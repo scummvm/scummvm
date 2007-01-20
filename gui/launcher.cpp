@@ -573,8 +573,8 @@ void LauncherDialog::updateListing() {
 			gameid = iter->_key;
 		if (description.empty()) {
 			GameDescriptor g = Base::findGame(gameid);
-			if (!g.description.empty())
-				description = g.description;
+			if (g.contains("description"))
+				description = g.description();
 		}
 
 		if (!gameid.empty() && !description.empty()) {
@@ -606,14 +606,14 @@ void LauncherDialog::addGameRecursive(FilesystemNode dir) {
 	}
 
 	// Run the detector on the dir
-	DetectedGameList candidates(PluginManager::instance().detectGames(files));
+	GameList candidates(PluginManager::instance().detectGames(files));
 	
 	if (candidates.size() >= 1) {
 		// At least one match was found. For now we just take the first one...
 		// a more sophisticated solution would do something more clever here,
 		// e.g. ask the user which one to pick (make sure to display the 
 		// path, too).
-		DetectedGame result = candidates[0];
+		GameDescriptor result = candidates[0];
 		addGameToConf(dir, result, true);
 	}
 	
@@ -661,7 +661,7 @@ void LauncherDialog::addGame() {
 
 		// ...so let's determine a list of candidates, games that
 		// could be contained in the specified directory.
-		DetectedGameList candidates(PluginManager::instance().detectGames(files));
+		GameList candidates(PluginManager::instance().detectGames(files));
 
 		int idx;
 		if (candidates.empty()) {
@@ -676,32 +676,32 @@ void LauncherDialog::addGame() {
 			// Display the candidates to the user and let her/him pick one
 			StringList list;
 			for (idx = 0; idx < (int)candidates.size(); idx++)
-				list.push_back(candidates[idx].description);
+				list.push_back(candidates[idx].description());
 
 			ChooserDialog dialog("Pick the game:");
 			dialog.setList(list);
 			idx = dialog.runModal();
 		}
 		if (0 <= idx && idx < (int)candidates.size()) {
-			DetectedGame result = candidates[idx];
+			GameDescriptor result = candidates[idx];
 			addGameToConf(dir, result, false);
 		}
 	}
 }
 
 
-void LauncherDialog::addGameToConf(FilesystemNode dir, DetectedGame result, bool suppressEditDialog) {
+void LauncherDialog::addGameToConf(FilesystemNode dir, GameDescriptor result, bool suppressEditDialog) {
 	// The auto detector or the user made a choice.
 	// Pick a domain name which does not yet exist (after all, we
 	// are *adding* a game to the config, not replacing).
-	String domain(result.gameid);
+	String domain(result.gameid());
 	if (ConfMan.hasGameDomain(domain)) {
 		int suffixN = 1;
 		char suffix[16];
 
 		while (ConfMan.hasGameDomain(domain)) {
 			snprintf(suffix, 16, "-%d", suffixN);
-			domain = result.gameid + suffix;
+			domain = result.gameid() + suffix;
 			suffixN++;
 		}
 	}
@@ -718,23 +718,23 @@ void LauncherDialog::addGameToConf(FilesystemNode dir, DetectedGame result, bool
 	// game target, we can change this (currently, you can only query
 	// for the generic gameid description; it's not possible to obtain
 	// a description which contains extended information like language, etc.).
-	ConfMan.set("description", result.description, domain);
+	ConfMan.set("description", result.description(), domain);
 
-	ConfMan.set("gameid", result.gameid, domain);
+	ConfMan.set("gameid", result.gameid(), domain);
 	ConfMan.set("path", dir.path(), domain);
 
 	// Set language if specified
-	if (result.language != Common::UNK_LANG)
-		ConfMan.set("language", Common::getLanguageCode(result.language), domain);
+	if (result.language() != Common::UNK_LANG)
+		ConfMan.set("language", Common::getLanguageCode(result.language()), domain);
 
 	// Set platform if specified
-	if (result.platform != Common::kPlatformUnknown)
-		ConfMan.set("platform", Common::getPlatformCode(result.platform), domain);
+	if (result.platform() != Common::kPlatformUnknown)
+		ConfMan.set("platform", Common::getPlatformCode(result.platform()), domain);
 
 	// Display edit dialog for the new entry
 	bool saveit = true;
 	if (!suppressEditDialog) {
-		EditGameDialog editDialog(domain, result.description);
+		EditGameDialog editDialog(domain, result.description());
 		saveit = (editDialog.runModal() > 0);
 	}
 	if (saveit) {
@@ -781,7 +781,7 @@ void LauncherDialog::editGame(int item) {
 	String gameId(ConfMan.get("gameid", _domains[item]));
 	if (gameId.empty())
 		gameId = _domains[item];
-	EditGameDialog editDialog(_domains[item], Base::findGame(gameId).description);
+	EditGameDialog editDialog(_domains[item], Base::findGame(gameId).description());
 	if (editDialog.runModal() > 0) {
 		// User pressed OK, so make changes permanent
 

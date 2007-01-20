@@ -1360,8 +1360,8 @@ GameDescriptor Engine_SCUMM_findGameID(const char *gameid) {
 	const ObsoleteGameID *o = obsoleteGameIDsTable;
 	while (o->from) {
 		if (0 == scumm_stricmp(gameid, o->from)) {
-			gs.gameid = gameid;
-			gs.description = "Obsolete game ID";
+			gs["gameid"] = gameid;
+			gs["description"] = "Obsolete game ID";
 			return gs;
 		}
 		o++;
@@ -1370,15 +1370,15 @@ GameDescriptor Engine_SCUMM_findGameID(const char *gameid) {
 }
 
 
-DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
-	DetectedGameList detectedGames;
+GameList Engine_SCUMM_detectGames(const FSList &fslist) {
+	GameList detectedGames;
 	Common::List<DetectorResult> results;
 
 	detectGames(fslist, results, 0);
 	
 	
 	for (Common::List<DetectorResult>::iterator x = results.begin(); x != results.end(); ++x) {
-		DetectedGame dg(x->game.gameid, findDescriptionFromGameID(x->game.gameid),
+		GameDescriptor dg(x->game.gameid, findDescriptionFromGameID(x->game.gameid),
 				x->language, x->game.platform);
 		dg.updateDesc(x->extra);	// Append additional information, if set, to the description.
 		detectedGames.push_back(dg);

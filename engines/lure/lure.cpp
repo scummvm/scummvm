@@ -103,11 +103,11 @@ GameDescriptor Engine_LURE_findGameID(const char *gameid) {
 			break;
 		g++;
 	}
-	return *g;
+	return GameDescriptor(g->gameid, g->description);
 }
 
-DetectedGameList Engine_LURE_detectGames(const FSList &fslist) {
-	DetectedGameList detectedGames;
+GameList Engine_LURE_detectGames(const FSList &fslist) {
+	GameList detectedGames;
 	const GameSettings *g;
 	FSList::const_iterator file;
 
@@ -137,7 +137,7 @@ DetectedGameList Engine_LURE_detectGames(const FSList &fslist) {
 		}
 		for (g = lure_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				DetectedGame dg(*g, g->language);
+				GameDescriptor dg(g->gameid, g->description, g->language);
 				dg.updateDesc((g->features & GF_FLOPPY) ? "Floppy" : 0);
 				detectedGames.push_back(dg);
 			}

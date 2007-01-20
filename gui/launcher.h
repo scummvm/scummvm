@@ -68,7 +68,7 @@ protected:
 
 	void selectGame(const String &name);
 	
-	void addGameToConf(FilesystemNode dir, DetectedGame result, bool suppressEditDialog);
+	void addGameToConf(FilesystemNode dir, GameDescriptor result, bool suppressEditDialog);
 	void addGameRecursive(FilesystemNode dir);
 };
 

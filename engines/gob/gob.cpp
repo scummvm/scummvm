@@ -813,11 +813,11 @@ GameDescriptor Engine_GOB_findGameID(const char *gameid) {
 			break;
 		g++;
 	}
-	return *g;
+	return GameDescriptor(g->gameid, g->description);
 }
 
-DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
-	DetectedGameList detectedGames;
+GameList Engine_GOB_detectGames(const FSList &fslist) {
+	GameList detectedGames;
 	const GameSettings *g;
 	FSList::const_iterator file;
 
@@ -843,7 +843,7 @@ DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 		}
 		for (g = gob_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				detectedGames.push_back(DetectedGame(g->gameid, g->description));
+				detectedGames.push_back(GameDescriptor(g->gameid, g->description));
 			}
 		}
 		if (detectedGames.empty()) {

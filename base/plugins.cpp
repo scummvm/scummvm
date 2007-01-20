@@ -25,30 +25,33 @@
 #include "common/util.h"
 
 
-void DetectedGame::updateDesc(const char *extra) {
+void GameDescriptor::updateDesc(const char *extra) {
 	// TODO: The format used here (LANG/PLATFORM/EXTRA) is not set in stone.
 	// We may want to change the order (PLATFORM/EXTRA/LANG, anybody?), or
 	// the seperator (instead of '/' use ', ' or ' ').
-	const bool hasCustomLanguage = (language != Common::UNK_LANG);
-	const bool hasCustomPlatform = (platform != Common::kPlatformUnknown);
+	const bool hasCustomLanguage = (this->contains("language") && (this->language() != Common::UNK_LANG));
+	const bool hasCustomPlatform = (this->contains("platform") && (this->platform() != Common::kPlatformUnknown));
 	const bool hasExtraDesc = (extra && extra[0]);
 
 	// Adapt the description string if custom platform/language is set.
 	if (hasCustomLanguage || hasCustomPlatform || hasExtraDesc) {
-		description += " (";
+		Common::String descr = this->description();
+
+		descr += " (";
 		if (hasCustomLanguage)
-			description += Common::getLanguageDescription(language);
+			descr += Common::getLanguageDescription(this->language());
 		if (hasCustomPlatform) {
 			if (hasCustomLanguage)
-				description += "/";
-			description += Common::getPlatformDescription(platform);
+				descr += "/";
+			descr += Common::getPlatformDescription(this->platform());
 		}
 		if (hasExtraDesc) {
 			if (hasCustomPlatform || hasCustomLanguage)
-				description += "/";
-			description += extra;
+				descr += "/";
+			descr += extra;
 		}
-		description += ")";
+		descr += ")";
+		this->operator []("description") = descr;
 	}
 }
 
@@ -86,7 +89,7 @@ public:
 		return (*_plugin->_qf)(gameid);
 	}
 
-	DetectedGameList detectGames(const FSList &fslist) const {
+	GameList detectGames(const FSList &fslist) const {
 		assert(_plugin->_df);
 		return (*_plugin->_df)(fslist);
 	}
@@ -247,8 +250,8 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 	}
 }
 
-DetectedGameList PluginManager::detectGames(const FSList &fslist) const {
-	DetectedGameList candidates;
+GameList PluginManager::detectGames(const FSList &fslist) const {
+	GameList candidates;
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.

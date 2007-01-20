@@ -34,7 +34,7 @@
 namespace Common {
 
 PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
-	DetectedGameList (*detectFunc)(const FSList &fslist),
+	GameList (*detectFunc)(const FSList &fslist),
 	const Common::ADObsoleteGameID *obsoleteList
 	) {
 	const char *gameid = ConfMan.get("gameid").c_str();
@@ -61,10 +61,10 @@ PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
 		return kInvalidPathError;
 	}
 
-	DetectedGameList detectedGames = detectFunc(fslist);
+	GameList detectedGames = detectFunc(fslist);
 
 	for (uint i = 0; i < detectedGames.size(); i++) {
-		if (detectedGames[i].gameid == gameid) {
+		if (detectedGames[i].gameid() == gameid) {
 			return kNoError;
 		}
 	}
@@ -89,18 +89,18 @@ GameDescriptor ADVANCED_DETECTOR_FIND_GAMEID(
 		const Common::ADObsoleteGameID *o = obsoleteList;
 		while (o->from) {
 			if (0 == scumm_stricmp(gameid, o->from)) {
-				gs.gameid = gameid;
-				gs.description = "Obsolete game ID";
+				gs["gameid"] = gameid;
+				gs["description"] = "Obsolete game ID";
 				return gs;
 			}
 			o++;
 		}
 	} else
-		return *g;
+		return GameDescriptor(g->gameid, g->description);
 	return gs;
 }
 
-static DetectedGame toDetectedGame(const ADGameDescription &g, const PlainGameDescriptor *sg) {
+static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGameDescriptor *sg) {
 	const char *title = 0;
 
 	while (sg->gameid) {
@@ -109,19 +109,19 @@ static DetectedGame toDetectedGame(const ADGameDescription &g, const PlainGameDe
 		sg++;
 	}
 
-	DetectedGame dg(g.gameid, title, g.language, g.platform);
-	dg.updateDesc(g.extra);
-	return dg;
+	GameDescriptor gd(g.gameid, title, g.language, g.platform);
+	gd.updateDesc(g.extra);
+	return gd;
 }
 
-DetectedGameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
+GameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	const FSList &fslist,
 	const byte *descs,
 	const int descItemSize,
 	const int md5Bytes,
 	const PlainGameDescriptor *list
 	) {
-	DetectedGameList detectedGames;
+	GameList detectedGames;
 	Common::AdvancedDetector ad;
 	Common::ADList matches;
 	Common::ADGameDescList descList;
@@ -137,7 +137,7 @@ DetectedGameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	matches = ad.detectGame(&fslist, md5Bytes, Common::UNK_LANG, Common::kPlatformUnknown);
 
 	for (uint i = 0; i < matches.size(); i++)
-		detectedGames.push_back(toDetectedGame(*(const ADGameDescription *)(descs + matches[i] * descItemSize), list));
+		detectedGames.push_back(toGameDescriptor(*(const ADGameDescription *)(descs + matches[i] * descItemSize), list));
 
 	return detectedGames;
 }
@@ -150,7 +150,7 @@ int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 	) {
 	int gameNumber = -1;
 
-	DetectedGameList detectedGames;
+	GameList detectedGames;
 	Common::AdvancedDetector ad;
 	Common::ADList matches;
 	Common::ADGameDescList descList;
@@ -184,7 +184,7 @@ int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 		error("TODO invalid gameNumber %d (max. expected value: %d)", gameNumber, descList.size());
 	}
 
-	debug(2, "Running %s", toDetectedGame(*(const ADGameDescription *)(descs + gameNumber * descItemSize), list).description.c_str());
+	debug(2, "Running %s", toGameDescriptor(*(const ADGameDescription *)(descs + gameNumber * descItemSize), list).description().c_str());
 
 	return gameNumber;
 }

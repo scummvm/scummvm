@@ -32,7 +32,7 @@
 #include "cine/cine.h"
 
 namespace Cine {
-static DetectedGameList GAME_detectGames(const FSList &fslist);
+static GameList GAME_detectGames(const FSList &fslist);
 }
 
 static const PlainGameDescriptor cineGames[] = {
@@ -433,7 +433,7 @@ bool CineEngine::initGame() {
 	return true;
 }
 
-DetectedGameList GAME_detectGames(const FSList &fslist) {
+GameList GAME_detectGames(const FSList &fslist) {
 	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 		fslist,
 		(const byte *)gameDescriptions,

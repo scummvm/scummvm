@@ -26,32 +26,41 @@
 
 #include "common/str.h"
 #include "common/array.h"
+#include "common/hash-str.h"
 
 struct PlainGameDescriptor {
 	const char *gameid;
 	const char *description;	// TODO: Rename this to "title" or so
 };
 
-struct GameDescriptor {
-	Common::String gameid;
-	Common::String description;	// TODO: Rename this to "title" or so
-	
+class GameDescriptor : public Common::StringMap {
+public:
 	GameDescriptor() {}
-	GameDescriptor(Common::String g, Common::String d) :
-		gameid(g), description(d) {}
+
+	GameDescriptor(const PlainGameDescriptor &pgd) {
+		this->operator []("gameid") = pgd.gameid;
+		this->operator []("description") = pgd.description;
+	}
+
+	GameDescriptor(Common::String g, Common::String d, Common::Language l  = Common::UNK_LANG,
+	             Common::Platform p = Common::kPlatformUnknown) {
+		this->operator []("gameid") = g;
+		this->operator []("description") = d;
+		if (l != Common::UNK_LANG)
+			this->operator []("language") = Common::getLanguageCode(l);
+		if (p != Common::kPlatformUnknown)
+			this->operator []("platform") = Common::getPlatformCode(p);
+	}
 
 	/**
-	 * This template constructor allows to easily convert structs that mimic
-	 * GameDescriptor to a real GameDescriptor instance.
-	 *
-	 * Normally, one would just subclass GameDescriptor to get this effect much easier.
-	 * However, subclassing a struct turns it into a non-POD type. One of the
-	 * consequences is that you can't have inline intialized arrays of that type.
-	 * But we heavily rely on those, hence we can't subclass GameDescriptor...
+	 * Update the description string by appending (LANG/PLATFORM/EXTRA) to it.
 	 */
-	template <class T>
-	GameDescriptor(const T &g) :
-		gameid(g.gameid), description(g.description) {}
+	void updateDesc(const char *extra = 0);
+
+	Common::String &gameid() { return this->operator []("gameid"); }
+	Common::String &description() { return this->operator []("description"); }
+	Common::Language language() { return Common::parseLanguage(this->operator []("language")); }
+	Common::Platform platform() { return Common::parsePlatform(this->operator []("platform")); }
 };
 
 /** List of games. */
@@ -61,7 +70,7 @@ public:
 	GameList(const GameList &list) : Common::Array<GameDescriptor>(list) {}
 	GameList(const PlainGameDescriptor *g) {
 		while (g->gameid) {
-			push_back(*g);
+			push_back(GameDescriptor(g->gameid, g->description));
 			g++;
 		}
 	}

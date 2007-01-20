@@ -34,7 +34,7 @@ typedef PluginError (*EngineFactory)(OSystem *syst, Engine **engine);
 typedef const char *(*NameFunc)();
 typedef GameDescriptor (*GameIDQueryFunc)(const char *gameid);
 typedef GameList (*GameIDListFunc)();
-typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
+typedef GameList (*DetectFunc)(const FSList &fslist);
 
 
 class DynamicPlugin : public Plugin {
@@ -68,7 +68,7 @@ public:
 		return (*_qf)(gameid);
 	}
 
-	DetectedGameList detectGames(const FSList &fslist) const {
+	GameList detectGames(const FSList &fslist) const {
 		assert(_df);
 		return (*_df)(fslist);
 	}

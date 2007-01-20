@@ -110,8 +110,8 @@ static const SkyVersion skyVersions[] = {
 	{ 0, 0, 0, 0 }
 };
 
-DetectedGameList Engine_SKY_detectGames(const FSList &fslist) {
-	DetectedGameList detectedGames;
+GameList Engine_SKY_detectGames(const FSList &fslist) {
+	GameList detectedGames;
 	bool hasSkyDsk = false;
 	bool hasSkyDnr = false;
 	int dinnerTableEntries = -1;
@@ -144,7 +144,7 @@ DetectedGameList Engine_SKY_detectGames(const FSList &fslist) {
 		// Match found, add to list of candidates, then abort inner loop.
 		// The game detector uses US English by default. We want British
 		// English to match the recorded voices better.
-		DetectedGame dg(skySetting, Common::UNK_LANG, Common::kPlatformUnknown);
+		GameDescriptor dg(skySetting.gameid, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown);
 		const SkyVersion *sv = skyVersions;
 		while (sv->dinnerTableEntries) {
 			if (dinnerTableEntries == sv->dinnerTableEntries &&

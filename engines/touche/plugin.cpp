@@ -123,7 +123,7 @@ GameDescriptor Engine_TOUCHE_findGameID(const char *gameid) {
 	return GameDescriptor();
 }
 
-DetectedGameList Engine_TOUCHE_detectGames(const FSList &fslist) {
+GameList Engine_TOUCHE_detectGames(const FSList &fslist) {
 	bool foundFile = false;
 	FSList::const_iterator file;
 	for (file = fslist.begin(); file != fslist.end(); ++file) {
@@ -140,7 +140,7 @@ DetectedGameList Engine_TOUCHE_detectGames(const FSList &fslist) {
 			break;
 		}
 	}
-	DetectedGameList detectedGames;
+	GameList detectedGames;
 	if (foundFile) {
 		// Currently, the detection code is based on a MD5 checksum. If all known versions
 		// have a different file size for TOUCHE.DAT, we may consider using this to do the
@@ -150,7 +150,7 @@ DetectedGameList Engine_TOUCHE_detectGames(const FSList &fslist) {
 			for (int i = 0; i < ARRAYSIZE(toucheGameVersionsTable); ++i) {
 				const GameVersion *gv = &toucheGameVersionsTable[i];
 				if (md5digest.equalsIgnoreCase(gv->md5digest)) {
-					DetectedGame dg(toucheGameDescriptor.gameid, gv->description, gv->language, gv->platform);
+					GameDescriptor dg(toucheGameDescriptor.gameid, gv->description, gv->language, gv->platform);
 					detectedGames.push_back(dg);
 					break;
 				}
@@ -172,12 +172,12 @@ PluginError Engine_TOUCHE_create(OSystem *system, Engine **engine) {
 	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
 		return kInvalidPathError;
 	}
-	DetectedGameList game = Engine_TOUCHE_detectGames(fslist);
+	GameList game = Engine_TOUCHE_detectGames(fslist);
 	if (game.size() != 1) {
 		return kNoGameDataFoundError;
 	}
 	assert(engine);
-	*engine = new Touche::ToucheEngine(system, game[0].language);
+	*engine = new Touche::ToucheEngine(system, game[0].language());
 	return kNoError;
 }
 

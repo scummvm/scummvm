@@ -36,35 +36,6 @@ class FSList;
 class OSystem;
 
 /**
- * A detected game. Carries the GameDescriptor, but also (optionally)
- * information about the language and platform of the detected game.
- */
-struct DetectedGame : public GameDescriptor {
-	Common::Language language;
-	Common::Platform platform;
-	DetectedGame(const char *g = 0, const char *d = 0,
-	             Common::Language l = Common::UNK_LANG,
-	             Common::Platform p = Common::kPlatformUnknown)
-		: GameDescriptor(g, d), language(l), platform(p) {}
-
-	template <class T>
-	DetectedGame(const T &game,
-	             Common::Language l = Common::UNK_LANG,
-	             Common::Platform p = Common::kPlatformUnknown)
-		: GameDescriptor(game.gameid, game.description), language(l), platform(p) {}
-	
-	/**
-	 * Update the description string by appending (LANG/PLATFORM/EXTRA) to it.
-	 */
-	void updateDesc(const char *extra = 0);
-};
-
-
-/** List of detected games. */
-typedef Common::Array<DetectedGame> DetectedGameList;
-
-
-/**
  * Error codes which mayb be reported by plugins under various circumstances.
  * @todo Turn this into a global 'ErrorCode' enum used by all of ScummVM ?
  */
@@ -96,7 +67,7 @@ public:
 
 	virtual GameList getSupportedGames() const = 0;
 	virtual GameDescriptor findGame(const char *gameid) const = 0;
-	virtual DetectedGameList detectGames(const FSList &fslist) const = 0;
+	virtual GameList detectGames(const FSList &fslist) const = 0;
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const = 0;
 };
@@ -146,7 +117,7 @@ public:
 		PLUGIN_EXPORT GameList PLUGIN_gameIDList() { return Engine_##ID##_gameIDList(); } \
 		PLUGIN_EXPORT GameDescriptor PLUGIN_findGameID(const char *gameid) { return Engine_##ID##_findGameID(gameid); } \
 		PLUGIN_EXPORT PluginError PLUGIN_createEngine(OSystem *syst, Engine **engine) { return Engine_##ID##_create(syst, engine); } \
-		PLUGIN_EXPORT DetectedGameList PLUGIN_detectGames(const FSList &fslist) { return Engine_##ID##_detectGames(fslist); } \
+		PLUGIN_EXPORT GameList PLUGIN_detectGames(const FSList &fslist) { return Engine_##ID##_detectGames(fslist); } \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
 #endif
@@ -161,7 +132,7 @@ class PluginRegistrator {
 public:
 	typedef GameDescriptor (*GameIDQueryFunc)(const char *gameid);
 	typedef PluginError (*EngineFactory)(OSystem *syst, Engine **engine);
-	typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
+	typedef GameList (*DetectFunc)(const FSList &fslist);
 
 protected:
 	const char *_name;
@@ -225,7 +196,7 @@ public:
 
 	const PluginList &getPlugins()	{ return _plugins; }
 
-	DetectedGameList detectGames(const FSList &fslist) const;
+	GameList detectGames(const FSList &fslist) const;
 };
 
 #endif

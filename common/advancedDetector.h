@@ -102,7 +102,7 @@ GameDescriptor ADVANCED_DETECTOR_FIND_GAMEID(
 
 // FIXME/TODO: Rename this function to something more sensible.
 // Possibly move it inside class AdvancedDetector ?
-DetectedGameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
+GameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	const FSList &fslist,
 	const byte *descs,
 	const int descItemSize,
@@ -123,7 +123,7 @@ int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 // FIXME/TODO: Rename this function to something more sensible.
 // Possibly move it inside class AdvancedDetector ?
 PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
-	DetectedGameList (*detectFunc)(const FSList &fslist),
+	GameList (*detectFunc)(const FSList &fslist),
 	const Common::ADObsoleteGameID *obsoleteList
 	);
 
@@ -135,7 +135,7 @@ PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
 	GameDescriptor Engine_##engine##_findGameID(const char *gameid) { \
 		return Common::ADVANCED_DETECTOR_FIND_GAMEID(gameid,list,obsoleteList); \
 	} \
-	DetectedGameList Engine_##engine##_detectGames(const FSList &fslist) { \
+	GameList Engine_##engine##_detectGames(const FSList &fslist) { \
 		return detectFunc(fslist);						\
 	} \
 	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \

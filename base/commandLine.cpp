@@ -527,7 +527,7 @@ static void listGames() {
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		GameList list = (*iter)->getSupportedGames();
 		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
-			printf("%-20s %s\n", v->gameid.c_str(), v->description.c_str());
+			printf("%-20s %s\n", v->gameid().c_str(), v->description().c_str());
 		}
 	}
 }
@@ -550,8 +550,8 @@ static void listTargets() {
 			// be taken into account, too.
 			Common::String gameid(name);
 			GameDescriptor g = Base::findGame(gameid);
-			if (g.description.size() > 0)
-				description = g.description;
+			if (g["description"].size() > 0)
+				description = g["description"];
 		}
 
 		printf("%-20s %s\n", name.c_str(), description.c_str());
@@ -589,11 +589,11 @@ static void runDetectorTest() {
 			continue;
 		}
 
-		DetectedGameList candidates(PluginManager::instance().detectGames(files));
+		GameList candidates(PluginManager::instance().detectGames(files));
 		bool gameidDiffers = false;
-		DetectedGameList::iterator x;
+		GameList::iterator x;
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
-			gameidDiffers |= (scumm_stricmp(gameid.c_str(), x->gameid.c_str()) != 0);
+			gameidDiffers |= (scumm_stricmp(gameid.c_str(), x->gameid().c_str()) != 0);
 		}
 		
 		if (candidates.empty()) {
@@ -616,10 +616,10 @@ static void runDetectorTest() {
 		
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
 			printf("    gameid '%s', desc '%s', language '%s', platform '%s'\n",
-					x->gameid.c_str(),
-					x->description.c_str(),
-					Common::getLanguageCode(x->language),
-					Common::getPlatformCode(x->platform));
+				   x->gameid().c_str(),
+				   x->description().c_str(),
+				   Common::getLanguageCode(x->language()),
+				   Common::getPlatformCode(x->platform()));
 		}
 	}
 	int total = domains.size();
@@ -666,7 +666,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	// domain (i.e. a target) matching this argument, or alternatively
 	// whether there is a gameid matching that name.
 	if (!command.empty()) {
-		if (ConfMan.hasGameDomain(command) || Base::findGame(command).gameid.size() > 0) {
+		if (ConfMan.hasGameDomain(command) || Base::findGame(command)["gameid"].size() > 0) {
 			ConfMan.setActiveDomain(command);
 		} else {
 			usage("Unrecognized game target '%s'", command.c_str());

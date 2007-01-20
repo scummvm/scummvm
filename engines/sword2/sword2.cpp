@@ -65,7 +65,7 @@ GameList Engine_SWORD2_gameIDList() {
 	const Sword2::GameSettings *g = Sword2::sword2_settings;
 	GameList games;
 	while (g->gameid) {
-		games.push_back(*g);
+		games.push_back(GameDescriptor(g->gameid, g->description));
 		g++;
 	}
 	return games;
@@ -78,11 +78,11 @@ GameDescriptor Engine_SWORD2_findGameID(const char *gameid) {
 			break;
 		g++;
 	}
-	return *g;
+	return GameDescriptor(g->gameid, g->description);
 }
 
-DetectedGameList Engine_SWORD2_detectGames(const FSList &fslist) {
-	DetectedGameList detectedGames;
+GameList Engine_SWORD2_detectGames(const FSList &fslist) {
+	GameList detectedGames;
 	const Sword2::GameSettings *g;
 
 	// TODO: It would be nice if we had code here which distinguishes
@@ -97,7 +97,7 @@ DetectedGameList Engine_SWORD2_detectGames(const FSList &fslist) {
 
 				if (0 == scumm_stricmp(g->detectname, fileName)) {
 					// Match found, add to list of candidates, then abort inner loop.
-					detectedGames.push_back(*g);
+					detectedGames.push_back(GameDescriptor(g->gameid, g->description));
 					break;
 				}
 			}
@@ -118,10 +118,10 @@ PluginError Engine_SWORD2_create(OSystem *syst, Engine **engine) {
 
 	// Invoke the detector
 	Common::String gameid = ConfMan.get("gameid");
-	DetectedGameList detectedGames = Engine_SWORD2_detectGames(fslist);
+	GameList detectedGames = Engine_SWORD2_detectGames(fslist);
 
 	for (uint i = 0; i < detectedGames.size(); i++) {
-		if (detectedGames[i].gameid == gameid) {
+		if (detectedGames[i].gameid() == gameid) {
 			*engine = new Sword2::Sword2Engine(syst);
 			return kNoError;
 		}

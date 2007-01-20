@@ -30,7 +30,7 @@
 #include "parallaction/parallaction.h"
 
 namespace Parallaction {
-static DetectedGameList GAME_detectGames(const FSList &fslist);
+static GameList GAME_detectGames(const FSList &fslist);
 }
 
 static const PlainGameDescriptor parallactionGames[] = {
@@ -84,7 +84,7 @@ bool Parallaction::detectGame() {
 	return true;
 }
 
-DetectedGameList GAME_detectGames(const FSList &fslist) {
+GameList GAME_detectGames(const FSList &fslist) {
 	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 		fslist,
 		(const byte *)gameDescriptions,

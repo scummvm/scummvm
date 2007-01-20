@@ -31,7 +31,7 @@
 
 
 namespace Agi {
-static DetectedGameList GAME_detectGames(const FSList &fslist);
+static GameList GAME_detectGames(const FSList &fslist);
 }
 
 static const PlainGameDescriptor agiGames[] = {
@@ -958,7 +958,7 @@ bool AgiEngine::initGame() {
 	return true;
 }
 
-DetectedGameList GAME_detectGames(const FSList &fslist) {
+GameList GAME_detectGames(const FSList &fslist) {
 	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 		fslist,
 		(const byte *)gameDescriptions,

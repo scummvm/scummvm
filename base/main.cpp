@@ -69,7 +69,7 @@ GameDescriptor findGame(const Common::String &gameName, const Plugin **plugin) {
 	PluginList::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		result = (*iter)->findGame(gameName.c_str());
-		if (!result.gameid.empty()) {
+		if (!result.gameid().empty()) {
 			if (plugin)
 				*plugin = *iter;
 			break;
@@ -126,7 +126,7 @@ static const Plugin *detectMain() {
 	}
 
 	// FIXME: Do we really need this one? 
-	printf("Trying to start game '%s'\n", game.description.c_str());
+	printf("Trying to start game '%s'\n", game.description().c_str());
 
 	return plugin;
 }
@@ -191,7 +191,7 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description"));
 
-	Common::String desc = Base::findGame(ConfMan.get("gameid")).description;
+	Common::String desc = Base::findGame(ConfMan.get("gameid")).description();
 	if (caption.empty() && !desc.empty())
 		caption = desc;
 	if (caption.empty())

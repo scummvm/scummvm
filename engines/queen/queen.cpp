@@ -65,8 +65,8 @@ GameDescriptor Engine_QUEEN_findGameID(const char *gameid) {
 	return GameDescriptor();
 }
 
-DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
-	DetectedGameList detectedGames;
+GameList Engine_QUEEN_detectGames(const FSList &fslist) {
+	GameList detectedGames;
 
 	// Iterate over all files in the given directory
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -80,7 +80,7 @@ DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
 			}
 			Queen::DetectedGameVersion version;
 			if (Queen::Resource::detectVersion(&version, &dataFile)) {
-				DetectedGame dg(queenGameDescriptor, version.language, Common::kPlatformPC);
+				GameDescriptor dg(queenGameDescriptor.gameid, queenGameDescriptor.description, version.language, Common::kPlatformPC);
 				if (version.features & Queen::GF_DEMO) {
 					dg.updateDesc("Demo");
 				} else if (version.features & Queen::GF_INTERVIEW) {
