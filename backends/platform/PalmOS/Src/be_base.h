@@ -118,8 +118,8 @@ protected:
 		kKeyAny				= 1 << 31
 	};
 	enum {
-		MAX_MOUSE_W = 48,
-		MAX_MOUSE_H = 48
+		MAX_MOUSE_W = 80,
+		MAX_MOUSE_H = 80
 	};
 	struct MousePos {
 		int16 x,y,w,h;
