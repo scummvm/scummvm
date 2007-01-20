@@ -1,526 +1,381 @@
-/*
-	io_m3sd.c 
 
-	Hardware Routines for reading a Secure Digital card
-	using the M3 SD
-	
-	Some code based on M3 SD drivers supplied by M3Adapter.
-	Some code written by SaTa may have been unknowingly used.
-
- Copyright (c) 2006 Michael "Chishm" Chisholm
-	 
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
-
-  1. Redistributions of source code must retain the above copyright notice,
-     this list of conditions and the following disclaimer.
-  2. Redistributions in binary form must reproduce the above copyright notice,
-     this list of conditions and the following disclaimer in the documentation and/or
-     other materials provided with the distribution.
-  3. The name of the author may not be used to endorse or promote products derived
-     from this software without specific prior written permission.
-
- THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
- AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE
- LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- 
-	2006-07-25 - Chishm
-		* Improved startup function that doesn't delay hundreds of seconds
-		  before reporting no card inserted.
-		* Fixed writeData function to timeout on error
-		* writeSectors function now wait until the card is ready before continuing with a transfer
-
-	2006-08-05 - Chishm
-		* Tries multiple times to get a Relative Card Address at startup
-		
-	2006-08-07 - Chishm
-		* Moved the SD initialization to a common function
-*/
-
+#define io_M3SD_c
 #include "io_m3sd.h"
-#include "io_sd_common.h"
-#include "io_m3_common.h"
-//#include "common.h"
-#include "disc_io.h"
-#include <stdio.h>
 
-#define BYTES_PER_READ 512
+//M3-SD interface SD card.
 
-//---------------------------------------------------------------
-// M3SD register addresses
+#define DMA3SAD      *(volatile u32*)0x040000D4
+#define DMA3DAD      *(volatile u32*)0x040000D8
+#define DMA3CNT      *(volatile u32*)0x040000DC
+#define DMA3CR       *(volatile u16*)0x040000DE
 
-#define REG_M3SD_DIR	(*(vu16*)0x08800000)	// direction control register
-#define REG_M3SD_DAT	(*(vu16*)0x09000000)	// SD data line, 8 bits at a time
-#define REG_M3SD_CMD	(*(vu16*)0x09200000)	// SD command byte
-#define REG_M3SD_ARGH	(*(vu16*)0x09400000)	// SD command argument, high halfword
-#define REG_M3SD_ARGL	(*(vu16*)0x09600000)	// SD command argument, low halfword
-#define REG_M3SD_STS	(*(vu16*)0x09800000)	// command and status register
+//SD dir control bit cmddir=bit0 clken=bit1
+//output
+#define SDDIR			(*(volatile u16*)0x8800000)
 
-//---------------------------------------------------------------
-// Send / receive timeouts, to stop infinite wait loops
-#define NUM_STARTUP_CLOCKS 100	// Number of empty (0xFF when sending) bytes to send/receive to/from the card
-#define TRANSMIT_TIMEOUT 20000	// Time to wait for the M3 to respond to transmit or receive requests
-#define RESPONSE_TIMEOUT 256	// Number of clocks sent to the SD card before giving up
-#define WRITE_TIMEOUT	3000	// Time to wait for the card to finish writing
+//SD send get control bit send=bit0 get=bit1
+//output
+#define SDCON			(*(volatile u16*)0x9800000)
 
-//---------------------------------------------------------------
-// Variables required for tracking SD state
-static u32 _M3SD_relativeCardAddress = 0;	// Preshifted Relative Card Address
+//SD output data obyte[7:0]=AD[7:0]
+//output
+#define SDODA			(*(volatile u16*)0x9000000)
 
-//---------------------------------------------------------------
-// Internal M3 SD functions
+//SD input data AD[7:0]=ibyte[7:0]
+//input
+#define SDIDA			(*(volatile u16*)0x9000000)
 
-static inline void _M3SD_unlock (void) {
-	_M3_changeMode (M3_MODE_MEDIA);
+//readsector data1
+#define SDIDA1			(*(volatile u16*)0x9200000)
+
+//readsector data2
+#define SDIDA2			(*(volatile u16*)0x9400000)
+
+//readsector data3
+#define SDIDA3			(*(volatile u16*)0x9600000)
+
+//SD stutas cmdneg=bit0 cmdpos=bit1 issend=bit2 isget=bit3
+//input
+#define SDSTA			(*(volatile u16*)0x9800000)
+
+#define M3_REG_STS		*(vu16*)(0x09800000)	// Status of the CF Card / Device control
+#define M3_DATA			(vu16*)(0x08800000)		// Pointer to buffer of CF data transered from card
+
+// CF Card status
+#define CF_STS_INSERTED1		0x20
+#define CF_STS_INSERTED2		0x30
+#define CF_STS_INSERTED3		0x22
+#define CF_STS_INSERTED4		0x32
+#define isM3ins(sta)	((sta==CF_STS_INSERTED1) || (sta==CF_STS_INSERTED2) || (sta==CF_STS_INSERTED3) || (sta==CF_STS_INSERTED4))
+
+
+#define CARD_TIMEOUT	400000		// Updated due to suggestion from SaTa, otherwise card will timeout sometimes on a write
+//#define CARD_TIMEOUT	(500*100)	// M3SD timeout nomal:500
+
+void SendCommand(u16 command, u32 sectorn);
+void PassRespond(u32 num);
+void SD_crc16(u16* buff,u16 num,u16* crc16buff);
+void SD_data_write(u16 *buff,u16* crc16buff);
+u16 M3_SetChipReg(u32 Data);
+
+//=========================================================
+u16 M3_SetChipReg(u32 Data)
+{
+	u16 i,j;
+
+	i = *(volatile u16*)(0x700001*2+0x8000000);
+
+	i = *(volatile u16*)(0x000007*2+0x8000000);
+	i = *(volatile u16*)(0x400ffe*2+0x8000000);
+	i = *(volatile u16*)(0x000825*2+0x8000000);
+
+	i = *(volatile u16*)(0x400309*2+0x8000000);
+	i = *(volatile u16*)(0x000000*2+0x8000000);
+	i = *(volatile u16*)(0x400db3*2+0x8000000);
+
+	i = *(volatile u16*)((Data*2)+0x8000000);
+
+	j = *(volatile u16*)(0x000407*2+0x8000000);
+	i = *(volatile u16*)(0x000000*2+0x8000000);
+
+	return j;
 }
 
-static inline bool _M3SD_waitOnBusy (void) {
-	int i = 0;
-	while ( (REG_M3SD_STS & 0x01) == 0x00) {
-		i++;
-		if (i >= TRANSMIT_TIMEOUT) {
-			return false;
-		}
+void M3_SelectSaver(u8 Bank)
+{
+	u16 i;
+
+	i = *(volatile u16*)(0x700001*2+0x8000000);
+
+	i = *(volatile u16*)(0x000007*2+0x8000000);
+	i = *(volatile u16*)(0x400FFE*2+0x8000000);
+	i = *(volatile u16*)(0x000825*2+0x8000000);
+
+	i = *(volatile u16*)(0x400309*2+0x8000000);
+	i = *(volatile u16*)(0x000000*2+0x8000000);
+	i = *(volatile u16*)(0x400db3*2+0x8000000);
+
+	i = *(volatile u16*)((Bank<<4)*2+0x8000000);
+
+	i = *(volatile u16*)(0x000407*2+0x8000000);
+	i = *(volatile u16*)(0x000000*2+0x8000000);
+}
+
+void DMA3(u32 src, u32 dst, u32 cnt)
+{
+	u16 i,j,cnttmp;
+
+	cnttmp = (cnt&0xffff);
+	if( ((dst&0x03) == 0)
+		&&((cnttmp&0x0f) == 0)
+		&&(cnttmp>0))
+	{
+		DC_FlushRange(dst,cnttmp*2);
+		DMA3CR &= (~0x3a00);
+		DMA3CR &= (~0x8000);
+		i = DMA3CR;
+		j = DMA3CR;
+
+		DMA3SAD=src;
+		DMA3DAD=dst;
+		DMA3CNT=cnt;
 	}
-	return true;
-}
-
-static inline bool _M3SD_waitForDataReady (void) {
-	int i = 0;
-	while ( (REG_M3SD_STS & 0x40) == 0x00) {
-		i++;
-		if (i >= TRANSMIT_TIMEOUT) {
-			return false;
-		}
-	}
-	return true;
-}
-
-
-static bool _M3SD_sendCommand (u16 command, u32 argument) {
-	REG_M3SD_STS = 0x8;
-	REG_M3SD_CMD = 0x40 + command;		// Include the start bit
-	REG_M3SD_ARGH = argument >> 16;
-	REG_M3SD_ARGL = argument;
-	// The CRC7 of the command is calculated by the M3
-	
-	REG_M3SD_DIR=0x29;
-	if (!_M3SD_waitOnBusy()) {
-		REG_M3SD_DIR=0x09;
-		return false;
-	}
-	REG_M3SD_DIR=0x09;
-	return true;
-}
-
-static bool _M3SD_sendByte (u8 byte) {
-	int i = 0;
-	REG_M3SD_DAT = byte;
-	REG_M3SD_DIR = 0x03;
-	REG_M3SD_STS = 0x01;
-	while ((REG_M3SD_STS & 0x04) == 0) {
-		i++;
-		if (i >= TRANSMIT_TIMEOUT) {
-			return false;
-		}
-	}
-	return true;
-}
-
-static u8 _M3SD_getByte (void) {
-	int i;
-	// Request 8 bits of data from the SD's CMD pin
-	REG_M3SD_DIR = 0x02;
-	REG_M3SD_STS = 0x02;
-	// Wait for the data to be ready
-	i = 0;
-	while ((REG_M3SD_STS & 0x08) == 0) {
-		i++;
-		if (i >= TRANSMIT_TIMEOUT) {
-			// Return an empty byte if a timeout occurs
-			return 0xFF;
-		}
-	}
-	i = 0;
-	while ((REG_M3SD_STS & 0x08) != 0) {
-		i++;
-		if (i >= TRANSMIT_TIMEOUT) {
-			// Return an empty byte if a timeout occurs
-			return 0xFF;
-		}
-	}
-	// Return the data
-	return (REG_M3SD_DAT & 0xff);
-}
-
-// Returns the response from the SD card to a previous command.
-static bool _M3SD_getResponse (u8* dest, u32 length) {
-	u32 i;	
-	u8 dataByte;
-	int shiftAmount;
-	
-	// Wait for the card to be non-busy
-	for (i = 0; i < RESPONSE_TIMEOUT; i++) {
-		dataByte = _M3SD_getByte();
-		if (dataByte != SD_CARD_BUSY) {
-			break;
-		}
-	}
-	
-	if (dest == NULL) {
-		return true;
-	}
-	
-	// Still busy after the timeout has passed
-	if (dataByte == 0xff) {
-		return false;
-	}
-	
-	// Read response into buffer
-	for ( i = 0; i < length; i++) {
-		dest[i] = dataByte;
-		dataByte = _M3SD_getByte();
-	}
-	// dataByte will contain the last piece of the response
-	
-	// Send 16 more clocks, 8 more than the delay required between a response and the next command
-	i = _M3SD_getByte();
-	i = _M3SD_getByte();
-	
-	// Shift response so that the bytes are correctly aligned
-	// The register may not contain properly aligned data
-	for (shiftAmount = 0; ((dest[0] << shiftAmount) & 0x80) != 0x00; shiftAmount++) {
-		if (shiftAmount >= 7) {
-			return false;
-		}
-	}
-	
-	for (i = 0; i < length - 1; i++) {
-		dest[i] = (dest[i] << shiftAmount) | (dest[i+1] >> (8-shiftAmount));
-	}
-	// Get the last piece of the response from dataByte
-	dest[i] = (dest[i] << shiftAmount) | (dataByte >> (8-shiftAmount));
-
-	return true;
-}
-
-
-static inline bool _M3SD_getResponse_R1 (u8* dest) {
-	return _M3SD_getResponse (dest, 6);
-}
-
-static inline bool _M3SD_getResponse_R1b (u8* dest) {
-	return _M3SD_getResponse (dest, 6);
-}
-
-static inline bool _M3SD_getResponse_R2 (u8* dest) {
-	return _M3SD_getResponse (dest, 17);
-}
-
-static inline bool _M3SD_getResponse_R3 (u8* dest) {
-	return _M3SD_getResponse (dest, 6);
-}
-
-static inline bool _M3SD_getResponse_R6 (u8* dest) {
-	return _M3SD_getResponse (dest, 6);
-}
-
-static void _M3SD_sendClocks (u32 numClocks) {
-	while (numClocks--) {
-		_M3SD_sendByte(0xff);
-	}
-}
-
-static void _M3SD_getClocks (u32 numClocks) {
-	while (numClocks--) {
-		_M3SD_getByte();
-	}
-}
-
-bool _M3SD_cmd_6byte_response (u8* responseBuffer, u8 command, u32 data) {
-	_M3SD_sendCommand (command, data);
-	return _M3SD_getResponse (responseBuffer, 6);
-}
-
-bool _M3SD_cmd_17byte_response (u8* responseBuffer, u8 command, u32 data) {
-	_M3SD_sendCommand (command, data);
-	return _M3SD_getResponse (responseBuffer, 17);
-}
-
-static bool _M3SD_initCard (void) {
-	// Give the card time to stabilise
-	_M3SD_sendClocks (NUM_STARTUP_CLOCKS);
-	
-	// Reset the card
-	if (!_M3SD_sendCommand (GO_IDLE_STATE, 0)) {
-		return false;
-	}
-
-	_M3SD_getClocks (NUM_STARTUP_CLOCKS);
-
-	// Card is now reset, including it's address
-	_M3SD_relativeCardAddress = 0;
-	
-	// Init the card
-	return _SD_InitCard (_M3SD_cmd_6byte_response, 
-				_M3SD_cmd_17byte_response,
-				true,
-				&_M3SD_relativeCardAddress);
-}
-
-static bool _M3SD_readData (void* buffer) {
-	u32 i;
-	u8* buff_u8 = (u8*)buffer;
-	u16* buff = (u16*)buffer;
-	u16 temp;
-
-	REG_M3SD_DIR = 0x49;
-	if (!_M3SD_waitForDataReady()) {
-		REG_M3SD_DIR = 0x09;
-		return false;
-	}
-	REG_M3SD_DIR = 0x09;
-	
-	REG_M3SD_DIR =  0x8;
-	REG_M3SD_STS = 0x4;
-	
-	i = REG_M3SD_DIR;
-	// Read data
-	i=256;
-	if ((u32)buff_u8 & 0x01) {
-		while(i--)
+	else
+	{
+		for(j=0;j<cnttmp;j++)
 		{
-			temp = REG_M3SD_DIR;
-			*buff_u8++ = temp & 0xFF;
-			*buff_u8++ = temp >> 8;
+			*(u16*)(dst+j*2) = *(u16*)(src+j*2);
 		}
-	} else {
-		while(i--)
-			*buff++ = REG_M3SD_DIR; 
 	}
-	// Read end checksum
-	i = REG_M3SD_DIR + REG_M3SD_DIR + REG_M3SD_DIR + REG_M3SD_DIR;
-	
-	return true;
 }
 
-static void _M3SD_clkout (void) {
-	REG_M3SD_DIR = 0x4;
-	REG_M3SD_DIR = 0xc;
-/*	__asm volatile (
-	"ldr 	r1, =0x08800000		\n"	
-	"mov 	r0, #0x04			\n"
-	"strh	r0, [r1]			\n"
-	"mov	r0, r0				\n"
-	"mov	r0, r0				\n"
-	"mov    r0, #0x0c			\n"
-	"strh	r0, [r1]			\n"
-	:					// Outputs
-	:					// Inputs
-	: "r0", "r1"		// Clobber list
-	);*/
+void SendCommand(u16 command, u32 sectorn)
+{
+	SDCON=0x8;
+	SDIDA1=0x40+command;
+	SDIDA2=(sectorn>>7);
+	SDIDA3=(sectorn<<9);
+
+	SDDIR=0x29;
+	while ((SDSTA&0x01) != 0x01);
+	SDDIR=0x09;
 }
 
-static void _M3SD_clkin (void) {
-	REG_M3SD_DIR = 0x0;
-	REG_M3SD_DIR = 0x8;
-/*	__asm volatile (
-	"ldr 	r1, =0x08800000		\n"	
-	"mov 	r0, #0x00			\n"
-	"strh	r0, [r1]			\n"
-	"mov	r0, r0				\n"
-	"mov	r0, r0				\n"
-	"mov    r0, #0x08			\n"
-	"strh	r0, [r1]			\n"
-	:					// Outputs
-	:					// Inputs
-	: "r0", "r1"		// Clobber list
-	);*/
+void PassRespond(u32 num)
+{
+	u32 i,j,dmanum;
+
+	dmanum=(64+(num<<3))>>2;
+	SDDIR=0x8;
+	SDCON=0x4;
+
+	for(j=0;j<dmanum;j++)
+	{
+		i = SDDIR;
+	}
 }
 
-static bool _M3SD_writeData (u8* data, u8* crc) {
-	int i;
-	u8 temp;
+//read multi sectors function
+void readsectors(u16 * p,u32 sectorn,u16 number)
+{
+	u32 i,j;
 
+	SendCommand(18,sectorn);
+	for(i=0;i<number;i++,p+=0x100)
+	{
+		SDDIR=0x49;
+		while ( (SDSTA&0x40) !=0x40);
+		SDDIR=0x09;
+
+		SDDIR=0x8;
+		SDCON=0x4;
+		j = *(volatile u16*)0x8800000;
+		DMA3(0x8800000,(u32)p,0x80000100);
+		j = *(volatile u16*)0x8800000;
+		j = *(volatile u16*)0x8800000;
+		j = *(volatile u16*)0x8800000;
+		j = *(volatile u16*)0x8800000;
+
+		SDCON=0x8;
+	}
+
+	SendCommand(12,sectorn);
+	PassRespond(6);
+}
+
+//write one sector function
+void M3SD_writesector(u16 * p,u32 sectorn)
+{
+	u16 crc[4];
+	u16* check = (u16 *) malloc(512);
+	u16* data = (u16 *) malloc(512);
+	memcpy(data, p, 512);
+
+	int verify = 0;
+	int tries = 0;
 	do {
-		_M3SD_clkin();
-	} while ((REG_M3SD_DAT & 0x100) == 0);
-	
-	REG_M3SD_DAT = 0;	// Start bit
-	
-	_M3SD_clkout();
-	
-	for (i = 0; i < BYTES_PER_READ; i++) {
-		temp = (*data++);
-		REG_M3SD_DAT = temp >> 4;
-		_M3SD_clkout();
-		REG_M3SD_DAT = temp;
-		_M3SD_clkout();
-	}
-	
-	if (crc != NULL) {
-		for (i = 0; i < 8; i++) {
-			temp = (*crc++);
-			REG_M3SD_DAT = temp >> 4;
-			_M3SD_clkout();
-			REG_M3SD_DAT = temp;
-			_M3SD_clkout();
-		}
-	}
+		SendCommand(24,sectorn);
+		PassRespond(6);
 
-	i = 32;
-	while (i--) {
-		temp += 2;		// a NOP to stop the compiler optimising out the loop
-	}
-	
-	for (i = 0; i  < 32; i++) {
-		REG_M3SD_DAT = 0xff;
-		_M3SD_clkout();
-	}
-	
-	do {
-		_M3SD_clkin();
-	} while ((REG_M3SD_DAT & 0x100) == 0);
-	
-	return true;
-}
+		SDDIR=0x4;
+		SDCON=0x0;
 
-//---------------------------------------------------------------
-// Functions needed for the external interface
+		SD_crc16(data,512,crc);
+		SD_data_write(data,crc);
 
-bool _M3SD_startUp (void) {
-	_M3SD_unlock();
-	return _M3SD_initCard();
-}
+		readsectors(check, sectorn, 1);
 
-bool _M3SD_isInserted (void) {
-	u8 responseBuffer [6];
-	// Make sure the card receives the command
-	if (!_M3SD_sendCommand (SEND_STATUS, 0)) {
-		return false;
-	}
-	// Make sure the card responds
-	if (!_M3SD_getResponse_R1 (responseBuffer)) {
-		return false;
-	}
-	// Make sure the card responded correctly
-	if (responseBuffer[0] != SEND_STATUS) {
-		return false;
-	}
-	return true;
-}
-
-bool _M3SD_readSectors (u32 sector, u32 numSectors, void* buffer) {
-	u32 i;
-	u8* dest = (u8*) buffer;
-	u8 responseBuffer[6];
-	
-	if (numSectors == 1) {
-		// If it's only reading one sector, use the (slightly faster) READ_SINGLE_BLOCK
-		if (!_M3SD_sendCommand (READ_SINGLE_BLOCK, sector * BYTES_PER_READ)) {
-			return false;
-		}
-
-		if (!_M3SD_readData (buffer)) {
-			return false;
-		}
-
-	} else {
-		// Stream the required number of sectors from the card
-		if (!_M3SD_sendCommand (READ_MULTIPLE_BLOCK, sector * BYTES_PER_READ)) {
-			return false;
-		}
-	
-		for(i=0; i < numSectors; i++, dest+=BYTES_PER_READ) {
-			if (!_M3SD_readData(dest)) {
-				return false;
+		int r;
+		verify = 0;
+		for (r = 0; r < 256; r++) {
+			if (check[r] != data[r]) {
+				verify++;
 			}
-			REG_M3SD_STS = 0x8;
 		}
-	
-		// Stop the streaming
-		_M3SD_sendCommand (STOP_TRANSMISSION, 0);
-		_M3SD_getResponse_R1b (responseBuffer);
-	}
 
-	return true;
+		if (verify > 0) {
+			tries++;
+		}
+
+	} while ((verify > 0) && (tries < 16));
+	
+	free(data);
+	free(check);
+}	// */
+
+/*-----------------------------------------------------------------
+M3SD_IsInserted
+Is a compact flash card inserted?
+bool return OUT:  true if a CF card is inserted
+-----------------------------------------------------------------*/
+bool M3SD_IsInserted (void)
+{
+	u16 sta;
+	bool i;
+
+	M3_SetChipReg(0x400003);
+	M3_REG_STS = CF_STS_INSERTED1;
+	sta=M3_REG_STS;
+	i = ( isM3ins(sta) );
+
+	M3_SetChipReg(0x400002);
+	return i;
 }
 
-bool _M3SD_writeSectors (u32 sector, u32 numSectors, const void* buffer) {
-	u8 crc[8];
-	u8 responseBuffer[6];
-	u32 offset = sector * BYTES_PER_READ;
-	u8* data = (u8*) buffer;
+/*-----------------------------------------------------------------
+M3SD_ClearStatus
+Tries to make the CF card go back to idle mode
+bool return OUT:  true if a CF card is idle
+-----------------------------------------------------------------*/
+bool M3SD_ClearStatus (void)
+{
 	int i;
-	// Precalculate the data CRC
-	_SD_CRC16 ( data, BYTES_PER_READ, crc);
-	
-	while (numSectors--) {
-		// Send a single sector write command
-		_M3SD_sendCommand (WRITE_BLOCK, offset);
-		if (!_M3SD_getResponse_R1 (responseBuffer)) {
-			return false;
-		}
-	
-		REG_M3SD_DIR = 0x4;
-		REG_M3SD_STS = 0x0;
-	
-		// Send the data
-		if (! _M3SD_writeData( data, crc)) {
-			return false;
-		}
-		
-		if (numSectors > 0) {
-			offset += BYTES_PER_READ;
-			data += BYTES_PER_READ;
-			// Calculate the next CRC while waiting for the card to finish writing
-			_SD_CRC16 ( data, BYTES_PER_READ, crc);
-		}
-		
-		// Wait for the card to be ready for the next transfer
-		i = WRITE_TIMEOUT;
-		responseBuffer[3] = 0;
-		do {
-			_M3SD_sendCommand (SEND_STATUS, _M3SD_relativeCardAddress);
-			_M3SD_getResponse_R1 (responseBuffer);
-			i--;
-			if (i <= 0) {
-				return false;
-			}
-		} while (((responseBuffer[3] & 0x1f) != ((SD_STATE_TRAN << 1) | READY_FOR_DATA)));
+	u16 sta;
+
+	M3_SetChipReg(0x400003);
+	i = 0;
+	M3_REG_STS = CF_STS_INSERTED1;
+	while (i < CARD_TIMEOUT)
+	{
+		sta=M3_REG_STS;
+		if(  isM3ins(sta)  )break;
+		i++;
 	}
+
+	M3_SetChipReg(0x400002);
+	if (i >= CARD_TIMEOUT) return false;
+
+	return true;
+}
+
+/*-----------------------------------------------------------------
+M3SD_ReadSectors
+Read 512 byte sector numbered "sector" into "buffer"
+u32 sector IN: address of first 512 byte sector on CF card to read
+u8 numSecs IN: number of 512 byte sectors to read,
+ 1 to 256 sectors can be read, 0 = 256
+void* buffer OUT: pointer to 512 byte buffer to store data in
+bool return OUT: true if successful
+-----------------------------------------------------------------*/
+bool M3SD_ReadSectors(u32 sector, u8 numSecs, void* buffer)
+{
+	//read multi sectors function
+	M3_SetChipReg(0x400003);
+	readsectors((u16*)buffer,sector,numSecs);
+	M3_SetChipReg(0x400002);
+	return true;	// */
+}
+/*-----------------------------------------------------------------
+M3SD_WriteSectors
+Write 512 byte sector numbered "sector" from "buffer"
+u32 sector IN: address of 512 byte sector on CF card to read
+u8 numSecs IN: number of 512 byte sectors to read,
+ 1 to 256 sectors can be read, 0 = 256
+void* buffer IN: pointer to 512 byte buffer to read data from
+bool return OUT: true if successful
+-----------------------------------------------------------------*/
+bool M3SD_WriteSectors (u32 sector, u8 numSecs, void* buffer)
+{
+	bool r=true;
+	int i;
+	M3_SetChipReg(0x400003);
+	for(i=0;i<numSecs;i++)
+	{
+		M3SD_writesector((u16*)((u32)buffer+512*i),sector+i);
+	}
+	M3_SetChipReg(0x400002);
+	return r;
+}
+
+/*-----------------------------------------------------------------
+M3_Unlock
+Returns true if M3 was unlocked, false if failed
+Added by MightyMax
+-----------------------------------------------------------------*/
+bool M3SD_Unlock(void)
+{
+	vu16 sta;
+	bool i;
+
+	// run unlock sequence
+	volatile unsigned short tmp;
+
+	M3_SetChipReg(0x400003);
+	tmp = *(volatile unsigned short *)0x08000000 ;
+	tmp = *(volatile unsigned short *)0x08E00002 ;
+	tmp = *(volatile unsigned short *)0x0800000E ;
+	tmp = *(volatile unsigned short *)0x08801FFC ;
+	tmp = *(volatile unsigned short *)0x0800104A ;
+	tmp = *(volatile unsigned short *)0x08800612 ;
+	tmp = *(volatile unsigned short *)0x08000000 ;
+	tmp = *(volatile unsigned short *)0x08801B66 ;
+	tmp = *(volatile unsigned short *)0x08800006 ;
+	tmp = *(volatile unsigned short *)0x08000000 ;
+
+	// test that we have register access
+	sta=M3_REG_STS;
+	sta=M3_REG_STS;
+	if(  isM3ins(sta)  )
+	{
+		i = true;
+	}
+	else
+	{
+		i = false;
+	}
+
+	M3_SetChipReg(0x400002);
+	return i;
+}
+
+bool M3SD_Shutdown(void)
+{
+	return M3SD_ClearStatus() ;
+}
+
+bool M3SD_StartUp(void)
+{
+	vu16* waitCr = (vu16*)0x4000204;
 	
-	return true;
-
+	*waitCr |= 0x6000;
+//	*(vu16*)0x4000204=0x6000;
+	// Try unlocking 3 times, because occationally it fails to detect the reader.
+	return M3SD_Unlock() | M3SD_Unlock() | M3SD_Unlock();
 }
 
-bool _M3SD_clearStatus (void) {
-	return _M3SD_initCard ();
+IO_INTERFACE io_m3sd =
+{
+	0x4453334D,	// 'M3SD'
+	FEATURE_MEDIUM_CANREAD | FEATURE_MEDIUM_CANWRITE,
+	(FN_MEDIUM_STARTUP)&M3SD_StartUp,
+	(FN_MEDIUM_ISINSERTED)&M3SD_IsInserted,
+	(FN_MEDIUM_READSECTORS)&M3SD_ReadSectors,
+	(FN_MEDIUM_WRITESECTORS)&M3SD_WriteSectors,
+	(FN_MEDIUM_CLEARSTATUS)&M3SD_ClearStatus,
+	(FN_MEDIUM_SHUTDOWN)&M3SD_Shutdown
+};
+
+LPIO_INTERFACE M3SD_GetInterface(void)
+{
+	return &io_m3sd ;
 }
-
-bool _M3SD_shutdown (void) {
-	_M3_changeMode (M3_MODE_ROM);
-	return true;
-}
-
-IO_INTERFACE _io_m3sd = {
-	DEVICE_TYPE_M3SD,
-	FEATURE_MEDIUM_CANREAD | FEATURE_MEDIUM_CANWRITE | FEATURE_SLOT_GBA,
-	(FN_MEDIUM_STARTUP)&_M3SD_startUp,
-	(FN_MEDIUM_ISINSERTED)&_M3SD_isInserted,
-	(FN_MEDIUM_READSECTORS)&_M3SD_readSectors,
-	(FN_MEDIUM_WRITESECTORS)&_M3SD_writeSectors,
-	(FN_MEDIUM_CLEARSTATUS)&_M3SD_clearStatus,
-	(FN_MEDIUM_SHUTDOWN)&_M3SD_shutdown
-} ;
-
-LPIO_INTERFACE M3SD_GetInterface(void) {
-	return &_io_m3sd ;
-} ;
-

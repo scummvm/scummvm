@@ -71,7 +71,16 @@ bool SCSD_ReadSectors (u32 sector, u8 ReadNumber, void* buff)
 
 bool SCSD_WriteSectors (u32 sector, u8 writeNumber, void* buff)
 {
-	WriteSector((u16 *)buff,sector,writeNumber);
+	u16* alignedBuffer = (u16 *) malloc(512);
+	int r;
+
+	for (r = 0; r < writeNumber; r++)
+	{
+		memcpy(alignedBuffer, buff, 512);
+		WriteSector(((u16 *)(buff)) + (r * 256), sector + r, 1);
+	}
+
+	free(alignedBuffer);
 	return true;
 }
 

@@ -825,9 +825,9 @@ bool FAT_InitFiles (void)
 
 
 	// Make sure it is a valid MBR or boot sector
-	if ( (globalBuffer[0x1FE] != 0x55) || (globalBuffer[0x1FF] != 0xAA)) {
+/*	if ( (globalBuffer[0x1FE] != 0x55) || (globalBuffer[0x1FF] != 0xAA)) {
 		return false;
-	}
+	}*/
 
 	
 
