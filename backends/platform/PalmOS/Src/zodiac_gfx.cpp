@@ -59,9 +59,6 @@ void OSystem_PalmZodiac::load_gfx_mode() {
 	_ratio.width = ((float)_screenWidth / _screenHeight * gVars->screenFullHeight);
 	_ratio.height = ((float)_screenHeight / _screenWidth * gVars->screenFullWidth);
 
-	_sysOldOrientation = SysGetOrientation();
-	SysSetOrientation(sysOrientationLandscape);
-
 	_mouseBackupP = (byte *)MemPtrNew(MAX_MOUSE_W * MAX_MOUSE_H * 2); // *2 if 16bit
 	_mouseDataP = (byte *)MemPtrNew(MAX_MOUSE_W * MAX_MOUSE_H);
 	_offScreenP = (byte *)MemPtrNew(_screenWidth * _screenHeight);
@@ -72,6 +69,9 @@ void OSystem_PalmZodiac::load_gfx_mode() {
 
 	UInt32 depth = 16;
 	WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
+
+	_sysOldOrientation = SysGetOrientation();
+	SysSetOrientation(sysOrientationLandscape);
 
 	gVars->indicator.on = RGBToColor(0,255,0);
 	gVars->indicator.off = RGBToColor(0,0,0);

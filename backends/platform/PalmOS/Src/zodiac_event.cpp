@@ -24,33 +24,6 @@
 
 #include "be_zodiac.h"
 
-void OSystem_PalmZodiac::get_coordinates(EventPtr ev, Coord &x, Coord &y) {
-	Boolean dummy;
-	EvtGetPenNative(WinGetDisplayWindow(), &ev->screenX, &ev->screenY, &dummy);
-
-	x = (ev->screenX - _screenOffset.x);
-	y = (ev->screenY - _screenOffset.y);
-
-	if (_stretched) {
-		Int32 w, h;
-
-		if (_mode == GFX_NORMAL) {
-
-			h = gVars->screenHeight - MIN_OFFSET * 2;
-			w = gVars->screenWidth;
-			x = (_screenWidth * x) / w;
-			y = (_screenHeight * y) / h;
-
-		} else {
-
-			h = (_ratio.adjustAspect == kRatioHeight ? _ratio.height : gVars->screenFullHeight);
-			w = (_ratio.adjustAspect == kRatioWidth ? _ratio.width : gVars->screenFullWidth);
-			x = (_screenWidth * x) / w;
-			y = (_screenHeight * y) / h;
-		}
-	}
-}
-
 bool OSystem_PalmZodiac::check_event(Event &event, EventPtr ev) {
 	if (ev->eType == keyDownEvent) {
 		switch (ev->data.keyDown.chr) {
