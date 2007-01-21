@@ -22,6 +22,7 @@
 
 #include "common/stdafx.h"
 #include "common/savefile.h"
+#include "common/util.h"
 #include "backends/saves/default/default-saves.h"
 
 #include <stdio.h>
@@ -30,6 +31,12 @@
 #ifdef USE_ZLIB
 #include <zlib.h>
 #endif
+
+#if defined(UNIX) || defined(__SYMBIAN32__)
+#include <errno.h>
+#include <sys/stat.h>
+#endif
+
 
 class StdioSaveFile : public Common::InSaveFile, public Common::OutSaveFile {
 private:
@@ -170,7 +177,47 @@ static void join_paths(const char *filename, const char *directory,
 
 Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename) {
 	char buf[256];
-	join_paths(filename, getSavePath(), buf, sizeof(buf));
+
+	// Ensure that the savepath exists and is writeable. If not, generate
+	// an appropriate error
+	const char *savePath = getSavePath();
+#if defined(UNIX) || defined(__SYMBIAN32__)
+	struct stat sb;
+	
+	// Check whether the dir exists
+	if (stat(savePath, &sb) == -1) {
+		// The dir does not exist, or stat failed for some other reason.
+		// If the problem was that the path pointed to nothing, try
+		// to create the dir.
+		if (errno == ENOENT) {
+			if (mkdir(savePath, 0755) != 0) {
+				// mkdir could fail for various reasons: The parent dir doesn't exist,
+				// or is not writeable, the path could be completly bogus, etc.
+				warning("mkdir for '%s' failed!", savePath);
+				perror("mkdir");
+				// TODO: Specify an error code here so that callers can 
+				// determine what exactly went wrong.
+				return 0;
+			}
+		} else {
+			// Unknown error, abort.
+			// TODO: Specify an error code here so that callers can 
+			// determine what exactly went wrong.
+			return 0;
+		}
+	} else {
+		// So stat() succeeded. But is the path actually pointing to a
+		// directory?
+		if (!S_ISDIR(sb.st_mode)) {
+			// TODO: Specify an error code here so that callers can 
+			// determine what exactly went wrong.
+			return 0;
+		}
+	}
+#endif
+
+
+	join_paths(filename, savePath, buf, sizeof(buf));
 
 #ifdef USE_ZLIB
 	GzipSaveFile *sf = new GzipSaveFile(buf, true);
@@ -203,5 +250,8 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename)
 }
 
 void DefaultSaveFileManager::listSavefiles(const char * /* prefix */, bool *marks, int num) {
+	// TODO: Implement this properly, at least on systems that support
+	// opendir/readdir.
+	// Even better, replace this with a better design...
 	memset(marks, true, num * sizeof(bool));
 }

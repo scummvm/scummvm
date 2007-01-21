@@ -35,16 +35,12 @@
 #include "sound/mixer.h"
 
 #ifdef UNIX
-#include <errno.h>
-#include <sys/stat.h>
 #ifdef MACOSX
 #define DEFAULT_SAVE_PATH "Documents/ScummVM Savegames"
 #else
 #define DEFAULT_SAVE_PATH ".scummvm"
 #endif
 #elif defined(__SYMBIAN32__)
-#include <errno.h>
-#include <sys/stat.h>
 #define DEFAULT_SAVE_PATH "Savegames"
 #endif
 
@@ -221,36 +217,19 @@ void registerDefaults() {
 	ConfMan.registerDefault("alsa_port", "65:0");
 #endif
 
+	// Register default savepath
 #ifdef DEFAULT_SAVE_PATH
 	char savePath[MAXPATHLEN];
 #ifdef UNIX
-	struct stat sb;
 	const char *home = getenv("HOME");
 	if (home && *home && strlen(home) < MAXPATHLEN) {
 		snprintf(savePath, MAXPATHLEN, "%s/%s", home, DEFAULT_SAVE_PATH);
-		if (stat(savePath, &sb) == -1) {
-			/* create the dir if it does not exist */
-			if (errno == ENOENT) {
-				if (mkdir(savePath, 0755) != 0) {
-					perror("mkdir");
-					exit(1);
-				}
-			}
-		}
-		/* check that the dir is there */
-		if (stat(savePath, &sb) == 0) {
-			ConfMan.registerDefault("savepath", savePath);
-		}
+		ConfMan.registerDefault("savepath", savePath);
 	}
 #elif defined(__SYMBIAN32__)
 	strcpy(savePath, Symbian::GetExecutablePath());
 	strcat(savePath, DEFAULT_SAVE_PATH);
-	struct stat sb;
-	if (stat(savePath, &sb) == -1)
-		if (errno == ENOENT)// create the dir if it does not exist
-			if (mkdir(savePath, 0755) != 0)
-				warning("mkdir for '%s' failed!", savePath);
-	ConfMan.registerDefault("savepath", savePath); // this should be enough...
+	ConfMan.registerDefault("savepath", savePath);
 #endif
 #endif // #ifdef DEFAULT_SAVE_PATH
 }
