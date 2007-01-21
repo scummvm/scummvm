@@ -362,7 +362,7 @@ void waitUntilLeftClick() {
 void Parallaction::runGame() {
 //	printf("runGame()\n");
 
-	addJob(jobEraseAnimations, (void*)1, JOBPRIORITY_RUNSTUFF);
+	addJob(jobEraseAnimations, (void*)1, JOBPRIORITY_ERASEANIMATIONS);
 	_jRunScripts = addJob(jobRunScripts, 0, JOBPRIORITY_RUNSTUFF);
 	addJob(jobDisplayAnimations, 0, JOBPRIORITY_DRAWANIMATIONS);
 
