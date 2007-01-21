@@ -166,6 +166,7 @@ public:
 	Val &operator [](const Key &key);
 	const Val &operator [](const Key &key) const;
 
+	Val &getVal(const Key &key);
 	const Val &getVal(const Key &key) const;
 	void setVal(const Key &key, const Val &val);
 
@@ -381,14 +382,19 @@ bool HashMap<Key, Val, HashFunc, EqualFunc>::contains(const Key &key) const {
 
 template <class Key, class Val, class HashFunc, class EqualFunc>
 Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator [](const Key &key) {
-	uint ctr = lookupAndCreateIfMissing(key);
-	assert(_arr[ctr] != NULL);
-	return _arr[ctr]->_value;
+	return getVal(key);
 }
 
 template <class Key, class Val, class HashFunc, class EqualFunc>
 const Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator [](const Key &key) const {
 	return getVal(key);
+}
+
+template <class Key, class Val, class HashFunc, class EqualFunc>
+Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) {
+	uint ctr = lookupAndCreateIfMissing(key);
+	assert(_arr[ctr] != NULL);
+	return _arr[ctr]->_value;
 }
 
 template <class Key, class Val, class HashFunc, class EqualFunc>
