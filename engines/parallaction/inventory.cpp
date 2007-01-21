@@ -151,7 +151,7 @@ void addInventoryItem(uint16 item) {
 void dropItem(uint16 v) {
 
 	uint16 _di = 0;
-	for (uint16 _si = 0; _si < INVENTORY_MAX_ITEMS; _si++) {
+	for (uint16 _si = 0; _si < INVENTORY_MAX_ITEMS - 1; _si++) {
 
 		if (v + 4 == _inventory[_si]._index) {
 			_di = 1;
