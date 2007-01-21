@@ -23,8 +23,6 @@
  */
 
 #include "be_os5.h"
-#include "graphics/surface.h"
-#include "common/config-manager.h"
 #include <PenInputMgr.h>
 #include <palmOneResources.h>
 
@@ -55,21 +53,10 @@ void OSystem_PalmOS5::load_gfx_mode() {
 		return;
 	_gfxLoaded = true;
 
-	// get command line config
-//	_fullscreen = ConfMan.getBool("fullscreen");	// TODO : (NORMAL mode)
-	_ratio.adjustAspect = ConfMan.getBool("aspect_ratio") ? kRatioHeight : kRatioNone;
-
-	// precalc ratio (WIDE mode)
-	_ratio.width = (gVars->screenFullHeight * _screenWidth / _screenHeight);
-	_ratio.height = (gVars->screenFullWidth * _screenHeight / _screenWidth);
 
 	_mouseBackupP = (byte *)MemPtrNew(MAX_MOUSE_W * MAX_MOUSE_H * 2); // *2 if 16bit
 	_mouseDataP = (byte *)MemPtrNew(MAX_MOUSE_W * MAX_MOUSE_H);
 	_offScreenP	= (byte *)malloc(_screenWidth * _screenHeight);
-
-	MemSet(_offScreenP, _screenWidth * _screenHeight, 0);
-	MemSet(_nativePal, sizeof(_nativePal), 0);
-	MemSet(_currentPalette, sizeof(_currentPalette), 0);
 
 	UInt32 depth = 16;
 	WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
@@ -79,13 +66,17 @@ void OSystem_PalmOS5::load_gfx_mode() {
 	gVars->indicator.off = RGBToColor(0,0,0);
 
 	_overlayH =  alloc_screen(_screenWidth, _screenHeight);
-	_overlayP = (OverlayColor *)(BmpGetBits(WinGetBitmap(_overlayH)));
-
 	_screenH = WinGetDisplayWindow();
+
+	_overlayP = (OverlayColor *)(BmpGetBits(WinGetBitmap(_overlayH)));
 	_screenP = (byte *)(BmpGetBits(WinGetBitmap(_screenH)));
 
-	_isSwitchable = OPTIONS_TST(kOptModeLandscape) && OPTIONS_TST(kOptCollapsible);
-	if (!_isSwitchable)
+	MemSet(_offScreenP, _screenWidth * _screenHeight, 0);
+	MemSet(_nativePal, sizeof(_nativePal), 0);
+	MemSet(_currentPalette, sizeof(_currentPalette), 0);
+
+	_isSwitchable = (_screenWidth == 320 && _screenHeight == 200 && OPTIONS_TST(kOptCollapsible));
+	if (_screenWidth > 320 || _screenHeight > 200 || !_isSwitchable)
 		_mode = GFX_NORMAL;
 
 	hotswap_gfx_mode(_mode);
@@ -93,53 +84,62 @@ void OSystem_PalmOS5::load_gfx_mode() {
 
 void OSystem_PalmOS5::hotswap_gfx_mode(int mode) {
 	Err e;
+	UInt32 device;
 
 	if (_mode != GFX_NORMAL && !_isSwitchable)
 		return;
-
-#ifdef PALMOS_ARM
-	UInt32 device;
-	Boolean isT3 = false;
-	if (!FtrGet(sysFileCSystem, sysFtrNumOEMDeviceID, &device))
-		isT3 = (device == kPalmOneDeviceIDTungstenT3);
-#endif
 
 	if (_workScreenH)
 		WinDeleteWindow(_workScreenH, false);
 	_workScreenH = NULL;
 
-	_screenDest.w = _screenWidth;
-	_screenDest.h = _screenHeight;
+#ifdef PALMOS_ARM
+	Boolean isT3 = false;
+	if (!FtrGet(sysFileCSystem, sysFtrNumOEMDeviceID, &device))
+		isT3 = (device == kPalmOneDeviceIDTungstenT3);
+#endif
 
 	// prevent bad DIA redraw (Stat part)
-	if (mode == GFX_NORMAL) {
-		_redawOSD = true;
-		_stretched = (_screenWidth > gVars->screenWidth);
-
+	if (mode  == GFX_NORMAL) {		
+		// only if this API is available
+		if (_stretched && OPTIONS_TST(kOptCollapsible)) {
 #ifdef PALMOS_ARM
-		if (isT3) {
-			//AiaSetInputAreaState(aiaInputAreaShow);
-			StatShow_68k();
-			PINSetInputAreaState_68k(pinInputAreaOpen);
-		} else
+			if (isT3) {
+				//AiaSetInputAreaState(aiaInputAreaShow);
+				StatShow_68k();
+				PINSetInputAreaState_68k(pinInputAreaOpen);
+			} else
 #endif
-		{
-			StatShow();
-			PINSetInputAreaState(pinInputAreaOpen);
+			{
+				StatShow();
+				PINSetInputAreaState(pinInputAreaOpen);
+			}
 		}
 
-		if (_stretched) {
-			calc_rect(false);
-		} else {
-			// offsets
-			_screenOffset.x = (gVars->screenWidth - _screenWidth) / 2;
-			_screenOffset.y = (gVars->screenHeight - _screenHeight) / 2;
+		_redawOSD = true;
+		_stretched = false;
+		OPTIONS_RST(kOptDisableOnScrDisp);
+		_screenDest.w = _screenWidth;
+		_screenDest.h = _screenHeight;
+
+		if (_wasRotated) {
+			// restore controls rotation
+			SWAP(_keyMouse.bitLeft, _keyMouse.bitRight);
+			SWAP(_keyMouse.bitRight, _keyMouse.bitDown);
+			SWAP(_keyMouse.bitLeft, _keyMouse.bitUp);
+			_wasRotated = false;
 		}
+
+		_workScreenH = alloc_screen(_screenWidth, _screenHeight);
+		_workScreenP = (int16 *)(BmpGetBits(WinGetBitmap(_workScreenH)));
+		MemSet(_workScreenP, _screenWidth * _screenHeight * 2, 0);
+
+		_screenOffset.x = (gVars->screenWidth - _screenWidth) / 2;
+		_screenOffset.y = (gVars->screenHeight - _screenHeight)  / 2;
+		
+		_render = &OSystem_PalmOS5::render_1x;
 
 	} else {
-		_redawOSD = false;
-		_stretched = true;
-
 #ifdef PALMOS_ARM
 		// T3 DIA library is 68k base, there is no possible native call
 		if (isT3) {
@@ -153,21 +153,34 @@ void OSystem_PalmOS5::hotswap_gfx_mode(int mode) {
 			StatHide();
 		}
 
-		calc_rect(true);
-	}
-
-	if (_stretched) {
-		calc_scale();
+		_redawOSD = false;
+		_stretched = true;
 		OPTIONS_SET(kOptDisableOnScrDisp);
-		_render = &OSystem_PalmOS5::render_landscapeAny;
-	} else {
-		OPTIONS_RST(kOptDisableOnScrDisp);
-		_render = &OSystem_PalmOS5::render_1x;
-	}
 
-	_workScreenH = alloc_screen(_screenDest.w, _screenDest.h);
-	_workScreenP = (int16 *)(BmpGetBits(WinGetBitmap(_workScreenH)));
-	MemSet(_workScreenP, _screenDest.w * _screenDest.h * 2, 0);
+		if (OPTIONS_TST(kOptModeLandscape)) {
+			_screenDest.w = 480;
+			_screenDest.h = 300;
+			_workScreenH = alloc_screen(480, 300);
+			_render = &OSystem_PalmOS5::render_landscape;
+
+		} else {
+			_screenDest.w = 300;
+			_screenDest.h = 480;
+			_workScreenH = alloc_screen(300, 480);
+			_render = &OSystem_PalmOS5::render_portrait;
+			// This mode need a controls rotation
+			SWAP(_keyMouse.bitLeft, _keyMouse.bitUp);
+			SWAP(_keyMouse.bitRight, _keyMouse.bitDown);
+			SWAP(_keyMouse.bitLeft, _keyMouse.bitRight);
+			_wasRotated = true;
+		}
+
+		_workScreenP = (int16 *)(BmpGetBits(WinGetBitmap(_workScreenH)));
+		MemSet(_workScreenP, 480 * 300 * 2, 0);
+
+		_screenOffset.x = 0;
+		_screenOffset.y = 10;
+	}
 
 	_mode = mode;
 	clearScreen();
@@ -231,15 +244,6 @@ void OSystem_PalmOS5::copyRectToScreen(const byte *buf, int pitch, int x, int y,
 			buf += pitch;
 		} while (--h);
 	}
-}
-
-bool OSystem_PalmOS5::grabRawScreen(Graphics::Surface *surf) {
-	assert(surf);
-
-	surf->create(_screenWidth, _screenHeight, 1);
-	MemMove(surf->pixels, _offScreenP, _screenWidth * _screenHeight);
-	
-	return true;
 }
 
 void OSystem_PalmOS5::int_updateScreen() {
