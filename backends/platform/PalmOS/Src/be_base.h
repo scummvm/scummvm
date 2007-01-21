@@ -110,14 +110,6 @@ protected:
 	virtual void draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color = 0);
 
 	enum {
-		kKeyNone			= 0,
-		kKeyMouseMove		= 1	<< 0,
-		kKeyMouseLButton	= 1	<< 1,
-	
-		kKeyCalc			= 1 << 30,
-		kKeyAny				= 1 << 31
-	};
-	enum {
 		MAX_MOUSE_W = 80,
 		MAX_MOUSE_H = 80
 	};
@@ -159,8 +151,6 @@ protected:
 		UInt32 bitDown;
 		UInt32 bitLeft;
 		UInt32 bitRight;
-		UInt32 bitButLeft;
-		Boolean hasMore;
 	} _keyMouse;
 	
 	bool _mouseVisible;
@@ -173,8 +163,7 @@ protected:
 	byte *_mouseDataP, *_mouseBackupP;
 	
 
-	eventsEnum _lastEvent;
-	WChar _lastKey;
+	eventsEnum _wasKey;
 	UInt8 _lastKeyModifier;
 	UInt32 _lastKeyRepeat;
 	Boolean _useNumPad, _showBatLow;

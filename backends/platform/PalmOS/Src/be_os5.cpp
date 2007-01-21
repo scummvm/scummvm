@@ -83,16 +83,12 @@ void OSystem_PalmOS5::int_initBackend() {
 		_keyMouse.bitDown	= keyBitPageDown;
 		_keyMouse.bitLeft	= keyBitNavLeft;
 		_keyMouse.bitRight	= keyBitNavRight;
-		_keyMouse.bitButLeft= keyBitNavSelect;
-		_keyMouse.hasMore	= true;
 
 	} else if (OPTIONS_TST(kOpt5WayNavigatorV2)) {
 		_keyMouse.bitUp		= keyBitRockerUp|keyBitPageUp;
 		_keyMouse.bitDown	= keyBitRockerDown|keyBitPageDown;
 		_keyMouse.bitLeft	= keyBitRockerLeft;
 		_keyMouse.bitRight	= keyBitRockerRight;
-		_keyMouse.bitButLeft= keyBitRockerCenter;
-		_keyMouse.hasMore	= true;
 	}
 }
 

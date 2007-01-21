@@ -25,11 +25,25 @@
 #include "be_zodiac.h"
 
 bool OSystem_PalmZodiac::check_event(Event &event, EventPtr ev) {
-	if (ev->eType == keyDownEvent) {
+	if (ev->eType == keyUpEvent) {
+		switch (ev->data.keyDown.chr) {
+		case vchrActionLeft:
+			event.type = EVENT_LBUTTONUP;
+			event.mouse.x = _mouseCurState.x;
+			event.mouse.y = _mouseCurState.y;
+			return true;
+
+		case vchrActionRight:
+			event.type = EVENT_RBUTTONUP;
+			event.mouse.x = _mouseCurState.x;
+			event.mouse.y = _mouseCurState.y;
+			return true;
+		}
+
+	} else if (ev->eType == keyDownEvent) {
 		switch (ev->data.keyDown.chr) {
 		// F5 = menu
 		case vchrThumbWheelBack:
-			_lastKey = kKeyNone;
 			event.type = EVENT_KEYDOWN;
 			event.kbd.keycode = 319;
 			event.kbd.ascii = 319;
@@ -45,14 +59,12 @@ bool OSystem_PalmZodiac::check_event(Event &event, EventPtr ev) {
 			return false; // not a key
 
 		case vchrActionLeft:
-			_lastKey = kKeyMouseLButton;
 			event.type = EVENT_LBUTTONDOWN;
 			event.mouse.x = _mouseCurState.x;
 			event.mouse.y = _mouseCurState.y;
 			return true;
 
 		case vchrActionRight:
-			_lastKey = kKeyNone;
 			event.type = EVENT_RBUTTONDOWN;
 			event.mouse.x = _mouseCurState.x;
 			event.mouse.y = _mouseCurState.y;
@@ -81,16 +93,6 @@ bool OSystem_PalmZodiac::check_event(Event &event, EventPtr ev) {
 			break;
 		}
 
-	} else if (_overlayVisible) {
-		switch (_lastKey) {
-		case kKeyMouseLButton:
-			_lastKey = kKeyNone;
-			event.type = EVENT_LBUTTONUP;
-			event.mouse.x = _mouseCurState.x;
-			event.mouse.y = _mouseCurState.y;
-			return true;
-
-		}
 	}
 
 	return false;

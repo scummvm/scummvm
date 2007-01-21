@@ -106,7 +106,9 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			if (getMillis() >= (_keyMouseRepeat + _keyMouseDelay)) {
 				_keyMouseRepeat = getMillis();
 
-				if (gVars->arrowKeys) {				
+				if (gVars->arrowKeys) {
+					event.kbd.keycode = 0;
+
 					if (keyCurrentState & _keyMouse.bitUp)
 						event.kbd.keycode = 273;
 					else if (keyCurrentState & _keyMouse.bitDown)
@@ -115,12 +117,13 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 						event.kbd.keycode = 276;
 					else if (keyCurrentState & _keyMouse.bitRight)
 						event.kbd.keycode = 275;
-					else if (keyCurrentState & _keyMouse.bitButLeft)
-						event.kbd.keycode = chrLineFeed;
 
-					event.type = EVENT_KEYDOWN;
-					event.kbd.ascii = event.kbd.keycode;
-					event.kbd.flags = 0;
+					if (event.kbd.keycode) {
+						event.type = EVENT_KEYDOWN;
+						event.kbd.ascii = event.kbd.keycode;
+						event.kbd.flags = 0;
+						return true;
+					}
 
 				} else {
 					Int8 sx = 0;
@@ -139,28 +142,13 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 					if (sx || sy) {
 						simulate_mouse(event, sx, sy, &x, &y);
 						event.type = EVENT_MOUSEMOVE;
-						_lastKey = kKeyMouseMove;
+						event.mouse.x = x;
+						event.mouse.y = y;
+						warpMouse(x, y);
 
-					} else {			
-						x = _mouseCurState.x;
-						y = _mouseCurState.y;
-
-						if (keyCurrentState & _keyMouse.bitButLeft) {
-							event.type = EVENT_LBUTTONDOWN;
-							_lastKey = kKeyMouseLButton;
-
-						} else if (_lastKey == kKeyMouseLButton) {
-							event.type = EVENT_LBUTTONUP;
-							_lastKey = kKeyNone;
-						}
+						return true;
 					}
-
-					event.mouse.x = x;
-					event.mouse.y = y;
-					warpMouse(x, y);
-		//			updateCD();
 				}
-				return true;
 			}
 		}
 
@@ -168,7 +156,6 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			switch (ev.data.keyDown.chr) {
 			// ESC key
 			case vchrLaunch:
-				_lastKey = kKeyNone;
 				event.type = EVENT_KEYDOWN;
 				event.kbd.keycode = 27;
 				event.kbd.ascii = 27;
@@ -177,7 +164,6 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 
 			// F5 = menu
 			case vchrMenu:
-				_lastKey = kKeyNone;
 				event.type = EVENT_KEYDOWN;
 				event.kbd.keycode = 319;
 				event.kbd.ascii = 319;
@@ -192,14 +178,12 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 //			case vchrBrightness:	// volume control on Zodiac, let other backends disable it
 			case vchrContrast:
 				// do nothing
-				_lastKey = kKeyNone;
 				return true;
 			}
 		}
 
 		if (check_event(event, &ev))
 			return true;
-		_lastKey = kKeyNone;
 
 		// prevent crash when alarm is raised
 		handled = ((ev.eType == keyDownEvent) && 
@@ -219,10 +203,9 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			if (y > _screenHeight || y < 0 || x > _screenWidth || x < 0)
 				return false;
 
-			if (_lastEvent != penMoveEvent && (abs(y - event.mouse.y) <= 2 || abs(x - event.mouse.x) <= 2)) // move only if
+			if (abs(y - event.mouse.y) <= 2 || abs(x - event.mouse.x) <= 2)
 				return false;
 
-			_lastEvent = penMoveEvent;
 			event.type = EVENT_MOUSEMOVE;
 			event.mouse.x = x;
 			event.mouse.y = y;
@@ -244,11 +227,10 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 				event.kbd.ascii = num;
 				event.kbd.flags = 0;
 
-				_lastEvent = keyDownEvent;
+				_wasKey = true;
 				return true;
 			}
 
-			_lastEvent = penDownEvent;				
 			if (y > _screenHeight || y < 0 || x > _screenWidth || x < 0)
 				return false;
 
@@ -329,7 +311,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			}
 			
 			// other keys
-			_lastEvent = keyDownEvent;
+			_wasKey = true;
 			event.type = EVENT_KEYDOWN;
 			event.kbd.keycode = key;
 			event.kbd.ascii = key;
@@ -337,9 +319,9 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			return true;
 
 		default:
-			if (_lastEvent == keyDownEvent) {
+			if (_wasKey) {
 				event.type = EVENT_KEYUP;
-				_lastEvent = nilEvent;
+				_wasKey = false;
 				return true;
 			}
 			return false;

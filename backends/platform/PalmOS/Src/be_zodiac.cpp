@@ -33,12 +33,10 @@ OSystem_PalmZodiac::OSystem_PalmZodiac() : OSystem_PalmOS5Ex() {
 }
 
 void OSystem_PalmZodiac::int_initBackend() {
-	_keyMouse.bitUp		= keyBitRockerUp;
-	_keyMouse.bitDown	= keyBitRockerDown;
-	_keyMouse.bitLeft	= keyBitRockerLeft;
-	_keyMouse.bitRight	= keyBitRockerRight;
-	_keyMouse.bitButLeft= keyBitRockerCenter;
-	_keyMouse.hasMore	= true;
+	_keyMouse.bitUp			= keyBitRockerUp;
+	_keyMouse.bitDown		= keyBitRockerDown;
+	_keyMouse.bitLeft		= keyBitRockerLeft;
+	_keyMouse.bitRight		= keyBitRockerRight;
 }
 
 void OSystem_PalmZodiac::calc_rect(Boolean fullscreen) {

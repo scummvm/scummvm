@@ -38,40 +38,48 @@ void OSystem_PalmOS5::get_coordinates(EventPtr ev, Coord &x, Coord &y) {
 }
 
 bool OSystem_PalmOS5::check_event(Event &event, EventPtr ev) {
-	if (ev->eType == keyDownEvent) {
+	if (ev->eType == keyUpEvent) {
 		switch (ev->data.keyDown.chr) {
+		case vchrHard3:
+			event.type = EVENT_LBUTTONUP;
+			event.mouse.x = _mouseCurState.x;
+			event.mouse.y = _mouseCurState.y;
+			return true;
+
 		case vchrHard4:
-			_lastKey = kKeyNone;
-			event.type = EVENT_RBUTTONDOWN;
+			event.type = EVENT_RBUTTONUP;
 			event.mouse.x = _mouseCurState.x;
 			event.mouse.y = _mouseCurState.y;
 			return true;
 		}
-		
-		if (_keyMouse.hasMore) {
-			switch (ev->data.keyDown.chr) {
-			// hot swap gfx
-//			case 0x1B04:
-			case vchrHard1:
-				printf("swap\n");
-				if (OPTIONS_TST(kOptCollapsible))
-					hotswap_gfx_mode(_mode == GFX_WIDE ? GFX_NORMAL: GFX_WIDE);
-				return false; // not a key
 
-//			case 0x1B05:
-			case vchrHard2:
-			setFeatureState(kFeatureAspectRatioCorrection, 0);
+	} else if (ev->eType == keyDownEvent) {
+		switch (ev->data.keyDown.chr) {
+
+		// hot swap gfx
+//	case 0x1B04:
+		case vchrHard1:
+			printf("swap\n");
+			if (OPTIONS_TST(kOptCollapsible))
+				hotswap_gfx_mode(_mode == GFX_WIDE ? GFX_NORMAL: GFX_WIDE);
 			return false; // not a key
-			
-			// F5 = menu
-			case vchrHard3:
-				_lastKey = kKeyNone;
-				event.type = EVENT_KEYDOWN;
-				event.kbd.keycode = 319;
-				event.kbd.ascii = 319;
-				event.kbd.flags = 0;
-				return true;
-			}
+
+//	case 0x1B05:
+		case vchrHard2:
+		setFeatureState(kFeatureAspectRatioCorrection, 0);
+		return false; // not a key
+
+		case vchrHard3:
+			event.type = EVENT_RBUTTONDOWN;
+			event.mouse.x = _mouseCurState.x;
+			event.mouse.y = _mouseCurState.y;
+			return true;
+
+		case vchrHard4:
+			event.type = EVENT_RBUTTONDOWN;
+			event.mouse.x = _mouseCurState.x;
+			event.mouse.y = _mouseCurState.y;
+			return true;
 		}
 	}
 

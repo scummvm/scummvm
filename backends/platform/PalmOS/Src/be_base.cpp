@@ -51,8 +51,7 @@ OSystem_PalmBase::OSystem_PalmBase() {
 	_screenP = NULL;
 	_screenPitch = gVars->screenPitch;
 	
-	_lastEvent = nilEvent;
-	_lastKey = kKeyNone;
+	_wasKey = false;
 	_lastKeyModifier = kModifierNone;
 	_lastKeyRepeat = 100;
 	_useNumPad = false;
@@ -89,13 +88,11 @@ void OSystem_PalmBase::initBackend() {
 
 	_keyMouse.bitUp		= keyBitPageUp;
 	_keyMouse.bitDown	= keyBitPageDown;
-	_keyMouse.bitLeft	= keyBitHard1;
-	_keyMouse.bitRight	= keyBitHard2;
-	_keyMouse.bitButLeft= keyBitHard3;
-	_keyMouse.hasMore	= false;
+	_keyMouse.bitLeft	= keyBitHard2;
+	_keyMouse.bitRight	= keyBitHard3;
 
 	int_initBackend();
-	_keyMouseMask = (_keyMouse.bitUp | _keyMouse.bitDown | _keyMouse.bitLeft | _keyMouse.bitRight | _keyMouse.bitButLeft);
+	_keyMouseMask = (_keyMouse.bitUp | _keyMouse.bitDown | _keyMouse.bitLeft | _keyMouse.bitRight);
 
 	// Create the savefile manager, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
