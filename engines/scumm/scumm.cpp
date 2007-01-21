@@ -784,7 +784,7 @@ ScummEngine_vCUPhe::~ScummEngine_vCUPhe() {
 
 int ScummEngine_vCUPhe::init() {
 	_system->beginGFXTransaction();
-		_system->initSize(640, 480);
+		_system->initSize(CUP_Player::kDefaultVideoWidth, CUP_Player::kDefaultVideoHeight);
 		initCommonGFX(true);
 	_system->endGFXTransaction();
 
@@ -792,10 +792,10 @@ int ScummEngine_vCUPhe::init() {
 }
 
 int ScummEngine_vCUPhe::go() {
-	_cupPlayer->open(_filenamePattern.pattern);
-	_cupPlayer->play();
-	_cupPlayer->close();
-
+	if (_cupPlayer->open(_filenamePattern.pattern)) {
+		_cupPlayer->play();
+		_cupPlayer->close();
+	}
 	return 0;
 }
 

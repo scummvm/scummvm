@@ -42,7 +42,7 @@ class ResExtractor;
 class LogicHE;
 class MoviePlayer;
 class Sprite;
-struct CUP_Player;
+class CUP_Player;
 #endif
 
 class ScummEngine_v60he : public ScummEngine_v6 {

@@ -30,6 +30,10 @@
 
 namespace Scumm {
 
+CUP_Player::CUP_Player(OSystem *sys, ScummEngine_vCUPhe *vm, Audio::Mixer *mixer)
+	: _vm(vm), _mixer(mixer), _system(sys) {
+}
+
 bool CUP_Player::open(const char *filename) {
 	bool opened = false;
 	debug(1, "opening '%s'", filename);
@@ -37,19 +41,34 @@ bool CUP_Player::open(const char *filename) {
 		uint32 tag = _fd.readUint32BE();
 		_fd.readUint32BE();
 		if (tag == MKID_BE('BEAN')) {
-			_playbackRate = 66;
-			_width = 640;
-			_height = 480;
-			_offscreenBuffer = (uint8 *)malloc(_width * _height);
-			memset(_offscreenBuffer, 0, _width * _height);
+			_playbackRate = kDefaultPlaybackRate;
+			_width = kDefaultVideoWidth;
+			_height = kDefaultVideoHeight;
+
+			memset(_paletteData, 0, sizeof(_paletteData));
 			_paletteChanged = false;
+			_offscreenBuffer = 0;
+
+			_currentChunkData = 0;
+			_currentChunkSize = 0;
+			_bufferLzssData = 0;
+			_bufferLzssSize = 0;
+
 			_sfxCount = 0;
 			_sfxBuffer = 0;
-			_sfxHandleTable = 0;
+			for (int i = 0; i < kSfxChannels; ++i) {
+				_sfxChannels[i].sfxNum = -1;
+			}
 			memset(_sfxQueue, 0, sizeof(_sfxQueue));
 			_sfxQueuePos = 0;
+			_lastSfxChannel = -1;
+
 			parseHeaderTags();
 			debug(1, "rate %d width %d height %d", _playbackRate, _width, _height);
+
+			_offscreenBuffer = (uint8 *)malloc(_width * _height);
+			memset(_offscreenBuffer, 0, _width * _height);
+
 			opened = true;
 		}
 	}
@@ -59,8 +78,9 @@ bool CUP_Player::open(const char *filename) {
 void CUP_Player::close() {
 	_fd.close();
 	free(_offscreenBuffer);
+	_offscreenBuffer = 0;
 	free(_sfxBuffer);
-	delete[] _sfxHandleTable;
+	_sfxBuffer = 0;
 }
 
 uint32 CUP_Player::loadNextChunk() {
@@ -106,13 +126,12 @@ void CUP_Player::parseHeaderTags() {
 
 void CUP_Player::play() {
 	int ticks = _system->getMillis();
-	while (_currentChunkSize != 0 && !_vm->_quit) {
+	while (_currentChunkSize != 0 && !_vm->_quit && !_fd.ioFailed()) {
 		uint32 tag, size;
 		parseNextTag(_currentChunkData, tag, size);
 		if (tag == MKID_BE('BLOK')) {
-			bool fastMode = false;
 			int diff = _system->getMillis() - ticks;
-			if (diff >= 0 && diff <= _playbackRate && !fastMode) {
+			if (diff >= 0 && diff <= _playbackRate) {
 				_system->delayMillis(_playbackRate - diff);
 			} else {
 				_system->delayMillis(1);
@@ -145,34 +164,67 @@ void CUP_Player::updateScreen() {
 void CUP_Player::updateSfx() {
 	for (int i = 0; i < _sfxQueuePos; ++i) {
 		const CUP_Sfx *sfx = &_sfxQueue[i];
-		int index;
 		if (sfx->num == -1) {
-			for (index = 0; index < _sfxCount; ++index) {
-				if (_mixer->isSoundHandleActive(_sfxHandleTable[index])) {
+			debug(1, "Stopping sound channel %d", _lastSfxChannel);
+			if (_lastSfxChannel != -1) {
+				_mixer->stopHandle(_sfxChannels[_lastSfxChannel].handle);
+			}
+			continue;
+		}
+		if ((sfx->flags & kSfxFlagRestart) == 0) {
+			bool alreadyPlaying = false;
+			for (int ch = 0; ch < kSfxChannels; ++ch) {
+				if (_mixer->isSoundHandleActive(_sfxChannels[ch].handle) && _sfxChannels[ch].sfxNum == sfx->num) {
+					alreadyPlaying = true;
 					break;
 				}
 			}
-			if (index == _sfxCount) {
+			if (alreadyPlaying) {
 				continue;
 			}
-		} else {
-			index = sfx->num - 1;
 		}
-		assert(index >= 0 && index < _sfxCount);
-		if (!_mixer->isSoundHandleActive(_sfxHandleTable[index]) || (sfx->mode & 2) != 0) {
-			if ((sfx->flags & 0x8000) == 0) {
-				warning("Unhandled Sfx looping");
-				continue;
+		CUP_SfxChannel *sfxChannel = 0;
+		for (int ch = 0; ch < kSfxChannels; ++ch) {
+			if (!_mixer->isSoundHandleActive(_sfxChannels[ch].handle)) {
+				_lastSfxChannel = ch;
+				sfxChannel = &_sfxChannels[ch];
+				sfxChannel->sfxNum = sfx->num;
+				sfxChannel->flags = sfx->flags;
+				break;
 			}
-			uint32 offset = READ_LE_UINT32(_sfxBuffer + index * 4) - 8;
+		}
+		if (sfxChannel) {
+			debug(1, "Start sound %d channel %d flags 0x%X", sfx->num, _lastSfxChannel, sfx->flags);
+			int sfxIndex = sfxChannel->sfxNum - 1;
+			assert(sfxIndex >= 0 && sfxIndex < _sfxCount);
+			uint32 offset = READ_LE_UINT32(_sfxBuffer + sfxIndex * 4) - 8;
 			uint8 *soundData = _sfxBuffer + offset;
 			if (READ_BE_UINT32(soundData) == MKID_BE('DATA')) {
 				uint32 soundSize = READ_BE_UINT32(soundData + 4);
-				_mixer->playRaw(&_sfxHandleTable[index], soundData + 8, soundSize - 8, 11025, Audio::Mixer::FLAG_UNSIGNED);
+				uint32 flags = Audio::Mixer::FLAG_UNSIGNED;
+				uint32 loopEnd = 0;
+				if (sfx->flags & kSfxFlagLoop) {
+					flags |= Audio::Mixer::FLAG_LOOP;
+					loopEnd = soundSize - 8;
+				}
+				_mixer->playRaw(&sfxChannel->handle, soundData + 8, soundSize - 8, 11025, flags, -1, 255, 0, 0, loopEnd);
 			}
+		} else {
+			warning("Unable to find a free channel to play sound %d", sfx->num);
 		}
 	}
 	_sfxQueuePos = 0;
+}
+
+void CUP_Player::waitForSfxChannel(int channel) {
+	assert(channel >= 0 && channel < kSfxChannels);
+	CUP_SfxChannel *sfxChannel = &_sfxChannels[channel];
+	if ((sfxChannel->flags & kSfxFlagLoop) == 0) {
+		while (_mixer->isSoundHandleActive(sfxChannel->handle) && !_vm->_quit) {
+			_vm->parseEvents();
+			_system->delayMillis(10);
+		}
+	}
 }
 
 void CUP_Player::parseNextTag(const uint8 *data, uint32 &tag, uint32 &size) {
@@ -211,7 +263,7 @@ void CUP_Player::parseNextTag(const uint8 *data, uint32 &tag, uint32 &size) {
 	case MKID_BE('WRLE'):
 		// this is never triggered
 	default:
-		warning("unhandled tag %s", tag2str(tag));
+		warning("Unhandled tag %s", tag2str(tag));
 		break;
 	}
 }
@@ -232,21 +284,15 @@ void CUP_Player::handleSFXB(const uint8 *data, uint32 dataSize) {
 				if (_sfxBuffer) {
 					memcpy(_sfxBuffer, data + 8, dataSize - 16);
 				}
-				_sfxHandleTable = new Audio::SoundHandle[_sfxCount];
 			}
 		}
 	}
 }
 
 void CUP_Player::handleRGBS(const uint8 *data, uint32 dataSize) {
-	int i;
-	uint8 *ptr = _paletteData;
-
-	for (i = 0; i < 256; i++) {
-		*ptr++ = *data++;
-		*ptr++ = *data++;
-		*ptr++ = *data++;
-		*ptr++ = 0;
+	for (int i = 0; i < 256; i++) {
+		memcpy(&_paletteData[i * 4], data, 3);
+		data += 3;
 	}
 	_paletteChanged = true;
 }
@@ -378,20 +424,21 @@ uint8 *CUP_Player::handleLZSS(const uint8 *data, uint32 dataSize) {
 			data += 8;
 			uint32 offset1 = READ_LE_UINT32(data);
 			uint32 offset2 = READ_LE_UINT32(data + 4);
-			decodeLzssData(_bufferLzssData, data + 8, data + offset1, data + offset2, _tempLzssBuffer);
+			decodeLZSS(_bufferLzssData, data + 8, data + offset1, data + offset2);
 			return _bufferLzssData;
 		}
 	}
 	return 0;
 }
 
-void CUP_Player::decodeLzssData(uint8 *dst1, const uint8 *src1, const uint8 *src2, const uint8 *src3, uint8 *dst2) {
+void CUP_Player::decodeLZSS(uint8 *dst, const uint8 *src1, const uint8 *src2, const uint8 *src3) {
+	uint8 wnd[4096];
 	int index = 1;
 	while (1) {
 		int code = *src1++;
 		for (int b = 0; b < 8; ++b) {
 			if (code & (1 << b)) {
-				*dst1++ = dst2[index] = *src2++;
+				*dst++ = wnd[index] = *src2++;
 				++index;
 				index &= 0xFFF;
 			} else {
@@ -402,7 +449,7 @@ void CUP_Player::decodeLzssData(uint8 *dst1, const uint8 *src1, const uint8 *src
 					return;
 				}
 				while (count--) {
-					*dst1++ = dst2[index] = dst2[offs];
+					*dst++ = wnd[index] = wnd[offs];
 					++index;
 					index &= 0xFFF;
 					++offs;
@@ -419,14 +466,13 @@ void CUP_Player::handleRATE(const uint8 *data, uint32 dataSize) {
 }
 
 void CUP_Player::handleSNDE(const uint8 *data, uint32 dataSize) {
-	if (_sfxQueuePos < ARRAYSIZE(_sfxQueue)) {
-		CUP_Sfx *sfx = &_sfxQueue[_sfxQueuePos];
-		sfx->mode = READ_LE_UINT32(data);
-		sfx->num = (int16)READ_LE_UINT16(data + 4);
-		// READ_LE_UINT16(data + 6); // unused
-		sfx->flags = READ_LE_UINT16(data + 8);
-		++_sfxQueuePos;
-	}
+	assert(_sfxQueuePos < kSfxQueueSize);
+	CUP_Sfx *sfx = &_sfxQueue[_sfxQueuePos];
+	sfx->flags = READ_LE_UINT32(data);
+	sfx->num = READ_LE_UINT16(data + 4);
+	uint16 loop = READ_LE_UINT16(data + 8);
+	assert((loop & 0x8000) != 0); // this is never triggered
+	++_sfxQueuePos;
 }
 
 void CUP_Player::handleTOIL(const uint8 *data, uint32 dataSize) {
@@ -443,18 +489,21 @@ void CUP_Player::handleTOIL(const uint8 *data, uint32 dataSize) {
 			}
 			switch (code) {
 			case 1:
+				for (int i = 0; i < kSfxChannels; ++i) {
+					waitForSfxChannel(i);
+				}
 				_vm->_quit = true;
 				break;
-			case 7: { // pause playback
-					int sfxSync = READ_LE_UINT32(data);
-					warning("Unhandled playback pause %d", sfxSync);
+			case 7: {
+					int channelSync = READ_LE_UINT32(data);
+					waitForSfxChannel(channelSync);
 				}
 				break;
 			case 2: // display copyright/information messagebox
 			case 3: // no-op in the original
 			case 4: // restart playback
 			case 5: // disable normal screen update
-			case 6: // perform offscreen buffers swapping
+			case 6: // enable double buffer rendering
 				// these are never triggered
 			default:
 				warning("Unhandled TOIL code=%d", code);
