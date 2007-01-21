@@ -70,7 +70,7 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	uint i;
 
 	for (i = 0; i < _editString.size(); ++i) {
-		width += g_gui.getCharWidth(_editString[i]);
+		width += g_gui.theme()->getCharWidth(_editString[i], _font);
 		if (width >= x)
 			break;
 	}
