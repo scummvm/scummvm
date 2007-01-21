@@ -42,30 +42,12 @@ void OSystem_PalmZodiac::int_initBackend() {
 }
 
 void OSystem_PalmZodiac::calc_rect(Boolean fullscreen) {
-	Int32 w, h;
-	
-	if (fullscreen) {
-		w = (_ratio.adjustAspect == kRatioWidth) ? _ratio.width : gVars->screenFullWidth;
-		h = (_ratio.adjustAspect == kRatioHeight) ? _ratio.height : gVars->screenFullHeight;
-
-		_screenOffset.x = (_ratio.adjustAspect == kRatioWidth) ? (gVars->screenFullWidth - _ratio.width) / 2 : 0;
-		_screenOffset.y = (_ratio.adjustAspect == kRatioHeight) ? (gVars->screenFullHeight - _ratio.height) / 2 : 0;
-
-	} else {
-		w = gVars->screenWidth;
-		h = gVars->screenHeight - MIN_OFFSET * 2;
-
-		_screenOffset.x = 0;
-		_screenOffset.y = MIN_OFFSET;		
-	}
+	OSystem_PalmOS5::calc_rect(fullscreen);
 
 	_dstRect.x = _screenOffset.x;
 	_dstRect.y = _screenOffset.y;
-	_dstRect.w = w;
-	_dstRect.h = h;
-	
-	_screenDest.w = _dstRect.w;
-	_screenDest.h = _dstRect.h;
+	_dstRect.w = _screenDest.w;
+	_dstRect.h = _screenDest.h;
 }
 
 void OSystem_PalmZodiac::setFeatureState(Feature f, bool enable) {

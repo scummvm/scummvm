@@ -67,10 +67,10 @@ void OSystem_PalmOS5::calc_rect(Boolean fullscreen) {
 
 	} else {
 		w = gVars->screenWidth;
-		h = gVars->screenHeight - MIN_OFFSET * 2;
+		h = gVars->screenHeight * _screenHeight / _screenWidth;
 
 		_screenOffset.x = 0;
-		_screenOffset.y = MIN_OFFSET;		
+		_screenOffset.y = (gVars->screenHeight - h) / 2;		
 	}
 	
 	_screenDest.w = w;

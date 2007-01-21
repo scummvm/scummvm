@@ -27,8 +27,6 @@
 
 #include "be_base.h"
 
-#define MIN_OFFSET	20
-
 #if !defined(SYSTEM_CALLBACK) || defined(PALMOS_68K)
 #	define SYSTEM_CALLBACK
 #	ifdef PALMOS_ARM
@@ -125,10 +123,8 @@ private:
 
 	void draw_mouse();
 	void undraw_mouse();
-	virtual void get_coordinates(EventPtr ev, Coord &x, Coord &y);
 	virtual bool check_event(Event &event, EventPtr ev);
 	virtual void extras_palette(uint8 index, uint8 r, uint8 g, uint8 b);
-	void calc_rect(Boolean fullscreen);
 	void calc_scale();
 
 	void render_landscapeAny(RectangleType &r, PointType &p);
@@ -157,6 +153,9 @@ protected:
 		Coord width;	// (width x 320)
 		Coord height;	// (480 x height)
 	} _ratio;
+
+	void calc_rect(Boolean fullscreen);
+	void get_coordinates(EventPtr ev, Coord &x, Coord &y);
 
 public:
 	OSystem_PalmOS5();

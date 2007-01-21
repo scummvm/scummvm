@@ -55,7 +55,6 @@ private:
 
 	void extras_palette(uint8 index, uint8 r, uint8 g, uint8 b);
 	void calc_rect(Boolean fullscreen);
-	void get_coordinates(EventPtr ev, Coord &x, Coord &y);
 	bool check_event(Event &event, EventPtr ev);
 	void draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color = 0);
 
