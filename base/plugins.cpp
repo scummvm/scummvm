@@ -25,39 +25,6 @@
 #include "common/util.h"
 
 
-void GameDescriptor::updateDesc(const char *extra) {
-	// TODO: The format used here (LANG/PLATFORM/EXTRA) is not set in stone.
-	// We may want to change the order (PLATFORM/EXTRA/LANG, anybody?), or
-	// the seperator (instead of '/' use ', ' or ' ').
-	const bool hasCustomLanguage = (this->contains("language") && (this->language() != Common::UNK_LANG));
-	const bool hasCustomPlatform = (this->contains("platform") && (this->platform() != Common::kPlatformUnknown));
-	const bool hasExtraDesc = (extra && extra[0]);
-
-	// Adapt the description string if custom platform/language is set.
-	if (hasCustomLanguage || hasCustomPlatform || hasExtraDesc) {
-		Common::String descr = this->description();
-
-		descr += " (";
-		if (hasCustomLanguage)
-			descr += Common::getLanguageDescription(this->language());
-		if (hasCustomPlatform) {
-			if (hasCustomLanguage)
-				descr += "/";
-			descr += Common::getPlatformDescription(this->platform());
-		}
-		if (hasExtraDesc) {
-			if (hasCustomPlatform || hasCustomLanguage)
-				descr += "/";
-			descr += extra;
-		}
-		descr += ")";
-		this->operator []("description") = descr;
-	}
-}
-
-
-#pragma mark -
-
 #ifndef DYNAMIC_MODULES
 class StaticPlugin : public Plugin {
 	PluginRegistrator *_plugin;
