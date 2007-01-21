@@ -354,6 +354,7 @@ void Graphics::floodFill(byte color, uint16 left, uint16 top, uint16 right, uint
 void Graphics::flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Graphics::Buffers buffer) {
 //	printf("Graphics::flatBlit(%i, %i, %i, %i)\n", w, h, x, y);
 
+    // source coordinates
 	int16 left = 0, top = 0;
 	int16 right = w, bottom = h;
 
@@ -1237,12 +1238,15 @@ void Graphics::drawBorder(Graphics::Buffers buffer, uint16 x, uint16 y, uint16 w
 
 	byte *d = _buffers[buffer] + x + SCREEN_WIDTH * y;
 
+    memset(d, color, w);
+
 	for (uint16 i = 0; i < h; i++) {
-		d[i] = color;
-		d[i + SCREEN_WIDTH * (h-1)] = color;
 		d[i * SCREEN_WIDTH] = color;
 		d[i * SCREEN_WIDTH + w - 1] = color;
 	}
+
+    d = _buffers[buffer] + x + SCREEN_WIDTH * (y + h - 1);
+    memset(d, color, w);
 
 	return;
 }
