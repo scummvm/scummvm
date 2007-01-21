@@ -2251,8 +2251,8 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 			textObject->setFont(check_font(2));
 		else if (strmatch(key_text, "fgcolor"))
 			textObject->setFGColor(check_color(2));
-		else if (strmatch(key_text, "hicolor"))
-			warning("getTextObjectParams 'hicolor'");
+		else if (strmatch(key_text, "hicolor"));
+			// this is only used in credits screen, can be ignored, seems not needed
 		else if (strmatch(key_text, "disabled"))
 			textObject->setDisabled(atoi(lua_getstring(lua_getresult(2))) != 0);
 		else if (strmatch(key_text, "center"))
