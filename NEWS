@@ -23,8 +23,12 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Cine:
    - Improved support for international versions.
 
+ Queen:
+   - Fixed some sound glitches.
+
  SCUMM:
    - Fixed various actor walking issues.
+   - Added support for non-interactive demos of HE games (CUP).
 
  Simon:
    - Renamed Simon engine to AGOS.
