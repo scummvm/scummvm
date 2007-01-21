@@ -25,6 +25,7 @@
 
 #include "base/plugins.h"
 
+#include "common/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
@@ -32,6 +33,15 @@
 #include "agos/agos.h"
 
 namespace AGOS {
+
+struct AGOSGameDescription {
+	Common::ADGameDescription desc;
+
+	int gameType;
+	int gameId;
+	uint32 features;
+};
+
 static GameList GAME_detectGames(const FSList &fslist);
 }
 
@@ -96,6 +106,38 @@ GameList GAME_detectGames(const FSList &fslist) {
 		FILE_MD5_BYTES,
 		simonGames
 	);
+}
+
+int AGOSEngine::getGameId() const {
+	return _gameDescription->gameId;
+}
+
+int AGOSEngine::getGameType() const {
+	return _gameDescription->gameType;
+}
+
+uint32 AGOSEngine::getFeatures() const {
+	return _gameDescription->features;
+}
+
+const char *AGOSEngine::getExtra() const {
+	return _gameDescription->desc.extra;
+}
+
+Common::Language AGOSEngine::getLanguage() const {
+	return _gameDescription->desc.language;
+}
+
+Common::Platform AGOSEngine::getPlatform() const {
+	return _gameDescription->desc.platform;
+}
+
+const char *AGOSEngine::getFileName(int type) const { 
+	for (int i = 0; _gameDescription->desc.filesDescriptions[i].fileType; i++) {
+		if (_gameDescription->desc.filesDescriptions[i].fileType == type)
+			return _gameDescription->desc.filesDescriptions[i].fileName; 
+	}
+	return NULL;
 }
 
 } // End of namespace AGOS

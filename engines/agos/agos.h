@@ -34,8 +34,6 @@
 #include "agos/sound.h"
 #include "agos/vga.h"
 
-#include "common/advancedDetector.h"
-
 namespace AGOS {
 
 /* Enable and set to zone number number to dump */
@@ -120,13 +118,7 @@ enum SIMONGameType {
 	GType_PP = 7
 };
 
-struct AGOSGameDescription {
-	Common::ADGameDescription desc;
-
-	int gameType;
-	int gameId;
-	uint32 features;
-};
+struct AGOSGameDescription;
 
 struct GameSpecificSettings;
 
@@ -175,18 +167,13 @@ public:
 	bool initGame(void);
 	void setupGame();
 
-	int getGameId() const { return _gameDescription->gameId; }
-	int getGameType() const { return _gameDescription->gameType; }
-	uint32 getFeatures() const { return _gameDescription->features; }
-	Common::Language getLanguage() const { return _gameDescription->desc.language; }
-	Common::Platform getPlatform() const { return _gameDescription->desc.platform; }
-	const char *getFileName(int type) const { 
-		for (int i = 0; _gameDescription->desc.filesDescriptions[i].fileType; i++) {
-			if (_gameDescription->desc.filesDescriptions[i].fileType == type)
-				return _gameDescription->desc.filesDescriptions[i].fileName; 
-		}
-		return NULL;
-	}
+	int getGameId() const;
+	int getGameType() const;
+	uint32 getFeatures() const;
+	const char *getExtra() const;
+	Common::Language getLanguage() const;
+	Common::Platform getPlatform() const;
+	const char *getFileName(int type) const;
 
 protected:
 	void playSting(uint a);
