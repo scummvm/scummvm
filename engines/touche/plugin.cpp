@@ -73,8 +73,7 @@ static const GameVersion toucheGameVersionsTable[] = {
 		Common::IT_ITA,
 		Common::kPlatformPC
 	},
-	{
-		// english demo version
+	{ // demo version
 		"Touche: The Adventures of the Fifth Musketeer (Demo)",
 		8720683,
 		"ddaed436445b2e77294ed19e8ae4aa2c",

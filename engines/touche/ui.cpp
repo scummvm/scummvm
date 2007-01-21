@@ -149,7 +149,7 @@ void ToucheEngine::drawButton(void *button) {
 		if (b->data != 0) {
 			const char *str = getString(b->data);
 			const int w = getStringWidth(b->data);
-			const int h = 16;
+			const int h = kTextHeight;
 			const int x = b->x + (b->w - w) / 2;
 			const int y = b->y + (b->h - h) / 2;
 			Graphics::drawString16(_offscreenBuffer, kScreenWidth, 0xFF, x, y, str);
@@ -514,18 +514,18 @@ void ToucheEngine::drawConversationPanel() {
 }
 
 void ToucheEngine::printStatusString(const char *str) {
-	Graphics::fillRect(_offscreenBuffer, kScreenWidth, 0, 0, kScreenWidth, 16, 0xD7);
-	Graphics::drawRect(_offscreenBuffer, kScreenWidth, 0, 0, kScreenWidth, 16, 0xD6, 0xD8);
+	Graphics::fillRect(_offscreenBuffer, kScreenWidth, 0, 0, kScreenWidth, kTextHeight, 0xD7);
+	Graphics::drawRect(_offscreenBuffer, kScreenWidth, 0, 0, kScreenWidth, kTextHeight, 0xD6, 0xD8);
 	Graphics::drawString16(_offscreenBuffer, kScreenWidth, 0xFF, 0, 0, str);
-	updateScreenArea(0, 0, kScreenWidth, 16);
+	updateScreenArea(0, 0, kScreenWidth, kTextHeight);
 	_system->updateScreen();
 }
 
 void ToucheEngine::clearStatusString() {
 	Graphics::copyRect(_offscreenBuffer, kScreenWidth, 0, 0,
 	  _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615],
-	  kScreenWidth, 16);
-	updateScreenArea(0, 0, kScreenWidth, 16);
+	  kScreenWidth, kTextHeight);
+	updateScreenArea(0, 0, kScreenWidth, kTextHeight);
 }
 
 int ToucheEngine::displayQuitDialog() {

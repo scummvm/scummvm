@@ -1262,7 +1262,7 @@ void ToucheEngine::drawGameString(uint16 color, int x1, int y, const char *str) 
 	while (*str) {
 		char chr = *str++;
 		if (chr == '\\') {
-			y += 16;
+			y += kTextHeight;
 			w = Graphics::getStringWidth16(str);
 			x = x1 - w / 2;
 		} else {
@@ -1611,12 +1611,12 @@ void ToucheEngine::handleMouseClickOnRoom(int flag) {
 							drawGameString(0xFF, strPosX + strWidth / 2, strPosY, strData);
 						}
 						stringDrawn = true;
-						Common::Rect redrawRect(strPosX, strPosY, strPosX + strWidth, strPosY + 16);
+						Common::Rect redrawRect(strPosX, strPosY, strPosX + strWidth, strPosY + kTextHeight);
 						if (_programHitBoxTable[i].state & 0x8000) {
 							redrawRect.extend(_programHitBoxTable[i].hitBoxes[1]);
 						}
 						addToDirtyRect(redrawRect);
-						_programHitBoxTable[i].hitBoxes[1] = Common::Rect(strPosX, strPosY, strPosX + strWidth, strPosY + 16);
+						_programHitBoxTable[i].hitBoxes[1] = Common::Rect(strPosX, strPosY, strPosX + strWidth, strPosY + kTextHeight);
 						_programHitBoxTable[i].state |= 0x8000;
 					}
 					if (_inp_leftMouseButtonPressed) {
@@ -1679,7 +1679,7 @@ void ToucheEngine::handleMouseClickOnInventory(int flag) {
 		if (!_conversationAreaCleared) {
 			if (_inp_mousePos.x >= 40) {
 				if (_inp_mousePos.y >= 328) {
-					int replyNum = (_inp_mousePos.y - 328) / 16;
+					int replyNum = (_inp_mousePos.y - 328) / kTextHeight;
 					if (replyNum >= 4) {
 						replyNum = 3;
 					}
@@ -1799,7 +1799,7 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 	int cursorW = strW + 28;
 	int cursorPosX = CLIP<int16>(offs - cursorW / 2, 0, kScreenWidth - cursorW);
 	offs = cursorPosX + 14;
-	h *= 16;
+	h *= kTextHeight;
 	int cursorH = h + 28;
 	int cursorPosY = CLIP<int16>(y - 24, 0, kRoomHeight - cursorH);
 	y = cursorPosY + 24;
@@ -1815,7 +1815,7 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 		if (actionsTable[i] == 0) {
 			break;
 		}
-		drawString(0xF8F9, offs, y + i * 16, actionsTable[i]);
+		drawString(0xF8F9, offs, y + i * kTextHeight, actionsTable[i]);
 	}
 	updateScreenArea(cursorPosX, cursorPosY, cursorW, cursorH);
 
@@ -1824,22 +1824,22 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 	i = -1;
 	while (_inp_rightMouseButtonPressed && _flagsTable[611] == 0) {
 		if (rect.contains(_inp_mousePos)) {
-			int c = (_inp_mousePos.y - y) / 16;
+			int c = (_inp_mousePos.y - y) / kTextHeight;
 			if (c != i) {
 				if (i >= 0) {
-					drawY = y + i * 16;
+					drawY = y + i * kTextHeight;
 					drawString(0xF8F9, offs, drawY, actionsTable[i]);
-					updateScreenArea(offs, drawY, strW, 16);
+					updateScreenArea(offs, drawY, strW, kTextHeight);
 				}
 				i = c;
-				drawY = y + i * 16;
+				drawY = y + i * kTextHeight;
 				drawString(0xF8FF, offs, drawY, actionsTable[i]);
-				updateScreenArea(offs, drawY, strW, 16);
+				updateScreenArea(offs, drawY, strW, kTextHeight);
 			}
 		} else if (i >= 0) {
-			drawY = y + i * 16;
+			drawY = y + i * kTextHeight;
 			drawString(0xF8F9, offs, drawY, actionsTable[i]);
-			updateScreenArea(offs, drawY, strW, 16);
+			updateScreenArea(offs, drawY, strW, kTextHeight);
 			i = -1;
 		}
 		processEvents(false);
@@ -2196,8 +2196,8 @@ int ToucheEngine::updateKeyCharTalk(int skipFlag) {
 	if (_keyCharTalkCounter != 0) {
 		_currentObjectNum = talkingKeyChar;
 		_talkTextDisplayed = true;
-		int textHeight = 16;
-		y -= 16;
+		int textHeight = kTextHeight;
+		y -= kTextHeight;
 		if (y < 0) {
 			y = 1;
 		} else if (y > kRoomHeight) {
@@ -2205,7 +2205,7 @@ int ToucheEngine::updateKeyCharTalk(int skipFlag) {
 		}
 		if (textWidth > 200) {
 			textWidth = 200;
-			stringData = formatTalkText(16, &y, &textHeight, stringData);
+			stringData = formatTalkText(&y, &textHeight, stringData);
 		}
 		x -= textWidth / 2;
 		if (x < 0) {
@@ -2244,48 +2244,44 @@ int ToucheEngine::updateKeyCharTalk(int skipFlag) {
 	return 1;
 }
 
-const char *ToucheEngine::formatTalkText(int mode, int *y, int *h, const char *text) {
+const char *ToucheEngine::formatTalkText(int *y, int *h, const char *text) {
 	static char talkTextBuffer[200];
 	int newLineWidth = 0;
 	int lineWidth = 0;
 	char *textBuffer = talkTextBuffer;
 	char *textLine = textBuffer;
-	if (mode != 16) {
-		return text;
-	} else {
-		while (*text) {
-			char chr = *text++;
-			int chrWidth = Graphics::getCharWidth16(chr);
-			lineWidth += chrWidth;
-			if (chr == ' ') {
-				if (lineWidth + newLineWidth >= 200) {
-					*textLine = '\\';
-					newLineWidth = lineWidth - chrWidth;
-					*y -= mode;
-					*h += mode;
-					lineWidth = chrWidth;
-				} else {
-					newLineWidth += lineWidth;
-					lineWidth = chrWidth;
-				}
-				*textBuffer = ' ';
-				textLine = textBuffer;
-				textBuffer++;
+	while (*text) {
+		char chr = *text++;
+		int chrWidth = Graphics::getCharWidth16(chr);
+		lineWidth += chrWidth;
+		if (chr == ' ') {
+			if (lineWidth + newLineWidth >= 200) {
+				*textLine = '\\';
+				newLineWidth = lineWidth - chrWidth;
+				*y -= kTextHeight;
+				*h += kTextHeight;
+				lineWidth = chrWidth;
 			} else {
-				*textBuffer++ = chr;
+				newLineWidth += lineWidth;
+				lineWidth = chrWidth;
 			}
+			*textBuffer = ' ';
+			textLine = textBuffer;
+			textBuffer++;
+		} else {
+			*textBuffer++ = chr;
 		}
-		if (newLineWidth + lineWidth >= 200) {
-			*textLine = '\\';
-			*y -= mode;
-			*h += mode;
-		}
-		*textBuffer = '\0';
-		if (*y < 0) {
-			*y = 1;
-		}
-		return talkTextBuffer;
 	}
+	if (newLineWidth + lineWidth >= 200) {
+		*textLine = '\\';
+		*y -= kTextHeight;
+		*h += kTextHeight;
+	}
+	*textBuffer = '\0';
+	if (*y < 0) {
+		*y = 1;
+	}
+	return talkTextBuffer;
 }
 
 void ToucheEngine::addToTalkTable(int talkingKeyChar, int num, int otherKeyChar) {
@@ -2413,16 +2409,16 @@ void ToucheEngine::drawCharacterConversation() {
 	}
 	drawConversationPanel();
 	for (int i = 0; i < 4; ++i) {
-		drawString(214, 42, 328 + i * 16, _conversationChoicesTable[_scrollConversationChoiceOffset + i].msg);
+		drawString(214, 42, 328 + i * kTextHeight, _conversationChoicesTable[_scrollConversationChoiceOffset + i].msg);
 	}
 	updateScreenArea(0, 320, kScreenWidth, kScreenHeight - 320);
 	_conversationAreaCleared = false;
 }
 
 void ToucheEngine::drawConversationString(int num, uint16 color) {
-	const int y = 328 + num * 16;
+	const int y = 328 + num * kTextHeight;
 	drawString(color, 42, y, _conversationChoicesTable[num + _scrollConversationChoiceOffset].msg);
-	updateScreenArea(0, y, kScreenWidth, 16);
+	updateScreenArea(0, y, kScreenWidth, kTextHeight);
 }
 
 void ToucheEngine::clearConversationArea() {

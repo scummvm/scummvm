@@ -323,6 +323,7 @@ enum {
 	kIconHeight = 42,
 	kCursorWidth = 58,
 	kCursorHeight = 42,
+	kTextHeight = 16,
 	kMaxProgramDataSize = 61440
 };
 
@@ -436,7 +437,7 @@ protected:
 
 	void resetTalkingVars();
 	int updateKeyCharTalk(int pauseFlag);
-	const char *formatTalkText(int mode, int *y, int *h, const char *text);
+	const char *formatTalkText(int *y, int *h, const char *text);
 	void addToTalkTable(int talkingKeyChar, int num, int otherKeyChar);
 	void removeFromTalkTable(int keyChar);
 	void addConversationChoice(int16 num);
