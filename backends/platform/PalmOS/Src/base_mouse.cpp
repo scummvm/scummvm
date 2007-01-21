@@ -45,17 +45,19 @@ bool OSystem_PalmBase::showMouse(bool visible) {
 void OSystem_PalmBase::simulate_mouse(Event &event, Int8 iHoriz, Int8 iVert, Coord *xr, Coord *yr) {
 	Int16 x = _mouseCurState.x;
 	Int16 y = _mouseCurState.y;
-	Int16 slow;
+	Int16 slow, fact;
 
 	_lastKeyRepeat++;
+	fact = _screenWidth / 320;
+	fact = (fact) ? fact : 1;
 
-	if (_lastKeyRepeat > 32)
-		_lastKeyRepeat = 32;
+	if (_lastKeyRepeat > 32 * fact)
+		_lastKeyRepeat = 32 * fact;
 
 	slow = (iHoriz && iVert) ? 2 : 1;
 
-	x += iHoriz * (_lastKeyRepeat >> 2) / slow;
-	y += iVert * (_lastKeyRepeat >> 2) / slow;
+	x += iHoriz * (_lastKeyRepeat >> 2) / slow * fact;
+	y += iVert * (_lastKeyRepeat >> 2) / slow * fact;
 
 	x = (x < 0				) ? 0					: x;
 	x = (x >= _screenWidth	) ? _screenWidth - 1	: x;
