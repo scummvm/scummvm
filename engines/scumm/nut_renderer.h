@@ -33,14 +33,17 @@ class NutRenderer {
 protected:
 	ScummEngine *_vm;
 	bool _loaded;
+	bool _bitmapFont;
 	int _numChars;
+	byte *_decodedData;
 	struct {
-		int xoffs;
-		int yoffs;
-		int width;
-		int height;
+		uint16 width;
+		uint16 height;
 		byte *src;
 	} _chars[256];
+
+	static void codec1(bool bitmap, byte *dst, const byte *src, int width, int height, int pitch);
+	static void codec21(bool bitmap, byte *dst, const byte *src, int width, int height, int pitch);
 
 	void drawChar(const Graphics::Surface &s, byte c, int x, int y, byte color);
 	void draw2byte(const Graphics::Surface &s, int c, int x, int y, byte color);
@@ -50,7 +53,7 @@ public:
 	virtual ~NutRenderer();
 	int getNumChars() const { return _numChars; }
 
-	bool loadFont(const char *filename);
+	bool loadFont(const char *filename, bool bitmap);
 
 	void drawFrame(byte *dst, int c, int x, int y);
 	void drawShadowChar(const Graphics::Surface &s, int c, int x, int y, byte color, bool showShadow);

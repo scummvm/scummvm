@@ -30,26 +30,92 @@ namespace Scumm {
 NutRenderer::NutRenderer(ScummEngine *vm) :
 	_vm(vm),
 	_loaded(false),
-	_numChars(0) {
+	_numChars(0),
+	_decodedData(0) {
 	memset(_chars, 0, sizeof(_chars));
 }
 
 NutRenderer::~NutRenderer() {
-	for (int i = 0; i < _numChars; i++) {
-		delete []_chars[i].src;
+	delete [] _decodedData;
+}
+
+void NutRenderer::codec1(bool bitmap, byte *dst, const byte *src, int width, int height, int pitch) {
+	byte val, code;
+	int32 length;
+	int h = height, size_line;
+
+	for (h = 0; h < height; h++) {
+		size_line = READ_LE_UINT16(src);
+		src += 2;
+		byte bit = 0x80;
+		byte *dstPtrNext = dst + pitch;
+		while (size_line > 0) {
+			code = *src++;
+			size_line--;
+			length = (code >> 1) + 1;
+			if (code & 1) {
+				val = *src++;
+				size_line--;
+				if (bitmap) {
+					for (int i = 0; i < length; i++) {
+						if (val)
+							*dst |= bit;
+						bit >>= 1;
+						if (!bit) {
+							bit = 0x80;
+							dst++;
+						}
+					}
+				} else {
+					if (val)
+						memset(dst, val, length);
+					dst += length;
+				}
+			} else {
+				size_line -= length;
+				while (length--) {
+					val = *src++;
+					if (bitmap) {
+						if (val)
+							*dst |= bit;
+						bit >>= 1;
+						if (!bit) {
+							bit = 0x80;
+							dst++;
+						}
+					} else {
+						if (val)
+							*dst = val;
+						dst++;
+					}
+				}
+			}
+		}
+		dst = dstPtrNext;
 	}
 }
 
-void smush_decode_codec1(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
-
-static void smush_decode_codec21(byte *dst, const byte *src, int width, int height, int pitch) {
+void NutRenderer::codec21(bool bitmap, byte *dst, const byte *src, int width, int height, int pitch) {
 	while (height--) {
-		uint8 *dstPtrNext = dst + pitch;
-		const uint8 *srcPtrNext = src + 2 + READ_LE_UINT16(src); src += 2;
+		byte *dstPtrNext = dst + pitch;
+		const byte *srcPtrNext = src + 2 + READ_LE_UINT16(src);
+		src += 2;
 		int len = width;
+		byte bit = 0x80;
 		do {
+			int i;
 			int offs = READ_LE_UINT16(src); src += 2;
-			dst += offs;
+			if (bitmap) {
+				for (i = 0; i < offs; i++) {
+					bit >>= 1;
+					if (!bit) {
+						bit = 0x80;
+						dst++;
+					}
+				}
+			} else {
+				dst += offs;
+			}
 			len -= offs;
 			if (len <= 0) {
 				break;
@@ -63,17 +129,33 @@ static void smush_decode_codec21(byte *dst, const byte *src, int width, int heig
 			//  src bytes equal to 255 are replaced by 0 in dst
 			//  src bytes equal to 1 are replaced by a color passed as an argument in the original function
 			//  other src bytes values are copied as-is
-			memcpy(dst, src, w); dst += w; src += w;
+			if (bitmap) {
+				for (i = 0; i < w; i++) {
+					if (src[i])
+						*dst |= bit;
+					bit >>= 1;
+					if (!bit) {
+						bit = 0x80;
+						dst++;
+					}
+				}
+			} else {
+				memcpy(dst, src, w);
+				dst += w;
+			}
+			src += w;
 		} while (len > 0);
 		dst = dstPtrNext;
 		src = srcPtrNext;
 	}
 }
 
-bool NutRenderer::loadFont(const char *filename) {
+bool NutRenderer::loadFont(const char *filename, bool bitmap) {
 	if (_loaded) {
 		debug(0, "NutRenderer::loadFont() Font already loaded, ok, loading...");
 	}
+
+	_bitmapFont = bitmap;
 
 	ScummFile file;
 	_vm->openFile(file, filename);
@@ -89,7 +171,7 @@ bool NutRenderer::loadFont(const char *filename) {
 	}
 
 	uint32 length = file.readUint32BE();
-	byte *dataSrc = (byte *)malloc(length);
+	byte *dataSrc = new byte[length];
 	file.read(dataSrc, length);
 	file.close();
 
@@ -99,9 +181,36 @@ bool NutRenderer::loadFont(const char *filename) {
 		return false;
 	}
 
+	// We pre-decode the font, which may seem wasteful at first. Actually,
+	// the memory needed for just the decoded glyphs is smaller than the
+	// whole of the undecoded font file.
+
 	_numChars = READ_LE_UINT16(dataSrc + 10);
 	assert(_numChars <= ARRAYSIZE(_chars));
+
 	uint32 offset = 0;
+	uint32 decodedLength = 0;
+	for (int l = 0; l < _numChars; l++) {
+		offset += READ_BE_UINT32(dataSrc + offset + 4) + 16;
+		int width = READ_LE_UINT16(dataSrc + offset + 14);
+		int height = READ_LE_UINT16(dataSrc + offset + 16);
+		if (_bitmapFont) {
+			decodedLength += (((width + 7) / 8) * height);
+		} else {
+			decodedLength += (width * height);
+		}
+	}
+
+	// If characters have transparency, then bytes just get skipped and
+	// so there may appear some garbage. That's why we have to fill it
+	// with zeroes first.
+
+	_decodedData = new byte[decodedLength];
+	memset(_decodedData, 0, decodedLength);
+
+	byte *decodedPtr = _decodedData;
+
+	offset = 0;
 	for (int l = 0; l < _numChars; l++) {
 		offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
 		if (READ_BE_UINT32(dataSrc + offset) != 'FRME') {
@@ -114,32 +223,37 @@ bool NutRenderer::loadFont(const char *filename) {
 			break;
 		}
 		int codec = READ_LE_UINT16(dataSrc + offset + 8);
-		_chars[l].xoffs = READ_LE_UINT16(dataSrc + offset + 10);
-		_chars[l].yoffs = READ_LE_UINT16(dataSrc + offset + 12);
+		// _chars[l].xoffs = READ_LE_UINT16(dataSrc + offset + 10);
+		// _chars[l].yoffs = READ_LE_UINT16(dataSrc + offset + 12);
 		_chars[l].width = READ_LE_UINT16(dataSrc + offset + 14);
 		_chars[l].height = READ_LE_UINT16(dataSrc + offset + 16);
-		const int srcSize = _chars[l].width * _chars[l].height;
-		_chars[l].src = new byte[srcSize];
-		// If characters have transparency, then bytes just get skipped and
-		// so there may appear some garbage. That's why we have to fill it
-		// with zeroes first.
-		memset(_chars[l].src, 0, srcSize);
+		_chars[l].src = decodedPtr;
+
+		int pitch;
+
+		if (_bitmapFont) {
+			pitch = (_chars[l].width + 7) / 8;
+		} else {
+			pitch = _chars[l].width;
+		}
+
+		decodedPtr += (pitch * _chars[l].height);
 
 		const uint8 *fobjptr = dataSrc + offset + 22;
 		switch (codec) {
 		case 1:
-			smush_decode_codec1(_chars[l].src, fobjptr, 0, 0, _chars[l].width, _chars[l].height, _chars[l].width);
+			codec1(_bitmapFont, _chars[l].src, fobjptr, _chars[l].width, _chars[l].height, pitch);
 			break;
 		case 21:
 		case 44:
-			smush_decode_codec21(_chars[l].src, fobjptr, _chars[l].width, _chars[l].height, _chars[l].width);
+			codec21(_bitmapFont, _chars[l].src, fobjptr, _chars[l].width, _chars[l].height, pitch);
 			break;
 		default:
 			error("NutRenderer::loadFont: unknown codec: %d", codec);
 		}
 	}
 
-	free(dataSrc);
+	delete [] dataSrc;
 	_loaded = true;
 	return true;
 }
@@ -210,8 +324,10 @@ void NutRenderer::drawShadowChar(const Graphics::Surface &s, int c, int x, int y
 }
 
 void NutRenderer::drawFrame(byte *dst, int c, int x, int y) {
-	const int width = MIN(_chars[c].width, _vm->_screenWidth - x);
-	const int height = MIN(_chars[c].height, _vm->_screenHeight - y);
+	assert(!_bitmapFont);
+
+	const int width = MIN((int)_chars[c].width, _vm->_screenWidth - x);
+	const int height = MIN((int)_chars[c].height, _vm->_screenHeight - y);
 	const byte *src = _chars[c].src;
 	const int srcPitch = _chars[c].width;
 	byte bits = 0;
@@ -243,10 +359,16 @@ void NutRenderer::drawFrame(byte *dst, int c, int x, int y) {
 
 void NutRenderer::drawChar(const Graphics::Surface &s, byte c, int x, int y, byte color) {
 	byte *dst = (byte *)s.pixels + y * s.pitch + x;
-	const int width = MIN(_chars[c].width, s.w - x);
-	const int height = MIN(_chars[c].height, s.h - y);
+	const int width = MIN((int)_chars[c].width, s.w - x);
+	const int height = MIN((int)_chars[c].height, s.h - y);
 	const byte *src = _chars[c].src;
-	const int srcPitch = _chars[c].width;
+	int srcPitch;
+
+	if (_bitmapFont) {
+		srcPitch = (_chars[c].width + 7) / 8;
+	} else {
+		srcPitch = _chars[c].width;
+	}
 
 	const int minX = x < 0 ? -x : 0;
 	const int minY = y < 0 ? -y : 0;
@@ -261,9 +383,17 @@ void NutRenderer::drawChar(const Graphics::Surface &s, byte c, int x, int y, byt
 	}
 
 	for (int ty = minY; ty < height; ty++) {
-		for (int tx = minX; tx < width; tx++) {
-			if (src[tx] != 0) {
-				dst[tx] = color;
+		int tx;
+
+		for (tx = minX; tx < width; tx++) {
+			if (_bitmapFont) {
+				if (src[tx / 8] & (0x80 >> (tx % 8))) {
+					dst[tx] = color;
+				}
+			} else {
+				if (src[tx] != 0) {
+					dst[tx] = color;
+				}
 			}
 		}
 		src += srcPitch;

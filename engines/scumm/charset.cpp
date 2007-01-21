@@ -1609,7 +1609,7 @@ CharsetRendererNut::CharsetRendererNut(ScummEngine *vm)
 			break;
 		sprintf(fontname, "font%d.nut", i);
 		_fr[i] = new NutRenderer(_vm);
-		if (!(_fr[i]->loadFont(fontname))) {
+		if (!(_fr[i]->loadFont(fontname, true))) {
 			delete _fr[i];
 			_fr[i] = NULL;
 		}
