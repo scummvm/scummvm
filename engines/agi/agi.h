@@ -29,7 +29,6 @@
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/util.h"
-#include "common/advancedDetector.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -111,13 +110,7 @@ enum AgiGameFeatures {
 
 };
 
-struct AGIGameDescription {
-	Common::ADGameDescription desc;
-
-	int gameType;
-	uint32 features;
-	uint16 version;
-};
+struct AGIGameDescription;
 
 enum {
 	NO_GAMEDIR = 0,
@@ -531,6 +524,8 @@ public:
 	}
 
 	const AGIGameDescription *_gameDescription;
+	uint32 getFeatures() const;
+	uint16 getVersion() const;
 
 private:
 

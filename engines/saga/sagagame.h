@@ -326,22 +326,6 @@ struct GamePatchDescription {
 	const GameSoundInfo *soundInfo;
 };
 
-struct SAGAGameDescription {
-	Common::ADGameDescription desc;
-
-	int gameType;
-	int gameId;
-	uint32 features;
-	const GameDisplayInfo *gameDisplayInfo;
-	int startSceneNumber;
-	const GameResourceDescription *resourceDescription;
-	int fontsCount;
-	const GameFontDescription *fontDescriptions;
-	const GameSoundInfo *voiceInfo;
-	const GameSoundInfo *sfxInfo;
-	const GameSoundInfo *musicInfo;
-	int patchesCount;
-	const GamePatchDescription *patchDescriptions;
-};
+struct SAGAGameDescription;
 
 #define FILE_MD5_BYTES 5000

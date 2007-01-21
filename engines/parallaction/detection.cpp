@@ -30,6 +30,19 @@
 #include "parallaction/parallaction.h"
 
 namespace Parallaction {
+
+struct PARALLACTIONGameDescription {
+	Common::ADGameDescription desc;
+
+	int gameType;
+	uint32 features;
+};
+
+int Parallaction::getGameType() const { return _gameDescription->gameType; }
+uint32 Parallaction::getFeatures() const { return _gameDescription->features; }
+Common::Language Parallaction::getLanguage() const { return _gameDescription->desc.language; }
+Common::Platform Parallaction::getPlatform() const { return _gameDescription->desc.platform; }
+
 static GameList GAME_detectGames(const FSList &fslist);
 }
 

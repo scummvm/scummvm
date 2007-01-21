@@ -31,7 +31,10 @@
 
 #include "saga/gfx.h"
 #include "saga/list.h"
-#include "common/advancedDetector.h"
+
+namespace Common {
+struct ADGameFileDescription;
+}
 
 namespace Saga {
 
@@ -247,7 +250,6 @@ inline uint16 objectIndexToId(int type, int index) {
 	return (type << OBJECT_TYPE_SHIFT) | (OBJECT_TYPE_MASK & index);
 }
 
-
 class SagaEngine : public Engine {
 	friend class Scene;
 
@@ -372,29 +374,29 @@ public:
 
 public:
 	bool initGame(void);
-public:
-	const SAGAGameDescription *getGameDescription() const { return _gameDescription; }
-	const bool isBigEndian() const { return (_gameDescription->features & GF_BIG_ENDIAN_DATA) != 0; }
-	const bool isMacResources() const { return (getPlatform() == Common::kPlatformMacintosh); }
-	const GameResourceDescription *getResourceDescription() { return _gameDescription->resourceDescription; }
-	const GameSoundInfo *getVoiceInfo() const { return _gameDescription->voiceInfo; }
-	const GameSoundInfo *getSfxInfo() const { return _gameDescription->sfxInfo; }
-	const GameSoundInfo *getMusicInfo() const { return _gameDescription->musicInfo; }
 
-	const GameFontDescription *getFontDescription(int index) {
-		assert(index < _gameDescription->fontsCount);
-		return &_gameDescription->fontDescriptions[index];
-	}
-	int getFontsCount() const { return _gameDescription->fontsCount; }
+	const bool isBigEndian() const;
+	const bool isMacResources() const;
+	const GameResourceDescription *getResourceDescription();
+	const GameSoundInfo *getVoiceInfo() const;
+	const GameSoundInfo *getSfxInfo() const;
+	const GameSoundInfo *getMusicInfo() const;
 
-	int getGameId() const { return _gameDescription->gameId; }
-	int getGameType() const { return _gameDescription->gameType; }
-	uint32 getFeatures() const { return _gameDescription->features; }
-	Common::Language getLanguage() const { return _gameDescription->desc.language; }
-	Common::Platform getPlatform() const { return _gameDescription->desc.platform; }
-	int getGameNumber() const { return _gameNumber; }
-	int getStartSceneNumber() const { return _gameDescription->startSceneNumber; }
+	const GameFontDescription *getFontDescription(int index);
+	int getFontsCount() const;
 
+	int getGameId() const;
+	int getGameType() const;
+	uint32 getFeatures() const;
+	Common::Language getLanguage() const;
+	Common::Platform getPlatform() const;
+	int getGameNumber() const;
+	int getStartSceneNumber() const;
+
+	int getPatchesCount() const;
+	const GamePatchDescription *getPatchDescriptions() const;
+
+	const Common::ADGameFileDescription *getFilesDescriptions() const;
 
 	const Common::Rect &getDisplayClip() const { return _displayClip;}
 	int getDisplayWidth() const { return _gameDisplayInfo.logicalWidth; }

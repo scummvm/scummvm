@@ -39,6 +39,49 @@
 
 
 namespace Saga {
+struct SAGAGameDescription {
+	Common::ADGameDescription desc;
+
+	int gameType;
+	int gameId;
+	uint32 features;
+	const GameDisplayInfo *gameDisplayInfo;
+	int startSceneNumber;
+	const GameResourceDescription *resourceDescription;
+	int fontsCount;
+	const GameFontDescription *fontDescriptions;
+	const GameSoundInfo *voiceInfo;
+	const GameSoundInfo *sfxInfo;
+	const GameSoundInfo *musicInfo;
+	int patchesCount;
+	const GamePatchDescription *patchDescriptions;
+};
+
+const bool SagaEngine::isBigEndian() const { return (_gameDescription->features & GF_BIG_ENDIAN_DATA) != 0; }
+const bool SagaEngine::isMacResources() const { return (getPlatform() == Common::kPlatformMacintosh); }
+const GameResourceDescription *SagaEngine::getResourceDescription() { return _gameDescription->resourceDescription; }
+const GameSoundInfo *SagaEngine::getVoiceInfo() const { return _gameDescription->voiceInfo; }
+const GameSoundInfo *SagaEngine::getSfxInfo() const { return _gameDescription->sfxInfo; }
+const GameSoundInfo *SagaEngine::getMusicInfo() const { return _gameDescription->musicInfo; }
+
+const GameFontDescription *SagaEngine::getFontDescription(int index) {
+	assert(index < _gameDescription->fontsCount);
+	return &_gameDescription->fontDescriptions[index];
+}
+int SagaEngine::getFontsCount() const { return _gameDescription->fontsCount; }
+
+int SagaEngine::getGameId() const { return _gameDescription->gameId; }
+int SagaEngine::getGameType() const { return _gameDescription->gameType; }
+uint32 SagaEngine::getFeatures() const { return _gameDescription->features; }
+Common::Language SagaEngine::getLanguage() const { return _gameDescription->desc.language; }
+Common::Platform SagaEngine::getPlatform() const { return _gameDescription->desc.platform; }
+int SagaEngine::getGameNumber() const { return _gameNumber; }
+int SagaEngine::getStartSceneNumber() const { return _gameDescription->startSceneNumber; }
+
+int SagaEngine::getPatchesCount() const { return _gameDescription->patchesCount; }
+const GamePatchDescription *SagaEngine::getPatchDescriptions() const { return _gameDescription->patchDescriptions; }
+const Common::ADGameFileDescription *SagaEngine::getFilesDescriptions() const { return _gameDescription->desc.filesDescriptions; }
+
 static GameList GAME_detectGames(const FSList &fslist);
 }
 

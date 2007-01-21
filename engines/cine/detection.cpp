@@ -32,6 +32,19 @@
 #include "cine/cine.h"
 
 namespace Cine {
+struct CINEGameDescription {
+	Common::ADGameDescription desc;
+
+	int gameType;
+	uint32 features;
+};
+
+int CineEngine::getGameType() const { return _gameDescription->gameType; }
+uint32 CineEngine::getFeatures() const { return _gameDescription->features; }
+Common::Language CineEngine::getLanguage() const { return _gameDescription->desc.language; }
+Common::Platform CineEngine::getPlatform() const { return _gameDescription->desc.platform; }
+
+
 static GameList GAME_detectGames(const FSList &fslist);
 }
 

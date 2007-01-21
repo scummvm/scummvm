@@ -28,7 +28,6 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/util.h"
-#include "common/advancedDetector.h"
 
 #include "engines/engine.h"
 
@@ -59,12 +58,7 @@ enum CineGameFeatures {
 	GF_ALT_FONT = 1 << 2
 };
 
-struct CINEGameDescription {
-	Common::ADGameDescription desc;
-
-	int gameType;
-	uint32 features;
-};
+struct CINEGameDescription;
 
 class CineEngine : public Engine {
 
@@ -79,10 +73,10 @@ public:
 	CineEngine(OSystem *syst);
 	virtual ~CineEngine();
 
-	int getGameType() const { return _gameDescription->gameType; }
-	uint32 getFeatures() const { return _gameDescription->features; }
-	Common::Language getLanguage() const { return _gameDescription->desc.language; }
-	Common::Platform getPlatform() const { return _gameDescription->desc.platform; }
+	int getGameType() const;
+	uint32 getFeatures() const;
+	Common::Language getLanguage() const;
+	Common::Platform getPlatform() const;
 
 	bool loadSaveDirectory(void);
 	void makeSystemMenu(void);

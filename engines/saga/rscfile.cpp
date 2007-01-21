@@ -34,6 +34,8 @@
 #include "saga/sndres.h"
 #include "saga/stream.h"
 
+#include "common/advancedDetector.h"
+
 namespace Saga {
 
 struct MacResMap {
@@ -317,8 +319,8 @@ bool Resource::loadContext(ResourceContext *context) {
 	}
 
 	//process external patch files
-	for (j = 0; j < _vm->getGameDescription()->patchesCount; j++) {
-		patchDescription = &_vm->getGameDescription()->patchDescriptions[j];
+	for (j = 0; j < _vm->getPatchesCount(); j++) {
+		patchDescription = &_vm->getPatchDescriptions()[j];
 		if ((patchDescription->fileType & context->fileType) != 0) {
 			if (patchDescription->resourceId < context->count) {
 				resourceData = &context->table[patchDescription->resourceId];
@@ -342,7 +344,7 @@ bool Resource::createContexts() {
 	ResourceContext *context;
 
 	_contextsCount = 0;
-	for (i = 0; _vm->getGameDescription()->desc.filesDescriptions[i].fileName; i++)
+	for (i = 0; _vm->getFilesDescriptions()[i].fileName; i++)
 		_contextsCount++;
 
 	_contexts = (ResourceContext*)calloc(_contextsCount, sizeof(*_contexts));
@@ -350,8 +352,8 @@ bool Resource::createContexts() {
 	for (i = 0; i < _contextsCount; i++) {
 		context = &_contexts[i];
 		context->file = new Common::File();
-		context->fileName = _vm->getGameDescription()->desc.filesDescriptions[i].fileName;
-		context->fileType = _vm->getGameDescription()->desc.filesDescriptions[i].fileType;
+		context->fileName = _vm->getFilesDescriptions()[i].fileName;
+		context->fileType = _vm->getFilesDescriptions()[i].fileType;
 		context->serial = 0;
 
 		// IHNM has serveral different voice files, so we need to allow

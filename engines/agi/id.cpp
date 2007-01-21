@@ -32,7 +32,7 @@ namespace Agi {
 int AgiEngine::v2IdGame() {
 	int ver;
 
-	ver = _gameDescription->version;
+	ver = getVersion();
 	_game.ver = ver;
 	debugC(2, kDebugLevelMain, "game.ver = 0x%x", _game.ver);
 	agiSetRelease(ver);
@@ -51,7 +51,7 @@ int AgiEngine::v2IdGame() {
 int AgiEngine::v3IdGame() {
 	int ver;
 
-	ver = _gameDescription->version;
+	ver = getVersion();
 	_game.ver = ver;
 	debugC(2, kDebugLevelMain, "game.ver = 0x%x", _game.ver);
 	agiSetRelease(ver);

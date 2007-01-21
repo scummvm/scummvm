@@ -441,12 +441,12 @@ int AgiEngine::agiDetectGame() {
 
 	assert(_gameDescription != NULL);
 
-	_opt.amigaMode = ((_gameDescription->features & AGI_AMIGA) == AGI_AMIGA);
-	_opt.agdsMode = ((_gameDescription->features & AGI_AGDS) == AGI_AGDS);
-	_opt.agimouse = ((_gameDescription->features & AGI_MOUSE) == AGI_MOUSE);
+	_opt.amigaMode = ((getFeatures() & AGI_AMIGA) == AGI_AMIGA);
+	_opt.agdsMode = ((getFeatures() & AGI_AGDS) == AGI_AGDS);
+	_opt.agimouse = ((getFeatures() & AGI_MOUSE) == AGI_MOUSE);
 
 
-	if(_gameDescription->version <= 0x2999) {
+	if(getVersion() <= 0x2999) {
 		_loader = new AgiLoader_v2(this);
 	} else {
 		_loader = new AgiLoader_v3(this);

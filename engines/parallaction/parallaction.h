@@ -26,7 +26,6 @@
 #include "engines/engine.h"
 #include "parallaction/defs.h"
 #include "parallaction/inventory.h"
-#include "common/advancedDetector.h"
 
 
 namespace Parallaction {
@@ -59,12 +58,7 @@ enum ParallactionGameType {
 	GType_BRA
 };
 
-struct PARALLACTIONGameDescription {
-	Common::ADGameDescription desc;
-
-	int gameType;
-	uint32 features;
-};
+struct PARALLACTIONGameDescription;
 
 struct Job;
 typedef void (*JobFn)(void*, Job*);
@@ -226,10 +220,10 @@ public:
 	void changeCharacter(const char *name);
 
 public:
-	int getGameType() const { return _gameDescription->gameType; }
-	uint32 getFeatures() const { return _gameDescription->features; }
-	Common::Language getLanguage() const { return _gameDescription->desc.language; }
-	Common::Platform getPlatform() const { return _gameDescription->desc.platform; }
+	int getGameType() const;
+	uint32 getFeatures() const;
+	Common::Language getLanguage() const;
+	Common::Platform getPlatform() const;
 
 private:
 	const PARALLACTIONGameDescription *_gameDescription;
