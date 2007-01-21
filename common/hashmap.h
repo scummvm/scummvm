@@ -110,6 +110,7 @@ public:
 
 	void assign(const HM_t& map);
 	int lookup(const Key &key) const;
+	int lookupAndCreateIfMissing(const Key &key);
 	void expand_array(uint newsize);
 
 public:
@@ -164,7 +165,9 @@ public:
 
 	Val &operator [](const Key &key);
 	const Val &operator [](const Key &key) const;
-	const Val &queryVal(const Key &key) const;
+
+	const Val &getVal(const Key &key) const;
+	void setVal(const Key &key, const Val &val);
 
 	void clear(bool shrinkArray = 0);
 
@@ -352,13 +355,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
 }
 
 template <class Key, class Val, class HashFunc, class EqualFunc>
-bool HashMap<Key, Val, HashFunc, EqualFunc>::contains(const Key &key) const {
-	uint ctr = lookup(key);
-	return (_arr[ctr] != NULL);
-}
-
-template <class Key, class Val, class HashFunc, class EqualFunc>
-Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator [](const Key &key) {
+int HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &key) {
 	uint ctr = lookup(key);
 
 	if (_arr[ctr] == NULL) {
@@ -372,19 +369,40 @@ Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator [](const Key &key) {
 		}
 	}
 
+	return ctr;
+}
+
+
+template <class Key, class Val, class HashFunc, class EqualFunc>
+bool HashMap<Key, Val, HashFunc, EqualFunc>::contains(const Key &key) const {
+	uint ctr = lookup(key);
+	return (_arr[ctr] != NULL);
+}
+
+template <class Key, class Val, class HashFunc, class EqualFunc>
+Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator [](const Key &key) {
+	uint ctr = lookupAndCreateIfMissing(key);
+	assert(_arr[ctr] != NULL);
 	return _arr[ctr]->_value;
 }
 
 template <class Key, class Val, class HashFunc, class EqualFunc>
 const Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator [](const Key &key) const {
-	return queryVal(key);
+	return getVal(key);
 }
 
 template <class Key, class Val, class HashFunc, class EqualFunc>
-const Val &HashMap<Key, Val, HashFunc, EqualFunc>::queryVal(const Key &key) const {
+const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) const {
 	uint ctr = lookup(key);
 	assert(_arr[ctr] != NULL);
 	return _arr[ctr]->_value;
+}
+
+template <class Key, class Val, class HashFunc, class EqualFunc>
+void HashMap<Key, Val, HashFunc, EqualFunc>::setVal(const Key &key, const Val &val) {
+	uint ctr = lookupAndCreateIfMissing(key);
+	assert(_arr[ctr] != NULL);
+	_arr[ctr]->_value = val;
 }
 
 template <class Key, class Val, class HashFunc, class EqualFunc>
