@@ -60,8 +60,8 @@ public:
 
 	Common::String &gameid() { return getVal("gameid"); }
 	Common::String &description() { return getVal("description"); }
-	Common::Language language() const { return Common::parseLanguage(getVal("language")); }
-	Common::Platform platform() const { return Common::parsePlatform(getVal("platform")); }
+	Common::Language language() const { return contains("language") ? Common::parseLanguage(getVal("language")) : Common::UNK_LANG; }
+	Common::Platform platform() const { return contains("platform") ? Common::parsePlatform(getVal("platform")) : Common::kPlatformUnknown; }
 };
 
 /** List of games. */
