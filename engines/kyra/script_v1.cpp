@@ -1130,7 +1130,8 @@ int KyraEngine::o1_preserveAllObjectBackgrounds(ScriptState *script) {
 
 int KyraEngine::o1_updateSceneAnimations(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_updateSceneAnimations(%p) (%d)", (const void *)script, stackPos(0));
-	if (stackPos(0)) {
+	int times = stackPos(0);
+	while (times--) {
 		_sprites->updateSceneAnims();
 		_animator->updateAllObjectShapes();
 	}
