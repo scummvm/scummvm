@@ -157,6 +157,9 @@ void Parallaction::doSaveGame(uint16 _di) {
 	sprintf(path, "game.%d", _di);
 
 	Common::OutSaveFile *f = _saveFileMan->openForSaving(path);
+	// FIXME: Properly handle openForSaving failures instead of
+	// just crashing silently!
+	assert(f);
 
 	char s[30];
 

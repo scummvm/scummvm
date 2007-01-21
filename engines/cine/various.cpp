@@ -1022,6 +1022,9 @@ void CineEngine::makeSystemMenu(void) {
 						snprintf(tmp, 80, "%s.dir", _targetName.c_str());
 
 						fHandle = g_saveFileMan->openForSaving(tmp);
+						// FIXME: Properly handle openForSaving failures instead of
+						// just crashing silently!
+						assert(fHandle);
 
 						fHandle->write(currentSaveName, 200);
 						delete fHandle;
