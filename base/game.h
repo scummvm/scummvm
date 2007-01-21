@@ -24,6 +24,7 @@
 #ifndef BASE_GAME_H
 #define BASE_GAME_H
 
+#include "common/stdafx.h"
 #include "common/str.h"
 #include "common/array.h"
 #include "common/hash-str.h"
@@ -38,18 +39,18 @@ public:
 	GameDescriptor() {}
 
 	GameDescriptor(const PlainGameDescriptor &pgd) {
-		this->operator []("gameid") = pgd.gameid;
-		this->operator []("description") = pgd.description;
+		setVal("gameid", pgd.gameid);
+		setVal("description", pgd.description);
 	}
 
 	GameDescriptor(Common::String g, Common::String d, Common::Language l  = Common::UNK_LANG,
 	             Common::Platform p = Common::kPlatformUnknown) {
-		this->operator []("gameid") = g;
-		this->operator []("description") = d;
+		setVal("gameid", g);
+		setVal("description", d);
 		if (l != Common::UNK_LANG)
-			this->operator []("language") = Common::getLanguageCode(l);
+			setVal("language", Common::getLanguageCode(l));
 		if (p != Common::kPlatformUnknown)
-			this->operator []("platform") = Common::getPlatformCode(p);
+			setVal("platform", Common::getPlatformCode(p));
 	}
 
 	/**
@@ -57,10 +58,10 @@ public:
 	 */
 	void updateDesc(const char *extra = 0);
 
-	Common::String &gameid() { return this->operator []("gameid"); }
-	Common::String &description() { return this->operator []("description"); }
-	Common::Language language() { return Common::parseLanguage(this->operator []("language")); }
-	Common::Platform platform() { return Common::parsePlatform(this->operator []("platform")); }
+	Common::String &gameid() { return getVal("gameid"); }
+	Common::String &description() { return getVal("description"); }
+	Common::Language language() const { return Common::parseLanguage(getVal("language")); }
+	Common::Platform platform() const { return Common::parsePlatform(getVal("platform")); }
 };
 
 /** List of games. */

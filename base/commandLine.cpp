@@ -550,8 +550,8 @@ static void listTargets() {
 			// be taken into account, too.
 			Common::String gameid(name);
 			GameDescriptor g = Base::findGame(gameid);
-			if (g["description"].size() > 0)
-				description = g["description"];
+			if (g.description().size() > 0)
+				description = g.description();
 		}
 
 		printf("%-20s %s\n", name.c_str(), description.c_str());
