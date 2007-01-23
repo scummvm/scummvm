@@ -50,7 +50,8 @@ class Parse;
 class Scenery;
 class GTimer;
 class Util;
-class Music;
+class Adlib;
+class Infogrames;
 
 /*
 #define	VAR_OFFSET(offs)		(*(uint32 *)(_vm->_global->_inter_variables + (offs)))
@@ -92,14 +93,15 @@ enum {
 	GF_WOODRUFF = 1 << 3,
 	GF_CD = 1 << 4,
 	GF_MAC = 1 << 5,
-	GF_EGA = 1 << 6
+	GF_EGA = 1 << 6,
+	GF_AMIGA = 1 << 7
 };
 
 enum {
 	kDebugFuncOp = 1 << 0,
 	kDebugDrawOp = 1 << 1,
 	kDebugGobOp = 1 << 2,
-	kDebugMusic = 1 << 3,     // CD and adlib music
+	kDebugMusic = 1 << 3,     // CD, Adlib and Infogrames music
 	kDebugParser = 1 << 4,
 	kDebugGameFlow = 1 << 5,
 	kDebugFileIO = 1 << 6,
@@ -165,7 +167,8 @@ public:
 	GTimer *_gtimer;
 	Util *_util;
 	Inter *_inter;
-	Music *_music;
+	Adlib *_adlib;
+	Infogrames *_infogrames;
 	GobEngine *_vm;
 
 	void writeVarDebug(uint32 offs, uint32 v);

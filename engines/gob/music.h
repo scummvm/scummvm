@@ -30,29 +30,194 @@
 #include "common/mutex.h"
 
 #include "gob/gob.h"
+#include "gob/util.h"
 
 namespace Gob {
 
 class GobEngine;
 
-class Music : public Audio::AudioStream {
+// Emulation of the "Paula" Amiga music chip
+class Paula: public Audio::AudioStream {
 public:
-	Music(GobEngine *vm);
-	virtual ~Music();
+	Paula(GobEngine *vm, bool stereo = false, int intFreq = 0);
+	~Paula();
+	
+	bool playing() const { return _playing; }
+	void setInterruptFreq(int freq) { _intFreq = freq; }
+	void clearVoice(int voice);
+	void clearVoices() { int i; for (i = 0; i < 4; i++) clearVoice(i); }
+	virtual void startPlay(void) {}
+	virtual void stopPlay(void) {}
+	virtual void pausePlay(bool pause) {}
+
+// AudioStream API
+	int readBuffer(int16 *buffer, const int numSamples);
+	bool isStereo() const { return _stereo; }
+	bool endOfData() const { return _end; }
+	int getRate() const { return _rate; }
+
+protected:
+	struct Channel {
+		int8 *data;
+		int8 *dataRepeat;
+		uint32 length;
+		uint32 lengthRepeat;
+		int16 period;
+		byte volume;
+		double offset;
+		byte panning; // For stereo mixing; 0: left, 1: right
+	} _voice[4];
+
+	int _rate;
+	int _intFreq;
+	int _curInt;
+	bool _stereo;
+	bool _end;
+	bool _playing;
+
+	GobEngine *_vm;
+
+	void mix(int16 *&buf, int8 data, int voice) {
+		if (_stereo) {
+			*buf++ += _voice[voice].panning == 0 ? 2 * _voice[voice].volume * data : 0;
+			*buf++ += _voice[voice].panning == 1 ? 2 * _voice[voice].volume * data : 0;
+		} else
+			*buf++ += _voice[voice].volume * data;
+	}
+	virtual void interrupt(void) {};
+};
+
+class Infogrames : public Paula {
+public:
+	class Instruments {
+	public:
+		struct Sample {
+			int8 *data;
+			int8 *dataRepeat;
+			uint32 length;
+			uint32 lengthRepeat;
+		} _samples[32];
+
+		uint8 _count;
+		int8 *_sampleData;
+
+		Instruments();
+		~Instruments();
+
+		bool load(Common::SeekableReadStream &ins);
+		bool load(const char *ins) {
+			Common::File f;
+
+			if (f.open(ins))
+				return load(f);
+			return false;
+		}
+	};
+
+	Infogrames(GobEngine *vm, bool stereo = false);
+	~Infogrames();
+
+	Instruments *getInstruments(void) const { return _instruments; }
+	bool getRepeating(void) const { return _repCount != 0; }
+	void setRepeating (int32 repCount) { _repCount = repCount; }
+	void restart(void) { if (!_data || !_instruments) return; init(); _end = false; }
+	virtual void startPlay(void) { if (_data && _instruments) { restart(); _playing = true; } }
+	virtual void stopPlay(void) { _playing = false; }
+	virtual void pausePlay(bool pause) { _playing = !pause; }
+
+	bool load(Common::SeekableReadStream &dum);
+	bool load(const char *dum) {
+		Common::File f;
+
+		if (f.open(dum))
+			return load(f);
+		return false;
+	}
+	void unload(bool destroyInstruments = false);
+	template<typename T> bool loadInstruments(T ins) {
+		unload(true);
+		_instruments = new Instruments();
+		if (!_instruments->load(ins)) {
+			delete _instruments;
+			_instruments = 0;
+			return false;
+		}
+		return true;
+	}
+
+protected:
+	Instruments *_instruments;
+
+	static const uint8 tickCount[];
+	static const uint16 periods[];
+	byte *_data;
+	int32 _repCount;
+
+	uint16 _volume;
+	int16 _period;
+	byte *_volSlideBlocks;
+	byte *_periodSlideBlocks;
+	byte *_subSong;
+	byte *_cmdBlocks;
+	uint8 _sample;
+	uint8 _speedCounter;
+	uint8 _speed;
+	uint8 _newVol;
+	uint8 _field_1E;
+
+	struct Slide {
+		int16 finetuneNeg;
+		int16 finetunePos;
+		byte *data;
+		int8 amount;
+		uint8 dataOffset;
+		uint8 flags; // 0: Apply finetune modifier, 2: Don't slide, 7: Continuous
+		uint8 curDelay1;
+		uint8 curDelay2;
+	};
+	struct Channel {
+		byte *cmdBlockIndices;
+		byte *cmds;
+		byte *cmdBlocks;
+		Slide volSlide;
+		Slide periodSlide;
+		int16 curPeriod;
+		int16 period;
+		uint16 curCmdBlock;
+		uint16 flags; // 0: Need init, 5: Loop cmdBlocks, 6: Ignore channel
+		uint8 ticks;
+		uint8 tickCount;
+		int8 periodMod;
+		uint8 field_2B;
+		uint8 field_2C;
+		uint8 field_2F;
+	} _chn[4];
+
+	void init(void);
+	void reset(void);
+	void getNextSample(Channel &chn);
+	int16 tune(Slide &slide, int16 start) const;
+	virtual void interrupt(void);
+};
+
+class Adlib : public Audio::AudioStream {
+public:
+	Adlib(GobEngine *vm);
+	virtual ~Adlib();
 
 	void lock() { _mutex.lock(); }
 	void unlock() { _mutex.unlock(); }
-	bool playing() { return _playing; }
-	bool getRepeating(void) { return _repCount != 0; }
+	bool playing() const { return _playing; }
+	bool getRepeating(void) const { return _repCount != 0; }
 	void setRepeating (int32 repCount) { _repCount = repCount; }
-	int getIndex(void) { return _index; }
+	int getIndex(void) const { return _index; }
 	virtual void startPlay(void);
 	virtual void stopPlay(void) { _mutex.lock(); _playing = false; _mutex.unlock(); }
 	virtual void playTrack(const char *trackname);
 	virtual void playBgMusic(void);
-	virtual bool loadMusic(const char *filename);
-	virtual void loadFromMemory(byte *data, int index=-1);
-	virtual void unloadMusic(void);
+	virtual bool load(const char *filename);
+	virtual void load(byte *data, int index=-1);
+	virtual void unload(void);
 
 // AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) {
@@ -100,22 +265,19 @@ protected:
 	void pollMusic(void);
 };
 
-class Music_Dummy: public Music {
+class Adlib_Dummy: public Adlib {
 public:
-	Music_Dummy(GobEngine *vm) : Music(vm) {
-		_vm->_mixer->setupPremix(0);
-		OPLDestroy(_opl);
-	}
+	Adlib_Dummy(GobEngine *vm) : Adlib(vm) {}
 
 	virtual void startPlay(void) {};
 	virtual void stopPlay(void) {};
 	virtual void playTrack(const char *trackname) {};
-	virtual void playBgMusic(void) {};
-	virtual bool loadMusic(const char *filename) { return true; };
-	virtual void loadFromMemory(byte *data) {};
-	virtual void unloadMusic(void) {};
+	virtual void playBgAdlib(void) {};
+	virtual bool load(const char *filename) { return true; }
+	virtual void load(byte *data, int index=-1) {}
+	virtual void unload(void) {};
 
-	virtual ~Music_Dummy() {};
+	virtual ~Adlib_Dummy() {};
 };
 
 } // End of namespace Gob

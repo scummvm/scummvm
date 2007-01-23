@@ -348,8 +348,8 @@ void Game::freeSoundSlot(int16 slot) {
 		return;
 
 	if (_soundADL[slot]) {
-		if (_vm->_music->getIndex() == slot)
-			_vm->_music->stopPlay();
+		if (_vm->_adlib->getIndex() == slot)
+			_vm->_adlib->stopPlay();
 		if (_soundFromExt[slot] == 1) {
 			delete[] ((char *) _soundSamples[slot]);
 			_soundFromExt[slot] = 0;

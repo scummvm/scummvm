@@ -84,8 +84,8 @@ static const GameSettings gob_games[] = {
 	// CD 1.02 version. Multilingual
 	{"gob1", "Gobliiins (CD)", GF_GOB1 | GF_CD, Common::UNK_LANG, "8bd873137b6831c896ee8ad217a6a398", "intro"},
 
-	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "c65e9cc8ba23a38456242e1f2b1caad4", "intro"},
-	{"gob1", "Gobliiins (Amiga)", GF_GOB1, Common::UNK_LANG, "972f22c6ff8144a6636423f0354ca549", "intro"},
+	{"gob1", "Gobliiins (Amiga)", GF_GOB1 | GF_AMIGA, Common::UNK_LANG, "c65e9cc8ba23a38456242e1f2b1caad4", "intro"},
+	{"gob1", "Gobliiins (Amiga)", GF_GOB1 | GF_AMIGA, Common::UNK_LANG, "972f22c6ff8144a6636423f0354ca549", "intro"},
 
 	{"gob1", "Gobliiins (Interactive Demo)", GF_GOB1, Common::UNK_LANG, "e72bd1e3828c7dec4c8a3e58c48bdfdb", "intro"},
 	
@@ -97,6 +97,8 @@ static const GameSettings gob_games[] = {
 	{"gob2", "Gobliins 2 (DOS Deu)", GF_GOB2, Common::DE_DEU, "a13892cdf4badda85a6f6fb47603a128", "intro"},
 	{"gob2", "Gobliins 2 (DOS Ru)", GF_GOB2, Common::RU_RUS, "cd3e1df8b273636ee32e34b7064f50e8", "intro"},
 
+	{"gob2", "Gobliins 2 (Amiga Deu)", GF_GOB2 | GF_AMIGA, Common::DE_DEU, "d28b9e9b41f31acfa58dcd12406c7b2c", "intro"},
+
 	// Supplied by blackwhiteeagle in bug report #1605235
 	{"gob2", "Gobliins 2 (DOS Deu)", GF_GOB2, Common::DE_DEU, "3e4e7db0d201587dd2df4003b2993ef6", "intro"},
 
@@ -107,7 +109,7 @@ static const GameSettings gob_games[] = {
 
 	{"gob2", "Gobliins 2 (Demo)", GF_GOB2, Common::UNK_LANG, "8b1c98ff2ab2e14f47a1b891e9b92217", "usa"},
 	{"gob2", "Gobliins 2 (Interactive Demo)", GF_GOB2, Common::UNK_LANG, "cf1c95b2939bd8ff58a25c756cb6125e", "intro"},
-	{"gob2", "Gobliins 2 (Amiga Interactive Demo)", GF_GOB2, Common::UNK_LANG, "4b278c2678ea01383fd5ca114d947eea", "intro"},
+	{"gob2", "Gobliins 2 (Amiga Interactive Demo)", GF_GOB2 | GF_AMIGA, Common::UNK_LANG, "4b278c2678ea01383fd5ca114d947eea", "intro"},
 
 	{"gob2", "Ween: The Prohpecy", GF_GOB2, Common::UNK_LANG, "2bb8878a8042244dd2b96ff682381baa", "intro"},
 	{"gob2", "Ween: The Prophecy (Fr)", GF_GOB2, Common::UNK_LANG, "4b10525a3782aa7ecd9d833b5c1d308b", "intro"},
@@ -195,7 +197,7 @@ GobEngine::GobEngine(OSystem * syst, uint32 features, Common::Language lang,
 	Common::addSpecialDebugLevel(kDebugFuncOp, "FuncOpcodes", "Script FuncOpcodes debug level");
 	Common::addSpecialDebugLevel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
 	Common::addSpecialDebugLevel(kDebugGobOp, "GoblinOpcodes", "Script GoblinOpcodes debug level");
-	Common::addSpecialDebugLevel(kDebugMusic, "Music", "CD and adlib music debug level");
+	Common::addSpecialDebugLevel(kDebugMusic, "Music", "CD, Adlib and Infogrames music debug level");
 	Common::addSpecialDebugLevel(kDebugParser, "Parser", "Parser debug level");
 	Common::addSpecialDebugLevel(kDebugGameFlow, "Gameflow", "Gameflow debug level");
 	Common::addSpecialDebugLevel(kDebugFileIO, "FileIO", "File Input/Output debug level");
@@ -222,7 +224,12 @@ GobEngine::~GobEngine() {
 	delete _scenery;
 	delete _gtimer;
 	delete _util;
-	delete _music;
+	if (_adlib)
+		delete _adlib;
+	if (_infogrames) {
+		_infogrames->unload(true);
+		delete _infogrames;
+	}
 	delete _video;
 	delete[] _startTot;
 	delete[] _startTot0;
@@ -680,6 +687,8 @@ uint32 GobEngine::readDataEndian(Common::InSaveFile &in, char *varBuf, byte *siz
 }
 
 int GobEngine::init() {
+	_infogrames = 0;
+	_adlib = 0;
 	_snd = new Snd(this);
 	_global = new Global(this);
 	_anim = new Anim();
@@ -715,11 +724,12 @@ int GobEngine::init() {
 	}
 	else
 		error("GobEngine::init(): Unknown version of game engine");
-	if ((_features & Gob::GF_MAC) || (_features & Gob::GF_GOB1) || (_features & Gob::GF_GOB2)) {
+	if (!(_features & Gob::GF_AMIGA) &&
+			((_features & Gob::GF_MAC) || (_features & Gob::GF_GOB1) || (_features & Gob::GF_GOB2))) {
 		if (MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL)
-			_music = new Music_Dummy(this);
+			_adlib = new Adlib_Dummy(this);
 		else
-			_music = new Music(this);
+			_adlib = new Adlib(this);
 	}
 	_vm = this;
 

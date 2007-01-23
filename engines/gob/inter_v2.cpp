@@ -1600,9 +1600,9 @@ bool Inter_v2::o2_playSound(char &cmdCount, int16 &counter, int16 &retFlag) {
 	}
 	// loc_E2F3
 	if (_vm->_game->_soundTypes[index] & 8) {
-		_vm->_music->loadFromMemory((byte *) _vm->_game->_soundSamples[index], index);
-		_vm->_music->setRepeating(repCount - 1);
-		_vm->_music->startPlay();
+		_vm->_adlib->load((byte *) _vm->_game->_soundSamples[index], index);
+		_vm->_adlib->setRepeating(repCount - 1);
+		_vm->_adlib->startPlay();
 	} else {
 		_vm->_snd->stopSound(0);
 		_vm->_snd->playSample(_vm->_game->_soundSamples[index], repCount, frequency);
@@ -1613,11 +1613,33 @@ bool Inter_v2::o2_playSound(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 bool Inter_v2::o2_goblinFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int16 cmd;
+	char fileName[20];
 
 	cmd = load16();
 	_vm->_global->_inter_execPtr += 2;
 
-	if (cmd == 100) {
+	switch (cmd) {
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+	case 11:
+	case 13:
+		load16();
+		break;
+
+	case 10:
+		strcpy(fileName, GET_VAR_STR(load16()));
+		strcat(fileName, ".DUM");
+		if (!_vm->_infogrames) {
+			_vm->_infogrames = new Infogrames(_vm, true);
+			_vm->_infogrames->loadInstruments("i1.ins");
+		}
+		_vm->_infogrames->load(fileName);
+		_vm->_infogrames->startPlay();
+		break;
+
+	case 100:
 		_vm->_goblin->_word_2F9C0 = VAR(load16());
 		_vm->_goblin->_word_2F9BE = VAR(load16());
 		_vm->_goblin->_dword_2F9B6 = load16();
@@ -1625,10 +1647,16 @@ bool Inter_v2::o2_goblinFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 		_vm->_goblin->_word_2F9BC = VAR(load16());
 		_vm->_goblin->_word_2F9BA = VAR(load16());
 		_vm->_goblin->sub_19BD3();
-	} else if (cmd != 101) {
+		break;
+
+	case 101:
+		break;
+
+	default:
 		_vm->_global->_inter_execPtr -= 2;
 		cmd = load16();
 		_vm->_global->_inter_execPtr += cmd << 1;
+		break;
 	}
 
 	return false;
