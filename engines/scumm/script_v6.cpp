@@ -999,6 +999,7 @@ void ScummEngine_v6::o6_cursorCommand() {
 	case 0x9A:		// SO_CURSOR_HOTSPOT Set cursor hotspot
 		a = pop();
 		setCursorHotspot(pop(), a);
+		updateCursor();
 		break;
 	case 0x9C:		// SO_CHARSET_SET
 		initCharset(pop());
