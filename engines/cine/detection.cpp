@@ -54,13 +54,7 @@ static const PlainGameDescriptor cineGames[] = {
 	{0, 0}
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(CINE, Cine::CineEngine, Cine::GAME_detectGames, cineGames, 0);
-
-REGISTER_PLUGIN(CINE, "Cinematique evo 1 engine", "Future Wars & Operation Stealth (C) Delphine Software");
-
 namespace Cine {
-
-#define FILE_MD5_BYTES 5000
 
 static const CINEGameDescription gameDescriptions[] = {
 	{
@@ -435,25 +429,36 @@ static const CINEGameDescription gameDescriptions[] = {
 	{ { NULL, NULL, AD_ENTRY1(NULL, NULL), Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0 }
 };
 
+}
+
+static const Common::ADParams detectionParams = {
+	// Pointer to ADGameDescription or its superset structure
+	(const byte *)Cine::gameDescriptions,
+	// Size of that superset structure
+	sizeof(Cine::CINEGameDescription),
+	// Number of bytes to compute MD5 sum for
+	5000,
+	// List of all engine targets
+	cineGames,
+	// Structure for autoupgrading obsolete targets
+	0
+};
+
+ADVANCED_DETECTOR_DEFINE_PLUGIN(CINE, Cine::CineEngine, Cine::GAME_detectGames, detectionParams);
+
+REGISTER_PLUGIN(CINE, "Cinematique evo 1 engine", "Future Wars & Operation Stealth (C) Delphine Software");
+
+namespace Cine {
+
 bool CineEngine::initGame() {
-	int i = Common::ADVANCED_DETECTOR_DETECT_INIT_GAME(
-		(const byte *)gameDescriptions,
-		sizeof(CINEGameDescription),
-		FILE_MD5_BYTES,
-		cineGames
-		);
+	int i = Common::ADVANCED_DETECTOR_DETECT_INIT_GAME(detectionParams);
+
 	_gameDescription = &gameDescriptions[i];
 	return true;
 }
 
 GameList GAME_detectGames(const FSList &fslist) {
-	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
-		fslist,
-		(const byte *)gameDescriptions,
-		sizeof(CINEGameDescription),
-		FILE_MD5_BYTES,
-		cineGames
-	);
+	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(fslist, detectionParams);
 }
 
 } // End of namespace Cine

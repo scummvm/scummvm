@@ -50,6 +50,19 @@ struct ADObsoleteGameID {
 	Common::Platform platform;
 };
 
+struct ADParams {
+	// Pointer to ADGameDescription or its superset structure
+	const byte *descs;
+	// Size of that superset structure
+	const int descItemSize;
+	// Number of bytes to compute MD5 sum for
+	const int md5Bytes;
+	// List of all engine targets
+	const PlainGameDescriptor *list;
+	// Structure for autoupgrading obsolete targets
+	const Common::ADObsoleteGameID *obsoleteList;
+};
+
 typedef Array<int> ADList;
 typedef Array<const ADGameDescription*> ADGameDescList;
 
@@ -84,7 +97,7 @@ public:
 	 * @param platform	restrict results to specified platform only
 	 * @return	list of indexes to GameDescriptions of matched games
 	 */
-	ADList detectGame(const FSList *fslist, int md5Bytes, Language language, Platform platform);
+	ADList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform);
 
 private:
 	ADGameDescList _gameDescriptions;
@@ -95,8 +108,7 @@ private:
 // Possibly move it inside class AdvancedDetector ?
 GameDescriptor ADVANCED_DETECTOR_FIND_GAMEID(
 	const char *gameid,
-	const PlainGameDescriptor *list,
-	const Common::ADObsoleteGameID *obsoleteList
+	const Common::ADParams &params
 	);
 
 
@@ -104,36 +116,30 @@ GameDescriptor ADVANCED_DETECTOR_FIND_GAMEID(
 // Possibly move it inside class AdvancedDetector ?
 GameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	const FSList &fslist,
-	const byte *descs,
-	const int descItemSize,
-	const int md5Bytes,
-	const PlainGameDescriptor *list
+	const Common::ADParams &params
 	);
 
 
 // FIXME/TODO: Rename this function to something more sensible.
 // Possibly move it inside class AdvancedDetector ?
 int ADVANCED_DETECTOR_DETECT_INIT_GAME(
-	const byte *descs,
-	const int descItemSize,
-	const int md5Bytes,
-	const PlainGameDescriptor *list
+	const Common::ADParams &params
 	);
 
 // FIXME/TODO: Rename this function to something more sensible.
 // Possibly move it inside class AdvancedDetector ?
 PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
 	GameList (*detectFunc)(const FSList &fslist),
-	const Common::ADObsoleteGameID *obsoleteList
+	const Common::ADParams &params
 	);
 
 
-#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,createFunction,detectFunc,list,obsoleteList) \
+#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,createFunction,detectFunc,params) \
 	GameList Engine_##engine##_gameIDList() { \
-		return GameList(list); \
+		return GameList(params.list); \
 	} \
 	GameDescriptor Engine_##engine##_findGameID(const char *gameid) { \
-		return Common::ADVANCED_DETECTOR_FIND_GAMEID(gameid,list,obsoleteList); \
+		return Common::ADVANCED_DETECTOR_FIND_GAMEID(gameid, params); \
 	} \
 	GameList Engine_##engine##_detectGames(const FSList &fslist) { \
 		return detectFunc(fslist);						\
@@ -141,7 +147,7 @@ PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
 	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \
 		assert(syst); \
 		assert(engine); \
-		PluginError err = ADVANCED_DETECTOR_ENGINE_CREATE(detectFunc, obsoleteList); \
+		PluginError err = ADVANCED_DETECTOR_ENGINE_CREATE(detectFunc, params); \
 		if (err == kNoError) \
 			*engine = new createFunction(syst); \
 		return err; \

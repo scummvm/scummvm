@@ -35,12 +35,12 @@ namespace Common {
 
 PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
 	GameList (*detectFunc)(const FSList &fslist),
-	const Common::ADObsoleteGameID *obsoleteList
+	const Common::ADParams &params
 	) {
 	const char *gameid = ConfMan.get("gameid").c_str();
 
-	if (obsoleteList != 0) {
-		for (const Common::ADObsoleteGameID *o = obsoleteList; o->from; ++o) {
+	if (params.obsoleteList != 0) {
+		for (const Common::ADObsoleteGameID *o = params.obsoleteList; o->from; ++o) {
 			if (!scumm_stricmp(gameid, o->from)) {
 				gameid = o->to;
 				ConfMan.set("gameid", o->to);
@@ -74,10 +74,9 @@ PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
 
 GameDescriptor ADVANCED_DETECTOR_FIND_GAMEID(
 	const char *gameid,
-	const PlainGameDescriptor *list,
-	const Common::ADObsoleteGameID *obsoleteList
+	const Common::ADParams &params
 	) {
-	const PlainGameDescriptor *g = list;
+	const PlainGameDescriptor *g = params.list;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
 			return *g;
@@ -85,8 +84,8 @@ GameDescriptor ADVANCED_DETECTOR_FIND_GAMEID(
 	}
 
 	GameDescriptor gs;
-	if (obsoleteList != 0) {
-		const Common::ADObsoleteGameID *o = obsoleteList;
+	if (params.obsoleteList != 0) {
+		const Common::ADObsoleteGameID *o = params.obsoleteList;
 		while (o->from) {
 			if (0 == scumm_stricmp(gameid, o->from)) {
 				gs["gameid"] = gameid;
@@ -116,10 +115,7 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 
 GameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	const FSList &fslist,
-	const byte *descs,
-	const int descItemSize,
-	const int md5Bytes,
-	const PlainGameDescriptor *list
+	const Common::ADParams &params
 	) {
 	GameList detectedGames;
 	Common::AdvancedDetector ad;
@@ -127,26 +123,23 @@ GameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	Common::ADGameDescList descList;
 	const byte *descPtr;
 
-	for (descPtr = descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += descItemSize)
+	for (descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize)
 		descList.push_back((const ADGameDescription *)descPtr);
 
 	ad.registerGameDescriptions(descList);
 
-	debug(3, "%s: cnt: %d", ((const ADGameDescription *)descs)->gameid,  descList.size());
+	debug(3, "%s: cnt: %d", ((const ADGameDescription *)params.descs)->gameid,  descList.size());
 
-	matches = ad.detectGame(&fslist, md5Bytes, Common::UNK_LANG, Common::kPlatformUnknown);
+	matches = ad.detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown);
 
 	for (uint i = 0; i < matches.size(); i++)
-		detectedGames.push_back(toGameDescriptor(*(const ADGameDescription *)(descs + matches[i] * descItemSize), list));
+		detectedGames.push_back(toGameDescriptor(*(const ADGameDescription *)(params.descs + matches[i] * params.descItemSize), params.list));
 
 	return detectedGames;
 }
 
 int ADVANCED_DETECTOR_DETECT_INIT_GAME(
-	const byte *descs,
-	const int descItemSize,
-	const int md5Bytes,
-	const PlainGameDescriptor *list
+	const Common::ADParams &params
 	) {
 	int gameNumber = -1;
 
@@ -166,15 +159,15 @@ int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 
 	Common::String gameid = ConfMan.get("gameid");
 
-	for (descPtr = descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += descItemSize)
+	for (descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize)
 		descList.push_back((const ADGameDescription *)descPtr);
 
 	ad.registerGameDescriptions(descList);
 
-	matches = ad.detectGame(0, md5Bytes, language, platform);
+	matches = ad.detectGame(0, params, language, platform);
 
 	for (uint i = 0; i < matches.size(); i++) {
-		if (((const ADGameDescription *)(descs + matches[i] * descItemSize))->gameid == gameid) {
+		if (((const ADGameDescription *)(params.descs + matches[i] * params.descItemSize))->gameid == gameid) {
 			gameNumber = matches[i];
 			break;
 		}
@@ -184,7 +177,7 @@ int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 		error("TODO invalid gameNumber %d (max. expected value: %d)", gameNumber, descList.size());
 	}
 
-	debug(2, "Running %s", toGameDescriptor(*(const ADGameDescription *)(descs + gameNumber * descItemSize), list).description().c_str());
+	debug(2, "Running %s", toGameDescriptor(*(const ADGameDescription *)(params.descs + gameNumber * params.descItemSize), params.list).description().c_str());
 
 	return gameNumber;
 }
@@ -199,7 +192,7 @@ static String getDescription(const ADGameDescription *g) {
 	return String(tmp);
 }
 
-ADList AdvancedDetector::detectGame(const FSList *fslist, int md5Bytes, Language language, Platform platform) {
+ADList AdvancedDetector::detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform) {
 	typedef HashMap<String, bool, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringSet;
 	StringSet filesList;
 
@@ -238,7 +231,7 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, int md5Bytes, Language
 
 			if (!filesList.contains(tstr) && !filesList.contains(tstr2)) continue;
 
-			if (!md5_file(*file, md5sum, md5Bytes)) continue;
+			if (!md5_file(*file, md5sum, params.md5Bytes)) continue;
 			for (j = 0; j < 16; j++) {
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 			}
@@ -257,7 +250,7 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, int md5Bytes, Language
 				if (testFile.open(file->_key)) {
 					testFile.close();
 
-					if (md5_file(file->_key.c_str(), md5sum, md5Bytes)) {
+					if (md5_file(file->_key.c_str(), md5sum, params.md5Bytes)) {
 						for (j = 0; j < 16; j++) {
 							sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 						}

@@ -1,5 +1,3 @@
-#define FILE_MD5_BYTES 5000
-
 static const AGOSGameDescription gameDescriptions[] = {
 	// Elvira 1 - English Amiga Floppy
 	{

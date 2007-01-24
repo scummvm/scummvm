@@ -33,11 +33,6 @@
 using namespace Kyra;
 using namespace Common;
 
-enum {
-	// We only compute MD5 of the first megabyte of our data files.
-	kMD5FileSizeLimit = 1024 * 1024
-};
-
 struct KYRAGameDescription {
 	Common::ADGameDescription desc;
 
@@ -130,6 +125,19 @@ const PlainGameDescriptor gameList[] = {
 	{ 0, 0 }
 };
 
+static const Common::ADParams detectionParams = {
+	// Pointer to ADGameDescription or its superset structure
+	(const byte *)adGameDescs,
+	// Size of that superset structure
+	sizeof(KYRAGameDescription),
+	// Number of bytes to compute MD5 sum for
+	1024 * 1024,
+	// List of all engine targets
+	gameList,
+	// Structure for autoupgrading obsolete targets
+	0
+};
+
 } // End of anonymous namespace
 
 GameList Engine_KYRA_gameIDList() {
@@ -137,17 +145,11 @@ GameList Engine_KYRA_gameIDList() {
 }
 
 GameDescriptor Engine_KYRA_findGameID(const char *gameid) {
-	return Common::ADVANCED_DETECTOR_FIND_GAMEID(gameid, gameList, 0);
+	return Common::ADVANCED_DETECTOR_FIND_GAMEID(gameid, detectionParams);
 }
 
 GameList Engine_KYRA_detectGames(const FSList &fslist) {
-	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
-		fslist,
-		(const byte *)adGameDescs,
-		sizeof(KYRAGameDescription),
-		kMD5FileSizeLimit,
-		gameList
-	);
+	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(fslist, detectionParams);
 }
 
 PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
@@ -171,7 +173,7 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 
 	ad.registerGameDescriptions(descList);
 
-	matches = ad.detectGame(&fslist, kMD5FileSizeLimit, Common::UNK_LANG, Common::kPlatformUnknown);
+	matches = ad.detectGame(&fslist, detectionParams, Common::UNK_LANG, Common::kPlatformUnknown);
 
 	if (!setupGameFlags(matches, flags)) {
 		return kNoGameDataFoundError;

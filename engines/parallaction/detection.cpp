@@ -51,14 +51,7 @@ static const PlainGameDescriptor parallactionGames[] = {
 	{0, 0}
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(PARALLACTION, Parallaction::Parallaction, Parallaction::GAME_detectGames, parallactionGames, 0);
-
-REGISTER_PLUGIN(PARALLACTION, "Parallaction engine", "Nippon Safes Inc. (C) Dynabyte");
-
-
 namespace Parallaction {
-
-#define FILE_MD5_BYTES 5000
 
 static const PARALLACTIONGameDescription gameDescriptions[] = {
 	{
@@ -85,26 +78,37 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 	{ { NULL, NULL, { { NULL, 0, NULL } }, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0 }
 };
 
+}
+
+static const Common::ADParams detectionParams = {
+	// Pointer to ADGameDescription or its superset structure
+	(const byte *)Parallaction::gameDescriptions,
+	// Size of that superset structure
+	sizeof(Parallaction::PARALLACTIONGameDescription),
+	// Number of bytes to compute MD5 sum for
+	5000,
+	// List of all engine targets
+	parallactionGames,
+	// Structure for autoupgrading obsolete targets
+	0
+};
+
+ADVANCED_DETECTOR_DEFINE_PLUGIN(PARALLACTION, Parallaction::Parallaction, Parallaction::GAME_detectGames, detectionParams);
+
+REGISTER_PLUGIN(PARALLACTION, "Parallaction engine", "Nippon Safes Inc. (C) Dynabyte");
+
+
+namespace Parallaction {
 
 bool Parallaction::detectGame() {
-	int i = Common::ADVANCED_DETECTOR_DETECT_INIT_GAME(
-		(const byte *)gameDescriptions,
-		sizeof(PARALLACTIONGameDescription),
-		FILE_MD5_BYTES,
-		parallactionGames
-		);
+	int i = Common::ADVANCED_DETECTOR_DETECT_INIT_GAME(detectionParams);
+
 	_gameDescription = &gameDescriptions[i];
 	return true;
 }
 
 GameList GAME_detectGames(const FSList &fslist) {
-	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
-		fslist,
-		(const byte *)gameDescriptions,
-		sizeof(PARALLACTIONGameDescription),
-		FILE_MD5_BYTES,
-		parallactionGames
-	);
+	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(fslist, detectionParams);
 }
 
 } // End of namespace Parallaction

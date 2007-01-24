@@ -79,33 +79,40 @@ static const PlainGameDescriptor simonGames[] = {
 	{0, 0}
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(AGOS, AGOS::AGOSEngine, AGOS::GAME_detectGames, simonGames, obsoleteGameIDsTable);
+namespace AGOS {
+
+#include "agosgame.cpp"
+
+}
+
+static const Common::ADParams detectionParams = {
+	// Pointer to ADGameDescription or its superset structure
+	(const byte *)AGOS::gameDescriptions,
+	// Size of that superset structure
+	sizeof(AGOS::AGOSGameDescription),
+	// Number of bytes to compute MD5 sum for
+	5000,
+	// List of all engine targets
+	simonGames,
+	// Structure for autoupgrading obsolete targets
+	obsoleteGameIDsTable
+};
+
+ADVANCED_DETECTOR_DEFINE_PLUGIN(AGOS, AGOS::AGOSEngine, AGOS::GAME_detectGames, detectionParams);
 
 REGISTER_PLUGIN(AGOS, "AGOS", "AGOS (C) Adventure Soft");
 
 namespace AGOS {
 
-#include "agosgame.cpp"
-
 bool AGOSEngine::initGame() {
-	int i = Common::ADVANCED_DETECTOR_DETECT_INIT_GAME(
-		(const byte *)gameDescriptions,
-		sizeof(AGOSGameDescription),
-		FILE_MD5_BYTES,
-		simonGames
-		);
+	int i = Common::ADVANCED_DETECTOR_DETECT_INIT_GAME(detectionParams);
+
 	_gameDescription = &gameDescriptions[i];
 	return true;
 }
 
 GameList GAME_detectGames(const FSList &fslist) {
-	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
-		fslist,
-		(const byte *)gameDescriptions,
-		sizeof(AGOSGameDescription),
-		FILE_MD5_BYTES,
-		simonGames
-	);
+	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(fslist, detectionParams);
 }
 
 int AGOSEngine::getGameId() const {
