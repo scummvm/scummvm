@@ -85,28 +85,40 @@ const Common::ADGameFileDescription *SagaEngine::getFilesDescriptions() const { 
 static GameList GAME_detectGames(const FSList &fslist);
 }
 
-static const PlainGameDescriptor saga_games[] = {
+static const PlainGameDescriptor sagaGames[] = {
 	{"ite", "Inherit the Earth: Quest for the Orb"},
 	{"ihnm", "I Have No Mouth and I Must Scream"},
 	{0, 0}
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(SAGA, Saga::SagaEngine, Saga::GAME_detectGames, saga_games, 0);
+namespace Saga {
 
+#include "sagagame.cpp"
+
+}
+
+static const Common::ADParams detectionParams = {
+	// Pointer to ADGameDescription or its superset structure
+	(const byte *)Saga::gameDescriptions,
+	// Size of that superset structure
+	sizeof(Saga::SAGAGameDescription),
+	// Number of bytes to compute MD5 sum for
+	5000,
+	// List of all engine targets
+	sagaGames,
+	// Structure for autoupgrading obsolete targets
+	0
+};
+
+ADVANCED_DETECTOR_DEFINE_PLUGIN(SAGA, Saga::SagaEngine, Saga::GAME_detectGames, detectionParams);
 
 REGISTER_PLUGIN(SAGA, "SAGA Engine", "Inherit the Earth (C) Wyrmkeep Entertainment");
 
 namespace Saga {
 
-#include "sagagame.cpp"
-
 bool SagaEngine::initGame() {
-	int i = Common::ADVANCED_DETECTOR_DETECT_INIT_GAME(
-		(const byte *)gameDescriptions,
-		sizeof(SAGAGameDescription),
-		FILE_MD5_BYTES,
-		saga_games
-		);
+	int i = Common::ADVANCED_DETECTOR_DETECT_INIT_GAME(detectionParams);
+
 	_gameDescription = &gameDescriptions[i];
 
 	_gameDisplayInfo = *_gameDescription->gameDisplayInfo;
@@ -117,13 +129,7 @@ bool SagaEngine::initGame() {
 }
 
 GameList GAME_detectGames(const FSList &fslist) {
-	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
-		fslist,
-		(const byte *)gameDescriptions,
-		sizeof(SAGAGameDescription),
-		FILE_MD5_BYTES,
-		saga_games
-	);
+	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(fslist, detectionParams);
 }
 
 } // End of namespace Saga

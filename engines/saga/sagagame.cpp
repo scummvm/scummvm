@@ -560,8 +560,6 @@ static const GameSoundInfo IHNM_GameSound = {
 	true
 };
 
-#define FILE_MD5_BYTES 5000
-
 static const SAGAGameDescription gameDescriptions[] = {
 	// Inherit the earth - DOS Demo version
 	// sound unchecked
