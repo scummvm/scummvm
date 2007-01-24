@@ -183,9 +183,9 @@ static const CINEGameDescription gameDescriptions[] = {
 			"fw",
 			"Demo",
 			{
-				{ "demo",		0,	"0f50767cd964e302d3af0ba2528df8c4"},
-				{ "demo.prc",	0,	"d2ac3a743d288359c63644ea7071edae"},
-				{ NULL, 0, NULL}
+				{ "demo",		0,	"0f50767cd964e302d3af0ba2528df8c4", -1},
+				{ "demo.prc",	0,	"d2ac3a743d288359c63644ea7071edae", -1},
+				{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
@@ -283,9 +283,9 @@ static const CINEGameDescription gameDescriptions[] = {
 			"os",
 			"256 colors",
 			{
-				{ "procs1",		0,	"74c2dabd9d212525fca8875a5f6d8994"},
-				{ "sds1",		0,	"75443ba39cdc95667e07d7118e5c151c"},
-				{ NULL, 0, NULL}
+				{ "procs1",		0,	"74c2dabd9d212525fca8875a5f6d8994", -1},
+				{ "sds1",		0,	"75443ba39cdc95667e07d7118e5c151c", -1},
+				{ NULL, 0, NULL, 0}
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,

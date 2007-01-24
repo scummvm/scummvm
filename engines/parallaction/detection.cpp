@@ -59,15 +59,15 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			"nippon",
 			"",
 			{
-				{ "disk1",	0, "610363308258e926dbabd5a9e7bb769f"},
-				{ "disk2",	0, "bfdd7bcfbc226f4acf3f67fa9efa2826"},
-				{ "disk3",	0, "eec08180240888d76e3cfe3e183d5d5d"},
-				{ "disk4",	0, "5bffddc7db226bdaa7dd3e10e5a15e68"},
-				{ "en", 	0, "65cbfa81eafe308621184796ed116700"},
-				{ "fr", 	0, "ac20c743ea10f2cb4491f76c5644582c"},
-				{ "ge", 	0, "50916bfa34aee1380e0e959b37eceb5a"},
-				{ "it", 	0, "89964aef04d2c53a615ee8983caf2775"},
-				{ NULL, 0, NULL}
+				{ "disk1",	0, "610363308258e926dbabd5a9e7bb769f", 1060142},
+				{ "disk2",	0, "bfdd7bcfbc226f4acf3f67fa9efa2826", 907205},
+				{ "disk3",	0, "eec08180240888d76e3cfe3e183d5d5d", 1030721},
+				{ "disk4",	0, "5bffddc7db226bdaa7dd3e10e5a15e68", 1151403},
+				{ "en", 	0, "65cbfa81eafe308621184796ed116700", 399360},
+				{ "fr", 	0, "ac20c743ea10f2cb4491f76c5644582c", 410624},
+				{ "ge", 	0, "50916bfa34aee1380e0e959b37eceb5a", 410624},
+				{ "it", 	0, "89964aef04d2c53a615ee8983caf2775", 410624},
+				{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -75,7 +75,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 		GType_Nippon,
 		0,
 	},
-	{ { NULL, NULL, { { NULL, 0, NULL } }, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0 }
+	{ { NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0 }
 };
 
 }

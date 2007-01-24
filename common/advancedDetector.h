@@ -34,6 +34,7 @@ struct ADGameFileDescription {
 	const char *fileName;
 	uint16 fileType;
 	const char *md5;
+	const int32 fileSize;
 };
 
 struct ADGameDescription {
@@ -66,7 +67,7 @@ struct ADParams {
 typedef Array<int> ADList;
 typedef Array<const ADGameDescription*> ADGameDescList;
 
-#define AD_ENTRY1(f, x) {{ f, 0, x }, {NULL, 0, NULL}}
+#define AD_ENTRY1(f, x) {{ f, 0, x, -1}, {NULL, 0, NULL, 0}}
 
 
 // TODO/FIXME: Fingolfin asks: Why is AdvancedDetector a class, considering that

@@ -57,14 +57,9 @@ static const PlainGameDescriptor agiGames[] = {
 	{0, 0}
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(AGI, Agi::AgiEngine, Agi::GAME_detectGames, agiGames, 0);
-
-REGISTER_PLUGIN(AGI, "AGI v2 + v3 Engine", "Sierra AGI Engine (C) Sierra On-Line Software");
-
 
 namespace Agi {
 
-#define FILE_MD5_BYTES 5000
 #define FANMADE_LV(name,md5,lang,ver) {			\
 		{ \
 			"agi", \
@@ -961,28 +956,39 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Voodoo Girl - Queen of the Darned (v1.2 2002 Mar 29)", "11d0417b7b886f963d0b36789dac4c8f"),
 	FANMADE("Wizaro (v0.1)", "abeec1eda6eaf8dbc52443ea97ff140c"),
 
-	{ { NULL, NULL, {NULL, 0, NULL}, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0, 0 }
+	{ { NULL, NULL, {NULL, 0, NULL, 0}, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0, 0 }
 };
 
+}
+
+static const Common::ADParams detectionParams = {
+	// Pointer to ADGameDescription or its superset structure
+	(const byte *)Agi::gameDescriptions,
+	// Size of that superset structure
+	sizeof(Agi::AGIGameDescription),
+	// Number of bytes to compute MD5 sum for
+	5000,
+	// List of all engine targets
+	agiGames,
+	// Structure for autoupgrading obsolete targets
+	0
+};
+
+ADVANCED_DETECTOR_DEFINE_PLUGIN(AGI, Agi::AgiEngine, Agi::GAME_detectGames, detectionParams);
+
+REGISTER_PLUGIN(AGI, "AGI v2 + v3 Engine", "Sierra AGI Engine (C) Sierra On-Line Software");
+
+namespace Agi {
+
 bool AgiEngine::initGame() {
-	int i = Common::ADVANCED_DETECTOR_DETECT_INIT_GAME(
-		(const byte *)gameDescriptions,
-		sizeof(AGIGameDescription),
-		FILE_MD5_BYTES,
-		agiGames
-		);
+	int i = Common::ADVANCED_DETECTOR_DETECT_INIT_GAME(detectionParams);
+
 	_gameDescription = &gameDescriptions[i];
 	return true;
 }
 
 GameList GAME_detectGames(const FSList &fslist) {
-	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
-		fslist,
-		(const byte *)gameDescriptions,
-		sizeof(AGIGameDescription),
-		FILE_MD5_BYTES,
-		agiGames
-	);
+	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(fslist, detectionParams);
 }
 
 } // End of namespace Agi

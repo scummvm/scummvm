@@ -70,7 +70,7 @@ static const KYRAGameDescription adGameDescs[] = {
 	{ { "kyra2", 0, AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"), UNK_LANG, kPlatformPC }, KYRA2_UNK_FLAGS }, // check this! (cd version?)
 
 	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), UNK_LANG, kPlatformPC }, KYRA3_CD_FLAGS },
-	{ { NULL, NULL, {NULL, 0, NULL}, UNK_LANG, kPlatformUnknown }, KYRA2_UNK_FLAGS }
+	{ { NULL, NULL, {NULL, 0, NULL, 0}, UNK_LANG, kPlatformUnknown }, KYRA2_UNK_FLAGS }
 };
 
 static bool setupGameFlags(const ADList &list, GameFlags &flags) {
