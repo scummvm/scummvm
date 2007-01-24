@@ -420,6 +420,8 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION_OPT("joystick", "0")
+				settings["joystick_num"] = option;
+				settings.erase("joystick");
 			END_OPTION
 
 			DO_LONG_OPTION("platform")
