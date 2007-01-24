@@ -29,8 +29,10 @@
 struct TimerSlot {
 	Common::TimerManager::TimerProc callback;
 	void *refCon;
-	int32 interval;
-	int32 nextFireTime;
+	uint32 interval;	// in microseconds
+
+	uint32 nextFireTime;	// in milliseconds
+	uint32 nextFireTimeMicro;	// mircoseconds part of nextFire
 	
 	TimerSlot *next;
 };
@@ -39,7 +41,7 @@ void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {
 	// The head points to a fake anchor TimerSlot; this common
 	// trick allows us to get rid of many special cases.
 	
-	const int32 nextFireTime = newSlot->nextFireTime;
+	const uint32 nextFireTime = newSlot->nextFireTime;
 	TimerSlot *slot = head;
 	newSlot->next = 0;
 
@@ -47,7 +49,7 @@ void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {
 	// timers in such a way that the list stays sorted...
 	while (true) {
 		assert(slot);
-		if (slot->next == 0 || slot->next->nextFireTime > nextFireTime) {
+		if (slot->next == 0 || nextFireTime < slot->next->nextFireTime) {
 			newSlot->next = slot->next;
 			slot->next = newSlot;
 			return;
@@ -80,7 +82,7 @@ DefaultTimerManager::~DefaultTimerManager() {
 void DefaultTimerManager::handler() {
 	Common::StackLock lock(_mutex);
 
-	const int32 curTime = g_system->getMillis() * 1000;
+	const uint32 curTime = g_system->getMillis();
 	
 	// Repeat as long as there is a TimerSlot that is scheduled to fire.
 	TimerSlot *slot = _head->next;
@@ -92,7 +94,12 @@ void DefaultTimerManager::handler() {
 		// queue. Has to be done before the timer callback is invoked, in case
 		// the callback wants to remove itself.
 		assert(slot->interval > 0);
-		slot->nextFireTime += slot->interval;
+		slot->nextFireTime += (slot->interval / 1000);
+		slot->nextFireTimeMicro += (slot->interval % 1000);
+		if (slot->nextFireTimeMicro > 1000) {
+			slot->nextFireTime += slot->nextFireTimeMicro / 1000;
+			slot->nextFireTimeMicro %= 1000;
+		}
 		insertPrioQueue(_head, slot);
 
 		// Invoke the timer callback
@@ -108,12 +115,12 @@ bool DefaultTimerManager::installTimerProc(TimerProc callback, int32 interval, v
 	assert(interval > 0);
 	Common::StackLock lock(_mutex);
 	
-	
 	TimerSlot *slot = new TimerSlot;
 	slot->callback = callback;
 	slot->refCon = refCon;
 	slot->interval = interval;
-	slot->nextFireTime = g_system->getMillis() * 1000 + interval;
+	slot->nextFireTime = g_system->getMillis() + interval / 1000;
+	slot->nextFireTimeMicro = interval % 1000;
 	slot->next = 0;
 	
 	insertPrioQueue(_head, slot);
