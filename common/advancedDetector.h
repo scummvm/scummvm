@@ -25,7 +25,7 @@
 #include "common/fs.h"
 
 #include "base/game.h"	// For PlainGameDescriptor and GameList
-#include "base/plugins.h"	// For DetectedGameList
+#include "base/plugins.h"	// For PluginError
 
 
 namespace Common {
