@@ -93,7 +93,7 @@ public:
 	 *
 	 * @param fslist	FSList to scan or NULL for scanning all specified
 	 *  default directories.
-	 * @param md5Bytes	number of bytes which are used to calculate MD5
+	 * @param params	a ADParams struct containing various parameters
 	 * @param language	restrict results to specified language only
 	 * @param platform	restrict results to specified platform only
 	 * @return	list of indexes to GameDescriptions of matched games
