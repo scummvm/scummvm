@@ -192,15 +192,6 @@ int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 }
 
 
-static String getDescription(const ADGameDescription *g) {
-	char tmp[256];
-
-	snprintf(tmp, 256, "%s (%s %s/%s)", g->gameid, g->extra,
-			 getPlatformDescription(g->platform), getLanguageDescription(g->language));
-
-	return String(tmp);
-}
-
 static ADList detectGame(ADGameDescList gameDescriptions, const FSList *fslist, const Common::ADParams &params, Language language, Platform platform) {
 	typedef HashMap<String, bool, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringSet;
 	StringSet filesList;
@@ -325,7 +316,8 @@ static ADList detectGame(ADGameDescList gameDescriptions, const FSList *fslist, 
 			debug(3, "Matched file: %s", tstr.c_str());
 		}
 		if (!fileMissing) {
-			debug(2, "Found game: %s (%d)", getDescription(g).c_str(), i);
+			debug(2, "Found game: %s (%s %s/%s) (%d)", g->gameid, g->extra,
+			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 
 			// Count the number of matching files. Then, only keep those
 			// entries which match a maximal amount of files.
@@ -345,7 +337,8 @@ static ADList detectGame(ADGameDescList gameDescriptions, const FSList *fslist, 
 			}
 
 		} else {
-			debug(5, "Skipping game: %s (%d)", getDescription(g).c_str(), i);
+			debug(5, "Skipping game: %s (%s %s/%s) (%d)", g->gameid, g->extra,
+			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 		}
 	}
 
