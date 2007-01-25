@@ -497,7 +497,7 @@ freddicove	Freddi Fish 5: The Case of the Creature of Coral Cave
 
 maze	Freddi Fish and Luther's Maze Madness
 	4f04b321a95d4315ce6d65f8e1dd0368	-1	us	All	HE 80	-	-	Kirben
-	cd424f143a141bc59226ad83a6e40f51	-1	nl	Mac	HE 98.5	-	-	daniel9
+	cd424f143a141bc59226ad83a6e40f51	-1	nl	All	HE 98.5	-	-	daniel9, sugarcube
 	4dbff3787aedcd96b0b325f2d92d7ad9	-1	us	All	HE 100	Updated	-	Kirben
 
 water	Freddi Fish and Luther's Water Worries
