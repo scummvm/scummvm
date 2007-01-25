@@ -354,7 +354,7 @@ static ADList detectGame(ADGameDescList gameDescriptions, const FSList *fslist, 
 		printf("ScummVM team along with your game name and version:\n");
 
 		for (StringMap::const_iterator file = filesMD5.begin(); file != filesMD5.end(); ++file)
-			printf("%s: %s\n", file->_key.c_str(), file->_value.c_str());
+			printf("%s: \"%s\", %d\n", file->_key.c_str(), file->_value.c_str(), filesSize[file->_key]);
 	}
 
 	return matched;
