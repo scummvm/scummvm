@@ -2332,7 +2332,7 @@ void Inter_v2::o2_playInfogrames(int16 &extraData, int32 *retVarPtr, Goblin::Gob
 	strcat(fileName, ".DUM");
 	debugC(1, kDebugMusic, "Playing Infogrames music file \"%s\"", fileName);
 	if (!_vm->_game->_infIns) {
-		_vm->_game->_infIns = new Infogrames::Instruments;
+		_vm->_game->_infIns = new Audio::Infogrames::Instruments;
 		if (!_vm->_game->_infIns->load("i1.ins")) {
 			warning("Couldn't load instruments file");
 			delete _vm->_game->_infIns;
@@ -2342,7 +2342,7 @@ void Inter_v2::o2_playInfogrames(int16 &extraData, int32 *retVarPtr, Goblin::Gob
 	if (_vm->_game->_infIns) {
 		_vm->_mixer->stopHandle(_vm->_game->_infHandle);
 		_vm->_game->_infogrames =
-			new Infogrames(*_vm->_game->_infIns, true,
+			new Audio::Infogrames(*_vm->_game->_infIns, true,
 					_vm->_mixer->getOutputRate());
 		if (!_vm->_game->_infogrames->load(fileName)) {
 			warning("Couldn't load infogrames music");

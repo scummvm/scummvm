@@ -23,6 +23,7 @@
 #ifndef GOB_GAME_H
 #define GOB_GAME_H
 
+#include "sound/mods/infogrames.h"
 #include "gob/sound.h"
 #include "gob/music.h"
 #include "gob/video.h"
@@ -152,8 +153,8 @@ public:
 	char _soundFromExt[60];
 	bool _soundADL[60];
 
-	Infogrames::Instruments *_infIns;
-	Infogrames *_infogrames;
+	Audio::Infogrames::Instruments *_infIns;
+	Audio::Infogrames *_infogrames;
 	Audio::SoundHandle _infHandle;
 
 	char _totToLoad[20];

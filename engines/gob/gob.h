@@ -51,7 +51,6 @@ class Scenery;
 class GTimer;
 class Util;
 class Adlib;
-class Infogrames;
 
 /*
 #define	VAR_OFFSET(offs)		(*(uint32 *)(_vm->_global->_inter_variables + (offs)))

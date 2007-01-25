@@ -20,6 +20,8 @@ MODULE_OBJS := \
 	wave.o \
 	mods/module.o \
 	mods/protracker.o \
+	mods/paula.o \
+	mods/infogrames.o \
 	softsynth/adlib.o \
 	softsynth/ym2612.o \
 	softsynth/fluidsynth.o \
