@@ -96,6 +96,20 @@ Resource::Resource(KyraEngine *engine) {
 				}
 			}
 		}
+
+		if (_engine->gameFlags().platform == Common::kPlatformFMTowns) {
+			Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
+			uint unloadHash = (_engine->gameFlags().lang == Common::EN_ANY) ? Common::hashit_lower("JMC.PAK") : Common::hashit_lower("EMC.PAK");
+
+			for (;start != _pakfiles.end(); ++start) {
+				if ((*start)->filename() == unloadHash) {
+					delete *start;
+					*start = 0;
+					_pakfiles.erase(start);
+					break;
+				}
+			}
+		}
 	}
 }
 
