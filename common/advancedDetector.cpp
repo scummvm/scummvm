@@ -33,6 +33,21 @@
 
 namespace Common {
 
+/**
+ * Detect games in specified directory.
+ * Parameters language and platform are used to pass on values
+ * specified by the user. I.e. this is used to restrict search scope.
+ *
+ * @param fslist	FSList to scan or NULL for scanning all specified
+ *  default directories.
+ * @param params	a ADParams struct containing various parameters
+ * @param language	restrict results to specified language only
+ * @param platform	restrict results to specified platform only
+ * @return	list of indexes to GameDescriptions of matched games
+ */
+static ADList detectGame(ADGameDescList gameDescriptions, const FSList *fslist, const Common::ADParams &params, Language language, Platform platform);
+
+
 PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
 	GameList (*detectFunc)(const FSList &fslist),
 	const Common::ADParams &params
@@ -118,7 +133,6 @@ GameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	const Common::ADParams &params
 	) {
 	GameList detectedGames;
-	Common::AdvancedDetector ad;
 	Common::ADList matches;
 	Common::ADGameDescList descList;
 	const byte *descPtr;
@@ -126,11 +140,9 @@ GameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	for (descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize)
 		descList.push_back((const ADGameDescription *)descPtr);
 
-	ad.registerGameDescriptions(descList);
-
 	debug(3, "%s: cnt: %d", ((const ADGameDescription *)params.descs)->gameid,  descList.size());
 
-	matches = ad.detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown);
+	matches = detectGame(descList, &fslist, params, Common::UNK_LANG, Common::kPlatformUnknown);
 
 	for (uint i = 0; i < matches.size(); i++)
 		detectedGames.push_back(toGameDescriptor(*(const ADGameDescription *)(params.descs + matches[i] * params.descItemSize), params.list));
@@ -144,7 +156,6 @@ int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 	int gameNumber = -1;
 
 	GameList detectedGames;
-	Common::AdvancedDetector ad;
 	Common::ADList matches;
 	Common::ADGameDescList descList;
 	const byte *descPtr;
@@ -162,9 +173,7 @@ int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 	for (descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize)
 		descList.push_back((const ADGameDescription *)descPtr);
 
-	ad.registerGameDescriptions(descList);
-
-	matches = ad.detectGame(0, params, language, platform);
+	matches = detectGame(descList, 0, params, language, platform);
 
 	for (uint i = 0; i < matches.size(); i++) {
 		if (((const ADGameDescription *)(params.descs + matches[i] * params.descItemSize))->gameid == gameid) {
@@ -192,7 +201,7 @@ static String getDescription(const ADGameDescription *g) {
 	return String(tmp);
 }
 
-ADList AdvancedDetector::detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform) {
+static ADList detectGame(ADGameDescList gameDescriptions, const FSList *fslist, const Common::ADParams &params, Language language, Platform platform) {
 	typedef HashMap<String, bool, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringSet;
 	StringSet filesList;
 
@@ -211,12 +220,12 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, const Common::ADParams
 	bool fileMissing;
 	const ADGameFileDescription *fileDesc;
 
-	assert(_gameDescriptions.size());
+	assert(gameDescriptions.size());
 
 	// First we compose list of files which we need MD5s for
-	for (i = 0; i < _gameDescriptions.size(); i++) {
-		for (j = 0; _gameDescriptions[i]->filesDescriptions[j].fileName; j++) {
-			tstr = String(_gameDescriptions[i]->filesDescriptions[j].fileName);
+	for (i = 0; i < gameDescriptions.size(); i++) {
+		for (j = 0; gameDescriptions[i]->filesDescriptions[j].fileName; j++) {
+			tstr = String(gameDescriptions[i]->filesDescriptions[j].fileName);
 			tstr.toLowercase();
 			tstr2 = tstr + ".";
 			filesList[tstr] = true;
@@ -275,8 +284,8 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, const Common::ADParams
 	ADList matched;
 	int maxFilesMatched = 0;
 
-	for (i = 0; i < _gameDescriptions.size(); i++) {
-		const ADGameDescription *g = _gameDescriptions[i];
+	for (i = 0; i < gameDescriptions.size(); i++) {
+		const ADGameDescription *g = gameDescriptions[i];
 		fileMissing = false;
 
 		// Do not even bother to look at entries which do not have matching

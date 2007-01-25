@@ -32,9 +32,9 @@ namespace Common {
 
 struct ADGameFileDescription {
 	const char *fileName;
-	uint16 fileType;      // Optional. Not used in detection, only be engines
-	const char *md5;      // Optional could be NULL
-	const int32 fileSize; // Optional. Set to -1 to ignore
+	uint16 fileType;      // Optional. Not used during detection, only by engines.
+	const char *md5;      // Optional. May be NULL.
+	const int32 fileSize; // Optional. Set to -1 to ignore.
 };
 
 struct ADGameDescription {
@@ -70,43 +70,7 @@ typedef Array<const ADGameDescription*> ADGameDescList;
 #define AD_ENTRY1(f, x) {{ f, 0, x, -1}, {NULL, 0, NULL, 0}}
 
 
-// TODO/FIXME: Fingolfin asks: Why is AdvancedDetector a class, considering that
-// it is only used as follow:
-//  1) Create an instance of it on the stack
-//  2) invoke registerGameDescriptions and setFileMD5Bytes 
-//  3) invoke detectGame *once*
-// Obviously, 2) could also be handled by passing more params to detectGame.
-// So it seem we could replace this class by a simple advancedDetectGame(...)
-// function, w/o a class or instantiating object... ? Or is there a deeper
-// reason I miss?
-class AdvancedDetector {
-public:
-
-	void registerGameDescriptions(ADGameDescList gameDescriptions) {
-		_gameDescriptions = gameDescriptions;
-	}
-
-	/**
-	 * Detect games in specified directory.
-	 * Parameters language and platform are used to pass on values
-	 * specified by the user. I.e. this is used to restrict search scope.
-	 *
-	 * @param fslist	FSList to scan or NULL for scanning all specified
-	 *  default directories.
-	 * @param params	a ADParams struct containing various parameters
-	 * @param language	restrict results to specified language only
-	 * @param platform	restrict results to specified platform only
-	 * @return	list of indexes to GameDescriptions of matched games
-	 */
-	ADList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform);
-
-private:
-	ADGameDescList _gameDescriptions;
-};
-
-
 // FIXME/TODO: Rename this function to something more sensible.
-// Possibly move it inside class AdvancedDetector ?
 GameDescriptor ADVANCED_DETECTOR_FIND_GAMEID(
 	const char *gameid,
 	const Common::ADParams &params
@@ -114,7 +78,6 @@ GameDescriptor ADVANCED_DETECTOR_FIND_GAMEID(
 
 
 // FIXME/TODO: Rename this function to something more sensible.
-// Possibly move it inside class AdvancedDetector ?
 GameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	const FSList &fslist,
 	const Common::ADParams &params
@@ -122,13 +85,11 @@ GameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 
 
 // FIXME/TODO: Rename this function to something more sensible.
-// Possibly move it inside class AdvancedDetector ?
 int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 	const Common::ADParams &params
 	);
 
 // FIXME/TODO: Rename this function to something more sensible.
-// Possibly move it inside class AdvancedDetector ?
 PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
 	GameList (*detectFunc)(const FSList &fslist),
 	const Common::ADParams &params
