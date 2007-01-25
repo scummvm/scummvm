@@ -70,38 +70,58 @@ typedef Array<const ADGameDescription*> ADGameDescList;
 #define AD_ENTRY1(f, x) {{ f, 0, x, -1}, {NULL, 0, NULL, 0}}
 
 
-// FIXME/TODO: Rename this function to something more sensible.
-GameDescriptor ADVANCED_DETECTOR_FIND_GAMEID(
+namespace AdvancedDetector {
+
+/**
+ * Scan through the game descriptors specified in params and search for
+ * 'gameid' in there. If a match is found, returns a  GameDescriptor
+ * with gameid and description set.
+ */
+GameDescriptor findGameID(
 	const char *gameid,
 	const Common::ADParams &params
 	);
 
 
 // FIXME/TODO: Rename this function to something more sensible.
-GameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
+GameList detectAllGames(
 	const FSList &fslist,
 	const Common::ADParams &params
 	);
 
 
 // FIXME/TODO: Rename this function to something more sensible.
-int ADVANCED_DETECTOR_DETECT_INIT_GAME(
+int detectBestMatchingGame(
 	const Common::ADParams &params
 	);
 
 // FIXME/TODO: Rename this function to something more sensible.
-PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
+void upgradeTargetIfNecessary(const Common::ADParams &params);
+
+// FIXME/TODO: Rename this function to something more sensible.
+PluginError detectGameForEngineCreation(
 	GameList (*detectFunc)(const FSList &fslist),
 	const Common::ADParams &params
 	);
 
 
-#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,className,detectFunc,params) \
+// FIXME: It would probably be good to merge detectBestMatchingGame
+// and detectGameForEngineCreation into a single function. Right now, the
+// detection code called priort to creating an engine instance
+// (i.e. detectGameForEngineCreation) differs from the detection code the 
+// engines call internally (i.e. detectBestMatchingGame). This could lead
+// to hard to debug and odd errors.
+
+
+} // End of namespace AdvancedDetector
+
+
+#define ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_FUNC(engine,factoryFunc,detectFunc,params) \
 	GameList Engine_##engine##_gameIDList() { \
 		return GameList(params.list); \
 	} \
 	GameDescriptor Engine_##engine##_findGameID(const char *gameid) { \
-		return Common::ADVANCED_DETECTOR_FIND_GAMEID(gameid, params); \
+		return Common::AdvancedDetector::findGameID(gameid, params); \
 	} \
 	GameList Engine_##engine##_detectGames(const FSList &fslist) { \
 		return detectFunc(fslist);						\
@@ -109,11 +129,19 @@ PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
 	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \
 		assert(syst); \
 		assert(engine); \
-		PluginError err = ADVANCED_DETECTOR_ENGINE_CREATE(detectFunc, params); \
+		Common::AdvancedDetector::upgradeTargetIfNecessary(params); \
+		PluginError err = Common::AdvancedDetector::detectGameForEngineCreation(detectFunc, params); \
 		if (err == kNoError) \
-			*engine = new className(syst); \
+			*engine = factoryFunc(syst); \
 		return err; \
 	} \
+	void dummyFuncToAllowTrailingSemicolon()
+
+#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,className,detectFunc,params) \
+	static className *engine##_createInstance(OSystem *syst) { \
+		return new className(syst); \
+	} \
+	ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_FUNC(engine,engine##_createInstance,detectFunc,params); \
 	void dummyFuncToAllowTrailingSemicolon()
 
 

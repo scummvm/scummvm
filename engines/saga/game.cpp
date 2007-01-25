@@ -114,7 +114,9 @@ REGISTER_PLUGIN(SAGA, "SAGA Engine", "Inherit the Earth (C) Wyrmkeep Entertainme
 namespace Saga {
 
 bool SagaEngine::initGame() {
-	int i = Common::ADVANCED_DETECTOR_DETECT_INIT_GAME(detectionParams);
+	int i = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	if (i < 0)
+		return false;
 
 	_gameDescription = &gameDescriptions[i];
 
@@ -126,7 +128,7 @@ bool SagaEngine::initGame() {
 }
 
 GameList GAME_detectGames(const FSList &fslist) {
-	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(fslist, detectionParams);
+	return Common::AdvancedDetector::detectAllGames(fslist, detectionParams);
 }
 
 } // End of namespace Saga

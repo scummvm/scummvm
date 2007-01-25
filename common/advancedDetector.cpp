@@ -33,6 +33,8 @@
 
 namespace Common {
 
+namespace AdvancedDetector {
+
 /**
  * Detect games in specified directory.
  * Parameters language and platform are used to pass on values
@@ -48,27 +50,32 @@ namespace Common {
 static ADList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform);
 
 
-PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
+void upgradeTargetIfNecessary(const Common::ADParams &params) {
+	if (params.obsoleteList == 0)
+		return;
+
+	const char *gameid = ConfMan.get("gameid").c_str();
+
+	for (const Common::ADObsoleteGameID *o = params.obsoleteList; o->from; ++o) {
+		if (!scumm_stricmp(gameid, o->from)) {
+			gameid = o->to;
+			ConfMan.set("gameid", o->to);
+
+			if (o->platform != Common::kPlatformUnknown)
+				ConfMan.set("platform", Common::getPlatformCode(o->platform));
+
+			warning("Target upgraded from %s to %s", o->from, o->to);
+			ConfMan.flushToDisk();
+			break;
+		}
+	}
+}
+
+PluginError detectGameForEngineCreation(
 	GameList (*detectFunc)(const FSList &fslist),
 	const Common::ADParams &params
 	) {
-	const char *gameid = ConfMan.get("gameid").c_str();
-
-	if (params.obsoleteList != 0) {
-		for (const Common::ADObsoleteGameID *o = params.obsoleteList; o->from; ++o) {
-			if (!scumm_stricmp(gameid, o->from)) {
-				gameid = o->to;
-				ConfMan.set("gameid", o->to);
-
-				if (o->platform != Common::kPlatformUnknown)
-					ConfMan.set("platform", Common::getPlatformCode(o->platform));
-
-				warning("Target upgraded from %s to %s", o->from, o->to);
-				ConfMan.flushToDisk();
-				break;
-			}
-		}
-	}
+	Common::String gameid = ConfMan.get("gameid");
 
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
@@ -87,7 +94,7 @@ PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
 	return kNoGameDataFoundError;
 }
 
-GameDescriptor ADVANCED_DETECTOR_FIND_GAMEID(
+GameDescriptor findGameID(
 	const char *gameid,
 	const Common::ADParams &params
 	) {
@@ -128,7 +135,7 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 	return gd;
 }
 
-GameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
+GameList detectAllGames(
 	const FSList &fslist,
 	const Common::ADParams &params
 	) {
@@ -141,7 +148,7 @@ GameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	return detectedGames;
 }
 
-int ADVANCED_DETECTOR_DETECT_INIT_GAME(
+int detectBestMatchingGame(
 	const Common::ADParams &params
 	) {
 	Common::Language language = Common::UNK_LANG;
@@ -164,9 +171,7 @@ int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 		}
 	}
 
-	if (gameNumber < 0) {
-		error("ADVANCED_DETECTOR_DETECT_INIT_GAME: no match found (TODO: Let the caller handle this)");
-	} else {
+	if (gameNumber >= 0) {
 		debug(2, "Running %s", toGameDescriptor(*(const ADGameDescription *)(params.descs + gameNumber * params.descItemSize), params.list).description().c_str());
 	}
 
@@ -339,5 +344,7 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 
 	return matched;
 }
+
+}	// End of namespace AdvancedDetector
 
 }	// End of namespace Common

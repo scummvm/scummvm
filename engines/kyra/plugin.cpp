@@ -28,50 +28,47 @@
 
 #include "base/plugins.h"
 
-using namespace Kyra;
-using namespace Common;
-
 struct KYRAGameDescription {
 	Common::ADGameDescription desc;
 
-	GameFlags flags;
+	Kyra::GameFlags flags;
 };
 
 namespace {
 
-#define FLAGS(x, y, z, w, id) { UNK_LANG, kPlatformUnknown, x, y, z, w, id }
+#define FLAGS(x, y, z, w, id) { Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, w, id }
 
-#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, GI_KYRA1)
-#define KYRA1_TOWNS_FLAGS FLAGS(false, true, true, false, GI_KYRA1)
-#define KYRA1_CD_FLAGS FLAGS(false, true, false, true, GI_KYRA1)
-#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, GI_KYRA1)
+#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_FLAGS FLAGS(false, true, true, false, Kyra::GI_KYRA1)
+#define KYRA1_CD_FLAGS FLAGS(false, true, false, true, Kyra::GI_KYRA1)
+#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, Kyra::GI_KYRA1)
 
-#define KYRA2_UNK_FLAGS FLAGS(false, false, false, false, GI_KYRA2)
+#define KYRA2_UNK_FLAGS FLAGS(false, false, false, false, Kyra::GI_KYRA2)
 
-#define KYRA3_CD_FLAGS FLAGS(false, false, false, true, GI_KYRA3)
+#define KYRA3_CD_FLAGS FLAGS(false, false, false, true, Kyra::GI_KYRA3)
 
 static const KYRAGameDescription adGameDescs[] = {
-	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "3c244298395520bb62b5edfe41688879"), EN_ANY, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
-	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "796e44863dd22fa635b042df1bf16673"), EN_ANY, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
-	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "abf8eb360e79a6c2a837751fbd4d3d24"), FR_FRA, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
-	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "6018e1dfeaca7fe83f8d0b00eb0dd049"), DE_DEU, kPlatformPC }, KYRA1_FLOPPY_FLAGS },
-	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "f0b276781f47c130f423ec9679fe9ed9"), DE_DEU, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from Arne.F
-	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "8909b41596913b3f5deaf3c9f1017b01"), ES_ESP, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from VooD
-	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "747861d2a9c643c59fdab570df5b9093"), ES_ESP, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // floppy 1.8 from clemmy
-	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "ef08c8c237ee1473fd52578303fc36df"), IT_ITA, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from gourry
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "3c244298395520bb62b5edfe41688879"), Common::EN_ANY, Common::kPlatformPC }, KYRA1_FLOPPY_FLAGS },
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "796e44863dd22fa635b042df1bf16673"), Common::EN_ANY, Common::kPlatformPC }, KYRA1_FLOPPY_FLAGS },
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "abf8eb360e79a6c2a837751fbd4d3d24"), Common::FR_FRA, Common::kPlatformPC }, KYRA1_FLOPPY_FLAGS },
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "6018e1dfeaca7fe83f8d0b00eb0dd049"), Common::DE_DEU, Common::kPlatformPC }, KYRA1_FLOPPY_FLAGS },
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "f0b276781f47c130f423ec9679fe9ed9"), Common::DE_DEU, Common::kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from Arne.F
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "8909b41596913b3f5deaf3c9f1017b01"), Common::ES_ESP, Common::kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from VooD
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "747861d2a9c643c59fdab570df5b9093"), Common::ES_ESP, Common::kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // floppy 1.8 from clemmy
+	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "ef08c8c237ee1473fd52578303fc36df"), Common::IT_ITA, Common::kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from gourry
 
-	{ { "kyra1", 0, AD_ENTRY1("TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59"), EN_ANY, kPlatformFMTowns }, KYRA1_TOWNS_FLAGS },
+	{ { "kyra1", 0, AD_ENTRY1("TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59"), Common::EN_ANY, Common::kPlatformFMTowns }, KYRA1_TOWNS_FLAGS },
 
-	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "fac399fe62f98671e56a005c5e94e39f"), EN_ANY, kPlatformPC }, KYRA1_CD_FLAGS },
-	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "230f54e6afc007ab4117159181a1c722"), DE_DEU, kPlatformPC }, KYRA1_CD_FLAGS },
-	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "b037c41768b652a040360ffa3556fd2a"), FR_FRA, kPlatformPC }, KYRA1_CD_FLAGS },
+	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "fac399fe62f98671e56a005c5e94e39f"), Common::EN_ANY, Common::kPlatformPC }, KYRA1_CD_FLAGS },
+	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "230f54e6afc007ab4117159181a1c722"), Common::DE_DEU, Common::kPlatformPC }, KYRA1_CD_FLAGS },
+	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "b037c41768b652a040360ffa3556fd2a"), Common::FR_FRA, Common::kPlatformPC }, KYRA1_CD_FLAGS },
 
-	{ { "kyra1", "Demo", AD_ENTRY1("DEMO1.WSA", "fb722947d94897512b13b50cc84fd648"), EN_ANY, kPlatformPC }, KYRA1_DEMO_FLAGS },
+	{ { "kyra1", "Demo", AD_ENTRY1("DEMO1.WSA", "fb722947d94897512b13b50cc84fd648"), Common::EN_ANY, Common::kPlatformPC }, KYRA1_DEMO_FLAGS },
 
-	{ { "kyra2", 0, AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"), UNK_LANG, kPlatformPC }, KYRA2_UNK_FLAGS }, // check this! (cd version?)
+	{ { "kyra2", 0, AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"), Common::UNK_LANG, Common::kPlatformPC }, KYRA2_UNK_FLAGS }, // check this! (cd version?)
 
-	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), UNK_LANG, kPlatformPC }, KYRA3_CD_FLAGS },
-	{ { NULL, NULL, {NULL, 0, NULL, 0}, UNK_LANG, kPlatformUnknown }, FLAGS(0, 0, 0, 0, 0) }
+	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), Common::UNK_LANG, Common::kPlatformPC }, KYRA3_CD_FLAGS },
+	{ { NULL, NULL, {NULL, 0, NULL, 0}, Common::UNK_LANG, Common::kPlatformUnknown }, FLAGS(0, 0, 0, 0, 0) }
 };
 
 const PlainGameDescriptor gameList[] = {
@@ -101,48 +98,48 @@ GameList Engine_KYRA_gameIDList() {
 }
 
 GameDescriptor Engine_KYRA_findGameID(const char *gameid) {
-	return ADVANCED_DETECTOR_FIND_GAMEID(gameid, detectionParams);
+	return Common::AdvancedDetector::findGameID(gameid, detectionParams);
 }
 
 GameList Engine_KYRA_detectGames(const FSList &fslist) {
-	return ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(fslist, detectionParams);
+	return Common::AdvancedDetector::detectAllGames(fslist, detectionParams);
 }
 
 PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
 	
-	int id = ADVANCED_DETECTOR_DETECT_INIT_GAME(detectionParams);
+	int id = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
 	if (id == -1) {
 		// FIXME: This case currently can never happen, as we simply error out
-		// inside ADVANCED_DETECTOR_DETECT_INIT_GAME.
+		// inside AdvancedDetector::detectBestMatchingGame.
 		
 		// maybe add non md5 based detection again?
 		return kNoGameDataFoundError;
 	}
 
-	GameFlags flags = adGameDescs[id].flags;
+	Kyra::GameFlags flags = adGameDescs[id].flags;
 
-	Platform platform = parsePlatform(ConfMan.get("platform"));
-	if (platform != kPlatformUnknown) {
+	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
+	if (platform != Common::kPlatformUnknown) {
 		flags.platform = platform;
 	}
 
-	if (flags.lang == UNK_LANG) {
-		Language lang = parseLanguage(ConfMan.get("language"));
-		if (lang != UNK_LANG) {
+	if (flags.lang == Common::UNK_LANG) {
+		Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
+		if (lang != Common::UNK_LANG) {
 			flags.lang = lang;
 		} else {
-			flags.lang = EN_ANY;
+			flags.lang = Common::EN_ANY;
 		}
 	}
 
 	if (!scumm_stricmp("kyra1", gameid)) {
-		*engine = new KyraEngine_v1(syst, flags);
+		*engine = new Kyra::KyraEngine_v1(syst, flags);
 	} else if (!scumm_stricmp("kyra2", gameid)) {
-		*engine = new KyraEngine_v2(syst, flags);
+		*engine = new Kyra::KyraEngine_v2(syst, flags);
 	} else if (!scumm_stricmp("kyra3", gameid)) {
-		*engine = new KyraEngine_v3(syst, flags);
+		*engine = new Kyra::KyraEngine_v3(syst, flags);
 	} else
 		error("Kyra engine created with invalid gameid");
 

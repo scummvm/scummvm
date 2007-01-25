@@ -981,14 +981,16 @@ REGISTER_PLUGIN(AGI, "AGI v2 + v3 Engine", "Sierra AGI Engine (C) Sierra On-Line
 namespace Agi {
 
 bool AgiEngine::initGame() {
-	int i = Common::ADVANCED_DETECTOR_DETECT_INIT_GAME(detectionParams);
+	int i = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	if (i < 0)
+		return false;
 
 	_gameDescription = &gameDescriptions[i];
 	return true;
 }
 
 GameList GAME_detectGames(const FSList &fslist) {
-	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(fslist, detectionParams);
+	return Common::AdvancedDetector::detectAllGames(fslist, detectionParams);
 }
 
 } // End of namespace Agi

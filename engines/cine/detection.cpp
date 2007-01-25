@@ -450,14 +450,16 @@ REGISTER_PLUGIN(CINE, "Cinematique evo 1 engine", "Future Wars & Operation Steal
 namespace Cine {
 
 bool CineEngine::initGame() {
-	int i = Common::ADVANCED_DETECTOR_DETECT_INIT_GAME(detectionParams);
+	int i = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	if (i < 0)
+		return false;
 
 	_gameDescription = &gameDescriptions[i];
 	return true;
 }
 
 GameList GAME_detectGames(const FSList &fslist) {
-	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(fslist, detectionParams);
+	return Common::AdvancedDetector::detectAllGames(fslist, detectionParams);
 }
 
 } // End of namespace Cine
