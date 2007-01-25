@@ -2276,7 +2276,7 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 	uint8 *srcData = _vm->resource()->fileData(filename, &fileSize);
 
 	if (!srcData) {
-		warning("coudln't load bitmap: '%s'", filename);
+		warning("couldn't load bitmap: '%s'", filename);
 		return;
 	}
 

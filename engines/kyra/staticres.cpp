@@ -411,7 +411,7 @@ bool StaticResource::loadLanguageTable(const char *filename, void *&ptr, int &si
 		static bool warned = false;
 		if (!warned) {
 			warned = true;
-			warning("coudln't find specific language table for your version, using English now");
+			warning("couldn't find specific language table for your version, using English now");
 		}
 		return true;
 	}
