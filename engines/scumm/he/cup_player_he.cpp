@@ -137,16 +137,12 @@ void CUP_Player::updateSfx() {
 			}
 			continue;
 		}
-		if ((sfx->flags & kSfxFlagRestart) == 0) {
-			bool alreadyPlaying = false;
+		if ((sfx->flags & kSfxFlagRestart) != 0) {
 			for (int ch = 0; ch < kSfxChannels; ++ch) {
 				if (_mixer->isSoundHandleActive(_sfxChannels[ch].handle) && _sfxChannels[ch].sfxNum == sfx->num) {
-					alreadyPlaying = true;
+					_mixer->stopHandle(_sfxChannels[ch].handle);
 					break;
 				}
-			}
-			if (alreadyPlaying) {
-				continue;
 			}
 		}
 		CUP_SfxChannel *sfxChannel = 0;
@@ -185,6 +181,7 @@ void CUP_Player::updateSfx() {
 void CUP_Player::waitForSfxChannel(int channel) {
 	assert(channel >= 0 && channel < kSfxChannels);
 	CUP_SfxChannel *sfxChannel = &_sfxChannels[channel];
+	debug(1, "waitForSfxChannel %d", channel);
 	if ((sfxChannel->flags & kSfxFlagLoop) == 0) {
 		while (_mixer->isSoundHandleActive(sfxChannel->handle) && !_vm->_quit) {
 			_vm->parseEvents();
