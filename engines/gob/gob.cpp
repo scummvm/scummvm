@@ -226,10 +226,6 @@ GobEngine::~GobEngine() {
 	delete _util;
 	if (_adlib)
 		delete _adlib;
-	if (_infogrames) {
-		_infogrames->unload(true);
-		delete _infogrames;
-	}
 	delete _video;
 	delete[] _startTot;
 	delete[] _startTot0;
@@ -687,7 +683,6 @@ uint32 GobEngine::readDataEndian(Common::InSaveFile &in, char *varBuf, byte *siz
 }
 
 int GobEngine::init() {
-	_infogrames = 0;
 	_adlib = 0;
 	_snd = new Snd(this);
 	_global = new Global(this);
@@ -724,9 +719,11 @@ int GobEngine::init() {
 	}
 	else
 		error("GobEngine::init(): Unknown version of game engine");
+	_noMusic = MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL;
 	if (!(_features & Gob::GF_AMIGA) &&
-			((_features & Gob::GF_MAC) || (_features & Gob::GF_GOB1) || (_features & Gob::GF_GOB2))) {
-		if (MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL)
+			(((_features & Gob::GF_MAC) && (_features & Gob::GF_GOB1)) ||
+			 (_features & Gob::GF_GOB2))) {
+		if (_noMusic)
 			_adlib = new Adlib_Dummy(this);
 		else
 			_adlib = new Adlib(this);

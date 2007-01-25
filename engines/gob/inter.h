@@ -362,7 +362,8 @@ protected:
 	void o2_playMult(void);
 	void o2_initCursor(void);
 	void o2_playImd(void);
-	void o2_setPickable(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o2_handleGoblins(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o2_playInfogrames(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
 };
 
 }				// End of namespace Gob

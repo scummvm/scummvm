@@ -84,7 +84,7 @@ const int Inter_v2::_goblinFuncLookUp[][2] = {
 	{50, 36},
 	{52, 37},
 	{53, 38},
-	{150, 39},
+	{100, 39},
 	{152, 40},
 	{200, 41},
 	{201, 42},
@@ -551,94 +551,94 @@ void Inter_v2::setupOpcodes(void) {
 
 	static const OpcodeGoblinEntryV2 opcodesGoblin[71] = {
 		/* 00 */
-		OPCODE(o1_setState),
-		OPCODE(o1_setCurFrame),
-		OPCODE(o1_setNextState),
-		OPCODE(o1_setMultState),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		/* 04 */
-		OPCODE(o1_setOrder),
-		OPCODE(o1_setActionStartState),
-		OPCODE(o1_setCurLookDir),
-		OPCODE(o1_setType),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		/* 08 */
-		OPCODE(o1_setNoTick),
-		OPCODE(o2_setPickable),
-		OPCODE(o1_setXPos),
-		OPCODE(o1_setYPos),
+		{NULL, ""},
+		OPCODE(o2_playInfogrames),
+		{NULL, ""},
+		{NULL, ""},
 		/* 0C */
-		OPCODE(o1_setDoAnim),
-		OPCODE(o1_setRelaxTime),
-		OPCODE(o1_setMaxTick),
-		OPCODE(o1_getState),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		/* 10 */
-		OPCODE(o1_getCurFrame),
-		OPCODE(o1_getNextState),
-		OPCODE(o1_getMultState),
-		OPCODE(o1_getOrder),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		/* 14 */
-		OPCODE(o1_getActionStartState),
-		OPCODE(o1_getCurLookDir),
-		OPCODE(o1_getType),
-		OPCODE(o1_getNoTick),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		/* 18 */
-		OPCODE(o1_getPickable),
-		OPCODE(o1_getObjMaxFrame),
-		OPCODE(o1_getXPos),
-		OPCODE(o1_getYPos),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		/* 1C */
-		OPCODE(o1_getDoAnim),
-		OPCODE(o1_getRelaxTime),
-		OPCODE(o1_getMaxTick),
-		OPCODE(o1_manipulateMap),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		/* 20 */
-		OPCODE(o1_getItem),
-		OPCODE(o1_manipulateMapIndirect),
-		OPCODE(o1_getItemIndirect),
-		OPCODE(o1_setPassMap),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		/* 24 */
-		OPCODE(o1_setGoblinPosH),
-		OPCODE(o1_getGoblinPosXH),
-		OPCODE(o1_getGoblinPosYH),
-		OPCODE(o1_setGoblinMultState),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		OPCODE(o2_handleGoblins),
 		/* 28 */
-		OPCODE(o1_setGoblinUnk14),
-		OPCODE(o1_setItemIdInPocket),
-		OPCODE(o1_setItemIndInPocket),
-		OPCODE(o1_getItemIdInPocket),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		/* 2C */
-		OPCODE(o1_getItemIndInPocket),
-		OPCODE(o1_setItemPos),
-		OPCODE(o1_setGoblinPos),
-		OPCODE(o1_setGoblinState),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		/* 30 */
-		OPCODE(o1_setGoblinStateRedraw),
-		OPCODE(o1_decRelaxTime),
-		OPCODE(o1_getGoblinPosX),
-		OPCODE(o1_getGoblinPosY),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		/* 34 */
-		OPCODE(o1_clearPathExistence),
-		OPCODE(o1_setGoblinVisible),
-		OPCODE(o1_setGoblinInvisible),
-		OPCODE(o1_getObjectIntersect),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		/* 38 */
-		OPCODE(o1_getGoblinIntersect),
-		OPCODE(o1_setItemPos),
-		OPCODE(o1_loadObjects),
-		OPCODE(o1_freeObjects),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		/* 3C */
-		OPCODE(o1_animateObjects),
-		OPCODE(o1_drawObjects),
-		OPCODE(o1_loadMap),
-		OPCODE(o1_moveGoblin),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		/* 40 */
-		OPCODE(o1_switchGoblin),
-		OPCODE(o1_loadGoblin),
-		OPCODE(o1_writeTreatItem),
-		OPCODE(o1_moveGoblin0),
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		/* 44 */
-		OPCODE(o1_setGoblinTarget),
-		OPCODE(o1_setGoblinObjectsPos),
-		OPCODE(o1_initGoblin)
+		{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 	};
 
 	_opcodesDrawV2 = opcodesDraw;
@@ -687,9 +687,11 @@ void Inter_v2::executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Go
 		}
 
 	if (op == NULL) {
-		warning("unimplemented opcodeGoblin: %d", i);
+		int16 val;
+
 		_vm->_global->_inter_execPtr -= 2;
-		_vm->_global->_inter_execPtr += load16() * 2;
+		val = load16();
+		_vm->_global->_inter_execPtr += val << 1;
 	}
 	else
 		(this->*op) (extraData, retVarPtr, objDesc);
@@ -1613,52 +1615,13 @@ bool Inter_v2::o2_playSound(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 bool Inter_v2::o2_goblinFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int16 cmd;
-	char fileName[20];
+	int16 extraData;
 
 	cmd = load16();
 	_vm->_global->_inter_execPtr += 2;
 
-	switch (cmd) {
-	case 0:
-	case 1:
-	case 2:
-	case 3:
-	case 11:
-	case 13:
-		load16();
-		break;
-
-	case 10:
-		strcpy(fileName, GET_VAR_STR(load16()));
-		strcat(fileName, ".DUM");
-		if (!_vm->_infogrames) {
-			_vm->_infogrames = new Infogrames(_vm, true);
-			_vm->_infogrames->loadInstruments("i1.ins");
-		}
-		_vm->_infogrames->load(fileName);
-		_vm->_infogrames->startPlay();
-		break;
-
-	case 100:
-		_vm->_goblin->_word_2F9C0 = VAR(load16());
-		_vm->_goblin->_word_2F9BE = VAR(load16());
-		_vm->_goblin->_dword_2F9B6 = load16();
-		_vm->_goblin->_dword_2F9B2 = load16();
-		_vm->_goblin->_word_2F9BC = VAR(load16());
-		_vm->_goblin->_word_2F9BA = VAR(load16());
-		_vm->_goblin->sub_19BD3();
-		break;
-
-	case 101:
-		break;
-
-	default:
-		_vm->_global->_inter_execPtr -= 2;
-		cmd = load16();
-		_vm->_global->_inter_execPtr += cmd << 1;
-		break;
-	}
-
+	if (cmd != 101)
+		executeGoblinOpcode(cmd, extraData, NULL, NULL);
 	return false;
 }
 
@@ -2346,6 +2309,51 @@ void Inter_v2::o2_switchTotSub(void) {
 	_vm->_game->switchTotSub(index, skipPlay);
 }
 
+void Inter_v2::o2_handleGoblins(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
+	_vm->_goblin->_word_2F9C0 = VAR(load16());
+	_vm->_goblin->_word_2F9BE = VAR(load16());
+	_vm->_goblin->_dword_2F9B6 = load16();
+	_vm->_goblin->_dword_2F9B2 = load16();
+	_vm->_goblin->_word_2F9BC = VAR(load16());
+	_vm->_goblin->_word_2F9BA = VAR(load16());
+	_vm->_goblin->handleGoblins();
+}
+
+void Inter_v2::o2_playInfogrames(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
+	int16 varName;
+	char fileName[20];
+
+	varName = load16();
+
+	if (_vm->_noMusic)
+		return;
+
+	strcpy(fileName, GET_VAR_STR(varName));
+	strcat(fileName, ".DUM");
+	debugC(1, kDebugMusic, "Playing Infogrames music file \"%s\"", fileName);
+	if (!_vm->_game->_infIns) {
+		_vm->_game->_infIns = new Infogrames::Instruments;
+		if (!_vm->_game->_infIns->load("i1.ins")) {
+			warning("Couldn't load instruments file");
+			delete _vm->_game->_infIns;
+			_vm->_game->_infIns = 0;
+		}
+	}
+	if (_vm->_game->_infIns) {
+		_vm->_mixer->stopHandle(_vm->_game->_infHandle);
+		_vm->_game->_infogrames =
+			new Infogrames(*_vm->_game->_infIns, true,
+					_vm->_mixer->getOutputRate());
+		if (!_vm->_game->_infogrames->load(fileName)) {
+			warning("Couldn't load infogrames music");
+			delete _vm->_game->_infogrames;
+			_vm->_game->_infogrames = 0;
+		} else
+			_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType,
+					&_vm->_game->_infHandle, _vm->_game->_infogrames);
+	}
+}
+
 void Inter_v2::storeKey(int16 key) {
 	WRITE_VAR(12, _vm->_util->getTimeKey() - _vm->_game->_startTimeKey);
 
@@ -2386,10 +2394,6 @@ void Inter_v2::storeMouse(void) {
 	WRITE_VAR(2, x);
 	WRITE_VAR(3, y);
 	WRITE_VAR(4, _vm->_game->_mouseButtons);
-}
-
-void Inter_v2::o2_setPickable(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
-	warning("GOB2 Stub! o2_setPickable");
 }
 
 void Inter_v2::animPalette(void) {

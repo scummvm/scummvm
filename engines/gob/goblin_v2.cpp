@@ -523,4 +523,168 @@ void Goblin_v2::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	}
 }
 
+void Goblin_v2::handleGoblins(void) {
+	Mult::Mult_Object *obj0;
+	Mult::Mult_Object *obj1;
+	Mult::Mult_AnimData *anim0;
+	Mult::Mult_AnimData *anim1;
+	int16 pass;
+	int16 gob1X;
+	int16 gob2X;
+	int16 gob1Y;
+	int16 gob2Y;
+	int16 var_A;
+	int16 var_C;
+	int16 di;
+	int16 si;
+
+	obj0 = &_vm->_mult->_objects[0];
+	obj1 = &_vm->_mult->_objects[1];
+	anim0 = obj0->pAnimData;
+	anim1 = obj1->pAnimData;
+
+	si = anim0->state;
+	di = anim1->state;
+
+	if (anim0->isBusy == 0) {
+		if ((_word_2F9BC == 0) && (anim0->isStatic == 0)) {
+			if ((VAR(_dword_2F9B6) == 0) && (si == 28)) {
+				si = _vm->_util->getRandom(3) + 24;
+				sub_195C7(0, si);
+				WRITE_VAR(_dword_2F9B6, 100);
+			} else
+				WRITE_VAR(_dword_2F9B6, VAR(_dword_2F9B6) - 1);
+		}
+		if ((si == 8) || (si == 9) || (si == 29))
+			anim0->curLookDir = 6;
+	}
+	if (anim1->isBusy == 0) {
+		if ((_word_2F9BA == 0) && (anim1->isStatic == 0)) {
+			if ((VAR(_dword_2F9B2) == 0) && (di == 28)) {
+				di = _vm->_util->getRandom(3) + 24;
+				sub_195C7(1, di);
+				WRITE_VAR(_dword_2F9B2, 100);
+			} else
+				WRITE_VAR(_dword_2F9B2, VAR(_dword_2F9B2) - 1);
+		}
+		if ((di == 8) || (di == 9) || (di == 29))
+			anim1->curLookDir = 6;
+	}
+
+	if ((anim0->isBusy == 1) && (anim0->isStatic == 0) &&
+			((anim0->state == 28) || (anim0->state == 29)))
+		anim0->curLookDir = 0;
+	if ((anim1->isBusy == 1) && (anim1->isStatic == 0) &&
+			((anim1->state == 28) || (anim1->state == 29)))
+		anim1->curLookDir = 0;
+
+	if (VAR(18) != ((uint32) -1)) {
+		if (anim0->layer == 44)
+			anim0->curLookDir = 4;
+		else if (anim0->layer == 45)
+			anim0->curLookDir = 0;
+		if (anim0->isBusy == 0)
+			anim0->curLookDir = 6;
+	}
+	if (VAR(19) != ((uint32) -1)) {
+		if (anim1->layer == 48)
+			anim1->curLookDir = 4;
+		else if (anim1->layer == 49)
+			anim1->curLookDir = 0;
+		if (anim1->isBusy == 0)
+			anim1->curLookDir = 6;
+	}
+
+	if ((anim0->layer == 45) && (anim0->curLookDir == 4) && (anim0->pathExistence == 5) &&
+			(VAR(18) == ((uint32) -1)) && (_word_2F9C0 == 0)) {
+		sub_195C7(0, 19);
+	}
+	if ((anim0->layer == 44) && (anim0->curLookDir == 0) && (anim0->pathExistence == 5) &&
+			(VAR(18) == ((uint32) -1)) && (_word_2F9C0 == 0)) {
+		sub_195C7(0, 16);
+	}
+	if ((anim1->layer == 49) && (anim1->curLookDir == 4) && (anim1->pathExistence == 5) &&
+			(VAR(19) == ((uint32) -1)) && (_word_2F9BE == 0)) {
+		sub_195C7(1, 19);
+	}
+	if ((anim1->layer == 48) && (anim1->curLookDir == 0) && (anim1->pathExistence == 5) &&
+			(VAR(19) == ((uint32) -1)) && (_word_2F9BE == 0)) {
+		sub_195C7(1, 16);
+	}
+
+	gob1X = obj0->goblinX;
+	gob2X = obj1->goblinX;
+	gob1Y = obj0->goblinY;
+	gob2Y = obj1->goblinY;
+	di = anim0->field_13;
+	si = anim0->field_14;
+	var_A = anim1->field_13;
+	var_C = anim1->field_14;
+
+	pass = _vm->_map->getPass(gob1X, gob1Y);
+	if ((pass > 17) && (pass < 21))
+		sub_19AB7(anim0);
+	pass = _vm->_map->getPass(gob2X, gob2Y);
+	if ((pass > 17) && (pass < 21))
+		sub_19B45(anim1);
+
+	if ((di < 0) || (di > 39) || (si < 0) || (si > 39))
+		return;
+
+	if (gob1Y > si) {
+		if (_vm->_map->getPass(di, si) > 17) {
+			do {
+				si--;
+			} while (_vm->_map->getPass(di, si) > 17);
+			si++;
+			if (_vm->_map->getPass(di - 1, si) == 0) {
+				if (_vm->_map->getPass(di + 1, si) != 0)
+					di++;
+			} else
+				di--;
+			sub_197A6(di, si, 0);
+		}
+	} else {
+		if (_vm->_map->getPass(di, si) > 17) {
+			do {
+				si++;
+			} while (_vm->_map->getPass(di, si) > 17);
+			si--;
+			if (_vm->_map->getPass(di - 1, si) == 0) {
+				if (_vm->_map->getPass(di + 1, si) != 0)
+					di++;
+			} else
+				di--;
+			sub_197A6(di, si, 0);
+		}
+	}
+	if (gob2Y > var_C) {
+		if (_vm->_map->getPass(var_A, var_C) > 17) {
+			do {
+				var_C--;
+			} while (_vm->_map->getPass(var_A, var_C) > 17);
+			var_C++;
+			if (_vm->_map->getPass(var_A - 1, var_C) == 0) {
+				if (_vm->_map->getPass(var_A + 1, var_C) != 0)
+					var_A++;
+			} else
+				var_A--;
+			sub_197A6(var_A, var_C, 1);
+		}
+	} else {
+		if (_vm->_map->getPass(var_A, var_C) > 17) {
+			do {
+				var_C++;
+			} while (_vm->_map->getPass(var_A, var_C) > 17);
+			var_C--;
+			if (_vm->_map->getPass(var_A - 1, var_C) == 0) {
+				if (_vm->_map->getPass(var_A + 1, var_C) != 0)
+					var_A++;
+			} else
+				var_A--;
+			sub_197A6(var_A, var_C, 1);
+		}
+	}
+}
+
 } // End of namespace Gob

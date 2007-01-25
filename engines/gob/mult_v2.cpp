@@ -516,7 +516,6 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 	}
 
 	do {
-		_vm->_snd->loopSounds();
 		stop = 1;
 
 		if (VAR(58) == 0) {
@@ -540,6 +539,7 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 
 		stop = doFadeAnim(stop);
 		stop = doSoundAnim(stop, _frame);
+		_vm->_snd->loopSounds();
 
 		if (_frame >= endFrame)
 			stopNoClear = 1;
@@ -1318,18 +1318,7 @@ void Mult_v2::animate(void) {
 
 void Mult_v2::playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
 	    int16 channel) {
-//	warning("playSound, %d, %d, %d", repCount, freq, channel);
-	if (soundDesc->frequency >= 0) {
-		if (soundDesc->frequency == freq)
-			_vm->_snd->playSample(soundDesc, repCount, -channel);
-		else
-			_vm->_snd->playSample(soundDesc, repCount, freq);
-	} else {
-		if (soundDesc->frequency == -freq)
-			_vm->_snd->playSample(soundDesc, repCount, -channel);
-		else
-			_vm->_snd->playSample(soundDesc, repCount, freq);
-	}
+	_vm->_snd->playSample(soundDesc, repCount, freq);
 }
 
 void Mult_v2::freeMult(void) {

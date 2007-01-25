@@ -24,6 +24,7 @@
 #define GOB_GAME_H
 
 #include "gob/sound.h"
+#include "gob/music.h"
 #include "gob/video.h"
 
 namespace Gob {
@@ -150,6 +151,10 @@ public:
 	int8 _soundTypes[60];
 	char _soundFromExt[60];
 	bool _soundADL[60];
+
+	Infogrames::Instruments *_infIns;
+	Infogrames *_infogrames;
+	Audio::SoundHandle _infHandle;
 
 	char _totToLoad[20];
 

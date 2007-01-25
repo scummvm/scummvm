@@ -32,19 +32,15 @@
 
 namespace Gob {
 
-Paula::Paula(GobEngine *vm, bool stereo, int intFreq) : _vm(vm) {
+Paula::Paula(bool stereo, int rate, int interruptFreq) :
+		_stereo(stereo), _rate(rate), _intFreq(interruptFreq) {
 	_playing = false;
 
-	_stereo = stereo;
-	_rate = _vm->_mixer->getOutputRate();
-	_vm->_mixer->setupPremix(this, Audio::Mixer::kMusicSoundType);
-	_intFreq = intFreq;
-
 	clearVoices();
-	_voice[0].panning = 0;
-	_voice[1].panning = 1;
-	_voice[2].panning = 1;
-	_voice[3].panning = 0;
+	_voice[0].panning = 63;
+	_voice[1].panning = 191;
+	_voice[2].panning = 191;
+	_voice[3].panning = 63;
 
 	if (_intFreq <= 0)
 		_intFreq = _rate;
@@ -54,10 +50,12 @@ Paula::Paula(GobEngine *vm, bool stereo, int intFreq) : _vm(vm) {
 }
 
 Paula::~Paula() {
-	_vm->_mixer->setupPremix(0);
 }
 
-void Paula::clearVoice(int voice) {
+void Paula::clearVoice(byte voice) {
+	if (voice >= 4)
+		return;
+
 	_voice[voice].data = 0;
 	_voice[voice].dataRepeat = 0;
 	_voice[voice].length = 0;
@@ -78,9 +76,14 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 	int16 *p;
 	int8 *data;
 
+	_mutex.lock();
+
 	memset(buffer, 0, numSamples * 2);
 	if (!_playing)
+	{
+		_mutex.unlock();
 		return numSamples;
+	}
 
 	samples = _stereo ? numSamples / 2 : numSamples;
 	while (samples > 0) {
@@ -101,7 +104,8 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 			p = buffer;
 
 			_voice[voice].volume &= 0x3F;
-			if ((_voice[voice].lengthRepeat > 2) && ((int)(offset + nSamples * rate) >= sLen)) {
+			if ((_voice[voice].lengthRepeat > 2) &&
+					((int)(offset + nSamples * rate) >= sLen)) {
 				int neededSamples = nSamples;
 
 				int end = (int)((sLen - offset) / rate);
@@ -122,7 +126,8 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 							mix(p, data[(int)(offset + rate * i)], voice);
 
 						_voice[voice].data = data = _voice[voice].dataRepeat;
-						_voice[voice].length = sLen = _voice[voice].lengthRepeat;
+						_voice[voice].length = sLen =
+							_voice[voice].lengthRepeat;
 						_voice[voice].offset = offset = 0;
 
 						neededSamples -= end;
@@ -132,7 +137,8 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 						_voice[voice].offset += rate * neededSamples;
 						if (ceil(_voice[voice].offset) >= sLen) {
 							_voice[voice].data = data = _voice[voice].dataRepeat;
-							_voice[voice].length = sLen = _voice[voice].lengthRepeat;
+							_voice[voice].length = sLen =
+								_voice[voice].lengthRepeat;
 							_voice[voice].offset = offset = 0;
 						}
 						neededSamples = 0;
@@ -148,7 +154,8 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 							mix(p, data[(int)(offset + rate * i)], voice);
 						_voice[voice].offset = sLen;
 					} else {
-						// The requested number of samples is the limiting factor, not the sample
+						// The requested number of samples is the limiting
+						// factor, not the sample
 
 						for (int i = 0; i < nSamples; i++)
 							mix(p, data[(int)(offset + rate * i)], voice);
@@ -161,10 +168,20 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 		_curInt += nSamples;
 		samples -= nSamples;
 	}
+	_mutex.unlock();
 	return numSamples;
 }
 
 Infogrames::Instruments::Instruments() {
+	init();
+}
+
+Infogrames::Instruments::~Instruments() {
+	if (_sampleData)
+		delete[] _sampleData;
+}
+
+void Infogrames::Instruments::init() {
 	int i;
 
 	for (i = 0; i < 32; i++) {
@@ -177,11 +194,6 @@ Infogrames::Instruments::Instruments() {
 	_sampleData = 0;
 }
 
-Infogrames::Instruments::~Instruments() {
-	if (_sampleData)
-		delete[] _sampleData;
-}
-
 bool Infogrames::Instruments::load(Common::SeekableReadStream &ins) {
 	int i;
 	uint32 fsize;
@@ -189,13 +201,16 @@ bool Infogrames::Instruments::load(Common::SeekableReadStream &ins) {
 	uint32 offsetRepeat[32];
 	uint32 dataOffset;
 
+	unload();
+
 	fsize = ins.readUint32BE();
 	dataOffset = fsize;
 	for (i = 0; (i < 32) && !ins.eos(); i++) {
 		offset[i] = ins.readUint32BE();
 		offsetRepeat[i] = ins.readUint32BE();
 		if ((offset[i] > fsize) || (offsetRepeat[i] > fsize) ||
-				(offset[i] < (ins.pos() + 4)) || (offsetRepeat[i] < (ins.pos() + 4))) {
+				(offset[i] < (ins.pos() + 4)) ||
+				(offsetRepeat[i] < (ins.pos() + 4))) {
 			// Definitely no real entry anymore
 			ins.seek(-8, SEEK_CUR);
 			break;
@@ -223,29 +238,38 @@ bool Infogrames::Instruments::load(Common::SeekableReadStream &ins) {
 	return true;
 }
 
+void Infogrames::Instruments::unload(void) {
+	if (_sampleData)
+		delete[] _sampleData;
+	init();
+}
+
+const uint8 Infogrames::tickCount[] =
+	{2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96};
 const uint16 Infogrames::periods[] =
 	{0x6ACC, 0x64CC, 0x5F25, 0x59CE, 0x54C3, 0x5003, 0x4B86, 0x4747, 0x4346,
-		0x3F8B, 0x3BF3, 0x3892, 0x3568, 0x3269, 0x2F93, 0x2CEA, 0x2A66, 0x2801,
-		0x2566, 0x23A5, 0x21AF, 0x1FC4, 0x1DFE, 0x1C4E, 0x1ABC, 0x1936, 0x17CC,
-		0x1676, 0x1533, 0x1401, 0x12E4, 0x11D5, 0x10D4, 0xFE3, 0xEFE, 0xE26, 
-		0xD5B, 0xC9B, 0xBE5, 0xB3B, 0xA9B, 0xA02, 0x972, 0x8E9, 0x869, 0x7F1,
-		0x77F, 0x713, 0x6AD, 0x64D, 0x5F2, 0x59D, 0x54D, 0x500, 0x4B8, 0x475,
-		0x435, 0x3F8, 0x3BF, 0x38A, 0x356, 0x326, 0x2F9, 0x2CF, 0x2A6, 0x280,
-		0x25C, 0x23A, 0x21A, 0x1FC, 0x1E0, 0x1C5, 0x1AB, 0x193, 0x17D, 0x167,
-		0x153, 0x140, 0x12E, 0x11D, 0x10D, 0xFE, 0xF0, 0xE2, 0xD6, 0xCA, 0xBE,
-		0xB4, 0xAA, 0xA0, 0x97, 0x8F, 0x87, 0x7F, 0x78, 0x70, 0x60, 0x50, 0x40,
-		0x30, 0x20, 0x10, 0, 0, 0x20, 0x2020, 0x2020, 0x2020, 0x2020, 0x3030,
-		0x3030, 0x3020, 0x2020, 0x2020, 0x2020, 0x2020, 0x2020, 0x2020, 0x2020,
-		0x2020, 0x2090, 0x4040, 0x4040, 0x4040, 0x4040, 0x4040, 0x4040, 0x4040,
-		0x400C, 0xC0C, 0xC0C, 0xC0C, 0xC0C, 0xC40, 0x4040, 0x4040, 0x4040, 0x909,
-		0x909, 0x909, 0x101, 0x101, 0x101, 0x101, 0x101, 0x101, 0x101, 0x101, 0x101,
-		0x101, 0x4040, 0x4040, 0x4040, 0xA0A, 0xA0A, 0xA0A, 0x202, 0x202, 0x202, 
-		0x202, 0x202, 0x202, 0x202, 0x202, 0x202, 0x202, 0x4040, 0x4040, 0x2000};
-const uint8 Infogrames::tickCount[] = {2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96};
+	 0x3F8B, 0x3BF3, 0x3892, 0x3568, 0x3269, 0x2F93, 0x2CEA, 0x2A66, 0x2801,
+	 0x2566, 0x23A5, 0x21AF, 0x1FC4, 0x1DFE, 0x1C4E, 0x1ABC, 0x1936, 0x17CC,
+	 0x1676, 0x1533, 0x1401, 0x12E4, 0x11D5, 0x10D4, 0x0FE3, 0x0EFE, 0x0E26, 
+	 0x0D5B, 0x0C9B, 0x0BE5, 0x0B3B, 0x0A9B, 0x0A02, 0x0972, 0x08E9, 0x0869,
+	 0x07F1, 0x077F, 0x0713, 0x06AD, 0x064D, 0x05F2, 0x059D, 0x054D, 0x0500,
+	 0x04B8, 0x0475, 0x0435, 0x03F8, 0x03BF, 0x038A, 0x0356, 0x0326, 0x02F9,
+	 0x02CF, 0x02A6, 0x0280, 0x025C, 0x023A, 0x021A, 0x01FC, 0x01E0, 0x01C5,
+	 0x01AB, 0x0193, 0x017D, 0x0167, 0x0153, 0x0140, 0x012E, 0x011D, 0x010D,
+	 0x00FE, 0x00F0, 0x00E2, 0x00D6, 0x00CA, 0x00BE, 0x00B4, 0x00AA, 0x00A0,
+	 0x0097, 0x008F, 0x0087, 0x007F, 0x0078, 0x0070, 0x0060, 0x0050, 0x0040,
+	 0x0030, 0x0020, 0x0010, 0x0000, 0x0000, 0x0020, 0x2020, 0x2020, 0x2020,
+	 0x2020, 0x3030, 0x3030, 0x3020, 0x2020, 0x2020, 0x2020, 0x2020, 0x2020,
+	 0x2020, 0x2020, 0x2020, 0x2090, 0x4040, 0x4040, 0x4040, 0x4040, 0x4040,
+	 0x4040, 0x4040, 0x400C, 0x0C0C, 0x0C0C, 0x0C0C, 0x0C0C, 0x0C40, 0x4040,
+	 0x4040, 0x4040, 0x0909, 0x0909, 0x0909, 0x0101, 0x0101, 0x0101, 0x0101,
+	 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x4040, 0x4040, 0x4040,
+	 0x0A0A, 0x0A0A, 0x0A0A, 0x0202, 0x0202, 0x0202, 0x0202, 0x0202, 0x0202,
+	 0x0202, 0x0202, 0x0202, 0x0202, 0x4040, 0x4040, 0x2000};
 
-Infogrames::Infogrames(GobEngine *vm, bool stereo) :
-		Paula(vm, stereo, vm->_mixer->getOutputRate()/80) {
-	_instruments = 0;
+Infogrames::Infogrames(Instruments &ins, bool stereo, int rate) :
+		Paula(stereo, rate, rate/80) {
+	_instruments = &ins;
 	_data = 0;
 	_repCount = -1;
 
@@ -264,7 +288,6 @@ void Infogrames::init() {
 	_period = 0;
 	_sample = 0;
 	_speedCounter = _speed;
-	_newVol = 0x3F;
 
 	for (i = 0; i < 4; i++) {
 		_chn[i].cmds = 0;
@@ -285,28 +308,20 @@ void Infogrames::init() {
 		_chn[i].periodSlide.flags = 0;
 		_chn[i].periodSlide.curDelay1 = 0;
 		_chn[i].periodSlide.curDelay2 = 0;
-		_chn[i].curPeriod = 0;
 		_chn[i].period = 0;
-		_chn[i].curCmdBlock = 0;
-		_chn[i].flags = 0;
+		_chn[i].flags = 0x81;
 		_chn[i].ticks = 0;
 		_chn[i].tickCount = 0;
 		_chn[i].periodMod = 0;
-		_chn[i].field_2B = 0;
-		_chn[i].field_2C = 0;
-		_chn[i].field_2F = 0;
 	}
 
-	for (i = 0; i < 4; i++) {
-		_chn[i].flags = 0x81;
-		_chn[i].field_2B = 0x3F;
-		_chn[i].field_2F = 0x3F;
-	}
+	_end = _data == 0;
 }
 
 void Infogrames::reset() {
 	int i;
 
+	stopPlay();
 	init();
 
 	_volSlideBlocks = 0;
@@ -315,8 +330,6 @@ void Infogrames::reset() {
 	_cmdBlocks = 0;
 	_speedCounter = 0;
 	_speed = 0;
-	_newVol = 0;
-	_field_1E = 8;
 
 	for (i = 0; i < 4; i++)
 		_chn[i].cmdBlockIndices = 0;
@@ -350,11 +363,8 @@ bool Infogrames::load(Common::SeekableReadStream &dum) {
 	for (i = 0; i < 4; i++) {
 		_chn[i].cmdBlockIndices = _subSong + dataStr.readUint16BE();
 		_chn[i].flags = 0x81;
-		_chn[i].field_2B = 0x3F;
-		_chn[i].field_2F = 0x3F;
 	}
 	_cmdBlocks = _data + dataStr.pos() + 2;
-	_newVol = 0x3F;
 
 	if ((_volSlideBlocks > (_data + size)) ||
 			(_periodSlideBlocks > (_data + size)) ||
@@ -366,10 +376,11 @@ bool Infogrames::load(Common::SeekableReadStream &dum) {
 		return false;
 
 	_end = false;
+	_playing = true;
 	return true;
 }
 
-void Infogrames::unload(bool destroyInstruments) {
+void Infogrames::unload(void) {
 	stopPlay();
 
 	if (_data)
@@ -378,12 +389,6 @@ void Infogrames::unload(bool destroyInstruments) {
 
 	clearVoices();
 	reset();
-
-	if (destroyInstruments) {
-		if (_instruments)
-			delete _instruments;
-		_instruments = 0;
-	}
 
 	_end = true;
 }
@@ -397,28 +402,16 @@ void Infogrames::getNextSample(Channel &chn) {
 	if (chn.flags & 64)
 		return;
 
-	if (chn.field_2B != chn.field_2F) {
-		chn.field_2C++;
-		if (chn.field_2C > _field_1E) {
-			chn.field_2C = 0;
-			if (chn.field_2F <= chn.field_2B)
-				chn.field_2B--;
-			else
-				chn.field_2B++;
-		}
-	}
-
 	if (chn.flags & 1) {
 		chn.flags &= ~1;
 		chn.cmdBlocks = chn.cmdBlockIndices;
-		chn.curCmdBlock = 0;
 	} else {
 		chn.flags &= ~1;
 		if (_speedCounter == 0)
 			chn.ticks--;
 		if (chn.ticks != 0) {
-			_volume = MAX(0, tune(chn.volSlide, 0) - (0x3F - MAX(chn.field_2B, _newVol)));
-			_period = tune(chn.periodSlide, chn.curPeriod);
+			_volume = MAX((int16) 0, tune(chn.volSlide, 0));
+			_period = tune(chn.periodSlide, chn.period);
 			return;
 		} else {
 			chn.ticks = chn.tickCount;
@@ -430,8 +423,8 @@ void Infogrames::getNextSample(Channel &chn) {
 		while (cont || ((cmdBlock = *chn.cmdBlocks) != 0xFF)) {
 			if (!cont) {
 				chn.cmdBlocks++;
-				chn.curCmdBlock++;
-				chn.cmds = _subSong + READ_BE_UINT16(_cmdBlocks + (cmdBlock * 2));
+				chn.cmds = _subSong +
+					READ_BE_UINT16(_cmdBlocks + (cmdBlock * 2));
 			} else
 				cont = false;
 			while ((cmd = *chn.cmds) != 0xFF) {
@@ -463,7 +456,8 @@ void Infogrames::getNextSample(Channel &chn) {
 							chn.periodMod = (int8) *chn.cmds++;
 							break;
 						case 1: // Set continuous period slide
-							chn.periodSlide.data = _periodSlideBlocks + *chn.cmds++ * 13 + 1;
+							chn.periodSlide.data =
+								_periodSlideBlocks + *chn.cmds++ * 13 + 1;
 							chn.periodSlide.amount = 0;
 							chn.periodSlide.dataOffset = 0;
 							chn.periodSlide.finetunePos = 0;
@@ -473,7 +467,8 @@ void Infogrames::getNextSample(Channel &chn) {
 							chn.periodSlide.flags = 0x81;
 							break;
 						case 2: // Set non-continuous period slide
-							chn.periodSlide.data = _periodSlideBlocks + *chn.cmds++ * 13 + 1;
+							chn.periodSlide.data =
+								_periodSlideBlocks + *chn.cmds++ * 13 + 1;
 							chn.periodSlide.amount = 0;
 							chn.periodSlide.dataOffset = 0;
 							chn.periodSlide.finetunePos = 0;
@@ -492,7 +487,6 @@ void Infogrames::getNextSample(Channel &chn) {
 				} else { // 0xxxxxxx - Set period
 					if (cmd != 0)
 						cmd += chn.periodMod;
-					chn.curPeriod = periods[cmd];
 					chn.period = periods[cmd];
 					chn.volSlide.dataOffset = 0;
 					chn.volSlide.finetunePos = 0;
@@ -508,20 +502,18 @@ void Infogrames::getNextSample(Channel &chn) {
 					chn.periodSlide.curDelay2 = 0;
 					chn.periodSlide.flags |= 1;
 					chn.periodSlide.flags &= ~4;
-					_volume = MAX(0, tune(chn.volSlide, 0) - (0x3F - MAX(chn.field_2B, _newVol)));
-					_period = tune(chn.periodSlide, chn.curPeriod);
+					_volume = MAX((int16) 0, tune(chn.volSlide, 0));
+					_period = tune(chn.periodSlide, chn.period);
 					return;
 				}
 			}
 		}
-		if (chn.flags & 32) {
-			chn.cmdBlocks = chn.cmdBlockIndices;
-			chn.curCmdBlock = 0;
-		} else {
+		if (!(chn.flags & 32)) {
 			chn.flags |= 0x40;
 			_volume = 0;
 			return;
-		}
+		} else
+			chn.cmdBlocks = chn.cmdBlockIndices;
 	}
 }
 
@@ -586,7 +578,8 @@ void Infogrames::interrupt() {
 			_voice[chn].data = _instruments->_samples[_sample].data;
 			_voice[chn].length = _instruments->_samples[_sample].length;
 			_voice[chn].dataRepeat = _instruments->_samples[_sample].dataRepeat;
-			_voice[chn].lengthRepeat = _instruments->_samples[_sample].lengthRepeat;
+			_voice[chn].lengthRepeat =
+				_instruments->_samples[_sample].lengthRepeat;
 			_voice[chn].offset = 0;
 			_sample = 0xFF;
 		}
@@ -600,10 +593,12 @@ void Infogrames::interrupt() {
 		if (_repCount > 0) {
 			_repCount--;
 			init();
-		} else if (_repCount == -1)
-			init();
-		else
+		} else if (_repCount != -1) {
 			_end = true;
+			_playing = false;
+		}
+		else
+			init();
 	}
 }
 
@@ -698,7 +693,8 @@ void Adlib::premixerCall(int16 *buf, uint len) {
 			uint datalen = len;
 			while (datalen && _playing) {
 				if (_samplesTillPoll) {
-					render = (datalen > _samplesTillPoll) ? (_samplesTillPoll) : (datalen);
+					render = (datalen > _samplesTillPoll) ?
+						(_samplesTillPoll) : (datalen);
 					datalen -= render;
 					_samplesTillPoll -= render;
 					YM3812UpdateOne(_opl, data, render);
@@ -759,10 +755,10 @@ void Adlib::setFreqs(void) {
 		// Run through the 12 columns
 		for (col = 0; col < 12; col ++) {
 			if (!col)
-				val = (((0x2710L + lin * 0x18) * 0xCB78 / 0x3D090) << 0xE) * 9 / 0x1B503;
+				val = (((0x2710L + lin * 0x18) * 0xCB78 / 0x3D090) << 0xE) *
+					9 / 0x1B503;
 			_freqs[lin][col] = (short)((val + 4) >> 3);
 			val = val * 0x6A / 0x64;
-	//      val = val *  392 / 370;
 		} 
 	}
 }
@@ -810,7 +806,8 @@ void Adlib::setVoice(byte voice, byte instr, bool set) {
 		writeOPL(0x08, 0x00);
 		writeOPL(0x40 | channel, ((strct[0] & 3) << 6) | (strct[8] & 0x3F));
 		if (!i)
-			writeOPL(0xC0 | voice  , ((strct[2] & 7) << 1) | (1 - (strct[12] & 1)));
+			writeOPL(0xC0 | voice,
+					((strct[2] & 7) << 1) | (1 - (strct[12] & 1)));
 		writeOPL(0x60 | channel, ((strct[3] & 0xF) << 4) | (strct[6] & 0xF));
 		writeOPL(0x80 | channel, ((strct[4] & 0xF) << 4) | (strct[7] & 0xF));
 		writeOPL(0x20 | channel, ((strct[9] & 1) << 7) |
@@ -971,14 +968,16 @@ void Adlib::pollMusic(void) {
 				_samplesTillPoll = 0;
 				return;
 			default:
-				warning("Unknown special command in ADL, stopping playback: %X", instr & 0x0F);
+				warning("Unknown special command in ADL, stopping playback: %X",
+						instr & 0x0F);
 				_repCount = 0;
 				_ended = true;
 				break;
 			}
 			break;
 		default:
-			warning("Unknown command in ADL, stopping playback: %X", instr & 0xF0);
+			warning("Unknown command in ADL, stopping playback: %X",
+					instr & 0xF0);
 			_repCount = 0;
 			_ended = true;
 			break;
@@ -998,13 +997,6 @@ void Adlib::pollMusic(void) {
 		tempo ++;
 
 	_samplesTillPoll = tempo * (_rate / 1000);
-}
-
-void Adlib::startPlay(void) {
-	if (!_data)
-		return;
-	
-	_playing = true;
 }
 
 void Adlib::playBgMusic(void) {

@@ -95,18 +95,14 @@ void Snd::speakerOff(void) {
 }
 
 void Snd::playSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency) {
-	if (frequency == 0)
+	if (frequency <= 0)
 		frequency = sndDesc->frequency;
 
-	if (frequency <= 0) {
-		warning("Attempted to play a sample with a frequency of %d (sndDesc->freq = %d)", frequency, sndDesc->frequency);
-		return;
-	}
-//	assert(frequency > 0);
+	for (int i = 0; i < ARRAYSIZE(_loopingSounds); i++)
+		_loopingSounds[i] = 0;
+	_vm->_mixer->stopHandle(sndDesc->handle);
 
-	if (!_vm->_mixer->isSoundHandleActive(sndDesc->handle)) {
-		_vm->_mixer->playRaw(&sndDesc->handle, sndDesc->data, sndDesc->size, frequency, 0);
-	}
+	_vm->_mixer->playRaw(&sndDesc->handle, sndDesc->data, sndDesc->size, frequency, 0);
 
 	sndDesc->repCount = repCount - 1;
 	sndDesc->frequency = frequency;

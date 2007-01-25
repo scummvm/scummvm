@@ -146,6 +146,7 @@ public:
 	char *_startTot;
 	char *_startTot0;
 	bool _copyProtection;
+	bool _noMusic;
 	bool _quitRequested;
 
 	Game *_game;
@@ -168,7 +169,6 @@ public:
 	Util *_util;
 	Inter *_inter;
 	Adlib *_adlib;
-	Infogrames *_infogrames;
 	GobEngine *_vm;
 
 	void writeVarDebug(uint32 offs, uint32 v);

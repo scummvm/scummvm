@@ -217,13 +217,13 @@ public:
 	int16 treatItem(int16 action);
 	int16 doMove(Gob_Object *gobDesc, int16 cont, int16 action);
 
-	void sub_19BD3(void);
 	void sub_195C7(int16 index, int16 state);
 	void sub_11984(Mult::Mult_Object *obj);
 	void sub_197A6(int16 destX, int16 destY, int16 objIndex);
 	void sub_19AB7(Mult::Mult_AnimData *animData);
 	void sub_19B45(Mult::Mult_AnimData *animData);
 
+	virtual void handleGoblins(void) = 0;
 	virtual void placeObject(Gob_Object * objDesc, char animated,
 			int16 index, int16 x, int16 y, int16 state) = 0;
 	virtual void freeObjects(void) = 0;
@@ -257,6 +257,7 @@ protected:
 
 class Goblin_v1 : public Goblin {
 public:
+	virtual void handleGoblins(void) {}
 	virtual void placeObject(Gob_Object * objDesc, char animated,
 			int16 index, int16 x, int16 y, int16 state);
 	virtual void freeObjects(void);
@@ -273,6 +274,7 @@ protected:
 
 class Goblin_v2 : public Goblin_v1 {
 public:
+	virtual void handleGoblins(void);
 	virtual void placeObject(Gob_Object * objDesc, char animated,
 			int16 index, int16 x, int16 y, int16 state);
 	virtual void freeObjects(void);

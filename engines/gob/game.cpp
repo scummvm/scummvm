@@ -72,6 +72,8 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 		_soundFromExt[i] = 0;
 		_soundADL[i] = false;
 	}
+	_infIns = 0;
+	_infogrames = 0;
 
 	_curTotFile[0] = 0;
 	_curExtFile[0] = 0;
@@ -148,6 +150,8 @@ Game::~Game() {
 		delete[] _imdVidBuffer;
 	if (_word_2FC80)
 		delete[] _word_2FC80;
+	if (_infIns)
+		delete _infIns;
 }
 
 char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight, uint32 *dataSize) {
