@@ -42,6 +42,7 @@ namespace {
 #define FLAGS(x, y, z, w, id) { UNK_LANG, kPlatformUnknown, x, y, z, w, id }
 
 #define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, GI_KYRA1)
+#define KYRA1_TOWNS_FLAGS FLAGS(false, true, true, false, GI_KYRA1)
 #define KYRA1_CD_FLAGS FLAGS(false, true, false, true, GI_KYRA1)
 #define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, GI_KYRA1)
 
@@ -58,6 +59,8 @@ static const KYRAGameDescription adGameDescs[] = {
 	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "8909b41596913b3f5deaf3c9f1017b01"), ES_ESP, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from VooD
 	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "747861d2a9c643c59fdab570df5b9093"), ES_ESP, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // floppy 1.8 from clemmy
 	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "ef08c8c237ee1473fd52578303fc36df"), IT_ITA, kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from gourry
+
+	{ { "kyra1", 0, AD_ENTRY1("TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59"), EN_ANY, kPlatformFMTowns }, KYRA1_TOWNS_FLAGS },
 
 	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "fac399fe62f98671e56a005c5e94e39f"), EN_ANY, kPlatformPC }, KYRA1_CD_FLAGS },
 	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "230f54e6afc007ab4117159181a1c722"), DE_DEU, kPlatformPC }, KYRA1_CD_FLAGS },

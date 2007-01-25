@@ -196,9 +196,9 @@ void KyraEngine::seq_introStory() {
 	_screen->clearPage(0);
 	if (_flags.isTalkie) {
 		return;
-	} else if (_flags.lang == Common::EN_ANY && _flags.platform != Common::kPlatformMacintosh) {
+	} else if (_flags.lang == Common::EN_ANY && _flags.platform == Common::kPlatformPC) {
 		_screen->loadBitmap("TEXT.CPS", 3, 3, 0);
-	} else if (_flags.lang == Common::EN_ANY && _flags.platform == Common::kPlatformMacintosh) {
+	} else if (_flags.lang == Common::EN_ANY) {
 		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, 0);
 	} else if (_flags.lang == Common::DE_DEU) {
 		_screen->loadBitmap("TEXT_GER.CPS", 3, 3, 0);

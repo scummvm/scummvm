@@ -62,7 +62,7 @@ enum {
 	GF_AMIGA	= 1 << 17	// this is no special version flag yet!
 };
 
-#define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_AUDIOCD)
+#define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO/* | GF_AUDIOCD*/)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_ITALIAN | GF_LNGUNK)
 
 uint32 createFeatures(const GameFlags &flags) {
@@ -70,8 +70,8 @@ uint32 createFeatures(const GameFlags &flags) {
 		return GF_TALKIE;
 	if (flags.isDemo)
 		return GF_DEMO;
-	if (flags.hasAudioCD)
-		return GF_AUDIOCD;
+	//if (flags.hasAudioCD)
+	//	return GF_AUDIOCD;
 	return GF_FLOPPY;
 }
 
@@ -817,9 +817,9 @@ void KyraEngine::loadButtonShapes() {
 void KyraEngine::loadMainScreen(int page) {
 	_screen->clearPage(page);
 
-	if (_flags.lang == Common::EN_ANY && !_flags.isTalkie && _flags.platform != Common::kPlatformMacintosh)
+	if (_flags.lang == Common::EN_ANY && !_flags.isTalkie && _flags.platform == Common::kPlatformPC)
 		_screen->loadBitmap("MAIN15.CPS", page, page, 0);
-	else if (_flags.lang == Common::EN_ANY && (_flags.isTalkie || _flags.platform == Common::kPlatformMacintosh)) 
+	else if (_flags.lang == Common::EN_ANY) 
 		_screen->loadBitmap("MAIN_ENG.CPS", page, page, 0);
 	else if (_flags.lang == Common::FR_FRA)
 		_screen->loadBitmap("MAIN_FRE.CPS", page, page, 0);

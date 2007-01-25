@@ -74,7 +74,7 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 	uint16 numShapes = READ_LE_UINT16(data);
 	if (shape < numShapes) {
 		uint32 offs = 0;
-		if (_vm->gameFlags().isTalkie) {
+		if (_vm->gameFlags().useAltShapeHeader) {
 			offs = READ_LE_UINT32(data + 2 + shape * 4);
 		} else {
 			offs = READ_LE_UINT16(data + 2 + shape * 2);

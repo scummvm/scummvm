@@ -184,7 +184,10 @@ bool ScriptHelper::startScript(ScriptState *script, int function) {
 	if (functionOffset == (uint16)-1) {
 		return false;
 	}
-	script->ip = &script->dataPtr->data[functionOffset*2];
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+		script->ip = &script->dataPtr->data[functionOffset*2+2];
+	else
+		script->ip = &script->dataPtr->data[functionOffset*2];
 	return true;
 }
 
