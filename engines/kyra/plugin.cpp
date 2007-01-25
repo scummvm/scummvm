@@ -119,6 +119,20 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 	}
 
 	GameFlags flags = adGameDescs[id].flags;
+	
+	Platform platform = parsePlatform(ConfMan.get("platform"));
+	if (platform != kPlatformUnknown) {
+		flags.platform = platform;
+	}
+
+	if (flags.lang == UNK_LANG) {
+		Language lang = parseLanguage(ConfMan.get("language"));
+		if (lang != UNK_LANG) {
+			flags.lang = lang;
+		} else {
+			flags.lang = EN_ANY;
+		}
+	}
 
 	if (!scumm_stricmp("kyra1", gameid)) {
 		*engine = new KyraEngine_v1(syst, flags);
