@@ -45,7 +45,7 @@ namespace Common {
  * @param platform	restrict results to specified platform only
  * @return	list of indexes to GameDescriptions of matched games
  */
-static ADList detectGame(ADGameDescList gameDescriptions, const FSList *fslist, const Common::ADParams &params, Language language, Platform platform);
+static ADList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform);
 
 
 PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
@@ -132,18 +132,9 @@ GameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 	const FSList &fslist,
 	const Common::ADParams &params
 	) {
+	Common::ADList matches = detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown);
+
 	GameList detectedGames;
-	Common::ADList matches;
-	Common::ADGameDescList descList;
-	const byte *descPtr;
-
-	for (descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize)
-		descList.push_back((const ADGameDescription *)descPtr);
-
-	debug(3, "%s: cnt: %d", ((const ADGameDescription *)params.descs)->gameid,  descList.size());
-
-	matches = detectGame(descList, &fslist, params, Common::UNK_LANG, Common::kPlatformUnknown);
-
 	for (uint i = 0; i < matches.size(); i++)
 		detectedGames.push_back(toGameDescriptor(*(const ADGameDescription *)(params.descs + matches[i] * params.descItemSize), params.list));
 
@@ -153,13 +144,6 @@ GameList ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(
 int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 	const Common::ADParams &params
 	) {
-	int gameNumber = -1;
-
-	GameList detectedGames;
-	Common::ADList matches;
-	Common::ADGameDescList descList;
-	const byte *descPtr;
-
 	Common::Language language = Common::UNK_LANG;
 	Common::Platform platform = Common::kPlatformUnknown;
 
@@ -170,11 +154,9 @@ int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 
 	Common::String gameid = ConfMan.get("gameid");
 
-	for (descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize)
-		descList.push_back((const ADGameDescription *)descPtr);
+	Common::ADList matches = detectGame(0, params, language, platform);
 
-	matches = detectGame(descList, 0, params, language, platform);
-
+	int gameNumber = -1;
 	for (uint i = 0; i < matches.size(); i++) {
 		if (((const ADGameDescription *)(params.descs + matches[i] * params.descItemSize))->gameid == gameid) {
 			gameNumber = matches[i];
@@ -182,17 +164,17 @@ int ADVANCED_DETECTOR_DETECT_INIT_GAME(
 		}
 	}
 
-	if (gameNumber >= (int)descList.size() || gameNumber == -1) {
-		error("TODO invalid gameNumber %d (max. expected value: %d)", gameNumber, descList.size());
+	if (gameNumber < 0) {
+		error("ADVANCED_DETECTOR_DETECT_INIT_GAME: no match found (TODO: Let the caller handle this)");
+	} else {
+		debug(2, "Running %s", toGameDescriptor(*(const ADGameDescription *)(params.descs + gameNumber * params.descItemSize), params.list).description().c_str());
 	}
-
-	debug(2, "Running %s", toGameDescriptor(*(const ADGameDescription *)(params.descs + gameNumber * params.descItemSize), params.list).description().c_str());
 
 	return gameNumber;
 }
 
 
-static ADList detectGame(ADGameDescList gameDescriptions, const FSList *fslist, const Common::ADParams &params, Language language, Platform platform) {
+static ADList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform) {
 	typedef HashMap<String, bool, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringSet;
 	StringSet filesList;
 
@@ -211,7 +193,12 @@ static ADList detectGame(ADGameDescList gameDescriptions, const FSList *fslist, 
 	bool fileMissing;
 	const ADGameFileDescription *fileDesc;
 
+	Common::ADGameDescList gameDescriptions;
+	for (const byte *descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize)
+		gameDescriptions.push_back((const ADGameDescription *)descPtr);
+
 	assert(gameDescriptions.size());
+
 
 	// First we compose list of files which we need MD5s for
 	for (i = 0; i < gameDescriptions.size(); i++) {
