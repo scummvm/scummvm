@@ -51,7 +51,7 @@ int WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
 	_deltaBufferSize = READ_LE_UINT16(wsaData); wsaData += 2;
 	_offscreenBuffer = NULL;
 	_flags = 0;
-	if (_vm->gameFlags().isTalkie) {
+	if (_vm->gameFlags().useAltShapeHeader) {
 		flags = READ_LE_UINT16(wsaData); wsaData += 2;
 	}
 	
