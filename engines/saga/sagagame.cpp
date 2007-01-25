@@ -592,11 +592,11 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
-	// Inherit the earth - MAC Demo version
+	// Inherit the earth - MAC Demo version 2
 	{
 		{
 			"ite",
-			"Demo",
+			"Demo 2",
 			{
 	{"ited.rsc",		GAME_RESOURCEFILE,	"addfc9d82bc2fa1f4cab23743c652c08", -1},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"fded5c59b8b7c5976229f960d21e6b0b", -1},
@@ -623,11 +623,11 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEMacPatch_Files,
 	},
 
-	// Inherit the earth - early MAC Demo version
+	// Inherit the earth - MAC Demo version 1
 	{
 		{
 			"ite",
-			"early Demo",
+			"Demo 1",
 			{
 	{"ited.rsc",		GAME_RESOURCEFILE,	"addfc9d82bc2fa1f4cab23743c652c08", -1},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"fded5c59b8b7c5976229f960d21e6b0b", -1},
@@ -725,7 +725,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", -1},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", -1},
-	{"soundsd.rsc",		GAME_SOUNDFILE,		"95a6c148e22e99a8c243f2978223583c", -1},
+	{"soundsd.rsc",		GAME_SOUNDFILE,		"95a6c148e22e99a8c243f2978223583c", 2026769},
 	{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4", -1},
 	{"musicd.rsc",		GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4", -1},
 	{ NULL, 0, NULL, 0}
@@ -748,15 +748,46 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITELinPatch_Files,
 	},
 
-	// Inherit the earth - Win32 Demo version
+	// Inherit the earth - Win32 Demo version 3
 	{
 		{
 			"ite",
-			"Demo",
+			"Demo 3",
 			{
 	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", -1},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", -1},
-	{"soundsd.rsc",		GAME_SOUNDFILE,		"95a6c148e22e99a8c243f2978223583c", -1},
+	{"soundsd.rsc",		GAME_SOUNDFILE,		"95a6c148e22e99a8c243f2978223583c", 2005074},
+	{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4", -1},
+	{"musicd.rsc",		GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+		},
+		GType_ITE,
+		GID_ITE_WINDEMO3,
+		GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES,
+		&ITE_DisplayInfo,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEWINDEMO_GameFonts),
+		ITEWINDEMO_GameFonts,
+		&ITEWINDEMO2_GameVoice,
+		&ITEWINDEMO2_GameSound,
+		&ITELINDEMO_GameMusic,
+		ARRAYSIZE(ITEWinPatch2_Files),
+		ITEWinPatch2_Files,
+	},
+
+	// Inherit the earth - Win32 Demo version 2
+	{
+		{
+			"ite",
+			"Demo 2",
+			{
+	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", -1},
+	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", -1},
+	{"soundsd.rsc",		GAME_SOUNDFILE,		"95a6c148e22e99a8c243f2978223583c", 2005074},
 	{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4", -1},
 	{ NULL, 0, NULL, 0}
 			},
@@ -778,11 +809,11 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWinPatch2_Files,
 	},
 
-	// Inherit the earth - early Win32 Demo version
+	// Inherit the earth - Win32 Demo version 1
 	{
 		{
 			"ite",
-			"early Demo",
+			"Demo 1",
 			{
 	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", -1},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", -1},

@@ -197,7 +197,9 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, const Common::ADParams
 	StringSet filesList;
 
 	typedef StringMap StringMap;
+	typedef HashMap<String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> IntMap;
 	StringMap filesMD5;
+	IntMap filesSize;
 
 	String tstr, tstr2;
 	
@@ -224,6 +226,8 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, const Common::ADParams
 	
 	if (fslist != 0) {
 		for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
+			Common::File f;
+
 			if (file->isDirectory()) continue;
 			tstr = file->name();
 			tstr.toLowercase();
@@ -237,6 +241,11 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, const Common::ADParams
 			}
 			filesMD5[tstr] = String(md5str);
 			filesMD5[tstr2] = String(md5str);
+
+			if (f.open(file->path())) {
+				filesSize[tstr] = filesSize[tstr2] = (int32)f.size();
+				f.close();
+			}
 		}
 	} else {
 		File testFile;
@@ -248,6 +257,7 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, const Common::ADParams
 			debug(3, "+ %s", tstr.c_str());
 			if (!filesMD5.contains(tstr)) {
 				if (testFile.open(file->_key)) {
+					filesSize[tstr] = filesSize[tstr2] = (int32)testFile.size();
 					testFile.close();
 
 					if (md5_file(file->_key.c_str(), md5sum, params.md5Bytes)) {
@@ -271,8 +281,8 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, const Common::ADParams
 
 		// Do not even bother to look at entries which do not have matching
 		// language and platform (if specified).
-		if ((g->language != language && language != UNK_LANG) ||
-			(g->platform != platform && platform != kPlatformUnknown)) {
+		if ((language != UNK_LANG && g->language != language) ||
+			(platform != kPlatformUnknown && g->platform != platform)) {
 			continue;
 		}
 		
@@ -283,13 +293,25 @@ ADList AdvancedDetector::detectGame(const FSList *fslist, const Common::ADParams
 			tstr.toLowercase();
 			tstr2 = tstr + ".";
 
-			if (!filesMD5.contains(tstr) && !filesMD5.contains(tstr2)) {
-				fileMissing = true;
-				break;
+			if (fileDesc->md5 != NULL) {
+				if (!filesMD5.contains(tstr) && !filesMD5.contains(tstr2)) {
+					fileMissing = true;
+					break;
+				}
+				if (strcmp(fileDesc->md5, filesMD5[tstr].c_str()) && strcmp(fileDesc->md5, filesMD5[tstr2].c_str())) {
+					fileMissing = true;
+					break;
+				}
 			}
-			if (strcmp(fileDesc->md5, filesMD5[tstr].c_str()) && strcmp(fileDesc->md5, filesMD5[tstr2].c_str())) {
-				fileMissing = true;
-				break;
+			if (fileDesc->fileSize != -1) {
+				if (!filesMD5.contains(tstr) && !filesMD5.contains(tstr2)) {
+					fileMissing = true;
+					break;
+				}
+				if (fileDesc->fileSize != filesSize[tstr] && fileDesc->fileSize != filesSize[tstr2]) {
+					fileMissing = true;
+					break;
+				}
 			}
 			debug(3, "Matched file: %s", tstr.c_str());
 		}

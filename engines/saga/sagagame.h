@@ -22,6 +22,7 @@ enum GameIds {
 	GID_ITE_MACDEMO1, // older Wyrmkeep mac demo
 	GID_ITE_LINDEMO,
 	GID_ITE_WINDEMO2,
+	GID_ITE_WINDEMO3,
 	GID_ITE_MACDEMO2,
 
 	// German
