@@ -110,49 +110,17 @@ GameList Engine_KYRA_detectGames(const FSList &fslist) {
 PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
-
-	FSList fslist;
-	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
-		return kInvalidPathError;
-	}
-
-	GameFlags flags;
-	Common::AdvancedDetector ad;
-	Common::ADList matches;
-	Common::ADGameDescList descList;
-
-	for (int i = 0; i < ARRAYSIZE(adGameDescs) - 1; ++i) {
-		descList.push_back(&adGameDescs[i].desc);
-	}
-
-	ad.registerGameDescriptions(descList);
-
-	matches = ad.detectGame(&fslist, detectionParams, Common::UNK_LANG, Common::kPlatformUnknown);
-
-	if (!matches.size()) {
+	
+	int id = ADVANCED_DETECTOR_DETECT_INIT_GAME(detectionParams);
+	if (id == -1) {
+		// FIXME: This case currently can never happen, as we simply error out
+		// inside ADVANCED_DETECTOR_DETECT_INIT_GAME.
+		
 		// maybe add non md5 based detection again?
 		return kNoGameDataFoundError;
 	}
 
-	int id = matches[0];
-
-	flags = adGameDescs[id].flags;
-
-	Platform platform = parsePlatform(ConfMan.get("platform"));
-	if (platform != kPlatformUnknown) {
-		flags.platform = platform;
-	}
-	
-	if (flags.lang == UNK_LANG) {
-		Language lang = parseLanguage(ConfMan.get("language"));
-		if (lang != UNK_LANG) {
-			flags.lang = lang;
-		} else {
-			flags.lang = EN_ANY;
-		}
-	}
-
+	GameFlags flags = adGameDescs[id].flags;
 
 	if (!scumm_stricmp("kyra1", gameid)) {
 		*engine = new KyraEngine_v1(syst, flags);
@@ -161,7 +129,7 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 	} else if (!scumm_stricmp("kyra3", gameid)) {
 		*engine = new KyraEngine_v3(syst, flags);
 	} else
-		error("Kyra engine created with invalid gameid.");
+		error("Kyra engine created with invalid gameid");
 
 	return kNoError;
 }
