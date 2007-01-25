@@ -73,51 +73,6 @@ static const KYRAGameDescription adGameDescs[] = {
 	{ { NULL, NULL, {NULL, 0, NULL, 0}, UNK_LANG, kPlatformUnknown }, KYRA2_UNK_FLAGS }
 };
 
-static bool setupGameFlags(const ADList &list, GameFlags &flags) {
-	if (!list.size()) {
-		// maybe add non md5 based detection again?
-		return false;
-	}
-
-	int id = list[0];
-
-	// FIXME: Isn't the following check/loop obsolete (i.e. I was/am under the
-	// impression that AdvancedDetector already performs this check).
-	if (list.size() > 1) {
-		int filesCount = 0;
-		int curID = 0;
-		// get's the entry which has most files to check (most specialized)
-		for (ADList::const_iterator i = list.begin(); i != list.end(); ++i, ++curID) {
-			int fCount = 0;
-
-			for (int j = 0; adGameDescs[*i].desc.filesDescriptions[j].fileName; j++)
-				fCount++;
-
-			if (filesCount < fCount) {
-				filesCount = fCount;
-				id = curID;
-			}
-		}
-	}
-
-	flags = adGameDescs[id].flags;
-
-	Platform platform = parsePlatform(ConfMan.get("platform"));
-	if (platform != kPlatformUnknown) {
-		flags.platform = platform;
-	}
-	Language lang = parseLanguage(ConfMan.get("language"));
-	if (lang != UNK_LANG && flags.lang == UNK_LANG) {
-		flags.lang = lang;
-	}
-
-	if (flags.lang == UNK_LANG) {
-		flags.lang = EN_ANY;
-	}
-
-	return true;
-}
-
 const PlainGameDescriptor gameList[] = {
 	{ "kyra1", "The Legend of Kyrandia" },
 	{ "kyra2", "The Legend of Kyrandia: The Hand of Fate" },
@@ -175,9 +130,29 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 
 	matches = ad.detectGame(&fslist, detectionParams, Common::UNK_LANG, Common::kPlatformUnknown);
 
-	if (!setupGameFlags(matches, flags)) {
+	if (!matches.size()) {
+		// maybe add non md5 based detection again?
 		return kNoGameDataFoundError;
 	}
+
+	int id = matches[0];
+
+	flags = adGameDescs[id].flags;
+
+	Platform platform = parsePlatform(ConfMan.get("platform"));
+	if (platform != kPlatformUnknown) {
+		flags.platform = platform;
+	}
+	
+	if (flags.lang == UNK_LANG) {
+		Language lang = parseLanguage(ConfMan.get("language"));
+		if (lang != UNK_LANG) {
+			flags.lang = lang;
+		} else {
+			flags.lang = EN_ANY;
+		}
+	}
+
 
 	if (!scumm_stricmp("kyra1", gameid)) {
 		*engine = new KyraEngine_v1(syst, flags);
