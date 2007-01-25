@@ -109,7 +109,10 @@ void KyraEngine::seq_intro() {
 
 	_seq->setCopyViewOffs(true);
 	_screen->setFont(Screen::FID_8_FNT);
-	snd_playTheme(MUSIC_INTRO, 2);
+	if (_flags.hasAudioCD)
+		snd_playWanderScoreViaMap(57, 0);
+	else
+		snd_playTheme(MUSIC_INTRO, 2);
 	_text->setTalkCoords(144);
 	for (int i = 0; i < ARRAYSIZE(introProcTable) && !seq_skipSequence(); ++i) {
 		(this->*introProcTable[i])();

@@ -28,6 +28,7 @@
 #include "sound/mixer.h"
 #include "sound/voc.h"
 #include "sound/audiostream.h"
+#include "sound/audiocd.h"
 
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
@@ -433,6 +434,117 @@ void SoundMidiPC::beginFadeOut() {
 
 #pragma mark -
 
+SoundCD::~SoundCD() {
+	AudioCD.stop();
+}
+
+bool SoundCD::init() {
+	_engine->checkCD();
+	return true;
+}
+
+void SoundCD::process() {
+	AudioCD.updateCD();
+}
+
+namespace {
+
+struct CDTrackTable {
+	uint32 unk1;
+	bool loop;
+	int track;
+};
+
+} // end of anonymous namespace
+
+void SoundCD::playTrack(uint8 track) {
+	if (track < 2)
+		return;
+	track -= 2;
+
+	static CDTrackTable tTable[] = {
+		{ 0x04000, 1,  0 },
+		{ 0x05480, 1,  6 },
+		{ 0x05E70, 0,  1 },
+		{ 0x06D90, 1,  3 },
+		{ 0x072C0, 0, -1 },
+		{ 0x075F0, 1, -1 },
+		{ 0x07880, 1, -1 },
+		{ 0x089C0, 0, -1 },
+		{ 0x09080, 0, -1 },
+		{ 0x091D0, 1,  4 },
+		{ 0x0A880, 1,  5 },
+		{ 0x0AF50, 0, -1 },
+		{ 0x0B1A0, 1, -1 },
+		{ 0x0B870, 0, -1 },
+		{ 0x0BCF0, 1, -1 },
+		{ 0x0C5D0, 1,  7 },
+		{ 0x0D3E0, 1,  8 },
+		{ 0x0e7b0, 1,  2 },
+		{ 0x0edc0, 0, -1 },
+		{ 0x0eef0, 1,  9 },
+		{ 0x10540, 1, 10 },
+		{ 0x10d80, 0, -1 },
+		{ 0x10E30, 0, -1 },
+		{ 0x10FC0, 0, -1 },
+		{ 0x11310, 1, -1 },
+		{ 0x11A20, 1, -1 },
+		{ 0x12380, 0, -1 },
+		{ 0x12540, 1, -1 },
+		{ 0x12730, 1, -1 },
+		{ 0x12A90, 1, 11 },
+		{ 0x134D0, 0, -1 },
+		{ 0x00000, 0, -1 },
+		{ 0x13770, 0, -1 },
+		{ 0x00000, 0, -1 },
+		{ 0x00000, 0, -1 },
+		{ 0x00000, 0, -1 },
+		{ 0x00000, 0, -1 },
+		{ 0x14710, 1, 12 },
+		{ 0x15DF0, 1, 13 },
+		{ 0x16030, 1, 14 },
+		{ 0x17030, 0, -1 },
+		{ 0x17650, 0, -1 },
+		{ 0x134D0, 0, -1 },
+		{ 0x178E0, 1, -1 },
+		{ 0x18200, 0, -1 },
+		{ 0x18320, 0, -1 },
+		{ 0x184A0, 0, -1 },
+		{ 0x18BB0, 0, -1 },
+		{ 0x19040, 0, 19 },
+		{ 0x19B50, 0, 20 },
+		{ 0x17650, 0, -1 },
+		{ 0x1A730, 1, 21 },
+		{ 0x00000, 0, -1 },
+		{ 0x12380, 0, -1 },
+		{ 0x1B810, 0, -1 },
+		{ 0x1BA50, 0, 15 },
+		{ 0x1C190, 0, 16 },
+		{ 0x1CA50, 0, 17 },
+		{ 0x1D100, 0, 18 },
+	};
+
+	int trackNum = tTable[track].track;
+	bool loop = tTable[track].loop;
+	// could be that if the trackNum is -1, the music should be stopped
+	// instead of letting the old music play on
+	if (trackNum == -1 || trackNum == _lastTrack)
+		return;
+
+	haltTrack();
+	AudioCD.play(trackNum+1, loop ? -1 : 1, 0, 0);
+	AudioCD.updateCD();
+
+	_lastTrack = trackNum;
+}
+
+void SoundCD::haltTrack() {
+	_lastTrack = -1;
+	AudioCD.stop();
+	AudioCD.updateCD();
+}
+
+#pragma mark -
 
 bool KyraEngine::speechEnabled() {
 	return _flags.isTalkie && (_configVoice == 1 || _configVoice == 2);
@@ -457,45 +569,59 @@ void KyraEngine::snd_playSoundEffect(int track) {
 
 void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playWanderScoreViaMap(%d, %d)", command, restart);
-	static const int8 soundTable[] = {
-		-1,   0,  -1,   1,   0,   3,   0,   2,
-		 0,   4,   1,   2,   1,   3,   1,   4,
-		 1,  92,   1,   6,   1,   7,   2,   2,
-		 2,   3,   2,   4,   2,   5,   2,   6,
-		 2,   7,   3,   3,   3,   4,   1,   8,
-		 1,   9,   4,   2,   4,   3,   4,   4,
-		 4,   5,   4,   6,   4,   7,   4,   8,
-		 1,  11,   1,  12,   1,  14,   1,  13,
-		 4,   9,   5,  12,   6,   2,   6,   6,
-		 6,   7,   6,   8,   6,   9,   6,   3,
-		 6,   4,   6,   5,   7,   2,   7,   3,
-		 7,   4,   7,   5,   7,   6,   7,   7,
-		 7,   8,   7,   9,   8,   2,   8,   3,
-		 8,   4,   8,   5,   6,  11,   5,  11
-	};
-	//if (!_disableSound) {
-	//	XXX
-	//}
-	assert(command*2+1 < ARRAYSIZE(soundTable));
-	if (_curMusicTheme != soundTable[command*2]+1) {
-		if (soundTable[command*2] != -1) {
-			snd_playTheme(soundTable[command*2]+1);
-		}
-	}
-	
 	if (restart)
 		_lastMusicCommand = -1;
-	
-	if (command != 1) {
-		if (_lastMusicCommand != command) {
-			_lastMusicCommand = command;
+
+	if (_flags.hasAudioCD) {
+		if (command == 1) {
+			_sound->beginFadeOut();
+		} else if (command >= 35 && command <= 38) {
+			snd_playSoundEffect(command-20);
+		} else if (command >= 2) {
+			if (_lastMusicCommand != command) {
+				// the original does -2 here we handle this inside _sound->playTrack()
+				_sound->playTrack(command);
+			}
+		} else
 			_sound->haltTrack();
-			_sound->playTrack(soundTable[command*2+1]);
-		}
 	} else {
-		_lastMusicCommand = 1;
-		_sound->beginFadeOut();
+		static const int8 soundTable[] = {
+			-1,   0,  -1,   1,   0,   3,   0,   2,
+			 0,   4,   1,   2,   1,   3,   1,   4,
+			 1,  92,   1,   6,   1,   7,   2,   2,
+			 2,   3,   2,   4,   2,   5,   2,   6,
+			 2,   7,   3,   3,   3,   4,   1,   8,
+			 1,   9,   4,   2,   4,   3,   4,   4,
+			 4,   5,   4,   6,   4,   7,   4,   8,
+			 1,  11,   1,  12,   1,  14,   1,  13,
+			 4,   9,   5,  12,   6,   2,   6,   6,
+			 6,   7,   6,   8,   6,   9,   6,   3,
+			 6,   4,   6,   5,   7,   2,   7,   3,
+			 7,   4,   7,   5,   7,   6,   7,   7,
+			 7,   8,   7,   9,   8,   2,   8,   3,
+			 8,   4,   8,   5,   6,  11,   5,  11
+		};
+		//if (!_disableSound) {
+		//	XXX
+		//}
+		assert(command*2+1 < ARRAYSIZE(soundTable));
+		if (_curMusicTheme != soundTable[command*2]+1) {
+			if (soundTable[command*2] != -1) {
+				snd_playTheme(soundTable[command*2]+1);
+			}
+		}
+	
+		if (command != 1) {
+			if (_lastMusicCommand != command) {
+				_sound->haltTrack();
+				_sound->playTrack(soundTable[command*2+1]);
+			}
+		} else {
+			_sound->beginFadeOut();
+		}
 	}
+
+	_lastMusicCommand = command;
 }
 
 void KyraEngine::snd_playVoiceFile(int id) {

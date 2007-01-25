@@ -146,7 +146,11 @@ int KyraEngine::init() {
 	// TODO: We should play the native Kyra 2 Adlib music, but until that
 	//       is support, we'll use the automagic MIDI -> Adlib converter.
 
-	if (midiDriver == MD_ADLIB && _flags.gameID == GI_KYRA1) {
+	if (_flags.hasAudioCD) {
+		// no sfx enabled for CD audio music atm
+		// later on here should be a usage of MixedSoundDriver
+		_sound = new SoundCD(this, _mixer);
+	} else if (midiDriver == MD_ADLIB && _flags.gameID == GI_KYRA1) {
 		_sound = new SoundAdlibPC(_mixer, this);
 		assert(_sound);
 	} else {

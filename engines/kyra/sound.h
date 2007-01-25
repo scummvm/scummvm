@@ -230,6 +230,29 @@ private:
 	Common::Mutex _mutex;
 };
 
+class SoundCD : public Sound {
+public:
+	SoundCD(KyraEngine *engine, Audio::Mixer *mixer) : Sound(engine, mixer), _lastTrack(-1) {}
+	~SoundCD();
+
+	bool init();
+	void process();
+
+	void setVolume(int) { /* TODO */ }
+	int getVolume() { return 255; /* TODO */ }
+
+	void loadMusicFile(const char *) {}
+
+	void playTrack(uint8 track);
+	void haltTrack();
+
+	void playSoundEffect(uint8) {}
+
+	void beginFadeOut() { /* TODO */ }
+private:
+	int _lastTrack;
+};
+
 class MixedSoundDriver : public Sound {
 public:
 	MixedSoundDriver(KyraEngine *engine, Audio::Mixer *mixer, Sound *music, Sound *sfx) : Sound(engine, mixer), _music(music), _sfx(sfx) {}

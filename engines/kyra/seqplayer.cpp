@@ -399,37 +399,20 @@ void SeqPlayer::s1_playEffect() {
 
 void SeqPlayer::s1_playTrack() {
 	uint8 msg = *_seqData++;
-/*	
-	// we do not have audio cd support for now
-	if (_vm->features() & GF_AUDIOCD) {
-		switch (msg) {
-		case 0:
-			// nothing to do here...
-			break;
-		case 1:
-			_sound->beginFadeOut();
-			break;
-		case 56:
-			_vm->snd_playTheme(KyraEngine::MUSIC_INTRO, 3);
-			break;
-		case 57:
-			_vm->snd_playTheme(KyraEngine::MUSIC_INTRO, 4);
-			break;
-		case 58:
-			_vm->snd_playTheme(KyraEngine::MUSIC_INTRO, 5);
-			break;
-		default:
-			warning("Unknown seq. message: %.02d", msg);
-			break;
-		}
-	} else {*/
+
+	if (_vm->gameFlags().hasAudioCD) {
+		if (msg <= 1)
+			_vm->snd_playWanderScoreViaMap(msg, 0);
+		else
+			_vm->snd_playWanderScoreViaMap(msg+55, 0);
+	} else {
 		if (msg == 1) {
 			_sound->beginFadeOut();
 		} else {
 			_sound->haltTrack();
 			_sound->playTrack(msg);
 		}
-//	}
+	}
 }
 
 void SeqPlayer::s1_allocTempBuffer() {
