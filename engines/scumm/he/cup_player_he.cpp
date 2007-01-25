@@ -37,9 +37,9 @@ CUP_Player::CUP_Player(OSystem *sys, ScummEngine_vCUPhe *vm, Audio::Mixer *mixer
 bool CUP_Player::open(const char *filename) {
 	bool opened = false;
 	debug(1, "opening '%s'", filename);
-	if (_fd.open(filename)) {
-		uint32 tag = _fd.readUint32BE();
-		_fd.readUint32BE();
+	if (_fileStream.open(filename)) {
+		uint32 tag = _fileStream.readUint32BE();
+		_fileStream.readUint32BE();
 		if (tag == MKID_BE('BEAN')) {
 			_playbackRate = kDefaultPlaybackRate;
 			_width = kDefaultVideoWidth;
@@ -49,10 +49,12 @@ bool CUP_Player::open(const char *filename) {
 			_paletteChanged = false;
 			_offscreenBuffer = 0;
 
-			_currentChunkData = 0;
-			_currentChunkSize = 0;
-			_bufferLzssData = 0;
-			_bufferLzssSize = 0;
+			_inLzssBufData = 0;
+			_inLzssBufSize = 0;
+			_outLzssBufData = 0;
+			_outLzssBufSize = 0;
+
+			_dataSize = 0;
 
 			_sfxCount = 0;
 			_sfxBuffer = 0;
@@ -62,9 +64,6 @@ bool CUP_Player::open(const char *filename) {
 			memset(_sfxQueue, 0, sizeof(_sfxQueue));
 			_sfxQueuePos = 0;
 			_lastSfxChannel = -1;
-
-			parseHeaderTags();
-			debug(1, "rate %d width %d height %d", _playbackRate, _width, _height);
 
 			_offscreenBuffer = (uint8 *)malloc(_width * _height);
 			memset(_offscreenBuffer, 0, _width * _height);
@@ -76,79 +75,46 @@ bool CUP_Player::open(const char *filename) {
 }
 
 void CUP_Player::close() {
-	_fd.close();
+	_fileStream.close();
 	free(_offscreenBuffer);
 	_offscreenBuffer = 0;
+	free(_inLzssBufData);
+	_inLzssBufData = 0;
+	free(_outLzssBufData);
+	_outLzssBufData = 0;
 	free(_sfxBuffer);
 	_sfxBuffer = 0;
 }
 
-uint32 CUP_Player::loadNextChunk() {
-	uint32 tag = _fd.readUint32BE();
-	uint32 size = _fd.readUint32BE() - 8;
-	if (_currentChunkSize < size) {
-		free(_currentChunkData);
-		_currentChunkSize = 0;
-		_currentChunkData = (uint8 *)malloc(size);
-	}
-	if (_currentChunkData) {
-		_currentChunkSize = size;
-		_fd.read(_currentChunkData, _currentChunkSize);
-	}
-	return tag;
-}
-
-void CUP_Player::parseHeaderTags() {
-	_dataSize = 0;
-	while (_dataSize == 0 && !_vm->_quit && !_fd.ioFailed()) {
-		uint32 tag = loadNextChunk();
-		switch (tag) {
-		case MKID_BE('HEAD'):
-			handleHEAD(_currentChunkData, _currentChunkSize);
-			break;
-		case MKID_BE('SFXB'):
-			handleSFXB(_currentChunkData, _currentChunkSize);
-			break;
-		case MKID_BE('RGBS'):
-			handleRGBS(_currentChunkData, _currentChunkSize);
-			break;
-		case MKID_BE('DATA'):
-			_dataSize = _currentChunkSize;
-			break;
-		case MKID_BE('GFXB'):
-			// this is never triggered
-		default:
-			warning("unhandled tag %s", tag2str(tag));
-			break;
-		}
-	}
-}
-
 void CUP_Player::play() {
-	int ticks = _system->getMillis();
-	while (_currentChunkSize != 0 && !_vm->_quit && !_fd.ioFailed()) {
-		uint32 tag, size;
-		parseNextTag(_currentChunkData, tag, size);
-		if (tag == MKID_BE('BLOK')) {
-			int diff = _system->getMillis() - ticks;
-			if (diff >= 0 && diff <= _playbackRate) {
-				_system->delayMillis(_playbackRate - diff);
-			} else {
-				_system->delayMillis(1);
-			}
-			updateSfx();
-			updateScreen();
-			_vm->parseEvents();
-
-			ticks = _system->getMillis();
-			size = 8;
+	while (parseNextHeaderTag(_fileStream)) {
+		if (_fileStream.ioFailed()) {
+			return;
 		}
-		_currentChunkData += size;
-		_currentChunkSize -= size;
+	}
+	debug(1, "rate %d width %d height %d", _playbackRate, _width, _height);
+
+	int ticks = _system->getMillis();
+	while (_dataSize != 0 && !_vm->_quit) {
+		while (parseNextBlockTag(_fileStream)) {
+			if (_fileStream.ioFailed()) {
+				return;
+			}
+		}
+		int diff = _system->getMillis() - ticks;
+		if (diff >= 0 && diff <= _playbackRate) {
+			_system->delayMillis(_playbackRate - diff);
+		} else {
+			_system->delayMillis(1);
+		}
+		updateSfx();
+		updateScreen();
+		_vm->parseEvents();
+		ticks = _system->getMillis();
 	}
 }
 
-void CUP_Player::setDirtyScreenRect(const Common::Rect &r) {
+void CUP_Player::copyRectToScreen(const Common::Rect &r) {
 	const uint8 *src = _offscreenBuffer + r.top * _width + r.left;
 	_system->copyRectToScreen(src, _width, r.left, r.top, r.width() + 1, r.height() + 1);
 }
@@ -227,146 +193,168 @@ void CUP_Player::waitForSfxChannel(int channel) {
 	}
 }
 
-void CUP_Player::parseNextTag(const uint8 *data, uint32 &tag, uint32 &size) {
-	tag = READ_BE_UINT32(data);
-	size = READ_BE_UINT32(data + 4);
-	data += 8;
+bool CUP_Player::parseNextHeaderTag(Common::SeekableReadStream &dataStream) {
+	uint32 tag = dataStream.readUint32BE();
+	uint32 size = dataStream.readUint32BE() - 8;
+	uint32 next = dataStream.pos() + size;
+	debug(1, "New header tag %s %d dataSize %d", tag2str(tag), size, _dataSize);
+	switch (tag) {
+	case MKID_BE('HEAD'):
+		handleHEAD(dataStream, size);
+		break;
+	case MKID_BE('SFXB'):
+		handleSFXB(dataStream, size);
+		break;
+	case MKID_BE('RGBS'):
+		handleRGBS(dataStream, size);
+		break;
+	case MKID_BE('DATA'):
+		_dataSize = size;
+		return false;
+	case MKID_BE('GFXB'):
+		// this is never triggered
+	default:
+		warning("Unhandled tag %s", tag2str(tag));
+		break;
+	}
+	dataStream.seek(next);
+	return true;
+}
+
+bool CUP_Player::parseNextBlockTag(Common::SeekableReadStream &dataStream) {
+	uint32 tag = dataStream.readUint32BE();
+	uint32 size = dataStream.readUint32BE() - 8;
+	uint32 next = dataStream.pos() + size;
+	debug(1, "New block tag %s %d dataSize %d", tag2str(tag), size, _dataSize);
 	switch (tag) {
 	case MKID_BE('FRAM'):
-		handleFRAM(_offscreenBuffer, data, size);
+		handleFRAM(dataStream, size);
 		break;
 	case MKID_BE('LZSS'):
-		data = handleLZSS(data, size);
-		if (data) {
-			uint32 t, s;
-			parseNextTag(data, t, s);
+		if (handleLZSS(dataStream, size) && _outLzssBufSize != 0) {
+			Common::MemoryReadStream memoryStream(_outLzssBufData, _outLzssBufSize);
+			parseNextBlockTag(memoryStream);
 		}
 		break;
 	case MKID_BE('RATE'):
-		handleRATE(data, size);
+		handleRATE(dataStream, size);
 		break;
 	case MKID_BE('RGBS'):
-		handleRGBS(data, size);
+		handleRGBS(dataStream, size);
 		break;
 	case MKID_BE('SNDE'):
-		handleSNDE(data, size);
+		handleSNDE(dataStream, size);
 		break;
 	case MKID_BE('TOIL'):
-		handleTOIL(data, size);
-		break;
-	case MKID_BE('BLOK'):
-		// not handled here
+		handleTOIL(dataStream, size);
 		break;
 	case MKID_BE('SRLE'):
-		handleSRLE(_offscreenBuffer, data, size);
+		handleSRLE(dataStream, size);
 		break;
+	case MKID_BE('BLOK'):
+		_dataSize -= size + 8;
+		return false;
 	case MKID_BE('WRLE'):
 		// this is never triggered
 	default:
 		warning("Unhandled tag %s", tag2str(tag));
 		break;
 	}
+	dataStream.seek(next);
+	return true;
 }
 
-void CUP_Player::handleHEAD(const uint8 *data, uint32 dataSize) {
-	_playbackRate = READ_LE_UINT16(data);
-	_width = READ_LE_UINT16(data + 2);
-	_height = READ_LE_UINT16(data + 4);
+void CUP_Player::handleHEAD(Common::SeekableReadStream &dataStream, uint32 dataSize) {
+	_playbackRate = dataStream.readUint16LE();
+	_width = dataStream.readUint16LE();
+	_height = dataStream.readUint16LE();
 }
 
-void CUP_Player::handleSFXB(const uint8 *data, uint32 dataSize) {
+void CUP_Player::handleSFXB(Common::SeekableReadStream &dataStream, uint32 dataSize) {
 	if (dataSize > 16) { // WRAP and OFFS chunks
-		if (READ_BE_UINT32(data) == MKID_BE('WRAP')) {
-			data += 8;
-			if (READ_BE_UINT32(data) == MKID_BE('OFFS')) {
-				_sfxCount = (READ_BE_UINT32(data + 4) - 8) / 4;
+		uint32 tag = dataStream.readUint32BE();
+		uint32 size = dataStream.readUint32BE();
+		if (tag == MKID_BE('WRAP')) {
+			tag = dataStream.readUint32BE();
+			size = dataStream.readUint32BE();
+			if (tag == MKID_BE('OFFS')) {
+				_sfxCount = (size - 8) / 4;
 				_sfxBuffer = (uint8 *)malloc(dataSize - 16);
 				if (_sfxBuffer) {
-					memcpy(_sfxBuffer, data + 8, dataSize - 16);
+					dataStream.read(_sfxBuffer, dataSize - 16);
 				}
 			}
 		}
 	}
 }
 
-void CUP_Player::handleRGBS(const uint8 *data, uint32 dataSize) {
+void CUP_Player::handleRGBS(Common::SeekableReadStream &dataStream, uint32 dataSize) {
 	for (int i = 0; i < 256; i++) {
-		memcpy(&_paletteData[i * 4], data, 3);
-		data += 3;
+		dataStream.read(&_paletteData[i * 4], 3);
 	}
 	_paletteChanged = true;
 }
 
-void CUP_Player::handleFRAM(uint8 *dst, const uint8 *data, uint32 size) {
-	const uint8 flags = *data++;
-	int type = 256;
-	if (flags & 1) {
-		type = *data++;
-	}
-	Common::Rect r;
-	if (flags & 2) {
-		r.left   = READ_LE_UINT16(data); data += 2;
-		r.top    = READ_LE_UINT16(data); data += 2;
-		r.right  = READ_LE_UINT16(data); data += 2;
-		r.bottom = READ_LE_UINT16(data); data += 2;
-	}
-	if (flags & 0x80) {
-		decodeFRAM(dst, r, data, type);
-		setDirtyScreenRect(r);
+static void decodeTRLE(uint8 *dst, int dstPitch, Common::Rect &dstRect, Common::SeekableReadStream &dataStream) {
+	dst += dstRect.top * dstPitch + dstRect.left;
+	int h = dstRect.bottom - dstRect.top + 1;
+	int w = dstRect.right - dstRect.left + 1;
+	while (h--) {
+		int lineSize = dataStream.readUint16LE();
+		int nextLineOffset = dataStream.pos() + lineSize;
+		uint8 *dstNextLine = dst + dstPitch;
+		if (lineSize != 0) {
+			uint8 *dstEnd = dst + w;
+			while (dst < dstEnd) {
+				int code = dataStream.readByte();
+				if (code & 1) { // skip
+					code >>= 1;
+					dst += code;
+				} else if (code & 2) { // set
+					code = (code >> 2) + 1;
+					const int sz = MIN<int>(code, dstEnd - dst);
+					memset(dst, dataStream.readByte(), sz);
+					dst += sz;
+				} else { // copy
+					code = (code >> 2) + 1;
+					const int sz = MIN<int>(code, dstEnd - dst);
+					dataStream.read(dst, sz);
+					dst += sz;
+				}
+			}
+		}
+		dataStream.seek(nextLineOffset);
+		dst = dstNextLine;
 	}
 }
 
-void CUP_Player::decodeFRAM(uint8 *dst, Common::Rect &dstRect, const uint8 *data, int type) {
-	if (type == 256) {
-		dst += dstRect.top * _width + dstRect.left;
-		int h = dstRect.bottom - dstRect.top + 1;
-		int w = dstRect.right - dstRect.left + 1;
-		while (h--) {
-			uint16 lineSize = READ_LE_UINT16(data); data += 2;
-			uint8 *dstNextLine = dst + _width;
-			const uint8 *dataNextLine = data + lineSize;
-			if (lineSize != 0) {
-				uint8 *dstEnd = dst + w;
-				while (dst < dstEnd) {
-					int code = *data++;
-					if (code & 1) { // skip
-						code >>= 1;
-						dst += code;
-					} else if (code & 2) { // set
-						code = (code >> 2) + 1;
-						const int sz = MIN<int>(code, dstEnd - dst);
-						memset(dst, *data++, sz);
-						dst += sz;
-					} else { // copy
-						code = (code >> 2) + 1;
-						const int sz = MIN<int>(code, dstEnd - dst);
-						memcpy(dst, data, sz);
-						dst += sz;
-						data += sz;
-					}
-				}
-			}
-			dst = dstNextLine;
-			data = dataNextLine;
+
+void CUP_Player::handleFRAM(Common::SeekableReadStream &dataStream, uint32 dataSize) {
+	const uint8 flags = dataStream.readByte();
+	int type = 256;
+	if (flags & 1) {
+		type = dataStream.readByte();
+	}
+	Common::Rect r;
+	if (flags & 2) {
+		r.left   = dataStream.readUint16LE();
+		r.top    = dataStream.readUint16LE();
+		r.right  = dataStream.readUint16LE();
+		r.bottom = dataStream.readUint16LE();
+	}
+	if (flags & 0x80) {
+		if (type == 256) {
+			decodeTRLE(_offscreenBuffer, _width, r, dataStream);
+			copyRectToScreen(r);
+		} else {
+			warning("Unhandled FRAM type %d", type); // this is never triggered
 		}
 	}
 }
 
-void CUP_Player::handleSRLE(uint8 *dst, const uint8 *data, uint32 size) {
-	Common::Rect r;
-	r.left   = READ_LE_UINT16(data); data += 2;
-	r.top    = READ_LE_UINT16(data); data += 2;
-	r.right  = READ_LE_UINT16(data); data += 2;
-	r.bottom = READ_LE_UINT16(data); data += 2;
-	const uint8 *colorMap = data;
-	int unpackedSize = READ_LE_UINT32(data + 32);
-	decodeSRLE(dst, colorMap, data + 36, unpackedSize);
-	setDirtyScreenRect(r);
-}
-
-void CUP_Player::decodeSRLE(uint8 *dst, const uint8 *colorMap, const uint8 *data, int unpackedSize) {
+static void decodeSRLE(uint8 *dst, const uint8 *colorMap, Common::SeekableReadStream &dataStream, int unpackedSize) {
 	while (unpackedSize > 0) {
-		int size, code = *data++;
+		int size, code = dataStream.readByte();
 		if ((code & 1) == 0) {
 			if ((code & 2) == 0) {
 				size = (code >> 2) + 1;
@@ -379,11 +367,11 @@ void CUP_Player::decodeSRLE(uint8 *dst, const uint8 *colorMap, const uint8 *data
 				} else {
 					code >>= 3;
 					if (code == 0) {
-						size = 1 + *data++;
+						size = 1 + dataStream.readByte();
 					} else {
 						size = code;
 					}
-					memset(dst, *data++, MIN(unpackedSize, size));
+					memset(dst, dataStream.readByte(), MIN(unpackedSize, size));
 					dst += size;
 					unpackedSize -= size;
 				}
@@ -391,7 +379,7 @@ void CUP_Player::decodeSRLE(uint8 *dst, const uint8 *colorMap, const uint8 *data
 		} else {
 			code >>= 1;
 			if (code == 0) {
-				code = 1 + READ_LE_UINT16(data); data += 2;
+				code = 1 + dataStream.readUint16LE();
 			}
 			dst += code;
 			unpackedSize -= code;
@@ -399,39 +387,20 @@ void CUP_Player::decodeSRLE(uint8 *dst, const uint8 *colorMap, const uint8 *data
 	}
 }
 
-uint8 *CUP_Player::handleLZSS(const uint8 *data, uint32 dataSize) {
-	uint32 compressionType = 0;
-	uint32 compressionSize = 0;
-	uint32 tag, size;
-
-	tag = READ_BE_UINT32(data);
-	size = READ_BE_UINT32(data + 4);
-	if (tag == MKID_BE('LZHD')) {
-		compressionType = READ_LE_UINT32(data + 8);
-		compressionSize = READ_LE_UINT32(data + 12);
-	}
-	data += size;
-
-	tag = READ_BE_UINT32(data);
-	size = READ_BE_UINT32(data + 4);
-	if (tag == MKID_BE('DATA')) {
-		if (compressionType == 0x2000) {
-			if (_bufferLzssSize < compressionSize) {
-				_bufferLzssSize = compressionSize;
-				free(_bufferLzssData);
-				_bufferLzssData = (uint8 *)malloc(_bufferLzssSize);
-			}
-			data += 8;
-			uint32 offset1 = READ_LE_UINT32(data);
-			uint32 offset2 = READ_LE_UINT32(data + 4);
-			decodeLZSS(_bufferLzssData, data + 8, data + offset1, data + offset2);
-			return _bufferLzssData;
-		}
-	}
-	return 0;
+void CUP_Player::handleSRLE(Common::SeekableReadStream &dataStream, uint32 dataSize) {
+	Common::Rect r;
+	r.left   = dataStream.readUint16LE();
+	r.top    = dataStream.readUint16LE();
+	r.right  = dataStream.readUint16LE();
+	r.bottom = dataStream.readUint16LE();
+	uint8 colorMap[32];
+	dataStream.read(colorMap, 32);
+	int unpackedSize = dataStream.readUint32LE();
+	decodeSRLE(_offscreenBuffer, colorMap, dataStream, unpackedSize);
+	copyRectToScreen(r);
 }
 
-void CUP_Player::decodeLZSS(uint8 *dst, const uint8 *src1, const uint8 *src2, const uint8 *src3) {
+static void decodeLZSS(uint8 *dst, const uint8 *src1, const uint8 *src2, const uint8 *src3) {
 	uint8 wnd[4096];
 	int index = 1;
 	while (1) {
@@ -460,59 +429,87 @@ void CUP_Player::decodeLZSS(uint8 *dst, const uint8 *src1, const uint8 *src2, co
 	}
 }
 
-void CUP_Player::handleRATE(const uint8 *data, uint32 dataSize) {
-	const int rate = (int16)READ_LE_UINT16(data);
+bool CUP_Player::handleLZSS(Common::SeekableReadStream &dataStream, uint32 dataSize) {
+	uint32 tag = dataStream.readUint32BE();
+	uint32 size = dataStream.readUint32BE();
+	if (tag == MKID_BE('LZHD')) {
+		uint32 compressionType = dataStream.readUint32LE();
+		uint32 compressionSize = dataStream.readUint32LE();
+		tag = dataStream.readUint32BE();
+		size = dataStream.readUint32BE();
+		if (tag == MKID_BE('DATA') && compressionType == 0x2000) {
+			if (_inLzssBufSize < size - 16) {
+				free(_inLzssBufData);
+				_inLzssBufSize = size - 16;
+				_inLzssBufData = (uint8 *)malloc(_inLzssBufSize);
+			}
+			if (_outLzssBufSize < compressionSize) {
+				free(_outLzssBufData);
+				_outLzssBufSize = compressionSize;
+				_outLzssBufData = (uint8 *)malloc(_outLzssBufSize);
+			}
+			if (_inLzssBufData && _outLzssBufData) {
+				uint32 offset1 = dataStream.readUint32LE() - 8;
+				uint32 offset2 = dataStream.readUint32LE() - 8;
+				dataStream.read(_inLzssBufData, size - 16);
+				decodeLZSS(_outLzssBufData, _inLzssBufData, _inLzssBufData + offset1, _inLzssBufData + offset2);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void CUP_Player::handleRATE(Common::SeekableReadStream &dataStream, uint32 dataSize) {
+	const int rate = dataStream.readSint16LE();
 	_playbackRate = CLIP(rate, 1, 4000);
 }
 
-void CUP_Player::handleSNDE(const uint8 *data, uint32 dataSize) {
+void CUP_Player::handleSNDE(Common::SeekableReadStream &dataStream, uint32 dataSize) {
 	assert(_sfxQueuePos < kSfxQueueSize);
 	CUP_Sfx *sfx = &_sfxQueue[_sfxQueuePos];
-	sfx->flags = READ_LE_UINT32(data);
-	sfx->num = READ_LE_UINT16(data + 4);
-	uint16 loop = READ_LE_UINT16(data + 8);
+	sfx->flags = dataStream.readUint32LE();
+	sfx->num = dataStream.readUint16LE();
+	dataStream.skip(2);
+	uint16 loop = dataStream.readUint16LE();
 	assert((loop & 0x8000) != 0); // this is never triggered
 	++_sfxQueuePos;
 }
 
-void CUP_Player::handleTOIL(const uint8 *data, uint32 dataSize) {
-	int codesCount = READ_LE_UINT16(data); data += 2;
-	if (dataSize > 0) {
-		while (codesCount != 0) {
-			int codeSize = *data++;
-			if (codeSize == 0) {
-				codeSize = READ_LE_UINT16(data); data += 2;
-			}
-			int code = *data++;
-			if (code == 0) {
-				code = READ_LE_UINT16(data); data += 2;
-			}
-			switch (code) {
-			case 1:
-				for (int i = 0; i < kSfxChannels; ++i) {
-					waitForSfxChannel(i);
-				}
-				_vm->_quit = true;
-				break;
-			case 7: {
-					int channelSync = READ_LE_UINT32(data);
-					waitForSfxChannel(channelSync);
-				}
-				break;
-			case 2: // display copyright/information messagebox
-			case 3: // no-op in the original
-			case 4: // restart playback
-			case 5: // disable normal screen update
-			case 6: // enable double buffer rendering
-				// these are never triggered
-			default:
-				warning("Unhandled TOIL code=%d", code);
-				break;
-			}
-			dataSize -= codeSize;
-			data += codeSize;
-			--codesCount;
+void CUP_Player::handleTOIL(Common::SeekableReadStream &dataStream, uint32 dataSize) {
+	int codesCount = dataStream.readUint16LE();
+	while (codesCount != 0) {
+		int codeSize = dataStream.readByte();
+		if (codeSize == 0) {
+			codeSize = dataStream.readUint16LE();
 		}
+		int code = dataStream.readByte();
+		if (code == 0) {
+			code = dataStream.readUint16LE();
+		}
+		switch (code) {
+		case 1:
+			for (int i = 0; i < kSfxChannels; ++i) {
+				waitForSfxChannel(i);
+			}
+			_vm->_quit = true;
+			break;
+		case 7: {
+				int channelSync = dataStream.readUint32LE();
+				waitForSfxChannel(channelSync);
+			}
+			break;
+		case 2: // display copyright/information messagebox
+		case 3: // no-op in the original
+		case 4: // restart playback
+		case 5: // disable normal screen update
+		case 6: // enable double buffer rendering
+			// these are never triggered
+		default:
+			warning("Unhandled TOIL code=%d", code);
+			break;
+		}
+		--codesCount;
 	}
 }
 
