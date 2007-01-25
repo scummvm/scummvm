@@ -96,7 +96,7 @@ PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
 	);
 
 
-#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,createFunction,detectFunc,params) \
+#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,className,detectFunc,params) \
 	GameList Engine_##engine##_gameIDList() { \
 		return GameList(params.list); \
 	} \
@@ -111,7 +111,7 @@ PluginError ADVANCED_DETECTOR_ENGINE_CREATE(
 		assert(engine); \
 		PluginError err = ADVANCED_DETECTOR_ENGINE_CREATE(detectFunc, params); \
 		if (err == kNoError) \
-			*engine = new createFunction(syst); \
+			*engine = new className(syst); \
 		return err; \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
