@@ -98,11 +98,11 @@ GameList Engine_KYRA_gameIDList() {
 }
 
 GameDescriptor Engine_KYRA_findGameID(const char *gameid) {
-	return Common::ADVANCED_DETECTOR_FIND_GAMEID(gameid, detectionParams);
+	return ADVANCED_DETECTOR_FIND_GAMEID(gameid, detectionParams);
 }
 
 GameList Engine_KYRA_detectGames(const FSList &fslist) {
-	return Common::ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(fslist, detectionParams);
+	return ADVANCED_DETECTOR_DETECT_GAMES_FUNCTION(fslist, detectionParams);
 }
 
 PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
