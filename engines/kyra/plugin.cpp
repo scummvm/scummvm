@@ -24,8 +24,6 @@
 #include "kyra/kyra3.h"
 
 #include "common/config-manager.h"
-#include "common/fs.h"
-#include "common/system.h"
 #include "common/advancedDetector.h"
 
 #include "base/plugins.h"

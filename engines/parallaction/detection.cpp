@@ -25,7 +25,6 @@
 #include "base/plugins.h"
 
 #include "common/advancedDetector.h"
-#include "common/file.h"
 
 #include "parallaction/parallaction.h"
 

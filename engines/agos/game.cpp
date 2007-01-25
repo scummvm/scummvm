@@ -26,9 +26,6 @@
 #include "base/plugins.h"
 
 #include "common/advancedDetector.h"
-#include "common/config-manager.h"
-#include "common/file.h"
-#include "common/fs.h"
 
 #include "agos/agos.h"
 
