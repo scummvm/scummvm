@@ -32,9 +32,9 @@ namespace Common {
 
 struct ADGameFileDescription {
 	const char *fileName;
-	uint16 fileType;
-	const char *md5;
-	const int32 fileSize;
+	uint16 fileType;      // Optional. Not used in detection, only be engines
+	const char *md5;      // Optional could be NULL
+	const int32 fileSize; // Optional. Set to -1 to ignore
 };
 
 struct ADGameDescription {
