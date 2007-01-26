@@ -277,8 +277,8 @@ void runDialogue(SpeakData *data) {
 
 		v5C._data0 = v6E._array[v60->_mood & 0xF];
 //		v5C._data1 = v6E.field_8[v60->_mood & 0xF];
-		v48._data0 = _characterFace._array[v60->_mood & 0xF];
-//		v48._data1 = _characterFace.field_8[v60->_mood & 0xF];
+		v48._data0 = _characterFace._array[0];
+//		v48._data1 = _characterFace.field_8[0];
 
 		// display Question if any
 		if (scumm_stricmp(v60->_text, "NULL")) {
