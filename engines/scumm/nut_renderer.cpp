@@ -294,11 +294,14 @@ void NutRenderer::drawShadowChar(const Graphics::Surface &s, int c, int x, int y
 		return;
 	}
 
-	// HACK: we draw the character a total of 7 times: 6 times shifted
-	// and in black for the shadow, and once in the right color and position.
-	// This way we achieve the exact look as the original CMI had. However,
-	// the question remains whether they did it this way, too, or if there is
-	// some "font shadow" resource we don't know yet.
+	// We draw the character a total of 7 times: 6 times shifted and in black
+	// for the shadow, and once in the right color and position. This way we
+	// achieve the exact look as the original CMI had.
+	// However, this is not how the original engine handled it. Char glyphs
+	// were compressed with codec 44. In the decoding routine, transparent
+	// pixels are skipped. Other pixels are just filled with the decoded color
+	// which can be equal to 0 (==shadow), 1 (==char color) or another value
+	// (255, 224) which is just copied as-is in the destination buffer.
 
 	static const int offsetX[7] = { -1,  0, 1, 0, 1, 2, 0 };
 	static const int offsetY[7] = {  0, -1, 0, 1, 2, 1, 0 };
