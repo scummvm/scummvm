@@ -1,4 +1,4 @@
-/* scummvm - Scumm Interpreter
+/* ScummVM - Scumm Interpreter
  * Copyright (C) 2002-2006 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
@@ -725,7 +725,7 @@ void ScummEngine_v8::o8_cursorCommand() {
 		setCursorTransparency(pop());
 		break;
 	case 0xE7: 		// SO_CHARSET_SET
-		_verbCharset = pop();
+		_string[0]._default.charset = pop();
 		break;
 	case 0xE8:		// SO_CHARSET_COLOR
 		getStackList(args, ARRAYSIZE(args));
@@ -1088,7 +1088,7 @@ void ScummEngine_v8::o8_verbOps() {
 		vs->hicolor = 0;
 		vs->dimcolor = 8;
 		vs->type = kTextVerbType;
-		vs->charset_nr = _verbCharset;
+		vs->charset_nr = _string[0]._default.charset;
 		vs->curmode = 0;
 		vs->saveid = 0;
 		vs->key = 0;
