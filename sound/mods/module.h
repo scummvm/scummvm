@@ -29,6 +29,11 @@
 namespace Modules {
 
 /*
+ * FIXME: Is the following comment still valid? If so, 
+ * it should be marked accordingly, and maybe added to our 
+ * TODO list on the Wiki (conserving memory is always a big
+ * boon for our smaller targets).
+ *
  * Storing notes and patterns like this
  * wastes insane amounts of memory.
  *

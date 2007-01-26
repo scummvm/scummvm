@@ -179,9 +179,12 @@ void ProtrackerStream::generateSound() {
 
 	_buf->ensureCapacity(samples);
 
+// FIXME: Could this code be unified/ with Paula::readBuffer?
+// They look very similar. Maybe one could be rewritten to 
+// use the other?
+
 	int16 *p = _buf->getEnd();
-	for (int i = 0; i < samples; i++)
-		p[i] = 0;
+	memset(p, 0, samples * sizeof(int16));
 
 	for (int track = 0; track < 4; track++) {
 		if (_track[track].sample > 0) {
@@ -234,8 +237,7 @@ void ProtrackerStream::generateSound() {
 				}
 			} else {
 				if (offset < slen) {
-					if ((int)(offset + samples * rate) >=
-					    slen) {
+					if ((int)(offset + samples * rate) >= slen) {
 						/* The end of the sample is the limiting factor */
 
 						int end = (int)((slen - offset) / rate);

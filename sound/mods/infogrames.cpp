@@ -236,8 +236,7 @@ bool Infogrames::load(Common::SeekableReadStream &dum) {
 void Infogrames::unload(void) {
 	stopPlay();
 
-	if (_data)
-		delete[] _data;
+	delete[] _data;
 	_data = 0;
 
 	clearVoices();
@@ -449,9 +448,9 @@ void Infogrames::interrupt() {
 		} else if (_repCount != -1) {
 			_end = true;
 			_playing = false;
-		}
-		else
+		} else {
 			init();
+		}
 	}
 }
 

@@ -35,18 +35,19 @@ namespace Audio {
  */
 class Paula : public AudioStream {
 public:
+	static const int NUM_VOICES = 4;
+
 	Paula(bool stereo = false, int rate = 44100, int interruptFreq = 0);
 	~Paula();
 	
 	bool playing() const { return _playing; }
 	void setInterruptFreq(int freq) { _intFreq = freq; }
-	void setPanning(byte voice, byte panning)
-	{
-		if (voice < 4)
-			_voice[voice].panning = panning;
+	void setPanning(byte voice, byte panning) {
+		assert(voice < NUM_VOICES);
+		_voice[voice].panning = panning;
 	}
 	void clearVoice(byte voice);
-	void clearVoices() { int i; for (i = 0; i < 4; i++) clearVoice(i); }
+	void clearVoices() { for (int i = 0; i < NUM_VOICES; ++i) clearVoice(i); }
 	virtual void startPlay(void) {}
 	virtual void stopPlay(void) {}
 	virtual void pausePlay(bool pause) {}
@@ -67,7 +68,7 @@ protected:
 		byte volume;
 		double offset;
 		byte panning; // For stereo mixing: 0 = far left, 255 = far right
-	} _voice[4];
+	} _voice[NUM_VOICES];
 
 	int _rate;
 	int _intFreq;
@@ -78,13 +79,12 @@ protected:
 	Common::Mutex _mutex;
 
 	void mix(int16 *&buf, int8 data, int voice) {
+		const int32 tmp = ((int32) data) * _voice[voice].volume;
 		if (_stereo) {
-			*buf++ += (((int32) data) * _voice[voice].volume *
-				 (255 - _voice[voice].panning)) >> 7;
-			*buf++ += (((int32) data) * _voice[voice].volume *
-				 (_voice[voice].panning)) >> 7;
+			*buf++ += (tmp * (255 - _voice[voice].panning)) >> 7;
+			*buf++ += (tmp * (_voice[voice].panning)) >> 7;
 		} else
-			*buf++ += _voice[voice].volume * data;
+			*buf++ += tmp;
 	}
 	virtual void interrupt(void) {};
 };

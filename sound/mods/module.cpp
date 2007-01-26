@@ -33,6 +33,11 @@ bool Module::load(Common::ReadStream &st) {
 	st.read(songname, 20);
 	songname[20] = '\0';
 
+	// FIXME: We define sample to have 32 entries,
+	// yet we only setup 31 of these -- is this on
+	// purpose, or an off-by-one error? This should
+	// be clarified by either adding a comment explaining
+	// this odditiy, or by fixing the off-by-one-bug.
 	for (int i = 0; i < 31; ++i) {
 		st.read(sample[i].name, 22);
 		sample[i].name[22] = '\0';

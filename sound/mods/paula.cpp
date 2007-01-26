@@ -45,8 +45,7 @@ Paula::~Paula() {
 }
 
 void Paula::clearVoice(byte voice) {
-	if (voice >= 4)
-		return;
+	assert(voice < NUM_VOICES);
 
 	_voice[voice].data = 0;
 	_voice[voice].dataRepeat = 0;
@@ -68,12 +67,14 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 	int16 *p;
 	int8 *data;
 
-	_mutex.lock();
+// FIXME: Could this code be unified/merged with ProtrackerStream::generateSound?
+// They look very similar. Maybe one could be rewritten to 
+// use the other?
+	
+	Common::StackLock lock(_mutex);
 
 	memset(buffer, 0, numSamples * 2);
-	if (!_playing)
-	{
-		_mutex.unlock();
+	if (!_playing) {
 		return numSamples;
 	}
 
@@ -84,7 +85,7 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 			_curInt = 0;
 		}
 		nSamples = MIN(samples, _intFreq - _curInt);
-		for (voice = 0; voice < 4; voice++) {
+		for (voice = 0; voice < NUM_VOICES; voice++) {
 			if (!_voice[voice].data || (_voice[voice].period <= 0))
 				continue;
 
@@ -160,7 +161,6 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 		_curInt += nSamples;
 		samples -= nSamples;
 	}
-	_mutex.unlock();
 	return numSamples;
 }
 
