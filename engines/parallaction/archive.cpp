@@ -42,6 +42,9 @@ static uint32			_handle = MAX_ARCHIVE_ENTRIES;
 void openArchive(const char *file) {
 	debugC(1, kDebugDisk, "open archive '%s'", file);
 
+    if (_archive.isOpen()) closeArchive();
+
+
 	uint32	offset = DIRECTORY_OFFSET_IN_FILE;
 	char	path[PATH_LEN];
 
