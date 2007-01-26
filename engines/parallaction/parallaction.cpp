@@ -30,7 +30,7 @@
 
 #include "common/util.h"
 #include "common/file.h"
-
+#include "common/config-manager.h"
 
 namespace Parallaction {
 
@@ -175,13 +175,15 @@ Parallaction::Parallaction(OSystem *syst) :
 /*    Common::addSpecialDebugLevel(kDebugAnimation, "Animation", "Animations debug level");
     Common::addSpecialDebugLevel(kDebugZone, "Zone", "Zones debug level");
     Common::addSpecialDebugLevel(kDebugCommand, "Command", "Commands debug level");
-    Common::addSpecialDebugLevel(kDebugDialogue, "Dialogue", "Dialogues debug level");
+
     Common::addSpecialDebugLevel(kDebugIntro, "Intro", "Intro debug level");
     Common::addSpecialDebugLevel(kDebugInventory, "Inventory", "Inventory debug level");
-    Common::addSpecialDebugLevel(kDebugLocation, "Location", "Locations debug level");
 */
-	Common::addSpecialDebugLevel(kDebugDisk, "Disk", "Disk debug level");
-	Common::addSpecialDebugLevel(kDebugWalk, "Walk", "Walk debug level");
+
+    Common::addSpecialDebugLevel(kDebugDialogue, "dialogue", "Dialogues debug level");
+    Common::addSpecialDebugLevel(kDebugLocation, "location", "Location debug level");
+	Common::addSpecialDebugLevel(kDebugDisk, "disk", "Disk debug level");
+	Common::addSpecialDebugLevel(kDebugWalk, "walk", "Walk debug level");
 }
 
 
@@ -197,20 +199,51 @@ int Parallaction::init() {
 		GUIErrorMessage("No valid games were found in the specified directory.");
 		return -1;
 	}
-
-//	strcpy(_location, "night");
-//	strcpy(_characterName, "drki");
-//	strcpy(_languageDir, "it/");
-//	_skipMenu = true;
-
-	_engineFlags = 0;
-
+/*
+	strcpy(_location, "taxint");
 	strcpy(_characterName, "dough");
-	memset(_locationNames, 0, 120*32);
+	strcpy(_languageDir, "it/");
+	_skipMenu = true;
+*/
+	_engineFlags = 0;
+/*
+    if (ConfMan.hasKey("boot_param")) {
+        Common::String bootp = ConfMan.get("boot_param");
+
+        char argv[3][30];
+        char* d = argv[0];
+        uint16 j = 0;
+        for (uint16 i = 0; i < bootp.size(); i++) {
+            if (bootp[i] == '.') {
+                j++;
+                d = argv[j];
+                continue;
+            }
+
+            *d++ = bootp[i];
+        }
+
+        if (j < 3) {
+            GUIErrorMessage("Not enough parameters for Nippon Safes Inc.");
+            return -2;
+        }
+
+        argv[2][2] = '/';
+        argv[2][3] = '\0';
+
+        strcpy(_location, argv[0]);
+        strcpy(_characterName, argv[1]);
+        strcpy(_languageDir, argv[2]);
+        _skipMenu = true;
+
+    } else {*/
+        strcpy(_characterName, "dough");
+/*    }
+*/
+
+
+    memset(_locationNames, 0, 120*32);
 	_numLocations = 0;
-
-
-
 
 	_yourself._zone.pos._position._x = 150;
 	_yourself._zone.pos._position._y = 100;
@@ -904,13 +937,13 @@ void resumeJobs() {
 }
 
 void runJobs() {
-//	printf("runJobs...START\n");
+	debugC(1, kDebugLocation, "runJobs");
 
 	if (_engineFlags & kEnginePauseJobs) return;
 
 	Job *j = (Job*)_jobs._node._next;
 	while (j) {
-//		printf("Job run %s\n", _jobDescriptions[j->_tag]);
+		debugC(1, kDebugLocation, "runJobs: %i", j->_tag);
 
 		(*j->_fn)(j->_parm, j);
 		Job *v4 = (Job*)j->_node._next;
@@ -920,7 +953,7 @@ void runJobs() {
 		j = v4;
 	}
 
-//	printf("runJobs...DONE\n");
+	debugC(1, kDebugLocation, "runJobs completed");
 
 	return;}
 

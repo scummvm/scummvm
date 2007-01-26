@@ -46,7 +46,7 @@ namespace Parallaction {
 
 
 Command *parseCommands(ArchivedFile *file) {
-//	printf("parseCommands()\n");
+//	printf("parseCommands()");
 
 	Node root;
 	memset(&root, 0, sizeof(root));
@@ -54,7 +54,7 @@ Command *parseCommands(ArchivedFile *file) {
 	parseFillBuffers();
 
 	while (scumm_stricmp(_tokens[0], "ENDCOMMANDS") && scumm_stricmp(_tokens[0], "ENDZONE")) {
-//		printf("token[0] = %s\n", _tokens[0]);
+//		printf("token[0] = %s", _tokens[0]);
 
 		Command *cmd = (Command*)memAlloc(sizeof(Command));
 		memset(cmd, 0, sizeof(Command));
@@ -62,7 +62,7 @@ Command *parseCommands(ArchivedFile *file) {
 		cmd->_id = _vm->searchTable(_tokens[0], commands_names);
 		uint16 _si = 1;
 
-//		printf("cmd id = %i\n", cmd->_id);
+//		printf("cmd id = %i", cmd->_id);
 
 		switch (cmd->_id) {
 		case CMD_SET:	// set
@@ -212,7 +212,7 @@ void freeCommands(Command *list) {
 
 
 void runCommands(Command *list, Zone *z) {
-//	printf("runCommands()\n");
+	debugC(1, kDebugLocation, "runCommands");
 
 	Command *cmd = list;
 	for ( ; cmd; cmd = (Command*)cmd->_node._next) {
@@ -229,8 +229,7 @@ void runCommands(Command *list, Zone *z) {
 		if ((cmd->_flagsOn & v8) != cmd->_flagsOn) continue;
 		if ((cmd->_flagsOff & ~v8) != cmd->_flagsOff) continue;
 
-//		printf("localflags: %x\n", v8);
-//		printf("%s (on flags: %x, off flags: %x)\n", commands_names[cmd->_id-1], cmd->_flagsOn, cmd->_flagsOff);
+		debugC(1, kDebugLocation, "runCommands: %s (on: %x, off: %x)", commands_names[cmd->_id-1], cmd->_flagsOn, cmd->_flagsOff);
 
 		switch (cmd->_id) {
 
@@ -334,6 +333,8 @@ void runCommands(Command *list, Zone *z) {
 
 		}
 	}
+
+    debugC(1, kDebugLocation, "runCommands completed");
 
 	return;
 

@@ -38,7 +38,7 @@ void freeAnimations();
 
 
 void Parallaction::parseLocation(const char *filename) {
-//	printf("parseLocation(%s)\n", filename);
+//	printf("parseLocation(%s)", filename);
 
 	char *location_src = NULL;
 
@@ -82,7 +82,7 @@ void Parallaction::parseLocation(const char *filename) {
 
 	parseFillBuffers();
 	while (scumm_stricmp(_tokens[0], "ENDLOCATION")) {
-//		printf("token[0] = %s\n", _tokens[0]);
+//		printf("token[0] = %s", _tokens[0]);
 
 		if (!scumm_stricmp(_tokens[0], "LOCATION")) {
 			char *background = strchr(_tokens[1], '.');
@@ -188,8 +188,8 @@ void Parallaction::parseLocation(const char *filename) {
 }
 
 void resolveLocationForwards() {
-//	printf("resolveLocationForwards()\n");
-//	printf("# forwards: %i\n", _numForwards);
+//	printf("resolveLocationForwards()");
+//	printf("# forwards: %i", _numForwards);
 
 	for (uint16 _si = 0; _forwardedCommands[_si]; _si++) {
 		_forwardedCommands[_si]->u._animation = findAnimation(_forwardedAnimationNames[_si]);
@@ -266,7 +266,7 @@ void parseWalkNodes(ArchivedFile *file, Node *list) {
 }
 
 void switchBackground(char *name) {
-//	printf("switchBackground(%s)\n", name);
+//	printf("switchBackground(%s)", name);
 
 	byte palette[PALETTE_SIZE];
 
@@ -302,8 +302,9 @@ void switchBackground(char *name) {
 
 
 void Parallaction::changeLocation(char *location) {
+    debugC(1, kDebugLocation, "changeLocation to '%s'", location);
 
-//	printf("changeLocation('%s')\n", location);
+//	printf("changeLocation('%s')", location);
 	if (_musicData1 != 0) {
 		if (!scumm_stricmp(_characterName, "dino"))
 			loadMusic("dino");
@@ -315,12 +316,16 @@ void Parallaction::changeLocation(char *location) {
 
 		playMusic();
 		_musicData1 = 0;
+
+        debugC(1, kDebugLocation, "changeLocation: started character specific music");
 	}
 
 	if (!scumm_stricmp(location, "night") || !scumm_stricmp(location, "intsushi")) {
 		stopMusic();
 		loadMusic("soft");
 		playMusic();
+
+        debugC(1, kDebugLocation, "changeLocation: started music 'soft'");
 	}
 
 	if (!scumm_stricmp(location, "museo") ||
@@ -333,14 +338,24 @@ void Parallaction::changeLocation(char *location) {
 
 		stopMusic();
 		_musicData1 = 1;
+
+        debugC(1, kDebugLocation, "changeLocation: music stopped");
 	}
 
-	if (_engineFlags & kEngineMouse) changeCursor( kCursorArrow );
+
+	if (_engineFlags & kEngineMouse) {
+        changeCursor( kCursorArrow );
+        debugC(1, kDebugLocation, "changeLocation: changed cursor");
+	}
 
 	strcpy(_newLocation, location);
 
 	removeNode(&_yourself._zone._node);
+    debugC(1, kDebugLocation, "changeLocation: removed character from the animation list");
+
 	freeLocation();
+    debugC(1, kDebugLocation, "changeLocation: old location free'd");
+
 
 	char *tmp = strchr(_newLocation, '.');
 	if (tmp) {
@@ -349,9 +364,12 @@ void Parallaction::changeLocation(char *location) {
 		if (!scumm_strnicmp(tmp+1, "slide", 5)) {
 			char filename[200];
 			sprintf(filename, "%s.slide", _newLocation);
+
 			_vm->_graphics->loadBackground(filename, Graphics::kBitBack);
 			_vm->_graphics->palUnk0(_palette);
 			_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+
+            debugC(1, kDebugLocation, "changeLocation: new background set");
 
 			_vm->_graphics->_proportionalFont = false;
 			_vm->_graphics->loadExternalCnv("slidecnv", &Graphics::_font);
@@ -363,6 +381,8 @@ void Parallaction::changeLocation(char *location) {
 
 			_vm->_graphics->freeCnv(&Graphics::_font);
 			waitUntilLeftClick();
+
+            debugC(1, kDebugLocation, "changeLocation: intro text shown");
 
 			tmp = strchr(tmp+1, '.');
 			strcpy(_newLocation, tmp+1);
@@ -378,13 +398,18 @@ void Parallaction::changeLocation(char *location) {
 			changeCharacter(tmp+1);
 			strcpy(_characterName, tmp+1);
 		}
+
+		debugC(1, kDebugLocation, "changeLocation: character changed to '%s'", _characterName);
 	}
 
 	addNode(&_animations, &_yourself._zone._node);
+	debugC(1, kDebugLocation, "changeLocation: new character added to the animation list");
+
 	strcpy(_saveData1, _newLocation);
 
 	parseLocation(_newLocation);
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
+    debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", _newLocation);
 
 	_yourself._zone.pos._oldposition._x = -1000;
 	_yourself._zone.pos._oldposition._y = -1000;
@@ -396,6 +421,8 @@ void Parallaction::changeLocation(char *location) {
 		_yourself._frame = _firstFrame;
 		_firstPosition._y = -1000;
 		_firstPosition._x = -1000;
+
+        debugC(1, kDebugLocation, "changeLocation: initial position set to x: %i, y: %i, f: %i", _firstPosition._x, _firstPosition._y, _firstFrame);
 	}
 
 	byte palette[PALETTE_SIZE];
@@ -410,12 +437,21 @@ void Parallaction::changeLocation(char *location) {
 		_vm->_graphics->swapBuffers();
 	}
 
-	if (_locationComment) doLocationEnterTransition();
+	if (_locationComment) {
+	    doLocationEnterTransition();
+        debugC(1, kDebugLocation, "changeLocation: shown location comment");
+	}
+
 	runJobs();
 	_vm->_graphics->swapBuffers();
 
 	_vm->_graphics->palUnk0(_palette);
-	if (_locationACommands) runCommands(_locationACommands);
+	if (_locationACommands) {
+	    runCommands(_locationACommands);
+        debugC(1, kDebugLocation, "changeLocation: location acommands run");
+    }
+
+    debugC(1, kDebugLocation, "changeLocation completed");
 
 	return;
 
@@ -431,7 +467,7 @@ void Parallaction::changeLocation(char *location) {
 //	THE FINAL PALETTE IS NOT THE SAME AS THE MAIN PALETTE!!!!!!
 //
 void Parallaction::doLocationEnterTransition() {
-//	printf("doLocationEnterTransition()\n");
+	debugC(1, kDebugLocation, "doLocationEnterTransition");
 
 	byte v60[PALETTE_SIZE];
 	if (_localFlags[_currentLocationIndex] & 1) return; // visited
@@ -472,6 +508,8 @@ void Parallaction::doLocationEnterTransition() {
 		_vm->_graphics->quickFadePalette(v60);
 		_vm->_graphics->setPalette(v60);
 	}
+
+	debugC(1, kDebugLocation, "doLocationEnterTransition completed");
 
 	return;
 }

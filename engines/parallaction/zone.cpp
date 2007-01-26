@@ -53,7 +53,7 @@ Zone *findZone(const char *name) {
 
 
 void Parallaction::parseZone(ArchivedFile *file, Node *list, char *name) {
-//	printf("parseZone(%s)\n", name);
+//	printf("parseZone(%s)", name);
 
 	if (findZone(name)) {
 		while (scumm_stricmp(_tokens[0], "endzone")) {
@@ -72,7 +72,7 @@ void Parallaction::parseZone(ArchivedFile *file, Node *list, char *name) {
 
 	parseFillBuffers();
 	while (scumm_stricmp(_tokens[0], "endzone")) {
-//		printf("token[0] = %s\n", _tokens[0]);
+//		printf("token[0] = %s", _tokens[0]);
 
 		if (!scumm_stricmp(_tokens[0], "limits")) {
 			z->_limits._left = atoi(_tokens[1]);
@@ -99,7 +99,7 @@ void Parallaction::parseZone(ArchivedFile *file, Node *list, char *name) {
 			z->_commands = parseCommands(file);
 		}
 		if (!scumm_stricmp(_tokens[0], "label")) {
-//			printf("label: %s\n", _tokens[1]);
+//			printf("label: %s", _tokens[1]);
 			_vm->_graphics->makeCnvFromString(&z->_label, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "flags")) {
@@ -194,7 +194,7 @@ void freeZones(Node *list) {
 
 
 void Parallaction::parseZoneTypeBlock(ArchivedFile *file, Zone *z) {
-//	printf("parseZoneTypeBlock()\n");
+//	printf("parseZoneTypeBlock()");
 
 	ZoneTypeData *u = &z->u;
 
@@ -233,7 +233,7 @@ void Parallaction::parseZoneTypeBlock(ArchivedFile *file, Zone *z) {
 
 	char vC8[PATH_LEN];
 
-//	printf("type = %x\n", z->_type);
+//	printf("type = %x", z->_type);
 
 	do {
 
@@ -261,7 +261,7 @@ void Parallaction::parseZoneTypeBlock(ArchivedFile *file, Zone *z) {
 			}
 
 			if (!scumm_stricmp(_tokens[0], "file")) {
-//				printf("file: '%s'\n", _tokens[0]);
+//				printf("file: '%s'", _tokens[0]);
 
 				Cnv *doorcnv = &u->door->_cnv;
 				strcpy(vC8, _tokens[1]);
@@ -269,7 +269,7 @@ void Parallaction::parseZoneTypeBlock(ArchivedFile *file, Zone *z) {
 				StaticCnv vE0;
 				_vm->_graphics->loadCnv(vC8, doorcnv);
 
-//				printf("door width: %i, height: %i\n", doorcnv->_width, doorcnv->_height );
+//				printf("door width: %i, height: %i", doorcnv->_width, doorcnv->_height );
 
 				vE0._width = doorcnv->_width;
 				vE0._height = doorcnv->_height;
@@ -332,7 +332,7 @@ void Parallaction::parseZoneTypeBlock(ArchivedFile *file, Zone *z) {
 		case kZoneSpeak: // speak Zone init
 			if (!scumm_stricmp(_tokens[0], "file")) {
 				strcpy(u->speak->_name, _tokens[1]);
-//				printf("speak file name: %s\n", u.speak._name);
+//				printf("speak file name: %s", u.speak._name);
 			}
 			if (!scumm_stricmp(_tokens[0], "Dialogue")) {
 				u->speak->_dialogue = parseDialogue(file);
@@ -387,14 +387,14 @@ void displayCharacterComment(ExamineData *data) {
 
 	_vm->_graphics->freeCnv(&Graphics::_font);
 
-//	printf("wait left\n");
+//	printf("wait left");
 
 	waitUntilLeftClick();
 
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 	_vm->_graphics->freeCnv(&_characterFace);
 
-//	printf("done\n");
+//	printf("done");
 
 
 	return;
@@ -452,7 +452,7 @@ void displayItemComment(ExamineData *data) {
 
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
-//	printf("done\n");
+//	printf("done");
 
 	return;
 }
@@ -460,11 +460,11 @@ void displayItemComment(ExamineData *data) {
 
 
 uint16 runZone(Zone *z) {
-//	printf("runZone('%s')\n", z->_name);
+    debugC(1, kDebugLocation, "runZone (%s)", z->_name);
 
 	uint16 subtype = z->_type & 0xFFFF;
 
-//	printf("subtype = %x, objecttype = %x\n", subtype, (z->_type & 0xFFFF0000) >> 16);
+	debugC(1, kDebugLocation, "type = %x, object = %x", subtype, (z->_type & 0xFFFF0000) >> 16);
 	switch(subtype) {
 
 	case kZoneExamine:
@@ -500,7 +500,7 @@ uint16 runZone(Zone *z) {
 
 	}
 
-//	printf("done executing Zone\n");
+    debugC(1, kDebugLocation, "runZone completed");
 
 	return 0;
 }
@@ -571,7 +571,7 @@ void jobRemovePickedItem(void *parm, Job *j) {
 }
 
 void jobDisplayDroppedItem(void *parm, Job *j) {
-//	printf("jobDisplayDroppedItem...\n");
+//	printf("jobDisplayDroppedItem...");
 
 	Zone *z = (Zone*)parm;
 
@@ -590,7 +590,7 @@ void jobDisplayDroppedItem(void *parm, Job *j) {
 		j->_finished = 1;
 	}
 
-//	printf("done\n");
+//	printf("done");
 
 	return;
 }
@@ -599,14 +599,14 @@ void jobDisplayDroppedItem(void *parm, Job *j) {
 
 
 Zone *hitZone(uint32 type, uint16 x, uint16 y) {
-//	printf("hitZone(%i, %i, %i)\n", type, x, y);
+//	printf("hitZone(%i, %i, %i)", type, x, y);
 
 	uint16 _di = y;
 	uint16 _si = x;
 	Zone *z = (Zone*)_zones._next;
 
 	for (; z; z = (Zone*)z->_node._next) {
-//		printf("Zone name: %s\n", z->_name);
+//		printf("Zone name: %s", z->_name);
 
 		if (z->_flags & kFlagsRemove) continue;
 
@@ -649,7 +649,7 @@ Zone *hitZone(uint32 type, uint16 x, uint16 y) {
 
 	int16 _a, _b, _c, _d, _e, _f;
 	for (; a; a = (Animation*)a->_zone._node._next) {
-//		printf("Animation name: %s\n", a->_zone._name);
+//		printf("Animation name: %s", a->_zone._name);
 
 		_a = (a->_zone._flags & kFlagsActive) ? 1 : 0;															   // _a: active Animation
 		_e = ((_si >= a->_zone.pos._position._x + a->_cnv._width) || (_si <= a->_zone.pos._position._x)) ? 0 : 1;		// _e: horizontal range

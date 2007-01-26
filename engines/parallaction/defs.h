@@ -102,7 +102,9 @@ char *skip_whitespace(char *s);
 
 enum {
 	kDebugDisk = 1 << 0,
-	kDebugWalk = 1 << 1
+	kDebugWalk = 1 << 1,
+	kDebugLocation = 1 << 2,
+	kDebugDialogue = 1 << 3
 };
 
 } // namespace Parallaction
