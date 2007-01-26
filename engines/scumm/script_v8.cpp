@@ -678,7 +678,7 @@ void ScummEngine_v8::o8_blastText() {
 void ScummEngine_v8::o8_cursorCommand() {
 	byte subOp = fetchScriptByte();
 	int a, i;
-	int args[16];
+	int args[4];
 
 	switch (subOp) {
 	case 0xDC:		// SO_CURSOR_ON Turn cursor on
@@ -729,8 +729,6 @@ void ScummEngine_v8::o8_cursorCommand() {
 		break;
 	case 0xE8:		// SO_CHARSET_COLOR
 		getStackList(args, ARRAYSIZE(args));
-		for (i = 0; i < 16; i++)
-			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
 		break;
 	case 0xE9: 		// SO_CURSOR_PUT
 		{
