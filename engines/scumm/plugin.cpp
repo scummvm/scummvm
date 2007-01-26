@@ -965,7 +965,7 @@ static Common::String generateFilenameForDetection(const GameFilenamePattern &gf
 }
 
 struct DetectorDesc {
-	Common::String path;
+  FilesystemNode node;
 	Common::String md5;
 	uint8 md5sum[16];
 	const MD5Table *md5Entry;	// Entry of the md5 table corresponding to this file, if any.
@@ -983,7 +983,7 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
 			DetectorDesc d;
-			d.path = file->path();
+			d.node = *file;
 			d.md5Entry = 0;
 			fileMD5Map[file->name()] = d;
 		}
@@ -1031,7 +1031,7 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 		DetectorDesc &d = fileMD5Map[file];
 		if (d.md5.empty()) {
 			uint8 md5sum[16];
-			if (Common::md5_file(d.path.c_str(), md5sum, kMD5FileSizeLimit)) {
+			if (Common::md5_file(d.node, md5sum, kMD5FileSizeLimit)) {
 				char md5str[32+1];
 				for (int j = 0; j < 16; j++) {
 					sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
@@ -1150,8 +1150,8 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 	// try to filter out some cases.
 
 	Common::File tmp;
-	if (!tmp.open(d.path.c_str())) {
-		warning("SCUMM detectGames: failed to open '%s' for read access", d.path.c_str());
+	if (!tmp.open(d.node)) {
+		warning("SCUMM detectGames: failed to open '%s' for read access", d.node.path().c_str());
 		return false;
 	}
 	
