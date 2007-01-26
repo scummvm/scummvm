@@ -1,4 +1,4 @@
-/* ScummVM - Scumm Interpreter
+/* scummvm - Scumm Interpreter
  * Copyright (C) 2002-2006 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
@@ -677,7 +677,7 @@ void ScummEngine_v8::o8_blastText() {
 
 void ScummEngine_v8::o8_cursorCommand() {
 	byte subOp = fetchScriptByte();
-	int a, i;
+	int a;
 	int args[4];
 
 	switch (subOp) {
@@ -729,6 +729,7 @@ void ScummEngine_v8::o8_cursorCommand() {
 		break;
 	case 0xE8:		// SO_CHARSET_COLOR
 		getStackList(args, ARRAYSIZE(args));
+		// This opcode does nothing (confirmed with disasm)
 		break;
 	case 0xE9: 		// SO_CURSOR_PUT
 		{
