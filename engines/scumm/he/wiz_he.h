@@ -133,6 +133,12 @@ enum WizProcessFlags {
 	kWPFMaskImg = 0x80000
 };
 
+enum {
+	kWizXMap = 0,
+	kWizRMap,
+	kWizCopy
+};
+
 class ScummEngine_v70he;
 
 class Wiz {
@@ -196,7 +202,8 @@ public:
 	static void copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int maskT, int maskP);
 	static void copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor);
 	static void copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor);
-	static void decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr = NULL, const uint8 *xmapPtr = NULL);
+	template<int type> static void decompressWizImage(uint8 *dst, int dstPitch, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr = NULL, const uint8 *xmapPtr = NULL);
+	template<int type> static void decompressRawWizImage(uint8 *dst, int dstPitch, const uint8 *src, int srcPitch, int w, int h, int transColor, const uint8 *palPtr = NULL);
 	int isWizPixelNonTransparent(const uint8 *data, int x, int y, int w, int h);
 	uint8 getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 color);
 	uint8 getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 color);
