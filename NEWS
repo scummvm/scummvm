@@ -6,11 +6,11 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added Cinematique evo 1 engine. Currently only Future Wars is supported.
    - Added Touche: The Adventures of the Fifth Musketeer engine.
    - Added support for Gobliins2.
-   - Added support for Simon the Sorcerer's Puzzle Pack
+   - Added support for Simon the Sorcerer's Puzzle Pack.
 
  General:
    - Better compression for DXA movies.
-   - Added Dialog which allows the user to select the GUI theme on runtime.
+   - Added dialog which allows the user to select the GUI theme on runtime.
 
  Broken Sword 1:
    - Added support for DXA cutscenes.
@@ -29,6 +29,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  SCUMM:
    - Fixed various actor walking issues.
    - Added support for non-interactive demos of HE games (CUP).
+   - Improved A/V syncing in SMUSH videos (affects Dig, FT, COMI).
+   - Several other minor fixes.
 
  Simon:
    - Renamed Simon engine to AGOS.
