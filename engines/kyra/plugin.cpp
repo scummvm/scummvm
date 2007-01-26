@@ -47,7 +47,7 @@ namespace {
 
 #define KYRA3_CD_FLAGS FLAGS(false, false, false, true, Kyra::GI_KYRA3)
 
-static const KYRAGameDescription adGameDescs[] = {
+const KYRAGameDescription adGameDescs[] = {
 	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "3c244298395520bb62b5edfe41688879"), Common::EN_ANY, Common::kPlatformPC }, KYRA1_FLOPPY_FLAGS },
 	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "796e44863dd22fa635b042df1bf16673"), Common::EN_ANY, Common::kPlatformPC }, KYRA1_FLOPPY_FLAGS },
 	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "abf8eb360e79a6c2a837751fbd4d3d24"), Common::FR_FRA, Common::kPlatformPC }, KYRA1_FLOPPY_FLAGS },
@@ -78,7 +78,7 @@ const PlainGameDescriptor gameList[] = {
 	{ 0, 0 }
 };
 
-static const Common::ADParams detectionParams = {
+const Common::ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)adGameDescs,
 	// Size of that superset structure
