@@ -172,7 +172,7 @@ void CDROM::startTrack(const char *trackname) {
 	}
 
 	if (!matchPtr) {
-		error("Track %s not found", trackname);
+		warning("Track %s not found", trackname);
 		return;
 	}
 

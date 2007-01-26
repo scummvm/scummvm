@@ -307,7 +307,7 @@ void Adlib::setKey(byte voice, byte note, bool on, bool spec) {
 
 	_notes[voice] = note;
 	note += _notCol[voice];
-	note = MIN(0x5F, (int)note);
+	note = MIN((byte) 0x5F, note);
 	octa = note / 12;
 	freq = _freqs[_notLin[voice]][note - octa * 12];
 

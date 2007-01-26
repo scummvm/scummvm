@@ -1601,10 +1601,12 @@ bool Inter_v2::o2_playSound(char &cmdCount, int16 &counter, int16 &retFlag) {
 			_vm->_game->_soundSamples[index]->size / 2) * 1000) / freq2;
 	}
 	// loc_E2F3
-	if (_vm->_game->_soundTypes[index] & 8) {
-		_vm->_adlib->load((byte *) _vm->_game->_soundSamples[index], index);
-		_vm->_adlib->setRepeating(repCount - 1);
-		_vm->_adlib->startPlay();
+	if ((_vm->_game->_soundTypes[index] & 8)) {
+		if (_vm->_adlib) {
+			_vm->_adlib->load((byte *) _vm->_game->_soundSamples[index], index);
+			_vm->_adlib->setRepeating(repCount - 1);
+			_vm->_adlib->startPlay();
+		}
 	} else {
 		_vm->_snd->stopSound(0);
 		_vm->_snd->playSample(_vm->_game->_soundSamples[index], repCount, frequency);

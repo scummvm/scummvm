@@ -1210,7 +1210,8 @@ bool Inter_v1::o1_playComposition(char &cmdCount, int16 &counter, int16 &retFlag
 }
 
 bool Inter_v1::o1_stopSound(char &cmdCount, int16 &counter, int16 &retFlag) {
-	_vm->_adlib->stopPlay();
+	if (_vm->_adlib)
+		_vm->_adlib->stopPlay();
 	_vm->_snd->stopSound(_vm->_parse->parseValExpr());
 	_soundEndTimeKey = 0;
 	return false;
@@ -1640,9 +1641,10 @@ void Inter_v1::o1_loadCurLayer(void) {
 
 void Inter_v1::o1_playCDTrack(void) {
 	evalExpr(0);
-	if (_vm->_features & GF_MAC)
-		_vm->_adlib->playTrack(_vm->_global->_inter_resStr);
-	else
+	if (_vm->_features & GF_MAC) {
+		if (_vm->_adlib)
+			_vm->_adlib->playTrack(_vm->_global->_inter_resStr);
+	} else
 		// Used in gob1 CD
 		_vm->_cdrom->startTrack(_vm->_global->_inter_resStr);
 }
@@ -1663,9 +1665,10 @@ void Inter_v1::o1_getCDTrackPos(void) {
 }
 
 void Inter_v1::o1_stopCD(void) {
-	if (_vm->_features & GF_MAC)
-		_vm->_adlib->stopPlay();
-	else
+	if (_vm->_features & GF_MAC) {
+		if (_vm->_adlib)
+			_vm->_adlib->stopPlay();
+	} else
 		// Used in gob1 CD
 		_vm->_cdrom->stopPlaying();
 }
@@ -2587,9 +2590,10 @@ void Inter_v1::o1_animateObjects(int16 &extraData, int32 *retVarPtr, Goblin::Gob
 void Inter_v1::o1_drawObjects(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
 	_vm->_goblin->drawObjects();
 
-	if (_vm->_features & GF_MAC)
-		_vm->_adlib->playBgMusic();
-	else if (_vm->_cdrom->getTrackPos() == -1)
+	if (_vm->_features & GF_MAC) {
+		if (_vm->_adlib)
+			_vm->_adlib->playBgMusic();
+	} else if (_vm->_cdrom->getTrackPos() == -1)
 		_vm->_cdrom->playBgMusic();
 }
 
