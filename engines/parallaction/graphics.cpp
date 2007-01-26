@@ -352,7 +352,7 @@ void Graphics::floodFill(byte color, uint16 left, uint16 top, uint16 right, uint
 
 
 void Graphics::flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Graphics::Buffers buffer) {
-//	printf("Graphics::flatBlit(%i, %i, %i, %i)\n", w, h, x, y);
+	printf("Graphics::flatBlit(%i, %i, %i, %i)\n", w, h, x, y);
 
     // source coordinates
 	int16 left = 0, top = 0;
@@ -376,6 +376,8 @@ void Graphics::flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Graphi
 	byte *s = data + left + top * w;
 	byte *d = _buffers[buffer] + x + y * SCREEN_WIDTH;
 
+	printf("Graphics::flatBlit CLIPPED (%i, %i, %i, %i) -> (%i, %i) %x %x\n", left, top, right, bottom, x, y, (uint32)s, (uint32)d);
+
 	for (uint16 i = top; i < bottom; i++) {
 		for (uint16 j = left; j < right; j++) {
 			if (*s != 0) *d = *s;
@@ -387,7 +389,11 @@ void Graphics::flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Graphi
 		d += (SCREEN_WIDTH - right + left);
 	}
 
+	printf("Graphics::flatBlit BLITTED\n");
+
 	if (buffer == kBitFront) updateScreen();
+
+	printf("Graphics::flatBlit DONE\n");
 
 	return;
 
@@ -614,6 +620,7 @@ void Graphics::restoreCnvBackground(StaticCnv *cnv, int16 x, int16 y) {
 //	strings
 //
 void Graphics::displayString(uint16 x, uint16 y, const char *text) {
+    if (text == NULL) return;
 
 	uint16 len = strlen(text);
 	StaticCnv tmp;
@@ -718,6 +725,8 @@ bool Graphics::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwi
 
 
 uint16 Graphics::getStringWidth(const char *text) {
+	if (text == NULL) return 0;
+
 	uint16 len = strlen(text);
 
 	if (_proportionalFont == 0) {
