@@ -825,7 +825,7 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 							strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-3]));
 							valPtr[-3] = encodePtr(_vm->_global->_inter_resStr, kResStr);
 						}
-						if (strcmp(_vm->_global->_inter_resStr, decodePtr(valPtr[-1])) != 0)
+						if (scumm_stricmp(_vm->_global->_inter_resStr, decodePtr(valPtr[-1])) != 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
