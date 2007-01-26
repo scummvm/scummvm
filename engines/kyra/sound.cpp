@@ -95,7 +95,7 @@ bool Sound::voiceIsPlaying() {
 
 #pragma mark -
 
-SoundMidiPC::SoundMidiPC(MidiDriver *driver, Audio::Mixer *mixer, KyraEngine *engine) : Sound(engine, mixer) {
+SoundMidiPC::SoundMidiPC(KyraEngine *engine, Audio::Mixer *mixer, MidiDriver *driver) : Sound(engine, mixer) {
 	_driver = driver;
 	_passThrough = false;
 	_eventFromMusic = false;

@@ -119,7 +119,7 @@ class AdlibDriver;
 
 class SoundAdlibPC : public Sound {
 public:
-	SoundAdlibPC(Audio::Mixer *mixer, KyraEngine *engine);
+	SoundAdlibPC(KyraEngine *engine, Audio::Mixer *mixer);
 	~SoundAdlibPC();
 
 	bool init();
@@ -163,7 +163,7 @@ private:
 
 class SoundMidiPC : public MidiDriver, public Sound {
 public:
-	SoundMidiPC(MidiDriver *driver, Audio::Mixer *mixer, KyraEngine *engine);
+	SoundMidiPC(KyraEngine *engine, Audio::Mixer *mixer, MidiDriver *driver);
 	~SoundMidiPC();
 
 	bool init() { return true; }

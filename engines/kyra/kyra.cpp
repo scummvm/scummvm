@@ -151,7 +151,7 @@ int KyraEngine::init() {
 		// later on here should be a usage of MixedSoundDriver
 		_sound = new SoundCD(this, _mixer);
 	} else if (midiDriver == MD_ADLIB && _flags.gameID == GI_KYRA1) {
-		_sound = new SoundAdlibPC(_mixer, this);
+		_sound = new SoundAdlibPC(this, _mixer);
 		assert(_sound);
 	} else {
 		bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
@@ -162,7 +162,7 @@ int KyraEngine::init() {
 			driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		}
 
-		SoundMidiPC *soundMidiPc = new SoundMidiPC(driver, _mixer, this);
+		SoundMidiPC *soundMidiPc = new SoundMidiPC(this, _mixer, driver);
 		_sound = soundMidiPc;
 		assert(_sound);
 		soundMidiPc->hasNativeMT32(native_mt32);
@@ -175,7 +175,7 @@ int KyraEngine::init() {
 		// are decidedly inferior to the Adlib ones.
 
 		if (midiDriver != MD_ADLIB && ConfMan.getBool("multi_midi")) {
-			SoundAdlibPC *adlib = new SoundAdlibPC(_mixer, this);
+			SoundAdlibPC *adlib = new SoundAdlibPC(this, _mixer);
 			assert(adlib);
 			
 			_sound = new MixedSoundDriver(this, _mixer, soundMidiPc, adlib);

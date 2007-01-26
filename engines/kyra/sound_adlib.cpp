@@ -2206,7 +2206,7 @@ const int SoundAdlibPC::_kyra1SoundTriggers[] = {
 
 const int SoundAdlibPC::_kyra1NumSoundTriggers = ARRAYSIZE(SoundAdlibPC::_kyra1SoundTriggers);
 
-SoundAdlibPC::SoundAdlibPC(Audio::Mixer *mixer, KyraEngine *engine)
+SoundAdlibPC::SoundAdlibPC(KyraEngine *engine, Audio::Mixer *mixer)
 	: Sound(engine, mixer), _driver(0), _trackEntries(), _soundDataPtr(0) {
 	memset(_trackEntries, 0, sizeof(_trackEntries));
 	_driver = new AdlibDriver(mixer);
