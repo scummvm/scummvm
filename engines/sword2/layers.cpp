@@ -52,7 +52,7 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 
 	assert(res);
 
-	_vm->_sound->clearFxQueue();
+	_vm->_sound->clearFxQueue(false);
 	waitForFade();
 
 	debug(1, "CHANGED TO LOCATION \"%s\"", _vm->_resman->fetchName(res));

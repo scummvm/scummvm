@@ -2333,7 +2333,7 @@ int32 Logic::fnSmackerLeadOut(int32 *params) {
 int32 Logic::fnStopAllFx(int32 *params) {
 	// params:	none
 
-	_vm->_sound->clearFxQueue();
+	_vm->_sound->clearFxQueue(false);
 	return IR_CONT;
 }
 

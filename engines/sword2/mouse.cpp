@@ -1356,7 +1356,7 @@ void Mouse::addHuman() {
 		_vm->_screen->setPalette(0, 1, white, RDPAL_INSTANT);
 
 		// Stops all fx & clears the queue - eg. when leaving a room
-		_vm->_sound->clearFxQueue();
+		_vm->_sound->clearFxQueue(false);
 
 		// Trash all object resources so they load in fresh & restart
 		// their logic scripts

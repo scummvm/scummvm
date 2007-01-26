@@ -538,10 +538,10 @@ void ResourceManager::remove(int res) {
 
 void ResourceManager::removeAll() {
 	// We need to clear the FX queue, because otherwise the sound system
-	// will still believe that the sound resources are in memory, and that
-	// it's ok to close them.
+	// will still believe that the sound resources are in memory. We also
+ 	// need to kill the movie lead-in/out.
 
-	_vm->_sound->clearFxQueue();
+	_vm->_sound->clearFxQueue(false);
 
 	for (uint i = 0; i < _totalResFiles; i++)
 		remove(i);
@@ -555,10 +555,10 @@ void ResourceManager::killAll(bool wantInfo) {
 	int nuked = 0;
 
 	// We need to clear the FX queue, because otherwise the sound system
-	// will still believe that the sound resources are in memory, and that
-	// it's ok to close them.
+	// will still believe that the sound resources are in memory. We also
+	// need to kill the movie lead-in/out.
 
-	_vm->_sound->clearFxQueue();
+	_vm->_sound->clearFxQueue(true);
 
 	for (uint i = 0; i < _totalResFiles; i++) {
 		// Don't nuke the global variables or the player object!

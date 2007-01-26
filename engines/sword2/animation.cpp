@@ -308,9 +308,6 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 	bool terminate = false;
 	bool textVisible = false;
 	bool startNextText = false;
-	byte *data;
-	uint32 len;
-	Audio::SoundHandle leadInHandle, leadOutHandle;
 	uint32 flags = Audio::Mixer::FLAG_16BITS;
 
 	// This happens if the user quits during the "eye" cutscene.
@@ -318,14 +315,7 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 		return;
 
 	if (leadIn) {
-		data = _vm->_resman->openResource(leadIn);
-		len = _vm->_resman->fetchLen(leadIn) - ResHeader::size();
-
-		assert(_vm->_resman->fetchType(data) == WAV_FILE);
-
-		data += ResHeader::size();
-
-		_vm->_sound->playFx(&leadInHandle, data, len, Audio::Mixer::kMaxChannelVolume, 0, false, Audio::Mixer::kMusicSoundType);
+		_vm->_sound->playMovieSound(leadIn, kLeadInSound);
 	}
 
 	savePalette();
@@ -377,14 +367,7 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 		}
 
 		if (leadOut && _currentFrame == _leadOutFrame) {
-			data = _vm->_resman->openResource(leadOut);
-			len = _vm->_resman->fetchLen(leadOut) - ResHeader::size();
-
-			assert(_vm->_resman->fetchType(data) == WAV_FILE);
-
-			data += ResHeader::size();
-
-			_vm->_sound->playFx(&leadOutHandle, data, len, Audio::Mixer::kMaxChannelVolume, 0, false, Audio::Mixer::kMusicSoundType);
+			_vm->_sound->playMovieSound(leadOut, kLeadOutSound);
 		}
 
 		syncFrame();

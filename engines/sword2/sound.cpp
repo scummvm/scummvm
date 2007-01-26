@@ -89,7 +89,7 @@ Sound::Sound(Sword2Engine *vm) {
 Sound::~Sound() {
 	_vm->_mixer->setupPremix(0);
 
-	clearFxQueue();
+	clearFxQueue(true);
 	stopMusic(true);
 	stopSpeech();
 
@@ -121,14 +121,24 @@ void Sound::setReverseStereo(bool reverse) {
 }
 
 /**
- * Stop all sounds, close their resources and clear the FX queue.
+ * Stop all sounds, close their resources and clear the FX queue. This is used
+ * when going from one room to another, among other things.
  */
 
-void Sound::clearFxQueue() {
+void Sound::clearFxQueue(bool killMovieSounds) {
 	for (int i = 0; i < FXQ_LENGTH; i++) {
 		if (_fxQueue[i].resource) {
 			stopFx(i);
 		}
+	}
+
+	// We aren't just going to change rooms or anything like that, we are
+	// killing off resources (e.g. when restoring or restarting). We need
+	// to also kill any movie lead-in/out sounds.
+
+	if (killMovieSounds) {
+		_vm->_mixer->stopHandle(_leadInHandle);
+		_vm->_mixer->stopHandle(_leadOutHandle);
 	}
 }
 
@@ -172,6 +182,33 @@ void Sound::processFxQueue() {
 			break;
 		}
 	}
+}
+
+/**
+ * This function is used by the cutscene player to play the movie lead-in/out.
+ * @param res The sound resource to play
+ * @param type Either kLeadInSound or kLeadOutSound
+ */
+
+void Sound::playMovieSound(int32 res, int type) {
+	Audio::SoundHandle *handle;
+
+	if (type == kLeadInSound)
+		handle = &_leadInHandle;
+	else
+		handle = &_leadOutHandle;
+
+	if (_vm->_mixer->isSoundHandleActive(*handle)) {
+		_vm->_mixer->stopHandle(*handle);
+	}
+
+	byte *data = _vm->_resman->openResource(res);
+	uint32 len = _vm->_resman->fetchLen(res) - ResHeader::size();
+
+	assert(_vm->_resman->fetchType(data) == WAV_FILE);
+	data += ResHeader::size();
+
+	_vm->_sound->playFx(handle, data, len, Audio::Mixer::kMaxChannelVolume, 0, false, Audio::Mixer::kMusicSoundType);
 }
 
 /**

@@ -134,7 +134,7 @@ void Sword2Engine::registerStartPoint(int32 key, char *name) {
 void Sword2Engine::runStart(int start) {
 	// Restarting - stop sfx, music & speech!
 
-	_sound->clearFxQueue();
+	_sound->clearFxQueue(true);
 	_logic->fnStopMusic(NULL);
 	_sound->unpauseSpeech();
 	_sound->stopSpeech();

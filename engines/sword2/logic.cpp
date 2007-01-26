@@ -216,7 +216,7 @@ void Logic::expressChangeSession(uint32 sesh_id) {
 
 	// Various clean-ups
 	_router->clearWalkGridList();
-	_vm->_sound->clearFxQueue();
+	_vm->_sound->clearFxQueue(false);
 	_router->freeAllRouteMem();
 }
 

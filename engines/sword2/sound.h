@@ -54,6 +54,11 @@ enum {
 };
 
 enum {
+	kLeadInSound,
+	kLeadOutSound
+};
+
+enum {
 	// These three types correspond to types set by the scripts
 	FX_SPOT		= 0,
 	FX_LOOP		= 1,
@@ -171,6 +176,9 @@ private:
 
 	Common::Mutex _mutex;
 
+	Audio::SoundHandle _leadInHandle;
+	Audio::SoundHandle _leadOutHandle;
+
 	struct FxQueueEntry {
 		Audio::SoundHandle handle;	// sound handle
 		uint32 resource;		// resource id of sample
@@ -220,7 +228,7 @@ public:
 
 	// End of AudioStream API
 
-	void clearFxQueue();
+	void clearFxQueue(bool killMovieSounds);
 	void processFxQueue();
 
 	void setReverseStereo(bool reverse);
@@ -249,6 +257,8 @@ public:
 
 	void pauseAllSound();
 	void unpauseAllSound();
+
+	void playMovieSound(int32 res, int type);
 
 	void queueFx(int32 res, int32 type, int32 delay, int32 volume, int32 pan);
 	int32 playFx(FxQueueEntry *fx);
