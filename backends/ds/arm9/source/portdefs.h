@@ -35,8 +35,6 @@ typedef signed int s32;
 
 #define CT_NO_TRANSPARENCY
 
-#undef assert
-#define assert(expr) consolePrintf("Asserted!")
 //#define NO_DEBUG_MSGS
 #include "ds-fs.h"
 

@@ -77,6 +77,8 @@
  #include "io_mmcf.h"
 #endif
 
+#include "io_dldi.h"
+
 // Keep a pointer to the active interface
 LPIO_INTERFACE active_interface = 0;
 
@@ -89,6 +91,8 @@ LPIO_INTERFACE active_interface = 0;
 
 */
 int discDetect = 0;
+
+int dldiFound = FALSE;
 
 #ifdef DISC_CACHE
 
@@ -103,6 +107,8 @@ static struct {
 	u32 dirty;
 	u32 count;
 } cache[ DISC_CACHE_COUNT ];
+
+FATDevice currentDevice;
 
 static u32 disc_CacheFind(u32 sector) {
 	u32 i;
@@ -245,6 +251,7 @@ bool disc_setGbaSlotInterface (void)
 		if (active_interface->fn_StartUp())
 		{
 			// set M3 SD as default IO
+			currentDevice = DEVICE_M3SD;
 			return true ;
 		} ;
 	}
@@ -259,6 +266,7 @@ bool disc_setGbaSlotInterface (void)
 	if (active_interface->fn_StartUp())
 	{
 		// set MMCF as default IO
+		currentDevice = DEVICE_MMCF;
 		return true ;
 	} ;
 #endif
@@ -271,6 +279,7 @@ bool disc_setGbaSlotInterface (void)
 	if (active_interface->fn_StartUp())
 	{
 		// set M3 CF as default IO
+		currentDevice = DEVICE_M3CF;
 		return true ;
 	} ;
 #endif
@@ -282,6 +291,7 @@ bool disc_setGbaSlotInterface (void)
 	if (active_interface->fn_StartUp())
 	{
 		// set GBAMP as default IO
+		currentDevice = DEVICE_MPCF;
 		return true ;
 	} ;
 #endif
@@ -293,6 +303,7 @@ bool disc_setGbaSlotInterface (void)
 	if (active_interface->fn_StartUp())
 	{
 		// set SC CF as default IO
+		currentDevice = DEVICE_SCCF;
 		return true ;
 	} ;
 #endif
@@ -325,6 +336,11 @@ bool disc_setGbaSlotInterface (void)
 	return false;
 }
 
+
+FATDevice disc_getDeviceId() {
+	return currentDevice;
+}
+
 #ifdef NDS
 // Check the DS card slot for a valid memory card interface
 // If an interface is found, it is set as the default interace
@@ -339,6 +355,27 @@ bool disc_setDsSlotInterface (void)
 	WAIT_CR |= (1<<11);
 #endif
 
+	active_interface = DLDI_GetInterface();
+
+	if (stricmp(&_dldi_driver_name, "Default (No interface)")) {
+		char name[48];
+		memcpy(name, &_dldi_driver_name, 48);
+		name[47] = '\0';
+		consolePrintf("DLDI Device:\n'%s'\n", name);
+		dldiFound = TRUE;
+	} else {
+		consolePrintf("DLDI Driver not patched!\n");
+		dldiFound = FALSE;
+	}
+
+	if (active_interface->fn_StartUp()) {
+		consolePrintf("DLDI Driver Initialised OK!\n");
+		currentDevice = DEVICE_DLDI;
+		return true;
+	} else {
+		consolePrintf("DLDI Initialise failed.\n");
+	}
+
 #ifdef SUPPORT_SCSD
 	// check if we have a SuperCard SD plugged in
 	if (discDetect == 2) {
@@ -347,6 +384,7 @@ bool disc_setDsSlotInterface (void)
 		if (active_interface->fn_StartUp())
 		{
 			// set SC SD as default IO
+			currentDevice = DEVICE_SCSD;
 			return true ;
 		} ;
 	}
@@ -358,6 +396,7 @@ bool disc_setDsSlotInterface (void)
 	if (active_interface->fn_StartUp())
 	{
 		// set NJSD as default IO
+		currentDevice = DEVICE_NJSD;
 		return true ;
 	} ;
 #endif
@@ -368,6 +407,7 @@ bool disc_setDsSlotInterface (void)
 	if (active_interface->fn_StartUp())
 	{
 		// set Neoflash MK2 / MK3 as default IO
+		currentDevice = DEVICE_NMMC;
 		return true ;
 	} ;
 #endif

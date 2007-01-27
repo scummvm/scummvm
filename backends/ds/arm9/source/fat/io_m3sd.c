@@ -1,7 +1,7 @@
 
 #define io_M3SD_c
 #include "io_m3sd.h"
-
+#ifdef SUPPORT_M3SD
 //M3-SD interface SD card.
 
 #define DMA3SAD      *(volatile u32*)0x040000D4
@@ -379,3 +379,5 @@ LPIO_INTERFACE M3SD_GetInterface(void)
 {
 	return &io_m3sd ;
 }
+
+#endif

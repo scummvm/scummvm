@@ -20,6 +20,7 @@
 #ifndef _DS_FS_H
 #define _DS_FS_H
 
+#define USE_ASSERTS
 
 #include "stdafx.h"
 #include "common/array.h"
@@ -175,6 +176,17 @@ int 	std_ferror(FILE* handle);
 #define getc(handle)						DS::std_getc(handle)
 #define getcwd(dir, dunno)					DS::std_getcwd(dir, dunno)
 #define ferror(handle)						DS::std_ferror(handle)
+
+#ifdef assert
+#undef assert
+#endif
+
+
+#ifdef USE_ASSERTS
+#define assert(s) if (!(s)) consolePrintf("Assertion failed: '##s##' at file %s, line %d\n", __FILE__, __LINE__)
+#else
+#define assert(s)
+#endif
 
 
 }

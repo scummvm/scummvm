@@ -34,6 +34,14 @@
 // - Delete files
 // - Fatlib conversion
 
+// - Software scalar
+// - Delete files
+// - Unified menu?
+// - Drivers for EZ Flash IV and DS Xtreme?
+// - Stereo audio
+
+//#define USE_BUILT_IN_DRIVER_SELECTION
+
 #include <nds.h>
 
 #include <ARM9/console.h> //basic print funcionality
@@ -468,7 +476,7 @@ void displayMode8Bit() {
 	BG0_Y0 = 0;
 	
 	// Restore palette entry used by text in the front-end	
-	PALETTE_SUB[255] = savedPalEntry255;
+//	PALETTE_SUB[255] = savedPalEntry255;
 	
 	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(0), (u16*)CHAR_BASE_BLOCK(1), 16);
 	consolePrintSet(0, 23);
@@ -1875,16 +1883,18 @@ bool getIndyFightState() {
 
 bool GBAMPAvail = false;
 
-void initGBAMP(int mode) {	
+bool initGBAMP(int mode) {	
 	if (FAT_InitFiles()) {
 		if (mode == 2)	{
 			disc_IsInserted();
 		}
 		GBAMPAvail = true;
-		consolePrintf("Found flash card reader!\n");
+//		consolePrintf("Found flash card reader!\n");
+		return true;
 	} else {
 		GBAMPAvail = false;
-		consolePrintf("Flash card reader not found!\n");
+//		consolePrintf("Flash card reader not found!\n");
+		return false;
 	}
 }
 	 
@@ -2022,41 +2032,43 @@ int main(void)
 	
 
 	
-	consolePrintf("---------------------------\n");
+	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.9.1");
+	consolePrintf("Version 0.9.1a beta2 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Supports: Lucasarts SCUMM\n");
-	consolePrintf("---------------------------\n");
+	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_B)
 	consolePrintf("build B\n");
 	consolePrintf("Supports: BASS, QUEEN\n");
-	consolePrintf("---------------------------\n");
+	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_C)
 	consolePrintf("build C\n");
-	consolePrintf("---------------------------\n");
 	consolePrintf("Supports: SIMON, KYRA, GOB\n");
+	consolePrintf("-------------------------------\n");
 #endif
-	consolePrintf("L/R + D-pad/pen: Scroll view\n");
-	consolePrintf("D-pad left:  Left mouse button\n");
+	consolePrintf("L/R + D-pad/pen:    Scroll view\n");
+	consolePrintf("D-pad left:   Left mouse button\n");
 	consolePrintf("D-pad right: Right mouse button\n");
-	consolePrintf("D-pad up:    Hover mouse\n");
-	consolePrintf("B button:    Skip cutscenes\n");
-	consolePrintf("Select:		DS Options menu\n");
-	consolePrintf("Start:       Game menu\n");
-	consolePrintf("Y (in game): Toggle console\n");
-	consolePrintf("X:           Toggle keyboard\n");
-	consolePrintf("A:			Swap screens\n");
-	consolePrintf("L+R (on start): Clear SRAM\n");
+	consolePrintf("D-pad up:           Hover mouse\n");
+	consolePrintf("B button:        Skip cutscenes\n");
+	consolePrintf("Select:		   DS Options menu\n");
+	consolePrintf("Start:   Game menu (some games)\n");
+	consolePrintf("Y (in game):     Toggle console\n");
+	consolePrintf("X:              Toggle keyboard\n");
+	consolePrintf("A:                 Swap screens\n");
+	consolePrintf("L+R (on start):      Clear SRAM\n");
 
 #if defined(DS_BUILD_A)
 	consolePrintf("For a complete key list see the\n");
-	consolePrintf("help screen.\n\n");
+	consolePrintf("help screen.\n");
 #endif
 
-	
+	consolePrintf("\n");
+
+#ifdef USE_BUILT_IN_DRIVER_SELECTION
 	// Do M3 detection selectioon
 	int extraData = DSSaveFileManager::getExtraData();
 	bool present = DSSaveFileManager::isExtraDataPresent();
@@ -2093,7 +2105,11 @@ int main(void)
 
 	disc_setEnable(mode);
 	DSSaveFileManager::setExtraData(mode);
+#else
+	
+	int mode = 0;
 
+#endif
 
 /*
 	if ((present) && (extraData & 0x00000001)) {
@@ -2123,7 +2139,13 @@ int main(void)
 	DSFileSystemNode* node = new DSFileSystemNode();
 	if (!node->getZip() || (!node->getZip()->isReady())) {
 		// If not found, init CF/SD driver
-		initGBAMP(mode);
+		if (!initGBAMP(mode)) {
+			consolePrintf("\nNo file system was found.\n");
+			consolePrintf("View the README_DLDI.TXT file\n");
+			consolePrintf("for more information.\n");
+
+			while (1);
+		}
 	}
 	delete node;
 
@@ -2161,7 +2183,7 @@ int main(void)
 	}
 #else
 	while (1) {
-		scummvm_main(1, (char **) &argv);
+		scummvm_main(2, (char **) &argv);
 		powerOff();
 	}
 #endif
