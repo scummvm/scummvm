@@ -31,7 +31,7 @@ namespace Audio {
 
 class AudioStream;
 
-AudioStream *makeProtrackerStream(Common::ReadStream *stream, int rate = 44100);
+AudioStream *makeProtrackerStream(Common::ReadStream *stream, int rate = 44100, bool stereo = false);
 
 } // End of namespace Audio
 

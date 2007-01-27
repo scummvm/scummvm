@@ -24,68 +24,18 @@
 #include "common/stdafx.h"
 
 #include "sound/mods/protracker.h"
+#include "sound/mods/paula.h"
 #include "sound/mods/module.h"
 
 #include "sound/audiostream.h"
 
 namespace Modules {
 
-class SoundBuffer {
-private:
-	int _capacity;
-	int _size;
-	int16 *_data;
-
-public:
-	SoundBuffer() {
-		_size = 0;
-		_capacity = 8192;
-		_data = (int16 *)malloc(_capacity * sizeof(int16));
-		assert(_data);
-	}
-
-	~SoundBuffer() {
-		free(_data);
-	}
-
-	int size() {
-		return _size;
-	}
-
-	int16 *getEnd() {
-		return _data + _size;
-	}
-
-	void ensureCapacity(int len) {
-		if (_size + len > _capacity) {
-			do {
-				_capacity *= 2;
-			} while (_size + len > _capacity);
-
-			_data = (int16 *)realloc(_data, _capacity * sizeof(int16));
-			assert(_data);
-		}
-	}
-
-	void finish(int len) {
-		_size += len;
-	}
-
-	void pop(int16 *dest, int len) {
-		assert(_size >= len);
-		memcpy(dest, _data, len * sizeof(int16));
-		memmove(_data, _data + len, (_size - len) * sizeof(int16));
-		_size -= len;
-	}
-};
-
-class ProtrackerStream : public ::Audio::AudioStream {
+class ProtrackerStream : public ::Audio::Paula {
 private:
 	Module *_module;
 
 	int _rate;
-	SoundBuffer *_buf;
-	double _generatedSamplesOverflow;
 
 	int _tick;
 	int _row;
@@ -128,28 +78,23 @@ private:
 	} _track[4];
 
 public:
-	ProtrackerStream(Common::ReadStream *stream, int rate);
+	ProtrackerStream(Common::ReadStream *stream, int rate, bool stereo);
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return false; }
-	bool endOfData() const { return false; }
-
-	int getRate() const { return _rate; }
-	
 private:
-	void generateSound();
+	void startPlay() { _playing = true; _end = false; }
+	void interrupt();
 
 	void updateRow();
 	void updateEffects();
+
 };
 
-ProtrackerStream::ProtrackerStream(Common::ReadStream *stream, int rate) {
+ProtrackerStream::ProtrackerStream(Common::ReadStream *stream, int rate, bool stereo) :
+		Paula(stereo, rate, rate/50) {
 	_module = new Module();
 	bool result = _module->load(*stream);
 	assert(result);
 
-	_buf = new SoundBuffer();
-	
 	_rate = rate;
 	_tick = _row = _pos = 0;
 	_hasJumpToPattern = false;
@@ -161,104 +106,14 @@ ProtrackerStream::ProtrackerStream(Common::ReadStream *stream, int rate) {
 	_speed = 6;
 	_bpm = 125;
 
-	_generatedSamplesOverflow = 0.0;
-
 	for (int t = 0; t < 4; t++) {
 		_track[t].sample = 0;
 		_track[t].period = 0;
 		_track[t].offset = 0.0;
-
 		_track[t].vibrato = 0;
 	}	
-}
 
-void ProtrackerStream::generateSound() {
-	_generatedSamplesOverflow += 5.0 * _rate / (2.0 * _bpm);
-	int samples = (int)floor(_generatedSamplesOverflow);
-	_generatedSamplesOverflow -= samples;
-
-	_buf->ensureCapacity(samples);
-
-// FIXME: Could this code be unified/ with Paula::readBuffer?
-// They look very similar. Maybe one could be rewritten to 
-// use the other?
-
-	int16 *p = _buf->getEnd();
-	memset(p, 0, samples * sizeof(int16));
-
-	for (int track = 0; track < 4; track++) {
-		if (_track[track].sample > 0) {
-			p = _buf->getEnd();
-
-			double frequency =
-			    (7093789.2 / 2.0) / (_track[track].period +
-			    _track[track].vibrato);
-
-			double rate = frequency / _rate;
-			double offset = _track[track].offset;
-			int sample = _track[track].sample - 1;
-			int slen = _module->sample[sample].len;
-			int8 *data = _module->sample[sample].data;
-
-			static bool did_warn_about_finetune = false;
-			if (!did_warn_about_finetune && _module->sample[sample].finetune != 0) {
-				did_warn_about_finetune = true;
-				warning("Finetuning not implemented!");
-			}
-
-			if (_module->sample[sample].replen > 2) {
-				int neededSamples = samples;
-
-				while ((int)(offset + neededSamples * rate) >=
-				    (_module->sample[sample].repeat + _module->sample[sample].replen)) {
-					/* The repeat length is the limiting factor */
-
-					int end =
-					    (int)((_module->sample[sample].
-						repeat + _module->sample[sample].
-						replen - offset) / rate);
-
-					for (int i = 0; i < end; i++)
-						*p++ +=
-						    _track[track].vol * data[(int)(offset + rate * i)];
-					_track[track].offset =
-					    _module->sample[sample].repeat;
-					offset = _track[track].offset;
-					neededSamples -= end;
-				}
-				if (neededSamples > 0) {
-					/* The requested number of samples is the limiting factor, not the repeat length */
-
-					for (int i = 0; i < neededSamples; i++)
-						*p++ +=
-						    _track[track].vol * data[(int)(offset + rate * i)];
-					_track[track].offset +=
-					    rate * neededSamples;
-				}
-			} else {
-				if (offset < slen) {
-					if ((int)(offset + samples * rate) >= slen) {
-						/* The end of the sample is the limiting factor */
-
-						int end = (int)((slen - offset) / rate);
-						for (int i = 0; i < end; i++)
-							*p++ += _track[track].vol *
-							    data[(int)(offset + rate * i)];
-						_track[track].offset = slen;
-					} else {
-						/* The requested number of samples is the limiting factor, not the sample */
-
-						for (int i = 0; i < samples; i++)
-							*p++ += _track[track].vol *
-							    data[(int)(offset + rate * i)];
-						_track[track].offset += rate * samples;
-					}
-				}
-			}
-		}
-	}
-
-	_buf->finish(samples);
+	startPlay();
 }
 
 void ProtrackerStream::updateRow() {
@@ -269,11 +124,11 @@ void ProtrackerStream::updateRow() {
 
 		int effect = note.effect >> 8;
 
+		_track[track].sample = note.sample;
+		if (_track[track].sample != note.sample) {
+			_track[track].vibratoPos = 0;
+		}
 		if (note.sample) {
-			if (_track[track].sample != note.sample) {
-				_track[track].vibratoPos = 0;
-			}
-			_track[track].sample = note.sample;
 			_track[track].vol = _module->sample[note.sample - 1].vol;
 		}
 		if (note.period) {
@@ -348,6 +203,7 @@ void ProtrackerStream::updateRow() {
 				_speed = exy;
 			} else {
 				_bpm = exy;
+				setInterruptFreq((int) (((double) _bpm) * 0.4));
 			}
 			break;
 		default:
@@ -491,54 +347,65 @@ void ProtrackerStream::updateEffects() {
 	}
 }
 
-int ProtrackerStream::readBuffer(int16 *buffer, const int numSamples) {
-	while (_buf->size() < numSamples) {
-		if (_tick == 0) {
-			if (_hasJumpToPattern) {
-				_hasJumpToPattern = false;
-				_pos = _jumpToPattern;
-				_row = 0;
-			} else if (_hasPatternBreak) {
-				_hasPatternBreak = false;
-				_row = _skiprow;
-				_pos = (_pos + 1) % _module->songlen;
-				_patternLoopRow = 0;
-			} else if (_hasPatternLoop) {
-				_hasPatternLoop = false;
-				_row = _patternLoopRow;
-			}
-			if (_row >= 64) {
-				_row = 0;
-				_pos = (_pos + 1) % _module->songlen;
-				_patternLoopRow = 0;
-			}
+void ProtrackerStream::interrupt(void) {
+	int track;
 
-			if (_patternDelay == 0) {
-				updateRow();
-			} else {
-				_patternDelay--;
-			}
-		} else
-			updateEffects();
+	for (track = 0; track < 4; track++)
+		_track[track].offset = _voice[track].offset;
 
-		_tick = (_tick + 1) % _speed;
-		if (_tick == 0)
-			_row++;
+	if (_tick == 0) {
+		if (_hasJumpToPattern) {
+			_hasJumpToPattern = false;
+			_pos = _jumpToPattern;
+			_row = 0;
+		} else if (_hasPatternBreak) {
+			_hasPatternBreak = false;
+			_row = _skiprow;
+			_pos = (_pos + 1) % _module->songlen;
+			_patternLoopRow = 0;
+		} else if (_hasPatternLoop) {
+			_hasPatternLoop = false;
+			_row = _patternLoopRow;
+		}
+		if (_row >= 64) {
+			_row = 0;
+			_pos = (_pos + 1) % _module->songlen;
+			_patternLoopRow = 0;
+		}
 
-		generateSound();
+		if (_patternDelay == 0) {
+			updateRow();
+		} else {
+			_patternDelay--;
+		}
+	} else
+		updateEffects();
+
+	_tick = (_tick + 1) % _speed;
+	if (_tick == 0)
+		_row++;
+
+	for (track = 0; track < 4; track++) {
+		_voice[track].period = _track[track].period + _track[track].vibrato;
+		_voice[track].volume = _track[track].vol;
+		if (_track[track].sample) {
+			sample_t &sample = _module->sample[_track[track].sample - 1];
+			_voice[track].data = sample.data;
+			_voice[track].dataRepeat = sample.replen > 2 ? sample.data + sample.repeat : 0;
+			_voice[track].length = sample.len;
+			_voice[track].lengthRepeat = sample.replen;
+			_voice[track].offset = _track[track].offset;
+			_track[track].sample = 0;
+		}
 	}
-
-	_buf->pop(buffer, numSamples);
-
-	return numSamples;
 }
 
 } // End of namespace Modules
 
 namespace Audio {
 
-AudioStream *makeProtrackerStream(Common::ReadStream *stream, int rate) {
-	return new Modules::ProtrackerStream(stream, rate);
+AudioStream *makeProtrackerStream(Common::ReadStream *stream, int rate, bool stereo) {
+	return new Modules::ProtrackerStream(stream, rate, stereo);
 }
 
 } // End of namespace Audio
