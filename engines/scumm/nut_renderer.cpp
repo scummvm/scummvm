@@ -159,7 +159,7 @@ void NutRenderer::loadFont(const char *filename) {
 	}
 
 	uint32 tag = file.readUint32BE();
-	if (tag != 'ANIM') {
+	if (tag != MKID_BE('ANIM')) {
 		error("NutRenderer::loadFont() there is no ANIM chunk in font header");
 	}
 
@@ -168,7 +168,7 @@ void NutRenderer::loadFont(const char *filename) {
 	file.read(dataSrc, length);
 	file.close();
 
-	if (READ_BE_UINT32(dataSrc) != 'AHDR') {
+	if (READ_BE_UINT32(dataSrc) != MKID_BE('AHDR')) {
 		error("NutRenderer::loadFont() there is no AHDR chunk in font header");
 	}
 
@@ -204,12 +204,12 @@ void NutRenderer::loadFont(const char *filename) {
 	offset = 0;
 	for (int l = 0; l < _numChars; l++) {
 		offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
-		if (READ_BE_UINT32(dataSrc + offset) != 'FRME') {
+		if (READ_BE_UINT32(dataSrc + offset) != MKID_BE('FRME')) {
 			error("NutRenderer::loadFont(%s) there is no FRME chunk %d (offset %x)", filename, l, offset);
 			break;
 		}
 		offset += 8;
-		if (READ_BE_UINT32(dataSrc + offset) != 'FOBJ') {
+		if (READ_BE_UINT32(dataSrc + offset) != MKID_BE('FOBJ')) {
 			error("NutRenderer::loadFont(%s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, l, offset);
 			break;
 		}
