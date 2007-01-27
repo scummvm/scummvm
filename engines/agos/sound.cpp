@@ -125,7 +125,6 @@ public:
 class VocSound : public BaseSound {
 public:
 	VocSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian) {};
-	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };
 
@@ -240,16 +239,16 @@ void WavSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle,
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound, vol);
 }
 
-Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
+void VocSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol) {
 	if (_offsets == NULL)
-		return NULL;
+		return;
 
 	_file->seek(_offsets[sound], SEEK_SET);
-	return Audio::makeVOCStream(*_file);
-}
 
-void VocSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol) {
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), sound);
+	int size, rate;
+	byte *buffer = Audio::loadVOCFromStream(*_file, size, rate);
+	assert(buffer);
+	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, sound);
 }
 
 void RawSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol) {
