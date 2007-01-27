@@ -332,11 +332,14 @@ int SoundMgr::initSound() {
 	/*loadInstruments("demo.sys"); */
 #endif
 
+	_mixer->setupPremix(this);
+
 	return r;
 }
 
 void SoundMgr::deinitSound() {
 	debugC(3, kDebugLevelSound, "()");
+	_mixer->setupPremix(NULL);
 	free(sndBuffer);
 }
 
@@ -714,7 +717,6 @@ SoundMgr::SoundMgr(AgiEngine *agi, Audio::Mixer *pMixer) {
 	_vm = agi;
 	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();
-	_mixer->setupPremix(this);
 }
 
 void SoundMgr::premixerCall(int16 *data, uint len) {
@@ -726,7 +728,6 @@ void SoundMgr::setVolume(uint8 volume) {
 }
 
 SoundMgr::~SoundMgr() {
-	_mixer->setupPremix(NULL);
 }
 
 } // End of namespace Agi
