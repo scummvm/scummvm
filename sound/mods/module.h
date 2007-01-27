@@ -68,8 +68,8 @@ public:
 	~Module();
 
 	bool load(Common::ReadStream &stream);
-	byte static periodToNote(int16 period, byte finetune = 0);
-	int16 static noteToPeriod(byte note, byte finetune = 0);
+	static byte periodToNote(int16 period, byte finetune = 0);
+	static int16 noteToPeriod(byte note, byte finetune = 0);
 
 private:
 	static const int16 periods[16][60];
