@@ -32,6 +32,7 @@ namespace Modules {
 
 struct note_t {
 	byte sample;
+	byte note;
 	uint16 period;
 	uint16 effect;
 };
@@ -67,6 +68,11 @@ public:
 	~Module();
 
 	bool load(Common::ReadStream &stream);
+	byte static periodToNote(int16 period, byte finetune = 0);
+	int16 static noteToPeriod(byte note, byte finetune = 0);
+
+private:
+	static const int16 periods[16][60];
 };
 
 } // End of namespace Modules
