@@ -28,19 +28,6 @@
 
 namespace Modules {
 
-/*
- * FIXME: Is the following comment still valid? If so, 
- * it should be marked accordingly, and maybe added to our 
- * TODO list on the Wiki (conserving memory is always a big
- * boon for our smaller targets).
- *
- * Storing notes and patterns like this
- * wastes insane amounts of memory.
- *
- * They should be stored in memory
- * like they are in the file.
- */
-
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 struct note_t {
@@ -67,7 +54,8 @@ class Module {
 public:
 	byte songname[21];
 
-	sample_t sample[32];
+	static const int NUM_SAMPLES = 31;
+	sample_t sample[NUM_SAMPLES];
 
 	byte songlen;
 	byte undef;
