@@ -19,6 +19,7 @@ chdir("../../../");
 	"mmp/scummvm_cine.mmp", 
 	"mmp/scummvm_agi.mmp", 
 	"mmp/scummvm_touche.mmp", 
+	"mmp/scummvm_parallaction.mmp", 
 	"S60/ScummVM_S60.mmp",  
 	"S60v3/ScummVM_S60v3.mmp", 
 	"S80/ScummVM_S80.mmp", 
@@ -87,6 +88,7 @@ ParseModule("_lure",	"lure",		\@section_empty);
 ParseModule("_cine",	"cine",		\@section_empty);
 ParseModule("_agi",	"agi",		\@section_empty);
 ParseModule("_touche",	"touche",	\@section_empty);
+ParseModule("_parallaction","parallaction",\@section_empty);
 print "
 =======================================================================================
 Done. Enjoy :P

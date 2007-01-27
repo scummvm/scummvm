@@ -55,6 +55,7 @@ OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way
 	//MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 	//MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 	//MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib
+	//MACRO			DISABLE_PARALLACTION	// LIB:scummvm_parallaction.lib
 
 //STOP_AUTO_MACROS_MASTER//
 
