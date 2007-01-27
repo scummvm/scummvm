@@ -89,11 +89,7 @@ static const Common::ADParams detectionParams = {
 	// List of all engine targets
 	parallactionGames,
 	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"parallaction",
-	// Flags
-	Common::kADFlagComplexID
+	0
 };
 
 ADVANCED_DETECTOR_DEFINE_PLUGIN(PARALLACTION, Parallaction::Parallaction, Parallaction::GAME_detectGames, detectionParams);
