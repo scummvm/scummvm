@@ -574,7 +574,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	if ((!ConfMan.getBool("subtitles")) && ((flags & 8) == 8))
 		return;
 
-	SmushFont *sf = _sf[0];
+	SmushFont *sf = getFont(0);
 	int color = 15;
 	while (*str == '/') {
 		str++; // For Full Throttle text resources
@@ -600,7 +600,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 			{
 				int id = str[3] - '0';
 				str += 4;
-				sf = _sf[id];
+				sf = getFont(id);
 			}
 			break;
 		case 'c':
@@ -1027,45 +1027,54 @@ void SmushPlayer::handleAnimHeader(Chunk &b) {
 }
 
 void SmushPlayer::setupAnim(const char *file) {
-	int i;
-	char file_font[11];
-
 	if (_insanity) {
 		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)))
 			readString("mineroad.trs");
 	} else
 		readString(file);
+}
+
+SmushFont *SmushPlayer::getFont(int font) {
+	char file_font[11];
+
+	if (_sf[font])
+		return _sf[font];
 
 	if (_vm->_game.id == GID_FT) {
 		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))) {
-			_sf[0] = new SmushFont(_vm, true, false);
-			_sf[1] = new SmushFont(_vm, true, false);
-			_sf[2] = new SmushFont(_vm, true, false);
-			_sf[3] = new SmushFont(_vm, true, false);
-			_sf[0]->loadFont("scummfnt.nut", false);
-			_sf[1]->loadFont("techfnt.nut", false);
-			_sf[2]->loadFont("titlfnt.nut", false);
-			_sf[3]->loadFont("specfnt.nut", false);
+			const char *ft_fonts[] = {
+				"scummfnt.nut",
+				"techfnt.nut",
+				"titlfnt.nut",
+				"specfnt.nut"
+			};
+
+			assert(font >= 0 && font < ARRAYSIZE(ft_fonts));
+
+			_sf[font] = new SmushFont(_vm, true, false);
+			_sf[font]->loadFont(ft_fonts[font], false);
 		}
 	} else if (_vm->_game.id == GID_DIG) {
 		if (!(_vm->_game.features & GF_DEMO)) {
-			for (i = 0; i < 4; i++) {
-				sprintf(file_font, "font%d.nut", i);
-				_sf[i] = new SmushFont(_vm, i != 0, false);
-				_sf[i]->loadFont(file_font, false);
-			}
+			assert(font >= 0 && font < 4);
+
+			sprintf(file_font, "font%d.nut", font);
+			_sf[font] = new SmushFont(_vm, font != 0, false);
+			_sf[font]->loadFont(file_font, false);
 		}
 	} else if (_vm->_game.id == GID_CMI) {
-		for (i = 0; i < 5; i++) {
-			if ((_vm->_game.features & GF_DEMO) && (i == 4))
-				break;
-			sprintf(file_font, "font%d.nut", i);
-			_sf[i] = new SmushFont(_vm, false, true);
-			_sf[i]->loadFont(file_font, false);
-		}
+		int numFonts = (_vm->_game.features & GF_DEMO) ? 4 : 5;
+		assert(font >= 0 && font < numFonts);
+
+		sprintf(file_font, "font%d.nut", font);
+		_sf[font] = new SmushFont(_vm, false, true);
+		_sf[font]->loadFont(file_font, false);
 	} else {
-		error("SmushPlayer::setupAnim() Unknown font setup for game");
+		error("SmushPlayer::getFont() Unknown font setup for game");
 	}
+
+	assert(_sf[font]);
+	return _sf[font];
 }
 
 void SmushPlayer::parseNextFrame() {

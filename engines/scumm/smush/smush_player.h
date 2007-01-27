@@ -122,6 +122,7 @@ protected:
 	const char *getString(int id);
 
 private:
+	SmushFont *getFont(int font);
 	void parseNextFrame();
 	void init(int32 spped);
 	void setupAnim(const char *file);
