@@ -46,8 +46,8 @@ bool Module::load(Common::ReadStream &st) {
 		sample[i].replen = 2 * st.readUint16BE();
 	}
 
-	songlen = 2 * st.readByte();
-	undef = 2 * st.readByte();
+	songlen = st.readByte();
+	undef = st.readByte();
 
 	st.read(songpos, 128);
 	st.read(sig, 4);
