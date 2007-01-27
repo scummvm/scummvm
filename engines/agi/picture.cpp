@@ -44,7 +44,8 @@ static uint8 priColour;
 
 static uint8 circles[][15] = {	/* agi circle bitmaps */
 	{0x80},
-	{0xfc},
+	/* {0xfc}, */
+	{ 3 << 4 },	/* pattern data different from specs. fixes gold rush. does not seem to break any other v3 games */
 	{0x5f, 0xf4},
 	{0x66, 0xff, 0xf6, 0x60},
 	{0x23, 0xbf, 0xff, 0xff, 0xee, 0x20},
