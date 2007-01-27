@@ -541,7 +541,7 @@ void ResourceManager::removeAll() {
 	// will still believe that the sound resources are in memory. We also
  	// need to kill the movie lead-in/out.
 
-	_vm->_sound->clearFxQueue(false);
+	_vm->_sound->clearFxQueue(true);
 
 	for (uint i = 0; i < _totalResFiles; i++)
 		remove(i);
