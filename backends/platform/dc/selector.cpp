@@ -147,7 +147,7 @@ struct Dir
 
 static Game the_game;
 
-static void detectGames(FSList &files, DetectedGameList &candidates)
+static void detectGames(FSList &files, GameList &candidates)
 {
   const PluginList &plugins = PluginManager::instance().getPlugins();
   PluginList::const_iterator iter = plugins.begin();
@@ -225,18 +225,18 @@ static int findGames(Game *games, int max)
 	  files.push_back(*entry);
     }
     
-    DetectedGameList candidates;
+    GameList candidates;
     detectGames(files, candidates);
     
-    for(DetectedGameList::const_iterator ge = candidates.begin();
+    for(GameList::const_iterator ge = candidates.begin();
 	ge != candidates.end(); ++ge)
       if(curr_game < max) {
-	strcpy(games[curr_game].filename_base, ge->gameid.c_str());
+	strcpy(games[curr_game].filename_base, ge->gameid().c_str());
 	strcpy(games[curr_game].dir, dirs[curr_dir-1].name);
 	if(uniqueGame(games[curr_game].filename_base,
 		      games[curr_game].dir, games, curr_game)) {
 	  
-	  strcpy(games[curr_game].text, ge->description.c_str());
+	  strcpy(games[curr_game].text, ge->description().c_str());
 #if 0
 	  printf("Registered game <%s> in <%s> <%s> because of <%s> <*>\n",
 		 games[curr_game].text, games[curr_game].dir,
