@@ -181,7 +181,7 @@ enum RenderMode {
 	kRenderAmiga = 5
 };
 
-enum HerculesDimesnions {
+enum HerculesDimensions {
 	kHercW = 720,
 	kHercH = 350
 };
