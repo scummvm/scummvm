@@ -27,19 +27,20 @@
 
 namespace Scumm {
 
-NutRenderer::NutRenderer(ScummEngine *vm) :
+NutRenderer::NutRenderer(ScummEngine *vm, const char *filename, bool bitmap) :
 	_vm(vm),
-	_loaded(false),
+	_bitmapFont(bitmap),
 	_numChars(0),
 	_decodedData(0) {
 	memset(_chars, 0, sizeof(_chars));
+	loadFont(filename);
 }
 
 NutRenderer::~NutRenderer() {
 	delete [] _decodedData;
 }
 
-void NutRenderer::codec1(bool bitmap, byte *dst, const byte *src, int width, int height, int pitch) {
+void NutRenderer::codec1(byte *dst, const byte *src, int width, int height, int pitch) {
 	byte val, code;
 	int32 length;
 	int h = height, size_line;
@@ -56,7 +57,7 @@ void NutRenderer::codec1(bool bitmap, byte *dst, const byte *src, int width, int
 			if (code & 1) {
 				val = *src++;
 				size_line--;
-				if (bitmap) {
+				if (_bitmapFont) {
 					for (int i = 0; i < length; i++) {
 						if (val)
 							*dst |= bit;
@@ -75,7 +76,7 @@ void NutRenderer::codec1(bool bitmap, byte *dst, const byte *src, int width, int
 				size_line -= length;
 				while (length--) {
 					val = *src++;
-					if (bitmap) {
+					if (_bitmapFont) {
 						if (val)
 							*dst |= bit;
 						bit >>= 1;
@@ -95,7 +96,7 @@ void NutRenderer::codec1(bool bitmap, byte *dst, const byte *src, int width, int
 	}
 }
 
-void NutRenderer::codec21(bool bitmap, byte *dst, const byte *src, int width, int height, int pitch) {
+void NutRenderer::codec21(byte *dst, const byte *src, int width, int height, int pitch) {
 	while (height--) {
 		byte *dstPtrNext = dst + pitch;
 		const byte *srcPtrNext = src + 2 + READ_LE_UINT16(src);
@@ -105,7 +106,7 @@ void NutRenderer::codec21(bool bitmap, byte *dst, const byte *src, int width, in
 		do {
 			int i;
 			int offs = READ_LE_UINT16(src); src += 2;
-			if (bitmap) {
+			if (_bitmapFont) {
 				for (i = 0; i < offs; i++) {
 					bit >>= 1;
 					if (!bit) {
@@ -129,7 +130,7 @@ void NutRenderer::codec21(bool bitmap, byte *dst, const byte *src, int width, in
 			//  src bytes equal to 255 are replaced by 0 in dst
 			//  src bytes equal to 1 are replaced by a color passed as an argument in the original function
 			//  other src bytes values are copied as-is
-			if (bitmap) {
+			if (_bitmapFont) {
 				for (i = 0; i < w; i++) {
 					if (src[i])
 						*dst |= bit;
@@ -150,24 +151,16 @@ void NutRenderer::codec21(bool bitmap, byte *dst, const byte *src, int width, in
 	}
 }
 
-bool NutRenderer::loadFont(const char *filename, bool bitmap) {
-	if (_loaded) {
-		debug(0, "NutRenderer::loadFont() Font already loaded, ok, loading...");
-	}
-
-	_bitmapFont = bitmap;
-
+void NutRenderer::loadFont(const char *filename) {
 	ScummFile file;
 	_vm->openFile(file, filename);
 	if (!file.isOpen()) {
 		error("NutRenderer::loadFont() Can't open font file: %s", filename);
-		return false;
 	}
 
 	uint32 tag = file.readUint32BE();
 	if (tag != 'ANIM') {
 		error("NutRenderer::loadFont() there is no ANIM chunk in font header");
-		return false;
 	}
 
 	uint32 length = file.readUint32BE();
@@ -177,8 +170,6 @@ bool NutRenderer::loadFont(const char *filename, bool bitmap) {
 
 	if (READ_BE_UINT32(dataSrc) != 'AHDR') {
 		error("NutRenderer::loadFont() there is no AHDR chunk in font header");
-		free(dataSrc);
-		return false;
 	}
 
 	// We pre-decode the font, which may seem wasteful at first. Actually,
@@ -242,11 +233,11 @@ bool NutRenderer::loadFont(const char *filename, bool bitmap) {
 		const uint8 *fobjptr = dataSrc + offset + 22;
 		switch (codec) {
 		case 1:
-			codec1(_bitmapFont, _chars[l].src, fobjptr, _chars[l].width, _chars[l].height, pitch);
+			codec1(_chars[l].src, fobjptr, _chars[l].width, _chars[l].height, pitch);
 			break;
 		case 21:
 		case 44:
-			codec21(_bitmapFont, _chars[l].src, fobjptr, _chars[l].width, _chars[l].height, pitch);
+			codec21(_chars[l].src, fobjptr, _chars[l].width, _chars[l].height, pitch);
 			break;
 		default:
 			error("NutRenderer::loadFont: unknown codec: %d", codec);
@@ -254,16 +245,9 @@ bool NutRenderer::loadFont(const char *filename, bool bitmap) {
 	}
 
 	delete [] dataSrc;
-	_loaded = true;
-	return true;
 }
 
 int NutRenderer::getCharWidth(byte c) const {
-	if (!_loaded) {
-		error("NutRenderer::getCharWidth() Font is not loaded");
-		return 0;
-	}
-
 	if (c >= 0x80 && _vm->_useCJKMode)
 		return _vm->_2byteWidth / 2;
 
@@ -274,11 +258,6 @@ int NutRenderer::getCharWidth(byte c) const {
 }
 
 int NutRenderer::getCharHeight(byte c) const {
-	if (!_loaded) {
-		error("NutRenderer::getCharHeight() Font is not loaded");
-		return 0;
-	}
-
 	if (c >= 0x80 && _vm->_useCJKMode)
 		return _vm->_2byteHeight;
 
@@ -289,10 +268,6 @@ int NutRenderer::getCharHeight(byte c) const {
 }
 
 void NutRenderer::drawShadowChar(const Graphics::Surface &s, int c, int x, int y, byte color, bool showShadow) {
-	if (!_loaded) {
-		error("NutRenderer::drawShadowChar() Font is not loaded");
-		return;
-	}
 
 	// We draw the character a total of 7 times: 6 times shifted and in black
 	// for the shadow, and once in the right color and position. This way we
@@ -405,11 +380,6 @@ void NutRenderer::drawChar(const Graphics::Surface &s, byte c, int x, int y, byt
 }
 
 void NutRenderer::draw2byte(const Graphics::Surface &s, int c, int x, int y, byte color) {
-	if (!_loaded) {
-		error("NutRenderer::draw2byte() Font is not loaded");
-		return;
-	}
-
 	byte *dst = (byte *)s.pixels + y * s.pitch + x;
 	const int width = _vm->_2byteWidth;
 	const int height = MIN(_vm->_2byteHeight, s.h - y);

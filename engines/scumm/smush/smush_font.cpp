@@ -29,8 +29,8 @@
 
 namespace Scumm {
 
-SmushFont::SmushFont(ScummEngine *vm, bool use_original_colors, bool new_colors) :
-	NutRenderer(vm),
+SmushFont::SmushFont(ScummEngine *vm, const char *filename, bool use_original_colors, bool new_colors) :
+	NutRenderer(vm, filename, false),
 	_color(-1),
 	_new_colors(new_colors),
 	_original(use_original_colors) {
@@ -38,10 +38,6 @@ SmushFont::SmushFont(ScummEngine *vm, bool use_original_colors, bool new_colors)
 
 int SmushFont::getStringWidth(const char *str) {
 	assert(str);
-	if (!_loaded) {
-		error("SmushFont::getStringWidth() Font is not loaded");
-		return 0;
-	}
 
 	int width = 0;
 	while (*str) {
@@ -56,10 +52,6 @@ int SmushFont::getStringWidth(const char *str) {
 
 int SmushFont::getStringHeight(const char *str) {
 	assert(str);
-	if (!_loaded) {
-		error("SmushFont::getStringHeight() Font is not loaded");
-		return 0;
-	}
 
 	int height = 0;
 	while (*str) {

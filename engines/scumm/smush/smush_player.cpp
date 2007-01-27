@@ -1051,24 +1051,21 @@ SmushFont *SmushPlayer::getFont(int font) {
 
 			assert(font >= 0 && font < ARRAYSIZE(ft_fonts));
 
-			_sf[font] = new SmushFont(_vm, true, false);
-			_sf[font]->loadFont(ft_fonts[font], false);
+			_sf[font] = new SmushFont(_vm, ft_fonts[font], true, false);
 		}
 	} else if (_vm->_game.id == GID_DIG) {
 		if (!(_vm->_game.features & GF_DEMO)) {
 			assert(font >= 0 && font < 4);
 
 			sprintf(file_font, "font%d.nut", font);
-			_sf[font] = new SmushFont(_vm, font != 0, false);
-			_sf[font]->loadFont(file_font, false);
+			_sf[font] = new SmushFont(_vm, file_font, font != 0, false);
 		}
 	} else if (_vm->_game.id == GID_CMI) {
 		int numFonts = (_vm->_game.features & GF_DEMO) ? 4 : 5;
 		assert(font >= 0 && font < numFonts);
 
 		sprintf(file_font, "font%d.nut", font);
-		_sf[font] = new SmushFont(_vm, false, true);
-		_sf[font]->loadFont(file_font, false);
+		_sf[font] = new SmushFont(_vm, file_font, false, true);
 	} else {
 		error("SmushPlayer::getFont() Unknown font setup for game");
 	}

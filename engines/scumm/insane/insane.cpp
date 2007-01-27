@@ -65,16 +65,12 @@ Insane::Insane(ScummEngine_v7 *scumm) {
 		readFileToMem("toranch.flu", &_smush_toranchFlu);
 		readFileToMem("minedriv.flu", &_smush_minedrivFlu);
 		readFileToMem("minefite.flu", &_smush_minefiteFlu);
-		_smush_bensgoggNut = new NutRenderer(_vm);
-		_smush_bensgoggNut->loadFont("bensgogg.nut", false);
-		_smush_bencutNut = new NutRenderer(_vm);
-		_smush_bencutNut->loadFont("bencut.nut", false);
+		_smush_bensgoggNut = new NutRenderer(_vm, "bensgogg.nut", false);
+		_smush_bencutNut = new NutRenderer(_vm, "bencut.nut", false);
 	}
 
-	_smush_iconsNut = new NutRenderer(_vm);
-	_smush_iconsNut->loadFont("icons.nut", false);
-	_smush_icons2Nut = new NutRenderer(_vm);
-	_smush_icons2Nut->loadFont("icons2.nut", false);
+	_smush_iconsNut = new NutRenderer(_vm, "icons.nut", false);
+	_smush_icons2Nut = new NutRenderer(_vm, "icons2.nut", false);
 }
 
 Insane::~Insane(void) {

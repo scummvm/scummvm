@@ -1610,8 +1610,6 @@ CharsetRendererNut::CharsetRendererNut(ScummEngine *vm)
 
 CharsetRendererNut::~CharsetRendererNut() {
 	for (int i = 0; i < 5; i++) {
-		if ((_vm->_game.id == GID_CMI) && (_vm->_game.features & GF_DEMO) && (i == 4))
-			break;
 		delete _fr[i];
 	}
 }
@@ -1621,11 +1619,9 @@ void CharsetRendererNut::setCurID(byte id) {
 	assert(id < numFonts);
 	_curId = id;
 	if (!_fr[id]) {
-		_fr[id] = new NutRenderer(_vm);
 		char fontname[11];
 		sprintf(fontname, "font%d.nut", id);
-		_fr[id] = new NutRenderer(_vm);
-		_fr[id]->loadFont(fontname, true);
+		_fr[id] = new NutRenderer(_vm, fontname, true);
 	}
 	_current = _fr[id];
 	assert(_current);
