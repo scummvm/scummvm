@@ -7,7 +7,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			{
 	{ "gameamiga",		GAME_BASEFILE,	"7bdaff4a118d8035047cf9b1393b3fa0", -1},
 	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1", -1},
-	{ "start",		GAME_RESTFILE,	"69fb4f12108b39ae659f108cad4d3efe", -1},
+	{ "start",		GAME_RESTFILE,	"c111be88c7f6d40e3f9b128939c1236d", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -49,7 +49,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			{
 	{ "gamest",		GAME_BASEFILE,	"8942859018fcfb2dbed13e83d974d1ab", -1},
 	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1", -1},
-	{ "start",		GAME_RESTFILE,	"69fb4f12108b39ae659f108cad4d3efe", -1},
+	{ "start",		GAME_RESTFILE,	"cd711028e209c47b81d04141fff2587b", -1},
 	{ "tbllist",		GAME_TBLFILE,	"5b6ff494bf7e24213758598ef4ac0a8b", -1},
 	{ NULL, 0, NULL, 0}
 			},
@@ -138,7 +138,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ "gameamiga",		GAME_BASEFILE,	"4aa163967f5d2bd319f8350d6af03186", -1},
 	{ "icon.dat",		GAME_ICONFILE,	"a88b1c02e13ab04dd790ec30502c323d", -1},
 	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", -1},
-	{ "start",		GAME_RESTFILE,	"4d380a35ba941d03ee5084c71d20055b", -1},
+	{ "start",		GAME_RESTFILE,	"a9f876c6c66dfd011b971da3dc7b4ada", -1},
 	{ "stripped.txt",	GAME_STRFILE,	"41c975a9c1106cb5298a0bc3df0a266e", -1},
 	{ "tbllist",		GAME_TBLFILE,	"177f5f2640e80ef92d1421d32de06a5e", -1},
 	{ NULL, 0, NULL, 0}
@@ -306,7 +306,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ "gameamiga",		GAME_BASEFILE,	"eca24fe7c3e005caca47cecac56f7245", -1},
 	{ "icon.pkd",		GAME_ICONFILE,	"4822a91c18b1b2005ac17fc617f7dcbe", -1},
 	{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e", -1},
-	{ "start",		GAME_RESTFILE,	"036b647973d6884cdfc2042a3d12df83", -1},
+	{ "start",		GAME_RESTFILE,	"b575b336e741dde1725edd4079d5ab67", -1},
 	{ "stripped.txt",	GAME_STRFILE,	"6faaebff2786216900061eeb978f10af", -1},
 	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0", -1},
 	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f", -1},
