@@ -124,11 +124,11 @@ void ProtrackerStream::updateRow() {
 
 		int effect = note.effect >> 8;
 
-		_track[track].sample = note.sample;
-		if (_track[track].sample != note.sample) {
-			_track[track].vibratoPos = 0;
-		}
 		if (note.sample) {
+			if (_track[track].sample != note.sample) {
+				_track[track].vibratoPos = 0;
+			}
+			_track[track].sample = note.sample;
 			_track[track].vol = _module->sample[note.sample - 1].vol;
 		}
 		if (note.period) {
@@ -203,7 +203,7 @@ void ProtrackerStream::updateRow() {
 				_speed = exy;
 			} else {
 				_bpm = exy;
-				setInterruptFreq((int) (((double) _bpm) * 0.4));
+				setInterruptFreq((int) (getRate() / (_bpm * 0.4)));
 			}
 			break;
 		default:
