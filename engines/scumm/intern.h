@@ -866,7 +866,7 @@ public:
 	};
 	
 protected:
-	int _verbCharset, _verbLineSpacing;
+	int _verbLineSpacing;
 	bool _existLanguageFile;
 	char *_languageBuffer;
 	LangIndexNode *_languageIndex;

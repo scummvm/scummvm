@@ -819,7 +819,6 @@ void ScummEngine_vCUPhe::parseEvents() {
 #ifndef DISABLE_SCUMM_7_8
 ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v6(syst, dr) {
-	_verbCharset = 0;
 	_verbLineSpacing = 10;
 
 	_smushFrameRate = 0;
