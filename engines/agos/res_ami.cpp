@@ -89,6 +89,10 @@ static void convertcompressedclip(uint16 height, uint16 width) {
 	char n;
 	uncbuffer = (byte *)malloc(height * width * 4);
 	uncbfrout = (byte *)malloc(height * width * 4);
+	
+	byte *free_uncbuffer = uncbuffer;
+	byte *free_uncbfrout = uncbfrout;
+	
 	length = width / 16;
 	length *= height;
 	plane0 = READ_BE_UINT16(clipptr) + READ_BE_UINT16(clipptr + 2) + clipptr; clipptr += 4; plane0 += 4;
@@ -217,8 +221,8 @@ static void convertcompressedclip(uint16 height, uint16 width) {
 	}
 	if (cliplength > (height * width / 2))
 		warning("Negative compression. Clip %d. %d bytes bigger.",clipnumber,(cliplength-(height*width/2)));
-	//free(uncbuffer);
-	//free(uncbfrout);
+	free(free_uncbuffer);
+	free(free_uncbfrout);
 }
 
 static void convertclip(uint32 offset, uint16 height, uint16 width) {
