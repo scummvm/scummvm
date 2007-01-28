@@ -440,7 +440,11 @@ static const Common::ADParams detectionParams = {
 	// List of all engine targets
 	cineGames,
 	// Structure for autoupgrading obsolete targets
-	0
+	0,
+	// Name of single gameid (optional)
+	"cine",
+	// Flags
+	Common::kADFlagComplexID
 };
 
 ADVANCED_DETECTOR_DEFINE_PLUGIN(CINE, Cine::CineEngine, Cine::GAME_detectGames, detectionParams);

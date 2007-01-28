@@ -88,6 +88,10 @@ const Common::ADParams detectionParams = {
 	// List of all engine targets
 	gameList,
 	// Structure for autoupgrading obsolete targets
+	0,
+	// Name of single gameid (optional)
+	0,
+	// Flags
 	0
 };
 

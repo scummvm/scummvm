@@ -92,7 +92,11 @@ static const Common::ADParams detectionParams = {
 	// List of all engine targets
 	simonGames,
 	// Structure for autoupgrading obsolete targets
-	obsoleteGameIDsTable
+	obsoleteGameIDsTable,
+	// Name of single gameid (optional)
+	0,
+	// Flags
+	0
 };
 
 ADVANCED_DETECTOR_DEFINE_PLUGIN(AGOS, AGOS::AGOSEngine, AGOS::GAME_detectGames, detectionParams);

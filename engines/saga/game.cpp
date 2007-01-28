@@ -104,7 +104,11 @@ static const Common::ADParams detectionParams = {
 	// List of all engine targets
 	sagaGames,
 	// Structure for autoupgrading obsolete targets
-	0
+	0,
+	// Name of single gameid (optional)
+	"saga",
+	// Flags
+	Common::kADFlagComplexID
 };
 
 ADVANCED_DETECTOR_DEFINE_PLUGIN(SAGA, Saga::SagaEngine, Saga::GAME_detectGames, detectionParams);

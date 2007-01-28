@@ -971,7 +971,11 @@ static const Common::ADParams detectionParams = {
 	// List of all engine targets
 	agiGames,
 	// Structure for autoupgrading obsolete targets
-	0
+	0,
+	// Name of single gameid (optional)
+	"agi",
+	// Flags
+	Common::kADFlagComplexID
 };
 
 ADVANCED_DETECTOR_DEFINE_PLUGIN(AGI, Agi::AgiEngine, Agi::GAME_detectGames, detectionParams);

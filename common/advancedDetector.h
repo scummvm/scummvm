@@ -51,6 +51,10 @@ struct ADObsoleteGameID {
 	Common::Platform platform;
 };
 
+enum ADFlags {
+	kADFlagComplexID = (1 << 0) // Generate complex suggested IDs
+};
+
 struct ADParams {
 	// Pointer to ADGameDescription or its superset structure
 	const byte *descs;
@@ -60,14 +64,19 @@ struct ADParams {
 	const int md5Bytes;
 	// List of all engine targets
 	const PlainGameDescriptor *list;
-	// Structure for autoupgrading obsolete targets
+	// Structure for autoupgrading obsolete targets (optional)
 	const Common::ADObsoleteGameID *obsoleteList;
+	// Name of single gameid (optional)
+	const char *singleid;
+	// Flags
+	const uint32 flags;
 };
 
 typedef Array<int> ADList;
 typedef Array<const ADGameDescription*> ADGameDescList;
 
 #define AD_ENTRY1(f, x) {{ f, 0, x, -1}, {NULL, 0, NULL, 0}}
+#define AD_ENTRY1s(f, x, s) {{ f, 0, x, s}, {NULL, 0, NULL, 0}}
 
 
 namespace AdvancedDetector {
