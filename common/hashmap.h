@@ -104,6 +104,9 @@ public:
 	HashFunc _hash;
 	EqualFunc _equal;
 	
+	// Default value, returned by the const getVal.
+	const Val _defaultVal;
+	
 #ifdef DEBUG_HASH_COLLISIONS
 	mutable int _collisions, _lookups;
 #endif
@@ -209,7 +212,8 @@ public:
  * Base constructor, creates an empty hashmap.
  */
 template <class Key, class Val, class HashFunc, class EqualFunc>
-HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() {
+HashMap<Key, Val, HashFunc, EqualFunc>::HashMap()
+	: _defaultVal() {
 	_arrsize = nextTableSize(0);
 	_arr = new Node *[_arrsize];
 	assert(_arr != NULL);
@@ -229,7 +233,8 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() {
  * to heap buffers for the internal storage.
  */
 template <class Key, class Val, class HashFunc, class EqualFunc>
-HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t& map) {
+HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t& map)
+	: _defaultVal()  {
 	assign(map);
 }
 
@@ -400,8 +405,10 @@ Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) {
 template <class Key, class Val, class HashFunc, class EqualFunc>
 const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) const {
 	uint ctr = lookup(key);
-	assert(_arr[ctr] != NULL);
-	return _arr[ctr]->_value;
+	if (_arr[ctr] != NULL)
+		return _arr[ctr]->_value;
+	else
+		return _defaultVal;
 }
 
 template <class Key, class Val, class HashFunc, class EqualFunc>
