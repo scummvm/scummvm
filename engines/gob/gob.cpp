@@ -284,7 +284,9 @@ int32 GobEngine::getSaveSize(enum SaveFiles sFile) {
 	}
 #endif // GOB_ORIGSAVES
 
-	if ((in = _saveFileMan->openForLoading(_saveFiles[(int) sFile]))) {
+	if (sFile == SAVE_SAV)
+		size = _global->_savedBack == 0 ? -1 : _global->_savedBackSize;
+	else if ((in = _saveFileMan->openForLoading(_saveFiles[(int) sFile]))) {
 		size = getSaveSize(*in);
 		delete in;
 	}
@@ -302,62 +304,84 @@ const char *GobEngine::getSaveSlotFile(int slot) {
 }
 
 void GobEngine::saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset) {
-	int32 retSize;
 	int16 index;
-	int16 top;
 	bool writePal;
-	bool needEnforceEndian;
 	char *sName;
 	char *buf;
 	char *oBuf;
+	int32 retSize;
 	int32 iSize;
 	int32 oSize;
 	int32 oOff;
-	Video::SurfaceDesc *destDesc;
 	Video::SurfaceDesc *srcDesc;
 	Common::InSaveFile *in;
 	Common::OutSaveFile *out;
 
+	retSize = 0;
 	index = 0;
 	oBuf = 0;
 	in = 0;
 	writePal = false;
 	sName = _saveFiles[(int) sFile];
-	needEnforceEndian = false;
 
 	WRITE_VAR(1, 1);
 
-	if (size < 0) {
+	if (sFile == SAVE_SAV) {
+		_global->_savedBackSize = -1;
+		if (size >= 0) {
+			warning("Invalid attempt at saving a sprite");
+			return;
+		}
 		if (size < -1000) {
-			writePal = true;
 			size += 1000;
+			writePal = true;
+			memcpy((char *) _global->_savedPal, (char *) _global->_pPaletteDesc->vgaPal, 768);
 		}
 		index = -size - 1;
-		assert((index >= 0) && (index < 50)); // Just to be sure...
-		buf = (char *) _draw->_spritesArray[index]->vidPtr;
-		size = _draw->getSpriteRectSize(index);
-		if ((_draw->_spritesArray[index]->vidMode & 0x80) == 0)
-			size = -size;
-	} else {
-		int32 varSize = READ_LE_UINT32(_game->_totFileData + 0x2C) * 4;
+		if ((index < 0) || (index >= 50)) {
+			warning("Invalid attempt at saving a sprite");
+			return;
+		}
+		srcDesc = _draw->_spritesArray[index];
 
-		if (size == 0) {
-			dataVar = 0;
-			size = varSize;
-		}
-		buf = _global->_inter_variables + dataVar;
-#ifndef GOB_ORIGSAVES
-		if (sFile == SAVE_CAT) {
-			if(saveGame((offset - 600) / varSize, dataVar, size, offset))
-				WRITE_VAR(1, 0);
-			return;
-		} else if (offset != 0) {
-			warning("Can't write file \"%s\": Can't correctly enfore endianness with offset", sName);
-			return;
-		}
-		needEnforceEndian = true;
-#endif // GOB_ORIGSAVES
+		if (_global->_savedBack)
+			_video->freeSurfDesc(_global->_savedBack);
+
+		_global->_savedBack =
+			_video->initSurfDesc(_vm->_global->_videoMode, srcDesc->width, srcDesc->height, 0);
+		_vm->_video->drawSprite(srcDesc, _global->_savedBack, 0, 0,
+				srcDesc->width - 1, srcDesc->height - 1, 0, 0, 0);
+
+		_global->_savedBackSize = _draw->getSpriteRectSize(index);
+		if (writePal)
+			_global->_savedBackSize += 768;
+
+		WRITE_VAR(1, 0);
+		return;
 	}
+
+	if (size < 0) {
+		warning("Invalid saving procedure");
+		return;
+	}
+
+	int32 varSize = READ_LE_UINT32(_game->_totFileData + 0x2C) * 4;
+
+	if (size == 0) {
+		dataVar = 0;
+		size = varSize;
+	}
+	buf = _global->_inter_variables + dataVar;
+#ifndef GOB_ORIGSAVES
+	if (sFile == SAVE_CAT) {
+		if(saveGame((offset - 600) / varSize, dataVar, size, offset))
+			WRITE_VAR(1, 0);
+		return;
+	} else if (offset != 0) {
+		warning("Can't write file \"%s\": Can't correctly enfore endianness with offset", sName);
+		return;
+	}
+#endif // GOB_ORIGSAVES
 
 	if ((in = _saveFileMan->openForLoading(sName)))
 		iSize = getSaveSize(*in);
@@ -365,7 +389,7 @@ void GobEngine::saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 		iSize = 0;
 
 	oOff = offset < 0 ? MAX((int32) 0, iSize - (-offset - 1)) : offset;
-	oSize = MAX(iSize, oOff + ABS(size));
+	oSize = MAX(iSize, oOff + size);
 	oBuf = new char[oSize];
 	memset(oBuf, 0, oSize);
 
@@ -380,33 +404,11 @@ void GobEngine::saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 		return;
 	}
 	
-	if (writePal) {
-		memcpy(oBuf + oOff, (char *) _global->_pPaletteDesc->vgaPal, 768);
-		oOff += 768;
-	}
-
-	if (!needEnforceEndian) {
-		if (size < 0) {
-			srcDesc = _draw->_spritesArray[index];
-			destDesc = _video->initSurfDesc(_global->_videoMode, srcDesc->width, 25, 0);
-			for (top = 0, retSize = 0; top < srcDesc->height; top += 25) {
-				int16 height = MIN(25, srcDesc->height - top);
-				_video->drawSprite(srcDesc, destDesc, 0, top, srcDesc->width - 1,
-						top + height - 1, 0, 0, 0);
-				memcpy(oBuf + oOff, (char *) destDesc->vidPtr, srcDesc->width * 25);
-				oOff += srcDesc->width * 25;
-			}
-			_video->freeSurfDesc(destDesc);
-		} else
-			memcpy(oBuf + oOff, buf, size);
-
-		out->write(oBuf, oSize);
-	} else
-		writeDataEndian(*out, buf, _global->_inter_variablesSizes + dataVar, size);
+	retSize = writeDataEndian(*out, buf, _global->_inter_variablesSizes + dataVar, size);
 
 	out->flush();
 
-	if (out->ioFailed())
+	if (out->ioFailed() || (retSize != size))
 		warning("Can't write file \"%s\"", sName);
 	else {
 		debugC(1, kDebugFileIO, "Saved file \"%s\" (%d, %d bytes at %d)",
@@ -494,57 +496,77 @@ void GobEngine::loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 	int32 sSize;
 	int32 retSize;
 	int16 index;
-	int16 y;
 	char *buf;
 	char *sName;
 	bool readPal;
-	bool needEnforceEndian;
 	Video::SurfaceDesc *destDesc;
-	Video::SurfaceDesc *srcDesc;
 	Common::InSaveFile *in;
 
 	index = 0;
 	readPal = false;
 	sName = _saveFiles[(int) sFile];
-	needEnforceEndian = false;
 
 	WRITE_VAR(1, 1);
-
-	if (size < 0) {
+	
+	if (sFile == SAVE_SAV) {
+		if (size >= 0) {
+			warning("Invalid attempt at loading a sprite");
+			return;
+		}
 		if (size < -1000) {
-			readPal = true;
 			size += 1000;
+			readPal = true;
+			memcpy((char *) _global->_pPaletteDesc->vgaPal, (char *) _global->_savedPal, 768);
 		}
 		index = -size - 1;
-		assert((index >= 0) && (index < 50)); // Just to be sure...
-		buf = (char *) _draw->_spritesArray[index]->vidPtr;
-		size = _draw->getSpriteRectSize(index);
-		if ((_draw->_spritesArray[index]->vidMode & 0x80) == 0)
-			size = -size;
-	} else {
-		int32 varSize;
-		varSize = READ_LE_UINT32(_game->_totFileData + 0x2C) * 4;
-		if (size == 0) {
-			dataVar = 0;
-			size = varSize;
-		}
-		buf = _global->_inter_variables + dataVar;
-#ifndef GOB_ORIGSAVES
-		if (sFile == SAVE_CAT) {
-			if(loadGame((offset - 600) / varSize, dataVar, size, offset))
-				WRITE_VAR(1, 0);
-			return;
-		} else if (offset != 0) {
-			warning("Can't read file \"%s\": Can't correctly enfore endianness with offset", sName);
+		if ((index < 0) || (index >= 50)) {
+			warning("Invalid attempt at loading a sprite");
 			return;
 		}
-		needEnforceEndian = true;
-#endif // GOB_ORIGSAVES
+		destDesc = _draw->_spritesArray[index];
+
+		if ((destDesc->width != _global->_savedBack->width) ||
+		    (destDesc->height != _global->_savedBack->height)) {
+			warning("Resolution doesn't match while loading a sprite");
+			return;
+		}
+
+		_vm->_video->drawSprite(_global->_savedBack, destDesc, 0, 0,
+				destDesc->width - 1, destDesc->height - 1, 0, 0, 0);
+		if (index == 21) {
+			_video->drawSprite(_draw->_backSurface, _draw->_frontSurface, 0, 0,
+					_draw->_frontSurface->width - 1, _draw->_frontSurface->height - 1, 0, 0, 0);
+			_video->waitRetrace(_global->_videoMode);
+		}
+
+		WRITE_VAR(1, 0);
+		return;
 	}
 
+	if (size < 0) {
+		warning("Invalid loading procedure");
+		return;
+	}
+
+	int32 varSize;
+	varSize = READ_LE_UINT32(_game->_totFileData + 0x2C) * 4;
+	if (size == 0) {
+		dataVar = 0;
+		size = varSize;
+	}
+	buf = _global->_inter_variables + dataVar;
+#ifndef GOB_ORIGSAVES
+	if (sFile == SAVE_CAT) {
+		if(loadGame((offset - 600) / varSize, dataVar, size, offset))
+			WRITE_VAR(1, 0);
+		return;
+	} else if (offset != 0) {
+		warning("Can't read file \"%s\": Can't correctly enfore endianness with offset", sName);
+		return;
+	}
+#endif // GOB_ORIGSAVES
+
 	if (_global->_inter_resStr[0] == 0) {
-		if (readPal)
-			size += 768;
 		WRITE_VAR(1, size);
 		return;
 	}
@@ -564,30 +586,7 @@ void GobEngine::loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 	else
 		in->seek(offset, 0);
 
-	if (readPal) {
-		retSize = in->read((char *) _global->_pPaletteDesc->vgaPal, 768);
-		_draw->_applyPal = 1;
-	}
-
-	if (!needEnforceEndian) {
-		if (size < 0) {
-			destDesc = _draw->_spritesArray[index];
-			srcDesc = _video->initSurfDesc(_global->_videoMode, destDesc->width, 25, 0);
-			for (y = 0, retSize = 0; y < destDesc->height; y += 25) {
-				int16 height = MIN(25, destDesc->height - y);
-				retSize += in->read((char *) srcDesc->vidPtr, destDesc->width * 25);
-				_video->drawSprite(srcDesc, destDesc, 0, 0, destDesc->width - 1, height - 1, 0, y, 0);
-			}
-			_video->freeSurfDesc(srcDesc);
-		} else
-			retSize = in->read(buf, size);
-		if (index == 21) {
-			_video->drawSprite(_draw->_backSurface, _draw->_frontSurface, 0, 0,
-					_draw->_frontSurface->width - 1, _draw->_frontSurface->height - 1, 0, 0, 0);
-			_video->waitRetrace(_global->_videoMode);
-		}
-	} else
-		retSize = readDataEndian(*in, buf, _global->_inter_variablesSizes + dataVar, size);
+	retSize = readDataEndian(*in, buf, _global->_inter_variablesSizes + dataVar, size);
 
 	if (retSize == size)
 		WRITE_VAR(1, 0);

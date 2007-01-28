@@ -933,8 +933,8 @@ void Inter_v2::o2_stub0x85(void) {
 }
 
 int16 Inter_v2::loadSound(int16 search) {
-	int16 id; // si
-	int16 slot; // di
+	int16 id;
+	int16 slot;
 	uint32 i;
 	bool isADL;
 	char sndfile[14];
@@ -969,7 +969,7 @@ int16 Inter_v2::loadSound(int16 search) {
 	_vm->_game->_soundIds[slot] = id;
 	_vm->_game->_soundADL[slot] = isADL;
 
-	if (id == -1) { // loc_969D
+	if (id == -1) {
 		strcpy(sndfile, _vm->_global->_inter_execPtr);
 		_vm->_global->_inter_execPtr += 9;
 		if (!isADL) {
@@ -977,12 +977,16 @@ int16 Inter_v2::loadSound(int16 search) {
 			_vm->_game->_soundSamples[slot] = _vm->_game->loadSND(sndfile, 3);
 		} else {
 			strcat(sndfile, ".ADL");
-			// TODO: This is very ugly
-			_vm->_game->_soundSamples[slot] = (Snd::SoundDesc *) _vm->_dataio->getData(sndfile);
+			dataPtr = _vm->_dataio->getData(sndfile);
+			if (dataPtr == 0)
+				return slot;
+
+			_vm->_game->_soundSamples[slot] = new Snd::SoundDesc;
+			_vm->_game->_soundSamples[slot]->data = dataPtr;
 		}
 		_vm->_game->_soundTypes[slot] = 2;
-	} else { // loc_9735
-		if (id >= 30000) { // loc_973E
+	} else {
+		if (id >= 30000) {
 			if (!isADL && (_vm->_game->_totFileData[0x29] >= 51)) { // loc_9763
 				if (_vm->_inter->_terminate != 0)
 					return slot;
@@ -993,43 +997,41 @@ int16 Inter_v2::loadSound(int16 search) {
 					return slot;
 				}
 				soundDesc->data = extData + 6;
-				soundDesc->frequency = (extData[4] << 8) + extData[5];
+				soundDesc->frequency = MAX((extData[4] << 8) + extData[5], 4700);
 				soundDesc->size = (extData[1] << 16) + (extData[2] << 8) + extData[3];
 				soundDesc->flag = 0;
-				if (soundDesc->frequency < 4700)
-					soundDesc->frequency = 4700;
 				soundDesc->frequency = -soundDesc->frequency;
 				for (i = 0, dataPtr = soundDesc->data; i < soundDesc->size; i++, dataPtr++)
 					*dataPtr ^= 0x80;
+				_vm->_game->_soundFromExt[slot] = 1;
 				_vm->_game->_soundTypes[slot] = 4;
 				_vm->_game->_soundSamples[slot] = soundDesc;
-				_vm->_game->_soundFromExt[slot] = 1;
-			} else { // loc_99BC
+			} else {
 				uint32 dataSize;
 
 				extData = _vm->_game->loadExtData(id, 0, 0, &dataSize);
 				if (extData == 0)
 					return slot;
-				_vm->_game->_soundTypes[slot] = 1;
-				if (!isADL)
-					_vm->_game->loadSound(slot, extData, dataSize);
-				else
-					// TODO: This is very ugly
-					_vm->_game->_soundSamples[slot] = (Snd::SoundDesc *) extData;
+
 				_vm->_game->_soundFromExt[slot] = 1;
+				_vm->_game->_soundTypes[slot] = 1;
+				if (isADL) {
+					_vm->_game->_soundSamples[slot] = new Snd::SoundDesc;
+					_vm->_game->_soundSamples[slot]->data = extData;
+				} else
+					_vm->_game->loadSound(slot, extData, dataSize);
 			}
-		} else { // loc_9A13
+		} else {
 			int16 dataSize;
 
 			extData = _vm->_game->loadTotResource(id, &dataSize);
-			if (!isADL)
+			if (isADL) {
+				_vm->_game->_soundSamples[slot] = new Snd::SoundDesc;
+				_vm->_game->_soundSamples[slot]->data = extData;
+			} else
 				_vm->_game->loadSound(slot, extData, dataSize);
-			else
-				// TODO: This is very ugly
-				_vm->_game->_soundSamples[slot] = (Snd::SoundDesc *) extData;
 		}
 	}
-	// loc_9A4E
 
 	if (isADL)
 		_vm->_game->_soundTypes[slot] |= 8;
@@ -1362,18 +1364,11 @@ bool Inter_v2::o2_readData(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int32 retSize;
 	int32 size;
 	int32 offset;
-	int16 dataVar; // si
+	int16 dataVar;
 	int16 handle;
-	int16 index;
-	int16 y;
 	char *buf;
 	char tmp[4];
-	bool readPal;
-	Video::SurfaceDesc *destDesc;
-	Video::SurfaceDesc *srcDesc;
 
-	index = 0;
-	readPal = false;
 	evalExpr(0);
 	dataVar = _vm->_parse->parseVarIndex();
 	size = _vm->_parse->parseValExpr();
@@ -1398,28 +1393,16 @@ bool Inter_v2::o2_readData(char &cmdCount, int16 &counter, int16 &retFlag) {
 	}
 
 	if (size < 0) {
-		if (size < -1000) {
-			readPal = true;
-			size += 1000;
-		}
-		index = -size - 1;
-		assert((index >= 0) && (index < 50)); // Just to be sure...
-		buf = (char *) _vm->_draw->_spritesArray[index]->vidPtr;
-		size = _vm->_draw->getSpriteRectSize(index);
-		if ((_vm->_draw->_spritesArray[index]->vidMode & 0x80) == 0)
-			size = -size;
-	} else {
-		if (size == 0) {
-			dataVar = 0;
-			size = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
-		}
-		buf = _vm->_global->_inter_variables + dataVar;
-		memset(_vm->_global->_inter_variablesSizes + dataVar, 0, size);
+		warning("Attempted to read a raw sprite from file \"%s\"", _vm->_global->_inter_resStr);
+		return false ;
+	} else if (size == 0) {
+		dataVar = 0;
+		size = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
 	}
+	buf = _vm->_global->_inter_variables + dataVar;
+	memset(_vm->_global->_inter_variablesSizes + dataVar, 0, size);
 
 	if (_vm->_global->_inter_resStr[0] == 0) {
-		if (readPal)
-			size += 768;
 		WRITE_VAR(1, size);
 		return false;
 	}
@@ -1436,21 +1419,7 @@ bool Inter_v2::o2_readData(char &cmdCount, int16 &counter, int16 &retFlag) {
 	else
 		_vm->_dataio->seekData(handle, offset, 0);
 
-	if (readPal) {
-		retSize = _vm->_dataio->readData(handle, (char *) _vm->_global->_pPaletteDesc->vgaPal, 768);
-		_vm->_draw->_applyPal = 1;
-	}
-
-	if (size < 0) {
-		destDesc = _vm->_draw->_spritesArray[index];
-		srcDesc = _vm->_video->initSurfDesc(_vm->_global->_videoMode, destDesc->width, 25, 0);
-		for (y = 0, retSize = 0; y < destDesc->height; y += 25) {
-			int16 height = MIN(25, destDesc->height - y);
-			retSize += _vm->_dataio->readData(handle, (char *) srcDesc->vidPtr, destDesc->width * 25);
-			_vm->_video->drawSprite(srcDesc, destDesc, 0, 0, destDesc->width - 1, height - 1, 0, y, 0);
-		}
-		_vm->_video->freeSurfDesc(srcDesc);
-	} else if (((dataVar >> 2) == 59) && (size == 4)) {
+	if (((dataVar >> 2) == 59) && (size == 4)) {
 		retSize = _vm->_dataio->readData(handle, tmp, 4);
 		WRITE_VAR(59, READ_LE_UINT32(tmp));
 	} else
@@ -1603,7 +1572,7 @@ bool Inter_v2::o2_playSound(char &cmdCount, int16 &counter, int16 &retFlag) {
 	// loc_E2F3
 	if ((_vm->_game->_soundTypes[index] & 8)) {
 		if (_vm->_adlib) {
-			_vm->_adlib->load((byte *) _vm->_game->_soundSamples[index], index);
+			_vm->_adlib->load((byte *) _vm->_game->_soundSamples[index]->data, index);
 			_vm->_adlib->setRepeating(repCount - 1);
 			_vm->_adlib->startPlay();
 		}

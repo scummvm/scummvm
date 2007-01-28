@@ -151,6 +151,9 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 
 	for (i = 0; i < 128; i++)
 		_pressedKeys[i] = 0;
+
+	_savedBack = 0;
+	_savedBackSize = -1;
 }
 
 } // End of namespace Gob

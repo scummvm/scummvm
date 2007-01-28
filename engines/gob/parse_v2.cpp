@@ -114,7 +114,6 @@ int16 Parse_v2::parseValExpr(unsigned stopToken) {
 	int16 brackPos;
 	static int16 flag = 0;
 	int16 oldflag;
-	int16 foo;
 
 	oldflag = flag;
 	if (flag == 0) {
@@ -189,8 +188,7 @@ int16 Parse_v2::parseValExpr(unsigned stopToken) {
 				break;
 
 			case 24:
-				foo = _vm->_inter->load16();
-				*valPtr = READ_VARO_UINT16(foo * 4);
+				*valPtr = READ_VARO_UINT16(_vm->_inter->load16() * 4);
 				break;
 
 			case 25:
@@ -441,7 +439,7 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 
 			case 21:
 				*operPtr = 20;
-				*valPtr = *((int8 *) _vm->_global->_inter_execPtr++);
+				*valPtr = (int8) (*_vm->_global->_inter_execPtr++);
 				break;
 
 			case 22:
