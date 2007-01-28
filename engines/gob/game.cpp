@@ -360,7 +360,7 @@ void Game::freeSoundSlot(int16 slot) {
 			_soundFromExt[slot] = 0;
 		}
 
-		delete _soundSamples;
+		delete _soundSamples[slot];
 	} else {
 		char* data = _soundSamples[slot]->data;
 
