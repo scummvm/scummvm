@@ -353,7 +353,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 
 	// Reset charset mask
 	_charset->_hasMask = false;
-	_charset->clearTextSurface();
+	clearTextSurface();
 
 	_lastCodePtr = NULL;
 	_drawObjectQueNr = 0;

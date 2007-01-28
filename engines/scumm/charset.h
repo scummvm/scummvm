@@ -43,7 +43,6 @@ class CharsetRenderer {
 public:
 
 	Common::Rect _str;
-	int _nextLeft, _nextTop;
 
 	int _top;
 	int _left, _startLeft;
@@ -62,12 +61,6 @@ public:
 	bool _firstChar;
 	bool _disableOffsX;
 
-	/**
-	 * All text is normally rendered into this overlay surface. Then later
-	 * drawStripToScreen() composits it over the game graphics.
-	 */
-	Graphics::Surface _textSurface;
-
 protected:
 	ScummEngine *_vm;
 	byte _curId;
@@ -75,10 +68,6 @@ protected:
 public:
 	CharsetRenderer(ScummEngine *vm);
 	virtual ~CharsetRenderer();
-
-	void restoreCharsetBg();
-	void clearCharsetMask();
-	void clearTextSurface();
 
 	virtual void printChar(int chr, bool ignoreCharsetMask) = 0;
 	virtual void drawChar(int chr, const Graphics::Surface &s, int x, int y) {}
@@ -126,6 +115,8 @@ public:
 class CharsetRendererClassic : public CharsetRendererCommon {
 protected:
 	void drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height);
+
+	void printCharIntern(bool is2byte, const byte *charPtr, int origWidth, int origHeight, int width, int height, VirtScreen *vs, bool ignoreCharsetMask);
 
 public:
 	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererCommon(vm) {}

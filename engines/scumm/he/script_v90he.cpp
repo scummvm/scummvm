@@ -2594,7 +2594,7 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		_skipDrawObject = 0;
 		break;
 	case 23:
-		_charset->clearCharsetMask();
+		clearCharsetMask();
 		_fullRedraw = true;
 		break;
 	case 24:

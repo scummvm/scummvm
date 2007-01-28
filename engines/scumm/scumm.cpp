@@ -529,6 +529,8 @@ ScummEngine::~ScummEngine() {
 	delete _costumeLoader;
 	delete _costumeRenderer;
 
+	_textSurface.free();
+
 	free(_shadowPalette);
 
 	free(_palManipPalette);
@@ -1074,6 +1076,10 @@ void ScummEngine::setupScumm() {
 	// Create the charset renderer
 	setupCharsetRenderer();
 
+	// Create and clear the text surface
+	_textSurface.create(_screenWidth, _screenHeight, 1);
+	clearTextSurface();
+
 	// Create the costume renderer
 	setupCostumeRenderer();
 
@@ -1324,6 +1330,8 @@ void ScummEngine::resetScumm() {
 	_defaultTalkDelay = 3;
 	_talkDelay = 0;
 	_keepText = false;
+	_nextLeft = 0;
+	_nextTop = 0;
 
 	_currentCursor = 0;
 	_cursor.state = 0;
@@ -1732,7 +1740,7 @@ load_game:
 	scummLoop_handleSaveLoad();
 
 	if (_completeScreenRedraw) {
-		_charset->clearCharsetMask();
+		clearCharsetMask();
 		_charset->_hasMask = false;
 
 		// HACK as in game save stuff isn't supported currently

@@ -1162,6 +1162,13 @@ protected:
 public:
 	CharsetRenderer *_charset;
 	byte _charsetColorMap[16];
+
+	/**
+	 * All text is normally rendered into this overlay surface. Then later
+	 * drawStripToScreen() composits it over the game graphics.
+	 */
+	Graphics::Surface _textSurface;
+
 protected:
 	byte _charsetColor;
 	byte _charsetData[23][16];
@@ -1170,6 +1177,12 @@ protected:
 	byte _charsetBuffer[512];
 
 	bool _keepText;
+
+	int _nextLeft, _nextTop;
+
+	void restoreCharsetBg();
+	void clearCharsetMask();
+	void clearTextSurface();
 
 	virtual void initCharset(int charset);
 

@@ -311,7 +311,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			_charset->setCurID(*buffer++);
 			buffer += 2;
 			memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
-			_charset->_nextTop -= _charset->getFontHeight() - oldy;
+			_nextTop -= _charset->getFontHeight() - oldy;
 			break;
 		default:
 			error("handleNextCharsetCode: invalid code %d", c);
@@ -506,18 +506,18 @@ void ScummEngine::CHARSET_1() {
 		if (_game.version >= 7) {
 #ifndef DISABLE_SCUMM_7_8
 			((ScummEngine_v7 *)this)->clearSubtitleQueue();
-			_charset->_nextLeft = _string[0].xpos;
-			_charset->_nextTop = _string[0].ypos;
+			_nextLeft = _string[0].xpos;
+			_nextTop = _string[0].ypos;
 #endif
 		} else {
-			_charset->restoreCharsetBg();
+			restoreCharsetBg();
 		}
 	}
 
 	t = _charset->_right - _string[0].xpos - 1;
 	if (_charset->_center) {
-		if (t > _charset->_nextLeft)
-			t = _charset->_nextLeft;
+		if (t > _nextLeft)
+			t = _nextLeft;
 		t *= 2;
 	}
 
@@ -525,9 +525,9 @@ void ScummEngine::CHARSET_1() {
 		_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, t);
 
 	if (_charset->_center) {
-		_charset->_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
-		if (_charset->_nextLeft < 0)
-			_charset->_nextLeft = 0;
+		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
+		if (_nextLeft < 0)
+			_nextLeft = 0;
 	}
 
 	_charset->_disableOffsX = _charset->_firstChar = !_keepText;
@@ -542,7 +542,7 @@ void ScummEngine::CHARSET_1() {
 
 		if (c == 13) {
 		newLine:;
-			_charset->_nextLeft = _string[0].xpos;
+			_nextLeft = _string[0].xpos;
 #ifndef DISABLE_SCUMM_7_8			
 			if (_game.version >= 7 && subtitleLine != subtitleBuffer) {
 				((ScummEngine_v7 *)this)->addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
@@ -550,15 +550,15 @@ void ScummEngine::CHARSET_1() {
 			}
 #endif
 			if (_charset->_center) {
-				_charset->_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
+				_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 			}
 
 			if (_game.version == 0) {
 				break;
 			} else if (!(_game.platform == Common::kPlatformFMTowns) && _string[0].height) {
-				_charset->_nextTop += _string[0].height;
+				_nextTop += _string[0].height;
 			} else {
-				_charset->_nextTop += _charset->getFontHeight();
+				_nextTop += _charset->getFontHeight();
 			}
 			if (_game.version > 3) {
 				// FIXME - is this really needed?
@@ -568,16 +568,16 @@ void ScummEngine::CHARSET_1() {
 		}
 
 		// Handle line overflow for V3. See also bug #1306269.
-		if (_game.version == 3 && _charset->_nextLeft >= _screenWidth) {
-			_charset->_nextLeft = _screenWidth;
+		if (_game.version == 3 && _nextLeft >= _screenWidth) {
+			_nextLeft = _screenWidth;
 		}
 		// Handle line breaks for V1-V2
-		if (_game.version <= 2 && _charset->_nextLeft >= _screenWidth) {
+		if (_game.version <= 2 && _nextLeft >= _screenWidth) {
 			goto newLine;
 		}
 
-		_charset->_left = _charset->_nextLeft;
-		_charset->_top = _charset->_nextTop;
+		_charset->_left = _nextLeft;
+		_charset->_top = _nextTop;
 
 		if (_game.version >= 7) {
 #ifndef DISABLE_SCUMM_7_8
@@ -614,8 +614,8 @@ void ScummEngine::CHARSET_1() {
 					_charset->printChar(c, false);
 				}
 			}
-			_charset->_nextLeft = _charset->_left;
-			_charset->_nextTop = _charset->_top;
+			_nextLeft = _charset->_left;
+			_nextTop = _charset->_top;
 		}
 
 		if (_game.version <= 2) {
@@ -695,8 +695,6 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		_charset->_left -= _charset->getStringWidth(a, buf) / 2;
 	}
 
-	const bool ignoreCharsetMask = (_game.version < 7);
-
 	if (!buf[0]) {
 		buf[0] = ' ';
 		buf[1] = 0;
@@ -732,7 +730,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 					_charset->_left = _charset->_startLeft;
 				}
 				if (!(_game.platform == Common::kPlatformFMTowns) && _string[0].height) {
-					_charset->_nextTop += _string[0].height;
+					_nextTop += _string[0].height;
 				} else {
 					_charset->_top += fontHeight;
 				}
@@ -774,7 +772,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 					}
 				}
 			}
-			_charset->printChar(c, ignoreCharsetMask);
+			_charset->printChar(c, (_game.version < 7));
 			_charset->_blitAlso = false;
 
 			if (cmi_pos_hack) {
@@ -785,8 +783,8 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	}
 
 	if (a == 0) {
-		_charset->_nextLeft = _charset->_left;
-		_charset->_nextTop = _charset->_top;
+		_nextLeft = _charset->_left;
+		_nextTop = _charset->_top;
 	}
 
 	_string[a].xpos = _charset->_str.right + 8;	// Indy3: Fixes Grail Diary text positioning

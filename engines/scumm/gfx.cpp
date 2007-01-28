@@ -545,7 +545,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 	assert(top >= 0 && bottom <= vs->h);	// Paranoia checks
 	assert(x >= 0 && width <= vs->pitch);
-	assert(_charset->_textSurface.pixels);
+	assert(_textSurface.pixels);
 	assert(_compositeBuf);
 	
 	if (width > vs->w - x)
@@ -570,10 +570,10 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 	if (_game.version < 7) {
 		// Handle the text mask in older games; newer (V7/V8) games do not use it anymore.
-		const byte *text = (byte *)_charset->_textSurface.getBasePtr(x, y);
+		const byte *text = (byte *)_textSurface.getBasePtr(x, y);
 	
 #ifdef __DS__
-		DS::asmDrawStripToScreen(height, width, text, src, dst, vs->pitch, _screenWidth, _charset->_textSurface.pitch);
+		DS::asmDrawStripToScreen(height, width, text, src, dst, vs->pitch, _screenWidth, _textSurface.pitch);
 #else	
 		// Compose the text over the game graphics
 		for (int h = 0; h < height; ++h) {
@@ -585,7 +585,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 			}
 			src += vs->pitch;
 			dst += _screenWidth;
-			text += _charset->_textSurface.pitch;
+			text += _textSurface.pitch;
 		}
 #endif
 	} else {
@@ -904,36 +904,36 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 	if (vs->hasTwoBuffers && _currentRoom != 0 && isLightOn()) {
 		blit(screenBuf, vs->pitch, vs->getBackPixels(rect.left, rect.top), vs->pitch, width, height);
 		if (vs->number == kMainVirtScreen && _charset->_hasMask) {
-			byte *mask = (byte *)_charset->_textSurface.getBasePtr(rect.left, rect.top - _screenTop);
-			fill(mask, _charset->_textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
+			byte *mask = (byte *)_textSurface.getBasePtr(rect.left, rect.top - _screenTop);
+			fill(mask, _textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
 		}
 	} else {
 		fill(screenBuf, vs->pitch, backColor, width, height);
 	}
 }
 
-void CharsetRenderer::restoreCharsetBg() {
-	_nextLeft = _vm->_string[0].xpos;
-	_nextTop = _vm->_string[0].ypos + _vm->_screenTop;
+void ScummEngine::restoreCharsetBg() {
+	_nextLeft = _string[0].xpos;
+	_nextTop = _string[0].ypos + _screenTop;
 
-	if (_hasMask) {
-		_hasMask = false;
-		_str.left = -1;
-		_left = -1;
+	if (_charset->_hasMask) {
+		_charset->_hasMask = false;
+		_charset->_str.left = -1;
+		_charset->_left = -1;
 
 		// Restore background on the whole text area. This code is based on
 		// restoreBackground(), but was changed to only restore those parts which are
 		// currently covered by the charset mask.
 
-		VirtScreen *vs = &_vm->virtscr[_textScreenID];
+		VirtScreen *vs = &virtscr[_charset->_textScreenID];
 		if (!vs->h)
 			return;
 
-		_vm->markRectAsDirty(vs->number, Common::Rect(vs->w, vs->h), USAGE_BIT_RESTORED);
+		markRectAsDirty(vs->number, Common::Rect(vs->w, vs->h), USAGE_BIT_RESTORED);
 	
 		byte *screenBuf = vs->getPixels(0, 0);
 
-		if (vs->hasTwoBuffers && _vm->_currentRoom != 0 && _vm->isLightOn()) {
+		if (vs->hasTwoBuffers && _currentRoom != 0 && isLightOn()) {
 			if (vs->number != kMainVirtScreen) {
 				// Restore from back buffer
 				const byte *backBuf = vs->getBackPixels(0, 0);
@@ -951,11 +951,11 @@ void CharsetRenderer::restoreCharsetBg() {
 	}
 }
 
-void CharsetRenderer::clearCharsetMask() {
-	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _vm->_gdi->_imgBufOffs[1]);
+void ScummEngine::clearCharsetMask() {
+	memset(getResourceAddress(rtBuffer, 9), 0, _gdi->_imgBufOffs[1]);
 }
 
-void CharsetRenderer::clearTextSurface() {
+void ScummEngine::clearTextSurface() {
 	memset(_textSurface.pixels, CHARSET_MASK_TRANSPARENCY, _textSurface.pitch * _textSurface.h);
 }
 
@@ -1098,8 +1098,8 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 			error("can only copy bg to main window");
 		blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height);
 		if (_charset->_hasMask) {
-			byte *mask = (byte *)_charset->_textSurface.getBasePtr(x, y - _screenTop);
-			fill(mask, _charset->_textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
+			byte *mask = (byte *)_textSurface.getBasePtr(x, y - _screenTop);
+			fill(mask, _textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
 		}
 	} else if (_game.heversion == 100) {
 		// Flags are used for different methods in HE games

@@ -1895,7 +1895,7 @@ void ScummEngine::stopTalk() {
 		((ScummEngine_v7 *)this)->clearSubtitleQueue();
 #endif
 	} else {
-		_charset->restoreCharsetBg();
+		restoreCharsetBg();
 	}
 }
 

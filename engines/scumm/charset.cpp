@@ -29,6 +29,19 @@
 
 namespace Scumm {
 
+/*
+TODO:
+Right now our charset renderers directly access _textSurface, as well as the
+virtual screens of ScummEngine. Ideally, this would not be the case. Instead,
+ScummVM would simply pass the appropriate Surface to the resp. methods. 
+Of course it is not quite as simple, various flags and offsets have to
+be taken into account for that.
+
+The advantage will be cleaner coder (easier to debug, in particular), and a 
+better separation of the various modules.
+*/
+
+
 void ScummEngine::loadCJKFont() {
 	Common::File fp;
 	_useCJKMode = false;
@@ -186,10 +199,6 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 
 
 CharsetRenderer::CharsetRenderer(ScummEngine *vm) {
-
-	_nextLeft = 0;
-	_nextTop = 0;
-
 	_top = 0;
 	_left = 0;
 	_startLeft = 0;
@@ -206,18 +215,9 @@ CharsetRenderer::CharsetRenderer(ScummEngine *vm) {
 
 	_vm = vm;
 	_curId = 0;
-
-	const int size = _vm->_screenWidth * _vm->_screenHeight;
-	_textSurface.pixels = malloc(size);
-	_textSurface.w = _vm->_screenWidth;
-	_textSurface.h = _vm->_screenHeight;
-	_textSurface.pitch = _vm->_screenWidth;
-	_textSurface.bytesPerPixel = 1;
-	clearTextSurface();
 }
 
 CharsetRenderer::~CharsetRenderer() {
-	free(_textSurface.pixels);
 }
 
 CharsetRendererCommon::CharsetRendererCommon(ScummEngine *vm)
@@ -1258,8 +1258,8 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		dst = vs->getPixels(_left, drawTop);
 		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight);
 	} else {
-		dst = (byte *)_textSurface.pixels + _top * _textSurface.pitch + _left;
-		drawBits1(_textSurface, dst, charPtr, drawTop, origWidth, origHeight);
+		dst = (byte *)_vm->_textSurface.pixels + _top * _vm->_textSurface.pitch + _left;
+		drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight);
 	}
 
 	if (_str.left > _left)
@@ -1317,7 +1317,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	int offsX, offsY;
 	VirtScreen *vs;
 	const byte *charPtr;
-	int is2byte = (chr >= 0x80 && _vm->_useCJKMode) ? 1 : 0;
+	bool is2byte = (chr >= 0x80 && _vm->_useCJKMode);
 
 	assertRange(1, _curId, _vm->_numCharsets - 1, "charset");
 
@@ -1400,20 +1400,38 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height);
 
-	byte *dstPtr;
-	byte *back = NULL;
-
 	if (!ignoreCharsetMask) {
 		_hasMask = true;
 		_textScreenID = vs->number;
 	}
+
+	printCharIntern(is2byte, charPtr, origWidth, origHeight, width, height, vs, ignoreCharsetMask);
+
+	_left += origWidth;
+
+	if (_str.right < _left) {
+		_str.right = _left;
+		if (_shadowMode != kNoShadowMode)
+			_str.right++;
+	}
+
+	if (_str.bottom < _top + height)
+		_str.bottom = _top + height;
+
+	_top -= offsY;
+}
+
+void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, int origWidth, int origHeight, int width, int height, VirtScreen *vs, bool ignoreCharsetMask) {
+	byte *dstPtr;
+	byte *back = NULL;
+	int drawTop = _top - vs->topline;
 
 	if ((_vm->_game.heversion >= 71 && _bitDepth >= 8) || (_vm->_game.heversion >= 90 && _bitDepth == 0)) {
 #ifndef DISABLE_HE
 		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstPtr = vs->getPixels(0, 0);
 		} else {
-			dstPtr = (byte *)_textSurface.pixels;
+			dstPtr = (byte *)_vm->_textSurface.pixels;
 		}
 
 		if (_blitAlso && vs->hasTwoBuffers) {
@@ -1442,8 +1460,8 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 			dstSurface = *vs;
 			dstPtr = vs->getPixels(_left, drawTop);
 		} else {
-			dstSurface = _textSurface;
-			dstPtr = (byte *)_textSurface.pixels + (_top - _vm->_screenTop) * _textSurface.pitch + _left;
+			dstSurface = _vm->_textSurface;
+			dstPtr = (byte *)_vm->_textSurface.pixels + (_top - _vm->_screenTop) * _vm->_textSurface.pitch + _left;
 		}
 
 		if (_blitAlso && vs->hasTwoBuffers) {
@@ -1498,19 +1516,6 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 			}
 		}
 	}
-
-	_left += origWidth;
-
-	if (_str.right < _left) {
-		_str.right = _left;
-		if (_shadowMode != kNoShadowMode)
-			_str.right++;
-	}
-
-	if (_str.bottom < _top + height)
-		_str.bottom = _top + height;
-
-	_top -= offsY;
 }
 
 void CharsetRendererClassic::drawChar(int chr, const Graphics::Surface &s, int x, int y) {
@@ -1686,7 +1691,7 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 		s = *vs;
 		s.pixels = vs->getPixels(0, 0);
 	} else {
-		s = _textSurface;
+		s = _vm->_textSurface;
 		drawTop -= _vm->_screenTop;
 	}
 
@@ -1753,8 +1758,8 @@ void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
 		dst = vs->getPixels(_left, drawTop);
 		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight);
 	} else {
-		dst = (byte *)_textSurface.pixels + _top * _textSurface.pitch + _left;
-		drawBits1(_textSurface, dst, charPtr, drawTop, origWidth, origHeight);
+		dst = (byte *)_vm->_textSurface.pixels + _top * _vm->_textSurface.pitch + _left;
+		drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight);
 	}
 
 	if (_str.left > _left)
