@@ -690,11 +690,12 @@ void LauncherDialog::addGame() {
 }
 
 
-void LauncherDialog::addGameToConf(FilesystemNode dir, GameDescriptor result, bool suppressEditDialog) {
+void LauncherDialog::addGameToConf(const FilesystemNode &dir, const GameDescriptor &result, bool suppressEditDialog) {
 	// The auto detector or the user made a choice.
 	// Pick a domain name which does not yet exist (after all, we
 	// are *adding* a game to the config, not replacing).
 	String domain(result.gameid());
+	assert(!domain.empty());
 	if (ConfMan.hasGameDomain(domain)) {
 		int suffixN = 1;
 		char suffix[16];
@@ -718,7 +719,8 @@ void LauncherDialog::addGameToConf(FilesystemNode dir, GameDescriptor result, bo
 	// game target, we can change this (currently, you can only query
 	// for the generic gameid description; it's not possible to obtain
 	// a description which contains extended information like language, etc.).
-	ConfMan.set("description", result.description(), domain);
+	if (!result.description().empty())
+		ConfMan.set("description", result.description(), domain);
 
 	ConfMan.set("gameid", result.gameid(), domain);
 	ConfMan.set("path", dir.path(), domain);
