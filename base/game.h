@@ -58,6 +58,8 @@ public:
 	 */
 	void updateDesc(const char *extra = 0);
 
+	Common::String &gameid() { return getVal("gameid"); }
+	Common::String &description() { return getVal("description"); }
 	const Common::String &gameid() const { return getVal("gameid"); }
 	const Common::String &description() const { return getVal("description"); }
 	Common::Language language() const { return contains("language") ? Common::parseLanguage(getVal("language")) : Common::UNK_LANG; }
