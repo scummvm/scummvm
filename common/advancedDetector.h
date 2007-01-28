@@ -32,15 +32,15 @@ namespace Common {
 
 struct ADGameFileDescription {
 	const char *fileName;
-	uint16 fileType;      // Optional. Not used during detection, only by engines.
-	const char *md5;      // Optional. May be NULL.
-	const int32 fileSize; // Optional. Set to -1 to ignore.
+	uint16 fileType; // Optional. Not used during detection, only by engines.
+	const char *md5; // Optional. May be NULL.
+	int32 fileSize;  // Optional. Set to -1 to ignore.
 };
 
 struct ADGameDescription {
 	const char *gameid;
 	const char *extra;
-	const ADGameFileDescription filesDescriptions[14];
+	ADGameFileDescription filesDescriptions[14];
 	Language language;
 	Platform platform;
 };
@@ -59,9 +59,9 @@ struct ADParams {
 	// Pointer to ADGameDescription or its superset structure
 	const byte *descs;
 	// Size of that superset structure
-	const int descItemSize;
+	int descItemSize;
 	// Number of bytes to compute MD5 sum for
-	const int md5Bytes;
+	int md5Bytes;
 	// List of all engine targets
 	const PlainGameDescriptor *list;
 	// Structure for autoupgrading obsolete targets (optional)
