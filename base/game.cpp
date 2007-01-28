@@ -68,7 +68,7 @@ GameDescriptor findGame(const Common::String &gameName, const Plugin **plugin) {
 	PluginList::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		result = (*iter)->findGame(gameName.c_str());
-		if (result.contains("gameid") && !result["gameid"].empty()) {
+		if (!result.gameid().empty()) {
 			if (plugin)
 				*plugin = *iter;
 			break;

@@ -36,7 +36,10 @@ struct PlainGameDescriptor {
 
 class GameDescriptor : public Common::StringMap {
 public:
-	GameDescriptor() {}
+	GameDescriptor() {
+		setVal("gameid", "");
+		setVal("description", "");
+	}
 
 	GameDescriptor(const PlainGameDescriptor &pgd) {
 		setVal("gameid", pgd.gameid);
