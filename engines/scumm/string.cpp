@@ -400,7 +400,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 
 void ScummEngine::CHARSET_1() {
 	Actor *a;
-	int t, c = 0;
+	int c = 0;
 #ifndef DISABLE_SCUMM_7_8
 	byte subtitleBuffer[200];
 	byte *subtitleLine = subtitleBuffer;
@@ -514,15 +514,16 @@ void ScummEngine::CHARSET_1() {
 		}
 	}
 
-	t = _charset->_right - _string[0].xpos - 1;
-	if (_charset->_center) {
-		if (t > _nextLeft)
-			t = _nextLeft;
-		t *= 2;
-	}
+	if (_game.version > 3) {
+		int maxwidth = _charset->_right - _string[0].xpos - 1;
+		if (_charset->_center) {
+			if (maxwidth > _nextLeft)
+				maxwidth = _nextLeft;
+			maxwidth *= 2;
+		}
 
-	if (_game.version > 3)
-		_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, t);
+		_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, maxwidth);
+	}
 
 	if (_charset->_center) {
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
