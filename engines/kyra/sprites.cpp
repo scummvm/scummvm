@@ -385,9 +385,9 @@ void Sprites::updateSceneAnims() {
 				data += 2;
 				break;
 			default:
-				debugC(1, kDebugLevelSprites, "Unsupported anim command %X in script %i", READ_LE_UINT16(data), i);
+				warning("Unsupported anim command %X in script %i", READ_LE_UINT16(data), i);
 				//endLoop = true;
-				data += 1;
+				data += 2;
 				break;
 			}
 		}
