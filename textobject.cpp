@@ -208,7 +208,7 @@ void TextObject::draw() {
 		int y;
 
 		if (_height != 0)
-			y = _y - (_font->getHeight() / 2);
+			y = _y + 5;
 		else
 			y = _y + 5;
 		if (y < 0)
