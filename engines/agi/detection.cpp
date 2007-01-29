@@ -70,7 +70,7 @@ static const PlainGameDescriptor agiGames[] = {
 	{"sq1", "Space Quest 1"},
 	{"sq2", "Space Quest 2"},
 	{"xmascard", "Xmas Card"},
-	
+
 	{0, 0}
 };
 
@@ -280,6 +280,20 @@ static const AGIGameDescription gameDescriptions[] = {
 			"goldrush",
 			"5.25\" 2.01 12/22/88",
 			AD_ENTRY1("grdir", "db733d199238d4009a9e95f11ece34e9"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V3,
+		0,
+		0x3149,
+	},
+
+	{
+		// Sarien Name == Gold Rush! (PC 3.5") 2.01 12/22/88 [AGI 3.002.149]
+		{
+			"goldrush",
+			"(IBM 3.5\") 2.01 12/22/88",
+			AD_ENTRY1("grdir", "6a285235745f69b4b421403659497216"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -863,12 +877,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Journey Of Chef", "aa0a0b5a6364801ae65fdb96d6741df5"),
 	FANMADE("Jukebox (v1.0)", "c4b9c5528cc67f6ba777033830de7751"),
 	FANMADE("Justin Quest (v1.0 in development)", "103050989da7e0ffdc1c5e1793a4e1ec"),
-	FANMADE("Jï ½ulumaa (v0.05) (Estonian)", "53982ecbfb907e41392b3961ad1c3475"),
+	FANMADE("Jï¿½ ï¿½ulumaa (v0.05) (Estonian)", "53982ecbfb907e41392b3961ad1c3475"),
 	FANMADE("Kings Quest 2  - Breast Intentions (v2.0)", "6b4f796d0421d2e12e501b511962e03a"),
 	FANMADE("Lasse Holm: The Quest for Revenge (v1.0)", "f9fbcc8a4ef510bfbb92423296ff4abb"),
 	FANMADE("Lawman for Hire", "c78b28bfd3767dd455b992cd8b7854fa"),
 	FANMADE("Lefty Goes on Vacation (Not in The Right Place)", "ccdc49a33870310b01f2c48b8a1f3c34"),
-	FANMADE("Les Insï ½parables (v1.0)", "4b780887cab0ecabc5eca319acb3acf2"),
+	FANMADE("Les Insï¿½ ï¿½parables (v1.0)", "4b780887cab0ecabc5eca319acb3acf2"),
 	FANMADE("Little Pirate (Demo 2 v0.6)", "437068efe4ec32d436da09d6f2ea56e1"),
 	FANMADE("Lost Eternity (v1.0)", "95f15c5632feb8a39e9ca3d9af35fcc9"),
 	FANMADE("MD Quest - The Search for Michiel (v0.10)", "2a6fcb21d2b5e4144c38ed817fabe8ee"),
