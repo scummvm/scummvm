@@ -799,7 +799,7 @@ void DriverGL::dimScreen() {
 		uint8 r = (pixel & 0xFF0000) >> 16;
 		uint8 g = (pixel & 0x00FF00) >> 8;
 		uint8 b = (pixel & 0x0000FF);
-		uint32 color = (r + g + b) / 6;
+		uint32 color = (r + g + b) / 10;
 		data[l] = ((color & 0xFF) << 16) | ((color & 0xFF) << 8) | (color & 0xFF);
 	}
 }

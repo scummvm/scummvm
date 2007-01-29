@@ -546,7 +546,7 @@ void DriverTinyGL::dimScreen() {
 		uint8 r = (pixel & 0xF800) >> 8;
 		uint8 g = (pixel & 0x07E0) >> 3;
 		uint8 b = (pixel & 0x001F) << 3;
-		uint32 color = (r + g + b) / 6;
+		uint32 color = (r + g + b) / 10;
 		data[l] = ((color & 0xF8) << 8) | ((color & 0xFC) << 3) | (color >> 3);
 	}
 }
