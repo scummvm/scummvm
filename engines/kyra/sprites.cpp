@@ -337,7 +337,13 @@ void Sprites::updateSceneAnims() {
 				break;
 			case 0xFFAA:
 				data += 2;
-				debugC(1, kDebugLevelSprites, "TODO func: Reset Brandon's sprite");
+				debugC(6, kDebugLevelSprites, "func: Reset Brandon's sprite");
+				_engine->animator()->actors()->sceneAnimPtr = 0;
+				_engine->animator()->actors()->bkgdChangeFlag = 1;
+				_engine->animator()->actors()->refreshFlag = 1;
+				_engine->animator()->restoreAllObjectBackgrounds();
+				_engine->animator()->flagAllObjectsForRefresh();
+				_engine->animator()->updateAllObjectShapes();
 				break;
 			case 0xFFAB:
 				data += 2;
