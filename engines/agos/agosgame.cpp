@@ -1461,6 +1461,29 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// Simon the Sorcerer 2 - French Windows CD
+	{
+		{
+			"simon2",
+			"CD",
+
+			{
+	{ "gsptr30",		GAME_BASEFILE,	"6e217d75f4089b92270fad879e091e29", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
+	{ "simon2.gme",		GAME_GMEFILE,	"1d2f867a7eba818c85c1e4849821e812", -1},
+	{ "stripped.txt",	GAME_STRFILE,	"5ea27977b4d7dcfd50eb5074e162ebbf", -1},
+	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::FR_FRA,
+			Common::kPlatformWindows
+		},
+
+		GType_SIMON2,
+		GID_SIMON2TALKIE,
+		GF_TALKIE
+	},
+
 	// Simon the Sorcerer 2 - German Windows CD
 	{
 		{
