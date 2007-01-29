@@ -2240,7 +2240,9 @@ void Inter_v2::o2_totSub(void) {
 		totFile[i] = 0;
 	}
 
-	_vm->_util->longDelay(100);
+	// WORKAROUND: There is a race condition in the script when opening the notepad
+	if (!scumm_stricmp(totFile, "edit"))
+		_vm->_util->forceMouseUp();
 	flags = (byte) *_vm->_global->_inter_execPtr++;
 	_vm->_game->totSub(flags, totFile);
 }

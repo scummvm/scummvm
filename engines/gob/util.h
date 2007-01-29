@@ -83,6 +83,7 @@ public:
 	static void deleteList(List * list);
 	static void prepareStr(char *str);
 	void waitMouseRelease(char drawMouse);
+	void forceMouseUp(void);
 
 	static const char trStr1[];
 	static const char trStr2[];

@@ -488,4 +488,10 @@ void Util::waitMouseRelease(char drawMouse) {
 }
 
 void Util::keyboard_release(void) {;}
+
+void Util::forceMouseUp(void) {
+	_vm->_game->_mouseButtons = 0;
+	_mouseButtons = 0;
+}
+
 } // End of namespace Gob
