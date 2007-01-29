@@ -1,7 +1,9 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#ifndef NDEBUG
 #define NDEBUG
+#endif
 
 #ifdef NDEBUG
 #define NO_DEBUG_OUTPUT
