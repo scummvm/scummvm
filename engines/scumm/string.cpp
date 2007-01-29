@@ -507,7 +507,7 @@ void ScummEngine::CHARSET_1() {
 #ifndef DISABLE_SCUMM_7_8
 			((ScummEngine_v7 *)this)->clearSubtitleQueue();
 			_nextLeft = _string[0].xpos;
-			_nextTop = _string[0].ypos;
+			_nextTop = _string[0].ypos + _screenTop;
 #endif
 		} else {
 			restoreCharsetBg();
@@ -583,7 +583,8 @@ void ScummEngine::CHARSET_1() {
 #ifndef DISABLE_SCUMM_7_8
 			if (subtitleLine == subtitleBuffer) {
 				subtitlePos.x = _charset->_left;
-				subtitlePos.y = _charset->_top;
+				// BlastText position is relative to the top of the screen, adjust y-coordinate
+				subtitlePos.y = _charset->_top - _screenTop;
 			}
 			*subtitleLine++ = c;
 			*subtitleLine = '\0';
