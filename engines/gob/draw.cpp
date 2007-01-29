@@ -40,7 +40,6 @@ namespace Gob {
 
 Draw::Draw(GobEngine *vm) : _vm(vm) {
 	int i;
-	int j;
 
 	_fontIndex = 0;
 	_spriteLeft = 0;
@@ -65,13 +64,8 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_textToPrint = 0;
 	_transparency = 0;
 
-	for (i = 0; i < 50; i++) {
+	for (i = 0; i < 50; i++)
 		_spritesArray[i] = 0;
-		_spritesHeights[i] = 0;
-		for (j = 0; j < 3; j++) {
-			_bigSpritesParts[i][j] = 0;
-		}
-	}
 
 	_invalidatedCount = 0;
 	for (i = 0; i < 30; i++) {
@@ -163,7 +157,7 @@ void Draw::invalidateRect(int16 left, int16 top, int16 right, int16 bottom) {
 		bottom = temp;
 	}
 
-	if (left > 319 || right < 0 || top > 199 || bottom < 0)
+	if (left > (_vm->_video->_surfWidth - 1) || right < 0 || top > 199 || bottom < 0)
 		return;
 
 	_noInvalidated = 0;
@@ -171,7 +165,7 @@ void Draw::invalidateRect(int16 left, int16 top, int16 right, int16 bottom) {
 	if (_invalidatedCount >= 30) {
 		_invalidatedLefts[0] = 0;
 		_invalidatedTops[0] = 0;
-		_invalidatedRights[0] = 319;
+		_invalidatedRights[0] = _vm->_video->_surfWidth - 1;
 		_invalidatedBottoms[0] = 199;
 		_invalidatedCount = 1;
 		return;
@@ -180,8 +174,8 @@ void Draw::invalidateRect(int16 left, int16 top, int16 right, int16 bottom) {
 	if (left < 0)
 		left = 0;
 
-	if (right > 319)
-		right = 319;
+	if (right > (_vm->_video->_surfWidth - 1))
+		right = _vm->_video->_surfWidth - 1;
 
 	if (top < 0)
 		top = 0;
@@ -271,8 +265,8 @@ void Draw::blitInvalidated(void) {
 	if (_applyPal) {
 		clearPalette();
 
-		_vm->_video->drawSprite(_backSurface, _frontSurface, 0, 0, 319,
-		    199, 0, 0, 0);
+		_vm->_video->drawSprite(_backSurface, _frontSurface, 0, 0,
+				_vm->_video->_surfWidth - 1, 199, 0, 0, 0);
 		setPalette();
 		_invalidatedCount = 0;
 		_noInvalidated = 1;
@@ -295,7 +289,7 @@ void Draw::blitInvalidated(void) {
 }
 
 void Draw::setPalette(void) {
-	if (_vm->_global->_videoMode != 0x13)
+	if ((_vm->_global->_videoMode != 0x13) && (_vm->_global->_videoMode != 0x14))
 		error("setPalette: Video mode 0x%x is not supported!\n",
 		    _vm->_global->_videoMode);
 
@@ -314,17 +308,10 @@ void Draw::clearPalette(void) {
 }
 
 void Draw::freeSprite(int16 index) {
-	int i;
-
-	// .-- sub_CD84 ---
 	if (_spritesArray[index] == 0)
 		return;
-	_vm->_video->freeSurfDesc(_spritesArray[index]);
 
-	for (i = 0; i < 3; i++)
-		if (_bigSpritesParts[index][i] != 0)
-			_vm->_video->freeSurfDesc(_bigSpritesParts[index][i]);
-	// '------
+	_vm->_video->freeSurfDesc(_spritesArray[index]);
 
 	_spritesArray[index] = 0;
 }
@@ -350,143 +337,6 @@ void Draw::adjustCoords(char adjust, int16 *coord1, int16 *coord2) {
 			*coord2 = *coord2 * 2 + 1;
 		if (coord1 != 0)
 			*coord1 = *coord1 * 2 + 1;
-	}
-}
-
-void Draw::fillRect(int16 index, int16 left, int16 top, int16 right,
-		int16 bottom, int16 color) {
-	int i;
-	int16 newbottom;
-
-	if (bottom < _spritesHeights[index]) {
-		_vm->_video->fillRect(_spritesArray[index], left, top, right, bottom, color);
-		return;
-	}
-
-	if (top < _spritesHeights[index]) {
-		_vm->_video->fillRect(_spritesArray[index], left, top, right,
-				_spritesHeights[index]-1, color);
-	}
-
-	for (i = 1; i < 4; i++) {
-		if ((_spritesHeights[index] * i) > bottom)
-			continue;
-		if (_bigSpritesParts[index][i-1] == 0)
-			return;
-		newbottom = MIN(bottom - (_spritesHeights[index] * i), (_spritesHeights[index] * i) - 1);
-		_vm->_video->fillRect(_bigSpritesParts[index][i-1], left, 0, right, newbottom, color);
-	}
-}
-
-void Draw::drawSprite(int16 source, int16 dest, int16 left,
-		int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) {
-	int i;
-	int16 topS;
-	int16 yS;
-	int16 newbottom;
-
-	if (bottom < _spritesHeights[source]) {
-		drawSprite(_spritesArray[source], dest, left, top, right, bottom, x, y, transp);
-		return;
-	}
-
-	topS = top;
-	yS = y;
-
-	if (top < _spritesHeights[source]) {
-		drawSprite(_spritesArray[source], dest, left, top, right,
-				_spritesHeights[source], x, y, transp);
-		yS = y + _spritesHeights[source] - top;
-		topS = _spritesHeights[source];
-	}
-	for (i = 1; i < 4; i++) {
-		if ((_spritesHeights[source] * i) > topS)
-			continue;
-		if ((_spritesHeights[source] * (i+1)) <= topS)
-			continue;
-		if (_bigSpritesParts[source][i-1] == 0)
-			break;
-		newbottom = MIN(bottom - (_spritesHeights[source] * i), _spritesHeights[source] - 1);
-		drawSprite(_bigSpritesParts[source][i-1], dest, left,
-				topS - _spritesHeights[source], right, newbottom, x, yS, transp);
-		yS += newbottom - (topS - (_spritesHeights[source] * i)) + 1;
-		topS += newbottom - (topS - (_spritesHeights[source] * i)) + 1;
-	}
-}
-
-void Draw::drawSprite(Video::SurfaceDesc * source, int16 dest, int16 left,
-		int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) {
-	int i;
-	int16 topS;
-	int16 yS;
-	int16 newbottom;
-
-	if ((y + bottom - top) < _spritesHeights[dest]) {
-		_vm->_video->drawSprite(source, _spritesArray[dest], left, top,
-				right, bottom, x, y, transp);
-		return;
-	}
-
-	topS = top;
-	yS = y;
-
-	if (y < _spritesHeights[dest]) {
-		_vm->_video->drawSprite(source, _spritesArray[dest], left, top, right,
-				top + _spritesHeights[dest] - y - 1, x, y, transp);
-		yS = _spritesHeights[dest];
-		topS += _spritesHeights[dest] - y;
-	}
-
-	for (i = 1; i < 4; i++) {
-		if ((_spritesHeights[dest] * i) > yS)
-			continue;
-		if ((_spritesHeights[dest] * (i+1)) <= yS)
-			continue;
-		if (_bigSpritesParts[dest][i-1] == 0)
-			break;
-		newbottom = MIN(bottom, (int16) (topS + _spritesHeights[dest] - 1));
-		_vm->_video->drawSprite(source, _bigSpritesParts[dest][i-1], left, topS,
-				right, newbottom, x, yS - (_spritesHeights[dest] * i), transp);
-		yS += newbottom - topS + 1;
-		topS += newbottom - topS + 1;
-	}
-}
-
-void Draw::drawSprite(int16 source, Video::SurfaceDesc * dest, int16 left,
-		int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) {
-	int i;
-	int16 topS;
-	int16 yS;
-	int16 newbottom;
-
-	if (bottom < _spritesHeights[source]) {
-		_vm->_video->drawSprite(_spritesArray[source], dest, left, top, right,
-				bottom, x, y, transp);
-		return;
-	}
-
-	topS = top;
-	yS = y;
-
-	if (top < _spritesHeights[source]) {
-		_vm->_video->drawSprite(_spritesArray[source], dest, left, top, right,
-				_spritesHeights[source] - 1, x, y, transp);
-		yS = y + _spritesHeights[source] - top;
-		topS = _spritesHeights[source];
-	}
-
-	for (i = 1; i < 4; i++) {
-		if ((_spritesHeights[source] * i) > topS)
-			continue;
-		if ((_spritesHeights[source] * (i+1)) <= topS)
-			continue;
-		if (_bigSpritesParts[source][i-1] == 0)
-			break;
-		newbottom = MIN(bottom - (_spritesHeights[source] * i), _spritesHeights[source] - 1);
-		_vm->_video->drawSprite(_bigSpritesParts[source][i-1], dest, left,
-				topS - (_spritesHeights[source] * i), right, newbottom, x, y, transp);
-		yS += newbottom - (topS - (_spritesHeights[source] * i)) + 1;
-		topS += newbottom - (topS - (_spritesHeights[source] * i)) + 1;
 	}
 }
 

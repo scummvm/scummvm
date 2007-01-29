@@ -321,9 +321,7 @@ protected:
 	void o2_switchTotSub(void);
 	void o2_stub0x54(void);
 	void o2_stub0x55(void);
-	void o2_stub0x80(void);
 	void o2_stub0x81(void);
-	void o2_stub0x82(void);
 	void o2_stub0x85(void);
 	bool o2_getFreeMem(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_readData(char &cmdCount, int16 &counter, int16 &retFlag);
@@ -362,6 +360,8 @@ protected:
 	void o2_playMult(void);
 	void o2_initCursor(void);
 	void o2_playImd(void);
+	void o2_initScreen(void);
+	void o2_setScrollOffset(void);
 	void o2_handleGoblins(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
 	void o2_playInfogrames(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
 };

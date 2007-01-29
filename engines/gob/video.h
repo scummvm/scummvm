@@ -90,7 +90,8 @@ public:
 		PalDesc() : vgaPal(0), unused1(0), unused2(0) {}
 	};
 
-	bool _extraMode;
+	int16 _surfWidth;
+	int16 _scrollOffset;
 
 	Video(class GobEngine *vm);
 	virtual ~Video() {};

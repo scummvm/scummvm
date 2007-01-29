@@ -39,54 +39,6 @@ namespace Gob {
 Draw_v2::Draw_v2(GobEngine *vm) : Draw_v1(vm) {
 }
 
-void Draw_v2::initBigSprite(int16 index, int16 width, int16 height, int16 flags) {
-	int i;
-	int16 partsheight;
-	int16 remainheight;
-	int8 fragment;
-
-	if (flags != 0)
-		flags = 2;
-
-	// .-- sub_CBD0 ---
-
-	for (i = 0; i < 3; i++)
-		_bigSpritesParts[index][i] = 0;
-	_spritesHeights[index] = height;
-
-	if (_vm->_video->getRectSize(width, height, flags, _vm->_global->_videoMode) > 65000) {
-		_spritesHeights[index] = height & 0xFFFE;
-		while (_vm->_video->getRectSize(width, _spritesHeights[index], flags,
-					_vm->_global->_videoMode) > 65000) {
-			_spritesHeights[index] -= 2;
-		}
-
-		partsheight = _spritesHeights[index];
-		initSpriteSurf(index, _vm->_global->_videoMode, width, partsheight, flags);
-		fragment = 0;
-		while (partsheight < height) {
-			remainheight = height - partsheight;
-			if (_spritesHeights[index] >= remainheight) {
-				_bigSpritesParts[index][fragment] =
-					_vm->_video->initSurfDesc(_vm->_global->_videoMode, width,
-							remainheight, flags);
-				partsheight = height;
-			} else {
-				_bigSpritesParts[index][fragment] =
-					_vm->_video->initSurfDesc(_vm->_global->_videoMode, width,
-							_spritesHeights[index], flags);
-				partsheight += _spritesHeights[index];
-			}
-			_vm->_video->clearSurf(_bigSpritesParts[index][fragment]);
-			fragment++;
-		}
-	} else
-		initSpriteSurf(index, _vm->_global->_videoMode, width, height, flags);
-
-	_vm->_video->clearSurf(_spritesArray[index]);
-	// '------
-}
-
 void Draw_v2::printText(void) {
 	int i;
 	char *dataPtr;
@@ -545,7 +497,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 				_spriteBottom -= _frontSurface->height;
 			}
 			if (_destSurface == 21)
-				invalidateRect(0, _frontSurface->height, 319,
+				invalidateRect(0, _frontSurface->height, _vm->_video->_surfWidth - 1,
 						_frontSurface->height + _off_2E51B->height - 1);
 			destSurface += 4;
 		}
@@ -591,31 +543,12 @@ void Draw_v2::spriteOperation(int16 operation) {
 		if ((sourceSurf == 0) || (destSurf == 0))
 			break;
 
-		if ((sourceSurf->vidMode & 0x80) && (destSurf->vidMode & 0x80))
-			_vm->_video->drawSprite(_spritesArray[_sourceSurface],
-					_spritesArray[_destSurface],
-					_spriteLeft, _spriteTop,
-					_spriteLeft + _spriteRight - 1,
-					_spriteTop + _spriteBottom - 1,
-					_destSpriteX, _destSpriteY, _transparency);
-		else if (!(sourceSurf->vidMode & 0x80) && (destSurf->vidMode & 0x80))
-			drawSprite(_sourceSurface, _spritesArray[_destSurface],
-					_spriteLeft, spriteTop,
-					_spriteLeft + _spriteRight - 1,
-					_spriteTop + _spriteBottom - 1,
-					_destSpriteX, _destSpriteY, _transparency);
-		else if ((sourceSurf->vidMode & 0x80) && !(destSurf->vidMode & 0x80))
-			drawSprite(_spritesArray[_sourceSurface], _destSurface,
-					_spriteLeft, spriteTop,
-					_spriteLeft + _spriteRight - 1,
-					_spriteTop + _spriteBottom - 1,
-					_destSpriteX, _destSpriteY, _transparency);
-		else
-			drawSprite(_sourceSurface, _destSurface,
-					_spriteLeft, _spriteTop,
-					_spriteLeft + _spriteRight - 1,
-					_spriteTop + _spriteBottom - 1,
-					_destSpriteX, _destSpriteY, _transparency);
+		_vm->_video->drawSprite(_spritesArray[_sourceSurface],
+				_spritesArray[_destSurface],
+				_spriteLeft, spriteTop,
+				_spriteLeft + _spriteRight - 1,
+				_spriteTop + _spriteBottom - 1,
+				_destSpriteX, _destSpriteY, _transparency);
 
 		if (_destSurface == 21) {
 			invalidateRect(_destSpriteX, _destSpriteY,
@@ -634,8 +567,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_FILLRECT:
-		fillRect(_destSurface, destSpriteX, _destSpriteY,
-				_destSpriteX + _spriteRight - 1,
+		_vm->_video->fillRect(_spritesArray[_destSurface], destSpriteX,
+				_destSpriteY, _destSpriteX + _spriteRight - 1,
 				_destSpriteY + _spriteBottom - 1, _backColor);
 
 		if (_destSurface == 21) {
@@ -718,7 +651,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 		left = _destSpriteX;
 		if ((_fontIndex >= 4) || (_fontToSprite[_fontIndex].sprite == -1)) {
 			if (_fonts[_fontIndex]->extraData == 0) {
-				if (((signed int) _textToPrint[0]) == -1) {
+				if (((int8) _textToPrint[0]) == -1) {
 					dataBuf = _vm->_game->_totTextData->dataPtr + _textToPrint[1] + 1;
 					len = *dataBuf++;
 					for (i = 0; i < len; i++) {
@@ -763,9 +696,11 @@ void Draw_v2::spriteOperation(int16 operation) {
 				}
 			}
 		} else {
+			sourceSurf = _spritesArray[_fontToSprite[_fontIndex].sprite];
+			ratio = ((sourceSurf == _frontSurface) || (sourceSurf == _backSurface)) ?
+				320 : sourceSurf->width;
+			ratio /= _fontToSprite[_fontIndex].width;
 			for (i = 0; i < len; i++) {
-				ratio = _spritesArray[_fontToSprite[_fontIndex].sprite]->width
-					/ _fontToSprite[_fontIndex].width;
 				y = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) / ratio)
 					* _fontToSprite[_fontIndex].height;
 				x = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) % ratio)
@@ -1039,7 +974,7 @@ void Draw_v2::initScreen(void) {
 		_off_2E517->vidPtr = _frontSurface->vidPtr +
 			((_frontSurface->width * _frontSurface->height ) / 4);
 	}
-	initBigSprite(21, 320, 200, 0);
+	initBigSprite(21, _vm->_video->_surfWidth, 200, 0);
 	_backSurface = _spritesArray[21];
 	_vm->_video->clearSurf(_backSurface);
 	
@@ -1066,7 +1001,7 @@ void Draw_v2::closeScreen(void) {
 	_scummvmCursor = 0;
 	if (_off_2E51B != 0) {
 		memcpy(_frontSurface, _off_2E51B, sizeof(Video::SurfaceDesc));
-		_frontSurface->width = 320;
+		_frontSurface->width = _vm->_video->_surfWidth;
 		_frontSurface->height = 200;
 		delete _off_2E51B;
 		delete _off_2E517;

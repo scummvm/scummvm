@@ -37,7 +37,7 @@ Init_v1::Init_v1(GobEngine *vm) : Init(vm) {
 }
 
 void Init_v1::soundVideo(int32 smallHeap, int16 flag) {
-	if (_vm->_global->_videoMode != 0x13 && _vm->_global->_videoMode != 0)
+	if (_vm->_global->_videoMode != 0x13 && _vm->_global->_videoMode != 0x14 && _vm->_global->_videoMode != 0)
 		error("soundVideo: Video mode 0x%x is not supported!",
 		    _vm->_global->_videoMode);
 

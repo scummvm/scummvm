@@ -285,9 +285,9 @@ void Inter_v2::setupOpcodes(void) {
 		{NULL, ""},
 		{NULL, ""},
 		/* 80 */
-		OPCODE(o2_stub0x80),
+		OPCODE(o2_initScreen),
 		OPCODE(o2_stub0x81),
-		OPCODE(o2_stub0x82),
+		OPCODE(o2_setScrollOffset),
 		OPCODE(o2_playImd),
 		/* 84 */
 		OPCODE(o2_drawStub),
@@ -812,77 +812,6 @@ void Inter_v2::o2_stub0x55(void) {
 	}
 }
 
-void Inter_v2::o2_stub0x80(void) {
-	int16 start;
-	int16 videoMode;
-	int16 width;
-	int16 height;
-
-	start = load16();
-
-	videoMode = start & 0xFF;
-	start = (start >> 8) & 0xFF;
-
-	width = _vm->_parse->parseValExpr();
-	height = _vm->_parse->parseValExpr();
-
-	if ((videoMode == _vm->_global->_videoMode) && (width == -1))
-		return;
-
-	if (videoMode == 0x14) {
-		videoMode = 0x13;
-		_vm->_video->_extraMode = true;
-	}
-	else
-		_vm->_video->_extraMode = false;
-	
-	_vm->_draw->closeScreen();
-	_vm->_util->clearPalette();
-	memset(_vm->_global->_redPalette, 0, 256);
-	memset(_vm->_global->_greenPalette, 0, 256);
-	memset(_vm->_global->_bluePalette, 0, 256);
-//	warning("GOB2 Stub! _vid_setStubDriver");
-
-	if (videoMode == 0x10) {
-		_vm->_global->_videoMode = 0x12;
-		_vm->_video->initPrimary(0xE);
-		_vm->_global->_videoMode = 0x10;
-		warning("GOB2 Stub! Set VGA CRT Maximum Scan Line to 0");
-		_vm->_draw->_frontSurface->height = 400;
-	} else {
-		_vm->_global->_videoMode = videoMode;
-		_vm->_video->initPrimary(videoMode);
-	}
-	WRITE_VAR(15, _vm->_global->_videoMode);
-
-	_vm->_global->_setAllPalette = 1;
-
-	if ((width != -1) && _vm->_video->_extraMode) {
-		_vm->_game->_byte_2FC9B = 1;
-/*		if (width > 960)
-			width = 960;
-		_vm->_draw->_frontSurface->width = width;
-		_vm->_draw->_frontSurface->height = height;
-		warning("GOB2 Stub! _vid_setVirtRes(_vm->_draw->_frontSurface);");
-		_vm->_global->_mouseMaxCol = width;
-		_vm->_global->_mouseMaxRow = height;*/
-	}
-
-	_vm->_util->setMousePos(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY);
-	_vm->_util->clearPalette();
-
-	if (start == 0)
-		_vm->_draw->_word_2E51F = 0;
-	else
-		_vm->_draw->_word_2E51F = _vm->_global->_primaryHeight - start;
-	_vm->_draw->initScreen();
-
-	if (_vm->_draw->_off_2E51B != 0) {
-		warning("GOB2 Stub! _vid_setSplit(_vm->_global->_primaryHeight - start);");
-		warning("GOB2 Stub! _vid_setPixelShift(0, start);");
-	}
-}
-
 void Inter_v2::o2_stub0x81(void) {
 	int16 var1;
 	int16 var2;
@@ -898,27 +827,6 @@ void Inter_v2::o2_stub0x81(void) {
 	var5 = _vm->_parse->parseValExpr();
 	var6 = _vm->_parse->parseValExpr();
 	warning("GOB2 Stub! o2_stub0x81(%d, %d, %d, %d, %d, %d)", var1, var2, var3, var4, var5, var6);
-}
-
-void Inter_v2::o2_stub0x82(void) {
-	int16 expr;
-
-	expr = _vm->_parse->parseValExpr();
-
-	if (expr == -1) {
-		if (_vm->_game->_byte_2FC9B != 0)
-			_vm->_game->_byte_2FC9B = 1;
-		_vm->_parse->parseValExpr();
-		WRITE_VAR(2, _vm->_draw->_word_2FC9E);
-		WRITE_VAR(3, _vm->_draw->_word_2FC9C);
-	} else {
-		_vm->_draw->_word_2FC9E = expr;
-		_vm->_draw->_word_2FC9C = _vm->_parse->parseValExpr();
-	}
-/*	if (_vm->_draw->_off_2E51B != 0)
-		warning("GOB2 Stub! _vid_setPixelShift(_vm->_draw->_word_2FC9E, _vm->_draw->_word_2FC9C + 200 - _vm->_draw->_word_2E51F)");
-	else
-		warning("GOB2 Stub! _vid_setPixelShift(_vm->_draw->_word_2FC9E, _vm->_draw->_word_2FC9C);");*/
 }
 
 void Inter_v2::o2_stub0x85(void) {
@@ -2015,44 +1923,14 @@ void Inter_v2::o2_initMult(void) {
 	}
 
 	_vm->_draw->adjustCoords(0, &_vm->_anim->_areaWidth, &_vm->_anim->_areaHeight);
-
 	if (_vm->_anim->_animSurf == 0) {
-		if (_vm->_global->_videoMode == 18) {
-			_vm->_anim->_animSurf = new Video::SurfaceDesc;
-			memcpy(_vm->_anim->_animSurf, _vm->_draw->_frontSurface, sizeof(Video::SurfaceDesc));
-			_vm->_anim->_animSurf->width = (_vm->_anim->_areaLeft + _vm->_anim->_areaWidth - 1) | 7;
-			_vm->_anim->_animSurf->width -= (_vm->_anim->_areaLeft & 0x0FFF8) - 1;
-			_vm->_anim->_animSurf->height = _vm->_anim->_areaHeight;
-			_vm->_anim->_animSurf->vidPtr += 0x0C000;
-			_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;
-		} else {
-			if ((_vm->_global->_videoMode == 0x13) && _vm->_video->_extraMode) { 
-				if (((_vm->_draw->_backSurface->width * _vm->_draw->_backSurface->height) / 2
-						+ (_vm->_anim->_areaWidth * _vm->_anim->_areaHeight) / 4) < 65536) {
-					warning("GOB2 Stub! Inter_v2::o2_initMult(), wide frontSurface, using the extra space as animSurf");
-/*					_vm->_anim->_animSurf = new Video::SurfaceDesc;
-					memcpy(_vm->_anim->_animSurf, _vm->_draw->_frontSurface, sizeof(Video::SurfaceDesc));
-					_vm->_anim->_animSurf->width = (_vm->_anim->_areaLeft + _vm->_anim->_areaWidth - 1) | 7;
-					_vm->_anim->_animSurf->width -= (_vm->_anim->_areaLeft & 0x0FF8) - 1;
-					_vm->_anim->_animSurf->height = _vm->_anim->_areaHeight;
-					_vm->_anim->_animSurf->vidPtr = _vm->_draw->_backSurface->vidPtr +
-						_vm->_draw->_backSurface->width * _vm->_draw->_backSurface->height / 4;
-					_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;*/
-					_vm->_draw->initBigSprite(22, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
-					_vm->_anim->_animSurf = _vm->_draw->_spritesArray[22];
-				} else
-					_vm->_draw->initBigSprite(22, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
-					_vm->_anim->_animSurf = _vm->_draw->_spritesArray[22];
-			} else
-				_vm->_draw->initBigSprite(22, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
-				_vm->_anim->_animSurf = _vm->_draw->_spritesArray[22];
-		}
+		_vm->_draw->initBigSprite(22, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
+		_vm->_anim->_animSurf = _vm->_draw->_spritesArray[22];
 		if (_terminate)
 			return;
 	}
 
 	_vm->_draw->adjustCoords(1, &_vm->_anim->_areaWidth, &_vm->_anim->_areaHeight);
-
 	_vm->_draw->_sourceSurface = 21;
 	_vm->_draw->_destSurface = 22;
 	_vm->_draw->_spriteLeft = _vm->_anim->_areaLeft;
@@ -2248,6 +2126,102 @@ void Inter_v2::o2_playImd(void) {
 		_vm->_game->closeImd();
 }
 
+void Inter_v2::o2_initScreen(void) {
+	int16 start;
+	int16 videoMode;
+	int16 width;
+	int16 height;
+
+	start = load16();
+
+	videoMode = start & 0xFF;
+	start = (start >> 8) & 0xFF;
+
+	width = _vm->_parse->parseValExpr();
+	height = _vm->_parse->parseValExpr();
+
+	if ((videoMode == _vm->_global->_videoMode) && (width == -1))
+		return;
+
+	_vm->_video->_surfWidth = videoMode == 0x14 ? 640 : 320;
+	
+	_vm->_draw->closeScreen();
+	_vm->_util->clearPalette();
+	memset(_vm->_global->_redPalette, 0, 256);
+	memset(_vm->_global->_greenPalette, 0, 256);
+	memset(_vm->_global->_bluePalette, 0, 256);
+
+	if (videoMode == 0x10) {
+		_vm->_global->_videoMode = 0x12;
+		_vm->_video->initPrimary(0xE);
+		_vm->_global->_videoMode = 0x10;
+		warning("GOB2 Stub! Set VGA CRT Maximum Scan Line to 0");
+		_vm->_draw->_frontSurface->height = 400;
+	} else {
+		_vm->_global->_videoMode = videoMode;
+		_vm->_video->initPrimary(videoMode);
+	}
+	WRITE_VAR(15, _vm->_global->_videoMode);
+
+	_vm->_global->_setAllPalette = 1;
+
+	if ((width != -1) && (_vm->_global->_videoMode == 0x14)) {
+		_vm->_game->_byte_2FC9B = 1;
+/*
+		if (width > 960)
+			width = 960;
+		_vm->_draw->_frontSurface->width = width;
+		_vm->_draw->_frontSurface->height = height;
+		warning("GOB2 Stub! _vid_setVirtRes(_vm->_draw->_frontSurface);");
+		_vm->_global->_mouseMaxCol = width;
+		_vm->_global->_mouseMaxRow = height;
+*/
+	}
+
+	_vm->_util->setMousePos(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY);
+	_vm->_util->clearPalette();
+
+	if (start == 0)
+		_vm->_draw->_word_2E51F = 0;
+	else
+		_vm->_draw->_word_2E51F = _vm->_global->_primaryHeight - start;
+	_vm->_draw->initScreen();
+
+	if (_vm->_draw->_off_2E51B != 0) {
+		_vm->_video->_scrollOffset = 0;
+
+/*
+	warning("_vid_setSplit(%d)", _vm->_global->_primaryHeight - start);
+	warning("_vid_setPixelShift(0, %d", start);
+*/
+	}
+}
+
+void Inter_v2::o2_setScrollOffset(void) {
+	int16 offset;
+
+	offset = _vm->_parse->parseValExpr();
+
+	if (offset == -1) {
+		if (_vm->_game->_byte_2FC9B != 0)
+			_vm->_game->_byte_2FC9B = 1;
+		_vm->_parse->parseValExpr();
+		WRITE_VAR(2, _vm->_draw->_word_2FC9E);
+		WRITE_VAR(3, _vm->_draw->_word_2FC9C);
+	} else {
+		_vm->_draw->_word_2FC9E = offset;
+		_vm->_draw->_word_2FC9C = _vm->_parse->parseValExpr();
+	}
+	_vm->_video->_scrollOffset = _vm->_draw->_word_2FC9E;
+
+/*
+	if (_vm->_draw->_off_2E51B != 0)
+		warning("_vid_setPixelShift(%d, %d)", _vm->_draw->_word_2FC9E, _vm->_draw->_word_2FC9C + 200 - _vm->_draw->_word_2E51F);
+	else
+		warning("_vid_setPixelShift(%d, %d)", _vm->_draw->_word_2FC9E, _vm->_draw->_word_2FC9C);;
+*/
+}
+
 void Inter_v2::o2_totSub(void) {
 	char totFile[14];
 	byte length;
@@ -2266,6 +2240,7 @@ void Inter_v2::o2_totSub(void) {
 		totFile[i] = 0;
 	}
 
+	_vm->_util->longDelay(100);
 	flags = (byte) *_vm->_global->_inter_execPtr++;
 	_vm->_game->totSub(flags, totFile);
 }

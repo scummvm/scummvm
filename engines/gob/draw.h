@@ -24,6 +24,7 @@
 #define GOB_DRAW_H
 
 #include "gob/video.h"
+#include "gob/global.h"
 
 namespace Gob {
 
@@ -62,8 +63,6 @@ public:
 	char *_textToPrint;
 	int16 _transparency;
 	Video::SurfaceDesc *_spritesArray[50];
-	Video::SurfaceDesc *_bigSpritesParts[50][3];
-	uint16 _spritesHeights[50];
 
 	int16 _invalidatedCount;
 	int16 _invalidatedTops[30];
@@ -128,14 +127,6 @@ public:
 
 	void freeSprite(int16 index);
 	void adjustCoords(char adjust, int16 *coord1, int16 *coord2);
-	void fillRect(int16 index, int16 left, int16 top, int16 right,
-		int16 bottom, int16 color);
-	void drawSprite(int16 source, int16 dest, int16 left,
-			int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
-	void drawSprite(Video::SurfaceDesc * source, int16 dest, int16 left,
-			int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
-	void drawSprite(int16 source, Video::SurfaceDesc * dest, int16 left,
-			int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
 	void drawString(char *str, int16 x, int16 y, int16 color1, int16 color2,
 		int16 transp, Video::SurfaceDesc *dest, Video::FontDesc *font);
 	void printTextCentered(int16 arg_0, int16 left, int16 top, int16 right,
@@ -160,7 +151,10 @@ protected:
 
 class Draw_v1 : public Draw {
 public:
-	virtual void initBigSprite(int16 index, int16 width, int16 height, int16 flags);
+	virtual void initBigSprite(int16 index, int16 width, int16 height, int16 flags) {
+		_vm->_draw->_spritesArray[index] =
+				_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, flags);
+	}
 	virtual void printText(void);
 	virtual void spriteOperation(int16 operation);
 	virtual void blitCursor(void);
@@ -174,7 +168,12 @@ public:
 
 class Draw_v2 : public Draw_v1 {
 public:
-	virtual void initBigSprite(int16 index, int16 width, int16 height, int16 flags);
+	virtual void initBigSprite(int16 index, int16 width, int16 height, int16 flags) {
+		// This would init big surfaces in pieces, to avoid breaking page bounds.
+		// This isn't necessary anymore, so we don't do it.
+		initSpriteSurf(index, _vm->_global->_videoMode, width, height, flags);
+		_vm->_video->clearSurf(_spritesArray[index]);
+	}
 	virtual void printText(void);
 	virtual void spriteOperation(int16 operation);
 	virtual void blitCursor(void);

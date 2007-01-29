@@ -492,7 +492,7 @@ int16 Game_v2::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 		int16 cursorBottom;
 		int16 oldWord_2FC9C;
 		int16 oldWord_2FC9E;
-		if ((_vm->_video->_extraMode) && (handleMouse != 0)) {
+		if ((_vm->_global->_videoMode == 0x14) && (handleMouse != 0)) {
 			width = _vm->_draw->_frontSurface->width;
 			height = _vm->_draw->_frontSurface->height;
 			if ((width > _vm->_global->_primaryWidth) || (height > _vm->_global->_primaryHeight)
@@ -678,7 +678,8 @@ void Game_v2::prepareStart(void) {
 	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 
 	_vm->_draw->initScreen();
-	_vm->_video->fillRect(_vm->_draw->_frontSurface, 0, 0, 319, 199, 1);
+	_vm->_video->fillRect(_vm->_draw->_frontSurface, 0, 0,
+			_vm->_video->_surfWidth - 1, 199, 1);
 
 	_vm->_util->setMousePos(152, 92);
 

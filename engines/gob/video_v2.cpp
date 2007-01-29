@@ -40,7 +40,8 @@ Video_v2::Video_v2(GobEngine *vm) : Video_v1(vm) {
 void Video_v2::waitRetrace(int16) {
 	CursorMan.showMouse((_vm->_draw->_showCursor & 2) != 0);
 	if (_vm->_draw->_frontSurface) {
-		g_system->copyRectToScreen(_vm->_draw->_frontSurface->vidPtr, 320, 0, 0, 320, 200);
+		g_system->copyRectToScreen(_vm->_draw->_frontSurface->vidPtr + _scrollOffset,
+				_surfWidth, 0, 0, 320, 200);
 		g_system->updateScreen();
 	}
 }
@@ -97,7 +98,7 @@ Video::SurfaceDesc *Video_v2::initSurfDesc(int16 vidMode, int16 width, int16 hei
 	if (flags & RETURN_PRIMARY)
 		return _vm->_draw->_frontSurface;
 
-	if (vidMode != 0x13)
+	if ((vidMode != 0x13) && (vidMode != 0x14))
 		error("Video::initSurfDesc: Only VGA 0x13 mode is supported!");
 
 	if ((flags & PRIMARY_SURFACE) == 0)
@@ -129,8 +130,8 @@ Video::SurfaceDesc *Video_v2::initSurfDesc(int16 vidMode, int16 width, int16 hei
 		assert(descPtr);
 		if (descPtr->vidPtr != 0)
 			delete[] descPtr->vidPtr;
-		vidMem = new byte[320 * 200];
-		memset(vidMem, 0, 64000);
+		vidMem = new byte[_surfWidth * 200];
+		memset(vidMem, 0, _surfWidth * 200);
 	} else {
 		if (flags & DISABLE_SPR_ALLOC) {
 			descPtr = new SurfaceDesc;
@@ -177,7 +178,7 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	if (!destDesc)
 		return 1;
 
-	if ((destDesc->vidMode & 0x7f) != 0x13)
+	if (((destDesc->vidMode & 0x7f) != 0x13) && ((destDesc->vidMode & 0x7f) != 0x14))
 		error("Video::spriteUncompressor: Video mode 0x%x is not supported!",
 		    destDesc->vidMode & 0x7f);
 
@@ -202,12 +203,6 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 
 		srcPtr = sprBuf + 3;
 		sourceLeft = READ_LE_UINT32(srcPtr);
-
-		// TODO: Needed until wide/scrolling surfaces are supported...
-		if ((x + srcWidth) >= destDesc->width)
-			x = 0;
-		if ((y + srcHeight) >= destDesc->height)
-			y = 0;
 
 		destPtr = destDesc->vidPtr + destDesc->width * y + x;
 

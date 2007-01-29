@@ -318,7 +318,7 @@ void Util::clearPalette(void) {
 	int16 i;
 	byte colors[768];
 
-	if (_vm->_global->_videoMode != 0x13)
+	if ((_vm->_global->_videoMode != 0x13) && (_vm->_global->_videoMode != 0x14))
 		error("clearPalette: Video mode 0x%x is not supported!",
 		    _vm->_global->_videoMode);
 

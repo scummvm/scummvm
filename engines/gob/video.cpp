@@ -36,8 +36,9 @@ namespace Gob {
 /* NOT IMPLEMENTED */
 
 Video::Video(GobEngine *vm) : _vm(vm) {
-	_extraMode = false;
 	_videoDriver = 0;
+	_surfWidth = 320;
+	_scrollOffset = 0;
 }
 
 char Video::initDriver(int16 vidMode) {
@@ -60,7 +61,7 @@ void Video::freeDriver() {
 int32 Video::getRectSize(int16 width, int16 height, int16 flag, int16 mode) {
 	int32 size;
 
-	if ((mode & 0x7f) != 0x13)
+	if (((mode & 0x7f) != 0x13) && ((mode & 0x7f) != 0x14))
 		warning
 		    ("Video::getRectSize: Video mode %d is not fully supported!",
 		    mode & 0x7f);
@@ -85,14 +86,10 @@ int32 Video::getRectSize(int16 width, int16 height, int16 flag, int16 mode) {
 }
 
 void Video::freeSurfDesc(SurfaceDesc * surfDesc) {
-	if (surfDesc == 0)
+	if ((surfDesc == 0) || (surfDesc == _vm->_draw->_frontSurface))
 		return;
 
-	// TODO: valgrind shows an "Invalid free() / delete / delete[]" here...
-	// delete[] surfDesc->vidPtr;
-
-	// GOB2: surfDesc != _vm->_draw->_frontSurface (since _frontSurface is set
-	// to _pPrimarySurfDesc in Game::prepareStart(), is there a difference?)
+	delete[] surfDesc->vidPtr;
 	if (surfDesc != _vm->_global->_pPrimarySurfDesc) {
 		_vm->_global->_sprAllocated--;
 		delete surfDesc;
@@ -297,7 +294,7 @@ void Video::drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, i
 	if (spriteUncompressor(sprBuf, width, height, x, y, transp, dest))
 		return;
 
-	if ((dest->vidMode & 0x7f) != 0x13)
+	if (((dest->vidMode & 0x7f) != 0x13) && ((dest->vidMode & 0x7f) != 0x14))
 		error("Video::drawPackedSprite: Video mode 0x%x is not fully supported!",
 		    dest->vidMode & 0x7f);
 
@@ -312,7 +309,7 @@ void Video::setPalElem(int16 index, char red, char green, char blue, int16 unuse
 	_vm->_global->_greenPalette[index] = green;
 	_vm->_global->_bluePalette[index] = blue;
 
-	if (vidMode != 0x13)
+	if ((vidMode != 0x13) && (vidMode != 0x14))
 		error("Video::setPalElem: Video mode 0x%x is not supported!",
 		    vidMode);
 
@@ -328,7 +325,7 @@ void Video::setPalette(PalDesc *palDesc) {
 	byte pal[1024];
 	int16 numcolors;
 
-	if (_vm->_global->_videoMode != 0x13)
+	if ((_vm->_global->_videoMode != 0x13) && (_vm->_global->_videoMode != 0x14))
 		error("Video::setPalette: Video mode 0x%x is not supported!",
 		    _vm->_global->_videoMode);
 
@@ -374,11 +371,11 @@ void Video::setFullPalette(PalDesc *palDesc) {
 
 void Video::initPrimary(int16 mode) {
 	int16 old;
-	if (mode != 0x13 && mode != 3 && mode != -1)
+	if (mode != 0x13 && mode != 0x14 && mode != 3 && mode != -1)
 		error("Video::initPrimary: Video mode 0x%x is not supported!",
 		    mode);
 
-	if (_vm->_global->_videoMode != 0x13)
+	if ((_vm->_global->_videoMode != 0x13) && (_vm->_global->_videoMode != 0x14))
 		error("Video::initPrimary: Video mode 0x%x is not supported!",
 		    mode);
 
@@ -391,7 +388,7 @@ void Video::initPrimary(int16 mode) {
 		Video::initDriver(mode);
 
 	if (mode != 3) {
-		initSurfDesc(mode, 320, 200, PRIMARY_SURFACE);
+		initSurfDesc(mode, _surfWidth, 200, PRIMARY_SURFACE);
 
 		if (_vm->_global->_dontSetPalette)
 			return;

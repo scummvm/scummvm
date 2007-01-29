@@ -135,8 +135,8 @@ memBlocks	= word ptr -2*/
 	_vm->_global->_inter_variablesSizes = 0;
 	_palDesc = new Video::PalDesc;
 
-	if (_vm->_global->_videoMode != 0x13)
-		error("initGame: Only 0x13 video mode is supported!");
+	if ((_vm->_global->_videoMode != 0x13) && (_vm->_global->_videoMode != 0x14))
+		error("initGame: Only 0x13 or 0x14 video mode is supported!");
 
 	_palDesc->vgaPal = _vm->_draw->_vgaPalette;
 	_palDesc->unused1 = _vm->_draw->_unusedPalette1;

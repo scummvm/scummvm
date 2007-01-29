@@ -37,12 +37,13 @@ Init_v2::Init_v2(GobEngine *vm) : Init_v1(vm) {
 }
 
 void Init_v2::soundVideo(int32 smallHeap, int16 flag) {
-	if (_vm->_global->_videoMode != 0x13 && _vm->_global->_videoMode != 0)
+	if (_vm->_global->_videoMode != 0x13 && _vm->_global->_videoMode != 0x14 &&
+			_vm->_global->_videoMode != 0)
 		error("soundVideo: Video mode 0x%x is not supported!",
 		    _vm->_global->_videoMode);
 
 	_vm->_draw->_frontSurface = &_vm->_global->_primarySurfDesc;
-	_vm->_video->initSurfDesc(_vm->_global->_videoMode, 320, 200, 0x80);
+	_vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_video->_surfWidth, 200, 0x80);
 
 	//if ((flag & 4) == 0)
 	//	_vm->_video->findVideo();
@@ -68,7 +69,8 @@ void Init_v2::soundVideo(int32 smallHeap, int16 flag) {
 //	_vm->_global->_pPrimarySurfDesc = &_vm->_global->_primarySurfDesc;
 
 	if (_vm->_global->_videoMode != 0)
-		_vm->_video->initSurfDesc(_vm->_global->_videoMode, 320, 200, PRIMARY_SURFACE);
+		_vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_video->_surfWidth, 200,
+				PRIMARY_SURFACE);
 
 	if (_vm->_global->_soundFlags & MIDI_FLAG) {
 		_vm->_global->_soundFlags &= _vm->_global->_presentSound;

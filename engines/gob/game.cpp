@@ -834,7 +834,7 @@ int8 Game::openImd(const char *path, int16 x, int16 y, int16 repeat, int16 flags
 			memset(_imdFrameData, 0, _imdFrameDataSize + 1000);
 			memset(_imdVidBuffer, 0, _imdVidBufferSize + 1000);
 
-			if (_vm->_video->_extraMode) {
+			if (_vm->_global->_videoMode == 0x14) {
 				_byte_2FC83 = (flags & 0x80) ? 1 : 0;
 				if (!(_imdFile->field_E & 0x100) || (_imdFile->field_E & 0x2000)) {
 					setImdXY(_imdFile, 0, 0);
@@ -854,7 +854,7 @@ int8 Game::openImd(const char *path, int16 x, int16 y, int16 repeat, int16 flags
 				if (flags & 0x40) {
 					_imdX = x != -1 ? x : _imdX;
 					_imdY = y != -1 ? y : _imdY;
-					if (_vm->_video->_extraMode && ((_imdFile->surfDesc->vidMode & 0x7F) == 0x13)) {
+					if ((_imdFile->surfDesc->vidMode & 0x7F) == 0x14) {
 						surfDesc = _vm->_video->initSurfDesc(0x13, _imdFile->width, _imdFile->height, 0);
 						_vm->_video->drawSprite(_vm->_draw->_spritesArray[21], surfDesc, _imdX, _imdY,
 								_imdX + _imdFile->width - 1, _imdY + _imdFile->height - 1, 0, 0, 0);
@@ -1148,7 +1148,7 @@ void Game::playImd(int16 frame, int16 arg_2, int16 arg_4, int16 arg_6, int16 arg
 	if ((var_1 == 1) && (arg_2 == 8) && (_byte_2FC83 != 0))
 		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 
-	if (_vm->_video->_extraMode && (_imdFile->surfDesc->vidMode == 0x13)) {
+	if (_imdFile->surfDesc->vidMode == 0x14) {
 		if ((_byte_2FC82 != 0) && (_word_2FC80 == _vm->_draw->_spritesArray[20]->vidPtr)) {
 			vidMemBak = _vm->_draw->_spritesArray[20]->vidPtr;
 			_vm->_draw->_spritesArray[20]->vidPtr = _vm->_draw->_spritesArray[21]->vidPtr;
@@ -1166,7 +1166,7 @@ void Game::playImd(int16 frame, int16 arg_2, int16 arg_4, int16 arg_6, int16 arg
 						_imdFile->frameCoords[frame].bottom);
 		}
 	} else {
-		if ((_imdFile->field_E & 0x100) && (_vm->_video->_extraMode) &&
+		if ((_imdFile->field_E & 0x100) && (_vm->_global->_videoMode == 0x14) &&
 				(_byte_2FC82 != 0) && (sub_2C825(_imdFile) & 0x8000) && (_byte_2FC83 == 0)) {
 			surfDescBak = _imdFile->surfDesc;
 			if (_word_2FC80 == _vm->_draw->_spritesArray[20]->vidPtr)
@@ -1181,7 +1181,7 @@ void Game::playImd(int16 frame, int16 arg_2, int16 arg_4, int16 arg_6, int16 arg
 			var_4 = viewImd(_imdFile, frame);
 			if (!(var_4 & 0x800)) {
 				if (_byte_2FC83 == 0) {
-					if (_vm->_video->_extraMode) {
+					if (_vm->_global->_videoMode == 0x14) {
 						if (_byte_2FC82 == 0) {
 							memcpy((char *) &frontSurfBak, (char *) &_vm->_draw->_frontSurface,
 									sizeof(Video::SurfaceDesc));
@@ -1219,7 +1219,7 @@ void Game::playImd(int16 frame, int16 arg_2, int16 arg_4, int16 arg_6, int16 arg
 									_imdFile->frameCoords[frame].bottom);
 					}
 				} else
-					if (_vm->_video->_extraMode)
+					if (_vm->_global->_videoMode == 0x14)
 						imdDrawFrame(_imdFile, frame, _imdX, _imdY);
 			}
 		}
@@ -1407,7 +1407,7 @@ int16 Game::viewImd(Game::Imd *imdPtr, int16 frame) {
 				retVal |= *_imdFrameData;
 				if (imdPtr->surfDesc == 0)
 					continue;
-				if (!(_vm->_video->_extraMode && (imdPtr->surfDesc->vidMode == 0x13)))
+				if (imdPtr->surfDesc->vidMode != 0x14)
 					imdRenderFrame(imdPtr);
 				else
 					warning("GOB2 Stub! viedImd, sub_2C69A(imdPtr);");
