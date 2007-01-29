@@ -43,25 +43,30 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	_handleInput = false;
 	_abortWalkFlag = false;
 	_abortWalkFlag2 = false;
-	// just used for cd audio version, it should only load the sfx music file there
-	/*if (_currentCharacter->sceneId == 7 && sceneId == 24) {
-		_newMusicTheme = 3;
-	} else if (_currentCharacter->sceneId == 25 && sceneId == 109) {
-		_newMusicTheme = 4;
-	} else if (_currentCharacter->sceneId == 120 && sceneId == 37) {
-		_newMusicTheme = 5;
-	} else if (_currentCharacter->sceneId == 52 && sceneId == 199) {
-		_newMusicTheme = 6;
-	} else if (_currentCharacter->sceneId == 37 && sceneId == 120) {
-		_newMusicTheme = 4;
-	} else if (_currentCharacter->sceneId == 109 && sceneId == 25) {
-		_newMusicTheme = 3;
-	} else if (_currentCharacter->sceneId == 24 && sceneId == 7) {
-		_newMusicTheme = 2;
+	// just used for fm towns version, it should only load the sfx music file there
+	if (_flags.platform == Common::kPlatformFMTowns) {
+		int newSfxFile = -1;
+		if (_currentCharacter->sceneId == 7 && sceneId == 24) {
+			newSfxFile = 2;
+		} else if (_currentCharacter->sceneId == 25 && sceneId == 109) {
+			newSfxFile = 3;
+		} else if (_currentCharacter->sceneId == 120 && sceneId == 37) {
+			newSfxFile = 4;
+		} else if (_currentCharacter->sceneId == 52 && sceneId == 199) {
+			newSfxFile = 5;
+		} else if (_currentCharacter->sceneId == 37 && sceneId == 120) {
+			newSfxFile = 3;
+		} else if (_currentCharacter->sceneId == 109 && sceneId == 25) {
+			newSfxFile = 2;
+		} else if (_currentCharacter->sceneId == 24 && sceneId == 7) {
+			newSfxFile = 1;
+		}
+		
+		if (newSfxFile != -1) {
+			_curSfxFile = newSfxFile;
+			_sound->loadSoundFile(_curSfxFile);
+		}
 	}
-	if (_newMusicTheme != _curMusicTheme) {
-		snd_playTheme(_newMusicTheme);
-	}*/
 	
 	switch (_currentCharacter->sceneId) {
 	case 1:

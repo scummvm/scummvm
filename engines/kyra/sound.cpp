@@ -28,7 +28,6 @@
 #include "sound/mixer.h"
 #include "sound/voc.h"
 #include "sound/audiostream.h"
-#include "sound/audiocd.h"
 
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
@@ -38,7 +37,7 @@ namespace Kyra {
 
 Sound::Sound(KyraEngine *engine, Audio::Mixer *mixer)
 	: _engine(engine), _mixer(mixer), _currentVocFile(0), _vocHandle(), _compressHandle(),
-	_musicEnabled(true), _sfxEnabled(true) {
+	_musicEnabled(true), _sfxEnabled(true), _soundFileList(0), _soundFileListSize(0) {
 }
 
 Sound::~Sound() {
@@ -125,7 +124,7 @@ SoundMidiPC::~SoundMidiPC() {
 
 	Common::StackLock lock(_mutex);
 
-	_driver->setTimerCallback(NULL, NULL);
+	_driver->setTimerCallback(0, 0);
 	close();
 }
 
@@ -246,9 +245,9 @@ void SoundMidiPC::metaEvent(byte type, byte *data, uint16 length) {
 	}
 }
 
-void SoundMidiPC::loadMusicFile(const char *file) {
+void SoundMidiPC::loadSoundFile(uint file) {
 	char filename[25];
-	sprintf(filename, "%s.%s", file, _useC55 ? "C55" : "XMI");
+	sprintf(filename, "%s.%s", soundFilename(file), _useC55 ? "C55" : "XMI");
 
 	uint32 size;
 	uint8 *data = (_engine->resource())->fileData(filename, &size);
@@ -283,9 +282,9 @@ void SoundMidiPC::playMusic(uint8 *data, uint32 size) {
 	_parser->setTempo(0);
 }
 
-void SoundMidiPC::loadSoundEffectFile(const char *file) {
+void SoundMidiPC::loadSoundEffectFile(uint file) {
 	char filename[25];
-	sprintf(filename, "%s.%s", file, _useC55 ? "C55" : "XMI");
+	sprintf(filename, "%s.%s", soundFilename(file), _useC55 ? "C55" : "XMI");
 
 	uint32 size;
 	uint8 *data = (_engine->resource())->fileData(filename, &size);
@@ -434,118 +433,6 @@ void SoundMidiPC::beginFadeOut() {
 
 #pragma mark -
 
-SoundCD::~SoundCD() {
-	AudioCD.stop();
-}
-
-bool SoundCD::init() {
-	_engine->checkCD();
-	return true;
-}
-
-void SoundCD::process() {
-	AudioCD.updateCD();
-}
-
-namespace {
-
-struct CDTrackTable {
-	uint32 unk1;
-	bool loop;
-	int track;
-};
-
-} // end of anonymous namespace
-
-void SoundCD::playTrack(uint8 track) {
-	if (track < 2)
-		return;
-	track -= 2;
-
-	static CDTrackTable tTable[] = {
-		{ 0x04000, 1,  0 },
-		{ 0x05480, 1,  6 },
-		{ 0x05E70, 0,  1 },
-		{ 0x06D90, 1,  3 },
-		{ 0x072C0, 0, -1 },
-		{ 0x075F0, 1, -1 },
-		{ 0x07880, 1, -1 },
-		{ 0x089C0, 0, -1 },
-		{ 0x09080, 0, -1 },
-		{ 0x091D0, 1,  4 },
-		{ 0x0A880, 1,  5 },
-		{ 0x0AF50, 0, -1 },
-		{ 0x0B1A0, 1, -1 },
-		{ 0x0B870, 0, -1 },
-		{ 0x0BCF0, 1, -1 },
-		{ 0x0C5D0, 1,  7 },
-		{ 0x0D3E0, 1,  8 },
-		{ 0x0e7b0, 1,  2 },
-		{ 0x0edc0, 0, -1 },
-		{ 0x0eef0, 1,  9 },
-		{ 0x10540, 1, 10 },
-		{ 0x10d80, 0, -1 },
-		{ 0x10E30, 0, -1 },
-		{ 0x10FC0, 0, -1 },
-		{ 0x11310, 1, -1 },
-		{ 0x11A20, 1, -1 },
-		{ 0x12380, 0, -1 },
-		{ 0x12540, 1, -1 },
-		{ 0x12730, 1, -1 },
-		{ 0x12A90, 1, 11 },
-		{ 0x134D0, 0, -1 },
-		{ 0x00000, 0, -1 },
-		{ 0x13770, 0, -1 },
-		{ 0x00000, 0, -1 },
-		{ 0x00000, 0, -1 },
-		{ 0x00000, 0, -1 },
-		{ 0x00000, 0, -1 },
-		{ 0x14710, 1, 12 },
-		{ 0x15DF0, 1, 13 },
-		{ 0x16030, 1, 14 },
-		{ 0x17030, 0, -1 },
-		{ 0x17650, 0, -1 },
-		{ 0x134D0, 0, -1 },
-		{ 0x178E0, 1, -1 },
-		{ 0x18200, 0, -1 },
-		{ 0x18320, 0, -1 },
-		{ 0x184A0, 0, -1 },
-		{ 0x18BB0, 0, -1 },
-		{ 0x19040, 0, 19 },
-		{ 0x19B50, 0, 20 },
-		{ 0x17650, 0, -1 },
-		{ 0x1A730, 1, 21 },
-		{ 0x00000, 0, -1 },
-		{ 0x12380, 0, -1 },
-		{ 0x1B810, 0, -1 },
-		{ 0x1BA50, 0, 15 },
-		{ 0x1C190, 0, 16 },
-		{ 0x1CA50, 0, 17 },
-		{ 0x1D100, 0, 18 },
-	};
-
-	int trackNum = tTable[track].track;
-	bool loop = tTable[track].loop;
-	// could be that if the trackNum is -1, the music should be stopped
-	// instead of letting the old music play on
-	if (trackNum == -1 || trackNum == _lastTrack)
-		return;
-
-	haltTrack();
-	AudioCD.play(trackNum+1, loop ? -1 : 1, 0, 0);
-	AudioCD.updateCD();
-
-	_lastTrack = trackNum;
-}
-
-void SoundCD::haltTrack() {
-	_lastTrack = -1;
-	AudioCD.stop();
-	AudioCD.updateCD();
-}
-
-#pragma mark -
-
 bool KyraEngine::speechEnabled() {
 	return _flags.isTalkie && (_configVoice == 1 || _configVoice == 2);
 }
@@ -556,17 +443,21 @@ bool KyraEngine::textEnabled() {
 
 void KyraEngine::snd_playTheme(int file, int track) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playTheme(%d)", file);
-	assert(file < _musicFilesCount);
-	_curMusicTheme = _newMusicTheme = file;
-	_sound->loadMusicFile(_musicFiles[file]);
+	_curMusicTheme = file;
+	_sound->loadSoundFile(_curMusicTheme);
 	_sound->playTrack(track);
 }
 
 void KyraEngine::snd_playSoundEffect(int track) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playSoundEffect(%d)", track);
-	if (_flags.hasAudioCD && track == 49) {
-		snd_playWanderScoreViaMap(56, 1);
-		return;
+	if (_flags.platform == Common::kPlatformFMTowns) {
+		if (track == 49) {
+			snd_playWanderScoreViaMap(56, 1);
+			return;
+		} else if (track == 10) {
+			// I don't know what's supposed to happen here, but calling playSoundEffect will lead to crash
+			return;
+		}
 	}
 	_sound->playSoundEffect(track);
 }
@@ -576,7 +467,7 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 	if (restart)
 		_lastMusicCommand = -1;
 
-	if (_flags.hasAudioCD) {
+	if (_flags.platform == Common::kPlatformFMTowns) {
 		if (command == 1) {
 			_sound->beginFadeOut();
 		} else if (command >= 35 && command <= 38) {

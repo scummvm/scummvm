@@ -76,7 +76,8 @@ public:
 	virtual void setVolume(int volume) = 0;
 	virtual int getVolume() = 0;
 
-	virtual void loadMusicFile(const char *file) = 0;
+	virtual void setSoundFileList(const char * const *list, uint s) { _soundFileList = list; _soundFileListSize = s; }
+	virtual void loadSoundFile(uint file) = 0;
 
 	virtual void playTrack(uint8 track) = 0;
 	virtual void haltTrack() = 0;
@@ -96,13 +97,16 @@ public:
 	void voiceStop();
 	
 protected:
+	const char *soundFilename(uint file) { return (file < _soundFileListSize) ? _soundFileList[file] : ""; }
 	bool _musicEnabled;
 	bool _sfxEnabled;
 
 	KyraEngine *_engine;
 	Audio::Mixer *_mixer;
-
 private:
+	const char * const *_soundFileList;
+	uint _soundFileListSize;
+
 	Audio::AudioStream *_currentVocFile;
 	Audio::SoundHandle _vocHandle;
 	Common::File _compressHandle;
@@ -128,7 +132,7 @@ public:
 	void setVolume(int volume);
 	int getVolume();
 	
-	void loadMusicFile(const char *file);
+	void loadSoundFile(uint file);
 	
 	void playTrack(uint8 track);
 	void haltTrack();
@@ -139,8 +143,6 @@ public:
 private:
 	void play(uint8 track);
 
-	void loadSoundFile(const char *file);
-
 	void unk1();
 	void unk2();
 
@@ -149,7 +151,7 @@ private:
 	uint8 _trackEntries[120];
 	uint8 *_soundDataPtr;
 	int _sfxPlayingSound;
-	Common::String _soundFileLoaded;
+	uint _soundFileLoaded;
 
 	uint8 _sfxPriority;
 	uint8 _sfxFourthByteOfSong;
@@ -171,7 +173,7 @@ public:
 	void setVolume(int volume);
 	int getVolume() { return _volume; }
 
-	void loadMusicFile(const char *file);
+	void loadSoundFile(uint file);
 
 	void playTrack(uint8 track);
 	void haltTrack();
@@ -202,7 +204,7 @@ public:
 private:
 	void playMusic(uint8 *data, uint32 size);
 	void stopMusic();
-	void loadSoundEffectFile(const char *file);
+	void loadSoundEffectFile(uint file);
 	void loadSoundEffectFile(uint8 *data, uint32 size);
 
 	void stopSoundEffect();
@@ -230,10 +232,10 @@ private:
 	Common::Mutex _mutex;
 };
 
-class SoundCD : public Sound {
+class SoundTowns : public Sound {
 public:
-	SoundCD(KyraEngine *engine, Audio::Mixer *mixer) : Sound(engine, mixer), _lastTrack(-1) {}
-	~SoundCD();
+	SoundTowns(KyraEngine *engine, Audio::Mixer *mixer);
+	~SoundTowns();
 
 	bool init();
 	void process();
@@ -241,16 +243,31 @@ public:
 	void setVolume(int) { /* TODO */ }
 	int getVolume() { return 255; /* TODO */ }
 
-	void loadMusicFile(const char *) {}
+	void loadSoundFile(uint file);
 
 	void playTrack(uint8 track);
 	void haltTrack();
 
-	void playSoundEffect(uint8) {}
+	void playSoundEffect(uint8);
 
 	void beginFadeOut() { /* TODO */ }
 private:
+	void stopSoundEffect();
+	void setPitch(uint8 *&data, uint32 &size, int8 sourcePitch, int8 targetPitch);
+
 	int _lastTrack;
+	Audio::AudioStream *_currentSFX;
+	Audio::SoundHandle _sfxHandle;
+	int _currentTrackTable;
+	bool _sfxIsPlaying;
+	uint _sfxFileIndex;
+	uint8 *_sfxFileData;
+	uint8 *_sfxPlaybackBuffer;
+
+	static const char *_sfxFiles[];
+	static const int _sfxFilenum;
+	static const uint8 _sfxBTTable[256];
+	const uint8 *_sfxWDTable;	
 };
 
 class MixedSoundDriver : public Sound {
@@ -264,7 +281,8 @@ public:
 	void setVolume(int volume) { _music->setVolume(volume); _sfx->setVolume(volume); }
 	int getVolume() { return _music->getVolume(); }
 
-	void loadMusicFile(const char *file) { _music->loadMusicFile(file); _sfx->loadMusicFile(file); }
+	void setSoundFileList(const char * const*list, uint s) { _music->setSoundFileList(list, s); _sfx->setSoundFileList(list, s); }
+	void loadSoundFile(uint file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
 
 	void playTrack(uint8 track) { _music->playTrack(track); }
 	void haltTrack() { _music->haltTrack(); }

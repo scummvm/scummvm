@@ -146,10 +146,10 @@ int KyraEngine::init() {
 	// TODO: We should play the native Kyra 2 Adlib music, but until that
 	//       is support, we'll use the automagic MIDI -> Adlib converter.
 
-	if (_flags.hasAudioCD) {
+	if (_flags.platform == Common::kPlatformFMTowns) {
 		// no sfx enabled for CD audio music atm
 		// later on here should be a usage of MixedSoundDriver
-		_sound = new SoundCD(this, _mixer);
+		_sound = new SoundTowns(this, _mixer);
 	} else if (midiDriver == MD_ADLIB && _flags.gameID == GI_KYRA1) {
 		_sound = new SoundAdlibPC(this, _mixer);
 		assert(_sound);
@@ -182,11 +182,7 @@ int KyraEngine::init() {
 			assert(_sound);
 		}
 	}
-	if (!_sound->init()) {
-		error("Couldn't init sound");
-	}
-	_sound->setVolume(255);
-	
+
 	_res = new Resource(this);
 	assert(_res);
 	_sprites = new Sprites(this, _system);
@@ -207,6 +203,17 @@ int KyraEngine::init() {
 	
 	initStaticResource();
 	
+	if (!_sound->init())
+		error("Couldn't init sound");
+
+	if (_flags.platform == Common::kPlatformFMTowns)
+		_sound->setSoundFileList(_soundFilesTowns, _soundFilesTownsCount);
+	else
+		_sound->setSoundFileList(_soundFiles, _soundFilesCount);
+
+	_sound->setVolume(255);
+	_sound->loadSoundFile(0);
+
 	_paletteChanged = 1;
 	_currentCharacter = 0;
 	_characterList = new Character[11];

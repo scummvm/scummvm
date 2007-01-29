@@ -51,7 +51,6 @@ struct GameFlags {
 	Common::Platform platform;
 	bool isDemo;
 	bool useAltShapeHeader;	// alternative shape header (uses 2 bytes more, those are unused though)
-	bool hasAudioCD;
 	bool isTalkie;
 	byte gameID;
 };
@@ -238,10 +237,6 @@ class KyraEngine : public Engine {
 	friend class Debugger;
 	friend class ScreenAnimator;
 public:
-	enum {
-		MUSIC_INTRO = 0
-	};
-
 	KyraEngine(OSystem *system, const GameFlags &flags);
 	virtual ~KyraEngine();
 
@@ -805,7 +800,7 @@ protected:
 	uint8 _configVoice;
 
 	int _curMusicTheme;
-	int _newMusicTheme;
+	int _curSfxFile;
 	int16 _lastMusicCommand;
 
 	Resource *_res;
@@ -974,9 +969,12 @@ protected:
 	const uint8 * const*_specialPalettes;
 
 	Timer _timers[34];
-	uint32 _timerNextRun;	
-	static const char *_musicFiles[];
-	static const int _musicFilesCount;
+	uint32 _timerNextRun;
+
+	static const char *_soundFiles[];
+	static const int _soundFilesCount;
+	static const char *_soundFilesTowns[];
+	static const int _soundFilesTownsCount;
 	
 	static const int8 _charXPosTable[];
 	static const int8 _addXPosTable[];

@@ -29,14 +29,16 @@
 #include "kyra/animator.h"
 #include "kyra/screen.h"
 #include "kyra/resource.h"
+#include "kyra/sound.h"
 
-#define CURRENT_VERSION 6
+#define CURRENT_VERSION 7
 
 // TODO: our current savefiles still use the old
 // flag system to check the version, we should
 // change that some day, but for now it works
 #define GF_FLOPPY (1 <<  0)
 #define GF_TALKIE (1 <<  1)
+#define GF_FMTOWNS (1 <<  2)
 
 namespace Kyra {
 void KyraEngine::loadGame(const char *fileName) {
@@ -78,11 +80,15 @@ void KyraEngine::loadGame(const char *fileName) {
 			warning("Can not load cdrom savefile for this (non cdrom) gameversion");
 			delete in;
 			return;
+		} else if ((flags & GF_FMTOWNS) && !(_flags.platform == Common::kPlatformFMTowns)) {
+			warning("can not load FM-Towns savefile for this (non FM-Towns) gameversion");
+			delete in;
+			return;
 		}
 	} else {
 		warning("Make sure your savefile was from this version! (too old savefile version to detect that)");
 	}
-	
+
 	snd_playSoundEffect(0x0A);
 	snd_playWanderScoreViaMap(0, 1);
 
@@ -198,6 +204,10 @@ void KyraEngine::loadGame(const char *fileName) {
 		in->readByte(); // Voice
 	}
 
+	if (version >= 7) {
+		_curSfxFile = in->readByte();
+	}
+
 	_screen->_disableScreen = true;
 	loadMainScreen(8);
 
@@ -265,7 +275,12 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 	out->writeUint32BE(MKID_BE('KYRA'));
 	out->writeUint32BE(CURRENT_VERSION);
 	out->write(saveName, 31);
-	out->writeUint32BE((_flags.isTalkie ? GF_TALKIE : GF_FLOPPY));
+	if (_flags.isTalkie)
+		out->writeUint32BE(GF_TALKIE);
+	else if (_flags.platform == Common::kPlatformFMTowns)
+		out->writeUint32BE(GF_FMTOWNS);
+	else
+		out->writeUint32BE(GF_FLOPPY);
 
 	for (int i = 0; i < 11; i++) {
 		out->writeUint16BE(_characterList[i].sceneId);
@@ -334,6 +349,8 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 	out->writeUint16BE(0xFFFF);
 	
 	out->writeSint16BE(_lastMusicCommand);
+
+	out->writeByte(_curSfxFile);
 
 	out->flush();
 

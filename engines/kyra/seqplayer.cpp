@@ -400,7 +400,9 @@ void SeqPlayer::s1_playEffect() {
 void SeqPlayer::s1_playTrack() {
 	uint8 msg = *_seqData++;
 
-	if (_vm->gameFlags().hasAudioCD) {
+	// HACK: as long as we don't have extracted static data from the fm-towns
+	// version in kyra.dat we use this to get music working
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 		if (msg <= 1)
 			_vm->snd_playWanderScoreViaMap(msg, 0);
 		else

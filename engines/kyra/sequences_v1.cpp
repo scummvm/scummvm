@@ -38,7 +38,7 @@ namespace Kyra {
 void KyraEngine::seq_demo() {
 	debugC(9, kDebugLevelMain, "KyraEngine::seq_demo()");
 
-	snd_playTheme(MUSIC_INTRO, 2);
+	snd_playTheme(0, 2);
 
 	_screen->loadBitmap("START.CPS", 7, 7, _screen->_currentPalette);
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 6, 0);
@@ -109,10 +109,8 @@ void KyraEngine::seq_intro() {
 
 	_seq->setCopyViewOffs(true);
 	_screen->setFont(Screen::FID_8_FNT);
-	if (_flags.hasAudioCD)
-		snd_playWanderScoreViaMap(57, 0);
-	else
-		snd_playTheme(MUSIC_INTRO, 2);
+	if (_flags.platform != Common::kPlatformFMTowns)
+		snd_playTheme(0, 2);
 	_text->setTalkCoords(144);
 	for (int i = 0; i < ARRAYSIZE(introProcTable) && !seq_skipSequence(); ++i) {
 		(this->*introProcTable[i])();
@@ -129,6 +127,18 @@ void KyraEngine::seq_intro() {
 
 void KyraEngine::seq_introLogos() {
 	debugC(9, kDebugLevelMain, "KyraEngine::seq_introLogos()");
+
+	if (_flags.platform == Common::kPlatformFMTowns) {
+		_screen->loadBitmap("LOGO.CPS", 3, 3, _screen->_currentPalette);
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+		_screen->updateScreen();
+		_screen->fadeFromBlack();
+		delay(90 * _tickLength);
+		_screen->fadeToBlack();
+		if (!_abortIntroFlag)
+			snd_playWanderScoreViaMap(57, 0);
+	}
+
 	_screen->clearPage(0);
 	_screen->loadBitmap("TOP.CPS", 7, 7, NULL);
 	_screen->loadBitmap("BOTTOM.CPS", 5, 5, _screen->_currentPalette);
@@ -1069,8 +1079,9 @@ void KyraEngine::seq_playCredits() {
 	_screen->clearCurPage();
 	_screen->setTextColorMap(colorMap);
 	_screen->_charWidth = -1;
-	// we don't need that one for midi or adlib
-	if (_flags.hasAudioCD)
+
+	// we only need this for the fm-towns version
+	if (_flags.platform == Common::kPlatformFMTowns)
 		snd_playWanderScoreViaMap(53, 1);
 
 	uint8 *buffer = 0;

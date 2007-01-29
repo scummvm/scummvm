@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	sequences_v2.o \
 	sound_adlib.o \
 	sound_digital.o \
+	sound_towns.o \
 	sound.o \
 	sprites.o \
 	staticres.o \

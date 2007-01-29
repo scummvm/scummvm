@@ -36,16 +36,16 @@ struct KYRAGameDescription {
 
 namespace {
 
-#define FLAGS(x, y, z, w, id) { Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, w, id }
+#define FLAGS(x, y, z, id) { Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, id }
 
-#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_TOWNS_FLAGS FLAGS(false, true, true, false, Kyra::GI_KYRA1)
-#define KYRA1_CD_FLAGS FLAGS(false, true, false, true, Kyra::GI_KYRA1)
-#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, Kyra::GI_KYRA1)
+#define KYRA1_CD_FLAGS FLAGS(false, true, true, Kyra::GI_KYRA1)
+#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, Kyra::GI_KYRA1)
 
-#define KYRA2_UNK_FLAGS FLAGS(false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_UNK_FLAGS FLAGS(false, false, false, Kyra::GI_KYRA2)
 
-#define KYRA3_CD_FLAGS FLAGS(false, false, false, true, Kyra::GI_KYRA3)
+#define KYRA3_CD_FLAGS FLAGS(false, false, true, Kyra::GI_KYRA3)
 
 const KYRAGameDescription adGameDescs[] = {
 	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "3c244298395520bb62b5edfe41688879"), Common::EN_ANY, Common::kPlatformPC }, KYRA1_FLOPPY_FLAGS },
@@ -68,7 +68,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ { "kyra2", 0, AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"), Common::UNK_LANG, Common::kPlatformPC }, KYRA2_UNK_FLAGS }, // check this! (cd version?)
 
 	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), Common::UNK_LANG, Common::kPlatformPC }, KYRA3_CD_FLAGS },
-	{ { NULL, NULL, {NULL, 0, NULL, 0}, Common::UNK_LANG, Common::kPlatformUnknown }, FLAGS(0, 0, 0, 0, 0) }
+	{ { NULL, NULL, {NULL, 0, NULL, 0}, Common::UNK_LANG, Common::kPlatformUnknown }, FLAGS(0, 0, 0, 0) }
 };
 
 const PlainGameDescriptor gameList[] = {

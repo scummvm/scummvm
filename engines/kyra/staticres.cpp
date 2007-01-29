@@ -30,8 +30,8 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 12
-#define KYRADAT_FILESIZE 67227
+#define RESFILE_VERSION 13
+#define KYRADAT_FILESIZE 142510
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -50,7 +50,7 @@ bool StaticResource::checkKyraDat() {
 enum {
 	GF_FLOPPY	= 1 <<  0,
 	GF_TALKIE	= 1 <<  1,
-	GF_AUDIOCD	= 1 <<  2,  // FM-Towns versions seems to use audio CD
+	GF_FMTOWNS	= 1 <<  2,
 	GF_DEMO		= 1 <<  3,
 	GF_ENGLISH	= 1 <<  4,
 	GF_FRENCH	= 1 <<  5,
@@ -70,8 +70,8 @@ uint32 createFeatures(const GameFlags &flags) {
 		return GF_TALKIE;
 	if (flags.isDemo)
 		return GF_DEMO;
-	//if (flags.hasAudioCD)
-	//	return GF_AUDIOCD;
+	//if (flags.platform == Common::kPlatformFMTowns)
+	//	return GF_FMTOWNS;
 	return GF_FLOPPY;
 }
 
@@ -189,6 +189,9 @@ bool StaticResource::init() {
 
 		// PALETTE table
 		{ kPaletteList, kPaletteTable, "1 33 PALTABLE" },
+		
+		// FM-TOWNS specific
+		{ kKyra1TownsSFXTable, kRawData, "SFXTABLE.TSX" },
 
 		{ 0, 0, 0 }
 	};
@@ -592,7 +595,9 @@ uint8 *StaticResource::getFile(const char *name, int &size) {
 		ext = ".CD";
 	} else if (_engine->gameFlags().isDemo) {
 		ext = ".DEM";
-	}
+	} /*else if (_engine->gameFlags().platform == Common::kPlatformFMTowns) {
+		ext = ".TNS";
+	} */
 	snprintf(buffer, 64, "%s%s", name, ext);
 	uint32 tempSize = 0;
 	uint8 *data = _engine->resource()->fileData(buffer, &tempSize);
@@ -1066,7 +1071,7 @@ void KyraEngine::setupOpcodeTable() {
 }
 #undef Opcode
 
-const char *KyraEngine::_musicFiles[] = {
+const char *KyraEngine::_soundFiles[] = {
 	"INTRO",
 	"KYRA1A",
 	"KYRA1B",
@@ -1079,7 +1084,18 @@ const char *KyraEngine::_musicFiles[] = {
 	"KYRAMISC"
 };
 
-const int KyraEngine::_musicFilesCount = ARRAYSIZE(_musicFiles);
+const int KyraEngine::_soundFilesCount = ARRAYSIZE(KyraEngine::_soundFiles);
+
+const char *KyraEngine::_soundFilesTowns[] = {
+	"TW_INTRO.SFX",
+	"TW_SCEN1.SFX",
+	"TW_SCEN2.SFX",
+	"TW_SCEN3.SFX",
+	"TW_SCEN4.SFX",
+	"TW_SCEN5.SFX",
+};
+
+const int KyraEngine::_soundFilesTownsCount = ARRAYSIZE(KyraEngine::_soundFilesTowns);
 
 const int8 KyraEngine::_charXPosTable[] = {
 	 0,  4,  4,  4,  0, -4, -4, -4

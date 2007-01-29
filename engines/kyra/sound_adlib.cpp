@@ -2213,7 +2213,7 @@ SoundAdlibPC::SoundAdlibPC(KyraEngine *engine, Audio::Mixer *mixer)
 	assert(_driver);
 
 	_sfxPlayingSound = -1;
-	_soundFileLoaded = "";
+	_soundFileLoaded = (uint)-1;
 
 	_soundTriggers = _kyra1SoundTriggers;
 	_numSoundTriggers = _kyra1NumSoundTriggers;
@@ -2252,10 +2252,6 @@ int SoundAdlibPC::getVolume() {
 	return 0;
 }
 
-void SoundAdlibPC::loadMusicFile(const char *file) {
-	loadSoundFile(file);
-}
-
 void SoundAdlibPC::playTrack(uint8 track) {
 	if (_musicEnabled) {
 		// WORKAROUND: There is a bug in the Kyra 1 "Pool of Sorrow"
@@ -2263,7 +2259,7 @@ void SoundAdlibPC::playTrack(uint8 track) {
 		// sync for each loop. To avoid that, we declare that all four
 		// of the song channels have to jump "in sync".
 
-		if (track == 4 && _soundFileLoaded == "KYRA1B")
+		if (track == 4 && scumm_stricmp(soundFilename(_soundFileLoaded), "KYRA1B") == 0)
 			_driver->setSyncJumpMask(0x000F);
 		else
 			_driver->setSyncJumpMask(0);
@@ -2330,18 +2326,17 @@ void SoundAdlibPC::beginFadeOut() {
 	playSoundEffect(1);
 }
 
-void SoundAdlibPC::loadSoundFile(const char *file) {
+void SoundAdlibPC::loadSoundFile(uint file) {
 	if (_soundFileLoaded == file)
 		return;
 
-	if (_soundDataPtr) {
+	if (_soundDataPtr)
 		haltTrack();
-	}
 
 	uint8 *file_data = 0; uint32 file_size = 0;
 
 	char filename[25];
-	sprintf(filename, "%s.ADL", file);
+	sprintf(filename, "%s.ADL", soundFilename(file));
 
 	file_data = _engine->resource()->fileData(filename, &file_size);
 	if (!file_data) {
