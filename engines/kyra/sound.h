@@ -262,7 +262,6 @@ private:
 	bool _sfxIsPlaying;
 	uint _sfxFileIndex;
 	uint8 *_sfxFileData;
-	uint8 *_sfxPlaybackBuffer;
 
 	static const char *_sfxFiles[];
 	static const int _sfxFilenum;

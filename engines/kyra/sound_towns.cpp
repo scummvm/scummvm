@@ -32,7 +32,7 @@
 namespace Kyra {
 
 SoundTowns::SoundTowns(KyraEngine *engine, Audio::Mixer *mixer) : Sound(engine, mixer), _lastTrack(-1),
-	_currentSFX(0),	_sfxFileData(0), _sfxFileIndex((uint)-1), _sfxPlaybackBuffer(0), _sfxWDTable(0) {
+	_currentSFX(0),	_sfxFileData(0), _sfxFileIndex((uint)-1), _sfxWDTable(0) {
 }
 
 SoundTowns::~SoundTowns() {
@@ -206,17 +206,17 @@ void SoundTowns::playSoundEffect(uint8 track) {
 	uint32 playbackBufferSize = (sfxHeaderID == 1) ? sfxHeaderInBufferSize : sfxHeaderOutBufferSize;
 
 	stopSoundEffect();
-	_sfxPlaybackBuffer = new uint8[playbackBufferSize];
-	memset(_sfxPlaybackBuffer, 0x80, playbackBufferSize);
+	uint8 *sfxPlaybackBuffer = new uint8[playbackBufferSize];
+	memset(sfxPlaybackBuffer, 0x80, playbackBufferSize);
 
 	uint8 * sfxBody = ((uint8*)sfxHeader) + 0x20;
 
 	if (!sfxHeaderID) {
-		memcpy(_sfxPlaybackBuffer, sfxBody, playbackBufferSize);
+		memcpy(sfxPlaybackBuffer, sfxBody, playbackBufferSize);
 	} else if (sfxHeaderID == 1) {
-		Screen::decodeFrame4(sfxBody, _sfxPlaybackBuffer, playbackBufferSize);
+		Screen::decodeFrame4(sfxBody, sfxPlaybackBuffer, playbackBufferSize);
 	} else if (_sfxWDTable) {
-		uint8 * tgt = _sfxPlaybackBuffer;
+		uint8 * tgt = sfxPlaybackBuffer;
 		uint32 sfx_BtTable_Offset = 0;
 		uint32 sfx_WdTable_Offset = 0;
 		uint32 sfx_WdTable_Number = 5;
@@ -234,16 +234,16 @@ void SoundTowns::playSoundEffect(uint8 track) {
 	}
 
 	for (uint32 i = 0; i < playbackBufferSize; i++) {		
-		if (_sfxPlaybackBuffer[i] < 0x80)
-			_sfxPlaybackBuffer[i] = 0x80 - _sfxPlaybackBuffer[i];
+		if (sfxPlaybackBuffer[i] < 0x80)
+			sfxPlaybackBuffer[i] = 0x80 - sfxPlaybackBuffer[i];
 	}
 
 	playbackBufferSize -= 0x20;
-	setPitch(_sfxPlaybackBuffer, playbackBufferSize, sfxHeader->pitch, pitch);
+	setPitch(sfxPlaybackBuffer, playbackBufferSize, sfxHeader->pitch, pitch);
 	
 	_currentSFX = Audio::makeLinearInputStream(0x2b11,
 		Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LITTLE_ENDIAN | Audio::Mixer::FLAG_AUTOFREE,
-		_sfxPlaybackBuffer, playbackBufferSize, 0, 0);
+		sfxPlaybackBuffer, playbackBufferSize, 0, 0);
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _currentSFX);
 }
 
