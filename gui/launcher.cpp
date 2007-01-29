@@ -694,15 +694,22 @@ void LauncherDialog::addGameToConf(const FilesystemNode &dir, const GameDescript
 	// The auto detector or the user made a choice.
 	// Pick a domain name which does not yet exist (after all, we
 	// are *adding* a game to the config, not replacing).
-	String domain(result.gameid());
+	String domain;
+
+	if (result.contains("preferredtarget"))
+		domain = result["preferredtarget"];
+	else
+		domain = result.gameid();
+
 	assert(!domain.empty());
 	if (ConfMan.hasGameDomain(domain)) {
 		int suffixN = 1;
 		char suffix[16];
+		String gameid(domain);
 
 		while (ConfMan.hasGameDomain(domain)) {
 			snprintf(suffix, 16, "-%d", suffixN);
-			domain = result.gameid() + suffix;
+			domain = gameid + suffix;
 			suffixN++;
 		}
 	}

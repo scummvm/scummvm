@@ -82,6 +82,12 @@ typedef Array<const ADGameDescription*> ADGameDescList;
 namespace AdvancedDetector {
 
 /**
+ * Returns list of targets supported by the engine.
+ * Distinguishes engines with single ID
+ */
+GameList genGameList(const Common::ADParams &params);
+
+/**
  * Scan through the game descriptors specified in params and search for
  * 'gameid' in there. If a match is found, returns a  GameDescriptor
  * with gameid and description set.
@@ -127,7 +133,7 @@ PluginError detectGameForEngineCreation(
 
 #define ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_FUNC(engine,factoryFunc,detectFunc,params) \
 	GameList Engine_##engine##_gameIDList() { \
-		return GameList(params.list); \
+		return Common::AdvancedDetector::genGameList(params); \
 	} \
 	GameDescriptor Engine_##engine##_findGameID(const char *gameid) { \
 		return Common::AdvancedDetector::findGameID(gameid, params); \

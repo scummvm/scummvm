@@ -83,9 +83,16 @@ static GameList GAME_detectGames(const FSList &fslist);
 }
 
 static const PlainGameDescriptor sagaGames[] = {
+	{"saga", "SAGA Engine game"},
 	{"ite", "Inherit the Earth: Quest for the Orb"},
 	{"ihnm", "I Have No Mouth and I Must Scream"},
 	{0, 0}
+};
+
+static const Common::ADObsoleteGameID obsoleteGameIDsTable[] = {
+	{"ite", "saga", Common::kPlatformUnknown},
+	{"ihnm", "saga", Common::kPlatformUnknown},
+	{0, 0, Common::kPlatformUnknown}
 };
 
 namespace Saga {
@@ -104,7 +111,7 @@ static const Common::ADParams detectionParams = {
 	// List of all engine targets
 	sagaGames,
 	// Structure for autoupgrading obsolete targets
-	0,
+	obsoleteGameIDsTable,
 	// Name of single gameid (optional)
 	"saga",
 	// Flags

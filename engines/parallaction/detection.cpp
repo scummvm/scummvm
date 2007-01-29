@@ -46,6 +46,7 @@ static GameList GAME_detectGames(const FSList &fslist);
 }
 
 static const PlainGameDescriptor parallactionGames[] = {
+	{"parallaction", "Parallaction engine game"},
 	{"nippon", "Nippon Safes Inc."},
 	{0, 0}
 };

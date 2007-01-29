@@ -175,27 +175,27 @@ const char *getLanguageDescription(Language id) {
 
 
 const PlatformDescription g_platforms[] = {
-	{"3do", "3do", "3DO", kPlatform3DO},
-	{"acorn", "acorn", "Acorn", kPlatformAcorn},
-	{"amiga", "ami", "Amiga", kPlatformAmiga},
-	{"atari", "atari-st", "Atari ST", kPlatformAtariST},
-	{"c64", "c64", "Commodore 64", kPlatformC64},
-	{"pc", "dos", "DOS", kPlatformPC},
+	{"3do", "3do", "3do", "3DO", kPlatform3DO},
+	{"acorn", "acorn", "acorn", "Acorn", kPlatformAcorn},
+	{"amiga", "ami", "amiga", "Amiga", kPlatformAmiga},
+	{"atari", "atari-st", "st", "Atari ST", kPlatformAtariST},
+	{"c64", "c64", "c64", "Commodore 64", kPlatformC64},
+	{"pc", "dos", "ibm", "DOS", kPlatformPC},
 
 	// The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
 	// However, on the net many variations can be seen, like "FMTOWNS",
 	// "FM TOWNS", "FmTowns", etc.
-	{"fmtowns", "towns", "FM-TOWNS", kPlatformFMTowns},
+	{"fmtowns", "towns", "fm", "FM-TOWNS", kPlatformFMTowns},
 
-	{"linux", "linux", "Linux", kPlatformLinux},
-	{"macintosh", "mac", "Macintosh", kPlatformMacintosh},
-	{"nes", "nes", "NES", kPlatformNES},
-	{"segacd", "segacd", "SegaCD", kPlatformSegaCD},
-	{"windows", "win", "Windows", kPlatformWindows},
+	{"linux", "linux", "linux", "Linux", kPlatformLinux},
+	{"macintosh", "mac", "mac", "Macintosh", kPlatformMacintosh},
+	{"nes", "nes", "nes", "NES", kPlatformNES},
+	{"segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD},
+	{"windows", "win", "win", "Windows", kPlatformWindows},
 
-	{"2GS", "2gs", "Apple IIgs", kPlatformApple2GS },
+	{"2gs", "2gs", "2gs", "Apple IIgs", kPlatformApple2GS },
 
-	{0, 0, "Default", kPlatformUnknown}
+	{0, 0, 0, "Default", kPlatformUnknown}
 };
 
 Platform parsePlatform(const String &str) {
@@ -215,7 +215,7 @@ Platform parsePlatform(const String &str) {
 
 	const PlatformDescription *l = g_platforms;
 	for (; l->code; ++l) {
-		if (!scumm_stricmp(l->code, s) || !scumm_stricmp(l->code2, s))
+		if (!scumm_stricmp(l->code, s) || !scumm_stricmp(l->code2, s) || !scumm_stricmp(l->abbrev, s))
 			return l->id;
 	}
 
@@ -228,6 +228,15 @@ const char *getPlatformCode(Platform id) {
 	for (; l->code; ++l) {
 		if (l->id == id)
 			return l->code;
+	}
+	return 0;
+}
+
+const char *getPlatformAbbrev(Platform id) {
+	const PlatformDescription *l = g_platforms;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->abbrev;
 	}
 	return 0;
 }

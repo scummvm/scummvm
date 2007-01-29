@@ -48,9 +48,16 @@ static GameList GAME_detectGames(const FSList &fslist);
 }
 
 static const PlainGameDescriptor cineGames[] = {
+	{"cine", "Cinematique evo.1 engine game"},
 	{"fw", "Future Wars"},
 	{"os", "Operation Stealth"},
 	{0, 0}
+};
+
+static const Common::ADObsoleteGameID obsoleteGameIDsTable[] = {
+	{"fw", "cine", Common::kPlatformUnknown},
+	{"os", "cine", Common::kPlatformUnknown},
+	{0, 0, Common::kPlatformUnknown}
 };
 
 namespace Cine {
@@ -440,7 +447,7 @@ static const Common::ADParams detectionParams = {
 	// List of all engine targets
 	cineGames,
 	// Structure for autoupgrading obsolete targets
-	0,
+	obsoleteGameIDsTable,
 	// Name of single gameid (optional)
 	"cine",
 	// Flags

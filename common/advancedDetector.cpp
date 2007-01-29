@@ -50,6 +50,25 @@ namespace AdvancedDetector {
 static ADList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform);
 
 
+GameList genGameList(const Common::ADParams &params) {
+	if (params.singleid != NULL) {
+		GameList gl;
+
+		const PlainGameDescriptor *g = params.list;
+		while (g->gameid) {
+			if (0 == scumm_stricmp(params.singleid, g->gameid)) {
+				gl.push_back(GameDescriptor(g->gameid, g->description));
+
+				return gl;
+			}
+			g++;
+		}
+		error("Engine %s doesn't have its singleid specified in ids list", params.singleid);
+	}
+
+	return GameList(params.list);
+}
+
 void upgradeTargetIfNecessary(const Common::ADParams &params) {
 	if (params.obsoleteList == 0)
 		return;
@@ -85,6 +104,10 @@ PluginError detectGameForEngineCreation(
 
 	GameList detectedGames = detectFunc(fslist);
 
+	// We have single ID set, so we have a game if there are hits
+	if (params.singleid != NULL && detectedGames.size())
+		return kNoError;
+
 	for (uint i = 0; i < detectedGames.size(); i++) {
 		if (detectedGames[i].gameid() == gameid) {
 			return kNoError;
@@ -106,6 +129,7 @@ GameDescriptor findGameID(
 	}
 
 	GameDescriptor gs;
+
 	if (params.obsoleteList != 0) {
 		const Common::ADObsoleteGameID *o = params.obsoleteList;
 		while (o->from) {
@@ -135,6 +159,26 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 	return gd;
 }
 
+/**
+ * Makes gameid in form of
+ * gameid-plaform-lang
+ */
+static String generateComplexID(const String id, int listPos, const Common::ADParams &params) {
+	const ADGameDescription *desc = (const ADGameDescription *)(params.descs + listPos * params.descItemSize);
+
+	String res(id);
+
+	if (desc->platform != kPlatformPC && desc->platform != kPlatformUnknown) {
+		res = res + "-" + getPlatformAbbrev(desc->platform);
+	}
+
+	if (desc->language != EN_ANY && desc->language != UNK_LANG) {
+		res = res + "-" + getLanguageCode(desc->language);
+	}
+
+	return res;
+}
+
 GameList detectAllGames(
 	const FSList &fslist,
 	const Common::ADParams &params
@@ -142,8 +186,23 @@ GameList detectAllGames(
 	Common::ADList matches = detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown);
 
 	GameList detectedGames;
-	for (uint i = 0; i < matches.size(); i++)
-		detectedGames.push_back(toGameDescriptor(*(const ADGameDescription *)(params.descs + matches[i] * params.descItemSize), params.list));
+	for (uint i = 0; i < matches.size(); i++) {
+		GameDescriptor desc(toGameDescriptor(*(const ADGameDescription *)(params.descs + matches[i] * params.descItemSize), params.list));
+
+		if (params.singleid != NULL) {
+			desc["preferredtarget"] = desc["gameid"];
+			desc["gameid"] = params.singleid;
+		}
+
+		if (params.flags & kADFlagComplexID) {
+			if (!desc.contains("preferredtarget"))
+				desc["preferredtarget"] = desc["gameid"];
+
+			desc["preferredtarget"] = generateComplexID(desc["preferredtarget"], matches[i], params);
+		}
+
+		detectedGames.push_back(desc);
+	}
 
 	return detectedGames;
 }

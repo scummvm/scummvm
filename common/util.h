@@ -155,6 +155,7 @@ enum Platform {
 struct PlatformDescription {
 	const char *code;
 	const char *code2;
+	const char *abbrev;
 	const char *description;
 	Common::Platform id;
 };
@@ -164,6 +165,7 @@ extern const PlatformDescription g_platforms[];
 /** Convert a string containing a platform name into a Platform enum value. */
 extern Platform parsePlatform(const String &str);
 extern const char *getPlatformCode(Platform id);
+extern const char *getPlatformAbbrev(Platform id);
 extern const char *getPlatformDescription(Platform id);
 
 /**
