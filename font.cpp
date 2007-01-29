@@ -33,14 +33,10 @@ Font::Font(const char *filename, const char *data, int /*len*/) :
 
 	_numChars = READ_LE_UINT32(data);
 	_dataSize = READ_LE_UINT32(data + 4);
-	_maxCharWidth = READ_LE_UINT32(data + 8);
-	_maxCharHeight= READ_LE_UINT32(data + 12);
-	_unknownHeader1 = READ_LE_UINT32(data + 16);
-	_unknownHeader2 = READ_LE_UINT32(data + 20); // 8 unknown bytes are skipped
+	_height = READ_LE_UINT32(data + 8);
+	_baseOffsetY = READ_LE_UINT32(data + 12);
 	_firstChar = READ_LE_UINT32(data + 24);
 	_lastChar = READ_LE_UINT32(data + 28);
-
-	//printf("unknown1: %#02x. unknown2: %#02x.\n", _unknownHeader1, _unknownHeader2);
 
 	data += 32;
 
@@ -60,18 +56,13 @@ Font::Font(const char *filename, const char *data, int /*len*/) :
 		error("Could not load font %s. Out of memory\n", filename);
 	for (uint i = 0; i < _numChars; ++i) {
 		_charHeaders[i].offset = READ_LE_UINT32(data);
-		// 1 unknown byte before the startingLine, and 2 afterwards are skipped
-		_charHeaders[i].unknown = READ_LE_UINT32(data + 4);
-		_charHeaders[i].logicalWidth = *(uint8 *)(data + 4);
-		_charHeaders[i].startingCol = *(uint8 *)(data + 5);
-		_charHeaders[i].startingLine = (*(uint8 *)(data + 6)) & 0x0F;
-		_charHeaders[i].width = READ_LE_UINT32(data + 8);
-		_charHeaders[i].height = READ_LE_UINT32(data + 12);
+		_charHeaders[i].width = *(int8 *)(data + 4);
+		_charHeaders[i].startingCol = *(int8 *)(data + 5);
+		_charHeaders[i].startingLine = *(int8 *)(data + 6);
+		_charHeaders[i].dataWidth = READ_LE_UINT32(data + 8);
+		_charHeaders[i].dataHeight = READ_LE_UINT32(data + 12);
 		data += 16;
-		_charHeaders[i].logicalWidth = MAX((int32) _charHeaders[i].logicalWidth, _charHeaders[i].width);
-		//printf("%c. width: %d. logical width: %d. startCol: %d\n", i, _charHeaders[i].width, _charHeaders[i].logicalWidth, _charHeaders[i].startingCol);
 	}
-
 	// Read font data
 	_fontData = (byte *)malloc(_dataSize);
 	if (!_fontData)
@@ -86,8 +77,7 @@ Font::~Font() {
 	free(_fontData);
 }
 
-uint16 Font::getCharIndex(unsigned char c)
-{
+uint16 Font::getCharIndex(unsigned char c) {
 	uint16 c2 = uint16(c);
 	
 	// In order to ensure the correct character codes for

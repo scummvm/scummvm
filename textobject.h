@@ -85,7 +85,7 @@ protected:
 	Font *_font;
 	char _textID[256];
 	uint8 *_textBitmap;
-	int *_bitmapWidthPtr, *_bitmapHeightPtr;
+	int *_bitmapWidthPtr;
 	Driver::TextObjectHandle **_textObjectHandle;
 };
 

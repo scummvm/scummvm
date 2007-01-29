@@ -35,7 +35,7 @@ TextObjectDefaults textObjectDefaults;
 TextObject::TextObject() :
 		_created(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
 		_numberLines(1), _disabled(false), _font(NULL), _textBitmap(NULL),
-		_bitmapWidthPtr(NULL), _bitmapHeightPtr(NULL), _textObjectHandle(NULL) {
+		_bitmapWidthPtr(NULL), _textObjectHandle(NULL) {
 	memset(_textID, 0, sizeof(_textID));
 	_fgColor._vals[0] = 0;
 	_fgColor._vals[1] = 0;
@@ -81,13 +81,10 @@ int TextObject::getBitmapWidth() {
 }
 
 int TextObject::getBitmapHeight() {
-	if (_bitmapHeightPtr == NULL)
-		return 0;
-
 	uint height = 0;
 
 	for (int i = 0; i < _numberLines; i++) {
-		height += _bitmapHeightPtr[i];
+		height += _font->getHeight();
 	}
 	return height;
 }
@@ -96,9 +93,8 @@ int TextObject::getTextCharPosition(int pos) {
 	int width = 0;
 	std::string msg = parseMsgText(_textID, NULL);
 	for (int i = 0; (msg[i] != '\0') && (i < pos); ++i) {
-		width += _font->getCharLogicalWidth(msg[i]);
+		width += _font->getCharWidth(msg[i]);
 	}
-
 	return width;
 }
 
@@ -127,7 +123,7 @@ void TextObject::createBitmap() {
 	_numberLines = 1;
 	lineWidth = 0;
 	for (int i = 0; msg[i] != '\0'; ++i) {
-		lineWidth += _font->getCharLogicalWidth(msg[i]);
+		lineWidth += MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
 		if ((_width != 0 && lineWidth > (_width - _x))
 				|| (_justify == CENTER && (_x - lineWidth / 2 < 0 || _x + lineWidth / 2 > 640))
 				|| (_justify == LJUSTIFY && (_x + lineWidth > 640))
@@ -141,48 +137,47 @@ void TextObject::createBitmap() {
 		}
 		message += msg[i];
 	}
-	_textObjectHandle = (Driver::TextObjectHandle **) malloc(sizeof(long) * _numberLines);
+	_textObjectHandle = (Driver::TextObjectHandle **)malloc(sizeof(long) * _numberLines);
 	_bitmapWidthPtr = (int *)malloc(sizeof(int) * _numberLines);
-	_bitmapHeightPtr = (int *)malloc(sizeof(int) * _numberLines);
 
 	for (int j = 0; j < _numberLines; j++) {
 		int nextLinePos = message.find_first_of('\n');
 		std::string currentLine = message.substr(0, nextLinePos);
 
 		_bitmapWidthPtr[j] = 0;
-		_bitmapHeightPtr[j] = 0;
 		for (int i = 0; currentLine[i] != '\0'; ++i) {
-			_bitmapWidthPtr[j] += _font->getCharLogicalWidth(currentLine[i]);
-			int h = _font->getCharHeight(currentLine[i]) + _font->getCharStartingLine(currentLine[i]);
-			if (h > _bitmapHeightPtr[j])
-				_bitmapHeightPtr[j] = h;
+			_bitmapWidthPtr[j] += MAX(_font->getCharWidth(currentLine[i]),
+										_font->getCharDataWidth(currentLine[i]));
 		}
-		//printf("creating textobject: %s\nheight: %d\nwidth: %d\n", currentLine.c_str(), _bitmapHeight[j], _bitmapWidth[j]);
 
-		// Due to the size of charWidth we need to allocate one more byte than we plan on using
-		_textBitmap = new uint8[_bitmapHeightPtr[j] * _bitmapWidthPtr[j] + 1];
-		memset(_textBitmap, 0, _bitmapHeightPtr[j] * _bitmapWidthPtr[j] + 1);
+		_textBitmap = new uint8[_font->getHeight() * (_bitmapWidthPtr[j] + 1)];
+		memset(_textBitmap, 0, _font->getHeight() * (_bitmapWidthPtr[j] + 1));
 
 		// Fill bitmap
-		int offset = 0;
-		for (int line = 0; line < _bitmapHeightPtr[j]; ++line) {
-			for (int c = 0; currentLine[c] != '\0'; ++c) {
-				int32 charWidth = _font->getCharWidth(currentLine[c]);
-				int32 charLogicalWidth = _font->getCharLogicalWidth(currentLine[c]);
-				int8 startingCol = _font->getCharStartingCol(currentLine[c]);
-				int8 startingLine = _font->getCharStartingLine(currentLine[c]);
-
-				if (startingLine < line + 1 && _font->getCharHeight(currentLine[c]) + startingLine > line) {
-					memcpy(&_textBitmap[offset + startingCol],
-						_font->getCharData(currentLine[c]) + charWidth * (line - startingLine), charWidth);
+		int startOffset = 0;
+		for (int c = 0; currentLine[c] != '\0'; c++) {
+			int ch = currentLine[c];
+			int8 startingLine = _font->getCharStartingLine(ch) + _font->getBaseOffsetY();
+			int32 charDataWidth = _font->getCharDataWidth(ch);
+			int32 charWidth = _font->getCharWidth(ch);
+			int8 startingCol = _font->getCharStartingCol(ch);
+			for (int line = 0; line < _font->getCharDataHeight(ch); line++) {
+				int offset = startOffset + ((_bitmapWidthPtr[j] + 1) * (line + startingLine));
+				for (int r = 0; r < charDataWidth; r++) {
+					const byte pixel = *(_font->getCharData(ch) + r + (charDataWidth * line));
+					byte *dst = _textBitmap + offset + startingCol + r;
+					if ((*dst == 0) && (pixel != 0))
+						_textBitmap[offset + startingCol + r] = pixel;
 				}
-
-				offset += charLogicalWidth;
+				if (line + startingLine >= _font->getHeight())
+					break;
 			}
+			startOffset += charWidth;
 		}
-		_textObjectHandle[j] = g_driver->createTextBitmap(_textBitmap, _bitmapWidthPtr[j], _bitmapHeightPtr[j], _fgColor);
+
+		_textObjectHandle[j] = g_driver->createTextBitmap(_textBitmap, _bitmapWidthPtr[j] + 1, _font->getHeight(), _fgColor);
 		delete[] _textBitmap;
-		message = message.substr(nextLinePos+1, message.length()-(nextLinePos+1));
+		message = message.substr(nextLinePos + 1, message.length() - (nextLinePos + 1));
 	}
 	_created = true;
 }
@@ -201,10 +196,6 @@ void TextObject::destroyBitmap() {
 		free(_bitmapWidthPtr);
 		_bitmapWidthPtr = NULL;
 	}
-	if (_bitmapHeightPtr) {
-		free(_bitmapHeightPtr);
-		_bitmapHeightPtr = NULL;
-	}
 }
 
 void TextObject::draw() {
@@ -217,29 +208,29 @@ void TextObject::draw() {
 		int y;
 
 		if (_height != 0)
-			y = (int) (_y - _bitmapHeightPtr[i] / 2.0);
+			y = _y - (_font->getHeight() / 2);
 		else
-			y = _y;
+			y = _y + 5;
 		if (y < 0)
 			y = 0;
 		
 		if (_justify == LJUSTIFY || _justify == NONE)
 			g_driver->drawTextBitmap(_x, height + y, _textObjectHandle[i]);
 		else if (_justify == CENTER) {
-			int x = (int) (_x - (1 / 2.0) * _bitmapWidthPtr[i]);
+			int x = _x - (_bitmapWidthPtr[i] / 2);
 			if (x < 0)
 				x = 0;
 
 			g_driver->drawTextBitmap(x, height + y, _textObjectHandle[i]);
 		} else if (_justify == RJUSTIFY) {
-			int x = _x - getBitmapWidth();
+			int x = (_x - getBitmapWidth());
 			if (x < 0)
 				x = 0;
 
-			g_driver->drawTextBitmap(x, height + _y, _textObjectHandle[i]);
+			g_driver->drawTextBitmap(x, height + y, _textObjectHandle[i]);
 		} else if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("TextObject::draw: Unknown justification code (%d)!", _justify);
 
-		height += _bitmapHeightPtr[i];
+		height += _font->getHeight();
 	}
 }

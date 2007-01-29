@@ -33,9 +33,11 @@ public:
 	Font(const char *filename, const char *data, int len);
 	~Font();
 
+	int32 getHeight() { return _height; }
+	int32 getBaseOffsetY() { return _baseOffsetY; }
+	int32 getCharDataWidth(unsigned char c) { return _charHeaders[getCharIndex(c)].dataWidth; }
+	int32 getCharDataHeight(unsigned char c) { return _charHeaders[getCharIndex(c)].dataHeight; }
 	int32 getCharWidth(unsigned char c) { return _charHeaders[getCharIndex(c)].width; }
-	int32 getCharHeight(unsigned char c) { return _charHeaders[getCharIndex(c)].height; }
-	int32 getCharLogicalWidth(unsigned char c) { return _charHeaders[getCharIndex(c)].logicalWidth; }
 	int32 getCharStartingCol(unsigned char c) { return _charHeaders[getCharIndex(c)].startingCol; }
 	int32 getCharStartingLine(unsigned char c) { return _charHeaders[getCharIndex(c)].startingLine; }
 	const byte *getCharData(unsigned char c) { return _fontData + (_charHeaders[getCharIndex(c)].offset); }
@@ -46,18 +48,16 @@ private:
 	uint16 getCharIndex(unsigned char c);
 	struct CharHeader {
 		int32 offset;
-		int32 unknown;
-		int8  logicalWidth;
+		int8  width;
 		int8  startingCol;
 		int8  startingLine;
-		int32 width;
-		int32 height;
+		int32 dataWidth;
+		int32 dataHeight;
 	};
 
 	uint32 _numChars;
 	uint32 _dataSize;
-	uint32 _maxCharWidth, _maxCharHeight;
-	uint32 _unknownHeader1, _unknownHeader2;
+	uint32 _height, _baseOffsetY;
 	uint32 _firstChar, _lastChar;
 	uint16 *_charIndex;
 	CharHeader *_charHeaders;
