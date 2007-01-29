@@ -206,6 +206,8 @@ void KyraEngine::loadGame(const char *fileName) {
 
 	if (version >= 7) {
 		_curSfxFile = in->readByte();
+		if (_flags.platform == Common::kPlatformFMTowns)
+			_sound->loadSoundFile(_curSfxFile);
 	}
 
 	_screen->_disableScreen = true;
