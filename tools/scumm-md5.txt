@@ -540,8 +540,8 @@ jungle	Let's Explore the Jungle with Buzzy
 
 pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
 	672dec94b82f7f0877ebb5b5cf7f4bc1	-1	us	All	-	-	-	khalek
+	1d7a2e1ddcade791e2de0cfceac86725	-1	fr	All	-	-	-	gist974, ThierryFR
 	4fa6870d9bc8c313b65d54b1da5a1891	-1	nl	Windows	-	-	-	joostp
-	1d7a2e1ddcade791e2de0cfceac86725	-1	fr	Windows	-	-	-	gist974
 	a095e33061606d231ff37dca4c64c8ac	-1	de	All	HE 99	-	-	Joachim Eberhard
 	898eaa21f79cf8d4f08db856244689ff	66505	en	Windows	HE 99	Updated	-	Joachim Eberhard
 	37aed3f91c1ef959e0bd265f9b13781f	-1	us	All	HE 100	Updated	-	Kirben
@@ -670,7 +670,7 @@ puttzoo	Putt-Putt Saves the Zoo
 PuttTime	Putt-Putt Travels Through Time
 	fcb78ebecab2757264c590890c319cc5	-1	nl	All	HE 85	-	-	adutchguy, daniel9
 	63fdcdc95cdeea00060883aed38e5504	-1	en	All	HE 85	-	-	iziku
-	db21a6e338fe3b70c2723b6530865bf2	-1	fr	Windows	HE 85	-	-	gist974
+	db21a6e338fe3b70c2723b6530865bf2	-1	fr	All	HE 85	-	-	gist974, ThierryFR
 	84e3c23a49ded8a6f9197735c8eb3de7	-1	de	Windows	HE 85	-	-	oncer
 	2108d83dcf09f8adb4bc524669c8cf51	-1	us	All	HE 99	Updated	-	Kirben
 	7c980a1b1596a93f26917318884f48f7	-1	de	All	HE 99	Updated	-	Joachim Eberhard
