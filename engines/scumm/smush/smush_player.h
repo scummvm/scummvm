@@ -47,7 +47,9 @@ private:
 	byte _pal[0x300];
 	StringResource *_strings;
 	Codec37Decoder _codec37;
+	bool _codec37AlreadyInit;
 	Codec47Decoder _codec47;
+	bool _codec47AlreadyInit;
 	FileChunk *_base;
 	byte *_frameBuffer;
 	byte *_specialBuffer;
@@ -70,7 +72,6 @@ private:
 	byte _IACToutput[4096];
 	int32 _IACTpos;
 	bool _storeFrame;
-	bool _alreadyInit;
 	bool _initDone;
 	int _speed;
 	bool _outputSound;
@@ -130,6 +131,7 @@ private:
 	void tryCmpFile(const char *filename);
 
 	bool readString(const char *file);
+	void decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height);
 	void checkBlock(const Chunk &, Chunk::type, uint32 = 0);
 	void handleAnimHeader(Chunk &);
 	void handleFrame(Chunk &);

@@ -284,7 +284,8 @@ SmushPlayer::~SmushPlayer() {
 void SmushPlayer::init(int32 speed) {
 	_frame = 0;
 	_speed = speed;
-	_alreadyInit = false;
+	_codec37AlreadyInit = false;
+	_codec47AlreadyInit = false;
 	_endOfFile = false;
 
 	_vm->_smushVideoShouldFinish = false;
@@ -318,7 +319,7 @@ void SmushPlayer::release() {
 	_closeOnTextTick = true;
 	// Wait for _closeOnTextTick to be set to false to indicate file closure
 	while (_closeOnTextTick) {
-		User::After(15624); 
+		User::After(15624);
 	}
 #endif
 
@@ -352,6 +353,15 @@ void SmushPlayer::release() {
 	_vm->_gdi->_numStrips = _origNumStrips;
 
 	_initDone = false;
+
+	if (_codec37AlreadyInit) {
+		_codec37.deinit();
+		_codec37AlreadyInit = false;
+	}
+	if (_codec47AlreadyInit) {
+		_codec47.deinit();
+		_codec47AlreadyInit = false;
+	}
 }
 
 void SmushPlayer::checkBlock(const Chunk &b, Chunk::type type_expected, uint32 min_size) {
@@ -781,6 +791,31 @@ void SmushPlayer::handleNewPalette(Chunk &b) {
 
 void smush_decode_codec1(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
+void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height) {
+	switch (codec) {
+	case 1:
+	case 3:
+		smush_decode_codec1(_dst, src, left, top, width, height, _vm->_screenWidth);
+		break;
+	case 37:
+		if (!_codec37AlreadyInit) {
+			_codec37.init(width, height);
+			_codec37AlreadyInit = true;
+		}
+		_codec37.decode(_dst, src);
+		break;
+	case 47:
+		if (!_codec47AlreadyInit) {
+			_codec47.init(width, height);
+			_codec47AlreadyInit = true;
+		}
+		_codec47.decode(_dst, src);
+		break;
+	default:
+		error("Invalid codec for frame object : %d", codec);
+	}
+}
+
 #ifdef USE_ZLIB
 void SmushPlayer::handleZlibFrameObject(Chunk &b) {
 	if (_skipNext) {
@@ -813,17 +848,12 @@ void SmushPlayer::handleZlibFrameObject(Chunk &b) {
 		_dst = _specialBuffer;
 	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
 		return;
+
 	// FT Insane uses smaller frames to draw overlays with moving objects
 	// Other .san files do have them as well but their purpose in unknown
 	// and often it causes memory overdraw. So just skip those frames
 	else if (!_insanity && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)))
 		return;
-
-	if (!_alreadyInit) {
-		_codec37.init(width, height);
-		_codec47.init(width, height);
-		_alreadyInit = true;
-	}
 
 	if ((height == 242) && (width == 384)) {
 		_width = width;
@@ -833,20 +863,7 @@ void SmushPlayer::handleZlibFrameObject(Chunk &b) {
 		_height = _vm->_screenHeight;
 	}
 
-	switch (codec) {
-	case 1:
-	case 3:
-		smush_decode_codec1(_dst, fobjBuffer + 14, left, top, width, height, _vm->_screenWidth);
-		break;
-	case 37:
-		_codec37.decode(_dst, fobjBuffer + 14);
-		break;
-	case 47:
-		_codec47.decode(_dst, fobjBuffer + 14);
-		break;
-	default:
-		error("Invalid codec for frame object : %d", (int)codec);
-	}
+	decodeFrameObject(codec, fobjBuffer + 14, left, top, width, height);
 
 	if (_storeFrame) {
 		if (_frameBuffer == NULL) {
@@ -885,12 +902,6 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	else if (!_insanity && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)))
 		return;
 
-	if (!_alreadyInit) {
-		_codec37.init(width, height);
-		_codec47.init(width, height);
-		_alreadyInit = true;
-	}
-
 	if ((height == 242) && (width == 384)) {
 		_width = width;
 		_height = height;
@@ -907,20 +918,7 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	assert(chunk_buffer);
 	b.read(chunk_buffer, chunk_size);
 
-	switch (codec) {
-	case 1:
-	case 3:
-		smush_decode_codec1(_dst, chunk_buffer, left, top, width, height, _vm->_screenWidth);
-		break;
-	case 37:
-		_codec37.decode(_dst, chunk_buffer);
-		break;
-	case 47:
-		_codec47.decode(_dst, chunk_buffer);
-		break;
-	default:
-		error("Invalid codec for frame object : %d", (int)codec);
-	}
+	decodeFrameObject(codec, chunk_buffer, left, top, width, height);
 
 	if (_storeFrame) {
 		if (_frameBuffer == NULL) {
@@ -1390,7 +1388,7 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			if (!skipFrame) {
 				int w = _width, h = _height;
 
-				// Workaround for bug #1386333: "FT DEMO: assertion triggered 
+				// Workaround for bug #1386333: "FT DEMO: assertion triggered
 				// when playing movie". Some frames there are 384 x 224
 				if (w > _vm->_screenWidth)
 					w = _vm->_screenWidth;

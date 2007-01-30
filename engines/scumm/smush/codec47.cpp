@@ -513,6 +513,8 @@ void Codec47Decoder::init(int width, int height) {
 	deinit();
 	_width = width;
 	_height = height;
+	_tableBig = (byte *)malloc(256 * 388);
+	_tableSmall = (byte *)malloc(256 * 128);
 	makeTablesInterpolation(4);
 	makeTablesInterpolation(8);
 
@@ -525,12 +527,20 @@ void Codec47Decoder::init(int width, int height) {
 }
 
 Codec47Decoder::Codec47Decoder() {
-	_tableBig = (byte *)malloc(99328);
-	_tableSmall = (byte *)malloc(32768);
+	_tableBig = NULL;
+	_tableSmall = NULL;
 	_deltaBuf = NULL;
 }
 
 void Codec47Decoder::deinit() {
+	if (_tableBig) {
+		free(_tableBig);
+		_tableBig = NULL;
+	}
+	if (_tableSmall) {
+		free(_tableSmall);
+		_tableSmall = NULL;
+	}
 	_lastTableWidth = -1;
 	if (_deltaBuf) {
 		free(_deltaBuf);
@@ -542,14 +552,6 @@ void Codec47Decoder::deinit() {
 }
 
 Codec47Decoder::~Codec47Decoder() {
-	if (_tableBig) {
-		free(_tableBig);
-		_tableBig = NULL;
-	}
-	if (_tableSmall) {
-		free(_tableSmall);
-		_tableSmall = NULL;
-	}
 	deinit();
 }
 
