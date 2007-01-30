@@ -1641,7 +1641,7 @@ void Inter_v1::o1_loadCurLayer(void) {
 
 void Inter_v1::o1_playCDTrack(void) {
 	evalExpr(0);
-	if (_vm->_features & GF_MAC) {
+	if (_vm->_platform == Common::kPlatformMacintosh) {
 		if (_vm->_adlib)
 			_vm->_adlib->playTrack(_vm->_global->_inter_resStr);
 	} else
@@ -1665,7 +1665,7 @@ void Inter_v1::o1_getCDTrackPos(void) {
 }
 
 void Inter_v1::o1_stopCD(void) {
-	if (_vm->_features & GF_MAC) {
+	if (_vm->_platform == Common::kPlatformMacintosh) {
 		if (_vm->_adlib)
 			_vm->_adlib->stopPlay();
 	} else
@@ -2590,7 +2590,7 @@ void Inter_v1::o1_animateObjects(int16 &extraData, int32 *retVarPtr, Goblin::Gob
 void Inter_v1::o1_drawObjects(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
 	_vm->_goblin->drawObjects();
 
-	if (_vm->_features & GF_MAC) {
+	if (_vm->_platform == Common::kPlatformMacintosh) {
 		if (_vm->_adlib)
 			_vm->_adlib->playBgMusic();
 	} else if (_vm->_cdrom->getTrackPos() == -1)

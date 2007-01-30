@@ -81,7 +81,7 @@ void Game_v1::playTot(int16 skipPlay) {
 				_vm->_draw->_fontToSprite[i].height = -1;
 			}
 
-			if (_vm->_features & GF_MAC) {
+			if (_vm->_platform == Common::kPlatformMacintosh) {
 				if (_vm->_adlib)
 					_vm->_adlib->stopPlay();
 			} else

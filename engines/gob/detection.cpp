@@ -129,7 +129,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformAmiga,
 		},
-		GF_GOB1 | GF_AMIGA,
+		GF_GOB1,
 		"intro"
 	},
 	{
@@ -151,7 +151,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformMacintosh,
 		},
-		GF_GOB1 | GF_MAC,
+		GF_GOB1,
 		"intro"
 	},
 	{
@@ -217,7 +217,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformAmiga,
 		},
-		GF_GOB2 | GF_AMIGA,
+		GF_GOB2,
 		"intro"
 	},
 	{ // Supplied by blackwhiteeagle in bug report #1605235
@@ -283,7 +283,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 		},
-		GF_GOB2 | GF_AMIGA,
+		GF_GOB2,
 		"intro"
 	},
 	{
@@ -510,6 +510,7 @@ bool GobEngine::detectGame() {
 
 	_features = gameDescriptions[i].features;
 	_language = gameDescriptions[i].desc.language;
+	_platform = gameDescriptions[i].desc.platform;
 
 	return true;
 }

@@ -91,9 +91,7 @@ enum {
 	GF_GOB3 = 1 << 2,
 	GF_WOODRUFF = 1 << 3,
 	GF_CD = 1 << 4,
-	GF_MAC = 1 << 5,
-	GF_EGA = 1 << 6,
-	GF_AMIGA = 1 << 7
+	GF_EGA = 1 << 5
 };
 
 enum {
@@ -144,6 +142,7 @@ public:
 
 	int32 _features;
 	Common::Language _language;
+	Common::Platform _platform;
 	char *_startTot;
 	char *_startTot0;
 	bool _copyProtection;
