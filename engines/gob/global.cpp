@@ -37,8 +37,7 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 	_videoMode = 0;
 
 	/* Sound */
-	_presentSound = 0x8000;	/* undefined values */
-	_soundFlags = 0x8000;
+	_soundFlags = 0;
 	_blasterPort = 0;
 	_disableSoundCfg = 0;
 

@@ -92,17 +92,11 @@ void Game_v2::playTot(int16 skipPlay) {
 				_vm->_mult->initAll();
 				_vm->_mult->zeroMultData();
 
-/*				for (i = 0; i < 50; i++)
-					_vm->_draw->_spritesArray[i] = 0;*/
-
 				_vm->_draw->_spritesArray[20] = _vm->_draw->_frontSurface;
 				_vm->_draw->_spritesArray[21] = _vm->_draw->_backSurface;
 				_vm->_draw->_cursorSpritesBack = _vm->_draw->_cursorSprites;
 			} else
 				_vm->_inter->initControlVars(0);
-
-			for (i = 0; i < 20; i++)
-				_soundSamples[i] = 0;
 
 			_totTextData = 0;
 			_totResourceTable = 0;
@@ -661,8 +655,6 @@ int16 Game_v2::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 			_vm->_draw->animateCursor(-1);
 
 		_vm->_util->delay(10);
-
-		_vm->_snd->loopSounds();
 	}
 }
 

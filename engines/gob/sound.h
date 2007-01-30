@@ -28,7 +28,7 @@
 
 namespace Gob {
 
-class Snd {
+class Snd : public Audio::AudioStream {
 public:
 	struct SoundDesc {
 		Audio::SoundHandle handle;
@@ -45,7 +45,6 @@ public:
 
 	typedef void (*CleanupFuncPtr) (int16);
 
-	SoundDesc *_loopingSounds[10]; // Should be enough
 	char _playingSound;
 	CleanupFuncPtr _cleanupFunc;
 
@@ -53,15 +52,22 @@ public:
 	void speakerOn(int16 frequency, int32 length);
 	void speakerOff(void);
 	SoundDesc *loadSoundData(const char *path);
-	void stopSound(int16 arg){return;}
-	void loopSounds(void);
+	void stopSound(int16 arg);
 	void playSample(SoundDesc *sndDesc, int16 repCount, int16 frequency);
-	void playComposition(Snd::SoundDesc ** samples, int16 *composit, int16 freqVal) {;}
-	void waitEndPlay(void) {;}
+	void playComposition(int16 *composition, int16 freqVal);
+	void stopComposition(void);
+	int8 getCompositionSlot(void);
+	void waitEndPlay(void);
 
 	// This deletes sndDesc and stops playing the sample.
 	// If freedata is set, it also delete[]s the sample data.
 	void freeSoundDesc(SoundDesc *sndDesc, bool freedata=true);
+
+	int readBuffer(int16 *buffer, const int numSamples);
+	bool isStereo() const { return false; }
+	bool endOfData() const { return _end; }
+	bool endOfStream() const { return false; }
+	int getRate() const { return _rate; }
 
 protected:
 	// TODO: This is a very primitive square wave generator. The only thing is
@@ -91,6 +97,26 @@ protected:
 	SquareWaveStream _speakerStream;
 	Audio::SoundHandle _speakerHandle;
 
+	Audio::SoundHandle *_activeHandle;
+	Audio::SoundHandle _compositionHandle;
+	int16 _composition[50];
+	int8 _compositionPos;
+
+	Audio::SoundHandle _handle;
+	Common::Mutex _mutex;
+	SoundDesc *_curSoundDesc;
+	bool _end;
+	int8 *_data;
+	uint32 _length;
+	uint32 _rate;
+	int32 _freq;
+	int32 _repCount;
+	double _offset;
+	double _ratio;
+	double _frac;
+	int16 _cur;
+	int16 _last;
+
 	GobEngine *_vm;
 
 	void cleanupFuncCallback() {;}
@@ -101,6 +127,9 @@ protected:
 	void writeAdlib(int16 port, int16 data);
 	void setBlasterPort(int16 port);
 	void setResetTimerFlag(char flag){return;}
+	void setSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency);
+	void checkEndSample(void);
+	void nextCompositionPos(void);
 };
 
 }				// End of namespace Gob

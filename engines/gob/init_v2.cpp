@@ -45,40 +45,24 @@ void Init_v2::soundVideo(int32 smallHeap, int16 flag) {
 	_vm->_draw->_frontSurface = &_vm->_global->_primarySurfDesc;
 	_vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_video->_surfWidth, 200, 0x80);
 
-	//if ((flag & 4) == 0)
-	//	_vm->_video->findVideo();
-
 	_vm->_global->_mousePresent = 1;
 
 	_vm->_global->_inVM = 0;
 
-	_vm->_global->_presentSound = 0; // FIXME: sound is not supported yet
-
 	_vm->_global->_sprAllocated = 0;
 	_vm->_gtimer->enableTimer();
 
-	// _vm->_snd->setResetTimerFlag(debugFlag); // TODO
-
-	if (_vm->_global->_videoMode == 0x13)
+	if ((_vm->_global->_videoMode == 0x13) || (_vm->_global->_videoMode == 0x14))
 		_vm->_global->_colorCount = 256;
 
 	_vm->_global->_pPaletteDesc = &_vm->_global->_paletteStruct;
 	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
 	_vm->_global->_pPaletteDesc->unused1 = _vm->_global->_unusedPalette1;
 	_vm->_global->_pPaletteDesc->unused2 = _vm->_global->_unusedPalette2;
-//	_vm->_global->_pPrimarySurfDesc = &_vm->_global->_primarySurfDesc;
 
 	if (_vm->_global->_videoMode != 0)
 		_vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_video->_surfWidth, 200,
 				PRIMARY_SURFACE);
-
-	if (_vm->_global->_soundFlags & MIDI_FLAG) {
-		_vm->_global->_soundFlags &= _vm->_global->_presentSound;
-		if (_vm->_global->_presentSound & ADLIB_FLAG)
-			_vm->_global->_soundFlags |= MIDI_FLAG;
-	} else {
-		_vm->_global->_soundFlags &= _vm->_global->_presentSound;
-	}
 }
 
 } // End of namespace Gob

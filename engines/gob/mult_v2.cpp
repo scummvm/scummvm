@@ -522,7 +522,6 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 
 		stop = doFadeAnim(stop);
 		stop = doSoundAnim(stop, _frame);
-		_vm->_snd->loopSounds();
 
 		if (_frame >= endFrame)
 			stopNoClear = 1;

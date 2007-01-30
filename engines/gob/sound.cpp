@@ -61,24 +61,21 @@ int Snd::SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 Snd::Snd(GobEngine *vm) : _vm(vm) {
-	//CleanupFuncPtr cleanupFunc;// = &snd_cleanupFuncCallback();
 	_cleanupFunc = 0;
-	for (int i = 0; i < ARRAYSIZE(_loopingSounds); i++)
-		_loopingSounds[i] = NULL;
 	_playingSound = 0;
-}
 
-void Snd::loopSounds(void) {
-	for (int i = 0; i < ARRAYSIZE(_loopingSounds); i++) {
-		SoundDesc *snd = _loopingSounds[i];
-		if (snd && !_vm->_mixer->isSoundHandleActive(snd->handle)) {
-			if (snd->repCount-- > 0) {
-				_vm->_mixer->playRaw(&snd->handle, snd->data, snd->size, snd->frequency, 0);
-			} else {
-				_loopingSounds[i] = NULL;
-			}
-		}
-	}
+	_rate = _vm->_mixer->getOutputRate();
+	_end = true;
+	_data = 0;
+	_length = 0;
+	_freq = 0;
+	_repCount = 0;
+	_offset = 0.0;
+
+	_compositionPos = -1;
+
+	_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_handle,
+			this, -1, 255, 0, false, true);
 }
 
 void Snd::setBlasterPort(int16 port) {return;}
@@ -94,28 +91,54 @@ void Snd::speakerOff(void) {
 	_vm->_mixer->stopHandle(_speakerHandle);
 }
 
-void Snd::playSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency) {
-	if (frequency <= 0)
-		frequency = sndDesc->frequency;
+int8 Snd::getCompositionSlot(void) {
+	if (_compositionPos == -1)
+		return -1;
 
-	for (int i = 0; i < ARRAYSIZE(_loopingSounds); i++)
-		_loopingSounds[i] = 0;
-	_vm->_mixer->stopHandle(sndDesc->handle);
+	return _composition[_compositionPos];
+}
 
-	_vm->_mixer->playRaw(&sndDesc->handle, sndDesc->data, sndDesc->size, frequency, 0);
+void Snd::stopSound(int16 arg)
+{
+	Common::StackLock slock(_mutex);
 
-	sndDesc->repCount = repCount - 1;
-	sndDesc->frequency = frequency;
+	_data = 0;
+	_end = true;
+}
 
-	if (repCount > 1) {
-		for (int i = 0; i < ARRAYSIZE(_loopingSounds); i++) {
-			if (!_loopingSounds[i]) {
-				_loopingSounds[i] = sndDesc;
-				return;
-			}
-		}
-		warning("Looping sounds list is full");
+void Snd::waitEndPlay(void) {
+	while (!_end)
+		_vm->_util->longDelay(200);
+	stopSound(0);
+}
+
+void Snd::stopComposition(void) {
+	if (_compositionPos != -1) {
+		stopSound(0);
+		_compositionPos = -1;
 	}
+}
+
+void Snd::nextCompositionPos(void) {
+	int8 slot;
+
+	while ((++_compositionPos < 50) && ((slot = _composition[_compositionPos]) != -1)) {
+		if ((slot >= 0) && (slot <= 60) && (_vm->_game->_soundSamples[slot] != 0)
+				&& !(_vm->_game->_soundTypes[slot] & 8)) {
+			setSample(_vm->_game->_soundSamples[slot], 1, 0);
+			return;
+		}
+	}
+	_compositionPos = -1;
+}
+
+void Snd::playComposition(int16 *composition, int16 freqVal) {
+	waitEndPlay();
+	stopComposition();
+
+	for (int i = 0; i < 50; i++)
+		_composition[i] = composition[i];
+	nextCompositionPos();
 }
 
 void Snd::writeAdlib(int16 port, int16 data) {
@@ -133,12 +156,8 @@ Snd::SoundDesc *Snd::loadSoundData(const char *path) {
 }
 
 void Snd::freeSoundDesc(Snd::SoundDesc *sndDesc, bool freedata) {
-	_vm->_mixer->stopHandle(sndDesc->handle);
-
-	for (int i = 0; i < ARRAYSIZE(_loopingSounds); i++) {
-		if (_loopingSounds[i] == sndDesc)
-			_loopingSounds[i] = NULL;
-	}
+	if (sndDesc == _curSoundDesc)
+		stopSound(0);
 
 	if (freedata) {
 		delete[] sndDesc->data;
@@ -146,7 +165,75 @@ void Snd::freeSoundDesc(Snd::SoundDesc *sndDesc, bool freedata) {
 	delete sndDesc;
 }
 
-}                               // End of namespace Gob
+void Snd::setSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency) {
+	if (frequency <= 0)
+		frequency = sndDesc->frequency;
 
+	_curSoundDesc = sndDesc;
+	sndDesc->repCount = repCount - 1;
+	sndDesc->frequency = frequency;
 
+	_data = (int8 *) sndDesc->data;
+	_length = sndDesc->size;
+	_freq = frequency;
+	_ratio = ((double) _freq) / _rate;
+	_offset = 0.0;
+	_frac = 0;
+	_cur = 0;
+	_last = 0;
+	_repCount = repCount;
+	_end = false;
+	_playingSound = 0;
+}
 
+void Snd::playSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency) {
+	Common::StackLock slock(_mutex);
+
+	if (!_end)
+		return; 
+
+	setSample(sndDesc, repCount, frequency);
+	if (!_vm->_mixer->isSoundHandleActive(_handle))
+		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_handle,
+				this, -1, 255, 0, false, true);
+}
+
+void Snd::checkEndSample(void) {
+	if (_compositionPos != -1)
+		nextCompositionPos();
+	else if ((_repCount == -1) || (--_repCount > 0)) {
+		_offset = 0.0;
+		_end = false;
+		_playingSound = 0;
+	} else {
+		_end = true;
+		_playingSound = 0;
+	}
+}
+
+int Snd::readBuffer(int16 *buffer, const int numSamples) {
+	memset(buffer, 0, numSamples);
+
+	for (int i = 0; i < numSamples; i++) {
+		Common::StackLock slock(_mutex);
+
+		if (!_data)
+			return i;
+		if (_end || (_offset >= _length))
+			checkEndSample();
+		if (_end)
+			return i;
+
+		*buffer++ = (int) (_last + (_cur - _last) * _frac);
+		_frac += _ratio;
+		while (_frac > 1) {
+			_frac -= 1;
+			_last = _cur;
+			_cur = _data[(int) _offset] << 8;
+		}
+		_offset += _ratio;
+	}
+	return numSamples;
+}
+
+} // End of namespace Gob

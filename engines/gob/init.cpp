@@ -50,18 +50,7 @@ Init::Init(GobEngine *vm) : _vm(vm) {
 void Init::findBestCfg(void) {
 	_vm->_global->_videoMode = VIDMODE_VGA;
 	_vm->_global->_useMouse = _vm->_global->_mousePresent;
-	if (_vm->_global->_presentSound & BLASTER_FLAG)
-		_vm->_global->_soundFlags = BLASTER_FLAG | SPEAKER_FLAG | MIDI_FLAG;
-	else if (_vm->_global->_presentSound & PROAUDIO_FLAG)
-		_vm->_global->_soundFlags = PROAUDIO_FLAG | SPEAKER_FLAG | MIDI_FLAG;
-	else if (_vm->_global->_presentSound & ADLIB_FLAG)
-		_vm->_global->_soundFlags = ADLIB_FLAG | SPEAKER_FLAG | MIDI_FLAG;
-	else if (_vm->_global->_presentSound & INTERSOUND_FLAG)
-		_vm->_global->_soundFlags = INTERSOUND_FLAG | SPEAKER_FLAG;
-	else if (_vm->_global->_presentSound & SPEAKER_FLAG)
-		_vm->_global->_soundFlags = SPEAKER_FLAG;
-	else
-		_vm->_global->_soundFlags = 0;
+	_vm->_global->_soundFlags = MIDI_FLAG | SPEAKER_FLAG | BLASTER_FLAG | ADLIB_FLAG;
 }
 
 void Init::cleanup(void) {

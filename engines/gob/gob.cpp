@@ -614,14 +614,10 @@ int GobEngine::init() {
 	else
 		error("GobEngine::init(): Unknown version of game engine");
 	_noMusic = MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL;
-	if (!(_features & Gob::GF_AMIGA) &&
-			(((_features & Gob::GF_MAC) && (_features & Gob::GF_GOB1)) ||
-			 (_features & Gob::GF_GOB2))) {
-		if (_noMusic)
-			_adlib = new Adlib_Dummy(this);
-		else
-			_adlib = new Adlib(this);
-	}
+	if (!_noMusic && !(_features & Gob::GF_AMIGA) &&
+	   (((_features & Gob::GF_MAC) && (_features & Gob::GF_GOB1)) ||
+	     (_features & Gob::GF_GOB2)))
+		_adlib = new Adlib(this);
 	_vm = this;
 
 	_system->beginGFXTransaction();
@@ -642,7 +638,7 @@ int GobEngine::init() {
 
 	_global->_videoMode = 0x13;
 	_global->_useMouse = 1;
-	_global->_soundFlags = 0;
+	_global->_soundFlags = MIDI_FLAG | SPEAKER_FLAG | BLASTER_FLAG | ADLIB_FLAG;
 
 	if (ConfMan.hasKey("language"))
 		_language = Common::parseLanguage(ConfMan.get("language"));
@@ -687,7 +683,6 @@ int GobEngine::init() {
 	//        640x480.
 
 	g_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
-
 	return 0;
 }
 

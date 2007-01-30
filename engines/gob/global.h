@@ -80,7 +80,6 @@ public:
 
 	int16 _disableVideoCfg;
 
-	uint16 _presentSound;
 	uint16 _soundFlags;
 	int16 _disableSoundCfg;
 	int16 _blasterPort;

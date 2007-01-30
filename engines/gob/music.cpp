@@ -82,7 +82,6 @@ Adlib::Adlib(GobEngine *vm) : _vm(vm) {
 	_dataSize = 0;
 	_rate = _vm->_mixer->getOutputRate();
 	_opl = makeAdlibOPL(_rate);
-	_vm->_mixer->setupPremix(this, Audio::Mixer::kMusicSoundType);
 	_first = true;
 	_ended = false;
 	_playing = false;
@@ -92,74 +91,71 @@ Adlib::Adlib(GobEngine *vm) : _vm(vm) {
 
 	for (i = 0; i < 16; i ++)
 		_pollNotes[i] = 0;
-
 	setFreqs();
+
+	_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_handle,
+			this, -1, 255, 0, false, true);
 }
 
 Adlib::~Adlib(void) {
+	Common::StackLock slock(_mutex);
+
+	_vm->_mixer->stopHandle(_handle);
 	OPLDestroy(_opl);
 	if (_data && _needFree)
 		delete[] _data;
-	_vm->_mixer->setupPremix(0);
 }
 
-void Adlib::premixerCall(int16 *buf, uint len) {
-	_mutex.lock();
-	if (!_playing) {
-		memset(buf, 0, 2 * len * sizeof(int16));
-		_mutex.unlock();
-		return;
+int Adlib::readBuffer(int16 *buffer, const int numSamples) {
+	Common::StackLock slock(_mutex);
+	int samples;
+	int render;
+
+	if (!_playing || (numSamples < 0)) {
+		memset(buffer, 0, numSamples * sizeof(int16));
+		return numSamples;
 	}
-	else {
-		if (_first) {
-			memset(buf, 0, 2 * len * sizeof(int16));
+	if (_first) {
+		memset(buffer, 0, numSamples * sizeof(int16));
+		pollMusic();
+		return numSamples;
+	}
+
+	samples = numSamples;
+	while (samples && _playing) {
+		if (_samplesTillPoll) {
+			render = (samples > _samplesTillPoll) ?  (_samplesTillPoll) : (samples);
+			samples -= render;
+			_samplesTillPoll -= render;
+			YM3812UpdateOne(_opl, buffer, render);
+			buffer += render;
+		} else {
 			pollMusic();
-			_mutex.unlock();
-			return;
-		}
-		else {
-			uint32 render;
-			int16 *data = buf;
-			uint datalen = len;
-			while (datalen && _playing) {
-				if (_samplesTillPoll) {
-					render = (datalen > _samplesTillPoll) ?
-						(_samplesTillPoll) : (datalen);
-					datalen -= render;
-					_samplesTillPoll -= render;
-					YM3812UpdateOne(_opl, data, render);
-					data += render;
-				} else {
-					pollMusic();
-					if (_ended) {
-						memset(data, 0, datalen * sizeof(int16));
-						datalen = 0;
-					}
-				}
+			if (_ended) {
+				memset(buffer, 0, samples * sizeof(int16));
+				samples = 0;
 			}
-		}
-		if (_ended) {
-			_first = true;
-			_ended = false;
-			_playPos = _data + 3 + (_data[1] + 1) * 0x38;
-			_samplesTillPoll = 0;
-			if (_repCount == -1) {
-				reset();
-				setVoices();
-			} else if (_repCount > 0) {
-				_repCount--;
-				reset();
-				setVoices();
-			}
-			else
-				_playing = false;
-		}
-		// Convert mono data to stereo
-		for (int i = (len - 1); i >= 0; i--) {
-			buf[2 * i] = buf[2 * i + 1] = buf[i];
 		}
 	}
-	_mutex.unlock();
+
+	if (_ended) {
+		_first = true;
+		_ended = false;
+		_playPos = _data + 3 + (_data[1] + 1) * 0x38;
+		_samplesTillPoll = 0;
+		if (_repCount == -1) {
+			reset();
+			setVoices();
+		} else if (_repCount > 0) {
+			_repCount--;
+			reset();
+			setVoices();
+		}
+		else
+			_playing = false;
+	}
+
+	return numSamples;
 }
 
 void Adlib::writeOPL(byte reg, byte val) {
@@ -194,6 +190,7 @@ void Adlib::setFreqs(void) {
 }
 
 void Adlib::reset() {
+	_first = true;
 	OPLResetChip(_opl);
 	_samplesTillPoll = 0;
 
@@ -356,20 +353,11 @@ void Adlib::pollMusic(void) {
 			setVolume(channel, *(_playPos++));
 			setKey(channel, note, true, false);
 			break;
-		case 0x10:
-			warning("GOB2 Stub! ADL command 0x10");
-			break;
-		case 0x50:
-			warning("GOB2 Stub! ADL command 0x50");
-			break;
 		// Note on
 		case 0x90:
 			note = *(_playPos++);
 			_pollNotes[channel] = note;
 			setKey(channel, note, true, false);
-			break;
-		case 0x60:
-			warning("GOB2 Stub! ADL command 0x60");
 			break;
 		// Last note off
 		case 0x80:

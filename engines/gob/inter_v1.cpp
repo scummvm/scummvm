@@ -1205,7 +1205,7 @@ bool Inter_v1::o1_playComposition(char &cmdCount, int16 &counter, int16 &retFlag
 	for (i = 0; i < 50; i++)
 		composition[i] = (int16)VAR_OFFSET(dataVar + i * 4);
 
-	_vm->_snd->playComposition(_vm->_game->_soundSamples, composition, freqVal);
+	_vm->_snd->playComposition(composition, freqVal);
 	return false;
 }
 

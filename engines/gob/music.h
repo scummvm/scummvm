@@ -39,7 +39,7 @@ class GobEngine;
 class Adlib : public Audio::AudioStream {
 public:
 	Adlib(GobEngine *vm);
-	virtual ~Adlib();
+	~Adlib();
 
 	void lock() { _mutex.lock(); }
 	void unlock() { _mutex.unlock(); }
@@ -50,9 +50,8 @@ public:
 	virtual void startPlay(void) { if (_data) _playing = true; }
 	virtual void stopPlay(void)
 	{
-		_mutex.lock();
+		Common::StackLock slock(_mutex);
 		_playing = false;
-		_mutex.unlock();
 	}
 	virtual void playTrack(const char *trackname);
 	virtual void playBgMusic(void);
@@ -61,12 +60,10 @@ public:
 	virtual void unload(void);
 
 // AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples) {
-		premixerCall(buffer, numSamples / 2);
-		return numSamples;
-	}
-	bool isStereo() const { return true; }
-	bool endOfData() const { return false; }
+	int readBuffer(int16 *buffer, const int numSamples);
+	bool isStereo() const { return false; }
+	bool endOfData() const { return !_playing; }
+	bool endOfStream() const { return false; }
 	int getRate() const { return _rate; }
 	
 protected:
@@ -74,6 +71,7 @@ protected:
 	static const char *_trackFiles[];
 	static const unsigned char _operators[];
 	static const unsigned char _volRegNums [];
+	Audio::SoundHandle _handle;
 	FM_OPL *_opl;
 	int _index;
 	byte *_data;
@@ -86,7 +84,7 @@ protected:
 	byte _notLin[11];
 	bool _notOn[11];
 	byte _pollNotes[16];
-	uint32 _samplesTillPoll;
+	int _samplesTillPoll;
 	int32 _repCount;
 	bool _playing;
 	bool _first;
@@ -95,7 +93,6 @@ protected:
 	Common::Mutex _mutex;
 	GobEngine *_vm;
 
-	void premixerCall(int16 *buf, uint len);
 	void writeOPL(byte reg, byte val);
 	void setFreqs(void);
 	void reset(void);
@@ -104,24 +101,6 @@ protected:
 	void setKey(byte voice, byte note, bool on, bool spec);
 	void setVolume(byte voice, byte volume);
 	void pollMusic(void);
-};
-
-/**
- * A dummy class for the "null" sound driver
- */
-class Adlib_Dummy: public Adlib {
-public:
-	Adlib_Dummy(GobEngine *vm) : Adlib(vm) {}
-
-	virtual void startPlay(void) {};
-	virtual void stopPlay(void) {};
-	virtual void playTrack(const char *trackname) {};
-	virtual void playBgAdlib(void) {};
-	virtual bool load(const char *filename) { return true; }
-	virtual void load(byte *data, int index=-1) {}
-	virtual void unload(void) {};
-
-	virtual ~Adlib_Dummy() {};
 };
 
 } // End of namespace Gob

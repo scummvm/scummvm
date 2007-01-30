@@ -579,8 +579,6 @@ int16 Game_v1::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 			_vm->_draw->animateCursor(-1);
 
 		_vm->_util->delay(10);
-
-		_vm->_snd->loopSounds();
 	}
 }
 

@@ -1401,7 +1401,16 @@ bool Inter_v2::o2_checkData(char &cmdCount, int16 &counter, int16 &retFlag) {
 }
 
 bool Inter_v2::o2_stopSound(char &cmdCount, int16 &counter, int16 &retFlag) {
-	_vm->_snd->stopSound(_vm->_parse->parseValExpr());
+	int16 expr;
+
+	expr = _vm->_parse->parseValExpr();
+
+	if (expr < 0) {
+		if (_vm->_adlib)
+			_vm->_adlib->stopPlay();
+	} else
+		_vm->_snd->stopSound(expr);
+
 	_soundEndTimeKey = 0;
 	return false;
 }
