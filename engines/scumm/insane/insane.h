@@ -80,7 +80,6 @@ class Insane {
 	int32 _numberArray;
    	int32 _emulTimerId;
 	int32 _emulateInterrupt;
-	byte _errbuf[0x7d0];
 	int32 _flag1d;
 	int32 _mainTimerId;
 	int32 _objArray1Idx;
