@@ -156,27 +156,19 @@ void Codec47Decoder::makeTablesInterpolation(int param) {
 	if (param == 8) {
 		table47_1 = codec47_table_big1;
 		table47_2 = codec47_table_big2;
-		ptr = _tableBig + 384;
+		ptr = _tableBig;
 		for (i = 0; i < 256; i++) {
-			*ptr = 0;
-			ptr += 388;
-		}
-		ptr = _tableBig + 385;
-		for (i = 0; i < 256; i++) {
-			*ptr = 0;
+			ptr[384] = 0;
+			ptr[385] = 0;
 			ptr += 388;
 		}
 	} else if (param == 4) {
 		table47_1 = codec47_table_small1;
 		table47_2 = codec47_table_small2;
-		ptr = _tableSmall + 96;
+		ptr = _tableSmall;
 		for (i = 0; i < 256; i++) {
-			*ptr = 0;
-			ptr += 128;
-		}
-		ptr = _tableSmall + 97;
-		for (i = 0; i < 256; i++) {
-			*ptr = 0;
+			ptr[96] = 0;
+			ptr[97] = 0;
 			ptr += 128;
 		}
 	} else {
