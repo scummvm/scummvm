@@ -223,11 +223,16 @@ int detectBestMatchingGame(
 	Common::ADList matches = detectGame(0, params, language, platform);
 
 	int gameNumber = -1;
-	for (uint i = 0; i < matches.size(); i++) {
-		if (((const ADGameDescription *)(params.descs + matches[i] * params.descItemSize))->gameid == gameid) {
-			gameNumber = matches[i];
-			break;
+
+	if (params.singleid == NULL) {
+		for (uint i = 0; i < matches.size(); i++) {
+			if (((const ADGameDescription *)(params.descs + matches[i] * params.descItemSize))->gameid == gameid) {
+				gameNumber = matches[i];
+				break;
+			}
 		}
+	} else {
+		gameNumber = matches[0];
 	}
 
 	if (gameNumber >= 0) {
@@ -258,11 +263,15 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 	const ADGameFileDescription *fileDesc;
 
 	Common::ADGameDescList gameDescriptions;
+
+	debug(3, "Starting detection");
+
 	for (const byte *descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize)
 		gameDescriptions.push_back((const ADGameDescription *)descPtr);
 
 	assert(gameDescriptions.size());
 
+	debug(4, "List of descriptions: %d", gameDescriptions.size());
 
 	// First we compose list of files which we need MD5s for
 	for (i = 0; i < gameDescriptions.size(); i++) {
@@ -284,6 +293,8 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 			tstr.toLowercase();
 			tstr2 = tstr + ".";
 
+			debug(3, "+ %s", tstr.c_str());
+
 			if (!filesList.contains(tstr) && !filesList.contains(tstr2)) continue;
 
 			if (!md5_file(*file, md5sum, params.md5Bytes)) continue;
@@ -292,6 +303,8 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 			}
 			filesMD5[tstr] = String(md5str);
 			filesMD5[tstr2] = String(md5str);
+
+			debug(3, "> %s: %s", tstr.c_str(), md5str);
 
 			if (f.open(file->path())) {
 				filesSize[tstr] = filesSize[tstr2] = (int32)f.size();
@@ -350,6 +363,7 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 					break;
 				}
 				if (strcmp(fileDesc->md5, filesMD5[tstr].c_str()) && strcmp(fileDesc->md5, filesMD5[tstr2].c_str())) {
+					debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesMD5[tstr].c_str());
 					fileMissing = true;
 					break;
 				}
@@ -360,6 +374,7 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 					break;
 				}
 				if (fileDesc->fileSize != filesSize[tstr] && fileDesc->fileSize != filesSize[tstr2]) {
+					debug(3, "Size Mismatch. Skipping");
 					fileMissing = true;
 					break;
 				}
