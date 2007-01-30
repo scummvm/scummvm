@@ -32,8 +32,8 @@
 
 namespace Touche {
 
-ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
-	: Engine(system), _language(language) {
+ToucheEngine::ToucheEngine(OSystem *system)
+	: Engine(system) {
 
 	_saveLoadCurrentPage = 0;
 	_saveLoadCurrentSlot = 0;
@@ -63,19 +63,11 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	_menuRedrawCounter = 0;
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
 
-	Graphics::setupFont(_language);
-
-	setupOpcodes();
-
 	Common::addSpecialDebugLevel(kDebugEngine,   "Engine",   "Engine debug level");
 	Common::addSpecialDebugLevel(kDebugGraphics, "Graphics", "Graphics debug level");
 	Common::addSpecialDebugLevel(kDebugResource, "Resource", "Resource debug level");
 	Common::addSpecialDebugLevel(kDebugOpcodes,  "Opcodes",  "Opcodes debug level");
 	Common::addSpecialDebugLevel(kDebugUserIntf, "UserIntf", "UserInterface debug level");
-
-	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
-	_midiPlayer = new MidiPlayer(driver);
 }
 
 ToucheEngine::~ToucheEngine() {
@@ -88,6 +80,20 @@ int ToucheEngine::init() {
 		initCommonGFX(true);
 		_system->initSize(kScreenWidth, kScreenHeight);
 	_system->endGFXTransaction();
+
+	// Detect game
+	if (!detectGame()) {
+		GUIErrorMessage("No valid games were found in the specified directory.");
+		return -1;
+	}
+
+	Graphics::setupFont(_language);
+
+	setupOpcodes();
+
+	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+	_midiPlayer = new MidiPlayer(driver);
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));

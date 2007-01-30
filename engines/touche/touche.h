@@ -347,13 +347,15 @@ public:
 
 	typedef void (ToucheEngine::*OpcodeProc)();
 
-	ToucheEngine(OSystem *system, Common::Language language);
+	ToucheEngine(OSystem *system);
 	virtual ~ToucheEngine();
 
 	virtual int init();
 	virtual int go();
 
 protected:
+
+	bool detectGame();
 
 	void restart();
 	void readConfigurationSettings();
