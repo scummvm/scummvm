@@ -132,8 +132,10 @@ protected:
 	uint32 writeDataEndian(Common::OutSaveFile &out, char *varBuf, byte *sizeBuf, int32 size);
 	uint32 readDataEndian(Common::InSaveFile &in, char *varBuf, byte *sizeBuf, int32 size);
 
+	bool detectGame();
+
 public:
-	GobEngine(OSystem *syst, uint32 features, Common::Language lang, const char *startTotBase);
+	GobEngine(OSystem *syst);
 	virtual ~GobEngine();
 
 	void shutdown();

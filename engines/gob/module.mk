@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	anim.o \
 	cdrom.o \
 	dataio.o \
+	detection.o \
 	draw.o \
 	draw_v1.o \
 	draw_v2.o \
