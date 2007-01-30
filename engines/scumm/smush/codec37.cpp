@@ -28,8 +28,7 @@
 
 namespace Scumm {
 
-void Codec37Decoder::init(int width, int height) {
-	deinit();
+Codec37Decoder::Codec37Decoder(int width, int height) {
 	_width = width;
 	_height = height;
 	_frameSize = _width * _height;
@@ -40,26 +39,15 @@ void Codec37Decoder::init(int width, int height) {
 	_deltaBufs[0] = _deltaBuf + 0x4D80;
 	_deltaBufs[1] = _deltaBuf + 0xE880 + _frameSize;
 	_offsetTable = new int16[255];
-	_curtable = 0;
 	if (_offsetTable == 0)
 		error("unable to allocate decoder offset table");
-	_tableLastPitch = -1;
-	_tableLastIndex = -1;
-}
-
-Codec37Decoder::Codec37Decoder() {
-	_deltaSize = 0;
-	_deltaBuf = 0;
-	_deltaBufs[0] = 0;
-	_deltaBufs[1] = 0;
 	_curtable = 0;
-	_offsetTable = 0;
+	_prevSeqNb = 0;
 	_tableLastPitch = -1;
 	_tableLastIndex = -1;
-	_prevSeqNb = 0;
 }
 
-void Codec37Decoder::deinit() {
+Codec37Decoder::~Codec37Decoder() {
 	if (_offsetTable) {
 		delete []_offsetTable;
 		_offsetTable = 0;
@@ -73,10 +61,6 @@ void Codec37Decoder::deinit() {
 		_deltaBufs[0] = 0;
 		_deltaBufs[1] = 0;
 	}
-}
-
-Codec37Decoder::~Codec37Decoder() {
-	deinit();
 }
 
 void Codec37Decoder::maketable(int pitch, int index) {

@@ -53,10 +53,8 @@ private:
 	void decode2(byte *dst, const byte *src, int width, int height, const byte *param_ptr);
 
 public:
-	Codec47Decoder();
+	Codec47Decoder(int width, int height);
 	~Codec47Decoder();
-	void init(int width, int height);
-	void deinit();
 	bool decode(byte *dst, const byte *src);
 };
 

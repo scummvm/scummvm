@@ -40,6 +40,8 @@
 #include "scumm/util.h"
 #include "scumm/smush/channel.h"
 #include "scumm/smush/chunk.h"
+#include "scumm/smush/codec37.h"
+#include "scumm/smush/codec47.h"
 #include "scumm/smush/smush_font.h"
 #include "scumm/smush/smush_mixer.h"
 #include "scumm/smush/smush_player.h"
@@ -238,6 +240,8 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
 	_vm = scumm;
 	_version = -1;
 	_nbframes = 0;
+	_codec37 = 0;
+	_codec47 = 0;
 	_smixer = NULL;
 	_strings = NULL;
 	_sf[0] = NULL;
@@ -284,8 +288,6 @@ SmushPlayer::~SmushPlayer() {
 void SmushPlayer::init(int32 speed) {
 	_frame = 0;
 	_speed = speed;
-	_codec37AlreadyInit = false;
-	_codec47AlreadyInit = false;
 	_endOfFile = false;
 
 	_vm->_smushVideoShouldFinish = false;
@@ -354,14 +356,10 @@ void SmushPlayer::release() {
 
 	_initDone = false;
 
-	if (_codec37AlreadyInit) {
-		_codec37.deinit();
-		_codec37AlreadyInit = false;
-	}
-	if (_codec47AlreadyInit) {
-		_codec47.deinit();
-		_codec47AlreadyInit = false;
-	}
+	delete _codec37;
+	_codec37 = 0;
+	delete _codec47;
+	_codec47 = 0;
 }
 
 void SmushPlayer::checkBlock(const Chunk &b, Chunk::type type_expected, uint32 min_size) {
@@ -798,18 +796,16 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		smush_decode_codec1(_dst, src, left, top, width, height, _vm->_screenWidth);
 		break;
 	case 37:
-		if (!_codec37AlreadyInit) {
-			_codec37.init(width, height);
-			_codec37AlreadyInit = true;
-		}
-		_codec37.decode(_dst, src);
+		if (!_codec37)
+			_codec37 = new Codec37Decoder(width, height);
+		if (_codec37)
+			_codec37->decode(_dst, src);
 		break;
 	case 47:
-		if (!_codec47AlreadyInit) {
-			_codec47.init(width, height);
-			_codec47AlreadyInit = true;
-		}
-		_codec47.decode(_dst, src);
+		if (!_codec47)
+			_codec47 = new Codec47Decoder(width, height);
+		if (_codec47)
+			_codec47->decode(_dst, src);
 		break;
 	default:
 		error("Invalid codec for frame object : %d", codec);

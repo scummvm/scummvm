@@ -501,8 +501,7 @@ void Codec47Decoder::decode2(byte *dst, const byte *src, int width, int height, 
 	} while (--bh);
 }
 
-void Codec47Decoder::init(int width, int height) {
-	deinit();
+Codec47Decoder::Codec47Decoder(int width, int height) {
 	_width = width;
 	_height = height;
 	_tableBig = (byte *)malloc(256 * 388);
@@ -518,13 +517,7 @@ void Codec47Decoder::init(int width, int height) {
 	_curBuf = _deltaBuf + _frameSize * 2;
 }
 
-Codec47Decoder::Codec47Decoder() {
-	_tableBig = NULL;
-	_tableSmall = NULL;
-	_deltaBuf = NULL;
-}
-
-void Codec47Decoder::deinit() {
+Codec47Decoder::~Codec47Decoder() {
 	if (_tableBig) {
 		free(_tableBig);
 		_tableBig = NULL;
@@ -541,10 +534,6 @@ void Codec47Decoder::deinit() {
 		_deltaBufs[0] = NULL;
 		_deltaBufs[1] = NULL;
 	}
-}
-
-Codec47Decoder::~Codec47Decoder() {
-	deinit();
 }
 
 bool Codec47Decoder::decode(byte *dst, const byte *src) {

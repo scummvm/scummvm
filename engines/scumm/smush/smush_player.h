@@ -25,8 +25,6 @@
 
 #include "common/util.h"
 #include "scumm/smush/chunk.h"
-#include "scumm/smush/codec37.h"
-#include "scumm/smush/codec47.h"
 #include "scumm/sound.h"
 
 namespace Scumm {
@@ -35,6 +33,8 @@ class ScummEngine_v7;
 class SmushFont;
 class SmushMixer;
 class StringResource;
+class Codec37Decoder;
+class Codec47Decoder;
 
 class SmushPlayer {
 	friend class Insane;
@@ -46,10 +46,8 @@ private:
 	int16 _deltaPal[0x300];
 	byte _pal[0x300];
 	StringResource *_strings;
-	Codec37Decoder _codec37;
-	bool _codec37AlreadyInit;
-	Codec47Decoder _codec47;
-	bool _codec47AlreadyInit;
+	Codec37Decoder *_codec37;
+	Codec47Decoder *_codec47;
 	FileChunk *_base;
 	byte *_frameBuffer;
 	byte *_specialBuffer;

@@ -42,10 +42,8 @@ private:
 	int _width, _height;
 
 public:
-	Codec37Decoder();
+	Codec37Decoder(int width, int height);
 	~Codec37Decoder();
-	void init(int width, int height);
-	void deinit();
 protected:
 	void maketable(int, int);
 	void proc1(byte *dst, const byte *src, int32, int, int, int, int16 *);
