@@ -75,6 +75,19 @@ void PrimitiveObject::createLine(int x1, int x2, int y1, int y2, Color color) {
 	_type = 3;
 }
 
+void PrimitiveObject::createPolygon(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, Color color) {
+	_x1 = x1;
+	_y1 = y1;
+	_x2 = x2;
+	_y2 = y2;
+	_x3 = x3;
+	_y3 = y3;
+	_x4 = x4;
+	_y4 = y4;
+	_color = color;
+	_type = 4;
+}
+
 void PrimitiveObject::draw() {
 	assert(_type);
 
@@ -84,4 +97,6 @@ void PrimitiveObject::draw() {
 		g_driver->drawBitmap(_bitmap);
 	else if (_type == 3)
 		g_driver->drawLine(this);
+	else if (_type == 4)
+		g_driver->drawPolygon(this);
 }

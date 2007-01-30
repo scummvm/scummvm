@@ -903,9 +903,48 @@ void DriverGL::drawLine(PrimitiveObject *primitive) {
 
 	glBegin(GL_LINES);
 	glVertex2f(x1, y1);
-	glVertex2f(x2, y1);
 	glVertex2f(x2, y2);
-	glVertex2f(x1, y2);
+	glEnd();
+
+	glColor3f(1.0f, 1.0f, 1.0f);
+
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+}
+
+void DriverGL::drawPolygon(PrimitiveObject *primitive) {
+	int x1 = primitive->getX1();
+	int y1 = primitive->getY1();
+	int x2 = primitive->getX2();
+	int y2 = primitive->getY2();
+	int x3 = primitive->getX3();
+	int y3 = primitive->getY3();
+	int x4 = primitive->getX4();
+	int y4 = primitive->getY4();
+
+	Color color = primitive->getColor();
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glColor3f(color.red() / 255.0f, color.green() / 255.0f, color.blue() / 255.0f);
+
+	glBegin(GL_LINES);
+	glVertex2f(x1, y1);
+	glVertex2f(x2, y2);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex2f(x3, y3);
+	glVertex2f(x4, y4);
 	glEnd();
 
 	glColor3f(1.0f, 1.0f, 1.0f);

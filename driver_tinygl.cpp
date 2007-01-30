@@ -610,7 +610,37 @@ void DriverTinyGL::drawLine(PrimitiveObject *primitive) {
 	uint16 c = ((color.red() & 0xF8) << 8) | ((color.green() & 0xFC) << 3) | (color.blue() >> 3);
 
 	for (int x = x1; x <= x2; x++) {
-		int y = (int) (m * x) + b;
+		int y = (int)(m * x) + b;
+		WRITE_LE_UINT16(dst + 640 * y + x, c);
+	}
+}
+
+void DriverTinyGL::drawPolygon(PrimitiveObject *primitive) {
+	uint16 *dst = (uint16 *)_zb->pbuf;
+	int x1 = primitive->getX1();
+	int y1 = primitive->getY1();
+	int x2 = primitive->getX2();
+	int y2 = primitive->getY2();
+	int x3 = primitive->getX3();
+	int y3 = primitive->getY3();
+	int x4 = primitive->getX4();
+	int y4 = primitive->getY4();
+	float m;
+	int b;
+
+	Color color = primitive->getColor();
+	uint16 c = ((color.red() & 0xF8) << 8) | ((color.green() & 0xFC) << 3) | (color.blue() >> 3);
+
+	m = (y2 - y1) / (x2 - x1);
+	b = (int)(-m * x1 + y1);
+	for (int x = x1; x <= x2; x++) {
+		int y = (int)(m * x) + b;
+		WRITE_LE_UINT16(dst + 640 * y + x, c);
+	}
+	m = (y4 - y3) / (x4 - x3);
+	b = (int)(-m * x3 + y3);
+	for (int x = x3; x <= x4; x++) {
+		int y = (int)(m * x) + b;
 		WRITE_LE_UINT16(dst + 640 * y + x, c);
 	}
 }

@@ -90,6 +90,7 @@ public:
 
 	void drawRectangle(PrimitiveObject *primitive);
 	void drawLine(PrimitiveObject *primitive);
+	void drawPolygon(PrimitiveObject *primitive);
 
 	void prepareSmushFrame(int width, int height, byte *bitmap);
 	void drawSmushFrame(int offsetX, int offsetY);

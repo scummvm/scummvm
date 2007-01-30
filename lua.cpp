@@ -125,7 +125,7 @@ static inline PrimitiveObject *check_primobject(int num) {
 	lua_Object param = lua_getparam(num);
 	if (lua_isuserdata(param) && lua_tag(param) == MKID('PRIM'))
 		return static_cast<PrimitiveObject *>(lua_getuserdata(param));
-	luaL_argerror(num, "primitive (rectangle) expected");
+	luaL_argerror(num, "primitive expected");
 	return NULL;
 } 
 
@@ -2530,7 +2530,67 @@ static void PurgePrimitiveQueue() {
 }
 
 static void DrawPolygon() {
-	stubWarning("DrawPolygon");
+	lua_Object tableObj1, tableObj2, pointObj;
+	int x1, y1, x2, y2, x3, y3, x4, y4;
+	Color color;
+
+	color._vals[0] = 255;
+	color._vals[1] = 255;
+	color._vals[2] = 255;
+
+	tableObj1 = lua_getparam(1);
+	tableObj2 = lua_getparam(2);
+
+	if (lua_istable(tableObj1)) {
+		lua_pushobject(tableObj1);
+		lua_pushnumber(1);
+		pointObj = lua_gettable();
+		x1 = lua_getnumber(pointObj);
+		lua_pushobject(tableObj1);
+		lua_pushnumber(2);
+		pointObj = lua_gettable();
+		y1 = lua_getnumber(pointObj);
+		lua_pushobject(tableObj1);
+		lua_pushnumber(3);
+		pointObj = lua_gettable();
+		x2 = lua_getnumber(pointObj);
+		lua_pushobject(tableObj1);
+		lua_pushnumber(4);
+		pointObj = lua_gettable();
+		y2 = lua_getnumber(pointObj);
+		lua_pushobject(tableObj1);
+		lua_pushnumber(5);
+		pointObj = lua_gettable();
+		x3 = lua_getnumber(pointObj);
+		lua_pushobject(tableObj1);
+		lua_pushnumber(6);
+		pointObj = lua_gettable();
+		y3 = lua_getnumber(pointObj);
+		lua_pushobject(tableObj1);
+		lua_pushnumber(7);
+		pointObj = lua_gettable();
+		x4 = lua_getnumber(pointObj);
+		lua_pushobject(tableObj1);
+		lua_pushnumber(8);
+		pointObj = lua_gettable();
+		y4 = lua_getnumber(pointObj);
+	} else {
+		lua_pushnil();
+	}
+
+	if (lua_istable(tableObj2)) {
+		lua_pushobject(tableObj2);
+		lua_pushstring("color");
+		lua_Object colorObj = lua_gettable();
+		if (lua_isuserdata(colorObj) && lua_tag(colorObj) == MKID('COLR')) {
+			color = static_cast<Color *>(lua_getuserdata(colorObj));
+		}
+	}
+
+	PrimitiveObject *p = new PrimitiveObject();
+	p->createPolygon(x1, y1, x2, y2, x3, y3, x4, y4, color);
+	g_engine->registerPrimitiveObject(p);
+	lua_pushusertag(p, MKID('PRIM'));
 }
 
 static void DrawLine() {
@@ -2548,7 +2608,7 @@ static void DrawLine() {
 	color._vals[1] = 255;
 	color._vals[2] = 255;
 
-	if (lua_istable(tableObj)){
+	if (lua_istable(tableObj)) {
 		lua_pushobject(tableObj);
 		lua_pushstring("color");
 		lua_Object colorObj = lua_gettable();
@@ -2600,12 +2660,26 @@ static void ChangePrimitive() {
 		color = static_cast<Color *>(lua_getuserdata(colorObj));
 		pmodify->setColor(color);
 	}
+
 	lua_pushobject(tableObj);
 	lua_pushstring("y");
 	lua_Object yObj = lua_gettable();
 	if (!lua_isnil(yObj)) {
-		pmodify->setY1(atoi(lua_getstring(yObj)));
-		pmodify->setY2(atoi(lua_getstring(yObj)));
+		int y = atoi(lua_getstring(yObj));
+		if (pmodify->getType() == 4) {
+			int y1 = pmodify->getY1();
+			int y2 = pmodify->getY2();
+			int y3 = pmodify->getY3();
+			int y4 = pmodify->getY4();
+			int dy = y - y1;
+			pmodify->setY1(y1 + dy);
+			pmodify->setY2(y2 + dy);
+			pmodify->setY3(y3 + dy);
+			pmodify->setY4(y4 + dy);
+		} else {
+			pmodify->setY1(y);
+			pmodify->setY2(y);
+		}
 	}
 }
 
