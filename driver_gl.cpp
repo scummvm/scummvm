@@ -805,7 +805,7 @@ void DriverGL::dimScreen() {
 }
 
 void DriverGL::dimRegion(int x, int yReal, int w, int h, float level) {
-	uint32 *data = new uint32[w*h];
+	uint32 *data = new uint32[w * h];
 	int y = _screenHeight - yReal;
 	
 	// collect the requested area and generate the dimmed version
