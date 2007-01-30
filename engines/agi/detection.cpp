@@ -56,6 +56,7 @@ static const PlainGameDescriptor agiGames[] = {
 	{"agi-fanmade", "Fanmade AGI game"},
 	{"agidemo", "AGI Demo"},
 	{"bc", "Black Cauldron"},
+	{"caitlyn", "Caitlyn's Destiny"},
 	{"ddp", "Donald Duck's Playground"},
 	{"goldrush", "Gold Rush"},
 	{"kq1", "King's Quest 1"},
@@ -67,8 +68,13 @@ static const PlainGameDescriptor agiGames[] = {
 	{"mh1", "Manhunter 1: NY"},
 	{"mh2", "Manhunter 2: SF"},
 	{"pq1", "Police Quest 1"},
+	{"serguei1", "Serguei's Destiny 1"},
+	{"serguei2", "Serguei's Destiny 2"},
+	{"sq0", "Space Quest 0 - Replicated"},
 	{"sq1", "Space Quest 1"},
 	{"sq2", "Space Quest 2"},
+	{"sqx", "Space Quest X - The Lost Chapter"},
+	{"tetris", "AGI Tetris"},
 	{"xmascard", "Xmas Card"},
 
 	{0, 0}
@@ -77,9 +83,9 @@ static const PlainGameDescriptor agiGames[] = {
 
 namespace Agi {
 
-#define FANMADE_LV(name,md5,lang,ver) {			\
+#define FANMADE_ILV(id, name,md5,lang,ver) {	\
 		{ \
-			"agi-fanmade", \
+			id, \
 			name, \
 			AD_ENTRY1("logdir", md5), \
 			lang, \
@@ -89,8 +95,10 @@ namespace Agi {
 		0, \
 		ver, \
 	}
+#define FANMADE_LV(name,md5,lang,ver) FANMADE_ILV("agi-fanmade",name,md5,lang,ver)
 #define FANMADE_V(name,md5,ver) FANMADE_LV(name,md5,Common::EN_ANY,ver)
 #define FANMADE_L(name,md5,lang) FANMADE_LV(name,md5,lang,0x2917)
+#define FANMADE_I(id,name,md5) FANMADE_ILV(id,name,md5,Common::EN_ANY,0x2917)
 #define FANMADE(name,md5) FANMADE_LV(name,md5,Common::EN_ANY,0x2917)
 
 static const AGIGameDescription gameDescriptions[] = {
@@ -778,7 +786,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("AGI Mouse Demo 1.10", "f4ad396b496d6167635ad0b410312ab8"),
 	FANMADE("AGI Piano (v1.0)", "8778b3d89eb93c1d50a70ef06ef10310"),
 	FANMADE("AGI Quest (v1.46-TJ0)", "1cf1a5307c1a0a405f5039354f679814"),
-	FANMADE("AGI Tetris", "7a874e2db2162e7a4ce31c9130248d8a"),
+	FANMADE_I("tetris", "", "7a874e2db2162e7a4ce31c9130248d8a"),
 	FANMADE_V("AGI Trek (Demo)", "c02882b8a8245b629c91caf7eb78eafe", 0x2440),
 	FANMADE("AGI256 Demo", "79261ac143b2e2773b2753674733b0d5"),
 	FANMADE("AGI256-2 Demo", "3cad9b3aff1467cebf0c5c5b110985c5"),
@@ -805,8 +813,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Botz", "a8fabe4e807adfe5ec02bfec6d983695"),
 	FANMADE("Brian's Quest (v1.0)", "0964aa79b9cdcff7f33a12b1d7e04b9c"),
 	FANMADE("CPU-21 (v1.0)", "35b7cdb4d17e890e4c52018d96e9cbf4"),
-	FANMADE("Caitlyn's Destiny (demo)", "5b8a3cdb2fc05469f8119d49f50fbe98"),
-	FANMADE("Caitlyn's Destiny", "818469c484cae6dad6f0e9a353f68bf8"),
+	FANMADE_I("caitlyn", "Demo", "5b8a3cdb2fc05469f8119d49f50fbe98"),
+	FANMADE_I("caitlyn", "", "818469c484cae6dad6f0e9a353f68bf8"),
 	FANMADE("Car Driver (v1.1)", "2311611d2d36d20ccc9da806e6cba157"),
 	FANMADE("Coco Coq (English) - Coco Coq In Grostesteing's Base (v.1.0.3)", "97631f8e710544a58bd6da9e780f9320"),
 	FANMADE_L("Coco Coq (French) - Coco Coq Dans la Base de Grostesteing (v1.0.2)", "ef579ebccfe5e356f9a557eb3b2d8649", Common::FR_FRA),
@@ -877,12 +885,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Journey Of Chef", "aa0a0b5a6364801ae65fdb96d6741df5"),
 	FANMADE("Jukebox (v1.0)", "c4b9c5528cc67f6ba777033830de7751"),
 	FANMADE("Justin Quest (v1.0 in development)", "103050989da7e0ffdc1c5e1793a4e1ec"),
-	FANMADE("J� �ulumaa (v0.05) (Estonian)", "53982ecbfb907e41392b3961ad1c3475"),
+	FANMADE("J\xf5ulumaa (v0.05) (Estonian)", "53982ecbfb907e41392b3961ad1c3475"),
 	FANMADE("Kings Quest 2  - Breast Intentions (v2.0)", "6b4f796d0421d2e12e501b511962e03a"),
 	FANMADE("Lasse Holm: The Quest for Revenge (v1.0)", "f9fbcc8a4ef510bfbb92423296ff4abb"),
 	FANMADE("Lawman for Hire", "c78b28bfd3767dd455b992cd8b7854fa"),
 	FANMADE("Lefty Goes on Vacation (Not in The Right Place)", "ccdc49a33870310b01f2c48b8a1f3c34"),
-	FANMADE("Les Ins� �parables (v1.0)", "4b780887cab0ecabc5eca319acb3acf2"),
+	FANMADE("Les Ins\xe3parables (v1.0)", "4b780887cab0ecabc5eca319acb3acf2"),
 	FANMADE("Little Pirate (Demo 2 v0.6)", "437068efe4ec32d436da09d6f2ea56e1"),
 	FANMADE("Lost Eternity (v1.0)", "95f15c5632feb8a39e9ca3d9af35fcc9"),
 	FANMADE("MD Quest - The Search for Michiel (v0.10)", "2a6fcb21d2b5e4144c38ed817fabe8ee"),
@@ -940,19 +948,19 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Save Santa (v1.0)", "4644f6beb5802081772f14be56ae196c"),
 	FANMADE("Save Santa (v1.3)", "f8afdb6efc5af5e7c0228b44633066af"),
 	FANMADE("Schiller", "ade39dea968c959cfebe1cf935d653e9"),
-	FANMADE("Serguei's Destiny 1 (v1.0)", "b86725f067e456e10cdbdf5f58e01dec"),
-	FANMADE("Serguei's Destiny 1 (v1.1 2002 Sep 5)", "91975c1fb4b13b0f9a8e9ff74731030d"),
-	FANMADE("Serguei's Destiny 1 (v1.1 2003 Apr 10)", "91975c1fb4b13b0f9a8e9ff74731030d"),
-	FANMADE("Serguei's Destiny 2 (v0.1.1 Demo)", "906ccbc2ddedb29b63141acc6d10cd28"),
+	FANMADE_I("serguei1", "(v1.0)", "b86725f067e456e10cdbdf5f58e01dec"),
+	FANMADE_I("serguei1", "v1.1 2002 Sep 5", "91975c1fb4b13b0f9a8e9ff74731030d"),
+	FANMADE_I("serguei1", "v1.1 2003 Apr 10", "91975c1fb4b13b0f9a8e9ff74731030d"),
+	FANMADE_I("serguei2", "v0.1.1 Demo", "906ccbc2ddedb29b63141acc6d10cd28"),
 	FANMADE("Shifty (v1.0)", "2a07984d27b938364bf6bd243ac75080"),
 	FANMADE("Sliding Tile Game (v1.00)", "949bfff5d8a81c3139152eed4d84ca75"),
 	FANMADE("Snowboarding Demo (v1.0)", "24bb8f29f1eddb5c0a099705267c86e4"),
 	FANMADE("Solar System Tour", "b5a3d0f392dfd76a6aa63f3d5f578403"),
 	FANMADE("Sorceror's Appraisal", "fe62615557b3cb7b08dd60c9d35efef1"),
-	FANMADE("Space Quest 0 - Replicated (v1.03)", "d2fd6f7404e86182458494e64375e590"),
-	FANMADE("Space Quest 0 - Replicated (v1.04)", "2ad9d1a4624a98571ee77dcc83f231b6"),
-	FANMADE("Space Quest X - The Lost Chapter (v10.0 Feb 05)", "c992ae2f8ab18360404efdf16fa9edd1"),
-	FANMADE("Space Quest X - The Lost Chapter (v10.0 Jul 18)", "812edec45cefad559d190ffde2f9c910"),
+	FANMADE_I("sq0", "v1.03", "d2fd6f7404e86182458494e64375e590"),
+	FANMADE_I("sq0", "v1.04", "2ad9d1a4624a98571ee77dcc83f231b6"),
+	FANMADE_I("sqx", "v10.0 Feb 05", "c992ae2f8ab18360404efdf16fa9edd1"),
+	FANMADE_I("sqx", "v10.0 Jul 18", "812edec45cefad559d190ffde2f9c910"),
 	FANMADE("Space Trek (v1.0)", "807a1aeadb2ace6968831d36ab5ea37a"),
 	FANMADE("Special Delivery", "88764dfe61126b8e73612c851b510a33"),
 	FANMADE("Speeder Bike Challenge (v1.0)", "2deb25bab379285ca955df398d96c1e7"),
