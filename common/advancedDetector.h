@@ -69,7 +69,7 @@ struct ADParams {
 	// Name of single gameid (optional)
 	const char *singleid;
 	// Flags
-	const uint32 flags;
+	uint32 flags;
 };
 
 typedef Array<int> ADList;
