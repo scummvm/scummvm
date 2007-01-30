@@ -33,7 +33,7 @@
 namespace Touche {
 
 ToucheEngine::ToucheEngine(OSystem *system)
-	: Engine(system) {
+	: Engine(system), _midiPlayer(0) {
 
 	_saveLoadCurrentPage = 0;
 	_saveLoadCurrentSlot = 0;

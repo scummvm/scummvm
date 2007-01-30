@@ -36,7 +36,7 @@ static GameList GAME_detectGames(const FSList &fslist);
 static const PlainGameDescriptor toucheGames[] = {
 	{"touche", "Touche: The Adventures of the Fifth Musketeer"},
 	{"touche-fr", "Touche: Les Aventures du Cinquieme Mousquetaire"},
-	{"touche-de", "Touche - Die Abenteuer des funften Musketiers"},
+	{"touche-de", "Touche: Die Abenteuer des funften Musketiers"},
 	{"touche-it", "Touche: The Adventures of the Fifth Musketeer"},
 	{0, 0}
 };
@@ -116,6 +116,8 @@ namespace Touche {
 
 bool ToucheEngine::detectGame() {
 	int i = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	if (i < 0)
+		return false;
 
 	_language = gameDescriptions[i].language;
 	return true;
