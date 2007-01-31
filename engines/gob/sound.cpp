@@ -101,13 +101,6 @@ void Snd::speakerOff(void) {
 	_vm->_mixer->stopHandle(_speakerHandle);
 }
 
-int8 Snd::getCompositionSlot(void) {
-	if (_compositionPos == -1)
-		return -1;
-
-	return _composition[_compositionPos];
-}
-
 void Snd::stopSound(int16 fadeLength)
 {
 	Common::StackLock slock(_mutex);
@@ -127,6 +120,7 @@ void Snd::stopSound(int16 fadeLength)
 }
 
 void Snd::waitEndPlay(void) {
+	_compositionPos = -1;
 	while (!_end && !_vm->_quitRequested)
 		_vm->_util->longDelay(200);
 	stopSound(0);

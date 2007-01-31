@@ -56,7 +56,6 @@ public:
 	void playSample(SoundDesc *sndDesc, int16 repCount, int16 frequency, int16 fadeLength = 0);
 	void playComposition(int16 *composition, int16 freqVal);
 	void stopComposition(void);
-	int8 getCompositionSlot(void);
 	void waitEndPlay(void);
 
 	// This deletes sndDesc and stops playing the sample.

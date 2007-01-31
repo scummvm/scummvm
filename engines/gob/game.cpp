@@ -351,13 +351,6 @@ void Game::freeSoundSlot(int16 slot) {
 	if ((slot < 0) || (slot >= 60) || (_soundSamples[slot] == 0))
 		return;
 
-	if (slot == _vm->_snd->getCompositionSlot()) {
-		if (_vm->_quitRequested)
-			_vm->_snd->stopComposition();
-		else
-			_vm->_snd->waitEndPlay();
-	}
-
 	if (_soundADL[slot]) {
 		if (_vm->_adlib && (_vm->_adlib->getIndex() == slot))
 			_vm->_adlib->stopPlay();
