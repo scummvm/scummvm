@@ -204,34 +204,19 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 		return 1;
 	if (_itemInHand != -1) {
 		assert(_putDownFirst);
-		if (speechEnabled()) {
-			snd_voiceWaitForFinish();
-			snd_playVoiceFile(2000);
-		}
-		if (textEnabled())	
-			characterSays(_putDownFirst[0], 0, -2);
+		characterSays(2000, _putDownFirst[0], 0, -2);
 		return 1;
 	}
 	if (queryGameFlag(0xF1)) {
 		assert(_waitForAmulet);
-		if (speechEnabled()) {
-			snd_voiceWaitForFinish();
-			snd_playVoiceFile(2001);
-		}
-		if (textEnabled())	
-			characterSays(_waitForAmulet[0], 0, -2);	
+		characterSays(2001, _waitForAmulet[0], 0, -2);	
 		return 1;
 	}
 	if (!queryGameFlag(0x55+jewel)) {
 		assert(_blackJewel);
 		_animator->makeBrandonFaceMouse();
 		drawJewelPress(jewel, 1);
-		if (speechEnabled()) {
-			snd_voiceWaitForFinish();
-			snd_playVoiceFile(2002);
-		}
-		if (textEnabled())	
-			characterSays(_blackJewel[0], 0, -2);
+		characterSays(2002, _blackJewel[0], 0, -2);
 		return 1;
 	}
 	drawJewelPress(jewel, 0);
@@ -258,12 +243,7 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 		} else if (_brandonStatusBit == 0) {
 			seq_brandonHealing();
 			assert(_healingTip);
-			if (speechEnabled()) {
-				snd_voiceWaitForFinish();
-				snd_playVoiceFile(2003);
-			}
-			if (textEnabled())	
-				characterSays(_healingTip[0], 0, -2);
+			characterSays(2003, _healingTip[0], 0, -2);
 		}
 		break;
 		
@@ -274,12 +254,8 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 	case 2:
 		if (_brandonStatusBit & 1) {
 			assert(_wispJewelStrings);
-			if (speechEnabled()) {
-				snd_voiceWaitForFinish();
-				snd_playVoiceFile(2004);
-			}
 			if (textEnabled())	
-				characterSays(_wispJewelStrings[0], 0, -2);
+				characterSays(2004, _wispJewelStrings[0], 0, -2);
 		} else {
 			if (_brandonStatusBit & 2) {
 				// XXX
@@ -303,12 +279,7 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 	case 3:
 		seq_dispelMagicAnimation();
 		assert(_magicJewelString);
-		if (speechEnabled()) {
-			snd_voiceWaitForFinish();
-			snd_playVoiceFile(2007);
-		}
-		if (textEnabled())	
-			characterSays(_magicJewelString[0], 0, -2);
+		characterSays(2007, _magicJewelString[0], 0, -2);
 		break;
 		
 	default:

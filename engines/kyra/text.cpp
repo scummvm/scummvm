@@ -32,10 +32,11 @@
 
 namespace Kyra {
 
-void KyraEngine::waitForChatToFinish(int16 chatDuration, const char *chatStr, uint8 charNum) {
+void KyraEngine::waitForChatToFinish(int vocFile, int16 chatDuration, const char *chatStr, uint8 charNum) {
 	debugC(9, kDebugLevelMain, "KyraEngine::waitForChatToFinish(%i, %s, %i)", chatDuration, chatStr, charNum); 
 	bool hasUpdatedNPCs = false;
 	bool runLoop = true;
+	bool drawText = textEnabled();
 	uint8 currPage;
 	OSystem::Event event;
 
@@ -60,6 +61,11 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, const char *chatStr, ui
 
 	if (chatDuration != -1)
 		chatDuration *= _tickLength;
+
+	if (vocFile != -1) {
+		snd_voiceWaitForFinish();
+		snd_playVoiceFile(vocFile);
+	}
 
 	disableTimer(14);
 	disableTimer(18);
@@ -93,16 +99,18 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, const char *chatStr, ui
 		_animator->preserveAnyChangedBackgrounds();
 		_animator->prepDrawAllObjects();
 
-		currPage = _screen->_curPage;
-		_screen->_curPage = 2;
-		_text->printCharacterText(chatStr, charNum, _characterList[charNum].x1);
-		_animator->_updateScreen = true;
-		_screen->_curPage = currPage;
+		if (drawText) {
+			currPage = _screen->_curPage;
+			_screen->_curPage = 2;
+			_text->printCharacterText(chatStr, charNum, _characterList[charNum].x1);
+			_animator->_updateScreen = true;
+			_screen->_curPage = currPage;
+		}
 
 		_animator->copyChangedObjectsForward(0);
 		updateTextFade();
 
-		if ((chatDuration < (int16)(_system->getMillis() - timeAtStart)) && chatDuration != -1)
+		if ((chatDuration < (int16)(_system->getMillis() - timeAtStart)) && chatDuration != -1 && (!drawText || !snd_voiceIsPlaying()))
 			break;
 
 		uint32 nextTime = loopStart + _gameSpeed;
@@ -135,6 +143,9 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, const char *chatStr, ui
 		if (_skipFlag)
 			runLoop = false;
 	}
+
+	snd_voiceWaitForFinish();
+	snd_stopVoice();
 
 	enableTimer(14);
 	enableTimer(15);
@@ -247,7 +258,7 @@ int KyraEngine::initCharacterChat(int8 charNum) {
 	return returnValue;
 }
 
-void KyraEngine::characterSays(const char *chatStr, int8 charNum, int8 chatDuration) {
+void KyraEngine::characterSays(int vocFile, const char *chatStr, int8 charNum, int8 chatDuration) {
 	debugC(9, kDebugLevelMain, "KyraEngine::characterSays('%s', %i, %d)", chatStr, charNum, chatDuration);
 	uint8 startAnimFrames[] =  { 0x10, 0x32, 0x56, 0x0, 0x0, 0x0 };
 
@@ -287,32 +298,39 @@ void KyraEngine::characterSays(const char *chatStr, int8 charNum, int8 chatDurat
 
 	_text->_talkMessageY = yPos;
 	_text->_talkMessageH = lineNum * 10;
-	_animator->restoreAllObjectBackgrounds();
+	
+	if (textEnabled()) {
+		_animator->restoreAllObjectBackgrounds();
 
-	_screen->copyRegion(12, _text->_talkMessageY, 12, 136, 296, _text->_talkMessageH, 2, 2);
-	_screen->hideMouse();
+		_screen->copyRegion(12, _text->_talkMessageY, 12, 136, 296, _text->_talkMessageH, 2, 2);
+		_screen->hideMouse();
 
-	_text->printCharacterText(processedString, charNum, _characterList[charNum].x1);
-	_screen->showMouse();
+		_text->printCharacterText(processedString, charNum, _characterList[charNum].x1);
+		_screen->showMouse();
+	}
 
 	if (chatDuration == -2)
 		chatTicks = strlen(processedString) * 9;
 	else
 		chatTicks = chatDuration;
 
-	waitForChatToFinish(chatTicks, chatStr, charNum);
+	if (!speechEnabled())
+		vocFile = -1;
+	waitForChatToFinish(vocFile, chatTicks, chatStr, charNum);
 
-	_animator->restoreAllObjectBackgrounds();
+	if (textEnabled()) {
+		_animator->restoreAllObjectBackgrounds();
 
-	_screen->copyRegion(12, 136, 12, _text->_talkMessageY, 296, _text->_talkMessageH, 2, 2);
-	_animator->preserveAllBackgrounds();
-	_animator->prepDrawAllObjects();
-	_screen->hideMouse();
+		_screen->copyRegion(12, 136, 12, _text->_talkMessageY, 296, _text->_talkMessageH, 2, 2);
+		_animator->preserveAllBackgrounds();
+		_animator->prepDrawAllObjects();
+		_screen->hideMouse();
 
-	_screen->copyRegion(12, _text->_talkMessageY, 12, _text->_talkMessageY, 296, _text->_talkMessageH, 2, 0);
-	_screen->showMouse();
-	_animator->flagAllObjectsForRefresh();
-	_animator->copyChangedObjectsForward(0);
+		_screen->copyRegion(12, _text->_talkMessageY, 12, _text->_talkMessageY, 296, _text->_talkMessageH, 2, 0);
+		_screen->showMouse();
+		_animator->flagAllObjectsForRefresh();
+		_animator->copyChangedObjectsForward(0);
+	}
 
 	if (chatPartnerNum != -1 && chatPartnerNum < 5)
 		restoreChatPartnerAnimFrame(chatPartnerNum);

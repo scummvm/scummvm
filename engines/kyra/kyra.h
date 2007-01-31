@@ -289,6 +289,8 @@ public:
 	void snd_playTheme(int file, int track = 0);
 	void snd_playVoiceFile(int id);
 	void snd_voiceWaitForFinish(bool ingame = true);
+	bool snd_voiceIsPlaying();
+	void snd_stopVoice();
 	void snd_playSoundEffect(int track);
 	void snd_playWanderScoreViaMap(int command, int restart);
 
@@ -487,8 +489,8 @@ protected:
 	void backupChatPartnerAnimFrame(int8 charNum);
 	void restoreChatPartnerAnimFrame(int8 charNum);
 	void endCharacterChat(int8 charNum, int16 arg_4);
-	void waitForChatToFinish(int16 chatDuration, const char *str, uint8 charNum);
-	void characterSays(const char *chatStr, int8 charNum, int8 chatDuration);
+	void waitForChatToFinish(int vocFile, int16 chatDuration, const char *str, uint8 charNum);
+	void characterSays(int vocFile, const char *chatStr, int8 charNum, int8 chatDuration);
 
 	void setCharactersPositions(int character);
 	int setGameFlag(int flag);

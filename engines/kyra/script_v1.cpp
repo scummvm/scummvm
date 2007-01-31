@@ -45,15 +45,10 @@ int KyraEngine::o1_characterSays(ScriptState *script) {
 	_skipFlag = false;
 	if (_flags.isTalkie) {
 		debugC(3, kDebugLevelScriptFuncs, "o1_characterSays(%p) (%d, '%s', %d, %d)", (const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3));
-		if (speechEnabled()) {
-			snd_voiceWaitForFinish();
-			snd_playVoiceFile(stackPos(0));
-		}
-		if (textEnabled())
-			characterSays(stackPosString(1), stackPos(2), stackPos(3));
+		characterSays(stackPos(0), stackPosString(1), stackPos(2), stackPos(3));
 	} else {
 		debugC(3, kDebugLevelScriptFuncs, "o1_characterSays(%p) ('%s', %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2));
-		characterSays(stackPosString(0), stackPos(1), stackPos(2));
+		characterSays(-1, stackPosString(0), stackPos(1), stackPos(2));
 	}
 
 	return 0;
@@ -644,6 +639,8 @@ int KyraEngine::o1_customPrintTalkString(ScriptState *script) {
 
 int KyraEngine::o1_restoreCustomPrintBackground(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_restoreCustomPrintBackground(%p) ()", (const void *)script);
+	snd_voiceWaitForFinish();
+	snd_stopVoice();
 	_text->restoreTalkTextMessageBkgd(2, 0);
 	return 0;
 }
