@@ -153,7 +153,8 @@ void KyraEngine::endCharacterChat(int8 charNum, int16 convoInitialized) {
 
 	if (convoInitialized != 0) {
 		_talkingCharNum = -1;
-		_currentCharacter->currentAnimFrame = 7;
+		if (_currentCharacter->currentAnimFrame != 88)
+			_currentCharacter->currentAnimFrame = 7;
 		_animator->animRefreshNPC(0);
 		_animator->updateAllObjectShapes();
 	}
@@ -167,7 +168,9 @@ void KyraEngine::restoreChatPartnerAnimFrame(int8 charNum) {
 		_animator->animRefreshNPC(charNum);
 	}
 
-	_currentCharacter->currentAnimFrame = 7;
+	if (_currentCharacter->currentAnimFrame != 88)
+		_currentCharacter->currentAnimFrame = 7;
+
 	_animator->animRefreshNPC(0);
 	_animator->updateAllObjectShapes();
 }
@@ -178,10 +181,11 @@ void KyraEngine::backupChatPartnerAnimFrame(int8 charNum) {
 	if (charNum < 5 && charNum > 0) 
 		_currentChatPartnerBackupFrame = _characterList[charNum].currentAnimFrame;
 
-	if (_scaleMode != 0)
-		_currentCharacter->currentAnimFrame = 7;
-	else
+	if (_currentCharacter->currentAnimFrame != 88) {
 		_currentCharacter->currentAnimFrame = 16;
+		if (_scaleMode != 0)
+			_currentCharacter->currentAnimFrame = 7;
+	}
 
 	_animator->animRefreshNPC(0);
 	_animator->updateAllObjectShapes();
@@ -210,13 +214,17 @@ int8 KyraEngine::getChatPartnerNum() {
 }
 
 int KyraEngine::initCharacterChat(int8 charNum) {
-	if (_talkingCharNum == -1) {
-		_talkingCharNum = 0;
+	int returnValue = 0;
 
-		if (_scaleMode != 0)
-			_currentCharacter->currentAnimFrame = 7;
-		else
+	if (_talkingCharNum == -1) {
+		returnValue = 1;
+		_talkingCharNum = 0;
+		
+		if (_currentCharacter->currentAnimFrame != 88) {
 			_currentCharacter->currentAnimFrame = 16;
+			if (_scaleMode != 0)
+				_currentCharacter->currentAnimFrame = 7;
+		}
 
 		_animator->animRefreshNPC(0);
 		_animator->updateAllObjectShapes();
@@ -236,7 +244,7 @@ int KyraEngine::initCharacterChat(int8 charNum) {
 	_animator->preserveAnyChangedBackgrounds();
 	_charSayUnk3 = charNum;
 
-	return 1;
+	return returnValue;
 }
 
 void KyraEngine::characterSays(const char *chatStr, int8 charNum, int8 chatDuration) {

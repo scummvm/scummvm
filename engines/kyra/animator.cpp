@@ -257,7 +257,7 @@ void ScreenAnimator::prepDrawAllObjects() {
 			}
 			
 			// talking head functionallity
-			if (_vm->_talkingCharNum != -1) {
+			if (_vm->_talkingCharNum != -1 && (_vm->_currentCharacter->currentAnimFrame != 88 || curObject->index != 0)) {
 				const int16 baseAnimFrameTable1[] = { 0x11, 0x35, 0x59, 0x00, 0x00, 0x00 };
 				const int16 baseAnimFrameTable2[] = { 0x15, 0x39, 0x5D, 0x00, 0x00, 0x00 };
 				const int8 xOffsetTable1[] = { 2, 4, 0, 5, 2, 0, 0, 0 };
