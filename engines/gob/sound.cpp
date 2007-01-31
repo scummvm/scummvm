@@ -199,8 +199,8 @@ void Snd::setSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency, in
 	_ratio = ((double) _freq) / _rate;
 	_offset = 0.0;
 	_frac = 0;
-	_cur = 0;
-	_last = 0;
+	_last = _cur;
+	_cur = _data[0];
 	_repCount = repCount;
 	_end = false;
 	_playingSound = 1;
@@ -236,6 +236,7 @@ void Snd::checkEndSample(void) {
 		nextCompositionPos();
 	else if ((_repCount == -1) || (--_repCount > 0)) {
 		_offset = 0.0;
+		_frac = 0.0;
 		_end = false;
 		_playingSound = 1;
 	} else {
@@ -259,6 +260,7 @@ int Snd::readBuffer(int16 *buffer, const int numSamples) {
 
 		*buffer++ = (int16) ((_last + (_cur - _last) * _frac) * _fadeVol);
 		_frac += _ratio;
+		_offset += _ratio;
 		while (_frac > 1) {
 			_frac -= 1;
 			_last = _cur;
@@ -279,8 +281,6 @@ int Snd::readBuffer(int16 *buffer, const int numSamples) {
 				}
 			}
 		}
-
-		_offset += _ratio;
 	}
 	return numSamples;
 }
