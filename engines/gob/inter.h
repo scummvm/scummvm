@@ -74,6 +74,9 @@ public:
 protected:
 	GobEngine *_vm;
 
+	// The busy-wait detection in o1_keyFunc breaks fast scrolling in Ween
+	bool _noBusyWait;
+
 	virtual void setupOpcodes(void) = 0;
 	virtual void executeDrawOpcode(byte i) = 0;
 	virtual bool executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag) = 0;

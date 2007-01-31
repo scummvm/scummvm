@@ -1335,13 +1335,19 @@ bool Inter_v1::o1_loadTot(char &cmdCount, int16 &counter, int16 &retFlag) {
 bool Inter_v1::o1_keyFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int16 flag;
 	int16 key;
+	uint32 now;
+	static uint32 lastCalled = 0;
 
 	flag = load16();
 	animPalette();
 	_vm->_draw->blitInvalidated();
 
-	// Gob2 busy-waits here, so add a delay
-	_vm->_util->longDelay(1);
+	now = _vm->_util->getTimeKey();
+	if (!_noBusyWait)
+		if ((now - lastCalled) <= 20)
+			_vm->_util->longDelay(20);
+	lastCalled = now;
+	_noBusyWait = false;
 
 	if (flag != 0) {
 
@@ -1774,7 +1780,6 @@ bool Inter_v1::o1_callSub(char &cmdCount, int16 &counter, int16 &retFlag) {
 	// Skipping the copy protection screen in Gobliins 2
 	if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 1746)
 			&& !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot0)) {
-		warning("=> Skipping copy protection screen");
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		_vm->_global->_inter_execPtr += 2;
 		return false;

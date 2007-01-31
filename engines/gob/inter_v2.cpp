@@ -2205,6 +2205,8 @@ void Inter_v2::o2_setScrollOffset(void) {
 		_vm->_draw->_word_2FC9C = _vm->_parse->parseValExpr();
 	}
 	_vm->_video->_scrollOffset = _vm->_draw->_word_2FC9E;
+	_vm->_video->waitRetrace(_vm->_global->_videoMode);
+	_noBusyWait = true;
 
 /*
 	if (_vm->_draw->_off_2E51B != 0)

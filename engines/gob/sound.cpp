@@ -262,18 +262,18 @@ int Snd::readBuffer(int16 *buffer, const int numSamples) {
 		}
 
 		if (_fade) {
-			if (++_curFadeSamples < _fadeSamples) {
-				_fadeVol -= _fadeVolStep;
-			} else {
+			if (++_curFadeSamples >= _fadeSamples) {
 				if (_fadeVolStep > 0) {
 					_data = 0;
 					_end = true;
 					_playingSound = 0;
+					_compositionPos = -1;
 				} else {
 					_fadeVol = 255.0;
 					_fade = false;
 				}
-			}
+			} else
+				_fadeVol -= _fadeVolStep;
 		}
 	}
 	return numSamples;

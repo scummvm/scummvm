@@ -388,6 +388,17 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"gob3",
+			"",
+			AD_ENTRY1("intro.stk", "bd679eafde2084d8011f247e51b5a805"),
+			UNK_LANG,
+			kPlatformAmiga,
+		},
+		GF_GOB2,
+		"intro"
+	},
+	{
+		{
+			"gob3",
 			"CD 1.000",
 			AD_ENTRY1("intro.stk", "6f2c226c62dd7ab0ab6f850e89d3fc47"),
 			UNK_LANG,

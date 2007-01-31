@@ -42,6 +42,7 @@ namespace Gob {
 Inter::Inter(GobEngine *vm) : _vm(vm) {
 	int i;
 
+	_noBusyWait = false;
 	_terminate = false;
 	_breakFlag = false;
 	
