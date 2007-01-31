@@ -212,6 +212,49 @@ void Script::isSkorlInCell(uint16 v1, uint16 v2, uint16 v3) {
 	res.fieldList().setField(GENERAL, v);
 }
 
+// Called by the script when Ratpouch is pushing the bricks in the Outer Cell
+
+void Script::ratpouchPushBricks(uint16 v1, uint16 v2, uint16 v3)
+{
+	Resources &res = Resources::getReference();
+
+	// Mark the bricks exit as now open
+	RoomExitJoinData *joinRec = res.getExitJoin(BRICKS_ID);
+	joinRec->blocked = 0;
+
+	// Set Ratpouch moving through the new exit to room #7
+	Hotspot *ratpouchHotspot = res.getActiveHotspot(RATPOUCH_ID);
+	ratpouchHotspot->setActions(0); // Make sure he can't be interrupted
+	ratpouchHotspot->currentActions().clear();
+	ratpouchHotspot->currentActions().addBack(DISPATCH_ACTION, 7);
+}
+
+// Causes the current character to change to the specified room and position
+
+void Script::characterChangeRoom(uint16 y, uint16 x, uint16 roomNumber) {
+	Resources &res = Resources::getReference();
+	ValueTableData &fields = res.fieldList();
+	Hotspot *charHotspot = res.getActiveHotspot(fields.getField(CHARACTER_HOTSPOT_ID));
+	assert(charHotspot);
+
+	uint16 newRoomNumber = roomNumber & 0xff;
+	Direction newDirection = (Direction)(roomNumber >> 8);
+
+	Support::characterChangeRoom(*charHotspot, newRoomNumber, 
+		(int16) (x - 0x80), (int16) (y - 0x80), newDirection);
+}
+
+// Pauses Ratpouch for a long period (as good as idefinite)
+
+void Script::pauseRatpouch(uint16 v1, uint16 v2, uint16 v3)
+{
+	Resources &res = Resources::getReference();
+	Hotspot *ratpouch = res.getActiveHotspot(RATPOUCH_ID);
+	assert(ratpouch);
+	ratpouch->setCharacterMode(CHARMODE_PAUSED);
+	ratpouch->setDelayCtr(0x7fff);
+}
+
 // Sets a character to a given hotspot script, and sets the character's current 
 // action to executing a script
 
@@ -462,6 +505,9 @@ SequenceMethodRecord scriptMethods[] = {
 	{21, Script::playMusic},
 	{22, Script::getDoorBlocked},
 	{23, Script::isSkorlInCell},
+	{24, Script::ratpouchPushBricks},
+	{25, Script::characterChangeRoom},
+	{26, Script::pauseRatpouch},
 	{27, Script::setBlockingHotspotScript},
 	{28, Script::decrInventoryItems},
 	{29, Script::setTalking},

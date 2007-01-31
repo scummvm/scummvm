@@ -93,6 +93,9 @@ public:
 	static void playMusic(uint16 musicNum, uint16 v2, uint16 v3);
 	static void getDoorBlocked(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void isSkorlInCell(uint16 v1, uint16 v2, uint16 v3);
+	static void ratpouchPushBricks(uint16 v1, uint16 v2, uint16 v3);
+	static void characterChangeRoom(uint16 y, uint16 x, uint16 roomNumber);
+	static void pauseRatpouch(uint16 v1, uint16 v2, uint16 v3);
 	static void setBlockingHotspotScript(uint16 charId, uint16 scriptIndex, uint16 v3);
 	static void decrInventoryItems(uint16 v1, uint16 v2, uint16 v3);
 	static void setTalking(uint16 characterId, uint16 destHotspot, uint16 messageId);
