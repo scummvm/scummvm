@@ -1491,7 +1491,6 @@ bool Inter_v2::o2_goblinFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 	cmd = load16();
 	_vm->_global->_inter_execPtr += 2;
 
-	warning("goblinFunc %d", cmd);
 	if (cmd != 101)
 		executeGoblinOpcode(cmd, extraData, NULL, NULL);
 	return false;
