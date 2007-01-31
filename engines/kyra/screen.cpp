@@ -307,7 +307,8 @@ void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
 
 void Screen::setScreenPalette(const uint8 *palData) {
 	debugC(9, kDebugLevelScreen, "Screen::setScreenPalette(%p)", (const void *)palData);
-	memcpy(_screenPalette, palData, 768);
+	if (palData != _screenPalette)
+		memcpy(_screenPalette, palData, 768);
 	uint8 screenPal[256 * 4];
 	for (int i = 0; i < 256; ++i) {
 		screenPal[4 * i + 0] = (palData[0] << 2) | (palData[0] & 3);
@@ -2023,7 +2024,7 @@ uint8 *Screen::getPalette(int num) {
 	debugC(9, kDebugLevelScreen, "Screen::getPalette(%d)", num);
 	assert(num >= 0 && num < ARRAYSIZE(_palettes)+1);
 	if (num == 0) {
-		return _screenPalette;
+		return _currentPalette;
 	}
 	
 	return _palettes[num-1];

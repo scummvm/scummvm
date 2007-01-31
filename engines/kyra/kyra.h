@@ -317,6 +317,10 @@ public:
 	int mouseX() { return _mouseX; }
 	int mouseY() { return _mouseY; }
 	
+	int setGameFlag(int flag);
+	int queryGameFlag(int flag);
+	int resetGameFlag(int flag);
+	
 	virtual int runOpcode(ScriptState *script, uint8 opcode);
 protected:
 	int o1_magicInMouseItem(ScriptState *script);
@@ -493,9 +497,6 @@ protected:
 	void characterSays(int vocFile, const char *chatStr, int8 charNum, int8 chatDuration);
 
 	void setCharactersPositions(int character);
-	int setGameFlag(int flag);
-	int queryGameFlag(int flag);
-	int resetGameFlag(int flag);
 	
 	void setupSceneResource(int sceneId);
 	

@@ -415,10 +415,15 @@ void Sprites::loadDAT(const char *filename, SceneExits &exits) {
 	_engine->_northExitHeight = READ_LE_UINT16(_dat + 0x15);
 	if (_engine->_northExitHeight & 1)
 		_engine->_northExitHeight += 1;
+
+	if (_engine->queryGameFlag(0xA0)) {
+		memcpy(_screen->getPalette(1), _screen->getPalette(3), 768);
+	} else {
+		memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
+	}
 	// XXX
-	memcpy(_screen->_currentPalette + 744 - 60, _dat + 0x17, 60);
 	_engine->_paletteChanged = 1;
-	memcpy(_screen->getPalette(1), _screen->_currentPalette, sizeof(uint8)*768);
+	memcpy(_screen->getPalette(1) + 684, _dat + 0x17, 60);
 	uint8 *data = _dat + 0x6B;
 
 	uint16 length = READ_LE_UINT16(data);

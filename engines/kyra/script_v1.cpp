@@ -1547,10 +1547,9 @@ int KyraEngine::o1_fadeEntirePalette(ScriptState *script) {
 		warning("unimplemented o1_fadeEntirePalette function");
 		return 0;
 	} else if (cmd == 2) {
-		// HACK
-		uint8 *clearPal = _screen->getPalette(0);
-		fadePal = _screen->getPalette(1);		
-		memset(clearPal, 0, sizeof(uint8)*768);
+		memset(_screen->getPalette(2), 0, 768);
+		memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
+		fadePal = _screen->getPalette(0);
 	}
 	
 	_screen->fadePalette(fadePal, stackPos(1));

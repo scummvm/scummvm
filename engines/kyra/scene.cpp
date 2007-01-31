@@ -822,18 +822,28 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 }
 
 void KyraEngine::initSceneScreen(int brandonAlive) {
-	// XXX Palette stuff
+	if (_unkScreenVar1 && !queryGameFlag(0xA0)) {
+		for (int i = 0; i < 60; ++i) {
+			uint16 col = _screen->getPalette(0)[684+i];
+			col += _screen->getPalette(1)[684+i] << 1;
+			col >>= 2;
+			_screen->getPalette(0)[684+i] = col;
+		}
+		_screen->setScreenPalette(_screen->getPalette(0));
+	}
+
 	if (_unkScreenVar2 == 1) {
 		_screen->shuffleScreen(8, 8, 304, 128, 2, 0, _unkScreenVar3, false);
 	} else {
 		_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
 	}
+
 	if (_unkScreenVar1 && _paletteChanged) {
 		if (!queryGameFlag(0xA0)) {
-			// XXX Palette stuff
-			_screen->setScreenPalette(_screen->_currentPalette);
+			memcpy(_screen->getPalette(0) + 684, _screen->getPalette(1) + 684, 60);
+			_screen->setScreenPalette(_screen->getPalette(0));
 		} else {
-			// XXX Palette stuff
+			memset(_screen->getPalette(0), 0, 768);
 		}
 	}
 	// really call this here?
