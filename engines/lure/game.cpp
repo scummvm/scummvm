@@ -251,11 +251,8 @@ void Game::handleMenuResponse(uint8 selection) {
 }
 
 void Game::playerChangeRoom() {
-	OSystem &system = System::getReference();
 	Resources &res = Resources::getReference();
-	Screen &screen = Screen::getReference();
 	Room &room = Room::getReference();
-	Mouse &mouse = Mouse::getReference();
 	ValueTableData &fields = res.fieldList();
 	SequenceDelayList &delayList = Resources::getReference().delayList();
 
@@ -272,22 +269,10 @@ void Game::playerChangeRoom() {
 
 	int animFlag = fields.getField(ROOM_EXIT_ANIMATION);
 	if (animFlag == 1)
-	{
-		Palette palette(CHUTE_PALETTE_ID);
-		AnimationSequence *anim = new AnimationSequence(screen, system, 
-			CHUTE_ANIM_ID, palette, false);
-		mouse.cursorOff();
-		anim->show();
-		mouse.cursorOn();
-	} else if (animFlag != 0)
-	{
-		Palette palette(BARREL_PALETTE_ID);
-		AnimationSequence *anim = new AnimationSequence(screen, system, 
-			BARREL_ANIM_ID, palette, false);
-		mouse.cursorOff();
-		anim->show();
-		mouse.cursorOn();
-	}
+		displayChuteAnimation();
+	else if (animFlag != 0)
+		displayBarrelAnimation();
+	fields.setField(ROOM_EXIT_ANIMATION, 0);
 
 	// Change to the new room
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
@@ -297,6 +282,53 @@ void Game::playerChangeRoom() {
 	player->setPosition(newPos.x, newPos.y);
 	player->setOccupied(true);
 	room.setRoomNumber(roomNum, false);
+}
+
+void Game::displayChuteAnimation()
+{
+	OSystem &system = System::getReference();
+	Resources &res = Resources::getReference();
+	Screen &screen = Screen::getReference();
+	Mouse &mouse = Mouse::getReference();
+
+	ValueTableData &fields = res.fieldList();
+	Palette palette(CHUTE_PALETTE_ID);
+
+	debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Starting chute animation");
+	mouse.cursorOff();
+
+	AnimationSequence *anim = new AnimationSequence(screen, system, 
+		CHUTE_ANIM_ID, palette, false);
+	anim->show();
+	delete anim;
+	
+	anim = new AnimationSequence(screen, system, CHUTE2_ANIM_ID, 
+		palette, false);	
+	anim->show();
+	delete anim;
+
+	anim = new AnimationSequence(screen, system, CHUTE3_ANIM_ID, 
+		palette, false);	
+	anim->show();
+	delete anim;
+
+	mouse.cursorOn();
+	fields.setField(82, 1);
+}
+
+void Game::displayBarrelAnimation()
+{
+	OSystem &system = System::getReference();
+	Screen &screen = Screen::getReference();
+	Mouse &mouse = Mouse::getReference();
+
+	debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Starting barrel animation");
+	Palette palette(BARREL_PALETTE_ID);
+	AnimationSequence *anim = new AnimationSequence(screen, system, 
+		BARREL_ANIM_ID, palette, false);
+	mouse.cursorOff();
+	anim->show();
+	mouse.cursorOn();
 }
 
 void Game::handleClick() {

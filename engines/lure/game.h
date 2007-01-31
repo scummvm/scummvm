@@ -52,6 +52,8 @@ private:
 	void doAction(Action action, uint16 hotspotId, uint16 usedId);
 
 	void playerChangeRoom();
+	void displayChuteAnimation();
+	void displayBarrelAnimation();
 	void handleBootParam(int value);
 public:
 	Game();
