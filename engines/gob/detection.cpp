@@ -308,6 +308,17 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB2,
 		"intro"
 	},
+	{ // Supplied by cartman_ on #scummvm
+		{
+			"ween",
+			"",
+			AD_ENTRY1("intro.stk", "63170e71f04faba88673b3f510f9c4c8"),
+			DE_DEU,
+			kPlatformPC,
+		},
+		GF_GOB2,
+		"intro"
+	},
 	{
 		{
 			"ween-demo",
