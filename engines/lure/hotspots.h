@@ -65,6 +65,7 @@ private:
 	static void followerAnimHandler(Hotspot &h);
 	static void skorlAnimHandler(Hotspot &h);
 	static void droppingTorchAnimHandler(Hotspot &h);
+	static void playerSewerExitAnimHandler(Hotspot &h);
 	static void fireAnimHandler(Hotspot &h);
 	static void prisonerAnimHandler(Hotspot &h);
 	static void talkAnimHandler(Hotspot &h);
@@ -406,11 +407,11 @@ public:
 		assert(_data);
 		_data->pauseCtr = value;
 	}
-	bool coveredFlag() { 
+	VariantBool coveredFlag() { 
 		assert(_data);
 		return _data->coveredFlag;
 	}
-	void setCoveredFlag(bool value) { 
+	void setCoveredFlag(VariantBool value) { 
 		assert(_data);
 		_data->coveredFlag = value;
 	}

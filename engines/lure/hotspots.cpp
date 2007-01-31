@@ -512,8 +512,10 @@ void Hotspot::setRandomDest() {
 // Sets or clears the hotspot as occupying an area in its room's pathfinding data
 
 void Hotspot::setOccupied(bool occupiedFlag) {
-	if (occupiedFlag == coveredFlag()) return;
-	setCoveredFlag(occupiedFlag);
+	if ((coveredFlag() != VB_INITIAL) &&
+		(occupiedFlag == (coveredFlag() == VB_TRUE)))
+		return;
+	setCoveredFlag(occupiedFlag ? VB_TRUE : VB_FALSE);
 
 	int xp = x() >> 3;
 	int yp = (y() - 8 + heightCopy() - 4) >> 3;
@@ -595,7 +597,7 @@ void Hotspot::updateMovement() {
 			resetPosition();
 		} else {
 			// Make sure the cell occupied by character is covered
-			_data->coveredFlag = true;
+			_data->coveredFlag = VB_TRUE;
 			setOccupied(true);
 		}
 	}
@@ -1922,6 +1924,8 @@ HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 		return skorlAnimHandler;
 	case 0x7F69:
 		return droppingTorchAnimHandler;
+	case 0x7FA1:
+		return playerSewerExitAnimHandler;
 	case 0x8009:
 		return fireAnimHandler;
 	case 0x81B3:
@@ -2553,7 +2557,7 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 	if ((fields.getField(37) == 0) && h.currentActions().isEmpty()) {
 		
 		if (h.roomNumber() == h.currentActions().top().roomNumber()) {
-			// In room - et a random destination
+			// In room - set a random destination
 			h.setRandomDest();
 
 		} else {
@@ -2615,6 +2619,33 @@ void HotspotTickHandlers::droppingTorchAnimHandler(Hotspot &h) {
 			res.activateHotspot(0x418);
 		}
  	}
+}
+
+void HotspotTickHandlers::playerSewerExitAnimHandler(Hotspot &h) {
+	if (h.frameCtr() > 0)
+	{
+		h.decrFrameCtr();
+	}
+	else if (h.executeScript())
+	{
+		Resources &res = Resources::getReference();
+
+		// Deactive the dropping animation
+		h.setLayer(0);
+		res.deactivateHotspot(h.hotspotId());
+
+		// Position the player
+		Hotspot *playerHotspot = res.getActiveHotspot(PLAYER_ID);
+		playerHotspot->setPosition(FULL_SCREEN_WIDTH / 2, (FULL_SCREEN_HEIGHT - MENUBAR_Y_SIZE) / 2);
+		playerHotspot->setDirection(DOWN);
+		playerHotspot->setCharacterMode(CHARMODE_NONE);
+
+		// Setup Ratpouch
+		Hotspot *ratpouchHotspot = res.getActiveHotspot(RATPOUCH_ID);
+		ratpouchHotspot->setCharacterMode(CHARMODE_NONE);
+		ratpouchHotspot->setDelayCtr(0);
+		ratpouchHotspot->setActions(0x821C00);
+	}
 }
 
 void HotspotTickHandlers::fireAnimHandler(Hotspot &h) {
@@ -2867,6 +2898,7 @@ void HotspotTickHandlers::headAnimHandler(Hotspot &h) {
 	uint16 frameNumber = 0;
 
 	if (character->y() < 79) {
+		// TODO: 
 		//character = res.getActiveHotspot(RATPOUCH_ID);
 		frameNumber = 1;
 	} else {
