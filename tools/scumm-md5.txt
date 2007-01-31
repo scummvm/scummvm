@@ -711,6 +711,7 @@ PuttsFunShop	Putt-Putt's One-Stop Fun Shop
 	5262a27afcaee04e5c4900220bd463e7	-1	us	All	-	-	-	Kirben
 
 spyfox	SPY Fox 1: Dry Cereal
+	ee785fe2569bc9965526e774f7ab86f1	-1	fr	Mac	-	-	-	ThierryFR
 	6bf70eee5de3d24d2403e0dd3d267e8a	49221	All	Windows	-	-	-	khalek
 	100b4c8403ad6a83d4bf7dbf83e44dc4	-1	fr	Windows	-	-	-	gist974
 	9bda5fee51d2fda5253d02c642016bf4	-1	nl	All	HE 98.5	-	-	daniel9, joostp
@@ -729,11 +730,11 @@ spyfox	SPY Fox 1: Dry Cereal
 
 spyfox2	SPY Fox 2: Some Assembly Required
 	f79e60c17cca601e411f1f75e8ee9b5a	51286	All	All	-	-	-	Kirben
+	90e2f0af4f779629695c6394a65bb702	-1	fr	All	-	-	-	gist974, ThierryFR
 	bc4700bc0e12879f6d25d14d6be6cfdd	-1	de	All	-	-	-	Joachim Eberhard
 	cea91e3dd47f2518ea418e41611aa77f	-1	ru	All	-	-	-	sev
 	9fd66fb3b04703bd50da4356e4202558	-1	en	Mac	-	-	-	pix_climber
 	71fe97c3108678cf604f14abe342341b	-1	nl	Windows	-	-	-	adutchguy
-	90e2f0af4f779629695c6394a65bb702	-1	fr	Windows	-	-	-	gist974
 
 	1c792d28376d45e145cb916bca0400a2	-1	nl	All	-	Demo	-	joostp
 	7222f260253f325c21fcfa68b5bfab67	-1	us	All	-	Demo	-	Kirben
@@ -744,8 +745,8 @@ spyfox2	SPY Fox 2: Some Assembly Required
 
 spyozon	SPY Fox 3: Operation Ozone
 	600abd3e9f47e63e670188b7e4e86ac7	47128	us	All	-	-	-	Kirben
+	10d8e66cd11049ce64815ebb9fd76eb3	-1	fr	All	-	-	-	gist974, ThierryFR
 	96a3069a3c63caa7329588ce1fef41ee	-1	ru	All	-	-	-	sev
-	10d8e66cd11049ce64815ebb9fd76eb3	-1	fr	Windows	-	-	-	gist974
 	7015b059ab72cff3a0ef9fb4d5e9889d	-1	de	Windows	-	-	-	andy482
 	be39a5d4db60e8aa736b9086778cb45c	-1	gb	Windows	-	-	-	
 
