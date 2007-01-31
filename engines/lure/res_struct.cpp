@@ -303,7 +303,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	// Initialise runtime fields
 	actionCtr = 0;
 	blockedState = BS_NONE;
-	coveredFlag = false;
+	coveredFlag = VB_INITIAL;
 	talkMessageId = 0;
 	talkDestCharacterId = 0;
 	talkCountdown = 0;
@@ -340,7 +340,7 @@ void HotspotData::saveToStream(WriteStream *stream) {
 	// Write out the runtime fields
 	stream->writeUint16LE(actionCtr);
 	stream->writeUint16LE(blockedState);
-	stream->writeByte(coveredFlag);
+	stream->writeByte((byte)coveredFlag);
 	stream->writeUint16LE(talkMessageId);
 	stream->writeUint16LE(talkDestCharacterId);
 	stream->writeUint16LE(talkCountdown);
@@ -378,7 +378,7 @@ void HotspotData::loadFromStream(ReadStream *stream) {
 	// Read in the runtime fields
 	actionCtr = stream->readUint16LE();
 	blockedState = (BlockedState)stream->readUint16LE();
-	coveredFlag = stream->readByte() != 0;
+	coveredFlag = (VariantBool)stream->readByte();
 	talkMessageId = stream->readUint16LE();
 	talkDestCharacterId = stream->readUint16LE();
 	talkCountdown = stream->readUint16LE();

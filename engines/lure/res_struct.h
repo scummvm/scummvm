@@ -385,6 +385,8 @@ enum CharacterMode {CHARMODE_NONE, CHARMODE_HESITATE, CHARMODE_IDLE, CHARMODE_PA
 
 enum BlockedState {BS_NONE, BS_INITIAL, BS_FINAL};
 
+enum VariantBool {VB_INITIAL, VB_FALSE, VB_TRUE};
+
 class HotspotData {
 public:
 	HotspotData(HotspotResource *rec);
@@ -426,7 +428,7 @@ public:
 	// Runtime fields
 	uint16 actionCtr;
 	BlockedState blockedState;
-	bool coveredFlag;
+	VariantBool coveredFlag;
 	uint16 talkMessageId;
 	uint16 talkDestCharacterId;
 	uint16 talkCountdown;
@@ -696,7 +698,7 @@ enum FieldName {
 	BOTTLE_FILLED = 18,
 	TALK_INDEX = 19,
 	SACK_CUT = 20,
-	ROOM_EXIT_ANIMATION = 82
+	ROOM_EXIT_ANIMATION = 76
 };
 
 enum GameFlags {
