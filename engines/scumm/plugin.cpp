@@ -558,6 +558,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi", "Freddi Fish", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddi", "FreddiD", kGenHEPC, Common::NL_NLD, UNK, 0 },
 	{ "freddi", "Freddi Fisk", kGenHEMac, Common::SE_SWE, Common::kPlatformMacintosh, 0 },
+	{ "freddi", "Marine Malice", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 	{ "freddi", "MM-DEMO", kGenHEPC, UNK_LANG, UNK, 0 },
 
 	{ "freddi2", "freddi2", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -568,6 +569,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi2", "Freddi Fish 2", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddi2", "FreddiCHSH", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi2", "Fritzi Fisch 2", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
+	{ "freddi2", "MALICE2", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 
 	{ "freddi3", "freddi3", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi3", "F3-Mdemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -581,6 +583,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi3", "fritzi3", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "freddi3", "Fritzi3demo", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "freddi3", "Fritzi3demo", kGenHEPC, Common::DE_DEU, UNK, 0 },
+	{ "freddi3", "Marine Malice 3", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 	{ "freddi3", "MALICEMCV", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "freddi3", "MaliceMCV", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 	{ "freddi3", "MM3-DEMO", kGenHEPC, Common::FR_FRA, UNK, 0 },
@@ -597,6 +600,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi4", "FreddiGS", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "freddi4", "FreddiHRBG", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi4", "FreddiMini", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi4", "Malice4", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 	{ "freddi4", "MaliceMRC", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "freddi4", "Mm4demo", kGenHEPC, Common::FR_FRA, UNK, 0 },
 
