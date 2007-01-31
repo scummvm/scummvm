@@ -254,8 +254,7 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 	case 2:
 		if (_brandonStatusBit & 1) {
 			assert(_wispJewelStrings);
-			if (textEnabled())	
-				characterSays(2004, _wispJewelStrings[0], 0, -2);
+			characterSays(2004, _wispJewelStrings[0], 0, -2);
 		} else {
 			if (_brandonStatusBit & 2) {
 				// XXX
