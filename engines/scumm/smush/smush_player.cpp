@@ -309,6 +309,7 @@ void SmushPlayer::init(int32 speed) {
 
 	_vm->_mixer->stopHandle(_compressedFileSoundHandle);
 	_vm->_mixer->stopHandle(_IACTchannel);
+	_IACTpos = 0;
 	_vm->_smixer->stop();
 
 	_initDone = true;
@@ -1407,6 +1408,7 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			_smixer->stop();
 			_vm->_mixer->stopHandle(_compressedFileSoundHandle);
 			_vm->_mixer->stopHandle(_IACTchannel);
+			_IACTpos = 0;
 			break;
 		}
 		_vm->_system->delayMillis(10);
