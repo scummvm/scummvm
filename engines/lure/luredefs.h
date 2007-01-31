@@ -118,6 +118,8 @@ enum Action {
 // Palette and animation for chute animation
 #define CHUTE_PALETTE_ID 0x404C
 #define CHUTE_ANIM_ID 0x404D
+#define CHUTE2_ANIM_ID 0x404f
+#define CHUTE3_ANIM_ID 0x4051
 // Palette and animation for hiding in barrel
 #define BARREL_PALETTE_ID 0xE9F0
 #define BARREL_ANIM_ID 0xE9F1
@@ -231,6 +233,7 @@ enum Action {
 #define TRANSFORM_ID 0x425
 #define START_EXIT_ID 0x2710
 #define BOTTLE_HOTSPOT_ID 0x2710
+#define BRICKS_ID 0x2714
 #define START_NONVISUAL_HOTSPOT_ID 0x7530
 
 // Milliseconds delay between game frames
