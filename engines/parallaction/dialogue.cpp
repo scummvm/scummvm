@@ -393,7 +393,7 @@ void runDialogue(SpeakData *data) {
 
 			if (displayedAnswers == true) {
 
-                debugC(1, kDebugDialogue, "runDialogue: showing answering face (%x)", (uint32)v48._data0);
+                debugC(1, kDebugDialogue, "runDialogue: showing answering face (%p)", (const void*)v48._data0);
 
 				_vm->_graphics->flatBlitCnv(
 					&v48,
