@@ -384,8 +384,8 @@ void Room::update() {
 	List<Hotspot *>::iterator iTemp;
 	for (i = hotspots.begin(); i != hotspots.end(); ++i) {
 		Hotspot *h = i.operator*();
-		if ((h->roomNumber() != _roomNumber) || !h->isActiveAnimation() 
-				|| (h->layer() != 1)) 
+		if ((h->layer() != 1) || (h->roomNumber() != _roomNumber) || 
+			h->skipFlag() || !h->isActiveAnimation())
 			continue;
 		int16 endY = h->y() + h->heightCopy();
 
@@ -462,9 +462,10 @@ void Room::update() {
 		// Temporary display of pathfinding data
 		for (int yctr = 0; yctr < ROOM_PATHS_HEIGHT; ++yctr) {
 			for (int xctr = 0; xctr < ROOM_PATHS_WIDTH; ++xctr) {
+/*
 				if (_roomData->paths.isOccupied(xctr, yctr)) 
 					s.fillRect(Rect(xctr * 8, yctr * 8 + 8, xctr * 8 + 7, yctr * 8 + 15), 255);
-/*
+*/
 				uint16 v = tempLayer[(yctr + 1) * DECODED_PATHS_WIDTH + xctr + 1];
 				if ((v != 0) && (v < 100)) {
 					sprintf(buffer, "%d", v % 10);
@@ -473,7 +474,6 @@ void Room::update() {
 				} else if (_roomData->paths.isOccupied(xctr, yctr)) {
 					s.fillRect(Rect(xctr * 8, yctr * 8 + 8, xctr * 8 + 7, yctr * 8 + 15), 255);
 				}
-*/
 			}
 		}
 
