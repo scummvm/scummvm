@@ -321,7 +321,7 @@ protected:
 	void o2_switchTotSub(void);
 	void o2_stub0x54(void);
 	void o2_stub0x55(void);
-	void o2_stub0x81(void);
+	void o2_scroll(void);
 	void o2_stub0x85(void);
 	bool o2_getFreeMem(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_readData(char &cmdCount, int16 &counter, int16 &retFlag);

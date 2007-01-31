@@ -52,8 +52,8 @@ public:
 	void speakerOn(int16 frequency, int32 length);
 	void speakerOff(void);
 	SoundDesc *loadSoundData(const char *path);
-	void stopSound(int16 arg);
-	void playSample(SoundDesc *sndDesc, int16 repCount, int16 frequency);
+	void stopSound(int16 fadeLength);
+	void playSample(SoundDesc *sndDesc, int16 repCount, int16 frequency, int16 fadeLength = 0);
 	void playComposition(int16 *composition, int16 freqVal);
 	void stopComposition(void);
 	int8 getCompositionSlot(void);
@@ -113,9 +113,17 @@ protected:
 	int32 _repCount;
 	double _offset;
 	double _ratio;
+
 	double _frac;
 	int16 _cur;
 	int16 _last;
+
+	bool _fade;
+	double _fadeVol;
+	double _fadeVolStep;
+	uint8 _fadeLength;
+	uint32 _fadeSamples;
+	uint32 _curFadeSamples;
 
 	GobEngine *_vm;
 
@@ -127,7 +135,7 @@ protected:
 	void writeAdlib(int16 port, int16 data);
 	void setBlasterPort(int16 port);
 	void setResetTimerFlag(char flag){return;}
-	void setSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency);
+	void setSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency, int16 fadeLength);
 	void checkEndSample(void);
 	void nextCompositionPos(void);
 };

@@ -286,7 +286,7 @@ void Inter_v2::setupOpcodes(void) {
 		{NULL, ""},
 		/* 80 */
 		OPCODE(o2_initScreen),
-		OPCODE(o2_stub0x81),
+		OPCODE(o2_scroll),
 		OPCODE(o2_setScrollOffset),
 		OPCODE(o2_playImd),
 		/* 84 */
@@ -810,23 +810,6 @@ void Inter_v2::o2_stub0x55(void) {
 		}
 		break;
 	}
-}
-
-void Inter_v2::o2_stub0x81(void) {
-	int16 var1;
-	int16 var2;
-	int16 var3;
-	int16 var4;
-	int16 var5;
-	int16 var6;
-
-	var1 = _vm->_parse->parseValExpr();
-	var2 = _vm->_parse->parseValExpr();
-	var3 = _vm->_parse->parseValExpr();
-	var4 = _vm->_parse->parseValExpr();
-	var5 = _vm->_parse->parseValExpr();
-	var6 = _vm->_parse->parseValExpr();
-	warning("GOB2 Stub! o2_stub0x81(%d, %d, %d, %d, %d, %d)", var1, var2, var3, var4, var5, var6);
 }
 
 void Inter_v2::o2_stub0x85(void) {
@@ -1508,6 +1491,7 @@ bool Inter_v2::o2_goblinFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 	cmd = load16();
 	_vm->_global->_inter_execPtr += 2;
 
+	warning("goblinFunc %d", cmd);
 	if (cmd != 101)
 		executeGoblinOpcode(cmd, extraData, NULL, NULL);
 	return false;
@@ -2229,6 +2213,37 @@ void Inter_v2::o2_setScrollOffset(void) {
 	else
 		warning("_vid_setPixelShift(%d, %d)", _vm->_draw->_word_2FC9E, _vm->_draw->_word_2FC9C);;
 */
+}
+
+void Inter_v2::o2_scroll(void) {
+	int16 startX;
+	int16 startY;
+	int16 endX;
+	int16 endY;
+	int16 stepX;
+	int16 stepY;
+	int16 curX;
+	int16 curY;
+
+	startX = _vm->_parse->parseValExpr();
+	startY = _vm->_parse->parseValExpr();
+	endX = _vm->_parse->parseValExpr();
+	endY = _vm->_parse->parseValExpr();
+	stepX = _vm->_parse->parseValExpr();
+	stepY = _vm->_parse->parseValExpr();
+
+	if ((stepY != 0) || (startY > 0) || (endY > 0))
+		warning("GOB2 Stub! Vertical scrolling / high surfaces");
+
+	curX = startX;
+	curY = startY;
+	while ((curX != endX) || (curY != endY)) {
+		curX = stepX > 0 ? MIN(curX + stepX, (int) endX) : MAX(curX + stepX, (int) endX);
+		curY = stepY > 0 ? MIN(curY + stepY, (int) endY) : MAX(curY + stepY, (int) endY);
+		_vm->_draw->_word_2FC9E = curX;
+		_vm->_video->_scrollOffset = _vm->_draw->_word_2FC9E;
+		_vm->_video->waitRetrace(_vm->_global->_videoMode);
+	}
 }
 
 void Inter_v2::o2_totSub(void) {

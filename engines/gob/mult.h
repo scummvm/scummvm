@@ -146,7 +146,7 @@ public:
 		int16 frame;
 		int16 cmd;
 		int16 freq;
-		int16 channel;
+		int16 fadeLength;
 		int16 repCount;
 		int16 resId;
 		int16 soundIndex;
@@ -248,7 +248,7 @@ public:
 				  char handleMouse) = 0;
 	virtual void animate(void) = 0;
 	virtual void playSound(Snd::SoundDesc * soundDesc, int16 repCount,
-				  int16 freq, int16 channel) = 0;
+				  int16 freq, int16 fadeLength) = 0;
 	virtual void freeMult(void) = 0;
 	virtual void freeMultKeys(void) = 0;
 
@@ -280,7 +280,7 @@ public:
 				  char handleMouse);
 	virtual void animate(void);
 	virtual void playSound(Snd::SoundDesc * soundDesc, int16 repCount,
-				  int16 freq, int16 channel);
+				  int16 freq, int16 fadeLength);
 	virtual void freeMult(void);
 	virtual void freeMultKeys(void);
 
@@ -367,7 +367,7 @@ public:
 				  char handleMouse);
 	virtual void animate(void);
 	virtual void playSound(Snd::SoundDesc * soundDesc, int16 repCount,
-				  int16 freq, int16 channel);
+				  int16 freq, int16 fadeLength);
 	virtual void freeMult(void);
 	virtual void freeMultKeys(void);
 

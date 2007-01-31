@@ -1058,7 +1058,9 @@ Game::Imd *Game::loadImdFile(const char *path, Video::SurfaceDesc *surfDesc, int
 
 	if (imdPtr->verMin & 0x4000) {
 		// loc_29C4F
-		error("GOB2 Stub! loadImdFile, imdPtr->verMin & 0x4000");
+		warning("GOB2 Stub! loadImdFile, imdPtr->verMin & 0x4000");
+		warning("Can't open IMD \"%s.IMD\"", path);
+		return 0;
 		// Sound stuff, I presume...
 	}
 

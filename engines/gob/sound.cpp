@@ -72,6 +72,16 @@ Snd::Snd(GobEngine *vm) : _vm(vm) {
 	_repCount = 0;
 	_offset = 0.0;
 
+	_frac = 0.0;
+	_cur = 0;
+	_last = 0;
+
+	_fade = false;
+	_fadeVol = 255.0;
+	_fadeVolStep = 0.0;
+	_fadeSamples = 0;
+	_curFadeSamples = 0;
+
 	_compositionPos = -1;
 
 	_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_handle,
@@ -98,16 +108,26 @@ int8 Snd::getCompositionSlot(void) {
 	return _composition[_compositionPos];
 }
 
-void Snd::stopSound(int16 arg)
+void Snd::stopSound(int16 fadeLength)
 {
 	Common::StackLock slock(_mutex);
 
-	_data = 0;
-	_end = true;
+	if (fadeLength <= 0) {
+		_data = 0;
+		_end = true;
+		_playingSound = 0;
+		return;
+	}
+
+	_fade = true;
+	_fadeVol = 255.0;
+	_fadeSamples = (int) (fadeLength * (((double) _rate) / 10.0));
+	_fadeVolStep = 255.0 / ((double) _fadeSamples);
+	_curFadeSamples = 0;
 }
 
 void Snd::waitEndPlay(void) {
-	while (!_end)
+	while (!_end && !_vm->_quitRequested)
 		_vm->_util->longDelay(200);
 	stopSound(0);
 }
@@ -125,7 +145,7 @@ void Snd::nextCompositionPos(void) {
 	while ((++_compositionPos < 50) && ((slot = _composition[_compositionPos]) != -1)) {
 		if ((slot >= 0) && (slot <= 60) && (_vm->_game->_soundSamples[slot] != 0)
 				&& !(_vm->_game->_soundTypes[slot] & 8)) {
-			setSample(_vm->_game->_soundSamples[slot], 1, 0);
+			setSample(_vm->_game->_soundSamples[slot], 1, 0, 0);
 			return;
 		}
 	}
@@ -165,7 +185,7 @@ void Snd::freeSoundDesc(Snd::SoundDesc *sndDesc, bool freedata) {
 	delete sndDesc;
 }
 
-void Snd::setSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency) {
+void Snd::setSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency, int16 fadeLength) {
 	if (frequency <= 0)
 		frequency = sndDesc->frequency;
 
@@ -183,16 +203,29 @@ void Snd::setSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency) {
 	_last = 0;
 	_repCount = repCount;
 	_end = false;
-	_playingSound = 0;
+	_playingSound = 1;
+
+	_curFadeSamples = 0;
+	if (fadeLength == 0) {
+		_fade = false;
+		_fadeVol = 255.0;
+		_fadeSamples = 0;
+		_fadeVolStep = 0.0;
+	} else {
+		_fade = true;
+		_fadeVol = 0.0;
+		_fadeSamples = (int) (fadeLength * (((double) _rate) / 10.0));
+		_fadeVolStep = -(255.0 / ((double) _fadeSamples));
+	}
 }
 
-void Snd::playSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency) {
+void Snd::playSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency, int16 fadeLength) {
 	Common::StackLock slock(_mutex);
 
 	if (!_end)
 		return; 
 
-	setSample(sndDesc, repCount, frequency);
+	setSample(sndDesc, repCount, frequency, fadeLength);
 	if (!_vm->_mixer->isSoundHandleActive(_handle))
 		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_handle,
 				this, -1, 255, 0, false, true);
@@ -204,7 +237,7 @@ void Snd::checkEndSample(void) {
 	else if ((_repCount == -1) || (--_repCount > 0)) {
 		_offset = 0.0;
 		_end = false;
-		_playingSound = 0;
+		_playingSound = 1;
 	} else {
 		_end = true;
 		_playingSound = 0;
@@ -224,13 +257,29 @@ int Snd::readBuffer(int16 *buffer, const int numSamples) {
 		if (_end)
 			return i;
 
-		*buffer++ = (int) (_last + (_cur - _last) * _frac);
+		*buffer++ = (int16) ((_last + (_cur - _last) * _frac) * _fadeVol);
 		_frac += _ratio;
 		while (_frac > 1) {
 			_frac -= 1;
 			_last = _cur;
-			_cur = _data[(int) _offset] << 8;
+			_cur = _data[(int) _offset];
 		}
+
+		if (_fade) {
+			if (++_curFadeSamples < _fadeSamples) {
+				_fadeVol -= _fadeVolStep;
+			} else {
+				if (_fadeVolStep > 0) {
+					_data = 0;
+					_end = true;
+					_playingSound = 0;
+				} else {
+					_fadeVol = 255.0;
+					_fade = false;
+				}
+			}
+		}
+
 		_offset += _ratio;
 	}
 	return numSamples;

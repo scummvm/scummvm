@@ -203,7 +203,7 @@ void Mult_v2::loadMult(int16 resId) {
 		_multData2->sndKeys[i].frame = data.readSint16LE();
 		_multData2->sndKeys[i].cmd = data.readSint16LE();
 		_multData2->sndKeys[i].freq = data.readSint16LE();
-		_multData2->sndKeys[i].channel = data.readSint16LE();
+		_multData2->sndKeys[i].fadeLength = data.readSint16LE();
 		_multData2->sndKeys[i].repCount = data.readSint16LE();
 		_multData2->sndKeys[i].soundIndex = -1;
 		_multData2->sndKeys[i].resId = -1;
@@ -564,8 +564,8 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_animDataAllocated = 0;
 		}
 
-		if (_vm->_snd->_playingSound != 0)
-			_vm->_snd->stopSound(10);
+/*		if (_vm->_snd->_playingSound != 0)
+			_vm->_snd->stopSound(10);*/
 
 		WRITE_VAR(57, (uint32)-1);
 	} else
@@ -862,11 +862,11 @@ char Mult_v2::doSoundAnim(char stop, int16 frame) {
 				if (_vm->_game->_soundSamples[sndKey->soundIndex] == 0)
 					continue;
 				playSound(_vm->_game->_soundSamples[sndKey->soundIndex], sndKey->repCount,
-				    sndKey->freq, sndKey->channel);
+				    sndKey->freq, sndKey->fadeLength);
 			}
 		} else {
 			if (_vm->_snd->_playingSound)
-				_vm->_snd->stopSound(sndKey->channel);
+				_vm->_snd->stopSound(sndKey->fadeLength);
 		}
 	}
 	return stop;
@@ -1299,8 +1299,8 @@ void Mult_v2::animate(void) {
 }
 
 void Mult_v2::playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
-	    int16 channel) {
-	_vm->_snd->playSample(soundDesc, repCount, freq);
+	    int16 fadeLength) {
+	_vm->_snd->playSample(soundDesc, repCount, freq, fadeLength);
 }
 
 void Mult_v2::freeMult(void) {
