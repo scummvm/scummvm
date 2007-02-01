@@ -45,6 +45,7 @@ struct Anim {
 	uint8 *loopStart;
 	uint16 loopsLeft;
 	uint32 nextRun;
+	uint32 lastRefresh;
 	bool play;
 	uint16 width;
 	uint16 height;
@@ -85,7 +86,6 @@ protected:
 	Screen *_screen;
 	uint8 *_dat;
 	Common::RandomSource _rnd;
-	uint8 _animDelay;
 	uint8 *_spriteDefStart;
 	uint8 _drawLayerTable[8];
 };

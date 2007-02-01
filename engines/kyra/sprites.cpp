@@ -41,7 +41,6 @@ Sprites::Sprites(KyraEngine *engine, OSystem *system) {
 	_dat = 0;
 	memset(_anims, 0, sizeof(_anims));
 	memset(_sceneShapes, 0, sizeof(_sceneShapes));
-	_animDelay = 16;
 	_spriteDefStart = 0;
 	memset(_drawLayerTable, 0, sizeof(_drawLayerTable));
 	_sceneAnimatorBeaconFlag = 0;
@@ -159,6 +158,7 @@ void Sprites::updateSceneAnims() {
 			_anims[i].y = READ_LE_UINT16(data);
 			data += 2;
 			_anims[i].flipX = false;
+			_anims[i].lastRefresh = _system->getMillis();
 			refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1 != 0);
 			break;
 		case 0xFF8D:
@@ -176,13 +176,15 @@ void Sprites::updateSceneAnims() {
 			_anims[i].y = READ_LE_UINT16(data);
 			data += 2;
 			_anims[i].flipX = true;
+			_anims[i].lastRefresh = _system->getMillis();
 			refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1 != 0);
 			break;
 		case 0xFF8A:
 			data += 2;
 			debugC(6, kDebugLevelSprites, "func: Set time to wait");
 			debugC(6, kDebugLevelSprites, "Time %i", READ_LE_UINT16(data));
-			_anims[i].nextRun = _system->getMillis() + READ_LE_UINT16(data) * _animDelay;
+			_anims[i].nextRun = _system->getMillis() + READ_LE_UINT16(data) * _engine->tickLength();
+			_anims[i].nextRun -= _system->getMillis() - _anims[i].lastRefresh;
 			data += 2;
 			break;
 		case 0xFFB3:
@@ -193,7 +195,8 @@ void Sprites::updateSceneAnims() {
 			data += 2;
 			debugC(6, kDebugLevelSprites, "Maximum time %i", READ_LE_UINT16(data));
 			data += 2;
-			_anims[i].nextRun = _system->getMillis() + rndNr * _animDelay;
+			_anims[i].nextRun = _system->getMillis() + rndNr * _engine->tickLength();
+			_anims[i].nextRun -= _system->getMillis() - _anims[i].lastRefresh;
 			break;
 		case 0xFF8C:
 			data += 2;
@@ -254,6 +257,7 @@ void Sprites::updateSceneAnims() {
 			_anims[i].sprite = READ_LE_UINT16(data);
 			_anims[i].flipX = false;
 			data += 2;
+			_anims[i].lastRefresh = _system->getMillis();
 			refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1 != 0);
 			break;
 		case 0xFF91:
@@ -263,6 +267,7 @@ void Sprites::updateSceneAnims() {
 			_anims[i].sprite = READ_LE_UINT16(data);
 			_anims[i].flipX = true;
 			data += 2;
+			_anims[i].lastRefresh = _system->getMillis();
 			refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1 != 0);
 			break;
 		case 0xFF92:
