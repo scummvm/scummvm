@@ -70,7 +70,7 @@ const KYRAGameDescription adGameDescs[] = {
 
 	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), Common::EN_ANY, Common::kPlatformPC }, KYRA3_CD_FLAGS },
 	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), Common::DE_DEU, Common::kPlatformPC }, KYRA3_CD_FLAGS },
-	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), Common::FA_FRA, Common::kPlatformPC }, KYRA3_CD_FLAGS },
+	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), Common::FR_FRA, Common::kPlatformPC }, KYRA3_CD_FLAGS },
 	{ { NULL, NULL, { {NULL, 0, NULL, 0} }, Common::UNK_LANG, Common::kPlatformUnknown }, FLAGS(0, 0, 0, 0) }
 };
 
