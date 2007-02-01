@@ -284,7 +284,7 @@ void Inter::renewTimeInVars(void) {
 	t = localtime(&now);
 
 	WRITE_VAR(5, 1900 + t->tm_year);
-	WRITE_VAR(6, t->tm_mon);
+	WRITE_VAR(6, t->tm_mon + 1);
 	WRITE_VAR(7, 0);
 	WRITE_VAR(8, t->tm_mday);
 	WRITE_VAR(9, t->tm_hour);
