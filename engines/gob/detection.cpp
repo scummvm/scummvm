@@ -477,6 +477,17 @@ static const GOBGameDescription gameDescriptions[] = {
 		{
 			"woodruff",
 			"",
+			AD_ENTRY1s("intro.stk", "b50fee012a5abcd0ac2963e1b4b56bec", 20298108),
+			EN_USA,
+			kPlatformPC,
+		},
+		GF_WOODRUFF,
+		"intro"
+	},
+	{
+		{
+			"woodruff",
+			"",
 			AD_ENTRY1s("intro.stk", "5f5f4e0a72c33391e67a47674b120cc6", 20296422),
 			DE_DEU,
 			kPlatformPC,
