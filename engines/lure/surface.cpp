@@ -371,7 +371,7 @@ Surface *Surface::newDialog(uint16 width, const char *line, uint8 colour) {
 	wordWrap(lineCopy, width - (DIALOG_EDGE_SIZE + 3) * 2, lines, numLines);
 
 	// Create the dialog 
-	Surface *result = newDialog(width, numLines, (const char **) lines, true, colour);
+	Surface *result = newDialog(width, numLines, const_cast<const char **>(lines), true, colour);
 
 	// Deallocate used resources
 	free(lines);

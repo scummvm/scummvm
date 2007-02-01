@@ -573,7 +573,7 @@ void loadErrmessDat(const char *fname) {
 			ptr[i] = (char *)ptr + (sizeof(char *) * 6 * 4) + 60 * i;
 			in.read(ptr[i], 60);
 		}
-		failureMessages = (const char **)ptr;
+		failureMessages = const_cast<const char **>(ptr);
 
 		in.close();
 	} else {

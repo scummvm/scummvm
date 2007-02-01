@@ -245,7 +245,7 @@ uint16 PopupMenu::ShowInventory() {
 		}
 	}
 	
-	uint16 result = Show(numItems, (const char **) itemNames);
+	uint16 result = Show(numItems, const_cast<const char **>(itemNames));
 	if (result != 0xffff) result = idList[result];
 
 	for (itemCtr = 0; itemCtr < numItems; ++itemCtr)
@@ -351,7 +351,7 @@ uint16 PopupMenu::ShowItems(Action contextAction) {
 		return 0xfffe;
 
 	// Display items
-	uint16 result = Show(numItems, (const char **) entryNames);
+	uint16 result = Show(numItems, const_cast<const char **>(entryNames));
 	if (result != 0xffff) result = entryIds[result];
 
 	// Deallocate display strings

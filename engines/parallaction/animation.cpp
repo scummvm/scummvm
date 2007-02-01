@@ -98,7 +98,7 @@ Animation *Parallaction::parseAnimation(ArchivedFile *file, Node *list, char *na
 		}
 		if (!scumm_stricmp(_tokens[0], "type")) {
 			if (_tokens[2][0] != '\0') {
-				vD0->_zone._type = ((4 + searchTable(_tokens[2], (const char **)_objectsNames)) << 16) & 0xFFFF0000;
+				vD0->_zone._type = ((4 + searchTable(_tokens[2], const_cast<const char **>(_objectsNames))) << 16) & 0xFFFF0000;
 			}
 			int16 _si = searchTable(_tokens[1], _zoneTypeNames);
 			if (_si != -1) {

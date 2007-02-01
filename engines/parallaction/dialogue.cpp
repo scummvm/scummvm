@@ -93,14 +93,14 @@ Dialogue *parseDialogue(ArchivedFile *file) {
 		parseFillBuffers();
 		while (scumm_stricmp(_tokens[0], "endquestion")) {	// parse answers
 
-			const char** v60 = (const char **)_localFlagNames;
+			const char** v60 = const_cast<const char **>(_localFlagNames);
 			uint16 v56 = 1;
 
 			if (_tokens[1][0]) {
 
 				if (!scumm_stricmp(_tokens[1], "global")) {
 					v56 = 2;
-					v60 = (const char **)_globalTable;
+					v60 = const_cast<const char **>(_globalTable);
 					vB4->_yesFlags[_di] |= kFlagsGlobal;
 				}
 
@@ -149,7 +149,7 @@ Dialogue *parseDialogue(ArchivedFile *file) {
 		for (uint16 v5A = 0; v5A < 5; v5A++) {
 			if (_questions[_si]->_answers[v5A] == 0) continue;
 
-			int16 v58 = _vm->searchTable(_questions[_si]->_following._names[v5A], (const char **)_questions_names);
+			int16 v58 = _vm->searchTable(_questions[_si]->_following._names[v5A], const_cast<const char **>(_questions_names));
 			memFree(_questions[_si]->_following._names[v5A]);
 
 			if (v58 == -1) {
