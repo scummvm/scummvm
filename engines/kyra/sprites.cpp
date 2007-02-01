@@ -108,6 +108,7 @@ void Sprites::setupSceneAnims() {
 			data += 2;
 
 			_anims[i].script = data;
+			_anims[i].curPos = data;
 
 			int bkgdWidth = _anims[i].width;
 			int bkgdHeight = _anims[i].height;
@@ -128,8 +129,8 @@ void Sprites::setupSceneAnims() {
 void Sprites::updateSceneAnims() {
 	debugC(9, kDebugLevelSprites,  "Sprites::updateSceneAnims()");
 	uint32 currTime = _system->getMillis();
+	bool update;
 	uint8 *data;
-	bool endLoop;
 	uint16 rndNr;
 	uint16 anim;
 	uint16 sound;
@@ -138,260 +139,253 @@ void Sprites::updateSceneAnims() {
 		if (_anims[i].script == 0 || !_anims[i].play || _anims[i].nextRun != 0 && _anims[i].nextRun > currTime)
 			continue;
 
-		if (_anims[i].reentry == 0) {
-			data = _anims[i].script;
-			if (READ_LE_UINT16(data) == 0xFF8B)
-				continue;
-		} else {
-			data = _anims[i].reentry;
-			_anims[i].reentry = 0;
-		}
-
-		endLoop = false;
-		while (READ_LE_UINT16(data) != 0xFF87 && !endLoop) {
-			assert((data - _anims[i].script) < _anims[i].length);
-			switch (READ_LE_UINT16(data)) {
-			case 0xFF88:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Set sprite image.");
-				debugC(6, kDebugLevelSprites, "Sprite index %i", READ_LE_UINT16(data));
-				_anims[i].sprite = READ_LE_UINT16(data);
-				data += 2;
-				//debugC(6, kDebugLevelSprites, "Unused %i", READ_LE_UINT16(data));
-				data += 2;
-				debugC(6, kDebugLevelSprites, "X %i", READ_LE_UINT16(data));
-				_anims[i].x = READ_LE_UINT16(data);
-				data += 2;
-				debugC(6, kDebugLevelSprites, "Y %i", READ_LE_UINT16(data));
-				_anims[i].y = READ_LE_UINT16(data);
-				data += 2;
-				_anims[i].flipX = false;
-				refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1 != 0);
-				break;
-			case 0xFF8D:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Set sprite image, flipped.");
-				debugC(6, kDebugLevelSprites, "Sprite index %i", READ_LE_UINT16(data));
-				_anims[i].sprite = READ_LE_UINT16(data);
-				data += 2;
-				//debugC(9, kDebugLevelSprites,  "Unused %i", READ_LE_UINT16(data));
-				data += 2;
-				debugC(6, kDebugLevelSprites, "X %i", READ_LE_UINT16(data));
-				_anims[i].x = READ_LE_UINT16(data);
-				data += 2;
-				debugC(6, kDebugLevelSprites, "Y %i", READ_LE_UINT16(data));
-				_anims[i].y = READ_LE_UINT16(data);
-				data += 2;
-				_anims[i].flipX = true;
-				refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1 != 0);
-				break;
-			case 0xFF8A:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Set time to wait");
-				debugC(6, kDebugLevelSprites, "Time %i", READ_LE_UINT16(data));
-				_anims[i].nextRun = _system->getMillis() + READ_LE_UINT16(data) * _animDelay;
-				data += 2;
-				break;
-			case 0xFFB3:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Set time to wait to random value");
-				rndNr = READ_LE_UINT16(data) + _rnd.getRandomNumber( READ_LE_UINT16(data) + 2);
-				debugC(6, kDebugLevelSprites, "Minimum time %i", READ_LE_UINT16(data));
-				data += 2;
-				debugC(6, kDebugLevelSprites, "Maximum time %i", READ_LE_UINT16(data));
-				data += 2;
-				_anims[i].nextRun = _system->getMillis() + rndNr * _animDelay;
-				break;
-			case 0xFF8C:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Wait until wait time has elapsed");
-				_anims[i].reentry = data;
-				endLoop = true;
-				//assert( _anims[i].nextRun > _system->getMillis());
-				break;
-			case 0xFF99:
-				data += 2;
-				debugC(1, kDebugLevelSprites, "func: Set value of unknown animation property to 1");
-				_anims[i].unk1 = 1;
-				break;
-			case 0xFF9A:
-				data += 2;
-				debugC(1, kDebugLevelSprites, "func: Set value of unknown animation property to 0");
-				_anims[i].unk1 = 0;
-				break;		
-			case 0xFF97:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Set default X coordinate of sprite");
-				debugC(6, kDebugLevelSprites, "X %i", READ_LE_UINT16(data));
-				_anims[i].x = READ_LE_UINT16(data);
-				data += 2;
-				break;
-			case 0xFF98:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Set default Y coordinate of sprite");
-				debugC(6, kDebugLevelSprites, "Y %i", READ_LE_UINT16(data));
-				_anims[i].y = READ_LE_UINT16(data);
-				data += 2;
-				break;
-			case 0xFF8B:
-				debugC(6, kDebugLevelSprites, "func: Jump to start of script section");
-				//data = scriptStart;
-				_anims[i].nextRun = _system->getMillis();
-				endLoop = true;
-				break;
-			case 0xFF8E:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Begin for () loop");
-				debugC(6, kDebugLevelSprites, "Iterations: %i", READ_LE_UINT16(data));
-				_anims[i].loopsLeft = READ_LE_UINT16(data);
-				data += 2;
-				_anims[i].loopStart = data;
-				break;
-			case 0xFF8F:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: End for () loop");
-				if (_anims[i].loopsLeft > 0) {
-					_anims[i].loopsLeft--;
-					data = _anims[i].loopStart;
-				}
-				break;
-			case 0xFF90:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Set sprite image using default X and Y");
-				debugC(6, kDebugLevelSprites, "Sprite index %i", READ_LE_UINT16(data));
-				_anims[i].sprite = READ_LE_UINT16(data);
-				_anims[i].flipX = false;
-				data += 2;
-				refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1 != 0);
-				break;
-			case 0xFF91:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Set sprite image using default X and Y, flipped.");
-				debugC(6, kDebugLevelSprites, "Sprite index %i", READ_LE_UINT16(data));
-				_anims[i].sprite = READ_LE_UINT16(data);
-				_anims[i].flipX = true;
-				data += 2;
-				refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1 != 0);
-				break;
-			case 0xFF92:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Increase value of default X-coordinate");
-				debugC(6, kDebugLevelSprites, "Increment %i", READ_LE_UINT16(data));
-				_anims[i].x += READ_LE_UINT16(data);
-				data += 2;
-				break;
-			case 0xFF93:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Increase value of default Y-coordinate");
-				debugC(6, kDebugLevelSprites, "Increment %i", READ_LE_UINT16(data));
-				_anims[i].y += READ_LE_UINT16(data);
-				data += 2;
-				break;
-			case 0xFF94:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Decrease value of default X-coordinate");
-				debugC(6, kDebugLevelSprites, "Decrement %i", READ_LE_UINT16(data));
-				_anims[i].x -= READ_LE_UINT16(data);
-				data += 2;
-				break;
-			case 0xFF95:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Decrease value of default Y-coordinate");
-				debugC(6, kDebugLevelSprites, "Decrement %i", READ_LE_UINT16(data));
-				_anims[i].y -= READ_LE_UINT16(data);
-				data += 2;
-				break;
-			case 0xFF96:
-				data += 2;
-				debugC(9, kDebugLevelSprites,  "func: Stop animation");
-				debugC(9, kDebugLevelSprites,  "Animation index %i", READ_LE_UINT16(data));
-				anim = READ_LE_UINT16(data);
-				data += 2;
-				_anims[anim].play = false;
-				_anims[anim].sprite = -1;
-				break;
-/*			case 0xFF97:
-				data += 2;
-				debugC(1, kDebugLevelSprites, "func: Set value of animation property 34h to 0");
-				break;*/
-			case 0xFFAD:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Set Brandon's X coordinate");
-				debugC(6, kDebugLevelSprites, "X %i", READ_LE_UINT16(data));
-				_engine->currentCharacter()->x1 = READ_LE_UINT16(data);
-				data += 2;
-				break;
-			case 0xFFAE:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Set Brandon's Y coordinate");
-				debugC(6, kDebugLevelSprites, "Y %i", READ_LE_UINT16(data));
-				_engine->currentCharacter()->y1 = READ_LE_UINT16(data);
-				data += 2;
-				break;
-			case 0xFFAF:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Set Brandon's sprite");
-				debugC(6, kDebugLevelSprites, "Sprite %i", READ_LE_UINT16(data));
-				_engine->currentCharacter()->currentAnimFrame = READ_LE_UINT16(data);
-				data += 2;
-				break;
-			case 0xFFAA:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Reset Brandon's sprite");
-				_engine->animator()->actors()->sceneAnimPtr = 0;
-				_engine->animator()->actors()->bkgdChangeFlag = 1;
-				_engine->animator()->actors()->refreshFlag = 1;
-				_engine->animator()->restoreAllObjectBackgrounds();
-				_engine->animator()->flagAllObjectsForRefresh();
-				_engine->animator()->updateAllObjectShapes();
-				break;
-			case 0xFFAB:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Update Brandon's sprite");
-				_engine->animator()->animRefreshNPC(0);
-				_engine->animator()->flagAllObjectsForRefresh();
-				_engine->animator()->updateAllObjectShapes();
-				break;
-			case 0xFFB0:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Play sound");
-				debugC(6, kDebugLevelSprites, "Sound index %i", READ_LE_UINT16(data));
-				_engine->snd_playSoundEffect(READ_LE_UINT16(data));
-				data += 2;
-				break;
-			case 0xFFB1:
-				data += 2;
-				_sceneAnimatorBeaconFlag = 1;
-				break;
-			case 0xFFB2:
-				data += 2;
-				_sceneAnimatorBeaconFlag = 0;
-				break;
-			case 0xFFB4:
-				data += 2;
-				debugC(6, kDebugLevelSprites, "func: Play (at random) a certain sound at a certain percentage of time");
-				debugC(6, kDebugLevelSprites, "Sound index %i", READ_LE_UINT16(data));
-				sound = READ_LE_UINT16(data);
-				data += 2;
-				debugC(6, kDebugLevelSprites, "Percentage %i", READ_LE_UINT16(data));
-				rndNr = _rnd.getRandomNumber(100);
-				if (rndNr <= READ_LE_UINT16(data))
-					_engine->snd_playSoundEffect(sound);
-				data += 2;
-				break;
-			case 0xFFA7:
-				data += 2;
-				_anims[READ_LE_UINT16(data)].play = 1;
-				data += 2;
-				break;
-			default:
-				warning("Unsupported anim command %X in script %i", READ_LE_UINT16(data), i);
-				//endLoop = true;
-				data += 2;
-				break;
+		data = _anims[i].curPos;
+		update = true;
+		debugC(6, kDebugLevelSprites, "anim: %d 0x%.04X", i, READ_LE_UINT16(data));
+		assert((data - _anims[i].script) < _anims[i].length);
+		switch (READ_LE_UINT16(data)) {
+		case 0xFF88:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Set sprite image.");
+			debugC(6, kDebugLevelSprites, "Sprite index %i", READ_LE_UINT16(data));
+			_anims[i].sprite = READ_LE_UINT16(data);
+			data += 2;
+			//debugC(6, kDebugLevelSprites, "Unused %i", READ_LE_UINT16(data));
+			data += 2;
+			debugC(6, kDebugLevelSprites, "X %i", READ_LE_UINT16(data));
+			_anims[i].x = READ_LE_UINT16(data);
+			data += 2;
+			debugC(6, kDebugLevelSprites, "Y %i", READ_LE_UINT16(data));
+			_anims[i].y = READ_LE_UINT16(data);
+			data += 2;
+			_anims[i].flipX = false;
+			refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1 != 0);
+			break;
+		case 0xFF8D:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Set sprite image, flipped.");
+			debugC(6, kDebugLevelSprites, "Sprite index %i", READ_LE_UINT16(data));
+			_anims[i].sprite = READ_LE_UINT16(data);
+			data += 2;
+			//debugC(9, kDebugLevelSprites,  "Unused %i", READ_LE_UINT16(data));
+			data += 2;
+			debugC(6, kDebugLevelSprites, "X %i", READ_LE_UINT16(data));
+			_anims[i].x = READ_LE_UINT16(data);
+			data += 2;
+			debugC(6, kDebugLevelSprites, "Y %i", READ_LE_UINT16(data));
+			_anims[i].y = READ_LE_UINT16(data);
+			data += 2;
+			_anims[i].flipX = true;
+			refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1 != 0);
+			break;
+		case 0xFF8A:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Set time to wait");
+			debugC(6, kDebugLevelSprites, "Time %i", READ_LE_UINT16(data));
+			_anims[i].nextRun = _system->getMillis() + READ_LE_UINT16(data) * _animDelay;
+			data += 2;
+			break;
+		case 0xFFB3:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Set time to wait to random value");
+			rndNr = READ_LE_UINT16(data) + _rnd.getRandomNumber( READ_LE_UINT16(data) + 2);
+			debugC(6, kDebugLevelSprites, "Minimum time %i", READ_LE_UINT16(data));
+			data += 2;
+			debugC(6, kDebugLevelSprites, "Maximum time %i", READ_LE_UINT16(data));
+			data += 2;
+			_anims[i].nextRun = _system->getMillis() + rndNr * _animDelay;
+			break;
+		case 0xFF8C:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Wait until wait time has elapsed");
+			update = (_anims[i].nextRun < currTime);
+			//assert( _anims[i].nextRun > _system->getMillis());
+			break;
+		case 0xFF99:
+			data += 2;
+			debugC(1, kDebugLevelSprites, "func: Set value of unknown animation property to 1");
+			_anims[i].unk1 = 1;
+			break;
+		case 0xFF9A:
+			data += 2;
+			debugC(1, kDebugLevelSprites, "func: Set value of unknown animation property to 0");
+			_anims[i].unk1 = 0;
+			break;		
+		case 0xFF97:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Set default X coordinate of sprite");
+			debugC(6, kDebugLevelSprites, "X %i", READ_LE_UINT16(data));
+			_anims[i].x = READ_LE_UINT16(data);
+			data += 2;
+			break;
+		case 0xFF98:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Set default Y coordinate of sprite");
+			debugC(6, kDebugLevelSprites, "Y %i", READ_LE_UINT16(data));
+			_anims[i].y = READ_LE_UINT16(data);
+			data += 2;
+			break;
+		case 0xFF8B:
+			debugC(6, kDebugLevelSprites, "func: Jump to start of script section");
+			_anims[i].curPos = _anims[i].script;
+			_anims[i].nextRun = _system->getMillis();
+			update = false;
+			break;
+		case 0xFF8E:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Begin for () loop");
+			debugC(6, kDebugLevelSprites, "Iterations: %i", READ_LE_UINT16(data));
+			_anims[i].loopsLeft = READ_LE_UINT16(data);
+			data += 2;
+			_anims[i].loopStart = data;
+			break;
+		case 0xFF8F:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: End for () loop");
+			if (_anims[i].loopsLeft > 0) {
+				_anims[i].loopsLeft--;
+				data = _anims[i].loopStart;
 			}
+			break;
+		case 0xFF90:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Set sprite image using default X and Y");
+			debugC(6, kDebugLevelSprites, "Sprite index %i", READ_LE_UINT16(data));
+			_anims[i].sprite = READ_LE_UINT16(data);
+			_anims[i].flipX = false;
+			data += 2;
+			refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1 != 0);
+			break;
+		case 0xFF91:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Set sprite image using default X and Y, flipped.");
+			debugC(6, kDebugLevelSprites, "Sprite index %i", READ_LE_UINT16(data));
+			_anims[i].sprite = READ_LE_UINT16(data);
+			_anims[i].flipX = true;
+			data += 2;
+			refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1 != 0);
+			break;
+		case 0xFF92:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Increase value of default X-coordinate");
+			debugC(6, kDebugLevelSprites, "Increment %i", READ_LE_UINT16(data));
+			_anims[i].x += READ_LE_UINT16(data);
+			data += 2;
+			break;
+		case 0xFF93:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Increase value of default Y-coordinate");
+			debugC(6, kDebugLevelSprites, "Increment %i", READ_LE_UINT16(data));
+			_anims[i].y += READ_LE_UINT16(data);
+			data += 2;
+			break;
+		case 0xFF94:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Decrease value of default X-coordinate");
+			debugC(6, kDebugLevelSprites, "Decrement %i", READ_LE_UINT16(data));
+			_anims[i].x -= READ_LE_UINT16(data);
+			data += 2;
+			break;
+		case 0xFF95:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Decrease value of default Y-coordinate");
+			debugC(6, kDebugLevelSprites, "Decrement %i", READ_LE_UINT16(data));
+			_anims[i].y -= READ_LE_UINT16(data);
+			data += 2;
+			break;
+		case 0xFF96:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Stop animation");
+			debugC(6, kDebugLevelSprites, "Animation index %i", READ_LE_UINT16(data));
+			anim = READ_LE_UINT16(data);
+			data += 2;
+			_anims[anim].play = false;
+			_anims[anim].sprite = -1;
+			break;
+/*		case 0xFF97:
+			data += 2;
+			debugC(1, kDebugLevelSprites, "func: Set value of animation property 34h to 0");
+			break;*/
+		case 0xFFAD:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Set Brandon's X coordinate");
+			debugC(6, kDebugLevelSprites, "X %i", READ_LE_UINT16(data));
+			_engine->currentCharacter()->x1 = READ_LE_UINT16(data);
+			data += 2;
+			break;
+		case 0xFFAE:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Set Brandon's Y coordinate");
+			debugC(6, kDebugLevelSprites, "Y %i", READ_LE_UINT16(data));
+			_engine->currentCharacter()->y1 = READ_LE_UINT16(data);
+			data += 2;
+			break;
+		case 0xFFAF:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Set Brandon's sprite");
+			debugC(6, kDebugLevelSprites, "Sprite %i", READ_LE_UINT16(data));
+			_engine->currentCharacter()->currentAnimFrame = READ_LE_UINT16(data);
+			data += 2;
+			break;
+		case 0xFFAA:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Reset Brandon's sprite");
+			_engine->animator()->actors()->sceneAnimPtr = 0;
+			_engine->animator()->actors()->bkgdChangeFlag = 1;
+			_engine->animator()->actors()->refreshFlag = 1;
+			_engine->animator()->restoreAllObjectBackgrounds();
+			_engine->animator()->flagAllObjectsForRefresh();
+			_engine->animator()->updateAllObjectShapes();
+			break;
+		case 0xFFAB:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Update Brandon's sprite");
+			_engine->animator()->animRefreshNPC(0);
+			_engine->animator()->flagAllObjectsForRefresh();
+			_engine->animator()->updateAllObjectShapes();
+			break;
+		case 0xFFB0:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Play sound");
+			debugC(6, kDebugLevelSprites, "Sound index %i", READ_LE_UINT16(data));
+			_engine->snd_playSoundEffect(READ_LE_UINT16(data));
+			data += 2;
+			break;
+		case 0xFFB1:
+			data += 2;
+			_sceneAnimatorBeaconFlag = 1;
+			break;
+		case 0xFFB2:
+			data += 2;
+			_sceneAnimatorBeaconFlag = 0;
+			break;
+		case 0xFFB4:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Play (at random) a certain sound at a certain percentage of time");
+			debugC(6, kDebugLevelSprites, "Sound index %i", READ_LE_UINT16(data));
+			sound = READ_LE_UINT16(data);
+			data += 2;
+			debugC(6, kDebugLevelSprites, "Percentage %i", READ_LE_UINT16(data));
+			rndNr = _rnd.getRandomNumber(100);
+			if (rndNr <= READ_LE_UINT16(data))
+				_engine->snd_playSoundEffect(sound);
+			data += 2;
+			break;
+		case 0xFFA7:
+			data += 2;
+			debugC(6, kDebugLevelSprites, "func: Play animation");
+			debugC(6, kDebugLevelSprites, "Animation index %i", READ_LE_UINT16(data));
+			_anims[READ_LE_UINT16(data)].play = 1;
+			data += 2;
+			break;
+		default:
+			warning("Unsupported anim command %X in script %i", READ_LE_UINT16(data), i);
+			data += 2;
+			break;
 		}
 
+		if (update)
+			_anims[i].curPos = data;
 		if (READ_LE_UINT16(data) == 0xFF87)
 			_anims[i].play = false;
 	}
@@ -464,6 +458,7 @@ void Sprites::loadDAT(const char *filename, SceneExits &exits) {
 			case 0xFF86:
 				assert(nextAnim < MAX_NUM_ANIMS);
 				_anims[nextAnim].script = data;
+				_anims[nextAnim].curPos = data;
 				_anims[nextAnim].sprite = -1;
 				_anims[nextAnim].play = true;
 				animstart = data;
@@ -478,7 +473,7 @@ void Sprites::loadDAT(const char *filename, SceneExits &exits) {
 				data += 2;
 				break;
 			default:
-				debugC(1, kDebugLevelSprites, "Unknown code in DAT file: %x", READ_LE_UINT16(data));
+				warning("Unknown code in DAT file '%s' offset %d: %x", filename, data - _dat, READ_LE_UINT16(data));
 				data += 2;
 				break;
 			}

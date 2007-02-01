@@ -36,6 +36,7 @@ struct Sprite {
 
 struct Anim {
 	uint8 *script;
+	uint8 *curPos;
 	uint16 length;
 	int16 x;
 	int16 y;
@@ -43,7 +44,6 @@ struct Anim {
 	int8 sprite;
 	uint8 *loopStart;
 	uint16 loopsLeft;
-	uint8 *reentry;
 	uint32 nextRun;
 	bool play;
 	uint16 width;
