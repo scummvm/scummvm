@@ -557,7 +557,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 			len = *src++;
 
 		do {
-			if (*scaleytab++ < _scaleY) {
+			if (_scaleY == 255 || *scaleytab++ < _scaleY) {
 				if (_actorHitMode) {
 					if (color && y == _actorHitY && v1.x == _actorHitX) {
 						_actorHitResult = true;
