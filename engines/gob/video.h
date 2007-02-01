@@ -120,7 +120,7 @@ public:
 	virtual void drawLetter(int16 item, int16 x, int16 y, FontDesc * fontDesc,
 			int16 color1, int16 color2, int16 transp, SurfaceDesc * dest) = 0;
 	virtual SurfaceDesc *initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags) = 0;
-	virtual void waitRetrace(int16) = 0;
+	virtual void waitRetrace(int16, bool mouse = true) = 0;
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 			int16 x, int16 y, int16 transp, SurfaceDesc * destDesc) = 0;
 
@@ -136,7 +136,7 @@ public:
 	virtual void drawLetter(int16 item, int16 x, int16 y, FontDesc * fontDesc,
 			int16 color1, int16 color2, int16 transp, SurfaceDesc * dest);
 	virtual SurfaceDesc *initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags);
-	virtual void waitRetrace(int16);
+	virtual void waitRetrace(int16, bool mouse = true);
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 			int16 x, int16 y, int16 transp, SurfaceDesc * destDesc);
 
@@ -149,7 +149,7 @@ public:
 	virtual void drawLetter(int16 item, int16 x, int16 y, FontDesc * fontDesc,
 			int16 color1, int16 color2, int16 transp, SurfaceDesc * dest);
 	virtual SurfaceDesc *initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags);
-	virtual void waitRetrace(int16);
+	virtual void waitRetrace(int16, bool mouse = true);
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 			int16 x, int16 y, int16 transp, SurfaceDesc * destDesc);
 

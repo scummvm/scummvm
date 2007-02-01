@@ -84,6 +84,7 @@ public:
 	static void prepareStr(char *str);
 	void waitMouseRelease(char drawMouse);
 	void forceMouseUp(void);
+	void setScrollOffset(int16 scrollOffset);
 
 	static const char trStr1[];
 	static const char trStr2[];

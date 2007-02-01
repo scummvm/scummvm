@@ -564,8 +564,8 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_animDataAllocated = 0;
 		}
 
-/*		if (_vm->_snd->_playingSound != 0)
-			_vm->_snd->stopSound(10);*/
+		if (_vm->_snd->_playingSound != 0)
+			_vm->_snd->stopSound(10);
 
 		WRITE_VAR(57, (uint32)-1);
 	} else

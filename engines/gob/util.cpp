@@ -188,8 +188,8 @@ void Util::longDelay(uint16 msecs) {
 	do {
 		_vm->_video->waitRetrace(_vm->_global->_videoMode);
 		processInput();
-		delay(25);
-	} while (g_system->getMillis() < time);
+		delay(15);
+	} while (!_vm->_quitRequested && (g_system->getMillis() < time));
 }
 
 void Util::delay(uint16 msecs) {
@@ -492,6 +492,12 @@ void Util::keyboard_release(void) {;}
 void Util::forceMouseUp(void) {
 	_vm->_game->_mouseButtons = 0;
 	_mouseButtons = 0;
+}
+
+void Util::setScrollOffset(int16 scrollOffset) {
+	processInput();
+	_vm->_video->_scrollOffset = scrollOffset;
+	_vm->_video->waitRetrace(_vm->_global->_videoMode);
 }
 
 } // End of namespace Gob

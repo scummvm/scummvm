@@ -1633,7 +1633,7 @@ bool Inter_v2::o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag) {
 		break;
 
 	case 50:
-		if (_vm->_global->_videoMode != 0x0D) { // || (word_2D479 == 256) {
+		if ((_vm->_global->_videoMode != 0x0D) || (_vm->_global->_colorCount == 256)) {
 			_vm->_global->_inter_execPtr += 16;
 			return false;
 		}
@@ -1647,7 +1647,7 @@ bool Inter_v2::o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag) {
 		break;
 
 	case 52:
-		if (_vm->_global->_videoMode != 0x0D) { // || (word_2D479 == 256) {
+		if ((_vm->_global->_videoMode != 0x0D) || (_vm->_global->_colorCount == 256)) {
 			_vm->_global->_inter_execPtr += 48;
 			return false;
 		}
@@ -2204,8 +2204,7 @@ void Inter_v2::o2_setScrollOffset(void) {
 		_vm->_draw->_word_2FC9E = offset;
 		_vm->_draw->_word_2FC9C = _vm->_parse->parseValExpr();
 	}
-	_vm->_video->_scrollOffset = _vm->_draw->_word_2FC9E;
-	_vm->_video->waitRetrace(_vm->_global->_videoMode);
+	_vm->_util->setScrollOffset(_vm->_draw->_word_2FC9E);
 	_noBusyWait = true;
 
 /*
@@ -2238,12 +2237,11 @@ void Inter_v2::o2_scroll(void) {
 
 	curX = startX;
 	curY = startY;
-	while ((curX != endX) || (curY != endY)) {
+	while (!_vm->_quitRequested && ((curX != endX) || (curY != endY))) {
 		curX = stepX > 0 ? MIN(curX + stepX, (int) endX) : MAX(curX + stepX, (int) endX);
 		curY = stepY > 0 ? MIN(curY + stepY, (int) endY) : MAX(curY + stepY, (int) endY);
 		_vm->_draw->_word_2FC9E = curX;
-		_vm->_video->_scrollOffset = _vm->_draw->_word_2FC9E;
-		_vm->_video->waitRetrace(_vm->_global->_videoMode);
+		_vm->_util->setScrollOffset(_vm->_draw->_word_2FC9E);
 	}
 }
 
@@ -2389,13 +2387,13 @@ void Inter_v2::animPalette(void) {
 			col = _vm->_global->_pPaletteDesc->vgaPal[_animPalLowIndex[j]];
 
 			for (i = _animPalLowIndex[j]; i < _animPalHighIndex[j]; i++)
-				_vm->_draw->_vgaPalette[i] = _vm->_global->_pPaletteDesc->vgaPal[i];
+				_vm->_draw->_vgaPalette[i] = _vm->_global->_pPaletteDesc->vgaPal[i + 1];
 
 			_vm->_global->_pPaletteDesc->vgaPal[_animPalHighIndex[j]] = col;
 		} else {
 			col = _vm->_global->_pPaletteDesc->vgaPal[_animPalHighIndex[j]];
 			for (i = _animPalHighIndex[j]; i > _animPalLowIndex[j]; i--)
-				_vm->_draw->_vgaPalette[i] = _vm->_global->_pPaletteDesc->vgaPal[i];
+				_vm->_draw->_vgaPalette[i] = _vm->_draw->_vgaPalette[i - 1];
 
 			_vm->_global->_pPaletteDesc->vgaPal[_animPalLowIndex[j]] = col;
 		}

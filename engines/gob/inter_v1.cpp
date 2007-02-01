@@ -1345,7 +1345,7 @@ bool Inter_v1::o1_keyFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 	now = _vm->_util->getTimeKey();
 	if (!_noBusyWait)
 		if ((now - lastCalled) <= 20)
-			_vm->_util->longDelay(20);
+			_vm->_util->longDelay(1);
 	lastCalled = now;
 	_noBusyWait = false;
 
@@ -1413,6 +1413,7 @@ bool Inter_v1::o1_keyFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 		storeKey(key);
 		return false;
 	} else {
+		_vm->_util->longDelay(1);
 		key = _vm->_game->checkCollisions(0, 0, 0, 0);
 		storeKey(key);
 

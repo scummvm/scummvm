@@ -29,6 +29,7 @@
 #include "gob/global.h"
 #include "gob/video.h"
 #include "gob/draw.h"
+#include "gob/util.h"
 
 namespace Gob {
 
@@ -37,11 +38,16 @@ Video_v1::Video_v1(GobEngine *vm) : Video(vm) {
 
 //XXX: Use this function to update the screen for now.
 //     This should be moved to a better location later on.
-void Video_v1::waitRetrace(int16) {
-	CursorMan.showMouse((_vm->_draw->_showCursor & 2) != 0);
+void Video_v1::waitRetrace(int16, bool mouse) {
+	uint32 time;
+
+	if (mouse)
+		CursorMan.showMouse((_vm->_draw->_showCursor & 2) != 0);
 	if (_vm->_global->_pPrimarySurfDesc) {
+		time = _vm->_util->getTimeKey();
 		g_system->copyRectToScreen(_vm->_global->_pPrimarySurfDesc->vidPtr, 320, 0, 0, 320, 200);
 		g_system->updateScreen();
+		_vm->_util->delay(MAX(1, 10 - (int)(_vm->_util->getTimeKey() - time)));
 	}
 }
 
