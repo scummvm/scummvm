@@ -58,6 +58,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "ef08c8c237ee1473fd52578303fc36df"), Common::IT_ITA, Common::kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from gourry
 
 	{ { "kyra1", 0, AD_ENTRY1("TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59"), Common::EN_ANY, Common::kPlatformFMTowns }, KYRA1_TOWNS_FLAGS },
+	//{ { "kyra1", 0, AD_ENTRY1("TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59"), Common::JA_JPN, Common::kPlatformFMTowns }, KYRA1_TOWNS_FLAGS },
 
 	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "fac399fe62f98671e56a005c5e94e39f"), Common::EN_ANY, Common::kPlatformPC }, KYRA1_CD_FLAGS },
 	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "230f54e6afc007ab4117159181a1c722"), Common::DE_DEU, Common::kPlatformPC }, KYRA1_CD_FLAGS },
@@ -67,7 +68,9 @@ const KYRAGameDescription adGameDescs[] = {
 
 	{ { "kyra2", 0, AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"), Common::UNK_LANG, Common::kPlatformPC }, KYRA2_UNK_FLAGS }, // check this! (cd version?)
 
-	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), Common::UNK_LANG, Common::kPlatformPC }, KYRA3_CD_FLAGS },
+	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), Common::EN_ANY, Common::kPlatformPC }, KYRA3_CD_FLAGS },
+	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), Common::DE_DEU, Common::kPlatformPC }, KYRA3_CD_FLAGS },
+	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), Common::FA_FRA, Common::kPlatformPC }, KYRA3_CD_FLAGS },
 	{ { NULL, NULL, { {NULL, 0, NULL, 0} }, Common::UNK_LANG, Common::kPlatformUnknown }, FLAGS(0, 0, 0, 0) }
 };
 
