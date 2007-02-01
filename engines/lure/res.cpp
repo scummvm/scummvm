@@ -472,6 +472,7 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 	} else {
 		// Standard load
 		bool loadFlag = true;
+		uint16 talkIndex;
 
 		switch (res->loadOffset) {
 		case 0x3afe:
@@ -491,6 +492,17 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 			// Standard animation load
 			break;
 
+		case 0x8617:
+			// Custom loader used by the notice hotspot 42ah in room #20
+			talkIndex = _fieldList.getField(TALK_INDEX);
+			if ((talkIndex < 8) || (talkIndex >= 14))
+				// Don't load hotspot
+				loadFlag = false;
+			else
+				// Make the notice be on-screen
+				res->startY = 85;    
+			break;
+
 		case 0x88ac:
 			// Torch in room #1
 			loadFlag = _fieldList.getField(TORCH_HIDE) == 0;
@@ -506,6 +518,7 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 			Hotspot *hotspot = addHotspot(hotspotId);
 			assert(hotspot);
 			if (res->loadOffset == 0x7167) hotspot->setPersistant(true);
+			if (res->loadOffset == 0x8617) hotspot->handleTalkDialog();
 			return hotspot;
 		}
 	}
