@@ -995,7 +995,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Voodoo Girl - Queen of the Darned (v1.2 2002 Mar 29)", "11d0417b7b886f963d0b36789dac4c8f"),
 	FANMADE("Wizaro (v0.1)", "abeec1eda6eaf8dbc52443ea97ff140c"),
 
-	{ { NULL, NULL, {NULL, 0, NULL, 0}, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0, 0 }
+	{ { NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0, 0 }
 };
 
 }
