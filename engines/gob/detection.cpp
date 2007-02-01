@@ -247,7 +247,51 @@ static const GOBGameDescription gameDescriptions[] = {
 			"gob2",
 			"CD 1.02",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
-			UNK_LANG,
+			EN_ANY,
+			kPlatformPC,
+		},
+		GF_GOB2 | GF_CD,
+		"intro"
+	},
+	{
+		{
+			"gob2",
+			"CD 1.02",
+			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
+			DE_DEU,
+			kPlatformPC,
+		},
+		GF_GOB2 | GF_CD,
+		"intro"
+	},
+	{
+		{
+			"gob2",
+			"CD 1.02",
+			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
+			FR_FRA,
+			kPlatformPC,
+		},
+		GF_GOB2 | GF_CD,
+		"intro"
+	},
+	{
+		{
+			"gob2",
+			"CD 1.02",
+			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
+			IT_ITA,
+			kPlatformPC,
+		},
+		GF_GOB2 | GF_CD,
+		"intro"
+	},
+	{
+		{
+			"gob2",
+			"CD 1.02",
+			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
+			ES_ESP,
 			kPlatformPC,
 		},
 		GF_GOB2 | GF_CD,

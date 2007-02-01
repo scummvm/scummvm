@@ -651,6 +651,7 @@ int GobEngine::init() {
 	case Common::DE_DEU:
 		_global->_language = 1;
 		break;
+	case Common::EN_ANY:
 	case Common::EN_GRB:
 		_global->_language = 2;
 		break;
