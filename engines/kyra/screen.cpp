@@ -140,8 +140,6 @@ void Screen::updateScreen() {
 
 	updateDirtyRects();
 
-	_forceFullUpdate = false;
-	_numDirtyRects = 0;
 	//for debug reasons (needs 640x200 screen)
 	//_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 320, 0, SCREEN_W, SCREEN_H);
 	_system->updateScreen();
