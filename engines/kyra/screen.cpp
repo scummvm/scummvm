@@ -138,6 +138,16 @@ void Screen::updateScreen() {
 	if (_disableScreen)
 		return;
 
+	updateDirtyRects();
+
+	_forceFullUpdate = false;
+	_numDirtyRects = 0;
+	//for debug reasons (needs 640x200 screen)
+	//_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 320, 0, SCREEN_W, SCREEN_H);
+	_system->updateScreen();
+}
+
+void Screen::updateDirtyRects() {
 	if (_forceFullUpdate) {
 		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
 	} else {
@@ -149,9 +159,6 @@ void Screen::updateScreen() {
 	}
 	_forceFullUpdate = false;
 	_numDirtyRects = 0;
-	//for debug reasons (needs 640x200 screen)
-	//_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 320, 0, SCREEN_W, SCREEN_H);
-	_system->updateScreen();
 }
 
 uint8 *Screen::getPagePtr(int pageNum) {
@@ -237,6 +244,8 @@ void Screen::fadeSpecialPalette(int palIndex, int startIndex, int size, int fade
 
 void Screen::fadePalette(const uint8 *palData, int delay) {
 	debugC(9, kDebugLevelScreen, "Screen::fadePalette(%p, %d)", (const void *)palData, delay);
+	updateDirtyRects();
+
 	uint8 fadePal[768];
 	memcpy(fadePal, _screenPalette, 768);
 	uint8 diff, maxDiff = 0;

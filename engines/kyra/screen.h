@@ -200,6 +200,7 @@ public:
 
 private:
 	uint8 *getPagePtr(int pageNum);
+	void updateDirtyRects();
 
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
 	void restoreMouseRect();
