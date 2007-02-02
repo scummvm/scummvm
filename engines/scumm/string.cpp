@@ -400,7 +400,6 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 
 void ScummEngine::CHARSET_1() {
 	Actor *a;
-	int c = 0;
 #ifndef DISABLE_SCUMM_7_8
 	byte subtitleBuffer[200];
 	byte *subtitleLine = subtitleBuffer;
@@ -533,6 +532,7 @@ void ScummEngine::CHARSET_1() {
 
 	_charset->_disableOffsX = _charset->_firstChar = !_keepText;
 
+	int c = 0;
 	while (handleNextCharsetCode(a, &c)) {
 		if (c == 0) {
 			// End of text reached, set _haveMsg accordingly

@@ -235,15 +235,12 @@ void Gdi::init() {
 	if (_vm->_game.version >= 7) {
 		// We now have mostly working smooth scrolling code in place for V7+ games
 		// (i.e. The Dig, Full Throttle and COMI). It seems to work very well so far.
-		// One area which still may need some work are the AKOS codecs (except for
-		// codec 1, which I already updated): their masking code may need adjustments,
-		// similar to the treatment codec 1 received.
 		//
 		// To understand how we achieve smooth scrolling, first note that with it, the
 		// virtual screen strips don't match the display screen strips anymore. To
 		// overcome that problem, we simply use a screen pitch that is 8 pixel wider
 		// than the actual screen width, and always draw one strip more than needed to
-		// the backbuf (of course we have to treat the right border seperately). This
+		// the backbuf (thus we have to treat the right border seperately).
 		_numStrips += 1;
 	}
 }
@@ -341,16 +338,15 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 	vs->pitch = width;
 
 	if (_game.version >= 7) {
-		// Increase the pitch by one; needed to accomodate the extra
-		// screen strip which we use to implement smooth scrolling.
-		// See Gdi::init()
+		// Increase the pitch by one; needed to accomodate the extra screen
+		// strip which we use to implement smooth scrolling. See Gdi::init().
 		vs->pitch += 8;
 	}
 
 	size = vs->pitch * vs->h;
 	if (scrollable) {
 		// Allow enough spaces so that rooms can be up to 4 resp. 8 screens
-		// wide. To achieve (horizontal!) scrolling, we use a neat trick:
+		// wide. To achieve horizontal scrolling, SCUMM uses a neat trick:
 		// only the offset into the screen buffer (xstart) is changed. That way
 		// very little of the screen has to be redrawn, and we have a very low
 		// memory overhead (namely for every pixel we want to scroll, we need
@@ -607,8 +603,8 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 		// HACK: This is dirty hack which renders narrow NES rooms centered
 		// NES can address negative number strips and that poses problem for
-		// our code. So instead adding zillions of fixes and potentially break
-		// other games we shift it right on rendering stage
+		// our code. So instead of adding zillions of fixes and potentially
+		// breaking other games, we shift it right at the rendering stage.
 		if ((_game.platform == Common::kPlatformNES) && (((_NESStartStrip > 0) && (vs->number == kMainVirtScreen)) || (vs->number == kTextVirtScreen))) {
 			x += 16;
 			while (x + width >= _screenWidth)
@@ -630,17 +626,18 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 // EGA
 // monkey2 loom maniac monkey1 atlantis indy3 zak loomcd
 
+static const byte cgaDither[2][2][16] = {
+	{{0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 3, 1, 3, 2, 1, 3},
+	 {0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3}},
+	{{0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3},
+	 {0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 1, 1, 3, 2, 1, 3}}};
+
 // CGA dithers 4x4 square with direct substitutes
 // Odd lines have colors swapped, so there will be checkered patterns.
 // But apparently there is a mistake for 10th color.
 void ScummEngine::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const {
 	byte *ptr;
 	int idx1, idx2;
-	static const byte cgaDither[2][2][16] = {
-		{{0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 3, 1, 3, 2, 1, 3},
-		 {0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3}},
-		{{0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3},
-		 {0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 1, 1, 3, 2, 1, 3}}};
 
 	for (int y1 = 0; y1 < height; y1++) {
 		ptr = dst + y1 * dstPitch;
@@ -671,11 +668,6 @@ void ScummEngine::ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int
 	byte *srcptr, *dstptr;
 	int xo = *x, yo = *y, widtho = *width, heighto = *height;
 	int idx1, idx2, dsty = 0, y1;
-	static const byte cgaDither[2][2][16] = {
-		{{0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 3, 1, 3, 2, 1, 3},
-		 {0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3}},
-		{{0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3},
-		 {0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 1, 1, 3, 2, 1, 3}}};
 
 	// calculate dsty
 	for (y1 = 0; y1 < yo; y1++) {
@@ -787,9 +779,15 @@ void ScummEngine::redrawBGAreas() {
 	int diff;
 	int val = 0;
 
-	if (!(_game.features & GF_NEW_CAMERA))
+	if (!(_game.features & GF_NEW_CAMERA)) {
+		// Starting with V4 games (with the exception of the PASS demo), text
+		// is drawn over the game graphics (as  opposed to be drawn in a
+		// separate region of the screen). So, when scrolling in one of these
+		// games (pre-new camera system), if actor text is visible (as indicated
+		// by the _hasMask flag), we first remove it before proceeding.
 		if (camera._cur.x != camera._last.x && _charset->_hasMask && (_game.version > 3 && _game.id != GID_PASS))
 			stopTalk();
+	}
 
 	// Redraw parts of the background which are marked as dirty.
 	if (!_fullRedraw && _bgNeedsRedraw) {
@@ -1272,6 +1270,7 @@ void ScummEngine::setShake(int mode) {
 void Gdi::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 					const int x, const int y, const int width, const int height,
 	                int stripnr, int numstrip) {
+	// Do nothing by default
 }
 
 void GdiV1::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
