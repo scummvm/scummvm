@@ -2775,7 +2775,6 @@ void ScummEngine_v5::decodeParseString() {
 						strcpy((char *)tmpBuf+16, "^18^");
 					else
 						strcpy((char *)tmpBuf+16, "^19^");
-					printf("evil workaround active");
 					printString(textSlot, tmpBuf);
 				} else {
 					printString(textSlot, _scriptPointer);
