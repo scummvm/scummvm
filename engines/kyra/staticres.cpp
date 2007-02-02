@@ -22,6 +22,7 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "common/md5.h"
 #include "kyra/kyra.h"
 #include "kyra/kyra2.h"
 #include "kyra/kyra3.h"
@@ -30,17 +31,27 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 13
-#define KYRADAT_FILESIZE 142510
+#define RESFILE_VERSION 14
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
 	if (!kyraDat.open("KYRA.DAT"))
 		return false;
 	
-	if (kyraDat.size() != KYRADAT_FILESIZE)
+	uint32 size = kyraDat.size() - 16;
+	uint8 digest[16];
+	kyraDat.seek(size, SEEK_SET);
+	if (kyraDat.read(digest, 16) != 16)
 		return false;
+	kyraDat.close();
 	
+	uint8 digestCalc[16];
+	if (!Common::md5_file("KYRA.DAT", digestCalc, size))
+		return false;
+
+	for (int i = 0; i < 16; ++i)
+		if (digest[i] != digestCalc[i])
+			return false;
 	return true;
 }
 
@@ -57,13 +68,14 @@ enum {
 	GF_GERMAN	= 1 <<  6,
 	GF_SPANISH	= 1 <<  7,
 	GF_ITALIAN	= 1 <<  8,
+	GF_JAPANESE = 1 <<  9,
 	// other languages here
 	GF_LNGUNK	= 1 << 16,	// also used for multi language in kyra3
 	GF_AMIGA	= 1 << 17	// this is no special version flag yet!
 };
 
 #define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO/* | GF_AUDIOCD*/)
-#define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_ITALIAN | GF_LNGUNK)
+#define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_ITALIAN | GF_JAPANESE | GF_LNGUNK)
 
 uint32 createFeatures(const GameFlags &flags) {
 	if (flags.isTalkie)
