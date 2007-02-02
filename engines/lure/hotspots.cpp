@@ -1592,6 +1592,7 @@ void Hotspot::doBribe(HotspotData *hotspot) {
 		if (sequenceOffset != 0) return;
 	}
 
+	// TODO: talk_record_index
 	showMessage(sequenceOffset);
 }
 
@@ -2556,11 +2557,12 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 
 	if ((fields.getField(37) == 0) && h.currentActions().isEmpty()) {
 		
-		if (h.roomNumber() == h.currentActions().top().roomNumber()) {
-			// In room - set a random destination
+		if (h.roomNumber() == player->roomNumber()) {
+			// In same room as player - set a random destination
 			h.setRandomDest();
 
 		} else {
+			// Character in different room than player
 			if (h.hotspotId() == GOEWIN_ID) 
 				h.currentActions().addFront(DISPATCH_ACTION, player->roomNumber());
 			else {
@@ -2568,7 +2570,7 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 				RoomTranslationRecord *p = &roomTranslations[0];
 				while ((p->srcRoom != 0) && (p->srcRoom != player->roomNumber()))
 					++p;
-				h.currentActions().top().setRoomNumber(
+				h.currentActions().addFront(DISPATCH_ACTION, 
 					(p->srcRoom != 0) ? p->destRoom : player->roomNumber());
 			}
 		}
