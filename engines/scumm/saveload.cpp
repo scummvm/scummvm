@@ -276,9 +276,11 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	if (_screenTop < 0)
 		_screenTop = 0;
 
-	// WORKAROUND bug #795214: Object 819 could be set to a state of 1 in old save games
-	// Object 819 is part of the exit of the church and should not be drawn.
-	if (hdr.ver < VER(59) && _game.id == GID_MONKEY_VGA) {
+	// WORKAROUND bug #795214: For unknown reasons, object 819 sometimes is in
+	// state 1 in old save games, implying it should be drawn. This in turn
+	// results in a crash when entering the church, as object 819 is part of the
+	//  exitof the church and there are no graphics assigned to it.
+	if (_game.id == GID_MONKEY_VGA) {
 		putState(819, 0);
 	}
 
