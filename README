@@ -529,9 +529,15 @@ the section on reporting bugs.
             The Secret of Monkey Island, Monkey Island 2: LeChuck's Revenge
             and Indiana Jones and the Fate of Atlantis
 
-     Loom (EGA):
-     The Secret of Monkey Island (EGA):
-          - MIDI support requires the Roland update from LucasArts
+     Loom:
+          - Turning off the subtitles via the config file does not work reliably
+            as the Loom scripts automatically turn them on again
+          - MIDI support in the EGA version requires the Roland update from
+            LucasArts
+
+     The Secret of Monkey Island:
+          - MIDI support in the EGA version requires the Roland update from
+            LucasArts
 
      Beneath a Steel Sky:
           - Amiga versions aren't supported
