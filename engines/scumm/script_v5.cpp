@@ -2758,15 +2758,30 @@ void ScummEngine_v5::decodeParseString() {
 				}
 			}
 			break;
-		case 15:	// SO_TEXTSTRING
-			// WORKAROUND: This happens when Chaos introduces
-			// herself to bishop Mandible. Of all the places to put
-			// a typo...
-			if (_game.id == GID_LOOM && strcmp((const char *) _scriptPointer, "I am Choas.") == 0)
-				printString(textSlot, (const byte *) "I am Chaos.");
-			else
-				printString(textSlot, _scriptPointer);
-			_scriptPointer += resStrLen(_scriptPointer) + 1;
+		case 15:{	// SO_TEXTSTRING
+				const int len = resStrLen(_scriptPointer);
+	
+				if (_game.id == GID_LOOM && strcmp((const char *) _scriptPointer, "I am Choas.") == 0) {
+					// WORKAROUND: This happens when Chaos introduces
+					// herself to bishop Mandible. Of all the places to put
+					// a typo...
+					printString(textSlot, (const byte *) "I am Chaos.");
+				} else if (_game.id == GID_INDY4 && _roomResource == 23 && vm.slot[_currentScript].number == 167 &&
+						len == 24 && 0==memcmp(_scriptPointer+16, "pregod", 6)) {
+					// WORKAROUND for bug #1621210.
+					byte tmpBuf[25];
+					memcpy(tmpBuf, _scriptPointer, 25);
+					if (tmpBuf[22] == '8')
+						strcpy((char *)tmpBuf+16, "^18^");
+					else
+						strcpy((char *)tmpBuf+16, "^19^");
+					printf("evil workaround active");
+					printString(textSlot, tmpBuf);
+				} else {
+					printString(textSlot, _scriptPointer);
+				}
+				_scriptPointer += len + 1;
+			}
 
 
  			// In SCUMM V1-V3, there were no 'default' values for the text slot
