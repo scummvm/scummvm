@@ -40,11 +40,11 @@ class SmushPlayer {
 	friend class Insane;
 private:
 	ScummEngine_v7 *_vm;
-	int _version;
 	int32 _nbframes;
 	SmushMixer *_smixer;
 	int16 _deltaPal[0x300];
 	byte _pal[0x300];
+	SmushFont *_sf[5];
 	StringResource *_strings;
 	Codec37Decoder *_codec37;
 	Codec47Decoder *_codec47;
@@ -70,7 +70,6 @@ private:
 	byte _IACToutput[4096];
 	int32 _IACTpos;
 	bool _storeFrame;
-	bool _initDone;
 	int _speed;
 	bool _outputSound;
 	bool _endOfFile;
@@ -105,7 +104,6 @@ public:
 	void warpMouse(int x, int y, int buttons);
 
 protected:
-	SmushFont *_sf[5];
 	int _width, _height;
 
 	int _origPitch, _origNumStrips;

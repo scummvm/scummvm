@@ -238,7 +238,6 @@ void SmushPlayer::timerCallback() {
 
 SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
 	_vm = scumm;
-	_version = -1;
 	_nbframes = 0;
 	_codec37 = 0;
 	_codec47 = 0;
@@ -262,7 +261,6 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
 	_width = 0;
 	_height = 0;
 	_IACTpos = 0;
-	_initDone = false;
 	_speed = -1;
 	_insanity = false;
 	_middleAudio = false;
@@ -311,13 +309,9 @@ void SmushPlayer::init(int32 speed) {
 	_vm->_mixer->stopHandle(_IACTchannel);
 	_IACTpos = 0;
 	_vm->_smixer->stop();
-
-	_initDone = true;
 }
 
 void SmushPlayer::release() {
-	if (!_initDone)
-		return;
 #ifdef __SYMBIAN32__
 	_closeOnTextTick = true;
 	// Wait for _closeOnTextTick to be set to false to indicate file closure
@@ -354,8 +348,6 @@ void SmushPlayer::release() {
 	// some explanation.
 	_vm->virtscr[0].pitch = _origPitch;
 	_vm->_gdi->_numStrips = _origNumStrips;
-
-	_initDone = false;
 
 	delete _codec37;
 	_codec37 = 0;
@@ -1010,7 +1002,7 @@ void SmushPlayer::handleAnimHeader(Chunk &b) {
 	checkBlock(b, MKID_BE('AHDR'), 0x300 + 6);
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleAnimHeader()");
 
-	_version = b.readUint16LE();
+	/* _version = */ b.readUint16LE();
 	_nbframes = b.readUint16LE();
 	b.readUint16LE();
 
