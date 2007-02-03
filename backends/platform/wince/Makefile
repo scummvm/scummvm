@@ -1,25 +1,25 @@
 # ScummVM Makefile for Windows CE port
 # Uses the VLC toolchain
-# $URL:$
-# $Id:$
+# $URL$
+# $Id$
 
 srcdir    = ../../..
 VPATH     = $(srcdir)
-#HAVE_GCC3 = false
 
 #DISABLE_SCUMM = 1
-#DISABLE_SIMON = 1
-#DISABLE_SKY = 1
-#DISABLE_QUEEN = 1
-#DISABLE_GOB = 1
+DISABLE_SKY = 1
+DISABLE_QUEEN = 1
+DISABLE_GOB = 1
 DISABLE_LURE = 1
 DISABLE_CINE = 1
 DISABLE_SAGA = 1
-#DISABLE_KYRA = 1
+DISABLE_KYRA = 1
 DISABLE_AGI = 1
-#DISABLE_AGOS = 1
-#DISABLE_SWORD1 = 1
-#DISABLE_SWORD2 = 1
+DISABLE_AGOS = 1
+DISABLE_SWORD1 = 1
+DISABLE_SWORD2 = 1
+DISABLE_TOUCHE = 1
+DISABLE_PARALLACTION = 1
 
 
 CXX    = arm-wince-pe-g++
@@ -37,7 +37,7 @@ CAT    = cat
 
 DEFINES := -D_WIN32_WCE=300 -DARM -D__ARM__ -D_ARM_ -DUNICODE -DSCUMM_NEED_ALIGNMENT -DFPM_DEFAULT -DUSE_MAD -DNONSTANDARD_PORT -DUSE_TREMOR -DUSE_VORBIS -DUSE_MPEG2 -DWIN32 -DUSE_ZLIB
 DEFINES += -D__stdcall= -Dcdecl= -D__cdecl__= -D__cdecl= -Wno-multichar
-DEFINES += -O2
+#DEFINES += -O2
 DEFINES += -DDEBUG -DUSE_WINDBG -g
 
 INCLUDES := -I$(srcdir) -I. -I$(srcdir)/engines -Ilibs/include -Ilibs/include/sdl -ICEgui -ICEkeys
