@@ -35,7 +35,7 @@ Widget::Widget(GuiObject *boss, int x, int y, int w, int h)
 	init();
 }
 
-Widget::Widget(GuiObject *boss, const String &name)
+Widget::Widget(GuiObject *boss, const Common::String &name)
 	: GuiObject(name), _type(0), _boss(boss),
 	  _id(0), _flags(0), _hints(THEME_HINT_FIRST_DRAW), _hasFocus(false) {
 	init();
@@ -141,14 +141,14 @@ bool Widget::isVisible() const {
 
 #pragma mark -
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align)
+StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, TextAlignment align)
 	: Widget(boss, x, y, w, h), _align(align) {
 	_flags = WIDGET_ENABLED;
 	_type = kStaticTextWidget;
 	_label = text;
 }
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, const String &name, const String &text)
+StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text)
 	: Widget(boss, name) {
 	_flags = WIDGET_ENABLED;
 	_type = kStaticTextWidget;
@@ -166,7 +166,7 @@ void StaticTextWidget::setValue(int value) {
 	_label = buf;
 }
 
-void StaticTextWidget::setLabel(const String &label) {
+void StaticTextWidget::setLabel(const Common::String &label) {
 	_label = label;
 	// TODO: We should automatically redraw when the label is changed.
 	// The following doesn't quite work when we are using tabs, plus it
@@ -190,14 +190,14 @@ void StaticTextWidget::drawWidget(bool hilite) {
 
 #pragma mark -
 
-ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
+ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, x, y, w, h, label, kTextAlignCenter), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey) {
 	_flags = WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG;
 	_type = kButtonWidget;
 }
 
-ButtonWidget::ButtonWidget(GuiObject *boss, const String &name, const String &label, uint32 cmd, uint8 hotkey)
+ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, name, label), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey) {
 	_flags = WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG;
@@ -216,13 +216,13 @@ void ButtonWidget::drawWidget(bool hilite) {
 
 #pragma mark -
 
-CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
+CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey), _state(false) {
 	_flags = WIDGET_ENABLED;
 	_type = kCheckboxWidget;
 }
 
-CheckboxWidget::CheckboxWidget(GuiObject *boss, const String &name, const String &label, uint32 cmd, uint8 hotkey)
+CheckboxWidget::CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::String &label, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, name, label, cmd, hotkey), _state(false) {
 	_flags = WIDGET_ENABLED;
 	_type = kCheckboxWidget;
@@ -257,7 +257,7 @@ SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, uint32 c
 	_type = kSliderWidget;
 }
 
-SliderWidget::SliderWidget(GuiObject *boss, const String &name, uint32 cmd)
+SliderWidget::SliderWidget(GuiObject *boss, const Common::String &name, uint32 cmd)
 	: Widget(boss, name), CommandSender(boss),
 	  _cmd(cmd), _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false) {
 	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
@@ -319,7 +319,7 @@ GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h)
 	_hints &= ~THEME_HINT_SAVE_BACKGROUND;
 }
 
-GraphicsWidget::GraphicsWidget(GuiObject *boss, const String &name)
+GraphicsWidget::GraphicsWidget(GuiObject *boss, const Common::String &name)
 	: Widget(boss, name), _gfx(), _alpha(256), _transparency(false) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
 	_type = kGraphicsWidget;
@@ -376,7 +376,7 @@ ContainerWidget::ContainerWidget(GuiObject *boss, int x, int y, int w, int h) : 
 	_type = kContainerWidget;
 }
 
-ContainerWidget::ContainerWidget(GuiObject *boss, const String &name) : Widget(boss, name) {
+ContainerWidget::ContainerWidget(GuiObject *boss, const Common::String &name) : Widget(boss, name) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
 	_type = kContainerWidget;
 }

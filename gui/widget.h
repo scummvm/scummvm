@@ -164,17 +164,16 @@ protected:
 /* StaticTextWidget */
 class StaticTextWidget : public Widget {
 protected:
-	typedef Common::String String;
 	typedef Graphics::TextAlignment TextAlignment;
 
-	String					_label;
+	Common::String			_label;
 	TextAlignment			_align;
 public:
-	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align);
-	StaticTextWidget(GuiObject *boss, const String &name, const String &text);
+	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, TextAlignment align);
+	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text);
 	void setValue(int value);
-	void setLabel(const String &label);
-	const String &getLabel() const		{ return _label; }
+	void setLabel(const Common::String &label);
+	const Common::String &getLabel() const		{ return _label; }
 	void setAlign(TextAlignment align);
 	TextAlignment getAlign() const		{ return _align; }
 
@@ -189,8 +188,8 @@ protected:
 	uint32	_cmd;
 	uint8	_hotkey;
 public:
-	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
-	ButtonWidget(GuiObject *boss, const String &name, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
+	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, uint32 cmd = 0, uint8 hotkey = 0);
+	ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void setCmd(uint32 cmd)				{ _cmd = cmd; }
 	uint32 getCmd() const				{ return _cmd; }
@@ -208,8 +207,8 @@ class CheckboxWidget : public ButtonWidget {
 protected:
 	bool	_state;
 public:
-	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
-	CheckboxWidget(GuiObject *boss, const String &name, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
+	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, uint32 cmd = 0, uint8 hotkey = 0);
+	CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }

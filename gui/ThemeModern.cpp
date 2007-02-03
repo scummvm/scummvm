@@ -1280,7 +1280,7 @@ void ThemeModern::deleteFonts() {
 	FontMan.removeFontName(FONT_NAME_ITALIC);
 }
 
-void ThemeModern::setupFont(const String &key, const String &name, FontStyle style) {
+void ThemeModern::setupFont(const Common::String &key, const Common::String &name, FontStyle style) {
 	if (_evaluator->getVar(key) == EVAL_STRING_VAR) {
 		_fonts[style] = FontMan.getFontByName(name);
 

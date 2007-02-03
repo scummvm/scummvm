@@ -37,7 +37,7 @@ Theme::~Theme() {
 	delete _evaluator;
 }
 
-void Theme::getColorFromConfig(const String &value, OverlayColor &color) {
+void Theme::getColorFromConfig(const Common::String &value, OverlayColor &color) {
 	const char *postfixes[] = {".r", ".g", ".b"};
 	int rgb[3];
 
@@ -47,7 +47,7 @@ void Theme::getColorFromConfig(const String &value, OverlayColor &color) {
 	color = g_system->RGBToColor(rgb[0], rgb[1], rgb[2]);
 }
 
-void Theme::getColorFromConfig(const String &value, uint8 &r, uint8 &g, uint8 &b) {
+void Theme::getColorFromConfig(const Common::String &value, uint8 &r, uint8 &g, uint8 &b) {
 	r = _evaluator->getVar(value + ".r", 0);
 	g = _evaluator->getVar(value + ".g", 0);
 	b = _evaluator->getVar(value + ".b", 0);
@@ -143,7 +143,7 @@ Common::String Theme::genCacheFilename(const char *filename) {
 	return "";
 }
 
-bool Theme::loadConfigFile(const String &stylefile) {
+bool Theme::loadConfigFile(const Common::String &stylefile) {
 	if (ConfMan.hasKey("themepath"))
 		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
 
@@ -187,7 +187,7 @@ bool Theme::loadConfigFile(const String &stylefile) {
 	return true;
 }
 
-bool Theme::themeConfigUseable(const String &stylefile, const String &style, String *cStyle, Common::ConfigFile *cfg) {
+bool Theme::themeConfigUseable(const Common::String &stylefile, const Common::String &style, Common::String *cStyle, Common::ConfigFile *cfg) {
 	if (ConfMan.hasKey("themepath"))
 		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
 

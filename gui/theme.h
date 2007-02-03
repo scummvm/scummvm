@@ -72,7 +72,6 @@ enum {
 
 
 class Theme {
-	typedef Common::String String;
 public:
 	Theme();
 		
@@ -204,9 +203,9 @@ public:
 		return kTextAlignCenter;
 	}
 
-	void processResSection(Common::ConfigFile &config, const String &name, bool skipDefs = false, const String &prefix = "");
-	void processSingleLine(const String &section, const String &prefix, const String &name, const String &str);
-	void setSpecialAlias(const String &alias, const String &name);
+	void processResSection(Common::ConfigFile &config, const Common::String &name, bool skipDefs = false, const Common::String &prefix = "");
+	void processSingleLine(const Common::String &section, const Common::String &prefix, const Common::String &name, const Common::String &str);
+	void setSpecialAlias(const Common::String &alias, const Common::String &name);
 
 	bool isThemeLoadingRequired();
 	bool sectionIsSkipped(Common::ConfigFile &config, const char *name, int w, int h);
@@ -214,10 +213,10 @@ public:
 
 	Eval *_evaluator;
 
-	static bool themeConfigUseable(const String &file, const String &style="", String *cStyle=0, Common::ConfigFile *cfg=0);
+	static bool themeConfigUseable(const Common::String &file, const Common::String &style="", Common::String *cStyle=0, Common::ConfigFile *cfg=0);
 
-	const String &getStylefileName() const { return _stylefile; }
-	const String &getThemeName() const { return _stylename; }
+	const Common::String &getStylefileName() const { return _stylefile; }
+	const Common::String &getThemeName() const { return _stylename; }
 
 	virtual bool supportsImages() const { return false; }
 
@@ -227,14 +226,14 @@ public:
 
 	virtual const Graphics::Surface *getImageSurface(const kThemeImages n) const { return 0; }
 protected:
-	bool loadConfigFile(const String &file);
-	void getColorFromConfig(const String &name, OverlayColor &col);
-	void getColorFromConfig(const String &value, uint8 &r, uint8 &g, uint8 &b);
+	bool loadConfigFile(const Common::String &file);
+	void getColorFromConfig(const Common::String &name, OverlayColor &col);
+	void getColorFromConfig(const Common::String &value, uint8 &r, uint8 &g, uint8 &b);
 
 	const Graphics::Font *loadFont(const char *filename);
 	Common::String genCacheFilename(const char *filename);
 
-	String _stylefile, _stylename;
+	Common::String _stylefile, _stylename;
 
 	Common::Rect _drawArea;
 	Common::ConfigFile _configFile;
@@ -273,23 +272,21 @@ public:
 	
 	void resetDrawArea();
 
-	typedef Common::String String;
-
 	const Graphics::Font *getFont(FontStyle font) const { return _font; }
 	int getFontHeight(FontStyle font = kFontStyleBold) const { if (_initOk) return _font->getFontHeight(); return 0; }
-	int getStringWidth(const String &str, FontStyle font) const { if (_initOk) return _font->getStringWidth(str); return 0; }
+	int getStringWidth(const Common::String &str, FontStyle font) const { if (_initOk) return _font->getStringWidth(str); return 0; }
 	int getCharWidth(byte c, FontStyle font) const { if (_initOk) return _font->getCharWidth(c); return 0; }
 
 	void drawDialogBackground(const Common::Rect &r, uint16 hints, State state);
-	void drawText(const Common::Rect &r, const String &str, State state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font);
+	void drawText(const Common::Rect &r, const Common::String &str, State state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font);
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, State state);
 
 	void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, State state);
-	void drawButton(const Common::Rect &r, const String &str, State state, uint16 hints);
+	void drawButton(const Common::Rect &r, const Common::String &str, State state, uint16 hints);
 	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, State state, int alpha, bool themeTrans);
 	void drawSlider(const Common::Rect &r, int width, State state);
-	void drawCheckbox(const Common::Rect &r, const String &str, bool checked, State state);
-	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, int titleVPad, State state);
+	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, State state);
+	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, State state);
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState, State state);
 	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, State state, TextAlign align);
 	void drawCaret(const Common::Rect &r, bool erase, State state);
@@ -322,7 +319,7 @@ private:
 	bool _initOk;
 	bool _enabled;
 
-	String _fontName;
+	Common::String _fontName;
 	const Graphics::Font *_font;
 	OverlayColor _color, _shadowcolor;
 	OverlayColor _bgcolor;
@@ -346,9 +343,8 @@ private:
 #ifndef DISABLE_FANCY_THEMES
 
 class ThemeModern : public Theme {
-	typedef Common::String String;
 public:
-	ThemeModern(OSystem *system, const String &stylefile, const Common::ConfigFile *cfg = 0);
+	ThemeModern(OSystem *system, const Common::String &stylefile, const Common::ConfigFile *cfg = 0);
 	virtual ~ThemeModern();
 
 	bool init();
@@ -372,19 +368,19 @@ public:
 
 	const Graphics::Font *getFont(FontStyle font = kFontStyleBold) const { return _fonts[font]; }
 	int getFontHeight(FontStyle font = kFontStyleBold) const { if (_fonts[font]) return _fonts[font]->getFontHeight(); return 0; }
-	int getStringWidth(const String &str, FontStyle font = kFontStyleBold) const { if (_fonts[font]) return _fonts[font]->getStringWidth(str); return 0; }
+	int getStringWidth(const Common::String &str, FontStyle font = kFontStyleBold) const { if (_fonts[font]) return _fonts[font]->getStringWidth(str); return 0; }
 	int getCharWidth(byte c, FontStyle font = kFontStyleBold) const { if (_fonts[font]) return _fonts[font]->getCharWidth(c); return 0; }
 
 	void drawDialogBackground(const Common::Rect &r, uint16 hints, State state);
-	void drawText(const Common::Rect &r, const String &str, State state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font);
+	void drawText(const Common::Rect &r, const Common::String &str, State state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font);
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, State state);
 
 	void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, State state);
-	void drawButton(const Common::Rect &r, const String &str, State state, uint16 hints);
+	void drawButton(const Common::Rect &r, const Common::String &str, State state, uint16 hints);
 	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, State state, int alpha, bool themeTrans);
 	void drawSlider(const Common::Rect &r, int width, State state);
-	void drawCheckbox(const Common::Rect &r, const String &str, bool checked, State state);
-	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, int titleVPad, State state);
+	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, State state);
+	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, State state);
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState, State state);
 	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, State state, TextAlign align);
 	void drawCaret(const Common::Rect &r, bool erase, State state);
@@ -449,7 +445,7 @@ private:
 	void setupFonts();
 	void deleteFonts();
 
-	void setupFont(const String &key, const String &name, FontStyle style);
+	void setupFont(const Common::String &key, const Common::String &name, FontStyle style);
 
 	const Graphics::Font *_fonts[kFontStyleMax];
 
@@ -544,7 +540,7 @@ private:
 	byte _cursorPal[4*MAX_CURS_COLORS];
 
 private:
-	const String *_imageHandles;
+	const Common::String *_imageHandles;
 	const Graphics::Surface **_images;
 	
 	enum ColorHandles {
