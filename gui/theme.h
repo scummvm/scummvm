@@ -540,7 +540,7 @@ private:
 	byte _cursorPal[4*MAX_CURS_COLORS];
 
 private:
-	const Common::String *_imageHandles;
+	Common::String _imageHandles[kImageHandlesMax];
 	const Graphics::Surface **_images;
 	
 	enum ColorHandles {

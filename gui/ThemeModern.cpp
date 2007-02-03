@@ -54,7 +54,7 @@ OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max
 #pragma mark -
 
 ThemeModern::ThemeModern(OSystem *system, const Common::String &stylefile, const Common::ConfigFile *cfg) : Theme(), _system(system), _screen(), _initOk(false),
-_lastUsedBitMask(0), _forceRedraw(false), _imageHandles(0), _images(0), _colors(), _fonts(), _cursor(0), _gradientFactors() {
+_lastUsedBitMask(0), _forceRedraw(false), _imageHandles(), _images(0), _colors(), _fonts(), _cursor(0), _gradientFactors() {
 	_stylefile = stylefile;
 	_initOk = false;
 	_enabled = false;
@@ -113,10 +113,8 @@ ThemeModern::~ThemeModern() {
 	delete [] _images;
 	delete [] _cursor;
 	_images = 0;
-	if (_imageHandles) {
-		for (int i = 0; i < kImageHandlesMax; ++i) {
-			ImageMan.unregisterSurface(_imageHandles[i]);
-		}
+	for (int i = 0; i < kImageHandlesMax; ++i) {
+		ImageMan.unregisterSurface(_imageHandles[i]);
 	}
 	ImageMan.remArchive(_stylefile + ".zip");
 }
@@ -1301,76 +1299,70 @@ void ThemeModern::setupFont(const Common::String &key, const Common::String &nam
 #pragma mark -
 
 void ThemeModern::processExtraValues() {
-	// FIXME: Using a static (function local) variable like this is *EVIL* and
-	// defeats the purpose of OOP. Turn this into a member variable ASAP!
-	static Common::String imageHandlesTable[kImageHandlesMax];
-
 	// load the pixmap filenames from the config file
-	imageHandlesTable[kDialogBkgdCorner] = _evaluator->getStringVar("pix_dialog_corner");
-	imageHandlesTable[kDialogBkgdTop] = _evaluator->getStringVar("pix_dialog_top");
-	imageHandlesTable[kDialogBkgdLeft] = _evaluator->getStringVar("pix_dialog_left");
-	imageHandlesTable[kDialogBkgd] = _evaluator->getStringVar("pix_dialog_bkgd");
+	_imageHandles[kDialogBkgdCorner] = _evaluator->getStringVar("pix_dialog_corner");
+	_imageHandles[kDialogBkgdTop] = _evaluator->getStringVar("pix_dialog_top");
+	_imageHandles[kDialogBkgdLeft] = _evaluator->getStringVar("pix_dialog_left");
+	_imageHandles[kDialogBkgd] = _evaluator->getStringVar("pix_dialog_bkgd");
 
-	imageHandlesTable[kWidgetBkgdCorner] = _evaluator->getStringVar("pix_widget_corner");
-	imageHandlesTable[kWidgetBkgdTop] = _evaluator->getStringVar("pix_widget_top");
-	imageHandlesTable[kWidgetBkgdLeft] = _evaluator->getStringVar("pix_widget_left");
-	imageHandlesTable[kWidgetBkgd] = _evaluator->getStringVar("pix_widget_bkgd");
+	_imageHandles[kWidgetBkgdCorner] = _evaluator->getStringVar("pix_widget_corner");
+	_imageHandles[kWidgetBkgdTop] = _evaluator->getStringVar("pix_widget_top");
+	_imageHandles[kWidgetBkgdLeft] = _evaluator->getStringVar("pix_widget_left");
+	_imageHandles[kWidgetBkgd] = _evaluator->getStringVar("pix_widget_bkgd");
 
-	imageHandlesTable[kWidgetSmallBkgdCorner] = _evaluator->getStringVar("pix_widget_small_corner");
-	imageHandlesTable[kWidgetSmallBkgdTop] = _evaluator->getStringVar("pix_widget_small_top");
-	imageHandlesTable[kWidgetSmallBkgdLeft] = _evaluator->getStringVar("pix_widget_small_left");
-	imageHandlesTable[kWidgetSmallBkgd] = _evaluator->getStringVar("pix_widget_small_bkgd");
+	_imageHandles[kWidgetSmallBkgdCorner] = _evaluator->getStringVar("pix_widget_small_corner");
+	_imageHandles[kWidgetSmallBkgdTop] = _evaluator->getStringVar("pix_widget_small_top");
+	_imageHandles[kWidgetSmallBkgdLeft] = _evaluator->getStringVar("pix_widget_small_left");
+	_imageHandles[kWidgetSmallBkgd] = _evaluator->getStringVar("pix_widget_small_bkgd");
 
-	imageHandlesTable[kCheckboxEmpty] = _evaluator->getStringVar("pix_checkbox_empty");
-	imageHandlesTable[kCheckboxChecked] = _evaluator->getStringVar("pix_checkbox_checked");
+	_imageHandles[kCheckboxEmpty] = _evaluator->getStringVar("pix_checkbox_empty");
+	_imageHandles[kCheckboxChecked] = _evaluator->getStringVar("pix_checkbox_checked");
 
-	imageHandlesTable[kWidgetArrow] = _evaluator->getStringVar("pix_widget_arrow");
+	_imageHandles[kWidgetArrow] = _evaluator->getStringVar("pix_widget_arrow");
 
-	imageHandlesTable[kTabBkgdCorner] = _evaluator->getStringVar("pix_tab_corner");
-	imageHandlesTable[kTabBkgdTop] = _evaluator->getStringVar("pix_tab_top");
-	imageHandlesTable[kTabBkgdLeft] = _evaluator->getStringVar("pix_tab_left");
-	imageHandlesTable[kTabBkgd] = _evaluator->getStringVar("pix_tab_bkgd");
+	_imageHandles[kTabBkgdCorner] = _evaluator->getStringVar("pix_tab_corner");
+	_imageHandles[kTabBkgdTop] = _evaluator->getStringVar("pix_tab_top");
+	_imageHandles[kTabBkgdLeft] = _evaluator->getStringVar("pix_tab_left");
+	_imageHandles[kTabBkgd] = _evaluator->getStringVar("pix_tab_bkgd");
 
-	imageHandlesTable[kSliderBkgdCorner] = _evaluator->getStringVar("pix_slider_bkgd_corner");
-	imageHandlesTable[kSliderBkgdTop] = _evaluator->getStringVar("pix_slider_bkgd_top");
-	imageHandlesTable[kSliderBkgdLeft] = _evaluator->getStringVar("pix_slider_bkgd_left");
-	imageHandlesTable[kSliderBkgd] = _evaluator->getStringVar("pix_slider_bkgd_bkgd");
+	_imageHandles[kSliderBkgdCorner] = _evaluator->getStringVar("pix_slider_bkgd_corner");
+	_imageHandles[kSliderBkgdTop] = _evaluator->getStringVar("pix_slider_bkgd_top");
+	_imageHandles[kSliderBkgdLeft] = _evaluator->getStringVar("pix_slider_bkgd_left");
+	_imageHandles[kSliderBkgd] = _evaluator->getStringVar("pix_slider_bkgd_bkgd");
 
-	imageHandlesTable[kSliderCorner] = _evaluator->getStringVar("pix_slider_corner");
-	imageHandlesTable[kSliderTop] = _evaluator->getStringVar("pix_slider_top");
-	imageHandlesTable[kSliderLeft] = _evaluator->getStringVar("pix_slider_left");
-	imageHandlesTable[kSlider] = _evaluator->getStringVar("pix_slider_bkgd");
+	_imageHandles[kSliderCorner] = _evaluator->getStringVar("pix_slider_corner");
+	_imageHandles[kSliderTop] = _evaluator->getStringVar("pix_slider_top");
+	_imageHandles[kSliderLeft] = _evaluator->getStringVar("pix_slider_left");
+	_imageHandles[kSlider] = _evaluator->getStringVar("pix_slider_bkgd");
 
-	imageHandlesTable[kScrollbarBkgdCorner] = _evaluator->getStringVar("pix_scrollbar_bkgd_corner");
-	imageHandlesTable[kScrollbarBkgdTop] = _evaluator->getStringVar("pix_scrollbar_bkgd_top");
-	imageHandlesTable[kScrollbarBkgdLeft] = _evaluator->getStringVar("pix_scrollbar_bkgd_left");
-	imageHandlesTable[kScrollbarBkgd] = _evaluator->getStringVar("pix_scrollbar_bkgd_bkgd");
+	_imageHandles[kScrollbarBkgdCorner] = _evaluator->getStringVar("pix_scrollbar_bkgd_corner");
+	_imageHandles[kScrollbarBkgdTop] = _evaluator->getStringVar("pix_scrollbar_bkgd_top");
+	_imageHandles[kScrollbarBkgdLeft] = _evaluator->getStringVar("pix_scrollbar_bkgd_left");
+	_imageHandles[kScrollbarBkgd] = _evaluator->getStringVar("pix_scrollbar_bkgd_bkgd");
 
-	imageHandlesTable[kScrollbarCorner] = _evaluator->getStringVar("pix_scrollbar_corner");
-	imageHandlesTable[kScrollbarTop] = _evaluator->getStringVar("pix_scrollbar_top");
-	imageHandlesTable[kScrollbarLeft] = _evaluator->getStringVar("pix_scrollbar_left");
-	imageHandlesTable[kScrollbar] = _evaluator->getStringVar("pix_scrollbar_bkgd");
+	_imageHandles[kScrollbarCorner] = _evaluator->getStringVar("pix_scrollbar_corner");
+	_imageHandles[kScrollbarTop] = _evaluator->getStringVar("pix_scrollbar_top");
+	_imageHandles[kScrollbarLeft] = _evaluator->getStringVar("pix_scrollbar_left");
+	_imageHandles[kScrollbar] = _evaluator->getStringVar("pix_scrollbar_bkgd");
 
-	imageHandlesTable[kButtonBkgdCorner] = _evaluator->getStringVar("pix_button_corner");
-	imageHandlesTable[kButtonBkgdTop] = _evaluator->getStringVar("pix_button_top");
-	imageHandlesTable[kButtonBkgdLeft] = _evaluator->getStringVar("pix_button_left");
-	imageHandlesTable[kButtonBkgd] = _evaluator->getStringVar("pix_button_bkgd");
+	_imageHandles[kButtonBkgdCorner] = _evaluator->getStringVar("pix_button_corner");
+	_imageHandles[kButtonBkgdTop] = _evaluator->getStringVar("pix_button_top");
+	_imageHandles[kButtonBkgdLeft] = _evaluator->getStringVar("pix_button_left");
+	_imageHandles[kButtonBkgd] = _evaluator->getStringVar("pix_button_bkgd");
 
-	imageHandlesTable[kThemeLogo] = _evaluator->getStringVar("pix_theme_logo");
+	_imageHandles[kThemeLogo] = _evaluator->getStringVar("pix_theme_logo");
 
-	imageHandlesTable[kPopUpWidgetBkgdCorner] = _evaluator->getStringVar("pix_popupwidget_corner");
-	imageHandlesTable[kPopUpWidgetBkgdTop] = _evaluator->getStringVar("pix_popupwidget_top");
-	imageHandlesTable[kPopUpWidgetBkgdLeft] = _evaluator->getStringVar("pix_popupwidget_left");
-	imageHandlesTable[kPopUpWidgetBkgd] = _evaluator->getStringVar("pix_popupwidget_bkgd");
+	_imageHandles[kPopUpWidgetBkgdCorner] = _evaluator->getStringVar("pix_popupwidget_corner");
+	_imageHandles[kPopUpWidgetBkgdTop] = _evaluator->getStringVar("pix_popupwidget_top");
+	_imageHandles[kPopUpWidgetBkgdLeft] = _evaluator->getStringVar("pix_popupwidget_left");
+	_imageHandles[kPopUpWidgetBkgd] = _evaluator->getStringVar("pix_popupwidget_bkgd");
 
-	imageHandlesTable[kEditTextBkgdCorner] = _evaluator->getStringVar("pix_edittext_bkgd_corner");
-	imageHandlesTable[kEditTextBkgdTop] = _evaluator->getStringVar("pix_edittext_bkgd_top");
-	imageHandlesTable[kEditTextBkgdLeft] = _evaluator->getStringVar("pix_edittext_bkgd_left");
-	imageHandlesTable[kEditTextBkgd] = _evaluator->getStringVar("pix_edittext_bkgd");
+	_imageHandles[kEditTextBkgdCorner] = _evaluator->getStringVar("pix_edittext_bkgd_corner");
+	_imageHandles[kEditTextBkgdTop] = _evaluator->getStringVar("pix_edittext_bkgd_top");
+	_imageHandles[kEditTextBkgdLeft] = _evaluator->getStringVar("pix_edittext_bkgd_left");
+	_imageHandles[kEditTextBkgd] = _evaluator->getStringVar("pix_edittext_bkgd");
 
-	imageHandlesTable[kGUICursor] = _evaluator->getStringVar("pix_cursor_image");
-
-	_imageHandles = imageHandlesTable;
+	_imageHandles[kGUICursor] = _evaluator->getStringVar("pix_cursor_image");
 
 	for (int i = 0; i < kImageHandlesMax; ++i) {
 		ImageMan.registerSurface(_imageHandles[i], 0);
