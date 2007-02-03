@@ -247,15 +247,14 @@ int getAngleFromPos(int x, int y, bool useATAN) {
 }
 
 int Actor::calcMovementFactor(const Common::Point& next) {
-	Common::Point _actorPos(_pos);
 	int diffX, diffY;
 	int32 deltaXFactor, deltaYFactor;
 
-	if (_actorPos == next)
+	if (_pos == next)
 		return 0;
 
-	diffX = next.x - _actorPos.x;
-	diffY = next.y - _actorPos.y;
+	diffX = next.x - _pos.x;
+	diffY = next.y - _pos.y;
 	deltaYFactor = _speedy << 16;
 
 	if (diffY < 0)
@@ -281,7 +280,7 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 		}
 	}
 
-	_walkdata.cur = _actorPos;
+	_walkdata.cur = _pos;
 	_walkdata.next = next;
 	_walkdata.deltaXFactor = deltaXFactor;
 	_walkdata.deltaYFactor = deltaYFactor;
@@ -295,7 +294,6 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 
 int Actor::actorWalkStep() {
 	int tmpX, tmpY;
-	Common::Point _actorPos;
 	int distX, distY;
 	int nextFacing;
 
@@ -309,37 +307,33 @@ int Actor::actorWalkStep() {
 		_moving |= MF_IN_LEG;
 	}
 
-	_actorPos = _pos;
-
-	if (_walkbox != _walkdata.curbox && _vm->checkXYInBoxBounds(_walkdata.curbox, _actorPos.x, _actorPos.y)) {
+	if (_walkbox != _walkdata.curbox && _vm->checkXYInBoxBounds(_walkdata.curbox, _pos.x, _pos.y)) {
 		setBox(_walkdata.curbox);
 	}
 
 	distX = ABS(_walkdata.next.x - _walkdata.cur.x);
 	distY = ABS(_walkdata.next.y - _walkdata.cur.y);
 
-	if (ABS(_actorPos.x - _walkdata.cur.x) >= distX && ABS(_actorPos.y - _walkdata.cur.y) >= distY) {
+	if (ABS(_pos.x - _walkdata.cur.x) >= distX && ABS(_pos.y - _walkdata.cur.y) >= distY) {
 		_moving &= ~MF_IN_LEG;
 		return 0;
 	}
 
-	tmpX = (_actorPos.x << 16) + _walkdata.xfrac + (_walkdata.deltaXFactor >> 8) * _scalex;
+	tmpX = (_pos.x << 16) + _walkdata.xfrac + (_walkdata.deltaXFactor >> 8) * _scalex;
 	_walkdata.xfrac = (uint16)tmpX;
-	_actorPos.x = (tmpX >> 16);
+	_pos.x = (tmpX >> 16);
 
-	tmpY = (_actorPos.y << 16) + _walkdata.yfrac + (_walkdata.deltaYFactor >> 8) * _scaley;
+	tmpY = (_pos.y << 16) + _walkdata.yfrac + (_walkdata.deltaYFactor >> 8) * _scaley;
 	_walkdata.yfrac = (uint16)tmpY;
-	_actorPos.y = (tmpY >> 16);
+	_pos.y = (tmpY >> 16);
 
-	if (ABS(_actorPos.x - _walkdata.cur.x) > distX) {
-		_actorPos.x = _walkdata.next.x;
+	if (ABS(_pos.x - _walkdata.cur.x) > distX) {
+		_pos.x = _walkdata.next.x;
 	}
 
-	if (ABS(_actorPos.y - _walkdata.cur.y) > distY) {
-		_actorPos.y = _walkdata.next.y;
+	if (ABS(_pos.y - _walkdata.cur.y) > distY) {
+		_pos.y = _walkdata.next.y;
 	}
-
-	_pos = _actorPos;
 
 	if (_vm->_game.version >= 4 && _vm->_game.version <= 6 && _pos == _walkdata.next) {
 		_moving &= ~MF_IN_LEG;
