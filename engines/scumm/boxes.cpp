@@ -585,13 +585,10 @@ BoxCoords ScummEngine::getBoxCoordinates(int boxnum) {
 		box->lr.x = (short)FROM_LE_32(bp->v8.lrx);
 		box->lr.y = (short)FROM_LE_32(bp->v8.lry);
 
-		// FIXME: Some walkboxes in CMI appear to have been flipped,
-		// in the sense that for instance the lower boundary is above
-		// the upper one. Can that really be the case, or is there
-		// some more sinister problem afoot?
-		//
-		// Is this fix sufficient, or will we need something more
-		// elaborate?
+		// WORKAROUND (see patch #684732): Some walkboxes in CMI appear
+		// to have been flipped, in the sense that for instance the
+		// lower boundary is above the upper one. We work around this
+		// by simply flipping them back.
 
 		if (box->ul.y > box->ll.y && box->ur.y > box->lr.y) {
 			SWAP(box->ul, box->ll);
@@ -779,6 +776,7 @@ int ScummEngine::getPathToDestBox(byte from, byte to) {
  * line in order to get from box1 to box3 via box2.
  */
 bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, Common::Point &foundPath) {
+	assert(_game.version >= 3);
 	BoxCoords box1 = _vm->getBoxCoordinates(box1nr);
 	BoxCoords box2 = _vm->getBoxCoordinates(box2nr);
 	Common::Point tmp;
@@ -1047,6 +1045,7 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 	if (getBoxFlags(box1nr) & kBoxInvisible || getBoxFlags(box2nr) & kBoxInvisible)
 		return false;
 
+	assert(_game.version >= 3);
 	box2 = getBoxCoordinates(box1nr);
 	box = getBoxCoordinates(box2nr);
 
