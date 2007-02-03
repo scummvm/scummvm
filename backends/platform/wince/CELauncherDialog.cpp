@@ -57,21 +57,6 @@ public:
 	}
 };
 
-class CEConflictDialog : public Dialog {
-public:
-	CEConflictDialog::CEConflictDialog(const Common::String &name)
-	: Dialog(10, 60, 300, 77) {
-
-		addButton(this,(_w - kButtonWidth) / 2, 45, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
-
-		Common::String conflict("Too many matches for directory ");
-		conflict += name;
-		new StaticTextWidget(this, 0, 10, _w, kLineHeight, conflict, kTextAlignCenter);
-		new StaticTextWidget(this, 0, 20, _w, kLineHeight, "Please fix this :)", kTextAlignCenter);
-	}
-};
-
-
 CELauncherDialog::CELauncherDialog() : GUI::LauncherDialog() {
 }
 
@@ -83,74 +68,17 @@ void CELauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 d
 	}
 }
 
-void CELauncherDialog::addCandidate(Common::String path, DetectedGameList &candidates) {
-	int idx = -1;
-	DetectedGame result;
-
-	if (candidates.empty())
-		return;
-
-	if (candidates.size() == 1)
-		idx = 0;
-	else {
-			char candidateName[100];
-			unsigned int i;
-			for (i=path.size() - 2; i && path[i] != '\\'; i--);
-			strcpy(candidateName, &path[i + 1]);
-			candidateName[strlen(candidateName) - 1] = '\0';
-			for (i=0; i<candidates.size(); i++) {
-				if (scumm_stricmp(candidateName, candidates[i].description.c_str()) == 0) {
-					idx = i;
-					break;
-				}
-			}
-			if (idx == -1) {
-				CEConflictDialog conflict(candidateName);
-				conflict.runModal();
-			}
-	}
-
-	if (idx < 0)
-		return;
-
-	// FIXME : factor that
-	result = candidates[idx];
-
-	// The auto detector or the user made a choice.
-	// Pick a domain name which does not yet exist (after all, we
-	// are *adding* a game to the config, not replacing).
-	Common::String domain(result.gameid);
-	if (ConfMan.hasGameDomain(domain)) {
-		char suffix = 'a';
-		domain += suffix;
-		while (ConfMan.hasGameDomain(domain)) {
-			assert(suffix < 'z');
-			domain.deleteLastChar();
-			suffix++;
-			domain += suffix;
-		}
-		ConfMan.set("gameid", result.description, domain);
-		ConfMan.set("description", result.description, domain);
-	} else 
-		ConfMan.addGameDomain(domain);
-
-	ConfMan.set("path", path, domain);
-
-	// Set language if specified
-	if (result.language != Common::UNK_LANG)
-		ConfMan.set("language", Common::getLanguageCode(result.language), domain);
-
-	// Set platform if specified
-	if (result.platform != Common::kPlatformUnknown)
-		ConfMan.set("platform", Common::getPlatformCode(result.platform), domain);
-}
-
 void CELauncherDialog::automaticScanDirectory(const FilesystemNode &node) {
 	// First check if we have a recognized game in the current directory
 	FSList files;
 	node.listDir(files, FilesystemNode::kListFilesOnly);
-	DetectedGameList candidates(PluginManager::instance().detectGames(files));
-	CELauncherDialog::addCandidate((Common::String) node.path(), candidates);
+	// detect
+	GameList candidates(PluginManager::instance().detectGames(files));
+	// insert
+	if (candidates.size() >= 1) {
+		GameDescriptor result = candidates[0];
+		GUILauncherDialog::addGameToConf(node, result, true);
+	}
 	// Then recurse on the subdirectories
 	FSList dirs;
 	node.listDir(dirs, FilesystemNode::kListDirectoriesOnly);
@@ -162,14 +90,14 @@ void CELauncherDialog::automaticScanDirectory(const FilesystemNode &node) {
 void CELauncherDialog::addGame() {
 	MessageDialog alert("Do you want to perform an automatic scan ?", "Yes", "No");
 	if (alert.runModal() == kMessageOK && _browser->runModal() > 0) {
-			// Clear existing domains
-			ConfigManager::DomainMap &domains = (ConfigManager::DomainMap&)ConfMan.getGameDomains();
-			domains.clear();
-			ConfMan.flushToDisk();
-			automaticScanDirectory(_browser->getResult());
-			ConfMan.flushToDisk();
-			updateListing();
-			draw();
+		// Clear existing domains
+		ConfigManager::DomainMap &domains = (ConfigManager::DomainMap&)ConfMan.getGameDomains();
+		domains.clear();
+		ConfMan.flushToDisk();
+		automaticScanDirectory(_browser->getResult());
+		ConfMan.flushToDisk();
+		updateListing();
+		draw();
 	}
 	else
 		GUILauncherDialog::addGame();

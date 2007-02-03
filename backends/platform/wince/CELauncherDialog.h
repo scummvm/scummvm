@@ -33,7 +33,6 @@ public:
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 protected:
 	void addGame();
-	void addCandidate(Common::String path, DetectedGameList &candidates);
 	void automaticScanDirectory(const FilesystemNode &node);
 };
 
