@@ -113,7 +113,7 @@ void KyraEngine::waitForChatToFinish(int vocFile, int16 chatDuration, const char
 		if ((chatDuration < (int16)(_system->getMillis() - timeAtStart)) && chatDuration != -1 && (!drawText || !snd_voiceIsPlaying()))
 			break;
 
-		uint32 nextTime = loopStart + _gameSpeed;
+		uint32 nextTime = loopStart + _tickLength; 
 		
 		while (_system->getMillis() < nextTime) {
 			while (_system->pollEvent(event)) {

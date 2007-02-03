@@ -678,7 +678,7 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 			_skipFlag = false;
 			
 		if (amount > 0 && !_skipFlag && !_quitFlag) {
-			_system->delayMillis((amount > 10) ? 10 : amount);
+			_system->delayMillis(10);
 		}
 
 		if (_skipFlag) {
