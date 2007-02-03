@@ -11,6 +11,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  General:
    - Better compression for DXA movies.
    - Added dialog which allows the user to select the GUI theme on runtime.
+   - Launcher allows you to scan for games in all subfolders of a directory
+     (press shift then click on "Add Game").
 
  Broken Sword 1:
    - Added support for DXA cutscenes.
