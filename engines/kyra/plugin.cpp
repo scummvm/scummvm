@@ -126,6 +126,9 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 	}
 
 	Kyra::GameFlags flags = adGameDescs[id].flags;
+	
+	flags.lang = adGameDescs[id].desc.language;
+	flags.platform = adGameDescs[id].desc.platform;
 
 	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
 	if (platform != Common::kPlatformUnknown) {
