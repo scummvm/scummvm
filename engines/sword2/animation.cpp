@@ -351,7 +351,7 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 			}
 
 			if (startNextText && !_mixer->isSoundHandleActive(_speechHandle)) {
-				_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_speechHandle, t->speech, t->speechBufferSize, 22050, flags);
+				_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_speechHandle, t->speech, t->speechBufferSize, 22050, flags);
 				startNextText = false;
 			}
 

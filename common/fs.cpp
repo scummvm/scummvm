@@ -95,7 +95,7 @@ FilesystemNode FilesystemNode::getParent() const {
 	}
 }
 
-FilesystemNode FilesystemNode::getChild(const String &n) const {
+FilesystemNode FilesystemNode::getChild(const Common::String &n) const {
 	if (_realNode == 0)
 		return *this;
 

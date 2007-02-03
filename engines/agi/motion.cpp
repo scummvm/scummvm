@@ -42,7 +42,7 @@ int AgiEngine::checkBlock(int x, int y) {
 	return true;
 }
 
-void AgiEngine::changePos(struct VtEntry *v) {
+void AgiEngine::changePos(VtEntry *v) {
 	int b, x, y;
 	int dx[9] = { 0, 0, 1, 1, 1, 0, -1, -1, -1 };
 	int dy[9] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
@@ -64,7 +64,7 @@ void AgiEngine::changePos(struct VtEntry *v) {
 	}
 }
 
-void AgiEngine::motionWander(struct VtEntry *v) {
+void AgiEngine::motionWander(VtEntry *v) {
 	if (v->parm1--) {
 		if (~v->flags & DIDNT_MOVE)
 			return;
@@ -80,7 +80,7 @@ void AgiEngine::motionWander(struct VtEntry *v) {
 	}
 }
 
-void AgiEngine::motionFollowEgo(struct VtEntry *v) {
+void AgiEngine::motionFollowEgo(VtEntry *v) {
 	int egoX, egoY;
 	int objX, objY;
 	int dir;
@@ -142,7 +142,7 @@ void AgiEngine::motionFollowEgo(struct VtEntry *v) {
 	}
 }
 
-void AgiEngine::motionMoveObj(struct VtEntry *v) {
+void AgiEngine::motionMoveObj(VtEntry *v) {
 	v->direction = getDirection(v->xPos, v->yPos, v->parm1, v->parm2, v->stepSize);
 
 	/* Update V6 if ego */
@@ -153,7 +153,7 @@ void AgiEngine::motionMoveObj(struct VtEntry *v) {
 		inDestination(v);
 }
 
-void AgiEngine::checkMotion(struct VtEntry *v) {
+void AgiEngine::checkMotion(VtEntry *v) {
 	switch (v->motion) {
 	case MOTION_WANDER:
 		motionWander(v);
@@ -178,7 +178,7 @@ void AgiEngine::checkMotion(struct VtEntry *v) {
  *
  */
 void AgiEngine::checkAllMotions() {
-	struct VtEntry *v;
+	VtEntry *v;
 
 	for (v = _game.viewTable; v < &_game.viewTable[MAX_VIEWTABLE]; v++) {
 		if ((v->flags & (ANIMATED | UPDATE | DRAWN)) == (ANIMATED | UPDATE | DRAWN)
@@ -194,7 +194,7 @@ void AgiEngine::checkAllMotions() {
  * type motion that * has reached its final destination coordinates.
  * @param  v  Pointer to view table entry
  */
-void AgiEngine::inDestination(struct VtEntry *v) {
+void AgiEngine::inDestination(VtEntry *v) {
 	if (v->motion == MOTION_MOVE_OBJ) {
 		v->stepSize = v->parm3;
 		setflag(v->parm4, true);
@@ -210,7 +210,7 @@ void AgiEngine::inDestination(struct VtEntry *v) {
  * after setting the motion mode to MOTION_MOVE_OBJ.
  * @param  v  Pointer to view table entry
  */
-void AgiEngine::moveObj(struct VtEntry *v) {
+void AgiEngine::moveObj(VtEntry *v) {
 	motionMoveObj(v);
 }
 

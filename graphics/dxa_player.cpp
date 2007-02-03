@@ -287,7 +287,7 @@ void DXAPlayer::decode12(byte *data, int size, int totalSize) {
 #endif
 }
 
-void DXAPlayer::decode13(uint8 *data, int size, int totalSize) {
+void DXAPlayer::decode13(byte *data, int size, int totalSize) {
 #ifdef USE_ZLIB
 	uint8 *codeBuf, *dataBuf, *motBuf, *maskBuf;
 

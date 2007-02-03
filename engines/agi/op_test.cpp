@@ -129,7 +129,7 @@ static uint8 testController(uint8 cont) {
 }
 
 static uint8 testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	struct VtEntry *v = &game.viewTable[n];
+	VtEntry *v = &game.viewTable[n];
 	uint8 r;
 
 	r = v->xPos >= x1 && v->yPos >= y1 && v->xPos <= x2 && v->yPos <= y2;
@@ -140,7 +140,7 @@ static uint8 testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 }
 
 static uint8 testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	struct VtEntry *v = &game.viewTable[n];
+	VtEntry *v = &game.viewTable[n];
 
 	return v->xPos >= x1 &&
 	    v->yPos >= y1 && v->xPos + v->xSize - 1 <= x2 && v->yPos <= y2;
@@ -148,7 +148,7 @@ static uint8 testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 
 /* if n is in centre of box */
 static uint8 testObjCentre(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	struct VtEntry *v = &game.viewTable[n];
+	VtEntry *v = &game.viewTable[n];
 
 	return v->xPos + v->xSize / 2 >= x1 &&
 			v->xPos + v->xSize / 2 <= x2 && v->yPos >= y1 && v->yPos <= y2;
@@ -156,7 +156,7 @@ static uint8 testObjCentre(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 
 /* if nect N is in right corner */
 static uint8 testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	struct VtEntry *v = &game.viewTable[n];
+	VtEntry *v = &game.viewTable[n];
 
 	return v->xPos + v->xSize - 1 >= x1 &&
 			v->xPos + v->xSize - 1 <= x2 && v->yPos >= y1 && v->yPos <= y2;

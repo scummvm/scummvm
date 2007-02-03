@@ -392,7 +392,7 @@ struct AgiGame {
 	AgiSound sounds[MAX_DIRS];		/**< AGI sound resources */
 
 	/* view table */
-	struct VtEntry viewTable[MAX_VIEWTABLE];
+	VtEntry viewTable[MAX_VIEWTABLE];
 
 	int32 ver;								/**< detected game version */
 

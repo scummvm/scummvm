@@ -63,7 +63,6 @@ class FSList : public Common::Array<FilesystemNode> {};
  * we can build upon this.
  */
 class FilesystemNode {
-	typedef Common::String String;
 private:
 	AbstractFilesystemNode *_realNode;
 	int *_refCount;
@@ -96,7 +95,7 @@ public:
 	 * operating system doesn't support the concept), some other directory is
 	 * used (usually the root directory).
 	 */
-	FilesystemNode(const String &path);
+	FilesystemNode(const Common::String &path);
 
 	/**
 	 * Copy constructor.
@@ -129,7 +128,7 @@ public:
 	 * directory nodes (an assertion is triggered otherwise). If no no child
 	 * node with the given name exists, an invalid node is returned.
 	 */
-	FilesystemNode getChild(const String &name) const;
+	FilesystemNode getChild(const Common::String &name) const;
 
 	/**
 	 * Return a list of child nodes of this directory node. If called on a node
@@ -155,7 +154,7 @@ public:
 	 * like constructing paths!
 	 * @return the display name
 	 */
-	virtual String displayName() const;
+	virtual Common::String displayName() const;
 
 	/**
 	 * Return a string representation of the name of the file. This is can be
@@ -165,7 +164,7 @@ public:
 	 *
 	 * @return the file name
 	 */
-	virtual String name() const;
+	virtual Common::String name() const;
 
 	/**
 	 * Return a string representation of the file which can be passed to fopen(),
@@ -178,7 +177,7 @@ public:
 	 *
 	 * @return the 'path' represented by this filesystem node
 	 */
-	virtual String path() const;
+	virtual Common::String path() const;
 
 	/**
 	 * Compare the name of this node to the name of another. Directories

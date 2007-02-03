@@ -27,7 +27,7 @@
 
 namespace Agi {
 
-int AgiEngine::checkPosition(struct VtEntry *v) {
+int AgiEngine::checkPosition(VtEntry *v) {
 	debugC(4, kDebugLevelSprites, "check position @ %d, %d", v->xPos, v->yPos);
 
 	if (v->xPos < 0 ||
@@ -52,8 +52,8 @@ int AgiEngine::checkPosition(struct VtEntry *v) {
 /**
  * Check if there's another object on the way
  */
-int AgiEngine::checkCollision(struct VtEntry *v) {
-	struct VtEntry *u;
+int AgiEngine::checkCollision(VtEntry *v) {
+	VtEntry *u;
 
 	if (v->flags & IGNORE_OBJECTS)
 		return 0;
@@ -168,7 +168,7 @@ check_ego:
  * rules, otherwise the previous position will be kept.
  */
 void AgiEngine::updatePosition() {
-	struct VtEntry *v;
+	VtEntry *v;
 	int x, y, oldX, oldY, border;
 
 	_game.vars[vBorderCode] = 0;

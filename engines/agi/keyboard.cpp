@@ -99,7 +99,7 @@ int AgiEngine::doPollKeyboard() {
 }
 
 int AgiEngine::handleController(int key) {
-	struct VtEntry *v = &_game.viewTable[0];
+	VtEntry *v = &_game.viewTable[0];
 	int i;
 
 	/* The Black Cauldron needs KEY_ESCAPE to use menus */

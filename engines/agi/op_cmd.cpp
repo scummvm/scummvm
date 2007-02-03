@@ -1006,8 +1006,8 @@ cmd(restart_game) {
 
 cmd(distance) {
 	int16 x1, y1, x2, y2, d;
-	struct VtEntry *v0 = &game.viewTable[p0];
-	struct VtEntry *v1 = &game.viewTable[p1];
+	VtEntry *v0 = &game.viewTable[p0];
+	VtEntry *v1 = &game.viewTable[p1];
 
 	if (v0->flags & DRAWN && v1->flags & DRAWN) {
 		x1 = v0->xPos + v0->xSize / 2;

@@ -186,7 +186,7 @@ void AgiEngine::oldInputMode() {
 /* If main_cycle returns false, don't process more events! */
 int AgiEngine::mainCycle() {
 	unsigned int key, kascii;
-	struct VtEntry *v = &_game.viewTable[0];
+	VtEntry *v = &_game.viewTable[0];
 
 	_gfx->pollTimer();		/* msdos driver -> does nothing */
 	updateTimer();

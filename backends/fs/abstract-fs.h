@@ -87,7 +87,7 @@ protected:
 	 * identical to oldNode. Hence, we can use the "path" value for persistent
 	 * storage e.g. in the config file.
 	 *
-	 * @TODO: This is of course a place where non-portable code easily will sneak
+	 * @todo: This is of course a place where non-portable code easily will sneak
 	 *        in, because the format of the path used here is not well-defined.
 	 *        So we really should reconsider this API and try to come up with
 	 *        something which is more portable but still flexible enough for our

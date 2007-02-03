@@ -352,7 +352,7 @@ int AgiEngine::loadGame(const char *fileName) {
 	/* game.sounds - loaded above */
 
 	for (i = 0; i < vtEntries; i++) {
-		struct VtEntry *v = &_game.viewTable[i];
+		VtEntry *v = &_game.viewTable[i];
 
 		v->stepTime = in->readByte();
 		v->stepTimeCount = in->readByte();
@@ -398,13 +398,13 @@ int AgiEngine::loadGame(const char *fileName) {
 		v->parm4 = in->readByte();
 	}
 	for (i = vtEntries; i < MAX_VIEWTABLE; i++) {
-		memset(&_game.viewTable[i], 0, sizeof(struct VtEntry));
+		memset(&_game.viewTable[i], 0, sizeof(VtEntry));
 	}
 
 	/* Fix some pointers in viewtable */
 
 	for (i = 0; i < MAX_VIEWTABLE; i++) {
-		struct VtEntry *v = &_game.viewTable[i];
+		VtEntry *v = &_game.viewTable[i];
 
 		if (_game.dirView[v->currentView].offset == _EMPTY)
 			continue;

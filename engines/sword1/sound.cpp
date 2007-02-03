@@ -196,12 +196,12 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			uint32 size;
 			int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
 			if (data)
-				_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_speechHandle, data, size, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID, speechVol, speechPan);
+				_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_speechHandle, data, size, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID, speechVol, speechPan);
 		}
 #ifdef USE_MAD
 		else if (_cowMode == CowMp3) {
 			_cowFile.seek(index);
-			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_speechHandle, Audio::makeMP3Stream(&_cowFile, sampleSize), SOUND_SPEECH_ID, speechVol, speechPan);
+			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, Audio::makeMP3Stream(&_cowFile, sampleSize), SOUND_SPEECH_ID, speechVol, speechPan);
 			// with compressed audio, we can't calculate the wave volume.
 			// so default to talking.
 			for (int cnt = 0; cnt < 480; cnt++)
@@ -212,7 +212,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 #ifdef USE_VORBIS
 		else if (_cowMode == CowVorbis) {
 			_cowFile.seek(index);
-			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_speechHandle, Audio::makeVorbisStream(&_cowFile, sampleSize), SOUND_SPEECH_ID, speechVol, speechPan);
+			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, Audio::makeVorbisStream(&_cowFile, sampleSize), SOUND_SPEECH_ID, speechVol, speechPan);
 			for (int cnt = 0; cnt < 480; cnt++)
 				_waveVolume[cnt] = true;
 			_waveVolPos = 0;
