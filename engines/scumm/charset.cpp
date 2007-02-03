@@ -1626,7 +1626,7 @@ void CharsetRendererNut::setCurID(byte id) {
 	if (!_fr[id]) {
 		char fontname[11];
 		sprintf(fontname, "font%d.nut", id);
-		_fr[id] = new NutRenderer(_vm, fontname, true);
+		_fr[id] = new NutRenderer(_vm, fontname);
 	}
 	_current = _fr[id];
 	assert(_current);
@@ -1655,12 +1655,8 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 	if (chr == '@')
 		return;
 
-	shadow.left = _left - 1;
-	shadow.top = _top - 1;
-
-	// Note that the character is drawn with a shadow, so it is slightly
-	// larger than the advertised dimensions. See drawShadowChar() for
-	// details.
+	shadow.left = _left;
+	shadow.top = _top;
 
 	if (_firstChar) {
 		_str.left = (shadow.left >= 0) ? shadow.left : 0;
@@ -1676,8 +1672,8 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 	if (chr >= 256 && _vm->_useCJKMode)
 		width = _vm->_2byteWidth;
 
-	shadow.right = _left + width + 2;
-	shadow.bottom = _top + height + 2;
+	shadow.right = _left + width;
+	shadow.bottom = _top + height;
 
 	Graphics::Surface s;
 	if (!ignoreCharsetMask) {
@@ -1695,7 +1691,10 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 		drawTop -= _vm->_screenTop;
 	}
 
-	_current->drawShadowChar(s, chr, _left, drawTop, _color, _curId != 3);
+	if (chr >= 256 && _vm->_useCJKMode)
+		_current->draw2byte(s, chr, _left, drawTop, _color);
+	else
+		_current->drawChar(s, (byte)chr, _left, drawTop, _color);
 	_vm->markRectAsDirty(kMainVirtScreen, shadow);
 
 	if (_str.left > _left)

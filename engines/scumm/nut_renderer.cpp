@@ -27,73 +27,27 @@
 
 namespace Scumm {
 
-NutRenderer::NutRenderer(ScummEngine *vm, const char *filename, bool bitmap) :
+NutRenderer::NutRenderer(ScummEngine *vm, const char *filename) :
 	_vm(vm),
-	_bitmapFont(bitmap),
 	_numChars(0),
+	_maxCharSize(0),
+	_charBuffer(0),
 	_decodedData(0) {
 	memset(_chars, 0, sizeof(_chars));
 	loadFont(filename);
 }
 
 NutRenderer::~NutRenderer() {
+	delete [] _charBuffer;
 	delete [] _decodedData;
 }
 
-void NutRenderer::codec1(byte *dst, const byte *src, int width, int height, int pitch) {
-	byte val, code;
-	int32 length;
-	int h = height, size_line;
+void smush_decode_codec1(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
-	for (h = 0; h < height; h++) {
-		size_line = READ_LE_UINT16(src);
-		src += 2;
-		byte bit = 0x80;
-		byte *dstPtrNext = dst + pitch;
-		while (size_line > 0) {
-			code = *src++;
-			size_line--;
-			length = (code >> 1) + 1;
-			if (code & 1) {
-				val = *src++;
-				size_line--;
-				if (_bitmapFont) {
-					for (int i = 0; i < length; i++) {
-						if (val)
-							*dst |= bit;
-						bit >>= 1;
-						if (!bit) {
-							bit = 0x80;
-							dst++;
-						}
-					}
-				} else {
-					if (val)
-						memset(dst, val, length);
-					dst += length;
-				}
-			} else {
-				size_line -= length;
-				while (length--) {
-					val = *src++;
-					if (_bitmapFont) {
-						if (val)
-							*dst |= bit;
-						bit >>= 1;
-						if (!bit) {
-							bit = 0x80;
-							dst++;
-						}
-					} else {
-						if (val)
-							*dst = val;
-						dst++;
-					}
-				}
-			}
-		}
-		dst = dstPtrNext;
-	}
+void NutRenderer::codec1(byte *dst, const byte *src, int width, int height, int pitch) {
+	smush_decode_codec1(dst, src, 0, 0, width, height, pitch);
+	for (int i = 0; i < width * height; i++)
+		_paletteMap[dst[i]] = 1;
 }
 
 void NutRenderer::codec21(byte *dst, const byte *src, int width, int height, int pitch) {
@@ -102,21 +56,9 @@ void NutRenderer::codec21(byte *dst, const byte *src, int width, int height, int
 		const byte *srcPtrNext = src + 2 + READ_LE_UINT16(src);
 		src += 2;
 		int len = width;
-		byte bit = 0x80;
 		do {
-			int i;
 			int offs = READ_LE_UINT16(src); src += 2;
-			if (_bitmapFont) {
-				for (i = 0; i < offs; i++) {
-					bit >>= 1;
-					if (!bit) {
-						bit = 0x80;
-						dst++;
-					}
-				}
-			} else {
-				dst += offs;
-			}
+			dst += offs;
 			len -= offs;
 			if (len <= 0) {
 				break;
@@ -130,20 +72,11 @@ void NutRenderer::codec21(byte *dst, const byte *src, int width, int height, int
 			//  src bytes equal to 255 are replaced by 0 in dst
 			//  src bytes equal to 1 are replaced by a color passed as an argument in the original function
 			//  other src bytes values are copied as-is
-			if (_bitmapFont) {
-				for (i = 0; i < w; i++) {
-					if (src[i])
-						*dst |= bit;
-					bit >>= 1;
-					if (!bit) {
-						bit = 0x80;
-						dst++;
-					}
-				}
-			} else {
-				memcpy(dst, src, w);
-				dst += w;
+			for (int i = 0; i < w; i++) {
+				_paletteMap[src[i]] = 1;
 			}
+			memcpy(dst, src, w);
+			dst += w;
 			src += w;
 		} while (len > 0);
 		dst = dstPtrNext;
@@ -181,28 +114,30 @@ void NutRenderer::loadFont(const char *filename) {
 
 	uint32 offset = 0;
 	uint32 decodedLength = 0;
-	for (int l = 0; l < _numChars; l++) {
+	int l;
+	
+	_paletteMap = new byte[256];
+	for (l = 0; l < 256; l++) {
+		_paletteMap[l] = 0;
+	}
+
+	for (l = 0; l < _numChars; l++) {
 		offset += READ_BE_UINT32(dataSrc + offset + 4) + 16;
 		int width = READ_LE_UINT16(dataSrc + offset + 14);
 		int height = READ_LE_UINT16(dataSrc + offset + 16);
-		if (_bitmapFont) {
-			decodedLength += (((width + 7) / 8) * height);
-		} else {
-			decodedLength += (width * height);
-		}
+		int size = width * height;
+		decodedLength += size;
+		if (size > _maxCharSize)
+			_maxCharSize = size;
 	}
 
-	// If characters have transparency, then bytes just get skipped and
-	// so there may appear some garbage. That's why we have to fill it
-	// with zeroes first.
+	debug(1, "NutRenderer::loadFont('%s') - decodedLength = %d", filename, decodedLength);
 
 	_decodedData = new byte[decodedLength];
-	memset(_decodedData, 0, decodedLength);
-
 	byte *decodedPtr = _decodedData;
 
 	offset = 0;
-	for (int l = 0; l < _numChars; l++) {
+	for (l = 0; l < _numChars; l++) {
 		offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
 		if (READ_BE_UINT32(dataSrc + offset) != MKID_BE('FRME')) {
 			error("NutRenderer::loadFont(%s) there is no FRME chunk %d (offset %x)", filename, l, offset);
@@ -220,31 +155,110 @@ void NutRenderer::loadFont(const char *filename) {
 		_chars[l].height = READ_LE_UINT16(dataSrc + offset + 16);
 		_chars[l].src = decodedPtr;
 
-		int pitch;
+		decodedPtr += (_chars[l].width * _chars[l].height);
 
-		if (_bitmapFont) {
-			pitch = (_chars[l].width + 7) / 8;
+		// If characters have transparency, then bytes just get skipped and
+		// so there may appear some garbage. That's why we have to fill it
+		// with a default color first.
+		if (codec == 44) {
+			memset(_chars[l].src, kSmush44TransparentColor, _chars[l].width * _chars[l].height);
+			_paletteMap[kSmush44TransparentColor] = 1;
+			_chars[l].transparency = kSmush44TransparentColor;
 		} else {
-			pitch = _chars[l].width;
+			memset(_chars[l].src, kDefaultTransparentColor, _chars[l].width * _chars[l].height);
+			_paletteMap[kDefaultTransparentColor] = 1;
+			_chars[l].transparency = kDefaultTransparentColor;
 		}
-
-		decodedPtr += (pitch * _chars[l].height);
 
 		const uint8 *fobjptr = dataSrc + offset + 22;
 		switch (codec) {
 		case 1:
-			codec1(_chars[l].src, fobjptr, _chars[l].width, _chars[l].height, pitch);
+			codec1(_chars[l].src, fobjptr, _chars[l].width, _chars[l].height, _chars[l].width);
 			break;
 		case 21:
 		case 44:
-			codec21(_chars[l].src, fobjptr, _chars[l].width, _chars[l].height, pitch);
+			codec21(_chars[l].src, fobjptr, _chars[l].width, _chars[l].height, _chars[l].width);
 			break;
 		default:
 			error("NutRenderer::loadFont: unknown codec: %d", codec);
 		}
 	}
 
+	// We have decoded the font. Now let's see if we can re-compress it to
+	// a more compact format. Start by counting the number of colors.
+
+	int numColors = 0;
+	for (l = 0; l < 256; l++) {
+		if (_paletteMap[l]) {
+			if (numColors < ARRAYSIZE(_palette)) {
+				_paletteMap[l] = numColors;
+				_palette[numColors] = l;
+			}
+			numColors++;
+		}
+	}
+
+	// Now _palette contains all the used colors, and _paletteMap maps the
+	// real color to the palette index.
+
+	if (numColors <= 2)
+		_bpp = 1;
+	else if (numColors <= 4)
+		_bpp = 2;
+	else if (numColors <= 16)
+		_bpp = 4;
+	else
+		_bpp = 8;
+
+	if (_bpp < 8) {
+		int compressedLength = 0;
+		for (l = 0; l < 256; l++) {
+			compressedLength += (((_bpp * _chars[l].width + 7) / 8) * _chars[l].height);
+		}
+
+		debug(1, "NutRenderer::loadFont('%s') - compressedLength = %d (%d bpp)", filename, compressedLength, _bpp);
+
+		byte *compressedData = new byte[compressedLength];
+		memset(compressedData, 0, compressedLength);
+
+		offset = 0;
+
+		for (l = 0; l < 256; l++) {
+			byte *src = _chars[l].src;
+			byte *dst = compressedData + offset;
+			int srcPitch = _chars[l].width;
+			int dstPitch = (_bpp * _chars[l].width + 7) / 8;
+
+			for (int h = 0; h < _chars[l].height; h++) {
+				byte bit = 0x80;
+				byte *nextDst = dst + dstPitch;
+				for (int w = 0; w < srcPitch; w++) {
+					byte color = _paletteMap[src[w]];
+					for (int i = 0; i < _bpp; i++) {
+						if (color & (1 << i))
+							*dst |= bit;
+						bit >>= 1;
+					}
+					if (!bit) {
+						bit = 0x80;
+						dst++;
+					}
+				}
+				src += srcPitch;
+				dst = nextDst;
+			}
+			_chars[l].src = compressedData + offset;
+			offset += (dstPitch * _chars[l].height);
+		}
+
+		delete [] _decodedData;
+		_decodedData = compressedData;
+
+		_charBuffer = new byte[_maxCharSize];
+	}
+
 	delete [] dataSrc;
+	delete [] _paletteMap;
 }
 
 int NutRenderer::getCharWidth(byte c) const {
@@ -267,46 +281,53 @@ int NutRenderer::getCharHeight(byte c) const {
 	return _chars[c].height;
 }
 
-void NutRenderer::drawShadowChar(const Graphics::Surface &s, int c, int x, int y, byte color, bool showShadow) {
+byte *NutRenderer::unpackChar(byte c) {
+	if (_bpp == 8)
+		return _chars[c].src;
 
-	// We draw the character a total of 7 times: 6 times shifted and in black
-	// for the shadow, and once in the right color and position. This way we
-	// achieve the exact look as the original CMI had.
-	// However, this is not how the original engine handled it. Char glyphs
-	// were compressed with codec 44. In the decoding routine, transparent
-	// pixels are skipped. Other pixels are just filled with the decoded color
-	// which can be equal to 0 (==shadow), 1 (==char color) or another value
-	// (255, 224) which is just copied as-is in the destination buffer.
+	byte *src = _chars[c].src;
+	int pitch = (_bpp * _chars[c].width + 7) / 8;
 
-	static const int offsetX[7] = { -1,  0, 1, 0, 1, 2, 0 };
-	static const int offsetY[7] = {  0, -1, 0, 1, 2, 1, 0 };
-	const int cTable[7] = { 0, 0, 0, 0, 0, 0, color };
-	int i = 0;
+	for (int ty = 0; ty < _chars[c].height; ty++) {
+		for (int tx = 0; tx < _chars[c].width; tx++) {
+			byte val;
+			int offset;
+			byte bit;
 
-	if (!showShadow)
-		i = 6;
+			switch (_bpp) {
+			case 1:
+				offset = tx / 8;
+				bit = 0x80 >> (tx % 8);
+				break;
+			case 2:
+				offset = tx / 4;
+				bit = 0x80 >> (2 * (tx % 4));
+				break;
+			default:
+				offset = tx / 2;
+				bit = 0x80 >> (4 * (tx % 2));
+				break;
+			}
 
-	for (; i < 7; i++) {
-		x += offsetX[i];
-		y += offsetY[i];
-		color = cTable[i];
+			val = 0;
 
-		if (c >= 256 && _vm->_useCJKMode)
-			draw2byte(s, c, x, y, color);
-		else
-			drawChar(s, (byte)c, x, y, color);
+			for (int i = 0; i < _bpp; i++) {
+				if (src[offset] & (bit >> i))
+					val |= (1 << i);
+			}
 
-		x -= offsetX[i];
-		y -= offsetY[i];
+			_charBuffer[ty * _chars[c].width + tx] = _palette[val];
+		}
+		src += pitch;
 	}
+
+	return _charBuffer;
 }
 
 void NutRenderer::drawFrame(byte *dst, int c, int x, int y) {
-	assert(!_bitmapFont);
-
 	const int width = MIN((int)_chars[c].width, _vm->_screenWidth - x);
 	const int height = MIN((int)_chars[c].height, _vm->_screenHeight - y);
-	const byte *src = _chars[c].src;
+	const byte *src = unpackChar(c);
 	const int srcPitch = _chars[c].width;
 	byte bits = 0;
 
@@ -339,14 +360,8 @@ void NutRenderer::drawChar(const Graphics::Surface &s, byte c, int x, int y, byt
 	byte *dst = (byte *)s.pixels + y * s.pitch + x;
 	const int width = MIN((int)_chars[c].width, s.w - x);
 	const int height = MIN((int)_chars[c].height, s.h - y);
-	const byte *src = _chars[c].src;
-	int srcPitch;
-
-	if (_bitmapFont) {
-		srcPitch = (_chars[c].width + 7) / 8;
-	} else {
-		srcPitch = _chars[c].width;
-	}
+	const byte *src = unpackChar(c);
+	int srcPitch = _chars[c].width;
 
 	const int minX = x < 0 ? -x : 0;
 	const int minY = y < 0 ? -y : 0;
@@ -361,16 +376,12 @@ void NutRenderer::drawChar(const Graphics::Surface &s, byte c, int x, int y, byt
 	}
 
 	for (int ty = minY; ty < height; ty++) {
-		int tx;
-
-		for (tx = minX; tx < width; tx++) {
-			if (_bitmapFont) {
-				if (src[tx / 8] & (0x80 >> (tx % 8))) {
+		for (int tx = minX; tx < width; tx++) {
+			if (src[tx] != _chars[c].transparency) {
+				if (src[tx] == 1) {
 					dst[tx] = color;
-				}
-			} else {
-				if (src[tx] != 0) {
-					dst[tx] = color;
+				} else {
+					dst[tx] = src[tx];
 				}
 			}
 		}

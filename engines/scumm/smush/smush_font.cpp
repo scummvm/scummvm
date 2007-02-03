@@ -30,7 +30,7 @@
 namespace Scumm {
 
 SmushFont::SmushFont(ScummEngine *vm, const char *filename, bool use_original_colors, bool new_colors) :
-	NutRenderer(vm, filename, false),
+	NutRenderer(vm, filename),
 	_color(-1),
 	_new_colors(new_colors),
 	_original(use_original_colors) {
@@ -65,7 +65,7 @@ int SmushFont::getStringHeight(const char *str) {
 int SmushFont::drawChar(byte *buffer, int dst_width, int x, int y, byte chr) {
 	int w = _chars[chr].width;
 	int h = _chars[chr].height;
-	const byte *src = _chars[chr].src;
+	const byte *src = unpackChar(chr);
 	byte *dst = buffer + dst_width * y + x;
 
 	assert(dst_width == _vm->_screenWidth);
@@ -74,7 +74,7 @@ int SmushFont::drawChar(byte *buffer, int dst_width, int x, int y, byte chr) {
 		for (int j = 0; j < h; j++) {
 			for (int i = 0; i < w; i++) {
 				int8 value = *src++;
-				if (value)
+				if (value != _chars[chr].transparency)
 					dst[i] = value;
 			}
 			dst += dst_width;
@@ -89,7 +89,7 @@ int SmushFont::drawChar(byte *buffer, int dst_width, int x, int y, byte chr) {
 						dst[i] = 0xFF;
 					} else if (value == -31) {
 						dst[i] = 0;
-					} else if (value) {
+					} else if (value != _chars[chr].transparency) {
 						dst[i] = value;
 					}
 				}
@@ -101,7 +101,7 @@ int SmushFont::drawChar(byte *buffer, int dst_width, int x, int y, byte chr) {
 					int8 value = *src++;
 					if (value == 1) {
 						dst[i] = color;
-					} else if (value) {
+					} else if (value != _chars[chr].transparency) {
 						dst[i] = 0;
 					}
 				}

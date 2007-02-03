@@ -31,31 +31,41 @@ class ScummEngine;
 
 class NutRenderer {
 protected:
+
+	enum {
+		kDefaultTransparentColor = 0,
+		kSmush44TransparentColor = 2
+	};
+
 	ScummEngine *_vm;
-	bool _bitmapFont;
 	int _numChars;
+	int _maxCharSize;
+	byte *_charBuffer;
 	byte *_decodedData;
+	byte *_paletteMap;
+	byte _bpp;
+	byte _palette[16];
 	struct {
 		uint16 width;
 		uint16 height;
 		byte *src;
+		byte transparency;
 	} _chars[256];
 
 	void codec1(byte *dst, const byte *src, int width, int height, int pitch);
 	void codec21(byte *dst, const byte *src, int width, int height, int pitch);
 
-	void drawChar(const Graphics::Surface &s, byte c, int x, int y, byte color);
-	void draw2byte(const Graphics::Surface &s, int c, int x, int y, byte color);
-
 	void loadFont(const char *filename);
+	byte *unpackChar(byte c);
 
 public:
-	NutRenderer(ScummEngine *vm, const char *filename, bool bitmap);
+	NutRenderer(ScummEngine *vm, const char *filename);
 	virtual ~NutRenderer();
 	int getNumChars() const { return _numChars; }
 
 	void drawFrame(byte *dst, int c, int x, int y);
-	void drawShadowChar(const Graphics::Surface &s, int c, int x, int y, byte color, bool showShadow);
+	void drawChar(const Graphics::Surface &s, byte c, int x, int y, byte color);
+	void draw2byte(const Graphics::Surface &s, int c, int x, int y, byte color);
 
 	int getCharWidth(byte c) const;
 	int getCharHeight(byte c) const;
