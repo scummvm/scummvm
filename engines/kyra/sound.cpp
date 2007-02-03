@@ -443,7 +443,7 @@ bool KyraEngine::textEnabled() {
 
 void KyraEngine::snd_playTheme(int file, int track) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playTheme(%d)", file);
-	_curMusicTheme = file;
+	_curSfxFile = _curMusicTheme = file;
 	_sound->loadSoundFile(_curMusicTheme);
 	_sound->playTrack(track);
 }
