@@ -1299,6 +1299,9 @@ void ThemeModern::setupFont(const Common::String &key, const Common::String &nam
 #pragma mark -
 
 void ThemeModern::processExtraValues() {
+	// TODO: think of unloading all old graphic files first, instead of just
+	// loading new ones if needed when this is processed?
+
 	// load the pixmap filenames from the config file
 	_imageHandles[kDialogBkgdCorner] = _evaluator->getStringVar("pix_dialog_corner");
 	_imageHandles[kDialogBkgdTop] = _evaluator->getStringVar("pix_dialog_top");
