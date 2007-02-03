@@ -1301,6 +1301,8 @@ void ThemeModern::setupFont(const Common::String &key, const Common::String &nam
 #pragma mark -
 
 void ThemeModern::processExtraValues() {
+	// FIXME: Using a static (function local) variable like this is *EVIL* and
+	// defeats the purpose of OOP. Turn this into a member variable ASAP!
 	static Common::String imageHandlesTable[kImageHandlesMax];
 
 	// load the pixmap filenames from the config file
