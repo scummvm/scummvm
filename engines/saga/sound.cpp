@@ -79,7 +79,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 	if (!buffer.isSigned)
 		flags |= Audio::Mixer::FLAG_UNSIGNED;
 
-	_mixer->playRaw(handle, buffer.buffer, buffer.size, buffer.frequency, flags, -1, volume);
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer, buffer.size, buffer.frequency, flags, -1, volume);
 }
 
 void Sound::playSound(SoundBuffer &buffer, int volume, bool loop) {

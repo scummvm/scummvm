@@ -248,7 +248,7 @@ void VocSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle,
 	int size, rate;
 	byte *buffer = Audio::loadVOCFromStream(*_file, size, rate);
 	assert(buffer);
-	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, sound);
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, sound);
 }
 
 void RawSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol) {
@@ -261,7 +261,7 @@ void RawSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle,
 	byte *buffer = (byte *)malloc(size);
 	assert(buffer);
 	_file->read(buffer, size);
-	_mixer->playRaw(handle, buffer, size, 22050, flags | Audio::Mixer::FLAG_AUTOFREE, sound);
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer, size, 22050, flags | Audio::Mixer::FLAG_AUTOFREE, sound);
 }
 
 #ifdef USE_MAD
@@ -671,9 +671,9 @@ void Sound::playRawData(byte *soundData, uint sound, uint size) {
 	memcpy(buffer, soundData, size);
 
 	if (_vm->getPlatform() == Common::kPlatformPC)
-		_mixer->playRaw(&_effectsHandle, buffer, size, 8000, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE, sound);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_effectsHandle, buffer, size, 8000, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE, sound);
 	else
-		_mixer->playRaw(&_effectsHandle, buffer, size, 8000, Audio::Mixer::FLAG_AUTOFREE, sound);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_effectsHandle, buffer, size, 8000, Audio::Mixer::FLAG_AUTOFREE, sound);
 }
 
 // Feeble Files specific
@@ -737,7 +737,7 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 		memcpy(buffer, soundData + stream.pos(), size);
 	}
 
-	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, sound, vol, pan);
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, sound, vol, pan);
 }
 
 void Sound::stopSfx5() {

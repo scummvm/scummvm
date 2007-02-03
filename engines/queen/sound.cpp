@@ -198,7 +198,7 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 	if (sound) {
 		f->read(sound, size);
 		byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
-		_mixer->playRaw(soundHandle, sound, size, 11025, flags);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, soundHandle, sound, size, 11025, flags);
 	}
 }
 

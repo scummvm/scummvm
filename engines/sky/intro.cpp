@@ -740,7 +740,7 @@ bool Intro::nextPart(uint16 *&data) {
 		// probably use _skySound instead of calling playRaw()
 		// directly, but this will have to do for now.
 		memset(vData, 127, sizeof(struct dataFileHeader));
-		_mixer->playRaw(&_voice, vData, _skyDisk->_lastLoadedFileSize, 11025,
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_voice, vData, _skyDisk->_lastLoadedFileSize, 11025,
 				Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED, SOUND_VOICE);
 		return true;
 	case WAITVOICE:
@@ -757,12 +757,12 @@ bool Intro::nextPart(uint16 *&data) {
 		return true;
 	case LOOPBG:
 		_mixer->stopID(SOUND_BG);
-		_mixer->playRaw(&_bgSfx, _bgBuf + 256, _bgSize - 768, 11025,
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_bgSfx, _bgBuf + 256, _bgSize - 768, 11025,
 				Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LOOP, SOUND_BG);
 		return true;
 	case PLAYBG:
 		_mixer->stopID(SOUND_BG);
-		_mixer->playRaw(&_bgSfx, _bgBuf + 256, _bgSize - 768, 11025,
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_bgSfx, _bgBuf + 256, _bgSize - 768, 11025,
 				Audio::Mixer::FLAG_UNSIGNED, SOUND_BG);
 		return true;
 	case STOPBG:

@@ -1040,7 +1040,7 @@ void Sound::playSound(uint32 id, byte *sound, uint32 size, Audio::SoundHandle *h
 	memcpy(buffer, sound+sizeof(struct dataFileHeader), size);
 
 	_mixer->stopID(id);
-	_mixer->playRaw(handle, buffer, size, 11025, flags, id);
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer, size, 11025, flags, id);
 }
 
 void Sound::loadSection(uint8 pSection) {
@@ -1118,9 +1118,9 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 	}
 
 	if (channel == 0)
-		_mixer->playRaw(&_ingameSound0, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH0, volume, 0, loopSta, loopEnd);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_ingameSound0, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH0, volume, 0, loopSta, loopEnd);
 	else
-		_mixer->playRaw(&_ingameSound1, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH1, volume, 0, loopSta, loopEnd);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_ingameSound1, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH1, volume, 0, loopSta, loopEnd);
 }
 
 void Sound::fnStartFx(uint32 sound, uint8 channel) {
@@ -1245,7 +1245,7 @@ bool Sound::startSpeech(uint16 textNum) {
 		rate = 11025;
 
 	_mixer->stopID(SOUND_SPEECH);
-	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize, rate, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE, SOUND_SPEECH);
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_ingameSpeech, playBuffer, speechSize, rate, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE, SOUND_SPEECH);
 	return true;
 }
 

@@ -188,7 +188,7 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr, size);
-		_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, rate, flags, soundID);
 	}
 	// WORKAROUND bug # 1311447
 	else if (READ_BE_UINT32(ptr) == 0x460e200d) {
@@ -210,7 +210,7 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr, size);
-		_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, rate, flags, soundID);
 	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
@@ -281,7 +281,7 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + 6, size);
-		_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, rate, flags, soundID);
 	}
 	else if ((_vm->_game.platform == Common::kPlatformFMTowns && _vm->_game.version == 3) || READ_BE_UINT32(ptr) == MKID_BE('SOUN') || READ_BE_UINT32(ptr) == MKID_BE('TOWS')) {
 
@@ -334,7 +334,7 @@ void Sound::playSound(int soundID) {
 				if (loopEnd > 0)
 					flags |= Audio::Mixer::FLAG_LOOP;
 
-				_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID, 255, 0, loopStart, loopEnd);
+				_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, waveSize, rate, flags, soundID, 255, 0, loopStart, loopEnd);
 			}
 			break;
 		case 1:
@@ -395,7 +395,7 @@ void Sound::playSound(int soundID) {
 		sound = (char *)malloc(size);
 		int vol = ptr[24] * 4;
 		memcpy(sound, ptr + READ_BE_UINT16(ptr + 8), size);
-		_mixer->playRaw(NULL, sound, size, rate, Audio::Mixer::FLAG_AUTOFREE, soundID, vol, 0);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, rate, Audio::Mixer::FLAG_AUTOFREE, soundID, vol, 0);
 	}
 	else {
 

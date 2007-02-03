@@ -535,7 +535,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		musicFile.close();
 
 		if (_vm->_game.heversion == 70) {
-			_mixer->playRaw(&_heSoundChannels[heChannel], spoolPtr, size, 11025, flags, soundID, 255, 0, 0,0, type);
+			_mixer->playRaw(type, &_heSoundChannels[heChannel], spoolPtr, size, 11025, flags, soundID, 255, 0, 0, 0);
 			return;
 		}
 	}
@@ -586,7 +586,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		}
 
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
-		_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID, 255, 0, 0,0, type);
+		_mixer->playRaw(type, &_heSoundChannels[heChannel], sound, size, rate, flags, soundID, 255, 0, 0,0);
 	}
 	// Support for sound in Humongous Entertainment games
 	else if (READ_BE_UINT32(ptr) == MKID_BE('DIGI') || READ_BE_UINT32(ptr) == MKID_BE('TALK')) {
@@ -642,7 +642,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		}
 
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
-		_mixer->playRaw(&_heSoundChannels[heChannel], ptr + heOffset + 8, size, rate, flags, soundID, 255, 0, 0,0, type);
+		_mixer->playRaw(type, &_heSoundChannels[heChannel], ptr + heOffset + 8, size, rate, flags, soundID, 255, 0, 0,0);
 
 	}
 	// Support for PCM music in 3DO versions of Humongous Entertainment games
@@ -660,7 +660,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		_mixer->stopID(_currentMusic);
 		_currentMusic = soundID;
-		_mixer->playRaw(NULL, ptr + 8, size, rate, flags, soundID, 255, 0, 0,0, Audio::Mixer::kMusicSoundType);
+		_mixer->playRaw(Audio::Mixer::kMusicSoundType, NULL, ptr + 8, size, rate, flags, soundID, 255, 0, 0,0);
 	}
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MIDI')) {
 		if (_vm->_imuse) {

@@ -114,8 +114,6 @@ Mixer::Mixer() {
 	for (i = 0; i < ARRAYSIZE(_volumeForSoundType); i++)
 		_volumeForSoundType[i] = kMaxMixerVolume;
 
-	_paused = false;
-
 	for (i = 0; i != NUM_CHANNELS; i++)
 		_channels[i] = 0;
 
@@ -131,10 +129,6 @@ Mixer::~Mixer() {
 
 uint Mixer::getOutputRate() const {
 	return (uint)_syst->getOutputSampleRate();
-}
-
-bool Mixer::isPaused() {
-	return _paused;
 }
 
 void Mixer::setupPremix(AudioStream *stream, SoundType type) {
@@ -173,8 +167,13 @@ void Mixer::insertChannel(SoundHandle *handle, Channel *chan) {
 	}
 }
 
-void Mixer::playRaw(SoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
-			int id, byte volume, int8 balance, uint32 loopStart, uint32 loopEnd, SoundType type) {
+void Mixer::playRaw(
+			SoundType type,
+			SoundHandle *handle,
+			void *sound,
+			uint32 size, uint rate, byte flags,
+			int id, byte volume, int8 balance,
+			uint32 loopStart, uint32 loopEnd) {
 	Common::StackLock lock(_mutex);
 
 	// Prevent duplicate sounds
@@ -207,8 +206,13 @@ void Mixer::playRaw(SoundHandle *handle, void *sound, uint32 size, uint rate, by
 	insertChannel(handle, chan);
 }
 
-void Mixer::playInputStream(SoundType type, SoundHandle *handle, AudioStream *input,
-			int id, byte volume, int8 balance, bool autofreeStream, bool permanent) {
+void Mixer::playInputStream(
+			SoundType type,
+			SoundHandle *handle,
+			AudioStream *input,
+			int id, byte volume, int8 balance,
+			bool autofreeStream,
+			bool permanent) {
 	Common::StackLock lock(_mutex);
 
 	if (input == 0) {
@@ -242,20 +246,18 @@ void Mixer::mix(int16 *buf, uint len) {
 	//  zero the buf
 	memset(buf, 0, 2 * len * sizeof(int16));
 
-	if (!_paused) {
-		if (_premixChannel)
-			_premixChannel->mix(buf, len);
+	if (_premixChannel)
+		_premixChannel->mix(buf, len);
 
-		// now mix all channels
-		for (int i = 0; i != NUM_CHANNELS; i++)
-			if (_channels[i]) {
-				if (_channels[i]->isFinished()) {
-					delete _channels[i];
-					_channels[i] = 0;
-				} else if (!_channels[i]->isPaused())
-					_channels[i]->mix(buf, len);
-			}
-	}
+	// now mix all channels
+	for (int i = 0; i != NUM_CHANNELS; i++)
+		if (_channels[i]) {
+			if (_channels[i]->isFinished()) {
+				delete _channels[i];
+				_channels[i] = 0;
+			} else if (!_channels[i]->isPaused())
+				_channels[i]->mix(buf, len);
+		}
 }
 
 void Mixer::mixCallback(void *s, byte *samples, int len) {
@@ -319,14 +321,6 @@ void Mixer::setChannelBalance(SoundHandle handle, int8 balance) {
 	_channels[index]->setBalance(balance);
 }
 
-uint32 Mixer::getSoundElapsedTimeOfSoundID(int id) {
-	Common::StackLock lock(_mutex);
-	for (int i = 0; i != NUM_CHANNELS; i++)
-		if (_channels[i] && _channels[i]->getId() == id)
-			return _channels[i]->getElapsedTime();
-	return 0;
-}
-
 uint32 Mixer::getSoundElapsedTime(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 
@@ -338,7 +332,12 @@ uint32 Mixer::getSoundElapsedTime(SoundHandle handle) {
 }
 
 void Mixer::pauseAll(bool paused) {
-	_paused = paused;
+	Common::StackLock lock(_mutex);
+	for (int i = 0; i != NUM_CHANNELS; i++) {
+		if (_channels[i] != 0) {
+			_channels[i]->pause(paused);
+		}
+	}
 }
 
 void Mixer::pauseID(int id, bool paused) {
@@ -354,7 +353,7 @@ void Mixer::pauseID(int id, bool paused) {
 void Mixer::pauseHandle(SoundHandle handle, bool paused) {
 	Common::StackLock lock(_mutex);
 
-	// Simply ignore pause/unpause requests for handles of sound that alreayd terminated
+	// Simply ignore (un)pause requests for sounds that already terminated
 	const int index = handle._val % NUM_CHANNELS;
 	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
 		return;

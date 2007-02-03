@@ -311,7 +311,7 @@ int32 Sound::playFx(Audio::SoundHandle *handle, byte *data, uint32 len, uint8 vo
 	if (loop)
 		flags |= Audio::Mixer::FLAG_LOOP;
 
-	_vm->_mixer->playRaw(handle, data + stream.pos(), size, rate, flags, -1, vol, pan, 0, 0, soundType);
+	_vm->_mixer->playRaw(soundType, handle, data + stream.pos(), size, rate, flags, -1, vol, pan, 0, 0);
 	return RD_OK;
 }
 

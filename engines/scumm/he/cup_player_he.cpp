@@ -169,7 +169,7 @@ void CUP_Player::updateSfx() {
 					flags |= Audio::Mixer::FLAG_LOOP;
 					loopEnd = soundSize - 8;
 				}
-				_mixer->playRaw(&sfxChannel->handle, soundData + 8, soundSize - 8, 11025, flags, -1, 255, 0, 0, loopEnd);
+				_mixer->playRaw(Audio::Mixer::kSFXSoundType, &sfxChannel->handle, soundData + 8, soundSize - 8, 11025, flags, -1, 255, 0, 0, loopEnd);
 			}
 		} else {
 			warning("Unable to find a free channel to play sound %d", sfx->num);

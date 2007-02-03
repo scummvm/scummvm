@@ -38,6 +38,12 @@ class AudioStream;
 class Channel;
 class Mixer;
 
+/**
+ * A SoundHandle instances corresponds to a specific sound
+ * being played via the mixer. It can be used to control that
+ * sound (pause it, stop it, etc.).
+ * @see The Mixer class
+ */
 class SoundHandle {
 	friend class Channel;
 	friend class Mixer;
@@ -46,6 +52,10 @@ public:
 	inline SoundHandle() : _val(0xFFFFFFFF) {}
 };
 
+/**
+ * The main audio mixer handles mixing of an arbitrary number of
+ * input audio streams (in the form of AudioStream instances).
+ */
 class Mixer {
 public:
 	enum {
@@ -96,8 +106,6 @@ private:
 
 	int _volumeForSoundType[4];
 
-	bool _paused;
-
 	uint32 _handleSeed;
 	Channel *_channels[NUM_CHANNELS];
 
@@ -136,18 +144,38 @@ public:
 	 * (using the makeLinearInputStream factory function), which is then
 	 * passed on to playInputStream.
 	 */
-	void playRaw(SoundHandle *handle,
-				void *sound, uint32 size, uint rate, byte flags,
-				int id = -1, byte volume = 255, int8 balance = 0,
-				uint32 loopStart = 0, uint32 loopEnd = 0,
-				SoundType type = kSFXSoundType);
+	void playRaw(
+		SoundType type,
+		SoundHandle *handle,
+		void *sound, uint32 size, uint rate, byte flags,
+		int id = -1, byte volume = 255, int8 balance = 0,
+		uint32 loopStart = 0, uint32 loopEnd = 0);
 
 	/**
 	 * Start playing the given audio input stream.
+	 *
+	 * Note that the sound id assigned below is unique. At most one stream
+	 * with a given idea can play at any given time. Trying to play a sound
+	 * with an id that is already in use causes the new sound to be not played.
+	 *
+	 * @param type	the type (voice/sfx/music) of the stream
+	 * @param handle	a SoundHandle which can be used to reference and control
+	 *                  the stream via suitable mixer methods
+	 * @param input	the actual AudioStream to be played
+	 * @param id	a unique id assigned to this stream
+	 * @param volume	the volume with which to play the sound, ranging from 0 to 255
+	 * @param balance	the balance with which to play the sound, ranging from -128 to 127
+	 * @param autofreeStream	a flag indicating whether the stream should be
+	 *                          freed after playback finished
+	 * @param permanent	a flag indicating whether a plain stopAll call should
+	 *                  not stop this particular stream
 	 */
-	void playInputStream(SoundType type, SoundHandle *handle, AudioStream *input,
-				int id = -1, byte volume = 255, int8 balance = 0,
-				bool autofreeStream = true, bool permanent = false);
+	void playInputStream(
+		SoundType type,
+		SoundHandle *handle,
+		AudioStream *input,
+		int id = -1, byte volume = 255, int8 balance = 0,
+		bool autofreeStream = true, bool permanent = false);
 
 
 
@@ -173,10 +201,10 @@ public:
 
 
 	/**
-	 * Pause/unpause the mixer (this temporarily stops all audio processing,
-	 * including all regular channels and the premix channel).
+	 * Pause/unpause all sounds, including all regular channels and the
+	 * premix channel.
 	 *
-	 * @param paused true to pause the mixer, false to unpause it
+	 * @param paused true to pause everything, false to unpause
 	 */
 	void pauseAll(bool paused);
 
@@ -215,19 +243,12 @@ public:
 	int getSoundID(SoundHandle handle);
 
 	/**
-	 * Check if a sound with the given hANDLE is active.
+	 * Check if a sound with the given handle is active.
 	 *
 	 * @param handle sound to query
 	 * @return true if the sound is active
 	 */
 	bool isSoundHandleActive(SoundHandle handle);
-
-	/**
-	 * Check if the mixer is paused (using pauseAll).
-	 *
-	 * @return true if the mixer is paused
-	 */
-	bool isPaused();
 
 
 
@@ -247,11 +268,6 @@ public:
 	 *        (-127 ... 0 ... 127) corresponds to (left ... center ... right)
 	 */
 	void setChannelBalance(SoundHandle handle, int8 balance);
-
-	/**
-	 * Get approximation of for how long the Sound ID has been playing.
-	 */
-	uint32 getSoundElapsedTimeOfSoundID(int id);
 
 	/**
 	 * Get approximation of for how long the channel has been playing.

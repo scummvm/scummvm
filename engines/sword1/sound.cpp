@@ -172,7 +172,7 @@ void Sound::playSample(QueueElement *elem) {
 						flags |= Audio::Mixer::FLAG_STEREO;
 					if (_fxList[elem->id].type == FX_LOOP)
 						flags |= Audio::Mixer::FLAG_LOOP;
-					_mixer->playRaw(&elem->handle, sampleData + 0x2C, size, 11025, flags, elem->id, volume, pan);
+					_mixer->playRaw(Audio::Mixer::kSFXSoundType, &elem->handle, sampleData + 0x2C, size, 11025, flags, elem->id, volume, pan);
 			}
 		} else
 			break;
@@ -196,7 +196,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			uint32 size;
 			int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
 			if (data)
-				_mixer->playRaw(&_speechHandle, data, size, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID, speechVol, speechPan);
+				_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_speechHandle, data, size, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID, speechVol, speechPan);
 		}
 #ifdef USE_MAD
 		else if (_cowMode == CowMp3) {
