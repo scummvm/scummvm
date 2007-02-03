@@ -133,11 +133,7 @@ static const char HELP_STRING[] =
 ;
 #endif
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__) || defined (__SYMBIAN32__))
-static Common::String s_appName("scummvm");
-#else
 static const char *s_appName = "scummvm";
-#endif
 
 static void usage(const char *s, ...) GCC_PRINTF(1, 2);
 
@@ -150,7 +146,7 @@ static void usage(const char *s, ...) {
 	va_end(va);
 
 #if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__) || defined (__SYMBIAN32__))
-	printf(USAGE_STRING, s_appName.c_str(), buf, s_appName.c_str(), s_appName.c_str());
+	printf(USAGE_STRING, s_appName, buf, s_appName, s_appName);
 #endif
 	exit(1);
 }
@@ -628,11 +624,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 		printf("Features compiled in: %s\n", gScummVMFeatures);
 		return false;
 	} else if (command == "help") {
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__) || defined(__SYMBIAN32__))
-		printf(HELP_STRING, s_appName.c_str());
-#else
 		printf(HELP_STRING, s_appName);
-#endif
 		return false;
 	}
 #ifdef DETECTOR_TESTING_HACK
