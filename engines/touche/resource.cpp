@@ -130,19 +130,7 @@ void ToucheEngine::res_allocateTables() {
 		error("Unable to allocate memory for object data");
 	}
 
-	static const int initialSpriteSizeTable[NUM_SPRITES] = {
-		0x34BC0, 0x1E848, 0x1E848, 0x23A50,
-		0x1E848, 0x23940, 0x1E848
-	};
 	memset(_spritesTable, 0, sizeof(_spritesTable));
-	for (int i = 0; i < NUM_SPRITES; ++i) {
-		SpriteData *spr = &_spritesTable[i];
-		spr->size = initialSpriteSizeTable[i];
-		spr->ptr = (uint8 *)malloc(spr->size);
-		if (!spr->ptr) {
-			error("Unable to allocate memory for sprite %d", i);
-		}
-	}
 
 	_offscreenBuffer = (uint8 *)malloc(kScreenWidth * kScreenHeight);
 	if (!_offscreenBuffer) {
@@ -179,6 +167,7 @@ void ToucheEngine::res_deallocateTables() {
 
 	for (int i = 0; i < NUM_SPRITES; ++i) {
 		free(_spritesTable[i].ptr);
+		_spritesTable[i].ptr = 0;
 	}
 
 	free(_offscreenBuffer);
@@ -470,11 +459,15 @@ void ToucheEngine::res_loadSprite(int num, int index) {
 	_currentImageHeight = _fData.readUint16LE();
 	const uint32 size = _currentImageWidth * _currentImageHeight;
 	if (size > spr->size) {
-		warning("Reallocating memory for sprite %d (index %d), %d bytes needed", num, index, size - spr->size);
+		debug(8, "Reallocating memory for sprite %d (index %d), %d bytes needed", num, index, size - spr->size);
 		spr->size = size;
-		spr->ptr = (uint8 *)realloc(spr->ptr, size);
+		if (spr->ptr) {
+			spr->ptr = (uint8 *)realloc(spr->ptr, size);
+		} else {
+			spr->ptr = (uint8 *)malloc(size);
+		}
 		if (!spr->ptr) {
-			error("Unable to reallocate memory for sprite %d", num);
+			error("Unable to reallocate memory for sprite %d (%d bytes)", num, size);
 		}
 	}
 	for (int i = 0; i < _currentImageHeight; ++i) {
@@ -604,8 +597,7 @@ void ToucheEngine::res_loadMusic(int num) {
 void ToucheEngine::res_loadSpeech(int num) {
 	debugC(9, kDebugResource, "ToucheEngine::res_loadSpeech() num=%d", num);
 	if (num == -1) {
-		_mixer->stopHandle(_speechHandle);
-		_speechPlaying = false;
+		res_stopSpeech();
 	} else {
 		if (_compressedSpeechData < 0) { // uncompressed speech data
 			if (_fSpeech[0].isOpen()) {
