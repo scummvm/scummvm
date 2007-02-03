@@ -46,6 +46,9 @@ void IMuseDigital::timer_handler(void *refCon) {
 
 IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, int fps)
 	: _vm(scumm), _mixer(mixer) {
+	assert(_vm);
+	assert(mixer);
+
 	_pause = false;
 	_sound = new ImuseDigiSndMgr(_vm);
 	assert(_sound);
@@ -216,7 +219,7 @@ void IMuseDigital::callback() {
 				continue;
 			}
 
-			if (_pause || !_vm)
+			if (_pause)
 				return;
 
 			if (track->volFadeUsed) {
