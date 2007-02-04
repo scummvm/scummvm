@@ -308,6 +308,9 @@ void switchBackground(char *name) {
 }
 
 extern Zone     *_hoverZone;
+extern Job     *_jDrawLabel;
+extern Job     *_jEraseLabel;
+
 
 void Parallaction::changeLocation(char *location) {
     debugC(1, kDebugLocation, "changeLocation to '%s'", location);
@@ -349,6 +352,17 @@ void Parallaction::changeLocation(char *location) {
 
         debugC(2, kDebugLocation, "changeLocation: music stopped");
 	}
+
+    // WORKAROUND: this if-statement has been added to avoid crashes caused by
+    // execution of label jobs after a location switch. The other workaround in
+    // Parallaction::runGame should have been rendered useless by this one.
+    if (_jDrawLabel != NULL) {
+        removeJob(_jDrawLabel);
+        removeJob(_jEraseLabel);
+        _jDrawLabel = NULL;
+        _jEraseLabel = NULL;
+    }
+
 
     _hoverZone = NULL;
 	if (_engineFlags & kEngineMouse) {

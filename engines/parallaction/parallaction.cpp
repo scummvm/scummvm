@@ -138,8 +138,8 @@ uint16		_introSarcData2 = 1;
 
 
 static Job	   *_jDrawInventory = NULL;
-static Job	   *_jDrawLabel = NULL;
-static Job	   *_jEraseLabel = NULL;
+Job	   *_jDrawLabel = NULL;
+Job	   *_jEraseLabel = NULL;
 Zone    *_hoverZone = NULL;
 static Job	   *_jRunScripts = NULL;
 
