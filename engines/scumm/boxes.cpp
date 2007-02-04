@@ -776,7 +776,7 @@ int ScummEngine::getPathToDestBox(byte from, byte to) {
  * line in order to get from box1 to box3 via box2.
  */
 bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, Common::Point &foundPath) {
-	assert(_game.version >= 3);
+	assert(_vm->_game.version >= 3);
 	BoxCoords box1 = _vm->getBoxCoordinates(box1nr);
 	BoxCoords box2 = _vm->getBoxCoordinates(box2nr);
 	Common::Point tmp;
