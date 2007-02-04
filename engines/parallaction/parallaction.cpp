@@ -184,6 +184,7 @@ Parallaction::Parallaction(OSystem *syst) :
     Common::addSpecialDebugLevel(kDebugLocation, "location", "Location debug level");
 	Common::addSpecialDebugLevel(kDebugDisk, "disk", "Disk debug level");
 	Common::addSpecialDebugLevel(kDebugWalk, "walk", "Walk debug level");
+	Common::addSpecialDebugLevel(kDebugGraphics, "gfx", "Gfx debug level");
 }
 
 
@@ -956,7 +957,6 @@ void resumeJobs() {
 }
 
 void runJobs() {
-	debugC(1, kDebugLocation, "runJobs");
 
 	if (_engineFlags & kEnginePauseJobs) return;
 
@@ -972,9 +972,8 @@ void runJobs() {
 		j = v4;
 	}
 
-	debugC(1, kDebugLocation, "runJobs completed");
-
-	return;}
+	return;
+}
 
 // this Job uses a static counter to delay removal
 // and is in fact only used to remove jEraseLabel jobs

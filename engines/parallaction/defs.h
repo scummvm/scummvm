@@ -105,7 +105,8 @@ enum {
 	kDebugDisk = 1 << 0,
 	kDebugWalk = 1 << 1,
 	kDebugLocation = 1 << 2,
-	kDebugDialogue = 1 << 3
+	kDebugDialogue = 1 << 3,
+	kDebugGraphics = 1 << 4
 };
 
 } // namespace Parallaction

@@ -235,7 +235,7 @@ void Graphics::quickFadePalette(byte *palette) {
 //	FIXME: the effect is different from the original
 //
 void Graphics::animatePalette(byte *palette) {
-//	printf("Graphics::animatePalette()\n");
+// printf("Graphics::animatePalette()\n");
 
 	byte tmp[3];
 
@@ -360,7 +360,7 @@ void Graphics::floodFill(byte color, uint16 left, uint16 top, uint16 right, uint
 
 
 void Graphics::flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Graphics::Buffers buffer) {
-//	printf("Graphics::flatBlit(%i, %i, %i, %i)\n", w, h, x, y);
+    debugC(9, kDebugGraphics, "Graphics::flatBlit(%i, %i, %i, %i)", w, h, x, y);
 
     // source coordinates
 	int16 left = 0, top = 0;
@@ -384,7 +384,7 @@ void Graphics::flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Graphi
 	byte *s = data + left + top * w;
 	byte *d = _buffers[buffer] + x + y * SCREEN_WIDTH;
 
-//	printf("Graphics::flatBlit CLIPPED (%i, %i, %i, %i) -> (%i, %i) %x %x\n", left, top, right, bottom, x, y, (uint32)s, (uint32)d);
+	debugC(9, kDebugGraphics, "Graphics::flatBlit CLIPPED (%i, %i, %i, %i) -> (%i, %i) %x %x", left, top, right, bottom, x, y, (uint32)s, (uint32)d);
 
 	for (uint16 i = top; i < bottom; i++) {
 		for (uint16 j = left; j < right; j++) {
@@ -397,11 +397,11 @@ void Graphics::flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Graphi
 		d += (SCREEN_WIDTH - right + left);
 	}
 
-//	printf("Graphics::flatBlit BLITTED\n");
+	debugC(9, kDebugGraphics, "Graphics::flatBlit BLITTED");
 
 	if (buffer == kBitFront) updateScreen();
 
-//	printf("Graphics::flatBlit DONE\n");
+	debugC(9, kDebugGraphics, "Graphics::flatBlit DONE");
 
 	return;
 
