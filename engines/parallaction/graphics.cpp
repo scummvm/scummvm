@@ -458,8 +458,7 @@ void Graphics::blit(uint16 w, uint16 h, int16 x, int16 y, uint16 z, byte *data, 
 void jobDisplayLabel(void *parm, Job *j) {
 
 	ZoneLabel *label = (ZoneLabel*)parm;
-
-   debugC(1, kDebugLocation, "jobDisplayLabel (%x)", (uint32) label);
+    debugC(1, kDebugLocation, "jobDisplayLabel (%p)", (const void*) label);
 
 	if (label->_cnv._width == 0) return;
 	_vm->_graphics->flatBlitCnv(&label->_cnv, Graphics::_labelPosition[0]._x, Graphics::_labelPosition[0]._y, Graphics::kBitBack, label->_cnv._data1);
@@ -470,7 +469,7 @@ void jobDisplayLabel(void *parm, Job *j) {
 void jobEraseLabel(void *parm, Job *j) {
 	ZoneLabel *label = (ZoneLabel*)parm;
 
-    debugC(1, kDebugLocation, "jobEraseLabel (%x)", (uint32) label);
+    debugC(1, kDebugLocation, "jobEraseLabel (%p)", (const void*) label);
 
 	int16 _si, _di;
 
