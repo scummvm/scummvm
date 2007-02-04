@@ -207,24 +207,24 @@ static const ObsoleteGameID obsoleteGameIDsTable[] = {
 // only a single unique variant. This is used to help the detector quickly
 // decide whether it has to worry about distinguishing multiple variants or not.
 static const GameSettings gameVariantsTable[] = {
-	{"maniac", "C64",  GID_MANIAC, 0, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformC64},
-	{"maniac", "V1",   GID_MANIAC, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
-	{"maniac", "NES",  GID_MANIAC, 1, 0, MDT_NONE,  GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformNES},
-	{"maniac", "V2",   GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
-	{"maniac", "Demo", GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE | GF_DEMO, Common::kPlatformPC},
+	{"maniac", "C64",  GID_MANIAC, 0, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformC64},
+	{"maniac", "V1",   GID_MANIAC, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
+	{"maniac", "NES",  GID_MANIAC, 1, 0, MDT_NONE,  GF_SMALL_HEADER | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformNES},
+	{"maniac", "V2",   GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"maniac", "Demo", GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE | GF_DEMO, Common::kPlatformPC},
 
-	{"zak", "V1",       GID_ZAK, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
-	{"zak", "V2",       GID_ZAK, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
-	{"zak", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS, GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
+	{"zak", "V1",       GID_ZAK, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"zak", "V2",       GID_ZAK, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"zak", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS, GF_SMALL_HEADER | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 
-	{"indy3", "EGA",      GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
-	{"indy3", "No Adlib", GID_INDY3, 3, 0, MDT_PCSPK,             GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
-	{"indy3", "VGA",      GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB, GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
-	{"indy3", "FM-TOWNS", GID_INDY3, 3, 0, MDT_TOWNS,             GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
+	{"indy3", "EGA",      GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB, GF_SMALL_HEADER | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"indy3", "No Adlib", GID_INDY3, 3, 0, MDT_PCSPK,             GF_SMALL_HEADER | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"indy3", "VGA",      GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB, GF_SMALL_HEADER | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
+	{"indy3", "FM-TOWNS", GID_INDY3, 3, 0, MDT_TOWNS,             GF_SMALL_HEADER | GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 
-	{"loom", "EGA",      GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
-	{"loom", "No Adlib", GID_LOOM, 3, 0, MDT_PCSPK,                        GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
-	{"loom", "FM-TOWNS", GID_LOOM, 3, 0, MDT_TOWNS,                        GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
+	{"loom", "EGA",      GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI, GF_SMALL_HEADER | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"loom", "No Adlib", GID_LOOM, 3, 0, MDT_PCSPK,                        GF_SMALL_HEADER | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"loom", "FM-TOWNS", GID_LOOM, 3, 0, MDT_TOWNS,                        GF_SMALL_HEADER | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 	{"loom", "VGA",      GID_LOOM, 4, 0, MDT_NONE,                         GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
 
 	{"pass", 0, GID_PASS, 4, 0, MDT_PCSPK | MDT_ADLIB, GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},

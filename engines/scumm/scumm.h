@@ -107,9 +107,6 @@ enum GameFeatures {
 	/** Games which have Audio CD tracks. */
 	GF_AUDIOTRACKS         = 1 << 9,
 
-	/** Games without actor scaling (ScummEngine_v3 and subclasses). */
-	GF_NO_SCALING          = 1 << 10,
-
 	/**
 	 * Games using only very few local variables in scripts.
 	 * Apparently that is only the case for 256 color version of Indy3.
