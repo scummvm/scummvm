@@ -384,11 +384,11 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		DebugPrintf("Actor[%d].ignoreBoxes = %d\n", actnum, a->_ignoreBoxes);
 	} else if (!strcmp(argv[2], "x")) {
 		a->putActor(value, a->getRealPos().y);
-		DebugPrintf("Actor[%d].x = %d\n", actnum, a->getPos().x);
+		DebugPrintf("Actor[%d].x = %d\n", actnum, a->getRealPos().x);
 		_vm->_fullRedraw = true;
 	} else if (!strcmp(argv[2], "y")) {
 		a->putActor(a->getRealPos().x, value);
-		DebugPrintf("Actor[%d].y = %d\n", actnum, a->getPos().y);
+		DebugPrintf("Actor[%d].y = %d\n", actnum, a->getRealPos().y);
 		_vm->_fullRedraw = true;
 	} else if (!strcmp(argv[2], "_elevation")) {
 		a->setElevation(value);
@@ -427,7 +427,7 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 		a = _vm->_actors[i];
 		if (a->_visible)
 			DebugPrintf("|%2d|%4d|%4d|%3d|%4d|%3d|%3d|%3d|%3d|%3d|%3d|%3d|$%08x|\n",
-						 a->_number, a->getPos().x, a->getPos().y, a->_width, a->getElevation(),
+						 a->_number, a->getRealPos().x, a->getRealPos().y, a->_width, a->getElevation(),
 						 a->_costume, a->_walkbox, a->_moving, a->_forceClip, a->_frame,
 						 a->_scalex, a->getFacing(), _vm->_classData[a->_number]);
 	}
