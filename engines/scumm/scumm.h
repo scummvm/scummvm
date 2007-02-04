@@ -135,11 +135,6 @@ enum GameFeatures {
 /* SCUMM Debug Channels */
 void CDECL debugC(int level, const char *s, ...);
 
-struct dbgChannelDesc {
-	const char *channel, *desc;
-	uint32 flag;
-};
-
 enum {
 	DEBUG_GENERAL	=	1 << 0,		// General debug
 	DEBUG_SCRIPTS	=	1 << 2,		// Track script execution (start/stop/pause)
@@ -439,9 +434,6 @@ public:
 
 	/** Central resource data. */
 	ResourceManager *_res;
-
-	// Misc utility functions
-	uint32 _debugFlags;	// Used by the debugger
 
 protected:
 	VirtualMachineState vm;

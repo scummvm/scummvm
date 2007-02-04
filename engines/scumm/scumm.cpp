@@ -80,6 +80,25 @@ namespace Scumm {
 ScummEngine *g_scumm = 0;
 
 
+struct dbgChannelDesc {
+	const char *channel, *desc;
+	uint32 flag;
+};
+
+
+// Debug channel lookup table for Debugger console
+static const dbgChannelDesc debugChannels[] = {
+	{"SCRIPTS", "Track script execution", DEBUG_SCRIPTS},
+	{"OPCODES", "Track opcode execution", DEBUG_OPCODES},
+	{"IMUSE", "Track iMUSE events", DEBUG_IMUSE},
+	{"RESOURCE", "Track resource loading/management", DEBUG_RESOURCE},
+	{"VARS", "Track variable changes", DEBUG_VARS},
+	{"ACTORS", "Actor-related debug", DEBUG_ACTORS},
+	{"SOUND", "Sound related debug", DEBUG_SOUND},
+	{"INSANE", "Track INSANE", DEBUG_INSANE},
+	{"SMUSH", "Track SMUSH", DEBUG_SMUSH}
+};
+
 ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	: Engine(syst),
 	  _game(dr.game),
@@ -112,7 +131,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_musicEngine = NULL;
 	_verbs = NULL;
 	_objs = NULL;
-	_debugFlags = 0;
 	_sound = NULL;
 	memset(&vm, 0, sizeof(vm));
 	_quit = false;
@@ -502,9 +520,16 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		_herculesBuf = (byte *)malloc(Common::kHercW * Common::kHercH);
 	}
+
+	// Add debug levels	
+	for (int i = 0; i < ARRAYSIZE(debugChannels); ++i)
+		Common::addSpecialDebugLevel(debugChannels[i].flag,  debugChannels[i].channel, debugChannels[i].desc);
 }
 
+
 ScummEngine::~ScummEngine() {
+	Common::clearAllSpecialDebugLevels();
+
 	if (_musicEngine) {
 		_musicEngine->terminate();
 		delete _musicEngine;
@@ -557,6 +582,7 @@ ScummEngine::~ScummEngine() {
 	delete _res;
 	delete _gdi;
 }
+
 
 ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
  : ScummEngine(syst, dr) {

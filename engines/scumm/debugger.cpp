@@ -38,27 +38,13 @@
 
 namespace Scumm {
 
-// Debug channel lookup table for Debugger console
-static const dbgChannelDesc debugChannels[] = {
-	{"SCRIPTS", "Track script execution", DEBUG_SCRIPTS},
-	{"OPCODES", "Track opcode execution", DEBUG_OPCODES},
-	{"IMUSE", "Track iMUSE events", DEBUG_IMUSE},
-	{"RESOURCE", "Track resource loading/management", DEBUG_RESOURCE},
-	{"VARS", "Track variable changes", DEBUG_VARS},
-	{"ACTORS", "Actor-related debug", DEBUG_ACTORS},
-	{"SOUND", "Sound related debug", DEBUG_SOUND},
-	{"INSANE", "Track INSANE", DEBUG_INSANE},
-	{"SMUSH", "Track SMUSH", DEBUG_SMUSH}
-};
-
-
 void CDECL debugC(int channel, const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
 	// FIXME: Still spew all debug at -d9, for crashes in startup etc.
 	//	  Add setting from commandline ( / abstract channel interface)
-	if (!(g_scumm->_debugFlags & channel) && (gDebugLevel < 9))
+	if (!(Common::getEnabledSpecialDebugLevels() & channel) && (gDebugLevel < 9))
 		return;
 
 	va_start(va, s);
@@ -112,7 +98,9 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	DCmd_Register("imuse",     WRAP_METHOD(ScummDebugger, Cmd_IMuse));
 }
 
-ScummDebugger::~ScummDebugger() {} // we need this here for __SYMBIAN32__
+ScummDebugger::~ScummDebugger() {
+	 // we need this destructor, even if it is empty, for __SYMBIAN32__
+}
 
 void ScummDebugger::preEnter() {
 	// Pause sound output
@@ -505,25 +493,25 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 }
 
 bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
-	int numChannels = sizeof(debugChannels) / sizeof(dbgChannelDesc);
+	Common::Array<Common::EngineDebugLevel> lvls = Common::listSpecialDebugLevels();
 
 	bool setFlag = false;	// Remove or add debug channel?
 
-	if ((argc == 1) && (_vm->_debugFlags == 0)) {
+	if ((argc == 1) && (Common::getEnabledSpecialDebugLevels() == 0)) {
 		DebugPrintf("No debug flags are enabled\n");
 		DebugPrintf("Available Channels: ");
-		for (int i = 0; i < numChannels; i++) {
-			DebugPrintf("%s, ", debugChannels[i].channel);
+		for (uint i = 0; i < lvls.size(); i++) {
+			DebugPrintf("%s, ", lvls[i].option.c_str());
 		}
 		DebugPrintf("\n");
 		return true;
 	}
 
-	if ((argc == 1) && (_vm->_debugFlags > 0)) {
-		for (int i = 0; i < numChannels; i++) {
-			if (_vm->_debugFlags & debugChannels[i].flag)
-				DebugPrintf("%s - %s\n", debugChannels[i].channel,
-							 debugChannels[i].desc);
+	if ((argc == 1) && (Common::getEnabledSpecialDebugLevels() > 0)) {
+		for (uint i = 0; i < lvls.size(); i++) {
+			if (lvls[i].enabled)
+				DebugPrintf("%s - %s\n", lvls[i].option.c_str(),
+							 lvls[i].description.c_str());
 		}
 		return true;
 	}
@@ -536,25 +524,25 @@ bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
 	} else {
 		DebugPrintf("Syntax: Debug +CHANNEL, or Debug -CHANNEL\n");
 		DebugPrintf("Available Channels: ");
-		for (int i = 0; i < numChannels; i++) {
-			DebugPrintf("%s, ", debugChannels[i].channel);
+		for (uint i = 0; i < lvls.size(); i++) {
+			DebugPrintf("%s, ", lvls[i].option.c_str());
 			DebugPrintf("\n");
 		}
 	}
 
 	// Identify flag
 	const char *realFlag = argv[1] + 1;
-	for (int i = 0; i < numChannels; i++) {
-		if ((scumm_stricmp(debugChannels[i].channel, realFlag)) == 0) {
+	for (uint i = 0; i < lvls.size(); i++) {
+		if ((scumm_stricmp(lvls[i].option.c_str(), realFlag)) == 0) {
 			if (setFlag) {
-				_vm->_debugFlags |= debugChannels[i].flag;
+				enableSpecialDebugLevel(lvls[i].option);
 				DebugPrintf("Enable ");
 			} else {
-				_vm->_debugFlags &= ~debugChannels[i].flag;
+				disableSpecialDebugLevel(lvls[i].option);
 				DebugPrintf("Disable ");
 			}
 
-			DebugPrintf("%s\n", debugChannels[i].desc);
+			DebugPrintf("%s\n", lvls[i].description.c_str());
 			return true;
 		}
 	}
