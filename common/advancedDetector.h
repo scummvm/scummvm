@@ -52,7 +52,8 @@ struct ADObsoleteGameID {
 };
 
 enum ADFlags {
-	kADFlagComplexID = (1 << 0) // Generate complex suggested IDs
+	kADFlagComplexID =         (1 << 0), // Generate complex suggested IDs
+	kADFlagFilebasedFallback = (1 << 1)  // Use file based fallback detection
 };
 
 struct ADParams {
@@ -68,6 +69,8 @@ struct ADParams {
 	const Common::ADObsoleteGameID *obsoleteList;
 	// Name of single gameid (optional)
 	const char *singleid;
+	// List of files for file-based fallback detection (optional)
+	const char **fileBased;
 	// Flags
 	uint32 flags;
 };

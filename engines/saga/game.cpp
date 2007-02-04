@@ -114,6 +114,8 @@ static const Common::ADParams detectionParams = {
 	obsoleteGameIDsTable,
 	// Name of single gameid (optional)
 	"saga",
+	// List of files for file-based fallback detection (optional)
+	0,
 	// Flags
 	Common::kADFlagComplexID
 };

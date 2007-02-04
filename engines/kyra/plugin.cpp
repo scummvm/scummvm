@@ -94,6 +94,8 @@ const Common::ADParams detectionParams = {
 	0,
 	// Name of single gameid (optional)
 	0,
+	// List of files for file-based fallback detection (optional)
+	0,
 	// Flags
 	0
 };

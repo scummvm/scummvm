@@ -45,10 +45,13 @@ using namespace Common;
 static const PlainGameDescriptor gobGames[] = {
 	{"gob", "Gob engine game"},
 	{"gob1", "Gobliiins"},
+	{"gob1cd", "Gobliiins CD"},
 	{"gob1-demo", "Gobliiins Demo"},
 	{"gob2", "Gobliins 2"},
+	{"gob2cd", "Gobliins 2 CD"},
 	{"gob2-demo", "Gobliins 2 Demo"},
 	{"gob3", "Goblins Quest 3"},
+	{"gob3cd", "Goblins Quest 3 CD"},
 	{"gob3-demo", "Goblins Quest 3 Demo"},
 	{"bargon", "Bargon Attack"},
 	{"ween", "Ween: The Prohpecy"},
@@ -66,6 +69,17 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 namespace Gob {
 
 static const GOBGameDescription gameDescriptions[] = {
+	{ // Dummy entry for fallback detection
+		{
+			"gob1",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+		},
+		GF_GOB1,
+		"intro"
+	},
 	{ // Supplied by Florian Zeitz on scummvm-devel
 		{
 			"gob1",
@@ -99,10 +113,21 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB1,
 		"intro"
 	},
-	{ // CD 1.000 version. Multilingual
+	{ // Dummy entry for fallback detection
 		{
-			"gob1",
-			"CD 1.000",
+			"gob1cd",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+		},
+		GF_GOB1 | GF_CD,
+		"intro"
+	},
+	{ // CD 1.000 version.
+		{
+			"gob1cd",
+			"v1.000",
 			AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
 			UNK_LANG,
 			kPlatformPC,
@@ -112,10 +137,43 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{ // CD 1.02 version. Multilingual
 		{
-			"gob1",
-			"CD 1.02",
+			"gob1cd",
+			"v1.02",
 			AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
-			UNK_LANG,
+			EN_USA,
+			kPlatformPC,
+		},
+		GF_GOB1 | GF_CD,
+		"intro"
+	},
+	{ // CD 1.02 version. Multilingual
+		{
+			"gob1cd",
+			"v1.02",
+			AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
+			FR_FRA,
+			kPlatformPC,
+		},
+		GF_GOB1 | GF_CD,
+		"intro"
+	},
+	{ // CD 1.02 version. Multilingual
+		{
+			"gob1cd",
+			"v1.02",
+			AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
+			IT_ITA,
+			kPlatformPC,
+		},
+		GF_GOB1 | GF_CD,
+		"intro"
+	},
+	{ // CD 1.02 version. Multilingual
+		{
+			"gob1cd",
+			"v1.02",
+			AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
+			ES_ESP,
 			kPlatformPC,
 		},
 		GF_GOB1 | GF_CD,
@@ -152,6 +210,17 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformMacintosh,
 		},
 		GF_GOB1,
+		"intro"
+	},
+	{ // Dummy entry for fallback detection
+		{
+			"gob2",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+		},
+		GF_GOB2,
 		"intro"
 	},
 	{
@@ -231,10 +300,21 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB2,
 		"intro"
 	},
+	{ // Dummy entry for fallback detection
+		{
+			"gob2cd",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+		},
+		GF_GOB2 | GF_CD,
+		"intro"
+	},
 	{
 		{
-			"gob2",
-			"CD 1.000",
+			"gob2cd",
+			"v1.000",
 			AD_ENTRY1("intro.stk", "9de5fbb41cf97182109e5fecc9d90347"),
 			EN_USA,
 			kPlatformPC,
@@ -244,8 +324,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"gob2",
-			"CD 1.02",
+			"gob2cd",
+			"v1.02",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			EN_ANY,
 			kPlatformPC,
@@ -255,8 +335,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"gob2",
-			"CD 1.02",
+			"gob2cd",
+			"v1.02",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			DE_DEU,
 			kPlatformPC,
@@ -266,8 +346,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"gob2",
-			"CD 1.02",
+			"gob2cd",
+			"v1.02",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			FR_FRA,
 			kPlatformPC,
@@ -277,8 +357,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"gob2",
-			"CD 1.02",
+			"gob2cd",
+			"v1.02",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			IT_ITA,
 			kPlatformPC,
@@ -288,8 +368,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"gob2",
-			"CD 1.02",
+			"gob2cd",
+			"v1.02",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			ES_ESP,
 			kPlatformPC,
@@ -453,8 +533,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"gob3",
-			"CD 1.000",
+			"gob3cd",
+			"v1.000",
 			AD_ENTRY1("intro.stk", "6f2c226c62dd7ab0ab6f850e89d3fc47"),
 			UNK_LANG,
 			kPlatformPC,
@@ -464,8 +544,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"gob3",
-			"CD 1.02",
+			"gob3cd",
+			"v1.02",
 			AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
 			UNK_LANG,
 			kPlatformPC,
@@ -542,6 +622,15 @@ static const GOBGameDescription gameDescriptions[] = {
 	{ { NULL, NULL, { { NULL, 0, NULL, 0 } }, UNK_LANG, kPlatformUnknown }, 0, NULL }
 };
 
+static const char *fileBased[] = {
+	"gob1",   "intro.stk", "disk1.stk", "disk2.stk", "disk3.stk", "disk4.stk", 0,
+	"gob1cd", "intro.stk", "gob.lic", 0,
+	"gob2",   "intro.stk", 0,
+	"gob2",   "intro.stk", "disk2.stk", "disk3.stk", 0,
+	"gob2cd", "intro.stk", "gobnew.lic", 0,
+	0
+};
+
 }
 
 static const ADParams detectionParams = {
@@ -557,8 +646,10 @@ static const ADParams detectionParams = {
 	obsoleteGameIDsTable,
 	// Name of single gameid (optional)
 	"gob",
+	// List of files for file-based fallback detection (optional)
+	Gob::fileBased,
 	// Flags
-	kADFlagComplexID
+	kADFlagComplexID | kADFlagFilebasedFallback
 };
 
 ADVANCED_DETECTOR_DEFINE_PLUGIN(GOB, Gob::GobEngine, Gob::GAME_detectGames, detectionParams);
@@ -593,28 +684,7 @@ bool GobEngine::detectGame() {
 }
 
 GameList GAME_detectGames(const FSList &fslist) {
-	GameList gl(AdvancedDetector::detectAllGames(fslist, detectionParams));
-
-	if (gl.empty()) {
-		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-			if (file->isDirectory()) continue;
-			
-			if (!scumm_stricmp(file->name().c_str(), "intro.stk")) {
-				const PlainGameDescriptor *g = detectionParams.list;
-				while (g->gameid) {
-					if (0 == scumm_stricmp(detectionParams.singleid, g->gameid)) {
-						gl.push_back(GameDescriptor(g->gameid, g->description));
-
-						return gl;
-					}
-
-					g++;
-				}
-			}
-		}
-	}
-
-	return gl;
+	return AdvancedDetector::detectAllGames(fslist, detectionParams);
 }
 
 } // End of namespace Parallaction

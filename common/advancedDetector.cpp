@@ -251,6 +251,7 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 	typedef HashMap<String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> IntMap;
 	StringMap filesMD5;
 	IntMap filesSize;
+	IntMap allFiles;
 
 	String tstr, tstr2;
 	
@@ -292,6 +293,8 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 			tstr = file->name();
 			tstr.toLowercase();
 			tstr2 = tstr + ".";
+
+			allFiles[tstr] = allFiles[tstr2] = 1;
 
 			debug(3, "+ %s", tstr.c_str());
 
@@ -349,7 +352,12 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 			(platform != kPlatformUnknown && g->platform != platform)) {
 			continue;
 		}
-		
+
+		if (g->filesDescriptions[0].fileName == 0) {
+			debug(5, "Skipping dummy entry: %s", g->gameid);
+			continue;
+		}
+
 		// Try to open all files for this game
 		for (j = 0; g->filesDescriptions[j].fileName; j++) {
 			fileDesc = &g->filesDescriptions[j];
@@ -357,28 +365,26 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 			tstr.toLowercase();
 			tstr2 = tstr + ".";
 
+			if (!filesMD5.contains(tstr) && !filesMD5.contains(tstr2)) {
+				fileMissing = true;
+				break;
+			}
 			if (fileDesc->md5 != NULL) {
-				if (!filesMD5.contains(tstr) && !filesMD5.contains(tstr2)) {
-					fileMissing = true;
-					break;
-				}
 				if (strcmp(fileDesc->md5, filesMD5[tstr].c_str()) && strcmp(fileDesc->md5, filesMD5[tstr2].c_str())) {
 					debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesMD5[tstr].c_str());
 					fileMissing = true;
 					break;
 				}
 			}
+
 			if (fileDesc->fileSize != -1) {
-				if (!filesMD5.contains(tstr) && !filesMD5.contains(tstr2)) {
-					fileMissing = true;
-					break;
-				}
 				if (fileDesc->fileSize != filesSize[tstr] && fileDesc->fileSize != filesSize[tstr2]) {
 					debug(3, "Size Mismatch. Skipping");
 					fileMissing = true;
 					break;
 				}
 			}
+
 			debug(3, "Matched file: %s", tstr.c_str());
 		}
 		if (!fileMissing) {
@@ -414,6 +420,102 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 
 		for (StringMap::const_iterator file = filesMD5.begin(); file != filesMD5.end(); ++file)
 			printf("%s: \"%s\", %d\n", file->_key.c_str(), file->_value.c_str(), filesSize[file->_key]);
+	}
+
+	if (params.flags & kADFlagFilebasedFallback) {
+		if (params.fileBased == NULL) {
+			error("Engine %s has FilebasedFallback flag set but list fileBased is empty",
+				  params.singleid); // We may get 0 as singleid here, but let's ignore it
+		}
+
+		const char **ptr = params.fileBased;
+
+		// First we create list of files required for detection
+		if (allFiles.empty()) {
+			File testFile;
+
+			while (*ptr) {
+				ptr++;
+
+				while (*ptr) {
+					tstr = String(*ptr);
+					tstr.toLowercase();
+
+					if (!allFiles.contains(tstr)) {
+						if (testFile.open(tstr)) {
+							tstr2 = tstr + ".";
+							allFiles[tstr] = allFiles[tstr2] = 1;
+							testFile.close();
+						}
+					}
+
+					ptr++;
+				}
+
+				ptr++;
+			}
+		}
+
+		int maxFiles = 0;
+		int matchFiles;
+		const char **matchEntry = 0;
+		const char **entryStart;
+
+		ptr = params.fileBased;
+
+		while (*ptr) {
+			entryStart = ptr;
+			fileMissing = false;
+			matchFiles = 0;
+
+			ptr++;
+
+			while (*ptr) {
+				if (fileMissing) {
+					ptr++;
+					continue;
+				}
+
+				tstr = String(*ptr);
+
+				tstr.toLowercase();
+				tstr2 = tstr + ".";
+
+				debug(3, "++ %s", *ptr);
+				if (!allFiles.contains(tstr) && !allFiles.contains(tstr2)) {
+					fileMissing = true;
+					ptr++;
+					continue;
+				}
+
+				matchFiles++;
+				ptr++;
+			}
+
+			if (!fileMissing)
+				debug(4, "Matched: %s", *entryStart);
+
+			if (!fileMissing && matchFiles > maxFiles) {
+				matchEntry = entryStart;
+				maxFiles = matchFiles;
+
+				debug(4, "and overrided");
+			}
+
+			ptr++;
+		}
+
+		if (matchEntry) { // We got a match
+			for (i = 0; i < gameDescriptions.size(); i++) {
+				if (gameDescriptions[i]->filesDescriptions[0].fileName == 0) {
+					if (!scumm_stricmp(gameDescriptions[i]->gameid, *matchEntry)) {
+						warning("But it looks like unknown variant of %s", *matchEntry);
+
+						matched.push_back(i);
+					}
+				}
+			}
+		}
 	}
 
 	return matched;
