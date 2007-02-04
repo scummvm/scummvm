@@ -186,9 +186,6 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain))
 		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain));
 
-	// As a last resort add current directory
-	Common::File::addDefaultDirectory(".");
-
 	// On creation the engine should've set up all debug levels so we can use
 	// the command line arugments here
 	Common::enableSpecialDebugLevelList(edebuglevels);
