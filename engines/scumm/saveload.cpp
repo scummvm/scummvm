@@ -901,7 +901,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		debug(2, "Saved game MD5: %s", (s->getVersion() >= 39) ? md5str1 : "unknown");
 
 		if (memcmp(md5Backup, _gameMD5, 16) != 0) {
-			warning("Game was saved with different gamedata - you may encounter problems.");
+			warning("Game was saved with different gamedata - you may encounter problems");
 			debug(1, "You have %s and save is %s.", md5str2, md5str1);
  			memcpy(_gameMD5, md5Backup, 16);
 		}

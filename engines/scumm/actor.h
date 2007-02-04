@@ -189,6 +189,10 @@ public:
 		putActor(_pos.x, _pos.y, _room);
 	}
 
+	void putActor(int room) {
+		putActor(_pos.x, _pos.y, room);
+	}
+
 	void putActor(int x, int y) {
 		putActor(x, y, _room);
 	}
@@ -199,7 +203,7 @@ protected:
 	int calcMovementFactor(const Common::Point& next);
 	int actorWalkStep();
 	int remapDirection(int dir, bool is_walking);
-	void setupActorScale();
+	virtual void setupActorScale();
 
 	void setBox(int box);
 	int updateActorDirection(bool is_walking);
@@ -239,7 +243,16 @@ public:
 		return _room == _vm->_currentRoom;
 	}
 
-	const Common::Point &getPos() const {
+	Common::Point getPos() const {
+		Common::Point p(_pos);
+		if (_vm->_game.version <= 2) {
+			p.x *= V12_X_MULTIPLIER;
+			p.y *= V12_Y_MULTIPLIER;
+		}
+		return p;
+	}
+
+	const Common::Point& getRealPos() const {
 		return _pos;
 	}
 
@@ -323,6 +336,7 @@ public:
 	virtual void walkActor();
 
 protected:
+	virtual void setupActorScale();
 	void findPathTowardsOld(byte box, byte box2, byte box3, Common::Point &p2, Common::Point &p3);
 };
 

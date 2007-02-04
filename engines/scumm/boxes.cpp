@@ -240,7 +240,7 @@ void ScummEngine::setBoxScaleSlot(int box, int slot) {
 }
 
 int ScummEngine::getScale(int box, int x, int y) {
-	if (_game.features & GF_NO_SCALING)
+	if (_game.version <= 3)
 		return 255;
 
 	Box *ptr = getBoxBaseAddr(box);
@@ -306,7 +306,7 @@ int ScummEngine::getScaleFromSlot(int slot, int x, int y) {
 }
 
 int ScummEngine::getBoxScale(int box) {
-	if (_game.features & GF_NO_SCALING)
+	if (_game.version <= 3)
 		return 255;
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
@@ -600,25 +600,25 @@ BoxCoords ScummEngine::getBoxCoordinates(int boxnum) {
 			SWAP(box->ll, box->lr);
 		}
 	} else if (_game.version == 0) {
-		box->ul.x = bp->c64.x1 * V12_X_MULTIPLIER;
-		box->ul.y = bp->c64.y1 * V12_Y_MULTIPLIER;
-		box->ur.x = bp->c64.x2 * V12_X_MULTIPLIER;
-		box->ur.y = bp->c64.y1 * V12_Y_MULTIPLIER;
+		box->ul.x = bp->c64.x1;
+		box->ul.y = bp->c64.y1;
+		box->ur.x = bp->c64.x2;
+		box->ur.y = bp->c64.y1;
 
-		box->ll.x = bp->c64.x1 * V12_X_MULTIPLIER;
-		box->ll.y = bp->c64.y2 * V12_Y_MULTIPLIER;
-		box->lr.x = bp->c64.x2 * V12_X_MULTIPLIER;
-		box->lr.y = bp->c64.y2 * V12_Y_MULTIPLIER;
+		box->ll.x = bp->c64.x1;
+		box->ll.y = bp->c64.y2;
+		box->lr.x = bp->c64.x2;
+		box->lr.y = bp->c64.y2;
 	} else if (_game.version <= 2) {
-		box->ul.x = bp->v2.ulx * V12_X_MULTIPLIER;
-		box->ul.y = bp->v2.uy * V12_Y_MULTIPLIER;
-		box->ur.x = bp->v2.urx * V12_X_MULTIPLIER;
-		box->ur.y = bp->v2.uy * V12_Y_MULTIPLIER;
+		box->ul.x = bp->v2.ulx;
+		box->ul.y = bp->v2.uy;
+		box->ur.x = bp->v2.urx;
+		box->ur.y = bp->v2.uy;
 
-		box->ll.x = bp->v2.llx * V12_X_MULTIPLIER;
-		box->ll.y = bp->v2.ly * V12_Y_MULTIPLIER;
-		box->lr.x = bp->v2.lrx * V12_X_MULTIPLIER;
-		box->lr.y = bp->v2.ly * V12_Y_MULTIPLIER;
+		box->ll.x = bp->v2.llx;
+		box->ll.y = bp->v2.ly;
+		box->lr.x = bp->v2.lrx;
+		box->lr.y = bp->v2.ly;
 	} else {
 		box->ul.x = (int16)READ_LE_UINT16(&bp->old.ulx);
 		box->ul.y = (int16)READ_LE_UINT16(&bp->old.uly);

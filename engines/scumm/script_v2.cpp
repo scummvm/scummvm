@@ -818,9 +818,6 @@ void ScummEngine_v2::o2_verbOps() {
 		break;
 
 	default: {	// New Verb
-		// FIXME: maybe use V12_X_MULTIPLIER here... maybe not. Depends
-		// on whether verbs can be handled separately from objects and
-		// actors or not when it comes to handling coordinates.
 		int x = fetchScriptByte() * 8;
 		int y = fetchScriptByte() * 8;
 		slot = getVarOrDirectByte(PARAM_1) + 1;
@@ -1133,8 +1130,8 @@ void ScummEngine_v2::o2_walkActorTo() {
 
 	a = derefActor(act, "o2_walkActorTo");
 
-	x = getVarOrDirectByte(PARAM_2) * V12_X_MULTIPLIER;
-	y = getVarOrDirectByte(PARAM_3) * V12_Y_MULTIPLIER;
+	x = getVarOrDirectByte(PARAM_2);
+	y = getVarOrDirectByte(PARAM_3);
 
 	a->startWalkActor(x, y, -1);
 }
@@ -1146,8 +1143,8 @@ void ScummEngine_v2::o2_putActor() {
 
 	a = derefActor(act, "o2_putActor");
 
-	x = getVarOrDirectByte(PARAM_2) * V12_X_MULTIPLIER;
-	y = getVarOrDirectByte(PARAM_3) * V12_Y_MULTIPLIER;
+	x = getVarOrDirectByte(PARAM_2);
+	y = getVarOrDirectByte(PARAM_3);
 
 	if (_game.id == GID_MANIAC && _game.version <= 1 && _game.platform != Common::kPlatformNES)
 		a->setFacing(180);
@@ -1213,13 +1210,12 @@ void ScummEngine_v2::o2_putActorAtObject() {
 	Actor *a;
 
 	a = derefActor(getVarOrDirectByte(PARAM_1), "o2_putActorAtObject");
-
 	obj = getVarOrDirectWord(PARAM_2);
 	if (whereIsObject(obj) != WIO_NOT_FOUND)
 		getObjectXYPos(obj, x, y);
 	else {
-		x = 240;
-		y = 120;
+		x = 30;
+		y = 60;
 	}
 
 	a->putActor(x, y);
@@ -1245,7 +1241,7 @@ void ScummEngine_v2::o2_getActorElevation() {
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o2_getActorElevation");
-	setResult(a->getElevation() / V12_Y_MULTIPLIER);
+	setResult(a->getElevation());
 }
 
 void ScummEngine_v2::o2_setActorElevation() {
@@ -1253,7 +1249,7 @@ void ScummEngine_v2::o2_setActorElevation() {
 	int elevation = (int8)getVarOrDirectByte(PARAM_2);
 
 	Actor *a = derefActor(act, "o2_setActorElevation");
-	a->setElevation(elevation * V12_Y_MULTIPLIER);
+	a->setElevation(elevation);
 }
 
 void ScummEngine_v2::o2_actorFromPos() {
@@ -1282,7 +1278,7 @@ void ScummEngine_v2::o2_getActorX() {
 	getResultPos();
 
 	a = getVarOrDirectByte(PARAM_1);
-	setResult(getObjX(a) / V12_X_MULTIPLIER);
+	setResult(getObjX(a));
 }
 
 void ScummEngine_v2::o2_getActorY() {
@@ -1290,7 +1286,7 @@ void ScummEngine_v2::o2_getActorY() {
 	getResultPos();
 
 	a = getVarOrDirectByte(PARAM_1);
-	setResult(getObjY(a) / V12_Y_MULTIPLIER);
+	setResult(getObjY(a));
 }
 
 void ScummEngine_v2::o2_isGreater() {
@@ -1371,8 +1367,8 @@ void ScummEngine_v2::o2_loadRoomWithEgo() {
 	a->putActor(0, 0, room);
 	_egoPositioned = false;
 
-	x = (int8)fetchScriptByte() * V12_X_MULTIPLIER;
-	y = (int8)fetchScriptByte() * V12_Y_MULTIPLIER;
+	x = (int8)fetchScriptByte();
+	y = (int8)fetchScriptByte();
 
 	startScene(a->_room, a, obj);
 
@@ -1433,7 +1429,6 @@ void ScummEngine_v2::o2_roomOps() {
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
 	case 1:			// SO_ROOM_SCROLL
-		// FIXME: Use V12_X_MULTIPLIER... ?
 		a *= 8;
 		b *= 8;
 		if (a < (_screenWidth / 2))

@@ -1329,7 +1329,7 @@ void ScummEngine_v5::o5_isActorInBox() {
 	int box = getVarOrDirectByte(PARAM_2);
 	Actor *a = derefActor(act, "o5_isActorInBox");
 
-	if (!checkXYInBoxBounds(box, a->getPos().x, a->getPos().y))
+	if (!checkXYInBoxBounds(box, a->getRealPos().x, a->getRealPos().y))
 		o5_jumpRelative();
 	else
 		ignoreScriptWord();
@@ -1488,7 +1488,7 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 
 	a = derefActor(VAR(VAR_EGO), "o5_loadRoomWithEgo");
 
-	a->putActor(a->getPos().x, a->getPos().y, room);
+	a->putActor(room);
 	oldDir = a->getFacing();
 	_egoPositioned = false;
 
@@ -2630,9 +2630,9 @@ implement a proper fix.
 	if (!a2->isInCurrentRoom())
 		return;
 
-	if (_game.version <= 2)
+	if (_game.version <= 2) {
 		dist *= V12_X_MULTIPLIER;
-	else if (dist == 0xFF) {
+	} else if (dist == 0xFF) {
 		dist = a->_scalex * a->_width / 0xFF;
 		dist += (a2->_scalex * a2->_width / 0xFF) / 2;
 	}
@@ -2643,6 +2643,10 @@ implement a proper fix.
 	else
 		x -= dist;
 
+	if (_game.version <= 2) {
+		x /= V12_X_MULTIPLIER;
+		y /= V12_Y_MULTIPLIER;
+	}
 	if (_game.version <= 3) {
 		AdjustBoxResult abr = a->adjustXYToBeInBox(x, y);
 		x = abr.x;

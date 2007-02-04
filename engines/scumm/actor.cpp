@@ -87,8 +87,13 @@ void Actor::initActor(int mode) {
 		_costumeNeedsInit = false;
 		_visible = false;
 		_flip = false;
-		_speedx = 8;
-		_speedy = 2;
+		if (_vm->_game.version <= 2) {
+			_speedx = 1;
+			_speedy = 1;
+		} else {
+			_speedx = 8;
+			_speedy = 2;
+		}
 		_frame = 0;
 		_walkbox = 0;
 		_animProgress = 0;
@@ -128,7 +133,11 @@ void Actor::initActor(int mode) {
 
 	stopActorMoving();
 
-	setActorWalkSpeed(8, 2);
+	if (_vm->_game.version <= 2)
+		setActorWalkSpeed(1, 1);
+	else
+		setActorWalkSpeed(8, 2);
+
 	_animSpeed = 0;
 	if (_vm->_game.version >= 6)
 		_animProgress = 0;
@@ -173,14 +182,13 @@ void Actor::setBox(int box) {
 	setupActorScale();
 }
 
+void ActorOldWalk::setupActorScale() {
+	// TODO: The following could probably be removed
+	_scalex = 0xFF;
+	_scaley = 0xFF;
+}
+
 void Actor::setupActorScale() {
-
-	if (_vm->_game.features & GF_NO_SCALING) {
-		_scalex = 0xFF;
-		_scaley = 0xFF;
-		return;
-	}
-
 	if (_ignoreBoxes)
 		return;
 
@@ -510,7 +518,7 @@ void Actor::walkActor() {
 }
 
 /*
-void Actor::walkActorV12() {
+void Actor::walkActor() {
 	Common::Point foundPath, tmp;
 	int new_dir, next_box;
 
@@ -961,8 +969,6 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 			return abr;
 
 		bestDist = (_vm->_game.version >= 7) ? 0x7FFFFFFF : 0xFFFF;
-		if (_vm->_game.version <= 2)	// Adjust for the fact that we multiply x by 8 and y by 2
-			bestDist *= V12_X_MULTIPLIER * V12_Y_MULTIPLIER;
 		bestBox = kInvalidBox;
 
 		// We iterate (backwards) over all boxes, searching the one closest
@@ -1326,9 +1332,15 @@ void Actor::drawActorCostume(bool hitTestMode) {
 
 	bcr->_actorID = _number;
 
-	bcr->_actorX = _pos.x + _offsX - _vm->virtscr[0].xstart;
+	bcr->_actorX = _pos.x + _offsX;
 	bcr->_actorY = _pos.y + _offsY - _elevation;
 
+	if (_vm->_game.version <= 2) {
+		bcr->_actorX *= V12_X_MULTIPLIER;
+		bcr->_actorY *= V12_Y_MULTIPLIER;
+	}
+	bcr->_actorX -= _vm->virtscr[0].xstart;
+	
 	if (_vm->_game.platform == Common::kPlatformNES) {
 		// In the NES version, when the actor is facing right,
 		// we need to shift it 8 pixels to the left
@@ -2354,6 +2366,31 @@ void Actor::saveLoadWithSerializer(Serializer *ser) {
 	}
 
 	ser->saveLoadEntries(this, actorEntries);
+	
+	if (ser->isLoading() && _vm->_game.version <= 2 && ser->getVersion() < VER(70)) {
+		_pos.x /= V12_X_MULTIPLIER;
+		_pos.y /= V12_Y_MULTIPLIER;
+
+		_speedx /= V12_X_MULTIPLIER;
+		_speedy /= V12_Y_MULTIPLIER;
+		_elevation /= V12_Y_MULTIPLIER;
+
+		if (_walkdata.dest.x != -1) {
+			_walkdata.dest.x /= V12_X_MULTIPLIER;
+			_walkdata.dest.y /= V12_Y_MULTIPLIER;
+		}
+
+		_walkdata.cur.x /= V12_X_MULTIPLIER;
+		_walkdata.cur.y /= V12_Y_MULTIPLIER;
+
+		_walkdata.next.x /= V12_X_MULTIPLIER;
+		_walkdata.next.y /= V12_Y_MULTIPLIER;
+
+		if (_walkdata.point3.x != 32000) {
+			_walkdata.point3.x /= V12_X_MULTIPLIER;
+			_walkdata.point3.y /= V12_Y_MULTIPLIER;
+		}
+	}
 }
 
 } // End of namespace Scumm

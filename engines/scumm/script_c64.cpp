@@ -745,8 +745,8 @@ void ScummEngine_c64::o_putActorAtObject() {
 	if (whereIsObject(obj) != WIO_NOT_FOUND)
 		getObjectXYPos(obj, x, y);
 	else {
-		x = 240;
-		y = 120;
+		x = 30;
+		y = 60;
 	}
 
 	a->putActor(x, y);

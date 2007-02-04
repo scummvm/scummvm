@@ -606,7 +606,7 @@ void ScummEngine_c64::checkExecVerbs() {
 				runObject(_activeObject, entry);
 			} else if (zone->number == kMainVirtScreen) {
 				a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
-				a->startWalkActor(_virtualMouse.x, _virtualMouse.y, -1);
+				a->startWalkActor(_virtualMouse.x / V12_X_MULTIPLIER, _virtualMouse.y / V12_Y_MULTIPLIER, -1);
 			}
 
 			_activeInventory = 0;

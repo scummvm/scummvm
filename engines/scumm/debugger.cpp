@@ -383,11 +383,11 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		a->_ignoreBoxes = (value > 0);
 		DebugPrintf("Actor[%d].ignoreBoxes = %d\n", actnum, a->_ignoreBoxes);
 	} else if (!strcmp(argv[2], "x")) {
-		a->putActor(value, a->getPos().y);
+		a->putActor(value, a->getRealPos().y);
 		DebugPrintf("Actor[%d].x = %d\n", actnum, a->getPos().x);
 		_vm->_fullRedraw = true;
 	} else if (!strcmp(argv[2], "y")) {
-		a->putActor(a->getPos().x, value);
+		a->putActor(a->getRealPos().x, value);
 		DebugPrintf("Actor[%d].y = %d\n", actnum, a->getPos().y);
 		_vm->_fullRedraw = true;
 	} else if (!strcmp(argv[2], "_elevation")) {
@@ -754,6 +754,13 @@ void ScummDebugger::drawBox(int box) {
 	r[1] = coords.ur;
 	r[2] = coords.lr;
 	r[3] = coords.ll;
+	
+	if (_vm->_game.version <= 2) {
+		for (int i = 0; i < 4; ++i) {
+			r[i].x *= V12_X_MULTIPLIER;
+			r[i].y *= V12_Y_MULTIPLIER;
+		}
+	}
 
 	// TODO - maybe use different colors for each box, and/or print the box number inside it?
 	fillQuad(_vm, r, 13);

@@ -340,8 +340,8 @@ int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
 	if (object < _numActors) {
 		act = derefActorSafe(object, "getObjectOrActorXY");
 		if (act && act->isInCurrentRoom()) {
-			x = act->getPos().x;
-			y = act->getPos().y;
+			x = act->getRealPos().x;
+			y = act->getRealPos().y;
 			return 0;
 		} else
 			return -1;
@@ -354,8 +354,8 @@ int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
 		if (_objectOwnerTable[object] < _numActors) {
 			act = derefActor(_objectOwnerTable[object], "getObjectOrActorXY(2)");
 			if (act && act->isInCurrentRoom()) {
-				x = act->getPos().x;
-				y = act->getPos().y;
+				x = act->getRealPos().x;
+				y = act->getRealPos().y;
 				return 0;
 			}
 		}
@@ -412,6 +412,9 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 			x = od.x_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].x);
 			y = od.y_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].y);
 		}
+	} else if (_game.version <= 2) {
+		x = od.walk_x / V12_X_MULTIPLIER;
+		y = od.walk_y / V12_Y_MULTIPLIER;
 	} else {
 		x = od.walk_x;
 		y = od.walk_y;
@@ -458,17 +461,8 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 		y2 = r.y;
 	}
 
-	// Now compute the distance between the two points
-	if (_game.version <= 2) {
-		// For V1/V2 games, distances are measured in the original "character"
-		// based coordinate system, instead of pixels. Otherwise various scripts
-		// will break. See bugs #853874, #774529
-		x /= V12_X_MULTIPLIER;
-		y /= V12_Y_MULTIPLIER;
-		x2 /= V12_X_MULTIPLIER;
-		y2 /= V12_Y_MULTIPLIER;
-	}
 
+	// Now compute the distance between the two points
 	return getDist(x, y, x2, y2);
 }
 
@@ -1449,7 +1443,7 @@ int ScummEngine::getObjX(int obj) {
 	if (obj < _numActors) {
 		if (obj < 1)
 			return 0;									/* fix for indy4's map */
-		return derefActor(obj, "getObjX")->getPos().x;
+		return derefActor(obj, "getObjX")->getRealPos().x;
 	} else {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;
@@ -1463,7 +1457,7 @@ int ScummEngine::getObjY(int obj) {
 	if (obj < _numActors) {
 		if (obj < 1)
 			return 0;									/* fix for indy4's map */
-		return derefActor(obj, "getObjY")->getPos().y;
+		return derefActor(obj, "getObjY")->getRealPos().y;
 	} else {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;
