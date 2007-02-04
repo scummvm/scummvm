@@ -120,8 +120,8 @@ const uint16 Infogrames::periods[] =
 	 0x0A0A, 0x0A0A, 0x0A0A, 0x0202, 0x0202, 0x0202, 0x0202, 0x0202, 0x0202,
 	 0x0202, 0x0202, 0x0202, 0x0202, 0x4040, 0x4040, 0x2000};
 
-Infogrames::Infogrames(Instruments &ins, bool stereo, int rate) :
-		Paula(stereo, rate, rate/80) {
+Infogrames::Infogrames(Instruments &ins, bool stereo, int rate,
+		int interruptFreq) : Paula(stereo, rate, interruptFreq) {
 	_instruments = &ins;
 	_data = 0;
 	_repCount = -1;

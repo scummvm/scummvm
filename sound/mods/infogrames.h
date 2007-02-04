@@ -70,7 +70,8 @@ public:
 		friend class Infogrames;
 	};
 
-	Infogrames(Instruments &ins, bool stereo = false, int rate = 44100);
+	Infogrames(Instruments &ins, bool stereo = false, int rate = 44100,
+			int interruptFreq = 0);
 	~Infogrames();
 
 	Instruments *getInstruments(void) const { return _instruments; }

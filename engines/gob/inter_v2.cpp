@@ -2314,7 +2314,7 @@ void Inter_v2::o2_playInfogrames(int16 &extraData, int32 *retVarPtr, Goblin::Gob
 		_vm->_mixer->stopHandle(_vm->_game->_infHandle);
 		_vm->_game->_infogrames =
 			new Audio::Infogrames(*_vm->_game->_infIns, true,
-					_vm->_mixer->getOutputRate());
+					_vm->_mixer->getOutputRate(), _vm->_mixer->getOutputRate() / 75);
 		if (!_vm->_game->_infogrames->load(fileName)) {
 			warning("Couldn't load infogrames music");
 			delete _vm->_game->_infogrames;
