@@ -221,7 +221,7 @@ void Graphics::fadePalette(byte *palette) {
 
 void Graphics::quickFadePalette(byte *palette) {
 
-	for (uint16 i = 0; i <= PALETTE_SIZE; i++) {
+	for (uint16 i = 0; i < PALETTE_SIZE; i++) {
 		if (palette[i] == _palette[i]) continue;
 		palette[i] += (palette[i] < _palette[i] ? 4 : -4);
 	}
