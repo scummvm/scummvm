@@ -124,7 +124,7 @@ int16 pickupItem(Zone *z) {
 	_inventory[_si]._id = (z->u.get->_icon << 16) & 0xFFFF0000;
 	_inventory[_si]._index = z->u.get->_icon;
 
-	addJob(jobRemovePickedItem, z, JOBPRIORITY_ADDREMOVEITEMS);
+	addJob(jobRemovePickedItem, z, kPriority17 );
 
 	if (_inventory[_si]._id == 0) return 0;
 

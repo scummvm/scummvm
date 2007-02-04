@@ -83,6 +83,7 @@ struct Cnv {
 struct ArchivedFile;
 struct Animation;
 struct Zone;
+struct ZoneLabel;
 
 struct Command;
 

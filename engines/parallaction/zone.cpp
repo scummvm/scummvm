@@ -41,7 +41,7 @@ Zone *findZone(const char *name) {
 	Zone *v4 = (Zone*)_zones._next;
 
 	while (v4) {
-		if (!scumm_stricmp(name, v4->_name)) return v4;
+		if (!scumm_stricmp(name, v4->_label._text)) return v4;
 		v4 = (Zone*)v4->_node._next;
 	}
 
@@ -65,8 +65,8 @@ void Parallaction::parseZone(ArchivedFile *file, Node *list, char *name) {
 	Zone *z = (Zone*)memAlloc(sizeof(Zone));
 	memset(z, 0, sizeof(Zone));
 
-	z->_name = (char*)memAlloc(strlen(name)+1);
-	strcpy(z->_name, name);
+	z->_label._text = (char*)memAlloc(strlen(name)+1);
+	strcpy(z->_label._text, name);
 
 	addNode(list, &z->_node);
 
@@ -100,7 +100,7 @@ void Parallaction::parseZone(ArchivedFile *file, Node *list, char *name) {
 		}
 		if (!scumm_stricmp(_tokens[0], "label")) {
 //			printf("label: %s", _tokens[1]);
-			_vm->_graphics->makeCnvFromString(&z->_label, _tokens[1]);
+			_vm->_graphics->makeCnvFromString(&z->_label._cnv, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "flags")) {
 			uint16 _si = 1;
@@ -119,6 +119,7 @@ void Parallaction::parseZone(ArchivedFile *file, Node *list, char *name) {
 }
 
 void freeZones(Node *list) {
+    debugC(1, kDebugLocation, "freeZones: kEngineQuit = %i", _engineFlags & kEngineQuit);
 
 	Zone *z = (Zone*)list;
 	Zone *v8 = NULL;
@@ -129,7 +130,9 @@ void freeZones(Node *list) {
 
 		// TODO: understand and simplify this monster
 		if (((z->_limits._top == -1) || ((z->_limits._left == -2) && ((isItemInInventory(z->u.merge->_obj1) != 0) || (isItemInInventory(z->u.merge->_obj2) != 0)))) &&
-			(_engineFlags & kEngineQuit) == 0) {
+			((_engineFlags & kEngineQuit) == 0)) {
+
+            debugC(1, kDebugLocation, "freeZones preserving zone '%s'", z->_label._text);
 
 			v8 = (Zone*)z->_node._next;
 			removeNode(&z->_node);
@@ -176,8 +179,9 @@ void freeZones(Node *list) {
 			break;
 		}
 
-		memFree(z->_name);
-		_vm->_graphics->freeStaticCnv(&z->_label);
+		memFree(z->_label._text);
+		z->_label._text = NULL;
+		_vm->_graphics->freeStaticCnv(&z->_label._cnv);
 		freeCommands(z->_commands);
 
 	}
@@ -460,7 +464,7 @@ void displayItemComment(ExamineData *data) {
 
 
 uint16 runZone(Zone *z) {
-    debugC(1, kDebugLocation, "runZone (%s)", z->_name);
+    debugC(1, kDebugLocation, "runZone (%s)", z->_label._text);
 
 	uint16 subtype = z->_type & 0xFFFF;
 
@@ -487,7 +491,7 @@ uint16 runZone(Zone *z) {
 		if (z->_flags & kFlagsLocked) break;
 		z->_flags ^= kFlagsClosed;
 		if (z->u.door->_cnv._count == 0) break;
-		addJob(jobToggleDoor, z, JOBPRIORITY_TOGGLEDOOR);
+		addJob(jobToggleDoor, z, kPriority18 );
 		break;
 
 	case kZoneHear:

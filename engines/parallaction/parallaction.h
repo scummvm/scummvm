@@ -32,17 +32,30 @@ namespace Parallaction {
 
 // high values mean high priority
 
-#define JOBPRIORITY_DRAWLABEL			0
-#define JOBPRIORITY_DRAWMOUSE			1
-#define JOBPRIORITY_SHOWINVENTORY		2
-#define JOBPRIORITY_DRAWANIMATIONS		3
-#define JOBPRIORITY_RUNSTUFF			15
-#define JOBPRIORITY_ADDREMOVEITEMS		17
-#define JOBPRIORITY_TOGGLEDOOR			18
-#define JOBPRIORITY_WALK				19
-#define JOBPRIORITY_ERASEANIMATIONS		20
-#define JOBPRIORITY_HIDEINVENTORY		20
-#define JOBPRIORITY_ERASEMOUSE			21
+enum {
+    kPriority0 = 0,
+    kPriority1 = 1,
+    kPriority2 = 2,
+    kPriority3 = 3,
+    kPriority4 = 4,
+    kPriority5 = 5,
+    kPriority6 = 6,
+    kPriority7 = 7,
+    kPriority8 = 8,
+    kPriority9 = 9,
+    kPriority10 = 10,
+    kPriority11 = 11,
+    kPriority12 = 12,
+    kPriority13 = 13,
+    kPriority14 = 14,
+    kPriority15 = 15,
+    kPriority16 = 16,
+    kPriority17 = 17,
+    kPriority18 = 18,
+    kPriority19 = 19,
+    kPriority20 = 20,
+    kPriority21 = 21
+};
 
 enum {
 	kMouseNone			= 0,
@@ -250,7 +263,7 @@ protected:		// data
 
 		int16       _inventoryIndex;
 		Zone*       _zone;
-        StaticCnv*  _cnv;
+        ZoneLabel*  _label;
 	};
 
 	bool		_skipMenu;

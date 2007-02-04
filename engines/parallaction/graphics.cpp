@@ -27,6 +27,7 @@
 #include "parallaction/parallaction.h"
 #include "parallaction/inventory.h"
 #include "parallaction/disk.h"
+#include "parallaction/zone.h"
 
 
 extern OSystem *g_system;
@@ -456,35 +457,39 @@ void Graphics::blit(uint16 w, uint16 h, int16 x, int16 y, uint16 z, byte *data, 
 
 void jobDisplayLabel(void *parm, Job *j) {
 
-	StaticCnv *cnv = (StaticCnv*)parm;
+	ZoneLabel *label = (ZoneLabel*)parm;
 
-	if (cnv->_data0 == NULL) return;
-	_vm->_graphics->flatBlitCnv(cnv, Graphics::_labelPosition[0]._x, Graphics::_labelPosition[0]._y, Graphics::kBitBack, cnv->_data1);
+   debugC(1, kDebugLocation, "jobDisplayLabel (%x)", (uint32) label);
+
+	if (label->_cnv._width == 0) return;
+	_vm->_graphics->flatBlitCnv(&label->_cnv, Graphics::_labelPosition[0]._x, Graphics::_labelPosition[0]._y, Graphics::kBitBack, label->_cnv._data1);
 
 	return;
 }
 
 void jobEraseLabel(void *parm, Job *j) {
-	StaticCnv *cnv = (StaticCnv*)parm;
+	ZoneLabel *label = (ZoneLabel*)parm;
+
+    debugC(1, kDebugLocation, "jobEraseLabel (%x)", (uint32) label);
 
 	int16 _si, _di;
 
 	if (_vm->_activeItem._id != 0) {
-		_si = _mousePos._x + 16 - cnv->_width/2;
+		_si = _mousePos._x + 16 - label->_cnv._width/2;
 		_di = _mousePos._y + 34;
 	} else {
-		_si = _mousePos._x + 8 - cnv->_width/2;
-		_di = _mousePos._y + 33;
+		_si = _mousePos._x + 8 - label->_cnv._width/2;
+		_di = _mousePos._y + 21;
 	}
 
 	if (_si < 0) _si = 0;
 	if (_di > 190) _di = 190;
 
-	if (cnv->_width > SCREEN_WIDTH)
+	if (label->_cnv._width + _si > SCREEN_WIDTH)
 		_si = SCREEN_WIDTH - _si;
 
 
-	_vm->_graphics->restoreBackground(Graphics::_labelPosition[1]._x, Graphics::_labelPosition[1]._y, cnv->_width, cnv->_height);
+	_vm->_graphics->restoreBackground(Graphics::_labelPosition[1]._x, Graphics::_labelPosition[1]._y, label->_cnv._width, label->_cnv._height);
 
 	Graphics::_labelPosition[1]._x = Graphics::_labelPosition[0]._x;
 	Graphics::_labelPosition[1]._y = Graphics::_labelPosition[0]._y;

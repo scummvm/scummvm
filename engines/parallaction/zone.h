@@ -117,8 +117,10 @@ struct ZoneTypeData {
 	MergeData	*merge;
 };
 
-
-
+struct ZoneLabel {
+	char*			_text;
+	StaticCnv		_cnv;
+};
 
 struct Zone {
 	Node			_node;
@@ -131,8 +133,9 @@ struct Zone {
 	};
 	uint32			_type;
 	uint32			_flags;
-	char*			_name;
-	StaticCnv		_label;
+//	char*			_labeltext;
+//	StaticCnv		_labelcnv;
+	ZoneLabel       _label;
 	uint16			field_2C;		// unused
 	uint16			field_2E;		// unused
 	ZoneTypeData	u;

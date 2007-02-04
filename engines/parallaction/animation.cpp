@@ -67,7 +67,7 @@ Animation *findAnimation(const char *name) {
 	Animation *v4 = (Animation*)_animations._next;
 
 	while (v4) {
-		if (!scumm_stricmp(name, v4->_zone._name)) return v4;
+		if (!scumm_stricmp(name, v4->_zone._label._text)) return v4;
 		v4 = (Animation*)v4->_zone._node._next;
 	}
 
@@ -81,8 +81,8 @@ Animation *Parallaction::parseAnimation(ArchivedFile *file, Node *list, char *na
 	Animation *vD0 = (Animation*)memAlloc(sizeof(Animation));
 	memset(vD0, 0, sizeof(Animation));
 
-	vD0->_zone._name = (char*)memAlloc(strlen(name)+1);
-	strcpy(vD0->_zone._name, name);
+	vD0->_zone._label._text = (char*)memAlloc(strlen(name)+1);
+	strcpy(vD0->_zone._label._text, name);
 
 	addNode(list, &vD0->_zone._node);
 
@@ -109,7 +109,7 @@ Animation *Parallaction::parseAnimation(ArchivedFile *file, Node *list, char *na
 			}
 		}
 		if (!scumm_stricmp(_tokens[0], "label")) {
-			_vm->_graphics->makeCnvFromString(&vD0->_zone._label, _tokens[1]);
+			_vm->_graphics->makeCnvFromString(&vD0->_zone._label._cnv, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "flags")) {
 			uint16 _si = 1;
@@ -226,7 +226,7 @@ void jobDisplayAnimations(void *parm, Job *j) {
 
 
 void jobEraseAnimations(void *arg_0, Job *j) {
-//	printf("jobEraseAnimations()...\n");
+	debugC(1, kDebugLocation, "jobEraseAnimations");
 
 	Animation *a = (Animation*)_animations._next;
 
@@ -358,7 +358,7 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 	case INST_ON:	// on
 	case INST_OFF:	// off
 	case INST_START:	// start
-		if (!scumm_stricmp(_tokens[1], a->_zone._name)) {
+		if (!scumm_stricmp(_tokens[1], a->_zone._label._text)) {
 			inst->_opBase._a = a;
 		} else {
 			inst->_opBase._a = findAnimation(_tokens[1]);
@@ -426,7 +426,7 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 		break;
 
 	case INST_PUT:	// put
-		if (!scumm_stricmp(_tokens[1], a->_zone._name)) {
+		if (!scumm_stricmp(_tokens[1], a->_zone._label._text)) {
 			inst->_opBase._a = a;
 		} else {
 			inst->_opBase._a = findAnimation(_tokens[1]);
@@ -521,7 +521,7 @@ LValue getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation 
 
 
 void jobRunScripts(void *parm, Job *j) {
-//	printf("jobRunScripts()\n");
+    debugC(1, kDebugLocation, "jobRunScripts");
 
 	static uint16 modCounter = 0;
 
@@ -607,7 +607,7 @@ void jobRunScripts(void *parm, Job *j) {
 
 			case INST_MOVE: // move
 				v4 = buildWalkPath(*inst->_opA._pvalue, *inst->_opB._pvalue);
-				addJob(jobWalk, v4, JOBPRIORITY_WALK );
+				addJob(jobWalk, v4, kPriority19 );
 				_engineFlags |= kEngineWalking;
 				break;
 

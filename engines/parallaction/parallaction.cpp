@@ -140,7 +140,7 @@ uint16		_introSarcData2 = 1;
 static Job	   *_jDrawInventory = NULL;
 static Job	   *_jDrawLabel = NULL;
 static Job	   *_jEraseLabel = NULL;
-static Zone    *_hoverZone = NULL;
+Zone    *_hoverZone = NULL;
 static Job	   *_jRunScripts = NULL;
 
 static Cnv		_miniCharacterFrames;
@@ -257,8 +257,8 @@ int Parallaction::init() {
 	_yourself._zone._flags = kFlagsActive | kFlagsNoName;
 	_yourself._zone._type = kZoneYou;
 
-	_yourself._zone._label._data0 = NULL;
-	_yourself._zone._name = strdup("yourself");
+	_yourself._zone._label._cnv._data0 = NULL;
+	_yourself._zone._label._text = strdup("yourself");
 
 	addNode(&_animations, &_yourself._zone._node);
 	_graphics = new Graphics(this);
@@ -395,9 +395,9 @@ void waitUntilLeftClick() {
 void Parallaction::runGame() {
 //	printf("runGame()\n");
 
-	addJob(jobEraseAnimations, (void*)1, JOBPRIORITY_ERASEANIMATIONS);
-	_jRunScripts = addJob(jobRunScripts, 0, JOBPRIORITY_RUNSTUFF);
-	addJob(jobDisplayAnimations, 0, JOBPRIORITY_DRAWANIMATIONS);
+	addJob(jobEraseAnimations, (void*)1, kPriority20);
+	_jRunScripts = addJob(jobRunScripts, 0, kPriority15);
+	addJob(jobDisplayAnimations, 0, kPriority3);
 
 	_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
 
@@ -422,6 +422,8 @@ void Parallaction::runGame() {
 		_keyDown = updateInput();
 
 		if ((_mouseHidden == 0) && ((_engineFlags & kEngineMouse) == 0) && ((_engineFlags & kEngineWalking) == 0)) {
+			debugC(1, kDebugLocation, "runGame: checking input");
+
 			InputData *v8 = translateInput();
 			if (v8) processInput(v8);
 		}
@@ -469,21 +471,24 @@ void Parallaction::processInput(InputData *data) {
 
 	switch (data->_event) {
 	case kEvEnterZone:
+        debugC(1, kDebugLocation, "processInput: kEvEnterZone");
 		_graphics->_labelPosition[1]._x = -1000;
 		_graphics->_labelPosition[1]._y = -1000;
 		_graphics->_labelPosition[0]._x = -1000;
 		_graphics->_labelPosition[0]._y = -1000;
-		_jDrawLabel = addJob(&jobDisplayLabel, (void*)data->_cnv, JOBPRIORITY_DRAWLABEL);
-		_jEraseLabel = addJob(&jobEraseLabel, (void*)data->_cnv, JOBPRIORITY_HIDEINVENTORY);
+		_jDrawLabel = addJob(&jobDisplayLabel, (void*)data->_label, kPriority0);
+		_jEraseLabel = addJob(&jobEraseLabel, (void*)data->_label, kPriority20);
 		break;
 
 	case kEvExitZone:
+        debugC(1, kDebugLocation, "processInput: kEvExitZone");
 		removeJob(_jDrawLabel);
-		addJob(&jobWaitRemoveJob, _jEraseLabel, JOBPRIORITY_RUNSTUFF);
+		addJob(&jobWaitRemoveJob, _jEraseLabel, kPriority15);
 		_jDrawLabel = NULL;
 		break;
 
 	case kEvAction:
+        debugC(1, kDebugLocation, "processInput: kEvAction");
 		_procCurrentHoverItem = -1;
 		_hoverZone = NULL;
 		pauseJobs();
@@ -496,16 +501,16 @@ void Parallaction::processInput(InputData *data) {
 
 	case kEvOpenInventory:
 		_procCurrentHoverItem = -1;
-		_hoverZone = 0;
+		_hoverZone = NULL;
 		if (_jDrawLabel != 0) {
 			removeJob(_jDrawLabel);
 			_jDrawLabel = NULL;
-			addJob(&jobWaitRemoveJob, _jEraseLabel, JOBPRIORITY_SHOWINVENTORY);
+			addJob(&jobWaitRemoveJob, _jEraseLabel, kPriority2);
 		}
 		if (hitZone(kZoneYou, _mousePos._x, _mousePos._y) == 0)
 		changeCursor(kCursorArrow);
 		removeJob(_jRunScripts);
-		_jDrawInventory = addJob(&jobShowInventory, 0, JOBPRIORITY_SHOWINVENTORY);
+		_jDrawInventory = addJob(&jobShowInventory, 0, kPriority2);
 		openInventory();
 		break;
 
@@ -515,8 +520,8 @@ void Parallaction::processInput(InputData *data) {
 			// activates item
 			changeCursor(data->_inventoryIndex);
 		}
-		_jRunScripts = addJob(&jobRunScripts, 0, JOBPRIORITY_RUNSTUFF);
-		addJob(&jobHideInventory, 0, JOBPRIORITY_HIDEINVENTORY);
+		_jRunScripts = addJob(&jobRunScripts, 0, kPriority15);
+		addJob(&jobHideInventory, 0, kPriority20);
 		removeJob(_jDrawInventory);
 		break;
 
@@ -527,12 +532,13 @@ void Parallaction::processInput(InputData *data) {
 		break;
 
 	case kEvWalk:
-		_hoverZone = 0;
+        debugC(1, kDebugLocation, "processInput: kEvWalk");
+		_hoverZone = NULL;
 		changeCursor(kCursorArrow);
 		if (_yourself._zone._flags & kFlagsRemove) break;
 		if ((_yourself._zone._flags & kFlagsActive) == 0) break;
 		v4 = buildWalkPath(data->_mousePos._x, data->_mousePos._y);
-		addJob(jobWalk, v4, JOBPRIORITY_WALK);
+		addJob(jobWalk, v4, kPriority19);
 		_engineFlags |= kEngineWalking; 								   // inhibits processing of input until walking is over
 		break;
 
@@ -639,7 +645,7 @@ Parallaction::InputData *Parallaction::translateInput() {
 
 			_hoverZone = z;
 			_input._event = kEvEnterZone;
-			_input._cnv = &z->_label;
+			_input._label = &z->_label;
 			return &_input;
 		}
 
@@ -751,9 +757,11 @@ void Parallaction::changeCursor(int32 index) {
 
 	if (index == kCursorArrow) {		// standard mouse pointer
 
+        debugC(1, kDebugLocation, "changeCursor(%i), label: %p", index, (const void*)_jDrawLabel);
+
 		if (_jDrawLabel != NULL) {
 			removeJob(_jDrawLabel);
-			addJob(&jobWaitRemoveJob, _jEraseLabel, JOBPRIORITY_RUNSTUFF);
+			addJob(&jobWaitRemoveJob, _jEraseLabel, kPriority15 );
 			_jDrawLabel = NULL;
 		}
 
