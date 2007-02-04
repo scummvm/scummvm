@@ -45,6 +45,7 @@ public:
 
 protected:
 	ListWidget		*_list;
+	ButtonWidget	*_addButton;
 	Widget			*_startButton;
 	Widget			*_editButton;
 	Widget			*_removeButton;

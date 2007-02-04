@@ -494,7 +494,8 @@ LauncherDialog::LauncherDialog()
 			new ButtonWidget(this, "launcher_start_button", "Start", kStartCmd, 'S');
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
-	new ButtonWidget(this, "launcher_addGame_button", "Add Game...", kAddGameCmd, 'A');
+	_addButton = 
+		new ButtonWidget(this, "launcher_addGame_button", "Add Game...", kAddGameCmd, 'A');
 	_editButton =
 		new ButtonWidget(this, "launcher_editGame_button", "Edit Game...", kEditGameCmd, 'E');
 	_removeButton =
@@ -806,11 +807,21 @@ void LauncherDialog::editGame(int item) {
 void LauncherDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	_modifiers = modifiers;
 	Dialog::handleKeyDown(ascii, keycode, modifiers);
+
+	if ((modifiers & OSystem::KBD_SHIFT) != 0) {
+		_addButton->setLabel("Mass Add...");
+		_addButton->draw();
+	}
 }
 
 void LauncherDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 	_modifiers = modifiers;
 	Dialog::handleKeyUp(ascii, keycode, modifiers);
+
+	if ((modifiers & OSystem::KBD_SHIFT) == 0) {
+		_addButton->setLabel("Add Game...");
+		_addButton->draw();
+	}
 }
 
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
