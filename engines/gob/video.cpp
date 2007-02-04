@@ -301,6 +301,14 @@ void Video::drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, i
 	_videoDriver->drawPackedSprite(sprBuf, width, height, x, y, transp, dest);
 }
 
+void Video::drawPackedSprite(const char *path, SurfaceDesc * dest, int width) {
+	char *data;
+
+	data = _vm->_dataio->getData(path);
+	drawPackedSprite((byte *) data, width, dest->height, 0, 0, 0, dest);
+	delete[] data;
+}
+
 void Video::setPalElem(int16 index, char red, char green, char blue, int16 unused,
 	    int16 vidMode) {
 	byte pal[4];

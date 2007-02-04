@@ -218,8 +218,10 @@ public:
 	void finishImd(Imd *imdPtr);
 	void setImdXY(Imd *imdPtr, int16 x, int16 y);
 	void playImd(int16 arg_0, int16 arg_2, int16 arg_4, int16 arg_6, int16 arg_8, int16 arg_A);
+	void playImd(const char *path, int16 x, int16 y, int16 startFrame, int16 frames,
+			bool fade, bool interruptible);
 	int16 viewImd(Game::Imd *imdPtr, int16 arg_4);
-	void imdDrawFrame(Imd *imdPtr, int16 arg_4, int16 arg_6, int16 arg_8);
+	void imdDrawFrame(Imd *imdPtr, int16 frame, int16 x, int16 y, Video::SurfaceDesc *dest = 0);
 	void imdRenderFrame(Imd *imdPtr);
 	void imdFrameUncompressor(byte *dest, byte *src);
 	int16 sub_2C825(Imd *imdPtr);

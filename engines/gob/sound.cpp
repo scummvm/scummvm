@@ -82,6 +82,9 @@ Snd::Snd(GobEngine *vm) : _vm(vm) {
 	_fadeSamples = 0;
 	_curFadeSamples = 0;
 
+	_compositionSamples = 0;
+	_compositionSampleTypes = 0;
+	_compositionSampleCount = 0;
 	_compositionPos = -1;
 
 	_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_handle,
@@ -119,10 +122,16 @@ void Snd::stopSound(int16 fadeLength)
 	_curFadeSamples = 0;
 }
 
-void Snd::waitEndPlay(void) {
-	_compositionPos = -1;
-	while (!_end && !_vm->_quitRequested)
+void Snd::waitEndPlay(bool interruptible, bool stopComp) {
+	if (stopComp)
+		_compositionPos = -1;
+	while (!_end && !_vm->_quitRequested) {
+		if (interruptible && (_vm->_util->checkKey() == 0x11B)) {
+			WRITE_VAR(57, -1);
+			return;
+		}
 		_vm->_util->longDelay(200);
+	}
 	stopSound(0);
 }
 
@@ -137,21 +146,32 @@ void Snd::nextCompositionPos(void) {
 	int8 slot;
 
 	while ((++_compositionPos < 50) && ((slot = _composition[_compositionPos]) != -1)) {
-		if ((slot >= 0) && (slot <= 60) && (_vm->_game->_soundSamples[slot] != 0)
-				&& !(_vm->_game->_soundTypes[slot] & 8)) {
-			setSample(_vm->_game->_soundSamples[slot], 1, 0, 0);
+		if ((slot >= 0) && (slot < _compositionSampleCount) &&
+				(_compositionSamples[slot] != 0) && !(_compositionSampleTypes[slot] & 8)) {
+			setSample(_compositionSamples[slot], 1, 0, 0);
 			return;
 		}
 	}
 	_compositionPos = -1;
 }
 
-void Snd::playComposition(int16 *composition, int16 freqVal) {
+void Snd::playComposition(int16 *composition, int16 freqVal, SoundDesc **sndDescs,
+		int8 *sndTypes, int8 sndCount) {
+	int i;
+
 	waitEndPlay();
 	stopComposition();
 
-	for (int i = 0; i < 50; i++)
+	_compositionSamples = sndDescs ? sndDescs : _vm->_game->_soundSamples;
+	_compositionSampleTypes = sndTypes ? sndTypes : _vm->_game->_soundTypes;
+	_compositionSampleCount = sndCount;
+
+	i = -1;
+	do {
+		i++;
 		_composition[i] = composition[i];
+	} while ((i < 50) && (composition[i] != -1));
+
 	nextCompositionPos();
 }
 
@@ -255,7 +275,7 @@ int Snd::readBuffer(int16 *buffer, const int numSamples) {
 		*buffer++ = (int16) ((_last + (_cur - _last) * _frac) * _fadeVol);
 		_frac += _ratio;
 		_offset += _ratio;
-		while (_frac > 1) {
+		while ((_frac > 1) && (_offset < _length)) {
 			_frac -= 1;
 			_last = _cur;
 			_cur = _data[(int) _offset];

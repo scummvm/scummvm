@@ -58,6 +58,7 @@ void Game_v2::playTot(int16 skipPlay) {
 	int32 i;
 	char *filePtr;
 	char *savedIP;
+	bool totTextLoc;
 
 	oldNestLevel = _vm->_inter->_nestLevel;
 	oldBreakFrom = _vm->_inter->_breakFromLevel;
@@ -134,11 +135,13 @@ void Game_v2::playTot(int16 skipPlay) {
 			filePtr = (char *)_totFileData + 0x30;
 
 			_totTextData = 0;
+			totTextLoc = false;
 			if (READ_LE_UINT32(filePtr) != (uint32)-1) {
 				_totTextData = new TotTextTable;
-				if (READ_LE_UINT32(filePtr) == 0)
+				if (READ_LE_UINT32(filePtr) == 0) {
 					_totTextData->dataPtr = loadLocTexts();
-				else
+					totTextLoc = true;
+				} else
 					_totTextData->dataPtr = (_totFileData + READ_LE_UINT32((char *)_totFileData + 0x30));
 
 				_totTextData->items = 0;
@@ -222,6 +225,8 @@ void Game_v2::playTot(int16 skipPlay) {
 			if (_totTextData) {
 				if (_totTextData->items)
 					delete[] _totTextData->items;
+				if (totTextLoc)
+					delete[] _totTextData->dataPtr;
 				delete _totTextData;
 			}
 			_totTextData = 0;

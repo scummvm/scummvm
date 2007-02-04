@@ -1304,9 +1304,10 @@ void Mult_v2::playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
 }
 
 void Mult_v2::freeMult(void) {
-	if (_vm->_anim->_animSurf != 0)
-		delete _vm->_anim->_animSurf;
+	if ((_vm->_anim->_animSurf != 0) && (_vm->_draw->_spritesArray[22] != 0))
+		_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
 	_vm->_anim->_animSurf = 0;
+	_vm->_draw->_spritesArray[22] = 0;
 
 	delete[] _objects;
 	delete[] _renderData2;

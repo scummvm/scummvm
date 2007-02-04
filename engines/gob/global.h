@@ -219,6 +219,7 @@ public:
 	}
 
 	Global(GobEngine *vm);
+	~Global();
 
 protected:
 	GobEngine *_vm;

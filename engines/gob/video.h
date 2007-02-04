@@ -109,6 +109,7 @@ public:
 	void clearSurf(SurfaceDesc * dest);
 	void drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y,
 						  int16 transp, SurfaceDesc * dest);
+	void drawPackedSprite(const char *path, SurfaceDesc * dest, int width = 320);
 	void setPalElem(int16 index, char red, char green, char blue, int16 unused,
 					int16 vidMode);
 	void setPalette(PalDesc * palDesc);

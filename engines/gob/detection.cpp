@@ -462,7 +462,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 		},
-		GF_GOB2,
+		GF_BARGON,
 		"intro"
 	},
 	{
@@ -536,7 +536,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			"gob3cd",
 			"v1.000",
 			AD_ENTRY1("intro.stk", "6f2c226c62dd7ab0ab6f850e89d3fc47"),
-			UNK_LANG,
+			EN_USA,
 			kPlatformPC,
 		},
 		GF_GOB2,

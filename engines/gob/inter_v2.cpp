@@ -2387,7 +2387,7 @@ void Inter_v2::animPalette(void) {
 			col = _vm->_global->_pPaletteDesc->vgaPal[_animPalLowIndex[j]];
 
 			for (i = _animPalLowIndex[j]; i < _animPalHighIndex[j]; i++)
-				_vm->_draw->_vgaPalette[i] = _vm->_global->_pPaletteDesc->vgaPal[i + 1];
+				_vm->_draw->_vgaPalette[i] = _vm->_draw->_vgaPalette[i + 1];
 
 			_vm->_global->_pPaletteDesc->vgaPal[_animPalHighIndex[j]] = col;
 		} else {

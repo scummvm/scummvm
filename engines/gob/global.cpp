@@ -90,6 +90,7 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 
 	_oldMode = 3;
 	_dontSetPalette = 0;
+	_primarySurfDesc.vidPtr = 0;
 	_pPrimarySurfDesc = 0;
 
 	_pPaletteDesc = 0;
@@ -153,6 +154,11 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 
 	_savedBack = 0;
 	_savedBackSize = -1;
+}
+
+Global::~Global() {
+	if (_primarySurfDesc.vidPtr)
+		delete[] _primarySurfDesc.vidPtr;
 }
 
 } // End of namespace Gob

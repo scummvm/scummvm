@@ -611,6 +611,18 @@ int GobEngine::init() {
 		_goblin = new Goblin_v2(this);
 		_scenery = new Scenery_v2(this);
 	}
+	else if (_features & Gob::GF_BARGON) {
+		_inter = new Inter_Bargon(this);
+		_parse = new Parse_v2(this);
+		_mult = new Mult_v2(this);
+		_draw = new Draw_Bargon(this);
+		_game = new Game_v2(this);
+		_video = new Video_v2(this);
+		_init = new Init_v2(this);
+		_map = new Map_v2(this);
+		_goblin = new Goblin_v2(this);
+		_scenery = new Scenery_v2(this);
+	}
 	else
 		error("GobEngine::init(): Unknown version of game engine");
 	_noMusic = MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL;

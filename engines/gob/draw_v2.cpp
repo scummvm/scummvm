@@ -848,7 +848,7 @@ void Draw_v2::animateCursor(int16 cursor) {
 	if (cursorIndex == -1) {
 		cursorIndex = 0;
 		for (ptr = _vm->_game->_collisionAreas; ptr->left != -1; ptr++) {
-			if ((ptr->flags & 0xF00) || (ptr->flags & 0x4000))
+			if ((ptr->flags & 0xF00) || (ptr->id & 0x4000))
 				continue;
 
 			if (ptr->left > _vm->_global->_inter_mouseX)

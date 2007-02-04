@@ -185,6 +185,14 @@ public:
 	virtual ~Draw_v2() {};
 };
 
+class Draw_Bargon: public Draw_v2 {
+public:
+	virtual void initScreen(void);
+
+	Draw_Bargon(GobEngine *vm);
+	virtual ~Draw_Bargon() {};
+};
+
 // Draw operations
 
 #define DRAW_BLITSURF	0

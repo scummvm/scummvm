@@ -54,9 +54,10 @@ public:
 	SoundDesc *loadSoundData(const char *path);
 	void stopSound(int16 fadeLength);
 	void playSample(SoundDesc *sndDesc, int16 repCount, int16 frequency, int16 fadeLength = 0);
-	void playComposition(int16 *composition, int16 freqVal);
+	void playComposition(int16 *composition, int16 freqVal, SoundDesc **sndDescs = 0,
+			int8 *sndTypes = 0, int8 sndCount = 60);
 	void stopComposition(void);
-	void waitEndPlay(void);
+	void waitEndPlay(bool interruptible = false, bool stopComp = true);
 
 	// This deletes sndDesc and stops playing the sample.
 	// If freedata is set, it also delete[]s the sample data.
@@ -95,9 +96,12 @@ protected:
 
 	SquareWaveStream _speakerStream;
 	Audio::SoundHandle _speakerHandle;
-
 	Audio::SoundHandle *_activeHandle;
 	Audio::SoundHandle _compositionHandle;
+	
+	SoundDesc **_compositionSamples;
+	int8 *_compositionSampleTypes;
+	int8 _compositionSampleCount;
 	int16 _composition[50];
 	int8 _compositionPos;
 

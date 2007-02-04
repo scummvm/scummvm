@@ -152,6 +152,9 @@ Game::~Game() {
 		delete[] _word_2FC80;
 	if (_infIns)
 		delete _infIns;
+
+	for (int i = 0; i < 60; i++)
+		freeSoundSlot(i);
 }
 
 char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight, uint32 *dataSize) {
@@ -763,35 +766,28 @@ void Game::collAreaSub(int16 index, int8 enter) {
 
 Snd::SoundDesc *Game::loadSND(const char *path, int8 arg_4) {
 	Snd::SoundDesc *soundDesc;
-	uint32 dsize;
+	uint32 dSize;
 	char *data;
 	char *dataPtr;
 
 	soundDesc = new Snd::SoundDesc;
 
+	dSize = _vm->_dataio->getDataSize(path) - 6;
 	data = _vm->_dataio->getData(path);
-	if (data == 0) {
-		delete soundDesc;
-		return 0;
-	}
-	soundDesc->data = data;
-	soundDesc->flag = *data & 0x7F;
-	if (*data == 0)
-		soundDesc->flag = 8;
+	soundDesc->data = new char[dSize];
+	soundDesc->flag = *data ? (*data & 0x7F) : 8;
 	dataPtr = data + 4;
 
 	WRITE_LE_UINT16(dataPtr, READ_BE_UINT16(dataPtr));
+	WRITE_LE_UINT32(data,
+			(READ_LE_UINT32(data) >> 24) +
+			((READ_LE_UINT16(data) & 0xFF00) << 8) +
+			((READ_LE_UINT16(data + 2) & 0xFF) >> 8));
 
-	WRITE_LE_UINT32(data, (READ_LE_UINT32(data) >> 24) + ((READ_LE_UINT16(data) & 0xFF00) << 8) + ((READ_LE_UINT16(data + 2) & 0xFF) >> 8));
-
-	soundDesc->size = READ_LE_UINT32(data);
-	dsize = _vm->_dataio->getDataSize(path) - 6;
-	if (dsize > soundDesc->size)
-		soundDesc->size = dsize;
-
+	soundDesc->size = MAX(dSize, READ_LE_UINT32(data));
 	soundDesc->frequency = READ_LE_UINT16(dataPtr);
-	soundDesc->data += 6;
 	soundDesc->timerTicks = 1193180 / READ_LE_UINT16(dataPtr);
+	memcpy(soundDesc->data, data + 6, dSize - 6);
 
 	if (arg_4 & 2)
 		arg_4 |= 1;
@@ -1316,7 +1312,7 @@ int16 Game::viewImd(Game::Imd *imdPtr, int16 frame) {
 		} else if (imdPtr->framesPos != 0)
 			imdPtr->filePos = imdPtr->framesPos[frame];
 		else
-			error("Image %d innaccessible in IMD", frame);
+			error("Image %d inaccessible in IMD", frame);
 		imdPtr->curFrame = frame;
 		_vm->_dataio->seekData(imdPtr->fileHandle, imdPtr->filePos, 0);
 	}
@@ -1432,25 +1428,26 @@ int16 Game::viewImd(Game::Imd *imdPtr, int16 frame) {
 	return retVal;
 }
 
-void Game::imdDrawFrame(Imd *imdPtr, int16 frame, int16 x, int16 y) {
-	// In the original asm, "sub_2C348" is called instead of Video::drawSprite();
-	// it basically just blits.
+void Game::imdDrawFrame(Imd *imdPtr, int16 frame, int16 x, int16 y,
+		Video::SurfaceDesc *dest) {
+	if (!dest)
+		dest = _vm->_draw->_frontSurface;
 
 	if (frame == 0)
-		_vm->_video->drawSprite(imdPtr->surfDesc, _vm->_draw->_frontSurface, 0, 0,
+		_vm->_video->drawSprite(imdPtr->surfDesc, dest, 0, 0,
 				imdPtr->width - 1, imdPtr->height - 1, x, y, 1);
 	else if ((imdPtr->frameCoords != 0) && (imdPtr->frameCoords[frame].left != -1))
-		_vm->_video->drawSprite(imdPtr->surfDesc, _vm->_draw->_frontSurface,
+		_vm->_video->drawSprite(imdPtr->surfDesc, dest,
 				imdPtr->frameCoords[frame].left, imdPtr->frameCoords[frame].top,
 				imdPtr->frameCoords[frame].right, imdPtr->frameCoords[frame].bottom,
 				imdPtr->frameCoords[frame].left, imdPtr->frameCoords[frame].top, 1);
 	else if (imdPtr->stdX != -1)
-		_vm->_video->drawSprite(imdPtr->surfDesc, _vm->_draw->_frontSurface,
+		_vm->_video->drawSprite(imdPtr->surfDesc, dest,
 				imdPtr->stdX, imdPtr->stdY, imdPtr->stdX + imdPtr->stdWidth - 1,
 				imdPtr->stdY + imdPtr->stdHeight - 1, x + imdPtr->stdX,
 				y + imdPtr->stdY, 1);
 	else
-		_vm->_video->drawSprite(imdPtr->surfDesc, _vm->_draw->_frontSurface, 0, 0,
+		_vm->_video->drawSprite(imdPtr->surfDesc, dest, 0, 0,
 				imdPtr->width - 1, imdPtr->height - 1, x, y, 0);
 }
 
@@ -1630,6 +1627,67 @@ void Game::imdFrameUncompressor(byte *dest, byte *src) {
 			frameLength -= chunkLength;
 		}
 	}
+}
+
+void Game::playImd(const char *path, int16 x, int16 y, int16 startFrame, int16 frames,
+		bool fade, bool interruptible) {
+	int16 mouseX;
+	int16 mouseY;
+	int16 buttons;
+	int curFrame;
+	int endFrame;
+	int backFrame;
+
+	_vm->_util->setFrameRate(12);
+	openImd(path, 0, 0, 0, 0);
+	_vm->_video->fillRect(_vm->_draw->_frontSurface, x, y, x + _imdFile->width - 1,
+			y + _imdFile->height - 1, 0);
+
+	if (fade)
+		_vm->_palanim->fade(0, -2, 0);
+
+	endFrame = frames > 0 ? frames : _imdFile->framesCount;
+	for (curFrame = 0; curFrame < endFrame; curFrame++) {
+		viewImd(_imdFile, curFrame);
+		imdDrawFrame(_imdFile, curFrame, x, y);
+		if (fade) {
+			_vm->_palanim->fade(_vm->_global->_pPaletteDesc, -2, 0);
+			fade = false;
+		}
+		_vm->_video->waitRetrace(_vm->_global->_videoMode);
+		if ((interruptible && (checkKeys(&mouseX, &mouseY, &buttons, 0) == 0x11B)) ||
+				_vm->_quitRequested) {
+			_vm->_palanim->fade(0, -2, 0);
+			_vm->_video->clearSurf(_vm->_draw->_frontSurface);
+			memset((char *) _vm->_draw->_vgaPalette, 0, 768);
+			WRITE_VAR(4, buttons);
+			WRITE_VAR(0, 0x11B);
+			WRITE_VAR(57, (uint32) -1);
+			break;
+		}
+		_vm->_util->waitEndFrame();
+	}
+	if (frames < 0) {
+		endFrame = _imdFile->framesCount + frames;
+		for (curFrame = _imdFile->framesCount - 1; curFrame >= endFrame; curFrame--) {
+			for (backFrame = 0; backFrame <= curFrame; backFrame++)
+				viewImd(_imdFile, backFrame);
+			imdDrawFrame(_imdFile, curFrame, x, y);
+			_vm->_video->waitRetrace(_vm->_global->_videoMode);
+			if ((interruptible && (checkKeys(&mouseX, &mouseY, &buttons, 0) == 0x11B)) ||
+					_vm->_quitRequested) {
+				_vm->_palanim->fade(0, -2, 0);
+				_vm->_video->clearSurf(_vm->_draw->_frontSurface);
+				memset((char *) _vm->_draw->_vgaPalette, 0, 768);
+				WRITE_VAR(4, buttons);
+				WRITE_VAR(0, 0x11B);
+				WRITE_VAR(57, (uint32) -1);
+				break;
+			}
+			_vm->_util->waitEndFrame();
+		}
+	}
+	closeImd();
 }
 
 int16 Game::sub_2C825(Imd *imdPtr) {

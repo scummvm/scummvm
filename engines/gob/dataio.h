@@ -28,7 +28,7 @@
 
 namespace Gob {
 
-#define MAX_DATA_FILES	6
+#define MAX_DATA_FILES	8
 #define MAX_SLOT_COUNT	4
 
 class DataIO {

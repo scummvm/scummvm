@@ -362,9 +362,10 @@ void Draw::printTextCentered(int16 arg_0, int16 left, int16 top, int16 right,
 	adjustCoords(1, &left, &top);
 	adjustCoords(1, &right, &bottom);
 
-	if (_vm->_game->_totFileData[0x7E] != 0) {
+	if (READ_LE_UINT16(_vm->_game->_totFileData + 0x7E) != 0) {
 		storedIP = _vm->_global->_inter_execPtr;
-		_vm->_global->_inter_execPtr = _vm->_game->_totFileData + 0x7E;
+		_vm->_global->_inter_execPtr = _vm->_game->_totFileData +
+			READ_LE_UINT16(_vm->_game->_totFileData + 0x7E);
 		WRITE_VAR(17, (uint32) arg_0);
 		WRITE_VAR(18, (uint32) left);
 		WRITE_VAR(19, (uint32) top);

@@ -85,6 +85,10 @@ protected:
 	virtual const char *getOpcodeFuncDesc(byte i, byte j) = 0;
 	virtual const char *getOpcodeGoblinDesc(int i) = 0;
 	virtual void loadMult(void) = 0;
+
+	void o_drawNOP(void) {}
+	bool o_funcNOP(char &cmdCount, int16 &counter, int16 &retFlag) { return false; }
+	void o_gobNOP(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {}
 };
 
 class Inter_v1 : public Inter {
@@ -367,6 +371,52 @@ protected:
 	void o2_setScrollOffset(void);
 	void o2_handleGoblins(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
 	void o2_playInfogrames(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+};
+
+class Inter_Bargon : public Inter_v2 {
+public:
+	Inter_Bargon(GobEngine *vm);
+	virtual ~Inter_Bargon() {};
+
+protected:
+	typedef void (Inter_Bargon::*OpcodeDrawProcBargon)(void);
+	typedef bool (Inter_Bargon::*OpcodeFuncProcBargon)(char &, int16 &, int16 &);
+	typedef void (Inter_Bargon::*OpcodeGoblinProcBargon)(int16 &, int32 *, Goblin::Gob_Object *);
+  struct OpcodeDrawEntryBargon {
+		OpcodeDrawProcBargon proc;
+		const char *desc;
+		};
+  struct OpcodeFuncEntryBargon {
+		OpcodeFuncProcBargon proc;
+		const char *desc;
+		};
+  struct OpcodeGoblinEntryBargon {
+		OpcodeGoblinProcBargon proc;
+		const char *desc;
+		};
+	const OpcodeDrawEntryBargon *_opcodesDrawBargon;
+	const OpcodeFuncEntryBargon *_opcodesFuncBargon;
+	const OpcodeGoblinEntryBargon *_opcodesGoblinBargon;
+	static const int _goblinFuncLookUp[][2];
+
+	virtual void setupOpcodes(void);
+	virtual void executeDrawOpcode(byte i);
+	virtual bool executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag);
+	virtual void executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	virtual const char *getOpcodeDrawDesc(byte i);
+	virtual const char *getOpcodeFuncDesc(byte i, byte j);
+	virtual const char *getOpcodeGoblinDesc(int i);
+
+	void oBargon_intro0(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void oBargon_intro1(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void oBargon_intro2(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void oBargon_intro3(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void oBargon_intro4(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void oBargon_intro5(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void oBargon_intro6(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void oBargon_intro7(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void oBargon_intro8(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void oBargon_intro9(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
 };
 
 }				// End of namespace Gob
