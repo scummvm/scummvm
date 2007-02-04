@@ -421,9 +421,20 @@ void Parallaction::runGame() {
 	while ((_engineFlags & kEngineQuit) == 0) {
 		_keyDown = updateInput();
 
-		if ((_mouseHidden == 0) && ((_engineFlags & kEngineMouse) == 0) && ((_engineFlags & kEngineWalking) == 0)) {
-			debugC(1, kDebugLocation, "runGame: checking input");
+        debugC(1, kDebugLocation, "runGame: input flags (%i, %i, %i, %i)",
+            _mouseHidden == 0,
+            (_engineFlags & kEngineMouse) == 0,
+            (_engineFlags & kEngineWalking) == 0,
+            (_engineFlags & kEngineChangeLocation) == 0
+        );
 
+        // WORKAROUND: the engine doesn't check for displayed labels before performing a location
+        // switch, thus crashing whenever a jobDisplayLabel/jEraseLabel pair is left into the
+        // queue after the character enters a door.
+        // Skipping input processing when kEngineChangeLocation is set solves the issue. It's
+        // noteworthy that the programmers added this very check in Big Red Adventure's engine,
+        // so it should be ok here in Nippon Safes too.
+		if ((_mouseHidden == 0) && ((_engineFlags & kEngineMouse) == 0) && ((_engineFlags & kEngineWalking) == 0) && ((_engineFlags & kEngineChangeLocation) == 0)) {
 			InputData *v8 = translateInput();
 			if (v8) processInput(v8);
 		}
@@ -969,11 +980,11 @@ void runJobs() {
 // and is in fact only used to remove jEraseLabel jobs
 //
 void jobWaitRemoveJob(void *parm, Job *j) {
-//	printf("jobWaitRemoveJob(%x)\n", parm);
-
 	Job *arg = (Job*)parm;
 
 	static uint16 count = 0;
+
+    debugC(1, kDebugLocation, "jobWaitRemoveJob: count = %i", count);
 
 	_engineFlags |= kEngineMouse;
 
