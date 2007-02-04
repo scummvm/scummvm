@@ -262,6 +262,13 @@ bool disableSpecialDebugLevel(const String &option);
  */
 const Array<EngineDebugLevel> &listSpecialDebugLevels();
 
+/**
+ * Return the active debug flag mask (i.e. all active debug flags ORed
+ * together into a single uint32).
+ */
+uint32 getEnabledSpecialDebugLevels();
+
+
 }	// End of namespace Common
 
 

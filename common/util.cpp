@@ -297,8 +297,8 @@ const char *getRenderModeDescription(RenderMode id) {
 
 #pragma mark -
 
-Array<EngineDebugLevel> gDebugLevels;
-uint32 gDebugLevelsEnabled = 0;
+static Array<EngineDebugLevel> gDebugLevels;
+static uint32 gDebugLevelsEnabled = 0;
 
 bool addSpecialDebugLevel(uint32 level, const String &option, const String &description) {
 	for (uint i = 0; i < gDebugLevels.size(); ++i) {
@@ -357,6 +357,11 @@ bool disableSpecialDebugLevel(const String &option) {
 const Array<EngineDebugLevel> &listSpecialDebugLevels() {
 	return gDebugLevels;
 }
+
+uint32 getEnabledSpecialDebugLevels() {
+	return gDebugLevelsEnabled;
+}
+
 
 }	// End of namespace Common
 
