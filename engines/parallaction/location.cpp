@@ -299,7 +299,7 @@ void switchBackground(char *name) {
 	return;
 }
 
-
+extern Zone    *_hoverZone;
 
 void Parallaction::changeLocation(char *location) {
     debugC(1, kDebugLocation, "changeLocation to '%s'", location);
@@ -342,7 +342,7 @@ void Parallaction::changeLocation(char *location) {
         debugC(1, kDebugLocation, "changeLocation: music stopped");
 	}
 
-
+    _hoverZone = NULL;
 	if (_engineFlags & kEngineMouse) {
         changeCursor( kCursorArrow );
         debugC(1, kDebugLocation, "changeLocation: changed cursor");
