@@ -34,7 +34,7 @@
 
 #include "gui/widget.h"
 
-#define THEME_VERSION 18
+#define THEME_VERSION 19
 
 namespace GUI {
 

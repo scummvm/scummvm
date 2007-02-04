@@ -1581,7 +1581,6 @@ inline OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos) 
 }
 
 OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max, uint factor = 1) {
-	max /= factor;
 	pos *= factor;
 	if (pos >= max)
 		return end;
