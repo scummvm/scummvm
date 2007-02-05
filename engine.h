@@ -65,6 +65,7 @@ public:
 	bool getFlipEnable() { return _flipEnable; }
 	void refreshDrawMode() { _refreshDrawNeeded = true; }
 	void drawPrimitives();
+	void setShadowColor(Color c);
 
 	void mainLoop();
 	unsigned frameStart() const { return _frameStart; }
@@ -182,6 +183,7 @@ private:
 	bool _refreshDrawNeeded;
 	char _fps[8];
 	bool _doFlip;
+	Color _shadowColor;
 
 	unsigned _frameStart, _frameTime, _movieTime;
 	unsigned int _frameTimeCollection;

@@ -1393,6 +1393,81 @@ static void GetVisibleThings() {
 	lua_pushobject(result);
 }
 
+static void SetShadowColor() {
+	DEBUG_FUNCTION();
+
+	int r = check_int(1);
+	int g = check_int(2);
+	int b = check_int(3);
+
+	g_engine->setShadowColor(Color(r, g, b));
+}
+
+static void KillActorShadows() {
+	DEBUG_FUNCTION();
+
+	Actor *act = check_actor(1);
+
+	act->clearShadowPlanes();
+}
+
+static void SetActiveShadow() {
+	DEBUG_FUNCTION();
+
+	Actor *act = check_actor(1);
+	int shadowId = check_int(2);
+
+	act->setActiveShadow(shadowId);
+}
+
+static void SetActorShadowPoint() {
+	DEBUG_FUNCTION();
+
+	Actor *act = check_actor(1);
+	float x = luaL_check_number(2);
+	float y = luaL_check_number(3);
+	float z = luaL_check_number(4);
+
+	act->setShadowPoint(Vector3d(x, y, z));
+}
+
+static void SetActorShadowPlane() {
+	DEBUG_FUNCTION();
+
+	Actor *act = check_actor(1);
+	char *name = lua_getstring(lua_getparam(2));
+
+	act->setShadowPlane(name);
+}
+
+static void AddShadowPlane() {
+	DEBUG_FUNCTION();
+
+	Actor *act = check_actor(1);
+	char *name = lua_getstring(lua_getparam(2));
+
+	act->addShadowPlane(name);
+}
+
+static void ActivateActorShadow() {
+	DEBUG_FUNCTION();
+
+	Actor *act = check_actor(1);
+	int shadowId = check_int(2);
+	bool state = getbool(3);
+
+	//act->setActivateShadow(shadowId, state);
+}
+
+static void SetActorShadowValid() {
+	DEBUG_FUNCTION();
+
+	Actor *act = check_actor(1);
+	int valid = check_int(2);
+
+	//act->setShadowValid(valid);
+}
+
 // 0 - translate from '/msgId/'
 // 1 - don't translate - message after '/msgId'
 // 2 - return '/msgId/'
@@ -3181,8 +3256,7 @@ static void debugFunction(char *debugMessage, const char *funcName) {
 // Stub function for builtin functions not yet implemented
 static void stubWarning(char *funcName) {
 	// If the user doesn't want these debug messages then don't print them
-	if(debugLevel != DEBUG_WARN && debugLevel != DEBUG_STUB && debugLevel != DEBUG_FUNC
-	 && debugLevel != DEBUG_ALL)
+	if (debugLevel != DEBUG_WARN && debugLevel != DEBUG_STUB && debugLevel != DEBUG_FUNC && debugLevel != DEBUG_ALL)
 		return;
 	
 	debugFunction("WARNING: Stub function", funcName);
@@ -3206,14 +3280,6 @@ STUB_FUNC(SetActorCollisionScale)
 STUB_FUNC(SetActorCollisionMode)
 STUB_FUNC(FlushControls)
 STUB_FUNC(ActorToClean)
-STUB_FUNC(SetActorShadowValid)
-STUB_FUNC(AddShadowPlane)
-STUB_FUNC(KillActorShadows)
-STUB_FUNC(SetActiveShadow)
-STUB_FUNC(SetActorShadowPoint)
-STUB_FUNC(SetActorShadowPlane)
-STUB_FUNC(ActivateActorShadow)
-STUB_FUNC(SetShadowColor)
 STUB_FUNC(LightMgrStartup)
 STUB_FUNC(SetLightIntensity)
 STUB_FUNC(SetLightPosition)
@@ -3248,7 +3314,6 @@ STUB_FUNC(SetCameraPosition)
 STUB_FUNC(GetCameraFOV)
 STUB_FUNC(SetCameraFOV)
 STUB_FUNC(GetCameraRoll)
-STUB_FUNC(ActorShadow)
 STUB_FUNC(ActorPuckOrient)
 STUB_FUNC(GetMemoryUsage)
 STUB_FUNC(GetFontDimensions)
@@ -3520,7 +3585,6 @@ struct luaL_reg mainOpcodes[] = {
 	{ "GetSpeechMode", GetSpeechMode },
 	{ "SetShadowColor", SetShadowColor },
 	{ "ActivateActorShadow", ActivateActorShadow },
-	{ "ActorShadow", ActorShadow },
 	{ "SetActorShadowPlane", SetActorShadowPlane },
 	{ "SetActorShadowPoint", SetActorShadowPoint },
 	{ "SetActiveShadow", SetActiveShadow },

@@ -667,3 +667,7 @@ void Engine::setTextSpeed(int speed) {
 		_textSpeed = 10;
 	_textSpeed = speed;
 }
+
+void Engine::setShadowColor(Color c) {
+	_shadowColor = c;
+}

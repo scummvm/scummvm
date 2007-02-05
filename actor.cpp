@@ -28,6 +28,7 @@
 #include "localize.h"
 #include "driver.h"
 #include "smush.h"
+#include "walkplane.h"
 
 #include "mixer/mixer.h"
 
@@ -53,6 +54,7 @@ Actor::Actor(const char *name) :
 	_lookingMode = false;
 	_constrain = false;
 	_talkSoundName = "";
+	_activeShadowSlot = -1;
 
 	for (int i = 0; i < 10; i++) {
 		_talkCostume[i] = NULL;
@@ -599,4 +601,47 @@ void Actor::draw() {
 void Actor::undraw(bool /*visible*/) {
 	if (!talking() || !g_imuse->isVoicePlaying())
 		shutUp();
+}
+
+#define strmatch(src, dst)     (strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
+
+void Actor::setShadowPlane(const char *name) {
+	assert(_activeShadowSlot != -1);
+
+	_shadowArray[_activeShadowSlot].name = name;
+}
+
+void Actor::addShadowPlane(const char *name) {
+	assert(_activeShadowSlot != -1);
+
+	int numSectors = g_engine->currScene()->getSectorCount();
+
+	for (int i = 0; i < numSectors; i++) {
+		Sector *sector = g_engine->currScene()->getSectorBase(i);
+		if (strmatch(sector->name(), name)) {
+			_shadowArray[_activeShadowSlot].planeList.push_back(sector);
+			return;
+		}
+	}
+}
+
+void Actor::setActiveShadow(int shadowId) {
+	assert(shadowId >= 0 && shadowId <= 4);
+
+	_activeShadowSlot = shadowId;
+}
+
+void Actor::setShadowPoint(Vector3d pos) {
+	assert(_activeShadowSlot != -1);
+
+	_shadowArray[_activeShadowSlot].pos = pos;
+}
+
+void Actor::clearShadowPlanes() {
+	for (int i = 0; i < 5; i++) {
+		Shadow *shadow = &_shadowArray[i];
+		while (!shadow->planeList.empty()) {
+			shadow->planeList.pop_back();
+		}
+	}
 }

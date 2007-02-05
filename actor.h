@@ -34,6 +34,14 @@
 class Costume;
 class LipSynch;
 class TextObject;
+class Sector;
+
+struct Shadow {
+	std::string name;
+	Vector3d pos;
+	std::list<Sector *>planeList;
+	bool active;
+};
 
 class Actor {
 public:
@@ -112,6 +120,13 @@ public:
 	int costumeStackDepth() const {
 		return _costumeStack.size();
 	}
+
+	void setActiveShadow(int shadowId);
+	void setShadowPoint(Vector3d pos);
+	void setShadowPlane(const char *name);
+	void addShadowPlane(const char *name);
+	void clearShadowPlanes();
+
 	void setConstrain(bool constrain) {
 		_constrain = constrain;
 	}
@@ -179,12 +194,15 @@ private:
 	Costume *_mumbleCostume;
 	int _mumbleChore;
 
+	Shadow _shadowArray[5];
+	int _activeShadowSlot;
+
 	static Font *_sayLineFont;
 	TextObject *_sayLineText;
 
 	// Validate a yaw angle then set it appropriately
 	void setYaw(float yaw);
-	
+
 	int getTurnChore(int dir) {
 		return (dir > 0 ? _rightTurnChore : _leftTurnChore);
 	}

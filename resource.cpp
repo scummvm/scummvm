@@ -114,10 +114,8 @@ ResourceLoader::ResourceLoader() {
 		error("Cannot find any resource files in %s - check configuration file", dir_str.c_str());
 }
 
-ResourceLoader::~ResourceLoader()
-{
-	for(LabList::const_iterator i = _labs.begin();
-	    i != _labs.end(); i++)
+ResourceLoader::~ResourceLoader() {
+	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); i++)
 		delete (*i);
 }
 
@@ -125,6 +123,7 @@ const Lab *ResourceLoader::findFile(const char *filename) const {
 	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); i++)
 		if ((*i)->fileExists(filename))
 			return *i;
+
 	return NULL;
 }
 
