@@ -414,7 +414,11 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 		}
 	}
 
-	if (!filesMD5.empty() && matched.empty()) {
+	// We've found a match 
+	if (!matched.empty())
+		return matched;
+
+	if (!filesMD5.empty()) {
 		printf("MD5s of your game version are unknown. Please, report following data to\n");
 		printf("ScummVM team along with your game name and version:\n");
 
