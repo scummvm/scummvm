@@ -384,7 +384,7 @@ void Graphics::flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Graphi
 	byte *s = data + left + top * w;
 	byte *d = _buffers[buffer] + x + y * SCREEN_WIDTH;
 
-	debugC(9, kDebugGraphics, "Graphics::flatBlit CLIPPED (%i, %i, %i, %i) -> (%i, %i) %x %x", left, top, right, bottom, x, y, (uint32)s, (uint32)d);
+	debugC(9, kDebugGraphics, "Graphics::flatBlit CLIPPED (%i, %i, %i, %i) -> (%i, %i) %p %p", left, top, right, bottom, x, y, (const void*)s, (const void*)d);
 
 	for (uint16 i = top; i < bottom; i++) {
 		for (uint16 j = left; j < right; j++) {
