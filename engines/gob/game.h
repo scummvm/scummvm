@@ -202,6 +202,7 @@ public:
 	void freeCollision(int16 id);
 
 	void loadSound(int16 slot, char *dataPtr, uint32 dataSize = 4294967295U);
+	int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons, char handleMouse);
 	int16 adjustKey(int16 key);
 	int32 loadTotFile(char *path);
 	void loadExtTable(void);
@@ -236,8 +237,6 @@ public:
 	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
 			char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex) = 0;
-	virtual int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons,
-					char handleMouse) = 0;
 	virtual int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 						  int16 *pResIndex) = 0;
 	virtual void prepareStart(void) = 0;
@@ -296,8 +295,6 @@ public:
 	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
 			char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex);
-	virtual int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons,
-					char handleMouse);
 	virtual int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 						  int16 *pResIndex);
 	virtual void prepareStart(void);
@@ -323,8 +320,6 @@ public:
 	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
 			char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex);
-	virtual int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons,
-					char handleMouse);
 	virtual int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 						  int16 *pResIndex);
 	virtual void prepareStart(void);

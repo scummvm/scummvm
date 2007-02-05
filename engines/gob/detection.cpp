@@ -151,6 +151,17 @@ static const GOBGameDescription gameDescriptions[] = {
 			"gob1cd",
 			"v1.02",
 			AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
+			DE_DEU,
+			kPlatformPC,
+		},
+		GF_GOB1 | GF_CD,
+		"intro"
+	},
+	{ // CD 1.02 version. Multilingual
+		{
+			"gob1cd",
+			"v1.02",
+			AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
 			FR_FRA,
 			kPlatformPC,
 		},
@@ -201,12 +212,56 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB1,
 		"intro"
 	},
-   	{
+	{ // Supplied by paul66 in bug report #1652352
 		{
 			"gob1",
 			"",
 			AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
-			UNK_LANG,
+			EN_ANY,
+			kPlatformMacintosh,
+		},
+		GF_GOB1,
+		"intro"
+	},
+	{ // Supplied by paul66 in bug report #1652352
+		{
+			"gob1",
+			"",
+			AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
+			DE_DEU,
+			kPlatformMacintosh,
+		},
+		GF_GOB1,
+		"intro"
+	},
+	{ // Supplied by paul66 in bug report #1652352
+		{
+			"gob1",
+			"",
+			AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
+			FR_FRA,
+			kPlatformMacintosh,
+		},
+		GF_GOB1,
+		"intro"
+	},
+	{ // Supplied by paul66 in bug report #1652352
+		{
+			"gob1",
+			"",
+			AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
+			IT_ITA,
+			kPlatformMacintosh,
+		},
+		GF_GOB1,
+		"intro"
+	},
+	{ // Supplied by paul66 in bug report #1652352
+		{
+			"gob1",
+			"",
+			AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
+			ES_ESP,
 			kPlatformMacintosh,
 		},
 		GF_GOB1,
@@ -487,6 +542,17 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB2,
 		"intro"
 	},
+	{ // Supplied by paul66 in bug report #1652352
+		{
+			"gob3",
+			"",
+			AD_ENTRY1("intro.stk", "f6d225b25a180606fa5dbe6405c97380"),
+			DE_DEU,
+			kPlatformPC,
+		},
+		GF_GOB2,
+		"intro"
+	},
 	{
 		{
 			"gob3",
@@ -542,12 +608,12 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB2,
 		"intro"
 	},
-	{
+	{ // Supplied by paul66 in bug report #1652352
 		{
 			"gob3cd",
 			"v1.02",
 			AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
-			UNK_LANG,
+			DE_DEU,
 			kPlatformPC,
 		},
 		GF_GOB2,

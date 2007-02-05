@@ -163,9 +163,62 @@ public:
 		int16 field_E;
 	};
 
+	struct Mult_Data {
+		int16 palFadeKeysCount;
+		Mult_PalFadeKey *palFadeKeys;
+
+		int16 palKeysCount;
+		Mult_PalKey *palKeys;
+
+		int16 staticKeysCount;
+		Mult_StaticKey *staticKeys;
+		int16 staticIndices[10];
+		int16 staticLoaded[10];
+		int8 staticCount;
+
+		int16 animKeysCount[4];
+		Mult_AnimKey *animKeys[4];
+		int16 animIndices[10];
+		int8 animCount;
+
+		int16 animLoaded[10];
+		int16 animKeysFrames[4];
+		int16 animKeysStartFrames[4];
+		int16 animKeysStopFrames[4];
+		int16 animKeysIndices[4][4];
+		int8 animDirection;
+
+		int16 textKeysCount;
+		Mult_TextKey *textKeys;
+
+		int16 sndKeysCount;
+		Mult_SndKey *sndKeys;
+
+		int16 sndSlotsCount;
+		int16 sndSlot[60];
+		int16 frameRate;      
+
+		Video::Color fadePal[5][16];
+		int16 field_124[4][4];
+		int16 palAnimIndices[4]; // Not sure here
+		int16 frameStart;
+
+		int16 field_17F[4][4];
+
+		int16 someKeysCount[4];
+		Mult_SomeKey *someKeys[4];
+		int16 someKeysIndices[4];
+		char *somepointer09; // ?
+		char *somepointer10; // ?
+		char *execPtr;
+	};
+
 #include "common/pack-end.h"	// END STRUCT PACKING
 
 	// Globals
+
+	Mult_Data *_multData;
+	Mult_Data *_multDatas[8];
 
 	Mult_Object *_objects;
 	int16 *_renderData;
@@ -173,11 +226,9 @@ public:
 	int16 _objCount;
 	Video::SurfaceDesc *_underAnimSurf;
 
-	char *_multData;
 	int16 _frame;
 	char _doPalSubst;
 	int16 _counter;
-	int16 _frameRate;
 
 	int32 *_animArrayX;
 	int32 *_animArrayY;
@@ -185,29 +236,9 @@ public:
 	Mult_AnimData *_animArrayData;
 
 	int16 _index;
-
-	// Static keys
-	int16 _staticKeysCount;
-	Mult_StaticKey *_staticKeys;
-	int16 _staticIndices[10];
-
-	// Anim keys
-	Mult_AnimKey *_animKeys[4];
-	int16 _animKeysCount[4];
-	int16 _animLayer;
-	int16 _animIndices[10];
-
-	// Text keys
-	int16 _textKeysCount;
-	Mult_TextKey *_textKeys;
-
-	int16 _frameStart;
-
-	// Palette keys
 	int16 _palKeyIndex;
-	int16 _palKeysCount;
-	Mult_PalKey *_palKeys;
 	Video::Color *_oldPalette;
+
 	Video::Color _palAnimPalette[256];
 	int16 _palAnimKey;
 	int16 _palAnimIndices[4];
@@ -215,26 +246,13 @@ public:
 	int16 _palAnimGreen[4];
 	int16 _palAnimBlue[4];
 
-	// Palette fading
-	Mult_PalFadeKey *_palFadeKeys;
-	int16 _palFadeKeysCount;
 	char _palFadingRed;
 	char _palFadingGreen;
 	char _palFadingBlue;
 
 	char _animDataAllocated;
 
-	int16 _staticLoaded[10];
-	int16 _animLoaded[10];
-	int16 _sndSlotsCount;
-
-	// Sound keys
-	int16 _sndKeysCount;
-	Mult_SndKey *_sndKeys;
-
 	int8 *_orderArray;
-	int8 _staticCount;
-	int8 _animCount;
 
 	void zeroMultData(void);
 	void checkFreeMult(void);
@@ -296,67 +314,6 @@ protected:
 
 class Mult_v2 : public Mult_v1 {
 public:
-
-#include "common/pack-start.h"	// START STRUCT PACKING
-
-	struct Mult_Data {
-		int16 palFadeKeysCount;
-		Mult_PalFadeKey *palFadeKeys;
-
-		int16 palKeysCount;
-		Mult_PalKey *palKeys;
-
-		int16 staticKeysCount;
-		Mult_StaticKey *staticKeys;
-		int8 staticCount;
-		int16 staticIndices[10];
-		int16 staticLoaded[10];
-
-		int16 animKeysCount[4];
-		Mult_AnimKey *animKeys[4];
-		int8 animCount;
-		int16 animIndices[10];
-		int16 animLoaded[10];
-		int16 animKeysFrames[4];
-		int16 animKeysStartFrames[4];
-		int16 animKeysStopFrames[4];
-		int16 animKeysIndices[4][4];
-		int8 animDirection;
-
-		int16 textKeysCount;
-		Mult_TextKey *textKeys;
-
-		int16 sndKeysCount;
-		Mult_SndKey *sndKeys;
-
-		int16 sndSlotsCount;
-		int16 sndSlot[60];
-		int16 frameRate;      
-
-		Video::Color fadePal[5][16];
-		int16 field_124[4][4];
-		int16 palAnimIndices[4]; // Not sure here
-		// TODO: Use this one instead of _frameStart
-		int16 frameStart;
-
-		int16 field_17F[4][4];
-
-		int16 someKeysCount[4];
-		Mult_SomeKey *someKeys[4];
-		int16 someKeysIndices[4];
-		char *somepointer09; // ?
-		char *somepointer10; // ?
-		char *execPtr;
-	};
-
-#include "common/pack-end.h"	// END STRUCT PACKING
-
-	Mult_Data *_multData2; // TODO: This'll be _multData once every function using it
-	                       //       in GOB2 is done
-												 // TODO: Maybe changing Mult_v1::_multData to struct Mult_Data as well?
-												 //       Could help minimizing code dup...
-	Mult_Data *_multDatas[8];
-
 	Mult_v2(GobEngine *vm);
 	virtual ~Mult_v2();
 

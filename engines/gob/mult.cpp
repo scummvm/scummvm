@@ -41,16 +41,17 @@
 namespace Gob {
 
 Mult::Mult(GobEngine *vm) : _vm(vm) {
+	int i;
+
+	_multData = 0;
 	_objects = 0;
 	_renderData = 0;
 	_renderData2 = 0;
 	_objCount = 0;
 	_underAnimSurf = 0;
-	_multData = 0;
 	_frame = 0;
 	_doPalSubst = 0;
 	_counter = 0;
-	_frameRate = 0;
 
 	_animArrayX = 0;
 	_animArrayY = 0;
@@ -58,28 +59,7 @@ Mult::Mult(GobEngine *vm) : _vm(vm) {
 
 	_index = 0;
 
-	_staticKeysCount = 0;
-	_staticKeys = 0;
-	int i;
-	for (i = 0; i < 10; i++)
-		_staticIndices[i] = 0;
-
-	for (i = 0; i < 4; i++) {
-		_animKeys[i] = 0;
-		_animKeysCount[i] = 0;
-	}
-	_animLayer = 0;
-	for (i = 0; i < 10; i++)
-		_animIndices[i] = 0;
-
-	_textKeysCount = 0;
-	_textKeys = 0;
-
-	_frameStart = 0;
-
 	_palKeyIndex = 0;
-	_palKeysCount = 0;
-	_palKeys = 0;
 	_oldPalette = 0;
 	_palAnimKey = 0;
 	for (i = 0; i < 256; i++) {
@@ -94,22 +74,11 @@ Mult::Mult(GobEngine *vm) : _vm(vm) {
 		_palAnimBlue[i] = 0;
 	}
 
-	_palFadeKeys = 0;
-	_palFadeKeysCount = 0;
 	_palFadingRed = 0;
 	_palFadingGreen = 0;
 	_palFadingBlue = 0;
 
 	_animDataAllocated = 0;
-
-	for (i = 0; i < 10; i++) {
-		_staticLoaded[i] = 0;
-		_animLoaded[i] = 0;
-	}
-	_sndSlotsCount = 0;
-
-	_sndKeysCount = 0;
-	_sndKeys = 0;
 
 	for (i = 0; i < 5; i++)
 		for (int j = 0; j < 16; j++) {
@@ -159,7 +128,7 @@ void Mult::zeroMultData(void) {
 }
 
 void Mult::checkFreeMult(void) {
-	if (_multData != 0)
+	if (_multData)
 		freeMultKeys();
 }
 

@@ -43,54 +43,58 @@ Mult_v1::Mult_v1(GobEngine *vm) : Mult(vm) {
 void Mult_v1::loadMult(int16 resId) {
 	int16 palIndex;
 	int16 i, j;
+	char *extData;
 
-	_sndSlotsCount = 0;
-	_frameStart = 0;
-	_multData = _vm->_game->loadExtData(resId, 0, 0);
-	Common::MemoryReadStream data((byte *) _multData, 4294967295U);
+	_multData = new Mult_Data;
+	memset(_multData, 0, sizeof(Mult_Data));
 
-	_staticCount = data.readSByte() + 1;
-	_animCount = data.readSByte() + 1;
+	_multData->sndSlotsCount = 0;
+	_multData->frameStart = 0;
+	extData = _vm->_game->loadExtData(resId, 0, 0);
+	Common::MemoryReadStream data((byte *) extData, 4294967295U);
 
-	for (i = 0; i < _staticCount; i++, data.seek(14, SEEK_CUR)) {
-		_staticIndices[i] = _vm->_scenery->loadStatic(1);
+	_multData->staticCount = data.readSByte() + 1;
+	_multData->animCount = data.readSByte() + 1;
 
-		if (_staticIndices[i] >= 100) {
-			_staticIndices[i] -= 100;
-			_staticLoaded[i] = 1;
+	for (i = 0; i < _multData->staticCount; i++, data.seek(14, SEEK_CUR)) {
+		_multData->staticIndices[i] = _vm->_scenery->loadStatic(1);
+
+		if (_multData->staticIndices[i] >= 100) {
+			_multData->staticIndices[i] -= 100;
+			_multData->staticLoaded[i] = 1;
 		} else {
-			_staticLoaded[i] = 0;
+			_multData->staticLoaded[i] = 0;
 		}
 	}
 
-	for (i = 0; i < _animCount; i++, data.seek(14, SEEK_CUR)) {
-		_animIndices[i] = _vm->_scenery->loadAnim(1);
+	for (i = 0; i < _multData->animCount; i++, data.seek(14, SEEK_CUR)) {
+		_multData->animIndices[i] = _vm->_scenery->loadAnim(1);
 
-		if (_animIndices[i] >= 100) {
-			_animIndices[i] -= 100;
-			_animLoaded[i] = 1;
+		if (_multData->animIndices[i] >= 100) {
+			_multData->animIndices[i] -= 100;
+			_multData->animLoaded[i] = 1;
 		} else {
-			_animLoaded[i] = 0;
+			_multData->animLoaded[i] = 0;
 		}
 	}
 
-	_frameRate = data.readSint16LE();
-	_staticKeysCount = data.readSint16LE();
-	_staticKeys = new Mult_StaticKey[_staticKeysCount];
-	for (i = 0; i < _staticKeysCount; i++) {
-		_staticKeys[i].frame = data.readSint16LE();
-		_staticKeys[i].layer = data.readSint16LE();
+	_multData->frameRate = data.readSint16LE();
+	_multData->staticKeysCount = data.readSint16LE();
+	_multData->staticKeys = new Mult_StaticKey[_multData->staticKeysCount];
+	for (i = 0; i < _multData->staticKeysCount; i++) {
+		_multData->staticKeys[i].frame = data.readSint16LE();
+		_multData->staticKeys[i].layer = data.readSint16LE();
 	}
 
 	for (j = 0; j < 4; j++) {
-		_animKeysCount[j] = data.readSint16LE();
-		_animKeys[j] = new Mult_AnimKey[_animKeysCount[j]];
-		for (i = 0; i < _animKeysCount[j]; i++) {
-			_animKeys[j][i].frame = data.readSint16LE();
-			_animKeys[j][i].layer = data.readSint16LE();
-			_animKeys[j][i].posX = data.readSint16LE();
-			_animKeys[j][i].posY = data.readSint16LE();
-			_animKeys[j][i].order = data.readSint16LE();
+		_multData->animKeysCount[j] = data.readSint16LE();
+		_multData->animKeys[j] = new Mult_AnimKey[_multData->animKeysCount[j]];
+		for (i = 0; i < _multData->animKeysCount[j]; i++) {
+			_multData->animKeys[j][i].frame = data.readSint16LE();
+			_multData->animKeys[j][i].layer = data.readSint16LE();
+			_multData->animKeys[j][i].posX = data.readSint16LE();
+			_multData->animKeys[j][i].posY = data.readSint16LE();
+			_multData->animKeys[j][i].order = data.readSint16LE();
 		}
 	}
 
@@ -102,71 +106,71 @@ void Mult_v1::loadMult(int16 resId) {
 		}
 	}
 
-	_palFadeKeysCount = data.readSint16LE();
-	_palFadeKeys = new Mult_PalFadeKey[_palFadeKeysCount];
-	for (i = 0; i < _palFadeKeysCount; i++) {
-		_palFadeKeys[i].frame = data.readSint16LE();
-		_palFadeKeys[i].fade = data.readSint16LE();
-		_palFadeKeys[i].palIndex = data.readSint16LE();
-		_palFadeKeys[i].flag = data.readSByte();
+	_multData->palFadeKeysCount = data.readSint16LE();
+	_multData->palFadeKeys = new Mult_PalFadeKey[_multData->palFadeKeysCount];
+	for (i = 0; i < _multData->palFadeKeysCount; i++) {
+		_multData->palFadeKeys[i].frame = data.readSint16LE();
+		_multData->palFadeKeys[i].fade = data.readSint16LE();
+		_multData->palFadeKeys[i].palIndex = data.readSint16LE();
+		_multData->palFadeKeys[i].flag = data.readSByte();
 	}
 
-	_palKeysCount = data.readSint16LE();
-	_palKeys = new Mult_PalKey[_palKeysCount];
-	for (i = 0; i < _palKeysCount; i++) {
-		_palKeys[i].frame = data.readSint16LE();
-		_palKeys[i].cmd = data.readSint16LE();
-		_palKeys[i].rates[0] = data.readSint16LE();
-		_palKeys[i].rates[1] = data.readSint16LE();
-		_palKeys[i].rates[2] = data.readSint16LE();
-		_palKeys[i].rates[3] = data.readSint16LE();
-		_palKeys[i].unknown0 = data.readSint16LE();
-		_palKeys[i].unknown1 = data.readSint16LE();
-		data.read(_palKeys[i].subst, 64);
+	_multData->palKeysCount = data.readSint16LE();
+	_multData->palKeys = new Mult_PalKey[_multData->palKeysCount];
+	for (i = 0; i < _multData->palKeysCount; i++) {
+		_multData->palKeys[i].frame = data.readSint16LE();
+		_multData->palKeys[i].cmd = data.readSint16LE();
+		_multData->palKeys[i].rates[0] = data.readSint16LE();
+		_multData->palKeys[i].rates[1] = data.readSint16LE();
+		_multData->palKeys[i].rates[2] = data.readSint16LE();
+		_multData->palKeys[i].rates[3] = data.readSint16LE();
+		_multData->palKeys[i].unknown0 = data.readSint16LE();
+		_multData->palKeys[i].unknown1 = data.readSint16LE();
+		data.read(_multData->palKeys[i].subst, 64);
 	}
 
-	_textKeysCount = data.readSint16LE();
-	_textKeys = new Mult_TextKey[_textKeysCount];
-	for (i = 0; i < _textKeysCount; i++) {
-		_textKeys[i].frame = data.readSint16LE();
-		_textKeys[i].cmd = data.readSint16LE();
+	_multData->textKeysCount = data.readSint16LE();
+	_multData->textKeys = new Mult_TextKey[_multData->textKeysCount];
+	for (i = 0; i < _multData->textKeysCount; i++) {
+		_multData->textKeys[i].frame = data.readSint16LE();
+		_multData->textKeys[i].cmd = data.readSint16LE();
 		for (int k = 0; k < 9; ++k)
-			_textKeys[i].unknown0[k] = data.readSint16LE();
-		_textKeys[i].index = data.readSint16LE();
-		_textKeys[i].unknown1[0] = data.readSint16LE();
-		_textKeys[i].unknown1[1] = data.readSint16LE();
+			_multData->textKeys[i].unknown0[k] = data.readSint16LE();
+		_multData->textKeys[i].index = data.readSint16LE();
+		_multData->textKeys[i].unknown1[0] = data.readSint16LE();
+		_multData->textKeys[i].unknown1[1] = data.readSint16LE();
 	}
 
-	_sndKeysCount = data.readSint16LE();
-	_sndKeys = new Mult_SndKey[_sndKeysCount];
-	for (i = 0; i < _sndKeysCount; i++) {
-		_sndKeys[i].frame = data.readSint16LE();
-		_sndKeys[i].cmd = data.readSint16LE();
-		_sndKeys[i].freq = data.readSint16LE();
-		_sndKeys[i].fadeLength = data.readSint16LE();
-		_sndKeys[i].repCount = data.readSint16LE();
-		_sndKeys[i].soundIndex = -1;
-		_sndKeys[i].resId = -1;
+	_multData->sndKeysCount = data.readSint16LE();
+	_multData->sndKeys = new Mult_SndKey[_multData->sndKeysCount];
+	for (i = 0; i < _multData->sndKeysCount; i++) {
+		_multData->sndKeys[i].frame = data.readSint16LE();
+		_multData->sndKeys[i].cmd = data.readSint16LE();
+		_multData->sndKeys[i].freq = data.readSint16LE();
+		_multData->sndKeys[i].fadeLength = data.readSint16LE();
+		_multData->sndKeys[i].repCount = data.readSint16LE();
+		_multData->sndKeys[i].soundIndex = -1;
+		_multData->sndKeys[i].resId = -1;
 		data.seek(26, SEEK_CUR);
-		switch (_sndKeys[i].cmd) {
+		switch (_multData->sndKeys[i].cmd) {
 		case 1:
 		case 4:
-			_sndKeys[i].resId = READ_LE_UINT16(_vm->_global->_inter_execPtr);
+			_multData->sndKeys[i].resId = READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
 			for (j = 0; j < i; j++) {
-				if (_sndKeys[i].resId ==
-				    _sndKeys[j].resId) {
-					_sndKeys[i].soundIndex =
-					    _sndKeys[j].soundIndex;
+				if (_multData->sndKeys[i].resId ==
+				    _multData->sndKeys[j].resId) {
+					_multData->sndKeys[i].soundIndex =
+					    _multData->sndKeys[j].soundIndex;
 					_vm->_global->_inter_execPtr += 2;
 					break;
 				}
 			}
 			if (i == j) {
-				_vm->_inter->loadSound(19 - _sndSlotsCount);
-				_sndKeys[i].soundIndex =
-				    19 - _sndSlotsCount;
-				_sndSlotsCount++;
+				_vm->_inter->loadSound(19 - _multData->sndSlotsCount);
+				_multData->sndKeys[i].soundIndex =
+				    19 - _multData->sndSlotsCount;
+				_multData->sndSlotsCount++;
 			}
 			break;
 
@@ -175,7 +179,7 @@ void Mult_v1::loadMult(int16 resId) {
 			break;
 
 		case 5:
-			_vm->_global->_inter_execPtr += _sndKeys[i].freq * 2;
+			_vm->_global->_inter_execPtr += _multData->sndKeys[i].freq * 2;
 			break;
 		}
 	}
@@ -211,10 +215,11 @@ void Mult_v1::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 		_palFadingBlue = 0;
 
 		_oldPalette = _vm->_global->_pPaletteDesc->vgaPal;
-		memcpy((char *)_palAnimPalette, (char *)_vm->_global->_pPaletteDesc->vgaPal, 768);
+		memcpy((char *)_palAnimPalette,
+				(char *)_vm->_global->_pPaletteDesc->vgaPal, 768);
 
 		if (_vm->_anim->_animSurf == 0) {
-			_vm->_util->setFrameRate(_frameRate);
+			_vm->_util->setFrameRate(_multData->frameRate);
 			_vm->_anim->_areaTop = 0;
 			_vm->_anim->_areaLeft = 0;
 			_vm->_anim->_areaWidth = 320;
@@ -331,27 +336,29 @@ void Mult_v1::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 
 		WRITE_VAR(57, (uint32)-1);
 	} else
-		WRITE_VAR(57, _frame - 1 - _frameStart);
+		WRITE_VAR(57, _frame - 1 - _multData->frameStart);
 }
 
 char Mult_v1::drawStatics(char stop) {
-	if (_staticKeys[_staticKeysCount - 1].frame > _frame)
+	if (_multData->staticKeys[_multData->staticKeysCount - 1].frame > _frame)
 		stop = 0;
 
-	for (_counter = 0; _counter < _staticKeysCount;
+	for (_counter = 0; _counter < _multData->staticKeysCount;
 	    _counter++) {
-		if (_staticKeys[_counter].frame != _frame
-		    || _staticKeys[_counter].layer == -1)
+		if (_multData->staticKeys[_counter].frame != _frame
+		    || _multData->staticKeys[_counter].layer == -1)
 			continue;
 
-		for (_vm->_scenery->_curStatic = 0, _vm->_scenery->_curStaticLayer = _staticKeys[_counter].layer;
-			 _vm->_scenery->_curStaticLayer >= _vm->_scenery->_statics[_staticIndices[_vm->_scenery->_curStatic]].layersCount;
-			 _vm->_scenery->_curStatic++) {
+		_vm->_scenery->_curStaticLayer = _multData->staticKeys[_counter].layer;
+		for (_vm->_scenery->_curStatic = 0;
+				_vm->_scenery->_curStaticLayer >=
+					_vm->_scenery->_statics[_multData->staticIndices[_vm->_scenery->_curStatic]].layersCount;
+				_vm->_scenery->_curStatic++) {
 			_vm->_scenery->_curStaticLayer -=
-			    _vm->_scenery->_statics[_staticIndices[_vm->_scenery->_curStatic]].layersCount;
+			    _vm->_scenery->_statics[_multData->staticIndices[_vm->_scenery->_curStatic]].layersCount;
 		}
 
-		_vm->_scenery->_curStatic = _staticIndices[_vm->_scenery->_curStatic];
+		_vm->_scenery->_curStatic = _multData->staticIndices[_vm->_scenery->_curStatic];
 		_vm->_scenery->renderStatic(_vm->_scenery->_curStatic, _vm->_scenery->_curStaticLayer);
 		_vm->_video->drawSprite(_vm->_draw->_backSurface, _vm->_anim->_animSurf,
 		    0, 0, 319, 199, 0, 0, 0);
@@ -366,8 +373,8 @@ char Mult_v1::drawAnims(char stop) {
 	int16 count;
 
 	for (_index = 0; _index < 4; _index++) {
-		for (_counter = 0; _counter < _animKeysCount[_index]; _counter++) {
-			key = &_animKeys[_index][_counter];
+		for (_counter = 0; _counter < _multData->animKeysCount[_index]; _counter++) {
+			key = &_multData->animKeys[_index][_counter];
 			animObj = &_objects[_index];
 			if (key->frame != _frame)
 				continue;
@@ -386,15 +393,17 @@ char Mult_v1::drawAnims(char stop) {
 				animObj->tick = 0;
 				animObj->pAnimData->layer = key->layer;
 
-				count = _vm->_scenery->_animations[_animIndices[0]].layersCount;
+				count =
+					_vm->_scenery->_animations[_multData->animIndices[0]].layersCount;
 				i = 0;
 				while (animObj->pAnimData->layer >= count) {
 					animObj->pAnimData->layer -= count;
 					i++;
 
-					count = _vm->_scenery->_animations[_animIndices[i]].layersCount;
+					count =
+						_vm->_scenery->_animations[_multData->animIndices[i]].layersCount;
 				}
-				animObj->pAnimData->animation = _animIndices[i];
+				animObj->pAnimData->animation = _multData->animIndices[i];
 			} else {
 				animObj->pAnimData->isStatic = 1;
 			}
@@ -407,20 +416,21 @@ void Mult_v1::drawText(char *pStop, char *pStopNoClear) {
 	char *savedIP;
 
 	int16 cmd;
-	for (_index = 0; _index < _textKeysCount; _index++) {
-		if (_textKeys[_index].frame != _frame)
+	for (_index = 0; _index < _multData->textKeysCount; _index++) {
+		if (_multData->textKeys[_index].frame != _frame)
 			continue;
 
-		cmd = _textKeys[_index].cmd;
+		cmd = _multData->textKeys[_index].cmd;
 		if (cmd == 0) {
 			*pStop = 0;
 		} else if (cmd == 1) {
 			*pStopNoClear = 1;
-			_frameStart = 0;
+			_multData->frameStart = 0;
 		} else if (cmd == 3) {
 			*pStop = 0;
 			savedIP = _vm->_global->_inter_execPtr;
-			_vm->_global->_inter_execPtr = (char *)(&_textKeys[_index].index);
+			_vm->_global->_inter_execPtr =
+				(char *)(&_multData->textKeys[_index].index);
 			_vm->_global->_inter_execPtr = savedIP;
 		}
 	}
@@ -430,16 +440,17 @@ char Mult_v1::prepPalAnim(char stop) {
 	_palKeyIndex = -1;
 	do {
 		_palKeyIndex++;
-		if (_palKeyIndex >= _palKeysCount)
+		if (_palKeyIndex >= _multData->palKeysCount)
 			return stop;
-	} while (_palKeys[_palKeyIndex].frame != _frame);
+	} while (_multData->palKeys[_palKeyIndex].frame != _frame);
 
-	if (_palKeys[_palKeyIndex].cmd == -1) {
+	if (_multData->palKeys[_palKeyIndex].cmd == -1) {
 		stop = 0;
 		_doPalSubst = 0;
 		_vm->_global->_pPaletteDesc->vgaPal = _oldPalette;
 
-		memcpy((char *)_palAnimPalette, (char *)_vm->_global->_pPaletteDesc->vgaPal, 768);
+		memcpy((char *)_palAnimPalette,
+				(char *)_vm->_global->_pPaletteDesc->vgaPal, 768);
 
 		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 	} else {
@@ -467,7 +478,7 @@ void Mult_v1::doPalAnim(void) {
 		return;
 
 	for (_index = 0; _index < 4; _index++) {
-		palKey = &_palKeys[_palAnimKey];
+		palKey = &_multData->palKeys[_palAnimKey];
 
 		if ((_frame % palKey->rates[_index]) != 0)
 			continue;
@@ -491,9 +502,12 @@ void Mult_v1::doPalAnim(void) {
 				off = palKey->subst[(_palAnimIndices[_index] + 1) % 16][_index] - 1;
 				off2 = palKey->subst[_palAnimIndices[_index]][_index] - 1;
 
-				_vm->_global->_pPaletteDesc->vgaPal[off2].red = _vm->_global->_pPaletteDesc->vgaPal[off].red;
-				_vm->_global->_pPaletteDesc->vgaPal[off2].green = _vm->_global->_pPaletteDesc->vgaPal[off].green;
-				_vm->_global->_pPaletteDesc->vgaPal[off2].blue = _vm->_global->_pPaletteDesc->vgaPal[off].blue;
+				_vm->_global->_pPaletteDesc->vgaPal[off2].red =
+					_vm->_global->_pPaletteDesc->vgaPal[off].red;
+				_vm->_global->_pPaletteDesc->vgaPal[off2].green =
+					_vm->_global->_pPaletteDesc->vgaPal[off].green;
+				_vm->_global->_pPaletteDesc->vgaPal[off2].blue =
+					_vm->_global->_pPaletteDesc->vgaPal[off].blue;
 			}
 
 			_palAnimIndices[_index] = (_palAnimIndices[_index] + 1) % 16;
@@ -518,7 +532,8 @@ void Mult_v1::doPalAnim(void) {
 
 		palPtr = _vm->_global->_pPaletteDesc->vgaPal;
 		for (_counter = 0; _counter < 16; _counter++) {
-			_vm->_video->setPalElem(_counter, palPtr->red, palPtr->green, palPtr->blue, 0, 0x13);
+			_vm->_video->setPalElem(_counter, palPtr->red, palPtr->green,
+					palPtr->blue, 0, 0x13);
 			palPtr++;
 		}
 
@@ -537,8 +552,8 @@ void Mult_v1::doPalAnim(void) {
 char Mult_v1::doFadeAnim(char stop) {
 	Mult_PalFadeKey *fadeKey;
 
-	for (_index = 0; _index < _palFadeKeysCount; _index++) {
-		fadeKey = &_palFadeKeys[_index];
+	for (_index = 0; _index < _multData->palFadeKeysCount; _index++) {
+		fadeKey = &_multData->palFadeKeys[_index];
 
 		if (fadeKey->frame != _frame)
 			continue;
@@ -579,8 +594,8 @@ char Mult_v1::doFadeAnim(char stop) {
 
 char Mult_v1::doSoundAnim(char stop, int16 frame) {
 	Mult_SndKey *sndKey;
-	for (_index = 0; _index < _sndKeysCount; _index++) {
-		sndKey = &_sndKeys[_index];
+	for (_index = 0; _index < _multData->sndKeysCount; _index++) {
+		sndKey = &_multData->sndKeys[_index];
 		if (sndKey->frame != frame)
 			continue;
 
@@ -588,14 +603,14 @@ char Mult_v1::doSoundAnim(char stop, int16 frame) {
 			if (sndKey->cmd == 1) {
 				_vm->_snd->stopSound(0);
 				stop = 0;
-				playSound(_vm->_game->_soundSamples[sndKey->soundIndex], sndKey->repCount,
-				    sndKey->freq, sndKey->fadeLength);
+				playSound(_vm->_game->_soundSamples[sndKey->soundIndex],
+						sndKey->repCount, sndKey->freq, sndKey->fadeLength);
 
 			} else if (sndKey->cmd == 4) {
 				_vm->_snd->stopSound(0);
 				stop = 0;
-				playSound(_vm->_game->_soundSamples[sndKey->soundIndex], sndKey->repCount,
-				    sndKey->freq, sndKey->fadeLength);
+				playSound(_vm->_game->_soundSamples[sndKey->soundIndex],
+						sndKey->repCount, sndKey->freq, sndKey->fadeLength);
 			}
 		} else {
 			if (_vm->_snd->_playingSound)
@@ -837,7 +852,8 @@ void Mult_v1::animate(void) {
 			} else {
 				pAnimData->frame++;
 				if (pAnimData->frame >=
-				    _vm->_scenery->_animations[(int)pAnimData->animation].layers[pAnimData->layer].framesCount) {
+				    _vm->_scenery->_animations[(int)pAnimData->animation].
+						layers[pAnimData->layer].framesCount) {
 					switch (pAnimData->animType) {
 					case 0:
 						pAnimData->frame = 0;
@@ -890,7 +906,8 @@ void Mult_v1::animate(void) {
 }
 
 void Mult_v1::freeMult(void) {
-	_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
+	if ((_vm->_anim->_animSurf != 0) && (_vm->_draw->_spritesArray[22] != 0))
+		_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
 
 	delete[] _objects;
 	delete[] _renderData;
@@ -911,35 +928,31 @@ void Mult_v1::playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
 void Mult_v1::freeMultKeys(void) {
 	int i;
 
-	delete[] _multData;
+	for (i = 0; i < _multData->staticCount; i++) {
 
-	for (i = 0; i < _staticCount; i++) {
-
-		if (_staticLoaded[i] != 0)
-			_vm->_scenery->freeStatic(_staticIndices[i]);
+		if (_multData->staticLoaded[i] != 0)
+			_vm->_scenery->freeStatic(_multData->staticIndices[i]);
 	}
 
-	for (i = 0; i < _animCount; i++) {
-		if (_animLoaded[i] != 0)
-			_vm->_scenery->freeAnim(_animIndices[i]);
+	for (i = 0; i < _multData->animCount; i++) {
+		if (_multData->animLoaded[i] != 0)
+			_vm->_scenery->freeAnim(_multData->animIndices[i]);
 	}
 
-	delete[] _staticKeys;
+	delete[] _multData->staticKeys;
 
 	for (i = 0; i < 4; i++)
-		delete[] _animKeys[i];
+		delete[] _multData->animKeys[i];
 
-	delete[] _palFadeKeys;
-	delete[] _palKeys;
-	delete[] _textKeys;
+	delete[] _multData->palFadeKeys;
+	delete[] _multData->palKeys;
+	delete[] _multData->textKeys;
 
-	for (i = 0; i < _sndSlotsCount; i++) {
+	for (i = 0; i < _multData->sndSlotsCount; i++) {
 		_vm->_game->freeSoundSlot(19 - i);
 	}
 
-	delete[] _sndKeys;
-
-	_multData = 0;
+	delete[] _multData->sndKeys;
 
 	if (_animDataAllocated != 0) {
 		delete[] _objects;
@@ -963,6 +976,9 @@ void Mult_v1::freeMultKeys(void) {
 
 		_animDataAllocated = 0;
 	}
+
+	delete _multData;
+	_multData = 0;
 }
 
 } // End of namespace Gob

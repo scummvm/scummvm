@@ -402,36 +402,6 @@ void Game_v2::popCollisions(void) {
 	delete[] _collStack[_collStackSize];
 }
 
-int16 Game_v2::checkKeys(int16 *pMouseX, int16 *pMouseY, int16 *pButtons, char handleMouse) {
-	_vm->_util->processInput();
-
-	if ((_vm->_global->_inter_variables != 0) && (VAR(58) != 0)) {
-		if (_vm->_mult->_frameStart != (int)VAR(58) - 1)
-			_vm->_mult->_frameStart++;
-		else
-			_vm->_mult->_frameStart = 0;
-
-		_vm->_mult->playMult(_vm->_mult->_frameStart + VAR(57),
-				_vm->_mult->_frameStart + VAR(57), 1, handleMouse);
-	}
-
-	if (_vm->_inter->_soundEndTimeKey != 0
-	    && _vm->_util->getTimeKey() >= _vm->_inter->_soundEndTimeKey) {
-		_vm->_snd->stopSound(_vm->_inter->_soundStopVal);
-		_vm->_inter->_soundEndTimeKey = 0;
-	}
-
-	if (_vm->_global->_useMouse == 0)
-		error("checkKeys: Can't work without mouse!");
-
-	_vm->_util->getMouseState(pMouseX, pMouseY, pButtons);
-
-	if (*pButtons == 3)
-		*pButtons = 0;
-
-	return _vm->_util->checkKey();
-}
-
 int16 Game_v2::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 	    int16 *pResIndex) {
 	int16 resIndex;
