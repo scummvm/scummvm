@@ -798,6 +798,8 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 		}
 
 	}
+	_pressedMapX = CLIP((int) _pressedMapX, 0, _vm->_map->_mapWidth - 1);
+	_pressedMapY = CLIP((int) _pressedMapY, 0, _vm->_map->_mapHeight - 1);
 }
 
 void Goblin::adjustTarget(void) {
@@ -819,6 +821,8 @@ void Goblin::adjustTarget(void) {
 			_pressedMapX++;
 		}
 	}
+	_pressedMapX = CLIP((int) _pressedMapX, 0, _vm->_map->_mapWidth - 1);
+	_pressedMapY = CLIP((int) _pressedMapY, 0, _vm->_map->_mapHeight - 1);
 }
 
 void Goblin::targetDummyItem(Gob_Object *gobDesc) {
@@ -984,6 +988,8 @@ void Goblin::targetItem(void) {
 			}
 		}
 	}
+	_pressedMapX = CLIP((int) _pressedMapX, 0, _vm->_map->_mapWidth - 1);
+	_pressedMapY = CLIP((int) _pressedMapY, 0, _vm->_map->_mapHeight - 1);
 }
 
 void Goblin::moveFindItem(int16 posX, int16 posY) {
@@ -1021,8 +1027,8 @@ void Goblin::moveFindItem(int16 posX, int16 posY) {
 			break;
 		}
 
-		_pressedMapX = MIN(posX / 12, _vm->_map->_mapWidth - 1);
-		_pressedMapY = MIN(posY / 6, _vm->_map->_mapHeight - 1);
+		_pressedMapX = posX / 12;
+		_pressedMapY = posY / 6;
 
 		if (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX] == 0
 		    && i < 20) {
@@ -1063,6 +1069,8 @@ void Goblin::moveFindItem(int16 posX, int16 posY) {
 		_pressedMapX = posX / 12;
 		_pressedMapY = posY / 6;
 	}
+	_pressedMapX = CLIP((int) _pressedMapX, 0, _vm->_map->_mapWidth - 1);
+	_pressedMapY = CLIP((int) _pressedMapY, 0, _vm->_map->_mapHeight - 1);
 }
 
 void Goblin::moveCheckSelect(int16 framesCount, Gob_Object * gobDesc, int16 *pGobIndex,
