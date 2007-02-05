@@ -1175,7 +1175,7 @@ protected:
 
 	virtual void initCharset(int charset);
 
-	void printString(int m, const byte *msg);
+	virtual void printString(int m, const byte *msg);
 
 	virtual bool handleNextCharsetCode(Actor *a, int *c);
 	void CHARSET_1();

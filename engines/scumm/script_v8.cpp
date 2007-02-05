@@ -499,12 +499,8 @@ void ScummEngine_v8::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = true;
 		break;
 	case 0xD1:		// SO_PRINT_STRING
-		if (m == 5)
-			enqueueText(_scriptPointer, _string[m].xpos, _string[m].ypos, _string[m].color, _string[m].charset, _string[m].center);
-		else
-			printString(m, _scriptPointer);
+		printString(m, _scriptPointer);
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
-
 		break;
 	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
 		//debug(0, "decodeParseString: SO_PRINT_WRAP");
@@ -671,8 +667,10 @@ void ScummEngine_v8::o8_arrayOps() {
 }
 
 void ScummEngine_v8::o8_blastText() {
-	// FIXME
-	decodeParseString(5, 0);
+	// Original V8 interpreter uses StringSlot 2 for o_blastText and 4 for o_printDebug.
+	// Since slot 2 is already mapped to printDebug for V6 (see ScummEngine::printString()),
+	// we just "swap" the slots, and use slot 4 here.
+	decodeParseString(4, 0);
 }
 
 void ScummEngine_v8::o8_cursorCommand() {

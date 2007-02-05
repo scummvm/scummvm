@@ -64,12 +64,21 @@ void ScummEngine::printString(int m, const byte *msg) {
 	}
 }
 
+#ifndef DISABLE_SCUMM_7_8
+void ScummEngine_v8::printString(int m, const byte *msg) {
+	if (m == 4) {
+		const StringTab &st = _string[m];
+		enqueueText(msg, st.xpos, st.ypos, st.color, st.charset, st.center);
+	} else {
+		ScummEngine::printString(m, msg);
+	}
+}
+#endif
 
 void ScummEngine::debugMessage(const byte *msg) {
 	byte buffer[500];
 	convertMessageToString(msg, buffer, sizeof(buffer));
 
-//	if ((_game.id == GID_CMI) && _debugMode) {	// In CMI, debugMessage is used for printDebug output
 	if ((buffer[0] != 0xFF) && _debugMode) {
 		debug(0, "DEBUG: %s", buffer);
 		return;
