@@ -1247,7 +1247,7 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 			text = (const byte *)"/CATHPLAT.068/left";
 		else if (!strcmp((const char *)text, "right"))
 			text = (const byte *)"/CATHPLAT.070/right";
-		else if (!strcmp((const char *)text, "right"))
+		else if (!strcmp((const char *)text, "top"))
 			text = (const byte *)"/CATHPLAT.067/top";
 		else if (!strcmp((const char *)text, "exit"))
 			text = (const byte *)"/SKY.008/exit";
