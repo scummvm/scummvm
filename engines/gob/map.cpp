@@ -258,7 +258,7 @@ int16 Map::checkDirectPath(Mult::Mult_Object *obj, int16 x0, int16 y0, int16 x1,
 			if (obj->nearestWayPoint < obj->nearestDest)
 				if (_wayPoints[obj->nearestWayPoint + 1].field_2 == 1)
 					return 3;
-			if (_wayPoints[obj->nearestDest - 1].field_2 == 1)
+			if ((obj->nearestDest > 0) && (_wayPoints[obj->nearestDest - 1].field_2 == 1))
 				return 3;
 		}
 
