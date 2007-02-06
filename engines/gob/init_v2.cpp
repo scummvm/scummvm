@@ -43,7 +43,8 @@ void Init_v2::soundVideo(int32 smallHeap, int16 flag) {
 		    _vm->_global->_videoMode);
 
 	_vm->_draw->_frontSurface = &_vm->_global->_primarySurfDesc;
-	_vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_video->_surfWidth, 200, 0x80);
+	_vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_video->_surfWidth,
+			_vm->_video->_surfHeight, 0x80);
 
 	_vm->_global->_mousePresent = 1;
 
@@ -61,8 +62,8 @@ void Init_v2::soundVideo(int32 smallHeap, int16 flag) {
 	_vm->_global->_pPaletteDesc->unused2 = _vm->_global->_unusedPalette2;
 
 	if (_vm->_global->_videoMode != 0)
-		_vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_video->_surfWidth, 200,
-				PRIMARY_SURFACE);
+		_vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_video->_surfWidth,
+				_vm->_video->_surfHeight, PRIMARY_SURFACE);
 }
 
 } // End of namespace Gob

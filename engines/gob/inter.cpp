@@ -190,60 +190,6 @@ void Inter::funcBlock(int16 retFlag) {
 	return;
 }
 
-void Inter::checkSwitchTable(char **ppExec) {
-	int16 i;
-	int16 len;
-	char found;
-	int32 value;
-	char notFound;
-	char defFlag;
-
-	found = 0;
-	notFound = 1;
-	*ppExec = 0;
-	value = _vm->_parse->parseVarIndex();
-	value = VAR_OFFSET(value);
-
-	do {
-		len = *(int8*)_vm->_global->_inter_execPtr++; // must be a signed char typ and char is not default signed on all platforms.
-
-		if (len == -5)
-			break;
-
-		for (i = 0; i < len; i++) {
-			evalExpr(0);
-
-			if (_terminate)
-				return;
-
-			if (_vm->_global->_inter_resVal == value) {
-				found = 1;
-				notFound = 0;
-			}
-		}
-
-		if (found != 0)
-			*ppExec = _vm->_global->_inter_execPtr;
-
-		_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
-		found = 0;
-	} while (len != -5);
-
-	if (len != -5)
-		_vm->_global->_inter_execPtr++;
-
-	defFlag = *_vm->_global->_inter_execPtr;
-	defFlag >>= 4;
-	if (defFlag != 4)
-		return;
-	_vm->_global->_inter_execPtr++;
-
-	if (notFound)
-		*ppExec = _vm->_global->_inter_execPtr;
-
-	_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
-}
-
 void Inter::callSub(int16 retFlag) {
 	int16 block;
 	while (!_vm->_quitRequested && _vm->_global->_inter_execPtr != 0 && (char *)_vm->_global->_inter_execPtr != _vm->_game->_totFileData) {

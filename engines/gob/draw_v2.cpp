@@ -957,8 +957,8 @@ void Draw_v2::animateCursor(int16 cursor) {
 }
 
 void Draw_v2::initScreen(void) {
-	_word_2FC9C = 0;
-	_word_2FC9E = 0;
+	_scrollOffsetX = 0;
+	_scrollOffsetY = 0;
 
 	if (_word_2E51F != 0) {
 		_off_2E51B = new Video::SurfaceDesc;
@@ -974,7 +974,7 @@ void Draw_v2::initScreen(void) {
 		_off_2E517->vidPtr = _frontSurface->vidPtr +
 			((_frontSurface->width * _frontSurface->height ) / 4);
 	}
-	initBigSprite(21, _vm->_video->_surfWidth, 200, 0);
+	initBigSprite(21, _vm->_video->_surfWidth, _vm->_video->_surfHeight, 0);
 	_backSurface = _spritesArray[21];
 	_vm->_video->clearSurf(_backSurface);
 	
@@ -1002,7 +1002,7 @@ void Draw_v2::closeScreen(void) {
 	if (_off_2E51B != 0) {
 		memcpy(_frontSurface, _off_2E51B, sizeof(Video::SurfaceDesc));
 		_frontSurface->width = _vm->_video->_surfWidth;
-		_frontSurface->height = 200;
+		_frontSurface->height = _vm->_video->_surfHeight;
 		delete _off_2E51B;
 		delete _off_2E517;
 		_off_2E51B = 0;

@@ -91,7 +91,9 @@ public:
 	};
 
 	int16 _surfWidth;
-	int16 _scrollOffset;
+	int16 _surfHeight;
+	int16 _scrollOffsetX;
+	int16 _scrollOffsetY;
 
 	Video(class GobEngine *vm);
 	virtual ~Video() {};

@@ -646,6 +646,117 @@ void Inter_v1::setupOpcodes(void) {
 	_opcodesGoblinV1 = opcodesGoblin;
 }
 
+void Inter_v1::executeDrawOpcode(byte i) {
+	debugC(1, kDebugDrawOp, "opcodeDraw %d [0x%x] (%s)", i, i, getOpcodeDrawDesc(i));
+
+	OpcodeDrawProcV1 op = _opcodesDrawV1[i].proc;
+
+	if (op == NULL)
+		warning("unimplemented opcodeDraw: %d", i);
+	else
+		(this->*op) ();
+}
+
+bool Inter_v1::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag) {
+	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%x.0x%x] (%s)", i, j, i, j, getOpcodeFuncDesc(i, j));
+
+	if ((i > 4) || (j > 15)) {
+		warning("unimplemented opcodeFunc: %d.%d", i, j);
+		return false;
+	}
+
+	OpcodeFuncProcV1 op = _opcodesFuncV1[i*16 + j].proc;
+
+	if (op == NULL)
+		warning("unimplemented opcodeFunc: %d.%d", i, j);
+	else
+		return (this->*op) (cmdCount, counter, retFlag);
+	return false;
+}
+
+void Inter_v1::executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
+	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%x] (%s)", i, i, getOpcodeGoblinDesc(i));
+
+	OpcodeGoblinProcV1 op = NULL;
+
+	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
+		if (_goblinFuncLookUp[j][0] == i) {
+			op = _opcodesGoblinV1[_goblinFuncLookUp[j][1]].proc;
+			break;
+		}
+
+	if (op == NULL) {
+		warning("unimplemented opcodeGoblin: %d", i);
+		_vm->_global->_inter_execPtr -= 2;
+		int16 cmd = load16();
+		_vm->_global->_inter_execPtr += cmd * 2;
+	}
+	else
+		(this->*op) (extraData, retVarPtr, objDesc);
+}
+
+const char *Inter_v1::getOpcodeDrawDesc(byte i) {
+	return _opcodesDrawV1[i].desc;
+}
+
+const char *Inter_v1::getOpcodeFuncDesc(byte i, byte j) {
+	if ((i > 4) || (j > 15))
+		return "";
+
+	return _opcodesFuncV1[i*16 + j].desc;
+}
+
+const char *Inter_v1::getOpcodeGoblinDesc(int i) {
+	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
+		if (_goblinFuncLookUp[j][0] == i)
+			return _opcodesGoblinV1[_goblinFuncLookUp[j][1]].desc;
+	return "";
+}
+
+void Inter_v1::checkSwitchTable(char **ppExec) {
+	int i;
+	int16 len;
+	int32 value;
+	bool found;
+	bool notFound;
+
+	found = false;
+	notFound = true;
+	*ppExec = 0;
+	value = VAR_OFFSET(_vm->_parse->parseVarIndex());
+
+	len = (int8) *_vm->_global->_inter_execPtr++;
+	while (len != -5) {
+		for (i = 0; i < len; i++) {
+			evalExpr(0);
+
+			if (_terminate)
+				return;
+
+			if (_vm->_global->_inter_resVal == value) {
+				found = true;
+				notFound = false;
+			}
+		}
+
+		if (found)
+			*ppExec = _vm->_global->_inter_execPtr;
+
+		_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
+		found = false;
+		len = (int8) *_vm->_global->_inter_execPtr++;
+	} 
+
+	if ((*_vm->_global->_inter_execPtr >> 4) != 4)
+		return;
+
+	_vm->_global->_inter_execPtr++;
+	if (notFound)
+		*ppExec = _vm->_global->_inter_execPtr;
+
+	_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
+}
+
 bool Inter_v1::o1_setMousePos(char &cmdCount, int16 &counter, int16 &retFlag) {
 	_vm->_global->_inter_mouseX = _vm->_parse->parseValExpr();
 	_vm->_global->_inter_mouseY = _vm->_parse->parseValExpr();
@@ -1303,6 +1414,7 @@ bool Inter_v1::o1_loadSpriteToPos(char &cmdCount, int16 &counter, int16 &retFlag
 		_vm->_draw->_destSurface = 101;
 	_vm->_draw->_transparency &= 1;
 	_vm->_global->_inter_execPtr += 2;
+
 	_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 
 	return false;
@@ -1694,73 +1806,6 @@ void Inter_v1::o1_freeFontToSprite(void) {
 	_vm->_draw->_fontToSprite[i].base = -1;
 	_vm->_draw->_fontToSprite[i].width = -1;
 	_vm->_draw->_fontToSprite[i].height = -1;
-}
-
-void Inter_v1::executeDrawOpcode(byte i) {
-	debugC(1, kDebugDrawOp, "opcodeDraw %d [0x%x] (%s)", i, i, getOpcodeDrawDesc(i));
-
-	OpcodeDrawProcV1 op = _opcodesDrawV1[i].proc;
-
-	if (op == NULL)
-		warning("unimplemented opcodeDraw: %d", i);
-	else
-		(this->*op) ();
-}
-
-bool Inter_v1::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag) {
-	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%x.0x%x] (%s)", i, j, i, j, getOpcodeFuncDesc(i, j));
-
-	if ((i > 4) || (j > 15)) {
-		warning("unimplemented opcodeFunc: %d.%d", i, j);
-		return false;
-	}
-
-	OpcodeFuncProcV1 op = _opcodesFuncV1[i*16 + j].proc;
-
-	if (op == NULL)
-		warning("unimplemented opcodeFunc: %d.%d", i, j);
-	else
-		return (this->*op) (cmdCount, counter, retFlag);
-	return false;
-}
-
-void Inter_v1::executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
-	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%x] (%s)", i, i, getOpcodeGoblinDesc(i));
-
-	OpcodeGoblinProcV1 op = NULL;
-
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i) {
-			op = _opcodesGoblinV1[_goblinFuncLookUp[j][1]].proc;
-			break;
-		}
-
-	if (op == NULL) {
-		warning("unimplemented opcodeGoblin: %d", i);
-		_vm->_global->_inter_execPtr -= 2;
-		int16 cmd = load16();
-		_vm->_global->_inter_execPtr += cmd * 2;
-	}
-	else
-		(this->*op) (extraData, retVarPtr, objDesc);
-}
-
-const char *Inter_v1::getOpcodeDrawDesc(byte i) {
-	return _opcodesDrawV1[i].desc;
-}
-
-const char *Inter_v1::getOpcodeFuncDesc(byte i, byte j) {
-	if ((i > 4) || (j > 15))
-		return "";
-
-	return _opcodesFuncV1[i*16 + j].desc;
-}
-
-const char *Inter_v1::getOpcodeGoblinDesc(int i) {
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i)
-			return _opcodesGoblinV1[_goblinFuncLookUp[j][1]].desc;
-	return "";
 }
 
 bool Inter_v1::o1_callSub(char &cmdCount, int16 &counter, int16 &retFlag) {

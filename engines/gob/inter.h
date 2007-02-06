@@ -58,11 +58,11 @@ public:
 	char evalExpr(int16 *pRes);
 	char evalBoolResult(void);
 	void funcBlock(int16 retFlag);
-	void checkSwitchTable(char **ppExec);
 	void callSub(int16 retFlag);
 	void initControlVars(char full);
 	void renewTimeInVars(void);
 	void manipulateMap(int16 xPos, int16 yPos, int16 item);
+	virtual void checkSwitchTable(char **ppExec) = 0;
 	virtual int16 loadSound(int16 slot) = 0;
 	virtual void storeKey(int16 key) = 0;
 	virtual void storeMouse(void) = 0;
@@ -95,6 +95,7 @@ class Inter_v1 : public Inter {
 public:
 	Inter_v1(GobEngine *vm);
 	virtual ~Inter_v1() {};
+	virtual void checkSwitchTable(char **ppExec);
 	virtual int16 loadSound(int16 slot);
 	virtual void storeKey(int16 key);
 	virtual void storeMouse(void);
@@ -288,6 +289,7 @@ class Inter_v2 : public Inter_v1 {
 public:
 	Inter_v2(GobEngine *vm);
 	virtual ~Inter_v2() {};
+	virtual void checkSwitchTable(char **ppExec);
 	virtual int16 loadSound(int16 search);
 	virtual void storeKey(int16 key);
 	virtual void storeMouse(void);

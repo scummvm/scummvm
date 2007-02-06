@@ -129,10 +129,11 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 
 	_cursorTimeKey = 0;
 
-	warning("GOB2 Stub! _word_2E8E2, _word_2FC9C, _word_2FC9E, _word_2E51F, _off_2E51B, _off_2E517");
+	_scrollOffsetX = 0;
+	_scrollOffsetY = 0;
+
+	warning("GOB2 Stub! _word_2E8E2, _word_2E51F, _off_2E51B, _off_2E517");
 	_word_2E8E2 = 2;
-	_word_2FC9C = 0;
-	_word_2FC9E = 0;
 	_word_2E51F = 0;
 	_off_2E51B = 0;
 	_off_2E517 = 0;
@@ -157,7 +158,8 @@ void Draw::invalidateRect(int16 left, int16 top, int16 right, int16 bottom) {
 		bottom = temp;
 	}
 
-	if (left > (_vm->_video->_surfWidth - 1) || right < 0 || top > 199 || bottom < 0)
+	if ((left > (_vm->_video->_surfWidth - 1)) || (right < 0) ||
+			(top > (_vm->_video->_surfHeight - 1)) || (bottom < 0))
 		return;
 
 	_noInvalidated = 0;
@@ -166,7 +168,7 @@ void Draw::invalidateRect(int16 left, int16 top, int16 right, int16 bottom) {
 		_invalidatedLefts[0] = 0;
 		_invalidatedTops[0] = 0;
 		_invalidatedRights[0] = _vm->_video->_surfWidth - 1;
-		_invalidatedBottoms[0] = 199;
+		_invalidatedBottoms[0] = _vm->_video->_surfHeight - 1;
 		_invalidatedCount = 1;
 		return;
 	}
@@ -180,8 +182,8 @@ void Draw::invalidateRect(int16 left, int16 top, int16 right, int16 bottom) {
 	if (top < 0)
 		top = 0;
 
-	if (bottom > 199)
-		bottom = 199;
+	if (bottom > (_vm->_video->_surfHeight - 1))
+		bottom = _vm->_video->_surfHeight - 1;
 
 	left &= 0xfff0;
 	right |= 0x000f;
@@ -266,7 +268,7 @@ void Draw::blitInvalidated(void) {
 		clearPalette();
 
 		_vm->_video->drawSprite(_backSurface, _frontSurface, 0, 0,
-				_vm->_video->_surfWidth - 1, 199, 0, 0, 0);
+				_vm->_video->_surfWidth - 1, _vm->_video->_surfHeight - 1, 0, 0, 0);
 		setPalette();
 		_invalidatedCount = 0;
 		_noInvalidated = 1;

@@ -38,7 +38,9 @@ namespace Gob {
 Video::Video(GobEngine *vm) : _vm(vm) {
 	_videoDriver = 0;
 	_surfWidth = 320;
-	_scrollOffset = 0;
+	_surfHeight = 200;
+	_scrollOffsetX = 0;
+	_scrollOffsetY = 0;
 }
 
 char Video::initDriver(int16 vidMode) {
@@ -396,7 +398,7 @@ void Video::initPrimary(int16 mode) {
 		Video::initDriver(mode);
 
 	if (mode != 3) {
-		initSurfDesc(mode, _surfWidth, 200, PRIMARY_SURFACE);
+		initSurfDesc(mode, _surfWidth, _vm->_video->_surfHeight, PRIMARY_SURFACE);
 
 		if (_vm->_global->_dontSetPalette)
 			return;

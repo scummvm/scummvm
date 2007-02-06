@@ -452,15 +452,15 @@ int16 Game_v2::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 							 &_mouseButtons, handleMouse);
 
 		// TODO: What of this is needed?
-		// Scrolling?
+		// Mouse position calculation in scrollable screen?
 		int16 width;
 		int16 height;
 		int16 sWidth;
 		int16 sHeight;
 		int16 cursorRight;
 		int16 cursorBottom;
-		int16 oldWord_2FC9C;
-		int16 oldWord_2FC9E;
+		int16 oldOffY;
+		int16 oldOffX;
 		if ((_vm->_global->_videoMode == 0x14) && (handleMouse != 0)) {
 			width = _vm->_draw->_frontSurface->width;
 			height = _vm->_draw->_frontSurface->height;
@@ -470,64 +470,65 @@ int16 Game_v2::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 				sHeight = _vm->_global->_primaryHeight;
 				if (_vm->_draw->_off_2E51B != 0)
 					sHeight -= _vm->_draw->_off_2E51B->height;
-				oldWord_2FC9E = _vm->_draw->_word_2FC9E;
-				oldWord_2FC9C = _vm->_draw->_word_2FC9C;
-				if ((width > sWidth) && (_vm->_global->_inter_mouseX >= _vm->_draw->_word_2FC9E)) {
+				oldOffX = _vm->_draw->_scrollOffsetX;
+				oldOffY = _vm->_draw->_scrollOffsetY;
+				if ((width > sWidth) && (_vm->_global->_inter_mouseX >= _vm->_draw->_scrollOffsetX)) {
 					cursorRight = _vm->_global->_inter_mouseX + _vm->_draw->_cursorWidth;
-					if (cursorRight > (_vm->_draw->_word_2FC9E + sWidth))
-						_vm->_draw->_word_2FC9E = MIN(cursorRight - sWidth, width - sWidth);
-				} else if (_vm->_global->_inter_mouseX < _vm->_draw->_word_2FC9E)
-					_vm->_draw->_word_2FC9E = _vm->_global->_inter_mouseX;
+					if (cursorRight > (_vm->_draw->_scrollOffsetX + sWidth))
+						_vm->_draw->_scrollOffsetX = MIN(cursorRight - sWidth, width - sWidth);
+				} else if (_vm->_global->_inter_mouseX < _vm->_draw->_scrollOffsetX)
+					_vm->_draw->_scrollOffsetX = _vm->_global->_inter_mouseX;
 				height = _vm->_draw->_frontSurface->height;
-				if ((height > sHeight) && (_vm->_global->_inter_mouseY >= _vm->_draw->_word_2FC9C)) {
+				if ((height > sHeight) && (_vm->_global->_inter_mouseY >= _vm->_draw->_scrollOffsetY)) {
 					cursorBottom = _vm->_global->_inter_mouseY + _vm->_draw->_cursorHeight;
-					if (cursorBottom > (_vm->_draw->_word_2FC9C + sHeight))
-						_vm->_draw->_word_2FC9C = MIN(cursorBottom - sHeight, height - sHeight);
-				} else if (_vm->_global->_inter_mouseY < _vm->_draw->_word_2FC9C)
-					_vm->_draw->_word_2FC9C = _vm->_global->_inter_mouseY;
-				if ((oldWord_2FC9E != _vm->_draw->_word_2FC9E) ||
-						(oldWord_2FC9C != _vm->_draw->_word_2FC9C)) {
+					if (cursorBottom > (_vm->_draw->_scrollOffsetY + sHeight))
+						_vm->_draw->_scrollOffsetY = MIN(cursorBottom - sHeight, height - sHeight);
+				} else if (_vm->_global->_inter_mouseY < _vm->_draw->_scrollOffsetY)
+					_vm->_draw->_scrollOffsetY = _vm->_global->_inter_mouseY;
+				if ((oldOffX != _vm->_draw->_scrollOffsetX) ||
+						(oldOffY != _vm->_draw->_scrollOffsetY)) {
 					if (_byte_2FC9B == 0) {
-						_vm->_draw->_word_2FC9E = oldWord_2FC9E;
-						_vm->_draw->_word_2FC9C = oldWord_2FC9C;
+						_vm->_draw->_scrollOffsetX = oldOffX;
+						_vm->_draw->_scrollOffsetY = oldOffY;
 						if ((_vm->_draw->_frontSurface->width > sWidth) && 
-								(_vm->_global->_inter_mouseX >= oldWord_2FC9E)) {
+								(_vm->_global->_inter_mouseX >= oldOffX)) {
 							if ((_vm->_global->_inter_mouseX + _vm->_draw->_cursorWidth) >
-									(_vm->_draw->_word_2FC9E + sWidth))
-								_vm->_global->_inter_mouseX = _vm->_draw->_word_2FC9E +
+									(_vm->_draw->_scrollOffsetX + sWidth))
+								_vm->_global->_inter_mouseX = _vm->_draw->_scrollOffsetX +
 									sWidth - _vm->_draw->_cursorWidth;
-						} else if (_vm->_global->_inter_mouseX < oldWord_2FC9E)
-							_vm->_global->_inter_mouseX = oldWord_2FC9E;
+						} else if (_vm->_global->_inter_mouseX < oldOffX)
+							_vm->_global->_inter_mouseX = oldOffX;
 
 						if ((_vm->_draw->_frontSurface->height > sHeight) && 
-								(_vm->_global->_inter_mouseY >= _vm->_draw->_word_2FC9C)) {
+								(_vm->_global->_inter_mouseY >= _vm->_draw->_scrollOffsetY)) {
 							if ((_vm->_global->_inter_mouseY + _vm->_draw->_cursorHeight) >
-									(_vm->_draw->_word_2FC9C + sHeight))
-								_vm->_global->_inter_mouseY = _vm->_draw->_word_2FC9C +
+									(_vm->_draw->_scrollOffsetY + sHeight))
+								_vm->_global->_inter_mouseY = _vm->_draw->_scrollOffsetY +
 									sHeight - _vm->_draw->_cursorHeight;
-						} else if (_vm->_global->_inter_mouseY < oldWord_2FC9E)
-							_vm->_global->_inter_mouseY = _vm->_draw->_word_2FC9C;
+						} else if (_vm->_global->_inter_mouseY < oldOffX)
+							_vm->_global->_inter_mouseY = _vm->_draw->_scrollOffsetY;
 					} else {
-						if (oldWord_2FC9E > _vm->_draw->_word_2FC9E) {
-							_vm->_global->_inter_mouseX += (oldWord_2FC9E - _vm->_draw->_word_2FC9E) / 2;
-							_vm->_draw->_word_2FC9E += (oldWord_2FC9E - _vm->_draw->_word_2FC9E) / 2;
+						if (oldOffX > _vm->_draw->_scrollOffsetX) {
+							_vm->_global->_inter_mouseX += (oldOffX - _vm->_draw->_scrollOffsetX) / 2;
+							_vm->_draw->_scrollOffsetX += (oldOffX - _vm->_draw->_scrollOffsetX) / 2;
 						} else {
-							_vm->_global->_inter_mouseX -= (_vm->_draw->_word_2FC9E - oldWord_2FC9E) / 2;
-							_vm->_draw->_word_2FC9E -= (_vm->_draw->_word_2FC9E - oldWord_2FC9E) / 2;
+							_vm->_global->_inter_mouseX -= (_vm->_draw->_scrollOffsetX - oldOffX) / 2;
+							_vm->_draw->_scrollOffsetX -= (_vm->_draw->_scrollOffsetX - oldOffX) / 2;
 						}
-						if (oldWord_2FC9C > _vm->_draw->_word_2FC9C) {
-							_vm->_global->_inter_mouseY += (oldWord_2FC9C - _vm->_draw->_word_2FC9C) / 2;
-							_vm->_draw->_word_2FC9C += (oldWord_2FC9C - _vm->_draw->_word_2FC9C) / 2;
-							if (_vm->_draw->_word_2FC9C < 2)
-								_vm->_draw->_word_2FC9C = 0;
+						if (oldOffY > _vm->_draw->_scrollOffsetY) {
+							_vm->_global->_inter_mouseY += (oldOffY - _vm->_draw->_scrollOffsetY) / 2;
+							_vm->_draw->_scrollOffsetY += (oldOffY - _vm->_draw->_scrollOffsetY) / 2;
+							if (_vm->_draw->_scrollOffsetY < 2)
+								_vm->_draw->_scrollOffsetY = 0;
 						} else {
-							_vm->_global->_inter_mouseY -= (_vm->_draw->_word_2FC9C - oldWord_2FC9C) / 2;
-							_vm->_draw->_word_2FC9C -= (_vm->_draw->_word_2FC9C - oldWord_2FC9C) / 2;
+							_vm->_global->_inter_mouseY -= (_vm->_draw->_scrollOffsetY - oldOffY) / 2;
+							_vm->_draw->_scrollOffsetY -= (_vm->_draw->_scrollOffsetY - oldOffY) / 2;
 						}
 						if (_vm->_draw->_off_2E51B == 0)
-							warning("_vid_setPixelShift(_vm->_draw->_word_2FC9E, _vm->_draw->_word_2FC9C);");
+							_vm->_util->setScrollOffset();
 						else
-							warning("_vid_setPixelShift(_vm->_draw->_word_2FC9E, _vm->_draw->_word_2FC9C + _vm->_draw->_off_2E51B->height);");
+							_vm->_util->setScrollOffset(_vm->_draw->_scrollOffsetX,
+									_vm->_draw->_scrollOffsetY + _vm->_draw->_off_2E51B->height);;
 					}
 					_vm->_util->setMousePos(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY);
 				}
@@ -646,7 +647,7 @@ void Game_v2::prepareStart(void) {
 
 	_vm->_draw->initScreen();
 	_vm->_video->fillRect(_vm->_draw->_frontSurface, 0, 0,
-			_vm->_video->_surfWidth - 1, 199, 1);
+			_vm->_video->_surfWidth - 1, _vm->_video->_surfHeight - 1, 1);
 
 	_vm->_util->setMousePos(152, 92);
 

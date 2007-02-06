@@ -424,7 +424,7 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_vm->_anim->_areaTop = 0;
 			_vm->_anim->_areaLeft = 0;
 			_vm->_anim->_areaWidth = _vm->_video->_surfWidth;
-			_vm->_anim->_areaHeight = 200;
+			_vm->_anim->_areaHeight = _vm->_video->_surfHeight;
 			_objCount = 4;
 
 			if (_objects)
@@ -478,7 +478,7 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_vm->_draw->_spriteLeft = 0;
 			_vm->_draw->_spriteTop = 0;
 			_vm->_draw->_spriteRight = _vm->_video->_surfWidth;
-			_vm->_draw->_spriteBottom = 200;
+			_vm->_draw->_spriteBottom = _vm->_video->_surfHeight;
 			_vm->_draw->_transparency = 0;
 			_vm->_draw->spriteOperation(0);
 			_animDataAllocated = 1;
@@ -609,7 +609,7 @@ char Mult_v2::drawStatics(char stop) {
 		_vm->_draw->_spriteLeft = 0;
 		_vm->_draw->_spriteTop = 0;
 		_vm->_draw->_spriteRight = _vm->_video->_surfWidth;
-		_vm->_draw->_spriteBottom = 200;
+		_vm->_draw->_spriteBottom = _vm->_video->_surfHeight;
 		_vm->_draw->_transparency = 0;
 		_vm->_draw->spriteOperation(0);
 	}

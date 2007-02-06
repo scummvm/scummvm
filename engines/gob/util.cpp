@@ -494,9 +494,10 @@ void Util::forceMouseUp(void) {
 	_mouseButtons = 0;
 }
 
-void Util::setScrollOffset(int16 scrollOffset) {
+void Util::setScrollOffset(int16 x, int16 y) {
 	processInput();
-	_vm->_video->_scrollOffset = scrollOffset;
+	_vm->_video->_scrollOffsetX = x >= 0 ? x : _vm->_draw->_scrollOffsetX;
+	_vm->_video->_scrollOffsetY = y >= 0 ? y : _vm->_draw->_scrollOffsetY;
 	_vm->_video->waitRetrace(_vm->_global->_videoMode);
 }
 

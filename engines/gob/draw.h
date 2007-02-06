@@ -114,8 +114,8 @@ public:
 	int16 _palLoadData2[4];
 		
 	int16 _word_2E8E2;
-	int16 _word_2FC9C;
-	int16 _word_2FC9E;
+	int16 _scrollOffsetY;
+	int16 _scrollOffsetX;
 	int16 _word_2E51F;
 	Video::SurfaceDesc *_off_2E51B;
 	Video::SurfaceDesc *_off_2E517;

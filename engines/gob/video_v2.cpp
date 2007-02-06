@@ -45,8 +45,9 @@ void Video_v2::waitRetrace(int16, bool mouse) {
 		CursorMan.showMouse((_vm->_draw->_showCursor & 2) != 0);
 	if (_vm->_draw->_frontSurface) {
 		time = _vm->_util->getTimeKey();
-		g_system->copyRectToScreen(_vm->_draw->_frontSurface->vidPtr + _scrollOffset,
-				_surfWidth, 0, 0, 320, 200);
+		g_system->copyRectToScreen(_vm->_draw->_frontSurface->vidPtr +
+				_scrollOffsetY * _surfWidth + _scrollOffsetX, _surfWidth,
+				0, 0, 320, 200);
 		g_system->updateScreen();
 		_vm->_util->delay(MAX(1, 10 - (int)(_vm->_util->getTimeKey() - time)));
 	}
@@ -136,8 +137,8 @@ Video::SurfaceDesc *Video_v2::initSurfDesc(int16 vidMode, int16 width, int16 hei
 		assert(descPtr);
 		if (descPtr->vidPtr != 0)
 			delete[] descPtr->vidPtr;
-		vidMem = new byte[_surfWidth * 200];
-		memset(vidMem, 0, _surfWidth * 200);
+		vidMem = new byte[_surfWidth * _surfHeight];
+		memset(vidMem, 0, _surfWidth * _surfHeight);
 	} else {
 		if (flags & DISABLE_SPR_ALLOC) {
 			descPtr = new SurfaceDesc;
