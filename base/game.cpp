@@ -37,17 +37,17 @@ void GameDescriptor::updateDesc(const char *extra) {
 		Common::String descr = description();
 
 		descr += " (";
-		if (hasCustomLanguage)
-			descr += Common::getLanguageDescription(language());
+		if (hasExtraDesc)
+			descr += extra;
 		if (hasCustomPlatform) {
-			if (hasCustomLanguage)
+			if (hasExtraDesc)
 				descr += "/";
 			descr += Common::getPlatformDescription(platform());
 		}
-		if (hasExtraDesc) {
-			if (hasCustomPlatform || hasCustomLanguage)
+		if (hasCustomLanguage) {
+			if (hasExtraDesc || hasCustomPlatform)
 				descr += "/";
-			descr += extra;
+			descr += Common::getLanguageDescription(language());
 		}
 		descr += ")";
 		setVal("description", descr);
