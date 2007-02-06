@@ -79,7 +79,7 @@ public:
 		Gob_StateLine *stateMach;	// +28h
 		Gob_StateLine *realStateMach;	// +2ch
 		char doAnim;		// +30h
-		char order;			// +31h
+		int8 order;			// +31h
 		char noTick;		// +32h
 		char toRedraw;		// +33h
 		char type;			// +34h
