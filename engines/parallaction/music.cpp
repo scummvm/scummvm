@@ -39,7 +39,7 @@ static byte *_musicBits = NULL;
 
 // TODO
 // move this into a proper midi driver and decode the numeric commands
-void _music_command(int32, int32, int32, int32) {
+void _music_command(const void*, const void*, const void*, const void*) {
 
 }
 
@@ -49,8 +49,8 @@ void stopMusic() {
 	if (_playing == false) return;
 	if (_allocated == false) return;
 
-	_music_command(4, 0, 0, 0);     // stop
-	_music_command(5, 0, 0, 0);     // reset timer
+	_music_command((const void*)4, (const void*)0, (const void*)0, (const void*)0);     // stop
+	_music_command((const void*)5, (const void*)0, (const void*)0, (const void*)0);     // reset timer
 
 	memFree(_musicBits);
 
@@ -67,12 +67,12 @@ void playMusic() {
 	if (_allocated == false) return;
 
 	_music_command(0, 0, 0, 0);     // init driver
-	_music_command(1, 0, 0, 0);     // init timer
-	_music_command(17, 1, 0, 0);    // set source segment
-	_music_command(7, 1, 0, 0);     // set source offset and do SOMETHING
+	_music_command((const void*)1, 0, 0, 0);     // init timer
+	_music_command((const void*)17, (const void*)1, 0, 0);    // set source segment
+	_music_command((const void*)7, (const void*)1, 0, 0);     // set source offset and do SOMETHING
 
 	// FIXME: casting pointer to uint32
-	_music_command(2, (uint32)_musicBits, 0, 0);    // play
+	_music_command((const void*)2, (const void*)_musicBits, 0, 0);    // play
 
 	_playing = true;
 
