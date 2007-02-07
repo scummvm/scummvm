@@ -771,22 +771,13 @@ void OSystem_GP2X::copyRectToScreen(const byte *src, int pitch, int x, int y, in
 	SDL_UnlockSurface(_screen);
 }
 
+// TIDY: DIRTY HACK: Try a REALLY simple version of grabRawScreen to
+//       debug why it will not work on the GP2X.
 bool OSystem_GP2X::grabRawScreen(Graphics::Surface *surf) {
-	assert(_screen);
 	assert(surf);
 
-	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
-
-	surf->create(_screenWidth, _screenHeight, _screen->format->BytesPerPixel);
-
-	// Try to lock the screen surface
-	if (SDL_LockSurface(_screen) == -1)
-		error("SDL_LockSurface failed: %s", SDL_GetError());
-
-	memcpy(surf->pixels, _screen->pixels, _screenWidth * _screenHeight * _screen->format->BytesPerPixel);
-
-	// Unlock the screen surface
-	SDL_UnlockSurface(_screen);
+	surf->create(_screenWidth, _screenHeight, 1);
+	memcpy(surf->pixels, _screen->pixels, _screenWidth * _screenHeight);
 
 	return true;
 }
