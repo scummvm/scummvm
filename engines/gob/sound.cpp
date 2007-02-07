@@ -240,9 +240,6 @@ void Snd::playSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency, i
 		return; 
 
 	setSample(sndDesc, repCount, frequency, fadeLength);
-	if (!_vm->_mixer->isSoundHandleActive(_handle))
-		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_handle,
-				this, -1, 255, 0, false, true);
 }
 
 void Snd::checkEndSample(void) {
