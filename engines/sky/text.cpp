@@ -679,12 +679,13 @@ const PatchMessage Text::_patchedMessages[NUM_PATCH_MSG] = {
 	{ 28693, "Endast tal" },
 	{ 28686, "Musikvolym" },
 	{ 4336, "Wir befinden uns EINHUNDERTZWANZIG METER #ber dem ERBODEN!" }, // - german
+	{ 28686, "Volume de musique" }, // - french
 };
 
 const uint16 Text::_patchLangIdx[8] = {
 	0xFFFF, // SKY_ENGLISH
 	7,		// SKY_GERMAN
-	0xFFFF, // SKY_FRENCH
+	8,		// SKY_FRENCH
 	0xFFFF, // SKY_USA
 	3,		// SKY_SWEDISH
 	0,		// SKY_ITALIAN
@@ -695,7 +696,7 @@ const uint16 Text::_patchLangIdx[8] = {
 const uint16 Text::_patchLangNum[8] = {
 	0, // SKY_ENGLISH
 	1, // SKY_GERMAN
-	0, // SKY_FRENCH
+	1, // SKY_FRENCH
 	0, // SKY_USA
 	4, // SKY_SWEDISH
 	3, // SKY_ITALIAN
