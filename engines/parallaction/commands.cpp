@@ -174,7 +174,7 @@ Command *parseCommands(ArchivedFile *file) {
 					byte _al = _vm->searchTable(&_tokens[_si][2], const_cast<const char **>(_globalTable));
 					cmd->_flagsOff |= 1 << (_al - 1);
 				} else {
-					byte _al = _vm->searchTable(_tokens[_si], const_cast<const char **>(_localFlagNames));
+					byte _al = _vm->searchTable(_tokens[_si], const_cast<const char **>(_globalTable));
 					cmd->_flagsOn |= 1 << (_al - 1);
 				}
 
