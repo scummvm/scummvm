@@ -19,7 +19,7 @@ clean:
 	rm -f $(BIN)
 	rm -f $(OBJS)
 
-create_kyradat.o: eng.h esp.h fre.h ger.h misc.h pak.h util.h md5.h
+create_kyradat.o: eng.h esp.h fre.h ger.h misc.h pak.h towns.h util.h md5.h
 pak.o: pak.h util.h
 
 %.o: %.cpp

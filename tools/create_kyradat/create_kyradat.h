@@ -134,6 +134,9 @@ enum kExtractID {
 	kConfigStrings,
 	
 	kKyra1TownsSFXTable,
+	kCreditsStrings,
+	kSjisVTable,
+	kMenuSKB,
 	
 	kMaxResIDs
 };
@@ -153,7 +156,8 @@ struct ExtractFilename {
 enum kSpecial {
 	kTalkieVersion = 0,
 	kDemoVersion = 1,
-	kFMTownsVersion = 2
+	kFMTownsVersionE = 2,
+	kFMTownsVersionJ = 3
 };
 
 struct SpecialExtension {
@@ -195,7 +199,7 @@ enum kExtractType {
 
 struct ExtractType {
 	int type;
-	bool (*extract)(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename);
+	bool (*extract)(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
 	void (*createFilename)(char *dstFilename, const int lang, const int special, const char *filename);
 };
 

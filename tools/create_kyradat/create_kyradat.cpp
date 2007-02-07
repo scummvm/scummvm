@@ -25,7 +25,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 14,
+	kKyraDatVersion = 15,
 	kIndexSize = 12
 };
 
@@ -36,11 +36,12 @@ enum {
 #include "esp.h"
 #include "fre.h"
 #include "ger.h"
+#include "towns.h"
 
-bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename);
-bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename);
-bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename);
-bool extractShapes(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename);
+bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
+bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
+bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
+bool extractShapes(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 
 void createFilename(char *dstFilename, const int lang, const int special, const char *filename);
 void createLangFilename(char *dstFilename, const int lang, const int special, const char *filename);
@@ -159,7 +160,10 @@ const ExtractFilename extractFilenames[] = {
 	{ kPaletteList33, kTypeRawData, "PALTABLE33.PAL" },
 	
 	// FM-TOWNS specific
-	{ kKyra1TownsSFXTable, kTypeRawData, "SFXTABLE.TSX" },
+	{ kKyra1TownsSFXTable, kTypeRawData, "SFXTABLE" },
+	{ kCreditsStrings, kTypeRawData, "CREDITS" },
+	{ kMenuSKB, kTypeStringList, "MENUSKB" },
+	{ kSjisVTable, kTypeRawData, "SJISTABLE" },
 
 	{ -1, 0, 0 }
 };
@@ -282,32 +286,111 @@ bool hasNeededEntries(const Game *game, const PAKFile *file) {
 
 // extraction
 
-bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename) {
-	uint8 *buffer = new uint8[size];
-	assert(buffer);
-	memcpy(buffer, data, size);
+bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
+	uint8 *buffer = 0;
+
+	if (fmtPatch == 2) {
+		buffer = new uint8[0x12602];
+		assert(buffer);
+		memcpy(buffer, data, 0x7EE5);
+		memcpy(buffer + 0x7EE5, data + 0x7EE7, 0x7FFF);
+		memcpy(buffer + 0xFEE4, data + 0xFEE8, 0x271E);
+	} else {
+		buffer = new uint8[size];
+		assert(buffer);
+		memcpy(buffer, data, size);
+	}
+
 	return out.addFile(filename, buffer, size);
 }
 
-bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename) {
+bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
 	uint32 entries = 0;
+	uint32 targetsize = size + 4;
 	for (uint32 i = 0; i < size; ++i) {
-		if (!data[i])
+		if (!data[i]) {
 			++entries;
+			if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) {
+				// prevents creation of empty entries (which we have mostly between all strings in the fm-towns version)
+				while (!data[++i]) {
+					if (i == size)
+						break;
+					targetsize--;
+				}
+				if (fmtPatch == 1) {
+					// Here is the first step of the extra treatment for all fm-towns string arrays that 
+					// contain more than one string and which the original code
+					// addresses via stringname[boolJapanese].
+					// We simply skip every other string
+					if (i == size)
+						continue;
+					uint32 size = strlen((const char*) data + i);
+					i += size; targetsize = --targetsize - size;
+					while (!data[++i]) {
+						if (i == size)
+							break;
+						targetsize--;
+					}
+				}
+			}
+		}
 	}
 	
-	uint8 *buffer = new uint8[size + 4];
+	if (fmtPatch == 2) {
+		targetsize++;
+		entries++;
+	}
+	
+	uint8 *buffer = new uint8[targetsize];
 	assert(buffer);
 	uint8 *output = buffer;
+	uint8 *input = (uint8*) data;
 
 	WRITE_BE_UINT32(output, entries); output += 4;
-	memcpy(output, data, size);
+	if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) {
+		const byte * c = data + size;
+		do {
+			strcpy((char*) output, (const char*) input);
+			uint32 stringsize = strlen((const char*)output) + 1;
+			input += stringsize; output += stringsize;
+			// skip empty entries
+			while (!*input) {
+				// Write one empty string into intro strings file
+				if (fmtPatch == 2) {
+					if ((g->special == kFMTownsVersionE && input - data == 0x260) ||
+						(g->special == kFMTownsVersionJ && input - data == 0x265))
+							*output++ = *input;
+				}
 
-	return out.addFile(filename, buffer, size + 4);
+				if (++input == c)
+					break;
+			}
+
+			if (fmtPatch == 1) {
+				// Here is the extra treatment for all fm-towns string arrays that 
+				// contain more than one string and which the original code
+				// addresses via stringname[boolJapanese].
+				// We simply skip every other string
+				if (input == c)
+					continue;
+				input += strlen((const char*)input);
+				while (!*input) {
+					if (++input == c)
+						break;
+				}
+			}
+
+		} while (input < c);
+	} else {
+		memcpy(output, data, size);
+	}
+
+	return out.addFile(filename, buffer, targetsize);
 }
 
-bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename) {
-	const int countRooms = size / 0x51;
+bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
+	// different entry size for the fm-towns version
+	const int countRooms = (g->special == kFMTownsVersionE) ? (size / 0x69) : (size / 0x51);
 
 	uint8 *buffer = new uint8[countRooms * 9 + 4];
 	assert(buffer);
@@ -322,13 +405,14 @@ bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 si
 		WRITE_BE_UINT16(output, READ_LE_UINT16(src)); output += 2; src += 2;
 		WRITE_BE_UINT16(output, READ_LE_UINT16(src)); output += 2; src += 2;
 		WRITE_BE_UINT16(output, READ_LE_UINT16(src)); output += 2; src += 2;
-		src += (0x51 - 9);
+		// different entry size for the fm-towns version
+		src += (g->special == kFMTownsVersionE) ? 0x60 : (0x51 - 9);
 	}
 
 	return out.addFile(filename, buffer, countRooms * 9 + 4);
 }
 
-bool extractShapes(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename) {
+bool extractShapes(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
 	byte *buffer = new byte[size + 1 * 4];
 	assert(buffer);
 	byte *output = buffer;
@@ -365,7 +449,7 @@ uint32 getFeatures(const Game *g) {
 		features |= GF_TALKIE;
 	else if (g->special == kDemoVersion)
 		features |= GF_DEMO;
-	else if (g->special == kFMTownsVersion)
+	else if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ)
 		features |= GF_FMTOWNS;
 	else
 		features |= GF_FLOPPY;
@@ -380,6 +464,8 @@ uint32 getFeatures(const Game *g) {
 		features |= GF_SPANISH;
 	else if (g->lang == IT_ITA)
 		features |= GF_ITALIAN;
+	else if (g->lang == JA_JPN)
+		features |= GF_JAPANESE;
 	
 	return features;
 }
@@ -501,6 +587,18 @@ int main(int argc, char *argv[]) {
 		if (!process(out, g, buffer, size))
 			fprintf(stderr, "ERROR: couldn't process file '%s'", argv[i]);
 		
+		if (g->special == kFMTownsVersionE) {
+			// The English and non language specific data has now been extracted
+			// so we switch to Japanese and extract the rest
+			if (!hasNeededEntries(++g, &out)) {
+				warning("file '%s' is missing offset entries and thus can't be processed", argv[i]);
+				delete [] buffer;
+				continue;
+			}
+			if (!process(out, g, buffer, size))
+				fprintf(stderr, "ERROR: couldn't process file '%s'", argv[i]);
+		}
+		
 		delete [] buffer;
 	}
 
@@ -551,8 +649,18 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		PAKFile::cFileList *list = out.getFileList();
 		if (list && list->findEntry(filename) != 0)
 			continue;
-
-		if (!tDesc->extract(out, g, data + i->startOff, i->endOff - i->startOff, filename)) {
+		
+		int patch = 0;
+		if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) {
+			// FM Towns files that need addional patches
+			if (i->id == kTakenStrings || i->id == kNoDropStrings || i->id == kPoisonGoneString ||
+				i->id == kThePoisonStrings || i->id == kFluteStrings || i->id == kWispJewelStrings)
+				patch = 1;
+			else if (i->id == kIntroStrings || i->id == kKyra1TownsSFXTable)
+				patch = 2;						
+		}
+		
+		if (!tDesc->extract(out, g, data + i->startOff, i->endOff - i->startOff, filename, patch)) {
 			fprintf(stderr, "ERROR: couldn't extract id %d\n", i->id);
 			return false;
 		}
@@ -573,6 +681,7 @@ const Game *gameDescs[] = {
 	kyra1EspGames,
 	kyra1FreGames,
 	kyra1GerGames,
+	kyra1TownsGames,
 	0
 };
 
@@ -599,3 +708,4 @@ const Game *findGame(const byte *buffer, const uint32 size) {
 	printf("file is not supported (unknown md5 \"%s\")\n", md5str);
 	return 0;
 }
+
