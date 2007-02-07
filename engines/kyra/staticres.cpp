@@ -31,7 +31,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 14
+#define RESFILE_VERSION 15
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -74,7 +74,7 @@ enum {
 	GF_AMIGA	= 1 << 17	// this is no special version flag yet!
 };
 
-#define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO/* | GF_AUDIOCD*/)
+#define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_FMTOWNS)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_ITALIAN | GF_JAPANESE | GF_LNGUNK)
 
 uint32 createFeatures(const GameFlags &flags) {
@@ -82,8 +82,8 @@ uint32 createFeatures(const GameFlags &flags) {
 		return GF_TALKIE;
 	if (flags.isDemo)
 		return GF_DEMO;
-	//if (flags.platform == Common::kPlatformFMTowns)
-	//	return GF_FMTOWNS;
+	if (flags.platform == Common::kPlatformFMTowns)
+		return GF_FMTOWNS;
 	return GF_FLOPPY;
 }
 
@@ -98,6 +98,8 @@ uint32 createLanguage(const GameFlags &flags) {
 		return GF_SPANISH;
 	if (flags.lang == Common::IT_ITA)
 		return GF_ITALIAN;
+	if (flags.lang == Common::JA_JPN)
+		return GF_JAPANESE;
 	return GF_LNGUNK;
 }
 
@@ -112,6 +114,7 @@ static const LanguageTypes languages[] = {
 	{ GF_GERMAN, "GER" },
 	{ GF_SPANISH, "SPA" },
 	{ GF_ITALIAN, "ITA" },
+	{ GF_JAPANESE, "JPN" },
 	{ 0, 0 }
 };
 
@@ -203,7 +206,7 @@ bool StaticResource::init() {
 		{ kPaletteList, kPaletteTable, "1 33 PALTABLE" },
 		
 		// FM-TOWNS specific
-		{ kKyra1TownsSFXTable, kRawData, "SFXTABLE.TSX" },
+		{ kKyra1TownsSFXTable, kRawData, "SFXTABLE" },
 
 		{ 0, 0, 0 }
 	};
@@ -607,9 +610,9 @@ uint8 *StaticResource::getFile(const char *name, int &size) {
 		ext = ".CD";
 	} else if (_engine->gameFlags().isDemo) {
 		ext = ".DEM";
-	} /*else if (_engine->gameFlags().platform == Common::kPlatformFMTowns) {
+	} else if (_engine->gameFlags().platform == Common::kPlatformFMTowns) {
 		ext = ".TNS";
-	} */
+	} 
 	snprintf(buffer, 64, "%s%s", name, ext);
 	uint32 tempSize = 0;
 	uint8 *data = _engine->resource()->fileData(buffer, &tempSize);

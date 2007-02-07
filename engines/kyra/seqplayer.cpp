@@ -400,20 +400,11 @@ void SeqPlayer::s1_playEffect() {
 void SeqPlayer::s1_playTrack() {
 	uint8 msg = *_seqData++;
 
-	// HACK: as long as we don't have extracted static data from the fm-towns
-	// version in kyra.dat we use this to get music working
-	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
-		if (msg <= 1)
-			_vm->snd_playWanderScoreViaMap(msg, 0);
-		else
-			_vm->snd_playWanderScoreViaMap(msg+55, 0);
+	if (msg == 1) {
+		_sound->beginFadeOut();
 	} else {
-		if (msg == 1) {
-			_sound->beginFadeOut();
-		} else {
-			_sound->haltTrack();
-			_sound->playTrack(msg);
-		}
+		_sound->haltTrack();
+		_sound->playTrack(msg);
 	}
 }
 
