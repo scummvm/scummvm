@@ -48,7 +48,25 @@ int KyraEngine::o1_characterSays(ScriptState *script) {
 		characterSays(stackPos(0), stackPosString(1), stackPos(2), stackPos(3));
 	} else {
 		debugC(3, kDebugLevelScriptFuncs, "o1_characterSays(%p) ('%s', %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2));
-		characterSays(-1, stackPosString(0), stackPos(1), stackPos(2));
+		const char *string = stackPosString(0);
+
+		if (_flags.platform == Common::kPlatformFMTowns && _flags.lang == Common::JA_JPN) {
+			static const char townsString1[] = {
+				0x83, 0x75, 0x83, 0x89, 0x83, 0x93, 0x83, 0x83, 0x93, 0x81,
+				0x41, 0x82, 0xDC, 0x82, 0xBD, 0x97, 0x88, 0x82, 0xBD, 0x82,
+				0xCC, 0x82, 0xA9, 0x81, 0x48, 0x00, 0x00, 0x00
+			};
+			static const char townsString2[] = {
+				0x83, 0x75, 0x83, 0x89, 0x83, 0x93, 0x83, 0x5C, 0x83, 0x93,
+				0x81, 0x41, 0x82, 0xDC, 0x82, 0xBD, 0x97, 0x88, 0x82, 0xBD,
+				0x82, 0xCC, 0x82, 0xA9, 0x81, 0x48, 0x00, 0x00
+			};
+
+			if (strncmp(townsString1, string, sizeof(townsString1)) == 0)
+				string = townsString2;
+		}
+
+		characterSays(-1, string, stackPos(1), stackPos(2));
 	}
 
 	return 0;
