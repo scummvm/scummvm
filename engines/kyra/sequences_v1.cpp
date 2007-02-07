@@ -1035,10 +1035,20 @@ void KyraEngine::seq_playCredits() {
 		snd_playWanderScoreViaMap(53, 1);
 
 	uint8 *buffer = 0;
-	uint32 size;
+	uint32 size = 0;
 	
-	buffer = _res->fileData("CREDITS.TXT", &size);
-	assert(buffer);
+	if (_flags.platform == Common::kPlatformFMTowns) {
+		int sizeTmp = 0;
+		const uint8 *bufferTmp = _staticres->loadRawData(kCreditsStrings, sizeTmp);
+		buffer = new uint8[sizeTmp];
+		assert(buffer);
+		memcpy(buffer, bufferTmp, sizeTmp);
+		size = sizeTmp;
+		_staticres->unloadId(kCreditsStrings);
+	} else {
+		buffer = _res->fileData("CREDITS.TXT", &size);
+		assert(buffer);
+	}
 
 	uint8 *nextString = buffer;
 	uint8 *currentString = buffer;
@@ -1134,8 +1144,8 @@ void KyraEngine::seq_playCredits() {
 		if (nextLoop > now)
 			_system->delayMillis(nextLoop - now);
 	}
-	
-	delete[] buffer;
+
+	delete [] buffer;
 	
 	_screen->fadeToBlack();
 	_screen->clearCurPage();

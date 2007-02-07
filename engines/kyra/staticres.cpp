@@ -207,6 +207,7 @@ bool StaticResource::init() {
 		
 		// FM-TOWNS specific
 		{ kKyra1TownsSFXTable, kRawData, "SFXTABLE" },
+		{ kCreditsStrings, kRawData, "CREDITS" },
 
 		{ 0, 0, 0 }
 	};

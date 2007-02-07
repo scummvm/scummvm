@@ -199,6 +199,7 @@ enum kKyraResources {
 	kConfigStrings,
 	
 	kKyra1TownsSFXTable,
+	kCreditsStrings,
 	
 	kMaxResIDs
 };
