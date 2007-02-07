@@ -818,8 +818,7 @@ void Draw_v2::blitCursor(void) {
 	if (_cursorIndex == -1)
 		return;
 	
-	if (_showCursor == 2)
-		_showCursor = 0;
+	_showCursor = (_showCursor & ~2) | ((_showCursor & 1) << 1);
 }
 
 void Draw_v2::animateCursor(int16 cursor) {
@@ -832,16 +831,7 @@ void Draw_v2::animateCursor(int16 cursor) {
 	int16 maxY;
 	int16 cursorIndex;
 
-	_showCursor |= 2;
-
-	/*
-	if (((_backSurface->width - 9) < _vm->_global->_inter_mouseX) ||
-			((_backSurface->height - 4) < _vm->_global->_inter_mouseY)) {
-		_vm->_global->_inter_mouseX = MIN((int) _vm->_global->_inter_mouseX, _backSurface->width - 9);
-		_vm->_global->_inter_mouseY = MIN((int) _vm->_global->_inter_mouseY, _backSurface->height - 4);
-		_vm->_util->setMousePos(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY);
-	}
-	*/
+	_showCursor |= 1;
 
 	// .-- _draw_animateCursorSUB1 ---
 	cursorIndex = cursor;
@@ -891,8 +881,6 @@ void Draw_v2::animateCursor(int16 cursor) {
 			} else {
 				if ((_noInvalidated != 0) && (_vm->_global->_inter_mouseX == _cursorX) &&
 						(_vm->_global->_inter_mouseY == _cursorY)) {
-					if (!CursorMan.isVisible())
-						_showCursor = 0;
 					_vm->_video->waitRetrace(_vm->_global->_videoMode);
 					return;
 				}
@@ -932,26 +920,23 @@ void Draw_v2::animateCursor(int16 cursor) {
 		CursorMan.replaceCursor(_scummvmCursor->vidPtr, _cursorWidth, _cursorHeight, 0, 0, 0);
 
 		if (_frontSurface != _backSurface) {
-			_showCursor |= 1;
 			if (_noInvalidated == 0) {
-				_showCursor = CursorMan.isVisible() ? 2 : 0;
 				int16 tmp = _cursorIndex;
 				_cursorIndex = -1;
 				blitInvalidated();
 				_cursorIndex = tmp;
 			} else {
+				_showCursor = 3;
 				_vm->_video->waitRetrace(_vm->_global->_videoMode);
 				if (minY < 50)
 					_vm->_util->delay(5);
-				_showCursor = (_showCursor & ~2) | ((_showCursor & 1) << 1);
 			}
-			_showCursor &= ~1;
 		}
 	} else
 		blitCursor();
 
-	if (CursorMan.isVisible())
-		_showCursor = 2;
+	_showCursor &= ~1;
+
 	_cursorX = newX;
 	_cursorY = newY;
 }

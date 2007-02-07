@@ -43,8 +43,8 @@ public:
 		int16 bottom;
 		int16 flags;
 		int16 key;
-		int16 funcEnter;
-		int16 funcLeave;
+		uint16 funcEnter;
+		uint16 funcLeave;
 		int16 field_12; // New in GOB2
 	};
 
@@ -230,7 +230,7 @@ public:
 	virtual void playTot(int16 skipPlay) = 0;
 	virtual void clearCollisions(void) = 0;
 	virtual int16 addNewCollision(int16 id, int16 left, int16 top, int16 right,
-			int16 bottom, int16 flags, int16 key, int16 funcEnter, int16 funcLeave) = 0;
+			int16 bottom, int16 flags, int16 key, uint16 funcEnter, uint16 funcLeave) = 0;
 	virtual void collisionsBlock(void) = 0;
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
 					InputDesc *inpDesc, int16 *collResId, int16 *collIndex) = 0;
@@ -274,7 +274,7 @@ protected:
 	GobEngine *_vm;
 		
 	void setCollisions(void);
-	void collSub(int16 offset);
+	void collSub(uint16 offset);
 	void collAreaSub(int16 index, int8 enter);
 	int16 openLocTextFile(char *locTextFile, int language);
 
@@ -288,7 +288,7 @@ public:
 	virtual void playTot(int16 skipPlay);
 	virtual void clearCollisions(void);
 	virtual int16 addNewCollision(int16 id, int16 left, int16 top, int16 right,
-			int16 bottom, int16 flags, int16 key, int16 funcEnter, int16 funcLeave);
+			int16 bottom, int16 flags, int16 key, uint16 funcEnter, uint16 funcLeave);
 	virtual void collisionsBlock(void);
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
 					InputDesc *inpDesc, int16 *collResId, int16 *collIndex);
@@ -313,7 +313,7 @@ public:
 	virtual void playTot(int16 skipPlay);
 	virtual void clearCollisions(void);
 	virtual int16 addNewCollision(int16 id, int16 left, int16 top, int16 right,
-			int16 bottom, int16 flags, int16 key, int16 funcEnter, int16 funcLeave);
+			int16 bottom, int16 flags, int16 key, uint16 funcEnter, uint16 funcLeave);
 	virtual void collisionsBlock(void);
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
 					InputDesc *inpDesc, int16 *collResId, int16 *collIndex);

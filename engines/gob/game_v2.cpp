@@ -308,7 +308,7 @@ void Game_v2::clearCollisions() {
 }
 
 int16 Game_v2::addNewCollision(int16 id, int16 left, int16 top, int16 right, int16 bottom,
-	    int16 flags, int16 key, int16 funcEnter, int16 funcLeave) {
+	    int16 flags, int16 key, uint16 funcEnter, uint16 funcLeave) {
 	int16 i;
 	Collision *ptr;
 

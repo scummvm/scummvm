@@ -248,6 +248,7 @@ void Draw::invalidateRect(int16 left, int16 top, int16 right, int16 bottom) {
 void Draw::blitInvalidated(void) {
 	int16 i;
 
+
 	if (_cursorIndex == 4)
 		blitCursor();
 

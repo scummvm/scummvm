@@ -754,7 +754,7 @@ void Game::setCollisions(void) {
 	}
 }
 
-void Game::collSub(int16 offset) {
+void Game::collSub(uint16 offset) {
 	char *savedIP;
 	int16 collStackSize;
 
@@ -1155,6 +1155,8 @@ void Game::playImd(int16 frame, int16 arg_2, int16 arg_4, int16 arg_6, int16 arg
 	byte *vidMemBak;
 	Video::SurfaceDesc *surfDescBak;
 	Video::SurfaceDesc frontSurfBak;
+
+	_vm->_draw->_showCursor = 0;
 
 	int8 byte_31344 = 0;
 

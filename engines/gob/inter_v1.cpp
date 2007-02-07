@@ -950,6 +950,7 @@ void Inter_v1::o1_initCursor(void) {
 void Inter_v1::o1_initCursorAnim(void) {
 	int16 ind;
 
+	_vm->_draw->_showCursor = 3;
 	ind = _vm->_parse->parseValExpr();
 	_vm->_draw->_cursorAnimLow[ind] = load16();
 	_vm->_draw->_cursorAnimHigh[ind] = load16();
@@ -959,6 +960,7 @@ void Inter_v1::o1_initCursorAnim(void) {
 void Inter_v1::o1_clearCursorAnim(void) {
 	int16 ind;
 
+	_vm->_draw->_showCursor = 0;
 	ind = _vm->_parse->parseValExpr();
 	_vm->_draw->_cursorAnimLow[ind] = -1;
 	_vm->_draw->_cursorAnimHigh[ind] = 0;
@@ -1530,6 +1532,7 @@ bool Inter_v1::o1_keyFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 		storeKey(key);
 		return false;
 	} else {
+		_vm->_draw->_showCursor &= ~2;
 		_vm->_util->longDelay(1);
 		key = _vm->_game->checkCollisions(0, 0, 0, 0);
 		storeKey(key);
@@ -1814,11 +1817,12 @@ void Inter_v1::o1_freeFontToSprite(void) {
 }
 
 bool Inter_v1::o1_callSub(char &cmdCount, int16 &counter, int16 &retFlag) {
-	char *storedIP = _vm->_global->_inter_execPtr;
+	char *storedIP;
+	uint32 offset;
 
-//	_vm->_global->_inter_execPtr = (char *)_vm->_game->_totFileData + READ_LE_UINT16(_vm->_global->_inter_execPtr);
+	storedIP = _vm->_global->_inter_execPtr;
+	offset = READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
-	uint16 offset = READ_LE_UINT16(_vm->_global->_inter_execPtr);
 	debugC(5, kDebugGameFlow, "tot = \"%s\", offset = %d", _vm->_game->_curTotFile, offset);
 
 	// Skipping the copy protection screen in Gobliiins
