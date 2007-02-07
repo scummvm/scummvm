@@ -161,6 +161,20 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x2272,
 	},
 
+	{
+		// reported by Filippos (thebluegr) in bugreport #1654500
+		{
+			"ddp",
+			"1.0C",
+			AD_ENTRY1s("logdir", "550971d196f65190a5c760d2479406ef", 132),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2272,
+	},
+
 
 	{
 		// Sarien Name == AGI Demo 1 (PC) 05/87 [AGI 2.425]
@@ -598,6 +612,35 @@ static const AGIGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// reported by Filippos (thebluegr) in bugreport #1654500
+		// Sarien Name == Manhunter NY (PC 5.25") 1.22 8/31/88 [AGI 3.002.107]
+		{
+			"mh1",
+			"1.22 8/31/88",
+			AD_ENTRY1s("mhdir", "0c7b86f05fe02c2e26cff1b07450b82a", 2123),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V3,
+		0,
+		0x3149,
+	},
+
+	{
+		// Sarien Name == Manhunter NY (PC 3.5") 1.22 8/31/88 [AGI 3.002.102]
+		{
+			"mh1",
+			"1.22 8/31/88",
+			AD_ENTRY1s("mhdir", "5b625329021ad49fd0c1d6f2d6f54bba", 2141),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V3,
+		0,
+		0x3149,
+	},
+
+	{
 		// Sarien Name == Manhunter SF (PC 3.5") 3.02 7/26/89 [AGI 3.002.149]
 		{
 			"mh2",
@@ -746,6 +789,35 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x2936,
 	},
 
+
+	{
+		// reported by Filippos (thebluegr) in bugreport #1654500
+		// Sarien Name == Space Quest 2 (PC 5.25") 2.0A [AGI 2.912]
+		{
+			"sq2",
+			"5.25\" 2.0A",
+			AD_ENTRY1s("logdir", "ad7ce8f800581ecc536f3e8021d7a74d", 423),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2917,
+	},
+
+	{
+		// Sarien Name == Space Quest 2 (PC 3.5") 2.0A [AGI 2.912]
+		{
+			"sq2",
+			"3.5\" 2.0A",
+			AD_ENTRY1s("logdir", "6c25e33d23b8bed42a5c7fa63d588e5c", 423),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2917,
+	},
 
 	{
 		// Sarien Name == Space Quest 2 (PC 5.25"/ST) 2.0C/A [AGI 2.915]
