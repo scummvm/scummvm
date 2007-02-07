@@ -5,18 +5,18 @@ echo and let all the build work be done from the backend/build folder.
 
 # Set the paths up here to generate the config.
 
-PATH=/tools/open2x_gcc/gcc-4.0.2-glibc-2.3.5/arm-open2x-linux/arm-open2x-linux/bin:$PATH
-PATH=/tools/open2x_gcc/gcc-4.0.2-glibc-2.3.5/arm-open2x-linux/bin:$PATH
+PATH=/opt/open2x/gcc-4.1.1-glibc-2.3.6/arm-open2x-linux/bin:$PATH
+PATH=/opt/open2x/gcc-4.1.1-glibc-2.3.6/bin:$PATH
 
 # Export the tool names for cross-compiling
 export CXX=arm-open2x-linux-g++
 export CXXFLAGS=-march=armv4t
-export CPPFLAGS=-I/tools/open2x_gcc/gcc-4.0.2-glibc-2.3.5/arm-open2x-linux/include
-export LDFLAGS=-L/tools/open2x_gcc/gcc-4.0.2-glibc-2.3.5/arm-open2x-linux/lib 
+export CPPFLAGS=-I/opt/open2x/gcc-4.1.1-glibc-2.3.6/include
+export LDFLAGS=-L/opt/open2x/gcc-4.1.1-glibc-2.3.6/lib 
 export DEFINES=-DNDEBUG 
 
 # Edit the configure line to suit.
 cd ../../../..
-./configure --backend=gp2x --disable-mt32emu --host=gp2x --disable-mpeg2 --disable-flac  --disable-nasm --disable-hq-scalers --with-sdl-prefix=/tools/open2x_gcc/gcc-4.0.2-glibc-2.3.5/arm-open2x-linux/bin --enable-tremor --with-tremor-prefix=/tools/open2x_gcc/gcc-4.0.2-glibc-2.3.5/arm-open2x-linux --enable-zlib --with-zlib-prefix=/tools/open2x_gcc/gcc-4.0.2-glibc-2.3.5/arm-open2x-linux --enable-mad --with-mad-prefix=/tools/open2x_gcc/gcc-4.0.2-glibc-2.3.5/arm-open2x-linux
+./configure --backend=gp2x --disable-mt32emu --host=gp2x --disable-mpeg2 --disable-flac  --disable-nasm --disable-hq-scalers --with-sdl-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6/bin --enable-tremor --with-tremor-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 --enable-zlib --with-zlib-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 --enable-mad --with-mad-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6
 
 echo Generating config for GP2X complete. Check for errors.

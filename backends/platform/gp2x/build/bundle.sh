@@ -2,18 +2,18 @@
 
 echo Quick script to make building a distribution of the GP2X port more consistent.
 
-PATH=/tools/open2x_gcc/gcc-4.0.2-glibc-2.3.5/arm-open2x-linux/arm-open2x-linux/bin:$PATH
-PATH=/tools/open2x_gcc/gcc-4.0.2-glibc-2.3.5/arm-open2x-linux/bin:$PATH
+PATH=/opt/open2x/gcc-4.1.1-glibc-2.3.6/arm-open2x-linux/bin:$PATH
+PATH=/opt/open2x/gcc-4.1.1-glibc-2.3.6/bin:$PATH
 export CXX=arm-open2x-linux-g++
 export CXXFLAGS=-march=armv4t
-export CPPFLAGS=-I/tools/open2x_gcc/gcc-4.0.2-glibc-2.3.5/arm-open2x-linux/include
-export LDFLAGS=-L/tools/open2x_gcc/gcc-4.0.2-glibc-2.3.5/arm-open2x-linux/lib 
+export CPPFLAGS=-I/opt/open2x/gcc-4.1.1-glibc-2.3.6/include
+export LDFLAGS=-L/opt/open2x/gcc-4.1.1-glibc-2.3.6/lib 
 
 echo Collecting files.
 mkdir "scummvm-gp2x-`date '+%Y-%m-%d'`"
-mkdir "scummvm-gp2x-`date '+%Y-%m-%d'`\saves"
+mkdir "scummvm-gp2x-`date '+%Y-%m-%d'`/saves"
 
-echo "Please put your save games in this dir" >> "scummvm-gp2x-`date '+%Y-%m-%d'`\saves\PUT_SAVES_IN_THIS_DIR"
+echo "Please put your save games in this dir" >> "scummvm-gp2x-`date '+%Y-%m-%d'`/saves/PUT_SAVES_IN_THIS_DIR"
 
 cp ./scummvm.gpe ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ./scummvm.png ./scummvm-gp2x-`date '+%Y-%m-%d'`/
