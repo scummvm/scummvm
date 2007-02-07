@@ -64,9 +64,13 @@ static const TrackFormat TRACK_FORMATS[] = {
 
 
 AudioCDManager::AudioCDManager() {
-	memset(&_cd, 0, sizeof(_cd));
 	memset(_cachedTracks, 0, sizeof(_cachedTracks));
 	memset(_trackInfo, 0, sizeof(_trackInfo));
+	_cd.playing = false;
+	_cd.track = 0;
+	_cd.start = 0;
+	_cd.duration = 0;
+	_cd.numLoops = 0;
 	_currentCache = 0;
 	_mixer = g_system->getMixer();
 	assert(_mixer);
