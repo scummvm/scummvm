@@ -19,7 +19,7 @@
  * $Id$
  */
 
-#include "gui/theme.h"
+#include "gui/ThemeClassic.h"
 #include "gui/eval.h"
 
 namespace GUI {

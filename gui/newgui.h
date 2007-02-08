@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "graphics/fontman.h"
 #include "gui/theme.h"
+#include "gui/widget.h"
 
 class OSystem;
 
