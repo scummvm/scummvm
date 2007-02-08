@@ -24,12 +24,11 @@
 #ifndef SWORD2_LOGIC_H
 #define SWORD2_LOGIC_H
 
-#include "sword2/memory.h"
 #include "common/endian.h"
+#include "sword2/animation.h"
+#include "sword2/memory.h"
 
 namespace Sword2 {
-
-struct MovieTextObject;
 
 #define MAX_events 10
 
@@ -79,21 +78,7 @@ private:
 	// keeps count of number of text lines to disaply during the sequence
 	uint32 _sequenceTextLines;
 
-	// FOR TEXT LINES IN SEQUENCE PLAYER
-
-	struct SequenceTextInfo {
-		uint32 textNumber;
-		uint16 startFrame;
-		uint16 endFrame;
-		byte *text_mem;
-		uint32 speechBufferSize;
-		uint16 *speech_mem;
-	};
-
 	SequenceTextInfo _sequenceTextList[MAX_SEQUENCE_TEXT_LINES];
-
-	void createSequenceSpeech(MovieTextObject *sequenceText[]);
-	void clearSequenceSpeech(MovieTextObject *sequenceText[]);
 
 	// when not playing a wav we calculate the speech time based upon
 	// length of ascii

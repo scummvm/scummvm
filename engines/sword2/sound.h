@@ -269,7 +269,6 @@ public:
 	int32 getSpeechStatus();
 	int32 amISpeaking();
 	int32 playCompSpeech(uint32 speechId, uint8 vol, int8 pan);
-	uint32 preFetchCompSpeech(uint32 speechId, uint16 **buf);
 	int32 stopSpeech();
 
 	int32 streamCompMusic(uint32 musicId, bool loop);

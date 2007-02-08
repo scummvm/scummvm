@@ -2102,7 +2102,6 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// 		1 number of frames in the sequence, used for PSX.
 
 	char filename[30];
-	MovieTextObject *sequenceSpeechArray[MAX_SEQUENCE_TEXT_LINES + 1];
 
 	// The original code had some #ifdef blocks for skipping or muting the
 	// cutscenes - fondly described as "the biggest fudge in the history
@@ -2118,12 +2117,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// Write to walkthrough file (zebug0.txt)
  	debug(5, "PLAYING SEQUENCE \"%s\"", filename);
 
-	// now create the text sprites, if any
-
-	if (_sequenceTextLines)
-		createSequenceSpeech(sequenceSpeechArray);
-
-	// don't want to carry on streaming game music when smacker starts!
+	// don't want to carry on streaming game music when cutscene starts!
 	fnStopMusic(NULL);
 
 	// pause sfx during sequence
@@ -2131,9 +2125,11 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	MoviePlayer *player = makeMoviePlayer(_vm, filename);
 
-	if (player->load(filename, (_sequenceTextLines && !readVar(DEMO)) ? sequenceSpeechArray : NULL)) {
-		player->play(_smackerLeadIn, _smackerLeadOut);
+	if (player->load()) {
+		player->play(_sequenceTextList, _sequenceTextLines, _smackerLeadIn, _smackerLeadOut);
 	}
+
+	_sequenceTextLines = 0;
 
 	delete player;
 
@@ -2142,11 +2138,6 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	_smackerLeadIn = 0;
 	_smackerLeadOut = 0;
-
-	// now clear the text sprites, if any
-
-	if (_sequenceTextLines)
-		clearSequenceSpeech(sequenceSpeechArray);
 
 	// now clear the screen in case the Sequence was quitted (using ESC)
 	// rather than fading down to black
@@ -2219,12 +2210,15 @@ int32 Logic::fnAddSequenceText(int32 *params) {
 	//		1 frame number to start the text displaying
 	//		2 frame number to stop the text dispalying
 
-	assert(_sequenceTextLines < MAX_SEQUENCE_TEXT_LINES);
+	if (!readVar(DEMO)) {
+		assert(_sequenceTextLines < MAX_SEQUENCE_TEXT_LINES);
 
-	_sequenceTextList[_sequenceTextLines].textNumber = params[0];
-	_sequenceTextList[_sequenceTextLines].startFrame = params[1];
-	_sequenceTextList[_sequenceTextLines].endFrame = params[2];
-	_sequenceTextLines++;
+		_sequenceTextList[_sequenceTextLines].textNumber = params[0];
+		_sequenceTextList[_sequenceTextLines].startFrame = params[1];
+		_sequenceTextList[_sequenceTextLines].endFrame = params[2];
+		_sequenceTextLines++;
+	}
+
 	return IR_CONT;
 }
 

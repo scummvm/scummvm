@@ -705,46 +705,6 @@ int32 Sound::amISpeaking() {
 }
 
 /**
- * This function loads and decompresses a list of speech from a cluster, but
- * does not play it. This is used for cutscene voice-overs, presumably to
- * avoid having to read from more than one file on the CD during playback.
- * @param speechId the text line id used to reference the speech
- * @param buf a pointer to the buffer that will be allocated for the sound
- */
-
-uint32 Sound::preFetchCompSpeech(uint32 speechId, uint16 **buf) {
-	int cd = _vm->_resman->getCD();
-	uint32 numSamples;
-
-	SoundFileHandle *fh = (cd == 1) ? &_speechFile[0] : &_speechFile[1];
-
-	Audio::AudioStream *input = getAudioStream(fh, "speech", cd, speechId, &numSamples);
-
-	if (!input)
-		return 0;
-
-	*buf = NULL;
-
-	// Decompress data into speech buffer.
-
-	uint32 bufferSize = 2 * numSamples;
-
-	*buf = (uint16 *)malloc(bufferSize);
-	if (!*buf) {
-		delete input;
-		fh->file.close();
-		return 0;
-	}
-
-	uint32 readSamples = input->readBuffer((int16 *)*buf, numSamples);
-
-	fh->file.close();
-	delete input;
-
-	return 2 * readSamples;
-}
-
-/**
  * This function loads, decompresses and plays a line of speech. An error
  * occurs if speech is already playing.
  * @param speechId the text line id used to reference the speech

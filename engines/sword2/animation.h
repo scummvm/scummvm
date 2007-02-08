@@ -26,20 +26,25 @@
 #include "graphics/mpeg_player.h"
 #include "sound/mixer.h"
 
+#include "sword2/screen.h"
+
 namespace Sword2 {
 
-struct SpriteInfo;
-
-// This is the structure which is passed to the sequence player. It includes
-// the smack to play, and any text lines which are to be displayed over the top
-// of the sequence.
-
-struct MovieTextObject {
+struct SequenceTextInfo {
+	uint32 textNumber;
 	uint16 startFrame;
 	uint16 endFrame;
-	SpriteInfo *textSprite;
-	uint32 speechBufferSize;
-	uint16 *speech;
+};
+
+struct MovieTextObject {
+	byte *textMem;
+	SpriteInfo textSprite;
+	uint16 speechId;
+
+	MovieTextObject() {
+		textMem = NULL;
+		speechId = 0;
+	}
 };
 
 struct MovieInfo {
@@ -61,9 +66,11 @@ protected:
 
 	byte _originalPalette[4 * 256];
 
+	uint32 _numSpeechLines;
+	uint32 _firstSpeechFrame;
+	MovieTextObject _textObject;
 	byte *_textSurface;
 
-	Audio::SoundHandle _speechHandle;
 	Audio::SoundHandle _bgSoundHandle;
 	Audio::AudioStream *_bgSoundStream;
 
@@ -85,15 +92,14 @@ protected:
 
 	static const MovieInfo _movies[];
 
-	MovieTextObject **_textList;
-	int _currentText;
+	uint32 _currentText;
 
 	void savePalette();
 	void restorePalette();
 
-	void openTextObject(MovieTextObject *t);
-	void closeTextObject(MovieTextObject *t);
-	void calcTextPosition(MovieTextObject *t, int &xPos, int &yPos);
+	void openTextObject(SequenceTextInfo *t);
+	void closeTextObject();
+	void calcTextPosition(int &xPos, int &yPos);
 
 	virtual void handleScreenChanged() {}
 
@@ -102,16 +108,16 @@ protected:
 	virtual bool decodeFrame() = 0;
 	virtual void syncFrame();
 	virtual void drawFrame();
-	virtual void drawTextObject(MovieTextObject *t);
-	virtual void undrawTextObject(MovieTextObject *t);
+	virtual void drawTextObject();
+	virtual void undrawTextObject();
 
 public:
-	MoviePlayer(Sword2Engine *vm);
+	MoviePlayer(Sword2Engine *vm, const char *name);
 	virtual ~MoviePlayer();
 
 	void updatePalette(byte *pal, bool packed = true);
-	virtual bool load(const char *name, MovieTextObject *text[]);
-	void play(int32 leadIn, int32 leadOut);
+	virtual bool load();
+	void play(SequenceTextInfo *textList, uint32 numLines, int32 leadIn, int32 leadOut);
 };
 
 class MoviePlayerDummy : public MoviePlayer {
@@ -119,14 +125,14 @@ protected:
 	bool decodeFrame();
 	void syncFrame();
 	void drawFrame();
-	void drawTextObject(MovieTextObject *t);
-	void undrawTextObject(MovieTextObject *t);
+	void drawTextObject();
+	void undrawTextObject();
 
 public:
-	MoviePlayerDummy(Sword2Engine *vm);
+	MoviePlayerDummy(Sword2Engine *vm, const char *name);
 	virtual ~MoviePlayerDummy();
 
-	bool load(const char *name, MovieTextObject *text[]);
+	bool load();
 };
 
 #ifdef USE_MPEG2
@@ -164,15 +170,15 @@ protected:
 	void clearFrame();
 	void drawFrame();
 	void updateScreen();
-	void drawTextObject(MovieTextObject *t);
-	void undrawTextObject(MovieTextObject *t);
+	void drawTextObject();
+	void undrawTextObject();
 #endif
 
 public:
-	MoviePlayerMPEG(Sword2Engine *vm);
+	MoviePlayerMPEG(Sword2Engine *vm, const char *name);
 	~MoviePlayerMPEG();
 
-	bool load(const char *name, MovieTextObject *text[]);
+	bool load();
 };
 #endif
 
@@ -183,10 +189,10 @@ protected:
 	bool decodeFrame();
 
 public:
-	MoviePlayerDXA(Sword2Engine *vm);
+	MoviePlayerDXA(Sword2Engine *vm, const char *name);
 	~MoviePlayerDXA();
 
-	bool load(const char *name, MovieTextObject *text[]);
+	bool load();
 };
 #endif
 

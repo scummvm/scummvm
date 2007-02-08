@@ -30,6 +30,7 @@
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
+#include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/mouse.h"
 #include "sword2/resman.h"
@@ -65,11 +66,11 @@ const MovieInfo MoviePlayer::_movies[19] = {
 	{ "enddemo",  110, false }
 };
 
-MoviePlayer::MoviePlayer(Sword2Engine *vm) {
+MoviePlayer::MoviePlayer(Sword2Engine *vm, const char *name) {
 	_vm = vm;
+	_name = strdup(name);
 	_mixer = _vm->_mixer;
 	_system = _vm->_system;
-	_name = NULL;
 	_textSurface = NULL;
 	_bgSoundStream = NULL;
 	_ticks = 0;
@@ -86,7 +87,6 @@ MoviePlayer::MoviePlayer(Sword2Engine *vm) {
 	_seamless = false;
 	_framesSkipped = 0;
 	_forceFrame = false;
-	_textList = NULL;
 	_currentText = 0;
 }
 
@@ -202,84 +202,121 @@ void MoviePlayer::drawFrame() {
 	_system->copyRectToScreen(_frameBuffer + _frameY * screenWidth + _frameX, screenWidth, _frameX, _frameY, _frameWidth, _frameHeight);
 }
 
-void MoviePlayer::openTextObject(MovieTextObject *t) {
-	if (t->textSprite) {
-		_vm->_screen->createSurface(t->textSprite, &_textSurface);
+void MoviePlayer::openTextObject(SequenceTextInfo *t) {
+	// Pull out the text line to get the official text number (for WAV id)
+
+	uint32 res = t->textNumber / SIZE;
+	uint32 localText = t->textNumber & 0xffff;
+
+	// Open text resource and get the line
+
+	byte *text = _vm->fetchTextLine(_vm->_resman->openResource(res), localText);
+
+	_textObject.speechId = READ_LE_UINT16(text);
+
+	// Is it speech or subtitles, or both?
+
+	// If we want subtitles, or there was no sound
+
+	if (_vm->getSubtitles() || !_textObject.speechId) {
+		_textObject.textMem = _vm->_fontRenderer->makeTextSprite(text + 2, 600, 255, _vm->_speechFontId, 1);
+	}
+
+	_vm->_resman->closeResource(res);
+
+	if (_textObject.textMem) {
+		FrameHeader frame;
+
+		frame.read(_textObject.textMem);
+
+		_textObject.textSprite.x = 320 - frame.width / 2;
+		_textObject.textSprite.y = 440 - frame.height;
+		_textObject.textSprite.w = frame.width;
+		_textObject.textSprite.h = frame.height;
+		_textObject.textSprite.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION;
+		_textObject.textSprite.data = _textObject.textMem + FrameHeader::size();
+		_vm->_screen->createSurface(&_textObject.textSprite, &_textSurface);
 	}
 }
 
-void MoviePlayer::closeTextObject(MovieTextObject *t) {
+void MoviePlayer::closeTextObject() {
+	free(_textObject.textMem);
+	_textObject.textMem = NULL;
+
+	_textObject.speechId = 0;
+
 	if (_textSurface) {
 		_vm->_screen->deleteSurface(_textSurface);
 		_textSurface = NULL;
 	}
 }
 
-void MoviePlayer::calcTextPosition(MovieTextObject *t, int &xPos, int &yPos) {
-	xPos = 320 - t->textSprite->w / 2;
-	yPos = 420 - t->textSprite->h;
+void MoviePlayer::calcTextPosition(int &xPos, int &yPos) {
+	xPos = 320 - _textObject.textSprite.w / 2;
+	yPos = 420 - _textObject.textSprite.h;
 }
 
-void MoviePlayer::drawTextObject(MovieTextObject *t) {
-	if (t->textSprite && _textSurface) {
+void MoviePlayer::drawTextObject() {
+	if (_textObject.textMem && _textSurface) {
 		int screenWidth = _vm->_screen->getScreenWide();
-		byte *src = t->textSprite->data;
+		byte *src = _textObject.textSprite.data;
+		uint16 width = _textObject.textSprite.w;
+		uint16 height = _textObject.textSprite.h;
 		int xPos, yPos;
 
-		calcTextPosition(t, xPos, yPos);
+		calcTextPosition(xPos, yPos);
 
 		byte *dst = _frameBuffer + yPos * screenWidth + xPos;
 
-		for (int y = 0; y < t->textSprite->h; y++) {
-			for (int x = 0; x < t->textSprite->w; x++) {
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
 				if (src[x] == 1)
 					dst[x] = _black;
 				else if (src[x] == 255)
 					dst[x] = _white;
 			}
-			src += t->textSprite->w;
+			src += width;
 			dst += screenWidth;
 		}
 
-		if (yPos + t->textSprite->h > _frameY + _frameHeight || t->textSprite->w > _frameWidth) {
-			_system->copyRectToScreen(_frameBuffer + yPos * screenWidth + xPos, screenWidth, xPos, yPos, t->textSprite->w, t->textSprite->h);
+		if (yPos + height > _frameY + _frameHeight || width > _frameWidth) {
+			_system->copyRectToScreen(_frameBuffer + yPos * screenWidth + xPos, screenWidth, xPos, yPos, width, height);
 		}
 	}
 }
 
-void MoviePlayer::undrawTextObject(MovieTextObject *t) {
-	if (t->textSprite) {
+void MoviePlayer::undrawTextObject() {
+	if (_textObject.textMem) {
 		int xPos, yPos;
 
-		calcTextPosition(t, xPos, yPos);
+		calcTextPosition(xPos, yPos);
+		uint16 width = _textObject.textSprite.w;
+		uint16 height = _textObject.textSprite.h;
 
 		// We only need to undraw the text if it's outside the frame.
 		// Otherwise the next frame will cover the old text anyway.
 
-		if (yPos + t->textSprite->h > _frameY + _frameHeight || t->textSprite->w > _frameWidth) {
+		if (yPos + height > _frameY + _frameHeight || width > _frameWidth) {
 			int screenWidth = _vm->_screen->getScreenWide();
 			byte *dst = _frameBuffer + yPos * screenWidth + xPos;
 
-			for (int y = 0; y < t->textSprite->h; y++) {
-				memset(dst, 0, t->textSprite->w);
+			for (int y = 0; y < height; y++) {
+				memset(dst, 0, width);
 				dst += screenWidth;
 			}
 
-			_system->copyRectToScreen(_frameBuffer + yPos * screenWidth + xPos, screenWidth, xPos, yPos, t->textSprite->w, t->textSprite->h);
+			_system->copyRectToScreen(_frameBuffer + yPos * screenWidth + xPos, screenWidth, xPos, yPos, width, height);
 		}
 	}
 }
 
-bool MoviePlayer::load(const char *name, MovieTextObject *text[]) {
+bool MoviePlayer::load() {
 	_bgSoundStream = NULL;
-	_textList = text;
 	_currentText = 0;
 	_currentFrame = 0;
 
-	_name = strdup(name);
-
 	for (int i = 0; i < ARRAYSIZE(_movies); i++) {
-		if (scumm_stricmp(name, _movies[i].name) == 0) {
+		if (scumm_stricmp(_name, _movies[i].name) == 0) {
 			_seamless = _movies[i].seamless;
 			_numFrames = _movies[i].frames;
 			if (_numFrames > 60)
@@ -304,25 +341,23 @@ bool MoviePlayer::load(const char *name, MovieTextObject *text[]) {
 	return false;
 }
 
-void MoviePlayer::play(int32 leadIn, int32 leadOut) {
+void MoviePlayer::play(SequenceTextInfo *textList, uint32 numLines, int32 leadIn, int32 leadOut) {
 	bool terminate = false;
 	bool textVisible = false;
 	bool startNextText = false;
-	uint32 flags = Audio::Mixer::FLAG_16BITS;
 
 	// This happens if the user quits during the "eye" cutscene.
 	if (_vm->_quit)
 		return;
+
+	_numSpeechLines = numLines;
+	_firstSpeechFrame = (numLines > 0) ? textList[0].startFrame : 0;
 
 	if (leadIn) {
 		_vm->_sound->playMovieSound(leadIn, kLeadInSound);
 	}
 
 	savePalette();
-
-#ifndef SCUMM_BIG_ENDIAN
-	flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
-#endif
 
 	_framesSkipped = 0;
 	_ticks = _system->getMillis();
@@ -338,32 +373,32 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 		// The frame has been decoded. Now draw the subtitles, if any,
 		// before drawing it to the screen.
 
-		if (_textList && _textList[_currentText]) {
-			MovieTextObject *t = _textList[_currentText];
+		if (_currentText < numLines) {
+			SequenceTextInfo *t = &textList[_currentText];
 
 			if (_currentFrame == t->startFrame) {
 				openTextObject(t);
 				textVisible = true;
 
-				if (t->speech) {
+				if (_textObject.speechId) {
 					startNextText = true;
 				}
 			}
 
-			if (startNextText && !_mixer->isSoundHandleActive(_speechHandle)) {
-				_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_speechHandle, t->speech, t->speechBufferSize, 22050, flags);
+			if (startNextText && _vm->_sound->amISpeaking() == RDSE_QUIET) {
+				_vm->_sound->playCompSpeech(_textObject.speechId, 16, 0);
 				startNextText = false;
 			}
 
 			if (_currentFrame == t->endFrame) {
-				undrawTextObject(t);
-				closeTextObject(t);
+				undrawTextObject();
+				closeTextObject();
 				_currentText++;
 				textVisible = false;
 			}
 
 			if (textVisible)
-				drawTextObject(t);
+				drawTextObject();
 		}
 
 		if (leadOut && _currentFrame == _leadOutFrame) {
@@ -404,8 +439,8 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 		// If the sound is still playing, draw the subtitles one final
 		// time. This happens in the "carib" cutscene.
 
-		if (textVisible && _mixer->isSoundHandleActive(_speechHandle)) {
-			drawTextObject(_textList[_currentText]);
+		if (textVisible && _vm->_sound->amISpeaking() == RDSE_SPEAKING) {
+			drawTextObject();
 		}
 
 		drawFrame();
@@ -418,19 +453,17 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 		// mid-sentence, and - even more importantly - that we don't
 		// free the sound buffer while it's still in use.
 
-		while (_mixer->isSoundHandleActive(_speechHandle) || _mixer->isSoundHandleActive(_bgSoundHandle)) {
+		while (_vm->_sound->amISpeaking() == RDSE_SPEAKING || _mixer->isSoundHandleActive(_bgSoundHandle)) {
 			_system->delayMillis(100);
 		}
 	} else {
-		_mixer->stopHandle(_speechHandle);
+		_vm->_sound->stopSpeech();
 		_mixer->stopHandle(_bgSoundHandle);
 	}
 
 	// The current text object may still be open
-	if (_textList && _textList[_currentText]) {
-		undrawTextObject(_textList[_currentText]);
-		closeTextObject(_textList[_currentText]);
-	}
+	undrawTextObject();
+	closeTextObject();
 
 	if (!_seamless) {
 		clearFrame();
@@ -448,7 +481,8 @@ void MoviePlayer::play(int32 leadIn, int32 leadOut) {
 // Movie player for the new DXA movies
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayerDXA::MoviePlayerDXA(Sword2Engine *vm) : MoviePlayer(vm) {
+MoviePlayerDXA::MoviePlayerDXA(Sword2Engine *vm, const char *name)
+	: MoviePlayer(vm, name) {
 	debug(0, "Creating DXA cutscene player");
 }
 
@@ -466,13 +500,13 @@ bool MoviePlayerDXA::decodeFrame() {
 	return true;
 }
 
-bool MoviePlayerDXA::load(const char *name, MovieTextObject *text[]) {
-	if (!MoviePlayer::load(name, text))
+bool MoviePlayerDXA::load() {
+	if (!MoviePlayer::load())
 		return false;
 
 	char filename[20];
 
-	snprintf(filename, sizeof(filename), "%s.dxa", name);
+	snprintf(filename, sizeof(filename), "%s.dxa", _name);
 
 	if (loadFile(filename)) {
 		// The Broken Sword games always use external audio tracks.
@@ -501,7 +535,8 @@ bool MoviePlayerDXA::load(const char *name, MovieTextObject *text[]) {
 // Movie player for the old MPEG movies
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayerMPEG::MoviePlayerMPEG(Sword2Engine *vm) : MoviePlayer(vm) {
+MoviePlayerMPEG::MoviePlayerMPEG(Sword2Engine *vm, const char *name)
+	: MoviePlayer(vm, name) {
 #ifdef BACKEND_8BIT
 	debug(0, "Creating MPEG cutscene player (8-bit)");
 #else
@@ -514,13 +549,13 @@ MoviePlayerMPEG::~MoviePlayerMPEG() {
 	_anim = NULL;
 }
 
-bool MoviePlayerMPEG::load(const char *name, MovieTextObject *text[]) {
-	if (!MoviePlayer::load(name, text))
+bool MoviePlayerMPEG::load() {
+	if (!MoviePlayer::load())
 		return false;
 
 	_anim = new AnimationState(_vm, this);
 
-	if (!_anim->init(name)) {
+	if (!_anim->init(_name)) {
 		delete _anim;
 		_anim = NULL;
 		return false;
@@ -579,13 +614,13 @@ void MoviePlayerMPEG::updateScreen() {
 	_anim->updateScreen();
 }
 
-void MoviePlayerMPEG::drawTextObject(MovieTextObject *t) {
-	if (t->textSprite && _textSurface) {
-		_anim->drawTextObject(t->textSprite, _textSurface);
+void MoviePlayerMPEG::drawTextObject() {
+	if (_textObject.textMem && _textSurface) {
+		_anim->drawTextObject(&_textObject.textSprite, _textSurface);
 	}
 }
 
-void MoviePlayerMPEG::undrawTextObject(MovieTextObject *t) {
+void MoviePlayerMPEG::undrawTextObject() {
 	// As long as we only have subtitles for full-sized cutscenes, we don't
 	// really need to implement this function.
 }
@@ -689,15 +724,16 @@ void AnimationState::drawYUV(int width, int height, byte *const *dat) {
 // Dummy player for subtitled speech only
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayerDummy::MoviePlayerDummy(Sword2Engine *vm) : MoviePlayer(vm) {
+MoviePlayerDummy::MoviePlayerDummy(Sword2Engine *vm, const char *name)
+	: MoviePlayer(vm, name) {
 	debug(0, "Creating Dummy cutscene player");
 }
 
 MoviePlayerDummy::~MoviePlayerDummy() {
 }
 
-bool MoviePlayerDummy::load(const char *name, MovieTextObject *text[]) {
-	if (!MoviePlayer::load(name, text))
+bool MoviePlayerDummy::load() {
+	if (!MoviePlayer::load())
 		return false;
 
 	_frameBuffer = _vm->_screen->getScreen();
@@ -711,7 +747,7 @@ bool MoviePlayerDummy::load(const char *name, MovieTextObject *text[]) {
 }
 
 bool MoviePlayerDummy::decodeFrame() {
-	if (_currentFrame == 0 && _textList) {
+	if (_currentFrame == 0 && _numSpeechLines > 0) {
 		byte dummyPalette[] = {
 			  0,   0,   0, 0,
 			255, 255, 255, 0,
@@ -767,7 +803,7 @@ bool MoviePlayerDummy::decodeFrame() {
 
 	// If we have played the final voice-over, skip ahead to the lead out
 
-	if (_textList && !_textList[_currentText] && !_mixer->isSoundHandleActive(_speechHandle) && _leadOutFrame != (uint)-1 && _currentFrame < _leadOutFrame) {
+	if (_currentText >= _numSpeechLines && _vm->_sound->amISpeaking() == RDSE_QUIET && _leadOutFrame != (uint)-1 && _currentFrame < _leadOutFrame) {
 		_currentFrame = _leadOutFrame - 1;
 	}
 
@@ -775,7 +811,7 @@ bool MoviePlayerDummy::decodeFrame() {
 }
 
 void MoviePlayerDummy::syncFrame() {
-	if (!_textList || _currentFrame < _textList[0]->startFrame) {
+	if (_numSpeechLines == 0 || _currentFrame < _firstSpeechFrame) {
 		_ticks = _system->getMillis();
 		return;
 	}
@@ -786,16 +822,16 @@ void MoviePlayerDummy::syncFrame() {
 void MoviePlayerDummy::drawFrame() {
 }
 
-void MoviePlayerDummy::drawTextObject(MovieTextObject *t) {
-	if (t->textSprite && _textSurface) {
-		_vm->_screen->drawSurface(t->textSprite, _textSurface);
+void MoviePlayerDummy::drawTextObject() {
+	if (_textObject.textMem && _textSurface) {
+		_vm->_screen->drawSurface(&_textObject.textSprite, _textSurface);
 	}
 }
 
-void MoviePlayerDummy::undrawTextObject(MovieTextObject *t) {
-	if (t->textSprite && _textSurface) {
-		memset(_textSurface, 1, t->textSprite->w * t->textSprite->h);
-		drawTextObject(t);
+void MoviePlayerDummy::undrawTextObject() {
+	if (_textObject.textMem && _textSurface) {
+		memset(_textSurface, 1, _textObject.textSprite.w * _textObject.textSprite.h);
+		drawTextObject();
 	}
 }
 
@@ -804,13 +840,13 @@ void MoviePlayerDummy::undrawTextObject(MovieTextObject *t) {
 ///////////////////////////////////////////////////////////////////////////////
 
 MoviePlayer *makeMoviePlayer(Sword2Engine *vm, const char *name) {
-	char filename[20];
+	static char filename[20];
 
 #ifdef USE_ZLIB
 	snprintf(filename, sizeof(filename), "%s.dxa", name);
 
 	if (Common::File::exists(filename)) {
-		return new MoviePlayerDXA(vm);
+		return new MoviePlayerDXA(vm, name);
 	}
 #endif
 
@@ -818,11 +854,11 @@ MoviePlayer *makeMoviePlayer(Sword2Engine *vm, const char *name) {
 	snprintf(filename, sizeof(filename), "%s.mp2", name);
 
 	if (Common::File::exists(filename)) {
-		return new MoviePlayerMPEG(vm);
+		return new MoviePlayerMPEG(vm, name);
 	}
 #endif
 
-	return new MoviePlayerDummy(vm);
+	return new MoviePlayerDummy(vm, name);
 }
 
 } // End of namespace Sword2
