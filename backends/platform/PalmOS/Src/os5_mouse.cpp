@@ -41,6 +41,15 @@ void OSystem_PalmOS5::setMouseCursor(const byte *buf, uint w, uint h, int hotspo
 	if (w == 0 || h == 0)
 		return;
 
+FIXME: The restriction on MAX_MOUSE_H / MAX_MOUSE_W is obsolete;
+in particular, BS2 might use bigger cursors these days.
+See also bug #1609058. 1607180
+Hence this code now might overwrite memory unchecked; at the
+very least an assert should be inserted to cause a controlled
+crash, but of course it would be better to remove the restriction
+on "small" cursors.
+
+
 	_mouseCurState.w = w;
 	_mouseCurState.h = h;
 

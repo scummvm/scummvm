@@ -283,9 +283,6 @@ protected:
 
 	enum {
 		NUM_DIRTY_RECT = 100,
-
-		MAX_MOUSE_W = 80,
-		MAX_MOUSE_H = 80,
 		MAX_SCALING = 3
 	};
 

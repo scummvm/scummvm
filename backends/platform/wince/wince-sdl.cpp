@@ -851,7 +851,7 @@ void OSystem_WINCE3::update_game_settings() {
 			if (ConfMan.hasKey("landscape"))
 				if (ConfMan.get("landscape")[0] > 57) {
 					_newOrientation = _orientationLandscape = ConfMan.getBool("landscape");
-					//ConfMan.removeKey("landscape", String::emptyString);
+					//ConfMan.removeKey("landscape", "");
 					ConfMan.setInt("landscape", _orientationLandscape);
 				} else
 					_newOrientation = _orientationLandscape = ConfMan.getInt("landscape");
@@ -1704,6 +1704,11 @@ void OSystem_WINCE3::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	if (w == 0 || h == 0)
 		return;
 
+/*
+FIXME: The restriction on MAX_MOUSE_H / MAX_MOUSE_W is obsolete;
+in particular, BS2 might use bigger cursors these days.
+See also bug #1609058. 1607180
+*/
 	assert(w <= MAX_MOUSE_W);
 	assert(h <= MAX_MOUSE_H);
 	_mouseCurState.w = w;
