@@ -29,18 +29,7 @@
 
 namespace AGOS {
 
-byte *buffer;
-byte *bufptr;
-byte *bufferout;
-byte *bufptrout;
-uint32 bufoutend;
-byte *clipptr;
-byte *clipoutptr;
-int clipnumber;
-
-static void uncompressplane(byte *plane, byte *outptr, uint16 length) {
-	debug(10, "uncompressplane: length %d", length);
-
+static void uncompressplane(const byte *plane, byte *outptr, uint16 length) {
 	char x;
 	byte y, z;
 	while (length) {
@@ -70,18 +59,10 @@ static void uncompressplane(byte *plane, byte *outptr, uint16 length) {
 	}
 }
 
-static void convertcompressedclip(uint16 height, uint16 width) {
-	debug(10, "convertcompressedclip: height %d width %d", height, width);
-
-	byte *plane0;
-	byte *plane1;
-	byte *plane2;
-	byte *plane3;
+static void convertcompressedclip(const byte *src, byte *dst, uint16 height, uint16 width) {
+	const byte *plane0, *plane1, *plane2, *plane3;
 	byte *uncbuffer;
-	byte *uncptr0;
-	byte *uncptr1;
-	byte *uncptr2;
-	byte *uncptr3;
+	byte *uncptr0, *uncptr1, *uncptr2, *uncptr3;
 	byte *uncbfrout;
 	byte *uncbfroutptr;
 	uint16 length, i, j, k, word1, word2, word3, word4, cliplength;
@@ -95,18 +76,18 @@ static void convertcompressedclip(uint16 height, uint16 width) {
 	
 	length = width / 16;
 	length *= height;
-	plane0 = READ_BE_UINT16(clipptr) + READ_BE_UINT16(clipptr + 2) + clipptr; clipptr += 4; plane0 += 4;
-	plane1 = READ_BE_UINT16(clipptr) + READ_BE_UINT16(clipptr + 2) + clipptr; clipptr += 4; plane1 += 4;
-	plane2 = READ_BE_UINT16(clipptr) + READ_BE_UINT16(clipptr + 2) + clipptr; clipptr += 4; plane2 += 4;
-	plane3 = READ_BE_UINT16(clipptr) + READ_BE_UINT16(clipptr + 2) + clipptr; clipptr += 4; plane3 += 4;
+	plane0 = READ_BE_UINT16(src) + READ_BE_UINT16(src + 2) + src; src += 4; plane0 += 4;
+	plane1 = READ_BE_UINT16(src) + READ_BE_UINT16(src + 2) + src; src += 4; plane1 += 4;
+	plane2 = READ_BE_UINT16(src) + READ_BE_UINT16(src + 2) + src; src += 4; plane2 += 4;
+	plane3 = READ_BE_UINT16(src) + READ_BE_UINT16(src + 2) + src; src += 4; plane3 += 4;
 	plane0 -= 4;
 	plane1 -= 8;
 	plane2 -= 12;
 	plane3 -= 16;
 	uncptr0 = uncbuffer;
-	uncptr1 = uncptr0+(length*2);
-	uncptr2 = uncptr1+(length*2);
-	uncptr3 = uncptr2+(length*2);
+	uncptr1 = uncptr0+(length * 2);
+	uncptr2 = uncptr1+(length * 2);
+	uncptr3 = uncptr2+(length * 2);
 	uncompressplane(plane0, uncptr0, length);
 	uncompressplane(plane1, uncptr1, length);
 	uncompressplane(plane2, uncptr2, length);
@@ -152,8 +133,8 @@ static void convertcompressedclip(uint16 height, uint16 width) {
 	cliplength = 0;
 	while(1) {
 		if (length == 1) {
-			*clipoutptr++ = 0xFF; bufoutend++;
-			*clipoutptr++ = *uncbuffer; bufoutend++;
+			*dst++ = 0xFF;
+			*dst++ = *uncbuffer;
 			cliplength += 2;
 			break;
 		}
@@ -164,8 +145,8 @@ static void convertcompressedclip(uint16 height, uint16 width) {
 			n = 1;
 			y = *uncbuffer++;
 			if (length == 0) {
-				*clipoutptr++ = n; bufoutend++;
-				*clipoutptr++ = x; bufoutend++;
+				*dst++ = n;
+				*dst++ = x;
 				cliplength += 2;
 				break;
 			}
@@ -179,8 +160,8 @@ static void convertcompressedclip(uint16 height, uint16 width) {
 				if(n == 127)
 					break;
 			}
-			*clipoutptr++ = n; bufoutend++;
-			*clipoutptr++ = x; bufoutend++;
+			*dst++ = n;
+			*dst++ = x;
 			cliplength += 2;
 			uncbuffer--;
 			if (length == 0)
@@ -188,10 +169,9 @@ static void convertcompressedclip(uint16 height, uint16 width) {
 			length++;
 		} else {
 			n =- 1;
-			uncptr0 = clipoutptr;
-			clipoutptr++;
-			bufoutend++;
-			*clipoutptr++ = x; bufoutend++;
+			uncptr0 = dst;
+			dst++;
+			*dst++ = x;
 			cliplength += 2;
 			x = y;
 			y = *uncbuffer++;
@@ -204,7 +184,7 @@ static void convertcompressedclip(uint16 height, uint16 width) {
 				if (n == -127)
 					break;
 				n--;
-				*clipoutptr++ = x; bufoutend++;
+				*dst++ = x;
 				cliplength++;
 				x = y;
 				y = *uncbuffer++;
@@ -219,33 +199,30 @@ static void convertcompressedclip(uint16 height, uint16 width) {
 			length += 2;
 		}
 	}
-	if (cliplength > (height * width / 2))
-		warning("Negative compression. Clip %d. %d bytes bigger.",clipnumber,(cliplength-(height*width/2)));
+
 	free(free_uncbuffer);
 	free(free_uncbfrout);
 }
 
-static void convertclip(uint32 offset, uint16 height, uint16 width) {
-	debug(10, "convertclip: height %d width %d", height, width);
-
+byte *AGOSEngine::convertclip(const byte *src, uint height, uint width, byte flags) {
 	uint32 length, i, j;
 	uint16 word1, word2, word3, word4;
 	byte outbyte, outbyte1;
-	clipptr = offset + buffer;
-	clipoutptr = bufoutend + bufferout;
-	WRITE_BE_UINT32(bufptrout, bufoutend); bufptrout += 4;
-	WRITE_BE_UINT16(bufptrout, height); bufptrout += 2;
-	WRITE_BE_UINT16(bufptrout, width); bufptrout += 2;
-	if (height > 32000) {
-		convertcompressedclip((uint16)(height - 32768), width);
+
+	free(_planarBuf);
+	_planarBuf = (byte *)malloc(width * height);
+	byte *dst = _planarBuf;
+
+	if (flags & 0x80) {
+		convertcompressedclip(src, dst, height, width);
 	} else {
 		width /= 16;
 		length = height * width;
 		for (i = 0; i < length; i++) {
-			word1 = READ_BE_UINT16(clipptr); clipptr += 2;
-			word2 = READ_BE_UINT16(clipptr); clipptr += 2;
-			word3 = READ_BE_UINT16(clipptr); clipptr += 2;
-			word4 = READ_BE_UINT16(clipptr); clipptr += 2;
+			word1 = READ_BE_UINT16(src); src += 2;
+			word2 = READ_BE_UINT16(src); src += 2;
+			word3 = READ_BE_UINT16(src); src += 2;
+			word4 = READ_BE_UINT16(src); src += 2;
 			for (j = 0; j < 8; j++) {
 				outbyte = ((word1 / 32768) + ((word2 / 32768) * 2) + ((word3 / 32768) * 4) + ((word4 / 32768) * 8));
 				word1 <<= 1;
@@ -257,67 +234,12 @@ static void convertclip(uint32 offset, uint16 height, uint16 width) {
 				word2 <<= 1;
 				word3 <<= 1;
 				word4 <<= 1;
-				*clipoutptr++ = (outbyte * 16 + outbyte1); bufoutend++;
+				*dst++ = (outbyte * 16 + outbyte1);
 			}
 		}
 	}
-}
 
-void AGOSEngine::convertAmiga(byte *srcBuf, int32 fileSize) {
-	// TODO Better detection of full screen images
-	if ((getGameType() == GType_WW && fileSize == 178624) ||
-		fileSize == 64800) {
-		byte *dstBuf = allocBlock (fileSize);
-		memcpy(dstBuf, srcBuf, fileSize);
-		return;
-	}
-
-	uint32 clipoffset, outlength;
-	uint16 clipwidth, clipheight;
-	byte *clipsend;
-
-	debug(10, "convertAmiga: fizeSize %d", fileSize);
-
-	buffer = (byte *)malloc((int32)fileSize);
-	memcpy(buffer, srcBuf, fileSize);
-	bufptr = buffer;
-
-	bufferout = (byte *)malloc((int32)(fileSize * 2));
-	bufptr = buffer;
-	bufptrout = bufferout;
-	clipnumber = 0;
-	while(1) {
-		clipoffset = READ_BE_UINT32(bufptr); bufptr += 4;
-		clipheight = READ_BE_UINT16(bufptr); bufptr += 2;
-		clipwidth = READ_BE_UINT16(bufptr); bufptr += 2;
-		if (clipoffset != 0)
-			break;
-		WRITE_BE_UINT32(bufptrout, 0); bufptrout += 4;
-		WRITE_BE_UINT32(bufptrout, 0); bufptrout += 4;
-		clipnumber++;
-	}
-
-	clipsend = buffer + clipoffset;
-	bufoutend = clipoffset;
-	while (bufptr <= clipsend) {
-		if (clipoffset != 0) {
-			convertclip(clipoffset, clipheight, clipwidth);
-		} else {
-			WRITE_BE_UINT32(bufptrout, 0); bufptrout += 4;
-			WRITE_BE_UINT32(bufptrout, 0); bufptrout += 4;
-		}
-		clipoffset = READ_BE_UINT32(bufptr); bufptr += 4;
-		clipheight = READ_BE_UINT16(bufptr); bufptr += 2;
-		clipwidth = READ_BE_UINT16(bufptr); bufptr += 2;
-		clipnumber++;
-	}
-	outlength = bufoutend;
-	debug(10, "convertAmiga: outlength %d",outlength);
-
-	byte *dstBuf = allocBlock (outlength);
-	memcpy(dstBuf, bufferout, outlength);
-	free(buffer);
-	free(bufferout);
+	return _planarBuf;
 }
 
 } // End of namespace AGOS

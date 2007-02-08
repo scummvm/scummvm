@@ -210,7 +210,8 @@ enum GameFeatures {
 	GF_CRUNCHED_GAMEPC = 1 << 3,
 	GF_ZLIBCOMP        = 1 << 4,
 	GF_32COLOR         = 1 << 5,
-	GF_DEMO            = 1 << 6
+	GF_PLANAR          = 1 << 6,
+	GF_DEMO            = 1 << 7
 };
 
 enum GameFileTypes {

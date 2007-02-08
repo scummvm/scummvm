@@ -419,6 +419,8 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	memset(_lettersToPrintBuf, 0, sizeof(_lettersToPrintBuf));
 
+	_planarBuf = 0;
+
 	_vgaTickCounter = 0;
 
 	_moviePlay = 0;

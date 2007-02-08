@@ -617,6 +617,10 @@ void AGOSEngine::vc10_draw() {
 	if (height == 0 || width == 0)
 		return;
 
+	if (getFeatures() & GF_PLANAR) {
+		state.depack_src = convertclip(state.depack_src, height, width * 16, flags);
+	}
+
 	if (_dumpImages)
 		dumpSingleBitmap(_vgaCurZoneNum, state.image, state.depack_src, width, height,
 											 state.palette);

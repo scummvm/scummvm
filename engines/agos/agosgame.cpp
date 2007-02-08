@@ -16,7 +16,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_ELVIRA1,
 		GID_ELVIRA1,
-		GF_OLD_BUNDLE | GF_CRUNCHED
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
 
 	// Elvira 1 - English Amiga Demo
@@ -37,7 +37,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_ELVIRA1,
 		GID_ELVIRA1,
-		GF_OLD_BUNDLE | GF_CRUNCHED | GF_DEMO
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR | GF_DEMO
 	},
 
 	// Elvira 1 - English Atari ST Floppy
@@ -59,7 +59,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_ELVIRA1,
 		GID_ELVIRA1,
-		GF_OLD_BUNDLE | GF_CRUNCHED
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
 
 	// Elvira 1 - French Atari ST Floppy
@@ -81,7 +81,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_ELVIRA1,
 		GID_ELVIRA1,
-		GF_OLD_BUNDLE | GF_CRUNCHED
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
 
 	// Elvira 1 - English DOS Floppy
@@ -171,7 +171,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_ELVIRA2,
 		GID_ELVIRA2,
-		GF_OLD_BUNDLE | GF_CRUNCHED
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
 
 	// Elvira 2 - English Atari ST Floppy
@@ -195,7 +195,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_ELVIRA2,
 		GID_ELVIRA2,
-		GF_OLD_BUNDLE | GF_CRUNCHED
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
 
 	// Elvira 2 - French Atari ST Floppy
@@ -219,7 +219,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_ELVIRA2,
 		GID_ELVIRA2,
-		GF_OLD_BUNDLE | GF_CRUNCHED
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
 
 
@@ -365,7 +365,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_WW,
 		GID_WAXWORKS,
-		GF_OLD_BUNDLE | GF_CRUNCHED | GF_CRUNCHED_GAMEPC
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_CRUNCHED_GAMEPC | GF_PLANAR
 	},
 
 	// Waxworks - English DOS Floppy
@@ -459,7 +459,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_SIMON1,
 		GID_SIMON1AMIGA,
-		GF_32COLOR | GF_CRUNCHED | GF_OLD_BUNDLE
+		GF_32COLOR | GF_CRUNCHED | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
 	// Simon the Sorcerer 1 - English Amiga ECS Demo
@@ -481,7 +481,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_SIMON1,
 		GID_SIMON1AMIGA,
-		GF_32COLOR | GF_CRUNCHED | GF_CRUNCHED_GAMEPC | GF_OLD_BUNDLE | GF_DEMO
+		GF_32COLOR | GF_CRUNCHED | GF_CRUNCHED_GAMEPC | GF_OLD_BUNDLE | GF_PLANAR | GF_DEMO
 	},
 
 	// Simon the Sorcerer 1 - English Amiga AGA Floppy
@@ -503,7 +503,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_SIMON1,
 		GID_SIMON1AMIGA,
-		GF_CRUNCHED | GF_OLD_BUNDLE
+		GF_CRUNCHED | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
 	// Simon the Sorcerer 1 - French Amiga AGA Floppy
@@ -525,7 +525,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_SIMON1,
 		GID_SIMON1AMIGA,
-		GF_CRUNCHED | GF_OLD_BUNDLE
+		GF_CRUNCHED | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
 	// Simon the Sorcerer 1 - German Amiga AGA Floppy
@@ -547,7 +547,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_SIMON1,
 		GID_SIMON1AMIGA,
-		GF_CRUNCHED | GF_OLD_BUNDLE
+		GF_CRUNCHED | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
 	// Simon the Sorcerer 1 - English Amiga CD32
@@ -569,7 +569,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_SIMON1,
 		GID_SIMON1CD32,
-		GF_TALKIE | GF_OLD_BUNDLE
+		GF_TALKIE | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
 	// Simon the Sorcerer 1 - English Amiga CD32 alternative?
@@ -591,7 +591,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_SIMON1,
 		GID_SIMON1CD32,
-		GF_TALKIE | GF_OLD_BUNDLE
+		GF_TALKIE | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
 	// Simon the Sorcerer 1 - English DOS Floppy Demo

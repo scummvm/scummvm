@@ -479,6 +479,7 @@ protected:
 	uint8 _currentPalette[1024];
 	uint8 _displayPalette[1024];
 
+	byte *_planarBuf;
 	byte _videoBuf1[32000];
 	uint16 _videoWindows[128];
 
@@ -1335,7 +1336,8 @@ protected:
 	byte *getBackGround();
 	byte *getScaleBuf();
 
-	void convertAmiga(byte *srcBuf, int32 fileSize);
+	byte *convertclip(const byte *src, uint height, uint width, byte flags);
+
 	bool decrunchFile(byte *src, byte *dst, uint32 size);
 	void loadVGABeardFile(uint id);
 	void loadVGAVideoFile(uint id, uint type);

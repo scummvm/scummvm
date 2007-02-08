@@ -718,28 +718,13 @@ void AGOSEngine::loadVGAVideoFile(uint id, uint type) {
 				error("loadVGAVideoFile: Read failed");
 
 			dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
-			if (type == 2) {
-				dst = (byte *)malloc(dstSize);
-				decrunchFile(srcBuffer, dst, srcSize);
-				convertAmiga(dst, dstSize);
-				free(dst);
-			} else {
-				dst = allocBlock (dstSize + extraBuffer);
-				decrunchFile(srcBuffer, dst, srcSize);
-			}
+			dst = allocBlock (dstSize + extraBuffer);
+			decrunchFile(srcBuffer, dst, srcSize);
 			free(srcBuffer);
 		} else {
-			if (getGameId() == GID_SIMON1CD32 && type == 2) {
-				dst = (byte *)malloc(dstSize);
-				if (in.read(dst, dstSize) != dstSize)
-					error("loadVGAVideoFile: Read failed");
-				convertAmiga(dst, dstSize);
-				free(dst);
-			} else {
-				dst = allocBlock(dstSize + extraBuffer);
-				if (in.read(dst, dstSize) != dstSize)
-					error("loadVGAVideoFile: Read failed");
-			}
+			dst = allocBlock(dstSize + extraBuffer);
+			if (in.read(dst, dstSize) != dstSize)
+				error("loadVGAVideoFile: Read failed");
 		}
 		in.close();
 	} else {
