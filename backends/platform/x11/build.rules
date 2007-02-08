@@ -1,7 +1,0 @@
-# Build settings for the X11 backend
-MODULES  += backends/x11
-OBJS    += backends/x11/x11.o
-DEFINES += -DUNIX -DX11_BACKEND
-LDFLAGS += -L/usr/X11R6/lib -L/usr/local/lib
-INCLUDES+= -I/usr/X11R6/include
-LIBS    += -lpthread -lXext -lX11

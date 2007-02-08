@@ -1,9 +1,0 @@
-# Build settings for the SDL backend
-MODULES  += backends/sdl
-DEFINES  += -DUNIX
-INCLUDES += `sdl-config --cflags`
-LIBS     += `sdl-config --libs`
-
-# Uncomment this in addition to the above if you compile on Mac OS X
-# DEFINES += -DMACOSX
-# LIBS	+= -framework QuickTime -framework AudioUnit

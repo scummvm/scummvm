@@ -79,7 +79,7 @@ $(EXECUTABLE):  $(OBJS)
 
 distclean: clean
 	$(RM_REC) $(DEPDIRS)
-	$(RM) build.rules config.h config.mk config.log
+	$(RM) config.h config.mk config.log
 
 clean:
 	$(RM) $(OBJS) $(EXECUTABLE)
