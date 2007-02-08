@@ -400,9 +400,12 @@ void KyraEngine_v3::realInit() {
 	musicUpdate(0);
 	musicUpdate(0);
 
-	assert(loadLanguageFile("ITEMS.", _itemList));
-	assert(loadLanguageFile("C_CODE.", _cCodeFile));
-	assert(loadLanguageFile("SCENES.", _scenesList));
+	if (!loadLanguageFile("ITEMS.", _itemList))
+		error("couldn't load ITEMS");
+	if (!loadLanguageFile("C_CODE.", _cCodeFile))
+		error("couldn't load C_CODE");
+	if (!loadLanguageFile("SCENES.", _scenesList))
+		error("couldn't load SCENES");
 
 	assert(_unkBuffer5 && _unkBuffer6 && _unkBuffer7 && _costpalData && _unkBuffer9 &&
 			_unkWSAPtr && _unkPage2 && _itemList && _cCodeFile && _scenesList);
