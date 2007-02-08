@@ -475,6 +475,10 @@ int KyraEngine::drawShadedBoxCallback(Button *button) {
 
 void KyraEngine::setGUILabels() {
 	int offset = 0;
+	int offsetOptions = 0;
+	int offsetMainMenu = 0;
+	int offsetOn = 0;
+
 	int walkspeedGarbageOffset = 36;
 	int menuLabelGarbageOffset = 0;
 	
@@ -486,10 +490,16 @@ void KyraEngine::setGUILabels() {
 		} else if (_flags.lang == Common::FR_FRA) {
 			offset = 6;
 		}
+		offsetOn = offsetMainMenu = offsetOptions = offset;
 		walkspeedGarbageOffset = 48;
 	} else if (_flags.lang == Common::ES_ESP) {
-		offset = -4;
+		offsetOn = offsetMainMenu = offsetOptions = offset = -4;
 		menuLabelGarbageOffset = 72;
+	} else if (_flags.platform == Common::kPlatformFMTowns) {
+		offset = 1;
+		offsetOptions = 10;
+		offsetOn = 0;
+		walkspeedGarbageOffset = 0;
 	}
 	
 	assert(offset + 27 < _guiStringsSize);
@@ -532,22 +542,22 @@ void KyraEngine::setGUILabels() {
 	_menu[1].item[1].itemString = _guiStrings[23 + offset];
 		
 	// Music is
-	_menu[5].item[0].labelString = _guiStrings[26 + offset];
+	_menu[5].item[0].labelString = _guiStrings[26 + offsetOptions];
 	// Sounds are
-	_menu[5].item[1].labelString = _guiStrings[27 + offset];
+	_menu[5].item[1].labelString = _guiStrings[27 + offsetOptions];
 	// Walk speed
-	_menu[5].item[2].labelString = &_guiStrings[24 + offset][walkspeedGarbageOffset];
+	_menu[5].item[2].labelString = &_guiStrings[24 + offsetOptions][walkspeedGarbageOffset];
 	// Text speed
-	_menu[5].item[4].labelString = _guiStrings[25 + offset];
+	_menu[5].item[4].labelString = _guiStrings[25 + offsetOptions];
 	// Main Menu
-	_menu[5].item[5].itemString = &_guiStrings[19 + offset][menuLabelGarbageOffset];
+	_menu[5].item[5].itemString = &_guiStrings[19 + offsetMainMenu][menuLabelGarbageOffset];
 	
 	if (_flags.isTalkie) {
 		// Text & Voice
 		_voiceTextString = _guiStrings[28 + offset];
 	}
-	_textSpeedString = _guiStrings[25 + offset];
-	_onString =  _guiStrings[20 + offset];
+	_textSpeedString = _guiStrings[25 + offsetOptions];
+	_onString =  _guiStrings[20 + offsetOn];
 	_offString =  _guiStrings[21 + offset];
 }
 
