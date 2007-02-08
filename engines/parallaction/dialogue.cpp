@@ -546,19 +546,18 @@ void runDialogue(SpeakData *data) {
 
 int16 selectAnswer(Question *q, StaticCnv *cnv) {
 
-	int16 v6 = 0;
 	int16 numAvailableAnswers = 0;
 	int16 _si = 0;
 	int16 _di = 0;
 
-	for (; q->_answers[v6]; v6++) {
-		if (_answerBalloonY[v6] == SKIPPED_ANSWER) continue;
+	int16 i = 0;
+	for (; q->_answers[i]; i++) {
+		if (_answerBalloonY[i] == SKIPPED_ANSWER) continue;
 
-		_di = v6;
+		_di = i;
 		numAvailableAnswers++;
 	}
-
-	_answerBalloonY[v6] = 2000;
+	_answerBalloonY[i] = 2000;
 
 	if (numAvailableAnswers == 1) {
 
@@ -594,7 +593,7 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 		_si = getHoverAnswer(_mousePos._x, _mousePos._y, q);
 
 		if (_si != v2) {
-			if (_si != -1) {
+			if (v2 != -1) {
 				_vm->_graphics->displayWrappedString(
 					q->_answers[v2],
 					_answerBalloonX[v2],
@@ -624,6 +623,8 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 			);
 
 		}
+
+        g_system->delayMillis(30);
 
 		v2 = _si;
 	}
