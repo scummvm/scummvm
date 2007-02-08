@@ -110,13 +110,13 @@ Dialogue *parseDialogue(ArchivedFile *file) {
 						byte _al = _vm->searchTable(_tokens[v56]+2, v60);
 						vB4->_noFlags[_di] |= 1 << (_al - 1);
 					} else {
-						byte _al = _vm->searchTable(_tokens[v56]+2, v60);
+						byte _al = _vm->searchTable(_tokens[v56], v60);
 						vB4->_yesFlags[_di] |= 1 << (_al - 1);
 					}
 
 					v56++;
 
-				} while (!scumm_stricmp(_tokens[v56], "|"));
+				} while (!scumm_stricmp(_tokens[v56++], "|"));
 
 			}
 
