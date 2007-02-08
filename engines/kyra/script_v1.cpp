@@ -622,9 +622,7 @@ int KyraEngine::o1_restoreAllObjectBackgrounds(ScriptState *script) {
 
 int KyraEngine::o1_setCustomPaletteRange(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setCustomPaletteRange(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
-	uint8 *screenPal = _screen->_currentPalette;
-	memcpy(&screenPal[stackPos(1)*3], _specialPalettes[stackPos(0)], stackPos(2)*3);
-	_screen->setScreenPalette(screenPal);
+	memcpy(_screen->getPalette(1) + stackPos(1)*3, _specialPalettes[stackPos(0)], stackPos(2)*3);
 	return 0;
 }
 
@@ -1265,8 +1263,7 @@ int KyraEngine::o1_setFireberryGlowPalette(ScriptState *script) {
 		}
 	}
 	const uint8 *palette = _specialPalettes[palIndex];
-	memcpy(&_screen->_currentPalette[684], palette, 44);
-	_screen->setScreenPalette(_screen->_currentPalette);
+	memcpy(_screen->getPalette(1) + 684, palette, 44);
 	return 0;
 }
 

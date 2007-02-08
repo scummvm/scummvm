@@ -55,7 +55,7 @@ void Sound::voicePlay(const char *file) {
 
 		_compressHandle.close();
 		_engine->resource()->getFileHandle(filenamebuffer, &fileSize, _compressHandle);
-		if (!_compressHandle.isOpen())
+	if (!_compressHandle.isOpen())
 			continue;
 		
 		_currentVocFile = _supportedCodes[i].streamFunc(&_compressHandle, fileSize);
@@ -454,7 +454,7 @@ void KyraEngine::snd_playSoundEffect(int track) {
 		if (track == 49) {
 			snd_playWanderScoreViaMap(56, 1);
 			return;
-		} else if (track == 10) {
+		} else if (track == 0 || track == 1 || track == 10) {
 			// I don't know what's supposed to happen here, but calling playSoundEffect will lead to crash
 			return;
 		}
