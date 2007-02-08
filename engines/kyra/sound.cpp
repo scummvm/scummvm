@@ -55,7 +55,7 @@ void Sound::voicePlay(const char *file) {
 
 		_compressHandle.close();
 		_engine->resource()->getFileHandle(filenamebuffer, &fileSize, _compressHandle);
-	if (!_compressHandle.isOpen())
+		if (!_compressHandle.isOpen())
 			continue;
 		
 		_currentVocFile = _supportedCodes[i].streamFunc(&_compressHandle, fileSize);
