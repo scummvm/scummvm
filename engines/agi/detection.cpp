@@ -102,78 +102,6 @@ namespace Agi {
 #define FANMADE(name,md5) FANMADE_LV(name,md5,Common::EN_ANY,0x2917)
 
 static const AGIGameDescription gameDescriptions[] = {
-	{
-		// Sarien Name == Black Cauldron (Apple IIgs) 1.0O 2/24/89 (CE)
-		{
-			"bc",
-			"1.0O 2/24/89 (CE)",
-			AD_ENTRY1("bcdir", "dc09d30b147242692f4f85b9811962db"),
-			Common::EN_ANY,
-			Common::kPlatformApple2GS,
-		},
-		GType_V3,
-		0,
-		0x3149,
-	},
-
-
-	{
-		// Sarien Name == Black Cauldron (PC) 2.00 6/14/87 [AGI 2.439]
-		{
-			"bc",
-			"2.00 6/14/87",
-			AD_ENTRY1("logdir", "7f598d4712319b09d7bd5b3be10a2e4a"),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-		},
-		GType_V2,
-		0,
-		0x2440,
-	},
-
-
-	{
-		// Sarien Name == Black Cauldron (PC 5.25") 2.10 11/10/88 [AGI 3.002.098]
-		{
-			"bc",
-			"5.25\" 2.10 11/10/88",
-			AD_ENTRY1("bcdir", "0c5a9acbcc7e51127c34818e75806df6"),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-		},
-		GType_V3,
-		0,
-		0x3149,
-	},
-
-
-	{
-		// Sarien Name == Donald Duck's Playground (ST) 1.0A 8/8/86
-		{
-			"ddp",
-			"1.0A 8/8/86",
-			AD_ENTRY1("logdir", "64388812e25dbd75f7af1103bc348596"),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-		},
-		GType_V2,
-		0,
-		0x2272,
-	},
-
-	{
-		// reported by Filippos (thebluegr) in bugreport #1654500
-		{
-			"ddp",
-			"1.0C",
-			AD_ENTRY1s("logdir", "550971d196f65190a5c760d2479406ef", 132),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-		},
-		GType_V2,
-		0,
-		0x2272,
-	},
 
 
 	{
@@ -210,7 +138,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == AGI Demo 2 (PC 3.5") 11/87 [AGI 2.915]
 		{
 			"agidemo",
-			"Demo 2 3.5\" 11/87",
+			"Demo 2 11/87 3.5\"",
 			AD_ENTRY1("logdir", "e8ebeb0bbe978172fe166f91f51598c7"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -225,7 +153,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == AGI Demo 2 (PC 5.25") 11/87 [v1] [AGI 2.915]
 		{
 			"agidemo",
-			"Demo 2 5.25\" 11/87 [version 1]",
+			"Demo 2 11/87 [version 1] 5.25\"",
 			AD_ENTRY1("logdir", "852ac303a374df62571642ca1e2d1f0a"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -240,7 +168,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == AGI Demo 2 (PC 5.25") 01/88 [v2] [AGI 2.917]
 		{
 			"agidemo",
-			"Demo 2 5.25\" 01/88 [version 2]",
+			"Demo 2 01/88 [version 2] 5.25\"",
 			AD_ENTRY1("logdir", "1503f02086ea9f388e7e041c039eaa69"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -267,11 +195,56 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 4 demo (PC) [AGI 3.002.102]
+		// Sarien Name == Black Cauldron (Amiga) 2.00 6/14/87
 		{
-			"kq4",
-			"Demo",
-			AD_ENTRY1("dmdir", "a3332d70170a878469d870b14863d0bf"),
+			"bc",
+			"2.00 6/14/87",
+			AD_ENTRY1("logdir", "7b01694af21213b4727bb94476f64eb5"),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+		GType_V2,
+		0,
+		0x2440,
+	},
+
+
+	{
+		// Sarien Name == Black Cauldron (Apple IIgs) 1.0O 2/24/89 (CE)
+		{
+			"bc",
+			"1.0O 2/24/89 (CE)",
+			AD_ENTRY1("bcdir", "dc09d30b147242692f4f85b9811962db"),
+			Common::EN_ANY,
+			Common::kPlatformApple2GS,
+		},
+		GType_V3,
+		0,
+		0x3149,
+	},
+
+
+	{
+		// Sarien Name == Black Cauldron (PC) 2.00 6/14/87 [AGI 2.439]
+		{
+			"bc",
+			"2.00 6/14/87",
+			AD_ENTRY1("logdir", "7f598d4712319b09d7bd5b3be10a2e4a"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2440,
+	},
+
+
+	{
+		// Sarien Name == Black Cauldron (PC 5.25") 2.10 11/10/88 [AGI 3.002.098]
+		{
+			"bc",
+			"2.10 11/10/88 5.25\"",
+			AD_ENTRY1("bcdir", "0c5a9acbcc7e51127c34818e75806df6"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -282,11 +255,26 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Xmas Card 1986 (PC) [AGI 2.272]
+		// Sarien Name == Donald Duck's Playground (Amiga) 1.0C
 		{
-			"xmascard",
-			"1986 [version 1]",
-			AD_ENTRY1("logdir", "3067b8d5957e2861e069c3c0011bd43d"),
+			"ddp",
+			"1.0C",
+			AD_ENTRY1("logdir", "550971d196f65190a5c760d2479406ef"),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+		GType_V2,
+		0,
+		0x2272,
+	},
+
+
+	{
+		// Sarien Name == Donald Duck's Playground (ST) 1.0A 8/8/86
+		{
+			"ddp",
+			"1.0A 8/8/86",
+			AD_ENTRY1("logdir", "64388812e25dbd75f7af1103bc348596"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 		},
@@ -297,10 +285,70 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
+		// reported by Filippos (thebluegr) in bugreport #1654500
+		{
+			"ddp",
+			"1.0C",
+			AD_ENTRY1s("logdir", "550971d196f65190a5c760d2479406ef", 132),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2272,
+	},
+
+
+	{
+		// Sarien Name == Gold Rush! (Amiga) 1.01 1/13/89 aka 2.05 3/9/89	# 2.316
+		{
+			"goldrush",
+			"1.01 1/13/89 aka 2.05 3/9/89",
+			AD_ENTRY1("dirs", "a1d4de3e75c2688c1e2ca2634ffc3bd8"),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+		GType_V3,
+		0,
+		0x3149,
+	},
+
+
+	{
+		// Sarien Name == Gold Rush! (Apple IIgs) 1.0M 2/28/89 (CE) aka 2.01 12/22/88
+		{
+			"goldrush",
+			"1.0M 2/28/89 (CE) aka 2.01 12/22/88",
+			AD_ENTRY1("grdir", "3f7b9ce62631434389f85371b11921d6"),
+			Common::EN_ANY,
+			Common::kPlatformApple2GS,
+		},
+		GType_V3,
+		0,
+		0x3149,
+	},
+
+
+	{
+		// Sarien Name == Gold Rush! (ST) 1.01 1/13/89 aka 2.01 12/22/88
+		{
+			"goldrush",
+			"1.01 1/13/89 aka 2.01 12/22/88",
+			AD_ENTRY1("grdir", "4dd4d50480a3d6c206fa227ce8142735"),
+			Common::EN_ANY,
+			Common::kPlatformAtariST,
+		},
+		GType_V3,
+		0,
+		0x3149,
+	},
+
+
+	{
 		// Sarien Name == Gold Rush! (PC 5.25") 2.01 12/22/88 [AGI 3.002.149]
 		{
 			"goldrush",
-			"5.25\" 2.01 12/22/88",
+			"2.01 12/22/88 5.25\"",
 			AD_ENTRY1("grdir", "db733d199238d4009a9e95f11ece34e9"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -310,11 +358,12 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x3149,
 	},
 
+
 	{
 		// Sarien Name == Gold Rush! (PC 3.5") 2.01 12/22/88 [AGI 3.002.149]
 		{
 			"goldrush",
-			"(IBM 3.5\") 2.01 12/22/88",
+			"2.01 12/22/88 3.5\"",
 			AD_ENTRY1("grdir", "6a285235745f69b4b421403659497216"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -322,6 +371,36 @@ static const AGIGameDescription gameDescriptions[] = {
 		GType_V3,
 		0,
 		0x3149,
+	},
+
+
+	{
+		// Sarien Name == King's Quest 1 (Amiga) 1.0U		# 2.082
+		{
+			"kq1",
+			"1.0U",
+			AD_ENTRY1("logdir", "246c695324f1c514aee2b904fa352fad"),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+		GType_V2,
+		0,
+		0x2440,
+	},
+
+
+	{
+		// Sarien Name == King's Quest 1 (ST) 1.0V
+		{
+			"kq1",
+			"1.0V",
+			AD_ENTRY1("logdir", "c3a017e556c4b0eece366a4cd9abb657"),
+			Common::EN_ANY,
+			Common::kPlatformAtariST,
+		},
+		GType_V2,
+		0,
+		0x2272,
 	},
 
 
@@ -359,10 +438,25 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == King's Quest 1 (PC 5.25"/3.5") 2.0F [AGI 2.917]
 		{
 			"kq1",
-			"5.25\"/3.5\" 2.0F",
+			"2.0F 5.25\"/3.5\"",
 			AD_ENTRY1("logdir", "10ad66e2ecbd66951534a50aedcd0128"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2917,
+	},
+
+
+	{
+		// Sarien Name == King's Quest 2 (IIgs) 2.0A 6/16/88 (CE)
+		{
+			"kq2",
+			"2.0A 6/16/88 (CE)",
+			AD_ENTRY1("logdir", "5203c8b95250a2ecfee93ddb99414753"),
+			Common::EN_ANY,
+			Common::kPlatformApple2GS,
 		},
 		GType_V2,
 		0,
@@ -419,7 +513,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == King's Quest 2 (PC 5.25"/3.5") 2.2 [AGI 2.426]
 		{
 			"kq2",
-			"5.25\"/3.5\" 2.2",
+			"2.2 5.25\"/3.5\"",
 			AD_ENTRY1("logdir", "b944c4ff18fb8867362dc21cc688a283"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -427,6 +521,81 @@ static const AGIGameDescription gameDescriptions[] = {
 		GType_V2,
 		0,
 		0x2917,
+	},
+
+
+	{
+		// Sarien Name == King's Quest 3 (Amiga) 1.01 11/8/86
+		{
+			"kq3",
+			"1.01 11/8/86",
+			AD_ENTRY1("logdir", "8ab343306df0e2d98f136be4e8cfd0ef"),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+		GType_V2,
+		0,
+		0x2440,
+	},
+
+
+	{
+		// Sarien Name == King's Quest 3 (ST) 1.02 11/18/86
+		{
+			"kq3",
+			"1.02 11/18/86",
+			AD_ENTRY1("logdir", "8846df2654302b623217ba8bd6d657a9"),
+			Common::EN_ANY,
+			Common::kPlatformAtariST,
+		},
+		GType_V2,
+		0,
+		0x2272,
+	},
+
+
+	{
+		// Sarien Name == King's Quest 3 (Mac) 2.14 3/15/88
+		{
+			"kq3",
+			"2.14 3/15/88",
+			AD_ENTRY1("logdir", "7639c0da5ce94848227d409351fabda2"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+		},
+		GType_V2,
+		0,
+		0x2440,
+	},
+
+
+	{
+		// Sarien Name == King's Quest 3 (IIgs) 2.0A 8/28/88 (CE)
+		{
+			"kq3",
+			"2.0A 8/28/88 (CE)",
+			AD_ENTRY1("logdir", "ac30b7ca5a089b5e642fbcdcbe872c12"),
+			Common::EN_ANY,
+			Common::kPlatformApple2GS,
+		},
+		GType_V2,
+		0,
+		0x2917,
+	},
+
+
+	{
+		// Sarien Name == King's Quest 3 (Amiga) 2.15 11/15/89	# 2.333
+		{
+			"kq3",
+			"2.15 11/15/89",
+			AD_ENTRY1("dirs", "8e35bded2bc5cf20f5eec2b15523b155"),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+		GType_V3,
+		0,
+		0x3086,
 	},
 
 
@@ -449,7 +618,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == King's Quest 3 (PC 5.25") 2.00 5/25/87 [AGI 2.435]
 		{
 			"kq3",
-			"5.25\" 2.00 5/25/87",
+			"2.00 5/25/87 5.25\"",
 			AD_ENTRY1("logdir", "18aad8f7acaaff760720c5c6885b6bab"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -464,7 +633,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == King's Quest 3 (Mac) 2.14 3/15/88
 		{
 			"kq3",
-			"5.25\" 2.14 3/15/88",
+			"2.14 3/15/88 5.25\"",
 			AD_ENTRY1("logdir", "7650e659c7bc0f1e9f8a410b7a2e9de6"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -479,7 +648,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == King's Quest 3 (PC 3.5") 2.14 3/15/88 [AGI 2.936]
 		{
 			"kq3",
-			"3.5\" 2.14 3/15/88",
+			"2.14 3/15/88 3.5\"",
 			AD_ENTRY1("logdir", "d3d17b77b3b3cd13246749231d9473cd"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -491,10 +660,40 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
+		// Sarien Name == King's Quest 4 (PC 5.25") 2.3 9/27/88 [AGI 3.002.086]
+		{
+			"kq4",
+			"2.3 9/27/88",
+			AD_ENTRY1("kq4dir", "6d7714b8b61466a5f5981242b993498f"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V3,
+		0,
+		0x3086,
+	},
+
+
+	{
+		// Sarien Name == King's Quest 4 (IIgs) 1.0K 11/22/88 (CE)
+		{
+			"kq4",
+			"1.0K 11/22/88",
+			AD_ENTRY1("kq4dir", "8536859331159f15012e35dc82cb154e"),
+			Common::EN_ANY,
+			Common::kPlatformApple2GS,
+		},
+		GType_V3,
+		0,
+		0x3086,
+	},
+
+
+	{
 		// Sarien Name == King's Quest 4 (PC 3.5") 2.0 7/27/88 [AGI 3.002.086]
 		{
 			"kq4",
-			"3.5\" 2.0 7/27/88",
+			"2.0 7/27/88 3.5\"",
 			AD_ENTRY1("kq4dir", "fe44655c42f16c6f81046fdf169b6337"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -509,7 +708,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == King's Quest 4 (PC 3.5") 2.2 9/27/88 [AGI 3.002.086]
 		{
 			"kq4",
-			"3.5\" 2.2 9/27/88",
+			"2.2 9/27/88 3.5\"",
 			AD_ENTRY1("kq4dir", "7470b3aeb49d867541fc66cc8454fb7d"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -517,6 +716,81 @@ static const AGIGameDescription gameDescriptions[] = {
 		GType_V3,
 		0,
 		0x3086,
+	},
+
+
+	{
+		// Sarien Name == King's Quest 4 demo (PC) [AGI 3.002.102]
+		{
+			"kq4",
+			"Demo",
+			AD_ENTRY1("dmdir", "a3332d70170a878469d870b14863d0bf"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V3,
+		0,
+		0x3149,
+	},
+
+
+	{
+		// Sarien Name == Leisure Suit Larry 1 (PC 5.25"/3.5") 1.00 6/1/87 [AGI 2.440]
+		{
+			"lsl1",
+			"1.00 6/1/87 5.25\"/3.5\"",
+			AD_ENTRY1("logdir", "1fe764e66857e7f305a5f03ca3f4971d"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2440,
+	},
+
+
+	{
+		// Sarien Name == Leisure Suit Larry 1 (ST) 1.04 6/18/87
+		{
+			"lsl1",
+			"1.04 6/18/87",
+			AD_ENTRY1("logdir", "8b579f8673fe9448c2538f5ed9887cf0"),
+			Common::EN_ANY,
+			Common::kPlatformAtariST,
+		},
+		GType_V2,
+		0,
+		0x2440,
+	},
+
+
+	{
+		// Sarien Name == Leisure Suit Larry 1 (Amiga) 1.05 6/26/87	# x.yyy
+		{
+			"lsl1",
+			"1.05 6/26/87",
+			AD_ENTRY1("logdir", "3f5d26d8834ca49c147fb60936869d56"),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+		GType_V2,
+		0,
+		0x2440,
+	},
+
+
+	{
+		// Sarien Name == Leisure Suit Larry 1 (IIgs) 1.0E
+		{
+			"lsl1",
+			"1.0E",
+			AD_ENTRY1("logdir", "5f9e1dd68d626c6d303131c119582ad4"),
+			Common::EN_ANY,
+			Common::kPlatformApple2GS,
+		},
+		GType_V2,
+		0,
+		0x2440,
 	},
 
 
@@ -539,7 +813,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == Leisure Suit Larry 1 (PC 5.25"/3.5") 1.00 6/1/87 [AGI 2.440]
 		{
 			"lsl1",
-			"5.25\"/3.5\" 1.00 6/1/87",
+			"1.00 6/1/87 5.25\"/3.5\"",
 			AD_ENTRY1("logdir", "1fe764e66857e7f305a5f03ca3f4971d"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -550,35 +824,18 @@ static const AGIGameDescription gameDescriptions[] = {
 	},
 
 
-#if 0
 	{
-		// Sarien Name == Mixed Up Mother Goose (PC) [AGI 2.915] (Broken)
+		// Sarien Name == Manhunter NY (ST) 1.03 10/20/88
 		{
-			"mixedup",
-			"[corrupt/OBJECT from disk 1]",
-			AD_ENTRY1("logdir", "e524655abf9b96a3b179ffcd1d0f79af"),
+			"mh1",
+			"1.03 10/20/88",
+			AD_ENTRY1("mhdir", "f2d58056ad802452d60776ee920a52a6"),
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformAtariST,
 		},
-		GType_V2,
+		GType_V3,
 		0,
-		0x2917,
-	},
-#endif
-
-
-	{
-		// Sarien Name == Mixed-Up Mother Goose (PC) [AGI 2.915]
-		{
-			"mixedup",
-			"",
-			AD_ENTRY1("logdir", "e524655abf9b96a3b179ffcd1d0f79af"),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-		},
-		GType_V2,
-		0,
-		0x2917,
+		0x3149,
 	},
 
 
@@ -611,6 +868,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x3149,
 	},
 
+
 	{
 		// reported by Filippos (thebluegr) in bugreport #1654500
 		// Sarien Name == Manhunter NY (PC 5.25") 1.22 8/31/88 [AGI 3.002.107]
@@ -626,6 +884,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x3149,
 	},
 
+
 	{
 		// Sarien Name == Manhunter NY (PC 3.5") 1.22 8/31/88 [AGI 3.002.102]
 		{
@@ -640,14 +899,182 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x3149,
 	},
 
+
+	{
+		// Sarien Name == Manhunter SF (ST) 1.0 7/29/89
+		{
+			"mh2",
+			"1.0 7/29/89",
+			AD_ENTRY1("mh2dir", "5e3581495708b952fea24438a6c7e040"),
+			Common::EN_ANY,
+			Common::kPlatformAtariST,
+		},
+		GType_V3,
+		0,
+		0x3149,
+	},
+
+
+	{
+		// Sarien Name == Manhunter SF (Amiga) 3.06 8/17/89		# 2.333
+		{
+			"mh2",
+			"3.06 8/17/89",
+			AD_ENTRY1("dirs", "b412e8a126368b76696696f7632d4c16"),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+		GType_V3,
+		0,
+		0x3086,
+	},
+
+
+	{
+		// Sarien Name == Manhunter SF (PC 5.25") 3.03 8/17/89 [AGI 3.002.149]
+		{
+			"mh2",
+			"3.03 8/17/89 5.25\"",
+			AD_ENTRY1("mh2dir", "b90e4795413c43de469a715fb3c1fa93"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V3,
+		0,
+		0x3149,
+	},
+
+
 	{
 		// Sarien Name == Manhunter SF (PC 3.5") 3.02 7/26/89 [AGI 3.002.149]
 		{
 			"mh2",
-			"3.5\" 3.02 7/26/89",
+			"3.02 7/26/89 3.5\"",
 			AD_ENTRY1("mh2dir", "6fb6f0ee2437704c409cf17e081ba152"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
+		},
+		GType_V3,
+		0,
+		0x3149,
+	},
+
+
+	{
+		// Sarien Name == Mixed-Up Mother Goose (Amiga) 1.1
+		{
+			"mixedup",
+			"1.1",
+			AD_ENTRY1("dirs", "5c1295fe6daaf95831195ba12894dbd9"),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+		GType_V3,
+		0,
+		0x3086,
+	},
+
+
+	{
+		// Sarien Name == Mixed Up Mother Goose (IIgs)
+		{
+			"mixedup",
+			"",
+			AD_ENTRY1("logdir", "3541954a7303467c6df87665312ffb6a"),
+			Common::EN_ANY,
+			Common::kPlatformApple2GS,
+		},
+		GType_V2,
+		0,
+		0x2917,
+	},
+
+
+	{
+		// Sarien Name == Mixed-Up Mother Goose (PC) [AGI 2.915]
+		{
+			"mixedup",
+			"",
+			AD_ENTRY1("logdir", "e524655abf9b96a3b179ffcd1d0f79af"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2917,
+	},
+
+
+#if 0
+	{
+		// Sarien Name == Mixed Up Mother Goose (PC) [AGI 2.915] (Broken)
+		{
+			"mixedup",
+			"[corrupt/OBJECT from disk 1]",
+			AD_ENTRY1("logdir", "e524655abf9b96a3b179ffcd1d0f79af"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2917,
+	},
+#endif
+
+
+	{
+		// Sarien Name == Police Quest 1 (PC) 2.0E 11/17/87 [AGI 2.915]
+		{
+			"pq1",
+			"2.0E 11/17/87",
+			AD_ENTRY1("logdir", "2fd992a92df6ab0461d5a2cd83c72139"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2917,
+	},
+
+
+	{
+		// Sarien Name == Police Quest 1 (Mac) 2.0G 12/3/87
+		{
+			"pq1",
+			"2.0G 12/3/87",
+			AD_ENTRY1("logdir", "805750b66c1c5b88a214e67bfdca17a1"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+		},
+		GType_V2,
+		0,
+		0x2440,
+	},
+
+
+	{
+		// Sarien Name == Police Quest 1 (IIgs) 2.0B-88421
+		{
+			"pq1",
+			"2.0B-88421",
+			AD_ENTRY1("logdir", "e7c175918372336461e3811d594f482f"),
+			Common::EN_ANY,
+			Common::kPlatformApple2GS,
+		},
+		GType_V2,
+		0,
+		0x2917,
+	},
+
+
+	{
+		// Sarien Name == Police Quest 1 (Amiga) 2.0B 2/22/89	# 2.310
+		{
+			"pq1",
+			"2.0B 2/22/89",
+			AD_ENTRY1("dirs", "cfa93e5f2aa7378bddd10ad6746a2ffb"),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
 		},
 		GType_V3,
 		0,
@@ -689,10 +1116,10 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == Police Quest 1 (Mac) 2.0G 12/3/87
 		{
 			"pq1",
-			"5.25\"/ST 2.0G 12/03/87",
+			"2.0G 12/03/87 5.25\"/ST",
 			AD_ENTRY1("logdir", "231f3e28170d6e982fc0ced4c98c5c1c"),
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformMacintosh,
 		},
 		GType_V2,
 		0,
@@ -708,6 +1135,81 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "d194e5d88363095f55d5096b8e32fbbb"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2917,
+	},
+
+
+	{
+		// Sarien Name == Space Quest 1 (ST) 1.1A
+		{
+			"sq1",
+			"1.1A",
+			AD_ENTRY1("logdir", "6421fb64b0e6604c9dd065975d9279e9"),
+			Common::EN_ANY,
+			Common::kPlatformAtariST,
+		},
+		GType_V2,
+		0,
+		0x2440,
+	},
+
+
+	{
+		// Sarien Name == Space Quest 1 (PC) 1.1A [AGI 2.272]
+		{
+			"sq1",
+			"1.1A",
+			AD_ENTRY1("logdir", "8d8c20ab9f4b6e4817698637174a1cb6"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2272,
+	},
+
+
+	{
+		// Sarien Name == Space Quest 1 (Amiga) 1.2			# 2.082
+		{
+			"sq1",
+			"1.2",
+			AD_ENTRY1("logdir", "0b216d931e95750f1f4837d6a4b821e5"),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+		},
+		GType_V2,
+		0,
+		0x2440,
+	},
+
+
+	{
+		// Sarien Name == Space Quest 1 (Mac) 1.5D
+		{
+			"sq1",
+			"1.5D",
+			AD_ENTRY1("logdir", "ce88419aadd073d1c6682d859b3d8aa2"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+		},
+		GType_V2,
+		0,
+		0x2440,
+	},
+
+
+	{
+		// Sarien Name == Space Quest 1 (IIgs) 2.2
+		{
+			"sq1",
+			"2.2",
+			AD_ENTRY1("logdir", "64b9b3d04c1066d36e6a6e56187a83f7"),
+			Common::EN_ANY,
+			Common::kPlatformApple2GS,
 		},
 		GType_V2,
 		0,
@@ -749,7 +1251,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == Space Quest 1 (PC 5.25"/3.5") 2.2 [AGI 2.426/2.917]
 		{
 			"sq1",
-			"5.25\"/3.5\" 2.2",
+			"2.2 5.25\"/3.5\"",
 			AD_ENTRY1("logdir", "5d67630aba008ec5f7f9a6d0a00582f4"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -757,6 +1259,37 @@ static const AGIGameDescription gameDescriptions[] = {
 		GType_V2,
 		0,
 		0x2440,
+	},
+
+
+
+	{
+		// Sarien Name == Space Quest 2 (PC 3.5") 2.0D [AGI 2.936]
+		{
+			"sq2",
+			"2.0D 3.5\"",
+			AD_ENTRY1("logdir", "85390bde8958c39830e1adbe9fff87f3"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2936,
+	},
+
+
+	{
+		// Sarien Name == Space Quest 2 (IIgs) 2.0A 7/25/88 (CE)
+		{
+			"sq2",
+			"2.0A 7/25/88 (CE)",
+			AD_ENTRY1("logdir", "5dfdac98dd3c01fcfb166529f917e911"),
+			Common::EN_ANY,
+			Common::kPlatformApple2GS,
+		},
+		GType_V2,
+		0,
+		0x2936,
 	},
 
 
@@ -795,7 +1328,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == Space Quest 2 (PC 5.25") 2.0A [AGI 2.912]
 		{
 			"sq2",
-			"5.25\" 2.0A",
+			"2.0A 5.25\"",
 			AD_ENTRY1s("logdir", "ad7ce8f800581ecc536f3e8021d7a74d", 423),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -805,11 +1338,12 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x2917,
 	},
 
+
 	{
 		// Sarien Name == Space Quest 2 (PC 3.5") 2.0A [AGI 2.912]
 		{
 			"sq2",
-			"3.5\" 2.0A",
+			"2.0A 3.5\"",
 			AD_ENTRY1s("logdir", "6c25e33d23b8bed42a5c7fa63d588e5c", 423),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -819,11 +1353,12 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x2917,
 	},
 
+
 	{
 		// Sarien Name == Space Quest 2 (PC 5.25"/ST) 2.0C/A [AGI 2.915]
 		{
 			"sq2",
-			"5.25\"/ST 2.0C [A]",
+			"2.0C/A 5.25\"/ST",
 			AD_ENTRY1("logdir", "bd71fe54869e86945041700f1804a651"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -838,7 +1373,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == Space Quest 2 (PC 3.5") 2.0F [AGI 2.936]
 		{
 			"sq2",
-			"3.5\" 2.0F",
+			"2.0F 3.5\"",
 			AD_ENTRY1("logdir", "28add5125484302d213911df60d2aded"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -847,6 +1382,22 @@ static const AGIGameDescription gameDescriptions[] = {
 		0,
 		0x2936,
 	},
+
+
+	{
+		// Sarien Name == Xmas Card 1986 (PC) [AGI 2.272]
+		{
+			"xmascard",
+			"1986 [version 1]",
+			AD_ENTRY1("logdir", "3067b8d5957e2861e069c3c0011bd43d"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+		},
+		GType_V2,
+		0,
+		0x2272,
+	},
+
 
 	FANMADE("2 Player Demo", "4279f46b3cebd855132496476b1d2cca"),
 	FANMADE("AGI Contest 1 Template", "d879aed25da6fc655564b29567358ae2"),
