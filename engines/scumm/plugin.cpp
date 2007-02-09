@@ -975,7 +975,7 @@ static Common::String generateFilenameForDetection(const GameFilenamePattern &gf
 }
 
 struct DetectorDesc {
-  FilesystemNode node;
+	FilesystemNode node;
 	Common::String md5;
 	uint8 md5sum[16];
 	const MD5Table *md5Entry;	// Entry of the md5 table corresponding to this file, if any.
@@ -1346,7 +1346,6 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 
 using namespace Scumm;
 
-
 GameList Engine_SCUMM_gameIDList() {
 	const PlainGameDescriptor *g = gameDescriptions;
 	GameList games;
@@ -1393,6 +1392,27 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 		GameDescriptor dg(x->game.gameid, findDescriptionFromGameID(x->game.gameid),
 				x->language, x->game.platform);
 		dg.updateDesc(x->extra);	// Append additional information, if set, to the description.
+
+		// Compute and set the preferred target name for this game.
+		// Based on generateComplexID() in advancedDetector.cpp.
+		// TODO: Maybe also take the "extra" field into account, somehow?
+		// I.e. in order to distinguish  the target names of e.g. EGA and
+		// VGA versions.
+		// Alternatively: add a "preferredTargetPrefix" field to the gameVariantsTable
+		// (with value 0 by default, implying "use the gameid as prefix").
+		// If we do that, 
+		Common::String res(x->game.gameid);
+
+		if (x->game.platform != Common::kPlatformPC && x->game.platform != Common::kPlatformUnknown) {
+			res = res + "-" + Common::getPlatformAbbrev(x->game.platform);
+		}
+
+		if (x->language != Common::EN_ANY && x->language != Common::UNK_LANG) {
+			res = res + "-" + Common::getLanguageCode(x->language);
+		}
+
+		dg["preferredtarget"] = res;
+
 		detectedGames.push_back(dg);
 	}
 
