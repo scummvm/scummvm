@@ -1975,8 +1975,6 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot standard character p=(%d,%d,%d) bs=%d\n%s", 
 			h.x(), h.y(), h.roomNumber(), h.blockedState(), buffer);
 	}
-	if (h.hotspotId() == 1005)
-		printf("XYZZY Woozy\n");
 
 	// Handle any active talk dialog
 	h.handleTalkDialog();
