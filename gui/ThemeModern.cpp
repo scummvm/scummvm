@@ -257,6 +257,7 @@ void ThemeModern::drawDialogBackground(const Common::Rect &r, uint16 hints, Stat
 
 	if ((hints & THEME_HINT_SAVE_BACKGROUND) && !(hints & THEME_HINT_FIRST_DRAW) && !_forceRedraw) {
 		restoreBackground(r2, true);
+		addDirtyRect(r2);
 		return;
 	}
 
@@ -286,11 +287,9 @@ void ThemeModern::drawText(const Common::Rect &r, const Common::String &str, Sta
 	if (!_initOk)
 		return;
 
-	Common::Rect r2(r.left, r.top, r.right, r.top+getFontHeight(font));
 	uint32 color;
 
-	restoreBackground(r2);
-	r2.bottom += 4;
+	restoreBackground(r);
 
 	if (inverted) {
 		_screen.fillRect(r, _colors[kTextInvertedBackground]);
@@ -300,7 +299,7 @@ void ThemeModern::drawText(const Common::Rect &r, const Common::String &str, Sta
 	}
 
 	getFont(font)->drawString(&_screen, str, r.left, r.top, r.width(), color, convertAligment(align), deltax, useEllipsis);
-	addDirtyRect(r2);
+	addDirtyRect(r);
 }
 
 void ThemeModern::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, State state) {
@@ -370,6 +369,7 @@ void ThemeModern::drawWidgetBackground(const Common::Rect &r, uint16 hints, Widg
 
 	if ((hints & THEME_HINT_SAVE_BACKGROUND) && !(hints & THEME_HINT_FIRST_DRAW) && !_forceRedraw) {
 		restoreBackground((hints & THEME_HINT_USE_SHADOW) ? r2 : r);
+		addDirtyRect((hints & THEME_HINT_USE_SHADOW) ? r2 : r);
 		return;
 	}
 
