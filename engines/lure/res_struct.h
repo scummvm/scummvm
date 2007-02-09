@@ -221,11 +221,12 @@ struct RoomExitIndexedHotspotResource {
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
-// Class template for a derived list that destroys the contained
-// object when the record containing it is destroyed. It's not
-// perfect, since the underlying list doesn't have virtual
-// methods, but it's sufficient for my usage
-
+/**
+ * Class template for a derived list that destroys the contained
+ * object when the record containing it is destroyed. It's not
+ * perfect, since the underlying list doesn't have virtual
+ * methods, but it's sufficient for my usage.
+ */
 template <class T>
 class ManagedList: public Common::List<T> {
 	typedef typename Common::List<T> Common_List;
@@ -255,8 +256,7 @@ public:
 	}
 };
 
-// Enumeration used for direction facings
-
+/** Enumeration used for direction facings */
 enum Direction {UP, DOWN, LEFT, RIGHT, NO_DIRECTION};
 
 // Support classes to hold loaded resources
