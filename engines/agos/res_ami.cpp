@@ -21,7 +21,7 @@
  *
  */
 
-// Conversion routines for planar graphics in Amiga verisions
+// Conversion routines for planar graphics in Amiga versions
 #include "common/stdafx.h"
 
 #include "agos/agos.h"
@@ -33,29 +33,23 @@ enum {
 	kMaxColorDepth = 5
 };
 
-static void uncompressplane(const byte *plane, byte *outptr, uint16 length) {
+static void uncompressplane(const byte *plane, byte *outptr, int length) {
 	while (length != 0) {
+		int wordlen;
 		char x = *plane++;
 		if (x >= 0) {
-			x++;
-			byte y = *plane++;
-			byte z = *plane++;
-			while (x != 0) {
-				*outptr++ = y;
-				*outptr++ = z;
-				if (--length == 0)
-					break;
-				x--;
+			wordlen = MIN<int>(x + 1, length);
+			uint16 w = READ_UINT16(plane); plane += 2;
+			for (int i = 0; i < wordlen; ++i) {
+				WRITE_UINT16(outptr, w); outptr += 2;
 			}
 		} else {
-			while (x != 0) {
-				*outptr++ = *plane++;
-				*outptr++ = *plane++;
-				if (--length == 0)
-					break;
-				x++;
-			}
+			wordlen = MIN<int>(-x, length);
+			memcpy(outptr, plane, wordlen * 2);
+			outptr += wordlen * 2;
+			plane += wordlen * 2;
 		}
+		length -= wordlen;
 	}
 }
 
@@ -63,7 +57,7 @@ static void bitplanetochunky(uint16 *w, uint8 colorDepth, uint8 *&dst) {
 	for (int j = 0; j < 8; j++) {
 		byte color1 = 0;
 		byte color2 = 0;
-		for (int p = 0; p < 5; ++p) {
+		for (int p = 0; p < colorDepth; ++p) {
 			if (w[p] & 0x8000) {
 				color1 |= 1 << p;
 			}
@@ -81,11 +75,10 @@ static void bitplanetochunky(uint16 *w, uint8 colorDepth, uint8 *&dst) {
 	}
 }
 
-static void convertcompressedclip(const byte *src, byte *dst, uint8 colorDepth, uint16 height, uint16 width) {
+static void convertcompressedclip(const byte *src, byte *dst, uint8 colorDepth, int height, int width) {
 	const byte *plane[kMaxColorDepth];
 	byte *uncptr[kMaxColorDepth];
-	uint32 length, i, j;
-	uint16 w[kMaxColorDepth];
+	int length, i, j;
 
 	byte *uncbfrout = (byte *)malloc(width * height);
 
@@ -100,6 +93,7 @@ static void convertcompressedclip(const byte *src, byte *dst, uint8 colorDepth, 
 
 	byte *uncbfroutptr = uncbfrout;
 	for (i = 0; i < length; ++i) {
+		uint16 w[kMaxColorDepth];
 		for (j = 0; j < colorDepth; ++j) {
 			w[j] = READ_BE_UINT16(plane[j]); plane[j] += 2;
 		}
@@ -122,9 +116,8 @@ static void convertcompressedclip(const byte *src, byte *dst, uint8 colorDepth, 
 }
 
 byte *AGOSEngine::convertclip(const byte *src, bool is32Colors, uint height, uint width, byte flags) {
+	int length, i, j;
 	uint8 colorDepth = is32Colors ? 5 : 4;
-
-	uint32 length, i, j;
 
 	free(_planarBuf);
 	_planarBuf = (byte *)malloc(width * height);
