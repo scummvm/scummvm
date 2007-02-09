@@ -541,24 +541,38 @@ byte *AGOSEngine::vc10_uncompressFlip(const byte *src, uint w, uint h) {
 }
 
 byte *AGOSEngine::vc10_flip(const byte *src, uint w, uint h) {
-	w *= 8;
-
 	byte *dstPtr;
 	uint i;
 
-	dstPtr = _videoBuf1 + w;
+	if (getFeatures() & GF_32COLOR) {
+		w *= 16;
+		dstPtr = _videoBuf1 + w;
 
-	do {
-		byte *dst = dstPtr;
-		for (i = 0; i != w; ++i) {
-			byte b = src[i];
-			b = (b >> 4) | (b << 4);
-			*--dst = b;
-		}
+		do {
+			byte *dst = dstPtr;
+			for (i = 0; i != w; ++i) {
+				*--dst = src[i];
+			}
 
-		src += w;
-		dstPtr += w;
-	} while (--h);
+			src += w;
+			dstPtr += w;
+		} while (--h);
+	} else {
+		w *= 8;
+		dstPtr = _videoBuf1 + w;
+
+		do {
+			byte *dst = dstPtr;
+			for (i = 0; i != w; ++i) {
+				byte b = src[i];
+				b = (b >> 4) | (b << 4);
+				*--dst = b;
+			}
+
+			src += w;
+			dstPtr += w;
+		} while (--h);
+	}
 
 	return _videoBuf1;
 }
@@ -580,10 +594,6 @@ void AGOSEngine::vc10_draw() {
 		state.palette = (_vcPtr[1] * 16);
 		_vcPtr += 2;
 	} else {
-		state.palette = 0;
-	}
-
-	if (getFeatures() & GF_32COLOR) {
 		state.palette = 0;
 	}
 
@@ -617,15 +627,29 @@ void AGOSEngine::vc10_draw() {
 	if (height == 0 || width == 0)
 		return;
 
-	if (getFeatures() & GF_PLANAR) {
-		state.depack_src = convertclip(state.depack_src, height, width * 16, flags);
-	}
-
 	if (_dumpImages)
 		dumpSingleBitmap(_vgaCurZoneNum, state.image, state.depack_src, width, height,
 											 state.palette);
-	// Check if image is compressed
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+	if (getFeatures() & GF_PLANAR) {
+		bool is32Colors = false;
+		if (getGameType() == GType_SIMON1) {
+			if (((_lockWord & 0x20) && !state.palette) || state.palette == 0xC0 ||
+			(getFeatures() & GF_32COLOR)) {
+				is32Colors = true;
+			}
+		}
+
+		state.depack_src = convertclip(state.depack_src, is32Colors, height, width * 16, flags);
+
+		// converted planar clip is already uncompressed
+		if (state.flags & kDFCompressedFlip) {
+			state.flags &= ~kDFCompressedFlip;
+			state.flags |= kDFFlip;
+		}
+		if (state.flags & kDFCompressed) {
+			state.flags &= ~kDFCompressed;
+		}
+	} else if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		if (flags & 0x80) {
 			state.flags |= kDFCompressed;
 		}
@@ -674,6 +698,8 @@ void AGOSEngine::vc10_draw() {
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		drawImages_Feeble(&state);
+	} else if (getFeatures() & GF_32COLOR) {
+		drawImages_Amiga(&state);
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		drawImages_Simon(&state);
 	} else {

@@ -1278,6 +1278,7 @@ protected:
 	bool drawImages_clip(VC10_state *state);
 
 	void drawImages(VC10_state *state);
+	void drawImages_Amiga(VC10_state *state);
 	void drawImages_Simon(VC10_state *state);
 	void drawImages_Feeble(VC10_state *state);
 
@@ -1336,7 +1337,7 @@ protected:
 	byte *getBackGround();
 	byte *getScaleBuf();
 
-	byte *convertclip(const byte *src, uint height, uint width, byte flags);
+	byte *convertclip(const byte *src, bool is32Colors, uint height, uint width, byte flags);
 
 	bool decrunchFile(byte *src, byte *dst, uint32 size);
 	void loadVGABeardFile(uint id);

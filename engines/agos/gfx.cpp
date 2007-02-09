@@ -425,36 +425,30 @@ void AGOSEngine::drawImages_Simon(VC10_state *state) {
 			dst = state->surf_addr + w * 2;		/* edi */
 
 			h = state->draw_height;
-			if ((getGameType() == GType_SIMON1) && getBitFlag(88)) {
-				/* transparency */
-				do {
-					if (mask[0] & 0xF0) {
-						if ((dst[0] & 0x0F0) == 0x20)
+			do {
+				if ((getGameType() == GType_SIMON1) && getBitFlag(88)) {
+					/* transparency */
+						if (mask[0] & 0xF0) {
+							if ((dst[0] & 0x0F0) == 0x20)
+								dst[0] = src[0];
+						}
+						if (mask[0] & 0x0F) {
+							if ((dst[1] & 0x0F0) == 0x20)
+								dst[1] = src[1];
+						}
+				} else {
+					/* no transparency */
+						if (mask[0] & 0xF0)
 							dst[0] = src[0];
-					}
-					if (mask[0] & 0x0F) {
-						if ((dst[1] & 0x0F0) == 0x20)
+						if (mask[0] & 0x0F)
 							dst[1] = src[1];
-					}
-					mask++;
-					dst += state->surf_pitch;
-					src += state->surf2_pitch;
-				} while (--h);
-			} else {
-				/* no transparency */
-				do {
-					if (mask[0] & 0xF0)
-						dst[0] = src[0];
-					if (mask[0] & 0x0F)
-						dst[1] = src[1];
-					mask++;
-					dst += state->surf_pitch;
-					src += state->surf2_pitch;
-				} while (--h);
-			}
+				}
+				mask++;
+				dst += state->surf_pitch;
+				src += state->surf2_pitch;
+			} while (--h);
 		} while (++w != state->draw_width);
-	} else if ((((_lockWord & 0x20) && state->palette == 0) || state->palette == 0xC0) &&
-		getPlatform() != Common::kPlatformAmiga) {
+	} else if ((((_lockWord & 0x20) && state->palette == 0) || state->palette == 0xC0)) {
 		const byte *src;
 		byte *dst;
 		uint h, i;
@@ -586,6 +580,61 @@ void AGOSEngine::drawImages_Simon(VC10_state *state) {
 				src += state->width * 8;
 			} while (--state->draw_height);
 		}
+	}
+}
+
+void AGOSEngine::drawImages_Amiga(VC10_state *state) {
+	uint8 *dst;
+	const byte *src;
+	const uint16 *vlut = &_videoWindows[_windowNum * 4];
+
+	if (drawImages_clip(state) == 0)
+		return;
+
+	uint xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
+	uint yoffs = (vlut[1] - _videoWindows[17] + state->y);
+
+	state->surf2_addr += xoffs + yoffs * state->surf_pitch;
+	state->surf_addr += xoffs + yoffs * state->surf2_pitch;
+
+	if (state->flags & kDFMasked) {
+		const byte *mask = state->depack_src + (state->width * state->y_skip * 16) + (state->x_skip * 8);
+		src = state->surf2_addr;
+		dst = state->surf_addr;
+
+		state->draw_width *= 2;
+
+		uint h = state->draw_height;
+		do {
+			for (uint i = 0; i != state->draw_width; i++) {
+				if ((getGameType() == GType_SIMON1) && getBitFlag(88)) {
+					/* transparency */
+					if (mask[i] & 1 && (dst[i] & 1) == 0x20)
+						dst[i] = src[i];
+				} else {
+					/* no transparency */
+					if (mask[i] & 1)
+						dst[i] = src[i];
+				}
+			}
+			dst += state->surf_pitch;
+			src += state->surf2_pitch;
+			mask += state->width * 16;
+		} while (--h);
+	} else {
+		src = state->depack_src + (state->width * state->y_skip * 16) + (state->x_skip * 8);
+		dst = state->surf_addr;
+
+		state->draw_width *= 2;
+
+		uint h = state->draw_height;
+		do {
+			for (uint i = 0; i != state->draw_width; i++)
+				if ((state->flags & kDFNonTrans) || src[i])
+					dst[i] = src[i];
+			dst += _screenWidth;
+			src += state->width * 16;
+		} while (--h);
 	}
 }
 

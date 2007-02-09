@@ -29,29 +29,29 @@
 
 namespace AGOS {
 
+enum {
+	kMaxColorDepth = 5
+};
+
 static void uncompressplane(const byte *plane, byte *outptr, uint16 length) {
-	char x;
-	byte y, z;
-	while (length) {
-		x = *plane++;
+	while (length != 0) {
+		char x = *plane++;
 		if (x >= 0) {
-			x += 1;
-			y = *plane++;
-			z = *plane++;
-			while (x) {
+			x++;
+			byte y = *plane++;
+			byte z = *plane++;
+			while (x != 0) {
 				*outptr++ = y;
 				*outptr++ = z;
-				length--;
-				if (length == 0)
+				if (--length == 0)
 					break;
 				x--;
 			}
 		} else {
-			while (x) {
+			while (x != 0) {
 				*outptr++ = *plane++;
 				*outptr++ = *plane++;
-				length--;
-				if (length == 0)
+				if (--length == 0)
 					break;
 				x++;
 			}
@@ -59,183 +59,87 @@ static void uncompressplane(const byte *plane, byte *outptr, uint16 length) {
 	}
 }
 
-static void convertcompressedclip(const byte *src, byte *dst, uint16 height, uint16 width) {
-	const byte *plane0, *plane1, *plane2, *plane3;
-	byte *uncbuffer;
-	byte *uncptr0, *uncptr1, *uncptr2, *uncptr3;
-	byte *uncbfrout;
-	byte *uncbfroutptr;
-	uint16 length, i, j, k, word1, word2, word3, word4, cliplength;
-	byte outbyte, outbyte1, x, y;
-	char n;
-	uncbuffer = (byte *)malloc(height * width * 4);
-	uncbfrout = (byte *)malloc(height * width * 4);
-	
-	byte *free_uncbuffer = uncbuffer;
-	byte *free_uncbfrout = uncbfrout;
-	
-	length = width / 16;
-	length *= height;
-	plane0 = READ_BE_UINT16(src) + READ_BE_UINT16(src + 2) + src; src += 4; plane0 += 4;
-	plane1 = READ_BE_UINT16(src) + READ_BE_UINT16(src + 2) + src; src += 4; plane1 += 4;
-	plane2 = READ_BE_UINT16(src) + READ_BE_UINT16(src + 2) + src; src += 4; plane2 += 4;
-	plane3 = READ_BE_UINT16(src) + READ_BE_UINT16(src + 2) + src; src += 4; plane3 += 4;
-	plane0 -= 4;
-	plane1 -= 8;
-	plane2 -= 12;
-	plane3 -= 16;
-	uncptr0 = uncbuffer;
-	uncptr1 = uncptr0+(length * 2);
-	uncptr2 = uncptr1+(length * 2);
-	uncptr3 = uncptr2+(length * 2);
-	uncompressplane(plane0, uncptr0, length);
-	uncompressplane(plane1, uncptr1, length);
-	uncompressplane(plane2, uncptr2, length);
-	uncompressplane(plane3, uncptr3, length);
-	uncbfroutptr = uncbfrout;
-	for (i = 0; i < length; i++) {
-		word1=READ_BE_UINT16(uncptr0); uncptr0 += 2;
-		word2=READ_BE_UINT16(uncptr1); uncptr1 += 2;
-		word3=READ_BE_UINT16(uncptr2); uncptr2 += 2;
-		word4=READ_BE_UINT16(uncptr3); uncptr3 += 2;
-		for (j = 0; j < 8; j++) {
-			outbyte = ((word1 / 32768) + ((word2 / 32768) * 2) + ((word3 / 32768) * 4) + ((word4 / 32768) * 8));
-			word1 <<= 1;
-			word2 <<= 1;
-			word3 <<= 1;
-			word4 <<= 1;
-			outbyte1 = ((word1 / 32768) + ((word2 / 32768) * 2) + ((word3 / 32768) * 4) + ((word4 / 32768) * 8));
-			word1 <<= 1;
-			word2 <<= 1;
-			word3 <<= 1;
-			word4 <<= 1;
-			*uncbfroutptr++ = (outbyte * 16 + outbyte1);
-		}
-	}
-	uncptr0 = uncbuffer;
-	uncptr1 = uncbfrout;
-	uncptr2 = uncbfrout;
-	uncptr3 = uncbfrout;
-	for (i = 0; i < (width / 16); i++) {
-		for (k = 0; k < 8; k++) {
-			for (j = 0; j < height; j++) {
-				*uncptr0++ = *uncptr1;
-				uncptr1 += 8;
+static void bitplanetochunky(uint16 *w, uint8 colorDepth, uint8 *&dst) {
+	for (int j = 0; j < 8; j++) {
+		byte color1 = 0;
+		byte color2 = 0;
+		for (int p = 0; p < 5; ++p) {
+			if (w[p] & 0x8000) {
+				color1 |= 1 << p;
 			}
-			uncptr2++;
-			uncptr1 = uncptr2;
-		}
-		uncptr3 += (height * 8);
-		uncptr2 = uncptr3;
-		uncptr1 = uncptr2;
-	}
-	length *= 8;
-	cliplength = 0;
-	while(1) {
-		if (length == 1) {
-			*dst++ = 0xFF;
-			*dst++ = *uncbuffer;
-			cliplength += 2;
-			break;
-		}
-		x = *uncbuffer++;
-		y = *uncbuffer++;
-		length -= 2;
-		if (x == y) {
-			n = 1;
-			y = *uncbuffer++;
-			if (length == 0) {
-				*dst++ = n;
-				*dst++ = x;
-				cliplength += 2;
-				break;
+			if (w[p] & 0x4000) {
+				color2 |= 1 << p;
 			}
-			length--;
-			while (x == y) 	{
-				n++;
-				y = *uncbuffer++;
-				if (length == 0)
-					break;
-				length--;
-				if(n == 127)
-					break;
-			}
-			*dst++ = n;
-			*dst++ = x;
-			cliplength += 2;
-			uncbuffer--;
-			if (length == 0)
-				break;
-			length++;
+			w[p] <<= 2;
+		}
+		if (colorDepth > 4) {
+			*dst++ = color1;
+			*dst++ = color2;
 		} else {
-			n =- 1;
-			uncptr0 = dst;
-			dst++;
-			*dst++ = x;
-			cliplength += 2;
-			x = y;
-			y = *uncbuffer++;
-			if (length == 0) {
-				*uncptr0 = n;
-				break;
-			}
-			length--;
-			while (x != y) {
-				if (n == -127)
-					break;
-				n--;
-				*dst++ = x;
-				cliplength++;
-				x = y;
-				y = *uncbuffer++;
-				if (length == 0)
-					break;
-				length--;
-			}
-			*uncptr0 = n;
-			if (length == 0)
-				break;
-			uncbuffer -= 2;
-			length += 2;
+			*dst++ = (color1 << 4) | color2;
 		}
 	}
-
-	free(free_uncbuffer);
-	free(free_uncbfrout);
 }
 
-byte *AGOSEngine::convertclip(const byte *src, uint height, uint width, byte flags) {
+static void convertcompressedclip(const byte *src, byte *dst, uint8 colorDepth, uint16 height, uint16 width) {
+	const byte *plane[kMaxColorDepth];
+	byte *uncptr[kMaxColorDepth];
 	uint32 length, i, j;
-	uint16 word1, word2, word3, word4;
-	byte outbyte, outbyte1;
+	uint16 w[kMaxColorDepth];
+
+	byte *uncbfrout = (byte *)malloc(width * height);
+
+	length = (width + 15) / 16 * height;
+
+	for (i = 0; i < colorDepth; ++i) {
+		plane[i] = src + READ_BE_UINT16(src + i * 4) + READ_BE_UINT16(src + i * 4 + 2);
+		uncptr[i] = (uint8 *)malloc(length * 2);
+		uncompressplane(plane[i], uncptr[i], length);
+		plane[i] = uncptr[i];
+	}
+
+	byte *uncbfroutptr = uncbfrout;
+	for (i = 0; i < length; ++i) {
+		for (j = 0; j < colorDepth; ++j) {
+			w[j] = READ_BE_UINT16(plane[j]); plane[j] += 2;
+		}
+		bitplanetochunky(w, colorDepth, uncbfroutptr);
+	}
+
+	uncbfroutptr = uncbfrout;
+	const int chunkSize = colorDepth > 4 ? 16 : 8;
+	for (i = 0; i < width / 16; ++i) {
+		for (j = 0; j < height; ++j) {
+			memcpy(dst + width * chunkSize / 16 * j + chunkSize * i, uncbfroutptr, chunkSize);
+			uncbfroutptr += chunkSize;
+		}
+	}
+
+	free(uncbfrout);
+	for (i = 0; i < colorDepth; ++i) {
+		free(uncptr[i]);
+  	}
+}
+
+byte *AGOSEngine::convertclip(const byte *src, bool is32Colors, uint height, uint width, byte flags) {
+	uint8 colorDepth = is32Colors ? 5 : 4;
+
+	uint32 length, i, j;
 
 	free(_planarBuf);
 	_planarBuf = (byte *)malloc(width * height);
 	byte *dst = _planarBuf;
 
 	if (flags & 0x80) {
-		convertcompressedclip(src, dst, height, width);
+		convertcompressedclip(src, dst, colorDepth, height, width);
 	} else {
-		width /= 16;
-		length = height * width;
+		length = (width + 15) / 16 * height;
 		for (i = 0; i < length; i++) {
-			word1 = READ_BE_UINT16(src); src += 2;
-			word2 = READ_BE_UINT16(src); src += 2;
-			word3 = READ_BE_UINT16(src); src += 2;
-			word4 = READ_BE_UINT16(src); src += 2;
-			for (j = 0; j < 8; j++) {
-				outbyte = ((word1 / 32768) + ((word2 / 32768) * 2) + ((word3 / 32768) * 4) + ((word4 / 32768) * 8));
-				word1 <<= 1;
-				word2 <<= 1;
-				word3 <<= 1;
-				word4 <<= 1;
-				outbyte1 = ((word1 / 32768) + ((word2 / 32768) * 2) + ((word3 / 32768) * 4) + ((word4 / 32768) * 8));
-				word1 <<= 1;
-				word2 <<= 1;
-				word3 <<= 1;
-				word4 <<= 1;
-				*dst++ = (outbyte * 16 + outbyte1);
+			uint16 w[kMaxColorDepth];
+			for (j = 0; j < colorDepth; ++j) {
+				w[j] = READ_BE_UINT16(src); src += 2;
 			}
+			bitplanetochunky(w, colorDepth, dst);
 		}
 	}
 
