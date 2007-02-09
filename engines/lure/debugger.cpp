@@ -40,6 +40,7 @@ Debugger::Debugger(): GUI::Debugger() {
 	DCmd_Register("give",				WRAP_METHOD(Debugger, cmd_giveItem));
 	DCmd_Register("hotspots",			WRAP_METHOD(Debugger, cmd_hotspots));
 	DCmd_Register("hotspot",			WRAP_METHOD(Debugger, cmd_hotspot));
+	DCmd_Register("room",				WRAP_METHOD(Debugger, cmd_room));
 }
 
 static int strToInt(const char *s) {
@@ -344,6 +345,53 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 				pData.upFrame, pData.downFrame, pData.leftFrame, pData.rightFrame);		
 			DebugPrintf("Current frame = %d of %d\n", h->frameNumber(), h->numFrames());
 		}
+	}
+
+	DebugPrintf("\n");
+	return true;
+}
+
+bool Debugger::cmd_room(int argc, const char **argv) {
+	Resources &res = Resources::getReference();
+	StringData &strings = StringData::getReference();
+	char buffer[MAX_DESC_SIZE];
+
+	if (argc < 2) {
+		DebugPrintf("room <room_number>\n");
+		return true;
+	} 
+	int roomNumber = strToInt(argv[1]);
+	RoomData *room = res.getRoom(roomNumber);
+	if (!room) {
+		DebugPrintf("Unknown room specified\n");
+		return true;
+	}
+
+	// Show the room details
+	strings.getString(roomNumber, buffer);
+	DebugPrintf("room #%d - %s\n", roomNumber,  buffer);
+	strings.getString(room->descId, buffer);
+	DebugPrintf("%s\n", buffer);
+	DebugPrintf("Horizontal clipping = %d->%d walk area=(%d,%d)-(%d,%d)\n",
+		room->clippingXStart, room->clippingXEnd, 
+		room->walkBounds.left, room->walkBounds.top, 
+		room->walkBounds.right, room->walkBounds.bottom);
+
+	DebugPrintf("Exit hotspots:");
+	RoomExitHotspotList &exits = room->exitHotspots;
+	if (exits.empty())
+		DebugPrintf(" none\n");
+	else
+	{
+		RoomExitHotspotList::iterator i;
+		for (i = exits.begin(); i != exits.end(); ++i) {
+			RoomExitHotspotData *rec = *i;
+			
+			DebugPrintf("\nArea - (%d,%d)-(%d,%d) Room=%d Cursor=%d Hotspot=%xh",
+				rec->xs, rec->ys, rec->xe, rec->ye, rec->destRoomNumber, rec->cursorNum, rec->hotspotId);
+		}
+
+		DebugPrintf("\n");
 	}
 
 	DebugPrintf("\n");

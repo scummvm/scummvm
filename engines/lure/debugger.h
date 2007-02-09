@@ -43,6 +43,7 @@ protected:
 	bool cmd_giveItem(int argc, const char **argv);
 	bool cmd_hotspots(int argc, const char **argv);
 	bool cmd_hotspot(int argc, const char **argv);
+	bool cmd_room(int argc, const char **argv);
 };
 
 } // End of namespace Lure
