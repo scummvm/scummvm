@@ -163,6 +163,7 @@ void Game::execute() {
 						break;
 
 					case 267:  // keypad '/'
+					case '/':
 						room.setShowInfo(!room.showInfo());
 						break;
 
@@ -543,10 +544,8 @@ bool Game::GetTellActions() {
 	StringData &strings = StringData::getReference();
 	StringList &stringList = res.stringList();
 	char *statusLine = room.statusLine();
-	uint16 fullCommands[MAX_TELL_COMMANDS * 3 + 1];
-	uint16 *commands = &fullCommands[1];
+	uint16 *commands = &_tellCommands[1];
 	char *statusLinePos[MAX_TELL_COMMANDS][4];
-	int commandIndex = 0;
 	int paramIndex = 0;
 	uint16 selectionId;
 	char selectionName[MAX_DESC_SIZE];
@@ -555,11 +554,12 @@ bool Game::GetTellActions() {
 	const char *continueStrsList[2] = {stringList.getString(S_AND_THEN), stringList.getString(S_FINISH)};
 
 	// First word will be the destination character
-	fullCommands[0] = room.hotspotId();
+	_tellCommands[0] = room.hotspotId();
+	_numTellCommands = 0;
 
 	// Loop for getting tell commands
 
-	while ((commandIndex >= 0) && (commandIndex < MAX_TELL_COMMANDS)) {
+	while ((_numTellCommands >= 0) && (_numTellCommands < MAX_TELL_COMMANDS)) {
 
 		// Loop for each sub-part of commands: Action, up to two params, and 
 		// a "and then" selection to allow for more commands
@@ -567,7 +567,7 @@ bool Game::GetTellActions() {
 		while ((paramIndex >= 0) && (paramIndex <= 4)) {
 			// Update status line
 			statusLine += strlen(statusLine);
-			statusLinePos[commandIndex][paramIndex] = statusLine;
+			statusLinePos[_numTellCommands][paramIndex] = statusLine;
 			room.update();
 			screen.update();
 
@@ -577,13 +577,13 @@ bool Game::GetTellActions() {
 				action = PopupMenu::Show(0x6A07FD);
 				if (action == NONE) {
 					// Move backwards to prior specified action
-					--commandIndex;
-					if (commandIndex < 0) 
+					--_numTellCommands;
+					if (_numTellCommands < 0) 
 						paramIndex = -1;
 					else
 					{
 						paramIndex = 3;
-						statusLine = statusLinePos[commandIndex][paramIndex];
+						statusLine = statusLinePos[_numTellCommands][paramIndex];
 						*statusLine = '\0';
 					}
 					break;
@@ -593,15 +593,15 @@ bool Game::GetTellActions() {
 				sprintf(statusLine + strlen(statusLine), "%s ", stringList.getString(action));
 
 				// Handle any processing for the action
-				commands[commandIndex * 3] = (uint16) action;
-				commands[commandIndex * 3 + 1] = 0;
-				commands[commandIndex * 3 + 2] = 0;
+				commands[_numTellCommands * 3] = (uint16) action;
+				commands[_numTellCommands * 3 + 1] = 0;
+				commands[_numTellCommands * 3 + 2] = 0;
 				++paramIndex;
 				break;
 
 			case 1:
 				// First parameter
-				action = (Action) commands[commandIndex * 3]; 
+				action = (Action) commands[_numTellCommands * 3]; 
 				if (action != RETURN) {
 					// Prompt for selection
 					if ((action != USE) && (action != DRINK) && (action != GIVE)) 
@@ -612,7 +612,7 @@ bool Game::GetTellActions() {
 					if ((selectionId == 0xffff) || (selectionId == 0xfffe)) {
 						// Move back to prompting for action
 						--paramIndex;
-						statusLine = statusLinePos[commandIndex][paramIndex];
+						statusLine = statusLinePos[_numTellCommands][paramIndex];
 						*statusLine = '\0';
 						break;
 					}
@@ -627,7 +627,7 @@ bool Game::GetTellActions() {
 					}
 
 					// Store selected entry
-					commands[commandIndex * 3 + 1] = selectionId;
+					commands[_numTellCommands * 3 + 1] = selectionId;
 					strcat(statusLine, selectionName);
 				}
 
@@ -636,7 +636,7 @@ bool Game::GetTellActions() {
 
 			case 2:
 				// Second parameter
-				action = (Action) commands[commandIndex * 3]; 
+				action = (Action) commands[_numTellCommands * 3]; 
 				if (action == ASK)
 					strcat(statusLine, " for ");
 				else if (action == GIVE)
@@ -653,7 +653,7 @@ bool Game::GetTellActions() {
 				selectionId = PopupMenu::ShowItems(GET);
 				if ((selectionId == 0xfffe) || (selectionId == 0xffff)) {
 					--paramIndex;
-					statusLine = statusLinePos[commandIndex][paramIndex];
+					statusLine = statusLinePos[_numTellCommands][paramIndex];
 					*statusLine = '\0';
 				} else {
 					// Display the second parameter
@@ -662,16 +662,16 @@ bool Game::GetTellActions() {
 					strings.getString(hotspot->nameId, selectionName);
 					strcat(statusLine, selectionName);
 
-					commands[commandIndex * 3 + 2] = selectionId;
+					commands[_numTellCommands * 3 + 2] = selectionId;
 					++paramIndex;
 				}
 				break;
 
 			case 3:
 				// Prompting for "and then" for more commands
-				if (commandIndex == MAX_TELL_COMMANDS - 1) {
+				if (_numTellCommands == MAX_TELL_COMMANDS - 1) {
 					// No more commands allowed
-					++commandIndex;
+					++_numTellCommands;
 					paramIndex = -1;
 				} else {
 					// Only prompt if less than 8 commands entered
@@ -681,20 +681,20 @@ bool Game::GetTellActions() {
 					case 0:
 						// Get ready for next command
 						sprintf(statusLine + strlen(statusLine), " %s ", continueStrsList[0]);
-						++commandIndex;
+						++_numTellCommands;
 						paramIndex = 0;
 						break;
 
 					case 1:
 						// Increment for just selected command, and add a large amount
 						// to signal that the command sequence is complete
-						commandIndex += 1 + 0x100;
+						_numTellCommands += 1 + 0x100;
 						paramIndex = -1;
 						break;
 
 					default:
 						// Move to end of just completed command
-						action = (Action) commands[commandIndex * 3]; 
+						action = (Action) commands[_numTellCommands * 3]; 
 						if (action == RETURN)
 							paramIndex = 0;
 						else if ((action == ASK) || (action == GIVE) || (action == USE))
@@ -702,7 +702,7 @@ bool Game::GetTellActions() {
 						else
 							paramIndex = 1;
 					
-						statusLine = statusLinePos[commandIndex][paramIndex];
+						statusLine = statusLinePos[_numTellCommands][paramIndex];
 						*statusLine = '\0';
 					}
 				}
@@ -710,16 +710,13 @@ bool Game::GetTellActions() {
 		}
 	}
 
-	bool result = (commandIndex != -1);
+	bool result = (_numTellCommands != -1);
 	if (result) {
-		commandIndex &= 0xff;
-		assert((commandIndex > 0) && (commandIndex <= MAX_TELL_COMMANDS));
+		_numTellCommands &= 0xff;
+		assert((_numTellCommands > 0) && (_numTellCommands <= MAX_TELL_COMMANDS));
 		strcpy(statusLinePos[0][0], "..");
 		room.update();
 		screen.update();
-
-		CharacterScheduleEntry *playerRec = res.playerSupportRecord();
-  		playerRec->setDetails2(TELL, commandIndex * 3 + 1, &fullCommands[0]);
 	}
 
 	return result;
@@ -738,10 +735,16 @@ void Game::doAction(Action action, uint16 hotspotId, uint16 usedId) {
 	room.setCursorState(CS_ACTION);
 
 	// Set the action
-	CharacterScheduleEntry *rec = res.playerSupportRecord();
-	if (action != TELL)
-		rec->setDetails(action, hotspotId, usedId);
-	player->currentActions().addFront(DISPATCH_ACTION, rec, player->roomNumber());
+	if (action == TELL)
+	{
+		// Tell action needs special handling because of the variable length parameter list - add in a
+		// placeholder entry, and then replace it's details with the TELL command data
+		player->currentActions().addFront(NONE, player->roomNumber(), 0, 0);
+		player->currentActions().top().supportData().setDetails2(TELL, _numTellCommands * 3 + 1, &_tellCommands[0]);
+	}
+	else
+		// All other action types
+		player->currentActions().addFront(action, player->roomNumber(), hotspotId, usedId);
 }
 
 void Game::doShowCredits() {

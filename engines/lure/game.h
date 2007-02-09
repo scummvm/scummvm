@@ -43,6 +43,8 @@ private:
 	Debugger *_debugger;
 	bool _slowSpeedFlag, _soundFlag;
 	uint8 _state;
+	uint16 _tellCommands[MAX_TELL_COMMANDS * 3 + 1];
+	int _numTellCommands;
 
 	void handleMenuResponse(uint8 selection);
 	void handleClick();
