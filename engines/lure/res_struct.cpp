@@ -708,7 +708,7 @@ CharacterScheduleEntry *CharacterScheduleEntry::next() {
 }
 
 uint16 CharacterScheduleEntry::id() {
-	return (_parent == NULL) ? NULL : _parent->getId(this);
+	return (_parent == NULL) ? 0 : _parent->getId(this);
 }
 
 CharacterScheduleSet::CharacterScheduleSet(CharacterScheduleResource *rec, uint16 setId) {
