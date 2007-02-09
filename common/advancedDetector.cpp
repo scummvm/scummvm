@@ -163,9 +163,7 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
  * Makes gameid in form of
  * gameid-plaform-lang
  */
-static String generateComplexID(const String id, int listPos, const Common::ADParams &params) {
-	const ADGameDescription *desc = (const ADGameDescription *)(params.descs + listPos * params.descItemSize);
-
+static String generateComplexID(const String &id, const ADGameDescription *desc) {
 	String res(id);
 
 	if (desc->platform != kPlatformPC && desc->platform != kPlatformUnknown) {
@@ -187,7 +185,8 @@ GameList detectAllGames(
 
 	GameList detectedGames;
 	for (uint i = 0; i < matches.size(); i++) {
-		GameDescriptor desc(toGameDescriptor(*(const ADGameDescription *)(params.descs + matches[i] * params.descItemSize), params.list));
+		const ADGameDescription *adgDesc = (const ADGameDescription *)(params.descs + matches[i] * params.descItemSize);
+		GameDescriptor desc(toGameDescriptor(*adgDesc, params.list));
 
 		if (params.singleid != NULL) {
 			desc["preferredtarget"] = desc["gameid"];
@@ -198,7 +197,7 @@ GameList detectAllGames(
 			if (!desc.contains("preferredtarget"))
 				desc["preferredtarget"] = desc["gameid"];
 
-			desc["preferredtarget"] = generateComplexID(desc["preferredtarget"], matches[i], params);
+			desc["preferredtarget"] = generateComplexID(desc["preferredtarget"], adgDesc);
 		}
 
 		detectedGames.push_back(desc);
