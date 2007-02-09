@@ -859,7 +859,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"mh1",
 			"1.06 3/18/89",
-			AD_ENTRY1("mhdir", "92c6183042d1c2bb76236236a7d7a847"),
+			AD_ENTRY1("dirs", "92c6183042d1c2bb76236236a7d7a847"),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
