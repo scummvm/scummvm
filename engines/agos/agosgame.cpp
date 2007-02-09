@@ -792,6 +792,29 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE
 	},
 
+	// Simon the Sorcerer 1 - English DOS CD Demo
+	{
+		{
+			"simon1",
+			"CD Demo",
+
+			{
+	{ "simon.gme", 		GAME_GMEFILE,	"b4a7526ced425ba8ad0d548d0ec69900", -1},
+	{ "gamepc"	, 	GAME_BASEFILE,	"425c7d1957699d35abca7e12a08c7422", -1},
+	{ "icon.dat", 		GAME_ICONFILE, 	"22107c24dfb31b66ac503c28a6e20b19", -1},
+	{ "stripped.txt", 	GAME_STRFILE,	"d9de7542612d9f4e0819ad0df5eac56b", -1},
+	{ "tbllist", 		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC
+		},
+
+		GType_SIMON1,
+		GID_SIMON1TALKIE,
+		GF_TALKIE
+	},
+
 	// Simon the Sorcerer 1 - English DOS CD
 	{
 		{
