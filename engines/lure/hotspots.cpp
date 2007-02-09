@@ -984,7 +984,12 @@ void Hotspot::doAction(Action action, HotspotData *hotspot) {
 
 void Hotspot::doNothing(HotspotData *hotspot) {
 	_currentActions.pop();
-	if (hotspotId() == PLAYER_ID) {
+	if (!_currentActions.isEmpty())
+	{
+		setBlockedFlag(false);
+		currentActions().top().setAction(DISPATCH_ACTION);
+	}
+	else if (hotspotId() == PLAYER_ID) {
 		Room::getReference().setCursorState(CS_NONE);
 	}
 }
@@ -1322,6 +1327,7 @@ void Hotspot::doTell(HotspotData *hotspot) {
 			CharacterScheduleEntry &cmdData = _currentActions.top().supportData();
 			character->setStartRoomNumber(character->roomNumber());
 			character->currentActions().clear();
+			character->setBlockedFlag(false);
 
 			for (int index = 1; index < cmdData.numParams(); index += 3) {
 				character->currentActions().addBack((Action) cmdData.param(index),
@@ -1969,6 +1975,8 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot standard character p=(%d,%d,%d) bs=%d\n%s", 
 			h.x(), h.y(), h.roomNumber(), h.blockedState(), buffer);
 	}
+	if (h.hotspotId() == 1005)
+		printf("XYZZY Woozy\n");
 
 	// Handle any active talk dialog
 	h.handleTalkDialog();
@@ -2091,13 +2099,13 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		}
 		return;
 	}
-//loc_1040
+
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot standard character point 6");
 	CurrentAction action = actions.action();
 
 	switch (action) {
 	case NO_ACTION:
-		// TODO: HS[44h]=2, update movement
+		h.setCharacterMode(CHARMODE_IDLE);
 		break;
 
 	case DISPATCH_ACTION:
@@ -2163,35 +2171,43 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 			h.currentActions().top().setAction(WALKING);
 			h.setPosition(h.x(), h.y() & 0xfff8);
 		} else if (h.blockedState() == BS_FINAL) {
-			debugC(ERROR_DETAILED, kLureDebugAnimations, "BS_FINAL result handling");
+			// If this point is reached, the character twice hasn't found a walking path
+			debugC(ERROR_DETAILED, kLureDebugAnimations, "Character is hopelessly blocked");
 
 			res.pausedList().reset(h.hotspotId());
 			h.updateMovement();
+
 			assert(!h.currentActions().isEmpty());
 			h.currentActions().pop();
 
-			// TODO: HS[4Dh] = 0
+			h.setBlockedFlag(false);
 			h.setBlockedState(BS_NONE);
 			h.setCharacterMode(CHARMODE_PAUSED);
 			h.setDelayCtr(2);
 
-			assert(!h.currentActions().isEmpty());
-			if (h.roomNumber() != h.currentActions().top().roomNumber())
+			if (h.currentActions().isEmpty() || 
+				(h.currentActions().top().roomNumber() != h.roomNumber()))
 				h.setDestHotspot(0xffff);
 
 			if (bumpedPlayer)
 				h.setCharacterMode(CHARMODE_6);
+
 		} else {
-			debugC(ERROR_DETAILED, kLureDebugAnimations, "Non-standard result handling");
+			debugC(ERROR_DETAILED, kLureDebugAnimations, "Character is blocked from moving");
 			CharacterScheduleEntry *newEntry = res.charSchedules().getEntry(RETURN_SUPPORT_ID);
 			assert(newEntry);
-
+			
+			// Increment the blocked state 
 			h.setBlockedState((BlockedState) ((int) h.blockedState() + 1));
+			if (!h.blockedFlag())
+			{
+				// Not already handling blocked, so add a new dummy action so that the new
+				// action set below will not replace the existing one
+				h.currentActions().addFront(DISPATCH_ACTION, 0);
+				h.setBlockedFlag(true);
+			}
 
-			// TODO: Figure out usage of HS[4Dh] == 0
-			if (1)
-				h.currentActions().addFront(DISPATCH_ACTION, h.roomNumber());
-
+			// Set the current action
 			CurrentActionEntry &entry = h.currentActions().top();
 			entry.setAction(DISPATCH_ACTION);
 			entry.setSupportData(newEntry);
@@ -2943,8 +2959,10 @@ void HotspotTickHandlers::rackSerfAnimHandler(Hotspot &h) {
 		if (HotspotScript::execute(&h)) {
 			h.setLayer(255);
 			res.deactivateHotspot(h.hotspotId());
+
+			HotspotData *ratpouchData = res.getHotspot(RATPOUCH_ID);
+			ratpouchData->roomNumber = 4;
 			Hotspot *newHotspot = res.activateHotspot(RATPOUCH_ID);
-			newHotspot->setRoomNumber(4);
 			newHotspot->converse(PLAYER_ID, 0x9C, true);
 		}
 		break;
@@ -3020,9 +3038,8 @@ void HotspotTickHandlers::npcRoomChange(Hotspot &h) {
 
 		if (joinRec->blocked) {
 			// The room exit is blocked - so add an opening action
-			CharacterScheduleEntry &entry = h.npcSupportData();
-			entry.setDetails(OPEN, h.destHotspotId());
-			h.currentActions().addFront(DISPATCH_ACTION, &entry, h.roomNumber());
+			h.currentActions().addFront(OPEN, h.roomNumber(), h.destHotspotId(), 0);
+			h.setBlockedFlag(false);
 			return;
 		}
 	}
@@ -3461,6 +3478,7 @@ CurrentActionEntry::CurrentActionEntry(CurrentAction newAction, uint16 roomNum) 
 }
 
 CurrentActionEntry::CurrentActionEntry(CurrentAction newAction, CharacterScheduleEntry *data, uint16 roomNum) { 
+	assert(data->parent() != NULL);
 	_action = newAction; 
 	_supportData = data; 
 	_dynamicSupportData = false;
@@ -3469,6 +3487,7 @@ CurrentActionEntry::CurrentActionEntry(CurrentAction newAction, CharacterSchedul
 
 CurrentActionEntry::CurrentActionEntry(Action newAction, uint16 roomNum, uint16 param1, uint16 param2) {
 	_action = DISPATCH_ACTION;
+	_dynamicSupportData = true;
 	_supportData = new CharacterScheduleEntry();
 	uint16 params[2] = {param1, param2};
 	_supportData->setDetails2(newAction, 2, params);
@@ -3704,6 +3723,7 @@ bool Support::checkRoomChange(Hotspot &h) {
 	RoomExitData *exitRec = roomData->exits.checkExits(x, y);
 
 	if (exitRec) {
+		// End the current walking sequence
 		if (exitRec->sequenceOffset != 0xffff) {
 			Script::execute(exitRec->sequenceOffset);
 		} else {

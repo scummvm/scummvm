@@ -102,7 +102,10 @@ public:
 	uint16 roomNumber() { return _roomNumber; }
 	void setAction(CurrentAction newAction) { _action = newAction; }
 	void setRoomNumber(uint16 roomNum) { _roomNumber = roomNum; }
-	void setSupportData(CharacterScheduleEntry *newRec) { _supportData = newRec; }
+	void setSupportData(CharacterScheduleEntry *newRec) { 
+		assert((newRec == NULL) || (newRec->parent() != NULL));
+		_supportData = newRec; 
+	}
 	void setSupportData(uint16 entryId);
 
 	void saveToStream(WriteStream *stream);
@@ -241,7 +244,6 @@ private:
 	HotspotOverrideData *_override;
 	bool _skipFlag;
 	CurrentActionStack _currentActions;
-	CharacterScheduleEntry _npcSupportData;
 	PathFinder _pathFinder;
 	uint16 _frameWidth;
 	bool _frameStartsUsed;
@@ -367,6 +369,14 @@ public:
 		assert(_data);
 		_data->blockedState = newState; 
 	}
+	bool blockedFlag() {
+		assert(_data);
+		return _data->blockedFlag;
+	}
+	void setBlockedFlag(bool newValue) {
+		assert(_data);
+		_data->blockedFlag = newValue;
+	}
 	void setWalkFlag(bool value) { _walkFlag = value; }
 	void setStartRoomNumber(uint16 value) { _startRoomNumber = value; }
 	void setSize(uint16 newWidth, uint16 newHeight);
@@ -454,7 +464,6 @@ public:
 	void doAction();
 	void doAction(Action action, HotspotData *hotspot);
 	CurrentActionStack &currentActions() { return _currentActions; }
-	CharacterScheduleEntry &npcSupportData() { return _npcSupportData; }
 	PathFinder &pathFinder() { return _pathFinder; }
 	uint16 frameCtr() { return _frameCtr; }
 	void setFrameCtr(uint16 value) { _frameCtr = value; }

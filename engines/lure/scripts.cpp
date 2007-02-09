@@ -395,7 +395,9 @@ void Script::setNewSupportData(uint16 hotspotId, uint16 index, uint16 v3) {
 	CharacterScheduleEntry *entry = res.charSchedules().getEntry(dataId);
 
 	Hotspot *h = res.getActiveHotspot(hotspotId);
+	h->setBlockedFlag(false);
 	h->currentActions().addFront(DISPATCH_ACTION, entry, h->roomNumber());
+	h->setActionCtr(0);
 }
 
 // Replaces the existing current action with a new dispatch data entry
@@ -553,8 +555,8 @@ const char *scriptMethodNames[67] = {
 	"SET CHAR SPEAKING TO ITSELF",
 
 	"CHECK CELL DOOR", "PLAY MUSIC", "IS DOOR BLOCKED", "IS SKORL IN CELL",
-	NULL, NULL, NULL, "SET BLOCKING HOTSPOT SCRIPT", "DECREMENT # INVENTORY ITEMS",
-	"SET TALKING",
+	"PUSH BRICKS", "CHARACTER CHANGE ROOM", "PAUSE RATPOUCH", "SET BLOCKING HOTSPOT SCRIPT", 
+	"DECREMENT # INVENTORY ITEMS", "SET TALKING",
 
 	"SET ACTION CTR", "START SPEAKING", "DISABLE HOTSPOT", "CUT SACK",
 	"INCREASE # GROATS", "ENABLE HOTSPOT", NULL, "TRANSFORM PLAYER",
