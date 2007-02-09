@@ -303,6 +303,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	// Initialise runtime fields
 	actionCtr = 0;
 	blockedState = BS_NONE;
+	blockedFlag = false;
 	coveredFlag = VB_INITIAL;
 	talkMessageId = 0;
 	talkDestCharacterId = 0;
@@ -340,6 +341,7 @@ void HotspotData::saveToStream(WriteStream *stream) {
 	// Write out the runtime fields
 	stream->writeUint16LE(actionCtr);
 	stream->writeUint16LE(blockedState);
+	stream->writeByte((byte)blockedFlag);
 	stream->writeByte((byte)coveredFlag);
 	stream->writeUint16LE(talkMessageId);
 	stream->writeUint16LE(talkDestCharacterId);
@@ -378,6 +380,7 @@ void HotspotData::loadFromStream(ReadStream *stream) {
 	// Read in the runtime fields
 	actionCtr = stream->readUint16LE();
 	blockedState = (BlockedState)stream->readUint16LE();
+	blockedFlag = stream->readByte() != 0;
 	coveredFlag = (VariantBool)stream->readByte();
 	talkMessageId = stream->readUint16LE();
 	talkDestCharacterId = stream->readUint16LE();
@@ -705,7 +708,7 @@ CharacterScheduleEntry *CharacterScheduleEntry::next() {
 }
 
 uint16 CharacterScheduleEntry::id() {
-	return parent()->getId(this);
+	return (_parent == NULL) ? NULL : _parent->getId(this);
 }
 
 CharacterScheduleSet::CharacterScheduleSet(CharacterScheduleResource *rec, uint16 setId) {

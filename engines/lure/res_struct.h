@@ -428,6 +428,7 @@ public:
 	// Runtime fields
 	uint16 actionCtr;
 	BlockedState blockedState;
+	bool blockedFlag;
 	VariantBool coveredFlag;
 	uint16 talkMessageId;
 	uint16 talkDestCharacterId;
