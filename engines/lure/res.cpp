@@ -66,7 +66,6 @@ void Resources::freeData() {
 	delete _messagesData;
 	delete _cursors;
 	delete [] _charOffsets;
-	delete _playerSupportRecord;
 }
 
 struct AnimRecordTemp {
@@ -316,7 +315,6 @@ void Resources::reloadData() {
 	_messagesData = d.getEntry(MESSAGES_LIST_RESOURCE_ID);
 	_talkDialogData = d.getEntry(TALK_DIALOG_RESOURCE_ID);
 
-	_playerSupportRecord = new CharacterScheduleEntry();
 	_activeTalkData = NULL;
 	_currentAction = NONE;
 	_talkState = TALK_NONE;

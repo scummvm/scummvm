@@ -74,7 +74,6 @@ private:
 
 	int numCharOffsets;
 	uint16 *_charOffsets;
-	CharacterScheduleEntry *_playerSupportRecord;
 
 	TalkData *_activeTalkData;
 	TalkState _talkState;
@@ -133,7 +132,6 @@ public:
 			error("support data list index #1 was referenced - special handlng TODO");
 		return _charOffsets[index]; 
 	}
-	CharacterScheduleEntry *playerSupportRecord() { return _playerSupportRecord; }
 	void copyCursorTo(Surface *s, uint8 cursorNum, int16 x, int16 y);
 
 	uint16 numInventoryItems();
