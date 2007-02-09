@@ -305,10 +305,10 @@ static const AGIGameDescription gameDescriptions[] = {
 			"goldrush",
 			"1.01 1/13/89 aka 2.05 3/9/89",
 			{
-			{ "dirs", 0, "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399},
-			{ "vol.0", 0, "c5268f6968cdb7fd197a157981c2656e", 78902},
-			{ NULL, 0, NULL, 0}
-			}
+				{ "dirs", 0, "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399},
+				{ "vol.0", 0, "c5268f6968cdb7fd197a157981c2656e", 78902},
+				{ NULL, 0, NULL, 0}
+			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
@@ -384,10 +384,10 @@ static const AGIGameDescription gameDescriptions[] = {
 			"goldrush",
 			"2.01 12/22/88",
 			{
-			{ "grdir", 0, "db733d199238d4009a9e95f11ece34e9", 2399},
-			{ "vol.0", 0, "099cf878595fea15a4b2506d40b8ea53", 25070},
-			{ NULL, 0, NULL, 0}
-			}
+				{ "grdir", 0, "db733d199238d4009a9e95f11ece34e9", 2399},
+				{ "vol.0", 0, "099cf878595fea15a4b2506d40b8ea53", 25070},
+				{ NULL, 0, NULL, 0}
+			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 		},
@@ -613,10 +613,10 @@ static const AGIGameDescription gameDescriptions[] = {
 			"kq3",
 			"2.15 11/15/89",
 			{
-			{ "dirs", 0, "8e35bded2bc5cf20f5eec2b15523b155", 1805},
-			{ "vol.0", 0, "5fe2c6032ef90220d20e0d1a2e0877dd", 49984},
-			{ NULL, 0, NULL, 0}
-			}
+				{ "dirs", 0, "8e35bded2bc5cf20f5eec2b15523b155", 1805},
+				{ "vol.0", 0, "5fe2c6032ef90220d20e0d1a2e0877dd", 49984},
+				{ NULL, 0, NULL, 0}
+			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
@@ -948,10 +948,10 @@ static const AGIGameDescription gameDescriptions[] = {
 			"mh2",
 			"3.06 8/17/89",
 			{
-			{ "dirs", 0, "b412e8a126368b76696696f7632d4c16", 2573},
-			{ "vol.0", 0, "1156926cf3e63c19d735b962d4f4b48b", 118843},
-			{ NULL, 0, NULL, 0}
-			}
+				{ "dirs", 0, "b412e8a126368b76696696f7632d4c16", 2573},
+				{ "vol.0", 0, "1156926cf3e63c19d735b962d4f4b48b", 118843},
+				{ NULL, 0, NULL, 0}
+			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
@@ -997,10 +997,10 @@ static const AGIGameDescription gameDescriptions[] = {
 			"mixedup",
 			"1.1",
 			{
-			{ "dirs", 0, "5c1295fe6daaf95831195ba12894dbd9", 2021},
-			{ "vol.0", 0, "731594cdf40a3f72fc803c89879491e0", 19901},
-			{ NULL, 0, NULL, 0}
-			}
+				{ "dirs", 0, "5c1295fe6daaf95831195ba12894dbd9", 2021},
+				{ "vol.0", 0, "731594cdf40a3f72fc803c89879491e0", 19901},
+				{ NULL, 0, NULL, 0}
+			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
@@ -1108,10 +1108,10 @@ static const AGIGameDescription gameDescriptions[] = {
 			"pq1",
 			"2.0B 2/22/89",
 			{
-			{ "dirs", 0, "cfa93e5f2aa7378bddd10ad6746a2ffb", 1613},
-			{ "vol.0", 0, "1222778713f48f87621ef38986768897", 40310},
-			{ NULL, 0, NULL, 0}
-			}
+				{ "dirs", 0, "cfa93e5f2aa7378bddd10ad6746a2ffb", 1613},
+				{ "vol.0", 0, "1222778713f48f87621ef38986768897", 40310},
+				{ NULL, 0, NULL, 0}
+			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
