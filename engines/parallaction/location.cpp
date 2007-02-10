@@ -36,6 +36,7 @@ void switchBackground(char *name);
 void parseWalkNodes(ArchivedFile *file, Node *list);
 void freeAnimations();
 
+Node helperNode = { NULL, NULL };
 
 void Parallaction::parseLocation(const char *filename) {
 //	printf("parseLocation(%s)", filename);
@@ -217,15 +218,17 @@ void freeLocation() {
 	_locationWalkNodes._next = NULL;
     debugC(7, kDebugLocation, "freeLocation: walk nodes freed");
 
+    helperNode._prev = helperNode._next = NULL;
 	freeZones(_zones._next);
 	freeNodeList(_zones._next);
-	memset(&_zones, 0, sizeof(Node));
+	memcpy(&_zones, &helperNode, sizeof(Node));
     debugC(7, kDebugLocation, "freeLocation: zones freed");
 
+    helperNode._prev = helperNode._next = NULL;
 	freeZones(_animations._next);
 	freeAnimations();
 	freeNodeList(_animations._next);
-    memset(&_animations, 0, sizeof(Node));
+    memcpy(&_animations, &helperNode, sizeof(Node));
     debugC(7, kDebugLocation, "freeLocation: animations freed");
 
 	if (_locationComment) {

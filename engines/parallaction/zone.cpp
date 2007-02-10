@@ -36,6 +36,8 @@ void freeDialogue(Dialogue *d);
 Node _zones = { NULL, NULL };
 Node _animations = { NULL, NULL };
 
+extern Node helperNode;
+
 Zone *findZone(const char *name) {
 
 	Zone *v4 = (Zone*)_zones._next;
@@ -124,9 +126,7 @@ void freeZones(Node *list) {
 	Zone *z = (Zone*)list;
 	Zone *v8 = NULL;
 
-	Node nullNode = { 0, 0 };
-
-	for (; z; z=(Zone*)z->_node._next) {
+	for (; z; ) {
 
 		// TODO: understand and simplify this monster
 		if (((z->_limits._top == -1) || ((z->_limits._left == -2) && ((isItemInInventory(z->u.merge->_obj1) != 0) || (isItemInInventory(z->u.merge->_obj2) != 0)))) &&
@@ -136,7 +136,7 @@ void freeZones(Node *list) {
 
 			v8 = (Zone*)z->_node._next;
 			removeNode(&z->_node);
-			addNode(&nullNode, &z->_node);
+			addNode(&helperNode, &z->_node);
 			z = v8;
 			continue;
 		}
@@ -183,6 +183,8 @@ void freeZones(Node *list) {
 		z->_label._text = NULL;
 		_vm->_graphics->freeStaticCnv(&z->_label._cnv);
 		freeCommands(z->_commands);
+
+        z=(Zone*)z->_node._next;
 
 	}
 
