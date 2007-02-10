@@ -122,7 +122,12 @@ int AgiLoader_v3::init() {
 	Common::File fp;
 	Common::String path;
 
-	path = Common::String(_vm->_game.name) + DIR_;
+	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		path = Common::String("dirs");
+		_vm->_game.name[0] = 0; // Empty prefix
+	} else {
+		path = Common::String(_vm->_game.name) + DIR_;
+	}
 
 	if (!fp.open(path)) {
 		printf("Failed to open \"%s\"\n", path.c_str());
