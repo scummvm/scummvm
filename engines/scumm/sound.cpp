@@ -111,7 +111,7 @@ void Sound::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags
 }
 
 void Sound::processSound() {
-	if (_vm->_game.features & GF_DIGI_IMUSE) {
+	if (_vm->_game.version >= 7) {
 		processSfxQueues();
 	} else if (_vm->_game.heversion >= 60) {
 		processSoundQueues();
@@ -765,7 +765,7 @@ void Sound::stopSound(int sound) {
 		stopCDTimer();
 	}
 
-	if (!(_vm->_game.features & GF_DIGI_IMUSE))
+	if (_vm->_game.version < 7)
 		_mixer->stopID(sound);
 
 	if (_vm->_musicEngine)

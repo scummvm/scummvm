@@ -1100,7 +1100,7 @@ void ScummEngine_v6::o6_startSound() {
 		offset = pop();
 
 #ifndef DISABLE_SCUMM_7_8
-	if (_game.features & GF_DIGI_IMUSE)
+	if (_game.version >= 7)
 		_imuseDigital->startSfx(pop(), 64);
 	else
 #endif
@@ -1112,7 +1112,7 @@ void ScummEngine_v6::o6_stopSound() {
 }
 
 void ScummEngine_v6::o6_startMusic() {
-	if (_game.features & GF_DIGI_IMUSE)
+	if (_game.version >= 7)
 		error("o6_startMusic() It shouldn't be called here for imuse digital");
 
 	_sound->addSoundToQueue(pop());

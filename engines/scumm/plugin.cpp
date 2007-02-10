@@ -246,14 +246,14 @@ static const GameSettings gameVariantsTable[] = {
 	{"samnmax",  0, GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
 #ifndef DISABLE_SCUMM_7_8
-	{"ft", "",       GID_FT,  7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, UNK},
-	{"ft", "Demo",   GID_FT,  7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, UNK},
+	{"ft", "",       GID_FT,  7, 0, MDT_NONE, GF_NEW_COSTUMES, UNK},
+	{"ft", "Demo",   GID_FT,  7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_DEMO, UNK},
 
-	{"dig", "",      GID_DIG, 7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, UNK},
-	{"dig", "Demo",  GID_DIG, 7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, UNK},
+	{"dig", "",      GID_DIG, 7, 0, MDT_NONE, GF_NEW_COSTUMES, UNK},
+	{"dig", "Demo",  GID_DIG, 7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_DEMO, UNK},
 
-	{"comi", "",     GID_CMI, 8, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformWindows},
-	{"comi", "Demo", GID_CMI, 8, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformWindows},
+	{"comi", "",     GID_CMI, 8, 0, MDT_NONE, GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"comi", "Demo", GID_CMI, 8, 0, MDT_NONE, GF_NEW_COSTUMES | GF_DEMO, Common::kPlatformWindows},
 #endif
 
 	// Humongous Entertainment Scumm Version 6

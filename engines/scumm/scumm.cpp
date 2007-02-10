@@ -1176,9 +1176,7 @@ void ScummEngine::setupScumm() {
 #ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v7::setupScumm() {
 
-	if (_game.features & GF_DIGI_IMUSE) {
-		_musicEngine = _imuseDigital = new IMuseDigital(this, _mixer, 10);
-	}
+	_musicEngine = _imuseDigital = new IMuseDigital(this, _mixer, 10);
 
 	ScummEngine::setupScumm();
 
@@ -1314,7 +1312,7 @@ void ScummEngine::resetScumm() {
 		_verbs[i].key = 0;
 	}
 
-	if (_game.features & GF_NEW_CAMERA) {
+	if (_game.version >= 7) {
 		VAR(VAR_CAMERA_THRESHOLD_X) = 100;
 		VAR(VAR_CAMERA_THRESHOLD_Y) = 70;
 		VAR(VAR_CAMERA_ACCEL_X) = 100;
@@ -1538,7 +1536,7 @@ void ScummEngine::setupMusic(int midi) {
 	}
 
 	// Init iMuse
-	if (_game.features & GF_DIGI_IMUSE) {
+	if (_game.version >= 7) {
 		// Setup for digital iMuse is performed in another place
 	} else if (_game.platform == Common::kPlatformC64) {
 		// TODO
@@ -1889,7 +1887,7 @@ int ScummEngine_v90he::scummLoop(int delta) {
 #endif
 
 void ScummEngine::scummLoop_updateScummVars() {
-	if (_game.features & GF_NEW_CAMERA) {
+	if (_game.version >= 7) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 		VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
 	} else if (_game.version <= 2) {

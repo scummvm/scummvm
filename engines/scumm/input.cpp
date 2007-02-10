@@ -243,7 +243,7 @@ void ScummEngine::processInput() {
 
 	_virtualMouse.x = _mouse.x + virtscr[0].xstart;
 	_virtualMouse.y = _mouse.y - virtscr[0].topline;
-	if (_game.features & GF_NEW_CAMERA)
+	if (_game.version >= 7)
 		_virtualMouse.y += _screenTop;
 
 	if (_virtualMouse.y < 0)

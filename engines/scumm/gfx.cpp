@@ -448,7 +448,7 @@ void ScummEngine::drawDirtyScreenParts() {
 	updateDirtyScreen(kTextVirtScreen);
 
 	// Update game area ("stage")
-	if (camera._last.x != camera._cur.x || (_game.features & GF_NEW_CAMERA && (camera._cur.y != camera._last.y))) {
+	if (camera._last.x != camera._cur.x || (_game.version >= 7 && (camera._cur.y != camera._last.y))) {
 		// Camera moved: redraw everything
 		VirtScreen *vs = &virtscr[kMainVirtScreen];
 		drawStripToScreen(vs, 0, vs->w, 0, vs->h);
@@ -779,13 +779,13 @@ void ScummEngine::redrawBGAreas() {
 	int diff;
 	int val = 0;
 
-	if (!(_game.features & GF_NEW_CAMERA)) {
+	if (_game.id != GID_PASS && _game.version >= 4 && _game.version <= 6) {
 		// Starting with V4 games (with the exception of the PASS demo), text
 		// is drawn over the game graphics (as  opposed to be drawn in a
 		// separate region of the screen). So, when scrolling in one of these
 		// games (pre-new camera system), if actor text is visible (as indicated
 		// by the _hasMask flag), we first remove it before proceeding.
-		if (camera._cur.x != camera._last.x && _charset->_hasMask && (_game.version > 3 && _game.id != GID_PASS))
+		if (camera._cur.x != camera._last.x && _charset->_hasMask)
 			stopTalk();
 	}
 
@@ -798,7 +798,7 @@ void ScummEngine::redrawBGAreas() {
 		}
 	}
 
-	if (_game.features & GF_NEW_CAMERA) {
+	if (_game.version >= 7) {
 		diff = camera._cur.x / 8 - camera._last.x / 8;
 		if (_fullRedraw || ABS(diff) >= _gdi->_numStrips) {
 			_bgNeedsRedraw = false;
@@ -3110,7 +3110,7 @@ void ScummEngine::fadeOut(int effect) {
 	VirtScreen *vs = &virtscr[0];
 
 	vs->setDirtyRange(0, 0);
-	if (!(_game.features & GF_NEW_CAMERA))
+	if (_game.version < 7)
 		camera._last.x = camera._cur.x;
 
  	// TheDig can disable fadeIn(), and may call fadeOut() several times

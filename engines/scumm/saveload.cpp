@@ -334,7 +334,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// Load the static room data
 	setupRoomSubBlocks();
 
-	if (!(_game.features & GF_NEW_CAMERA)) {
+	if (_game.version < 7) {
 		camera._last.x = camera._cur.x;
 	}
 

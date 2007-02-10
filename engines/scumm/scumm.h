@@ -80,14 +80,8 @@ enum {
  * Note that some of them could be replaced by checks for the SCUMM version.
  */
 enum GameFeatures {
-	/** Games with the new camera system (ScummEngine_v7 and subclasses). */
-	GF_NEW_CAMERA          = 1 << 1,
-
 	/** Games with the AKOS costume system (ScummEngine_v7 and subclasses, HE games). */
 	GF_NEW_COSTUMES        = 1 << 2,
-
-	/** Games with digital iMUSE (ScummEngine_v7 and subclasses). */
-	GF_DIGI_IMUSE          = 1 << 3,
 
 	/** Games using XOR encrypted data files. */
 	GF_USE_KEY             = 1 << 4,
@@ -120,7 +114,7 @@ enum GameFeatures {
 	 *  HE Games with more global scripts and different sprite handling
 	 *  i.e. read it as HE version 9.85. Used for HE98 only.
 	 */
-	GF_HE_985		= 1 << 14,
+	GF_HE_985             = 1 << 14,
 
 	/** HE games with 16 bit color */
 	GF_16BIT_COLOR         = 1 << 15,
@@ -1288,7 +1282,7 @@ public:
 	byte VAR_SUBTITLES;
 	byte VAR_V6_EMSSPACE;
 
-	// V7/V8 (=GF_NEW_CAMERA) specific variables
+	// V7/V8 specific variables
 	byte VAR_CAMERA_POS_Y;
 	byte VAR_CAMERA_MIN_Y;
 	byte VAR_CAMERA_MAX_Y;

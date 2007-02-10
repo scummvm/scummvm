@@ -29,7 +29,7 @@
 namespace Scumm {
 
 void ScummEngine::setCameraAtEx(int at) {
-	if (!(_game.features & GF_NEW_CAMERA)) {
+	if (_game.version < 7) {
 		camera._mode = kNormalCameraMode;
 		camera._cur.x = at;
 		setCameraAt(at, 0);
@@ -176,7 +176,7 @@ void ScummEngine::moveCamera() {
 
 void ScummEngine::cameraMoved() {
 	int screenLeft;
-	if (_game.features & GF_NEW_CAMERA) {
+	if (_game.version >= 7) {
 		assert(camera._cur.x >= (_screenWidth / 2) && camera._cur.y >= (_screenHeight / 2));
 	} else {
 		if (camera._cur.x < (_screenWidth / 2)) {
@@ -190,7 +190,7 @@ void ScummEngine::cameraMoved() {
 	_screenEndStrip = _screenStartStrip + _gdi->_numStrips - 1;
 
 	_screenTop = camera._cur.y - (_screenHeight / 2);
-	if (_game.features & GF_NEW_CAMERA) {
+	if (_game.version >= 7) {
 		screenLeft = camera._cur.x - (_screenWidth / 2);
 	} else {
 		screenLeft = _screenStartStrip * 8;
@@ -206,7 +206,7 @@ void ScummEngine::panCameraTo(int x, int y) {
 }
 
 void ScummEngine::actorFollowCamera(int act) {
-	if (!(_game.features & GF_NEW_CAMERA)) {
+	if (_game.version < 7) {
 		int old;
 
 		old = camera._follows;
