@@ -251,16 +251,16 @@ bool AgiEngine::predictiveDialog(void) {
 }
 
 static char *ltrim(char *t) {
-        while (isspace(*t))
-                t++;
-        return t;
+	while (isspace(*t))
+		t++;
+	return t;
 }
 
 static char *rtrim(char *t) {
-        int l = strlen(t) - 1;
-        while (l >= 0 && isspace(t[l]))
-                t[l--] = 0;
-        return t;
+	int l = strlen(t) - 1;
+	while (l >= 0 && isspace(t[l]))
+		t[l--] = 0;
+	return t;
 }
 
 #define MAXLINELEN 80
@@ -272,36 +272,52 @@ void AgiEngine::loadDict(void) {
 	if (!in.open("pred.txt"))
 		return;
 
-	while (!in.eos()) {
-		if (!in.readLine(buf, MAXLINELEN))
-			break;
-
+	while (!in.eos() && in.readLine(buf, MAXLINELEN)) {
 		// Skip leading & trailing whitespaces
 		char *t = rtrim(ltrim(buf));
 		char *k = t;
-		int len = 0;
-		char key[30];
 
 		// Skip empty lines
 		if (*t == 0)
 			continue;
 
+		// First comes the key, scan until we encounter a space
 		while (!isspace(*t)) {
-			len++;
 			t++;
 		}
-
+		if (*t == 0)
+			continue;	// No value was specified, skip this
+		*t++ = 0;	// Terminate the key with a zero byte
+		String key(k);
+		
+		// Skip over whitespaces
 		while (isspace(*t))
 			t++;
 
-		strncpy(key, k, len);
-		key[len] = 0;
-
-		_dict[String(key)] = String(t);
-		_dictKeys.push_back(String(key));
+		_dict[key] = String(t);
+		_dictKeys.push_back(key);
 	}
 
-	Common::sort(_dictKeys.begin(), _dictKeys.end());
+	// Sort _dictKeys using combsort11 (since we expect pre-sorted data,
+	// this is fast enough for our purposes).
+	// See http://en.wikipedia.org/wiki/Comb_sort
+	uint gap = _dictKeys.size();
+	bool swaps = false;
+
+	while (gap != 1 || swaps) {
+		if (gap > 1) {
+			gap = (uint)(gap / 1.3);
+			if (gap == 10 || gap == 9) gap = 11;
+		}
+		
+		swaps = false;
+		for (uint i = 0; i + gap < _dictKeys.size(); ++i) {
+			if (_dictKeys[i] > _dictKeys[i + gap]) {
+				SWAP(_dictKeys[i], _dictKeys[i + gap]);
+				swaps = true;
+			}
+		}
+	}
 
 	debug(0, "Loaded %d keys", _dict.size());
 }
