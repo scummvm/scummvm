@@ -128,10 +128,16 @@
 			RelativePath="..\..\engines\gob\dataio.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\detection.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\draw.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\draw.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\draw_bargon.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\draw_v1.cpp">
@@ -198,6 +204,9 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\inter.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\inter_bargon.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\inter_v1.cpp">

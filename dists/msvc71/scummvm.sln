@@ -66,6 +66,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "touche", "touche.vcproj", "
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "parallaction", "parallaction.vcproj", "{0068957B-E2E1-4988-8C87-D541D84DAF20}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -130,6 +134,10 @@ Global
 		{43C2D921-FEE3-40BE-B58A-A6CA34235731}.Debug.Build.0 = Debug|Win32
 		{43C2D921-FEE3-40BE-B58A-A6CA34235731}.Release.ActiveCfg = Release|Win32
 		{43C2D921-FEE3-40BE-B58A-A6CA34235731}.Release.Build.0 = Release|Win32
+		{0068957B-E2E1-4988-8C87-D541D84DAF20}.Debug.ActiveCfg = Debug|Win32
+		{0068957B-E2E1-4988-8C87-D541D84DAF20}.Debug.Build.0 = Debug|Win32
+		{0068957B-E2E1-4988-8C87-D541D84DAF20}.Release.ActiveCfg = Release|Win32
+		{0068957B-E2E1-4988-8C87-D541D84DAF20}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

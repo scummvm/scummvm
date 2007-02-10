@@ -135,7 +135,10 @@
 			RelativePath="..\..\engines\agi\cycle.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\font.cpp">
+			RelativePath="..\..\engines\agi\detection.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\font.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\agi\global.cpp">
@@ -210,9 +213,6 @@
 			RelativePath="..\..\engines\agi\savegame.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\savegame.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\agi\sound.cpp">
 		</File>
 		<File
@@ -226,9 +226,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\agi\text.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\text.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\agi\view.cpp">

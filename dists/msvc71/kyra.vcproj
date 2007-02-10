@@ -200,6 +200,9 @@
 			RelativePath="..\..\engines\kyra\sound_digital.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\sound_towns.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\sprites.cpp">
 		</File>
 		<File
