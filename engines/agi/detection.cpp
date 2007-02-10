@@ -44,6 +44,10 @@ uint32 AgiEngine::getFeatures() const {
 	return _gameDescription->features;
 }
 
+Common::Platform AgiEngine::getPlatform() const {
+	return _gameDescription->desc.platform;
+}
+
 uint16 AgiEngine::getVersion() const {
 	return _gameDescription->version;
 }
@@ -497,7 +501,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 		},
 		GType_V2,
-		AGI_AMIGA,
+		0,
 		0x2440,
 	},
 
@@ -876,7 +880,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 		},
 		GType_V3,
-		AGI_AMIGA,
+		0,
 		0x3149,
 	},
 
@@ -1327,7 +1331,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 		},
 		GType_V2,
-		AGI_AMIGA,
+		0,
 		0x2936,
 	},
 

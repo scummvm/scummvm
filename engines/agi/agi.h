@@ -104,9 +104,8 @@ enum AgiGameType {
 };
 
 enum AgiGameFeatures {
-	AGI_AMIGA = 1 << 0,
-	AGI_MOUSE = 1 << 1,
-	AGI_AGDS = 1 << 2
+	AGI_MOUSE = 1 << 0,
+	AGI_AGDS = 1 << 1
 
 };
 
@@ -526,6 +525,7 @@ public:
 	const AGIGameDescription *_gameDescription;
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
+	Common::Platform getPlatform() const;
 
 private:
 

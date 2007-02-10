@@ -441,7 +441,7 @@ int AgiEngine::agiDetectGame() {
 
 	assert(_gameDescription != NULL);
 
-	_opt.amigaMode = ((getFeatures() & AGI_AMIGA) == AGI_AMIGA);
+	_opt.amigaMode = (getPlatform() == Common::kPlatformAmiga);
 	_opt.agdsMode = ((getFeatures() & AGI_AGDS) == AGI_AGDS);
 	_opt.agimouse = ((getFeatures() & AGI_MOUSE) == AGI_MOUSE);
 
