@@ -578,8 +578,20 @@ void AgiEngine::initialize() {
 		break;
 	}
 
-	if (ConfMan.hasKey("render_mode"))
+	if (ConfMan.hasKey("render_mode")) {
 		_opt.renderMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
+	} else if (ConfMan.hasKey("platform")) {
+		switch (Common::parsePlatform(ConfMan.get("platform"))) {
+		case Common::kPlatformAmiga:
+			_opt.renderMode = Common::kRenderAmiga;
+			break;
+		case Common::kPlatformPC:
+			_opt.renderMode = Common::kRenderEGA;
+			break;
+		default:
+			break;
+		}
+	}
 
 	_console = new Console(this);
 	_gfx = new GfxMgr(this);
