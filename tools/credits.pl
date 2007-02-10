@@ -716,7 +716,7 @@ begin_credits("Credits");
 
 	begin_section("Code contributions");
 	  begin_persons();
-		  add_person("Ori Avtalion", "salty-horse", "Subtitle control options in the GUI");
+		  add_person("Ori Avtalion", "salty-horse", "Subtitle control options in the GUI; BASS GUI fixes");
 		  add_person("Stuart Caie", "", "Decoders for Simon 1 Amiga data files");
 		  add_person("Paolo Costabel", "", "PSP port contributions");
 		  add_person("Thierry Crozat", "criezy", "Support for Broken Sword 1 Macintosh version");

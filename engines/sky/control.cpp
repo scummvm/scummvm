@@ -284,15 +284,12 @@ void Control::initPanel(void) {
 	_savePanButton    = createResource(      _sprites.button, 3, 0, 58,  39, 48, SAVE_GAME_PANEL, MAINPANEL);
 	_dosPanButton     = createResource(      _sprites.button, 3, 0, 58,  59, 93,     QUIT_TO_DOS, MAINPANEL);
 	_restartPanButton = createResource(      _sprites.button, 3, 0, 58,  79, 94,         RESTART, MAINPANEL);
-	if (SkyEngine::_systemVars.systemFlags & SF_FX_OFF)
-		_fxPanButton  = createResource(      _sprites.button, 3, 0, 58,  99, 87,       TOGGLE_FX, MAINPANEL);
-	else
-		_fxPanButton  = createResource(      _sprites.button, 3, 2, 58,  99, 86,       TOGGLE_FX, MAINPANEL);
+	_fxPanButton      = createResource(      _sprites.button, 3, 0, 58,  99, 90,       TOGGLE_FX, MAINPANEL);
 
 	if (SkyEngine::isCDVersion()) { // CD Version: Toggle text/speech
-		_musicPanButton = createResource(      _sprites.button, 3, 0, 58, 119, 52,     TOGGLE_TEXT, MAINPANEL);
+		_musicPanButton = createResource(    _sprites.button, 3, 0, 58, 119, 52,     TOGGLE_TEXT, MAINPANEL);
 	} else {                       // disk version: toggle music on/off
-		_musicPanButton = createResource(      _sprites.button, 3, 0, 58, 119, 91,       TOGGLE_MS, MAINPANEL);
+		_musicPanButton = createResource(    _sprites.button, 3, 0, 58, 119, 91,       TOGGLE_MS, MAINPANEL);
 	}
 	_bodge            = createResource(  _sprites.musicBodge, 2, 1, 98, 115,  0,      DO_NOTHING, MAINPANEL);
 	_yesNo            = createResource(       _sprites.yesNo, 1, 0, -2,  40,  0,      DO_NOTHING, MAINPANEL);
@@ -474,6 +471,15 @@ void Control::doControlPanel(void) {
 	else
 		_skyScreen->setPalette(60510);
 
+	// Set initial button lights
+	_fxPanButton->_curSprite =
+		(SkyEngine::_systemVars.systemFlags & SF_FX_OFF ? 0 : 2);
+
+	// music button only available in floppy version
+	if (!SkyEngine::isCDVersion())
+		_musicPanButton->_curSprite =
+			(SkyEngine::_systemVars.systemFlags & SF_MUS_OFF ? 0 : 2);
+
 	drawMainPanel();
 
 	_savedMouse = _skyMouse->giveCurrentMouseType();
@@ -573,10 +579,10 @@ uint16 Control::handleClick(ConResource *pButton) {
 		_mouseClicked = true;
 		return doMusicSlide();
 	case TOGGLE_FX:
-		return toggleFx(pButton);
+		toggleFx(pButton);
+		return TOGGLED;
 	case TOGGLE_MS:
-		animClick(pButton);
-		toggleMusic();
+		toggleMusic(pButton);
 		return TOGGLED;
 	case TOGGLE_TEXT:
 		animClick(pButton);
@@ -647,6 +653,7 @@ bool Control::getYesNo(char *text) {
 			wantMouse = MOUSE_NORMAL;
 	}
 	_mouseClicked = false;
+	_skyMouse->spriteMouse(MOUSE_NORMAL, 0, 0);
 	if (dlgTextDat)
 		free(dlgTextDat);
 	delete dlgText;
@@ -708,25 +715,21 @@ uint16 Control::doSpeedSlide(void) {
 	return SPEED_CHANGED;
 }
 
-uint16 Control::toggleFx(ConResource *pButton) {
+void Control::toggleFx(ConResource *pButton) {
 
 	SkyEngine::_systemVars.systemFlags ^= SF_FX_OFF;
 	if (SkyEngine::_systemVars.systemFlags & SF_FX_OFF) {
 		pButton->_curSprite = 0;
-		pButton->_text = 0x7000 + 87;
 		_statusBar->setToText(0x7000 + 87);
 	} else {
 		pButton->_curSprite = 2;
-		pButton->_text = 0x7000 + 86;
 		_statusBar->setToText(0x7000 + 86);
 	}
 
 	ConfMan.setBool("sfx_mute", (SkyEngine::_systemVars.systemFlags & SF_FX_OFF) != 0);
 
 	pButton->drawToScreen(WITH_MASK);
-	buttonControl(pButton);
 	_system->updateScreen();
-	return TOGGLED;
 }
 
 uint16 Control::toggleText(void) {
@@ -756,17 +759,23 @@ uint16 Control::toggleText(void) {
 	return TOGGLED;
 }
 
-void Control::toggleMusic(void) {
+void Control::toggleMusic(ConResource *pButton) {
 
+	SkyEngine::_systemVars.systemFlags ^= SF_MUS_OFF;
 	if (SkyEngine::_systemVars.systemFlags & SF_MUS_OFF) {
-		SkyEngine::_systemVars.systemFlags &= ~SF_MUS_OFF;
-		_skyMusic->startMusic(SkyEngine::_systemVars.currentMusic);
-		_statusBar->setToText(0x7000 + 88);
-	} else {
-		SkyEngine::_systemVars.systemFlags |= SF_MUS_OFF;
 		_skyMusic->startMusic(0);
+		pButton->_curSprite = 0;
 		_statusBar->setToText(0x7000 + 89);
+	} else {
+		_skyMusic->startMusic(SkyEngine::_systemVars.currentMusic);
+		pButton->_curSprite = 2;
+		_statusBar->setToText(0x7000 + 88);
 	}
+
+	ConfMan.setBool("music_mute", (SkyEngine::_systemVars.systemFlags & SF_MUS_OFF) != 0);
+
+	pButton->drawToScreen(WITH_MASK);
+	_system->updateScreen();
 }
 
 uint16 Control::shiftDown(uint8 speed) {

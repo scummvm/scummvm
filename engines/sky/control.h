@@ -203,9 +203,9 @@ private:
 	uint16 handleClick(ConResource *pButton);
 	uint16 doMusicSlide(void);
 	uint16 doSpeedSlide(void);
-	uint16 toggleFx(ConResource *pButton);
+	void toggleFx(ConResource *pButton);
 	uint16 toggleText(void);
-	void toggleMusic(void);
+	void toggleMusic(ConResource *pButton);
 	uint16 shiftDown(uint8 speed);
 	uint16 shiftUp(uint8 speed);
 	void drawTextCross(uint32 flags);

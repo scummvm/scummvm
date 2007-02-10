@@ -357,6 +357,9 @@ int SkyEngine::init() {
 	if (ConfMan.getBool("sfx_mute")) {
 		SkyEngine::_systemVars.systemFlags |= SF_FX_OFF;
 	}
+	if (ConfMan.getBool("music_mute")) {
+		SkyEngine::_systemVars.systemFlags |= SF_MUS_OFF;
+	}
 	 _mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	 _mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_floppyIntro = ConfMan.getBool("alt_intro");

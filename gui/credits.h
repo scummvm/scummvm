@@ -234,7 +234,7 @@ static const char *credits[] = {
 "\\C\\c0""",
 "\\C\\c1""Code contributions",
 "\\C\\c0""Ori Avtalion",
-"\\C\\c2""Subtitle control options in the GUI",
+"\\C\\c2""Subtitle control options in the GUI; BASS GUI fixes",
 "\\C\\c0""Stuart Caie",
 "\\C\\c2""Decoders for Simon 1 Amiga data files",
 "\\C\\c0""Paolo Costabel",
