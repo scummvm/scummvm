@@ -458,18 +458,21 @@ const char *AgiEngine::getSavegameFilename(int num) {
 	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), num);
 	return saveLoadSlot;
 }
-
+	
 int AgiEngine::selectSlot() {
 	int i, key, active = 0;
 	int rc = -1;
 	int hm = 2, vm = 3;	/* box margins */
+	int xmin, xmax, slotClicked;
 	char desc[NUM_SLOTS][40];
+	int textCentre, buttonLength, buttonX[2], buttonY;
+	const char *buttonText[] = { "  OK  ", "Cancel", NULL };
 
 	for (i = 0; i < NUM_SLOTS; i++) {
 		char fileName[MAX_PATH];
 		Common::InSaveFile *in;
 		
-		debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Game id seems to be %s", _targetName.c_str());
+		debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Current game id is %s", _targetName.c_str());
 		sprintf(fileName, "%s", getSavegameFilename(i));
 		if (!(in = _saveFileMan->openForLoading(fileName))) {
 			debugC(4, kDebugLevelMain | kDebugLevelSavegame, "File %s does not exist", fileName);
@@ -489,6 +492,15 @@ int AgiEngine::selectSlot() {
 		}
 	}
 
+	textCentre = GFX_WIDTH / CHAR_LINES / 2;
+	buttonLength = 6;
+	buttonX[0] = (textCentre - 3 * buttonLength / 2) * CHAR_COLS;
+	buttonX[1] = (textCentre + buttonLength / 2) * CHAR_COLS;
+	buttonY = (vm + 17) * CHAR_LINES;
+	
+	for (i = 0; i < 2; i++)
+	_gfx->drawButton(buttonX[i], buttonY, buttonText[i], 0, 0, MSG_BOX_TEXT, MSG_BOX_COLOUR);
+
 	for (;;) {
 		char dstr[64];
 		for (i = 0; i < NUM_SLOTS; i++) {
@@ -496,9 +508,8 @@ int AgiEngine::selectSlot() {
 			printText(dstr, 0, hm + 1, vm + 4 + i,
 					(40 - 2 * hm) - 1, i == active ? MSG_BOX_COLOUR : MSG_BOX_TEXT,
 					i == active ? MSG_BOX_TEXT : MSG_BOX_COLOUR);
-
 		}
-
+		
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = doPollKeyboard();
 		switch (key) {
@@ -510,6 +521,22 @@ int AgiEngine::selectSlot() {
 			rc = -1;
 			goto getout;
 		case BUTTON_LEFT:
+			if (_gfx->testButton(buttonX[0], buttonY, buttonText[0])) {
+				rc = active;
+				strncpy(_game.strings[MAX_STRINGS], desc[i], MAX_STRINGLEN);
+				goto press;
+			}
+			if (_gfx->testButton(buttonX[1], buttonY, buttonText[1])) {
+				rc = -1;
+				goto getout;
+			}
+			xmin = (hm + 1) * CHAR_COLS;
+			xmax = xmin + CHAR_COLS * 34;
+			if ((int)g_mouse.x >= xmin && (int)g_mouse.x <= xmax) {
+				slotClicked = ((int)g_mouse.y-1)/CHAR_COLS-(vm+4);
+				if (slotClicked >= 0 && slotClicked < NUM_SLOTS) 
+					active = slotClicked;
+			}
 			break;
 		case KEY_DOWN:
 			active++;
@@ -552,8 +579,6 @@ int AgiEngine::saveGameDialog() {
 	drawWindow(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
 	printText("Select a slot in which you wish to save the game:",
 			0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
-	printText("Press ENTER to select, ESC cancels",
-			0, hm + 1, vm + 17, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 
 	slot = selectSlot();
 	if (slot < 0)	
@@ -568,7 +593,7 @@ int AgiEngine::saveGameDialog() {
 	_gfx->flushBlock(3 * CHAR_COLS, 11 * CHAR_LINES - 1,
 			37 * CHAR_COLS, 12 * CHAR_LINES);
 
-	getString(2, 11, 33, MAX_STRINGS);
+	getString(2, 11, 31, MAX_STRINGS);
 	_gfx->printCharacter(3, 11, _game.cursorChar, MSG_BOX_COLOUR, MSG_BOX_TEXT);
 	do {
 		mainCycle();
@@ -625,8 +650,6 @@ int AgiEngine::loadGameDialog() {
 	drawWindow(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
 	printText("Select a game which you wish to\nrestore:",
 			0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
-	printText("Press ENTER to select, ESC cancels",
-			0, hm + 1, vm + 17, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 
 	slot = selectSlot();
 
