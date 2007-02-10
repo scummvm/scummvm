@@ -306,7 +306,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			"1.01 1989-01-13 aka 2.05 1989-03-09",
 			{
 				{ "dirs", 0, "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399},
-				{ "vol.0", 0, "c5268f6968cdb7fd197a157981c2656e", 78902},
+				{ "vol.0", 0, "f24632edb9f5ffbd4bb3b723d03bc040", 78902},
 				{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -385,7 +385,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			"2.01 1988-12-22",
 			{
 				{ "grdir", 0, "db733d199238d4009a9e95f11ece34e9", 2399},
-				{ "vol.0", 0, "099cf878595fea15a4b2506d40b8ea53", 25070},
+				{ "vol.0", 0, "4b6423d143674d3757ab1b875d25951d", 25070},
 				{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -614,7 +614,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			"2.15 1989-11-15",
 			{
 				{ "dirs", 0, "8e35bded2bc5cf20f5eec2b15523b155", 1805},
-				{ "vol.0", 0, "5fe2c6032ef90220d20e0d1a2e0877dd", 49984},
+				{ "vol.0", 0, "46da47c54cbe92a86db15322bff9dfb4", 49984},
 				{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -934,7 +934,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			"3.06 1989-08-17",
 			{
 				{ "dirs", 0, "b412e8a126368b76696696f7632d4c16", 2573},
-				{ "vol.0", 0, "1156926cf3e63c19d735b962d4f4b48b", 118843},
+				{ "vol.0", 0, "b52005f4ece6df1fd52112401d6f4a1b", 118843},
 				{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -983,7 +983,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			"1.1 1986-12-10",
 			{
 				{ "dirs", 0, "5c1295fe6daaf95831195ba12894dbd9", 2021},
-				{ "vol.0", 0, "731594cdf40a3f72fc803c89879491e0", 19901},
+				{ "vol.0", 0, "33856d58682ac2504391eebca5989556", 19901},
 				{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -1094,7 +1094,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			"2.0B 1989-02-22",
 			{
 				{ "dirs", 0, "cfa93e5f2aa7378bddd10ad6746a2ffb", 1613},
-				{ "vol.0", 0, "1222778713f48f87621ef38986768897", 40310},
+				{ "vol.0", 0, "ee6089fcb9bac4dad1ebbd71fab3edbc", 40310},
 				{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
