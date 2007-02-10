@@ -837,21 +837,6 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Leisure Suit Larry 1 (PC 5.25"/3.5") 1.00 6/1/87 [AGI 2.440]
-		{
-			"lsl1",
-			"1.00 6/1/87 5.25\"/3.5\"",
-			AD_ENTRY1("logdir", "1fe764e66857e7f305a5f03ca3f4971d"),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-		},
-		GType_V2,
-		0,
-		0x2440,
-	},
-
-
-	{
 		// Sarien Name == Manhunter NY (ST) 1.03 10/20/88
 		{
 			"mh1",
