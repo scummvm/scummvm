@@ -317,13 +317,13 @@ void Hotspot::copyTo(Surface *dest) {
 
 	// Handle clipping for Y position
 	if (yPos < 0) {
-		if (yPos + hHeight <= 0) 
+		if (yPos + hHeight <= MENUBAR_Y_SIZE) 
 			// Completely off screen, so don't display
 			return;
 
 		// Reduce the source rectangle to only the on-screen portion
-		r.top += -yPos;
-		yPos = 0;
+		r.top += -(yPos + MENUBAR_Y_SIZE);
+		yPos = MENUBAR_Y_SIZE;
 	}
 	else if (yPos >= FULL_SCREEN_HEIGHT)
 		return;
