@@ -303,7 +303,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == Gold Rush! (Amiga) 1.01 1/13/89 aka 2.05 3/9/89	# 2.316
 		{
 			"goldrush",
-			"1.01 1989-1-13 aka 2.05 1989-3-9",
+			"1.01 1989-01-13 aka 2.05 1989-03-09",
 			{
 				{ "dirs", 0, "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399},
 				{ "vol.0", 0, "c5268f6968cdb7fd197a157981c2656e", 78902},
@@ -322,7 +322,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == Gold Rush! (Apple IIgs) 1.0M 2/28/89 (CE) aka 2.01 12/22/88
 		{
 			"goldrush",
-			"1.0M 1989-2-28 (CE) aka 2.01 1988-12-22",
+			"1.0M 1989-02-28 (CE) aka 2.01 1988-12-22",
 			AD_ENTRY1("grdir", "3f7b9ce62631434389f85371b11921d6"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
@@ -337,7 +337,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == Gold Rush! (ST) 1.01 1/13/89 aka 2.01 12/22/88
 		{
 			"goldrush",
-			"1.01 1989-1-13 aka 2.01 1988-12-22",
+			"1.01 1989-01-13 aka 2.01 1988-12-22",
 			AD_ENTRY1("grdir", "4dd4d50480a3d6c206fa227ce8142735"),
 			Common::EN_ANY,
 			Common::kPlatformAtariST,
@@ -551,7 +551,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == King's Quest 3 (Amiga) 1.01 11/8/86
 		{
 			"kq3",
-			"1.01 1986-11-8",
+			"1.01 1986-11-08",
 			AD_ENTRY1("logdir", "8ab343306df0e2d98f136be4e8cfd0ef"),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
@@ -765,7 +765,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		// Sarien Name == Leisure Suit Larry 1 (PC 5.25"/3.5") 1.00 6/1/87 [AGI 2.440]
 		{
 			"lsl1",
-			"1.00 1987-06-1 5.25\"/3.5\"",
+			"1.00 1987-06-01 5.25\"/3.5\"",
 			AD_ENTRY1("logdir", "1fe764e66857e7f305a5f03ca3f4971d"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
