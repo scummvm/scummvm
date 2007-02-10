@@ -1454,6 +1454,10 @@ OverlayColor ThemeModern::calcLuminance(OverlayColor col) {
 	uint8 r, g, b;
 	_system->colorToRGB(col, r, g, b);
 
+	// A better (but slower) formula to calculate the luminance would be:
+	//uint lum = (byte)((0.299 * r + 0.587 * g + 0.114 * b) + 0.5);
+	// Note that the approximation below will only produce values between
+	// (and including) 0 and 221.
 	uint lum = (r >> 2) + (g >> 1) + (b >> 3);
 	
 	return _system->RGBToColor(lum, lum, lum);
