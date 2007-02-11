@@ -84,6 +84,7 @@ GameDescriptor Engine_SWORD2_findGameID(const char *gameid) {
 GameList Engine_SWORD2_detectGames(const FSList &fslist) {
 	GameList detectedGames;
 	const Sword2::GameSettings *g;
+	FSList::const_iterator file;
 
 	// TODO: It would be nice if we had code here which distinguishes
 	// between the 'sword2' and 'sword2demo' targets. The current code
@@ -91,7 +92,7 @@ GameList Engine_SWORD2_detectGames(const FSList &fslist) {
 
 	for (g = Sword2::sword2_settings; g->gameid; ++g) {
 		// Iterate over all files in the given directory
-		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		for (file = fslist.begin(); file != fslist.end(); ++file) {
 			if (!file->isDirectory()) {
 				const char *fileName = file->name().c_str();
 
@@ -103,6 +104,30 @@ GameList Engine_SWORD2_detectGames(const FSList &fslist) {
 			}
 		}
 	}
+
+	
+	if (detectedGames.empty()) {
+		// Nothing found -- try to recurse into the 'clusters' subdirectory,
+		// present e.g. if the user copied the data straight from CD.
+		for (file = fslist.begin(); file != fslist.end(); ++file) {
+			if (file->isDirectory()) {
+				const char *fileName = file->name().c_str();
+
+				if (0 == scumm_stricmp("clusters", fileName)) {
+					FSList recList;
+					if (file->listDir(recList, FilesystemNode::kListAll)) {
+						GameList recGames(Engine_SWORD2_detectGames(recList));
+						if (!recGames.empty()) {
+							detectedGames.push_back(recGames);
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+
 	return detectedGames;
 }
 
@@ -112,7 +137,7 @@ PluginError Engine_SWORD2_create(OSystem *syst, Engine **engine) {
 
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
+	if (!dir.listDir(fslist, FilesystemNode::kListAll)) {
 		return kInvalidPathError;
 	}
 
