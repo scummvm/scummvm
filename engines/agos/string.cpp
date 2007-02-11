@@ -156,6 +156,10 @@ void AGOSEngine::loadTextIntoMem(uint stringId) {
 		filename[i] = 0;
 		p++;
 
+		if (getPlatform() == Common::kPlatformAcorn) {
+			sprintf(filename, "%s.DAT", filename);
+		}
+
 		base_max = (p[0] * 256) | p[1];
 		p += 2;
 

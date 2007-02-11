@@ -677,7 +677,9 @@ void AGOSEngine::loadVGAVideoFile(uint id, uint type) {
 		dst = allocBlock(dstSize + extraBuffer);
 		decompressData(filename, dst, offs, srcSize, dstSize);
 	} else if (getFeatures() & GF_OLD_BUNDLE) {
-		if (getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST) {
+		if (getPlatform() == Common::kPlatformAcorn) {
+			sprintf(filename, "%.3d%d.DAT", id, type);
+		} else if (getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST) {
 			if (getFeatures() & GF_TALKIE) {
 				sprintf(filename, "%.3d%d.out", id, type);
 			} else if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {

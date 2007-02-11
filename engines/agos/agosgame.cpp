@@ -394,6 +394,28 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE
 	},
 
+	// Simon the Sorcerer 1 - English Acorn Floppy
+	{
+		{
+			"simon1",
+			"Floppy",
+
+			{
+	{ "gamebase.dat", 	GAME_BASEFILE,	"c392e494dcabed797b98cbcfc687b33a", -1},
+	{ "icondata.dat", 	GAME_ICONFILE, 	"22107c24dfb31b66ac503c28a6e20b19", -1},
+	{ "stripped.dat", 	GAME_STRFILE,	"c95a0a1ee973e19c2a1c5d12026c139f", -1},
+	{ "tbllist.dat", 	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformAcorn
+		},
+
+		GType_SIMON1,
+		GID_SIMON1ACORN,
+		GF_OLD_BUNDLE
+	},
+
 	// Simon the Sorcerer 1 - English Acorn CD Demo
 	{
 		{

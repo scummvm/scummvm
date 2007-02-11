@@ -360,6 +360,10 @@ bool AGOSEngine::loadTablesNewIntoMem(uint subr_id) {
 		filename[i] = 0;
 		p++;
 
+		if (getPlatform() == Common::kPlatformAcorn) {
+			sprintf(filename, "%s.DAT", filename);
+		}
+
 		for (;;) {
 			min_num = READ_BE_UINT16(p); p += 2;
 			if (min_num == 0)

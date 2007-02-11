@@ -120,7 +120,9 @@ void AGOSEngine::skipSpeech() {
 void AGOSEngine::loadMusic(uint music) {
 	char buf[4];
 
-	if (getPlatform() == Common::kPlatformAtariST) {
+	if (getGameId() == GID_SIMON1ACORN) {
+		// TODO: Add support for music format used by Simon 1 Floppy
+	} else if (getPlatform() == Common::kPlatformAtariST) {
 		// TODO: Add support for music format used by Elvira 2
 	} else if (getPlatform() == Common::kPlatformAmiga) {
 		_mixer->stopHandle(_modHandle);
@@ -130,6 +132,8 @@ void AGOSEngine::loadMusic(uint music) {
 
 		if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO)
 			sprintf(filename, "elvira2");
+		else if (getPlatform() == Common::kPlatformAcorn)
+			sprintf(filename, "%dtune.DAT", music);
 		else
 			sprintf(filename, "%dtune", music);
 
