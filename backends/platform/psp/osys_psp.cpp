@@ -30,6 +30,10 @@
 #include "common/rect.h"
 #include "osys_psp.h"
 
+#include "backends/saves/default/default-saves.h"
+#include "backends/timer/default/default-timer.h"
+#include "sound/mixer.h"
+
 #include "common/config-manager.h"
 
 #include <pspgu.h>
@@ -49,6 +53,12 @@ unsigned long RGBToColour(unsigned long r, unsigned long g, unsigned long b) {
 
 void putPixel(uint16 x, uint16 y, unsigned long colour) {
 	*(unsigned short *)(DrawBuffer + (y << 9) + x ) = colour;
+}
+
+static int timer_handler(int t) {
+	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
+	tm->handler();
+	return t;
 }
 
 const OSystem::GraphicsMode OSystem_PSP::s_supportedGraphicsModes[] = {
@@ -80,6 +90,18 @@ OSystem_PSP::~OSystem_PSP() {
 	if (_overlayBuffer) free(_overlayBuffer);
 	if (_mouseBuf)	free(_mouseBuf);
 }
+
+
+void OSystem_PSP::initBackend() {
+	_savefile = new DefaultSaveFileManager(); 
+	_mixer = new Audio::Mixer();
+	_timer = new DefaultTimerManager();
+	setSoundCallback(Audio::Mixer::mixCallback, _mixer);
+	setTimerCallback(&timer_handler, 10);
+
+	OSystem::initBackend();
+}
+
 
 bool OSystem_PSP::hasFeature(Feature f) {
 	return false;

@@ -41,6 +41,10 @@ namespace Graphics {
 	struct Surface;
 }
 
+namespace Common {
+	class SaveFileManager;
+	class TimerManager;
+} 
 
 class OSystem_PSP : public OSystem {
 public:
@@ -72,11 +76,17 @@ protected:
 	
 	uint32		_samplesPerSec;
 	SceCtrlData pad;
-	
+
+	Common::SaveFileManager *_savefile;
+	Audio::Mixer *_mixer;
+	Common::TimerManager *_timer;
+
 public:
 
 	OSystem_PSP();
 	virtual ~OSystem_PSP();
+
+	virtual void initBackend();
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
@@ -107,7 +117,7 @@ public:
 	virtual OverlayColor ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b);
 	virtual void colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b);
 	virtual void grabPalette(byte *colors, uint start, uint num);
-	
+
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
@@ -117,6 +127,7 @@ public:
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 
+	typedef int (*TimerProc)(int interval);
 	virtual void setTimerCallback(TimerProc callback, int interval);
 
 	virtual MutexRef createMutex(void);
@@ -124,9 +135,14 @@ public:
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
+	typedef void (*SoundProc)(void *param, byte *buf, int len);
 	virtual bool setSoundCallback(SoundProc proc, void *param);
 	virtual void clearSoundCallback();
 	virtual int getOutputSampleRate() const;
+
+	Common::SaveFileManager *getSavefileManager() { return _savefile; }
+	Audio::Mixer *getMixer() { return _mixer; }
+	Common::TimerManager *getTimerManager() { return _timer; }
 
 	virtual void quit();
 
