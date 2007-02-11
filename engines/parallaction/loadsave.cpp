@@ -721,7 +721,7 @@ int Parallaction::selectSaveFile(uint16 arg_0) {
 
 	Common::StringList l;
 
-    int count = buildSaveFileList(l);
+    /*int count = */ buildSaveFileList(l);
     slc->setList(l);
 
     int idx = slc->runModal();
@@ -734,8 +734,6 @@ int Parallaction::selectSaveFile(uint16 arg_0) {
 
 
 void Parallaction::loadGame() {
-
-    char buf[32];
 
 	int _di = selectSaveFile( 0 );
 	if (_di == -1) {
@@ -758,8 +756,6 @@ void Parallaction::saveGame() {
 //	strcpy(v30, asc_1C91A);
 
 	if (!scumm_stricmp(_location, "caveau")) return;
-
-    char buf[32];
 
 	int slot = selectSaveFile( 1 );
 	if (slot == -1) {
