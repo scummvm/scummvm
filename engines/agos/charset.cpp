@@ -294,9 +294,9 @@ void AGOSEngine::renderStringAmiga(uint vga_sprite_id, uint color, uint width, u
 		count *= 2;
 
 	p = dst + vga_sprite_id * 8;
-	dst += READ_BE_UINT32(p);
 	WRITE_BE_UINT16(p + 4, height);
 	WRITE_BE_UINT16(p + 6, width);
+	dst += READ_BE_UINT32(p);
 
 	width /= 8;	// convert width from pixels to bytes
 
@@ -312,8 +312,7 @@ void AGOSEngine::renderStringAmiga(uint vga_sprite_id, uint color, uint width, u
 			delta = 0;
 		} else if ((tmp -= '!') < 0) {
 			delta += 6;
-			if (delta > 8)
-			{
+			if (delta > 8) {
 				delta -= 8;
 				dst_org++;
 			}
@@ -322,22 +321,18 @@ void AGOSEngine::renderStringAmiga(uint vga_sprite_id, uint color, uint width, u
 			int img_width = img[40];
 			int mdelta = 8 - delta;
 			byte *cur_dst = dst_org;
-			for (int row = 0; row < 10; row++)
-			{
+			for (int row = 0; row < 10; row++) {
 				int col = color;
-				for (int plane = 0; plane < 3; plane++)
-				{
+				for (int plane = 0; plane < 3; plane++) {
 					chr = img[plane] >> delta;
-					if (chr)
-					{
+					if (chr) {
 						if (col & 1) *(cur_dst + charsize * 0) |= chr;
 						if (col & 2) *(cur_dst + charsize * 1) |= chr;
 						if (col & 4) *(cur_dst + charsize * 2) |= chr;
 						if (col & 8) *(cur_dst + charsize * 3) |= chr;
 					}
 					chr = img[plane] << mdelta;
-					if ((mdelta >= img_width) && (chr))
-					{
+					if ((mdelta >= img_width) && (chr)) {
 						if (col & 1) *(cur_dst + charsize * 0 + 1) |= chr;
 						if (col & 2) *(cur_dst + charsize * 1 + 1) |= chr;
 						if (col & 4) *(cur_dst + charsize * 2 + 1) |= chr;
@@ -346,16 +341,14 @@ void AGOSEngine::renderStringAmiga(uint vga_sprite_id, uint color, uint width, u
 					col++;
 				}
 				chr = img[3] >> delta;
-				if (chr)
-				{
+				if (chr) {
 					*(cur_dst + charsize * 0) |= chr;
 					*(cur_dst + charsize * 1) |= chr;
 					*(cur_dst + charsize * 2) |= chr;
 					*(cur_dst + charsize * 3) |= chr;
 				}
 				chr = img[3] << mdelta;
-				if ((mdelta >= img_width) && (chr))
-				{
+				if ((mdelta >= img_width) && (chr)) {
 					*(cur_dst + charsize * 0 + 1) |= chr;
 					*(cur_dst + charsize * 1 + 1) |= chr;
 					*(cur_dst + charsize * 2 + 1) |= chr;
@@ -365,8 +358,7 @@ void AGOSEngine::renderStringAmiga(uint vga_sprite_id, uint color, uint width, u
 				img += 4;
 			}
 			delta += img_width - 1;
-			if (delta > 8)
-			{
+			if (delta > 8) {
 				delta -= 8;
 				dst_org++;
 			}
