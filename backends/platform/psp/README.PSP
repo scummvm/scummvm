@@ -1,4 +1,4 @@
-ScummVM-PSP 0.9.0SVN README 
+ScummVM-PSP 0.10.0SVN README 
 ===========================
 
 Installation
@@ -34,6 +34,9 @@ Notes
 
 - Sleep/Suspend mode currently isn't supported, so don't use it when
   running ScummVM.
+
+- This README may be outdated, for more up-to-date instructions and notes see
+  the PSP Port Wiki: http://wiki.scummvm.org/index.php/PlayStation_Portable
 
 Frequently Asked Questions
 ==========================
@@ -84,12 +87,6 @@ To build ScummVM for PSP you need:
 - libmad(*)	(svn co svn://svn.pspdev.org/psp/trunk/libmad)
 
 - libTremor(*)	(svn co svn://svn.pspdev.org/psp/trunk/libTremor)
-
-- libmpeg2(*)  	(http://libmpeg2.sf.net)
-		Note: As this is not in pspdev svn, you'll need to build
-		it manually. Adding a psp target/host to config.sub and
-		using a configure line similar to the SDL port worked for
-		me.
 
 (*) = optional
 

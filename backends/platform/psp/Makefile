@@ -48,10 +48,6 @@ LIBS	+= -lmad
 CXXFLAGS+= -DUSE_VORBIS -DUSE_TREMOR
 LIBS	+= -lvorbisidec
 
-#comment this out if you don't want to use libmpeg2
-CXXFLAGS+= -DUSE_MPEG2
-LIBS	+= -lmpeg2
-
 LIBS    += `$(PSPBIN)/sdl-config --libs` -lz -lstdc++ -lc -lpspdisplay -lpspgu -lpspctrl -lpspsdk -lpspnet -lpspnet_inet -lpsputility -lpspsdk -lpspuser
 
 CXXFLAGS := $(CXXFLAGS) -fno-exceptions -fno-rtti
