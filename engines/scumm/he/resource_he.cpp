@@ -149,7 +149,6 @@ int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte
 	char *arg_language = NULL;
 	const char *arg_type = resType;
 	char *arg_name = resName;
-	int arg_action = ACTION_LIST;
 	int ressize = 0;
 
 	_arg_raw = false;
@@ -197,11 +196,8 @@ int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte
 		goto cleanup;
 	}
 
-	//	verbose_printf("file is a %s\n",
-	//		fi.is_PE_binary ? "Windows NT `PE' binary" : "Windows 3.1 `NE' binary");
-
 	/* errors will be printed by the callback */
-	ressize = do_resources(&fi, arg_type, arg_name, arg_language, arg_action, data);
+	ressize = do_resources(&fi, arg_type, arg_name, arg_language, data);
 
 	/* free stuff and close file */
 	cleanup:
@@ -495,7 +491,7 @@ bool Win32ResExtractor::check_offset(byte *memory, int total_size, const char *n
 /* do_resources:
  *   Do something for each resource matching type, name and lang.
  */
-int Win32ResExtractor::do_resources(WinLibrary *fi, const char *type, char *name, char *lang, int action, byte **data) {
+int Win32ResExtractor::do_resources(WinLibrary *fi, const char *type, char *name, char *lang, byte **data) {
 	WinResource *type_wr;
 	WinResource *name_wr;
 	WinResource *lang_wr;
@@ -505,7 +501,7 @@ int Win32ResExtractor::do_resources(WinLibrary *fi, const char *type, char *name
 	name_wr = type_wr + 1;
 	lang_wr = type_wr + 2;
 
-	size = do_resources_recurs(fi, NULL, type_wr, name_wr, lang_wr, type, name, lang, action, data);
+	size = do_resources_recurs(fi, NULL, type_wr, name_wr, lang_wr, type, name, lang, data);
 
 	free(type_wr);
 
@@ -520,7 +516,7 @@ int Win32ResExtractor::do_resources(WinLibrary *fi, const char *type, char *name
 
 int Win32ResExtractor::do_resources_recurs(WinLibrary *fi, WinResource *base,
 		  WinResource *type_wr, WinResource *name_wr, WinResource *lang_wr,
-		  const char *type, char *name, char *lang, int action, byte **data) {
+		  const char *type, char *name, char *lang, byte **data) {
 	int c, rescnt;
 	WinResource *wr;
 	uint32 size = 0;
@@ -541,7 +537,7 @@ int Win32ResExtractor::do_resources_recurs(WinLibrary *fi, WinResource *base,
 		/* go deeper unless there is something that does NOT match */
 		if (LEVEL_MATCHES(type) && LEVEL_MATCHES(name) && LEVEL_MATCHES(lang)) {
 			if (wr->is_directory)
-				size = do_resources_recurs(fi, wr+c, type_wr, name_wr, lang_wr, type, name, lang, action, data);
+				size = do_resources_recurs(fi, wr+c, type_wr, name_wr, lang_wr, type, name, lang, data);
 			else
 				size = extract_resources(fi, wr+c, type_wr, name_wr, lang_wr, data);
 		}
@@ -603,51 +599,17 @@ bool Win32ResExtractor::decode_pe_resource_id(WinLibrary *fi, WinResource *wr, u
 byte *Win32ResExtractor::get_resource_entry(WinLibrary *fi, WinResource *wr, int *size) {
 	byte *result;
 
-	if (fi->is_PE_binary) {
-		Win32ImageResourceDataEntry *dataent;
+	Win32ImageResourceDataEntry *dataent;
 
-		dataent = (Win32ImageResourceDataEntry *) wr->children;
-		RETURN_IF_BAD_POINTER(NULL, *dataent);
-		*size = FROM_LE_32(dataent->size);
+	dataent = (Win32ImageResourceDataEntry *) wr->children;
+	RETURN_IF_BAD_POINTER(NULL, *dataent);
+	*size = FROM_LE_32(dataent->size);
 
-		result = fi->memory + FROM_LE_32(dataent->offset_to_data);
-	} else {
-		Win16NENameInfo *nameinfo;
-		int sizeshift;
-
-		nameinfo = (Win16NENameInfo *) wr->children;
-		sizeshift = *((uint16 *) fi->first_resource - 1);
-		*size = FROM_LE_16(nameinfo->length) << sizeshift;
-
-		result = fi->memory + (FROM_LE_16(nameinfo->offset) << sizeshift);
-	}
+	result = fi->memory + FROM_LE_32(dataent->offset_to_data);
 
 	RETURN_IF_BAD_OFFSET(NULL, result, *size);
 
 	return result;
-}
-
-bool Win32ResExtractor::decode_ne_resource_id(WinLibrary *fi, WinResource *wr, uint16 value) {
-	if (value & NE_RESOURCE_NAME_IS_NUMERIC) {		/* numeric id */
-		/* translate id into a string */
-		snprintf(wr->id, WINRES_ID_MAXLEN, "%d", value & ~NE_RESOURCE_NAME_IS_NUMERIC);
-		wr->numeric_id = true;
-	} else {					/* ASCII string id */
-		int len;
-		char *mem = (char *)NE_HEADER(fi->memory)
-		                     + NE_HEADER(fi->memory)->rsrctab
-		                     + value;
-
-		/* copy each char of the string, and terminate it */
-		RETURN_IF_BAD_POINTER(false, *mem);
-		len = FROM_LE_16(mem[0]);
-		RETURN_IF_BAD_OFFSET(false, &mem[1], sizeof(char) * len);
-		memcpy(wr->id, &mem[1], len);
-		wr->id[len] = '\0';
-		wr->numeric_id = false;
-	}
-
-	return true;
 }
 
 Win32ResExtractor::WinResource *Win32ResExtractor::list_pe_resources(WinLibrary *fi, Win32ImageResourceDirectory *pe_res, int level, int *count) {
@@ -680,69 +642,6 @@ Win32ResExtractor::WinResource *Win32ResExtractor::list_pe_resources(WinLibrary 
 	return wr;
 }
 
-Win32ResExtractor::WinResource *Win32ResExtractor::list_ne_name_resources(WinLibrary *fi, WinResource *typeres, int *count) {
-	int c, rescnt;
-	WinResource *wr;
-	Win16NETypeInfo *typeinfo = (Win16NETypeInfo *) typeres->this_;
-	Win16NENameInfo *nameinfo = (Win16NENameInfo *) typeres->children;
-
-	/* count number of `type' resources */
-	RETURN_IF_BAD_POINTER(NULL, typeinfo->count);
-	*count = rescnt = FROM_LE_16(typeinfo->count);
-
-	/* allocate WinResource's */
-	wr = (WinResource *)malloc(sizeof(WinResource) * rescnt);
-
-	/* fill in the WinResource's */
-	for (c = 0 ; c < rescnt ; c++) {
-		RETURN_IF_BAD_POINTER(NULL, nameinfo[c]);
-		wr[c].this_ = nameinfo+c;
-		wr[c].is_directory = false;
-		wr[c].children = nameinfo+c;
-		wr[c].level = 1;
-
-		/* fill in wr->id, wr->numeric_id */
-		if (!decode_ne_resource_id(fi, wr + c, FROM_LE_16(nameinfo[c].id)))
-			return NULL;
-	}
-
-	return wr;
-}
-
-Win32ResExtractor::WinResource *Win32ResExtractor::list_ne_type_resources(WinLibrary *fi, int *count) {
-	int c, rescnt;
-	WinResource *wr;
-	Win16NETypeInfo *typeinfo;
-
-	/* count number of `type' resources */
-	typeinfo = (Win16NETypeInfo *) fi->first_resource;
-	RETURN_IF_BAD_POINTER(NULL, *typeinfo);
-	for (rescnt = 0 ; typeinfo->type_id != 0 ; rescnt++) {
-		typeinfo = NE_TYPEINFO_NEXT(typeinfo);
-		RETURN_IF_BAD_POINTER(NULL, *typeinfo);
-	}
-	*count = rescnt;
-
-	/* allocate WinResource's */
-	wr = (WinResource *)malloc(sizeof(WinResource) * rescnt);
-
-	/* fill in the WinResource's */
-	typeinfo = (Win16NETypeInfo *) fi->first_resource;
-	for (c = 0 ; c < rescnt ; c++) {
-		wr[c].this_ = typeinfo;
-		wr[c].is_directory = (typeinfo->count != 0);
-		wr[c].children = typeinfo+1;
-		wr[c].level = 0;
-
-		/* fill in wr->id, wr->numeric_id */
-		if (!decode_ne_resource_id(fi, wr + c, FROM_LE_16(typeinfo->type_id)))
-			return NULL;
-
-		typeinfo = NE_TYPEINFO_NEXT(typeinfo);
-	}
-
-	return wr;
-}
 
 /* list_resources:
  *   Return an array of WinResource's in the current
@@ -752,16 +651,10 @@ Win32ResExtractor::WinResource *Win32ResExtractor::list_resources(WinLibrary *fi
 	if (res != NULL && !res->is_directory)
 		return NULL;
 
-	if (fi->is_PE_binary) {
-		return list_pe_resources(fi, (Win32ImageResourceDirectory *)
-				 (res == NULL ? fi->first_resource : res->children),
-				 (res == NULL ? 0 : res->level+1),
-				 count);
-	} else {
-		return (res == NULL
-				? list_ne_type_resources(fi, count)
-				: list_ne_name_resources(fi, res, count));
-	}
+	return list_pe_resources(fi, (Win32ImageResourceDirectory *)
+			 (res == NULL ? fi->first_resource : res->children),
+			 (res == NULL ? 0 : res->level+1),
+			 count);
 }
 
 /* read_library:
@@ -785,30 +678,6 @@ bool Win32ResExtractor::read_library(WinLibrary *fi) {
 			error("%s: not a Windows library", fi->file->name());
 			return false;
 		}
-	}
-
-	/* check for OS2 (Win16) header signature `NE' */
-	RETURN_IF_BAD_POINTER(false, NE_HEADER(fi->memory)->magic);
-	if (FROM_LE_16(NE_HEADER(fi->memory)->magic) == IMAGE_OS2_SIGNATURE) {
-		OS2ImageHeader *header = NE_HEADER(fi->memory);
-
-		RETURN_IF_BAD_POINTER(false, header->rsrctab);
-		RETURN_IF_BAD_POINTER(false, header->restab);
-
-		if (FROM_LE_16(header->rsrctab) >= FROM_LE_16(header->restab)) {
-			error("%s: no resource directory found", fi->file->name());
-			return false;
-		}
-
-		// Apply endian fix
-		fix_os2_image_header_endian(header);
-
-		fi->is_PE_binary = false;
-		fi->first_resource = (byte *) NE_HEADER(fi->memory)
-		  + header->rsrctab + sizeof(uint16);
-		RETURN_IF_BAD_POINTER(false, *(Win16NETypeInfo *) fi->first_resource);
-
-		return true;
 	}
 
 	/* check for NT header signature `PE' */
@@ -862,7 +731,6 @@ bool Win32ResExtractor::read_library(WinLibrary *fi) {
 		fix_win32_image_data_directory(dir);
 
 		fi->first_resource = fi->memory + dir->virtual_address;
-		fi->is_PE_binary = true;
 		return true;
 	}
 
@@ -1219,35 +1087,6 @@ void Win32ResExtractor::fix_win32_image_section_header(Win32ImageSectionHeader *
     LE16(obj->number_of_relocations);
     LE16(obj->number_of_linenumbers);
     LE32(obj->characteristics);
-}
-
-void Win32ResExtractor::fix_os2_image_header_endian(OS2ImageHeader *obj) {
-    LE16(obj->magic);
-    LE16(obj->enttab);
-    LE16(obj->cbenttab);
-    LE32(obj->crc);
-    LE16(obj->flags);
-    LE16(obj->autodata);
-    LE16(obj->heap);
-    LE16(obj->stack);
-    LE32(obj->csip);
-    LE32(obj->sssp);
-    LE16(obj->cseg);
-    LE16(obj->cmod);
-    LE16(obj->cbnrestab);
-    LE16(obj->segtab);
-    LE16(obj->rsrctab);
-    LE16(obj->restab);
-    LE16(obj->modtab);
-    LE16(obj->imptab);
-    LE32(obj->nrestab);
-    LE16(obj->cmovent);
-    LE16(obj->align);
-    LE16(obj->cres);
-    LE16(obj->fastload_offset);
-    LE16(obj->fastload_length);
-    LE16(obj->swaparea);
-    LE16(obj->expver);
 }
 
 /* fix_win32_image_header_endian:

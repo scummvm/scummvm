@@ -35,17 +35,7 @@ namespace Scumm {
  * Definitions
  */
 
-#define ACTION_LIST 				1	/* command: list resources */
-#define ACTION_EXTRACT				2	/* command: extract resources */
-#define CALLBACK_STOP				0	/* results of ResourceCallback */
-#define CALLBACK_CONTINUE			1
-#define CALLBACK_CONTINUE_RECURS	2
-
 #define MZ_HEADER(x)	((DOSImageHeader *)(x))
-#define NE_HEADER(x)	((OS2ImageHeader *)PE_HEADER(x))
-#define NE_TYPEINFO_NEXT(x) ((Win16NETypeInfo *)((byte *)(x) + sizeof(Win16NETypeInfo) + \
-						    FROM_LE_16(((Win16NETypeInfo *)x)->count) * sizeof(Win16NENameInfo)))
-#define NE_RESOURCE_NAME_IS_NUMERIC (0x8000)
 
 #define STRIP_RES_ID_FORMAT(x) (x != NULL && (x[0] == '-' || x[0] == '+') ? ++x : x)
 
@@ -64,10 +54,6 @@ namespace Scumm {
                            PE_HEADER(module)->file_header.size_of_optional_header))
 
 #define IMAGE_DOS_SIGNATURE    0x5A4D     /* MZ */
-#define IMAGE_OS2_SIGNATURE    0x454E     /* NE */
-#define IMAGE_OS2_SIGNATURE_LE 0x454C     /* LE */
-#define IMAGE_OS2_SIGNATURE_LX 0x584C     /* LX */
-#define IMAGE_VXD_SIGNATURE    0x454C     /* LE */
 #define IMAGE_NT_SIGNATURE     0x00004550 /* PE00 */
 
 #if !defined (WIN32)
@@ -76,6 +62,7 @@ namespace Scumm {
 #define IMAGE_SCN_CNT_UNINITIALIZED_DATA	0x00000080
 #endif
 
+// Only IMAGE_DIRECTORY_ENTRY_RESOURCE is used:
 #define	IMAGE_DIRECTORY_ENTRY_EXPORT		0
 #define	IMAGE_DIRECTORY_ENTRY_IMPORT		1
 #define	IMAGE_DIRECTORY_ENTRY_RESOURCE		2
@@ -92,6 +79,7 @@ namespace Scumm {
 #define	IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT	13
 #define	IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR	14
 
+// Only RT_GROUP_CURSOR and RT_GROUP_ICON are used
 #if !defined (WIN32)
 #define RT_CURSOR        1
 #define RT_BITMAP        2
@@ -178,7 +166,6 @@ class Win32ResExtractor : public ResExtractor {
 		Common::File *file;
 		byte *memory;
 		byte *first_resource;
-		bool is_PE_binary;
 		int total_size;
 	};
 
@@ -272,48 +259,6 @@ class Win32ResExtractor : public ResExtractor {
 		uint16 type_id;
 		uint16 count;
 		uint32 resloader;     // FARPROC16 - smaller? uint16?
-	};
-
-	struct Win16NENameInfo {
-		uint16 offset;
-		uint16 length;
-		uint16 flags;
-		uint16 id;
-		uint16 handle;
-		uint16 usage;
-	};
-
-	struct OS2ImageHeader {
-		uint16 magic;
-		byte ver;
-		byte rev;
-		uint16 enttab;
-		uint16 cbenttab;
-		int32 crc;
-		uint16 flags;
-		uint16 autodata;
-		uint16 heap;
-		uint16 stack;
-		uint32 csip;
-		uint32 sssp;
-		uint16 cseg;
-		uint16 cmod;
-		uint16 cbnrestab;
-		uint16 segtab;
-		uint16 rsrctab;
-		uint16 restab;
-		uint16 modtab;
-		uint16 imptab;
-		uint32 nrestab;
-		uint16 cmovent;
-		uint16 align;
-		uint16 cres;
-		byte exetyp;
-		byte flagsothers;
-		uint16 fastload_offset;
-		uint16 fastload_length;
-		uint16 swaparea;
-		uint16 expver;
 	};
 
 	struct DOSImageHeader {
@@ -435,7 +380,7 @@ class Win32ResExtractor : public ResExtractor {
 	bool read_library(WinLibrary *);
 	WinResource *find_resource(WinLibrary *, const char *, const char *, const char *, int *);
 	byte *get_resource_entry(WinLibrary *, WinResource *, int *);
-	int do_resources(WinLibrary *, const char *, char *, char *, int, byte **);
+	int do_resources(WinLibrary *, const char *, char *, char *, byte **);
 	bool compare_resource_id(WinResource *, const char *);
 	const char *res_type_string_to_id(const char *);
 
@@ -447,12 +392,9 @@ class Win32ResExtractor : public ResExtractor {
 	byte *extract_group_icon_cursor_resource(WinLibrary *, WinResource *, char *, int *, bool);
 
 	bool decode_pe_resource_id(WinLibrary *, WinResource *, uint32);
-	bool decode_ne_resource_id(WinLibrary *, WinResource *, uint16);
-	WinResource *list_ne_type_resources(WinLibrary *, int *);
-	WinResource *list_ne_name_resources(WinLibrary *, WinResource *, int *);
 	WinResource *list_pe_resources(WinLibrary *, Win32ImageResourceDirectory *, int, int *);
 	int calc_vma_size(WinLibrary *);
-	int do_resources_recurs(WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *, const char *, char *, char *, int, byte **);
+	int do_resources_recurs(WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *, const char *, char *, char *, byte **);
 	WinResource *find_with_resource_array(WinLibrary *, WinResource *, const char *);
 
 	bool check_offset(byte *, int, const char *, void *, int);
@@ -463,7 +405,6 @@ class Win32ResExtractor : public ResExtractor {
 	void fix_win32_bitmap_info_header_endian(Win32BitmapInfoHeader *obj);
 	void fix_win32_cursor_icon_file_dir_entry_endian(Win32CursorIconFileDirEntry *obj);
 	void fix_win32_image_section_header(Win32ImageSectionHeader *obj);
-	void fix_os2_image_header_endian(OS2ImageHeader *obj);
 	void fix_win32_image_header_endian(Win32ImageNTHeaders *obj);
 	void fix_win32_image_data_directory(Win32ImageDataDirectory *obj);
 };
