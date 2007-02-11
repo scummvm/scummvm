@@ -125,6 +125,9 @@ int AgiLoader_v3::init() {
 	if (_vm->getPlatform() == Common::kPlatformAmiga) {
 		path = Common::String("dirs");
 		_vm->_game.name[0] = 0; // Empty prefix
+	} else if (_vm->getFeatures() & AGI_MACGOLDRUSH) {
+		path = "grdir";
+		_vm->_game.name[0] = 0; // Empty prefix
 	} else {
 		path = Common::String(_vm->_game.name) + DIR_;
 	}

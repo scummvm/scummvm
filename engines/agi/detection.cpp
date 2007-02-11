@@ -308,11 +308,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"goldrush",
 			"1.01 1989-01-13 aka 2.05 1989-03-09",
-			{
-				{ "dirs", 0, "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399},
-				{ "vol.0", 0, "f24632edb9f5ffbd4bb3b723d03bc040", 78902},
-				{ NULL, 0, NULL, 0}
-			},
+			AD_ENTRY1s("dirs", "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
@@ -396,7 +392,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformMacintosh,
 		},
 		GType_V3,
-		0,
+		AGI_MACGOLDRUSH,
 		0x3149,
 	},
 
@@ -616,11 +612,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"kq3",
 			"2.15 1989-11-15",
-			{
-				{ "dirs", 0, "8e35bded2bc5cf20f5eec2b15523b155", 1805},
-				{ "vol.0", 0, "46da47c54cbe92a86db15322bff9dfb4", 49984},
-				{ NULL, 0, NULL, 0}
-			},
+			AD_ENTRY1s("dirs", "8e35bded2bc5cf20f5eec2b15523b155", 1805),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
@@ -936,11 +928,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"mh2",
 			"3.06 1989-08-17",
-			{
-				{ "dirs", 0, "b412e8a126368b76696696f7632d4c16", 2573},
-				{ "vol.0", 0, "b52005f4ece6df1fd52112401d6f4a1b", 118843},
-				{ NULL, 0, NULL, 0}
-			},
+			AD_ENTRY1s("dirs", "b412e8a126368b76696696f7632d4c16", 2573),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
@@ -985,11 +973,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"mixedup",
 			"1.1 1986-12-10",
-			{
-				{ "dirs", 0, "5c1295fe6daaf95831195ba12894dbd9", 2021},
-				{ "vol.0", 0, "33856d58682ac2504391eebca5989556", 19901},
-				{ NULL, 0, NULL, 0}
-			},
+			AD_ENTRY1s("dirs", "5c1295fe6daaf95831195ba12894dbd9", 2021),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
@@ -1096,11 +1080,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"pq1",
 			"2.0B 1989-02-22",
-			{
-				{ "dirs", 0, "cfa93e5f2aa7378bddd10ad6746a2ffb", 1613},
-				{ "vol.0", 0, "ee6089fcb9bac4dad1ebbd71fab3edbc", 40310},
-				{ NULL, 0, NULL, 0}
-			},
+			AD_ENTRY1s("dirs", "cfa93e5f2aa7378bddd10ad6746a2ffb", 1613),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
