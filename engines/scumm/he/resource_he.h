@@ -44,7 +44,7 @@ namespace Scumm {
 #define MZ_HEADER(x)	((DOSImageHeader *)(x))
 #define NE_HEADER(x)	((OS2ImageHeader *)PE_HEADER(x))
 #define NE_TYPEINFO_NEXT(x) ((Win16NETypeInfo *)((byte *)(x) + sizeof(Win16NETypeInfo) + \
-						    ((Win16NETypeInfo *)x)->count * sizeof(Win16NENameInfo)))
+						    FROM_LE_16(((Win16NETypeInfo *)x)->count) * sizeof(Win16NENameInfo)))
 #define NE_RESOURCE_NAME_IS_NUMERIC (0x8000)
 
 #define STRIP_RES_ID_FORMAT(x) (x != NULL && (x[0] == '-' || x[0] == '+') ? ++x : x)
@@ -264,39 +264,8 @@ class Win32ResExtractor : public ResExtractor {
 	};
 
 	struct Win32ImageResourceDirectoryEntry {
-		union {
-			struct {
-				#ifdef SCUMM_BIGENDIAN
-				unsigned name_is_string:1;
-				unsigned name_offset:31;
-	    	    #else
-				unsigned name_offset:31;
-				unsigned name_is_string:1;
-	    	    #endif
-			} s1;
-			uint32 name;
-			struct {
-	    	    #ifdef SCUMM_BIG_ENDIAN
-				uint16 __pad;
-				uint16 id;
-	    	    #else
-				uint16 id;
-				uint16 __pad;
-	    	    #endif
-			} s2;
-		} u1;
-		union {
-			uint32 offset_to_data;
-			struct {
-	    	    #ifdef SCUMM_BIG_ENDIAN
-				unsigned data_is_directory:1;
-				unsigned offset_to_directory:31;
-	    	    #else
-				unsigned offset_to_directory:31;
-				unsigned data_is_directory:1;
-	    	    #endif
-			} s;
-		} u2;
+		uint32 name;
+		uint32 offset_to_data;
 	};
 
 	struct Win16NETypeInfo {
