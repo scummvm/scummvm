@@ -29,28 +29,45 @@
 
 #include "common/savefile.h"
 
+#include "gui/widget.h"
+#include "gui/ListWidget.h"
+#include "gui/message.h"
+
+/* Nippon Safes savefiles are called 'game.1' to 'game.10'. The game conventiently allows users to
+ * give meanigful name to savegames, and it uses an extra file 'savegame' to keep track of these
+ * names.
+ *
+ * This re-implementation disposes of the extra file to make moving of savefiles easier. Debugging
+ * will benefit from this, too. The savegame name is written as the first line of the savefile
+ * itself, thus breaking compatibility with the original version. Who cares anyway?
+ */
+
+
 namespace Parallaction {
 
 
 extern char _gameNames[][20];
 
-void Parallaction::doLoadGame(uint16 _di) {
+void Parallaction::doLoadGame(uint16 slot) {
 
 	_introSarcData3 = 200;
 	_introSarcData2 = 1;
 
 	char filename[PATH_LEN];
-	sprintf(filename, "game.%d", _di);
+	sprintf(filename, "game.%i", slot);
 
 	Common::InSaveFile *f = _saveFileMan->openForLoading(filename);
 	if (!f) return;
+
+    char s[20];
+
+    f->readLine(s, 19);
 
 	f->readLine(_vm->_characterName, 15);
 	f->readLine(_location, 15);
 
 	strcat(_location, ".");
 
-	char s[20];
 	f->readLine(s, 15);
 	_firstPosition._x = atoi(s);
 
@@ -122,46 +139,38 @@ void Parallaction::doLoadGame(uint16 _di) {
 	strcat(_location, _vm->_characterName);
 	_engineFlags |= kEngineChangeLocation;
 
+#if 0
 	printf("game loaded: character %s, location %s\n", _vm->_characterName, _location);
-//	  getch();
+#endif
 
 	return;
 }
 
 
-
-
-// FIXME: implements this (select a file slot for load/save)
-int16 selectSaveFile(uint16 arg_0) {
-	return 0;
-}
-
-
-
-void Parallaction::loadGame() {
-
-	bool marks[10];
-	_saveFileMan->listSavefiles("game.", marks, 10);
-
-	int16 _di = selectSaveFile( 0 );
-	if (_di > 10) return;
-
-	doLoadGame(_di);
-
-	return;
-}
-
-void Parallaction::doSaveGame(uint16 _di) {
+void Parallaction::doSaveGame(uint16 slot, const char* name) {
 
 	char path[PATH_LEN];
-	sprintf(path, "game.%d", _di);
+	sprintf(path, "game.%i", slot);
 
 	Common::OutSaveFile *f = _saveFileMan->openForSaving(path);
-	// FIXME: Properly handle openForSaving failures instead of
-	// just crashing silently!
-	assert(f);
+	if (f == 0) {
+	    char buf[32];
+	    sprintf(buf, "Can't save game in slot %i\n\n(%s)", slot, path);
+	    GUI::MessageDialog dialog(buf);
+        dialog.runModal();
+        return;
+	}
 
 	char s[30];
+
+    if (!name || name[0] == '\0') {
+        sprintf(s, "default_%i", slot);
+    } else {
+        strncpy(s, name, 29);
+    }
+
+    f->writeString(s);
+    f->writeString("\n");
 
 	if (_engineFlags & kEngineMiniDonna) {
 		sprintf(s, "%stras\n", _vm->_characterName);
@@ -209,28 +218,6 @@ void textModeFunc1( char *) {
 
 
 
-void Parallaction::saveGame() {
-
-//	strcpy(v30, asc_1C91A);
-
-	if (!scumm_stricmp(_location, "caveau")) return;
-
-	bool marks[10];
-	_saveFileMan->listSavefiles("game.", marks, 10);
-
-	int16 _di = selectSaveFile( 1 );
-	if (_di > 10) return;
-
-
-	printf("saving game %i...", _di);
-	doSaveGame(_di);
-	printf("done\n");
-//	  getch();
-
-	return;
-
-
-}
 
 #if 0
 int16 selectSaveFile(uint16 arg_0) {
@@ -528,6 +515,268 @@ void saveGame() {
 	return;
 }
 #endif
+
+
+
+enum {
+	kSaveCmd = 'SAVE',
+	kLoadCmd = 'LOAD',
+	kPlayCmd = 'PLAY',
+	kOptionsCmd = 'OPTN',
+	kHelpCmd = 'HELP',
+	kAboutCmd = 'ABOU',
+	kQuitCmd = 'QUIT',
+	kChooseCmd = 'CHOS'
+};
+
+
+
+SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, Parallaction *engine)
+	: Dialog("scummsaveload"), _list(0), _chooseButton(0), _gfxWidget(0), _vm(engine) {
+
+//	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
+
+	new GUI::StaticTextWidget(this, "scummsaveload_title", title);
+
+	// Add choice list
+	_list = new GUI::ListWidget(this, "scummsaveload_list");
+	_list->setEditable(true);
+	_list->setNumberingMode(GUI::kListNumberingOne);
+
+	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
+	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
+
+	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
+
+	_date = new GUI::StaticTextWidget(this, 0, 0, 10, 10, "No date saved", GUI::kTextAlignCenter);
+	_time = new GUI::StaticTextWidget(this, 0, 0, 10, 10, "No time saved", GUI::kTextAlignCenter);
+	_playtime = new GUI::StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", GUI::kTextAlignCenter);
+
+	// Buttons
+	new GUI::ButtonWidget(this, "scummsaveload_cancel", "Cancel", GUI::kCloseCmd, 0);
+	_chooseButton = new GUI::ButtonWidget(this, "scummsaveload_choose", buttonLabel, kChooseCmd, 0);
+	_chooseButton->setEnabled(false);
+}
+
+SaveLoadChooser::~SaveLoadChooser() {
+}
+
+const Common::String &SaveLoadChooser::getResultString() const {
+	return _list->getSelectedString();
+}
+
+void SaveLoadChooser::setList(const StringList& list) {
+	_list->setList(list);
+}
+
+int SaveLoadChooser::runModal() {
+	if (_gfxWidget)
+		_gfxWidget->setGfx(0);
+	int ret = GUI::Dialog::runModal();
+	return ret;
+}
+
+void SaveLoadChooser::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	int selItem = _list->getSelected();
+	switch (cmd) {
+	case GUI::kListItemActivatedCmd:
+	case GUI::kListItemDoubleClickedCmd:
+		if (selItem >= 0) {
+			if (!getResultString().empty()) {
+				_list->endEditMode();
+				setResult(selItem);
+				close();
+			}
+		}
+		break;
+	case kChooseCmd:
+		_list->endEditMode();
+		setResult(selItem);
+		close();
+		break;
+	case GUI::kListSelectionChangedCmd: {
+		if (_gfxWidget) {
+			updateInfos();
+		}
+
+        _list->startEditMode();
+		// Disable button if nothing is selected, or (in load mode) if an empty
+		// list item is selected. We allow choosing an empty item in save mode
+		// because we then just assign a default name.
+		_chooseButton->setEnabled(selItem >= 0 && (!getResultString().empty()));
+		_chooseButton->draw();
+	} break;
+	case GUI::kCloseCmd:
+		setResult(-1);
+	default:
+		Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+void SaveLoadChooser::reflowLayout() {
+    _container->setFlags(GUI::WIDGET_INVISIBLE);
+    _gfxWidget->setFlags(GUI::WIDGET_INVISIBLE);
+    _date->setFlags(GUI::WIDGET_INVISIBLE);
+    _time->setFlags(GUI::WIDGET_INVISIBLE);
+    _playtime->setFlags(GUI::WIDGET_INVISIBLE);
+
+	Dialog::reflowLayout();
+}
+
+void SaveLoadChooser::updateInfos() {
+/*	int selItem = _list->getSelected();
+	Graphics::Surface *thumb;
+	thumb = _vm->loadThumbnailFromSlot(selItem + 1);
+
+	if (thumb) {
+		_gfxWidget->setGfx(thumb);
+		_gfxWidget->useAlpha(256);
+		thumb->free();
+	} else {
+		_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
+	}
+
+	delete thumb;
+	_gfxWidget->draw();
+
+	InfoStuff infos;
+	memset(&infos, 0, sizeof(InfoStuff));
+	char buffer[32];
+	if (_vm->loadInfosFromSlot(selItem + 1, &infos)) {
+		snprintf(buffer, 32, "Date: %.2d.%.2d.%.4d",
+			(infos.date >> 24) & 0xFF, (infos.date >> 16) & 0xFF,
+			infos.date & 0xFFFF);
+		_date->setLabel(buffer);
+		_date->draw();
+
+		snprintf(buffer, 32, "Time: %.2d:%.2d",
+			(infos.time >> 8) & 0xFF, infos.time & 0xFF);
+		_time->setLabel(buffer);
+		_time->draw();
+
+		int minutes = infos.playtime / 60;
+		int hours = minutes / 60;
+		minutes %= 60;
+
+		snprintf(buffer, 32, "Playtime: %.2d:%.2d",
+			hours & 0xFF, minutes & 0xFF);
+		_playtime->setLabel(buffer);
+		_playtime->draw();
+	} else {
+		snprintf(buffer, 32, "No date saved");
+		_date->setLabel(buffer);
+		_date->draw();
+
+		snprintf(buffer, 32, "No time saved");
+		_time->setLabel(buffer);
+		_time->draw();
+
+		snprintf(buffer, 32, "No playtime saved");
+		_playtime->setLabel(buffer);
+		_playtime->draw();
+	}
+*/
+}
+
+int Parallaction::buildSaveFileList(Common::StringList& l) {
+
+    char name[16];
+    char buf[30];
+
+    int count = 0;
+
+    for (int i = 0; i < 10; i++) {
+        sprintf(name, "game.%i", i);
+
+        buf[0] = '\0';
+        Common::InSaveFile *f = _saveFileMan->openForLoading(name);
+
+        if (f) {
+            f->readLine(buf, 29);
+            delete f;
+
+            count++;
+        }
+
+        l.push_back(buf);
+    }
+
+    return count;
+}
+
+
+int Parallaction::selectSaveFile(uint16 arg_0) {
+
+    const Common::String caption[2] = {
+        "Load file",
+        "Save file"
+    };
+
+    const Common::String button[2] = {
+        "Load",
+        "Save"
+    };
+
+    SaveLoadChooser* slc = new SaveLoadChooser(caption[arg_0], button[arg_0], _vm);
+
+	Common::StringList l;
+
+    int count = buildSaveFileList(l);
+    slc->setList(l);
+
+    int idx = slc->runModal();
+    _saveFileName = slc->getResultString();
+    delete slc;
+
+	return idx;
+}
+
+
+
+void Parallaction::loadGame() {
+
+    char buf[32];
+
+	int _di = selectSaveFile( 0 );
+	if (_di == -1) {
+	    return;
+	}
+
+	doLoadGame(_di);
+
+    GUI::TimedMessageDialog dialog("Loading game...", 1500);
+    dialog.runModal();
+
+	changeCursor(kCursorArrow);
+
+	return;
+}
+
+
+void Parallaction::saveGame() {
+
+//	strcpy(v30, asc_1C91A);
+
+	if (!scumm_stricmp(_location, "caveau")) return;
+
+    char buf[32];
+
+	int slot = selectSaveFile( 1 );
+	if (slot == -1) {
+	    return;
+	}
+
+	doSaveGame(slot, _saveFileName.c_str());
+
+    GUI::TimedMessageDialog dialog("Saving game...", 1500);
+    dialog.runModal();
+
+	return;
+
+
+}
+
+
 
 
 

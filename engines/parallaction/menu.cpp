@@ -284,7 +284,7 @@ uint16 Menu::selectGame() {
 	strcpy(_location, "fogne");
 	strcpy(_engine->_characterName, "dough");
 
-//	loadGame();
+	_vm->loadGame();
 	closeArchive();
 
 	return 1;  // load game

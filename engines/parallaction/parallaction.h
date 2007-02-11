@@ -26,6 +26,14 @@
 #include "engines/engine.h"
 #include "parallaction/defs.h"
 #include "parallaction/inventory.h"
+#include "common/str.h"
+#include "gui/dialog.h"
+#include "gui/widget.h"
+
+namespace GUI {
+	class ListWidget;
+	class CommandSender;
+}
 
 
 namespace Parallaction {
@@ -290,8 +298,11 @@ protected:		// members
 	void		initGame();
 	void		initGlobals();
 
-	void		doLoadGame(uint16 _di);
-	void		doSaveGame(uint16 _di);
+    Common::String      _saveFileName;
+    int         buildSaveFileList(Common::StringList& l);
+    int         selectSaveFile(uint16 arg_0);
+	void		doLoadGame(uint16 slot);
+	void		doSaveGame(uint16 slot, const char* name);
 
 	void		runGame();
 	InputData * translateInput();
@@ -314,6 +325,34 @@ protected:		// members
 
 // FIXME: remove global
 extern Parallaction *_vm;
+
+class SaveLoadChooser : public GUI::Dialog {
+	typedef Common::String String;
+	typedef Common::StringList StringList;
+protected:
+	GUI::ListWidget		*_list;
+	GUI::ButtonWidget	*_chooseButton;
+	GUI::GraphicsWidget	*_gfxWidget;
+	GUI::StaticTextWidget	*_date;
+	GUI::StaticTextWidget	*_time;
+	GUI::StaticTextWidget	*_playtime;
+	GUI::ContainerWidget	*_container;
+	Parallaction			*_vm;
+
+	uint8 _fillR, _fillG, _fillB;
+
+	void updateInfos();
+public:
+	SaveLoadChooser(const String &title, const String &buttonLabel, Parallaction *engine);
+	~SaveLoadChooser();
+
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	const String &getResultString() const;
+	void setList(const StringList& list);
+	int runModal();
+
+	virtual void reflowLayout();
+};
 
 
 } // namespace Parallaction
