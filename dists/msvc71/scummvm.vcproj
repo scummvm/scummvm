@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib agi_debug/agi.lib cine_debug/cine.lib gob_debug/gob.lib kyra_debug/kyra.lib lure_debug/lure.lib queen_debug/queen.lib saga_debug/saga.lib scumm_debug/scumm.lib agos_debug/agos.lib sky_debug/sky.lib sword1_debug/sword1.lib sword2_debug/sword2.lib parallaction_debug/parallaction.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib agi_debug/agi.lib cine_debug/cine.lib gob_debug/gob.lib kyra_debug/kyra.lib lure_debug/lure.lib queen_debug/queen.lib saga_debug/saga.lib scumm_debug/scumm.lib agos_debug/agos.lib sky_debug/sky.lib sword1_debug/sword1.lib sword2_debug/sword2.lib touche_debug/touche.lib parallaction_debug/parallaction.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
