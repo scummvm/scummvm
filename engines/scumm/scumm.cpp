@@ -1518,8 +1518,8 @@ void ScummEngine::setupMusic(int midi) {
 		break;
 	}
 	
-	// FIXME: MD_TOWNS should not be _midi_native in the first place!! iMuse code needs to be restructured.
-	if ((_game.id == GID_TENTACLE) || (_game.id == GID_SAMNMAX) || (midiDriver == MD_TOWNS))
+	// DOTT + SAM use General MIDI, so they shouldn't use GS settings
+	if ((_game.id == GID_TENTACLE) || (_game.id == GID_SAMNMAX))
 		_enable_gs = false;
 	else
 		_enable_gs = ConfMan.getBool("enable_gs");
@@ -1577,8 +1577,12 @@ void ScummEngine::setupMusic(int midi) {
 			_imuse->property(IMuse::PROP_GAME_ID, _game.id);
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
-			_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
-			_imuse->property(IMuse::PROP_GS, _enable_gs);
+			// YM2162 driver can't handle midi->getPercussionChannel(), NULL shouldn't init MT-32/GM/GS
+			if ((midi != MDT_TOWNS) && (midi != MDT_NONE)) { 
+				_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
+				if (midiDriver != MD_MT32) // MT-32 Emulation shouldn't be GM/GS initialized
+					_imuse->property(IMuse::PROP_GS, _enable_gs);
+			}
 			if (_game.heversion >= 60 || midi == MDT_TOWNS) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
 				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
