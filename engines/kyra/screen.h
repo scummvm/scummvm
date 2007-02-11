@@ -94,70 +94,103 @@ public:
 	bool init();
 
 	void updateScreen();
-	const uint8 *getCPagePtr(int pageNum) const;
-	uint8 *getPageRect(int pageNum, int x, int y, int w, int h);
-	void clearPage(int pageNum);
+
+	// page cur. functions
 	int setCurPage(int pageNum);
-	void clearCurPage();
-	uint8 getPagePixel(int pageNum, int x, int y);
-	void setPagePixel(int pageNum, int x, int y, uint8 color);
-	void fadeFromBlack(int delay=0x54);
-	void fadeToBlack(int delay=0x54);
-	void fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime);
-	void fadePalette(const uint8 *palData, int delay);
-	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
-	void setScreenPalette(const uint8 *palData);
-	void copyToPage0(int y, int h, uint8 page, uint8 *seqBuf);
-	void copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags=0);
-	void copyPage(uint8 srcPage, uint8 dstPage);
-	void copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src);
+
 	void copyFromCurPageBlock(int x, int y, int w, int h, const uint8 *src);
 	void copyCurPageBlock(int x, int y, int w, int h, uint8 *dst);
+
+	void clearCurPage();
+
+	// page 0 functions
+	void copyToPage0(int y, int h, uint8 page, uint8 *seqBuf);
+	void shakeScreen(int times);
+
+	// page functions
+	void copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags=0);
+	void copyPage(uint8 srcPage, uint8 dstPage);
+
+	void copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest);
+	void copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src);
+
 	void shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent);
 	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1);
+
+	void clearPage(int pageNum);
+
+	uint8 getPagePixel(int pageNum, int x, int y);
+	void setPagePixel(int pageNum, int x, int y, uint8 color);
+
+	const uint8 *getCPagePtr(int pageNum) const;
+	uint8 *getPageRect(int pageNum, int x, int y, int w, int h);
+
+	// palette handling
+	void fadeFromBlack(int delay=0x54);
+	void fadeToBlack(int delay=0x54);
+
+	void fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime);
+	void fadePalette(const uint8 *palData, int delay);
+
+	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
+	void setScreenPalette(const uint8 *palData);
+	uint8 *getPalette(int num);
+
+	// gui specific (processing on _curPage)
 	void drawLine(bool vertical, int x, int y, int length, int color);
 	void drawClippedLine(int x1, int y1, int x2, int y2, int color);
 	void drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2);
 	void drawBox(int x1, int y1, int x2, int y2, int color);
-	void setAnimBlockPtr(int size);
-	void setTextColorMap(const uint8 *cmap);
-	void setTextColor(const uint8 *cmap, int a, int b);
+
+	// font/text handling
 	bool loadFont(FontId fontId, const char *filename);
 	FontId setFont(FontId fontId);
+
 	int getFontHeight() const;
 	int getFontWidth() const;
+
 	int getCharWidth(uint8 c) const;
 	int getTextWidth(const char *str) const;
+
 	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
 	void drawChar(uint8 c, int x, int y);
+
+	void setTextColorMap(const uint8 *cmap);
+	void setTextColor(const uint8 *cmap, int a, int b);
+
 	void setScreenDim(int dim);
+
+	// shape handling
+	uint8 *encodeShape(int x, int y, int w, int h, int flags);
+
+	int setNewShapeHeight(uint8 *shape, int height);
+	int resetShapeHeight(uint8 *shape);
+
 	void drawShapePlotPixelCallback1(uint8 *dst, uint8 color);
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
-	static void decodeFrame3(const uint8 *src, uint8 *dst, uint32 size);
-	static void decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
-	static void decodeFrameDelta(uint8 *dst, const uint8 *src);
-	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch, bool noXor);
-	
-	uint8 *encodeShape(int x, int y, int w, int h, int flags);
-	void copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest);
-	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
 
-	void shakeScreen(int times);
-
-	int getRectSize(int x, int y);
+	// mouse handling
 	void hideMouse();
 	void showMouse();
+	void setMouseCursor(int x, int y, byte *shape);	
+
+	// rect handling
+	int getRectSize(int w, int h);
+
+	void rectClip(int &x, int &y, int w, int h);
+
+	void addBitBlitRect(int x, int y, int w, int h);
+	void bitBlitRects();
+
+	// misc	
+	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
+
+	void setAnimBlockPtr(int size);
+
 	void setShapePages(int page1, int page2);
-	void setMouseCursor(int x, int y, byte *shape);
-	uint8 *getPalette(int num);
 	
 	byte getShapeFlag1(int x, int y);
 	byte getShapeFlag2(int x, int y);
-	int setNewShapeHeight(uint8 *shape, int height);
-	int resetShapeHeight(uint8 *shape);
-	
-	void addBitBlitRect(int x, int y, int w, int h);
-	void bitBlitRects();
 	
 	void savePageToDisk(const char *file, int page);
 	void loadPageFromDisk(const char *file, int page);
@@ -172,7 +205,7 @@ public:
 	void restoreRect1(int xpos, int ypos);
 	void copyBackgroundBlock(int x, int page, int flag);
 	void copyBackgroundBlock2(int x);
-	void rectClip(int &x, int &y, int w, int h);
+
 	int getDrawLayer(int x, int y);
 	int getDrawLayer2(int x, int y, int height);
 
@@ -188,6 +221,12 @@ public:
 	
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
+
+	// decoding functions
+	static void decodeFrame3(const uint8 *src, uint8 *dst, uint32 size);
+	static void decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
+	static void decodeFrameDelta(uint8 *dst, const uint8 *src);
+	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch, bool noXor);
 
 	// maybe subclass screen for kyra3
 	static const ScreenDim _screenDimTableK3[];
