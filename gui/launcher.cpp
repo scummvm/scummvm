@@ -633,7 +633,6 @@ void LauncherDialog::addGame() {
 	if (massAdd) {
 		MessageDialog alert("Do you really want to run the mass game detector? "
 							"This could potentially add a huge number of games.", "Yes", "No");
-		alert.runModal();
 		if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
 			addGameRecursive(_browser->getResult());
 		}
