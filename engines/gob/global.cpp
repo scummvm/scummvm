@@ -54,6 +54,7 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 	/* Language */
 	_disableLangCfg = 0x8000;
 	_language = 0x8000;
+	_languageWanted = 0x8000;
 
 	/* Timer variables */
 	_startTime = 0;

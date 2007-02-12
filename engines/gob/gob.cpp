@@ -694,6 +694,7 @@ int GobEngine::init() {
 		_global->_language = 2;
 		break;
 	}
+	_global->_languageWanted = _global->_language;
 
 	// FIXME: This is the ugly way of reducing redraw overhead. It works
 	//        well for 320x200 but it's unclear how well it will work for

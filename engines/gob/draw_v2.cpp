@@ -79,6 +79,12 @@ void Draw_v2::printText(void) {
 	if ((_vm->_game->_totTextData == 0) || (_vm->_game->_totTextData->dataPtr == 0))
 		return;
 
+	if (_vm->_global->_languageWanted != _vm->_global->_language) {
+		warning("Your game version doesn't support the requested language, "
+				"using the first one available (%d)", _vm->_global->_language);
+		_vm->_global->_languageWanted = _vm->_global->_language;
+	}
+
 	size = _vm->_game->_totTextData->items[index].size;
 	dataPtr = _vm->_game->_totTextData->dataPtr + _vm->_game->_totTextData->items[index].offset;
 	ptr = dataPtr;
@@ -652,6 +658,12 @@ void Draw_v2::spriteOperation(int16 operation) {
 		if ((_fontIndex >= 4) || (_fontToSprite[_fontIndex].sprite == -1)) {
 			if (_fonts[_fontIndex]->extraData == 0) {
 				if (((int8) _textToPrint[0]) == -1) {
+					if (_vm->_global->_languageWanted != _vm->_global->_language) {
+						warning("Your game version doesn't support the requested language, "
+								"using the first one available (%d)",
+								_vm->_global->_language);
+						_vm->_global->_languageWanted = _vm->_global->_language;
+					}
 					dataBuf = _vm->_game->_totTextData->dataPtr + _textToPrint[1] + 1;
 					len = *dataBuf++;
 					for (i = 0; i < len; i++) {

@@ -87,6 +87,7 @@ public:
 
 	uint16 _disableLangCfg;
 	uint16 _language;
+	uint16 _languageWanted;
 
 	// Timer variables
 	int32 _startTime;

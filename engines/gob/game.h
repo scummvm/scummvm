@@ -137,6 +137,7 @@ public:
 	Collision *_collisionAreas;
 	Collision *_collStack[5];
 
+	bool _foundTotLoc;
 	TotTextTable *_totTextData;
 
 	char _curTotFile[14];

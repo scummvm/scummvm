@@ -141,8 +141,10 @@ void Game_v2::playTot(int16 skipPlay) {
 				if (READ_LE_UINT32(filePtr) == 0) {
 					_totTextData->dataPtr = loadLocTexts();
 					totTextLoc = true;
-				} else
+				} else {
 					_totTextData->dataPtr = (_totFileData + READ_LE_UINT32((char *)_totFileData + 0x30));
+					_vm->_global->_language = _vm->_global->_languageWanted;
+				}
 
 				_totTextData->items = 0;
 				if (_totTextData->dataPtr != 0) {

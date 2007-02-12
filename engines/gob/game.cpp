@@ -54,6 +54,8 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_extHandle = 0;
 	_collisionAreas = 0;
 	_shouldPushColls = 0;
+
+	_foundTotLoc = false;
 	_totTextData = 0;
 
 	// Collisions stack
@@ -690,28 +692,29 @@ int16 Game::openLocTextFile(char *locTextFile, int language) {
 }
 
 char *Game::loadLocTexts(void) {
-	static bool found = false;
 	char locTextFile[20];
 	int16 handle;
 	int i;
 
 	strcpy(locTextFile, _curTotFile);
 
-	handle = openLocTextFile(locTextFile, _vm->_global->_language);
-	if ((handle < 0) && !found) {
+	handle = openLocTextFile(locTextFile, _vm->_global->_languageWanted);
+	if (handle >= 0) {
+		_foundTotLoc = true;
+		_vm->_global->_language = _vm->_global->_languageWanted;
+	}
+	else if (!_foundTotLoc) {
 		for (i = 0; i < 10; i++) {
 			handle = openLocTextFile(locTextFile, i);
 			if (handle >= 0) {
-				warning("Your game version doesn't support the requested language, using the first one available (%d)", i);
 				_vm->_global->_language = i;
-				found = true;
 				break;
 			}
 		}
 	}
+	debugC(1, kDebugFileIO, "Using language %d for %s", _vm->_global->_language, _curTotFile);
 
 	if (handle >= 0) {
-		found = true;
 		_vm->_dataio->closeData(handle);
 		return _vm->_dataio->getData(locTextFile);
 	}
