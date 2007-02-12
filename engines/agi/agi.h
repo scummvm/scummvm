@@ -104,9 +104,9 @@ enum AgiGameType {
 };
 
 enum AgiGameFeatures {
-	AGI_MOUSE =       (1 << 0),
-	AGI_AGDS =        (1 << 1),
-	AGI_MACGOLDRUSH = (1 << 2)
+	AGI_MOUSE = 1 << 0,
+	AGI_AGDS = 1 << 1,
+	AGI_MACGOLDRUSH = 1 << 2
 };
 
 struct AGIGameDescription;
@@ -477,6 +477,7 @@ public:
 class GfxMgr;
 class SpritesMgr;
 class Menu;
+class SearchTree;
 
 extern struct Mouse g_mouse;
 
@@ -756,16 +757,14 @@ private:
 	void loadDict(void);
 	bool matchWord(void);
 
-	typedef Common::HashMap<String, String, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> DictMap;
-	DictMap _dict;
-	Common::StringList _dictKeys;
+	SearchTree *_searchTreeRoot;
+	SearchTree *_activeTreeNode;
+	
+	void insertSearchNode(const char *word);
+
 	String _currentCode;
 	String _currentWord;
-	String _matchedWord;
 	int _wordNumber;
-	uint _wordPosition;
-	bool _nextIsActive;
-	bool _addIsActive;
 public:
 	char _predictiveResult[40];
 };

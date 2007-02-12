@@ -559,6 +559,8 @@ AgiEngine::AgiEngine(OSystem *syst) : Engine(syst) {
 	_objects = NULL;
 
 	_oldMode = -1;
+	
+	_searchTreeRoot = 0;
 }
 
 void AgiEngine::initialize() {

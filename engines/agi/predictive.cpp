@@ -32,6 +32,80 @@ namespace Agi {
 #define kModeNum 1
 #define kModeAbc 2
 
+static byte s_asciiToNumTable[256];
+
+void setAsciiToNumTableBatch(const char *chars, byte value) {
+	while (*chars) {
+		s_asciiToNumTable[tolower(*chars)] = value;
+		s_asciiToNumTable[toupper(*chars)] = value;
+		chars++;
+	}
+}
+
+void initAsciiToNumTable() {
+	memset(s_asciiToNumTable, 0, sizeof(s_asciiToNumTable));
+
+	setAsciiToNumTableBatch("1'-.&", 1);
+	setAsciiToNumTableBatch("2abc", 2);
+	setAsciiToNumTableBatch("3def", 3);
+	setAsciiToNumTableBatch("4ghi", 4);
+	setAsciiToNumTableBatch("5jkl", 5);
+	setAsciiToNumTableBatch("6mno", 6);
+	setAsciiToNumTableBatch("7pqrs", 7);
+	setAsciiToNumTableBatch("8tuv", 8);
+	setAsciiToNumTableBatch("9wxyz", 9);
+}
+
+class SearchTree {
+public:
+	//byte val;
+	//SearchTree *parent;	// TODO: Could be used to speed up re-searches
+	SearchTree *children[10];
+	Common::StringList words;
+	
+	SearchTree() {
+		memset(children, 0, sizeof(children));
+	}
+	
+	SearchTree *getChild(byte val) {
+		assert(val < 10);
+		if (children[val] == 0) {
+			children[val] = new SearchTree();
+		}
+		return children[val];
+	}
+
+	SearchTree *findChildWithWords() {
+		if (!words.empty())
+			return this;
+		
+		SearchTree *child = 0;
+		for (int i = 0; i < 10 && !child; ++i) {
+			if (children[i])
+				child = children[i]->findChildWithWords();
+		}
+	
+		return child;
+	}
+	
+};
+
+
+void AgiEngine::insertSearchNode(const char *word) {
+	// Insert the word into the tree
+	SearchTree *tree = _searchTreeRoot;
+	assert(tree);
+	for (int i = 0; word[i] != 0; ++i) {
+		byte key = s_asciiToNumTable[(int)word[i]];
+		if (key == 0)
+			return;	// abort!
+		tree = tree->getChild(key);
+	}
+
+	// TODO: Sort words, remove duplicates... ?
+	tree->words.push_back(word);
+}
+
 bool AgiEngine::predictiveDialog(void) {
 	int key, active = 0;
 	bool rc = false;
@@ -40,6 +114,10 @@ bool AgiEngine::predictiveDialog(void) {
 	int bx[17], by[17];
 	String prefix = "";
 	char temp[MAXWORDLEN + 1];
+	
+	
+	// FIXME: Move this to a more appropriate place.
+	initAsciiToNumTable();
 
 	const char *buttonStr[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
 	const char *buttons[] = {
@@ -62,9 +140,9 @@ bool AgiEngine::predictiveDialog(void) {
 	};
 	const char *modes[] = { "Pre", "123", "Abc" };
 
-	if (!_dict.size()) {
+	if (!_searchTreeRoot) {
 		loadDict();
-		if (!_dict.size())
+		if (!_searchTreeRoot)
 			return false;
 	}
 
@@ -106,12 +184,10 @@ bool AgiEngine::predictiveDialog(void) {
 		_gfx->getKey();
 	}
 
-	_wordPosition = 0;
 	_currentCode = "";
 	_currentWord = "";
-	_matchedWord = "";
 	_wordNumber = 0;
-	_nextIsActive = _addIsActive = false;
+	_activeTreeNode = 0;
 
 	int mode = kModePre;
 
@@ -123,9 +199,11 @@ bool AgiEngine::predictiveDialog(void) {
 				int color1 = colors[i * 2];
 				int color2 = colors[i * 2 + 1];
 
-				if (i == 9 && !_nextIsActive) { // Next
+				if (i == 9 && !(_activeTreeNode && _activeTreeNode->words.size() > 1)) { // Next
 					color2 = 7;
 				}
+				
+				bool _addIsActive = false; // FIXME
 				if (i == 10 && !_addIsActive) { // Add
 					color2 = 7;
 				}
@@ -172,23 +250,19 @@ bool AgiEngine::predictiveDialog(void) {
 
 						prefix += temp;
 						prefix += " ";
-						_wordPosition = 0;
 						_currentCode = "";
 					} if (active < 9 || active == 11 || active == 15) { // number or backspace
 						if (active == 11) { // backspace
 							if (_currentCode.size()) {
 								_currentCode.deleteLastChar();
-								_wordPosition--;
 							} else {
 								if (prefix.size())
 									prefix.deleteLastChar();
 							}
 						} else if (active == 15) { // zero
 							_currentCode += buttonStr[9];
-							_wordPosition++;
 						} else {
 							_currentCode += buttonStr[active];
-							_wordPosition++;
 						}
 
 						if (mode == kModeNum) {
@@ -196,23 +270,14 @@ bool AgiEngine::predictiveDialog(void) {
 						} else if (mode == kModePre) {
 							if (!matchWord() && _currentCode.size()) {
 								_currentCode.deleteLastChar();
-								_wordPosition--;
 								matchWord();
 							}
 						}
 					} else if (active == 9) { // next
-						if (_nextIsActive) {
-							int wordsNumber = (_matchedWord.size() + 1) / _currentCode.size();
-							int start;
-
-							_wordNumber = (_wordNumber + 1) % wordsNumber;
-
-							start = _wordNumber * (_currentCode.size() + 1);
-
-							strncpy(temp, _matchedWord.c_str() + start, _currentCode.size());
-							temp[_matchedWord.size() + 1] = 0;
-
-							_currentWord = temp;
+						int totalWordsNumber = _activeTreeNode ? _activeTreeNode->words.size() : 0;
+						if (totalWordsNumber > 0) {
+							_wordNumber = (_wordNumber + 1) % totalWordsNumber;
+							_currentWord = String(_activeTreeNode->words[_wordNumber].c_str(), _currentCode.size());
 						}
 					} else if (active == 10) { // add
 						debug(0, "add");
@@ -268,100 +333,72 @@ static char *rtrim(char *t) {
 void AgiEngine::loadDict(void) {
 	Common::File in;
 	char buf[MAXLINELEN];
+	int words = 0, lines = 0;
 
 	if (!in.open("pred.txt"))
 		return;
 
+	_searchTreeRoot = new SearchTree();
+	words = 0;
+
 	while (!in.eos() && in.readLine(buf, MAXLINELEN)) {
 		// Skip leading & trailing whitespaces
-		char *t = rtrim(ltrim(buf));
-		char *k = t;
+		char *word = rtrim(ltrim(buf));
 
 		// Skip empty lines
-		if (*t == 0)
+		if (*word == 0)
 			continue;
-
-		// First comes the key, scan until we encounter a space
-		while (!isspace(*t)) {
-			t++;
-		}
-		if (*t == 0)
-			continue;	// No value was specified, skip this
-		*t++ = 0;	// Terminate the key with a zero byte
-		String key(k);
 		
-		// Skip over whitespaces
-		while (isspace(*t))
-			t++;
+		lines++;
 
-		_dict[key] = String(t);
-		_dictKeys.push_back(key);
-	}
-
-	// Sort _dictKeys using combsort11 (since we expect pre-sorted data,
-	// this is fast enough for our purposes).
-	// See http://en.wikipedia.org/wiki/Comb_sort
-	uint gap = _dictKeys.size();
-	bool swaps = false;
-
-	while (gap != 1 || swaps) {
-		if (gap > 1) {
-			gap = (uint)(gap / 1.3);
-			if (gap == 10 || gap == 9) gap = 11;
-		}
-		
-		swaps = false;
-		for (uint i = 0; i + gap < _dictKeys.size(); ++i) {
-			if (_dictKeys[i] > _dictKeys[i + gap]) {
-				SWAP(_dictKeys[i], _dictKeys[i + gap]);
-				swaps = true;
+		// The lines are of the form:  "1234 word word"
+		// I.e. first comes a T9 number, then a space separated list of
+		// words with that T9 code. We simply ignore the T9 code, and then
+		// insert the words in order of occurance.
+		char *tok = strtok(word, " \t");
+		if (tok) {
+			while ((tok = strtok(NULL, " ")) != NULL) {
+				insertSearchNode(tok);
+				words++;
 			}
 		}
 	}
 
-	debug(0, "Loaded %d keys", _dict.size());
+	debug(0, "Loaded %d lines with %d words", lines, words);
 }
 
 bool AgiEngine::matchWord(void) {
-	_addIsActive = false;
-
-	if (!_currentCode.size()) {
+	if (_currentCode.empty()) {
 		return false;
 	}
+	
+	// Lookup word in the search tree
+	SearchTree *tree = _searchTreeRoot;
+	assert(tree);
+	for (uint i = 0; i < _currentCode.size(); ++i) {
+		int key = _currentCode[i] - '0';
+		if (key < 1 || key > 9) {
+			tree = 0;
+			break;	// Invalid key/code value, abort!
+		}
+		tree = tree->children[key];
+		if (!tree)
+			break;	// No matching entry in the search tree, abort!
+	}
+	
+	if (tree)
+		tree = tree->findChildWithWords();
 
-	if (_dict.contains(_currentCode)) {
-		_currentWord = _matchedWord = _dict[_currentCode];
+	_wordNumber = 0;
+	_activeTreeNode = tree;
+	_currentWord.clear();
 
-		_nextIsActive = ((_matchedWord.size() + 1) / _currentCode.size() > 1);
-		return true;
+
+	if (tree) {
+		_currentWord = String(_activeTreeNode->words[_wordNumber].c_str(), _currentCode.size());
 	}
 
-	// Else search first partial match
-	for (uint i = 0; i < _dictKeys.size(); i++) {
-		bool matched = true;
-
-		if (_dictKeys[i].size() < _wordPosition)
-			continue;
-
-		for (uint j = 0; j < _dictKeys[i].size() && j < _wordPosition; j++) {
-			if (_currentCode[j] != _dictKeys[i][j]) {
-				matched = false;
-				break;
-			}
-		}
-		if (matched && _dictKeys[i].size() >= _wordPosition) {
-			_currentWord = _matchedWord = _dict[_dictKeys[i]];
-
-			_nextIsActive = ((_matchedWord.size() + 1) / _currentCode.size() > 1);
-			return true;
-		}
-	}
-
-	_currentWord = _matchedWord = "";
-	_nextIsActive = false;
-	_addIsActive = true;
-
-	return false;
+	return tree != 0;
 }
 
 } // End of namespace Agi
