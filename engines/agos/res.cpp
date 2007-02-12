@@ -680,10 +680,12 @@ void AGOSEngine::loadVGAVideoFile(uint id, uint type) {
 		if (getPlatform() == Common::kPlatformAcorn) {
 			sprintf(filename, "%.3d%d.DAT", id, type);
 		} else if (getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST) {
-			//if (getFeatures() & GF_TALKIE) {
-				sprintf(filename, "%.2d%d.out", id, type);
-			/* } else if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
-				if (id == 20)
+			if (getFeatures() & GF_TALKIE) {
+				sprintf(filename, "%.3d%d.out", id, type);
+			} else if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
+				if (getPlatform() == Common::kPlatformAtariST)
+					sprintf(filename, "%.2d%d.out", id, type);
+				else if (id == 20)
 					sprintf(filename, "D%d.out", type);
 				else if (id == 26)
 					sprintf(filename, "J%d.out", type);
@@ -699,7 +701,7 @@ void AGOSEngine::loadVGAVideoFile(uint id, uint type) {
 				sprintf(filename, "%.2d%d.pkd", id, type);
 			} else {
 				sprintf(filename, "%.3d%d.pkd", id, type);
-			} */
+			}
 		} else {
 			if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 				sprintf(filename, "%.2d%d.VGA", id, type);

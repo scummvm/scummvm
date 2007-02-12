@@ -483,8 +483,6 @@ Subroutine *AGOSEngine::createSubroutine(uint id) {
 SubroutineLine *AGOSEngine::createSubroutineLine(Subroutine *sub, int where) {
 	SubroutineLine *sl, *cur_sl = NULL, *last_sl = NULL;
 
-	printf("sub->id %d\n", sub->id);
-
 	if (sub->id == 0)
 		sl = (SubroutineLine *)allocateTable(SUBROUTINE_LINE_BIG_SIZE);
 	else
