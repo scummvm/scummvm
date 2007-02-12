@@ -193,7 +193,8 @@ void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 		if (getPlatform() == Common::kPlatformAmiga) {
 			src = _iconFilePtr;
 			src += READ_BE_UINT32(&((uint32 *)src)[icon]);
-			decompressIconAmiga(dst, src, 24, 24, 240, _dxSurfacePitch);
+			uint8 color = (getFeatures() & GF_32COLOR) ? 16 : 240;
+			decompressIconAmiga(dst, src, 24, 24, color, _dxSurfacePitch);
 		} else {
 			src = _iconFilePtr;
 			src += READ_LE_UINT16(&((uint16 *)src)[icon]);
@@ -203,7 +204,7 @@ void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 		dst += (x + window->x) * 8;
 		dst += (y * 20 + window->y) * _dxSurfacePitch;
 
-		uint color = dst[0] & 0xF0;
+		uint8 color = dst[0] & 0xF0;
 
 		if (getPlatform() == Common::kPlatformAmiga) {
 			src = _iconFilePtr;
