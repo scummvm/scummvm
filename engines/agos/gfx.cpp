@@ -958,7 +958,11 @@ void AGOSEngine::animate(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x,
 				break;
 			p += sizeof(AnimationHeader_Simon);
 		}
-		assert(READ_BE_UINT16(&((AnimationHeader_Simon *) p)->id) == vgaSpriteId);
+
+		if (READ_BE_UINT16(&((AnimationHeader_Simon *) p)->id) != vgaSpriteId) {
+			debug(0, "setImage: Animation %d not found.", vgaSpriteId);
+			return;
+		}
 	} else {
 		p = pp + READ_BE_UINT16(pp + 10);
 		p += 20;
@@ -1068,7 +1072,12 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool vgaScript) {
 				break;
 			b += sizeof(ImageHeader_Simon);
 		}
-		assert(READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == vga_res_id);
+
+
+		if (READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) != vga_res_id) {
+			debug(0, "setImage: Image %d not found.", vga_res_id);
+			return;
+		}
 	} else {
 		b = bb + READ_BE_UINT16(bb + 10);
 		b += 20;
