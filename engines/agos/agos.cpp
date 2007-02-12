@@ -744,7 +744,9 @@ void AGOSEngine::setupGame() {
 
 	allocItemHeap();
 	allocTablesHeap();
-	initMouse();
+
+	if (getGameType() != GType_SIMON2)
+		initMouse();
 
 	_variableArray = (int16 *)calloc(_numVars, sizeof(int16));
 	_variableArrayPtr = _variableArray;
