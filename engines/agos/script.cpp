@@ -624,7 +624,7 @@ void AGOSEngine::o_picture() {
 	// for vga_res 12701, but only vga_res 12700 exists.
 	if (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformAmiga &&
 		vga_res == 12701) {
-		vga_res = 12700;
+		return;
 	}
 
 	_picture8600 = (vga_res == 8600);
