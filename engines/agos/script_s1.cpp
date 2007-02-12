@@ -27,6 +27,10 @@
 
 #include "agos/agos.h"
 
+#ifdef _WIN32_WCE
+extern bool isSmartphone(void);
+#endif
+
 namespace AGOS {
 
 void AGOSEngine::setupSimon1Opcodes(OpcodeProc *op) {
