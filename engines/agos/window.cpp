@@ -185,9 +185,15 @@ void AGOSEngine::restoreBlock(uint h, uint w, uint y, uint x) {
 }
 
 void AGOSEngine::setTextColor(uint color) {
-	WindowBlock *window;
+	WindowBlock *window = _windowArray[_curWindow];
 
-	window = _windowArray[_curWindow];
+	if ((getFeatures() & GF_32COLOR) && color != 0) {
+		if (window->fill_color == 17)
+			color = 25;
+		else
+			color = 12;
+	}
+
 	window->text_color = color;
 }
 
