@@ -630,16 +630,16 @@ void AGOSEngine::vc10_draw() {
 	if (_dumpImages)
 		dumpSingleBitmap(_vgaCurZoneNum, state.image, state.depack_src, width, height,
 											 state.palette);
-	if (getFeatures() & GF_PLANAR) {
-		bool is32Colors = false;
-		if (getGameType() == GType_SIMON1) {
-			if (((_lockWord & 0x20) && !state.palette) || state.palette == 0xC0 ||
-			(getFeatures() & GF_32COLOR)) {
-				is32Colors = true;
-			}
-		}
+	state.width = state.draw_width = width;		/* cl */
+	state.height = state.draw_height = height;	/* ch */
 
-		state.depack_src = convertclip(state.depack_src, is32Colors, height, width * 16, flags);
+	state.depack_cont = -0x80;
+
+	state.x_skip = 0;				/* colums to skip = bh */
+	state.y_skip = 0;				/* rows to skip   = bl */
+
+	if (getFeatures() & GF_PLANAR) {
+		state.depack_src = convertclip(&state, flags);
 
 		// converted planar clip is already uncompressed
 		if (state.flags & kDFCompressedFlip) {
@@ -663,14 +663,6 @@ void AGOSEngine::vc10_draw() {
 			}
 		}
 	}
-
-	state.width = state.draw_width = width;		/* cl */
-	state.height = state.draw_height = height;	/* ch */
-
-	state.depack_cont = -0x80;
-
-	state.x_skip = 0;				/* colums to skip = bh */
-	state.y_skip = 0;				/* rows to skip   = bl */
 
 	uint maxWidth = (getGameType() == GType_FF || getGameType() == GType_PP) ? 640 : 20;
 	if ((getGameType() == GType_SIMON2 || getGameType() == GType_FF) && width > maxWidth) {

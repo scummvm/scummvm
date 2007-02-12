@@ -115,9 +115,19 @@ static void convertcompressedclip(const byte *src, byte *dst, uint8 colorDepth, 
   	}
 }
 
-byte *AGOSEngine::convertclip(const byte *src, bool is32Colors, uint height, uint width, byte flags) {
+byte *AGOSEngine::convertclip(VC10_state *state, byte flags) {
 	int length, i, j;
-	uint8 colorDepth = is32Colors ? 5 : 4;
+
+	uint8 colorDepth = 4;
+	if (getGameType() == GType_SIMON1) {
+		if (((_lockWord & 0x20) && !state->palette) || (getFeatures() & GF_32COLOR)) {
+			colorDepth = 5;
+		}
+	}
+
+	const byte *src = state->depack_src;
+	int width = state->width * 16;
+	int height = state->height;
 
 	free(_planarBuf);
 	_planarBuf = (byte *)malloc(width * height);
@@ -129,7 +139,7 @@ byte *AGOSEngine::convertclip(const byte *src, bool is32Colors, uint height, uin
 		length = (width + 15) / 16 * height;
 		for (i = 0; i < length; i++) {
 			uint16 w[kMaxColorDepth];
-			if (getGameType() == GType_SIMON1 && !is32Colors) {
+			if (getGameType() == GType_SIMON1 && colorDepth == 4) {
 				for (j = 0; j < colorDepth; ++j) {
 					w[j] = READ_BE_UINT16(src + j * length * 2);
 				}

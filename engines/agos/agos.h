@@ -1337,7 +1337,7 @@ protected:
 	byte *getBackGround();
 	byte *getScaleBuf();
 
-	byte *convertclip(const byte *src, bool is32Colors, uint height, uint width, byte flags);
+	byte *convertclip(VC10_state *state, byte flags);
 
 	bool decrunchFile(byte *src, byte *dst, uint32 size);
 	void loadVGABeardFile(uint id);
