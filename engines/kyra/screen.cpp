@@ -78,6 +78,7 @@ bool Screen::init() {
 	memset(_sjisOverlayPtrs, 0, sizeof(_sjisOverlayPtrs));
 	_useOverlays = false;
 	_useSJIS = false;
+	_sjisTempPage = _sjisFontData = 0;
 
 	if (_vm->gameFlags().useHiResOverlay) {
 		_system->beginGFXTransaction();
