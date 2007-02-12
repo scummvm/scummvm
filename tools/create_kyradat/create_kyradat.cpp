@@ -25,7 +25,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 15,
+	kKyraDatVersion = 16,
 	kIndexSize = 12
 };
 
@@ -337,8 +337,8 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	}
 	
 	if (fmtPatch == 2) {
-		targetsize++;
-		entries++;
+		targetsize += (g->special - 1);
+		entries += (g->special - 1);
 	}
 	
 	uint8 *buffer = new uint8[targetsize];
@@ -358,7 +358,8 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 				// Write one empty string into intro strings file
 				if (fmtPatch == 2) {
 					if ((g->special == kFMTownsVersionE && input - data == 0x260) ||
-						(g->special == kFMTownsVersionJ && input - data == 0x265))
+						(g->special == kFMTownsVersionJ && input - data == 0x2BD) ||
+						(g->special == kFMTownsVersionJ && input - data == 0x2BE))
 							*output++ = *input;
 				}
 
@@ -708,4 +709,5 @@ const Game *findGame(const byte *buffer, const uint32 size) {
 	printf("file is not supported (unknown md5 \"%s\")\n", md5str);
 	return 0;
 }
+
 
