@@ -1306,7 +1306,11 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"sq2",
 			"2.0F 1986-12-09 [VOL.2->PICTURE.16 broken]",
-			AD_ENTRY1("logdir", "28add5125484302d213911df60d2aded"),
+			{
+				{ "logdir", 0, "28add5125484302d213911df60d2aded", 426},
+				{ "object", 0, "5dc52be721257719f4b311a84ce22b16", 372},
+				{ NULL, 0, NULL, 0}
+			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 		},
