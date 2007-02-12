@@ -442,8 +442,8 @@ void AGOSEngine::o_random() {
 	uint var = getVarWrapper();
 	uint value = (uint16)getVarOrWord();
 
-	// Copy protection subtitles aren't displayed in Amiga version
-	if (getGameId() == GID_SIMON1AMIGA && var == 51 && value == 8)
+	// Copy protection subtitles aren't displayed in Amiga OCS version
+	if ((getFeatures() & GF_32COLOR) && var == 51 && value == 8)
 		writeVariable(var, 4);
 	else
 		writeVariable(var, _rnd.getRandomNumber(value - 1));
