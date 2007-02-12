@@ -39,7 +39,7 @@ namespace Parallaction {
 #define PALETTE_COLORS		32
 #define PALETTE_SIZE		PALETTE_COLORS*3
 
-#pragma pack(push, 1)
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 struct PaletteFxRange {
 
@@ -51,7 +51,7 @@ struct PaletteFxRange {
 
 };
 
-#pragma pack(pop)
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 extern byte _palette[];
 
