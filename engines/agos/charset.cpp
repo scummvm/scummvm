@@ -305,63 +305,58 @@ void AGOSEngine::renderStringAmiga(uint vga_sprite_id, uint color, uint width, u
 	dst_org = dst;
 	int delta = 0;
 	while ((chr = *txt++) != 0) {
-		int tmp = chr;
+		int img_width = 1;
 		if (chr == 10) {
 			dst += width * 10;
 			dst_org = dst;
 			delta = 0;
-		} else if ((tmp -= '!') < 0) {
-			delta += 6;
-			if (delta > 8) {
-				delta -= 8;
-				dst_org++;
-			}
+		} else if ((signed char)(chr -= '!') < 0) {
+			img_width = 7;
 		} else {
 			const byte *img = simon_agaFont + chr * 41;
-			int img_width = img[40];
-			int mdelta = 8 - delta;
+			img_width = img[40];
 			byte *cur_dst = dst_org;
 			for (int row = 0; row < 10; row++) {
 				int col = color;
 				for (int plane = 0; plane < 3; plane++) {
 					chr = img[plane] >> delta;
 					if (chr) {
-						if (col & 1) *(cur_dst + charsize * 0) |= chr;
-						if (col & 2) *(cur_dst + charsize * 1) |= chr;
-						if (col & 4) *(cur_dst + charsize * 2) |= chr;
-						if (col & 8) *(cur_dst + charsize * 3) |= chr;
+						if (col & 1) cur_dst[charsize * 0] |= chr;
+						if (col & 2) cur_dst[charsize * 1] |= chr;
+						if (col & 4) cur_dst[charsize * 2] |= chr;
+						if (col & 8) cur_dst[charsize * 3] |= chr;
 					}
-					chr = img[plane] << mdelta;
-					if ((mdelta >= img_width) && (chr)) {
-						if (col & 1) *(cur_dst + charsize * 0 + 1) |= chr;
-						if (col & 2) *(cur_dst + charsize * 1 + 1) |= chr;
-						if (col & 4) *(cur_dst + charsize * 2 + 1) |= chr;
-						if (col & 8) *(cur_dst + charsize * 3 + 1) |= chr;
+					chr = img[plane] << (8 - delta);
+					if (((8 - delta) < img_width) && (chr)) {
+						if (col & 1) cur_dst[charsize * 0 + 1] |= chr;
+						if (col & 2) cur_dst[charsize * 1 + 1] |= chr;
+						if (col & 4) cur_dst[charsize * 2 + 1] |= chr;
+						if (col & 8) cur_dst[charsize * 3 + 1] |= chr;
 					}
 					col++;
 				}
 				chr = img[3] >> delta;
 				if (chr) {
-					*(cur_dst + charsize * 0) |= chr;
-					*(cur_dst + charsize * 1) |= chr;
-					*(cur_dst + charsize * 2) |= chr;
-					*(cur_dst + charsize * 3) |= chr;
+					cur_dst[charsize * 0] |= chr;
+					cur_dst[charsize * 1] |= chr;
+					cur_dst[charsize * 2] |= chr;
+					cur_dst[charsize * 3] |= chr;
 				}
-				chr = img[3] << mdelta;
-				if ((mdelta >= img_width) && (chr)) {
-					*(cur_dst + charsize * 0 + 1) |= chr;
-					*(cur_dst + charsize * 1 + 1) |= chr;
-					*(cur_dst + charsize * 2 + 1) |= chr;
-					*(cur_dst + charsize * 3 + 1) |= chr;
+				chr = img[3] << (8 - delta);
+				if (((8 - delta) < img_width) && (chr)) {
+					cur_dst[charsize * 0 + 1] |= chr;
+					cur_dst[charsize * 1 + 1] |= chr;
+					cur_dst[charsize * 2 + 1] |= chr;
+					cur_dst[charsize * 3 + 1] |= chr;
 				}
 				cur_dst += width;
 				img += 4;
 			}
-			delta += img_width - 1;
-			if (delta > 8) {
-				delta -= 8;
-				dst_org++;
-			}
+		}
+		delta += img_width - 1;
+		if (delta >= 8) {
+			delta -= 8;
+			dst_org++;
 		}
 	}
 }

@@ -75,6 +75,21 @@ static void bitplanetochunky(uint16 *w, uint8 colorDepth, uint8 *&dst) {
 	}
 }
 
+static void bitplanetochunkytext(uint16 *w, uint8 colorDepth, uint8 *&dst) {
+	for (int j = 0; j < 16; j++) {
+		byte color = 0;
+		for (int p = 0; p < colorDepth; ++p) {
+			if (w[p] & 0x8000) {
+				color |= 1 << p;
+			}
+			w[p] <<= 1;
+		}
+		if (color)
+			color |= 0xC0;
+		*dst++ = color;
+	}
+}
+
 static void convertcompressedclip(const byte *src, byte *dst, uint8 colorDepth, int height, int width) {
 	const byte *plane[kMaxColorDepth];
 	byte *uncptr[kMaxColorDepth];
@@ -143,7 +158,11 @@ byte *AGOSEngine::convertclip(VC10_state *state, byte flags) {
 				for (j = 0; j < colorDepth; ++j) {
 					w[j] = READ_BE_UINT16(src + j * length * 2);
 				}
-				bitplanetochunky(w, colorDepth, dst);
+				if (state->palette == 0xC0) {
+					bitplanetochunkytext(w, colorDepth, dst);
+				} else {
+					bitplanetochunky(w, colorDepth, dst);
+				}
 				src += 2;
 			} else {
 				for (j = 0; j < colorDepth; ++j) {

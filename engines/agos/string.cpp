@@ -465,6 +465,7 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 		renderString(1, color, width, height, convertedString);
 	} else {
 		if (getPlatform() == Common::kPlatformAmiga) {
+			color = color * 3 + 1;
 			renderStringAmiga(vgaSpriteId, color, width, height, convertedString);
 		} else {
 			color = color * 3 + 192;
