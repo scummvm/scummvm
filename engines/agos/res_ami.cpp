@@ -135,7 +135,8 @@ byte *AGOSEngine::convertImage(VC10_state *state, bool compressed) {
 
 	uint8 colorDepth = 4;
 	if (getGameType() == GType_SIMON1) {
-		if (((_lockWord & 0x20) && !state->palette) || (getFeatures() & GF_32COLOR)) {
+		if (((_lockWord & 0x20) && !state->palette) || ((getFeatures() & GF_32COLOR) &&
+			state->palette != 0xC0)) {
 			colorDepth = 5;
 		}
 	}
