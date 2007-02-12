@@ -627,6 +627,7 @@ int GobEngine::init() {
 		error("GobEngine::init(): Unknown version of game engine");
 	_noMusic = MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL;
 	if (!_noMusic && !(_platform == Common::kPlatformAmiga) &&
+		 !(_platform == Common::kPlatformAtariST) &&
 	   (((_platform == Common::kPlatformMacintosh) && (_features & Gob::GF_GOB1)) ||
 	     (_features & Gob::GF_GOB2)))
 		_adlib = new Adlib(this);
@@ -648,9 +649,13 @@ int GobEngine::init() {
 	_global->_debugFlag = 1;
 	_global->_doRangeClamp = 1;
 
-	// WORKAROUND: Some Amiga versions only play music when the video mode is
-	// Amiga-ish
-	_global->_fakeVideoMode = (_platform == Common::kPlatformAmiga) ? 0x11 : 0x13;
+	// WORKAROUND: Some versions check the video mode to detect the system
+	if (_platform == Common::kPlatformAmiga)
+		_global->_fakeVideoMode = 0x11;
+	else if (_platform == Common::kPlatformAtariST)
+		_global->_fakeVideoMode = 0x10;
+	else
+		_global->_fakeVideoMode = 0x13;
 
 	_global->_videoMode = 0x13;
 	_global->_useMouse = 1;

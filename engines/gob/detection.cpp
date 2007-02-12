@@ -561,6 +561,17 @@ static const GOBGameDescription gameDescriptions[] = {
 		{
 			"ween",
 			"",
+			AD_ENTRY1("intro.stk", "e6d13fb3b858cb4f78a8780d184d5b2c"),
+			FR_FRA,
+			kPlatformAtariST,
+		},
+		GF_GOB2,
+		"intro"
+	},
+	{
+		{
+			"ween",
+			"",
 			AD_ENTRY1("intro.stk", "4b10525a3782aa7ecd9d833b5c1d308b"),
 			FR_FRA,
 			kPlatformPC,
@@ -588,7 +599,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 		},
 		GF_GOB2,
-		"intro"
+		"show"
 	},
 	{
 		{

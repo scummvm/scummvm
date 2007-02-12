@@ -151,6 +151,8 @@ void Snd::nextCompositionPos(void) {
 			setSample(_compositionSamples[slot], 1, 0, 0);
 			return;
 		}
+		if (_compositionPos == 49)
+			_compositionPos = -1;
 	}
 	_compositionPos = -1;
 }

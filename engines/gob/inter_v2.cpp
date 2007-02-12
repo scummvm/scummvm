@@ -1403,9 +1403,9 @@ bool Inter_v2::o2_readData(char &cmdCount, int16 &counter, int16 &retFlag) {
 	if (((dataVar >> 2) == 59) && (size == 4)) {
 		retSize = _vm->_dataio->readData(handle, tmp, 4);
 		WRITE_VAR(59, READ_LE_UINT32(tmp));
-		// The scripts in some Amiga versions divide through 256^3 then,
+		// The scripts in some versions divide through 256^3 then,
 		// effectively doing a LE->BE conversion
-		if ((_vm->_platform == Common::kPlatformAmiga) && (VAR(59) < 256))
+		if ((_vm->_platform != Common::kPlatformPC) && (VAR(59) < 256))
 			WRITE_VAR(59, SWAP_BYTES_32(VAR(59)));
 	} else
 		retSize = _vm->_dataio->readData(handle, buf, size);
@@ -1741,7 +1741,7 @@ bool Inter_v2::o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag) {
 		break;
 
 	case 52:
-		if ((_vm->_platform != Common::kPlatformAmiga) &&
+		if ((_vm->_platform == Common::kPlatformPC) &&
 				((_vm->_global->_videoMode != 0x0D) || (_vm->_global->_colorCount == 256))) {
 			_vm->_global->_inter_execPtr += 48;
 			return false;
@@ -1830,7 +1830,7 @@ bool Inter_v2::o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag) {
 			_vm->_draw->_vgaPalette[i].green = _vm->_global->_inter_execPtr[1];
 			_vm->_draw->_vgaPalette[i].blue = _vm->_global->_inter_execPtr[2];
 		}
-		if ((_vm->_platform != Common::kPlatformAmiga) && _vm->_global->_videoMode >= 0x13)
+		if ((_vm->_platform == Common::kPlatformPC) && _vm->_global->_videoMode >= 0x13)
 			return false;
 		break;
 
@@ -2224,7 +2224,7 @@ void Inter_v2::o2_initScreen(void) {
 
 	_vm->_global->_fakeVideoMode = videoMode;
 
-	// Some Amiga versions require this
+	// Some versions require this
 	if (videoMode == 0xD)
 		videoMode = 0x14;
 
