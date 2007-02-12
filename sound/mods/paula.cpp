@@ -109,6 +109,9 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 
 				while (neededSamples > 0) {
 					if (neededSamples >= (int) ((sLen - offset) / rate)) {
+						while (rate > (sLen - offset))
+							rate -= (sLen - offset);
+
 						end = (int)((sLen - offset) / rate);
 
 						for (int i = 0; i < end; i++)
