@@ -33,7 +33,7 @@ enum {
 	kMaxColorDepth = 5
 };
 
-static void uncompressplane(const byte *plane, byte *outptr, int length) {
+static void uncompressPlane(const byte *plane, byte *outptr, int length) {
 	while (length != 0) {
 		int wordlen;
 		char x = *plane++;
@@ -53,7 +53,7 @@ static void uncompressplane(const byte *plane, byte *outptr, int length) {
 	}
 }
 
-static void bitplanetochunky(uint16 *w, uint8 colorDepth, uint8 *&dst) {
+static void bitplaneToChunky(uint16 *w, uint8 colorDepth, uint8 *&dst) {
 	for (int j = 0; j < 8; j++) {
 		byte color1 = 0;
 		byte color2 = 0;
@@ -75,7 +75,7 @@ static void bitplanetochunky(uint16 *w, uint8 colorDepth, uint8 *&dst) {
 	}
 }
 
-static void bitplanetochunkytext(uint16 *w, uint8 colorDepth, uint8 *&dst) {
+static void bitplaneToChunkyText(uint16 *w, uint8 colorDepth, uint8 *&dst) {
 	for (int j = 0; j < 16; j++) {
 		byte color = 0;
 		for (int p = 0; p < colorDepth; ++p) {
@@ -90,7 +90,7 @@ static void bitplanetochunkytext(uint16 *w, uint8 colorDepth, uint8 *&dst) {
 	}
 }
 
-static void convertcompressedclip(const byte *src, byte *dst, uint8 colorDepth, int height, int width) {
+static void convertCompressedImage(const byte *src, byte *dst, uint8 colorDepth, int height, int width) {
 	const byte *plane[kMaxColorDepth];
 	byte *uncptr[kMaxColorDepth];
 	int length, i, j;
@@ -102,7 +102,7 @@ static void convertcompressedclip(const byte *src, byte *dst, uint8 colorDepth, 
 	for (i = 0; i < colorDepth; ++i) {
 		plane[i] = src + READ_BE_UINT16(src + i * 4) + READ_BE_UINT16(src + i * 4 + 2);
 		uncptr[i] = (uint8 *)malloc(length * 2);
-		uncompressplane(plane[i], uncptr[i], length);
+		uncompressPlane(plane[i], uncptr[i], length);
 		plane[i] = uncptr[i];
 	}
 
@@ -112,7 +112,7 @@ static void convertcompressedclip(const byte *src, byte *dst, uint8 colorDepth, 
 		for (j = 0; j < colorDepth; ++j) {
 			w[j] = READ_BE_UINT16(plane[j]); plane[j] += 2;
 		}
-		bitplanetochunky(w, colorDepth, uncbfroutptr);
+		bitplaneToChunky(w, colorDepth, uncbfroutptr);
 	}
 
 	uncbfroutptr = uncbfrout;
@@ -130,7 +130,7 @@ static void convertcompressedclip(const byte *src, byte *dst, uint8 colorDepth, 
   	}
 }
 
-byte *AGOSEngine::convertclip(VC10_state *state, byte flags) {
+byte *AGOSEngine::convertImage(VC10_state *state, bool compressed) {
 	int length, i, j;
 
 	uint8 colorDepth = 4;
@@ -148,8 +148,8 @@ byte *AGOSEngine::convertclip(VC10_state *state, byte flags) {
 	_planarBuf = (byte *)malloc(width * height);
 	byte *dst = _planarBuf;
 
-	if (flags & 0x80) {
-		convertcompressedclip(src, dst, colorDepth, height, width);
+	if (compressed) {
+		convertCompressedImage(src, dst, colorDepth, height, width);
 	} else {
 		length = (width + 15) / 16 * height;
 		for (i = 0; i < length; i++) {
@@ -159,16 +159,16 @@ byte *AGOSEngine::convertclip(VC10_state *state, byte flags) {
 					w[j] = READ_BE_UINT16(src + j * length * 2);
 				}
 				if (state->palette == 0xC0) {
-					bitplanetochunkytext(w, colorDepth, dst);
+					bitplaneToChunkyText(w, colorDepth, dst);
 				} else {
-					bitplanetochunky(w, colorDepth, dst);
+					bitplaneToChunky(w, colorDepth, dst);
 				}
 				src += 2;
 			} else {
 				for (j = 0; j < colorDepth; ++j) {
 					w[j] = READ_BE_UINT16(src); src += 2;
 				}
-				bitplanetochunky(w, colorDepth, dst);
+				bitplaneToChunky(w, colorDepth, dst);
 			}
 		}
 	}

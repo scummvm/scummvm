@@ -639,7 +639,7 @@ void AGOSEngine::vc10_draw() {
 	state.y_skip = 0;				/* rows to skip   = bl */
 
 	if (getFeatures() & GF_PLANAR) {
-		state.depack_src = convertclip(&state, flags);
+		state.depack_src = convertImage(&state, (flags & 0x80));
 
 		// converted planar clip is already uncompressed
 		if (state.flags & kDFCompressedFlip) {
