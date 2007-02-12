@@ -221,6 +221,7 @@ private:
 	int	_mouseHotspotX, _mouseHotspotY;
 	byte *_mouseBackupOld;
 	uint16 *_mouseBackupToolbar;
+	uint16 _mouseBackupDim;
 
 	// Smartphone specific variables
 

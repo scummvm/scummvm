@@ -299,7 +299,7 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	_freeLook(false), _forcePanelInvisible(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
 	_scalersChanged(false), _monkeyKeyboard(false), _lastKeyPressed(0), _tapTime(0),
 	_saveToolbarState(false), _saveActiveToolbar(NAME_MAIN_PANEL), _rbutton(false),
-	_usesEmulatedMouse(false)
+	_usesEmulatedMouse(false), _mouseBackupOld(NULL), _mouseBackupToolbar(NULL), _mouseBackupDim(0)
 {
 	_isSmartphone = CEDevice::isSmartphone();
 	_hasSmartphoneResolution = CEDevice::hasSmartphoneResolution() || CEDevice::isSmartphone();
@@ -312,10 +312,6 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	create_toolbar();
 
 	_mixer = 0;
-
-	// Mouse backup (temporary code)
-	_mouseBackupOld = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
-	_mouseBackupToolbar = (uint16*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
 }
 
 void OSystem_WINCE3::swap_panel_visibility() {
@@ -467,9 +463,7 @@ void OSystem_WINCE3::swap_zoom_down() {
 	internUpdateScreen();
 }
 
-//#ifdef WIN32_PLATFORM_WFSP
 // Smartphone actions
-
 void OSystem_WINCE3::initZones() {
         int i;
 
@@ -705,7 +699,6 @@ int OSystem_WINCE3::getOutputSampleRate() const {
 }
 
 void OSystem_WINCE3::setWindowCaption(const char *caption) {
-//void OSystem_WINCE3::engineInit() {
 	check_mappings(); // called here to initialize virtual keys handling
 	
 	//update_game_settings();
@@ -1003,8 +996,6 @@ bool OSystem_WINCE3::update_scalers() {
 
 		return true;
 	}
-
-//#ifdef WIN32_PLATFORM_WFSP
 	if (CEDevice::hasSmartphoneResolution()) {
 		if (_screenWidth > 320)
 			error("Game resolution not supported on Smartphone");
@@ -1017,7 +1008,6 @@ bool OSystem_WINCE3::update_scalers() {
 		initZones();
 		return true;
 	}
-//#endif
 
 	return false;
 }
@@ -1704,13 +1694,6 @@ void OSystem_WINCE3::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	if (w == 0 || h == 0)
 		return;
 
-/*
-FIXME: The restriction on MAX_MOUSE_H / MAX_MOUSE_W is obsolete;
-in particular, BS2 might use bigger cursors these days.
-See also bug #1609058. 1607180
-*/
-	assert(w <= MAX_MOUSE_W);
-	assert(h <= MAX_MOUSE_H);
 	_mouseCurState.w = w;
 	_mouseCurState.h = h;
 
@@ -1721,8 +1704,19 @@ See also bug #1609058. 1607180
 
 	free(_mouseData);
 
-	_mouseData = (byte *)malloc(w * h);
+	_mouseData = (byte *) malloc(w * h);
 	memcpy(_mouseData, buf, w * h);
+
+	if (w > _mouseBackupDim || h > _mouseBackupDim)
+	{
+		// mouse has been undrawn, adjust sprite backup area
+		free(_mouseBackupOld);
+		free(_mouseBackupToolbar);
+		uint16 tmp = (w > h) ? w : h;
+		_mouseBackupOld = (byte *) malloc(tmp * tmp * 2);	// can hold 8bpp (playfield) or 16bpp (overlay) data
+		_mouseBackupToolbar = (uint16 *) malloc(tmp * tmp * 2); // 16 bpp
+		_mouseBackupDim = tmp;
+	}
 }
 
 void OSystem_WINCE3::setMousePos(int x, int y) {
@@ -1745,6 +1739,7 @@ void OSystem_WINCE3::internDrawMouse() {
 	int h = _mouseCurState.h;
 	byte color;
 	const byte *src = _mouseData;		// Image representing the mouse
+	int width;
 	
 	// clip the mouse rect, and adjust the src pointer accordingly
 	if (x < 0) {
@@ -1780,7 +1775,7 @@ void OSystem_WINCE3::internDrawMouse() {
 	
 		dst = (byte *)_screen->pixels + y * _screenWidth + x;
 		while (h > 0) {
-			int width = w;
+			width = w;
 			while (width > 0) {
 				*bak++ = *dst;
 				color = *src++;
@@ -1790,7 +1785,7 @@ void OSystem_WINCE3::internDrawMouse() {
 				width--;
 			}
 			src += _mouseCurState.w - w;
-			bak += MAX_MOUSE_W - w;
+			bak += _mouseBackupDim - w;
 			dst += _screenWidth - w;
 			h--;
 		}
@@ -1801,7 +1796,7 @@ void OSystem_WINCE3::internDrawMouse() {
 	
 		dst = (byte *)_overlayscreen->pixels + (y + 1) * _overlayscreen->pitch + (x + 1) * 2;
 		while (h > 0) {
-			int width = w;
+			width = w;
 			while (width > 0) {
 				*bak++ = *(uint16 *)dst;
 				color = *src++;
@@ -1811,7 +1806,7 @@ void OSystem_WINCE3::internDrawMouse() {
 				width--;
 			}
 			src += _mouseCurState.w - w;
-			bak += MAX_MOUSE_W - w;
+			bak += _mouseBackupDim - w;
 			dst += _overlayscreen->pitch - w * 2;
 			h--;
 		}
@@ -1864,24 +1859,16 @@ void OSystem_WINCE3::undrawMouse() {
 
 		// No need to do clipping here, since drawMouse() did that already
 		dst = (byte *)_screen->pixels + old_mouse_y * _screenWidth + old_mouse_x;
-		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _screenWidth) {
-			for (x = 0; x < old_mouse_w; ++x) {
-				dst[x] = bak[x];
-			}
-		}
-	
+		for (y = 0; y < old_mouse_h; ++y, bak += _mouseBackupDim, dst += _screenWidth)
+			memcpy(dst, bak, old_mouse_w);
 	} else {
-
 		byte *dst;
 		uint16 *bak = (uint16 *)_mouseBackupOld;
 	
 		// No need to do clipping here, since drawMouse() did that already
 		dst = (byte *)_overlayscreen->pixels + (old_mouse_y + 1) * _overlayscreen->pitch + (old_mouse_x + 1) * 2;
-		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _overlayscreen->pitch) {
-			for (x = 0; x < old_mouse_w; ++x) {
-				*((uint16 *)dst + x) = bak[x];
-			}
-		}
+		for (y = 0; y < old_mouse_h; ++y, bak += _mouseBackupDim, dst += _overlayscreen->pitch)
+			memcpy(dst, bak, old_mouse_w << 1);
 	}
 
 	addDirtyRect(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
@@ -1899,6 +1886,7 @@ void OSystem_WINCE3::drawToolbarMouse(SDL_Surface *surf, bool draw) {
 	int h = _mouseCurState.h;
 	byte color;
 	const byte *src = _mouseData;
+	int width;
 
 	// clip
 	if (x < 0) {
@@ -1927,7 +1915,7 @@ void OSystem_WINCE3::drawToolbarMouse(SDL_Surface *surf, bool draw) {
 
 	if (draw) {		// blit it
 		while (h > 0) {
-			int width = w;
+			width = w;
 			while (width > 0) {
 				*bak++ = *dst;
 				color = *src++;
@@ -1937,14 +1925,13 @@ void OSystem_WINCE3::drawToolbarMouse(SDL_Surface *surf, bool draw) {
 				width--;
 			}
 			src += _mouseCurState.w - w;
-			bak += MAX_MOUSE_W - w;
+			bak += _mouseBackupDim - w;
 			dst += surf->w - w;
 			h--;
 		}
 	} else {		// restore bg
-		for (int y = 0; y < h; ++y, bak += MAX_MOUSE_W, dst += surf->w)
-			for (int x = 0; x < w; ++x)
-				dst[x] = bak[x];
+		for (y = 0; y < h; ++y, bak += _mouseBackupDim, dst += surf->w)
+			memcpy(dst, bak, w << 1);
 	}
 
 	SDL_UnlockSurface(surf);
