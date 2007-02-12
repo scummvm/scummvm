@@ -42,8 +42,8 @@ Engine::Engine(OSystem *syst)
 		_mixer(_system->getMixer()),
 		_timer(_system->getTimerManager()),
 		_saveFileMan(_system->getSavefileManager()),
-		_gameDataPath(ConfMan.get("path")),
-		_targetName(ConfMan.getActiveDomainName()) {
+		_targetName(ConfMan.getActiveDomainName()),
+		_gameDataPath(ConfMan.get("path")) {
 
 	g_engine = this;
 	_autosavePeriod = ConfMan.getInt("autosave_period");
@@ -88,7 +88,7 @@ void Engine::initCommonGFX(bool defaultTo1XScaler) {
 	// settings: Via the config file, via the command line, and via in-game
 	// hotkeys.
 	// Any global or command line settings already have been applied at the time
-	// we get here. Hence we only do something 
+	// we get here. Hence we only do something
 
 	// (De)activate aspect-ratio correction as determined by the config settings
 	if (gameDomain && gameDomain->contains("aspect_ratio"))
