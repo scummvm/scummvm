@@ -837,6 +837,26 @@ void AGOSEngine::pause() {
 }
 
 int AGOSEngine::go() {
+	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAtariST &&
+		(getFeatures() & GF_DEMO)) {
+		int i;
+
+		while(1) {
+			for (i = 1; i < 4; i++) {
+				setWindowImageEx(3, 9902 + i);
+				debug(0, "Displaying image %d", 9902 + i);
+				delay(1000);
+
+			}
+
+			for (i = 4; i < 16; i++) {
+				setWindowImageEx(4, 9902 + i);
+				debug(0, "Displaying image %d", 9902 + i);
+				delay(1000);
+			}
+		}
+	}
+
 	loadGamePcFile();
 
 	addTimeEvent(0, 1);
@@ -867,8 +887,10 @@ int AGOSEngine::go() {
 		_moviePlay->play();
 	}
 
-	runSubroutine101();
+	//runSubroutine101();
 	permitInput();
+
+	setWindowImageEx(3, 911);
 
 	while (1) {
 		waitForInput();

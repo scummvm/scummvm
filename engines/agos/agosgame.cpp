@@ -40,6 +40,27 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR | GF_DEMO
 	},
 
+	// Elvira 1 - English Atari ST Floppy Demo
+	{
+		{
+			"elvira1",
+			"Demo",
+
+			{
+	{ "991.out",		0,	"9238242d3274bb770cb4925d2b268f83", -1},
+	{ "992.out",		0,	"5526cd64e515f1c5f9ff8f2fb569c4eb", -1},
+	{ "993.out",		0,	"d41d8cd98f00b204e9800998ecf8427e", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformAtariST
+		},
+
+		GType_ELVIRA1,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE | GF_PLANAR | GF_DEMO
+	},
+
 	// Elvira 1 - English Atari ST Floppy
 	{
 		{
