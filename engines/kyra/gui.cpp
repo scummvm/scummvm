@@ -819,6 +819,10 @@ void KyraEngine::gui_getInput() {
 		case OSystem::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
+			if (_flags.useHiResOverlay) {
+				_mouseX >>= 1;
+				_mouseY >>= 1;
+			}
 			_system->updateScreen();
 			lastScreenUpdate = now;
 			break;
@@ -1485,6 +1489,10 @@ bool KyraEngine::gui_mainMenuGetInput() {
 		case OSystem::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
+			if (_flags.useHiResOverlay) {
+				_mouseX >>= 1;
+				_mouseY >>= 1;
+			}
 			break;
 		case OSystem::EVENT_LBUTTONUP:
 			return true;

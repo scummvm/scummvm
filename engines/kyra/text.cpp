@@ -29,6 +29,7 @@
 #include "kyra/sprites.h"
 
 #include "common/system.h"
+#include "common/endian.h"
 
 namespace Kyra {
 
@@ -395,8 +396,9 @@ void KyraEngine::updateTextFade() {
 	}
 }
 
-TextDisplayer::TextDisplayer(Screen *screen) {
+TextDisplayer::TextDisplayer(KyraEngine *vm, Screen *screen) {
 	_screen = screen;
+	_vm = vm;
 
 	_talkCoords.y = 0x88;
 	_talkCoords.x = 0;
@@ -430,6 +432,12 @@ int TextDisplayer::getCharLength(const char *str, int len) {
 		Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
 		int i = 0;
 		while (i <= len && *str) {
+			uint c = *str++;
+			c &= 0xFF;
+			if (c >= 0x7F && _vm->gameFlags().lang == Common::JA_JPN) {
+				c = READ_LE_UINT16(str - 1);
+				++str;
+			}	
 			i += _screen->getCharWidth(*str++);
 			++charsCount;
 		}

@@ -37,6 +37,9 @@ Screen::Screen(KyraEngine *vm, OSystem *system)
 }
 
 Screen::~Screen() {
+	for (int i = 0; i < SCREEN_OVLS_NUM; ++i) {
+		delete [] _sjisOverlayPtrs[i];
+	}
 	for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2) {
 		delete [] _pagePtrs[pageNum];
 		_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = 0;
@@ -45,6 +48,8 @@ Screen::~Screen() {
 		delete[] _fonts[f].fontData;
 		_fonts[f].fontData = NULL;
 	}
+	delete [] _sjisFontData;
+	delete [] _sjisTempPage;
 	delete [] _currentPalette;
 	delete [] _screenPalette;
 	delete [] _decodeShapeBuffer;
@@ -70,20 +75,48 @@ bool Screen::init() {
 
 	_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, false);
 
-	_system->beginGFXTransaction();
-		_vm->initCommonGFX(false);
-		//for debug reasons (see Screen::updateScreen)
-		//_system->initSize(640, 200);
-		_system->initSize(320, 200);
-	_system->endGFXTransaction();
+	memset(_sjisOverlayPtrs, 0, sizeof(_sjisOverlayPtrs));
+	_useOverlays = false;
+	_useSJIS = false;
+
+	if (_vm->gameFlags().useHiResOverlay) {
+		_system->beginGFXTransaction();
+			_vm->initCommonGFX(true);
+			_system->initSize(640, 400);
+		_system->endGFXTransaction();
+
+		for (int i = 0; i < SCREEN_OVLS_NUM; ++i) {
+			_sjisOverlayPtrs[i] = new uint8[SCREEN_OVL_SJIS_SIZE];
+			assert(_sjisOverlayPtrs[i]);
+			memset(_sjisOverlayPtrs[i], 0x80, SCREEN_OVL_SJIS_SIZE);
+		}
+		_useOverlays = true;
+		_useSJIS = (_vm->gameFlags().lang == Common::JA_JPN);
+
+		if (_useSJIS) {
+			_sjisFontData = _vm->resource()->fileData("FMT_FNT.ROM", 0);
+			if (!_sjisFontData)
+				error("missing font rom ('FMT_FNT.ROM') required for this version");
+			_sjisTempPage = new uint8[420];
+			assert(_sjisTempPage);
+			_sjisTempPage2 = _sjisTempPage + 60;
+			_sjisSourceChar = _sjisTempPage + 384;
+		}
+	} else {
+		_system->beginGFXTransaction();
+			_vm->initCommonGFX(false);
+			//for debug reasons (see Screen::updateScreen)
+			//_system->initSize(640, 200);
+			_system->initSize(320, 200);
+		_system->endGFXTransaction();
+	}
 
 	_curPage = 0;
 	for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2) {
 		uint8 *pagePtr = new uint8[SCREEN_PAGE_SIZE];
-		if (pagePtr) {
-			memset(pagePtr, 0, SCREEN_PAGE_SIZE);
-			_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr;
-		}
+		assert(pagePtr);
+		memset(pagePtr, 0, SCREEN_PAGE_SIZE);
+		_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr;
 	}
 	memset(_shapePages, 0, sizeof(_shapePages));
 	_currentPalette = new uint8[768];
@@ -138,7 +171,10 @@ void Screen::updateScreen() {
 	if (_disableScreen)
 		return;
 
-	updateDirtyRects();
+	if (_useOverlays)
+		updateDirtyRectsOvl();
+	else
+		updateDirtyRects();
 
 	//for debug reasons (needs 640x200 screen)
 	//_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 320, 0, SCREEN_W, SCREEN_H);
@@ -157,6 +193,68 @@ void Screen::updateDirtyRects() {
 	}
 	_forceFullUpdate = false;
 	_numDirtyRects = 0;
+}
+
+void Screen::updateDirtyRectsOvl() {
+	if (_forceFullUpdate) {
+		const byte *src = getCPagePtr(0);
+		byte *dst = _sjisOverlayPtrs[0];
+
+		scale2x(dst, 640, src, SCREEN_W, SCREEN_W, SCREEN_H);
+		mergeOverlay(0, 0, 640, 400);
+		_system->copyRectToScreen(dst, 640, 0, 0, 640, 400);
+	} else {
+		const byte *page0 = getCPagePtr(0);
+		byte *ovl0 = _sjisOverlayPtrs[0];
+
+		for (int i = 0; i < _numDirtyRects; ++i) {
+			Rect &cur = _dirtyRects[i];
+			byte *dst = ovl0 + cur.y * 1280 + (cur.x<<1);
+			const byte *src = page0 + cur.y * SCREEN_W + cur.x;
+
+			scale2x(dst, 640, src, SCREEN_W, cur.x2, cur.y2);
+			mergeOverlay(cur.x<<1, cur.y<<1, cur.x2<<1, cur.y2<<1);
+			_system->copyRectToScreen(dst, 640, cur.x<<1, cur.y<<1, cur.x2<<1, cur.y2<<1);
+		}
+	}
+	_forceFullUpdate = false;
+	_numDirtyRects = 0;
+}
+
+void Screen::scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h) {
+	byte *dstL1 = dst;
+	byte *dstL2 = dst + dstPitch;
+
+	int dstAdd = dstPitch * 2 - w * 2;
+	int srcAdd = srcPitch - w;
+
+	while (h--) {
+		for (int x = 0; x < w; ++x, dstL1 += 2, dstL2 += 2) {
+			uint16 col = *src++;
+			col |= col << 8;
+			*(uint16*)(dstL1) = col;
+			*(uint16*)(dstL2) = col;
+		}
+		dstL1 += dstAdd; dstL2 += dstAdd;
+		src += srcAdd;
+	}
+}
+
+void Screen::mergeOverlay(int x, int y, int w, int h) {
+	byte *dst = _sjisOverlayPtrs[0] + y * 640 + x;
+	const byte *src = _sjisOverlayPtrs[1] + y * 640 + x;
+
+	int add = 640 - w;
+
+	while (h--) {
+		for (x = 0; x < w; ++x, ++dst) {
+			byte col = *src++;
+			if (col != 0x80)
+				*dst = col;
+		}
+		dst += add;
+		src += add;
+	}
 }
 
 uint8 *Screen::getPagePtr(int pageNum) {
@@ -183,6 +281,7 @@ void Screen::clearPage(int pageNum) {
 	assert(pageNum < SCREEN_PAGE_NUM);
 	if (pageNum == 0 || pageNum == 1) _forceFullUpdate = true;
 	memset(getPagePtr(pageNum), 0, SCREEN_PAGE_SIZE);
+	clearOverlayPage(pageNum);
 }
 
 int Screen::setCurPage(int pageNum) {
@@ -197,6 +296,7 @@ void Screen::clearCurPage() {
 	debugC(9, kDebugLevelScreen, "Screen::clearCurPage()");
 	if (_curPage == 0 || _curPage == 1) _forceFullUpdate = true;
 	memset(getPagePtr(_curPage), 0, SCREEN_PAGE_SIZE);
+	clearOverlayPage(_curPage);
 }
 
 uint8 Screen::getPagePixel(int pageNum, int x, int y) {
@@ -344,6 +444,7 @@ void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
 		dstPage += SCREEN_W;
 	}
 	addDirtyRect(0, y, SCREEN_W, h);
+	clearOverlayRect(0, 0, y, SCREEN_W, h);
 }
 
 void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags) {
@@ -383,6 +484,8 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 	if (dstPage == 0 || dstPage == 1)
 		addDirtyRect(x2, y2, w, h);
 
+	copyOverlayRegion(x1, y1, x2, y2, w, h, srcPage, dstPage);
+
 	if (flags & CR_X_FLIPPED) {
 		while (h--) {
 			for (int i = 0; i < w; ++i) {
@@ -421,6 +524,7 @@ void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
 	uint8 *src = getPagePtr(srcPage);
 	uint8 *dst = getPagePtr(dstPage);
 	memcpy(dst, src, SCREEN_W * SCREEN_H);
+	copyOverlayRegion(0, 0, 0, 0, SCREEN_W, SCREEN_H, srcPage, dstPage);
 	
 	if (dstPage == 0 || dstPage == 1) _forceFullUpdate = true;
 }
@@ -433,6 +537,8 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, w, h);
 	
+	clearOverlayRect(pageNum, x, y, w, h);
+
 	while (h--) {
 		memcpy(dst, src, w);
 		dst += SCREEN_W;
@@ -462,6 +568,8 @@ void Screen::copyFromCurPageBlock(int x, int y, int w, int h, const uint8 *src) 
 	
 	if (_curPage == 0 || _curPage == 1)
 		addDirtyRect(x*8, y, w*8, h);
+	
+	clearOverlayRect(_curPage, x*8, y, w*8, h);
 	
 	while (h--) {
 		memcpy(dst, src, w*8);
@@ -547,6 +655,9 @@ void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPag
 			_vm->delay(wait);
 		}
 	}
+
+	copyOverlayRegion(sx, sy, sx, sy, w, h, srcPage, dstPage);
+
 	if (_vm->quit()) {
 		copyRegion(sx, sy, sx, sy, w, h, srcPage, dstPage);
 		_system->updateScreen();
@@ -563,6 +674,8 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum) 
 	
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x1, y1, x2-x1+1, y2-y1+1);
+
+	clearOverlayRect(pageNum, x1, y1, x2-x1+1, y2-y1+1);
 	
 	for (; y1 <= y2; ++y1) {
 		memset(dst, color, x2 - x1 + 1);
@@ -650,6 +763,8 @@ void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 	
 	if (_curPage == 0 || _curPage == 1)
 		addDirtyRect(x, y, (vertical) ? 1 : length, (vertical) ? length : 1);
+
+	clearOverlayRect(_curPage, x, y, (vertical) ? 1 : length, (vertical) ? length : 1);
 }
 
 void Screen::setAnimBlockPtr(int size) {
@@ -718,17 +833,21 @@ int Screen::getFontWidth() const {
 	return *(_fonts[_currentFont].fontData + _fonts[_currentFont].charSizeOffset + 5);
 }
 
-int Screen::getCharWidth(uint8 c) const {
-	debugC(9, kDebugLevelScreen, "Screen::getCharWidth('%c')", c);
+int Screen::getCharWidth(uint16 c) const {
+	debugC(9, kDebugLevelScreen, "Screen::getCharWidth('%c'|%d)", c & 0xFF, c);
+	if (c & 0xFF00)
+		return SJIS_CHARSIZE >> 1;
 	return (int)_fonts[_currentFont].charWidthTable[c] + _charWidth;
 }
 
 int Screen::getTextWidth(const char *str) const {
 	debugC(9, kDebugLevelScreen, "Screen::getTextWidth('%s')", str);
+
 	int curLineLen = 0;
 	int maxLineLen = 0;
 	while (1) {
-		char c = *str++;
+		uint c = *str++;
+		c &= 0xFF;
 		if (c == 0) {
 			break;
 		} else if (c == '\r') {
@@ -738,9 +857,16 @@ int Screen::getTextWidth(const char *str) const {
 				curLineLen = 0;
 			}
 		} else {
-			curLineLen += getCharWidth(c);
+			if (c <= 0x7F || !_useSJIS)
+				curLineLen += getCharWidth(c);
+			else {
+				c = READ_LE_UINT16(str - 1);
+				++str;
+				curLineLen += getCharWidth(c);
+			}
 		}
 	}
+
 	return MAX(curLineLen, maxLineLen);
 }
 
@@ -752,7 +878,8 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	setTextColor(cmap, 0, 1);
 	
 	Font *fnt = &_fonts[_currentFont];
-	uint8 charHeight = *(fnt->fontData + fnt->charSizeOffset + 4);
+	const uint8 charHeightFnt = *(fnt->fontData + fnt->charSizeOffset + 4);
+	uint8 charHeight = 0;
 	
 	if (x < 0) {
 		x = 0;
@@ -767,7 +894,8 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	}
 
 	while (1) {
-		char c = *str++;
+		uint c = *str++;
+		c &= 0xFF;
 		if (c == 0) {
 			break;
 		} else if (c == '\r') {
@@ -782,13 +910,22 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 					break;
 				}
 			}
-			drawChar(c, x, y);
+			if (c <= 0x7F || !_useSJIS) {
+				drawCharANSI(c, x, y);
+				charHeight = charHeightFnt;
+			} else {
+				c = READ_LE_UINT16(str - 1);
+				++str;
+				charWidth = getCharWidth(c);
+				charHeight = SJIS_CHARSIZE >> 1;
+				drawCharSJIS(c, x, y);
+			}
 			x += charWidth;
 		}
 	}
 }
 
-void Screen::drawChar(uint8 c, int x, int y) {
+void Screen::drawCharANSI(uint8 c, int x, int y) {
 	debugC(9, kDebugLevelScreen, "Screen::drawChar('%c', %d, %d)", c, x, y);
 	Font *fnt = &_fonts[_currentFont];
 	uint8 *dst = getPagePtr(_curPage) + y * SCREEN_W + x;
@@ -856,7 +993,7 @@ void Screen::drawChar(uint8 c, int x, int y) {
 }
 
 void Screen::setScreenDim(int dim) {
-	debugC(9, kDebugLevelScreen, "setScreenDim(%d)", dim);
+	debugC(9, kDebugLevelScreen, "Screen::setScreenDim(%d)", dim);
 	if (_vm->game() == GI_KYRA1) {
 		assert(dim < _screenDimTableCount);
 		_curDim = &_screenDimTable[dim];
@@ -1053,6 +1190,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	uint8 *dstStart = getPagePtr(pageNum);
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, x2-x1, y2-y1);
+	clearOverlayRect(pageNum, x, y, x2-x1, y2-y1);
 	
 	int scaleYTable[SCREEN_H];
 	assert(y1 >= 0 && y2 < SCREEN_H);
@@ -1984,12 +2122,26 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 	if (_vm->gameFlags().useAltShapeHeader)
 		shape -= 2;
 
+	if (_vm->gameFlags().useHiResOverlay) {
+		mouseWidth <<= 1;
+		mouseHeight <<= 1;
+		fillRect(mouseWidth, 0, mouseWidth, mouseHeight, 0, 8);
+	}
+
+
 	uint8 *cursor = new uint8[mouseHeight * mouseWidth];
 	fillRect(0, 0, mouseWidth, mouseHeight, 0, 8);
 	drawShape(8, shape, 0, 0, 0, 0);
 
+	int xOffset = 0;
+
+	if (_vm->gameFlags().useHiResOverlay) {
+		xOffset = mouseWidth;
+		scale2x(getPagePtr(8) + mouseWidth, SCREEN_W, getPagePtr(8), SCREEN_W, mouseWidth, mouseHeight);
+	}
+
 	CursorMan.showMouse(false);
-	copyRegionToBuffer(8, 0, 0, mouseWidth, mouseHeight, cursor);
+	copyRegionToBuffer(8, xOffset, 0, mouseWidth, mouseHeight, cursor);
 	CursorMan.replaceCursor(cursor, mouseWidth, mouseHeight, x, y, 0);
 	CursorMan.showMouse(true);
 	delete [] cursor;
@@ -2013,6 +2165,7 @@ void Screen::copyScreenFromRect(int x, int y, int w, int h, const uint8 *ptr) {
 	}
 	
 	addDirtyRect(x, y, w, h);
+	clearOverlayRect(0, x, y, w, h);
 }
 
 void Screen::copyScreenToRect(int x, int y, int w, int h, uint8 *ptr) {
@@ -2109,6 +2262,7 @@ void Screen::savePageToDisk(const char *file, int page) {
 void Screen::loadPageFromDisk(const char *file, int page) {
 	debugC(9, kDebugLevelScreen, "Screen::loadPageFromDisk('%s', %d)", file, page);
 	copyBlockToPage(page, 0, 0, SCREEN_W, SCREEN_H, _saveLoadPage[page/2]);
+	clearOverlayRect(page, 0, 0, SCREEN_W, SCREEN_H);
 	delete [] _saveLoadPage[page/2];
 	_saveLoadPage[page/2] = 0;
 }
@@ -2381,6 +2535,328 @@ void Screen::addDirtyRect(int x, int y, int w, int h) {
 	cur.x2 = w;
 	cur.y = y;
 	cur.y2 = h;
+}
+
+// overlay functions
+
+byte *Screen::getOverlayPtr(int page) {
+	if (page == 0 || page == 1)
+		return _sjisOverlayPtrs[1];
+	else if (page == 2 || page == 3)
+		return _sjisOverlayPtrs[2];
+	else
+		return 0;
+}
+
+void Screen::clearOverlayPage(int page) {
+	byte *dst = getOverlayPtr(page);
+	if (!dst)
+		return;
+	memset(dst, 0x80, SCREEN_OVL_SJIS_SIZE);
+}
+
+void Screen::clearOverlayRect(int page, int x, int y, int w, int h) {
+	byte *dst = getOverlayPtr(page);
+
+	if (!dst || w < 0 || h < 0)
+		return;
+
+	x <<= 1; y <<= 1;
+	w <<= 1; h <<= 1;
+
+	dst += y * 640 + x;
+
+	if (w == 640 && h == 400) {
+		memset(dst, 0x80, SCREEN_OVL_SJIS_SIZE);
+	} else {
+		while (h--) {
+			memset(dst, 0x80, w);
+			dst += 640;
+		}
+	}
+}
+
+void Screen::copyOverlayRegion(int x, int y, int x2, int y2, int w, int h, int srcPage, int dstPage) {
+	byte *dst = getOverlayPtr(dstPage);
+	const byte *src = getOverlayPtr(srcPage);
+
+	if (!dst || !src)
+		return;
+
+	x <<= 1; x2 <<= 1;
+	y <<= 1; y2 <<= 1;
+	w <<= 1; h <<= 1;
+
+	dst += y2 * 640 + x2;
+	src += y * 640 + x;
+
+	while (h--) {
+		for (x = 0; x < w; ++x)
+			memcpy(dst, src, w);
+		dst += 640;
+		src += 640;
+	}
+}
+
+// SJIS rendering
+
+namespace {
+int SJIStoFMTChunk(int f, int s) { // copied from scumm\charset.cpp
+	enum {
+		KANA = 0,
+		KANJI = 1,
+		EKANJI = 2
+	};
+	int base = s - ((s + 1) % 32);
+	int c = 0, p = 0, chunk_f = 0, chunk = 0, cr = 0, kanjiType = KANA;
+
+	if (f >= 0x81 && f <= 0x84) kanjiType = KANA;
+	if (f >= 0x88 && f <= 0x9f) kanjiType = KANJI;
+	if (f >= 0xe0 && f <= 0xea) kanjiType = EKANJI;
+
+	if ((f > 0xe8 || (f == 0xe8 && base >= 0x9f)) || (f > 0x90 || (f == 0x90 && base >= 0x9f))) {
+		c = 48; //correction
+		p = -8; //correction
+	}
+
+	if (kanjiType == KANA) {//Kana
+		chunk_f = (f - 0x81) * 2;
+	} else if (kanjiType == KANJI) {//Standard Kanji
+		p += f - 0x88;
+		chunk_f = c + 2 * p;
+	} else if (kanjiType == EKANJI) {//Enhanced Kanji
+		p += f - 0xe0;
+		chunk_f = c + 2 * p;
+	}
+
+	// Base corrections
+	if (base == 0x7f && s == 0x7f)
+		base -= 0x20;
+	if (base == 0x9f && s == 0xbe)
+		base += 0x20;
+	if (base == 0xbf && s == 0xde)
+		base += 0x20;
+	//if (base == 0x7f && s == 0x9e)
+	//	base += 0x20;
+
+	switch (base) {
+	case 0x3f:
+		cr = 0; //3f
+		if (kanjiType == KANA) chunk = 1;
+		else if (kanjiType == KANJI) chunk = 31;
+		else if (kanjiType == EKANJI) chunk = 111;
+		break;
+	case 0x5f:
+		cr = 0; //5f
+		if (kanjiType == KANA) chunk = 17;
+		else if (kanjiType == KANJI) chunk = 47;
+		else if (kanjiType == EKANJI) chunk = 127;
+		break;
+	case 0x7f:
+		cr = -1; //80
+		if (kanjiType == KANA) chunk = 9;
+		else if (kanjiType == KANJI) chunk = 63;
+		else if (kanjiType == EKANJI) chunk = 143;
+		break;
+	case 0x9f:
+		cr = 1; //9e
+		if (kanjiType == KANA) chunk = 2;
+		else if (kanjiType == KANJI) chunk = 32;
+		else if (kanjiType == EKANJI) chunk = 112;
+		break;
+	case 0xbf:
+		cr = 1; //be
+		if (kanjiType == KANA) chunk = 18;
+		else if (kanjiType == KANJI) chunk = 48;
+		else if (kanjiType == EKANJI) chunk = 128;
+		break;
+	case 0xdf:
+		cr = 1; //de
+		if (kanjiType == KANA) chunk = 10;
+		else if (kanjiType == KANJI) chunk = 64;
+		else if (kanjiType == EKANJI) chunk = 144;
+		break;
+	default:
+		debug(4, "Invalid Char! f %x s %x base %x c %d p %d", f, s, base, c, p);
+		return 0;
+	}
+
+	debug(6, "Kanji: %c%c f 0x%x s 0x%x base 0x%x c %d p %d chunk %d cr %d index %d", f, s, f, s, base, c, p, chunk, cr, ((chunk_f + chunk) * 32 + (s - base)) + cr);
+	return ((chunk_f + chunk) * 32 + (s - base)) + cr;
+}
+} // end of anonymous namespace
+
+void Screen::drawCharSJIS(uint16 c, int x, int y) {
+	debugC(9, kDebugLevelScreen, "Screen::drawCharSJIS('%c', %d, %d)", c, x, y);
+
+	int color1 = _textColorsMap[1];
+	int color2 = _textColorsMap[0];
+
+	memset(_sjisTempPage2, 0x80, 324);
+	memset(_sjisSourceChar, 0, 36);
+	memcpy(_sjisSourceChar, _sjisFontData + 0x20 * SJIStoFMTChunk(c & 0xff, c >> 8), 0x20);
+	
+	if (_curPage == 0 || _curPage == 1)
+		addDirtyRect(x, y, SJIS_CHARSIZE >> 1, SJIS_CHARSIZE >> 1);
+
+	x <<= 1;
+	y <<= 1;
+
+	uint8 *destPage = getOverlayPtr(_curPage);
+	if (!destPage) {
+		warning("trying to draw SJIS char on unsupported page %d", _curPage);
+		return;
+	}
+
+   	destPage += y * 640 + x;
+	uint8 *src = 0, *dst = 0;
+	
+	if (color2 != 0x80) {
+		// draw color2 shadow
+		src = _sjisSourceChar;
+		dst = _sjisTempPage2;
+
+		for (int i = 0; i < SJIS_CHARSIZE; i++) {
+			*((uint16*)dst) = READ_LE_UINT16(src);
+			dst += 2; src += 2;
+			*dst++ = 0;
+		}
+		
+		src = _sjisTempPage2;
+		dst = _sjisTempPage;
+		memset(dst, 0, 60);
+		for (int i = 0; i < 48; i++)
+			*dst++ |= *src++;
+		
+		src = _sjisTempPage2;
+		dst = _sjisTempPage + 3;
+		for (int i = 0; i < 48; i++)
+			*dst++ |= *src++;
+
+		src = _sjisTempPage2;
+		dst = _sjisTempPage + 6;
+		for (int i = 0; i < 48; i++)
+			*dst++ |= *src++;
+
+		for (int i = 0; i < 2; i++) {
+			src = _sjisTempPage;
+			for (int ii = 0; ii < SJIS_CHARSIZE; ii++) {
+				uint8 cy2 = 0;
+				uint8 cy1 = 0;
+				for (int iii = 0; iii < 3; iii++) {
+					cy1 = *src & 1;
+					*src |= ((*src >> 1) | (cy2 << 7));
+					cy2 = cy1;
+					src++;
+				}
+			}
+		}
+
+		src = _sjisTempPage2;
+		for (int i = 0; i < SJIS_CHARSIZE; i++) {
+			uint8 cy2 = 0;
+			uint8 cy1 = 0;
+			for (int ii = 0; ii < 3; ii++) {
+				cy1 = *src & 1;
+				*src = ((*src >> 1) | (cy2 << 7));
+				cy2 = cy1;
+				src++;
+			}
+		}
+
+		src = _sjisTempPage2;
+		dst = _sjisTempPage + 3;
+		for (int i = 0; i < 48; i++)
+			*dst++ ^= *src++;
+
+		memset(_sjisTempPage2, 0x80, 324);
+		src = _sjisTempPage;
+		dst = _sjisTempPage2;
+
+		uint8 height = SJIS_CHARSIZE * 3;
+		uint8 width = SJIS_CHARSIZE;
+		if (color2 & 0xff00) {
+			height -= 3;
+			width--;
+			dst += 0x13;		
+		}
+		
+		for (int i = 0; i < height; i++) {
+			uint8 rs = *src++;
+			for (int ii = 0; ii < 8; ii++) {
+				if (rs & 0x80)
+					*dst = (color2 & 0xff);
+				rs <<= 1;				
+				dst++;
+
+				if (!--width) {
+					width = SJIS_CHARSIZE;
+					if (color2 & 0xff00) {						
+						width--;
+						dst++;
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	//	draw color1 char
+	src = _sjisSourceChar;
+	dst = _sjisTempPage;
+
+	for (int i = 0; i < SJIS_CHARSIZE; i++) {
+		*(uint16*)dst = READ_LE_UINT16(src);
+		dst += 2; src += 2;
+		*dst++ = 0;
+	}
+
+	src = _sjisTempPage;
+	dst = _sjisTempPage2;
+	if (color2 != 0x80)
+		color1 = (color1 & 0xff) | 0x100;
+
+	uint8 height = SJIS_CHARSIZE * 3;
+	uint8 width = SJIS_CHARSIZE;
+	if (color1 & 0xff00) {
+		height -= 3;
+		width--;
+		dst += 0x13;		
+	}
+		
+	for (int i = 0; i < height; i++) {
+		uint8 rs = *src++;
+		for (int ii = 0; ii < 8; ii++) {
+			if (rs & 0x80)
+				*dst = (color1 & 0xff);
+			rs <<= 1;				
+			dst++;
+
+			if (!--width) {
+				width = SJIS_CHARSIZE;
+				if (color1 & 0xff00) {						
+					width--;
+					dst++;
+				}
+				break;
+			}
+		}
+	}    
+	
+	//	copy char to surface
+	src = _sjisTempPage2;
+	dst = destPage;
+	int pitch = 640 - SJIS_CHARSIZE;
+
+	for (int i = 0; i < SJIS_CHARSIZE; i++) {
+		for (int ii = 0; ii < SJIS_CHARSIZE; ii++) {
+			if (*src != 0x80)
+				*dst = *src;
+			src++;			
+			dst++;
+		}
+		dst += pitch;
+	}
 }
 
 } // End of namespace Kyra

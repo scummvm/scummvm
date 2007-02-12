@@ -52,6 +52,7 @@ struct GameFlags {
 	bool isDemo;
 	bool useAltShapeHeader;	// alternative shape header (uses 2 bytes more, those are unused though)
 	bool isTalkie;
+	bool useHiResOverlay;
 	byte gameID;
 };
 

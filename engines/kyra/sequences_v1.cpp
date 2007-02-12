@@ -211,7 +211,7 @@ void KyraEngine::seq_introStory() {
 		return;
 	} else if (_flags.lang == Common::EN_ANY && _flags.platform == Common::kPlatformPC) {
 		_screen->loadBitmap("TEXT.CPS", 3, 3, 0);
-	} else if (_flags.lang == Common::EN_ANY) {
+	} else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN) {
 		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, 0);
 	} else if (_flags.lang == Common::DE_DEU) {
 		_screen->loadBitmap("TEXT_GER.CPS", 3, 3, 0);
@@ -225,6 +225,20 @@ void KyraEngine::seq_introStory() {
 		warning("no story graphics file found");
 	}
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 3, 0);
+
+	if (_flags.lang == Common::JA_JPN) {
+		const int x1 = (Screen::SCREEN_W - _screen->getTextWidth(_seq_textsTable[18])) / 2;
+		const int x2 = (Screen::SCREEN_W - _screen->getTextWidth(_seq_textsTable[19])) / 2;
+		const int y1 = 175;
+		const int y2 = 184;
+		
+		uint8 colorMap[] = { 0, 15, 12, 12 };
+		_screen->setTextColor(colorMap, 0, 3);
+
+		_screen->printText(_seq_textsTable[18], x1, y1, 5, 8);
+		_screen->printText(_seq_textsTable[19], x2, y2, 5, 8);
+	}
+
 	_screen->updateScreen();
 	//debugC(0, kDebugLevelMain, "skipFlag %i, %i", _skipFlag, _tickLength);
 	delay(360 * _tickLength);

@@ -598,9 +598,11 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		// used in Kallak writing intro
 		if (_seqDisplayTextFlag && _seqDisplayedTextTimer != 0xFFFFFFFF) {
 			if (_seqDisplayedTextTimer < _system->getMillis()) {
-				char charStr[2];
+				char charStr[3];
 				charStr[0] = _vm->seqTextsTable()[_seqDisplayedText][_seqDisplayedChar];
-				charStr[1] = '\0';
+				charStr[1] = charStr[2] = '\0';
+				if (_vm->gameFlags().lang == Common::JA_JPN)
+					charStr[1] = _vm->seqTextsTable()[_seqDisplayedText][++_seqDisplayedChar];
 				_screen->printText(charStr, _seqDisplayedTextX, 180, 0xF, 0xC);
 				_seqDisplayedTextX += _screen->getCharWidth(charStr[0]);
 				++_seqDisplayedChar;

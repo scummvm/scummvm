@@ -36,16 +36,17 @@ struct KYRAGameDescription {
 
 namespace {
 
-#define FLAGS(x, y, z, id) { Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, id }
+#define FLAGS(x, y, z, a, id) { Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, a, id }
 
-#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, Kyra::GI_KYRA1)
-#define KYRA1_CD_FLAGS FLAGS(false, true, true, Kyra::GI_KYRA1)
-#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, Kyra::GI_KYRA1)
+#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, true, Kyra::GI_KYRA1)
+#define KYRA1_CD_FLAGS FLAGS(false, true, true, false, Kyra::GI_KYRA1)
+#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, Kyra::GI_KYRA1)
 
-#define KYRA2_UNK_FLAGS FLAGS(false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_UNK_FLAGS FLAGS(false, false, false, false, Kyra::GI_KYRA2)
 
-#define KYRA3_CD_FLAGS FLAGS(false, false, true, Kyra::GI_KYRA3)
+#define KYRA3_CD_FLAGS FLAGS(false, false, true, false, Kyra::GI_KYRA3)
 
 const KYRAGameDescription adGameDescs[] = {
 	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "3c244298395520bb62b5edfe41688879"), Common::EN_ANY, Common::kPlatformPC }, KYRA1_FLOPPY_FLAGS },
@@ -58,7 +59,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "ef08c8c237ee1473fd52578303fc36df"), Common::IT_ITA, Common::kPlatformPC }, KYRA1_FLOPPY_FLAGS }, // from gourry
 
 	{ { "kyra1", 0, AD_ENTRY1("TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59"), Common::EN_ANY, Common::kPlatformFMTowns }, KYRA1_TOWNS_FLAGS },
-	//{ { "kyra1", 0, AD_ENTRY1("TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59"), Common::JA_JPN, Common::kPlatformFMTowns }, KYRA1_TOWNS_FLAGS },
+	{ { "kyra1", 0, AD_ENTRY1("TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59"), Common::JA_JPN, Common::kPlatformFMTowns }, KYRA1_TOWNS_SJIS_FLAGS },
 
 	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "fac399fe62f98671e56a005c5e94e39f"), Common::EN_ANY, Common::kPlatformPC }, KYRA1_CD_FLAGS },
 	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "230f54e6afc007ab4117159181a1c722"), Common::DE_DEU, Common::kPlatformPC }, KYRA1_CD_FLAGS },
@@ -71,7 +72,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), Common::EN_ANY, Common::kPlatformPC }, KYRA3_CD_FLAGS },
 	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), Common::DE_DEU, Common::kPlatformPC }, KYRA3_CD_FLAGS },
 	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), Common::FR_FRA, Common::kPlatformPC }, KYRA3_CD_FLAGS },
-	{ { NULL, NULL, { {NULL, 0, NULL, 0} }, Common::UNK_LANG, Common::kPlatformUnknown }, FLAGS(0, 0, 0, 0) }
+	{ { NULL, NULL, { {NULL, 0, NULL, 0} }, Common::UNK_LANG, Common::kPlatformUnknown }, FLAGS(0, 0, 0, 0, 0) }
 };
 
 const PlainGameDescriptor gameList[] = {

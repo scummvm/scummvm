@@ -25,6 +25,7 @@
 
 namespace Kyra {
 class Screen;
+class KyraEngine;
 class FontId;
 
 class TextDisplayer {
@@ -37,7 +38,7 @@ class TextDisplayer {
 		TALK_SUBSTRING_NUM = 3
 	};
 public:
-	TextDisplayer(Screen *screen);
+	TextDisplayer(KyraEngine *vm, Screen *screen);
 	~TextDisplayer() {}
 
 	void setTalkCoords(uint16 y);
@@ -60,6 +61,7 @@ public:
 	bool printed() const { return _talkMessagePrinted; }
 private:
 	Screen *_screen;
+	KyraEngine *_vm;
 
 	char _talkBuffer[300];
 	char _talkSubstrings[TALK_SUBSTRING_LEN * TALK_SUBSTRING_NUM];

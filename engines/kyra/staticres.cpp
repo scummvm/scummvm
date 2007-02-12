@@ -31,7 +31,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 15
+#define RESFILE_VERSION 16
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -235,7 +235,7 @@ bool StaticResource::init() {
 	delete [] temp;
 	temp = 0;
 	
-	if (version < RESFILE_VERSION) {
+	if (version != RESFILE_VERSION) {
 		error("invalid KYRA.DAT file version (%d, required %d)", version, RESFILE_VERSION);
 	}
 	if (gameID != _engine->game()) {
@@ -840,7 +840,7 @@ void KyraEngine::loadMainScreen(int page) {
 
 	if (_flags.lang == Common::EN_ANY && !_flags.isTalkie && _flags.platform == Common::kPlatformPC)
 		_screen->loadBitmap("MAIN15.CPS", page, page, 0);
-	else if (_flags.lang == Common::EN_ANY) 
+	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN) 
 		_screen->loadBitmap("MAIN_ENG.CPS", page, page, 0);
 	else if (_flags.lang == Common::FR_FRA)
 		_screen->loadBitmap("MAIN_FRE.CPS", page, page, 0);

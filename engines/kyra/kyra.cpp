@@ -195,7 +195,7 @@ int KyraEngine::init() {
 	assert(_animator);
 	_animator->init(5, 11, 12);
 	assert(*_animator);
-	_text = new TextDisplayer(_screen);
+	_text = new TextDisplayer(this, _screen);
 	assert(_text);
 
 	_staticres = new StaticResource(this);
@@ -337,25 +337,27 @@ int KyraEngine::init() {
 	_lang = 0;
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
 
-	switch (lang) {
-	case Common::EN_ANY:
-	case Common::EN_USA:
-	case Common::EN_GRB:
-		_lang = 0;
-		break;
+	if (_flags.gameID == GI_KYRA2 || _flags.gameID == GI_KYRA3) {
+		switch (lang) {
+		case Common::EN_ANY:
+		case Common::EN_USA:
+		case Common::EN_GRB:
+			_lang = 0;
+			break;
 
-	case Common::FR_FRA:
-		_lang = 1;
-		break;
+		case Common::FR_FRA:
+			_lang = 1;
+			break;
 
-	case Common::DE_DEU:
-		_lang = 2;
-		break;
+		case Common::DE_DEU:
+			_lang = 2;
+			break;
 
-	default:
-		warning("unsupported language, switching back to English");
-		_lang = 0;
-		break;
+		default:
+			warning("unsupported language, switching back to English");
+			_lang = 0;
+			break;
+		}
 	}
 
 	return 0;
@@ -634,6 +636,10 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 			case OSystem::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
+				if (_flags.useHiResOverlay) {
+					_mouseX >>= 1;
+					_mouseY >>= 1;
+				}
 				_animator->_updateScreen = true;
 				break;
 			case OSystem::EVENT_QUIT:
@@ -644,19 +650,24 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 				break;
 			case OSystem::EVENT_LBUTTONUP:
 				_mousePressFlag = false;
-				if (_abortWalkFlag2) {
-					_abortWalkFlag = true;
-					_mouseX = event.mouse.x;
-					_mouseY = event.mouse.y;
+
+				_mouseX = event.mouse.x;
+				_mouseY = event.mouse.y;
+				if (_flags.useHiResOverlay) {
+					_mouseX >>= 1;
+					_mouseY >>= 1;
 				}
+
+				if (_abortWalkFlag2) 
+					_abortWalkFlag = true;
+
 				if (_handleInput) {
-					_mouseX = event.mouse.x;
-					_mouseY = event.mouse.y;
 					_handleInput = false;
 					processInput(_mouseX, _mouseY);
 					_handleInput = true;
 				} else
 					_skipFlag = true;
+
 				break;
 			default:
 				break;

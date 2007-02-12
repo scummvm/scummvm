@@ -717,7 +717,10 @@ int KyraEngine::o1_copyWSARegion(ScriptState *script) {
 
 int KyraEngine::o1_printText(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_printText(%p) ('%s', %d, %d, 0x%X, 0x%X)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
-	_screen->printText(stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	if (_flags.lang == Common::JA_JPN && stackPos(3) == 7)
+		_screen->printText(stackPosString(0), stackPos(1), stackPos(2), 0, 0x80);
+	else
+		_screen->printText(stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	_screen->updateScreen();
 	return 0;
 }

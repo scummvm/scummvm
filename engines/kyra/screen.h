@@ -61,7 +61,9 @@ public:
 		SCREEN_W = 320,
 		SCREEN_H = 200,
 		SCREEN_PAGE_SIZE = 320 * 200 + 1024,
-		SCREEN_PAGE_NUM  = 16
+		SCREEN_OVL_SJIS_SIZE = 640 * 400,
+		SCREEN_PAGE_NUM = 16,
+		SCREEN_OVLS_NUM = 3
 	};
 
 	enum CopyRegionFlags {
@@ -149,11 +151,10 @@ public:
 	int getFontHeight() const;
 	int getFontWidth() const;
 
-	int getCharWidth(uint8 c) const;
+	int getCharWidth(uint16 c) const;
 	int getTextWidth(const char *str) const;
 
 	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
-	void drawChar(uint8 c, int x, int y);
 
 	void setTextColorMap(const uint8 *cmap);
 	void setTextColor(const uint8 *cmap, int a, int b);
@@ -240,6 +241,25 @@ public:
 private:
 	uint8 *getPagePtr(int pageNum);
 	void updateDirtyRects();
+	void updateDirtyRectsOvl();
+
+	void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
+	void mergeOverlay(int x, int y, int w, int h);
+
+	// overlay specific
+	byte *getOverlayPtr(int pageNum);
+	void clearOverlayPage(int pageNum);
+	void clearOverlayRect(int pageNum, int x, int y, int w, int h);
+	void copyOverlayRegion(int x, int y, int x2, int y2, int w, int h, int srcPage, int dstPage);
+
+	// font/text specific
+	void drawCharANSI(uint8 c, int x, int y);
+	void drawCharSJIS(uint16 c, int x, int y);
+
+	enum {
+		SJIS_CHARSIZE = 18,
+		SJIS_CHARS = 8192
+	};
 
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
 	void restoreMouseRect();
@@ -250,15 +270,30 @@ private:
 	template<bool noXor> static void wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch);
 
 	uint8 *_pagePtrs[16];
+	uint8 *_sjisOverlayPtrs[SCREEN_OVLS_NUM];
+
+	bool _useOverlays;
+	bool _useSJIS;
+
+	uint8 *_sjisFontData;
+	uint8 *_sjisTempPage;
+	uint8 *_sjisTempPage2;
+	uint8 *_sjisSourceChar;
+
 	uint8 *_saveLoadPage[8];
+
 	uint8 *_screenPalette;
 	uint8 *_palettes[3];
+
 	Font _fonts[FID_NUM];
 	uint8 _textColorsMap[16];
+
 	uint8 *_decodeShapeBuffer;
 	int _decodeShapeBufferSize;
+
 	uint8 *_animBlockPtr;
 	int _animBlockSize;
+
 	int _mouseLockCount;
 	
 	Rect *_bitBlitRects;
