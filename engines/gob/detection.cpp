@@ -546,11 +546,44 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB2,
 		"intro"
 	},
-	{
+	{ // Supplied by vampir_raziel in bug report #1658373
 		{
 			"ween",
 			"",
-			AD_ENTRY1("intro.stk", "257fe669705ac4971efdfd5656eef16a"),
+			AD_ENTRY1s("intro.stk", "bfd9d02faf3d8d60a2cf744f95eb48dd", 456570),
+			EN_GRB,
+			kPlatformAmiga,
+		},
+		GF_GOB2,
+		"intro"
+	},
+	{ // Supplied by vampir_raziel in bug report #1658373
+		{
+			"ween",
+			"",
+			AD_ENTRY1s("intro.stk", "af83debf2cbea21faa591c7b4608fe92", 458192),
+			DE_DEU,
+			kPlatformAmiga,
+		},
+		GF_GOB2,
+		"intro"
+	},
+	{ // Supplied by vampir_raziel in bug report #1658373
+		{
+			"ween",
+			"",
+			AD_ENTRY1s("intro.stk", "257fe669705ac4971efdfd5656eef16a", 457719),
+			FR_FRA,
+			kPlatformAmiga,
+		},
+		GF_GOB2,
+		"intro"
+	},
+	{ // Supplied by vampir_raziel in bug report #1658373
+		{
+			"ween",
+			"",
+			AD_ENTRY1s("intro.stk", "dffd1ab98fe76150d6933329ca6f4cc4", 459458),
 			FR_FRA,
 			kPlatformAmiga,
 		},
