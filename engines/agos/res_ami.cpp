@@ -129,10 +129,18 @@ byte *AGOSEngine::convertclip(const byte *src, bool is32Colors, uint height, uin
 		length = (width + 15) / 16 * height;
 		for (i = 0; i < length; i++) {
 			uint16 w[kMaxColorDepth];
-			for (j = 0; j < colorDepth; ++j) {
-				w[j] = READ_BE_UINT16(src); src += 2;
+			if (getGameType() == GType_SIMON1 && !is32Colors) {
+				for (j = 0; j < colorDepth; ++j) {
+					w[j] = READ_BE_UINT16(src + j * length * 2);
+				}
+				bitplanetochunky(w, colorDepth, dst);
+				src += 2;
+			} else {
+				for (j = 0; j < colorDepth; ++j) {
+					w[j] = READ_BE_UINT16(src); src += 2;
+				}
+				bitplanetochunky(w, colorDepth, dst);
 			}
-			bitplanetochunky(w, colorDepth, dst);
 		}
 	}
 
