@@ -129,7 +129,51 @@ static const GOBGameDescription gameDescriptions[] = {
 			"gob1cd",
 			"v1.000",
 			AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
-			UNK_LANG,
+			EN_USA,
+			kPlatformPC,
+		},
+		GF_GOB1 | GF_CD,
+		"intro"
+	},
+	{ // CD 1.000 version.
+		{
+			"gob1cd",
+			"v1.000",
+			AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
+			DE_DEU,
+			kPlatformPC,
+		},
+		GF_GOB1 | GF_CD,
+		"intro"
+	},
+	{ // CD 1.000 version.
+		{
+			"gob1cd",
+			"v1.000",
+			AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
+			FR_FRA,
+			kPlatformPC,
+		},
+		GF_GOB1 | GF_CD,
+		"intro"
+	},
+	{ // CD 1.000 version.
+		{
+			"gob1cd",
+			"v1.000",
+			AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
+			IT_ITA,
+			kPlatformPC,
+		},
+		GF_GOB1 | GF_CD,
+		"intro"
+	},
+	{ // CD 1.000 version.
+		{
+			"gob1cd",
+			"v1.000",
+			AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
+			ES_ESP,
 			kPlatformPC,
 		},
 		GF_GOB1 | GF_CD,
@@ -296,6 +340,21 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "b45b984ee8017efd6ea965b9becd4d66"),
 			EN_GRB,
 			kPlatformPC,
+		},
+		GF_GOB2,
+		"intro"
+	},
+	{
+		{
+			"gob2",
+			"",
+			{
+				{"intro.stk", 0, "b45b984ee8017efd6ea965b9becd4d66", 828443},
+				{"musmac1.mid", 0, "a02553bd7b42e1bc1d24bac1f089dc6d", 124540},
+				{NULL, 0, NULL, 0}
+			},
+			UNK_LANG,
+			kPlatformMacintosh,
 		},
 		GF_GOB2,
 		"intro"
@@ -480,8 +539,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		{
 			"ween",
 			"",
+			AD_ENTRY1s("intro.stk", "de92e5c6a8c163007ffceebef6e67f7d", 7117568),
+			EN_USA,
+			kPlatformPC,
+		},
+		GF_GOB2,
+		"intro"
+	},
+	{
+		{
+			"ween",
+			"",
 			AD_ENTRY1("intro.stk", "4b10525a3782aa7ecd9d833b5c1d308b"),
-			UNK_LANG,
+			FR_FRA,
 			kPlatformPC,
 		},
 		GF_GOB2,
