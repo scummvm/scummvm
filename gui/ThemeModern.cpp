@@ -53,7 +53,7 @@ OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max
 #pragma mark -
 
 ThemeModern::ThemeModern(OSystem *system, const Common::String &stylefile, const Common::ConfigFile *cfg) : Theme(), _system(system), _screen(), _initOk(false),
-_lastUsedBitMask(0), _forceRedraw(false), _imageHandles(), _images(0), _colors(), _fonts(), _cursor(0), _gradientFactors() {
+_forceRedraw(false), _lastUsedBitMask(0), _fonts(), _cursor(0), _imageHandles(), _images(0), _colors(), _gradientFactors() {
 	_stylefile = stylefile;
 	_initOk = false;
 	_enabled = false;
