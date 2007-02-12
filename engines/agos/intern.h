@@ -147,6 +147,8 @@ enum {
 	SUBROUTINE_LINE_BIG_SIZE = 8
 };
 
+#include "common/pack-start.h"
+
 struct Subroutine {
 	uint16 id;								/* subroutine ID */
 	uint16 first;								/* offset from subroutine start to first subroutine line */
@@ -159,6 +161,8 @@ struct SubroutineLine {
 	int16 noun1;
 	int16 noun2;
 };
+
+#include "common/pack-end.h"
 
 struct TimeEvent {
 	uint32 time;
