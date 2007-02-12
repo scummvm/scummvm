@@ -25,7 +25,6 @@
 #include "common/stdafx.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/paletteman.h"
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
@@ -441,7 +440,7 @@ int GfxMgr::initVideo() {
 		255, 255, 255, 0
 	};
 
-	PaletteMan.replaceCursorPalette(cursorPalette, 0, 3);
+	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
 	CursorMan.replaceCursor(mouseCursor, 16, 16, 1, 1);
 
 	return errOK;

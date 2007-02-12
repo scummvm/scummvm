@@ -28,7 +28,6 @@
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/paletteman.h"
 
 namespace Cine {
 
@@ -125,7 +124,7 @@ void setMouseCursor(int cursor) {
 			++src;
 		}
 		CursorMan.replaceCursor(mouseCursor, 16, 16, mc->hotspotX, mc->hotspotY);
-		PaletteMan.replaceCursorPalette(cursorPalette, 0, 2);
+		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		currentMouseCursor = cursor;
 	}
 }

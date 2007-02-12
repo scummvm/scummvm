@@ -33,7 +33,7 @@
 #include "scumm/he/sound_he.h"
 
 #include "sound/wave.h"
-#include "graphics/paletteman.h"
+#include "graphics/cursorman.h"
 
 #include "common/stream.h"
 #include "common/system.h"
@@ -112,7 +112,7 @@ void ResExtractor::setCursor(int id) {
 	}
 
 	if (cc->palette)
-		PaletteMan.replaceCursorPalette(cc->palette, 0, cc->palSize);
+		CursorMan.replaceCursorPalette(cc->palette, 0, cc->palSize);
 
 	_vm->setCursorHotspot(cc->hotspot_x, cc->hotspot_y);
 	_vm->setCursorFromBuffer(cc->bitmap, cc->w, cc->h, cc->w);

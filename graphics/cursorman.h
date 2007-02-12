@@ -74,6 +74,49 @@ public:
 	 */
 	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int targetScale = 1);
 
+	/**
+	 * Enable/Disable the current cursor palette.
+	 *
+	 * @param disable
+	 */
+	void disableCursorPalette(bool disable);
+
+	/**
+	 * Push a new cursor palette onto the stack, and set it in the backend.
+	 * The palette entries from 'start' till (start+num-1) will be replaced
+	 * so a full palette updated is accomplished via start=0, num=256.
+	 *
+	 * The palette data is specified in the same interleaved RGBA format as
+	 * used by all backends.
+	 *
+	 * @param colors	the new palette data, in interleaved RGB format
+	 * @param start		the first palette entry to be updated
+	 * @param num		the number of palette entries to be updated
+	 *
+	 * @note If num is zero, the cursor palette is disabled.
+	 */
+	void pushCursorPalette(const byte *colors, uint start, uint num);
+
+	/**
+	 * Pop a cursor palette from the stack, and restore the previous one to
+	 * the backend. If there is no previous palette, the cursor palette is
+	 * disabled instead.
+	 */
+	void popCursorPalette();
+
+	/**
+	 * Replace the current cursor palette on the stack. If the stack is
+	 * empty, the palette is pushed instead. It's a slightly more optimized
+	 * way of popping the old palette before pushing the new one.
+	 *
+	 * @param colors	the new palette data, in interleaved RGB format
+	 * @param start		the first palette entry to be updated
+	 * @param num		the number of palette entries to be updated
+	 *
+	 * @note If num is zero, the cursor palette is disabled.
+	 */
+	void replaceCursorPalette(const byte *colors, uint start, uint num);
+
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 	CursorManager();
@@ -108,13 +151,40 @@ private:
 		}
 	};
 
-	Common::Stack<Cursor *> _cursorStack;
-};
+	struct Palette {
+		byte *_data;
+		uint _start;
+		uint _num;
+		uint _size;
 
+		bool _disabled;
+
+		Palette(const byte *colors, uint start, uint num) {
+			_start = start;
+			_num = num;
+			_size = 4 * num;
+
+			if (num) {
+				_data = new byte[_size];
+				memcpy(_data, colors, _size);
+			} else {
+				_data = NULL;
+			}
+
+			_disabled = false;
+		}
+
+		~Palette() {
+			delete [] _data;
+		}
+	};
+
+	Common::Stack<Cursor *> _cursorStack;
+	Common::Stack<Palette *> _cursorPaletteStack;
+};
 
 } // End of namespace Graphics
 
-/** Shortcut for accessing the cursor manager. */
 #define CursorMan	(::Graphics::CursorManager::instance())
 
 #endif

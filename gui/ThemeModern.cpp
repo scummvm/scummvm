@@ -28,7 +28,6 @@
 #include "graphics/imagedec.h"
 #include "graphics/colormasks.h"
 #include "graphics/cursorman.h"
-#include "graphics/paletteman.h"
 
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -160,7 +159,7 @@ void ThemeModern::refresh() {
 	resetupGuiRenderer();
 	if (_enabled) {
 		_system->showOverlay();
-		PaletteMan.replaceCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
+		CursorMan.replaceCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
 		CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
 	}		
 }
@@ -179,7 +178,7 @@ void ThemeModern::enable() {
 void ThemeModern::disable() {
 	_system->hideOverlay();
 	if (_useCursor) {
-		PaletteMan.popCursorPalette();
+		CursorMan.popCursorPalette();
 		CursorMan.popCursor();
 	}
 	_enabled = false;
@@ -1477,7 +1476,7 @@ OverlayColor ThemeModern::calcDimColor(OverlayColor col) {
 #pragma mark -
 
 void ThemeModern::setUpCursor() {
-	PaletteMan.pushCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
+	CursorMan.pushCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
 	CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
 	CursorMan.showMouse(true);
 }

@@ -24,7 +24,7 @@
 #include "common/stdafx.h"
 
 #include "common/system.h"
-#include "graphics/paletteman.h"
+#include "graphics/cursorman.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -1539,7 +1539,7 @@ void Wiz::loadWizCursor(int resId) {
 	_vm->setCursorFromBuffer(cursor, cw, ch, cw);
 
 	// Since we set up cursor palette for default cursor, disable it now
-	PaletteMan.disableCursorPalette(true);
+	CursorMan.disableCursorPalette(true);
 
 	free(cursor);
 }

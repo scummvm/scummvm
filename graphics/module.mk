@@ -13,7 +13,6 @@ MODULE_OBJS := \
 	imagedec.o \
 	imageman.o \
 	mpeg_player.o \
-	paletteman.o \
 	primitives.o \
 	scaler.o \
 	scaler/thumbnail.o \

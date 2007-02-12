@@ -23,7 +23,6 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/cursorman.h"
-#include "graphics/paletteman.h"
 #include "gui/newgui.h"
 #include "gui/dialog.h"
 #include "gui/eval.h"
@@ -139,7 +138,7 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 		_theme->disable();
 
 	if (_useStdCursor) {
-		PaletteMan.popCursorPalette();
+		CursorMan.popCursorPalette();
 		CursorMan.popCursor();
 	}
 
@@ -367,7 +366,7 @@ void NewGui::saveState() {
 void NewGui::restoreState() {
 	if (_useStdCursor) {
 		CursorMan.popCursor();
-		PaletteMan.popCursorPalette();
+		CursorMan.popCursorPalette();
 	}
 
 	_system->updateScreen();
@@ -415,7 +414,7 @@ void NewGui::setupCursor() {
 		 87,  87,  87, 0
 	};
 
-	PaletteMan.pushCursorPalette(palette, 0, 4);
+	CursorMan.pushCursorPalette(palette, 0, 4);
 	CursorMan.pushCursor(NULL, 0, 0, 0, 0);
 	CursorMan.showMouse(true);
 }

@@ -34,6 +34,7 @@ CursorManager::CursorManager() {
 	if (!g_initialized) {
 		g_initialized = true;
 		_cursorStack.clear();
+		_cursorPaletteStack.clear();
 	}
 }
 
@@ -105,6 +106,85 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 	cur->_targetScale = targetScale;
 
 	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale);
+}
+
+void CursorManager::disableCursorPalette(bool disable) {
+	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+		return;
+
+	if (_cursorPaletteStack.empty())
+		return;
+
+	Palette *pal = _cursorPaletteStack.top();
+	pal->_disabled = disable;
+
+	g_system->disableCursorPalette(true);
+}
+
+void CursorManager::pushCursorPalette(const byte *colors, uint start, uint num) {
+	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+		return;
+
+	Palette *pal = new Palette(colors, start, num);
+	_cursorPaletteStack.push(pal);
+
+	if (num)
+		g_system->setCursorPalette(colors, start, num);
+	else
+		g_system->disableCursorPalette(true);
+}
+
+void CursorManager::popCursorPalette() {
+	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+		return;
+
+	if (_cursorPaletteStack.empty())
+		return;
+
+	Palette *pal = _cursorPaletteStack.pop();
+	delete pal;
+
+	if (_cursorPaletteStack.empty()) {
+		g_system->disableCursorPalette(true);
+		return;
+	}
+
+	pal = _cursorPaletteStack.top();
+
+	if (pal->_num && !pal->_disabled)
+		g_system->setCursorPalette(pal->_data, pal->_start, pal->_num);
+	else
+		g_system->disableCursorPalette(true);
+}
+
+void CursorManager::replaceCursorPalette(const byte *colors, uint start, uint num) {
+	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+		return;
+
+	if (_cursorPaletteStack.empty()) {
+		pushCursorPalette(colors, start, num);
+		return;
+	}
+
+	Palette *pal = _cursorPaletteStack.top();
+	uint size = 4 * num;
+
+	if (pal->_size < size) {
+		// Could not re-use the old buffer. Create a new one.
+		delete[] pal->_data;
+		pal->_data = new byte[size];
+		pal->_size = size;
+	}
+
+	pal->_start = start;
+	pal->_num = num;
+
+	if (num) {
+		memcpy(pal->_data, colors, 4 * num);
+		g_system->setCursorPalette(pal->_data, pal->_start, pal->_num);
+	} else {
+		g_system->disableCursorPalette(true);
+	}
 }
 
 } // End of namespace Graphics

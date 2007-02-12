@@ -24,7 +24,6 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/cursorman.h"
-#include "graphics/paletteman.h"
 #include "scumm/bomp.h"
 #include "scumm/charset.h"
 #include "scumm/intern.h"
@@ -178,7 +177,7 @@ void ScummEngine_v70he::setDefaultCursor() {
 
 	// Since white color position is not guaranteed
 	// we setup our own palette if supported by backend
-	PaletteMan.replaceCursorPalette(palette, 0xfe, 2);
+	CursorMan.replaceCursorPalette(palette, 0xfe, 2);
 
 	updateCursor();
 }
