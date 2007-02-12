@@ -196,7 +196,7 @@ void Game_v2::playTot(int16 skipPlay) {
 
 			_vm->_global->_inter_animDataSize = READ_LE_UINT16((char *)_totFileData + 0x38);
 			if (_vm->_global->_inter_variables == 0) {
-				variablesCount = READ_LE_UINT32((char *)_totFileData + 0x2c);
+				variablesCount = READ_LE_UINT16((char *)_totFileData + 0x2c);
 				_vm->_global->_inter_variables = new char[variablesCount * 4];
 				_vm->_global->_inter_variablesSizes = new byte[variablesCount * 4];
 				_vm->_global->clearVars(variablesCount);
@@ -209,7 +209,7 @@ void Game_v2::playTot(int16 skipPlay) {
 
 			WRITE_VAR(13, _vm->_global->_useMouse);
 			WRITE_VAR(14, _vm->_global->_soundFlags);
-			WRITE_VAR(15, _vm->_global->_videoMode);
+			WRITE_VAR(15, _vm->_global->_fakeVideoMode);
 			WRITE_VAR(16, _vm->_global->_language);
 
 			_vm->_inter->callSub(2);

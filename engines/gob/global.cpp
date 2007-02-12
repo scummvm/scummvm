@@ -35,13 +35,12 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 	_presentHER = UNDEF;
 
 	_videoMode = 0;
+	_fakeVideoMode = 0;
 
 	/* Sound */
 	_soundFlags = 0;
 	_blasterPort = 0;
 	_disableSoundCfg = 0;
-
-	//char _playingSound = 0;
 
 	/* Mouse */
 	_disableMouseCfg = 0;

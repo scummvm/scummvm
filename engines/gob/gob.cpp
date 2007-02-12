@@ -648,6 +648,10 @@ int GobEngine::init() {
 	_global->_debugFlag = 1;
 	_global->_doRangeClamp = 1;
 
+	// WORKAROUND: Some Amiga versions only play music when the video mode is
+	// Amiga-ish
+	_global->_fakeVideoMode = (_platform == Common::kPlatformAmiga) ? 0x11 : 0x13;
+
 	_global->_videoMode = 0x13;
 	_global->_useMouse = 1;
 	_global->_soundFlags = MIDI_FLAG | SPEAKER_FLAG | BLASTER_FLAG | ADLIB_FLAG;

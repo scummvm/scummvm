@@ -690,6 +690,7 @@ int16 Game::openLocTextFile(char *locTextFile, int language) {
 }
 
 char *Game::loadLocTexts(void) {
+	static bool found = false;
 	char locTextFile[20];
 	int16 handle;
 	int i;
@@ -697,18 +698,20 @@ char *Game::loadLocTexts(void) {
 	strcpy(locTextFile, _curTotFile);
 
 	handle = openLocTextFile(locTextFile, _vm->_global->_language);
-	if ((handle < 0) && !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot0)) {
-		warning("Your game version doesn't support the requested language, using the first one available");
+	if ((handle < 0) && !found) {
 		for (i = 0; i < 10; i++) {
 			handle = openLocTextFile(locTextFile, i);
 			if (handle >= 0) {
+				warning("Your game version doesn't support the requested language, using the first one available (%d)", i);
 				_vm->_global->_language = i;
+				found = true;
 				break;
 			}
 		}
 	}
 
 	if (handle >= 0) {
+		found = true;
 		_vm->_dataio->closeData(handle);
 		return _vm->_dataio->getData(locTextFile);
 	}

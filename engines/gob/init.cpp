@@ -189,8 +189,8 @@ memBlocks	= word ptr -2*/
 	if (handle >= 0) {
 		// Get variables count
 		_vm->_dataio->seekData(handle, 0x2c, SEEK_SET);
-		_vm->_dataio->readData(handle, (char *)&varsCount, 4);
-		varsCount = FROM_LE_32(varsCount);
+		_vm->_dataio->readData(handle, (char *)&varsCount, 2);
+		varsCount = FROM_LE_16(varsCount);
 		_vm->_dataio->closeData(handle);
 
 		_vm->_global->_inter_variables = new char[varsCount * 4];

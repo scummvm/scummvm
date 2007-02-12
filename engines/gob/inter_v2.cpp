@@ -45,7 +45,7 @@ namespace Gob {
 #define OPCODE(x) _OPCODE(Inter_v2, x)
 
 const int Inter_v2::_goblinFuncLookUp[][2] = {
-	{1, 0},
+	{0, 0},
 	{2, 1},
 	{3, 2},
 	{4, 3},
@@ -551,7 +551,7 @@ void Inter_v2::setupOpcodes(void) {
 
 	static const OpcodeGoblinEntryV2 opcodesGoblin[71] = {
 		/* 00 */
-		{NULL, ""},
+		OPCODE(o2_loadInfogramesIns),
 		{NULL, ""},
 		{NULL, ""},
 		{NULL, ""},
@@ -1403,6 +1403,10 @@ bool Inter_v2::o2_readData(char &cmdCount, int16 &counter, int16 &retFlag) {
 	if (((dataVar >> 2) == 59) && (size == 4)) {
 		retSize = _vm->_dataio->readData(handle, tmp, 4);
 		WRITE_VAR(59, READ_LE_UINT32(tmp));
+		// The scripts in some Amiga versions divide through 256^3 then,
+		// effectively doing a LE->BE conversion
+		if ((_vm->_platform == Common::kPlatformAmiga) && (VAR(59) < 256))
+			WRITE_VAR(59, SWAP_BYTES_32(VAR(59)));
 	} else
 		retSize = _vm->_dataio->readData(handle, buf, size);
 
@@ -1737,7 +1741,8 @@ bool Inter_v2::o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag) {
 		break;
 
 	case 52:
-		if ((_vm->_global->_videoMode != 0x0D) || (_vm->_global->_colorCount == 256)) {
+		if ((_vm->_platform != Common::kPlatformAmiga) &&
+				((_vm->_global->_videoMode != 0x0D) || (_vm->_global->_colorCount == 256))) {
 			_vm->_global->_inter_execPtr += 48;
 			return false;
 		}
@@ -1821,12 +1826,11 @@ bool Inter_v2::o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 	case 52:
 		for (i = 0; i < 16; i++, _vm->_global->_inter_execPtr += 3) {
-			_vm->_draw->_vgaSmallPalette[i].red = _vm->_global->_inter_execPtr[0];
-			_vm->_draw->_vgaSmallPalette[i].green = _vm->_global->_inter_execPtr[1];
-			_vm->_draw->_vgaSmallPalette[i].blue = _vm->_global->_inter_execPtr[2];
+			_vm->_draw->_vgaPalette[i].red = _vm->_global->_inter_execPtr[0];
+			_vm->_draw->_vgaPalette[i].green = _vm->_global->_inter_execPtr[1];
+			_vm->_draw->_vgaPalette[i].blue = _vm->_global->_inter_execPtr[2];
 		}
-		_vm->_global->_inter_execPtr += 48;
-		if (_vm->_global->_videoMode >= 0x13)
+		if ((_vm->_platform != Common::kPlatformAmiga) && _vm->_global->_videoMode >= 0x13)
 			return false;
 		break;
 
@@ -2218,6 +2222,12 @@ void Inter_v2::o2_initScreen(void) {
 	width = _vm->_parse->parseValExpr();
 	height = _vm->_parse->parseValExpr();
 
+	_vm->_global->_fakeVideoMode = videoMode;
+
+	// Some Amiga versions require this
+	if (videoMode == 0xD)
+		videoMode = 0x14;
+
 	if ((videoMode == _vm->_global->_videoMode) && (width == -1))
 		return;
 
@@ -2242,7 +2252,7 @@ void Inter_v2::o2_initScreen(void) {
 		_vm->_global->_videoMode = videoMode;
 		_vm->_video->initPrimary(videoMode);
 	}
-	WRITE_VAR(15, _vm->_global->_videoMode);
+	WRITE_VAR(15, _vm->_global->_fakeVideoMode);
 
 	_vm->_global->_setAllPalette = 1;
 
@@ -2372,7 +2382,38 @@ void Inter_v2::o2_handleGoblins(int16 &extraData, int32 *retVarPtr, Goblin::Gob_
 	_vm->_goblin->handleGoblins();
 }
 
-void Inter_v2::o2_playInfogrames(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
+void Inter_v2::o2_loadInfogramesIns(int16 &extraData, int32 *retVarPtr,
+		Goblin::Gob_Object *objDesc) {
+	int16 varName;
+	char fileName[20];
+
+	varName = load16();
+
+	if (_vm->_noMusic)
+		return;
+
+	strcpy(fileName, GET_VAR_STR(varName));
+	strcat(fileName, ".INS");
+	debugC(1, kDebugMusic, "Loading Infogrames instrument file \"%s\"", fileName);
+
+	if (_vm->_game->_infogrames) {
+		_vm->_mixer->stopHandle(_vm->_game->_infHandle);
+		_vm->_game->_infogrames = 0;
+	}
+
+	if (_vm->_game->_infIns)
+		delete _vm->_game->_infIns;
+
+	_vm->_game->_infIns = new Audio::Infogrames::Instruments;
+	if (!_vm->_game->_infIns->load(fileName)) {
+		warning("Couldn't load instruments file");
+		delete _vm->_game->_infIns;
+		_vm->_game->_infIns = 0;
+	}
+}
+
+void Inter_v2::o2_playInfogrames(int16 &extraData, int32 *retVarPtr,
+		Goblin::Gob_Object *objDesc) {
 	int16 varName;
 	char fileName[20];
 

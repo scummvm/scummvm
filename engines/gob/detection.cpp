@@ -54,8 +54,8 @@ static const PlainGameDescriptor gobGames[] = {
 	{"gob3cd", "Goblins Quest 3 CD"},
 	{"gob3-demo", "Goblins Quest 3 Demo"},
 	{"bargon", "Bargon Attack"},
-	{"ween", "Ween: The Prohpecy"},
-	{"ween-demo", "Ween: The Prohpecy Demo"},
+	{"ween", "Ween: The Prophecy"},
+	{"ween-demo", "Ween: The Prophecy Demo"},
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
 	{0, 0}
 };
@@ -529,7 +529,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			"ween",
 			"",
 			AD_ENTRY1("intro.stk", "2bb8878a8042244dd2b96ff682381baa"),
-			UNK_LANG,
+			EN_GRB,
 			kPlatformPC,
 		},
 		GF_GOB2,
@@ -542,6 +542,17 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("intro.stk", "de92e5c6a8c163007ffceebef6e67f7d", 7117568),
 			EN_USA,
 			kPlatformPC,
+		},
+		GF_GOB2,
+		"intro"
+	},
+	{
+		{
+			"ween",
+			"",
+			AD_ENTRY1("intro.stk", "257fe669705ac4971efdfd5656eef16a"),
+			FR_FRA,
+			kPlatformAmiga,
 		},
 		GF_GOB2,
 		"intro"
@@ -578,6 +589,17 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		GF_GOB2,
 		"intro"
+	},
+	{
+		{
+			"ween-demo",
+			"",
+			AD_ENTRY1("intro.stk", "15fb91a1b9b09684b28ac75edf66e504"),
+			EN_USA,
+			kPlatformPC,
+		},
+		GF_GOB2,
+		"show"
 	},
 	{
 		{

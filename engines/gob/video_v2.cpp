@@ -99,6 +99,9 @@ Video::SurfaceDesc *Video_v2::initSurfDesc(int16 vidMode, int16 width, int16 hei
 	int16 someFlags = 1;
 	SurfaceDesc *descPtr;
 
+	if (_vm->_platform == Common::kPlatformAmiga)
+		flags &= ~RETURN_PRIMARY;
+
 	if (flags != PRIMARY_SURFACE)
 		_vm->_global->_sprAllocated++;
 

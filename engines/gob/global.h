@@ -77,6 +77,7 @@ public:
 	int16 _presentHER;
 
 	int16 _videoMode;
+	int16 _fakeVideoMode;
 
 	int16 _disableVideoCfg;
 

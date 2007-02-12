@@ -372,6 +372,7 @@ protected:
 	void o2_initScreen(void);
 	void o2_setScrollOffset(void);
 	void o2_handleGoblins(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o2_loadInfogramesIns(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
 	void o2_playInfogrames(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
 };
 
