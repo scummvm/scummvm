@@ -90,7 +90,7 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, soundStruct *soun
 
 	file->seek(offset, SEEK_SET);
 	uint32 tag = file->readUint32BE();
-	assert(tag == 'RMAP');
+	assert(tag == MKID_BE('RMAP'));
 	int32 version = file->readUint32BE();
 	if (version != 2) {
 		error("ImuseDigiSndMgr::prepareSoundFromRMAP: Wrong version number, expected 2, but it's: %d.", version);

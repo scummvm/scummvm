@@ -89,7 +89,7 @@ int BundleDirCache::matchFile(const char *filename) {
 			error("BundleDirCache::matchFileFile() Can't find free slot for file bundle dir cache");
 
 		tag = file.readUint32BE();
-		if (tag == 'LB23')
+		if (tag == MKID_BE('LB23'))
 			_budleDirCache[freeSlot].compressedBun = true;
 		offset = file.readUint32BE();
 
@@ -109,7 +109,7 @@ int BundleDirCache::matchFile(const char *filename) {
 			int32 z = 0;
 			int32 z2;
 
-			if (tag == 'LB23') {
+			if (tag == MKID_BE('LB23')) {
 				file.read(_budleDirCache[freeSlot].bundleTable[i].filename, 24);
 			} else {
 				for (z2 = 0; z2 < 8; z2++)
