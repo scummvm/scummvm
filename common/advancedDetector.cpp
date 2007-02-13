@@ -231,14 +231,15 @@ PluginError detectGameForEngineCreation(
 		return kInvalidPathError;
 	}
 
-	GameList detectedGames = detectAllGames(fslist, params);
+	Common::ADList matches = detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown);
 
 	// We have single ID set, so we have a game if there are hits
-	if (params.singleid != NULL && detectedGames.size())
+	if (params.singleid != NULL && matches.size())
 		return kNoError;
 
-	for (uint i = 0; i < detectedGames.size(); i++) {
-		if (detectedGames[i].gameid() == gameid) {
+	for (uint i = 0; i < matches.size(); i++) {
+		const ADGameDescription *adgDesc = (const ADGameDescription *)(params.descs + matches[i] * params.descItemSize);
+		if (adgDesc->gameid == gameid) {
 			return kNoError;
 		}
 	}
