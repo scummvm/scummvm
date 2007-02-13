@@ -46,16 +46,12 @@ static const PlainGameDescriptor gobGames[] = {
 	{"gob", "Gob engine game"},
 	{"gob1", "Gobliiins"},
 	{"gob1cd", "Gobliiins CD"},
-	{"gob1-demo", "Gobliiins Demo"},
 	{"gob2", "Gobliins 2"},
 	{"gob2cd", "Gobliins 2 CD"},
-	{"gob2-demo", "Gobliins 2 Demo"},
 	{"gob3", "Goblins Quest 3"},
 	{"gob3cd", "Goblins Quest 3 CD"},
-	{"gob3-demo", "Goblins Quest 3 Demo"},
 	{"bargon", "Bargon Attack"},
 	{"ween", "Ween: The Prophecy"},
-	{"ween-demo", "Ween: The Prophecy Demo"},
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
 	{0, 0}
 };
@@ -251,7 +247,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"gob1-demo",
+			"gob1",
 			"Demo",
 			AD_ENTRY1("intro.stk", "972f22c6ff8144a6636423f0354ca549"),
 			UNK_LANG,
@@ -263,7 +259,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"gob1-demo",
+			"gob1",
 			"Interactive Demo",
 			AD_ENTRY1("intro.stk", "e72bd1e3828c7dec4c8a3e58c48bdfdb"),
 			UNK_LANG,
@@ -531,8 +527,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"gob2-demo",
-			"Non-Interactive",
+			"gob2",
+			"Non-Interactive Demo",
 			AD_ENTRY1("intro.stk", "8b1c98ff2ab2e14f47a1b891e9b92217"),
 			UNK_LANG,
 			kPlatformPC,
@@ -543,8 +539,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"gob2-demo",
-			"Interactive",
+			"gob2",
+			"Interactive Demo",
 			AD_ENTRY1("intro.stk", "cf1c95b2939bd8ff58a25c756cb6125e"),
 			UNK_LANG,
 			kPlatformPC,
@@ -555,8 +551,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"gob2-demo",
-			"Interactive",
+			"gob2",
+			"Interactive Demo",
 			AD_ENTRY1("intro.stk", "4b278c2678ea01383fd5ca114d947eea"),
 			UNK_LANG,
 			kPlatformPC,
@@ -675,8 +671,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"ween-demo",
-			"",
+			"ween",
+			"Demo",
 			AD_ENTRY1("intro.stk", "2e9c2898f6bf206ede801e3b2e7ee428"),
 			UNK_LANG,
 			kPlatformPC,
@@ -687,8 +683,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"ween-demo",
-			"",
+			"ween",
+			"Demo",
 			AD_ENTRY1("intro.stk", "15fb91a1b9b09684b28ac75edf66e504"),
 			EN_USA,
 			kPlatformPC,
@@ -819,8 +815,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"gob3-demo",
-			"Interactive",
+			"gob3",
+			"Interactive Demo",
 			AD_ENTRY1("intro.stk", "7aebd94e49c2c5c518c9e7b74f25de9d"),
 			UNK_LANG,
 			kPlatformPC,
@@ -831,8 +827,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"gob3-demo",
-			"Non-interactive",
+			"gob3",
+			"Non-interactive Demo",
 			AD_ENTRY1("intro.stk", "b9b898fccebe02b69c086052d5024a55"),
 			UNK_LANG,
 			kPlatformPC,
@@ -843,7 +839,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"gob3-demo",
+			"gob3",
 			"Interactive Demo 2",
 			AD_ENTRY1("intro.stk", "e5dcbc9f6658ebb1e8fe26bc4da0806d"),
 			UNK_LANG,

@@ -166,6 +166,10 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 static String generateComplexID(const String &id, const ADGameDescription *desc) {
 	String res(id);
 
+	if (desc->flags & GF_DEMO) {
+		res = res + "-demo";
+	}
+
 	if (desc->platform != kPlatformPC && desc->platform != kPlatformUnknown) {
 		res = res + "-" + getPlatformAbbrev(desc->platform);
 	}
