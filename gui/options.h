@@ -62,6 +62,7 @@ protected:
 
 	ButtonWidget *_soundFontButton;
 	StaticTextWidget *_soundFont;
+	ButtonWidget *_soundFontClearButton;
 
 	void addGraphicControls(GuiObject *boss, const String &prefix);
 	void addAudioControls(GuiObject *boss, const String &prefix);

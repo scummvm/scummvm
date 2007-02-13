@@ -68,6 +68,7 @@ enum {
 	kSubtitleSpeedChanged	= 'stsc',
 	kSpeechVolumeChanged	= 'vcvc',
 	kChooseSoundFontCmd		= 'chsf',
+	kClearSoundFontCmd      = 'clsf',
 	kChooseSaveDirCmd		= 'chos',
 	kChooseThemeDirCmd		= 'chth',
 	kChooseExtraDirCmd		= 'chex',
@@ -321,6 +322,8 @@ void OptionsDialog::close() {
 				String soundFont(_soundFont->getLabel());
 				if (!soundFont.empty() && (soundFont != "None"))
 					ConfMan.set("soundfont", soundFont, _domain);
+				else
+					ConfMan.removeKey("soundfont", _domain);
 			} else {
 				ConfMan.removeKey("multi_midi", _domain);
 				ConfMan.removeKey("native_mt32", _domain);
@@ -441,6 +444,7 @@ void OptionsDialog::setMIDISettingsState(bool enabled) {
 
 	_soundFontButton->setEnabled(enabled);
 	_soundFont->setEnabled(enabled);
+	_soundFontClearButton->setEnabled(enabled);
 	_multiMidiCheckbox->setEnabled(enabled);
 	_mt32Checkbox->setEnabled(enabled);
 	_enableGSCheckbox->setEnabled(enabled);
@@ -532,6 +536,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const String &prefix) {
 	// SoundFont
 	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", "SoundFont:", kChooseSoundFontCmd, 0);
 	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", "None");
+	_soundFontClearButton = new ButtonWidget(boss, prefix + "mcFontClearButton", "C", kClearSoundFontCmd, 0);
 
 	// Multi midi setting
 	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", "Mixed Adlib/MIDI mode", 0, 0);
@@ -802,6 +807,11 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			_soundFont->setLabel(file.path());
 			draw();
 		}
+		break;
+	}
+	case kClearSoundFontCmd: {
+		_soundFont->setLabel("None");
+		draw();
 		break;
 	}
 	case kChooseThemeCmd: {
