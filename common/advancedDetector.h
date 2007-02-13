@@ -67,7 +67,11 @@ struct ADObsoleteGameID {
 };
 
 enum ADFlags {
-	kADFlagComplexID =         (1 << 0), // Generate complex suggested IDs
+	/**
+	 * Generate/augment preferred target with information on the language (if
+	 * not equal to english) and platform (if not equal to PC).
+	 */
+	kADFlagAugmentPreferredTarget = (1 << 0),
 	kADFlagFilebasedFallback = (1 << 1)  // Use file based fallback detection
 };
 

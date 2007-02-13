@@ -915,7 +915,7 @@ static const ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	Gob::fileBased,
 	// Flags
-	kADFlagComplexID | kADFlagFilebasedFallback
+	kADFlagAugmentPreferredTarget | kADFlagFilebasedFallback
 };
 
 ADVANCED_DETECTOR_DEFINE_PLUGIN(GOB, Gob::GobEngine, Gob::GAME_detectGames, detectionParams);

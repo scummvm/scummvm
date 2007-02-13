@@ -1739,7 +1739,7 @@ static const Common::ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
-	Common::kADFlagComplexID
+	Common::kADFlagAugmentPreferredTarget
 };
 
 ADVANCED_DETECTOR_DEFINE_PLUGIN(AGI, Agi::AgiEngine, Agi::GAME_detectGames, detectionParams);

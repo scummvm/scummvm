@@ -170,7 +170,7 @@ GameList detectAllGames(
 			desc["gameid"] = params.singleid;
 		}
 
-		if (params.flags & kADFlagComplexID) {
+		if (params.flags & kADFlagAugmentPreferredTarget) {
 			if (!desc.contains("preferredtarget"))
 				desc["preferredtarget"] = desc["gameid"];
 
