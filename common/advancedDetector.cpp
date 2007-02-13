@@ -90,33 +90,6 @@ void upgradeTargetIfNecessary(const Common::ADParams &params) {
 	}
 }
 
-PluginError detectGameForEngineCreation(
-	GameList (*detectFunc)(const FSList &fslist),
-	const Common::ADParams &params
-	) {
-	Common::String gameid = ConfMan.get("gameid");
-
-	FSList fslist;
-	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
-		return kInvalidPathError;
-	}
-
-	GameList detectedGames = detectFunc(fslist);
-
-	// We have single ID set, so we have a game if there are hits
-	if (params.singleid != NULL && detectedGames.size())
-		return kNoError;
-
-	for (uint i = 0; i < detectedGames.size(); i++) {
-		if (detectedGames[i].gameid() == gameid) {
-			return kNoError;
-		}
-	}
-
-	return kNoGameDataFoundError;
-}
-
 GameDescriptor findGameID(
 	const char *gameid,
 	const Common::ADParams &params
@@ -245,6 +218,32 @@ int detectBestMatchingGame(
 	return gameNumber;
 }
 
+PluginError detectGameForEngineCreation(
+	GameList (*detectFunc)(const FSList &fslist),
+	const Common::ADParams &params
+	) {
+	Common::String gameid = ConfMan.get("gameid");
+
+	FSList fslist;
+	FilesystemNode dir(ConfMan.get("path"));
+	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
+		return kInvalidPathError;
+	}
+
+	GameList detectedGames = detectFunc(fslist);
+
+	// We have single ID set, so we have a game if there are hits
+	if (params.singleid != NULL && detectedGames.size())
+		return kNoError;
+
+	for (uint i = 0; i < detectedGames.size(); i++) {
+		if (detectedGames[i].gameid() == gameid) {
+			return kNoError;
+		}
+	}
+
+	return kNoGameDataFoundError;
+}
 
 static ADList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform) {
 	typedef HashMap<String, bool, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringSet;
