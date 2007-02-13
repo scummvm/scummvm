@@ -133,10 +133,12 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 }
 
 /**
- * Makes gameid in form of
- * gameid-plaform-lang
+ * Generate a preferred target value as
+ *   GAMEID-PLAFORM-LANG
+ * or (if GF_DEMO has been set)
+ *   GAMEID-demo-PLAFORM-LANG
  */
-static String generateComplexID(const String &id, const ADGameDescription *desc) {
+static String generatePreferredTarget(const String &id, const ADGameDescription *desc) {
 	String res(id);
 
 	if (desc->flags & GF_DEMO) {
@@ -174,7 +176,7 @@ GameList detectAllGames(
 			if (!desc.contains("preferredtarget"))
 				desc["preferredtarget"] = desc["gameid"];
 
-			desc["preferredtarget"] = generateComplexID(desc["preferredtarget"], adgDesc);
+			desc["preferredtarget"] = generatePreferredTarget(desc["preferredtarget"], adgDesc);
 		}
 
 		detectedGames.push_back(desc);
