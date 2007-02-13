@@ -705,19 +705,9 @@ int Parallaction::buildSaveFileList(Common::StringList& l) {
 }
 
 
-int Parallaction::selectSaveFile(uint16 arg_0) {
+int Parallaction::selectSaveFile(uint16 arg_0, const char* caption, const char* button) {
 
-    const Common::String caption[2] = {
-        "Load file",
-        "Save file"
-    };
-
-    const Common::String button[2] = {
-        "Load",
-        "Save"
-    };
-
-    SaveLoadChooser* slc = new SaveLoadChooser(caption[arg_0], button[arg_0], _vm);
+    SaveLoadChooser* slc = new SaveLoadChooser(caption, button, _vm);
 
 	Common::StringList l;
 
@@ -735,7 +725,7 @@ int Parallaction::selectSaveFile(uint16 arg_0) {
 
 void Parallaction::loadGame() {
 
-	int _di = selectSaveFile( 0 );
+	int _di = selectSaveFile( 0, "Load file", "Load" );
 	if (_di == -1) {
 	    return;
 	}
@@ -757,7 +747,7 @@ void Parallaction::saveGame() {
 
 	if (!scumm_stricmp(_location, "caveau")) return;
 
-	int slot = selectSaveFile( 1 );
+	int slot = selectSaveFile( 1, "Save file", "Save" );
 	if (slot == -1) {
 	    return;
 	}

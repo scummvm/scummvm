@@ -300,7 +300,7 @@ protected:		// members
 
     Common::String      _saveFileName;
     int         buildSaveFileList(Common::StringList& l);
-    int         selectSaveFile(uint16 arg_0);
+    int         selectSaveFile(uint16 arg_0, const char* caption, const char* button);
 	void		doLoadGame(uint16 slot);
 	void		doSaveGame(uint16 slot, const char* name);
 
