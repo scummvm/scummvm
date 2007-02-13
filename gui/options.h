@@ -155,7 +155,12 @@ protected:
 	StaticTextWidget *_themePath;
 	StaticTextWidget *_extraPath;
 
+	//
+	// Misc controls
+	//
 	StaticTextWidget *_curTheme;
+
+	PopUpWidget *_autosavePeriodPopUp;
 };
 
 } // End of namespace GUI

@@ -190,6 +190,8 @@ const char *Theme::_defaultConfigINI =
 "glOff=((buttonHeight - kLineHeight) / 2 + 2)\n"
 "globaloptions_themebutton2=10 yoffset buttonWidth buttonHeight\n"
 "globaloptions_curtheme=(prev.x2 + 20) (yoffset + glOff) (parent.w - (prev.w + 20) - 10) kLineHeight\n"
+"yoffset=(yoffset + buttonHeight + 4)\n"
+"globaloptions_autosaveperiod=10 yoffset (parent.w - 10 - 25) (kLineHeight + 2)\n"
 "\n"
 "globaloptions_cancel=(parent.w - 2 * (buttonWidth + 10)) (parent.h - buttonHeight - 8) buttonWidth buttonHeight\n"
 "globaloptions_ok=(prev.x2 + 10) prev.y prev.w prev.h\n"

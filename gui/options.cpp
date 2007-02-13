@@ -81,6 +81,10 @@ enum {
 };
 #endif
 
+static const char *savePeriodLabels[] = { "Never", "each 5 mins", "each 10 mins", "each 15 mins", "each 30 mins", 0 };
+static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
+
+
 
 OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h), _domain(domain) {
@@ -697,6 +701,14 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	new ButtonWidget(tab, "globaloptions_themebutton2", "Theme:", kChooseThemeCmd, 0);
 	_curTheme = new StaticTextWidget(tab, "globaloptions_curtheme", g_gui.theme()->getThemeName());
 
+	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
+
+	_autosavePeriodPopUp = new PopUpWidget(tab, "globaloptions_autosaveperiod", "Autosave: ", labelWidth);
+
+	for (int i = 0; savePeriodLabels[i]; i++) {
+		_autosavePeriodPopUp->appendEntry(savePeriodLabels[i], savePeriodValues[i]);
+	}
+
 	// TODO: joystick setting
 
 
@@ -748,6 +760,14 @@ void GlobalOptionsDialog::open() {
 		_extraPath->setLabel(extraPath);
 	}
 #endif
+
+	// Misc Tab
+	_autosavePeriodPopUp->setSelected(1);
+	int value = ConfMan.getInt("autosave_period");
+	for (int i = 0; savePeriodLabels[i]; i++) {
+		if (value == savePeriodValues[i])
+			_autosavePeriodPopUp->setSelected(i);
+	}
 }
 
 void GlobalOptionsDialog::close() {
@@ -762,6 +782,8 @@ void GlobalOptionsDialog::close() {
 		String extraPath(_extraPath->getLabel());
 		if (!extraPath.empty() && (extraPath != "None"))
 			ConfMan.set("extrapath", extraPath, _domain);
+
+		ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
 	}
 	OptionsDialog::close();
 }
