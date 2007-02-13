@@ -120,7 +120,7 @@ struct ADParams {
 	const PlainGameDescriptor *list;
 
 	/**
-	 * Structure for autoupgrading obsolete targets (optional)
+	 * Structure for autoupgrading obsolete targets (optional).
 	 *
 	 * @todo Properly explain this.
 	 */
@@ -134,13 +134,31 @@ struct ADParams {
 	const char *singleid;
 
 	/**
-	 * List of files for file-based fallback detection (optional)
-	 
+	 * List of files for file-based fallback detection (optional).
+	 * This is used if the regular MD5 based detection failed to 
+	 * detect anything.
+	 *
 	 * @todo Properly explain this
 	 */
 	const char **fileBasedFallback;
+	
+	/** 
+	 * A callback pointing to an (optional) generic fallback detect
+	 * function. If present, this gets called if both the regular
+	 * MD5 based detection as well as the file based fallback failed
+	 * to detect anything. It is supposed
+	 *
+	 * @note The fslist parameter may be 0 -- in that case, it is assumed
+	 *       that the callback searchs the current directory.
+	 */
+	//GameList (*fallbackDetectFunc)(const FSList *fslist);
+	uint dummy;
 
-	/** Flags */
+	/**
+	 * A bitmask of flags which can be used to configure the behavior
+	 * of the AdvancedDetector. Refer to ADFlags for a list of flags
+	 * that can be ORed together and passed here.
+	 */
 	uint32 flags;
 };
 
@@ -158,31 +176,19 @@ GameList gameIDList(const Common::ADParams &params);
  * 'gameid' in there. If a match is found, returns a  GameDescriptor
  * with gameid and description set.
  */
-GameDescriptor findGameID(
-	const char *gameid,
-	const Common::ADParams &params
-	);
-
+GameDescriptor findGameID(const char *gameid, const Common::ADParams &params);
 
 // FIXME/TODO: Rename this function to something more sensible.
-GameList detectAllGames(
-	const FSList &fslist,
-	const Common::ADParams &params
-	);
-
+GameList detectAllGames(const FSList &fslist, const Common::ADParams &params);
 
 // FIXME/TODO: Rename this function to something more sensible.
-int detectBestMatchingGame(
-	const Common::ADParams &params
-	);
+const ADGameDescription *detectBestMatchingGame(const Common::ADParams &params);
 
 // FIXME/TODO: Rename this function to something more sensible.
 void upgradeTargetIfNecessary(const Common::ADParams &params);
 
 // FIXME/TODO: Rename this function to something more sensible.
-PluginError detectGameForEngineCreation(
-	const Common::ADParams &params
-	);
+PluginError detectGameForEngineCreation(const Common::ADParams &params);
 
 
 // FIXME: It would probably be good to merge detectBestMatchingGame

@@ -1741,6 +1741,8 @@ static const Common::ADParams detectionParams = {
 	"agi",
 	// List of files for file-based fallback detection (optional)
 	0,
+	// Fallback callback
+	0,
 	// Flags
 	Common::kADFlagAugmentPreferredTarget
 };
@@ -1752,12 +1754,8 @@ REGISTER_PLUGIN(AGI, "AGI v2 + v3 Engine", "Sierra AGI Engine (C) Sierra On-Line
 namespace Agi {
 
 bool AgiEngine::initGame() {
-	int i = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	if (i < 0)
-		return false;
-
-	_gameDescription = &gameDescriptions[i];
-	return true;
+	_gameDescription = (const AGIGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	return (_gameDescription != 0);
 }
 
 } // End of namespace Agi

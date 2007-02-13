@@ -913,6 +913,8 @@ static const ADParams detectionParams = {
 	"gob",
 	// List of files for file-based fallback detection (optional)
 	Gob::fileBased,
+	// Fallback callback
+	0,
 	// Flags
 	kADFlagAugmentPreferredTarget
 };
@@ -925,25 +927,27 @@ REGISTER_PLUGIN(GOB, "Gob Engine", "Goblins Games (C) Coktel Vision");
 namespace Gob {
 
 bool GobEngine::detectGame() {
-	int i = AdvancedDetector::detectBestMatchingGame(detectionParams);
+	const GOBGameDescription *gd = (const GOBGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	if (gd == 0)
+		return false;
 
-	if (gameDescriptions[i].startTotBase == 0) {
+	if (gd->startTotBase == 0) {
 		_startTot = new char[10];
 		_startTot0 = new char[11];
 		strcpy(_startTot, "intro.tot");
 		strcpy(_startTot0, "intro0.tot");
 	} else {
-		_startTot = new char[strlen(gameDescriptions[i].startTotBase) + 5];
-		_startTot0 = new char[strlen(gameDescriptions[i].startTotBase) + 6];
-		strcpy(_startTot, gameDescriptions[i].startTotBase);
-		strcpy(_startTot0, gameDescriptions[i].startTotBase);
+		_startTot = new char[strlen(gd->startTotBase) + 5];
+		_startTot0 = new char[strlen(gd->startTotBase) + 6];
+		strcpy(_startTot, gd->startTotBase);
+		strcpy(_startTot0, gd->startTotBase);
 		strcat(_startTot, ".tot");
 		strcat(_startTot0, "0.tot");
 	}
 
-	_features = gameDescriptions[i].features;
-	_language = gameDescriptions[i].desc.language;
-	_platform = gameDescriptions[i].desc.platform;
+	_features = gd->features;
+	_language = gd->desc.language;
+	_platform = gd->desc.platform;
 
 	return true;
 }

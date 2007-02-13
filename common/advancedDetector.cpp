@@ -188,9 +188,10 @@ GameList detectAllGames(
 	return detectedGames;
 }
 
-int detectBestMatchingGame(
+const ADGameDescription *detectBestMatchingGame(
 	const Common::ADParams &params
 	) {
+	const ADGameDescription *agdDesc = 0;
 	Common::Language language = Common::UNK_LANG;
 	Common::Platform platform = Common::kPlatformUnknown;
 
@@ -203,24 +204,23 @@ int detectBestMatchingGame(
 
 	Common::ADList matches = detectGame(0, params, language, platform);
 
-	int gameNumber = -1;
-
 	if (params.singleid == NULL) {
 		for (uint i = 0; i < matches.size(); i++) {
-			if (((const ADGameDescription *)(params.descs + matches[i] * params.descItemSize))->gameid == gameid) {
-				gameNumber = matches[i];
+			agdDesc = (const ADGameDescription *)(params.descs + matches[i] * params.descItemSize);
+			if (agdDesc->gameid == gameid) {
 				break;
 			}
+			agdDesc = 0;
 		}
-	} else {
-		gameNumber = matches[0];
+	} else if (matches.size() > 0) {
+		agdDesc = (const ADGameDescription *)(params.descs + matches[0] * params.descItemSize);
 	}
 
-	if (gameNumber >= 0) {
-		debug(2, "Running %s", toGameDescriptor(*(const ADGameDescription *)(params.descs + gameNumber * params.descItemSize), params.list).description().c_str());
+	if (agdDesc != 0) {
+		debug(2, "Running %s", toGameDescriptor(*agdDesc, params.list).description().c_str());
 	}
 
-	return gameNumber;
+	return agdDesc;
 }
 
 PluginError detectGameForEngineCreation(
@@ -426,6 +426,8 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 		return matched;
 
 	if (!filesMD5.empty()) {
+		// TODO: This message should be cleaned up / made more specific.
+		// For example, we should specify at least which engine triggered this.
 		printf("MD5s of your game version are unknown. Please, report following data to\n");
 		printf("ScummVM team along with your game name and version:\n");
 
@@ -505,7 +507,7 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 				matchEntry = entryStart;
 				maxFiles = matchFiles;
 
-				debug(4, "and overrided");
+				debug(4, "and overriden");
 			}
 
 			ptr++;
@@ -515,6 +517,8 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 			for (i = 0; i < gameDescriptions.size(); i++) {
 				if (gameDescriptions[i]->filesDescriptions[0].fileName == 0) {
 					if (!scumm_stricmp(gameDescriptions[i]->gameid, *matchEntry)) {
+						// FIXME: This warning, if ever seen by somebody, is
+						// extremly cryptic!
 						warning("But it looks like unknown variant of %s", *matchEntry);
 
 						matched.push_back(i);
@@ -523,7 +527,12 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 			}
 		}
 	}
-
+/*	
+	// If we still haven't got a match, try to use the fallback callback :-)
+	if (matched.empty() && params.fallbackDetectFunc != 0) {
+		matched = (*params.fallbackDetectFunc)(fslist);
+	}
+*/
 	return matched;
 }
 

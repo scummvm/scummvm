@@ -97,6 +97,8 @@ const Common::ADParams detectionParams = {
 	0,
 	// List of files for file-based fallback detection (optional)
 	0,
+	// Fallback callback
+	0,
 	// Flags
 	0
 };
@@ -119,19 +121,16 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
 	
-	int id = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	if (id == -1) {
-		// FIXME: This case currently can never happen, as we simply error out
-		// inside AdvancedDetector::detectBestMatchingGame.
-		
+	const KYRAGameDescription *gd = (const KYRAGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	if (gd == 0) {
 		// maybe add non md5 based detection again?
 		return kNoGameDataFoundError;
 	}
 
-	Kyra::GameFlags flags = adGameDescs[id].flags;
+	Kyra::GameFlags flags = gd->flags;
 	
-	flags.lang = adGameDescs[id].desc.language;
-	flags.platform = adGameDescs[id].desc.platform;
+	flags.lang = gd->desc.language;
+	flags.platform = gd->desc.platform;
 
 	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
 	if (platform != Common::kPlatformUnknown) {

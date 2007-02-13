@@ -480,6 +480,8 @@ static const Common::ADParams detectionParams = {
 	"cine",
 	// List of files for file-based fallback detection (optional)
 	0,
+	// Fallback callback
+	0,
 	// Flags
 	Common::kADFlagAugmentPreferredTarget
 };
@@ -491,12 +493,8 @@ REGISTER_PLUGIN(CINE, "Cinematique evo 1 engine", "Future Wars & Operation Steal
 namespace Cine {
 
 bool CineEngine::initGame() {
-	int i = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	if (i < 0)
-		return false;
-
-	_gameDescription = &gameDescriptions[i];
-	return true;
+	_gameDescription = (const CINEGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	return (_gameDescription != 0);
 }
 
 } // End of namespace Cine

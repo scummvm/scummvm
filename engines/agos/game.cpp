@@ -96,6 +96,8 @@ static const Common::ADParams detectionParams = {
 	0,
 	// List of files for file-based fallback detection (optional)
 	0,
+	// Fallback callback
+	0,
 	// Flags
 	Common::kADFlagAugmentPreferredTarget
 };
@@ -107,12 +109,8 @@ REGISTER_PLUGIN(AGOS, "AGOS", "AGOS (C) Adventure Soft");
 namespace AGOS {
 
 bool AGOSEngine::initGame() {
-	int i = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	if (i < 0)
-		return false;
-
-	_gameDescription = &gameDescriptions[i];
-	return true;
+	_gameDescription = (const AGOSGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	return (_gameDescription != 0);
 }
 
 

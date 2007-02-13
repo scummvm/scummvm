@@ -94,6 +94,8 @@ static const Common::ADParams detectionParams = {
 	"parallaction",
 	// List of files for file-based fallback detection (optional)
 	0,
+	// Fallback callback
+	0,
 	// Flags
 	Common::kADFlagAugmentPreferredTarget
 };
@@ -106,10 +108,8 @@ REGISTER_PLUGIN(PARALLACTION, "Parallaction engine", "Nippon Safes Inc. (C) Dyna
 namespace Parallaction {
 
 bool Parallaction::detectGame() {
-	int i = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-
-	_gameDescription = &gameDescriptions[i];
-	return true;
+	_gameDescription = (const PARALLACTIONGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	return (_gameDescription != 0);
 }
 
 } // End of namespace Parallaction

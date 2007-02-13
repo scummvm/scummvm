@@ -115,6 +115,8 @@ static const Common::ADParams detectionParams = {
 	"saga",
 	// List of files for file-based fallback detection (optional)
 	0,
+	// Fallback callback
+	0,
 	// Flags
 	Common::kADFlagAugmentPreferredTarget
 };
@@ -126,11 +128,9 @@ REGISTER_PLUGIN(SAGA, "SAGA Engine", "Inherit the Earth (C) Wyrmkeep Entertainme
 namespace Saga {
 
 bool SagaEngine::initGame() {
-	int i = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	if (i < 0)
+	_gameDescription = (const SAGAGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	if (_gameDescription == 0)
 		return false;
-
-	_gameDescription = &gameDescriptions[i];
 
 	_gameDisplayInfo = *_gameDescription->gameDisplayInfo;
 	_displayClip.right = _gameDisplayInfo.logicalWidth;

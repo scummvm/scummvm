@@ -108,6 +108,8 @@ static const Common::ADParams detectionParams = {
 	"touche",
 	// List of files for file-based fallback detection (optional)
 	0,
+	// Fallback callback
+	0,
 	// Flags
 	0
 };
@@ -119,11 +121,11 @@ REGISTER_PLUGIN(TOUCHE, "Touche Engine", "Touche: The Adventures of the 5th Musk
 namespace Touche {
 
 bool ToucheEngine::detectGame() {
-	int i = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	if (i < 0)
+	const Common::ADGameDescription *gd = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	if (gd == 0)
 		return false;
 
-	_language = gameDescriptions[i].language;
+	_language = gd->language;
 	return true;
 }
 
