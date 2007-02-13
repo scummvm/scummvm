@@ -33,7 +33,6 @@
 
 namespace Common {
 
-typedef Array<int> ADList;
 typedef Array<const ADGameDescription*> ADGameDescList;
 
 namespace AdvancedDetector {
@@ -48,9 +47,9 @@ namespace AdvancedDetector {
  * @param params	a ADParams struct containing various parameters
  * @param language	restrict results to specified language only
  * @param platform	restrict results to specified platform only
- * @return	list of indexes to GameDescriptions of matched games
+ * @return	list of ADGameDescription (or subclass) pointers corresponding to matched games
  */
-static ADList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform);
+static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform);
 
 
 GameList gameIDList(const Common::ADParams &params) {
@@ -163,12 +162,11 @@ GameList detectAllGames(
 	const FSList &fslist,
 	const Common::ADParams &params
 	) {
-	Common::ADList matches = detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown);
+	ADGameDescList matches = detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown);
 
 	GameList detectedGames;
 	for (uint i = 0; i < matches.size(); i++) {
-		const ADGameDescription *adgDesc = (const ADGameDescription *)(params.descs + matches[i] * params.descItemSize);
-		GameDescriptor desc(toGameDescriptor(*adgDesc, params.list));
+		GameDescriptor desc(toGameDescriptor(*matches[i], params.list));
 
 		if (params.singleid != NULL) {
 			desc["preferredtarget"] = desc["gameid"];
@@ -179,7 +177,7 @@ GameList detectAllGames(
 			if (!desc.contains("preferredtarget"))
 				desc["preferredtarget"] = desc["gameid"];
 
-			desc["preferredtarget"] = generatePreferredTarget(desc["preferredtarget"], adgDesc);
+			desc["preferredtarget"] = generatePreferredTarget(desc["preferredtarget"], matches[i]);
 		}
 
 		detectedGames.push_back(desc);
@@ -202,18 +200,17 @@ const ADGameDescription *detectBestMatchingGame(
 
 	Common::String gameid = ConfMan.get("gameid");
 
-	Common::ADList matches = detectGame(0, params, language, platform);
+	ADGameDescList matches = detectGame(0, params, language, platform);
 
 	if (params.singleid == NULL) {
 		for (uint i = 0; i < matches.size(); i++) {
-			agdDesc = (const ADGameDescription *)(params.descs + matches[i] * params.descItemSize);
-			if (agdDesc->gameid == gameid) {
+			if (matches[i]->gameid == gameid) {
+				agdDesc = matches[i];
 				break;
 			}
-			agdDesc = 0;
 		}
 	} else if (matches.size() > 0) {
-		agdDesc = (const ADGameDescription *)(params.descs + matches[0] * params.descItemSize);
+		agdDesc = matches[0];
 	}
 
 	if (agdDesc != 0) {
@@ -234,15 +231,14 @@ PluginError detectGameForEngineCreation(
 		return kInvalidPathError;
 	}
 
-	Common::ADList matches = detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown);
+	ADGameDescList matches = detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown);
 
 	// We have single ID set, so we have a game if there are hits
 	if (params.singleid != NULL && matches.size())
 		return kNoError;
 
 	for (uint i = 0; i < matches.size(); i++) {
-		const ADGameDescription *adgDesc = (const ADGameDescription *)(params.descs + matches[i] * params.descItemSize);
-		if (adgDesc->gameid == gameid) {
+		if (matches[i]->gameid == gameid) {
 			return kNoError;
 		}
 	}
@@ -250,7 +246,7 @@ PluginError detectGameForEngineCreation(
 	return kNoGameDataFoundError;
 }
 
-static ADList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform) {
+static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform) {
 	typedef HashMap<String, bool, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringSet;
 	StringSet filesList;
 
@@ -346,7 +342,7 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 		}
 	}
 
-	ADList matched;
+	ADGameDescList matched;
 	int maxFilesMatched = 0;
 
 	for (i = 0; i < gameDescriptions.size(); i++) {
@@ -408,9 +404,9 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 				debug(2, " ... new best match, removing all previous candidates");
 				maxFilesMatched = curFilesMatched;
 				matched.clear();
-				matched.push_back(i);
+				matched.push_back(g);
 			} else if (curFilesMatched == maxFilesMatched) {
-				matched.push_back(i);
+				matched.push_back(g);
 			} else {
 				debug(2, " ... skipped");
 			}
@@ -521,7 +517,7 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 						// extremly cryptic!
 						warning("But it looks like unknown variant of %s", *matchEntry);
 
-						matched.push_back(i);
+						matched.push_back(gameDescriptions[i]);
 					}
 				}
 			}
