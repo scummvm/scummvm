@@ -375,8 +375,11 @@ int AgiEngine::agiInit() {
 		break;
 	}
 
-	_game.gameFlags |= _opt.amigaMode ? ID_AMIGA : 0;
-	_game.gameFlags |= _opt.agdsMode ? ID_AGDS : 0;
+	if (getPlatform() == Common::kPlatformAmiga)
+		_game.gameFlags |= ID_AMIGA;
+
+	if (getFeatures() & GF_AGDS)
+		_game.gameFlags |= ID_AGDS;
 
 	if (_game.gameFlags & ID_AMIGA)
 		report("Amiga padded game detected.\n");
@@ -440,11 +443,6 @@ int AgiEngine::agiDetectGame() {
 	int ec = errOK;
 
 	assert(_gameDescription != NULL);
-
-	_opt.amigaMode = (getPlatform() == Common::kPlatformAmiga);
-	_opt.agdsMode = ((getFeatures() & AGI_AGDS) == AGI_AGDS);
-	_opt.agimouse = ((getFeatures() & AGI_MOUSE) == AGI_MOUSE);
-
 
 	if(getVersion() <= 0x2999) {
 		_loader = new AgiLoader_v2(this);
@@ -564,33 +562,31 @@ AgiEngine::AgiEngine(OSystem *syst) : Engine(syst) {
 }
 
 void AgiEngine::initialize() {
-	memset(&_opt, 0, sizeof(struct AgiOptions));
-	_opt.gamerun = GAMERUN_RUNGAME;
-
 	// TODO: Some sound emulation modes do not fit our current music
 	//       drivers, and I'm not sure what they are. For now, they might
 	//       as well be called "PC Speaker" and "Not PC Speaker".
 
 	switch (MidiDriver::detectMusicDriver(MDT_PCSPK)) {
 	case MD_PCSPK:
-		_opt.soundemu = SOUND_EMU_PC;
+		_soundemu = SOUND_EMU_PC;
 		break;
 	default:
-		_opt.soundemu = SOUND_EMU_NONE;
+		_soundemu = SOUND_EMU_NONE;
 		break;
 	}
 
 	if (ConfMan.hasKey("render_mode")) {
-		_opt.renderMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
+		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
 	} else if (ConfMan.hasKey("platform")) {
 		switch (Common::parsePlatform(ConfMan.get("platform"))) {
 		case Common::kPlatformAmiga:
-			_opt.renderMode = Common::kRenderAmiga;
+			_renderMode = Common::kRenderAmiga;
 			break;
 		case Common::kPlatformPC:
-			_opt.renderMode = Common::kRenderEGA;
+			_renderMode = Common::kRenderEGA;
 			break;
 		default:
+			_renderMode = Common::kRenderEGA;
 			break;
 		}
 	}

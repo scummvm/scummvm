@@ -1195,7 +1195,7 @@ cmd(print_at_v) {
 }
 
 cmd(push_script) {
-	if (g_agi->_opt.agimouse) {
+	if (g_agi->getFeatures() & GF_AGIMOUSE) {
 		game.vars[27] = g_mouse.button;
 		game.vars[28] = g_mouse.x / 2;
 		game.vars[29] = g_mouse.y;
@@ -1230,7 +1230,7 @@ cmd(shake_screen) {
 	/* AGI Mouse 1.1 uses shake.screen values between 100 and 109 to
 	 * set the palette.
 	 */
-	if (g_agi->_opt.agimouse && p0 >= 100 && p0 < 110) {
+	if ((g_agi->getFeatures() & GF_AGIMOUSE) && p0 >= 100 && p0 < 110) {
 		report("not implemented: AGI Mouse palettes\n");
 		return;
 	} else

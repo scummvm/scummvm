@@ -201,7 +201,7 @@ int AgiEngine::mainCycle() {
 	/* In AGI Mouse emulation mode we must update the mouse-related
 	 * vars in every interpreter cycle.
 	 */
-	if (_opt.agimouse) {
+	if (getFeatures() & GF_AGIMOUSE) {
 		_game.vars[28] = g_mouse.x / 2;
 		_game.vars[29] = g_mouse.y;
 	}
@@ -302,7 +302,7 @@ int AgiEngine::playGame() {
 	_game.clockEnabled = true;
 	_game.lineUserInput = 22;
 
-	if (_opt.agimouse)
+	if (getFeatures() & GF_AGIMOUSE)
 		report("Using AGI Mouse 1.0 protocol\n");
 
 	report("Running AGI script.\n");

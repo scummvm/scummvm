@@ -273,14 +273,6 @@ void SoundMgr::startSound(int resnum, int flag) {
 	/* Nat Budin reports that the flag should be reset when sound starts
 	 */
 	_vm->setflag(endflag, false);
-
-	/* FIXME: should wait for sound time instead of setting the flag
-	 *        immediately
-	 */
-	if (_vm->_opt.nosound) {
-		_vm->setflag(endflag, true);
-		stopSound();
-	}
 }
 
 void SoundMgr::stopSound() {
@@ -305,7 +297,7 @@ int SoundMgr::initSound() {
 
 	env = false;
 
-	switch (_vm->_opt.soundemu) {
+	switch (_vm->_soundemu) {
 	case SOUND_EMU_NONE:
 		waveform = waveformRamp;
 		env = true;
@@ -349,7 +341,7 @@ void SoundMgr::stopNote(int i) {
 #ifdef USE_CHORUS
 	/* Stop chorus ;) */
 	if (chn[i].type == AGI_SOUND_4CHN &&
-		_vm->_opt.soundemu == SOUND_EMU_NONE && i < 3) {
+		_vm->_soundemu == SOUND_EMU_NONE && i < 3) {
 		stopNote(i + 4);
 	}
 #endif
@@ -358,7 +350,7 @@ void SoundMgr::stopNote(int i) {
 void SoundMgr::playNote(int i, int freq, int vol) {
 	if (!_vm->getflag(fSoundOn))
 		vol = 0;
-	else if (vol && _vm->_opt.soundemu == SOUND_EMU_PC)
+	else if (vol && _vm->_soundemu == SOUND_EMU_PC)
 		vol = 160;
 
 	chn[i].phase = 0;
@@ -370,7 +362,7 @@ void SoundMgr::playNote(int i, int freq, int vol) {
 #ifdef USE_CHORUS
 	/* Add chorus ;) */
 	if (chn[i].type == AGI_SOUND_4CHN &&
-		_vm->_opt.soundemu == SOUND_EMU_NONE && i < 3) {
+		_vm->_soundemu == SOUND_EMU_NONE && i < 3) {
 		int newfreq = freq * 1007 / 1000;
 		if (freq == newfreq)
 			newfreq++;
@@ -452,7 +444,7 @@ void SoundMgr::playSampleSound() {
 void SoundMgr::playAgiSound() {
 	int i, freq;
 
-	for (playing = i = 0; i < (_vm->_opt.soundemu == SOUND_EMU_PC ? 1 : 4); i++) {
+	for (playing = i = 0; i < (_vm->_soundemu == SOUND_EMU_PC ? 1 : 4); i++) {
 		playing |= !chn[i].end;
 
 		if (chn[i].end)
@@ -475,7 +467,7 @@ void SoundMgr::playAgiSound() {
 				chn[i].env = 0;
 #ifdef USE_CHORUS
 				/* chorus */
-				if (chn[i].type == AGI_SOUND_4CHN && _vm->_opt.soundemu == SOUND_EMU_NONE && i < 3) {
+				if (chn[i].type == AGI_SOUND_4CHN && _vm->_soundemu == SOUND_EMU_NONE && i < 3) {
 					chn[i + 4].vol = 0;
 					chn[i + 4].env = 0;
 				}

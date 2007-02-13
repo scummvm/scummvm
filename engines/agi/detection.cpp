@@ -99,11 +99,11 @@ namespace Agi {
 		features, \
 		ver, \
 	}
-#define FANMADE_LV(name,md5,lang,ver) FANMADE_ILFV("agi-fanmade",name,md5,lang,0,ver)
+#define FANMADE_LV(name,md5,lang,ver) FANMADE_ILFV("agi-fanmade",name,md5,lang,GF_FANMADE,ver)
 #define FANMADE_V(name,md5,ver) FANMADE_LV(name,md5,Common::EN_ANY,ver)
-#define FANMADE_F(name,md5,features) FANMADE_ILFV("agi-danmade",name,md5,Common::EN_ANY,features,0x2917)
+#define FANMADE_F(name,md5,features) FANMADE_ILFV("agi-fanmade",name,md5,Common::EN_ANY,(GF_FANMADE|features),0x2917)
 #define FANMADE_L(name,md5,lang) FANMADE_LV(name,md5,lang,0x2917)
-#define FANMADE_I(id,name,md5) FANMADE_ILFV(id,name,md5,Common::EN_ANY,0,0x2917)
+#define FANMADE_I(id,name,md5) FANMADE_ILFV(id,name,md5,Common::EN_ANY,GF_FANMADE,0x2917)
 #define FANMADE(name,md5) FANMADE_LV(name,md5,Common::EN_ANY,0x2917)
 
 static const AGIGameDescription gameDescriptions[] = {
@@ -412,7 +412,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
-		AGI_MACGOLDRUSH,
+		GF_MACGOLDRUSH,
 		0x3149,
 	},
 
@@ -1523,8 +1523,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Al Pond 1 - Al Lives Forever (v1.0)", "e8921c3043b749b056ff51f56d1b451b"),
 	FANMADE("Al Pond 1 - Al Lives Forever (v1.3)", "fb4699474054962e0dbfb4cf12ca52f6"),
 	FANMADE("Apocalyptic Quest (v0.03 Teaser)", "42ced528b67965d3bc3b52c635f94a57"),
-	FANMADE_F("Apocalyptic Quest (v4.00 Alpha 1)", "e15581628d84949b8d352d224ec3184b", AGI_MOUSE),
-	FANMADE_F("Apocalyptic Quest (v4.00 Alpha 2)", "0eee850005860e46345b38fea093d194", AGI_MOUSE),
+	FANMADE_F("Apocalyptic Quest (v4.00 Alpha 1)", "e15581628d84949b8d352d224ec3184b", GF_AGIMOUSE),
+	FANMADE_F("Apocalyptic Quest (v4.00 Alpha 2)", "0eee850005860e46345b38fea093d194", GF_AGIMOUSE),
 	FANMADE("Band Quest (Demo)", "7326abefd793571cc17ed0db647bdf34"),
 	FANMADE("Band Quest (Early Demo)", "de4758dd34676b248c8301b32d93bc6f"),
 	FANMADE("Beyond the Titanic 2", "9b8de38dc64ffb3f52b7877ea3ebcef9"),
@@ -1582,7 +1582,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
-		AGI_AGDS,
+		GF_AGDS,
 		0x2440,
 	},
 

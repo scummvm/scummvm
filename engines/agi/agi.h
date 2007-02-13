@@ -104,9 +104,13 @@ enum AgiGameType {
 };
 
 enum AgiGameFeatures {
-	AGI_MOUSE = 1 << 0,
-	AGI_AGDS = 1 << 1,
-	AGI_MACGOLDRUSH = 1 << 2
+	GF_AGIMOUSE =    (1 << 0),
+	GF_AGDS =        (1 << 1),
+	GF_AGI256 =      (1 << 2),
+	GF_AGI256_2 =    (1 << 3),
+	GF_AGIPAL =      (1 << 4),
+	GF_MACGOLDRUSH = (1 << 5),
+	GF_FANMADE =     (1 << 6)
 };
 
 struct AGIGameDescription;
@@ -178,26 +182,6 @@ struct Mouse {
 	int button;
 	unsigned int x;
 	unsigned int y;
-};
-
-/**
- * Command-line options.
- */
-struct AgiOptions {
-#define GAMERUN_RUNGAME 0
-#define GAMERUN_PICVIEW 1
-#define GAMERUN_WORDS	2
-#define GAMERUN_OBJECTS	3
-#define GAMERUN_GAMES	4
-#define GAMERUN_CRC	5
-	int gamerun;		/**< game run mode*/
-	int emuversion;		/**< AGI version to emulate */
-	bool agdsMode;		/**< enable AGDS mode */
-	bool amigaMode;		/**< enable Amiga mode */
-	bool nosound;		/**< disable sound */
-	Common::RenderMode renderMode;
-	int soundemu;		/**< sound emulation mode */
-	bool agimouse;		/**< AGI Mouse 1.0 emulation */
 };
 
 #define report printf
@@ -588,7 +572,8 @@ public:
 	void releaseImageStack();
 
 	AgiDebug _debug;
-	AgiOptions _opt;
+	Common::RenderMode _renderMode;
+	int _soundemu;
 
 	int _keyControl;
 	int _keyAlt;

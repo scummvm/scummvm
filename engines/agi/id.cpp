@@ -70,15 +70,9 @@ int AgiEngine::setupV2Game(int ver, uint32 crc) {
 		agiSetRelease(ver = 0x2917);
 	}
 
-	/* setup the differences in the opcodes and other bits in the
-	 * AGI v2 specs
-	 */
-	if (_opt.emuversion)
-		agiSetRelease(ver = _opt.emuversion);
-
 	// Should this go above the previous lines, so we can force emulation versions
 	// even for AGDS games? -- dsymonds
-	if (_opt.agdsMode)
+	if (getFeatures() & GF_AGDS)
 		agiSetRelease(ver = 0x2440);	/* ALL AGDS games built for 2.440 */
 
 	report("Seting up for version 0x%04X\n", ver);
@@ -108,9 +102,6 @@ int AgiEngine::setupV3Game(int ver, uint32 crc) {
 		report("Unknown v3 Sierra game: %08x\n\n", crc);
 		agiSetRelease(ver = 0x3149);
 	}
-
-	if (_opt.emuversion)
-		agiSetRelease(ver = _opt.emuversion);
 
 	report("Seting up for version 0x%04X\n", ver);
 

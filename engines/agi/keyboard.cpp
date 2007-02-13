@@ -166,7 +166,7 @@ int AgiEngine::handleController(int key) {
 			return true;
 		}
 
-		if (!_opt.agimouse) {
+		if (!(getFeatures() & GF_AGIMOUSE)) {
 			/* Handle mouse button events */
 			if (key == BUTTON_LEFT) {
 				v->flags |= ADJ_EGO_XY;

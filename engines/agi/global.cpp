@@ -64,7 +64,7 @@ void AgiEngine::decrypt(uint8 *mem, int len) {
 	const uint8 *key;
 	int i;
 
-	key = _opt.agdsMode ? (const uint8 *)CRYPT_KEY_AGDS
+	key = (getFeatures() & GF_AGDS) ? (const uint8 *)CRYPT_KEY_AGDS
 	                   : (const uint8 *)CRYPT_KEY_SIERRA;
 
 	for (i = 0; i < len; i++)

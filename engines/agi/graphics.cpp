@@ -407,7 +407,7 @@ static const byte mouseCursorArrow[] = {
  * @see deinit_video()
  */
 int GfxMgr::initVideo() {
-	if (_vm->_opt.renderMode == Common::kRenderEGA)
+	if (_vm->_renderMode == Common::kRenderEGA)
 		initPalette(egaPalette);
 	else
 		initPalette(newPalette);
@@ -481,7 +481,7 @@ int GfxMgr::deinitMachine() {
  * @param p pointer to the row start in the AGI screen
  */
 void GfxMgr::putPixelsA(int x, int y, int n, uint8 *p) {
-	if (_vm->_opt.renderMode == Common::kRenderCGA) {
+	if (_vm->_renderMode == Common::kRenderCGA) {
 		for (x *= 2; n--; p++, x += 2) {
 			register uint16 q = (cgaMap[(*p & 0xf0) >> 4] << 4) | cgaMap[*p & 0x0f];
 			if (_vm->_debug.priority)
