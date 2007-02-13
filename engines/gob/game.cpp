@@ -1672,7 +1672,7 @@ void Game::playImd(const char *path, int16 x, int16 y, int16 startFrame, int16 f
 		bool fade, bool interruptible) {
 	int16 mouseX;
 	int16 mouseY;
-	int16 buttons;
+	int16 buttons = 0;
 	int curFrame;
 	int endFrame;
 	int backFrame;
