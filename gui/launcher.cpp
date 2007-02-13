@@ -392,6 +392,12 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// User made this choice...
 			FilesystemNode file(browser.getResult());
 			_soundFont->setLabel(file.path());
+
+			if (!file.path().empty() && (file.path() != "None"))
+				_soundFontClearButton->setEnabled(true);
+			else
+				_soundFontClearButton->setEnabled(false);
+
 			draw();
 		}
 		break;

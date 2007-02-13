@@ -205,10 +205,13 @@ void OptionsDialog::open() {
 		_enableGSCheckbox->setState(ConfMan.getBool("enable_gs", _domain));
 
 		String soundFont(ConfMan.get("soundfont", _domain));
-		if (soundFont.empty() || !ConfMan.hasKey("soundfont", _domain))
+		if (soundFont.empty() || !ConfMan.hasKey("soundfont", _domain)) {
 			_soundFont->setLabel("None");
-		else
+			_soundFontClearButton->setEnabled(false);
+		} else {
 			_soundFont->setLabel(soundFont);
+			_soundFontClearButton->setEnabled(true);
+		}
 
 		// MIDI gain setting
 		char buf[10];
@@ -448,7 +451,12 @@ void OptionsDialog::setMIDISettingsState(bool enabled) {
 
 	_soundFontButton->setEnabled(enabled);
 	_soundFont->setEnabled(enabled);
-	_soundFontClearButton->setEnabled(enabled);
+
+	if (enabled && !_soundFont->getLabel().empty() && (_soundFont->getLabel() != "None"))
+		_soundFontClearButton->setEnabled(enabled);
+	else
+		_soundFontClearButton->setEnabled(false);
+
 	_multiMidiCheckbox->setEnabled(enabled);
 	_mt32Checkbox->setEnabled(enabled);
 	_enableGSCheckbox->setEnabled(enabled);
@@ -827,12 +835,19 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			// User made his choice...
 			FilesystemNode file(browser.getResult());
 			_soundFont->setLabel(file.path());
+
+			if (!file.path().empty() && (file.path() != "None"))
+				_soundFontClearButton->setEnabled(true);
+			else
+				_soundFontClearButton->setEnabled(false);
+
 			draw();
 		}
 		break;
 	}
 	case kClearSoundFontCmd: {
 		_soundFont->setLabel("None");
+		_soundFontClearButton->setEnabled(false);
 		draw();
 		break;
 	}
