@@ -50,7 +50,7 @@ namespace AdvancedDetector {
 static ADList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform);
 
 
-GameList genGameList(const Common::ADParams &params) {
+GameList gameIDList(const Common::ADParams &params) {
 	if (params.singleid != NULL) {
 		GameList gl;
 
@@ -221,7 +221,6 @@ int detectBestMatchingGame(
 }
 
 PluginError detectGameForEngineCreation(
-	GameList (*detectFunc)(const FSList &fslist),
 	const Common::ADParams &params
 	) {
 	Common::String gameid = ConfMan.get("gameid");
@@ -232,7 +231,7 @@ PluginError detectGameForEngineCreation(
 		return kInvalidPathError;
 	}
 
-	GameList detectedGames = detectFunc(fslist);
+	GameList detectedGames = detectAllGames(fslist, params);
 
 	// We have single ID set, so we have a game if there are hits
 	if (params.singleid != NULL && detectedGames.size())

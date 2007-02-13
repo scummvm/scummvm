@@ -28,10 +28,6 @@
 
 #include "touche/touche.h"
 
-namespace Touche {
-static GameList GAME_detectGames(const FSList &fslist);
-}
-
 
 static const PlainGameDescriptor toucheGames[] = {
 	{"touche", "Touche: The Adventures of the Fifth Musketeer"},
@@ -116,7 +112,7 @@ static const Common::ADParams detectionParams = {
 	0
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(TOUCHE, Touche::ToucheEngine, Touche::GAME_detectGames, detectionParams);
+ADVANCED_DETECTOR_DEFINE_PLUGIN(TOUCHE, Touche::ToucheEngine, detectionParams);
 
 REGISTER_PLUGIN(TOUCHE, "Touche Engine", "Touche: The Adventures of the 5th Musketeer (C) Clipper Software");
 
@@ -129,10 +125,6 @@ bool ToucheEngine::detectGame() {
 
 	_language = gameDescriptions[i].language;
 	return true;
-}
-
-GameList GAME_detectGames(const FSList &fslist) {
-	return Common::AdvancedDetector::detectAllGames(fslist, detectionParams);
 }
 
 } // End of namespace Touche

@@ -52,7 +52,6 @@ uint16 AgiEngine::getVersion() const {
 	return _gameDescription->version;
 }
 
-static GameList GAME_detectGames(const FSList &fslist);
 }
 
 static const PlainGameDescriptor agiGames[] = {
@@ -1743,7 +1742,7 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(AGI, Agi::AgiEngine, Agi::GAME_detectGames, detectionParams);
+ADVANCED_DETECTOR_DEFINE_PLUGIN(AGI, Agi::AgiEngine, detectionParams);
 
 REGISTER_PLUGIN(AGI, "AGI v2 + v3 Engine", "Sierra AGI Engine (C) Sierra On-Line Software");
 
@@ -1756,10 +1755,6 @@ bool AgiEngine::initGame() {
 
 	_gameDescription = &gameDescriptions[i];
 	return true;
-}
-
-GameList GAME_detectGames(const FSList &fslist) {
-	return Common::AdvancedDetector::detectAllGames(fslist, detectionParams);
 }
 
 } // End of namespace Agi

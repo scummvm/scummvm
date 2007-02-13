@@ -37,7 +37,6 @@ struct GOBGameDescription {
 	const char *startTotBase;
 };
 
-static GameList GAME_detectGames(const FSList &fslist);
 }
 
 using namespace Common;
@@ -918,7 +917,7 @@ static const ADParams detectionParams = {
 	kADFlagAugmentPreferredTarget | kADFlagFilebasedFallback
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(GOB, Gob::GobEngine, Gob::GAME_detectGames, detectionParams);
+ADVANCED_DETECTOR_DEFINE_PLUGIN(GOB, Gob::GobEngine, detectionParams);
 
 REGISTER_PLUGIN(GOB, "Gob Engine", "Goblins Games (C) Coktel Vision");
 
@@ -947,10 +946,6 @@ bool GobEngine::detectGame() {
 	_platform = gameDescriptions[i].desc.platform;
 
 	return true;
-}
-
-GameList GAME_detectGames(const FSList &fslist) {
-	return AdvancedDetector::detectAllGames(fslist, detectionParams);
 }
 
 } // End of namespace Parallaction

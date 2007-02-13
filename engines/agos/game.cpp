@@ -39,7 +39,6 @@ struct AGOSGameDescription {
 	uint32 features;
 };
 
-static GameList GAME_detectGames(const FSList &fslist);
 }
 
 /**
@@ -101,7 +100,7 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(AGOS, AGOS::AGOSEngine, AGOS::GAME_detectGames, detectionParams);
+ADVANCED_DETECTOR_DEFINE_PLUGIN(AGOS, AGOS::AGOSEngine, detectionParams);
 
 REGISTER_PLUGIN(AGOS, "AGOS", "AGOS (C) Adventure Soft");
 
@@ -116,9 +115,6 @@ bool AGOSEngine::initGame() {
 	return true;
 }
 
-GameList GAME_detectGames(const FSList &fslist) {
-	return Common::AdvancedDetector::detectAllGames(fslist, detectionParams);
-}
 
 int AGOSEngine::getGameId() const {
 	return _gameDescription->gameId;

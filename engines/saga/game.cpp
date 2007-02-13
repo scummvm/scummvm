@@ -79,7 +79,6 @@ int SagaEngine::getPatchesCount() const { return _gameDescription->patchesCount;
 const GamePatchDescription *SagaEngine::getPatchDescriptions() const { return _gameDescription->patchDescriptions; }
 const Common::ADGameFileDescription *SagaEngine::getFilesDescriptions() const { return _gameDescription->desc.filesDescriptions; }
 
-static GameList GAME_detectGames(const FSList &fslist);
 }
 
 static const PlainGameDescriptor sagaGames[] = {
@@ -120,7 +119,7 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(SAGA, Saga::SagaEngine, Saga::GAME_detectGames, detectionParams);
+ADVANCED_DETECTOR_DEFINE_PLUGIN(SAGA, Saga::SagaEngine, detectionParams);
 
 REGISTER_PLUGIN(SAGA, "SAGA Engine", "Inherit the Earth (C) Wyrmkeep Entertainment");
 
@@ -138,10 +137,6 @@ bool SagaEngine::initGame() {
 	_displayClip.bottom = _gameDisplayInfo.logicalHeight;
 
 	return _resource->createContexts();
-}
-
-GameList GAME_detectGames(const FSList &fslist) {
-	return Common::AdvancedDetector::detectAllGames(fslist, detectionParams);
 }
 
 } // End of namespace Saga

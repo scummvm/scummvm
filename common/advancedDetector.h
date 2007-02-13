@@ -107,7 +107,7 @@ namespace AdvancedDetector {
  * Returns list of targets supported by the engine.
  * Distinguishes engines with single ID
  */
-GameList genGameList(const Common::ADParams &params);
+GameList gameIDList(const Common::ADParams &params);
 
 /**
  * Scan through the game descriptors specified in params and search for
@@ -137,7 +137,6 @@ void upgradeTargetIfNecessary(const Common::ADParams &params);
 
 // FIXME/TODO: Rename this function to something more sensible.
 PluginError detectGameForEngineCreation(
-	GameList (*detectFunc)(const FSList &fslist),
 	const Common::ADParams &params
 	);
 
@@ -153,32 +152,32 @@ PluginError detectGameForEngineCreation(
 } // End of namespace AdvancedDetector
 
 
-#define ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_FUNC(engine,factoryFunc,detectFunc,params) \
+#define ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_FUNC(engine,factoryFunc,params) \
 	GameList Engine_##engine##_gameIDList() { \
-		return Common::AdvancedDetector::genGameList(params); \
+		return Common::AdvancedDetector::gameIDList(params); \
 	} \
 	GameDescriptor Engine_##engine##_findGameID(const char *gameid) { \
 		return Common::AdvancedDetector::findGameID(gameid, params); \
 	} \
 	GameList Engine_##engine##_detectGames(const FSList &fslist) { \
-		return detectFunc(fslist);						\
+		return Common::AdvancedDetector::detectAllGames(fslist, params); \
 	} \
 	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \
 		assert(syst); \
 		assert(engine); \
 		Common::AdvancedDetector::upgradeTargetIfNecessary(params); \
-		PluginError err = Common::AdvancedDetector::detectGameForEngineCreation(detectFunc, params); \
+		PluginError err = Common::AdvancedDetector::detectGameForEngineCreation(params); \
 		if (err == kNoError) \
 			*engine = factoryFunc(syst); \
 		return err; \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
 
-#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,className,detectFunc,params) \
-	static className *engine##_createInstance(OSystem *syst) { \
+#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,className,params) \
+	static Engine *engine##_createInstance(OSystem *syst) { \
 		return new className(syst); \
 	} \
-	ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_FUNC(engine,engine##_createInstance,detectFunc,params); \
+	ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_FUNC(engine,engine##_createInstance,params); \
 	void dummyFuncToAllowTrailingSemicolon()
 
 

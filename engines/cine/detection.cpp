@@ -43,8 +43,6 @@ uint32 CineEngine::getFeatures() const { return _gameDescription->features; }
 Common::Language CineEngine::getLanguage() const { return _gameDescription->desc.language; }
 Common::Platform CineEngine::getPlatform() const { return _gameDescription->desc.platform; }
 
-
-static GameList GAME_detectGames(const FSList &fslist);
 }
 
 static const PlainGameDescriptor cineGames[] = {
@@ -486,7 +484,7 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(CINE, Cine::CineEngine, Cine::GAME_detectGames, detectionParams);
+ADVANCED_DETECTOR_DEFINE_PLUGIN(CINE, Cine::CineEngine, detectionParams);
 
 REGISTER_PLUGIN(CINE, "Cinematique evo 1 engine", "Future Wars & Operation Stealth (C) Delphine Software");
 
@@ -499,10 +497,6 @@ bool CineEngine::initGame() {
 
 	_gameDescription = &gameDescriptions[i];
 	return true;
-}
-
-GameList GAME_detectGames(const FSList &fslist) {
-	return Common::AdvancedDetector::detectAllGames(fslist, detectionParams);
 }
 
 } // End of namespace Cine

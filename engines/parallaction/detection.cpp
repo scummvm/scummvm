@@ -41,8 +41,6 @@ int Parallaction::getGameType() const { return _gameDescription->gameType; }
 uint32 Parallaction::getFeatures() const { return _gameDescription->features; }
 Common::Language Parallaction::getLanguage() const { return _gameDescription->desc.language; }
 Common::Platform Parallaction::getPlatform() const { return _gameDescription->desc.platform; }
-
-static GameList GAME_detectGames(const FSList &fslist);
 }
 
 static const PlainGameDescriptor parallactionGames[] = {
@@ -100,7 +98,7 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(PARALLACTION, Parallaction::Parallaction, Parallaction::GAME_detectGames, detectionParams);
+ADVANCED_DETECTOR_DEFINE_PLUGIN(PARALLACTION, Parallaction::Parallaction, detectionParams);
 
 REGISTER_PLUGIN(PARALLACTION, "Parallaction engine", "Nippon Safes Inc. (C) Dynabyte");
 
@@ -112,10 +110,6 @@ bool Parallaction::detectGame() {
 
 	_gameDescription = &gameDescriptions[i];
 	return true;
-}
-
-GameList GAME_detectGames(const FSList &fslist) {
-	return Common::AdvancedDetector::detectAllGames(fslist, detectionParams);
 }
 
 } // End of namespace Parallaction
