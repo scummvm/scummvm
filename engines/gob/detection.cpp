@@ -72,7 +72,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1,
 		"intro"
@@ -84,7 +84,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4"),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1 | GF_EGA,
 		"intro"
@@ -96,7 +96,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "f9233283a0be2464248d83e14b95f09c"),
 			RU_RUS,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1 | GF_EGA,
 		"intro"
@@ -108,7 +108,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "26a9118c0770fa5ac93a9626761600b2"),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1,
 		"intro"
@@ -120,7 +120,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1 | GF_CD,
 		"intro"
@@ -132,7 +132,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
 			EN_USA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1 | GF_CD,
 		"intro"
@@ -144,7 +144,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
 			DE_DEU,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1 | GF_CD,
 		"intro"
@@ -156,7 +156,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
 			FR_FRA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1 | GF_CD,
 		"intro"
@@ -168,7 +168,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
 			IT_ITA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1 | GF_CD,
 		"intro"
@@ -180,7 +180,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
 			ES_ESP,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1 | GF_CD,
 		"intro"
@@ -192,7 +192,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
 			EN_USA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1 | GF_CD,
 		"intro"
@@ -204,7 +204,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
 			DE_DEU,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1 | GF_CD,
 		"intro"
@@ -216,7 +216,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
 			FR_FRA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1 | GF_CD,
 		"intro"
@@ -228,7 +228,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
 			IT_ITA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1 | GF_CD,
 		"intro"
@@ -240,7 +240,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
 			ES_ESP,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1 | GF_CD,
 		"intro"
@@ -252,7 +252,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "972f22c6ff8144a6636423f0354ca549"),
 			UNK_LANG,
 			kPlatformAmiga,
-			Common::GF_DEMO
+			Common::ADGF_DEMO
 		},
 		GF_GOB1,
 		"intro"
@@ -264,7 +264,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "e72bd1e3828c7dec4c8a3e58c48bdfdb"),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_DEMO
+			Common::ADGF_DEMO
 		},
 		GF_GOB1,
 		"intro"
@@ -276,7 +276,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
 			EN_ANY,
 			kPlatformMacintosh,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1,
 		"intro"
@@ -288,7 +288,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
 			DE_DEU,
 			kPlatformMacintosh,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1,
 		"intro"
@@ -300,7 +300,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
 			FR_FRA,
 			kPlatformMacintosh,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1,
 		"intro"
@@ -312,7 +312,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
 			IT_ITA,
 			kPlatformMacintosh,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1,
 		"intro"
@@ -324,7 +324,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
 			ES_ESP,
 			kPlatformMacintosh,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1,
 		"intro"
@@ -336,7 +336,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -348,7 +348,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "a13ecb4f6d8fd881ebbcc02e45cb5475"),
 			FR_FRA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -360,7 +360,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "b45b984ee8017efd6ea965b9becd4d66"),
 			EN_GRB,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -376,7 +376,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			},
 			UNK_LANG,
 			kPlatformMacintosh,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -388,7 +388,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "dedb5d31d8c8050a8cf77abedcc53dae"),
 			EN_USA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -400,7 +400,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "a13892cdf4badda85a6f6fb47603a128"),
 			DE_DEU,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -412,7 +412,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "cd3e1df8b273636ee32e34b7064f50e8"),
 			RU_RUS,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -424,7 +424,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "d28b9e9b41f31acfa58dcd12406c7b2c"),
 			DE_DEU,
 			kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -436,7 +436,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "3e4e7db0d201587dd2df4003b2993ef6"),
 			DE_DEU,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -448,7 +448,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2 | GF_CD,
 		"intro"
@@ -460,7 +460,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "9de5fbb41cf97182109e5fecc9d90347"),
 			EN_USA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2 | GF_CD,
 		"intro"
@@ -472,7 +472,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			EN_ANY,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2 | GF_CD,
 		"intro"
@@ -484,7 +484,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			DE_DEU,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2 | GF_CD,
 		"intro"
@@ -496,7 +496,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			FR_FRA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2 | GF_CD,
 		"intro"
@@ -508,7 +508,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			IT_ITA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2 | GF_CD,
 		"intro"
@@ -520,7 +520,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			ES_ESP,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2 | GF_CD,
 		"intro"
@@ -532,7 +532,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "8b1c98ff2ab2e14f47a1b891e9b92217"),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_DEMO
+			Common::ADGF_DEMO
 		},
 		GF_GOB2,
 		"usa"
@@ -544,7 +544,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "cf1c95b2939bd8ff58a25c756cb6125e"),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_DEMO
+			Common::ADGF_DEMO
 		},
 		GF_GOB2,
 		"intro"
@@ -556,7 +556,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "4b278c2678ea01383fd5ca114d947eea"),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_DEMO
+			Common::ADGF_DEMO
 		},
 		GF_GOB2,
 		"intro"
@@ -568,7 +568,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "2bb8878a8042244dd2b96ff682381baa"),
 			EN_GRB,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -580,7 +580,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("intro.stk", "de92e5c6a8c163007ffceebef6e67f7d", 7117568),
 			EN_USA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -592,7 +592,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("intro.stk", "bfd9d02faf3d8d60a2cf744f95eb48dd", 456570),
 			EN_GRB,
 			kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -604,7 +604,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("intro.stk", "af83debf2cbea21faa591c7b4608fe92", 458192),
 			DE_DEU,
 			kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -616,7 +616,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("intro.stk", "257fe669705ac4971efdfd5656eef16a", 457719),
 			FR_FRA,
 			kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -628,7 +628,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("intro.stk", "dffd1ab98fe76150d6933329ca6f4cc4", 459458),
 			FR_FRA,
 			kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -640,7 +640,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "e6d13fb3b858cb4f78a8780d184d5b2c"),
 			FR_FRA,
 			kPlatformAtariST,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -652,7 +652,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "4b10525a3782aa7ecd9d833b5c1d308b"),
 			FR_FRA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -664,7 +664,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "63170e71f04faba88673b3f510f9c4c8"),
 			DE_DEU,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -676,7 +676,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "2e9c2898f6bf206ede801e3b2e7ee428"),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_DEMO
+			Common::ADGF_DEMO
 		},
 		GF_GOB2,
 		"show"
@@ -688,7 +688,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "15fb91a1b9b09684b28ac75edf66e504"),
 			EN_USA,
 			kPlatformPC,
-			Common::GF_DEMO
+			Common::ADGF_DEMO
 		},
 		GF_GOB2,
 		"show"
@@ -700,7 +700,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "da3c54be18ab73fbdb32db24624a9c23"),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_BARGON,
 		"intro"
@@ -712,7 +712,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "32b0f57f5ae79a9ae97e8011df38af42"),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -724,7 +724,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "1e2f64ec8dfa89f42ee49936a27e66e7"),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -736,7 +736,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "f6d225b25a180606fa5dbe6405c97380"),
 			DE_DEU,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -748,7 +748,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "e42a4f2337d6549487a80864d7826972"),
 			FR_FRA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -760,7 +760,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "4e3af248a48a2321364736afab868527"),
 			RU_RUS,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -772,7 +772,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "8d28ce1591b0e9cc79bf41cad0fc4c9c"),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -784,7 +784,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "bd679eafde2084d8011f247e51b5a805"),
 			UNK_LANG,
 			kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -796,7 +796,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "6f2c226c62dd7ab0ab6f850e89d3fc47"),
 			EN_USA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -808,7 +808,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
 			DE_DEU,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
 		"intro"
@@ -820,7 +820,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "7aebd94e49c2c5c518c9e7b74f25de9d"),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_DEMO
+			Common::ADGF_DEMO
 		},
 		GF_GOB2,
 		"intro"
@@ -832,7 +832,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "b9b898fccebe02b69c086052d5024a55"),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_DEMO
+			Common::ADGF_DEMO
 		},
 		GF_GOB2,
 		"intro"
@@ -844,7 +844,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "e5dcbc9f6658ebb1e8fe26bc4da0806d"),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_DEMO
+			Common::ADGF_DEMO
 		},
 		GF_GOB2,
 		"intro"
@@ -856,7 +856,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
 			UNK_LANG,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_WOODRUFF,
 		"intro"
@@ -868,7 +868,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("intro.stk", "b50fee012a5abcd0ac2963e1b4b56bec", 20298108),
 			EN_USA,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_WOODRUFF,
 		"intro"
@@ -880,7 +880,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("intro.stk", "5f5f4e0a72c33391e67a47674b120cc6", 20296422),
 			DE_DEU,
 			kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GF_WOODRUFF,
 		"intro"

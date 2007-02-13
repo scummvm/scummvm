@@ -135,13 +135,13 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 /**
  * Generate a preferred target value as
  *   GAMEID-PLAFORM-LANG
- * or (if GF_DEMO has been set)
+ * or (if ADGF_DEMO has been set)
  *   GAMEID-demo-PLAFORM-LANG
  */
 static String generatePreferredTarget(const String &id, const ADGameDescription *desc) {
 	String res(id);
 
-	if (desc->flags & GF_DEMO) {
+	if (desc->flags & ADGF_DEMO) {
 		res = res + "-demo";
 	}
 

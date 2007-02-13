@@ -94,7 +94,7 @@ namespace Agi {
 			AD_ENTRY1("logdir", md5), \
 			lang, \
 			Common::kPlatformPC, \
-			Common::GF_NO_FLAGS \
+			Common::ADGF_NO_FLAGS \
 		}, \
 		GType_V2, \
 		0, \
@@ -117,7 +117,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "9c4a5b09cc3564bc48b4766e679ea332"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -133,7 +133,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "580ffdc569ff158f56fb92761604f70e"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -149,7 +149,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "e8ebeb0bbe978172fe166f91f51598c7"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -165,7 +165,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "852ac303a374df62571642ca1e2d1f0a"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -181,7 +181,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "1503f02086ea9f388e7e041c039eaa69"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -197,7 +197,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("dmdir", "289c7a2c881f1d973661e961ced77d74"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -213,7 +213,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "7b01694af21213b4727bb94476f64eb5"),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -229,7 +229,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("bcdir", "dc09d30b147242692f4f85b9811962db"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -245,7 +245,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "7f598d4712319b09d7bd5b3be10a2e4a"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -261,7 +261,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("bcdir", "0c5a9acbcc7e51127c34818e75806df6"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -277,7 +277,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "550971d196f65190a5c760d2479406ef"),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -293,7 +293,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "64388812e25dbd75f7af1103bc348596"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -309,7 +309,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("logdir", "550971d196f65190a5c760d2479406ef", 132),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -325,7 +325,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("dirs", "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -341,7 +341,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("grdir", "3f7b9ce62631434389f85371b11921d6"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -357,7 +357,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("grdir", "4dd4d50480a3d6c206fa227ce8142735"),
 			Common::EN_ANY,
 			Common::kPlatformAtariST,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -373,7 +373,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("grdir", "db733d199238d4009a9e95f11ece34e9"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -389,7 +389,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("grdir", "6a285235745f69b4b421403659497216"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -409,7 +409,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		AGI_MACGOLDRUSH,
@@ -425,7 +425,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "246c695324f1c514aee2b904fa352fad"),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -441,7 +441,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "c3a017e556c4b0eece366a4cd9abb657"),
 			Common::EN_ANY,
 			Common::kPlatformAtariST,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -457,7 +457,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "f4277aa34b43d37382bc424c81627617"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -473,7 +473,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "d4c4739d4ac63f7dbd29255425077d48"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -489,7 +489,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "10ad66e2ecbd66951534a50aedcd0128"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -505,7 +505,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "5203c8b95250a2ecfee93ddb99414753"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -521,7 +521,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "b866f0fab2fad91433a637a828cfa410"),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -537,7 +537,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "cbdb0083317c8e7cfb7ac35da4bc7fdc"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -553,7 +553,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "759e39f891a0e1d86dd29d7de485c6ac"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -569,7 +569,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "b944c4ff18fb8867362dc21cc688a283"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -585,7 +585,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "8ab343306df0e2d98f136be4e8cfd0ef"),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -601,7 +601,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "8846df2654302b623217ba8bd6d657a9"),
 			Common::EN_ANY,
 			Common::kPlatformAtariST,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -617,7 +617,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "7639c0da5ce94848227d409351fabda2"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -633,7 +633,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "ac30b7ca5a089b5e642fbcdcbe872c12"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -649,7 +649,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("dirs", "8e35bded2bc5cf20f5eec2b15523b155", 1805),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -665,7 +665,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "9c2b34e7ffaa89c8e2ecfeb3695d444b"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -681,7 +681,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "18aad8f7acaaff760720c5c6885b6bab"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -697,7 +697,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "7650e659c7bc0f1e9f8a410b7a2e9de6"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -713,7 +713,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "d3d17b77b3b3cd13246749231d9473cd"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -729,7 +729,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("kq4dir", "6d7714b8b61466a5f5981242b993498f"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -745,7 +745,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("kq4dir", "8536859331159f15012e35dc82cb154e"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -761,7 +761,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("kq4dir", "fe44655c42f16c6f81046fdf169b6337"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -777,7 +777,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("kq4dir", "7470b3aeb49d867541fc66cc8454fb7d"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -793,7 +793,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("dmdir", "a3332d70170a878469d870b14863d0bf"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -809,7 +809,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "1fe764e66857e7f305a5f03ca3f4971d"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -825,7 +825,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "8b579f8673fe9448c2538f5ed9887cf0"),
 			Common::EN_ANY,
 			Common::kPlatformAtariST,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -841,7 +841,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "3f5d26d8834ca49c147fb60936869d56"),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -857,7 +857,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "5f9e1dd68d626c6d303131c119582ad4"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -873,7 +873,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "8a0076429890531832f0dc113285e31e"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -889,7 +889,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("mhdir", "f2d58056ad802452d60776ee920a52a6"),
 			Common::EN_ANY,
 			Common::kPlatformAtariST,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -905,7 +905,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("mhdir", "2f1509f76f24e6e7d213f2dadebbf156"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -921,7 +921,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("dirs", "92c6183042d1c2bb76236236a7d7a847"),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -938,7 +938,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("mhdir", "0c7b86f05fe02c2e26cff1b07450b82a", 2123),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -954,7 +954,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("mhdir", "5b625329021ad49fd0c1d6f2d6f54bba", 2141),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -970,7 +970,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("mh2dir", "5e3581495708b952fea24438a6c7e040"),
 			Common::EN_ANY,
 			Common::kPlatformAtariST,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -986,7 +986,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("dirs", "b412e8a126368b76696696f7632d4c16", 2573),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -1002,7 +1002,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("mh2dir", "b90e4795413c43de469a715fb3c1fa93"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -1018,7 +1018,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("mh2dir", "6fb6f0ee2437704c409cf17e081ba152"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -1034,7 +1034,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("dirs", "5c1295fe6daaf95831195ba12894dbd9", 2021),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -1050,7 +1050,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "3541954a7303467c6df87665312ffb6a"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1066,7 +1066,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "e524655abf9b96a3b179ffcd1d0f79af"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1083,7 +1083,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "e524655abf9b96a3b179ffcd1d0f79af"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1100,7 +1100,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "2fd992a92df6ab0461d5a2cd83c72139"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1116,7 +1116,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "805750b66c1c5b88a214e67bfdca17a1"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1132,7 +1132,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "e7c175918372336461e3811d594f482f"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1148,7 +1148,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("dirs", "cfa93e5f2aa7378bddd10ad6746a2ffb", 1613),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
 		0,
@@ -1164,7 +1164,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "8994e39d0901de3d07cecfb954075bb5"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1180,7 +1180,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "b9dbb305092851da5e34d6a9f00240b1"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1196,7 +1196,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "231f3e28170d6e982fc0ced4c98c5c1c"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1212,7 +1212,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "d194e5d88363095f55d5096b8e32fbbb"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1228,7 +1228,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "6421fb64b0e6604c9dd065975d9279e9"),
 			Common::EN_ANY,
 			Common::kPlatformAtariST,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1244,7 +1244,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "8d8c20ab9f4b6e4817698637174a1cb6"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1260,7 +1260,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "0b216d931e95750f1f4837d6a4b821e5"),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1276,7 +1276,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "ce88419aadd073d1c6682d859b3d8aa2"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1292,7 +1292,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "64b9b3d04c1066d36e6a6e56187a83f7"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1308,7 +1308,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "af93941b6c51460790a9efa0e8cb7122"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1324,7 +1324,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "8d8c20ab9f4b6e4817698637174a1cb6"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1340,7 +1340,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "5d67630aba008ec5f7f9a6d0a00582f4"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1357,7 +1357,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "85390bde8958c39830e1adbe9fff87f3"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1373,7 +1373,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "5dfdac98dd3c01fcfb166529f917e911"),
 			Common::EN_ANY,
 			Common::kPlatformApple2GS,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1393,7 +1393,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1409,7 +1409,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "bfbebe0b59d83f931f2e1c62ce9484a7"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1426,7 +1426,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("logdir", "ad7ce8f800581ecc536f3e8021d7a74d", 423),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1442,7 +1442,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("logdir", "6c25e33d23b8bed42a5c7fa63d588e5c", 423),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1458,7 +1458,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "bd71fe54869e86945041700f1804a651"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1474,7 +1474,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "28add5125484302d213911df60d2aded"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1490,7 +1490,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "3067b8d5957e2861e069c3c0011bd43d"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		0,
@@ -1579,7 +1579,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "421da3a18004122a966d64ab6bd86d2e"),
 			Common::RU_RUS,
 			Common::kPlatformPC,
-			Common::GF_NO_FLAGS
+			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
 		AGI_AGDS,

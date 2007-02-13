@@ -38,8 +38,8 @@ struct ADGameFileDescription {
 };
 
 enum ADGameFlags {
-	GF_NO_FLAGS = 0,
-	GF_DEMO = 1 << 31
+	ADGF_NO_FLAGS = 0,
+	ADGF_DEMO = 1 << 31
 };
 
 struct ADGameDescription {
@@ -58,7 +58,7 @@ struct ADGameDescription {
 };
 
 #define AD_TABLE_END_MARKER	\
-	{ NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, Common::GF_NO_FLAGS }
+	{ NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, Common::ADGF_NO_FLAGS }
 
 struct ADObsoleteGameID {
 	const char *from;
