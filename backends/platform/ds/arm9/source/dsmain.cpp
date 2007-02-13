@@ -148,7 +148,6 @@ u8 gameID;
 
 bool consoleEnable = true;
 bool gameScreenSwap = false;
-bool cpuScaler = false;
 bool isCpuScalerEnabled();
 //#define HEAVY_LOGGING
 
@@ -249,8 +248,9 @@ void updateStatus();
 
 TransferSound soundControl;
 
-bool isCpuScalerEnabled() {
-	return cpuScaler;	
+bool isCpuScalerEnabled()
+{
+	return (ConfMan.hasKey("cpu_scaler", "ds") && ConfMan.getBool("cpu_scaler", "ds"));
 }
 
 //plays an 8 bit mono sample at 11025Hz
@@ -651,7 +651,7 @@ void displayMode16Bit() {
 	BG3_CR = BG_BMP16_512x256;
 	highBuffer = false;
 	
-	BG3_XDX = cpuScaler ? 256 : (int) (1.25f * 256);
+	BG3_XDX = isCpuScalerEnabled() ? 256 : (int) (1.25f * 256);
     BG3_XDY = 0;
     BG3_YDX = 0;
     BG3_YDY = (int) ((200.0f / 192.0f) * 256);
@@ -701,7 +701,7 @@ void displayMode16BitFlipBuffer() {
 //		highBuffer = !highBuffer;
 //		BG3_CR = BG_BMP16_512x256 |	BG_BMP_RAM(highBuffer? 1: 0);
 		
-		if (cpuScaler)
+		if (isCpuScalerEnabled())
 		{
             Rescale_320x256x1555_To_256x256x1555(BG_GFX, back, 512, 512);
 		}
@@ -750,7 +750,7 @@ u16* get16BitBackBuffer() {
 }
 
 u16* get8BitBackBuffer() {
-	if (cpuScaler)
+	if (isCpuScalerEnabled())
 		return BG_GFX;
 	else
 		return BG_GFX + 0x10000;		// 16bit qty!
@@ -1349,7 +1349,7 @@ void setMainScreenScale(int x, int y) {
 		SUB_BG3_YDX = 0;
 		SUB_BG3_YDY = y;
 	} else {
-		if (cpuScaler && (x==320))
+		if (isCpuScalerEnabled() && (x==320))
 		{
 			BG3_XDX = 256;
 			BG3_XDY = 0;

@@ -53,6 +53,7 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 200 - 20) {
 	_twoHundredPercentCheckbox = new GUI::CheckboxWidget(this, 20, 70, 230, 20, "Zoomed screen at fixed 200% zoom", 0, 'T');
 	_highQualityAudioCheckbox = new GUI::CheckboxWidget(this, 20, 85, 250, 20, "High quality audio (slower) (reboot)", 0, 'T');
 	_disablePowerOff = new GUI::CheckboxWidget(this, 20, 100, 250, 20, "Disable power off on quit", 0, 'T');
+	_cpuScaler = new GUI::CheckboxWidget(this, 20, 115, 250, 20, "CPU scaler", 0, 'T');
 
 	new GUI::StaticTextWidget(this, 20, 130, 110, 15, "Touch X Offset", GUI::kTextAlignLeft);
 	_touchX = new GUI::SliderWidget(this, 130, 130, 130, 12, 1);
@@ -106,6 +107,12 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 200 - 20) {
 		_disablePowerOff->setState(false);
 	}
 
+	if (ConfMan.hasKey("cpu_scaler", "ds")) {
+		_cpuScaler->setState(ConfMan.getBool("cpu_scaler", "ds"));
+	} else {
+		_cpuScaler->setState(false);
+	}
+
 	_indyFightCheckbox->setState(DS::getIndyFightState());
 
 	if (ConfMan.hasKey("xoffset", "ds")) {
@@ -128,6 +135,7 @@ DSOptionsDialog::~DSOptionsDialog() {
 	ConfMan.setBool("twohundredpercent", _twoHundredPercentCheckbox->getState(), "ds");
 	ConfMan.setBool("22khzaudio", _highQualityAudioCheckbox->getState(), "ds");
 	ConfMan.setBool("disablepoweroff", _disablePowerOff->getState(), "ds");
+	ConfMan.setBool("cpu_scaler", _cpuScaler->getState(), "ds");	
 	ConfMan.setInt("xoffset", _touchX->getValue(), "ds");
 	ConfMan.setInt("yoffset", _touchY->getValue(), "ds");
 	DS::setOptions();

@@ -51,6 +51,8 @@ protected:
 	GUI::CheckboxWidget* _indyFightCheckbox;
 	GUI::CheckboxWidget* _highQualityAudioCheckbox;
 	GUI::CheckboxWidget* _disablePowerOff;
+	GUI::CheckboxWidget* _cpuScaler;
+	
 #ifdef DS_SCUMM_BUILD
 	Scumm::SaveLoadChooser* _delDialog;
 #endif
