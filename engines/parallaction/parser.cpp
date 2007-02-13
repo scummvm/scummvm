@@ -96,7 +96,7 @@ uint16 parseFillBuffers() {
 			puts("non ho letto ");
 			exit(0);
 		}
-		v4 = skip_whitespace(v4);
+		v4 = Common::ltrim(v4);
 	} while (strlen(v4) == 0 || v4[0] == '#');
 
 	_si = 0;
@@ -111,7 +111,7 @@ uint16 parseFillBuffers() {
 
 		}
 
-		v4 = skip_whitespace(v4);
+		v4 = Common::ltrim(v4);
 		_si++;
 	}
 
@@ -137,15 +137,6 @@ char *parseNextToken(char *s, char *tok, uint16 count, const char *brk) {
 	*tok = '\0';
 	return s;
 }
-
-
-char *skip_whitespace(char *s) {
-
-	while (*s == 0x20 || *s == 0xA || *s == 0x9) s++;
-
-	return s;
-}
-
 
 
 } // namespace Parallaction
