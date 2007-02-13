@@ -631,7 +631,7 @@ Win32ResExtractor::WinResource *Win32ResExtractor::list_pe_resources(WinLibrary 
 		RETURN_IF_BAD_POINTER(NULL, dirent[c]);
 		wr[c].this_ = pe_res;
 		wr[c].level = level;
-		wr[c].is_directory = (FROM_LE_32(dirent[c].offset_to_data) & IMAGE_RESOURCE_DATA_IS_DIRECTORY);
+		wr[c].is_directory = ((FROM_LE_32(dirent[c].offset_to_data) & IMAGE_RESOURCE_DATA_IS_DIRECTORY) != 0);
 		wr[c].children = fi->first_resource + (FROM_LE_32(dirent[c].offset_to_data) & ~IMAGE_RESOURCE_DATA_IS_DIRECTORY);
 
 		/* fill in wr->id, wr->numeric_id */
