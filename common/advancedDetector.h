@@ -39,7 +39,7 @@ struct ADGameFileDescription {
 
 enum ADGameFlags {
 	ADGF_NO_FLAGS = 0,
-	ADGF_DEMO = 1 << 31
+	ADGF_DEMO = (1 << 30)
 };
 
 struct ADGameDescription {
