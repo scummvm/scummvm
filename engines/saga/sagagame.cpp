@@ -576,6 +576,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
+			Common::GF_DEMO
 		},
 		GType_ITE,
 		GID_ITE_DEMO_G, // Game id
@@ -607,6 +608,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
+			Common::GF_DEMO
 		},
 		GType_ITE,
 		GID_ITE_MACDEMO2,
@@ -638,6 +640,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
+			Common::GF_DEMO
 		},
 		GType_ITE,
 		GID_ITE_MACDEMO1,
@@ -669,6 +672,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
+			Common::GF_NO_FLAGS
 		},
 		GType_ITE,
 		GID_ITE_MACCD_G,
@@ -700,6 +704,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
+			Common::GF_NO_FLAGS
 		},
 		GType_ITE,
 		GID_ITE_MACCD,
@@ -732,6 +737,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformLinux,
+			Common::GF_DEMO
 		},
 		GType_ITE,
 		GID_ITE_LINDEMO,
@@ -763,6 +769,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
+			Common::GF_DEMO
 		},
 		GType_ITE,
 		GID_ITE_WINDEMO3,
@@ -793,6 +800,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
+			Common::GF_DEMO
 		},
 		GType_ITE,
 		GID_ITE_WINDEMO2,
@@ -823,6 +831,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
+			Common::GF_DEMO
 		},
 		GType_ITE,
 		GID_ITE_WINDEMO1,
@@ -859,6 +868,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
+			Common::GF_NO_FLAGS
 		},
 		GType_ITE,
 		GID_ITE_MULTICD,
@@ -890,6 +900,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformLinux,
+			Common::GF_NO_FLAGS
 		},
 		GType_ITE,
 		GID_ITE_LINCD,
@@ -920,6 +931,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
+			Common::GF_NO_FLAGS
 		},
 		GType_ITE,
 		GID_ITE_WINCD,
@@ -950,6 +962,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_ITE,
 		GID_ITE_CD_G,
@@ -981,6 +994,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_ITE,
 		GID_ITE_CD_G2,
@@ -1012,6 +1026,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_ITE,
 		GID_ITE_CD_DE,
@@ -1043,6 +1058,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_ITE,
 		GID_ITE_CD_DE2,
@@ -1073,6 +1089,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_ITE,
 		GID_ITE_CD,
@@ -1102,6 +1119,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_ITE,
 		GID_ITE_DISK_DE,
@@ -1132,6 +1150,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_ITE,
 		GID_ITE_DISK_DE2,
@@ -1161,6 +1180,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_ITE,
 		GID_ITE_DISK_G,
@@ -1191,6 +1211,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_ITE,
 		GID_ITE_DISK_G2,
@@ -1221,6 +1242,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
+			Common::GF_DEMO
 		},
 		GType_IHNM,
 		GID_IHNM_DEMO,
@@ -1260,6 +1282,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_IHNM,
 		GID_IHNM_CD,
@@ -1300,6 +1323,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_IHNM,
 		GID_IHNM_CD_DE,
@@ -1339,6 +1363,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_IHNM,
 		GID_IHNM_CD_ES,
@@ -1378,6 +1403,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::RU_RUS,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_IHNM,
 		GID_IHNM_CD_RU,
@@ -1416,6 +1442,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_IHNM,
 		GID_IHNM_CD_FR,
@@ -1431,5 +1458,5 @@ static const SAGAGameDescription gameDescriptions[] = {
 		0,
 		NULL,
 	},
-	{ { NULL, NULL, { {NULL, 0, NULL, 0} }, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, 0, NULL }
+	{ AD_TABLE_END_MARKER, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, 0, NULL }
 };

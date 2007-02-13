@@ -70,6 +70,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("part01", "61d003202d301c29dd399acfb1354310"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_FW,
 		0,
@@ -83,6 +84,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("part01", "91d7271155520eae6915a9dd2dac120c"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_FW,
 		0,
@@ -95,6 +97,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("part01", "f5e98fcca3fb5e7afa284c81c39d8b14"),
 			Common::DE_DEU,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_FW,
 		GF_ALT_FONT,
@@ -107,6 +110,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("part01", "570109f965c7f53984b98c83d86eb206"),
 			Common::ES_ESP,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_FW,
 		GF_ALT_FONT,
@@ -119,6 +123,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("part01", "5d1acb97abe9591f9008e00d07add95a"),
 			Common::FR_FRA,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_FW,
 		0,
@@ -131,6 +136,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("part01", "57afd280b598b4180fda6689fbedc4b8"),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
+			Common::GF_NO_FLAGS
 		},
 		GType_FW,
 		0,
@@ -143,6 +149,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("part01", "3a87a913e0e33963a48a7f822ca0eb0e"),
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
+			Common::GF_NO_FLAGS
 		},
 		GType_FW,
 		GF_ALT_FONT,
@@ -155,6 +162,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("part01", "5ad0007ccd5f7b3dd6b15ea7f281f9e1"),
 			Common::ES_ESP,
 			Common::kPlatformAmiga,
+			Common::GF_NO_FLAGS
 		},
 		GType_FW,
 		0,
@@ -167,6 +175,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("part01", "460f2da8793bc581a2d4b6fc19ccb5ae"),
 			Common::FR_FRA,
 			Common::kPlatformAmiga,
+			Common::GF_NO_FLAGS
 		},
 		GType_FW,
 		0,
@@ -179,6 +188,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("part01", "1c8e5207743172134409ac58860021af"),
 			Common::IT_ITA,
 			Common::kPlatformAmiga,
+			Common::GF_NO_FLAGS
 		},
 		GType_FW,
 		0,
@@ -195,6 +205,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
+			Common::GF_DEMO
 		},
 		GType_FW,
 		0,
@@ -207,6 +218,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("part01", "36050db13af57e462ca1adc4df99de4e"),
 			Common::EN_ANY,
 			Common::kPlatformAtariST,
+			Common::GF_NO_FLAGS
 		},
 		GType_FW,
 		0,
@@ -219,6 +231,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("part01", "ef245573b7dab0d4825ceb98e37cef4d"),
 			Common::FR_FRA,
 			Common::kPlatformAtariST,
+			Common::GF_NO_FLAGS
 		},
 		GType_FW,
 		0,
@@ -231,6 +244,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs00", 	"d6752e7d25924cb866b61eb7cb0c8b56"),
 			Common::EN_GRB,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		0,
@@ -243,6 +257,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs1", "d8c3a9d05a63e4cfa801826a7063a126"),
 			Common::EN_USA,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		0,
@@ -255,6 +270,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs00", "862a75d76fb7fffec30e52be9ad1c474"),
 			Common::EN_USA,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		GF_CD,
@@ -267,6 +283,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs1", "39b91ae35d1297ce0a76a1a803ca1593"),
 			Common::DE_DEU,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		0,
@@ -279,6 +296,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs1", "74c2dabd9d212525fca8875a5f6d8994"),
 			Common::ES_ESP,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		0,
@@ -295,6 +313,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		GF_CD,
@@ -307,6 +326,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs00", "f143567f08cfd1a9b1c9a41c89eadfef"),
 			Common::FR_FRA,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		0,
@@ -319,6 +339,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs1", "da066e6b8dd93f2502c2a3755f08dc12"),
 			Common::IT_ITA,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		0,
@@ -331,6 +352,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs0", "a9da5531ead0ebf9ad387fa588c0cbb0"),
 			Common::EN_GRB,
 			Common::kPlatformAmiga,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		0,
@@ -343,6 +365,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs0", "8a429ced2f4acff8a15ae125174042e8"),
 			Common::EN_GRB,
 			Common::kPlatformAmiga,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		0,
@@ -355,6 +378,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs0", "d5f27e33fc29c879f36f15b86ccfa58c"),
 			Common::EN_USA,
 			Common::kPlatformAmiga,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		0,
@@ -367,6 +391,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs0", "8b7dce249821d3a62b314399c4334347"),
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		0,
@@ -379,6 +404,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs0", "35fc295ddd0af9da932d256ba799a4b0"),
 			Common::ES_ESP,
 			Common::kPlatformAmiga,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		0,
@@ -391,6 +417,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs0", "d4ea4a97e01fa67ea066f9e785050ed2"),
 			Common::FR_FRA,
 			Common::kPlatformAmiga,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		0,
@@ -403,6 +430,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("demo", "8d3a750d1c840b1b1071e42f9e6f6aa2"),
 			Common::EN_GRB,
 			Common::kPlatformAmiga,
+			Common::GF_DEMO
 		},
 		GType_OS,
 		GF_DEMO,
@@ -415,6 +443,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs0", "1501d5ae364b2814a33ed19347c3fcae"),
 			Common::EN_GRB,
 			Common::kPlatformAtariST,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		0,
@@ -427,12 +456,13 @@ static const CINEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("procs0", "2148d25de3219dd4a36580ca735d0afa"),
 			Common::FR_FRA,
 			Common::kPlatformAtariST,
+			Common::GF_NO_FLAGS
 		},
 		GType_OS,
 		0,
 	},
 
-	{ { NULL, NULL, AD_ENTRY1(NULL, NULL), Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0 }
+	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
 }

@@ -37,13 +37,28 @@ struct ADGameFileDescription {
 	int32 fileSize;  // Optional. Set to -1 to ignore.
 };
 
+enum ADGameFlags {
+	GF_NO_FLAGS = 0,
+	GF_DEMO = 1 << 31
+};
+
 struct ADGameDescription {
 	const char *gameid;
 	const char *extra;
 	ADGameFileDescription filesDescriptions[14];
 	Language language;
 	Platform platform;
+	
+	/**
+	 * A bitmask of extra flags. The top 8 bits are reserved for generic flags
+	 * defined in the ADGameFlags. This leaves 24 flags to be used by client
+	 * code.
+	 */
+	uint32 flags;
 };
+
+#define AD_TABLE_END_MARKER	\
+	{ NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, Common::GF_NO_FLAGS }
 
 struct ADObsoleteGameID {
 	const char *from;

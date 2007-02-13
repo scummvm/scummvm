@@ -71,11 +71,12 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
+			Common::GF_NO_FLAGS
 		},
 		GType_Nippon,
 		0,
 	},
-	{ { NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown }, 0, 0 }
+	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
 }
