@@ -194,6 +194,11 @@ String operator +(const String &x, const char *y);
 bool operator == (const char *x, const String &y);
 bool operator != (const char *x, const String &y);
 
+// Utility functions to remove leading and trailing whitespaces
+extern char *ltrim(char *t);
+extern char *rtrim(char *t);
+extern char *trim(char *t);
+
 class StringList : public Array<String> {
 public:
 	void push_back(const char *str) {

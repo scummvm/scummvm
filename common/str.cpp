@@ -431,5 +431,21 @@ String operator +(const String &x, const char *y) {
 	return temp;
 }
 
+char *ltrim(char *t) {
+	while (isspace(*t))
+		t++;
+	return t;
+}
+
+char *rtrim(char *t) {
+	int l = strlen(t) - 1;
+	while (l >= 0 && isspace(t[l]))
+		t[l--] = 0;
+	return t;
+}
+
+char *trim(char *t) {
+	return rtrim(ltrim(t));
+}
 
 }	// End of namespace Common

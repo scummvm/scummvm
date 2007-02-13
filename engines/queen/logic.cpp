@@ -44,20 +44,6 @@
 
 namespace Queen {
 
-static Common::String trim(const Common::String &s) {
-	const char *p;
-
-	p = s.c_str();
-	while (*p == ' ') ++p;
-	int start = p - s.c_str();
-
-	p = s.c_str() + s.size() - 1;
-	while (p != s.c_str() && *p == ' ') --p;
-	int end = p - s.c_str();
-
-	return Common::String(s.c_str() + start, end - start + 1);
-}
-
 Logic::Logic(QueenEngine *vm)
 	: _credits(NULL), _objectData(NULL), _roomData(NULL), _sfxName(NULL),
 	_itemData(NULL), _graphicData(NULL), _walkOffData(NULL), _objectDescription(NULL),
@@ -227,16 +213,16 @@ void Logic::readQueenJas() {
 
 	_joeResponse.push_back("");
 	for (i = 1; i <= JOE_RESPONSE_MAX; i++) {
-		_joeResponse.push_back(queen2jas.nextLine());
-	}
+		char *defaultResponse = queen2jas.nextLine();
 
-	// Spanish version adds some space characters (0x20) at the beginning
-	// and the end of the journal button captions. As the engine computes
-	// the text width to center it, we need to trim those strings.
-	if (_vm->resource()->getLanguage() == Common::ES_ESP) {
-		for (i = 30; i <= 35; i++) {
-			_joeResponse[i] = trim(_joeResponse[i]);
+		// In the spanish version, captions of journal buttons have leading & trailing
+		// whitespaces (they probably did it that way to center the texts). As we do
+		// differently (see code in journal.cpp), we remove these extra characters here.
+		if (_vm->resource()->getLanguage() == Common::ES_ESP && i >= 30 && i <= 35) {
+			defaultResponse = Common::trim(defaultResponse);
 		}
+
+		_joeResponse.push_back(defaultResponse);
 	}
 
 	_aAnim.push_back("");

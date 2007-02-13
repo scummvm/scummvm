@@ -32,19 +32,6 @@
 
 namespace Common {
 
-static char *ltrim(char *t) {
-	while (isspace(*t))
-		t++;
-	return t;
-}
-
-static char *rtrim(char *t) {
-	int l = strlen(t) - 1;
-	while (l >= 0 && isspace(t[l]))
-		t[l--] = 0;
-	return t;
-}
-
 /**
  * Check whether the given string is a valid section or key name.
  * For that, it must only consist of letters, numbers, dashes and

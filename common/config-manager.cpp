@@ -45,19 +45,6 @@ DECLARE_SINGLETON(Common::ConfigManager);
 
 #define MAXLINELEN 256
 
-static char *ltrim(char *t) {
-	while (isspace(*t))
-		t++;
-	return t;
-}
-
-static char *rtrim(char *t) {
-	int l = strlen(t) - 1;
-	while (l >= 0 && isspace(t[l]))
-		t[l--] = 0;
-	return t;
-}
-
 static bool isValidDomainName(const Common::String &domName) {
 	const char *p = domName.c_str();
 	while (*p && (isalnum(*p) || *p == '-' || *p == '_'))

@@ -315,19 +315,6 @@ bool AgiEngine::predictiveDialog(void) {
 	return rc;
 }
 
-static char *ltrim(char *t) {
-	while (isspace(*t))
-		t++;
-	return t;
-}
-
-static char *rtrim(char *t) {
-	int l = strlen(t) - 1;
-	while (l >= 0 && isspace(t[l]))
-		t[l--] = 0;
-	return t;
-}
-
 #define MAXLINELEN 80
 
 void AgiEngine::loadDict(void) {
@@ -343,7 +330,7 @@ void AgiEngine::loadDict(void) {
 
 	while (!in.eos() && in.readLine(buf, MAXLINELEN)) {
 		// Skip leading & trailing whitespaces
-		char *word = rtrim(ltrim(buf));
+		char *word = Common::trim(buf);
 
 		// Skip empty lines
 		if (*word == 0)
