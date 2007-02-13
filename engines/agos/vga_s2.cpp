@@ -170,7 +170,7 @@ void AGOSEngine::vc71_ifSeqWaiting() {
 	// This command skips the next instruction
 	// unless (1) there is a track playing, AND
 	// (2) there is a track queued to play after it.
-	if (!midi.isPlaying (true))
+	if (!midi.isPlaying(true))
 		vcSkipNextInstruction();
 }
 
@@ -194,8 +194,8 @@ void AGOSEngine::vc72_segue() {
 	if (track == -1 || track == 999) {
 		midi.stop();
 	} else {
-		midi.setLoop (loop != 0);
-		midi.startTrack (track);
+		midi.setLoop(loop != 0);
+		midi.startTrack(track);
 	}
 }
 

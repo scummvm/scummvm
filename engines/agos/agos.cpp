@@ -531,7 +531,7 @@ int AGOSEngine::init() {
 	midi.setDriver(driver);
 	int ret = midi.open();
 	if (ret)
-		warning ("MIDI Player init failed: \"%s\"", midi.getErrorName (ret));
+		warning("MIDI Player init failed: \"%s\"", midi.getErrorName (ret));
 	midi.setVolume(ConfMan.getInt("music_volume"));
 
 	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1)

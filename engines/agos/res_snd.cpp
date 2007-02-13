@@ -169,17 +169,17 @@ void AGOSEngine::loadMusic(uint music) {
 		_gameFile->read(buf, 4);
 		if (!memcmp(buf, "FORM", 4)) {
 			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-			midi.loadXMIDI (_gameFile);
+			midi.loadXMIDI(_gameFile);
 		} else {
 			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-			midi.loadMultipleSMF (_gameFile);
+			midi.loadMultipleSMF(_gameFile);
 		}
 
 		_lastMusicPlayed = music;
 		_nextMusicToPlay = -1;
 	} else if (getGameType() == GType_SIMON1) {
 		midi.stop();
-		midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)
+		midi.setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
 		if (getFeatures() & GF_TALKIE) {
 			// FIXME: The very last music resource, a cymbal crash for when the
@@ -188,16 +188,16 @@ void AGOSEngine::loadMusic(uint music) {
 			// a loop override that acomplishes this, but there seems to be nothing
 			// for this in the SMF resources.
 			if (music == 35)
-				midi.setLoop (false);
+				midi.setLoop(false);
 
 			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
 			_gameFile->read(buf, 4);
 			if (!memcmp(buf, "GMF\x1", 4)) {
 				_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-				midi.loadSMF (_gameFile, music);
+				midi.loadSMF(_gameFile, music);
 			} else {
 				_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-				midi.loadMultipleSMF (_gameFile);
+				midi.loadMultipleSMF(_gameFile);
 			}
 
 		} else {
@@ -209,15 +209,15 @@ void AGOSEngine::loadMusic(uint music) {
 				error("loadMusic: Can't load music from '%s'", filename);
 
 			if (getFeatures() & GF_DEMO)
-				midi.loadS1D (&f);
+				midi.loadS1D(&f);
 			else
-				midi.loadSMF (&f, music);
+				midi.loadSMF(&f, music);
 		}
 
-		midi.startTrack (0);
+		midi.startTrack(0);
 	} else {
 		midi.stop();
-		midi.setLoop (true); // Must do this BEFORE loading music.
+		midi.setLoop(true); // Must do this BEFORE loading music.
 
 		char filename[15];
 		File f;
@@ -226,8 +226,8 @@ void AGOSEngine::loadMusic(uint music) {
 		if (f.isOpen() == false)
 			error("loadMusic: Can't load music from '%s'", filename);
 
-		midi.loadS1D (&f);
-		midi.startTrack (0);
+		midi.loadS1D(&f);
+		midi.startTrack(0);
 	}
 }
 

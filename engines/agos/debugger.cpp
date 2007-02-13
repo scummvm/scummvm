@@ -83,9 +83,9 @@ bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
 		uint music = atoi(argv[1]);
 		uint range = (_vm->getGameType() == GType_SIMON2) ? 93 : 34;
 		if (music <= range) {
-			_vm->loadMusic (music);
+			_vm->loadMusic(music);
 			if (_vm->getGameType() == GType_SIMON2)
-				_vm->midi.startTrack (0);
+				_vm->midi.startTrack(0);
 		} else
 			DebugPrintf("Music out of range (0 - %d)\n", range);
 	} else
