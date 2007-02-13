@@ -715,7 +715,10 @@ int Parallaction::selectSaveFile(uint16 arg_0, const char* caption, const char* 
     slc->setList(l);
 
     int idx = slc->runModal();
-    _saveFileName = slc->getResultString();
+    if (idx >= 0) {
+        _saveFileName = slc->getResultString();
+    }
+
     delete slc;
 
 	return idx;
