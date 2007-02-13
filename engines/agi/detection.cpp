@@ -106,7 +106,7 @@ namespace Agi {
 #define FANMADE_L(name,md5,lang) FANMADE_LV(name,md5,lang,0x2917)
 #define FANMADE_LF(name,md5,lang,features) FANMADE_ILFV("agi-fanmade",name,md5,lang,(GF_FANMADE|features),0x2917)
 #define FANMADE_I(id,name,md5) FANMADE_ILFV(id,name,md5,Common::EN_ANY,GF_FANMADE,0x2917)
-#define FANMADE_IF(id,name,md5) FANMADE_ILFV(id,name,md5,Common::EN_ANY,(GF_FANMADE|features),0x2917)
+#define FANMADE_IF(id,name,md5,features) FANMADE_ILFV(id,name,md5,Common::EN_ANY,(GF_FANMADE|features),0x2917)
 #define FANMADE(name,md5) FANMADE_LV(name,md5,Common::EN_ANY,0x2917)
 
 static const AGIGameDescription gameDescriptions[] = {
