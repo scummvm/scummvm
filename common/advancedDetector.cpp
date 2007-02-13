@@ -33,6 +33,9 @@
 
 namespace Common {
 
+typedef Array<int> ADList;
+typedef Array<const ADGameDescription*> ADGameDescList;
+
 namespace AdvancedDetector {
 
 /**
@@ -430,13 +433,8 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 			printf("%s: \"%s\", %d\n", file->_key.c_str(), file->_value.c_str(), filesSize[file->_key]);
 	}
 
-	if (params.flags & kADFlagFilebasedFallback) {
-		if (params.fileBased == NULL) {
-			error("Engine %s has FilebasedFallback flag set but list fileBased is empty",
-				  params.singleid); // We may get 0 as singleid here, but let's ignore it
-		}
-
-		const char **ptr = params.fileBased;
+	if (params.fileBasedFallback != 0) {
+		const char **ptr = params.fileBasedFallback;
 
 		// First we create list of files required for detection
 		if (allFiles.empty()) {
@@ -469,7 +467,7 @@ static ADList detectGame(const FSList *fslist, const Common::ADParams &params, L
 		const char **matchEntry = 0;
 		const char **entryStart;
 
-		ptr = params.fileBased;
+		ptr = params.fileBasedFallback;
 
 		while (*ptr) {
 			entryStart = ptr;
