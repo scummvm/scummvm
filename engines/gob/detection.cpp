@@ -948,4 +948,4 @@ bool GobEngine::detectGame() {
 	return true;
 }
 
-} // End of namespace Parallaction
+} // End of namespace Gob
