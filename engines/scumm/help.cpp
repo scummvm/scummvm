@@ -116,10 +116,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 		switch (gameId) {
 		case GID_ZAK:
 		case GID_MANIAC:
-			// HACK. I know use of g_scumm here is evil, however, 
-			// introducing new GID and putting it everywhere will
-			// pollute code much more that this single instance
-			if (g_scumm->_game.platform == Common::kPlatformNES) {
+			if (platform == Common::kPlatformNES) {
 				ADD_BIND("q", "Push");
 				ADD_BIND("a", "Pull");
 				ADD_BIND("z", "Give");
@@ -215,10 +212,8 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("s", "puSh");
 			ADD_BIND("y", "pull (Yank)");
 			if (platform == Common::kPlatformSegaCD) {
-			// FIXME look at scripts to figure all options out...
-			// keys 1->4 seem to do something as well
-				ADD_BIND("6", "Highlight prev dialogue");
-				ADD_BIND("7", "Highlight next dialogue");
+				ADD_BIND("KeyUp", "Highlight prev dialogue");
+				ADD_BIND("KeyDown", "Highlight next dialogue");
 			}
 			break;
 		case GID_SAMNMAX:
