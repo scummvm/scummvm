@@ -1036,9 +1036,54 @@ static Common::Language detectLanguage(const FSList &fslist, byte id) {
 	return Common::UNK_LANG;
 }
 
+
+static void computeGameSettingsFromMD5(const FSList &fslist, const GameFilenamePattern *gfp, const MD5Table *md5Entry, DetectorResult &dr) {
+	dr.language = md5Entry->language;
+	dr.extra = md5Entry->extra;
+
+	// Compute the precise game settings using gameVariantsTable.
+	for (const GameSettings *g = gameVariantsTable; g->gameid; ++g) {
+		if (g->gameid[0] == 0 || !scumm_stricmp(md5Entry->gameid, g->gameid)) {
+			// The gameid either matches, or is empty. The latter indicates
+			// a generic entry, currently used for some generic HE settings.
+			if (g->variant == 0 || !scumm_stricmp(md5Entry->variant, g->variant)) {
+				// Perfect match found, use it and stop the loop
+				dr.game = *g;
+				dr.game.gameid = md5Entry->gameid;
+
+				// Set the platform value. The value from the MD5 record has
+				// highest priority; if missing (i.e. set to unknown) we try
+				// to use that from the filename pattern record instead.
+				if (md5Entry->platform != Common::kPlatformUnknown) {
+					dr.game.platform = md5Entry->platform;
+				} else if (gfp->platform != Common::kPlatformUnknown) {
+					dr.game.platform = gfp->platform;
+				}
+				
+				// HACK: Special case to distinguish the V1 demo from the full version
+				// (since they have identical MD5):
+				if (dr.game.id == GID_MANIAC && !strcmp(gfp->pattern, "%02d.MAN")) {
+					dr.extra = "V1 Demo";
+				}
+
+				// HACK: If 'Demo' occurs in the extra string, set the GF_DEMO flag,
+				// required by some game demos (e.g. Dig, FT and COMI).
+				if (dr.extra && strstr(dr.extra, "Demo")) {
+					dr.game.features |= GF_DEMO;
+				}
+				
+				// HACK: Detect COMI & Dig languages
+				if (dr.language == UNK_LANG && (dr.game.id == GID_CMI || dr.game.id == GID_DIG)) {
+					dr.language = detectLanguage(fslist, dr.game.id);
+				}
+				break;
+			}
+		}
+	}
+}
+
 static void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, const char *gameid) {
 	DescMap fileMD5Map;
-	const GameSettings *g;
 	DetectorResult dr;
 	
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -1099,55 +1144,15 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 				dr.md5 = d.md5;
 
 				if (d.md5Entry) {
-					// Exact match found
-					dr.language = d.md5Entry->language;
-					dr.extra = d.md5Entry->extra;
-
-					// Compute the precise game settings using gameVariantsTable.
-					for (g = gameVariantsTable; g->gameid; ++g) {
-						if (g->gameid[0] == 0 || !scumm_stricmp(d.md5Entry->gameid, g->gameid)) {
-							// The gameid either matches, or is empty. The latter indicates
-							// a generic entry, currently used for some generic HE settings.
-							if (g->variant == 0 || !scumm_stricmp(d.md5Entry->variant, g->variant)) {
-								// Perfect match found, use it and stop the loop
-								dr.game = *g;
-								dr.game.gameid = d.md5Entry->gameid;
-
-								// Set the platform value. The value from the MD5 record has
-								// highest priority; if missing (i.e. set to unknown) we try
-								// to use that from the filename pattern record instead.
-								if (d.md5Entry->platform != Common::kPlatformUnknown) {
-									dr.game.platform = d.md5Entry->platform;
-								} else if (gfp->platform != Common::kPlatformUnknown) {
-									dr.game.platform = gfp->platform;
-								}
-								
-								// HACK: Special case to distinguish the V1 demo from the full version
-								// (since they have identical MD5):
-								if (dr.game.id == GID_MANIAC && !strcmp(gfp->pattern, "%02d.MAN")) {
-									dr.extra = "V1 Demo";
-								}
-
-								// HACK: If 'Demo' occurs in the extra string, set the GF_DEMO flag,
-								// required by some game demos (e.g. Dig, FT and COMI).
-								if (dr.extra && strstr(dr.extra, "Demo")) {
-									dr.game.features |= GF_DEMO;
-								}
-								
-								// HACK: Detect COMI & Dig languages
-								if (dr.language == UNK_LANG && (dr.game.id == GID_CMI || dr.game.id == GID_DIG)) {
-									dr.language = detectLanguage(fslist, dr.game.id);
-								}
-								
-								results.push_back(dr);
-								break;
-							}
-						}
-					}
+					// Exact match found. Compute the precise game settings.
+					computeGameSettingsFromMD5(fslist, gfp, d.md5Entry, dr);
 
 					// Sanity check: We *should* have found a matching gameid / variant at this point.
 					// If not, then there's a bug in our data tables...
 					assert(dr.game.gameid != 0);
+					
+					// Add it to the list of detected games
+					results.push_back(dr);
 				}
 			}
 		}
@@ -1172,7 +1177,7 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 		// the gfp record. We then try to decide for each whether it could be
 		// appropriate or not.
 		dr.md5 = d.md5;
-		for (g = gameVariantsTable; g->gameid; ++g) {
+		for (const GameSettings *g = gameVariantsTable; g->gameid; ++g) {
 			// Skip over entries with a different gameid.
 			if (g->gameid[0] == 0 || scumm_stricmp(gfp->gameid, g->gameid))
 				continue;
