@@ -257,28 +257,22 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 	String tstr, tstr2;
 	
 	uint i;
-	int j;
 	char md5str[32+1];
 	uint8 md5sum[16];
 
 	bool fileMissing;
 	const ADGameFileDescription *fileDesc;
-
-	Common::ADGameDescList gameDescriptions;
+	const ADGameDescription *g;
+	const byte *descPtr;
 
 	debug(3, "Starting detection");
 
-	for (const byte *descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize)
-		gameDescriptions.push_back((const ADGameDescription *)descPtr);
-
-	assert(gameDescriptions.size());
-
-	debug(4, "List of descriptions: %d", gameDescriptions.size());
-
 	// First we compose list of files which we need MD5s for
-	for (i = 0; i < gameDescriptions.size(); i++) {
-		for (j = 0; gameDescriptions[i]->filesDescriptions[j].fileName; j++) {
-			tstr = String(gameDescriptions[i]->filesDescriptions[j].fileName);
+	for (descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize) {
+		g = (const ADGameDescription *)descPtr;
+
+		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
+			tstr = String(fileDesc->fileName);
 			tstr.toLowercase();
 			tstr2 = tstr + ".";
 			filesList[tstr] = true;
@@ -302,8 +296,8 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 			if (!filesList.contains(tstr) && !filesList.contains(tstr2)) continue;
 
 			if (!md5_file(*file, md5sum, params.md5Bytes)) continue;
-			for (j = 0; j < 16; j++) {
-				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
+			for (i = 0; i < 16; i++) {
+				sprintf(md5str + i*2, "%02x", (int)md5sum[i]);
 			}
 			filesMD5[tstr] = String(md5str);
 			filesMD5[tstr2] = String(md5str);
@@ -329,8 +323,8 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 					testFile.close();
 
 					if (md5_file(file->_key.c_str(), md5sum, params.md5Bytes)) {
-						for (j = 0; j < 16; j++) {
-							sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
+						for (i = 0; i < 16; i++) {
+							sprintf(md5str + i*2, "%02x", (int)md5sum[i]);
 						}
 						filesMD5[tstr] = String(md5str);
 						debug(3, "> %s: %s", tstr.c_str(), md5str);
@@ -342,10 +336,9 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 
 	ADGameDescList matched;
 	int maxFilesMatched = 0;
-	const ADGameDescription *g;
 
-	for (i = 0; i < gameDescriptions.size(); i++) {
-		g = gameDescriptions[i];
+	for (i = 0, descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize, ++i) {
+		g = (const ADGameDescription *)descPtr;
 		fileMissing = false;
 
 		// Do not even bother to look at entries which do not have matching
@@ -361,8 +354,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 		}
 
 		// Try to open all files for this game
-		for (j = 0; g->filesDescriptions[j].fileName; j++) {
-			fileDesc = &g->filesDescriptions[j];
+		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			tstr = fileDesc->fileName;
 			tstr.toLowercase();
 			tstr2 = tstr + ".";
@@ -396,7 +388,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 			// Count the number of matching files. Then, only keep those
 			// entries which match a maximal amount of files.
 			int curFilesMatched = 0;
-			for (j = 0; g->filesDescriptions[j].fileName; j++)
+			for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++)
 				curFilesMatched++;
 			
 			if (curFilesMatched > maxFilesMatched) {
@@ -504,8 +496,8 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 		}
 
 		if (matchedGameid) { // We got a match
-			for (i = 0; i < gameDescriptions.size(); i++) {
-				g = gameDescriptions[i];
+			for (descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize) {
+				g = (const ADGameDescription *)descPtr;
 				if (g->filesDescriptions[0].fileName == 0) {
 					if (!scumm_stricmp(g->gameid, matchedGameid)) {
 						// FIXME: This warning, if ever seen by somebody, is
