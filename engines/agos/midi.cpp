@@ -28,8 +28,6 @@
 
 #include "agos/agos.h"
 
-#include "agos/agos.h"
-
 namespace AGOS {
 
 
