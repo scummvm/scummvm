@@ -431,13 +431,21 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 	}
 
 	if (params.fileBasedFallback != 0) {
+		// The format of fileBasedFallback is like this:
+		// It points to an array of strings (char pointers), separated into
+		// multiple "rows".
+		// First comes a gameid, then follows a list of filenames that have
+		// to be present in order to generate a match; the row is terminated
+		// by a zero byte.
+		// The whole list is terminated by another zero byte (i.e. a zero gameid).
 		const char **ptr = params.fileBasedFallback;
 
-		// First we create list of files required for detection
+		// First we create list of files required for detection.
 		if (allFiles.empty()) {
 			File testFile;
 
 			while (*ptr) {
+				// skip the gameid
 				ptr++;
 
 				while (*ptr) {
@@ -459,23 +467,18 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 			}
 		}
 
-		int maxFiles = 0;
-		int matchFiles;
-		const char **matchEntry = 0;
-		const char **entryStart;
+		int maxNumMatchedFiles = 0;
+		const char *matchedGameid = 0;
 
 		ptr = params.fileBasedFallback;
 
 		while (*ptr) {
-			entryStart = ptr;
+			const char *entryGameid = *ptr++;
 			fileMissing = false;
-			matchFiles = 0;
+			int numMatchedFiles = 0;
 
-			ptr++;
-
-			while (*ptr) {
+			for (; *ptr; ptr++) {
 				if (fileMissing) {
-					ptr++;
 					continue;
 				}
 
@@ -487,20 +490,18 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 				debug(3, "++ %s", *ptr);
 				if (!allFiles.contains(tstr) && !allFiles.contains(tstr2)) {
 					fileMissing = true;
-					ptr++;
 					continue;
 				}
 
-				matchFiles++;
-				ptr++;
+				numMatchedFiles++;
 			}
 
 			if (!fileMissing)
-				debug(4, "Matched: %s", *entryStart);
+				debug(4, "Matched: %s", entryGameid);
 
-			if (!fileMissing && matchFiles > maxFiles) {
-				matchEntry = entryStart;
-				maxFiles = matchFiles;
+			if (!fileMissing && numMatchedFiles > maxNumMatchedFiles) {
+				matchedGameid = entryGameid;
+				maxNumMatchedFiles = numMatchedFiles;
 
 				debug(4, "and overriden");
 			}
@@ -508,14 +509,14 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 			ptr++;
 		}
 
-		if (matchEntry) { // We got a match
+		if (matchedGameid) { // We got a match
 			for (i = 0; i < gameDescriptions.size(); i++) {
 				g = gameDescriptions[i];
 				if (g->filesDescriptions[0].fileName == 0) {
-					if (!scumm_stricmp(g->gameid, *matchEntry)) {
+					if (!scumm_stricmp(g->gameid, matchedGameid)) {
 						// FIXME: This warning, if ever seen by somebody, is
 						// extremly cryptic!
-						warning("But it looks like unknown variant of %s", *matchEntry);
+						warning("But it looks like unknown variant of %s", matchedGameid);
 
 						matched.push_back(g);
 					}
