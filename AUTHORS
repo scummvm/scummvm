@@ -221,6 +221,7 @@ Other contributions
      Janne Huttunen        - V3 actor mask support, Dig/FT SMUSH audio
      Kovacs Endre Janos    - Several fixes for Simon1
      Jeroen Janssen        - Numerous readability and bugfix patches
+     Florian Kagerer       - Various Kyrandia 1 FM-Towns code contributions
      Andreas Karlsson      - Initial port for EPOC/SymbianOS
      Claudio Matsuoka      - Daily Linux builds
      Thomas Mayer          - PSP port contributions

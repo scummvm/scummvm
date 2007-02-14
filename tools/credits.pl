@@ -725,6 +725,7 @@ begin_credits("Credits");
 		  add_person("Janne Huttunen", "", "V3 actor mask support, Dig/FT SMUSH audio");
 		  add_person("Kov&aacute;cs Endre J&aacute;nos", "", "Several fixes for Simon1");
 		  add_person("Jeroen Janssen", "", "Numerous readability and bugfix patches");
+		  add_person("Florian Kagerer", "athrxx", "Various Kyrandia 1 FM-Towns code contributions");
 		  add_person("Andreas Karlsson", "Sprawl", "Initial port for EPOC/SymbianOS");
 		  add_person("Claudio Matsuoka", "", "Daily Linux builds");
 		  add_person("Thomas Mayer", "", "PSP port contributions");
