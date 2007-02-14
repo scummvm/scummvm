@@ -444,11 +444,11 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 		if (allFiles.empty()) {
 			File testFile;
 
-			while (*ptr) {
+			for (; *ptr; ptr++) {
 				// skip the gameid
 				ptr++;
 
-				while (*ptr) {
+				for (; *ptr; ptr++) {
 					tstr = String(*ptr);
 					tstr.toLowercase();
 
@@ -459,11 +459,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 							testFile.close();
 						}
 					}
-
-					ptr++;
 				}
-
-				ptr++;
 			}
 		}
 
@@ -472,7 +468,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 
 		ptr = params.fileBasedFallback;
 
-		while (*ptr) {
+		for (; *ptr; ptr++) {
 			const char *entryGameid = *ptr++;
 			fileMissing = false;
 			int numMatchedFiles = 0;
@@ -505,8 +501,6 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 
 				debug(4, "and overriden");
 			}
-
-			ptr++;
 		}
 
 		if (matchedGameid) { // We got a match
