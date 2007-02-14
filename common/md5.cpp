@@ -34,6 +34,17 @@
 
 namespace Common {
 
+typedef struct {
+	uint32 total[2];
+	uint32 state[4];
+	uint8 buffer[64];
+} md5_context;
+
+void md5_starts(md5_context *ctx);
+void md5_update(md5_context *ctx, const uint8 *input, uint32 length);
+void md5_finish(md5_context *ctx, uint8 digest[16]);
+
+
 #define GET_UINT32(n, b, i)	(n) = READ_LE_UINT32(b + i)
 #define PUT_UINT32(n, b, i)	WRITE_LE_UINT32(b + i, n)
 
@@ -253,6 +264,12 @@ bool md5_file(const char *name, uint8 digest[16], uint32 length) {
 		warning("md5_file couldn't open '%s'", name);
 		return false;
 	}
+	
+	return md5_file(f, digest, length);
+}
+	
+
+bool md5_file(ReadStream &stream, uint8 digest[16], uint32 length) {
 
 #ifdef DISABLE_MD5
 	memset(digest, 0, 16);
@@ -261,7 +278,7 @@ bool md5_file(const char *name, uint8 digest[16], uint32 length) {
 	int i;
 	unsigned char buf[1000];
 	bool restricted = (length != 0);
-	int readlen;
+	uint32 readlen;
 
 	if (!restricted || sizeof(buf) <= length)
 		readlen = sizeof(buf);
@@ -270,7 +287,7 @@ bool md5_file(const char *name, uint8 digest[16], uint32 length) {
 
 	md5_starts(&ctx);
 
-	while ((i = f.read(buf, readlen)) > 0) {
+	while ((i = stream.read(buf, readlen)) > 0) {
 		md5_update(&ctx, buf, i);
 
 		length -= i;
@@ -283,6 +300,42 @@ bool md5_file(const char *name, uint8 digest[16], uint32 length) {
 
 	md5_finish(&ctx, digest);
 #endif
+	return true;
+}
+
+bool md5_file_string(const FilesystemNode &file, char md5str[32+1], uint32 length) {
+	uint8 digest[16];
+	if (!md5_file(file, digest, length))
+		return false;
+
+	for (int i = 0; i < 16; i++) {
+		sprintf(md5str + i*2, "%02x", (int)digest[i]);
+	}
+
+	return true;
+}
+
+bool md5_file_string(const char *name, char md5str[32+1], uint32 length) {
+	uint8 digest[16];
+	if (!md5_file(name, digest, length))
+		return false;
+
+	for (int i = 0; i < 16; i++) {
+		sprintf(md5str + i*2, "%02x", (int)digest[i]);
+	}
+
+	return true;
+}
+
+bool md5_file_string(ReadStream &stream, char md5str[32+1], uint32 length) {
+	uint8 digest[16];
+	if (!md5_file(stream, digest, length))
+		return false;
+
+	for (int i = 0; i < 16; i++) {
+		sprintf(md5str + i*2, "%02x", (int)digest[i]);
+	}
+
 	return true;
 }
 
