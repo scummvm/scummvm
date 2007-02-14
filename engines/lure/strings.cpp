@@ -277,8 +277,11 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 			// Copy over hotspot or action 
 			ch = readCharacter();
 			const char *p = (ch == '1') ? hotspotName : characterName;
-			strcpy(destPos, p);
-			destPos += strlen(p);
+			if (p != NULL)
+			{
+				strcpy(destPos, p);
+				destPos += strlen(p);
+			}
 		} else if ((uint8) ch >= 0xa0) {
 			const char *p = getName((uint8) ch - 0xa0);
 			strcpy(destPos, p);
