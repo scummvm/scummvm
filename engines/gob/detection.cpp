@@ -64,18 +64,6 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 namespace Gob {
 
 static const GOBGameDescription gameDescriptions[] = {
-	{ // Dummy entry for fallback detection
-		{
-			"gob1",
-			"unknown",
-			AD_ENTRY1(0, 0),
-			UNK_LANG,
-			kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		GF_GOB1,
-		"intro"
-	},
 	{ // Supplied by Florian Zeitz on scummvm-devel
 		{
 			"gob1",
@@ -110,18 +98,6 @@ static const GOBGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB1,
-		"intro"
-	},
-	{ // Dummy entry for fallback detection
-		{
-			"gob1cd",
-			"unknown",
-			AD_ENTRY1(0, 0),
-			UNK_LANG,
-			kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		GF_GOB1 | GF_CD,
 		"intro"
 	},
 	{ // CD 1.000 version.
@@ -328,18 +304,6 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB1,
 		"intro"
 	},
-	{ // Dummy entry for fallback detection
-		{
-			"gob2",
-			"unknown",
-			AD_ENTRY1(0, 0),
-			UNK_LANG,
-			kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		GF_GOB2,
-		"intro"
-	},
 	{
 		{
 			"gob2",
@@ -438,18 +402,6 @@ static const GOBGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB2,
-		"intro"
-	},
-	{ // Dummy entry for fallback detection
-		{
-			"gob2cd",
-			"unknown",
-			AD_ENTRY1(0, 0),
-			UNK_LANG,
-			kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		GF_GOB2 | GF_CD,
 		"intro"
 	},
 	{
@@ -887,13 +839,64 @@ static const GOBGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, 0, NULL }
 };
 
-static const char *fileBased[] = {
-	"gob1",   "intro.stk", "disk1.stk", "disk2.stk", "disk3.stk", "disk4.stk", 0,
-	"gob1cd", "intro.stk", "gob.lic", 0,
-	"gob2",   "intro.stk", 0,
-	"gob2",   "intro.stk", "disk2.stk", "disk3.stk", 0,
-	"gob2cd", "intro.stk", "gobnew.lic", 0,
-	0
+static const GOBGameDescription fallbackDescs[] = {
+	{
+		{
+			"gob1",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB1,
+		"intro"
+	},
+	{
+		{
+			"gob1cd",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB1 | GF_CD,
+		"intro"
+	},
+	{
+		{
+			"gob2",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB2,
+		"intro"
+	},
+	{
+		{
+			"gob2cd",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB2 | GF_CD,
+		"intro"
+	},
+};
+
+static const ADFileBasedFallback fileBased[] = {
+	{ &fallbackDescs[0], { "intro.stk", "disk1.stk", "disk2.stk", "disk3.stk", "disk4.stk", 0 } },
+	{ &fallbackDescs[1], { "intro.stk", "gob.lic", 0 } },
+	{ &fallbackDescs[2], { "intro.stk", 0 } },
+	{ &fallbackDescs[2], { "intro.stk", "disk2.stk", "disk3.stk", 0 } },
+	{ &fallbackDescs[3], { "intro.stk", "gobnew.lic", 0 } },
+	{ 0, { 0 } }
 };
 
 }

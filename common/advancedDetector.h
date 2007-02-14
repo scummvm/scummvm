@@ -79,6 +79,21 @@ struct ADObsoleteGameID {
 	Common::Platform platform;
 };
 
+struct ADFileBasedFallback {
+	/**
+	 * Pointer to an ADGameDescription or subclass thereof.
+	 */
+	const void *desc;
+	
+	/**
+	 * A zero-terminated list of filenames.
+	 *
+	 * @todo Properly explain this
+	 */
+	const char *filenames[10];
+};
+
+
 enum ADFlags {
 	/**
 	 * Generate/augment preferred target with information on the language (if
@@ -142,10 +157,11 @@ struct ADParams {
 	 * List of files for file-based fallback detection (optional).
 	 * This is used if the regular MD5 based detection failed to 
 	 * detect anything.
+	 * As usual this list is terminated by an all-zero entry.
 	 *
 	 * @todo Properly explain this
 	 */
-	const char **fileBasedFallback;
+	const ADFileBasedFallback *fileBasedFallback;
 	
 	/** 
 	 * A callback pointing to an (optional) generic fallback detect
