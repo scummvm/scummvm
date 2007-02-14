@@ -485,12 +485,16 @@ void Dialog::show(const char *text) {
 	mouse.cursorOn();
 }
 
-void Dialog::show(uint16 stringId) {
+void Dialog::show(uint16 stringId, const char *hotspotName, const char *characterName) {
 	char buffer[MAX_DESC_SIZE];
 	StringData &sl = StringData::getReference();
 
-	sl.getString(stringId, buffer);
+	sl.getString(stringId, buffer, hotspotName, characterName);
 	show(buffer);
+}
+
+void Dialog::show(uint16 stringId) {
+	show(stringId, NULL, NULL);
 }
 
 /*--------------------------------------------------------------------------*/

@@ -248,6 +248,7 @@ private:
 	uint16 _frameWidth;
 	bool _frameStartsUsed;
 	uint16 _frameStarts[MAX_NUM_FRAMES];
+	char _nameBuffer[MAX_HOTSPOT_NAME_SIZE];
 
 	// Runtime fields
 	uint16 _frameCtr;
@@ -356,6 +357,7 @@ public:
 		if (_data) _data->roomNumber = roomNum;
 	}
 	uint16 nameId();
+	const char *getName();
 	bool isActiveAnimation();
 	void setPosition(int16 newX, int16 newY);
 	void setDestPosition(int16 newX, int16 newY) { _destX = newX; _destY = newY; }

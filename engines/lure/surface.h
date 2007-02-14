@@ -76,6 +76,7 @@ public:
 class Dialog {
 public:
 	static void show(const char *text);
+	static void show(uint16 stringId, const char *hotspotName, const char *characterName);
 	static void show(uint16 stringId);
 };
 

@@ -70,6 +70,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_override = resources.getHotspotOverride(res->hotspotId);
 	setAnimation(_data->animRecordId);
 	_tickHandler = HotspotTickHandlers::getHandler(_data->tickProcOffset);
+	_nameBuffer[0] = '\0';
 
 	_frameCtr = 0;
 	_skipFlag = false;
@@ -156,6 +157,7 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 
 	_frameWidth = _width;
 	_frameStartsUsed = false;
+	_nameBuffer[0] = '\0';
 }
 
 Hotspot::~Hotspot() {
@@ -352,6 +354,15 @@ uint16 Hotspot::nameId() {
 		return 0;
 	else 
 		return _data->nameId;
+}
+
+const char *Hotspot::getName()
+{
+	// If name hasn't been loaded yet, then do so
+	if (!_nameBuffer[0] && (nameId() != 0))
+		StringData::getReference().getString(nameId(), _nameBuffer);
+
+	return &_nameBuffer[0];
 }
 
 void Hotspot::setPosition(int16 newX, int16 newY) {
@@ -670,7 +681,10 @@ void Hotspot::showMessage(uint16 messageId, uint16 destCharacterId) {
 	} else if (idVal >= 0x8000) {
 		// Handle string display
 		idVal &= 0x7fff;
-		Dialog::show(idVal);
+		hotspot = res.getActiveHotspot(res.fieldList().getField(ACTIVE_HOTSPOT_ID));
+		const char *itemName = (hotspot == NULL) ? NULL : hotspot->getName();
+
+		Dialog::show(idVal, itemName, this->getName());
 		
 	} else if (idVal != 0) {
 		// Handle message as a talking dialog (the character talking to themselves)
