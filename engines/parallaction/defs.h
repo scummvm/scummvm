@@ -99,7 +99,6 @@ void memFree(void *m);
 void errorFileNotFound(const char*);
 
 void beep();
-char *skip_whitespace(char *s);
 
 enum {
 	kDebugDisk = 1 << 0,

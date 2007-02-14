@@ -724,7 +724,7 @@ bool Graphics::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwi
 		rx += getStringWidth(token) + getStringWidth(" ");
 		linewidth += getStringWidth(" ");
 
-		text = skip_whitespace(text);
+		text = Common::ltrim(text);
 	}
 
 //	printf("done\n");
@@ -781,7 +781,7 @@ void Graphics::getStringExtent(char *text, uint16 maxwidth, int16* width, int16*
 		}
 
 		w += getStringWidth(" ");
-		text = skip_whitespace(text);
+		text = Common::ltrim(text);
 	}
 
 	if (*width < w) *width = w;

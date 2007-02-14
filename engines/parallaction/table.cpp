@@ -46,7 +46,7 @@ uint16 tableFillBuffers(Common::SeekableReadStream &stream) {
 		line = stream.readLine(buf, 200);
 		if (line == NULL) return 0;
 
-		line = skip_whitespace(line);
+		line = Common::ltrim(line);
 	} while (strlen(line) == 0 || line[0] == '#');
 
 	uint16 count = 0;
@@ -61,7 +61,7 @@ uint16 tableFillBuffers(Common::SeekableReadStream &stream) {
 
 		}
 
-		line = skip_whitespace(line);
+		line = Common::ltrim(line);
 		count++;
 	}
 

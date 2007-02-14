@@ -182,7 +182,7 @@ char *parseDialogueString() {
 		vD0 = parseNextLine(vC8, 200);
 		if (vD0 == 0) return NULL;
 
-		vD0 = skip_whitespace(vD0);
+		vD0 = Common::ltrim(vD0);
 
 	} while (strlen(vD0) == 0);
 

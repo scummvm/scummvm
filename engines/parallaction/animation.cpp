@@ -313,7 +313,7 @@ int16 scriptFillBuffers(ArchivedFile *file) {
 		vCE = readArchivedFileText(vCA, 200, file);
 		if (vCE == 0) return 0;
 
-		skip_whitespace(vCE);
+		Common::ltrim(vCE);
 	} while (strlen(vCE) == 0 || vCE[0] == '#');
 
 	while (strlen(vCE) > 0 && _si < 20) {
@@ -327,7 +327,7 @@ int16 scriptFillBuffers(ArchivedFile *file) {
 
 		}
 
-		vCE = skip_whitespace(vCE);
+		vCE = Common::ltrim(vCE);
 		_si++;
 	}
 
