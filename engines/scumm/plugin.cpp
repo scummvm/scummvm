@@ -29,7 +29,6 @@
 #include "common/fs.h"
 #include "common/list.h"
 #include "common/md5.h"
-#include "common/system.h"	// Only needed for g_system
 
 #include "scumm/plugin.h"
 #include "scumm/scumm.h"
