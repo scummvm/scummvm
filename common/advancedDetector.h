@@ -61,6 +61,11 @@ struct ADGameDescription {
 };
 
 /**
+ * A list of pointers to ADGameDescription structs (or subclasses thereof).
+ */
+typedef Array<const ADGameDescription*> ADGameDescList;
+
+/**
  * End marker for a table of ADGameDescription structs. Use this to
  * terminate a list to be passed to the AdvancedDetector API.
  */
@@ -144,15 +149,16 @@ struct ADParams {
 	
 	/** 
 	 * A callback pointing to an (optional) generic fallback detect
-	 * function. If present, this gets called if both the regular
+	 * function. If present, this callback is invoked if both the regular
 	 * MD5 based detection as well as the file based fallback failed
-	 * to detect anything. It is supposed
+	 * to detect anything.
 	 *
 	 * @note The fslist parameter may be 0 -- in that case, it is assumed
 	 *       that the callback searchs the current directory.
+	 *
+	 * @todo
 	 */
-	//GameList (*fallbackDetectFunc)(const FSList *fslist);
-	uint dummy;
+	ADGameDescList (*fallbackDetectFunc)(const FSList *fslist);
 
 	/**
 	 * A bitmask of flags which can be used to configure the behavior

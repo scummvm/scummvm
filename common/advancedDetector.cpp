@@ -33,8 +33,6 @@
 
 namespace Common {
 
-typedef Array<const ADGameDescription*> ADGameDescList;
-
 namespace AdvancedDetector {
 
 /**
@@ -344,9 +342,10 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 
 	ADGameDescList matched;
 	int maxFilesMatched = 0;
+	const ADGameDescription *g;
 
 	for (i = 0; i < gameDescriptions.size(); i++) {
-		const ADGameDescription *g = gameDescriptions[i];
+		g = gameDescriptions[i];
 		fileMissing = false;
 
 		// Do not even bother to look at entries which do not have matching
@@ -511,24 +510,25 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 
 		if (matchEntry) { // We got a match
 			for (i = 0; i < gameDescriptions.size(); i++) {
-				if (gameDescriptions[i]->filesDescriptions[0].fileName == 0) {
-					if (!scumm_stricmp(gameDescriptions[i]->gameid, *matchEntry)) {
+				g = gameDescriptions[i];
+				if (g->filesDescriptions[0].fileName == 0) {
+					if (!scumm_stricmp(g->gameid, *matchEntry)) {
 						// FIXME: This warning, if ever seen by somebody, is
 						// extremly cryptic!
 						warning("But it looks like unknown variant of %s", *matchEntry);
 
-						matched.push_back(gameDescriptions[i]);
+						matched.push_back(g);
 					}
 				}
 			}
 		}
 	}
-/*	
+
 	// If we still haven't got a match, try to use the fallback callback :-)
 	if (matched.empty() && params.fallbackDetectFunc != 0) {
 		matched = (*params.fallbackDetectFunc)(fslist);
 	}
-*/
+
 	return matched;
 }
 
