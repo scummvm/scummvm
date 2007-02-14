@@ -978,6 +978,64 @@ typedef Common::HashMap<Common::String, DetectorDesc, Common::IgnoreCase_Hash, C
 
 static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Common::String &file);
 
+
+// Search for a node with the given "name", inside fslist. Ignores case
+// when performing the matching. The first match is returned, so if you 
+// search for "resource" and two nodes "RESOURE and "resource" are present,
+// the first match is used.
+static bool searchFSNode(const FSList &fslist, const Common::String &name, FilesystemNode &result) {
+	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		if (!scumm_stricmp(file->name().c_str(), name.c_str())) {
+			result = *file;
+			return true;
+		}
+	}
+	return false;
+}
+
+// The following function tries to detect the language for COMI and DIG
+static Common::Language detectLanguage(const FSList &fslist, byte id) {
+	assert(id == GID_CMI || id == GID_DIG);
+
+	// Check for LANGUAGE.BND (Dig) resp. LANGUAGE.TAB (CMI).
+	// These are usually inside the "RESOURCE" subdirectory.
+	// If found, we match based on the file size (should we
+	// ever determine that this is insufficient, we can still
+	// switch to MD5 based detection).
+	const char *filename = (id == GID_CMI) ? "LANGUAGE.TAB" : "LANGUAGE.BND";
+	Common::File tmp;
+	FilesystemNode langFile;
+	if (!searchFSNode(fslist, filename, langFile) || !tmp.open(langFile)) {
+		// try loading in RESOURCE sub dir...
+		FilesystemNode resDir;
+		FSList tmpList;
+		if (searchFSNode(fslist, "RESOURCE", resDir)
+			&& resDir.isDirectory()
+			&& resDir.listDir(tmpList, FilesystemNode::kListFilesOnly)
+			&& searchFSNode(tmpList, filename, langFile)) {
+			tmp.open(langFile);
+		}
+	}
+	if (tmp.isOpen()) {
+		uint size = tmp.size();
+		if (id == GID_CMI) {
+			switch (size) {
+			case 439080:	// 2daf3db71d23d99d19fc9a544fcf6431
+				return Common::EN_ANY;
+			case 493252:	// 5d59594b24f3f1332e7d7e17455ed533
+				return Common::DE_DEU;
+			}
+		} else {
+			switch (size) {
+			case 248627:	// 1fd585ac849d57305878c77b2f6c74ff
+				return Common::DE_DEU;
+			}
+		}
+	}
+	
+	return Common::UNK_LANG;
+}
+
 static void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, const char *gameid) {
 	DescMap fileMD5Map;
 	const GameSettings *g;
@@ -1074,6 +1132,11 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 								// required by some game demos (e.g. Dig, FT and COMI).
 								if (dr.extra && strstr(dr.extra, "Demo")) {
 									dr.game.features |= GF_DEMO;
+								}
+								
+								// HACK: Detect COMI & Dig languages
+								if (dr.language == UNK_LANG && (dr.game.id == GID_CMI || dr.game.id == GID_DIG)) {
+									dr.language = detectLanguage(fslist, dr.game.id);
 								}
 								
 								results.push_back(dr);
