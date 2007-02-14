@@ -594,6 +594,11 @@ ScummEngine::~ScummEngine() {
 ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
  : ScummEngine(syst, dr) {
 
+	// All "classic" games (V5 and older) encrypted their data files
+	// with exception of the GF_OLD256 games.
+	if (!(_game.features & GF_OLD256))
+		_game.features |= GF_USE_KEY;
+
 	static const uint16 default_cursor_images[4][16] = {
 		/* cross-hair */
 		{ 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0000, 0x7e3f,
@@ -630,15 +635,20 @@ ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
 ScummEngine_v4::ScummEngine_v4(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v5(syst, dr) {
 	_resourceHeaderSize = 6;
+	_game.features |= GF_SMALL_HEADER;
 }
 
 ScummEngine_v3::ScummEngine_v3(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v4(syst, dr) {
+	// All v3 and older games only used 16 colors with exception of the GF_OLD256 games.
+	if (!(_game.features & GF_OLD256))
+		_game.features |= GF_16COLOR;
 }
 
 ScummEngine_v3old::ScummEngine_v3old(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v3(syst, dr) {
 	_resourceHeaderSize = 4;
+	_game.features |= GF_OLD_BUNDLE;
 }
 
 ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
@@ -696,6 +706,9 @@ ScummEngine_v60he::ScummEngine_v60he(OSystem *syst, const DetectorResult &dr)
 	memset(_hInFileTable, 0, sizeof(_hInFileTable));
 	memset(_hOutFileTable, 0, sizeof(_hOutFileTable));
 	memset(_heTimers, 0, sizeof(_heTimers));
+
+	if (_game.heversion >= 61)
+		_game.features |= GF_NEW_COSTUMES;
 }
 
 ScummEngine_v60he::~ScummEngine_v60he() {
@@ -867,6 +880,8 @@ ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	_languageBuffer = NULL;
 	_languageIndex = NULL;
 	clearSubtitleQueue();
+
+	_game.features |= GF_NEW_COSTUMES;
 }
 
 ScummEngine_v7::~ScummEngine_v7() {
