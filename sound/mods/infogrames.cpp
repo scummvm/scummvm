@@ -247,7 +247,7 @@ void Infogrames::unload(void) {
 
 void Infogrames::getNextSample(Channel &chn) {
 	byte *data;
-	byte cmdBlock;
+	byte cmdBlock = 0;
 	uint16 cmd;
 	bool cont = false;
 
