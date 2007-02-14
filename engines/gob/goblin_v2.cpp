@@ -83,8 +83,8 @@ void Goblin_v2::placeObject(Gob_Object *objDesc, char animated,
 			*obj->pPosY = (y + 1) * _vm->_map->_tilesHeight
 				- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
 		else
-			*obj->pPosY = ((y + 1) / 2) * _vm->_map->_tilesHeight
-				- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
+			*obj->pPosY = ((y + 1) * _vm->_map->_tilesHeight) -
+				(_vm->_scenery->_animBottom - _vm->_scenery->_animTop) - (y + 1) / 2;
 		*obj->pPosX = x * _vm->_map->_tilesWidth;
 	} else {
 		if (obj->goblinStates[state] != 0) {
@@ -102,8 +102,8 @@ void Goblin_v2::placeObject(Gob_Object *objDesc, char animated,
 				*obj->pPosY = (y + 1) * _vm->_map->_tilesHeight
 					- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
 			else
-				*obj->pPosY = ((y + 1) / 2) * _vm->_map->_tilesHeight
-					- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
+				*obj->pPosY = ((y + 1) * _vm->_map->_tilesHeight) -
+					(_vm->_scenery->_animBottom - _vm->_scenery->_animTop) - (y + 1) / 2;
 			*obj->pPosX = x * _vm->_map->_tilesWidth;
 			initiateMove(obj);
 		} else

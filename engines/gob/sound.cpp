@@ -29,6 +29,15 @@
 
 namespace Gob {
 
+Snd::SquareWaveStream::SquareWaveStream() {
+	_rate = 44100;
+	_beepForever = false;
+	_periodLength = 0;
+	_periodSamples = 0;
+	_remainingSamples = 0;
+	_sampleValue = 0;
+}
+
 void Snd::SquareWaveStream::playNote(int freq, int32 ms, uint rate) {
 	_rate = rate;
 	_periodLength = _rate / (2 * freq);
@@ -44,20 +53,21 @@ void Snd::SquareWaveStream::playNote(int freq, int32 ms, uint rate) {
 }
 
 int Snd::SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
-	int samples = 0;
-
-	while (samples < numSamples && _remainingSamples > 0) {
-		*buffer++ = _sampleValue;
+	for (int i = 0; i < numSamples; i++) {
+		if (!_remainingSamples) {
+			buffer[i] = 0;
+			continue;
+		}
+		buffer[i] = _sampleValue;
 		if (_periodSamples++ > _periodLength) {
 			_periodSamples = 0;
 			_sampleValue = -_sampleValue;
 		}
-		samples++;
 		if (!_beepForever)
 			_remainingSamples--;
 	}
 
-	return samples;
+	return numSamples;
 }
 
 Snd::Snd(GobEngine *vm) : _vm(vm) {
@@ -89,19 +99,18 @@ Snd::Snd(GobEngine *vm) : _vm(vm) {
 
 	_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_handle,
 			this, -1, 255, 0, false, true);
+	_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
+			&_speakerStream, -1, 255, 0, false, true);
 }
 
 void Snd::setBlasterPort(int16 port) {return;}
 
 void Snd::speakerOn(int16 frequency, int32 length) {
 	_speakerStream.playNote(frequency, length, _vm->_mixer->getOutputRate());
-	if (!_vm->_mixer->isSoundHandleActive(_speakerHandle)) {
-		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_speakerHandle, &_speakerStream, -1, 255, 0, false);
-	}
 }
 
 void Snd::speakerOff(void) {
-	_vm->_mixer->stopHandle(_speakerHandle);
+	_speakerStream.stop();
 }
 
 void Snd::stopSound(int16 fadeLength)

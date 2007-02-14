@@ -1138,7 +1138,7 @@ void Inter_v2::o2_moveGoblin(void) {
 			mouseX = _vm->_global->_inter_mouseX;
 			mouseY = _vm->_global->_inter_mouseY;
 			if (_vm->_map->_bigTiles)
-				mouseY += ((_vm->_global->_inter_mouseX / _vm->_map->_tilesHeight) + 1) / 2;
+				mouseY += ((_vm->_global->_inter_mouseY / _vm->_map->_tilesHeight) + 1) / 2;
 			obj->gobDestX = mouseX / _vm->_map->_tilesWidth;
 			obj->gobDestY = mouseY / _vm->_map->_tilesHeight;
 			gobDestX = obj->gobDestX;
@@ -1296,13 +1296,13 @@ void Inter_v2::loadMult(void) {
 			objAnim->layer = obj->goblinStates[objAnim->state][0].layer;
 			objAnim->animation = animation;
 			_vm->_scenery->updateAnim(layer, 0, animation, 0, *obj->pPosX, *obj->pPosY, 0);
-			if (!_vm->_map->_bigTiles) {
+			if (!_vm->_map->_bigTiles)
 				*obj->pPosY = (obj->goblinY + 1) * _vm->_map->_tilesHeight
 					- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
-			} else {
-				*obj->pPosY = ((obj->goblinY + 1) / 2) * _vm->_map->_tilesHeight
-					- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
-			}
+			else
+				*obj->pPosY = ((obj->goblinY + 1) * _vm->_map->_tilesHeight) -
+					(_vm->_scenery->_animBottom - _vm->_scenery->_animTop) -
+					((obj->goblinY + 1) / 2);
 			*obj->pPosX = obj->goblinX * _vm->_map->_tilesWidth;
 		}
 	}

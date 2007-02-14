@@ -1468,7 +1468,7 @@ bool Inter_v1::o1_keyFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 		if (flag != 1) {
 			if (flag != 2) {
 				if (flag < 20) {
-					_vm->_util->delay(flag);
+					_vm->_util->delay(flag * 2);
 					_noBusyWait = true;
 				}
 				else

@@ -1925,7 +1925,7 @@ void Goblin::sub_197A6(int16 destX, int16 destY, int16 objIndex) {
 			mouseX = _vm->_global->_inter_mouseX;
 			mouseY = _vm->_global->_inter_mouseY;
 			if (_vm->_map->_bigTiles)
-				mouseY += ((_vm->_global->_inter_mouseX / _vm->_map->_tilesHeight) + 1) / 2;
+				mouseY += ((_vm->_global->_inter_mouseY / _vm->_map->_tilesHeight) + 1) / 2;
 			obj->gobDestX = mouseX / _vm->_map->_tilesWidth;
 			obj->gobDestY = mouseY / _vm->_map->_tilesHeight;
 			gobDestX = obj->gobDestX;

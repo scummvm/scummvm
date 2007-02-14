@@ -82,15 +82,17 @@ protected:
 		int16 _sampleValue;
 
 	public:
-		SquareWaveStream() {}
+		SquareWaveStream();
 		~SquareWaveStream() {}
 
 		void playNote(int freq, int32 ms, uint rate);
+		void stop(void) { _remainingSamples = 0; }
 
 		int readBuffer(int16 *buffer, const int numSamples);
 
-		bool endOfData() const	{ return _remainingSamples == 0; }
 		bool isStereo() const	{ return false; }
+		bool endOfData() const	{ return false; }
+		bool endOfStream() const { return false; }
 		int getRate() const	{ return _rate; }
 	};
 
