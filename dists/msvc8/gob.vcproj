@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
@@ -184,11 +184,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\detection.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\draw.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\draw.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\draw_bargon.cpp"
 			>
 		</File>
 		<File
@@ -277,6 +285,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\inter.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\inter_bargon.cpp"
 			>
 		</File>
 		<File
