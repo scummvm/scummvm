@@ -258,7 +258,6 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 	
 	uint i;
 	char md5str[32+1];
-	uint8 md5sum[16];
 
 	bool fileMissing;
 	const ADGameFileDescription *fileDesc;
@@ -295,12 +294,9 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 
 			if (!filesList.contains(tstr) && !filesList.contains(tstr2)) continue;
 
-			if (!md5_file(*file, md5sum, params.md5Bytes)) continue;
-			for (i = 0; i < 16; i++) {
-				sprintf(md5str + i*2, "%02x", (int)md5sum[i]);
-			}
-			filesMD5[tstr] = String(md5str);
-			filesMD5[tstr2] = String(md5str);
+			if (!md5_file_string(*file, md5str, params.md5Bytes))
+				continue;
+			filesMD5[tstr] = filesMD5[tstr2] = md5str;
 
 			debug(3, "> %s: %s", tstr.c_str(), md5str);
 
@@ -322,11 +318,8 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 					filesSize[tstr] = filesSize[tstr2] = (int32)testFile.size();
 					testFile.close();
 
-					if (md5_file(file->_key.c_str(), md5sum, params.md5Bytes)) {
-						for (i = 0; i < 16; i++) {
-							sprintf(md5str + i*2, "%02x", (int)md5sum[i]);
-						}
-						filesMD5[tstr] = String(md5str);
+					if (md5_file_string(file->_key.c_str(), md5str, params.md5Bytes)) {
+						filesMD5[tstr] = md5str;
 						debug(3, "> %s: %s", tstr.c_str(), md5str);
 					}
 				}

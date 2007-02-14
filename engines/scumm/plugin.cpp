@@ -971,7 +971,6 @@ static Common::String generateFilenameForDetection(const GameFilenamePattern &gf
 struct DetectorDesc {
 	FilesystemNode node;
 	Common::String md5;
-	uint8 md5sum[16];
 	const MD5Table *md5Entry;	// Entry of the md5 table corresponding to this file, if any.
 };
 
@@ -1013,7 +1012,6 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 		dr.game.gameid = 0;
 		dr.language = gfp->language;
 		dr.md5.clear();
-		memset(dr.md5sum, 0, 16);
 		dr.extra = 0;
 		
 		//  ____            _     _ 
@@ -1034,19 +1032,13 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 		//
 		DetectorDesc &d = fileMD5Map[file];
 		if (d.md5.empty()) {
-			uint8 md5sum[16];
-			if (Common::md5_file(d.node, md5sum, kMD5FileSizeLimit)) {
-				char md5str[32+1];
-				for (int j = 0; j < 16; j++) {
-					sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
-				}
+			char md5str[32+1];
+			if (Common::md5_file_string(d.node, md5str, kMD5FileSizeLimit)) {
 
 				d.md5 = md5str;
-				memcpy(d.md5sum, md5sum, 16);
 				d.md5Entry = findInMD5Table(md5str);
 
 				dr.md5 = d.md5;
-				memcpy(dr.md5sum, d.md5sum, 16);
 
 				if (d.md5Entry) {
 					// Exact match found
@@ -1117,7 +1109,6 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 		// the gfp record. We then try to decide for each whether it could be
 		// appropriate or not.
 		dr.md5 = d.md5;
-		memcpy(dr.md5sum, d.md5sum, 16);
 		for (g = gameVariantsTable; g->gameid; ++g) {
 			// Skip over entries with a different gameid.
 			if (g->gameid[0] == 0 || scumm_stricmp(gfp->gameid, g->gameid))

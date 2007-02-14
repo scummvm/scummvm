@@ -116,7 +116,6 @@ struct DetectorResult {
 	GameSettings game;
 	Common::Language language;
 	Common::String md5;
-	uint8 md5sum[16];
 	const char *extra;
 };
 

@@ -119,8 +119,15 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	}
 	_res = new ResourceManager(this);
 
-	// Copy MD5 checksum
-	memcpy(_gameMD5, dr.md5sum, 16);
+	// Convert MD5 checksum back into a digest
+	for (int i = 0; i < 16; ++i) {
+		char tmpStr[3] = "00";
+		uint tmpVal;
+		tmpStr[0] = dr.md5[2*i];
+		tmpStr[1] = dr.md5[2*i+1];
+		sscanf(tmpStr, "%x", &tmpVal);
+		_gameMD5[i] = (byte)tmpVal;
+	}
 	
 	_fileHandle = 0;
 	

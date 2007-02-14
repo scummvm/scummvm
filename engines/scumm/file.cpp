@@ -1383,14 +1383,10 @@ bool ScummNESFile::generateIndex() {
 }
 
 bool ScummNESFile::open(const Common::String &filename, AccessMode mode) {
-	uint8 md5sum[16];
 
 	if (_ROMset == kROMsetNum) {
-		if (Common::md5_file(filename.c_str(), md5sum)) {
-			char md5str[32+1];
-			for (int j = 0; j < 16; j++) {
-				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
-			}
+		char md5str[32+1];
+		if (Common::md5_file_string(filename.c_str(), md5str)) {
 
 			if (!strcmp(md5str, "3905799e081b80a61d4460b7b733c206")) {
 				_ROMset = kROMsetUSA;

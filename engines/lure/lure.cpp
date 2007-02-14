@@ -128,13 +128,9 @@ GameList Engine_LURE_detectGames(const FSList &fslist) {
 	if (file == fslist.end())
 		return detectedGames;
 
-	uint8 md5sum[16];
 	char md5str[32 + 1];
 
-	if (Common::md5_file(*file, md5sum, kMD5FileSizeLimit)) {
-		for (int i = 0; i < 16; i++) {
-			sprintf(md5str + i * 2, "%02x", (int)md5sum[i]);
-		}
+	if (Common::md5_file_string(*file, md5str, kMD5FileSizeLimit)) {
 		for (g = lure_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
 				GameDescriptor dg(g->gameid, g->description, g->language);
@@ -224,7 +220,6 @@ void LureEngine::detectGame() {
 
 	// Do an md5 check 
 
-	uint8 md5sum[16];
 	char md5str[32 + 1];
 	const GameSettings *g;
 	bool found = false;
@@ -235,11 +230,7 @@ void LureEngine::detectGame() {
 		if (!Common::File::exists(g->checkFile))
 			continue;
 
-		if (Common::md5_file(g->checkFile, md5sum, kMD5FileSizeLimit)) {
-			for (int j = 0; j < 16; j++) {
-				sprintf(md5str + j * 2, "%02x", (int)md5sum[j]);
-			}
-		} else
+		if (!Common::md5_file_string(g->checkFile, md5str, kMD5FileSizeLimit))
 			continue;
 
 		if (strcmp(g->md5sum, (char *)md5str) == 0) {
