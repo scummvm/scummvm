@@ -864,15 +864,15 @@ int AGOSEngine::go() {
 		int i;
 
 		while(1) {
-			for (i = 1; i < 4; i++) {
-				setWindowImageEx(3, 9902 + i);
+			for (i = 0; i < 4; i++) {
+				setWindowImage(3, 9902 + i);
 				debug(0, "Displaying image %d", 9902 + i);
 				delay(1000);
 
 			}
 
 			for (i = 4; i < 16; i++) {
-				setWindowImageEx(4, 9902 + i);
+				setWindowImage(4, 9902 + i);
 				debug(0, "Displaying image %d", 9902 + i);
 				delay(1000);
 			}
