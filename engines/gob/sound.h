@@ -51,6 +51,7 @@ public:
 	Snd(GobEngine *vm);
 	void speakerOn(int16 frequency, int32 length);
 	void speakerOff(void);
+	void speakerOnUpdate(uint32 milis);
 	SoundDesc *loadSoundData(const char *path);
 	void stopSound(int16 fadeLength);
 	void playSample(SoundDesc *sndDesc, int16 repCount, int16 frequency, int16 fadeLength = 0);
@@ -79,6 +80,7 @@ protected:
 		uint32 _periodLength;
 		uint32 _periodSamples;
 		uint32 _remainingSamples;
+		uint32 _mixedSamples;
 		int16 _sampleValue;
 
 	public:
@@ -86,7 +88,8 @@ protected:
 		~SquareWaveStream() {}
 
 		void playNote(int freq, int32 ms, uint rate);
-		void stop(void) { _remainingSamples = 0; }
+		void update(uint32 milis);
+		void stop(uint32 milis);
 
 		int readBuffer(int16 *buffer, const int numSamples);
 
@@ -98,6 +101,8 @@ protected:
 
 	SquareWaveStream _speakerStream;
 	Audio::SoundHandle _speakerHandle;
+	uint32 _speakerStartTimeKey;
+
 	Audio::SoundHandle *_activeHandle;
 	Audio::SoundHandle _compositionHandle;
 	

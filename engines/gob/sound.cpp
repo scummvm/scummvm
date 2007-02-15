@@ -36,6 +36,7 @@ Snd::SquareWaveStream::SquareWaveStream() {
 	_periodSamples = 0;
 	_remainingSamples = 0;
 	_sampleValue = 0;
+	_mixedSamples = 0;
 }
 
 void Snd::SquareWaveStream::playNote(int freq, int32 ms, uint rate) {
@@ -50,6 +51,29 @@ void Snd::SquareWaveStream::playNote(int freq, int32 ms, uint rate) {
 		_remainingSamples = (_rate * ms) / 1000;
 		_beepForever = false;
 	}
+	_mixedSamples = 0;
+}
+
+void Snd::SquareWaveStream::stop(uint32 milis) {
+	if (!_beepForever)
+		return;
+
+	if (milis)
+		update(milis);
+	else
+		_remainingSamples = 0;
+}
+
+void Snd::SquareWaveStream::update(uint32 milis) {
+	uint32 neededSamples;
+
+	if (!_beepForever || !_remainingSamples)
+		return;
+
+	neededSamples = (_rate * milis) / 1000;
+	_remainingSamples =
+		neededSamples > _mixedSamples ? neededSamples - _mixedSamples : 0;
+	_beepForever = false;
 }
 
 int Snd::SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -65,6 +89,7 @@ int Snd::SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
 		}
 		if (!_beepForever)
 			_remainingSamples--;
+		_mixedSamples++;
 	}
 
 	return numSamples;
@@ -107,10 +132,15 @@ void Snd::setBlasterPort(int16 port) {return;}
 
 void Snd::speakerOn(int16 frequency, int32 length) {
 	_speakerStream.playNote(frequency, length, _vm->_mixer->getOutputRate());
+	_speakerStartTimeKey = _vm->_util->getTimeKey();
 }
 
 void Snd::speakerOff(void) {
-	_speakerStream.stop();
+	_speakerStream.stop(_vm->_util->getTimeKey() - _speakerStartTimeKey);
+}
+
+void Snd::speakerOnUpdate(uint32 milis) {
+	_speakerStream.update(milis);
 }
 
 void Snd::stopSound(int16 fadeLength)
