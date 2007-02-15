@@ -1221,6 +1221,7 @@ void SmushPlayer::seekSan(const char *file, int32 pos, int32 contFrame) {
 	_seekFile = file ? file : "";
 	_seekPos = pos;
 	_seekFrame = contFrame;
+	_pauseTime = 0;
 }
 
 void SmushPlayer::tryCmpFile(const char *filename) {
