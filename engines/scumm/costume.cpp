@@ -655,6 +655,11 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 			x = -x;
 		}
 
+		left = MIN(left, _actorX + x);
+		right = MAX(right, _actorX + x + 8);
+		top = MIN(top, _actorY + y);
+		bottom = MAX(bottom, _actorY + y + 8);
+
 		if ((_actorX + x < 0) || (_actorX + x + 8 >= _out.w))
 			continue;
 		if ((_actorY + y < 0) || (_actorY + y + 8 >= _out.h))
@@ -681,10 +686,6 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 					*((byte *)_out.pixels + my * _out.pitch + mx) = palette[c];
 			}
 		}
-		left = MIN(left, _actorX + x);
-		right = MAX(right, _actorX + x + 8);
-		top = MIN(top, _actorY + y);
-		bottom = MAX(bottom, _actorY + y + 8);
 	}
 
 	_draw_top = top;
