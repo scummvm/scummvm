@@ -37,6 +37,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Simon:
    - Renamed Simon engine to AGOS.
 
+ Kyrandia:
+   - Added support for FM-Towns version (both English and Japanese).
+
  Nintendo DS Port:
    - TOOO: Mention DLDI support
 
