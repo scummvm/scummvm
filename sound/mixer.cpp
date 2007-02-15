@@ -246,7 +246,7 @@ void Mixer::mix(int16 *buf, uint len) {
 	//  zero the buf
 	memset(buf, 0, 2 * len * sizeof(int16));
 
-	if (_premixChannel)
+	if (_premixChannel && !_premixChannel->isPaused())
 		_premixChannel->mix(buf, len);
 
 	// now mix all channels
@@ -270,13 +270,16 @@ void Mixer::mixCallback(void *s, byte *samples, int len) {
 
 void Mixer::stopAll(bool force) {
 	Common::StackLock lock(_mutex);
-	for (int i = 0; i != NUM_CHANNELS; i++)
+	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] != 0) {
 			if (force || !_channels[i]->isPermanent()) {
 				delete _channels[i];
 				_channels[i] = 0;
 			}
 		}
+	}
+	
+	// Note: the _premixChannel is *not* affected by stopAll!
 }
 
 void Mixer::stopID(int id) {
@@ -338,6 +341,10 @@ void Mixer::pauseAll(bool paused) {
 			_channels[i]->pause(paused);
 		}
 	}
+
+	// Unlike stopAll, we also pause the premix channel, if present.
+	if (_premixChannel)
+		_premixChannel->pause(paused);
 }
 
 void Mixer::pauseID(int id, bool paused) {
