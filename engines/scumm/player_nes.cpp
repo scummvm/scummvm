@@ -75,7 +75,7 @@ struct tAPU {
 	int	SampleRate;
 } APU;
 
-const byte LengthCounts[32] = {
+static const byte LengthCounts[32] = {
 	0x0A,0xFE,
 	0x14,0x02,
 	0x28,0x04,
@@ -108,7 +108,7 @@ static struct {
 	int32 Pos;
 } Square0, Square1;
 
-const int8 Duties[4][8] = {
+static const int8 Duties[4][8] = {
 	{-4,+4,-4,-4,-4,-4,-4,-4},
 	{-4,+4,+4,-4,-4,-4,-4,-4},
 	{-4,+4,+4,+4,+4,-4,-4,-4},
@@ -320,7 +320,7 @@ static struct {
 	int32 Pos;
 } Triangle;
 
-const int8 TriDuty[32] = {
+static const int8 TriDuty[32] = {
 	-8,-7,-6,-5,-4,-3,-2,-1,
 	+0,+1,+2,+3,+4,+5,+6,+7,
 	+7,+6,+5,+4,+3,+2,+1,+0,
