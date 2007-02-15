@@ -1917,7 +1917,7 @@ void ScummEngine::scummLoop_updateScummVars() {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 		VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
 	} else if (_game.version <= 2) {
-		VAR(VAR_CAMERA_POS_X) = camera._cur.x / V12_X_MULTIPLIER;
+		VAR(VAR_CAMERA_POS_X) = camera._cur.x >> V12_X_SHIFT;
 	} else {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 	}
@@ -1937,8 +1937,8 @@ void ScummEngine::scummLoop_updateScummVars() {
 		// We use shifts below instead of dividing by V12_X_MULTIPLIER resp.
 		// V12_Y_MULTIPLIER to handle negative coordinates correctly.
 		// This fixes e.g. bugs #1328131 and #1537595.
-		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x >> 3;	// V12_X_MULTIPLIER
-		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y >> 1;	// V12_X_MULTIPLIER
+		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x >> V12_X_SHIFT;
+		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y >> V12_Y_SHIFT;
 
 		// Adjust mouse coordinates as narrow rooms in NES are centered
 		if (_game.platform == Common::kPlatformNES && _NESStartStrip > 0) {

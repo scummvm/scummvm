@@ -2368,27 +2368,27 @@ void Actor::saveLoadWithSerializer(Serializer *ser) {
 	ser->saveLoadEntries(this, actorEntries);
 	
 	if (ser->isLoading() && _vm->_game.version <= 2 && ser->getVersion() < VER(70)) {
-		_pos.x /= V12_X_MULTIPLIER;
-		_pos.y /= V12_Y_MULTIPLIER;
+		_pos.x >>= V12_X_SHIFT;
+		_pos.y >>= V12_Y_SHIFT;
 
-		_speedx /= V12_X_MULTIPLIER;
-		_speedy /= V12_Y_MULTIPLIER;
-		_elevation /= V12_Y_MULTIPLIER;
+		_speedx >>= V12_X_SHIFT;
+		_speedy >>= V12_Y_SHIFT;
+		_elevation >>= V12_Y_SHIFT;
 
 		if (_walkdata.dest.x != -1) {
-			_walkdata.dest.x /= V12_X_MULTIPLIER;
-			_walkdata.dest.y /= V12_Y_MULTIPLIER;
+			_walkdata.dest.x >>= V12_X_SHIFT;
+			_walkdata.dest.y >>= V12_Y_SHIFT;
 		}
 
-		_walkdata.cur.x /= V12_X_MULTIPLIER;
-		_walkdata.cur.y /= V12_Y_MULTIPLIER;
+		_walkdata.cur.x >>= V12_X_SHIFT;
+		_walkdata.cur.y >>= V12_Y_SHIFT;
 
-		_walkdata.next.x /= V12_X_MULTIPLIER;
-		_walkdata.next.y /= V12_Y_MULTIPLIER;
+		_walkdata.next.x >>= V12_X_SHIFT;
+		_walkdata.next.y >>= V12_Y_SHIFT;
 
 		if (_walkdata.point3.x != 32000) {
-			_walkdata.point3.x /= V12_X_MULTIPLIER;
-			_walkdata.point3.y /= V12_Y_MULTIPLIER;
+			_walkdata.point3.x >>= V12_X_SHIFT;
+			_walkdata.point3.y >>= V12_Y_SHIFT;
 		}
 	}
 }
