@@ -302,10 +302,10 @@ int16 scriptFillBuffers(ArchivedFile *file) {
 //	printf("scriptFillBuffers()\n");
 	char v2[] = "\"\0";
 
-	for (uint16 _si = 0; _si < 15; _si++)
-		_tokens[_si][0] = '\0';
-
 	int16 _si = 0;
+	
+	for (; _si < 15; _si++)
+		_tokens[_si][0] = '\0';
 
 	char vCA[200];
 	char *vCE = NULL;
@@ -316,6 +316,7 @@ int16 scriptFillBuffers(ArchivedFile *file) {
 		Common::ltrim(vCE);
 	} while (strlen(vCE) == 0 || vCE[0] == '#');
 
+	_si = 0;
 	while (strlen(vCE) > 0 && _si < 20) {
 		vCE = parseNextToken(vCE, _tokens[_si], 40, " \t\n");
 		if (_tokens[_si][0] == '"' && _tokens[_si][strlen(_tokens[_si])-1] != '"') {
