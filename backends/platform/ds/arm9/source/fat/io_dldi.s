@@ -2,6 +2,7 @@
 	.align	4
 	.arm
 	.global _io_dldi
+	.global _dldi_driver_name
 @---------------------------------------------------------------------------------
 .equ FEATURE_MEDIUM_CANREAD,		0x00000001
 .equ FEATURE_MEDIUM_CANWRITE,		0x00000002
@@ -21,6 +22,7 @@
 @---------------------------------------------------------------------------------
 @ Text identifier - can be anything up to 47 chars + terminating null -- 16 bytes
 	.align	4
+_dldi_driver_name:
 	.asciz "Default (No interface)"
 
 @---------------------------------------------------------------------------------

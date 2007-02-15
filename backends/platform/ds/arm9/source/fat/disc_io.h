@@ -105,6 +105,7 @@ extern bool disc_IsInserted(void) ;
 
 extern void disc_setEnable(int en);
 extern FATDevice disc_getDeviceId();
+void disc_getDldiId(char* id);
 
 /*-----------------------------------------------------------------
 disc_ReadSectors

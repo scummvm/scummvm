@@ -44,6 +44,7 @@
 // - 100% scale
 
 #define USE_LIBCARTRESET
+//#define USE_BUILT_IN_DRIVER_SELECTION
 
 #include <nds.h>
 
@@ -1995,19 +1996,21 @@ bool getIndyFightState() {
 
 bool GBAMPAvail = false;
 
-void initGBAMP(int mode) {	
+bool initGBAMP(int mode) {	
 	if (FAT_InitFiles()) {
 		if (mode == 2)	{
 			disc_IsInserted();
 		}
 		GBAMPAvail = true;
-		consolePrintf("Found flash card reader!\n");
+//		consolePrintf("Found flash card reader!\n");
+		return true;
 	} else {
 		GBAMPAvail = false;
-		consolePrintf("Flash card reader not found!\n");
+//		consolePrintf("Flash card reader not found!\n");
+		return false;
 	}
 }
-	 
+
 bool isGBAMPAvailable() {
 	return GBAMPAvail;
 }
@@ -2038,45 +2041,51 @@ void debug_print_stub(char *string) {
 #endif
 
 #ifdef USE_LIBCARTRESET
+
+struct cardTranslate {
+	int cartResetId;
+	int svmId;
+	char dldiId[5];
+};
+
+#define NUM_CARD_READERS 7
+
+cardTranslate cardReaderTable[] = {
+	{DEVICE_TYPE_M3SD,		DEVICE_M3SD,	"M3SD"},
+	{DEVICE_TYPE_M3CF,		DEVICE_M3CF,	"M3CF"},
+	{DEVICE_TYPE_MPCF,		DEVICE_MPCF,	"MPCF"},
+	{DEVICE_TYPE_SCCF,		DEVICE_SCCF,	"SCCF"},
+	{DEVICE_TYPE_SCSD,		DEVICE_SCSD,	"SCSD"},
+	{DEVICE_TYPE_SCSD,		DEVICE_SCSD,	"SCLT"},
+	{DEVICE_TYPE_NMMC,		DEVICE_NMMC,	"NMMC"},
+};
+
 void reboot() {
 	int deviceType = -1;
 
-	switch (disc_getDeviceId()) {
-		case DEVICE_M3SD: {
-			deviceType = DEVICE_TYPE_M3SD;
-			break;
+	
+	if (disc_getDeviceId() == DEVICE_DLDI) {
+
+		char id[6];
+		disc_getDldiId(id);
+
+		consolePrintf("DLDI Device ID: %s\n", id);
+
+		for (int r = 0; r < NUM_CARD_READERS; r++) {
+			if (!stricmp(id, cardReaderTable[r].dldiId)) {
+				deviceType = cardReaderTable[r].cartResetId;
+			}
 		}
-		case DEVICE_MMCF: {
-			deviceType = -1;
-			break;
-		}
-		case DEVICE_M3CF: {
-			deviceType = DEVICE_TYPE_M3CF;
-			break;
-		}
-		case DEVICE_MPCF: {
-			deviceType = DEVICE_TYPE_MPCF;
-			break;
-		}
-		case DEVICE_SCCF: {
-			deviceType = DEVICE_TYPE_SCCF;
-			break;
-		}
-		case DEVICE_NJSD: {
-			deviceType = -1;
-			break;
-		}
-		case DEVICE_SCSD: {
-			deviceType = DEVICE_TYPE_SCSD;
-			break;
-		}
-		case DEVICE_NMMC: {
-			deviceType = DEVICE_TYPE_NMMC;
-			break;
+	} else {
+		for (int r = 0; r < NUM_CARD_READERS; r++) {
+			if (disc_getDeviceId() == cardReaderTable[r].svmId) {
+				deviceType = cardReaderTable[r].cartResetId;
+			}
 		}
 	}
 
-	consolePrintf("Device: %x\n", deviceType);
+
+	consolePrintf("Device number: %x\n", deviceType);
 
 	if (deviceType == -1) {
 		IPC->reset = true;				// Send message to ARM7 to turn power off
@@ -2202,34 +2211,35 @@ int main(void)
 	
 
 	
-	consolePrintf("---------------------------\n");
+	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
 	consolePrintf("Version 0.10.0SVN ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Supports: Lucasarts SCUMM\n");
-	consolePrintf("---------------------------\n");
+	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_B)
 	consolePrintf("build B\n");
 	consolePrintf("Supports: BASS, QUEEN\n");
-	consolePrintf("---------------------------\n");
+	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_C)
 	consolePrintf("build C\n");
-	consolePrintf("---------------------------\n");
 	consolePrintf("Supports: SIMON, KYRA, GOB\n");
+	consolePrintf("-------------------------------\n");
 #endif
-	consolePrintf("L/R + D-pad/pen: Scroll view\n");
-	consolePrintf("D-pad left:  Left mouse button\n");
+	consolePrintf("L/R + D-pad/pen:    Scroll view\n");
+	consolePrintf("D-pad left:   Left mouse button\n");
 	consolePrintf("D-pad right: Right mouse button\n");
-	consolePrintf("D-pad up:    Hover mouse\n");
-	consolePrintf("B button:    Skip cutscenes\n");
-	consolePrintf("Select:		DS Options menu\n");
-	consolePrintf("Start:       Game menu\n");
-	consolePrintf("Y (in game): Toggle console\n");
-	consolePrintf("X:           Toggle keyboard\n");
-	consolePrintf("A:			Swap screens\n");
-	consolePrintf("L+R (on start): Clear SRAM\n");
+	consolePrintf("D-pad up:           Hover mouse\n");
+	consolePrintf("B button:        Skip cutscenes\n");
+	consolePrintf("Select:		   DS Options menu\n");
+	consolePrintf("Start:   Game menu (some games)\n");
+	consolePrintf("Y (in game):     Toggle console\n");
+	consolePrintf("X:              Toggle keyboard\n");
+	consolePrintf("A:                 Swap screens\n");
+	consolePrintf("L+R (on start):      Clear SRAM\n");
+
 
 #if defined(DS_BUILD_A)
 	consolePrintf("For a complete key list see the\n");
@@ -2239,6 +2249,7 @@ int main(void)
 #endif
 
 	
+#ifdef USE_BUILT_IN_DRIVER_SELECTION
 	// Do M3 detection selectioon
 	int extraData = DSSaveFileManager::getExtraData();
 	bool present = DSSaveFileManager::isExtraDataPresent();
@@ -2275,6 +2286,11 @@ int main(void)
 
 	disc_setEnable(mode);
 	DSSaveFileManager::setExtraData(mode);
+#else
+	
+	int mode = 0;
+
+#endif
 
 
 /*
@@ -2306,6 +2322,14 @@ int main(void)
 	if (!node->getZip() || (!node->getZip()->isReady())) {
 		// If not found, init CF/SD driver
 		initGBAMP(mode);
+
+		if (!initGBAMP(mode)) {
+			consolePrintf("\nNo file system was found.\n");
+			consolePrintf("View the README_DLDI.TXT file\n");
+			consolePrintf("for more information.\n");
+
+			while (1);
+		}
 	}
 	delete node;
 

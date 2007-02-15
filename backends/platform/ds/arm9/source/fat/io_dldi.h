@@ -23,6 +23,8 @@
 
 extern IO_INTERFACE _io_dldi;
 
+extern u8 _dldi_driver_name;
+
 // export interface
 static inline LPIO_INTERFACE DLDI_GetInterface(void) {
 #ifdef NDS

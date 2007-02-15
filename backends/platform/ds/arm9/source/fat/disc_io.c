@@ -92,6 +92,8 @@ LPIO_INTERFACE active_interface = 0;
 */
 int discDetect = 0;
 
+int dldiFound = FALSE;
+
 #ifdef DISC_CACHE
 
 #include <string.h>
@@ -339,6 +341,15 @@ FATDevice disc_getDeviceId() {
 	return currentDevice;
 }
 
+void disc_getDldiId(char* id) {
+	char* driverId = (char *) &_io_dldi;
+	id[0] = driverId[0];
+	id[1] = driverId[1];
+	id[2] = driverId[2];
+	id[3] = driverId[3];
+	id[4] = '\0';
+}
+
 #ifdef NDS
 // Check the DS card slot for a valid memory card interface
 // If an interface is found, it is set as the default interace
@@ -354,6 +365,17 @@ bool disc_setDsSlotInterface (void)
 #endif
 
 	active_interface = DLDI_GetInterface();
+
+	if (stricmp(&_dldi_driver_name, "Default (No interface)")) {
+		char name[48];
+		memcpy(name, &_dldi_driver_name, 48);
+		name[47] = '\0';
+		consolePrintf("DLDI Device:\n'%s'\n", name);
+		dldiFound = TRUE;
+	} else {
+		consolePrintf("DLDI Driver not patched!\n");
+		dldiFound = FALSE;
+	}
 
 	if (active_interface->fn_StartUp()) {
 		consolePrintf("DLDI Driver Initialised OK!\n");
