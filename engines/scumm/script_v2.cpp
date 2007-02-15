@@ -861,16 +861,26 @@ void ScummEngine_v2::o2_verbOps() {
 		vs->curRect.left = x;
 		vs->curRect.top = y;
 
-		// FIXME: again, this map depends on the language of the game.
+		// FIXME: these keyboard map depends on the language of the game.
 		// E.g. a german keyboard has 'z' and 'y' swapped, while a french
 		// keyboard starts with "awert", etc.
-		const char keyboard[] = {
-				'q','w','e','r','t',
-				'a','s','d','f','g',
-				'z','x','c','v','b'
-			};
-		if (1 <= slot && slot <= ARRAYSIZE(keyboard))
-			vs->key = keyboard[slot - 1];
+		if (_game.platform == Common::kPlatformNES) {
+			static const char keyboard[] = {
+					'q','w','e','r',
+					'a','s','d','f',
+					'z','x','c','v'
+				};
+			if (1 <= slot && slot <= ARRAYSIZE(keyboard))
+				vs->key = keyboard[slot - 1];
+		} else {
+			static const char keyboard[] = {
+					'q','w','e','r','t',
+					'a','s','d','f','g',
+					'z','x','c','v','b'
+				};
+			if (1 <= slot && slot <= ARRAYSIZE(keyboard))
+				vs->key = keyboard[slot - 1];
+		}
 
 		// It follows the verb name
 		loadPtrToResource(rtVerb, slot, NULL);
