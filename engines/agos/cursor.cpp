@@ -487,7 +487,7 @@ void AGOSEngine::initMouse() {
 
 		uint8 color = 225;
 		if (getPlatform() == Common::kPlatformAmiga)
-			color = (getFeatures() & GF_32COLOR) ? 17 : 225;
+			color = (getFeatures() & GF_32COLOR) ? 17 : 241;
 
 		const uint16 *src = _common_cursors[0];
 		for (int i = 0; i < 16; i++) {
