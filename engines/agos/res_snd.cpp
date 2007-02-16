@@ -30,6 +30,7 @@
 #include "agos/agos.h"
 #include "agos/vga.h"
 
+#include "sound/audiocd.h"
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/mods/protracker.h"
@@ -117,14 +118,7 @@ void AGOSEngine::skipSpeech() {
 	}
 }
 
-void AGOSEngine::loadMusic(uint music) {
-	char buf[4];
-
-	if (getGameId() == GID_SIMON1ACORN) {
-		// TODO: Add support for music format used by Simon 1 Floppy
-	} else if (getPlatform() == Common::kPlatformAtariST) {
-		// TODO: Add support for music format used by Elvira 2
-	} else if (getPlatform() == Common::kPlatformAmiga) {
+void AGOSEngine::loadModule(uint music) {
 		_mixer->stopHandle(_modHandle);
 
 		char filename[15];
@@ -163,7 +157,12 @@ void AGOSEngine::loadMusic(uint music) {
 		}
 
 		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_modHandle, audioStream);
-	} else if (getGameType() == GType_SIMON2) {
+}
+
+void AGOSEngine::loadMusic(uint music) {
+	char buf[4];
+
+	if (getGameType() == GType_SIMON2) {
 		midi.stop();
 		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
 		_gameFile->read(buf, 4);
@@ -179,16 +178,24 @@ void AGOSEngine::loadMusic(uint music) {
 		_nextMusicToPlay = -1;
 	} else if (getGameType() == GType_SIMON1) {
 		midi.stop();
-		midi.setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
-		if (getFeatures() & GF_TALKIE) {
+		// Support for compressed music from the music enhancement project
+		AudioCD.stop();
+		AudioCD.play(music, -1, 0, 0);
+		if (AudioCD.isPlaying())
+			return;
+
+		if (getGameId() == GID_SIMON1ACORN) {
+			// TODO: Add support for music format used by Simon 1 Floppy
+		} else if (getPlatform() == Common::kPlatformAmiga) {
+			loadModule(music);
+		} else if (getFeatures() & GF_TALKIE) {
 			// FIXME: The very last music resource, a cymbal crash for when the
 			// two demons crash into each other, should NOT be looped like the
 			// other music tracks. In simon1dos/talkie the GMF resource includes
 			// a loop override that acomplishes this, but there seems to be nothing
 			// for this in the SMF resources.
-			if (music == 35)
-				midi.setLoop(false);
+			midi.setLoop(music != 35);; // Must do this BEFORE loading music. (GMF may have its own override.)
 
 			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
 			_gameFile->read(buf, 4);
@@ -200,6 +207,7 @@ void AGOSEngine::loadMusic(uint music) {
 				midi.loadMultipleSMF(_gameFile);
 			}
 
+			midi.startTrack(0);
 		} else {
 			char filename[15];
 			File f;
@@ -208,26 +216,33 @@ void AGOSEngine::loadMusic(uint music) {
 			if (f.isOpen() == false)
 				error("loadMusic: Can't load music from '%s'", filename);
 
+			midi.setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
 			if (getFeatures() & GF_DEMO)
 				midi.loadS1D(&f);
 			else
 				midi.loadSMF(&f, music);
+
+			midi.startTrack(0);
 		}
-
-		midi.startTrack(0);
 	} else {
-		midi.stop();
-		midi.setLoop(true); // Must do this BEFORE loading music.
+		if (getPlatform() == Common::kPlatformAmiga) {
+			loadModule(music);
+		} else if (getPlatform() == Common::kPlatformAtariST) {
+			// TODO: Add support for music formats used
+		} else {
+			midi.stop();
+			midi.setLoop(true); // Must do this BEFORE loading music.
 
-		char filename[15];
-		File f;
-		sprintf(filename, "MOD%d.MUS", music);
-		f.open(filename);
-		if (f.isOpen() == false)
-			error("loadMusic: Can't load music from '%s'", filename);
+			char filename[15];
+			File f;
+			sprintf(filename, "MOD%d.MUS", music);
+			f.open(filename);
+			if (f.isOpen() == false)
+				error("loadMusic: Can't load music from '%s'", filename);
 
-		midi.loadS1D(&f);
-		midi.startTrack(0);
+			midi.loadS1D(&f);
+			midi.startTrack(0);
+		}
 	}
 }
 

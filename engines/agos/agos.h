@@ -1397,6 +1397,8 @@ protected:
 	void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr);
 
 	void loadMusic(uint music);
+	void loadModule(uint music);
+
 	void checkTimerCallback();
 	void delay(uint delay);
 	void pause();
