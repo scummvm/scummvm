@@ -1951,6 +1951,8 @@ HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 		return fireAnimHandler;
 	case 0x81B3:
 		return prisonerAnimHandler;
+	case 0x81F3:
+		return catrionaAnimHandler;
 	case 0x8241:
 		return headAnimHandler;
 	case 0x882A:
@@ -2707,6 +2709,18 @@ void HotspotTickHandlers::prisonerAnimHandler(Hotspot &h) {
 	}
 }
 
+void HotspotTickHandlers::catrionaAnimHandler(Hotspot &h) {
+	h.handleTalkDialog();
+	if (h.frameCtr() > 0)
+	{
+		h.decrFrameCtr();
+	}
+	else
+	{
+		h.executeScript();
+		h.setFrameCtr(h.actionCtr());
+	}
+}
 
 // Special variables used across multiple calls to talkAnimHandler
 static TalkEntryData *_talkResponse;
