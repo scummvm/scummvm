@@ -3020,7 +3020,7 @@ void HotspotTickHandlers::npcRoomChange(Hotspot &h) {
 	// Get room exit coordinates
 	RoomExitCoordinateData &exitData = res.coordinateList().getEntry(
 		h.roomNumber()).getData(h.currentActions().top().roomNumber());
-	
+
 	if (h.hotspotId() != RATPOUCH_ID) {
 		// Count up the number of characters in the room
 		HotspotList &list = res.activeHotspots();
@@ -3319,8 +3319,8 @@ bool PathFinder::process() {
 	}
 	
 final_step:
-	if (_xPos < 0) add(LEFT, -_xPos);
-	else if (_xPos > 0) add(RIGHT, _xPos);
+	if (_xPos < 0) add(RIGHT, -_xPos);
+	else if (_xPos > 0) add(LEFT, _xPos);
 
 	return true;
 }
