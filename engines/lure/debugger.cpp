@@ -275,7 +275,7 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 	Hotspot *h;
 
 	if (argc < 2) {
-		DebugPrintf("hotspot <hotspot_id> ['paths' | 'schedule' | 'actions']\n");
+		DebugPrintf("hotspot <hotspot_id> ['paths' | 'schedule' | 'actions' | 'activate' | 'deactivate']\n");
 		return true;
 	} 
 	hs = res.getHotspot(strToInt(argv[1]));
@@ -323,6 +323,18 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 					DebugPrintf("%s - Script %xh\n", actionStr, offset);
 				}
 			}
+	} else if (strcmp(argv[2], "activate") == 0) {
+		// Activate the hotspot
+		res.activateHotspot(hs->hotspotId);
+		hs->flags &= !HOTSPOTFLAG_20;
+		DebugPrintf("Activated\n");
+
+	} else if (strcmp(argv[2], "deactivate") == 0) {
+		// Activate the hotspot
+		res.deactivateHotspot(hs->hotspotId);
+		hs->flags |= HOTSPOTFLAG_20;
+		DebugPrintf("Deactivated\n");
+
 	} else {
 		if (!h) 
 			DebugPrintf("The specified hotspot is not currently active\n");
