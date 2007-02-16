@@ -163,17 +163,13 @@ void MidiDriver_CoreMIDI::sysEx(const byte *msg, uint16 length) {
 
 	packet->timeStamp = 0;
 
-	// Add SysEx frame if missing
-	if (*msg != 0xF0) {
-		packet->length = length + 2;
-		packet->data[0] = 0xF0;
-		memcpy(packet->data + 1, msg, length);
-		packet->data[length + 1] = 0xF7;
-	} else {
-		packet->length = length;
-		memcpy(packet->data, msg, length);
-	}
+	// Add SysEx frame
+	packet->length = length + 2;
+	packet->data[0] = 0xF0;
+	memcpy(packet->data + 1, msg, length);
+	packet->data[length + 1] = 0xF7;
 
+	// Send it
 	MIDISend(mOutPort, mDest, packetList);
 }
 

@@ -124,6 +124,9 @@ void MidiParser_SMF::parseNextEvent(EventInfo &info) {
 			info.ext.data = _position._play_pos;
 			_position._play_pos += info.length;
 			break;
+		
+		default:
+			warning("MidiParser_XMIDI::parseNextEvent: Unsupported event code %x", info.event);
 		}
 	}
 }

@@ -34,7 +34,7 @@
 class MidiDriver_WIN : public MidiDriver_MPU401 {
 private:
 	MIDIHDR _streamHeader;
-	byte _streamBuffer [258];	// SysEx blocks should be no larger than 256 bytes
+	byte _streamBuffer[256];	// SysEx blocks should be no larger than 256 bytes
 	HANDLE _streamEvent;
 	HMIDIOUT _mo;
 	bool _isOpen;
@@ -42,19 +42,19 @@ private:
 	void check_error(MMRESULT result);
 
 public:
-	MidiDriver_WIN() : _isOpen (false) { }
+	MidiDriver_WIN() : _isOpen(false) { }
 	int open();
 	void close();
 	void send(uint32 b);
-	void sysEx (const byte *msg, uint16 length);
+	void sysEx(const byte *msg, uint16 length);
 };
 
 int MidiDriver_WIN::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
-	_streamEvent = CreateEvent (NULL, true, true, NULL);
-	MMRESULT res = midiOutOpen((HMIDIOUT *)&_mo, MIDI_MAPPER, (unsigned long) _streamEvent, 0, CALLBACK_EVENT);
+	_streamEvent = CreateEvent(NULL, true, true, NULL);
+	MMRESULT res = midiOutOpen((HMIDIOUT *)&_mo, MIDI_MAPPER, (unsigned long)_streamEvent, 0, CALLBACK_EVENT);
 	if (res != MMSYSERR_NOERROR) {
 		check_error(res);
 		CloseHandle(_streamEvent);
@@ -70,9 +70,9 @@ void MidiDriver_WIN::close() {
 		return;
 	_isOpen = false;
 	MidiDriver_MPU401::close();
-	midiOutUnprepareHeader (_mo, &_streamHeader, sizeof (_streamHeader));
+	midiOutUnprepareHeader(_mo, &_streamHeader, sizeof(_streamHeader));
 	check_error(midiOutClose(_mo));
-	CloseHandle (_streamEvent);
+	CloseHandle(_streamEvent);
 }
 
 void MidiDriver_WIN::send(uint32 b) {
@@ -98,25 +98,29 @@ void MidiDriver_WIN::sysEx(const byte *msg, uint16 length) {
 		return;
 	}
 
-	midiOutUnprepareHeader (_mo, &_streamHeader, sizeof (_streamHeader));
-	_streamBuffer [0] = 0xF0;
-	memcpy(&_streamBuffer[1], msg, length);
-	_streamBuffer [length+1] = 0xF7;
+	assert(length+2 <= 256);
 
-	_streamHeader.lpData = (char *) _streamBuffer;
+	midiOutUnprepareHeader(_mo, &_streamHeader, sizeof(_streamHeader));
+
+	// Add SysEx frame
+	_streamBuffer[0] = 0xF0;
+	memcpy(&_streamBuffer[1], msg, length);
+	_streamBuffer[length+1] = 0xF7;
+
+	_streamHeader.lpData = (char *)_streamBuffer;
 	_streamHeader.dwBufferLength = length + 2;
 	_streamHeader.dwBytesRecorded = length + 2;
 	_streamHeader.dwUser = 0;
 	_streamHeader.dwFlags = 0;
 
-	MMRESULT result = midiOutPrepareHeader (_mo, &_streamHeader, sizeof (_streamHeader));
+	MMRESULT result = midiOutPrepareHeader(_mo, &_streamHeader, sizeof(_streamHeader));
 	if (result != MMSYSERR_NOERROR) {
 		check_error (result);
 		return;
 	}
 
 	ResetEvent(_streamEvent);
-	result = midiOutLongMsg (_mo, &_streamHeader, sizeof (_streamHeader));
+	result = midiOutLongMsg(_mo, &_streamHeader, sizeof(_streamHeader));
 	if (result != MMSYSERR_NOERROR) {
 		check_error(result);
 		SetEvent(_streamEvent);

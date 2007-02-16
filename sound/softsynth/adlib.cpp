@@ -565,7 +565,7 @@ public:
 	int getRate() const { return _mixer->getOutputRate(); }
 
 private:
-	bool _game_SmallHeader;
+	bool _scummSmallHeader;	// FIXME: This flag controls a special mode for SCUMM V3 games
 
 	FM_OPL *_opl;
 	byte *_adlib_reg_cache;
@@ -805,7 +805,7 @@ MidiDriver_ADLIB::MidiDriver_ADLIB(Audio::Mixer *mixer)
 	: MidiDriver_Emulated(mixer) {
 	uint i;
 
-	_game_SmallHeader = false;
+	_scummSmallHeader = false;
 
 	_adlib_reg_cache = 0;
 
@@ -922,8 +922,8 @@ void MidiDriver_ADLIB::send(byte chan, uint32 b) {
 uint32 MidiDriver_ADLIB::property(int prop, uint32 param) {
 	switch (prop) {
 		case PROP_OLD_ADLIB: // Older games used a different operator volume algorithm
-			_game_SmallHeader = (param > 0);
-			if (_game_SmallHeader) {
+			_scummSmallHeader = (param > 0);
+			if (_scummSmallHeader) {
 				_timer_p = 473;
 				_timer_q = 1000;
 			} else {
@@ -1041,7 +1041,7 @@ void MidiDriver_ADLIB::mc_inc_stuff(AdlibVoice *voice, Struct10 *s10, Struct11 *
 		switch (s11->param) {
 		case 0:
 			voice->_vol_2 = s10->start_value + s11->modify_val;
-			if (!_game_SmallHeader) {
+			if (!_scummSmallHeader) {
 				adlib_set_param(voice->_channel, 0,
 												volume_table[lookup_table[voice->_vol_2]
 																		 [part->_vol_eff >> 2]]);
@@ -1051,7 +1051,7 @@ void MidiDriver_ADLIB::mc_inc_stuff(AdlibVoice *voice, Struct10 *s10, Struct11 *
 			break;
 		case 13:
 			voice->_vol_1 = s10->start_value + s11->modify_val;
-			if (voice->_twochan && !_game_SmallHeader) {
+			if (voice->_twochan && !_scummSmallHeader) {
 				adlib_set_param(voice->_channel, 13,
 												volume_table[lookup_table[voice->_vol_1]
 												[part->_vol_eff >> 2]]);
@@ -1253,10 +1253,6 @@ void MidiDriver_ADLIB::adlib_playnote(int channel, int note) {
 	adlib_write(channel + 0xB0, oct | 0x20);
 }
 
-// TODO: Replace this with RandomSource? But if so, please note that this
-// function will be called with negative parameters - getRandomNumber(-1) will
-// crash ScummVM, random_nr(-1) won't.
-
 int MidiDriver_ADLIB::random_nr(int a) {
 	static byte _rand_seed = 1;
 	if (_rand_seed & 1) {
@@ -1310,8 +1306,8 @@ AdlibVoice *MidiDriver_ADLIB::allocate_voice(byte pri) {
 		}
 	}
 
-	/* V3 games don't have note priorities, first comes wins. */
-	if (_game_SmallHeader)
+	/* SCUMM V3 games don't have note priorities, first comes wins. */
+	if (_scummSmallHeader)
 		return NULL;
 
 	if (best)
@@ -1341,7 +1337,7 @@ void MidiDriver_ADLIB::mc_key_on(AdlibVoice *voice, AdlibInstrument *instr, byte
 	if (voice->_duration != 0)
 		voice->_duration *= 63;
 
-	if (!_game_SmallHeader)
+	if (!_scummSmallHeader)
 		vol_1 = (instr->mod_scalingOutputLevel & 0x3F) + lookup_table[velocity >> 1][instr->mod_waveformSelect >> 2];
 	else
 		vol_1 = 0x3f - (instr->mod_scalingOutputLevel & 0x3F);
@@ -1349,7 +1345,7 @@ void MidiDriver_ADLIB::mc_key_on(AdlibVoice *voice, AdlibInstrument *instr, byte
 		vol_1 = 0x3F;
 	voice->_vol_1 = vol_1;
 
-	if (!_game_SmallHeader)
+	if (!_scummSmallHeader)
 		vol_2 = (instr->car_scalingOutputLevel & 0x3F) + lookup_table[velocity >> 1][instr->car_waveformSelect >> 2];
 	else
 		vol_2 = 0x3f - (instr->car_scalingOutputLevel & 0x3F);
@@ -1359,7 +1355,7 @@ void MidiDriver_ADLIB::mc_key_on(AdlibVoice *voice, AdlibInstrument *instr, byte
 
 	c = part->_vol_eff >> 2;
 
-	if (!_game_SmallHeader) {
+	if (!_scummSmallHeader) {
 		vol_2 = volume_table[lookup_table[vol_2][c]];
 		if (voice->_twochan)
 			vol_1 = volume_table[lookup_table[vol_1][c]];
@@ -1453,7 +1449,7 @@ void MidiDriver_ADLIB::mc_init_stuff(AdlibVoice *voice, Struct10 * s10,
 
 void MidiDriver_ADLIB::struct10_init(Struct10 *s10, InstrumentExtra *ie) {
 	s10->active = 1;
-	if (!_game_SmallHeader) {
+	if (!_scummSmallHeader) {
 		s10->cur_val = 0;
 	} else {
 		s10->cur_val = s10->start_value;

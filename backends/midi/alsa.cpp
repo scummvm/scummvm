@@ -196,15 +196,16 @@ void MidiDriver_ALSA::send(uint32 b) {
 }
 
 void MidiDriver_ALSA::sysEx(const byte *msg, uint16 length) {
-	unsigned char buf[1024];
+	unsigned char buf[256];
 
-	if (length > 254) {
-		warning("Cannot send SysEx block - data too large");
-		return;
-	}
+	assert(length + 2 <= 256);
+
+	// Add SysEx frame
 	buf[0] = 0xF0;
 	memcpy(buf + 1, msg, length);
 	buf[length + 1] = 0xF7;
+
+	// Send it
 	snd_seq_ev_set_sysex(&ev, length + 2, &buf);
 	send_event(1);
 }

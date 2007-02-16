@@ -1484,7 +1484,7 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 
 	// General MIDI System On message
 	// Resets all GM devices to default settings
-	memcpy(&buffer[0], "\xF0\x7E\x7F\x09\x01\xF7", 6);
+	memcpy(&buffer[0], "\x7E\x7F\x09\x01", 4);
 	midi->sysEx(buffer, 6);
 	debug(2, "GM SysEx: GM System On");
 	_system->delayMillis(200);
@@ -1499,11 +1499,11 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		// require individual SysEx commands with unique IDs.
 
 		// Roland GS SysEx ID
-		memcpy(&buffer[0], "\xF0\x41\x10\x42\x12", 5);
+		memcpy(&buffer[0], "\x41\x10\x42\x12", 4);
 
 		// GS Reset
-		memcpy(&buffer[5], "\x40\x00\x7F\x00\x41\xF7", 6);
-		midi->sysEx(buffer, 11);
+		memcpy(&buffer[4], "\x40\x00\x7F\x00\x41", 5);
+		midi->sysEx(buffer, 9);
 		debug(2, "GS SysEx: GS Reset");
 		_system->delayMillis(200);
 
@@ -1532,8 +1532,8 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		}
 
 		// Set Master Chorus to 0. The MT-32 has no chorus capability.
-		memcpy(&buffer[5], "\x40\x01\x3A\x00\x05\xF7", 6);
-		midi->sysEx(buffer, 11);
+		memcpy(&buffer[4], "\x40\x01\x3A\x00\x05", 5);
+		midi->sysEx(buffer, 9);
 		debug(2, "GS SysEx: Master Chorus Level is 0");
 
 		// Set Channels 1-16 Reverb to 64, which is the
@@ -1545,48 +1545,17 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		// Set Channels 1-16 Pitch Bend Sensitivity to
 		// 12 semitones; then lock the RPN by setting null.
 		for (i = 0; i < 16; ++i) {
-			midi->send((  0    << 16) | (100 << 8) | (0xB0 | i));
-			midi->send((  0    << 16) | (101 << 8) | (0xB0 | i));
-			midi->send((  12   << 16) | (6   << 8) | (0xB0 | i));
-			midi->send((  0    << 16) | (38  << 8) | (0xB0 | i));
-			midi->send((  127  << 16) | (100 << 8) | (0xB0 | i));
-			midi->send((  127  << 16) | (101 << 8) | (0xB0 | i));
+			midi->setPitchBendRange(i, 12);
 		}
 		debug(2, "GM Controller 6 Change: Channels 1-16 Pitch Bend Sensitivity is 12 semitones");
 
 		// Set channels 1-16 Mod. LFO1 Pitch Depth to 4
-		memcpy(&buffer[5], "\x40\x20\x04\x04\x18\xF7", 6);
-		midi->sysEx(buffer, 11);
-		memcpy(&buffer[5], "\x40\x21\x04\x04\x17\xF7", 6);
-		midi->sysEx(buffer, 11);
-		memcpy(&buffer[5], "\x40\x22\x04\x04\x16\xF7", 6);
-		midi->sysEx(buffer, 11);
-		memcpy(&buffer[5], "\x40\x23\x04\x04\x15\xF7", 6);
-		midi->sysEx(buffer, 11);
-		memcpy(&buffer[5], "\x40\x24\x04\x04\x14\xF7", 6);
-		midi->sysEx(buffer, 11);
-		memcpy(&buffer[5], "\x40\x25\x04\x04\x13\xF7", 6);
-		midi->sysEx(buffer, 11);
-		memcpy(&buffer[5], "\x40\x26\x04\x04\x12\xF7", 6);
-		midi->sysEx(buffer, 11);
-		memcpy(&buffer[5], "\x40\x27\x04\x04\x11\xF7", 6);
-		midi->sysEx(buffer, 11);
-		memcpy(&buffer[5], "\x40\x28\x04\x04\x10\xF7", 6);
-		midi->sysEx(buffer, 11);
-		memcpy(&buffer[5], "\x40\x29\x04\x04\x0F\xF7", 6);
-		midi->sysEx(buffer, 11);
-		memcpy(&buffer[5], "\x40\x2A\x04\x04\x0E\xF7", 6);
-		midi->sysEx(buffer, 11);
-		memcpy(&buffer[5], "\x40\x2B\x04\x04\x0D\xF7", 6);
-		midi->sysEx(buffer, 11);
-		memcpy(&buffer[5], "\x40\x2C\x04\x04\x0C\xF7", 6);
-		midi->sysEx(buffer, 11);
-		memcpy(&buffer[5], "\x40\x2D\x04\x04\x0B\xF7", 6);
-		midi->sysEx(buffer, 11);
-		memcpy(&buffer[5], "\x40\x2E\x04\x04\x0A\xF7", 6);
-		midi->sysEx(buffer, 11);
-		memcpy(&buffer[5], "\x40\x2F\x04\x04\x09\xF7", 6);
-		midi->sysEx(buffer, 11);
+		memcpy(&buffer[4], "\x40\x20\x04\x04\x18", 5);
+		for (i = 0; i < 16; ++i) {
+			buffer[5] = 0x20 + i;
+			buffer[8] = 0x18 - i;
+			midi->sysEx(buffer, 9);
+		}
 		debug(2, "GS SysEx: Channels 1-16 Mod. LFO1 Pitch Depth Level is 4");
 
 		// Set Percussion Channel Expression to 80
@@ -1596,26 +1565,26 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		// Turn off Percussion Channel Rx. Expression so that
 		// Expression cannot be modified. I don't know why, but
 		// Roland does it this way.
-		memcpy(&buffer[5], "\x40\x10\x0E\x00\x22\xF7", 6);
-		midi->sysEx(buffer, 11);
+		memcpy(&buffer[4], "\x40\x10\x0E\x00\x22", 5);
+		midi->sysEx(buffer, 9);
 		debug(2, "GS SysEx: Percussion Channel Rx. Expression is OFF");
 
 		// Change Reverb Character to 0. I don't think this
 		// sounds most like MT-32, but apparently Roland does.
-		memcpy(&buffer[5], "\x40\x01\x31\x00\x0E\xF7", 6);
-		midi->sysEx(buffer, 11);
+		memcpy(&buffer[4], "\x40\x01\x31\x00\x0E", 5);
+		midi->sysEx(buffer, 9);
 		debug(2, "GS SysEx: Reverb Character is 0");
 
 		// Change Reverb Pre-LF to 4, which is similar to
 		// what MT-32 reverb does.
-		memcpy(&buffer[5], "\x40\x01\x32\x04\x09\xF7", 6);
-		midi->sysEx(buffer, 11);
+		memcpy(&buffer[4], "\x40\x01\x32\x04\x09", 5);
+		midi->sysEx(buffer, 9);
 		debug(2, "GS SysEx: Reverb Pre-LF is 4");
 
 		// Change Reverb Time to 106; the decay on Hall 2
 		// Reverb is too fast compared to the MT-32's
-		memcpy(&buffer[5], "\x40\x01\x34\x6A\x21\xF7", 6);
-		midi->sysEx(buffer, 11);
+		memcpy(&buffer[4], "\x40\x01\x34\x6A\x21", 5);
+		midi->sysEx(buffer, 9);
 		debug(2, "GS SysEx: Reverb Time is 106");
 	}
 }

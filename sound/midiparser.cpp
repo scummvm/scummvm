@@ -121,7 +121,7 @@ void MidiParser::hangingNote(byte channel, byte note, uint32 time_left, bool rec
 			best = ptr;
 			if (ptr->time_left) {
 				if (recycle)
-					_driver->send(0x80 | channel | note << 8);
+					_driver->send(0x80 | channel, note, 0);
 				--_hanging_notes_count;
 			}
 			break;
@@ -166,7 +166,7 @@ void MidiParser::onTimer() {
 		for (i = ARRAYSIZE(_hanging_notes); i; --i, ++ptr) {
 			if (ptr->time_left) {
 				if (ptr->time_left <= _timer_rate) {
-					_driver->send(0x80 | ptr->channel | ptr->note << 8);
+					_driver->send(0x80 | ptr->channel, ptr->note, 0);
 					ptr->time_left = 0;
 					--_hanging_notes_count;
 				} else {
@@ -193,7 +193,11 @@ void MidiParser::onTimer() {
 
 		if (info.event == 0xF0) {
 			// SysEx event
-			_driver->sysEx (info.ext.data, (uint16)info.length);
+			// Check for trailing 0xF7 -- if present, remove it.
+			if (info.ext.data[info.length-1] == 0xF7)
+				_driver->sysEx(info.ext.data, (uint16)info.length-1);
+			else
+				_driver->sysEx(info.ext.data, (uint16)info.length);
 		} else if (info.event == 0xFF) {
 			// META event
 			if (info.ext.type == 0x2F) {
@@ -223,7 +227,7 @@ void MidiParser::onTimer() {
 				else
 					activeNote(info.channel(), info.basic.param1, true);
 			}
-			_driver->send(info.event | info.basic.param1 << 8 | info.basic.param2 << 16);
+			_driver->send(info.event, info.basic.param1, info.basic.param2);
 		}
 
 
@@ -249,7 +253,7 @@ void MidiParser::allNotesOff() {
 	for (i = 0; i < 128; ++i) {
 		for (j = 0; j < 16; ++j) {
 			if (_active_notes[i] & (1 << j)) {
-				_driver->send(0x80 | j | i << 8);
+				_driver->send(0x80 | j, i, 0);
 			}
 		}
 	}
@@ -257,7 +261,7 @@ void MidiParser::allNotesOff() {
 	// Turn off all hanging notes
 	for (i = 0; i < ARRAYSIZE(_hanging_notes); i++) {
 		if (_hanging_notes[i].time_left) {
-			_driver->send(0x80 | _hanging_notes[i].channel | _hanging_notes[i].note << 8);
+			_driver->send(0x80 | _hanging_notes[i].channel, _hanging_notes[i].note, 0);
 			_hanging_notes[i].time_left = 0;
 		}
 	}
@@ -267,7 +271,7 @@ void MidiParser::allNotesOff() {
 	// support this...).
 
 	for (i = 0; i < 16; ++i) {
-		_driver->send(0x007BB0 | i); // All notes off
+		_driver->send(0xB0 | i, 0x7b, 0); // All notes off
 	}
 
 	memset(_active_notes, 0, sizeof(_active_notes));
@@ -323,7 +327,7 @@ void MidiParser::hangAllActiveNotes() {
 				for (j = 0; j < 16; ++j) {
 					if (temp_active[i] & (1 << j)) {
 						activeNote(j, i, false);
-						_driver->send(0x80 | j | i << 8);
+						_driver->send(0x80 | j, i, 0);
 					}
 				}
 			}
@@ -368,10 +372,13 @@ bool MidiParser::jumpToTick(uint32 tick, bool fireEvents) {
 						_driver->metaEvent(info.ext.type, info.ext.data, (uint16) info.length);
 				}
 			} else if (fireEvents) {
-				if (info.event == 0xF0)
-					_driver->sysEx(info.ext.data, (uint16) info.length);
-				else
-					_driver->send(info.event | info.basic.param1 << 8 | info.basic.param2 << 16);
+				if (info.event == 0xF0) {
+					if (info.ext.data[info.length-1] == 0xF7)
+						_driver->sysEx(info.ext.data, (uint16)info.length-1);
+					else
+						_driver->sysEx(info.ext.data, (uint16)info.length);
+				} else
+					_driver->send(info.event, info.basic.param1, info.basic.param2);
 			}
 
 			parseNextEvent(_next_event);
@@ -411,7 +418,7 @@ void MidiParser::unloadMusic() {
 
 		if (_driver) {
 			for (int i = 0; i < 16; ++i) {
-				_driver->send(0x4000E0 | i);
+				_driver->send(0xE0 | i, 0, 0x40);
 			}
 		}
 	}

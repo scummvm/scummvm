@@ -120,6 +120,9 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 				info.ext.data[2] = 0x20;
 			}
 			break;
+		
+		default:
+			warning("MidiParser_XMIDI::parseNextEvent: Unsupported event code %x", info.event);
 		}
 	}
 }

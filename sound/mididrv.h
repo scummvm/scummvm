@@ -165,8 +165,24 @@ public:
 	/** Close the midi driver. */
 	virtual void close() = 0;
 
-	/** Output a packed midi command to the midi stream. */
+	/**
+	 * Output a packed midi command to the midi stream.
+	 * The 'lowest' byte (i.e. b & 0xFF) is the status
+	 * code, then come (if used) the first and second
+	 * opcode.
+	 */
 	virtual void send(uint32 b) = 0;
+	
+	/**
+	 * Output a midi command to the midi stream. Convenience wrapper
+	 * around the usual 'packed' send method.
+	 *
+	 * Do NOT use this for sysEx transmission; instead, use the sysEx()
+	 * method below.
+	 */
+	void send(byte status, byte firstOp, byte secondOp) {
+		send(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
+	}
 
 	/** Get or set a property. */
 	virtual uint32 property(int prop, uint32 param) { return 0; }
@@ -175,18 +191,29 @@ public:
 	static const char *getErrorName(int error_code);
 
 	// HIGH-LEVEL SEMANTIC METHODS
-	virtual void setPitchBendRange(byte channel, uint range)
-	{
-		send((  0   << 16) | (101 << 8) | (0xB0 | channel));
-		send((  0   << 16) | (100 << 8) | (0xB0 | channel));
-		send((range << 16) | (  6 << 8) | (0xB0 | channel));
-		send((  0   << 16) | ( 38 << 8) | (0xB0 | channel));
-		send(( 127  << 16) | (101 << 8) | (0xB0 | channel));
-		send(( 127  << 16) | (100 << 8) | (0xB0 | channel));
+	virtual void setPitchBendRange(byte channel, uint range) {
+		send(0xB0 | channel, 101, 0);
+		send(0xB0 | channel, 100, 0);
+		send(0xB0 | channel,   6, range);
+		send(0xB0 | channel,  38, 0);
+		send(0xB0 | channel, 101, 127);
+		send(0xB0 | channel, 100, 127);
 	}
 
+	/**
+	 * Transmit a sysEx to the midi device.
+	 *
+	 * The given msg MUST NOT contain the usual SysEx frame, i.e. 
+	 * do NOT include the leading 0xF0 and the trailing 0xF7.
+	 *
+	 * Furthermore, the maximal supported length of a SysEx
+	 * is 254 bytes. Passing longer buffers can lead to 
+	 * undefined behavior (most likely, a crash).
+	 */
 	virtual void sysEx(const byte *msg, uint16 length) { }
+
 	virtual void sysEx_customInstrument(byte channel, uint32 type, const byte *instr) { }
+
 	virtual void metaEvent(byte type, byte *data, uint16 length) { }
 
 	// Timing functions - MidiDriver now operates timers

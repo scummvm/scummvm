@@ -178,22 +178,18 @@ void MidiDriver_CORE::send(uint32 b) {
 }
 
 void MidiDriver_CORE::sysEx(const byte *msg, uint16 length) {
+	unsigned char buf[256];
+
+	assert(length + 2 <= 256);
 	assert(_auGraph != NULL);
 
-	// Add SysEx frame if missing
-	byte *buf = 0;
-	if (*msg != 0xF0) {
-		buf = (byte *)malloc(length + 2);
-		buf[0] = 0xF0;
-		memcpy(buf+1, msg, length);
-		buf[length+1] = 0xF7;
-		msg = buf;
-		length += 2;
-	}
+	// Add SysEx frame
+	buf[0] = 0xF0;
+	memcpy(buf + 1, msg, length);
+	buf[length + 1] = 0xF7;
 
-	MusicDeviceSysEx(_synth, msg, length);
-
-	free(buf);
+	// Send it
+	MusicDeviceSysEx(_synth, buf, length+2);
 }
 
 MidiDriver *MidiDriver_CORE_create() {

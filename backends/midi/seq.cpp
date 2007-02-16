@@ -141,14 +141,11 @@ void MidiDriver_SEQ::send(uint32 b) {
 }
 
 void MidiDriver_SEQ::sysEx (const byte *msg, uint16 length) {
-	if (length > 254) {
-		warning ("Cannot send SysEx block - data too large");
-		return;
-	}
-
 	unsigned char buf [1024];
 	int position = 0;
 	const byte *chr = msg;
+
+	assert(length + 2 <= 256);
 
 	buf[position++] = SEQ_MIDIPUTC;
 	buf[position++] = 0xF0;

@@ -110,6 +110,11 @@ void MidiDriver_Zodiac::send(uint32 b) {
 }
 
 void MidiDriver_Zodiac::sysEx(const byte *msg, uint16 length) {
+FIXME: We may have to add the 0xF0 / 0xF7 frame here.
+Or not -- maybe TwMidiSysEx doesn't expect it either.
+But since I couldn't find any documentation on this API,
+I'll leave it to the porter to decide that. -- Fingolfin
+
 	TwMidiSysEx(_midiHandle, 0, (byte *)msg, length);
 }
 

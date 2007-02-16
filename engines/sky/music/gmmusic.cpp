@@ -92,9 +92,9 @@ void GmMusic::setupChannels(uint8 *channelData) {
 }
 
 void GmMusic::startDriver(void) {
-	// Send GM System On to reset channel parameters on external and capa$
-	uint8 sysEx[] = "\xf0\x7e\x7f\x09\x01\xf7";
-	_midiDrv->sysEx(sysEx, 6);
+	// Send GM System On to reset channel parameters etc.
+	uint8 sysEx[] = {0x7e, 0x7f, 0x09, 0x01};
+	_midiDrv->sysEx(sysEx, sizeof(sysEx));
 	//_midiDrv->send(0xFF);  //ALSA can't handle this.
 	// skip all sysEx as it can't be handled anyways.
 }

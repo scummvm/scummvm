@@ -397,7 +397,8 @@ void Player::sysEx(const byte *p, uint16 len) {
 		debugC(DEBUG_IMUSE, "[%02d] SysEx:%s", _id, buf);
 	}
 
-	if (_se->_sysex) (*_se->_sysex) (this, p, len);
+	if (_se->_sysex)
+		(*_se->_sysex)(this, p, len);
 }
 
 void Player::decode_sysex_bytes(const byte *src, byte *dst, int len) {
