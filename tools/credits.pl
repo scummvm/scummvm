@@ -480,6 +480,7 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("AGI");
+		  add_person("Stuart George", "darkfiber", "");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
 		  add_person("Eugene Sandulenko", "sev", "");
 		  add_person("David Symonds", "dsymonds", "");
