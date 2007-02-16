@@ -84,7 +84,7 @@ public:
 	bool _enable_sfx;
 
 public:
-	MidiPlayer(OSystem *system);
+	MidiPlayer();
 	virtual ~MidiPlayer();
 
 	void loadSMF(Common::File *in, int song, bool sfx = false);

@@ -73,7 +73,7 @@ static const GameSpecificSettings puzzlepack_settings = {
 #endif
 
 AGOSEngine::AGOSEngine(OSystem *syst)
-	: Engine(syst), midi(syst) {
+	: Engine(syst), midi() {
 	_vcPtr = 0;
 	_vc_get_out_of_code = 0;
 	_gameOffsetsPtr = 0;

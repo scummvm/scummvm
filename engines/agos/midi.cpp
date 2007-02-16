@@ -36,7 +36,7 @@ namespace AGOS {
 // and just provide a factory function.
 extern MidiParser *MidiParser_createS1D();
 
-MidiPlayer::MidiPlayer(OSystem *system) {
+MidiPlayer::MidiPlayer() {
 	// Since initialize() is called every time the music changes,
 	// this is where we'll initialize stuff that must persist
 	// between songs.
@@ -72,6 +72,12 @@ int MidiPlayer::open() {
 	if (ret)
 		return ret;
 	_driver->setTimerCallback(this, &onTimer);
+
+	// General MIDI System On message
+	// Resets all GM devices to default settings
+	_driver->sysEx((const byte *)"\x7E\x7F\x09\x01", 4);
+	g_system->delayMillis(200);
+
 	return 0;
 }
 
