@@ -87,7 +87,7 @@ easier and quicker. If you cannot donate, help and contribute a patch!
 2.0) Contact:
 ---- --------
 The easiest way to contact the ScummVM team is by submitting bug reports
-(see section 2.1) or by using our forums <http://forums.scummvm.org>.
+(see section 2.1) or by using our forums at http://forums.scummvm.org .
 You can also join and e-mail the scummvm-devel mailing list, or chat with
 us on IRC (#scummvm on irc.freenode.net) Please do not ask us to support
 an unsupported game -- read the FAQ on our web site first.
@@ -233,10 +233,10 @@ The ScummVM team does not condone piracy. However, there are cases
 where the game companies (such as LucasArts) themselves bundled
 'cracked' executables with their games -- in these cases the data
 files still contain the copy protection scripts, but the interpreter
-bypasses them (similar to what an illegaly cracked version might do,
+bypasses them (similar to what an illegally cracked version might do,
 only that here the producer of the game did it). There is no way for
 us to tell the difference between legitimate and pirated data files,
-so for the games where we know that a cracked version the original
+so for the games where we know that a cracked version of the original
 interpreter was sold at some point, ScummVM will always have to bypass
 the copy protection.
 
@@ -312,7 +312,7 @@ other Unix-like operating systems.
 Most of the newer games on the Macintosh shipped with only a single data file
 (note that in some cases this data file was made invisible, so you may need
 extra tools in order to copy it). ScummVM is able to directly use such a data file;
-simpy point ScummVM at the directory containing it, and it should work (just like
+simply point ScummVM at the directory containing it, and it should work (just like
 with every other supported game).
 
 We also provide a tool called 'rescumm' in the tools package to extract the
@@ -375,7 +375,7 @@ TODO: What about DXA??? Mention it here, too???
 TODO
 
 The cutscenes should be placed in the main game data directory. Note that
-currently this requires either copying the game to hard disk or reburning
+currently this requires either copying the game to hard disk or burning
 customised versions of the game CDs.
 
 The instructions for the Broken Sword games are for the Sold-Out Software
@@ -454,7 +454,7 @@ therefore changed with the music volume control as well.
 3.11) Inherit the Earth: Quest for the Orb notes:
 ----- -------------------------------------------
 In order to run the Mac OS X Wyrmkeep re-release of the game you will need to
-copy over data from the CD to your hard drive. If you're on a PC then consult:
+copy over data from the CD to your hard disk. If you're on a PC then consult:
 
   http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
 
@@ -524,7 +524,7 @@ the section on reporting bugs.
             users of Microsoft Windows 2000/XP may experience random crashes.
             This is due to a long-standing Windows bug, resulting in corrupt
             game files being read from the CD. Please copy the game data to
-            your harddrive to avoid this.
+            your hard disk to avoid this.
 
      FM-TOWNS versions:
           - The Kanji versions require the FM-TOWNS Font ROM
@@ -722,7 +722,7 @@ arguments -- see the next section.
 
 The meaning of most long options (that is, those options starting with a
 double-dash) can be inverted by prefixing them with "no-". For example,
---no-aspect-ratio will turn aspectio ratio correction off. This is useful
+--no-aspect-ratio will turn aspect ratio correction off. This is useful
 if you want to override a setting in the configuration file.
 
 The short game name ('game target') you see at the end of the command
@@ -750,10 +750,10 @@ ScummVM includes a language option for Maniac Mansion, Zak McKracken, The Dig,
 The Curse of Monkey Island, Beneath a Steel Sky, Broken Sword 1 and
 Simon the Sorcerer 1 and 2.
 
-Note that with the exception of TODO, using this option does *not*
-change the languge of the game (which usually is hard coded), but
-rather is only used to select the appropriate font (e.g. for a German version
-of a game, one containing umlauts).
+Note that with the exception of Beneath a Steel Sky, Broken Sword 1, TODO,
+using this option does *not* change the language of the game (which usually
+is hardcoded), but rather is only used to select the appropriate font (e.g.
+for a German version of a game, one containing umlauts).
 
 Maniac Mansion and Zak McKracken
         en  - English (default)
@@ -982,7 +982,7 @@ The platforms that currently have a different default directory are:
 For some games (namely "Beneath a Steel Sky", "Flight of the Amazon
 Queen" and all SCUMM games), ScummVM will by default automatically
 save the current state every five minutes (adjustable via the
-"autosave_period" config setting). For the SCUMM enbgine, it will save
+"autosave_period" config setting). For the SCUMM engine, it will save
 in Slot 0. This savestate can then be loaded again via Ctrl-0, or the
 F5 menu.
 
@@ -1154,11 +1154,11 @@ port 64:0, four WaveTable MIDI outputs in 65:0, 65:1, 65:2
 and 65:3, and two TiMidity ports, located at 128:0 and 128:1.
 
 If you have a FM-chip on your card, like the SB16, then you have to load
-the soundfonts using the sbiload software. Example:
+the SoundFonts using the sbiload software. Example:
   sbiload -p 65:0 /etc/std.o3 /etc/drums.o3
 
 If you have a WaveTable capable sound card, you have to load a sbk or sf2
-soundfont using the sfxload software. Example:
+SoundFont using the sfxload software. Example:
   sfxload /path/to/8mbgmsfx.sf2
 
 If you don't have a MIDI capable soundcard, there are two options: FluidSynth
@@ -1255,7 +1255,7 @@ to read the encoder documentation before you use other values.
 
 7.7.6) Compressing sfx/speech in Simon the Sorcerer and The Feeble Files
 ------ -----------------------------------------------------------------
-Use our compress_simon util from the scummvm-tools package to perform this
+Use our compress_simon utility from the scummvm-tools package to perform this
 task. You can choose between multiple target formats, but note that you can
 only use each if ScummVM was compiled with the respective decoder support
 enabled.
@@ -1304,7 +1304,7 @@ Use "compress_sword1 --help" to get a full list of the options.
 
 7.7.8) Compressing speech/music in Broken Sword 2
 ------ ------------------------------------------
-Use our compress_sword2 util from the scummvm-tools package to perform this
+Use our compress_sword2 utility from the scummvm-tools package to perform this
 task. You can choose between multiple target formats, but note  that you can
 only use each if ScummVM was compiled with the respective decoder support
 enabled.
@@ -1453,7 +1453,7 @@ The following keywords are recognized:
         tempo           number   The music tempo (50-200) (default: 100)
         speech_volume   number   The speech volume setting (0-255)
         midi_gain       number   The MIDI gain (0-1000) (default: 100) (Only
-                                 suported by some MIDI drivers.)
+                                 supported by some MIDI drivers.)
 
         copy_protection bool     Enable copy protection in SCUMM games, when
                                  ScummVM disables it by default.
@@ -1495,7 +1495,7 @@ unsupported), and a supported compiler. Several compilers, including
 GCC, mingw and recent versions of Microsoft Visual C++ are
 supported. If you wish to use MP3-compressed CD tracks or .SOU files,
 you will need to install the MAD library; likewise you will need the
-appropriatelibraries for Ogg Vorbis and FLAC compressed sound. For
+appropriate libraries for Ogg Vorbis and FLAC compressed sound. For
 MPEG2 support, libmpeg2 is required. For compressed save states, zlib is required.
 
 Some parts of ScummVM, particularly scalers, have highly optimized versions
