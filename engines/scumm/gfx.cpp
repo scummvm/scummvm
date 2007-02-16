@@ -1285,7 +1285,7 @@ void GdiNES::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 					const int x, const int y, const int width, const int height,
 	                int stripnr, int numstrip) {
 	if (_objectMode) {
-		decodeNESObject(ptr, x, y, width, height);
+		decodeNESObject(ptr, x - stripnr, y, width, height);
 	}
 }
 
