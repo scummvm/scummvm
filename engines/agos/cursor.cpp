@@ -485,9 +485,9 @@ void AGOSEngine::initMouse() {
 		_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
 		memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
 
-		uint8 color = 241;
+		uint8 color = 225;
 		if (getPlatform() == Common::kPlatformAmiga)
-			color = (getFeatures() & GF_32COLOR) ? 17 : 241;
+			color = (getFeatures() & GF_32COLOR) ? 17 : 225;
 
 		const uint16 *src = _common_cursors[0];
 		for (int i = 0; i < 16; i++) {
