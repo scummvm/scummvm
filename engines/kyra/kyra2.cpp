@@ -32,7 +32,6 @@
 namespace Kyra {
 
 KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngine(system, flags) {
-		
 	memset(_gameShapes, 0, sizeof(_gameShapes));
 	_mouseSHPBuf = 0;
 }
@@ -43,6 +42,7 @@ KyraEngine_v2::~KyraEngine_v2() {
 
 int KyraEngine_v2::init() {
 	KyraEngine::init();
+
 	_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
 	_screen->loadFont(Screen::FID_GOLDFONT_FNT, "GOLDFONT.FNT");
@@ -67,7 +67,14 @@ int KyraEngine_v2::init() {
 }
 
 int KyraEngine_v2::go() {	
-	//_sound->loadMusicFile("K2INTRO");
+	// TODO: move this to proper place
+	static const char *soundfileList[] = {
+		"K2INTRO"
+	};
+
+	_sound->setSoundFileList(soundfileList, 1);
+	_sound->loadSoundFile(0);
+
 	// Temporary measure to work around the fact that there's 
 	// several WSA files with identical names in different PAK files.
 	_res->unloadPakFile("OUTFARM.PAK");

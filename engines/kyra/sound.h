@@ -148,7 +148,8 @@ private:
 
 	AdlibDriver *_driver;
 
-	uint8 _trackEntries[120];
+	bool _v2;
+	uint8 _trackEntries[500];
 	uint8 *_soundDataPtr;
 	int _sfxPlayingSound;
 	uint _soundFileLoaded;

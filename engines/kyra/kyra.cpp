@@ -152,7 +152,7 @@ int KyraEngine::init() {
 		// no sfx enabled for CD audio music atm
 		// later on here should be a usage of MixedSoundDriver
 		_sound = new SoundTowns(this, _mixer);
-	} else if (midiDriver == MD_ADLIB && _flags.gameID == GI_KYRA1) {
+	} else if (midiDriver == MD_ADLIB) {
 		_sound = new SoundAdlibPC(this, _mixer);
 		assert(_sound);
 	} else {

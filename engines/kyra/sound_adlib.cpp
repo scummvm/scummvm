@@ -60,7 +60,7 @@ namespace Kyra {
 
 class AdlibDriver : public Audio::AudioStream {
 public:
-	AdlibDriver(Audio::Mixer *mixer);
+	AdlibDriver(Audio::Mixer *mixer, bool v2);
 	~AdlibDriver();
 
 	int callback(int opcode, ...);
@@ -241,7 +241,7 @@ private:
 	}
 
 	uint8 *getInstrument(int instrumentId) {
-		return _soundData + READ_LE_UINT16(_soundData + 500 + 2 * instrumentId);
+		return _soundData + READ_LE_UINT16(_soundData + (_v2 ? 1000 : 500) + 2 * instrumentId);
 	}
 
 	void setupPrograms();
@@ -407,13 +407,17 @@ private:
 	Common::Mutex _mutex;
 	Audio::Mixer *_mixer;
 
+	bool _v2;
+
 	void lock() { _mutex.lock(); }
 	void unlock() { _mutex.unlock(); }
 };
 
-AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
+AdlibDriver::AdlibDriver(Audio::Mixer *mixer, bool v2) {
 	setupOpcodeList();
 	setupParserOpcodeTable();
+
+	_v2 = v2;
 
 	_mixer = mixer;
 
@@ -2209,7 +2213,8 @@ const int SoundAdlibPC::_kyra1NumSoundTriggers = ARRAYSIZE(SoundAdlibPC::_kyra1S
 SoundAdlibPC::SoundAdlibPC(KyraEngine *engine, Audio::Mixer *mixer)
 	: Sound(engine, mixer), _driver(0), _trackEntries(), _soundDataPtr(0) {
 	memset(_trackEntries, 0, sizeof(_trackEntries));
-	_driver = new AdlibDriver(mixer);
+	_v2 = (_engine->gameFlags().gameID == GI_KYRA2);
+	_driver = new AdlibDriver(mixer, _v2);
 	assert(_driver);
 
 	_sfxPlayingSound = -1;
@@ -2279,14 +2284,21 @@ void SoundAdlibPC::playSoundEffect(uint8 track) {
 }
 
 void SoundAdlibPC::play(uint8 track) {
-	uint8 soundId = _trackEntries[track];
-	if ((int8)soundId == -1 || !_soundDataPtr)
+	uint16 soundId = 0;
+	
+	if (_v2)
+		soundId = READ_LE_UINT16(&_trackEntries[track<<1]);
+	else
+		soundId = _trackEntries[track];
+
+	if ((soundId == 0xFFFF && _v2) || (soundId == 0xFF && !_v2) || !_soundDataPtr)
 		return;
-	soundId &= 0xFF;
+
 	while ((_driver->callback(16, 0) & 8)) {
 		// We call the system delay and not the game delay to avoid concurrency issues.
 		_engine->_system->delayMillis(10);
 	}
+
 	if (_sfxPlayingSound != -1) {
 		// Restore the sounds's normal values.
 		_driver->callback(10, _sfxPlayingSound, int(1), int(_sfxPriority));
@@ -2350,11 +2362,18 @@ void SoundAdlibPC::loadSoundFile(uint file) {
 	_driver->callback(8, int(-1));
 	_soundDataPtr = 0;
 
+	int soundDataSize = file_size;
 	uint8 *p = file_data;
-	memcpy(_trackEntries, p, 120*sizeof(uint8));
-	p += 120;
 
-	int soundDataSize = file_size - 120;
+	if (_v2) {
+		memcpy(_trackEntries, p, 500);
+		p += 500;
+		soundDataSize -= 500;
+	} else {
+		memcpy(_trackEntries, p, 120);
+		p += 120;
+		soundDataSize -= 120;
+	}
 
 	_soundDataPtr = new uint8[soundDataSize];
 	assert(_soundDataPtr);
