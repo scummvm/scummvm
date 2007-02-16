@@ -144,6 +144,9 @@ public:
 
 class Instrument_Adlib : public InstrumentInternal {
 private:
+
+#include "common/pack-start.h"	// START STRUCT PACKING
+
 	struct {
 		byte flags_1;
 		byte oplvl_1;
@@ -163,6 +166,8 @@ private:
 		byte duration;
 	} _instrument;
 
+#include "common/pack-end.h"	// END STRUCT PACKING
+
 public:
 	Instrument_Adlib(const byte *data);
 	Instrument_Adlib(Serializer *s);
@@ -174,6 +179,9 @@ public:
 
 class Instrument_Roland : public InstrumentInternal {
 private:
+
+#include "common/pack-start.h"	// START STRUCT PACKING
+
 	struct RolandInstrument {
 		byte roland_id;
 		byte device_id;
@@ -231,7 +239,10 @@ private:
 			byte tva_env_sustain_level;
 		} partial[4];
 		byte checksum;
-	} GNUPACK;
+	};
+
+#include "common/pack-end.h"	// END STRUCT PACKING
+
 	RolandInstrument _instrument;
 
 	char _instrument_name [11];
