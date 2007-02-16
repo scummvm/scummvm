@@ -796,12 +796,6 @@
 				RelativePath="..\..\graphics\mpeg_player.h">
 			</File>
 			<File
-				RelativePath="..\..\graphics\paletteman.cpp">
-			</File>
-			<File
-				RelativePath="..\..\graphics\paletteman.h">
-			</File>
-			<File
 				RelativePath="..\..\graphics\primitives.cpp">
 			</File>
 			<File
