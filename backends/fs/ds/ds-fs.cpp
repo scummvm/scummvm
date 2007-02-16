@@ -567,7 +567,7 @@ size_t std_fread(const void* ptr, size_t size, size_t numItems, FILE* handle) {
 					if (feof(handle)) eof = true;
 					*(((char *) (ptr)) + r * size + t) = getc(handle);
 				}*/
-				int left = size * numItems;;
+				int left = size * numItems;
 				int bytesRead = -1;
 				while ((left > 0) && (!FAT_feof((FAT_FILE *) handle))) {
 					int amount = left > 8192? 8192: left;

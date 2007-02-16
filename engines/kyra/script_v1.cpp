@@ -1491,7 +1491,7 @@ int KyraEngine::o1_playWinterScrollSequence(ScriptState *script) {
 
 int KyraEngine::o1_getIdolGem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_getIdolGem(%p) (%d)", (const void *)script, stackPos(0));
-	return _idolGemsTable[stackPos(0)];;
+	return _idolGemsTable[stackPos(0)];
 }
 
 int KyraEngine::o1_setIdolGem(ScriptState *script) {

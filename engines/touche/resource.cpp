@@ -345,7 +345,7 @@ void ToucheEngine::res_decodeProgramData() {
 		phbd.str = READ_LE_UINT16(p); p += 2;
 		phbd.defaultStr = READ_LE_UINT16(p); p += 2;
 		for (int i = 0; i < 8; ++i) {
-			phbd.actions[i] = READ_LE_UINT16(p); p += 2;;
+			phbd.actions[i] = READ_LE_UINT16(p); p += 2;
 		}
 		for (int i = 0; i < 2; ++i) {
 			int16 x = READ_LE_UINT16(p); p += 2;

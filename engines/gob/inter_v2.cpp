@@ -2305,7 +2305,7 @@ void Inter_v2::o2_setScrollOffset(void) {
 	if (_vm->_draw->_off_2E51B != 0)
 		warning("_vid_setPixelShift(%d, %d)", _vm->_draw->_scrollOffsetX, _vm->_draw->_scrollOffsetY + 200 - _vm->_draw->_word_2E51F);
 	else
-		warning("_vid_setPixelShift(%d, %d)", _vm->_draw->_scrollOffsetX, _vm->_draw->_scrollOffsetY);;
+		warning("_vid_setPixelShift(%d, %d)", _vm->_draw->_scrollOffsetX, _vm->_draw->_scrollOffsetY);
 */
 }
 

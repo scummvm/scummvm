@@ -244,7 +244,7 @@ static void *sound_and_music_thread(void *params) {
 	param = AFMT_S16_LE;
 	if (ioctl(sound_fd, SNDCTL_DSP_SETFMT, &param) == -1) {
 		warning("Error in the SNDCTL_DSP_SETFMT ioctl!\n");
-		return NULL;;
+		return NULL;
 	}
 	if (param != AFMT_S16_LE) {
 		warning("AFMT_S16_LE not supported!\n");

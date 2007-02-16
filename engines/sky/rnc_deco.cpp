@@ -200,7 +200,7 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 	inputptr = (((const uint8 *)input) + HEADER_LEN);
 	_srcPtr = inputptr;
 
-	inputHigh = ((const uint8 *)input) + packLen + HEADER_LEN;;
+	inputHigh = ((const uint8 *)input) + packLen + HEADER_LEN;
 	outputLow = (uint8 *)output;
 	outputHigh = *(((const uint8 *)input) + 16) + unpackLen + outputLow;
 

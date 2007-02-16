@@ -338,7 +338,7 @@ void AGOSEngine::dumpVgaFile(const byte *vga) {
 
 	pp = vga;
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		p = pp + READ_LE_UINT16(pp + 2);;
+		p = pp + READ_LE_UINT16(pp + 2);
 		count = READ_LE_UINT16(&((const VgaFileHeader2_Feeble *) p)->imageCount);
 		p = pp + READ_LE_UINT16(&((const VgaFileHeader2_Feeble *) p)->imageTable);
 
@@ -349,7 +349,7 @@ void AGOSEngine::dumpVgaFile(const byte *vga) {
 			p += sizeof(ImageHeader_Feeble);
 		}
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-		p = pp + READ_BE_UINT16(pp + 4);;
+		p = pp + READ_BE_UINT16(pp + 4);
 		count = READ_BE_UINT16(&((const VgaFileHeader2_Common *) p)->imageCount);
 		p = pp + READ_BE_UINT16(&((const VgaFileHeader2_Common *) p)->imageTable);
 

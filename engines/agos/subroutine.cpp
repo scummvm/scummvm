@@ -782,7 +782,8 @@ byte *AGOSEngine::readSingleOpcode(Common::SeekableReadStream *in, byte *ptr) {
 				val = 0xFFF7;
 				break;
 			default:
-				val = fileReadItemID(in);;
+				val = fileReadItemID(in);
+				break;
 			}
 			WRITE_BE_UINT16(ptr, val); ptr += 2;
 			break;

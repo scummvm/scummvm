@@ -530,7 +530,7 @@ int16 Game_v2::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 							_vm->_util->setScrollOffset();
 						else
 							_vm->_util->setScrollOffset(_vm->_draw->_scrollOffsetX,
-									_vm->_draw->_scrollOffsetY + _vm->_draw->_off_2E51B->height);;
+									_vm->_draw->_scrollOffsetY + _vm->_draw->_off_2E51B->height);
 					}
 					_vm->_util->setMousePos(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY);
 				}

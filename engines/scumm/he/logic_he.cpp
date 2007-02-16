@@ -503,7 +503,7 @@ int LogicHEfunshop::checkShape(int32 data0, int32 data1, int32 data4, int32 data
 	diff7_3 = data7 - data3;
 	diff2 = data3 * data6 - data2 * data7;
 	sum1 = diff2_6 * data1 + diff2 + diff7_3 * data0;
-	sum2 = diff2_6 * data5 + diff2 + diff7_3 * data4;;
+	sum2 = diff2_6 * data5 + diff2 + diff7_3 * data4;
 
 	if (sum1 != 0 && sum2 != 0) {
 		sum2 ^= sum1;

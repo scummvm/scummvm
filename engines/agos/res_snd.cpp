@@ -195,7 +195,7 @@ void AGOSEngine::loadMusic(uint music) {
 			// other music tracks. In simon1dos/talkie the GMF resource includes
 			// a loop override that acomplishes this, but there seems to be nothing
 			// for this in the SMF resources.
-			midi.setLoop(music != 35);; // Must do this BEFORE loading music. (GMF may have its own override.)
+			midi.setLoop(music != 35); // Must do this BEFORE loading music. (GMF may have its own override.)
 
 			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
 			_gameFile->read(buf, 4);

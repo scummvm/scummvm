@@ -388,7 +388,7 @@ void AGOSEngine::startAnOverlayAnim() {
 	}
 
 	vsp->y = x / 20 * 32;
-	vsp->x = x % 20 * 32;;
+	vsp->x = x % 20 * 32;
 	vsp->id = vcReadVar(a);
 	vsp->zoneNum = zoneNum;
 
