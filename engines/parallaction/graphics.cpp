@@ -961,11 +961,9 @@ void Graphics::loadExternalCnv(const char *filename, Cnv *cnv) {
 	if (!stream.open(path))
 		errorFileNotFound(path);
 
-	cnv->_count = cnv->_width = cnv->_height = 0;
-
-	stream.read(&cnv->_count, 1);
-	stream.read(&cnv->_width, 1);
-	stream.read(&cnv->_height, 1);
+	cnv->_count = stream.readByte();
+	cnv->_width = stream.readByte();
+	cnv->_height = stream.readByte();
 
 	cnv->_array = (byte**)memAlloc(cnv->_count * sizeof(byte*));
 
@@ -1000,8 +998,8 @@ void Graphics::loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
 	cnv->_width = cnv->_height = 0;
 
 	stream.skip(1);
-	stream.read(&cnv->_width, 1);
-	stream.read(&cnv->_height, 1);
+	cnv->_width = stream.readByte();
+	cnv->_height = stream.readByte();
 
 	uint16 size = cnv->_width*cnv->_height;
 
