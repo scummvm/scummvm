@@ -27,12 +27,16 @@
 
 namespace Parallaction {
 
+
 struct Cnv;
 
 struct InventoryItem {
-	uint32		_id;
+	uint32		_id;            // lowest 16 bits are always zero
 	uint16		_index;
 };
+
+#define MAKE_INVENTORY_ID(x) (((x) & 0xFFFF) << 16)
+
 
 extern InventoryItem _inventory[];
 

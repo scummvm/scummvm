@@ -128,9 +128,15 @@ void freeZones(Node *list) {
 
 	for (; z; ) {
 
-		// TODO: understand and simplify this monster
-		if (((z->_limits._top == -1) || ((z->_limits._left == -2) && ((isItemInInventory(z->u.merge->_obj1) != 0) || (isItemInInventory(z->u.merge->_obj2) != 0)))) &&
-			((_engineFlags & kEngineQuit) == 0)) {
+        // WORKAROUND: this huge condition is needed because we made ZoneTypeData a collection of structs
+        // instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
+        // but we need to check it separately here. The same workaround is applied in hitZone.
+		if (((z->_limits._top == -1) ||
+            ((z->_limits._left == -2) && (
+                (((z->_type & 0xFFFF) == kZoneMerge) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj1)) != 0) || (isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj2)) != 0))) ||
+                (((z->_type & 0xFFFF) == kZoneGet) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.get->_icon)) != 0)))
+            ))) &&
+            ((_engineFlags & kEngineQuit) == 0)) {
 
             debugC(1, kDebugLocation, "freeZones preserving zone '%s'", z->_label._text);
 
@@ -623,10 +629,12 @@ Zone *hitZone(uint32 type, uint16 x, uint16 y) {
 
 			// out of Zone, so look for special values
 			if ((z->_limits._left == -2) || (z->_limits._left == -3)) {
-				// only merge zones have _left == -2 or _left == -3
 
-				if (((_si == z->u.merge->_obj1) && (_di == z->u.merge->_obj2)) ||
-					((_si == z->u.merge->_obj2) && (_di == z->u.merge->_obj1))) {
+				// WORKAROUND: this huge condition is needed because we made ZoneTypeData a collection of structs
+				// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
+				// but we need to check it separately here. The same workaround is applied in freeZones.
+				if ((((z->_type & 0xFFFF0000) == kZoneMerge) && (((_si == z->u.merge->_obj1) && (_di == z->u.merge->_obj2)) || ((_si == z->u.merge->_obj2) && (_di == z->u.merge->_obj1)))) ||
+                    (((z->_type & 0xFFFF0000) == kZoneGet) && ((_si == z->u.get->_icon) || (_di == z->u.get->_icon)))) {
 
 					// special Zone
 					if ((type == 0) && ((z->_type & 0xFFFF0000) == 0)) return z;
