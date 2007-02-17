@@ -91,7 +91,6 @@ protected:
 	void *allocBuffer(int num, uint32 size);
 	void freeBuffers();
 
-	int decodeFormat80(byte *inbuf, byte *outbuf);
 	void decodeSND1(byte *inbuf, uint32 insize, byte *outbuf, uint32 outsize);
 
 	void displayFrame(uint frameNum);
@@ -100,6 +99,7 @@ protected:
 
 	VQAHeader _header;
 	uint32 *_frameInfo;
+	uint32 _codeBookSize;
 	byte *_codeBook;
 	byte *_partialCodeBook;
 	bool _compressedCodeBook;

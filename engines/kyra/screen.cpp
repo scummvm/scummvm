@@ -1547,7 +1547,7 @@ void Screen::decodeFrame3(const uint8 *src, uint8 *dst, uint32 size) {
 	}
 }
 
-void Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
+uint Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
 	debugC(9, kDebugLevelScreen, "Screen::decodeFrame4(%p, %p, %d)", (const void *)src, (const void *)dst, dstSize);
 	uint8 *dstOrig = dst;
 	uint8 *dstEnd = dst + dstSize;
@@ -1595,6 +1595,7 @@ void Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
 			break;
 		}
 	}
+	return dst - dstOrig;
 }
 
 void Screen::decodeFrameDelta(uint8 *dst, const uint8 *src) {

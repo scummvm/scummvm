@@ -96,77 +96,6 @@ uint32 VQAMovie::readTag() {
 	return tag;
 }
 
-// Chunk types ending in a 'Z' are decoded using this function.
-
-int VQAMovie::decodeFormat80(byte *inbuf, byte *outbuf) {
-	byte *src = inbuf;
-	byte *dst = outbuf;
-
-	while (1) {
-		int relPos, pos;
-		int count;
-		byte color;
-		int i;
-
-		byte command = *src++;
-
-		switch (command) {
-		case 0x80:
-			return dst - outbuf;
-
-		case 0xFF:
-			/* 11111111 <count> <pos> */
-			count = src[0] | (src[1] << 8);
-			pos = src[2] | (src[3] << 8);
-			src += 4;
-			for (i = 0; i < count; i++)
-				dst[i] = outbuf[i + pos];
-			break;
-
-		case 0xFE:
-			/* 11111110 <count> <color> */
-			count = src[0] | (src[1] << 8);
-			color = src[2];
-			src += 3;
-			memset(dst, color, count);
-			break;
-
-		default:
-			if (command >= 0xC0) {
-				/* 11 <count - 3> <pos> */
-				count = (command & 0x3F) + 3;
-				pos = src[0] | (src[1] << 8);
-				src += 2;
-				for (i = 0; i < count; i++)
-					dst[i] = outbuf[pos + i];
-			} else if (command >= 0x80) {
-				/* 10 <count> */
-				count = command & 0x3F;
-				memcpy(dst, src, count);
-				src += count;
-			} else {
-				/* 0 <count - 3> <relative pos> */
-				count = ((command & 0x70) >> 4) + 3;
-				relPos = ((command & 0x0F) << 8) | src[0];
-				src++;
-				for (i = 0; i < count; i++)
-					dst[i] = dst[i - relPos];
-			}
-			break;
-		}
-
-		dst += count;
-	}
-}
-
-inline int16 clip8BitSample(int16 sample) {
-	if (sample > 255)
-		return 255;
-	if (sample < 0)
-		return 0;
-	return sample;
-}
-
 void VQAMovie::decodeSND1(byte *inbuf, uint32 insize, byte *outbuf, uint32 outsize) {
 	const int8 WSTable2Bit[] = { -2, -1, 0, 1 };
 	const int8 WSTable4Bit[] = {
@@ -206,11 +135,11 @@ void VQAMovie::decodeSND1(byte *inbuf, uint32 insize, byte *outbuf, uint32 outsi
 				code = *inbuf++;
 
 				curSample += WSTable4Bit[code & 0x0f];
-				curSample = clip8BitSample(curSample);
+				curSample = CLIP<int16>(curSample, 0, 255);
 				*outbuf++ = curSample;
 
 				curSample += WSTable4Bit[code >> 4];
-				curSample = clip8BitSample(curSample);
+				curSample = CLIP<int16>(curSample, 0, 255);
 				*outbuf++ = curSample;
 
 				outsize -= 2;
@@ -221,19 +150,19 @@ void VQAMovie::decodeSND1(byte *inbuf, uint32 insize, byte *outbuf, uint32 outsi
 				code = *inbuf++;
 
 				curSample += WSTable2Bit[code & 0x03];
-				curSample = clip8BitSample(curSample);
+				curSample = CLIP<int16>(curSample, 0, 255);
 				*outbuf++ = curSample;
 
 				curSample += WSTable2Bit[(code >> 2) & 0x03];
-				curSample = clip8BitSample(curSample);
+				curSample = CLIP<int16>(curSample, 0, 255);
 				*outbuf++ = curSample;
 
 				curSample += WSTable2Bit[(code >> 4) & 0x03];
-				curSample = clip8BitSample(curSample);
+				curSample = CLIP<int16>(curSample, 0, 255);
 				*outbuf++ = curSample;
 
 				curSample += WSTable2Bit[(code >> 6) & 0x03];
-				curSample = clip8BitSample(curSample);
+				curSample = CLIP<int16>(curSample, 0, 255);
 				*outbuf++ = curSample;
 
 				outsize -= 4;
@@ -325,11 +254,11 @@ bool VQAMovie::open(const char *filename) {
 			_frameInfo = new uint32[_header.numFrames];
 			_frame = new byte[_header.width * _header.height];
 
-			size = 0xf00 * _header.blockW * _header.blockH;
-			_codeBook = new byte[size];
-			_partialCodeBook = new byte[size];
-			memset(_codeBook, 0, size);
-			memset(_partialCodeBook, 0, size);
+			_codeBookSize = 0xf00 * _header.blockW * _header.blockH;
+			_codeBook = new byte[_codeBookSize];
+			_partialCodeBook = new byte[_codeBookSize];
+			memset(_codeBook, 0, _codeBookSize);
+			memset(_partialCodeBook, 0, _codeBookSize);
 
 			_numVectorPointers = (_header.width / _header.blockW) * (_header.height * _header.blockH);
 			_vectorPointers = new uint16[_numVectorPointers];
@@ -427,6 +356,7 @@ void VQAMovie::close() {
 
 		_frameInfo = NULL;
 		_frame = NULL;
+		_codeBookSize = 0;
 		_codeBook = NULL;
 		_partialCodeBook = NULL;
 		_vectorPointers = NULL;
@@ -513,7 +443,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 				case MKID_BE('CBFZ'):	// Full codebook
 					inbuf = (byte *)allocBuffer(0, size);
 					_file.read(inbuf, size);
-					decodeFormat80(inbuf, _codeBook);
+					Screen::decodeFrame4(inbuf, _codeBook, _codeBookSize);
 					break;
 
 				case MKID_BE('CBP0'):	// Partial codebook
@@ -538,7 +468,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 				case MKID_BE('CPLZ'):	// Palette
 					inbuf = (byte *)allocBuffer(0, size);
 					_file.read(inbuf, size);
-					size = decodeFormat80(inbuf, _vm->screen()->_currentPalette);
+					Screen::decodeFrame4(inbuf, _vm->screen()->_currentPalette, 768);
 					break;
 
 				case MKID_BE('VPT0'):	// Frame data
@@ -553,7 +483,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 					outbuf = (byte *)allocBuffer(1, 2 * _numVectorPointers);
 
 					_file.read(inbuf, size);
-					size = decodeFormat80(inbuf, outbuf);
+					size = Screen::decodeFrame4(inbuf, outbuf, 2 * _numVectorPointers);
 
 					assert(size / 2 <= _numVectorPointers);
 
@@ -614,7 +544,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 
 	if (_numPartialCodeBooks == _header.cbParts) {
 		if (_compressedCodeBook) {
-			decodeFormat80(_partialCodeBook, _codeBook);
+			Screen::decodeFrame4(_partialCodeBook, _codeBook, _codeBookSize);
 		} else {
 			memcpy(_codeBook, _partialCodeBook, _partialCodeBookSize);
 		}
@@ -633,7 +563,7 @@ void VQAMovie::play() {
 
 	startTick = _system->getMillis();
 
-	// First, handle any sound chunk that apears before the first frame.
+	// First, handle any sound chunk that appears before the first frame.
 	// At least in some versions, it will contain half a second of audio,
 	// presumably to lessen the risk of audio underflow.
 	//
