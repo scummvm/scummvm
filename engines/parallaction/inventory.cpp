@@ -119,7 +119,8 @@ int16 pickupItem(Zone *z) {
 
 	uint16 _si;
 	for (_si = 0; _inventory[_si]._id != 0; _si++) ;
-	if (_si == INVENTORY_MAX_ITEMS) return -1;
+	if (_si == INVENTORY_MAX_ITEMS)
+		return -1;
 
 	_inventory[_si]._id = (z->u.get->_icon << 16) & 0xFFFF0000;
 	_inventory[_si]._index = z->u.get->_icon;

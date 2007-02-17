@@ -41,28 +41,28 @@ namespace Parallaction {
 // high values mean high priority
 
 enum {
-    kPriority0 = 0,
-    kPriority1 = 1,
-    kPriority2 = 2,
-    kPriority3 = 3,
-    kPriority4 = 4,
-    kPriority5 = 5,
-    kPriority6 = 6,
-    kPriority7 = 7,
-    kPriority8 = 8,
-    kPriority9 = 9,
-    kPriority10 = 10,
-    kPriority11 = 11,
-    kPriority12 = 12,
-    kPriority13 = 13,
-    kPriority14 = 14,
-    kPriority15 = 15,
-    kPriority16 = 16,
-    kPriority17 = 17,
-    kPriority18 = 18,
-    kPriority19 = 19,
-    kPriority20 = 20,
-    kPriority21 = 21
+	kPriority0 = 0,
+	kPriority1 = 1,
+	kPriority2 = 2,
+	kPriority3 = 3,
+	kPriority4 = 4,
+	kPriority5 = 5,
+	kPriority6 = 6,
+	kPriority7 = 7,
+	kPriority8 = 8,
+	kPriority9 = 9,
+	kPriority10 = 10,
+	kPriority11 = 11,
+	kPriority12 = 12,
+	kPriority13 = 13,
+	kPriority14 = 14,
+	kPriority15 = 15,
+	kPriority16 = 16,
+	kPriority17 = 17,
+	kPriority18 = 18,
+	kPriority19 = 19,
+	kPriority20 = 20,
+	kPriority21 = 21
 };
 
 enum {
@@ -271,7 +271,7 @@ protected:		// data
 
 		int16       _inventoryIndex;
 		Zone*       _zone;
-        ZoneLabel*  _label;
+		ZoneLabel*  _label;
 	};
 
 	bool		_skipMenu;
@@ -298,9 +298,9 @@ protected:		// members
 	void		initGame();
 	void		initGlobals();
 
-    Common::String      _saveFileName;
-    int         buildSaveFileList(Common::StringList& l);
-    int         selectSaveFile(uint16 arg_0, const char* caption, const char* button);
+	Common::String      _saveFileName;
+	int         buildSaveFileList(Common::StringList& l);
+	int         selectSaveFile(uint16 arg_0, const char* caption, const char* button);
 	void		doLoadGame(uint16 slot);
 	void		doSaveGame(uint16 slot, const char* name);
 

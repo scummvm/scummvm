@@ -295,19 +295,19 @@ void runCommands(Command *list, Zone *z) {
 			break;
 
 		case CMD_ON:	// on
-            // WORKAROUND: the original DOS-based engine didn't check u->_zone before dereferencing
-            // the pointer to get structure members, thus leading to crashes in systems with memory
-            // protection.
-            // As a side note, the overwritten address is the 5th entry in the DOS interrupt table
-            // (print screen handler): this suggests that a system would hang when the print screen
-            // key is pressed after playing Nippon Safes, provided that this code path is taken.
-            if (u->_zone != NULL) {
-                u->_zone->_flags &= ~kFlagsRemove;
-                u->_zone->_flags |= kFlagsActive;
-                if ((u->_zone->_type & 0xFFFF) == kZoneGet) {
-                    addJob(&jobDisplayDroppedItem, u->_zone, kPriority17 );
-                }
-            }
+			// WORKAROUND: the original DOS-based engine didn't check u->_zone before dereferencing
+			// the pointer to get structure members, thus leading to crashes in systems with memory
+			// protection.
+			// As a side note, the overwritten address is the 5th entry in the DOS interrupt table
+			// (print screen handler): this suggests that a system would hang when the print screen
+			// key is pressed after playing Nippon Safes, provided that this code path is taken.
+			if (u->_zone != NULL) {
+				u->_zone->_flags &= ~kFlagsRemove;
+				u->_zone->_flags |= kFlagsActive;
+				if ((u->_zone->_type & 0xFFFF) == kZoneGet) {
+					addJob(&jobDisplayDroppedItem, u->_zone, kPriority17 );
+				}
+			}
 			break;
 
 		case CMD_OFF:	// off
@@ -342,7 +342,7 @@ void runCommands(Command *list, Zone *z) {
 		}
 	}
 
-    debugC(1, kDebugLocation, "runCommands completed");
+	debugC(1, kDebugLocation, "runCommands completed");
 
 	return;
 

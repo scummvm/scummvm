@@ -360,14 +360,16 @@ void Graphics::floodFill(byte color, uint16 left, uint16 top, uint16 right, uint
 
 
 void Graphics::flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Graphics::Buffers buffer) {
-    debugC(9, kDebugGraphics, "Graphics::flatBlit(%i, %i, %i, %i)", w, h, x, y);
+	debugC(9, kDebugGraphics, "Graphics::flatBlit(%i, %i, %i, %i)", w, h, x, y);
 
-    // source coordinates
+	// source coordinates
 	int16 left = 0, top = 0;
 	int16 right = w, bottom = h;
 
-	if (x + w > SCREEN_WIDTH) right = SCREEN_WIDTH - x;
-	if (y + h > SCREEN_HEIGHT) bottom = SCREEN_HEIGHT - y;
+	if (x + w > SCREEN_WIDTH)
+		right = SCREEN_WIDTH - x;
+	if (y + h > SCREEN_HEIGHT)
+		bottom = SCREEN_HEIGHT - y;
 
 	if (x < 0) {	// partially left clipped
 		left = -x;
@@ -465,9 +467,10 @@ void Graphics::blit(uint16 w, uint16 h, int16 x, int16 y, uint16 z, byte *data, 
 void jobDisplayLabel(void *parm, Job *j) {
 
 	ZoneLabel *label = (ZoneLabel*)parm;
-    debugC(1, kDebugLocation, "jobDisplayLabel (%p)", (const void*) label);
+	debugC(1, kDebugLocation, "jobDisplayLabel (%p)", (const void*) label);
 
-	if (label->_cnv._width == 0) return;
+	if (label->_cnv._width == 0)
+		return;
 	_vm->_graphics->flatBlitCnv(&label->_cnv, Graphics::_labelPosition[0]._x, Graphics::_labelPosition[0]._y, Graphics::kBitBack, label->_cnv._data1);
 
 	return;
@@ -476,7 +479,7 @@ void jobDisplayLabel(void *parm, Job *j) {
 void jobEraseLabel(void *parm, Job *j) {
 	ZoneLabel *label = (ZoneLabel*)parm;
 
-    debugC(1, kDebugLocation, "jobEraseLabel (%p)", (const void*) label);
+	debugC(1, kDebugLocation, "jobEraseLabel (%p)", (const void*) label);
 
 	int16 _si, _di;
 
@@ -631,7 +634,8 @@ void Graphics::restoreCnvBackground(StaticCnv *cnv, int16 x, int16 y) {
 //	strings
 //
 void Graphics::displayString(uint16 x, uint16 y, const char *text) {
-    if (text == NULL) return;
+	if (text == NULL)
+		return;
 
 	uint16 len = strlen(text);
 	StaticCnv tmp;
@@ -1178,13 +1182,13 @@ void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 		_bgLayers[_si] = _al;
 	}
 
-    Common::MemoryReadStream sread(tempfx, sizeof(PaletteFxRange)*6);
+	Common::MemoryReadStream sread(tempfx, sizeof(PaletteFxRange)*6);
 	for (_si = 0; _si < 6; _si++) {
-	    _palettefx[_si]._timer = sread.readUint16BE();
-	    _palettefx[_si]._step = sread.readUint16BE();
-	    _palettefx[_si]._flags = sread.readUint16BE();
-	    _palettefx[_si]._first = sread.readByte();
-	    _palettefx[_si]._last = sread.readByte();
+		_palettefx[_si]._timer = sread.readUint16BE();
+		_palettefx[_si]._step = sread.readUint16BE();
+		_palettefx[_si]._flags = sread.readUint16BE();
+		_palettefx[_si]._first = sread.readByte();
+		_palettefx[_si]._last = sread.readByte();
 	}
 
 #if 0
@@ -1258,15 +1262,15 @@ void Graphics::drawBorder(Graphics::Buffers buffer, uint16 x, uint16 y, uint16 w
 
 	byte *d = _buffers[buffer] + x + SCREEN_WIDTH * y;
 
-    memset(d, color, w);
+	memset(d, color, w);
 
 	for (uint16 i = 0; i < h; i++) {
 		d[i * SCREEN_WIDTH] = color;
 		d[i * SCREEN_WIDTH + w - 1] = color;
 	}
 
-    d = _buffers[buffer] + x + SCREEN_WIDTH * (y + h - 1);
-    memset(d, color, w);
+	d = _buffers[buffer] + x + SCREEN_WIDTH * (y + h - 1);
+	memset(d, color, w);
 
 	return;
 }

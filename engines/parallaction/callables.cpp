@@ -47,7 +47,8 @@ void _c_play_boogie(void *parm) {
 
 	static uint16 flag = 1;
 
-	if (flag == 0) return;
+	if (flag == 0)
+		return;
 	flag = 0;
 
 	stopMusic();
@@ -174,7 +175,8 @@ static uint16 num_foglie = 0;
 void _c_contaFoglie(void *parm) {
 
 	num_foglie++;
-	if (num_foglie != 6) return;
+	if (num_foglie != 6)
+		return;
 
 	_commandFlags |= 0x1000;
 
@@ -264,7 +266,8 @@ void _c_finito(void *parm) {
 	Common::File stream;
 
 	stream.open(_vm->_characterName, Common::File::kFileWriteMode);
-	if (stream.isOpen()) stream.close();
+	if (stream.isOpen())
+		stream.close();
 
 	Common::File streamDino, streamDough, streamDonna;
 

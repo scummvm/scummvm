@@ -522,7 +522,7 @@ LValue getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation 
 
 
 void jobRunScripts(void *parm, Job *j) {
-    debugC(3, kDebugLocation, "jobRunScripts");
+	debugC(3, kDebugLocation, "jobRunScripts");
 
 	static uint16 modCounter = 0;
 
@@ -673,7 +673,8 @@ void jobRunScripts(void *parm, Job *j) {
 		a->_program->_ip = (Instruction*)inst->_node._next;
 
 label1:
-		if (a->_zone._flags & kFlagsCharacter) a->_z = a->_zone.pos._position._y + a->_cnv._height;
+		if (a->_zone._flags & kFlagsCharacter)
+			a->_z = a->_zone.pos._position._y + a->_cnv._height;
 	}
 
 	sortAnimations();
@@ -685,8 +686,10 @@ label1:
 void wrapLocalVar(LocalVariable *local) {
 //	  printf("wrapLocalVar(v: %i, min: %i, max: %i)\n", local->_value, local->_min, local->_max);
 
-	if (local->_value >= local->_max) local->_value = local->_min;
-	if (local->_value < local->_min) local->_value = local->_max - 1;
+	if (local->_value >= local->_max)
+		local->_value = local->_min;
+	if (local->_value < local->_min)
+		local->_value = local->_max - 1;
 
 	return;
 }

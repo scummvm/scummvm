@@ -69,7 +69,8 @@ char *parseComment(ArchivedFile *file) {
 		v194 = parseNextLine(v190, 400);
 
 		v194[strlen(v194)-1] = '\0';
-		if (!scumm_stricmp(v194, "endtext")) break;
+		if (!scumm_stricmp(v194, "endtext"))
+			break;
 
 		strcat(_tmp_comment, v194);
 		strcat(_tmp_comment, " ");

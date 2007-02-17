@@ -193,7 +193,8 @@ void Menu::newGame() {
 		if (_mouseButtons == kMouseRightUp) break;
 	}
 
-	if (_mouseButtons != kMouseRightUp) return;    // show intro
+	if (_mouseButtons != kMouseRightUp)
+		return;    // show intro
 
 	_vm->_graphics->freeCnv(&Graphics::_font);
 	closeArchive();

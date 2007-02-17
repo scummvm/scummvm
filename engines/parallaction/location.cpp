@@ -203,7 +203,7 @@ void resolveLocationForwards() {
 
 
 void freeLocation() {
-   debugC(7, kDebugLocation, "freeLocation");
+	debugC(7, kDebugLocation, "freeLocation");
 
 	uint16 _si = 1;
 	while (_localFlagNames[_si] != 0) {
@@ -211,43 +211,43 @@ void freeLocation() {
 		_localFlagNames[_si] = NULL;
 		_si++;
 	}
-    debugC(7, kDebugLocation, "freeLocation: localflags names freed");
+	debugC(7, kDebugLocation, "freeLocation: localflags names freed");
 
 
 	freeNodeList(_locationWalkNodes._next);
 	_locationWalkNodes._next = NULL;
-    debugC(7, kDebugLocation, "freeLocation: walk nodes freed");
+	debugC(7, kDebugLocation, "freeLocation: walk nodes freed");
 
-    helperNode._prev = helperNode._next = NULL;
+	helperNode._prev = helperNode._next = NULL;
 	freeZones(_zones._next);
 	freeNodeList(_zones._next);
 	memcpy(&_zones, &helperNode, sizeof(Node));
-    debugC(7, kDebugLocation, "freeLocation: zones freed");
+	debugC(7, kDebugLocation, "freeLocation: zones freed");
 
-    helperNode._prev = helperNode._next = NULL;
+	helperNode._prev = helperNode._next = NULL;
 	freeZones(_animations._next);
 	freeAnimations();
 	freeNodeList(_animations._next);
-    memcpy(&_animations, &helperNode, sizeof(Node));
-    debugC(7, kDebugLocation, "freeLocation: animations freed");
+	memcpy(&_animations, &helperNode, sizeof(Node));
+	debugC(7, kDebugLocation, "freeLocation: animations freed");
 
 	if (_locationComment) {
 		memFree(_locationComment);
 	}
 	_locationComment = NULL;
-    debugC(7, kDebugLocation, "freeLocation: comments freed");
+	debugC(7, kDebugLocation, "freeLocation: comments freed");
 
 	if (_locationCommands) {
 		freeNodeList(&_locationCommands->_node);
 	}
 	_locationCommands = NULL;
-    debugC(7, kDebugLocation, "freeLocation: commands freed");
+	debugC(7, kDebugLocation, "freeLocation: commands freed");
 
 	if (_locationACommands) {
 		freeNodeList(&_locationACommands->_node);
 	}
 	_locationACommands = NULL;
-    debugC(7, kDebugLocation, "freeLocation: acommands freed");
+	debugC(7, kDebugLocation, "freeLocation: acommands freed");
 
 	return;
 }
@@ -316,7 +316,7 @@ extern Job     *_jEraseLabel;
 
 
 void Parallaction::changeLocation(char *location) {
-    debugC(1, kDebugLocation, "changeLocation to '%s'", location);
+	debugC(1, kDebugLocation, "changeLocation to '%s'", location);
 
 //	printf("changeLocation('%s')", location);
 	if (_musicData1 != 0) {
@@ -331,7 +331,7 @@ void Parallaction::changeLocation(char *location) {
 		playMusic();
 		_musicData1 = 0;
 
-        debugC(2, kDebugLocation, "changeLocation: started character specific music");
+		debugC(2, kDebugLocation, "changeLocation: started character specific music");
 	}
 
 	if (!scumm_stricmp(location, "night") || !scumm_stricmp(location, "intsushi")) {
@@ -339,7 +339,7 @@ void Parallaction::changeLocation(char *location) {
 		loadMusic("soft");
 		playMusic();
 
-        debugC(2, kDebugLocation, "changeLocation: started music 'soft'");
+		debugC(2, kDebugLocation, "changeLocation: started music 'soft'");
 	}
 
 	if (!scumm_stricmp(location, "museo") ||
@@ -353,33 +353,33 @@ void Parallaction::changeLocation(char *location) {
 		stopMusic();
 		_musicData1 = 1;
 
-        debugC(2, kDebugLocation, "changeLocation: music stopped");
+		debugC(2, kDebugLocation, "changeLocation: music stopped");
 	}
 
-    // WORKAROUND: this if-statement has been added to avoid crashes caused by
-    // execution of label jobs after a location switch. The other workaround in
-    // Parallaction::runGame should have been rendered useless by this one.
-    if (_jDrawLabel != NULL) {
-        removeJob(_jDrawLabel);
-        removeJob(_jEraseLabel);
-        _jDrawLabel = NULL;
-        _jEraseLabel = NULL;
-    }
+	// WORKAROUND: this if-statement has been added to avoid crashes caused by
+	// execution of label jobs after a location switch. The other workaround in
+	// Parallaction::runGame should have been rendered useless by this one.
+	if (_jDrawLabel != NULL) {
+		removeJob(_jDrawLabel);
+		removeJob(_jEraseLabel);
+		_jDrawLabel = NULL;
+		_jEraseLabel = NULL;
+	}
 
 
-    _hoverZone = NULL;
+	_hoverZone = NULL;
 	if (_engineFlags & kEngineMouse) {
-        changeCursor( kCursorArrow );
-        debugC(2, kDebugLocation, "changeLocation: changed cursor");
+		changeCursor( kCursorArrow );
+		debugC(2, kDebugLocation, "changeLocation: changed cursor");
 	}
 
 	strcpy(_newLocation, location);
 
 	removeNode(&_yourself._zone._node);
-    debugC(2, kDebugLocation, "changeLocation: removed character from the animation list");
+	debugC(2, kDebugLocation, "changeLocation: removed character from the animation list");
 
 	freeLocation();
-    debugC(1, kDebugLocation, "changeLocation: old location free'd");
+	debugC(1, kDebugLocation, "changeLocation: old location free'd");
 
 
 	char *tmp = strchr(_newLocation, '.');
@@ -394,7 +394,7 @@ void Parallaction::changeLocation(char *location) {
 			_vm->_graphics->palUnk0(_palette);
 			_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
-            debugC(1, kDebugLocation, "changeLocation: new background set");
+			debugC(1, kDebugLocation, "changeLocation: new background set");
 
 			_vm->_graphics->_proportionalFont = false;
 			_vm->_graphics->loadExternalCnv("slidecnv", &Graphics::_font);
@@ -407,7 +407,7 @@ void Parallaction::changeLocation(char *location) {
 			_vm->_graphics->freeCnv(&Graphics::_font);
 			waitUntilLeftClick();
 
-            debugC(2, kDebugLocation, "changeLocation: intro text shown");
+			debugC(2, kDebugLocation, "changeLocation: intro text shown");
 
 			tmp = strchr(tmp+1, '.');
 			strcpy(_newLocation, tmp+1);
@@ -434,7 +434,7 @@ void Parallaction::changeLocation(char *location) {
 
 	parseLocation(_newLocation);
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
-    debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", _newLocation);
+	debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", _newLocation);
 
 	_yourself._zone.pos._oldposition._x = -1000;
 	_yourself._zone.pos._oldposition._y = -1000;
@@ -447,7 +447,7 @@ void Parallaction::changeLocation(char *location) {
 		_firstPosition._y = -1000;
 		_firstPosition._x = -1000;
 
-        debugC(2, kDebugLocation, "changeLocation: initial position set to x: %i, y: %i, f: %i", _firstPosition._x, _firstPosition._y, _firstFrame);
+		debugC(2, kDebugLocation, "changeLocation: initial position set to x: %i, y: %i, f: %i", _firstPosition._x, _firstPosition._y, _firstFrame);
 	}
 
 	byte palette[PALETTE_SIZE];
@@ -463,8 +463,8 @@ void Parallaction::changeLocation(char *location) {
 	}
 
 	if (_locationComment) {
-	    doLocationEnterTransition();
-        debugC(2, kDebugLocation, "changeLocation: shown location comment");
+		doLocationEnterTransition();
+		debugC(2, kDebugLocation, "changeLocation: shown location comment");
 	}
 
 	runJobs();
@@ -472,11 +472,11 @@ void Parallaction::changeLocation(char *location) {
 
 	_vm->_graphics->palUnk0(_palette);
 	if (_locationACommands) {
-	    runCommands(_locationACommands);
-        debugC(1, kDebugLocation, "changeLocation: location acommands run");
-    }
+		runCommands(_locationACommands);
+		debugC(1, kDebugLocation, "changeLocation: location acommands run");
+	}
 
-    debugC(1, kDebugLocation, "changeLocation completed");
+	debugC(1, kDebugLocation, "changeLocation completed");
 
 	return;
 

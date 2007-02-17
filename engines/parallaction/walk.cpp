@@ -120,7 +120,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	uint16 v38 = walkFunc1(to_x, to_y, v44);
 	if (v38 == 1) {
 		// destination directly reachable
-        debugC(1, kDebugWalk, "direct move to (%i, %i)", to_x, to_y);
+		debugC(1, kDebugWalk, "direct move to (%i, %i)", to_x, to_y);
 		memFree(v44);
 		return v48;
 	}
@@ -219,9 +219,9 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	WalkNode* tmp = &v58;
 	uint16 i = 1;
 	while (tmp->_node._next) {
-	    debugC(1, kDebugWalk, "node %i: %i, %i", i, tmp->_x, tmp->_y);
-        tmp = (WalkNode*)tmp->_node._next;
-        i++;
+		debugC(1, kDebugWalk, "node %i: %i, %i", i, tmp->_x, tmp->_y);
+		tmp = (WalkNode*)tmp->_node._next;
+		i++;
 	}
 
 
@@ -321,7 +321,7 @@ void jobWalk(void *parm, Job *j) {
 	int16 _si = _yourself._zone.pos._position._x;
 	int16 _di = _yourself._zone.pos._position._y;
 
-//    debugC(1, kDebugWalk, "jobWalk to (%i, %i)", node->_x + _yourself._cnv._width / 2, node->_y + _yourself._cnv._height);
+//	debugC(1, kDebugWalk, "jobWalk to (%i, %i)", node->_x + _yourself._cnv._width / 2, node->_y + _yourself._cnv._height);
 
 	_yourself._zone.pos._oldposition._x = _si;
 	_yourself._zone.pos._oldposition._y = _di;
@@ -338,11 +338,11 @@ void jobWalk(void *parm, Job *j) {
 		}
 
 
-        WalkNode *tmp = (WalkNode*)node->_node._next;
+		WalkNode *tmp = (WalkNode*)node->_node._next;
 		j->_parm = node->_node._next;
 		memFree(node);
 
-        debugC(1, kDebugWalk, "jobWalk moving to next node (%i, %i)", tmp->_x, tmp->_y);
+		debugC(1, kDebugWalk, "jobWalk moving to next node (%i, %i)", tmp->_x, tmp->_y);
 
 		node = (WalkNode*)tmp;
 	}
@@ -352,8 +352,10 @@ void jobWalk(void *parm, Job *j) {
 		node->_y - _yourself._zone.pos._position._y
 	};
 
-	if (dist._x < 0) dist._x = -dist._x;
-	if (dist._y < 0) dist._y = -dist._y;
+	if (dist._x < 0)
+		dist._x = -dist._x;
+	if (dist._y < 0)
+		dist._y = -dist._y;
 
 	walkData1++;
 

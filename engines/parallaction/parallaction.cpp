@@ -172,16 +172,16 @@ Parallaction::Parallaction(OSystem *syst) :
 
 	Common::File::addDefaultDirectory( _gameDataPath );
 
-/*    Common::addSpecialDebugLevel(kDebugAnimation, "Animation", "Animations debug level");
-    Common::addSpecialDebugLevel(kDebugZone, "Zone", "Zones debug level");
-    Common::addSpecialDebugLevel(kDebugCommand, "Command", "Commands debug level");
+/*	Common::addSpecialDebugLevel(kDebugAnimation, "Animation", "Animations debug level");
+	Common::addSpecialDebugLevel(kDebugZone, "Zone", "Zones debug level");
+	Common::addSpecialDebugLevel(kDebugCommand, "Command", "Commands debug level");
 
-    Common::addSpecialDebugLevel(kDebugIntro, "Intro", "Intro debug level");
-    Common::addSpecialDebugLevel(kDebugInventory, "Inventory", "Inventory debug level");
+	Common::addSpecialDebugLevel(kDebugIntro, "Intro", "Intro debug level");
+	Common::addSpecialDebugLevel(kDebugInventory, "Inventory", "Inventory debug level");
 */
 
-    Common::addSpecialDebugLevel(kDebugDialogue, "dialogue", "Dialogues debug level");
-    Common::addSpecialDebugLevel(kDebugLocation, "location", "Location debug level");
+	Common::addSpecialDebugLevel(kDebugDialogue, "dialogue", "Dialogues debug level");
+	Common::addSpecialDebugLevel(kDebugLocation, "location", "Location debug level");
 	Common::addSpecialDebugLevel(kDebugDisk, "disk", "Disk debug level");
 	Common::addSpecialDebugLevel(kDebugWalk, "walk", "Walk debug level");
 	Common::addSpecialDebugLevel(kDebugGraphics, "gfx", "Gfx debug level");
@@ -208,42 +208,42 @@ int Parallaction::init() {
 */
 	_engineFlags = 0;
 /*
-    if (ConfMan.hasKey("boot_param")) {
-        Common::String bootp = ConfMan.get("boot_param");
+	if (ConfMan.hasKey("boot_param")) {
+		Common::String bootp = ConfMan.get("boot_param");
 
-        char argv[3][30];
-        char* d = argv[0];
-        uint16 j = 0;
-        for (uint16 i = 0; i < bootp.size(); i++) {
-            if (bootp[i] == '.') {
-                j++;
-                d = argv[j];
-                continue;
-            }
+		char argv[3][30];
+		char* d = argv[0];
+		uint16 j = 0;
+		for (uint16 i = 0; i < bootp.size(); i++) {
+			if (bootp[i] == '.') {
+				j++;
+				d = argv[j];
+				continue;
+			}
 
-            *d++ = bootp[i];
-        }
+			*d++ = bootp[i];
+		}
 
-        if (j < 3) {
-            GUIErrorMessage("Not enough parameters for Nippon Safes Inc.");
-            return -2;
-        }
+		if (j < 3) {
+			GUIErrorMessage("Not enough parameters for Nippon Safes Inc.");
+			return -2;
+		}
 
-        argv[2][2] = '/';
-        argv[2][3] = '\0';
+		argv[2][2] = '/';
+		argv[2][3] = '\0';
 
-        strcpy(_location, argv[0]);
-        strcpy(_characterName, argv[1]);
-        strcpy(_languageDir, argv[2]);
-        _skipMenu = true;
+		strcpy(_location, argv[0]);
+		strcpy(_characterName, argv[1]);
+		strcpy(_languageDir, argv[2]);
+		_skipMenu = true;
 
-    } else {*/
-        strcpy(_characterName, "dough");
-/*    }
+	} else {*/
+		strcpy(_characterName, "dough");
+/*	}
 */
 
 
-    memset(_locationNames, 0, 120*32);
+	memset(_locationNames, 0, 120*32);
 	_numLocations = 0;
 
 	_yourself._zone.pos._position._x = 150;
@@ -422,19 +422,19 @@ void Parallaction::runGame() {
 	while ((_engineFlags & kEngineQuit) == 0) {
 		_keyDown = updateInput();
 
-        debugC(3, kDebugLocation, "runGame: input flags (%i, %i, %i, %i)",
-            _mouseHidden == 0,
-            (_engineFlags & kEngineMouse) == 0,
-            (_engineFlags & kEngineWalking) == 0,
-            (_engineFlags & kEngineChangeLocation) == 0
-        );
+		debugC(3, kDebugLocation, "runGame: input flags (%i, %i, %i, %i)",
+			_mouseHidden == 0,
+			(_engineFlags & kEngineMouse) == 0,
+			(_engineFlags & kEngineWalking) == 0,
+			(_engineFlags & kEngineChangeLocation) == 0
+		);
 
-        // WORKAROUND: the engine doesn't check for displayed labels before performing a location
-        // switch, thus crashing whenever a jobDisplayLabel/jEraseLabel pair is left into the
-        // queue after the character enters a door.
-        // Skipping input processing when kEngineChangeLocation is set solves the issue. It's
-        // noteworthy that the programmers added this very check in Big Red Adventure's engine,
-        // so it should be ok here in Nippon Safes too.
+		// WORKAROUND: the engine doesn't check for displayed labels before performing a location
+		// switch, thus crashing whenever a jobDisplayLabel/jEraseLabel pair is left into the
+		// queue after the character enters a door.
+		// Skipping input processing when kEngineChangeLocation is set solves the issue. It's
+		// noteworthy that the programmers added this very check in Big Red Adventure's engine,
+		// so it should be ok here in Nippon Safes too.
 		if ((_mouseHidden == 0) && ((_engineFlags & kEngineMouse) == 0) && ((_engineFlags & kEngineWalking) == 0) && ((_engineFlags & kEngineChangeLocation) == 0)) {
 			InputData *v8 = translateInput();
 			if (v8) processInput(v8);
@@ -483,7 +483,7 @@ void Parallaction::processInput(InputData *data) {
 
 	switch (data->_event) {
 	case kEvEnterZone:
-        debugC(2, kDebugLocation, "processInput: kEvEnterZone");
+		debugC(2, kDebugLocation, "processInput: kEvEnterZone");
 		_graphics->_labelPosition[1]._x = -1000;
 		_graphics->_labelPosition[1]._y = -1000;
 		_graphics->_labelPosition[0]._x = -1000;
@@ -493,14 +493,14 @@ void Parallaction::processInput(InputData *data) {
 		break;
 
 	case kEvExitZone:
-        debugC(2, kDebugLocation, "processInput: kEvExitZone");
+		debugC(2, kDebugLocation, "processInput: kEvExitZone");
 		removeJob(_jDrawLabel);
 		addJob(&jobWaitRemoveJob, _jEraseLabel, kPriority15);
 		_jDrawLabel = NULL;
 		break;
 
 	case kEvAction:
-        debugC(2, kDebugLocation, "processInput: kEvAction");
+		debugC(2, kDebugLocation, "processInput: kEvAction");
 		_procCurrentHoverItem = -1;
 		_hoverZone = NULL;
 		pauseJobs();
@@ -544,7 +544,7 @@ void Parallaction::processInput(InputData *data) {
 		break;
 
 	case kEvWalk:
-        debugC(2, kDebugLocation, "processInput: kEvWalk");
+		debugC(2, kDebugLocation, "processInput: kEvWalk");
 		_hoverZone = NULL;
 		changeCursor(kCursorArrow);
 		if (_yourself._zone._flags & kFlagsRemove) break;
@@ -769,7 +769,7 @@ void Parallaction::changeCursor(int32 index) {
 
 	if (index == kCursorArrow) {		// standard mouse pointer
 
-        debugC(1, kDebugLocation, "changeCursor(%i), label: %p", index, (const void*)_jDrawLabel);
+		debugC(1, kDebugLocation, "changeCursor(%i), label: %p", index, (const void*)_jDrawLabel);
 
 		if (_jDrawLabel != NULL) {
 			removeJob(_jDrawLabel);
@@ -967,7 +967,8 @@ void runJobs() {
 		(*j->_fn)(j->_parm, j);
 		Job *v4 = (Job*)j->_node._next;
 
-		if (j->_finished == 1) removeJob(j);
+		if (j->_finished == 1)
+			removeJob(j);
 
 		j = v4;
 	}
@@ -983,7 +984,7 @@ void jobWaitRemoveJob(void *parm, Job *j) {
 
 	static uint16 count = 0;
 
-    debugC(3, kDebugLocation, "jobWaitRemoveJob: count = %i", count);
+	debugC(3, kDebugLocation, "jobWaitRemoveJob: count = %i", count);
 
 	_engineFlags |= kEngineMouse;
 

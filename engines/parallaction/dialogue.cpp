@@ -220,14 +220,14 @@ void freeDialogue(Dialogue *d) {
 
 
 void runDialogue(SpeakData *data) {
-    debugC(1, kDebugDialogue, "runDialogue: starting dialogue '%s'", data->_name);
+	debugC(1, kDebugDialogue, "runDialogue: starting dialogue '%s'", data->_name);
 
 	enterDialogue();
-    debugC(1, kDebugDialogue, "runDialogue: enterDialogue ok");
+	debugC(1, kDebugDialogue, "runDialogue: enterDialogue ok");
 
 	if (!scumm_stricmp(_location, "museum")) {
 		_vm->_graphics->freeCnv( &_tempFrames );
-        debugC(1, kDebugDialogue, "runDialogue: special trick for 'museum' location");
+		debugC(1, kDebugDialogue, "runDialogue: special trick for 'museum' location");
 	}
 
 	char v20[PATH_LEN];
@@ -242,9 +242,9 @@ void runDialogue(SpeakData *data) {
 		sprintf(v20, "%stal", v24);
 	}
 
-    debugC(1, kDebugDialogue, "runDialogue: loading 1st character head '%s'", v20);
+	debugC(1, kDebugDialogue, "runDialogue: loading 1st character head '%s'", v20);
 	_vm->_graphics->loadExternalCnv(v20, &_characterFace);
-    debugC(1, kDebugDialogue, "runDialogue: 1st character head loaded");
+	debugC(1, kDebugDialogue, "runDialogue: 1st character head loaded");
 
 	_vm->_graphics->loadExternalCnv("comiccnv", &Graphics::_font);
 
@@ -253,11 +253,11 @@ void runDialogue(SpeakData *data) {
 
 	if (!scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0') {
 		memcpy(&v6E, &_characterFace, sizeof(Cnv));
-        debugC(1, kDebugDialogue, "runDialogue: using default character head");
+		debugC(1, kDebugDialogue, "runDialogue: using default character head");
 	} else {
-        debugC(1, kDebugDialogue, "runDialogue: loading 2nd character head '%s'", v20);
+		debugC(1, kDebugDialogue, "runDialogue: loading 2nd character head '%s'", v20);
 		_vm->_graphics->loadCnv(data->_name, &v6E);
-        debugC(1, kDebugDialogue, "runDialogue: 2nd character head loaded");
+		debugC(1, kDebugDialogue, "runDialogue: 2nd character head loaded");
 	}
 
 	v5C._width = v6E._width;
@@ -282,7 +282,7 @@ void runDialogue(SpeakData *data) {
 
 		// display Question if any
 		if (scumm_stricmp(v60->_text, "NULL")) {
-            debugC(1, kDebugDialogue, "runDialogue: showing question '%s'", v60->_text);
+			debugC(1, kDebugDialogue, "runDialogue: showing question '%s'", v60->_text);
 
 			_vm->_graphics->flatBlitCnv(
 				&v5C,
@@ -345,10 +345,10 @@ void runDialogue(SpeakData *data) {
 						&_answerBalloonH[_si]
 					);
 
-                    debugC(1, kDebugDialogue, "runDialogue: showing answer #%i '%s'",
-                        _si,
-                        v60->_answers[_si]
-                    );
+					debugC(1, kDebugDialogue, "runDialogue: showing answer #%i '%s'",
+						_si,
+						v60->_answers[_si]
+					);
 
 					_vm->_graphics->drawBalloon(
 						_answerBalloonX[_si],
@@ -368,18 +368,18 @@ void runDialogue(SpeakData *data) {
 						3
 					);
 
-                   debugC(1, kDebugDialogue, "runDialogue: answer #%i shown at (%i, %i)+(%i, %i)",
-                        _si,
-                        _answerBalloonX[_si],
+					debugC(1, kDebugDialogue, "runDialogue: answer #%i shown at (%i, %i)+(%i, %i)",
+						_si,
+						_answerBalloonX[_si],
 						_answerBalloonY[_si],
 						_answerBalloonW[_si],
 						_answerBalloonH[_si]
-                    );
+					);
 
 
 					displayedAnswers = true;
 				} else {
-                    debugC(1, kDebugDialogue, "runDialogue: skipping answer #%i", _si);
+					debugC(1, kDebugDialogue, "runDialogue: skipping answer #%i", _si);
 
 					_answerBalloonY[_si+1] = _answerBalloonY[_si];
 					_answerBalloonY[_si] = SKIPPED_ANSWER;
@@ -393,7 +393,7 @@ void runDialogue(SpeakData *data) {
 
 			if (displayedAnswers == true) {
 
-                debugC(1, kDebugDialogue, "runDialogue: showing answering face (%p)", (const void*)v48._data0);
+				debugC(1, kDebugDialogue, "runDialogue: showing answering face (%p)", (const void*)v48._data0);
 
 				_vm->_graphics->flatBlitCnv(
 					&v48,
@@ -403,20 +403,20 @@ void runDialogue(SpeakData *data) {
 					v48._data1
 				);
 
-                debugC(1, kDebugDialogue, "runDialogue: answering face shown");
+				debugC(1, kDebugDialogue, "runDialogue: answering face shown");
 
 				if (askPassword == false) {
 
-                    debugC(1, kDebugDialogue, "runDialogue: waiting for user to select answer");
+					debugC(1, kDebugDialogue, "runDialogue: waiting for user to select answer");
 					_di = selectAnswer(v60, &v48);
-                    debugC(1, kDebugDialogue, "runDialogue: user selected answer #%i", _di);
+					debugC(1, kDebugDialogue, "runDialogue: user selected answer #%i", _di);
 
 				} else {
 
 					char password[100];
 					uint16 passwordLen = 0;
 
-                    debugC(1, kDebugDialogue, "runDialogue: asking password");
+					debugC(1, kDebugDialogue, "runDialogue: asking password");
 
 					while (askPassword == true) {
 						strcpy(password, ".......");
@@ -495,7 +495,7 @@ void runDialogue(SpeakData *data) {
 				v60 = (Dialogue*)v60->_following._questions[_di];
 
 			} else {
-                debugC(1, kDebugDialogue, "runDialogue: no suitable answers found");
+				debugC(1, kDebugDialogue, "runDialogue: no suitable answers found");
 
 				v60 = NULL;
 			}
@@ -507,21 +507,21 @@ void runDialogue(SpeakData *data) {
 
 	}
 
-    debugC(1, kDebugDialogue, "runDialogue: out of dialogue loop");
+	debugC(1, kDebugDialogue, "runDialogue: out of dialogue loop");
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
 	_vm->_graphics->freeCnv(&_characterFace);
-    debugC(1, kDebugDialogue, "runDialogue: 1st character head free'd");
+	debugC(1, kDebugDialogue, "runDialogue: 1st character head free'd");
 
 	if (scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0') {
 		_vm->_graphics->freeCnv(&v6E);
-        debugC(1, kDebugDialogue, "runDialogue: 2nd character head free'd");
+		debugC(1, kDebugDialogue, "runDialogue: 2nd character head free'd");
 	}
 
 	_vm->_graphics->freeCnv(&Graphics::_font);
 
 	exitDialogue();
-    debugC(1, kDebugDialogue, "runDialogue: exit dialogue ok");
+	debugC(1, kDebugDialogue, "runDialogue: exit dialogue ok");
 
 	if (!scumm_stricmp(_location, "museum")) {
 
@@ -532,13 +532,13 @@ void runDialogue(SpeakData *data) {
 
 		memcpy(&_yourself._cnv, &_tempFrames, sizeof(Cnv));
 
-        debugC(1, kDebugDialogue, "runDialogue: special trick for 'museum' location ok");
+		debugC(1, kDebugDialogue, "runDialogue: special trick for 'museum' location ok");
 	}
 
-    debugC(1, kDebugDialogue, "runDialogue: running zone commands");
+	debugC(1, kDebugDialogue, "runDialogue: running zone commands");
 	runCommands(v34);
 
-    debugC(1, kDebugDialogue, "runDialogue: end");
+	debugC(1, kDebugDialogue, "runDialogue: end");
 
 	return;
 
@@ -624,7 +624,7 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 
 		}
 
-        g_system->delayMillis(30);
+		g_system->delayMillis(30);
 
 		v2 = _si;
 	}

@@ -42,7 +42,8 @@ static uint32			_handle = MAX_ARCHIVE_ENTRIES;
 void openArchive(const char *file) {
 	debugC(1, kDebugDisk, "open archive '%s'", file);
 
-    if (_archive.isOpen()) closeArchive();
+	if (_archive.isOpen())
+		closeArchive();
 
 
 	uint32	offset = DIRECTORY_OFFSET_IN_FILE;
@@ -96,7 +97,7 @@ ArchivedFile *openArchivedFile(const char *name) {
 	ArchivedFile *file = (ArchivedFile*)memAlloc(sizeof(ArchivedFile));
 
 	if (!file)
-        error("openArchivedFile: can't allocate buffer for '%s'", name);
+		error("openArchivedFile: can't allocate buffer for '%s'", name);
 
 	file->_index = i;
 	file->_offset = _archiveOffsets[i];
@@ -167,7 +168,8 @@ char *readArchivedFileText(char *buf, uint16 size, void*) {
 
 	char *t = _archive.readLine(buf, size);
 
-	if (_archive.eof() || t == NULL) return NULL;
+	if (_archive.eof() || t == NULL)
+		return NULL;
 
 	return t;
 }

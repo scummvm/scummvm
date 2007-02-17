@@ -121,24 +121,24 @@ void Parallaction::parseZone(ArchivedFile *file, Node *list, char *name) {
 }
 
 void freeZones(Node *list) {
-    debugC(1, kDebugLocation, "freeZones: kEngineQuit = %i", _engineFlags & kEngineQuit);
+	debugC(1, kDebugLocation, "freeZones: kEngineQuit = %i", _engineFlags & kEngineQuit);
 
 	Zone *z = (Zone*)list;
 	Zone *v8 = NULL;
 
 	for (; z; ) {
 
-        // WORKAROUND: this huge condition is needed because we made ZoneTypeData a collection of structs
-        // instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
-        // but we need to check it separately here. The same workaround is applied in hitZone.
+		// WORKAROUND: this huge condition is needed because we made ZoneTypeData a collection of structs
+		// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
+		// but we need to check it separately here. The same workaround is applied in hitZone.
 		if (((z->_limits._top == -1) ||
-            ((z->_limits._left == -2) && (
-                (((z->_type & 0xFFFF) == kZoneMerge) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj1)) != 0) || (isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj2)) != 0))) ||
-                (((z->_type & 0xFFFF) == kZoneGet) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.get->_icon)) != 0)))
-            ))) &&
-            ((_engineFlags & kEngineQuit) == 0)) {
+			((z->_limits._left == -2) && (
+				(((z->_type & 0xFFFF) == kZoneMerge) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj1)) != 0) || (isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj2)) != 0))) ||
+				(((z->_type & 0xFFFF) == kZoneGet) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.get->_icon)) != 0)))
+			))) &&
+			((_engineFlags & kEngineQuit) == 0)) {
 
-            debugC(1, kDebugLocation, "freeZones preserving zone '%s'", z->_label._text);
+			debugC(1, kDebugLocation, "freeZones preserving zone '%s'", z->_label._text);
 
 			v8 = (Zone*)z->_node._next;
 			removeNode(&z->_node);
@@ -190,7 +190,7 @@ void freeZones(Node *list) {
 		_vm->_graphics->freeStaticCnv(&z->_label._cnv);
 		freeCommands(z->_commands);
 
-        z=(Zone*)z->_node._next;
+		z=(Zone*)z->_node._next;
 
 	}
 
@@ -472,7 +472,7 @@ void displayItemComment(ExamineData *data) {
 
 
 uint16 runZone(Zone *z) {
-    debugC(3, kDebugLocation, "runZone (%s)", z->_label._text);
+	debugC(3, kDebugLocation, "runZone (%s)", z->_label._text);
 
 	uint16 subtype = z->_type & 0xFFFF;
 
@@ -512,7 +512,7 @@ uint16 runZone(Zone *z) {
 
 	}
 
-    debugC(3, kDebugLocation, "runZone completed");
+	debugC(3, kDebugLocation, "runZone completed");
 
 	return 0;
 }
@@ -634,28 +634,39 @@ Zone *hitZone(uint32 type, uint16 x, uint16 y) {
 				// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
 				// but we need to check it separately here. The same workaround is applied in freeZones.
 				if ((((z->_type & 0xFFFF0000) == kZoneMerge) && (((_si == z->u.merge->_obj1) && (_di == z->u.merge->_obj2)) || ((_si == z->u.merge->_obj2) && (_di == z->u.merge->_obj1)))) ||
-                    (((z->_type & 0xFFFF0000) == kZoneGet) && ((_si == z->u.get->_icon) || (_di == z->u.get->_icon)))) {
+					(((z->_type & 0xFFFF0000) == kZoneGet) && ((_si == z->u.get->_icon) || (_di == z->u.get->_icon)))) {
 
 					// special Zone
-					if ((type == 0) && ((z->_type & 0xFFFF0000) == 0)) return z;
-					if (z->_type == type) return z;
-					if ((z->_type & 0xFFFF0000) == type) return z;
+					if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
+						return z;
+					if (z->_type == type)
+						return z;
+					if ((z->_type & 0xFFFF0000) == type)
+						return z;
 
 				}
 			}
 
-			if (z->_limits._left != -1) continue;
-			if (_si < _yourself._zone.pos._position._x) continue;
-			if (_si > (_yourself._zone.pos._position._x + _yourself._cnv._width)) continue;
-			if (_di < _yourself._zone.pos._position._y) continue;
-			if (_di > (_yourself._zone.pos._position._y + _yourself._cnv._height)) continue;
+			if (z->_limits._left != -1)
+				continue;
+			if (_si < _yourself._zone.pos._position._x)
+				continue;
+			if (_si > (_yourself._zone.pos._position._x + _yourself._cnv._width))
+				continue;
+			if (_di < _yourself._zone.pos._position._y)
+				continue;
+			if (_di > (_yourself._zone.pos._position._y + _yourself._cnv._height))
+				continue;
 
 		}
 
 		// normal Zone
-		if ((type == 0) && ((z->_type & 0xFFFF0000) == 0)) return z;
-		if (z->_type == type) return z;
-		if ((z->_type & 0xFFFF0000) == type) return z;
+		if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
+			return z;
+		if (z->_type == type)
+			return z;
+		if ((z->_type & 0xFFFF0000) == type)
+			return z;
 
 	}
 
