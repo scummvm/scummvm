@@ -211,7 +211,6 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 	byte bomp_scaling_x[64];
 	byte bomp_scaling_y[64];
 
-
 	if (bd.x < 0) {
 		clip.left = -bd.x;
 	} else {
@@ -331,32 +330,13 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 	}
 }
 
-static const byte bitCount[] = {
-	8, 7, 7, 6, 7, 6, 6, 5, 7, 6, 6, 5, 6, 5, 5, 4,
-	7, 6, 6, 5, 6, 5, 5, 4, 6, 5, 5, 4, 5, 4, 4, 3,
-	7, 6, 6, 5, 6, 5, 5, 4, 6, 5, 5, 4, 5, 4, 4, 3,
-	6, 5, 5, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 3, 3, 2,
-	7, 6, 6, 5, 6, 5, 5, 4, 6, 5, 5, 4, 5, 4, 4, 3,
-	6, 5, 5, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 3, 3, 2,
-	6, 5, 5, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 3, 3, 2,
-	5, 4, 4, 3, 4, 3, 3, 2, 4, 3, 3, 2, 3, 2, 2, 1,
-	7, 6, 6, 5, 6, 5, 5, 4, 6, 5, 5, 4, 5, 4, 4, 3,
-	6, 5, 5, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 3, 3, 2,
-	6, 5, 5, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 3, 3, 2,
-	5, 4, 4, 3, 4, 3, 3, 2, 4, 3, 3, 2, 3, 2, 2, 1,
-	6, 5, 5, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 3, 3, 2,
-	5, 4, 4, 3, 4, 3, 3, 2, 4, 3, 3, 2, 3, 2, 2, 1,
-	5, 4, 4, 3, 4, 3, 3, 2, 4, 3, 3, 2, 3, 2, 2, 1,
-	4, 3, 3, 2, 3, 2, 2, 1, 3, 2, 2, 1, 2, 1, 1, 0,
-};
-
 int32 setupBompScale(byte *scaling, int32 size, byte scale) {
 	byte tmp;
 	int32 count;
 	const byte *tmp_ptr;
 	byte *tmp_scaling = scaling;
 	byte a = 0;
-	byte ret_value = 0;
+	byte bitsCount = 0;
 	const int offsets[8] = { 3, 2, 1, 0, 7, 6, 5, 4 };
 
 	count = (256 - size / 2);
@@ -371,23 +351,24 @@ int32 setupBompScale(byte *scaling, int32 size, byte scale) {
 			a <<= 1;
 			if (scale < tmp) {
 				a |= 1;
+			} else {
+				bitsCount++;
 			}
 		}
 		tmp_ptr += 8;
 
 		*tmp_scaling++ = a;
 	}
-	if ((size & 7) != 0) {
-		*(tmp_scaling - 1) |= revBitMask(size & 7);
+	size &= 7;
+	if (size != 0) {
+		--tmp_scaling;
+		if ((*tmp_scaling & revBitMask(size)) == 0) {
+			*tmp_scaling |= revBitMask(size);
+			bitsCount--;
+		}
 	}
 
-	count = (size + 7) / 8;
-	while (count--) {
-		tmp = *scaling++;
-		ret_value += bitCount[tmp];
-	}
-
-	return ret_value;
+	return bitsCount;
 }
 
 } // End of namespace Scumm
