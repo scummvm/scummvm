@@ -311,8 +311,7 @@ void Room::addLayers(Hotspot &h) {
 	int16 yStart = hsY / RECT_SIZE;
 	int16 yEnd = (hsY + h.heightCopy() - 1) / RECT_SIZE;
 	int16 numY = yEnd - yStart + 1;
-debugC(ERROR_BASIC, kLureDebugAnimations, "p=(%d,%d) rp=(%d,%d) size=(%d,%d)", 
-	   hsX, hsY, xStart, yStart, numX, numY);
+	
 	for (int16 xCtr = 0; xCtr < numX; ++xCtr, ++xStart) {
 		int16 xs = xStart - 4;
 		if (xs < 0) continue;
@@ -511,6 +510,9 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	p.copyFrom(&tempPalette);
 	r.insertPaletteSubset(p);
 	_screen.setPalette(&p);
+
+	// Set the new room number
+	r.fieldList().setField(ROOM_NUMBER, newRoomNumber);
 
 	if (_roomData->sequenceOffset != 0xffff)
 		Script::execute(_roomData->sequenceOffset);
