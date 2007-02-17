@@ -29,8 +29,6 @@
 #include "agos/intern.h"
 #include "agos/vga.h"
 
-#include <sys/stat.h>
-
 namespace AGOS {
 
 const byte *AGOSEngine::dumpOpcode(const byte *p) {
@@ -393,14 +391,13 @@ static const byte bmp_hdr[] = {
 };
 
 void dumpBMP(const char *filename, int w, int h, const byte *bytes, const uint32 *palette) {
-	FILE *out = fopen(filename, "wb");
+	Common::File out;
 	byte my_hdr[sizeof(bmp_hdr)];
 	int i;
 
-	if (out == NULL) {
-		printf("DUMP ERROR\n");
+	out.open(filename, Common::File::kFileWriteMode);
+	if (!out.isOpen())
 		return;
-	}
 
 	memcpy(my_hdr, bmp_hdr, sizeof(bmp_hdr));
 
@@ -409,7 +406,7 @@ void dumpBMP(const char *filename, int w, int h, const byte *bytes, const uint32
 	*(uint32 *)(my_hdr + 22) = h;
 
 
-	fwrite(my_hdr, 1, sizeof(my_hdr), out);
+	out.write(my_hdr, sizeof(my_hdr));
 
 	for (i = 0; i != 256; i++, palette++) {
 		byte color[4];
@@ -417,14 +414,12 @@ void dumpBMP(const char *filename, int w, int h, const byte *bytes, const uint32
 		color[1] = (byte)(*palette >> 8);
 		color[2] = (byte)(*palette);
 		color[3] = 0;
-		fwrite(color, 1, 4, out);
+		out.write(color, 4);
 	}
 
 	while (--h >= 0) {
-		fwrite(bytes + h * ((w + 3) & ~3), ((w + 3) & ~3), 1, out);
+		out.write(bytes + h * ((w + 3) & ~3), ((w + 3) & ~3));
 	}
-
-	fclose(out);
 }
 
 void AGOSEngine::dumpBitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette,
@@ -468,20 +463,11 @@ void AGOSEngine::dumpBitmap(const char *filename, const byte *offs, int w, int h
 
 void AGOSEngine::dumpSingleBitmap(int file, int image, const byte *offs, int w, int h, byte base) {
 	char buf[40];
-#if !defined(PALMOS_MODE) && !defined(__DC__) && !defined(__PSP__) && !defined(__PLAYSTATION2__)
-	struct stat statbuf;
-#endif
 
-#if defined(MACOS_CARBON)
-	sprintf(buf, ":dumps:File%d_Image%d.bmp", file, image);
-#else
 	sprintf(buf, "dumps/File%d_Image%d.bmp", file, image);
-#endif
 
-#if !defined(PALMOS_MODE) && !defined(__DC__) && !defined(__PSP__) && !defined(__PLAYSTATION2__)
-	if (stat(buf, &statbuf) == 0)
+	if (Common::File::exists(buf))
 		return;
-#endif
 
 	dumpBitmap(buf, offs, w, h, 0, _displayPalette, base);
 }
@@ -542,11 +528,7 @@ void AGOSEngine::dumpVgaBitmaps(const byte *vga, byte *vga1, int res) {
 
 		/* dump bitmap */
 		char buf[40];
-#if defined(MACOS_CARBON)
-		sprintf(buf, ":dumps:Res%d_Image%d.bmp", res, i);
-#else
 		sprintf(buf, "dumps/Res%d_Image%d.bmp", res, i);
-#endif
 
 		dumpBitmap(buf, vga + offs, width, height, flags, pal, 0);
 	}
