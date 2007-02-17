@@ -165,7 +165,7 @@ protected:
 	//
 	//	maps a character for representation
 	//
-	char mapChar(char c);
+	byte mapChar(byte c);
 
 	void flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Graphics::Buffers buffer);
 	void blit(uint16 w, uint16 h, int16 x, int16 y, uint16 z, byte *data, Graphics::Buffers buffer, Graphics::Buffers mask);

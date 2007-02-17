@@ -641,7 +641,7 @@ void Graphics::displayString(uint16 x, uint16 y, const char *text) {
 	StaticCnv tmp;
 
 	for (uint16 i = 0; i < len; i++) {
-		char c = mapChar(text[i]);
+		byte c = mapChar(text[i]);
 
 		tmp._width = _font._width;
 		tmp._height = _font._height;
@@ -663,7 +663,7 @@ void Graphics::displayBalloonString(uint16 x, uint16 y, const char *text, byte c
 
 	for (uint16 i = 0; i < len; i++) {
 
-		char c = mapChar(text[i]);
+		byte c = mapChar(text[i]);
 		uint16 w = _proportionalFont ? _glyphWidths[(int)c] : 8;
 		byte *s = _font._array[c];
 		byte *d = _buffers[kBitFront] + x + y*SCREEN_WIDTH;
@@ -752,7 +752,7 @@ uint16 Graphics::getStringWidth(const char *text) {
 	// proportional font
 	uint16 w = 0;
 	for (uint16 i = 0; i < len; i++) {
-		char c = mapChar(text[i]);
+		byte c = mapChar(text[i]);
 		w += _glyphWidths[(int)c];
 	}
 
@@ -915,7 +915,7 @@ void Graphics::makeCnvFromString(StaticCnv *cnv, char *text) {
 	cnv->_data0 = (byte*)memAlloc(cnv->_width * cnv->_height);
 
 	for (uint16 i = 0; i < len; i++) {
-		char c = mapChar(text[i]);
+		byte c = mapChar(text[i]);
 
 		byte *s = _font._array[c];
 		byte *d = cnv->_data0 + _font._width * i;
@@ -934,15 +934,14 @@ void Graphics::makeCnvFromString(StaticCnv *cnv, char *text) {
 //
 //	internal character mapping
 //
-char Graphics::mapChar(char c) {
-	byte b = (byte)c;
+byte Graphics::mapChar(byte c) {
 
-	if (b == 0xA5) return 0x5F;
-	if (b == 0xDF) return 0x60;
+	if (c == 0xA5) return 0x5F;
+	if (c == 0xDF) return 0x60;
 
-	if (b > 0x7F) return b - 0x7F;
+	if (c > 0x7F) return c - 0x7F;
 
-	return b - 0x20;
+	return c - 0x20;
 }
 
 
