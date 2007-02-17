@@ -407,7 +407,10 @@ void Script::setSupportData(uint16 hotspotId, uint16 index, uint16 v3) {
 	uint16 dataId = res.getCharOffset(index);
 
 	CharacterScheduleEntry *entry = res.charSchedules().getEntry(dataId);
+	assert(entry != NULL);
 	Hotspot *h = res.getActiveHotspot(hotspotId);
+	assert(h != NULL);
+	assert(!h->currentActions().isEmpty());
 
 	h->currentActions().pop();
 	h->currentActions().addFront(DISPATCH_ACTION, entry, h->roomNumber());
