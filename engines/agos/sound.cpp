@@ -309,7 +309,7 @@ Audio::AudioStream *VorbisSound::makeAudioStream(uint sound) {
 
 	int i = 1;
 	while (_offsets[sound + i] == _offsets[sound])
-			i++;
+		i++;
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
@@ -338,7 +338,7 @@ Audio::AudioStream *FlacSound::makeAudioStream(uint sound) {
 
 	int i = 1;
 	while (_offsets[sound + i] == _offsets[sound])
-			i++;
+		i++;
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
