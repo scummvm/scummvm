@@ -358,7 +358,7 @@ uint16 Parallaction::updateInput() {
 			break;
 
 		case OSystem::EVENT_QUIT:
-            _system->quit();
+			_system->quit();
 			break;
 
 		default:
@@ -380,13 +380,13 @@ void waitUntilLeftClick() {
 	for (;;) {
 		g_system->pollEvent(e);
 
-        if (e.type == OSystem::EVENT_LBUTTONUP)
-            break;
+		if (e.type == OSystem::EVENT_LBUTTONUP)
+			break;
 
-        if (e.type == OSystem::EVENT_QUIT) {
-            g_system->quit();
-            break;
-        }
+		if (e.type == OSystem::EVENT_QUIT) {
+			g_system->quit();
+			break;
+		}
 
 		g_system->delayMillis(10);
 	}
