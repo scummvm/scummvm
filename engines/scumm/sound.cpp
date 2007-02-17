@@ -924,17 +924,7 @@ BaseScummFile *Sound::openSfxFile() {
 	}
 	basename[1] = "monster.";
 
-	for (uint j = 0; j < 2 && !file->isOpen(); ++j) {
-		for (int i = 0; extensions[i].ext; ++i) {
-			tmp = basename[j] + extensions[i].ext;
-			if (_vm->openFile(*file, tmp)) {
-				_soundMode = extensions[i].mode;
-				break;
-			}
-		}
-	}
-
-	if (!file->isOpen()) {
+	if (_vm->_game.heversion >= 60) {
 		if ((_vm->_game.heversion <= 61 && _vm->_game.platform == Common::kPlatformMacintosh) || (_vm->_game.heversion >= 70)) {
 			tmp = _vm->generateFilename(-2);
 		} else {
@@ -944,6 +934,16 @@ BaseScummFile *Sound::openSfxFile() {
 		if (file->open(tmp) && _vm->_game.heversion <= 73)
 			file->setEnc(0x69);
 		_soundMode = kVOCMode;
+	} else if (_vm->_game.version >= 5 && _vm->_game.version <= 7) {
+		for (uint j = 0; j < 2 && !file->isOpen(); ++j) {
+			for (int i = 0; extensions[i].ext; ++i) {
+				tmp = basename[j] + extensions[i].ext;
+				if (_vm->openFile(*file, tmp)) {
+					_soundMode = extensions[i].mode;
+					break;
+				}
+			}
+		}
 	}
 
 	if (_soundMode != kVOCMode) {
