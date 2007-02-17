@@ -35,6 +35,9 @@ namespace Audio {
 namespace Scumm {
 
 class ScummEngine;
+namespace APUe {
+	class APU;
+}
 
 static const int MAXVOLUME = 0x7F;
 static const int NUMSLOTS = 3;
@@ -77,6 +80,7 @@ private:
 
 	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
+	APUe::APU *_apu;
 	int _sample_rate;
 	int _samples_per_frame;
 	int _current_sample;
