@@ -249,7 +249,7 @@ void QueenEngine::saveGameState(uint16 slot, const char *desc) {
 
 		// write save data
 		file->write(saveData, dataSize);
-		file->flush();
+		file->finalize();
 
 		// check for errors
 		if (file->ioFailed()) {

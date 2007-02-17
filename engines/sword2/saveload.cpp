@@ -132,7 +132,7 @@ uint32 Sword2Engine::saveData(uint16 slotNo, byte *buffer, uint32 bufferSize) {
 	}
 
 	out->write(buffer, bufferSize);
-	out->flush();
+	out->finalize();
 
 	if (!out->ioFailed()) {
 		delete out;

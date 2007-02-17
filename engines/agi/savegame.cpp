@@ -200,7 +200,7 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 	}
 	out->writeByte(0);
 
-	out->flush();
+	out->finalize();
 	if (out->ioFailed())
 		warning("Can't write file '%s'. (Disk full?)", fileName);
 	else

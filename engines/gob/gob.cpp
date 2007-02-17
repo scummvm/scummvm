@@ -295,7 +295,7 @@ void GobEngine::saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 	
 	retSize = writeDataEndian(*out, buf, _global->_inter_variablesSizes + dataVar, size);
 
-	out->flush();
+	out->finalize();
 
 	if (out->ioFailed() || (retSize != size))
 		warning("Can't write file \"%s\"", sName);
@@ -329,7 +329,7 @@ bool GobEngine::saveGame(int saveSlot, int16 dataVar, int32 size, int32 offset) 
 		}
 		writeDataEndian(*out, _saveIndex + saveSlot * 40, _saveIndexSizes + saveSlot * 40, 40);
 		writeDataEndian(*out, varBuf, sizeBuf, size);
-		out->flush();
+		out->finalize();
 		if (out->ioFailed()) {
 			warning("Can't save to slot %d", saveSlot);
 			return false;

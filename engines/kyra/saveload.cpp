@@ -362,7 +362,7 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 
 	out->writeByte(_curSfxFile);
 
-	out->flush();
+	out->finalize();
 
 	// check for errors
 	if (out->ioFailed())

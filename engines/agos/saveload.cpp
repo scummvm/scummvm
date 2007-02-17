@@ -649,7 +649,7 @@ bool AGOSEngine::loadGame_e1(const char *filename, bool restartMode) {
 }
 
 bool AGOSEngine::saveGame_e1(const char *filename) {
-	Common::WriteStream *f;
+	Common::OutSaveFile *f;
 	uint item_index, num_item, i;
 	TimeEvent *te;
 	uint32 curTime = 0;
@@ -717,7 +717,7 @@ bool AGOSEngine::saveGame_e1(const char *filename) {
 		f->writeUint16BE(readVariable(i));
 	}
 
-	f->flush();
+	f->finalize();
 	bool result = !f->ioFailed();
 
 	delete f;
@@ -873,7 +873,7 @@ bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 }
 
 bool AGOSEngine::saveGame(uint slot, const char *caption) {
-	Common::WriteStream *f;
+	Common::OutSaveFile *f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
 	uint32 curTime = 0;
@@ -988,7 +988,7 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 		f->writeUint16BE(_superRoomNumber);
 	}
 
-	f->flush();
+	f->finalize();
 	bool result = !f->ioFailed();
 
 	delete f;

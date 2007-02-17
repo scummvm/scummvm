@@ -211,7 +211,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 	out->writeSint16LE(_isoMap->getMapPosition().x);
 	out->writeSint16LE(_isoMap->getMapPosition().y);
 
-	out->flush();
+	out->finalize();
 
 	// TODO: Check out->ioFailed()
 

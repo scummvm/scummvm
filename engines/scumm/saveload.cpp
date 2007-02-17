@@ -109,7 +109,7 @@ bool ScummEngine::saveState(int slot, bool compat) {
 
 	Serializer ser(0, out, CURRENT_VER);
 	saveOrLoad(&ser);
-	out->flush();
+	out->finalize();
 	if (out->ioFailed()) {
 		delete out;
 		debug(1, "State save as '%s' FAILED", filename);

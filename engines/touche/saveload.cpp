@@ -344,7 +344,7 @@ bool ToucheEngine::saveGameState(int num, const char *description) {
 		strncpy(headerDescription, description, kGameStateDescriptionLen - 1);
 		f->write(headerDescription, kGameStateDescriptionLen);
 		saveGameStateData(f);
-		f->flush();
+		f->finalize();
 		if (!f->ioFailed()) {
 			saveOk = true;
 		} else {

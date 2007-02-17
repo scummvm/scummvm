@@ -763,7 +763,7 @@ void Control::writeSavegameDescriptions(void) {
 		else
 			outf->writeByte(255);
 	}
-	outf->flush();
+	outf->finalize();
 	if (outf->ioFailed())
 		displayMessage(0, "Can't write to SAVEGAME.INF in directory '%s'. Device full?", _saveFileMan->getSavePath());
 	delete outf;
@@ -958,7 +958,7 @@ void Control::saveGameToFile(uint8 slot) {
 	uint32 *playerRaw = (uint32*)cpt;
 	for (uint32 cnt2 = 0; cnt2 < playerSize; cnt2++)
 		outf->writeUint32LE(playerRaw[cnt2]);
-	outf->flush();
+	outf->finalize();
 	if (outf->ioFailed())
 		displayMessage(0, "Couldn't write to file '%s' in directory '%s'. Device full?", fName, _saveFileMan->getSavePath());
 	delete outf;

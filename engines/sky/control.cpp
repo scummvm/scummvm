@@ -1138,7 +1138,7 @@ void Control::saveDescriptions(uint8 *srcBuf) {
 	bool ioFailed = true;
 	if (outf) {
 		outf->write(tmpBuf, tmpPos - tmpBuf);
-		outf->flush();
+		outf->finalize();
 		if (!outf->ioFailed())
 			ioFailed = false;
 		delete outf;
@@ -1165,7 +1165,7 @@ void Control::doAutoSave(void) {
 	uint32 fSize = prepareSaveData(saveData);
 
 	outf->write(saveData, fSize);
-	outf->flush();
+	outf->finalize();
 
 	if (outf->ioFailed())
 		displayMessage(0, "Unable to write autosave file '%s' in directory '%s'. Disk full?", fName, _saveFileMan->getSavePath());
@@ -1187,7 +1187,7 @@ uint16 Control::saveGameToFile(void) {
 	uint32 fSize = prepareSaveData(saveData);
 
 	uint32 writeRes = outf->write(saveData, fSize);
-	outf->flush();
+	outf->finalize();
 	if (outf->ioFailed())
 		writeRes = 0;
 	free(saveData);
