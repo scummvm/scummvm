@@ -88,13 +88,13 @@ void ScummEngine::setC64Palette() {
 	setPalColor(15, 0xA4, 0xA7, 0xA2);
 
 	// Use 17 color table for v1 games to allow correct color for inventory and
-	// sentence line Original games used some kind of dynamic color table
+	// sentence line. Original games used some kind of dynamic color table
 	// remapping between rooms.
 	setPalColor(16, 255,  85, 255);
 }
 
 void ScummEngine::setNESPalette() {
-	setPalColor(0x00,0x24,0x24,0x24); // 0x1D
+	setPalColor(0x00,0x00,0x00,0x00); // 0x1D
 	setPalColor(0x01,0x00,0x24,0x92);
 	setPalColor(0x02,0x00,0x00,0xDB);
 	setPalColor(0x03,0x6D,0x49,0xDB);
