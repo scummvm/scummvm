@@ -90,7 +90,7 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 		fh->file.open(filename);
 		fh->fileType = soundMode;
 		if (!fh->file.isOpen()) {
-			warning("Very strange fopen error");
+			warning("BS2 getAudioStream: Failed opening file '%s'", filename);
 			return NULL;
 		}
 		if (fh->fileSize != fh->file.size()) {

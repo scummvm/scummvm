@@ -328,11 +328,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 				break;
 			}
 
-#if defined(MACOS_CARBON)
-			sprintf(buf, ":dumps:%s-%d.dmp", tag, res);
-#else
 			sprintf(buf, "dumps/%s-%d.dmp", tag, res);
-#endif
 
 			if (!Common::File::exists(buf)) {
 				if (out.open(buf, Common::File::kFileWriteMode))

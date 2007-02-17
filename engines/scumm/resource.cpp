@@ -1325,11 +1325,7 @@ void ScummEngine::dumpResource(const char *tag, int idx, const byte *ptr, int le
 	else
 		size = READ_BE_UINT32(ptr + 4);
 
-#if defined(MACOS_CARBON)
-	sprintf(buf, ":dumps:%s%d.dmp", tag, idx);
-#else
 	sprintf(buf, "dumps/%s%d.dmp", tag, idx);
-#endif
 
 	out.open(buf, Common::File::kFileWriteMode);
 	if (out.isOpen() == false)
