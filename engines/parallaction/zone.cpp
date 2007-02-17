@@ -472,11 +472,11 @@ void displayItemComment(ExamineData *data) {
 
 
 uint16 runZone(Zone *z) {
-    debugC(1, kDebugLocation, "runZone (%s)", z->_label._text);
+    debugC(3, kDebugLocation, "runZone (%s)", z->_label._text);
 
 	uint16 subtype = z->_type & 0xFFFF;
 
-	debugC(1, kDebugLocation, "type = %x, object = %x", subtype, (z->_type & 0xFFFF0000) >> 16);
+	debugC(3, kDebugLocation, "type = %x, object = %x", subtype, (z->_type & 0xFFFF0000) >> 16);
 	switch(subtype) {
 
 	case kZoneExamine:
@@ -512,7 +512,7 @@ uint16 runZone(Zone *z) {
 
 	}
 
-    debugC(1, kDebugLocation, "runZone completed");
+    debugC(3, kDebugLocation, "runZone completed");
 
 	return 0;
 }

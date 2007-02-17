@@ -226,7 +226,7 @@ void jobDisplayAnimations(void *parm, Job *j) {
 
 
 void jobEraseAnimations(void *arg_0, Job *j) {
-	debugC(1, kDebugLocation, "jobEraseAnimations");
+	debugC(3, kDebugLocation, "jobEraseAnimations");
 
 	Animation *a = (Animation*)_animations._next;
 
@@ -303,7 +303,7 @@ int16 scriptFillBuffers(ArchivedFile *file) {
 	char v2[] = "\"\0";
 
 	int16 _si = 0;
-	
+
 	for (; _si < 15; _si++)
 		_tokens[_si][0] = '\0';
 
@@ -522,7 +522,7 @@ LValue getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation 
 
 
 void jobRunScripts(void *parm, Job *j) {
-    debugC(1, kDebugLocation, "jobRunScripts");
+    debugC(3, kDebugLocation, "jobRunScripts");
 
 	static uint16 modCounter = 0;
 

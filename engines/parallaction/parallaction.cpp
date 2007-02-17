@@ -422,7 +422,7 @@ void Parallaction::runGame() {
 	while ((_engineFlags & kEngineQuit) == 0) {
 		_keyDown = updateInput();
 
-        debugC(1, kDebugLocation, "runGame: input flags (%i, %i, %i, %i)",
+        debugC(3, kDebugLocation, "runGame: input flags (%i, %i, %i, %i)",
             _mouseHidden == 0,
             (_engineFlags & kEngineMouse) == 0,
             (_engineFlags & kEngineWalking) == 0,
@@ -483,7 +483,7 @@ void Parallaction::processInput(InputData *data) {
 
 	switch (data->_event) {
 	case kEvEnterZone:
-        debugC(1, kDebugLocation, "processInput: kEvEnterZone");
+        debugC(2, kDebugLocation, "processInput: kEvEnterZone");
 		_graphics->_labelPosition[1]._x = -1000;
 		_graphics->_labelPosition[1]._y = -1000;
 		_graphics->_labelPosition[0]._x = -1000;
@@ -493,14 +493,14 @@ void Parallaction::processInput(InputData *data) {
 		break;
 
 	case kEvExitZone:
-        debugC(1, kDebugLocation, "processInput: kEvExitZone");
+        debugC(2, kDebugLocation, "processInput: kEvExitZone");
 		removeJob(_jDrawLabel);
 		addJob(&jobWaitRemoveJob, _jEraseLabel, kPriority15);
 		_jDrawLabel = NULL;
 		break;
 
 	case kEvAction:
-        debugC(1, kDebugLocation, "processInput: kEvAction");
+        debugC(2, kDebugLocation, "processInput: kEvAction");
 		_procCurrentHoverItem = -1;
 		_hoverZone = NULL;
 		pauseJobs();
@@ -544,7 +544,7 @@ void Parallaction::processInput(InputData *data) {
 		break;
 
 	case kEvWalk:
-        debugC(1, kDebugLocation, "processInput: kEvWalk");
+        debugC(2, kDebugLocation, "processInput: kEvWalk");
 		_hoverZone = NULL;
 		changeCursor(kCursorArrow);
 		if (_yourself._zone._flags & kFlagsRemove) break;
@@ -962,7 +962,7 @@ void runJobs() {
 
 	Job *j = (Job*)_jobs._node._next;
 	while (j) {
-		debugC(1, kDebugLocation, "runJobs: %i", j->_tag);
+		debugC(3, kDebugLocation, "runJobs: %i", j->_tag);
 
 		(*j->_fn)(j->_parm, j);
 		Job *v4 = (Job*)j->_node._next;
@@ -983,7 +983,7 @@ void jobWaitRemoveJob(void *parm, Job *j) {
 
 	static uint16 count = 0;
 
-    debugC(1, kDebugLocation, "jobWaitRemoveJob: count = %i", count);
+    debugC(3, kDebugLocation, "jobWaitRemoveJob: count = %i", count);
 
 	_engineFlags |= kEngineMouse;
 
