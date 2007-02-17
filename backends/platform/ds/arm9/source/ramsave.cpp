@@ -346,7 +346,7 @@ void DSSaveFileManager::listFiles() {
 
 DSSaveFileManager* DSSaveFileManager::instancePtr = NULL;
 
-Common::SaveFile *DSSaveFileManager::openSavefile(const char* filename, bool saveOrLoad) {
+DSSaveFile *DSSaveFileManager::openSavefile(const char* filename, bool saveOrLoad) {
 	for (int r = 0; r < 8; r++) {
 		if (gbaSave[r].isValid() && (gbaSave[r].matches((char *) filename))) {
 //			consolePrintf("Matched save %d (%d)\n", r, gbaSave[r].getSize());
@@ -398,7 +398,7 @@ void DSSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) 
 	
 }
 
-Common::SaveFile *DSSaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
+DSSaveFile *DSSaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
 	
 	// Find a free save slot
 	int r = 0;

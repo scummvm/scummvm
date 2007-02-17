@@ -139,7 +139,7 @@ GBAMPSaveFileManager::~GBAMPSaveFileManager() {
 
 }
 
-Common::SaveFile* GBAMPSaveFileManager::openSavefile(char const* name, bool saveOrLoad) {
+GBAMPSaveFile* GBAMPSaveFileManager::openSavefile(char const* name, bool saveOrLoad) {
 	char fileSpec[128];
 	
 	strcpy(fileSpec, getSavePath());

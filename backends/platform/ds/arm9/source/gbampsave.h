@@ -26,7 +26,7 @@
 
 #define SAVE_BUFFER_SIZE 100000
 
-class GBAMPSaveFile : public Common::SaveFile {
+class GBAMPSaveFile : public InSaveFile, public OutSaveFile {
 	FILE* handle;
 	char buffer[SAVE_BUFFER_SIZE];
 	int bufferPos;
@@ -64,7 +64,7 @@ public:
 	
 //	static GBAMPSaveFileManager* instance() { return instancePtr; }
 
-	Common::SaveFile *openSavefile(const char *filename, bool saveOrLoad);
+	GBAMPSaveFile *openSavefile(const char *filename, bool saveOrLoad);
 	
 	virtual Common::OutSaveFile* openForSaving(const char* filename) { return openSavefile(filename, true); }
 	virtual Common::InSaveFile* openForLoading(const char* filename) { return openSavefile(filename, false); }
@@ -74,9 +74,6 @@ public:
 	
 	void deleteFile(char* name);
 	void listFiles();
-	
-protected:
-	Common::SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
 };
 
 

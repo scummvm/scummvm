@@ -56,11 +56,20 @@ public:
 	}
 };
 
-/**
- * Convenience intermediate class, to be removed.
- */
-class SaveFile : public InSaveFile, public OutSaveFile {};
 
+/**
+ * The SaveFileManager is serving as a factor for InSaveFile
+ * and OutSaveFile objects.
+ *
+ * Engines and other code should use SaveFiles whenever they need to
+ * store data which they need to be able to retrieve later on --
+ * i.e. typically save states, but also configuration files and similar
+ * things.
+ *
+ * While not declared as a singleton,
+ * it is effectively used as such, with OSystem::getSavefileManager
+ * returning the single SaveFileManager instances to be used.
+ */
 class SaveFileManager {
 
 public:

@@ -28,7 +28,7 @@
 
 #define DS_MAX_SAVE_SIZE 150000
 
-class DSSaveFile : public Common::SaveFile {
+class DSSaveFile : public InSaveFile, public OutSaveFile {
 	int address;
 	int ptr;
 	bool ownsData;
@@ -116,7 +116,7 @@ public:
 	
 	static DSSaveFileManager* instance() { return instancePtr; }
 
-	Common::SaveFile *openSavefile(const char *filename, bool saveOrLoad);
+	DSSaveFile *openSavefile(const char *filename, bool saveOrLoad);
 	
 	virtual Common::OutSaveFile* openForSaving(const char* filename) { return openSavefile(filename, true); }
 	virtual Common::InSaveFile* openForLoading(const char* filename) { return openSavefile(filename, false); }
@@ -140,7 +140,7 @@ public:
 	static void setExtraData(int data);
 
 protected:
-	Common::SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
+	DSSaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
 };
 
 #endif
