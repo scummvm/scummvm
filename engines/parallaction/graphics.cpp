@@ -495,7 +495,7 @@ void jobEraseLabel(void *parm, Job *j) {
 	if (_di > 190) _di = 190;
 
 	if (label->_cnv._width + _si > SCREEN_WIDTH)
-		_si = SCREEN_WIDTH - _si;
+		_si = SCREEN_WIDTH - label->_cnv._width;
 
 
 	_vm->_graphics->restoreBackground(Graphics::_labelPosition[1]._x, Graphics::_labelPosition[1]._y, label->_cnv._width, label->_cnv._height);
