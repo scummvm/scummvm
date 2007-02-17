@@ -2201,8 +2201,10 @@ const uint8 AdlibDriver::_unkTables[][32] = {
 
 #pragma mark -
 
-// At the time of writing, the only known case where Kyra 1 uses sound triggers
-// is in the castle, to cycle between three different songs.
+// Kyra 1 sound triggers. Most noticeably, these are used towards the end of
+// the game, in the castle, to cycle between different songs. The same music is
+// used in other places throughout the game, but the player is less likely to
+// spend enough time there to notice.
 
 const int SoundAdlibPC::_kyra1SoundTriggers[] = {
 	0, 4, 5, 3
@@ -2220,8 +2222,14 @@ SoundAdlibPC::SoundAdlibPC(KyraEngine *engine, Audio::Mixer *mixer)
 	_sfxPlayingSound = -1;
 	_soundFileLoaded = (uint)-1;
 
-	_soundTriggers = _kyra1SoundTriggers;
-	_numSoundTriggers = _kyra1NumSoundTriggers;
+	if (_v2) {
+		// TODO: Figure out if Kyra 2 uses sound triggers at all.
+		_soundTriggers = NULL;
+		_numSoundTriggers = 0;
+	} else {
+		_soundTriggers = _kyra1SoundTriggers;
+		_numSoundTriggers = _kyra1NumSoundTriggers;
+	}
 }
 
 SoundAdlibPC::~SoundAdlibPC() {
