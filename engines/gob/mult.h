@@ -271,7 +271,7 @@ public:
 	virtual void freeMultKeys(void) = 0;
 
 	Mult(GobEngine *vm);
-	virtual ~Mult() {};
+	virtual ~Mult();
 
 protected:
 	Video::Color _fadePal[5][16];

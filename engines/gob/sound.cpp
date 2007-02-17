@@ -98,6 +98,7 @@ int Snd::SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
 Snd::Snd(GobEngine *vm) : _vm(vm) {
 	_cleanupFunc = 0;
 	_playingSound = 0;
+	_curSoundDesc = 0;
 
 	_rate = _vm->_mixer->getOutputRate();
 	_end = true;

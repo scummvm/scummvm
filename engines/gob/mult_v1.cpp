@@ -183,6 +183,8 @@ void Mult_v1::loadMult(int16 resId) {
 			break;
 		}
 	}
+
+	delete[] extData;
 }
 
 void Mult_v1::setMultData(uint16 multindex) {

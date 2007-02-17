@@ -49,18 +49,11 @@ Mult_v2::Mult_v2(GobEngine *vm) : Mult_v1(vm) {
 }
 
 Mult_v2::~Mult_v2() {
-	int i;
-
 	freeMultKeys();
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		_multData = _multDatas[i];
 		freeMultKeys();
 	}
-
-	if (_orderArray)
-		delete[] _orderArray;
-	if (_renderData2)
-		delete[] _renderData2;
 }
 
 void Mult_v2::loadMult(int16 resId) {

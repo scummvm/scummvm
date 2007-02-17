@@ -102,8 +102,9 @@ public:
 	virtual void findNearestToDest(Mult::Mult_Object *obj) = 0;
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) = 0;
 
+	virtual void init(void) = 0;
 	Map(GobEngine *vm);
-	virtual ~Map() {};
+	virtual ~Map();
 
 protected:
 	char *_avoDataPtr;
@@ -128,6 +129,7 @@ public:
 		_passMap[y * _mapWidth + x] = pass;
 	}
 
+	virtual void init(void);
 	Map_v1(GobEngine *vm);
 	virtual ~Map_v1();
 };
@@ -151,6 +153,7 @@ public:
 		_passMap[y * heightOff + x] = pass;
 	}
 
+	virtual void init(void);
 	Map_v2(GobEngine *vm);
 	virtual ~Map_v2();
 };

@@ -625,6 +625,7 @@ int GobEngine::init() {
 	}
 	else
 		error("GobEngine::init(): Unknown version of game engine");
+
 	_noMusic = MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL;
 	if (!_noMusic && !(_platform == Common::kPlatformAmiga) &&
 		 !(_platform == Common::kPlatformAtariST) &&
@@ -632,6 +633,8 @@ int GobEngine::init() {
 	     (_features & Gob::GF_GOB2)))
 		_adlib = new Adlib(this);
 	_vm = this;
+
+	_map->init();
 
 	_system->beginGFXTransaction();
 		initCommonGFX(false);

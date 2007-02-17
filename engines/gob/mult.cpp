@@ -90,6 +90,25 @@ Mult::Mult(GobEngine *vm) : _vm(vm) {
 	_orderArray = 0;
 }
 
+Mult::~Mult() {
+	if (_objects)
+		delete[] _objects;
+	if (_orderArray)
+		delete[] _orderArray;
+	if (_renderData)
+		delete[] _renderData;
+	if (_renderData2)
+		delete[] _renderData2;
+	if (_multData)
+		delete _multData;
+	if (_animArrayX)
+		delete[] _animArrayX;
+	if (_animArrayY)
+		delete[] _animArrayY;
+	if (_animArrayData)
+		delete[] _animArrayData;
+}
+
 void Mult::freeAll(void) {
 	int16 i;
 

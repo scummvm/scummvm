@@ -257,7 +257,7 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 	}
 
 	planeCount = layerPtr->planeCount;
-	for (order = 0; order < 10; order++) {
+	for (order = 0; order < 40; order++) {
 		for (plane = 0, planePtr = layerPtr->planes;
 		    plane < planeCount; plane++, planePtr++) {
 			if (planePtr->drawOrder != order)
@@ -312,7 +312,7 @@ void Scenery::updateStatic(int16 orderFrom) {
 
 	planeCount = layerPtr->planeCount;
 
-	for (order = orderFrom; order < 10; order++) {
+	for (order = orderFrom; order < 40; order++) {
 		for (planePtr = layerPtr->planes, plane = 0;
 		    plane < planeCount; plane++, planePtr++) {
 			if (planePtr->drawOrder != order)

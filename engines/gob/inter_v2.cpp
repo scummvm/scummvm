@@ -1465,8 +1465,10 @@ bool Inter_v2::o2_checkData(char &cmdCount, int16 &counter, int16 &retFlag) {
 		if (handle >= 0) {
 			_vm->_dataio->closeData(handle);
 			size = _vm->_dataio->getDataSize(_vm->_global->_inter_resStr);
-		} else
+		} else {
 			size = -1;
+			warning("File \"%s\" not found", _vm->_global->_inter_resStr);
+		}
 	}
 	if (size == -1)
 		handle = -1;

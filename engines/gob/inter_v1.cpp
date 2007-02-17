@@ -1044,6 +1044,8 @@ bool Inter_v1::o1_checkData(char &cmdCount, int16 &counter, int16 &retFlag) {
 	WRITE_VAR_OFFSET(varOff, handle);
 	if (handle >= 0)
 		_vm->_dataio->closeData(handle);
+	else
+		warning("File \"%s\" not found", _vm->_global->_inter_resStr);
 	return false;
 }
 

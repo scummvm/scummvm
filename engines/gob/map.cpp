@@ -70,6 +70,20 @@ Map::Map(GobEngine *vm) : _vm(vm) {
 	_avoDataPtr = 0;
 }
 
+Map::~Map() {
+	if (_passMap)
+		delete[] _passMap;
+
+	if (_itemsMap) {
+		for (int i = 0; i < _mapHeight; i++)
+			delete[] _itemsMap[i];
+		delete[] _itemsMap;
+	}
+
+	if (_wayPoints)
+		delete[] _wayPoints;
+}
+
 void Map::placeItem(int16 x, int16 y, int16 id) {
 	if ((_itemsMap[y][x] & 0xff00) != 0)
 		_itemsMap[y][x] = (_itemsMap[y][x] & 0xff00) | id;

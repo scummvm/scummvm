@@ -45,6 +45,9 @@ Map_v2::~Map_v2() {
 	_passMap = 0;
 }
 
+void Map_v2::init(void) {
+}
+
 void Map_v2::loadMapObjects(char *avjFile) {
 	int i;
 	int j;
@@ -102,6 +105,9 @@ void Map_v2::loadMapObjects(char *avjFile) {
 		wayPointsCount = _wayPointsCount = 40;
 	else
 		wayPointsCount = _wayPointsCount == 0 ? 1 : _wayPointsCount;
+
+	if (_wayPoints)
+		delete[] _wayPoints;
 
 	_wayPoints = new Point[wayPointsCount];
 	for (i = 0; i < _wayPointsCount; i++) {
@@ -182,6 +188,8 @@ void Map_v2::loadMapObjects(char *avjFile) {
 	_vm->_goblin->_soundSlotsCount = _vm->_inter->load16();
 	for (i = 0; i < _vm->_goblin->_soundSlotsCount; i++)
 		_vm->_goblin->_soundSlots[i] = _vm->_inter->loadSound(1);
+
+	delete[] extData;
 }
 
 void Map_v2::findNearestToGob(Mult::Mult_Object *obj) {

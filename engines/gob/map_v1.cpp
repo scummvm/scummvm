@@ -35,6 +35,12 @@
 namespace Gob {
 
 Map_v1::Map_v1(GobEngine *vm) : Map(vm) {
+}
+
+Map_v1::~Map_v1() {
+}
+
+void Map_v1::init(void) {
 	int i;
 	int j;
 
@@ -58,23 +64,6 @@ Map_v1::Map_v1(GobEngine *vm) : Map(vm) {
 		_wayPoints[i].y = 0;
 		_wayPoints[i].field_2 = 0;
 	}
-}
-
-Map_v1::~Map_v1() {
-	int i;
-
-	_mapWidth = 26;
-	_mapHeight = 28;
-
-	if (_passMap)
-		delete[] _passMap;
-	if (_itemsMap) {
-		for (i = 0; i < _mapHeight; i++)
-			delete[] _itemsMap[i];
-		delete[] _itemsMap;
-	}
-	if (_wayPoints)
-		delete[] _wayPoints;
 }
 
 void Map_v1::loadMapObjects(char *avjFile) {
