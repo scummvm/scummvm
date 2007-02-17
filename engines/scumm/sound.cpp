@@ -905,7 +905,6 @@ BaseScummFile *Sound::openSfxFile() {
 		{ 0, kVOCMode }
 	};
 
-	char buf[256];
 	ScummFile *file = new ScummFile();
 	_offsetTable = NULL;
 
@@ -914,6 +913,7 @@ BaseScummFile *Sound::openSfxFile() {
 	 * same directory */
 
 	Common::String basename[2];
+	Common::String tmp;
 	
 	const char *ptr = strchr(_vm->_filenamePattern.pattern, '.');
 	if (ptr) {
@@ -926,8 +926,7 @@ BaseScummFile *Sound::openSfxFile() {
 
 	for (uint j = 0; j < 2 && !file->isOpen(); ++j) {
 		for (int i = 0; extensions[i].ext; ++i) {
-			Common::String tmp(basename[j]);
-			tmp += extensions[i].ext;
+			tmp = basename[j] + extensions[i].ext;
 			if (_vm->openFile(*file, tmp)) {
 				_soundMode = extensions[i].mode;
 				break;
@@ -937,12 +936,12 @@ BaseScummFile *Sound::openSfxFile() {
 
 	if (!file->isOpen()) {
 		if ((_vm->_game.heversion <= 61 && _vm->_game.platform == Common::kPlatformMacintosh) || (_vm->_game.heversion >= 70)) {
-			strncpy(buf, _vm->generateFilename(-2).c_str(), sizeof(buf));
+			tmp = _vm->generateFilename(-2);
 		} else {
-			sprintf(buf, "%s.tlk", _vm->_filenamePattern.pattern);
+			tmp = basename[0] + "tlk";
 		}
 
-		if (file->open(buf) && _vm->_game.heversion <= 73)
+		if (file->open(tmp) && _vm->_game.heversion <= 73)
 			file->setEnc(0x69);
 		_soundMode = kVOCMode;
 	}
