@@ -171,12 +171,10 @@ void bompApplyShadow3(const byte *shadowPalette, const byte *line_buffer, byte *
 }
 
 void bompApplyActorPalette(byte *actorPalette, byte *line_buffer, int32 size) {
-	if (actorPalette != 0) {
-		actorPalette[255] = 255;
-		while (size-- > 0) {
-			*line_buffer = actorPalette[*line_buffer];
-			line_buffer++;
-		}
+	actorPalette[255] = 255;
+	while (size-- > 0) {
+		*line_buffer = actorPalette[*line_buffer];
+		line_buffer++;
 	}
 }
 
@@ -331,39 +329,35 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 }
 
 int32 setupBompScale(byte *scaling, int32 size, byte scale) {
-	byte tmp;
+	static const int offsets[8] = { 3, 2, 1, 0, 7, 6, 5, 4 };
 	int32 count;
-	const byte *tmp_ptr;
-	byte *tmp_scaling = scaling;
-	byte a = 0;
 	byte bitsCount = 0;
-	const int offsets[8] = { 3, 2, 1, 0, 7, 6, 5, 4 };
 
 	count = (256 - size / 2);
 	assert(0 <= count && count < 768);
-	tmp_ptr = bigCostumeScaleTable + count;
+	const byte *scaleTable = bigCostumeScaleTable + count;
 
 	count = (size + 7) / 8;
 	while (count--) {
-		a = 0;
+		byte scaleMask = 0;
 		for (int i = 0; i < 8; i++) {
-			tmp = *(tmp_ptr + offsets[i]);
-			a <<= 1;
-			if (scale < tmp) {
-				a |= 1;
+			byte scaleTest = *(scaleTable + offsets[i]);
+			scaleMask <<= 1;
+			if (scale < scaleTest) {
+				scaleMask |= 1;
 			} else {
 				bitsCount++;
 			}
 		}
-		tmp_ptr += 8;
+		scaleTable += 8;
 
-		*tmp_scaling++ = a;
+		*scaling++ = scaleMask;
 	}
 	size &= 7;
 	if (size != 0) {
-		--tmp_scaling;
-		if ((*tmp_scaling & revBitMask(size)) == 0) {
-			*tmp_scaling |= revBitMask(size);
+		--scaling;
+		if ((*scaling & revBitMask(size)) == 0) {
+			*scaling |= revBitMask(size);
 			bitsCount--;
 		}
 	}
