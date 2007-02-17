@@ -316,8 +316,10 @@ void Parallaction::initGlobals() {
 	initTable("global.tab", _globalTable);
 }
 
-//
-//	broken input management
+// FIXME: the engine has 3 event loops. The following routine hosts the main one,
+// and it's called from 8 different places in the code. There exist 2 more specialised
+// loops which could possibly be merged into this one with some effort in changing
+// caller code, i.e. adding condition checks.
 //
 uint16 Parallaction::updateInput() {
 
@@ -330,7 +332,6 @@ uint16 Parallaction::updateInput() {
 
 		switch (e.type) {
 		case OSystem::EVENT_KEYDOWN:
-			if (e.kbd.ascii == ' ') KeyDown = kEvQuitGame;
 			if (e.kbd.ascii == 'l') KeyDown = kEvLoadGame;
 			if (e.kbd.ascii == 's') KeyDown = kEvSaveGame;
 			break;
@@ -357,7 +358,7 @@ uint16 Parallaction::updateInput() {
 			break;
 
 		case OSystem::EVENT_QUIT:
-			_engineFlags |= kEngineQuit;
+            _system->quit();
 			break;
 
 		default:
@@ -371,21 +372,23 @@ uint16 Parallaction::updateInput() {
 
 }
 
-
+// FIXME: see comment for updateInput()
 void waitUntilLeftClick() {
 
 	OSystem::Event e;
 
 	for (;;) {
 		g_system->pollEvent(e);
-		g_system->delayMillis(10);
-		if (e.type == OSystem::EVENT_LBUTTONUP)
-			break;
 
-		if (e.type == OSystem::EVENT_QUIT) {
-			_engineFlags |= kEngineQuit;
-			break;
-		}
+        if (e.type == OSystem::EVENT_LBUTTONUP)
+            break;
+
+        if (e.type == OSystem::EVENT_QUIT) {
+            g_system->quit();
+            break;
+        }
+
+		g_system->delayMillis(10);
 	}
 
 
