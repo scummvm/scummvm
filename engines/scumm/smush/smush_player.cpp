@@ -63,6 +63,7 @@
 namespace Scumm {
 
 static const int MAX_STRINGS = 200;
+static const int ETRS_HEADER_LENGTH = 16;
 
 class StringResource {
 private:
@@ -193,26 +194,13 @@ static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_enc
 	theFile.read(filebuffer, length);
 	filebuffer[length] = 0;
 
-	if (is_encoded) {
-		enum {
-			ETRS_HEADER_LENGTH = 16
-		};
+	if (is_encoded && READ_BE_UINT32(filebuffer) == MKID_BE('ETRS')) {
 		assert(length > ETRS_HEADER_LENGTH);
-		Chunk::type type = READ_BE_UINT32(filebuffer);
-
-		if (type != MKID_BE('ETRS')) {
-			delete [] filebuffer;
-			return getStrings(vm, file, false);
-		}
-
-		char *old = filebuffer;
-		filebuffer = new char[length - ETRS_HEADER_LENGTH + 1];
-		for (int32 i = ETRS_HEADER_LENGTH; i < length; i++) {
-			filebuffer[i - ETRS_HEADER_LENGTH] = old[i] ^ 0xCC;
-		}
-		filebuffer[length - ETRS_HEADER_LENGTH] = '\0';
-		delete []old;
 		length -= ETRS_HEADER_LENGTH;
+		for (int i = 0; i < length; ++i) {
+			filebuffer[i] = filebuffer[i + ETRS_HEADER_LENGTH] ^ 0xCC;
+		}
+		filebuffer[length] = '\0';
 	}
 	StringResource *sr = new StringResource;
 	assert(sr);
@@ -721,7 +709,7 @@ bool SmushPlayer::readString(const char *file) {
 		return true;
 	}
 
-	if ((_strings = getStrings(_vm, "digtxt.trs", true)) != 0) {
+	if (_vm->_game.id == GID_DIG && (_strings = getStrings(_vm, "digtxt.trs", true)) != 0) {
 		return true;
 	}
 	return false;
@@ -733,11 +721,7 @@ void SmushPlayer::readPalette(byte *out, Chunk &in) {
 
 static byte delta_color(byte org_color, int16 delta_color) {
 	int t = (org_color * 129 + delta_color) / 128;
-	if (t > 255)
-		t = 255;
-	if (t < 0)
-		t = 0;
-	return (byte)t;
+	return CLIP(t, 0, 255);
 }
 
 void SmushPlayer::handleDeltaPalette(Chunk &b) {
@@ -783,6 +767,26 @@ void SmushPlayer::handleNewPalette(Chunk &b) {
 void smush_decode_codec1(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
 void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height) {
+	if ((height == 242) && (width == 384)) {
+		if (_specialBuffer == 0)
+			_specialBuffer = (byte *)malloc(242 * 384);
+		_dst = _specialBuffer;
+	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
+		return;
+	// FT Insane uses smaller frames to draw overlays with moving objects
+	// Other .san files do have them as well but their purpose in unknown
+	// and often it causes memory overdraw. So just skip those frames
+	else if (!_insanity && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)))
+		return;
+
+	if ((height == 242) && (width == 384)) {
+		_width = width;
+		_height = height;
+	} else {
+		_width = _vm->_screenWidth;
+		_height = _vm->_screenHeight;
+	}
+
 	switch (codec) {
 	case 1:
 	case 3:
@@ -802,6 +806,14 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		break;
 	default:
 		error("Invalid codec for frame object : %d", codec);
+	}
+
+	if (_storeFrame) {
+		if (_frameBuffer == NULL) {
+			_frameBuffer = (byte *)malloc(_width * _height);
+		}
+		memcpy(_frameBuffer, _dst, _width * _height);
+		_storeFrame = false;
 	}
 }
 
@@ -831,36 +843,7 @@ void SmushPlayer::handleZlibFrameObject(Chunk &b) {
 	int width = READ_LE_UINT16(ptr); ptr += 2;
 	int height = READ_LE_UINT16(ptr); ptr += 2;
 
-	if ((height == 242) && (width == 384)) {
-		if (_specialBuffer == 0)
-			_specialBuffer = (byte *)malloc(242 * 384);
-		_dst = _specialBuffer;
-	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
-		return;
-
-	// FT Insane uses smaller frames to draw overlays with moving objects
-	// Other .san files do have them as well but their purpose in unknown
-	// and often it causes memory overdraw. So just skip those frames
-	else if (!_insanity && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)))
-		return;
-
-	if ((height == 242) && (width == 384)) {
-		_width = width;
-		_height = height;
-	} else {
-		_width = _vm->_screenWidth;
-		_height = _vm->_screenHeight;
-	}
-
 	decodeFrameObject(codec, fobjBuffer + 14, left, top, width, height);
-
-	if (_storeFrame) {
-		if (_frameBuffer == NULL) {
-			_frameBuffer = (byte *)malloc(_width * _height);
-		}
-		memcpy(_frameBuffer, _dst, _width * _height);
-		_storeFrame = false;
-	}
 
 	free(fobjBuffer);
 }
@@ -879,26 +862,6 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	int width = b.readUint16LE();
 	int height = b.readUint16LE();
 
-	if ((height == 242) && (width == 384)) {
-		if (_specialBuffer == 0)
-			_specialBuffer = (byte *)malloc(242 * 384);
-		_dst = _specialBuffer;
-	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
-		return;
-	// FT Insane uses smaller frames to draw overlays with moving objects
-	// Other .san files do have them as well but their purpose in unknown
-	// and often it causes memory overdraw. So just skip those frames
-	else if (!_insanity && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)))
-		return;
-
-	if ((height == 242) && (width == 384)) {
-		_width = width;
-		_height = height;
-	} else {
-		_width = _vm->_screenWidth;
-		_height = _vm->_screenHeight;
-	}
-
 	b.readUint16LE();
 	b.readUint16LE();
 
@@ -908,14 +871,6 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	b.read(chunk_buffer, chunk_size);
 
 	decodeFrameObject(codec, chunk_buffer, left, top, width, height);
-
-	if (_storeFrame) {
-		if (_frameBuffer == NULL) {
-			_frameBuffer = (byte *)malloc(_width * _height);
-		}
-		memcpy(_frameBuffer, _dst, _width * _height);
-		_storeFrame = false;
-	}
 
 	free(chunk_buffer);
 }
@@ -1376,15 +1331,10 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			skipped = 0;
 		if (_updateNeeded) {
 			if (!skipFrame) {
-				int w = _width, h = _height;
-
 				// Workaround for bug #1386333: "FT DEMO: assertion triggered
 				// when playing movie". Some frames there are 384 x 224
-				if (w > _vm->_screenWidth)
-					w = _vm->_screenWidth;
-
-				if (h > _vm->_screenHeight)
-					h = _vm->_screenHeight;
+				int w = MIN(_width, _vm->_screenWidth);
+				int h = MIN(_height, _vm->_screenHeight);
 
 				_vm->_system->copyRectToScreen(_dst, _width, 0, 0, w, h);
 				_vm->_system->updateScreen();
@@ -1414,4 +1364,3 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 }
 
 } // End of namespace Scumm
-

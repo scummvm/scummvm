@@ -71,7 +71,6 @@ private:
 	int32 _IACTpos;
 	bool _storeFrame;
 	int _speed;
-	bool _outputSound;
 	bool _endOfFile;
 
 	byte *_dst;

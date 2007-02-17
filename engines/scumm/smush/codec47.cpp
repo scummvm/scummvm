@@ -543,7 +543,6 @@ bool Codec47Decoder::decode(byte *dst, const byte *src) {
 	int32 seq_nb = READ_LE_UINT16(src + 0);
 
 	const byte *gfx_data = src + 26;
-	byte *tmp_ptr;
 
 	if (seq_nb == 0) {
 		makeTables47(_width);
@@ -583,14 +582,10 @@ bool Codec47Decoder::decode(byte *dst, const byte *src) {
 
 	if (seq_nb == _prevSeqNb + 1) {
 		if (src[3] == 1) {
-			tmp_ptr = _curBuf;
-			_curBuf = _deltaBufs[1];
-			_deltaBufs[1] = tmp_ptr;
+			SWAP(_curBuf, _deltaBufs[1]);
 		} else if (src[3] == 2) {
-			tmp_ptr = _deltaBufs[0];
-			_deltaBufs[0] = _deltaBufs[1];
-			_deltaBufs[1] = _curBuf;
-			_curBuf = tmp_ptr;
+			SWAP(_deltaBufs[0], _deltaBufs[1]);
+			SWAP(_deltaBufs[1], _curBuf);
 		}
 	}
 	_prevSeqNb = seq_nb;
