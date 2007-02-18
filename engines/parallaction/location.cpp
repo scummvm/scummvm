@@ -109,7 +109,7 @@ void Parallaction::parseLocation(const char *filename) {
 				_locationNames[_numLocations][0] = '\0';
 				_localFlags[_currentLocationIndex] = 0;
 			} else {
-				_localFlags[_currentLocationIndex] |= 1;	// 'visited'
+				_localFlags[_currentLocationIndex] |= kFlagsVisited;	// 'visited'
 			}
 
 			strcpy(_location, _tokens[1]);
@@ -145,7 +145,7 @@ void Parallaction::parseLocation(const char *filename) {
 			_locationACommands = parseCommands(file);
 		}
 		if (!scumm_stricmp(_tokens[0], "FLAGS")) {
-			if ((_localFlags[_currentLocationIndex] & 1) == 0) {
+			if ((_localFlags[_currentLocationIndex] & kFlagsVisited) == 0) {
 				// only for 1st visit
 				_localFlags[_currentLocationIndex] = 0;
 				_si = 1;
@@ -495,7 +495,7 @@ void Parallaction::doLocationEnterTransition() {
 	debugC(1, kDebugLocation, "doLocationEnterTransition");
 
 	byte v60[PALETTE_SIZE];
-	if (_localFlags[_currentLocationIndex] & 1) return; // visited
+	if (_localFlags[_currentLocationIndex] & kFlagsVisited) return; // visited
 
 	_vm->_graphics->buildBWPalette(v60);
 	_vm->_graphics->setPalette(v60);

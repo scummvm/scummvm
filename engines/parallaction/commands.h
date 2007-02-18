@@ -28,6 +28,7 @@
 namespace Parallaction {
 
 enum CommandFlags {
+	kFlagsVisited		= 1,
 	kFlagsExit			= 0x10000000,
 	kFlagsEnter 		= 0x20000000,
 	kFlagsGlobal		= 0x40000000
