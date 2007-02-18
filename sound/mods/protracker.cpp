@@ -33,7 +33,7 @@ namespace Modules {
 
 class ProtrackerStream : public ::Audio::Paula {
 private:
-	Module *_module;
+	Module _module;
 
 	int _rate;
 
@@ -50,7 +50,7 @@ private:
 
 	// For effect 0xD - PatternBreak;
 	bool _hasPatternBreak;
-	int _skiprow;
+	int _skipRow;
 
 	// For effect 0xE6 - Pattern Loop
 	bool _hasPatternLoop;
@@ -148,29 +148,28 @@ const int16 ProtrackerStream::sinetable[64] = {
 
 ProtrackerStream::ProtrackerStream(Common::ReadStream *stream, int rate, bool stereo) :
 		Paula(stereo, rate, rate/50) {
-	_module = new Module();
-	bool result = _module->load(*stream);
+	bool result = _module.load(*stream);
 	assert(result);
 
 	_rate = rate;
 	_tick = _row = _pos = 0;
-	_hasJumpToPattern = false;
-	_hasPatternBreak = false;
-	_hasPatternLoop = false;
-	_patternDelay = 0;
-	_patternLoopCount = 0;
-	_patternLoopRow = 0;
+
 	_speed = 6;
 	_bpm = 125;
 
-	for (int t = 0; t < 4; t++) {
-		_track[t].sample = 0;
-		_track[t].period = 0;
-		_track[t].offset = 0.0;
-		_track[t].vibrato = 0;
-		_track[t].delaySampleTick = 0;
-		_track[t].arpeggio = false;
-	}	
+	_hasJumpToPattern = false;
+	_jumpToPattern = 0;
+
+	_hasPatternBreak = false;
+	_skipRow = 0;
+
+	_hasPatternLoop = false;
+	_patternLoopCount = 0;
+	_patternLoopRow = 0;
+
+	_patternDelay = 0;
+
+	memset(_track, 0, sizeof(_track));
 
 	startPlay();
 }
@@ -181,7 +180,7 @@ void ProtrackerStream::updateRow() {
 		_track[track].vibrato = 0;
 		_track[track].delaySampleTick = 0;
 		note_t note =
-		    _module->pattern[_module->songpos[_pos]][_row][track];
+		    _module.pattern[_module.songpos[_pos]][_row][track];
 
 		int effect = note.effect >> 8;
 
@@ -190,14 +189,14 @@ void ProtrackerStream::updateRow() {
 				_track[track].vibratoPos = 0;
 			}
 			_track[track].sample = note.sample;
-			_track[track].finetune = _module->sample[note.sample - 1].finetune;
-			_track[track].vol = _module->sample[note.sample - 1].vol;
+			_track[track].finetune = _module.sample[note.sample - 1].finetune;
+			_track[track].vol = _module.sample[note.sample - 1].vol;
 		}
 
 		if (note.period) {
 			if (effect != 3 && effect != 5) {
 				if (_track[track].finetune)
-					_track[track].period = _module->noteToPeriod(note.note, _track[track].finetune);
+					_track[track].period = _module.noteToPeriod(note.note, _track[track].finetune);
 				else
 					_track[track].period = note.period;
 				_track[track].offset = 0.0;
@@ -262,9 +261,8 @@ void ProtrackerStream::updateRow() {
 			break;
 		case 0xD:
 			_hasPatternBreak = true;
-			_skiprow = ex * 10 + ey;
+			_skipRow = ex * 10 + ey;
 			break;
-
 		case 0xE:
 			switch (ex) {
 			case 0x0: // Switch filters off
@@ -277,10 +275,10 @@ void ProtrackerStream::updateRow() {
 				break;
 			case 0x5: // Set finetune
 				_track[track].finetune = ey;
-				_module->sample[_track[track].sample].finetune = ey;
+				_module.sample[_track[track].sample].finetune = ey;
 				if (note.period) {
 					if (ey)
-						_track[track].period = _module->noteToPeriod(note.note, ey);
+						_track[track].period = _module.noteToPeriod(note.note, ey);
 					else
 						_track[track].period = note.period;
 				}
@@ -343,7 +341,7 @@ void ProtrackerStream::updateEffects() {
 		_track[track].vibrato = 0;
 
 		note_t note =
-		    _module->pattern[_module->songpos[_pos]][_row][track];
+		    _module.pattern[_module.songpos[_pos]][_row][track];
 
 		int effect = note.effect >> 8;
 
@@ -356,11 +354,11 @@ void ProtrackerStream::updateEffects() {
 			if (ex || ey) {
 				if (_tick == 1)
 					_track[track].period =
-						_module->noteToPeriod(_track[track].arpeggioNotes[0],
+						_module.noteToPeriod(_track[track].arpeggioNotes[0],
 								_track[track].finetune);
 				else
 					_track[track].period =
-						_module->noteToPeriod(_track[track].arpeggioNotes[_tick % 3],
+						_module.noteToPeriod(_track[track].arpeggioNotes[_tick % 3],
 								_track[track].finetune);
 			}
 			break;
@@ -387,7 +385,6 @@ void ProtrackerStream::updateEffects() {
 		case 0xA:
 			doVolSlide(track, ex, ey);
 			break;
-
 		case 0xE:
 			switch (ex) {
 			case 0x6:
@@ -401,7 +398,7 @@ void ProtrackerStream::updateEffects() {
 					_track[track].sample = _track[track].delaySample;
 					_track[track].offset = 0.0;
 					if (_track[track].sample)
-						_track[track].vol = _module->sample[_track[track].sample - 1].vol;
+						_track[track].vol = _module.sample[_track[track].sample - 1].vol;
 				}
 				break;
 			}
@@ -418,7 +415,7 @@ void ProtrackerStream::interrupt(void) {
 
 	if (_tick == 0) {
 		if (_track[track].arpeggio) {
-			_track[track].period = _module->noteToPeriod(_track[track].arpeggioNotes[0],
+			_track[track].period = _module.noteToPeriod(_track[track].arpeggioNotes[0],
 					_track[track].finetune);
 		}
 		if (_hasJumpToPattern) {
@@ -427,8 +424,8 @@ void ProtrackerStream::interrupt(void) {
 			_row = 0;
 		} else if (_hasPatternBreak) {
 			_hasPatternBreak = false;
-			_row = _skiprow;
-			_pos = (_pos + 1) % _module->songlen;
+			_row = _skipRow;
+			_pos = (_pos + 1) % _module.songlen;
 			_patternLoopRow = 0;
 		} else if (_hasPatternLoop) {
 			_hasPatternLoop = false;
@@ -436,7 +433,7 @@ void ProtrackerStream::interrupt(void) {
 		}
 		if (_row >= 64) {
 			_row = 0;
-			_pos = (_pos + 1) % _module->songlen;
+			_pos = (_pos + 1) % _module.songlen;
 			_patternLoopRow = 0;
 		}
 
@@ -454,7 +451,7 @@ void ProtrackerStream::interrupt(void) {
 		_voice[track].period = _track[track].period + _track[track].vibrato;
 		_voice[track].volume = _track[track].vol;
 		if (_track[track].sample) {
-			sample_t &sample = _module->sample[_track[track].sample - 1];
+			sample_t &sample = _module.sample[_track[track].sample - 1];
 			_voice[track].data = sample.data;
 			_voice[track].dataRepeat = sample.replen > 2 ? sample.data + sample.repeat : 0;
 			_voice[track].length = sample.len;
