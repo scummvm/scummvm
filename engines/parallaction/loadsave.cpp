@@ -187,18 +187,18 @@ void Parallaction::doSaveGame(uint16 slot, const char* name) {
 	f->writeString(s);
 	sprintf(s, "%d\n", _score);
 	f->writeString(s);
-	sprintf(s, "%uld\n", _commandFlags);
+	sprintf(s, "%ul\n", _commandFlags);
 	f->writeString(s);
 
 	sprintf(s, "%d\n", _numLocations);
 	f->writeString(s);
 	for (uint16 _si = 0; _si < _numLocations; _si++) {
-		sprintf(s, "%s\n%uld\n", _locationNames[_si], _localFlags[_si]);
+		sprintf(s, "%s\n%ul\n", _locationNames[_si], _localFlags[_si]);
 		f->writeString(s);
 	}
 
 	for (uint16 _si = 0; _si < 30; _si++) {
-		sprintf(s, "%uld\n%d\n", _inventory[_si]._id, _inventory[_si]._index);
+		sprintf(s, "%ul\n%d\n", _inventory[_si]._id, _inventory[_si]._index);
 		f->writeString(s);
 	}
 
