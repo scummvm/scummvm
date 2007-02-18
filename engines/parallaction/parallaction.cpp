@@ -428,7 +428,7 @@ void Parallaction::runGame() {
 	while ((_engineFlags & kEngineQuit) == 0) {
 		_keyDown = updateInput();
 
-		debugC(3, kDebugLocation, "runGame: input flags (%i, %i, %i, %i)",
+		debugC(3, kDebugInput, "runGame: input flags (%i, %i, %i, %i)",
 			_mouseHidden == 0,
 			(_engineFlags & kEngineMouse) == 0,
 			(_engineFlags & kEngineWalking) == 0,
