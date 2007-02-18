@@ -280,7 +280,7 @@ public:
 
   bool ioFailed() const { return iofailed; }
   void clearIOFailed() { iofailed = false; }
-  void flush();
+  void finalize();
 };
 
 class VMSaveManager : public Common::SaveFileManager {
@@ -304,7 +304,7 @@ public:
   virtual void listSavefiles(const char *prefix, bool *marks, int num);
 };
 
-void OutVMSave::flush()
+void OutVMSave::finalize()
 {
   extern const char *gGameName;
   extern Icon icon;
@@ -335,7 +335,7 @@ void OutVMSave::flush()
 
 OutVMSave::~OutVMSave()
 {
-  flush();
+  finalize();
   delete[] buffer;
 }
 
