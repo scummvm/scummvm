@@ -36,6 +36,7 @@
 #include "gui/chooser.h"
 #include "gui/eval.h"
 #include "gui/launcher.h"
+#include "gui/massadd.h"
 #include "gui/message.h"
 #include "gui/newgui.h"
 #include "gui/options.h"
@@ -45,6 +46,7 @@
 #include "gui/PopUpWidget.h"
 
 #include "sound/mididrv.h"
+
 
 
 using Common::ConfigManager;
@@ -605,34 +607,6 @@ void LauncherDialog::updateListing() {
 	updateButtons();
 }
 
-void LauncherDialog::addGameRecursive(FilesystemNode dir) {
-	FSList files;
-	if (!dir.listDir(files, FilesystemNode::kListAll)) {
-		error("browser returned a node that is not a directory: '%s'",
-				dir.path().c_str());
-	}
-
-	// Run the detector on the dir
-	GameList candidates(PluginManager::instance().detectGames(files));
-	
-	if (candidates.size() >= 1) {
-		// At least one match was found. For now we just take the first one...
-		// a more sophisticated solution would do something more clever here,
-		// e.g. ask the user which one to pick (make sure to display the 
-		// path, too).
-		GameDescriptor result = candidates[0];
-		addGameToConf(dir, result, true);
-	}
-	
-	
-	// Recurse into all subdirs
-	for (FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
-		if (file->isDirectory()) {
-			addGameRecursive(*file);
-		}
-	}
-}
-
 void LauncherDialog::addGame() {
 	bool massAdd = (_modifiers & OSystem::KBD_SHIFT) != 0;
 	
@@ -640,7 +614,8 @@ void LauncherDialog::addGame() {
 		MessageDialog alert("Do you really want to run the mass game detector? "
 							"This could potentially add a huge number of games.", "Yes", "No");
 		if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
-			addGameRecursive(_browser->getResult());
+			MassAddDialog massAddDlg(_browser->getResult());
+			massAddDlg.runModal();
 		}
 		return;
 	}
@@ -690,13 +665,34 @@ void LauncherDialog::addGame() {
 		}
 		if (0 <= idx && idx < (int)candidates.size()) {
 			GameDescriptor result = candidates[idx];
-			addGameToConf(dir, result, false);
+
+			// TODO: Change the detectors to set "path" !
+			result["path"] = dir.path();
+
+			Common::String domain = addGameToConf(result);
+
+			// Display edit dialog for the new entry
+			EditGameDialog editDialog(domain, result.description());
+			if (editDialog.runModal() > 0) {
+				// User pressed OK, so make changes permanent
+		
+				// Write config to disk
+				ConfMan.flushToDisk();
+		
+				// Update the ListWidget, select the new item, and force a redraw
+				updateListing();
+				selectGame(domain);
+				draw();
+			} else {
+				// User aborted, remove the the new domain again
+				ConfMan.removeGameDomain(domain);
+			}
+
 		}
 	}
 }
 
-
-void LauncherDialog::addGameToConf(const FilesystemNode &dir, const GameDescriptor &result, bool suppressEditDialog) {
+Common::String addGameToConf(const GameDescriptor &result) {
 	// The auto detector or the user made a choice.
 	// Pick a domain name which does not yet exist (after all, we
 	// are *adding* a game to the config, not replacing).
@@ -733,39 +729,26 @@ void LauncherDialog::addGameToConf(const FilesystemNode &dir, const GameDescript
 	// for the generic gameid description; it's not possible to obtain
 	// a description which contains extended information like language, etc.).
 	if (!result.description().empty())
-		ConfMan.set("description", result.description(), domain);
+		ConfMan.set("description", result["description"], domain);
 
-	ConfMan.set("gameid", result.gameid(), domain);
-	ConfMan.set("path", dir.path(), domain);
+	// TODO: Instead of only setting a few selected keys, we could just copy *all*
+	// non-empty key/value pairs from result (with the exception of "preferredtarget")
+	// to the config domain. This way detectors could specify many more
+	// settings w/o any further changes needed in the launcher code!
+
+	ConfMan.set("gameid", result["gameid"], domain);
+	
+	ConfMan.set("path", result["path"], domain);
 
 	// Set language if specified
 	if (result.language() != Common::UNK_LANG)
-		ConfMan.set("language", Common::getLanguageCode(result.language()), domain);
+		ConfMan.set("language", result["language"], domain);
 
 	// Set platform if specified
 	if (result.platform() != Common::kPlatformUnknown)
-		ConfMan.set("platform", Common::getPlatformCode(result.platform()), domain);
+		ConfMan.set("platform", result["platform"], domain);
 
-	// Display edit dialog for the new entry
-	bool saveit = true;
-	if (!suppressEditDialog) {
-		EditGameDialog editDialog(domain, result.description());
-		saveit = (editDialog.runModal() > 0);
-	}
-	if (saveit) {
-		// User pressed OK, so make changes permanent
-
-		// Write config to disk
-		ConfMan.flushToDisk();
-
-		// Update the ListWidget, select the new item, and force a redraw
-		updateListing();
-		selectGame(domain);
-		draw();
-	} else {
-		// User aborted, remove the the new domain again
-		ConfMan.removeGameDomain(domain);
-	}
+	return domain;
 }
 
 void LauncherDialog::removeGame(int item) {

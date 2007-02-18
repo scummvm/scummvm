@@ -31,6 +31,10 @@ class BrowserDialog;
 class ListWidget;
 class GraphicsWidget;
 
+
+Common::String addGameToConf(const GameDescriptor &result);
+
+
 class LauncherDialog : public Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
@@ -68,9 +72,6 @@ protected:
 	void editGame(int item);
 
 	void selectGame(const String &name);
-	
-	void addGameToConf(const FilesystemNode &dir, const GameDescriptor &result, bool suppressEditDialog);
-	void addGameRecursive(FilesystemNode dir);
 };
 
 } // End of namespace GUI

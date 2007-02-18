@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	eval.o \
 	launcher.o \
 	ListWidget.o \
+	massadd.o \
 	message.o \
 	newgui.o \
 	options.o \
