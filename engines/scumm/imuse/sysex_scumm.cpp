@@ -106,11 +106,11 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 		++p; // Skip hardware type
 		part = player->getPart(a);
 		if (part) {
-			if (len == 63) {
-				player->decode_sysex_bytes(p, buf, len - 3);
+			if (len == 62) {
+				player->decode_sysex_bytes(p, buf, len - 2);
 				part->set_instrument((byte *)buf);
 			} else {
-				// SPK tracks have len == 49 here, and are not supported
+				// SPK tracks have len == 48 here, and are not supported
 				part->programChange(254); // Must be invalid, but not 255 (which is reserved)
 			}
 		}
@@ -119,14 +119,14 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 	case 17: // Adlib instrument definition(Global)
 		p += 2; // Skip hardware type and... whatever came right before it
 		a = *p++;
-		player->decode_sysex_bytes(p, buf, len - 4);
+		player->decode_sysex_bytes(p, buf, len - 3);
 		se->setGlobalAdlibInstrument(a, buf);
 		break;
 
 	case 33: // Parameter adjust
 		a = *p++ & 0x0F;
 		++p; // Skip hardware type
-		player->decode_sysex_bytes(p, buf, len - 3);
+		player->decode_sysex_bytes(p, buf, len - 2);
 		part = player->getPart(a);
 		if (part)
 			part->set_param(READ_BE_UINT16(buf), READ_BE_UINT16(buf + 2));
@@ -135,49 +135,49 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 	case 48: // Hook - jump
 		if (player->_scanning)
 			break;
-		player->decode_sysex_bytes(p + 1, buf, len - 2);
+		player->decode_sysex_bytes(p + 1, buf, len - 1);
 		player->maybe_jump(buf[0], READ_BE_UINT16(buf + 1), READ_BE_UINT16(buf + 3), READ_BE_UINT16(buf + 5));
 		break;
 
 	case 49: // Hook - global transpose
-		player->decode_sysex_bytes(p + 1, buf, len - 2);
+		player->decode_sysex_bytes(p + 1, buf, len - 1);
 		player->maybe_set_transpose(buf);
 		break;
 
 	case 50: // Hook - part on/off
 		buf[0] = *p++ & 0x0F;
-		player->decode_sysex_bytes(p, buf + 1, len - 2);
+		player->decode_sysex_bytes(p, buf + 1, len - 1);
 		player->maybe_part_onoff(buf);
 		break;
 
 	case 51: // Hook - set volume
 		buf[0] = *p++ & 0x0F;
-		player->decode_sysex_bytes(p, buf + 1, len - 2);
+		player->decode_sysex_bytes(p, buf + 1, len - 1);
 		player->maybe_set_volume(buf);
 		break;
 
 	case 52: // Hook - set program
 		buf[0] = *p++ & 0x0F;
-		player->decode_sysex_bytes(p, buf + 1, len - 2);
+		player->decode_sysex_bytes(p, buf + 1, len - 1);
 		player->maybe_set_program(buf);
 		break;
 
 	case 53: // Hook - set transpose
 		buf[0] = *p++ & 0x0F;
-		player->decode_sysex_bytes(p, buf + 1, len - 2);
+		player->decode_sysex_bytes(p, buf + 1, len - 1);
 		player->maybe_set_transpose_part(buf);
 		break;
 
 	case 64: // Marker
 		p++;
-		len -= 2;
+		len--;
 		while (len--) {
 			se->handle_marker(player->_id, *p++);
 		}
 		break;
 
 	case 80: // Loop
-		player->decode_sysex_bytes(p + 1, buf, len - 2);
+		player->decode_sysex_bytes(p + 1, buf, len - 1);
 		player->setLoop
 			(READ_BE_UINT16(buf), READ_BE_UINT16(buf + 2),
 			 READ_BE_UINT16(buf + 4), READ_BE_UINT16(buf + 6),
