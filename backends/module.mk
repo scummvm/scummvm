@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	plugins/win32/win32-provider.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
+	saves/compressed/compressed-saves.o \
 	timer/default/default-timer.o
 
 # Include common rules 

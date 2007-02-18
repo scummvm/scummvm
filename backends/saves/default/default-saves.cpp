@@ -24,13 +24,10 @@
 #include "common/savefile.h"
 #include "common/util.h"
 #include "backends/saves/default/default-saves.h"
+#include "backends/saves/compressed/compressed-saves.h"
 
 #include <stdio.h>
 #include <string.h>
-
-#ifdef USE_ZLIB
-#include <zlib.h>
-#endif
 
 #if defined(UNIX) || defined(__SYMBIAN32__)
 #include <errno.h>
@@ -83,70 +80,6 @@ public:
 		fseek(fh, offs, whence);
 	}
 };
-
-
-#ifdef USE_ZLIB
-class GzipSaveFile : public Common::InSaveFile, public Common::OutSaveFile {
-private:
-	gzFile fh;
-	bool _ioError;
-public:
-	GzipSaveFile(const char *filename, bool saveOrLoad) {
-		_ioError = false;
-		fh = gzopen(filename, (saveOrLoad? "wb" : "rb"));
-	}
-	~GzipSaveFile() {
-		if (fh)
-			gzclose(fh);
-	}
-
-	bool eos() const { return gzeof(fh) != 0; }
-	bool ioFailed() const { return _ioError; }
-	void clearIOFailed() { _ioError = false; }
-
-	bool isOpen() const { return fh != 0; }
-
-	uint32 read(void *dataPtr, uint32 dataSize) {
-		assert(fh);
-		int ret = gzread(fh, dataPtr, dataSize);
-		if (ret <= -1)
-			_ioError = true;
-		return ret;
-	}
-	uint32 write(const void *dataPtr, uint32 dataSize) {
-		assert(fh);
-		// Due to a "bug" in the zlib headers (or maybe I should say,
-		// a bug in the C++ spec? Whatever <g>) we have to be a bit
-		// hackish here and remove the const qualifier.
-		// Note that gzwrite's buf param is declared as "const voidp"
-		// which you might think is the same as "const void *" but it
-		// is not - rather it is equal to "void const *" which is the
-		// same as "void *". Hrmpf
-		int ret = gzwrite(fh, const_cast<void *>(dataPtr), dataSize);
-		if (ret <= 0)
-			_ioError = true;
-		return ret;
-	}
-
-	uint32 pos() const {
-		assert(fh);
-		return gztell(fh);
-	}
-	uint32 size() const {
-		assert(fh);
-		uint32 oldPos = gztell(fh);
-		gzseek(fh, 0, SEEK_END);
-		uint32 length = gztell(fh);
-		gzseek(fh, oldPos, SEEK_SET);
-		return length;
-	}
-
-	void seek(int32 offs, int whence = SEEK_SET) {
-		assert(fh);
-		gzseek(fh, offs, whence);
-	}
-};
-#endif
 
 
 static void join_paths(const char *filename, const char *directory,
@@ -219,34 +152,26 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 
 	join_paths(filename, savePath, buf, sizeof(buf));
 
-#ifdef USE_ZLIB
-	GzipSaveFile *sf = new GzipSaveFile(buf, true);
-#else
 	StdioSaveFile *sf = new StdioSaveFile(buf, true);
-#endif
 
 	if (!sf->isOpen()) {
 		delete sf;
 		sf = 0;
 	}
-	return sf;
+	return wrapOutSaveFile(sf);
 }
 
 Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename) {
 	char buf[256];
 	join_paths(filename, getSavePath(), buf, sizeof(buf));
 
-#ifdef USE_ZLIB
-	GzipSaveFile *sf = new GzipSaveFile(buf, false);
-#else
 	StdioSaveFile *sf = new StdioSaveFile(buf, false);
-#endif
 
 	if (!sf->isOpen()) {
 		delete sf;
 		sf = 0;
 	}
-	return sf;
+	return wrapInSaveFile(sf);
 }
 
 void DefaultSaveFileManager::listSavefiles(const char * /* prefix */, bool *marks, int num) {
