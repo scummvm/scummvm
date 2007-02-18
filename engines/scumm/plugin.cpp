@@ -938,29 +938,29 @@ Common::String ScummEngine::generateFilename(const int room) const {
 	return buf;
 }
 
-static Common::String generateFilenameForDetection(const GameFilenamePattern &gfp) {
+static Common::String generateFilenameForDetection(const char *pattern, FilenameGenMethod genMethod) {
 	char buf[128];
 
-	switch (gfp.genMethod) {
+	switch (genMethod) {
 	case kGenDiskNum:
 	case kGenRoomNum:
-		snprintf(buf, sizeof(buf), gfp.pattern, 0);
+		snprintf(buf, sizeof(buf), pattern, 0);
 		break;
 
 	case kGenHEPC:
-		snprintf(buf, sizeof(buf), "%s.he0", gfp.pattern);
+		snprintf(buf, sizeof(buf), "%s.he0", pattern);
 		break;
 
 	case kGenHEMac:
-		snprintf(buf, sizeof(buf), "%s (0)", gfp.pattern);
+		snprintf(buf, sizeof(buf), "%s (0)", pattern);
 		break;
 
 	case kGenHEMacNoParens:
-		snprintf(buf, sizeof(buf), "%s 0", gfp.pattern);
+		snprintf(buf, sizeof(buf), "%s 0", pattern);
 		break;
 
 	case kGenUnchanged:
-		strncpy(buf, gfp.pattern, sizeof(buf));
+		strncpy(buf, pattern, sizeof(buf));
 		break;
 
 	default:
@@ -1119,7 +1119,7 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 		// Generate the detectname corresponding to the gfp. If the file doesn't
 		// exist in the directory we are looking at, we can skip to the next
 		// one immediately.
-		Common::String file(generateFilenameForDetection(*gfp));
+		Common::String file(generateFilenameForDetection(gfp->pattern, gfp->genMethod));
 		if (!fileMD5Map.contains(file))
 			continue;
 
@@ -1576,8 +1576,14 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 	// unknown MD5, or with a medium debug level in case of a known MD5 (for
 	// debugging purposes).
 	if (!findInMD5Table(res.md5.c_str())) {
-		printf("Unknown MD5 (%s)! If this is an official version of the game (and not e.g. a fan made translation), "
-		       "please report the details (language, platform, etc.) of this game to the ScummVM team\n", res.md5.c_str());
+		printf("Your game version appears to be unknown. Please, report the following\n");
+		printf("data to the ScummVM team along with name of the game you tried to add\n");
+		printf("and its version/language/etc.:\n");
+		
+		printf("  SCUMM gameid '%s', file '%s', MD5 '%s'\n\n",
+				res.game.gameid,
+				generateFilenameForDetection(res.fp.pattern, res.fp.genMethod).c_str(),
+				res.md5.c_str());
 	} else {
 		debug(1, "Using MD5 '%s'", res.md5.c_str());
 	}

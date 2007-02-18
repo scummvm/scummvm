@@ -139,7 +139,11 @@ GameList Engine_LURE_detectGames(const FSList &fslist) {
 			}
 		}
 		if (detectedGames.empty()) {
-			debug("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
+			printf("Your game version appears to be unknown. Please, report the following\n");
+			printf("data to the ScummVM team along with name of the game you tried to add\n");
+			printf("and its version/language/etc.:\n");
+			
+			printf("  LURE MD5 '%s'\n\n", md5str);
 
 			const PlainGameDescriptor *g1 = lure_list;
 			while (g1->gameid) {

@@ -403,11 +403,17 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 	if (!filesMD5.empty()) {
 		// TODO: This message should be cleaned up / made more specific.
 		// For example, we should specify at least which engine triggered this.
-		printf("MD5s of your game version are unknown. Please, report following data to\n");
-		printf("ScummVM team along with your game name and version:\n");
+		//
+		// Might also be helpful to display the full path (for when this is used
+		// from the mass detector).
+		printf("Your game version appears to be unknown. Please, report the following\n");
+		printf("data to the ScummVM team along with name of the game you tried to add\n");
+		printf("and its version/language/etc.:\n");
 
 		for (StringMap::const_iterator file = filesMD5.begin(); file != filesMD5.end(); ++file)
-			printf("%s: \"%s\", %d\n", file->_key.c_str(), file->_value.c_str(), filesSize[file->_key]);
+			printf("  %s: '%s', %d\n", file->_key.c_str(), file->_value.c_str(), filesSize[file->_key]);
+
+		printf("\n");
 	}
 
 	if (params.fileBasedFallback != 0) {
