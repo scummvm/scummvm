@@ -59,11 +59,18 @@ public:
 		
 		// Verify file header is correct once more
 		w->seek(0, SEEK_SET);
-		assert(w->readUint16BE() == 0x1F8B);
+		uint16 header = w->readUint16BE();
+		assert(header == 0x1F8B ||
+		       ((header & 0x0F00) == 0x0800 && header % 31 == 0));
 		
-		// Retrieve the original file size
-		w->seek(-4, SEEK_END);
-		_origSize = w->readUint32LE();
+		if(header == 0x1F8B) {
+			// Retrieve the original file size
+			w->seek(-4, SEEK_END);
+			_origSize = w->readUint32LE();
+		} else {
+			// Original size not available in zlib format
+			_origSize = 0;
+		}
 		_pos = 0;
 		w->seek(0, SEEK_SET);
 		
@@ -261,7 +268,10 @@ public:
 Common::InSaveFile *wrapInSaveFile(Common::InSaveFile *toBeWrapped) {
 #if defined(USE_ZLIB)
 	if (toBeWrapped) {
-		bool isCompressed = (toBeWrapped->readUint16BE() == 0x1F8B);
+		uint16 header = toBeWrapped->readUint16BE();
+		bool isCompressed = (header == 0x1F8B ||
+				     ((header & 0x0F00) == 0x0800 &&
+				      header % 31 == 0));
 		toBeWrapped->seek(-2, SEEK_CUR);
 		if (isCompressed)
 			return new CompressedInSaveFile(toBeWrapped);
