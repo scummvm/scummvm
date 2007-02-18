@@ -85,6 +85,7 @@ protected:
 	Array<T>	_stack;
 public:
 	Stack<T>() {}
+	Stack<T>(const Array<T> &stackContent) : _stack(stackContent) {}
 
 	bool empty() const {
 		return _stack.empty();
@@ -97,10 +98,7 @@ public:
 	}
 	T top() const {
 		const int s = size();
-		if (s > 0)
-			return _stack[s - 1];
-		else
-			return 0;
+		return _stack[s - 1];
 	}
 	T pop() {
 		T tmp = top();
