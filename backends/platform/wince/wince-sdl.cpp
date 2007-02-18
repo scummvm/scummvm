@@ -627,10 +627,13 @@ bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
 
 	desired.thread_priority = thread_priority;
 
+	SDL_CloseAudio();
 	if (SDL_OpenAudio(&desired, NULL) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
 		return false;
 	}
+	else
+		warning("Sound opened OK, mixing at %d Hz", _sampleRate);
 	SDL_PauseAudio(0);
 	return true;
 }
