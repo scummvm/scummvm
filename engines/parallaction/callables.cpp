@@ -162,7 +162,7 @@ void _c_moveSarc(void *parm) {
 		a = findAnimation("finito");
 
 		a->_zone._flags |= (kFlagsActive | kFlagsActing);
-		_localFlags[_vm->_currentLocationIndex] |= kFlagsFixed;
+		_localFlags[_vm->_currentLocationIndex] |= 0x20;		// GROSS HACK: activates 'finito' flag in dinoit_museo.loc
 	}
 
 	return;
