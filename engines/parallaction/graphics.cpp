@@ -467,7 +467,7 @@ void Graphics::blit(uint16 w, uint16 h, int16 x, int16 y, uint16 z, byte *data, 
 void jobDisplayLabel(void *parm, Job *j) {
 
 	ZoneLabel *label = (ZoneLabel*)parm;
-	debugC(1, kDebugLocation, "jobDisplayLabel (%p)", (const void*) label);
+	debugC(1, kDebugJobs, "jobDisplayLabel (%p)", (const void*) label);
 
 	if (label->_cnv._width == 0)
 		return;
@@ -479,7 +479,7 @@ void jobDisplayLabel(void *parm, Job *j) {
 void jobEraseLabel(void *parm, Job *j) {
 	ZoneLabel *label = (ZoneLabel*)parm;
 
-	debugC(1, kDebugLocation, "jobEraseLabel (%p)", (const void*) label);
+	debugC(1, kDebugJobs, "jobEraseLabel (%p)", (const void*) label);
 
 	int16 _si, _di;
 
@@ -1031,8 +1031,10 @@ void Graphics::loadStaticCnv(const char *filename, StaticCnv *cnv) {
 
 	byte unk;
 	readArchivedFile(file, &unk, 1);
-	readArchivedFile(file, &cnv->_width, 1);
-	readArchivedFile(file, &cnv->_height, 1);
+	readArchivedFile(file, &unk, 1);
+	cnv->_width = unk;
+	readArchivedFile(file, &unk, 1);
+	cnv->_height = unk;
 
 	uint16 compressedsize = getArchivedFileLength(path) - 3;
 	byte *compressed = (byte*)memAlloc(compressedsize);
@@ -1067,9 +1069,14 @@ void Graphics::loadCnv(const char *filename, Cnv *cnv) {
 
 	cnv->_count = cnv->_width = cnv->_height = 0;
 
-	readArchivedFile(file, &cnv->_count, 1);
-	readArchivedFile(file, &cnv->_width, 1);
-	readArchivedFile(file, &cnv->_height, 1);
+	byte unk;
+
+	readArchivedFile(file, &unk, 1);
+	cnv->_count = unk;
+	readArchivedFile(file, &unk, 1);
+	cnv->_width = unk;
+	readArchivedFile(file, &unk, 1);
+	cnv->_height = unk;
 
 	uint16 framesize = cnv->_width*cnv->_height;
 
