@@ -176,7 +176,7 @@ void MassAddDialog::handleTickle() {
 		// Enable the OK button
 		_okButton->setEnabled(true);
 
-		snprintf(buf, sizeof(buf), "Scan complete!", _dirsScanned);
+		snprintf(buf, sizeof(buf), "Scan complete!");
 		_dirProgressText->setLabel(buf);
 	
 		snprintf(buf, sizeof(buf), "Discovered %d games.", _games.size());
