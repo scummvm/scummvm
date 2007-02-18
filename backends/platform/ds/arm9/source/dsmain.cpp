@@ -732,8 +732,10 @@ void displayMode16BitFlipBuffer() {
         #ifdef SCALER_PROFILE
         u16 t1 = TIMER1_DATA;
 	    TIMER1_CR &= ~TIMER_ENABLE;
-        u32 dt = t1 - t0;        
-        consolePrintf("%d us\n", (dt * 10240) / 334);
+        u32 dt = t1 - t0;
+        u32 dt_us = (dt * 10240) / 334;
+        u32 dt_ms = dt_us / 1000;
+        memset(base, 0xFF, dt_ms*2);
         #endif
 	}
 	#ifdef HEAVY_LOGGING
