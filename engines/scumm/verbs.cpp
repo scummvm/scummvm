@@ -627,6 +627,7 @@ void ScummEngine::verbMouseOver(int verb) {
 	if (_verbMouseOver != verb) {
 		if (_verbs[_verbMouseOver].type != kImageVerbType) {
 			drawVerb(_verbMouseOver, 0);
+			_verbMouseOver = verb;
 		}
 
 		if (_verbs[verb].type != kImageVerbType && _verbs[verb].hicolor) {
