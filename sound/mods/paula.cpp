@@ -65,7 +65,7 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 	double rate;
 	double offset;
 	int16 *p;
-	int8 *data;
+	const int8 *data;
 
 	Common::StackLock lock(_mutex);
 

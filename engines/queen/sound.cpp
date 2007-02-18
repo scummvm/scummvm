@@ -42,9 +42,9 @@ namespace Queen {
 
 Sound::Sound(Audio::Mixer *mixer, QueenEngine *vm) :
 	_mixer(mixer), _vm(vm), _sfxToggle(true), _speechToggle(true), _musicToggle(true), _lastOverride(0) {
-}
-
-Sound::~Sound() {
+#ifdef ENABLE_AMIGA_MUSIC
+	_lastModuleOverride = -1;
+#endif
 }
 
 Sound *Sound::giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression) {
@@ -122,6 +122,84 @@ void Sound::playSound(const char *base, bool isSpeech) {
 	}
 }
 
+#ifdef ENABLE_AMIGA_MUSIC
+
+static struct {
+	const char *name;
+	uint8 songNum;
+	uint8 remapSongNumTable[6];
+} amigaMusicData[] = {
+	{ "HOTEL",    1, {   1,   2,  39,   0 } },
+	{ "HOTEL",    2, {  20,  30,  34,   0 } },
+	{ "HOTEL",    3, {  19,   0 } },
+	{ "HOTEL",    4, {  29,  35,  36,   0 } },
+	{ "JUNG",     1, {  40,   0 } },
+	{ "JUNG",     2, {   3,  38,  89,   0 } },
+	{ "TEMPLE",   1, {  54,   0 } },
+	{ "TEMPLE",   2, {  12,   0 } },
+	{ "TEMPLE",   3, {   7,   9,  10,  11, 0 } },
+	{ "TEMPLE",   4, {  31,   0 } },
+	{ "FLODA",    1, {  16,   0 } },
+	{ "FLODA",    2, {  17,   0 } },
+	{ "FLODA",    3, {  13,   0 } },
+	{ "FLODA",    4, {  41,   0 } },
+	{ "FLODA",    5, {  30,  43,   0 } },
+	{ "TITLE",    1, {  67,  88, 203,   0 } },
+	{ "AWESTRUK", 1, {  37,  52,  90, 196, 0 } },
+	{ "'JUNGLE'", 1, {  91,   0 } },
+	{ "FRANK",    1, {  46,   0 } },
+	{ "BOB",      1, {   6,   0 } },
+	{ "AZURA",    1, {  44,  53, 204, 0 } },
+	{ "FORT",     1, {  21,   0 } },
+	{ "ROCKET",   1, {  32, 194, 195, 0 } },
+	{ "ROBOT",    1, {  92,   0 } }
+};
+
+void Sound::playSong(int16 songNum) {
+	debug(2, "Sound::playSong %d override %d/%d", songNum, _lastModuleOverride, _lastOverride);
+
+	const char *moduleName = 0;
+	for (int i = 0; i < ARRAYSIZE(amigaMusicData) && !moduleName; ++i) {
+		for (int j = 0; amigaMusicData[i].remapSongNumTable[j] != 0; ++j) {
+			if (amigaMusicData[i].remapSongNumTable[j] == songNum) {
+				moduleName = amigaMusicData[i].name;
+				songNum = amigaMusicData[i].songNum;
+
+				if (_lastModuleOverride == i && _lastOverride == songNum)
+					return;
+
+				_lastModuleOverride = i;
+				_lastOverride = songNum;
+				break;
+			}
+		}
+	}
+	if (!moduleName)
+		return;
+
+	_mixer->stopHandle(_musicHandle);
+
+	debug(1, "playAmigaSong name '%s' subsong %d", moduleName, songNum);
+
+	char buf[16];
+	sprintf(buf, "%s.SNG", moduleName);
+	Common::File fsng;
+	if (!fsng.open(buf))
+		return;
+
+	sprintf(buf, "%s.INS", moduleName);
+	Common::File fins;
+	if (!fins.open(buf))
+		return;
+
+	Audio::AudioStream *rjp1Stream = Audio::makeRjp1Stream(&fsng, &fins, songNum);
+	if (rjp1Stream) {
+		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, rjp1Stream);
+	}
+}
+
+#else
+
 void Sound::playSong(int16 songNum) {
 	if (songNum <= 0) {
 		_vm->music()->stopSong();
@@ -164,6 +242,8 @@ void Sound::playSong(int16 songNum) {
 	_vm->music()->queueTuneList(newTune);
 	_vm->music()->playMusic();
 }
+
+#endif // ENABLE_AMIGA_MUSIC
 
 void Sound::saveState(byte *&ptr) {
 	WRITE_BE_UINT16(ptr, _lastOverride); ptr += 2;

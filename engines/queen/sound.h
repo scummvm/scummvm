@@ -25,7 +25,11 @@
 
 #include "common/util.h"
 #include "sound/mixer.h"
+#include "sound/mods/rjp1.h"
 #include "queen/defs.h"
+
+// define this to enable amiga "rjp1" modules playback
+//#define ENABLE_AMIGA_MUSIC 1
 
 namespace Common {
 	class File;
@@ -57,7 +61,7 @@ class QueenEngine;
 class Sound {
 public:
 	Sound(Audio::Mixer *mixer, QueenEngine *vm);
-	virtual ~Sound();
+	virtual ~Sound() {}
 	static Sound *giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression);
 	void playSfx(uint16 sfx);
 	void playSpeech(const char *base);
@@ -120,6 +124,10 @@ protected:
 	int16 _lastOverride;
 	Audio::SoundHandle _sfxHandle;
 	Audio::SoundHandle _speechHandle;
+#ifdef ENABLE_AMIGA_MUSIC
+	int16 _lastModuleOverride;
+	Audio::SoundHandle _musicHandle;
+#endif
 };
 
 class SilentSound : public Sound {

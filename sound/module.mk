@@ -18,14 +18,15 @@ MODULE_OBJS := \
 	voc.o \
 	vorbis.o \
 	wave.o \
+	mods/infogrames.o \
 	mods/module.o \
 	mods/protracker.o \
 	mods/paula.o \
-	mods/infogrames.o \
+	mods/rjp1.o \
 	softsynth/adlib.o \
 	softsynth/ym2612.o \
 	softsynth/fluidsynth.o \
 	softsynth/mt32.o \
 
-# Include common rules 
+# Include common rules
 include $(srcdir)/rules.mk

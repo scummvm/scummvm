@@ -39,7 +39,7 @@ public:
 
 	Paula(bool stereo = false, int rate = 44100, int interruptFreq = 0);
 	~Paula();
-	
+
 	bool playing() const { return _playing; }
 	void setInterruptFreq(int freq) { _intFreq = freq; }
 	void setPanning(byte voice, byte panning) {
@@ -60,8 +60,8 @@ public:
 
 protected:
 	struct Channel {
-		int8 *data;
-		int8 *dataRepeat;
+		const int8 *data;
+		const int8 *dataRepeat;
 		uint32 length;
 		uint32 lengthRepeat;
 		int16 period;
