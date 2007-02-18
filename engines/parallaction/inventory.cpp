@@ -122,7 +122,7 @@ int16 pickupItem(Zone *z) {
 	if (_si == INVENTORY_MAX_ITEMS)
 		return -1;
 
-	_inventory[_si]._id = (z->u.get->_icon << 16) & 0xFFFF0000;
+	_inventory[_si]._id = MAKE_INVENTORY_ID(z->u.get->_icon);
 	_inventory[_si]._index = z->u.get->_icon;
 
 	addJob(jobRemovePickedItem, z, kPriority17 );
@@ -140,7 +140,7 @@ void addInventoryItem(uint16 item) {
 	uint16 _si = 0;
 	while (_inventory[_si]._id != 0) _si++;
 
-	_inventory[_si]._id = (item << 16) & 0xFFFF0000;
+	_inventory[_si]._id = MAKE_INVENTORY_ID(item);
 	_inventory[_si]._index = item;
 
 	refreshInventoryItem(_vm->_characterName, _si);
