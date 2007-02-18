@@ -722,7 +722,13 @@ Common::String addGameToConf(const GameDescriptor &result) {
 
 	// Add the name domain
 	ConfMan.addGameDomain(domain);
-			
+
+	// Copy all non-empty key/value pairs into the new domain
+	for (GameDescriptor::const_iterator iter = result.begin(); iter != result.end(); ++iter) {
+		if (!iter->_value.empty() && iter->_key != "preferredtarget")
+			ConfMan.set(iter->_key, iter->_value, domain);
+	}
+
 	// TODO: Setting the description field here has the drawback
 	// that the user does never notice when we upgrade our descriptions.
 	// It might be nice ot leave this field empty, and only set it to
@@ -732,26 +738,7 @@ Common::String addGameToConf(const GameDescriptor &result) {
 	// game target, we can change this (currently, you can only query
 	// for the generic gameid description; it's not possible to obtain
 	// a description which contains extended information like language, etc.).
-	if (!result.description().empty())
-		ConfMan.set("description", result["description"], domain);
-
-	// TODO: Instead of only setting a few selected keys, we could just copy *all*
-	// non-empty key/value pairs from result (with the exception of "preferredtarget")
-	// to the config domain. This way detectors could specify many more
-	// settings w/o any further changes needed in the launcher code!
-
-	ConfMan.set("gameid", result["gameid"], domain);
 	
-	ConfMan.set("path", result["path"], domain);
-
-	// Set language if specified
-	if (result.language() != Common::UNK_LANG)
-		ConfMan.set("language", result["language"], domain);
-
-	// Set platform if specified
-	if (result.platform() != Common::kPlatformUnknown)
-		ConfMan.set("platform", result["platform"], domain);
-
 	return domain;
 }
 
