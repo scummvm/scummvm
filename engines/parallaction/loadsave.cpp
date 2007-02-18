@@ -59,9 +59,9 @@ void Parallaction::doLoadGame(uint16 slot) {
 	Common::InSaveFile *f = _saveFileMan->openForLoading(filename);
 	if (!f) return;
 
-	char s[20];
+	char s[30];
 
-	f->readLine(s, 19);
+	f->readLine(s, 29);
 
 	f->readLine(_vm->_characterName, 15);
 	f->readLine(_location, 15);
