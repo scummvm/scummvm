@@ -137,6 +137,11 @@ void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height) {
 static bool isDivBy5Ready = false;
 static u32  DIV_BY_5[160];
 
+//#define USE_2D_TABLE
+#ifdef USE_2D_TABLE
+static u8   A4_B1_DIV5[32][32];
+static u8   A3_B2_DIV5[32][32];
+#endif
 void ComputeDivBy5TableIFN()
 {
     if (isDivBy5Ready)
@@ -148,6 +153,14 @@ void ComputeDivBy5TableIFN()
         DIV_BY_5[i] = (2*i+5)/10;
     }        
     
+    #ifdef USE_2D_TABLE
+    for(int i=0; i<32; ++i)
+        for(int j=0; j<32; ++j)
+        {
+            A4_B1_DIV5[i][j] = DIV_BY_5[4*i + j];
+            A3_B2_DIV5[i][j] = DIV_BY_5[3*i + 2*j];
+        }
+    #endif
 }
 
 static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3, u16 s4,
@@ -228,6 +241,46 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
 static inline void RescaleBlock_5x8888_To_4x1555( u32 s0, u32 s1, u32 s2, u32 s3, u32 s4,
                                                     u16* dest)
 {
+#ifdef USE_2D_TABLE
+    u32 bs0 = s0 & 0xFF;
+    u32 bs1 = s1 & 0xFF;
+    u32 bs2 = s2 & 0xFF;
+    u32 bs3 = s3 & 0xFF;
+    u32 bs4 = s4 & 0xFF;
+
+    u32 gs0 = (s0 >> 8) & 0xFF;
+    u32 gs1 = (s1 >> 8) & 0xFF;
+    u32 gs2 = (s2 >> 8) & 0xFF;
+    u32 gs3 = (s3 >> 8) & 0xFF;
+    u32 gs4 = (s4 >> 8) & 0xFF;
+    
+    u32 rs0 = (s0 >> 16);
+    u32 rs1 = (s1 >> 16);
+    u32 rs2 = (s2 >> 16);
+    u32 rs3 = (s3 >> 16);
+    u32 rs4 = (s4 >> 16);
+    
+    u32 rd0 = A4_B1_DIV5[rs0][rs1];
+    u32 rd1 = A3_B2_DIV5[rs1][rs2];
+    u32 rd2 = A3_B2_DIV5[rs3][rs2];
+    u32 rd3 = A4_B1_DIV5[rs4][rs3];
+
+    u32 gd0 = A4_B1_DIV5[gs0][gs1];
+    u32 gd1 = A3_B2_DIV5[gs1][gs2];
+    u32 gd2 = A3_B2_DIV5[gs3][gs2];
+    u32 gd3 = A4_B1_DIV5[gs4][gs3];
+
+    u32 bd0 = A4_B1_DIV5[bs0][bs1];
+    u32 bd1 = A3_B2_DIV5[bs1][bs2];
+    u32 bd2 = A3_B2_DIV5[bs3][bs2];
+    u32 bd3 = A4_B1_DIV5[bs4][bs3];
+
+    u32 d10 = 0x80008000 | (rd1 << 26) | (gd1 << 21) | (bd1 << 16) | (rd0 << 10) | (gd0 << 5) | bd0;
+    u32 d32 = 0x80008000 | (rd3 << 26) | (gd3 << 21) | (bd3 << 16) | (rd2 << 10) | (gd2 << 5) | bd2;
+    
+    ((u32*)dest)[0] = d10;
+    ((u32*)dest)[1] = d32;
+#else    
     u32 d0 = 4*s0 +   s1;
     u32 d1 = 2*s1 +   s1 + 2*s2;
     u32 d2 = 2*s2 + 2*s3 +   s3;
@@ -268,6 +321,7 @@ static inline void RescaleBlock_5x8888_To_4x1555( u32 s0, u32 s1, u32 s2, u32 s3
     
     ((u32*)dest)[0] = d10;
     ((u32*)dest)[1] = d32;
+#endif
 }
 
 // Can't work in place
