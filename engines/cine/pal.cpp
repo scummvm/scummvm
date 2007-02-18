@@ -34,7 +34,7 @@ byte palette256[256 * 3];
 
 uint16 palEntriesCount;
 
-Common::File palFileHandle;
+Common::File *palFileHandleP = NULL;
 
 PalEntry *palPtr;
 

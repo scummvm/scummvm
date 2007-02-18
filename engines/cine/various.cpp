@@ -60,7 +60,7 @@ void blitRawScreen(byte *frontBuffer) {
 	gfxFlipRawPage(frontBuffer);
 }
 
-Common::File partFileHandle;
+Common::File *partFileHandleP = NULL;
 
 void waitPlayerInput(void) {
 }

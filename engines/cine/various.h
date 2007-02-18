@@ -79,8 +79,12 @@ extern uint16 var3;
 extern uint16 var4;
 extern uint16 var5;
 
-extern Common::File palFileHandle;
-extern Common::File partFileHandle;
+extern Common::File *palFileHandleP;
+extern Common::File *partFileHandleP;
+
+#define palFileHandle (*palFileHandleP)
+#define partFileHandle (*partFileHandleP)
+
 
 void freeAnimDataTable(void);
 void mainLoopSub1(void);
