@@ -124,7 +124,6 @@ protected:
 	int go();
 	int init();
 
-	inline uint32 getSaveSize(Common::InSaveFile &in);
 	const char *getSaveSlotFile(int slot);
 	bool saveGame(int saveSlot, int16 dataVar, int32 size, int32 offset);
 	bool loadGame(int saveSlot, int16 dataVar, int32 size, int32 offset);

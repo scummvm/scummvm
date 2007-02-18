@@ -136,24 +136,6 @@ void GobEngine::shutdown() {
 	_quitRequested = true;
 }
 
-// Seeking with SEEK_END (and therefore also pos()) doesn't work with
-// gzip'd save files, so reading the whole thing in is necessary
-uint32 GobEngine::getSaveSize(Common::InSaveFile &in) {
-	char buf[1024];
-	uint32 size;
-	uint32 i;
-	uint32 pos;
-
-	size = 0;
-	pos = in.pos();
-	in.seek(0, SEEK_SET);
-	while ((i = in.read(buf, 1024)) > 0)
-		size += i;
-	in.seek(0, pos);
-
-	return size;
-}
-
 int32 GobEngine::getSaveSize(enum SaveFiles sFile) {
 	int32 size;
 	Common::InSaveFile *in;
@@ -176,7 +158,7 @@ int32 GobEngine::getSaveSize(enum SaveFiles sFile) {
 	if (sFile == SAVE_SAV)
 		size = _global->_savedBack == 0 ? -1 : _global->_savedBackSize;
 	else if ((in = _saveFileMan->openForLoading(_saveFiles[(int) sFile]))) {
-		size = getSaveSize(*in);
+		size = in->size();
 		delete in;
 	}
 
@@ -273,7 +255,7 @@ void GobEngine::saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 #endif // GOB_ORIGSAVES
 
 	if ((in = _saveFileMan->openForLoading(sName)))
-		iSize = getSaveSize(*in);
+		iSize = in->size();
 	else
 		iSize = 0;
 
@@ -468,7 +450,7 @@ void GobEngine::loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 	debugC(1, kDebugFileIO, "Loading file \"%s\" (%d, %d bytes at %d)",
 			sName, dataVar, size, offset);
 
-	sSize = getSaveSize(*in);
+	sSize = in->size();
 	_draw->animateCursor(4);
 	if (offset < 0)
 		in->seek(sSize - (-offset - 1), 0);
@@ -508,7 +490,7 @@ bool GobEngine::loadGame(int saveSlot, int16 dataVar, int32 size, int32 offset) 
 			warning("Can't load from slot %d", saveSlot);
 			return false;
 		}
-		if (((getSaveSize(*in) / 2) - 40) != (uint32) varSize) {
+		if (((in->size() / 2) - 40) != (uint32) varSize) {
 			warning("Can't load from slot %d: Wrong size", saveSlot);
 			return false;
 		}
