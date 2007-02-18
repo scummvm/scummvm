@@ -295,7 +295,10 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 	_walkdata.xfrac = 0;
 	_walkdata.yfrac = 0;
 
-	_targetFacing = getAngleFromPos(deltaXFactor, deltaYFactor, (_vm->_game.id == GID_DIG || _vm->_game.id == GID_CMI));
+	if (_vm->_game.version <= 2)
+		_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*deltaXFactor, V12_Y_MULTIPLIER*deltaYFactor, false);
+	else
+		_targetFacing = getAngleFromPos(deltaXFactor, deltaYFactor, (_vm->_game.id == GID_DIG || _vm->_game.id == GID_CMI));
 
 	return actorWalkStep();
 }
