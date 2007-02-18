@@ -616,6 +616,10 @@ void LauncherDialog::addGame() {
 		if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
 			MassAddDialog massAddDlg(_browser->getResult());
 			massAddDlg.runModal();
+
+			// Update the ListWidget and force a redraw
+			updateListing();
+			draw();
 		}
 		return;
 	}
