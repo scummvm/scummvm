@@ -176,7 +176,8 @@ void Square::Write(int Reg, byte Val) {
 		break;
 
 	case 4:
-		if (!(Enabled = Val ? true : false))
+		Enabled = Val;
+		if (!Enabled)
 			Timer = 0;
 		break;
 	}
@@ -293,7 +294,8 @@ void Triangle::Write(int Reg, byte Val) {
 		break;
 
 	case 4:
-		if (!(Enabled = Val ? true : false))
+		Enabled = Val;
+		if (!Enabled)
 			Timer = 0;
 		break;
 	}
@@ -389,7 +391,8 @@ void Noise::Write(int Reg, byte Val) {
 		break;
 
 	case 4:
-		if (!(Enabled = Val ? true : false))
+		Enabled = Val;
+		if (!Enabled)
 			Timer = 0;
 		break;
 	}
@@ -533,18 +536,14 @@ int step(T &obj, int sampcycles, uint frame_Cycles, int frame_Num) {
 			if (frame_Num < 4) {
 				obj.QuarterFrame();
 		
-				if (!(frame_Num & 1)) {
+				if (frame_Num & 1)
+					frame_Cycles++;
+				else
 					obj.HalfFrame();
-				}
-			}
-		
-			if (frame_Num & 1)
-				frame_Cycles++;
-		
-			if (frame_Num == 4)
-				frame_Num = 0;
-			else
+
 				frame_Num++;
+			} else
+				frame_Num = 0;
 		}
 	
 		if (!obj.Cycles)
@@ -571,14 +570,13 @@ int16 APU::GetSample(void) {
 	while (tmp >= Frame.Cycles) {
 		tmp -= Frame.Cycles;
 		Frame.Cycles = 7457;
-	
-		if (Frame.Num & 1)
-			Frame.Cycles++;
-	
-		if (Frame.Num == 4)
-			Frame.Num = 0;
-		else
+
+		if (Frame.Num < 4) {
+			if (Frame.Num & 1)
+				Frame.Cycles++;
 			Frame.Num++;
+		} else
+			Frame.Num = 0;
 	}
 
 	Frame.Cycles -= tmp;
