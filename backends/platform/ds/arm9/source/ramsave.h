@@ -28,7 +28,7 @@
 
 #define DS_MAX_SAVE_SIZE 150000
 
-class DSSaveFile : public InSaveFile, public OutSaveFile {
+class DSSaveFile : public Common::InSaveFile, public Common::OutSaveFile {
 	int address;
 	int ptr;
 	bool ownsData;

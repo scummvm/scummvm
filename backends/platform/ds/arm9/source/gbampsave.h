@@ -26,7 +26,7 @@
 
 #define SAVE_BUFFER_SIZE 100000
 
-class GBAMPSaveFile : public InSaveFile, public OutSaveFile {
+class GBAMPSaveFile : public Common::InSaveFile, public Common::OutSaveFile {
 	FILE* handle;
 	char buffer[SAVE_BUFFER_SIZE];
 	int bufferPos;
