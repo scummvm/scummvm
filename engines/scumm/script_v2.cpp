@@ -863,7 +863,7 @@ void ScummEngine_v2::o2_verbOps() {
 
 		// FIXME: these keyboard map depends on the language of the game.
 		// E.g. a german keyboard has 'z' and 'y' swapped, while a french
-		// keyboard starts with "awert", etc.
+		// keyboard starts with "azerty", etc.
 		if (_game.platform == Common::kPlatformNES) {
 			static const char keyboard[] = {
 					'q','w','e','r',
