@@ -244,7 +244,9 @@ public:
 			return 0;
 
 		// Hook in the new data ...
-		_stream.next_in = (Bytef*)dataPtr;
+		// Note: We need to make a const_cast here, as zlib is not aware
+		// of the const keyword.
+		_stream.next_in = const_cast<byte *>((const byte *)dataPtr);
 		_stream.avail_in = dataSize;
 	
 		// ... and flush it to disk
