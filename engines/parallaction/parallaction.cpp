@@ -185,6 +185,9 @@ Parallaction::Parallaction(OSystem *syst) :
 	Common::addSpecialDebugLevel(kDebugDisk, "disk", "Disk debug level");
 	Common::addSpecialDebugLevel(kDebugWalk, "walk", "Walk debug level");
 	Common::addSpecialDebugLevel(kDebugGraphics, "gfx", "Gfx debug level");
+	Common::addSpecialDebugLevel(kDebugJobs, "jobs", "Jobs debug level");
+	Common::addSpecialDebugLevel(kDebugInput, "input", "Input debug level");
+
 }
 
 
@@ -486,7 +489,7 @@ void Parallaction::processInput(InputData *data) {
 
 	switch (data->_event) {
 	case kEvEnterZone:
-		debugC(2, kDebugLocation, "processInput: kEvEnterZone");
+		debugC(2, kDebugInput, "processInput: kEvEnterZone");
 		_graphics->_labelPosition[1]._x = -1000;
 		_graphics->_labelPosition[1]._y = -1000;
 		_graphics->_labelPosition[0]._x = -1000;
@@ -496,14 +499,14 @@ void Parallaction::processInput(InputData *data) {
 		break;
 
 	case kEvExitZone:
-		debugC(2, kDebugLocation, "processInput: kEvExitZone");
+		debugC(2, kDebugInput, "processInput: kEvExitZone");
 		removeJob(_jDrawLabel);
 		addJob(&jobWaitRemoveJob, _jEraseLabel, kPriority15);
 		_jDrawLabel = NULL;
 		break;
 
 	case kEvAction:
-		debugC(2, kDebugLocation, "processInput: kEvAction");
+		debugC(2, kDebugInput, "processInput: kEvAction");
 		_procCurrentHoverItem = -1;
 		_hoverZone = NULL;
 		pauseJobs();
@@ -547,7 +550,7 @@ void Parallaction::processInput(InputData *data) {
 		break;
 
 	case kEvWalk:
-		debugC(2, kDebugLocation, "processInput: kEvWalk");
+		debugC(2, kDebugInput, "processInput: kEvWalk");
 		_hoverZone = NULL;
 		changeCursor(kCursorArrow);
 		if (_yourself._zone._flags & kFlagsRemove) break;
@@ -772,7 +775,7 @@ void Parallaction::changeCursor(int32 index) {
 
 	if (index == kCursorArrow) {		// standard mouse pointer
 
-		debugC(1, kDebugLocation, "changeCursor(%i), label: %p", index, (const void*)_jDrawLabel);
+		debugC(1, kDebugInput, "changeCursor(%i), label: %p", index, (const void*)_jDrawLabel);
 
 		if (_jDrawLabel != NULL) {
 			removeJob(_jDrawLabel);
@@ -965,7 +968,7 @@ void runJobs() {
 
 	Job *j = (Job*)_jobs._node._next;
 	while (j) {
-		debugC(3, kDebugLocation, "runJobs: %i", j->_tag);
+		debugC(3, kDebugJobs, "runJobs: %i", j->_tag);
 
 		(*j->_fn)(j->_parm, j);
 		Job *v4 = (Job*)j->_node._next;
@@ -987,7 +990,7 @@ void jobWaitRemoveJob(void *parm, Job *j) {
 
 	static uint16 count = 0;
 
-	debugC(3, kDebugLocation, "jobWaitRemoveJob: count = %i", count);
+	debugC(3, kDebugJobs, "jobWaitRemoveJob: count = %i", count);
 
 	_engineFlags |= kEngineMouse;
 

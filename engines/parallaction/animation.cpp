@@ -226,7 +226,7 @@ void jobDisplayAnimations(void *parm, Job *j) {
 
 
 void jobEraseAnimations(void *arg_0, Job *j) {
-	debugC(3, kDebugLocation, "jobEraseAnimations");
+	debugC(3, kDebugJobs, "jobEraseAnimations");
 
 	Animation *a = (Animation*)_animations._next;
 
@@ -522,7 +522,7 @@ LValue getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation 
 
 
 void jobRunScripts(void *parm, Job *j) {
-	debugC(3, kDebugLocation, "jobRunScripts");
+	debugC(3, kDebugJobs, "jobRunScripts");
 
 	static uint16 modCounter = 0;
 
@@ -541,7 +541,7 @@ void jobRunScripts(void *parm, Job *j) {
 
 		while ((inst->_index != INST_SHOW) && (a->_zone._flags & kFlagsActing)) {
 
-//			printf("Animation: %s, instruction: %s\n", a->_zone._name, inst->_index == INST_END ? "end" : _instructionNames[inst->_index - 1]);
+			debugC(1, kDebugJobs, "Animation: %s, instruction: %s", a->_zone._label._text, inst->_index == INST_END ? "end" : _instructionNames[inst->_index - 1]);
 
 			switch (inst->_index) {
 			case INST_ENDLOOP:	// endloop
