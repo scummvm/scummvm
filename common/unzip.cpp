@@ -120,7 +120,7 @@ typedef struct
 	uInt  size_local_extrafield;/* size of the local extra field */
 	uLong pos_local_extrafield;   /* position in the local extra field in read*/
 
-	uLong crc32;                /* crc32 of all data uncompressed */
+	uLong crc32_data;                /* crc32 of all data uncompressed */
 	uLong crc32_wait;           /* crc32 we must obtain after decompress all */
 	uLong rest_read_compressed; /* number of byte to be decompressed */
 	uLong rest_read_uncompressed;/*number of byte to be obtained after decomp*/
@@ -884,7 +884,7 @@ extern int ZEXPORT unzOpenCurrentFile (unzFile file)
 	Store = s->cur_file_info.compression_method==0;
 
 	pfile_in_zip_read_info->crc32_wait=s->cur_file_info.crc;
-	pfile_in_zip_read_info->crc32=0;
+	pfile_in_zip_read_info->crc32_data=0;
 	pfile_in_zip_read_info->compression_method =
             s->cur_file_info.compression_method;
 	pfile_in_zip_read_info->file=&s->file;
@@ -1003,7 +1003,7 @@ extern int ZEXPORT unzReadCurrentFile  (unzFile file, voidp buf, unsigned len)
 				*(pfile_in_zip_read_info->stream.next_out+i) =
                         *(pfile_in_zip_read_info->stream.next_in+i);
 
-			pfile_in_zip_read_info->crc32 = crc32(pfile_in_zip_read_info->crc32,
+			pfile_in_zip_read_info->crc32_data = crc32(pfile_in_zip_read_info->crc32_data,
 								pfile_in_zip_read_info->stream.next_out,
 								uDoCopy);
 			pfile_in_zip_read_info->rest_read_uncompressed-=uDoCopy;
@@ -1035,8 +1035,8 @@ extern int ZEXPORT unzReadCurrentFile  (unzFile file, voidp buf, unsigned len)
 			uTotalOutAfter = pfile_in_zip_read_info->stream.total_out;
 			uOutThis = uTotalOutAfter-uTotalOutBefore;
 
-			pfile_in_zip_read_info->crc32 =
-                crc32(pfile_in_zip_read_info->crc32,bufBefore,
+			pfile_in_zip_read_info->crc32_data =
+                crc32(pfile_in_zip_read_info->crc32_data,bufBefore,
                         (uInt)(uOutThis));
 
 			pfile_in_zip_read_info->rest_read_uncompressed -=
@@ -1172,7 +1172,7 @@ extern int ZEXPORT unzCloseCurrentFile (unzFile file)
 
 	if (pfile_in_zip_read_info->rest_read_uncompressed == 0)
 	{
-		if (pfile_in_zip_read_info->crc32 != pfile_in_zip_read_info->crc32_wait)
+		if (pfile_in_zip_read_info->crc32_data != pfile_in_zip_read_info->crc32_wait)
 			err=UNZ_CRCERROR;
 	}
 
