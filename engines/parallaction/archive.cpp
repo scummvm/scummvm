@@ -31,7 +31,14 @@ namespace Parallaction {
 
 #define DIRECTORY_OFFSET_IN_FILE	0x4000
 
-static Common::File 	_archive;
+#ifdef PALMOS_ARM
+	static Common::File *_archiveP = NULL;
+	#define _archive (*_archiveP)
+#else
+	static Common::File _archive;
+#endif
+
+
 static char 			_archiveDir[MAX_ARCHIVE_ENTRIES][32];
 static uint32			_archiveLenghts[MAX_ARCHIVE_ENTRIES];
 static uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
@@ -41,6 +48,11 @@ static uint32			_handle = MAX_ARCHIVE_ENTRIES;
 
 void openArchive(const char *file) {
 	debugC(1, kDebugDisk, "open archive '%s'", file);
+
+#ifdef PALMOS_ARM
+	if (!_archiveP)
+		_archiveP = new Common::File();
+#endif
 
 	if (_archive.isOpen())
 		closeArchive();
