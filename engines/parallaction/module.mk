@@ -11,12 +11,12 @@ MODULE_OBJS := \
 	graphics.o \
 	intro.o \
 	inventory.o \
-	loadsave.o \
 	location.o \
 	menu.o \
 	music.o \
 	parser.o \
 	parallaction.o \
+	saveload.o \
 	staticres.o \
 	table.o \
 	walk.o \
