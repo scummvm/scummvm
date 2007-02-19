@@ -91,7 +91,7 @@ public:
 		delete _wrapped;
 	}
 
-	bool ioFailed() const { return (_zlibErr != Z_OK); }
+	bool ioFailed() const { return (_zlibErr != Z_OK) && (_zlibErr != Z_STREAM_END); }
 	void clearIOFailed() { /* errors here are not recoverable!  */ }
 
 	uint32 read(void *dataPtr, uint32 dataSize) {
