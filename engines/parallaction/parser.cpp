@@ -22,7 +22,7 @@
 
 #include "parallaction/defs.h"
 #include "parallaction/parser.h"
-
+#include "parallaction/disk.h"
 
 namespace Parallaction {
 
@@ -118,6 +118,87 @@ uint16 parseFillBuffers() {
 
 	return _si;
 }
+
+//
+//	FIXME
+//	this function does the same Job as parseFillBuffers, except that
+//	it gets input from a SeekableStream instead of a memory buffer
+//
+uint16 tableFillBuffers(Common::SeekableReadStream &stream) {
+
+	for (uint16 i = 0; i < 20; i++)
+		_tokens[i][0] = '\0';
+
+	char buf[200];
+	char *line = NULL;
+	do {
+		line = stream.readLine(buf, 200);
+		if (line == NULL) return 0;
+
+		line = Common::ltrim(line);
+	} while (strlen(line) == 0 || line[0] == '#');
+
+	uint16 count = 0;
+	while (strlen(line) > 0 && count < 20) {
+		line = parseNextToken(line, _tokens[count], 40, " \t\n");
+		if (_tokens[count][0] == '"' && _tokens[count][strlen(_tokens[count]) - 1] != '"') {
+
+			line = parseNextToken(line, _tokens[count+1], 40, "\"");
+			strcat(_tokens[count], _tokens[count+1] );
+			_tokens[count][0] = ' ';
+			line++;
+
+		}
+
+		line = Common::ltrim(line);
+		count++;
+	}
+
+	return count;
+
+}
+
+//	FIXME
+//	this function does the same Job as parseFillBuffers, except that
+//	it gets input from an ArchivedFile instead of a memory buffer
+//
+int16 scriptFillBuffers(ArchivedFile *file) {
+//	printf("scriptFillBuffers()\n");
+	char v2[] = "\"\0";
+
+	int16 _si = 0;
+
+	for (; _si < 15; _si++)
+		_tokens[_si][0] = '\0';
+
+	char vCA[200];
+	char *vCE = NULL;
+	do {
+		vCE = readArchivedFileText(vCA, 200, file);
+		if (vCE == 0) return 0;
+
+		vCE = Common::ltrim(vCE);
+	} while (strlen(vCE) == 0 || vCE[0] == '#');
+
+	_si = 0;
+	while (strlen(vCE) > 0 && _si < 20) {
+		vCE = parseNextToken(vCE, _tokens[_si], 40, " \t\n");
+		if (_tokens[_si][0] == '"' && _tokens[_si][strlen(_tokens[_si])-1] != '"') {
+
+			vCE = parseNextToken(vCE, _tokens[_si+1], 40, v2);
+			strcat(_tokens[_si], _tokens[_si+1]);
+			_tokens[_si][0] = ' ';
+			vCE++;
+
+		}
+
+		vCE = Common::ltrim(vCE);
+		_si++;
+	}
+
+	return _si;
+}
+
 
 //	looks for next token in a string
 //

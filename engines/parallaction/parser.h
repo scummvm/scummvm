@@ -24,6 +24,7 @@
 #define PARALLACTION_PARSER_H
 
 #include "parallaction/defs.h"
+#include "common/file.h"
 
 namespace Parallaction {
 
@@ -34,6 +35,10 @@ char   *parseNextLine(char *s, uint16 count);
 char   *parseComment(ArchivedFile *file);
 uint16	parseFillBuffers();
 char   *parseNextToken(char *s, char *tok, uint16 count, const char *brk);
+
+uint16  tableFillBuffers(Common::SeekableReadStream &stream);
+int16	scriptFillBuffers(ArchivedFile *file);
+
 
 extern char _tokens[][40];
 

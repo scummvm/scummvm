@@ -57,7 +57,6 @@ void	sortAnimations();
 
 LValue	getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation *a);
 
-int16	scriptFillBuffers(ArchivedFile *file);
 
 uint16	_numLocals = 0;
 char	_localNames[10][10];
@@ -294,46 +293,6 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 
 
 
-//	FIXME
-//	this function does the same Job as parseFillBuffers, except that
-//	it gets input from an ArchivedFile instead of a memory buffer
-//
-int16 scriptFillBuffers(ArchivedFile *file) {
-//	printf("scriptFillBuffers()\n");
-	char v2[] = "\"\0";
-
-	int16 _si = 0;
-
-	for (; _si < 15; _si++)
-		_tokens[_si][0] = '\0';
-
-	char vCA[200];
-	char *vCE = NULL;
-	do {
-		vCE = readArchivedFileText(vCA, 200, file);
-		if (vCE == 0) return 0;
-
-		vCE = Common::ltrim(vCE);
-	} while (strlen(vCE) == 0 || vCE[0] == '#');
-
-	_si = 0;
-	while (strlen(vCE) > 0 && _si < 20) {
-		vCE = parseNextToken(vCE, _tokens[_si], 40, " \t\n");
-		if (_tokens[_si][0] == '"' && _tokens[_si][strlen(_tokens[_si])-1] != '"') {
-
-			vCE = parseNextToken(vCE, _tokens[_si+1], 40, v2);
-			strcat(_tokens[_si], _tokens[_si+1]);
-			_tokens[_si][0] = ' ';
-			vCE++;
-
-		}
-
-		vCE = Common::ltrim(vCE);
-		_si++;
-	}
-
-	return _si;
-}
 
 
 
