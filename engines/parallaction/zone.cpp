@@ -633,8 +633,8 @@ Zone *hitZone(uint32 type, uint16 x, uint16 y) {
 				// WORKAROUND: this huge condition is needed because we made ZoneTypeData a collection of structs
 				// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
 				// but we need to check it separately here. The same workaround is applied in freeZones.
-				if ((((z->_type & 0xFFFF0000) == kZoneMerge) && (((_si == z->u.merge->_obj1) && (_di == z->u.merge->_obj2)) || ((_si == z->u.merge->_obj2) && (_di == z->u.merge->_obj1)))) ||
-					(((z->_type & 0xFFFF0000) == kZoneGet) && ((_si == z->u.get->_icon) || (_di == z->u.get->_icon)))) {
+				if ((((z->_type & 0xFFFF) == kZoneMerge) && (((_si == z->u.merge->_obj1) && (_di == z->u.merge->_obj2)) || ((_si == z->u.merge->_obj2) && (_di == z->u.merge->_obj1)))) ||
+					(((z->_type & 0xFFFF) == kZoneGet) && ((_si == z->u.get->_icon) || (_di == z->u.get->_icon)))) {
 
 					// special Zone
 					if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
