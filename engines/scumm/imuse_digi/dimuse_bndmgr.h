@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef BUNDLE_MGR_H
-#define BUNDLE_MGR_H
+#ifndef SCUMM_IMUSE_DIGI_BUNDLE_MGR_H
+#define SCUMM_IMUSE_DIGI_BUNDLE_MGR_H
 
 #include "common/scummsys.h"
 #include "common/file.h"

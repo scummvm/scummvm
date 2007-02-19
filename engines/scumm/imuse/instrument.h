@@ -20,8 +20,8 @@
  * $Id$
  */
 
-#ifndef INSTRUMENT_H
-#define INSTRUMENT_H
+#ifndef SCUMM_IMUSE_INSTRUMENT_H
+#define SCUMM_IMUSE_INSTRUMENT_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

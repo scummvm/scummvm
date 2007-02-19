@@ -21,8 +21,8 @@
  *
  */
 
-#if !defined(SPRITE_HE_H) && !defined(DISABLE_HE)
-#define SPRITE_HE_H
+#if !defined(SCUMM_HE_SPRITE_HE_H) && !defined(DISABLE_HE)
+#define SCUMM_HE_SPRITE_HE_H
 
 namespace Scumm {
 

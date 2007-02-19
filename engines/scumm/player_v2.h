@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef PLAYER_V2_H
-#define PLAYER_V2_H
+#ifndef SCUMM_PLAYER_V2_H
+#define SCUMM_PLAYER_V2_H
 
 #include "common/scummsys.h"
 #include "common/mutex.h"

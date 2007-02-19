@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SAVELOAD_H
-#define SAVELOAD_H
+#ifndef SCUMM_SAVELOAD_H
+#define SCUMM_SAVELOAD_H
 
 #include "common/scummsys.h"
 #include <stddef.h>

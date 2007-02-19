@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef GFX_H
-#define GFX_H
+#ifndef SCUMM_GFX_H
+#define SCUMM_GFX_H
 
 #include "graphics/surface.h"
 

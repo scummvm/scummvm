@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef PLAYER_V2A_H
-#define PLAYER_V2A_H
+#ifndef SCUMM_PLAYER_V2A_H
+#define SCUMM_PLAYER_V2A_H
 
 #include "common/scummsys.h"
 #include "scumm/music.h"

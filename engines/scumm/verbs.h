@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef VERBS_H
-#define VERBS_H
+#ifndef SCUMM_VERBS_H
+#define SCUMM_VERBS_H
 
 #include "common/scummsys.h"
 #include "common/rect.h"

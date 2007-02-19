@@ -22,8 +22,8 @@
  */
 
 
-#ifndef ACTOR_H
-#define ACTOR_H
+#ifndef SCUMM_ACTOR_H
+#define SCUMM_ACTOR_H
 
 #include "common/scummsys.h"
 #include "scumm/saveload.h"

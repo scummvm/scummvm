@@ -20,8 +20,8 @@
  * $Id$
  */
 
-#ifndef DEFINED_IMUSE_INTERNAL
-#define DEFINED_IMUSE_INTERNAL
+#ifndef SCUMM_IMUSE_INTERNAL
+#define SCUMM_IMUSE_INTERNAL
 
 #include "common/scummsys.h"
 #include "scumm/imuse/imuse.h"

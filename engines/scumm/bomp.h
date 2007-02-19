@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BOMP_H
-#define BOMP_H
+#ifndef SCUMM_BOMP_H
+#define SCUMM_BOMP_H
 
 #include "common/scummsys.h"
 

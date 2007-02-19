@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SMUSH_FONT_H
-#define SMUSH_FONT_H
+#ifndef SCUMM_SMUSH_FONT_H
+#define SCUMM_SMUSH_FONT_H
 
 #include "common/scummsys.h"
 #include "scumm/nut_renderer.h"

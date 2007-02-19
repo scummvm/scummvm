@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef IMUSE_DIGI_SNDMGR_H
-#define IMUSE_DIGI_SNDMGR_H
+#ifndef SCUMM_IMUSE_DIGI_SNDMGR_H
+#define SCUMM_IMUSE_DIGI_SNDMGR_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

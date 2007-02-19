@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef AKOS_H
-#define AKOS_H
+#ifndef SCUMM_AKOS_H
+#define SCUMM_AKOS_H
 
 #include "scumm/base-costume.h"
 

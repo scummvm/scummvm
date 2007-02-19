@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef OBJECT_H
-#define OBJECT_H
+#ifndef SCUMM_OBJECT_H
+#define SCUMM_OBJECT_H
 
 namespace Scumm {
 

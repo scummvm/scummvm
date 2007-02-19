@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef BASE_COSTUME_H
-#define BASE_COSTUME_H
+#ifndef SCUMM_BASE_COSTUME_H
+#define SCUMM_BASE_COSTUME_H
 
 #include "common/scummsys.h"
 #include "scumm/actor.h"		// for CostumeData

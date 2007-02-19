@@ -20,8 +20,8 @@
  *
  */
 
-#if !defined(INSANE_H) && !defined(DISABLE_SCUMM_7_8)
-#define INSANE_H
+#if !defined(SCUMM_INSANE_H) && !defined(DISABLE_SCUMM_7_8)
+#define SCUMM_INSANE_H
 
 #include "engines/engine.h"
 #include "scumm/intern.h"

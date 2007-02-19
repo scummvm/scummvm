@@ -21,8 +21,8 @@
  *
  */
 
-#if !defined(FLOODFILL_HE_H) && !defined(DISABLE_HE)
-#define FLOODFILL_HE_H
+#if !defined(SCUMM_HE_FLOODFILL_HE_H) && !defined(DISABLE_HE)
+#define SCUMM_HE_FLOODFILL_HE_H
 
 #include "common/rect.h"
 

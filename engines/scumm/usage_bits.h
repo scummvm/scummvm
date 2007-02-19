@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef USAGE_BITS_H
-#define USAGE_BITS_H
+#ifndef SCUMM_USAGE_BITS_H
+#define SCUMM_USAGE_BITS_H
 
 namespace Scumm {
 

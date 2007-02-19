@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SMUSH_CODEC_47_H
-#define SMUSH_CODEC_47_H
+#ifndef SCUMM_SMUSH_CODEC_47_H
+#define SCUMM_SMUSH_CODEC_47_H
 
 #include "common/scummsys.h"
 

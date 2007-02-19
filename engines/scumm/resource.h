@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef RESOURCE_H
-#define RESOURCE_H
+#ifndef SCUMM_RESOURCE_H
+#define SCUMM_RESOURCE_H
 
 namespace Scumm {
 

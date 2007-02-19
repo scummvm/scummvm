@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef PLAYER_V1_H
-#define PLAYER_V1_H
+#ifndef SCUMM_PLAYER_V1_H
+#define SCUMM_PLAYER_V1_H
 
 #include "scumm/player_v2.h"
 

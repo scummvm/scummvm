@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef SCUMM_INTERN_HE_H
-#define SCUMM_INTERN_HE_H
+#ifndef SCUMM_HE_INTERN_HE_H
+#define SCUMM_HE_INTERN_HE_H
 
 #include "scumm/intern.h"
 #ifndef DISABLE_HE

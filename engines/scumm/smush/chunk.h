@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CHUNK_H
-#define CHUNK_H
+#ifndef SCUMM_SMUSH_CHUNK_H
+#define SCUMM_SMUSH_CHUNK_H
 
 #include "common/scummsys.h"
 #include "common/str.h"

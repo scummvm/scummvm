@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef COSTUME_H
-#define COSTUME_H
+#ifndef SCUMM_COSTUME_H
+#define SCUMM_COSTUME_H
 
 #include "scumm/base-costume.h"
 

@@ -20,8 +20,8 @@
  *
  */
 
-#if !defined(SMUSH_PLAYER_H) && !defined(DISABLE_SCUMM_7_8)
-#define SMUSH_PLAYER_H
+#if !defined(SCUMM_SMUSH_PLAYER_H) && !defined(DISABLE_SCUMM_7_8)
+#define SCUMM_SMUSH_PLAYER_H
 
 #include "common/util.h"
 #include "scumm/smush/chunk.h"

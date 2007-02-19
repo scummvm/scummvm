@@ -21,8 +21,8 @@
  *
  */
 
-#if !defined(WIZ_HE_H) && !defined(DISABLE_HE)
-#define WIZ_HE_H
+#if !defined(SCUMM_HE_WIZ_HE_H) && !defined(DISABLE_HE)
+#define SCUMM_HE_WIZ_HE_H
 
 #include "common/rect.h"
 

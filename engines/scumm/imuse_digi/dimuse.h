@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#if !defined(IMUSE_DIGI_H) && !defined(DISABLE_SCUMM_7_8)
-#define IMUSE_DIGI_H
+#if !defined(SCUMM_IMUSE_DIGI_H) && !defined(DISABLE_SCUMM_7_8)
+#define SCUMM_IMUSE_DIGI_H
 
 #include "common/scummsys.h"
 #include "common/util.h"

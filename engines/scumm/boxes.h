@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef BOXES_H
-#define BOXES_H
+#ifndef SCUMM_BOXES_H
+#define SCUMM_BOXES_H
 
 #include "common/rect.h"
 

@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef SCRIPT_H
-#define SCRIPT_H
+#ifndef SCUMM_SCRIPT_H
+#define SCUMM_SCRIPT_H
 
 #include "engines/engine.h"
 

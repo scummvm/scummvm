@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef ANIMATION_H
-#define ANIMATION_H
+#ifndef SCUMM_HE_ANIMATION_H
+#define SCUMM_HE_ANIMATION_H
 
 #include "common/file.h"
 

@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#if !defined(NUT_RENDERER_H) && !defined(DISABLE_SCUMM_7_8)
-#define NUT_RENDERER_H
+#if !defined(SCUMM_NUT_RENDERER_H) && !defined(DISABLE_SCUMM_7_8)
+#define SCUMM_NUT_RENDERER_H
 
 #include "common/file.h"
 #include "graphics/surface.h"

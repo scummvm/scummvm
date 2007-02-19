@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef IMUSE_H
-#define IMUSE_H
+#ifndef SCUMM_IMUSE_H
+#define SCUMM_IMUSE_H
 
 #include "common/scummsys.h"
 #include "common/mutex.h"

@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef CHARSET_H
-#define CHARSET_H
+#ifndef SCUMM_CHARSET_H
+#define SCUMM_CHARSET_H
 
 #include "common/scummsys.h"
 #include "common/rect.h"

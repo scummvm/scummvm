@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef PLAYER_MOD_H
-#define PLAYER_MOD_H
+#ifndef SCUMM_PLAYER_MOD_H
+#define SCUMM_PLAYER_MOD_H
 
 #include "scumm/scumm.h"
 #include "sound/audiostream.h"

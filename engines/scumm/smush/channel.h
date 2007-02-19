@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SMUSH_CHANNEL_H
-#define SMUSH_CHANNEL_H
+#ifndef SCUMM_SMUSH_CHANNEL_H
+#define SCUMM_SMUSH_CHANNEL_H
 
 #include "common/util.h"
 

@@ -21,8 +21,8 @@
  */
 
 
-#if !defined(CUP_PLAYER_HE_H) && !defined(DISABLE_HE)
-#define CUP_PLAYER_HE_H
+#if !defined(SCUMM_HE_CUP_PLAYER_HE_H) && !defined(DISABLE_HE)
+#define SCUMM_HE_CUP_PLAYER_HE_H
 
 #include "common/stream.h"
 
