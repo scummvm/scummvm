@@ -1000,20 +1000,18 @@ static void cd_timer_handler(void *refCon) {
 }
 
 void Sound::startCDTimer() {
-	int timer_interval;
-
-	// The timer interval has been tuned for Loom CD and the Monkey 1
-	// intro. I have to use 100 for Loom, or there will be a nasty stutter
-	// when Chaos first appears, and I have to use 101 for Monkey 1 or the
-	// intro music will be cut short.
-
-	if (_vm->_game.id == GID_LOOM && _vm->_game.version == 4)
-		timer_interval = 100;
-	else
-		timer_interval = 101;
+	// This timer interval is based on two scenes: The Monkey Island 1
+	// intro, and the scene in Loom CD where Chaos appears. In both cases
+	// the game plays the scene as two separate sounds, even though both
+	// halves are right next to each other in the CD track. Probably so
+	// that you can hit Escape to skip the first half.
+	//
+	// Make it too low, and the Monkey Island theme will be cut short. Make
+	// it too high, and there will be a nasty "hiccup" just as Chaos
+	// appears.
 
 	_vm->_timer->removeTimerProc(&cd_timer_handler);
-	_vm->_timer->installTimerProc(&cd_timer_handler, 1000 * timer_interval, _vm);
+	_vm->_timer->installTimerProc(&cd_timer_handler, 100700, _vm);
 }
 
 void Sound::stopCDTimer() {
