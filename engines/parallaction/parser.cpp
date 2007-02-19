@@ -83,23 +83,9 @@ char *parseComment(ArchivedFile *file) {
 	return v194;
 }
 
-uint16 parseFillBuffers() {
+uint16 fillTokens(char* line) {
 
-	uint16 i;
-	for (i = 0; i < 20; i++)
-		_tokens[i][0] = '\0';
-
-	char buf[200];
-	char *line = NULL;
-	do {
-		line = parseNextLine(buf, 200);
-		if (line == NULL) {
-			error("unexpected end of file while parsing");
-		}
-		line = Common::ltrim(line);
-	} while (strlen(line) == 0 || line[0] == '#');
-
-	i = 0;
+	uint16 i = 0;
 	while (strlen(line) > 0 && i < 20) {
 		line = parseNextToken(line, _tokens[i], 40, " \t\n");
 		if (_tokens[i][0] == '"' && _tokens[i][strlen(_tokens[i]) - 1] != '"') {
@@ -116,6 +102,25 @@ uint16 parseFillBuffers() {
 	}
 
 	return i;
+}
+
+uint16 parseFillBuffers() {
+
+	uint16 i;
+	for (i = 0; i < 20; i++)
+		_tokens[i][0] = '\0';
+
+	char buf[200];
+	char *line = NULL;
+	do {
+		line = parseNextLine(buf, 200);
+		if (line == NULL) {
+			error("unexpected end of file while parsing");
+		}
+		line = Common::ltrim(line);
+	} while (strlen(line) == 0 || line[0] == '#');
+
+	return fillTokens(line);
 }
 
 //
@@ -139,23 +144,7 @@ uint16 tableFillBuffers(Common::SeekableReadStream &stream) {
 		line = Common::ltrim(line);
 	} while (strlen(line) == 0 || line[0] == '#');
 
-	i = 0;
-	while (strlen(line) > 0 && i < 20) {
-		line = parseNextToken(line, _tokens[i], 40, " \t\n");
-		if (_tokens[i][0] == '"' && _tokens[i][strlen(_tokens[i]) - 1] != '"') {
-
-			line = parseNextToken(line, _tokens[i+1], 40, "\"");
-			strcat(_tokens[i], _tokens[i+1]);
-			_tokens[i][0] = ' ';
-			line++;
-
-		}
-
-		line = Common::ltrim(line);
-		i++;
-	}
-
-	return i;
+	return fillTokens(line);
 }
 
 
@@ -179,23 +168,7 @@ uint16 scriptFillBuffers(ArchivedFile *file) {
 		line = Common::ltrim(line);
 	} while (strlen(line) == 0 || line[0] == '#');
 
-	i = 0;
-	while (strlen(line) > 0 && i < 20) {
-		line = parseNextToken(line, _tokens[i], 40, " \t\n");
-		if (_tokens[i][0] == '"' && _tokens[i][strlen(_tokens[i]) - 1] != '"') {
-
-			line = parseNextToken(line, _tokens[i+1], 40, "\"");
-			strcat(_tokens[i], _tokens[i+1]);
-			_tokens[i][0] = ' ';
-			line++;
-
-		}
-
-		line = Common::ltrim(line);
-		i++;
-	}
-
-	return i;
+	return fillTokens(line);
 }
 
 
