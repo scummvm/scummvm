@@ -83,6 +83,15 @@ char *parseComment(ArchivedFile *file) {
 	return v194;
 }
 
+void clearTokens() {
+
+	for (uint16 i = 0; i < 20; i++)
+		_tokens[i][0] = '\0';
+
+	return;
+
+}
+
 uint16 fillTokens(char* line) {
 
 	uint16 i = 0;
@@ -106,9 +115,7 @@ uint16 fillTokens(char* line) {
 
 uint16 parseFillBuffers() {
 
-	uint16 i;
-	for (i = 0; i < 20; i++)
-		_tokens[i][0] = '\0';
+	clearTokens();
 
 	char buf[200];
 	char *line = NULL;
@@ -130,9 +137,7 @@ uint16 parseFillBuffers() {
 //
 uint16 tableFillBuffers(Common::SeekableReadStream &stream) {
 
-	uint16 i;
-	for (i = 0; i < 20; i++)
-		_tokens[i][0] = '\0';
+	clearTokens();
 
 	char buf[200];
 	char *line = NULL;
@@ -154,9 +159,7 @@ uint16 tableFillBuffers(Common::SeekableReadStream &stream) {
 //
 uint16 scriptFillBuffers(ArchivedFile *file) {
 
-	uint16 i;
-	for (i = 0; i < 20; i++)
-		_tokens[i][0] = '\0';
+	clearTokens();
 
 	char buf[200];
 	char *line = NULL;
