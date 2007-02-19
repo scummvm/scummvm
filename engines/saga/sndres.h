@@ -24,8 +24,8 @@
 
 // Sound resource class header
 
-#ifndef SAGA_SNDRES_H_
-#define SAGA_SNDRES_H_
+#ifndef SAGA_SNDRES_H
+#define SAGA_SNDRES_H
 
 #include "saga/itedata.h"
 #include "saga/sound.h"

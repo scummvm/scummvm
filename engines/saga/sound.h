@@ -24,8 +24,8 @@
 
 // Sound class
 
-#ifndef SAGA_SOUND_H_
-#define SAGA_SOUND_H_
+#ifndef SAGA_SOUND_H
+#define SAGA_SOUND_H
 
 #include "sound/mixer.h"
 

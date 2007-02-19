@@ -24,8 +24,8 @@
 
 // Music class
 
-#ifndef SAGA_MUSIC_H_
-#define SAGA_MUSIC_H_
+#ifndef SAGA_MUSIC_H
+#define SAGA_MUSIC_H
 
 #include "sound/audiocd.h"
 #include "sound/mididrv.h"

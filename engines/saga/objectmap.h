@@ -24,8 +24,8 @@
 
 // Object map / Object click-area module header file
 
-#ifndef SAGA_OBJECTMAP_H_
-#define SAGA_OBJECTMAP_H_
+#ifndef SAGA_OBJECTMAP_H
+#define SAGA_OBJECTMAP_H
 
 #include "saga/stream.h"
 

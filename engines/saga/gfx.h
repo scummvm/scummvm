@@ -24,8 +24,8 @@
 
 // Graphics maniuplation routines - private header file
 
-#ifndef SAGA_GFX_H_
-#define SAGA_GFX_H_
+#ifndef SAGA_GFX_H
+#define SAGA_GFX_H
 
 #include "graphics/surface.h"
 

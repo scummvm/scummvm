@@ -24,8 +24,8 @@
 
 // Background animation management module private header
 
-#ifndef SAGA_ANIMATION_H_
-#define SAGA_ANIMATION_H_
+#ifndef SAGA_ANIMATION_H
+#define SAGA_ANIMATION_H
 
 #include "saga/stream.h"
 

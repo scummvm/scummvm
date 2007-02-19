@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SAGA_PUZZLE_H_
-#define SAGA_PUZZLE_H_
+#ifndef SAGA_PUZZLE_H
+#define SAGA_PUZZLE_H
 
 namespace Saga {
 

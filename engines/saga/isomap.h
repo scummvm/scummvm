@@ -24,8 +24,8 @@
 
 // Isometric level module - private header
 
-#ifndef SAGA_ISOMAP_H_
-#define SAGA_ISOMAP_H_
+#ifndef SAGA_ISOMAP_H
+#define SAGA_ISOMAP_H
 
 #include "saga/actor.h"
 

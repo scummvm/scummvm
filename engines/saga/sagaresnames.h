@@ -24,8 +24,8 @@
 
 // Descriptive names for game resource numbers
 
-#ifndef SAGA_RESOURCENAMES_H_
-#define SAGA_RESOURCENAMES_H_
+#ifndef SAGA_RESOURCENAMES_H
+#define SAGA_RESOURCENAMES_H
 
 namespace Saga {
 

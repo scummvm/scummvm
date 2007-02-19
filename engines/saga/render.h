@@ -24,8 +24,8 @@
 
 // Main rendering loop - private header
 
-#ifndef SAGA_RENDER_H_
-#define SAGA_RENDER_H_
+#ifndef SAGA_RENDER_H
+#define SAGA_RENDER_H
 
 #include "saga/sprite.h"
 

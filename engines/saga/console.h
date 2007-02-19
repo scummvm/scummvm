@@ -24,8 +24,8 @@
 
  // Console module header file
 
-#ifndef SAGA_CONSOLE_H_
-#define SAGA_CONSOLE_H_
+#ifndef SAGA_CONSOLE_H
+#define SAGA_CONSOLE_H
 
 #include "gui/debugger.h"
 
