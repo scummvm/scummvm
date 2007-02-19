@@ -933,30 +933,24 @@ FlacTrackInfo::~FlacTrackInfo() {
 }
 
 DigitalTrackInfo* getFlacTrack(int track) {
-	assert(track >=1);
-	char track_name[32];
+	assert(track >= 1);
+	char trackName[4][32];
 	File *file = new File();
 
-	sprintf(track_name, "track%d.flac", track);
-	file->open(track_name);
+	sprintf(trackName[0], "track%d.flac", track);
+	sprintf(trackName[1], "track%02d.flac", track);
+	sprintf(trackName[2], "track%d.fla", track);
+	sprintf(trackName[3], "track%02d.fla", track);
 
-	if (file->isOpen()) {
-		FlacTrackInfo *trackInfo = new FlacTrackInfo(file);
-		if (!trackInfo->error())
-			return trackInfo;
-		delete trackInfo;
+
+	for (int i = 0; i < 4; ++i) {
+		if (file->open(trackName[i])) {
+			FlacTrackInfo *trackInfo = new FlacTrackInfo(file);
+			if (!trackInfo->error())
+				return trackInfo;
+			delete trackInfo;
+		}
 	}
-
-	sprintf(track_name, "track%d.fla", track);
-	file->open(track_name);
-
-	if (file->isOpen()) {
-		FlacTrackInfo *trackInfo = new FlacTrackInfo(file);
-		if (!trackInfo->error())
-			return trackInfo;
-		delete trackInfo;
-	}
-
 
 	delete file;
 	return NULL;

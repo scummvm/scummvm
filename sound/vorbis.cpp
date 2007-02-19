@@ -243,19 +243,20 @@ void VorbisTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int 
 }
 
 DigitalTrackInfo *getVorbisTrack(int track) {
-//debug(5, "" __FILE__ ":%i", __LINE__);
-	char track_name[32];
+	char trackName[2][32];
 	File *file = new File();
 
-	sprintf(track_name, "track%d.ogg", track);
-	file->open(track_name);
+	sprintf(trackName[0], "track%d.ogg", track);
+	sprintf(trackName[1], "track%02d.ogg", track);
 
-	if (file->isOpen()) {
-		VorbisTrackInfo *trackInfo = new VorbisTrackInfo(file);
-		file->decRef();
-		if (!trackInfo->error())
-			return trackInfo;
-		delete trackInfo;
+	for (int i = 0; i < 2; ++i) {
+		if (file->open(trackName[i])) {
+			VorbisTrackInfo *trackInfo = new VorbisTrackInfo(file);
+			file->decRef();
+			if (!trackInfo->error())
+				return trackInfo;
+			delete trackInfo;
+		}
 	}
 	delete file;
 	return NULL;

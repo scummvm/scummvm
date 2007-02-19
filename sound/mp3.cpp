@@ -472,17 +472,19 @@ MP3TrackInfo::~MP3TrackInfo() {
 }
 
 DigitalTrackInfo *getMP3Track(int track) {
-	char track_name[32];
+	char trackName[2][32];
 	File *file = new File();
 
-	sprintf(track_name, "track%d.mp3", track);
-	file->open(track_name);
+	sprintf(trackName[0], "track%d.mp3", track);
+	sprintf(trackName[1], "track%02d.mp3", track);
 
-	if (file->isOpen()) {
-		MP3TrackInfo *trackInfo = new MP3TrackInfo(file);
-		if (!trackInfo->error())
-			return trackInfo;
-		delete trackInfo;
+	for (int i = 0; i < 2; ++i) {
+		if (file->open(trackName[i])) {
+			MP3TrackInfo *trackInfo = new MP3TrackInfo(file);
+			if (!trackInfo->error())
+				return trackInfo;
+			delete trackInfo;
+		}
 	}
 	delete file;
 	return NULL;

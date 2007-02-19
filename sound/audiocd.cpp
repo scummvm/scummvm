@@ -41,7 +41,7 @@ struct TrackFormat {
 	/**
 	 * Pointer to a function which tries to open the specified track - the only argument
 	 * is the number of the track to be played.
-	 * Returns either the DigitalTrackInfo object representing the requested track or null
+	 * Returns either a DigitalTrackInfo object representing the requested track or null
 	 * in case of an error
 	 */
 	DigitalTrackInfo* (*openTrackFunction)(int);
@@ -49,14 +49,14 @@ struct TrackFormat {
 
 static const TrackFormat TRACK_FORMATS[] = {
 	/* decoderName,		openTrackFunction */
-#ifdef USE_FLAC
-	{ "Flac",			getFlacTrack },
-#endif
 #ifdef USE_VORBIS
 	{ "Ogg Vorbis",		getVorbisTrack },
 #endif
 #ifdef USE_MAD
 	{ "MPEG Layer 3",	getMP3Track },
+#endif
+#ifdef USE_FLAC
+	{ "Flac",			getFlacTrack },
 #endif
 
 	{ NULL, NULL } // Terminator
