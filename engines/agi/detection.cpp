@@ -271,55 +271,6 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x3149,
 	},
 
-
-	{
-		// Sarien Name == Donald Duck's Playground (Amiga) 1.0C
-		{
-			"ddp",
-			"1.0C 1987-04-27",
-			AD_ENTRY1("logdir", "550971d196f65190a5c760d2479406ef"),
-			Common::EN_ANY,
-			Common::kPlatformAmiga,
-			Common::ADGF_NO_FLAGS
-		},
-		GType_V2,
-		0,
-		0x2272,
-	},
-
-
-	{
-		// Sarien Name == Donald Duck's Playground (ST) 1.0A 8/8/86
-		{
-			"ddp",
-			"1.0A 1986-08-08",
-			AD_ENTRY1("logdir", "64388812e25dbd75f7af1103bc348596"),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		GType_V2,
-		0,
-		0x2272,
-	},
-
-
-	{
-		// reported by Filippos (thebluegr) in bugreport #1654500
-		{
-			"ddp",
-			"1.0C 1986-06-09",   // verify date
-			AD_ENTRY1s("logdir", "550971d196f65190a5c760d2479406ef", 132),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		GType_V2,
-		0,
-		0x2272,
-	},
-
-
 	{
 		// Sarien Name == Gold Rush! (Amiga) 1.01 1/13/89 aka 2.05 3/9/89	# 2.316
 		{
