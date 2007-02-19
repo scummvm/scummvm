@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef ANIMATION_H
-#define ANIMATION_H
+#ifndef AGOS_ANIMATION_H
+#define AGOS_ANIMATION_H
 
 #include "common/file.h"
 #include "common/stream.h"
