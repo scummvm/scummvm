@@ -85,38 +85,37 @@ char *parseComment(ArchivedFile *file) {
 
 uint16 parseFillBuffers() {
 
-	char tmp[200];
+	uint16 i;
+	for (i = 0; i < 20; i++)
+		_tokens[i][0] = '\0';
 
-	uint16 _si;
-	for (_si = 0; _si < 20; _si++) _tokens[_si][0] = '\0';
-
-	char *v4;
+	char buf[200];
+	char *line = NULL;
 	do {
-		v4 = parseNextLine(tmp, 200);
-		if (v4 == NULL) {
-			puts("non ho letto ");
-			exit(0);
+		line = parseNextLine(buf, 200);
+		if (line == NULL) {
+			error("unexpected end of file while parsing");
 		}
-		v4 = Common::ltrim(v4);
-	} while (strlen(v4) == 0 || v4[0] == '#');
+		line = Common::ltrim(line);
+	} while (strlen(line) == 0 || line[0] == '#');
 
-	_si = 0;
-	while (_si < 20 && strlen(v4) > 0) {
-		v4 = parseNextToken(v4, _tokens[_si], 40, " \t\n");
-		if (_tokens[_si][0] == '"' && _tokens[_si][strlen(_tokens[_si]) - 1] != '"') {
+	i = 0;
+	while (strlen(line) > 0 && i < 20) {
+		line = parseNextToken(line, _tokens[i], 40, " \t\n");
+		if (_tokens[i][0] == '"' && _tokens[i][strlen(_tokens[i]) - 1] != '"') {
 
-			v4 = parseNextToken(v4, _tokens[_si+1], 40, "\"\"\"");
-			strcat(_tokens[_si], _tokens[_si+1]);
-			_tokens[_si][0] = ' ';
-			v4++;
+			line = parseNextToken(line, _tokens[i+1], 40, "\"");
+			strcat(_tokens[i], _tokens[i+1]);
+			_tokens[i][0] = ' ';
+			line++;
 
 		}
 
-		v4 = Common::ltrim(v4);
-		_si++;
+		line = Common::ltrim(line);
+		i++;
 	}
 
-	return _si;
+	return i;
 }
 
 //
@@ -126,77 +125,77 @@ uint16 parseFillBuffers() {
 //
 uint16 tableFillBuffers(Common::SeekableReadStream &stream) {
 
-	for (uint16 i = 0; i < 20; i++)
+	uint16 i;
+	for (i = 0; i < 20; i++)
 		_tokens[i][0] = '\0';
 
 	char buf[200];
 	char *line = NULL;
 	do {
 		line = stream.readLine(buf, 200);
-		if (line == NULL) return 0;
-
+		if (line == NULL) {
+			return 0;
+		}
 		line = Common::ltrim(line);
 	} while (strlen(line) == 0 || line[0] == '#');
 
-	uint16 count = 0;
-	while (strlen(line) > 0 && count < 20) {
-		line = parseNextToken(line, _tokens[count], 40, " \t\n");
-		if (_tokens[count][0] == '"' && _tokens[count][strlen(_tokens[count]) - 1] != '"') {
+	i = 0;
+	while (strlen(line) > 0 && i < 20) {
+		line = parseNextToken(line, _tokens[i], 40, " \t\n");
+		if (_tokens[i][0] == '"' && _tokens[i][strlen(_tokens[i]) - 1] != '"') {
 
-			line = parseNextToken(line, _tokens[count+1], 40, "\"");
-			strcat(_tokens[count], _tokens[count+1] );
-			_tokens[count][0] = ' ';
+			line = parseNextToken(line, _tokens[i+1], 40, "\"");
+			strcat(_tokens[i], _tokens[i+1]);
+			_tokens[i][0] = ' ';
 			line++;
 
 		}
 
 		line = Common::ltrim(line);
-		count++;
+		i++;
 	}
 
-	return count;
-
+	return i;
 }
+
 
 //	FIXME
 //	this function does the same Job as parseFillBuffers, except that
 //	it gets input from an ArchivedFile instead of a memory buffer
 //
-int16 scriptFillBuffers(ArchivedFile *file) {
-//	printf("scriptFillBuffers()\n");
-	char v2[] = "\"\0";
+uint16 scriptFillBuffers(ArchivedFile *file) {
 
-	int16 _si = 0;
+	uint16 i;
+	for (i = 0; i < 20; i++)
+		_tokens[i][0] = '\0';
 
-	for (; _si < 15; _si++)
-		_tokens[_si][0] = '\0';
-
-	char vCA[200];
-	char *vCE = NULL;
+	char buf[200];
+	char *line = NULL;
 	do {
-		vCE = readArchivedFileText(vCA, 200, file);
-		if (vCE == 0) return 0;
+		line = readArchivedFileText(buf, 200, file);
+		if (line == NULL) {
+			return 0;
+		}
+		line = Common::ltrim(line);
+	} while (strlen(line) == 0 || line[0] == '#');
 
-		vCE = Common::ltrim(vCE);
-	} while (strlen(vCE) == 0 || vCE[0] == '#');
+	i = 0;
+	while (strlen(line) > 0 && i < 20) {
+		line = parseNextToken(line, _tokens[i], 40, " \t\n");
+		if (_tokens[i][0] == '"' && _tokens[i][strlen(_tokens[i]) - 1] != '"') {
 
-	_si = 0;
-	while (strlen(vCE) > 0 && _si < 20) {
-		vCE = parseNextToken(vCE, _tokens[_si], 40, " \t\n");
-		if (_tokens[_si][0] == '"' && _tokens[_si][strlen(_tokens[_si])-1] != '"') {
-
-			vCE = parseNextToken(vCE, _tokens[_si+1], 40, v2);
-			strcat(_tokens[_si], _tokens[_si+1]);
-			_tokens[_si][0] = ' ';
-			vCE++;
+			line = parseNextToken(line, _tokens[i+1], 40, "\"");
+			strcat(_tokens[i], _tokens[i+1]);
+			_tokens[i][0] = ' ';
+			line++;
 
 		}
 
-		vCE = Common::ltrim(vCE);
-		_si++;
+		line = Common::ltrim(line);
+		i++;
 	}
 
-	return _si;
+	return i;
 }
 
 
