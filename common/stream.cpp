@@ -128,8 +128,8 @@ uint32 SubReadStream::read(void *dataPtr, uint32 dataSize) {
 	return dataSize;
 }
 
-SeekableSubReadStream::SeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end)
-	: SubReadStream(parentStream, end),
+SeekableSubReadStream::SeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool disposeParentStream)
+	: SubReadStream(parentStream, end, disposeParentStream),
 	_parentStream(parentStream),
 	_begin(begin) {
 	assert(_begin <= _end);

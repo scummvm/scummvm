@@ -245,9 +245,16 @@ protected:
 	ReadStream *_parentStream;
 	uint32 _pos;
 	uint32 _end;
+	bool _disposeParentStream;
 public:
-	SubReadStream(ReadStream *parentStream, uint32 end)
-		: _parentStream(parentStream), _pos(0), _end(end) {}
+	SubReadStream(ReadStream *parentStream, uint32 end, bool disposeParentStream = false)
+		: _parentStream(parentStream),
+		  _pos(0),
+		  _end(end),
+		  _disposeParentStream(disposeParentStream) {}
+	~SubReadStream() {
+		if (_disposeParentStream) delete _parentStream;
+	}
 
 	virtual bool eos() const { return _pos == _end; }
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
@@ -263,7 +270,7 @@ protected:
 	SeekableReadStream *_parentStream;
 	uint32 _begin;
 public:
-	SeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end);
+	SeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool disposeParentStream = false);
 
 	virtual uint32 pos() const { return _pos - _begin; }
 	virtual uint32 size() const { return _end - _begin; }
