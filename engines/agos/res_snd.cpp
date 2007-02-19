@@ -179,9 +179,9 @@ void AGOSEngine::loadMusic(uint music) {
 	} else if (getGameType() == GType_SIMON1) {
 		midi.stop();
 
-		// Support for compressed music from the music enhancement project
+		// Support for compressed music from the ScummVM Music Enhancement Project
 		AudioCD.stop();
-		AudioCD.play(music, -1, 0, 0);
+		AudioCD.play(music + 1, -1, 0, 0);
 		if (AudioCD.isPlaying())
 			return;
 
