@@ -313,7 +313,7 @@ int16 scriptFillBuffers(ArchivedFile *file) {
 		vCE = readArchivedFileText(vCA, 200, file);
 		if (vCE == 0) return 0;
 
-		Common::ltrim(vCE);
+		vCE = Common::ltrim(vCE);
 	} while (strlen(vCE) == 0 || vCE[0] == '#');
 
 	_si = 0;
@@ -321,7 +321,7 @@ int16 scriptFillBuffers(ArchivedFile *file) {
 		vCE = parseNextToken(vCE, _tokens[_si], 40, " \t\n");
 		if (_tokens[_si][0] == '"' && _tokens[_si][strlen(_tokens[_si])-1] != '"') {
 
-			vCE = parseNextToken(vCE, _tokens[_si], 40, v2);
+			vCE = parseNextToken(vCE, _tokens[_si+1], 40, v2);
 			strcat(_tokens[_si], _tokens[_si+1]);
 			_tokens[_si][0] = ' ';
 			vCE++;
