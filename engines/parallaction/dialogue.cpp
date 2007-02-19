@@ -57,9 +57,8 @@ int16 _answerBalloonW[10] = { 0 };
 int16 _answerBalloonH[10] = { 0 };
 
 
-char *parseDialogueString();
 
-Dialogue *parseDialogue(ArchivedFile *file) {
+Dialogue *Parallaction::parseDialogue(ArchivedFile *file) {
 //	printf("parseDialogue()\n");
 	uint16 num_questions = 0;
 	uint16 v50[20];
@@ -70,7 +69,7 @@ Dialogue *parseDialogue(ArchivedFile *file) {
 		v50[_si] = 0;
 	}
 
-	parseFillBuffers();
+	fillBuffers(*_locationScript, true);
 
 	while (scumm_stricmp(_tokens[0], "enddialogue")) {
 		if (scumm_stricmp(_tokens[0], "Question")) continue;
@@ -85,12 +84,12 @@ Dialogue *parseDialogue(ArchivedFile *file) {
 		vB4->_text = parseDialogueString();
 //		printf("Question: '%s'\n", vB4->_text);
 
-		parseFillBuffers();
+		fillBuffers(*_locationScript, true);
 		vB4->_mood = atoi(_tokens[0]);
 
 		uint16 _di = 0;
 
-		parseFillBuffers();
+		fillBuffers(*_locationScript, true);
 		while (scumm_stricmp(_tokens[0], "endquestion")) {	// parse answers
 
 			const char** v60 = const_cast<const char **>(_localFlagNames);
@@ -124,20 +123,20 @@ Dialogue *parseDialogue(ArchivedFile *file) {
 
 //			printf("answer[%i]: '%s'\n", _di, vB4->_answers[_di]);
 
-			parseFillBuffers();
+			fillBuffers(*_locationScript, true);
 			vB4->_answer_moods[_di] = atoi(_tokens[0]);
 			vB4->_following._names[_di] = parseDialogueString();
 
-			parseFillBuffers();
+			fillBuffers(*_locationScript, true);
 			if (!scumm_stricmp(_tokens[0], "commands")) {
 				vB4->_commands[_di] = parseCommands(file);
-				parseFillBuffers();
+				fillBuffers(*_locationScript, true);
 			}
 
 			_di++;
 		}
 
-		parseFillBuffers();
+		fillBuffers(*_locationScript, true);
 		num_questions++;
 
 	}
@@ -173,13 +172,13 @@ Dialogue *parseDialogue(ArchivedFile *file) {
 }
 
 
-char *parseDialogueString() {
+char *Parallaction::parseDialogueString() {
 
 	char vC8[200];
 	char *vD0 = NULL;
 	do {
 
-		vD0 = parseNextLine(vC8, 200);
+		vD0 = _locationScript->readLine(vC8, 200);
 		if (vD0 == 0) return NULL;
 
 		vD0 = Common::ltrim(vD0);

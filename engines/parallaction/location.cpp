@@ -76,13 +76,14 @@ void Parallaction::parseLocation(const char *filename) {
 	uint32 count = file->_endOffset - file->_offset;
 	location_src = (char*)memAlloc(0x4000);
 
-	parseInit(location_src);
+	_locationScript = new LocScript(location_src);
+//	parseInit(location_src);
 
 	readArchivedFile(file, location_src, count);
 	closeArchivedFile(file);
 	closeArchive();
 
-	parseFillBuffers();
+	fillBuffers(*_locationScript, true);
 	while (scumm_stricmp(_tokens[0], "ENDLOCATION")) {
 //		printf("token[0] = %s", _tokens[0]);
 
@@ -186,7 +187,7 @@ void Parallaction::parseLocation(const char *filename) {
 		if (!scumm_stricmp(_tokens[0], "SOUND")) {
 			strcpy(_soundFile, _tokens[1]);
 		}
-		parseFillBuffers();
+		fillBuffers(*_locationScript, true);
 	}
 
 	resolveLocationForwards();
@@ -264,7 +265,7 @@ void freeLocation() {
 
 void parseWalkNodes(ArchivedFile *file, Node *list) {
 
-	parseFillBuffers();
+	fillBuffers(*_vm->_locationScript, true);
 	while (scumm_stricmp(_tokens[0], "ENDNODES")) {
 
 		if (!scumm_stricmp(_tokens[0], "COORD")) {
@@ -277,7 +278,7 @@ void parseWalkNodes(ArchivedFile *file, Node *list) {
 
 		}
 
-		parseFillBuffers();
+		fillBuffers(*_vm->_locationScript, true);
 	}
 
 	return;

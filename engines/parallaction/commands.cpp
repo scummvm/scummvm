@@ -51,7 +51,7 @@ Command *parseCommands(ArchivedFile *file) {
 	Node root;
 	memset(&root, 0, sizeof(root));
 
-	parseFillBuffers();
+	fillBuffers(*_vm->_locationScript, true);
 
 	while (scumm_stricmp(_tokens[0], "ENDCOMMANDS") && scumm_stricmp(_tokens[0], "ENDZONE")) {
 //		printf("token[0] = %s", _tokens[0]);
@@ -185,7 +185,7 @@ Command *parseCommands(ArchivedFile *file) {
 		}
 
 		addNode(&root, &cmd->_node);
-		parseFillBuffers();
+		fillBuffers(*_vm->_locationScript, true);
 
 	}
 

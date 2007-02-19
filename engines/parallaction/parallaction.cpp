@@ -1017,7 +1017,7 @@ void Parallaction::initTable(const char *path, char** table) {
 
 	uint16 count = 0;
 
-	tableFillBuffers(stream);
+	fillBuffers(stream);
 
 	while (scumm_stricmp(_tokens[0], "ENDTABLE")) {
 
@@ -1025,7 +1025,7 @@ void Parallaction::initTable(const char *path, char** table) {
 		strcpy(table[count], _tokens[0]);
 
 		count++;
-		tableFillBuffers(stream);
+		fillBuffers(stream);
 	}
 
 	table[count] = NULL;

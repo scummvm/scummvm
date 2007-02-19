@@ -85,7 +85,7 @@ Animation *Parallaction::parseAnimation(ArchivedFile *file, Node *list, char *na
 
 	addNode(list, &vD0->_zone._node);
 
-	parseFillBuffers();
+	fillBuffers(*_locationScript, true);
 	while (scumm_stricmp(_tokens[0], "endanimation")) {
 //		printf("token[0] = %s\n", _tokens[0]);
 
@@ -142,7 +142,7 @@ Animation *Parallaction::parseAnimation(ArchivedFile *file, Node *list, char *na
 			vD0->_zone._moveTo._y = atoi(_tokens[2]);
 		}
 
-		parseFillBuffers();
+		fillBuffers(*_locationScript, true);
 	}
 
 	vD0->_zone.pos._oldposition._x = -1000;

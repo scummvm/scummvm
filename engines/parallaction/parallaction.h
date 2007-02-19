@@ -26,6 +26,7 @@
 #include "engines/engine.h"
 #include "parallaction/defs.h"
 #include "parallaction/inventory.h"
+#include "parallaction/parser.h"
 #include "common/str.h"
 #include "gui/dialog.h"
 #include "gui/widget.h"
@@ -240,6 +241,11 @@ public:
 	void changeCursor(int32 index);
 	void changeCharacter(const char *name);
 
+	char   *parseComment(ArchivedFile *file);
+	char   *parseDialogueString();
+	Dialogue   *parseDialogue(ArchivedFile *file);
+
+
 public:
 	int getGameType() const;
 	uint32 getFeatures() const;
@@ -262,6 +268,8 @@ public:
 	uint16	_numLocations;
 
 	InventoryItem	_activeItem;
+
+	LocScript	*_locationScript;
 
 protected:		// data
 
