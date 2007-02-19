@@ -40,6 +40,7 @@ Node helperNode = { NULL, NULL };
 
 void Parallaction::parseLocation(const char *filename) {
 //	printf("parseLocation(%s)", filename);
+    debugC(1, kDebugLocation, "parseLocation('%s')", filename);
 
 	char *location_src = NULL;
 
@@ -93,21 +94,28 @@ void Parallaction::parseLocation(const char *filename) {
 			} else
 				background = _tokens[1];
 
+
+            // WORKAROUND: the original code erraneously incremented
+            // _currentLocationIndex, thus producing inconsistent
+            // savegames. This workaround modified the following loop
+            // and if-statement, so the code exactly matches the one
+            // in Big Red Adventure.
 			_currentLocationIndex = -1;
 			uint16 _di = 0;
 			while (_locationNames[_di][0] != '\0') {
 				if (!scumm_stricmp(_locationNames[_di], filename)) {
-					_currentLocationIndex = _di + 1;
+					_currentLocationIndex = _di;
 				}
 				_di++;
 			}
 
 			if (_currentLocationIndex  == -1) {
 				strcpy(_locationNames[_numLocations], filename);
-				_numLocations++;
 				_currentLocationIndex = _numLocations;
+
+				_numLocations++;
 				_locationNames[_numLocations][0] = '\0';
-				_localFlags[_currentLocationIndex] = 0;
+				_localFlags[_numLocations] = 0;
 			} else {
 				_localFlags[_currentLocationIndex] |= kFlagsVisited;	// 'visited'
 			}
