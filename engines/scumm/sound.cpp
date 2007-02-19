@@ -934,7 +934,7 @@ BaseScummFile *Sound::openSfxFile() {
 		if (file->open(tmp) && _vm->_game.heversion <= 73)
 			file->setEnc(0x69);
 		_soundMode = kVOCMode;
-	} else if (_vm->_game.version >= 5 && _vm->_game.version <= 7) {
+	} else {
 		for (uint j = 0; j < 2 && !file->isOpen(); ++j) {
 			for (int i = 0; extensions[i].ext; ++i) {
 				tmp = basename[j] + extensions[i].ext;

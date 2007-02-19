@@ -1088,7 +1088,7 @@ int ScummEngine::init() {
 		_imuse->setBase(_res->address[rtSound]);
 	}
 
-	if (_game.version >= 5)
+	if (_game.version >= 5 && _game.version <= 7)
 		_sound->setupSound();
 
 	updateSoundSettings();
@@ -2150,7 +2150,7 @@ void ScummEngine::restart() {
 	}
 
 	// Reinit sound engine
-	if (_game.version >= 5)
+	if (_game.version >= 5 && _game.version <= 7)
 		_sound->setupSound();
 
 	// Re-run bootscript
