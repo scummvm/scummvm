@@ -18,7 +18,6 @@ MODULE_OBJS := \
 	parallaction.o \
 	saveload.o \
 	staticres.o \
-	table.o \
 	walk.o \
 	zone.o
 
