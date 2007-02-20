@@ -33,7 +33,7 @@ namespace Parallaction {
 void resolveLocationForwards();
 void loadExternalMaskPath(char *filename);
 void switchBackground(char *name);
-void parseWalkNodes(ArchivedFile *file, Node *list);
+void parseWalkNodes(Script &script, Node *list);
 void freeAnimations();
 
 Node helperNode = { NULL, NULL };
@@ -147,10 +147,10 @@ void Parallaction::parseLocation(const char *filename) {
 			_localFlagNames[_si] = 0;
 		}
 		if (!scumm_stricmp(_tokens[0], "COMMANDS")) {
-			_locationCommands = parseCommands(file);
+			_locationCommands = parseCommands(*_locationScript);
 		}
 		if (!scumm_stricmp(_tokens[0], "ACOMMANDS")) {
-			_locationACommands = parseCommands(file);
+			_locationACommands = parseCommands(*_locationScript);
 		}
 		if (!scumm_stricmp(_tokens[0], "FLAGS")) {
 			if ((_localFlags[_currentLocationIndex] & kFlagsVisited) == 0) {
@@ -175,13 +175,13 @@ void Parallaction::parseLocation(const char *filename) {
 			_locationEndComment = parseComment(*_locationScript);
 		}
 		if (!scumm_stricmp(_tokens[0], "ZONE")) {
-			parseZone(file, &_zones, _tokens[1]);
+			parseZone(*_locationScript, &_zones, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "NODES")) {
-			parseWalkNodes(file, &_locationWalkNodes);
+			parseWalkNodes(*_locationScript, &_locationWalkNodes);
 		}
 		if (!scumm_stricmp(_tokens[0], "ANIMATION")) {
-			parseAnimation(file, &_animations, _tokens[1]);
+			parseAnimation(*_locationScript, &_animations, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "SOUND")) {
 			strcpy(_soundFile, _tokens[1]);
@@ -266,9 +266,9 @@ void freeLocation() {
 
 
 
-void parseWalkNodes(ArchivedFile *file, Node *list) {
+void parseWalkNodes(Script& script, Node *list) {
 
-	fillBuffers(*_vm->_locationScript, true);
+	fillBuffers(script, true);
 	while (scumm_stricmp(_tokens[0], "ENDNODES")) {
 
 		if (!scumm_stricmp(_tokens[0], "COORD")) {
@@ -281,7 +281,7 @@ void parseWalkNodes(ArchivedFile *file, Node *list) {
 
 		}
 
-		fillBuffers(*_vm->_locationScript, true);
+		fillBuffers(script, true);
 	}
 
 	return;

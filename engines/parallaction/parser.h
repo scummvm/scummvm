@@ -32,7 +32,6 @@ struct ArchivedFile;
 
 void	parseInit(char *s);
 char   *parseNextLine(char *s, uint16 count);
-char   *parseComment(ArchivedFile *file);
 uint16 fillBuffers(Common::SeekableReadStream &stream, bool errorOnEOF = false);
 char   *parseNextToken(char *s, char *tok, uint16 count, const char *brk);
 

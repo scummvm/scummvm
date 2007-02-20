@@ -74,7 +74,7 @@ Animation *findAnimation(const char *name) {
 }
 
 
-Animation *Parallaction::parseAnimation(ArchivedFile *file, Node *list, char *name) {
+Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) {
 //	printf("parseAnimation(%s)\n", name);
 
 	Animation *vD0 = (Animation*)memAlloc(sizeof(Animation));
@@ -85,7 +85,7 @@ Animation *Parallaction::parseAnimation(ArchivedFile *file, Node *list, char *na
 
 	addNode(list, &vD0->_zone._node);
 
-	fillBuffers(*_locationScript, true);
+	fillBuffers(script, true);
 	while (scumm_stricmp(_tokens[0], "endanimation")) {
 //		printf("token[0] = %s\n", _tokens[0]);
 
@@ -93,7 +93,7 @@ Animation *Parallaction::parseAnimation(ArchivedFile *file, Node *list, char *na
 			loadProgram(vD0, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "commands")) {
-			vD0->_zone._commands = parseCommands(file);
+			vD0->_zone._commands = parseCommands(script);
 		}
 		if (!scumm_stricmp(_tokens[0], "type")) {
 			if (_tokens[2][0] != '\0') {
@@ -103,7 +103,7 @@ Animation *Parallaction::parseAnimation(ArchivedFile *file, Node *list, char *na
 			if (_si != -1) {
 				vD0->_zone._type |= 1 << (_si-1);
 				if (((vD0->_zone._type & 0xFFFF) != kZoneNone) && ((vD0->_zone._type & 0xFFFF) != kZoneCommand)) {
-					parseZoneTypeBlock(file, &vD0->_zone);
+					parseZoneTypeBlock(script, &vD0->_zone);
 				}
 			}
 		}
@@ -142,7 +142,7 @@ Animation *Parallaction::parseAnimation(ArchivedFile *file, Node *list, char *na
 			vD0->_zone._moveTo._y = atoi(_tokens[2]);
 		}
 
-		fillBuffers(*_locationScript, true);
+		fillBuffers(script, true);
 	}
 
 	vD0->_zone.pos._oldposition._x = -1000;

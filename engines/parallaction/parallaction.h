@@ -145,7 +145,7 @@ void addNode(Node *list, Node *n);
 void removeNode(Node *n);
 void freeNodeList(Node *list);
 
-Command *parseCommands(ArchivedFile *file);
+Command *parseCommands(Script &script);
 void runCommands(Command *list, Zone *z = NULL);
 void freeCommands(Command*);
 
@@ -154,7 +154,6 @@ void freeZones(Node *list);
 void freeLocation();
 
 void runDialogue(SpeakData*);
-Dialogue *parseDialogue(ArchivedFile *file);
 
 void changeCharacter(const char *name);
 
@@ -242,8 +241,8 @@ public:
 	void changeCharacter(const char *name);
 
 	char   *parseComment(Script &script);
-	char   *parseDialogueString();
-	Dialogue   *parseDialogue(ArchivedFile *file);
+	char   *parseDialogueString(Script &script);
+	Dialogue   *parseDialogue(Script &script);
 
 
 public:
@@ -322,10 +321,10 @@ protected:		// members
 	void		resetTimer();
 
 	void		doLocationEnterTransition();
-	void		parseZone(ArchivedFile *file, Node *list, char *name);
-	Animation * parseAnimation(ArchivedFile *file, Node *list, char *name);
+	void		parseZone(Script &script, Node *list, char *name);
+	Animation * parseAnimation(Script &script, Node *list, char *name);
 	void		parseScriptLine(Instruction *inst, Animation *a, LocalVariable *locals);
-	void		parseZoneTypeBlock(ArchivedFile *file, Zone *z);
+	void		parseZoneTypeBlock(Script &script, Zone *z);
 	void		loadProgram(Animation *a, char *filename);
 	void		changeLocation(char *location);
 

@@ -58,7 +58,7 @@ int16 _answerBalloonH[10] = { 0 };
 
 
 
-Dialogue *Parallaction::parseDialogue(ArchivedFile *file) {
+Dialogue *Parallaction::parseDialogue(Script &script) {
 //	printf("parseDialogue()\n");
 	uint16 num_questions = 0;
 	uint16 v50[20];
@@ -69,7 +69,7 @@ Dialogue *Parallaction::parseDialogue(ArchivedFile *file) {
 		v50[_si] = 0;
 	}
 
-	fillBuffers(*_locationScript, true);
+	fillBuffers(script, true);
 
 	while (scumm_stricmp(_tokens[0], "enddialogue")) {
 		if (scumm_stricmp(_tokens[0], "Question")) continue;
@@ -81,15 +81,15 @@ Dialogue *Parallaction::parseDialogue(ArchivedFile *file) {
 		_questions_names[num_questions] = (char*)memAlloc(strlen(_tokens[1])+1);
 		strcpy(_questions_names[num_questions], _tokens[1]);
 
-		vB4->_text = parseDialogueString();
+		vB4->_text = parseDialogueString(script);
 //		printf("Question: '%s'\n", vB4->_text);
 
-		fillBuffers(*_locationScript, true);
+		fillBuffers(script, true);
 		vB4->_mood = atoi(_tokens[0]);
 
 		uint16 _di = 0;
 
-		fillBuffers(*_locationScript, true);
+		fillBuffers(script, true);
 		while (scumm_stricmp(_tokens[0], "endquestion")) {	// parse answers
 
 			const char** v60 = const_cast<const char **>(_localFlagNames);
@@ -119,24 +119,24 @@ Dialogue *Parallaction::parseDialogue(ArchivedFile *file) {
 
 			}
 
-			vB4->_answers[_di] = parseDialogueString();
+			vB4->_answers[_di] = parseDialogueString(script);
 
 //			printf("answer[%i]: '%s'\n", _di, vB4->_answers[_di]);
 
-			fillBuffers(*_locationScript, true);
+			fillBuffers(script, true);
 			vB4->_answer_moods[_di] = atoi(_tokens[0]);
-			vB4->_following._names[_di] = parseDialogueString();
+			vB4->_following._names[_di] = parseDialogueString(script);
 
-			fillBuffers(*_locationScript, true);
+			fillBuffers(script, true);
 			if (!scumm_stricmp(_tokens[0], "commands")) {
-				vB4->_commands[_di] = parseCommands(file);
-				fillBuffers(*_locationScript, true);
+				vB4->_commands[_di] = parseCommands(script);
+				fillBuffers(script, true);
 			}
 
 			_di++;
 		}
 
-		fillBuffers(*_locationScript, true);
+		fillBuffers(script, true);
 		num_questions++;
 
 	}
@@ -172,13 +172,13 @@ Dialogue *Parallaction::parseDialogue(ArchivedFile *file) {
 }
 
 
-char *Parallaction::parseDialogueString() {
+char *Parallaction::parseDialogueString(Script &script) {
 
 	char vC8[200];
 	char *vD0 = NULL;
 	do {
 
-		vD0 = _locationScript->readLine(vC8, 200);
+		vD0 = script.readLine(vC8, 200);
 		if (vD0 == 0) return NULL;
 
 		vD0 = Common::ltrim(vD0);

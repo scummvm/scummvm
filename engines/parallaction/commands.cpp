@@ -45,13 +45,13 @@ namespace Parallaction {
 #define CMD_STOP			16
 
 
-Command *parseCommands(ArchivedFile *file) {
+Command *parseCommands(Script &script) {
 //	printf("parseCommands()");
 
 	Node root;
 	memset(&root, 0, sizeof(root));
 
-	fillBuffers(*_vm->_locationScript, true);
+	fillBuffers(script, true);
 
 	while (scumm_stricmp(_tokens[0], "ENDCOMMANDS") && scumm_stricmp(_tokens[0], "ENDZONE")) {
 //		printf("token[0] = %s", _tokens[0]);
@@ -185,7 +185,7 @@ Command *parseCommands(ArchivedFile *file) {
 		}
 
 		addNode(&root, &cmd->_node);
-		fillBuffers(*_vm->_locationScript, true);
+		fillBuffers(script, true);
 
 	}
 

@@ -211,8 +211,6 @@ uint16	runZone(Zone *z);
 void	dropItem(uint16 v);
 int16	pickupItem(Zone *z);
 
-void	parseZone(ArchivedFile *file, Node *list, char *name);
-void	parseZoneTypeBlock(ArchivedFile *file, Zone *z);
 
 Zone   *hitZone(uint32 type, uint16 x, uint16 y);
 uint16	checkDoor();

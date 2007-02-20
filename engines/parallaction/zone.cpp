@@ -54,12 +54,12 @@ Zone *findZone(const char *name) {
 
 
 
-void Parallaction::parseZone(ArchivedFile *file, Node *list, char *name) {
+void Parallaction::parseZone(Script &script, Node *list, char *name) {
 //	printf("parseZone(%s)", name);
 
 	if (findZone(name)) {
 		while (scumm_stricmp(_tokens[0], "endzone")) {
-			fillBuffers(*_locationScript, true);
+			fillBuffers(script, true);
 		}
 		return;
 	}
@@ -72,7 +72,7 @@ void Parallaction::parseZone(ArchivedFile *file, Node *list, char *name) {
 
 	addNode(list, &z->_node);
 
-	fillBuffers(*_locationScript, true);
+	fillBuffers(script, true);
 	while (scumm_stricmp(_tokens[0], "endzone")) {
 //		printf("token[0] = %s", _tokens[0]);
 
@@ -93,12 +93,12 @@ void Parallaction::parseZone(ArchivedFile *file, Node *list, char *name) {
 			int16 _si = searchTable(_tokens[1], _zoneTypeNames);
 			if (_si != -1) {
 				z->_type |= 1 << (_si - 1);
-				parseZoneTypeBlock(file, z);
+				parseZoneTypeBlock(script, z);
 				continue;
 			}
 		}
 		if (!scumm_stricmp(_tokens[0], "commands")) {
-			z->_commands = parseCommands(file);
+			z->_commands = parseCommands(script);
 		}
 		if (!scumm_stricmp(_tokens[0], "label")) {
 //			printf("label: %s", _tokens[1]);
@@ -114,7 +114,7 @@ void Parallaction::parseZone(ArchivedFile *file, Node *list, char *name) {
 			} while (!scumm_stricmp(_tokens[_si++], "|"));
 		}
 
-		fillBuffers(*_locationScript, true);
+		fillBuffers(script, true);
 	}
 
 	return;
@@ -205,7 +205,7 @@ void freeZones(Node *list) {
 
 
 
-void Parallaction::parseZoneTypeBlock(ArchivedFile *file, Zone *z) {
+void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 //	printf("parseZoneTypeBlock()");
 
 	ZoneTypeData *u = &z->u;
@@ -256,7 +256,7 @@ void Parallaction::parseZoneTypeBlock(ArchivedFile *file, Zone *z) {
 				strcpy(u->examine->_filename, _tokens[1]);
 			}
 			if (!scumm_stricmp(_tokens[0], "desc")) {
-				u->examine->_description = parseComment(*_locationScript);
+				u->examine->_description = parseComment(script);
 			}
 			break;
 
@@ -347,12 +347,12 @@ void Parallaction::parseZoneTypeBlock(ArchivedFile *file, Zone *z) {
 //				printf("speak file name: %s", u.speak._name);
 			}
 			if (!scumm_stricmp(_tokens[0], "Dialogue")) {
-				u->speak->_dialogue = parseDialogue(file);
+				u->speak->_dialogue = parseDialogue(script);
 			}
 			break;
 		}
 
-		fillBuffers(*_locationScript, true);
+		fillBuffers(script, true);
 	} while (scumm_stricmp(_tokens[0], "endzone"));
 
 	return;
