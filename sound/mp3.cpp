@@ -266,11 +266,6 @@ int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 
-/*
-Crude factory function for MP3InputStream.
-To be replaced as soon as possible
-*/
-
 AudioStream *makeMP3Stream(Common::File *file, uint32 size) {
 	assert(file);
 
@@ -281,19 +276,12 @@ AudioStream *makeMP3Stream(Common::File *file, uint32 size) {
 	if (!size)
 		size = file->size() - file->pos();
 
-	// Read 'size' bytes of data (or until EOF is reached)
-	byte *buf = (byte *)malloc(size);
-	size = file->read(buf, size);
+	// Read 'size' bytes of data (or until EOF is reached) into a MemoryReadStream
+	Common::MemoryReadStream *stream = file->readStream(size);
 
-	
-	// Wrap the buffer into a MemoryReadStream ...
-	Common::ReadStream *stream = new Common::MemoryReadStream(buf, size, true);
 	// .. and create a MP3InputStream from all this
 	return new MP3InputStream(stream, true);
 }
-
-
-
 
 
 #pragma mark -
@@ -353,12 +341,13 @@ void MP3TrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int sta
 
 	// Open the file
 	Common::File *file = new Common::File();
-	assert(file);
-	file->open(_filename);
-	assert(file->isOpen());
+	if (!file || !file->open(_filename)) {
+		warning("MP3TrackInfo::play: failed to open '%s'", _filename.c_str());
+		return;
+	}
 
 	// Play it
-	AudioStream *input = new MP3InputStream(file, true, start, end);
+	MP3InputStream *input = new MP3InputStream(file, true, start, end);
 	
 	mixer->playInputStream(Audio::Mixer::kMusicSoundType, handle, input);
 }
@@ -379,46 +368,6 @@ DigitalTrackInfo *getMP3Track(int track) {
 	}
 	return NULL;
 }
-
-
-#pragma mark -
-
-
-// TODO: Write a factory function (or maybe multiple).
-// It would take:
-// - Either a SeekableReadStream, *or* a memory buffer + length
-//   (in fact, this might warrant having two factories. Using the
-//   memory buffer directly, instead of a MemoryReadStream, is a
-//   a lot more efficient, as it requires both less memory and less
-//   CPU time. On the other hand, we still want to support playback
-//   of big files. 
-//
-//  This would probably be easiest done by two subclasses, and suitable virtual
-//  methods:  MemBufferMP3InputStream vs. StreamMP3InputStream or so
-//
-// Further parameters:
-// - a start time (optional, 0 by default)
-// - a duration/end time (optional, 0 or -1 by default to indicate "play all").
-// - a disposeStorage bool, indicating whether we take over ownership of the
-//   stream/mem buffer and hence should dispose it after use, or not
-// - a numLoops parameter: int giving the number of reptitions, -1 or 0 for inifinity
-// 
-// Possible extra API (for a new AudioStream subclass):
-//  - void setLooping(int numLoops, time start, time duration)
-//  - void rewind
-//  - void seek(time dstTime), maybe even allow relative seeking -- do we need this?
-
-//
-// Extra thoughts: the MP3InputStream should have a method to indicate to the
-//  factory that something went wrong during creation, e.g. the data is not valid
-//  MP3 data. The factory then would dispose the new object and return NULL.
-//  Client code must be changed to handle that, of course.
-
-
-// As to DigitalTrackInfo: Of course eventually we want to get rid of it.
-// Until then, the DigitalTrackInfo should *not* create the stream until its
-// play method is called. This way, the hack for Symbian can hopefully be
-// removed completely.
 
 
 // Closing note: we added File::incRef and File::decRef mainly for the sake of the input streams
