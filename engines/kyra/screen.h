@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KYRASCREEN_H
-#define KYRASCREEN_H
+#ifndef KYRA_SCREEN_H
+#define KYRA_SCREEN_H
 
 #include "common/util.h"
 

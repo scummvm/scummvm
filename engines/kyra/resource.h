@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef RESOURCE_H
-#define RESOURCE_H
+#ifndef KYRA_RESOURCE_H
+#define KYRA_RESOURCE_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

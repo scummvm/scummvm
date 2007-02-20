@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KYRASEQPLAYER_H
-#define KYRASEQPLAYER_H
+#ifndef KYRA_SEQPLAYER_H
+#define KYRA_SEQPLAYER_H
 
 namespace Kyra {
 

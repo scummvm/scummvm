@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef VQA_H
-#define VQA_H
+#ifndef KYRA_VQA_H
+#define KYRA_VQA_H
 
 class OSystem;
 

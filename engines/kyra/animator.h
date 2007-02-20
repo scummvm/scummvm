@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KYRAANIMATOR_H
-#define KYRAANIMATOR_H
+#ifndef KYRA_ANIMATOR_H
+#define KYRA_ANIMATOR_H
 
 namespace Kyra {
 class KyraEngine;

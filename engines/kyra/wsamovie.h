@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef WSAMOVIES_H
-#define WSAMOVIES_H
+#ifndef KYRA_WSAMOVIE_H
+#define KYRA_WSAMOVIE_H
 
 #include "kyra/resource.h"
 

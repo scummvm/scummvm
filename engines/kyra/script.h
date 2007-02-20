@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KYRASCRIPT_H
-#define KYRASCRIPT_H
+#ifndef KYRA_SCRIPT_H
+#define KYRA_SCRIPT_H
 
 #include "kyra/kyra.h"
 

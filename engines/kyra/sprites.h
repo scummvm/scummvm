@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KYRASPRITES_H
-#define KYRASPRITES_H
+#ifndef KYRA_SPRITES_H
+#define KYRA_SPRITES_H
 
 namespace Kyra {
 

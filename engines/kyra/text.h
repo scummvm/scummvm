@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KYRATEXT_H
-#define KYRATEXT_H
+#ifndef KYRA_TEXT_H
+#define KYRA_TEXT_H
 
 namespace Kyra {
 class Screen;
