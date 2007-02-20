@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SWORDDEFS_H
-#define SWORDDEFS_H
+#ifndef SWORD1_SWORDDEFS_H
+#define SWORD1_SWORDDEFS_H
 
 #include "common/scummsys.h"
 

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SWORDRES_H
-#define SWORDRES_H
+#ifndef SWORD1_SWORDRES_H
+#define SWORD1_SWORDRES_H
 
 namespace Sword1 {
 

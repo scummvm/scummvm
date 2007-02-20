@@ -22,8 +22,8 @@
 
 // this is the object manager. our equivalent to protocol.c and coredata.c
 
-#ifndef OBJECTMAN_H
-#define OBJECTMAN_H
+#ifndef SWORD1_OBJECTMAN_H
+#define SWORD1_OBJECTMAN_H
 
 #include "sword1/resman.h"
 #include "sword1/sworddefs.h"

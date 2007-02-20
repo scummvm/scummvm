@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BSEVENTMAN_H
-#define BSEVENTMAN_H
+#ifndef SWORD1_EVENTMAN_H
+#define SWORD1_EVENTMAN_H
 
 #include "sword1/object.h"
 

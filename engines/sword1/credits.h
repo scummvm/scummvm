@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BS1CREDITS_H
-#define BS1CREDITS_H
+#ifndef SWORD1_CREDITS_H
+#define SWORD1_CREDITS_H
 
 #include "common/util.h"
 

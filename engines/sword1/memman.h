@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef MEMMAN_H
-#define MEMMAN_H
+#ifndef SWORD1_MEMMAN_H
+#define SWORD1_MEMMAN_H
 
 #include "common/scummsys.h"
 

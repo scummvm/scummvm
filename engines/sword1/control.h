@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BSCONTROL_H
-#define BSCONTROL_H
+#ifndef SWORD1_CONTROL_H
+#define SWORD1_CONTROL_H
 
 #include "common/scummsys.h"
 #include "sword1/sworddefs.h"

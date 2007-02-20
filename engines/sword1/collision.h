@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BSCOLLISION_H
-#define BSCOLLISION_H
+#ifndef SWORD1_COLLISION_H
+#define SWORD1_COLLISION_H
 
 /*#include "objectman.h"
 

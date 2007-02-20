@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BSLOGIC_H
-#define BSLOGIC_H
+#ifndef SWORD1_LOGIC_H
+#define SWORD1_LOGIC_H
 // combination of logic.c and scr_int.c
 
 #include "sword1/sworddefs.h"

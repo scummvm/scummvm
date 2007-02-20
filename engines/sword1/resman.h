@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef RESMAN_H
-#define RESMAN_H
+#ifndef SWORD1_RESMAN_H
+#define SWORD1_RESMAN_H
 
 #include "sword1/memman.h"
 #include "common/file.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BSMOUSE_H
-#define BSMOUSE_H
+#ifndef SWORD1_MOUSE_H
+#define SWORD1_MOUSE_H
 
 #include "common/scummsys.h"
 #include "sword1/sworddefs.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ANIMATION_H
-#define ANIMATION_H
+#ifndef SWORD1_ANIMATION_H
+#define SWORD1_ANIMATION_H
 
 #include "graphics/dxa_player.h"
 #include "graphics/mpeg_player.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BSMENU_H
-#define BSMENU_H
+#ifndef SWORD1_MENU_H
+#define SWORD1_MENU_H
 
 #include "sword1/sworddefs.h"
 #include "sword1/object.h"

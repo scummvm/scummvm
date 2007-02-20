@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BSSWORD1_H
-#define BSSWORD1_H
+#ifndef SWORD1_H
+#define SWORD1_H
 
 #include "engines/engine.h"
 #include "common/util.h"

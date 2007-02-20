@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BSSOUND_H
-#define BSSOUND_H
+#ifndef SWORD1_SOUND_H
+#define SWORD1_SOUND_H
 
 #include "sword1/object.h"
 #include "sword1/sworddefs.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BSMUSIC_H
-#define BSMUSIC_H
+#ifndef SWORD1_MUSIC_H
+#define SWORD1_MUSIC_H
 
 #include "common/scummsys.h"
 #include "common/mutex.h"

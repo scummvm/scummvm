@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BSTEXT_H
-#define BSTEXT_H
+#ifndef SWORD1_TEXT_H
+#define SWORD1_TEXT_H
 
 #include "sword1/object.h"
 #include "sword1/sworddefs.h"

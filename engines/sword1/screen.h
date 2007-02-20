@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BSSCREEN_H
-#define BSSCREEN_H
+#ifndef SWORD1_SCREEN_H
+#define SWORD1_SCREEN_H
 
 #include "sword1/sworddefs.h"
 

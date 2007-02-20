@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BSDEBUG_H
-#define BSDEBUG_H
+#ifndef SWORD1_DEBUG_H
+#define SWORD1_DEBUG_H
 
 #include "common/scummsys.h"
 
