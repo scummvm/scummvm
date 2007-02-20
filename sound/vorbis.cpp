@@ -46,8 +46,6 @@ using Common::File;
 
 namespace Audio {
 
-static AudioStream *makeVorbisStream(OggVorbis_File *file, int duration);
-
 // These are wrapper functions to allow using a File object to
 // provide data to the OggVorbis_File object.
 
@@ -129,8 +127,9 @@ static int seek_wrap(void *datasource, ogg_int64_t offset, int whence) {
 static int close_wrap(void *datasource) {
 	file_info *f = (file_info *) datasource;
 
-	f->file->decRef();
+	delete f->file;
 	delete f;
+
 	return 0;
 }
 
@@ -144,123 +143,6 @@ static ov_callbacks g_File_wrap = {
 	read_wrap, seek_wrap, close_wrap, tell_wrap
 };
 
-
-#pragma mark -
-#pragma mark --- Ogg Vorbis Audio CD emulation ---
-#pragma mark -
-
-class VorbisTrackInfo : public DigitalTrackInfo {
-private:
-	File *_file;
-	OggVorbis_File _ov_file;
-	bool _error_flag;
-
-public:
-	VorbisTrackInfo(File *file);
-	~VorbisTrackInfo();
-	bool openTrack();
-	bool error() { return _error_flag; }
-	void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration);
-};
-
-
-VorbisTrackInfo::VorbisTrackInfo(File *file) {
-//debug(5, "" __FILE__ ":%i", __LINE__);
-
-	_file = file;
-	if (openTrack()) {
-		warning("Invalid file format");
-		_error_flag = true;
-		_file = 0;
-	} else {
-		_error_flag = false;
-		_file->incRef();
-		ov_clear(&_ov_file);
-	}
-}
-
-bool VorbisTrackInfo::openTrack() {
-//debug(5, "" __FILE__ ":%i", __LINE__);
-	assert(_file);
-
-	file_info *f = new file_info;
-
-#if defined(__SYMBIAN32__)
-	// Symbian can't share filehandles between different threads.
-	// So create a new file  and seek that to the other filehandles position
-	f->file = new File;
-	f->file->open(_file->name());
-	f->file->seek(_file->pos());
-#else
-	f->file = _file;
-#endif
-
-	f->start = 0;
-	f->len = _file->size();
-	f->curr_pos = 0;
-	_file->seek(0);
-
-	bool err = (ov_open_callbacks((void *) f, &_ov_file, NULL, 0, g_File_wrap) < 0);
-	if (err) {
-#ifdef __SYMBIAN32__
-		delete f->file;
-#endif
-		delete f;
-	} else {
-#ifndef __SYMBIAN32__
-		_file->incRef();
-#endif	
-	}
-
-	return err;
-}
-
-VorbisTrackInfo::~VorbisTrackInfo() {
-//debug(5, "" __FILE__ ":%i", __LINE__);
-	if (! _error_flag) {
-		ov_clear(&_ov_file);
-		_file->decRef();
-	}
-}
-
-void VorbisTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) {
-//debug(5, "" __FILE__ ":%i", __LINE__);
-	bool err = openTrack(); err=err;//satisfy unused variable
-	assert(!err);
-
-#ifdef USE_TREMOR // In Tremor, the ov_time_seek() and ov_time_seek_page() calls take seeking positions in milliseconds as 64 bit integers, rather than in seconds as doubles as in Vorbisfile.
-#if defined(__SYMBIAN32__) && defined(__GCC32__) // SumthinWicked says: fixing "relocation truncated to fit: ARM_26 __fixdfdi" during linking on GCC, see portdefs.h
-	ov_time_seek(&_ov_file, (ogg_int64_t)scumm_fixdfdi(startFrame / 75.0 * 1000));
-#else
-	ov_time_seek(&_ov_file, (ogg_int64_t)(startFrame / 75.0 * 1000));
-#endif
-#else
-	ov_time_seek(&_ov_file, startFrame / 75.0);
-#endif
-
-	AudioStream *input = makeVorbisStream(&_ov_file, duration * ov_info(&_ov_file, -1)->rate / 75);
-	mixer->playInputStream(Audio::Mixer::kMusicSoundType, handle, input);
-}
-
-DigitalTrackInfo *getVorbisTrack(int track) {
-	char trackName[2][32];
-	File *file = new File();
-
-	sprintf(trackName[0], "track%d.ogg", track);
-	sprintf(trackName[1], "track%02d.ogg", track);
-
-	for (int i = 0; i < 2; ++i) {
-		if (file->open(trackName[i])) {
-			VorbisTrackInfo *trackInfo = new VorbisTrackInfo(file);
-			file->decRef();
-			if (!trackInfo->error())
-				return trackInfo;
-			delete trackInfo;
-		}
-	}
-	delete file;
-	return NULL;
-}
 
 #pragma mark -
 #pragma mark --- Ogg Vorbis stream ---
@@ -376,11 +258,6 @@ void VorbisInputStream::refill() {
 	_bufferEnd = (int16 *)read_pos;
 }
 
-static AudioStream *makeVorbisStream(OggVorbis_File *file, int duration) {
-//debug(5, "" __FILE__ ":%i", __LINE__);
-	return new VorbisInputStream(file, duration, false);
-}
-
 AudioStream *makeVorbisStream(File *file, uint32 size) {
 //debug(5, "" __FILE__ ":%i", __LINE__);
 	OggVorbis_File *ov_file = new OggVorbis_File;
@@ -411,6 +288,102 @@ AudioStream *makeVorbisStream(File *file, uint32 size) {
 		return new VorbisInputStream(ov_file, 0, true);
 	}
 }
+
+
+#pragma mark -
+#pragma mark --- Ogg Vorbis Audio CD emulation ---
+#pragma mark -
+
+class VorbisTrackInfo : public DigitalTrackInfo {
+private:
+	Common::String _filename;
+	bool _errorFlag;
+
+public:
+	VorbisTrackInfo(const char *filename);
+	bool openTrack(OggVorbis_File *ovFile);
+	bool error() { return _errorFlag; }
+	void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration);
+};
+
+
+VorbisTrackInfo::VorbisTrackInfo(const char *filename) :
+	_filename(filename),
+	_errorFlag(false) {
+
+	OggVorbis_File ov_file;
+	_errorFlag = openTrack(&ov_file);
+	
+	if (!_errorFlag)
+		ov_clear(&ov_file);
+}
+
+bool VorbisTrackInfo::openTrack(OggVorbis_File *ovFile) {
+	bool err;
+
+	file_info *f = new file_info;
+	assert(f);
+	f->file = new File;
+	assert(f->file);
+
+	err = !f->file->open(_filename);
+	
+	if (!err) {
+		f->start = 0;
+		f->len = f->file->size();
+		f->curr_pos = 0;
+	
+		err = (ov_open_callbacks((void *) f, ovFile, NULL, 0, g_File_wrap) < 0);
+	}
+
+	if (err) {
+		delete f->file;
+		delete f;
+	}
+
+	return err;
+}
+
+void VorbisTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) {
+	OggVorbis_File *ovFile = new OggVorbis_File;
+	bool err = openTrack(ovFile);
+	assert(!err);
+
+#ifdef USE_TREMOR
+	// In Tremor, the ov_time_seek() and ov_time_seek_page() calls take seeking
+	// positions in milliseconds as 64 bit integers, rather than in seconds as
+	// doubles as in Vorbisfile.
+#if defined(__SYMBIAN32__) && defined(__GCC32__)
+	// SumthinWicked says: fixing "relocation truncated to fit: ARM_26 __fixdfdi" during linking on GCC, see portdefs.h
+	ov_time_seek(ovFile, (ogg_int64_t)scumm_fixdfdi(startFrame / 75.0 * 1000));
+#else
+	ov_time_seek(ovFile, (ogg_int64_t)(startFrame / 75.0 * 1000));
+#endif
+#else
+	ov_time_seek(ovFile, startFrame / 75.0);
+#endif
+
+	AudioStream *input =  new VorbisInputStream(ovFile, duration * ov_info(ovFile, -1)->rate / 75, true);
+	mixer->playInputStream(Audio::Mixer::kMusicSoundType, handle, input);
+}
+
+DigitalTrackInfo *getVorbisTrack(int track) {
+	char trackName[2][32];
+
+	sprintf(trackName[0], "track%d.ogg", track);
+	sprintf(trackName[1], "track%02d.ogg", track);
+
+	for (int i = 0; i < 2; ++i) {
+		if (Common::File::exists(trackName[i])) {
+			VorbisTrackInfo *trackInfo = new VorbisTrackInfo(trackName[i]);
+			if (!trackInfo->error())
+				return trackInfo;
+			delete trackInfo;
+		}
+	}
+	return NULL;
+}
+
 
 
 } // End of namespace Audio

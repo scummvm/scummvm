@@ -167,7 +167,7 @@ void MP3InputStream::decodeMP3Data() {
 				if (_stream.error == MAD_ERROR_BUFLEN) {
 					break; // Read more data
 				} else if (MAD_RECOVERABLE(_stream.error)) {
-					debug(1, "MP3InputStream: Recoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
+					debug(6, "MP3InputStream: Recoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
 					continue;
 				} else {
 					warning("MP3InputStream: Unrecoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
@@ -193,8 +193,10 @@ void MP3InputStream::decodeMP3Data() {
 				if (_stream.error == MAD_ERROR_BUFLEN) {
 					break; // Read more data
 				} else if (MAD_RECOVERABLE(_stream.error)) {
-					// FIXME: should we do anything here?
-					debug(1, "MP3InputStream: Recoverable error in mad_frame_decode (%s)", mad_stream_errorstr(&_stream));
+					// Note: we will occasionally see MAD_ERROR_BADDATAPTR errors here.
+					// These are normal and expected (caused by our frame skipping (i.e. "seeking")
+					// code above).
+					debug(6, "MP3InputStream: Recoverable error in mad_frame_decode (%s)", mad_stream_errorstr(&_stream));
 					continue;
 				} else {
 					warning("MP3InputStream: Unrecoverable error in mad_frame_decode (%s)", mad_stream_errorstr(&_stream));
@@ -351,27 +353,27 @@ MP3TrackInfo::MP3TrackInfo(const char *filename) :
 	_filename(filename),
 	_errorFlag(false) {
 
-	Common::File file;
-	
 	// Try to open the file
+	Common::File file;
 	if (!file.open(_filename)) {
 		_errorFlag = true;
 		return;
 	}
 	
-	// Next, try to create a MP3InputStream from it
-	
-	MP3InputStream *mp3Stream = new MP3InputStream(&file, false);
+	// Next, try to create an MP3InputStream from it
+	MP3InputStream *tempStream = new MP3InputStream(&file, false);
 	
 	// If we see EOS here then that means that not (enough) valid input
 	// data was given.
-	_errorFlag = mp3Stream->endOfData();
+	_errorFlag = tempStream->endOfData();
 	
 	// Clean up again	
-	delete mp3Stream;
+	delete tempStream;
 }
 
 void MP3TrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) {
+	assert(!_errorFlag);
+
 	mad_timer_t start;
 	mad_timer_t end;
 	
@@ -389,12 +391,14 @@ void MP3TrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int sta
 	Common::File *file = new Common::File();
 	if (!file || !file->open(_filename)) {
 		warning("MP3TrackInfo::play: failed to open '%s'", _filename.c_str());
+		delete file;
 		return;
 	}
 
-	// Play it
+	// ... create an AudioStream ...
 	MP3InputStream *input = new MP3InputStream(file, true, start, end);
 	
+	// ... and play it
 	mixer->playInputStream(Audio::Mixer::kMusicSoundType, handle, input);
 }
 

@@ -874,41 +874,57 @@ void FlacInputStream::callWrapError(const ::FLAC__SeekableStreamDecoder *decoder
 
 class FlacTrackInfo : public DigitalTrackInfo {
 private:
-	File *_file;
-	FlacInputStream *_firstStream; // avoid having to open the Stream twice the first time
+	Common::String _filename;
+	bool _errorFlag;
 
 public:
-	FlacTrackInfo(File *file);
-	~FlacTrackInfo();
-	bool error() { return _file == NULL; }
+	FlacTrackInfo(const char *filename);
+	bool error() { return _errorFlag; }
 	void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration);
 };
 
-FlacTrackInfo::FlacTrackInfo(File *file) : _file(NULL), _firstStream(NULL) {
-	FlacInputStream *tempStream = new FlacInputStream(file);
-	/* first time the file will be tested, but not used */
-	if (tempStream->init()) {
-		_firstStream = tempStream;
-		_file = file;
-	} else
-		delete tempStream;
+FlacTrackInfo::FlacTrackInfo(const char *filename) :
+	_filename(filename),
+	_errorFlag(false) {
+	
+	// Try to open the file
+	Common::File file;
+	if (!file.open(_filename)) {
+		_errorFlag = true;
+		return;
+	}
+	
+	// Next, try to create a FlacInputStream from it
+	FlacInputStream *tempStream = new FlacInputStream(&file);
+
+	// If initialising the stream fails, we set the error flag
+	if (!tempStream || !tempStream->init())
+		_errorFlag = true;
+
+	delete tempStream;
 }
 
 void FlacTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) {
+	assert(!_errorFlag);
+
 	if (error()) {
 		debug(1, "FlacTrackInfo::play:  invalid state, method should not been called");
 	}
 
-	FlacInputStream *flac;
-
-	if (_firstStream != NULL) {
-		flac = _firstStream;
-		_firstStream = NULL;
-	} else {
-		flac = new FlacInputStream(_file);
-		flac->init();
+	// Open the file
+	Common::File *file = new Common::File();
+	if (!file || !file->open(_filename)) {
+		warning("FlacTrackInfo::play: failed to open '%s'", _filename.c_str());
+		delete file;
+		return;
 	}
 
+	// Create an AudioStream from the file
+	FlacInputStream *flac = new FlacInputStream(file);
+	flac->init();
+	file->decRef();
+
+	// Seek to the correct start position and start playback
 	if (flac->isStreamDecoderReady()) {
 		const FLAC__StreamMetadata_StreamInfo &info = flac->getStreamInfo();
 		if (duration)
@@ -921,38 +937,30 @@ void FlacTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int st
 			return;
 		}
 		// startSample is beyond the existing Samples
-		debug(1, "FlacTrackInfo: Audiostream %s could not seek to frame %d (ca %d secs)", _file->name(), startFrame, startFrame/75);
+		debug(1, "FlacTrackInfo: Audiostream %s could not seek to frame %d (ca %d secs)", _filename.c_str(), startFrame, startFrame/75);
 		flac->finish();
 	}
 	delete flac;
 }
 
-FlacTrackInfo::~FlacTrackInfo() {
-	delete _firstStream;
-	delete _file;
-}
-
 DigitalTrackInfo* getFlacTrack(int track) {
 	assert(track >= 1);
 	char trackName[4][32];
-	File *file = new File();
 
 	sprintf(trackName[0], "track%d.flac", track);
 	sprintf(trackName[1], "track%02d.flac", track);
 	sprintf(trackName[2], "track%d.fla", track);
 	sprintf(trackName[3], "track%02d.fla", track);
 
-
 	for (int i = 0; i < 4; ++i) {
-		if (file->open(trackName[i])) {
-			FlacTrackInfo *trackInfo = new FlacTrackInfo(file);
+		if (Common::File::exists(trackName[i])) {
+			FlacTrackInfo *trackInfo = new FlacTrackInfo(trackName[i]);
 			if (!trackInfo->error())
 				return trackInfo;
 			delete trackInfo;
 		}
 	}
 
-	delete file;
 	return NULL;
 }
 
