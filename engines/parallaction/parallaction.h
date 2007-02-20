@@ -241,7 +241,7 @@ public:
 	void changeCursor(int32 index);
 	void changeCharacter(const char *name);
 
-	char   *parseComment(ArchivedFile *file);
+	char   *parseComment(Script &script);
 	char   *parseDialogueString();
 	Dialogue   *parseDialogue(ArchivedFile *file);
 

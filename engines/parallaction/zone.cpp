@@ -256,7 +256,7 @@ void Parallaction::parseZoneTypeBlock(ArchivedFile *file, Zone *z) {
 				strcpy(u->examine->_filename, _tokens[1]);
 			}
 			if (!scumm_stricmp(_tokens[0], "desc")) {
-				u->examine->_description = parseComment(file);
+				u->examine->_description = parseComment(*_locationScript);
 			}
 			break;
 

@@ -169,10 +169,10 @@ void Parallaction::parseLocation(const char *filename) {
 			}
 		}
 		if (!scumm_stricmp(_tokens[0], "COMMENT")) {
-			_locationComment = parseComment(file);
+			_locationComment = parseComment(*_locationScript);
 		}
 		if (!scumm_stricmp(_tokens[0], "ENDCOMMENT")) {
-			_locationEndComment = parseComment(file);
+			_locationEndComment = parseComment(*_locationScript);
 		}
 		if (!scumm_stricmp(_tokens[0], "ZONE")) {
 			parseZone(file, &_zones, _tokens[1]);

@@ -74,38 +74,18 @@ void Script::seek(int32 offset, int whence) {
 	error("seek not supported on Script streams");
 }
 
-//	looks for next token in a string
-//
-//	scans 's' until one of the stop-chars in 'brk' is found
-//	builds a token and return the part of the string which hasn't been parsed
-
-char *parseNextToken(char *s, char *tok, uint16 count, const char *brk) {
-
-	while (*s != '\0') {
-
-		if (brk[0] == *s) break;
-		if (brk[1] == *s) break;
-		if (brk[2] == *s) break;
-
-		*tok++ = *s++;
-	}
-
-	*tok = '\0';
-	return s;
-}
-
 //
 //	a comment can appear both at location and Zone levels
 //	comments are displayed into rectangles on the screen
 //
-char *Parallaction::parseComment(ArchivedFile *file) {
+char *Parallaction::parseComment(Script &script) {
 
 	char			_tmp_comment[1000] = "\0";
 	char *v194;
 
 	do {
 		char v190[400];
-		v194 = _locationScript->readLine(v190, 400);
+		v194 = script.readLine(v190, 400);
 
 		v194[strlen(v194)-1] = '\0';
 		if (!scumm_stricmp(v194, "endtext"))
@@ -129,6 +109,26 @@ void clearTokens() {
 
 	return;
 
+}
+
+//	looks for next token in a string
+//
+//	scans 's' until one of the stop-chars in 'brk' is found
+//	builds a token and return the part of the string which hasn't been parsed
+
+char *parseNextToken(char *s, char *tok, uint16 count, const char *brk) {
+
+	while (*s != '\0') {
+
+		if (brk[0] == *s) break;
+		if (brk[1] == *s) break;
+		if (brk[2] == *s) break;
+
+		*tok++ = *s++;
+	}
+
+	*tok = '\0';
+	return s;
 }
 
 uint16 fillTokens(char* line) {
