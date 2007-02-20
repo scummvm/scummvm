@@ -47,12 +47,11 @@ protected:
 	mad_frame _frame;
 	mad_synth _synth;
 
-	mad_timer_t _startTime;	
-	mad_timer_t _endTime;
+	const mad_timer_t _startTime;	
+	const mad_timer_t _endTime;
 	mad_timer_t _totalTime;
 	
-	// TODO: For looping, we will have to use a SeekableReadStream here
-	Common::ReadStream *_inStream;
+	Common::SeekableReadStream *_inStream;
 	bool _disposeAfterUse;
 	
 	enum {
@@ -62,17 +61,16 @@ protected:
 	// This buffer contains a slab of input data
 	byte _buf[BUFFER_SIZE + MAD_BUFFER_GUARD];
 
-
-	uint32 _posInFrame;
-	int _curChannel;
-	
+	uint _numLoops;
+	uint _posInFrame;
 	bool _eos;
 	
 public:
-	MP3InputStream(Common::ReadStream *inStream,
+	MP3InputStream(Common::SeekableReadStream *inStream,
 	               bool dispose,
 	               mad_timer_t start = mad_timer_zero,
-	               mad_timer_t end = mad_timer_zero);
+	               mad_timer_t end = mad_timer_zero,
+	               uint numLoops = 1);
 	~MP3InputStream();
 	
 	bool init();
@@ -84,23 +82,23 @@ public:
 	int getRate() const			{ return _frame.header.samplerate; }
 
 protected:
+	void rewind();
 	void decodeMP3Data();
 	bool readMP3Data();
 };
 
-MP3InputStream::MP3InputStream(Common::ReadStream *inStream, bool dispose, mad_timer_t start, mad_timer_t end) :
+MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, bool dispose, mad_timer_t start, mad_timer_t end, uint numLoops) :
 	_inStream(inStream),
 	_disposeAfterUse(dispose),
 	_startTime(start),
 	_endTime(end),
 	_totalTime(mad_timer_zero),
+	_numLoops(numLoops),
+	_posInFrame(0),
 	_eos(false) {
 
 	// Make sure that either start < end, or end is zero (indicating "play until end")
 	assert(mad_timer_compare(_startTime, _endTime) < 0 || mad_timer_sign(_endTime) == 0);
-
-	_posInFrame = 0;
-	_curChannel = 0;
 
 	// The MAD_BUFFER_GUARD must always contain zeros (the reason
 	// for this is that the Layer III Huffman decoder of libMAD
@@ -126,6 +124,24 @@ MP3InputStream::~MP3InputStream() {
 		delete _inStream;
 }
 
+void MP3InputStream::rewind() {
+	// Start over again: reset the decoders, seek back to the start of the file, etc.
+
+	mad_synth_finish(&_synth);
+	mad_frame_finish(&_frame);
+	mad_stream_finish(&_stream);
+	
+	_inStream->seek(0, SEEK_SET);
+	_totalTime = mad_timer_zero;
+	_posInFrame = 0;
+	_eos = false;
+
+	// Reinit MAD
+	mad_stream_init(&_stream);
+	mad_frame_init(&_frame);
+	mad_synth_init(&_synth);
+}
+
 void MP3InputStream::decodeMP3Data() {
 	if (_eos)
 		return;
@@ -141,7 +157,7 @@ void MP3InputStream::decodeMP3Data() {
 			}
 		}
 
-		while (true) {
+		while (!_eos) {
 			_stream.error = MAD_ERROR_NONE;
 
 			// Decode the next header. Note: mad_frame_decode would do this for us, too.
@@ -190,6 +206,12 @@ void MP3InputStream::decodeMP3Data() {
 			mad_synth_frame(&_synth, &_frame);
 			_posInFrame = 0;
 			break;
+		}
+	
+		if (_eos) {
+			// If looping is enabled, try again
+			if (_numLoops == 0 || --_numLoops > 0)
+				rewind();
 		}
 
 	} while (_stream.error == MAD_ERROR_BUFLEN);
@@ -244,7 +266,6 @@ static inline int scale_sample(mad_fixed_t sample) {
 
 int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
-	assert(_curChannel == 0);	// Paranoia check
 	// Keep going as long as we have input available
 	while (samples < numSamples && !_eos) {
 		const int len = MIN(numSamples, samples + (int)(_synth.pcm.length - _posInFrame) * MAD_NCHANNELS(&_frame.header));
@@ -281,6 +302,31 @@ AudioStream *makeMP3Stream(Common::File *file, uint32 size) {
 
 	// .. and create a MP3InputStream from all this
 	return new MP3InputStream(stream, true);
+}
+
+AudioStream *makeMP3Stream(
+	Common::SeekableReadStream *stream,
+	bool disposeAfterUse,
+	uint32 startTime,
+	uint32 duration,
+	uint numLoops) {
+
+	mad_timer_t start;
+	mad_timer_t end;
+
+	// Both startTime and duration are given in milliseconds.
+	// Calculate the appropriate mad_timer_t values from them.
+	mad_timer_set(&start, startTime / 1000, startTime % 1000, 1000);
+	if (duration == 0) {
+		end = mad_timer_zero;
+	} else {
+		int endTime = startTime + duration;
+		mad_timer_set(&end, endTime / 1000, endTime % 1000, 1000);
+	}
+
+	MP3InputStream *mp3Stream = new MP3InputStream(stream, disposeAfterUse, start, end, numLoops);
+	
+	return mp3Stream;
 }
 
 

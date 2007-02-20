@@ -30,6 +30,7 @@
 
 namespace Common {
 	class File;
+	class SeekableReadStream;
 }
 
 namespace Audio {
@@ -46,6 +47,27 @@ DigitalTrackInfo *getMP3Track(int track);
  * factory function, and specify the appropriate size.
  */
 AudioStream *makeMP3Stream(Common::File *file, uint32 size);
+
+
+/**
+ * Create a new AudioStream from the MP3 data in the given stream.
+ * Allows for looping (which is why we require a SeekableReadStream),
+ * and specifying only a portion of the data to be played, based 
+ * on time offsets.
+ *
+ * @param stream			the SeekableReadStream from which to read the MP3 data
+ * @param disposeAfterUse	whether to delete the stream after use
+ * @param startTime			the (optional) time offset in milliseconds from which to start playback 
+ * @param duration			the (optional) time in milliseconds specifying how long to play
+ * @param numLoops			how often the data shall be looped (0 = infinite)
+ * @return	a new AudioStream, or NULL, if an error occured
+ */
+AudioStream *makeMP3Stream(
+	Common::SeekableReadStream *stream,
+	bool disposeAfterUse,
+	uint32 startTime = 0,
+	uint32 duration = 0,
+	uint numLoops = 1);
 
 } // End of namespace Audio
 
