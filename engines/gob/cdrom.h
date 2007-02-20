@@ -19,6 +19,10 @@
  * $Id$
  *
  */
+
+#ifndef GOB_CDROM_H
+#define GOB_CDROM_H
+
 #include "gob/gob.h"
 
 namespace Gob {
@@ -52,3 +56,5 @@ protected:
 };
 
 } // End of namespace Gob
+
+#endif
