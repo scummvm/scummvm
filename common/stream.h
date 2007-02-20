@@ -29,6 +29,7 @@
 namespace Common {
 
 class String;
+class MemoryReadStream;
 
 /**
  * Virtual base class for both ReadStream and WriteStream.
@@ -201,6 +202,13 @@ public:
 	int32 readSint32BE() {
 		return (int32)readUint32BE();
 	}
+	
+	/**
+	 * Read the specified amount of data into a malloc'ed buffer
+	 * which then is wrapped into a MemoryReadStream.
+	 */
+	MemoryReadStream *readStream(uint32 dataSize);
+
 };
 
 
@@ -284,51 +292,40 @@ public:
  */
 class MemoryReadStream : public SeekableReadStream {
 private:
-	const byte *_ptr;
 	const byte * const _ptrOrig;
-	const uint32 _bufSize;
+	const byte *_ptr;
+	const uint32 _size;
 	uint32 _pos;
 	byte _encbyte;
 	bool _disposeMemory;
 
 public:
-	MemoryReadStream(const byte *buf, uint32 len, bool disposeMemory = false) :
-		_ptr(buf),
-		_ptrOrig(buf),
-		_bufSize(len),
+
+	/**
+	 * This constructor takes a pointer to a memory buffer and a length, and
+	 * wraps it. If disposeMemory is true, the MemoryReadStream takes ownership
+	 * of the buffer and hence free's it when destructed.
+	 */
+	MemoryReadStream(const byte *dataPtr, uint32 dataSize, bool disposeMemory = false) :
+		_ptrOrig(dataPtr),
+		_ptr(dataPtr),
+		_size(dataSize),
 		_pos(0),
 		_encbyte(0),
 		_disposeMemory(disposeMemory) {}
 
 	~MemoryReadStream() {
 		if (_disposeMemory)
-			free((void *)_ptrOrig);
+			free(const_cast<byte *>(_ptrOrig));
 	}
 
 	void setEnc(byte value) { _encbyte = value; }
 
-	uint32 read(void *dataPtr, uint32 dataSize) {
-		// Read at most as many bytes as are still available...
-		if (dataSize > _bufSize - _pos)
-			dataSize = _bufSize - _pos;
-		memcpy(dataPtr, _ptr, dataSize);
+	uint32 read(void *dataPtr, uint32 dataSize);
 
-		if (_encbyte) {
-			byte *p = (byte *)dataPtr;
-			byte *end = p + dataSize;
-			while (p < end)
-				*p++ ^= _encbyte;
-		}
-
-		_ptr += dataSize;
-		_pos += dataSize;
-
-		return dataSize;
-	}
-
-	bool eos() const { return _pos == _bufSize; }
+	bool eos() const { return _pos == _size; }
 	uint32 pos() const { return _pos; }
-	uint32 size() const { return _bufSize; }
+	uint32 size() const { return _size; }
 
 	void seek(int32 offs, int whence = SEEK_SET);
 };

@@ -31,14 +31,41 @@ void WriteStream::writeString(const String &str) {
 	write(str.c_str(), str.size());
 }
 
+MemoryReadStream *ReadStream::readStream(uint32 dataSize) {
+	void *buf = malloc(dataSize);
+	dataSize = read(buf, dataSize);
+	assert(dataSize > 0);
+	return new MemoryReadStream((byte *)buf, dataSize, true);
+}
+
+
+uint32 MemoryReadStream::read(void *dataPtr, uint32 dataSize) {
+	// Read at most as many bytes as are still available...
+	if (dataSize > _size - _pos)
+		dataSize = _size - _pos;
+	memcpy(dataPtr, _ptr, dataSize);
+
+	if (_encbyte) {
+		byte *p = (byte *)dataPtr;
+		byte *end = p + dataSize;
+		while (p < end)
+			*p++ ^= _encbyte;
+	}
+
+	_ptr += dataSize;
+	_pos += dataSize;
+
+	return dataSize;
+}
+
 void MemoryReadStream::seek(int32 offs, int whence) {
 	// Pre-Condition
-	assert(_pos <= _bufSize);
+	assert(_pos <= _size);
 	switch (whence) {
 	case SEEK_END:
 		// SEEK_END works just like SEEK_SET, only 'reversed',
 		// i.e. from the end.
-		offs = _bufSize - offs;
+		offs = _size - offs;
 		// Fall through
 	case SEEK_SET:
 		_ptr = _ptrOrig + offs;
@@ -51,7 +78,7 @@ void MemoryReadStream::seek(int32 offs, int whence) {
 		break;
 	}
 	// Post-Condition
-	assert(_pos <= _bufSize);
+	assert(_pos <= _size);
 }
 
 #define LF 0x0A
