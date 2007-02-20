@@ -62,7 +62,12 @@ class Sound {
 public:
 	Sound(Audio::Mixer *mixer, QueenEngine *vm);
 	virtual ~Sound() {}
-	static Sound *giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression);
+
+	/**
+	 * Factory method for subclasses of class Sound.
+	 */
+	static Sound *makeSoundInstance(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression);
+
 	void playSfx(uint16 sfx);
 	void playSpeech(const char *base);
 	void playSong(int16 songNum);
@@ -129,47 +134,6 @@ protected:
 	Audio::SoundHandle _musicHandle;
 #endif
 };
-
-class SilentSound : public Sound {
-public:
-	SilentSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-protected:
-	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle);
-};
-
-class SBSound : public Sound {
-public:
-	SBSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-protected:
-	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle);
-};
-
-#ifdef USE_MAD
-class MP3Sound : public Sound {
-public:
-	MP3Sound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-protected:
-	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle);
-};
-#endif
-
-#ifdef USE_VORBIS
-class OGGSound : public Sound {
-public:
-	OGGSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-protected:
-	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle);
-};
-#endif
-
-#ifdef USE_FLAC
-class FLACSound : public Sound {
-public:
-	FLACSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-protected:
-	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle);
-};
-#endif // #ifdef USE_FLAC
 
 } // End of namespace Queen
 

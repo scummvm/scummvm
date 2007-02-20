@@ -398,7 +398,7 @@ int QueenEngine::init() {
 	_music = new Music(driver, this);
 	_music->hasNativeMT32(native_mt32);
 
-	_sound = Sound::giveSound(_mixer, this, _resource->getCompression());
+	_sound = Sound::makeSoundInstance(_mixer, this, _resource->getCompression());
 	_walk = new Walk(this);
 	//_talkspeedScale = (MAX_TEXT_SPEED - MIN_TEXT_SPEED) / 255.0;
 

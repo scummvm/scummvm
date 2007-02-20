@@ -40,6 +40,55 @@
 
 namespace Queen {
 
+class SilentSound : public Sound {
+public:
+	SilentSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {}
+protected:
+	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
+		// Do nothing
+	}
+};
+
+class SBSound : public Sound {
+public:
+	SBSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {}
+protected:
+	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle);
+};
+
+#ifdef USE_MAD
+class MP3Sound : public Sound {
+public:
+	MP3Sound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {}
+protected:
+	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeMP3Stream(f, size));
+	}
+};
+#endif
+
+#ifdef USE_VORBIS
+class OGGSound : public Sound {
+public:
+	OGGSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {}
+protected:
+	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeVorbisStream(f, size));
+	}
+};
+#endif
+
+#ifdef USE_FLAC
+class FLACSound : public Sound {
+public:
+	FLACSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
+protected:
+	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeFlacStream(f, size));
+	}
+};
+#endif // #ifdef USE_FLAC
+
 Sound::Sound(Audio::Mixer *mixer, QueenEngine *vm) :
 	_mixer(mixer), _vm(vm), _sfxToggle(true), _speechToggle(true), _musicToggle(true), _lastOverride(0) {
 #ifdef ENABLE_AMIGA_MUSIC
@@ -47,7 +96,7 @@ Sound::Sound(Audio::Mixer *mixer, QueenEngine *vm) :
 #endif
 }
 
-Sound *Sound::giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression) {
+Sound *Sound::makeSoundInstance(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression) {
 	if (!mixer->isReady())
 		return new SilentSound(mixer, vm);
 
@@ -113,7 +162,7 @@ void Sound::playSound(const char *base, bool isSpeech) {
 	strcat(name, ".SB");
 	waitFinished(isSpeech);
 	uint32 size;
-	Common::File *f = _vm->resource()->giveSound(name, &size);
+	Common::File *f = _vm->resource()->findSound(name, &size);
 	if (f) {
 		playSoundData(f, size, isSpeech ? &_speechHandle : &_sfxHandle);
 		_speechSfxExists = isSpeech;
@@ -253,9 +302,6 @@ void Sound::loadState(uint32 ver, byte *&ptr) {
 	_lastOverride = (int16)READ_BE_INT16(ptr); ptr += 2;
 }
 
-void SilentSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
-}
-
 void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
 	int headerSize;
 	f->seek(2, SEEK_CUR);
@@ -281,23 +327,5 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 		_mixer->playRaw(Audio::Mixer::kSFXSoundType, soundHandle, sound, size, 11025, flags);
 	}
 }
-
-#ifdef USE_MAD
-void MP3Sound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeMP3Stream(f, size));
-}
-#endif
-
-#ifdef USE_VORBIS
-void OGGSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeVorbisStream(f, size));
-}
-#endif
-
-#ifdef USE_FLAC
-void FLACSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeFlacStream(f, size));
-}
-#endif
 
 } //End of namespace Queen

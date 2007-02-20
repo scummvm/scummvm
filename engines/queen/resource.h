@@ -71,7 +71,7 @@ public:
 	bool fileExists(const char *filename) const { return resourceEntry(filename) != NULL; }
 
 	//! returns a reference to a sound file
-	Common::File *giveSound(const char *filename, uint32 *size);
+	Common::File *findSound(const char *filename, uint32 *size);
 
 	bool isDemo() const { return (_version.features & GF_DEMO) != 0; }
 	bool isInterview() const { return (_version.features & GF_INTERVIEW) != 0; }
