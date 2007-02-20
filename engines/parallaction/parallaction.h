@@ -269,7 +269,7 @@ public:
 
 	InventoryItem	_activeItem;
 
-	LocScript	*_locationScript;
+	Script	*_locationScript;
 
 protected:		// data
 

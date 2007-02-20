@@ -165,6 +165,8 @@ Parallaction::Parallaction(OSystem *syst) :
 	_activeItem._id = 0;
 	_procCurrentHoverItem = -1;
 
+	_locationScript = NULL;
+
 	_musicData1 = 0;
 	strcpy(_characterName1, "null");
 

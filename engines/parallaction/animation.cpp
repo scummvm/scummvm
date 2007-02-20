@@ -269,8 +269,7 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 
 	_numLocals = 0;
 
-	LocScript *script = new LocScript(src);
-//	scriptFillBuffers(file);
+	Script *script = new Script(src);
 
 	fillBuffers(*script);
 
@@ -291,11 +290,13 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 		vCC = (Instruction*)memAlloc(sizeof(Instruction));
 		memset(vCC, 0, sizeof(Instruction));
 		fillBuffers(*script);
-		//	scriptFillBuffers(file);
 	}
 
 	vCC->_index = INST_END;
 	addNode(vD0, &vCC->_node);
+
+	delete script;
+	delete src;
 
 	a->_program->_ip = (Instruction*)a->_program->_node._next;
 

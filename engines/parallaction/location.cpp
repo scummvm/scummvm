@@ -76,8 +76,7 @@ void Parallaction::parseLocation(const char *filename) {
 	uint32 count = file->_endOffset - file->_offset;
 	location_src = (char*)memAlloc(0x4000);
 
-	_locationScript = new LocScript(location_src);
-//	parseInit(location_src);
+	_locationScript = new Script(location_src);
 
 	readArchivedFile(file, location_src, count);
 	closeArchivedFile(file);
@@ -192,6 +191,10 @@ void Parallaction::parseLocation(const char *filename) {
 
 	resolveLocationForwards();
 	_vm->_graphics->freeCnv(&Graphics::_font);
+
+	delete _locationScript;
+	_locationScript = NULL;
+
 	memFree(location_src);
 
 	return;

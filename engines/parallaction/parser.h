@@ -36,18 +36,14 @@ char   *parseComment(ArchivedFile *file);
 uint16 fillBuffers(Common::SeekableReadStream &stream, bool errorOnEOF = false);
 char   *parseNextToken(char *s, char *tok, uint16 count, const char *brk);
 
-//uint16  tableFillBuffers(Common::SeekableReadStream &stream);
-//uint16	scriptFillBuffers(ArchivedFile *file);
-
-
 extern char _tokens[][40];
 
-class LocScript : public Common::SeekableReadStream {
+class Script : public Common::SeekableReadStream {
 
 	const char*	_src;
 
 public:
-	LocScript(const char* s);
+	Script(const char* s);
 
 	uint32 read(void *dataPtr, uint32 dataSize);
 
