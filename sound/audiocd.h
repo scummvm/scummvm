@@ -34,8 +34,10 @@ namespace Audio {
 
 class DigitalTrackInfo {
 public:
+	virtual ~DigitalTrackInfo() {}
+
 	virtual void play(Mixer *mixer, SoundHandle *handle, int startFrame, int duration) = 0;
-	virtual ~DigitalTrackInfo() { }
+//	virtual void stop();
 };
 
 
@@ -80,7 +82,7 @@ private:
 	};
 	int _cachedTracks[CACHE_TRACKS];
 	DigitalTrackInfo *_trackInfo[CACHE_TRACKS];
-	int _currentCache;
+	int _currentCacheIdx;
 
 	Mixer	*_mixer;
 };

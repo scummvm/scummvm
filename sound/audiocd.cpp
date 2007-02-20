@@ -47,7 +47,7 @@ struct TrackFormat {
 	DigitalTrackInfo* (*openTrackFunction)(int);
 };
 
-static const TrackFormat TRACK_FORMATS[] = {
+static const TrackFormat s_trackFormats[] = {
 	/* decoderName,		openTrackFunction */
 #ifdef USE_VORBIS
 	{ "Ogg Vorbis",		getVorbisTrack },
@@ -71,7 +71,7 @@ AudioCDManager::AudioCDManager() {
 	_cd.start = 0;
 	_cd.duration = 0;
 	_cd.numLoops = 0;
-	_currentCache = 0;
+	_currentCacheIdx = 0;
 	_mixer = g_system->getMixer();
 	assert(_mixer);
 }
@@ -142,36 +142,40 @@ AudioCDManager::Status AudioCDManager::getStatus() const {
 }
 
 int AudioCDManager::getCachedTrack(int track) {
-	int i;
-
 	// See if we find the track in the cache
-	for (i = 0; i < CACHE_TRACKS; i++)
+	for (int i = 0; i < CACHE_TRACKS; i++)
 		if (_cachedTracks[i] == track) {
-			if (_trackInfo[i])
-				return i;
-			else
-				return -1;
+			return _trackInfo[i] ? i : -1;
 		}
-	int currentIndex = _currentCache++;
-	_currentCache %= CACHE_TRACKS;
 
-	// Not found, see if it exists
-
-	// First, delete the previous track info object
-	delete _trackInfo[currentIndex];
-	_trackInfo[currentIndex] = NULL;
-	_cachedTracks[currentIndex] = 0;
-
-	for (i = 0; i < ARRAYSIZE(TRACK_FORMATS)-1 && _trackInfo[currentIndex] == NULL; ++i)
-		_trackInfo[currentIndex] = TRACK_FORMATS[i].openTrackFunction(track);
-
-	if (_trackInfo[currentIndex] != NULL) {
-		_cachedTracks[currentIndex] = track;
-		return currentIndex;
+	// The track is not already in the cache. Try and see if
+	// we can load it.
+	DigitalTrackInfo *newTrack = 0;
+	for (const TrackFormat *format = s_trackFormats;
+	     format->openTrackFunction != NULL && newTrack == NULL;
+	     ++format) {
+		newTrack = format->openTrackFunction(track);
 	}
 
-	debug(2, "Track %d not available in compressed format", track);
-	return -1;
+	int currentIndex = -1;
+
+	if (newTrack != NULL) {
+		// We successfully loaded a digital track. Store it into _trackInfo.
+
+		currentIndex = _currentCacheIdx++;
+		_currentCacheIdx %= CACHE_TRACKS;
+	
+		// First, delete the previous track info object
+		delete _trackInfo[currentIndex];
+
+		// Then, store the new track info object
+		_trackInfo[currentIndex] = newTrack;
+		_cachedTracks[currentIndex] = track;
+	} else {
+		debug(2, "Track %d not available in compressed format", track);
+	}
+
+	return currentIndex;
 }
 
 } // End of namespace Audio
