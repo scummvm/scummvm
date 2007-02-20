@@ -102,8 +102,6 @@ private:
 	OSystem *_syst;
 	Common::Mutex _mutex;
 
-	Channel *_premixChannel;
-
 	int _volumeForSoundType[4];
 
 	uint32 _handleSeed;
@@ -120,21 +118,12 @@ public:
 	/**
 	 * Is the mixer ready and setup? This may not be the case on systems which
 	 * don't support digital sound output. In that case, the mixer proc may
-	 * never be called. That in turn can cause breakage in games which use the
-	 * premix callback for syncing. In particular, the Adlib MIDI emulation...
+	 * never be called. That in turn can cause breakage in games which try to
+	 * sync with an audio stream. In particular, the Adlib MIDI emulation...
 	 *
 	 * @return whether the mixer is ready and setup
 	 */
 	bool isReady() const { return _mixerReady; };
-
-
-
-	/**
-	 * Set the premix stream. This is mainly used for the adlib music, but
-	 * is not limited to it. The premix stream is invoked by the mixer whenever
-	 * it needs to generate any data, before any other mixing takes place.
-	 */
-	void setupPremix(AudioStream *stream, SoundType type = kPlainSoundType);
 
 
 
@@ -182,7 +171,7 @@ public:
 	/**
 	 * Stop all currently playing sounds.
 	 */
-	void stopAll(bool force = false);
+	void stopAll();
 
 	/**
 	 * Stop playing the sound with given ID.
@@ -201,8 +190,8 @@ public:
 
 
 	/**
-	 * Pause/unpause all sounds, including all regular channels and the
-	 * premix channel.
+	 * Pause/unpause all sounds, including all regular and permanent 
+	 * channels
 	 *
 	 * @param paused true to pause everything, false to unpause
 	 */

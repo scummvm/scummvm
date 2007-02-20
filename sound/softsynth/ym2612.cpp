@@ -741,7 +741,7 @@ int MidiDriver_YM2612::open() {
 
 	MidiDriver_Emulated::open();
 
-	_mixer->setupPremix(this);
+	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 	return 0;
 }
 
@@ -750,8 +750,7 @@ void MidiDriver_YM2612::close() {
 		return;
 	_isOpen = false;
 
-	// Detach the premix callback handler
-	_mixer->setupPremix(0);
+	_mixer->stopHandle(_mixerSoundHandle);
 }
 
 void MidiDriver_YM2612::send(uint32 b) {

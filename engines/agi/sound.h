@@ -26,10 +26,7 @@
 #define AGI_SOUND_H
 
 #include "sound/audiostream.h"
-
-namespace Audio {
-class Mixer;
-} // End of namespace Audio
+#include "sound/mixer.h"
 
 namespace Agi {
 
@@ -128,6 +125,7 @@ public:
 
 private:
 	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundHandle;
 	uint32 _sampleRate;
 
 	void premixerCall(int16 *buf, uint len);

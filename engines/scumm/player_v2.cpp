@@ -375,13 +375,12 @@ Player_V2::Player_V2(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr) {
 	set_pcjr(pcjr);
 	setMusicVolume(255);
 
-	_mixer->setupPremix(this);
+	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 }
 
 Player_V2::~Player_V2() {
 	mutex_up();
-	// Detach the premix callback handler
-	_mixer->setupPremix(0);
+	_mixer->stopHandle(_soundHandle);
 	mutex_down();
 }
 

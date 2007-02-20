@@ -30,6 +30,7 @@ class MidiDriver_Emulated : public Audio::AudioStream, public MidiDriver {
 protected:
 	bool _isOpen;
 	Audio::Mixer *_mixer;
+	Audio::SoundHandle _mixerSoundHandle;
 
 private:
 	Common::TimerManager::TimerProc _timerProc;

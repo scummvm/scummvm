@@ -46,12 +46,11 @@ Player_MOD::Player_MOD(Audio::Mixer *mixer) {
 	_playproc = NULL;
 	_playparam = NULL;
 
-	_mixer->setupPremix(this);
+	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 }
 
 Player_MOD::~Player_MOD() {
-	// Detach the premix callback handler
-	_mixer->setupPremix(0);
+	_mixer->stopHandle(_soundHandle);
 	for (int i = 0; i < MOD_MAXCHANS; i++) {
 		if (!_channels[i].id)
 			continue;

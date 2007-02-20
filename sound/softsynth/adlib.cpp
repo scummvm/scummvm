@@ -847,7 +847,7 @@ int MidiDriver_ADLIB::open() {
 	adlib_write(0xBD, 0x00);
 	create_lookup_table();
 
-	_mixer->setupPremix(this);
+	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 
 	return 0;
 }
@@ -857,8 +857,7 @@ void MidiDriver_ADLIB::close() {
 		return;
 	_isOpen = false;
 
-	// Detach the premix callback handler
-	_mixer->setupPremix(0);
+	_mixer->stopHandle(_mixerSoundHandle);
 
 	uint i;
 	for (i = 0; i < ARRAYSIZE(_voices); ++i) {

@@ -50,7 +50,7 @@ Engine::Engine(OSystem *syst)
 }
 
 Engine::~Engine() {
-	_mixer->stopAll(true);
+	_mixer->stopAll();
 
 	g_engine = NULL;
 }

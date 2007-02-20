@@ -176,6 +176,7 @@ private:
 
 	Common::Mutex _mutex;
 
+	Audio::SoundHandle _mixerSoundHandle;
 	Audio::SoundHandle _leadInHandle;
 	Audio::SoundHandle _leadOutHandle;
 

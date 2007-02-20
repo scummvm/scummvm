@@ -28,10 +28,7 @@
 #include "common/mutex.h"
 #include "scumm/music.h"
 #include "sound/audiostream.h"
-
-namespace Audio {
-	class Mixer;
-}
+#include "sound/mixer.h"
 
 namespace Scumm {
 
@@ -96,6 +93,7 @@ public:
 protected:
 	bool _isV3Game;
 	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundHandle;
 	ScummEngine *_vm;
 
 	bool _pcjr;

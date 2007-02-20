@@ -57,8 +57,6 @@
 
 namespace Audio {
 class AudioStream;
-class Mixer;
-class SoundHandle;
 } // end of namespace Audio
 
 namespace Kyra {

@@ -108,7 +108,6 @@ Mixer::Mixer() {
 
 	_handleSeed = 0;
 
-	_premixChannel = 0;
 	int i = 0;
 
 	for (i = 0; i < ARRAYSIZE(_volumeForSoundType); i++)
@@ -121,27 +120,12 @@ Mixer::Mixer() {
 }
 
 Mixer::~Mixer() {
-	stopAll(true);
-
-	delete _premixChannel;
-	_premixChannel = 0;
+	for (int i = 0; i != NUM_CHANNELS; i++)
+		delete _channels[i];
 }
 
 uint Mixer::getOutputRate() const {
 	return (uint)_syst->getOutputSampleRate();
-}
-
-void Mixer::setupPremix(AudioStream *stream, SoundType type) {
-	Common::StackLock lock(_mutex);
-
-	delete _premixChannel;
-	_premixChannel = 0;
-
-	if (stream == 0)
-		return;
-
-	// Create the channel
-	_premixChannel = new Channel(this, type, stream, false);
 }
 
 void Mixer::insertChannel(SoundHandle *handle, Channel *chan) {
@@ -246,10 +230,7 @@ void Mixer::mix(int16 *buf, uint len) {
 	//  zero the buf
 	memset(buf, 0, 2 * len * sizeof(int16));
 
-	if (_premixChannel && !_premixChannel->isPaused())
-		_premixChannel->mix(buf, len);
-
-	// now mix all channels
+	// mix all channels
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i]) {
 			if (_channels[i]->isFinished()) {
@@ -268,18 +249,14 @@ void Mixer::mixCallback(void *s, byte *samples, int len) {
 	((Mixer *)s)->mix((int16 *)samples, len >> 2);
 }
 
-void Mixer::stopAll(bool force) {
+void Mixer::stopAll() {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++) {
-		if (_channels[i] != 0) {
-			if (force || !_channels[i]->isPermanent()) {
-				delete _channels[i];
-				_channels[i] = 0;
-			}
+		if (_channels[i] != 0 && !_channels[i]->isPermanent()) {
+			delete _channels[i];
+			_channels[i] = 0;
 		}
 	}
-	
-	// Note: the _premixChannel is *not* affected by stopAll!
 }
 
 void Mixer::stopID(int id) {
@@ -341,10 +318,6 @@ void Mixer::pauseAll(bool paused) {
 			_channels[i]->pause(paused);
 		}
 	}
-
-	// Unlike stopAll, we also pause the premix channel, if present.
-	if (_premixChannel)
-		_premixChannel->pause(paused);
 }
 
 void Mixer::pauseID(int id, bool paused) {

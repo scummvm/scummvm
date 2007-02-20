@@ -406,6 +406,7 @@ private:
 
 	Common::Mutex _mutex;
 	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundHandle;
 
 	bool _v2;
 
@@ -445,7 +446,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer, bool v2) {
 
 	_tablePtr1 = _tablePtr2 = 0;
 
-	_mixer->setupPremix(this);
+	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 
 	_samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
 	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
@@ -456,7 +457,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer, bool v2) {
 }
 
 AdlibDriver::~AdlibDriver() {
-	_mixer->setupPremix(0);
+	_mixer->stopHandle(_soundHandle);
 	OPLDestroy(_adlib);
 	_adlib = 0;
 }

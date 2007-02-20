@@ -27,10 +27,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/fmopl.h"
-
-namespace Audio {
-	class Mixer;
-}
+#include "sound/mixer.h"
 
 namespace Cine {
 	
@@ -105,6 +102,7 @@ protected:
 	FM_OPL *_opl;
 	int _sampleRate;
 	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundHandle;
 
 	byte _vibrato;
 	int _channelsVolumeTable[4];

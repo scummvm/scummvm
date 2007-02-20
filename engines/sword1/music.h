@@ -27,11 +27,8 @@
 #include "common/mutex.h"
 #include "common/file.h"
 #include "sound/audiostream.h"
+#include "sound/mixer.h"
 #include "sound/rate.h"
-
-namespace Audio {
-	class Mixer;
-}
 
 namespace Sword1 {
 
@@ -108,6 +105,7 @@ private:
 	MusicHandle _handles[2];
 	Audio::RateConverter *_converter[2];
 	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundHandle;
 	uint32 _sampleRate;
 	Common::Mutex _mutex;
 

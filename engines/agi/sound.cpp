@@ -324,14 +324,14 @@ int SoundMgr::initSound() {
 	/*loadInstruments("demo.sys"); */
 #endif
 
-	_mixer->setupPremix(this);
+	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 
 	return r;
 }
 
 void SoundMgr::deinitSound() {
 	debugC(3, kDebugLevelSound, "()");
-	_mixer->setupPremix(NULL);
+	_mixer->stopHandle(_soundHandle);
 	free(sndBuffer);
 }
 

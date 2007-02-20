@@ -39,12 +39,12 @@ AdlibMusic::AdlibMusic(Audio::Mixer *pMixer, Disk *pDisk)
 
 	_opl = makeAdlibOPL(_sampleRate);
 
-	_mixer->setupPremix(this);
+	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 }
 
 AdlibMusic::~AdlibMusic(void) {
 
-	_mixer->setupPremix(0);
+	_mixer->stopHandle(_soundHandle);
 }
 
 void AdlibMusic::premixerCall(int16 *data, uint len) {

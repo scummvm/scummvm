@@ -83,11 +83,11 @@ Sound::Sound(Sword2Engine *vm) {
 	_mixBuffer = NULL;
 	_mixBufferLen = 0;
 
-	_vm->_mixer->setupPremix(this, Audio::Mixer::kMusicSoundType);
+	_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 }
 
 Sound::~Sound() {
-	_vm->_mixer->setupPremix(0);
+	_vm->_mixer->stopHandle(_mixerSoundHandle);
 
 	clearFxQueue(true);
 	stopMusic(true);

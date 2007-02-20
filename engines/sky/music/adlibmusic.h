@@ -26,10 +26,7 @@
 #include "sky/music/musicbase.h"
 #include "sound/audiostream.h"
 #include "sound/fmopl.h"
-
-namespace Audio {
-	class Mixer;
-}
+#include "sound/mixer.h"
 
 namespace Sky {
 
@@ -50,6 +47,7 @@ public:
 private:
 	FM_OPL *_opl;
 	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundHandle;
 	uint8 *_initSequence;
 	uint32 _sampleRate, _nextMusicPoll;
 	virtual void setupPointers(void);
