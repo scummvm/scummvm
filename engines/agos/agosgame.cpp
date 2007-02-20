@@ -204,6 +204,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
 
+	// Elvira 2 - French Amiga Floppy
+	{
+		{
+			"elvira2",
+			"Floppy",
+
+			{
+	{ "gameamiga",		GAME_BASEFILE,	"7bb91fd61a135243b18b74b51ebca6bf", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"a88b1c02e13ab04dd790ec30502c323d", -1},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", -1},
+	{ "start",		GAME_RESTFILE,	"a9f876c6c66dfd011b971da3dc7b4ada", -1},
+	{ "stripped.txt",	GAME_STRFILE,	"41c975a9c1106cb5298a0bc3df0a266e", -1},
+	{ "tbllist",		GAME_TBLFILE,	"177f5f2640e80ef92d1421d32de06a5e", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::FR_FRA,
+			Common::kPlatformAmiga,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_ELVIRA2,
+		GID_ELVIRA2,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
+	},
+
 	// Elvira 2 - English Atari ST Floppy
 	{
 		{
