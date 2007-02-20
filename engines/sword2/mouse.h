@@ -19,10 +19,10 @@
  * $Id$
  */
 
-#include "common/rect.h"
-
 #ifndef SWORD2_MOUSE_H
 #define SWORD2_MOUSE_H
+
+#include "common/rect.h"
 
 #define MENU_MASTER_OBJECT	44
 
