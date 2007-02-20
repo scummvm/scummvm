@@ -279,40 +279,6 @@ public:
 };
 
 /**
- * XORReadStream is a wrapper around an arbitrary other ReadStream,
- * which 'decrypts' the data being read by XORing all data bytes with the given
- * encryption 'key'.
- *
- * Currently, this is not used anywhere, it's just a demo of how one can chain
- * streams if necessary.
- */
-class XORReadStream : public ReadStream {
-private:
-	byte _encbyte;
-	ReadStream *_realStream;
-public:
-	XORReadStream(ReadStream *in = 0, byte enc = 0) :  _encbyte(enc), _realStream(in) {}
-	void setStream(ReadStream *in) { _realStream = in; }
-	void setEnc(byte value) { _encbyte = value; }
-
-	virtual bool eos() const { return _realStream->eos(); }
-	virtual bool ioFailed() const { return _realStream->ioFailed(); }
-	virtual void clearIOFailed() { _realStream->clearIOFailed(); }
-
-	uint32 read(void *dataPtr, uint32 dataSize) {
-		assert(_realStream);
-		uint32 len = _realStream->read(dataPtr, dataSize);
-		if (_encbyte) {
-			byte *p = (byte *)dataPtr;
-			byte *end = p + len;
-			while (p < end)
-				*p++ ^= _encbyte;
-		}
-		return len;
-	}
-};
-
-/**
  * Simple memory based 'stream', which implements the ReadStream interface for
  * a plain memory block.
  */
@@ -323,9 +289,21 @@ private:
 	const uint32 _bufSize;
 	uint32 _pos;
 	byte _encbyte;
+	bool _disposeMemory;
 
 public:
-	MemoryReadStream(const byte *buf, uint32 len) : _ptr(buf), _ptrOrig(buf), _bufSize(len), _pos(0), _encbyte(0) {}
+	MemoryReadStream(const byte *buf, uint32 len, bool disposeMemory = false) :
+		_ptr(buf),
+		_ptrOrig(buf),
+		_bufSize(len),
+		_pos(0),
+		_encbyte(0),
+		_disposeMemory(disposeMemory) {}
+
+	~MemoryReadStream() {
+		if (_disposeMemory)
+			free((void *)_ptrOrig);
+	}
 
 	void setEnc(byte value) { _encbyte = value; }
 
