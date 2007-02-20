@@ -44,4 +44,4 @@ struct AgiLogic {
 
 }                             // End of namespace Agi
 
-#endif				/* AGI_LOGIC_H */
+#endif /* AGI_LOGIC_H */

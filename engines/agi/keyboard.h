@@ -75,4 +75,4 @@ extern uint8 scancodeTable[];
 
 }                             // End of namespace Agi
 
-#endif				/* AGI_KEYBOARD_H */
+#endif /* AGI_KEYBOARD_H */

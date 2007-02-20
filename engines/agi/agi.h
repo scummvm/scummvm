@@ -756,4 +756,4 @@ public:
 
 } // End of namespace Agi
 
-#endif // AGI_H
+#endif /* AGI_H */

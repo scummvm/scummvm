@@ -41,4 +41,4 @@ extern AgiLogicnames logicNamesIf[];
 
 } // End of namespace Agi
 
-#endif				/* AGI_OPCODES_H */
+#endif /* AGI_OPCODES_H */

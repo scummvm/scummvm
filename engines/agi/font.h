@@ -22,6 +22,9 @@
  *
  */
 
+#ifndef AGI_FONT_H
+#define AGI_FONT_H
+
 #include "common/stdafx.h"
 
 #include "agi/agi.h"
@@ -291,3 +294,5 @@ static const uint8 curFont[] = {
 };
 
 } // End of namespace Agi
+
+#endif /* AGI_FONT_H */

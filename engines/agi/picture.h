@@ -75,4 +75,4 @@ public:
 
 } // End of namespace Agi
 
-#endif				/* AGI_PICTURE_H */
+#endif /* AGI_PICTURE_H */

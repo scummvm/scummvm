@@ -31,4 +31,4 @@ void lzwExpand(uint8 *, uint8 *, int32);
 
 }				// End of namespace Agi
 
-#endif				/* AGI_LZW_H */
+#endif /* AGI_LZW_H */
