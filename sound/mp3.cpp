@@ -33,10 +33,8 @@
 #include <mad.h>
 
 
-using Common::File;
-
-
 namespace Audio {
+
 
 #pragma mark -
 #pragma mark --- MP3 (MAD) stream ---
@@ -44,242 +42,191 @@ namespace Audio {
 
 
 class MP3InputStream : public AudioStream {
-	struct mad_stream _stream;
-	struct mad_frame _frame;
-	struct mad_synth _synth;
-	mad_timer_t _duration;
-	uint32 _posInFrame;
-	uint32 _bufferSize;
-	int _size;
-	bool _isStereo;
-	int _curChannel;
-	File *_file;
-	byte *_ptr;
+protected:
+	mad_stream _stream;
+	mad_frame _frame;
+	mad_synth _synth;
 
-	bool init();
-	void refill(bool first = false);
-	inline bool eosIntern() const;
+	mad_timer_t _startTime;	
+	mad_timer_t _endTime;
+	mad_timer_t _totalTime;
+	
+	// TODO: For looping, we will have to use a SeekableReadStream here
+	Common::ReadStream *_inStream;
+	bool _disposeAfterUse;
+	
+	enum {
+		BUFFER_SIZE = 5 * 8192
+	};
+	
+	// This buffer contains a slab of input data
+	byte _buf[BUFFER_SIZE + MAD_BUFFER_GUARD];
+
+
+	uint32 _posInFrame;
+	int _curChannel;
+	
+	bool _eos;
+	
 public:
-	MP3InputStream(File *file, mad_timer_t duration);
-	MP3InputStream(File *file, uint32 size);
+	MP3InputStream(Common::ReadStream *inStream,
+	               bool dispose,
+	               mad_timer_t start = mad_timer_zero,
+	               mad_timer_t end = mad_timer_zero);
 	~MP3InputStream();
+	
+	bool init();
+	
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	bool endOfData() const		{ return eosIntern(); }
-	bool isStereo() const		{ return _isStereo; }
-
+	bool endOfData() const		{ return _eos; }
+	bool isStereo() const		{ return MAD_NCHANNELS(&_frame.header) == 2; }
 	int getRate() const			{ return _frame.header.samplerate; }
-#ifdef __SYMBIAN32__
-	// Used to store the last position stream was read for symbian
-	int _lastReadPosition;
-#endif
+
+protected:
+	void decodeMP3Data();
+	bool readMP3Data();
 };
 
+MP3InputStream::MP3InputStream(Common::ReadStream *inStream, bool dispose, mad_timer_t start, mad_timer_t end) :
+	_inStream(inStream),
+	_disposeAfterUse(dispose),
+	_startTime(start),
+	_endTime(end),
+	_totalTime(mad_timer_zero),
+	_eos(false) {
 
-/**
- * Play the MP3 data in the given file for the specified duration.
- *
- * @param file		file containing the MP3 data
- * @param duration	playback duration in frames (1/75th of a second), 0 means
- *					playback until EOF
- */
-MP3InputStream::MP3InputStream(File *file, mad_timer_t duration) {
-	// duration == 0 means: play everything till end of file
+	// Make sure that either start < end, or end is zero (indicating "play until end")
+	assert(mad_timer_compare(_startTime, _endTime) < 0 || mad_timer_sign(_endTime) == 0);
 
+	_posInFrame = 0;
+	_curChannel = 0;
+
+	// The MAD_BUFFER_GUARD must always contain zeros (the reason
+	// for this is that the Layer III Huffman decoder of libMAD
+	// may read a few bytes beyond the end of the input buffer).
+	memset(_buf + BUFFER_SIZE, 0, MAD_BUFFER_GUARD);
+
+	// Init MAD
 	mad_stream_init(&_stream);
 	mad_frame_init(&_frame);
 	mad_synth_init(&_synth);
 
-	_duration = duration;
-
-#if defined(__SYMBIAN32__)
-	// Symbian can't share filehandles between different threads.
-	// So create a new file  and seek that to the other filehandles position
-	_file= new File;
-	_file->open(file->name());
-	_file->seek(file->pos());
-#else
-	_file = file;
-#endif
-
-	_posInFrame = 0;
-	_bufferSize = 128 * 1024;	// Default buffer size is 128K
-
-	init();
-	_file->incRef();
-}
-
-/**
- * Play the MP3 data in the given file, using at most the given number of bytes.
- *
- * @param file		file containing the MP3 data
- * @param size		limits playback based on the number of input bytes, 0 means
- *					playback until EOF
- */
-MP3InputStream::MP3InputStream(File *file, uint32 size) {
-	mad_stream_init(&_stream);
-	mad_frame_init(&_frame);
-	mad_synth_init(&_synth);
-
-	_duration = mad_timer_zero;
-
-#if defined(__SYMBIAN32__)
-	// Symbian can't share filehandles between different threads.
-	// So create a new file  and seek that to the other filehandles position
-	_file= new File;
-	_file->open(file->name());
-	_file->seek(file->pos());
-#else
-	_file = file;
-#endif
-
-	_posInFrame = 0;
-	_bufferSize = size ? size : (128 * 1024);	// Default buffer size is 128K
-
-	init();
-
-	// If a size is specified, we do not perform any further read operations
-	if (size) {
-#ifdef __SYMBIAN32__
-		delete _file;
-#endif
-		_file = NULL;
-	} else {
-		_file->incRef();
-	}
+	// Decode the first chunk of data.
+	decodeMP3Data();
 }
 
 MP3InputStream::~MP3InputStream() {
+	// Deinit MAD
 	mad_synth_finish(&_synth);
 	mad_frame_finish(&_frame);
 	mad_stream_finish(&_stream);
 
-	free(_ptr);
-
-	if (_file)
-		_file->decRef();
-#ifdef __SYMBIAN32__
-	delete _file;
-#endif
+	if (_disposeAfterUse)
+		delete _inStream;
 }
 
-bool MP3InputStream::init() {
-	_isStereo = false;
-	_curChannel = 0;
-	_ptr = (byte *)malloc(_bufferSize + MAD_BUFFER_GUARD);
+void MP3InputStream::decodeMP3Data() {
+	if (_eos)
+		return;
 
-	// Read in the first chunk of the MP3 file
-	_size = _file->read(_ptr, _bufferSize);
-	if (_size <= 0) {
-		warning("MP3InputStream: Failed to read MP3 data");
+	do {
+
+		// If necessary, load more data
+		if (_stream.buffer == NULL || _stream.error == MAD_ERROR_BUFLEN) {
+			if (!readMP3Data()) {
+				// We tried to read more data but failed -> end of stream reached
+				_eos = true;
+				break;
+			}
+		}
+
+		while (true) {
+			_stream.error = MAD_ERROR_NONE;
+
+			// Decode the next header. Note: mad_frame_decode would do this for us, too.
+			// However, for seeking we don't want to decode the full frame (else it would
+			// be far too slow). Hence we perform this explicitly in a separate step.
+			if (mad_header_decode(&_frame.header, &_stream) == -1) {
+				if (_stream.error == MAD_ERROR_BUFLEN) {
+					break; // Read more data
+				} else if (MAD_RECOVERABLE(_stream.error)) {
+					debug(1, "MP3InputStream: Recoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
+					continue;
+				} else {
+					warning("MP3InputStream: Unrecoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
+					break;
+				}
+			}
+		
+			// Sum up the total playback time so far
+			mad_timer_add(&_totalTime, _frame.header.duration);
+			
+			// If we have not yet reached the start point, skip to the next frame
+			if (mad_timer_compare(_totalTime, _startTime) < 0)
+				continue;
+
+			// If an end time is specified and we are past it, stop
+			if (mad_timer_sign(_endTime) > 0 && mad_timer_compare(_totalTime, _endTime) > 0) {
+				_eos = true;
+				break;
+			}
+			
+			// Decode the next frame
+			if (mad_frame_decode(&_frame, &_stream) == -1) {
+				if (_stream.error == MAD_ERROR_BUFLEN) {
+					break; // Read more data
+				} else if (MAD_RECOVERABLE(_stream.error)) {
+					// FIXME: should we do anything here?
+					debug(1, "MP3InputStream: Recoverable error in mad_frame_decode (%s)", mad_stream_errorstr(&_stream));
+					continue;
+				} else {
+					warning("MP3InputStream: Unrecoverable error in mad_frame_decode (%s)", mad_stream_errorstr(&_stream));
+					break;
+				}
+			}
+			
+			// Synthesize PCM data
+			mad_synth_frame(&_synth, &_frame);
+			_posInFrame = 0;
+			break;
+		}
+
+	} while (_stream.error == MAD_ERROR_BUFLEN);
+	
+	if (_stream.error != MAD_ERROR_NONE)
+		_eos = true;
+}
+
+bool MP3InputStream::readMP3Data() {
+	uint32 remaining = 0;
+
+	// Give up immediately if we already used up all data in the stream
+	if (_inStream->eos())
 		return false;
+
+	if (_stream.next_frame) {
+		// If there is still data in the MAD stream, we need to preserve it.
+		// Note that we use memmove, as we are reusing the same buffer,
+		// and hence the data regions we copy from and to may overlap.
+		remaining = _stream.bufend - _stream.next_frame;
+		assert(remaining < BUFFER_SIZE);	// Paranoia check
+		memmove(_buf, _stream.next_frame, remaining);
 	}
 
+	// Try to read the next block
+	uint32 size = _inStream->read(_buf + remaining, BUFFER_SIZE - remaining);
+	if (size <= 0) {
+		return false;
+	}
+	
 	// Feed the data we just read into the stream decoder
-	mad_stream_buffer(&_stream, _ptr, _size);
-
-	// Read in initial data
-	refill(true);
-
-	// Check the header, determine if this is a stereo stream
-	int num;
-	switch (_frame.header.mode) {
-	case MAD_MODE_SINGLE_CHANNEL:
-	case MAD_MODE_DUAL_CHANNEL:
-	case MAD_MODE_JOINT_STEREO:
-	case MAD_MODE_STEREO:
-		num = MAD_NCHANNELS(&_frame.header);
-		assert(num == 1 || num == 2);
-		_isStereo = (num == 2);
-		break;
-	default:
-		warning("MP3InputStream: Cannot determine number of channels");
-		return false;
-	}
+	_stream.error = MAD_ERROR_NONE;
+	mad_stream_buffer(&_stream, _buf, size + remaining);
 
 	return true;
 }
 
-void MP3InputStream::refill(bool first) {
-
-	// Read the next frame (may have to retry several times, e.g.
-	// to skip over ID3 information).
-	// must reopen file at current position
-#ifdef __SYMBIAN32__
-	// For symbian we must check that an alternative file pointer is created, see if its open
-	// If not re-open file and seek to the last read position
-	if (_file && !_file->isOpen()) {
-		_file->open(_file->name());
-		_file->seek(_lastReadPosition);
-	}
-#endif
-
-	while (mad_frame_decode(&_frame, &_stream)) {
-		if (_stream.error == MAD_ERROR_BUFLEN) {
-			int offset;
-
-			if (!_file)
-				_size = -1;
-
-			// Give up immediately if we are at the EOF already
-			if (_size <= 0)
-				return;
-
-			if (!_stream.next_frame) {
-				offset = 0;
-				memset(_ptr, 0, _bufferSize + MAD_BUFFER_GUARD);
-			} else {
-				offset = _stream.bufend - _stream.next_frame;
-				memcpy(_ptr, _stream.next_frame, offset);
-			}
-			// Read in more data from the input file
-			_size = _file->read(_ptr + offset, _bufferSize - offset);
-
-			// Nothing read -> EOF -> bail out
-			if (_size <= 0) {
-				return;
-			}
-			_stream.error = (enum mad_error)0;
-
-			// Feed the data we just read into the stream decoder
-			mad_stream_buffer(&_stream, _ptr, _size + offset);
-
-		} else if (MAD_RECOVERABLE(_stream.error)) {
-			// FIXME: should we do anything here?
-			debug(6, "MP3InputStream: Recoverable error...");
-		} else {
-			error("MP3InputStream: Unrecoverable error");
-		}
-	}
-
-	// If a time limit was specified (i.e. if _duration is non-zero),
-	// check the play back time to determine whether we have to stop now.
-	if (_file && mad_timer_compare(_duration, mad_timer_zero) > 0) {
-		// Subtract the duration of this frame from the time left to play
-		mad_timer_t frame_duration = _frame.header.duration;
-		mad_timer_negate(&frame_duration);
-		mad_timer_add(&_duration, frame_duration);
-
-		if (!first && mad_timer_compare(_duration, mad_timer_zero) <= 0)
-			_size = -1;	// Mark for EOF
-	}
-
-	// Synthesise the frame into PCM samples and reset the buffer position
-	mad_synth_frame(&_synth, &_frame);
-	_posInFrame = 0;
-
-#ifdef __SYMBIAN32__
-	// For symbian we now store the last read position and then close the file
-	if (_file) {
-		_lastReadPosition = _file->pos();
-		_file->close();
-	}
-#endif
-}
-
-inline bool MP3InputStream::eosIntern() const {
-	return (_size < 0 || _posInFrame >= _synth.pcm.length);
-}
 
 static inline int scale_sample(mad_fixed_t sample) {
 	// round
@@ -298,27 +245,55 @@ static inline int scale_sample(mad_fixed_t sample) {
 int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	assert(_curChannel == 0);	// Paranoia check
-	while (samples < numSamples && !eosIntern()) {
-		const int len = MIN(numSamples, samples + (int)(_synth.pcm.length - _posInFrame) * (_isStereo ? 2 : 1));
+	// Keep going as long as we have input available
+	while (samples < numSamples && !_eos) {
+		const int len = MIN(numSamples, samples + (int)(_synth.pcm.length - _posInFrame) * MAD_NCHANNELS(&_frame.header));
 		while (samples < len) {
 			*buffer++ = (int16)scale_sample(_synth.pcm.samples[0][_posInFrame]);
 			samples++;
-			if (_isStereo) {
+			if (MAD_NCHANNELS(&_frame.header) == 2) {
 				*buffer++ = (int16)scale_sample(_synth.pcm.samples[1][_posInFrame]);
 				samples++;
 			}
 			_posInFrame++;
 		}
 		if (_posInFrame >= _synth.pcm.length) {
-			refill();
+			// We used up all PCM data in the current frame -- read & decode more
+			decodeMP3Data();
 		}
 	}
 	return samples;
 }
 
-AudioStream *makeMP3Stream(File *file, uint32 size) {
-	return new MP3InputStream(file, size);
+
+/*
+Crude factory function for MP3InputStream.
+To be replaced as soon as possible
+*/
+
+AudioStream *makeMP3Stream(Common::File *file, uint32 size) {
+	assert(file);
+
+	// FIXME: For now, just read the whole data into memory, and be done
+	// with it. Of course this is in general *not* a nice thing to do...
+
+	// If no size was specified, read the whole remainder of the file
+	if (!size)
+		size = file->size() - file->pos();
+
+	// Read 'size' bytes of data (or until EOF is reached)
+	byte *buf = (byte *)malloc(size);
+	size = file->read(buf, size);
+
+	
+	// Wrap the buffer into a MemoryReadStream ...
+	Common::ReadStream *stream = new Common::MemoryReadStream(buf, size, true);
+	// .. and create a MP3InputStream from all this
+	return new MP3InputStream(stream, true);
 }
+
+
+
 
 
 #pragma mark -
@@ -328,167 +303,126 @@ AudioStream *makeMP3Stream(File *file, uint32 size) {
 
 class MP3TrackInfo : public DigitalTrackInfo {
 private:
-	struct mad_header _mad_header;
-	long _size;
-	File *_file;
-	bool _error_flag;
+	Common::String _filename;
+	bool _errorFlag;
 
 public:
-	MP3TrackInfo(File *file);
-	~MP3TrackInfo();
-	bool error() { return _error_flag; }
+	MP3TrackInfo(const char *filename);
+	bool error() { return _errorFlag; }
 	void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration);
 };
 
 
-MP3TrackInfo::MP3TrackInfo(File *file) {
-#ifdef __SYMBIAN32__
-	// This data is taking a rather big room on symbians limited stack
-	// Create the buffers on the heap instead and let the stream and frame be references instead
-	struct mad_stream* streamptr = (struct mad_stream*)malloc(sizeof(struct mad_stream));
-	struct mad_frame* frameptr = (struct mad_frame*)malloc(sizeof(struct mad_frame));
-	unsigned char* bufferptr = (unsigned char*)malloc(8192);
+MP3TrackInfo::MP3TrackInfo(const char *filename) :
+	_filename(filename),
+	_errorFlag(false) {
 
-	struct mad_stream& stream = *streamptr;
-	struct mad_frame& frame = *frameptr;
-	unsigned char* buffer = bufferptr;
-	uint sizeofbuffer = 8192;
-#else
-	struct mad_stream stream;
-	struct mad_frame frame;
-	unsigned char buffer[8192];
-	uint sizeofbuffer = sizeof(buffer);
-#endif
-	unsigned int buflen = 0;
-	int count = 0;
-
-	// Check the format and bitrate
-	mad_stream_init(&stream);
-	mad_frame_init(&frame);
-
-	while (1) {
-		if (buflen < sizeofbuffer) {
-			int bytes;
-
-			bytes = file->read(buffer + buflen, sizeofbuffer - buflen);
-			if (bytes <= 0) {
-				if (bytes == -1) {
-					warning("Invalid file format");
-					goto error;
-				}
-				break;
-			}
-
-			buflen += bytes;
-		}
-
-		mad_stream_buffer(&stream, buffer, buflen);
-
-		while (1) {
-			if (mad_frame_decode(&frame, &stream) == -1) {
-				if (!MAD_RECOVERABLE(stream.error))
-					break;
-
-				if (stream.error != MAD_ERROR_BADCRC)
-					continue;
-			}
-
-			if (count++)
-				break;
-		}
-
-		if (count || stream.error != MAD_ERROR_BUFLEN)
-			break;
-
-		memmove(buffer, stream.next_frame,
-		        buflen = &buffer[buflen] - stream.next_frame);
+	Common::File file;
+	
+	// Try to open the file
+	if (!file.open(_filename)) {
+		_errorFlag = true;
+		return;
 	}
-
-	if (count)
-		memcpy(&_mad_header, &frame.header, sizeof(mad_header));
-	else {
-		warning("Invalid file format");
-		goto error;
-	}
-
-	mad_frame_finish(&frame);
-	mad_stream_finish(&stream);
-	// Get file size
-	_size = file->size();
-	_file = file;
-	_error_flag = false;
-#ifdef __SYMBIAN32__
-	// Free the heap reservations
-	free(frameptr);
-	free(streamptr);
-	free(bufferptr);
-#endif
-	return;
-
-error:
-	mad_frame_finish(&frame);
-	mad_stream_finish(&stream);
-	_error_flag = true;
-	delete file;
-#ifdef __SYMBIAN32__
-	// Free the heap reservations
-	free(frameptr);
-	free(streamptr);
-	free(bufferptr);
-#endif
+	
+	// Next, try to create a MP3InputStream from it
+	
+	MP3InputStream *mp3Stream = new MP3InputStream(&file, false);
+	
+	// If we see EOS here then that means that not (enough) valid input
+	// data was given.
+	_errorFlag = mp3Stream->endOfData();
+	
+	// Clean up again	
+	delete mp3Stream;
 }
 
 void MP3TrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) {
-	unsigned int offset;
-	mad_timer_t durationTime;
-
-	// Calc offset. As all bitrates are in kilobit per seconds, the division by 200 is always exact
-	offset = (startFrame * (_mad_header.bitrate / (8 * 25))) / 3;
-#ifdef __SYMBIAN32__
-	// Reopen the file if it is not open yet
-	if (!_file->isOpen())
-		_file->open(_file->name());
-#endif
-	_file->seek(offset, SEEK_SET);
-
-	// Calc delay
-	if (!duration) {
-		// FIXME: Using _size here is a problem if offset (or equivalently
-		// startFrame) is non-zero.
-		mad_timer_set(&durationTime, (_size * 8) / _mad_header.bitrate,
-					(_size * 8) % _mad_header.bitrate, _mad_header.bitrate);
+	mad_timer_t start;
+	mad_timer_t end;
+	
+	// Both startFrame and duration are given in frames, where 75 frames are one second.
+	// Calculate the appropriate mad_timer_t values from them.
+	mad_timer_set(&start, startFrame / 75, startFrame % 75, 75);
+	if (duration == 0) {
+		end = mad_timer_zero;
 	} else {
-		mad_timer_set(&durationTime, duration / 75, duration % 75, 75);
+		int endFrame = startFrame + duration;
+		mad_timer_set(&end, endFrame / 75, endFrame % 75, 75);
 	}
 
-	// Play it
-	AudioStream *input = new MP3InputStream(_file, durationTime);
-	mixer->playInputStream(Audio::Mixer::kMusicSoundType, handle, input);
-}
+	// Open the file
+	Common::File *file = new Common::File();
+	assert(file);
+	file->open(_filename);
+	assert(file->isOpen());
 
-MP3TrackInfo::~MP3TrackInfo() {
-	if (! _error_flag)
-		_file->close();
+	// Play it
+	AudioStream *input = new MP3InputStream(file, true, start, end);
+	
+	mixer->playInputStream(Audio::Mixer::kMusicSoundType, handle, input);
 }
 
 DigitalTrackInfo *getMP3Track(int track) {
 	char trackName[2][32];
-	File *file = new File();
 
 	sprintf(trackName[0], "track%d.mp3", track);
 	sprintf(trackName[1], "track%02d.mp3", track);
 
 	for (int i = 0; i < 2; ++i) {
-		if (file->open(trackName[i])) {
-			MP3TrackInfo *trackInfo = new MP3TrackInfo(file);
+		if (Common::File::exists(trackName[i])) {
+			MP3TrackInfo *trackInfo = new MP3TrackInfo(trackName[i]);
 			if (!trackInfo->error())
 				return trackInfo;
 			delete trackInfo;
 		}
 	}
-	delete file;
 	return NULL;
 }
+
+
+#pragma mark -
+
+
+// TODO: Write a factory function (or maybe multiple).
+// It would take:
+// - Either a SeekableReadStream, *or* a memory buffer + length
+//   (in fact, this might warrant having two factories. Using the
+//   memory buffer directly, instead of a MemoryReadStream, is a
+//   a lot more efficient, as it requires both less memory and less
+//   CPU time. On the other hand, we still want to support playback
+//   of big files. 
+//
+//  This would probably be easiest done by two subclasses, and suitable virtual
+//  methods:  MemBufferMP3InputStream vs. StreamMP3InputStream or so
+//
+// Further parameters:
+// - a start time (optional, 0 by default)
+// - a duration/end time (optional, 0 or -1 by default to indicate "play all").
+// - a disposeStorage bool, indicating whether we take over ownership of the
+//   stream/mem buffer and hence should dispose it after use, or not
+// - a numLoops parameter: int giving the number of reptitions, -1 or 0 for inifinity
+// 
+// Possible extra API (for a new AudioStream subclass):
+//  - void setLooping(int numLoops, time start, time duration)
+//  - void rewind
+//  - void seek(time dstTime), maybe even allow relative seeking -- do we need this?
+
+//
+// Extra thoughts: the MP3InputStream should have a method to indicate to the
+//  factory that something went wrong during creation, e.g. the data is not valid
+//  MP3 data. The factory then would dispose the new object and return NULL.
+//  Client code must be changed to handle that, of course.
+
+
+// As to DigitalTrackInfo: Of course eventually we want to get rid of it.
+// Until then, the DigitalTrackInfo should *not* create the stream until its
+// play method is called. This way, the hack for Symbian can hopefully be
+// removed completely.
+
+
+// Closing note: we added File::incRef and File::decRef mainly for the sake of the input streams
+// If we could but get rid of it...
 
 
 } // End of namespace Audio
