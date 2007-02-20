@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SKYTEXT_H
-#define SKYTEXT_H
+#ifndef SKY_TEXT_H
+#define SKY_TEXT_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

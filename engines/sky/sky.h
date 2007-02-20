@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SKYMAIN_H
-#define SKYMAIN_H
+#ifndef SKY_H
+#define SKY_H
 
 #include "common/stdafx.h"
 #include "engines/engine.h"

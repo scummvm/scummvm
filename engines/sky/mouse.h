@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SKYMOUSE_H
-#define SKYMOUSE_H
+#ifndef SKY_MOUSE_H
+#define SKY_MOUSE_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

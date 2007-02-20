@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef RNC_DECO_H
-#define RNC_DECO_H
+#ifndef SKY_RNC_DECO_H
+#define SKY_RNC_DECO_H
 
 #include "common/stdafx.h"
 

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SKYSOUND_H
-#define SKYSOUND_H
+#ifndef SKY_SOUND_H
+#define SKY_SOUND_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

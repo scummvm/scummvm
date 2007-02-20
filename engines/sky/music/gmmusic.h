@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GMMUSIC_H
-#define GMMUSIC_H
+#ifndef SKY_MUSIC_GMMUSIC_H
+#define SKY_MUSIC_GMMUSIC_H
 
 #include "sky/music/musicbase.h"
 

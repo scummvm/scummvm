@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SKYGMCHANNEL_H
-#define SKYGMCHANNEL_H
+#ifndef SKY_MUSIC_GMCHANNEL_H
+#define SKY_MUSIC_GMCHANNEL_H
 
 #include "sky/music/musicbase.h"
 

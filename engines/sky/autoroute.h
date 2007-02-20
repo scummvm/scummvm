@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AUTOROUTE_H
-#define AUTOROUTE_H
+#ifndef SKY_AUTOROUTE_H
+#define SKY_AUTOROUTE_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

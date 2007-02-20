@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef MT32MUSIC_H
-#define MT32MUSIC_H
+#ifndef SKY_MUSIC_MT32MUSIC_H
+#define SKY_MUSIC_MT32MUSIC_H
 
 #include "sky/music/musicbase.h"
 

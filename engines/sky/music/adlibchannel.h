@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ADLIBCHANNEL_H
-#define ADLIBCHANNEL_H
+#ifndef SKY_MUSIC_ADLIBCHANNEL_H
+#define SKY_MUSIC_ADLIBCHANNEL_H
 
 #include "sky/music/musicbase.h"
 #include "sound/fmopl.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ADLIBMUSIC_H
-#define ADLIBMUSIC_H
+#ifndef SKY_MUSIC_ADLIBMUSIC_H
+#define SKY_MUSIC_ADLIBMUSIC_H
 
 #include "sky/music/musicbase.h"
 #include "sound/audiostream.h"

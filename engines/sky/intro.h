@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef INTRO_H
-#define INTRO_H
+#ifndef SKY_INTRO_H
+#define SKY_INTRO_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

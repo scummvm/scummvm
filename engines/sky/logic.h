@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SKYLOGIC_H
-#define SKYLOGIC_H
+#ifndef SKY_LOGIC_H
+#define SKY_LOGIC_H
 
 #include "common/stdafx.h"
 #include "common/util.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CONTROL_H
-#define CONTROL_H
+#ifndef SKY_CONTROL_H
+#define SKY_CONTROL_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

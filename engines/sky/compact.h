@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SKYCOMPACT_H
-#define SKYCOMPACT_H
+#ifndef SKY_COMPACT_H
+#define SKY_COMPACT_H
 
 #include "sky/sky.h"
 #include "sky/struc.h"

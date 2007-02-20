@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SKYDEFS_H
-#define SKYDEFS_H
+#ifndef SKY_DEFS_H
+#define SKY_DEFS_H
 
 #include "common/stdafx.h"
 

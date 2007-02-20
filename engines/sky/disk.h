@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SKYDISK_H
-#define SKYDISK_H
+#ifndef SKY_DISK_H
+#define SKY_DISK_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"

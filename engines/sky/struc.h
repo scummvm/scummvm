@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SKYSTRUC_H
-#define SKYSTRUC_H
+#ifndef SKY_STRUC_H
+#define SKY_STRUC_H
 
 namespace Sky {
 
