@@ -259,8 +259,20 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 	ArchivedFile *file = openArchivedFile(vC8);
 	if (!file) errorFileNotFound(vC8);
 
+	uint32 size = getArchivedFileLength(vC8);
+	char* src = (char*)memAlloc(size+1);
+
+	readArchivedFile(file, src, size);
+	src[size] = '\0';
+
+	closeArchivedFile(file);
+
 	_numLocals = 0;
-	scriptFillBuffers(file);
+
+	LocScript *script = new LocScript(src);
+//	scriptFillBuffers(file);
+
+	fillBuffers(*script);
 
 	a->_program = (Program*)memAlloc(sizeof(Program));
 	memset(a->_program, 0, sizeof(Program));
@@ -278,15 +290,14 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 
 		vCC = (Instruction*)memAlloc(sizeof(Instruction));
 		memset(vCC, 0, sizeof(Instruction));
-		scriptFillBuffers(file);
+		fillBuffers(*script);
+		//	scriptFillBuffers(file);
 	}
 
 	vCC->_index = INST_END;
 	addNode(vD0, &vCC->_node);
 
 	a->_program->_ip = (Instruction*)a->_program->_node._next;
-
-	closeArchivedFile(file);
 
 	return;
 }

@@ -221,7 +221,7 @@ uint16 tableFillBuffers(Common::SeekableReadStream &stream) {
 
 	return fillTokens(line);
 }
-*/
+
 
 //	FIXME
 //	this function does the same Job as fillBuffers, except that
@@ -243,5 +243,5 @@ uint16 scriptFillBuffers(ArchivedFile *file) {
 
 	return fillTokens(line);
 }
-
+*/
 } // namespace Parallaction

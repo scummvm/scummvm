@@ -36,8 +36,8 @@ char   *parseComment(ArchivedFile *file);
 uint16 fillBuffers(Common::SeekableReadStream &stream, bool errorOnEOF = false);
 char   *parseNextToken(char *s, char *tok, uint16 count, const char *brk);
 
-uint16  tableFillBuffers(Common::SeekableReadStream &stream);
-uint16	scriptFillBuffers(ArchivedFile *file);
+//uint16  tableFillBuffers(Common::SeekableReadStream &stream);
+//uint16	scriptFillBuffers(ArchivedFile *file);
 
 
 extern char _tokens[][40];
