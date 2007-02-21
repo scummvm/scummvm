@@ -178,6 +178,7 @@ void AGOSEngine::loadMusic(uint music) {
 		_nextMusicToPlay = -1;
 	} else if (getGameType() == GType_SIMON1) {
 		midi.stop();
+		midi.setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
 		// Support for compressed music from the ScummVM Music Enhancement Project
 		AudioCD.stop();
@@ -190,12 +191,10 @@ void AGOSEngine::loadMusic(uint music) {
 		} else if (getPlatform() == Common::kPlatformAmiga) {
 			loadModule(music);
 		} else if (getFeatures() & GF_TALKIE) {
-			// FIXME: The very last music resource, a cymbal crash for when the
-			// two demons crash into each other, should NOT be looped like the
-			// other music tracks. In simon1dos/talkie the GMF resource includes
-			// a loop override that acomplishes this, but there seems to be nothing
-			// for this in the SMF resources.
-			midi.setLoop(music != 35); // Must do this BEFORE loading music. (GMF may have its own override.)
+			// We skip this music resource, as it was replaced by
+			// a sound effect, and the script was never updated.
+			if (music == 35)
+				return;
 
 			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
 			_gameFile->read(buf, 4);
@@ -216,7 +215,6 @@ void AGOSEngine::loadMusic(uint music) {
 			if (f.isOpen() == false)
 				error("loadMusic: Can't load music from '%s'", filename);
 
-			midi.setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
 			if (getFeatures() & GF_DEMO)
 				midi.loadS1D(&f);
 			else
