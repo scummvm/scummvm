@@ -441,12 +441,7 @@ void AGOSEngine::o_random() {
 	// 53: random
 	uint var = getVarWrapper();
 	uint value = (uint16)getVarOrWord();
-
-	// Copy protection subtitles aren't displayed in Amiga OCS version
-	if ((getFeatures() & GF_32COLOR) && var == 51 && value == 8)
-		writeVariable(var, 4);
-	else
-		writeVariable(var, _rnd.getRandomNumber(value - 1));
+	writeVariable(var, _rnd.getRandomNumber(value - 1));
 }
 
 void AGOSEngine::o_goto() {
