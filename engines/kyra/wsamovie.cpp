@@ -215,7 +215,7 @@ void WSAMovieV1::processFrame(int frameNum, uint8 *dst) {
 WSAMovieV2::WSAMovieV2(KyraEngine *vm) : WSAMovieV1(vm), _xAdd(0), _yAdd(0) {}
 
 int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
-	debugC(9, kDebugLevelMovie, "WSAMovieV3::open('%s', %d, %p)", filename, unk1, (const void *)palBuf);
+	debugC(9, kDebugLevelMovie, "WSAMovieV2::open('%s', %d, %p)", filename, unk1, (const void *)palBuf);
 	close();
 
 	uint32 flags = 0;
