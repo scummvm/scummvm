@@ -20,6 +20,15 @@
  *
  */
 
+#include "common/stdafx.h"
+
+#include "common/util.h"
+#include "common/file.h"
+#include "common/config-manager.h"
+
+#include "sound/mididrv.h"
+#include "sound/mixer.h"
+
 #include "parallaction/parallaction.h"
 #include "parallaction/menu.h"
 #include "parallaction/parser.h"
@@ -29,9 +38,6 @@
 #include "parallaction/graphics.h"
 #include "parallaction/zone.h"
 
-#include "common/util.h"
-#include "common/file.h"
-#include "common/config-manager.h"
 
 namespace Parallaction {
 
@@ -170,6 +176,7 @@ Parallaction::Parallaction(OSystem *syst) :
 	_musicData1 = 0;
 	strcpy(_characterName1, "null");
 
+	_midiPlayer = 0;
 
 	_baseTime = 0;
 
@@ -195,7 +202,7 @@ Parallaction::Parallaction(OSystem *syst) :
 
 
 Parallaction::~Parallaction() {
-
+	delete _midiPlayer;
 }
 
 
@@ -270,6 +277,11 @@ int Parallaction::init() {
 	addNode(&_animations, &_yourself._zone._node);
 	_graphics = new Graphics(this);
 
+	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+	_midiPlayer = new MidiPlayer(driver);
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	return 0;
 }
@@ -856,19 +868,14 @@ void Parallaction::changeCharacter(const char *name) {
 
 			refreshInventory(name);
 
-			stopMusic();
-
 			if (scumm_stricmp(name, "night") && scumm_stricmp(name, "intsushi")) {
 				if (!scumm_stricmp(name, "dino") || !scumm_stricmp(name, "minidino")) {
-					loadMusic("dino");
-				} else
-				if (!scumm_stricmp(name, "donna") || !scumm_stricmp(name, "minidonna")) {
-					loadMusic("donna");
+					_midiPlayer->play("dino");
+				} else if (!scumm_stricmp(name, "donna") || !scumm_stricmp(name, "minidonna")) {
+					_midiPlayer->play("donna");
 				} else {
-					loadMusic("nuts");
+					_midiPlayer->play("nuts");
 				}
-
-				playMusic();
 			}
 
 		}

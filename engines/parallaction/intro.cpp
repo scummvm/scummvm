@@ -124,9 +124,7 @@ extern Credit _credits[];
 
 void _c_startIntro(void *parm) {
 	_rightHandAnim = findAnimation("righthand");
-	stopMusic();
-	loadMusic("intro");
-	playMusic();
+	_vm->_midiPlayer->play("intro");
 	_engineFlags |= kEngineMouse;
 
 	return;

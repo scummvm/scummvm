@@ -313,7 +313,7 @@ void Menu::selectCharacter() {
 	v14._height = BLOCK_HEIGHT;
 
 	_engine->changeCursor(kCursorArrow);
-	stopMusic();
+	_vm->_midiPlayer->stop();
 	_vm->_graphics->_proportionalFont = false;
 
 	_vm->_graphics->loadExternalCnv("slidecnv", &Graphics::_font);

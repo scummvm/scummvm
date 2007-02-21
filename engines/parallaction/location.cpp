@@ -333,23 +333,19 @@ void Parallaction::changeLocation(char *location) {
 //	printf("changeLocation('%s')", location);
 	if (_musicData1 != 0) {
 		if (!scumm_stricmp(_characterName, "dino"))
-			loadMusic("dino");
+			_vm->_midiPlayer->play("dino");
+		else if (!scumm_stricmp(_characterName, "donna"))
+			_vm->_midiPlayer->play("donna");
 		else
-		if (!scumm_stricmp(_characterName, "donna"))
-			loadMusic("donna");
-		else
-			loadMusic("nuts");
+			_vm->_midiPlayer->play("nuts");
 
-		playMusic();
 		_musicData1 = 0;
 
 		debugC(2, kDebugLocation, "changeLocation: started character specific music");
 	}
 
 	if (!scumm_stricmp(location, "night") || !scumm_stricmp(location, "intsushi")) {
-		stopMusic();
-		loadMusic("soft");
-		playMusic();
+		_vm->_midiPlayer->play("soft");
 
 		debugC(2, kDebugLocation, "changeLocation: started music 'soft'");
 	}
@@ -362,7 +358,7 @@ void Parallaction::changeLocation(char *location) {
 		!scumm_stricmp(location, "endtgz") ||
 		!scumm_stricmp(location, "common")) {
 
-		stopMusic();
+		_vm->_midiPlayer->stop();
 		_musicData1 = 1;
 
 		debugC(2, kDebugLocation, "changeLocation: music stopped");

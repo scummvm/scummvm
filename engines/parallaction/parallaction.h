@@ -212,6 +212,7 @@ enum {
 
 class Graphics;
 class Menu;
+class MidiPlayer;
 
 class Parallaction : public Engine {
 
@@ -255,6 +256,8 @@ private:
 	const PARALLACTIONGameDescription *_gameDescription;
 
 public:
+
+	MidiPlayer *_midiPlayer;
 
 	Graphics*	_graphics;
 	Menu*	_menu;

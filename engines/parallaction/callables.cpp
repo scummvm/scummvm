@@ -51,9 +51,7 @@ void _c_play_boogie(void *parm) {
 		return;
 	flag = 0;
 
-	stopMusic();
-	loadMusic("boogie2");
-	playMusic();
+	_vm->_midiPlayer->play("boogie2");
 
 	return;
 }
