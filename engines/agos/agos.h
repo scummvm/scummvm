@@ -277,6 +277,7 @@ protected:
 
 	uint16 _debugMode;
 	uint16 _language;
+	bool _copyProtection;
 	bool _pause;
 	bool _startMainScript;
 	bool _continousMainScript;

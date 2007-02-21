@@ -875,6 +875,14 @@ void AGOSEngine::o_restoreIcons() {
 void AGOSEngine::o_freezeZones() {
 	// 138: freeze zones
 	freezeBottom();
+
+	if (!_copyProtection && !(getFeatures() & GF_TALKIE)) {
+		if ((getGameType() == GType_SIMON1 &&  _subroutine == 2924) ||
+			(getGameType() == GType_SIMON2 && _subroutine == 1322)) {
+			_variableArray[135] = 3;
+			setScriptCondition(0);
+		} 
+	}
 }
 
 void AGOSEngine::o_placeNoIcons() {

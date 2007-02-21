@@ -180,6 +180,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_drawImagesDebug = false;
 	_dumpImages = false;
 
+	_copyProtection = false;
 	_pause = false;
 	_speech = false;
 	_subtitles = false;
@@ -558,6 +559,7 @@ int AGOSEngine::init() {
 			_sound->effectsPause(_effectsPaused ^= 1);
 	}
 
+	_copyProtection = ConfMan.getBool("copy_protection");
 	_language = Common::parseLanguage(ConfMan.get("language"));
 
 	if (getGameType() == GType_PP) {
