@@ -119,44 +119,44 @@ void AGOSEngine::skipSpeech() {
 }
 
 void AGOSEngine::loadModule(uint music) {
-		_mixer->stopHandle(_modHandle);
+	_mixer->stopHandle(_modHandle);
 
-		char filename[15];
-		File f;
+	char filename[15];
+	File f;
 
-		if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO)
-			sprintf(filename, "elvira2");
-		else if (getPlatform() == Common::kPlatformAcorn)
-			sprintf(filename, "%dtune.DAT", music);
-		else
-			sprintf(filename, "%dtune", music);
+	if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO)
+		sprintf(filename, "elvira2");
+	else if (getPlatform() == Common::kPlatformAcorn)
+		sprintf(filename, "%dtune.DAT", music);
+	else
+		sprintf(filename, "%dtune", music);
 
-		f.open(filename);
-		if (f.isOpen() == false) {
-			error("loadMusic: Can't load module from '%s'", filename);
-		}
+	f.open(filename);
+	if (f.isOpen() == false) {
+		error("loadMusic: Can't load module from '%s'", filename);
+	}
 
-		Audio::AudioStream *audioStream;
-		if (!(getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) &&
-			getFeatures() & GF_CRUNCHED) {
+	Audio::AudioStream *audioStream;
+	if (!(getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) &&
+		getFeatures() & GF_CRUNCHED) {
 
-			uint srcSize = f.size();
-			byte *srcBuf = (byte *)malloc(srcSize);
-			if (f.read(srcBuf, srcSize) != srcSize)
-				error("loadMusic: Read failed");
+		uint srcSize = f.size();
+		byte *srcBuf = (byte *)malloc(srcSize);
+		if (f.read(srcBuf, srcSize) != srcSize)
+			error("loadMusic: Read failed");
 
-			uint dstSize = READ_BE_UINT32(srcBuf + srcSize - 4);
-			byte *dstBuf = (byte *)malloc(dstSize);
-			decrunchFile(srcBuf, dstBuf, srcSize);
-			free(srcBuf);
+		uint dstSize = READ_BE_UINT32(srcBuf + srcSize - 4);
+		byte *dstBuf = (byte *)malloc(dstSize);
+		decrunchFile(srcBuf, dstBuf, srcSize);
+		free(srcBuf);
 
-			Common::MemoryReadStream stream(dstBuf, dstSize);
-			audioStream = Audio::makeProtrackerStream(&stream, _mixer->getOutputRate());
-		} else {
-			audioStream = Audio::makeProtrackerStream(&f, _mixer->getOutputRate());
-		}
+		Common::MemoryReadStream stream(dstBuf, dstSize);
+		audioStream = Audio::makeProtrackerStream(&stream, _mixer->getOutputRate());
+	} else {
+		audioStream = Audio::makeProtrackerStream(&f, _mixer->getOutputRate());
+	}
 
-		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_modHandle, audioStream);
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_modHandle, audioStream);
 }
 
 void AGOSEngine::loadMusic(uint music) {
@@ -186,7 +186,7 @@ void AGOSEngine::loadMusic(uint music) {
 			return;
 
 		if (getGameId() == GID_SIMON1ACORN) {
-			// TODO: Add support for music format used by Simon 1 Floppy
+			// TODO: Add support for Desktop Tracker format
 		} else if (getPlatform() == Common::kPlatformAmiga) {
 			loadModule(music);
 		} else if (getFeatures() & GF_TALKIE) {
