@@ -156,9 +156,6 @@
 			RelativePath="..\..\engines\parallaction\inventory.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\loadsave.cpp">
-		</File>
-		<File
 			RelativePath="..\..\engines\parallaction\location.cpp">
 		</File>
 		<File
@@ -186,10 +183,10 @@
 			RelativePath="..\..\engines\parallaction\parser.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\staticres.cpp">
+			RelativePath="..\..\engines\parallaction\saveload.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\table.cpp">
+			RelativePath="..\..\engines\parallaction\staticres.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\walk.cpp">
