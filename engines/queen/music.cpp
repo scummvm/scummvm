@@ -56,7 +56,7 @@ void MusicPlayer::setVolume(int volume) {
 		volume = 255;
 
 	if (_masterVolume == volume)
-			return;
+		return;
 
 	_masterVolume = volume;
 

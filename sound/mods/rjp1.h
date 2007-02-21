@@ -29,7 +29,7 @@ namespace Audio {
 
 class AudioStream;
 
-AudioStream *makeRjp1Stream(Common::SeekableReadStream *songData, Common::SeekableReadStream *instrumentsData, int song);
+AudioStream *makeRjp1Stream(Common::SeekableReadStream *songData, Common::SeekableReadStream *instrumentsData, int song, int rate = 44100, bool stereo = true);
 
 } // End of namespace Audio
 

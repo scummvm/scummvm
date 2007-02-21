@@ -268,7 +268,7 @@ void Journal::handleMouseDown(int x, int y) {
 				if (_saveDescriptions[currentSlot][0]) {
 					_vm->graphics()->clearBobs();
 					_vm->display()->palFadeOut(ROOM_JOURNAL);
-					_vm->music()->stopSong();
+					_vm->sound()->stopSong();
 					_vm->loadGameState(currentSlot);
 					_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
 					_quitMode = QM_RESTORE;
@@ -320,7 +320,7 @@ void Journal::handleMouseDown(int x, int y) {
 			break;
 		case ZN_MUSIC_VOLUME:
 			val = (x - 136) * QueenEngine::MAX_MUSIC_VOLUME / (266 - 136);
-			_vm->music()->setVolume(val);
+			_vm->sound()->setVolume(val);
 			drawConfigPanel();
 			break;
 		case ZN_DESC_1:
@@ -357,7 +357,7 @@ void Journal::handleMouseDown(int x, int y) {
 			if (_vm->sound()->musicOn()) {
 				_vm->sound()->playLastSong();
 			} else {
-				_vm->music()->stopSong();
+				_vm->sound()->stopSong();
 			}
 			drawConfigPanel();
 			break;
@@ -447,7 +447,7 @@ void Journal::drawConfigPanel() {
 	_vm->checkOptionSettings();
 
 	drawSlideBar(_vm->talkSpeed(), QueenEngine::MAX_TEXT_SPEED, BOB_TALK_SPEED, 164, FRAME_BLUE_PIN);
-	drawSlideBar(_vm->music()->volume(), QueenEngine::MAX_MUSIC_VOLUME, BOB_MUSIC_VOLUME, 177, FRAME_GREEN_PIN);
+	drawSlideBar(_vm->sound()->volume(), QueenEngine::MAX_MUSIC_VOLUME, BOB_MUSIC_VOLUME, 177, FRAME_GREEN_PIN);
 
 	drawCheckBox(_vm->sound()->sfxOn(), BOB_SFX_TOGGLE, 221, 155, FRAME_CHECK_BOX);
 	drawCheckBox(_vm->sound()->speechOn(), BOB_SPEECH_TOGGLE, 158, 155, FRAME_CHECK_BOX);
@@ -467,12 +467,6 @@ void Journal::drawInfoPanel() {
 		break;
 	case 'a':
 		_vm->display()->setTextCentered(132, "Amiga A500/600", false);
-		break;
-	case 'A':
-		_vm->display()->setTextCentered(132, "Amiga A1200", false);
-		break;
-	case 'c':
-		_vm->display()->setTextCentered(132, "Amiga CD-32", false);
 		break;
 	}
 	switch (ver[1]) {

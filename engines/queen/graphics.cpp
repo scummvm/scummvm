@@ -246,31 +246,76 @@ Graphics::~Graphics() {
 }
 
 void Graphics::unpackControlBank() {
-	_vm->bankMan()->load("control.BBK",17);
-	_vm->bankMan()->unpack(1, 1, 17); // Mouse pointer
-	// unpack arrows frames and change hotspot to be always on top
-	for (int i = 3; i <= 4; ++i) {
-		_vm->bankMan()->unpack(i, i, 17);
-		BobFrame *bf = _vm->bankMan()->fetchFrame(i);
-		bf->yhotspot += 200;
+	if (_vm->resource()->getPlatform() == Common::kPlatformPC) {
+		_vm->bankMan()->load("CONTROL.BBK",17);
+
+		// unpack mouse pointer frame
+		_vm->bankMan()->unpack(1, 1, 17);
+
+		// unpack arrows frames and change hotspot to be always on top
+		_vm->bankMan()->unpack(3, 3, 17);
+		_vm->bankMan()->fetchFrame(3)->yhotspot += 200;
+		_vm->bankMan()->unpack(4, 4, 17);
+		_vm->bankMan()->fetchFrame(4)->yhotspot += 200;
+
+		_vm->bankMan()->close(17);
 	}
-	_vm->bankMan()->close(17);
 }
 
 void Graphics::setupArrows() {
-	int scrollX = _vm->display()->horizontalScroll();
-	BobSlot *arrow;
-	arrow = bob(ARROW_BOB_UP);
-	arrow->curPos(303 + 8 + scrollX, 150 + 1 + 200);
-	arrow->frameNum = 3;
-	arrow = bob(ARROW_BOB_DOWN);
-	arrow->curPos(303 + scrollX, 175 + 200);
-	arrow->frameNum = 4;
+	if (_vm->resource()->getPlatform() == Common::kPlatformPC) {
+		int scrollX = _vm->display()->horizontalScroll();
+		BobSlot *arrow;
+		arrow = bob(ARROW_BOB_UP);
+		arrow->curPos(303 + 8 + scrollX, 150 + 1 + 200);
+		arrow->frameNum = 3;
+		arrow = bob(ARROW_BOB_DOWN);
+		arrow->curPos(303 + scrollX, 175 + 200);
+		arrow->frameNum = 4;
+	}
 }
 
 void Graphics::setupMouseCursor() {
-	BobFrame *bf = _vm->bankMan()->fetchFrame(1);
-	_vm->display()->setMouseCursor(bf->data, bf->width, bf->height);
+	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+		static const uint8 defaultAmigaCursor[4 * 15] = {
+			0x00, 0x00, 0xFF, 0xC0,
+			0x7F, 0x80, 0x80, 0x40,
+			0x7F, 0x00, 0x80, 0x80,
+			0x7E, 0x00, 0x81, 0x00,
+			0x7F, 0x00, 0x80, 0x80,
+			0x7F, 0x80, 0x80, 0x40,
+			0x7F, 0xC0, 0x80, 0x20,
+			0x6F, 0xE0, 0x90, 0x10,
+			0x47, 0xF0, 0xA8, 0x08,
+			0x03, 0xF8, 0xC4, 0x04,
+			0x01, 0xFC, 0x02, 0x02,
+			0x00, 0xF8, 0x01, 0x04,
+			0x00, 0x70, 0x00, 0x88,
+			0x00, 0x20, 0x00, 0x50,
+			0x00, 0x00, 0x00, 0x20
+		};
+		uint8 cursorData[16 * 15];
+		const uint8 *src = defaultAmigaCursor;
+		int i = 0;
+		for (int h = 0; h < 15; ++h) {
+			for (int b = 0; b < 16; ++b) {
+				const uint16 mask = (1 << (15 - b));
+				cursorData[i] = 0;
+				if (READ_BE_UINT16(src + 0) & mask) {
+					cursorData[i] |= 4;
+				}
+				if (READ_BE_UINT16(src + 2) & mask) {
+					cursorData[i] |= 8;
+				}
+				++i;
+			}
+			src += 4;
+		}
+		_vm->display()->setMouseCursor(cursorData, 16, 15);
+	} else {
+		BobFrame *bf = _vm->bankMan()->fetchFrame(1);
+		_vm->display()->setMouseCursor(bf->data, bf->width, bf->height);
+	}
 }
 
 void Graphics::drawBob(const BobSlot *bs, const BobFrame *bf, const Box *bbox, int16 x, int16 y) {
@@ -1119,7 +1164,7 @@ BamScene::BamScene(QueenEngine *vm)
 }
 
 void BamScene::playSfx() {
-	// Don't try to play all the sounds. This is only necessary for the 
+	// Don't try to play all the sounds. This is only necessary for the
 	// fight bam, in which the number of 'sfx bam frames' is too much
 	// important / too much closer. The original game does not have
 	// this problem since its playSfx() function returns immediately

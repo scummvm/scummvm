@@ -46,7 +46,10 @@ const RetailGameVersion Resource::_gameVersions[] = {
 	{ "CHM10", 0x000DA981, 190705558 },
 	{ "PE100", 0x00101EC6,   3724538 },
 	{ "PE100", 0x00102B7F,   3732177 },
-	{ "PEint", 0x00103838,   1915913 }
+	{ "PEint", 0x00103838,   1915913 },
+	{ "aEM10", 0x00103F1E,    351775 },
+	{ "CE101", 0x00107D8D,    563335 },
+	{ "PE100", 0x001086D4,    597032 }
 };
 
 static int compareResourceEntry(const void *a, const void *b) {
@@ -107,26 +110,41 @@ ResourceEntry *Resource::resourceEntry(const char *filename) const {
 	return re;
 }
 
+static uint8 emptyBank[] = { 0, 0 };
+
 uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, uint32 *size) {
+	debug(7, "Resource::loadFile('%s')", filename);
 	ResourceEntry *re = resourceEntry(filename);
+	if (_version.platform == Common::kPlatformAmiga && re == NULL) {
+		return emptyBank;
+	}
 	assert(re != NULL);
 	uint32 sz = re->size - skipBytes;
 	if (size != NULL) {
 		*size = sz;
 	}
-
 	byte *dstBuf = new byte[sz];
-	_resourceFile.seek(re->offset + skipBytes);
-	_resourceFile.read(dstBuf, sz);
+	if (re->bundle == 1) {
+		_resourceFile.seek(re->offset + skipBytes);
+		_resourceFile.read(dstBuf, sz);
+	} else {
+		Common::File resourceFile;
+		char name[20];
+		sprintf(name, "queen.%d", re->bundle);
+		if (!resourceFile.open(name)) {
+			error("Could not open resource file '%s'", name);
+		}
+		resourceFile.seek(re->offset + skipBytes);
+		resourceFile.read(dstBuf, sz);
+	}
 	return dstBuf;
 }
 
 bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 	memset(ver, 0, sizeof(DetectedGameVersion));
 
-	char versionStr[6];
 	if (f->readUint32BE() == MKID_BE('QTBL')) {
-		f->read(versionStr, 6);
+		f->read(ver->str, 6);
 		f->skip(2);
 		ver->compression = f->readByte();
 		ver->features = GF_REBUILT;
@@ -137,13 +155,26 @@ bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 			warning("Unknown/unsupported FOTAQ version");
 			return false;
 		}
-		strcpy(versionStr, gameVersion->str);
+		strcpy(ver->str, gameVersion->str);
 		ver->compression = COMPRESSION_NONE;
 		ver->features = 0;
 		ver->tableOffset = gameVersion->tableOffset;
+		strcpy(ver->str, gameVersion->str);
+
+		// Handle game versions for which versionStr information is irrevelant
+		if (gameVersion == &_gameVersions[VER_AMI_DEMO]) { // CE101
+			ver->features |= GF_FLOPPY | GF_DEMO;
+			ver->platform = Common::kPlatformAmiga;
+			return true;
+		}
+		if (gameVersion == &_gameVersions[VER_AMI_INTERVIEW]) { // PE100
+			ver->features |= GF_FLOPPY | GF_INTERVIEW;
+			ver->platform = Common::kPlatformAmiga;
+			return true;
+		}
 	}
 
-	switch (versionStr[1]) {
+	switch (ver->str[1]) {
 	case 'E':
 		if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS) {
 			ver->language = Common::RU_RUS;
@@ -167,33 +198,43 @@ bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 		ver->language = Common::HB_ISR;
 		break;
 	default:
-		warning("Unknown language id '%c', defaulting to English", versionStr[1]);
-		ver->language = Common::EN_ANY;
+		error("Invalid language id '%c'", ver->str[1]);
 		break;
 	}
 
-	switch (versionStr[0]) {
+	switch (ver->str[0]) {
 	case 'P':
 		ver->features |= GF_FLOPPY;
+		ver->platform = Common::kPlatformPC;
 		break;
 	case 'C':
 		ver->features |= GF_TALKIE;
+		ver->platform = Common::kPlatformPC;
+		break;
+	case 'a':
+		ver->features |= GF_FLOPPY;
+		ver->platform = Common::kPlatformAmiga;
+		break;
+	default:
+		error("Invalid platform id '%c'", ver->str[0]);
 		break;
 	}
 
-	if (strcmp(versionStr, "PE100") == 0) {
+	if (strcmp(ver->str + 2, "100") == 0 || strcmp(ver->str + 2, "101") == 0) {
 		ver->features |= GF_DEMO;
-	} else if (strcmp(versionStr, "PEint") == 0) {
+	} else if (strcmp(ver->str + 2, "int") == 0) {
 		ver->features |= GF_INTERVIEW;
 	}
-
-	strcpy(ver->str, versionStr);
 	return true;
 }
 
 void Resource::checkJASVersion() {
+	if (_version.platform == Common::kPlatformAmiga) {
+		warning("Resource::checkJASVersion() disabled for Amiga versions");
+		return;
+	}
 	ResourceEntry *re = resourceEntry("QUEEN.JAS");
-	assert(re != NULL);
+	assert(re != NULL && re->bundle == 1);
 	uint32 offset = re->offset;
 	if (isDemo())
 		offset += JAS_VERSION_OFFSET_DEMO;
@@ -252,17 +293,14 @@ const RetailGameVersion *Resource::detectGameVersionFromSize(uint32 size) {
 }
 
 Common::File *Resource::findSound(const char *filename, uint32 *size) {
-	assert(strstr(filename, ".SB"));
-	Common::File *f = NULL;
+	assert(strstr(filename, ".SB") != NULL || strstr(filename, ".AMR") != NULL);
 	ResourceEntry *re = resourceEntry(filename);
-	if (re) {
-		if (size != NULL) {
-			*size = re->size;
-		}
+	if (re && re->bundle == 1) {
+		*size = re->size;
 		_resourceFile.seek(re->offset);
-		f = &_resourceFile;
+		return &_resourceFile;
 	}
-	return f;
+	return NULL;
 }
 
 LineReader::LineReader(char *buffer, uint32 bufsize) : _buffer(buffer), _bufSize(bufsize), _current(0) {

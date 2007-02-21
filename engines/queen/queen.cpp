@@ -40,13 +40,10 @@
 #include "queen/grid.h"
 #include "queen/input.h"
 #include "queen/logic.h"
-#include "queen/music.h"
 #include "queen/resource.h"
 #include "queen/sound.h"
 #include "queen/talk.h"
 #include "queen/walk.h"
-
-#include "sound/mididrv.h"
 
 static const PlainGameDescriptor queenGameDescriptor = {
 	"queen", "Flight of the Amazon Queen"
@@ -80,7 +77,7 @@ GameList Engine_QUEEN_detectGames(const FSList &fslist) {
 			}
 			Queen::DetectedGameVersion version;
 			if (Queen::Resource::detectVersion(&version, &dataFile)) {
-				GameDescriptor dg(queenGameDescriptor.gameid, queenGameDescriptor.description, version.language, Common::kPlatformPC);
+				GameDescriptor dg(queenGameDescriptor.gameid, queenGameDescriptor.description, version.language, version.platform);
 				if (version.features & Queen::GF_DEMO) {
 					dg.updateDesc("Demo");
 				} else if (version.features & Queen::GF_INTERVIEW) {
@@ -123,7 +120,6 @@ QueenEngine::~QueenEngine() {
 	delete _grid;
 	delete _input;
 	delete _logic;
-	delete _music;
 	delete _sound;
 	delete _walk;
 }
@@ -153,7 +149,7 @@ void QueenEngine::checkOptionSettings() {
 }
 
 void QueenEngine::readOptionSettings() {
-	_music->setVolume(ConfMan.getInt("music_volume"));
+	_sound->setVolume(ConfMan.getInt("music_volume"));
 	_sound->musicToggle(!ConfMan.getBool("music_mute"));
 	_sound->sfxToggle(!ConfMan.getBool("sfx_mute"));
 	_talkSpeed = (ConfMan.getInt("talkspeed") * (MAX_TEXT_SPEED - MIN_TEXT_SPEED) + 255 / 2) / 255 + MIN_TEXT_SPEED;
@@ -163,7 +159,7 @@ void QueenEngine::readOptionSettings() {
 }
 
 void QueenEngine::writeOptionSettings() {
-	ConfMan.setInt("music_volume", _music->volume());
+	ConfMan.setInt("music_volume", _sound->volume());
 	ConfMan.setBool("music_mute", !_sound->musicOn());
 	ConfMan.setBool("sfx_mute", !_sound->sfxOn());
 	ConfMan.setInt("talkspeed", ((_talkSpeed - MIN_TEXT_SPEED) * 255 + (MAX_TEXT_SPEED - MIN_TEXT_SPEED) / 2) / (MAX_TEXT_SPEED - MIN_TEXT_SPEED));
@@ -387,16 +383,6 @@ int QueenEngine::init() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	// Set mixer music volume to maximum, since music volume is regulated by MusicPlayer's MIDI messages
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
-
-	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-
-	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
-	if (native_mt32)
-		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
-	_music = new Music(driver, this);
-	_music->hasNativeMT32(native_mt32);
 
 	_sound = Sound::makeSoundInstance(_mixer, this, _resource->getCompression());
 	_walk = new Walk(this);

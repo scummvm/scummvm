@@ -82,7 +82,7 @@ public:
 		int instrumentsCount;
 	};
 
-	Rjp1(int rate = 44100, bool stereo = true);
+	Rjp1(int rate, bool stereo);
 	virtual ~Rjp1();
 
 	bool load(Common::SeekableReadStream *songData, Common::SeekableReadStream *instrumentsData);
@@ -519,8 +519,8 @@ const int16 Rjp1::_periodsTable[] = {
 
 const int Rjp1::_periodsCount = ARRAYSIZE(_periodsTable);
 
-AudioStream *makeRjp1Stream(Common::SeekableReadStream *songData, Common::SeekableReadStream *instrumentsData, int song) {
-	Rjp1 *stream = new Rjp1;
+AudioStream *makeRjp1Stream(Common::SeekableReadStream *songData, Common::SeekableReadStream *instrumentsData, int song, int rate, bool stereo) {
+	Rjp1 *stream = new Rjp1(rate, stereo);
 	if (stream->load(songData, instrumentsData)) {
 		stream->startSong(song);
 		return stream;

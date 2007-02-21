@@ -109,8 +109,11 @@ public:
 	void blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uint8 *srcBuf, uint16 srcPitch, uint16 w, uint16 h, bool xflip, bool masked);
 	void fill(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint16 w, uint16 h, uint8 color);
 
-	//! decode a PCX stream
-	void readPCX(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, uint16 h);
+	//! decode PCX picture data
+	void decodePCX(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dstPitch, uint16 *w, uint16 *h, uint8 *pal, uint16 palStart, uint16 palEnd);
+
+	//! decode ILBM picture data
+	void decodeLBM(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dstPitch, uint16 *w, uint16 *h, uint8 *pal, uint16 palStart, uint16 palEnd, uint8 colorBase = 0);
 
 	void horizontalScrollUpdate(int16 xCamera);
 	void horizontalScroll(int16 scroll);
@@ -222,6 +225,8 @@ private:
 
 	uint16 _horizontalScroll;
 	uint16 _bdWidth, _bdHeight;
+
+	const char *_imageExt;
 
 	//! texts list
 	TextSlot _texts[GAME_SCREEN_HEIGHT];

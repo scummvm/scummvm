@@ -44,6 +44,7 @@ struct RetailGameVersion {
 };
 
 struct DetectedGameVersion {
+	Common::Platform platform;
 	Common::Language language;
 	uint8 features;
 	uint8 compression;
@@ -87,29 +88,34 @@ public:
 	//! returns the language of the game
 	Common::Language getLanguage() const { return _version.language; }
 
+	Common::Platform getPlatform() const { return _version.platform; }
+
 	//! detect game version
 	static bool detectVersion(DetectedGameVersion *ver, Common::File *f);
 
 	enum Version {
-		VER_ENG_FLOPPY   = 0,
-		VER_ENG_TALKIE   = 1,
-		VER_FRE_FLOPPY   = 2,
-		VER_FRE_TALKIE   = 3,
-		VER_GER_FLOPPY   = 4,
-		VER_GER_TALKIE   = 5,
-		VER_ITA_FLOPPY   = 6,
-		VER_ITA_TALKIE   = 7,
-		VER_SPA_TALKIE   = 8,
-		VER_HEB_TALKIE	 = 9,
-		VER_DEMO_PCGAMES = 10,
-		VER_DEMO         = 11,
-		VER_INTERVIEW    = 12,
+		VER_ENG_FLOPPY     = 0,
+		VER_ENG_TALKIE     = 1,
+		VER_FRE_FLOPPY     = 2,
+		VER_FRE_TALKIE     = 3,
+		VER_GER_FLOPPY     = 4,
+		VER_GER_TALKIE     = 5,
+		VER_ITA_FLOPPY     = 6,
+		VER_ITA_TALKIE     = 7,
+		VER_SPA_TALKIE     = 8,
+		VER_HEB_TALKIE	   = 9,
+		VER_DEMO_PCGAMES   = 10,
+		VER_DEMO           = 11,
+		VER_INTERVIEW      = 12,
+		VER_AMI_ENG_FLOPPY = 13,
+		VER_AMI_DEMO       = 14,
+		VER_AMI_INTERVIEW  = 15,
 
-		VER_COUNT        = 13
+		VER_COUNT          = 16
 	};
 
 	enum {
-		CURRENT_TBL_VERSION = 1
+		CURRENT_TBL_VERSION = 2
 	};
 
 	enum {

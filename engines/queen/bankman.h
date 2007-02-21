@@ -68,6 +68,7 @@ private:
 	struct PackedBank {
 		uint32 indexes[MAX_BANK_SIZE];
 		uint8 *data;
+		char name[20];
 	};
 
 	//! unpacked bob frames
@@ -75,9 +76,6 @@ private:
 
 	 //! banked bob frames
 	PackedBank _banks[MAX_BANKS_NUMBER];
-
-	//! loaded banks names
-	char _loadedBanks[MAX_BANKS_NUMBER][20];
 
 	Resource *_res;
 };

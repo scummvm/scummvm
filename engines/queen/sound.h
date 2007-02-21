@@ -28,17 +28,11 @@
 #include "sound/mods/rjp1.h"
 #include "queen/defs.h"
 
-// define this to enable amiga "rjp1" modules playback
-//#define ENABLE_AMIGA_MUSIC 1
-
 namespace Common {
 	class File;
 }
 
 namespace Queen {
-
-class Input;
-class Resource;
 
 struct songData {
 	int16 tuneList[5];
@@ -56,6 +50,7 @@ struct tuneData {
 	int16 delay;
 };
 
+class Music;
 class QueenEngine;
 
 class Sound {
@@ -68,27 +63,33 @@ public:
 	 */
 	static Sound *makeSoundInstance(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression);
 
-	void playSfx(uint16 sfx);
-	void playSpeech(const char *base);
-	void playSong(int16 songNum);
+	virtual void playSfx(uint16 sfx) {}
+	virtual void playSong(int16 songNum) {}
+	virtual void playSpeech(const char *base) {}
+
+	virtual void stopSfx() {}
+	virtual void stopSong() {}
+	virtual void stopSpeech() {}
+
+	virtual bool isSpeechActive() const	{ return false; }
+	virtual bool isSfxActive() const { return false; }
+
+	virtual void setVolume(int vol)		{ _masterVolume = vol; }
+	virtual int volume()				{ return _masterVolume; }
+
 	void playLastSong()		{ playSong(_lastOverride); }
-	void stopSpeech()		{ _mixer->stopHandle(_speechHandle); }
-	void stopSfx()			{ _mixer->stopHandle(_sfxHandle); }
 
 	bool sfxOn() const			{ return _sfxToggle; }
 	void sfxToggle(bool val)	{ _sfxToggle = val; }
-	void toggleSfx()			{ _sfxToggle ^= true; }
+	void toggleSfx()			{ _sfxToggle = !_sfxToggle; }
 
 	bool speechOn()	const		{ return _speechToggle; }
 	void speechToggle(bool val)	{ _speechToggle = val; }
-	void toggleSpeech()			{ _speechToggle ^= true; }
+	void toggleSpeech()			{ _speechToggle = !_speechToggle; }
 
 	bool musicOn() const		{ return _musicToggle; }
 	void musicToggle(bool val)	{ _musicToggle = val; }
-	void toggleMusic()			{ _musicToggle ^= true; }
-
-	bool isSpeechActive() const	{ return _mixer->isSoundHandleActive(_speechHandle); }
-	bool isSfxActive() const 	{ return _mixer->isSoundHandleActive(_sfxHandle); }
+	void toggleMusic()			{ _musicToggle = !_musicToggle; }
 
 	bool speechSfxExists() const	{ return _speechSfxExists; }
 
@@ -114,9 +115,6 @@ public:
 #endif
 
 protected:
-	void waitFinished(bool isSpeech);
-	void playSound(const char *base, bool isSpeech);
-	virtual void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) = 0;
 
 	Audio::Mixer *_mixer;
 	QueenEngine *_vm;
@@ -127,12 +125,63 @@ protected:
 	bool _speechSfxExists;
 
 	int16 _lastOverride;
+	int _masterVolume;
+};
+
+class PCSound : public Sound {
+public:
+	PCSound(Audio::Mixer *mixer, QueenEngine *vm);
+	~PCSound();
+
+	void playSfx(uint16 sfx);
+	void playSpeech(const char *base);
+	void playSong(int16 songNum);
+
+	void stopSfx()			{ _mixer->stopHandle(_sfxHandle); }
+	void stopSong();
+	void stopSpeech()		{ _mixer->stopHandle(_speechHandle); }
+
+	bool isSpeechActive() const	{ return _mixer->isSoundHandleActive(_speechHandle); }
+	bool isSfxActive() const 	{ return _mixer->isSoundHandleActive(_sfxHandle); }
+
+	void setVolume(int vol);
+	int volume();
+
+protected:
+	void waitFinished(bool isSpeech);
+	void playSound(const char *base, bool isSpeech);
+
+	virtual void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) = 0;
+
 	Audio::SoundHandle _sfxHandle;
 	Audio::SoundHandle _speechHandle;
-#ifdef ENABLE_AMIGA_MUSIC
-	int16 _lastModuleOverride;
-	Audio::SoundHandle _musicHandle;
-#endif
+	Music *_music;
+};
+
+class AmigaSound : public Sound {
+public:
+	AmigaSound(Audio::Mixer *mixer, QueenEngine *vm);
+
+	void playSfx(uint16 sfx);
+	void playSong(int16 song);
+
+	void stopSfx();
+	void stopSong();
+
+	void updateMusic();
+
+	bool isSfxActive() const { return false; }
+
+protected:
+
+	void playSound(const char *base);
+	void playModule(const char *base, int song);
+	bool playSpecialSfx(int16 sfx);
+
+	int16 _fanfareRestore;
+	int _fanfareCount, _fluteCount;
+	Audio::SoundHandle _modHandle;
+	Audio::SoundHandle _sfxHandle;
 };
 
 } // End of namespace Queen

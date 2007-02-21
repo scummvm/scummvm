@@ -350,9 +350,9 @@ byte *Talk::loadDialogFile(const char *filename) {
 		const char *filename;
 		Common::Language language;
 	} dogFiles[] = {
-		{ "chief1.dog", Common::FR_FRA },
-		{ "chief2.dog", Common::FR_FRA },
-		{ "bud1.dog",   Common::IT_ITA }
+		{ "CHIEF1.DOG", Common::FR_FRA },
+		{ "CHIEF2.DOG", Common::FR_FRA },
+		{ "BUD1.DOG",   Common::IT_ITA }
 	};
 	for (int i = 0; i < ARRAYSIZE(dogFiles); ++i) {
 		if (!scumm_stricmp(filename, dogFiles[i].filename) &&

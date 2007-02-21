@@ -65,6 +65,10 @@ typedef struct GameVersion {
 #include "fat_pc_demo_pcgames.h"
 #include "fat_pc_demo.h"
 #include "fat_pc_interview.h"
+#include "fat_amiga_eng_floppy.h"
+#include "fat_amiga_demo.h"
+#include "fat_amiga_interview.h"
+
 
 #define FAT(x) x, (sizeof(x)/sizeof(x[0]))
 
@@ -81,11 +85,14 @@ static GameVersion gameVersionsTable[] = {
 	{ "CHM10", 190705558, FAT(fatHebCd), 0 },
 	{ "PE100",   3724538, FAT(fatPCDemoPcGames), 0 },
 	{ "PE100",   3732177, FAT(fatPCDemo), 0 },
-	{ "PEint",   1915913, FAT(fatPCInterview), 0 }
+	{ "PEint",   1915913, FAT(fatPCInterview), 0 },
+	{ "aEM10",    351775, FAT(fatAmigaEngFl), 0 },
+	{ "CE101",    563335, FAT(fatAmigaDemo), 0 },
+	{ "PE100",    597032, FAT(fatAmigaInterview), 0 }
 };
 
 static const uint32 QTBL_TAG = 0x5154424C;
-static const uint32 CURRENT_VERSION = 1;
+static const uint32 CURRENT_VERSION = 2;
 
 static void writeByte(FILE *fp, uint8 b) {
 	fwrite(&b, 1, 1, fp);
@@ -113,7 +120,7 @@ static void createTableFile(TableFile *tf) {
 	uint16 i, j;
 	uint32 offset; /* dump offset */
 
-	/* setup file entries table */	
+	/* setup file entries table */
 	assert(ARRAYSIZE(gameVersionsTable) < MAX_VERSIONS);
 	for (i = 0; i < ARRAYSIZE(gameVersionsTable); ++i) {
 		const GameVersion *gv = &gameVersionsTable[i];
@@ -121,7 +128,7 @@ static void createTableFile(TableFile *tf) {
 		tf->dataFileEntriesTable[i].fileEntriesCount = gv->dataFileEntriesCount;
 	}
 	tf->dataFileEntriesTableCount = ARRAYSIZE(gameVersionsTable);
-	
+
 	/* write queen table file */
 	out = fopen(tf->outfile, "wb");
 	if (!out) {
@@ -129,7 +136,7 @@ static void createTableFile(TableFile *tf) {
 		return;
 	}
 	/* write header tag */
-	writeUint32BE(out, QTBL_TAG);	
+	writeUint32BE(out, QTBL_TAG);
 	/* write version */
 	writeUint32BE(out, CURRENT_VERSION);
 	/* write tables */

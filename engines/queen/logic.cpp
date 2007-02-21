@@ -98,7 +98,8 @@ void Logic::readQueenJas() {
 	}
 	_roomData[_numRooms + 1] = _numObjects;
 
-	if (_vm->resource()->isDemo()) {
+	if ((_vm->resource()->isDemo() && _vm->resource()->getPlatform() == Common::kPlatformPC) ||
+		(_vm->resource()->isInterview() && _vm->resource()->getPlatform() == Common::kPlatformAmiga)) {
 		_sfxName = NULL;
 	} else {
 		_sfxName = new uint16[_numRooms + 1];
