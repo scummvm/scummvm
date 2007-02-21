@@ -5,7 +5,8 @@
 #ifndef CARTRESET_H
 #define CARTRESET_H
 
-#include <fat.h>
+#include <nds.h>
+//#include <fat.h>
 
 
 #ifdef __cplusplus
