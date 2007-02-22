@@ -84,6 +84,8 @@ public:
 	void palCustomLightsOff(uint16 roomNum);
 	void palCustomLightsOn(uint16 roomNum);
 
+	void palSetPanelColor(uint8 color, uint8 r, uint8 g, uint8 b);
+
 	//! mark all palette entries as dirty
 	void palSetAllDirty() { _pal.dirtyMin = 0; _pal.dirtyMax = 255; }
 

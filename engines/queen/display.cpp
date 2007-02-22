@@ -534,6 +534,13 @@ void Display::palCustomLightsOn(uint16 roomNum) {
 	_pal.scrollable = true;
 }
 
+void Display::palSetPanelColor(uint8 color, uint8 r, uint8 g, uint8 b) {
+	color -= 144;
+	_pal.panel[color * 3] = r;
+	_pal.panel[color * 3 + 1] = g;
+	_pal.panel[color * 3 + 2] = b;
+}
+
 int Display::getNumColorsForRoom(uint16 room) const {
 	int n = 224;
 	if (room >= 114 && room <= 125) {
@@ -635,6 +642,14 @@ void Display::setupPanel() {
 
 	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
 		decodeLBM(data, dataSize, _panelBuf, PANEL_W, &panelWidth, &panelHeight, _pal.panel, 0, 32, 144);
+		// setup special colors
+		// XXX set correct color values
+		palSetPanelColor(INK_BG_PANEL, 255, 255, 255);
+		palSetPanelColor(INK_JOURNAL, 255, 255, 255);
+		palSetPanelColor(INK_PINNACLE_ROOM, 255, 255, 255);
+		palSetPanelColor(INK_CMD_SELECT, 255, 255, 255);
+		palSetPanelColor(INK_CMD_NORMAL, 255, 255, 255);
+		palSetPanelColor(INK_CMD_LOCK, 255, 255, 255);
 	} else {
 		WRITE_LE_UINT16(data + 14, PANEL_H - 10);
 		decodePCX(data, dataSize, _panelBuf + PANEL_W * 10, PANEL_W, &panelWidth, &panelHeight, _pal.panel, 144, 256);
