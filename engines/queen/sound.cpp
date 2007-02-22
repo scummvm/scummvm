@@ -292,14 +292,13 @@ void AmigaSound::playSfx(uint16 sfx) {
 void AmigaSound::playSong(int16 song) {
 	debug(2, "Sound::playSong %d override %d", song, _lastOverride);
 
-    if (song < 0) {
-    	stopSong();
-    	return;
-    }
+  if (song < 0) {
+  	stopSong();
+  	return;
+  }
 
-    // remap song numbers for the Amiga
-    switch (song)
-    {
+  // remap song numbers for the Amiga
+	switch (song) {
 	case 1:
 	case 2:
 		song = 39;
@@ -329,107 +328,107 @@ void AmigaSound::playSong(int16 song) {
 	case 145:
 		song = 140;
 		break;
-    case 53:
-    case 204:
-        song = 44;
-        break;
-    case 136:
-    case 142:
-    case 179:
-        song = 86;
-        break;
-    case 101:
-    case 102:
-    case 143:
-        song = 188;
-        break;
-    case 65:
-    case 62:
-        song = 69;
-        break;
-    case 118:
-    case 119:
-        song = 137;
-        break;
-    case 130:
-    case 131:
-        song = 59;
-        break;
-    case 174:
-    case 175:
-        song = 57;
-        break;
-    case 171:
-    case 121:
-        song = 137;
-        break;
-    case 138:
-    case 170:
-    case 149:
-        song = 28;
-        break;
-    case 122:
-    case 180:
-    case 83:
-    case 98:
-        song = 83;
-        break;
-    case 20:
-    case 33:
-        song = 34;
-        break;
-    case 29:
-    case 35:
-        song = 36;
-        break;
-    case 7:
-    case 9:
-    case 10:
-        song = 11;
-        break;
-    case 110:
-        song = 94;
-        break;
-    case 111:
-        song = 95;
-        break;
-    case 30:
-        song = 43;
-        break;
-    case 76:
-        song = 27;
-        break;
-    case 194:
-    case 195:
-        song = 32;
-        break;
-    }
+	case 53:
+	case 204:
+	    song = 44;
+	    break;
+	case 136:
+	case 142:
+	case 179:
+	    song = 86;
+	    break;
+	case 101:
+	case 102:
+	case 143:
+	    song = 188;
+	    break;
+	case 65:
+	case 62:
+	    song = 69;
+	    break;
+	case 118:
+	case 119:
+	    song = 137;
+	    break;
+	case 130:
+	case 131:
+	    song = 59;
+	    break;
+	case 174:
+	case 175:
+	    song = 57;
+	    break;
+	case 171:
+	case 121:
+	    song = 137;
+	    break;
+	case 138:
+	case 170:
+	case 149:
+	    song = 28;
+	    break;
+	case 122:
+	case 180:
+	case 83:
+	case 98:
+	    song = 83;
+	    break;
+	case 20:
+	case 33:
+	    song = 34;
+	    break;
+	case 29:
+	case 35:
+	    song = 36;
+	    break;
+	case 7:
+	case 9:
+	case 10:
+	    song = 11;
+	    break;
+	case 110:
+	    song = 94;
+	    break;
+	case 111:
+	    song = 95;
+	    break;
+	case 30:
+	    song = 43;
+	    break;
+	case 76:
+	    song = 27;
+	    break;
+	case 194:
+	case 195:
+	    song = 32;
+	    break;
+	}
 
-    if (_lastOverride != 32 && _lastOverride != 44) {
-    	if (playSpecialSfx(song)) {
-    		return;
-    	}
-    }
+	if (_lastOverride != 32 && _lastOverride != 44) {
+		if (playSpecialSfx(song)) {
+			return;
+		}
+	}
 
-    if (_lastOverride == song && _mixer->isSoundHandleActive(_modHandle)) {
-	    return;
-    }
-    switch (song) {
-    // hotel
+	if (_lastOverride == song && _mixer->isSoundHandleActive(_modHandle)) {
+	  return;
+	}
+	switch (song) {
+	// hotel
 	case 39:
-        playModule("HOTEL", 1);
-        break;
-    case 19:
-        playModule("HOTEL", 3);
-        break;
-    case 34:
-        playModule("HOTEL", 2);
-        break;
-    case 36:
-        playModule("HOTEL", 4);
+		playModule("HOTEL", 1);
+		break;
+	case 19:
+		playModule("HOTEL", 3);
+		break;
+	case 34:
+		playModule("HOTEL", 2);
+		break;
+	case 36:
+		playModule("HOTEL", 4);
 		_fanfareRestore = _lastOverride;
-        _fanfareCount = 60;
-        break;
+		_fanfareCount = 60;
+		break;
 	// jungle
 	case 40:
 		playModule("JUNG", 1);
@@ -443,81 +442,81 @@ void AmigaSound::playSong(int16 song) {
 		break;
 	// temple
 	case 54:
-        playModule("TEMPLE", 1);
-        break;
-    case 12:
-        playModule("TEMPLE", 2);
-        break;
-    case 11:
-        playModule("TEMPLE", 3);
-        break;
-    case 31:
-        playModule("TEMPLE", 4);
-        _fanfareRestore = _lastOverride;
-        _fanfareCount = 80;
-        break;
-	// floda
-    case 41:
-        playModule("FLODA", 4);
+		playModule("TEMPLE", 1);
+		break;
+	case 12:
+		playModule("TEMPLE", 2);
+		break;
+	case 11:
+		playModule("TEMPLE", 3);
+		break;
+	case 31:
+		playModule("TEMPLE", 4);
 		_fanfareRestore = _lastOverride;
-        _fanfareCount = 60;
-        break;
-    case 13:
-        playModule("FLODA", 3);
-        break;
-    case 16:
-        playModule("FLODA", 1);
-        break;
-    case 17:
-        playModule("FLODA", 2);
-        break;
-    case 43:
-        playModule("FLODA", 5);
-        break;
+		_fanfareCount = 80;
+		break;
+	// floda
+	case 41:
+		playModule("FLODA", 4);
+		_fanfareRestore = _lastOverride;
+		_fanfareCount = 60;
+		break;
+	case 13:
+		playModule("FLODA", 3);
+		break;
+	case 16:
+		playModule("FLODA", 1);
+		break;
+	case 17:
+		playModule("FLODA", 2);
+		break;
+	case 43:
+		playModule("FLODA", 5);
+		break;
 	// end credits
-    case 67:
-        playModule("TITLE", 1);
-        break;
-    // intro credits
-    case 88:
-        playModule("TITLE", 1);
-        break;
-    // valley
-    case 90:
-        playModule("AWESTRUK", 1);
-        break;
-    // confrontation
-    case 91:
-        playModule("'JUNGLE'", 1);
-        break;
-    // Frank
-    case 46:
-        playModule("FRANK", 1);
-        break;
-    // trader bob
-    case 6:
-        playModule("BOB", 1);
-        break;
-    // azura
-    case 44:
-        playModule("AZURA", 1);
-        break;
-    // amazon fortress
-    case 21:
-        playModule("FORT", 1);
-        break;
-    // rocket
-    case 32:
-        playModule("ROCKET", 1);
-        break;
-    // robot
-    case 92:
-        playModule("ROBOT", 1);
-        break;
+	case 67:
+		playModule("TITLE", 1);
+		break;
+	// intro credits
+	case 88:
+		playModule("TITLE", 1);
+		break;
+	// valley
+	case 90:
+		playModule("AWESTRUK", 1);
+		break;
+	// confrontation
+	case 91:
+		playModule("'JUNGLE'", 1);
+		break;
+	// Frank
+	case 46:
+		playModule("FRANK", 1);
+		break;
+	// trader bob
+	case 6:
+		playModule("BOB", 1);
+		break;
+	// azura
+	case 44:
+		playModule("AZURA", 1);
+		break;
+	// amazon fortress
+	case 21:
+		playModule("FORT", 1);
+		break;
+	// rocket
+	case 32:
+		playModule("ROCKET", 1);
+		break;
+	// robot
+	case 92:
+		playModule("ROBOT", 1);
+		break;
 	default:
 		// song not available in the amiga version
 		return;
-    }
+	}
     _lastOverride = song;
 }
 
