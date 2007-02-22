@@ -2581,17 +2581,13 @@ RoomTranslationRecord roomTranslations[] = {
 	{0, 0}};
 
 void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
+	static int countdownCtr = 0;
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
 
-	if ((fields.getField(37) == 0) && h.currentActions().isEmpty()) {
-		
-		if (h.roomNumber() == player->roomNumber()) {
-			// In same room as player - set a random destination
-			h.setRandomDest();
-
-		} else {
+	if ((fields.getField(37) == 0) && (h.currentActions().size() <= 1))	{
+		if (h.roomNumber() != player->roomNumber()) {
 			// Character in different room than player
 			if (h.hotspotId() == GOEWIN_ID) 
 				h.currentActions().addFront(DISPATCH_ACTION, player->roomNumber());
@@ -2606,10 +2602,76 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 		}
 	}
 
-	if (h.characterMode() == CHARMODE_IDLE) {
-		// TODO: Checks on ds:[4f8ah] to figure out
+	// If some action is in progress, do standard handling
+	if (h.characterMode() != CHARMODE_IDLE) {
 		standardCharacterAnimHandler(h);
 		return;
+	}
+
+	if (fields.wanderingCharsLoaded()) {
+		// Start Ratpouch to sewer exit to meet player
+		fields.wanderingCharsLoaded() = false;
+		h.setBlockedFlag(false);
+		CharacterScheduleEntry *newEntry = res.charSchedules().getEntry(RETURN_SUPPORT_ID);
+		h.currentActions().addFront(DISPATCH_ACTION, newEntry, 7);
+		h.setActionCtr(0);
+
+		standardCharacterAnimHandler(h);
+		return;
+	}
+
+	// Handle any pause countdown
+	if (countdownCtr > 0)
+	{
+		--countdownCtr;
+		standardCharacterAnimHandler(h);
+		return;
+	}
+
+	// Handle selecting a random action for the character to do
+	RandomActionSet *set = res.randomActions().getRoom(h.roomNumber());
+	if (!set) return;
+	Common::RandomSource rnd;
+	RandomActionType actionType;
+	uint16 scheduleId;
+	int actionIndex = rnd.getRandomNumber(set->numActions() - 1);
+	set->getEntry(actionIndex, actionType, scheduleId);
+
+	if (actionType == REPEAT_ONCE_DONE)
+	{
+		// Repeat once random action that's already done, so don't repeat it
+		standardCharacterAnimHandler(h);
+		return;
+	}
+
+	// For repeat once actions, make sure the character is in the same room as the player
+	if (actionType == REPEAT_ONCE)
+	{
+		if (player->roomNumber() != h.roomNumber())
+		{
+			// Not in the same room, so don't do the action
+			standardCharacterAnimHandler(h);
+			return;
+		}
+		
+		// Flag the action as having been done, so it won't be repeated
+		set->setDone(actionIndex);
+	}
+
+	if (scheduleId == 0)
+	{
+		// No special schedule to perform, so simply set a random action
+		h.setRandomDest();
+	}
+	else
+	{
+		// Prepare the follower to standard the specified schedule
+		CharacterScheduleEntry *newEntry = res.charSchedules().getEntry(scheduleId);
+		assert(newEntry);
+		h.currentActions().addFront(DISPATCH_ACTION, newEntry, h.roomNumber());
+
+		// Set a random delay before beginning the action
+		countdownCtr = rnd.getRandomNumber(32);
 	}
 
 	standardCharacterAnimHandler(h);

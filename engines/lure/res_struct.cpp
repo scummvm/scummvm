@@ -34,7 +34,7 @@ const Action sortedActions[] = {ASK, BRIBE, BUY, CLOSE, DRINK, EXAMINE, GET, GIV
 
 int actionNumParams[NPC_JUMP_ADDRESS+1] = {0, 
 	1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 0, 1,
-	0, 1, 1, 1, 1, 0, 0, 2, 0, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1};
+	0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1};
 
 // Room data holding class
 
@@ -774,6 +774,55 @@ uint16 CharacterScheduleSet::getId(CharacterScheduleEntry *rec) {
 	return result;
 }
 
+// This classes is used to store a list of random action sets - one set per room
+
+RandomActionSet::RandomActionSet(uint16 *&offset)
+{
+	_roomNumber = READ_LE_UINT16(offset++);
+	uint16 actionDetails = READ_LE_UINT16(offset++);
+	_numActions = (actionDetails & 0xff);
+	assert(_numActions <= 8);
+	_types = new RandomActionType[_numActions];
+	_ids = new uint16[_numActions];
+
+	for (int actionIndex = 0; actionIndex < _numActions; ++actionIndex)
+	{
+		_ids[actionIndex] = READ_LE_UINT16(offset++);
+		_types[actionIndex] = (actionDetails & (0x100 << actionIndex)) != 0 ? REPEATABLE : REPEAT_ONCE;
+	}
+}
+
+RandomActionSet::~RandomActionSet()
+{
+	delete _types;
+	delete _ids;
+}
+
+RandomActionSet *RandomActionList::getRoom(uint16 roomNumber)
+{
+	iterator i;
+	for (i = begin(); i != end(); ++i) 
+	{
+		RandomActionSet *v = *i;
+		if (v->roomNumber() == roomNumber)
+			return v;
+	}
+	return NULL;
+}
+
+void RandomActionList::saveToStream(Common::WriteStream *stream)
+{
+
+}
+
+void RandomActionList::loadFromStream(Common::ReadStream *stream)
+{
+
+}
+
+
+
+
 // This class handles an indexed hotspot entry - which is used by the NPC code to
 // determine whether exiting a room to another given room has an exit hotspot or not
 
@@ -950,6 +999,7 @@ ValueTableData::ValueTableData() {
 	_playerPendingPos.isSet = false;
 	_flags = GAMEFLAG_4 | GAMEFLAG_1;
 	_hdrFlagMask = 1;
+	_wanderingCharsLoaded = false;
 
 	for (uint16 index = 0; index < NUM_VALUE_FIELDS; ++index)
 		_fieldList[index] = 0;
@@ -996,6 +1046,7 @@ void ValueTableData::saveToStream(Common::WriteStream *stream)
 	stream->writeSint16LE(_playerPendingPos.pos.y);
 	stream->writeByte(_flags);
 	stream->writeByte(_hdrFlagMask);
+	stream->writeByte(_wanderingCharsLoaded);
 	
 	// Write out the special fields
 	for (int index = 0; index < NUM_VALUE_FIELDS; ++index)
@@ -1014,6 +1065,7 @@ void ValueTableData::loadFromStream(Common::ReadStream *stream)
 	_playerPendingPos.pos.y = stream->readSint16LE();
 	_flags = stream->readByte();
 	_hdrFlagMask = stream->readByte();
+	_wanderingCharsLoaded = stream->readByte() != 0;
 	
 	// Read in the field list
 	for (int index = 0; index < NUM_VALUE_FIELDS; ++index)

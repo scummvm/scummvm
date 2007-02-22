@@ -633,6 +633,43 @@ public:
 
 typedef List<uint16> CharacterScheduleOffsets;
 
+// The follow classes are used to store the NPC schedule Ids for the random actions a follower can do in each room
+
+enum RandomActionType {REPEATABLE, REPEAT_ONCE, REPEAT_ONCE_DONE};
+
+class RandomActionSet {
+private:
+	uint16 _roomNumber;
+	int _numActions;
+	RandomActionType *_types;
+	uint16 *_ids;
+public:
+	RandomActionSet(uint16 *&offset);
+	~RandomActionSet();
+
+	uint16 roomNumber() { return _roomNumber; }
+	int numActions() { return _numActions; }
+	void getEntry(int index, RandomActionType &actionType, uint16 &id)
+	{
+		assert((index >= 0) && (index < _numActions));
+		actionType = _types[index];
+		id = _ids[index];
+	}
+	void setDone(int index)
+	{
+		assert((index >= 0) && (index < _numActions));
+		assert(_types[index] == REPEAT_ONCE);
+		_types[index] = REPEAT_ONCE_DONE;
+	}
+};
+
+class RandomActionList: public ManagedList<RandomActionSet *> {
+public:
+	RandomActionSet *getRoom(uint16 roomNumber);
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
+};
+
 class PausedCharacter {
 public:
 	PausedCharacter(uint16 SrcCharId, uint16 DestCharId);
@@ -730,6 +767,7 @@ private:
 	PlayerPendingPosition _playerPendingPos;
 	uint8 _flags;
 	uint8 _hdrFlagMask;
+	bool _wanderingCharsLoaded;
 
 	uint16 _fieldList[NUM_VALUE_FIELDS];
 	bool isKnownField(uint16 fieldIndex);
@@ -747,6 +785,7 @@ public:
 	uint8 &hdrFlagMask() { return _hdrFlagMask; }
 	PlayerNewPosition &playerNewPos() { return _playerNewPos; }
 	PlayerPendingPosition &playerPendingPos() { return _playerPendingPos; }
+	bool &wanderingCharsLoaded() { return _wanderingCharsLoaded; }
 
 	void saveToStream(Common::WriteStream *stream);
 	void loadFromStream(Common::ReadStream *stream);

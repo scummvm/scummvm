@@ -68,6 +68,7 @@ private:
 	MemoryBlock *_talkDialogData;
 	RoomExitCoordinatesList _coordinateList;
 	CharacterScheduleList _charSchedules;
+	RandomActionList _randomActions;
 	RoomExitIndexedHotspotList _indexedRoomExitHospots;
 	PausedCharacterList _pausedList;
 	StringList _stringList;
@@ -122,6 +123,7 @@ public:
 	MemoryBlock &getTalkDialogData() { return *_talkDialogData; }
 	RoomExitCoordinatesList &coordinateList() { return _coordinateList; }
 	CharacterScheduleList &charSchedules() { return _charSchedules; }
+	RandomActionList &randomActions() { return _randomActions; }
 	RoomExitIndexedHotspotList &exitHotspots() { return _indexedRoomExitHospots; }
 	PausedCharacterList &pausedList() { return _pausedList; }
 	StringList &stringList() { return _stringList; }

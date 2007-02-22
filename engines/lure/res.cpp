@@ -55,6 +55,7 @@ void Resources::freeData() {
 	_exitJoins.clear();
 	_delayList.clear();
 	_charSchedules.clear();
+	_randomActions.clear();
 	_indexedRoomExitHospots.clear();
 	_pausedList.clear();
 	_stringList.clear();
@@ -282,6 +283,15 @@ void Resources::reloadData() {
 	offset = (uint16 *) mb->data();
 	for (ctr = 0; ctr < numCharOffsets; ++ctr, ++offset) 
 		_charOffsets[ctr] = READ_LE_UINT16(offset);
+
+	// Next load up the list of random actions your follower can do in each room
+
+	++offset;
+	while (READ_LE_UINT16(offset) != 0xffff)
+	{
+		RandomActionSet *actionSet = new RandomActionSet(offset);
+		_randomActions.push_back(actionSet);
+	}
 
 	// Loop through loading the schedules
 	ctr = 0;
@@ -515,8 +525,25 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 		if (loadFlag) {
 			Hotspot *hotspot = addHotspot(hotspotId);
 			assert(hotspot);
+
+			// Special post-load handling
 			if (res->loadOffset == 0x7167) hotspot->setPersistant(true);
 			if (res->loadOffset == 0x8617) hotspot->handleTalkDialog();
+			
+			// TODO: Figure out why there's a room set in the animation decode for a range of characters,
+			// particularly since it doesn't seem to match what happens in-game
+			/*
+			if ((hotspot->hotspotId() >= RATPOUCH_ID) &&
+				(hotspot->hotspotId() < FIRST_NONCHARACTER_ID) &&
+				(hotspot->roomNumber() < 42))
+			{
+				// Start wandering characters off in room 24
+				hotspot->setRoomNumber(24);
+				hotspot->setPosition(64, 116);
+				_fieldList.wanderingCharsLoaded() = true;
+			}
+			*/
+
 			return hotspot;
 		}
 	}
