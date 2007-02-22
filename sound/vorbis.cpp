@@ -46,102 +46,37 @@ using Common::File;
 
 namespace Audio {
 
-// These are wrapper functions to allow using a File object to
+// These are wrapper functions to allow using a SeekableReadStream object to
 // provide data to the OggVorbis_File object.
 
-struct file_info {
-	File *file;
-	int start, curr_pos;
-	size_t len;
-};
+static size_t read_stream_wrap(void *ptr, size_t size, size_t nmemb, void *datasource) {
+	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)datasource;
 
-static size_t read_wrap(void *ptr, size_t size, size_t nmemb, void *datasource) {
-	file_info *f = (file_info *) datasource;
-	int result;
-
-#ifdef __SYMBIAN32__
-	// For symbian we must check that an alternative file pointer is created, see if its open
-	// If not re-open file and seek to the last read position
-	if (f->file && !f->file->isOpen()) {
-		f->file->open(f->file->name());
-		f->file->seek(f->curr_pos);
-	}
-#endif
-
-	nmemb *= size;
-	if (f->curr_pos > (int) f->len)
-		nmemb = 0;
-	else if (nmemb > f->len - f->curr_pos)
-		nmemb = f->len - f->curr_pos;
-	// There is no guarantee that the Vorbis stream is alone in accessing
-	// the file, so make sure the current position is what we think it is.
-	f->file->seek(f->start + f->curr_pos);
-	result = f->file->read(ptr, nmemb);
-#ifdef __SYMBIAN32__
-	// For symbian we now store the last read position and then close the file
-	if (f->file) {
-		f->file->close();
-	}
-#endif
-	if (result == -1) {
-		f->curr_pos = f->file->pos() - f->start;
-		return (size_t) -1;
-	} else {
-		f->curr_pos += result;
-		return result / size;
-	}
+	uint32 result = stream->read(ptr, size * nmemb);
+	
+	return result / size;
 }
 
-static int seek_wrap(void *datasource, ogg_int64_t offset, int whence) {
-	file_info *f = (file_info *) datasource;
-
-	if (whence == SEEK_SET)
-		offset += f->start;
-	else if (whence == SEEK_END) {
-		offset += f->start + f->len;
-		whence = SEEK_SET;
-	}
-
-#ifdef __SYMBIAN32__
-	// For symbian we must check that an alternative file pointer is created, see if its open
-	// If not re-open file and seek to the last read position
-	if (f->file && !f->file->isOpen()) {
-		f->file->open(f->file->name());
-		f->file->seek(f->curr_pos);
-	}
-#endif
-
-	f->file->seek(offset, whence);
-	f->curr_pos = f->file->pos() - f->start;
-
-#ifdef __SYMBIAN32__
-	// For symbian we now store the last read position and then close the file
-	if (f->file) {
-		f->file->close();
-	}
-#endif
-
-	return f->curr_pos;
+static int seek_stream_wrap(void *datasource, ogg_int64_t offset, int whence) {
+	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)datasource;
+	stream->seek(offset, whence);
+	return stream->pos();
 }
 
-static int close_wrap(void *datasource) {
-	file_info *f = (file_info *) datasource;
-
-	delete f->file;
-	delete f;
-
+static int close_stream_wrap(void *datasource) {
+	// Do nothing -- we leave it up to the VorbisInputStream to free memory as appropriate.
 	return 0;
 }
 
-static long tell_wrap(void *datasource) {
-	file_info *f = (file_info *) datasource;
-
-	return f->curr_pos;
+static long tell_stream_wrap(void *datasource) {
+	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)datasource;
+	return stream->pos();
 }
 
-static ov_callbacks g_File_wrap = {
-	read_wrap, seek_wrap, close_wrap, tell_wrap
+static ov_callbacks g_stream_wrap = {
+	read_stream_wrap, seek_stream_wrap, close_stream_wrap, tell_stream_wrap
 };
+
 
 
 #pragma mark -
@@ -150,62 +85,102 @@ static ov_callbacks g_File_wrap = {
 
 
 class VorbisInputStream : public AudioStream {
-	OggVorbis_File *_ov_file;
-	int _end_pos;
-	int _numChannels;
+protected:
+	OggVorbis_File _ovFile;
+
+	Common::SeekableReadStream *_inStream;
+	bool _disposeAfterUse;
+
 	int16 _buffer[4096];
 	const int16 *_bufferEnd;
 	const int16 *_pos;
-	bool _deleteFileAfterUse;
+	
+	bool _isStereo;
+	int _rate;
+	
+#ifdef USE_TREMOR
+	ogg_int64_t _startTime;
+	ogg_int64_t _endTime;
+#else
+	double _startTime;
+	double _endTime;
+#endif
 
 	void refill();
 	inline bool eosIntern() const;
 public:
-	VorbisInputStream(OggVorbis_File *file, int duration, bool deleteFileAfterUse);
+	// startTime / duration are in milliseconds
+	VorbisInputStream(Common::SeekableReadStream *inStream, bool dispose, uint startTime = 0, uint endTime = 0);
 	~VorbisInputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool endOfData() const		{ return eosIntern(); }
-	bool isStereo() const		{ return _numChannels >= 2; }
+	bool isStereo() const		{ return _isStereo; }
 
-	int getRate() const			{ return ov_info(_ov_file, -1)->rate; }
+	int getRate() const			{ return _rate; }
 
 };
 
-VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration, bool deleteFileAfterUse)
-	: _ov_file(file),
-	_bufferEnd(_buffer + ARRAYSIZE(_buffer)),
-	_deleteFileAfterUse(deleteFileAfterUse) {
-//debug(5, "" __FILE__ ":%i", __LINE__);
+VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool dispose, uint startTime, uint endTime) :
+	_inStream(inStream),
+	_disposeAfterUse(dispose),
+	_bufferEnd(_buffer + ARRAYSIZE(_buffer)) {
 
-	// Check the header, determine if this is a stereo stream
-	_numChannels = ov_info(_ov_file, -1)->channels;
+	bool err = (ov_open_callbacks(inStream, &_ovFile, NULL, 0, g_stream_wrap) < 0);
+	// FIXME: proper error handling!
+	assert(!err);
 
-	// Determine the end position
-	if (duration)
-		_end_pos = ov_pcm_tell(_ov_file) + duration;
-	else
-		_end_pos = ov_pcm_total(_ov_file, -1);
+#ifdef USE_TREMOR
+	/* TODO: Symbian may have to use scumm_fixdfdi here? To quote:
+	 "SumthinWicked says: fixing "relocation truncated to fit: ARM_26 __fixdfdi" during linking on GCC, see portdefs.h"
+	*/
+
+	// In Tremor, the ov_time_seek() and ov_time_seek_page() calls take seeking
+	// positions in milliseconds as 64 bit integers, rather than in seconds as
+	// doubles as in Vorbisfile.
+	ogg_int64_t totalTime;
+	_startTime = startTime;
+	_endTime = endTime;
+#else
+	double totalTime;
+	_startTime = startTime / 1000.0;
+	_endTime = endTime / 1000.0;
+#endif
+	
+	// If endTime was 0, or is past the end of the file, set it to the maximal time possible
+	totalTime = ov_time_total(&_ovFile, -1);
+	if (_endTime == 0 || _endTime > totalTime)
+		_endTime = totalTime;
+
+	// If the specified time range is empty, abort early.
+	if (_startTime >= _endTime) {
+		_pos = _bufferEnd;
+		return;
+	}
+	
+	// Seek to the start position
+	ov_time_seek(&_ovFile, _startTime);
 
 	// Read in initial data
 	refill();
+	
+	// Setup some header information
+	_isStereo = ov_info(&_ovFile, -1)->channels >= 2;
+	_rate = ov_info(&_ovFile, -1)->rate;
 }
 
 VorbisInputStream::~VorbisInputStream() {
-//debug(5, "" __FILE__ ":%i", __LINE__);
-	ov_clear(_ov_file);
-	if (_deleteFileAfterUse)
-		delete _ov_file;
+	ov_clear(&_ovFile);
+	if (_disposeAfterUse)
+		delete _inStream;
 }
 
 inline bool VorbisInputStream::eosIntern() const {
-//debug(5, "" __FILE__ ":%i", __LINE__);
 	return _pos >= _bufferEnd;
 }
 
 int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
-//debug(5, "" __FILE__ ":%i", __LINE__);
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
 		const int len = MIN(numSamples - samples, (int)(_bufferEnd - _pos));
@@ -221,23 +196,33 @@ int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 void VorbisInputStream::refill() {
-//debug(5, "" __FILE__ ":%i", __LINE__);
 	// Read the samples
 	uint len_left = sizeof(_buffer);
 	char *read_pos = (char *)_buffer;
 
-	while (len_left > 0 && _end_pos > ov_pcm_tell(_ov_file)) {
-		long result = ov_read(_ov_file, read_pos, len_left,
-#ifndef USE_TREMOR // Tremor ov_read() always returns data as signed 16 bit interleaved PCM in host byte order. As such, it does not take arguments to request specific signedness, byte order or bit depth as in Vorbisfile.
-#ifdef SCUMM_BIG_ENDIAN
-						1,
+	while (len_left > 0 && ov_time_tell(&_ovFile) < _endTime) {
+		long result;
+#ifdef USE_TREMOR
+		// Tremor ov_read() always returns data as signed 16 bit interleaved PCM
+		// in host byte order. As such, it does not take arguments to request 
+		// specific signedness, byte order or bit depth as in Vorbisfile.
+		result = ov_read(&_ovFile, read_pos, len_left,
+						NULL);
 #else
-						0,
-#endif
+#ifdef SCUMM_BIG_ENDIAN
+		result = ov_read(&_ovFile, read_pos, len_left,
+						1,
 						2,	// 16 bit
 						1,	// signed
-#endif
 						NULL);
+#else
+		result = ov_read(&_ovFile, read_pos, len_left,
+						0,
+						2,	// 16 bit
+						1,	// signed
+						NULL);
+#endif
+#endif
 		if (result == OV_HOLE) {
 			// Possibly recoverable, just warn about it
 			warning("Corrupted data in Vorbis file");
@@ -259,34 +244,20 @@ void VorbisInputStream::refill() {
 }
 
 AudioStream *makeVorbisStream(File *file, uint32 size) {
-//debug(5, "" __FILE__ ":%i", __LINE__);
-	OggVorbis_File *ov_file = new OggVorbis_File;
-	file_info *f = new file_info;
+	assert(file);
 
-#if defined(__SYMBIAN32__)
-	// Symbian can't share filehandles between different threads.
-	// So create a new file  and seek that to the other filehandles position
-	f->file = new File;
-	f->file->open(file->name());
-	f->file->seek(file->pos());
-#else
-	f->file = file;
-#endif
-	f->start = file->pos();
-	f->len = size;
-	f->curr_pos = 0;
+	// FIXME: For now, just read the whole data into memory, and be done
+	// with it. Of course this is in general *not* a nice thing to do...
 
-	if (ov_open_callbacks((void *) f, ov_file, NULL, 0, g_File_wrap) < 0) {
-		warning("Invalid file format");
-		delete ov_file;
-		delete f;
-		return 0;
-	} else {
-#ifndef __SYMBIAN32__
-		file->incRef();
-#endif
-		return new VorbisInputStream(ov_file, 0, true);
-	}
+	// If no size was specified, read the whole remainder of the file
+	if (!size)
+		size = file->size() - file->pos();
+
+	// Read 'size' bytes of data into a MemoryReadStream
+	Common::MemoryReadStream *stream = file->readStream(size);
+
+	// .. and create a VorbisInputStream from all this
+	return new VorbisInputStream(stream, true);
 }
 
 
@@ -301,7 +272,6 @@ private:
 
 public:
 	VorbisTrackInfo(const char *filename);
-	bool openTrack(OggVorbis_File *ovFile);
 	bool error() { return _errorFlag; }
 	void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration);
 };
@@ -310,60 +280,46 @@ public:
 VorbisTrackInfo::VorbisTrackInfo(const char *filename) :
 	_filename(filename),
 	_errorFlag(false) {
-
-	OggVorbis_File ov_file;
-	_errorFlag = openTrack(&ov_file);
 	
-	if (!_errorFlag)
-		ov_clear(&ov_file);
-}
 
-bool VorbisTrackInfo::openTrack(OggVorbis_File *ovFile) {
-	bool err;
-
-	file_info *f = new file_info;
-	assert(f);
-	f->file = new File;
-	assert(f->file);
-
-	err = !f->file->open(_filename);
-	
-	if (!err) {
-		f->start = 0;
-		f->len = f->file->size();
-		f->curr_pos = 0;
-	
-		err = (ov_open_callbacks((void *) f, ovFile, NULL, 0, g_File_wrap) < 0);
+	// Try to open the file
+	Common::File file;
+	if (!file.open(_filename)) {
+		_errorFlag = true;
+		return;
 	}
+	
+	// Next, try to create a VorbisInputStream from it
+	VorbisInputStream *tempStream = new VorbisInputStream(&file, false);
 
-	if (err) {
-		delete f->file;
-		delete f;
-	}
-
-	return err;
+	// If an error occured...
+	// TODO: add an error or init method to VorbisInputStream
+	_errorFlag = tempStream->endOfData();
+	
+	// Clean up again	
+	delete tempStream;
 }
 
 void VorbisTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) {
-	OggVorbis_File *ovFile = new OggVorbis_File;
-	bool err = openTrack(ovFile);
-	assert(!err);
+	assert(!_errorFlag);
+	uint start, end;
 
-#ifdef USE_TREMOR
-	// In Tremor, the ov_time_seek() and ov_time_seek_page() calls take seeking
-	// positions in milliseconds as 64 bit integers, rather than in seconds as
-	// doubles as in Vorbisfile.
-#if defined(__SYMBIAN32__) && defined(__GCC32__)
-	// SumthinWicked says: fixing "relocation truncated to fit: ARM_26 __fixdfdi" during linking on GCC, see portdefs.h
-	ov_time_seek(ovFile, (ogg_int64_t)scumm_fixdfdi(startFrame / 75.0 * 1000));
-#else
-	ov_time_seek(ovFile, (ogg_int64_t)(startFrame / 75.0 * 1000));
-#endif
-#else
-	ov_time_seek(ovFile, startFrame / 75.0);
-#endif
+	// Open the file
+	Common::File *file = new Common::File();
+	if (!file || !file->open(_filename)) {
+		warning("VorbisTrackInfo::play: failed to open '%s'", _filename.c_str());
+		delete file;
+		return;
+	}
+	
+	// Convert startFrame & duration from frames (1/75 s) to milliseconds (1/1000s)
+	start = startFrame * 1000 / 75;
+	end = duration ? ((startFrame + duration) * 1000 / 75) : 0;
 
-	AudioStream *input =  new VorbisInputStream(ovFile, duration * ov_info(ovFile, -1)->rate / 75, true);
+	// ... create an AudioStream ...
+	VorbisInputStream *input = new VorbisInputStream(file, true, start, end);
+	
+	// ... and play it
 	mixer->playInputStream(Audio::Mixer::kMusicSoundType, handle, input);
 }
 

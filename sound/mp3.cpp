@@ -299,10 +299,10 @@ AudioStream *makeMP3Stream(Common::File *file, uint32 size) {
 	if (!size)
 		size = file->size() - file->pos();
 
-	// Read 'size' bytes of data (or until EOF is reached) into a MemoryReadStream
+	// Read 'size' bytes of data into a MemoryReadStream
 	Common::MemoryReadStream *stream = file->readStream(size);
 
-	// .. and create a MP3InputStream from all this
+	// .. and create an MP3InputStream from all this
 	return new MP3InputStream(stream, true);
 }
 
