@@ -55,7 +55,7 @@ AudioStream *makeFlacStream(Common::File *file, uint32 size);
  * and specifying only a portion of the data to be played, based 
  * on time offsets.
  *
- * @param stream			the SeekableReadStream from which to read the MP3 data
+ * @param stream			the SeekableReadStream from which to read the FLAC data
  * @param disposeAfterUse	whether to delete the stream after use
  * @param startTime			the (optional) time offset in milliseconds from which to start playback 
  * @param duration			the (optional) time in milliseconds specifying how long to play
