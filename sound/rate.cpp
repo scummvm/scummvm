@@ -229,7 +229,7 @@ public:
 
 		// Mix the data into the output buffer
 		ptr = _buffer;
-		while (len--) {
+		while (len-- > 0) {
 			st_sample_t tmp0, tmp1;
 			tmp0 = tmp1 = *ptr++;
 			if (stereo) {
