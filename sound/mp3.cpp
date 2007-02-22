@@ -145,7 +145,6 @@ void MP3InputStream::decodeMP3Data() {
 		return;
 
 	do {
-
 		// If necessary, load more data
 		if (_stream.buffer == NULL || _stream.error == MAD_ERROR_BUFLEN) {
 			if (!readMP3Data()) {
@@ -288,6 +287,11 @@ int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 
+#pragma mark -
+#pragma mark --- MP3 factory functions ---
+#pragma mark -
+
+
 AudioStream *makeMP3Stream(Common::File *file, uint32 size) {
 	assert(file);
 
@@ -344,7 +348,6 @@ public:
 	bool error() { return _errorFlag; }
 	void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration);
 };
-
 
 MP3TrackInfo::MP3TrackInfo(const char *filename) :
 	_filename(filename),
@@ -415,11 +418,6 @@ DigitalTrackInfo *getMP3Track(int track) {
 	}
 	return NULL;
 }
-
-
-// Closing note: we added File::incRef and File::decRef mainly for the sake of the input streams
-// If we could but get rid of it...
-
 
 } // End of namespace Audio
 

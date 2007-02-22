@@ -41,9 +41,6 @@
 #endif
 
 
-using Common::File;
-
-
 namespace Audio {
 
 // These are wrapper functions to allow using a SeekableReadStream object to
@@ -260,7 +257,7 @@ void VorbisInputStream::refill() {
 	_bufferEnd = (int16 *)read_pos;
 }
 
-AudioStream *makeVorbisStream(File *file, uint32 size) {
+AudioStream *makeVorbisStream(Common::File *file, uint32 size) {
 	assert(file);
 
 	// FIXME: For now, just read the whole data into memory, and be done
@@ -290,10 +287,10 @@ AudioStream *makeVorbisStream(
 }
 
 
-
 #pragma mark -
 #pragma mark --- Ogg Vorbis Audio CD emulation ---
 #pragma mark -
+
 
 class VorbisTrackInfo : public DigitalTrackInfo {
 private:
@@ -305,7 +302,6 @@ public:
 	bool error() { return _errorFlag; }
 	void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration);
 };
-
 
 VorbisTrackInfo::VorbisTrackInfo(const char *filename) :
 	_filename(filename),
@@ -342,7 +338,7 @@ void VorbisTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int 
 	}
 	
 	// Convert startFrame & duration from frames (1/75 s) to milliseconds (1/1000s),
-	// i.e. multiple with a factor of 1000/75 = 40/3
+	// i.e. multiply with a factor of 1000/75 = 40/3.
 	uint start = startFrame * 40 / 3;
 	uint end = duration ? ((startFrame + duration) * 40 / 3) : 0;
 
@@ -369,7 +365,6 @@ DigitalTrackInfo *getVorbisTrack(int track) {
 	}
 	return NULL;
 }
-
 
 
 } // End of namespace Audio
