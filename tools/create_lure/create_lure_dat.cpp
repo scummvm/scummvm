@@ -1187,7 +1187,7 @@ int main(int argc, char *argv[])
 	if (!lure_exe.open(inFilename))
 	{
 		if (argc == 1) 
-			printf("Format: %s input_exe_filename output_filename\n");
+			printf("Format: %s input_exe_filename output_filename\n", argv[0]);
 		else
 			printf("Could not open file: %s\n", inFilename);
 	} 
