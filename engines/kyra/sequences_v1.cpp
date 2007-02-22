@@ -1005,10 +1005,13 @@ void KyraEngine::seq_playEnding() {
 	// XXX
 	assert(_homeString);
 	drawSentenceCommand(_homeString[0], 179);
-	memset(_screen->getPalette(0), 0, sizeof(uint8)*768);
-	_screen->setScreenPalette(_screen->getPalette(0));
+
+	memset(_screen->getPalette(2), 0, sizeof(uint8)*768);
+	_screen->setScreenPalette(_screen->getPalette(2));
+
 	_seq->playSequence(_seq_Reunion, false);
 	_screen->fadeToBlack();
+
 	_screen->showMouse();
 	seq_playCredits();
 }
@@ -1037,7 +1040,6 @@ void KyraEngine::seq_playCredits() {
 		_screen->setFont(Screen::FID_8_FNT);
 	
 	_screen->loadBitmap("CHALET.CPS", 4, 4, _screen->_currentPalette);
-	_screen->setScreenPalette(_screen->_currentPalette);
 	
 	_screen->setCurPage(0);
 	_screen->clearCurPage();
@@ -1114,6 +1116,11 @@ void KyraEngine::seq_playCredits() {
 	}
 
 	_screen->setCurPage(2);
+	
+	memset(_screen->getPalette(2), 0, sizeof(uint8)*768);
+	_screen->setScreenPalette(_screen->getPalette(2));
+	_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 0, Screen::CR_NO_P_CHECK);
+	_screen->fadePalette(_screen->_currentPalette, 0x5A);
 
 	OSystem::Event event;	
 	bool finished = false;
