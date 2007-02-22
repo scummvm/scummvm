@@ -341,9 +341,10 @@ void VorbisTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int 
 		return;
 	}
 	
-	// Convert startFrame & duration from frames (1/75 s) to milliseconds (1/1000s)
-	uint start = startFrame * 1000 / 75;
-	uint end = duration ? ((startFrame + duration) * 1000 / 75) : 0;
+	// Convert startFrame & duration from frames (1/75 s) to milliseconds (1/1000s),
+	// i.e. multiple with a factor of 1000/75 = 40/3
+	uint start = startFrame * 40 / 3;
+	uint end = duration ? ((startFrame + duration) * 40 / 3) : 0;
 
 	// ... create an AudioStream ...
 	VorbisInputStream *input = new VorbisInputStream(file, true, start, end);
