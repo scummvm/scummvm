@@ -287,8 +287,7 @@ void Resources::reloadData() {
 	// Next load up the list of random actions your follower can do in each room
 
 	++offset;
-	while (READ_LE_UINT16(offset) != 0xffff)
-	{
+	while (READ_LE_UINT16(offset) != 0xffff) {
 		RandomActionSet *actionSet = new RandomActionSet(offset);
 		_randomActions.push_back(actionSet);
 	}
@@ -535,8 +534,7 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 			/*
 			if ((hotspot->hotspotId() >= RATPOUCH_ID) &&
 				(hotspot->hotspotId() < FIRST_NONCHARACTER_ID) &&
-				(hotspot->roomNumber() < 42))
-			{
+				(hotspot->roomNumber() < 42)) {
 				// Start wandering characters off in room 24
 				hotspot->setRoomNumber(24);
 				hotspot->setPosition(64, 116);

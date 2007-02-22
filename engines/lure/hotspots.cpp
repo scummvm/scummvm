@@ -2621,8 +2621,7 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 	}
 
 	// Handle any pause countdown
-	if (countdownCtr > 0)
-	{
+	if (countdownCtr > 0) {
 		--countdownCtr;
 		standardCharacterAnimHandler(h);
 		return;
@@ -2637,18 +2636,15 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 	int actionIndex = rnd.getRandomNumber(set->numActions() - 1);
 	set->getEntry(actionIndex, actionType, scheduleId);
 
-	if (actionType == REPEAT_ONCE_DONE)
-	{
+	if (actionType == REPEAT_ONCE_DONE)	{
 		// Repeat once random action that's already done, so don't repeat it
 		standardCharacterAnimHandler(h);
 		return;
 	}
 
 	// For repeat once actions, make sure the character is in the same room as the player
-	if (actionType == REPEAT_ONCE)
-	{
-		if (player->roomNumber() != h.roomNumber())
-		{
+	if (actionType == REPEAT_ONCE) {
+		if (player->roomNumber() != h.roomNumber()) {
 			// Not in the same room, so don't do the action
 			standardCharacterAnimHandler(h);
 			return;
@@ -2658,13 +2654,10 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 		set->setDone(actionIndex);
 	}
 
-	if (scheduleId == 0)
-	{
+	if (scheduleId == 0) {
 		// No special schedule to perform, so simply set a random action
 		h.setRandomDest();
-	}
-	else
-	{
+	} else {
 		// Prepare the follower to standard the specified schedule
 		CharacterScheduleEntry *newEntry = res.charSchedules().getEntry(scheduleId);
 		assert(newEntry);

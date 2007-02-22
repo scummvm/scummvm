@@ -776,8 +776,7 @@ uint16 CharacterScheduleSet::getId(CharacterScheduleEntry *rec) {
 
 // This classes is used to store a list of random action sets - one set per room
 
-RandomActionSet::RandomActionSet(uint16 *&offset)
-{
+RandomActionSet::RandomActionSet(uint16 *&offset) {
 	_roomNumber = READ_LE_UINT16(offset++);
 	uint16 actionDetails = READ_LE_UINT16(offset++);
 	_numActions = (actionDetails & 0xff);
@@ -785,21 +784,18 @@ RandomActionSet::RandomActionSet(uint16 *&offset)
 	_types = new RandomActionType[_numActions];
 	_ids = new uint16[_numActions];
 
-	for (int actionIndex = 0; actionIndex < _numActions; ++actionIndex)
-	{
+	for (int actionIndex = 0; actionIndex < _numActions; ++actionIndex) {
 		_ids[actionIndex] = READ_LE_UINT16(offset++);
 		_types[actionIndex] = (actionDetails & (0x100 << actionIndex)) != 0 ? REPEATABLE : REPEAT_ONCE;
 	}
 }
 
-RandomActionSet::~RandomActionSet()
-{
+RandomActionSet::~RandomActionSet() {
 	delete _types;
 	delete _ids;
 }
 
-RandomActionSet *RandomActionList::getRoom(uint16 roomNumber)
-{
+RandomActionSet *RandomActionList::getRoom(uint16 roomNumber) {
 	iterator i;
 	for (i = begin(); i != end(); ++i) 
 	{
@@ -810,13 +806,11 @@ RandomActionSet *RandomActionList::getRoom(uint16 roomNumber)
 	return NULL;
 }
 
-void RandomActionList::saveToStream(Common::WriteStream *stream)
-{
+void RandomActionList::saveToStream(Common::WriteStream *stream) {
 
 }
 
-void RandomActionList::loadFromStream(Common::ReadStream *stream)
-{
+void RandomActionList::loadFromStream(Common::ReadStream *stream) {
 
 }
 
