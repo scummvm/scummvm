@@ -128,6 +128,8 @@ protected:
 
 	Common::File _resourceFile;
 
+	int _currentResourceFileNum;
+
 	DetectedGameVersion _version;
 
 	//! number of entries in resource table
@@ -140,6 +142,9 @@ protected:
 
 	//! returns a reference to the ReseourceEntry for the specified filename
 	ResourceEntry *resourceEntry(const char *filename) const;
+
+	//! seeks resource file to specific bundle and file offset
+	void seekResourceFile(int num, uint32 offset);
 
 	//! extarct the resource table for the specified game version
 	void readTableFile(uint32 offset);

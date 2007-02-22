@@ -41,9 +41,11 @@ void Cutaway::run(
 		const char *filename,
 		char *nextFilename,
 		QueenEngine *vm) {
-	Cutaway *cutaway = new Cutaway(filename, vm);
-	cutaway->run(nextFilename);
-	delete cutaway;
+	if (vm->resource()->fileExists(filename)) {
+		Cutaway *cutaway = new Cutaway(filename, vm);
+		cutaway->run(nextFilename);
+		delete cutaway;
+	}
 }
 
 Cutaway::Cutaway(

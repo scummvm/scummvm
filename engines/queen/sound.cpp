@@ -547,6 +547,7 @@ void AmigaSound::updateMusic() {
 }
 
 void AmigaSound::playSound(const char *base) {
+	debug(7, "AmigaSound::playSound(%s)", base);
 	char soundName[20];
 	sprintf(soundName, "%s.AMR", base);
 
@@ -563,6 +564,7 @@ void AmigaSound::playSound(const char *base) {
 }
 
 void AmigaSound::playModule(const char *base, int song) {
+	debug(7, "AmigaSound::playModule(%s, %d)", base, song);
 	char name[20];
 
 	// load song/pattern data

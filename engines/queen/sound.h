@@ -74,6 +74,8 @@ public:
 	virtual bool isSpeechActive() const	{ return false; }
 	virtual bool isSfxActive() const { return false; }
 
+	virtual void updateMusic() {}
+
 	virtual void setVolume(int vol)		{ _masterVolume = vol; }
 	virtual int volume()				{ return _masterVolume; }
 
@@ -168,9 +170,9 @@ public:
 	void stopSfx();
 	void stopSong();
 
-	void updateMusic();
+	bool isSfxActive() const { return _mixer->isSoundHandleActive(_sfxHandle); }
 
-	bool isSfxActive() const { return false; }
+	void updateMusic();
 
 protected:
 

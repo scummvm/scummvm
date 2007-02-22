@@ -62,6 +62,7 @@ Resource::Resource()
 	: _resourceEntries(0), _resourceTable(NULL) {
 	memset(&_version, 0, sizeof(_version));
 
+	_currentResourceFileNum = 1;
 	if (!_resourceFile.open("queen.1c")) {
 		if (!_resourceFile.open("queen.1")) {
 			error("Could not open resource file 'queen.1[c]'");
@@ -110,33 +111,17 @@ ResourceEntry *Resource::resourceEntry(const char *filename) const {
 	return re;
 }
 
-static uint8 emptyBank[] = { 0, 0 };
-
 uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, uint32 *size) {
 	debug(7, "Resource::loadFile('%s')", filename);
 	ResourceEntry *re = resourceEntry(filename);
-	if (_version.platform == Common::kPlatformAmiga && re == NULL) {
-		return emptyBank;
-	}
 	assert(re != NULL);
 	uint32 sz = re->size - skipBytes;
 	if (size != NULL) {
 		*size = sz;
 	}
 	byte *dstBuf = new byte[sz];
-	if (re->bundle == 1) {
-		_resourceFile.seek(re->offset + skipBytes);
-		_resourceFile.read(dstBuf, sz);
-	} else {
-		Common::File resourceFile;
-		char name[20];
-		sprintf(name, "queen.%d", re->bundle);
-		if (!resourceFile.open(name)) {
-			error("Could not open resource file '%s'", name);
-		}
-		resourceFile.seek(re->offset + skipBytes);
-		resourceFile.read(dstBuf, sz);
-	}
+	seekResourceFile(re->bundle, re->offset + skipBytes);
+	_resourceFile.read(dstBuf, sz);
 	return dstBuf;
 }
 
@@ -234,7 +219,7 @@ void Resource::checkJASVersion() {
 		return;
 	}
 	ResourceEntry *re = resourceEntry("QUEEN.JAS");
-	assert(re != NULL && re->bundle == 1);
+	assert(re != NULL);
 	uint32 offset = re->offset;
 	if (isDemo())
 		offset += JAS_VERSION_OFFSET_DEMO;
@@ -242,12 +227,26 @@ void Resource::checkJASVersion() {
 		offset += JAS_VERSION_OFFSET_INTV;
 	else
 		offset += JAS_VERSION_OFFSET_PC;
-	_resourceFile.seek(offset);
+	seekResourceFile(re->bundle, offset);
 
 	char versionStr[6];
 	_resourceFile.read(versionStr, 6);
 	if (strcmp(_version.str, versionStr))
 		error("Verifying game version failed! (expected: '%s', found: '%s')", _version.str, versionStr);
+}
+
+void Resource::seekResourceFile(int num, uint32 offset) {
+	if (_currentResourceFileNum != num) {
+		debug(7, "Opening resource file %d, current %d", num, _currentResourceFileNum);
+		_resourceFile.close();
+		char name[20];
+		sprintf(name, "queen.%d", num);
+		if (!_resourceFile.open(name)) {
+			error("Could not open resource file '%s'", name);
+		}
+		_currentResourceFileNum = num;
+	}
+	_resourceFile.seek(offset);
 }
 
 void Resource::readTableFile(uint32 offset) {
@@ -295,9 +294,9 @@ const RetailGameVersion *Resource::detectGameVersionFromSize(uint32 size) {
 Common::File *Resource::findSound(const char *filename, uint32 *size) {
 	assert(strstr(filename, ".SB") != NULL || strstr(filename, ".AMR") != NULL);
 	ResourceEntry *re = resourceEntry(filename);
-	if (re && re->bundle == 1) {
+	if (re) {
 		*size = re->size;
-		_resourceFile.seek(re->offset);
+		seekResourceFile(re->bundle, re->offset);
 		return &_resourceFile;
 	}
 	return NULL;

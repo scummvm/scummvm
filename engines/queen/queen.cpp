@@ -211,6 +211,7 @@ void QueenEngine::update(bool checkPlayerInput) {
 			_display->blankScreen();
 		}
 	}
+	_sound->updateMusic();
 }
 
 bool QueenEngine::canLoadOrSave() const {

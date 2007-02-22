@@ -52,6 +52,12 @@ void BankManager::load(const char *bankname, uint32 bankslot) {
 	}
 
 	close(bankslot);
+
+	if (_res->getPlatform() == Common::kPlatformAmiga && !_res->fileExists(bankname)) {
+		debug(9, "BankManager::load() bank '%s' doesn't exist", bankname);
+		return;
+	}
+
 	bank->data = _res->loadFile(bankname);
 
 	if (_res->getPlatform() == Common::kPlatformAmiga) {
