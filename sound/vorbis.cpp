@@ -332,7 +332,6 @@ VorbisTrackInfo::VorbisTrackInfo(const char *filename) :
 
 void VorbisTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) {
 	assert(!_errorFlag);
-	uint start, end;
 
 	// Open the file
 	Common::File *file = new Common::File();
@@ -343,8 +342,8 @@ void VorbisTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int 
 	}
 	
 	// Convert startFrame & duration from frames (1/75 s) to milliseconds (1/1000s)
-	start = startFrame * 1000 / 75;
-	end = duration ? ((startFrame + duration) * 1000 / 75) : 0;
+	uint start = startFrame * 1000 / 75;
+	uint end = duration ? ((startFrame + duration) * 1000 / 75) : 0;
 
 	// ... create an AudioStream ...
 	VorbisInputStream *input = new VorbisInputStream(file, true, start, end);
