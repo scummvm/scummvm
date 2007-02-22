@@ -47,16 +47,16 @@ struct CurrentActionOutput {
 
 int numParams[NPC_JUMP_ADDRESS+1] = {0, 
 	1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 0, 1,
-	0, 1, 1, 1, 1, 0, 0, 2, 0, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1};
+	0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1};
 
 #ifdef ENGLISH_LURE
 #define NUM_JUMP_OFFSETS 2
 uint16 jumpOffsets[2] = {0x87be, 0x881c};
 #endif
 
-#define MAX_BUFFER_ENTRIES 50
+#define MAX_BUFFER_ENTRIES 63
 #define MAX_INSTRUCTION_ENTRIES 300
-#define SCHEDULE_DATA_OFFSET 0x60
+#define SCHEDULE_DATA_OFFSET 0x80
 
 struct SupportStructure {
 	uint16 offset;
@@ -114,9 +114,9 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 	if (startOffset == 0x7248) { startOffset = 0x71ce; maxOffset = 0x7248; }
 	if (startOffset == 0x79a8) { startOffset = 0x785c; maxOffset = 0x79a8; }
 	if (startOffset == 0x6f4f) { startOffset = 0x6e5d; maxOffset = 0x6fe5; }
-	if (startOffset == 0x734a) maxOffset = 0x77a2;
+	if (startOffset == 0x76ec) { startOffset = 0x734a; maxOffset = 0x77a2; }
 #endif
-
+//printf("Start=%xh max=%xh\n", startOffset, maxOffset);
 	SymbolTableEntry symbolTable[MAX_INSTRUCTION_ENTRIES];
 	uint16 numSymbols = 0;
 	uint16 offset = startOffset;
@@ -213,7 +213,11 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 
 		// Output parameters
 		for (paramIndex = 0; paramIndex < numParams[actionNum]; ++paramIndex)
+		{
 			*pOut++ = TO_LE_16(params[paramIndex]);
+//			printf(" %xh", TO_LE_16(params[paramIndex]));
+		}
+//		printf("\n");
 
 		// Increase size
 		totalSize += (numParams[actionNum] + 1) * sizeof(uint16); 
@@ -268,6 +272,17 @@ void process_entry(uint16 offset, byte *data, uint16 &totalSize) {
 	}
 }
 
+struct RoomRandomActionEntry {
+	bool repeatable;
+	uint16 offset;
+};
+
+struct RoomRandomActionSet {
+	uint16 offset;
+	uint8 numEntries;
+	RoomRandomActionEntry *entries;
+};
+
 void read_action_sequence(byte *&data, uint16 &totalSize) 
 {
 	const uint16 hsOffset = 0x5d98;
@@ -276,7 +291,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 	HotspotHeaderEntry entryHeader;
 	CurrentActionInput action;
 	uint16 *pHeader;
-	int index;
+	int index, roomIndex;
 
 	// Allocate enough space for output sequence list
 	data = (byte *) malloc(MAX_DATA_SIZE);
@@ -286,8 +301,56 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 	lure_exe.seek(DATA_SEGMENT + TABLED_ACTIONS_OFFSET, SEEK_SET);
 	for (index = 0; index < NUM_TABLED_ACTION_BLOCKS; ++index)
 		offsetList[index] = lure_exe.readWord();
+	totalSize = sizeof(uint16) * (NUM_TABLED_ACTION_BLOCKS + 1);
 
-	totalSize = SCHEDULE_DATA_OFFSET;
+	/* Process the list of random actions that your follower can do in each room */
+	RoomRandomActionSet *randomActions = new RoomRandomActionSet[RANDOM_ROOM_NUM_ENTRIES];
+
+	// Get a list of the offsets for each room
+	lure_exe.seek(DATA_SEGMENT + RANDOM_ACTIONS_OFFSET, SEEK_SET);
+	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex)
+	{
+		randomActions[roomIndex].offset = lure_exe.readWord();
+		randomActions[roomIndex].numEntries = 0;
+		randomActions[roomIndex].entries = NULL;
+	}
+
+	// Next get the set of offsetes for the start of each sequence
+	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex)
+	{
+		if (randomActions[roomIndex].offset == 0)
+			continue;
+
+		lure_exe.seek(DATA_SEGMENT + randomActions[roomIndex].offset, SEEK_SET);
+		randomActions[roomIndex].numEntries = lure_exe.readByte();
+		assert(randomActions[roomIndex].numEntries <= 8);
+		randomActions[roomIndex].entries = new RoomRandomActionEntry[randomActions[roomIndex].numEntries];
+
+		// Loop through the entries
+		uint16 sequenceVal;
+		uint16 offset = randomActions[roomIndex].offset + 1;
+		for (uint8 entryCtr = 0; entryCtr < randomActions[roomIndex].numEntries; ++entryCtr)
+		{
+			randomActions[roomIndex].entries[entryCtr].repeatable = lure_exe.readWord() == 1;
+			offset += 2;
+
+			uint16 firstCommand = lure_exe.readWord();
+			randomActions[roomIndex].entries[entryCtr].offset = 
+				(firstCommand == 0xfffe) ? 0 : offset;
+			
+			offset += sizeof(uint16);
+			while (lure_exe.readWord() != 0xffff) 
+				offset += sizeof(uint16);
+			offset += sizeof(uint16);
+		}
+
+		// Adjust the total size to accomodate random action data in the output
+		totalSize += sizeof(uint16)  * randomActions[roomIndex].numEntries +
+			(sizeof(uint16) * 2);
+	}
+
+	totalSize += sizeof(uint16) + MAX_BUFFER_ENTRIES * sizeof(uint16);
+
 	numSupportEntries = 0;
 
 	// Handle required initial entries - the Lure engine refers to them directly by
@@ -297,12 +360,14 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 	process_entry(0xbb95, data, totalSize);
 	process_entry(0x7060, data, totalSize);
 	process_entry(0x728a, data, totalSize);
+	process_entry(0x76ec, data, totalSize);
 #endif
 
 	// Process the script engine list 
 	
 	for (index = 0; index < NUM_TABLED_ACTION_BLOCKS; ++index) 
-		process_entry(offsetList[index], data, totalSize);
+		if (offsetList[index] != 0)
+			process_entry(offsetList[index], data, totalSize);
 
 	// Next process each of the character hotspots
 
@@ -321,21 +386,67 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 			process_entry(FROM_LE_16(action.dataOffset), data, totalSize);
 	}
 
+	// Finally process each of the random room actions
+
+	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex)
+	{
+		for (index = 0; index < randomActions[roomIndex].numEntries; ++index)
+		{
+			if (randomActions[roomIndex].entries[index].offset != 0xfffe)
+			{
+//				printf("room=%d entry=%xh\n", roomIndex+1, randomActions[roomIndex].entries[index].offset);
+				process_entry(randomActions[roomIndex].entries[index].offset, data, totalSize);
+			}
+		}
+	}
+
 	// Output the list used in the script engine
 
 	pHeader = (uint16 *) data;
 	for (index = 0; index < NUM_TABLED_ACTION_BLOCKS; ++index) 
-		*pHeader++ = TO_LE_16(get_sequence_index(offsetList[index]));
-	*pHeader++ = 0xffff;
+		if (offsetList[index] == 0)
+			*pHeader++ = 0;
+		else
+			*pHeader++ = TO_LE_16(get_sequence_index(offsetList[index]));
+	*pHeader++ = TO_LE_16(0xffff);
+
+	// Output the data for the random room actions
+
+	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex)
+	{
+		if (randomActions[roomIndex].numEntries == 0)
+			continue;
+
+		*pHeader++ = TO_LE_16(roomIndex + 1);    // Save the room number
+
+		// Create a word containing the number of available actions and a bit flag set
+		// specifying which of the actions are repeatable (as opposed to once only)
+		uint16 v = randomActions[roomIndex].numEntries;
+		for (int entryCtr = 0; entryCtr < randomActions[roomIndex].numEntries; ++entryCtr)
+			if (randomActions[roomIndex].entries[entryCtr].repeatable)
+				v |= (0x100 << entryCtr);
+		*pHeader++ = TO_LE_16(v);
+
+		// Loop through the entries storing the action set to use
+		for (int entryCtr = 0; entryCtr < randomActions[roomIndex].numEntries; ++entryCtr)
+			if (randomActions[roomIndex].entries[entryCtr].offset == 0)
+				*pHeader++ = 0;
+			else
+				*pHeader++ = TO_LE_16(get_sequence_index(randomActions[roomIndex].entries[entryCtr].offset));
+	}
+	*pHeader++ = TO_LE_16(0xffff);
 
 	// Output the offsets of each action set
 
 	for (index = 0; index < numSupportEntries; ++index) 
 		*pHeader++ = TO_LE_16(supportList[index].resourceOffset);
-	*pHeader++ = 0xffff;
+	*pHeader++ = TO_LE_16(0xffff);
 
-	if ((int) ((byte *) pHeader - data) > SCHEDULE_DATA_OFFSET) {
-		printf("SCHEDULE_DATA_OFFSET was not high enough\n");
-		exit(1);
+	// Free up the random room action array
+	for (roomIndex = 0; roomIndex < 1; ++roomIndex)
+	{
+		if (randomActions[roomIndex].entries != NULL)
+			delete randomActions[roomIndex].entries;
 	}
+	delete randomActions;
 }	
