@@ -86,17 +86,12 @@ static ov_callbacks g_stream_wrap = {
 
 class VorbisInputStream : public AudioStream {
 protected:
-	OggVorbis_File _ovFile;
-
 	Common::SeekableReadStream *_inStream;
 	bool _disposeAfterUse;
 
-	int16 _buffer[4096];
-	const int16 *_bufferEnd;
-	const int16 *_pos;
-	
 	bool _isStereo;
 	int _rate;
+	uint _numLoops;
 	
 #ifdef USE_TREMOR
 	ogg_int64_t _startTime;
@@ -106,25 +101,31 @@ protected:
 	double _endTime;
 #endif
 
-	void refill();
-	inline bool eosIntern() const;
+	OggVorbis_File _ovFile;
+
+	int16 _buffer[4096];
+	const int16 *_bufferEnd;
+	const int16 *_pos;
+	
 public:
 	// startTime / duration are in milliseconds
-	VorbisInputStream(Common::SeekableReadStream *inStream, bool dispose, uint startTime = 0, uint endTime = 0);
+	VorbisInputStream(Common::SeekableReadStream *inStream, bool dispose, uint startTime = 0, uint endTime = 0, uint numLoops = 1);
 	~VorbisInputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	bool endOfData() const		{ return eosIntern(); }
+	bool endOfData() const		{ return _pos >= _bufferEnd; }
 	bool isStereo() const		{ return _isStereo; }
-
 	int getRate() const			{ return _rate; }
 
+protected:
+	void refill();
 };
 
-VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool dispose, uint startTime, uint endTime) :
+VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool dispose, uint startTime, uint endTime, uint numLoops) :
 	_inStream(inStream),
 	_disposeAfterUse(dispose),
+	_numLoops(numLoops),
 	_bufferEnd(_buffer + ARRAYSIZE(_buffer)) {
 
 	bool err = (ov_open_callbacks(inStream, &_ovFile, NULL, 0, g_stream_wrap) < 0);
@@ -176,13 +177,9 @@ VorbisInputStream::~VorbisInputStream() {
 		delete _inStream;
 }
 
-inline bool VorbisInputStream::eosIntern() const {
-	return _pos >= _bufferEnd;
-}
-
 int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
-	while (samples < numSamples && !eosIntern()) {
+	while (samples < numSamples && _pos < _bufferEnd) {
 		const int len = MIN(numSamples - samples, (int)(_bufferEnd - _pos));
 		memcpy(buffer, _pos, len * 2);
 		buffer += len;
@@ -190,6 +187,17 @@ int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 		samples += len;
 		if (_pos >= _bufferEnd) {
 			refill();
+			// If we are still out of data, and also past the end of specified
+			// time range, check whether looping is enabled...
+			if (_pos >= _bufferEnd && ov_time_tell(&_ovFile) >= _endTime) {
+				if (_numLoops != 1) {
+					// If looping is on and there are loops left, rewind to the start
+					if (_numLoops != 0)
+						_numLoops--;
+					ov_time_seek(&_ovFile, _startTime);
+					refill();
+				}
+			}
 		}
 	}
 	return samples;
@@ -200,7 +208,16 @@ void VorbisInputStream::refill() {
 	uint len_left = sizeof(_buffer);
 	char *read_pos = (char *)_buffer;
 
-	while (len_left > 0 && ov_time_tell(&_ovFile) < _endTime) {
+	while (len_left > 0) {
+		if (ov_time_tell(&_ovFile) >= _endTime) {
+			// If looping is on and there are loops left, rewind to the start
+			if (_numLoops == 1)
+				break;	// Last loop, abort
+			if (_numLoops != 0)
+				_numLoops--;
+			ov_time_seek(&_ovFile, _startTime);
+		}
+
 		long result;
 #ifdef USE_TREMOR
 		// Tremor ov_read() always returns data as signed 16 bit interleaved PCM
@@ -259,6 +276,19 @@ AudioStream *makeVorbisStream(File *file, uint32 size) {
 	// .. and create a VorbisInputStream from all this
 	return new VorbisInputStream(stream, true);
 }
+
+AudioStream *makeVorbisStream(
+	Common::SeekableReadStream *stream,
+	bool disposeAfterUse,
+	uint32 startTime,
+	uint32 duration,
+	uint numLoops) {
+
+	uint32 endTime = duration ? (startTime + duration) : 0;
+
+	return new VorbisInputStream(stream, disposeAfterUse, startTime, endTime, numLoops);
+}
+
 
 
 #pragma mark -

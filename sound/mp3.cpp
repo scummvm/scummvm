@@ -208,10 +208,11 @@ void MP3InputStream::decodeMP3Data() {
 			break;
 		}
 	
-		if (_eos) {
-			// If looping is enabled, rewind to the start
-			if (_numLoops == 0 || --_numLoops > 0)
-				rewind();
+		if (_eos && _numLoops != 1) {
+			// If looping is on and there are loops left, rewind to the start
+			if (_numLoops != 0)
+				_numLoops--;
+			rewind();
 		}
 
 	} while (_stream.error == MAD_ERROR_BUFLEN);
