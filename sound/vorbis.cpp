@@ -257,6 +257,12 @@ void VorbisInputStream::refill() {
 	_bufferEnd = (int16 *)read_pos;
 }
 
+
+#pragma mark -
+#pragma mark --- Ogg Vorbis factory functions ---
+#pragma mark -
+
+
 AudioStream *makeVorbisStream(Common::File *file, uint32 size) {
 	assert(file);
 
