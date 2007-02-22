@@ -43,17 +43,21 @@ namespace Audio {
 
 class MP3InputStream : public AudioStream {
 protected:
+	Common::SeekableReadStream *_inStream;
+	bool _disposeAfterUse;
+	
+	uint _numLoops;
+	uint _posInFrame;
+	bool _eos;
+	
+	const mad_timer_t _startTime;
+	const mad_timer_t _endTime;
+	mad_timer_t _totalTime;
+	
 	mad_stream _stream;
 	mad_frame _frame;
 	mad_synth _synth;
 
-	const mad_timer_t _startTime;	
-	const mad_timer_t _endTime;
-	mad_timer_t _totalTime;
-	
-	Common::SeekableReadStream *_inStream;
-	bool _disposeAfterUse;
-	
 	enum {
 		BUFFER_SIZE = 5 * 8192
 	};
@@ -61,10 +65,6 @@ protected:
 	// This buffer contains a slab of input data
 	byte _buf[BUFFER_SIZE + MAD_BUFFER_GUARD];
 
-	uint _numLoops;
-	uint _posInFrame;
-	bool _eos;
-	
 public:
 	MP3InputStream(Common::SeekableReadStream *inStream,
 	               bool dispose,
@@ -72,8 +72,6 @@ public:
 	               mad_timer_t end = mad_timer_zero,
 	               uint numLoops = 1);
 	~MP3InputStream();
-	
-	bool init();
 	
 	int readBuffer(int16 *buffer, const int numSamples);
 
@@ -90,12 +88,12 @@ protected:
 MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, bool dispose, mad_timer_t start, mad_timer_t end, uint numLoops) :
 	_inStream(inStream),
 	_disposeAfterUse(dispose),
-	_startTime(start),
-	_endTime(end),
-	_totalTime(mad_timer_zero),
 	_numLoops(numLoops),
 	_posInFrame(0),
-	_eos(false) {
+	_eos(false),
+	_startTime(start),
+	_endTime(end),
+	_totalTime(mad_timer_zero) {
 
 	// Make sure that either start < end, or end is zero (indicating "play until end")
 	assert(mad_timer_compare(_startTime, _endTime) < 0 || mad_timer_sign(_endTime) == 0);
@@ -183,7 +181,7 @@ void MP3InputStream::decodeMP3Data() {
 				continue;
 
 			// If an end time is specified and we are past it, stop
-			if (mad_timer_sign(_endTime) > 0 && mad_timer_compare(_totalTime, _endTime) > 0) {
+			if (mad_timer_sign(_endTime) > 0 && mad_timer_compare(_totalTime, _endTime) >= 0) {
 				_eos = true;
 				break;
 			}
@@ -211,7 +209,7 @@ void MP3InputStream::decodeMP3Data() {
 		}
 	
 		if (_eos) {
-			// If looping is enabled, try again
+			// If looping is enabled, rewind to the start
 			if (_numLoops == 0 || --_numLoops > 0)
 				rewind();
 		}
@@ -326,9 +324,7 @@ AudioStream *makeMP3Stream(
 		mad_timer_set(&end, endTime / 1000, endTime % 1000, 1000);
 	}
 
-	MP3InputStream *mp3Stream = new MP3InputStream(stream, disposeAfterUse, start, end, numLoops);
-	
-	return mp3Stream;
+	return new MP3InputStream(stream, disposeAfterUse, start, end, numLoops);
 }
 
 
