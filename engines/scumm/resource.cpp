@@ -721,6 +721,7 @@ int ScummEngine::getResourceRoomNr(int type, int idx) {
 
 int ScummEngine::getResourceSize(int type, int idx) {
 	byte *ptr = getResourceAddress(type, idx);
+	assert(ptr);
 	MemBlkHeader *hdr = (MemBlkHeader *)(ptr - sizeof(MemBlkHeader));
 
 	return hdr->size;
