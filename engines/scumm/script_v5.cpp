@@ -625,6 +625,9 @@ void ScummEngine_v5::o5_chainScript() {
 	// called via chainScript by script 32, and in there Local[5] is defined
 	// to the  actor ID of the opposing soldier. So, we copy that value over
 	// to the Local[5] variable of script 33.
+	// FIXME: This workaround is meant for Indy3 VGA, but we make no checks
+	// to exclude the EGA/Mac/FM-TOWNS versions. Maybe we should check those
+	// (by looking for GF_OLD256 && !platform=FM-TOWNS
 	if (_game.id == GID_INDY3 && vm.slot[cur].number == 32 && script == 33) {
 		vars[5] = vm.localvar[cur][5];
 	}
