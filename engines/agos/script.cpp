@@ -874,7 +874,9 @@ void AGOSEngine::o_freezeZones() {
 	if (!_copyProtection && !(getFeatures() & GF_TALKIE)) {
 		if ((getGameType() == GType_SIMON1 &&  _subroutine == 2924) ||
 			(getGameType() == GType_SIMON2 && _subroutine == 1322)) {
+			_variableArray[134] = 3;
 			_variableArray[135] = 3;
+			setBitFlag(135, 1);
 			setScriptCondition(0);
 		} 
 	}
