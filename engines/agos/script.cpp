@@ -614,7 +614,7 @@ void AGOSEngine::o_picture() {
 	uint vga_res = getVarOrWord();
 	uint mode = getVarOrByte();
 
-	// Work around a script bug in the Amiga AGA/CD32 versions
+	// WORKAROUND: For a script bug in the Amiga AGA/CD32 versions
 	// When selecting locations on the magical map, the script looks
 	// for vga_res 12701, but only vga_res 12700 exists.
 	if (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformAmiga &&

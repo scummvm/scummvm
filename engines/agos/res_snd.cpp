@@ -191,6 +191,7 @@ void AGOSEngine::loadMusic(uint music) {
 		} else if (getPlatform() == Common::kPlatformAmiga) {
 			loadModule(music);
 		} else if (getFeatures() & GF_TALKIE) {
+			// WORKAROUND: For a script bug in the CD versions
 			// We skip this music resource, as it was replaced by
 			// a sound effect, and the script was never updated.
 			if (music == 35)
