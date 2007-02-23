@@ -94,8 +94,7 @@ void Parallaction::parseLocation(const char *filename) {
 			} else
 				background = _tokens[1];
 
-
-            // WORKAROUND: the original code errorneously incremented
+            // WORKAROUND: the original code erroneously incremented
             // _currentLocationIndex, thus producing inconsistent
             // savegames. This workaround modified the following loop
             // and if-statement, so the code exactly matches the one
