@@ -85,7 +85,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 				{ "fr", 	0, "72f04be4320dfac719431419ec2b9a0d", 12778},
 				{ NULL, 0, NULL, 0}
 			},
-			Common::FR_FRA,
+			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
