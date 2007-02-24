@@ -42,7 +42,8 @@ struct StreamFileFormat {
 	 * Pointer to a function which tries to open a file of type StreamFormat.
 	 * Return NULL in case of an error (invalid/nonexisting file).
 	 */
-	AudioStream* (*openStreamFile)(Common::File *file, uint32 size);
+	AudioStream* (*openStreamFile)(Common::SeekableReadStream *stream, bool disposeAfterUse,
+					uint32 startTime, uint32 duration, uint numLoops);
 };
 
 static const StreamFileFormat STREAM_FILEFORMATS[] = {
@@ -77,13 +78,14 @@ AudioStream* AudioStream::openStreamFile(const char *filename)
 	for (int i = 0; i < ARRAYSIZE(STREAM_FILEFORMATS)-1 && stream == NULL; ++i) {
 		strcpy(ext, STREAM_FILEFORMATS[i].fileExtension);
 		fileHandle->open(buffer);
-		if (fileHandle->isOpen())
-			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, fileHandle->size());
+		if (fileHandle->isOpen()) {
+			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, true, 0, 0, 1);
+			fileHandle = 0;
+			break;
+		}
 	}
 
-	// Do not reference the file anymore. If the stream didn't incRef the file,
-	// the object will be deleted (and the file be closed).
-	fileHandle->decRef();
+	delete fileHandle;
 
 	if (stream == NULL) {
 		debug(1, "AudioStream: Could not open compressed AudioFile %s", filename);
