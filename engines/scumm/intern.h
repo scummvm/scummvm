@@ -214,6 +214,7 @@ public:
 	virtual void resetScumm();
 
 protected:
+	virtual void readResTypeList(int id, const char *name);
 	virtual void readIndexFile();
 	virtual void loadCharset(int no);
 	virtual void resetRoomObjects();

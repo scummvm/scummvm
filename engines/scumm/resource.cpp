@@ -512,26 +512,19 @@ void ScummEngine::readResTypeList(int id, const char *name) {
 		error("Invalid number of %ss (%d) in directory", name, num);
 	}
 
-	if (_game.features & GF_SMALL_HEADER) {
-		for (i = 0; i < num; i++) {
-			_res->roomno[id][i] = _fileHandle->readByte();
-			_res->roomoffs[id][i] = _fileHandle->readUint32LE();
-		}
-	} else {
-		for (i = 0; i < num; i++) {
-			_res->roomno[id][i] = _fileHandle->readByte();
-		}
-		for (i = 0; i < num; i++) {
-			_res->roomoffs[id][i] = _fileHandle->readUint32LE();
+	for (i = 0; i < num; i++) {
+		_res->roomno[id][i] = _fileHandle->readByte();
+	}
+	for (i = 0; i < num; i++) {
+		_res->roomoffs[id][i] = _fileHandle->readUint32LE();
 
-			if (id == rtRoom && _game.heversion >= 70)
-				_heV7RoomIntOffsets[i] = _res->roomoffs[id][i];
-		}
+		if (id == rtRoom && _game.heversion >= 70)
+			_heV7RoomIntOffsets[i] = _res->roomoffs[id][i];
+	}
 
-		if (_game.heversion >= 70) {
-			for (i = 0; i < num; i++) {
-				_res->globsize[id][i] = _fileHandle->readUint32LE();
-			}
+	if (_game.heversion >= 70) {
+		for (i = 0; i < num; i++) {
+			_res->globsize[id][i] = _fileHandle->readUint32LE();
 		}
 	}
 }

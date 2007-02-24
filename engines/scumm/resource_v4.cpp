@@ -30,6 +30,26 @@
 
 namespace Scumm {
 
+extern const char *resTypeFromId(int id);
+
+void ScummEngine_v4::readResTypeList(int id, const char *name) {
+	int num;
+	int i;
+
+	debug(9, "readResTypeList(%s,%s)", resTypeFromId(id), name);
+
+	num = _fileHandle->readUint16LE();
+
+	if (num != _res->num[id]) {
+		error("Invalid number of %ss (%d) in directory", name, num);
+	}
+
+	for (i = 0; i < num; i++) {
+		_res->roomno[id][i] = _fileHandle->readByte();
+		_res->roomoffs[id][i] = _fileHandle->readUint32LE();
+	}
+}
+
 void ScummEngine_v4::readIndexFile() {
 	uint16 blocktype;
 	uint32 itemsize;
