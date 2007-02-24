@@ -24,9 +24,6 @@
 #include "common/file.h"
 #include "common/system.h"
 
-#include "sound/vorbis.h"
-#include "sound/mp3.h"
-
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"

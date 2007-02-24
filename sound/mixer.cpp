@@ -30,9 +30,6 @@
 #include "sound/mixer.h"
 #include "sound/rate.h"
 #include "sound/audiostream.h"
-#include "sound/flac.h"
-#include "sound/mp3.h"
-#include "sound/vorbis.h"
 
 
 namespace Audio {
