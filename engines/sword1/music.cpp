@@ -209,7 +209,6 @@ int MusicHandle::readBuffer(int16 *buffer, const int numSamples) {
 		expectedSamples -= samplesReturned;
 		if ((expectedSamples > 0) && _audioSource->endOfData()) {
 			debug(2, "Music reached EOF");
-			_audioSource->endOfData();
 			if (_looping) {
 				delete _audioSource; // recreate same source.
 				_audioSource = createAudioSource();
