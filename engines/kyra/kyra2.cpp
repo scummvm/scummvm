@@ -43,20 +43,28 @@ KyraEngine_v2::~KyraEngine_v2() {
 int KyraEngine_v2::init() {
 	KyraEngine::init();
 
-	_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
-	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
+	if (_res->getFileSize("6.FNT")) {
+		_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
+	}
+	if (_res->getFileSize("8FAT.FNT")) {
+		_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
+	}
 	_screen->loadFont(Screen::FID_GOLDFONT_FNT, "GOLDFONT.FNT");
 	_screen->setAnimBlockPtr(3500);
 	_screen->setScreenDim(0);
 	
-	_mouseSHPBuf = _res->fileData("PWGMOUSE.SHP", 0);
-	assert(_mouseSHPBuf);
-
 	assert(_introStringsSize == 21);
 	for (int i = 0; i < 21; i++) {
 		_introStringsDuration[i] = strlen(_introStrings[i]) * 8;
 	}
 	
+	// No mouse display in demo
+	if (_flags.isDemo)
+		return 0;
+
+	_mouseSHPBuf = _res->fileData("PWGMOUSE.SHP", 0);
+	assert(_mouseSHPBuf);
+
 	for (int i = 0; i < 2; i++) {
 		_gameShapes[i] = _screen->getPtrToShape(_mouseSHPBuf, i);
 		assert(_gameShapes[i]);
@@ -67,12 +75,19 @@ int KyraEngine_v2::init() {
 }
 
 int KyraEngine_v2::go() {	
-	// TODO: move this to proper place
-	static const char *soundfileList[] = {
-		"K2INTRO"
-	};
-
-	_sound->setSoundFileList(soundfileList, 1);
+	if (_flags.isDemo) {
+		static const char *soundFileList[] = {
+			"K2_DEMO",
+			"LOLSYSEX"
+		};
+		_sound->setSoundFileList(soundFileList, 2);
+	} else {
+		// TODO: move this to proper place
+		static const char *soundFileList[] = {
+			"K2INTRO"
+		};
+		_sound->setSoundFileList(soundFileList, 1);
+	}
 	_sound->loadSoundFile(0);
 
 	// Temporary measure to work around the fact that there's 
