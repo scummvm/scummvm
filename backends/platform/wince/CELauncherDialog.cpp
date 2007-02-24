@@ -77,7 +77,8 @@ void CELauncherDialog::automaticScanDirectory(const FilesystemNode &node) {
 	// insert
 	if (candidates.size() >= 1) {
 		GameDescriptor result = candidates[0];
-		GUILauncherDialog::addGameToConf(node, result, true);
+		result["path"] = node.path();
+		addGameToConf(result);
 	}
 	// Then recurse on the subdirectories
 	FSList dirs;
@@ -87,6 +88,9 @@ void CELauncherDialog::automaticScanDirectory(const FilesystemNode &node) {
 
 }
 
+/* FIXME: We do this here, replicating code of the launcher, because findfirst/next
+ * returns some illegal paths atm.
+ */
 void CELauncherDialog::addGame() {
 	MessageDialog alert("Do you want to perform an automatic scan ?", "Yes", "No");
 	if (alert.runModal() == kMessageOK && _browser->runModal() > 0) {
