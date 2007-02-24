@@ -105,10 +105,15 @@ protected:
 	typedef int16 SampleType;
 	enum { BUFTYPE_BITS = 16 };
 
+	enum {
+		// Maximal buffer size. According to the FLAC format specification, the  block size is
+		// a 16 bit value (in fact it seems the maximal block size is 32768, but we play it safe).
+		BUFFER_SIZE = 65536
+	};
+	
 	struct {
-		SampleType *bufData;
+		SampleType bufData[BUFFER_SIZE];
 		SampleType *bufReadPos;
-		uint bufSize;
 		uint bufFill;
 	} _sampleCache;
 
@@ -191,10 +196,8 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 
 // TODO: Implement looping support
 
-	_sampleCache.bufData = NULL;
 	_sampleCache.bufReadPos = NULL;
 	_sampleCache.bufFill = 0;
-	_sampleCache.bufSize = 0;
 
 	_methodConvertBuffers = &FlacInputStream::convertBuffersGeneric;
 
@@ -250,8 +253,6 @@ FlacInputStream::~FlacInputStream() {
 		::FLAC__stream_decoder_delete(_decoder);
 #endif
 	}
-	delete[] _sampleCache.bufData;
-
 	if (_disposeAfterUse)
 		delete _inStream;
 }
@@ -316,7 +317,6 @@ int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	// If there is still data in our buffer from the last time around,
 	// copy that first.
 	if (_sampleCache.bufFill > 0) {
-		assert(_sampleCache.bufData != NULL && _sampleCache.bufReadPos != NULL && _sampleCache.bufSize > 0);
 		assert(_sampleCache.bufReadPos >= _sampleCache.bufData);
 		assert(_sampleCache.bufFill % numChannels == 0);
 
@@ -388,26 +388,6 @@ inline ::FLAC__SeekableStreamDecoderReadStatus FlacInputStream::callbackRead(FLA
 #else
 	return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
 #endif
-}
-
-bool FlacInputStream::allocateBuffer(uint minSamples) {
-	uint allocateSize = minSamples / getChannels();
-	// TODO: insert funky algorithm for optimum buffersize here
-	allocateSize = MIN(_streaminfo.max_blocksize, MAX(_streaminfo.min_blocksize, allocateSize));
-	allocateSize += 8 - (allocateSize % 8); // make sure it's a nice even amount
-	allocateSize *= getChannels();
-
-	_lastSampleWritten = _lastSampleWritten && _sampleCache.bufFill == 0;
-	_sampleCache.bufFill = 0;
-	_sampleCache.bufSize = 0;
-	delete[] _sampleCache.bufData;
-
-	_sampleCache.bufData = new SampleType[allocateSize];
-	if (_sampleCache.bufData != NULL) {
-		_sampleCache.bufSize = allocateSize;
-		return true;
-	}
-	return false;
 }
 
 void FlacInputStream::setBestConvertBufferMethod() {
@@ -624,11 +604,11 @@ inline ::FLAC__StreamDecoderWriteStatus FlacInputStream::callbackWrite(const ::F
 		_outBuffer += copySamples;
 	}
 
-	// checking if Buffer fits
-	if (_sampleCache.bufSize < numSamples) {
-		if (!allocateBuffer(numSamples))
-			return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
-	} // optional check if buffer is wasting too much memory ?
+	// verify that the buffer fits
+	if (numSamples > BUFFER_SIZE) {
+		warning("FlacInputStream: write buffer is too small: %d bytes available, %d bytes needed", BUFFER_SIZE,numSamples); 
+		return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
+	}
 
 	(*_methodConvertBuffers)(_sampleCache.bufData, inChannels, numSamples, numChannels, numBits);
 
