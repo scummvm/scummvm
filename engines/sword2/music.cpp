@@ -53,14 +53,14 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 			const char *ext;
 			int mode;
 		} file_types[] = {
-	#ifdef USE_MAD
-			{ "cl3", kMP3Mode },
+	#ifdef USE_FLAC
+			{ "clf", kFlacMode },
 	#endif
 	#ifdef USE_VORBIS
 			{ "clg", kVorbisMode },
 	#endif
-	#ifdef USE_FLAC
-			{ "clf", kFlacMode },
+	#ifdef USE_MAD
+			{ "cl3", kMP3Mode },
 	#endif
 			{ "clu", kCLUMode }
 		};

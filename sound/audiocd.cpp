@@ -49,14 +49,14 @@ struct TrackFormat {
 
 static const TrackFormat s_trackFormats[] = {
 	/* decoderName,		openTrackFunction */
+#ifdef USE_FLAC
+	{ "Flac",			getFlacTrack },
+#endif
 #ifdef USE_VORBIS
 	{ "Ogg Vorbis",		getVorbisTrack },
 #endif
 #ifdef USE_MAD
 	{ "MPEG Layer 3",	getMP3Track },
-#endif
-#ifdef USE_FLAC
-	{ "Flac",			getFlacTrack },
 #endif
 
 	{ NULL, NULL } // Terminator

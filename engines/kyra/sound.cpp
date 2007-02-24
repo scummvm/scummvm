@@ -551,15 +551,15 @@ bool KyraEngine::snd_voiceIsPlaying() {
 // static res
 
 const Sound::SpeechCodecs Sound::_supportedCodes[] = {
-#ifdef USE_MAD
-	{ ".VO3", Audio::makeMP3Stream },
-#endif // USE_MAD
-#ifdef USE_VORBIS
-	{ ".VOG", Audio::makeVorbisStream },
-#endif // USE_VORBIS
 #ifdef USE_FLAC
 	{ ".VOF", Audio::makeFlacStream },
 #endif // USE_FLAC
+#ifdef USE_VORBIS
+	{ ".VOG", Audio::makeVorbisStream },
+#endif // USE_VORBIS
+#ifdef USE_MAD
+	{ ".VO3", Audio::makeMP3Stream },
+#endif // USE_MAD
 	{ 0, 0 }
 };
 

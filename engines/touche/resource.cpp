@@ -45,14 +45,14 @@ struct CompressedSpeechFile {
 };
 
 static const CompressedSpeechFile compressedSpeechFilesTable[] = {
-#ifdef USE_MAD
-	{ "TOUCHE.SO3", Audio::makeMP3Stream },
+#ifdef USE_FLAC
+	{ "TOUCHE.SOF", Audio::makeFlacStream },
 #endif
 #ifdef USE_VORBIS
 	{ "TOUCHE.SOG", Audio::makeVorbisStream },
 #endif
-#ifdef USE_FLAC
-	{ "TOUCHE.SOF", Audio::makeFlacStream },
+#ifdef USE_MAD
+	{ "TOUCHE.SO3", Audio::makeMP3Stream },
 #endif
 	{ 0, 0 }
 };

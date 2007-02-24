@@ -133,16 +133,18 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 	char fileName[30];
 	stop();
 	_musicMode = MusicNone;
-#ifdef USE_MAD
-	sprintf(fileName, "%s.mp3", fileBase);
-	if (_file.open(fileName))
-		_musicMode = MusicMp3;
-#endif
 #ifdef USE_VORBIS
-	if (!_file.isOpen()) { // mp3 doesn't exist (or not compiled with MAD support)
+	if (!_file.isOpen()) {
 		sprintf(fileName, "%s.ogg", fileBase);
 		if (_file.open(fileName))
 			_musicMode = MusicVorbis;
+	}
+#endif
+#ifdef USE_MAD
+	if (!_file.isOpen()) {
+		sprintf(fileName, "%s.mp3", fileBase);
+		if (_file.open(fileName))
+			_musicMode = MusicMp3;
 	}
 #endif
 	if (!_file.isOpen()) {

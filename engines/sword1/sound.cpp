@@ -333,14 +333,6 @@ void Sound::initCowSystem(void) {
 	/* look for speech1/2.clu in the data dir
 	   and speech/speech.clu (running from cd or using cd layout)
 	*/
-#ifdef USE_MAD
-	sprintf(cowName, "SPEECH%d.CL3", SwordEngine::_systemVars.currentCD);
-	_cowFile.open(cowName);
-	if (_cowFile.isOpen()) {
-		debug(1, "Using MP3 compressed Speech Cluster");
-		_cowMode = CowMp3;
-	}
-#endif
 #ifdef USE_VORBIS
 	if (!_cowFile.isOpen()) {
 		sprintf(cowName, "SPEECH%d.CLV", SwordEngine::_systemVars.currentCD);
@@ -349,6 +341,14 @@ void Sound::initCowSystem(void) {
 			debug(1, "Using Vorbis compressed Speech Cluster");
 			_cowMode = CowVorbis;
 		}
+	}
+#endif
+#ifdef USE_MAD
+	sprintf(cowName, "SPEECH%d.CL3", SwordEngine::_systemVars.currentCD);
+	_cowFile.open(cowName);
+	if (_cowFile.isOpen()) {
+		debug(1, "Using MP3 compressed Speech Cluster");
+		_cowMode = CowMp3;
 	}
 #endif
 	if (!_cowFile.isOpen()) {
