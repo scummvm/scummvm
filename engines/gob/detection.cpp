@@ -548,6 +548,18 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB2,
 		"intro"
 	},
+	{ // Supplied by cybot_tmin in bug report #1667743
+		{
+			"ween",
+			"",
+			AD_ENTRY1s("intro.stk", "6d60f9205ecfbd8735da2ee7823a70dc", 7014426),
+			ES_ESP,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB2,
+		"intro"
+	},
 	{ // Supplied by vampir_raziel in bug report #1658373
 		{
 			"ween",
