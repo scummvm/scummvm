@@ -31,14 +31,7 @@ namespace Parallaction {
 //		ARCHIVE MANAGEMENT
 //------------------------------------------------------
 
-struct ArchivedFile {
-	uint16	_index;
-	uint32	_offset;
-	uint32	_cursor;
-	uint16	field_A;	// unused
-	uint16	field_C;	// unused
-	uint32	_endOffset;
-};
+struct ArchivedFile;
 
 void openArchive(const char *file);
 void closeArchive();

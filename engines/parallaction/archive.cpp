@@ -27,6 +27,16 @@
 
 namespace Parallaction {
 
+struct ArchivedFile {
+	uint16	_index;
+	uint32	_offset;
+	uint32	_cursor;
+	uint16	field_A;	// unused
+	uint16	field_C;	// unused
+	uint32	_endOffset;
+};
+
+
 #define MAX_ARCHIVE_ENTRIES 		384
 
 #define DIRECTORY_OFFSET_IN_FILE	0x4000
