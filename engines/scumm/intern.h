@@ -214,7 +214,7 @@ public:
 	virtual void resetScumm();
 
 protected:
-	virtual void readResTypeList(int id, const char *name);
+	virtual void readResTypeList(int id);
 	virtual void readIndexFile();
 	virtual void loadCharset(int no);
 	virtual void resetRoomObjects();
@@ -246,7 +246,7 @@ public:
 	ScummEngine_v3old(OSystem *syst, const DetectorResult &dr);
 
 protected:
-	virtual void readResTypeList(int id, const char *name);
+	virtual void readResTypeList(int id);
 	virtual void readIndexFile();
 	virtual void setupRoomSubBlocks();
 	virtual void resetRoomSubBlocks();

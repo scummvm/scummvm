@@ -32,16 +32,16 @@ namespace Scumm {
 
 extern const char *resTypeFromId(int id);
 
-void ScummEngine_v4::readResTypeList(int id, const char *name) {
+void ScummEngine_v4::readResTypeList(int id) {
 	int num;
 	int i;
 
-	debug(9, "readResTypeList(%s,%s)", resTypeFromId(id), name);
+	debug(9, "readResTypeList(%s)", resTypeFromId(id));
 
 	num = _fileHandle->readUint16LE();
 
 	if (num != _res->num[id]) {
-		error("Invalid number of %ss (%d) in directory", name, num);
+		error("Invalid number of %ss (%d) in directory", resTypeFromId(id), num);
 	}
 
 	for (i = 0; i < num; i++) {
@@ -125,19 +125,19 @@ void ScummEngine_v4::readIndexFile() {
 			break;
 
 		case 0x5230:	// 'R0'
-			readResTypeList(rtRoom, "room");
+			readResTypeList(rtRoom);
 			break;
 
 		case 0x5330:	// 'S0'
-			readResTypeList(rtScript, "script");
+			readResTypeList(rtScript);
 			break;
 
 		case 0x4E30:	// 'N0'
-			readResTypeList(rtSound, "sound");
+			readResTypeList(rtSound);
 			break;
 
 		case 0x4330:	// 'C0'
-			readResTypeList(rtCostume, "costume");
+			readResTypeList(rtCostume);
 			break;
 
 		case 0x4F30:	// 'O0'

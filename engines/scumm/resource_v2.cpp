@@ -144,10 +144,10 @@ void ScummEngine_v2::readEnhancedIndexFile() {
 
 	_fileHandle->readUint16LE(); /* version magic number */
 	readGlobalObjects();
-	readResTypeList(rtRoom, "room");
-	readResTypeList(rtCostume, "costume");
-	readResTypeList(rtScript, "script");
-	readResTypeList(rtSound, "sound");
+	readResTypeList(rtRoom);
+	readResTypeList(rtCostume);
+	readResTypeList(rtScript);
+	readResTypeList(rtSound);
 }
 
 void ScummEngine_v2::readGlobalObjects() {

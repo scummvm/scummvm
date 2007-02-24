@@ -737,7 +737,7 @@ protected:
 	bool openResourceFile(const Common::String &filename, byte encByte);	// TODO: Use Common::String
 
 	void loadPtrToResource(int type, int i, const byte *ptr);
-	virtual void readResTypeList(int id, const char *name);
+	virtual void readResTypeList(int id);
 //	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
 //	byte *createResource(int type, int index, uint32 size);
 	int loadResource(int type, int i);

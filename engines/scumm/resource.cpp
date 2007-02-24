@@ -367,7 +367,7 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		break;
 
 	case MKID_BE('DRSC'):		// Used by: COMI
-		readResTypeList(rtRoomScripts, "room script");
+		readResTypeList(rtRoomScripts);
 		break;
 
 	default:
@@ -381,15 +381,15 @@ void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int i;
 	switch (blocktype) {
 	case MKID_BE('DIRI'):
-		readResTypeList(rtRoomImage, "room image");
+		readResTypeList(rtRoomImage);
 		break;
 
 	case MKID_BE('DIRM'):
-		readResTypeList(rtImage, "images");
+		readResTypeList(rtImage);
 		break;
 
 	case MKID_BE('DIRT'):
-		readResTypeList(rtTalkie, "talkie");
+		readResTypeList(rtTalkie);
 		break;
 
 	case MKID_BE('DLFL'):
@@ -426,7 +426,7 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	switch (blocktype) {
 	case MKID_BE('DCHR'):
 	case MKID_BE('DIRF'):
-		readResTypeList(rtCharset, "charset");
+		readResTypeList(rtCharset);
 		break;
 
 	case MKID_BE('DOBJ'):
@@ -460,17 +460,17 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 
 	case MKID_BE('DROO'):
 	case MKID_BE('DIRR'):
-		readResTypeList(rtRoom, "room");
+		readResTypeList(rtRoom);
 		break;
 
 	case MKID_BE('DSCR'):
 	case MKID_BE('DIRS'):
-		readResTypeList(rtScript, "script");
+		readResTypeList(rtScript);
 		break;
 
 	case MKID_BE('DCOS'):
 	case MKID_BE('DIRC'):
-		readResTypeList(rtCostume, "costume");
+		readResTypeList(rtCostume);
 		break;
 
 	case MKID_BE('MAXS'):
@@ -480,7 +480,7 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 
 	case MKID_BE('DIRN'):
 	case MKID_BE('DSOU'):
-		readResTypeList(rtSound, "sound");
+		readResTypeList(rtSound);
 		break;
 
 	case MKID_BE('AARY'):
@@ -497,11 +497,11 @@ void ScummEngine::readArrayFromIndexFile() {
 	error("readArrayFromIndexFile() not supported in pre-V6 games");
 }
 
-void ScummEngine::readResTypeList(int id, const char *name) {
+void ScummEngine::readResTypeList(int id) {
 	int num;
 	int i;
 
-	debug(9, "readResTypeList(%s,%s)", resTypeFromId(id), name);
+	debug(9, "readResTypeList(%s)", resTypeFromId(id));
 
 	if (_game.version == 8)
 		num = _fileHandle->readUint32LE();
@@ -509,7 +509,7 @@ void ScummEngine::readResTypeList(int id, const char *name) {
 		num = _fileHandle->readUint16LE();
 
 	if (num != _res->num[id]) {
-		error("Invalid number of %ss (%d) in directory", name, num);
+		error("Invalid number of %ss (%d) in directory", resTypeFromId(id), num);
 	}
 
 	for (i = 0; i < num; i++) {
@@ -626,7 +626,7 @@ int ScummEngine::loadResource(int type, int idx) {
 	uint32 fileOffs;
 	uint32 size, tag;
 
-	debugC(DEBUG_RESOURCE, "loadResource(%s,%d)", resTypeFromId(type),idx);
+	debugC(DEBUG_RESOURCE, "loadResource(%s,%d)", resTypeFromId(type), idx);
 
 	if (type == rtCharset && (_game.features & GF_SMALL_HEADER)) {
 		loadCharset(idx);

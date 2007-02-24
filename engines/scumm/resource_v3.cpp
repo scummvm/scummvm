@@ -31,16 +31,16 @@ namespace Scumm {
 
 extern const char *resTypeFromId(int id);
 
-void ScummEngine_v3old::readResTypeList(int id, const char *name) {
+void ScummEngine_v3old::readResTypeList(int id) {
 	int num;
 	int i;
 
-	debug(9, "readResTypeList(%s,%s)", resTypeFromId(id), name);
+	debug(9, "readResTypeList(%s)", resTypeFromId(id));
 
 	num = _fileHandle->readByte();
 
 	if (num >= 0xFF) {
-		error("Too many %ss (%d) in directory", name, num);
+		error("Too many %ss (%d) in directory", resTypeFromId(id), num);
 	}
 
 	if (id == rtRoom) {
@@ -87,10 +87,10 @@ void ScummEngine_v3old::readIndexFile() {
 
 	_fileHandle->readUint16LE(); /* version magic number */
 	readGlobalObjects();
-	readResTypeList(rtRoom, "room");
-	readResTypeList(rtCostume, "costume");
-	readResTypeList(rtScript, "script");
-	readResTypeList(rtSound, "sound");
+	readResTypeList(rtRoom);
+	readResTypeList(rtCostume);
+	readResTypeList(rtScript);
+	readResTypeList(rtSound);
 
 	closeRoom();
 }
