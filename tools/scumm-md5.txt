@@ -220,7 +220,7 @@ pass	Passport to Adventure
 	e6cd81b25ab1453a8a6d3482118c391e	7857	en	DOS	-	-	-	Fingolfin
 
 zak	Misc FM-TOWNS demos
-	2d388339d6050d8ccaa757b64633954e	-1	en	FM-TOWNS	FM-TOWNS	Demo	indy/loom (non-interactive)	khalek
+	2d388339d6050d8ccaa757b64633954e	7520	en	FM-TOWNS	FM-TOWNS	Demo	indy/loom (non-interactive)	khalek
 	77f5c9cc0986eb729c1a6b4c8823bbae	7520	en	FM-TOWNS	FM-TOWNS	Demo	zak/loom (non-interactive)	khalek, Fingolfin
 	3938ee1aa4433fca9d9308c9891172b1	-1	en	FM-TOWNS	FM-TOWNS	Demo	indy/zak (non-interactive)	khalek
 
