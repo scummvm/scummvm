@@ -135,7 +135,6 @@ protected:
 	uint getChannels() const { return MIN(_streaminfo.channels, MAX_OUTPUT_CHANNELS); }
 
 	bool allocateBuffer(uint minSamples);
-	inline void deleteBuffer();
 
 	inline FLAC__StreamDecoderState getStreamDecoderState() const;
 
@@ -192,7 +191,6 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 	_preBuffer.bufFill = 0;
 	_preBuffer.bufSize = 0;
 
-	deleteBuffer();
 	_lastSampleWritten = false;
 	_methodConvertBuffers = &FlacInputStream::convertBuffersGeneric;
 
@@ -385,16 +383,6 @@ inline ::FLAC__SeekableStreamDecoderReadStatus FlacInputStream::callbackRead(FLA
 #endif
 }
 
-inline void FlacInputStream::deleteBuffer() {
-	_lastSampleWritten = _lastSampleWritten && _preBuffer.bufFill == 0;
-	_preBuffer.bufFill = 0;
-	_preBuffer.bufSize = 0;
-	if (_preBuffer.bufData != NULL) {
-		delete[] _preBuffer.bufData;
-		_preBuffer.bufData = NULL;
-	}
-}
-
 bool FlacInputStream::allocateBuffer(uint minSamples) {
 	uint allocateSize = minSamples / getChannels();
 	/** insert funky algorythm for optimum buffersize here */
@@ -402,7 +390,10 @@ bool FlacInputStream::allocateBuffer(uint minSamples) {
 	allocateSize += 8 - (allocateSize % 8); // make sure its an nice even amount
 	allocateSize *= getChannels();
 
-	deleteBuffer();
+	_lastSampleWritten = _lastSampleWritten && _preBuffer.bufFill == 0;
+	_preBuffer.bufFill = 0;
+	_preBuffer.bufSize = 0;
+	delete[] _preBuffer.bufData;
 
 	_preBuffer.bufData = new SampleType[allocateSize];
 	if (_preBuffer.bufData != NULL) {
