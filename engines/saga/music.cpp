@@ -416,7 +416,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 			break;
 		}
 	if (_track) {
-		_track->play(_mixer, &_musicHandle, (flags == MUSIC_LOOP) ? -1 : 1, 10000);
+		_track->play(_mixer, &_musicHandle, 1, (flags == MUSIC_LOOP) ? -1 : 1, 10000);
 		return;
 	}
 

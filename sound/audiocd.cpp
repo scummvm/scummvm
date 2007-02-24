@@ -91,7 +91,13 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration)
 		if (index >= 0) {
 			_mixer->stopHandle(_cd.handle);
 			_cd.playing = true;
-			_trackInfo[index]->play(_mixer, &_cd.handle, _cd.start, _cd.duration);
+			/*
+			FIXME: Seems numLoops == 0 and numLoops == 1 both indicate a single repetition,
+			while all other positive numbers indicate precisely the number of desired
+			repetitions. Finally, -1 means infinitely many
+			*/
+			numLoops = (numLoops < 1) ? numLoops + 1 : numLoops;
+			_trackInfo[index]->play(_mixer, &_cd.handle, numLoops, _cd.start, _cd.duration);
 		} else {
 			g_system->playCD(track, numLoops, startFrame, duration);
 			_cd.playing = false;
@@ -114,19 +120,13 @@ bool AudioCDManager::isPlaying() const {
 
 void AudioCDManager::updateCD() {
 	if (_cd.playing) {
-		// If the sound handle is 0, then playback stopped.
+		// Check whether the audio track stopped playback
 		if (!_mixer->isSoundHandleActive(_cd.handle)) {
-			// If playback just stopped, check if the current track is supposed
-			// to be repeated, and if that's the case, play it again. Else, stop
-			// the CD explicitly.
-			if (_cd.numLoops == -1 || --_cd.numLoops > 0) {
-				int index = getCachedTrack(_cd.track);
-				assert(index >= 0);
-				_trackInfo[index]->play(_mixer, &_cd.handle, _cd.start, _cd.duration);
-			} else {
-				_mixer->stopHandle(_cd.handle);
-				_cd.playing = false;
-			}
+			// FIXME: We do not update the numLoops parameter here (and in fact,
+			// currently can't do that). Luckily, only one engine ever checks
+			// this part of the AudioCD status, namely the SCUMM engine; and it
+			// only checks
+			_cd.playing = false;
 		}
 	} else {
 		g_system->updateCD();

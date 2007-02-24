@@ -780,7 +780,7 @@ private:
 public:
 	FlacTrackInfo(const char *filename);
 	bool error() { return _errorFlag; }
-	void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration);
+	void play(Mixer *mixer, SoundHandle *handle, int numLoops, int startFrame, int duration);
 };
 
 FlacTrackInfo::FlacTrackInfo(const char *filename) :
@@ -804,7 +804,7 @@ FlacTrackInfo::FlacTrackInfo(const char *filename) :
 	delete tempStream;
 }
 
-void FlacTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) {
+void FlacTrackInfo::play(Mixer *mixer, SoundHandle *handle, int numLoops, int startFrame, int duration) {
 	assert(!_errorFlag);
 
 	if (error()) {
@@ -824,7 +824,7 @@ void FlacTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int st
 	uint end = duration ? ((startFrame + duration) * 1000 / 75) : 0;
 
 	// ... create an AudioStream ...
-	FlacInputStream *input = new FlacInputStream(file, true, start, end);
+	FlacInputStream *input = new FlacInputStream(file, true, start, end, numLoops);
 	if (!input->isStreamDecoderReady()) {
 		delete input;
 		return;

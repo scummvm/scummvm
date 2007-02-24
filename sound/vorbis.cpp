@@ -306,7 +306,7 @@ private:
 public:
 	VorbisTrackInfo(const char *filename);
 	bool error() { return _errorFlag; }
-	void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration);
+	void play(Mixer *mixer, SoundHandle *handle, int numLoops, int startFrame, int duration);
 };
 
 VorbisTrackInfo::VorbisTrackInfo(const char *filename) :
@@ -332,7 +332,7 @@ VorbisTrackInfo::VorbisTrackInfo(const char *filename) :
 	delete tempStream;
 }
 
-void VorbisTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) {
+void VorbisTrackInfo::play(Mixer *mixer, SoundHandle *handle, int numLoops, int startFrame, int duration) {
 	assert(!_errorFlag);
 
 	// Open the file
@@ -349,7 +349,7 @@ void VorbisTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int 
 	uint end = duration ? ((startFrame + duration) * 40 / 3) : 0;
 
 	// ... create an AudioStream ...
-	VorbisInputStream *input = new VorbisInputStream(file, true, start, end);
+	VorbisInputStream *input = new VorbisInputStream(file, true, start, end, numLoops);
 	
 	// ... and play it
 	mixer->playInputStream(Audio::Mixer::kMusicSoundType, handle, input);

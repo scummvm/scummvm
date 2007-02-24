@@ -346,7 +346,7 @@ private:
 public:
 	MP3TrackInfo(const char *filename);
 	bool error() { return _errorFlag; }
-	void play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration);
+	void play(Mixer *mixer, SoundHandle *handle, int numLoops, int startFrame, int duration);
 };
 
 MP3TrackInfo::MP3TrackInfo(const char *filename) :
@@ -371,7 +371,7 @@ MP3TrackInfo::MP3TrackInfo(const char *filename) :
 	delete tempStream;
 }
 
-void MP3TrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) {
+void MP3TrackInfo::play(Mixer *mixer, SoundHandle *handle, int numLoops, int startFrame, int duration) {
 	assert(!_errorFlag);
 
 	mad_timer_t start;
@@ -396,7 +396,7 @@ void MP3TrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int sta
 	}
 
 	// ... create an AudioStream ...
-	MP3InputStream *input = new MP3InputStream(file, true, start, end);
+	MP3InputStream *input = new MP3InputStream(file, true, start, end, numLoops);
 	
 	// ... and play it
 	mixer->playInputStream(Audio::Mixer::kMusicSoundType, handle, input);
