@@ -1313,12 +1313,11 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 				return false;
 
 			/*
-			Considering that we know about *all* TOWNS versions,
-			and know their MD5s, we could simply rely on this and
-			if we find something which has an unknown MD5, assume
-			that it is an (so far unknown) version of Indy3.
-			However, there are also fan translations of the TOWNS versions,
-			so we can't really do that.
+			Considering that we know about *all* TOWNS versions, and
+			know their MD5s, we could simply rely on this and if we find
+			something which has an unknown MD5, assume that it is an (so
+			far unknown) version of Indy3. However, there are also fan
+			translations of the TOWNS versions, so we can't do that.
 
 			But we could at least look at the resource headers to distinguish
 			TOWNS versions from regular games:
@@ -1346,6 +1345,35 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 			  else
 				unknown, do not accept it
 			*/
+			
+			// We now try to exclude various possibilities by the presence of certain
+			// LFL files. Note that we only exclude something based on the *presence*
+			// of a LFL file here; compared to checking for the absence of files, this
+			// has the advantage that we are less likely to accidentally exclude demos
+			// (which, after all, are usually missing many LFL files present in the
+			// full version of the game).
+			
+			// No version of Indy3 has 05.LFL but MM, Loom and Zak all have it
+			if (g->id == GID_INDY3 && fileMD5Map.contains("05.LFL"))
+				return false;
+
+			// All versions of Indy3 have 93.LFL, but no other game
+			if (g->id != GID_INDY3 && fileMD5Map.contains("93.LFL"))
+				return false;
+
+			// No version of Loom has 48.LFL
+			if (g->id == GID_LOOM && fileMD5Map.contains("48.LFL"))
+				return false;
+
+			// No version of Zak has 60.LFL, but most (non-demo) versions of Indy3 have it
+			if (g->id == GID_ZAK && fileMD5Map.contains("60.LFL"))
+				return false;
+
+			// All versions of Indy3 and ZakTOWNS have 98.LFL, but no other game
+			if (g->id == GID_LOOM && fileMD5Map.contains("98.LFL"))
+				return false;
+
+
 		} else {
 			// TODO: Unknown file header, deal with it. Maybe an unencrypted
 			// variant...
