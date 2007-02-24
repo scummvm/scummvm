@@ -79,7 +79,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 	{
 		{
 			"nippon",
-			"amiga french demo",
+			"Demo",
 			{
 				{ "disk0",	0, "6fed2e18a6bfe5e8bb49144fcc95fd11", 624640},
 				{ "fr", 	0, "72f04be4320dfac719431419ec2b9a0d", 12778},
