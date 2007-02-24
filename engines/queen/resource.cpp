@@ -90,6 +90,10 @@ Resource::~Resource() {
 }
 
 ResourceEntry *Resource::resourceEntry(const char *filename) const {
+	if (filename[0] == 0 || strlen(filename) >= 14) {
+		uint8 *p = 0;
+		*p = 0x1234;
+	}
 	assert(filename[0] && strlen(filename) < 14);
 
 	Common::String entryName(filename);

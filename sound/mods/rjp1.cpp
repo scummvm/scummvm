@@ -227,7 +227,9 @@ void Rjp1::turnOffChannel(Rjp1Channel *channel) {
 void Rjp1::playChannel(Rjp1Channel *channel) {
 	if (channel->active) {
 		turnOnChannel(channel);
-		playSongSequence(channel);
+		if (channel->sequenceData) {
+			playSongSequence(channel);
+		}
 		modulateVolume(channel);
 		modulatePeriod(channel);
 	}

@@ -76,6 +76,8 @@ Display::Display(QueenEngine *vm, OSystem *system)
 	memset(_texts, 0, sizeof(_texts));
 
 	memset(&_dynalum, 0, sizeof(_dynalum));
+
+	setupInkColors();
 }
 
 Display::~Display() {
@@ -174,15 +176,19 @@ void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
 }
 
 void Display::palSetJoeDress() {
-	memcpy(_pal.room + 144 * 3, _palJoeDress, 16 * 3);
-	memcpy(_pal.screen + 144 * 3, _palJoeDress, 16 * 3);
-	palSet(_pal.screen, 144, 159, true);
+	if (_vm->resource()->getPlatform() == Common::kPlatformPC) {
+		memcpy(_pal.room + 144 * 3, _palJoeDress, 16 * 3);
+		memcpy(_pal.screen + 144 * 3, _palJoeDress, 16 * 3);
+		palSet(_pal.screen, 144, 159, true);
+	}
 }
 
 void Display::palSetJoeNormal() {
-	memcpy(_pal.room + 144 * 3, _palJoeClothes, 16 * 3);
-	memcpy(_pal.screen + 144 * 3, _palJoeClothes, 16 * 3);
-	palSet(_pal.screen, 144, 159, true);
+	if (_vm->resource()->getPlatform() == Common::kPlatformPC) {
+		memcpy(_pal.room + 144 * 3, _palJoeClothes, 16 * 3);
+		memcpy(_pal.screen + 144 * 3, _palJoeClothes, 16 * 3);
+		palSet(_pal.screen, 144, 159, true);
+	}
 }
 
 void Display::palSetPanel() {
@@ -260,30 +266,71 @@ void Display::palScroll(int start, int end) {
 	*palStart   = b;
 }
 
+void Display::palSetAmigaColor(uint8 color, uint16 rgb) {
+	uint8 b = rgb & 0xF; rgb >>= 4;
+	uint8 g = rgb & 0xF; rgb >>= 4;
+	uint8 r = rgb & 0xF;
+	_pal.room[color * 3] = (r << 4) | r;
+	_pal.room[color * 3 + 1] = (g << 4) | g;
+	_pal.room[color * 3 + 2] = (b << 4) | b;
+}
+
 void Display::palCustomColors(uint16 roomNum) {
 	debug(9, "Display::palCustomColors(%d)", roomNum);
-	int i;
+	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+		switch (roomNum) {
+		case 28:
+			palSetAmigaColor(27, 0xC60);
+			palSetAmigaColor(28, 0xA30);
+			palSetAmigaColor(29, 0x810);
+			palSetAmigaColor(30, 0x600);
+			break;
+		case 29:
+			palSetAmigaColor(27, 0X58B);
+			palSetAmigaColor(28, 0x369);
+			palSetAmigaColor(29, 0x158);
+			palSetAmigaColor(30, 0x046);
+			break;
+		case 30:
+			palSetAmigaColor(27, 0x5A4);
+			palSetAmigaColor(28, 0x384);
+			palSetAmigaColor(29, 0x171);
+			palSetAmigaColor(30, 0x056);
+			break;
+		case 31:
+			palSetAmigaColor(27, 0xDA4);
+			palSetAmigaColor(28, 0xB83);
+			palSetAmigaColor(29, 0x873);
+			palSetAmigaColor(30, 0x652);
+			break;
+		case 45:
+			palSetAmigaColor(20, 0xA58);
+			palSetAmigaColor(21, 0x845);
+			break;
+		}
+		return;
+	}
 	switch (roomNum) {
 	case 31:
-		for (i = 72; i < 84; i++) {
+		for (int i = 72; i < 84; i++) {
 			_pal.room[i * 3 + 1] = _pal.room[i * 3 + 1] * 90 / 100;
 			_pal.room[i * 3 + 2] = _pal.room[i * 3 + 2] * 70 / 100;
 		}
 		break;
 	case 29:
-		for (i = 72; i < 84; i++) {
+		for (int i = 72; i < 84; i++) {
 			_pal.room[i * 3 + 1] = _pal.room[i * 3 + 1] * 60 / 100;
 			_pal.room[i * 3 + 2] = _pal.room[i * 3 + 2] * 60 / 100;
 		}
 		break;
 	case 30:
-		for (i = 72; i < 84; i++) {
+		for (int i = 72; i < 84; i++) {
 			_pal.room[i * 3 + 0] = _pal.room[i * 3 + 0] * 60 / 100;
 			_pal.room[i * 3 + 1] = _pal.room[i * 3 + 1] * 80 / 100;
 		}
 		break;
 	case 28:
-		for (i = 72; i < 84; i++) {
+		for (int i = 72; i < 84; i++) {
 			_pal.room[i * 3 + 0] = _pal.room[i * 3 + 0] * 80 / 100;
 			_pal.room[i * 3 + 2] = _pal.room[i * 3 + 1] * 60 / 100;
 		}
@@ -304,6 +351,25 @@ void Display::palCustomScroll(uint16 roomNum) {
 	int i;
 
 	++scrollx;
+
+	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+		switch (roomNum) {
+		case 4:
+			if ((scrollx & 1) == 0) {
+				palScroll(24, 64);
+				loPal = 24;
+				hiPal = 64;
+			}
+			break;
+		case 74:
+			palScroll(28, 31);
+			loPal = 28;
+			hiPal = 31;
+			break;
+		}
+		return;
+	}
+
 	switch (roomNum) {
 	case 123: {
 			static int16 j = 0, jdir = 2;
@@ -511,34 +577,36 @@ void Display::palCustomFlash() {
 }
 
 void Display::palCustomLightsOff(uint16 roomNum) {
-	int end = 223;
-	int start = (roomNum == ROOM_FLODA_FRONTDESK) ? 32 : 16;
-	int n = end - start + 1;
-
-	memset(_pal.screen + start * 3, 0, n * 3);
-	palSet(_pal.screen, start, end, true);
-
+	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+		memset(_pal.screen, 0, 31 * 3);
+		_pal.screen[31 * 3] = 15;
+		_pal.screen[31 * 3 + 1] = 15;
+		_pal.screen[31 * 3 + 2] = 0;
+		palSet(_pal.screen, 0, 31, true);
+	} else {
+		const int end = 223;
+		const int start = (roomNum == ROOM_FLODA_FRONTDESK) ? 32 : 16;
+		const int n = end - start + 1;
+		memset(_pal.screen + start * 3, 0, n * 3);
+		palSet(_pal.screen, start, end, true);
+	}
 	_pal.scrollable = false;
 }
 
 void Display::palCustomLightsOn(uint16 roomNum) {
-	int end = 223;
-	int start = (roomNum == ROOM_FLODA_FRONTDESK) ? 32 : 0;
-	int n = end - start + 1;
-
-	memcpy(_pal.screen + start * 3, _pal.room + start * 3, n * 3);
-	palSet(_pal.screen, start, end, true);
-
+	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+		memcpy(_pal.screen, _pal.room, 32 * 3);
+		palSet(_pal.screen, 0, 31, true);
+	} else {
+		const int end = 223;
+		const int start = (roomNum == ROOM_FLODA_FRONTDESK) ? 32 : 0;
+		const int n = end - start + 1;
+		memcpy(_pal.screen + start * 3, _pal.room + start * 3, n * 3);
+		palSet(_pal.screen, start, end, true);
+	}
 	_pal.dirtyMin = 0;
 	_pal.dirtyMax = 223;
 	_pal.scrollable = true;
-}
-
-void Display::palSetPanelColor(uint8 color, uint8 r, uint8 g, uint8 b) {
-	color -= 144;
-	_pal.panel[color * 3] = r;
-	_pal.panel[color * 3 + 1] = g;
-	_pal.panel[color * 3 + 2] = b;
 }
 
 int Display::getNumColorsForRoom(uint16 room) const {
@@ -599,7 +667,7 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 		if (_fullRefresh) {
 			memset(_dirtyBlocks, 0, _dirtyBlocksWidth * _dirtyBlocksHeight);
 		}
-		debug(7, "Display::update() - Full blit (%d)", _fullRefresh);
+		debug(9, "Display::update() - Full blit (%d)", _fullRefresh);
 	} else {
 		uint16 count = 0;
 		uint8 *scrBuf = _screenBuf;
@@ -628,7 +696,7 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 		if (count != 0) {
 			_system->updateScreen();
 		}
-		debug(7, "Display::update() - Dirtyblocks blit (%d)", count);
+		debug(9, "Display::update() - Dirtyblocks blit (%d)", count);
 	}
 }
 
@@ -642,14 +710,6 @@ void Display::setupPanel() {
 
 	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
 		decodeLBM(data, dataSize, _panelBuf, PANEL_W, &panelWidth, &panelHeight, _pal.panel, 0, 32, 144);
-		// setup special colors
-		// XXX set correct color values
-		palSetPanelColor(INK_BG_PANEL, 255, 255, 255);
-		palSetPanelColor(INK_JOURNAL, 255, 255, 255);
-		palSetPanelColor(INK_PINNACLE_ROOM, 255, 255, 255);
-		palSetPanelColor(INK_CMD_SELECT, 255, 255, 255);
-		palSetPanelColor(INK_CMD_NORMAL, 255, 255, 255);
-		palSetPanelColor(INK_CMD_LOCK, 255, 255, 255);
 	} else {
 		WRITE_LE_UINT16(data + 14, PANEL_H - 10);
 		decodePCX(data, dataSize, _panelBuf + PANEL_W * 10, PANEL_W, &panelWidth, &panelHeight, _pal.panel, 144, 256);
@@ -692,8 +752,8 @@ void Display::drawBobPasteDown(const uint8 *data, uint16 x, uint16 y, uint16 w, 
 }
 
 void Display::drawInventoryItem(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h) {
-	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
-		if (data != NULL) {
+	if (data != NULL) {
+		if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
 			uint8 *dst = _panelBuf + y * PANEL_W + x;
 			while (h--) {
 				for (int i = 0; i < w; ++i) {
@@ -702,14 +762,10 @@ void Display::drawInventoryItem(const uint8 *data, uint16 x, uint16 y, uint16 w,
 				dst += PANEL_W;
 			}
 		} else {
-			fill(_panelBuf, PANEL_W, x, y, w, h, 144 + 2);
+			blit(_panelBuf, PANEL_W, x, y, data, w, w, h, false, false);
 		}
 	} else {
-		if (data != NULL) {
-			blit(_panelBuf, PANEL_W, x, y, data, w, w, h, false, false);
-		} else {
-			fill(_panelBuf, PANEL_W, x, y, w, h, INK_BG_PANEL);
-		}
+		fill(_panelBuf, PANEL_W, x, y, w, h, getInkColor(INK_BG_PANEL));
 	}
 	setDirtyBlock(x, 150 + y, w, h);
 }
@@ -975,6 +1031,29 @@ void Display::clearTexts(uint16 y1, uint16 y2) {
 	}
 }
 
+void Display::setupInkColors() {
+	memset(_inkColors, 0, sizeof(_inkColors));
+	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+		_inkColors[INK_BG_PANEL] = 144 + 2;
+		_inkColors[INK_JOURNAL] = 144 + 16;
+		_inkColors[INK_PINNACLE_ROOM] = 144 + 14;
+		_inkColors[INK_CMD_SELECT] = 144 + 17;
+		_inkColors[INK_CMD_NORMAL] = 144 + 1;
+		_inkColors[INK_TALK_NORMAL] = 144 + 1;
+		_inkColors[INK_JOE] = 144 + 17;
+		_inkColors[INK_OUTLINED_TEXT] = 0;
+	} else {
+		_inkColors[INK_BG_PANEL] = 226;
+		_inkColors[INK_JOURNAL] = 248;
+		_inkColors[INK_PINNACLE_ROOM] = 243;
+		_inkColors[INK_CMD_SELECT] = 255;
+		_inkColors[INK_CMD_NORMAL] = 225;
+		_inkColors[INK_TALK_NORMAL] = 7;
+		_inkColors[INK_JOE] = 14;
+		_inkColors[INK_OUTLINED_TEXT] = 16;
+	}
+}
+
 void Display::setFocusRect(const Common::Rect& rect) {
 	_system->setFocusRectangle(rect);
 }
@@ -1024,7 +1103,7 @@ void Display::drawText(uint16 x, uint16 y, uint8 color, const char *text, bool o
 		const uint8 *ftch = _font + ch * 8;
 		if (outlined) {
 			for (int i = 0; i < 8; ++i) {
-				drawChar(x + dx[i], y + dy[i], INK_OUTLINED_TEXT, ftch);
+				drawChar(x + dx[i], y + dy[i], getInkColor(INK_OUTLINED_TEXT), ftch);
 			}
 		}
 		drawChar(x, y, color, ftch);

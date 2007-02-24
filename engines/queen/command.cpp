@@ -46,12 +46,12 @@ void CmdText::clear() {
 	memset(_command, 0, sizeof(_command));
 }
 
-void CmdText::display(uint8 color) {
-	_vm->display()->textCurrentColor(color);
+void CmdText::display(InkColor color) {
+	_vm->display()->textCurrentColor(_vm->display()->getInkColor(color));
 	_vm->display()->setTextCentered(_y, _command, false);
 }
 
-void CmdText::displayTemp(uint8 color, Verb v, const char *name, bool outlined) {
+void CmdText::displayTemp(InkColor color, Verb v, const char *name, bool outlined) {
 	char temp[MAX_COMMAND_LEN] = "";
 	if (_isReversed) {
 		if (name != NULL)
@@ -64,17 +64,17 @@ void CmdText::displayTemp(uint8 color, Verb v, const char *name, bool outlined) 
 			strcat(temp, name);
 		}
 	}
-	_vm->display()->textCurrentColor(color);
+	_vm->display()->textCurrentColor(_vm->display()->getInkColor(color));
 	_vm->display()->setTextCentered(_y, temp, outlined);
 }
 
-void CmdText::displayTemp(uint8 color, const char *name, bool outlined) {
+void CmdText::displayTemp(InkColor color, const char *name, bool outlined) {
 	char temp[MAX_COMMAND_LEN];
 	if (_isReversed)
 		sprintf(temp, "%s %s", name, _command);
 	else
 		sprintf(temp, "%s %s", _command, name);
-	_vm->display()->textCurrentColor(color);
+	_vm->display()->textCurrentColor(_vm->display()->getInkColor(color));
 	_vm->display()->setTextCentered(_y, temp, outlined);
 }
 

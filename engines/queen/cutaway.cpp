@@ -41,11 +41,9 @@ void Cutaway::run(
 		const char *filename,
 		char *nextFilename,
 		QueenEngine *vm) {
-	if (vm->resource()->fileExists(filename)) {
-		Cutaway *cutaway = new Cutaway(filename, vm);
-		cutaway->run(nextFilename);
-		delete cutaway;
-	}
+	Cutaway *cutaway = new Cutaway(filename, vm);
+	cutaway->run(nextFilename);
+	delete cutaway;
 }
 
 Cutaway::Cutaway(
@@ -495,6 +493,7 @@ const byte *Cutaway::getCutawayAnim(const byte *ptr, int header, CutawayAnim &an
 		anim.bank = 15;
 	} else {
 		if (anim.bank != 13) {
+			assert(anim.bank - 1 < MAX_BANK_NAME_COUNT);
 			_vm->bankMan()->load(_bankNames[anim.bank-1], CUTAWAY_BANK);
 			anim.bank = 8;
 		} else {
@@ -518,7 +517,8 @@ const byte *Cutaway::getCutawayAnim(const byte *ptr, int header, CutawayAnim &an
 	anim.scale = (int16)READ_BE_INT16(ptr);
 	ptr += 2;
 
-	if (_vm->resource()->isDemo()) {
+	if ((_vm->resource()->isDemo() && _vm->resource()->getPlatform() == Common::kPlatformPC) ||
+		(_vm->resource()->isInterview() && _vm->resource()->getPlatform() == Common::kPlatformAmiga)) {
 		anim.song = 0;
 	} else {
 		anim.song = (int16)READ_BE_INT16(ptr);

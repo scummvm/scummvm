@@ -207,6 +207,8 @@ public:
 	//! enter the Journal (save/load, configuration)
 	virtual void useJournal() = 0;
 
+	void setupSpecialMoveTable();
+
 	//! execute a special move
 	void executeSpecialMove(uint16 sm);
 
@@ -221,6 +223,8 @@ public:
 		GAME_STATE_COUNT    = 211,
 		TALK_SELECTED_COUNT = 86
 	};
+
+	typedef void (Logic::*SpecialMoveProc)();
 
 protected:
 
@@ -252,6 +256,7 @@ protected:
 	void asmTurnGuardOn();
 	void asmPanLeft320To144();
 	void asmSmooch();
+	void asmSmoochNoScroll();
 	void asmMakeLightningHitPlane();
 	void asmScaleBlimp();
 	void asmScaleEnding();
@@ -259,6 +264,7 @@ protected:
 	void asmShakeScreen();
 	void asmAttemptPuzzle();
 	void asmScaleTitle();
+	void asmScrollTitle();
 	void asmPanRightToHugh();
 	void asmMakeWhiteFlash();
 	void asmPanRightToJoeAndRita();
@@ -268,7 +274,6 @@ protected:
 	void asmEndInterview();
 
 	virtual bool preChangeRoom() = 0;
-	virtual bool handleSpecialMove(uint16 sm) = 0;
 
 
 	uint16 _currentRoom;
@@ -361,6 +366,8 @@ protected:
 
 	//! cutscene counter
 	int _scene;
+	
+	SpecialMoveProc _specialMoves[40];
 
 	Credits *_credits;
 	Journal *_journal;
@@ -377,7 +384,6 @@ public:
 protected:
 
 	bool preChangeRoom();
-	bool handleSpecialMove(uint16 sm);
 };
 
 class LogicInterview : public Logic {
@@ -389,7 +395,6 @@ public:
 protected:
 
 	bool preChangeRoom();
-	bool handleSpecialMove(uint16 sm);
 };
 
 class LogicGame : public Logic {
@@ -401,7 +406,6 @@ public:
 protected:
 
 	bool preChangeRoom();
-	bool handleSpecialMove(uint16 sm);
 };
 
 

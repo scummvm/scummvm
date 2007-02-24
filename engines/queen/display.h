@@ -72,6 +72,8 @@ public:
 	//! scroll some palette colors
 	void palScroll(int start, int end);
 
+	void palSetAmigaColor(uint8 color, uint16 rgb);
+
 	//! custom palette effect for the specified room
 	void palCustomColors(uint16 roomNum);
 
@@ -83,8 +85,6 @@ public:
 
 	void palCustomLightsOff(uint16 roomNum);
 	void palCustomLightsOn(uint16 roomNum);
-
-	void palSetPanelColor(uint8 color, uint8 r, uint8 g, uint8 b);
 
 	//! mark all palette entries as dirty
 	void palSetAllDirty() { _pal.dirtyMin = 0; _pal.dirtyMax = 255; }
@@ -150,6 +150,10 @@ public:
 
 	//! remove entries from the texts list
 	void clearTexts(uint16 y1, uint16 y2);
+
+	void setupInkColors();
+
+	uint8 getInkColor(InkColor color) const { return _inkColors[color]; }
 
 	//! change the current text color
 	void textCurrentColor(uint8 color) { _curTextColor = color; }
@@ -238,6 +242,8 @@ private:
 
 	//! font justification sizes
 	uint8 _charWidth[256];
+
+	uint8 _inkColors[INK_COUNT];
 
 	Common::RandomSource _rnd;
 	Dynalum _dynalum;

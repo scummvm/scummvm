@@ -72,6 +72,7 @@ void Grid::readDataFrom(uint16 numObjects, uint16 numRooms, byte *&ptr) {
 
 void Grid::setZone(GridScreen screen, uint16 zoneNum, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	debug(9, "Grid::setZone(%d, %d, (%d,%d), (%d,%d))", screen, zoneNum, x1, y1, x2, y2);
+	assert(zoneNum < MAX_ZONES_NUMBER);
 	ZoneSlot *pzs = &_zones[screen][zoneNum];
 	pzs->valid = true;
 	pzs->box.x1 = x1;
@@ -82,6 +83,7 @@ void Grid::setZone(GridScreen screen, uint16 zoneNum, uint16 x1, uint16 y1, uint
 
 void Grid::setZone(GridScreen screen, uint16 zoneNum, const Box &box) {
 	debug(9, "Grid::setZone(%d, %d, (%d,%d), (%d,%d))", screen, zoneNum, box.x1, box.y1, box.x2, box.y2);
+	assert(zoneNum < MAX_ZONES_NUMBER);
 	ZoneSlot *pzs = &_zones[screen][zoneNum];
 	pzs->valid = true;
 	pzs->box = box;

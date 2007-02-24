@@ -127,6 +127,7 @@ QueenEngine::~QueenEngine() {
 void QueenEngine::registerDefaultSettings() {
 	ConfMan.registerDefault("talkspeed", Logic::DEFAULT_TALK_SPEED);
 	ConfMan.registerDefault("subtitles", true);
+	_subtitles = true;
 }
 
 void QueenEngine::checkOptionSettings() {
@@ -137,14 +138,14 @@ void QueenEngine::checkOptionSettings() {
 		_talkSpeed = MAX_TEXT_SPEED;
 	}
 
-	// ensure text is always on when voice is off
-	if (!_sound->speechOn()) {
-		_subtitles = true;
-	}
-
 	// demo and interview versions don't have speech at all
 	if (_sound->speechOn() && (_resource->isDemo() || _resource->isInterview())) {
 		_sound->speechToggle(false);
+	}
+
+	// ensure text is always on when voice is off
+	if (!_sound->speechOn()) {
+		_subtitles = true;
 	}
 }
 

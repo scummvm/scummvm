@@ -57,6 +57,7 @@ Logic::Logic(QueenEngine *vm)
 	_journal = new Journal(vm);
 	_scene = 0;
 	readQueenJas();
+	setupSpecialMoveTable();
 }
 
 Logic::~Logic() {
@@ -1451,10 +1452,76 @@ void Logic::changeRoom() {
 	_vm->display()->showMouseCursor(true);
 }
 
+void Logic::setupSpecialMoveTable() {
+	memset(_specialMoves, 0, sizeof(_specialMoves));
+	if (_vm->resource()->isDemo()) {
+		_specialMoves[4]  = &Logic::asmMakeJoeUseUnderwear;
+		_specialMoves[5]  = &Logic::asmSwitchToDressPalette;
+		_specialMoves[14] = &Logic::asmEndDemo;
+	} else if (_vm->resource()->isInterview()) {
+		_specialMoves[1]  = &Logic::asmInterviewIntro;
+		_specialMoves[2]  = &Logic::asmEndInterview;
+	} else {
+		_specialMoves[2]  = &Logic::asmMakeJoeUseDress;
+		_specialMoves[3]  = &Logic::asmMakeJoeUseNormalClothes;
+		_specialMoves[4]  = &Logic::asmMakeJoeUseUnderwear;
+		_specialMoves[5]  = &Logic::asmSwitchToDressPalette;
+		_specialMoves[6]  = &Logic::asmSwitchToNormalPalette;
+		_specialMoves[7]  = &Logic::asmStartCarAnimation;       // room 74
+		_specialMoves[8]  = &Logic::asmStopCarAnimation;        // room 74
+		_specialMoves[9]  = &Logic::asmStartFightAnimation;     // room 69
+		_specialMoves[10] = &Logic::asmWaitForFrankPosition;    // c69e.cut
+		_specialMoves[11] = &Logic::asmMakeFrankGrowing;        // c69z.cut
+		_specialMoves[12] = &Logic::asmMakeRobotGrowing;        // c69z.cut
+		_specialMoves[13] = &Logic::asmShrinkRobot;
+		_specialMoves[14] = &Logic::asmEndGame;
+		_specialMoves[15] = &Logic::asmPutCameraOnDino;
+		_specialMoves[16] = &Logic::asmPutCameraOnJoe;
+		_specialMoves[17] = &Logic::asmAltIntroPanRight;        // cintr.cut
+		_specialMoves[18] = &Logic::asmAltIntroPanLeft;         // cintr.cut
+		_specialMoves[19] = &Logic::asmSetAzuraInLove;
+		_specialMoves[20] = &Logic::asmPanRightFromJoe;
+		_specialMoves[21] = &Logic::asmSetLightsOff;
+		_specialMoves[22] = &Logic::asmSetLightsOn;
+		_specialMoves[23] = &Logic::asmSetManequinAreaOn;
+		_specialMoves[24] = &Logic::asmPanToJoe;
+		_specialMoves[25] = &Logic::asmTurnGuardOn;
+		_specialMoves[26] = &Logic::asmPanLeft320To144;
+		_specialMoves[27] = &Logic::asmSmooch;
+		_specialMoves[28] = &Logic::asmMakeLightningHitPlane;
+		_specialMoves[29] = &Logic::asmScaleBlimp;
+		_specialMoves[30] = &Logic::asmScaleEnding;
+		_specialMoves[31] = &Logic::asmWaitForCarPosition;
+		_specialMoves[32] = &Logic::asmShakeScreen;
+		_specialMoves[33] = &Logic::asmAttemptPuzzle;
+		_specialMoves[34] = &Logic::asmScaleTitle;
+		_specialMoves[36] = &Logic::asmPanRightToHugh;
+		_specialMoves[37] = &Logic::asmMakeWhiteFlash;
+		_specialMoves[38] = &Logic::asmPanRightToJoeAndRita;
+		_specialMoves[39] = &Logic::asmPanLeftToBomb;            // cdint.cut
+		if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+			_specialMoves[5] = 0;
+			_specialMoves[6] = 0;
+			_specialMoves[13] = 0;
+			_specialMoves[17] = 0;
+			_specialMoves[18] = 0;
+			_specialMoves[27] = &Logic::asmSmoochNoScroll;
+			_specialMoves[32] = 0;
+			_specialMoves[34] = &Logic::asmScrollTitle;
+			_specialMoves[35] = 0;
+			_specialMoves[36] = 0;
+			_specialMoves[37] = 0;
+			_specialMoves[38] = 0;
+			_specialMoves[39] = 0;
+		}
+	}
+}
+
 void Logic::executeSpecialMove(uint16 sm) {
 	debug(6, "Special move: %d", sm);
-	if (!handleSpecialMove(sm))
-		warning("unhandled / invalid special move : %d", sm);
+	if (sm < ARRAYSIZE(_specialMoves) && _specialMoves[sm] != 0) {
+		(this->*_specialMoves[sm])();
+	}
 }
 
 void Logic::asmMakeJoeUseDress() {
@@ -1505,14 +1572,21 @@ void Logic::asmMakeFrankGrowing() {
 	_vm->bankMan()->unpack(1, 38, 15);
 	BobSlot *bobFrank = _vm->graphics()->bob(5);
 	bobFrank->frameNum = 38;
-	bobFrank->curPos(160, 200);
-
-	int i;
-	for (i = 10; i <= 100; i += 4) {
-		bobFrank->scale = i;
-		_vm->update();
+	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+		bobFrank->x = 160;
+		bobFrank->scale = 100;
+		for (int i = 300; i >= 200; i -= 5) {
+			bobFrank->y = i;
+			_vm->update();
+		}		
+	} else {
+		bobFrank->curPos(160, 200);
+		for (int i = 10; i <= 100; i += 4) {
+			bobFrank->scale = i;
+			_vm->update();
+		}
 	}
-	for (i = 0; i <= 20; ++i) {
+	for (int i = 0; i <= 20; ++i) {
 		_vm->update();
 	}
 
@@ -1528,14 +1602,21 @@ void Logic::asmMakeRobotGrowing() {
 	_vm->bankMan()->unpack(1, 38, 15);
 	BobSlot *bobRobot = _vm->graphics()->bob(5);
 	bobRobot->frameNum = 38;
-	bobRobot->curPos(160, 200);
-
-	int i;
-	for (i = 10; i <= 100; i += 4) {
-		bobRobot->scale = i;
-		_vm->update();
+	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+		bobRobot->x = 160;
+		bobRobot->scale = 100;
+		for (int i = 350; i >= 200; i -= 5) {
+			bobRobot->y = i;
+			_vm->update();
+		}		
+	} else {
+		bobRobot->curPos(160, 200);
+		for (int i = 10; i <= 100; i += 4) {
+			bobRobot->scale = i;
+			_vm->update();
+		}
 	}
-	for (i = 0; i <= 20; ++i) {
+	for (int i = 0; i <= 20; ++i) {
 		_vm->update();
 	}
 
@@ -1708,6 +1789,19 @@ void Logic::asmSmooch() {
 	}
 }
 
+void Logic::asmSmoochNoScroll() {
+	_vm->graphics()->putCameraOnBob(-1);
+	BobSlot *bobAzura = _vm->graphics()->bob(5);
+	BobSlot *bobJoe = _vm->graphics()->bob(6);
+	for (int i = 0; i < 320; i += 8) {
+		if (bobJoe->x - bobAzura->x > 128) {
+			bobAzura->x += 2;
+			bobJoe->x -= 2;
+		}
+		_vm->update();
+	}	
+}
+
 void Logic::asmMakeLightningHitPlane() {
 	_vm->graphics()->putCameraOnBob(-1);
 	short iy = 0, x, ydir = -1, j, k;
@@ -1717,7 +1811,11 @@ void Logic::asmMakeLightningHitPlane() {
 
 	planeBob->y = 135;
 
-	planeBob->scale = 20;
+	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+		planeBob->scale = 100;
+	} else {
+		planeBob->scale = 20;
+	}
 
 	for (x = 660; x > 163; x -= 6) {
 		planeBob->x = x;
@@ -1791,11 +1889,13 @@ void Logic::asmScaleBlimp() {
 	BobSlot *bob = _vm->graphics()->bob(7);
 	int16 x = bob->x;
 	int16 y = bob->y;
+	bob->scale = 100;
 	while (bob->x > 150) {
 		bob->x = x * 256 / z + 150;
 		bob->y = y * 256 / z + 112;
-		bob->scale = 100 * 256 / z;
-
+		if (_vm->resource()->getPlatform() != Common::kPlatformAmiga) {
+			bob->scale = 100 * 256 / z;
+		}
 		++z;
 		if (z % 6 == 0) {
 			--x;
@@ -1808,14 +1908,14 @@ void Logic::asmScaleBlimp() {
 void Logic::asmScaleEnding() {
 	_vm->graphics()->bob(7)->active = false; // Turn off blimp
 	BobSlot *b = _vm->graphics()->bob(20);
-	b->x = 160;
-	b->y = 100;
-	int i;
-	for (i = 5; i <= 100; i += 5) {
-		b->scale = i;
-		_vm->update();
+	b->curPos(160, 100);
+	if (_vm->resource()->getPlatform() != Common::kPlatformAmiga) {
+		for (int i = 5; i <= 100; i += 5) {
+			b->scale = i;
+			_vm->update();
+		}
 	}
-	for (i = 0; i < 50; ++i) {
+	for (int i = 0; i < 50; ++i) {
 		_vm->update();
 	}
 	_vm->display()->palFadeOut(_currentRoom);
@@ -1853,6 +1953,18 @@ void Logic::asmScaleTitle() {
 	int i;
 	for (i = 5; i <= 100; i +=5) {
 		bob->scale = i;
+		bob->y -= 4;
+		_vm->update();
+	}
+}
+
+void Logic::asmScrollTitle() {
+	BobSlot *bob = _vm->graphics()->bob(5);
+	bob->animating = false;
+	bob->x = 161;
+	bob->y = 300;
+	bob->scale = 100;
+	while (bob->y >= 120) {
 		bob->y -= 4;
 		_vm->update();
 	}
@@ -2063,23 +2175,6 @@ bool LogicDemo::preChangeRoom() {
 	return false;
 }
 
-bool LogicDemo::handleSpecialMove(uint16 sm) {
-	switch (sm) {
-	case 4:
-		asmMakeJoeUseUnderwear();
-		break;
-	case 5:
-		asmSwitchToDressPalette();
-		break;
-	case 14:
-		asmEndDemo();
-		break;
-	default:
-		return false;
-	}
-	return true;
-}
-
 void LogicInterview::useJournal() {
 	// no-op
 }
@@ -2096,19 +2191,6 @@ bool LogicInterview::preChangeRoom() {
 	return false;
 }
 
-bool LogicInterview::handleSpecialMove(uint16 sm) {
-	switch (sm) {
-	case 1:
-		asmInterviewIntro();
-		break;
-	case 2:
-		asmEndInterview();
-		break;
-	default:
-		return false;
-	}
-	return true;
-}
 
 void LogicGame::useJournal() {
 	_vm->command()->clear(false);
@@ -2124,13 +2206,13 @@ bool LogicGame::preChangeRoom() {
 		displayRoom(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
 		playCutaway("copy.cut");
 		playCutaway("clogo.cut");
-
-		if (ConfMan.getBool("alt_intro") && _vm->resource()->isCD()) {
-			playCutaway("cintr.cut");
-		} else {
-			playCutaway("cdint.cut");
+		if (_vm->resource()->getPlatform() != Common::kPlatformAmiga) {
+			if (ConfMan.getBool("alt_intro") && _vm->resource()->isCD()) {
+				playCutaway("cintr.cut");
+			} else {
+				playCutaway("cdint.cut");
+			}
 		}
-
 		playCutaway("cred.cut");
 		_vm->display()->palSetPanel();
 		sceneReset();
@@ -2143,66 +2225,6 @@ bool LogicGame::preChangeRoom() {
 		return true;
 	}
 	return false;
-}
-
-bool LogicGame::handleSpecialMove(uint16 sm) {
-	typedef void (LogicGame::*SpecialMoveProc)();
-	static const SpecialMoveProc asmTable[] = {
-		/* 00 */
-		0,
-		0,
-		&LogicGame::asmMakeJoeUseDress,
-		&LogicGame::asmMakeJoeUseNormalClothes,
-		/* 04 */
-		&LogicGame::asmMakeJoeUseUnderwear,
-		&LogicGame::asmSwitchToDressPalette,
-		&LogicGame::asmSwitchToNormalPalette,
-		&LogicGame::asmStartCarAnimation,       // room 74
-		/* 08 */
-		&LogicGame::asmStopCarAnimation,        // room 74
-		&LogicGame::asmStartFightAnimation,     // room 69
-		&LogicGame::asmWaitForFrankPosition,    // c69e.cut
-		&LogicGame::asmMakeFrankGrowing,        // c69z.cut
-		/* 12 */
-		&LogicGame::asmMakeRobotGrowing,        // c69z.cut
-		&LogicGame::asmShrinkRobot,
-		&LogicGame::asmEndGame,
-		&LogicGame::asmPutCameraOnDino,
-		/* 16 */
-		&LogicGame::asmPutCameraOnJoe,
-		&LogicGame::asmAltIntroPanRight,        // cintr.cut
-		&LogicGame::asmAltIntroPanLeft,         // cintr.cut
-		&LogicGame::asmSetAzuraInLove,
-		/* 20 */
-		&LogicGame::asmPanRightFromJoe,
-		&LogicGame::asmSetLightsOff,
-		&LogicGame::asmSetLightsOn,
-		&LogicGame::asmSetManequinAreaOn,
-		/* 24 */
-		&LogicGame::asmPanToJoe,
-		&LogicGame::asmTurnGuardOn,
-		&LogicGame::asmPanLeft320To144,
-		&LogicGame::asmSmooch,
-		/* 28 */
-		&LogicGame::asmMakeLightningHitPlane,
-		&LogicGame::asmScaleBlimp,
-		&LogicGame::asmScaleEnding,
-		&LogicGame::asmWaitForCarPosition,
-		/* 32 */
-		&LogicGame::asmShakeScreen,
-		&LogicGame::asmAttemptPuzzle,
-		&LogicGame::asmScaleTitle,
-		0,
-		/* 36 */
-		&LogicGame::asmPanRightToHugh,
-		&LogicGame::asmMakeWhiteFlash,
-		&LogicGame::asmPanRightToJoeAndRita,
-		&LogicGame::asmPanLeftToBomb            // cdint.cut
-	};
-	if (sm >= ARRAYSIZE(asmTable) || asmTable[sm] == 0)
-		return false;
-	(this->*asmTable[sm])();
-	return true;
 }
 
 } // End of namespace Queen

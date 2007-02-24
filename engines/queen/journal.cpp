@@ -117,7 +117,7 @@ void Journal::setup() {
 	_vm->graphics()->clearBobs();
 	_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
 	_vm->bankMan()->eraseFrames(false);
-	_vm->display()->textCurrentColor(INK_JOURNAL);
+	_vm->display()->textCurrentColor(_vm->display()->getInkColor(INK_JOURNAL));
 
 	_vm->grid()->clear(GS_ROOM);
 	for (int i = 0; i < MAX_ZONES; ++i) {
@@ -159,7 +159,7 @@ void Journal::update() {
 	if (_textField.enabled) {
 		int16 x = _textField.x + _textField.posCursor;
 		int16 y = _textField.y + _currentSaveSlot * _textField.h + 8;
-		_vm->display()->drawBox(x, y, x + 6, y, INK_JOURNAL);
+		_vm->display()->drawBox(x, y, x + 6, y, _vm->display()->getInkColor(INK_JOURNAL));
 	}
 	_vm->display()->forceFullRefresh();
 	_vm->display()->update();

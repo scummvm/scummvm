@@ -1178,7 +1178,7 @@ int16 Talk::selectSentence() {
 	int talkZone[5];
 	int i;
 
-	_vm->display()->textCurrentColor(INK_TALK_NORMAL);
+	_vm->display()->textCurrentColor(_vm->display()->getInkColor(INK_TALK_NORMAL));
 
 	_vm->graphics()->setupArrows();
 	BobSlot *arrowBobUp   = _vm->graphics()->bob(Graphics::ARROW_BOB_UP);
@@ -1269,7 +1269,7 @@ int16 Talk::selectSentence() {
 						int16 y;
 						const Box *b = _vm->grid()->zone(GS_PANEL, oldZone);
 						for (y = b->y1; y < b->y2; y += 10)
-							_vm->display()->textColor(150 + y, INK_TALK_NORMAL);
+							_vm->display()->textColor(150 + y, _vm->display()->getInkColor(INK_TALK_NORMAL));
 						oldZone = 0;
 					}
 					if (mouseButton != 0) {
@@ -1292,13 +1292,13 @@ int16 Talk::selectSentence() {
 						if (zone > 0) {
 							const Box *b = _vm->grid()->zone(GS_PANEL, zone);
 							for (y = b->y1; y < b->y2; y += 10)
-								_vm->display()->textColor(150 + y, INK_JOE);
+								_vm->display()->textColor(150 + y, _vm->display()->getInkColor(INK_JOE));
 						}
 
 						if (oldZone > 0) {
 							const Box *b = _vm->grid()->zone(GS_PANEL, oldZone);
 							for (y = b->y1; y < b->y2; y += 10)
-								_vm->display()->textColor(150 + y, INK_TALK_NORMAL);
+								_vm->display()->textColor(150 + y, _vm->display()->getInkColor(INK_TALK_NORMAL));
 						}
 
 						oldZone = zone;

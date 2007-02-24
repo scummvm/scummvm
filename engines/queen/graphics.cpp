@@ -295,17 +295,21 @@ void Graphics::setupMouseCursor() {
 			0x00, 0x00, 0x00, 0x20
 		};
 		uint8 cursorData[16 * 15];
+		memset(cursorData, 0, sizeof(cursorData));
 		const uint8 *src = defaultAmigaCursor;
 		int i = 0;
 		for (int h = 0; h < 15; ++h) {
 			for (int b = 0; b < 16; ++b) {
 				const uint16 mask = (1 << (15 - b));
-				cursorData[i] = 0;
+				uint8 color = 0;
 				if (READ_BE_UINT16(src + 0) & mask) {
-					cursorData[i] |= 4;
+					color |= 1;
 				}
 				if (READ_BE_UINT16(src + 2) & mask) {
-					cursorData[i] |= 8;
+					color |= 2;
+				}
+				if (color != 0) {
+					cursorData[i] = 0x90 + color;
 				}
 				++i;
 			}

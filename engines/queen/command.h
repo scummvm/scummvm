@@ -38,13 +38,13 @@ struct CmdText {
 	void clear();
 
 	//! display the command sentence using the specified color
-	void display(uint8 color);
+	void display(InkColor color);
 
 	//! display a temporary command sentence using the specified parameters
-	void displayTemp(uint8 color, Verb v, const char *name = NULL, bool outlined = false);
+	void displayTemp(InkColor color, Verb v, const char *name = NULL, bool outlined = false);
 
 	//! display a temporary command sentence using the specified parameters
-	void displayTemp(uint8 color, const char *name, bool outlined = false);
+	void displayTemp(InkColor color, const char *name, bool outlined = false);
 
 	//! set the verb for the command sentence
 	void setVerb(Verb v);

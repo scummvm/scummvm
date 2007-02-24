@@ -53,16 +53,17 @@ enum Direction {
 	DIR_BACK  = 4
 };
 
-enum {
-	INK_BG_PANEL      = 226,
-	INK_JOURNAL       = 248,
-	INK_PINNACLE_ROOM = 243,
-	INK_CMD_SELECT    = 255,
-	INK_CMD_NORMAL    = 225,
-	INK_CMD_LOCK      = 234,
-	INK_TALK_NORMAL   = 7,
-	INK_JOE           = 14,
-	INK_OUTLINED_TEXT = 16
+enum InkColor {
+	INK_BG_PANEL = 0,
+	INK_JOURNAL,
+	INK_PINNACLE_ROOM,
+	INK_CMD_SELECT,
+	INK_CMD_NORMAL,
+	INK_TALK_NORMAL,
+	INK_JOE,
+	INK_OUTLINED_TEXT,
+	
+	INK_COUNT
 };
 
 enum {
