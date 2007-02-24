@@ -292,7 +292,6 @@ bool FlacInputStream::seekAbsolute(FLAC__uint64 sample) {
 	const bool result = (0 != ::FLAC__stream_decoder_seek_absolute(_decoder, sample));
 #endif
 	if (result) {
-		_sampleCache.bufFill = 0;
 		_lastSampleWritten = (_lastSample != 0 && sample >= _lastSample); // only set if we are SURE
 	}
 	return result;
@@ -339,6 +338,13 @@ int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 			assert(_sampleCache.bufFill == 0);
 			assert(_requestedSamples % numChannels == 0);
 			processSingleBlock();
+
+			// If we reached the end of the stream, and looping is enabled: Try to rewind
+			if (_lastSampleWritten && _numLoops != 1) {
+				if (_numLoops != 0)
+					_numLoops--;
+				seekAbsolute(_firstSample);
+			}
 		}
 
 		// Error handling
@@ -565,7 +571,8 @@ inline ::FLAC__StreamDecoderWriteStatus FlacInputStream::callbackWrite(const ::F
 	assert(frame->header.bits_per_sample == _streaminfo.bits_per_sample);
 	assert(frame->header.number_type == FLAC__FRAME_NUMBER_TYPE_SAMPLE_NUMBER || _streaminfo.min_blocksize == _streaminfo.max_blocksize);
 
-	assert(_sampleCache.bufFill == 0); // we dont append data
+	// We require that either the sample cache is empty, or that no samples were requested
+	assert(_sampleCache.bufFill == 0 || _requestedSamples == 0);
 
 	uint numSamples = frame->header.blocksize;
 	const uint numChannels = getChannels();
@@ -576,20 +583,21 @@ inline ::FLAC__StreamDecoderWriteStatus FlacInputStream::callbackWrite(const ::F
 	const FLAC__uint64 firstSampleNumber = (frame->header.number_type == FLAC__FRAME_NUMBER_TYPE_SAMPLE_NUMBER) ?
 		frame->header.number.sample_number : (static_cast<FLAC__uint64>(frame->header.number.frame_number)) * _streaminfo.max_blocksize;
 
+	// Check whether we are about to reach beyond the last sample we are supposed to play.
 	if (_lastSample != 0 && firstSampleNumber + numSamples >= _lastSample) {
 		numSamples = (uint)(firstSampleNumber >= _lastSample ? 0 : _lastSample - firstSampleNumber);
-		_requestedSamples = MIN(_requestedSamples, numSamples * numChannels);
 		_lastSampleWritten = true;
 	}
 
+	// The value in _requestedSamples counts raw samples, so if there are more than one
+	// channel, we have to multiply the number of available sample "pairs" by numChannels
 	numSamples *= numChannels;
 
-	const FLAC__int32 *inChannels[MAX_OUTPUT_CHANNELS] = { buffer[0] }; // one channel is a given...
-	for (uint i = 1; i < numChannels; ++i)
+	const FLAC__int32 *inChannels[MAX_OUTPUT_CHANNELS];
+	for (uint i = 0; i < numChannels; ++i)
 		inChannels[i] = buffer[i];
 
-
-	// writing DIRECTLY to the Buffer ScummVM provided
+	// write the incoming samples directly into the buffer provided to us by the mixer
 	if (_requestedSamples > 0) {
 		assert(_requestedSamples % numChannels == 0);
 		assert(_outBuffer != NULL);
@@ -604,16 +612,15 @@ inline ::FLAC__StreamDecoderWriteStatus FlacInputStream::callbackWrite(const ::F
 		_outBuffer += copySamples;
 	}
 
-	// verify that the buffer fits
-	if (numSamples > BUFFER_SIZE) {
-		warning("FlacInputStream: write buffer is too small: %d bytes available, %d bytes needed", BUFFER_SIZE,numSamples); 
-		return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
-	}
+	// Write all remaining samples (i.e. those which didn't fit into the mixer buffer)
+	// into the sample cache.
+	if (_sampleCache.bufFill == 0)
+		_sampleCache.bufReadPos = _sampleCache.bufData;
+	const uint cacheSpace = (_sampleCache.bufData + BUFFER_SIZE) - (_sampleCache.bufReadPos + _sampleCache.bufFill);
+	assert(numSamples <= cacheSpace);
+	(*_methodConvertBuffers)(_sampleCache.bufReadPos + _sampleCache.bufFill, inChannels, numSamples, numChannels, numBits);
 
-	(*_methodConvertBuffers)(_sampleCache.bufData, inChannels, numSamples, numChannels, numBits);
-
-	_sampleCache.bufFill = numSamples;
-	_sampleCache.bufReadPos = _sampleCache.bufData;
+	_sampleCache.bufFill += numSamples;
 
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
