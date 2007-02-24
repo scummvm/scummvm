@@ -110,7 +110,7 @@ protected:
 		SampleType *bufReadPos;
 		uint bufSize;
 		uint bufFill;
-	} _preBuffer;
+	} _sampleCache;
 
 	SampleType *_outBuffer;
 	uint _requestedSamples;
@@ -127,7 +127,11 @@ public:
 
 	bool isStereo() const { return _streaminfo.channels >= 2; }
 	int getRate() const { return _streaminfo.sample_rate; }
-	bool endOfData() const { return _streaminfo.channels == 0 || (_lastSampleWritten && _preBuffer.bufFill == 0); }
+	bool endOfData() const {
+		// End of data is reached if there either is no valid stream data available,
+		// or if we reached the last sample and completely emptied the sample cache
+		return _streaminfo.channels == 0 || (_lastSampleWritten && _sampleCache.bufFill == 0);
+	}
 
 	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC ; }
 
@@ -179,7 +183,7 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 		_disposeAfterUse(dispose),
 		_numLoops(numLoops),
 		_firstSample(0), _lastSample(0),
-		_outBuffer(NULL), _requestedSamples(0), _lastSampleWritten(true),
+		_outBuffer(NULL), _requestedSamples(0), _lastSampleWritten(false),
 		_methodConvertBuffers(&FlacInputStream::convertBuffersGeneric)
 {
 	assert(_inStream);
@@ -187,11 +191,11 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 
 // TODO: Implement looping support
 
-	_preBuffer.bufData = NULL;
-	_preBuffer.bufFill = 0;
-	_preBuffer.bufSize = 0;
+	_sampleCache.bufData = NULL;
+	_sampleCache.bufReadPos = NULL;
+	_sampleCache.bufFill = 0;
+	_sampleCache.bufSize = 0;
 
-	_lastSampleWritten = false;
 	_methodConvertBuffers = &FlacInputStream::convertBuffersGeneric;
 
 	bool success;
@@ -246,7 +250,7 @@ FlacInputStream::~FlacInputStream() {
 		::FLAC__stream_decoder_delete(_decoder);
 #endif
 	}
-	delete[] _preBuffer.bufData;
+	delete[] _sampleCache.bufData;
 
 	if (_disposeAfterUse)
 		delete _inStream;
@@ -287,7 +291,7 @@ bool FlacInputStream::seekAbsolute(FLAC__uint64 sample) {
 	const bool result = (0 != ::FLAC__stream_decoder_seek_absolute(_decoder, sample));
 #endif
 	if (result) {
-		_preBuffer.bufFill = 0;
+		_sampleCache.bufFill = 0;
 		_lastSampleWritten = (_lastSample != 0 && sample >= _lastSample); // only set if we are SURE
 	}
 	return result;
@@ -309,18 +313,20 @@ int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	_outBuffer = buffer;
 	_requestedSamples = numSamples;
 
-	if (_preBuffer.bufFill > 0) {
-		assert(_preBuffer.bufData != NULL && _preBuffer.bufReadPos != NULL && _preBuffer.bufSize > 0);
-		assert(_preBuffer.bufReadPos >= _preBuffer.bufData);
-		assert(_preBuffer.bufFill % numChannels == 0);
+	// If there is still data in our buffer from the last time around,
+	// copy that first.
+	if (_sampleCache.bufFill > 0) {
+		assert(_sampleCache.bufData != NULL && _sampleCache.bufReadPos != NULL && _sampleCache.bufSize > 0);
+		assert(_sampleCache.bufReadPos >= _sampleCache.bufData);
+		assert(_sampleCache.bufFill % numChannels == 0);
 
-		const uint copySamples = MIN((uint)numSamples, _preBuffer.bufFill);
-		memcpy(buffer, _preBuffer.bufReadPos, copySamples*sizeof(buffer[0]));
+		const uint copySamples = MIN((uint)numSamples, _sampleCache.bufFill);
+		memcpy(buffer, _sampleCache.bufReadPos, copySamples*sizeof(buffer[0]));
 
 		_outBuffer = buffer + copySamples;
 		_requestedSamples = numSamples - copySamples;
-		_preBuffer.bufReadPos += copySamples;
-		_preBuffer.bufFill -= copySamples;
+		_sampleCache.bufReadPos += copySamples;
+		_sampleCache.bufFill -= copySamples;
 	}
 
 	bool decoderOk = true;
@@ -328,32 +334,33 @@ int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	if (!_lastSampleWritten) {
 		FLAC__StreamDecoderState state = getStreamDecoderState();
 
+		// Keep poking FLAC to process more samples until we completely satisfied the request
 		for (; _requestedSamples > 0 && state == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC; state = getStreamDecoderState()) {
-			assert(_preBuffer.bufFill == 0);
+			assert(_sampleCache.bufFill == 0);
 			assert(_requestedSamples % numChannels == 0);
 			processSingleBlock();
 		}
 
-		if (state != FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC) {
-			switch (state) {
-			case FLAC__STREAM_DECODER_END_OF_STREAM :
-				_lastSampleWritten = true;
-				decoderOk = true; // no REAL error
-				break;
-
-			default:
-				decoderOk = false;
-				warning("FlacInputStream: An error occured while decoding. DecoderState is: %s",
-					FLAC__StreamDecoderStateString[getStreamDecoderState()]);
-			}
+		// Error handling
+		switch (state) {
+		case FLAC__STREAM_DECODER_END_OF_STREAM:
+			_lastSampleWritten = true;
+			break;
+		case FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC:
+			break;
+		default:
+			decoderOk = false;
+			warning("FlacInputStream: An error occured while decoding. DecoderState is: %s",
+				FLAC__StreamDecoderStateString[getStreamDecoderState()]);
 		}
 	}
 
+	// Compute how many samples we actually produced
 	const int samples = (int)(_outBuffer - buffer);
 	assert(samples % numChannels == 0);
 
-	_outBuffer = NULL; // basically unnessecary, only for the purpose of the asserts
-	_requestedSamples = 0; // basically unnessecary, only for the purpose of the asserts
+	_outBuffer = NULL; // basically unnecessary, only for the purpose of the asserts
+	_requestedSamples = 0; // basically unnecessary, only for the purpose of the asserts
 
 	return decoderOk ? samples : -1;
 }
@@ -385,26 +392,25 @@ inline ::FLAC__SeekableStreamDecoderReadStatus FlacInputStream::callbackRead(FLA
 
 bool FlacInputStream::allocateBuffer(uint minSamples) {
 	uint allocateSize = minSamples / getChannels();
-	/** insert funky algorythm for optimum buffersize here */
+	// TODO: insert funky algorithm for optimum buffersize here
 	allocateSize = MIN(_streaminfo.max_blocksize, MAX(_streaminfo.min_blocksize, allocateSize));
-	allocateSize += 8 - (allocateSize % 8); // make sure its an nice even amount
+	allocateSize += 8 - (allocateSize % 8); // make sure it's a nice even amount
 	allocateSize *= getChannels();
 
-	_lastSampleWritten = _lastSampleWritten && _preBuffer.bufFill == 0;
-	_preBuffer.bufFill = 0;
-	_preBuffer.bufSize = 0;
-	delete[] _preBuffer.bufData;
+	_lastSampleWritten = _lastSampleWritten && _sampleCache.bufFill == 0;
+	_sampleCache.bufFill = 0;
+	_sampleCache.bufSize = 0;
+	delete[] _sampleCache.bufData;
 
-	_preBuffer.bufData = new SampleType[allocateSize];
-	if (_preBuffer.bufData != NULL) {
-		_preBuffer.bufSize = allocateSize;
+	_sampleCache.bufData = new SampleType[allocateSize];
+	if (_sampleCache.bufData != NULL) {
+		_sampleCache.bufSize = allocateSize;
 		return true;
 	}
 	return false;
 }
 
-void FlacInputStream::setBestConvertBufferMethod()
-{
+void FlacInputStream::setBestConvertBufferMethod() {
 	PFCONVERTBUFFERS tempMethod = &FlacInputStream::convertBuffersGeneric;
 
 	const uint numChannels = getChannels();
@@ -429,8 +435,7 @@ void FlacInputStream::setBestConvertBufferMethod()
 }
 
 // 1 channel, no scaling
-void FlacInputStream::convertBuffersMonoNS(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits)
-{
+void FlacInputStream::convertBuffersMonoNS(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits) {
 	assert(numChannels == 1);
 	assert(numBits == BUFTYPE_BITS);
 
@@ -455,8 +460,7 @@ void FlacInputStream::convertBuffersMonoNS(SampleType* bufDestination, const FLA
 }
 
 // 1 channel, scaling from 8Bit
-void FlacInputStream::convertBuffersMono8Bit(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits)
-{
+void FlacInputStream::convertBuffersMono8Bit(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits) {
 	assert(numChannels == 1);
 	assert(numBits == 8);
 	assert(8 < BUFTYPE_BITS);
@@ -482,8 +486,7 @@ void FlacInputStream::convertBuffersMono8Bit(SampleType* bufDestination, const F
 }
 
 // 2 channels, no scaling
-void FlacInputStream::convertBuffersStereoNS(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits)
-{
+void FlacInputStream::convertBuffersStereoNS(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits) {
 	assert(numChannels == 2);
 	assert(numBits == BUFTYPE_BITS);
 	assert(numSamples % 2 == 0); // must be integral multiply of channels
@@ -516,8 +519,7 @@ void FlacInputStream::convertBuffersStereoNS(SampleType* bufDestination, const F
 }
 
 // 2 channels, scaling from 8Bit
-void FlacInputStream::convertBuffersStereo8Bit(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits)
-{
+void FlacInputStream::convertBuffersStereo8Bit(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits) {
 	assert(numChannels == 2);
 	assert(numBits == 8);
 	assert(numSamples % 2 == 0); // must be integral multiply of channels
@@ -550,8 +552,7 @@ void FlacInputStream::convertBuffersStereo8Bit(SampleType* bufDestination, const
 }
 
 // all Purpose-conversion - slowest of em all
-void FlacInputStream::convertBuffersGeneric(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits)
-{
+void FlacInputStream::convertBuffersGeneric(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits) {
 	assert(numSamples % numChannels == 0); // must be integral multiply of channels
 
 	if (numBits < BUFTYPE_BITS) {
@@ -584,7 +585,7 @@ inline ::FLAC__StreamDecoderWriteStatus FlacInputStream::callbackWrite(const ::F
 	assert(frame->header.bits_per_sample == _streaminfo.bits_per_sample);
 	assert(frame->header.number_type == FLAC__FRAME_NUMBER_TYPE_SAMPLE_NUMBER || _streaminfo.min_blocksize == _streaminfo.max_blocksize);
 
-	assert(_preBuffer.bufFill == 0); // we dont append data
+	assert(_sampleCache.bufFill == 0); // we dont append data
 
 	uint numSamples = frame->header.blocksize;
 	const uint numChannels = getChannels();
@@ -610,10 +611,12 @@ inline ::FLAC__StreamDecoderWriteStatus FlacInputStream::callbackWrite(const ::F
 
 	// writing DIRECTLY to the Buffer ScummVM provided
 	if (_requestedSamples > 0) {
-		assert(_requestedSamples % numChannels == 0); // must be integral multiply of channels
+		assert(_requestedSamples % numChannels == 0);
 		assert(_outBuffer != NULL);
 
-		const uint copySamples = MIN(_requestedSamples,numSamples);
+		// Copy & convert the available samples (limited both by how many we have available, and
+		// by how many are actually needed).
+		const uint copySamples = MIN(_requestedSamples, numSamples);
 		(*_methodConvertBuffers)(_outBuffer, inChannels, copySamples, numChannels, numBits);
 
 		_requestedSamples -= copySamples;
@@ -622,15 +625,15 @@ inline ::FLAC__StreamDecoderWriteStatus FlacInputStream::callbackWrite(const ::F
 	}
 
 	// checking if Buffer fits
-	if (_preBuffer.bufSize < numSamples) {
+	if (_sampleCache.bufSize < numSamples) {
 		if (!allocateBuffer(numSamples))
 			return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
 	} // optional check if buffer is wasting too much memory ?
 
-	(*_methodConvertBuffers)(_preBuffer.bufData, inChannels, numSamples, numChannels, numBits);
+	(*_methodConvertBuffers)(_sampleCache.bufData, inChannels, numSamples, numChannels, numBits);
 
-	_preBuffer.bufFill = numSamples;
-	_preBuffer.bufReadPos = _preBuffer.bufData;
+	_sampleCache.bufFill = numSamples;
+	_sampleCache.bufReadPos = _sampleCache.bufData;
 
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
