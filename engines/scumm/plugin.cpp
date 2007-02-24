@@ -1045,6 +1045,8 @@ static Common::Language detectLanguage(const FSList &fslist, byte id) {
 				return Common::IT_ITA;
 			case 228772:	// 5d9ad90d3a88ea012d25d61791895ebe
 				return Common::PT_BRA;
+			case 229884:	// d890074bc15c6135868403e73c5f4f36
+				return Common::ES_ESP;
 			}
 		}
 	}
@@ -1315,8 +1317,11 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 			and know their MD5s, we could simply rely on this and
 			if we find something which has an unknown MD5, assume
 			that it is an (so far unknown) version of Indy3.
+			However, there are also fan translations of the TOWNS versions,
+			so we can't really do that.
 
-			We can combine this with a look at the resource headers:
+			But we could at least look at the resource headers to distinguish
+			TOWNS versions from regular games:
 
 			Indy3:
 			_numGlobalObjects 1000
