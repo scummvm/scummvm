@@ -119,8 +119,11 @@ void CEActionsSmartphone::initInstanceMain(OSystem *mainSystem) {
 void CEActionsSmartphone::initInstanceGame() {
 	String gameid(ConfMan.get("gameid"));
 	bool is_simon = (strncmp(gameid.c_str(), "simon", 5) == 0);
-	bool is_sky = (gameid == "sky");
+	bool is_sword1 = (gameid == "sword1");
+	bool is_sword2 = (strcmp(gameid.c_str(), "sword2") == 0);
 	bool is_queen = (gameid == "queen");
+	bool is_sky = (gameid == "sky");
+	bool is_comi = (strncmp(gameid.c_str(), "comi", 4) == 0);
 	bool is_gob = (strncmp(gameid.c_str(), "gob", 3) == 0);
 	bool is_ite = ((strncmp(gameid.c_str(), "ite", 3) == 0) ||
 				  (strncmp(gameid.c_str(), "ihnm", 4) == 0));
@@ -128,16 +131,17 @@ void CEActionsSmartphone::initInstanceGame() {
 	bool is_samnmax = (gameid == "samnmax");
 	bool is_fw = (gameid == "fw");
 	bool is_os = (gameid == "os");
+	bool is_touche = (gameid == "touche");
 
 	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sky || is_samnmax || is_gob || is_fw || is_os)
+	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_samnmax || is_fw || is_os || is_touche)
 		_right_click_needed = true;
 
 	// Initialize keys for different actions
 	// Save
-	if (is_simon || is_gob)
+	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche)
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = false;
 	else if (is_queen || is_ite) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
@@ -154,7 +158,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	}
 	// Skip
 	_action_enabled[SMARTPHONE_ACTION_SKIP] = true;
-	if (is_simon || is_sky || is_gob || is_ite || is_kyra)
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_ite || is_kyra || is_touche)
 		_key_action[SMARTPHONE_ACTION_SKIP].setAscii(VK_ESCAPE);
 	else
 		_key_action[SMARTPHONE_ACTION_SKIP].setAscii(KEY_ALL_SKIP);

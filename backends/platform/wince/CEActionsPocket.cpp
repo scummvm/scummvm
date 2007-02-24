@@ -128,11 +128,12 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_samnmax = (gameid == "samnmax");
 	bool is_fw = (gameid == "fw");
 	bool is_os = (gameid == "os");
+	bool is_touche = (gameid == "touche");
 
 	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_samnmax || is_fw || is_os)
+	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_samnmax || is_fw || is_os || is_touche)
 		_right_click_needed = true;
 
 	// See if a "hide toolbar" mapping could be needed
@@ -144,7 +145,7 @@ void CEActionsPocket::initInstanceGame() {
 	_key_action[POCKET_ACTION_PAUSE].setAscii(VK_SPACE);
 	_action_enabled[POCKET_ACTION_PAUSE] = true;
 	// Save
-	if (is_simon || is_sword2 || is_gob || is_kyra)
+	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche)
 		_action_enabled[POCKET_ACTION_SAVE] = false;
 	else if (is_queen || is_ite) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
@@ -164,7 +165,7 @@ void CEActionsPocket::initInstanceGame() {
 	// Skip
 	if (!is_fw && !is_os)
 		_action_enabled[POCKET_ACTION_SKIP] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_ite || is_kyra)
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_ite || is_kyra || is_touche)
 		_key_action[POCKET_ACTION_SKIP].setAscii(VK_ESCAPE);
 	else
 		_key_action[POCKET_ACTION_SKIP].setAscii(KEY_ALL_SKIP);

@@ -1173,6 +1173,8 @@ void OSystem_WINCE3::loadGFXMode() {
 	// Always use full screen mode to have a "clean screen"
 	displayWidth = _screenWidth * _scaleFactorXm / _scaleFactorXd;
 	displayHeight = _screenHeight * _scaleFactorYm / _scaleFactorYd;
+	if (_screenHeight == 400)	// touche engine fixup
+		displayHeight += 80 * _scaleFactorYm / _scaleFactorYd;
 
 	// FIXME
 	if (displayWidth <= GetSystemMetrics(SM_CXSCREEN)) { // no rotation
