@@ -296,7 +296,7 @@ const RetailGameVersion *Resource::detectGameVersionFromSize(uint32 size) {
 }
 
 Common::File *Resource::findSound(const char *filename, uint32 *size) {
-	assert(strstr(filename, ".SB") != NULL || strstr(filename, ".AMR") != NULL);
+	assert(strstr(filename, ".SB") != NULL || strstr(filename, ".AMR") != NULL || strstr(filename, ".INS") != NULL);
 	ResourceEntry *re = resourceEntry(filename);
 	if (re) {
 		*size = re->size;

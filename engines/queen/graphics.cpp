@@ -303,13 +303,13 @@ void Graphics::setupMouseCursor() {
 				const uint16 mask = (1 << (15 - b));
 				uint8 color = 0;
 				if (READ_BE_UINT16(src + 0) & mask) {
-					color |= 1;
-				}
-				if (READ_BE_UINT16(src + 2) & mask) {
 					color |= 2;
 				}
+				if (READ_BE_UINT16(src + 2) & mask) {
+					color |= 1;
+				}
 				if (color != 0) {
-					cursorData[i] = 0x90 + color;
+					cursorData[i] = 0x90 + color - 1;
 				}
 				++i;
 			}
@@ -488,7 +488,7 @@ void Graphics::stopBobs() {
 }
 
 BobSlot *Graphics::bob(int index) {
-	assert(index < MAX_BOBS_NUMBER);
+	assert(index >= 0 && index < MAX_BOBS_NUMBER);
 	return &_bobs[index];
 }
 

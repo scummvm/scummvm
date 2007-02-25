@@ -286,7 +286,7 @@ void Display::palCustomColors(uint16 roomNum) {
 			palSetAmigaColor(30, 0x600);
 			break;
 		case 29:
-			palSetAmigaColor(27, 0X58B);
+			palSetAmigaColor(27, 0x58B);
 			palSetAmigaColor(28, 0x369);
 			palSetAmigaColor(29, 0x158);
 			palSetAmigaColor(30, 0x046);
@@ -755,7 +755,7 @@ void Display::drawInventoryItem(const uint8 *data, uint16 x, uint16 y, uint16 w,
 	if (data != NULL) {
 		if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
 			uint8 *dst = _panelBuf + y * PANEL_W + x;
-			while (h--) {
+			for (int j = 0; j < h; ++j) {
 				for (int i = 0; i < w; ++i) {
 					dst[i] = 144 + *data++;
 				}
@@ -932,19 +932,14 @@ void Display::horizontalScroll(int16 scroll) {
 
 void Display::setDirtyBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 	if (_fullRefresh < 2) {
+		assert(x + w <= SCREEN_W && y + h <= SCREEN_H);
 		uint16 ex = (x + w - 1) / D_BLOCK_W;
 		uint16 ey = (y + h - 1) / D_BLOCK_H;
 		x /= D_BLOCK_W;
 		y /= D_BLOCK_H;
-		uint16 cy = ey - y + 1;
-		uint16 cx = ex - x + 1;
-		if (cy >= _dirtyBlocksHeight) cy = _dirtyBlocksHeight - 1;
-		if (cx >= _dirtyBlocksWidth)  cx = _dirtyBlocksWidth  - 1;
 		uint8 *p = _dirtyBlocks + _dirtyBlocksWidth * y + x;
-		while (cy--) {
-			for (uint16 i = 0; i < cx; ++i) {
-				p[i] = 2;
-			}
+		for (; y <= ey; ++y) {
+			memset(p, 2, ex - x + 1);
 			p += _dirtyBlocksWidth;
 		}
 	}

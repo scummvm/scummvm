@@ -178,12 +178,14 @@ protected:
 
 	void playSound(const char *base);
 	void playModule(const char *base, int song);
+	void playRandomPatternJungle();
 	bool playSpecialSfx(int16 sfx);
 
 	int16 _fanfareRestore;
 	int _fanfareCount, _fluteCount;
 	Audio::SoundHandle _modHandle;
 	Audio::SoundHandle _sfxHandle;
+	Common::RandomSource _rnd;
 };
 
 } // End of namespace Queen

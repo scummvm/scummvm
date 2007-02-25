@@ -908,9 +908,7 @@ void Logic::inventoryRefresh() {
 	for (int i = 0; i < 4; ++i) {
 		uint16 itemNum = _inventoryItem[i];
 		if (itemNum != 0) {
-			// 1st object in inventory uses frame 9,
-			// whereas 2nd, 3rd and 4th uses frame 8
-			uint16 dstFrame = (itemNum != 0) ? 8 : 9;
+			uint16 dstFrame = (i == 0) ? 8 : 9;
 			// unpack frame for object and draw it
 			_vm->bankMan()->unpack(_itemData[itemNum].frame, dstFrame, 14);
 			_vm->graphics()->drawInventoryItem(dstFrame, x, 14);
@@ -1578,7 +1576,7 @@ void Logic::asmMakeFrankGrowing() {
 		for (int i = 300; i >= 200; i -= 5) {
 			bobFrank->y = i;
 			_vm->update();
-		}		
+		}
 	} else {
 		bobFrank->curPos(160, 200);
 		for (int i = 10; i <= 100; i += 4) {
@@ -1608,7 +1606,7 @@ void Logic::asmMakeRobotGrowing() {
 		for (int i = 350; i >= 200; i -= 5) {
 			bobRobot->y = i;
 			_vm->update();
-		}		
+		}
 	} else {
 		bobRobot->curPos(160, 200);
 		for (int i = 10; i <= 100; i += 4) {
@@ -1799,7 +1797,7 @@ void Logic::asmSmoochNoScroll() {
 			bobJoe->x -= 2;
 		}
 		_vm->update();
-	}	
+	}
 }
 
 void Logic::asmMakeLightningHitPlane() {

@@ -292,12 +292,12 @@ void AmigaSound::playSfx(uint16 sfx) {
 void AmigaSound::playSong(int16 song) {
 	debug(2, "Sound::playSong %d override %d", song, _lastOverride);
 
-  if (song < 0) {
-  	stopSong();
-  	return;
-  }
+	if (song < 0) {
+		stopSong();
+		return;
+	}
 
-  // remap song numbers for the Amiga
+	// remap song numbers for the Amiga
 	switch (song) {
 	case 1:
 	case 2:
@@ -539,7 +539,7 @@ void AmigaSound::updateMusic() {
 	if (_fluteCount > 0 && (_lastOverride == 40 || _lastOverride == 3)) {
 		--_fluteCount;
 		if (_fluteCount == 0) {
-//			playPattern(3, 5 + (getRandomNumber() & 7));
+			playRandomPatternJungle();
 			_fluteCount = 100;
 		}
 	}
@@ -588,6 +588,23 @@ void AmigaSound::playModule(const char *base, int song) {
 	delete[] insData;
 
 	_fanfareCount = 0;
+}
+
+void AmigaSound::playRandomPatternJungle() {
+	static const uint16 patOffset[] = { 2, 1416, 2722, 2242, 11046, 11046 };
+	static const uint16 patSize[] = { 1056, 826, 8100, 8580, 15808, 15808 };
+	uint32 soundSize;
+	Common::File *f = _vm->resource()->findSound("JUNG.INS", &soundSize);
+	if (f) {
+		const int i = _rnd.getRandomNumber(5);
+		uint8 *soundData = (uint8 *)malloc(patSize[i]);
+		if (soundData) {
+			f->seek(patOffset[i], SEEK_CUR);
+			f->read(soundData, patSize[i]);
+			byte flags = Audio::Mixer::FLAG_AUTOFREE;
+			_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, soundData, patSize[i], 9000, flags);
+		}
+	}
 }
 
 bool AmigaSound::playSpecialSfx(int16 sfx) {
