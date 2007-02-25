@@ -560,6 +560,7 @@ bool Codec47Decoder::decode(byte *dst, const byte *src) {
 		memcpy(_curBuf, gfx_data, _frameSize);
 		break;
 	case 1:
+		// Used by Outlaws, but not by any SCUMM game.
 		error("codec47: not implemented decode1 proc");
 		break;
 	case 2:
