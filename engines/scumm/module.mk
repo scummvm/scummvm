@@ -41,7 +41,7 @@ MODULE_OBJS := \
 	resource.o \
 	room.o \
 	saveload.o \
-	script_c64.o \
+	script_v0.o \
 	script_v2.o \
 	script_v5.o \
 	script_v6.o \
