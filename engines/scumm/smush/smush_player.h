@@ -66,7 +66,6 @@ private:
 
 	Audio::SoundHandle _compressedFileSoundHandle;
 	bool _compressedFileMode;
-	Common::File _compressedFile;
 	byte _IACToutput[4096];
 	int32 _IACTpos;
 	bool _storeFrame;

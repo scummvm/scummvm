@@ -1180,10 +1180,8 @@ void SmushPlayer::seekSan(const char *file, int32 pos, int32 contFrame) {
 }
 
 void SmushPlayer::tryCmpFile(const char *filename) {
-	if (_compressedFile.isOpen()) {
-		_vm->_mixer->stopHandle(_compressedFileSoundHandle);
-		_compressedFile.close();
-	}
+	_vm->_mixer->stopHandle(_compressedFileSoundHandle);
+
 	_compressedFileMode = false;
 	const char *i = strrchr(filename, '.');
 	if (i == NULL) {
@@ -1192,28 +1190,26 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 #if defined(USE_MAD) || defined(USE_VORBIS)
 	char fname[260];
 #endif
-#ifdef USE_MAD
-	memcpy(fname, filename, i - filename);
-	strcpy(fname + (i - filename), ".mp3");
-	_compressedFile.open(fname);
-	if (_compressedFile.isOpen()) {
-		int size = _compressedFile.size();
-		_compressedFileMode = true;
-		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeMP3Stream(&_compressedFile, size));
-		return;
-	}
-#endif
+	Common::File *file = new Common::File();
 #ifdef USE_VORBIS
 	memcpy(fname, filename, i - filename);
 	strcpy(fname + (i - filename), ".ogg");
-	_compressedFile.open(fname);
-	if (_compressedFile.isOpen()) {
-		int size = _compressedFile.size();
+	if (file->open(fname)) {
 		_compressedFileMode = true;
-		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeVorbisStream(&_compressedFile, size));
+		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeVorbisStream(file, true, 0, 0));
 		return;
 	}
 #endif
+#ifdef USE_MAD
+	memcpy(fname, filename, i - filename);
+	strcpy(fname + (i - filename), ".mp3");
+	if (file->open(fname)) {
+		_compressedFileMode = true;
+		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeMP3Stream(file, true, 0, 0));
+		return;
+	}
+#endif
+	delete file;
 }
 
 void SmushPlayer::pause() {
