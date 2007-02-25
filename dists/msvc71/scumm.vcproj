@@ -516,7 +516,7 @@
 			RelativePath="..\..\engines\scumm\script.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\scumm\script_c64.cpp">
+			RelativePath="..\..\engines\scumm\script_v0.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\script_v2.cpp">
