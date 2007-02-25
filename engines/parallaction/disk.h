@@ -64,7 +64,7 @@ public:
 	bool openArchivedFile(const char *name);
 	void closeArchivedFile();
 
-	uint32 size();
+	uint32 size() const;
 	void seek(int32 offs, int whence = SEEK_SET);
 
 	uint32 read(void *dataPtr, uint32 dataSize);

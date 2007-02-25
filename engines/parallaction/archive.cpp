@@ -76,16 +76,16 @@ void Archive::close() {
 }
 
 
-bool Archive::openArchivedFile(const char *name) {
+bool Archive::openArchivedFile(const char *filename) {
 	resetArchivedFile();
 
 	uint16 i = 0;
 	for ( ; i < MAX_ARCHIVE_ENTRIES; i++) {
-		if (!scumm_stricmp(_archiveDir[i], name)) break;
+		if (!scumm_stricmp(_archiveDir[i], filename)) break;
 	}
 	if (i == MAX_ARCHIVE_ENTRIES) return false;
 
-	debugC(1, kDebugDisk, "file '%s' found in slot %i", name, i);
+	debugC(1, kDebugDisk, "file '%s' found in slot %i", filename, i);
 
 	_file = true;
 
@@ -110,7 +110,7 @@ void Archive::closeArchivedFile() {
 }
 
 
-uint32 Archive::size() {
+uint32 Archive::size() const {
 	return (_file == true ? _fileEndOffset - _fileOffset : 0);
 }
 
@@ -144,10 +144,10 @@ uint32 Archive::read(void *dataPtr, uint32 dataSize) {
 	if (_fileEndOffset - _fileCursor < dataSize)
 		dataSize = _fileEndOffset - _fileCursor;
 
-	int32 read = _archive.read(dataPtr, dataSize);
-	_fileCursor += read;
+	int32 readBytes = _archive.read(dataPtr, dataSize);
+	_fileCursor += readBytes;
 
-	return read;
+	return readBytes;
 }
 
 
