@@ -165,7 +165,8 @@ bool MoviePlayer::load(uint32 id) {
 				for (uint32 segCnt = 0; segCnt < numSegs; segCnt++) {
 					oggSource->seek( header[SwordEngine::_systemVars.language * 2 + 0 + segCnt * 14]);
 					uint32 segSize = header[SwordEngine::_systemVars.language * 2 + 1 + segCnt * 14];
-					Audio::AudioStream *apStream = Audio::makeVorbisStream(oggSource, segSize);
+					Common::MemoryReadStream *stream = oggSource->readStream(segSize);
+					Audio::AudioStream *apStream = Audio::makeVorbisStream(streamm true);
 					if (!apStream)
 						error("Can't create Vorbis Stream from file %s", sndName);
 					sStream->appendStream(apStream);
@@ -174,7 +175,7 @@ bool MoviePlayer::load(uint32 id) {
 				_bgSoundStream = sStream;
 			} else
 				warning("Sound file \"%s\" not found", sndName);
-			oggSource->decRef();
+			delete oggSource;
 #endif
 			initOverlays(id);
 		}
