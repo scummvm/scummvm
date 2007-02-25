@@ -197,6 +197,11 @@ void ScummEngine_v2::readIndexFile() {
 				assert(_game.version == 1);
 			readClassicIndexFile();
 			break;
+		case 0x032:
+			printf("Apple II V1 game detected\n");
+			assert(_game.version == 0);
+			readClassicIndexFile();
+			break;
 		default:
 			error("Unknown magic id (0x%X) - this version is unsupported", magic);
 			break;
