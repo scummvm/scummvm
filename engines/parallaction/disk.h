@@ -31,8 +31,6 @@ namespace Parallaction {
 //		ARCHIVE MANAGEMENT
 //------------------------------------------------------
 
-struct ArchivedFile;
-
 void openArchive(const char *file);
 void closeArchive();
 
