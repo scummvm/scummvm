@@ -259,7 +259,7 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 	if (!_archive.openArchivedFile(vC8))
 		errorFileNotFound(vC8);
 
-	uint32 size = _archive.getArchivedFileLength(vC8);
+	uint32 size = _archive.getArchivedFileLength();
 	char* src = (char*)memAlloc(size+1);
 
 	_archive.readArchivedFile(src, size);

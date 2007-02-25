@@ -1035,7 +1035,7 @@ void Graphics::loadStaticCnv(const char *filename, StaticCnv *cnv) {
 	_vm->_archive.readArchivedFile(&unk, 1);
 	cnv->_height = unk;
 
-	uint16 compressedsize = _vm->_archive.getArchivedFileLength(path) - 3;
+	uint16 compressedsize = _vm->_archive.getArchivedFileLength() - 3;
 	byte *compressed = (byte*)memAlloc(compressedsize);
 
 	uint16 size = cnv->_width*cnv->_height;
@@ -1080,7 +1080,7 @@ void Graphics::loadCnv(const char *filename, Cnv *cnv) {
 
 	cnv->_array = (byte**)memAlloc(cnv->_count * sizeof(byte*));
 
-	uint32 size = _vm->_archive.getArchivedFileLength(path) - 3;
+	uint32 size = _vm->_archive.getArchivedFileLength() - 3;
 
 	byte *buf = (byte*)memAlloc(size);
 	_vm->_archive.readArchivedFile(buf, size);

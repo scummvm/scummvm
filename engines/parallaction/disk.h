@@ -53,14 +53,11 @@ protected:
 
 	Common::File 	_archive;
 
+protected:
+	void resetArchivedFile();
+
 public:
-	Archive() {
-		_file = false;
-		_fileIndex = 0;
-		_fileOffset = 0;
-		_fileCursor = 0;
-		_fileEndOffset = 0;
-	}
+	Archive();
 
 	void open(const char *file);
 	void close();
@@ -68,7 +65,7 @@ public:
 	bool openArchivedFile(const char *name);
 	void closeArchivedFile();
 
-	uint16 getArchivedFileLength(const char *name);
+	uint16 getArchivedFileLength();
 
 	int16 readArchivedFile(void *buffer, uint16 size);
 	char *readArchivedFileText(char *buf, uint16 size);

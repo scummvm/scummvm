@@ -27,6 +27,9 @@
 
 namespace Parallaction {
 
+Archive::Archive() {
+	resetArchivedFile();
+}
 
 void Archive::open(const char *file) {
 	debugC(1, kDebugDisk, "open archive '%s'", file);
@@ -67,11 +70,14 @@ void Archive::close() {
 
 	if (!_archive.isOpen()) return;
 
+	resetArchivedFile();
+
 	_archive.close();
 }
 
 
 bool Archive::openArchivedFile(const char *name) {
+	resetArchivedFile();
 
 	uint16 i = 0;
 	for ( ; i < MAX_ARCHIVE_ENTRIES; i++) {
@@ -93,26 +99,23 @@ bool Archive::openArchivedFile(const char *name) {
 	return true;
 }
 
-
-void Archive::closeArchivedFile() {
+void Archive::resetArchivedFile() {
 	_file = false;
 	_fileIndex = 0;
 	_fileCursor = 0;
 	_fileOffset = 0;
 	_fileEndOffset = 0;
-	return;
+}
+
+void Archive::closeArchivedFile() {
+	resetArchivedFile();
 }
 
 
-uint16 Archive::getArchivedFileLength(const char *name) {
+uint16 Archive::getArchivedFileLength() {
 //	printf("getArchivedFileLength(%s)\n", name);
 
-	for (uint16 i = 0; i < MAX_ARCHIVE_ENTRIES; i++) {
-		if (!scumm_stricmp(_archiveDir[i], name))
-			return _archiveLenghts[i];
-	}
-
-	return 0;
+	return (_file == true ? _fileEndOffset - _fileOffset : 0);
 }
 
 

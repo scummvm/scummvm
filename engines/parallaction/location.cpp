@@ -73,7 +73,7 @@ void Parallaction::parseLocation(const char *filename) {
 			errorFileNotFound(filename);
 	}
 
-	uint32 count = _archive.getArchivedFileLength(archivefile);
+	uint32 count = _archive.getArchivedFileLength();
 	location_src = (char*)memAlloc(0x4000);
 
 	_locationScript = new Script(location_src);
