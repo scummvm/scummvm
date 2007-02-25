@@ -130,6 +130,14 @@ Audio::AudioStream *MusicHandle::createAudioSource(void) {
 }
 
 bool MusicHandle::play(const char *fileBase, bool loop) {
+/*
+TODO/FIXME: This should be rewritten to make use of the new audio stream factories.
+In particular, it should take advantage of the looping capabilities; and it
+should avoid reading all the data into memory (by not using the old factory functions).
+Essentially, it seems to me as if we could get rid of createAudioSource().
+
+Maybe it could even be change to use AudioStream::openStreamFile.
+*/
 	char fileName[30];
 	stop();
 	_musicMode = MusicNone;
