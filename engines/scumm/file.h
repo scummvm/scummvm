@@ -111,7 +111,7 @@ public:
 };
 
 
-class ScummC64File : public BaseScummFile {
+class ScummDiskImage : public BaseScummFile {
 private:
 	Common::MemoryReadStream *_stream;
 	byte _roomDisks[59], _roomTracks[59], _roomSectors[59];
@@ -142,7 +142,7 @@ private:
 	uint16 fileReadUint16LE();
 
 public:
-	ScummC64File(const char *disk1, const char *disk2, GameSettings game);
+	ScummDiskImage(const char *disk1, const char *disk2, GameSettings game);
 	void setEnc(byte value);
 
 	bool open(const Common::String &filename, AccessMode mode = kFileReadMode);

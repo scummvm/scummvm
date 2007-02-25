@@ -1461,7 +1461,7 @@ bool ScummNESFile::openSubFile(const Common::String &filename) {
 }
 
 #pragma mark -
-#pragma mark --- ScummC64File ---
+#pragma mark --- ScummDiskImage ---
 #pragma mark -
 
 static const int maniacResourcesPerFile[55] = {
@@ -1483,7 +1483,7 @@ static const int zakResourcesPerFile[59] = {
 };
 
 
-ScummC64File::ScummC64File(const char *disk1, const char *disk2, GameSettings game) : _stream(0), _buf(0) {
+ScummDiskImage::ScummDiskImage(const char *disk1, const char *disk2, GameSettings game) : _stream(0), _buf(0) {
 	_disk1 = disk1;
 	_disk2 = disk2;
 	_game = game;
@@ -1507,28 +1507,28 @@ ScummC64File::ScummC64File(const char *disk1, const char *disk2, GameSettings ga
 	}
 }
 
-uint32 ScummC64File::write(const void *, uint32) {
-	error("ScummC64File does not support writing!");
+uint32 ScummDiskImage::write(const void *, uint32) {
+	error("ScummDiskImage does not support writing!");
 	return 0;
 }
 
-void ScummC64File::setEnc(byte enc) {
+void ScummDiskImage::setEnc(byte enc) {
 	_stream->setEnc(enc);
 }
 
-byte ScummC64File::fileReadByte() {
+byte ScummDiskImage::fileReadByte() {
 	byte b = 0;
 	File::read(&b, 1);
 	return b;
 }
 
-uint16 ScummC64File::fileReadUint16LE() {
+uint16 ScummDiskImage::fileReadUint16LE() {
 	uint16 a = fileReadByte();
 	uint16 b = fileReadByte();
 	return a | (b << 8);
 }
 
-bool ScummC64File::openDisk(char num) {
+bool ScummDiskImage::openDisk(char num) {
 	if (num == '1')
 		num = 1;
 	if (num == '2')
@@ -1543,21 +1543,21 @@ bool ScummC64File::openDisk(char num) {
 		else if (num == 2)
 			File::open(_disk2.c_str());
 		else {
-			error("ScummC64File::open(): wrong disk (%c)", num);
+			error("ScummDiskImage::open(): wrong disk (%c)", num);
 			return false;
 		}
 
 		_openedDisk = num;
 
 		if (!File::isOpen()) {
-			error("ScummC64File::open(): cannot open disk (%d)", num);
+			error("ScummDiskImage::open(): cannot open disk (%d)", num);
 			return false;
 		}
 	}
 	return true;
 }
 
-bool ScummC64File::open(const Common::String &filename, AccessMode mode) {
+bool ScummDiskImage::open(const Common::String &filename, AccessMode mode) {
 	uint16 signature;
 
 	// check signature
@@ -1571,7 +1571,7 @@ bool ScummC64File::open(const Common::String &filename, AccessMode mode) {
 
 	signature = fileReadUint16LE();
 	if (signature != 0x0A31) {
-		error("ScummC64File::open(): signature not found in disk 1!");
+		error("ScummDiskImage::open(): signature not found in disk 1!");
 		return false;
 	}
 
@@ -1596,7 +1596,7 @@ bool ScummC64File::open(const Common::String &filename, AccessMode mode) {
 }
 
 
-uint16 ScummC64File::extractIndex(Common::WriteStream *out) {
+uint16 ScummDiskImage::extractIndex(Common::WriteStream *out) {
 	int i;
 	uint16 reslen = 0;
 
@@ -1651,7 +1651,7 @@ uint16 ScummC64File::extractIndex(Common::WriteStream *out) {
 	return reslen;
 }
 
-bool ScummC64File::generateIndex() {
+bool ScummDiskImage::generateIndex() {
 	int bufsize;
 
 	bufsize = extractIndex(0);
@@ -1671,7 +1671,7 @@ bool ScummC64File::generateIndex() {
 	return true;
 }
 
-uint16 ScummC64File::extractResource(Common::WriteStream *out, int res) {
+uint16 ScummDiskImage::extractResource(Common::WriteStream *out, int res) {
 	const int AppleSectorOffset[36] = {
 		0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256,
 		272, 288, 304, 320, 336, 352, 368,
@@ -1707,7 +1707,7 @@ uint16 ScummC64File::extractResource(Common::WriteStream *out, int res) {
 	return reslen;
 }
 
-bool ScummC64File::generateResource(int res) {
+bool ScummDiskImage::generateResource(int res) {
 	int bufsize;
 
 	if (res >= _numRooms)
@@ -1730,7 +1730,7 @@ bool ScummC64File::generateResource(int res) {
 	return true;
 }
 
-void ScummC64File::close() {
+void ScummDiskImage::close() {
 	if (_stream)
 		delete _stream;
 	_stream = 0;
@@ -1741,7 +1741,7 @@ void ScummC64File::close() {
 	File::close();
 }
 
-bool ScummC64File::openSubFile(const Common::String &filename) {
+bool ScummDiskImage::openSubFile(const Common::String &filename) {
 	assert(isOpen());
 
 	const char *ext = strrchr(filename.c_str(), '.');

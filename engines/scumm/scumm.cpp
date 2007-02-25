@@ -988,7 +988,7 @@ int ScummEngine::init() {
 			tmpBuf1 = "maniac1.dsk";
 			tmpBuf2 = "maniac2.dsk";
 	
-			_fileHandle = new ScummC64File(tmpBuf1, tmpBuf2, _game);
+			_fileHandle = new ScummDiskImage(tmpBuf1, tmpBuf2, _game);
 			_containerFile = tmpBuf1;
 
 			_filenamePattern.pattern = "%.2d.LFL";
@@ -1005,7 +1005,7 @@ int ScummEngine::init() {
 				tmpBuf2 = "zak2.d64";
 			}
 	
-			_fileHandle = new ScummC64File(tmpBuf1, tmpBuf2, _game);
+			_fileHandle = new ScummDiskImage(tmpBuf1, tmpBuf2, _game);
 			_containerFile = tmpBuf1;
 
 			_filenamePattern.pattern = "%.2d.LFL";
