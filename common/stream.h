@@ -39,7 +39,7 @@ public:
 	virtual ~Stream() {}
 
 	/**
-	 * Returns true if any I/O failure occured.
+	 * Returns true if any I/O failure occurred.
 	 * This flag is never cleared automatically. In order to clear it,
 	 * client code has to call clearIOFailed() explicitly.
 	 *
@@ -154,7 +154,7 @@ public:
 	/**
 	 * Read am unsigned byte from the stream and return it.
 	 * Performs no error checking. The return value is undefined
-	 * if a read error occured (for which client code can check by
+	 * if a read error occurred (for which client code can check by
 	 * calling ioFailed()).
 	 */
 	byte readByte() {
@@ -166,7 +166,7 @@ public:
 	/**
 	 * Read a signed byte from the stream and return it.
 	 * Performs no error checking. The return value is undefined
-	 * if a read error occured (for which client code can check by
+	 * if a read error occurred (for which client code can check by
 	 * calling ioFailed()).
 	 */
 	int8 readSByte() {
@@ -179,7 +179,7 @@ public:
 	 * Read an unsigned 16-bit word stored in little endian (LSB first) order
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
-	 * if a read error occured (for which client code can check by
+	 * if a read error occurred (for which client code can check by
 	 * calling ioFailed()).
 	 */
 	uint16 readUint16LE() {
@@ -192,7 +192,7 @@ public:
 	 * Read an unsigned 32-bit word stored in little endian (LSB first) order
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
-	 * if a read error occured (for which client code can check by
+	 * if a read error occurred (for which client code can check by
 	 * calling ioFailed()).
 	 */
 	uint32 readUint32LE() {
@@ -205,7 +205,7 @@ public:
 	 * Read an unsigned 16-bit word stored in big endian (MSB first) order
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
-	 * if a read error occured (for which client code can check by
+	 * if a read error occurred (for which client code can check by
 	 * calling ioFailed()).
 	 */
 	uint16 readUint16BE() {
@@ -218,7 +218,7 @@ public:
 	 * Read an unsigned 32-bit word stored in big endian (MSB first) order
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
-	 * if a read error occured (for which client code can check by
+	 * if a read error occurred (for which client code can check by
 	 * calling ioFailed()).
 	 */
 	uint32 readUint32BE() {
@@ -231,7 +231,7 @@ public:
 	 * Read a signed 16-bit word stored in little endian (LSB first) order
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
-	 * if a read error occured (for which client code can check by
+	 * if a read error occurred (for which client code can check by
 	 * calling ioFailed()).
 	 */
 	int16 readSint16LE() {
@@ -242,7 +242,7 @@ public:
 	 * Read a signed 32-bit word stored in little endian (LSB first) order
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
-	 * if a read error occured (for which client code can check by
+	 * if a read error occurred (for which client code can check by
 	 * calling ioFailed()).
 	 */
 	int32 readSint32LE() {
@@ -253,7 +253,7 @@ public:
 	 * Read a signed 16-bit word stored in big endian (MSB first) order
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
-	 * if a read error occured (for which client code can check by
+	 * if a read error occurred (for which client code can check by
 	 * calling ioFailed()).
 	 */
 	int16 readSint16BE() {
@@ -264,7 +264,7 @@ public:
 	 * Read a signed 32-bit word stored in big endian (MSB first) order
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
-	 * if a read error occured (for which client code can check by
+	 * if a read error occurred (for which client code can check by
 	 * calling ioFailed()).
 	 */
 	int32 readSint32BE() {
@@ -304,7 +304,7 @@ public:
 	 *
 	 * @param buf	the buffer to store into
 	 * @param bufSize	the size of the buffer
-	 * @return a pointer to the read string, or NULL if an error occured
+	 * @return a pointer to the read string, or NULL if an error occurred
 	 * @note The line terminator (CR or CR/LF) is stripped and not inserted
 	 *       into the buffer.
 	 */
