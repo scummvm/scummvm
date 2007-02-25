@@ -25,6 +25,8 @@
 #include "common/util.h"
 #include "common/md5.h"
 
+#include "scumm/scumm.h"
+
 using Common::File;
 
 namespace Scumm {
@@ -1481,13 +1483,14 @@ static const int zakResourcesPerFile[59] = {
 };
 
 
-ScummC64File::ScummC64File(const char *disk1, const char *disk2, bool maniac) : _stream(0), _buf(0), _maniac(maniac) {
+ScummC64File::ScummC64File(const char *disk1, const char *disk2, GameSettings game) : _stream(0), _buf(0) {
 	_disk1 = disk1;
 	_disk2 = disk2;
+	_game = game;
 
 	_openedDisk = 0;
 
-	if (maniac) {
+	if (_game.id == GID_MANIAC) {
 		_numGlobalObjects = 256;
 		_numRooms = 55;
 		_numCostumes = 25;
@@ -1559,7 +1562,12 @@ bool ScummC64File::open(const Common::String &filename, AccessMode mode) {
 
 	// check signature
 	openDisk(1);
-	File::seek(0);
+
+	if (_game.platform == Common::kPlatformApple2GS) {
+		File::seek(142080);
+	} else {
+		File::seek(0);
+	}
 
 	signature = fileReadUint16LE();
 	if (signature != 0x0A31) {
@@ -1570,11 +1578,19 @@ bool ScummC64File::open(const Common::String &filename, AccessMode mode) {
 	extractIndex(0); // Fill in resource arrays
 
 	openDisk(2);
-	File::seek(0);
 
-	signature = fileReadUint16LE();
-	if (signature != 0x0132)
-		error("Error: signature not found in disk 2!\n");
+	if (_game.platform == Common::kPlatformApple2GS) {
+		File::seek(143104);
+		signature = fileReadUint16LE();
+		if (signature != 0x0032)
+			error("Error: signature not found in disk 2!\n");
+	} else {
+		File::seek(0);
+		signature = fileReadUint16LE();
+		if (signature != 0x0132)
+			error("Error: signature not found in disk 2!\n");
+	}
+
 
 	return true;
 }
@@ -1585,13 +1601,22 @@ uint16 ScummC64File::extractIndex(Common::WriteStream *out) {
 	uint16 reslen = 0;
 
 	openDisk(1);
-	File::seek(0);
+
+	if (_game.platform == Common::kPlatformApple2GS) {
+		File::seek(142080);
+	} else {
+		File::seek(0);
+	}
 
 	// skip signature
 	fileReadUint16LE();
 
 	// write expected signature
-	reslen += write_word(out, 0x0132);
+	if (_game.platform == Common::kPlatformApple2GS) {
+		reslen += write_word(out, 0x0132);
+	} else {
+		reslen += write_word(out, 0x0032);
+	}
 
 	// copy object flags
 	for (i = 0; i < _numGlobalObjects; i++)
@@ -1647,7 +1672,13 @@ bool ScummC64File::generateIndex() {
 }
 
 uint16 ScummC64File::extractResource(Common::WriteStream *out, int res) {
-	const int SectorOffset[36] = {
+	const int AppleSectorOffset[36] = {
+		0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256,
+		272, 288, 304, 320, 336, 352, 368,
+		384, 400, 416, 432, 448, 464,
+		480, 496, 512, 528, 544, 560
+	};
+	const int C64SectorOffset[36] = {
 		0,
 		0, 21, 42, 63, 84, 105, 126, 147, 168, 189, 210, 231, 252, 273, 294, 315, 336,
 		357, 376, 395, 414, 433, 452, 471,
@@ -1659,7 +1690,11 @@ uint16 ScummC64File::extractResource(Common::WriteStream *out, int res) {
 
 	openDisk(_roomDisks[res]);
 
-	File::seek((SectorOffset[_roomTracks[res]] + _roomSectors[res]) * 256);
+	if (_game.platform == Common::kPlatformApple2GS) {
+		File::seek((AppleSectorOffset[_roomTracks[res]] + _roomSectors[res]) * 256);
+	} else {
+		File::seek((C64SectorOffset[_roomTracks[res]] + _roomSectors[res]) * 256);
+	}
 
 	for (i = 0; i < _resourcesPerFile[res]; i++) {
 		uint16 len = fileReadUint16LE();

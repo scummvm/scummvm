@@ -25,6 +25,8 @@
 
 #include "common/file.h"
 
+#include "scumm/plugin.h"
+
 namespace Scumm {
 
 class BaseScummFile : public Common::File {
@@ -116,7 +118,8 @@ private:
 
 	byte *_buf;
 
-	bool _maniac;
+	GameSettings _game;
+
 	Common::String _disk1, _disk2;
 	int _openedDisk;
 
@@ -139,7 +142,7 @@ private:
 	uint16 fileReadUint16LE();
 
 public:
-	ScummC64File(const char *disk1, const char *disk2, bool maniac);
+	ScummC64File(const char *disk1, const char *disk2, GameSettings game);
 	void setEnc(byte value);
 
 	bool open(const Common::String &filename, AccessMode mode = kFileReadMode);

@@ -981,6 +981,18 @@ int ScummEngine::init() {
 			
 			_filenamePattern.pattern = "%.2d.LFL";
 			_filenamePattern.genMethod = kGenRoomNum;
+		} else if (_game.platform == Common::kPlatformApple2GS) {
+			// Read data from Apple II disk images.
+			const char *tmpBuf1, *tmpBuf2;
+			assert(_game.id == GID_MANIAC);
+			tmpBuf1 = "maniac1.dsk";
+			tmpBuf2 = "maniac2.dsk";
+	
+			_fileHandle = new ScummC64File(tmpBuf1, tmpBuf2, _game);
+			_containerFile = tmpBuf1;
+
+			_filenamePattern.pattern = "%.2d.LFL";
+			_filenamePattern.genMethod = kGenRoomNum;
 		} else if (_game.platform == Common::kPlatformC64) {
 			// Read data from C64 disk images.
 			const char *tmpBuf1, *tmpBuf2;
@@ -993,7 +1005,7 @@ int ScummEngine::init() {
 				tmpBuf2 = "zak2.d64";
 			}
 	
-			_fileHandle = new ScummC64File(tmpBuf1, tmpBuf2, _game.id == GID_MANIAC);
+			_fileHandle = new ScummC64File(tmpBuf1, tmpBuf2, _game);
 			_containerFile = tmpBuf1;
 
 			_filenamePattern.pattern = "%.2d.LFL";
@@ -1560,7 +1572,7 @@ void ScummEngine::setupMusic(int midi) {
 	// Init iMuse
 	if (_game.version >= 7) {
 		// Setup for digital iMuse is performed in another place
-	} else if (_game.platform == Common::kPlatformC64) {
+	} else if (_game.platform == Common::kPlatformApple2GS || _game.platform == Common::kPlatformC64) {
 		// TODO
 		_musicEngine = NULL;
 	} else if (_game.platform == Common::kPlatformNES) {

@@ -206,6 +206,7 @@ static const ObsoleteGameID obsoleteGameIDsTable[] = {
 // only a single unique variant. This is used to help the detector quickly
 // decide whether it has to worry about distinguishing multiple variants or not.
 static const GameSettings gameVariantsTable[] = {
+	{"maniac", "Apple II",     0, GID_MANIAC, 0, 0, MDT_PCSPK, 0, Common::kPlatformApple2GS},
 	{"maniac", "C64",     0, GID_MANIAC, 0, 0, MDT_PCSPK, 0, Common::kPlatformC64},
 	{"maniac", "V1",   "v1", GID_MANIAC, 1, 0, MDT_PCSPK, 0, Common::kPlatformPC},
 	{"maniac", "NES",     0, GID_MANIAC, 1, 0, MDT_NONE,  0, Common::kPlatformNES},
@@ -400,6 +401,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "maniac", "%02d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
 	{ "maniac", "%02d.MAN", kGenRoomNum, UNK_LANG, UNK, "Demo" },
 	{ "maniac", "maniac1.d64", kGenUnchanged, UNK_LANG, Common::kPlatformC64, "C64" },   // ... and maniac2.d64
+	{ "maniac", "maniac1.dsk", kGenUnchanged, UNK_LANG, Common::kPlatformApple2GS, "Apple II" },   // ... and maniac2.dsk
 	{ "maniac", "Maniac Mansion (E).prg", kGenUnchanged, Common::EN_GRB, Common::kPlatformNES, "NES" },
 	{ "maniac", "Maniac Mansion (F).prg", kGenUnchanged, Common::FR_FRA, Common::kPlatformNES, "NES" },
 	{ "maniac", "Maniac Mansion (SW).prg", kGenUnchanged, Common::SE_SWE, Common::kPlatformNES, "NES" },
@@ -1241,7 +1243,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 		return false;
 	}
 	
-	if (file == "maniac1.d64" || file == "zak1.d64") {
+	if (file == "maniac1.d64" || file == "maniac1.dsk" || file == "zak1.d64") {
 		// TODO
 	} else if (file == "00.LFL") {
 		// Used in V1, V2, V3 games.

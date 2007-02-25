@@ -33,7 +33,10 @@ namespace Scumm {
 
 void ScummEngine::resetPalette() {
 	if (_game.version <= 1) {
-		if (_game.platform == Common::kPlatformC64) {
+		if (_game.platform == Common::kPlatformApple2GS) {
+			// TODO: unique palette?
+			setC64Palette();
+		} else if (_game.platform == Common::kPlatformC64) {
 			setC64Palette();
 		} else if (_game.platform == Common::kPlatformNES) {
 			setNESPalette();

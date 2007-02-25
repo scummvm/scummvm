@@ -1617,6 +1617,7 @@ void ScummEngine_v2::o2_dummy() {
 }
 
 void ScummEngine_v2::o2_switchCostumeSet() {
+	printf("o2_switchCostumeSet\n");
 	// NES version of maniac uses this to switch between the two
 	// groups of costumes it has
 	if (_game.platform == Common::kPlatformNES)

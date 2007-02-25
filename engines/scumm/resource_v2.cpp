@@ -33,7 +33,7 @@ void ScummEngine_v2::readClassicIndexFile() {
 	int i;
 
 	if (_game.id == GID_MANIAC) {
-		if (_game.platform == Common::kPlatformC64) {
+		if (_game.version == 0) {
 			_numGlobalObjects = 256;
 			_numRooms = 55;
 			_numCostumes = 25;

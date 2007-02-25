@@ -440,7 +440,7 @@ void ScummEngine_v2::processKeyboard(int lastKeyHit) {
 		confirmRestartDialog();
 	} else {
 
-		if ((_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC && lastKeyHit == 27) || 
+		if ((_game.version == 0 && lastKeyHit == 27) || 
 			(VAR_CUTSCENEEXIT_KEY != 0xFF && lastKeyHit == 314+VAR(VAR_CUTSCENEEXIT_KEY))) {
 			abortCutscene();
 		} else {

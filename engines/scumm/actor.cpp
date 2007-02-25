@@ -1742,7 +1742,7 @@ void ScummEngine::resetV1ActorTalkColor() {
 	int i;
 
 	for (i = 1; i < _numActors; i++) {
-		if (_game.platform == Common::kPlatformC64) {
+		if (_game.version == 0) {
 			_actors[i]->_talkColor = c64MMActorTalkColor[i];
 		} else {
 			_actors[i]->_talkColor = v1MMActorTalkColor[i];
