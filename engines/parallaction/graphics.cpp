@@ -1026,22 +1026,17 @@ void Graphics::loadStaticCnv(const char *filename, StaticCnv *cnv) {
 			errorFileNotFound(path);
 	}
 
-	cnv->_width = cnv->_height = 0;
+	_vm->_archive.skip(1);
+	cnv->_width = _vm->_archive.readByte();
+	cnv->_height = _vm->_archive.readByte();
 
-	byte unk;
-	_vm->_archive.readArchivedFile(&unk, 1);
-	_vm->_archive.readArchivedFile(&unk, 1);
-	cnv->_width = unk;
-	_vm->_archive.readArchivedFile(&unk, 1);
-	cnv->_height = unk;
-
-	uint16 compressedsize = _vm->_archive.getArchivedFileLength() - 3;
+	uint16 compressedsize = _vm->_archive.size() - 3;
 	byte *compressed = (byte*)memAlloc(compressedsize);
 
 	uint16 size = cnv->_width*cnv->_height;
 	cnv->_data0 = (byte*)memAlloc(size);
 
-	_vm->_archive.readArchivedFile(compressed, compressedsize);
+	_vm->_archive.read(compressed, compressedsize);
 	_vm->_archive.closeArchivedFile();
 
 	decompressChunk(compressed, cnv->_data0, size);
@@ -1065,25 +1060,18 @@ void Graphics::loadCnv(const char *filename, Cnv *cnv) {
 			errorFileNotFound(path);
 	}
 
-	cnv->_count = cnv->_width = cnv->_height = 0;
-
-	byte unk;
-
-	_vm->_archive.readArchivedFile(&unk, 1);
-	cnv->_count = unk;
-	_vm->_archive.readArchivedFile(&unk, 1);
-	cnv->_width = unk;
-	_vm->_archive.readArchivedFile(&unk, 1);
-	cnv->_height = unk;
+	cnv->_count = _vm->_archive.readByte();
+	cnv->_width = _vm->_archive.readByte();
+	cnv->_height = _vm->_archive.readByte();
 
 	uint16 framesize = cnv->_width*cnv->_height;
 
 	cnv->_array = (byte**)memAlloc(cnv->_count * sizeof(byte*));
 
-	uint32 size = _vm->_archive.getArchivedFileLength() - 3;
+	uint32 size = _vm->_archive.size() - 3;
 
 	byte *buf = (byte*)memAlloc(size);
-	_vm->_archive.readArchivedFile(buf, size);
+	_vm->_archive.read(buf, size);
 
 	byte *s = buf;
 
@@ -1170,11 +1158,11 @@ void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 
 //	byte palette[PALETTE_SIZE];
 	byte v150[4];
-	_vm->_archive.readArchivedFile(_palette, PALETTE_SIZE);
-	_vm->_archive.readArchivedFile(&v150, 4);
+	_vm->_archive.read(_palette, PALETTE_SIZE);
+	_vm->_archive.read(&v150, 4);
 
 	byte tempfx[sizeof(PaletteFxRange)*6];
-	_vm->_archive.readArchivedFile(&tempfx, sizeof(PaletteFxRange)*6);
+	_vm->_archive.read(&tempfx, sizeof(PaletteFxRange)*6);
 
 //	setPalette(palette);
 
@@ -1205,7 +1193,7 @@ void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 	memset(_buffers[kMask0], 0, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 
 	byte *v4 = (byte*)memAlloc(SCREEN_SIZE);
-	_vm->_archive.readArchivedFile(v4, SCREEN_SIZE);
+	_vm->_archive.read(v4, SCREEN_SIZE);
 
 	byte v144[SCREEN_WIDTH];
 
@@ -1233,9 +1221,9 @@ void Graphics::loadMaskAndPath(const char *filename) {
 		errorFileNotFound(filename);
 
 	byte v4[4];
-	_vm->_archive.readArchivedFile(v4, 4);
-	_vm->_archive.readArchivedFile(_buffers[kPath0], SCREENPATH_WIDTH*SCREEN_HEIGHT);
-	_vm->_archive.readArchivedFile(_buffers[kMask0], SCREENMASK_WIDTH*SCREEN_HEIGHT);
+	_vm->_archive.read(v4, 4);
+	_vm->_archive.read(_buffers[kPath0], SCREENPATH_WIDTH*SCREEN_HEIGHT);
+	_vm->_archive.read(_buffers[kMask0], SCREENMASK_WIDTH*SCREEN_HEIGHT);
 
 	for (uint16 _si = 0; _si < 4; _si++) _bgLayers[_si] = v4[_si];
 

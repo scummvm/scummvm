@@ -89,7 +89,6 @@ bool Archive::openArchivedFile(const char *name) {
 
 	_file = true;
 
-	_fileIndex = i;
 	_fileOffset = _archiveOffsets[i];
 	_fileCursor = _archiveOffsets[i];
 	_fileEndOffset = _archiveOffsets[i] + _archiveLenghts[i];
@@ -101,7 +100,6 @@ bool Archive::openArchivedFile(const char *name) {
 
 void Archive::resetArchivedFile() {
 	_file = false;
-	_fileIndex = 0;
 	_fileCursor = 0;
 	_fileOffset = 0;
 	_fileEndOffset = 0;
@@ -112,43 +110,50 @@ void Archive::closeArchivedFile() {
 }
 
 
-uint16 Archive::getArchivedFileLength() {
-//	printf("getArchivedFileLength(%s)\n", name);
-
+uint32 Archive::size() {
 	return (_file == true ? _fileEndOffset - _fileOffset : 0);
 }
 
+void Archive::seek(int32 offs, int whence) {
+	assert(_file == true && _fileCursor <= _fileEndOffset);
 
-int16 Archive::readArchivedFile(void *buffer, uint16 size) {
-//	printf("readArchivedFile(%i, %i)\n", file->_cursor, file->_endOffset);
+	switch (whence) {
+	case SEEK_CUR:
+		_fileCursor += offs;
+		break;
+	case SEEK_SET:
+		_fileCursor = _fileOffset + offs;
+		break;
+	case SEEK_END:
+		_fileCursor = _fileEndOffset - offs;
+		break;
+	}
+	assert(_fileCursor <= _fileEndOffset && _fileCursor >= _fileOffset);
+
+	_archive.seek(_fileCursor, SEEK_SET);
+}
+
+uint32 Archive::read(void *dataPtr, uint32 dataSize) {
+//	printf("read(%i, %i)\n", file->_cursor, file->_endOffset);
 	if (_file == false)
-		error("readArchiveFile: no archived file is currently open");
+		error("Archive::read: no archived file is currently open");
 
-	if (_fileCursor == _fileEndOffset) return -1;
+	if (_fileCursor >= _fileEndOffset)
+		error("can't read beyond end of archived file");
 
-	if (_fileEndOffset - _fileCursor < size)
-		size = _fileEndOffset - _fileCursor;
+	if (_fileEndOffset - _fileCursor < dataSize)
+		dataSize = _fileEndOffset - _fileCursor;
 
-	_archive.seek(_fileCursor);
-	int16 read = _archive.read(buffer, size);
+	int32 read = _archive.read(dataPtr, dataSize);
 	_fileCursor += read;
 
 	return read;
 }
 
 
-char *Archive::readArchivedFileText(char *buf, uint16 size) {
-	if (_file == false)
-		error("readArchiveFileText: no archived file is currently open");
-
-	char *t = _archive.readLine(buf, size);
-
-	if (_archive.eof() || t == NULL)
-		return NULL;
-
-	return t;
+uint32 Archive::write(const void *dataPtr, uint32 dataSize) {
+	error("Archive files don't support writing");
 }
-
 
 
 

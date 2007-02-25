@@ -28,8 +28,6 @@
 
 namespace Parallaction {
 
-struct ArchivedFile;
-
 void	parseInit(char *s);
 char   *parseNextLine(char *s, uint16 count);
 uint16 fillBuffers(Common::SeekableReadStream &stream, bool errorOnEOF = false);

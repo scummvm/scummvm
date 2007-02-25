@@ -37,12 +37,11 @@ namespace Parallaction {
 
 #define DIRECTORY_OFFSET_IN_FILE	0x4000
 
-class Archive {
+class Archive : public Common::File {
 
 protected:
 
 	bool   			_file;
-	uint16			_fileIndex;
 	uint32			_fileOffset;
 	uint32			_fileCursor;
 	uint32			_fileEndOffset;
@@ -65,10 +64,11 @@ public:
 	bool openArchivedFile(const char *name);
 	void closeArchivedFile();
 
-	uint16 getArchivedFileLength();
+	uint32 size();
+	void seek(int32 offs, int whence = SEEK_SET);
 
-	int16 readArchivedFile(void *buffer, uint16 size);
-	char *readArchivedFileText(char *buf, uint16 size);
+	uint32 read(void *dataPtr, uint32 dataSize);
+	uint32 write(const void *dataPtr, uint32 dataSize);
 };
 
 

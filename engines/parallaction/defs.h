@@ -79,8 +79,6 @@ struct Cnv {
 	uint16	_count; 	// # of frames
 };
 
-
-struct ArchivedFile;
 struct Animation;
 struct Zone;
 struct ZoneLabel;
