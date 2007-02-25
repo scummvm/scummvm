@@ -530,6 +530,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "catalog", "catalog", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "catalog", "catalog2", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "catalog", "Preview.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "chase", "chase", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "chase", "Cheese Chase", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
