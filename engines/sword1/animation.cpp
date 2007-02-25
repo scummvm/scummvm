@@ -166,7 +166,7 @@ bool MoviePlayer::load(uint32 id) {
 					oggSource->seek( header[SwordEngine::_systemVars.language * 2 + 0 + segCnt * 14]);
 					uint32 segSize = header[SwordEngine::_systemVars.language * 2 + 1 + segCnt * 14];
 					Common::MemoryReadStream *stream = oggSource->readStream(segSize);
-					Audio::AudioStream *apStream = Audio::makeVorbisStream(streamm true);
+					Audio::AudioStream *apStream = Audio::makeVorbisStream(stream, true);
 					if (!apStream)
 						error("Can't create Vorbis Stream from file %s", sndName);
 					sStream->appendStream(apStream);
