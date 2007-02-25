@@ -35,7 +35,6 @@ class Credits {
 public:
 
 	Credits(QueenEngine *vm, const char* filename);
-	~Credits();
 
 	//! update/display credits for current room
 	void update();
@@ -77,8 +76,10 @@ private:
 	//! current text position
 	int _zone;
 
+	uint _lineNum;
+
 	//! contains the credits description
-	LineReader *_credits;
+	Common::StringList _credits;
 
 	QueenEngine *_vm;
 };

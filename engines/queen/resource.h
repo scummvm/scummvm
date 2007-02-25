@@ -65,8 +65,11 @@ public:
 	Resource();
 	~Resource();
 
-	//! loads the specified from the resource file
+	//! loads a binary file
 	uint8 *loadFile(const char *filename, uint32 skipBytes = 0, uint32 *size = NULL);
+
+	//! loads a text file
+	void loadTextFile(const char *filename, Common::StringList &stringList);
 
 	//! returns true if the file is present in the resource
 	bool fileExists(const char *filename) const { return resourceEntry(filename) != NULL; }
@@ -165,20 +168,6 @@ protected:
 	//! resource table for english floppy version
 	static ResourceEntry _resourceTablePEM10[];
 #endif
-};
-
-class LineReader {
-public:
-
-	LineReader(char *buffer, uint32 bufsize);
-	~LineReader();
-	char *nextLine();
-
-private:
-
-	char *_buffer;
-	uint32 _bufSize;
-	int _current;
 };
 
 } // End of namespace Queen

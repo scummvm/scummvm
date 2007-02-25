@@ -30,14 +30,8 @@
 namespace Queen {
 
 Credits::Credits(QueenEngine *vm, const char* filename) :
-	_vm(vm), _running(true), _count(0), _pause(0), _justify(0), _fontSize(0), _color(0), _zone(0) {
-	uint32 size;
-	char *buf = (char *)_vm->resource()->loadFile(filename, 0, &size);
-	_credits = new LineReader(buf, size);
-}
-
-Credits::~Credits() {
-	delete _credits;
+	_vm(vm), _running(true), _count(0), _pause(0), _justify(0), _fontSize(0), _color(0), _zone(0), _lineNum(0) {
+	_vm->resource()->loadTextFile(filename, _credits);
 }
 
 void Credits::nextRoom() {
@@ -62,8 +56,9 @@ void Credits::update() {
 	if (-1 == _pause)
 		return;
 
-	for (;;) {
-		const char *line = _credits->nextLine();
+	while (_lineNum < _credits.size()) {
+		const char *line = _credits[_lineNum].c_str();
+		++_lineNum;
 
 		if (0 == memcmp(line, "EN", 2)) {
 			_running = false;

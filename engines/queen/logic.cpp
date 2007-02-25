@@ -181,65 +181,21 @@ void Logic::readQueenJas() {
 	if (memcmp(ptr, _vm->resource()->getJASVersion(), 5) != 0) {
 		warning("Unexpected queen.jas file format");
 	}
-
 	delete[] jas;
 
-	uint32 size;
-	char *buf = (char *)_vm->resource()->loadFile("QUEEN2.JAS", 0, &size);
-	LineReader queen2jas(buf, size);
-
-	_objDescription.push_back("");
-	for (i = 1; i <= _numDescriptions; i++) {
-		_objDescription.push_back(queen2jas.nextLine());
-	}
+	_vm->resource()->loadTextFile("QUEEN2.JAS", _jasStringList);
+	_jasStringOffset[0] = 0;
+	_jasStringOffset[1] = _jasStringOffset[0] + _numDescriptions;
+	_jasStringOffset[2] = _jasStringOffset[1] + _numNames;
+	_jasStringOffset[3] = _jasStringOffset[2] + _numRooms;
+	_jasStringOffset[4] = _jasStringOffset[3] + 12;
+	_jasStringOffset[5] = _jasStringOffset[4] + JOE_RESPONSE_MAX;
+	_jasStringOffset[6] = _jasStringOffset[5] + _numAAnim;
+	_jasStringOffset[7] = _jasStringOffset[6] + _numAName;
 
 	// Patch for German text bug
 	if (_vm->resource()->getLanguage() == Common::DE_DEU) {
-		_objDescription[296] = "Es bringt nicht viel, das festzubinden.";
-	}
-
-	_objName.push_back("");
-	for (i = 1; i <= _numNames; i++) {
-		_objName.push_back(queen2jas.nextLine());
-	}
-
-	_roomName.push_back("");
-	for (i = 1; i <= _numRooms; i++) {
-		_roomName.push_back(queen2jas.nextLine());
-	}
-
-	_verbName.push_back("");
-	for (i = 1; i <= 12; i++) {
-		_verbName.push_back(queen2jas.nextLine());
-	}
-
-	_joeResponse.push_back("");
-	for (i = 1; i <= JOE_RESPONSE_MAX; i++) {
-		char *defaultResponse = queen2jas.nextLine();
-
-		// In the spanish version, captions of journal buttons have leading & trailing
-		// whitespaces (they probably did it that way to center the texts). As we do
-		// differently (see code in journal.cpp), we remove these extra characters here.
-		if (_vm->resource()->getLanguage() == Common::ES_ESP && i >= 30 && i <= 35) {
-			defaultResponse = Common::trim(defaultResponse);
-		}
-
-		_joeResponse.push_back(defaultResponse);
-	}
-
-	_aAnim.push_back("");
-	for (i = 1; i <= _numAAnim; i++) {
-		_aAnim.push_back(queen2jas.nextLine());
-	}
-
-	_aName.push_back("");
-	for (i = 1; i <= _numAName; i++) {
-		_aName.push_back(queen2jas.nextLine());
-	}
-
-	_aFile.push_back("");
-	for (i = 1; i <= _numAFile; i++) {
-		_aFile.push_back(queen2jas.nextLine());
+		_jasStringList[_jasStringOffset[JSO_OBJECT_DESCRIPTION] + 296 - 1] = "Es bringt nicht viel, das festzubinden.";
 	}
 }
 
@@ -254,11 +210,6 @@ void Logic::start() {
 
 	_oldRoom = 0;
 	_newRoom = _currentRoom;
-}
-
-ObjectData* Logic::objectData(int index) const {
-	assert(index >= 0 && index <= _numObjects);
-	return &_objectData[index];
 }
 
 uint16 Logic::findBob(uint16 obj) const {
@@ -441,27 +392,45 @@ void Logic::gameState(int index, int16 newValue) {
 
 const char *Logic::roomName(uint16 roomNum) const {
 	assert(roomNum >= 1 && roomNum <= _numRooms);
-	return _roomName[roomNum].c_str();
+	return _jasStringList[_jasStringOffset[JSO_ROOM_NAME] + roomNum - 1].c_str();
 }
 
 const char *Logic::objectName(uint16 objNum) const {
 	assert(objNum >= 1 && objNum <= _numNames);
-	return _objName[objNum].c_str();
+	return _jasStringList[_jasStringOffset[JSO_OBJECT_NAME] + objNum - 1].c_str();
 }
 
 const char *Logic::objectTextualDescription(uint16 objNum) const {
 	assert(objNum >= 1 && objNum <= _numDescriptions);
-	return _objDescription[objNum].c_str();
+	return _jasStringList[_jasStringOffset[JSO_OBJECT_DESCRIPTION] + objNum - 1].c_str();
 }
 
 const char *Logic::joeResponse(int i) const {
 	assert(i >= 1 && i <= JOE_RESPONSE_MAX);
-	return _joeResponse[i].c_str();
+	return _jasStringList[_jasStringOffset[JSO_JOE_RESPONSE] + i - 1].c_str();
 }
 
 const char *Logic::verbName(Verb v) const {
 	assert(v >= 0 && v <= 12);
-	return _verbName[v].c_str();
+	if (v == 0) {
+		return "";
+	}
+	return _jasStringList[_jasStringOffset[JSO_VERB_NAME] + v - 1].c_str();
+}
+
+const char *Logic::actorAnim(int num) const {
+	assert(num >= 1 && num < _numAAnim);
+	return _jasStringList[_jasStringOffset[JSO_ACTOR_ANIM] + num - 1].c_str();
+}
+
+const char *Logic::actorName(int num) const {
+	assert(num >= 1 && num < _numAName);
+	return _jasStringList[_jasStringOffset[JSO_ACTOR_NAME] + num - 1].c_str();
+}
+
+const char *Logic::actorFile(int num) const {
+	assert(num >= 1 && num < _numAFile);
+	return _jasStringList[_jasStringOffset[JSO_ACTOR_FILE] + num - 1].c_str();
 }
 
 void Logic::eraseRoom() {
@@ -559,7 +528,7 @@ ActorData *Logic::findActor(uint16 noun, const char *name) const {
 		for (uint16 i = 1; i <= _numActors; ++i) {
 			ActorData *pad = &_actorData[i];
 			if (pad->room == _currentRoom && gameState(pad->gsSlot) == pad->gsValue) {
-				if (bobNum == pad->bobNum || (name && _aName[pad->name] == name)) {
+				if (bobNum == pad->bobNum || (name && strcmp(actorName(pad->name), name) == 0)) {
 					return pad;
 				}
 			}
@@ -568,18 +537,18 @@ ActorData *Logic::findActor(uint16 noun, const char *name) const {
 	return NULL;
 }
 
-bool Logic::initPerson(uint16 noun, const char *actorName, bool loadBank, Person *pp) {
-	const ActorData *pad = findActor(noun, actorName);
+bool Logic::initPerson(uint16 noun, const char *name, bool loadBank, Person *pp) {
+	const ActorData *pad = findActor(noun, name);
 	if (pad != NULL) {
 		pp->actor = pad;
-		pp->name = _aName[pad->name].c_str();
+		pp->name = actorName(pad->name);
 		if (pad->anim != 0) {
-			pp->anim = _aAnim[pad->anim].c_str();
+			pp->anim = actorAnim(pad->anim);
 		} else {
 			pp->anim = NULL;
 		}
 		if (loadBank && pad->file != 0) {
-			_vm->bankMan()->load(_aFile[pad->file].c_str(), pad->bankNum);
+			_vm->bankMan()->load(actorFile(pad->file), pad->bankNum);
 			// if there is no valid actor file (ie pad->file is 0), the person
 			// data is already loaded as it is included in objects room bank (.bbk)
 		}
@@ -613,7 +582,7 @@ void Logic::loadJoeBanks(const char *animBank, const char *standBank) {
 }
 
 void Logic::setupJoe() {
-	loadJoeBanks("joe_a.BBK", "joe_b.BBK");
+	loadJoeBanks("JOE_A.BBK", "JOE_B.BBK");
 	joePrevFacing(DIR_FRONT);
 	joeFacing(DIR_FRONT);
 }
@@ -871,7 +840,7 @@ void Logic::playCutaway(const char *cutFile, char *next) {
 }
 
 void Logic::makeJoeSpeak(uint16 descNum, bool objectType) {
-	const char *text = objectType ? _objDescription[descNum].c_str() : _joeResponse[descNum].c_str();
+	const char *text = objectType ? objectTextualDescription(descNum) : joeResponse(descNum);
 	if (objectType) {
 		descNum += JOE_RESPONSE_MAX;
 	}
@@ -1963,8 +1932,8 @@ void Logic::asmScrollTitle() {
 	bob->y = 300;
 	bob->scale = 100;
 	while (bob->y >= 120) {
-		bob->y -= 4;
 		_vm->update();
+		bob->y -= 4;
 	}
 }
 

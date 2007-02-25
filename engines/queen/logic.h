@@ -43,9 +43,20 @@ enum JoeWalkMode {
 	JWM_SPEAK   = 3
 };
 
+enum {
+	JSO_OBJECT_DESCRIPTION = 0,
+	JSO_OBJECT_NAME,
+	JSO_ROOM_NAME,
+	JSO_VERB_NAME,
+	JSO_JOE_RESPONSE,
+	JSO_ACTOR_ANIM,
+	JSO_ACTOR_NAME,
+	JSO_ACTOR_FILE,
+	JSO_COUNT
+};
+
 class Credits;
 class Journal;
-class LineReader;
 class QueenEngine;
 
 class Logic {
@@ -72,7 +83,7 @@ public:
 		_newRoom = room;
 	}
 
-	ObjectData *objectData(int index) const;
+	ObjectData *objectData(int index) const { return &_objectData[index]; }
 	uint16 roomData(int room) const { return _roomData[room]; }
 	GraphicData *graphicData(int index) const { return &_graphicData[index]; }
 	ItemData *itemData(int index) const { return &_itemData[index]; }
@@ -117,6 +128,9 @@ public:
 	const char *objectTextualDescription(uint16 objNum) const;
 	const char *joeResponse(int i) const;
 	const char *verbName(Verb v) const;
+	const char *actorAnim(int num) const;
+	const char *actorName(int num) const;
+	const char *actorFile(int num) const;
 
 	void eraseRoom();
 	void setupRoom(const char *room, int comPanel, bool inCutaway);
@@ -321,30 +335,13 @@ protected:
 	//! actor initial position in room is _walkOffData[_entryObj]
 	int16 _entryObj;
 
-	//! object description (Look At)
-	Common::StringList _objDescription;
+	Common::StringList _jasStringList;
+	int _jasStringOffset[JSO_COUNT];
+
 	uint16 _numDescriptions;
-
-	Common::StringList _objName;
 	uint16 _numNames;
-
-	//! room name, prefix for data files (PCX, LUM...)
-	Common::StringList _roomName;
-
-	Common::StringList _verbName;
-
-	Common::StringList _joeResponse;
-
-	//! actor animation strings
-	Common::StringList _aAnim;
 	uint16 _numAAnim;
-
-	//! actor names
-	Common::StringList _aName;
 	uint16 _numAName;
-
-	//! actor filenames
-	Common::StringList _aFile;
 	uint16 _numAFile;
 
 	struct {
@@ -366,7 +363,7 @@ protected:
 
 	//! cutscene counter
 	int _scene;
-	
+
 	SpecialMoveProc _specialMoves[40];
 
 	Credits *_credits;

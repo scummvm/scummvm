@@ -90,10 +90,6 @@ Resource::~Resource() {
 }
 
 ResourceEntry *Resource::resourceEntry(const char *filename) const {
-	if (filename[0] == 0 || strlen(filename) >= 14) {
-		uint8 *p = 0;
-		*p = 0x1234;
-	}
 	assert(filename[0] && strlen(filename) < 14);
 
 	Common::String entryName(filename);
@@ -127,6 +123,18 @@ uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, uint32 *size) 
 	seekResourceFile(re->bundle, re->offset + skipBytes);
 	_resourceFile.read(dstBuf, sz);
 	return dstBuf;
+}
+
+void Resource::loadTextFile(const char *filename, Common::StringList &stringList) {
+	debug(7, "Resource::loadTextFile('%s')", filename);
+	ResourceEntry *re = resourceEntry(filename);
+	assert(re != NULL);
+	seekResourceFile(re->bundle, re->offset);
+	char buf[512];
+	Common::SeekableSubReadStream stream(&_resourceFile, re->offset, re->offset + re->size);
+	while (stream.readLine(buf, 512)) {
+		stringList.push_back(buf);
+	}
 }
 
 bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
@@ -304,25 +312,6 @@ Common::File *Resource::findSound(const char *filename, uint32 *size) {
 		return &_resourceFile;
 	}
 	return NULL;
-}
-
-LineReader::LineReader(char *buffer, uint32 bufsize) : _buffer(buffer), _bufSize(bufsize), _current(0) {
-}
-
-LineReader::~LineReader() {
-	delete[] _buffer;
-}
-
-char *LineReader::nextLine() {
-	char *startOfLine = _buffer + _current;
-	char *curPos = startOfLine;
-	while (curPos < _buffer + _bufSize && *curPos++ != 0xd) ;
-	*(curPos - 1) = '\0'; // '\r'
-	if (curPos < _buffer + _bufSize) {
-		*curPos = '\0'; // '\n'
-		_current = (curPos - _buffer) + 1;
-	}
-	return startOfLine;
 }
 
 } // End of namespace Queen

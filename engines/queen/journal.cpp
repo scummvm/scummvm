@@ -418,7 +418,11 @@ void Journal::drawPanel(const int *frames, const int *titles, int n) {
 	int y = 8;
 	while (n--) {
 		showBob(bobNum++, 32, y, *frames++);
-		drawPanelText(y + 12, _vm->logic()->joeResponse(*titles++));
+		// trim panel texts for spanish version
+		char buf[128];
+		strncpy(buf, _vm->logic()->joeResponse(*titles++), 128);
+		buf[127] = 0;
+		drawPanelText(y + 12, Common::trim(buf));
 		y += 48;
 	}
 }
