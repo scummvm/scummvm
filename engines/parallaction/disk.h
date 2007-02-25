@@ -36,13 +36,13 @@ struct ArchivedFile;
 void openArchive(const char *file);
 void closeArchive();
 
-ArchivedFile *openArchivedFile(const char *name);
-void closeArchivedFile(ArchivedFile*);
+bool openArchivedFile(const char *name);
+void closeArchivedFile();
 
 uint16 getArchivedFileLength(const char *name);
 
-int16 readArchivedFile(ArchivedFile*, void *buffer, uint16 size);
-char *readArchivedFileText(char *buf, uint16 size, void*);
+int16 readArchivedFile(void *buffer, uint16 size);
+char *readArchivedFileText(char *buf, uint16 size);
 
 
 

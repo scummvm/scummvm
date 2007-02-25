@@ -27,15 +27,11 @@
 
 namespace Parallaction {
 
-struct ArchivedFile {
-	uint16	_index;
-	uint32	_offset;
-	uint32	_cursor;
-	uint16	field_A;	// unused
-	uint16	field_C;	// unused
-	uint32	_endOffset;
-};
-
+static bool   			_file = false;
+static uint16			_fileIndex = 0;
+static uint32			_fileOffset = 0;
+static uint32			_fileCursor = 0;
+static uint32			_fileEndOffset = 0;
 
 #define MAX_ARCHIVE_ENTRIES 		384
 
@@ -53,7 +49,6 @@ static char 			_archiveDir[MAX_ARCHIVE_ENTRIES][32];
 static uint32			_archiveLenghts[MAX_ARCHIVE_ENTRIES];
 static uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
 
-static uint32			_handle = MAX_ARCHIVE_ENTRIES;
 
 
 void openArchive(const char *file) {
@@ -106,37 +101,36 @@ void closeArchive() {
 }
 
 
-ArchivedFile *openArchivedFile(const char *name) {
+bool openArchivedFile(const char *name) {
 
 	uint16 i = 0;
 	for ( ; i < MAX_ARCHIVE_ENTRIES; i++) {
 		if (!scumm_stricmp(_archiveDir[i], name)) break;
 	}
-	if (i == MAX_ARCHIVE_ENTRIES) return NULL;
+	if (i == MAX_ARCHIVE_ENTRIES) return false;
 
 	debugC(1, kDebugDisk, "file '%s' found in slot %i", name, i);
 
-	ArchivedFile *file = (ArchivedFile*)memAlloc(sizeof(ArchivedFile));
+	_file = true;
 
-	if (!file)
-		error("openArchivedFile: can't allocate buffer for '%s'", name);
+	_fileIndex = i;
+	_fileOffset = _archiveOffsets[i];
+	_fileCursor = _archiveOffsets[i];
+	_fileEndOffset = _archiveOffsets[i] + _archiveLenghts[i];
 
-	file->_index = i;
-	file->_offset = _archiveOffsets[i];
-	file->_cursor = _archiveOffsets[i];
-	file->_endOffset = _archiveOffsets[i] + _archiveLenghts[i];
+	_archive.seek(_fileOffset);
 
-	_handle = file->_index;
-	_archive.seek(file->_offset);
-
-	return file;
+	return true;
 }
 
 
 
-void closeArchivedFile(ArchivedFile *file) {
-	if (file) memFree(file);
-	_handle = MAX_ARCHIVE_ENTRIES;
+void closeArchivedFile() {
+	_file = false;
+	_fileIndex = 0;
+	_fileCursor = 0;
+	_fileOffset = 0;
+	_fileEndOffset = 0;
 	return;
 }
 
@@ -156,17 +150,19 @@ uint16 getArchivedFileLength(const char *name) {
 
 
 
-int16 readArchivedFile(ArchivedFile *file, void *buffer, uint16 size) {
+int16 readArchivedFile(void *buffer, uint16 size) {
 //	printf("readArchivedFile(%i, %i)\n", file->_cursor, file->_endOffset);
+	if (_file == false)
+		error("readArchiveFile: no archived file is currently open");
 
-	if (file->_cursor == file->_endOffset) return -1;
+	if (_fileCursor == _fileEndOffset) return -1;
 
-	if (file->_endOffset - file->_cursor < size)
-		size = file->_endOffset - file->_cursor;
+	if (_fileEndOffset - _fileCursor < size)
+		size = _fileEndOffset - _fileCursor;
 
-	_archive.seek(file->_cursor);
+	_archive.seek(_fileCursor);
 	int16 read = _archive.read(buffer, size);
-	file->_cursor += read;
+	_fileCursor += read;
 
 	return read;
 }
@@ -186,7 +182,9 @@ int16 readArchivedFile(ArchivedFile *file, void *buffer, uint16 size) {
 #endif
 
 
-char *readArchivedFileText(char *buf, uint16 size, void*) {
+char *readArchivedFileText(char *buf, uint16 size) {
+	if (_file == false)
+		error("readArchiveFileText: no archived file is currently open");
 
 	char *t = _archive.readLine(buf, size);
 

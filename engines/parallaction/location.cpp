@@ -66,11 +66,11 @@ void Parallaction::parseLocation(const char *filename) {
 	_languageDir[2] = '\0';
 	openArchive(_languageDir);
 	_languageDir[2] = '/';
-	ArchivedFile *file = openArchivedFile(archivefile);
-	if (!file) {
+
+	if (!openArchivedFile(archivefile)) {
 		sprintf(archivefile, "%s%s.loc", _languageDir, filename);
-		file = openArchivedFile(archivefile);
-		if (!file) errorFileNotFound(filename);
+		if (!openArchivedFile(archivefile))
+			errorFileNotFound(filename);
 	}
 
 	uint32 count = getArchivedFileLength(archivefile);
@@ -78,8 +78,8 @@ void Parallaction::parseLocation(const char *filename) {
 
 	_locationScript = new Script(location_src);
 
-	readArchivedFile(file, location_src, count);
-	closeArchivedFile(file);
+	readArchivedFile(location_src, count);
+	closeArchivedFile();
 	closeArchive();
 
 	fillBuffers(*_locationScript, true);

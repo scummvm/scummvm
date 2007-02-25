@@ -1020,20 +1020,19 @@ void Graphics::loadStaticCnv(const char *filename, StaticCnv *cnv) {
 	char path[PATH_LEN];
 
 	strcpy(path, filename);
-	ArchivedFile *file = openArchivedFile(path);
-	if (!file) {
+	if (!openArchivedFile(path)) {
 		sprintf(path, "%s.pp", filename);
-		file = openArchivedFile(path);
-		if (!file) errorFileNotFound(path);
+		if (!openArchivedFile(path))
+			errorFileNotFound(path);
 	}
 
 	cnv->_width = cnv->_height = 0;
 
 	byte unk;
-	readArchivedFile(file, &unk, 1);
-	readArchivedFile(file, &unk, 1);
+	readArchivedFile(&unk, 1);
+	readArchivedFile(&unk, 1);
 	cnv->_width = unk;
-	readArchivedFile(file, &unk, 1);
+	readArchivedFile(&unk, 1);
 	cnv->_height = unk;
 
 	uint16 compressedsize = getArchivedFileLength(path) - 3;
@@ -1042,8 +1041,8 @@ void Graphics::loadStaticCnv(const char *filename, StaticCnv *cnv) {
 	uint16 size = cnv->_width*cnv->_height;
 	cnv->_data0 = (byte*)memAlloc(size);
 
-	readArchivedFile(file, compressed, compressedsize);
-	closeArchivedFile(file);
+	readArchivedFile(compressed, compressedsize);
+	closeArchivedFile();
 
 	decompressChunk(compressed, cnv->_data0, size);
 	memFree(compressed);
@@ -1060,22 +1059,21 @@ void Graphics::loadCnv(const char *filename, Cnv *cnv) {
 	char path[PATH_LEN];
 
 	strcpy(path, filename);
-	ArchivedFile *file = openArchivedFile(path);
-	if (!file) {
+	if (!openArchivedFile(path)) {
 		sprintf(path, "%s.pp", filename);
-		file = openArchivedFile(path);
-		if (!file) errorFileNotFound(path);
+		if (!openArchivedFile(path))
+			errorFileNotFound(path);
 	}
 
 	cnv->_count = cnv->_width = cnv->_height = 0;
 
 	byte unk;
 
-	readArchivedFile(file, &unk, 1);
+	readArchivedFile(&unk, 1);
 	cnv->_count = unk;
-	readArchivedFile(file, &unk, 1);
+	readArchivedFile(&unk, 1);
 	cnv->_width = unk;
-	readArchivedFile(file, &unk, 1);
+	readArchivedFile(&unk, 1);
 	cnv->_height = unk;
 
 	uint16 framesize = cnv->_width*cnv->_height;
@@ -1085,7 +1083,7 @@ void Graphics::loadCnv(const char *filename, Cnv *cnv) {
 	uint32 size = getArchivedFileLength(path) - 3;
 
 	byte *buf = (byte*)memAlloc(size);
-	readArchivedFile(file, buf, size);
+	readArchivedFile(buf, size);
 
 	byte *s = buf;
 
@@ -1098,7 +1096,7 @@ void Graphics::loadCnv(const char *filename, Cnv *cnv) {
 		s += read;
 	}
 
-	closeArchivedFile(file);
+	closeArchivedFile();
 
 	memFree(buf);
 
@@ -1167,16 +1165,16 @@ void unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *path) {
 void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 //	printf("Graphics::loadBackground(%s)\n", filename);
 
-	ArchivedFile *file = openArchivedFile(filename);
-	if (!file) errorFileNotFound(filename);
+	if (!openArchivedFile(filename))
+		errorFileNotFound(filename);
 
 //	byte palette[PALETTE_SIZE];
 	byte v150[4];
-	readArchivedFile(file, _palette, PALETTE_SIZE);
-	readArchivedFile(file, &v150, 4);
+	readArchivedFile(_palette, PALETTE_SIZE);
+	readArchivedFile(&v150, 4);
 
 	byte tempfx[sizeof(PaletteFxRange)*6];
-	readArchivedFile(file, &tempfx, sizeof(PaletteFxRange)*6);
+	readArchivedFile(&tempfx, sizeof(PaletteFxRange)*6);
 
 //	setPalette(palette);
 
@@ -1207,7 +1205,7 @@ void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 	memset(_buffers[kMask0], 0, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 
 	byte *v4 = (byte*)memAlloc(SCREEN_SIZE);
-	readArchivedFile(file, v4, SCREEN_SIZE);
+	readArchivedFile(v4, SCREEN_SIZE);
 
 	byte v144[SCREEN_WIDTH];
 
@@ -1218,7 +1216,7 @@ void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 	}
 
 	memFree(v4);
-	closeArchivedFile(file);
+	closeArchivedFile();
 
 	return;
 }
@@ -1231,17 +1229,17 @@ void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 //
 void Graphics::loadMaskAndPath(const char *filename) {
 
-	ArchivedFile *file = openArchivedFile(filename);
-	if (!file) errorFileNotFound(filename);
+	if (!openArchivedFile(filename))
+		errorFileNotFound(filename);
 
 	byte v4[4];
-	readArchivedFile(file, v4, 4);
-	readArchivedFile(file, _buffers[kPath0], SCREENPATH_WIDTH*SCREEN_HEIGHT);
-	readArchivedFile(file, _buffers[kMask0], SCREENMASK_WIDTH*SCREEN_HEIGHT);
+	readArchivedFile(v4, 4);
+	readArchivedFile(_buffers[kPath0], SCREENPATH_WIDTH*SCREEN_HEIGHT);
+	readArchivedFile(_buffers[kMask0], SCREENMASK_WIDTH*SCREEN_HEIGHT);
 
 	for (uint16 _si = 0; _si < 4; _si++) _bgLayers[_si] = v4[_si];
 
-	closeArchivedFile(file);
+	closeArchivedFile();
 	return;
 }
 

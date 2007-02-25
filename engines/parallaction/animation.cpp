@@ -256,16 +256,16 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 
 	sprintf(vC8, "%s.script", filename);
 
-	ArchivedFile *file = openArchivedFile(vC8);
-	if (!file) errorFileNotFound(vC8);
+	if (!openArchivedFile(vC8))
+		errorFileNotFound(vC8);
 
 	uint32 size = getArchivedFileLength(vC8);
 	char* src = (char*)memAlloc(size+1);
 
-	readArchivedFile(file, src, size);
+	readArchivedFile(src, size);
 	src[size] = '\0';
 
-	closeArchivedFile(file);
+	closeArchivedFile();
 
 	_numLocals = 0;
 
