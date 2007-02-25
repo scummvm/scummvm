@@ -66,7 +66,7 @@ void Cutaway::load(const char *filename) {
 
 	ptr = _fileData = _vm->resource()->loadFile(filename, 20);
 
-	if (0 == scumm_stricmp(filename, "comic.cut"))
+	if (0 == scumm_stricmp(filename, "COMIC.CUT"))
 		_songBeforeComic = _vm->sound()->lastOverride();
 
 	strcpy(_basename, filename);
@@ -1167,7 +1167,7 @@ void Cutaway::updateGameState() {
 
 void Cutaway::talk(char *nextFilename) {
 	const char *p = strrchr(_talkFile, '.');
-	if (p && 0 == scumm_stricmp(p, ".dog")) {
+	if (p && 0 == scumm_stricmp(p, ".DOG")) {
 		nextFilename[0] = '\0';
 		assert(_talkTo > 0);
 		int personInRoom = _talkTo - _vm->logic()->roomData(_vm->logic()->currentRoom());

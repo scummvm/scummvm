@@ -708,7 +708,7 @@ void Command::grabSelectedVerb() {
 
 bool Command::executeIfCutaway(const char *description) {
 	if (strlen(description) > 4 &&
-		scumm_stricmp(description + strlen(description) - 4, ".cut") == 0) {
+		scumm_stricmp(description + strlen(description) - 4, ".CUT") == 0) {
 
 		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 
@@ -725,7 +725,7 @@ bool Command::executeIfCutaway(const char *description) {
 
 bool Command::executeIfDialog(const char *description) {
 	if (strlen(description) > 4 &&
-		scumm_stricmp(description + strlen(description) - 4, ".dog") == 0) {
+		scumm_stricmp(description + strlen(description) - 4, ".DOG") == 0) {
 
 		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 

@@ -805,14 +805,14 @@ void Logic::joeUseDress(bool showCut) {
 		joeFacing(DIR_FRONT);
 		joeFace();
 		if (gameState(VAR_JOE_DRESSING_MODE) == 0) {
-			playCutaway("cdres.CUT");
+			playCutaway("CDRES.CUT");
 			inventoryInsertItem(ITEM_CLOTHES);
 		} else {
-			playCutaway("cudrs.CUT");
+			playCutaway("CUDRS.CUT");
 		}
 	}
 	_vm->display()->palSetJoeDress();
-	loadJoeBanks("JoeD_A.BBK", "JoeD_B.BBK");
+	loadJoeBanks("JOED_A.BBK", "JOED_B.BBK");
 	inventoryDeleteItem(ITEM_DRESS);
 	gameState(VAR_JOE_DRESSING_MODE, 2);
 }
@@ -821,18 +821,18 @@ void Logic::joeUseClothes(bool showCut) {
 	if (showCut) {
 		joeFacing(DIR_FRONT);
 		joeFace();
-		playCutaway("cdclo.CUT");
+		playCutaway("CDCLO.CUT");
 		inventoryInsertItem(ITEM_DRESS);
 	}
 	_vm->display()->palSetJoeNormal();
-	loadJoeBanks("Joe_A.BBK", "Joe_B.BBK");
+	loadJoeBanks("JOE_A.BBK", "JOE_B.BBK");
 	inventoryDeleteItem(ITEM_CLOTHES);
 	gameState(VAR_JOE_DRESSING_MODE, 0);
 }
 
 void Logic::joeUseUnderwear() {
 	_vm->display()->palSetJoeNormal();
-	loadJoeBanks("JoeU_A.BBK", "JoeU_B.BBK");
+	loadJoeBanks("JOEU_A.BBK", "JOEU_B.BBK");
 	gameState(VAR_JOE_DRESSING_MODE, 1);
 }
 
@@ -1093,53 +1093,53 @@ void Logic::handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataN
 		makeJoeSpeak(16);
 		break;
 	case ROOM_JUNGLE_GORILLA_1:
-		playCutaway("c6c.CUT", nextCut);
+		playCutaway("C6C.CUT", nextCut);
 		break;
 	case ROOM_JUNGLE_GORILLA_2:
-		playCutaway("c14b.CUT", nextCut);
+		playCutaway("C14B.CUT", nextCut);
 		break;
 	case ROOM_AMAZON_ENTRANCE:
 		if (areaNum == 3) {
-			playCutaway("c16a.CUT", nextCut);
+			playCutaway("C16A.CUT", nextCut);
 		}
 		break;
 	case ROOM_AMAZON_HIDEOUT:
 		if (walkDataNum == 4) {
-			playCutaway("c17a.CUT", nextCut);
+			playCutaway("C17A.CUT", nextCut);
 		} else if (walkDataNum == 2) {
-			playCutaway("c17b.CUT", nextCut);
+			playCutaway("C17B.CUT", nextCut);
 		}
 		break;
 	case ROOM_FLODA_OUTSIDE:
-		playCutaway("c22a.CUT", nextCut);
+		playCutaway("C22A.CUT", nextCut);
 		break;
 	case ROOM_FLODA_KITCHEN:
-		playCutaway("c26b.CUT", nextCut);
+		playCutaway("C26B.CUT", nextCut);
 		break;
 	case ROOM_FLODA_KLUNK:
-		playCutaway("c30a.CUT", nextCut);
+		playCutaway("C30A.CUT", nextCut);
 		break;
 	case ROOM_FLODA_HENRY:
-		playCutaway("c32c.CUT", nextCut);
+		playCutaway("C32C.CUT", nextCut);
 		break;
 	case ROOM_TEMPLE_ZOMBIES:
 		if (areaNum == 6) {
 			switch (gameState(VAR_BYPASS_ZOMBIES)) {
 			case 0:
-				playCutaway("c50d.CUT", nextCut);
+				playCutaway("C50D.CUT", nextCut);
 				while (nextCut[0] != '\0') {
 					playCutaway(nextCut, nextCut);
 				}
 				gameState(VAR_BYPASS_ZOMBIES, 1);
 				break;
 			case 1:
-				playCutaway("c50h.CUT", nextCut);
+				playCutaway("C50H.CUT", nextCut);
 				break;
 			}
 		}
 		break;
 	case ROOM_TEMPLE_SNAKE:
-		playCutaway("c53b.CUT", nextCut);
+		playCutaway("C53B.CUT", nextCut);
 		break;
 	case ROOM_TEMPLE_LIZARD_LASER:
 		makeJoeSpeak(19);
@@ -1150,17 +1150,17 @@ void Logic::handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataN
 	case ROOM_HOTEL_LOBBY:
 		switch (gameState(VAR_HOTEL_ESCAPE_STATE)) {
 		case 0:
-			playCutaway("c73a.CUT");
+			playCutaway("C73A.CUT");
 			joeUseUnderwear();
 			joeFace();
 			gameState(VAR_HOTEL_ESCAPE_STATE, 1);
 			break;
 		case 1:
-			playCutaway("c73b.CUT");
+			playCutaway("C73B.CUT");
 			gameState(VAR_HOTEL_ESCAPE_STATE, 2);
 			break;
 		case 2:
-			playCutaway("c73c.CUT");
+			playCutaway("C73C.CUT");
 			break;
 		}
 		break;
@@ -1171,18 +1171,18 @@ void Logic::handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataN
 		break;
 	case ROOM_TEMPLE_MAZE_6:
 		if (areaNum == 5 && gameState(187) == 0) {
-			playCutaway("c101b.CUT", nextCut);
+			playCutaway("C101B.CUT", nextCut);
 		}
 		break;
 	case ROOM_FLODA_FRONTDESK:
 		if (areaNum == 3) {
 			switch (gameState(VAR_BYPASS_FLODA_RECEPTIONIST)) {
 			case 0:
-				playCutaway("c103b.CUT", nextCut);
+				playCutaway("C103B.CUT", nextCut);
 				gameState(VAR_BYPASS_FLODA_RECEPTIONIST, 1);
 				break;
 			case 1:
-				playCutaway("c103e.CUT", nextCut);
+				playCutaway("C103E.CUT", nextCut);
 				break;
 			}
 		}
@@ -1190,7 +1190,7 @@ void Logic::handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataN
 	}
 
 	while (strlen(nextCut) > 4 &&
-		scumm_stricmp(nextCut + strlen(nextCut) - 4, ".cut") == 0) {
+		scumm_stricmp(nextCut + strlen(nextCut) - 4, ".CUT") == 0) {
 		playCutaway(nextCut, nextCut);
 	}
 }
@@ -2160,12 +2160,12 @@ bool LogicDemo::preChangeRoom() {
 	if (currentRoom() == FOTAQ_LOGO && gameState(VAR_INTRO_PLAYED) == 0) {
 		currentRoom(79);
 		displayRoom(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
-		playCutaway("clogo.cut");
+		playCutaway("CLOGO.CUT");
 		sceneReset();
 		currentRoom(ROOM_HOTEL_LOBBY);
 		entryObj(584);
 		displayRoom(currentRoom(), RDM_FADE_JOE, 100, 2, true);
-		playCutaway("c70d.cut");
+		playCutaway("C70D.CUT");
 		gameState(VAR_INTRO_PLAYED, 1);
 		inventoryRefresh();
 		return true;
@@ -2181,7 +2181,7 @@ bool LogicInterview::preChangeRoom() {
 	if (currentRoom() == 2 && gameState(2) == 0) {
 		currentRoom(6);
 		displayRoom(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
-		playCutaway("start.cut");
+		playCutaway("START.CUT");
 		gameState(2, 1);
 		inventoryRefresh();
 		return true;
@@ -2202,22 +2202,22 @@ bool LogicGame::preChangeRoom() {
 		return true;
 	} else if (currentRoom() == FOTAQ_LOGO && gameState(VAR_INTRO_PLAYED) == 0) {
 		displayRoom(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
-		playCutaway("copy.cut");
-		playCutaway("clogo.cut");
+		playCutaway("COPY.CUT");
+		playCutaway("CLOGO.CUT");
 		if (_vm->resource()->getPlatform() != Common::kPlatformAmiga) {
 			if (ConfMan.getBool("alt_intro") && _vm->resource()->isCD()) {
-				playCutaway("cintr.cut");
+				playCutaway("CINTR.CUT");
 			} else {
-				playCutaway("cdint.cut");
+				playCutaway("CDINT.CUT");
 			}
 		}
-		playCutaway("cred.cut");
+		playCutaway("CRED.CUT");
 		_vm->display()->palSetPanel();
 		sceneReset();
 		currentRoom(ROOM_HOTEL_LOBBY);
 		entryObj(584);
 		displayRoom(currentRoom(), RDM_FADE_JOE, 100, 2, true);
-		playCutaway("c70d.cut");
+		playCutaway("C70D.CUT");
 		gameState(VAR_INTRO_PLAYED, 1);
 		inventoryRefresh();
 		return true;
