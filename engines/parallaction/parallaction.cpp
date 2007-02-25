@@ -850,10 +850,10 @@ void Parallaction::changeCharacter(const char *name) {
 			freeCharacterFrames();
 		}
 
-		closeArchive();
+		_archive.close();
 
 		strcpy(_disk, "disk1");
-		openArchive("disk1");
+		_archive.open("disk1");
 
 		char path[PATH_LEN];
 		strcpy(path, v32);

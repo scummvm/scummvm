@@ -27,6 +27,7 @@
 #include "parallaction/defs.h"
 #include "parallaction/inventory.h"
 #include "parallaction/parser.h"
+#include "parallaction/disk.h"
 #include "common/str.h"
 #include "gui/dialog.h"
 #include "gui/widget.h"
@@ -272,6 +273,8 @@ public:
 	InventoryItem	_activeItem;
 
 	Script	*_locationScript;
+
+	Archive	_archive;
 
 protected:		// data
 

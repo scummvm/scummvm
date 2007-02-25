@@ -61,26 +61,26 @@ void Parallaction::parseLocation(const char *filename) {
 	strcat(archivefile, filename);
 	strcat(archivefile, ".loc");
 
-	if (strcmp(_disk, "null")) closeArchive();
+	if (strcmp(_disk, "null")) _archive.close();
 
 	_languageDir[2] = '\0';
-	openArchive(_languageDir);
+	_archive.open(_languageDir);
 	_languageDir[2] = '/';
 
-	if (!openArchivedFile(archivefile)) {
+	if (!_archive.openArchivedFile(archivefile)) {
 		sprintf(archivefile, "%s%s.loc", _languageDir, filename);
-		if (!openArchivedFile(archivefile))
+		if (!_archive.openArchivedFile(archivefile))
 			errorFileNotFound(filename);
 	}
 
-	uint32 count = getArchivedFileLength(archivefile);
+	uint32 count = _archive.getArchivedFileLength(archivefile);
 	location_src = (char*)memAlloc(0x4000);
 
 	_locationScript = new Script(location_src);
 
-	readArchivedFile(location_src, count);
-	closeArchivedFile();
-	closeArchive();
+	_archive.readArchivedFile(location_src, count);
+	_archive.closeArchivedFile();
+	_archive.close();
 
 	fillBuffers(*_locationScript, true);
 	while (scumm_stricmp(_tokens[0], "ENDLOCATION")) {
@@ -134,7 +134,7 @@ void Parallaction::parseLocation(const char *filename) {
 		if (!scumm_stricmp(_tokens[0], "DISK")) {
 			strcpy(_disk, _tokens[1]);
 			strcpy(archivefile, _disk);
-			openArchive(archivefile);
+			_archive.open(archivefile);
 		}
 		if (!scumm_stricmp(_tokens[0], "LOCALFLAGS")) {
 			_si = 1;	// _localFlagNames[0] = 'visited'

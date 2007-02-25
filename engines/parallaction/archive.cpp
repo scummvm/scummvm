@@ -27,41 +27,12 @@
 
 namespace Parallaction {
 
-static bool   			_file = false;
-static uint16			_fileIndex = 0;
-static uint32			_fileOffset = 0;
-static uint32			_fileCursor = 0;
-static uint32			_fileEndOffset = 0;
 
-#define MAX_ARCHIVE_ENTRIES 		384
-
-#define DIRECTORY_OFFSET_IN_FILE	0x4000
-
-#ifdef PALMOS_ARM
-	static Common::File *_archiveP = NULL;
-	#define _archive (*_archiveP)
-#else
-	static Common::File _archive;
-#endif
-
-
-static char 			_archiveDir[MAX_ARCHIVE_ENTRIES][32];
-static uint32			_archiveLenghts[MAX_ARCHIVE_ENTRIES];
-static uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
-
-
-
-void openArchive(const char *file) {
+void Archive::open(const char *file) {
 	debugC(1, kDebugDisk, "open archive '%s'", file);
 
-#ifdef PALMOS_ARM
-	if (!_archiveP)
-		_archiveP = new Common::File();
-#endif
-
 	if (_archive.isOpen())
-		closeArchive();
-
+		close();
 
 	uint32	offset = DIRECTORY_OFFSET_IN_FILE;
 	char	path[PATH_LEN];
@@ -91,8 +62,7 @@ void openArchive(const char *file) {
 }
 
 
-
-void closeArchive() {
+void Archive::close() {
 	debugC(1, kDebugDisk, "close current archive");
 
 	if (!_archive.isOpen()) return;
@@ -101,7 +71,7 @@ void closeArchive() {
 }
 
 
-bool openArchivedFile(const char *name) {
+bool Archive::openArchivedFile(const char *name) {
 
 	uint16 i = 0;
 	for ( ; i < MAX_ARCHIVE_ENTRIES; i++) {
@@ -124,8 +94,7 @@ bool openArchivedFile(const char *name) {
 }
 
 
-
-void closeArchivedFile() {
+void Archive::closeArchivedFile() {
 	_file = false;
 	_fileIndex = 0;
 	_fileCursor = 0;
@@ -135,9 +104,7 @@ void closeArchivedFile() {
 }
 
 
-
-
-uint16 getArchivedFileLength(const char *name) {
+uint16 Archive::getArchivedFileLength(const char *name) {
 //	printf("getArchivedFileLength(%s)\n", name);
 
 	for (uint16 i = 0; i < MAX_ARCHIVE_ENTRIES; i++) {
@@ -149,8 +116,7 @@ uint16 getArchivedFileLength(const char *name) {
 }
 
 
-
-int16 readArchivedFile(void *buffer, uint16 size) {
+int16 Archive::readArchivedFile(void *buffer, uint16 size) {
 //	printf("readArchivedFile(%i, %i)\n", file->_cursor, file->_endOffset);
 	if (_file == false)
 		error("readArchiveFile: no archived file is currently open");
@@ -167,22 +133,8 @@ int16 readArchivedFile(void *buffer, uint16 size) {
 	return read;
 }
 
-#if 0
-int16 readArchivedFile(ArchivedFile *file, void *buffer, uint16 size) {
-	printf("readArchivedFile(%i, %i)\n", file->_cursor, file->_endOffset);
 
-	if (file->_cursor == file->_endOffset) return -1;
-
-	_archive.seek(file->_cursor);
-	int16 read = _archive.read(buffer, size);
-	file->_cursor += read;
-
-	return read;
-}
-#endif
-
-
-char *readArchivedFileText(char *buf, uint16 size) {
+char *Archive::readArchivedFileText(char *buf, uint16 size) {
 	if (_file == false)
 		error("readArchiveFileText: no archived file is currently open");
 

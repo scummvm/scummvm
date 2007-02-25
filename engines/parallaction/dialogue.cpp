@@ -526,9 +526,9 @@ void runDialogue(SpeakData *data) {
 
 	if (!scumm_stricmp(_location, "museum")) {
 
-		closeArchive();
+		_vm->_archive.close();
 		strcpy(_vm->_disk, "disk1");
-		openArchive(_vm->_disk);
+		_vm->_archive.open(_vm->_disk);
 		_vm->_graphics->loadCnv("dino", &_tempFrames);
 
 		memcpy(&_yourself._cnv, &_tempFrames, sizeof(Cnv));

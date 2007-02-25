@@ -24,6 +24,7 @@
 #define PARALLACTION_DISK_H
 
 #include "parallaction/defs.h"
+#include "common/file.h"
 
 namespace Parallaction {
 
@@ -31,17 +32,47 @@ namespace Parallaction {
 //		ARCHIVE MANAGEMENT
 //------------------------------------------------------
 
-void openArchive(const char *file);
-void closeArchive();
 
-bool openArchivedFile(const char *name);
-void closeArchivedFile();
+#define MAX_ARCHIVE_ENTRIES 		384
 
-uint16 getArchivedFileLength(const char *name);
+#define DIRECTORY_OFFSET_IN_FILE	0x4000
 
-int16 readArchivedFile(void *buffer, uint16 size);
-char *readArchivedFileText(char *buf, uint16 size);
+class Archive {
 
+protected:
+
+	bool   			_file;
+	uint16			_fileIndex;
+	uint32			_fileOffset;
+	uint32			_fileCursor;
+	uint32			_fileEndOffset;
+
+	char 			_archiveDir[MAX_ARCHIVE_ENTRIES][32];
+	uint32			_archiveLenghts[MAX_ARCHIVE_ENTRIES];
+	uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
+
+	Common::File 	_archive;
+
+public:
+	Archive() {
+		_file = false;
+		_fileIndex = 0;
+		_fileOffset = 0;
+		_fileCursor = 0;
+		_fileEndOffset = 0;
+	}
+
+	void open(const char *file);
+	void close();
+
+	bool openArchivedFile(const char *name);
+	void closeArchivedFile();
+
+	uint16 getArchivedFileLength(const char *name);
+
+	int16 readArchivedFile(void *buffer, uint16 size);
+	char *readArchivedFileText(char *buf, uint16 size);
+};
 
 
 

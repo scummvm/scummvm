@@ -355,7 +355,7 @@ void _c_ridux(void *parm) {
 void _c_testResult(void *parm) {
 	_vm->_graphics->swapBuffers();
 	_vm->parseLocation("common");
-	closeArchive();
+	_vm->_archive.close();
 
 	_vm->_graphics->loadExternalCnv("slidecnv", &Graphics::_font);
 	_vm->_graphics->_proportionalFont = false;

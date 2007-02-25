@@ -134,7 +134,7 @@ void Parallaction::doLoadGame(uint16 slot) {
 	refreshInventory(_vm->_characterName);
 
 	parseLocation("common");
-	closeArchive();
+	_archive.close();
 
 	strcat(_location, _vm->_characterName);
 	_engineFlags |= kEngineChangeLocation;
