@@ -801,8 +801,6 @@ void ScummEngine_v2::o2_verbOps() {
 	case 0:		// SO_DELETE_VERBS
 		slot = getVarOrDirectByte(PARAM_1) + 1;
 		assert(0 < slot && slot < _numVerbs);
-
-		//printf("o2_verbOps delete slot = %d\n", slot);
 		killVerb(slot);
 		break;
 
@@ -810,11 +808,7 @@ void ScummEngine_v2::o2_verbOps() {
 		verb = fetchScriptByte();
 		state = fetchScriptByte();
 		slot = getVerbSlot(verb, 0);
-
-		//printf("o2_verbOps Verb On/Off: verb = %d, slot = %d, state = %d\n", verb, slot, state);
-
 		_verbs[slot].curmode = state;
-
 		break;
 
 	default: {	// New Verb
@@ -827,9 +821,6 @@ void ScummEngine_v2::o2_verbOps() {
 			x += 8;
 		else if ((_game.id == GID_MANIAC) && (_game.version == 1))
 			y += 8;
-
-		//printf("o2_verbOps: verb = %d, slot = %d, x = %d, y = %d, unk = %d, name = %s\n",
-		//		verb, slot, x, y, prep, _scriptPointer);
 
 		VerbSlot *vs;
 		assert(0 < slot && slot < _numVerbs);
@@ -1617,7 +1608,6 @@ void ScummEngine_v2::o2_dummy() {
 }
 
 void ScummEngine_v2::o2_switchCostumeSet() {
-	printf("o2_switchCostumeSet\n");
 	// NES version of maniac uses this to switch between the two
 	// groups of costumes it has
 	if (_game.platform == Common::kPlatformNES)
