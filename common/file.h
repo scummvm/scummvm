@@ -86,7 +86,7 @@ public:
 	 * This can be used to share file objects between different
 	 * parts of the code. Some systems (like Symbian don't support
 	 * it thought). It should just be used on file objects
-	 * allocated with new, since decRef destroies the object
+	 * allocated with new, since decRef destroys the object
 	 * with delete if the counter reaches zero.
 	 *
 	 * This is a possible candidate to be reworked in the future
