@@ -1153,7 +1153,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	}
 }
 
-void ScummEngine_c64::saveOrLoad(Serializer *s) {
+void ScummEngine_v0::saveOrLoad(Serializer *s) {
 	ScummEngine::saveOrLoad(s);
 
 	// TODO: Save additional variables

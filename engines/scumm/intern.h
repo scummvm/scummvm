@@ -418,11 +418,11 @@ protected:
 };
 
 /**
- * Engine for Commodore 64 version of Maniac Mansion
+ * Engine for Apple II and Commodore 64 versions of Maniac Mansion
  */
-class ScummEngine_c64 : public ScummEngine_v2 {
+class ScummEngine_v0 : public ScummEngine_v2 {
 protected:
-	typedef void (ScummEngine_c64::*OpcodeProcC64)();
+	typedef void (ScummEngine_v0::*OpcodeProcC64)();
 	struct OpcodeEntryC64 {
 		OpcodeProcC64 proc;
 		const char *desc;
@@ -432,7 +432,7 @@ protected:
 
 	int _currentMode;
 public:
-	ScummEngine_c64(OSystem *syst, const DetectorResult &dr);
+	ScummEngine_v0(OSystem *syst, const DetectorResult &dr);
 
 	virtual void resetScumm();
 

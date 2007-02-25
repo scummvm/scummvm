@@ -669,7 +669,7 @@ ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 	VAR_CLICK_OBJECT = 0xFF;
 }
 
-ScummEngine_c64::ScummEngine_c64(OSystem *syst, const DetectorResult &dr)
+ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v2(syst, dr) {
 
 	_currentMode = 0;
@@ -1425,7 +1425,7 @@ void ScummEngine::resetScumm() {
 	_lastSaveTime = _system->getMillis();
 }
 
-void ScummEngine_c64::resetScumm() {
+void ScummEngine_v0::resetScumm() {
 	ScummEngine_v2::resetScumm();
 	initC64Verbs();
 }

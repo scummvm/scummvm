@@ -31,9 +31,9 @@
 
 namespace Scumm {
 
-#define OPCODE(x)	_OPCODE(ScummEngine_c64, x)
+#define OPCODE(x)	_OPCODE(ScummEngine_v0, x)
 
-void ScummEngine_c64::setupOpcodes() {
+void ScummEngine_v0::setupOpcodes() {
 	static const OpcodeEntryC64 opcodes[256] = {
 		/* 00 */
 		OPCODE(o5_stopObjectCode),
@@ -366,31 +366,31 @@ void ScummEngine_c64::setupOpcodes() {
 #define PARAM_2 0x40
 #define PARAM_3 0x20
 
-void ScummEngine_c64::executeOpcode(byte i) {
+void ScummEngine_v0::executeOpcode(byte i) {
 	OpcodeProcC64 op = _opcodesC64[i].proc;
 	(this->*op) ();
 }
 
-int ScummEngine_c64::getVarOrDirectWord(byte mask) {
+int ScummEngine_v0::getVarOrDirectWord(byte mask) {
 	return getVarOrDirectByte(mask);
 }
 
-uint ScummEngine_c64::fetchScriptWord() {
+uint ScummEngine_v0::fetchScriptWord() {
 	return fetchScriptByte();
 }
 
-const char *ScummEngine_c64::getOpcodeDesc(byte i) {
+const char *ScummEngine_v0::getOpcodeDesc(byte i) {
 	return _opcodesC64[i].desc;
 }
 
-int ScummEngine_c64::getObjectFlag() {
+int ScummEngine_v0::getObjectFlag() {
 	if (_opcode & 0x40)
 		return _activeObject;
 
 	return fetchScriptByte();
 }
 
-void ScummEngine_c64::decodeParseString() {
+void ScummEngine_v0::decodeParseString() {
 	byte buffer[512];
 	byte *ptr = buffer;
 	byte c;
@@ -426,17 +426,17 @@ void ScummEngine_c64::decodeParseString() {
 	actorTalk(buffer);
 }
 
-void ScummEngine_c64::setStateCommon(byte type) {
+void ScummEngine_v0::setStateCommon(byte type) {
 	int obj = getObjectFlag();
 	putState(obj, getState(obj) | type);
 }
 
-void ScummEngine_c64::clearStateCommon(byte type) {
+void ScummEngine_v0::clearStateCommon(byte type) {
 	int obj = getObjectFlag();
 	putState(obj, getState(obj) & ~type);
 }
 
-void ScummEngine_c64::ifStateCommon(byte type) {
+void ScummEngine_v0::ifStateCommon(byte type) {
 	int obj = getObjectFlag();
 
 	if ((getState(obj) & type) != 0)
@@ -445,7 +445,7 @@ void ScummEngine_c64::ifStateCommon(byte type) {
 		o_jumpRelative();
 }
 
-void ScummEngine_c64::ifNotStateCommon(byte type) {
+void ScummEngine_v0::ifNotStateCommon(byte type) {
 	int obj = getObjectFlag();
 
 	if ((getState(obj) & type) == 0)
@@ -454,7 +454,7 @@ void ScummEngine_c64::ifNotStateCommon(byte type) {
 		o_jumpRelative();
 }
 
-void ScummEngine_c64::drawSentence() {
+void ScummEngine_v0::drawSentence() {
 	Common::Rect sentenceline;
 	const byte *temp;
 	int sentencePrep = 0;
@@ -557,21 +557,21 @@ void ScummEngine_c64::drawSentence() {
 	drawString(2, (byte*)string);
 }
 
-void ScummEngine_c64::o_setState08() {
+void ScummEngine_v0::o_setState08() {
 	int obj = getObjectFlag();
 	putState(obj, getState(obj) | kObjectState_08);
 	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
 }
 
-void ScummEngine_c64::o_clearState08() {
+void ScummEngine_v0::o_clearState08() {
 	int obj = getObjectFlag();
 	putState(obj, getState(obj) & ~kObjectState_08);
 	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
 }
 
-void ScummEngine_c64::o_stopCurrentScript() {
+void ScummEngine_v0::o_stopCurrentScript() {
 	int script;
 
 	script = vm.slot[_currentScript].number;
@@ -582,57 +582,57 @@ void ScummEngine_c64::o_stopCurrentScript() {
 		stopScript(script);
 }
 
-void ScummEngine_c64::o_loadSound() {
+void ScummEngine_v0::o_loadSound() {
 	int resid = fetchScriptByte();
 	ensureResourceLoaded(rtSound, resid);
 }
 
-void ScummEngine_c64::o_lockSound() {
+void ScummEngine_v0::o_lockSound() {
 	int resid = fetchScriptByte();
 	_res->lock(rtSound, resid);
 }
 
-void ScummEngine_c64::o_unlockSound() {
+void ScummEngine_v0::o_unlockSound() {
 	int resid = fetchScriptByte();
 	_res->unlock(rtSound, resid);
 }
 
-void ScummEngine_c64::o_loadCostume() {
+void ScummEngine_v0::o_loadCostume() {
 	int resid = getVarOrDirectByte(PARAM_1);
 	ensureResourceLoaded(rtCostume, resid);
 }
 
-void ScummEngine_c64::o_lockCostume() {
+void ScummEngine_v0::o_lockCostume() {
 	int resid = fetchScriptByte();
 	_res->lock(rtCostume, resid);
 }
 
-void ScummEngine_c64::o_unlockCostume() {
+void ScummEngine_v0::o_unlockCostume() {
 	int resid = fetchScriptByte();
 	_res->unlock(rtCostume, resid);
 }
 
-void ScummEngine_c64::o_loadScript() {
+void ScummEngine_v0::o_loadScript() {
 	int resid = getVarOrDirectByte(PARAM_1);
 	ensureResourceLoaded(rtScript, resid);
 }
 
-void ScummEngine_c64::o_lockScript() {
+void ScummEngine_v0::o_lockScript() {
 	int resid = fetchScriptByte();
 	_res->lock(rtScript, resid);
 }
 
-void ScummEngine_c64::o_unlockScript() {
+void ScummEngine_v0::o_unlockScript() {
 	int resid = fetchScriptByte();
 	_res->unlock(rtScript, resid);
 }
 
-void ScummEngine_c64::o_loadRoom() {
+void ScummEngine_v0::o_loadRoom() {
 	int resid = getVarOrDirectByte(PARAM_1);
 	ensureResourceLoaded(rtRoom, resid);
 }
 
-void ScummEngine_c64::o_loadRoomWithEgo() {
+void ScummEngine_v0::o_loadRoomWithEgo() {
 	Actor *a;
 	int obj, room, x, y, dir;
 
@@ -663,17 +663,17 @@ void ScummEngine_c64::o_loadRoomWithEgo() {
 	}
 }
 
-void ScummEngine_c64::o_lockRoom() {
+void ScummEngine_v0::o_lockRoom() {
 	int resid = fetchScriptByte();
 	_res->lock(rtRoom, resid);
 }
 
-void ScummEngine_c64::o_unlockRoom() {
+void ScummEngine_v0::o_unlockRoom() {
 	int resid = fetchScriptByte();
 	_res->unlock(rtRoom, resid);
 }
 
-void ScummEngine_c64::o_cursorCommand() {
+void ScummEngine_v0::o_cursorCommand() {
 	// TODO
 	int state = 0;
 
@@ -696,7 +696,7 @@ void ScummEngine_c64::o_cursorCommand() {
 	debug(0, "o_cursorCommand(%d)", _currentMode);
 }
 
-void ScummEngine_c64::o_lights() {
+void ScummEngine_v0::o_lights() {
 	int a;
 
 	a = getVarOrDirectByte(PARAM_1);
@@ -715,7 +715,7 @@ void ScummEngine_c64::o_lights() {
 	_fullRedraw = true;
 }
 
-void ScummEngine_c64::o_animateActor() {
+void ScummEngine_v0::o_animateActor() {
 	int act = getVarOrDirectByte(PARAM_1);
 	int anim = getVarOrDirectByte(PARAM_2);
 	int unk = fetchScriptByte();
@@ -725,7 +725,7 @@ void ScummEngine_c64::o_animateActor() {
 	a->animateActor(anim);
 }
 
-void ScummEngine_c64::o_getActorMoving() {
+void ScummEngine_v0::o_getActorMoving() {
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o_getActorMoving");
@@ -735,7 +735,7 @@ void ScummEngine_c64::o_getActorMoving() {
 		setResult(2);
 }
 
-void ScummEngine_c64::o_putActorAtObject() {
+void ScummEngine_v0::o_putActorAtObject() {
 	int obj, x, y;
 	Actor *a;
 
@@ -752,7 +752,7 @@ void ScummEngine_c64::o_putActorAtObject() {
 	a->putActor(x, y);
 }
 
-void ScummEngine_c64::o_pickupObject() {
+void ScummEngine_v0::o_pickupObject() {
 	int obj = fetchScriptByte();
 	if (obj == 0) {
 		obj = _activeObject;
@@ -777,16 +777,16 @@ void ScummEngine_c64::o_pickupObject() {
 	runInventoryScript(1);
 }
 
-void ScummEngine_c64::o_setObjectName() {
+void ScummEngine_v0::o_setObjectName() {
 	int obj = fetchScriptByte();
 	setObjectName(obj);
 }
 
-void ScummEngine_c64::o_nop() {
+void ScummEngine_v0::o_nop() {
 }
 
 // TODO: Maybe translate actor flags in future.
-void ScummEngine_c64::o_setActorBitVar() {
+void ScummEngine_v0::o_setActorBitVar() {
 	byte act = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
 	byte mod = getVarOrDirectByte(PARAM_3);
@@ -800,7 +800,7 @@ void ScummEngine_c64::o_setActorBitVar() {
 	debug(0, "o_setActorBitVar(%d, %d, %d)", act, mask, mod);
 }
 
-void ScummEngine_c64::o_getActorBitVar() {
+void ScummEngine_v0::o_getActorBitVar() {
 	getResultPos();
 	byte act = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
@@ -811,7 +811,7 @@ void ScummEngine_c64::o_getActorBitVar() {
 	debug(0, "o_getActorBitVar(%d, %d, %d)", act, mask, (a->_miscflags & mask));
 }
 
-void ScummEngine_c64::o_setBitVar() {
+void ScummEngine_v0::o_setBitVar() {
 	byte flag = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
 	byte mod = getVarOrDirectByte(PARAM_3);
@@ -824,7 +824,7 @@ void ScummEngine_c64::o_setBitVar() {
 	debug(0, "o_setBitVar (%d, %d %d)", flag, mask, mod);
 }
 
-void ScummEngine_c64::o_getBitVar() {
+void ScummEngine_v0::o_getBitVar() {
 	getResultPos();
 	byte flag = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
@@ -834,17 +834,17 @@ void ScummEngine_c64::o_getBitVar() {
 	debug(0, "o_getBitVar (%d, %d %d)", flag, mask, _bitVars[flag] & (1 << mask));
 }
 
-void ScummEngine_c64::o_print_c64() {
+void ScummEngine_v0::o_print_c64() {
 	_actorToPrintStrFor = fetchScriptByte();
 	decodeParseString();
 }
 
-void ScummEngine_c64::o_printEgo_c64() {
+void ScummEngine_v0::o_printEgo_c64() {
 	_actorToPrintStrFor = (byte)VAR(VAR_EGO);
 	decodeParseString();
 }
 
-void ScummEngine_c64::o_doSentence() {
+void ScummEngine_v0::o_doSentence() {
 	byte entry = fetchScriptByte();
 	byte obj = fetchScriptByte();
 	fetchScriptByte();
@@ -852,12 +852,12 @@ void ScummEngine_c64::o_doSentence() {
 	runObjectScript(obj, entry, false, false, NULL);
 }
 
-void ScummEngine_c64::o_unknown2() {
+void ScummEngine_v0::o_unknown2() {
 	byte var1 = fetchScriptByte();
 	error("STUB: o_unknown2(%d)", var1);
 }
 
-void ScummEngine_c64::o_ifActiveObject() {
+void ScummEngine_v0::o_ifActiveObject() {
 	byte obj = fetchScriptByte();
 
 	if (obj == _activeInventory)
@@ -866,7 +866,7 @@ void ScummEngine_c64::o_ifActiveObject() {
 		o_jumpRelative();
 }
 
-void ScummEngine_c64::o_getClosestObjActor() {
+void ScummEngine_v0::o_getClosestObjActor() {
 	int obj;
 	int act;
 	int dist;
@@ -893,7 +893,7 @@ void ScummEngine_c64::o_getClosestObjActor() {
 	setResult(closest_obj);
 }
 
-void ScummEngine_c64::o_cutscene() {
+void ScummEngine_v0::o_cutscene() {
 	vm.cutSceneData[0] = _userState | (_userPut ? 16 : 0);
 	vm.cutSceneData[2] = _currentRoom;
 	vm.cutSceneData[3] = camera._mode;
@@ -908,7 +908,7 @@ void ScummEngine_c64::o_cutscene() {
 	vm.cutScenePtr[0] = 0;
 }
 
-void ScummEngine_c64::o_endCutscene() {
+void ScummEngine_v0::o_endCutscene() {
 	vm.cutSceneStackPointer = 0;
 
 	VAR(VAR_OVERRIDE) = 0;
@@ -926,7 +926,7 @@ void ScummEngine_c64::o_endCutscene() {
 	}
 }
 
-void ScummEngine_c64::o_beginOverride() {
+void ScummEngine_v0::o_beginOverride() {
 	const int idx = vm.cutSceneStackPointer;
 	assert(0 <= idx && idx < 5);
 
@@ -943,7 +943,7 @@ void ScummEngine_c64::o_beginOverride() {
 	VAR(VAR_OVERRIDE) = 0;
 }
 
-void ScummEngine_c64::o_isEqual() {
+void ScummEngine_v0::o_isEqual() {
 	int16 a, b;
 	int var;
 
@@ -958,7 +958,7 @@ void ScummEngine_c64::o_isEqual() {
 
 }
 
-void ScummEngine_c64::o_isGreater() {
+void ScummEngine_v0::o_isGreater() {
 	int16 a = getVar();
 	int16 b = getVarOrDirectByte(PARAM_1);
 	if (b > a)
@@ -967,7 +967,7 @@ void ScummEngine_c64::o_isGreater() {
 		o_jumpRelative();
 }
 
-void ScummEngine_c64::o_isGreaterEqual() {
+void ScummEngine_v0::o_isGreaterEqual() {
 	int16 a = getVar();
 	int16 b = getVarOrDirectByte(PARAM_1);
 	if (b >= a)
@@ -976,7 +976,7 @@ void ScummEngine_c64::o_isGreaterEqual() {
 		o_jumpRelative();
 }
 
-void ScummEngine_c64::o_isLess() {
+void ScummEngine_v0::o_isLess() {
 	int16 a = getVar();
 	int16 b = getVarOrDirectByte(PARAM_1);
 	if (b < a)
@@ -985,7 +985,7 @@ void ScummEngine_c64::o_isLess() {
 		o_jumpRelative();
 }
 
-void ScummEngine_c64::o_isLessEqual() {
+void ScummEngine_v0::o_isLessEqual() {
 	int16 a = getVar();
 	int16 b = getVarOrDirectByte(PARAM_1);
 
@@ -995,7 +995,7 @@ void ScummEngine_c64::o_isLessEqual() {
 		o_jumpRelative();
 }
 
-void ScummEngine_c64::o_isNotEqual() {
+void ScummEngine_v0::o_isNotEqual() {
 	int16 a = getVar();
 	int16 b = getVarOrDirectByte(PARAM_1);
 	if (b != a)
@@ -1004,7 +1004,7 @@ void ScummEngine_c64::o_isNotEqual() {
 		o_jumpRelative();
 }
 
-void ScummEngine_c64::o_notEqualZero() {
+void ScummEngine_v0::o_notEqualZero() {
 	int a = getVar();
 	if (a != 0)
 		ScummEngine::fetchScriptWord();
@@ -1012,7 +1012,7 @@ void ScummEngine_c64::o_notEqualZero() {
 		o_jumpRelative();
 }
 
-void ScummEngine_c64::o_equalZero() {
+void ScummEngine_v0::o_equalZero() {
 	int a = getVar();
 	if (a == 0)
 		ScummEngine::fetchScriptWord();
@@ -1020,12 +1020,12 @@ void ScummEngine_c64::o_equalZero() {
 		o_jumpRelative();
 }
 
-void ScummEngine_c64::o_jumpRelative() {
+void ScummEngine_v0::o_jumpRelative() {
 	int16 offset = (int16)ScummEngine::fetchScriptWord();
 	_scriptPointer += offset;
 }
 
-void ScummEngine_c64::o_setOwnerOf() {
+void ScummEngine_v0::o_setOwnerOf() {
 	int obj, owner;
 
 	obj = getVarOrDirectWord(PARAM_1);
@@ -1037,7 +1037,7 @@ void ScummEngine_c64::o_setOwnerOf() {
 	setOwnerOf(obj, owner);
 }
 
-void ScummEngine_c64::resetSentence() {
+void ScummEngine_v0::resetSentence() {
 	_activeInventory = 0;
 	_activeObject = 0;
 	_activeVerb = 13;

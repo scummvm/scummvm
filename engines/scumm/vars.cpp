@@ -106,7 +106,7 @@ void ScummEngine::setupScummVars() {
 	}
 }
 
-void ScummEngine_c64::setupScummVars() {
+void ScummEngine_v0::setupScummVars() {
 	VAR_EGO = 0;
 	VAR_CAMERA_POS_X = 2;
 	VAR_HAVE_MSG = 3;
@@ -536,7 +536,7 @@ void ScummEngine_v8::setupScummVars() {
 }
 #endif
 
-void ScummEngine_c64::resetScummVars() {
+void ScummEngine_v0::resetScummVars() {
 	_activeInventory = 0;
 	_activeObject = 0;
 	_activeVerb = 13;

@@ -83,7 +83,7 @@ static const VerbSettings C64VerbTable_German[] = {
 	{15, 23, 2,   0, "Benutz"}
 };
 
-void ScummEngine_c64::initC64Verbs() {
+void ScummEngine_v0::initC64Verbs() {
 	VirtScreen *virt = &virtscr[kVerbVirtScreen];
 	VerbSlot *vs;
 	int i;
@@ -464,7 +464,7 @@ void ScummEngine_v2::handleMouseOver(bool updateInventory) {
 	checkV2MouseOver(_mouse);
 }
 
-void ScummEngine_c64::handleMouseOver(bool updateInventory) {
+void ScummEngine_v0::handleMouseOver(bool updateInventory) {
 	ScummEngine_v2::handleMouseOver(updateInventory);
 
 	drawSentence();
@@ -560,7 +560,7 @@ void ScummEngine_v2::runObject(int obj, int entry) {
 	_activeVerb = 13;
 }
 
-void ScummEngine_c64::checkExecVerbs() {
+void ScummEngine_v0::checkExecVerbs() {
 	Actor *a;
 	VirtScreen *zone = findVirtScreen(_mouse.y);
 

@@ -1651,7 +1651,7 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 	// instantiate the appropriate game engine. Hooray!
 	switch (res.game.version) {
 	case 0:
-		*engine = new ScummEngine_c64(syst, res);
+		*engine = new ScummEngine_v0(syst, res);
 		break;
 	case 1:
 	case 2:

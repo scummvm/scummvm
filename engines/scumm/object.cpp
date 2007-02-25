@@ -865,7 +865,7 @@ void ScummEngine_v4::resetRoomObjects() {
 	}
 }
 
-void ScummEngine_c64::resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
+void ScummEngine_v0::resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
 	assert(room);
 	const byte *ptr = room + od->OBCDoffset;
 	ptr -= 2;
