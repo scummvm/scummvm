@@ -151,54 +151,122 @@ public:
 	// The remaining methods all have default implementations; subclasses
 	// need not (and should not) overload them.
 
+	/**
+	 * Read am unsigned byte from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occured (for which client code can check by
+	 * calling ioFailed()).
+	 */
 	byte readByte() {
 		byte b = 0;
 		read(&b, 1);
 		return b;
 	}
 
+	/**
+	 * Read a signed byte from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occured (for which client code can check by
+	 * calling ioFailed()).
+	 */
 	int8 readSByte() {
 		int8 b = 0;
 		read(&b, 1);
 		return b;
 	}
 
+	/**
+	 * Read an unsigned 16-bit word stored in little endian (LSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occured (for which client code can check by
+	 * calling ioFailed()).
+	 */
 	uint16 readUint16LE() {
 		uint16 a = readByte();
 		uint16 b = readByte();
 		return a | (b << 8);
 	}
 
+	/**
+	 * Read an unsigned 32-bit word stored in little endian (LSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occured (for which client code can check by
+	 * calling ioFailed()).
+	 */
 	uint32 readUint32LE() {
 		uint32 a = readUint16LE();
 		uint32 b = readUint16LE();
 		return (b << 16) | a;
 	}
 
+	/**
+	 * Read an unsigned 16-bit word stored in big endian (MSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occured (for which client code can check by
+	 * calling ioFailed()).
+	 */
 	uint16 readUint16BE() {
 		uint16 b = readByte();
 		uint16 a = readByte();
 		return a | (b << 8);
 	}
 
+	/**
+	 * Read an unsigned 32-bit word stored in big endian (MSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occured (for which client code can check by
+	 * calling ioFailed()).
+	 */
 	uint32 readUint32BE() {
 		uint32 b = readUint16BE();
 		uint32 a = readUint16BE();
 		return (b << 16) | a;
 	}
 
+	/**
+	 * Read a signed 16-bit word stored in little endian (LSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occured (for which client code can check by
+	 * calling ioFailed()).
+	 */
 	int16 readSint16LE() {
 		return (int16)readUint16LE();
 	}
 
+	/**
+	 * Read a signed 32-bit word stored in little endian (LSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occured (for which client code can check by
+	 * calling ioFailed()).
+	 */
 	int32 readSint32LE() {
 		return (int32)readUint32LE();
 	}
 
+	/**
+	 * Read a signed 16-bit word stored in big endian (MSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occured (for which client code can check by
+	 * calling ioFailed()).
+	 */
 	int16 readSint16BE() {
 		return (int16)readUint16BE();
 	}
 
+	/**
+	 * Read a signed 32-bit word stored in big endian (MSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occured (for which client code can check by
+	 * calling ioFailed()).
+	 */
 	int32 readSint32BE() {
 		return (int32)readUint32BE();
 	}
@@ -206,6 +274,8 @@ public:
 	/**
 	 * Read the specified amount of data into a malloc'ed buffer
 	 * which then is wrapped into a MemoryReadStream.
+	 * The returned stream might contain less data than requested,
+	 * if reading more failed.
 	 */
 	MemoryReadStream *readStream(uint32 dataSize);
 
