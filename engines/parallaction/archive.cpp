@@ -114,6 +114,14 @@ uint32 Archive::size() const {
 	return (_file == true ? _fileEndOffset - _fileOffset : 0);
 }
 
+uint32 Archive::pos() const {
+	return (_file == true ? _fileCursor - _fileOffset : 0 );
+}
+
+bool Archive::eos() const {
+	return (_file == true ? _fileCursor == _fileEndOffset : true );
+}
+
 void Archive::seek(int32 offs, int whence) {
 	assert(_file == true && _fileCursor <= _fileEndOffset);
 
@@ -148,11 +156,6 @@ uint32 Archive::read(void *dataPtr, uint32 dataSize) {
 	_fileCursor += readBytes;
 
 	return readBytes;
-}
-
-
-uint32 Archive::write(const void *dataPtr, uint32 dataSize) {
-	error("Archive files don't support writing");
 }
 
 

@@ -37,7 +37,7 @@ namespace Parallaction {
 
 #define DIRECTORY_OFFSET_IN_FILE	0x4000
 
-class Archive : public Common::File {
+class Archive : public Common::SeekableReadStream {
 
 protected:
 
@@ -65,10 +65,11 @@ public:
 	void closeArchivedFile();
 
 	uint32 size() const;
+	uint32 pos() const;
+	bool eos() const;
 	void seek(int32 offs, int whence = SEEK_SET);
 
 	uint32 read(void *dataPtr, uint32 dataSize);
-	uint32 write(const void *dataPtr, uint32 dataSize);
 };
 
 
