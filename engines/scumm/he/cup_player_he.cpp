@@ -128,6 +128,7 @@ void CUP_Player::updateScreen() {
 }
 
 void CUP_Player::updateSfx() {
+	int lastSfxChannel = _lastSfxChannel;
 	for (int i = 0; i < _sfxQueuePos; ++i) {
 		const CUP_Sfx *sfx = &_sfxQueue[i];
 		if (sfx->num == -1) {
@@ -148,7 +149,7 @@ void CUP_Player::updateSfx() {
 		CUP_SfxChannel *sfxChannel = 0;
 		for (int ch = 0; ch < kSfxChannels; ++ch) {
 			if (!_mixer->isSoundHandleActive(_sfxChannels[ch].handle)) {
-				_lastSfxChannel = ch;
+				lastSfxChannel = ch;
 				sfxChannel = &_sfxChannels[ch];
 				sfxChannel->sfxNum = sfx->num;
 				sfxChannel->flags = sfx->flags;
@@ -156,7 +157,7 @@ void CUP_Player::updateSfx() {
 			}
 		}
 		if (sfxChannel) {
-			debug(1, "Start sound %d channel %d flags 0x%X", sfx->num, _lastSfxChannel, sfx->flags);
+			debug(1, "Start sound %d channel %d flags 0x%X", sfx->num, lastSfxChannel, sfx->flags);
 			int sfxIndex = sfxChannel->sfxNum - 1;
 			assert(sfxIndex >= 0 && sfxIndex < _sfxCount);
 			uint32 offset = READ_LE_UINT32(_sfxBuffer + sfxIndex * 4) - 8;
@@ -175,6 +176,7 @@ void CUP_Player::updateSfx() {
 			warning("Unable to find a free channel to play sound %d", sfx->num);
 		}
 	}
+	_lastSfxChannel = lastSfxChannel;
 	_sfxQueuePos = 0;
 }
 
