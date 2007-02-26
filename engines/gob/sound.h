@@ -43,8 +43,6 @@ public:
 					  inClocks(0), frequency(0), flag(0) {}
 	};
 
-	typedef void (*CleanupFuncPtr) (int16);
-
 	char _playingSound;
 
 	Snd(GobEngine *vm);
@@ -74,6 +72,9 @@ public:
 protected:
 	// TODO: This is a very primitive square wave generator. The only thing is
 	//       has in common with the PC speaker is that it sounds terrible.
+	// Note: The SCUMM code has a PC speaker implementations; maybe it could be
+	//       refactored to be reusable by all engines. And DosBox also has code
+	//       for emulating the PC speaker.
 	class SquareWaveStream : public Audio::AudioStream {
 	private:
 		uint _rate;
@@ -86,7 +87,6 @@ protected:
 
 	public:
 		SquareWaveStream();
-		~SquareWaveStream() {}
 
 		void playNote(int freq, int32 ms, uint rate);
 		void update(uint32 milis);
