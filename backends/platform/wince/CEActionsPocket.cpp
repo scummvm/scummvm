@@ -129,6 +129,7 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_fw = (gameid == "fw");
 	bool is_os = (gameid == "os");
 	bool is_touche = (gameid == "touche");
+	bool is_agi = (gameid == "agi");
 
 	GUI_Actions::initInstanceGame();
 
@@ -156,6 +157,9 @@ void CEActionsPocket::initInstanceGame() {
 	} else if (is_fw || is_os) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
 		_key_action[POCKET_ACTION_SAVE].setAscii(291); // F10
+	} else if (is_agi) {
+		_action_enabled[POCKET_ACTION_SAVE] = true;
+		_key_action[POCKET_ACTION_SAVE].setAscii(SDLK_ESCAPE);
 	} else {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
 		_key_action[POCKET_ACTION_SAVE].setAscii(319); // F5 key

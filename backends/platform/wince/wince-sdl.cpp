@@ -680,7 +680,7 @@ void OSystem_WINCE3::get_sample_rate() {
 		}
 	}
 	// See if the output frequency is forced by the game
-	if (gameid == "ft" || gameid == "dig" || gameid == "comi" || gameid == "queen" || gameid == "sword")
+	if (gameid == "ft" || gameid == "dig" || gameid == "comi" || gameid == "queen" || gameid == "sword" || gameid == "agi")
 			_sampleRate = SAMPLES_PER_SEC_NEW;
 	else {
 		if (ConfMan.hasKey("high_sample_rate") && ConfMan.getBool("high_sample_rate"))
