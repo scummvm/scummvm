@@ -133,6 +133,7 @@ void Credits::update() {
 			_count++;
 		}
 	}
+	_running = false;
 }
 
 

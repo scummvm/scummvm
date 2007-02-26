@@ -56,8 +56,8 @@ Logic::Logic(QueenEngine *vm)
 	_puzzleAttemptCount = 0;
 	_journal = new Journal(vm);
 	_scene = 0;
+	memset(_specialMoves, 0, sizeof(_specialMoves));
 	readQueenJas();
-	setupSpecialMoveTable();
 }
 
 Logic::~Logic() {
@@ -200,6 +200,7 @@ void Logic::readQueenJas() {
 }
 
 void Logic::start() {
+	setupSpecialMoveTable();
 	_vm->command()->clear(false);
 	_vm->display()->setupPanel();
 	_vm->graphics()->unpackControlBank();
@@ -419,17 +420,17 @@ const char *Logic::verbName(Verb v) const {
 }
 
 const char *Logic::actorAnim(int num) const {
-	assert(num >= 1 && num < _numAAnim);
+	assert(num >= 1 && num <= _numAAnim);
 	return _jasStringList[_jasStringOffset[JSO_ACTOR_ANIM] + num - 1].c_str();
 }
 
 const char *Logic::actorName(int num) const {
-	assert(num >= 1 && num < _numAName);
+	assert(num >= 1 && num <= _numAName);
 	return _jasStringList[_jasStringOffset[JSO_ACTOR_NAME] + num - 1].c_str();
 }
 
 const char *Logic::actorFile(int num) const {
-	assert(num >= 1 && num < _numAFile);
+	assert(num >= 1 && num <= _numAFile);
 	return _jasStringList[_jasStringOffset[JSO_ACTOR_FILE] + num - 1].c_str();
 }
 
@@ -858,7 +859,7 @@ uint16 Logic::findInventoryItem(int invSlot) const {
 }
 
 void Logic::inventorySetup() {
-	_vm->bankMan()->load("objects.BBK", 14);
+	_vm->bankMan()->load("OBJECTS.BBK", 14);
 	if (_vm->resource()->isInterview()) {
 		_inventoryItem[0] = 1;
 		_inventoryItem[1] = 2;
@@ -1346,15 +1347,15 @@ void Logic::setupRestoredGame() {
 	switch (gameState(VAR_JOE_DRESSING_MODE)) {
 	case 0:
 		_vm->display()->palSetJoeNormal();
-		loadJoeBanks("Joe_A.BBK", "Joe_B.BBK");
+		loadJoeBanks("JOE_A.BBK", "JOE_B.BBK");
 		break;
 	case 1:
 		_vm->display()->palSetJoeNormal();
-		loadJoeBanks("JoeU_A.BBK", "JoeU_B.BBK");
+		loadJoeBanks("JOEU_A.BBK", "JOEU_B.BBK");
 		break;
 	case 2:
 		_vm->display()->palSetJoeDress();
-		loadJoeBanks("JoeD_A.BBK", "JoeD_B.BBK");
+		loadJoeBanks("JOED_A.BBK", "JOED_B.BBK");
 		break;
 	}
 
@@ -1414,74 +1415,9 @@ void Logic::sceneStop() {
 }
 
 void Logic::changeRoom() {
-	if (!preChangeRoom())
+	if (!changeToSpecialRoom())
 		displayRoom(currentRoom(), RDM_FADE_JOE, 100, 1, false);
 	_vm->display()->showMouseCursor(true);
-}
-
-void Logic::setupSpecialMoveTable() {
-	memset(_specialMoves, 0, sizeof(_specialMoves));
-	if (_vm->resource()->isDemo()) {
-		_specialMoves[4]  = &Logic::asmMakeJoeUseUnderwear;
-		_specialMoves[5]  = &Logic::asmSwitchToDressPalette;
-		_specialMoves[14] = &Logic::asmEndDemo;
-	} else if (_vm->resource()->isInterview()) {
-		_specialMoves[1]  = &Logic::asmInterviewIntro;
-		_specialMoves[2]  = &Logic::asmEndInterview;
-	} else {
-		_specialMoves[2]  = &Logic::asmMakeJoeUseDress;
-		_specialMoves[3]  = &Logic::asmMakeJoeUseNormalClothes;
-		_specialMoves[4]  = &Logic::asmMakeJoeUseUnderwear;
-		_specialMoves[5]  = &Logic::asmSwitchToDressPalette;
-		_specialMoves[6]  = &Logic::asmSwitchToNormalPalette;
-		_specialMoves[7]  = &Logic::asmStartCarAnimation;       // room 74
-		_specialMoves[8]  = &Logic::asmStopCarAnimation;        // room 74
-		_specialMoves[9]  = &Logic::asmStartFightAnimation;     // room 69
-		_specialMoves[10] = &Logic::asmWaitForFrankPosition;    // c69e.cut
-		_specialMoves[11] = &Logic::asmMakeFrankGrowing;        // c69z.cut
-		_specialMoves[12] = &Logic::asmMakeRobotGrowing;        // c69z.cut
-		_specialMoves[13] = &Logic::asmShrinkRobot;
-		_specialMoves[14] = &Logic::asmEndGame;
-		_specialMoves[15] = &Logic::asmPutCameraOnDino;
-		_specialMoves[16] = &Logic::asmPutCameraOnJoe;
-		_specialMoves[17] = &Logic::asmAltIntroPanRight;        // cintr.cut
-		_specialMoves[18] = &Logic::asmAltIntroPanLeft;         // cintr.cut
-		_specialMoves[19] = &Logic::asmSetAzuraInLove;
-		_specialMoves[20] = &Logic::asmPanRightFromJoe;
-		_specialMoves[21] = &Logic::asmSetLightsOff;
-		_specialMoves[22] = &Logic::asmSetLightsOn;
-		_specialMoves[23] = &Logic::asmSetManequinAreaOn;
-		_specialMoves[24] = &Logic::asmPanToJoe;
-		_specialMoves[25] = &Logic::asmTurnGuardOn;
-		_specialMoves[26] = &Logic::asmPanLeft320To144;
-		_specialMoves[27] = &Logic::asmSmooch;
-		_specialMoves[28] = &Logic::asmMakeLightningHitPlane;
-		_specialMoves[29] = &Logic::asmScaleBlimp;
-		_specialMoves[30] = &Logic::asmScaleEnding;
-		_specialMoves[31] = &Logic::asmWaitForCarPosition;
-		_specialMoves[32] = &Logic::asmShakeScreen;
-		_specialMoves[33] = &Logic::asmAttemptPuzzle;
-		_specialMoves[34] = &Logic::asmScaleTitle;
-		_specialMoves[36] = &Logic::asmPanRightToHugh;
-		_specialMoves[37] = &Logic::asmMakeWhiteFlash;
-		_specialMoves[38] = &Logic::asmPanRightToJoeAndRita;
-		_specialMoves[39] = &Logic::asmPanLeftToBomb;            // cdint.cut
-		if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
-			_specialMoves[5] = 0;
-			_specialMoves[6] = 0;
-			_specialMoves[13] = 0;
-			_specialMoves[17] = 0;
-			_specialMoves[18] = 0;
-			_specialMoves[27] = &Logic::asmSmoochNoScroll;
-			_specialMoves[32] = 0;
-			_specialMoves[34] = &Logic::asmScrollTitle;
-			_specialMoves[35] = 0;
-			_specialMoves[36] = 0;
-			_specialMoves[37] = 0;
-			_specialMoves[38] = 0;
-			_specialMoves[39] = 0;
-		}
-	}
 }
 
 void Logic::executeSpecialMove(uint16 sm) {
@@ -1605,7 +1541,7 @@ void Logic::asmEndGame() {
 	while (n--) {
 		_vm->update();
 	}
-	debug(0, "Game completed.");
+//	printf("Game completed.");
 	_vm->quitGame();
 }
 
@@ -2059,7 +1995,7 @@ void Logic::asmPanLeftToBomb() {
 }
 
 void Logic::asmEndDemo() {
-	debug(0, "Flight of the Amazon Queen, released January 95.");
+//	printf("Flight of the Amazon Queen, released January 95.");
 	_vm->quitGame();
 }
 
@@ -2104,7 +2040,7 @@ void Logic::asmInterviewIntro() {
 }
 
 void Logic::asmEndInterview() {
-	debug(0, "Interactive Interview copyright (c) 1995, IBI.");
+//	printf("Interactive Interview copyright (c) 1995, IBI.");
 	_vm->quitGame();
 }
 
@@ -2125,7 +2061,7 @@ void LogicDemo::useJournal() {
 	makePersonSpeak("This is a demo, so I can't load or save games*14", NULL, "");
 }
 
-bool LogicDemo::preChangeRoom() {
+bool LogicDemo::changeToSpecialRoom() {
 	if (currentRoom() == FOTAQ_LOGO && gameState(VAR_INTRO_PLAYED) == 0) {
 		currentRoom(79);
 		displayRoom(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
@@ -2142,11 +2078,19 @@ bool LogicDemo::preChangeRoom() {
 	return false;
 }
 
+void LogicDemo::setupSpecialMoveTable() {
+	_specialMoves[4] = &LogicDemo::asmMakeJoeUseUnderwear;
+	_specialMoves[14] = &LogicDemo::asmEndDemo;
+	if (_vm->resource()->getPlatform() == Common::kPlatformPC) {
+		_specialMoves[5]  = &LogicDemo::asmSwitchToDressPalette;
+	}
+}
+
 void LogicInterview::useJournal() {
 	// no-op
 }
 
-bool LogicInterview::preChangeRoom() {
+bool LogicInterview::changeToSpecialRoom() {
 	if (currentRoom() == 2 && gameState(2) == 0) {
 		currentRoom(6);
 		displayRoom(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
@@ -2158,6 +2102,10 @@ bool LogicInterview::preChangeRoom() {
 	return false;
 }
 
+void LogicInterview::setupSpecialMoveTable() {
+	_specialMoves[1] = &LogicInterview::asmInterviewIntro;
+	_specialMoves[2] = &LogicInterview::asmEndInterview;
+}
 
 void LogicGame::useJournal() {
 	_vm->command()->clear(false);
@@ -2165,7 +2113,7 @@ void LogicGame::useJournal() {
 	_vm->walk()->stopJoe();
 }
 
-bool LogicGame::preChangeRoom() {
+bool LogicGame::changeToSpecialRoom() {
 	if (currentRoom() == ROOM_JUNGLE_PINNACLE) {
 		handlePinnacleRoom();
 		return true;
@@ -2192,6 +2140,50 @@ bool LogicGame::preChangeRoom() {
 		return true;
 	}
 	return false;
+}
+
+void LogicGame::setupSpecialMoveTable() {
+	_specialMoves[2] = &LogicGame::asmMakeJoeUseDress;
+	_specialMoves[3] = &LogicGame::asmMakeJoeUseNormalClothes;
+	_specialMoves[4] = &LogicGame::asmMakeJoeUseUnderwear;
+	_specialMoves[7] = &LogicGame::asmStartCarAnimation;       // room 74
+	_specialMoves[8] = &LogicGame::asmStopCarAnimation;        // room 74
+	_specialMoves[9] = &LogicGame::asmStartFightAnimation;     // room 69
+	_specialMoves[10] = &LogicGame::asmWaitForFrankPosition;   // c69e.cut
+	_specialMoves[11] = &LogicGame::asmMakeFrankGrowing;       // c69z.cut
+	_specialMoves[12] = &LogicGame::asmMakeRobotGrowing;       // c69z.cut
+	_specialMoves[14] = &LogicGame::asmEndGame;
+	_specialMoves[15] = &LogicGame::asmPutCameraOnDino;
+	_specialMoves[16] = &LogicGame::asmPutCameraOnJoe;
+	_specialMoves[19] = &LogicGame::asmSetAzuraInLove;
+	_specialMoves[20] = &LogicGame::asmPanRightFromJoe;
+	_specialMoves[21] = &LogicGame::asmSetLightsOff;
+	_specialMoves[22] = &LogicGame::asmSetLightsOn;
+	_specialMoves[23] = &LogicGame::asmSetManequinAreaOn;
+	_specialMoves[24] = &LogicGame::asmPanToJoe;
+	_specialMoves[25] = &LogicGame::asmTurnGuardOn;
+	_specialMoves[26] = &LogicGame::asmPanLeft320To144;
+	_specialMoves[27] = &LogicGame::asmSmoochNoScroll;
+	_specialMoves[28] = &LogicGame::asmMakeLightningHitPlane;
+	_specialMoves[29] = &LogicGame::asmScaleBlimp;
+	_specialMoves[30] = &LogicGame::asmScaleEnding;
+	_specialMoves[31] = &LogicGame::asmWaitForCarPosition;
+	_specialMoves[32] = &LogicGame::asmShakeScreen;
+	_specialMoves[33] = &LogicGame::asmAttemptPuzzle;
+	_specialMoves[34] = &LogicGame::asmScrollTitle;
+	if (_vm->resource()->getPlatform() == Common::kPlatformPC) {
+		_specialMoves[5]  = &LogicGame::asmSwitchToDressPalette;
+		_specialMoves[6]  = &LogicGame::asmSwitchToNormalPalette;
+		_specialMoves[13] = &LogicGame::asmShrinkRobot;
+		_specialMoves[17] = &LogicGame::asmAltIntroPanRight;      // cintr.cut
+		_specialMoves[18] = &LogicGame::asmAltIntroPanLeft;       // cintr.cut
+		_specialMoves[27] = &LogicGame::asmSmooch;
+		_specialMoves[34] = &LogicGame::asmScaleTitle;
+		_specialMoves[36] = &LogicGame::asmPanRightToHugh;
+		_specialMoves[37] = &LogicGame::asmMakeWhiteFlash;
+		_specialMoves[38] = &LogicGame::asmPanRightToJoeAndRita;
+		_specialMoves[39] = &LogicGame::asmPanLeftToBomb;         // cdint.cut
+	}
 }
 
 } // End of namespace Queen

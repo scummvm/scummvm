@@ -367,6 +367,8 @@ void Display::palCustomScroll(uint16 roomNum) {
 			hiPal = 31;
 			break;
 		}
+		_pal.dirtyMin = MIN(_pal.dirtyMin, loPal);
+		_pal.dirtyMax = MAX(_pal.dirtyMax, hiPal);
 		return;
 	}
 
@@ -729,16 +731,19 @@ void Display::setupNewRoom(const char *name, uint16 room) {
 
 	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
 		decodeLBM(data, dataSize, _backdropBuf, BACKDROP_W, &_bdWidth, &_bdHeight, _pal.room, 0, 32);
+		if (_bdHeight < BACKDROP_H) {
+			memset(_backdropBuf + _bdHeight * BACKDROP_W, 0, (BACKDROP_H - _bdHeight) * BACKDROP_W);
+		}
 	} else {
 		int n = getNumColorsForRoom(room);
 		if (n != 256) {
 			n = 144;
 		}
 		decodePCX(data, dataSize, _backdropBuf, BACKDROP_W, &_bdWidth, &_bdHeight, _pal.room, 0, n);
-		palCustomColors(room);
 	}
 
 	delete[] data;
+	palCustomColors(room);
 	forceFullRefresh();
 }
 
@@ -932,7 +937,16 @@ void Display::horizontalScroll(int16 scroll) {
 
 void Display::setDirtyBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 	if (_fullRefresh < 2) {
-		assert(x + w <= SCREEN_W && y + h <= SCREEN_H);
+		if (x >= SCREEN_W) {
+			return;
+		} else if (x + w > SCREEN_W) {
+			w = SCREEN_W - x;
+		}
+		if (y >= SCREEN_H) {
+			return;
+		} else if (y + h > SCREEN_H) {
+			h = SCREEN_H - y;
+		}
 		uint16 ex = (x + w - 1) / D_BLOCK_W;
 		uint16 ey = (y + h - 1) / D_BLOCK_H;
 		x /= D_BLOCK_W;

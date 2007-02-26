@@ -463,8 +463,7 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 
 const byte *Cutaway::getCutawayAnim(const byte *ptr, int header, CutawayAnim &anim) {
 	// lines 1531-1607 in cutaway.c
-
-	//debug(6, "[Cutaway::getCutawayAnim] header=%i", header);
+	debug(6, "[Cutaway::getCutawayAnim] header=%i", header);
 
 	anim.currentFrame = 0;
 	anim.originalFrame = 0;

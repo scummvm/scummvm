@@ -411,7 +411,7 @@ void AmigaSound::playSong(int16 song) {
 	}
 
 	if (_lastOverride == song && _mixer->isSoundHandleActive(_modHandle)) {
-	  return;
+		return;
 	}
 	switch (song) {
 	// hotel
@@ -591,20 +591,7 @@ void AmigaSound::playModule(const char *base, int song) {
 }
 
 void AmigaSound::playRandomPatternJungle() {
-	static const uint16 patOffset[] = { 2, 1416, 2722, 2242, 11046, 11046 };
-	static const uint16 patSize[] = { 1056, 826, 8100, 8580, 15808, 15808 };
-	uint32 soundSize;
-	Common::File *f = _vm->resource()->findSound("JUNG.INS", &soundSize);
-	if (f) {
-		const int i = _rnd.getRandomNumber(5);
-		uint8 *soundData = (uint8 *)malloc(patSize[i]);
-		if (soundData) {
-			f->seek(patOffset[i], SEEK_CUR);
-			f->read(soundData, patSize[i]);
-			byte flags = Audio::Mixer::FLAG_AUTOFREE;
-			_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, soundData, patSize[i], 9000, flags);
-		}
-	}
+	// XXX pickup a pattern (songData[4],songData[6]) between 5 and 11 from JUNG.SNG and play it
 }
 
 bool AmigaSound::playSpecialSfx(int16 sfx) {

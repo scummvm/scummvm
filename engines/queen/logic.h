@@ -60,8 +60,8 @@ class Journal;
 class QueenEngine;
 
 class Logic {
-
 public:
+
 	Logic(QueenEngine *vm);
 	virtual ~Logic();
 
@@ -221,8 +221,6 @@ public:
 	//! enter the Journal (save/load, configuration)
 	virtual void useJournal() = 0;
 
-	void setupSpecialMoveTable();
-
 	//! execute a special move
 	void executeSpecialMove(uint16 sm);
 
@@ -287,7 +285,8 @@ protected:
 	void asmInterviewIntro();
 	void asmEndInterview();
 
-	virtual bool preChangeRoom() = 0;
+	virtual bool changeToSpecialRoom() = 0;
+	virtual void setupSpecialMoveTable() = 0;
 
 
 	uint16 _currentRoom;
@@ -380,7 +379,8 @@ public:
 
 protected:
 
-	bool preChangeRoom();
+	bool changeToSpecialRoom();
+	void setupSpecialMoveTable();
 };
 
 class LogicInterview : public Logic {
@@ -391,7 +391,8 @@ public:
 
 protected:
 
-	bool preChangeRoom();
+	bool changeToSpecialRoom();
+	void setupSpecialMoveTable();
 };
 
 class LogicGame : public Logic {
@@ -402,7 +403,8 @@ public:
 
 protected:
 
-	bool preChangeRoom();
+	bool changeToSpecialRoom();
+	void setupSpecialMoveTable();
 };
 
 
