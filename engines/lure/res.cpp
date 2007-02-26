@@ -640,6 +640,7 @@ void Resources::saveToStream(Common::WriteStream *stream)
 	_hotspotData.saveToStream(stream);
 	_activeHotspots.saveToStream(stream);
 	_fieldList.saveToStream(stream);
+	_randomActions.saveToStream(stream);
 }
 
 void Resources::loadFromStream(Common::ReadStream *stream) {
@@ -649,6 +650,8 @@ void Resources::loadFromStream(Common::ReadStream *stream) {
 	_activeHotspots.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading fields");
 	_fieldList.loadFromStream(stream);
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading random actions");
+	_randomActions.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Finished loading");
 }
 

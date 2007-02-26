@@ -980,7 +980,7 @@ void Hotspot::doAction(Action action, HotspotData *hotspot) {
 		&Hotspot::doExamine, 
 		NULL, NULL,
 		&Hotspot::npcSetRoomAndBlockedOffset, 
-		&Hotspot::npcUnknown1, 
+		&Hotspot::npcHeySir, 
 		&Hotspot::npcExecScript, 
 		&Hotspot::npcResetPausedList, 
 		&Hotspot::npcSetRandomDest,
@@ -1673,9 +1673,32 @@ void Hotspot::npcSetRoomAndBlockedOffset(HotspotData *hotspot) {
 	endAction();
 }
 
-void Hotspot::npcUnknown1(HotspotData *hotspot) {
-	warning("Not yet implemented");
-	endAction();
+void Hotspot::npcHeySir(HotspotData *hotspot) {
+	Resources &res = Resources::getReference();
+
+	// If player is performing an action, wait until it's done
+	Hotspot *playerHotspot = res.getActiveHotspot(PLAYER_ID);
+	if (!playerHotspot->currentActions().isEmpty()) {
+		setDelayCtr(12);
+		setCharacterMode(CHARMODE_PAUSED);
+		setActionCtr(0);
+		return;
+	}
+
+	// TODO: Check storage of hotspot Id in data_1090/data_1091=0
+
+	// Get the npc to say "Hey Sir" to player
+	showMessage(0x22, PLAYER_ID);
+
+	// Get the character to remain in place for a while
+	setDelayCtr(130);
+	setCharacterMode(CHARMODE_4);
+
+	// Set the talk override to the specified Id
+	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	_data->talkOverride = entry.param(0);
+
+	doNothing(hotspot);
 }
 
 void Hotspot::npcExecScript(HotspotData *hotspot) {
@@ -1822,9 +1845,19 @@ void Hotspot::npcJumpAddress(HotspotData *hotspot) {
 uint16 Hotspot::getTalkId(HotspotData *charHotspot) {
 	Resources &res = Resources::getReference();
 	uint16 talkIndex;
+	TalkHeaderData *headerEntry;
+
+	// If the hotspot has a talk data override, return it
+	if (charHotspot->talkOverride != 0)
+	{
+		// Has an override, so return it and reset back to zero
+		uint16 result = charHotspot->talkOverride;
+		charHotspot->talkOverride = 0;
+		return result;
+	}
 
 	// Get offset of talk set to use
-	TalkHeaderData *headerEntry = res.getTalkHeader(charHotspot->hotspotId);
+	headerEntry = res.getTalkHeader(charHotspot->hotspotId);
 
 	// Calculate talk index to use
 	if (charHotspot->nameId == STRANGER_ID)
@@ -2586,7 +2619,7 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 	ValueTableData &fields = res.fieldList();
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
 
-	if ((fields.getField(37) == 0) && (h.currentActions().size() <= 1))	{
+	if ((fields.getField(37) == 0) && h.currentActions().isEmpty()) {
 		if (h.roomNumber() != player->roomNumber()) {
 			// Character in different room than player
 			if (h.hotspotId() == GOEWIN_ID) 
@@ -2629,7 +2662,11 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 
 	// Handle selecting a random action for the character to do
 	RandomActionSet *set = res.randomActions().getRoom(h.roomNumber());
-	if (!set) return;
+	if (!set) {
+		standardCharacterAnimHandler(h);
+		return;
+	}
+
 	Common::RandomSource rnd;
 	RandomActionType actionType;
 	uint16 scheduleId;

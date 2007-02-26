@@ -31,7 +31,7 @@ namespace Lure {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 14
+#define LURE_DAT_MINOR 15
 
 #define LURE_DEBUG 1
 
@@ -213,8 +213,7 @@ enum Action {
 #define ROOM_PATHS_RESOURCE_ID 0x3f13
 #define EXIT_COORDINATES_RESOURCE_ID 0x3f14
 #define EXIT_HOTSPOT_ID_LIST 0x3f15
-
-#define STRING_LIST_RESOURCE_ID 0x3f17
+#define STRING_LIST_RESOURCE_ID 0x3f16
 
 // Script constants
 #define STARTUP_SCRIPT 0x23FC

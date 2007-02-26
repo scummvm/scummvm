@@ -438,6 +438,7 @@ public:
 	uint16 use2HotspotId;
 	uint16 v2b;
 	uint16 actionHotspotId;
+	uint16 talkOverride;
 
 	void enable() { flags |= 0x80; }
 	void disable() { flags &= 0x7F; }
@@ -649,18 +650,18 @@ public:
 
 	uint16 roomNumber() { return _roomNumber; }
 	int numActions() { return _numActions; }
-	void getEntry(int index, RandomActionType &actionType, uint16 &id)
-	{
+	void getEntry(int index, RandomActionType &actionType, uint16 &id) {
 		assert((index >= 0) && (index < _numActions));
 		actionType = _types[index];
 		id = _ids[index];
 	}
-	void setDone(int index)
-	{
+	void setDone(int index) {
 		assert((index >= 0) && (index < _numActions));
 		assert(_types[index] == REPEAT_ONCE);
 		_types[index] = REPEAT_ONCE_DONE;
 	}
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 };
 
 class RandomActionList: public ManagedList<RandomActionSet *> {

@@ -312,6 +312,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	useHotspotId = 0;
 	v2b = 0;
 	actionHotspotId = 0;
+	talkOverride = 0;
 }
 
 void HotspotData::saveToStream(WriteStream *stream) {
@@ -351,6 +352,7 @@ void HotspotData::saveToStream(WriteStream *stream) {
 	stream->writeUint16LE(use2HotspotId);
 	stream->writeUint16LE(v2b);
 	stream->writeUint16LE(actionHotspotId);
+	stream->writeUint16LE(talkOverride);
 }
 
 void HotspotData::loadFromStream(ReadStream *stream) {
@@ -390,6 +392,7 @@ void HotspotData::loadFromStream(ReadStream *stream) {
 	use2HotspotId = stream->readUint16LE();
 	v2b = stream->readUint16LE();
 	actionHotspotId = stream->readUint16LE();
+	talkOverride = stream->readUint16LE();
 }
 
 // Hotspot data list
@@ -806,16 +809,29 @@ RandomActionSet *RandomActionList::getRoom(uint16 roomNumber) {
 	return NULL;
 }
 
-void RandomActionList::saveToStream(Common::WriteStream *stream) {
+void RandomActionSet::saveToStream(Common::WriteStream *stream) {
+	stream->writeByte(numActions());
+	for (int actionIndex = 0; actionIndex < _numActions; ++actionIndex)
+		stream->writeByte((byte)_types[actionIndex]);
+}
 
+void RandomActionSet::loadFromStream(Common::ReadStream *stream) {
+	int amount = stream->readByte();
+	assert(amount == _numActions);
+	for (int actionIndex = 0; actionIndex < _numActions; ++actionIndex)
+		_types[actionIndex] = (RandomActionType)stream->readByte();
+}
+
+
+void RandomActionList::saveToStream(Common::WriteStream *stream) {
+	for (iterator i = begin(); i != end(); ++i) 
+		(*i)->saveToStream(stream);
 }
 
 void RandomActionList::loadFromStream(Common::ReadStream *stream) {
-
+	for (iterator i = begin(); i != end(); ++i) 
+		(*i)->loadFromStream(stream);
 }
-
-
-
 
 // This class handles an indexed hotspot entry - which is used by the NPC code to
 // determine whether exiting a room to another given room has an exit hotspot or not

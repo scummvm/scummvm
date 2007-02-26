@@ -260,7 +260,7 @@ private:
 	uint8 _exitCtr;
 	bool _walkFlag;
 	uint16 _startRoomNumber;
-
+	
 	// Support methods
 	uint16 getTalkId(HotspotData *charHotspot);
 	void startTalk(HotspotData *charHotspot, uint16 id);
@@ -294,7 +294,7 @@ private:
 	void doBribe(HotspotData *hotspot);
 	void doExamine(HotspotData *hotspot);
 	void npcSetRoomAndBlockedOffset(HotspotData *hotspot);
-	void npcUnknown1(HotspotData *hotspot); 
+	void npcHeySir(HotspotData *hotspot); 
 	void npcExecScript(HotspotData *hotspot); 
 	void npcResetPausedList(HotspotData *hotspot); 
 	void npcSetRandomDest(HotspotData *hotspot);
