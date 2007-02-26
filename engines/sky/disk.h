@@ -64,7 +64,6 @@ protected:
 	uint32 _dinnerTableEntries;
 	uint8 *_dinnerTableArea;
 	Common::File *_dataDiskHandle;
-	Common::File *_dnrHandle;
 	RncDecoder _rncDecoder;
 
 	uint16 _buildList[MAX_FILES_IN_LIST];

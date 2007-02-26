@@ -37,17 +37,17 @@ static const char *dinnerFilename = "sky.dnr";
 
 Disk::Disk() {
 	_dataDiskHandle = new Common::File();
-	_dnrHandle = new Common::File();
+	Common::File *dnrHandle = new Common::File();
 
-	_dnrHandle->open(dinnerFilename);
-	if (!_dnrHandle->isOpen())
+	dnrHandle->open(dinnerFilename);
+	if (!dnrHandle->isOpen())
 		error("Could not open %s", dinnerFilename);
 
-	if (!(_dinnerTableEntries = _dnrHandle->readUint32LE()))
+	if (!(_dinnerTableEntries = dnrHandle->readUint32LE()))
 		error("Error reading from sky.dnr"); //even though it was opened correctly?!
 
 	_dinnerTableArea = (uint8 *)malloc(_dinnerTableEntries * 8);
-	uint32 entriesRead = _dnrHandle->read(_dinnerTableArea, 8 * _dinnerTableEntries) / 8;
+	uint32 entriesRead = dnrHandle->read(_dinnerTableArea, 8 * _dinnerTableEntries) / 8;
 
 	if (entriesRead != _dinnerTableEntries)
 		error("entriesRead != dinnerTableEntries. [%d/%d]", entriesRead, _dinnerTableEntries);
@@ -60,16 +60,16 @@ Disk::Disk() {
 
 	memset(_buildList, 0, 60 * 2);
 	memset(_loadedFilesList, 0, 60 * 4);
+
+	dnrHandle->close();
+	delete dnrHandle;
 }
 
 Disk::~Disk(void) {
-	if (_dnrHandle->isOpen())
-		_dnrHandle->close();
 	if (_dataDiskHandle->isOpen())
 		_dataDiskHandle->close();
 	fnFlushBuffers();
 	free(_dinnerTableArea);
-	delete _dnrHandle;
 	delete _dataDiskHandle;
 }
 
