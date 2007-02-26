@@ -56,6 +56,8 @@ struct AgiSound {
 	uint16 type;		/**< sound resource type */
 };
 
+#include "common/pack-start.h"
+
 /**
  * AGI sound note structure.
  */
@@ -66,6 +68,8 @@ struct AgiNote {
 	uint8 frq1;			/**< MSB of note frequency */
 	uint8 vol;			/**< note volume */
 };
+
+#include "common/pack-end.h"
 
 /**
  * AGI engine sound channel structure.
