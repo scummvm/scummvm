@@ -95,8 +95,8 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 }
 
 GobEngine::~GobEngine() {
-	if (_snd)
-		_snd->terminate();
+	// Stop all mixer streams (except for the permanent ones).
+	_vm->_mixer->stopAll();
 
 	delete _mult;
 	delete _game;
@@ -116,8 +116,7 @@ GobEngine::~GobEngine() {
 	delete _scenery;
 	delete _gtimer;
 	delete _util;
-	if (_adlib)
-		delete _adlib;
+	delete _adlib;
 	delete _video;
 	delete[] _startTot;
 	delete[] _startTot0;

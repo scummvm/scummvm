@@ -48,8 +48,8 @@ public:
 	char _playingSound;
 
 	Snd(GobEngine *vm);
+	~Snd();
 
-	void terminate();
 	void speakerOn(int16 frequency, int32 length);
 	void speakerOff(void);
 	void speakerOnUpdate(uint32 milis);
@@ -138,14 +138,6 @@ protected:
 
 	GobEngine *_vm;
 
-	void cleanupFuncCallback() {;}
-	int16 checkProAudio(void) {return 0;}
-	int16 checkAdlib(void) {return 0;}
-	int16 checkBlaster(void) {return 0;}
-
-	void writeAdlib(int16 port, int16 data);
-	void setBlasterPort(int16 port);
-	void setResetTimerFlag(char flag){return;}
 	void setSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency, int16 fadeLength);
 	void checkEndSample(void);
 	void nextCompositionPos(void);

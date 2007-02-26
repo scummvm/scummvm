@@ -77,11 +77,8 @@ void Snd::SquareWaveStream::update(uint32 milis) {
 }
 
 int Snd::SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
-	for (int i = 0; i < numSamples; i++) {
-		if (!_remainingSamples) {
-			buffer[i] = 0;
-			continue;
-		}
+	int i;
+	for (i = 0; _remainingSamples && i < numSamples; i++) {
 		buffer[i] = _sampleValue;
 		if (_periodSamples++ > _periodLength) {
 			_periodSamples = 0;
@@ -91,6 +88,10 @@ int Snd::SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
 			_remainingSamples--;
 		_mixedSamples++;
 	}
+	
+	// Clear the rest of the buffer
+	if (i < numSamples)
+		memset(buffer + i, 0, (numSamples - i) * sizeof(int16));
 
 	return numSamples;
 }
@@ -128,15 +129,15 @@ Snd::Snd(GobEngine *vm) : _vm(vm) {
 			&_speakerStream, -1, 255, 0, false, true);
 }
 
-void Snd::terminate() {
-	// stop permanent streams manually
-	_vm->_mixer->stopHandle(_handle);
+Snd::~Snd() {
+	// stop permanent streams manually:
+	
+	// First the speaker stream
 	_vm->_mixer->stopHandle(_speakerHandle);
 
-	_vm->_mixer->stopAll();
+	// Next, this stream (class Snd is an AudioStream, too)
+	_vm->_mixer->stopHandle(_handle);
 }
-
-void Snd::setBlasterPort(int16 port) {return;}
 
 void Snd::speakerOn(int16 frequency, int32 length) {
 	_speakerStream.playNote(frequency, length, _vm->_mixer->getOutputRate());
@@ -151,8 +152,7 @@ void Snd::speakerOnUpdate(uint32 milis) {
 	_speakerStream.update(milis);
 }
 
-void Snd::stopSound(int16 fadeLength)
-{
+void Snd::stopSound(int16 fadeLength) {
 	Common::StackLock slock(_mutex);
 
 	if (fadeLength <= 0) {
@@ -222,10 +222,6 @@ void Snd::playComposition(int16 *composition, int16 freqVal, SoundDesc **sndDesc
 	} while ((i < 50) && (composition[i] != -1));
 
 	nextCompositionPos();
-}
-
-void Snd::writeAdlib(int16 port, int16 data) {
-	return;
 }
 
 Snd::SoundDesc *Snd::loadSoundData(const char *path) {
