@@ -505,8 +505,6 @@ AgiEngine::AgiEngine(OSystem *syst) : Engine(syst) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	_savePath = _saveFileMan->getSavePath();	// FIXME: Get rid of this
-
 	const GameSettings *g;
 
 	const char *gameid = ConfMan.get("gameid").c_str();

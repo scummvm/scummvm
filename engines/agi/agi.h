@@ -533,7 +533,6 @@ public:
 	AgiLoader *_loader;	/* loader */
 
 	Common::RandomSource *_rnd;
-	const char *_savePath;
 
 	const char *getSavegameFilename(int num);
 	int selectSlot();
