@@ -129,6 +129,14 @@ Snd::Snd(GobEngine *vm) : _vm(vm) {
 			&_speakerStream, -1, 255, 0, false, true);
 }
 
+void Snd::terminate() {
+	// stop permanent streams manually
+	_vm->_mixer->stopHandle(_handle);
+	_vm->_mixer->stopHandle(_speakerHandle);
+
+	_vm->_mixer->stopAll();
+}
+
 void Snd::setBlasterPort(int16 port) {return;}
 
 void Snd::speakerOn(int16 frequency, int32 length) {

@@ -49,6 +49,8 @@ public:
 	CleanupFuncPtr _cleanupFunc;
 
 	Snd(GobEngine *vm);
+
+	void terminate();
 	void speakerOn(int16 frequency, int32 length);
 	void speakerOff(void);
 	void speakerOnUpdate(uint32 milis);

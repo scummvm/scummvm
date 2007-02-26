@@ -95,6 +95,9 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 }
 
 GobEngine::~GobEngine() {
+	if (_snd)
+		_snd->terminate();
+
 	delete _mult;
 	delete _game;
 	delete _snd;
