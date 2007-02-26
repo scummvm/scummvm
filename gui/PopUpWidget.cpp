@@ -143,8 +143,7 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	_clickX = clickX - _x;
 	_clickY = clickY - _y;
 
-	// Time the popup was opened
-	_openTime = getMillis();
+	_openTime = 0;
 }
 
 void PopUpDialog::drawDialog() {
@@ -164,6 +163,11 @@ void PopUpDialog::drawDialog() {
 	/*if (_twoColumns && (count & 1)) {
 		g_gui.fillRect(_x + 1 + _w / 2, _y + 1 + kLineHeight * (_entriesPerColumn - 1), _w / 2 - 1, kLineHeight, g_gui._bgcolor);
 	}*/
+
+	if (_openTime == 0) {
+		// Time the popup was opened
+		_openTime = getMillis();
+	}
 }
 
 void PopUpDialog::handleMouseUp(int x, int y, int button, int clickCount) {
