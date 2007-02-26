@@ -58,6 +58,7 @@ private:
 	static void defaultHandler(Hotspot &h);
 	static void voiceBubbleAnimHandler(Hotspot &h);
 	static void standardAnimHandler(Hotspot &h);
+	static void standardAnimHandler2(Hotspot &h);
 	static void standardCharacterAnimHandler(Hotspot &h);
 	static void puzzledAnimHandler(Hotspot &h);
 	static void roomExitAnimHandler(Hotspot &h);

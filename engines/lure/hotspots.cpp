@@ -1966,8 +1966,6 @@ HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 		return voiceBubbleAnimHandler;
 	case PUZZLED_TICK_PROC_ID:
 		return puzzledAnimHandler;
-	case 0x7F3A:
-		return standardAnimHandler;
 	case 0x7207:
 		return roomExitAnimHandler;
 	case PLAYER_TICK_PROC_ID:
@@ -1976,6 +1974,10 @@ HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 		return followerAnimHandler;
 	case 0x7EFA:
 		return skorlAnimHandler;
+	case 0x7F37:
+		return standardAnimHandler2;
+	case 0x7F3A:
+		return standardAnimHandler;
 	case 0x7F69:
 		return droppingTorchAnimHandler;
 	case 0x7FA1:
@@ -2006,6 +2008,11 @@ void HotspotTickHandlers::standardAnimHandler(Hotspot &h) {
 		h.setTickCtr(h.tickCtr() - 1);
 	else 
 		h.executeScript();
+}
+
+void HotspotTickHandlers::standardAnimHandler2(Hotspot &h) {
+	h.handleTalkDialog();
+	standardCharacterAnimHandler(h);
 }
 
 void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
