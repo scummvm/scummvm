@@ -206,10 +206,10 @@ void SoundTowns::playSoundEffect(uint8 track) {
 	uint32 playbackBufferSize = (sfxHeaderID == 1) ? sfxHeaderInBufferSize : sfxHeaderOutBufferSize;
 
 	stopSoundEffect();
-	uint8 *sfxPlaybackBuffer = new uint8[playbackBufferSize];
+	uint8 *sfxPlaybackBuffer = (uint8 *)malloc(playbackBufferSize);
 	memset(sfxPlaybackBuffer, 0x80, playbackBufferSize);
 
-	uint8 * sfxBody = ((uint8*)sfxHeader) + 0x20;
+	uint8 *sfxBody = ((uint8 *)sfxHeader) + 0x20;
 
 	if (!sfxHeaderID) {
 		memcpy(sfxPlaybackBuffer, sfxBody, playbackBufferSize);
