@@ -29,7 +29,7 @@ enum Action {
 	UNLOCK = 9,	USE = 10, GIVE = 11, TALK_TO = 12, TELL = 13, BUY = 14,
 	LOOK = 15, LOOK_AT = 16, LOOK_THROUGH = 17,	ASK = 18, DRINK = 20,
 	STATUS = 21, GO_TO = 22, RETURN = 23, BRIBE = 24, EXAMINE = 25,
-	NPC_SET_ROOM_AND_BLOCKED_OFFSET = 28, NPC_UNKNOWN1 = 29, NPC_EXEC_SCRIPT = 30, 
+	NPC_SET_ROOM_AND_BLOCKED_OFFSET = 28, NPC_HEY_SIR = 29, NPC_EXEC_SCRIPT = 30, 
 	NPC_UNKNOWN2 = 31, NPC_SET_RAND_DEST = 32, NPC_WALKING_CHECK = 33, 
 	NPC_SET_SUPPORT_OFFSET = 34, NPC_SUPPORT_OFFSET_COND = 35, 
 	NPC_DISPATCH_ACTION = 36, NPC_UNKNOWN3 = 37, NPC_UNKNOWN4 = 38, 
@@ -69,7 +69,6 @@ SupportStructure supportList[MAX_BUFFER_ENTRIES];
 uint16 numSupportEntries = 0;
 
 #define FORWARD_JUMP_ALLOWANCE 0x30
-
 
 uint16 get_sequence_index(uint16 offset, int supportIndex) {
 	int index;
@@ -205,6 +204,13 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 				printf("Encountered unrecognised NPC code jump point: %xh\n", params[0]);
 				exit(1);
 			}
+			break;
+
+		case NPC_HEY_SIR:
+			// The 'Hey Sir' opcode causes the NPC to request your attention, and sets the active talk 
+			// record to a designated offset. So any offset occurances need to be saved so that it can
+			// be included in the resource for talk records
+			add_talk_offset(params[0]);
 			break;
 
 		default:

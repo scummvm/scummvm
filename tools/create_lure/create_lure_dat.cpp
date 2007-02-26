@@ -910,12 +910,6 @@ void read_room_exit_hotspots_data(byte *&data, uint16 &totalSize) {
 	totalSize += sizeof(uint16);
 }
 
-void read_ratpouch_schedules(byte *&data, uint16 &totalSize) {
-	// TODO: Parse out the schedules Ratpouch has for each room
-	data = (byte *) malloc(1);
-	totalSize = 1;
-}
-
 #define NUM_TEXT_ENTRIES 40
 const char *text_strings[NUM_TEXT_ENTRIES] = {
 	"Get", NULL, "Push", "Pull", "Operate", "Open", "Close", "Lock", "Unlock", "Use", 
@@ -1063,11 +1057,6 @@ void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size)
 		break;
 
 	case 21:
-		// Read in Ratpouch's room specific schedules
-		read_ratpouch_schedules(data, size);
-		break;
-
-	case 22:
 		// Set up the list of text strings used by the game
 		save_text_strings(data, size);
 		break;

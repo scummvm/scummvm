@@ -27,7 +27,7 @@
 #include "common/endian.h"
 
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 14
+#define VERSION_MINOR 15
 #define ENGLISH_LURE 
 
 #define DATA_SEGMENT 0xac50
@@ -404,5 +404,6 @@ public:
 };
 
 extern File lure_exe;
+extern void add_talk_offset(uint16 offset);
 
 #endif
