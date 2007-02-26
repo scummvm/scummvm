@@ -96,7 +96,6 @@ int Snd::SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 Snd::Snd(GobEngine *vm) : _vm(vm) {
-	_cleanupFunc = 0;
 	_playingSound = 0;
 	_curSoundDesc = 0;
 
@@ -307,8 +306,6 @@ void Snd::checkEndSample(void) {
 }
 
 int Snd::readBuffer(int16 *buffer, const int numSamples) {
-	memset(buffer, 0, numSamples);
-
 	for (int i = 0; i < numSamples; i++) {
 		Common::StackLock slock(_mutex);
 

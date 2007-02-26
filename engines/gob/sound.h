@@ -46,7 +46,6 @@ public:
 	typedef void (*CleanupFuncPtr) (int16);
 
 	char _playingSound;
-	CleanupFuncPtr _cleanupFunc;
 
 	Snd(GobEngine *vm);
 

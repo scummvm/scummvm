@@ -61,10 +61,6 @@ void Init::cleanup(void) {
 	_vm->_video->freeSurfDesc(_vm->_global->_pPrimarySurfDesc);
 	_vm->_global->_pPrimarySurfDesc = 0;
 
-	if (_vm->_snd->_cleanupFunc != 0 && _vm->_snd->_playingSound != 0) {
-		(*_vm->_snd->_cleanupFunc) (0);
-		_vm->_snd->_cleanupFunc = 0;
-	}
 	_vm->_snd->speakerOff();
 
 	_vm->_dataio->closeDataFile();
