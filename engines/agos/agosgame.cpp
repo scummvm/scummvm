@@ -1,26 +1,5 @@
 static const AGOSGameDescription gameDescriptions[] = {
-	// Elvira 1 - English Amiga Floppy
-	{
-		{
-			"elvira1",
-			"Floppy",
-			{
-	{ "gameamiga",		GAME_BASEFILE,	"7bdaff4a118d8035047cf9b1393b3fa0", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1", -1},
-	{ "start",		GAME_RESTFILE,	"c111be88c7f6d40e3f9b128939c1236d", -1},
-	{ NULL, 0, NULL, 0}
-			},
-			Common::EN_ANY,
-			Common::kPlatformAmiga,
-			Common::ADGF_NO_FLAGS
-		},
-
-		GType_ELVIRA1,
-		GID_ELVIRA1,
-		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
-	},
-
-	// Elvira 1 - English Amiga Demo
+	// Elvira 1 - English Amiga Floppy Demo
 	{
 		{
 			"elvira1",
@@ -40,6 +19,27 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GType_ELVIRA1,
 		GID_ELVIRA1,
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR | GF_DEMO
+	},
+
+	// Elvira 1 - English Amiga Floppy
+	{
+		{
+			"elvira1",
+			"Floppy",
+			{
+	{ "gameamiga",		GAME_BASEFILE,	"7bdaff4a118d8035047cf9b1393b3fa0", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1", -1},
+	{ "start",		GAME_RESTFILE,	"c111be88c7f6d40e3f9b128939c1236d", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_ELVIRA1,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
 
 	// Elvira 1 - English Atari ST Floppy Demo
@@ -429,6 +429,28 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GType_WW,
 		GID_WAXWORKS,
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_CRUNCHED_GAMEPC | GF_PLANAR
+	},
+
+	// Waxworks - English DOS Floppy Demo
+	{
+		{
+			"waxworks",
+			"Demo",
+
+			{
+	{ "demo",		GAME_BASEFILE,	"50704abde6c68a226001400461620129", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"ef1b8ad3494cf103dc10a99fe152ef9a", -1},
+	{ "menus.dat",		GAME_MENUFILE,	"c4103f122d27677c9db144cae1394a66", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_DEMO
+		},
+
+		GType_WW,
+		GID_WAXWORKS,
+		GF_OLD_BUNDLE | GF_DEMO
 	},
 
 	// Waxworks - English DOS Floppy
