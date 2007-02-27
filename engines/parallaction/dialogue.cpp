@@ -245,7 +245,7 @@ void runDialogue(SpeakData *data) {
 	_vm->_graphics->loadExternalCnv(v20, &_characterFace);
 	debugC(1, kDebugDialogue, "runDialogue: 1st character head loaded");
 
-	_vm->_graphics->loadExternalCnv("comiccnv", &Graphics::_font);
+	_vm->_graphics->setFont("comiccnv");
 
 	Cnv v6E;
 	StaticCnv v5C, v48;
@@ -518,8 +518,6 @@ void runDialogue(SpeakData *data) {
 		_vm->_graphics->freeCnv(&v6E);
 		debugC(1, kDebugDialogue, "runDialogue: 2nd character head free'd");
 	}
-
-	_vm->_graphics->freeCnv(&Graphics::_font);
 
 	exitDialogue();
 	debugC(1, kDebugDialogue, "runDialogue: exit dialogue ok");

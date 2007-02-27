@@ -285,7 +285,7 @@ void _c_finito(void *parm) {
 	_vm->_graphics->palUnk0(_palette);
 
 	if (gameCompleted) {
-		_vm->_graphics->loadExternalCnv("slidecnv", &Graphics::_font);
+		_vm->_graphics->setFont("slidecnv");
 		_vm->_graphics->_proportionalFont = false;
 		uint16 _ax = _vm->_graphics->getStringWidth(v4C[_language]);
 		_vm->_graphics->displayString((SCREEN_WIDTH - _ax)/2, 70, v4C[_language]);
@@ -303,9 +303,8 @@ void _c_finito(void *parm) {
 		strcpy(_location, "estgrotta.drki");
 
 		_engineFlags |= kEngineChangeLocation;
-		_vm->_graphics->freeCnv(&Graphics::_font);
 	} else {
-		_vm->_graphics->loadExternalCnv("slidecnv", &Graphics::_font);
+		_vm->_graphics->setFont("slidecnv");
 		_vm->_graphics->_proportionalFont = false;
 		uint16 _ax = _vm->_graphics->getStringWidth(v8C[_language]);
 		_vm->_graphics->displayString((SCREEN_WIDTH - _ax)/2, 70, v8C[_language]);
@@ -320,7 +319,6 @@ void _c_finito(void *parm) {
 		_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBit2);
 		waitUntilLeftClick();
 
-		_vm->_graphics->freeCnv(&Graphics::_font);
 		_vm->_menu->selectCharacter();
 	}
 
@@ -357,7 +355,7 @@ void _c_testResult(void *parm) {
 	_vm->parseLocation("common");
 	_vm->_archive.close();
 
-	_vm->_graphics->loadExternalCnv("slidecnv", &Graphics::_font);
+	_vm->_graphics->setFont("slidecnv");
 	_vm->_graphics->_proportionalFont = false;
 
 	uint16 _ax = _vm->_graphics->getStringWidth(_slideText[0]);
@@ -367,8 +365,6 @@ void _c_testResult(void *parm) {
 
 	_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBitBack);
 	_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBit2);
-
-	_vm->_graphics->freeCnv(&Graphics::_font);
 
 	return;
 }

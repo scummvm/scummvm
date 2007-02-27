@@ -46,7 +46,7 @@ void Parallaction::parseLocation(const char *filename) {
 
 	uint16 _si = 1;
 	_vm->_graphics->_proportionalFont = false;
-	_vm->_graphics->loadExternalCnv("topazcnv", &Graphics::_font);
+	_vm->_graphics->setFont("topazcnv");
 
 	char archivefile[PATH_LEN];
 
@@ -189,7 +189,6 @@ void Parallaction::parseLocation(const char *filename) {
 	}
 
 	resolveLocationForwards();
-	_vm->_graphics->freeCnv(&Graphics::_font);
 
 	delete _locationScript;
 	_locationScript = NULL;
@@ -404,14 +403,13 @@ void Parallaction::changeLocation(char *location) {
 			debugC(1, kDebugLocation, "changeLocation: new background set");
 
 			_vm->_graphics->_proportionalFont = false;
-			_vm->_graphics->loadExternalCnv("slidecnv", &Graphics::_font);
+			_vm->_graphics->setFont("slidecnv");
 
 			uint16 _ax = strlen(_slideText[0]);
 			_ax <<= 3;	// text width
 			uint16 _dx = (SCREEN_WIDTH - _ax) >> 1; // center text
 			_vm->_graphics->displayString(_dx, 14, _slideText[0]); // displays text on screen
 
-			_vm->_graphics->freeCnv(&Graphics::_font);
 			waitUntilLeftClick();
 
 			debugC(2, kDebugLocation, "changeLocation: intro text shown");
@@ -511,7 +509,7 @@ void Parallaction::doLocationEnterTransition() {
 	jobEraseAnimations(NULL, NULL);
 	jobDisplayAnimations(NULL, NULL);
 
-	_vm->_graphics->loadExternalCnv("comiccnv", &Graphics::_font);
+	_vm->_graphics->setFont("comiccnv");
 	_vm->_graphics->swapBuffers();
 	_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBitBack);
 
@@ -520,8 +518,6 @@ void Parallaction::doLocationEnterTransition() {
 	_vm->_graphics->floodFill(0, 5, 5, 10 + v7C, 5 + v7A, Graphics::kBitFront);
 	_vm->_graphics->floodFill(1, 6, 6, 9 + v7C, 4 + v7A, Graphics::kBitFront);
 	_vm->_graphics->displayWrappedString(_locationComment, 3, 5, 130, 0);
-
-	_vm->_graphics->freeCnv( &Graphics::_font );
 
 	// FIXME: ???
 #if 0

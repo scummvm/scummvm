@@ -389,15 +389,13 @@ void displayCharacterComment(ExamineData *data) {
 	v3C._data1 = NULL; //_characterFace.field_8[0];
 	v3C._data2 = NULL;
 
-	_vm->_graphics->loadExternalCnv("comiccnv", &Graphics::_font);
+	_vm->_graphics->setFont("comiccnv");
 	_vm->_graphics->flatBlitCnv(&v3C, 190, 80, Graphics::kBitFront, v3C._data1);
 
 	int16 v26, v28;
 	_vm->_graphics->getStringExtent(data->_description, 130, &v28, &v26);
 	_vm->_graphics->drawBalloon(140, 10, v28, v26, 0);
 	_vm->_graphics->displayWrappedString(data->_description, 140, 10, 130, 0);
-
-	_vm->_graphics->freeCnv(&Graphics::_font);
 
 //	printf("wait left");
 
@@ -450,13 +448,12 @@ void displayItemComment(ExamineData *data) {
 
 	int16 v6A = 0, v6C = 0;
 
-	_vm->_graphics->loadExternalCnv("comiccnv", &Graphics::_font);
+	_vm->_graphics->setFont("comiccnv");
 	_vm->_graphics->getStringExtent(data->_description, 130, &v6C, &v6A);
 	_vm->_graphics->drawBalloon(0, 90, v6C, v6A, 0);
 	_vm->_graphics->flatBlitCnv(&cnv, 100, 152, Graphics::kBitFront, cnv._data1);
 	_vm->_graphics->freeStaticCnv(&cnv);
 	_vm->_graphics->displayWrappedString(data->_description, 0, 90, 130, 0);
-	_vm->_graphics->freeCnv(&Graphics::_font);
 
 	jobEraseAnimations((void*)1, NULL);
 

@@ -132,7 +132,7 @@ void _c_startIntro(void *parm) {
 
 void _c_endIntro(void *parm) {
 
-	_vm->_graphics->loadExternalCnv("slidecnv", &_vm->_graphics->_font);
+	_vm->_graphics->setFont("slidecnv");
 	_vm->_graphics->_proportionalFont = false;
 
 	uint16 _di;
@@ -153,7 +153,6 @@ void _c_endIntro(void *parm) {
 	}
 
 	waitUntilLeftClick();
-	_vm->_graphics->freeCnv(&Graphics::_font);
 
 	_engineFlags &= ~kEngineMouse;
 	_vm->_menu->selectCharacter();

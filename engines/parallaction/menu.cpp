@@ -104,7 +104,7 @@ void Menu::start() {
 	_vm->_archive.open("disk1");
 	_vm->_graphics->_proportionalFont = false;
 
-	_vm->_graphics->loadExternalCnv("slidecnv", &Graphics::_font);
+	_vm->_graphics->setFont("slidecnv");
 
 	_vm->_graphics->Graphics::loadBackground("intro.slide", Graphics::kBitBack);
 	_vm->_graphics->palUnk0(_palette);
@@ -196,7 +196,6 @@ void Menu::newGame() {
 	if (_mouseButtons != kMouseRightUp)
 		return;    // show intro
 
-	_vm->_graphics->freeCnv(&Graphics::_font);
 	_vm->_archive.close();
 
 	selectCharacter();
@@ -280,7 +279,6 @@ uint16 Menu::selectGame() {
 	if (_si == 0) return 0; // new game
 
 	// load game
-	_vm->_graphics->freeCnv(&Graphics::_font);
 
 	strcpy(_location, "fogne");
 	strcpy(_engine->_characterName, "dough");
@@ -316,7 +314,7 @@ void Menu::selectCharacter() {
 	_vm->_midiPlayer->stop();
 	_vm->_graphics->_proportionalFont = false;
 
-	_vm->_graphics->loadExternalCnv("slidecnv", &Graphics::_font);
+	_vm->_graphics->setFont("slidecnv");
 	_vm->_archive.open("disk1");
 
 	_vm->_graphics->loadBackground("password.slide", Graphics::kBitBack);
@@ -416,7 +414,6 @@ void Menu::selectCharacter() {
 	_vm->_archive.close();
 
 	memFree(v14._data0);
-	_vm->_graphics->freeCnv(&Graphics::_font);
 
 	refreshInventory(_vm->_characterName);
 

@@ -180,7 +180,6 @@ void Graphics::palUnk0(byte *palette) {
 	return;
 }
 
-
 void Graphics::buildBWPalette(byte *palette) {
 
 	for (uint16 i = 0; i < PALETTE_COLORS; i++) {
@@ -797,6 +796,14 @@ void Graphics::getStringExtent(char *text, uint16 maxwidth, int16* width, int16*
 }
 
 
+void Graphics::setFont(const char* name) {
+	if (_font._array != NULL)
+		freeCnv(&_font);
+
+	loadExternalCnv(name, &_font);
+}
+
+
 //	backups background mask
 //
 //
@@ -1106,6 +1113,7 @@ void Graphics::freeCnv(Cnv *cnv) {
 		memFree(cnv->_array[_si]);
 	}
 	memFree(cnv->_array);
+	cnv->_array = NULL;
 
 	return;
 }
@@ -1366,6 +1374,8 @@ Graphics::Graphics(Parallaction* vm) :
 
 	initMouse( 0 );
 
+	_font._array = NULL;
+
 	return;
 }
 
@@ -1378,6 +1388,8 @@ Graphics::~Graphics() {
 	memFree(_buffers[kBitBack]);
 	memFree(_buffers[kBit2]);
 	memFree(_buffers[kBit3]);
+
+	freeCnv(&_font);
 
 	return;
 }

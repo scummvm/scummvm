@@ -140,11 +140,11 @@ public:
 
 	void setMousePointer(int16 index);
 
+	void setFont(const char* name);
 
 public:
 	static Point		_labelPosition[2];
 	static bool 		_proportionalFont;
-	static Cnv			_font;
 
 protected:
 	Parallaction*		_vm;
@@ -153,6 +153,9 @@ protected:
 
 	static byte			_mouseArrow[256];
 	static StaticCnv	_mouseComposedArrow;
+
+	static Cnv			_font;
+
 
 protected:
 	//
