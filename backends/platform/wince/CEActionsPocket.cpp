@@ -122,19 +122,17 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_sky = (gameid == "sky");
 	bool is_comi = (strncmp(gameid.c_str(), "comi", 4) == 0);
 	bool is_gob = (strncmp(gameid.c_str(), "gob", 3) == 0);
-	bool is_ite = ((strncmp(gameid.c_str(), "ite", 3) == 0) ||
-				  (strncmp(gameid.c_str(), "ihnm", 4) == 0));
+	bool is_saga = (gameid == "saga");
 	bool is_kyra = (gameid == "kyra1");
 	bool is_samnmax = (gameid == "samnmax");
-	bool is_fw = (gameid == "fw");
-	bool is_os = (gameid == "os");
+	bool is_cine = (gameid == "cine");
 	bool is_touche = (gameid == "touche");
 	bool is_agi = (gameid == "agi");
 
 	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_samnmax || is_fw || is_os || is_touche)
+	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_samnmax || is_cine || is_touche)
 		_right_click_needed = true;
 
 	// See if a "hide toolbar" mapping could be needed
@@ -148,13 +146,13 @@ void CEActionsPocket::initInstanceGame() {
 	// Save
 	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche)
 		_action_enabled[POCKET_ACTION_SAVE] = false;
-	else if (is_queen || is_ite) {
+	else if (is_queen || is_saga) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
 		_key_action[POCKET_ACTION_SAVE].setAscii(286); // F5 key for FOTAQ & ITE
 	} else if (is_sky) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
 		_key_action[POCKET_ACTION_SAVE].setAscii(63);
-	} else if (is_fw || is_os) {
+	} else if (is_cine) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
 		_key_action[POCKET_ACTION_SAVE].setAscii(291); // F10
 	} else if (is_agi) {
@@ -167,9 +165,9 @@ void CEActionsPocket::initInstanceGame() {
 	// Quit
 	_action_enabled[POCKET_ACTION_QUIT] = true;
 	// Skip
-	if (!is_fw && !is_os)
+	if (!is_cine)
 		_action_enabled[POCKET_ACTION_SKIP] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_ite || is_kyra || is_touche)
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_saga || is_kyra || is_touche)
 		_key_action[POCKET_ACTION_SKIP].setAscii(VK_ESCAPE);
 	else
 		_key_action[POCKET_ACTION_SKIP].setAscii(KEY_ALL_SKIP);
