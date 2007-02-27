@@ -813,13 +813,16 @@ bool ThemeModern::addDirtyRect(Common::Rect r, bool backup, bool special) {
 
 void ThemeModern::colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end, uint factor) {
 	OverlayColor *ptr = (OverlayColor*)_screen.getBasePtr(r.left, r.top);
-	int h = r.height();
-	while (h--) {
-		OverlayColor col = calcGradient(start, end, r.height()-h, r.height(), factor);
-		for (int i = 0; i < r.width(); ++i) {
-			ptr[i] = col;
+	const int h = r.height();
+	const int w = r.width();
+	const int lastRow = r.height() - 1;
+	const int ptrAdd = _screen.w - r.width();
+	for (int l = 0; l < h; ++l) { 
+		OverlayColor col = calcGradient(start, end, l, lastRow, factor);
+		for (int i = 0; i < w; ++i) {
+			*ptr++ = col;
 		}
-		ptr += _screen.w;
+		ptr += ptrAdd;
 	}
 }
 
@@ -867,8 +870,8 @@ void ThemeModern::drawRectMasked(const Common::Rect &r, const Graphics::Surface 
 			usedHeight = specialHeight;
 		}
 
-		OverlayColor startCol = calcGradient(start, end, yPos-r.top, r.height(), factor);
-		OverlayColor endCol = calcGradient(start, end, yPos-r.top+usedHeight, r.height(), factor);
+		OverlayColor startCol = calcGradient(start, end, yPos-r.top, r.height()-1, factor);
+		OverlayColor endCol = calcGradient(start, end, yPos-r.top+usedHeight, r.height()-1, factor);
 
 		for (int i = 0; i < partsW; ++i) {
 			// calculate the correct drawing width
@@ -1088,21 +1091,26 @@ void ThemeModern::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surfa
 	if (h <= 0)
 		return;
 
-#define NO_EFFECT(x, y) (src[x] & rowColor)
-#define ALPHA_EFFECT(x, y) (getColorAlpha(src[x] & rowColor, dst[y], alpha))
-#define DARKEN_EFFECT(x, y) (calcDimColor(src[x] & rowColor))
+#define NO_EFFECT(x) ((x) & rowColor)
+#define ALPHA_EFFECT(x) (getColorAlpha((x) & rowColor, *dst, alpha))
+#define DARKEN_EFFECT(x) (calcDimColor((x) & rowColor))
 
 #define LEFT_RIGHT_OFFSET(x) (drawWidth-x-1)
 #define NORMAL_OFFSET(x) (x)
 
 #define blitSurface(a, b) \
+		const int dstAdd = _screen.w - drawWidth; \
+		const int lastRow = r.height() - 1; \
 		for (int i = 0; i < h; ++i) { \
-			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor); \
-			for (int x = 0; x < drawWidth; ++x) { \
-				if (src[a(x)] != transparency) \
-					dst[x] = b(a(x), x); \
+			OverlayColor rowColor = calcGradient(start, end, i, lastRow, factor); \
+			for (int x = 0; x < drawWidth; ++x, ++dst) { \
+				OverlayColor col = src[a(x)]; \
+				if (col != transparency) { \
+					col = b(col); \
+					*dst = col; \
+				} \
 			} \
-			dst += _screen.w; \
+			dst += dstAdd; \
 			src += srcAdd; \
 		}
 	if (alpha >= 256) {
