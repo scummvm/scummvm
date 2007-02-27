@@ -81,7 +81,7 @@ enum {
 };
 #endif
 
-static const char *savePeriodLabels[] = { "Never", "each 5 mins", "each 10 mins", "each 15 mins", "each 30 mins", 0 };
+static const char *savePeriodLabels[] = { "Never", "every 5 mins", "every 10 mins", "every 15 mins", "every 30 mins", 0 };
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
 
 
