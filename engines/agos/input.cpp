@@ -549,9 +549,11 @@ bool AGOSEngine::processSpecialKeys() {
 		}
 	case '+':
 		midi.setVolume(midi.getVolume() + 16);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 16);
 		break;
 	case '-':
 		midi.setVolume(midi.getVolume() - 16);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) - 16);
 		break;
 	case 'm':
 		midi.pause(_musicPaused ^= 1);
