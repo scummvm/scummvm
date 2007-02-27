@@ -576,7 +576,7 @@ void ThemeModern::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, co
 						/*(state == kStateDisabled) ? -30 : */256, _colors[kTabBackgroundStart], _colors[kTabBackgroundEnd],
 						_gradientFactors[kTabFactor]);
 	
-	OverlayColor tabEnd = calcGradient(_colors[kTabActiveStart], _colors[kTabActiveEnd], tabHeight, r.height(), _gradientFactors[kTabFactor]);
+	OverlayColor tabEnd = calcGradient(_colors[kTabActiveStart], _colors[kTabActiveEnd], tabHeight, r.height()-1, _gradientFactors[kTabFactor]);
 
 	const int tabOffset = 1;
 
