@@ -70,7 +70,9 @@ static const char *lastPathComponent(const Common::String &str) {
 }
 
 AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
-	return AbstractFilesystemNode::getRoot();
+	char path[MAXPATHLEN];
+	getcwd(path, MAXPATHLEN);
+	return new SymbianFilesystemNode(path);
 }
 
 AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
@@ -97,16 +99,20 @@ SymbianFilesystemNode::SymbianFilesystemNode(const String &path) {
 		_isPseudoRoot = false;
 
 	_path = path;
-	const char *dsplName = NULL, *pos = path.c_str();
-	// FIXME -- why is this code scanning for a slash '/' when the rest of
-	// the code in this file uses backslashes '\' ?
-	// TODO: Use lastPathComponent here.
-	while (*pos)
-		if (*pos++ == '/')
-			dsplName = pos;
-	_displayName = String(dsplName);
-	_isValid = true;
-	_isDirectory = true;
+	_displayName = lastPathComponent(_path);
+
+	TEntry fileAttribs;
+	TFileName fname;
+	TPtrC8 ptr((const unsigned char*)_path.c_str(),_path.size());
+	fname.Copy(ptr);
+
+	if (CEikonEnv::Static()->FsSession().Entry(fname, fileAttribs) == KErrNone) {
+		_isValid = true;
+		_isDirectory = fileAttribs.IsDir();
+	} else {
+		_isValid = false;
+		_isDirectory = false;
+	}
 }
 
 bool SymbianFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
