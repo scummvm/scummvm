@@ -344,11 +344,13 @@ void Sound::initCowSystem(void) {
 	}
 #endif
 #ifdef USE_MAD
-	sprintf(cowName, "SPEECH%d.CL3", SwordEngine::_systemVars.currentCD);
-	_cowFile.open(cowName);
-	if (_cowFile.isOpen()) {
-		debug(1, "Using MP3 compressed Speech Cluster");
-		_cowMode = CowMp3;
+	if (!_cowFile.isOpen()) {
+		sprintf(cowName, "SPEECH%d.CL3", SwordEngine::_systemVars.currentCD);
+		_cowFile.open(cowName);
+		if (_cowFile.isOpen()) {
+			debug(1, "Using MP3 compressed Speech Cluster");
+			_cowMode = CowMp3;
+		}
 	}
 #endif
 	if (!_cowFile.isOpen()) {
