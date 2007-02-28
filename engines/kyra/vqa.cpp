@@ -230,26 +230,21 @@ bool VQAMovie::open(const char *filename) {
 			_header.maxCBFZSize = _file.readUint32LE();
 			_header.unk5        = _file.readUint32LE();
 
-			// Version 1 VQA files have some implicit defaults
+			// Kyrandia 3 uses version 1 VQA files, and is the only
+			// known game to do so. This version of the format has
+			// some implicit default values.
 
 			if (_header.version == 1) {
-				if (_header.flags & 1) {
-					if (_header.freq == 0)
-						_header.freq = 22050;
-					if (_header.channels == 0)
-						_header.channels = 1;
-					if (_header.bits == 0)
-						_header.bits = 8;
-				}
+				if (_header.freq == 0)
+					_header.freq = 22050;
+				if (_header.channels == 0)
+					_header.channels = 1;
+				if (_header.bits == 0)
+					_header.bits = 8;
 			}
 
 			setX((Screen::SCREEN_W - _header.width) / 2);
 			setY((Screen::SCREEN_H - _header.height) / 2);
-
-			// HACK: I've only seen 8-bit mono audio in Kyra 3
-
-			assert(_header.bits == 8);
-			assert(_header.channels == 1);
 
 			_frameInfo = new uint32[_header.numFrames];
 			_frame = new byte[_header.width * _header.height];
@@ -268,7 +263,19 @@ bool VQAMovie::open(const char *filename) {
 			_numPartialCodeBooks = 0;
 
 			if (_header.flags & 1) {
-				// TODO/FIXME: Shouldn't we set FLAG_STEREO if _header.channels == 2 (wonders Fingolfin)
+				// This VQA movie has sound. Kyrandia 3 uses
+				// 8-bit sound, and so far testing indicates
+				// that it's all mono.
+				//
+				// This is good, because it means we won't have
+				// to worry about the confusing parts of the
+				// VQA spec, where 8- and 16-bit data have 
+				// different signedness and stereo sample
+				// layout varies between different games.
+
+				assert(_header.bits == 8);
+				assert(_header.channels == 1);
+
 				_stream = Audio::makeAppendableAudioStream(_header.freq, Audio::Mixer::FLAG_UNSIGNED);
 			} else {
 				_stream = NULL;
@@ -297,7 +304,8 @@ bool VQAMovie::open(const char *filename) {
 			// HACK: This flag is set in jung2.vqa, and its
 			// purpose, if it has one, is unknown. It can't be a
 			// general purpose flag, because in large movies the
-			// frame offsets can be large enough to set this flag.
+			// frame offsets can be large enough to set this flag,
+			// though of course never for the first frame.
 			//
 			// At least in my copy of Kyrandia 3, _frameInfo[0] is
 			// 0x81000098, and the desired index is 0x4716. So the
