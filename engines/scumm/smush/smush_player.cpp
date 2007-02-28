@@ -366,7 +366,7 @@ void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frame
 		_smixer->addChannel(c);
 	}
 
-	if (_middleAudio || (index == 0)) {
+	if (_middleAudio || index == 0) {
 		c->setParameters(max_frames, flags, vol, pan, index);
 	} else {
 		c->checkParameters(index, max_frames, flags, vol, pan);

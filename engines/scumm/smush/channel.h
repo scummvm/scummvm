@@ -73,9 +73,6 @@ private:
 	bool _keepSize;
 
 protected:
-	void handleStrk(Chunk &c);
-	void handleSmrk(Chunk &c);
-	void handleShdr(Chunk &c);
 	bool handleSubTags(int32 &offset);
 
 public:
@@ -106,9 +103,6 @@ private:
 protected:
 	void decode();
 	bool handleMap(Chunk &c);
-	bool handleFormat(Chunk &c);
-	bool handleRegion(Chunk &c);
-	bool handleStop(Chunk &c);
 	bool handleSubTags(int32 &offset);
 
 public:

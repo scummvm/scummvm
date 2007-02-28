@@ -101,43 +101,30 @@ bool ImuseChannel::appendData(Chunk &b, int32 size) {
 	return true;
 }
 
-bool ImuseChannel::handleFormat(Chunk &src) {
-	if (src.size() != 20) error("invalid size for FRMT Chunk");
-	/*uint32 imuse_start =*/ src.readUint32BE();
-	src.skip(4);
-	_bitsize = src.readUint32BE();
-	_rate = src.readUint32BE();
-	_channels = src.readUint32BE();
-	assert(_channels == 1 || _channels == 2);
-	return true;
-}
-
-bool ImuseChannel::handleRegion(Chunk &src) {
-	if (src.size() != 8)
-		error("invalid size for REGN Chunk");
-	return true;
-}
-
-bool ImuseChannel::handleStop(Chunk &src) {
-	if (src.size() != 4)
-		error("invalid size for STOP Chunk");
-	return true;
-}
-
 bool ImuseChannel::handleMap(Chunk &map) {
 	while (!map.eos()) {
 		Chunk *sub = map.subBlock();
 		switch (sub->getType()) {
 		case MKID_BE('FRMT'):
-			handleFormat(*sub);
+			if (sub->size() != 20)
+				error("invalid size for FRMT Chunk");
+			/*uint32 imuse_start =*/ sub->readUint32BE();
+			sub->skip(4);
+			_bitsize = sub->readUint32BE();
+			_rate = sub->readUint32BE();
+			_channels = sub->readUint32BE();
+			assert(_channels == 1 || _channels == 2);
 			break;
 		case MKID_BE('TEXT'):
+			// Ignore this
 			break;
 		case MKID_BE('REGN'):
-			handleRegion(*sub);
+			if (sub->size() != 8)
+				error("invalid size for REGN Chunk");
 			break;
 		case MKID_BE('STOP'):
-			handleStop(*sub);
+			if (sub->size() != 4)
+				error("invalid size for STOP Chunk");
 			break;
 		default:
 			error("Unknown iMUS subChunk found : %s, %d", tag2str(sub->getType()), sub->size());

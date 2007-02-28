@@ -40,23 +40,6 @@ bool SaudChannel::isTerminated() const {
 	return (_markReached && _dataSize == 0 && _sbuffer == 0);
 }
 
-void SaudChannel::handleStrk(Chunk &b) {
-	int32 size = b.size();
-	if (size != 14 && size != 10) {
-		error("STRK has an invalid size : %d", size);
-	}
-}
-
-void SaudChannel::handleSmrk(Chunk &b) {
-	_markReached = true;
-}
-
-void SaudChannel::handleShdr(Chunk &b) {
-	int32 size = b.size();
-	if (size != 4)
-		error("SHDR has an invalid size : %d", size);
-}
-
 bool SaudChannel::handleSubTags(int32 &offset) {
 	if (_tbufferSize - offset >= 8) {
 		Chunk::type type = READ_BE_UINT32(_tbuffer + offset);
@@ -68,7 +51,9 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			_inData = false;
 			if (available_size >= (size + 8)) {
 				MemoryChunk c((byte *)_tbuffer + offset);
-				handleStrk(c);
+				if (c.size() != 14 && c.size() != 10) {
+					error("STRK has an invalid size : %d", c.size());
+				}
 			} else
 				return false;
 			break;
@@ -76,7 +61,7 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			_inData = false;
 			if (available_size >= (size + 8)) {
 				MemoryChunk c((byte *)_tbuffer + offset);
-				handleSmrk(c);
+				_markReached = true;
 			} else
 				return false;
 			break;
@@ -84,7 +69,8 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			_inData = false;
 			if (available_size >= (size + 8)) {
 				MemoryChunk c((byte *)_tbuffer + offset);
-				handleShdr(c);
+				if (c.size() != 4)
+					error("SHDR has an invalid size : %d", c.size());
 			} else
 				return false;
 			break;
