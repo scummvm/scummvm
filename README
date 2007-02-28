@@ -1259,32 +1259,32 @@ to read the encoder documentation before you use other values.
 
 7.7.6) Compressing sfx/speech in Simon the Sorcerer and The Feeble Files
 ------ -----------------------------------------------------------------
-Use our compress_simon utility from the scummvm-tools package to perform this
+Use our compress_agos utility from the scummvm-tools package to perform this
 task. You can choose between multiple target formats, but note that you can
 only use each if ScummVM was compiled with the respective decoder support
 enabled.
 
-  compress_simon effects     (For Acorn CD version of Simon 1)
-  compress_simon simon       (For Acorn CD version of Simon 1)
-  compress_simon effects.voc (For DOS CD version of Simon 1)
-  compress_simon simon.voc   (For DOS CD version of Simon 1)
-  compress_simon simon.wav   (For Windows CD version of Simon 1)
-  compress_simon simon2.voc  (For DOS CD version of Simon 2)
-  compress_simon simon2.wav  (For Windows CD version of Simon 2)
-  compress_simon mac         (For Macintosh version of Simon 2)
+  compress_agos effects     (For Acorn CD version of Simon 1)
+  compress_agos simon       (For Acorn CD version of Simon 1)
+  compress_agos effects.voc (For DOS CD version of Simon 1)
+  compress_agos simon.voc   (For DOS CD version of Simon 1)
+  compress_agos simon.wav   (For Windows CD version of Simon 1)
+  compress_agos simon2.voc  (For DOS CD version of Simon 2)
+  compress_agos simon2.wav  (For Windows CD version of Simon 2)
+  compress_agos mac         (For Macintosh version of Simon 2)
 
-  compress_simon voices1.wav (For Windows 2CD/4CD version of Feeble)
-  compress_simon voices2.wav (For Windows 2CD/4CD version of Feeble)
-  compress_simon voices3.wav (For Windows 4CD version of Feeble)
-  compress_simon voices4.wav (For Windows 4CD version of Feeble)
+  compress_agos voices1.wav (For Windows 2CD/4CD version of Feeble)
+  compress_agos voices2.wav (For Windows 2CD/4CD version of Feeble)
+  compress_agos voices3.wav (For Windows 4CD version of Feeble)
+  compress_agos voices4.wav (For Windows 4CD version of Feeble)
 
 For Ogg Vorbis add --vorbis to the options, i.e.
 
-  compress_simon --vorbis
+  compress_agos --vorbis
 
 For Flac add --flac and optional parameters, i.e.
 
-  compress_simon --flac --best -b 1152
+  compress_agos --flac --best -b 1152
 
 Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy this
 file to your game directory. You can safely remove the old file.
