@@ -462,7 +462,7 @@ void SmushPlayer::handleIACT(Chunk &b) {
 			c->checkParameters(index, nbframes, size, track_flags, unknown);
 		c->appendData(b, bsize);
 	} else {
-		byte output_data[4096];
+		// TODO: Move this code into another SmushChannel subclass?
 		byte *src = (byte *)malloc(bsize);
 		b.read(src, bsize);
 		byte *d_src = src;
@@ -477,6 +477,8 @@ void SmushPlayer::handleIACT(Chunk &b) {
 					_IACTpos += bsize;
 					bsize = 0;
 				} else {
+					byte *output_data = new byte[4096];
+
 					memcpy(_IACToutput + _IACTpos, d_src, len);
 					byte *dst = output_data;
 					byte *d_src2 = _IACToutput;
@@ -507,10 +509,10 @@ void SmushPlayer::handleIACT(Chunk &b) {
 					} while (--count);
 
 					if (!_IACTstream) {
-						_IACTstream = Audio::makeAppendableAudioStream(22050, Audio::Mixer::FLAG_STEREO | Audio::Mixer::FLAG_16BITS, 900000);
+						_IACTstream = Audio::makeAppendableAudioStream(22050, Audio::Mixer::FLAG_STEREO | Audio::Mixer::FLAG_16BITS);
 						_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_IACTchannel, _IACTstream);
 					}
-					_IACTstream->append(output_data, 0x1000);
+					_IACTstream->queueBuffer(output_data, 0x1000);
 
 					bsize -= len;
 					d_src += len;

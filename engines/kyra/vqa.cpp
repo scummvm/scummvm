@@ -268,8 +268,8 @@ bool VQAMovie::open(const char *filename) {
 			_numPartialCodeBooks = 0;
 
 			if (_header.flags & 1) {
-				// A 2-second buffer ought to be enough
-				_stream = Audio::makeAppendableAudioStream(_header.freq, Audio::Mixer::FLAG_UNSIGNED, 2 * _header.freq * _header.channels);
+				// TODO/FIXME: Shouldn't we set FLAG_STEREO if _header.channels == 2 (wonders Fingolfin)
+				_stream = Audio::makeAppendableAudioStream(_header.freq, Audio::Mixer::FLAG_UNSIGNED);
 			} else {
 				_stream = NULL;
 			}
@@ -399,9 +399,10 @@ void VQAMovie::displayFrame(uint frameNum) {
 		switch (tag) {
 		case MKID_BE('SND0'):	// Uncompressed sound
 			foundSound = true;
-			inbuf = (byte *)allocBuffer(0, size);
+			inbuf = new byte[size];
 			_file.read(inbuf, size);
-			_stream->append(inbuf, size);
+			assert(_stream);
+			_stream->queueBuffer(inbuf, size);
 			break;
 
 		case MKID_BE('SND1'):	// Compressed sound, almost like AUD
@@ -409,15 +410,18 @@ void VQAMovie::displayFrame(uint frameNum) {
 			outsize = _file.readUint16LE();
 			insize = _file.readUint16LE();
 
-			inbuf = (byte *)allocBuffer(0, insize);
+			inbuf = new byte[insize];
 			_file.read(inbuf, insize);
 
 			if (insize == outsize) {
-				_stream->append(inbuf, insize);
+				assert(_stream);
+				_stream->queueBuffer(inbuf, insize);
 			} else {
-				outbuf = (byte *)allocBuffer(1, outsize);
+				outbuf = new byte[outsize];
 				decodeSND1(inbuf, insize, outbuf, outsize);
-				_stream->append(outbuf, outsize);
+				assert(_stream);
+				_stream->queueBuffer(outbuf, outsize);
+				delete[] inbuf;
 			}
 			break;
 
@@ -589,24 +593,25 @@ void VQAMovie::play() {
 
 			switch (tag) {
 			case MKID_BE('SND0'):	// Uncompressed sound
-				inbuf = (byte *)allocBuffer(0, size);
+				inbuf = new byte[size];
 				_file.read(inbuf, size);
-				_stream->append(inbuf, size);
+				_stream->queueBuffer(inbuf, size);
 				break;
 
 			case MKID_BE('SND1'):	// Compressed sound
 				outsize = _file.readUint16LE();
 				insize = _file.readUint16LE();
 
-				inbuf = (byte *)allocBuffer(0, insize);
+				inbuf = new byte[insize];
 				_file.read(inbuf, insize);
 
 				if (insize == outsize) {
-					_stream->append(inbuf, insize);
+					_stream->queueBuffer(inbuf, insize);
 				} else {
-					outbuf = (byte *)allocBuffer(1, outsize);
+					outbuf = new byte[outsize];
 					decodeSND1(inbuf, insize, outbuf, outsize);
-					_stream->append(outbuf, outsize);
+					_stream->queueBuffer(outbuf, outsize);
+					delete[] inbuf;
 				}
 				break;
 

@@ -188,9 +188,8 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 				track->mixerFlags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
 #endif
 
-			int32 streamBufferSize = track->iteration;
 			track->stream2 = NULL;
-			track->stream = Audio::makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
+			track->stream = Audio::makeAppendableAudioStream(freq, track->mixerFlags);
 
 			const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
 			const int vol = track->vol / 1000;
@@ -324,10 +323,10 @@ void IMuseDigital::callback() {
 					if (_mixer->isReady()) {
 						_mixer->setChannelVolume(track->handle, vol);
 						_mixer->setChannelBalance(track->handle, pan);
-						track->stream->append(data, result);
+						track->stream->queueBuffer(data, result);
 						track->regionOffset += result;
-					}
-					free(data);
+					} else
+						delete[] data;
 
 					if (_sound->isEndOfRegion(track->soundHandle, track->curRegion)) {
 						switchToNextRegion(track);

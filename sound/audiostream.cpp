@@ -23,6 +23,7 @@
 #include "common/stdafx.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/list.h"
 #include "common/util.h"
 
 #include "sound/audiostream.h"
@@ -128,7 +129,6 @@ protected:
 	const int _rate;
 	const byte *_origPtr;
 
-	inline bool eosIntern() const	{ return _ptr >= _end; };
 public:
 	LinearMemoryStream(int rate, const byte *ptr, uint len, uint loopOffset, uint loopLen, bool autoFreeMemory)
 		: _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0), _rate(rate) {
@@ -154,7 +154,7 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool isStereo() const		{ return stereo; }
-	bool endOfData() const		{ return eosIntern(); }
+	bool endOfData() const		{ return _ptr >= _end; }
 
 	int getRate() const			{ return _rate; }
 };
@@ -162,7 +162,7 @@ public:
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
-	while (samples < numSamples && !eosIntern()) {
+	while (samples < numSamples && _ptr < _end) {
 		const int len = MIN(numSamples, samples + (int)(_end - _ptr) / (is16Bit ? 2 : 1));
 		while (samples < len) {
 			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _ptr, isLE);
@@ -170,7 +170,7 @@ int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buf
 			samples++;
 		}
 		// Loop, if looping was specified
-		if (_loopPtr && eosIntern()) {
+		if (_loopPtr && _ptr >= _end) {
 			_ptr = _loopPtr;
 			_end = _loopEnd;
 		}
@@ -228,6 +228,10 @@ AudioStream *makeLinearInputStream(int rate, byte flags, const byte *ptr, uint32
 #pragma mark --- Appendable audio stream ---
 #pragma mark -
 
+struct Buffer {
+	byte *start;
+	byte *end;
+};
 
 /**
  * Wrapped memory stream.
@@ -235,18 +239,22 @@ AudioStream *makeLinearInputStream(int rate, byte flags, const byte *ptr, uint32
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 class AppendableMemoryStream : public AppendableAudioStream {
 protected:
+
+	// A mutex to avoid access problems (causing e.g. corruption of
+	// the linked list) in thread aware environments.
 	Common::Mutex _mutex;
 
-	byte *_bufferStart;
-	byte *_bufferEnd;
-	byte *_pos;
-	byte *_end;
+	// List of all queueud buffers	
+	Common::List<Buffer> _bufferQueue;
+
+	// Position in the front buffer, if any
 	bool _finalized;
 	const int _rate;
+	byte *_pos;
 
-	inline bool eosIntern() const { return _end == _pos; };
+	inline bool eosIntern() const { return _bufferQueue.empty(); };
 public:
-	AppendableMemoryStream(int rate, uint bufferSize);
+	AppendableMemoryStream(int rate);
 	~AppendableMemoryStream();
 	int readBuffer(int16 *buffer, const int numSamples);
 
@@ -256,30 +264,22 @@ public:
 
 	int getRate() const			{ return _rate; }
 
-	void append(const byte *data, uint32 len);
+	void queueBuffer(byte *data, uint32 size);
 	void finish()				{ _finalized = true; }
 };
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::AppendableMemoryStream(int rate, uint bufferSize)
- : _finalized(false), _rate(rate) {
+AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::AppendableMemoryStream(int rate)
+ : _finalized(false), _rate(rate), _pos(0) {
 
-	// Verify the buffer size is sane
-	if (is16Bit && stereo)
-		assert((bufferSize & 3) == 0);
-	else if (is16Bit || stereo)
-		assert((bufferSize & 1) == 0);
-
-	_bufferStart = (byte *)malloc(bufferSize);
-	assert(_bufferStart != NULL);
-
-	_pos = _end = _bufferStart;
-	_bufferEnd = _bufferStart + bufferSize;
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::~AppendableMemoryStream() {
-	free(_bufferStart);
+	// Clear the queue
+	Common::List<Buffer>::iterator iter;
+	for (iter = _bufferQueue.begin(); iter != _bufferQueue.end(); ++iter)
+		delete[] iter->start;
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
@@ -288,12 +288,19 @@ int AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 
 
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
-		// Wrap around?
-		if (_pos >= _bufferEnd)
-			_pos = _pos - (_bufferEnd - _bufferStart);
+		Buffer buf = *_bufferQueue.begin();
+		if (_pos == 0)
+			_pos = buf.start;
 
-		const byte *endMarker = (_pos > _end) ? _bufferEnd : _end;
-		const int len = MIN(numSamples, samples + (int)(endMarker - _pos) / (is16Bit ? 2 : 1));
+		assert(buf.start <= _pos && _pos <= buf.end);
+		const int samplesLeftInCurBuffer = buf.end - _pos;
+		if (samplesLeftInCurBuffer == 0) {
+			_bufferQueue.erase(_bufferQueue.begin());
+			_pos = 0;
+			continue;
+		}
+
+		const int len = MIN(numSamples, samples + samplesLeftInCurBuffer / (is16Bit ? 2 : 1));
 		while (samples < len) {
 			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _pos, isLE);
 			_pos += (is16Bit ? 2 : 1);
@@ -305,50 +312,45 @@ int AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-void AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::append(const byte *data, uint32 len) {
+void AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::queueBuffer(byte *data, uint32 size) {
 	Common::StackLock lock(_mutex);
 
 	// Verify the buffer size is sane
 	if (is16Bit && stereo)
-		assert((len & 3) == 0);
+		assert((size & 3) == 0);
 	else if (is16Bit || stereo)
-		assert((len & 1) == 0);
+		assert((size & 1) == 0);
 
 	// Verify that the stream has not yet been finalized (by a call to finish())
 	assert(!_finalized);
 
-	if (_end + len > _bufferEnd) {
-		// Wrap-around case
-		uint32 size_to_end_of_buffer = _bufferEnd - _end;
-		len -= size_to_end_of_buffer;
-		if ((_end < _pos) || (_bufferStart + len >= _pos)) {
-			debug(2, "AppendableMemoryStream: buffer overflow (A)");
-			return;
-		}
-		memcpy(_end, data, size_to_end_of_buffer);
-		memcpy(_bufferStart, data + size_to_end_of_buffer, len);
-		_end = _bufferStart + len;
-	} else {
-		if ((_end < _pos) && (_end + len >= _pos)) {
-			debug(2, "AppendableMemoryStream: buffer overflow (B)");
-			return;
-		}
-		memcpy(_end, data, len);
-		_end += len;
-	}
+	// Queue the buffer
+	Buffer buf = {data, data+size};
+	_bufferQueue.push_back(buf);
+
+
+#if 0
+	// Output some stats
+	uint totalSize = 0;
+	Common::List<Buffer>::iterator iter;
+	for (iter = _bufferQueue.begin(); iter != _bufferQueue.end(); ++iter)
+		totalSize += iter->end - iter->start;
+	printf("AppendableMemoryStream::queueBuffer: added a %d byte buf, a total of %d bytes are queued\n",
+				size, totalSize);
+#endif
 }
 
 
 #define MAKE_WRAPPED(STEREO, UNSIGNED) \
 		if (is16Bit) { \
 			if (isLE) \
-				return new AppendableMemoryStream<STEREO, true, UNSIGNED, true>(rate, len); \
+				return new AppendableMemoryStream<STEREO, true, UNSIGNED, true>(rate); \
 			else  \
-				return new AppendableMemoryStream<STEREO, true, UNSIGNED, false>(rate, len); \
+				return new AppendableMemoryStream<STEREO, true, UNSIGNED, false>(rate); \
 		} else \
-			return new AppendableMemoryStream<STEREO, false, UNSIGNED, false>(rate, len)
+			return new AppendableMemoryStream<STEREO, false, UNSIGNED, false>(rate)
 
-AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 len) {
+AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags) {
 	const bool isStereo = (_flags & Audio::Mixer::FLAG_STEREO) != 0;
 	const bool is16Bit = (_flags & Audio::Mixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (_flags & Audio::Mixer::FLAG_UNSIGNED) != 0;

@@ -31,7 +31,8 @@
 namespace Audio {
 
 /**
- * Generic input stream for the resampling code.
+ * Generic audio input stream. Subclasses of this are used to feed arbitrary
+ * sampled audio data into ScummVM's audio mixer.
  */
 class AudioStream {
 public:
@@ -89,6 +90,13 @@ public:
 	static AudioStream* openStreamFile(const char *filename);
 };
 
+/**
+ * Factory function for a raw linear AudioStream, which will simply treat all data
+ * in the buffer described by ptr and len as raw sample data in the specified
+ * format. It will then simply pass this data directly to the mixer, after converting
+ * it to the sample format used by the mixer (i.e. 16 bit signed native endian).
+ * Optionally supports (infinite) looping of a portion of the data.
+ */
 AudioStream *makeLinearInputStream(int rate, byte flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
 
 /**
@@ -97,11 +105,29 @@ AudioStream *makeLinearInputStream(int rate, byte flags, const byte *ptr, uint32
  */
 class AppendableAudioStream : public Audio::AudioStream {
 public:
-	virtual void append(const byte *data, uint32 len) = 0;
+	
+	/**
+	 * Queue another audio data buffer for playback. The stream
+	 * will playback all queued buffers, in the order they were
+	 * queued. After all data contained in them has been played,
+	 * the buffer will be delete[]'d (so make sure to allocate them
+	 * with new[], not with malloc).
+	 */
+	virtual void queueBuffer(byte *data, uint32 size) = 0;
+	
+	/**
+	 * Mark the stream as finished, that is, signal that no further data
+	 * will be appended to it. Only after this has been done can the
+	 * AppendableAudioStream ever 'end' (
+	 */
 	virtual void finish() = 0;
 };
 
-AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 len);
+/**
+ * Factory function for an AppendableAudioStream. The rate and flags
+ * parameters are analog to those used in makeLinearInputStream.
+ */
+AppendableAudioStream *makeAppendableAudioStream(int rate, byte flags);
 
 
 } // End of namespace Audio

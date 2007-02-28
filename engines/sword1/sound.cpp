@@ -382,10 +382,8 @@ void Sound::initCowSystem(void) {
 }
 
 void Sound::closeCowSystem(void) {
-	if (_cowFile.isOpen())
-		_cowFile.close();
-	if (_cowHeader)
-		free(_cowHeader);
+	_cowFile.close();
+	free(_cowHeader);
 	_cowHeader = NULL;
 	_currentCowFile = 0;
 }

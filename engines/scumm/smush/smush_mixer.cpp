@@ -105,6 +105,7 @@ bool SmushMixer::handleFrame() {
 
 				_channels[i].chan->getParameters(stereo, is_16bit, vol, pan);
 
+				// Grab the audio data from the channel
 				int32 size = _channels[i].chan->getAvailableSoundDataSize();
 				byte *data = _channels[i].chan->getSoundData();
 
@@ -116,15 +117,16 @@ bool SmushMixer::handleFrame() {
 				}
 
 				if (_mixer->isReady()) {
+					// Stream the data
 					if (!_channels[i].stream) {
-						_channels[i].stream = Audio::makeAppendableAudioStream(_channels[i].chan->getRate(), flags, 500000);
+						_channels[i].stream = Audio::makeAppendableAudioStream(_channels[i].chan->getRate(), flags);
 						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_channels[i].handle, _channels[i].stream);
 					}
 					_mixer->setChannelVolume(_channels[i].handle, vol);
 					_mixer->setChannelBalance(_channels[i].handle, pan);
-					_channels[i].stream->append(data, size);
-				}
-				delete[] data;
+					_channels[i].stream->queueBuffer(data, size);	// The stream will free the buffer for us
+				} else
+					delete[] data;
 			}
 		}
 	}
