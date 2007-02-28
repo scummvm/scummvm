@@ -32,6 +32,15 @@
 #include "sound/flac.h"
 
 
+// This used to be an inline template function, but
+// buggy template function handling in MSVC6 forced
+// us to go with the macro approach. So far this is
+// the only template function that MSVC6 seemed to
+// compile incorrectly. Knock on wood.
+#define READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, ptr, isLE) \
+	((is16Bit ? (isLE ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr)) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
+
+
 namespace Audio {
 
 struct StreamFileFormat {
@@ -62,8 +71,7 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 	{ NULL, NULL, NULL } // Terminator
 };
 
-AudioStream* AudioStream::openStreamFile(const char *filename)
-{
+AudioStream* AudioStream::openStreamFile(const char *filename) {
 	char buffer[1024];
 	const uint len = strlen(filename);
 	assert(len+6 < sizeof(buffer)); // we need a bigger buffer if wrong

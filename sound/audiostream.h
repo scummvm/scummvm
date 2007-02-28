@@ -89,27 +89,6 @@ public:
 	static AudioStream* openStreamFile(const char *filename);
 };
 
-/**
- * A simple AudioStream which represents a 'silent' stream,
- * containing the specified number of zero samples.
- */
-class ZeroInputStream : public AudioStream {
-private:
-	int _len;
-public:
-	ZeroInputStream(uint len) : _len(len) { }
-	int readBuffer(int16 *buffer, const int numSamples) {
-		int samples = MIN(_len, numSamples);
-		memset(buffer, 0, samples * 2);
-		_len -= samples;
-		return samples;
-	}
-	bool isStereo() const { return false; }
-	bool eos() const { return _len <= 0; }
-
-	int getRate() const { return -1; }
-};
-
 AudioStream *makeLinearInputStream(int rate, byte flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
 
 /**
@@ -123,15 +102,6 @@ public:
 };
 
 AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 len);
-
-
-// This used to be an inline template function, but
-// buggy template function handling in MSVC6 forced
-// us to go with the macro approach. So far this is
-// the only template function that MSVC6 seemed to
-// compile incorrectly. Knock on wood.
-#define READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, ptr, isLE) \
-	((is16Bit ? (isLE ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr)) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
 
 
 } // End of namespace Audio
