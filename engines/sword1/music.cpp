@@ -46,7 +46,6 @@ WaveAudioStream::WaveAudioStream(Common::File *source, uint32 pSize) {
 
 	_sourceFile = source;
 	_sampleBuf = (uint8*)malloc(SMP_BUFSIZE);
-	_sourceFile->incRef();
 	if (_sourceFile->isOpen() && Audio::loadWAVFromStream(*_sourceFile, size, rate, flags)) {
 		_isStereo = (flags & Audio::Mixer::FLAG_STEREO) != 0;
 		_rate = rate;
@@ -67,7 +66,6 @@ WaveAudioStream::WaveAudioStream(Common::File *source, uint32 pSize) {
 
 WaveAudioStream::~WaveAudioStream(void) {
 	free(_sampleBuf);
-	_sourceFile->decRef();
 }
 
 int WaveAudioStream::readBuffer(int16 *buffer, const int numSamples) {

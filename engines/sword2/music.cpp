@@ -165,8 +165,6 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 CLUInputStream::CLUInputStream(Common::File *file, int size)
 	: _file(file), _firstTime(true), _bufferEnd(_outbuf + BUFFER_SIZE) {
 
-	_file->incRef();
-
 	// Determine the end position.
 	_file_pos = _file->pos();
 	_end_pos = _file_pos + size;
@@ -176,7 +174,6 @@ CLUInputStream::CLUInputStream(Common::File *file, int size)
 }
 
 CLUInputStream::~CLUInputStream() {
-	_file->decRef();
 }
 
 int CLUInputStream::readBuffer(int16 *buffer, const int numSamples) {
