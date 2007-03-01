@@ -40,9 +40,6 @@ protected:
 	/** Status flag which tells about recent I/O failures. */
 	bool _ioFailed;
 
-	/** Simple ref-counter for File objects. */
-	int32 _refcount;
-
 	/** The name of this file, for debugging. */
 	String _name;
 
@@ -80,30 +77,6 @@ public:
 	 * @return: true if the file exists, else false
 	 */
 	static bool exists(const String &filename);
-
-	/**
-	 * Increases the reference counter of the file object.
-	 * This can be used to share file objects between different
-	 * parts of the code. Some systems (like Symbian don't support
-	 * it thought). It should just be used on file objects
-	 * allocated with new, since decRef destroys the object
-	 * with delete if the counter reaches zero.
-	 *
-	 * This is a possible candidate to be reworked in the future
-	 * see the TODO list for more information.
-	 */
-	void incRef();
-
-	/**
-	 * Decreases the reference counter of the file object.
-	 * If the counter is zero after this call, the file object will
-	 * be deleted, with delete. It should just be used on file objects
-	 * allocated with new out of that reason.
-	 *
-	 * This is a possible candidate to be reworked in the future
-	 * see the TODO list for more information.
-	 */
-	void decRef();
 
 	virtual bool open(const String &filename, AccessMode mode = kFileReadMode);
 	virtual bool open(const FilesystemNode &node, AccessMode mode = kFileReadMode);

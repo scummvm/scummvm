@@ -167,7 +167,7 @@ void File::resetDefaultDirectories() {
 }
 
 File::File()
-	: _handle(0), _ioFailed(false), _refcount(1) {
+	: _handle(0), _ioFailed(false) {
 }
 
 //#define DEBUG_FILE_REFCOUNT
@@ -177,21 +177,6 @@ File::~File() {
 	warning("File::~File on file '%s'", _name.c_str());
 #endif
 	close();
-}
-void File::incRef() {
-#ifdef DEBUG_FILE_REFCOUNT
-	warning("File::incRef on file '%s'", _name.c_str());
-#endif
-	_refcount++;
-}
-
-void File::decRef() {
-#ifdef DEBUG_FILE_REFCOUNT
-	warning("File::decRef on file '%s'", _name.c_str());
-#endif
-	if (--_refcount == 0) {
-		delete this;
-	}
 }
 
 
