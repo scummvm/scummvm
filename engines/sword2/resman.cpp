@@ -423,27 +423,27 @@ Common::File *ResourceManager::openCluFile(uint16 fileNum) {
 }
 
 void ResourceManager::readCluIndex(uint16 fileNum, Common::File *file) {
-	if (_resFiles[fileNum].entryTab == NULL) {
-		// we didn't read from this file before, get its index table
-		assert(file);
+	// we didn't read from this file before, get its index table
+	assert(_resFiles[fileNum].entryTab == NULL);
+	assert(file);
 
-		// 1st DWORD of a cluster is an offset to the look-up table
-		uint32 table_offset = file->readUint32LE();
-		debug(6, "table offset = %d", table_offset);
-		uint32 tableSize = file->size() - table_offset; // the table is stored at the end of the file
-		file->seek(table_offset);
+	// 1st DWORD of a cluster is an offset to the look-up table
+	uint32 table_offset = file->readUint32LE();
+	debug(6, "table offset = %d", table_offset);
+	uint32 tableSize = file->size() - table_offset; // the table is stored at the end of the file
+	file->seek(table_offset);
 
-		assert((tableSize % 8) == 0);
-		_resFiles[fileNum].entryTab = (uint32*)malloc(tableSize);
-		_resFiles[fileNum].numEntries = tableSize / 8;
-		file->read(_resFiles[fileNum].entryTab, tableSize);
-		if (file->ioFailed())
-			error("unable to read index table from file %s\n", _resFiles[fileNum].fileName);
+	assert((tableSize % 8) == 0);
+	_resFiles[fileNum].entryTab = (uint32*)malloc(tableSize);
+	_resFiles[fileNum].numEntries = tableSize / 8;
+	file->read(_resFiles[fileNum].entryTab, tableSize);
+	if (file->ioFailed())
+		error("unable to read index table from file %s\n", _resFiles[fileNum].fileName);
+
 #ifdef SCUMM_BIG_ENDIAN
-		for (int tabCnt = 0; tabCnt < _resFiles[fileNum].numEntries * 2; tabCnt++)
-			_resFiles[fileNum].entryTab[tabCnt] = FROM_LE_32(_resFiles[fileNum].entryTab[tabCnt]);
+	for (int tabCnt = 0; tabCnt < _resFiles[fileNum].numEntries * 2; tabCnt++)
+	  _resFiles[fileNum].entryTab[tabCnt] = FROM_LE_32(_resFiles[fileNum].entryTab[tabCnt]);
 #endif
-	}
 }
 
 /**
