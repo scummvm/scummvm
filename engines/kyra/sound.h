@@ -310,7 +310,6 @@ private:
 	Audio::Mixer *_mixer;
 
 	struct Sound {
-		Common::File *fileHandle;
 		Audio::SoundHandle handle;
 		AUDStream *stream;
 	} _sounds[SOUND_STREAMS];

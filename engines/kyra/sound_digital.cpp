@@ -79,20 +79,9 @@ const int8 AUDStream::WSTable4Bit[] = {
 	 0,  1,  2,  3,  4,  5,  6,  8
 };
 
-AUDStream::AUDStream(Common::File *file, bool loop) : _file(0), _endOfData(true), _rate(0),
+AUDStream::AUDStream(Common::File *file, bool loop) : _file(file), _endOfData(true), _rate(0),
 	_processedSize(0), _totalSize(0), _bytesLeft(0), _outBuffer(0),
 	_outBufferOffset(0), _outBufferSize(0), _inBuffer(0), _inBufferSize(0) {
-#if defined(__SYMBIAN32__)
-	// Symbian can't share filehandles between different threads.
-	// So create a new file and seek that to the other filehandle's
-	// position
-	_file = new Common::File;
-	_file->open(file->name());
-	_file->seek(file->pos());
-#else
-	_file = file;
-#endif
-	_file->incRef();
 	
 	_rate = _file->readUint16LE();
 	_totalSize = _file->readUint32LE();
@@ -119,12 +108,7 @@ AUDStream::AUDStream(Common::File *file, bool loop) : _file(0), _endOfData(true)
 AUDStream::~AUDStream() {
 	delete [] _outBuffer;
 	delete [] _inBuffer;
-
-	if (_file)
-		_file->decRef();
-#ifdef __SYMBIAN32__
 	delete _file;
-#endif
 }
 
 void AUDStream::beginFadeIn() {
@@ -353,7 +337,7 @@ int SoundDigital::playSound(Common::File *fileHandle, bool loop, bool fadeIn, in
 		use = &_sounds[channel];
 	} else {
 		for (channel = 0; channel < SOUND_STREAMS; ++channel) {
-			if (!_sounds[channel].fileHandle) {
+			if (!_sounds[channel].stream) {
 				use = &_sounds[channel];
 				break;
 			}
@@ -361,6 +345,7 @@ int SoundDigital::playSound(Common::File *fileHandle, bool loop, bool fadeIn, in
 		
 		if (!use) {
 			warning("no free sound channel");
+			delete fileHandle;
 			return -1;
 		}
 	}
@@ -368,7 +353,7 @@ int SoundDigital::playSound(Common::File *fileHandle, bool loop, bool fadeIn, in
 	use->stream = new AUDStream(fileHandle, loop);
 	if (use->stream->endOfData()) {
 		delete use->stream;
-		delete fileHandle;
+		use->stream = 0;
 
 		return -1;
 	}
@@ -378,7 +363,6 @@ int SoundDigital::playSound(Common::File *fileHandle, bool loop, bool fadeIn, in
 	
 	// TODO: set correct sound type from channel id
 	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &use->handle, use->stream);
-	use->fileHandle = fileHandle;
 	
 	return use - _sounds;
 }
@@ -393,14 +377,9 @@ bool SoundDigital::isPlaying(int channel) {
 }
 
 void SoundDigital::stopSound(int channel) {
-	if (isPlaying(channel)) {
-		_mixer->stopHandle(_sounds[channel].handle);
-	}
-	
-	if (_sounds[channel].fileHandle) {
-		delete _sounds[channel].fileHandle;
-		_sounds[channel].fileHandle = 0;
-	}
+	assert(channel >= 0 && channel < SOUND_STREAMS);
+	_mixer->stopHandle(_sounds[channel].handle);
+	_sounds[channel].stream = 0;
 }
 
 void SoundDigital::beginFadeOut(int channel) {
