@@ -425,10 +425,7 @@ Common::File *ResourceManager::openCluFile(uint16 fileNum) {
 void ResourceManager::readCluIndex(uint16 fileNum, Common::File *file) {
 	if (_resFiles[fileNum].entryTab == NULL) {
 		// we didn't read from this file before, get its index table
-		if (file == NULL)
-			file = openCluFile(fileNum);
-		else
-			file->incRef();
+		assert(file);
 
 		// 1st DWORD of a cluster is an offset to the look-up table
 		uint32 table_offset = file->readUint32LE();
@@ -446,7 +443,6 @@ void ResourceManager::readCluIndex(uint16 fileNum, Common::File *file) {
 		for (int tabCnt = 0; tabCnt < _resFiles[fileNum].numEntries * 2; tabCnt++)
 			_resFiles[fileNum].entryTab[tabCnt] = FROM_LE_32(_resFiles[fileNum].entryTab[tabCnt]);
 #endif
-		file->decRef();
 	}
 }
 
@@ -491,7 +487,9 @@ uint32 ResourceManager::fetchLen(uint32 res) {
 	// open the cluster file
 
 	if (_resFiles[parent_res_file].entryTab == NULL) {
-		readCluIndex(parent_res_file);
+		Common::File *file = openCluFile(parent_res_file);
+		readCluIndex(parent_res_file, file);
+		delete file;
 	}
 	return _resFiles[parent_res_file].entryTab[actual_res * 2 + 1];
 }

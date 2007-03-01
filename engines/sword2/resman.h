@@ -54,7 +54,7 @@ struct ResourceFile {
 class ResourceManager {
 private:
 	Common::File *openCluFile(uint16 fileNum);
-	void readCluIndex(uint16 fileNum, Common::File *file = NULL);
+	void readCluIndex(uint16 fileNum, Common::File *file);
 	void removeFromCacheList(Resource *res);
 	void addToCacheList(Resource *res);
 	void checkMemUsage();
