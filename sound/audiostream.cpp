@@ -113,11 +113,10 @@ AudioStream* AudioStream::openStreamFile(const char *filename) {
  * block of data, which is passed to it upon creation.
  * Optionally supports looping the sound.
  *
- * Design note: This code tries to be as optimized as possible (without
+ * Design note: This code tries to be as efficient as possible (without
  * resorting to assembly, that is). To this end, it is written as a template
- * class. This way the compiler can actually create optimized code for each
- * special code. This results in a total of 12 versions of the code being
- * generated.
+ * class. This way the compiler can create optimized code for each special
+ * case. This results in a total of 12 versions of the code being generated.
  */
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 class LinearMemoryStream : public AudioStream {
