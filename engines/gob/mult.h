@@ -91,8 +91,8 @@ public:
 		int8 destY;                         // New in GOB2
 		int8 gobDestX;                      // New in GOB2
 		int8 gobDestY;                      // New in GOB2
-		int8 nearestWayPoint;               // New in GOB2
-		int8 nearestDest;                   // New in GOB2
+		uint8 nearestWayPoint;              // New in GOB2
+		uint8 nearestDest;                  // New in GOB2
 		int8 field_22;                      // New in GOB2
 		int8 someFlag;                      // New in GOB2
 		int8 field_24;                      // New in GOB2
