@@ -155,17 +155,6 @@ void Mixer::playRaw(
 			uint32 size, uint rate, byte flags,
 			int id, byte volume, int8 balance,
 			uint32 loopStart, uint32 loopEnd) {
-	Common::StackLock lock(_mutex);
-
-	// Prevent duplicate sounds
-	if (id != -1) {
-		for (int i = 0; i != NUM_CHANNELS; i++)
-			if (_channels[i] != 0 && _channels[i]->getId() == id) {
-				if ((flags & Mixer::FLAG_AUTOFREE) != 0)
-					free(sound);
-				return;
-			}
-	}
 
 	// Create the input stream
 	AudioStream *input;
@@ -179,12 +168,9 @@ void Mixer::playRaw(
 	} else {
 		input = makeLinearInputStream(rate, flags, (byte *)sound, size, 0, 0);
 	}
-
-	// Create the channel
-	Channel *chan = new Channel(this, type, input, true, (flags & Mixer::FLAG_REVERSE_STEREO) != 0, id);
-	chan->setVolume(volume);
-	chan->setBalance(balance);
-	insertChannel(handle, chan);
+	
+	// Play it
+	playInputStream(type, handle, input, id, volume, balance, true, false, (flags & Mixer::FLAG_REVERSE_STEREO));
 }
 
 void Mixer::playInputStream(
@@ -193,7 +179,8 @@ void Mixer::playInputStream(
 			AudioStream *input,
 			int id, byte volume, int8 balance,
 			bool autofreeStream,
-			bool permanent) {
+			bool permanent,
+			bool reverseStereo) {
 	Common::StackLock lock(_mutex);
 
 	if (input == 0) {
@@ -212,7 +199,7 @@ void Mixer::playInputStream(
 	}
 
 	// Create the channel
-	Channel *chan = new Channel(this, type, input, autofreeStream, false, id, permanent);
+	Channel *chan = new Channel(this, type, input, autofreeStream, reverseStereo, id, permanent);
 	chan->setVolume(volume);
 	chan->setBalance(balance);
 	insertChannel(handle, chan);

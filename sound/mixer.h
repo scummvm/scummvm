@@ -158,13 +158,16 @@ public:
 	 *                          freed after playback finished
 	 * @param permanent	a flag indicating whether a plain stopAll call should
 	 *                  not stop this particular stream
+	 * @param reverseStereo	a flag indicating whether left and right channels shall be swapped
 	 */
 	void playInputStream(
 		SoundType type,
 		SoundHandle *handle,
 		AudioStream *input,
 		int id = -1, byte volume = 255, int8 balance = 0,
-		bool autofreeStream = true, bool permanent = false);
+		bool autofreeStream = true,
+		bool permanent = false,
+		bool reverseStereo = false);
 
 
 
