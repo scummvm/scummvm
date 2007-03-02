@@ -89,5 +89,24 @@ void openLocation(const char *name, char* script) {
 
 }
 
+void loadHead(const char* name, StaticCnv* cnv) {
+
+	char path[PATH_LEN];
+
+	if (!scumm_strnicmp(name, "mini", 4)) {
+		name += 4;
+	}
+
+	snprintf(path, 8, "%shead", name);
+	path[8] = '\0';
+
+	_vm->_graphics->loadExternalStaticCnv(path, cnv);
+
+}
+
+
+void loadPointer(StaticCnv* cnv) {
+	_vm->_graphics->loadExternalStaticCnv("pointer", cnv);
+}
 
 } // namespace Parallaction

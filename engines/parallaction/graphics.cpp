@@ -509,7 +509,7 @@ void jobEraseLabel(void *parm, Job *j) {
 
 void Graphics::initMouse(uint16 arg_0) {
 
-	loadExternalStaticCnv("pointer", &_mouseComposedArrow);
+	loadPointer(&_mouseComposedArrow);
 
 	byte temp[16*16];
 	memcpy(temp, _mouseArrow, 16*16);

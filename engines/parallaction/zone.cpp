@@ -416,20 +416,8 @@ void displayItemComment(ExamineData *data) {
 	_vm->_graphics->flatBlitCnv(&data->_cnv, 140, (SCREEN_HEIGHT - data->_cnv._height)/2, Graphics::kBitFront, data->_cnv._data1);
 	_vm->_graphics->freeStaticCnv(&data->_cnv);
 
-	char *v4 = _vm->_characterName;
-	if (!scumm_strnicmp(v4, "mini", 4)) {
-		v4 += 4;
-	}
-
 	StaticCnv cnv;
-
-	sprintf(v68, "%shead", v4);
-
-	// WORKAROUND
-	// dos file names are in 8.3 format
-	v68[8] = '\0';
-
-	_vm->_graphics->loadExternalStaticCnv(v68, &cnv);
+	loadHead(_vm->_characterName, &cnv);
 
 	int16 v6A = 0, v6C = 0;
 
