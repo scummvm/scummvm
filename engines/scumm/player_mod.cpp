@@ -91,7 +91,7 @@ void Player_MOD::startChannel(int id, void *data, int size, int rate, uint8 vol,
 	_channels[i].vol = vol;
 	_channels[i].pan = pan;
 	_channels[i].freq = rate;
-	_channels[i].input = Audio::makeLinearInputStream(rate, Audio::Mixer::FLAG_AUTOFREE | (loopStart != loopEnd ? Audio::Mixer::FLAG_LOOP : 0), (const byte*)data, size, loopStart, loopEnd - loopStart);
+	_channels[i].input = Audio::makeLinearInputStream((const byte*)data, size, rate, Audio::Mixer::FLAG_AUTOFREE | (loopStart != loopEnd ? Audio::Mixer::FLAG_LOOP : 0), loopStart, loopEnd);
 	_channels[i].converter = Audio::makeRateConverter(rate, _mixer->getOutputRate(), false, false);
 }
 

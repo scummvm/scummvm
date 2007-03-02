@@ -154,7 +154,7 @@ AudioStream *makeVOCStream(Common::ReadStream &stream) {
 	if (!data)
 		return 0;
 
-	return makeLinearInputStream(rate, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED, data, size, 0, 0);
+	return makeLinearInputStream(data, size, rate, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED, 0, 0);
 }
 
 

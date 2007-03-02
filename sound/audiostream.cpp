@@ -200,12 +200,23 @@ int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buf
 		} else \
 			return new LinearMemoryStream<STEREO, false, UNSIGNED, false>(rate, ptr, len, loopOffset, loopLen, autoFree)
 
-AudioStream *makeLinearInputStream(int rate, byte flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen) {
+AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte flags, uint loopStart, uint loopEnd) {
 	const bool isStereo   = (flags & Audio::Mixer::FLAG_STEREO) != 0;
 	const bool is16Bit    = (flags & Audio::Mixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (flags & Audio::Mixer::FLAG_UNSIGNED) != 0;
 	const bool isLE       = (flags & Audio::Mixer::FLAG_LITTLE_ENDIAN) != 0;
 	const bool autoFree   = (flags & Audio::Mixer::FLAG_AUTOFREE) != 0;
+
+	uint loopOffset = 0, loopLen = 0;
+	if (flags & Audio::Mixer::FLAG_LOOP) {
+		if (loopEnd == 0)
+			loopEnd = len;
+		assert(loopStart <= loopEnd);
+		assert(loopEnd <= len);
+			
+		loopOffset = loopStart;
+		loopLen = loopEnd - loopStart;
+	}
 
 	if (isStereo) {
 		if (isUnsigned) {

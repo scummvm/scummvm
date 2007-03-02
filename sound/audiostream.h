@@ -97,7 +97,7 @@ public:
  * it to the sample format used by the mixer (i.e. 16 bit signed native endian).
  * Optionally supports (infinite) looping of a portion of the data.
  */
-AudioStream *makeLinearInputStream(int rate, byte flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
+AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte flags, uint loopStart, uint loopEnd);
 
 /**
  * An audio stream to which additional data can be appended on-the-fly.

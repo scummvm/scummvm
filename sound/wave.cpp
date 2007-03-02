@@ -192,7 +192,7 @@ AudioStream *makeWAVStream(Common::SeekableReadStream &stream) {
 	// Since we allocated our own buffer for the data, we must set the autofree flag.
 	flags |= Audio::Mixer::FLAG_AUTOFREE;
 
-	return makeLinearInputStream(rate, flags, data, size, 0, 0);
+	return makeLinearInputStream(data, size, rate, flags, 0, 0);
 }
 
 } // End of namespace Audio

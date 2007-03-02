@@ -241,9 +241,10 @@ void SoundTowns::playSoundEffect(uint8 track) {
 	playbackBufferSize -= 0x20;
 	setPitch(sfxPlaybackBuffer, playbackBufferSize, sfxHeader->pitch, pitch);
 	
-	_currentSFX = Audio::makeLinearInputStream(0x2b11,
+	_currentSFX = Audio::makeLinearInputStream(sfxPlaybackBuffer, playbackBufferSize, 
+		0x2b11,
 		Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LITTLE_ENDIAN | Audio::Mixer::FLAG_AUTOFREE,
-		sfxPlaybackBuffer, playbackBufferSize, 0, 0);
+		0, 0);
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _currentSFX);
 }
 
