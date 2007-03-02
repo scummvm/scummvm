@@ -41,34 +41,15 @@ enum MusicMode {
 	MusicVorbis
 };
 
-class WaveAudioStream : public Audio::AudioStream {
-public:
-	WaveAudioStream(Common::File *source, uint32 pSize);
-	virtual ~WaveAudioStream();
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo(void) const { return _isStereo; };
-	virtual bool endOfData(void) const;
-	virtual int getRate(void) const { return _rate; };
-private:
-	Common::File	*_sourceFile;
-	uint8	*_sampleBuf;
-	uint32	 _rate;
-	bool	 _isStereo;
-	uint32   _samplesLeft;
-	uint16	 _bitsPerSample;
-};
-
 class MusicHandle : public Audio::AudioStream {
 private:
 	Common::File _file;
-	bool _looping;
 	int32 _fading;
 	int32 _fadeSamples;
 	MusicMode _musicMode;
 	Audio::AudioStream *_audioSource;
-	Audio::AudioStream *createAudioSource(void);
 public:
-	MusicHandle() : _looping(false), _fading(0), _audioSource(NULL) {}
+	MusicHandle() : _fading(0), _audioSource(NULL) {}
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 	bool play(const char *filename, bool loop);
 	void stop();
