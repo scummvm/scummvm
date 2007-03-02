@@ -89,6 +89,24 @@ void loadLocation(const char *name, char* script) {
 
 }
 
+void loadScript(const char* name, char *script) {
+
+	char vC8[PATH_LEN];
+
+	sprintf(vC8, "%s.script", name);
+
+	if (!_vm->_archive.openArchivedFile(vC8))
+		errorFileNotFound(vC8);
+
+	uint32 size = _vm->_archive.size();
+
+	_vm->_archive.read(script, size);
+	script[size] = '\0';
+
+	_vm->_archive.closeArchivedFile();
+
+}
+
 void loadHead(const char* name, StaticCnv* cnv) {
 
 	char path[PATH_LEN];

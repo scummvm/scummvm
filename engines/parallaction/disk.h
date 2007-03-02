@@ -73,6 +73,7 @@ public:
 };
 
 void loadLocation(const char *name, char* script);
+void loadScript(const char* name, char *script);
 void loadTalk(const char *name, Cnv *cnv);
 void loadObjects(const char *name, Cnv *cnv);
 void loadPointer(StaticCnv* cnv);

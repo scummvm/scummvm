@@ -251,21 +251,9 @@ void jobEraseAnimations(void *arg_0, Job *j) {
 void Parallaction::loadProgram(Animation *a, char *filename) {
 //	printf("loadProgram(%s)\n", filename);
 
-
-	char vC8[PATH_LEN];
-
-	sprintf(vC8, "%s.script", filename);
-
-	if (!_archive.openArchivedFile(vC8))
-		errorFileNotFound(vC8);
-
-	uint32 size = _archive.size();
-	char* src = (char*)memAlloc(size+1);
-
-	_archive.read(src, size);
-	src[size] = '\0';
-
-	_archive.closeArchivedFile();
+	// the largest script in Nippon Safes is 3,668 bytes, so 4 kb is well enough
+	char* src = (char*)memAlloc(0x1000);
+	loadScript(filename, src);
 
 	_numLocals = 0;
 
