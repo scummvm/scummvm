@@ -63,12 +63,9 @@ public:
 	 * Mixer::playRaw resp. makeLinearInputStream to control their
 	 * behavior.
 	 *
-	 * Attention: The order/numbering of these *must not change*, as
-	 * at least the SCUMM iMuse Digital code stores bitmasks made up
-	 * from these flags in savegames.
-	 * In general, though, doing so is a bad idea and engine authors
-	 * are advised not to rely on a certain order of these flags
-	 * (and hence not to store them verbatim in savestates.
+	 * Engine authors are advised not to rely on a certain value or
+	 * order of these flags (in particular, do not store them verbatim
+	 * in savestates).
 	 */
 	enum RawFlags {
 		/** unsigned samples (default: signed) */
