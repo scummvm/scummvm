@@ -912,6 +912,18 @@ static const GOBGameDescription fallbackDescs[] = {
 		GF_GOB2 | GF_CD,
 		"intro"
 	},
+	{
+		{
+			"bargon",
+			"",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_BARGON,
+		"intro"
+	},
 };
 
 static const ADFileBasedFallback fileBased[] = {
@@ -920,6 +932,7 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[2], { "intro.stk", 0 } },
 	{ &fallbackDescs[2], { "intro.stk", "disk2.stk", "disk3.stk", 0 } },
 	{ &fallbackDescs[3], { "intro.stk", "gobnew.lic", 0 } },
+	{ &fallbackDescs[4], { "intro.stk", "scaa.imd", "scba.imd", "scbf.imd", 0 } },
 	{ 0, { 0 } }
 };
 
