@@ -852,11 +852,22 @@ void Talk::speakSegment(
 		// talk.c lines 1491-1533
 		switch (_vm->logic()->currentRoom()) {
 		case FAYE_HEAD:
+			textX = 15;
+			if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+				color = isJoe ? 15 : 29;
+			}
+			break;
 		case AZURA_HEAD:
 			textX = 15;
+			if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+				color = isJoe ? 6 : 30;
+			}
 			break;
 		default: // FRANK_HEAD
 			textX = 150;
+			if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+				color = 17;
+			}
 			break;
 		}
 		textY = isJoe ? 30 : 60;
@@ -1029,7 +1040,6 @@ const Talk::SpeechParameters *Talk::findSpeechParameters(
 	const SpeechParameters *iterator = _speechParameters;
 	if (faceDirection == DIR_RIGHT)
 		faceDirection = DIR_LEFT;
-
 	while (iterator->name[0] != '*') {
 		if (0 == scumm_stricmp(iterator->name, name) &&
 				iterator->state == state &&
@@ -1037,7 +1047,6 @@ const Talk::SpeechParameters *Talk::findSpeechParameters(
 			break;
 		iterator++;
 	}
-
 	return iterator;
 }
 

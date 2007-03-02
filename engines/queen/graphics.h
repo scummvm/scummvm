@@ -285,6 +285,7 @@ private:
 	static const BamDataBlock _fight1Data[];
 	static const BamDataBlock _fight2Data[];
 	static const BamDataBlock _fight3Data[];
+	static const BamDataBlock _fight4Data[];
 #endif
 };
 

@@ -160,11 +160,13 @@ bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 
 		// Handle game versions for which versionStr information is irrevelant
 		if (gameVersion == &_gameVersions[VER_AMI_DEMO]) { // CE101
+			ver->language = Common::EN_ANY;
 			ver->features |= GF_FLOPPY | GF_DEMO;
 			ver->platform = Common::kPlatformAmiga;
 			return true;
 		}
 		if (gameVersion == &_gameVersions[VER_AMI_INTERVIEW]) { // PE100
+			ver->language = Common::EN_ANY;
 			ver->features |= GF_FLOPPY | GF_INTERVIEW;
 			ver->platform = Common::kPlatformAmiga;
 			return true;
@@ -227,7 +229,8 @@ bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 
 void Resource::checkJASVersion() {
 	if (_version.platform == Common::kPlatformAmiga) {
-		warning("Resource::checkJASVersion() disabled for Amiga versions");
+		// don't bother verifying the JAS version string with these versions,
+		// it will be done at the end of Logic::readQueenJas, anyway
 		return;
 	}
 	ResourceEntry *re = resourceEntry("QUEEN.JAS");

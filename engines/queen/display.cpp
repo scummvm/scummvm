@@ -356,9 +356,9 @@ void Display::palCustomScroll(uint16 roomNum) {
 		switch (roomNum) {
 		case 4:
 			if ((scrollx & 1) == 0) {
-				palScroll(24, 64);
+				palScroll(24, 26);
 				loPal = 24;
-				hiPal = 64;
+				hiPal = 26;
 			}
 			break;
 		case 74:

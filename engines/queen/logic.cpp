@@ -1476,9 +1476,10 @@ void Logic::asmMakeFrankGrowing() {
 	BobSlot *bobFrank = _vm->graphics()->bob(5);
 	bobFrank->frameNum = 38;
 	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+		bobFrank->active = true;
 		bobFrank->x = 160;
 		bobFrank->scale = 100;
-		for (int i = 300; i >= 200; i -= 5) {
+		for (int i = 350; i >= 200; i -= 5) {
 			bobFrank->y = i;
 			_vm->update();
 		}
@@ -1506,6 +1507,7 @@ void Logic::asmMakeRobotGrowing() {
 	BobSlot *bobRobot = _vm->graphics()->bob(5);
 	bobRobot->frameNum = 38;
 	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+		bobRobot->active = true;
 		bobRobot->x = 160;
 		bobRobot->scale = 100;
 		for (int i = 350; i >= 200; i -= 5) {
@@ -2168,7 +2170,6 @@ void LogicGame::setupSpecialMoveTable() {
 	_specialMoves[29] = &LogicGame::asmScaleBlimp;
 	_specialMoves[30] = &LogicGame::asmScaleEnding;
 	_specialMoves[31] = &LogicGame::asmWaitForCarPosition;
-	_specialMoves[32] = &LogicGame::asmShakeScreen;
 	_specialMoves[33] = &LogicGame::asmAttemptPuzzle;
 	_specialMoves[34] = &LogicGame::asmScrollTitle;
 	if (_vm->resource()->getPlatform() == Common::kPlatformPC) {
@@ -2178,6 +2179,7 @@ void LogicGame::setupSpecialMoveTable() {
 		_specialMoves[17] = &LogicGame::asmAltIntroPanRight;      // cintr.cut
 		_specialMoves[18] = &LogicGame::asmAltIntroPanLeft;       // cintr.cut
 		_specialMoves[27] = &LogicGame::asmSmooch;
+		_specialMoves[32] = &LogicGame::asmShakeScreen;
 		_specialMoves[34] = &LogicGame::asmScaleTitle;
 		_specialMoves[36] = &LogicGame::asmPanRightToHugh;
 		_specialMoves[37] = &LogicGame::asmMakeWhiteFlash;

@@ -62,9 +62,10 @@ void BankManager::load(const char *bankname, uint32 bankslot) {
 
 	if (_res->getPlatform() == Common::kPlatformAmiga) {
 		uint16 entries = READ_BE_UINT16(bank->data + 4);
-		assert(entries < MAX_BANK_SIZE);
 		debug(9, "BankManager::load() entries = %d", entries);
+		assert(entries < MAX_BANK_SIZE);
 		uint32 offset = 6;
+		_banks[bankslot].indexes[0] = offset;
 		for (uint16 i = 1; i <= entries; ++i) {
 			_banks[bankslot].indexes[i] = offset;
 			uint16 dataSize = READ_BE_UINT16(bank->data + offset + 10);
@@ -72,9 +73,10 @@ void BankManager::load(const char *bankname, uint32 bankslot) {
 		}
 	} else {
 		uint16 entries = READ_LE_UINT16(bank->data);
-		assert(entries < MAX_BANK_SIZE);
 		debug(9, "BankManager::load() entries = %d", entries);
+		assert(entries < MAX_BANK_SIZE);
 		uint32 offset = 2;
+		_banks[bankslot].indexes[0] = offset;
 		for (uint16 i = 1; i <= entries; ++i) {
 			_banks[bankslot].indexes[i] = offset;
 			uint16 w = READ_LE_UINT16(bank->data + offset + 0);
@@ -152,8 +154,10 @@ void BankManager::unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 		bf->height   = h;
 
 		uint32 size = bf->width * bf->height;
-		bf->data = new uint8[ size ];
-		convertPlanarBitmap(bf->data, bf->width, p + 12, w, h, plane);
+		if (size != 0) {
+			bf->data = new uint8[ size ];
+			convertPlanarBitmap(bf->data, bf->width, p + 12, w, h, plane);
+		}
 	} else {
 		bf->width    = READ_LE_UINT16(p + 0);
 		bf->height   = READ_LE_UINT16(p + 2);
@@ -161,8 +165,10 @@ void BankManager::unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 		bf->yhotspot = READ_LE_UINT16(p + 6);
 
 		uint32 size = bf->width * bf->height;
-		bf->data = new uint8[ size ];
-		memcpy(bf->data, p + 8, size);
+		if (size != 0) {
+			bf->data = new uint8[ size ];
+			memcpy(bf->data, p + 8, size);
+		}
 	}
 }
 
@@ -216,7 +222,7 @@ BobFrame *BankManager::fetchFrame(uint32 index) {
 	debug(9, "BankManager::fetchFrame(%d)", index);
 	assert(index < MAX_FRAMES_NUMBER);
 	BobFrame *bf = &_frames[index];
-	assert(bf->data != 0);
+	assert((bf->width == 0 && bf->height == 0) || bf->data != 0);
 	return bf;
 }
 

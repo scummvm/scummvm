@@ -1212,8 +1212,9 @@ void Command::lookAtSelectedObject() {
 			break;
 		}
 	}
-
-	_vm->logic()->makeJoeSpeak(desc, true);
+	if (desc != 0) {
+		_vm->logic()->makeJoeSpeak(desc, true);
+	}
 	_vm->logic()->joeFace();
 }
 

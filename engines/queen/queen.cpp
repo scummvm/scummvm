@@ -362,8 +362,9 @@ int QueenEngine::init() {
 		_system->initSize(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 	_system->endGFXTransaction();
 
-	_bam = new BamScene(this);
 	_resource = new Resource();
+
+	_bam = new BamScene(this);
 	_bankMan = new BankManager(_resource);
 	_command = new Command(this);
 	_debugger = new Debugger(this);

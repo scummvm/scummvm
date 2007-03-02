@@ -98,6 +98,9 @@ void Credits::update() {
 				return;
 			case 'i' :
 				_color = atoi(&line[3]);
+				if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
+					_color &= 31;
+				}
 				break;
 			case '1' :
 			case '2' :
