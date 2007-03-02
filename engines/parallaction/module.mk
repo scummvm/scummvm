@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	debug.o \
 	detection.o \
 	dialogue.o \
+	disk.o \
 	graphics.o \
 	intro.o \
 	inventory.o \
