@@ -42,7 +42,7 @@ void Archive::open(const char *file) {
 
 	strcpy(path, file);
 	if (!_archive.open(path))
-		errorFileNotFound(path);
+		error("archive '%s' not found", path);
 
 	_archive.skip(22);
 	_archive.read(_archiveDir, MAX_ARCHIVE_ENTRIES*32);
