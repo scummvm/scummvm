@@ -49,7 +49,8 @@ typedef struct GameVersion {
 	uint32 dataSize;
 	DataFileEntry *dataFileEntries;
 	uint16 dataFileEntriesCount;
-	uint32 offset;
+	uint8 queenTblVersion;
+	uint32 queenTblOffset;
 } GameVersion;
 
 #include "fat_eng_floppy.h"
@@ -73,22 +74,22 @@ typedef struct GameVersion {
 #define FAT(x) x, (sizeof(x)/sizeof(x[0]))
 
 static GameVersion gameVersionsTable[] = {
-	{ "PEM10",  22677657, FAT(fatEngFl), 0 },
-	{ "CEM10", 190787021, FAT(fatEngCd), 0 },
-	{ "PFM10",  22157304, FAT(fatFreFl), 0 },
-	{ "CFM10", 186689095, FAT(fatFreCd), 0 },
-	{ "PGM10",  22240013, FAT(fatGerFl), 0 },
-	{ "CGM10", 217648975, FAT(fatGerCd), 0 },
-	{ "PIM10",  22461366, FAT(fatItaFl), 0 },
-	{ "CIM10", 190795582, FAT(fatItaCd), 0 },
-	{ "CSM10", 190730602, FAT(fatSpaCd), 0 },
-	{ "CHM10", 190705558, FAT(fatHebCd), 0 },
-	{ "PE100",   3724538, FAT(fatPCDemoPcGames), 0 },
-	{ "PE100",   3732177, FAT(fatPCDemo), 0 },
-	{ "PEint",   1915913, FAT(fatPCInterview), 0 },
-	{ "aEM10",    351775, FAT(fatAmigaEngFl), 0 },
-	{ "CE101",    563335, FAT(fatAmigaDemo), 0 },
-	{ "PE100",    597032, FAT(fatAmigaInterview), 0 }
+	{ "PEM10",  22677657, FAT(fatEngFl),          1, 0 },
+	{ "CEM10", 190787021, FAT(fatEngCd),          1, 0 },
+	{ "PFM10",  22157304, FAT(fatFreFl),          1, 0 },
+	{ "CFM10", 186689095, FAT(fatFreCd),          1, 0 },
+	{ "PGM10",  22240013, FAT(fatGerFl),          1, 0 },
+	{ "CGM10", 217648975, FAT(fatGerCd),          1, 0 },
+	{ "PIM10",  22461366, FAT(fatItaFl),          1, 0 },
+	{ "CIM10", 190795582, FAT(fatItaCd),          1, 0 },
+	{ "CSM10", 190730602, FAT(fatSpaCd),          1, 0 },
+	{ "CHM10", 190705558, FAT(fatHebCd),          1, 0 },
+	{ "PE100",   3724538, FAT(fatPCDemoPcGames),  1, 0 },
+	{ "PE100",   3732177, FAT(fatPCDemo),         1, 0 },
+	{ "PEint",   1915913, FAT(fatPCInterview),    1, 0 },
+	{ "aEM10",    351775, FAT(fatAmigaEngFl),     2, 0 },
+	{ "CE101",    563335, FAT(fatAmigaDemo),      2, 0 },
+	{ "PE100",    597032, FAT(fatAmigaInterview), 2, 0 }
 };
 
 static const uint32 QTBL_TAG = 0x5154424C;
@@ -150,7 +151,8 @@ static void createTableFile(TableFile *tf) {
 			const DataFileEntry *dfe = &dfet->fileEntries[j];
 			writeEntry(out, dfe);
 		}
-		gameVersionsTable[i].offset = offset;
+		assert(gameVersionsTable[i].queenTblVersion <= CURRENT_VERSION);
+		gameVersionsTable[i].queenTblOffset = offset;
 		/* update offset */
 		offset += 2 + dfet->fileEntriesCount * (12 + 1 + 4 + 4);
 	}
@@ -159,10 +161,10 @@ static void createTableFile(TableFile *tf) {
 
 static void printGameVersionTable() {
 	int i;
-	printf("const GameVersion Resource::_gameVersions[] = {\n");
+	printf("const RetailGameVersion Resource::_gameVersions[] = {\n");
 	for (i = 0; i < ARRAYSIZE(gameVersionsTable); ++i) {
 		const GameVersion *gv = &gameVersionsTable[i];
-		printf("\t{ \"%s\", 0x%08X, %9d },\n", gv->id, gv->offset, gv->dataSize);
+		printf("\t{ \"%s\", %d, 0x%08X, %9d },\n", gv->id, gv->queenTblVersion, gv->queenTblOffset, gv->dataSize);
 	}
 	printf("};\n");
 }

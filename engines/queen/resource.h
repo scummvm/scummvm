@@ -39,7 +39,8 @@ enum GameFeatures {
 
 struct RetailGameVersion {
 	char str[6];
-	uint32 tableOffset;
+	uint8 queenTblVersion;
+	uint32 queenTblOffset;
 	uint32 dataFileSize;
 };
 
@@ -49,7 +50,8 @@ struct DetectedGameVersion {
 	uint8 features;
 	uint8 compression;
 	char str[6];
-	uint32 tableOffset;
+	uint8 queenTblVersion;
+	uint32 queenTblOffset;
 };
 
 struct ResourceEntry {
@@ -118,10 +120,6 @@ public:
 	};
 
 	enum {
-		CURRENT_TBL_VERSION = 2
-	};
-
-	enum {
 		JAS_VERSION_OFFSET_DEMO = 0x119A8,
 		JAS_VERSION_OFFSET_INTV	= 0xCF8,
 		JAS_VERSION_OFFSET_PC	= 0x12484
@@ -149,8 +147,8 @@ protected:
 	//! seeks resource file to specific bundle and file offset
 	void seekResourceFile(int num, uint32 offset);
 
-	//! extarct the resource table for the specified game version
-	void readTableFile(uint32 offset);
+	//! extract the resource table for the specified game version
+	void readTableFile(uint8 version, uint32 offset);
 
 	//! read the resource table from the specified file
 	void readTableEntries(Common::File *file);

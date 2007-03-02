@@ -34,22 +34,22 @@ static ResourceEntry *_resourceTablePEM10;
 const char *Resource::_tableFilename = "queen.tbl";
 
 const RetailGameVersion Resource::_gameVersions[] = {
-	{ "PEM10", 0x00000008,  22677657 },
-	{ "CEM10", 0x0000584E, 190787021 },
-	{ "PFM10", 0x0002CD93,  22157304 },
-	{ "CFM10", 0x00032585, 186689095 },
-	{ "PGM10", 0x00059ACA,  22240013 },
-	{ "CGM10", 0x0005F2A7, 217648975 },
-	{ "PIM10", 0x000866B1,  22461366 },
-	{ "CIM10", 0x0008BEE2, 190795582 },
-	{ "CSM10", 0x000B343C, 190730602 },
-	{ "CHM10", 0x000DA981, 190705558 },
-	{ "PE100", 0x00101EC6,   3724538 },
-	{ "PE100", 0x00102B7F,   3732177 },
-	{ "PEint", 0x00103838,   1915913 },
-	{ "aEM10", 0x00103F1E,    351775 },
-	{ "CE101", 0x00107D8D,    563335 },
-	{ "PE100", 0x001086D4,    597032 }
+	{ "PEM10", 1, 0x00000008,  22677657 },
+	{ "CEM10", 1, 0x0000584E, 190787021 },
+	{ "PFM10", 1, 0x0002CD93,  22157304 },
+	{ "CFM10", 1, 0x00032585, 186689095 },
+	{ "PGM10", 1, 0x00059ACA,  22240013 },
+	{ "CGM10", 1, 0x0005F2A7, 217648975 },
+	{ "PIM10", 1, 0x000866B1,  22461366 },
+	{ "CIM10", 1, 0x0008BEE2, 190795582 },
+	{ "CSM10", 1, 0x000B343C, 190730602 },
+	{ "CHM10", 1, 0x000DA981, 190705558 },
+	{ "PE100", 1, 0x00101EC6,   3724538 },
+	{ "PE100", 1, 0x00102B7F,   3732177 },
+	{ "PEint", 1, 0x00103838,   1915913 },
+	{ "aEM10", 2, 0x00103F1E,    351775 },
+	{ "CE101", 2, 0x00107D8D,    563335 },
+	{ "PE100", 2, 0x001086D4,    597032 }
 };
 
 static int compareResourceEntry(const void *a, const void *b) {
@@ -75,7 +75,7 @@ Resource::Resource()
 	if (_version.features & GF_REBUILT) {
 		readTableEntries(&_resourceFile);
 	} else {
-		readTableFile(_version.tableOffset);
+		readTableFile(_version.queenTblVersion, _version.queenTblOffset);
 	}
 
 	checkJASVersion();
@@ -145,7 +145,8 @@ bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 		f->skip(2);
 		ver->compression = f->readByte();
 		ver->features = GF_REBUILT;
-		ver->tableOffset = 0;
+		ver->queenTblVersion = 0;
+		ver->queenTblOffset = 0;
 	} else {
 		const RetailGameVersion *gameVersion = detectGameVersionFromSize(f->size());
 		if (gameVersion == NULL) {
@@ -155,7 +156,8 @@ bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 		strcpy(ver->str, gameVersion->str);
 		ver->compression = COMPRESSION_NONE;
 		ver->features = 0;
-		ver->tableOffset = gameVersion->tableOffset;
+		ver->queenTblVersion = gameVersion->queenTblVersion;
+		ver->queenTblOffset = gameVersion->queenTblOffset;
 		strcpy(ver->str, gameVersion->str);
 
 		// Handle game versions for which versionStr information is irrevelant
@@ -264,12 +266,14 @@ void Resource::seekResourceFile(int num, uint32 offset) {
 	_resourceFile.seek(offset);
 }
 
-void Resource::readTableFile(uint32 offset) {
+void Resource::readTableFile(uint8 version, uint32 offset) {
 	Common::File tableFile;
 	tableFile.open(_tableFilename);
 	if (tableFile.isOpen() && tableFile.readUint32BE() == MKID_BE('QTBL')) {
-		if (tableFile.readUint32BE() != CURRENT_TBL_VERSION) {
-			warning("Incorrect version of queen.tbl, please update it");
+		uint32 tableVersion = tableFile.readUint32BE();
+		if (version > tableVersion) {
+			error("The game you are trying to play requires version %d of queen.tbl, "
+			      "you have version %d ; please update it", version, tableVersion);
 		}
 		tableFile.seek(offset);
 		readTableEntries(&tableFile);
