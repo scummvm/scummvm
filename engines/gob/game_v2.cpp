@@ -1038,8 +1038,15 @@ void Game_v2::collisionsBlock(void) {
 							WRITE_VAR(16, _activeCollResId & 0xFFF);
 
 						if (collPtr->funcLeave != 0) {
+							int16 collResIdBak = _activeCollResId;
+							int16 collIndexBak = _activeCollIndex;
+
 							timeKey = _vm->_util->getTimeKey();
 							collSub(collPtr->funcLeave);
+
+							_activeCollResId = collResIdBak;
+							_activeCollIndex = collIndexBak;
+
 							_vm->_inter->animPalette();
 
 							deltaTime = timeVal - (_vm->_util->getTimeKey() - timeKey);

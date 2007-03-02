@@ -222,6 +222,7 @@ void Scenery::freeStatic(int16 index) {
 	delete[] _statics[index].pieces;
 	delete[] _statics[index].piecesFromExt;
 
+	_statics[index].layersCount = 0;
 	_staticPictCount[index] = -1;
 }
 

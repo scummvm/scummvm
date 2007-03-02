@@ -774,7 +774,7 @@ void Inter_v2::checkSwitchTable(char **ppExec) {
 				_vm->_global->_inter_execPtr++;
 				if (!found && (value == (int8) *_vm->_global->_inter_execPtr))
 					found = true;
-					_vm->_global->_inter_execPtr += 2;
+				_vm->_global->_inter_execPtr += 2;
 				break;
 
 			default:
@@ -1539,11 +1539,13 @@ bool Inter_v2::o2_playSound(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int16 freq2;
 	int16 repCount; // di
 	int16 index; // si
+	int16 endRep;
 
 	index = _vm->_parse->parseValExpr();
 	repCount = _vm->_parse->parseValExpr();
 	frequency = _vm->_parse->parseValExpr();
 
+	warning("playSound(%d, %d, %d)", index, repCount, frequency);
 	_soundEndTimeKey = 0;
 	if (_vm->_game->_soundSamples[index] == 0)
 		return false;
@@ -1555,17 +1557,15 @@ bool Inter_v2::o2_playSound(char &cmdCount, int16 &counter, int16 &retFlag) {
 		repCount = -repCount;
 		_soundEndTimeKey = _vm->_util->getTimeKey();
 
-		if (frequency == 0)
-			freq2 = _vm->_game->_soundSamples[index]->frequency;
-		else
-			freq2 = frequency;
+		freq2 = frequency ? frequency : _vm->_game->_soundSamples[index]->frequency;
+		endRep = MAX(repCount - 1, 1);
+
 		_soundStopVal =
 		    (10 * (_vm->_game->_soundSamples[index]->size / 2)) / freq2;
 		_soundEndTimeKey +=
-		    ((_vm->_game->_soundSamples[index]->size * repCount -
+		    ((_vm->_game->_soundSamples[index]->size * endRep -
 			_vm->_game->_soundSamples[index]->size / 2) * 1000) / freq2;
 	}
-	// loc_E2F3
 	if ((_vm->_game->_soundTypes[index] & 8)) {
 		if (_vm->_adlib) {
 			_vm->_adlib->load((byte *) _vm->_game->_soundSamples[index]->data, index);
@@ -1574,7 +1574,7 @@ bool Inter_v2::o2_playSound(char &cmdCount, int16 &counter, int16 &retFlag) {
 		}
 	} else {
 		_vm->_snd->stopSound(0);
-		_vm->_snd->playSample(_vm->_game->_soundSamples[index], repCount, frequency);
+		_vm->_snd->playSample(_vm->_game->_soundSamples[index], repCount - 1, frequency);
 	}
 
 	return false;
@@ -1962,6 +1962,16 @@ void Inter_v2::o2_initMult(void) {
 	posYVar = _vm->_parse->parseVarIndex();
 	animDataVar = _vm->_parse->parseVarIndex();
 
+	if (_vm->_mult->_objects && (oldObjCount != _vm->_mult->_objCount)) {
+		warning("Initializing new objects without having cleaned up the old ones at first");
+		delete[] _vm->_mult->_objects;
+		delete[] _vm->_mult->_renderData2;
+		delete[] _vm->_mult->_orderArray;
+		_vm->_mult->_objects = 0;
+		_vm->_mult->_renderData2 = 0;
+		_vm->_mult->_orderArray = 0;
+	}
+
 	if (_vm->_mult->_objects == 0) {
 		_vm->_mult->_renderData2 = new Mult::Mult_Object*[_vm->_mult->_objCount];
 		memset(_vm->_mult->_renderData2, 0, _vm->_mult->_objCount * sizeof(Mult::Mult_Object*));
@@ -1990,9 +2000,6 @@ void Inter_v2::o2_initMult(void) {
 			_vm->_mult->_objects[i].goblinX = 1;
 			_vm->_mult->_objects[i].goblinY = 1;
 		}
-	} else if (oldObjCount != _vm->_mult->_objCount) {
-		error("o2_initMult: Object count changed, but storage didn't (old count = %d, new count = %d)",
-		    oldObjCount, _vm->_mult->_objCount);
 	}
 
 	if (_vm->_anim->_animSurf != 0 &&
