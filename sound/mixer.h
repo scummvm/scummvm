@@ -58,14 +58,26 @@ public:
  */
 class Mixer {
 public:
-	enum {
+	/**
+	 * Various flags which can be bit-ORed and then passed to
+	 * Mixer::playRaw resp. makeLinearInputStream to control their
+	 * behavior.
+	 *
+	 * Attention: The order/numbering of these *must not change*, as
+	 * at least the SCUMM iMuse Digital code stores bitmasks made up
+	 * from these flags in savegames.
+	 * In general, though, doing so is a bad idea and engine authors
+	 * are advised not to rely on a certain order of these flags
+	 * (and hence not to store them verbatim in savestates.
+	 */
+	enum RawFlags {
 		/** unsigned samples (default: signed) */
 		FLAG_UNSIGNED = 1 << 0,
 
 		/** sound is 16 bits wide (default: 8bit) */
 		FLAG_16BITS = 1 << 1,
 
-		/** sample is little endian (default: big endian) */
+		/** samples are little endian (default: big endian) */
 		FLAG_LITTLE_ENDIAN = 1 << 2,
 
 		/** sound is in stereo (default: mono) */
