@@ -116,4 +116,20 @@ void loadFont(const char* name, Cnv* cnv) {
 	_vm->_graphics->loadExternalCnv(path, cnv);
 }
 
+// loads character's icons set
+
+void openObjects(const char *name, Cnv* cnv) {
+
+	if (!scumm_strnicmp("mini", name, 4)) {
+		name += 4;
+	}
+
+	char path[PATH_LEN];
+	sprintf(path, "%sobj", name);
+
+	_vm->_graphics->loadExternalCnv(path, cnv);
+
+	return;
+}
+
 } // namespace Parallaction

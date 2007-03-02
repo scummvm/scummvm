@@ -22,6 +22,7 @@
 
 
 #include "parallaction/parallaction.h"
+#include "parallaction/disk.h"
 #include "parallaction/zone.h"
 #include "parallaction/graphics.h"
 #include "parallaction/inventory.h"
@@ -368,22 +369,10 @@ void cleanInventory() {
 }
 
 
-// loads character's icons set
 
-void loadCharacterItems(const char *character) {
-
-	if (!scumm_strnicmp("mini", character, 4)) character += 4;
-
-	char filename[PATH_LEN];
-	sprintf(filename, "%sobj", character);
-
-	_vm->_graphics->loadExternalCnv(filename, &_characterInventory);
-
-	return;
-}
 
 void refreshInventory(const char *character) {
-	loadCharacterItems(character);
+	openObjects(character, &_characterInventory);
 	redrawInventory();
 	_vm->_graphics->freeCnv(&_characterInventory);
 
@@ -392,7 +381,7 @@ void refreshInventory(const char *character) {
 
 
 void refreshInventoryItem(const char *character, uint16 index) {
-	loadCharacterItems(character);
+	openObjects(character, &_characterInventory);
 	drawInventoryItem(index, &_inventory[index]);
 	_vm->_graphics->freeCnv(&_characterInventory);
 
