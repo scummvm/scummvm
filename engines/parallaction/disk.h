@@ -72,9 +72,9 @@ public:
 	uint32 read(void *dataPtr, uint32 dataSize);
 };
 
-void openLocation(const char *name, char* script);
-void openTalk(const char *name, Cnv *cnv);
-void openObjects(const char *name, Cnv *cnv);
+void loadLocation(const char *name, char* script);
+void loadTalk(const char *name, Cnv *cnv);
+void loadObjects(const char *name, Cnv *cnv);
 void loadPointer(StaticCnv* cnv);
 void loadHead(const char* name, StaticCnv* cnv);
 void loadFont(const char* name, Cnv* cnv);

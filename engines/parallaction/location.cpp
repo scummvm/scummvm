@@ -49,7 +49,7 @@ void Parallaction::parseLocation(const char *filename) {
 	_vm->_graphics->setFont("topaz");
 
 	location_src = (char*)memAlloc(0x4000);
-	openLocation(filename, location_src);
+	loadLocation(filename, location_src);
 	_locationScript = new Script(location_src);
 
 	fillBuffers(*_locationScript, true);

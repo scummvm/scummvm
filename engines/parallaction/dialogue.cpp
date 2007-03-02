@@ -229,7 +229,7 @@ void runDialogue(SpeakData *data) {
 		debugC(1, kDebugDialogue, "runDialogue: special trick for 'museum' location");
 	}
 
-	openTalk(_vm->_characterName, &_characterFace);
+	loadTalk(_vm->_characterName, &_characterFace);
 
 	_vm->_graphics->setFont("comic");
 
@@ -241,7 +241,7 @@ void runDialogue(SpeakData *data) {
 		debugC(1, kDebugDialogue, "runDialogue: using default character head");
 	} else {
 		debugC(1, kDebugDialogue, "runDialogue: loading 2nd character head '%s'", _vm->_characterName);
-		openTalk(data->_name, &v6E);
+		loadTalk(data->_name, &v6E);
 		debugC(1, kDebugDialogue, "runDialogue: 2nd character head loaded");
 	}
 

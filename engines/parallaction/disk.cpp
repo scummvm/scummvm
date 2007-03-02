@@ -27,7 +27,7 @@
 
 namespace Parallaction {
 
-void openTalk(const char *name, Cnv *cnv) {
+void loadTalk(const char *name, Cnv *cnv) {
 
 	char* ext = strstr(name, ".talk");
 	if (ext != NULL) {
@@ -55,7 +55,7 @@ void openTalk(const char *name, Cnv *cnv) {
 
 }
 
-void openLocation(const char *name, char* script) {
+void loadLocation(const char *name, char* script) {
 
 	char archivefile[PATH_LEN];
 
@@ -118,7 +118,7 @@ void loadFont(const char* name, Cnv* cnv) {
 
 // loads character's icons set
 
-void openObjects(const char *name, Cnv* cnv) {
+void loadObjects(const char *name, Cnv* cnv) {
 
 	if (!scumm_strnicmp("mini", name, 4)) {
 		name += 4;

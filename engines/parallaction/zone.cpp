@@ -365,7 +365,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 void displayCharacterComment(ExamineData *data) {
 	if (data->_description == NULL) return;
 
-	openTalk(_vm->_characterName, &_characterFace);
+	loadTalk(_vm->_characterName, &_characterFace);
 
 	StaticCnv v3C;
 	v3C._width = _characterFace._width;
