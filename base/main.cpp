@@ -175,7 +175,7 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	}
 
 	if (ConfMan.hasKey("path"))
-		Common::File::addDefaultDirectoryRecursive(ConfMan.get("path"));
+		Common::File::addDefaultDirectory(ConfMan.get("path"));
 	else
 		Common::File::addDefaultDirectory(".");
 
