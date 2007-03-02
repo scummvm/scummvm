@@ -48,39 +48,9 @@ void Parallaction::parseLocation(const char *filename) {
 	_vm->_graphics->_proportionalFont = false;
 	_vm->_graphics->setFont("topazcnv");
 
-	char archivefile[PATH_LEN];
-
-	if (_characterName[0] == 'm') {
-		sprintf(archivefile, "%s%s", _characterName+4, _languageDir);
-	} else {
-		if (_characterName[0] == 'D') strcpy(archivefile, _languageDir);
-		else {
-			sprintf(archivefile, "%s%s", _characterName, _languageDir);
-		}
-	}
-	strcat(archivefile, filename);
-	strcat(archivefile, ".loc");
-
-	if (strcmp(_disk, "null")) _archive.close();
-
-	_languageDir[2] = '\0';
-	_archive.open(_languageDir);
-	_languageDir[2] = '/';
-
-	if (!_archive.openArchivedFile(archivefile)) {
-		sprintf(archivefile, "%s%s.loc", _languageDir, filename);
-		if (!_archive.openArchivedFile(archivefile))
-			errorFileNotFound(filename);
-	}
-
-	uint32 count = _archive.size();
 	location_src = (char*)memAlloc(0x4000);
-
+	openLocation(filename, location_src);
 	_locationScript = new Script(location_src);
-
-	_archive.read(location_src, count);
-	_archive.closeArchivedFile();
-	_archive.close();
 
 	fillBuffers(*_locationScript, true);
 	while (scumm_stricmp(_tokens[0], "ENDLOCATION")) {
@@ -133,8 +103,7 @@ void Parallaction::parseLocation(const char *filename) {
 		}
 		if (!scumm_stricmp(_tokens[0], "DISK")) {
 			strcpy(_disk, _tokens[1]);
-			strcpy(archivefile, _disk);
-			_archive.open(archivefile);
+			_archive.open(_disk);
 		}
 		if (!scumm_stricmp(_tokens[0], "LOCALFLAGS")) {
 			_si = 1;	// _localFlagNames[0] = 'visited'

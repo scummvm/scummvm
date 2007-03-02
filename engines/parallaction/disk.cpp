@@ -55,5 +55,39 @@ void openTalk(const char *name, Cnv *cnv) {
 
 }
 
+void openLocation(const char *name, char* script) {
+
+	char archivefile[PATH_LEN];
+
+	if (_vm->_characterName[0] == 'm') {
+		sprintf(archivefile, "%s%s", _vm->_characterName+4, _vm->_languageDir);
+	} else {
+		if (_vm->_characterName[0] == 'D') strcpy(archivefile, _vm->_languageDir);
+		else {
+			sprintf(archivefile, "%s%s", _vm->_characterName, _vm->_languageDir);
+		}
+	}
+	strcat(archivefile, name);
+	strcat(archivefile, ".loc");
+
+	_vm->_archive.close();
+
+	_vm->_languageDir[2] = '\0';
+	_vm->_archive.open(_vm->_languageDir);
+	_vm->_languageDir[2] = '/';
+
+	if (!_vm->_archive.openArchivedFile(archivefile)) {
+		sprintf(archivefile, "%s%s.loc", _vm->_languageDir, name);
+		if (!_vm->_archive.openArchivedFile(archivefile))
+			error("can't find location file '%s'", name);
+	}
+
+	uint32 count = _vm->_archive.size();
+	_vm->_archive.read(script, count);
+	_vm->_archive.closeArchivedFile();
+	_vm->_archive.close();
+
+}
+
 
 } // namespace Parallaction

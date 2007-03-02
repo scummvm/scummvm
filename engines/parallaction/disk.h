@@ -72,6 +72,7 @@ public:
 	uint32 read(void *dataPtr, uint32 dataSize);
 };
 
+void openLocation(const char *name, char* script);
 void openTalk(const char *name, Cnv *cnv);
 
 } // namespace Parallaction
