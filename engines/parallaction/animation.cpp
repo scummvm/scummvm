@@ -128,7 +128,7 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 				}
 			}
 
-			_vm->_graphics->loadCnv(vC8, &vD0->_cnv);
+			loadFrames(vC8, &vD0->_cnv);
 //			int16 _ax = _vm->_graphics->loadCnv(vC8, &vD0->_cnv);
 //			if (_ax == -1) exit(-1);
 		}

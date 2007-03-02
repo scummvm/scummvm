@@ -79,7 +79,8 @@ void loadObjects(const char *name, Cnv *cnv);
 void loadPointer(StaticCnv* cnv);
 void loadHead(const char* name, StaticCnv* cnv);
 void loadFont(const char* name, Cnv* cnv);
-
+void loadStatic(const char* name, StaticCnv* cnv);
+void loadFrames(const char* name, Cnv* cnv);
 
 } // namespace Parallaction
 

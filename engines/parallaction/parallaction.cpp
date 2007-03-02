@@ -857,11 +857,11 @@ void Parallaction::changeCharacter(const char *name) {
 
 		char path[PATH_LEN];
 		strcpy(path, v32);
-		_graphics->loadCnv(path, &_tempFrames);
+		loadFrames(path, &_tempFrames);
 
 		if (name[0] != 'D') {
 			sprintf(path, "mini%s", v32);
-			_graphics->loadCnv(path, &_miniCharacterFrames);
+			loadFrames(path, &_miniCharacterFrames);
 
 			sprintf(path, "%s.tab", name);
 			initTable(path, _objectsNames);

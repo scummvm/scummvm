@@ -279,7 +279,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 				strcpy(vC8, _tokens[1]);
 
 				StaticCnv vE0;
-				_vm->_graphics->loadCnv(vC8, doorcnv);
+				loadFrames(vC8, doorcnv);
 
 //				printf("door width: %i, height: %i", doorcnv->_width, doorcnv->_height );
 
@@ -309,7 +309,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 			if (!scumm_stricmp(_tokens[0], "file")) {
 				StaticCnv *vE4 = &u->get->_cnv;
 				strcpy(vC8, _tokens[1]);
-				_vm->_graphics->loadStaticCnv(vC8, vE4);
+				loadStatic(vC8, vE4);
 				vE4->_data2 = (byte*)memAlloc(vE4->_width*vE4->_height);
 
 				if ((z->_flags & kFlagsRemove) == 0) {
@@ -412,7 +412,7 @@ void displayItemComment(ExamineData *data) {
 
 	char v68[PATH_LEN];
 	strcpy(v68, data->_filename);
-	_vm->_graphics->loadStaticCnv(v68, &data->_cnv);
+	loadStatic(v68, &data->_cnv);
 	_vm->_graphics->flatBlitCnv(&data->_cnv, 140, (SCREEN_HEIGHT - data->_cnv._height)/2, Graphics::kBitFront, data->_cnv._data1);
 	_vm->_graphics->freeStaticCnv(&data->_cnv);
 

@@ -150,4 +150,19 @@ void loadObjects(const char *name, Cnv* cnv) {
 	return;
 }
 
+void loadStatic(const char* name, StaticCnv* cnv) {
+
+	_vm->_graphics->loadStaticCnv(name, cnv);
+
+	return;
+}
+
+void loadFrames(const char* name, Cnv* cnv) {
+
+	_vm->_graphics->loadCnv(name, cnv);
+
+	return;
+}
+
+
 } // namespace Parallaction

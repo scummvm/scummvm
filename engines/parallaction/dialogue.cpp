@@ -513,7 +513,7 @@ void runDialogue(SpeakData *data) {
 		_vm->_archive.close();
 		strcpy(_vm->_disk, "disk1");
 		_vm->_archive.open(_vm->_disk);
-		_vm->_graphics->loadCnv("dino", &_tempFrames);
+		loadFrames("dino", &_tempFrames);
 
 		memcpy(&_yourself._cnv, &_tempFrames, sizeof(Cnv));
 
