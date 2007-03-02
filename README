@@ -483,7 +483,7 @@ in the DOS directory of the CD.
 3.13) The Feeble Files notes:
 ----- -----------------------
 If you have the Windows version of The Feeble Files, there are several things
-to note. 
+to note.
 
 Many of the files necessary for the game are stored in an InstallShield file
 called data1.cab, which ScummVM is unable to unpack. You will need to use the
@@ -558,9 +558,6 @@ the section on reporting bugs.
 
      Broken Sword 2:
           - PlayStation 1 version isn't supported
-
-     Flight of the Amazon Queen
-          - Amiga versions aren't supported
 
      Inherit the Earth: Quest for the Orb
           - Amiga versions aren't supported

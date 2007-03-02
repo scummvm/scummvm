@@ -27,6 +27,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  Queen:
    - Fixed some sound glitches.
+   - Added support for Amiga versions.
 
  SCUMM:
    - Fixed various actor walking issues.
