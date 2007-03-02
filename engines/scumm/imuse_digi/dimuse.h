@@ -44,6 +44,23 @@ struct imuseComiTable;
 class Serializer;
 class ScummEngine_v7;
 
+// These flag bits correspond exactly to the sound mixer flags of March 2007.
+// We don't want to use the mixer flags directly, because then our saved games
+// will break in interesting ways if the mixer flags are ever assigned new
+// values. Now they should keep working, as long as these flags don't change.
+
+enum {
+	kFlagUnsigned = 1 << 0,
+	kFlag16Bits = 1 << 1,
+	kFlagLittleEndian = 1 << 2,
+	kFlagStereo = 1 << 3,
+	kFlagReverseStereo = 1 << 4
+
+	// Not used by Digital iMUSE
+	// kFlagAutoFree = 1 << 5,
+	// kFlagLoop = 1 << 6
+};
+
 class IMuseDigital : public MusicEngine {
 private:
 
@@ -76,7 +93,7 @@ private:
 		int32 soundType;
 		int32 iteration;
 		int32 mod;
-		int32 mixerFlags;
+		int32 flags;
 
 		ImuseDigiSndMgr::soundStruct *soundHandle;
 		Audio::SoundHandle handle;
@@ -104,6 +121,7 @@ private:
 	int32 _curMusicSeq;
 	int32 _curMusicCue;
 
+	int32 makeMixerFlags(int32 flags);
 	static void timer_handler(void *refConf);
 	void callback();
 	void switchToNextRegion(Track *track);

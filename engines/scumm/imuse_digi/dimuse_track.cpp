@@ -103,7 +103,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	track->dataOffset = 0;
 	track->regionOffset = 0;
 	track->mod = 0;
-	track->mixerFlags = 0;
+	track->flags = 0;
 	track->toBeRemoved = false;
 	track->readyToRemove = false;
 	track->soundType = soundType;
@@ -143,19 +143,19 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 
 		track->iteration = freq * channels;
 		if (channels == 2)
-			track->mixerFlags = Audio::Mixer::FLAG_STEREO | Audio::Mixer::FLAG_REVERSE_STEREO;
+			track->flags = kFlagStereo | kFlagReverseStereo;
 
 		if ((bits == 12) || (bits == 16)) {
-			track->mixerFlags |= Audio::Mixer::FLAG_16BITS;
+			track->flags |= kFlag16Bits;
 			track->iteration *= 2;
 		} else if (bits == 8) {
-			track->mixerFlags |= Audio::Mixer::FLAG_UNSIGNED;
+			track->flags |= kFlagUnsigned;
 		} else
 			error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
 
 #ifdef SCUMM_LITTLE_ENDIAN
 		if (track->compressed)
-			track->mixerFlags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+			track->flags |= kFlagLittleEndian;
 #endif
 	}
 
@@ -177,7 +177,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 
 		// setup 1 second stream wrapped buffer
 		track->stream2 = NULL;
-		track->stream = Audio::makeAppendableAudioStream(freq, track->mixerFlags);
+		track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->flags));
 		_mixer->playInputStream(type, &track->handle, track->stream, -1, vol, pan, false);
 		track->started = true;
 	}
@@ -328,7 +328,7 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 	fadeTrack->curRegion = track->curRegion;
 	fadeTrack->curHookId = track->curHookId;
 	fadeTrack->iteration = track->iteration;
-	fadeTrack->mixerFlags = track->mixerFlags;
+	fadeTrack->flags = track->flags;
 	fadeTrack->mod = track->mod;
 	fadeTrack->toBeRemoved = track->toBeRemoved;
 	fadeTrack->readyToRemove = track->readyToRemove;
@@ -355,7 +355,7 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 		type = Audio::Mixer::kMusicSoundType;
 
 	// setup 1 second stream wrapped buffer
-	fadeTrack->stream = Audio::makeAppendableAudioStream(_sound->getFreq(fadeTrack->soundHandle), fadeTrack->mixerFlags);
+	fadeTrack->stream = Audio::makeAppendableAudioStream(_sound->getFreq(fadeTrack->soundHandle), makeMixerFlags(fadeTrack->flags));
 	_mixer->playInputStream(type, &fadeTrack->handle, fadeTrack->stream, -1, fadeTrack->vol / 1000, fadeTrack->pan, false);
 	fadeTrack->started = true;
 	fadeTrack->used = true;

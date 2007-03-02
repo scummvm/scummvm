@@ -76,6 +76,21 @@ IMuseDigital::~IMuseDigital() {
 	free(_audioNames);
 }
 
+int32 IMuseDigital::makeMixerFlags(int32 flags) {
+	int32 mixerFlags = 0;
+	if (flags & kFlagUnsigned)
+		mixerFlags |= Audio::Mixer::FLAG_UNSIGNED;
+	if (flags & kFlag16Bits)
+		mixerFlags |= Audio::Mixer::FLAG_16BITS;
+	if (flags & kFlagLittleEndian)
+		mixerFlags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+	if (flags & kFlagStereo)
+		mixerFlags |= Audio::Mixer::FLAG_STEREO;
+	if (flags & kFlagReverseStereo)
+		mixerFlags |= Audio::Mixer::FLAG_REVERSE_STEREO;
+	return mixerFlags;
+}
+
 void IMuseDigital::resetState() {
 	_curMusicState = 0;
 	_curMusicSeq = 0;
@@ -122,7 +137,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 		MKLINE(Track, soundType, sleInt32, VER(31)),
 		MKLINE(Track, iteration, sleInt32, VER(31)),
 		MKLINE(Track, mod, sleInt32, VER(31)),
-		MKLINE(Track, mixerFlags, sleInt32, VER(31)),
+		MKLINE(Track, flags, sleInt32, VER(31)),
 		MK_OBSOLETE(Track, mixerVol, sleInt32, VER(31), VER(42)),
 		MK_OBSOLETE(Track, mixerPan, sleInt32, VER(31), VER(42)),
 		MKLINE(Track, compressed, sleByte, VER(45)),
@@ -171,25 +186,25 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 			int channels = _sound->getChannels(track->soundHandle);
 			int freq = _sound->getFreq(track->soundHandle);
 			track->iteration = freq * channels;
-			track->mixerFlags = 0;
+			track->flags = 0;
 			if (channels == 2)
-				track->mixerFlags = Audio::Mixer::FLAG_STEREO | Audio::Mixer::FLAG_REVERSE_STEREO;
+				track->flags = kFlagStereo | kFlagReverseStereo;
 
 			if ((bits == 12) || (bits == 16)) {
-				track->mixerFlags |= Audio::Mixer::FLAG_16BITS;
+				track->flags |= kFlag16Bits;
 				track->iteration *= 2;
 			} else if (bits == 8) {
-				track->mixerFlags |= Audio::Mixer::FLAG_UNSIGNED;
+				track->flags |= kFlagUnsigned;
 			} else
 				error("IMuseDigital::saveOrLoad(): Can't handle %d bit samples", bits);
 
 #ifdef SCUMM_LITTLE_ENDIAN
 			if (track->compressed)
-				track->mixerFlags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+				track->flags |= kFlagLittleEndian;
 #endif
 
 			track->stream2 = NULL;
-			track->stream = Audio::makeAppendableAudioStream(freq, track->mixerFlags);
+			track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->flags));
 
 			const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
 			const int vol = track->vol / 1000;
