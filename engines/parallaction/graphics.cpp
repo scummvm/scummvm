@@ -800,7 +800,7 @@ void Graphics::setFont(const char* name) {
 	if (_font._array != NULL)
 		freeCnv(&_font);
 
-	loadExternalCnv(name, &_font);
+	loadFont(name, &_font);
 }
 
 

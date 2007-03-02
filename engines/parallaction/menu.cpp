@@ -104,7 +104,7 @@ void Menu::start() {
 	_vm->_archive.open("disk1");
 	_vm->_graphics->_proportionalFont = false;
 
-	_vm->_graphics->setFont("slidecnv");
+	_vm->_graphics->setFont("slide");
 
 	_vm->_graphics->Graphics::loadBackground("intro.slide", Graphics::kBitBack);
 	_vm->_graphics->palUnk0(_palette);
@@ -314,7 +314,7 @@ void Menu::selectCharacter() {
 	_vm->_midiPlayer->stop();
 	_vm->_graphics->_proportionalFont = false;
 
-	_vm->_graphics->setFont("slidecnv");
+	_vm->_graphics->setFont("slide");
 	_vm->_archive.open("disk1");
 
 	_vm->_graphics->loadBackground("password.slide", Graphics::kBitBack);

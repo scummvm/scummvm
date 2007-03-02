@@ -109,4 +109,11 @@ void loadPointer(StaticCnv* cnv) {
 	_vm->_graphics->loadExternalStaticCnv("pointer", cnv);
 }
 
+void loadFont(const char* name, Cnv* cnv) {
+	char path[PATH_LEN];
+
+	sprintf(path, "%scnv", name);
+	_vm->_graphics->loadExternalCnv(path, cnv);
+}
+
 } // namespace Parallaction

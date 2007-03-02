@@ -46,7 +46,7 @@ void Parallaction::parseLocation(const char *filename) {
 
 	uint16 _si = 1;
 	_vm->_graphics->_proportionalFont = false;
-	_vm->_graphics->setFont("topazcnv");
+	_vm->_graphics->setFont("topaz");
 
 	location_src = (char*)memAlloc(0x4000);
 	openLocation(filename, location_src);
@@ -372,7 +372,7 @@ void Parallaction::changeLocation(char *location) {
 			debugC(1, kDebugLocation, "changeLocation: new background set");
 
 			_vm->_graphics->_proportionalFont = false;
-			_vm->_graphics->setFont("slidecnv");
+			_vm->_graphics->setFont("slide");
 
 			uint16 _ax = strlen(_slideText[0]);
 			_ax <<= 3;	// text width
@@ -478,7 +478,7 @@ void Parallaction::doLocationEnterTransition() {
 	jobEraseAnimations(NULL, NULL);
 	jobDisplayAnimations(NULL, NULL);
 
-	_vm->_graphics->setFont("comiccnv");
+	_vm->_graphics->setFont("comic");
 	_vm->_graphics->swapBuffers();
 	_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBitBack);
 

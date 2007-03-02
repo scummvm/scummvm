@@ -132,7 +132,7 @@ void _c_startIntro(void *parm) {
 
 void _c_endIntro(void *parm) {
 
-	_vm->_graphics->setFont("slidecnv");
+	_vm->_graphics->setFont("slide");
 	_vm->_graphics->_proportionalFont = false;
 
 	uint16 _di;

@@ -231,7 +231,7 @@ void runDialogue(SpeakData *data) {
 
 	openTalk(_vm->_characterName, &_characterFace);
 
-	_vm->_graphics->setFont("comiccnv");
+	_vm->_graphics->setFont("comic");
 
 	Cnv v6E;
 	StaticCnv v5C, v48;

@@ -285,7 +285,7 @@ void _c_finito(void *parm) {
 	_vm->_graphics->palUnk0(_palette);
 
 	if (gameCompleted) {
-		_vm->_graphics->setFont("slidecnv");
+		_vm->_graphics->setFont("slide");
 		_vm->_graphics->_proportionalFont = false;
 		uint16 _ax = _vm->_graphics->getStringWidth(v4C[_language]);
 		_vm->_graphics->displayString((SCREEN_WIDTH - _ax)/2, 70, v4C[_language]);
@@ -304,7 +304,7 @@ void _c_finito(void *parm) {
 
 		_engineFlags |= kEngineChangeLocation;
 	} else {
-		_vm->_graphics->setFont("slidecnv");
+		_vm->_graphics->setFont("slide");
 		_vm->_graphics->_proportionalFont = false;
 		uint16 _ax = _vm->_graphics->getStringWidth(v8C[_language]);
 		_vm->_graphics->displayString((SCREEN_WIDTH - _ax)/2, 70, v8C[_language]);
@@ -355,7 +355,7 @@ void _c_testResult(void *parm) {
 	_vm->parseLocation("common");
 	_vm->_archive.close();
 
-	_vm->_graphics->setFont("slidecnv");
+	_vm->_graphics->setFont("slide");
 	_vm->_graphics->_proportionalFont = false;
 
 	uint16 _ax = _vm->_graphics->getStringWidth(_slideText[0]);
