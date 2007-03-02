@@ -229,21 +229,7 @@ void runDialogue(SpeakData *data) {
 		debugC(1, kDebugDialogue, "runDialogue: special trick for 'museum' location");
 	}
 
-	char v20[PATH_LEN];
-	char *v24 = _vm->_characterName;
-	if (!scumm_strnicmp(v24, "mini", 4)) {
-		v24+=4;
-	}
-
-	if (_engineFlags & kEngineMiniDonna) {
-		sprintf(v20, "%stta", v24);
-	} else {
-		sprintf(v20, "%stal", v24);
-	}
-
-	debugC(1, kDebugDialogue, "runDialogue: loading 1st character head '%s'", v20);
-	_vm->_graphics->loadExternalCnv(v20, &_characterFace);
-	debugC(1, kDebugDialogue, "runDialogue: 1st character head loaded");
+	openTalk(_vm->_characterName, &_characterFace);
 
 	_vm->_graphics->setFont("comiccnv");
 
@@ -254,8 +240,8 @@ void runDialogue(SpeakData *data) {
 		memcpy(&v6E, &_characterFace, sizeof(Cnv));
 		debugC(1, kDebugDialogue, "runDialogue: using default character head");
 	} else {
-		debugC(1, kDebugDialogue, "runDialogue: loading 2nd character head '%s'", v20);
-		_vm->_graphics->loadCnv(data->_name, &v6E);
+		debugC(1, kDebugDialogue, "runDialogue: loading 2nd character head '%s'", _vm->_characterName);
+		openTalk(data->_name, &v6E);
 		debugC(1, kDebugDialogue, "runDialogue: 2nd character head loaded");
 	}
 

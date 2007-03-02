@@ -365,22 +365,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 void displayCharacterComment(ExamineData *data) {
 	if (data->_description == NULL) return;
 
-//	printf("displayCharacterComment()...");
-
-	char v20[20];
-	char *v24 = _vm->_characterName;
-	if (!scumm_strnicmp(v24, "mini", 4)) {
-		v24 += 4;
-	}
-	strcpy(v20, v24);
-
-	if (_engineFlags & kEngineMiniDonna) {
-		sprintf(v20, "%stta", v24);
-	} else {
-		sprintf(v20, "%stal", v24);
-	}
-
-	_vm->_graphics->loadExternalCnv(v20, &_characterFace);
+	openTalk(_vm->_characterName, &_characterFace);
 
 	StaticCnv v3C;
 	v3C._width = _characterFace._width;
