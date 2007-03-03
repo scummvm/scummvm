@@ -1495,6 +1495,11 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 	// Check whether lights are turned on or not
 	const bool lightsOn = _vm->isLightOn();
 
+	if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine) {
+		// FIXME: Image format unknown
+		return;
+	}
+
 	if (_vm->_game.features & GF_SMALL_HEADER) {
 		smap_ptr = ptr;
 	} else if (_vm->_game.version == 8) {
@@ -1602,20 +1607,31 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 	// but if e.g. a savegame gets corrupted, we can easily get into
 	// trouble here. See also bug #795214.
 	int offset = -1, smapLen;
-	if (_vm->_game.features & GF_16COLOR) {
+	if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine) {
+		// Length of offsets segment only
 		smapLen = READ_LE_UINT16(smap_ptr);
-		if (stripnr * 2 + 2 < smapLen)
+		if (stripnr * 2 + 2 < smapLen) {
 			offset = READ_LE_UINT16(smap_ptr + stripnr * 2 + 2);
+			offset += stripnr * 2 + 9;
+		}
+		debug(0, "stripnr %d len %d offset %d", stripnr, smapLen, offset);
+	} else if (_vm->_game.features & GF_16COLOR) {
+		smapLen = READ_LE_UINT16(smap_ptr);
+		if (stripnr * 2 + 2 < smapLen) {
+			offset = READ_LE_UINT16(smap_ptr + stripnr * 2 + 2);
+		}
+		assertRange(0, offset, smapLen-1, "screen strip");
 	} else if (_vm->_game.features & GF_SMALL_HEADER) {
 		smapLen = READ_LE_UINT32(smap_ptr);
 		if (stripnr * 4 + 4 < smapLen)
 			offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 4);
+		assertRange(0, offset, smapLen-1, "screen strip");
 	} else {
 		smapLen = READ_BE_UINT32(smap_ptr);
 		if (stripnr * 4 + 8 < smapLen)
 			offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
+		assertRange(0, offset, smapLen-1, "screen strip");
 	}
-	assertRange(0, offset, smapLen-1, "screen strip");
 
 	return decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
 }
@@ -1937,7 +1953,7 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 
 bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLinesToProcess) {
 	assert(numLinesToProcess);
-	
+
 	if (_vm->_game.features & GF_16COLOR) {
 		drawStripEGA(dst, dstPitch, src, numLinesToProcess);
 		return false;

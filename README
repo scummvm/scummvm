@@ -697,9 +697,9 @@ arguments -- see the next section.
   --cdrom=NUM              CD drive to play CD audio from (default: 0 = first
                            drive)
   --joystick[=NUM]         Enable joystick input (default: 0 = first joystick)
-  --platform=WORD          Specify version of game (allowed values: 3do, acorn,
-                           amiga, atari, c64, fmtowns, mac, nes, pc, segacd,
-                           windows)
+  --platform=WORD          Specify version of game (allowed values: 2gs, 3do,
+                           acorn, amiga, atari, c64, fmtowns, mac, nes, pc,
+                           pce, segacd, windows)
   --savepath=PATH          Path to where savegames are stored
   --soundfont=FILE         Select the SoundFont for MIDI playback (Only
                            supported by some MIDI drivers)

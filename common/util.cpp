@@ -175,6 +175,7 @@ const char *getLanguageDescription(Language id) {
 
 
 const PlatformDescription g_platforms[] = {
+	{"2gs", "2gs", "2gs", "Apple IIgs", kPlatformApple2GS },
 	{"3do", "3do", "3do", "3DO", kPlatform3DO},
 	{"acorn", "acorn", "acorn", "Acorn", kPlatformAcorn},
 	{"amiga", "ami", "amiga", "Amiga", kPlatformAmiga},
@@ -189,11 +190,11 @@ const PlatformDescription g_platforms[] = {
 
 	{"linux", "linux", "linux", "Linux", kPlatformLinux},
 	{"macintosh", "mac", "mac", "Macintosh", kPlatformMacintosh},
+	{"pce", "pce", "pce", "PC-Engine", kPlatformPCEngine },
 	{"nes", "nes", "nes", "NES", kPlatformNES},
 	{"segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD},
 	{"windows", "win", "win", "Windows", kPlatformWindows},
 
-	{"2gs", "2gs", "2gs", "Apple IIgs", kPlatformApple2GS },
 
 	{0, 0, 0, "Default", kPlatformUnknown}
 };

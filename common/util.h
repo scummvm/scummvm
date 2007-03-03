@@ -145,7 +145,7 @@ enum Platform {
 	kPlatformAcorn,
 	kPlatformSegaCD,
 	kPlatform3DO,
-//	kPlatformPCEngine,
+	kPlatformPCEngine,
 
 	kPlatformApple2GS,
 

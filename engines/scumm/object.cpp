@@ -846,9 +846,11 @@ void ScummEngine_v4::resetRoomObjects() {
 
 	ResourceIterator	obims(room, true);
 	for (i = 0; i < _numObjectsInRoom; i++) {
+		// In the PC Engine version of Loom, there aren't image blocks
+		// for all objects.
 		ptr = obims.findNext(MKID_BE('OBIM'));
 		if (ptr == NULL)
-			error("Room %d missing image blocks(s)", _roomResource);
+			break;
 
 		obim_id = READ_LE_UINT16(ptr + 6);
 

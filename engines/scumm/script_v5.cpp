@@ -1816,7 +1816,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 void ScummEngine_v5::o5_roomOps() {
 	int a = 0, b = 0, c, d, e;
 
-	if (_game.version == 3) {
+	if (_game.version == 3 && _game.platform != Common::kPlatformPCEngine) {
 		a = getVarOrDirectWord(PARAM_1);
 		b = getVarOrDirectWord(PARAM_2);
 	}
@@ -1824,7 +1824,7 @@ void ScummEngine_v5::o5_roomOps() {
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
 	case 1:		// SO_ROOM_SCROLL
-		if (_game.version != 3) {
+		if (_game.version != 3 || _game.platform == Common::kPlatformPCEngine) {
 			a = getVarOrDirectWord(PARAM_1);
 			b = getVarOrDirectWord(PARAM_2);
 		}
@@ -1841,7 +1841,7 @@ void ScummEngine_v5::o5_roomOps() {
 		break;
 	case 2:		// SO_ROOM_COLOR
 		if (_game.features & GF_SMALL_HEADER) {
-			if (_game.version != 3) {
+			if (_game.version != 3 || _game.platform == Common::kPlatformPCEngine) {
 				a = getVarOrDirectWord(PARAM_1);
 				b = getVarOrDirectWord(PARAM_2);
 			}
@@ -1854,7 +1854,7 @@ void ScummEngine_v5::o5_roomOps() {
 		break;
 
 	case 3:		// SO_ROOM_SCREEN
-		if (_game.version != 3) {
+		if (_game.version != 3 || _game.platform == Common::kPlatformPCEngine) {
 			a = getVarOrDirectWord(PARAM_1);
 			b = getVarOrDirectWord(PARAM_2);
 		}
@@ -1862,7 +1862,7 @@ void ScummEngine_v5::o5_roomOps() {
 		break;
 	case 4:		// SO_ROOM_PALETTE
 		if (_game.features & GF_SMALL_HEADER) {
-			if (_game.version != 3) {
+			if (_game.version != 3 || _game.platform == Common::kPlatformPCEngine) {
 				a = getVarOrDirectWord(PARAM_1);
 				b = getVarOrDirectWord(PARAM_2);
 			}

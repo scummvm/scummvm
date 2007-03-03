@@ -1572,7 +1572,8 @@ void ScummEngine::setupMusic(int midi) {
 	// Init iMuse
 	if (_game.version >= 7) {
 		// Setup for digital iMuse is performed in another place
-	} else if (_game.platform == Common::kPlatformApple2GS || _game.platform == Common::kPlatformC64) {
+	} else if (_game.platform == Common::kPlatformApple2GS || _game.platform == Common::kPlatformC64 ||
+		_game.platform == Common::kPlatformPCEngine) {
 		// TODO
 		_musicEngine = NULL;
 	} else if (_game.platform == Common::kPlatformNES) {
