@@ -31,8 +31,7 @@
 namespace Parallaction {
 
 void resolveLocationForwards();
-void loadExternalMaskPath(char *filename);
-void switchBackground(char *name);
+void switchBackground(const char* background, const char* mask);
 void parseWalkNodes(Script &script, Node *list);
 void freeAnimations();
 
@@ -57,12 +56,17 @@ void Parallaction::parseLocation(const char *filename) {
 //		printf("token[0] = %s", _tokens[0]);
 
 		if (!scumm_stricmp(_tokens[0], "LOCATION")) {
-			char *background = strchr(_tokens[1], '.');
-			if (background) {
-				background[0] = '\0';
-				background++;
+			// The parameter for location is 'location.mask'.
+			// If mask is not present, then it is assumed
+			// that path & mask are encoded in the background
+			// bitmap, otherwise a separate .msk file exists.
+
+			char *mask = strchr(_tokens[1], '.');
+			if (mask) {
+				mask[0] = '\0';
+				mask++;
 			} else
-				background = _tokens[1];
+				mask = _tokens[1];
 
             // WORKAROUND: the original code erroneously incremented
             // _currentLocationIndex, thus producing inconsistent
@@ -90,7 +94,7 @@ void Parallaction::parseLocation(const char *filename) {
 			}
 
 			strcpy(_location, _tokens[1]);
-			switchBackground(background);
+			switchBackground(_location, mask);
 
 			if (_tokens[2][0] != '\0') {
 				_yourself._zone.pos._position._x = atoi(_tokens[2]);
@@ -255,13 +259,13 @@ void parseWalkNodes(Script& script, Node *list) {
 
 }
 
-void switchBackground(char *name) {
+void switchBackground(const char* background, const char* mask) {
 //	printf("switchBackground(%s)", name);
 
 	byte palette[PALETTE_SIZE];
 
 	uint16 v2 = 0;
-	if (!scumm_stricmp(_location, "final")) {
+	if (!scumm_stricmp(background, "final")) {
 		_vm->_graphics->clearScreen(Graphics::kBitBack);
 		for (uint16 _si = 0; _si <= 93; ) {
 			palette[_si] = v2;
@@ -274,17 +278,17 @@ void switchBackground(char *name) {
 		_vm->_graphics->palUnk0(palette);
 	}
 
-	char dest[PATH_LEN];
-	strcpy(dest, _location);
-	strcat(dest, ".dyn");
-	_vm->_graphics->loadBackground(dest, Graphics::kBitBack);
+	char path[PATH_LEN];
+	sprintf(path, "%s.dyn", background);
+
+	_vm->_graphics->loadBackground(path, Graphics::kBitBack);
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
 
-	if (!scumm_stricmp(_location, name)) return;
-
-	// load external masks and paths only for certain locations
-	sprintf(dest, "%s.msk", name);
-	_vm->_graphics->loadMaskAndPath(dest);
+	if (scumm_stricmp(background, mask)) {
+		// load external masks and paths only for certain locations
+		sprintf(path, "%s.msk", mask);
+		_vm->_graphics->loadMaskAndPath(path);
+	}
 
 	return;
 }
