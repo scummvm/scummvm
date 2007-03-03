@@ -1164,29 +1164,18 @@ void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 	if (!_vm->_archive.openArchivedFile(filename))
 		errorFileNotFound(filename);
 
-//	byte palette[PALETTE_SIZE];
-	byte v150[4];
 	_vm->_archive.read(_palette, PALETTE_SIZE);
-	_vm->_archive.read(&v150, 4);
-
-	byte tempfx[sizeof(PaletteFxRange)*6];
-	_vm->_archive.read(&tempfx, sizeof(PaletteFxRange)*6);
-
-//	setPalette(palette);
 
 	uint16 _si;
-	for (_si = 0; _si < 4; _si++) {
-		byte _al = v150[_si];
-		_bgLayers[_si] = _al;
-	}
+	for (_si = 0; _si < 4; _si++)
+		_bgLayers[_si] = _vm->_archive.readByte();
 
-	Common::MemoryReadStream sread(tempfx, sizeof(PaletteFxRange)*6);
 	for (_si = 0; _si < 6; _si++) {
-		_palettefx[_si]._timer = sread.readUint16BE();
-		_palettefx[_si]._step = sread.readUint16BE();
-		_palettefx[_si]._flags = sread.readUint16BE();
-		_palettefx[_si]._first = sread.readByte();
-		_palettefx[_si]._last = sread.readByte();
+		_palettefx[_si]._timer = _vm->_archive.readUint16BE();
+		_palettefx[_si]._step = _vm->_archive.readUint16BE();
+		_palettefx[_si]._flags = _vm->_archive.readUint16BE();
+		_palettefx[_si]._first = _vm->_archive.readByte();
+		_palettefx[_si]._last = _vm->_archive.readByte();
 	}
 
 #if 0
