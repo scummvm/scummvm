@@ -36,6 +36,7 @@
 #include <math.h>
 
 #define DISABLE_SCALERS // we only need 1x
+#define DISABLE_HQ_SCALERS
 
 #if defined(USE_TREMOR) && !defined(USE_VORBIS)
 #define USE_VORBIS // make sure this one is defined together with USE_TREMOR!

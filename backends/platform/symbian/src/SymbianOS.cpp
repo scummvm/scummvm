@@ -136,27 +136,6 @@ void OSystem_SDL_Symbian::quitWithErrorMsg(const char *msg) {
 		g_system->quit();
 }
 
-/*
- * SumthinWicked says: the stuff below is copied from common/scaler.cpp, 
- * so we can skip compiling the scalers. ESDL still needs 1x and the scaler
- * architecture because we inherit from OSystem_SDL.
- */
-int gBitFormat = 565;
-void InitScalers(uint32 /*BitFormat*/) {} // called by OSystem_SDL functions, not relevant for ESDL
-	
-/** 
- * Trivial 'scaler' - in fact it doesn't do any scaling but just copies the
- * source to the destination.
- */
-void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
-							int width, int height) {
-	while (height--) {
-		memcpy(dstPtr, srcPtr, 2 * width);
-		srcPtr += srcPitch;
-		dstPtr += dstPitch;
-	}
-}
-
 // Overloaded from SDL_Commmon
 void OSystem_SDL_Symbian::quit() {
 	delete GUI_Actions::Instance();
