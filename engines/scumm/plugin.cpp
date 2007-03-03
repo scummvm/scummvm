@@ -224,8 +224,8 @@ static const GameSettings gameVariantsTable[] = {
 
 	{"loom", "EGA",      "ega", GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI, 0, UNK},
 	{"loom", "No Adlib", "ega", GID_LOOM, 3, 0, MDT_PCSPK,                        0, UNK},
+	{"loom", "PC-Engine",     0, GID_LOOM, 3, 0, MDT_NONE,                        GF_AUDIOTRACKS, Common::kPlatformPCEngine},
 	{"loom", "FM-TOWNS",     0, GID_LOOM, 3, 0, MDT_TOWNS,                        GF_AUDIOTRACKS | GF_OLD256, Common::kPlatformFMTowns},
-	{"loom", "PC-Engine",     0, GID_LOOM, 3, 0, MDT_NONE,                        GF_16COLOR | GF_AUDIOTRACKS | GF_OLD256, Common::kPlatformPCEngine},
 	{"loom", "VGA",      "vga", GID_LOOM, 4, 0, MDT_NONE,                         GF_AUDIOTRACKS,             Common::kPlatformPC},
 
 	{"pass", 0, 0, GID_PASS, 4, 0, MDT_PCSPK | MDT_ADLIB, GF_16COLOR, Common::kPlatformPC},
@@ -1660,7 +1660,7 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 		*engine = new ScummEngine_v2(syst, res);
 		break;
 	case 3:
-		if (res.game.features & GF_OLD256)
+		if ((res.game.features & GF_OLD256) || res.game.platform == Common::kPlatformPCEngine) 
 			*engine = new ScummEngine_v3(syst, res);
 		else
 			*engine = new ScummEngine_v3old(syst, res);
