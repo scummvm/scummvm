@@ -34,19 +34,11 @@ namespace Sword1 {
 
 #define TOTAL_TUNES 270
 
-enum MusicMode {
-	MusicNone = 0,
-	MusicWave,
-	MusicMp3,
-	MusicVorbis
-};
-
 class MusicHandle : public Audio::AudioStream {
 private:
 	Common::File _file;
 	int32 _fading;
 	int32 _fadeSamples;
-	MusicMode _musicMode;
 	Audio::AudioStream *_audioSource;
 public:
 	MusicHandle() : _fading(0), _audioSource(NULL) {}
