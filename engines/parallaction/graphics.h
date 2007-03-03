@@ -24,6 +24,8 @@
 #define PARALLACTION_GRAPHICS_H
 
 #include "parallaction/defs.h"
+#include "common/stream.h"
+
 
 namespace Parallaction {
 
@@ -98,6 +100,7 @@ public:
 
 	// location
 	void loadBackground(const char *filename, Graphics::Buffers buffer);
+	void parseBackground(Common::SeekableReadStream &stream);
 	void loadMaskAndPath(const char *filename);
 	uint16 queryPath(uint16 x, uint16 y);
 	int16 queryMask(int16 v);

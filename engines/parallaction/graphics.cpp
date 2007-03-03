@@ -1155,7 +1155,31 @@ void unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *path) {
 	return;
 }
 
+void Graphics::parseBackground(Common::SeekableReadStream &stream) {
 
+	stream.read(_palette, PALETTE_SIZE);
+
+	uint16 _si;
+	for (_si = 0; _si < 4; _si++)
+		_bgLayers[_si] = stream.readByte();
+
+	for (_si = 0; _si < 6; _si++) {
+		_palettefx[_si]._timer = stream.readUint16BE();
+		_palettefx[_si]._step = stream.readUint16BE();
+		_palettefx[_si]._flags = stream.readUint16BE();
+		_palettefx[_si]._first = stream.readByte();
+		_palettefx[_si]._last = stream.readByte();
+	}
+
+#if 0
+	uint16 v147;
+	for (v147 = 0; v147 < PALETTE_SIZE; v147++) {
+		byte _al = _palette[v147];
+		_palette[PALETTE_SIZE+v147] = _al / 2;
+	}
+#endif
+
+}
 
 
 void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
@@ -1164,6 +1188,8 @@ void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 	if (!_vm->_archive.openArchivedFile(filename))
 		errorFileNotFound(filename);
 
+	parseBackground(_vm->_archive);
+/*
 	_vm->_archive.read(_palette, PALETTE_SIZE);
 
 	uint16 _si;
@@ -1185,7 +1211,7 @@ void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 		_palette[PALETTE_SIZE+v147] = _al / 2;
 	}
 #endif
-
+*/
 	memset(_buffers[kPath0], 0, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 	memset(_buffers[kMask0], 0, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 
