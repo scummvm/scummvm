@@ -165,6 +165,10 @@ void Sound::playSound(int soundID) {
 	int rate;
 	byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
 
+	// FIXME: Sound resources are currently missing
+	if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine)
+		return;
+
 	debugC(DEBUG_SOUND, "playSound #%d (room %d)", soundID,
 		_vm->getResourceRoomNr(rtSound, soundID));
 

@@ -167,7 +167,8 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 		verbptr = objptr + 14;
 	else if (_game.version <= 2)
 		verbptr = objptr + 15;
-	else if (_game.features & GF_OLD_BUNDLE)
+	else if ((_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) ||
+		_game.features & GF_OLD_BUNDLE)
 		verbptr = objptr + 17;
 	else if (_game.features & GF_SMALL_HEADER)
 		verbptr = objptr + 19;
@@ -212,7 +213,9 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 			verbptr += 3;
 		} while (1);
 
-		if (_game.features & GF_SMALL_HEADER)
+		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)
+			return verboffs + READ_LE_UINT16(verbptr + 1) + 3;
+		else if (_game.features & GF_SMALL_HEADER)
 			return READ_LE_UINT16(verbptr + 1);
 		else
 			return verboffs + READ_LE_UINT16(verbptr + 1);

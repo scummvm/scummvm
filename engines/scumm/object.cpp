@@ -900,27 +900,41 @@ void ScummEngine_v4::resetRoomObject(ObjectData *od, const byte *room, const byt
 
 	od->obj_nr = READ_LE_UINT16(ptr + 6);
 
-	od->x_pos = *(ptr + 9) * 8;
-	od->y_pos = ((*(ptr + 10)) & 0x7F) * 8;
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
+		od->x_pos = *(ptr + 8) * 8;
+		od->y_pos = ((*(ptr + 9)) & 0x7F) * 8;
 
-	od->parentstate = (*(ptr + 10) & 0x80) ? 1 : 0;
-	if (_game.version <= 2)
-		od->parentstate *= 8;
+		od->parentstate = (*(ptr + 11) & 0x80) ? 1 : 0;
+		od->width = *(ptr + 10) * 8;
 
-	od->width = *(ptr + 11) * 8;
-
-	od->parent = *(ptr + 12);
-
-	if (_game.version <= 2) {
+		od->parent = *(ptr + 11);
 		od->walk_x = *(ptr + 13) * 8;
 		od->walk_y = (*(ptr + 14) & 0x1f) * 8;
 		od->actordir = (*(ptr + 15)) & 7;
 		od->height = *(ptr + 15) & 0xf8;
 	} else {
-		od->walk_x = READ_LE_UINT16(ptr + 13);
-		od->walk_y = READ_LE_UINT16(ptr + 15);
-		od->actordir = (*(ptr + 17)) & 7;
-		od->height = *(ptr + 17) & 0xf8;
+		od->x_pos = *(ptr + 9) * 8;
+		od->y_pos = ((*(ptr + 10)) & 0x7F) * 8;
+
+		od->parentstate = (*(ptr + 10) & 0x80) ? 1 : 0;
+		if (_game.version <= 2)
+			od->parentstate *= 8;
+
+		od->width = *(ptr + 11) * 8;
+
+		od->parent = *(ptr + 12);
+
+		if (_game.version <= 2) {
+			od->walk_x = *(ptr + 13) * 8;
+			od->walk_y = (*(ptr + 14) & 0x1f) * 8;
+			od->actordir = (*(ptr + 15)) & 7;
+			od->height = *(ptr + 15) & 0xf8;
+		} else {
+			od->walk_x = READ_LE_UINT16(ptr + 13);
+			od->walk_y = READ_LE_UINT16(ptr + 15);
+			od->actordir = (*(ptr + 17)) & 7;
+			od->height = *(ptr + 17) & 0xf8;
+		}
 	}
 }
 

@@ -88,7 +88,11 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	int step;
 	Codec1 v1;
 
-	
+	if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine) {
+		// FIXME: Unknown costume format
+		return 0;
+	}
+
 	const int scaletableSize = 128;
 	const bool newAmiCost = (_vm->_game.version == 5) && (_vm->_game.platform == Common::kPlatformAmiga);
 
@@ -550,6 +554,11 @@ void ClassicCostumeRenderer::proc3_ami(Codec1 &v1) {
 void ClassicCostumeLoader::loadCostume(int id) {
 	_id = id;
 	byte *ptr = _vm->getResourceAddress(rtCostume, id);
+
+	if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine) {
+		// FIXME: Unknown costume format
+		return;
+	}
 
 	if (_vm->_game.version >= 6)
 		ptr += 8;

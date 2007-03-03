@@ -1705,6 +1705,12 @@ void ScummEngine_v5::o5_resourceRoutines() {
 
 	int op = _opcode & 0x3F;
 
+	// FIXME: Sound resources are currently missing
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine &&
+		(op == 2 || op == 6)) {
+			return;
+	}
+
 	switch (op) {
 	case 1:			// SO_LOAD_SCRIPT
 	case 2:			// SO_LOAD_SOUND
@@ -1739,6 +1745,9 @@ void ScummEngine_v5::o5_resourceRoutines() {
 		_res->lock(rtScript, resid);
 		break;
 	case 10:		// SO_LOCK_SOUND
+		// FIXME: Sound resources are currently missing
+		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)
+			break;
 		_res->lock(rtSound, resid);
 		break;
 	case 11:		// SO_LOCK_COSTUME
@@ -1756,6 +1765,9 @@ void ScummEngine_v5::o5_resourceRoutines() {
 		_res->unlock(rtScript, resid);
 		break;
 	case 14:		// SO_UNLOCK_SOUND
+		// FIXME: Sound resources are currently missing
+		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)
+			break;
 		_res->unlock(rtSound, resid);
 		break;
 	case 15:		// SO_UNLOCK_COSTUME
