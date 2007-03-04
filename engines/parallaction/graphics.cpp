@@ -980,6 +980,7 @@ void Graphics::parseBackground(Common::SeekableReadStream &stream) {
 
 void Graphics::setBackground(byte *background) {
 	memcpy(_buffers[kBitBack], background, SCREEN_WIDTH*SCREEN_HEIGHT);
+	copyScreen(kBitBack, kBit2);
 }
 
 void Graphics::setMask(byte *mask) {
