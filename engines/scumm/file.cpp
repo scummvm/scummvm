@@ -1613,9 +1613,9 @@ uint16 ScummDiskImage::extractIndex(Common::WriteStream *out) {
 
 	// write expected signature
 	if (_game.platform == Common::kPlatformApple2GS) {
-		reslen += write_word(out, 0x0132);
-	} else {
 		reslen += write_word(out, 0x0032);
+	} else {
+		reslen += write_word(out, 0x0132);
 	}
 
 	// copy object flags
