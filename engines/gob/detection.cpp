@@ -340,7 +340,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB2,
 		"intro"
 	},
-	{
+	{ // Supplied by fac76 in bug report #1673397
 		{
 			"gob2",
 			"",
