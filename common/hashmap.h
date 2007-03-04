@@ -174,7 +174,7 @@ public:
 
 	void clear(bool shrinkArray = 0);
 
-	size_t erase(const Key &key);
+	void erase(const Key &key);
 
 	uint size() const { return _nele; }
 
@@ -264,11 +264,15 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::assign(const HM_t& map) {
 	memset(_arr, 0, _arrsize * sizeof(Node *));
 
 	// Simply clone the map given to us, one by one.
-	_nele = map._nele;
-	for (uint ctr = 0; ctr < _arrsize; ++ctr)
+	_nele = 0;
+	for (uint ctr = 0; ctr < _arrsize; ++ctr) {
 		if (map._arr[ctr] != NULL) {
 			_arr[ctr] = new Node(*map._arr[ctr]);
+			_nele++;
 		}
+	}
+	// Perform a sanity check (to help track down hashmap corruption)
+	assert(_nele == map._nele);
 }
 
 
@@ -296,20 +300,18 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::clear(bool shrinkArray) {
 template <class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::expand_array(uint newsize) {
 	assert(newsize > _arrsize);
-	Node **old_arr;
-	uint old_arrsize, old_nele, ctr, dex;
+	uint ctr, dex;
 
-	old_nele = _nele;
-	old_arr = _arr;
-	old_arrsize = _arrsize;
+	const uint old_nele = _nele;
+	const uint old_arrsize = _arrsize;
+	Node **old_arr = _arr;
 
 	// allocate a new array 
+	_nele = 0;
 	_arrsize = newsize;
 	_arr = new Node *[_arrsize];
 	assert(_arr != NULL);
 	memset(_arr, 0, _arrsize * sizeof(Node *));
-
-	_nele = 0;
 
 	// rehash all the old elements
 	for (ctr = 0; ctr < old_arrsize; ++ctr) {
@@ -330,6 +332,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::expand_array(uint newsize) {
 	}
 
 	// Perform a sanity check: Old number of elements should match the new one!
+	// This check will fail if some previous operation corrupted this hashmap.
 	assert(_nele == old_nele);
 
 	delete[] old_arr;
@@ -418,25 +421,33 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::setVal(const Key &key, const Val &v
 }
 
 template <class Key, class Val, class HashFunc, class EqualFunc>
-size_t HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
+void HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
 	// This is based on code in the Wikipedia article on Hash tables.
 	uint i = lookup(key);
 	if (_arr[i] == NULL)
-		return 0; // key wasn't present, so no work has to be done
+		return; // key wasn't present, so no work has to be done
+	// If we remove a key, we must check all subsequent keys and possibly
+	// reinsert them.
 	uint j = i;
 	while (true) {
+		// Look at the next table slot
 		j = (j + 1) % _arrsize;
+		// If the next slot is empty, we are done
 		if (_arr[j] == NULL)
 			break;
+		// Compute the slot where the content of the next slot should normally be,
+		// assuming an empty table, and check whether we have to move it.
 		uint k = _hash(_arr[j]->_key) % _arrsize;
 		if ((j > i && (k <= i || k > j)) ||
 		    (j < i && (k <= i && k > j)) ) {
+		    delete _arr[i];
 			_arr[i] = _arr[j];
 			i = j;
 		}
 	}
+    delete _arr[i];
 	_arr[i] = NULL;
-	return 1;
+	return;
 }
 
 }	// End of namespace Common
