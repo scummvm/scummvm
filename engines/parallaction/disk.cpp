@@ -27,12 +27,153 @@
 
 namespace Parallaction {
 
+//
+// decompress a graphics block
+//
+uint16 decompressChunk(byte *src, byte *dst, uint16 size) {
+
+	uint16 written = 0;
+	uint16 read = 0;
+	uint16 len = 0;
+
+	for (; written != size; written += len) {
+
+		len = src[read];
+		read++;
+
+		if (len <= 127) {
+			// copy run
+
+			len++;
+			memcpy(dst+written, src+read, len);
+			read += len;
+
+		} else {
+			// expand run
+
+			len = 257 - len;
+			memset(dst+written, src[read], len);
+			read++;
+
+		}
+
+	}
+
+	return read;
+}
+
+
+//
+// loads a cnv from an external file
+//
+void loadExternalCnv(const char *filename, Cnv *cnv) {
+//	printf("Graphics::loadExternalCnv(%s)...", filename);
+
+	char path[PATH_LEN];
+
+	sprintf(path, "%s.cnv", filename);
+
+	Common::File stream;
+
+	if (!stream.open(path))
+		errorFileNotFound(path);
+
+	cnv->_count = stream.readByte();
+	cnv->_width = stream.readByte();
+	cnv->_height = stream.readByte();
+
+	cnv->_array = (byte**)malloc(cnv->_count * sizeof(byte*));
+
+	uint16 size = cnv->_width*cnv->_height;
+	for (uint16 i = 0; i < cnv->_count; i++) {
+		cnv->_array[i] = (byte*)malloc(size);
+		stream.read(cnv->_array[i], size);
+	}
+
+	stream.close();
+
+//	printf("done\n");
+
+
+	return;
+}
+
+void loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
+
+	char path[PATH_LEN];
+
+	sprintf(path, "%s.cnv", filename);
+
+	Common::File stream;
+
+	if (!stream.open(path))
+		errorFileNotFound(path);
+
+	cnv->_width = cnv->_height = 0;
+
+	stream.skip(1);
+	cnv->_width = stream.readByte();
+	cnv->_height = stream.readByte();
+
+	uint16 size = cnv->_width*cnv->_height;
+
+	cnv->_data0 = (byte*)malloc(size);
+	stream.read(cnv->_data0, size);
+
+	stream.close();
+
+	return;
+}
+
+void loadCnv(const char *filename, Cnv *cnv) {
+//	printf("Graphics::loadCnv(%s)\n", filename);
+
+	char path[PATH_LEN];
+
+	strcpy(path, filename);
+	if (!_vm->_archive.openArchivedFile(path)) {
+		sprintf(path, "%s.pp", filename);
+		if (!_vm->_archive.openArchivedFile(path))
+			errorFileNotFound(path);
+	}
+
+	cnv->_count = _vm->_archive.readByte();
+	cnv->_width = _vm->_archive.readByte();
+	cnv->_height = _vm->_archive.readByte();
+
+	uint16 framesize = cnv->_width*cnv->_height;
+
+	cnv->_array = (byte**)malloc(cnv->_count * sizeof(byte*));
+
+	uint32 size = _vm->_archive.size() - 3;
+
+	byte *buf = (byte*)malloc(size);
+	_vm->_archive.read(buf, size);
+
+	byte *s = buf;
+
+	for (uint16 i = 0; i < cnv->_count; i++) {
+		cnv->_array[i] = (byte*)malloc(framesize);
+		uint16 read = decompressChunk(s, cnv->_array[i], framesize);
+
+//		printf("frame %i decompressed: %i --> %i\n", i, read, framesize);
+
+		s += read;
+	}
+
+	_vm->_archive.closeArchivedFile();
+
+	free(buf);
+
+	return;
+}
+
 void loadTalk(const char *name, Cnv *cnv) {
 
 	char* ext = strstr(name, ".talk");
 	if (ext != NULL) {
 		// npc talk
-		_vm->_graphics->loadCnv(name, cnv);
+		loadCnv(name, cnv);
 
 	} else {
 		// character talk
@@ -49,7 +190,7 @@ void loadTalk(const char *name, Cnv *cnv) {
 			sprintf(v20, "%stal", v24);
 		}
 
-		_vm->_graphics->loadExternalCnv(v20, cnv);
+		loadExternalCnv(v20, cnv);
 
 	}
 
@@ -118,20 +259,20 @@ void loadHead(const char* name, StaticCnv* cnv) {
 	snprintf(path, 8, "%shead", name);
 	path[8] = '\0';
 
-	_vm->_graphics->loadExternalStaticCnv(path, cnv);
+	loadExternalStaticCnv(path, cnv);
 
 }
 
 
 void loadPointer(StaticCnv* cnv) {
-	_vm->_graphics->loadExternalStaticCnv("pointer", cnv);
+	loadExternalStaticCnv("pointer", cnv);
 }
 
 void loadFont(const char* name, Cnv* cnv) {
 	char path[PATH_LEN];
 
 	sprintf(path, "%scnv", name);
-	_vm->_graphics->loadExternalCnv(path, cnv);
+	loadExternalCnv(path, cnv);
 }
 
 // loads character's icons set
@@ -145,21 +286,45 @@ void loadObjects(const char *name, Cnv* cnv) {
 	char path[PATH_LEN];
 	sprintf(path, "%sobj", name);
 
-	_vm->_graphics->loadExternalCnv(path, cnv);
+	loadExternalCnv(path, cnv);
 
 	return;
 }
 
+
 void loadStatic(const char* name, StaticCnv* cnv) {
 
-	_vm->_graphics->loadStaticCnv(name, cnv);
+	char path[PATH_LEN];
+
+	strcpy(path, name);
+	if (!_vm->_archive.openArchivedFile(path)) {
+		sprintf(path, "%s.pp", name);
+		if (!_vm->_archive.openArchivedFile(path))
+			errorFileNotFound(path);
+	}
+
+	_vm->_archive.skip(1);
+	cnv->_width = _vm->_archive.readByte();
+	cnv->_height = _vm->_archive.readByte();
+
+	uint16 compressedsize = _vm->_archive.size() - 3;
+	byte *compressed = (byte*)malloc(compressedsize);
+
+	uint16 size = cnv->_width*cnv->_height;
+	cnv->_data0 = (byte*)malloc(size);
+
+	_vm->_archive.read(compressed, compressedsize);
+	_vm->_archive.closeArchivedFile();
+
+	decompressChunk(compressed, cnv->_data0, size);
+	free(compressed);
 
 	return;
 }
 
 void loadFrames(const char* name, Cnv* cnv) {
 
-	_vm->_graphics->loadCnv(name, cnv);
+	loadCnv(name, cnv);
 
 	return;
 }

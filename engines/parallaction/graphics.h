@@ -88,10 +88,6 @@ public:
 
 	// cnv management
 	void makeCnvFromString(StaticCnv *cnv, char *text);
-	void loadExternalCnv(const char *filename, Cnv *cnv);
-	void loadExternalStaticCnv(const char *filename, StaticCnv *cnv);
-	void loadCnv(const char *filename, Cnv *cnv);
-	void loadStaticCnv(const char *filename, StaticCnv *cnv);
 	void freeCnv(Cnv *cnv);
 	void freeStaticCnv(StaticCnv *cnv);
 	void backupCnvBackground(StaticCnv *cnv, int16 x, int16 y);

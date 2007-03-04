@@ -952,158 +952,6 @@ byte Graphics::mapChar(byte c) {
 }
 
 
-//
-// loads a cnv from an external file
-//
-void Graphics::loadExternalCnv(const char *filename, Cnv *cnv) {
-//	printf("Graphics::loadExternalCnv(%s)...", filename);
-
-	char path[PATH_LEN];
-
-	sprintf(path, "%s.cnv", filename);
-
-	Common::File stream;
-
-	if (!stream.open(path))
-		errorFileNotFound(path);
-
-	cnv->_count = stream.readByte();
-	cnv->_width = stream.readByte();
-	cnv->_height = stream.readByte();
-
-	cnv->_array = (byte**)malloc(cnv->_count * sizeof(byte*));
-
-	uint16 size = cnv->_width*cnv->_height;
-	for (uint16 i = 0; i < cnv->_count; i++) {
-		cnv->_array[i] = (byte*)malloc(size);
-		stream.read(cnv->_array[i], size);
-	}
-
-	stream.close();
-
-//	printf("done\n");
-
-
-	return;
-}
-
-
-
-
-void Graphics::loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
-
-	char path[PATH_LEN];
-
-	sprintf(path, "%s.cnv", filename);
-
-	Common::File stream;
-
-	if (!stream.open(path))
-		errorFileNotFound(path);
-
-	cnv->_width = cnv->_height = 0;
-
-	stream.skip(1);
-	cnv->_width = stream.readByte();
-	cnv->_height = stream.readByte();
-
-	uint16 size = cnv->_width*cnv->_height;
-
-	cnv->_data0 = (byte*)malloc(size);
-	stream.read(cnv->_data0, size);
-
-	stream.close();
-
-	return;
-}
-
-
-
-
-
-void Graphics::loadStaticCnv(const char *filename, StaticCnv *cnv) {
-//	printf("Graphics::loadStaticCnv(%s)\n", filename);
-
-	char path[PATH_LEN];
-
-	strcpy(path, filename);
-	if (!_vm->_archive.openArchivedFile(path)) {
-		sprintf(path, "%s.pp", filename);
-		if (!_vm->_archive.openArchivedFile(path))
-			errorFileNotFound(path);
-	}
-
-	_vm->_archive.skip(1);
-	cnv->_width = _vm->_archive.readByte();
-	cnv->_height = _vm->_archive.readByte();
-
-	uint16 compressedsize = _vm->_archive.size() - 3;
-	byte *compressed = (byte*)malloc(compressedsize);
-
-	uint16 size = cnv->_width*cnv->_height;
-	cnv->_data0 = (byte*)malloc(size);
-
-	_vm->_archive.read(compressed, compressedsize);
-	_vm->_archive.closeArchivedFile();
-
-	decompressChunk(compressed, cnv->_data0, size);
-	free(compressed);
-
-	return;
-}
-
-
-
-
-void Graphics::loadCnv(const char *filename, Cnv *cnv) {
-//	printf("Graphics::loadCnv(%s)\n", filename);
-
-	char path[PATH_LEN];
-
-	strcpy(path, filename);
-	if (!_vm->_archive.openArchivedFile(path)) {
-		sprintf(path, "%s.pp", filename);
-		if (!_vm->_archive.openArchivedFile(path))
-			errorFileNotFound(path);
-	}
-
-	cnv->_count = _vm->_archive.readByte();
-	cnv->_width = _vm->_archive.readByte();
-	cnv->_height = _vm->_archive.readByte();
-
-	uint16 framesize = cnv->_width*cnv->_height;
-
-	cnv->_array = (byte**)malloc(cnv->_count * sizeof(byte*));
-
-	uint32 size = _vm->_archive.size() - 3;
-
-	byte *buf = (byte*)malloc(size);
-	_vm->_archive.read(buf, size);
-
-	byte *s = buf;
-
-	for (uint16 i = 0; i < cnv->_count; i++) {
-		cnv->_array[i] = (byte*)malloc(framesize);
-		uint16 read = decompressChunk(s, cnv->_array[i], framesize);
-
-//		printf("frame %i decompressed: %i --> %i\n", i, read, framesize);
-
-		s += read;
-	}
-
-	_vm->_archive.closeArchivedFile();
-
-	free(buf);
-
-	return;
-}
-
-
-
-
-
-
-
 void Graphics::freeCnv(Cnv *cnv) {
 //	printf("Graphics::freeCnv()\n");
 
@@ -1181,7 +1029,6 @@ void Graphics::parseBackground(Common::SeekableReadStream &stream) {
 
 }
 
-
 void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 //	printf("Graphics::loadBackground(%s)\n", filename);
 
@@ -1189,29 +1036,7 @@ void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 		errorFileNotFound(filename);
 
 	parseBackground(_vm->_archive);
-/*
-	_vm->_archive.read(_palette, PALETTE_SIZE);
 
-	uint16 _si;
-	for (_si = 0; _si < 4; _si++)
-		_bgLayers[_si] = _vm->_archive.readByte();
-
-	for (_si = 0; _si < 6; _si++) {
-		_palettefx[_si]._timer = _vm->_archive.readUint16BE();
-		_palettefx[_si]._step = _vm->_archive.readUint16BE();
-		_palettefx[_si]._flags = _vm->_archive.readUint16BE();
-		_palettefx[_si]._first = _vm->_archive.readByte();
-		_palettefx[_si]._last = _vm->_archive.readByte();
-	}
-
-#if 0
-	uint16 v147;
-	for (v147 = 0; v147 < PALETTE_SIZE; v147++) {
-		byte _al = _palette[v147];
-		_palette[PALETTE_SIZE+v147] = _al / 2;
-	}
-#endif
-*/
 	memset(_buffers[kPath0], 0, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 	memset(_buffers[kMask0], 0, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 
