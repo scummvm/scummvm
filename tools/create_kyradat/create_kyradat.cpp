@@ -337,7 +337,10 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	}
 	
 	if (fmtPatch == 2) {
-		targetsize += (g->special - 1);
+		if (g->special == kFMTownsVersionE)
+			targetsize--;
+		if (g->special == kFMTownsVersionJ)
+			targetsize += 2;		
 		entries += (g->special - 1);
 	}
 	
@@ -350,6 +353,10 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) {
 		const byte * c = data + size;
 		do {
+			if (fmtPatch == 2 && input - data == 0x3C0 && input[0x10] == 0x32) {
+				memcpy(output, input, 0x0F);
+				input += 0x11; output += 0x0F;
+			}
 			strcpy((char*) output, (const char*) input);
 			uint32 stringsize = strlen((const char*)output) + 1;
 			input += stringsize; output += stringsize;
