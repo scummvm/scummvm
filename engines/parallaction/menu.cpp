@@ -167,7 +167,7 @@ void Menu::newGame() {
 
 	const char **v14 = introMsg3;
 
-	loadScenery("test");
+	loadScenery("test", NULL);
 	_vm->_graphics->palUnk0(_palette);
 	_vm->_graphics->swapBuffers();
 

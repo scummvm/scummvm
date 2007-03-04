@@ -420,22 +420,16 @@ void loadSlide(const char *filename) {
 	loadBackground(path);
 }
 
-void loadScenery(const char *filename) {
+void loadScenery(const char *name, const char *mask) {
 	char path[PATH_LEN];
-	sprintf(path, "%s.dyn", filename);
+	sprintf(path, "%s.dyn", name);
 	loadBackground(path);
-}
 
-void loadBackground(const char* background, const char* mask) {
-
-	loadScenery(background);
-
-	if (scumm_stricmp(background, mask)) {
+	if (mask != NULL) {
 		// load external masks and paths only for certain locations
 		loadMaskAndPath(mask);
 	}
 
 }
-
 
 } // namespace Parallaction

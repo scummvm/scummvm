@@ -65,8 +65,7 @@ void Parallaction::parseLocation(const char *filename) {
 			if (mask) {
 				mask[0] = '\0';
 				mask++;
-			} else
-				mask = _tokens[1];
+			}
 
             // WORKAROUND: the original code erroneously incremented
             // _currentLocationIndex, thus producing inconsistent
@@ -278,7 +277,7 @@ void switchBackground(const char* background, const char* mask) {
 		_vm->_graphics->palUnk0(palette);
 	}
 
-	loadBackground(background, mask);
+	loadScenery(background, mask);
 
 	return;
 }
