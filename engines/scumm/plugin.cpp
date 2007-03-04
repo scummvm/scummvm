@@ -1602,6 +1602,12 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 			}
 		}
 	}
+	
+	// If we narrowed it down too much, abort
+	if (results.empty()) {
+		warning("Engine_SCUMM_create: Game data inconsistent with platform override");
+		return kNoGameDataFoundError;
+	}
 
 	// Still no unique match found -> we just use the first one
 	if (results.size() > 1) {
