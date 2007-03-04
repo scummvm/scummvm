@@ -81,7 +81,8 @@ void loadHead(const char* name, StaticCnv* cnv);
 void loadFont(const char* name, Cnv* cnv);
 void loadStatic(const char* name, StaticCnv* cnv);
 void loadFrames(const char* name, Cnv* cnv);
-void loadBackground(const char *filename);
+void loadSlide(const char *filename);
+void loadScenery(const char *filename);
 void loadMaskAndPath(const char *name);
 
 } // namespace Parallaction

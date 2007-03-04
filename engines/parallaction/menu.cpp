@@ -106,19 +106,19 @@ void Menu::start() {
 
 	_vm->_graphics->setFont("slide");
 
-	loadBackground("intro.slide");
+	loadSlide("intro");
 	_vm->_graphics->palUnk0(_palette);
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
 	g_system->delayMillis(2000);
 
-	loadBackground("minintro.slide");
+	loadSlide("minintro");
 	_vm->_graphics->palUnk0(_palette);
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
 	g_system->delayMillis(2000);
 
-	loadBackground("lingua.slide");
+	loadSlide("lingua");
 	_vm->_graphics->palUnk0(_palette);
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
@@ -146,7 +146,7 @@ void Menu::start() {
 		break;
 	}
 
-	loadBackground("restore.slide");
+	loadSlide("restore");
 	_vm->_graphics->palUnk0(_palette);
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
@@ -167,7 +167,7 @@ void Menu::newGame() {
 
 	const char **v14 = introMsg3;
 
-	loadBackground("test.dyn");
+	loadScenery("test");
 	_vm->_graphics->palUnk0(_palette);
 	_vm->_graphics->swapBuffers();
 
@@ -317,7 +317,7 @@ void Menu::selectCharacter() {
 	_vm->_graphics->setFont("slide");
 	_vm->_archive.open("disk1");
 
-	loadBackground("password.slide");
+	loadSlide("password");
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
 	_vm->_graphics->palUnk0(_palette);
 

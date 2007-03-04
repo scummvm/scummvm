@@ -414,4 +414,16 @@ void loadMaskAndPath(const char *name) {
 	return;
 }
 
+void loadSlide(const char *filename) {
+	char path[PATH_LEN];
+	sprintf(path, "%s.slide", filename);
+	loadBackground(path);
+}
+
+void loadScenery(const char *filename) {
+	char path[PATH_LEN];
+	sprintf(path, "%s.dyn", filename);
+	loadBackground(path);
+}
+
 } // namespace Parallaction

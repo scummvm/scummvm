@@ -278,10 +278,7 @@ void switchBackground(const char* background, const char* mask) {
 		_vm->_graphics->palUnk0(palette);
 	}
 
-	char path[PATH_LEN];
-	sprintf(path, "%s.dyn", background);
-
-	loadBackground(path);
+	loadScenery(background);
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
 
 	if (scumm_stricmp(background, mask)) {
@@ -365,10 +362,7 @@ void Parallaction::changeLocation(char *location) {
 		*tmp = '\0';
 
 		if (!scumm_strnicmp(tmp+1, "slide", 5)) {
-			char filename[200];
-			sprintf(filename, "%s.slide", _newLocation);
-
-			loadBackground(filename);
+			loadSlide(_newLocation);
 			_vm->_graphics->palUnk0(_palette);
 			_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
