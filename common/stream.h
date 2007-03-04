@@ -407,11 +407,10 @@ public:
 class MemoryWriteStream : public WriteStream {
 private:
 	byte *_ptr;
-	const byte * const _ptrOrig;
 	const uint32 _bufSize;
 	uint32 _pos;
 public:
-	MemoryWriteStream(byte *buf, uint32 len) : _ptr(buf), _ptrOrig(buf), _bufSize(len), _pos(0) {}
+	MemoryWriteStream(byte *buf, uint32 len) : _ptr(buf), _bufSize(len), _pos(0) {}
 
 	uint32 write(const void *dataPtr, uint32 dataSize) {
 		// Write at most as many bytes as are still available...
