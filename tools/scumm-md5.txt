@@ -367,12 +367,12 @@ baseball2003	Backyard Baseball 2003
 football	Backyard Football
 	7fc6cdb46b4c9d384c52327f4bca6416	-1	en	All	-	-	-	sev
 
-	2e85f7aa054930c692a5b1bed1dfc295	-1	en	All	-	Demo	-	khalek
 	425205754fa749f4f0b0dd9d09fa45fd	-1	en	All	-	Demo	-	Joachim Eberhard
 	5bd335265a61caa3d78956ad9f88ba23	-1	en	All	-	Demo	-	sev
 
 football2002	Backyard Football 2002
 	a095616d2d23ccf43b8e257711202cba	-1	en	All	-	-	-	clone2727
+	2e85f7aa054930c692a5b1bed1dfc295	-1	en	All	-	Demo	-	khalek
 
 soccer	Backyard Soccer
 	701246819d1a70573f41bf33fc19214f	-1	en	All	-	-	-	sev
