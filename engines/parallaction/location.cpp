@@ -278,13 +278,7 @@ void switchBackground(const char* background, const char* mask) {
 		_vm->_graphics->palUnk0(palette);
 	}
 
-	loadScenery(background);
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
-
-	if (scumm_stricmp(background, mask)) {
-		// load external masks and paths only for certain locations
-		loadMaskAndPath(mask);
-	}
+	loadBackground(background, mask);
 
 	return;
 }

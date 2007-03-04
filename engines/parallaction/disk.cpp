@@ -426,4 +426,16 @@ void loadScenery(const char *filename) {
 	loadBackground(path);
 }
 
+void loadBackground(const char* background, const char* mask) {
+
+	loadScenery(background);
+
+	if (scumm_stricmp(background, mask)) {
+		// load external masks and paths only for certain locations
+		loadMaskAndPath(mask);
+	}
+
+}
+
+
 } // namespace Parallaction
