@@ -919,7 +919,7 @@ void Graphics::makeCnvFromString(StaticCnv *cnv, char *text) {
 
 //	printf("%i x %i\n", cnv->_width, cnv->_height);
 
-	cnv->_data0 = (byte*)memAlloc(cnv->_width * cnv->_height);
+	cnv->_data0 = (byte*)malloc(cnv->_width * cnv->_height);
 
 	for (uint16 i = 0; i < len; i++) {
 		byte c = mapChar(text[i]);
@@ -971,11 +971,11 @@ void Graphics::loadExternalCnv(const char *filename, Cnv *cnv) {
 	cnv->_width = stream.readByte();
 	cnv->_height = stream.readByte();
 
-	cnv->_array = (byte**)memAlloc(cnv->_count * sizeof(byte*));
+	cnv->_array = (byte**)malloc(cnv->_count * sizeof(byte*));
 
 	uint16 size = cnv->_width*cnv->_height;
 	for (uint16 i = 0; i < cnv->_count; i++) {
-		cnv->_array[i] = (byte*)memAlloc(size);
+		cnv->_array[i] = (byte*)malloc(size);
 		stream.read(cnv->_array[i], size);
 	}
 
@@ -1009,7 +1009,7 @@ void Graphics::loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
 
 	uint16 size = cnv->_width*cnv->_height;
 
-	cnv->_data0 = (byte*)memAlloc(size);
+	cnv->_data0 = (byte*)malloc(size);
 	stream.read(cnv->_data0, size);
 
 	stream.close();
@@ -1038,16 +1038,16 @@ void Graphics::loadStaticCnv(const char *filename, StaticCnv *cnv) {
 	cnv->_height = _vm->_archive.readByte();
 
 	uint16 compressedsize = _vm->_archive.size() - 3;
-	byte *compressed = (byte*)memAlloc(compressedsize);
+	byte *compressed = (byte*)malloc(compressedsize);
 
 	uint16 size = cnv->_width*cnv->_height;
-	cnv->_data0 = (byte*)memAlloc(size);
+	cnv->_data0 = (byte*)malloc(size);
 
 	_vm->_archive.read(compressed, compressedsize);
 	_vm->_archive.closeArchivedFile();
 
 	decompressChunk(compressed, cnv->_data0, size);
-	memFree(compressed);
+	free(compressed);
 
 	return;
 }
@@ -1073,17 +1073,17 @@ void Graphics::loadCnv(const char *filename, Cnv *cnv) {
 
 	uint16 framesize = cnv->_width*cnv->_height;
 
-	cnv->_array = (byte**)memAlloc(cnv->_count * sizeof(byte*));
+	cnv->_array = (byte**)malloc(cnv->_count * sizeof(byte*));
 
 	uint32 size = _vm->_archive.size() - 3;
 
-	byte *buf = (byte*)memAlloc(size);
+	byte *buf = (byte*)malloc(size);
 	_vm->_archive.read(buf, size);
 
 	byte *s = buf;
 
 	for (uint16 i = 0; i < cnv->_count; i++) {
-		cnv->_array[i] = (byte*)memAlloc(framesize);
+		cnv->_array[i] = (byte*)malloc(framesize);
 		uint16 read = decompressChunk(s, cnv->_array[i], framesize);
 
 //		printf("frame %i decompressed: %i --> %i\n", i, read, framesize);
@@ -1093,7 +1093,7 @@ void Graphics::loadCnv(const char *filename, Cnv *cnv) {
 
 	_vm->_archive.closeArchivedFile();
 
-	memFree(buf);
+	free(buf);
 
 	return;
 }
@@ -1110,9 +1110,9 @@ void Graphics::freeCnv(Cnv *cnv) {
 	if (!cnv) return;
 
 	for (uint16 _si = 0; _si < cnv->_count; _si++) {
-		memFree(cnv->_array[_si]);
+		free(cnv->_array[_si]);
 	}
-	memFree(cnv->_array);
+	free(cnv->_array);
 	cnv->_array = NULL;
 
 	return;
@@ -1126,7 +1126,7 @@ void Graphics::freeStaticCnv(StaticCnv *cnv) {
 	if (!cnv) return;
 
 	if (!cnv || !cnv->_data0) return;
-	memFree(cnv->_data0);
+	free(cnv->_data0);
 	cnv->_data0 = NULL;
 
 	return;
@@ -1215,7 +1215,7 @@ void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 	memset(_buffers[kPath0], 0, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 	memset(_buffers[kMask0], 0, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 
-	byte *v4 = (byte*)memAlloc(SCREEN_SIZE);
+	byte *v4 = (byte*)malloc(SCREEN_SIZE);
 	_vm->_archive.read(v4, SCREEN_SIZE);
 
 	byte v144[SCREEN_WIDTH];
@@ -1226,7 +1226,7 @@ void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
 		unpackBackgroundScanline(v144, _buffers[buffer]+SCREEN_WIDTH*i, _buffers[kMask0]+SCREENMASK_WIDTH*i, _buffers[kPath0]+SCREENPATH_WIDTH*i);
 	}
 
-	memFree(v4);
+	free(v4);
 	_vm->_archive.closeArchivedFile();
 
 	return;
@@ -1357,16 +1357,16 @@ int16 Graphics::queryMask(int16 v) {
 
 void Graphics::initBuffers() {
 
-	_buffers[kBitFront] = (byte*)memAlloc(SCREEN_SIZE);
-	_buffers[kBitBack]	= (byte*)memAlloc(SCREEN_SIZE);
-	_buffers[kBit2]   = (byte*)memAlloc(SCREEN_SIZE);
-	_buffers[kBit3]   = (byte*)memAlloc(SCREEN_SIZE);	  // this buffer is also used by menu so it must stay this size
+	_buffers[kBitFront] = (byte*)malloc(SCREEN_SIZE);
+	_buffers[kBitBack]	= (byte*)malloc(SCREEN_SIZE);
+	_buffers[kBit2]   = (byte*)malloc(SCREEN_SIZE);
+	_buffers[kBit3]   = (byte*)malloc(SCREEN_SIZE);	  // this buffer is also used by menu so it must stay this size
 
-	_buffers[kMask0] = (byte*)memAlloc(SCREENMASK_WIDTH * SCREEN_HEIGHT);
-	_buffers[kPath0] = (byte*)memAlloc(SCREENPATH_WIDTH * SCREEN_HEIGHT);
+	_buffers[kMask0] = (byte*)malloc(SCREENMASK_WIDTH * SCREEN_HEIGHT);
+	_buffers[kPath0] = (byte*)malloc(SCREENPATH_WIDTH * SCREEN_HEIGHT);
 
-	_maskBackup = (byte*)memAlloc(SCREENMASK_WIDTH * SCREEN_HEIGHT);
-	_pathBackup = (byte*)memAlloc(SCREENPATH_WIDTH * SCREEN_HEIGHT);
+	_maskBackup = (byte*)malloc(SCREENMASK_WIDTH * SCREEN_HEIGHT);
+	_pathBackup = (byte*)malloc(SCREENPATH_WIDTH * SCREEN_HEIGHT);
 
 	return;
 }
@@ -1396,13 +1396,13 @@ Graphics::Graphics(Parallaction* vm) :
 
 Graphics::~Graphics() {
 
-	memFree(_buffers[kMask0]);
-	memFree(_buffers[kPath0]);
+	free(_buffers[kMask0]);
+	free(_buffers[kPath0]);
 
-	memFree(_buffers[kBitFront]);
-	memFree(_buffers[kBitBack]);
-	memFree(_buffers[kBit2]);
-	memFree(_buffers[kBit3]);
+	free(_buffers[kBitFront]);
+	free(_buffers[kBitBack]);
+	free(_buffers[kBit2]);
+	free(_buffers[kBit3]);
 
 	freeCnv(&_font);
 

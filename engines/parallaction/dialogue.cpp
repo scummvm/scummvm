@@ -74,11 +74,11 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 	while (scumm_stricmp(_tokens[0], "enddialogue")) {
 		if (scumm_stricmp(_tokens[0], "Question")) continue;
 
-		_questions[num_questions] = (Dialogue*)memAlloc(sizeof(Dialogue));
+		_questions[num_questions] = (Dialogue*)malloc(sizeof(Dialogue));
 		Dialogue *vB4 = _questions[num_questions];
 		memset(_questions[num_questions], 0, sizeof(Dialogue));
 
-		_questions_names[num_questions] = (char*)memAlloc(strlen(_tokens[1])+1);
+		_questions_names[num_questions] = (char*)malloc(strlen(_tokens[1])+1);
 		strcpy(_questions_names[num_questions], _tokens[1]);
 
 		vB4->_text = parseDialogueString(script);
@@ -149,7 +149,7 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 			if (_questions[_si]->_answers[v5A] == 0) continue;
 
 			int16 v58 = _vm->searchTable(_questions[_si]->_following._names[v5A], const_cast<const char **>(_questions_names));
-			memFree(_questions[_si]->_following._names[v5A]);
+			free(_questions[_si]->_following._names[v5A]);
 
 			if (v58 == -1) {
 				_questions[_si]->_following._questions[v5A] = 0;
@@ -166,7 +166,7 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 	}
 
 	for (uint16 _si = 0; _si < num_questions; _si++)
-		memFree(_questions_names[_si]);
+		free(_questions_names[_si]);
 
 	return _questions[0];
 }
@@ -188,7 +188,7 @@ char *Parallaction::parseDialogueString(Script &script) {
 	vD0[strlen(vD0)-1] = '\0';	// deletes the trailing '0xA' inserted by parseNextLine
 								// this is critical for Graphics::displayBalloonString to work properly
 
-	char *vCC = (char*)memAlloc(strlen(vD0)+1);
+	char *vCC = (char*)malloc(strlen(vD0)+1);
 	strcpy(vCC, vD0);
 
 	return vCC;
@@ -207,11 +207,11 @@ void freeDialogue(Dialogue *d) {
 
 	for (_si = 0; _si < 5; _si++) {
 		freeCommands(d->_commands[_si]);
-		memFree(d->_answers[_si]);
+		free(d->_answers[_si]);
 	}
 
-	memFree(d->_text);
-	memFree(d);
+	free(d->_text);
+	free(d);
 
 	return;
 }

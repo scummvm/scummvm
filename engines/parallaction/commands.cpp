@@ -56,7 +56,7 @@ Command *parseCommands(Script &script) {
 	while (scumm_stricmp(_tokens[0], "ENDCOMMANDS") && scumm_stricmp(_tokens[0], "ENDZONE")) {
 //		printf("token[0] = %s", _tokens[0]);
 
-		Command *cmd = (Command*)memAlloc(sizeof(Command));
+		Command *cmd = (Command*)malloc(sizeof(Command));
 		memset(cmd, 0, sizeof(Command));
 
 		cmd->_id = _vm->searchTable(_tokens[0], commands_names);
@@ -108,7 +108,7 @@ Command *parseCommands(Script &script) {
 			break;
 
 		case CMD_LOCATION:	// location
-			cmd->u._string = (char*)memAlloc(strlen(_tokens[_si])+1);
+			cmd->u._string = (char*)malloc(strlen(_tokens[_si])+1);
 			strcpy(cmd->u._string, _tokens[_si]);
 			_si++;
 			break;
@@ -200,8 +200,8 @@ void freeCommands(Command *list) {
 	while (cmd) {
 		Command *v4 = (Command*)cmd->_node._next;
 
-		if (cmd->_id == 6) memFree(cmd->u._zone);	// open
-		memFree(cmd);
+		if (cmd->_id == 6) free(cmd->u._zone);	// open
+		free(cmd);
 
 		cmd = v4;
 	}

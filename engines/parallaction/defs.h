@@ -92,8 +92,6 @@ struct Credit {
 	const char *_name;
 };
 
-void *memAlloc(uint32 size);
-void memFree(void *m);
 void errorFileNotFound(const char*);
 
 void beep();

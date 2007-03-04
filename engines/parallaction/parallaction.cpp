@@ -897,7 +897,7 @@ void freeNodeList(Node *list) {
 
 	while (list) {
 		Node *v4 = list->_next;
-		memFree(list);
+		free(list);
 		list = v4;
 	}
 
@@ -936,7 +936,7 @@ void removeNode(Node *n) {
 Job *addJob(JobFn fn, void *parm, uint16 tag) {
 //	printf("addJob(%i)\n", tag);
 
-	Job *v8 = (Job*)memAlloc(sizeof(Job));
+	Job *v8 = (Job*)malloc(sizeof(Job));
 
 	v8->_parm = parm;
 	v8->_fn = fn;
@@ -958,7 +958,7 @@ void removeJob(Job *j) {
 //	printf("removeJob(%x, %i)\n", j, j->_tag);
 
 	removeNode(&j->_node);
-	memFree(j);
+	free(j);
 	return;
 }
 
@@ -1030,7 +1030,7 @@ void Parallaction::initTable(const char *path, char** table) {
 
 	while (scumm_stricmp(_tokens[0], "ENDTABLE")) {
 
-		table[count] = (char*)memAlloc(strlen(_tokens[0])+1);
+		table[count] = (char*)malloc(strlen(_tokens[0])+1);
 		strcpy(table[count], _tokens[0]);
 
 		count++;
@@ -1051,7 +1051,7 @@ void Parallaction::freeTable(char** table) {
 
 	while (table[count]) {
 
-		memFree(table[count]);
+		free(table[count]);
 		table[count] = NULL;
 
 		count++;

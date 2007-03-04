@@ -77,10 +77,10 @@ Animation *findAnimation(const char *name) {
 Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) {
 //	printf("parseAnimation(%s)\n", name);
 
-	Animation *vD0 = (Animation*)memAlloc(sizeof(Animation));
+	Animation *vD0 = (Animation*)malloc(sizeof(Animation));
 	memset(vD0, 0, sizeof(Animation));
 
-	vD0->_zone._label._text = (char*)memAlloc(strlen(name)+1);
+	vD0->_zone._label._text = (char*)malloc(strlen(name)+1);
 	strcpy(vD0->_zone._label._text, name);
 
 	addNode(list, &vD0->_zone._node);
@@ -159,7 +159,7 @@ void  freeScript(Program *program) {
 
 	if (!program) return;
 
-	memFree(program->_locals);
+	free(program->_locals);
 	freeNodeList(&program->_node);
 
 	return;
@@ -252,7 +252,7 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 //	printf("loadProgram(%s)\n", filename);
 
 	// the largest script in Nippon Safes is 3,668 bytes, so 4 kb is well enough
-	char* src = (char*)memAlloc(0x1000);
+	char* src = (char*)malloc(0x1000);
 	loadScript(filename, src);
 
 	_numLocals = 0;
@@ -261,12 +261,12 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 
 	fillBuffers(*script);
 
-	a->_program = (Program*)memAlloc(sizeof(Program));
+	a->_program = (Program*)malloc(sizeof(Program));
 	memset(a->_program, 0, sizeof(Program));
-	a->_program->_locals = (LocalVariable*)memAlloc(sizeof(LocalVariable)*10);
+	a->_program->_locals = (LocalVariable*)malloc(sizeof(LocalVariable)*10);
 	Node *vD0 = &a->_program->_node;
 
-	Instruction *vCC = (Instruction*)memAlloc(sizeof(Instruction));
+	Instruction *vCC = (Instruction*)malloc(sizeof(Instruction));
 	memset(vCC, 0, sizeof(Instruction));
 
 	while (scumm_stricmp(_tokens[0], "endscript")) {
@@ -275,7 +275,7 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 		addNode(vD0, &vCC->_node);
 		vD0 = &vCC->_node;
 
-		vCC = (Instruction*)memAlloc(sizeof(Instruction));
+		vCC = (Instruction*)malloc(sizeof(Instruction));
 		memset(vCC, 0, sizeof(Instruction));
 		fillBuffers(*script);
 	}
@@ -284,7 +284,7 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 	addNode(vD0, &vCC->_node);
 
 	delete script;
-	delete src;
+	free(src);
 
 	a->_program->_ip = (Instruction*)a->_program->_node._next;
 

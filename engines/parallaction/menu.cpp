@@ -305,7 +305,7 @@ void Menu::selectCharacter() {
 
 	StaticCnv v14;
 
-	v14._data0 = (byte*)memAlloc(33);
+	v14._data0 = (byte*)malloc(33);
 	v14._data2 = v14._data0;
 	v14._width = BLOCK_WIDTH;
 	v14._height = BLOCK_HEIGHT;
@@ -413,7 +413,7 @@ void Menu::selectCharacter() {
 	_engineFlags |= kEngineChangeLocation;
 	_vm->_archive.close();
 
-	memFree(v14._data0);
+	free(v14._data0);
 
 	refreshInventory(_vm->_characterName);
 

@@ -54,16 +54,6 @@ const char *_jobDescriptions[] = {
 	"21 - erase mouse"
 };
 
-void *memAlloc(uint32 size) {
-	return malloc(size);
-}
-
-void memFree(void *m) {
-	free(m);
-	return;
-}
-
-
 void beep() {
 //	sound(1500);
 //	delay(100);

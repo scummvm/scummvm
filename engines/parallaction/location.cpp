@@ -47,7 +47,7 @@ void Parallaction::parseLocation(const char *filename) {
 	_vm->_graphics->_proportionalFont = false;
 	_vm->_graphics->setFont("topaz");
 
-	location_src = (char*)memAlloc(0x4000);
+	location_src = (char*)malloc(0x4000);
 	loadLocation(filename, location_src);
 	_locationScript = new Script(location_src);
 
@@ -112,7 +112,7 @@ void Parallaction::parseLocation(const char *filename) {
 		if (!scumm_stricmp(_tokens[0], "LOCALFLAGS")) {
 			_si = 1;	// _localFlagNames[0] = 'visited'
 			while (_tokens[_si][0] != '\0') {
-				_localFlagNames[_si] = (char*)memAlloc(strlen(_tokens[_si])+1);
+				_localFlagNames[_si] = (char*)malloc(strlen(_tokens[_si])+1);
 				strcpy(_localFlagNames[_si], _tokens[_si]);
 				_si++;
 			}
@@ -166,7 +166,7 @@ void Parallaction::parseLocation(const char *filename) {
 	delete _locationScript;
 	_locationScript = NULL;
 
-	memFree(location_src);
+	free(location_src);
 
 	return;
 }
@@ -190,7 +190,7 @@ void freeLocation() {
 
 	uint16 _si = 1;
 	while (_localFlagNames[_si] != 0) {
-		memFree(_localFlagNames[_si]);
+		free(_localFlagNames[_si]);
 		_localFlagNames[_si] = NULL;
 		_si++;
 	}
@@ -215,7 +215,7 @@ void freeLocation() {
 	debugC(7, kDebugLocation, "freeLocation: animations freed");
 
 	if (_locationComment) {
-		memFree(_locationComment);
+		free(_locationComment);
 	}
 	_locationComment = NULL;
 	debugC(7, kDebugLocation, "freeLocation: comments freed");
@@ -244,7 +244,7 @@ void parseWalkNodes(Script& script, Node *list) {
 
 		if (!scumm_stricmp(_tokens[0], "COORD")) {
 
-			WalkNode *v4 = (WalkNode*)memAlloc(sizeof(WalkNode));
+			WalkNode *v4 = (WalkNode*)malloc(sizeof(WalkNode));
 			v4->_x = atoi(_tokens[1]) - _yourself._cnv._width/2;
 			v4->_y = atoi(_tokens[2]) - _yourself._cnv._height;
 

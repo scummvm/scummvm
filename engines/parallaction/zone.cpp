@@ -64,10 +64,10 @@ void Parallaction::parseZone(Script &script, Node *list, char *name) {
 		return;
 	}
 
-	Zone *z = (Zone*)memAlloc(sizeof(Zone));
+	Zone *z = (Zone*)malloc(sizeof(Zone));
 	memset(z, 0, sizeof(Zone));
 
-	z->_label._text = (char*)memAlloc(strlen(name)+1);
+	z->_label._text = (char*)malloc(strlen(name)+1);
 	strcpy(z->_label._text, name);
 
 	addNode(list, &z->_node);
@@ -150,42 +150,42 @@ void freeZones(Node *list) {
 
 		switch (z->_type & 0xFFFF) {
 		case kZoneExamine:
-			memFree(z->u.examine->_filename);
-			memFree(z->u.examine->_description);
-			memFree(z->u.examine);
+			free(z->u.examine->_filename);
+			free(z->u.examine->_description);
+			free(z->u.examine);
 			break;
 
 		case kZoneDoor:
-			memFree(z->u.door->_location);
-			memFree(z->u.door->_background);
+			free(z->u.door->_location);
+			free(z->u.door->_background);
 			_vm->_graphics->freeCnv(&z->u.door->_cnv);
-			memFree(z->u.door);
+			free(z->u.door);
 			break;
 
 		case kZoneSpeak:
 			freeDialogue(z->u.speak->_dialogue);
-			memFree(z->u.speak);
+			free(z->u.speak);
 			break;
 
 		case kZoneGet:
-			memFree(z->u.get->_cnv._data2);
+			free(z->u.get->_cnv._data2);
 			_vm->_graphics->freeStaticCnv(&z->u.get->_cnv);
-			memFree(z->u.get);
+			free(z->u.get);
 			break;
 
 		case kZoneHear:
-			memFree(z->u.hear);
+			free(z->u.hear);
 			break;
 
 		case kZoneMerge:
-			memFree(z->u.merge);
+			free(z->u.merge);
 			break;
 
 		default:
 			break;
 		}
 
-		memFree(z->_label._text);
+		free(z->_label._text);
 		z->_label._text = NULL;
 		_vm->_graphics->freeStaticCnv(&z->_label._cnv);
 		freeCommands(z->_commands);
@@ -212,32 +212,32 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 
 	switch (z->_type & 0xFFFF) {
 	case kZoneExamine:	// examine Zone alloc
-		u->examine = (ExamineData*)memAlloc(sizeof(ExamineData));
+		u->examine = (ExamineData*)malloc(sizeof(ExamineData));
 		memset(u->examine, 0, sizeof(ExamineData));
 		break;
 
 	case kZoneDoor: // door Zone alloc
-		u->door = (DoorData*)memAlloc(sizeof(DoorData));
+		u->door = (DoorData*)malloc(sizeof(DoorData));
 		memset(u->door, 0, sizeof(DoorData));
 		break;
 
 	case kZoneGet:	// get Zone alloc
-		u->get = (GetData*)memAlloc(sizeof(GetData));
+		u->get = (GetData*)malloc(sizeof(GetData));
 		memset(u->get, 0, sizeof(GetData));
 		break;
 
 	case kZoneMerge:	// merge Zone alloc
-		u->merge = (MergeData*)memAlloc(sizeof(MergeData));
+		u->merge = (MergeData*)malloc(sizeof(MergeData));
 		memset(u->merge, 0, sizeof(MergeData));
 		break;
 
 	case kZoneHear: // hear Zone alloc
-		u->hear = (HearData*)memAlloc(sizeof(HearData));
+		u->hear = (HearData*)malloc(sizeof(HearData));
 		memset(u->hear, 0, sizeof(HearData));
 		break;
 
 	case kZoneSpeak:	// speak Zone alloc
-		u->speak = (SpeakData*)memAlloc(sizeof(SpeakData));
+		u->speak = (SpeakData*)malloc(sizeof(SpeakData));
 		memset(u->speak, 0, sizeof(SpeakData));
 		break;
 
@@ -252,7 +252,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 		switch (z->_type & 0xFFFF) {
 		case kZoneExamine: // examine Zone init
 			if (!scumm_stricmp(_tokens[0], "file")) {
-				u->examine->_filename = (char*)memAlloc(strlen(_tokens[1])+1);
+				u->examine->_filename = (char*)malloc(strlen(_tokens[1])+1);
 				strcpy(u->examine->_filename, _tokens[1]);
 			}
 			if (!scumm_stricmp(_tokens[0], "desc")) {
@@ -268,7 +268,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 			}
 
 			if (!scumm_stricmp(_tokens[0], "location")) {
-				u->door->_location = (char*)memAlloc(strlen(_tokens[1])+1);
+				u->door->_location = (char*)malloc(strlen(_tokens[1])+1);
 				strcpy(u->door->_location, _tokens[1]);
 			}
 
@@ -292,7 +292,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 //				_ax = (z->_flags & kFlagsClosed ? 0 : 1);
 //				vE0._data1 = doorcnv->field_8[_ax];
 
-				vE0._data2 = u->door->_background = (byte*)memAlloc(vE0._width*vE0._height);
+				vE0._data2 = u->door->_background = (byte*)malloc(vE0._width*vE0._height);
 				_vm->_graphics->backupCnvBackground(&vE0, z->_limits._left, z->_limits._top);
 
 				_vm->_graphics->flatBlitCnv(&vE0, z->_limits._left, z->_limits._top, Graphics::kBitBack, vE0._data1);
@@ -310,7 +310,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 				StaticCnv *vE4 = &u->get->_cnv;
 				strcpy(vC8, _tokens[1]);
 				loadStatic(vC8, vE4);
-				vE4->_data2 = (byte*)memAlloc(vE4->_width*vE4->_height);
+				vE4->_data2 = (byte*)malloc(vE4->_width*vE4->_height);
 
 				if ((z->_flags & kFlagsRemove) == 0) {
 					_vm->_graphics->backupCnvBackgroundTransparent(vE4, z->_limits._left, z->_limits._top);

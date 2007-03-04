@@ -109,8 +109,8 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	}
 	debugC(1, kDebugWalk, "found closest path point at (%i, %i)", to_x, to_y);
 
-	WalkNode *v48 = (WalkNode*)memAlloc(sizeof(WalkNode));
-	WalkNode *v44 = (WalkNode*)memAlloc(sizeof(WalkNode));
+	WalkNode *v48 = (WalkNode*)malloc(sizeof(WalkNode));
+	WalkNode *v44 = (WalkNode*)malloc(sizeof(WalkNode));
 
 	v48->_x = to_x - _yourself._cnv._width / 2; 		// target top left coordinates
 	v48->_y = to_y - _yourself._cnv._height;
@@ -121,7 +121,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	if (v38 == 1) {
 		// destination directly reachable
 		debugC(1, kDebugWalk, "direct move to (%i, %i)", to_x, to_y);
-		memFree(v44);
+		free(v44);
 		return v48;
 	}
 
@@ -184,7 +184,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 			if (_closest_node_found == 0) break;
 
-			WalkNode *_newnode = (WalkNode*)memAlloc(sizeof(WalkNode));
+			WalkNode *_newnode = (WalkNode*)malloc(sizeof(WalkNode));
 			memcpy( _newnode, _closest_node, sizeof(WalkNode));
 			v20._x = _newnode->_x;
 			v20._y = _newnode->_y;
@@ -225,7 +225,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	}
 
 
-	memFree(v44);
+	free(v44);
 	return (WalkNode*)v58._node._next;
 }
 
@@ -333,14 +333,14 @@ void jobWalk(void *parm, Job *j) {
 
 			j->_finished = 1;
 			checkDoor();
-			memFree(node);
+			free(node);
 			return;
 		}
 
 
 		WalkNode *tmp = (WalkNode*)node->_node._next;
 		j->_parm = node->_node._next;
-		memFree(node);
+		free(node);
 
 		debugC(1, kDebugWalk, "jobWalk moving to next node (%i, %i)", tmp->_x, tmp->_y);
 
