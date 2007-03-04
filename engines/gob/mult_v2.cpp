@@ -410,7 +410,6 @@ void Mult_v2::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 		_palFadingBlue = 0;
 
 		_oldPalette = _vm->_global->_pPaletteDesc->vgaPal;
-//		memcpy((char *)_palAnimPalette, (char *)_vm->_global->_pPaletteDesc->vgaPal, 768);
 
 		if (_vm->_anim->_animSurf == 0) {
 			_vm->_util->setFrameRate(_multData->frameRate);
@@ -694,9 +693,6 @@ char Mult_v2::prepPalAnim(char stop) {
 		stop = 0;
 		_doPalSubst = 0;
 		_vm->_global->_pPaletteDesc->vgaPal = _oldPalette;
-
-		memcpy((char *)_palAnimPalette, (char *)_vm->_global->_pPaletteDesc->vgaPal, 768);
-
 		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 	} else {
 		stop = 0;
@@ -708,6 +704,7 @@ char Mult_v2::prepPalAnim(char stop) {
 		_multData->palAnimIndices[2] = 0;
 		_multData->palAnimIndices[3] = 0;
 
+		memcpy((char *)_palAnimPalette, (char *)_vm->_global->_pPaletteDesc->vgaPal, 768);
 		_vm->_global->_pPaletteDesc->vgaPal = _palAnimPalette;
 	}
 	return stop;

@@ -356,6 +356,22 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB2,
 		"intro"
 	},
+	{ // Supplied by fac76 in bug report #1673397
+		{
+			"gob2",
+			"",
+			{
+				{"intro.stk", 0, "b45b984ee8017efd6ea965b9becd4d66", 828443},
+				{"musmac1.mid", 0, "7f96f491448c7a001b32df89cf8d2af2", 1658},
+				{NULL, 0, NULL, 0}
+			},
+			UNK_LANG,
+			kPlatformMacintosh,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB2,
+		"intro"
+	},
 	{
 		{
 			"gob2",

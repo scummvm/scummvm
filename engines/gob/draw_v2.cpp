@@ -41,9 +41,9 @@ Draw_v2::Draw_v2(GobEngine *vm) : Draw_v1(vm) {
 
 void Draw_v2::printText(void) {
 	int i;
-	char *dataPtr;
-	char *ptr;
-	char *ptr2;
+	byte *dataPtr;
+	byte *ptr;
+	byte *ptr2;
 	char mask[80];
 	char str[80];
 	char buf[50];
@@ -86,39 +86,32 @@ void Draw_v2::printText(void) {
 	}
 
 	size = _vm->_game->_totTextData->items[index].size;
-	dataPtr = _vm->_game->_totTextData->dataPtr + _vm->_game->_totTextData->items[index].offset;
+	dataPtr = ((byte *) _vm->_game->_totTextData->dataPtr) +
+		_vm->_game->_totTextData->items[index].offset;
 	ptr = dataPtr;
 
 	if ((_renderFlags & 0x400) && (ptr[1] & 0x80))
 		return;
 
-	if (_renderFlags & RENDERFLAG_CAPTUREPUSH) {
-		_destSpriteX = READ_LE_UINT16(ptr) & 0x7FFF;
-		_destSpriteY = READ_LE_UINT16(ptr + 2);
-		_spriteRight = READ_LE_UINT16(ptr + 4) - _destSpriteX + 1;
-		_spriteBottom = READ_LE_UINT16(ptr + 6) - _destSpriteY + 1;
-		_vm->_game->capturePush(_destSpriteX, _destSpriteY,
-						 _spriteRight, _spriteBottom);
-		(*_vm->_scenery->_pCaptureCounter)++;
-	}
-	
-	_destSpriteX = READ_LE_UINT16(ptr) & 0x7FFF;
-	destX = _destSpriteX;
-
-	_destSpriteY = READ_LE_UINT16(ptr + 2);
-	destY = _destSpriteY;
-
-	_spriteRight = READ_LE_UINT16(ptr + 4);
-	spriteRight = _spriteRight;
-
-	_spriteBottom = READ_LE_UINT16(ptr + 6);
-	spriteBottom = _spriteBottom;
-
-	_destSurface = 21;
-
+	destX = READ_LE_UINT16(ptr) & 0x7FFF;
+	destY = READ_LE_UINT16(ptr + 2);
+	spriteRight = READ_LE_UINT16(ptr + 4);
+	spriteBottom = READ_LE_UINT16(ptr + 6);
 	ptr += 8;
 
-	_backColor = (byte) *ptr++;
+	if (_renderFlags & RENDERFLAG_CAPTUREPUSH) {
+		_vm->_game->capturePush(destX, destY,
+				spriteRight - destX + 1, spriteBottom - destY + 1);
+		(*_vm->_scenery->_pCaptureCounter)++;
+	}
+
+	_destSpriteX = destX;
+	_destSpriteY = destY;
+	_spriteRight = spriteRight;
+	_spriteBottom = spriteBottom;
+	_destSurface = 21;
+
+	_backColor = *ptr++;
 	_transparency = 1;
 
 	spriteOperation(DRAW_CLEARRECT);
@@ -151,7 +144,7 @@ void Draw_v2::printText(void) {
 
 	// Adding the boundary check *shouldn't* pose any problems, since access behind
 	// that point should be forbidden anyway.
-	for (i = 0, ptr2 = ptr; ((ptr2 - dataPtr) < size) && (*ptr2 != 1); ptr2++, i++) {
+	for (i = 0, ptr2 = ptr; ((ptr2 - dataPtr) < size) && (*ptr2 != 1); i++) {
 		if ((_vm->_game->_totFileData[0x29] < 0x32) && (*ptr2 > 3) && (*ptr2 < 32))
 			*ptr2 = 32;
 
@@ -171,7 +164,7 @@ void Draw_v2::printText(void) {
 
 		case 6:
 			ptr2++;
-			switch (*ptr & 0xC0) {
+			switch (*ptr2 & 0xC0) {
 			case 0x40:
 				ptr2 += 9;
 				break;
@@ -188,7 +181,7 @@ void Draw_v2::printText(void) {
 			break;
 
 		case 10:
-			ptr2 += (((byte) ptr2[1]) * 2) + 2;
+			ptr2 += (ptr2[1] * 2) + 2;
 			break;
 
 		default:
@@ -214,7 +207,7 @@ void Draw_v2::printText(void) {
 	_transparency = 1;
 	
 	while (true) {
-		if ((*ptr >= 1) && ((*ptr <= 7) || (*ptr == 10)) && (strPos != 0)) {
+		if ((((*ptr >= 1) && (*ptr <= 7)) || (*ptr == 10)) && (strPos != 0)) {
 			str[MAX(strPos, strPos2)] = 0;
 			strPosBak = strPos;
 			width = strlen(str) * _fonts[fontIndex]->itemWidth;
@@ -299,7 +292,7 @@ void Draw_v2::printText(void) {
 
 		case 4:
 			ptr++;
-			frontColor = (byte) *ptr++;
+			frontColor = *ptr++;
 			break;
 
 		case 6:
@@ -341,7 +334,7 @@ void Draw_v2::printText(void) {
 		case 10:
 			// loc_12C93
 			str[0] = (char)255;
-			WRITE_LE_UINT16((uint16*)(str+1), ptr - _vm->_game->_totTextData->dataPtr);
+			WRITE_LE_UINT16((uint16*)(str+1), ((char *) ptr) - _vm->_game->_totTextData->dataPtr);
 			str[3] = 0;
 			ptr++;
 			i = *ptr++;

@@ -53,8 +53,13 @@ void Init_v2::soundVideo(int32 smallHeap, int16 flag) {
 	_vm->_global->_sprAllocated = 0;
 	_vm->_gtimer->enableTimer();
 
-	if ((_vm->_global->_videoMode == 0x13) || (_vm->_global->_videoMode == 0x14))
-		_vm->_global->_colorCount = 256;
+	if ((_vm->_platform == Common::kPlatformPC) || (_vm->_platform == Common::kPlatformMacintosh)) {
+		if ((_vm->_global->_videoMode == 0x13) || (_vm->_global->_videoMode == 0x14))
+			_vm->_global->_colorCount = 256;
+		else
+			_vm->_global->_colorCount = 16;
+	} else
+		_vm->_global->_colorCount = 16;
 
 	_vm->_global->_pPaletteDesc = &_vm->_global->_paletteStruct;
 	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;

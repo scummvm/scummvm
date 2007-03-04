@@ -1545,7 +1545,6 @@ bool Inter_v2::o2_playSound(char &cmdCount, int16 &counter, int16 &retFlag) {
 	repCount = _vm->_parse->parseValExpr();
 	frequency = _vm->_parse->parseValExpr();
 
-	warning("playSound(%d, %d, %d)", index, repCount, frequency);
 	_soundEndTimeKey = 0;
 	if (_vm->_game->_soundSamples[index] == 0)
 		return false;
@@ -1715,56 +1714,55 @@ bool Inter_v2::o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 	switch (cmd & 0x7f) {
 	case 48:
-		if ((_vm->_global->_videoMode < 0x32) || (_vm->_global->_videoMode > 0x63)) {
+		if ((_vm->_global->_fakeVideoMode < 0x32) || (_vm->_global->_fakeVideoMode > 0x63)) {
 			_vm->_global->_inter_execPtr += 48;
 			return false;
 		}
 		break;
 
 	case 49:
-		if ((_vm->_global->_videoMode != 5) && (_vm->_global->_videoMode != 7)) {
+		if ((_vm->_global->_fakeVideoMode != 5) && (_vm->_global->_fakeVideoMode != 7)) {
 			_vm->_global->_inter_execPtr += 18;
 			return false;
 		}
 		break;
 
 	case 50:
-		if ((_vm->_global->_videoMode != 0x0D) || (_vm->_global->_colorCount == 256)) {
+		if (_vm->_global->_colorCount == 256) {
 			_vm->_global->_inter_execPtr += 16;
 			return false;
 		}
 		break;
 
 	case 51:
-		if (_vm->_global->_videoMode < 0x64) {
+		if (_vm->_global->_fakeVideoMode < 0x64) {
 			_vm->_global->_inter_execPtr += 2;
 			return false;
 		}
 		break;
 
 	case 52:
-		if ((_vm->_platform == Common::kPlatformPC) &&
-				((_vm->_global->_videoMode != 0x0D) || (_vm->_global->_colorCount == 256))) {
+		if (_vm->_global->_colorCount == 256) {
 			_vm->_global->_inter_execPtr += 48;
 			return false;
 		}
 		break;
 
 	case 53:
-		if (_vm->_global->_videoMode < 0x13) {
+		if (_vm->_global->_colorCount != 256) {
 			_vm->_global->_inter_execPtr += 2;
 			return false;
 		}
 		break;
 
 	case 54:
-		if (_vm->_global->_videoMode < 0x13) {
+		if (_vm->_global->_fakeVideoMode < 0x13) {
 			return false;
 		}
 		break;
 
 	case 61:
-		if (_vm->_global->_videoMode < 0x13) {
+		if (_vm->_global->_fakeVideoMode < 0x13) {
 			*_vm->_global->_inter_execPtr += 4;
 			return false;
 		}
@@ -1832,8 +1830,6 @@ bool Inter_v2::o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag) {
 			_vm->_draw->_vgaPalette[i].green = _vm->_global->_inter_execPtr[1];
 			_vm->_draw->_vgaPalette[i].blue = _vm->_global->_inter_execPtr[2];
 		}
-		if ((_vm->_platform == Common::kPlatformPC) && _vm->_global->_videoMode >= 0x13)
-			return false;
 		break;
 
 	case 53:
