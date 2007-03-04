@@ -27,10 +27,19 @@
 
 namespace Parallaction {
 
+Disk::Disk(Parallaction* vm) : _vm(vm) {
+
+}
+
+Disk::~Disk() {
+	_archive.close();
+}
+
+
 //
 // decompress a graphics block
 //
-uint16 decompressChunk(byte *src, byte *dst, uint16 size) {
+uint16 Disk::decompressChunk(byte *src, byte *dst, uint16 size) {
 
 	uint16 written = 0;
 	uint16 read = 0;
@@ -66,7 +75,7 @@ uint16 decompressChunk(byte *src, byte *dst, uint16 size) {
 //
 // loads a cnv from an external file
 //
-void loadExternalCnv(const char *filename, Cnv *cnv) {
+void Disk::loadExternalCnv(const char *filename, Cnv *cnv) {
 //	printf("Graphics::loadExternalCnv(%s)...", filename);
 
 	char path[PATH_LEN];
@@ -98,7 +107,7 @@ void loadExternalCnv(const char *filename, Cnv *cnv) {
 	return;
 }
 
-void loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
+void Disk::loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
 
 	char path[PATH_LEN];
 
@@ -125,30 +134,30 @@ void loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
 	return;
 }
 
-void loadCnv(const char *filename, Cnv *cnv) {
+void Disk::loadCnv(const char *filename, Cnv *cnv) {
 //	printf("Graphics::loadCnv(%s)\n", filename);
 
 	char path[PATH_LEN];
 
 	strcpy(path, filename);
-	if (!_vm->_archive.openArchivedFile(path)) {
+	if (!_archive.openArchivedFile(path)) {
 		sprintf(path, "%s.pp", filename);
-		if (!_vm->_archive.openArchivedFile(path))
+		if (!_archive.openArchivedFile(path))
 			errorFileNotFound(path);
 	}
 
-	cnv->_count = _vm->_archive.readByte();
-	cnv->_width = _vm->_archive.readByte();
-	cnv->_height = _vm->_archive.readByte();
+	cnv->_count = _archive.readByte();
+	cnv->_width = _archive.readByte();
+	cnv->_height = _archive.readByte();
 
 	uint16 framesize = cnv->_width*cnv->_height;
 
 	cnv->_array = (byte**)malloc(cnv->_count * sizeof(byte*));
 
-	uint32 size = _vm->_archive.size() - 3;
+	uint32 size = _archive.size() - 3;
 
 	byte *buf = (byte*)malloc(size);
-	_vm->_archive.read(buf, size);
+	_archive.read(buf, size);
 
 	byte *s = buf;
 
@@ -161,14 +170,14 @@ void loadCnv(const char *filename, Cnv *cnv) {
 		s += read;
 	}
 
-	_vm->_archive.closeArchivedFile();
+	_archive.closeArchivedFile();
 
 	free(buf);
 
 	return;
 }
 
-void loadTalk(const char *name, Cnv *cnv) {
+void Disk::loadTalk(const char *name, Cnv *cnv) {
 
 	char* ext = strstr(name, ".talk");
 	if (ext != NULL) {
@@ -196,7 +205,7 @@ void loadTalk(const char *name, Cnv *cnv) {
 
 }
 
-void loadLocation(const char *name, char* script) {
+void Disk::loadLocation(const char *name, char* script) {
 
 	char archivefile[PATH_LEN];
 
@@ -211,44 +220,44 @@ void loadLocation(const char *name, char* script) {
 	strcat(archivefile, name);
 	strcat(archivefile, ".loc");
 
-	_vm->_archive.close();
+	_archive.close();
 
 	_vm->_languageDir[2] = '\0';
-	_vm->_archive.open(_vm->_languageDir);
+	_archive.open(_vm->_languageDir);
 	_vm->_languageDir[2] = '/';
 
-	if (!_vm->_archive.openArchivedFile(archivefile)) {
+	if (!_archive.openArchivedFile(archivefile)) {
 		sprintf(archivefile, "%s%s.loc", _vm->_languageDir, name);
-		if (!_vm->_archive.openArchivedFile(archivefile))
+		if (!_archive.openArchivedFile(archivefile))
 			error("can't find location file '%s'", name);
 	}
 
-	uint32 count = _vm->_archive.size();
-	_vm->_archive.read(script, count);
-	_vm->_archive.closeArchivedFile();
-	_vm->_archive.close();
+	uint32 count = _archive.size();
+	_archive.read(script, count);
+	_archive.closeArchivedFile();
+	_archive.close();
 
 }
 
-void loadScript(const char* name, char *script) {
+void Disk::loadScript(const char* name, char *script) {
 
 	char vC8[PATH_LEN];
 
 	sprintf(vC8, "%s.script", name);
 
-	if (!_vm->_archive.openArchivedFile(vC8))
+	if (!_archive.openArchivedFile(vC8))
 		errorFileNotFound(vC8);
 
-	uint32 size = _vm->_archive.size();
+	uint32 size = _archive.size();
 
-	_vm->_archive.read(script, size);
+	_archive.read(script, size);
 	script[size] = '\0';
 
-	_vm->_archive.closeArchivedFile();
+	_archive.closeArchivedFile();
 
 }
 
-void loadHead(const char* name, StaticCnv* cnv) {
+void Disk::loadHead(const char* name, StaticCnv* cnv) {
 
 	char path[PATH_LEN];
 
@@ -264,11 +273,11 @@ void loadHead(const char* name, StaticCnv* cnv) {
 }
 
 
-void loadPointer(StaticCnv* cnv) {
+void Disk::loadPointer(StaticCnv* cnv) {
 	loadExternalStaticCnv("pointer", cnv);
 }
 
-void loadFont(const char* name, Cnv* cnv) {
+void Disk::loadFont(const char* name, Cnv* cnv) {
 	char path[PATH_LEN];
 
 	sprintf(path, "%scnv", name);
@@ -277,7 +286,7 @@ void loadFont(const char* name, Cnv* cnv) {
 
 // loads character's icons set
 
-void loadObjects(const char *name, Cnv* cnv) {
+void Disk::loadObjects(const char *name, Cnv* cnv) {
 
 	if (!scumm_strnicmp("mini", name, 4)) {
 		name += 4;
@@ -292,29 +301,29 @@ void loadObjects(const char *name, Cnv* cnv) {
 }
 
 
-void loadStatic(const char* name, StaticCnv* cnv) {
+void Disk::loadStatic(const char* name, StaticCnv* cnv) {
 
 	char path[PATH_LEN];
 
 	strcpy(path, name);
-	if (!_vm->_archive.openArchivedFile(path)) {
+	if (!_archive.openArchivedFile(path)) {
 		sprintf(path, "%s.pp", name);
-		if (!_vm->_archive.openArchivedFile(path))
+		if (!_archive.openArchivedFile(path))
 			errorFileNotFound(path);
 	}
 
-	_vm->_archive.skip(1);
-	cnv->_width = _vm->_archive.readByte();
-	cnv->_height = _vm->_archive.readByte();
+	_archive.skip(1);
+	cnv->_width = _archive.readByte();
+	cnv->_height = _archive.readByte();
 
-	uint16 compressedsize = _vm->_archive.size() - 3;
+	uint16 compressedsize = _archive.size() - 3;
 	byte *compressed = (byte*)malloc(compressedsize);
 
 	uint16 size = cnv->_width*cnv->_height;
 	cnv->_data0 = (byte*)malloc(size);
 
-	_vm->_archive.read(compressed, compressedsize);
-	_vm->_archive.closeArchivedFile();
+	_archive.read(compressed, compressedsize);
+	_archive.closeArchivedFile();
 
 	decompressChunk(compressed, cnv->_data0, size);
 	free(compressed);
@@ -322,7 +331,7 @@ void loadStatic(const char* name, StaticCnv* cnv) {
 	return;
 }
 
-void loadFrames(const char* name, Cnv* cnv) {
+void Disk::loadFrames(const char* name, Cnv* cnv) {
 
 	loadCnv(name, cnv);
 
@@ -339,7 +348,7 @@ void loadFrames(const char* name, Cnv* cnv) {
 //
 
 
-void unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *path) {
+void Disk::unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *path) {
 
 	// update mask, path and screen
 	for (uint16 i = 0; i < SCREEN_WIDTH; i++) {
@@ -351,20 +360,20 @@ void unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *path) {
 	return;
 }
 
-void loadBackground(const char *filename) {
+void Disk::loadBackground(const char *filename) {
 //	printf("Graphics::loadBackground(%s)\n", filename);
 
-	if (!_vm->_archive.openArchivedFile(filename))
+	if (!_archive.openArchivedFile(filename))
 		errorFileNotFound(filename);
 
-	_vm->_graphics->parseBackground(_vm->_archive);
+	_vm->_graphics->parseBackground(_archive);
 
 	byte *bg = (byte*)calloc(1, SCREEN_WIDTH*SCREEN_HEIGHT);
 	byte *mask = (byte*)calloc(1, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 	byte *path = (byte*)calloc(1, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 
 	byte *v4 = (byte*)malloc(SCREEN_SIZE);
-	_vm->_archive.read(v4, SCREEN_SIZE);
+	_archive.read(v4, SCREEN_SIZE);
 
 	byte v144[SCREEN_WIDTH];
 
@@ -393,20 +402,20 @@ void loadBackground(const char *filename) {
 //	mask and path are normally combined (via OR) into the background picture itself
 //	read the comment on the top of this file for more
 //
-void loadMaskAndPath(const char *name) {
+void Disk::loadMaskAndPath(const char *name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.msk", name);
 
-	if (!_vm->_archive.openArchivedFile(path))
+	if (!_archive.openArchivedFile(path))
 		errorFileNotFound(name);
 
 	byte *maskBuf = (byte*)calloc(1, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 	byte *pathBuf = (byte*)calloc(1, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 
-	_vm->_graphics->parseDepths(_vm->_archive);
+	_vm->_graphics->parseDepths(_archive);
 
-	_vm->_archive.read(pathBuf, SCREENPATH_WIDTH*SCREEN_HEIGHT);
-	_vm->_archive.read(maskBuf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
+	_archive.read(pathBuf, SCREENPATH_WIDTH*SCREEN_HEIGHT);
+	_archive.read(maskBuf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 
 	_vm->_graphics->setMask(maskBuf);
 	_vm->_graphics->setPath(pathBuf);
@@ -414,13 +423,13 @@ void loadMaskAndPath(const char *name) {
 	return;
 }
 
-void loadSlide(const char *filename) {
+void Disk::loadSlide(const char *filename) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.slide", filename);
 	loadBackground(path);
 }
 
-void loadScenery(const char *name, const char *mask) {
+void Disk::loadScenery(const char *name, const char *mask) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.dyn", name);
 	loadBackground(path);
@@ -430,6 +439,11 @@ void loadScenery(const char *name, const char *mask) {
 		loadMaskAndPath(mask);
 	}
 
+}
+
+void Disk::selectArchive(const char *name) {
+	_archive.close();
+	_archive.open(name);
 }
 
 } // namespace Parallaction

@@ -162,6 +162,7 @@ Parallaction::Parallaction(OSystem *syst) :
 
 	// FIXME
 	_vm = this;
+	_disk = new Disk(this);
 
 	_skipMenu = false;
 
@@ -203,6 +204,7 @@ Parallaction::Parallaction(OSystem *syst) :
 
 Parallaction::~Parallaction() {
 	delete _midiPlayer;
+	delete _disk;
 }
 
 
@@ -850,18 +852,15 @@ void Parallaction::changeCharacter(const char *name) {
 			freeCharacterFrames();
 		}
 
-		_archive.close();
-
-		strcpy(_disk, "disk1");
-		_archive.open("disk1");
+		_disk->selectArchive("disk1");
 
 		char path[PATH_LEN];
 		strcpy(path, v32);
-		loadFrames(path, &_tempFrames);
+		_disk->loadFrames(path, &_tempFrames);
 
 		if (name[0] != 'D') {
 			sprintf(path, "mini%s", v32);
-			loadFrames(path, &_miniCharacterFrames);
+			_disk->loadFrames(path, &_miniCharacterFrames);
 
 			sprintf(path, "%s.tab", name);
 			initTable(path, _objectsNames);

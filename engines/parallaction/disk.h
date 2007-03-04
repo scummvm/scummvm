@@ -37,6 +37,9 @@ namespace Parallaction {
 
 #define DIRECTORY_OFFSET_IN_FILE	0x4000
 
+class Parallaction;
+class Graphics;
+
 class Archive : public Common::SeekableReadStream {
 
 protected:
@@ -72,17 +75,41 @@ public:
 	uint32 read(void *dataPtr, uint32 dataSize);
 };
 
-void loadLocation(const char *name, char* script);
-void loadScript(const char* name, char *script);
-void loadTalk(const char *name, Cnv *cnv);
-void loadObjects(const char *name, Cnv *cnv);
-void loadPointer(StaticCnv* cnv);
-void loadHead(const char* name, StaticCnv* cnv);
-void loadFont(const char* name, Cnv* cnv);
-void loadStatic(const char* name, StaticCnv* cnv);
-void loadFrames(const char* name, Cnv* cnv);
-void loadSlide(const char *filename);
-void loadScenery(const char* background, const char* mask);
+class Disk {
+
+private:
+	uint16 decompressChunk(byte *src, byte *dst, uint16 size);
+	void unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *path);
+	void loadExternalCnv(const char *filename, Cnv *cnv);
+	void loadCnv(const char *filename, Cnv *cnv);
+	void loadExternalStaticCnv(const char *filename, StaticCnv *cnv);
+	void loadBackground(const char *filename);
+	void loadMaskAndPath(const char *name);
+
+protected:
+	Archive			_archive;
+
+	Parallaction 	*_vm;
+	Graphics		*_gfx;
+
+public:
+	Disk(Parallaction *vm);
+	virtual ~Disk();
+
+	void selectArchive(const char *name);
+
+	void loadLocation(const char *name, char* script);
+	void loadScript(const char* name, char *script);
+	void loadTalk(const char *name, Cnv *cnv);
+	void loadObjects(const char *name, Cnv *cnv);
+	void loadPointer(StaticCnv* cnv);
+	void loadHead(const char* name, StaticCnv* cnv);
+	void loadFont(const char* name, Cnv* cnv);
+	void loadStatic(const char* name, StaticCnv* cnv);
+	void loadFrames(const char* name, Cnv* cnv);
+	void loadSlide(const char *filename);
+	void loadScenery(const char* background, const char* mask);
+};
 
 } // namespace Parallaction
 

@@ -128,7 +128,7 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 				}
 			}
 
-			loadFrames(vC8, &vD0->_cnv);
+			_disk->loadFrames(vC8, &vD0->_cnv);
 //			int16 _ax = _vm->_graphics->loadCnv(vC8, &vD0->_cnv);
 //			if (_ax == -1) exit(-1);
 		}
@@ -253,7 +253,7 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 
 	// the largest script in Nippon Safes is 3,668 bytes, so 4 kb is well enough
 	char* src = (char*)malloc(0x1000);
-	loadScript(filename, src);
+	_disk->loadScript(filename, src);
 
 	_numLocals = 0;
 

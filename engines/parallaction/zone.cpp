@@ -279,7 +279,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 				strcpy(vC8, _tokens[1]);
 
 				StaticCnv vE0;
-				loadFrames(vC8, doorcnv);
+				_disk->loadFrames(vC8, doorcnv);
 
 //				printf("door width: %i, height: %i", doorcnv->_width, doorcnv->_height );
 
@@ -293,9 +293,9 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 //				vE0._data1 = doorcnv->field_8[_ax];
 
 				vE0._data2 = u->door->_background = (byte*)malloc(vE0._width*vE0._height);
-				_vm->_graphics->backupCnvBackground(&vE0, z->_limits._left, z->_limits._top);
+				_graphics->backupCnvBackground(&vE0, z->_limits._left, z->_limits._top);
 
-				_vm->_graphics->flatBlitCnv(&vE0, z->_limits._left, z->_limits._top, Graphics::kBitBack, vE0._data1);
+				_graphics->flatBlitCnv(&vE0, z->_limits._left, z->_limits._top, Graphics::kBitBack, vE0._data1);
 			}
 
 			if (!scumm_stricmp(_tokens[0],	"startpos")) {
@@ -309,12 +309,12 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 			if (!scumm_stricmp(_tokens[0], "file")) {
 				StaticCnv *vE4 = &u->get->_cnv;
 				strcpy(vC8, _tokens[1]);
-				loadStatic(vC8, vE4);
+				_disk->loadStatic(vC8, vE4);
 				vE4->_data2 = (byte*)malloc(vE4->_width*vE4->_height);
 
 				if ((z->_flags & kFlagsRemove) == 0) {
-					_vm->_graphics->backupCnvBackgroundTransparent(vE4, z->_limits._left, z->_limits._top);
-					_vm->_graphics->flatBlitCnv(vE4, z->_limits._left, z->_limits._top, Graphics::kBitBack, vE4->_data1);
+					_graphics->backupCnvBackgroundTransparent(vE4, z->_limits._left, z->_limits._top);
+					_graphics->flatBlitCnv(vE4, z->_limits._left, z->_limits._top, Graphics::kBitBack, vE4->_data1);
 				}
 			}
 
@@ -365,7 +365,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 void displayCharacterComment(ExamineData *data) {
 	if (data->_description == NULL) return;
 
-	loadTalk(_vm->_characterName, &_characterFace);
+	_vm->_disk->loadTalk(_vm->_characterName, &_characterFace);
 
 	StaticCnv v3C;
 	v3C._width = _characterFace._width;
@@ -412,12 +412,12 @@ void displayItemComment(ExamineData *data) {
 
 	char v68[PATH_LEN];
 	strcpy(v68, data->_filename);
-	loadStatic(v68, &data->_cnv);
+	_vm->_disk->loadStatic(v68, &data->_cnv);
 	_vm->_graphics->flatBlitCnv(&data->_cnv, 140, (SCREEN_HEIGHT - data->_cnv._height)/2, Graphics::kBitFront, data->_cnv._data1);
 	_vm->_graphics->freeStaticCnv(&data->_cnv);
 
 	StaticCnv cnv;
-	loadHead(_vm->_characterName, &cnv);
+	_vm->_disk->loadHead(_vm->_characterName, &cnv);
 
 	int16 v6A = 0, v6C = 0;
 

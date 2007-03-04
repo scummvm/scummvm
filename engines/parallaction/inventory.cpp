@@ -372,7 +372,7 @@ void cleanInventory() {
 
 
 void refreshInventory(const char *character) {
-	loadObjects(character, &_characterInventory);
+	_vm->_disk->loadObjects(character, &_characterInventory);
 	redrawInventory();
 	_vm->_graphics->freeCnv(&_characterInventory);
 
@@ -381,7 +381,7 @@ void refreshInventory(const char *character) {
 
 
 void refreshInventoryItem(const char *character, uint16 index) {
-	loadObjects(character, &_characterInventory);
+	_vm->_disk->loadObjects(character, &_characterInventory);
 	drawInventoryItem(index, &_inventory[index]);
 	_vm->_graphics->freeCnv(&_characterInventory);
 

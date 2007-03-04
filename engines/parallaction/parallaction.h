@@ -264,7 +264,7 @@ public:
 	Menu*	_menu;
 	char	_characterName[30];
 	char	_languageDir[6];
-	char	_disk[6];
+	Disk*	_disk;
 
 	char	_locationNames[120][32];
 	int16	_currentLocationIndex;
@@ -273,8 +273,6 @@ public:
 	InventoryItem	_activeItem;
 
 	Script	*_locationScript;
-
-	Archive	_archive;
 
 protected:		// data
 

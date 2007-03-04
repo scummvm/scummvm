@@ -48,7 +48,7 @@ void Parallaction::parseLocation(const char *filename) {
 	_vm->_graphics->setFont("topaz");
 
 	location_src = (char*)malloc(0x4000);
-	loadLocation(filename, location_src);
+	_disk->loadLocation(filename, location_src);
 	_locationScript = new Script(location_src);
 
 	fillBuffers(*_locationScript, true);
@@ -105,8 +105,7 @@ void Parallaction::parseLocation(const char *filename) {
 			}
 		}
 		if (!scumm_stricmp(_tokens[0], "DISK")) {
-			strcpy(_disk, _tokens[1]);
-			_archive.open(_disk);
+			_disk->selectArchive(_tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "LOCALFLAGS")) {
 			_si = 1;	// _localFlagNames[0] = 'visited'
@@ -277,7 +276,7 @@ void switchBackground(const char* background, const char* mask) {
 		_vm->_graphics->palUnk0(palette);
 	}
 
-	loadScenery(background, mask);
+	_vm->_disk->loadScenery(background, mask);
 
 	return;
 }
@@ -355,19 +354,19 @@ void Parallaction::changeLocation(char *location) {
 		*tmp = '\0';
 
 		if (!scumm_strnicmp(tmp+1, "slide", 5)) {
-			loadSlide(_newLocation);
-			_vm->_graphics->palUnk0(_palette);
-			_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+			_disk->loadSlide(_newLocation);
+			_graphics->palUnk0(_palette);
+			_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
 			debugC(1, kDebugLocation, "changeLocation: new background set");
 
-			_vm->_graphics->_proportionalFont = false;
-			_vm->_graphics->setFont("slide");
+			_graphics->_proportionalFont = false;
+			_graphics->setFont("slide");
 
 			uint16 _ax = strlen(_slideText[0]);
 			_ax <<= 3;	// text width
 			uint16 _dx = (SCREEN_WIDTH - _ax) >> 1; // center text
-			_vm->_graphics->displayString(_dx, 14, _slideText[0]); // displays text on screen
+			_graphics->displayString(_dx, 14, _slideText[0]); // displays text on screen
 
 			waitUntilLeftClick();
 
@@ -397,7 +396,7 @@ void Parallaction::changeLocation(char *location) {
 	strcpy(_saveData1, _newLocation);
 
 	parseLocation(_newLocation);
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
+	_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
 	debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", _newLocation);
 
 	_yourself._zone.pos._oldposition._x = -1000;
@@ -416,14 +415,14 @@ void Parallaction::changeLocation(char *location) {
 
 	byte palette[PALETTE_SIZE];
 	for (uint16 _si = 0; _si < PALETTE_SIZE; _si++) palette[_si] = 0;
-	_vm->_graphics->palUnk0(palette);
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+	_graphics->palUnk0(palette);
+	_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 	if (_locationCommands) {
 		runCommands(_locationCommands);
 		runJobs();
-		_vm->_graphics->swapBuffers();
+		_graphics->swapBuffers();
 		runJobs();
-		_vm->_graphics->swapBuffers();
+		_graphics->swapBuffers();
 	}
 
 	if (_locationComment) {
@@ -432,9 +431,9 @@ void Parallaction::changeLocation(char *location) {
 	}
 
 	runJobs();
-	_vm->_graphics->swapBuffers();
+	_graphics->swapBuffers();
 
-	_vm->_graphics->palUnk0(_palette);
+	_graphics->palUnk0(_palette);
 	if (_locationACommands) {
 		runCommands(_locationACommands);
 		debugC(1, kDebugLocation, "changeLocation: location acommands run");

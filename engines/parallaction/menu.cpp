@@ -101,24 +101,24 @@ Menu::~Menu() {
 
 void Menu::start() {
 
-	_vm->_archive.open("disk1");
+	_vm->_disk->selectArchive("disk1");
 	_vm->_graphics->_proportionalFont = false;
 
 	_vm->_graphics->setFont("slide");
 
-	loadSlide("intro");
+	_vm->_disk->loadSlide("intro");
 	_vm->_graphics->palUnk0(_palette);
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
 	g_system->delayMillis(2000);
 
-	loadSlide("minintro");
+	_vm->_disk->loadSlide("minintro");
 	_vm->_graphics->palUnk0(_palette);
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
 	g_system->delayMillis(2000);
 
-	loadSlide("lingua");
+	_vm->_disk->loadSlide("lingua");
 	_vm->_graphics->palUnk0(_palette);
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
@@ -146,7 +146,7 @@ void Menu::start() {
 		break;
 	}
 
-	loadSlide("restore");
+	_vm->_disk->loadSlide("restore");
 	_vm->_graphics->palUnk0(_palette);
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
@@ -157,8 +157,6 @@ void Menu::start() {
 		newGame();
 	}
 
-	_vm->_archive.close();
-
 	return;
 }
 
@@ -167,7 +165,7 @@ void Menu::newGame() {
 
 	const char **v14 = introMsg3;
 
-	loadScenery("test", NULL);
+	_vm->_disk->loadScenery("test", NULL);
 	_vm->_graphics->palUnk0(_palette);
 	_vm->_graphics->swapBuffers();
 
@@ -195,8 +193,6 @@ void Menu::newGame() {
 
 	if (_mouseButtons != kMouseRightUp)
 		return;    // show intro
-
-	_vm->_archive.close();
 
 	selectCharacter();
 
@@ -284,7 +280,6 @@ uint16 Menu::selectGame() {
 	strcpy(_engine->_characterName, "dough");
 
 	_vm->loadGame();
-	_vm->_archive.close();
 
 	return 1;  // load game
 }
@@ -315,9 +310,9 @@ void Menu::selectCharacter() {
 	_vm->_graphics->_proportionalFont = false;
 
 	_vm->_graphics->setFont("slide");
-	_vm->_archive.open("disk1");
+	_vm->_disk->selectArchive("disk1");
 
-	loadSlide("password");
+	_vm->_disk->loadSlide("password");
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
 	_vm->_graphics->palUnk0(_palette);
 
@@ -411,7 +406,6 @@ void Menu::selectCharacter() {
 	_vm->_graphics->setPalette(palette);
 
 	_engineFlags |= kEngineChangeLocation;
-	_vm->_archive.close();
 
 	free(v14._data0);
 

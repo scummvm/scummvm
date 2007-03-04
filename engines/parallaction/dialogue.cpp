@@ -229,7 +229,7 @@ void runDialogue(SpeakData *data) {
 		debugC(1, kDebugDialogue, "runDialogue: special trick for 'museum' location");
 	}
 
-	loadTalk(_vm->_characterName, &_characterFace);
+	_vm->_disk->loadTalk(_vm->_characterName, &_characterFace);
 
 	_vm->_graphics->setFont("comic");
 
@@ -241,7 +241,7 @@ void runDialogue(SpeakData *data) {
 		debugC(1, kDebugDialogue, "runDialogue: using default character head");
 	} else {
 		debugC(1, kDebugDialogue, "runDialogue: loading 2nd character head '%s'", _vm->_characterName);
-		loadTalk(data->_name, &v6E);
+		_vm->_disk->loadTalk(data->_name, &v6E);
 		debugC(1, kDebugDialogue, "runDialogue: 2nd character head loaded");
 	}
 
@@ -509,11 +509,8 @@ void runDialogue(SpeakData *data) {
 	debugC(1, kDebugDialogue, "runDialogue: exit dialogue ok");
 
 	if (!scumm_stricmp(_location, "museum")) {
-
-		_vm->_archive.close();
-		strcpy(_vm->_disk, "disk1");
-		_vm->_archive.open(_vm->_disk);
-		loadFrames("dino", &_tempFrames);
+		_vm->_disk->selectArchive("disk1");
+		_vm->_disk->loadFrames("dino", &_tempFrames);
 
 		memcpy(&_yourself._cnv, &_tempFrames, sizeof(Cnv));
 

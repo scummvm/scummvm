@@ -509,7 +509,7 @@ void jobEraseLabel(void *parm, Job *j) {
 
 void Graphics::initMouse(uint16 arg_0) {
 
-	loadPointer(&_mouseComposedArrow);
+	_vm->_disk->loadPointer(&_mouseComposedArrow);
 
 	byte temp[16*16];
 	memcpy(temp, _mouseArrow, 16*16);
@@ -800,7 +800,7 @@ void Graphics::setFont(const char* name) {
 	if (_font._array != NULL)
 		freeCnv(&_font);
 
-	loadFont(name, &_font);
+	_vm->_disk->loadFont(name, &_font);
 }
 
 
