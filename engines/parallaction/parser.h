@@ -37,10 +37,13 @@ extern char _tokens[][40];
 
 class Script : public Common::SeekableReadStream {
 
-	const char*	_src;
+	const char*	const _src;
+	bool	_disposeSource;
+	char*	_pos;
 
 public:
-	Script(const char* s);
+	Script(const char* s, bool _disposeSource = false);
+	~Script();
 
 	uint32 read(void *dataPtr, uint32 dataSize);
 
