@@ -92,9 +92,8 @@ public:
 	typedef HashMap<Key, Val, HashFunc, EqualFunc> HM_t;
 
 	struct Node {
-		Key _key;
+		const Key _key;
 		Val _value;
-		Node() {}
 		Node(const Key &key) : _key(key) {}
 	};
 
