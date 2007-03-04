@@ -39,6 +39,7 @@ namespace Parallaction {
 
 class Parallaction;
 class Graphics;
+class Script;
 
 class Archive : public Common::SeekableReadStream {
 
@@ -98,8 +99,8 @@ public:
 
 	void selectArchive(const char *name);
 
-	void loadLocation(const char *name, char* script);
-	void loadScript(const char* name, char *script);
+	Script* loadLocation(const char *name);
+	Script* loadScript(const char* name);
 	void loadTalk(const char *name, Cnv *cnv);
 	void loadObjects(const char *name, Cnv *cnv);
 	void loadPointer(StaticCnv* cnv);

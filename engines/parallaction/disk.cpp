@@ -205,7 +205,7 @@ void Disk::loadTalk(const char *name, Cnv *cnv) {
 
 }
 
-void Disk::loadLocation(const char *name, char* script) {
+Script* Disk::loadLocation(const char *name) {
 
 	char archivefile[PATH_LEN];
 
@@ -232,14 +232,16 @@ void Disk::loadLocation(const char *name, char* script) {
 			error("can't find location file '%s'", name);
 	}
 
-	uint32 count = _archive.size();
-	_archive.read(script, count);
-	_archive.closeArchivedFile();
-	_archive.close();
+	uint32 size = _archive.size();
+	char *buf = (char*)malloc(size+1);
+	_archive.read(buf, size);
+	buf[size] = '\0';
+
+	return new Script(buf, true);
 
 }
 
-void Disk::loadScript(const char* name, char *script) {
+Script* Disk::loadScript(const char* name) {
 
 	char vC8[PATH_LEN];
 
@@ -249,12 +251,11 @@ void Disk::loadScript(const char* name, char *script) {
 		errorFileNotFound(vC8);
 
 	uint32 size = _archive.size();
+	char *buf = (char*)malloc(size+1);
+	_archive.read(buf, size);
+	buf[size] = '\0';
 
-	_archive.read(script, size);
-	script[size] = '\0';
-
-	_archive.closeArchivedFile();
-
+	return new Script(buf, true);
 }
 
 void Disk::loadHead(const char* name, StaticCnv* cnv) {

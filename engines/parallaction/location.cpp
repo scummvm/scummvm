@@ -41,15 +41,11 @@ void Parallaction::parseLocation(const char *filename) {
 //	printf("parseLocation(%s)", filename);
     debugC(1, kDebugLocation, "parseLocation('%s')", filename);
 
-	char *location_src = NULL;
-
 	uint16 _si = 1;
 	_vm->_graphics->_proportionalFont = false;
 	_vm->_graphics->setFont("topaz");
 
-	location_src = (char*)malloc(0x4000);
-	_disk->loadLocation(filename, location_src);
-	_locationScript = new Script(location_src);
+	_locationScript = _disk->loadLocation(filename);
 
 	fillBuffers(*_locationScript, true);
 	while (scumm_stricmp(_tokens[0], "ENDLOCATION")) {
@@ -163,8 +159,6 @@ void Parallaction::parseLocation(const char *filename) {
 
 	delete _locationScript;
 	_locationScript = NULL;
-
-	free(location_src);
 
 	return;
 }
