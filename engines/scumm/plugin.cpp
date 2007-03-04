@@ -1262,7 +1262,8 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 				// perfect match
 				return true;
 			}
-		} else if (buf[0] == 0xCE && buf[1] == 0xF5) {
+		} else if ((buf[0] == 0xCE && buf[1] == 0xF5) || // PC
+			(buf[0] == 0xCD && buf[1] == 0xFE)) {    // Commodore 64
 			// Looks like V1.
 			// Candidates: maniac classic, zak classic
 			
