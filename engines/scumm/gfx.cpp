@@ -1612,7 +1612,7 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 		smapLen = READ_LE_UINT16(smap_ptr);
 		if (stripnr * 2 + 2 < smapLen) {
 			offset = READ_LE_UINT16(smap_ptr + stripnr * 2 + 2);
-			offset += stripnr * 2 + 9;
+			offset += stripnr * 2 + 3;
 		}
 		debug(0, "stripnr %d len %d offset %d", stripnr, smapLen, offset);
 	} else if (_vm->_game.features & GF_16COLOR) {
