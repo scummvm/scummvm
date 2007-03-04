@@ -856,40 +856,6 @@ void Graphics::restoreBackgroundPath(Graphics::Buffers path) {
 	return;
 }
 
-//
-// decompress a graphics block
-//
-uint16 Graphics::decompressChunk(byte *src, byte *dst, uint16 size) {
-
-	uint16 written = 0;
-	uint16 read = 0;
-	uint16 len = 0;
-
-	for (; written != size; written += len) {
-
-		len = src[read];
-		read++;
-
-		if (len <= 127) {
-			// copy run
-
-			len++;
-			memcpy(dst+written, src+read, len);
-			read += len;
-
-		} else {
-			// expand run
-
-			len = 257 - len;
-			memset(dst+written, src[read], len);
-			read++;
-
-		}
-
-	}
-
-	return read;
-}
 
 void Graphics::restoreBackground(int16 left, int16 top, uint16 width, uint16 height) {
 //	printf("restoreBackground(%i, %i, %i, %i)\n", left, top, width, height);
@@ -980,38 +946,21 @@ void Graphics::freeStaticCnv(StaticCnv *cnv) {
 	return;
 }
 
-
-//
-//	slides (background images) are stored compressed by scanline in a rle fashion
-//
-//	the uncompressed data must then be unpacked to get:
-//	* color data [bits 0-5]
-//	* mask data [bits 6-7] (z buffer)
-//	* path data [bit 8] (walkable areas)
-//
-
-
-void unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *path) {
-
-	// update mask, path and screen
-	for (uint16 i = 0; i < SCREEN_WIDTH; i++) {
-		path[i/8] |= ((src[i] & 0x80) >> 7) << (i & 7);
-		mask[i/4] |= ((src[i] & 0x60) >> 5) << ((i & 3) << 1);
-		screen[i] = src[i] & 0x1F;
-	}
-
-	return;
+void Graphics::parseDepths(Common::SeekableReadStream &stream) {
+	_bgLayers[0] = stream.readByte();
+	_bgLayers[1] = stream.readByte();
+	_bgLayers[2] = stream.readByte();
+	_bgLayers[3] = stream.readByte();
 }
+
 
 void Graphics::parseBackground(Common::SeekableReadStream &stream) {
 
 	stream.read(_palette, PALETTE_SIZE);
 
-	uint16 _si;
-	for (_si = 0; _si < 4; _si++)
-		_bgLayers[_si] = stream.readByte();
+	parseDepths(stream);
 
-	for (_si = 0; _si < 6; _si++) {
+	for (uint32 _si = 0; _si < 6; _si++) {
 		_palettefx[_si]._timer = stream.readUint16BE();
 		_palettefx[_si]._step = stream.readUint16BE();
 		_palettefx[_si]._flags = stream.readUint16BE();
@@ -1029,54 +978,16 @@ void Graphics::parseBackground(Common::SeekableReadStream &stream) {
 
 }
 
-void Graphics::loadBackground(const char *filename, Graphics::Buffers buffer) {
-//	printf("Graphics::loadBackground(%s)\n", filename);
-
-	if (!_vm->_archive.openArchivedFile(filename))
-		errorFileNotFound(filename);
-
-	parseBackground(_vm->_archive);
-
-	memset(_buffers[kPath0], 0, SCREENPATH_WIDTH*SCREEN_HEIGHT);
-	memset(_buffers[kMask0], 0, SCREENMASK_WIDTH*SCREEN_HEIGHT);
-
-	byte *v4 = (byte*)malloc(SCREEN_SIZE);
-	_vm->_archive.read(v4, SCREEN_SIZE);
-
-	byte v144[SCREEN_WIDTH];
-
-	byte *s = v4;
-	for (uint16 i = 0; i < SCREEN_HEIGHT; i++) {
-		s += decompressChunk(s, v144, SCREEN_WIDTH);
-		unpackBackgroundScanline(v144, _buffers[buffer]+SCREEN_WIDTH*i, _buffers[kMask0]+SCREENMASK_WIDTH*i, _buffers[kPath0]+SCREENPATH_WIDTH*i);
-	}
-
-	free(v4);
-	_vm->_archive.closeArchivedFile();
-
-	return;
+void Graphics::setBackground(byte *background) {
+	memcpy(_buffers[kBitBack], background, SCREEN_WIDTH*SCREEN_HEIGHT);
 }
 
-//
-//	read background path and mask from a file
-//
-//	mask and path are normally combined (via OR) into the background picture itself
-//	read the comment on the top of this file for more
-//
-void Graphics::loadMaskAndPath(const char *filename) {
+void Graphics::setMask(byte *mask) {
+	memcpy(_buffers[kMask0], mask, SCREENMASK_WIDTH*SCREEN_HEIGHT);
+}
 
-	if (!_vm->_archive.openArchivedFile(filename))
-		errorFileNotFound(filename);
-
-	byte v4[4];
-	_vm->_archive.read(v4, 4);
-	_vm->_archive.read(_buffers[kPath0], SCREENPATH_WIDTH*SCREEN_HEIGHT);
-	_vm->_archive.read(_buffers[kMask0], SCREENMASK_WIDTH*SCREEN_HEIGHT);
-
-	for (uint16 _si = 0; _si < 4; _si++) _bgLayers[_si] = v4[_si];
-
-	_vm->_archive.closeArchivedFile();
-	return;
+void Graphics::setPath(byte *path) {
+	memcpy(_buffers[kPath0], path, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 }
 
 

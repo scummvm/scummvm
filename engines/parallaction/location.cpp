@@ -281,13 +281,12 @@ void switchBackground(const char* background, const char* mask) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.dyn", background);
 
-	_vm->_graphics->loadBackground(path, Graphics::kBitBack);
+	loadBackground(path);
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
 
 	if (scumm_stricmp(background, mask)) {
 		// load external masks and paths only for certain locations
-		sprintf(path, "%s.msk", mask);
-		_vm->_graphics->loadMaskAndPath(path);
+		loadMaskAndPath(mask);
 	}
 
 	return;
@@ -369,7 +368,7 @@ void Parallaction::changeLocation(char *location) {
 			char filename[200];
 			sprintf(filename, "%s.slide", _newLocation);
 
-			_vm->_graphics->loadBackground(filename, Graphics::kBitBack);
+			loadBackground(filename);
 			_vm->_graphics->palUnk0(_palette);
 			_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 

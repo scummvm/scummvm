@@ -329,5 +329,89 @@ void loadFrames(const char* name, Cnv* cnv) {
 	return;
 }
 
+//
+//	slides (background images) are stored compressed by scanline in a rle fashion
+//
+//	the uncompressed data must then be unpacked to get:
+//	* color data [bits 0-5]
+//	* mask data [bits 6-7] (z buffer)
+//	* path data [bit 8] (walkable areas)
+//
+
+
+void unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *path) {
+
+	// update mask, path and screen
+	for (uint16 i = 0; i < SCREEN_WIDTH; i++) {
+		path[i/8] |= ((src[i] & 0x80) >> 7) << (i & 7);
+		mask[i/4] |= ((src[i] & 0x60) >> 5) << ((i & 3) << 1);
+		screen[i] = src[i] & 0x1F;
+	}
+
+	return;
+}
+
+void loadBackground(const char *filename) {
+//	printf("Graphics::loadBackground(%s)\n", filename);
+
+	if (!_vm->_archive.openArchivedFile(filename))
+		errorFileNotFound(filename);
+
+	_vm->_graphics->parseBackground(_vm->_archive);
+
+	byte *bg = (byte*)calloc(1, SCREEN_WIDTH*SCREEN_HEIGHT);
+	byte *mask = (byte*)calloc(1, SCREENMASK_WIDTH*SCREEN_HEIGHT);
+	byte *path = (byte*)calloc(1, SCREENPATH_WIDTH*SCREEN_HEIGHT);
+
+	byte *v4 = (byte*)malloc(SCREEN_SIZE);
+	_vm->_archive.read(v4, SCREEN_SIZE);
+
+	byte v144[SCREEN_WIDTH];
+
+	byte *s = v4;
+	for (uint16 i = 0; i < SCREEN_HEIGHT; i++) {
+		s += decompressChunk(s, v144, SCREEN_WIDTH);
+		unpackBackgroundScanline(v144, bg+SCREEN_WIDTH*i, mask+SCREENMASK_WIDTH*i, path+SCREENPATH_WIDTH*i);
+	}
+
+	_vm->_graphics->setBackground(bg);
+	_vm->_graphics->setMask(mask);
+	_vm->_graphics->setPath(path);
+
+	free(v4);
+
+	free(bg);
+	free(mask);
+	free(path);
+
+	return;
+}
+
+//
+//	read background path and mask from a file
+//
+//	mask and path are normally combined (via OR) into the background picture itself
+//	read the comment on the top of this file for more
+//
+void loadMaskAndPath(const char *name) {
+	char path[PATH_LEN];
+	sprintf(path, "%s.msk", name);
+
+	if (!_vm->_archive.openArchivedFile(path))
+		errorFileNotFound(name);
+
+	byte *maskBuf = (byte*)calloc(1, SCREENMASK_WIDTH*SCREEN_HEIGHT);
+	byte *pathBuf = (byte*)calloc(1, SCREENPATH_WIDTH*SCREEN_HEIGHT);
+
+	_vm->_graphics->parseDepths(_vm->_archive);
+
+	_vm->_archive.read(pathBuf, SCREENPATH_WIDTH*SCREEN_HEIGHT);
+	_vm->_archive.read(maskBuf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
+
+	_vm->_graphics->setMask(maskBuf);
+	_vm->_graphics->setPath(pathBuf);
+
+	return;
+}
 
 } // namespace Parallaction

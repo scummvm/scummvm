@@ -95,7 +95,10 @@ public:
 	void restoreCnvBackground(StaticCnv *cnv, int16 x, int16 y);
 
 	// location
-	void loadBackground(const char *filename, Graphics::Buffers buffer);
+	void setBackground(byte *background);
+	void setMask(byte *mask);
+	void setPath(byte *path);
+	void parseDepths(Common::SeekableReadStream &stream);
 	void parseBackground(Common::SeekableReadStream &stream);
 	void loadMaskAndPath(const char *filename);
 	uint16 queryPath(uint16 x, uint16 y);
@@ -157,12 +160,6 @@ protected:
 
 
 protected:
-	//
-	//	decompress a graphics block (size is *target* size)
-	//
-	//	returns amount of byte read
-	//
-	uint16 decompressChunk(byte *src, byte *dst, uint16 size);
 
 	//
 	//	maps a character for representation
