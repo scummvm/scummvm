@@ -194,8 +194,6 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 	assert(_inStream);
 	memset(&_streaminfo, 0, sizeof(_streaminfo));
 
-// TODO: Implement looping support
-
 	_sampleCache.bufReadPos = NULL;
 	_sampleCache.bufFill = 0;
 
