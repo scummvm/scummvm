@@ -556,7 +556,8 @@ int ScummEngine::readVar(uint var) {
 			assertRange(0, var, _numRoomVariables - 1, "room variable (reading)");
 			return _roomVars[var];
 
-		} else if (_game.version <= 3 && !(_game.id == GID_INDY3 && (_game.platform == Common::kPlatformFMTowns))) {
+		} else if (_game.version <= 3 && !(_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns) &&
+			!(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)) {
 			int bit = var & 0xF;
 			var = (var >> 4) & 0xFF;
 
@@ -648,7 +649,8 @@ void ScummEngine::writeVar(uint var, int value) {
 			assertRange(0, var, _numRoomVariables - 1, "room variable (writing)");
 			_roomVars[var] = value;
 
-		} else if (_game.version <= 3 && !(_game.id == GID_INDY3 && (_game.platform == Common::kPlatformFMTowns))) {
+		} else if (_game.version <= 3 && !(_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns) &&
+			!(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)) {
 			// In the old games, the bit variables were using the same memory
 			// as the normal variables!
 			int bit = var & 0xF;
