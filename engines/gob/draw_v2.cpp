@@ -835,6 +835,8 @@ void Draw_v2::animateCursor(int16 cursor) {
 	int16 maxX;
 	int16 maxY;
 	int16 cursorIndex;
+	uint16 hotspotX = 0;
+	uint16 hotspotY = 0;
 
 	_showCursor |= 1;
 
@@ -910,8 +912,8 @@ void Draw_v2::animateCursor(int16 cursor) {
 		newX = _vm->_global->_inter_mouseX;
 		newY = _vm->_global->_inter_mouseY;
 		if (_cursorXDeltaVar != -1) {
-			newX -= (uint16)VAR(_cursorIndex + _cursorXDeltaVar);
-			newY -= (uint16)VAR(_cursorIndex + _cursorYDeltaVar);
+			newX -= hotspotX = (uint16) VAR(_cursorIndex + _cursorXDeltaVar);
+			newY -= hotspotY = (uint16) VAR(_cursorIndex + _cursorYDeltaVar);
 		}
 
 		minX = MIN(newX, _cursorX);
@@ -922,7 +924,8 @@ void Draw_v2::animateCursor(int16 cursor) {
 		_vm->_video->clearSurf(_scummvmCursor);
 		_vm->_video->drawSprite(_cursorSprites, _scummvmCursor, cursorIndex * _cursorWidth,
 				0, (cursorIndex * _cursorWidth) + _cursorWidth - 1, _cursorHeight - 1, 0, 0, 0);
-		CursorMan.replaceCursor(_scummvmCursor->vidPtr, _cursorWidth, _cursorHeight, 0, 0, 0);
+		CursorMan.replaceCursor(_scummvmCursor->vidPtr, _cursorWidth, _cursorHeight,
+				hotspotX, hotspotY, 0);
 
 		if (_frontSurface != _backSurface) {
 			if (_noInvalidated == 0) {
