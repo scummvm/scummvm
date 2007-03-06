@@ -447,6 +447,8 @@ protected:
 	virtual void resetScummVars();
 	virtual void decodeParseString();
 
+	virtual void processInput();
+
 	virtual void saveOrLoad(Serializer *s);
 
 	virtual void checkExecVerbs();
@@ -454,6 +456,8 @@ protected:
 	void resetVerbs();
 	void setNewKidVerbs();
 	void drawSentence();
+
+	void switchActor(int slot);
 
 	virtual int getVarOrDirectWord(byte mask);
 	virtual uint fetchScriptWord();

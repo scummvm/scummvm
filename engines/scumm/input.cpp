@@ -225,6 +225,14 @@ void ScummEngine::clearClickedStatus() {
 	_rightBtnPressed &= ~msClicked;
 }
 
+void ScummEngine_v0::processInput() {
+	// F1 - F3
+	if (_keyPressed >= 315 && _keyPressed <= 317) {
+		switchActor(_keyPressed - 315);
+	}
+
+	ScummEngine::processInput();
+}
 void ScummEngine::processInput() {
 	int lastKeyHit = _keyPressed;
 	_keyPressed = 0;

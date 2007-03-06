@@ -149,6 +149,13 @@ void ScummEngine_v0::setNewKidVerbs() {
 	setUserState(191);
 }
 
+void ScummEngine_v0::switchActor(int slot) {
+	VAR(VAR_EGO) = VAR(97 + slot);
+	actorFollowCamera(VAR(VAR_EGO));
+	resetVerbs();
+	setUserState(247);
+}
+
 void ScummEngine_v2::initV2MouseOver() {
 	int i;
 	int arrow_color, color, hi_color;
@@ -617,10 +624,7 @@ void ScummEngine_v0::checkExecVerbs() {
 			if (_activeVerb == 7) {
 				if (over) {
 					_activeVerb = 13;
-					VAR(VAR_EGO) = VAR(96 + _verbs[over].verbid);
-					actorFollowCamera(VAR(VAR_EGO));
-					resetVerbs();
-					setUserState(247);
+					switchActor(_verbs[over].verbid - 1);
 				}
 				return;
 			}
