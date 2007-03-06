@@ -83,7 +83,6 @@ static const VerbSettings v0VerbTable_German[] = {
 	{15, 23, 2,   0, "Benutz"}
 };
 
-// TODO: Move actor names to better location
 void ScummEngine_v0::resetVerbs() {
 	VirtScreen *virt = &virtscr[kVerbVirtScreen];
 	VerbSlot *vs;
