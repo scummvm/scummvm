@@ -465,6 +465,8 @@ void read_room_exit_joins(byte *&data, uint16 &totalSize) {
 void read_anim_data(byte *&data, uint16 &totalSize) {
 	// Add special pixel records
 	add_anim_record(0x5c95);
+	add_anim_record(0x5ce9);		// Blacksmith in bar?
+	add_anim_record(0x5915);		// Blacksmith hammering
 
 	// Get the animation data records
 	AnimRecord inRec;
