@@ -451,7 +451,8 @@ protected:
 
 	virtual void checkExecVerbs();
 	virtual void handleMouseOver(bool updateInventory);
-	void initC64Verbs();
+	void resetVerbs();
+	void setNewKidVerbs();
 	void drawSentence();
 
 	virtual int getVarOrDirectWord(byte mask);

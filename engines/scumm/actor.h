@@ -228,7 +228,7 @@ public:
 
 	bool actorHitTest(int x, int y);
 
-	byte *getActorName();
+	const byte *getActorName();
 	void startWalkActor(int x, int y, int dir);
 	void stopActorMoving();
 protected:

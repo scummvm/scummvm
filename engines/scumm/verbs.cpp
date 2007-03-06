@@ -46,7 +46,7 @@ struct VerbSettings {
 	const char *name;
 };
 
-static const VerbSettings C64VerbTable_English[] = {
+static const VerbSettings v0VerbTable_English[] = {
 	{ 1,  8, 0,   0, "Open"},
 	{ 2,  8, 1,   0, "Close"},
 	{ 3,  0, 2,   4, "Give"},
@@ -65,7 +65,7 @@ static const VerbSettings C64VerbTable_English[] = {
 };
 
 // FIXME: Replace * with the correct character
-static const VerbSettings C64VerbTable_German[] = {
+static const VerbSettings v0VerbTable_German[] = {
 	{ 1,  0, 1,   0, "Ziehe"},
 	{ 2,  0, 0,   0, "Dr[cke"},
 	{ 3,  7, 2,   4, "Lese"},
@@ -83,14 +83,18 @@ static const VerbSettings C64VerbTable_German[] = {
 	{15, 23, 2,   0, "Benutz"}
 };
 
-void ScummEngine_v0::initC64Verbs() {
+// TODO: Move actor names to better location
+void ScummEngine_v0::resetVerbs() {
 	VirtScreen *virt = &virtscr[kVerbVirtScreen];
 	VerbSlot *vs;
 	int i;
 
+	for (i = 1; i < 16; i++)
+		killVerb(i);
+
 	for (i = 1; i < 16; i++) {
 		vs = &_verbs[i];
-		vs->verbid = C64VerbTable_English[i - 1].id;
+		vs->verbid = v0VerbTable_English[i - 1].id;
 		vs->color = 5;
 		vs->hicolor = 7;
 		vs->dimcolor = 11;
@@ -101,18 +105,49 @@ void ScummEngine_v0::initC64Verbs() {
 		vs->key = 0;
 		vs->center = 0;
 		vs->imgindex = 0;
-		vs->prep = C64VerbTable_English[i - 1].prep;
+		vs->prep = v0VerbTable_English[i - 1].prep;
 
 		if (_language == Common::DE_DEU) {
-			vs->curRect.left = C64VerbTable_German[i - 1].x_pos * 8;
-			vs->curRect.top = C64VerbTable_German[i - 1].y_pos * 8 + virt->topline + 8;
-			loadPtrToResource(rtVerb, i, (const byte*)C64VerbTable_German[i - 1].name);
+			vs->curRect.left = v0VerbTable_German[i - 1].x_pos * 8;
+			vs->curRect.top = v0VerbTable_German[i - 1].y_pos * 8 + virt->topline + 8;
+			loadPtrToResource(rtVerb, i, (const byte*)v0VerbTable_German[i - 1].name);
 		} else {
-			vs->curRect.left = C64VerbTable_English[i - 1].x_pos * 8;
-			vs->curRect.top = C64VerbTable_English[i - 1].y_pos * 8 + virt->topline + 8;
-			loadPtrToResource(rtVerb, i, (const byte*)C64VerbTable_English[i - 1].name);
+			vs->curRect.left = v0VerbTable_English[i - 1].x_pos * 8;
+			vs->curRect.top = v0VerbTable_English[i - 1].y_pos * 8 + virt->topline + 8;
+			loadPtrToResource(rtVerb, i, (const byte*)v0VerbTable_English[i - 1].name);
 		}
 	}
+}
+
+void ScummEngine_v0::setNewKidVerbs() {
+	VirtScreen *virt = &virtscr[kVerbVirtScreen];
+	VerbSlot *vs;
+	int i;
+
+	for (i = 1; i < 16; i++)
+		killVerb(i);
+
+	for (i = 1; i < 4; i++) {
+		vs = &_verbs[i];
+		vs->verbid = i;
+		vs->color = 5;
+		vs->hicolor = 7;
+		vs->dimcolor = 11;
+		vs->type = kTextVerbType;
+		vs->charset_nr = _string[0]._default.charset;
+		vs->curmode = 1;
+		vs->saveid = 0;
+		vs->key = 0;
+		vs->center = 0;
+		vs->imgindex = 0;
+		vs->prep = 0;
+		vs->curRect.left = (i * 8) * 8;
+		vs->curRect.top = virt->topline + 8;
+
+		Actor *a = derefActor(VAR(96 + i), "setNewKidVerbs");
+		loadPtrToResource(rtVerb, i, (const byte*)(const byte*)a->getActorName());
+	}
+	setUserState(191);
 }
 
 void ScummEngine_v2::initV2MouseOver() {
@@ -578,14 +613,32 @@ void ScummEngine_v0::checkExecVerbs() {
 			checkV2Inventory(_mouse.x, _mouse.y);
 		} else {
 			int over = findVerbAtPos(_mouse.x, _mouse.y);
+
+			// Handle New Kid verb options
+			if (_activeVerb == 7) {
+				if (over) {
+					_activeVerb = 13;
+					VAR(VAR_EGO) = VAR(96 + _verbs[over].verbid);
+					actorFollowCamera(VAR(VAR_EGO));
+					resetVerbs();
+					setUserState(247);
+				}
+				return;
+			}
+
 			if (over) {
 				_activeVerb = _verbs[over].verbid;
+				// Selected New Kid verb
+				if (_activeVerb == 7)
+					setNewKidVerbs();
+
 				return;
 			}
 
 			int act = getActorFromPos(_virtualMouse.x, _virtualMouse.y);
 			int obj = findObject(_virtualMouse.x, _virtualMouse.y);
 			if (act != 0 && _activeVerb == 3 && _activeInventory != 0) {
+				// Give inventory item to actor
 				VAR(5) = act;
 				runObject(_activeInventory, _activeVerb);
 			} else if (obj) {

@@ -1991,8 +1991,25 @@ void Actor::setActorCostume(int c) {
 	}
 }
 
-byte *Actor::getActorName() {
-	byte *ptr = _vm->getResourceAddress(rtActorName, _number);
+static const char* v0ActorNames[7] = {
+	"Syd",
+	"Razor",
+	"Dave",
+	"Michael",
+	"Bernard",
+	"Wendy",
+	"Jeff"
+};
+
+const byte *Actor::getActorName() {
+	const byte *ptr;
+
+	if (_vm->_game.version == 0) {
+		ptr = (const byte *)v0ActorNames[_number - 1];
+	} else {
+ 		ptr = _vm->getResourceAddress(rtActorName, _number);
+	}
+
 	if (ptr == NULL) {
 		debugC(DEBUG_ACTORS, "Failed to find name of actor %d", _number);
 	}

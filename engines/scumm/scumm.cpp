@@ -1428,7 +1428,7 @@ void ScummEngine::resetScumm() {
 
 void ScummEngine_v0::resetScumm() {
 	ScummEngine_v2::resetScumm();
-	initC64Verbs();
+	resetVerbs();
 }
 
 void ScummEngine_v2::resetScumm() {
