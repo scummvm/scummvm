@@ -492,6 +492,10 @@ original installer or i5comp to unpack the contents of this file.
 TODO
 TODO: What is i5comp, where does one get it? -> Add this!
 TODO
+TODO: Seems a better tool might be unshield, http://synce.sourceforge.net/synce/unshield.php,
+TODO:  which is portable (Debian package exists) and it's author happens to be twogood
+TODO:  (a team member, that's too good to be true, isn't it? har har *ggg*)
+TODO
 
 The game uses Smacker cutscenes extensively, which we can't support directly,
 due to reasons described above. The cutscenes have to be re-encoded to DXA,
