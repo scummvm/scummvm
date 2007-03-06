@@ -168,11 +168,26 @@ void Hotspot::setAnimation(uint16 newAnimId) {
 	Resources &r = Resources::getReference();
 	HotspotAnimData *tempAnim;
 	_animId = newAnimId;
-	if (newAnimId == 0) tempAnim = NULL;
-	else tempAnim = r.getAnimation(newAnimId); 
+	if (newAnimId == 0) 
+		tempAnim = NULL;
+	else {
+		tempAnim = r.getAnimation(newAnimId); 
+		assert(tempAnim != NULL);
+	}
 	
 	setAnimation(tempAnim);
 }
+
+struct SizeOverrideEntry {
+	uint16 animId;
+	uint16 width, height;
+};
+
+static const SizeOverrideEntry sizeOverrides[] = {
+	{BLACKSMITH_STANDARD, 32, 48},
+	{BLACKSMITH_HAMMERING_ANIM_ID, 48, 47},
+	{0, 0, 0}
+};
 
 void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 	Disk &r = Disk::getReference();
@@ -188,6 +203,13 @@ void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 	_frameNumber = 0;
 	if (!newRecord) return;
 	if (!r.exists(newRecord->animId)) return;
+
+	// Scan for any size overrides - some animations get their size set after decoding, but
+	// we want it in advance so we can decode the animation straight to a graphic surface
+	const SizeOverrideEntry *p = &sizeOverrides[0];
+	while ((p->animId != 0) && (p->animId != newRecord->animId)) ++p;
+	if (p->animId != 0)
+		setSize(p->width, p->height);
 
 	_anim = newRecord;
 	MemoryBlock *src = Disk::getReference().getEntry(_anim->animId);
@@ -210,6 +232,7 @@ void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 	_numFrames = *numEntries;
 	_frameNumber = 0;
 	
+	// Special handling need
 	if (newRecord->animRecordId == SERF_ANIM_ID) {
 		_frameStartsUsed = true;
 		_frames = new Surface(416, 27);
@@ -376,11 +399,12 @@ void Hotspot::setPosition(int16 newX, int16 newY) {
 
 void Hotspot::setSize(uint16 newWidth, uint16 newHeight) {
 	_width = newWidth;
+	_frameWidth = newWidth;
 	_height = newHeight;
 }
 
 bool Hotspot::executeScript() {
-	if (_data->sequenceOffset == 0)
+	if (_data->sequenceOffset == 0xffff)
 		return false;
 	else
 		return HotspotScript::execute(this);
@@ -1988,6 +2012,8 @@ HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 		return prisonerAnimHandler;
 	case 0x81F3:
 		return catrionaAnimHandler;
+	case 0x820E:
+		return morkusAnimHandler;
 	case 0x8241:
 		return headAnimHandler;
 	case 0x882A:
@@ -2012,7 +2038,7 @@ void HotspotTickHandlers::standardAnimHandler(Hotspot &h) {
 
 void HotspotTickHandlers::standardAnimHandler2(Hotspot &h) {
 	h.handleTalkDialog();
-	standardCharacterAnimHandler(h);
+	standardAnimHandler(h);
 }
 
 void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
@@ -2810,14 +2836,26 @@ void HotspotTickHandlers::prisonerAnimHandler(Hotspot &h) {
 
 void HotspotTickHandlers::catrionaAnimHandler(Hotspot &h) {
 	h.handleTalkDialog();
-	if (h.frameCtr() > 0)
-	{
+	if (h.frameCtr() > 0) {
 		h.decrFrameCtr();
-	}
-	else
-	{
+	} else {
 		h.executeScript();
 		h.setFrameCtr(h.actionCtr());
+	}
+}
+
+void HotspotTickHandlers::morkusAnimHandler(Hotspot &h) {
+	h.handleTalkDialog();
+	if (h.frameCtr() > 0) {
+		h.decrFrameCtr();
+		return;
+	}
+
+	if (h.executeScript()) {
+		// Script is done - set new script to one of two alternates randomly
+		Common::RandomSource rnd;
+		h.setScript(rnd.getRandomNumber(100) >= 50 ? 0x54 : 0); 
+		h.setFrameCtr(20 + rnd.getRandomNumber(63));
 	}
 }
 
