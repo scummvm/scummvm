@@ -422,7 +422,7 @@ void Sprites::loadDAT(const char *filename, SceneExits &exits) {
 	}
 	// XXX
 	_engine->_paletteChanged = 1;
-	memcpy(_screen->getPalette(1) + 684, _dat + 0x17, 60);
+	_screen->loadPalette(_dat + 0x17, _screen->getPalette(1) + 684, 60);
 	uint8 *data = _dat + 0x6B;
 
 	uint16 length = READ_LE_UINT16(data);
@@ -478,7 +478,7 @@ void Sprites::loadDAT(const char *filename, SceneExits &exits) {
 				data += 2;
 				break;
 			default:
-				warning("Unknown code in DAT file '%s' offset %d: %x", filename, data - _dat, READ_LE_UINT16(data));
+				warning("Unknown code in DAT file '%s' offset %d: %x", filename, int(data - _dat), READ_LE_UINT16(data));
 				data += 2;
 				break;
 			}

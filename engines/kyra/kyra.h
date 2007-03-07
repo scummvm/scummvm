@@ -603,7 +603,6 @@ protected:
 	int _opcodeTableSize;
 	
 	void waitForEvent();
-	void loadPalette(const char *filename, uint8 *palData);
 	void loadMouseShapes();
 	void loadCharacterShapes();
 	void loadSpecialEffectShapes();

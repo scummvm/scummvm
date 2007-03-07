@@ -59,6 +59,8 @@ const KYRAGameDescription adGameDescs[] = {
 	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "747861d2a9c643c59fdab570df5b9093"), Common::ES_ESP, Common::kPlatformPC, Common::ADGF_NO_FLAGS }, KYRA1_FLOPPY_FLAGS }, // floppy 1.8 from clemmy
 	{ { "kyra1", 0, AD_ENTRY1("GEMCUT.EMC", "ef08c8c237ee1473fd52578303fc36df"), Common::IT_ITA, Common::kPlatformPC, Common::ADGF_NO_FLAGS }, KYRA1_FLOPPY_FLAGS }, // from gourry
 
+	//{ { "kyra1", 0, AD_ENTRY1("GEMCUT.PAK", "2bd1da653eaefd691e050e4a9eb68a64"), Common::EN_ANY, Common::kPlatformAmiga, Common::ADGF_NO_FLAGS }, KYRA1_FLOPPY_FLAGS },
+
 	{ { "kyra1", 0, AD_ENTRY1("TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59"), Common::EN_ANY, Common::kPlatformFMTowns, Common::ADGF_NO_FLAGS }, KYRA1_TOWNS_FLAGS },
 	{ { "kyra1", 0, AD_ENTRY1("TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59"), Common::JA_JPN, Common::kPlatformFMTowns, Common::ADGF_NO_FLAGS }, KYRA1_TOWNS_SJIS_FLAGS },
 

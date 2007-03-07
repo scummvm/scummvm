@@ -93,7 +93,7 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 void SeqPlayer::makeHandShapes() {
 	debugC(9, kDebugLevelSequence, "SeqPlayer::makeHandShapes()");
 	_screen->loadBitmap("WRITING.CPS", 3, 3, 0);
-	if (_vm->gameFlags().platform == Common::kPlatformMacintosh) {
+	if (_vm->gameFlags().platform == Common::kPlatformMacintosh || _vm->gameFlags().platform == Common::kPlatformAmiga) {
 		freeHandShapes();
 		
 		int pageBackUp = _screen->_curPage;

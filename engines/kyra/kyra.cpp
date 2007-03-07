@@ -499,7 +499,7 @@ void KyraEngine::startup() {
 	initMainButtonList();
 	loadMainScreen();
 	setupTimers();
-	loadPalette("PALETTE.COL", _screen->_currentPalette);
+	_screen->loadPalette("PALETTE.COL", _screen->_currentPalette);
 
 	// XXX
 	_animator->initAnimStateList();

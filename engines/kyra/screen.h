@@ -186,6 +186,9 @@ public:
 	// misc	
 	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
 
+	void loadPalette(const char *filename, uint8 *palData);
+	void loadPalette(const byte *data, uint8 *palData, int bytes);
+
 	void setAnimBlockPtr(int size);
 
 	void setShapePages(int page1, int page2);

@@ -523,17 +523,4 @@ uint32 INSFile::getFileSize(uint hash) {
 	return 0;
 }
 
-////////////////////////////////////////////
-void KyraEngine::loadPalette(const char *filename, uint8 *palData) {
-	debugC(9, kDebugLevelMain, "KyraEngine::loadPalette('%s' %p)", filename, (void *)palData);
-	uint32 fileSize = 0;
-	uint8 *srcData = _res->fileData(filename, &fileSize);
-
-	if (palData && fileSize) {
-		debugC(9, kDebugLevelMain,"Loading a palette of size %i from '%s'", fileSize, filename);
-		memcpy(palData, srcData, fileSize);
-	}
-	delete [] srcData;
-}
-
 } // end of namespace Kyra

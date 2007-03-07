@@ -2450,7 +2450,7 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 
 	if (palData && palSize) {
 		debugC(9, kDebugLevelMain,"Loading a palette of size %i from %s", palSize, filename);
-		memcpy(palData, srcData + 10, palSize);
+		loadPalette(srcData + 10, palData, palSize); 
 	}
 
 	uint8 *srcPtr = srcData + 10 + palSize;
@@ -2474,6 +2474,23 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 	}
 
 	delete [] srcData;
+}
+
+void Screen::loadPalette(const char *filename, uint8 *palData) {
+	debugC(9, kDebugLevelScreen, "Screen::loadPalette('%s' %p)", filename, (void *)palData);
+	uint32 fileSize = 0;
+	uint8 *srcData = _vm->resource()->fileData(filename, &fileSize);
+
+	if (palData && fileSize) {
+		debugC(9, kDebugLevelScreen,"Loading a palette of size %i from '%s'", fileSize, filename);
+		memcpy(palData, srcData, fileSize);
+	}
+	delete [] srcData;
+}
+
+void Screen::loadPalette(const byte *data, uint8 *palData, int bytes) {
+	debugC(9, kDebugLevelScreen, "Screen::loadPalette(%p, %p %d)", (void *)data, (void *)palData, bytes);
+	memcpy(palData, data, bytes);
 }
 
 // kyra3 specific

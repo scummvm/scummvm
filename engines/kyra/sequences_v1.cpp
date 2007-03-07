@@ -1641,7 +1641,7 @@ int KyraEngine::processBead(int x, int y, int &x2, int &y2, BeadState *ptr) {
 void KyraEngine::setupPanPages() {
 	debugC(9, kDebugLevelMain, "KyraEngine::setupPanPages()");
 	_screen->loadBitmap("BEAD.CPS", 3, 3, 0);
-	if (_flags.platform == Common::kPlatformMacintosh) {
+	if (_flags.platform == Common::kPlatformMacintosh || _flags.platform == Common::kPlatformAmiga) {
 		int pageBackUp = _screen->_curPage;
 		_screen->_curPage = 2;
 
