@@ -145,9 +145,11 @@ void CDROM::playMultMusic() {
 		{"avt022.tot", "fra6", "all6", "ang6", "esp6", "ita6"}
 	};
 
+	// Default to "ang?" for other languages (including EN_USA)
+	int language = _vm->_global->_language <= 4 ? _vm->_global->_language : 2;
 	for (int i = 0; i < ARRAYSIZE(tracks); i++)
 		if (!scumm_stricmp(_vm->_game->_curTotFile, tracks[i][0])) {
-			startTrack(tracks[i][_vm->_global->_language + 1]);
+			startTrack(tracks[i][language + 1]);
 			break;
 		}
 }
