@@ -372,6 +372,7 @@ football	Backyard Football
 
 football2002	Backyard Football 2002
 	a095616d2d23ccf43b8e257711202cba	-1	en	All	-	-	-	clone2727
+	d0549508a06bbb9f99ed19c9e97891f3	-1	en	All	-	-	-	Kirben
 	2e85f7aa054930c692a5b1bed1dfc295	-1	en	All	-	Demo	-	khalek
 
 soccer	Backyard Soccer
