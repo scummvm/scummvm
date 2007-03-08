@@ -95,8 +95,7 @@ static uint8 *decodeString(uint8 *buffer, uint32 code) {
 		*buffer++ = appendCharacter[code];
 		code = prefixCode[code];
 		if (i++ >= 4000) {
-			fprintf(stderr, "lzw: error in code expansion.\n");
-			abort();
+			error("lzw: error in code expansion.");
 		}
 	}
 	*buffer = code;

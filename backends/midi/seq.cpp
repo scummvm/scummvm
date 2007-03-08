@@ -134,7 +134,7 @@ void MidiDriver_SEQ::send(uint32 b) {
 		buf[position++] = 0;
 		break;
 	default:
-		fprintf(stderr, "Unknown : %08x\n", (int)b);
+		warning("MidiDriver_SEQ::send: unknown : %08x", (int)b);
 		break;
 	}
 	write(device, buf, position);

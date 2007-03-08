@@ -172,14 +172,14 @@ NewFontData* bdf_read_font(Common::SeekableReadStream &fp) {
 		goto errout;
 
 	if (!bdf_read_header(fp, pf)) {
-		fprintf(stderr, "Error reading font header\n");
+		warning("Error reading font header");
 		goto errout;
 	}
 
 	fp.seek(pos, SEEK_SET);
 
 	if (!bdf_read_bitmaps(fp, pf)) {
-		fprintf(stderr, "Error reading font bitmaps\n");
+		warning("Error reading font bitmaps");
 		goto errout;
 	}
 
@@ -207,12 +207,12 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 
 	for (;;) {
 		if (!bdf_getline(fp, buf, sizeof(buf))) {
-			fprintf(stderr, "Error: EOF on file\n");
+			warning("Error: EOF on file");
 			return 0;
 		}
 		if (isprefix(buf, "FONT ")) {		/* not required*/
 			if (sscanf(buf, "FONT %[^\n]", facename) != 1) {
-				fprintf(stderr, "Error: bad 'FONT'\n");
+				warning("Error: bad 'FONT'");
 				return 0;
 			}
 			pf->facename = strdup(facename);
@@ -220,7 +220,7 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 		}
 		if (isprefix(buf, "COPYRIGHT ")) {	/* not required*/
 			if (sscanf(buf, "COPYRIGHT \"%[^\"]", copyright) != 1) {
-				fprintf(stderr, "Error: bad 'COPYRIGHT'\n");
+				warning("Error: bad 'COPYRIGHT'");
 				return 0;
 			}
 			pf->copyright = strdup(copyright);
@@ -228,20 +228,20 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 		}
 		if (isprefix(buf, "DEFAULT_CHAR ")) {	/* not required*/
 			if (sscanf(buf, "DEFAULT_CHAR %d", &pf->defaultchar) != 1) {
-				fprintf(stderr, "Error: bad 'DEFAULT_CHAR'\n");
+				warning("Error: bad 'DEFAULT_CHAR'");
 				return 0;
 			}
 		}
 		if (isprefix(buf, "FONT_DESCENT ")) {
 			if (sscanf(buf, "FONT_DESCENT %d", &pf->descent) != 1) {
-				fprintf(stderr, "Error: bad 'FONT_DESCENT'\n");
+				warning("Error: bad 'FONT_DESCENT'");
 				return 0;
 			}
 			continue;
 		}
 		if (isprefix(buf, "FONT_ASCENT ")) {
 			if (sscanf(buf, "FONT_ASCENT %d", &pf->ascent) != 1) {
-				fprintf(stderr, "Error: bad 'FONT_ASCENT'\n");
+				warning("Error: bad 'FONT_ASCENT'");
 				return 0;
 			}
 			continue;
@@ -249,14 +249,14 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 		if (isprefix(buf, "FONTBOUNDINGBOX ")) {
 			if (sscanf(buf, "FONTBOUNDINGBOX %d %d %d %d",
 					   &pf->fbbw, &pf->fbbh, &pf->fbbx, &pf->fbby) != 4) {
-				fprintf(stderr, "Error: bad 'FONTBOUNDINGBOX'\n");
+				warning("Error: bad 'FONTBOUNDINGBOX'");
 				return 0;
 			}
 			continue;
 		}
 		if (isprefix(buf, "CHARS ")) {
 			if (sscanf(buf, "CHARS %d", &nchars) != 1) {
-				fprintf(stderr, "Error: bad 'CHARS'\n");
+				warning("Error: bad 'CHARS'");
 				return 0;
 			}
 			continue;
@@ -269,7 +269,7 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 		 */
 		if (isprefix(buf, "ENCODING ")) {
 			if (sscanf(buf, "ENCODING %d", &encoding) != 1) {
-				fprintf(stderr, "Error: bad 'ENCODING'\n");
+				warning("Error: bad 'ENCODING'");
 				return 0;
 			}
 			if (encoding >= 0 && 
@@ -289,7 +289,7 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 
 	/* calc font height*/
 	if (pf->ascent < 0 || pf->descent < 0 || firstchar < 0) {
-		fprintf(stderr, "Error: Invalid BDF file, requires FONT_ASCENT/FONT_DESCENT/ENCODING\n");
+		warning("Error: Invalid BDF file, requires FONT_ASCENT/FONT_DESCENT/ENCODING");
 		return 0;
 	}
 	pf->height = pf->ascent + pf->descent;
@@ -319,7 +319,7 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 	pf->bbx = (BBX *)malloc(pf->size * sizeof(BBX));
 	
 	if (!pf->bits || !pf->offset || !pf->width) {
-		fprintf(stderr, "Error: no memory for font load\n");
+		warning("Error: no memory for font load");
 		return 0;
 	}
 
@@ -344,7 +344,7 @@ int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
 
 	for (;;) {
 		if (!bdf_getline(fp, buf, sizeof(buf))) {
-			fprintf(stderr, "Error: EOF on file\n");
+			warning("Error: EOF on file");
 			return 0;
 		}
 		if (isprefix(buf, "STARTCHAR")) {
@@ -353,7 +353,7 @@ int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
 		}
 		if (isprefix(buf, "ENCODING ")) {
 			if (sscanf(buf, "ENCODING %d", &encoding) != 1) {
-				fprintf(stderr, "Error: bad 'ENCODING'\n");
+				warning("Error: bad 'ENCODING'");
 				return 0;
 			}
 			if (encoding < start_char || encoding > limit_char)
@@ -362,7 +362,7 @@ int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
 		}
 		if (isprefix(buf, "DWIDTH ")) {
 			if (sscanf(buf, "DWIDTH %d", &width) != 1) {
-				fprintf(stderr, "Error: bad 'DWIDTH'\n");
+				warning("Error: bad 'DWIDTH'");
 				return 0;
 			}
 			/* use font boundingbox width if DWIDTH <= 0*/
@@ -372,7 +372,7 @@ int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
 		}
 		if (isprefix(buf, "BBX ")) {
 			if (sscanf(buf, "BBX %d %d %d %d", &bbw, &bbh, &bbx, &bby) != 4) {
-				fprintf(stderr, "Error: bad 'BBX'\n");
+				warning("Error: bad 'BBX'");
 				return 0;
 			}
 			continue;
@@ -386,7 +386,7 @@ int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
 
 			/* set bits offset in encode map*/
 			if (pf->offset[encoding-pf->firstchar] != (unsigned long)-1) {
-				fprintf(stderr, "Error: duplicate encoding for character %d (0x%02x), ignoring duplicate\n",
+				warning("Error: duplicate encoding for character %d (0x%02x), ignoring duplicate",
 						encoding, encoding);
 				continue;
 			}
@@ -409,7 +409,7 @@ int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
 			/* read bitmaps*/
 			for (i = 0; i < bbh; ++i) {
 				if (!bdf_getline(fp, buf, sizeof(buf))) {
-					fprintf(stderr, "Error: EOF reading BITMAP data\n");
+					warning("Error: EOF reading BITMAP data");
 					return 0;
 				}
 				if (isprefix(buf, "ENDCHAR"))
@@ -497,9 +497,9 @@ int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
 	}
 	else {
 		if (ofs > pf->bits_size) {
-			fprintf(stderr, "Warning: DWIDTH spec > max FONTBOUNDINGBOX\n");
+			warning("Warning: DWIDTH spec > max FONTBOUNDINGBOX");
 			if (ofs > pf->bits_size+EXTRA) {
-				fprintf(stderr, "Error: Not enough bits initially allocated\n");
+				warning("Error: Not enough bits initially allocated");
 				return 0;
 			}
 			pf->bits_size = ofs;
