@@ -33,6 +33,9 @@
 
 namespace Common {
 
+class WriteStream;
+
+
 /**
  * The (singleton) configuration manager, used to query & set configuration
  * values using string keys.
@@ -152,7 +155,7 @@ private:
 	ConfigManager();
 
 	void			loadFile(const String &filename);
-	void			writeDomain(FILE *file, const String &name, const Domain &domain);
+	void			writeDomain(WriteStream &stream, const String &name, const Domain &domain);
 
 	Domain			_transientDomain;
 	DomainMap		_gameDomains;

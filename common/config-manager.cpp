@@ -247,13 +247,13 @@ void ConfigManager::loadFile(const String &filename) {
 
 void ConfigManager::flushToDisk() {
 #ifndef __DC__
-	FILE *cfg_file;
+	File cfg_file;
 
 // TODO
 //	if (!willwrite)
 //		return;
 
-	if (!(cfg_file = fopen(_filename.c_str(), "w"))) {
+	if (!cfg_file.open(_filename, File::kFileWriteMode)) {
 		warning("Unable to write configuration file: %s", _filename.c_str());
 	} else {
 
@@ -278,13 +278,11 @@ void ConfigManager::flushToDisk() {
 			if (!_domainSaveOrder.contains(d->_key))
 				writeDomain(cfg_file, d->_key, d->_value);
 		}
-
-		fclose(cfg_file);
 	}
 #endif // !__DC__
 }
 
-void ConfigManager::writeDomain(FILE *file, const String &name, const Domain &domain) {
+void ConfigManager::writeDomain(WriteStream &stream, const String &name, const Domain &domain) {
 	if (domain.empty())
 		return;		// Don't bother writing empty domains.
 
@@ -293,26 +291,31 @@ void ConfigManager::writeDomain(FILE *file, const String &name, const Domain &do
 	// Write domain comment (if any)
 	comment = domain.getDomainComment();
 	if (!comment.empty())
-		fprintf(file, "%s", comment.c_str());
+		stream.writeString(comment);
 
 	// Write domain start
-	fprintf(file, "[%s]\n", name.c_str());
+	stream.writeByte('[');
+	stream.writeString(name);
+	stream.writeByte(']');
+	stream.writeByte('\n');
 
 	// Write all key/value pairs in this domain, including comments
 	Domain::const_iterator x;
 	for (x = domain.begin(); x != domain.end(); ++x) {
-		const String &value = x->_value;
-		if (!value.empty()) {
+		if (!x->_value.empty()) {
 			// Write comment (if any)
 			if (domain.hasKVComment(x->_key)) {
 				comment = domain.getKVComment(x->_key);
-				fprintf(file, "%s", comment.c_str());
+				stream.writeString(comment);
 			}
 			// Write the key/value pair
-			fprintf(file, "%s=%s\n", x->_key.c_str(), value.c_str());
+			stream.writeString(x->_key);
+			stream.writeByte('=');
+			stream.writeString(x->_value);
+			stream.writeByte('\n');
 		}
 	}
-	fprintf(file, "\n");
+	stream.writeByte('\n');
 }
 
 
