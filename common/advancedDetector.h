@@ -81,14 +81,14 @@ struct ADObsoleteGameID {
 
 struct ADFileBasedFallback {
 	/**
-	 * Pointer to an ADGameDescription or subclass thereof.
+	 * Pointer to an ADGameDescription or subclass thereof which will get
+	 * returned if there's a detection match.
 	 */
 	const void *desc;
 	
 	/**
-	 * A zero-terminated list of filenames.
-	 *
-	 * @todo Properly explain this
+	 * A zero-terminated list of filenames used for matching. All files in
+	 * the list must be present to get a detection match.
 	 */
 	const char *filenames[10];
 };
@@ -100,7 +100,8 @@ enum ADFlags {
 	 * not equal to english) and platform (if not equal to PC).
 	 */
 	kADFlagAugmentPreferredTarget = (1 << 0),
-	kADFlagFilebasedFallback = (1 << 1)  // Use file based fallback detection
+	kADFlagPrintWarningOnFileBasedFallback = (1 << 1),
+	kADFlagFilebasedFallback = (1 << 2)  // Use file based fallback detection
 };
 
 /**

@@ -417,13 +417,6 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 	}
 
 	if (params.fileBasedFallback != 0) {
-		// The format of fileBasedFallback is like this:
-		// It points to an array of strings (char pointers), separated into
-		// multiple "rows".
-		// First comes a gameid, then follows a list of filenames that have
-		// to be present in order to generate a match; the row is terminated
-		// by a zero byte.
-		// The whole list is terminated by another zero byte (i.e. a zero gameid).
 		const ADFileBasedFallback *ptr = params.fileBasedFallback;
 		const char* const* filenames = 0;
 
@@ -448,6 +441,9 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 			}
 		}
 
+		// Then we perform the actual filename matching. If there are
+		// several matches, only the one with the maximum numbers of
+		// files is considered.
 		int maxNumMatchedFiles = 0;
 		const ADGameDescription *matchedDesc = 0;
 
@@ -490,11 +486,13 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 		}
 
 		if (matchedDesc) { // We got a match
-			// FIXME: This warning, if ever seen by somebody, is
-			// extremly cryptic!
-			warning("But it looks like unknown variant of %s", matchedDesc->gameid);
-
 			matched.push_back(matchedDesc);
+			if (params.flags & kADFlagPrintWarningOnFileBasedFallback) {
+				printf("Your game version has been detected using filename matching as a\n");
+				printf("variant of %s.\n", matchedDesc->gameid);
+				printf("If this is an original and unmodified version, please report any\n");
+				printf("information previously printed by ScummVM to the team.\n");
+			}
 		}
 	}
 
