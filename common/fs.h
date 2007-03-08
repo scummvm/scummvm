@@ -39,7 +39,7 @@ class AbstractFilesystemNode;
 class FSList : public Common::Array<FilesystemNode> {};
 
 
-/*
+/**
  * FilesystemNode provides an abstraction for file pathes, allowing for portable
  * file system browsing. To this ends, multiple or single roots have to be supported
  * (compare Unix with a single root, Windows with multiple roots C:, D:, ...).
