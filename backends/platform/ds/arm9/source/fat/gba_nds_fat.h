@@ -66,7 +66,9 @@ extern "C" {
 // Important constants
 
 
-#define MAX_FILENAME_LENGTH 256	// Maximum LFN length. Don't change this one
+enum {
+	MAX_FILENAME_LENGTH = 256	// Maximum LFN length. Don't change this one
+};
 
 // File Constants
 #ifndef EOF

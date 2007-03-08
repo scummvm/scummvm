@@ -34,12 +34,11 @@
 #include "backends/fs/abstract-fs.h"
 //#include "backends/fs/fs.h"
 
-// Fix name clash with FOTAQ engine, cutaway.h
-#undef MAX_FILENAME_LENGTH
-// This class is used when a Flash cart is in use
-
 namespace DS {
 
+/**
+ * This class is used when a Flash cart is in use.
+ */
 class DSFileSystemNode : public AbstractFilesystemNode {
 protected:
 	static ZipFile* _zipFile;
@@ -72,8 +71,9 @@ public:
 };
 
 
-// This class is used when the GBAMP (GBA Movie Player) is used with a CompactFlash card
-
+/**
+ * This class is used when the GBAMP (GBA Movie Player) is used with a CompactFlash card.
+ */
 class GBAMPFileSystemNode : public AbstractFilesystemNode {
 protected:
 	typedef class Common::String String;
