@@ -32,6 +32,9 @@
 #include "sound/mpu401.h"
 #include "common/util.h"
 
+#include <fcntl.h>
+#include <unistd.h>
+
 ////////////////////////////////////////
 //
 // Unix dev/sequencer driver
