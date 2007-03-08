@@ -52,6 +52,78 @@
 	#define fsize(a)			ps2_fsize(a)
 #endif
 
+#ifdef __DS__
+
+	struct fileHandle {
+		int pos;
+		bool used;
+		char* data;
+		int size;
+		
+		DSSaveFile* sramFile;
+	};
+	
+	// These functions replease the standard library functions of the same name.
+	// As this header is included after the standard one, I have the chance to #define
+	// all of these to my own code.
+	//
+	// A #define is the only way, as redefinig the functions would cause linker errors.
+	
+	// These functions need to be #undef'ed, as their original definition 
+	// in devkitarm is done with #includes (ugh!)
+	#undef feof
+	#undef stderr
+	#undef stdout
+	#undef stdin
+	#undef clearerr
+	#undef getc
+	#undef ferror
+	
+	#define stdout ((DS::fileHandle*) -1)
+	#define stderr ((DS::fileHandle*) -2)
+	#define stdin ((DS::fileHandle*) -3)
+	
+	#define FILE DS::fileHandle
+	//#define size_t int
+	
+	//#define FAT_chdir FAT_CWD
+	
+	FILE* 	std_fopen(const char* name, const char* mode);
+	void 	std_fclose(FILE* handle);
+	size_t 	std_fread(const void* ptr, size_t size, size_t numItems, FILE* handle);
+	size_t 	std_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle);
+	void 	std_fprintf(FILE* handle, const char* fmt, ...);
+	bool 	std_feof(FILE* handle);
+	void 	std_fflush(FILE* handle);
+	char* 	std_fgets(char* str, int size, FILE* file);
+	long int std_ftell(FILE* handle);
+	int 	std_fseek(FILE* handle, long int offset, int whence);
+	void 	std_clearerr(FILE* handle);
+	int 	std_getc(FILE* handle);
+	char* 	std_getcwd(char* dir, int dunno);
+	void 	std_cwd(char* dir);
+	int 	std_ferror(FILE* handle);
+	
+	// Only functions used in the ScummVM source have been defined here!
+	#define fopen(name, mode) 					DS::std_fopen(name, mode)
+	#define fclose(handle) 						DS::std_fclose(handle)
+	#define fread(ptr, size, items, file)		DS::std_fread(ptr, size, items, file)
+	#define fwrite(ptr, size, items, file)		DS::std_fwrite(ptr, size, items, file)
+	#define feof(handle)						DS::std_feof(handle)
+	//#define fprintf(file, fmt, ...)				DS::fprintf(file, fmt, ##__VA_ARGS__)
+	#define fprintf(file, fmt, ...)				{ char str[128]; sprintf(str, fmt, ##__VA_ARGS__); DS::std_fwrite(str, strlen(str), 1, file); }
+	#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
+	#define fflush(file)						DS::std_fflush(file)
+	#define fgets(str, size, file)				DS::std_fgets(str, size, file)
+	#define ftell(handle)						DS::std_ftell(handle)
+	#define fseek(handle, offset, whence)		DS::std_fseek(handle, offset, whence)
+	#define clearerr(handle)					DS::std_clearerr(handle)
+	#define getc(handle)						DS::std_getc(handle)
+	#define getcwd(dir, dunno)					DS::std_getcwd(dir, dunno)
+	#define ferror(handle)						DS::std_ferror(handle)
+
+#endif
+
 
 namespace Common {
 
