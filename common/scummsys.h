@@ -312,6 +312,8 @@
 
 	#define STRINGBUFLEN 256
 
+	#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
+
 #else
 	#error No system type defined
 

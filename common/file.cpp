@@ -100,7 +100,7 @@
 	#define fseek(handle, offset, whence)		DS::std_fseek(handle, offset, whence)
 	#define clearerr(handle)					DS::std_clearerr(handle)
 
-	#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
+	//#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
 
 	//#define fprintf(file, fmt, ...)				{ char str[128]; sprintf(str, fmt, ##__VA_ARGS__); DS::std_fwrite(str, strlen(str), 1, file); }
 	//#define fflush(file)						DS::std_fflush(file)	// used in common/util.cpp
