@@ -100,8 +100,7 @@ enum ADFlags {
 	 * not equal to english) and platform (if not equal to PC).
 	 */
 	kADFlagAugmentPreferredTarget = (1 << 0),
-	kADFlagPrintWarningOnFileBasedFallback = (1 << 1),
-	kADFlagFilebasedFallback = (1 << 2)  // Use file based fallback detection
+	kADFlagPrintWarningOnFileBasedFallback = (1 << 1)
 };
 
 /**
