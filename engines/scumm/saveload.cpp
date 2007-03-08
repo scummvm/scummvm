@@ -511,7 +511,8 @@ bool ScummEngine::loadInfos(Common::InSaveFile *file, InfoStuff *stuff) {
 	section.version = file->readUint32BE();
 	section.size = file->readUint32BE();
 
-	// if we extend this we should add a table for the special sizes at the versions to check it
+	// If we ever extend this we should add a table containing the sizes corresponding to each
+	// version, so that we are able to properly verify their correctness.
 	if (section.version == INFOSECTION_VERSION && section.size != SaveInfoSectionSize) {
 		warning("Info section is corrupt");
 		file->skip(section.size);
@@ -521,11 +522,10 @@ bool ScummEngine::loadInfos(Common::InSaveFile *file, InfoStuff *stuff) {
 	section.timeTValue = file->readUint32BE();
 	section.playtime = file->readUint32BE();
 
-	// for compatibility for older version we
-	// to load in with our old method
+	// For header version 1, we load the data in with our old method
 	if (section.version == 1) {
-		time_t curTime_ = section.timeTValue;
-		tm *curTime = localtime(&curTime_);	
+		time_t tmp = section.timeTValue;
+		tm *curTime = localtime(&tmp);	
 		stuff->date = (curTime->tm_mday & 0xFF) << 24 | ((curTime->tm_mon + 1) & 0xFF) << 16 | (curTime->tm_year + 1900) & 0xFFFF;
 		stuff->time = (curTime->tm_hour & 0xFF) << 8 | (curTime->tm_min) & 0xFF;
 	}
@@ -540,8 +540,7 @@ bool ScummEngine::loadInfos(Common::InSaveFile *file, InfoStuff *stuff) {
 	
 	stuff->playtime = section.playtime;
 
-	// skip all newer features, this could make problems if some older version uses more space for
-	// saving informations, but this should NOT happen
+	// Skip over the remaining (unsupported) data
 	if (section.size > SaveInfoSectionSize) {
 		file->skip(section.size - SaveInfoSectionSize);
 	}
