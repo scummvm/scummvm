@@ -30,6 +30,33 @@
 extern bool isSmartphone(void);
 #endif
 
+#ifdef __PLAYSTATION2__
+	// for those replaced fopen/fread/etc functions
+	typedef unsigned long	uint64;
+	typedef signed long	int64;
+	#include "backends/platform/ps2/fileio.h"
+
+	#define fprintf				ps2_fprintf
+	#define fflush(a)			ps2_fflush(a)
+#endif
+
+#ifdef __DS__
+	#undef stderr
+	#undef stdout
+	#undef stdin
+
+	#define stdout ((DS::fileHandle*) -1)
+	#define stderr ((DS::fileHandle*) -2)
+	#define stdin ((DS::fileHandle*) -3)
+	
+	void 	std_fprintf(FILE* handle, const char* fmt, ...);
+	void 	std_fflush(FILE* handle);
+
+	#define fprintf(file, fmt, ...)				{ char str[128]; sprintf(str, fmt, ##__VA_ARGS__); DS::std_fwrite(str, strlen(str), 1, file); }
+	#define fflush(file)						DS::std_fflush(file)
+#endif
+
+
 namespace Common {
 
 //

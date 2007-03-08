@@ -38,31 +38,25 @@
 
 	#define fopen(a, b)			ps2_fopen(a, b)
 	#define fclose(a)			ps2_fclose(a)
-	#define fflush(a)			ps2_fflush(a)
 	#define fseek(a, b, c)			ps2_fseek(a, b, c)
 	#define ftell(a)			ps2_ftell(a)
 	#define feof(a)				ps2_feof(a)
 	#define fread(a, b, c, d)		ps2_fread(a, b, c, d)
 	#define fwrite(a, b, c, d)		ps2_fwrite(a, b, c, d)
-	#define fgetc(a)			ps2_fgetc(a)
-	#define fgets(a, b, c)			ps2_fgets(a, b, c)
-	#define fputc(a, b)			ps2_fputc(a, b)
-	#define fputs(a, b)			ps2_fputs(a, b)
-	#define fprintf				ps2_fprintf
-	#define fsize(a)			ps2_fsize(a)
+
+	//#define fprintf				ps2_fprintf	// used in common/util.cpp
+	//#define fflush(a)			ps2_fflush(a)	// used in common/util.cpp
+
+	//#define fgetc(a)			ps2_fgetc(a)	// not used
+	//#define fgets(a, b, c)			ps2_fgets(a, b, c)	// not used
+	//#define fputc(a, b)			ps2_fputc(a, b)	// not used
+	//#define fputs(a, b)			ps2_fputs(a, b)	// not used
+
+	//#define fsize(a)			ps2_fsize(a)	// not used -- and it is not a standard function either
 #endif
 
 #ifdef __DS__
 
-	struct fileHandle {
-		int pos;
-		bool used;
-		char* data;
-		int size;
-		
-		DSSaveFile* sramFile;
-	};
-	
 	// These functions replease the standard library functions of the same name.
 	// As this header is included after the standard one, I have the chance to #define
 	// all of these to my own code.
@@ -72,37 +66,29 @@
 	// These functions need to be #undef'ed, as their original definition 
 	// in devkitarm is done with #includes (ugh!)
 	#undef feof
-	#undef stderr
-	#undef stdout
-	#undef stdin
 	#undef clearerr
-	#undef getc
-	#undef ferror
+	//#undef getc
+	//#undef ferror
 	
-	#define stdout ((DS::fileHandle*) -1)
-	#define stderr ((DS::fileHandle*) -2)
-	#define stdin ((DS::fileHandle*) -3)
-	
-	#define FILE DS::fileHandle
-	//#define size_t int
-	
-	//#define FAT_chdir FAT_CWD
+	#define FILE void
 	
 	FILE* 	std_fopen(const char* name, const char* mode);
 	void 	std_fclose(FILE* handle);
 	size_t 	std_fread(const void* ptr, size_t size, size_t numItems, FILE* handle);
 	size_t 	std_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle);
-	void 	std_fprintf(FILE* handle, const char* fmt, ...);
 	bool 	std_feof(FILE* handle);
-	void 	std_fflush(FILE* handle);
-	char* 	std_fgets(char* str, int size, FILE* file);
 	long int std_ftell(FILE* handle);
 	int 	std_fseek(FILE* handle, long int offset, int whence);
 	void 	std_clearerr(FILE* handle);
-	int 	std_getc(FILE* handle);
-	char* 	std_getcwd(char* dir, int dunno);
-	void 	std_cwd(char* dir);
-	int 	std_ferror(FILE* handle);
+
+	//void 	std_fprintf(FILE* handle, const char* fmt, ...);	// used in common/util.cpp
+	//void 	std_fflush(FILE* handle);	// used in common/util.cpp
+
+	//char* 	std_fgets(char* str, int size, FILE* file);	// not used
+	//int 	std_getc(FILE* handle);	// not used
+	//char* 	std_getcwd(char* dir, int dunno);	// not used
+	//void 	std_cwd(char* dir);	// not used
+	//int 	std_ferror(FILE* handle);	// not used
 	
 	// Only functions used in the ScummVM source have been defined here!
 	#define fopen(name, mode) 					DS::std_fopen(name, mode)
@@ -110,17 +96,19 @@
 	#define fread(ptr, size, items, file)		DS::std_fread(ptr, size, items, file)
 	#define fwrite(ptr, size, items, file)		DS::std_fwrite(ptr, size, items, file)
 	#define feof(handle)						DS::std_feof(handle)
-	//#define fprintf(file, fmt, ...)				DS::fprintf(file, fmt, ##__VA_ARGS__)
-	#define fprintf(file, fmt, ...)				{ char str[128]; sprintf(str, fmt, ##__VA_ARGS__); DS::std_fwrite(str, strlen(str), 1, file); }
-	#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
-	#define fflush(file)						DS::std_fflush(file)
-	#define fgets(str, size, file)				DS::std_fgets(str, size, file)
 	#define ftell(handle)						DS::std_ftell(handle)
 	#define fseek(handle, offset, whence)		DS::std_fseek(handle, offset, whence)
 	#define clearerr(handle)					DS::std_clearerr(handle)
-	#define getc(handle)						DS::std_getc(handle)
-	#define getcwd(dir, dunno)					DS::std_getcwd(dir, dunno)
-	#define ferror(handle)						DS::std_ferror(handle)
+
+	#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
+
+	//#define fprintf(file, fmt, ...)				{ char str[128]; sprintf(str, fmt, ##__VA_ARGS__); DS::std_fwrite(str, strlen(str), 1, file); }
+	//#define fflush(file)						DS::std_fflush(file)	// used in common/util.cpp
+
+	//#define fgets(str, size, file)				DS::std_fgets(str, size, file)	// not used
+	//#define getc(handle)						DS::std_getc(handle)	// not used
+	//#define getcwd(dir, dunno)					DS::std_getcwd(dir, dunno)	// not used
+	//#define ferror(handle)						DS::std_ferror(handle)	// not used
 
 #endif
 

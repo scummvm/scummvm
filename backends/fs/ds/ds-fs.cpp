@@ -27,7 +27,33 @@
 #include "dsmain.h"
 #include "gba_nds_fat.h"
 
+
 namespace DS {
+
+struct fileHandle {
+	int pos;
+	bool used;
+	char* data;
+	int size;
+	
+	DSSaveFile* sramFile;
+};
+
+#define FILE DS::fileHandle
+
+// FIXME: The following definition for stdin etc. are duplicated in common/util.cpp.
+// This should be fixed, e.g. by moving this (and the declarations of fileHandle,
+// the various functions etc.) into a separate header file which includes by util.cpp,
+// file.cpp and ds-fs.cpp
+
+#undef stderr
+#undef stdout
+#undef stdin
+
+#define stdout ((DS::fileHandle*) -1)
+#define stderr ((DS::fileHandle*) -2)
+#define stdin ((DS::fileHandle*) -3)
+
 
 //////////////////////////////////////////////////////////////
 // DSFileSystemNode - Flash ROM file system using Zip files
@@ -434,7 +460,7 @@ FILE* std_fopen(const char* name, const char* mode) {
 		}
 //		MT_memoryReport();
 		
-		return (fileHandle *) result;
+		return (FILE *) result;
 	}
 
 	
