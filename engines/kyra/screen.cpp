@@ -2489,7 +2489,7 @@ void Screen::loadPalette(const char *filename, uint8 *palData) {
 }
 
 void Screen::loadPalette(const byte *data, uint8 *palData, int bytes) {
-	debugC(9, kDebugLevelScreen, "Screen::loadPalette(%p, %p %d)", (void *)data, (void *)palData, bytes);
+	debugC(9, kDebugLevelScreen, "Screen::loadPalette(%p, %p %d)", (const void *)data, (void *)palData, bytes);
 	memcpy(palData, data, bytes);
 }
 
