@@ -38,27 +38,7 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
-#if (!( defined(PALMOS_MODE) || defined(__DC__) || defined(__GP32__) || defined(__amigaos4__) ) && !defined(_MSC_VER) && !defined(__DS__))
-#include <sys/param.h>
-#include <unistd.h>
-#endif
-
-#if !(defined(MAXPATHLEN))
-#ifndef PALMOS_MODE
-#define MAXPATHLEN 1024
-#else
-#define MAXPATHLEN 256
-#endif
-#endif
-
 namespace GUI {
-
-// TODO - allow changing options for:
-// - the save path (use _dirBrowser!)
-// - music & graphics driver (but see also the comments on EditGameDialog
-//   for some techincal difficulties with this)
-// - default volumes (sfx/speech/music)
-// - aspect ratio, language, platform, debug mode/level, cd drive, joystick, multi midi, native mt32
 
 enum {
 	kMidiGainChanged		= 'mgch',
@@ -747,13 +727,10 @@ void GlobalOptionsDialog::open() {
 	Common::String themePath(ConfMan.get("themepath", _domain));
 	Common::String extraPath(ConfMan.get("extrapath", _domain));
 
-	if (!savePath.empty()) {
-		_savePath->setLabel(savePath);
+	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
+		_savePath->setLabel("None");
 	} else {
-		// Default to the current directory...
-		char buf[MAXPATHLEN];
-		getcwd(buf, sizeof(buf));
-		_savePath->setLabel(buf);
+		_savePath->setLabel(savePath);
 	}
 
 	if (themePath.empty() || !ConfMan.hasKey("themepath", _domain)) {
@@ -780,8 +757,9 @@ void GlobalOptionsDialog::open() {
 
 void GlobalOptionsDialog::close() {
 	if (getResult()) {
-		// Savepath
-		ConfMan.set("savepath", _savePath->getLabel(), _domain);
+		String savePath(_savePath->getLabel());
+		if (!savePath.empty() && (savePath != "None"))
+			ConfMan.set("savepath", savePath, _domain);
 
 		String themePath(_themePath->getLabel());
 		if (!themePath.empty() && (themePath != "None"))
