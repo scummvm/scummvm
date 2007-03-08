@@ -352,7 +352,6 @@ protected:
 
 	uint8 _fillR, _fillG, _fillB;
 
-	void updateInfos();
 public:
 	SaveLoadChooser(const String &title, const String &buttonLabel, Parallaction *engine);
 	~SaveLoadChooser();
