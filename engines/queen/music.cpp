@@ -30,7 +30,8 @@
 
 namespace Queen {
 
-MusicPlayer::MusicPlayer(MidiDriver *driver, byte *data, uint32 size) : _driver(driver), _isPlaying(false), _looping(false), _randomLoop(false), _masterVolume(192), _queuePos(0), _musicData(data), _musicDataSize(size), _passThrough(false), _buf(0) {
+MidiMusic::MidiMusic(MidiDriver *driver, QueenEngine *vm)
+	: _driver(driver), _isPlaying(false), _looping(false), _randomLoop(false), _masterVolume(192), _queuePos(0), _passThrough(false), _buf(0) {
 	memset(_channel, 0, sizeof(_channel));
 	queueClear();
 	_lastSong = _currentSong = 0;
@@ -38,18 +39,21 @@ MusicPlayer::MusicPlayer(MidiDriver *driver, byte *data, uint32 size) : _driver(
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(_driver->getBaseTempo());
 
+	const char *filename = vm->resource()->isDemo() ? "AQ8.RL" : "AQ.RL";
+	_musicData = vm->resource()->loadFile(filename, 0, &_musicDataSize);
 	_numSongs = READ_LE_UINT16(_musicData);
 	this->open();
 }
 
-MusicPlayer::~MusicPlayer() {
+MidiMusic::~MidiMusic() {
 	_parser->unloadMusic();
 	delete _parser;
 	this->close();
 	delete[] _buf;
+	delete[] _musicData;
 }
 
-void MusicPlayer::setVolume(int volume) {
+void MidiMusic::setVolume(int volume) {
 	if (volume < 0)
 		volume = 0;
 	else if (volume > 255)
@@ -66,7 +70,13 @@ void MusicPlayer::setVolume(int volume) {
 	}
 }
 
-bool MusicPlayer::queueSong(uint16 songNum) {
+void MidiMusic::playSong(uint16 songNum) {
+	queueClear();
+	queueSong(songNum);
+	playMusic();
+}
+
+bool MidiMusic::queueSong(uint16 songNum) {
 	if (songNum >= _numSongs && songNum < 1000) {
 		// this happens at the end of the car chase, where we try to play song 176,
 		// see Sound::_tune[], entry 39
@@ -90,14 +100,14 @@ bool MusicPlayer::queueSong(uint16 songNum) {
 	return true;
 }
 
-void MusicPlayer::queueClear() {
+void MidiMusic::queueClear() {
 	_lastSong = _songQueue[0];
 	_queuePos = 0;
 	_looping = _randomLoop = false;
 	memset(_songQueue, 0, sizeof(_songQueue));
 }
 
-int MusicPlayer::open() {
+int MidiMusic::open() {
 	// Don't ever call open without first setting the output driver!
 	if (!_driver)
 		return 255;
@@ -109,14 +119,14 @@ int MusicPlayer::open() {
 	return 0;
 }
 
-void MusicPlayer::close() {
+void MidiMusic::close() {
 	_driver->setTimerCallback(NULL, NULL);
 	if (_driver)
 		_driver->close();
 	_driver = 0;
 }
 
-void MusicPlayer::send(uint32 b) {
+void MidiMusic::send(uint32 b) {
 	if (_passThrough) {
 		_driver->send(b);
 		return;
@@ -154,7 +164,7 @@ void MusicPlayer::send(uint32 b) {
 		_channel[channel]->send(b);
 }
 
-void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
+void MidiMusic::metaEvent(byte type, byte *data, uint16 length) {
 	//Only thing we care about is End of Track.
 	if (type != 0x2F)
 		return;
@@ -165,13 +175,13 @@ void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 		stopMusic();
 }
 
-void MusicPlayer::onTimer(void *refCon) {
-	MusicPlayer *music = (MusicPlayer *)refCon;
+void MidiMusic::onTimer(void *refCon) {
+	MidiMusic *music = (MidiMusic *)refCon;
 	if (music->_isPlaying)
 		music->_parser->onTimer();
 }
 
-void MusicPlayer::queueTuneList(int16 tuneList) {
+void MidiMusic::queueTuneList(int16 tuneList) {
 	queueClear();
 
 	//Jungle is the only part of the game that uses multiple tunelists.
@@ -212,9 +222,9 @@ void MusicPlayer::queueTuneList(int16 tuneList) {
 		_queuePos = randomQueuePos();
 }
 
-void MusicPlayer::playMusic() {
+void MidiMusic::playMusic() {
 	if (!_songQueue[0]) {
-		debug(5, "MusicPlayer::playMusic - Music queue is empty");
+		debug(5, "MidiMusic::playMusic - Music queue is empty");
 		return;
 	}
 
@@ -276,7 +286,7 @@ void MusicPlayer::playMusic() {
 	queueUpdatePos();
 }
 
-void MusicPlayer::queueUpdatePos() {
+void MidiMusic::queueUpdatePos() {
 	if (_randomLoop) {
 		_queuePos = randomQueuePos();
 	} else {
@@ -287,7 +297,7 @@ void MusicPlayer::queueUpdatePos() {
 	}
 }
 
-uint8 MusicPlayer::randomQueuePos() {
+uint8 MidiMusic::randomQueuePos() {
 	int queueSize = 0;
 	for (int i = 0; i < MUSIC_QUEUE_SIZE; i++)
 		if (_songQueue[i])
@@ -299,46 +309,26 @@ uint8 MusicPlayer::randomQueuePos() {
 	return (uint8) _rnd.getRandomNumber(queueSize - 1) & 0xFF;
 }
 
-void MusicPlayer::stopMusic() {
+void MidiMusic::stopMusic() {
 	_isPlaying = false;
 	_parser->unloadMusic();
 }
 
-uint32 MusicPlayer::songOffset(uint16 songNum) const {
+uint32 MidiMusic::songOffset(uint16 songNum) const {
 	uint16 offsLo = READ_LE_UINT16(_musicData + (songNum * 4) + 2);
 	uint16 offsHi = READ_LE_UINT16(_musicData + (songNum * 4) + 4);
 	return (offsHi << 4) | offsLo;
 }
 
-uint32 MusicPlayer::songLength(uint16 songNum) const {
+uint32 MidiMusic::songLength(uint16 songNum) const {
 	if (songNum < _numSongs)
 		return (songOffset(songNum + 1) - songOffset(songNum));
 	return (_musicDataSize - songOffset(songNum));
 }
 
-Music::Music(MidiDriver *driver, QueenEngine *vm) : _vToggle(false) {
-	if (vm->resource()->isDemo()) {
-		_musicData = vm->resource()->loadFile("AQ8.RL", 0, &_musicDataSize);
-	} else {
-		_musicData = vm->resource()->loadFile("AQ.RL", 0, &_musicDataSize);
-	}
-	_player = new MusicPlayer(driver, _musicData, _musicDataSize);
-}
-
-Music::~Music() {
-	delete _player;
-	delete[] _musicData;
-}
-
-void Music::playSong(uint16 songNum) {
-	_player->queueClear();
-	_player->queueSong(songNum);
-	_player->playMusic();
-}
-
-void Music::toggleVChange() {
-	setVolume(_vToggle ? (volume() * 2) : (volume() / 2));
-	_vToggle ^= true;
+void MidiMusic::toggleVChange() {
+	setVolume(_vToggle ? (getVolume() * 2) : (getVolume() / 2));
+	_vToggle = !_vToggle;
 }
 
 } // End of namespace Queen

@@ -148,7 +148,7 @@ PCSound::PCSound(Audio::Mixer *mixer, QueenEngine *vm)
 	if (native_mt32)
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_music = new Music(driver, vm);
+	_music = new MidiMusic(driver, vm);
 	_music->hasNativeMT32(native_mt32);
 }
 
@@ -224,7 +224,7 @@ void PCSound::setVolume(int vol) {
 }
 
 int PCSound::volume() {
-	return _music->volume();
+	return _music->getVolume();
 }
 
 void PCSound::waitFinished(bool isSpeech) {

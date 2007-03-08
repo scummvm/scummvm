@@ -160,7 +160,7 @@ void QueenEngine::readOptionSettings() {
 }
 
 void QueenEngine::writeOptionSettings() {
-	ConfMan.setInt("music_volume", _sound->volume());
+	ConfMan.setInt("music_volume", _sound->getVolume());
 	ConfMan.setBool("music_mute", !_sound->musicOn());
 	ConfMan.setBool("sfx_mute", !_sound->sfxOn());
 	ConfMan.setInt("talkspeed", ((_talkSpeed - MIN_TEXT_SPEED) * 255 + (MAX_TEXT_SPEED - MIN_TEXT_SPEED) / 2) / (MAX_TEXT_SPEED - MIN_TEXT_SPEED));

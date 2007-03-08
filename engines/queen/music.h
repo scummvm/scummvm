@@ -32,14 +32,16 @@ namespace Queen {
 
 class QueenEngine;
 
-class MusicPlayer : public MidiDriver {
+class MidiMusic : public MidiDriver {
 public:
-	MusicPlayer(MidiDriver *driver, byte *data, uint32 size);
-	~MusicPlayer();
+	MidiMusic(MidiDriver *driver, QueenEngine *vm);
+	~MidiMusic();
 	void setVolume(int volume);
 	int getVolume()			{ return _masterVolume; }
 
 	void hasNativeMT32(bool b)	{ _nativeMT32 = b; }
+	void playSong(uint16 songNum);
+	void stopSong() { stopMusic(); }
 	void playMusic();
 	void stopMusic();
 	void setLoop(bool loop)		{ _looping = loop; }
@@ -47,6 +49,7 @@ public:
 	bool queueSong(uint16 songNum);
 	void queueClear();
 	void setPassThrough(bool b)		{ _passThrough = b; }
+	void toggleVChange();
 
 	//MidiDriver interface implementation
 	int open();
@@ -93,31 +96,10 @@ protected:
 	int16 _songQueue[MUSIC_QUEUE_SIZE];
 
 	uint16 _numSongs;
-	byte *_musicData;
 	uint16 *_buf;
 	uint32 _musicDataSize;
-};
-
-class Music {
-public:
-	Music(MidiDriver *_driver, QueenEngine *vm);
-	~Music();
-	void hasNativeMT32(bool b)		{ _player->hasNativeMT32(b); }
-	void playSong(uint16 songNum);
-	void queueTuneList(int16 tuneList)	{ _player->queueTuneList(tuneList); }
-	void playMusic()			{ _player->playMusic(); }
-	void stopSong()				{ _player->stopMusic(); }
-	void setPassThrough(bool b)		{ _player->setPassThrough(b); }
-
-	void toggleVChange();
-	void setVolume(int vol)			{ _player->setVolume(vol); }
-	int volume()				{ return _player->getVolume(); }
-
-protected:
 	bool _vToggle;
 	byte *_musicData;
-	uint32 _musicDataSize;
-	MusicPlayer *_player;
 };
 
 } // End of namespace Queen

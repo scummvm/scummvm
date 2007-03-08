@@ -50,7 +50,7 @@ struct tuneData {
 	int16 delay;
 };
 
-class Music;
+class MidiMusic;
 class QueenEngine;
 
 class Sound {
@@ -77,7 +77,7 @@ public:
 	virtual void updateMusic() {}
 
 	virtual void setVolume(int vol)		{ _masterVolume = vol; }
-	virtual int volume()				{ return _masterVolume; }
+	virtual int getVolume()				{ return _masterVolume; }
 
 	void playLastSong()		{ playSong(_lastOverride); }
 
@@ -157,7 +157,7 @@ protected:
 
 	Audio::SoundHandle _sfxHandle;
 	Audio::SoundHandle _speechHandle;
-	Music *_music;
+	MidiMusic *_music;
 };
 
 class AmigaSound : public Sound {

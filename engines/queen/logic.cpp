@@ -655,7 +655,7 @@ void Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
 
 	if (_currentRoom == 108) {
 		_vm->graphics()->putCameraOnBob(-1);
-		_vm->bankMan()->load("joe_e.act", 7);
+		_vm->bankMan()->load("JOE_E.ACT", 7);
 		_vm->bankMan()->unpack(2, 31, 7);
 
 		_vm->display()->horizontalScroll(320);
