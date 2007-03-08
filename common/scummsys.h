@@ -24,7 +24,7 @@
 #ifndef COMMON_SCUMMSYS_H
 #define COMMON_SCUMMSYS_H
 
-#if !defined(_STDAFX_H) && !defined(__PLAYSTATION2__)
+#if !defined(COMMON_STDAFX_H) && !defined(__PLAYSTATION2__)
 #error Included scummsys.h without including stdafx.h first!
 #endif
 
@@ -356,6 +356,10 @@
 
 #ifndef PI
 #define PI 3.14159265358979323846
+#endif
+
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 256
 #endif
 
 
