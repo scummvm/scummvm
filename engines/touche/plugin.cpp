@@ -28,13 +28,9 @@
 
 #include "touche/touche.h"
 
-
 static const PlainGameDescriptor toucheGames[] = {
-	{"touche", "Touche: The Adventures of the Fifth Musketeer"},
-	{"touche-fr", "Touche: Les Aventures du Cinquieme Mousquetaire"},
-	{"touche-de", "Touche: Die Abenteuer des funften Musketiers"},
-	{"touche-it", "Touche: The Adventures of the Fifth Musketeer"},
-	{0, 0}
+	{ "touche", "Touche: The Adventures of the Fifth Musketeer" },
+	{ 0, 0 }
 };
 
 namespace Touche {
@@ -57,7 +53,7 @@ static const Common::ADGameDescription gameDescriptions[] = {
 		Common::ADGF_NO_FLAGS
 	},
 	{ // retail version
-		"touche-fr",
+		"touche",
 		"",
 		AD_ENTRY1s("touche.dat", "1caa20bb4d4fc2ce8eb867b6610082b3", 26558232),
 		Common::FR_FRA,
@@ -65,7 +61,7 @@ static const Common::ADGameDescription gameDescriptions[] = {
 		Common::ADGF_NO_FLAGS
 	},
 	{ // retail version - tracker item #1598643
-		"touche-de",
+		"touche",
 		"",
 		AD_ENTRY1s("touche.dat", "be2ae6454b3325e410946f2322547cd4", 26625537),
 		Common::DE_DEU,
@@ -73,7 +69,7 @@ static const Common::ADGameDescription gameDescriptions[] = {
 		Common::ADGF_NO_FLAGS
 	},
 	{ // fan-made translation (http://www.iagtg.net/) - tracker item #1602360
-		"touche-it",
+		"touche",
 		"",
 		AD_ENTRY1s("touche.dat", "1f442331d4b327c3488a9f6ffe9bdd25", 26367792),
 		Common::IT_ITA,
@@ -91,27 +87,23 @@ static const Common::ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
+static const Common::ADFileBasedFallback fileBasedFallback[] = {
+	{ &gameDescriptions[0], { "touche.dat", 0 } }, // default to english version
+	{ 0, { 0 } }
+};
+
 }
 
 static const Common::ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
 	(const byte *)Touche::gameDescriptions,
-	// Size of that superset structure
 	sizeof(Common::ADGameDescription),
-	// Number of bytes to compute MD5 sum for
-	4096,
-	// List of all engine targets
+	4096, // number of md5 bytes
 	toucheGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
+	0, // no obsolete targets data
 	"touche",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Fallback callback
-	0,
-	// Flags
-	0
+	Touche::fileBasedFallback, // file-based detection data to enable not yet known versions to start
+	0, // no fallback callback
+	Common::kADFlagAugmentPreferredTarget | Common::kADFlagPrintWarningOnFileBasedFallback
 };
 
 ADVANCED_DETECTOR_DEFINE_PLUGIN(TOUCHE, Touche::ToucheEngine, detectionParams);
