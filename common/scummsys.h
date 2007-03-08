@@ -279,21 +279,6 @@
 	#define SCUMM_LITTLE_ENDIAN 
 	#define SCUMM_NEED_ALIGNMENT
 
-	#define fopen(a, b)			ps2_fopen(a, b)
-	#define fclose(a)			ps2_fclose(a)
-	#define fflush(a)			ps2_fflush(a)
-	#define fseek(a, b, c)			ps2_fseek(a, b, c)
-	#define ftell(a)			ps2_ftell(a)
-	#define feof(a)				ps2_feof(a)
-	#define fread(a, b, c, d)		ps2_fread(a, b, c, d)
-	#define fwrite(a, b, c, d)		ps2_fwrite(a, b, c, d)
-	#define fgetc(a)			ps2_fgetc(a)
-	#define fgets(a, b, c)			ps2_fgets(a, b, c)
-	#define fputc(a, b)			ps2_fputc(a, b)
-	#define fputs(a, b)			ps2_fputs(a, b)
-	#define fprintf				ps2_fprintf
-	#define fsize(a)			ps2_fsize(a)
-
 #elif defined(__PSP__)
 
 	#define scumm_stricmp strcasecmp
@@ -405,17 +390,6 @@
 #else
 	// 15/16 bit color mode everywhere else...
 	typedef int16 OverlayColor;
-#endif
-
-#ifdef __PLAYSTATION2__
-	// for libmpeg2...
-	typedef uint8		uint8_t;
-	typedef uint32		uint32_t;
-
-	// for those replaced fopen/fread/etc functions
-	typedef unsigned long	uint64;
-	typedef signed long	int64;
-	#include "backends/platform/ps2/fileio.h"
 #endif
 
 

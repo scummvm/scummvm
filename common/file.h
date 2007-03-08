@@ -34,8 +34,8 @@ namespace Common {
 
 class File : public SeekableReadStream, public WriteStream {
 protected:
-	/** POSIX file handle to the actual file; 0 if no file is open. */
-	FILE *_handle;
+	/** File handle to the actual file; 0 if no file is open. */
+	void *_handle;
 
 	/** Status flag which tells about recent I/O failures. */
 	bool _ioFailed;

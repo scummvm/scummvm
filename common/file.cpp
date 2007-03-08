@@ -30,6 +30,29 @@
 #include "CoreFoundation/CoreFoundation.h"
 #endif
 
+#ifdef __PLAYSTATION2__
+	// for those replaced fopen/fread/etc functions
+	typedef unsigned long	uint64;
+	typedef signed long	int64;
+	#include "backends/platform/ps2/fileio.h"
+
+	#define fopen(a, b)			ps2_fopen(a, b)
+	#define fclose(a)			ps2_fclose(a)
+	#define fflush(a)			ps2_fflush(a)
+	#define fseek(a, b, c)			ps2_fseek(a, b, c)
+	#define ftell(a)			ps2_ftell(a)
+	#define feof(a)				ps2_feof(a)
+	#define fread(a, b, c, d)		ps2_fread(a, b, c, d)
+	#define fwrite(a, b, c, d)		ps2_fwrite(a, b, c, d)
+	#define fgetc(a)			ps2_fgetc(a)
+	#define fgets(a, b, c)			ps2_fgets(a, b, c)
+	#define fputc(a, b)			ps2_fputc(a, b)
+	#define fputs(a, b)			ps2_fputs(a, b)
+	#define fprintf				ps2_fprintf
+	#define fsize(a)			ps2_fsize(a)
+#endif
+
+
 namespace Common {
 
 typedef HashMap<String, int, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringIntMap;
@@ -337,7 +360,7 @@ bool File::exists(const String &filename) {
 
 void File::close() {
 	if (_handle)
-		fclose(_handle);
+		fclose((FILE *)_handle);
 	_handle = NULL;
 }
 
@@ -359,7 +382,7 @@ bool File::eof() const {
 		return false;
 	}
 
-	return feof(_handle) != 0;
+	return feof((FILE *)_handle) != 0;
 }
 
 uint32 File::pos() const {
@@ -368,7 +391,7 @@ uint32 File::pos() const {
 		return 0;
 	}
 
-	return ftell(_handle);
+	return ftell((FILE *)_handle);
 }
 
 uint32 File::size() const {
@@ -377,10 +400,10 @@ uint32 File::size() const {
 		return 0;
 	}
 
-	uint32 oldPos = ftell(_handle);
-	fseek(_handle, 0, SEEK_END);
-	uint32 length = ftell(_handle);
-	fseek(_handle, oldPos, SEEK_SET);
+	uint32 oldPos = ftell((FILE *)_handle);
+	fseek((FILE *)_handle, 0, SEEK_END);
+	uint32 length = ftell((FILE *)_handle);
+	fseek((FILE *)_handle, oldPos, SEEK_SET);
 
 	return length;
 }
@@ -391,8 +414,8 @@ void File::seek(int32 offs, int whence) {
 		return;
 	}
 
-	if (fseek(_handle, offs, whence) != 0)
-		clearerr(_handle);
+	if (fseek((FILE *)_handle, offs, whence) != 0)
+		clearerr((FILE *)_handle);
 }
 
 uint32 File::read(void *ptr, uint32 len) {
@@ -407,7 +430,7 @@ uint32 File::read(void *ptr, uint32 len) {
 	if (len == 0)
 		return 0;
 
-	real_len = fread(ptr2, 1, len, _handle);
+	real_len = fread(ptr2, 1, len, (FILE *)_handle);
 	if (real_len < len) {
 		_ioFailed = true;
 	}
@@ -424,7 +447,7 @@ uint32 File::write(const void *ptr, uint32 len) {
 	if (len == 0)
 		return 0;
 
-	if ((uint32)fwrite(ptr, 1, len, _handle) != len) {
+	if ((uint32)fwrite(ptr, 1, len, (FILE *)_handle) != len) {
 		_ioFailed = true;
 	}
 
