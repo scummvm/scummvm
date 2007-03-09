@@ -227,17 +227,15 @@ int32 LogicHErace::op_1101(int32 *args) {
 	float temp;
 
     temp = args[0] / _userData[532];
-
-	if (_userData[519] == temp) {
-		retval = (int32)temp;
-	} else {
+	if (_userData[519] != temp) {
 		_userData[519] = temp;
 		op_sub3(temp);
 		retval = 1;
+	} else {
+		retval = (int32)temp;
 	}
 
 	temp = args[1] / _userData[532];
-
 	if (_userData[520] != temp) {
 		_userData[520] = temp;
 		op_sub1(temp);
@@ -245,7 +243,6 @@ int32 LogicHErace::op_1101(int32 *args) {
 	}
 
 	temp = args[2] / _userData[532];
-
 	if (_userData[521] != temp) {
 		_userData[521] = temp;
 		op_sub2(temp);
@@ -652,6 +649,7 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 }
 
 int LogicHEfootball::op_1004(int32 *args) {
+	// Identical to LogicHEsoccer::op_1004
 	double res, a2, a4, a5;
 
 	a5 = ((double)args[4] - (double)args[1]) / ((double)args[5] - (double)args[2]);
@@ -669,13 +667,15 @@ int LogicHEfootball::op_1004(int32 *args) {
 }
 
 int LogicHEfootball::op_1006(int32 *args) {
+	// This seems to be more or less the inverse of op_1010
+	const double a1 = args[1];
 	double res;
 
-	res = (1.0 - args[1] * 2.9411764e-4 * 5.3050399e-2) * args[0] * 1.2360656e-1 +
-		args[1] * 1.1764706e-2 + 46;
+	res = (1.0 - a1 * 2.9411764e-4 * 5.3050399e-2) * 1.2360656e-1 * args[0] +
+		a1 * 1.1764706e-2 + 46;
 	writeScummVar(108, (int32)res);
 
-	res = 640.0 - args[2] * 1.2360656e-1 - args[1] * 1.1588235e-1 - 26;
+	res = 640.0 - args[2] * 1.2360656e-1 - a1 * 1.1588235e-1 - 26;
 	writeScummVar(109, (int32)res);
 
 	return 1;
@@ -703,13 +703,12 @@ int LogicHEfootball::op_1007(int32 *args) {
 }
 
 int LogicHEfootball::op_1010(int32 *args) {
-	double a1 = (640.0 - (double)args[1] - 26.0) * 8.6294413;
-	double res;
-
-	res = ((double)args[0] - 46 - a1 * 1.1764706e-2) /
+	// This seems to be more or less the inverse of op_1006
+	double a1 = (640.0 - (double)args[1] - 26.0) * / 1.1588235e-1;
+	double a0 = ((double)args[0] - 46 - a1 * 1.1764706e-2) /
 		((1.0 - a1 * 2.9411764e-4 * 5.3050399e-2) * 1.2360656e-1);
-	writeScummVar(108, (int32)res);
 
+	writeScummVar(108, (int32)a0);
 	writeScummVar(109, (int32)a1);
 
 	return 1;
@@ -839,6 +838,7 @@ int LogicHEsoccer::op_1002(int32 *args) {
 }
 
 int LogicHEsoccer::op_1004(int32 *args) {
+	// Identical to LogicHEfootball::op_1004
 	double res, a2, a4, a5;
 
 	a5 = ((double)args[4] - (double)args[1]) / ((double)args[5] - (double)args[2]);
