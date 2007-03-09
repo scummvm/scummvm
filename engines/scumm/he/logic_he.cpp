@@ -350,14 +350,14 @@ int32 LogicHErace::op_1140(int32 *args) {
 	x /= sq;
 	y /= sq;
 
-	// Compute the scaler product of the vectors (arg0,arg1) and (x,y)
+	// Compute the scalar product of the vectors (arg0,arg1) and (x,y)
 	const double scalarProduct = x * args[0] + y * args[1];
 
 	// Finally compute the projection of (arg2,arg3) onto (arg0,arg1)
 	double projX = args[0] - 2 * scalarProduct * args[2];
 	double projY = args[1] - 2 * scalarProduct * args[3];
 
-	// 0.86956525 = 1/1.15
+	// 0.86956525 = 1/1.15 = 20/23 = 40/46
 	projX *= 0.86956525;	// FIXME: Why is this here?
 
 	writeScummVar(108, (int32)projX);
@@ -494,8 +494,8 @@ void LogicHEfunshop::op_1005(int32 *args) {
 		data[i - 520 + 1] = getFromArray(args[0], 0, i);
 	}
 
-	args1 = args[1] * 0.01 + 1;
-	args2 = args[2] * 0.01 + 1;
+	args1 = args[1] / 100.0 + 1;
+	args2 = args[2] / 100.0 + 1;
 
 	for (i = 0; i < 4; i++) {
 		data[2 * i] *= args1;
@@ -682,12 +682,14 @@ int LogicHEfootball::op_1006(int32 *args) {
 	double res;
 
 	// 2.9411764e-4 = 1/3400
-	// 5.3050399e-2 = 1/18.85
-	// 1.1764706e-2 = 1/85
+	// 5.3050399e-2 = 1/18.85 = 20/377
+	// 1.1764706e-2 = 1/85 = 40/3400
 	res = (1.0 - a1 * 2.9411764e-4 * 5.3050399e-2) * 1.2360656e-1 * args[0] +
 		a1 * 1.1764706e-2 + 46;
 	writeScummVar(108, (int32)res);
 
+	// 1.2360656e-1 = 377/3050
+	// 1.1588235e-1 = 197/1700 = 394/3400
 	res = 640.0 - args[2] * 1.2360656e-1 - a1 * 1.1588235e-1 - 26;
 	writeScummVar(109, (int32)res);
 
@@ -720,8 +722,8 @@ int LogicHEfootball::op_1010(int32 *args) {
 	double a1 = (640.0 - (double)args[1] - 26.0) / 1.1588235e-1;
 
 	// 2.9411764e-4 = 1/3400
-	// 5.3050399e-2 = 1/18.85
-	// 1.1764706e-2 = 1/85
+	// 5.3050399e-2 = 1/18.85 = 20/377
+	// 1.1764706e-2 = 1/85 = 40/3400
 	double a0 = ((double)args[0] - 46 - a1 * 1.1764706e-2) /
 		((1.0 - a1 * 2.9411764e-4 * 5.3050399e-2) * 1.2360656e-1);
 
