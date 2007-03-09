@@ -429,6 +429,8 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
 	// If we remove a key, we must check all subsequent keys and possibly
 	// reinsert them.
 	uint j = i;
+	delete _arr[i];
+	_arr[i] = NULL;
 	while (true) {
 		// Look at the next table slot
 		j = (j + 1) % _arrsize;
@@ -440,12 +442,10 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
 		uint k = _hash(_arr[j]->_key) % _arrsize;
 		if ((j > i && (k <= i || k > j)) ||
 		    (j < i && (k <= i && k > j)) ) {
-		    delete _arr[i];
 			_arr[i] = _arr[j];
 			i = j;
 		}
 	}
-    delete _arr[i];
 	_arr[i] = NULL;
 	return;
 }
