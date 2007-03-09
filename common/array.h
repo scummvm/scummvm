@@ -23,7 +23,6 @@
 #define COMMON_ARRAY_H
 
 #include "common/scummsys.h"
-#include <assert.h>
 
 namespace Common {
 

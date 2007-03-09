@@ -24,7 +24,7 @@
 #define SCUMM_SAVELOAD_H
 
 #include "common/scummsys.h"
-#include <stddef.h>
+#include <stddef.h>	// for ptrdiff_t
 
 namespace Common {
 	class InSaveFile;

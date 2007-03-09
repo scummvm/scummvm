@@ -25,8 +25,6 @@
  * this program is licensed under the GPL.
  */
 
-#include <string.h>
-
 #include "common/file.h"
 #include "common/md5.h"
 #include "common/util.h"

@@ -23,7 +23,6 @@
 #define COMMON_LIST_H
 
 #include "common/scummsys.h"
-#include <assert.h>
 
 namespace Common {
 

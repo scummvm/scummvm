@@ -28,8 +28,6 @@
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
 
-#include <stdio.h>
-
 namespace AGOS {
 
 /**

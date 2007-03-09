@@ -25,8 +25,6 @@
 #include "common/hash-str.h"
 #include "common/util.h"
 
-#include <ctype.h>
-
 namespace Common {
 
 #if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))

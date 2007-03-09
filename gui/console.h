@@ -25,8 +25,6 @@
 #include "gui/dialog.h"
 #include "gui/newgui.h"
 
-#include <stdarg.h>
-
 namespace GUI {
 
 class ScrollBarWidget;

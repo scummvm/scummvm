@@ -25,9 +25,6 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 
-#include <assert.h>
-#include <string.h>
-
 namespace Common {
 
 /**

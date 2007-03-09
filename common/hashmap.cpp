@@ -49,7 +49,6 @@
  */
 
 #include "common/hashmap.h"
-#include <ctype.h>
 
 namespace Common {
 
