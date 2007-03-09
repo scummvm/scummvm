@@ -357,13 +357,12 @@ int32 LogicHErace::op_1140(int32 *args) {
 	double projX = args[0] - 2 * scalarProduct * args[2];
 	double projY = args[1] - 2 * scalarProduct * args[3];
 
-	// 0.86956525 = 1/1.15 = 20/23 = 40/46
-	projX *= 0.86956525;	// FIXME: Why is this here?
+	projX = projX * 20.0 / 23.0;	// FIXME: Why is this here?
 
 	writeScummVar(108, (int32)projX);
 
 	if (args[3] >= 0)	// FIXME: Why is this here?
-		projY *= 0.83333331f;	// FIXME: This value looks like 5/6
+		projY = projY * 5.0 / 6.0;
 
 	writeScummVar(109, (int32)projY);
 
@@ -684,13 +683,19 @@ int LogicHEfootball::op_1006(int32 *args) {
 	// 2.9411764e-4 = 1/3400
 	// 5.3050399e-2 = 1/18.85 = 20/377
 	// 1.1764706e-2 = 1/85 = 40/3400
+	// 1.2360656e-1 = 377/3050
 	res = (1.0 - a1 * 2.9411764e-4 * 5.3050399e-2) * 1.2360656e-1 * args[0] +
 		a1 * 1.1764706e-2 + 46;
+
+	// Shortened / optimized version of that formula:
+	// res = (377.0 - a1 / 170.0) / 3050.0 * args[0] + a1 / 85.0 + 46;
+
 	writeScummVar(108, (int32)res);
 
 	// 1.2360656e-1 = 377/3050
 	// 1.1588235e-1 = 197/1700 = 394/3400
 	res = 640.0 - args[2] * 1.2360656e-1 - a1 * 1.1588235e-1 - 26;
+
 	writeScummVar(109, (int32)res);
 
 	return 1;
@@ -724,6 +729,7 @@ int LogicHEfootball::op_1010(int32 *args) {
 	// 2.9411764e-4 = 1/3400
 	// 5.3050399e-2 = 1/18.85 = 20/377
 	// 1.1764706e-2 = 1/85 = 40/3400
+	// 1.2360656e-1 = 377/3050
 	double a0 = ((double)args[0] - 46 - a1 * 1.1764706e-2) /
 		((1.0 - a1 * 2.9411764e-4 * 5.3050399e-2) * 1.2360656e-1);
 
