@@ -182,29 +182,34 @@ int32 LogicHErace::op_1004(int32 *args) {
 }
 
 int32 LogicHErace::op_1100(int32 *args) {
+	// _userData 516,517,518 describe a 3D translation?
 	_userData[516] = (float)args[0] / args[10];
 	_userData[517] = (float)args[1] / args[10];
 	_userData[518] = (float)args[2] / args[10];
+
+	// _userData 519,520,521 describe rotation angles around the x,y,z axes?
 	_userData[519] = (float)args[3] / args[10];
 	_userData[520] = (float)args[4] / args[10];
-
-	op_sub1(_userData[520]);
-
 	_userData[521] = (float)args[5] / args[10];
 
+	op_sub1(_userData[520]);
 	op_sub2(_userData[521]);
 
+	// _userData[532] seems to be some kind of global scale factor
 	_userData[532] = (float)args[10];
 
-	_userData[524] = (float)args[8];
-	_userData[525] = (float)args[9];
-	_userData[522] = (float)args[6] / args[10];
-	_userData[523] = (float)args[7] / args[10];
+	_userData[524] = (float)args[8];	// not used
+	_userData[525] = (float)args[9];	// not used
+	_userData[522] = (float)args[6] / args[10];	// not used
+	_userData[523] = (float)args[7] / args[10];	// only used to compute 528 and 529
+
+	// The following two are some kind of scale factors
 	_userData[526] = (float)args[6] / args[8] / args[10];
 	_userData[527] = (float)args[7] / args[9] / args[10];
 
+	// Set var 108 and 109 -- the value set here corresponds to the values
+	// set by op_1110!
 	writeScummVar(108, (int32)((float)args[6] / args[8] * args[10]));
-
 	writeScummVar(109, (int32)((float)args[7] / args[9] * args[10]));
 
 	_userData[528] = (float)(_userData[519] - _userData[523] * 0.5);
@@ -213,6 +218,8 @@ int32 LogicHErace::op_1100(int32 *args) {
 	writeScummVar(110, (int32)(_userData[528] * args[10]));
 	writeScummVar(111, (int32)(_userData[529] * args[10]));
 
+	// 530 and 531 are only used to set vars 112 and 113, so no need
+	// to store them permanently
 	_userData[530] = (float)(_userData[517] / tan(_userData[529] * DEG2RAD));
 	_userData[531] = (float)(_userData[517] / tan(_userData[528] * DEG2RAD));
 
@@ -223,6 +230,7 @@ int32 LogicHErace::op_1100(int32 *args) {
 }
 
 int32 LogicHErace::op_1101(int32 *args) {
+	// Update rotation params?
 	int32 retval;
 	float temp;
 
@@ -253,6 +261,7 @@ int32 LogicHErace::op_1101(int32 *args) {
 }
 
 int32 LogicHErace::op_1102(int32 *args) {
+	// Update translation params?
 	int32 retval;
 	float temp;
 
@@ -297,19 +306,21 @@ int32 LogicHErace::op_1110() {
 }
 
 int32 LogicHErace::op_1120(int32 *args) {
-	double a0, a1, a2, expr;
+	double a0, a1, a2;
+	double b0, b1, b2;
 	double res1, res2;
 
 	a0 = args[0] / _userData[532] - _userData[516];
 	a1 = args[1] / _userData[532] - _userData[517];
 	a2 = args[2] / _userData[532] - _userData[518];
 
-	expr = a2 * _userDataD[17] + a1 * _userDataD[14] + a0 * _userDataD[11];
+	// Perform matrix multiplication (multiplying by a rotation matrix)
+	b2 = a2 * _userDataD[17] + a1 * _userDataD[14] + a0 * _userDataD[11];
+	b1 = a2 * _userDataD[16] + a1 * _userDataD[13] + a0 * _userDataD[10];
+	b0 = a2 * _userDataD[15] + a1 * _userDataD[12] + a0 * _userDataD[9];
 
-	res1 = (atan2(a2 * _userDataD[15] + a1 * _userDataD[12] + a0 * _userDataD[9], expr) * RAD2DEG)
-			/ _userData[526];
-	res2 = (atan2(a2 * _userDataD[16] + a1 * _userDataD[13] + a0 * _userDataD[10], expr) * RAD2DEG
-			- _userData[528]) / _userData[527];
+	res1 = (atan2(b0, b2) * RAD2DEG) / _userData[526];
+	res2 = (atan2(b1, b2) * RAD2DEG - _userData[528]) / _userData[527];
 
 	writeScummVar(108, (int32)res1);
 	writeScummVar(109, (int32)res2);
@@ -322,7 +333,6 @@ int32 LogicHErace::op_1130(int32 *args) {
 	double sn = sin(args[0] / _userData[532] * DEG2RAD);
 
 	writeScummVar(108, (int32)(cs * args[1] + sn * args[2]));
-
 	writeScummVar(109, (int32)(cs * args[2] - sn * args[1]));
 
 	return 1;
@@ -415,7 +425,6 @@ int32 LogicHEfunshop::dispatch(int op, int numArgs, int32 *args) {
 
 	default:
 		break;
-
 	}
 
 	return 0;
@@ -478,7 +487,7 @@ void LogicHEfunshop::op_1004(int32 *args) {
 void LogicHEfunshop::op_1005(int32 *args) {
 	double data[8];
 	double args1, args2;
-	int i=0;
+	int i;
 	for (i = 520; i <= 526; i += 2) {
 		data[i - 520] = getFromArray(args[0], 0, i - 1);
 		data[i - 520 + 1] = getFromArray(args[0], 0, i);
@@ -704,7 +713,7 @@ int LogicHEfootball::op_1007(int32 *args) {
 
 int LogicHEfootball::op_1010(int32 *args) {
 	// This seems to be more or less the inverse of op_1006
-	double a1 = (640.0 - (double)args[1] - 26.0) * / 1.1588235e-1;
+	double a1 = (640.0 - (double)args[1] - 26.0) / 1.1588235e-1;
 	double a0 = ((double)args[0] - 46 - a1 * 1.1764706e-2) /
 		((1.0 - a1 * 2.9411764e-4 * 5.3050399e-2) * 1.2360656e-1);
 
