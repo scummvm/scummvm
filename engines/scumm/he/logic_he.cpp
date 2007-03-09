@@ -322,24 +322,32 @@ int32 LogicHErace::op_1130(int32 *args) {
 }
 
 int32 LogicHErace::op_1140(int32 *args) {
-	double arg2 = -args[2] * args[2];
-	double arg3 = -args[3] * args[3];
-	double sq = sqrt(arg2 + arg3);
-	double res;
+	// This functions seems to perform some kind of projection: We project
+	// the vector (arg2,arg3) onto the vector (arg0,arg1), but also apply
+	// some kind of distortion factor ?!?
+	double x = args[2], y = args[3];
 
-	arg2 = arg2 / sq;
-	arg3 = arg3 / sq;
+	// We start by normalizing the vector described by arg2 and arg3.
+	// So compute its length and divide the x and y coordinates
+	const double sq = sqrt(x*x + y*y);
+	x /= sq;
+	y /= sq;
+	
+	// Compute the scaler product of the vectors (arg0,arg1) and (x,y)
+	const double scalarProduct = x * args[0] + y * args[1];
 
-	res = (args[0] - 2 * (arg2 * args[0] + arg3 * args[1]) * arg2) * 0.86956525;
+	// Finally compute the projection of (arg2,arg3) onto (arg0,arg1)
+	double projX = args[0] - 2 * scalarProduct * args[2];
+	double projY = args[1] - 2 * scalarProduct * args[3];
+	
+	projX *= 0.86956525;	// FIXME: Why is this here?
 
-	writeScummVar(108, (int32)res);
+	writeScummVar(108, (int32)projX);
 
-	res = args[1] - 2 * (arg2 * args[0] + arg3 * args[1]) * arg3;
+	if (args[3] >= 0)	// FIXME: Why is this here?
+		projY *= 0.83333331f;	// FIXME: This value looks like 5/6
 
-	if (-args[3] * args[3] >= 0)
-		res *= 0.83333331f;
-
-	writeScummVar(109, (int32)res);
+	writeScummVar(109, (int32)projY);
 
 	return 1;
 }
