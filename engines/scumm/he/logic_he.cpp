@@ -349,14 +349,15 @@ int32 LogicHErace::op_1140(int32 *args) {
 	const double sq = sqrt(x*x + y*y);
 	x /= sq;
 	y /= sq;
-	
+
 	// Compute the scaler product of the vectors (arg0,arg1) and (x,y)
 	const double scalarProduct = x * args[0] + y * args[1];
 
 	// Finally compute the projection of (arg2,arg3) onto (arg0,arg1)
 	double projX = args[0] - 2 * scalarProduct * args[2];
 	double projY = args[1] - 2 * scalarProduct * args[3];
-	
+
+	// 0.86956525 = 1/1.15
 	projX *= 0.86956525;	// FIXME: Why is this here?
 
 	writeScummVar(108, (int32)projX);
@@ -680,6 +681,9 @@ int LogicHEfootball::op_1006(int32 *args) {
 	const double a1 = args[1];
 	double res;
 
+	// 2.9411764e-4 = 1/3400
+	// 5.3050399e-2 = 1/18.85
+	// 1.1764706e-2 = 1/85
 	res = (1.0 - a1 * 2.9411764e-4 * 5.3050399e-2) * 1.2360656e-1 * args[0] +
 		a1 * 1.1764706e-2 + 46;
 	writeScummVar(108, (int32)res);
@@ -714,6 +718,10 @@ int LogicHEfootball::op_1007(int32 *args) {
 int LogicHEfootball::op_1010(int32 *args) {
 	// This seems to be more or less the inverse of op_1006
 	double a1 = (640.0 - (double)args[1] - 26.0) / 1.1588235e-1;
+
+	// 2.9411764e-4 = 1/3400
+	// 5.3050399e-2 = 1/18.85
+	// 1.1764706e-2 = 1/85
 	double a0 = ((double)args[0] - 46 - a1 * 1.1764706e-2) /
 		((1.0 - a1 * 2.9411764e-4 * 5.3050399e-2) * 1.2360656e-1);
 
