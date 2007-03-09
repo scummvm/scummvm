@@ -56,11 +56,9 @@ namespace Scumm {
 #define IMAGE_DOS_SIGNATURE    0x5A4D     /* MZ */
 #define IMAGE_NT_SIGNATURE     0x00004550 /* PE00 */
 
-#if !defined (WIN32)
 #define IMAGE_SCN_CNT_CODE			0x00000020
 #define IMAGE_SCN_CNT_INITIALIZED_DATA		0x00000040
 #define IMAGE_SCN_CNT_UNINITIALIZED_DATA	0x00000080
-#endif
 
 // Only IMAGE_DIRECTORY_ENTRY_RESOURCE is used:
 #define	IMAGE_DIRECTORY_ENTRY_EXPORT		0
@@ -80,7 +78,6 @@ namespace Scumm {
 #define	IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR	14
 
 // Only RT_GROUP_CURSOR and RT_GROUP_ICON are used
-#if !defined (WIN32)
 #define RT_CURSOR        1
 #define RT_BITMAP        2
 #define RT_ICON          3
@@ -94,7 +91,6 @@ namespace Scumm {
 #define RT_MESSAGELIST   11
 #define RT_GROUP_CURSOR  12
 #define RT_GROUP_ICON    14
-#endif
 
 #define RETURN_IF_BAD_POINTER(r, x) \
 	if (!check_offset(fi->memory, fi->total_size, fi->file->name(), &(x), sizeof(x))) \

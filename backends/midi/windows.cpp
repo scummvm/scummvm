@@ -21,6 +21,9 @@
 
 #if defined(WIN32) && !defined(_WIN32_WCE)
 
+
+#include <windows.h>
+#include <mmsystem.h>
 #include "common/stdafx.h"
 #include "sound/mpu401.h"
 #include "common/util.h"

@@ -29,6 +29,11 @@
 #include "gui/message.h"
 #include "sound/mixer.h"
 
+#if defined(WIN32)
+#include <windows.h>
+#include <direct.h>
+#endif
+
 #ifdef _WIN32_WCE
 extern bool isSmartphone(void);
 #endif

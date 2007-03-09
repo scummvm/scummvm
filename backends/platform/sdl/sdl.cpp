@@ -33,6 +33,10 @@
 
 #include "icons/scummvm.xpm"
 
+#if defined(WIN32)
+#include <windows.h>
+#endif
+
 #if defined(__SYMBIAN32__)
 #include "SymbianOs.h"
 #endif

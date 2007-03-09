@@ -94,20 +94,11 @@
 		
 		#endif
 		
-		
-		#include <windows.h>
 		#if defined(ARRAYSIZE)
 		// VS2005beta2 introduces new stuff in winnt.h
 		#undef ARRAYSIZE
 		#endif
 		
-		#include <io.h>
-		#include <fcntl.h>
-		#include <conio.h>
-		#include <mmsystem.h>
-		#include <winuser.h>
-		#include <direct.h>
-
 	#endif
 	
 	#if defined(__QNXNTO__)
