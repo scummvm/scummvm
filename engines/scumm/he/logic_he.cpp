@@ -28,12 +28,22 @@
 namespace Scumm {
 
 LogicHE::LogicHE(ScummEngine_v90he *vm) : _vm(vm) {
-	// Originally it used 0x930 and stored both floats and doubles inside
-	_userData = (float *)calloc(550, sizeof(float));
-	_userDataD = (double *)calloc(30, sizeof(double));
 }
 
 LogicHE::~LogicHE() {
+}
+
+LogicHErace::LogicHErace(ScummEngine_v90he *vm) : LogicHE(vm) {
+	// Originally it used 0x930 and stored both floats and doubles inside
+	_userData = (float *)calloc(550, sizeof(float));
+	_userDataD = (double *)calloc(30, sizeof(double));
+
+	// FIXME: of the 550 entries in _userData, only 516 till 532 are used
+	// FIXME: similarly, in _userDataD only 9 till 17 are used for computations
+	//       (some of the other entries are also set, but never read, hence useless).
+}
+
+LogicHErace::~LogicHErace() {
 	free(_userData);
 	free(_userDataD);
 }
@@ -353,6 +363,7 @@ int32 LogicHErace::op_1140(int32 *args) {
 }
 
 void LogicHErace::op_sub1(float arg) {
+	// Setup a rotation matrix
 	_userDataD[10] = _userDataD[12] = _userDataD[14] = _userDataD[16] = 0;
 	_userDataD[13] = 1;
 
@@ -363,6 +374,7 @@ void LogicHErace::op_sub1(float arg) {
 }
 
 void LogicHErace::op_sub2(float arg) {
+	// Setup a rotation matrix -- but it is NEVER USED!
 	_userDataD[20] = _userDataD[21] = _userDataD[24] = _userDataD[25] = 0;
 	_userDataD[26] = 1;
 
@@ -373,6 +385,7 @@ void LogicHErace::op_sub2(float arg) {
 }
 
 void LogicHErace::op_sub3(float arg) {
+	// Setup a rotation matrix -- but it is NEVER USED!
 	_userDataD[1] = _userDataD[2] = _userDataD[3] = _userDataD[6] = 0;
 	_userDataD[0] = 1;
 

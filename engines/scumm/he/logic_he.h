@@ -31,8 +31,6 @@ class ScummEngine_v90he;
 
 class LogicHE {
 public:
-	float *_userData;
-	double *_userDataD;
 	ScummEngine_v90he *_vm;
 
 	LogicHE(ScummEngine_v90he *vm);
@@ -53,8 +51,12 @@ public:
 };
 
 class LogicHErace : public LogicHE {
+private:
+	float *_userData;
+	double *_userDataD;
 public:
-	LogicHErace(ScummEngine_v90he *vm) : LogicHE(vm) {}
+	LogicHErace(ScummEngine_v90he *vm);
+	~LogicHErace();
 
 	int versionID();
 	int32 dispatch(int op, int numArgs, int32 *args);
