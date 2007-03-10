@@ -63,6 +63,8 @@ enum {
 
 static const char *savePeriodLabels[] = { "Never", "every 5 mins", "every 10 mins", "every 15 mins", "every 30 mins", 0 };
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
+static const char *outputRateLabels[] = { "Default", "22 kHz", "8 kHz", "11kHz", "44 kHz", "48 kHz", 0 };
+static const int outputRateValues[] = { 0, 22050, 8000, 11025, 44100, 48000, -1 };
 
 
 
@@ -90,6 +92,7 @@ void OptionsDialog::init() {
 	_aspectCheckbox = 0;
 	_enableAudioSettings = false;
 	_midiPopUp = 0;
+	_outputRatePopUp = 0;
 	_enableMIDISettings = false;
 	_multiMidiCheckbox = 0;
 	_mt32Checkbox = 0;
@@ -171,6 +174,15 @@ void OptionsDialog::open() {
 			md++;
 		}
 		_midiPopUp->setSelected(md->name ? i : 0);
+	}
+
+	if (_outputRatePopUp) {
+		_outputRatePopUp->setSelected(1);
+		int value = ConfMan.getInt("output_rate", _domain);
+		for	(int i = 0; outputRateLabels[i]; i++) {
+			if (value == outputRateValues[i])
+				_outputRatePopUp->setSelected(i);
+		}
 	}
 
 	if (_multiMidiCheckbox) {
@@ -295,6 +307,17 @@ void OptionsDialog::close() {
 					ConfMan.removeKey("music_driver", _domain);
 			} else {
 				ConfMan.removeKey("music_driver", _domain);
+			}
+		}
+
+		if (_outputRatePopUp) {
+			if (_enableAudioSettings) {
+				if (_outputRatePopUp->getSelectedTag() != 0)
+					ConfMan.setInt("output_rate", _outputRatePopUp->getSelectedTag(), _domain);
+				else
+					ConfMan.removeKey("output_rate", _domain);
+			} else {
+				ConfMan.removeKey("output_rate", _domain);
 			}
 		}
 
@@ -424,6 +447,7 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_enableAudioSettings = enabled;
 
 	_midiPopUp->setEnabled(enabled);
+	_outputRatePopUp->setEnabled(enabled);
 }
 
 void OptionsDialog::setMIDISettingsState(bool enabled) {
@@ -521,6 +545,13 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 		md++;
 	}
 
+	// Sample rate settings
+	_outputRatePopUp = new PopUpWidget(boss, prefix + "auSampleRatePopup", "Output rate: ", labelWidth);
+
+	for (int i = 0; outputRateLabels[i]; i++) {
+		_outputRatePopUp->appendEntry(outputRateLabels[i], outputRateValues[i]);
+	}
+
 	_enableAudioSettings = true;
 }
 
@@ -612,6 +643,8 @@ void OptionsDialog::reflowLayout() {
 
 	if (_midiPopUp)
 		_midiPopUp->changeLabelWidth(labelWidth);
+	if (_outputRatePopUp)
+		_outputRatePopUp->changeLabelWidth(labelWidth);
 	if (_gfxPopUp)
 		_gfxPopUp->changeLabelWidth(labelWidth);
 	if (_renderModePopUp)
@@ -764,10 +797,14 @@ void GlobalOptionsDialog::close() {
 		String themePath(_themePath->getLabel());
 		if (!themePath.empty() && (themePath != "None"))
 			ConfMan.set("themepath", themePath, _domain);
+		else
+			ConfMan.removeKey("themepath", _domain);
 
 		String extraPath(_extraPath->getLabel());
 		if (!extraPath.empty() && (extraPath != "None"))
 			ConfMan.set("extrapath", extraPath, _domain);
+		else
+			ConfMan.removeKey("extrapath", _domain);
 
 		ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
 	}

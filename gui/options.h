@@ -93,6 +93,7 @@ private:
 	//
 	bool _enableAudioSettings;
 	PopUpWidget *_midiPopUp;
+	PopUpWidget *_outputRatePopUp;
 
 	//
 	// MIDI controls
