@@ -742,6 +742,14 @@
 					RelativePath="..\..\sound\mods\protracker.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\sound\mods\rjp1.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\rjp1.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -839,6 +847,14 @@
 			<Filter
 				Name="saves"
 				>
+				<File
+					RelativePath="..\..\backends\saves\compressed\compressed-saves.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\saves\compressed\compressed-saves.h"
+					>
+				</File>
 				<File
 					RelativePath="..\..\backends\saves\default\default-saves.cpp"
 					>
@@ -954,6 +970,14 @@
 			</File>
 			<File
 				RelativePath="..\..\gui\ListWidget.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\massadd.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\massadd.h"
 				>
 			</File>
 			<File

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1250"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
@@ -221,10 +221,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\loadsave.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\parallaction\location.cpp"
 			>
 		</File>
@@ -258,6 +254,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\parser.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\saveload.cpp"
 			>
 		</File>
 		<File
