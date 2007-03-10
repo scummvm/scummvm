@@ -327,14 +327,14 @@ public:
 protected:
 	bool isInClass(int cls);
 
-	bool isPlayer();
+	virtual bool isPlayer();
 
 	bool findPathTowards(byte box, byte box2, byte box3, Common::Point &foundPath);
 };
 
-class ActorOldWalk : public Actor {
+class Actor_v3 : public Actor {
 public:
-	ActorOldWalk(int id) : Actor(id) {}
+	Actor_v3(int id) : Actor(id) {}
 
 	virtual void walkActor();
 
@@ -343,15 +343,26 @@ protected:
 	void findPathTowardsOld(byte box, byte box2, byte box3, Common::Point &p2, Common::Point &p3);
 };
 
-class ActorC64 : public ActorOldWalk {
+class Actor_v2 : public Actor_v3 {
+public:
+	Actor_v2(int id) : Actor_v3(id) {}
+
+	virtual void initActor(int mode);
+	//virtual void walkActor();
+
+protected:
+	virtual bool isPlayer();
+};
+
+class ActorC64 : public Actor_v2 {
 public:
 	// FIXME: This flag is never saved, which might lead to broken save states.
 	byte _miscflags;
 
 public:
-	ActorC64(int id) : ActorOldWalk(id) {}
+	ActorC64(int id) : Actor_v2(id) {}
 	virtual void initActor(int mode) {
-		ActorOldWalk::initActor(mode);
+		Actor_v2::initActor(mode);
 		if (mode == -1) {
 			_miscflags = 0;
 		}

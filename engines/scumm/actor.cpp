@@ -87,13 +87,8 @@ void Actor::initActor(int mode) {
 		_costumeNeedsInit = false;
 		_visible = false;
 		_flip = false;
-		if (_vm->_game.version <= 2) {
-			_speedx = 1;
-			_speedy = 1;
-		} else {
-			_speedx = 8;
-			_speedy = 2;
-		}
+		_speedx = 8;
+		_speedy = 2;
 		_frame = 0;
 		_walkbox = 0;
 		_animProgress = 0;
@@ -133,10 +128,7 @@ void Actor::initActor(int mode) {
 
 	stopActorMoving();
 
-	if (_vm->_game.version <= 2)
-		setActorWalkSpeed(1, 1);
-	else
-		setActorWalkSpeed(8, 2);
+	setActorWalkSpeed(8, 2);
 
 	_animSpeed = 0;
 	if (_vm->_game.version >= 6)
@@ -153,19 +145,11 @@ void Actor::initActor(int mode) {
 	_talkPan = 64;
 	_talkVolume = 127;
 
-	if (_vm->_game.version <= 2) {
-		_initFrame = 2;
-		_walkFrame = 0;
-		_standFrame = 1;
-		_talkStartFrame = 5;
-		_talkStopFrame = 4;
-	} else {
-		_initFrame = 1;
-		_walkFrame = 2;
-		_standFrame = 3;
-		_talkStartFrame = 4;
-		_talkStopFrame = 5;
-	}
+	_initFrame = 1;
+	_walkFrame = 2;
+	_standFrame = 3;
+	_talkStartFrame = 4;
+	_talkStopFrame = 5;
 
 	_walkScript = 0;
 	_talkScript = 0;
@@ -177,12 +161,30 @@ void Actor::initActor(int mode) {
 	_vm->_classData[_number] = (_vm->_game.version >= 7) ? _vm->_classData[0] : 0;
 }
 
+void Actor_v2::initActor(int mode) {
+	Actor::initActor(mode);
+
+	if (mode == -1) {
+		_speedx = 1;
+		_speedy = 1;
+	}
+
+	setActorWalkSpeed(1, 1);
+
+	_initFrame = 2;
+	_walkFrame = 0;
+	_standFrame = 1;
+	_talkStartFrame = 5;
+	_talkStopFrame = 4;
+}
+
+
 void Actor::setBox(int box) {
 	_walkbox = box;
 	setupActorScale();
 }
 
-void ActorOldWalk::setupActorScale() {
+void Actor_v3::setupActorScale() {
 	// TODO: The following could probably be removed
 	_scalex = 0xFF;
 	_scaley = 0xFF;
@@ -574,7 +576,7 @@ void Actor::walkActor() {
 }
 */
 
-void ActorOldWalk::walkActor() {
+void Actor_v3::walkActor() {
 	Common::Point p2, p3;	// Gate locations
 	int new_dir, next_box;
 
@@ -2117,10 +2119,11 @@ bool Actor::isInClass(int cls) {
 }
 
 bool Actor::isPlayer() {
-	if (_vm->_game.version <= 2)
-		return _vm->VAR(42) <= _number && _number <= _vm->VAR(43);
-	else
-		return isInClass(kObjectClassPlayer);
+	return isInClass(kObjectClassPlayer);
+}
+
+bool Actor_v2::isPlayer() {
+	return _vm->VAR(42) <= _number && _number <= _vm->VAR(43);
 }
 
 void Actor::setHEFlag(int bit, int set) {
