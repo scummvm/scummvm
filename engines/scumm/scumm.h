@@ -1040,11 +1040,6 @@ protected:
 	void dissolveEffect(int width, int height);
 	void scrollEffect(int dir);
 
-	// bomp
-public:
-	byte *_bompActorPalettePtr;
-	void drawBomp(const BompDrawData &bd, bool mirror);
-
 protected:
 	bool _shakeEnabled;
 	uint _shakeFrame;

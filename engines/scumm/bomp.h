@@ -24,6 +24,7 @@
 #define SCUMM_BOMP_H
 
 #include "common/scummsys.h"
+#include "graphics/surface.h"
 
 namespace Scumm {
 
@@ -33,6 +34,30 @@ void bompApplyShadow(int shadowMode, const byte *shadowPalette, const byte *line
 void decompressBomp(byte *dst, const byte *src, int w, int h);
 void bompDecodeLine(byte *dst, const byte *src, int size);
 void bompDecodeLineReverse(byte *dst, const byte *src, int size);
+
+
+/** Bomp graphics data */
+struct BompDrawData {
+	Graphics::Surface dst;
+	int x, y;
+
+	const byte *src;
+	int srcwidth, srcheight;
+
+	byte scale_x, scale_y;
+
+	byte *maskPtr;
+	int numStrips;
+
+	uint16 shadowMode;
+	byte *shadowPalette;
+
+	byte *actorPalette;
+
+	bool mirror;
+};
+
+void drawBomp(const BompDrawData &bd);
 
 } // End of namespace Scumm
 

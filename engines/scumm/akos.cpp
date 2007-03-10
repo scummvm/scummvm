@@ -317,7 +317,7 @@ void AkosRenderer::setPalette(byte *new_palette) {
 		if (color == 255) {
 			palette[0] = color;
 		} else {
-			_vm->_bompActorPalettePtr = palette;
+			useBompPalette = true;
 		}
 	}
 }
@@ -1025,14 +1025,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 
 	BompDrawData bdd;
 
-	bdd.srcwidth = _width;
-	bdd.srcheight = _height;
 	bdd.dst = _out;
-	bdd.dataptr = _srcptr;
-	bdd.scale_x = 255;
-	bdd.scale_y = 255;
-	bdd.shadowMode = _shadow_mode;
-
 	if (!_mirror) {
 		bdd.x = (_actorX - xmoveCur - _width) + 1;
 	} else {
@@ -1040,10 +1033,23 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	}
 	bdd.y = _actorY + ymoveCur;
 
-	bdd.maskPtr = _vm->getMaskBuffer(0, 0, _zbuf);
-	_vm->drawBomp(bdd, !_mirror);
+	bdd.src = _srcptr;
+	bdd.srcwidth = _width;
+	bdd.srcheight = _height;
 
-	_vm->_bompActorPalettePtr = NULL;
+	bdd.scale_x = 255;
+	bdd.scale_y = 255;
+
+	bdd.maskPtr = _vm->getMaskBuffer(0, 0, _zbuf);
+	bdd.numStrips = _numStrips;
+
+	bdd.shadowMode = _shadow_mode;
+	bdd.shadowPalette = _vm->_shadowPalette;
+
+	bdd.actorPalette = useBompPalette ? palette : 0;
+	bdd.mirror = !_mirror;
+
+	drawBomp(bdd);
 	
 	return 0;
 }

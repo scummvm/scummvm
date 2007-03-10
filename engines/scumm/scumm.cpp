@@ -250,7 +250,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	_doEffect = false;
 	_currentLights = 0;
-	_bompActorPalettePtr = NULL;
 	_shakeEnabled = false;
 	_shakeFrame = 0;
 	_screenStartStrip = 0;

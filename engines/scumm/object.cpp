@@ -1650,6 +1650,17 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 	if (!bomp)
 		error("object %d is not a blast object", eo->number);
 
+	bdd.dst = *vs;
+	bdd.dst.pixels = vs->getPixels(0, 0);
+	bdd.x = eo->rect.left;
+	bdd.y = eo->rect.top;
+
+	// Skip the bomp header
+	if (_game.version == 8) {
+		bdd.src = bomp + 8;
+	} else {
+		bdd.src = bomp + 10;
+	}
 	if (_game.version == 8) {
 		bdd.srcwidth = READ_LE_UINT32(bomp);
 		bdd.srcheight = READ_LE_UINT32(bomp+4);
@@ -1658,26 +1669,23 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 		bdd.srcheight = READ_LE_UINT16(bomp+4);
 	}
 
-	bdd.dst = *vs;
-	bdd.dst.pixels = vs->getPixels(0, 0);
-	// Skip the bomp header
-	if (_game.version == 8) {
-		bdd.dataptr = bomp + 8;
-	} else {
-		bdd.dataptr = bomp + 10;
-	}
-	bdd.x = eo->rect.left;
-	bdd.y = eo->rect.top;
 	bdd.scale_x = (byte)eo->scaleX;
 	bdd.scale_y = (byte)eo->scaleY;
+
 	bdd.maskPtr = NULL;
+	bdd.numStrips = _gdi->_numStrips;
 
 	if ((bdd.scale_x != 255) || (bdd.scale_y != 255)) {
 		bdd.shadowMode = 0;
 	} else {
 		bdd.shadowMode = eo->mode;
 	}
-	drawBomp(bdd, false);
+	bdd.shadowPalette = _shadowPalette;
+
+	bdd.actorPalette = 0;
+	bdd.mirror = false;
+
+	drawBomp(bdd);
 
 	markRectAsDirty(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y, bdd.y + bdd.srcheight);
 }

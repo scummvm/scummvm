@@ -59,6 +59,7 @@ protected:
 
 	// actor palette
 	byte palette[256];
+	bool useBompPalette;
 
 	// pointer to various parts of the costume resource
 	const byte *akos;
@@ -84,6 +85,7 @@ protected:
 
 public:
 	AkosRenderer(ScummEngine *scumm) : BaseCostumeRenderer(scumm) {
+		useBompPalette = false;
 		akos = 0;
 		akhd = 0;
 		akpl = 0;

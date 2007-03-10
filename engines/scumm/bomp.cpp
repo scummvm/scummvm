@@ -197,7 +197,7 @@ void bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, int32 siz
 	}
 }
 
-void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
+void drawBomp(const BompDrawData &bd) {
 	const byte *src;
 	byte *dst;
 	byte *mask = 0;
@@ -231,14 +231,14 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 		clip.bottom = bd.dst.h - bd.y;
 	}
 
-	src = bd.dataptr;
+	src = bd.src;
 	dst = (byte *)bd.dst.pixels + bd.y * bd.dst.pitch + (bd.x + clip.left);
 
 	const byte maskbit = revBitMask((bd.x + clip.left) & 7);
 
 	// Mask against any additionally imposed mask
 	if (bd.maskPtr) {
-		mask = bd.maskPtr + (bd.y * _gdi->_numStrips) + ((bd.x + clip.left) / 8);
+		mask = bd.maskPtr + (bd.y * bd.numStrips) + ((bd.x + clip.left) / 8);
 	}
 
 	// Setup vertical scaling
@@ -276,7 +276,7 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 	// Loop over all lines
 	while (pos_y < clip.bottom) {
 		// Decode a single (bomp encoded) line, reversed if we are in mirror mode
-		if (mirror)
+		if (bd.mirror)
 			bompDecodeLineReverse(line_buffer, src + 2, bd.srcwidth);
 		else
 			bompDecodeLine(line_buffer, src + 2, bd.srcwidth);
@@ -313,17 +313,17 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 				bompApplyMask(line_ptr, mask, maskbit, width, 255);
 
 			// Apply custom color map, if available
-			if (_bompActorPalettePtr)
-				bompApplyActorPalette(_bompActorPalettePtr, line_ptr, width);
+			if (bd.actorPalette)
+				bompApplyActorPalette(bd.actorPalette, line_ptr, width);
 
 			// Finally, draw the decoded, scaled, masked and recolored line onto
 			// the target surface, using the specified shadow mode
-			bompApplyShadow(bd.shadowMode, _shadowPalette, line_ptr, dst, width, 255);
+			bompApplyShadow(bd.shadowMode, bd.shadowPalette, line_ptr, dst, width, 255);
 		}
 
 		// Advance to the next line
 		pos_y++;
-		mask += _gdi->_numStrips;
+		mask += bd.numStrips;
 		dst += bd.dst.pitch;
 	}
 }

@@ -170,21 +170,6 @@ struct ColorCycle {
 	byte end;
 };
 
-/** Bomp graphics data, used as parameter to ScummEngine::drawBomp. */
-struct BompDrawData {
-	Graphics::Surface dst;
-
-	int x, y;
-	byte scale_x, scale_y;
-	const byte *dataptr;
-	int srcwidth, srcheight;
-	uint16 shadowMode;
-
-	byte *maskPtr;
-
-	BompDrawData() { memset(this, 0, sizeof(*this)); }
-};
-
 struct StripTable;
 
 #define CHARSET_MASK_TRANSPARENCY	253
