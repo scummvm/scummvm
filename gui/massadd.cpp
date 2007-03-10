@@ -56,7 +56,7 @@ enum {
 
 
 MassAddDialog::MassAddDialog(const FilesystemNode &startDir)
-	: Dialog(10, 20, 300, 174),
+	: Dialog("massadddialog"),
 	_dirsScanned(0),
 	_okButton(0),
 	_dirProgressText(0),
@@ -66,16 +66,6 @@ MassAddDialog::MassAddDialog(const FilesystemNode &startDir)
 	_scanStack.push(startDir);
 
 
-	int buttonWidth, buttonHeight;
-
-	if (g_gui.getWidgetSize() == kBigWidgetSize) {
-		buttonWidth = kBigButtonWidth;
-		buttonHeight = kBigButtonHeight;
-	} else {
-		buttonWidth = kButtonWidth;
-		buttonHeight = kButtonHeight;
-	}
-
 	// Create dialog items
 	// We need:
 	// - "OK" button, only enabled after the scan has finished
@@ -84,22 +74,18 @@ MassAddDialog::MassAddDialog(const FilesystemNode &startDir)
 	// - static text displaying the progress text
 	// - (future) a listbox showing all the games we added/are going to add
 
-	new StaticTextWidget(this, 10, 10 + 1 * kLineHeight, _w - 2*10, kLineHeight,
-								"Mass Add Dialog", kTextAlignCenter);
+	new StaticTextWidget(this, "massadddialog_caption",	"Mass Add Dialog");
 
-	_dirProgressText = new StaticTextWidget(this, 10, 10 + 3 * kLineHeight, _w - 2*10, kLineHeight,
-								"... progress ...", kTextAlignCenter);
+	_dirProgressText = new StaticTextWidget(this, "massadddialog_dirprogress",
+											"... progress ...");
 
-	_gameProgressText = new StaticTextWidget(this, 10, 10 + 4 * kLineHeight, _w - 2*10, kLineHeight,
-								"... progress ...", kTextAlignCenter);
+	_gameProgressText = new StaticTextWidget(this, "massadddialog_gameprogress",
+											 "... progress ...");
 
-	int okButtonPos = (_w - (buttonWidth * 2)) / 2;
-	int cancelButtonPos = ((_w - (buttonWidth * 2)) / 2) + buttonWidth + 10;
-
-	_okButton = addButton(this, okButtonPos, _h - buttonHeight - 8, "OK", kOkCmd, '\n');
+	_okButton = new ButtonWidget(this, "massadddialog_ok", "OK", kOkCmd, '\n');
 	_okButton->setEnabled(false);
 
-	addButton(this, cancelButtonPos, _h - buttonHeight - 8, "Cancel", kCancelCmd, '\27');
+	new ButtonWidget(this, "massadddialog_cancel", "Cancel", kCancelCmd, '\27');
 
 }
 
