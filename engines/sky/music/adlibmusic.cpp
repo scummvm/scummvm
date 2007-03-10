@@ -47,38 +47,33 @@ AdlibMusic::~AdlibMusic(void) {
 	_mixer->stopHandle(_soundHandle);
 }
 
-void AdlibMusic::premixerCall(int16 *data, uint len) {
+int AdlibMusic::readBuffer(int16 *data, const int numSamples) {
 
 	if (_musicData == NULL) {
 		// no music loaded
-		memset(data, 0, 2 * len * sizeof(int16));
+		memset(data, 0, numSamples * sizeof(int16));
 	} else if ((_currentMusic == 0) || (_numberOfChannels == 0)) {
 		// music loaded but not played as of yet
-		memset(data, 0, 2 * len * sizeof(int16));
+		memset(data, 0, numSamples * sizeof(int16));
 		// poll anyways as pollMusic() can activate the music
 		pollMusic();
-		_nextMusicPoll = _sampleRate/50;
+		_nextMusicPoll = _sampleRate / 50;
 	} else {
 		uint32 render;
-		int16 *origData = data;
-		uint origLen = len;
-		while (len) {
-			render = (len > _nextMusicPoll) ? (_nextMusicPoll) : (len);
-			len -= render;
+		int remaining = numSamples;
+		while (remaining) {
+			render = (remaining > _nextMusicPoll) ? (_nextMusicPoll) : (remaining);
+			remaining -= render;
 			_nextMusicPoll -= render;
 			YM3812UpdateOne(_opl, data, render);
 			data += render;
 			if (_nextMusicPoll == 0) {
 				pollMusic();
-				_nextMusicPoll = _sampleRate/50;
+				_nextMusicPoll = _sampleRate / 50;
 			}
 		}
-
-		// Convert mono data to stereo
-		for (int i = (origLen - 1); i >= 0; i--) {
-			origData[2 * i] = origData[2 * i + 1] = origData[i];
-		}
 	}
+	return numSamples;
 }
 
 void AdlibMusic::setupPointers(void) {
