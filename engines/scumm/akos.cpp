@@ -1051,6 +1051,8 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 
 	drawBomp(bdd);
 	
+	useBompPalette = false;
+	
 	return 0;
 }
 
