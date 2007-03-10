@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="" />
+	<File name="..\..\engines\scumm\gfx.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="27430" topLine="955" />
+	</File>
+	<File name="..\..\engines\scumm\he\logic_he.cpp" open="1" top="1" tabpos="5">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="..\..\engines\scumm\he\resource_he.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="22484" topLine="687" />
+	</File>
+	<File name="..\..\engines\scumm\he\resource_he.h" open="1" top="0" tabpos="4">
+		<Cursor position="3416" topLine="78" />
+	</File>
+	<File name="..\..\engines\scumm\resource.h" open="1" top="0" tabpos="3">
+		<Cursor position="1173" topLine="0" />
+	</File>
+</CodeBlocks_layout_file>

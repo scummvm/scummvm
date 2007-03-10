@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="" />
+	<File name="..\..\engines\saga\rscfile.h" open="1" top="0" tabpos="2">
+		<Cursor position="1398" topLine="19" />
+	</File>
+	<File name="..\..\engines\saga\sagagame.h" open="1" top="0" tabpos="1">
+		<Cursor position="4649" topLine="204" />
+	</File>
+</CodeBlocks_layout_file>

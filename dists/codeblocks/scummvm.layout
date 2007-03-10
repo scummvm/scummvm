@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="default" />
+	<File name="..\..\backends\fs\windows\windows-fs.cpp" open="1" top="0" tabpos="10">
+		<Cursor position="991" topLine="5" />
+	</File>
+	<File name="..\..\backends\midi\windows.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="1071" topLine="15" />
+	</File>
+	<File name="..\..\backends\platform\sdl\events.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="5928" topLine="213" />
+	</File>
+	<File name="..\..\backends\platform\sdl\graphics.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="4474" topLine="127" />
+	</File>
+	<File name="..\..\backends\platform\sdl\sdl-common.h" open="0" top="0" tabpos="0">
+		<Cursor position="7253" topLine="206" />
+	</File>
+	<File name="..\..\backends\platform\sdl\sdl.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="1466" topLine="10" />
+	</File>
+	<File name="..\..\backends\saves\default\default-saves.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1794" topLine="33" />
+	</File>
+	<File name="..\..\backends\saves\savefile.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1740" topLine="11" />
+	</File>
+	<File name="..\..\backends\timer\default\default-timer.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1311" topLine="10" />
+	</File>
+	<File name="..\..\base\commandLine.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="12102" topLine="287" />
+	</File>
+	<File name="..\..\base\game.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1060" topLine="27" />
+	</File>
+	<File name="..\..\base\main.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="10180" topLine="267" />
+	</File>
+	<File name="..\..\base\plugins.cpp" open="1" top="0" tabpos="7">
+		<Cursor position="2592" topLine="94" />
+	</File>
+	<File name="..\..\base\plugins.h" open="0" top="0" tabpos="0">
+		<Cursor position="7833" topLine="188" />
+	</File>
+	<File name="..\..\base\version.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="2" topLine="0" />
+	</File>
+	<File name="..\..\common\advancedDetector.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="8666" topLine="282" />
+	</File>
+	<File name="..\..\common\array.h" open="0" top="0" tabpos="0">
+		<Cursor position="1119" topLine="129" />
+	</File>
+	<File name="..\..\common\config-file.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="7460" topLine="248" />
+	</File>
+	<File name="..\..\common\config-manager.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="1205" topLine="15" />
+	</File>
+	<File name="..\..\common\config-manager.h" open="0" top="0" tabpos="0">
+		<Cursor position="1658" topLine="12" />
+	</File>
+	<File name="..\..\common\endian.h" open="0" top="0" tabpos="0">
+		<Cursor position="5094" topLine="126" />
+	</File>
+	<File name="..\..\common\file.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="10706" topLine="372" />
+	</File>
+	<File name="..\..\common\file.h" open="0" top="0" tabpos="13">
+		<Cursor position="1172" topLine="12" />
+	</File>
+	<File name="..\..\common\list.h" open="0" top="0" tabpos="0">
+		<Cursor position="5703" topLine="213" />
+	</File>
+	<File name="..\..\common\mutex.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1316" topLine="24" />
+	</File>
+	<File name="..\..\common\savefile.h" open="0" top="0" tabpos="1">
+		<Cursor position="1342" topLine="10" />
+	</File>
+	<File name="..\..\common\scummsys.h" open="0" top="0" tabpos="0">
+		<Cursor position="9547" topLine="341" />
+	</File>
+	<File name="..\..\common\stdafx.h" open="1" top="0" tabpos="1">
+		<Cursor position="3750" topLine="55" />
+	</File>
+	<File name="..\..\common\str.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="10347" topLine="401" />
+	</File>
+	<File name="..\..\common\str.h" open="0" top="0" tabpos="0">
+		<Cursor position="18" topLine="0" />
+	</File>
+	<File name="..\..\common\stream.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1828" topLine="46" />
+	</File>
+	<File name="..\..\common\stream.h" open="1" top="0" tabpos="3">
+		<Cursor position="11237" topLine="339" />
+	</File>
+	<File name="..\..\common\system.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1888" topLine="29" />
+	</File>
+	<File name="..\..\common\system.h" open="0" top="0" tabpos="2">
+		<Cursor position="10641" topLine="232" />
+	</File>
+	<File name="..\..\common\unzip.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="9067" topLine="298" />
+	</File>
+	<File name="..\..\common\util.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="11348" topLine="425" />
+	</File>
+	<File name="..\..\common\util.h" open="0" top="0" tabpos="2">
+		<Cursor position="7810" topLine="35" />
+	</File>
+	<File name="..\..\engines\engine.cpp" open="1" top="0" tabpos="6">
+		<Cursor position="1299" topLine="6" />
+	</File>
+	<File name="..\..\graphics\dxa_player.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="2699" topLine="98" />
+	</File>
+	<File name="..\..\graphics\font.h" open="0" top="0" tabpos="0">
+		<Cursor position="1274" topLine="37" />
+	</File>
+	<File name="..\..\graphics\ilbm.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="8845" topLine="271" />
+	</File>
+	<File name="..\..\graphics\ilbm.h" open="0" top="0" tabpos="2">
+		<Cursor position="1053" topLine="0" />
+	</File>
+	<File name="..\..\graphics\surface.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="3986" topLine="134" />
+	</File>
+	<File name="..\..\graphics\surface.h" open="0" top="0" tabpos="0">
+		<Cursor position="2083" topLine="24" />
+	</File>
+	<File name="..\..\gui\ListWidget.h" open="0" top="0" tabpos="0">
+		<Cursor position="1693" topLine="25" />
+	</File>
+	<File name="..\..\gui\PopUpWidget.cpp" open="0" top="0" tabpos="7">
+		<Cursor position="9213" topLine="325" />
+	</File>
+	<File name="..\..\gui\ThemeModern.cpp" open="0" top="0" tabpos="8">
+		<Cursor position="1928" topLine="22" />
+	</File>
+	<File name="..\..\gui\dialog.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="2732" topLine="48" />
+	</File>
+	<File name="..\..\gui\dialog.h" open="0" top="0" tabpos="0">
+		<Cursor position="1255" topLine="16" />
+	</File>
+	<File name="..\..\gui\massadd.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="5313" topLine="146" />
+	</File>
+	<File name="..\..\gui\message.h" open="0" top="0" tabpos="0">
+		<Cursor position="1307" topLine="13" />
+	</File>
+	<File name="..\..\gui\object.h" open="0" top="0" tabpos="4">
+		<Cursor position="2088" topLine="33" />
+	</File>
+	<File name="..\..\gui\options.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="20232" topLine="622" />
+	</File>
+	<File name="..\..\gui\theme-config.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="2171" topLine="30" />
+	</File>
+	<File name="..\..\gui\theme.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1060" topLine="18" />
+	</File>
+	<File name="..\..\gui\theme.h" open="0" top="0" tabpos="0">
+		<Cursor position="8342" topLine="197" />
+	</File>
+	<File name="..\..\gui\widget.h" open="0" top="0" tabpos="0">
+		<Cursor position="5090" topLine="21" />
+	</File>
+	<File name="..\..\sound\audiocd.h" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="44" />
+	</File>
+	<File name="..\..\sound\audiostream.h" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="90" />
+	</File>
+	<File name="..\..\sound\flac.h" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="4" />
+	</File>
+	<File name="..\..\sound\fmopl.h" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="110" />
+	</File>
+	<File name="..\..\sound\mididrv.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="164" />
+	</File>
+	<File name="..\..\sound\mididrv.h" open="0" top="0" tabpos="1">
+		<Cursor position="4230" topLine="136" />
+	</File>
+	<File name="..\..\sound\midiparser.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="0" topLine="198" />
+	</File>
+	<File name="..\..\sound\midiparser.h" open="0" top="0" tabpos="2">
+		<Cursor position="0" topLine="325" />
+	</File>
+	<File name="..\..\sound\mixer.h" open="0" top="0" tabpos="0">
+		<Cursor position="1127" topLine="161" />
+	</File>
+	<File name="..\..\sound\mods\paula.cpp" open="1" top="0" tabpos="9">
+		<Cursor position="1084" topLine="4" />
+	</File>
+	<File name="..\..\sound\mods\paula.h" open="1" top="0" tabpos="8">
+		<Cursor position="2346" topLine="39" />
+	</File>
+	<File name="..\..\sound\mp3.h" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="4" />
+	</File>
+	<File name="..\..\sound\mpu401.h" open="0" top="0" tabpos="0">
+		<Cursor position="1260" topLine="41" />
+	</File>
+	<File name="..\..\sound\rate.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="5797" topLine="175" />
+	</File>
+	<File name="..\..\sound\softsynth\mt32\mt32_file.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1218" topLine="15" />
+	</File>
+	<File name="..\..\sound\softsynth\mt32\structures.h" open="0" top="0" tabpos="0">
+		<Cursor position="1781" topLine="16" />
+	</File>
+	<File name="..\..\sound\voc.h" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="37" />
+	</File>
+	<File name="..\..\sound\vorbis.h" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="4" />
+	</File>
+	<File name="..\..\sound\wave.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1130" topLine="0" />
+	</File>
+	<File name="..\..\sound\wave.h" open="0" top="0" tabpos="0">
+		<Cursor position="1159" topLine="6" />
+	</File>
+</CodeBlocks_layout_file>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="" />
+	<File name="..\..\engines\kyra\animator.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="1008" topLine="0" />
+	</File>
+	<File name="..\..\engines\kyra\resource.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="1723" topLine="45" />
+	</File>
+	<File name="..\..\engines\kyra\resource.h" open="1" top="0" tabpos="4">
+		<Cursor position="3191" topLine="87" />
+	</File>
+	<File name="..\..\engines\kyra\staticres.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="0" topLine="0" />
+	</File>
+</CodeBlocks_layout_file>

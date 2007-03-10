@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="default" />
+	<File name="..\..\engines\queen\bankman.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="984" topLine="0" />
+	</File>
+	<File name="..\..\engines\queen\logic.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="1739" topLine="53" />
+	</File>
+	<File name="..\..\engines\queen\sound.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="13215" topLine="558" />
+	</File>
+</CodeBlocks_layout_file>
