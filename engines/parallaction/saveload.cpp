@@ -122,7 +122,7 @@ void Parallaction::doLoadGame(uint16 slot) {
 		strcpy(_vm->_characterName, _minidonnaName);
 	}
 
-	if (_vm->_characterName[0] == 'm') {
+	if (IS_MINI_CHARACTER(_vm->_characterName)) {
 		strcpy(filename, _vm->_characterName+4);
 	} else {
 		strcpy(filename, _vm->_characterName);

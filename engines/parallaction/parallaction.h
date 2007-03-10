@@ -149,6 +149,17 @@ extern const char *_minidonnaName;
 extern const char *_minidoughName;
 extern const char *_minidrkiName;
 
+// Various ways of detecting character modes used to exist
+// inside the engine, so they have been unified in the two
+// following macros.
+// Mini characters are those used in far away shots, like
+// the highway scenery, while Dummy characters are a mere
+// workaround to keep the engine happy when showing slides.
+// As a sidenote, standard sized characters' names start
+// with a lowercase 'd'.
+#define IS_MINI_CHARACTER(s) (((s)[0] == 'm'))
+#define IS_DUMMY_CHARACTER(s) (((s)[0] == 'D'))
+
 void waitUntilLeftClick();
 
 void addNode(Node *list, Node *n);

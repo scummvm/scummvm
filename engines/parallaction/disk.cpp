@@ -179,15 +179,15 @@ void Disk::loadTalk(const char *name, Cnv *cnv) {
 
 	} else {
 		// character talk
-
+/*
 		if (scumm_stricmp(name, _doughName) &&
 			scumm_stricmp(name, _dinoName) &&
 			scumm_stricmp(name, _donnaName) &&
 			scumm_stricmp(name, _drkiName)) return;
-
+*/
 		char v20[PATH_LEN];
 		char *v24 = const_cast<char*>(name);
-		if (!scumm_strnicmp(v24, "mini", 4)) {
+		if (IS_MINI_CHARACTER(v24)) {
 			v24+=4;
 		}
 
@@ -207,10 +207,10 @@ Script* Disk::loadLocation(const char *name) {
 
 	char archivefile[PATH_LEN];
 
-	if (_vm->_characterName[0] == 'm') {
+	if (IS_MINI_CHARACTER(_vm->_characterName)) {
 		sprintf(archivefile, "%s%s", _vm->_characterName+4, _vm->_languageDir);
 	} else {
-		if (_vm->_characterName[0] == 'D') strcpy(archivefile, _vm->_languageDir);
+		if (IS_DUMMY_CHARACTER(_vm->_characterName)) strcpy(archivefile, _vm->_languageDir);
 		else {
 			sprintf(archivefile, "%s%s", _vm->_characterName, _vm->_languageDir);
 		}
@@ -257,13 +257,13 @@ Script* Disk::loadScript(const char* name) {
 void Disk::loadHead(const char* name, StaticCnv* cnv) {
 
 	char path[PATH_LEN];
-
+/*
 	if (scumm_stricmp(name, _doughName) &&
 		scumm_stricmp(name, _dinoName) &&
 		scumm_stricmp(name, _donnaName) &&
 		scumm_stricmp(name, _drkiName)) return;
-
-	if (!scumm_strnicmp(name, "mini", 4)) {
+*/
+	if (IS_MINI_CHARACTER(name)) {
 		name += 4;
 	}
 
@@ -290,7 +290,7 @@ void Disk::loadFont(const char* name, Cnv* cnv) {
 
 void Disk::loadObjects(const char *name, Cnv* cnv) {
 
-	if (!scumm_strnicmp("mini", name, 4)) {
+	if (IS_MINI_CHARACTER(name)) {
 		name += 4;
 	}
 

@@ -829,7 +829,7 @@ void freeCharacterFrames() {
 
 	_vm->_graphics->freeCnv(&_tempFrames);
 
-	if (_vm->_characterName[0] != 'D') {
+	if (!IS_DUMMY_CHARACTER(_vm->_characterName)) {
 		_vm->_graphics->freeCnv(&_miniCharacterFrames);
 		_vm->freeTable(_objectsNames);
 		_vm->_graphics->freeCnv(&_yourTalk);
@@ -840,7 +840,7 @@ void freeCharacterFrames() {
 }
 
 void Parallaction::selectCharacterMusic(const char *name) {
-	if (!scumm_strnicmp(name, "mini", 4))
+	if (IS_MINI_CHARACTER(name))
 		name+=4;
 
 	if (!scumm_stricmp(name, _dinoName)) {
@@ -859,7 +859,7 @@ void Parallaction::changeCharacter(const char *name) {
 
 	bool miniCharacter = false;
 
-	if (!scumm_strnicmp(name, "mini", 4)) {
+	if (IS_MINI_CHARACTER(name)) {
 		name+=4;
 		miniCharacter = true;
 	}
@@ -885,10 +885,10 @@ void Parallaction::changeCharacter(const char *name) {
 		strcpy(path, v32);
 		_disk->loadFrames(path, &_tempFrames);
 
-		_disk->loadHead(path, &_yourHead);
-		_disk->loadTalk(path, &_yourTalk);
+		if (!IS_DUMMY_CHARACTER(name)) {
+			_disk->loadHead(path, &_yourHead);
+			_disk->loadTalk(path, &_yourTalk);
 
-		if (name[0] != 'D') {
 			sprintf(path, "mini%s", v32);
 			_disk->loadFrames(path, &_miniCharacterFrames);
 
