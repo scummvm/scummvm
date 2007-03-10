@@ -300,7 +300,7 @@ void Menu::selectCharacter() {
 
 	StaticCnv v14;
 
-	v14._data0 = (byte*)malloc(33);
+	v14._data0 = (byte*)malloc(BLOCK_WIDTH*BLOCK_HEIGHT);
 	v14._data2 = v14._data0;
 	v14._width = BLOCK_WIDTH;
 	v14._height = BLOCK_HEIGHT;
