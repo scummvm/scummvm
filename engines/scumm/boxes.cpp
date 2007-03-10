@@ -684,7 +684,7 @@ byte *ScummEngine::getBoxMatrixBaseAddr() {
 
 /**
  * Compute if there is a way that connects box 'from' with box 'to'.
- * Returns the number of a box adjactant to 'from' that is the next on the
+ * Returns the number of a box adjacent to 'from' that is the next on the
  * way to 'to' (this can be 'to' itself or a third box).
  * If there is no connection -1 is return.
  */
