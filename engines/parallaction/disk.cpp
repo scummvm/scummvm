@@ -32,7 +32,6 @@ Disk::Disk(Parallaction* vm) : _vm(vm) {
 }
 
 Disk::~Disk() {
-	_archive.close();
 }
 
 
@@ -99,8 +98,6 @@ void Disk::loadExternalCnv(const char *filename, Cnv *cnv) {
 		stream.read(cnv->_array[i], size);
 	}
 
-	stream.close();
-
 //	printf("done\n");
 
 
@@ -128,8 +125,6 @@ void Disk::loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
 
 	cnv->_data0 = (byte*)malloc(size);
 	stream.read(cnv->_data0, size);
-
-	stream.close();
 
 	return;
 }
@@ -169,8 +164,6 @@ void Disk::loadCnv(const char *filename, Cnv *cnv) {
 
 		s += read;
 	}
-
-	_archive.closeArchivedFile();
 
 	free(buf);
 
@@ -219,8 +212,6 @@ Script* Disk::loadLocation(const char *name) {
 	}
 	strcat(archivefile, name);
 	strcat(archivefile, ".loc");
-
-	_archive.close();
 
 	_vm->_languageDir[2] = '\0';
 	_archive.open(_vm->_languageDir);
@@ -324,7 +315,6 @@ void Disk::loadStatic(const char* name, StaticCnv* cnv) {
 	cnv->_data0 = (byte*)malloc(size);
 
 	_archive.read(compressed, compressedsize);
-	_archive.closeArchivedFile();
 
 	decompressChunk(compressed, cnv->_data0, size);
 	free(compressed);
@@ -443,7 +433,6 @@ void Disk::loadScenery(const char *name, const char *mask) {
 }
 
 void Disk::selectArchive(const char *name) {
-	_archive.close();
 	_archive.open(name);
 }
 
