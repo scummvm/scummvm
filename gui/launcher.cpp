@@ -284,30 +284,38 @@ void EditGameDialog::open() {
 	OptionsDialog::open();
 
 	int sel, i;
-	bool e;
+	bool e, f;
 
 	// En-/disable dialog items depending on whether overrides are active or not.
 
-	e = ConfMan.hasKey("fullscreen", _domain) ||
+	e = ConfMan.hasKey("gfx_mode", _domain) ||
+		ConfMan.hasKey("render_mode", _domain) ||
+		ConfMan.hasKey("fullscreen", _domain) ||
 		ConfMan.hasKey("aspect_ratio", _domain);
 	_globalGraphicsOverride->setState(e);
 
 	e = ConfMan.hasKey("music_driver", _domain) ||
+		ConfMan.hasKey("output_rate", _domain) ||
 		ConfMan.hasKey("subtitles", _domain) ||
 		ConfMan.hasKey("talkspeed", _domain);
-	_globalAudioOverride->setState(e);
 
-	e = ConfMan.hasKey("multi_midi", _domain) ||
-		ConfMan.hasKey("native_mt32", _domain)||
-		ConfMan.hasKey("enable_gs", _domain);
-	_globalMIDIOverride->setState(e);
-
-	e = ConfMan.hasKey("music_volume", _domain) ||
+	f = ConfMan.hasKey("music_volume", _domain) ||
 		ConfMan.hasKey("sfx_volume", _domain) ||
 		ConfMan.hasKey("speech_volume", _domain);
 
-	if (_globalVolumeOverride)
-		_globalVolumeOverride->setState(e);
+	if (_globalVolumeOverride) {
+		_globalAudioOverride->setState(e);
+		_globalVolumeOverride->setState(f);
+	} else {
+		_globalAudioOverride->setState(e || f);
+	}
+
+	e = ConfMan.hasKey("soundfont", _domain) ||
+		ConfMan.hasKey("multi_midi", _domain) ||
+		ConfMan.hasKey("native_mt32", _domain) ||
+		ConfMan.hasKey("enable_gs", _domain) ||
+		ConfMan.hasKey("midi_gain", _domain);
+	_globalMIDIOverride->setState(e);
 
 	// TODO: game path
 
