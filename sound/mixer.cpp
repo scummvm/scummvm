@@ -160,7 +160,7 @@ void Mixer::playRaw(
 	AudioStream *input = makeLinearInputStream((byte *)sound, size, rate, flags, loopStart, loopEnd);
 	
 	// Play it
-	playInputStream(type, handle, input, id, volume, balance, true, false, (flags & Mixer::FLAG_REVERSE_STEREO));
+	playInputStream(type, handle, input, id, volume, balance, true, false, ((flags & Mixer::FLAG_REVERSE_STEREO) != 0));
 }
 
 void Mixer::playInputStream(

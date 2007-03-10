@@ -125,7 +125,7 @@ public:
 		return _origSize;
 	}
 	void seek(int32 offset, int whence = SEEK_SET) {
-		int32 newPos;
+		int32 newPos = 0;
 		switch(whence) {
 		case SEEK_END:
 			newPos = size() - offset;
