@@ -176,7 +176,7 @@ void Square::Write(int Reg, byte Val) {
 		break;
 
 	case 4:
-		Enabled = Val;
+		Enabled = (Val != 0);
 		if (!Enabled)
 			Timer = 0;
 		break;
@@ -294,7 +294,7 @@ void Triangle::Write(int Reg, byte Val) {
 		break;
 
 	case 4:
-		Enabled = Val;
+		Enabled = (Val != 0);
 		if (!Enabled)
 			Timer = 0;
 		break;
@@ -391,7 +391,7 @@ void Noise::Write(int Reg, byte Val) {
 		break;
 
 	case 4:
-		Enabled = Val;
+		Enabled = (Val != 0);
 		if (!Enabled)
 			Timer = 0;
 		break;

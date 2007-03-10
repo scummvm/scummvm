@@ -172,7 +172,7 @@ void Disk::loadCnv(const char *filename, Cnv *cnv) {
 
 void Disk::loadTalk(const char *name, Cnv *cnv) {
 
-	char* ext = strstr(name, ".talk");
+	const char *ext = strstr(name, ".talk");
 	if (ext != NULL) {
 		// npc talk
 		loadCnv(name, cnv);

@@ -845,7 +845,7 @@ void Display::decodePCX(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dst
 }
 
 void Display::decodeLBM(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dstPitch, uint16 *w, uint16 *h, uint8 *pal, uint16 palStart, uint16 palEnd, uint8 colorBase) {
-	int planeCount, planePitch;
+	int planeCount = 0, planePitch = 0;
 	const uint8 *srcEnd = src + srcSize;
 	src += 12;
 	while (src < srcEnd) {
