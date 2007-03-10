@@ -65,7 +65,7 @@ void Console::postEnter() {
 bool Console::Cmd_SetVar(int argc, const char **argv) {
 	if (argc != 3) {
 		DebugPrintf("Usage: setvar <varnum> <value>");
-		return false;
+		return true;
 	}
 	int p1 = (int)atoi(argv[1]);
 	int p2 = (int)atoi(argv[2]);
@@ -77,7 +77,7 @@ bool Console::Cmd_SetVar(int argc, const char **argv) {
 bool Console::Cmd_SetFlag(int argc, const char **argv) {
 	if (argc != 3) {
 		DebugPrintf("Usage: setvar <varnum> <value>");
-		return false;
+		return true;
 	}
 	int p1 = (int)atoi(argv[1]);
 	int p2 = (int)atoi(argv[2]);
@@ -89,7 +89,7 @@ bool Console::Cmd_SetFlag(int argc, const char **argv) {
 bool Console::Cmd_SetObj(int argc, const char **argv) {
 	if (argc != 3) {
 		DebugPrintf("Usage: setvar <varnum> <value>");
-		return false;
+		return true;
 	}
 	int p1 = (int)atoi(argv[1]);
 	int p2 = (int)atoi(argv[2]);
@@ -102,7 +102,7 @@ bool Console::Cmd_RunOpcode(int argc, const char **argv) {
 	for (int i = 0; logicNamesCmd[i].name; i++) {
 		if (!strcmp(argv[1], logicNamesCmd[i].name)) {
 			uint8 p[16];
-			if ((argc - 2)!= logicNamesCmd[i].numArgs) {
+			if ((argc - 2) != logicNamesCmd[i].numArgs) {
 				DebugPrintf("AGI command wants %d arguments\n", logicNamesCmd[i].numArgs);
 				return 0;
 			}
@@ -120,7 +120,7 @@ bool Console::Cmd_RunOpcode(int argc, const char **argv) {
 		}
 	}
 
-	return false;
+	return true;
 }
 
 bool Console::Cmd_Crc(int argc, const char **argv) {
@@ -184,9 +184,9 @@ bool Console::Cmd_Objs(int argc, const char **argv) {
 }
 
 bool Console::Cmd_Opcode(int argc, const char **argv) {
-	if (argc != 1 || (strcmp(argv[1], "on") && strcmp(argv[1], "off"))) {
+	if (argc != 2 || (strcmp(argv[1], "on") && strcmp(argv[1], "off"))) {
 		DebugPrintf("Usage: opcode on|off\n");
-		return false;
+		return true;
 	}
 
 	_vm->_debug.opcodes = !strcmp(argv[1], "on");
@@ -195,9 +195,9 @@ bool Console::Cmd_Opcode(int argc, const char **argv) {
 }
 
 bool Console::Cmd_Logic0(int argc, const char **argv) {
-	if (argc != 1 || (strcmp(argv[1], "on") && strcmp(argv[1], "off"))) {
+	if (argc != 2 || (strcmp(argv[1], "on") && strcmp(argv[1], "off"))) {
 		DebugPrintf("Usage: logic0 on|off\n");
-		return false;
+		return true;
 	}
 
 	_vm->_debug.logic0 = !strcmp(argv[1], "on");
@@ -206,9 +206,9 @@ bool Console::Cmd_Logic0(int argc, const char **argv) {
 }
 
 bool Console::Cmd_Trigger(int argc, const char **argv) {
-	if (argc != 1 || (strcmp(argv[1], "on") && strcmp(argv[1], "off"))) {
+	if (argc != 2 || (strcmp(argv[1], "on") && strcmp(argv[1], "off"))) {
 		DebugPrintf("Usage: trigger on|off\n");
-		return false;
+		return true;
 	}
 	_vm->_debug.ignoretriggers = strcmp (argv[1], "on");
 
@@ -218,7 +218,7 @@ bool Console::Cmd_Trigger(int argc, const char **argv) {
 bool Console::Cmd_Step(int argc, const char **argv) {
 	_vm->_debug.enabled = 1;
 
-	if (argc == 0) {
+	if (argc == 1) {
 		_vm->_debug.steps = 1;
 		return true;
 	}
