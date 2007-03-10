@@ -364,6 +364,9 @@ baseball2001	Backyard Baseball 2001
 baseball2003	Backyard Baseball 2003
 	efe0a04a703e765ebebe92b6c8aa6b86	-1	en	All	-	-	-	Kirben, sev
 
+basketball	Backyard Basketball
+	d2cc8e31bce61e6cf2951249e10638fe	-1	en	All	-	-	-	clone2727, Kirben
+
 football	Backyard Football
 	7fc6cdb46b4c9d384c52327f4bca6416	-1	en	All	-	-	-	sev
 
