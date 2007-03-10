@@ -56,7 +56,6 @@ const byte _glyphWidths[126] = {
   0x05, 0x06, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x04, 0x06, 0x05, 0x05, 0x05, 0x05
 };
 
-Cnv 		Graphics::_font;
 bool		Graphics::_proportionalFont = false;
 Point		Graphics::_labelPosition[2] = { { 0, 0 }, { 0, 0 } };
 StaticCnv	Graphics::_mouseComposedArrow;
@@ -797,9 +796,7 @@ void Graphics::getStringExtent(char *text, uint16 maxwidth, int16* width, int16*
 
 
 void Graphics::setFont(const char* name) {
-	if (_font._array != NULL)
-		freeCnv(&_font);
-
+	freeCnv(&_font);
 	_vm->_disk->loadFont(name, &_font);
 }
 
@@ -922,11 +919,20 @@ void Graphics::freeCnv(Cnv *cnv) {
 //	printf("Graphics::freeCnv()\n");
 
 	if (!cnv) return;
+	if (cnv->_count == 0) return;
+	if (!cnv->_array) return;
 
 	for (uint16 _si = 0; _si < cnv->_count; _si++) {
-		free(cnv->_array[_si]);
+		if (cnv->_array[_si]) {
+			free(cnv->_array[_si]);
+		}
+		cnv->_array[_si] = NULL;
 	}
-	if (cnv->_array) free(cnv->_array);
+
+	if (cnv->_array)
+		free(cnv->_array);
+
+	cnv->_count = 0;
 	cnv->_array = NULL;
 
 	return;
@@ -1126,6 +1132,7 @@ Graphics::Graphics(Parallaction* vm) :
 
 	initMouse( 0 );
 
+	_font._count = 0;
 	_font._array = NULL;
 
 	return;

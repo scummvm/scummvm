@@ -156,7 +156,7 @@ protected:
 	static byte			_mouseArrow[256];
 	static StaticCnv	_mouseComposedArrow;
 
-	static Cnv			_font;
+	Cnv					_font;
 
 
 protected:
