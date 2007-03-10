@@ -60,9 +60,9 @@ int AdlibMusic::readBuffer(int16 *data, const int numSamples) {
 		_nextMusicPoll = _sampleRate / 50;
 	} else {
 		uint32 render;
-		int remaining = numSamples;
+		uint remaining = numSamples;
 		while (remaining) {
-			render = (remaining > _nextMusicPoll) ? (_nextMusicPoll) : (remaining);
+			render = (remaining > _nextMusicPoll) ? _nextMusicPoll : remaining;
 			remaining -= render;
 			_nextMusicPoll -= render;
 			YM3812UpdateOne(_opl, data, render);
