@@ -119,7 +119,7 @@ void Parallaction::doLoadGame(uint16 slot) {
 	}
 	if (!scumm_stricmp(_vm->_characterName, "minidonnatras")) {
 		_engineFlags |= kEngineMiniDonna;
-		strcpy(_vm->_characterName, "minidonna");
+		strcpy(_vm->_characterName, _minidonnaName);
 	}
 
 	if (_vm->_characterName[0] == 'm') {

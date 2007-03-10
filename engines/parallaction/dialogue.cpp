@@ -461,9 +461,9 @@ void runDialogue(SpeakData *data) {
 							g_system->delayMillis(20);
 						}
 
-						if ((!scumm_stricmp(_vm->_characterName, "dough") && !scumm_strnicmp(password, "1732461", 7)) ||
-							(!scumm_stricmp(_vm->_characterName, "donna") && !scumm_strnicmp(password, "1622", 4)) ||
-							(!scumm_stricmp(_vm->_characterName, "dino") && !scumm_strnicmp(password, "179", 3))) {
+						if ((!scumm_stricmp(_vm->_characterName, _doughName) && !scumm_strnicmp(password, "1732461", 7)) ||
+							(!scumm_stricmp(_vm->_characterName, _donnaName) && !scumm_strnicmp(password, "1622", 4)) ||
+							(!scumm_stricmp(_vm->_characterName, _dinoName) && !scumm_strnicmp(password, "179", 3))) {
 
 							askPassword = false;
 
@@ -509,7 +509,7 @@ void runDialogue(SpeakData *data) {
 	// that's why this hack (with hardcoded Dino) works
 	if (!scumm_stricmp(_location, "museum")) {
 		_vm->_disk->selectArchive("disk1");
-		_vm->_disk->loadFrames("dino", &_tempFrames);
+		_vm->_disk->loadFrames(_dinoName, &_tempFrames);
 
 		memcpy(&_yourself._cnv, &_tempFrames, sizeof(Cnv));
 

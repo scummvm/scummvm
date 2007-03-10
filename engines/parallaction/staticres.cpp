@@ -227,6 +227,15 @@ Credit _credits[] = {
 	{"CLICK MOUSE BUTTON TO START", 0}
 };
 
+const char *_dinoName = "dino";
+const char *_donnaName = "donna";
+const char *_doughName = "dough";
+const char *_drkiName = "drki";
+
+const char *_minidinoName = "minidino";
+const char *_minidonnaName = "minidonna";
+const char *_minidoughName = "minidough";
+const char *_minidrkiName = "minidrki";
 
 
 } // namespace Parallaction

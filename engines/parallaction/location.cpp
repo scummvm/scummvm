@@ -285,15 +285,8 @@ void Parallaction::changeLocation(char *location) {
 
 //	printf("changeLocation('%s')", location);
 	if (_musicData1 != 0) {
-		if (!scumm_stricmp(_characterName, "dino"))
-			_vm->_midiPlayer->play("dino");
-		else if (!scumm_stricmp(_characterName, "donna"))
-			_vm->_midiPlayer->play("donna");
-		else
-			_vm->_midiPlayer->play("nuts");
-
+		selectCharacterMusic(_vm->_characterName);
 		_musicData1 = 0;
-
 		debugC(2, kDebugLocation, "changeLocation: started character specific music");
 	}
 

@@ -390,14 +390,13 @@ void Menu::selectCharacter() {
 	}
 
 
-	strcpy(_location, "test");
 	if (_dino_points > _donna_points && _dino_points > _dough_points) {
-		strcat(_location, ".dino");
+		sprintf(_location, "test.%s", _dinoName);
 	} else {
 		if (_donna_points > _dino_points && _donna_points > _dough_points) {
-			strcat(_location, ".donna");
+			sprintf(_location, "test.%s", _donnaName);
 		} else {
-			strcat(_location, ".dough");
+			sprintf(_location, "test.%s", _doughName);
 		}
 	}
 

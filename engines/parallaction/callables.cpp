@@ -346,7 +346,7 @@ void _c_finito(void *parm) {
 }
 
 void _c_ridux(void *parm) {
-	_vm->changeCharacter("minidino");
+	_vm->changeCharacter(_minidinoName);
 	return;
 }
 

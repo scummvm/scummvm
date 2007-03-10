@@ -140,6 +140,15 @@ extern const char *commands_names[];
 extern const char *_instructionNames[];
 extern const char *_callableNames[];
 
+extern const char *_dinoName;
+extern const char *_donnaName;
+extern const char *_doughName;
+extern const char *_drkiName;
+extern const char *_minidinoName;
+extern const char *_minidonnaName;
+extern const char *_minidoughName;
+extern const char *_minidrkiName;
+
 void waitUntilLeftClick();
 
 void addNode(Node *list, Node *n);
@@ -331,6 +340,8 @@ protected:		// members
 	void		parseZoneTypeBlock(Script &script, Zone *z);
 	void		loadProgram(Animation *a, char *filename);
 	void		changeLocation(char *location);
+
+	void		selectCharacterMusic(const char *name);
 
 };
 

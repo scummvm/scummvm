@@ -839,16 +839,29 @@ void freeCharacterFrames() {
 	return;
 }
 
+void Parallaction::selectCharacterMusic(const char *name) {
+	if (!scumm_strnicmp(name, "mini", 4))
+		name+=4;
 
+	if (!scumm_stricmp(name, _dinoName)) {
+		_midiPlayer->play("dino");
+	} else if (!scumm_stricmp(name, _donnaName)) {
+		_midiPlayer->play("donna");
+	} else {
+		_midiPlayer->play("nuts");
+	}
+
+	return;
+}
 
 void Parallaction::changeCharacter(const char *name) {
 //	printf("changeCharacter(%s)\n", name);
 
-	uint16 _si = 0;
+	bool miniCharacter = false;
 
 	if (!scumm_strnicmp(name, "mini", 4)) {
 		name+=4;
-		_si = 1;
+		miniCharacter = true;
 	}
 
 	char v32[20];
@@ -884,21 +897,14 @@ void Parallaction::changeCharacter(const char *name) {
 
 			refreshInventory(name);
 
-			if (scumm_stricmp(name, "night") && scumm_stricmp(name, "intsushi")) {
-				if (!scumm_stricmp(name, "dino") || !scumm_stricmp(name, "minidino")) {
-					_midiPlayer->play("dino");
-				} else if (!scumm_stricmp(name, "donna") || !scumm_stricmp(name, "minidonna")) {
-					_midiPlayer->play("donna");
-				} else {
-					_midiPlayer->play("nuts");
-				}
-			}
+			if (scumm_stricmp(name, "night") && scumm_stricmp(name, "intsushi"))
+				selectCharacterMusic(name);
 
 		}
 
 	}
 
-	if (_si == 1) {
+	if (miniCharacter) {
 		memcpy(&_yourself._cnv, &_miniCharacterFrames, sizeof(Cnv));
 	} else {
 		memcpy(&_yourself._cnv, &_tempFrames, sizeof(Cnv));

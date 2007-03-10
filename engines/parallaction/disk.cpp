@@ -180,10 +180,10 @@ void Disk::loadTalk(const char *name, Cnv *cnv) {
 	} else {
 		// character talk
 
-		if (scumm_stricmp(name, "dough") &&
-			scumm_stricmp(name, "dino") &&
-			scumm_stricmp(name, "donna") &&
-			scumm_stricmp(name, "drki")) return;
+		if (scumm_stricmp(name, _doughName) &&
+			scumm_stricmp(name, _dinoName) &&
+			scumm_stricmp(name, _donnaName) &&
+			scumm_stricmp(name, _drkiName)) return;
 
 		char v20[PATH_LEN];
 		char *v24 = const_cast<char*>(name);
@@ -258,10 +258,10 @@ void Disk::loadHead(const char* name, StaticCnv* cnv) {
 
 	char path[PATH_LEN];
 
-	if (scumm_stricmp(name, "dough") &&
-		scumm_stricmp(name, "dino") &&
-		scumm_stricmp(name, "donna") &&
-		scumm_stricmp(name, "drki")) return;
+	if (scumm_stricmp(name, _doughName) &&
+		scumm_stricmp(name, _dinoName) &&
+		scumm_stricmp(name, _donnaName) &&
+		scumm_stricmp(name, _drkiName)) return;
 
 	if (!scumm_strnicmp(name, "mini", 4)) {
 		name += 4;
