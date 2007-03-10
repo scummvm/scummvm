@@ -926,7 +926,7 @@ void Graphics::freeCnv(Cnv *cnv) {
 	for (uint16 _si = 0; _si < cnv->_count; _si++) {
 		free(cnv->_array[_si]);
 	}
-	free(cnv->_array);
+	if (cnv->_array) free(cnv->_array);
 	cnv->_array = NULL;
 
 	return;

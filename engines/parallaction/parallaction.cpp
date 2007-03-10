@@ -56,6 +56,8 @@ uint32		_engineFlags = 0;
 char	   *_objectsNames[100];
 Zone	   *_activeZone = NULL;
 Animation	_yourself;
+StaticCnv	_yourHead;
+Cnv		    _yourTalk;
 uint16		_score = 1;
 Command    *_locationACommands = NULL;
 Command    *_locationCommands = NULL;
@@ -131,7 +133,6 @@ Point		_firstPosition = { -1000, -1000 };
 char		_newLocation[100];
 char	   *_globalTable[32];
 uint16		_firstFrame = 0;
-Cnv 		_characterFace;
 byte		_mouseHidden = 0;
 Node		_locationWalkNodes = { 0, 0 };
 uint32		_commandFlags = 0;
@@ -260,6 +261,17 @@ int Parallaction::init() {
 
 	memset(_locationNames, 0, 120*32);
 	_numLocations = 0;
+
+	_yourTalk._width = 0;
+	_yourTalk._height = 0;
+	_yourTalk._count = 0;
+	_yourTalk._array = NULL;
+
+	_yourHead._width = 0;
+	_yourHead._height = 0;
+	_yourHead._data0 = NULL;
+	_yourHead._data1 = NULL;
+	_yourHead._data2 = NULL;
 
 	_yourself._zone.pos._position._x = 150;
 	_yourself._zone.pos._position._y = 100;
@@ -820,6 +832,8 @@ void freeCharacterFrames() {
 	if (_vm->_characterName[0] != 'D') {
 		_vm->_graphics->freeCnv(&_miniCharacterFrames);
 		_vm->freeTable(_objectsNames);
+		_vm->_graphics->freeCnv(&_yourTalk);
+		_vm->_graphics->freeStaticCnv(&_yourHead);
 	}
 
 	return;
@@ -857,6 +871,9 @@ void Parallaction::changeCharacter(const char *name) {
 		char path[PATH_LEN];
 		strcpy(path, v32);
 		_disk->loadFrames(path, &_tempFrames);
+
+		_disk->loadHead(path, &_yourHead);
+		_disk->loadTalk(path, &_yourTalk);
 
 		if (name[0] != 'D') {
 			sprintf(path, "mini%s", v32);

@@ -119,7 +119,7 @@ extern char *_globalTable[];
 extern char _saveData1[];
 extern Point _firstPosition;		 // starting position after load game??
 extern uint16 _firstFrame;	 // starting frame after load game??
-extern Cnv _characterFace;
+extern Cnv _yourTalk;
 extern byte _mouseHidden;
 extern uint32 _commandFlags;
 extern Cnv _tempFrames;

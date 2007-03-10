@@ -229,15 +229,13 @@ void runDialogue(SpeakData *data) {
 		debugC(1, kDebugDialogue, "runDialogue: special trick for 'museum' location");
 	}
 
-	_vm->_disk->loadTalk(_vm->_characterName, &_characterFace);
-
 	_vm->_graphics->setFont("comic");
 
 	Cnv v6E;
 	StaticCnv v5C, v48;
 
 	if (!scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0') {
-		memcpy(&v6E, &_characterFace, sizeof(Cnv));
+		memcpy(&v6E, &_yourTalk, sizeof(Cnv));
 		debugC(1, kDebugDialogue, "runDialogue: using default character head");
 	} else {
 		debugC(1, kDebugDialogue, "runDialogue: loading 2nd character head '%s'", _vm->_characterName);
@@ -248,8 +246,8 @@ void runDialogue(SpeakData *data) {
 	v5C._width = v6E._width;
 	v5C._height = v6E._height;
 
-	v48._width = _characterFace._width;
-	v48._height = _characterFace._height;
+	v48._width = _yourTalk._width;
+	v48._height = _yourTalk._height;
 
 	bool displayedAnswers = false;
 	int16 question_width = 0, question_height = 0;
@@ -262,8 +260,8 @@ void runDialogue(SpeakData *data) {
 
 		v5C._data0 = v6E._array[v60->_mood & 0xF];
 //		v5C._data1 = v6E.field_8[v60->_mood & 0xF];
-		v48._data0 = _characterFace._array[0];
-//		v48._data1 = _characterFace.field_8[0];
+		v48._data0 = _yourTalk._array[0];
+//		v48._data1 = _yourTalk.field_8[0];
 
 		// display Question if any
 		if (scumm_stricmp(v60->_text, "NULL")) {
@@ -497,9 +495,6 @@ void runDialogue(SpeakData *data) {
 	debugC(1, kDebugDialogue, "runDialogue: out of dialogue loop");
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
-	_vm->_graphics->freeCnv(&_characterFace);
-	debugC(1, kDebugDialogue, "runDialogue: 1st character head free'd");
-
 	if (scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0') {
 		_vm->_graphics->freeCnv(&v6E);
 		debugC(1, kDebugDialogue, "runDialogue: 2nd character head free'd");
@@ -551,8 +546,8 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 			0
 		);
 
-		cnv->_data0 = _characterFace._array[q->_answer_moods[_di] & 0xF];
-//		cnv->_data1 = _characterFace.field_8[q->_answer_moods[_di] & 0xF];
+		cnv->_data0 = _yourTalk._array[q->_answer_moods[_di] & 0xF];
+//		cnv->_data1 = _yourTalk.field_8[q->_answer_moods[_di] & 0xF];
 
 		_vm->_graphics->flatBlitCnv(
 			cnv,
@@ -593,8 +588,8 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 				0
 			);
 
-			cnv->_data0 = _characterFace._array[q->_answer_moods[_si] & 0xF];
-//			cnv->_data1 = _characterFace.field_8[q->_answer_moods[_si] & 0xF];
+			cnv->_data0 = _yourTalk._array[q->_answer_moods[_si] & 0xF];
+//			cnv->_data1 = _yourTalk.field_8[q->_answer_moods[_si] & 0xF];
 
 			_vm->_graphics->flatBlitCnv(
 				cnv,

@@ -37,6 +37,7 @@ Node _zones = { NULL, NULL };
 Node _animations = { NULL, NULL };
 
 extern Node helperNode;
+extern StaticCnv	_yourHead;
 
 Zone *findZone(const char *name) {
 
@@ -365,13 +366,11 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 void displayCharacterComment(ExamineData *data) {
 	if (data->_description == NULL) return;
 
-	_vm->_disk->loadTalk(_vm->_characterName, &_characterFace);
-
 	StaticCnv v3C;
-	v3C._width = _characterFace._width;
-	v3C._height = _characterFace._height;
-	v3C._data0 = _characterFace._array[0];
-	v3C._data1 = NULL; //_characterFace.field_8[0];
+	v3C._width = _yourTalk._width;
+	v3C._height = _yourTalk._height;
+	v3C._data0 = _yourTalk._array[0];
+	v3C._data1 = NULL; //_yourTalk.field_8[0];
 	v3C._data2 = NULL;
 
 	_vm->_graphics->setFont("comic");
@@ -382,15 +381,9 @@ void displayCharacterComment(ExamineData *data) {
 	_vm->_graphics->drawBalloon(140, 10, v28, v26, 0);
 	_vm->_graphics->displayWrappedString(data->_description, 140, 10, 130, 0);
 
-//	printf("wait left");
-
 	waitUntilLeftClick();
 
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
-	_vm->_graphics->freeCnv(&_characterFace);
-
-//	printf("done");
-
 
 	return;
 }
@@ -408,24 +401,18 @@ void displayItemComment(ExamineData *data) {
 
 	if (data->_description == NULL) return;
 
-//	printf("displayItemComment()...");
-
 	char v68[PATH_LEN];
 	strcpy(v68, data->_filename);
 	_vm->_disk->loadStatic(v68, &data->_cnv);
 	_vm->_graphics->flatBlitCnv(&data->_cnv, 140, (SCREEN_HEIGHT - data->_cnv._height)/2, Graphics::kBitFront, data->_cnv._data1);
 	_vm->_graphics->freeStaticCnv(&data->_cnv);
 
-	StaticCnv cnv;
-	_vm->_disk->loadHead(_vm->_characterName, &cnv);
-
 	int16 v6A = 0, v6C = 0;
 
 	_vm->_graphics->setFont("comic");
 	_vm->_graphics->getStringExtent(data->_description, 130, &v6C, &v6A);
 	_vm->_graphics->drawBalloon(0, 90, v6C, v6A, 0);
-	_vm->_graphics->flatBlitCnv(&cnv, 100, 152, Graphics::kBitFront, cnv._data1);
-	_vm->_graphics->freeStaticCnv(&cnv);
+	_vm->_graphics->flatBlitCnv(&_yourHead, 100, 152, Graphics::kBitFront, _yourHead._data1);
 	_vm->_graphics->displayWrappedString(data->_description, 0, 90, 130, 0);
 
 	jobEraseAnimations((void*)1, NULL);
@@ -433,8 +420,6 @@ void displayItemComment(ExamineData *data) {
 	waitUntilLeftClick();
 
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
-
-//	printf("done");
 
 	return;
 }
