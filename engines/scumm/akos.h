@@ -55,25 +55,27 @@ protected:
 
 class AkosRenderer : public BaseCostumeRenderer {
 protected:
-	uint16 codec;
+	uint16 _codec;
 
-	// actor palette
-	byte palette[256];
-	bool useBompPalette;
+	// actor _palette
+	byte _palette[256];
+	bool _useBompPalette;
 
 	// pointer to various parts of the costume resource
-	const byte *akos;
-	const AkosHeader *akhd;
+	const AkosHeader *akhd;	// header
 
-	const byte *akpl, *akci, *aksq;
-	const AkosOffset *akof;
-	const byte *akcd;
-	const byte *akct;
-	const uint8 *xmap;
+	const byte *akpl;		// palette data
+	const byte *akci;		// CostumeInfo table
+	const byte *aksq;		// command sequence
+	const AkosOffset *akof;	// offsets into ci and cd table
+	const byte *akcd;		// costume data (contains the data for the codecs)
+
+	const byte *akct;		// HE specific: condition table
+	const uint8 *xmap;		// HE specific: shadow color table ?!?
 
 	struct {
-		byte unk5;
-		int unk6;
+		bool repeatMode;
+		int repeatCount;
 		byte mask;
 		byte color;
 		byte shift;
@@ -81,12 +83,11 @@ protected:
 		byte numbits;
 		const byte *dataptr;
 		byte buffer[336];
-	} akos16;
+	} _akos16;
 
 public:
 	AkosRenderer(ScummEngine *scumm) : BaseCostumeRenderer(scumm) {
-		useBompPalette = false;
-		akos = 0;
+		_useBompPalette = false;
 		akhd = 0;
 		akpl = 0;
 		akci = 0;
@@ -102,7 +103,7 @@ public:
 	int16 _actorHitX, _actorHitY;
 	bool _actorHitResult;
 
-	void setPalette(byte *palette);
+	void setPalette(byte *_palette);
 	void setFacing(const Actor *a);
 	void setCostume(int costume, int shadow);
 

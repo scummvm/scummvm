@@ -48,8 +48,8 @@ struct AkosHeader {
 };
 
 struct AkosOffset {
-	uint32 akcd;
-	uint16 akci;
+	uint32 akcd;	// offset into the akcd data
+	uint16 akci;	// offset into the akci data
 };
 
 #include "common/pack-end.h"	// END STRUCT PACKING
@@ -300,30 +300,30 @@ void AkosRenderer::setPalette(byte *new_palette) {
 
 	if (_vm->_game.heversion >= 99 && _paletteNum) {
 		for (i = 0; i < size; i++)
-			palette[i] = (byte)_vm->_hePalettes[_paletteNum * 1024 + 768 + akpl[i]];
+			_palette[i] = (byte)_vm->_hePalettes[_paletteNum * 1024 + 768 + akpl[i]];
 	} else {
 		for (i = 0; i < size; i++) {
-			palette[i] = new_palette[i] != 0xFF ? new_palette[i] : akpl[i];
+			_palette[i] = new_palette[i] != 0xFF ? new_palette[i] : akpl[i];
 		}
 	}
 
 	if (_vm->_game.heversion == 70) {
 		for (i = 0; i < size; i++)
-			palette[i] = _vm->_HEV7ActorPalette[palette[i]];
+			_palette[i] = _vm->_HEV7ActorPalette[_palette[i]];
 	} 
 
 	if (size == 256) {
 		byte color = new_palette[0];
 		if (color == 255) {
-			palette[0] = color;
+			_palette[0] = color;
 		} else {
-			useBompPalette = true;
+			_useBompPalette = true;
 		}
 	}
 }
 
 void AkosRenderer::setCostume(int costume, int shadow) {
-	akos = _vm->getResourceAddress(rtCostume, costume);
+	const byte *akos = _vm->getResourceAddress(rtCostume, costume);
 	assert(akos);
 
 	akhd = (const AkosHeader *) _vm->findResourceData(MKID_BE('AKHD'), akos);
@@ -332,7 +332,7 @@ void AkosRenderer::setCostume(int costume, int shadow) {
 	aksq = _vm->findResourceData(MKID_BE('AKSQ'), akos);
 	akcd = _vm->findResourceData(MKID_BE('AKCD'), akos);
 	akpl = _vm->findResourceData(MKID_BE('AKPL'), akos);
-	codec = READ_LE_UINT16(&akhd->codec);
+	_codec = READ_LE_UINT16(&akhd->codec);
 	akct = _vm->findResourceData(MKID_BE('AKCT'), akos);
 
 	xmap = 0;
@@ -420,7 +420,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 		_xmove += (int16)READ_LE_UINT16(&costumeInfo->move_x);
 		_ymove -= (int16)READ_LE_UINT16(&costumeInfo->move_y);
 
-		switch (codec) {
+		switch (_codec) {
 		case 1:
 			result |= codec1(xmoveCur, ymoveCur);
 			break;
@@ -431,7 +431,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 			result |= codec16(xmoveCur, ymoveCur);
 			break;
 		default:
-			error("akos_drawLimb: invalid codec %d", codec);
+			error("akos_drawLimb: invalid _codec %d", _codec);
 		}
 	} else {
 		if (code == AKC_ComplexChan2)  {
@@ -503,7 +503,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 					_shadow_mode = 3;
 			}
 
-			switch (codec) {
+			switch (_codec) {
 			case 1:
 				result |= codec1(xmoveCur, ymoveCur);
 				break;
@@ -517,7 +517,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 				result |= codec32(xmoveCur, ymoveCur);
 				break;
 			default:
-				error("akos_drawLimb: invalid codec %d", codec);
+				error("akos_drawLimb: invalid _codec %d", _codec);
 			}
 		}
 	}
@@ -567,7 +567,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 					masked = (y < v1.boundsRect.top || y >= v1.boundsRect.bottom) || (v1.x < 0 || v1.x >= v1.boundsRect.right) || (*mask & maskbit);
 
 					if (color && !masked && !skip_column) {
-						pcolor = palette[color];
+						pcolor = _palette[color];
 						if (_shadow_mode == 1) {
 							if (pcolor == 13)	
 								pcolor = _shadow_table[*dst];
@@ -1046,35 +1046,35 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	bdd.shadowMode = _shadow_mode;
 	bdd.shadowPalette = _vm->_shadowPalette;
 
-	bdd.actorPalette = useBompPalette ? palette : 0;
+	bdd.actorPalette = _useBompPalette ? _palette : 0;
 	bdd.mirror = !_mirror;
 
 	drawBomp(bdd);
 	
-	useBompPalette = false;
+	_useBompPalette = false;
 	
 	return 0;
 }
 
 void AkosRenderer::akos16SetupBitReader(const byte *src) {
-	akos16.unk5 = 0;
-	akos16.numbits = 16;
-	akos16.mask = (1 << *src) - 1;
-	akos16.shift = *(src);
-	akos16.color = *(src + 1);
-	akos16.bits = (*(src + 2) | *(src + 3) << 8);
-	akos16.dataptr = src + 4;
+	_akos16.repeatMode = false;
+	_akos16.numbits = 16;
+	_akos16.mask = (1 << *src) - 1;
+	_akos16.shift = *(src);
+	_akos16.color = *(src + 1);
+	_akos16.bits = (*(src + 2) | *(src + 3) << 8);
+	_akos16.dataptr = src + 4;
 }
 
 #define AKOS16_FILL_BITS()                                        \
-        if (akos16.numbits <= 8) {                                \
-          akos16.bits |= (*akos16.dataptr++) << akos16.numbits;   \
-          akos16.numbits += 8;                                    \
+        if (_akos16.numbits <= 8) {                                \
+          _akos16.bits |= (*_akos16.dataptr++) << _akos16.numbits;   \
+          _akos16.numbits += 8;                                    \
         }
 
 #define AKOS16_EAT_BITS(n)                                        \
-		akos16.numbits -= (n);                                    \
-		akos16.bits >>= (n);
+		_akos16.numbits -= (n);                                    \
+		_akos16.bits >>= (n);
 
 
 void AkosRenderer::akos16SkipData(int32 numbytes) {
@@ -1086,39 +1086,41 @@ void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
 
 	while (numbytes != 0) {
 		if (buf) {
-			*buf = akos16.color;
+			*buf = _akos16.color;
 			buf += dir;
 		}
 		
-		if (akos16.unk5 == 0) {
+		if (!_akos16.repeatMode) {
 			AKOS16_FILL_BITS()
-			bits = akos16.bits & 3;
+			bits = _akos16.bits & 3;
 			if (bits & 1) {
 				AKOS16_EAT_BITS(2)
 				if (bits & 2) {
-					tmp_bits = akos16.bits & 7;
+					tmp_bits = _akos16.bits & 7;
 					AKOS16_EAT_BITS(3)
 					if (tmp_bits != 4) {
-						akos16.color += (tmp_bits - 4);
+						// A color change
+						_akos16.color += (tmp_bits - 4);
 					} else {
-						akos16.unk5 = 1;
+						// Color does not change, but rather identical pixels get repeated
+						_akos16.repeatMode = true;
 						AKOS16_FILL_BITS()
-						akos16.unk6 = (akos16.bits & 0xff) - 1;
+						_akos16.repeatCount = (_akos16.bits & 0xff) - 1;
 						AKOS16_EAT_BITS(8)
 						AKOS16_FILL_BITS()
 					}
 				} else {
 					AKOS16_FILL_BITS()
-					akos16.color = ((byte)akos16.bits) & akos16.mask;
-					AKOS16_EAT_BITS(akos16.shift)
+					_akos16.color = ((byte)_akos16.bits) & _akos16.mask;
+					AKOS16_EAT_BITS(_akos16.shift)
 					AKOS16_FILL_BITS()
 				}
 			} else {
 				AKOS16_EAT_BITS(1);
 			}
 		} else {
-			if (--akos16.unk6 == 0) {
-				akos16.unk5 = 0;
+			if (--_akos16.repeatCount == 0) {
+				_akos16.repeatMode = false;
 			}
 		}
 		numbytes--;
@@ -1127,7 +1129,7 @@ void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
 
 void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir,
 		int32 numskip_before, int32 numskip_after, byte transparency, int maskLeft, int maskTop, int zBuf) {
-	byte *tmp_buf = akos16.buffer;
+	byte *tmp_buf = _akos16.buffer;
 	int maskpitch;
 	byte *maskptr;
 	const byte maskbit = revBitMask(maskLeft & 7);
@@ -1151,9 +1153,9 @@ void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, in
 	assert(t_width > 0);
 	while (t_height--) {
 		akos16DecodeLine(tmp_buf, t_width, dir);
-		bompApplyMask(akos16.buffer, maskptr, maskbit, t_width, transparency);
+		bompApplyMask(_akos16.buffer, maskptr, maskbit, t_width, transparency);
 		bool HE7Check = (_vm->_game.heversion == 70);
-		bompApplyShadow(_shadow_mode, _shadow_table, akos16.buffer, dest, t_width, transparency, HE7Check);
+		bompApplyShadow(_shadow_mode, _shadow_table, _akos16.buffer, dest, t_width, transparency, HE7Check);
 
 		if (numskip_after != 0)	{
 			akos16SkipData(numskip_after);
@@ -1167,7 +1169,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	Common::Rect clip;
 	int32 minx, miny, maxw, maxh;
 	int32 skip_x, skip_y, cur_x, cur_y;
-	byte transparency = (_vm->_game.heversion >= 61) ? palette[0] : 255;
+	byte transparency = (_vm->_game.heversion >= 61) ? _palette[0] : 255;
 
 	if (_actorHitMode) {
 		error("codec16: _actorHitMode not yet implemented");
