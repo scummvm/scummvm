@@ -208,7 +208,7 @@ enum EngineFlags {
 	kEngineChangeLocation	= (1 << 4),
 	kEngineMouse			= (1 << 5),
 	kEngineDragging 		= (1 << 6),
-	kEngineMiniDonna		= (1 << 7)
+	kEngineTransformedDonna		= (1 << 7)
 };
 
 enum {

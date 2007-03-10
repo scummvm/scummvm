@@ -112,13 +112,13 @@ void Parallaction::doLoadGame(uint16 slot) {
 
 	delete f;
 
-	_engineFlags &= ~kEngineMiniDonna;
+	_engineFlags &= ~kEngineTransformedDonna;
 	if (!scumm_stricmp(_vm->_characterName, "donnatras")) {
-		_engineFlags |= kEngineMiniDonna;
+		_engineFlags |= kEngineTransformedDonna;
 		strcpy(_vm->_characterName, "donna");
 	}
 	if (!scumm_stricmp(_vm->_characterName, "minidonnatras")) {
-		_engineFlags |= kEngineMiniDonna;
+		_engineFlags |= kEngineTransformedDonna;
 		strcpy(_vm->_characterName, _minidonnaName);
 	}
 
@@ -167,7 +167,7 @@ void Parallaction::doSaveGame(uint16 slot, const char* name) {
 	f->writeString(s);
 	f->writeString("\n");
 
-	if (_engineFlags & kEngineMiniDonna) {
+	if (_engineFlags & kEngineTransformedDonna) {
 		sprintf(s, "%stras\n", _vm->_characterName);
 	} else {
 		sprintf(s, "%s\n", _vm->_characterName);

@@ -122,7 +122,7 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 		if (!scumm_stricmp(_tokens[0], "file")) {
 			char vC8[200];
 			strcpy(vC8, _tokens[1]);
-			if (_engineFlags & kEngineMiniDonna) {
+			if (_engineFlags & kEngineTransformedDonna) {
 				if (!scumm_stricmp(_tokens[1], "donnap") || !scumm_stricmp(_tokens[1], "donnapa")) {
 					strcat(vC8, "tras");
 				}

@@ -187,7 +187,7 @@ void _c_zeroFoglie(void *parm) {
 }
 
 void _c_trasformata(void *parm) {
-	_engineFlags ^= kEngineMiniDonna;
+	_engineFlags ^= kEngineTransformedDonna;
 	return;
 }
 

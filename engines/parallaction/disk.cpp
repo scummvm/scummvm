@@ -191,7 +191,7 @@ void Disk::loadTalk(const char *name, Cnv *cnv) {
 			v24+=4;
 		}
 
-		if (_engineFlags & kEngineMiniDonna) {
+		if (_engineFlags & kEngineTransformedDonna) {
 			sprintf(v20, "%stta", v24);
 		} else {
 			sprintf(v20, "%stal", v24);

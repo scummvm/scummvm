@@ -869,7 +869,7 @@ void Parallaction::changeCharacter(const char *name) {
 
 
 
-	if (_engineFlags & kEngineMiniDonna) {
+	if (_engineFlags & kEngineTransformedDonna) {
 		strcat(v32, "tras");
 	}
 
