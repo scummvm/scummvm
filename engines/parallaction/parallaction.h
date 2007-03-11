@@ -117,8 +117,8 @@ extern uint16 _introSarcData2;		 // sarcophagus stuff to be saved
 
 extern char *_globalTable[];
 extern char _saveData1[];
-extern Point _firstPosition;		 // starting position after load game??
-extern uint16 _firstFrame;	 // starting frame after load game??
+//extern Point _firstPosition;		 // starting position after load game??
+//extern uint16 _firstFrame;	 // starting frame after load game??
 extern byte _mouseHidden;
 extern uint32 _commandFlags;
 
@@ -126,12 +126,12 @@ extern Cnv _yourTalk;
 
 extern Cnv _characterFrames;
 
-extern char _location[];
-extern Node _locationWalkNodes;
-extern Command *_locationACommands;
-extern Command *_locationCommands;
-extern char *_locationComment;
-extern char *_locationEndComment;
+//extern char _locationName[];
+//extern Node _walkNodes;
+//extern Command *_aCommands;
+//extern Command *_commands;
+//extern char *_comment;
+//extern char *_endComment;
 
 extern char *_objectsNames[];
 extern const char *_zoneTypeNames[];
@@ -237,6 +237,20 @@ class Graphics;
 class Menu;
 class MidiPlayer;
 
+struct Location {
+
+	Point		_startPosition;
+	uint16		_startFrame;
+	Node		_walkNodes;
+	char		_name[100];
+
+	Command    *_aCommands;
+	Command    *_commands;
+	char	   *_comment;
+	char	   *_endComment;
+
+};
+
 class Parallaction : public Engine {
 
 public:
@@ -291,6 +305,8 @@ public:
 	char	_locationNames[120][32];
 	int16	_currentLocationIndex;
 	uint16	_numLocations;
+
+	Location	_location;
 
 	InventoryItem	_activeItem;
 

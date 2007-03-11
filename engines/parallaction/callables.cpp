@@ -300,7 +300,7 @@ void _c_finito(void *parm) {
 		_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBit2);
 		waitUntilLeftClick();
 
-		strcpy(_location, "estgrotta.drki");
+		strcpy(_vm->_location._name, "estgrotta.drki");
 
 		_engineFlags |= kEngineChangeLocation;
 	} else {

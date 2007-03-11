@@ -51,7 +51,7 @@ uint16	_mouseButtons = 0;
 
 char		_saveData1[30] = { '\0' };
 uint16		_language = 0;
-char		_location[100] = "fogne";
+char		_slideText[2][40];
 uint32		_engineFlags = 0;
 char	   *_objectsNames[100];
 Zone	   *_activeZone = NULL;
@@ -64,10 +64,7 @@ static Cnv		_miniCharacterFrames;
 Cnv 			_yourObjects;
 
 uint16		_score = 1;
-Command    *_locationACommands = NULL;
-Command    *_locationCommands = NULL;
-char	   *_locationComment = NULL;
-char	   *_locationEndComment = NULL;
+
 uint32		_localFlags[120] = { 0 };
 
 static char tmp_visited_str[] = "visited";
@@ -133,13 +130,11 @@ Command *	_forwardedCommands[20] = {
 char		_forwardedAnimationNames[20][20];
 uint16		_numForwards = 0;
 char		_soundFile[20];
-char		_slideText[2][40];
-Point		_firstPosition = { -1000, -1000 };
 
 char	   *_globalTable[32];
-uint16		_firstFrame = 0;
+
 byte		_mouseHidden = 0;
-Node		_locationWalkNodes = { 0, 0 };
+
 uint32		_commandFlags = 0;
 uint16		_introSarcData3 = 200;
 uint16		_introSarcData2 = 1;
@@ -221,7 +216,7 @@ int Parallaction::init() {
 		return -1;
 	}
 /*
-	strcpy(_location, "taxint");
+	strcpy(_name, "taxint");
 	strcpy(_characterName, "dough");
 	strcpy(_languageDir, "it/");
 	_skipMenu = true;
@@ -252,7 +247,7 @@ int Parallaction::init() {
 		argv[2][2] = '/';
 		argv[2][3] = '\0';
 
-		strcpy(_location, argv[0]);
+		strcpy(_name, argv[0]);
 		strcpy(_characterName, argv[1]);
 		strcpy(_languageDir, argv[2]);
 		_skipMenu = true;
@@ -265,6 +260,18 @@ int Parallaction::init() {
 
 	memset(_locationNames, 0, 120*32);
 	_numLocations = 0;
+
+	_location._startPosition._x = -1000;
+	_location._startPosition._x = -1000;
+	_location._startFrame = 0;
+	_location._walkNodes._prev = NULL;
+	_location._walkNodes._next = NULL;
+	strcpy(_location._name, "fogne");
+	_location._aCommands = NULL;
+	_location._commands = NULL;
+	_location._comment = NULL;
+	_location._endComment = NULL;
+
 
 	_yourTalk._width = 0;
 	_yourTalk._height = 0;
@@ -325,7 +332,7 @@ void Parallaction::initGame() {
 		_menu->start();
 	}
 
-	char *v4 = strchr(_location, '.');
+	char *v4 = strchr(_location._name, '.');
 	if (v4) {
 		*v4 = '\0';
 	}
@@ -333,15 +340,15 @@ void Parallaction::initGame() {
 	_engineFlags &= ~kEngineChangeLocation;
 	changeCharacter(_characterName);
 
-	strcpy(_saveData1, _location);
-	parseLocation(_location);
+	strcpy(_saveData1, _location._name);
+	parseLocation(_location._name);
 
-	if (_firstPosition._x != -1000) {
-		_yourself._zone.pos._position._x = _firstPosition._x;
-		_yourself._zone.pos._position._y = _firstPosition._y;
-		_yourself._frame = _firstFrame;
-		_firstPosition._y = -1000;
-		_firstPosition._x = -1000;
+	if (_location._startPosition._x != -1000) {
+		_yourself._zone.pos._position._x = _location._startPosition._x;
+		_yourself._zone.pos._position._y = _location._startPosition._y;
+		_yourself._frame = _location._startFrame;
+		_location._startPosition._y = -1000;
+		_location._startPosition._x = -1000;
 	}
 
 	return;
@@ -441,20 +448,20 @@ void Parallaction::runGame() {
 
 	_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
 
-	if (_locationCommands)
-		runCommands(_locationCommands);
+	if (_location._commands)
+		runCommands(_location._commands);
 
 	runJobs();
 
 	_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
-	if (_locationComment)
+	if (_location._comment)
 		doLocationEnterTransition();
 
 	changeCursor(kCursorArrow);
 
-	if (_locationACommands)
-		runCommands(_locationACommands);
+	if (_location._aCommands)
+		runCommands(_location._aCommands);
 
 //	printf("entering game loop...\n");
 
@@ -488,7 +495,7 @@ void Parallaction::runGame() {
 
 		if (_engineFlags & kEngineChangeLocation) {
 			_engineFlags &= ~kEngineChangeLocation;
-			changeLocation(_location);
+			changeLocation(_location._name);
 			continue;
 		}
 

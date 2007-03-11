@@ -49,12 +49,12 @@ MidiPlayer::~MidiPlayer() {
 void MidiPlayer::play(const char *filename) {
 	stop();
 
-	if (!scumm_strnicmp(_location, "museo", 5)) return;
-	if (!scumm_strnicmp(_location, "intgrottadopo", 13)) return;
-	if (!scumm_strnicmp(_location, "caveau", 6)) return;
-	if (!scumm_strnicmp(_location, "estgrotta", 9)) return;
-	if (!scumm_strnicmp(_location, "plaza1", 6)) return;
-	if (!scumm_strnicmp(_location, "endtgz", 6)) return;
+	if (!scumm_strnicmp(_vm->_location._name, "museo", 5)) return;
+	if (!scumm_strnicmp(_vm->_location._name, "intgrottadopo", 13)) return;
+	if (!scumm_strnicmp(_vm->_location._name, "caveau", 6)) return;
+	if (!scumm_strnicmp(_vm->_location._name, "estgrotta", 9)) return;
+	if (!scumm_strnicmp(_vm->_location._name, "plaza1", 6)) return;
+	if (!scumm_strnicmp(_vm->_location._name, "endtgz", 6)) return;
 
 	char path[PATH_LEN];
 	sprintf(path, "%s.mid", filename);

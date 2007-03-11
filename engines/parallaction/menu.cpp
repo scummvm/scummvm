@@ -196,7 +196,7 @@ void Menu::newGame() {
 
 	selectCharacter();
 
-	char *v4 = strchr(_location, '.') + 1;
+	char *v4 = strchr(_vm->_location._name, '.') + 1;
 	strcpy(_engine->_characterName, v4);
 
 	return; // start game
@@ -276,7 +276,7 @@ uint16 Menu::selectGame() {
 
 	// load game
 
-	strcpy(_location, "fogne");
+	strcpy(_vm->_location._name, "fogne");
 	strcpy(_engine->_characterName, "dough");
 
 	_vm->loadGame();
@@ -391,12 +391,12 @@ void Menu::selectCharacter() {
 
 
 	if (_dino_points > _donna_points && _dino_points > _dough_points) {
-		sprintf(_location, "test.%s", _dinoName);
+		sprintf(_vm->_location._name, "test.%s", _dinoName);
 	} else {
 		if (_donna_points > _dino_points && _donna_points > _dough_points) {
-			sprintf(_location, "test.%s", _donnaName);
+			sprintf(_vm->_location._name, "test.%s", _donnaName);
 		} else {
-			sprintf(_location, "test.%s", _doughName);
+			sprintf(_vm->_location._name, "test.%s", _doughName);
 		}
 	}
 

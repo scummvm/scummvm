@@ -315,7 +315,7 @@ void runCommands(Command *list, Zone *z) {
 			break;
 
 		case CMD_LOCATION:	// location
-			strcpy(_location, u->_string);
+			strcpy(_vm->_location._name, u->_string);
 			_engineFlags |= kEngineChangeLocation;
 			break;
 

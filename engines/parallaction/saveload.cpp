@@ -64,15 +64,15 @@ void Parallaction::doLoadGame(uint16 slot) {
 	f->readLine(s, 29);
 
 	f->readLine(_vm->_characterName, 15);
-	f->readLine(_location, 15);
+	f->readLine(_vm->_location._name, 15);
 
-	strcat(_location, ".");
-
-	f->readLine(s, 15);
-	_firstPosition._x = atoi(s);
+	strcat(_vm->_location._name, ".");
 
 	f->readLine(s, 15);
-	_firstPosition._y = atoi(s);
+	_location._startPosition._x = atoi(s);
+
+	f->readLine(s, 15);
+	_location._startPosition._y = atoi(s);
 
 	f->readLine(s, 15);
 	_score = atoi(s);
@@ -135,7 +135,7 @@ void Parallaction::doLoadGame(uint16 slot) {
 
 	parseLocation("common");
 
-	strcat(_location, _vm->_characterName);
+	strcat(_vm->_location._name, _vm->_characterName);
 	_engineFlags |= kEngineChangeLocation;
 
 	return;
@@ -375,7 +375,7 @@ void Parallaction::loadGame() {
 
 void Parallaction::saveGame() {
 
-	if (!scumm_stricmp(_location, "caveau"))
+	if (!scumm_stricmp(_vm->_location._name, "caveau"))
 		return;
 
 	int slot = selectSaveFile( 1, "Save file", "Save" );
