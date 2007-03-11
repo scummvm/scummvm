@@ -365,7 +365,7 @@ void Parallaction::changeLocation(char *location) {
 		if (list[1] == "slide") {
 			showSlide(list[0].c_str());
 			list.remove_at(0);		// removes slide name
-			list.remove_at(1);		// removes 'slide'
+			list.remove_at(0);		// removes 'slide'
 		}
 
 		// list is now only [L].{[C]} (see above comment)
