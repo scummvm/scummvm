@@ -183,14 +183,6 @@ Parallaction::Parallaction(OSystem *syst) :
 
 	Common::File::addDefaultDirectory( _gameDataPath );
 
-/*	Common::addSpecialDebugLevel(kDebugAnimation, "Animation", "Animations debug level");
-	Common::addSpecialDebugLevel(kDebugZone, "Zone", "Zones debug level");
-	Common::addSpecialDebugLevel(kDebugCommand, "Command", "Commands debug level");
-
-	Common::addSpecialDebugLevel(kDebugIntro, "Intro", "Intro debug level");
-	Common::addSpecialDebugLevel(kDebugInventory, "Inventory", "Inventory debug level");
-*/
-
 	Common::addSpecialDebugLevel(kDebugDialogue, "dialogue", "Dialogues debug level");
 	Common::addSpecialDebugLevel(kDebugLocation, "location", "Location debug level");
 	Common::addSpecialDebugLevel(kDebugDisk, "disk", "Disk debug level");
@@ -215,48 +207,10 @@ int Parallaction::init() {
 		GUIErrorMessage("No valid games were found in the specified directory.");
 		return -1;
 	}
-/*
-	strcpy(_name, "taxint");
-	strcpy(_characterName, "dough");
-	strcpy(_languageDir, "it/");
-	_skipMenu = true;
-*/
+
 	_engineFlags = 0;
-/*
-	if (ConfMan.hasKey("boot_param")) {
-		Common::String bootp = ConfMan.get("boot_param");
 
-		char argv[3][30];
-		char* d = argv[0];
-		uint16 j = 0;
-		for (uint16 i = 0; i < bootp.size(); i++) {
-			if (bootp[i] == '.') {
-				j++;
-				d = argv[j];
-				continue;
-			}
-
-			*d++ = bootp[i];
-		}
-
-		if (j < 3) {
-			GUIErrorMessage("Not enough parameters for Nippon Safes Inc.");
-			return -2;
-		}
-
-		argv[2][2] = '/';
-		argv[2][3] = '\0';
-
-		strcpy(_name, argv[0]);
-		strcpy(_characterName, argv[1]);
-		strcpy(_languageDir, argv[2]);
-		_skipMenu = true;
-
-	} else {*/
-		strcpy(_characterName, "dough");
-/*	}
-*/
-
+	strcpy(_characterName, "dough");
 
 	memset(_locationNames, 0, 120*32);
 	_numLocations = 0;
@@ -440,7 +394,6 @@ void waitUntilLeftClick() {
 
 
 void Parallaction::runGame() {
-//	printf("runGame()\n");
 
 	addJob(jobEraseAnimations, (void*)1, kPriority20);
 	_jRunScripts = addJob(jobRunScripts, 0, kPriority15);
@@ -462,8 +415,6 @@ void Parallaction::runGame() {
 
 	if (_location._aCommands)
 		runCommands(_location._aCommands);
-
-//	printf("entering game loop...\n");
 
 	while ((_engineFlags & kEngineQuit) == 0) {
 		_keyDown = updateInput();
@@ -501,7 +452,6 @@ void Parallaction::runGame() {
 
 		g_system->delayMillis(30);
 
-//		printflags();
 		runJobs();
 
 		if ((_engineFlags & kEnginePauseJobs) == 0 || (_engineFlags & kEngineInventory)) {
@@ -514,8 +464,6 @@ void Parallaction::runGame() {
 
 	}
 
-//	printf("exiting game loop...\n");
-
 	delete _menu;
 
 	return;
@@ -523,7 +471,6 @@ void Parallaction::runGame() {
 
 
 void Parallaction::processInput(InputData *data) {
-//	printf("processInput()\n");
 	Zone *z;
 	WalkNode *v4;
 
@@ -624,7 +571,6 @@ void Parallaction::processInput(InputData *data) {
 
 
 Parallaction::InputData *Parallaction::translateInput() {
-//	printf("translateInput(%c)\n", _keyDown);
 
 	if (_keyDown == kEvQuitGame) {
 		_input._event = kEvQuitGame;
@@ -647,10 +593,7 @@ Parallaction::InputData *Parallaction::translateInput() {
 	if (((_engineFlags & kEnginePauseJobs) == 0) && ((_engineFlags & kEngineInventory) == 0)) {
 
 		if (_actionAfterWalk == true) {
-//			printf("1\n");
-
 			// if walking is over, then take programmed action
-
 			_input._event = kEvAction;
 			_actionAfterWalk = false;
 			return &_input;
@@ -659,17 +602,12 @@ Parallaction::InputData *Parallaction::translateInput() {
 		Zone *z = hitZone(_activeItem._id, _mousePos._x, _mousePos._y);
 
 		if (_mouseButtons == kMouseRightDown) {
-//			printf("2\n");
-
 			// right button down shows inventory
 
 			if (hitZone(kZoneYou, _mousePos._x, _mousePos._y) && (_activeItem._id != 0)) {
-//				printf("2.1\n");
-
 				_activeItem._index = (_activeItem._id >> 16) & 0xFFFF;
 				_engineFlags |= kEngineDragging;
 			}
-
 
 			_input._event = kEvOpenInventory;
 			_transCurrentHoverItem = -1;
@@ -677,15 +615,11 @@ Parallaction::InputData *Parallaction::translateInput() {
 		}
 
 		if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((z == NULL) || ((z->_type & 0xFFFF) != kZoneCommand))) {
-//			printf("3\n");
-
 			_input._event = kEvWalk;
 			return &_input;
 		}
 
 		if ((z != _hoverZone) && (_hoverZone != NULL)) {
-//			printf("4\n");
-
 			_hoverZone = NULL;
 			_input._event = kEvExitZone;
 //			_input._data= &z->_name;
@@ -693,14 +627,10 @@ Parallaction::InputData *Parallaction::translateInput() {
 		}
 
 		if (z == NULL) {
-//			printf("5\n");
-
 			return NULL;
 		}
 
 		if ((_hoverZone == NULL) && ((z->_flags & kFlagsNoName) == 0)) {
-//			printf("6\n");
-
 			_hoverZone = z;
 			_input._event = kEvEnterZone;
 			_input._label = &z->_label;
@@ -711,25 +641,18 @@ Parallaction::InputData *Parallaction::translateInput() {
 
 			_input._zone = z;
 			if (z->_flags & kFlagsNoWalk) {
-//				printf("7.1\n");
-
 				// character doesn't need to walk to take specified action
 				_input._event = kEvAction;
 
 			} else {
-//				  printf("7.2\n");
-
 				// action delayed: if Zone defined a moveto position the character is programmed to move there,
 				// else it will move to the mouse position
-
 				_input._event = kEvWalk;
 				_actionAfterWalk = true;
 				if (z->_moveTo._y != 0) {
-	//				printf("3.2.2\n");
 					_input._mousePos._x = z->_moveTo._x;
 					_input._mousePos._y = z->_moveTo._y;
 				}
-
 			}
 
 			beep();
@@ -741,11 +664,7 @@ Parallaction::InputData *Parallaction::translateInput() {
 
 	if ((_engineFlags & kEngineInventory) == 0) return NULL;
 
-//	printf("8\n");
-
-
 	// in inventory
-
 	int16 _si = getHoverInventoryItem(_mousePos._x, _mousePos._y);
 
 	if (_mouseButtons == kMouseRightUp) {
@@ -790,7 +709,6 @@ void Parallaction::resetTimer() {
 
 
 void Parallaction::waitTime(uint32 t) {
-//	printf("waitTime(%i)\n", t);
 
 	uint32 v4 = 0;
 
@@ -811,7 +729,6 @@ void Parallaction::waitTime(uint32 t) {
 //	index > 0 means inventory item
 //
 void Parallaction::changeCursor(int32 index) {
-//	printf("changeCursor(%i)\n", index);
 
 	if (index == kCursorArrow) {		// standard mouse pointer
 
@@ -895,7 +812,6 @@ void Parallaction::pickMusic(const char *location) {
 }
 
 void Parallaction::changeCharacter(const char *name) {
-//	printf("changeCharacter(%s)\n", name);
 
 	bool miniCharacter = false;
 
@@ -990,7 +906,6 @@ void removeNode(Node *n) {
 
 
 Job *addJob(JobFn fn, void *parm, uint16 tag) {
-//	printf("addJob(%i)\n", tag);
 
 	Job *v8 = (Job*)malloc(sizeof(Job));
 
@@ -1011,7 +926,6 @@ Job *addJob(JobFn fn, void *parm, uint16 tag) {
 }
 
 void removeJob(Job *j) {
-//	printf("removeJob(%x, %i)\n", j, j->_tag);
 
 	removeNode(&j->_node);
 	free(j);
