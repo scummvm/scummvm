@@ -279,6 +279,29 @@ extern Zone     *_hoverZone;
 extern Job     *_jDrawLabel;
 extern Job     *_jEraseLabel;
 
+void Parallaction::showSlide(const char *name) {
+
+	_disk->loadSlide(name);
+	_graphics->palUnk0(_palette);
+	_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+
+	debugC(1, kDebugLocation, "changeLocation: new background set");
+
+	_graphics->_proportionalFont = false;
+	_graphics->setFont("slide");
+
+	uint16 _ax = strlen(_slideText[0]);
+	_ax <<= 3;	// text width
+	uint16 _dx = (SCREEN_WIDTH - _ax) >> 1; // center text
+	_graphics->displayString(_dx, 14, _slideText[0]); // displays text on screen
+
+	waitUntilLeftClick();
+
+	debugC(2, kDebugLocation, "changeLocation: intro text shown");
+
+	return;
+}
+
 /*
 	changeLocation handles transitions between locations, and is able to display slides
 	between one and the other. The input parameter 'location' exists in some flavours:
@@ -319,41 +342,25 @@ void Parallaction::changeLocation(char *location) {
 		debugC(2, kDebugLocation, "changeLocation: changed cursor");
 	}
 
-	strcpy(_newLocation, location);
-
 	removeNode(&_yourself._zone._node);
 	debugC(2, kDebugLocation, "changeLocation: removed character from the animation list");
 
 	freeLocation();
 	debugC(1, kDebugLocation, "changeLocation: old location free'd");
 
+	char buf[100];
+	strcpy(buf, location);
 
-	char *tmp = strchr(_newLocation, '.');
+	char *tmp = strchr(buf, '.');	// tmp = ".slide.[L].[C]" or tmp = ".[C]" or tmp = NULL
 	if (tmp) {
 		*tmp = '\0';
 
 		if (!scumm_strnicmp(tmp+1, "slide", 5)) {
-			_disk->loadSlide(_newLocation);
-			_graphics->palUnk0(_palette);
-			_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
-
-			debugC(1, kDebugLocation, "changeLocation: new background set");
-
-			_graphics->_proportionalFont = false;
-			_graphics->setFont("slide");
-
-			uint16 _ax = strlen(_slideText[0]);
-			_ax <<= 3;	// text width
-			uint16 _dx = (SCREEN_WIDTH - _ax) >> 1; // center text
-			_graphics->displayString(_dx, 14, _slideText[0]); // displays text on screen
-
-			waitUntilLeftClick();
-
-			debugC(2, kDebugLocation, "changeLocation: intro text shown");
+			showSlide(buf);
 
 			tmp = strchr(tmp+1, '.');
-			strcpy(_newLocation, tmp+1);
-			tmp = strchr(_newLocation, '.');
+			strcpy(buf, tmp+1);
+			tmp = strchr(buf, '.');
 
 			if (tmp) {
 				*tmp = '\0';
@@ -372,11 +379,11 @@ void Parallaction::changeLocation(char *location) {
 	addNode(&_animations, &_yourself._zone._node);
 	debugC(2, kDebugLocation, "changeLocation: new character added to the animation list");
 
-	strcpy(_saveData1, _newLocation);
+	strcpy(_saveData1, buf);
 
-	parseLocation(_newLocation);
+	parseLocation(buf);
 	_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
-	debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", _newLocation);
+	debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", buf);
 
 	_yourself._zone.pos._oldposition._x = -1000;
 	_yourself._zone.pos._oldposition._y = -1000;

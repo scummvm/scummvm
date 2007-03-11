@@ -114,7 +114,7 @@ extern char _soundFile[];
 extern char _slideText[][40];
 extern uint16 _introSarcData3;		 // sarcophagus stuff to be saved
 extern uint16 _introSarcData2;		 // sarcophagus stuff to be saved
-extern char _newLocation[];
+
 extern char *_globalTable[];
 extern char _saveData1[];
 extern Point _firstPosition;		 // starting position after load game??
@@ -353,6 +353,7 @@ protected:		// members
 	void		parseZoneTypeBlock(Script &script, Zone *z);
 	void		loadProgram(Animation *a, char *filename);
 	void		changeLocation(char *location);
+	void 		showSlide(const char *name);
 
 	void 		pickMusic(const char *location);
 	void		selectCharacterMusic(const char *name);

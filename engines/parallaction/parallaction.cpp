@@ -135,7 +135,7 @@ uint16		_numForwards = 0;
 char		_soundFile[20];
 char		_slideText[2][40];
 Point		_firstPosition = { -1000, -1000 };
-char		_newLocation[100];
+
 char	   *_globalTable[32];
 uint16		_firstFrame = 0;
 byte		_mouseHidden = 0;
