@@ -260,9 +260,9 @@ void runDialogue(SpeakData *data) {
 	while (v60) {
 
 		v5C._data0 = v6E._array[v60->_mood & 0xF];
-//		v5C._data1 = v6E.field_8[v60->_mood & 0xF];
+		v5C._data1 = NULL; // v6E.field_8[v60->_mood & 0xF];
 		v48._data0 = _yourTalk._array[0];
-//		v48._data1 = _yourTalk.field_8[0];
+		v48._data1 = NULL; // _yourTalk.field_8[0];
 
 		// display Question if any
 		if (scumm_stricmp(v60->_text, "NULL")) {

@@ -440,6 +440,8 @@ LValue getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation 
 
 	LValue v;
 
+	v._pvalue = 0;	// should stop compiler from complaining
+
 	if (isdigit(str[0]) || str[0] == '-') {
 		inst->_flags |= kInstUsesLiteral;
 		v._value = atoi(str);
@@ -570,7 +572,7 @@ void jobRunScripts(void *parm, Job *j) {
 				v18._width = inst->_opBase._a->_cnv._width;
 				v18._height = inst->_opBase._a->_cnv._height;
 				v18._data0 = inst->_opBase._a->_cnv._array[inst->_opBase._a->_frame];
-//				v18._data1 = inst->_opBase._a->_cnv.field_8[inst->_opBase._a->_frame];
+				v18._data1 = NULL; // inst->_opBase._a->_cnv.field_8[inst->_opBase._a->_frame];
 
 				if (inst->_flags & kInstMaskedPut) {
 					uint16 _si = _vm->_graphics->queryMask(inst->_opB._value);
