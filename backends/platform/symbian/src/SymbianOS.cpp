@@ -411,20 +411,13 @@ FILE* 	symbian_fopen(const char* name, const char* mode) {
 			fileMode |= EFileStreamText;
 		}
 		
-		if (modeLen > 1) {
-			if (mode[1] == '+')
-				fileMode = fileMode| EFileWrite;	
-		}
-		
-		if (modeLen > 2) {
-			if (mode[1] == '+')
-				fileMode = fileMode| EFileWrite;	
+		if ((modeLen > 1 && mode[1] == '+') || (modeLen > 2 && mode[2] == '+')) {
+			fileMode = fileMode| EFileWrite;	
 		}
 		
 		switch(mode[0]) {
 		case 'a':
-			if (fileEntry->iFileHandle.Open(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone)
-			{
+			if (fileEntry->iFileHandle.Open(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
 				if (fileEntry->iFileHandle.Create(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
 					delete fileEntry;
 					fileEntry = NULL;
