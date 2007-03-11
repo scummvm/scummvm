@@ -196,7 +196,7 @@ bool OSystem_SDL_Symbian::setSoundCallback(SoundProc proc, void *param) {
 	_channels = obtained.channels;
 
 	// Need to create mixbuffer for stereo mix to downmix
-	if(_channels != 2) {
+	if (_channels != 2) {
 		_stereo_mix_buffer = new byte [obtained.size*2];//*2 for stereo values
 	}
 
@@ -261,7 +261,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Event &event) {
 				return true;			
 
 			case GUI::ACTION_DOWN:
-				if(ev.type == SDL_KEYDOWN) {
+				if (ev.type == SDL_KEYDOWN) {
 					_km.y_vel = 1;
 					_km.y_down_count = 1;
 				} else {
@@ -274,7 +274,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Event &event) {
 				return true;	
 
 			case GUI::ACTION_LEFT:
-				if(ev.type == SDL_KEYDOWN) {
+				if (ev.type == SDL_KEYDOWN) {
 					_km.x_vel = -1;
 					_km.x_down_count = 1;
 				} else {
@@ -287,7 +287,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Event &event) {
 				return true;
 
 			case GUI::ACTION_RIGHT:
-				if(ev.type == SDL_KEYDOWN) {
+				if (ev.type == SDL_KEYDOWN) {
 					_km.x_vel = 1;
 					_km.x_down_count = 1;
 				} else {
@@ -312,7 +312,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Event &event) {
 				return true;
 
 			case GUI::ACTION_ZONE:
-				if(ev.type == SDL_KEYDOWN) {
+				if (ev.type == SDL_KEYDOWN) {
 					int i;				
 					
 					for (i=0; i < TOTAL_ZONES; i++)
@@ -385,6 +385,139 @@ void OSystem_SDL_Symbian::initZones() {
 	}
 }
 
+// Symbian libc file functionality in order to provide shared file handles
+struct TSymbianFileEntry {
+	RFile iFileHandle;
+};
+
+#define FILE void
+
+FILE* 	symbian_fopen(const char* name, const char* mode) {
+	TSymbianFileEntry* fileEntry = new TSymbianFileEntry;
+	
+	if (fileEntry != NULL) {
+		TInt modeLen = strlen(mode);
+
+		TPtrC8 namePtr((unsigned char*) name, strlen(name));
+		TFileName tempFileName;		
+		tempFileName.Copy(namePtr);
+		
+		TInt fileMode = EFileRead;
+		
+		if (mode[0] == 'a')
+			fileMode = EFileWrite;
+		
+		if (!((modeLen > 1 && mode[1] == 'b') || (modeLen > 2 && mode[2] == 'b'))) {
+			fileMode |= EFileStreamText;
+		}
+		
+		if (modeLen > 1) {
+			if (mode[1] == '+')
+				fileMode = fileMode| EFileWrite;	
+		}
+		
+		if (modeLen > 2) {
+			if (mode[1] == '+')
+				fileMode = fileMode| EFileWrite;	
+		}
+		
+		switch(mode[0]) {
+		case 'a':
+			if (fileEntry->iFileHandle.Open(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone)
+			{
+				if (fileEntry->iFileHandle.Create(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
+					delete fileEntry;
+					fileEntry = NULL;
+				}
+			}
+			break;
+		case 'r': 
+			if (fileEntry->iFileHandle.Open(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
+				delete fileEntry;
+				fileEntry = NULL;
+			}
+			break;
+			
+		case 'w':
+			if (fileEntry->iFileHandle.Replace(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
+				delete fileEntry;
+				fileEntry = NULL;
+			}
+			break;
+		}
+	}
+	
+	return (FILE*) fileEntry;
+}
+
+void symbian_fclose(FILE* handle) {
+	((TSymbianFileEntry*)(handle))->iFileHandle.Close();
+
+	delete (TSymbianFileEntry*)(handle);
+}
+
+size_t symbian_fread(const void* ptr, size_t size, size_t numItems, FILE* handle) {
+	TPtr8 pointer( (unsigned char*) ptr, size*numItems);
+
+	((TSymbianFileEntry*)(handle))->iFileHandle.Read(pointer);
+	
+	return pointer.Length()/size;
+}
+
+size_t symbian_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle) {
+	TPtrC8 pointer( (unsigned char*) ptr, size*numItems);
+
+	if (((TSymbianFileEntry*)(handle))->iFileHandle.Write(pointer) == KErrNone) {
+		return numItems;
+	}
+
+	return 0;
+}
+
+bool symbian_feof(FILE* handle) {
+	TInt pos = 0;
+	if (((TSymbianFileEntry*)(handle))->iFileHandle.Seek(ESeekCurrent, pos) == KErrNone) {
+
+		TInt size = 0;
+		if (((TSymbianFileEntry*)(handle))->iFileHandle.Size(size) == KErrNone) {
+			if (pos == size)
+				return true;
+			return false;
+		}
+	}
+	return true;
+}
+
+long int symbian_ftell(FILE* handle) {
+	TInt pos = 0;
+
+	((TSymbianFileEntry*)(handle))->iFileHandle.Seek(ESeekCurrent, pos);
+
+	return pos;
+}
+
+int symbian_fseek(FILE* handle, long int offset, int whence) {
+	TSeek seekMode = ESeekStart;
+	TInt pos = offset;
+
+	switch(whence) {
+	case SEEK_SET:
+		seekMode = ESeekStart;
+		break;
+	case SEEK_CUR:
+		seekMode = ESeekCurrent;
+		break;
+	case SEEK_END:
+		seekMode = ESeekEnd;
+		break;
+		
+	}
+
+	return ((TSymbianFileEntry*)(handle))->iFileHandle.Seek(seekMode, pos);
+}
+
+void symbian_clearerr(FILE* /*handle*/) {
+}
 
 /** Vibration support */
 #ifdef  USE_VIBRA_SE_PXXX
@@ -402,5 +535,6 @@ void OSystem_SDL_Symbian::vibrationOn(int vibraLength) {
 void OSystem_SDL_Symbian::vibrationOff() {
 	_vibrationApi->VibrationOff();
 }
+
 #endif //  USE_SE_PXX_VIBRA
 
