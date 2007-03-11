@@ -680,6 +680,18 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_BARGON,
 		"intro"
 	},
+	{ // Supplied by Trekky in the forums
+		{
+			"bargon",
+			"",
+			AD_ENTRY1s("intro.stk", "2f54b330d21f65b04b7c1f8cca76426c", 262109),
+			FR_FRA,
+			kPlatformAtariST,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_BARGON,
+		"intro"
+	},
 	{
 		{
 			"gob3",
