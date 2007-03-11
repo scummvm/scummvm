@@ -43,8 +43,10 @@ void FatalError(const char *msg) {
 	TPtrC8 msgPtr((const TUint8 *)msg); 
 	TBuf<512> msg16Bit;
 	msg16Bit.Copy(msgPtr);
+#ifdef S60
+#else
 	CEikonEnv::Static()->InfoWinL(_L("ScummVM Fatal Error"), msg16Bit);
-	
+#endif
 	if (g_system)
 		g_system->quit();
 }

@@ -124,28 +124,40 @@ void SymbianActions::initInstanceGame() {
 	Common::String gameid(ConfMan.get("gameid"));
 	bool is_simon = (strncmp(gameid.c_str(), "simon", 5) == 0);
 	bool is_sky = (strncmp(gameid.c_str(), "sky", 3) == 0);
+	bool is_saga = (gameid == "saga");
+	bool is_comi = (strncmp(gameid.c_str(), "comi", 4) == 0);
 	bool is_queen = (strncmp(gameid.c_str(), "queen", 5) == 0);
 	bool is_gob = (strncmp(gameid.c_str(), "gob", 3) == 0);
 	bool is_ite = ((strncmp(gameid.c_str(), "ite", 3) == 0) ||
 				  (strncmp(gameid.c_str(), "ihnm", 4) == 0));
 	bool is_kyra = (gameid == "kyra1");
+	bool is_samnmax = (gameid == "samnmax");
+	bool is_cine = (gameid == "cine");
+	bool is_touche = (gameid == "touche");
+	bool is_agi = (gameid == "agi");
 	
 	Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sky || gameid == "samnmax" || is_gob)
+	if (is_sky || is_queen || is_comi || is_gob || is_samnmax || is_cine || is_touche)
 		_right_click_needed = true;
 
 	// Initialize keys for different actions
 	// Save
-	if (is_simon || is_gob || is_kyra) 
+	if (is_simon || is_gob || is_kyra || is_touche) 
 		_action_enabled[ACTION_SAVE] = false;
-	else if (is_queen || is_ite) {
+	else if (is_queen || is_saga || is_ite) {
 		_action_enabled[ACTION_SAVE] = true;
 		_key_action[ACTION_SAVE].setAscii(SDLK_F1); // F1 key for FOTAQ and ITE
 	} else if (is_sky) {
 		_action_enabled[ACTION_SAVE] = true;
 		_key_action[ACTION_SAVE].setAscii(63); 
+	} else if (is_cine) {
+		_action_enabled[ACTION_SAVE] = true;
+		_key_action[ACTION_SAVE].setAscii(291); // F10
+	} else if (is_agi) {
+		_action_enabled[ACTION_SAVE] = true;
+		_key_action[ACTION_SAVE].setAscii(SDLK_ESCAPE);
 	} else {
 		_action_enabled[ACTION_SAVE] = true;
 		_key_action[ACTION_SAVE].setAscii(SDLK_F5); // F5 key
