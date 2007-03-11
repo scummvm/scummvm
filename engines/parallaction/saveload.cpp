@@ -127,7 +127,7 @@ void Parallaction::doLoadGame(uint16 slot) {
 	} else {
 		strcpy(filename, _vm->_characterName);
 	}
-	strcat(filename, ".tab");
+//	strcat(filename, ".tab");
 //	freeTable(_objectsNames);
 //	initTable(filename, _objectsNames);
 
