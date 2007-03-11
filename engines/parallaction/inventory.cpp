@@ -51,7 +51,7 @@ namespace Parallaction {
 #define INVENTORY_WIDTH 			(INVENTORY_ITEMS_PER_LINE*INVENTORYITEM_WIDTH)
 #define INVENTORY_HEIGHT			(INVENTORY_LINES*INVENTORYITEM_HEIGHT)
 
-Cnv 			_characterInventory;
+extern Cnv 		_yourObjects;
 uint16			_numInvLines = 0;
 static Point	_invPosition = { 0, 0 };
 
@@ -190,10 +190,10 @@ void drawInventoryItem(uint16 pos, InventoryItem *item) {
 	_vm->_graphics->copyRect(
 		Graphics::kBit3,
 		col * INVENTORYITEM_WIDTH,
-		line * _characterInventory._height,
+		line * _yourObjects._height,
 		INVENTORYITEM_WIDTH,
-		_characterInventory._height,
-		_characterInventory._array[item->_index],
+		_yourObjects._height,
+		_yourObjects._array[item->_index],
 		INVENTORYITEM_PITCH
 	);
 
@@ -216,9 +216,9 @@ void highlightInventoryItem(int16 pos, byte color) {
 	_vm->_graphics->drawBorder(
 		Graphics::kBit3,
 		col * INVENTORYITEM_WIDTH,
-		line * _characterInventory._height,
+		line * _yourObjects._height,
 		INVENTORYITEM_WIDTH,
-		_characterInventory._height,
+		_yourObjects._height,
 		color
 	);
 
@@ -238,9 +238,9 @@ void extractInventoryGraphics(int16 pos, byte *dst) {
 		Graphics::kBit3,
 		dst,
 		col * INVENTORYITEM_WIDTH,
-		line * _characterInventory._height,
+		line * _yourObjects._height,
 		INVENTORYITEM_WIDTH,
-		_characterInventory._height,
+		_yourObjects._height,
 		INVENTORYITEM_PITCH
 	);
 
@@ -355,7 +355,7 @@ void redrawInventory() {
 }
 
 void initInventory() {
-	_characterInventory._count = 0;
+	_yourObjects._count = 0;
 }
 
 void cleanInventory() {
@@ -372,18 +372,18 @@ void cleanInventory() {
 
 
 void refreshInventory(const char *character) {
-	_vm->_disk->loadObjects(character, &_characterInventory);
+//	_vm->_disk->loadObjects(character, &_characterInventory);
 	redrawInventory();
-	_vm->_graphics->freeCnv(&_characterInventory);
+//	_vm->_graphics->freeCnv(&_yourObjects);
 
 	return;
 }
 
 
 void refreshInventoryItem(const char *character, uint16 index) {
-	_vm->_disk->loadObjects(character, &_characterInventory);
+//	_vm->_disk->loadObjects(character, &_yourObjects);
 	drawInventoryItem(index, &_inventory[index]);
-	_vm->_graphics->freeCnv(&_characterInventory);
+//	_vm->_graphics->freeCnv(&_characterInventory);
 
 	return;
 }

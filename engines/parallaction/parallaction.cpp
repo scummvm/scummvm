@@ -55,9 +55,14 @@ char		_location[100] = "fogne";
 uint32		_engineFlags = 0;
 char	   *_objectsNames[100];
 Zone	   *_activeZone = NULL;
-Animation	_yourself;
-StaticCnv	_yourHead;
-Cnv		    _yourTalk;
+
+Animation		_yourself;
+StaticCnv		_yourHead;
+Cnv		    	_yourTalk;
+Cnv 			_characterFrames;
+static Cnv		_miniCharacterFrames;
+Cnv 			_yourObjects;
+
 uint16		_score = 1;
 Command    *_locationACommands = NULL;
 Command    *_locationCommands = NULL;
@@ -136,7 +141,6 @@ uint16		_firstFrame = 0;
 byte		_mouseHidden = 0;
 Node		_locationWalkNodes = { 0, 0 };
 uint32		_commandFlags = 0;
-Cnv 		_tempFrames;
 uint16		_introSarcData3 = 200;
 uint16		_introSarcData2 = 1;
 
@@ -151,7 +155,7 @@ Job	   *_jEraseLabel = NULL;
 Zone    *_hoverZone = NULL;
 static Job	   *_jRunScripts = NULL;
 
-static Cnv		_miniCharacterFrames;
+
 
 static Job		_jobs = { { NULL, NULL }, 0, 0, 0, NULL, 0 };
 
@@ -827,13 +831,14 @@ void Parallaction::changeCursor(int32 index) {
 
 void freeCharacterFrames() {
 
-	_vm->_graphics->freeCnv(&_tempFrames);
+	_vm->_graphics->freeCnv(&_characterFrames);
 
 	if (!IS_DUMMY_CHARACTER(_vm->_characterName)) {
 		_vm->_graphics->freeCnv(&_miniCharacterFrames);
 		_vm->freeTable(_objectsNames);
 		_vm->_graphics->freeCnv(&_yourTalk);
 		_vm->_graphics->freeStaticCnv(&_yourHead);
+		_vm->_graphics->freeCnv(&_yourObjects);
 	}
 
 	return;
@@ -867,27 +872,24 @@ void Parallaction::changeCharacter(const char *name) {
 	char v32[20];
 	strcpy(v32, name);
 
-
-
-	if (_engineFlags & kEngineTransformedDonna) {
+	if (_engineFlags & kEngineTransformedDonna)
 		strcat(v32, "tras");
-	}
 
 	if (scumm_stricmp(v32, _characterName1)) {
 
-		if (scumm_stricmp(_characterName1, "null")) {
+		if (scumm_stricmp(_characterName1, "null"))
 			freeCharacterFrames();
-		}
 
 		_disk->selectArchive("disk1");
 
 		char path[PATH_LEN];
 		strcpy(path, v32);
-		_disk->loadFrames(path, &_tempFrames);
+		_disk->loadFrames(path, &_characterFrames);
 
 		if (!IS_DUMMY_CHARACTER(name)) {
 			_disk->loadHead(path, &_yourHead);
 			_disk->loadTalk(path, &_yourTalk);
+			_disk->loadObjects(name, &_yourObjects);
 
 			sprintf(path, "mini%s", v32);
 			_disk->loadFrames(path, &_miniCharacterFrames);
@@ -899,16 +901,13 @@ void Parallaction::changeCharacter(const char *name) {
 
 			if (scumm_stricmp(name, "night") && scumm_stricmp(name, "intsushi"))
 				selectCharacterMusic(name);
-
 		}
-
 	}
 
-	if (miniCharacter) {
+	if (miniCharacter)
 		memcpy(&_yourself._cnv, &_miniCharacterFrames, sizeof(Cnv));
-	} else {
-		memcpy(&_yourself._cnv, &_tempFrames, sizeof(Cnv));
-	}
+	else
+		memcpy(&_yourself._cnv, &_characterFrames, sizeof(Cnv));
 
 	strcpy(_characterName1, v32);
 
