@@ -351,39 +351,38 @@ void Parallaction::changeLocation(char *location) {
 	char buf[100];
 	strcpy(buf, location);
 
-	char *tmp = strchr(buf, '.');	// tmp = ".slide.[L].[C]" or tmp = ".[C]" or tmp = NULL
-	if (tmp) {
-		*tmp = '\0';
+	Common::StringList list;
+	char *tok = strtok(location, ".");
+	while (tok) {
+		list.push_back(tok);
+		tok = strtok(NULL, ".");
+	}
 
-		if (!scumm_strnicmp(tmp+1, "slide", 5)) {
-			showSlide(buf);
+	if (list.size() < 1 || list.size() > 4)
+		error("changeLocation: ill-formed location string '%s'", location);
 
-			tmp = strchr(tmp+1, '.');
-			strcpy(buf, tmp+1);
-			tmp = strchr(buf, '.');
-
-			if (tmp) {
-				*tmp = '\0';
-				changeCharacter(tmp+1);
-				strcpy(_characterName, tmp+1);
-			}
-
-		} else {
-			changeCharacter(tmp+1);
-			strcpy(_characterName, tmp+1);
+	if (list.size() > 1) {
+		if (list[1] == "slide") {
+			showSlide(list[0].c_str());
+			list.remove_at(0);		// removes slide name
+			list.remove_at(1);		// removes 'slide'
 		}
 
-		debugC(2, kDebugLocation, "changeLocation: character changed to '%s'", _characterName);
+		// list is now only [L].{[C]} (see above comment)
+		if (list.size() == 2) {
+			changeCharacter(list[1].c_str());
+			strcpy(_characterName, list[1].c_str());
+		}
 	}
 
 	addNode(&_animations, &_yourself._zone._node);
 	debugC(2, kDebugLocation, "changeLocation: new character added to the animation list");
 
-	strcpy(_saveData1, buf);
+	strcpy(_saveData1, list[0].c_str());
+	parseLocation(list[0].c_str());
 
-	parseLocation(buf);
 	_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
-	debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", buf);
+	debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", _saveData1);
 
 	_yourself._zone.pos._oldposition._x = -1000;
 	_yourself._zone.pos._oldposition._y = -1000;
