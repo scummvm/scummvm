@@ -128,10 +128,10 @@ void Parallaction::doLoadGame(uint16 slot) {
 		strcpy(filename, _vm->_characterName);
 	}
 	strcat(filename, ".tab");
-	freeTable(_objectsNames);
-	initTable(filename, _objectsNames);
+//	freeTable(_objectsNames);
+//	initTable(filename, _objectsNames);
 
-	refreshInventory(_vm->_characterName);
+//	refreshInventory(_vm->_characterName);
 
 	parseLocation("common");
 
