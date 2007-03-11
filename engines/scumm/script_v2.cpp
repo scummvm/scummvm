@@ -1202,6 +1202,9 @@ void ScummEngine_v2::o2_walkActorToObject() {
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		int x, y, dir;
 		getObjectXYPos(obj, x, y, dir);
+		AdjustBoxResult r = a->adjustXYToBeInBox(x, y);
+		x = r.x;
+		y = r.y;
 		a->startWalkActor(x, y, dir);
 	}
 }
@@ -1212,9 +1215,12 @@ void ScummEngine_v2::o2_putActorAtObject() {
 
 	a = derefActor(getVarOrDirectByte(PARAM_1), "o2_putActorAtObject");
 	obj = getVarOrDirectWord(PARAM_2);
-	if (whereIsObject(obj) != WIO_NOT_FOUND)
+	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		getObjectXYPos(obj, x, y);
-	else {
+		AdjustBoxResult r = a->adjustXYToBeInBox(x, y);
+		x = r.x;
+		y = r.y;
+	} else {
 		x = 30;
 		y = 60;
 	}
@@ -1374,6 +1380,9 @@ void ScummEngine_v2::o2_loadRoomWithEgo() {
 	startScene(a->_room, a, obj);
 
 	getObjectXYPos(obj, x2, y2, dir);
+	AdjustBoxResult r = a->adjustXYToBeInBox(x2, y2);
+	x2 = r.x;
+	y2 = r.y;
 	a->putActor(x2, y2, _currentRoom);
 	a->setDirection(dir + 180);
 

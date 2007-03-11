@@ -688,7 +688,7 @@ byte *ScummEngine::getBoxMatrixBaseAddr() {
  * way to 'to' (this can be 'to' itself or a third box).
  * If there is no connection -1 is return.
  */
-int ScummEngine::getPathToDestBox(byte from, byte to) {
+int ScummEngine::getNextBox(byte from, byte to) {
 	const byte *boxm;
 	byte i;
 	const int numOfBoxes = getNumBoxes();
@@ -1002,7 +1002,7 @@ void ScummEngine::createBoxMatrix() {
 	// itineray box. Assuming we are in the 5th "row" and encounter
 	// the triplet 7,11,15: this means to get from box 5 to any of
 	// the boxes 7,8,9,10,11 the shortest way is to go via box 15.
-	// See also getPathToDestBox.
+	// See also getNextBox.
 
 	byte *matrixStart = _res->createResource(rtMatrix, 1, BOX_MATRIX_SIZE);
 	const byte *matrixEnd = matrixStart + BOX_MATRIX_SIZE;
@@ -1042,7 +1042,7 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 	BoxCoords box;
 	BoxCoords box2;
 
-	if (getBoxFlags(box1nr) & kBoxInvisible || getBoxFlags(box2nr) & kBoxInvisible)
+	if ((getBoxFlags(box1nr) & kBoxInvisible) || (getBoxFlags(box2nr) & kBoxInvisible))
 		return false;
 
 	assert(_game.version >= 3);
@@ -1159,11 +1159,10 @@ void Actor_v3::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::P
 		}
 	}
 
-	p3 = pt = closestPtOnLine(gateA[1], gateB[1], _pos);
+	p3 = closestPtOnLine(gateA[1], gateB[1], _pos);
 
 	if (compareSlope(_pos, p3, gateA[0]) == compareSlope(_pos, p3, gateB[0])) {
-		closestPtOnLine(gateA[0], gateB[0], _pos);
-		p2 = pt;	// if point 2 between gates, ignore!
+		p2 = closestPtOnLine(gateA[0], gateB[0], _pos);
 	}
 }
 

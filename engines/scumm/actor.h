@@ -213,7 +213,7 @@ protected:
 
 public:
 	void adjustActorPos();
-	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY);
+	virtual AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY);
 
 	void setDirection(int direction);
 	void faceToObject(int obj);
@@ -348,7 +348,8 @@ public:
 	Actor_v2(int id) : Actor_v3(id) {}
 
 	virtual void initActor(int mode);
-	//virtual void walkActor();
+	virtual void walkActor();
+	virtual AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY);
 
 protected:
 	virtual bool isPlayer();

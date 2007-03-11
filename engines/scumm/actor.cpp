@@ -164,12 +164,8 @@ void Actor::initActor(int mode) {
 void Actor_v2::initActor(int mode) {
 	Actor::initActor(mode);
 
-	if (mode == -1) {
-		_speedx = 1;
-		_speedy = 1;
-	}
-
-	setActorWalkSpeed(1, 1);
+	_speedx = 1;
+	_speedy = 1;
 
 	_initFrame = 2;
 	_walkFrame = 0;
@@ -378,23 +374,29 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 		return;
 	}
 
-	if (_ignoreBoxes) {
-		abr.box = kInvalidBox;
-		_walkbox = kInvalidBox;
-	} else {
-		if (_vm->checkXYInBoxBounds(_walkdata.destbox, abr.x, abr.y)) {
-			abr.box = _walkdata.destbox;
-		} else {
-			abr = adjustXYToBeInBox(abr.x, abr.y);
-		}
-		if (_moving && _walkdata.destdir == dir && _walkdata.dest.x == abr.x && _walkdata.dest.y == abr.y)
+	if (_vm->_game.version <= 2) {
+		abr = adjustXYToBeInBox(abr.x, abr.y);
+		if (_pos.x == abr.x && _pos.y == abr.y && (dir == -1 || _facing == dir))
 			return;
-	}
-
-	if (_pos.x == abr.x && _pos.y == abr.y) {
-		if (dir != _facing)
-			turnToDirection(dir);
-		return;
+	} else {
+		if (_ignoreBoxes) {
+			abr.box = kInvalidBox;
+			_walkbox = kInvalidBox;
+		} else {
+			if (_vm->checkXYInBoxBounds(_walkdata.destbox, abr.x, abr.y)) {
+				abr.box = _walkdata.destbox;
+			} else {
+				abr = adjustXYToBeInBox(abr.x, abr.y);
+			}
+			if (_moving && _walkdata.destdir == dir && _walkdata.dest.x == abr.x && _walkdata.dest.y == abr.y)
+				return;
+		}
+	
+		if (_pos.x == abr.x && _pos.y == abr.y) {
+			if (dir != _facing)
+				turnToDirection(dir);
+			return;
+		}
 	}
 
 	_walkdata.dest.x = abr.x;
@@ -500,7 +502,7 @@ void Actor::walkActor() {
 		if (_walkbox == _walkdata.destbox)
 			break;
 
-		next_box = _vm->getPathToDestBox(_walkbox, _walkdata.destbox);
+		next_box = _vm->getNextBox(_walkbox, _walkdata.destbox);
 		if (next_box < 0) {
 			_walkdata.destbox = _walkbox;
 			_moving |= MF_LAST_LEG;
@@ -522,13 +524,13 @@ void Actor::walkActor() {
 	calcMovementFactor(_walkdata.dest);
 }
 
-/*
-void Actor::walkActor() {
+void Actor_v2::walkActor() {
 	Common::Point foundPath, tmp;
 	int new_dir, next_box;
 
 	if (_moving & MF_TURN) {
 		new_dir = updateActorDirection(false);
+		// FIXME -- is this correct?
 		if (_facing != new_dir)
 			setDirection(new_dir);
 		else
@@ -553,7 +555,7 @@ void Actor::walkActor() {
 				foundPath = _walkdata.dest;
 				_moving |= MF_LAST_LEG;
 			} else {
-				next_box = _vm->getPathToDestBox(_walkbox, _walkdata.destbox);
+				next_box = _vm->getNextBox(_walkbox, _walkdata.destbox);
 				if (next_box < 0) {
 					_moving |= MF_LAST_LEG;
 					return;
@@ -561,20 +563,20 @@ void Actor::walkActor() {
 
 				// Can't walk through locked boxes
 				int flags = _vm->getBoxFlags(next_box);
-				if (flags & kBoxLocked && !(flags & kBoxPlayerOnly && !isPlayer())) {
+				if ((flags & kBoxLocked) && !((flags & kBoxPlayerOnly) && !isPlayer())) {
 					_moving |= MF_LAST_LEG;
+					//_walkdata.destdir = -1;
 				}
 
 				_walkdata.curbox = next_box;
 
-				getClosestPtOnBox(_vm->getBoxCoordinates(_walkdata.curbox), x, y, tmp.x, tmp.y);
+				getClosestPtOnBox(_vm->getBoxCoordinates(_walkdata.curbox), _pos.x, _pos.y, tmp.x, tmp.y);
 				getClosestPtOnBox(_vm->getBoxCoordinates(_walkbox), tmp.x, tmp.y, foundPath.x, foundPath.y);
 			}
 			calcMovementFactor(foundPath);
 		}
 	}
 }
-*/
 
 void Actor_v3::walkActor() {
 	Common::Point p2, p3;	// Gate locations
@@ -627,7 +629,7 @@ void Actor_v3::walkActor() {
 		if (_walkbox == _walkdata.destbox)
 			break;
 
-		next_box = _vm->getPathToDestBox(_walkbox, _walkdata.destbox);
+		next_box = _vm->getNextBox(_walkbox, _walkdata.destbox);
 
 		// WORKAROUND: To fully fix bug #774783, we add a special case
 		// here, resulting in a different next_box value for Hitler.
@@ -641,32 +643,22 @@ void Actor_v3::walkActor() {
 
 		// Can't walk through locked boxes
 		int flags = _vm->getBoxFlags(next_box);
-		if (flags & kBoxLocked && !(flags & kBoxPlayerOnly && !isPlayer())) {
+		if ((flags & kBoxLocked) && !((flags & kBoxPlayerOnly) && !isPlayer())) {
 			_moving |= MF_LAST_LEG;
-// FIXME: Work in progress
-//			_walkdata.destdir = _facing;
 			return;
 		}
 
 		_walkdata.curbox = next_box;
 
-		if (_vm->_game.version <= 2) {
-			getClosestPtOnBox(_vm->getBoxCoordinates(_walkdata.curbox), _pos.x, _pos.y, p2.x, p2.y);
-			getClosestPtOnBox(_vm->getBoxCoordinates(_walkbox), p2.x, p2.y, p3.x, p3.y);
-// FIXME: Work in progress
-//			calcMovementFactor(p3);
-//			return;
-		} else {
-			findPathTowardsOld(_walkbox, next_box, _walkdata.destbox, p2, p3);
-			if (p2.x == 32000 && p3.x == 32000) {
-				break;
-			}
+		findPathTowardsOld(_walkbox, next_box, _walkdata.destbox, p2, p3);
+		if (p2.x == 32000 && p3.x == 32000) {
+			break;
+		}
 
-			if (p2.x != 32000) {
-				if (calcMovementFactor(p2)) {
-					_walkdata.point3 = p3;
-					return;
-				}
+		if (p2.x != 32000) {
+			if (calcMovementFactor(p2)) {
+				_walkdata.point3 = p3;
+				return;
 			}
 		}
 		if (calcMovementFactor(p3))
@@ -950,6 +942,124 @@ static bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold) 
 	return false;
 }
 
+static int checkXYInBoxBounds(int boxnum, int x, int y, int &destX, int &destY) {
+	BoxCoords box = g_scumm->getBoxCoordinates(boxnum);
+	int xmin, xmax;
+	
+	// We are supposed to determine the point (destX,destY) contained in
+	// the given box which is closest to the point (x,y), and then return
+	// some kind of "distance" between the two points.
+
+	// First, we determine destY and a range (xmin to xmax) in which destX
+	// is contained.
+	if (y < box.ul.y) {
+		// Point is above the box
+		destY = box.ul.y;
+		xmin = box.ul.x;
+		xmax = box.ur.x;
+	} else if (y >= box.ll.y) {
+		// Point is below the box
+		destY = box.ll.y;
+		xmin = box.ll.x;
+		xmax = box.lr.x;
+	} else if ((x >= box.ul.x) && (x >= box.ll.x) && (x < box.ur.x) && (x < box.lr.x)) {
+		// Point is strictly inside the box
+		destX = x;
+		destY = y;
+		xmin = xmax = x;
+	} else {
+		// Point is to the left or right of the box,
+		// so the y coordinate remains unchanged
+		destY = y;
+		int ul = box.ul.x;
+		int ll = box.ll.x;
+		int ur = box.ur.x;
+		int lr = box.lr.x;
+		int top = box.ul.y;
+		int bottom = box.ll.y;
+		int cury;
+
+		// Perform a binary search to determine the x coordinate.
+		// Note: It would be possible to compute this value in a
+		// single step simply by calculating the slope of the left
+		// resp. right side and using that to find the correct
+		// result. However, the original engine did use the search
+		// approach, so we do that, too.
+		do {
+			xmin = (ul + ll) / 2;
+			xmax = (ur + lr) / 2;
+			cury = (top + bottom) / 2;
+	
+			if (cury < y) {
+				top = cury;
+				ul = xmin;
+				ur = xmax;
+			} else if (cury > y) {
+				bottom = cury;
+				ll = xmin;
+				lr = xmax;
+			}
+		} while (cury != y);
+	}
+	
+	// Now that we have limited the value of destX to a fixed
+	// interval, it's a trivial matter to finally determine it.
+	if (x < xmin) {
+		destX = xmin;
+	} else if (x > xmax) {
+		destX = xmax;
+	} else {
+		destX = x;
+	}
+
+	// Compute the distance of the points. We measure the
+	// distance with a granularity of 8x8 blocks only (hence
+	// yDist must be divided by 4, as we are using 8x2 pixels
+	// blocks for actor coordinates).
+	int xDist = ABS(x - destX);
+	int yDist = ABS(y - destY) / 4;
+	int dist;
+
+	if (xDist < yDist)
+		dist = (xDist >> 1) + yDist;
+	else
+		dist = (yDist >> 1) + xDist;
+
+	return dist;
+}
+
+AdjustBoxResult Actor_v2::adjustXYToBeInBox(const int dstX, const int dstY) {
+	AdjustBoxResult abr;
+
+	abr.x = dstX;
+	abr.y = dstY;
+	abr.box = kInvalidBox;
+
+	int numBoxes = _vm->getNumBoxes() - 1;
+	int bestDist = 0xFF;
+	for (int box = numBoxes; box >= 0; box--) {
+		int foundX, foundY;
+		int flags = _vm->getBoxFlags(box);
+		if ((flags & kBoxInvisible) && !((flags & kBoxPlayerOnly) && !isPlayer()))
+			continue;
+		int dist = checkXYInBoxBounds(box, dstX, dstY, foundX, foundY);	// also merged with getClosestPtOnBox
+		if (dist == 0) {
+			abr.x = foundX;
+			abr.y = foundY;
+			abr.box = box;
+			break;
+		}
+		if (dist < bestDist) {
+			bestDist = dist;
+			abr.x = foundX;
+			abr.y = foundY;
+			abr.box = box;
+		}
+	}
+
+	return abr;
+}
+
 AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 	const uint thresholdTable[] = { 30, 80, 0 };
 	AdjustBoxResult abr;
@@ -982,7 +1092,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 			flags = _vm->getBoxFlags(box);
 
 			// Skip over invisible boxes
-			if (flags & kBoxInvisible && !(flags & kBoxPlayerOnly && !isPlayer()))
+			if ((flags & kBoxInvisible) && !((flags & kBoxPlayerOnly) && !isPlayer()))
 				continue;
 
 			// For increased performance, we perform a quick test if

@@ -1105,7 +1105,7 @@ public:
 
 	byte getNumBoxes();
 	byte *getBoxMatrixBaseAddr();
-	int getPathToDestBox(byte from, byte to);
+	int getNextBox(byte from, byte to);
 
 	void setBoxFlags(int box, int val);
 	void setBoxScale(int box, int b);
