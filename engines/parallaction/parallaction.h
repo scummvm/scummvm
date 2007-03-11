@@ -354,6 +354,7 @@ protected:		// members
 	void		loadProgram(Animation *a, char *filename);
 	void		changeLocation(char *location);
 
+	void 		pickMusic(const char *location);
 	void		selectCharacterMusic(const char *name);
 
 };

@@ -859,6 +859,34 @@ void Parallaction::selectCharacterMusic(const char *name) {
 	return;
 }
 
+void Parallaction::pickMusic(const char *location) {
+	if (_musicData1 != 0) {
+		selectCharacterMusic(_vm->_characterName);
+		_musicData1 = 0;
+		debugC(2, kDebugLocation, "changeLocation: started character specific music");
+	}
+
+	if (!scumm_stricmp(location, "night") || !scumm_stricmp(location, "intsushi")) {
+		_vm->_midiPlayer->play("soft");
+
+		debugC(2, kDebugLocation, "changeLocation: started music 'soft'");
+	}
+
+	if (!scumm_stricmp(location, "museo") ||
+		!scumm_stricmp(location, "caveau") ||
+		!scumm_strnicmp(location, "plaza1", 6) ||
+		!scumm_stricmp(location, "estgrotta") ||
+		!scumm_stricmp(location, "intgrottadopo") ||
+		!scumm_stricmp(location, "endtgz") ||
+		!scumm_stricmp(location, "common")) {
+
+		_vm->_midiPlayer->stop();
+		_musicData1 = 1;
+
+		debugC(2, kDebugLocation, "changeLocation: music stopped");
+	}
+}
+
 void Parallaction::changeCharacter(const char *name) {
 //	printf("changeCharacter(%s)\n", name);
 

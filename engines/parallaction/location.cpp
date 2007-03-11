@@ -283,32 +283,7 @@ extern Job     *_jEraseLabel;
 void Parallaction::changeLocation(char *location) {
 	debugC(1, kDebugLocation, "changeLocation to '%s'", location);
 
-//	printf("changeLocation('%s')", location);
-	if (_musicData1 != 0) {
-		selectCharacterMusic(_vm->_characterName);
-		_musicData1 = 0;
-		debugC(2, kDebugLocation, "changeLocation: started character specific music");
-	}
-
-	if (!scumm_stricmp(location, "night") || !scumm_stricmp(location, "intsushi")) {
-		_vm->_midiPlayer->play("soft");
-
-		debugC(2, kDebugLocation, "changeLocation: started music 'soft'");
-	}
-
-	if (!scumm_stricmp(location, "museo") ||
-		!scumm_stricmp(location, "caveau") ||
-		!scumm_strnicmp(location, "plaza1", 6) ||
-		!scumm_stricmp(location, "estgrotta") ||
-		!scumm_stricmp(location, "intgrottadopo") ||
-		!scumm_stricmp(location, "endtgz") ||
-		!scumm_stricmp(location, "common")) {
-
-		_vm->_midiPlayer->stop();
-		_musicData1 = 1;
-
-		debugC(2, kDebugLocation, "changeLocation: music stopped");
-	}
+	pickMusic(location);
 
 	// WORKAROUND: this if-statement has been added to avoid crashes caused by
 	// execution of label jobs after a location switch. The other workaround in
