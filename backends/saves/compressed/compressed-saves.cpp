@@ -77,7 +77,7 @@ public:
 		// Adding 32 to windowBits indicates to zlib that it is supposed to
 		// automatically detect whether gzip or zlib headers are used for
 		// the compressed file.
-		_zlibErr = inflateInit2(&_stream, MAX_WBITS + 32);
+		_zlibErr = inflateInit2(&_stream, MAX_WBITS);
 		if (_zlibErr != Z_OK)
 			return;
 		
@@ -201,7 +201,7 @@ public:
 		_zlibErr = deflateInit2(&_stream,
 		                 Z_DEFAULT_COMPRESSION,
 		                 Z_DEFLATED,
-		                 MAX_WBITS + 16,
+		                 MAX_WBITS,
 		                 8,
                          Z_DEFAULT_STRATEGY);
 		assert(_zlibErr == Z_OK);
