@@ -279,7 +279,24 @@ extern Zone     *_hoverZone;
 extern Job     *_jDrawLabel;
 extern Job     *_jEraseLabel;
 
+/*
+	changeLocation handles transitions between locations, and is able to display slides
+	between one and the other. The input parameter 'location' exists in some flavours:
 
+    1 - [S].slide.[L]{.[C]}
+	2 - [L]{.[C]}
+
+    where:
+
+	[S] is the slide to be shown
+    [L] is the location to switch to (immediately in case 2, or right after slide [S] in case 1)
+    [C] is the character to be selected, and is optional
+
+    The routine tells one form from the other by searching for the '.slide.'
+
+    NOTE: there exists one script in which [L] is not used in the case 1, but its use
+		  is commented out, and would definitely crash the current implementation.
+*/
 void Parallaction::changeLocation(char *location) {
 	debugC(1, kDebugLocation, "changeLocation to '%s'", location);
 
