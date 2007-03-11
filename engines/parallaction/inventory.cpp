@@ -372,18 +372,14 @@ void cleanInventory() {
 
 
 void refreshInventory(const char *character) {
-//	_vm->_disk->loadObjects(character, &_characterInventory);
 	redrawInventory();
-//	_vm->_graphics->freeCnv(&_yourObjects);
 
 	return;
 }
 
 
 void refreshInventoryItem(const char *character, uint16 index) {
-//	_vm->_disk->loadObjects(character, &_yourObjects);
 	drawInventoryItem(index, &_inventory[index]);
-//	_vm->_graphics->freeCnv(&_characterInventory);
 
 	return;
 }

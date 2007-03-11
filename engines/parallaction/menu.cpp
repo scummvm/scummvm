@@ -408,8 +408,6 @@ void Menu::selectCharacter() {
 
 	free(v14._data0);
 
-//	refreshInventory(_vm->_characterName);
-
 	return;
 
 }
