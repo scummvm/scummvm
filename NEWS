@@ -32,7 +32,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for Amiga versions.
 
  SCUMM:
-   - Fixed various actor walking issues.
+   - Fixed many (sometimes serious) actor walking issues, specifically
+     in Zak McKracken and Maniac Mansion.
    - Added support for non-interactive demos of HE games (CUP).
    - Improved A/V syncing in SMUSH videos (affects Dig, FT, COMI).
    - Several other minor fixes.
