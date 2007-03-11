@@ -85,6 +85,7 @@ int numLoops;
 int blockCount;
 int dataChunkStart;
 int blocksLeft;
+bool trackStartsAt2 = false;
 
 
 // These are from Microsoft's document on DVI ADPCM
@@ -128,7 +129,9 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 		stopTrack();
 	}
 	
-	
+	if (trackStartsAt2) {
+		track++;
+	}
 	
 	
 	
@@ -460,16 +463,17 @@ void stopTrack() {
 	DC_FlushAll();
 }
 
-bool checkCD() {
-	// Need to check whethe CD audio files are present - do this by trying to open Track1.wav.
-	consolePrintf("Attempted to open cd drive\n");
-
+bool trackExists(int num) {
 	Common::String path = ConfMan.get("path");
-	// 6577 153 154
+
+	char fname[128];
+
+	sprintf(fname, "track%d.wav", num);
+
 	if (path[strlen(path.c_str()) - 1] == '/') {
-		path = path + "track2.wav";
+		path = path + fname;
 	} else {
-		path = path + "/track2.wav";
+		path = path + "/" + fname;
 	}
 	consolePrintf("Looking for %s...", path.c_str());
 
@@ -482,6 +486,21 @@ bool checkCD() {
 	} else {
 		setActive(false);
 		consolePrintf("Failed!\n");
+		return false;
+	}
+}
+
+bool checkCD() {
+	// Need to check whethe CD audio files are present - do this by trying to open Track1.wav.
+	consolePrintf("Attempted to open cd drive\n");
+	
+	if (trackExists(1)) {
+		trackStartsAt2 = false;
+		return true;
+	} else if (trackExists(2)) {
+		trackStartsAt2 = true;
+		return true;
+	} else {
 		return false;
 	}
 }

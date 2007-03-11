@@ -343,7 +343,7 @@ bool GBAMPFileSystemNode::listDir(AbstractFSList& dirList, ListMode mode) const 
 //	consolePrintf("This dir: %s\n", path);
 	FAT_chdir(path);
 	
-	int entryType = FAT_FindFirstFile(fname);
+	int entryType = FAT_FindFirstFileLFN(fname);
 	
 	while (entryType != TYPE_NO_MORE) {
 	
@@ -368,7 +368,7 @@ bool GBAMPFileSystemNode::listDir(AbstractFSList& dirList, ListMode mode) const 
 //			consolePrintf("Skipping %s\n", fname);
 		}
 		
-		entryType = FAT_FindNextFile(fname);
+		entryType = FAT_FindNextFileLFN(fname);
 	}
 	
 //	consolePrintf("No more");

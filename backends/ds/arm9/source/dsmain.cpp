@@ -175,6 +175,12 @@ int gameHeight = 200;
 // Scale
 bool twoHundredPercentFixedScale = false;
 
+
+int triggeredIcon = 0;
+int triggeredIconTimeout = 0;
+
+
+
 enum controlType {
 	CONT_SCUMM_ORIGINAL,
 	CONT_SCUMM_SAMNMAX,
@@ -236,6 +242,8 @@ u16 savedPalEntry255 = RGB15(31, 31, 31);
 
 extern "C" int scummvm_main(int argc, char *argv[]);
 void updateStatus();
+void triggerIcon(int imageNum);
+void setIcon(int num, int x, int y, int imageNum, int flags, bool enable);
 
 TransferSound soundControl;
 
@@ -1048,7 +1056,7 @@ void addEventsToQueue() {
 				}
 			}
 			
-			if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))  && (displayModeIs8Bit)) {
+			if (((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) || (indyFightState))  && (displayModeIs8Bit)) {
 				// Controls specific to the control method
 			
 			
@@ -1161,17 +1169,35 @@ void addEventsToQueue() {
 	}
 }
 
+
+		
+void triggerIcon(int imageNum) {
+	if (imageNum == -1) {
+		triggeredIconTimeout = 0;
+	} else {
+		triggeredIcon = imageNum;
+		triggeredIconTimeout = 300;	
+	}
+}
+	
+
+void setIcon(int num, int x, int y, int imageNum, int flags, bool enable) {
+	sprites[num].attribute[0] = ATTR0_BMP | y | (!enable? ATTR0_DISABLED: 0); 
+	sprites[num].attribute[1] = ATTR1_SIZE_32 | x | flags;
+	sprites[num].attribute[2] = ATTR2_ALPHA(1)| (imageNum * 16);
+}
+
 void updateStatus() {
 	int offs;
 
 	if (displayModeIs8Bit) {
 		switch (mouseMode) {
 			case MOUSE_LEFT: {
-				offs = 16;
+				offs = 1;
 				break;
 			}
 			case MOUSE_RIGHT: {
-				offs = 32;
+				offs = 2;
 				break;
 			}
 			case MOUSE_HOVER: {
@@ -1185,25 +1211,28 @@ void updateStatus() {
 			}
 		}
 	
-		
-		sprites[0].attribute[0] = ATTR0_BMP | 150; 
-		sprites[0].attribute[1] = ATTR1_SIZE_32 | 208;
-		sprites[0].attribute[2] = ATTR2_ALPHA(1)| offs;
+		setIcon(0, 208, 150, offs, 0, true);
 	
 		if (indyFightState) {
-			sprites[2].attribute[0] = ATTR0_BMP | 150; 
-			sprites[2].attribute[1] = ATTR1_SIZE_32 | (190 - 32) | (indyFightRight? 0: ATTR1_FLIP_X);
-			sprites[2].attribute[2] = ATTR2_ALPHA(1)| 48;
+			setIcon(1, (190 - 32), 150, 3, (indyFightRight? 0: ATTR1_FLIP_X), true);
+			consolePrintf("%d\n", indyFightRight);
 		} else {
-			sprites[2].attribute[0] = ATTR0_DISABLED; 
-			sprites[2].attribute[1] = 0;
-			sprites[2].attribute[2] = 0;
+			setIcon(1, 0, 0, 0, 0, false);
 		}
+		
+		if (triggeredIconTimeout > 0) {
+			triggeredIconTimeout--;
+			setIcon(4, 16, 150, triggeredIcon, 0, true);
+		} else {
+			setIcon(4, 0, 192, 0, 0, true);
+		}
+		
 	} else {
-		sprites[0].attribute[0] = ATTR0_DISABLED; 
-		sprites[1].attribute[0] = ATTR0_DISABLED; 
-		sprites[2].attribute[0] = ATTR0_DISABLED; 
-		sprites[3].attribute[0] = ATTR0_DISABLED; 
+		setIcon(0, 0, 0, 0, 0, false);
+		setIcon(1, 0, 0, 0, 0, false);
+		setIcon(2, 0, 0, 0, 0, false);
+		setIcon(3, 0, 0, 0, 0, false);
+//		setIcon(4, 0, 0, 0, 0, false);
 	}
 
 	if ((keyboardIcon) && (!keyboardEnable) && (!displayModeIs8Bit)) {
@@ -1218,6 +1247,7 @@ void updateStatus() {
 	}
 
 }
+
 
 void soundBufferEmptyHandler() {
 	REG_IF = IRQ_TIMER2;
@@ -1261,18 +1291,20 @@ void setMainScreenScale(int x, int y) {
 	}
 }
 
-void setZoomedScreenScroll(int x, int y) {
+void setZoomedScreenScroll(int x, int y, bool shake) {
 	if (gameScreenSwap) {
-		BG3_CX = x + (((frameCount & 1) == 0)? 64: 0);
+		BG3_CX = x + ((shake && ((frameCount & 1) == 0))? 64: 0);
 		BG3_CY = y;
 		
 		touchX = x >> 8;
 		touchY = y >> 8;
 	} else {
-		SUB_BG3_CX = x + (((frameCount & 1) == 0)? 64: 0);
+		SUB_BG3_CX = x + ((shake && (frameCount & 1) == 0)? 64: 0);
 		SUB_BG3_CY = y;
 	}
 }
+
+
 
 void setZoomedScreenScale(int x, int y) {
 	if (gameScreenSwap) {
@@ -1297,7 +1329,7 @@ void VBlankHandler(void) {
 	//	consolePrintf("Guard band overwritten!");
 //  }
 
-//	consolePri ntf("X:%d Y:%d\n", getPenX(), getPenY());
+	//consolePrintf("X:%d Y:%d\n", getPenX(), getPenY());
 
 	static bool firstTime = true;
 
@@ -1335,8 +1367,6 @@ void VBlankHandler(void) {
 
 
 	frameCount++;
-	
-//	consolePrintf("%d\n", IPC->buttons);
 	
 
 
@@ -1396,29 +1426,62 @@ void VBlankHandler(void) {
 
 	static int ratio = ( 320 << 8) / SCUMM_GAME_WIDTH;
 	
+	bool zooming = false;
 	
 	if ((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) {
 		if ((getKeysHeld() & KEY_A) && (subScreenScale < ratio)) {
-			subScreenScale += 2;
+			subScreenScale += 1;
+			zooming = true;
 		}
 		
 		if ((getKeysHeld() & KEY_B) && (subScreenScale > 128)) {
-			subScreenScale -=2;
+			subScreenScale -=1;
+			zooming = true;
 		}
 	}
 
-
+	
 	int xCenter = subScTargetX + ((subScreenWidth >> 1) << 8);
 	int yCenter = subScTargetY + ((subScreenHeight >> 1) << 8);
+
 	
 	if (twoHundredPercentFixedScale) {
 		subScreenWidth = 256 >> 1;
 		subScreenHeight = 192 >> 1;
 	} else {
-		subScreenWidth = SCUMM_GAME_WIDTH * subScreenScale >> 8;
+		subScreenWidth = (((SCUMM_GAME_HEIGHT * 256) / 192) * subScreenScale) >> 8;
 		subScreenHeight = SCUMM_GAME_HEIGHT * subScreenScale >> 8;
+		
+		if ( ((subScreenWidth) > 256 - 8) && ((subScreenWidth) < 256 + 8) ) {
+			subScreenWidth = 256;
+			subScreenHeight = 192;
+			if (zooming) {
+				subScX = subScTargetX;
+				subScY = subScTargetY;
+			 	triggerIcon(5);
+			}
+		} else if ( ((subScreenWidth) > 128 - 8) && ((subScreenWidth) < 128 + 8) ) {
+			subScreenWidth = 128;
+			subScreenHeight = 96;
+			if (zooming) {
+				subScX = subScTargetX;
+				subScY = subScTargetY;
+				triggerIcon(6);
+			}
+		} else if (subScreenWidth > 256) {
+			subScreenWidth = 320;
+			subScreenHeight = 200;
+			if (zooming) {
+				subScX = subScTargetX;
+				subScY = subScTargetY;
+				triggerIcon(7);
+			}
+		} else {
+			triggerIcon(-1);
+		}
 	}
 	
+
 	subScTargetX = xCenter - ((subScreenWidth >> 1) << 8);
 	subScTargetY = yCenter - ((subScreenHeight >> 1) << 8);
 	
@@ -1486,8 +1549,8 @@ void VBlankHandler(void) {
 				scY = 0;
 			}
 			
-			setZoomedScreenScroll(subScX, subScY);
-			setZoomedScreenScale(subScreenWidth, (subScreenHeight * 256) / 192);
+			setZoomedScreenScroll(subScX, subScY, (subScreenWidth != 256) && (subScreenWidth != 128));
+			setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
 	
 		
 			setMainScreenScroll(scX << 8, (scY << 8) + (shakePos << 8));
@@ -1503,15 +1566,15 @@ void VBlankHandler(void) {
 				scY = 0;
 			}
 		
-			setZoomedScreenScroll(subScX, subScY);
-			setZoomedScreenScale(subScreenWidth, (subScreenHeight * 256) / 192);
+			setZoomedScreenScroll(subScX, subScY, (subScreenWidth != 256) && (subScreenWidth != 128));
+			setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
 	
 			setMainScreenScroll(64, (scY << 8) + (shakePos << 8));
 			setMainScreenScale(320, 256);		// 1:1 scale
 			
 		}
 	} else {
-		setZoomedScreenScroll(0, 0);
+		setZoomedScreenScroll(0, 0, true);
 		setZoomedScreenScale(320, 256);
 
 		setMainScreenScroll(0, 0);
@@ -1673,7 +1736,7 @@ void initHardware() {
 	
 	// Convert texture from 24bit 888 to 16bit 1555, remembering to set top bit!
 	u8* srcTex = (u8 *) icons_raw;
-	for (int r = 32 * 160 ; r >= 0; r--) {
+	for (int r = 32 * 256 ; r >= 0; r--) {
 		SPRITE_GFX_SUB[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
 		SPRITE_GFX[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
 	}
@@ -2035,7 +2098,7 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.9.1a beta2 ");
+	consolePrintf("Version 0.9.1a beta3 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Supports: Lucasarts SCUMM\n");
@@ -2059,7 +2122,7 @@ int main(void)
 	consolePrintf("Y (in game):     Toggle console\n");
 	consolePrintf("X:              Toggle keyboard\n");
 	consolePrintf("A:                 Swap screens\n");
-	consolePrintf("L+R (on start):      Clear SRAM\n");
+//	consolePrintf("L+R (on start):      Clear SRAM\n");
 
 #if defined(DS_BUILD_A)
 	consolePrintf("For a complete key list see the\n");
