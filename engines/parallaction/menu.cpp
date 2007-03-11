@@ -128,23 +128,7 @@ void Menu::start() {
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
 	_language = chooseLanguage();
 
-	switch (_language) {
-	case 0:
-		strcpy(_engine->_languageDir, "it/");
-		break;
-
-	case 1:
-		strcpy(_engine->_languageDir, "fr/");
-		break;
-
-	case 2:
-		strcpy(_engine->_languageDir, "en/");
-		break;
-
-	case 3:
-		strcpy(_engine->_languageDir, "ge/");
-		break;
-	}
+	_vm->_disk->setLanguage(_language);
 
 	_vm->_disk->loadSlide("restore");
 	_vm->_graphics->palUnk0(_palette);

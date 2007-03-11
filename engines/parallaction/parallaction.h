@@ -299,7 +299,6 @@ public:
 	Graphics*	_graphics;
 	Menu*	_menu;
 	char	_characterName[30];
-	char	_languageDir[6];
 	Disk*	_disk;
 
 	char	_locationNames[120][32];

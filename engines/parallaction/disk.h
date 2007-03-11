@@ -88,16 +88,18 @@ private:
 	void loadMaskAndPath(const char *name);
 
 protected:
-	Archive			_archive;
+	Archive		  _archive;
+	char		  _languageDir[3];
 
-	Parallaction 	*_vm;
-	Graphics		*_gfx;
+	Parallaction *_vm;
+	Graphics	 *_gfx;
 
 public:
 	Disk(Parallaction *vm);
 	virtual ~Disk();
 
 	void selectArchive(const char *name);
+	void setLanguage(uint16 language);
 
 	Script* loadLocation(const char *name);
 	Script* loadScript(const char* name);

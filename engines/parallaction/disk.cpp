@@ -34,6 +34,32 @@ Disk::Disk(Parallaction* vm) : _vm(vm) {
 Disk::~Disk() {
 }
 
+void Disk::setLanguage(uint16 language) {
+
+	switch (language) {
+	case 0:
+		strcpy(_languageDir, "it/");
+		break;
+
+	case 1:
+		strcpy(_languageDir, "fr/");
+		break;
+
+	case 2:
+		strcpy(_languageDir, "en/");
+		break;
+
+	case 3:
+		strcpy(_languageDir, "ge/");
+		break;
+
+	default:
+		error("unknown language");
+
+	}
+
+	return;
+}
 
 //
 // decompress a graphics block
@@ -208,22 +234,22 @@ Script* Disk::loadLocation(const char *name) {
 	char archivefile[PATH_LEN];
 
 	if (IS_MINI_CHARACTER(_vm->_characterName)) {
-		sprintf(archivefile, "%s%s", _vm->_characterName+4, _vm->_languageDir);
+		sprintf(archivefile, "%s%s", _vm->_characterName+4, _languageDir);
 	} else {
-		if (IS_DUMMY_CHARACTER(_vm->_characterName)) strcpy(archivefile, _vm->_languageDir);
+		if (IS_DUMMY_CHARACTER(_vm->_characterName)) strcpy(archivefile, _languageDir);
 		else {
-			sprintf(archivefile, "%s%s", _vm->_characterName, _vm->_languageDir);
+			sprintf(archivefile, "%s%s", _vm->_characterName, _languageDir);
 		}
 	}
 	strcat(archivefile, name);
 	strcat(archivefile, ".loc");
 
-	_vm->_languageDir[2] = '\0';
-	_archive.open(_vm->_languageDir);
-	_vm->_languageDir[2] = '/';
+	_languageDir[2] = '\0';
+	_archive.open(_languageDir);
+	_languageDir[2] = '/';
 
 	if (!_archive.openArchivedFile(archivefile)) {
-		sprintf(archivefile, "%s%s.loc", _vm->_languageDir, name);
+		sprintf(archivefile, "%s%s.loc", _languageDir, name);
 		if (!_archive.openArchivedFile(archivefile))
 			error("can't find location file '%s'", name);
 	}
