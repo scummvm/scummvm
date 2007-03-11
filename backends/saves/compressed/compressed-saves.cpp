@@ -28,6 +28,9 @@
 #if defined(USE_ZLIB)
 #include <zlib.h>
 
+#if ZLIB_VERNUM < 0x1204
+#error Version 1.2.0.4 or newer of zlib is required for this code
+#endif
 
 /**
  * A simple wrapper class which can be used to wrap around an arbitrary
@@ -76,8 +79,10 @@ public:
 		
 		// Adding 32 to windowBits indicates to zlib that it is supposed to
 		// automatically detect whether gzip or zlib headers are used for
-		// the compressed file.
-		_zlibErr = inflateInit2(&_stream, MAX_WBITS);
+		// the compressed file. This feature was added in zlib 1.2.0.4,
+		// released 10 August 2003.
+		// Note: This is *crucial* for savegame compatibility, do *not* remove!
+		_zlibErr = inflateInit2(&_stream, MAX_WBITS + 32);
 		if (_zlibErr != Z_OK)
 			return;
 		
@@ -196,12 +201,14 @@ public:
 		_stream.zfree = Z_NULL;
 		_stream.opaque = Z_NULL;
 		
-		// adding 16 to windowBits indicates to zlib that it is supposed to
-		// write gzip headers
+		// Adding 16 to windowBits indicates to zlib that it is supposed to
+		// write gzip headers. This feature was added in zlib 1.2.0.4,
+		// released 10 August 2003.
+		// Note: This is *crucial* for savegame compatibility, do *not* remove!
 		_zlibErr = deflateInit2(&_stream,
 		                 Z_DEFAULT_COMPRESSION,
 		                 Z_DEFLATED,
-		                 MAX_WBITS,
+		                 MAX_WBITS + 16,
 		                 8,
                          Z_DEFAULT_STRATEGY);
 		assert(_zlibErr == Z_OK);
