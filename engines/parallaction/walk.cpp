@@ -231,7 +231,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 
 uint16 queryPath(uint16 x, uint16 y) {
-	return _vm->_graphics->queryPath(x, y);
+	return _vm->_gfx->queryPath(x, y);
 }
 
 

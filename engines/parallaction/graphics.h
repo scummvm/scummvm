@@ -64,7 +64,7 @@ class Parallaction;
 struct DoorData;
 struct GetData;
 
-class Graphics {
+class Gfx {
 
 public:
 	enum Buffers {
@@ -108,27 +108,27 @@ public:
 	int16 queryMask(int16 v);
 	void intGrottaHackMask();
 	void restoreBackground(int16 left, int16 top, uint16 width, uint16 height);
-	void backupBackgroundMask(Graphics::Buffers mask);
-	void restoreBackgroundMask(Graphics::Buffers mask);
-	void backupBackgroundPath(Graphics::Buffers path);
-	void restoreBackgroundPath(Graphics::Buffers path);
+	void backupBackgroundMask(Gfx::Buffers mask);
+	void restoreBackgroundMask(Gfx::Buffers mask);
+	void backupBackgroundPath(Gfx::Buffers path);
+	void restoreBackgroundPath(Gfx::Buffers path);
 
 	// intro
-	void maskClearRectangle(uint16 left, uint16 top, uint16 right, uint16 bottom, Graphics::Buffers mask);
-	void maskOpNot(uint16 x, uint16 y, uint16 unused, Graphics::Buffers mask);
+	void maskClearRectangle(uint16 left, uint16 top, uint16 right, uint16 bottom, Gfx::Buffers mask);
+	void maskOpNot(uint16 x, uint16 y, uint16 unused, Gfx::Buffers mask);
 
 	// low level
 	void swapBuffers();
 	void updateScreen();
-	void clearScreen(Graphics::Buffers buffer);
-	void copyScreen(Graphics::Buffers srcbuffer, Graphics::Buffers dstbuffer);
-	void copyRect(Graphics::Buffers srcbuffer, uint16 sx, uint16 sy, Graphics::Buffers dstbuffer, uint16 dx, uint16 dy, uint16 w, uint16 h);
-	void copyRect(Graphics::Buffers dstbuffer, uint16 x, uint16 y, uint16 w, uint16 h, byte *src, uint16 pitch);
-	void grabRect(Graphics::Buffers srcbuffer, byte *dst, uint16 x, uint16 y, uint16 w, uint16 h, uint16 pitch);
-	void drawBorder(Graphics::Buffers buffer, uint16 x, uint16 y, uint16 w, uint16 h, byte color);
-	void floodFill(byte color, uint16 left, uint16 top, uint16 right, uint16 bottom, Graphics::Buffers buffer);
-	void flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Graphics::Buffers buffer, byte *unused);
-	void blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Graphics::Buffers buffer, Graphics::Buffers mask);
+	void clearScreen(Gfx::Buffers buffer);
+	void copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer);
+	void copyRect(Gfx::Buffers srcbuffer, uint16 sx, uint16 sy, Gfx::Buffers dstbuffer, uint16 dx, uint16 dy, uint16 w, uint16 h);
+	void copyRect(Gfx::Buffers dstbuffer, uint16 x, uint16 y, uint16 w, uint16 h, byte *src, uint16 pitch);
+	void grabRect(Gfx::Buffers srcbuffer, byte *dst, uint16 x, uint16 y, uint16 w, uint16 h, uint16 pitch);
+	void drawBorder(Gfx::Buffers buffer, uint16 x, uint16 y, uint16 w, uint16 h, byte color);
+	void floodFill(byte color, uint16 left, uint16 top, uint16 right, uint16 bottom, Gfx::Buffers buffer);
+	void flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer, byte *unused);
+	void blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer, Gfx::Buffers mask);
 
 	// palette
 	void animatePalette(byte *palette);
@@ -140,8 +140,8 @@ public:
 	void fadePalette(byte *palette);
 
 	// init
-	Graphics(Parallaction* vm);
-	virtual ~Graphics();
+	Gfx(Parallaction* vm);
+	virtual ~Gfx();
 
 	void setMousePointer(int16 index);
 
@@ -169,8 +169,8 @@ protected:
 	//
 	byte mapChar(byte c);
 
-	void flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Graphics::Buffers buffer);
-	void blit(uint16 w, uint16 h, int16 x, int16 y, uint16 z, byte *data, Graphics::Buffers buffer, Graphics::Buffers mask);
+	void flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Gfx::Buffers buffer);
+	void blit(uint16 w, uint16 h, int16 x, int16 y, uint16 z, byte *data, Gfx::Buffers buffer, Gfx::Buffers mask);
 
 
 	void initBuffers();

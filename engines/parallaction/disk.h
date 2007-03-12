@@ -38,7 +38,7 @@ namespace Parallaction {
 #define DIRECTORY_OFFSET_IN_FILE	0x4000
 
 class Parallaction;
-class Graphics;
+class Gfx;
 class Script;
 
 class Archive : public Common::SeekableReadStream {
@@ -92,7 +92,7 @@ protected:
 	char		  _languageDir[3];
 
 	Parallaction *_vm;
-	Graphics	 *_gfx;
+	Gfx	 *_gfx;
 
 public:
 	Disk(Parallaction *vm);

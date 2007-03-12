@@ -101,7 +101,7 @@ uint16 Disk::decompressChunk(byte *src, byte *dst, uint16 size) {
 // loads a cnv from an external file
 //
 void Disk::loadExternalCnv(const char *filename, Cnv *cnv) {
-//	printf("Graphics::loadExternalCnv(%s)...", filename);
+//	printf("Gfx::loadExternalCnv(%s)...", filename);
 
 	char path[PATH_LEN];
 
@@ -156,7 +156,7 @@ void Disk::loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
 }
 
 void Disk::loadCnv(const char *filename, Cnv *cnv) {
-//	printf("Graphics::loadCnv(%s)\n", filename);
+//	printf("Gfx::loadCnv(%s)\n", filename);
 
 	char path[PATH_LEN];
 
@@ -388,12 +388,12 @@ void Disk::unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *p
 }
 
 void Disk::loadBackground(const char *filename) {
-//	printf("Graphics::loadBackground(%s)\n", filename);
+//	printf("Gfx::loadBackground(%s)\n", filename);
 
 	if (!_archive.openArchivedFile(filename))
 		errorFileNotFound(filename);
 
-	_vm->_graphics->parseBackground(_archive);
+	_vm->_gfx->parseBackground(_archive);
 
 	byte *bg = (byte*)calloc(1, SCREEN_WIDTH*SCREEN_HEIGHT);
 	byte *mask = (byte*)calloc(1, SCREENMASK_WIDTH*SCREEN_HEIGHT);
@@ -410,9 +410,9 @@ void Disk::loadBackground(const char *filename) {
 		unpackBackgroundScanline(v144, bg+SCREEN_WIDTH*i, mask+SCREENMASK_WIDTH*i, path+SCREENPATH_WIDTH*i);
 	}
 
-	_vm->_graphics->setBackground(bg);
-	_vm->_graphics->setMask(mask);
-	_vm->_graphics->setPath(path);
+	_vm->_gfx->setBackground(bg);
+	_vm->_gfx->setMask(mask);
+	_vm->_gfx->setPath(path);
 
 	free(v4);
 
@@ -439,13 +439,13 @@ void Disk::loadMaskAndPath(const char *name) {
 	byte *maskBuf = (byte*)calloc(1, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 	byte *pathBuf = (byte*)calloc(1, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 
-	_vm->_graphics->parseDepths(_archive);
+	_vm->_gfx->parseDepths(_archive);
 
 	_archive.read(pathBuf, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 	_archive.read(maskBuf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 
-	_vm->_graphics->setMask(maskBuf);
-	_vm->_graphics->setPath(pathBuf);
+	_vm->_gfx->setMask(maskBuf);
+	_vm->_gfx->setPath(pathBuf);
 
 	return;
 }

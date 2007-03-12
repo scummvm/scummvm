@@ -102,40 +102,40 @@ Menu::~Menu() {
 void Menu::start() {
 
 	_vm->_disk->selectArchive("disk1");
-	_vm->_graphics->_proportionalFont = false;
+	_vm->_gfx->_proportionalFont = false;
 
-	_vm->_graphics->setFont("slide");
+	_vm->_gfx->setFont("slide");
 
 	_vm->_disk->loadSlide("intro");
-	_vm->_graphics->palUnk0(_palette);
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+	_vm->_gfx->palUnk0(_palette);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	g_system->delayMillis(2000);
 
 	_vm->_disk->loadSlide("minintro");
-	_vm->_graphics->palUnk0(_palette);
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+	_vm->_gfx->palUnk0(_palette);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	g_system->delayMillis(2000);
 
 	_vm->_disk->loadSlide("lingua");
-	_vm->_graphics->palUnk0(_palette);
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+	_vm->_gfx->palUnk0(_palette);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
-	_vm->_graphics->displayString(60, 30, "SELECT LANGUAGE");
+	_vm->_gfx->displayString(60, 30, "SELECT LANGUAGE");
 
-	_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBitBack);
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
+	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 	_language = chooseLanguage();
 
 	_vm->_disk->setLanguage(_language);
 
 	_vm->_disk->loadSlide("restore");
-	_vm->_graphics->palUnk0(_palette);
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+	_vm->_gfx->palUnk0(_palette);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
-//	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit3);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
+//	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit3);
 
 	if (selectGame() == 0) {
 		newGame();
@@ -150,22 +150,22 @@ void Menu::newGame() {
 	const char **v14 = introMsg3;
 
 	_vm->_disk->loadScenery("test", NULL);
-	_vm->_graphics->palUnk0(_palette);
-	_vm->_graphics->swapBuffers();
+	_vm->_gfx->palUnk0(_palette);
+	_vm->_gfx->swapBuffers();
 
-	uint16 _ax = (SCREEN_WIDTH - _vm->_graphics->getStringWidth(v14[0])) / 2;
-	_vm->_graphics->displayString(_ax, 50, v14[0]);
+	uint16 _ax = (SCREEN_WIDTH - _vm->_gfx->getStringWidth(v14[0])) / 2;
+	_vm->_gfx->displayString(_ax, 50, v14[0]);
 
-	_ax = (SCREEN_WIDTH - _vm->_graphics->getStringWidth(v14[1])) / 2;
-	_vm->_graphics->displayString(_ax, 70, v14[1]);
+	_ax = (SCREEN_WIDTH - _vm->_gfx->getStringWidth(v14[1])) / 2;
+	_vm->_gfx->displayString(_ax, 70, v14[1]);
 
-	_ax = (SCREEN_WIDTH - _vm->_graphics->getStringWidth(v14[2])) / 2;
-	_vm->_graphics->displayString(_ax, 100, v14[2]);
+	_ax = (SCREEN_WIDTH - _vm->_gfx->getStringWidth(v14[2])) / 2;
+	_vm->_gfx->displayString(_ax, 100, v14[2]);
 
-	_ax = (SCREEN_WIDTH - _vm->_graphics->getStringWidth(v14[3])) / 2;
-	_vm->_graphics->displayString(_ax, 120, v14[3]);
+	_ax = (SCREEN_WIDTH - _vm->_gfx->getStringWidth(v14[3])) / 2;
+	_vm->_gfx->displayString(_ax, 120, v14[3]);
 
-	_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBitBack);
+	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
 
 	_mouseButtons = kMouseNone;
@@ -192,7 +192,7 @@ uint16 Menu::chooseLanguage() {
 
 	do {
 		_engine->updateInput();
-		_vm->_graphics->swapBuffers();
+		_vm->_gfx->swapBuffers();
 
 		uint16 _di = _mousePos._x;
 		uint16 v2 = _mousePos._y;
@@ -231,7 +231,7 @@ uint16 Menu::selectGame() {
 	while (_mouseButtons != kMouseLeftUp) {
 
 		_engine->updateInput();
-		_vm->_graphics->swapBuffers();
+		_vm->_gfx->swapBuffers();
 		_engine->waitTime( 1 );
 
 		_si = 0;
@@ -241,17 +241,17 @@ uint16 Menu::selectGame() {
 		if (_si == _di) continue;
 
 		_di = _si;
-		_vm->_graphics->copyScreen(Graphics::kBit2, Graphics::kBitFront);
+		_vm->_gfx->copyScreen(Gfx::kBit2, Gfx::kBitFront);
 
 		if (_si != 0) {
 			// load a game
-			_vm->_graphics->displayString(60, 30, loadGameMsg[_language]);
+			_vm->_gfx->displayString(60, 30, loadGameMsg[_language]);
 		} else {
 			// new game
-			_vm->_graphics->displayString(60, 30, newGameMsg[_language]);
+			_vm->_gfx->displayString(60, 30, newGameMsg[_language]);
 		}
 
-		_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBitBack);
+		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
 	}
 
@@ -289,30 +289,30 @@ void Menu::selectCharacter() {
 	_engine->changeCursor(kCursorArrow);
 	_vm->_midiPlayer->stop();
 
-	_vm->_graphics->_proportionalFont = false;
-	_vm->_graphics->setFont("slide");
+	_vm->_gfx->_proportionalFont = false;
+	_vm->_gfx->setFont("slide");
 
 	_vm->_disk->selectArchive("disk1");
 	_vm->_disk->loadSlide("password");	// loads background into kBitBack buffer
 
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);	//
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);		//
-	_vm->_graphics->palUnk0(_palette);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);	//
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);		//
+	_vm->_gfx->palUnk0(_palette);
 
 	while (askPassword == true) {
 
 		askPassword = false;
 		_di = 0;
 
-		_vm->_graphics->displayString(60, 30, introMsg1[_language]);			// displays message
-		_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBitBack);
+		_vm->_gfx->displayString(60, 30, introMsg1[_language]);			// displays message
+		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
 		while (_di < 6) {
 
 			_mouseButtons = kMouseNone;
 			do {
 				_engine->updateInput();
-				_vm->_graphics->swapBuffers();
+				_vm->_gfx->swapBuffers();
 				_engine->waitTime(1);
 			} while (_mouseButtons != kMouseLeftUp);	// waits for left click
 
@@ -330,10 +330,10 @@ void Menu::selectCharacter() {
 
 				if (!r.contains(x, y)) continue;
 
-				_vm->_graphics->grabRect(Graphics::kBitFront, v14._data0, _si * BLOCK_X_OFFSET + BLOCK_X, BLOCK_Y - _si * BLOCK_Y_OFFSET, BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_WIDTH);
+				_vm->_gfx->grabRect(Gfx::kBitFront, v14._data0, _si * BLOCK_X_OFFSET + BLOCK_X, BLOCK_Y - _si * BLOCK_Y_OFFSET, BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_WIDTH);
 
-				_vm->_graphics->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Graphics::kBitBack, 0);
-				_vm->_graphics->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Graphics::kBitFront, 0);
+				_vm->_gfx->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Gfx::kBitBack, 0);
+				_vm->_gfx->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Gfx::kBitFront, 0);
 
 				beep();
 
@@ -352,12 +352,12 @@ void Menu::selectCharacter() {
 
 		if (askPassword == false) break;
 
-		_vm->_graphics->copyScreen(Graphics::kBit2, Graphics::kBitFront);
-		_vm->_graphics->displayString(60, 30, introMsg2[_language]);
+		_vm->_gfx->copyScreen(Gfx::kBit2, Gfx::kBitFront);
+		_vm->_gfx->displayString(60, 30, introMsg2[_language]);
 
 		g_system->delayMillis(2000);
 
-		_vm->_graphics->copyScreen(Graphics::kBit2, Graphics::kBitFront);
+		_vm->_gfx->copyScreen(Gfx::kBit2, Gfx::kBitFront);
 	}
 
 
@@ -372,8 +372,8 @@ void Menu::selectCharacter() {
 	}
 
 	byte palette[PALETTE_SIZE];
-	_vm->_graphics->getBlackPalette(palette);
-	_vm->_graphics->setPalette(palette);
+	_vm->_gfx->getBlackPalette(palette);
+	_vm->_gfx->setPalette(palette);
 
 	_engineFlags |= kEngineChangeLocation;
 

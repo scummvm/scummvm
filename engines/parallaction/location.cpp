@@ -42,8 +42,8 @@ void Parallaction::parseLocation(const char *filename) {
     debugC(1, kDebugLocation, "parseLocation('%s')", filename);
 
 	uint16 _si = 1;
-	_vm->_graphics->_proportionalFont = false;
-	_vm->_graphics->setFont("topaz");
+	_vm->_gfx->_proportionalFont = false;
+	_vm->_gfx->setFont("topaz");
 
 	_locationScript = _disk->loadLocation(filename);
 
@@ -258,7 +258,7 @@ void switchBackground(const char* background, const char* mask) {
 
 	uint16 v2 = 0;
 	if (!scumm_stricmp(background, "final")) {
-		_vm->_graphics->clearScreen(Graphics::kBitBack);
+		_vm->_gfx->clearScreen(Gfx::kBitBack);
 		for (uint16 _si = 0; _si <= 93; ) {
 			palette[_si] = v2;
 			palette[_si+1] = v2;
@@ -267,7 +267,7 @@ void switchBackground(const char* background, const char* mask) {
 			_si += 3;
 		}
 
-		_vm->_graphics->palUnk0(palette);
+		_vm->_gfx->palUnk0(palette);
 	}
 
 	_vm->_disk->loadScenery(background, mask);
@@ -282,18 +282,18 @@ extern Job     *_jEraseLabel;
 void Parallaction::showSlide(const char *name) {
 
 	_disk->loadSlide(name);
-	_graphics->palUnk0(_palette);
-	_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+	_gfx->palUnk0(_palette);
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	debugC(1, kDebugLocation, "changeLocation: new background set");
 
-	_graphics->_proportionalFont = false;
-	_graphics->setFont("slide");
+	_gfx->_proportionalFont = false;
+	_gfx->setFont("slide");
 
 	uint16 _ax = strlen(_slideText[0]);
 	_ax <<= 3;	// text width
 	uint16 _dx = (SCREEN_WIDTH - _ax) >> 1; // center text
-	_graphics->displayString(_dx, 14, _slideText[0]); // displays text on screen
+	_gfx->displayString(_dx, 14, _slideText[0]); // displays text on screen
 
 	waitUntilLeftClick();
 
@@ -381,7 +381,7 @@ void Parallaction::changeLocation(char *location) {
 	strcpy(_saveData1, list[0].c_str());
 	parseLocation(list[0].c_str());
 
-	_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 	debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", _saveData1);
 
 	_yourself._zone.pos._oldposition._x = -1000;
@@ -400,14 +400,14 @@ void Parallaction::changeLocation(char *location) {
 
 	byte palette[PALETTE_SIZE];
 	for (uint16 _si = 0; _si < PALETTE_SIZE; _si++) palette[_si] = 0;
-	_graphics->palUnk0(palette);
-	_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+	_gfx->palUnk0(palette);
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	if (_location._commands) {
 		runCommands(_location._commands);
 		runJobs();
-		_graphics->swapBuffers();
+		_gfx->swapBuffers();
 		runJobs();
-		_graphics->swapBuffers();
+		_gfx->swapBuffers();
 	}
 
 	if (_location._comment) {
@@ -416,9 +416,9 @@ void Parallaction::changeLocation(char *location) {
 	}
 
 	runJobs();
-	_graphics->swapBuffers();
+	_gfx->swapBuffers();
 
-	_graphics->palUnk0(_palette);
+	_gfx->palUnk0(_palette);
 	if (_location._aCommands) {
 		runCommands(_location._aCommands);
 		debugC(1, kDebugLocation, "changeLocation: location acommands run");
@@ -445,22 +445,22 @@ void Parallaction::doLocationEnterTransition() {
 	byte v60[PALETTE_SIZE];
 	if (_localFlags[_currentLocationIndex] & kFlagsVisited) return; // visited
 
-	_vm->_graphics->buildBWPalette(v60);
-	_vm->_graphics->setPalette(v60);
+	_vm->_gfx->buildBWPalette(v60);
+	_vm->_gfx->setPalette(v60);
 
 	jobRunScripts(NULL, NULL);
 	jobEraseAnimations(NULL, NULL);
 	jobDisplayAnimations(NULL, NULL);
 
-	_vm->_graphics->setFont("comic");
-	_vm->_graphics->swapBuffers();
-	_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBitBack);
+	_vm->_gfx->setFont("comic");
+	_vm->_gfx->swapBuffers();
+	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
 	int16 v7C, v7A;
-	_vm->_graphics->getStringExtent(_vm->_location._comment, 130, &v7C, &v7A);
-	_vm->_graphics->floodFill(0, 5, 5, 10 + v7C, 5 + v7A, Graphics::kBitFront);
-	_vm->_graphics->floodFill(1, 6, 6, 9 + v7C, 4 + v7A, Graphics::kBitFront);
-	_vm->_graphics->displayWrappedString(_vm->_location._comment, 3, 5, 130, 0);
+	_vm->_gfx->getStringExtent(_vm->_location._comment, 130, &v7C, &v7A);
+	_vm->_gfx->floodFill(0, 5, 5, 10 + v7C, 5 + v7A, Gfx::kBitFront);
+	_vm->_gfx->floodFill(1, 6, 6, 9 + v7C, 4 + v7A, Gfx::kBitFront);
+	_vm->_gfx->displayWrappedString(_vm->_location._comment, 3, 5, 130, 0);
 
 	// FIXME: ???
 #if 0
@@ -471,13 +471,13 @@ void Parallaction::doLocationEnterTransition() {
 
 	waitUntilLeftClick();
 
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront );
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront );
 
 	// fades maximum intensity palette towards approximation of main palette
 	for (uint16 _si = 0; _si<6; _si++) {
 		waitTime( 1 );
-		_vm->_graphics->quickFadePalette(v60);
-		_vm->_graphics->setPalette(v60);
+		_vm->_gfx->quickFadePalette(v60);
+		_vm->_gfx->setPalette(v60);
 	}
 
 	debugC(1, kDebugLocation, "doLocationEnterTransition completed");

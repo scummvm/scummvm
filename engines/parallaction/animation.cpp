@@ -108,7 +108,7 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 			}
 		}
 		if (!scumm_stricmp(_tokens[0], "label")) {
-			_vm->_graphics->makeCnvFromString(&vD0->_zone._label._cnv, _tokens[1]);
+			_vm->_gfx->makeCnvFromString(&vD0->_zone._label._cnv, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "flags")) {
 			uint16 _si = 1;
@@ -129,7 +129,7 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 			}
 
 			_disk->loadFrames(vC8, &vD0->_cnv);
-//			int16 _ax = _vm->_graphics->loadCnv(vC8, &vD0->_cnv);
+//			int16 _ax = _vm->_gfx->loadCnv(vC8, &vD0->_cnv);
 //			if (_ax == -1) exit(-1);
 		}
 		if (!scumm_stricmp(_tokens[0], "position")) {
@@ -171,7 +171,7 @@ void freeAnimations() {
 	Animation *v4 = (Animation*)_animations._next;
 	while (v4) {
 		freeScript(v4->_program);
-		_vm->_graphics->freeCnv(&v4->_cnv);
+		_vm->_gfx->freeCnv(&v4->_cnv);
 		v4 = (Animation*)v4->_zone._node._next;
 	}
 
@@ -199,10 +199,10 @@ void jobDisplayAnimations(void *parm, Job *j) {
 			if (v18->_zone._flags & kFlagsNoMasked)
 				_si = 3;
 			else
-				_si = _vm->_graphics->queryMask(v18->_zone.pos._position._y + v18->_cnv._height);
+				_si = _vm->_gfx->queryMask(v18->_zone.pos._position._y + v18->_cnv._height);
 
 //			printf("jobDisplayAnimations %s, x: %i, y: %i, w: %i, h: %i\n", v18->_zone._name, v18->_zone.pos._position._x, v18->_zone.pos._position._y, v14._width, v14._height);
-			_vm->_graphics->blitCnv(&v14, v18->_zone.pos._position._x, v18->_zone.pos._position._y, _si, Graphics::kBitBack, Graphics::kMask0);
+			_vm->_gfx->blitCnv(&v14, v18->_zone.pos._position._x, v18->_zone.pos._position._y, _si, Gfx::kBitBack, Gfx::kMask0);
 
 		}
 
@@ -234,7 +234,7 @@ void jobEraseAnimations(void *arg_0, Job *j) {
 		if (((a->_zone._flags & kFlagsActive) == 0) && ((a->_zone._flags & kFlagsRemove) == 0)) continue;
 
  // 	  printf("jobEraseAnimations %s, x: %i, y: %i, w: %i, h: %i\n", a->_zone._name, a->_zone.pos._oldposition._x, a->_zone.pos._oldposition._y, a->_cnv._width, a->_cnv._height);
-		_vm->_graphics->restoreBackground(a->_zone.pos._oldposition._x, a->_zone.pos._oldposition._y, a->_cnv._width, a->_cnv._height);
+		_vm->_gfx->restoreBackground(a->_zone.pos._oldposition._x, a->_zone.pos._oldposition._y, a->_cnv._width, a->_cnv._height);
 		if (arg_0) {
 			a->_zone.pos._oldposition._x = a->_zone.pos._position._x;
 			a->_zone.pos._oldposition._y = a->_zone.pos._position._y;
@@ -575,12 +575,12 @@ void jobRunScripts(void *parm, Job *j) {
 				v18._data1 = NULL; // inst->_opBase._a->_cnv.field_8[inst->_opBase._a->_frame];
 
 				if (inst->_flags & kInstMaskedPut) {
-					uint16 _si = _vm->_graphics->queryMask(inst->_opB._value);
-					_vm->_graphics->blitCnv(&v18, inst->_opA._value, inst->_opB._value, _si, Graphics::kBitBack, Graphics::kMask0 );
-					_vm->_graphics->blitCnv(&v18, inst->_opA._value, inst->_opB._value, _si, Graphics::kBit2, Graphics::kMask0 );
+					uint16 _si = _vm->_gfx->queryMask(inst->_opB._value);
+					_vm->_gfx->blitCnv(&v18, inst->_opA._value, inst->_opB._value, _si, Gfx::kBitBack, Gfx::kMask0 );
+					_vm->_gfx->blitCnv(&v18, inst->_opA._value, inst->_opB._value, _si, Gfx::kBit2, Gfx::kMask0 );
 				} else {
-					_vm->_graphics->flatBlitCnv(&v18, inst->_opA._value, inst->_opB._value, Graphics::kBitBack, v18._data1);
-					_vm->_graphics->flatBlitCnv(&v18, inst->_opA._value, inst->_opB._value, Graphics::kBit2, v18._data1);
+					_vm->_gfx->flatBlitCnv(&v18, inst->_opA._value, inst->_opB._value, Gfx::kBitBack, v18._data1);
+					_vm->_gfx->flatBlitCnv(&v18, inst->_opA._value, inst->_opB._value, Gfx::kBit2, v18._data1);
 				}
 				break;
 

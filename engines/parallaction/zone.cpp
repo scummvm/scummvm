@@ -103,7 +103,7 @@ void Parallaction::parseZone(Script &script, Node *list, char *name) {
 		}
 		if (!scumm_stricmp(_tokens[0], "label")) {
 //			printf("label: %s", _tokens[1]);
-			_vm->_graphics->makeCnvFromString(&z->_label._cnv, _tokens[1]);
+			_vm->_gfx->makeCnvFromString(&z->_label._cnv, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "flags")) {
 			uint16 _si = 1;
@@ -159,7 +159,7 @@ void freeZones(Node *list) {
 		case kZoneDoor:
 			free(z->u.door->_location);
 			free(z->u.door->_background);
-			_vm->_graphics->freeCnv(&z->u.door->_cnv);
+			_vm->_gfx->freeCnv(&z->u.door->_cnv);
 			free(z->u.door);
 			break;
 
@@ -170,7 +170,7 @@ void freeZones(Node *list) {
 
 		case kZoneGet:
 			free(z->u.get->_backup);
-			_vm->_graphics->freeStaticCnv(&z->u.get->_cnv);
+			_vm->_gfx->freeStaticCnv(&z->u.get->_cnv);
 			free(z->u.get);
 			break;
 
@@ -188,7 +188,7 @@ void freeZones(Node *list) {
 
 		free(z->_label._text);
 		z->_label._text = NULL;
-		_vm->_graphics->freeStaticCnv(&z->_label._cnv);
+		_vm->_gfx->freeStaticCnv(&z->_label._cnv);
 		freeCommands(z->_commands);
 
 		z=(Zone*)z->_node._next;
@@ -294,9 +294,9 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 //				vE0._data1 = doorcnv->field_8[_ax];
 
 				u->door->_background = (byte*)malloc(vE0._width*vE0._height);
-				_graphics->backupDoorBackground(u->door, z->_limits._left, z->_limits._top);
+				_gfx->backupDoorBackground(u->door, z->_limits._left, z->_limits._top);
 
-				_graphics->flatBlitCnv(&vE0, z->_limits._left, z->_limits._top, Graphics::kBitBack, vE0._data1);
+				_gfx->flatBlitCnv(&vE0, z->_limits._left, z->_limits._top, Gfx::kBitBack, vE0._data1);
 			}
 
 			if (!scumm_stricmp(_tokens[0],	"startpos")) {
@@ -314,8 +314,8 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 				u->get->_backup = (byte*)malloc(vE4->_width*vE4->_height);
 
 				if ((z->_flags & kFlagsRemove) == 0) {
-					_graphics->backupGetBackground(u->get, z->_limits._left, z->_limits._top);
-					_graphics->flatBlitCnv(vE4, z->_limits._left, z->_limits._top, Graphics::kBitBack, vE4->_data1);
+					_gfx->backupGetBackground(u->get, z->_limits._left, z->_limits._top);
+					_gfx->flatBlitCnv(vE4, z->_limits._left, z->_limits._top, Gfx::kBitBack, vE4->_data1);
 				}
 			}
 
@@ -372,17 +372,17 @@ void displayCharacterComment(ExamineData *data) {
 	v3C._data0 = _yourTalk._array[0];
 	v3C._data1 = NULL; //_yourTalk.field_8[0];
 
-	_vm->_graphics->setFont("comic");
-	_vm->_graphics->flatBlitCnv(&v3C, 190, 80, Graphics::kBitFront, v3C._data1);
+	_vm->_gfx->setFont("comic");
+	_vm->_gfx->flatBlitCnv(&v3C, 190, 80, Gfx::kBitFront, v3C._data1);
 
 	int16 v26, v28;
-	_vm->_graphics->getStringExtent(data->_description, 130, &v28, &v26);
-	_vm->_graphics->drawBalloon(140, 10, v28, v26, 0);
-	_vm->_graphics->displayWrappedString(data->_description, 140, 10, 130, 0);
+	_vm->_gfx->getStringExtent(data->_description, 130, &v28, &v26);
+	_vm->_gfx->drawBalloon(140, 10, v28, v26, 0);
+	_vm->_gfx->displayWrappedString(data->_description, 140, 10, 130, 0);
 
 	waitUntilLeftClick();
 
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	return;
 }
@@ -403,22 +403,22 @@ void displayItemComment(ExamineData *data) {
 	char v68[PATH_LEN];
 	strcpy(v68, data->_filename);
 	_vm->_disk->loadStatic(v68, &data->_cnv);
-	_vm->_graphics->flatBlitCnv(&data->_cnv, 140, (SCREEN_HEIGHT - data->_cnv._height)/2, Graphics::kBitFront, data->_cnv._data1);
-	_vm->_graphics->freeStaticCnv(&data->_cnv);
+	_vm->_gfx->flatBlitCnv(&data->_cnv, 140, (SCREEN_HEIGHT - data->_cnv._height)/2, Gfx::kBitFront, data->_cnv._data1);
+	_vm->_gfx->freeStaticCnv(&data->_cnv);
 
 	int16 v6A = 0, v6C = 0;
 
-	_vm->_graphics->setFont("comic");
-	_vm->_graphics->getStringExtent(data->_description, 130, &v6C, &v6A);
-	_vm->_graphics->drawBalloon(0, 90, v6C, v6A, 0);
-	_vm->_graphics->flatBlitCnv(&_yourHead, 100, 152, Graphics::kBitFront, _yourHead._data1);
-	_vm->_graphics->displayWrappedString(data->_description, 0, 90, 130, 0);
+	_vm->_gfx->setFont("comic");
+	_vm->_gfx->getStringExtent(data->_description, 130, &v6C, &v6A);
+	_vm->_gfx->drawBalloon(0, 90, v6C, v6A, 0);
+	_vm->_gfx->flatBlitCnv(&_yourHead, 100, 152, Gfx::kBitFront, _yourHead._data1);
+	_vm->_gfx->displayWrappedString(data->_description, 0, 90, 130, 0);
 
 	jobEraseAnimations((void*)1, NULL);
 
 	waitUntilLeftClick();
 
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	return;
 }
@@ -487,14 +487,14 @@ void jobToggleDoor(void *parm, Job *j) {
 		v14._width = v18->_width;
 		v14._height = v18->_height;
 
-		_vm->_graphics->restoreZoneBackground(z->u.door->_background, z->_limits._left, z->_limits._top, v18->_width, v18->_height);
+		_vm->_gfx->restoreZoneBackground(z->u.door->_background, z->_limits._left, z->_limits._top, v18->_width, v18->_height);
 
 		uint16 _ax = (z->_flags & kFlagsClosed ? 0 : 1);
 
 		v14._data0 = v18->_array[_ax];
 
-		_vm->_graphics->flatBlitCnv(&v14, z->_limits._left, z->_limits._top, Graphics::kBitBack, v14._data1);
-		_vm->_graphics->flatBlitCnv(&v14, z->_limits._left, z->_limits._top, Graphics::kBit2, v14._data1);
+		_vm->_gfx->flatBlitCnv(&v14, z->_limits._left, z->_limits._top, Gfx::kBitBack, v14._data1);
+		_vm->_gfx->flatBlitCnv(&v14, z->_limits._left, z->_limits._top, Gfx::kBit2, v14._data1);
 	}
 
 	count++;
@@ -522,7 +522,7 @@ void jobRemovePickedItem(void *parm, Job *j) {
 	static uint16 count = 0;
 
 	if (z->u.get->_cnv._width != 0) {
-		_vm->_graphics->restoreZoneBackground(z->u.get->_backup, z->_limits._left, z->_limits._top, z->u.get->_cnv._width, z->u.get->_cnv._height);
+		_vm->_gfx->restoreZoneBackground(z->u.get->_backup, z->_limits._left, z->_limits._top, z->u.get->_cnv._width, z->u.get->_cnv._height);
 	}
 
 	count++;
@@ -541,11 +541,11 @@ void jobDisplayDroppedItem(void *parm, Job *j) {
 
 	if (&z->u.get->_cnv != NULL) {
 		if (z->u.get->_cnv._data0 != NULL) {
-			_vm->_graphics->backupGetBackground(z->u.get, z->_limits._left, z->_limits._top);
+			_vm->_gfx->backupGetBackground(z->u.get, z->_limits._left, z->_limits._top);
 		}
 
-		_vm->_graphics->flatBlitCnv(&z->u.get->_cnv, z->_limits._left, z->_limits._top, Graphics::kBitBack, z->u.get->_cnv._data1);
-		_vm->_graphics->flatBlitCnv(&z->u.get->_cnv, z->_limits._left, z->_limits._top, Graphics::kBit2, z->u.get->_cnv._data1);
+		_vm->_gfx->flatBlitCnv(&z->u.get->_cnv, z->_limits._left, z->_limits._top, Gfx::kBitBack, z->u.get->_cnv._data1);
+		_vm->_gfx->flatBlitCnv(&z->u.get->_cnv, z->_limits._left, z->_limits._top, Gfx::kBit2, z->u.get->_cnv._data1);
 	}
 
 	j->_count++;

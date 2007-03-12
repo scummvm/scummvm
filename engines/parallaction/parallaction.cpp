@@ -253,7 +253,7 @@ int Parallaction::init() {
 	_yourself._zone._label._text = strdup("yourself");
 
 	addNode(&_animations, &_yourself._zone._node);
-	_graphics = new Graphics(this);
+	_gfx = new Gfx(this);
 
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
@@ -398,14 +398,14 @@ void Parallaction::runGame() {
 	_jRunScripts = addJob(jobRunScripts, 0, kPriority15);
 	addJob(jobDisplayAnimations, 0, kPriority3);
 
-	_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 
 	if (_location._commands)
 		runCommands(_location._commands);
 
 	runJobs();
 
-	_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	if (_location._comment)
 		doLocationEnterTransition();
@@ -454,11 +454,11 @@ void Parallaction::runGame() {
 		runJobs();
 
 		if ((_engineFlags & kEnginePauseJobs) == 0 || (_engineFlags & kEngineInventory)) {
-			_graphics->swapBuffers();
+			_gfx->swapBuffers();
 			byte palette[PALETTE_SIZE];
 			memcpy(palette, _palette, sizeof(palette));
-			_graphics->animatePalette(palette);
-			_graphics->setPalette(palette);
+			_gfx->animatePalette(palette);
+			_gfx->setPalette(palette);
 		}
 
 	}
@@ -476,10 +476,10 @@ void Parallaction::processInput(InputData *data) {
 	switch (data->_event) {
 	case kEvEnterZone:
 		debugC(2, kDebugInput, "processInput: kEvEnterZone");
-		_graphics->_labelPosition[1]._x = -1000;
-		_graphics->_labelPosition[1]._y = -1000;
-		_graphics->_labelPosition[0]._x = -1000;
-		_graphics->_labelPosition[0]._y = -1000;
+		_gfx->_labelPosition[1]._x = -1000;
+		_gfx->_labelPosition[1]._y = -1000;
+		_gfx->_labelPosition[0]._x = -1000;
+		_gfx->_labelPosition[0]._y = -1000;
 		_jDrawLabel = addJob(&jobDisplayLabel, (void*)data->_label, kPriority0);
 		_jEraseLabel = addJob(&jobEraseLabel, (void*)data->_label, kPriority20);
 		break;
@@ -745,7 +745,7 @@ void Parallaction::changeCursor(int32 index) {
 		_activeItem._id = _inventory[index]._id;
 	}
 
-	_graphics->setMousePointer(index);
+	_gfx->setMousePointer(index);
 
 	return;
 }
@@ -754,14 +754,14 @@ void Parallaction::changeCursor(int32 index) {
 
 void freeCharacterFrames() {
 
-	_vm->_graphics->freeCnv(&_characterFrames);
+	_vm->_gfx->freeCnv(&_characterFrames);
 
 	if (!IS_DUMMY_CHARACTER(_vm->_characterName)) {
-		_vm->_graphics->freeCnv(&_miniCharacterFrames);
+		_vm->_gfx->freeCnv(&_miniCharacterFrames);
 		_vm->freeTable(_objectsNames);
-		_vm->_graphics->freeCnv(&_yourTalk);
-		_vm->_graphics->freeStaticCnv(&_yourHead);
-		_vm->_graphics->freeCnv(&_yourObjects);
+		_vm->_gfx->freeCnv(&_yourTalk);
+		_vm->_gfx->freeStaticCnv(&_yourHead);
+		_vm->_gfx->freeCnv(&_yourObjects);
 	}
 
 	return;

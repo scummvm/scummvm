@@ -186,7 +186,7 @@ char *Parallaction::parseDialogueString(Script &script) {
 	} while (strlen(vD0) == 0);
 
 	vD0[strlen(vD0)-1] = '\0';	// deletes the trailing '0xA' inserted by parseNextLine
-								// this is critical for Graphics::displayBalloonString to work properly
+								// this is critical for Gfx::displayBalloonString to work properly
 
 	char *vCC = (char*)malloc(strlen(vD0)+1);
 	strcpy(vCC, vD0);
@@ -226,11 +226,11 @@ void runDialogue(SpeakData *data) {
 /*
 	// the only character which can have a dialogue inside the museum location is Dino
 	if (!scumm_stricmp(_name, "museum")) {
-		_vm->_graphics->freeCnv( &_characterFrames );
+		_vm->_gfx->freeCnv( &_characterFrames );
 		debugC(1, kDebugDialogue, "runDialogue: special trick for 'museum' location");
 	}
 */
-	_vm->_graphics->setFont("comic");
+	_vm->_gfx->setFont("comic");
 
 	Cnv v6E;
 	StaticCnv v5C, v48;
@@ -268,22 +268,22 @@ void runDialogue(SpeakData *data) {
 		if (scumm_stricmp(v60->_text, "NULL")) {
 			debugC(1, kDebugDialogue, "runDialogue: showing question '%s'", v60->_text);
 
-			_vm->_graphics->flatBlitCnv(
+			_vm->_gfx->flatBlitCnv(
 				&v5C,
 				QUESTION_CHARACTER_X,
 				QUESTION_CHARACTER_Y,
-				Graphics::kBitFront,
+				Gfx::kBitFront,
 				v5C._data1
 			);
 
-			_vm->_graphics->getStringExtent(
+			_vm->_gfx->getStringExtent(
 				v60->_text,
 				MAX_BALLOON_WIDTH,
 				&question_width,
 				&question_height
 			);
 
-			_vm->_graphics->drawBalloon(
+			_vm->_gfx->drawBalloon(
 				QUESTION_BALLOON_X,
 				QUESTION_BALLOON_Y,
 				question_width,
@@ -291,7 +291,7 @@ void runDialogue(SpeakData *data) {
 				v60->_mood & 0x10
 			);
 
-			_vm->_graphics->displayWrappedString(
+			_vm->_gfx->displayWrappedString(
 				v60->_text,
 				QUESTION_BALLOON_X,
 				QUESTION_BALLOON_Y,
@@ -300,7 +300,7 @@ void runDialogue(SpeakData *data) {
 			);
 
 			waitUntilLeftClick();
-			_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+			_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 		}
 
 		if (v60->_answers[0] == NULL) break;
@@ -322,7 +322,7 @@ void runDialogue(SpeakData *data) {
 				// display suitable answers
 				if (((v60->_yesFlags[_si] & v28) == v60->_yesFlags[_si]) && ((v60->_noFlags[_si] & ~v28) == v60->_noFlags[_si])) {
 
-					_vm->_graphics->getStringExtent(
+					_vm->_gfx->getStringExtent(
 						v60->_answers[_si],
 						MAX_BALLOON_WIDTH,
 						&_answerBalloonW[_si],
@@ -334,7 +334,7 @@ void runDialogue(SpeakData *data) {
 						v60->_answers[_si]
 					);
 
-					_vm->_graphics->drawBalloon(
+					_vm->_gfx->drawBalloon(
 						_answerBalloonX[_si],
 						_answerBalloonY[_si],
 						_answerBalloonW[_si],
@@ -344,7 +344,7 @@ void runDialogue(SpeakData *data) {
 
 					_answerBalloonY[_si+1] = 10 + _answerBalloonY[_si] + _answerBalloonH[_si];
 
-					askPassword = _vm->_graphics->displayWrappedString(
+					askPassword = _vm->_gfx->displayWrappedString(
 						v60->_answers[_si],
 						_answerBalloonX[_si],
 						_answerBalloonY[_si],
@@ -379,11 +379,11 @@ void runDialogue(SpeakData *data) {
 
 				debugC(1, kDebugDialogue, "runDialogue: showing answering face (%p)", (const void*)v48._data0);
 
-				_vm->_graphics->flatBlitCnv(
+				_vm->_gfx->flatBlitCnv(
 					&v48,
 					ANSWER_CHARACTER_X,
 					ANSWER_CHARACTER_Y,
-					Graphics::kBitFront,
+					Gfx::kBitFront,
 					v48._data1
 				);
 
@@ -404,9 +404,9 @@ void runDialogue(SpeakData *data) {
 
 					while (askPassword == true) {
 						strcpy(password, ".......");
-						_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+						_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
-						_vm->_graphics->drawBalloon(
+						_vm->_gfx->drawBalloon(
 							_answerBalloonX[0],
 							_answerBalloonY[0],
 							_answerBalloonW[0],
@@ -414,7 +414,7 @@ void runDialogue(SpeakData *data) {
 							1
 						);
 
-						_vm->_graphics->displayWrappedString(
+						_vm->_gfx->displayWrappedString(
 							v60->_answers[0],
 							_answerBalloonX[0],
 							_answerBalloonY[0],
@@ -422,15 +422,15 @@ void runDialogue(SpeakData *data) {
 							3
 						);
 
-						_vm->_graphics->flatBlitCnv(
+						_vm->_gfx->flatBlitCnv(
 							&v48,
 							ANSWER_CHARACTER_X,
 							ANSWER_CHARACTER_Y,
-							Graphics::kBitFront,
+							Gfx::kBitFront,
 							v48._data1
 						);
 
-						_vm->_graphics->displayBalloonString(
+						_vm->_gfx->displayBalloonString(
 							_answerBalloonX[0] + 5,
 							_answerBalloonY[0] + _answerBalloonH[0] - 15,
 							"> ",
@@ -451,7 +451,7 @@ void runDialogue(SpeakData *data) {
 							passwordLen++;
 							password[passwordLen] = '\0';
 
-							_vm->_graphics->displayBalloonString(
+							_vm->_gfx->displayBalloonString(
 								_answerBalloonX[0] + 5,
 								_answerBalloonY[0] + _answerBalloonH[0] - 15,
 								password,
@@ -475,7 +475,7 @@ void runDialogue(SpeakData *data) {
 
 				}
 
-				_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+				_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 				v34 = v60->_commands[_di];
 				v60 = (Dialogue*)v60->_following._questions[_di];
@@ -494,10 +494,10 @@ void runDialogue(SpeakData *data) {
 	}
 
 	debugC(1, kDebugDialogue, "runDialogue: out of dialogue loop");
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	if (scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0') {
-		_vm->_graphics->freeCnv(&v6E);
+		_vm->_gfx->freeCnv(&v6E);
 		debugC(1, kDebugDialogue, "runDialogue: 2nd character head free'd");
 	}
 
@@ -542,7 +542,7 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 
 	if (numAvailableAnswers == 1) {
 
-		_vm->_graphics->displayWrappedString(
+		_vm->_gfx->displayWrappedString(
 			q->_answers[_di],
 			_answerBalloonX[_di],
 			_answerBalloonY[_di],
@@ -553,11 +553,11 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 		cnv->_data0 = _yourTalk._array[q->_answer_moods[_di] & 0xF];
 //		cnv->_data1 = _yourTalk.field_8[q->_answer_moods[_di] & 0xF];
 
-		_vm->_graphics->flatBlitCnv(
+		_vm->_gfx->flatBlitCnv(
 			cnv,
 			ANSWER_CHARACTER_X,
 			ANSWER_CHARACTER_Y,
-			Graphics::kBitFront,
+			Gfx::kBitFront,
 			cnv->_data1
 		);
 
@@ -575,7 +575,7 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 
 		if (_si != v2) {
 			if (v2 != -1) {
-				_vm->_graphics->displayWrappedString(
+				_vm->_gfx->displayWrappedString(
 					q->_answers[v2],
 					_answerBalloonX[v2],
 					_answerBalloonY[v2],
@@ -584,7 +584,7 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 				);
 			}
 
-			_vm->_graphics->displayWrappedString(
+			_vm->_gfx->displayWrappedString(
 				q->_answers[_si],
 				_answerBalloonX[_si],
 				_answerBalloonY[_si],
@@ -595,11 +595,11 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 			cnv->_data0 = _yourTalk._array[q->_answer_moods[_si] & 0xF];
 //			cnv->_data1 = _yourTalk.field_8[q->_answer_moods[_si] & 0xF];
 
-			_vm->_graphics->flatBlitCnv(
+			_vm->_gfx->flatBlitCnv(
 				cnv,
 				ANSWER_CHARACTER_X,
 				ANSWER_CHARACTER_Y,
-				Graphics::kBitFront,
+				Gfx::kBitFront,
 				cnv->_data1
 			);
 
@@ -648,8 +648,8 @@ int16 getHoverAnswer(int16 x, int16 y, Question *q) {
 //
 void enterDialogue() {
 
-	_vm->_graphics->backupBackgroundMask(Graphics::kMask0);
-	_vm->_graphics->backupBackgroundPath(Graphics::kPath0);
+	_vm->_gfx->backupBackgroundMask(Gfx::kMask0);
+	_vm->_gfx->backupBackgroundPath(Gfx::kPath0);
 
 	return;
 }
@@ -659,8 +659,8 @@ void enterDialogue() {
 //
 void exitDialogue() {
 
-	_vm->_graphics->restoreBackgroundMask(Graphics::kMask0);
-	_vm->_graphics->restoreBackgroundPath(Graphics::kPath0);
+	_vm->_gfx->restoreBackgroundMask(Gfx::kMask0);
+	_vm->_gfx->restoreBackgroundPath(Gfx::kPath0);
 
 	refreshInventory(_vm->_characterName);
 

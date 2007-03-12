@@ -233,7 +233,7 @@ enum {
 
 
 
-class Graphics;
+class Gfx;
 class Menu;
 class MidiPlayer;
 
@@ -296,7 +296,7 @@ public:
 
 	MidiPlayer *_midiPlayer;
 
-	Graphics*	_graphics;
+	Gfx*	_gfx;
 	Menu*	_menu;
 	char	_characterName[30];
 	Disk*	_disk;

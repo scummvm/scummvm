@@ -132,16 +132,16 @@ void _c_startIntro(void *parm) {
 
 void _c_endIntro(void *parm) {
 
-	_vm->_graphics->setFont("slide");
-	_vm->_graphics->_proportionalFont = false;
+	_vm->_gfx->setFont("slide");
+	_vm->_gfx->_proportionalFont = false;
 
 	uint16 _di;
 	for (uint16 _si = 0; _si < 7; _si++) {
-		_di = _vm->_graphics->getStringWidth(_credits[_si]._role);
-		_vm->_graphics->displayString((SCREEN_WIDTH - _di)/2, 80, _credits[_si]._role);
+		_di = _vm->_gfx->getStringWidth(_credits[_si]._role);
+		_vm->_gfx->displayString((SCREEN_WIDTH - _di)/2, 80, _credits[_si]._role);
 
-		_di = _vm->_graphics->getStringWidth(_credits[_si]._name);
-		_vm->_graphics->displayString((SCREEN_WIDTH - _di)/2, 100, _credits[_si]._name);
+		_di = _vm->_gfx->getStringWidth(_credits[_si]._name);
+		_vm->_gfx->displayString((SCREEN_WIDTH - _di)/2, 100, _credits[_si]._name);
 
 		for (uint16 v2 = 0; v2 < 100; v2++) {
 			_vm->updateInput();
@@ -149,7 +149,7 @@ void _c_endIntro(void *parm) {
 				_vm->waitTime( 1 );
 		}
 
-		_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
+		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	}
 
 	waitUntilLeftClick();
@@ -168,27 +168,27 @@ void _c_moveSheet(void *parm) {
 		x -= 16;
 
 	uint16 _ax = (x + 32 > 319) ? 319 : (x + 32);
-	_vm->_graphics->floodFill(1, x, 47, _ax, 199, Graphics::kBitBack);
-	_vm->_graphics->floodFill(1, x, 47, _ax, 199, Graphics::kBit2);
+	_vm->_gfx->floodFill(1, x, 47, _ax, 199, Gfx::kBitBack);
+	_vm->_gfx->floodFill(1, x, 47, _ax, 199, Gfx::kBit2);
 
 	if (x >= 104) return;
 
 	_ax = (x + 247 > 319) ? 319 : (x + 247);
-	_vm->_graphics->floodFill(12, x+215, 47, _ax, 199, Graphics::kBitBack);
-	_vm->_graphics->floodFill(12, x+215, 47, _ax, 199, Graphics::kBit2);
+	_vm->_gfx->floodFill(12, x+215, 47, _ax, 199, Gfx::kBitBack);
+	_vm->_gfx->floodFill(12, x+215, 47, _ax, 199, Gfx::kBit2);
 
 	return;
 }
 
 
-void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Graphics::Buffers mask) {
+void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Gfx::Buffers mask) {
 
 	uint16 unused = 0;
 	int16 dx = newX - oldX;
 	int16 dy = newY - oldY;
 
-	_vm->_graphics->maskOpNot(oldX, oldY, unused, mask);
-	_vm->_graphics->maskOpNot(newX, newY, unused, mask);
+	_vm->_gfx->maskOpNot(oldX, oldY, unused, mask);
+	_vm->_gfx->maskOpNot(newX, newY, unused, mask);
 
 	if (abs(dx) >= abs(dy)) {
 
@@ -200,7 +200,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Graphics::Bu
 					oldY++;
 					v4 -= dx;
 				}
-				_vm->_graphics->maskOpNot(i + oldX, oldY, unused, mask);
+				_vm->_gfx->maskOpNot(i + oldX, oldY, unused, mask);
 			}
 		}
 
@@ -211,7 +211,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Graphics::Bu
 					oldY++;
 					v4 -= abs(dx);
 				}
-				_vm->_graphics->maskOpNot(oldX - i, oldY, unused, mask);
+				_vm->_gfx->maskOpNot(oldX - i, oldY, unused, mask);
 			}
 		}
 
@@ -222,7 +222,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Graphics::Bu
 					oldY--;
 					v4 -= abs(dx);
 				}
-				_vm->_graphics->maskOpNot(oldX - i, oldY, unused, mask);
+				_vm->_gfx->maskOpNot(oldX - i, oldY, unused, mask);
 			}
 		}
 
@@ -233,7 +233,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Graphics::Bu
 					oldY--;
 					v4 -= dx;
 				}
-				_vm->_graphics->maskOpNot(i + oldX, oldY, unused, mask);
+				_vm->_gfx->maskOpNot(i + oldX, oldY, unused, mask);
 			}
 		}
 
@@ -250,7 +250,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Graphics::Bu
 					oldX++;
 					v4 -= dy;
 				}
-				_vm->_graphics->maskOpNot(oldX, i + oldY, unused, mask);
+				_vm->_gfx->maskOpNot(oldX, i + oldY, unused, mask);
 			}
 		}
 
@@ -261,7 +261,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Graphics::Bu
 					oldX--;
 					v4 -= dy;
 				}
-				_vm->_graphics->maskOpNot(oldX, i + oldY, unused, mask);
+				_vm->_gfx->maskOpNot(oldX, i + oldY, unused, mask);
 			}
 		}
 
@@ -272,7 +272,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Graphics::Bu
 					oldX--;
 					v4 -= abs(dy);
 				}
-				_vm->_graphics->maskOpNot(oldX, oldY - i, unused, mask);
+				_vm->_gfx->maskOpNot(oldX, oldY - i, unused, mask);
 			}
 		}
 
@@ -283,7 +283,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Graphics::Bu
 					oldX++;
 					v4 -= abs(dy);
 				}
-				_vm->_graphics->maskOpNot(oldX, oldY - i, unused, mask);
+				_vm->_gfx->maskOpNot(oldX, oldY - i, unused, mask);
 			}
 		}
 
@@ -303,7 +303,7 @@ void _c_sketch(void *parm) {
 	uint16 _2 = _rightHandPositions[2*(index-1)+1];
 	uint16 _1 = _rightHandPositions[2*(index-1)];
 
-	introFunc1(_1, _2, _3, _4, Graphics::kMask0 );
+	introFunc1(_1, _2, _3, _4, Gfx::kMask0 );
 
 	_rightHandAnim->_zone.pos._position._x = _rightHandPositions[index*2];
 	_rightHandAnim->_zone.pos._position._y = _rightHandPositions[index*2+1] - 20;
@@ -318,11 +318,11 @@ void _c_sketch(void *parm) {
 
 void _c_shade(void *parm) {
 
-	_vm->_graphics->maskClearRectangle(_rightHandAnim->_zone.pos._position._x - 36,
+	_vm->_gfx->maskClearRectangle(_rightHandAnim->_zone.pos._position._x - 36,
 		_rightHandAnim->_zone.pos._position._y - 36,
 		_rightHandAnim->_zone.pos._position._x,
 		_rightHandAnim->_zone.pos._position._y,
-		Graphics::kMask0 );
+		Gfx::kMask0 );
 
 	return;
 

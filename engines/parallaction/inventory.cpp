@@ -31,7 +31,7 @@
 namespace Parallaction {
 
 //
-//	inventory is kept in Graphics::kBit3 at 0 offset
+//	inventory is kept in Gfx::kBit3 at 0 offset
 //	it is a grid made of (at most) 30 cells, 24x24 pixels each,
 //	arranged in 6 lines
 //
@@ -187,8 +187,8 @@ void drawInventoryItem(uint16 pos, InventoryItem *item) {
 	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
 	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
-	_vm->_graphics->copyRect(
-		Graphics::kBit3,
+	_vm->_gfx->copyRect(
+		Gfx::kBit3,
 		col * INVENTORYITEM_WIDTH,
 		line * _yourObjects._height,
 		INVENTORYITEM_WIDTH,
@@ -213,8 +213,8 @@ void highlightInventoryItem(int16 pos, byte color) {
 	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
 	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
-	_vm->_graphics->drawBorder(
-		Graphics::kBit3,
+	_vm->_gfx->drawBorder(
+		Gfx::kBit3,
 		col * INVENTORYITEM_WIDTH,
 		line * _yourObjects._height,
 		INVENTORYITEM_WIDTH,
@@ -234,8 +234,8 @@ void extractInventoryGraphics(int16 pos, byte *dst) {
 	int16 line = pos / INVENTORY_ITEMS_PER_LINE;
 	int16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
-	_vm->_graphics->grabRect(
-		Graphics::kBit3,
+	_vm->_gfx->grabRect(
+		Gfx::kBit3,
 		dst,
 		col * INVENTORYITEM_WIDTH,
 		line * _yourObjects._height,
@@ -256,11 +256,11 @@ void jobShowInventory(void *parm, Job *j) {
 
 	_numInvLines = (_numInvLines + 4) / INVENTORY_ITEMS_PER_LINE;
 
-	_vm->_graphics->copyRect(
-		Graphics::kBit3,
+	_vm->_gfx->copyRect(
+		Gfx::kBit3,
 		0,
 		0,
-		Graphics::kBitBack,
+		Gfx::kBitBack,
 		_invPosition._x,
 		_invPosition._y,
 		INVENTORY_WIDTH,
@@ -289,11 +289,11 @@ void jobHideInventory(void *parm, Job *j) {
 		_engineFlags &= ~kEngineMouse;
 	}
 
-	_vm->_graphics->copyRect(
-		Graphics::kBit2,
+	_vm->_gfx->copyRect(
+		Gfx::kBit2,
 		_invPosition._x,
 		_invPosition._y,
-		Graphics::kBitBack,
+		Gfx::kBitBack,
 		_invPosition._x,
 		_invPosition._y,
 		INVENTORY_WIDTH,

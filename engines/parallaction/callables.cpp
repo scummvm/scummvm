@@ -64,14 +64,14 @@ void _c_score(void *parm) {
 
 void _c_fade(void *parm) {
 	byte palette[PALETTE_SIZE];
-	_vm->_graphics->getBlackPalette(palette);
-	_vm->_graphics->setPalette(palette);
+	_vm->_gfx->getBlackPalette(palette);
+	_vm->_gfx->setPalette(palette);
 
-	_vm->_graphics->swapBuffers();
+	_vm->_gfx->swapBuffers();
 
 	for (uint16 _di = 0; _di < 64; _di++) {
-		_vm->_graphics->fadePalette(palette);
-		_vm->_graphics->setPalette(palette);
+		_vm->_gfx->fadePalette(palette);
+		_vm->_gfx->setPalette(palette);
 	}
 
 	_vm->waitTime( 1 );
@@ -207,7 +207,7 @@ void _c_onMouse(void *parm) {
 
 void _c_setMask(void *parm) {
 
-	_vm->_graphics->intGrottaHackMask();
+	_vm->_gfx->intGrottaHackMask();
 
 	return;
 }
@@ -225,16 +225,16 @@ void _c_frankenstein(void *parm) {
 		pal0[i*3+2] = 0;
 	}
 
-	_vm->_graphics->getBlackPalette(pal1);
+	_vm->_gfx->getBlackPalette(pal1);
 
 	for (uint16 _di = 0; _di < 30; _di++) {
 		g_system->delayMillis(20);
-		_vm->_graphics->setPalette(pal0);
+		_vm->_gfx->setPalette(pal0);
 		g_system->delayMillis(20);
-		_vm->_graphics->setPalette(pal1);
+		_vm->_gfx->setPalette(pal1);
 	}
 
-	_vm->_graphics->setPalette(_palette);
+	_vm->_gfx->setPalette(_palette);
 
 	return;
 }
@@ -282,41 +282,41 @@ void _c_finito(void *parm) {
 	cleanInventory();
 	refreshInventory(_vm->_characterName);
 
-	_vm->_graphics->palUnk0(_palette);
+	_vm->_gfx->palUnk0(_palette);
 
 	if (gameCompleted) {
-		_vm->_graphics->setFont("slide");
-		_vm->_graphics->_proportionalFont = false;
-		uint16 _ax = _vm->_graphics->getStringWidth(v4C[_language]);
-		_vm->_graphics->displayString((SCREEN_WIDTH - _ax)/2, 70, v4C[_language]);
-		_ax = _vm->_graphics->getStringWidth(v3C[_language]);
-		_vm->_graphics->displayString((SCREEN_WIDTH - _ax)/2, 100, v3C[_language]);
-		_ax = _vm->_graphics->getStringWidth(v2C[_language]);
-		_vm->_graphics->displayString((SCREEN_WIDTH - _ax)/2, 130, v2C[_language]);
-		_ax = _vm->_graphics->getStringWidth(v1C[_language]);
-		_vm->_graphics->displayString((SCREEN_WIDTH - _ax)/2, 160, v1C[_language]);
+		_vm->_gfx->setFont("slide");
+		_vm->_gfx->_proportionalFont = false;
+		uint16 _ax = _vm->_gfx->getStringWidth(v4C[_language]);
+		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 70, v4C[_language]);
+		_ax = _vm->_gfx->getStringWidth(v3C[_language]);
+		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 100, v3C[_language]);
+		_ax = _vm->_gfx->getStringWidth(v2C[_language]);
+		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 130, v2C[_language]);
+		_ax = _vm->_gfx->getStringWidth(v1C[_language]);
+		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 160, v1C[_language]);
 
-		_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBitBack);
-		_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBit2);
+		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
+		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBit2);
 		waitUntilLeftClick();
 
 		strcpy(_vm->_location._name, "estgrotta.drki");
 
 		_engineFlags |= kEngineChangeLocation;
 	} else {
-		_vm->_graphics->setFont("slide");
-		_vm->_graphics->_proportionalFont = false;
-		uint16 _ax = _vm->_graphics->getStringWidth(v8C[_language]);
-		_vm->_graphics->displayString((SCREEN_WIDTH - _ax)/2, 70, v8C[_language]);
-		_ax = _vm->_graphics->getStringWidth(v7C[_language]);
-		_vm->_graphics->displayString((SCREEN_WIDTH - _ax)/2, 100, v7C[_language]);
-		_ax = _vm->_graphics->getStringWidth(v6C[_language]);
-		_vm->_graphics->displayString((SCREEN_WIDTH - _ax)/2, 130, v6C[_language]);
-		_ax = _vm->_graphics->getStringWidth(v5C[_language]);
-		_vm->_graphics->displayString((SCREEN_WIDTH - _ax)/2, 160, v5C[_language]);
+		_vm->_gfx->setFont("slide");
+		_vm->_gfx->_proportionalFont = false;
+		uint16 _ax = _vm->_gfx->getStringWidth(v8C[_language]);
+		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 70, v8C[_language]);
+		_ax = _vm->_gfx->getStringWidth(v7C[_language]);
+		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 100, v7C[_language]);
+		_ax = _vm->_gfx->getStringWidth(v6C[_language]);
+		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 130, v6C[_language]);
+		_ax = _vm->_gfx->getStringWidth(v5C[_language]);
+		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 160, v5C[_language]);
 
-		_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBitBack);
-		_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBit2);
+		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
+		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBit2);
 		waitUntilLeftClick();
 
 		_vm->_menu->selectCharacter();
@@ -351,19 +351,19 @@ void _c_ridux(void *parm) {
 }
 
 void _c_testResult(void *parm) {
-	_vm->_graphics->swapBuffers();
+	_vm->_gfx->swapBuffers();
 	_vm->parseLocation("common");
 
-	_vm->_graphics->setFont("slide");
-	_vm->_graphics->_proportionalFont = false;
+	_vm->_gfx->setFont("slide");
+	_vm->_gfx->_proportionalFont = false;
 
-	uint16 _ax = _vm->_graphics->getStringWidth(_slideText[0]);
-	_vm->_graphics->displayString((SCREEN_WIDTH - _ax)/2, 38, _slideText[0]);
-	_ax = _vm->_graphics->getStringWidth(_slideText[1]);
-	_vm->_graphics->displayString((SCREEN_WIDTH - _ax)/2, 58, _slideText[1]);
+	uint16 _ax = _vm->_gfx->getStringWidth(_slideText[0]);
+	_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 38, _slideText[0]);
+	_ax = _vm->_gfx->getStringWidth(_slideText[1]);
+	_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 58, _slideText[1]);
 
-	_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBitBack);
-	_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBit2);
+	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
+	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBit2);
 
 	return;
 }

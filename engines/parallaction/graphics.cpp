@@ -56,10 +56,10 @@ const byte _glyphWidths[126] = {
   0x05, 0x06, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x04, 0x06, 0x05, 0x05, 0x05, 0x05
 };
 
-bool		Graphics::_proportionalFont = false;
-Point		Graphics::_labelPosition[2] = { { 0, 0 }, { 0, 0 } };
-StaticCnv	Graphics::_mouseComposedArrow;
-byte *		Graphics::_buffers[];
+bool		Gfx::_proportionalFont = false;
+Point		Gfx::_labelPosition[2] = { { 0, 0 }, { 0, 0 } };
+StaticCnv	Gfx::_mouseComposedArrow;
+byte *		Gfx::_buffers[];
 
 #define PALETTE_BACKUP	PALETTE_SIZE
 
@@ -113,8 +113,8 @@ byte _resBalloon[2][BALLOON_WIDTH*BALLOON_HEIGHT] = {
 	}
 };
 
-void Graphics::drawBalloon(int16 left, int16 top, uint16 width, uint16 height, uint16 winding) {
-//	printf("Graphics::drawBalloon(%i, %i, %i, %i, %i)...", left, top, width, height, winding);
+void Gfx::drawBalloon(int16 left, int16 top, uint16 width, uint16 height, uint16 winding) {
+//	printf("Gfx::drawBalloon(%i, %i, %i, %i, %i)...", left, top, width, height, winding);
 
 	width+=5;
 	floodFill(0, left, top, left+width, top+height, kBitFront);
@@ -145,7 +145,7 @@ void Graphics::drawBalloon(int16 left, int16 top, uint16 width, uint16 height, u
 //	palette management
 //
 
-void Graphics::setPalette(byte *palette) {
+void Gfx::setPalette(byte *palette) {
 //	printf("setPalette()\n");
 //	memcpy(_palette, palette, PALETTE_SIZE);
 
@@ -163,23 +163,23 @@ void Graphics::setPalette(byte *palette) {
 	return;
 }
 
-void Graphics::getBlackPalette(byte *palette) {
+void Gfx::getBlackPalette(byte *palette) {
 	memcpy(palette, _black_palette, PALETTE_SIZE);
 	return;
 }
 
-void Graphics::palUnk0(byte *palette) {
+void Gfx::palUnk0(byte *palette) {
 #if 0
 	for (uint16 i = 0; i < PALETTE_SIZE; i++) {
 		palette[PALETTE_BACKUP+i] = _palette[i]/2;
 	}
 #endif
-	Graphics::setPalette(palette);
+	Gfx::setPalette(palette);
 
 	return;
 }
 
-void Graphics::buildBWPalette(byte *palette) {
+void Gfx::buildBWPalette(byte *palette) {
 
 	for (uint16 i = 0; i < PALETTE_COLORS; i++) {
 		byte max;
@@ -208,7 +208,7 @@ void Graphics::buildBWPalette(byte *palette) {
 	return;
 }
 
-void Graphics::fadePalette(byte *palette) {
+void Gfx::fadePalette(byte *palette) {
 
 	for (uint16 i = 0; i < PALETTE_SIZE; i++)
 		if (palette[i] < _palette[i]) palette[i]++;
@@ -217,7 +217,7 @@ void Graphics::fadePalette(byte *palette) {
 	return;
 }
 
-void Graphics::quickFadePalette(byte *palette) {
+void Gfx::quickFadePalette(byte *palette) {
 
 	for (uint16 i = 0; i < PALETTE_SIZE; i++) {
 		if (palette[i] == _palette[i]) continue;
@@ -232,8 +232,8 @@ void Graphics::quickFadePalette(byte *palette) {
 //
 //	FIXME: the effect is different from the original
 //
-void Graphics::animatePalette(byte *palette) {
-// printf("Graphics::animatePalette()\n");
+void Gfx::animatePalette(byte *palette) {
+// printf("Gfx::animatePalette()\n");
 
 	byte tmp[3];
 
@@ -281,15 +281,15 @@ void Graphics::animatePalette(byte *palette) {
 
 
 
-void Graphics::updateScreen() {
-//	  printf("Graphics::updateScreen()\n");
+void Gfx::updateScreen() {
+//	  printf("Gfx::updateScreen()\n");
 	g_system->copyRectToScreen(_buffers[kBitFront], SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	g_system->updateScreen();
 	return;
 }
 
 
-void Graphics::swapBuffers() {
+void Gfx::swapBuffers() {
 	byte *temp = _buffers[kBitFront];
 	_buffers[kBitFront] = _buffers[kBitBack];
 	_buffers[kBitBack] = temp;
@@ -301,7 +301,7 @@ void Graphics::swapBuffers() {
 //
 //	graphic primitives
 //
-void Graphics::clearScreen(Graphics::Buffers buffer) {
+void Gfx::clearScreen(Gfx::Buffers buffer) {
 	memset(_buffers[buffer], 0, SCREEN_WIDTH*SCREEN_HEIGHT);
 
 	if (buffer == kBitFront) updateScreen();
@@ -310,7 +310,7 @@ void Graphics::clearScreen(Graphics::Buffers buffer) {
 }
 
 
-void Graphics::copyScreen(Graphics::Buffers srcbuffer, Graphics::Buffers dstbuffer) {
+void Gfx::copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer) {
 	memcpy(_buffers[dstbuffer], _buffers[srcbuffer], SCREEN_WIDTH*SCREEN_HEIGHT);
 
 	if (dstbuffer == kBitFront) updateScreen();
@@ -319,7 +319,7 @@ void Graphics::copyScreen(Graphics::Buffers srcbuffer, Graphics::Buffers dstbuff
 }
 
 
-void Graphics::copyRect(Graphics::Buffers srcbuffer, uint16 sx, uint16 sy, Graphics::Buffers dstbuffer, uint16 dx, uint16 dy, uint16 w, uint16 h) {
+void Gfx::copyRect(Gfx::Buffers srcbuffer, uint16 sx, uint16 sy, Gfx::Buffers dstbuffer, uint16 dx, uint16 dy, uint16 w, uint16 h) {
 
 	byte *s = _buffers[srcbuffer] + (sx + sy * SCREEN_WIDTH);
 	byte *d = _buffers[dstbuffer] + (dx + dy * SCREEN_WIDTH);
@@ -338,8 +338,8 @@ void Graphics::copyRect(Graphics::Buffers srcbuffer, uint16 sx, uint16 sy, Graph
 }
 
 
-void Graphics::floodFill(byte color, uint16 left, uint16 top, uint16 right, uint16 bottom, Graphics::Buffers buffer) {
-//	printf("Graphics::floodFill(%i, %i, %i, %i, %i)\n", color, left, top, right, bottom);
+void Gfx::floodFill(byte color, uint16 left, uint16 top, uint16 right, uint16 bottom, Gfx::Buffers buffer) {
+//	printf("Gfx::floodFill(%i, %i, %i, %i, %i)\n", color, left, top, right, bottom);
 
 	byte *d = _buffers[buffer] + (left + top * SCREEN_WIDTH);
 	uint16 w = right - left + 1;
@@ -357,8 +357,8 @@ void Graphics::floodFill(byte color, uint16 left, uint16 top, uint16 right, uint
 }
 
 
-void Graphics::flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Graphics::Buffers buffer) {
-	debugC(9, kDebugGraphics, "Graphics::flatBlit(%i, %i, %i, %i)", w, h, x, y);
+void Gfx::flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Gfx::Buffers buffer) {
+	debugC(9, kDebugGraphics, "Gfx::flatBlit(%i, %i, %i, %i)", w, h, x, y);
 
 	// source coordinates
 	int16 left = 0, top = 0;
@@ -384,7 +384,7 @@ void Graphics::flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Graphi
 	byte *s = data + left + top * w;
 	byte *d = _buffers[buffer] + x + y * SCREEN_WIDTH;
 
-	debugC(9, kDebugGraphics, "Graphics::flatBlit CLIPPED (%i, %i, %i, %i) -> (%i, %i) %p %p", left, top, right, bottom, x, y, (const void*)s, (const void*)d);
+	debugC(9, kDebugGraphics, "Gfx::flatBlit CLIPPED (%i, %i, %i, %i) -> (%i, %i) %p %p", left, top, right, bottom, x, y, (const void*)s, (const void*)d);
 
 	for (uint16 i = top; i < bottom; i++) {
 		for (uint16 j = left; j < right; j++) {
@@ -397,19 +397,19 @@ void Graphics::flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Graphi
 		d += (SCREEN_WIDTH - right + left);
 	}
 
-	debugC(9, kDebugGraphics, "Graphics::flatBlit BLITTED");
+	debugC(9, kDebugGraphics, "Gfx::flatBlit BLITTED");
 
 	if (buffer == kBitFront) updateScreen();
 
-	debugC(9, kDebugGraphics, "Graphics::flatBlit DONE");
+	debugC(9, kDebugGraphics, "Gfx::flatBlit DONE");
 
 	return;
 
 }
 
 
-void Graphics::blit(uint16 w, uint16 h, int16 x, int16 y, uint16 z, byte *data, Graphics::Buffers buffer, Graphics::Buffers mask) {
-//	printf("Graphics::blit(%i, %i, %i, %i, %i)\n", w, h, x, y, z);
+void Gfx::blit(uint16 w, uint16 h, int16 x, int16 y, uint16 z, byte *data, Gfx::Buffers buffer, Gfx::Buffers mask) {
+//	printf("Gfx::blit(%i, %i, %i, %i, %i)\n", w, h, x, y, z);
 
 	int16 left = 0, top = 0;
 	int16 right = w, bottom = h;
@@ -469,7 +469,7 @@ void jobDisplayLabel(void *parm, Job *j) {
 
 	if (label->_cnv._width == 0)
 		return;
-	_vm->_graphics->flatBlitCnv(&label->_cnv, Graphics::_labelPosition[0]._x, Graphics::_labelPosition[0]._y, Graphics::kBitBack, label->_cnv._data1);
+	_vm->_gfx->flatBlitCnv(&label->_cnv, Gfx::_labelPosition[0]._x, Gfx::_labelPosition[0]._y, Gfx::kBitBack, label->_cnv._data1);
 
 	return;
 }
@@ -496,17 +496,17 @@ void jobEraseLabel(void *parm, Job *j) {
 		_si = SCREEN_WIDTH - label->_cnv._width;
 
 
-	_vm->_graphics->restoreBackground(Graphics::_labelPosition[1]._x, Graphics::_labelPosition[1]._y, label->_cnv._width, label->_cnv._height);
+	_vm->_gfx->restoreBackground(Gfx::_labelPosition[1]._x, Gfx::_labelPosition[1]._y, label->_cnv._width, label->_cnv._height);
 
-	Graphics::_labelPosition[1]._x = Graphics::_labelPosition[0]._x;
-	Graphics::_labelPosition[1]._y = Graphics::_labelPosition[0]._y;
-	Graphics::_labelPosition[0]._x = _si;
-	Graphics::_labelPosition[0]._y = _di;
+	Gfx::_labelPosition[1]._x = Gfx::_labelPosition[0]._x;
+	Gfx::_labelPosition[1]._y = Gfx::_labelPosition[0]._y;
+	Gfx::_labelPosition[0]._x = _si;
+	Gfx::_labelPosition[0]._y = _di;
 
 	return;
 }
 
-void Graphics::initMouse(uint16 arg_0) {
+void Gfx::initMouse(uint16 arg_0) {
 
 	_vm->_disk->loadPointer(&_mouseComposedArrow);
 
@@ -521,7 +521,7 @@ void Graphics::initMouse(uint16 arg_0) {
 	return;
 }
 
-void Graphics::setMousePointer(int16 index) {
+void Gfx::setMousePointer(int16 index) {
 
 	if (index == kCursorArrow) {		// standard mouse pointer
 
@@ -560,18 +560,18 @@ void Graphics::setMousePointer(int16 index) {
 //
 //	Cnv management
 //
-void Graphics::flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Graphics::Buffers buffer, byte *unused) {
+void Gfx::flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer, byte *unused) {
 	flatBlit(cnv->_width, cnv->_height, x, y, cnv->_data0, buffer);
 	return;
 }
 
 
-void Graphics::blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Graphics::Buffers buffer, Graphics::Buffers mask) {
+void Gfx::blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer, Gfx::Buffers mask) {
 	blit(cnv->_width, cnv->_height, x, y, z, cnv->_data0,  buffer, mask);
 	return;
 }
 
-void Graphics::backupDoorBackground(DoorData *data, int16 x, int16 y) {
+void Gfx::backupDoorBackground(DoorData *data, int16 x, int16 y) {
 
 	byte *s = _buffers[kBit2] + x + y * SCREEN_WIDTH;
 	byte *d = data->_background;
@@ -586,7 +586,7 @@ void Graphics::backupDoorBackground(DoorData *data, int16 x, int16 y) {
 	return;
 }
 
-void Graphics::backupGetBackground(GetData *data, int16 x, int16 y) {
+void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 
 	byte *t = data->_cnv._data0;
 	byte *s = _buffers[kBitBack] + x + y * SCREEN_WIDTH;
@@ -610,7 +610,7 @@ void Graphics::backupGetBackground(GetData *data, int16 x, int16 y) {
 //
 //	copies a rectangular bitmap on the background
 //
-void Graphics::restoreZoneBackground(byte *data, int16 x, int16 y, uint16 w, uint16 h) {
+void Gfx::restoreZoneBackground(byte *data, int16 x, int16 y, uint16 w, uint16 h) {
 
 	StaticCnv cnv;
 
@@ -630,7 +630,7 @@ void Graphics::restoreZoneBackground(byte *data, int16 x, int16 y, uint16 w, uin
 //
 //	strings
 //
-void Graphics::displayString(uint16 x, uint16 y, const char *text) {
+void Gfx::displayString(uint16 x, uint16 y, const char *text) {
 	if (text == NULL)
 		return;
 
@@ -654,7 +654,7 @@ void Graphics::displayString(uint16 x, uint16 y, const char *text) {
 }
 
 
-void Graphics::displayBalloonString(uint16 x, uint16 y, const char *text, byte color) {
+void Gfx::displayBalloonString(uint16 x, uint16 y, const char *text, byte color) {
 
 	uint16 len = strlen(text);
 
@@ -688,8 +688,8 @@ void Graphics::displayBalloonString(uint16 x, uint16 y, const char *text, byte c
 
 
 
-bool Graphics::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, byte color) {
-//	printf("Graphics::displayWrappedString(%s, %i, %i, %i, %i)...", text, x, y, maxwidth, color);
+bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, byte color) {
+//	printf("Gfx::displayWrappedString(%s, %i, %i, %i, %i)...", text, x, y, maxwidth, color);
 
 	uint16 lines = 0;
 	bool rv = false;
@@ -736,7 +736,7 @@ bool Graphics::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwi
 
 
 
-uint16 Graphics::getStringWidth(const char *text) {
+uint16 Gfx::getStringWidth(const char *text) {
 	if (text == NULL) return 0;
 
 	uint16 len = strlen(text);
@@ -757,7 +757,7 @@ uint16 Graphics::getStringWidth(const char *text) {
 }
 
 
-void Graphics::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height) {
+void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height) {
 
 	uint16 lines = 0;
 	uint16 w = 0;
@@ -794,7 +794,7 @@ void Graphics::getStringExtent(char *text, uint16 maxwidth, int16* width, int16*
 }
 
 
-void Graphics::setFont(const char* name) {
+void Gfx::setFont(const char* name) {
 	freeCnv(&_font);
 	_vm->_disk->loadFont(name, &_font);
 }
@@ -803,7 +803,7 @@ void Graphics::setFont(const char* name) {
 //	backups background mask
 //
 //
-void Graphics::backupBackgroundMask(Graphics::Buffers mask) {
+void Gfx::backupBackgroundMask(Gfx::Buffers mask) {
 
 	byte *s = _buffers[mask];
 	byte *d = _maskBackup;
@@ -816,7 +816,7 @@ void Graphics::backupBackgroundMask(Graphics::Buffers mask) {
 //	restores background mask
 //
 //
-void Graphics::restoreBackgroundMask(Graphics::Buffers mask) {
+void Gfx::restoreBackgroundMask(Gfx::Buffers mask) {
 
 	byte *s = _maskBackup;
 	byte *d = _buffers[mask];
@@ -829,7 +829,7 @@ void Graphics::restoreBackgroundMask(Graphics::Buffers mask) {
 //	backups background path
 //
 //
-void Graphics::backupBackgroundPath(Graphics::Buffers path) {
+void Gfx::backupBackgroundPath(Gfx::Buffers path) {
 
 	byte *s = _buffers[path];
 	byte *d = _pathBackup;
@@ -842,7 +842,7 @@ void Graphics::backupBackgroundPath(Graphics::Buffers path) {
 //
 //	restores background path
 //
-void Graphics::restoreBackgroundPath(Graphics::Buffers path) {
+void Gfx::restoreBackgroundPath(Gfx::Buffers path) {
 
 	byte *s = _pathBackup;
 	byte *d = _buffers[path];
@@ -853,7 +853,7 @@ void Graphics::restoreBackgroundPath(Graphics::Buffers path) {
 }
 
 
-void Graphics::restoreBackground(int16 left, int16 top, uint16 width, uint16 height) {
+void Gfx::restoreBackground(int16 left, int16 top, uint16 width, uint16 height) {
 //	printf("restoreBackground(%i, %i, %i, %i)\n", left, top, width, height);
 
 	if (left < 0) left = 0;
@@ -871,7 +871,7 @@ void Graphics::restoreBackground(int16 left, int16 top, uint16 width, uint16 hei
 }
 
 
-void Graphics::makeCnvFromString(StaticCnv *cnv, char *text) {
+void Gfx::makeCnvFromString(StaticCnv *cnv, char *text) {
 //	printf("makeCnvFromString('%s')\n", text);
 
 	uint16 len = strlen(text);
@@ -903,7 +903,7 @@ void Graphics::makeCnvFromString(StaticCnv *cnv, char *text) {
 //
 //	internal character mapping
 //
-byte Graphics::mapChar(byte c) {
+byte Gfx::mapChar(byte c) {
 
 	if (c == 0xA5) return 0x5F;
 	if (c == 0xDF) return 0x60;
@@ -914,8 +914,8 @@ byte Graphics::mapChar(byte c) {
 }
 
 
-void Graphics::freeCnv(Cnv *cnv) {
-//	printf("Graphics::freeCnv()\n");
+void Gfx::freeCnv(Cnv *cnv) {
+//	printf("Gfx::freeCnv()\n");
 
 	if (!cnv) return;
 	if (cnv->_count == 0) return;
@@ -939,7 +939,7 @@ void Graphics::freeCnv(Cnv *cnv) {
 
 
 
-void Graphics::freeStaticCnv(StaticCnv *cnv) {
+void Gfx::freeStaticCnv(StaticCnv *cnv) {
 //	printf("free_static_cnv()\n");
 
 	if (!cnv) return;
@@ -951,7 +951,7 @@ void Graphics::freeStaticCnv(StaticCnv *cnv) {
 	return;
 }
 
-void Graphics::parseDepths(Common::SeekableReadStream &stream) {
+void Gfx::parseDepths(Common::SeekableReadStream &stream) {
 	_bgLayers[0] = stream.readByte();
 	_bgLayers[1] = stream.readByte();
 	_bgLayers[2] = stream.readByte();
@@ -959,7 +959,7 @@ void Graphics::parseDepths(Common::SeekableReadStream &stream) {
 }
 
 
-void Graphics::parseBackground(Common::SeekableReadStream &stream) {
+void Gfx::parseBackground(Common::SeekableReadStream &stream) {
 
 	stream.read(_palette, PALETTE_SIZE);
 
@@ -983,21 +983,21 @@ void Graphics::parseBackground(Common::SeekableReadStream &stream) {
 
 }
 
-void Graphics::setBackground(byte *background) {
+void Gfx::setBackground(byte *background) {
 	memcpy(_buffers[kBitBack], background, SCREEN_WIDTH*SCREEN_HEIGHT);
 	copyScreen(kBitBack, kBit2);
 }
 
-void Graphics::setMask(byte *mask) {
+void Gfx::setMask(byte *mask) {
 	memcpy(_buffers[kMask0], mask, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 }
 
-void Graphics::setPath(byte *path) {
+void Gfx::setPath(byte *path) {
 	memcpy(_buffers[kPath0], path, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 }
 
 
-void Graphics::copyRect(Graphics::Buffers dstbuffer, uint16 x, uint16 y, uint16 w, uint16 h, byte *src, uint16 pitch) {
+void Gfx::copyRect(Gfx::Buffers dstbuffer, uint16 x, uint16 y, uint16 w, uint16 h, byte *src, uint16 pitch) {
 
 	byte *d = _buffers[dstbuffer] + x + SCREEN_WIDTH * y;
 	byte *s = src;
@@ -1013,7 +1013,7 @@ void Graphics::copyRect(Graphics::Buffers dstbuffer, uint16 x, uint16 y, uint16 
 }
 
 
-void Graphics::drawBorder(Graphics::Buffers buffer, uint16 x, uint16 y, uint16 w, uint16 h, byte color) {
+void Gfx::drawBorder(Gfx::Buffers buffer, uint16 x, uint16 y, uint16 w, uint16 h, byte color) {
 
 	byte *d = _buffers[buffer] + x + SCREEN_WIDTH * y;
 
@@ -1030,7 +1030,7 @@ void Graphics::drawBorder(Graphics::Buffers buffer, uint16 x, uint16 y, uint16 w
 	return;
 }
 
-void Graphics::grabRect(Graphics::Buffers srcbuffer, byte *dst, uint16 x, uint16 y, uint16 w, uint16 h, uint16 pitch) {
+void Gfx::grabRect(Gfx::Buffers srcbuffer, byte *dst, uint16 x, uint16 y, uint16 w, uint16 h, uint16 pitch) {
 
 	byte *s = _buffers[srcbuffer] + x + SCREEN_WIDTH * y;
 
@@ -1045,7 +1045,7 @@ void Graphics::grabRect(Graphics::Buffers srcbuffer, byte *dst, uint16 x, uint16
 }
 
 
-void Graphics::maskOpNot(uint16 x, uint16 y, uint16 unused, Graphics::Buffers mask) {
+void Gfx::maskOpNot(uint16 x, uint16 y, uint16 unused, Gfx::Buffers mask) {
 
 	uint16 _ax = x + y * SCREEN_WIDTH;
 	_buffers[mask][_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
@@ -1055,7 +1055,7 @@ void Graphics::maskOpNot(uint16 x, uint16 y, uint16 unused, Graphics::Buffers ma
 
 
 
-void Graphics::maskClearRectangle(uint16 left, uint16 top, uint16 right, uint16 bottom, Graphics::Buffers mask) {
+void Gfx::maskClearRectangle(uint16 left, uint16 top, uint16 right, uint16 bottom, Gfx::Buffers mask) {
 
 	uint16 _di = left/4 + top*80;
 
@@ -1071,13 +1071,13 @@ void Graphics::maskClearRectangle(uint16 left, uint16 top, uint16 right, uint16 
 //	HACK
 //	this routine is only invoked from the 'intgrotta scenario'
 //
-void Graphics::intGrottaHackMask() {
+void Gfx::intGrottaHackMask() {
 	memset(_buffers[kMask0] + 3600, 0, 3600);
 	_bgLayers[1] = 500;
 	return;
 }
 
-uint16 Graphics::queryPath(uint16 x, uint16 y) {
+uint16 Gfx::queryPath(uint16 x, uint16 y) {
 
 	byte *v6 = _buffers[kPath0];
 
@@ -1088,7 +1088,7 @@ uint16 Graphics::queryPath(uint16 x, uint16 y) {
 
 }
 
-int16 Graphics::queryMask(int16 v) {
+int16 Gfx::queryMask(int16 v) {
 
 	for (uint16 _si = 0; _si < 3; _si++) {
 		if (_bgLayers[_si+1] > v) return _si;
@@ -1097,7 +1097,7 @@ int16 Graphics::queryMask(int16 v) {
 	return 3;
 }
 
-void Graphics::initBuffers() {
+void Gfx::initBuffers() {
 
 	_buffers[kBitFront] = (byte*)malloc(SCREEN_SIZE);
 	_buffers[kBitBack]	= (byte*)malloc(SCREEN_SIZE);
@@ -1114,7 +1114,7 @@ void Graphics::initBuffers() {
 }
 
 
-Graphics::Graphics(Parallaction* vm) :
+Gfx::Gfx(Parallaction* vm) :
 	_vm(vm) {
 
 	g_system->beginGFXTransaction();
@@ -1137,7 +1137,7 @@ Graphics::Graphics(Parallaction* vm) :
 	return;
 }
 
-Graphics::~Graphics() {
+Gfx::~Gfx() {
 
 	free(_buffers[kMask0]);
 	free(_buffers[kPath0]);
