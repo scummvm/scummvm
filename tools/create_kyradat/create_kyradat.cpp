@@ -25,7 +25,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 16,
+	kKyraDatVersion = 17,
 	kIndexSize = 12
 };
 
@@ -37,6 +37,7 @@ enum {
 #include "fre.h"
 #include "ger.h"
 #include "towns.h"
+#include "amiga.h"
 
 bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
@@ -309,7 +310,13 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	uint32 targetsize = size + 4;
 	for (uint32 i = 0; i < size; ++i) {
 		if (!data[i]) {
-			++entries;
+			if (g->special == kAmigaVersion) {
+				if (!((i + 1) & 0x1))
+					++entries;
+			} else {
+				++entries;
+			}
+
 			if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) {
 				// prevents creation of empty entries (which we have mostly between all strings in the fm-towns version)
 				while (!data[++i]) {
@@ -389,6 +396,16 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 			}
 
 		} while (input < c);
+	} else if (g->special == kAmigaVersion) {
+		// we need to strip some aligment zeros out here
+		int dstPos = 0;
+		for (int i = 0; i < size; ++i) {
+			if (!data[i] && ((i+1) & 0x1))
+				continue;
+			*output++ = data[i];
+			++dstPos;
+		}
+		targetsize = dstPos + 4;
 	} else {
 		memcpy(output, data, size);
 	}
@@ -398,7 +415,8 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 
 bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
 	// different entry size for the fm-towns version
-	const int countRooms = (g->special == kFMTownsVersionE) ? (size / 0x69) : (size / 0x51);
+	const int roomEntrySize = (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) ? (0x69) : ((g->special == kAmigaVersion) ? 0x52 : 0x51);
+	const int countRooms = size / roomEntrySize;
 
 	uint8 *buffer = new uint8[countRooms * 9 + 4];
 	assert(buffer);
@@ -407,14 +425,21 @@ bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 si
 	WRITE_BE_UINT32(output, countRooms); output += 4;
 
 	const byte *src = data;
-	for (int i = 0; i < countRooms; ++i) {
-		*output++ = *src++;
-		WRITE_BE_UINT16(output, READ_LE_UINT16(src)); output += 2; src += 2;
-		WRITE_BE_UINT16(output, READ_LE_UINT16(src)); output += 2; src += 2;
-		WRITE_BE_UINT16(output, READ_LE_UINT16(src)); output += 2; src += 2;
-		WRITE_BE_UINT16(output, READ_LE_UINT16(src)); output += 2; src += 2;
-		// different entry size for the fm-towns version
-		src += (g->special == kFMTownsVersionE) ? 0x60 : (0x51 - 9);
+	if (g->special == kAmigaVersion) {
+		for (int i = 0; i < countRooms; ++i) {
+			*output++ = *src++; assert(*src == 0); ++src;
+			memcpy(output, src, 8); output += 0x8;
+			src += roomEntrySize - 0x2;
+		}
+	} else {
+		for (int i = 0; i < countRooms; ++i) {
+			*output++ = *src++;
+			WRITE_BE_UINT16(output, READ_LE_UINT16(src)); output += 2; src += 2;
+			WRITE_BE_UINT16(output, READ_LE_UINT16(src)); output += 2; src += 2;
+			WRITE_BE_UINT16(output, READ_LE_UINT16(src)); output += 2; src += 2;
+			WRITE_BE_UINT16(output, READ_LE_UINT16(src)); output += 2; src += 2;
+			src += roomEntrySize - 0x9;
+		}
 	}
 
 	return out.addFile(filename, buffer, countRooms * 9 + 4);
@@ -459,6 +484,8 @@ uint32 getFeatures(const Game *g) {
 		features |= GF_DEMO;
 	else if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ)
 		features |= GF_FMTOWNS;
+	else if (g->special == kAmigaVersion)
+		features |= GF_AMIGA;
 	else
 		features |= GF_FLOPPY;
 
@@ -690,6 +717,7 @@ const Game *gameDescs[] = {
 	kyra1FreGames,
 	kyra1GerGames,
 	kyra1TownsGames,
+	kyra1AmigaGames,
 	0
 };
 

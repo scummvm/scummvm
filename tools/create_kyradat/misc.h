@@ -298,11 +298,65 @@ const int kyra1TownsJapNeed[] = {
 	-1
 };
 
+const int kyra1AmigaNeed[] = {
+	kKallakWritingSeq,
+	kMalcolmTreeSeq,
+	kWestwoodLogoSeq,
+	kKyrandiaLogoSeq,
+	kKallakMalcolmSeq,
+	kForestSeq,
+	kIntroCPSStrings,
+	kIntroWSAStrings,
+	kIntroCOLStrings,
+	kIntroStrings,
+	kRoomList,
+	kRoomFilenames,
+	kCharacterImageFilenames,
+	kDefaultShapes,
+	kItemNames,
+	kTakenStrings,
+	kPlacedStrings,
+	kDroppedStrings,
+	kNoDropStrings,
+	kAmuleteAnimSeq,
+	kPutDownString,
+	kWaitAmuletString,
+	kBlackJewelString,
+	kHealingTipString,
+	kPoisonGoneString,
+	kHealing1Shapes,
+	kHealing2Shapes,
+	kThePoisonStrings,
+	kFluteStrings,
+	kPoisonDeathShapes,
+	kFluteShapes,
+	kWinter1Shapes,
+	kWinter2Shapes,
+	kWinter3Shapes,
+	kDrinkShapes,
+	kWispShapes,
+	kMagicAnimShapes,
+	kBranStoneShapes,
+	kWispJewelStrings,
+	kMagicJewelStrings,
+	kFlaskFullString,
+	kFullFlaskString,
+	kOutroReunionSeq,
+	kOutroHomeString,
+	kVeryCleverString,
+	kGUIStrings,
+	kNewGameString,
+	kConfigStrings,
+	kCreditsStrings,
+	-1
+};
+
 const GameNeed gameNeedTable[] = {
 	{ kKyra1, -1, kyra1FloppyNeed },
 	{ kKyra1, kTalkieVersion, kyra1CDNeed },
-	{ kKyra1, kFMTownsVersionE , kyra1TownsEngNeed},
-	{ kKyra1, kFMTownsVersionJ, kyra1TownsJapNeed},
+	{ kKyra1, kFMTownsVersionE , kyra1TownsEngNeed },
+	{ kKyra1, kFMTownsVersionJ, kyra1TownsJapNeed },
+	{ kKyra1, kAmigaVersion, kyra1AmigaNeed },
 	{ kKyra1, kDemoVersion, kyra1DemoNeed },
 	{ -1, -1, 0 }
 };
@@ -312,6 +366,7 @@ const SpecialExtension specialTable[] = {
 	{ kDemoVersion, "DEM" },
 	{ kFMTownsVersionE , "TNS" },
 	{ kFMTownsVersionJ, "TNS" },
+	{ kAmigaVersion, "AMG" },
 	{ -1, 0 }
 };
 

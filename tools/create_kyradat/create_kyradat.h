@@ -157,7 +157,8 @@ enum kSpecial {
 	kTalkieVersion = 0,
 	kDemoVersion = 1,
 	kFMTownsVersionE = 2,
-	kFMTownsVersionJ = 3
+	kFMTownsVersionJ = 3,
+	kAmigaVersion = 4
 };
 
 struct SpecialExtension {
