@@ -2612,20 +2612,6 @@ void ScummEngine_v5::o5_walkActorToActor() {
 		return;
 	}
 
-
-/*
-FIXME: Disabled this undocumented workaround (which has been there since the
-very first revision of this code). It's likely related to the following workaround;
-if so, they should be merged. As it is, undocumented workarounds are bad and
-thus I disabled this. If anybody gets troubles due to this, we will be able to
-implement a proper fix.
-
-	if (nr == 106 && _game.id == GID_INDY4) {
-		printf("Bypassing Indy4 bug\n");
-		return;
-	}
-*/
-
 	if (_game.id == GID_INDY4 && nr == 1 && nr2 == 106 &&
 		dist == 255 && vm.slot[_currentScript].number == 210) {
 		// WORKAROUND bug: Work around an invalid actor bug when using the
