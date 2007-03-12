@@ -451,45 +451,50 @@ int AgiEngine::loadGame(const char *fileName) {
 	return errOK;
 }
 
-#define NUM_SLOTS 12
+#define NUM_SLOTS 100
+#define NUM_VISIBLE_SLOTS 12
 
 const char *AgiEngine::getSavegameFilename(int num) {
 	static char saveLoadSlot[12];
-	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), num);
+	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), num + _firstSlot);
 	return saveLoadSlot;
+}
+
+void AgiEngine::getSavegameDescription(int num, char *buf) {
+	char fileName[MAX_PATH];
+	Common::InSaveFile *in;
+		
+	debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Current game id is %s", _targetName.c_str());
+	sprintf(fileName, "%s", getSavegameFilename(num));
+	if (!(in = _saveFileMan->openForLoading(fileName))) {
+		debugC(4, kDebugLevelMain | kDebugLevelSavegame, "File %s does not exist", fileName);
+		strcpy(buf, "          (empty slot)");
+	} else {
+		debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Successfully opened %s for reading", fileName);
+		uint32 type = in->readUint32BE();
+		if (type == AGIflag) {
+			debugC(6, kDebugLevelMain | kDebugLevelSavegame, "Has AGI flag, good start");
+			in->read(buf, 31);
+		} else {
+			warning("This doesn't appear to be an AGI savegame");
+			strcpy(buf, "(corrupt file)");
+		} 
+
+		delete in;
+	}
 }
 	
 int AgiEngine::selectSlot() {
 	int i, key, active = 0;
 	int rc = -1;
-	int hm = 2, vm = 3;	/* box margins */
+	int hm = 1, vm = 3;	/* box margins */
 	int xmin, xmax, slotClicked;
-	char desc[NUM_SLOTS][40];
+	char desc[NUM_VISIBLE_SLOTS][40];
 	int textCentre, buttonLength, buttonX[2], buttonY;
 	const char *buttonText[] = { "  OK  ", "Cancel", NULL };
 
-	for (i = 0; i < NUM_SLOTS; i++) {
-		char fileName[MAX_PATH];
-		Common::InSaveFile *in;
-		
-		debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Current game id is %s", _targetName.c_str());
-		sprintf(fileName, "%s", getSavegameFilename(i));
-		if (!(in = _saveFileMan->openForLoading(fileName))) {
-			debugC(4, kDebugLevelMain | kDebugLevelSavegame, "File %s does not exist", fileName);
-			strcpy(desc[i], "          (empty slot)");
-		} else {
-			debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Successfully opened %s for reading", fileName);
-			uint32 type = in->readUint32BE();
-			if (type == AGIflag) {
-				debugC(6, kDebugLevelMain | kDebugLevelSavegame, "Has AGI flag, good start");
-				in->read(desc[i], 31);
-			} else {
-				warning("This doesn't appear to be an AGI savegame");
-				strcpy(desc[i], "(corrupt file)");
-			} 
-
-			delete in;
-		}
+	for (i = 0; i < NUM_VISIBLE_SLOTS; i++) {
+		getSavegameDescription(i, desc[i]);
 	}
 
 	textCentre = GFX_WIDTH / CHAR_LINES / 2;
@@ -499,16 +504,31 @@ int AgiEngine::selectSlot() {
 	buttonY = (vm + 17) * CHAR_LINES;
 	
 	for (i = 0; i < 2; i++)
-	_gfx->drawButton(buttonX[i], buttonY, buttonText[i], 0, 0, MSG_BOX_TEXT, MSG_BOX_COLOUR);
+		_gfx->drawButton(buttonX[i], buttonY, buttonText[i], 0, 0, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 
 	for (;;) {
 		char dstr[64];
-		for (i = 0; i < NUM_SLOTS; i++) {
+		for (i = 0; i < NUM_VISIBLE_SLOTS; i++) {
 			sprintf(dstr, "[%-32.32s]", desc[i]);
 			printText(dstr, 0, hm + 1, vm + 4 + i,
 					(40 - 2 * hm) - 1, i == active ? MSG_BOX_COLOUR : MSG_BOX_TEXT,
 					i == active ? MSG_BOX_TEXT : MSG_BOX_COLOUR);
 		}
+
+		char upArrow[] = "^";
+		char downArrow[] = "v";
+		char scrollBar[] = " ";
+
+		int sbPos = 1 + (_firstSlot * (NUM_VISIBLE_SLOTS - 2)) / (NUM_SLOTS - NUM_VISIBLE_SLOTS);
+		if (sbPos > NUM_VISIBLE_SLOTS - 2)
+			sbPos = NUM_VISIBLE_SLOTS - 2;
+
+		for (i = 1; i < NUM_VISIBLE_SLOTS - 1; i++)
+			printText(scrollBar, 35, hm + 1, vm + 4 + i, 1, MSG_BOX_COLOUR, 7, true);
+
+		printText(upArrow, 35, hm + 1, vm + 4, 1, 8, 7);
+		printText(downArrow, 35, hm + 1, vm + 4 + NUM_VISIBLE_SLOTS - 1, 1, 8, 7);
+		printText(scrollBar, 35, hm + 1, vm + 4 + sbPos, 1, MSG_BOX_COLOUR, MSG_BOX_TEXT);
 		
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = doPollKeyboard();
@@ -530,22 +550,89 @@ int AgiEngine::selectSlot() {
 				rc = -1;
 				goto getout;
 			}
+			slotClicked = ((int)g_mouse.y-1)/CHAR_COLS-(vm+4);
 			xmin = (hm + 1) * CHAR_COLS;
 			xmax = xmin + CHAR_COLS * 34;
 			if ((int)g_mouse.x >= xmin && (int)g_mouse.x <= xmax) {
-				slotClicked = ((int)g_mouse.y-1)/CHAR_COLS-(vm+4);
-				if (slotClicked >= 0 && slotClicked < NUM_SLOTS) 
+				if (slotClicked >= 0 && slotClicked < NUM_VISIBLE_SLOTS) 
 					active = slotClicked;
+			}
+			xmin = (hm + 36) * CHAR_COLS;
+			xmax = xmin + CHAR_COLS;
+			if ((int)g_mouse.x >= xmin && (int)g_mouse.x <= xmax) {
+				if (slotClicked >= 0 && slotClicked < NUM_VISIBLE_SLOTS) {
+					if (slotClicked == 0)
+						keyEnqueue(KEY_UP);
+					else if (slotClicked == NUM_VISIBLE_SLOTS - 1)
+						keyEnqueue(KEY_DOWN);
+					else if (slotClicked < sbPos)
+						keyEnqueue(KEY_UP_RIGHT);
+					else if (slotClicked > sbPos)
+						keyEnqueue(KEY_DOWN_RIGHT);
+				}
 			}
 			break;
 		case KEY_DOWN:
 			active++;
-			active %= NUM_SLOTS;
+			if (active >= NUM_VISIBLE_SLOTS) {
+				if (_firstSlot + NUM_VISIBLE_SLOTS < NUM_SLOTS) {
+					_firstSlot++;
+					for (i = 1; i < NUM_VISIBLE_SLOTS; i++)
+						memcpy(desc[i - 1], desc[i], sizeof(desc[0]));
+					getSavegameDescription(NUM_VISIBLE_SLOTS - 1, desc[NUM_VISIBLE_SLOTS - 1]);
+				}
+				active = NUM_VISIBLE_SLOTS - 1;
+			}
 			break;
 		case KEY_UP:
 			active--;
-			if (active < 0)
-				active = NUM_SLOTS - 1;
+			if (active < 0) {
+				active = 0;
+				if (_firstSlot > 0) {
+					_firstSlot--;
+					for (i = NUM_VISIBLE_SLOTS - 1; i > 0; i--)
+						memcpy(desc[i], desc[i - 1], sizeof(desc[0]));
+					getSavegameDescription(0, desc[0]);
+				}
+			}
+			break;
+			
+		// Page Up/Down and mouse wheel scrolling all leave 'active'
+		// unchanged so that a visible slot will remain selected.
+
+		case WHEEL_DOWN:
+			if (_firstSlot < NUM_SLOTS - NUM_VISIBLE_SLOTS) {
+				_firstSlot++;
+				for (i = 1; i < NUM_VISIBLE_SLOTS; i++)
+					memcpy(desc[i - 1], desc[i], sizeof(desc[0]));
+				getSavegameDescription(NUM_VISIBLE_SLOTS - 1, desc[NUM_VISIBLE_SLOTS - 1]);
+			}
+			break;
+		case WHEEL_UP:
+			if (_firstSlot > 0) {
+				_firstSlot--;
+				for (i = NUM_VISIBLE_SLOTS - 1; i > 0; i--)
+					memcpy(desc[i], desc[i - 1], sizeof(desc[0]));
+				getSavegameDescription(0, desc[0]);
+			}
+			break;
+		case KEY_DOWN_RIGHT:
+			// This is probably triggered by Page Down.
+			_firstSlot += NUM_VISIBLE_SLOTS;
+			if (_firstSlot > NUM_SLOTS - NUM_VISIBLE_SLOTS) {
+				_firstSlot = NUM_SLOTS - NUM_VISIBLE_SLOTS;
+			}
+			for (i = 0; i < NUM_VISIBLE_SLOTS; i++)
+				getSavegameDescription(i, desc[i]);
+			break;
+		case KEY_UP_RIGHT:
+			// This is probably triggered by Page Up.
+			_firstSlot -= NUM_VISIBLE_SLOTS;
+			if (_firstSlot < 0) {
+				_firstSlot = 0;
+			}
+			for (i = 0; i < NUM_VISIBLE_SLOTS; i++)
+				getSavegameDescription(i, desc[i]);
 			break;
 		}
 		_gfx->doUpdate();
@@ -568,7 +655,7 @@ int AgiEngine::saveGameDialog() {
 	int hm, vm, hp, vp;	
 	int w;
 
-	hm = 2;
+	hm = 1;
 	vm = 3;
 	hp = hm * CHAR_COLS;
 	vp = vm * CHAR_LINES;
@@ -577,7 +664,7 @@ int AgiEngine::saveGameDialog() {
 	sprintf(fileName, "%s", getSavegameFilename(slot));
 
 	drawWindow(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
-	printText("Select a slot in which you wish to save the game:",
+	printText("Select a slot in which you wish to\nsave the game:",
 			0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 
 	slot = selectSlot();
@@ -602,7 +689,7 @@ int AgiEngine::saveGameDialog() {
 
 	desc = _game.strings[MAX_STRINGS];
 	sprintf(dstr, "Are you sure you want to save the game "
-			"described as:\n\n%s\n\nin slot %d?\n\n\n", desc, slot);
+			"described as:\n\n%s\n\nin slot %d?\n\n\n", desc, slot + _firstSlot);
 
 	rc = selectionBox(dstr, buttons);
 
@@ -636,7 +723,7 @@ int AgiEngine::loadGameDialog() {
 	int hm, vm, hp, vp;	/* box margins */
 	int w;
 
-	hm = 2;
+	hm = 1;
 	vm = 3;
 	hp = hm * CHAR_COLS;
 	vp = vm * CHAR_LINES;

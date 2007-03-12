@@ -52,11 +52,6 @@ namespace Agi {
 static uint32 g_tickTimer;
 struct Mouse g_mouse;
 
-#define keyEnqueue(k) do { _keyQueue[_keyQueueEnd++] = (k); \
-	_keyQueueEnd %= KEY_QUEUE_SIZE; } while (0)
-#define keyDequeue(k) do { (k) = _keyQueue[_keyQueueStart++]; \
-	_keyQueueStart %= KEY_QUEUE_SIZE; } while (0)
-
 void AgiEngine::processEvents() {
 	OSystem::Event event;
 	int key = 0;
@@ -81,6 +76,14 @@ void AgiEngine::processEvents() {
 			keyEnqueue(key);
 			g_mouse.x = event.mouse.x;
 			g_mouse.y = event.mouse.y;
+			break;
+		case OSystem::EVENT_WHEELUP:
+			key = WHEEL_UP;
+			keyEnqueue(key);
+			break;
+		case OSystem::EVENT_WHEELDOWN:
+			key = WHEEL_DOWN;
+			keyEnqueue(key);
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
 			g_mouse.x = event.mouse.x;
@@ -557,6 +560,7 @@ AgiEngine::AgiEngine(OSystem *syst) : Engine(syst) {
 	_oldMode = -1;
 	
 	_searchTreeRoot = 0;
+	_firstSlot = 0;
 }
 
 void AgiEngine::initialize() {

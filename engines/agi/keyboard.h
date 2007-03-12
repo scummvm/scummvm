@@ -29,6 +29,11 @@
 
 namespace Agi {
 
+#define keyEnqueue(k) do { _keyQueue[_keyQueueEnd++] = (k); \
+	_keyQueueEnd %= KEY_QUEUE_SIZE; } while (0)
+#define keyDequeue(k) do { (k) = _keyQueue[_keyQueueStart++]; \
+	_keyQueueStart %= KEY_QUEUE_SIZE; } while (0)
+
 /* QNX4 has a KEY_DOWN defined which we don't need to care about */
 #undef KEY_DOWN
 
@@ -67,6 +72,8 @@ namespace Agi {
 
 #define BUTTON_LEFT	0xF101	/* Left mouse button */
 #define BUTTON_RIGHT	0xF202	/* Right mouse button */
+#define WHEEL_UP	0xF203	/* Mouse wheel up */
+#define WHEEL_DOWN	0xF204	/* Mouse wheel down */
 
 #define KEY_SCAN(k)	(k >> 8)
 #define KEY_ASCII(k)	(k & 0xff)

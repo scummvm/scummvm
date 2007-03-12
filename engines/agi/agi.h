@@ -524,6 +524,8 @@ private:
 
 	uint32 matchVersion(uint32 crc);
 
+	int _firstSlot;
+
 public:
 	AgiGame _game;
 	AgiObject *_objects;	/* objects in the game */
@@ -535,6 +537,7 @@ public:
 	Common::RandomSource *_rnd;
 
 	const char *getSavegameFilename(int num);
+	void getSavegameDescription(int num, char *buf);
 	int selectSlot();
 	int saveGame(const char *fileName, const char *saveName);
 	int saveGameDialog();
