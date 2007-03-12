@@ -848,7 +848,6 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 	default:
 		// original range is 1001 - 1021
 		LogicHE::dispatch(op, numArgs, args);
-		warning("Tell sev how to reproduce it (%d)", op);
 	}
 
 	return res;
