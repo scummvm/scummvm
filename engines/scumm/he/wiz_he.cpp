@@ -553,7 +553,7 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const uint8 *src, const C
 	int h, w, xoff, dstInc;
 
 	if (type == kWizXMap) {
-		assert(palPtr != 0 && xmapPtr != 0);
+		assert(xmapPtr != 0);
 	}
 	if (type == kWizRMap) {
 		assert(palPtr != 0);
@@ -619,7 +619,7 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const uint8 *src, const C
 					}
 					while (code--) {
 						if (type == kWizXMap) {
-							*dstPtr = xmapPtr[palPtr[*dataPtr] * 256 + *dstPtr];
+							*dstPtr = xmapPtr[*dataPtr * 256 + *dstPtr];
 						}
 						if (type == kWizRMap) {
 							*dstPtr = palPtr[*dataPtr];
@@ -647,7 +647,7 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const uint8 *src, const C
 					}
 					while (code--) {
 						if (type == kWizXMap) {
-							*dstPtr = xmapPtr[palPtr[*dataPtr++] * 256 + *dstPtr];
+							*dstPtr = xmapPtr[*dataPtr++ * 256 + *dstPtr];
 						}
 						if (type == kWizRMap) {
 							*dstPtr = palPtr[*dataPtr++];
