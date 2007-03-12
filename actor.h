@@ -36,10 +36,12 @@ class LipSynch;
 class TextObject;
 class Sector;
 
+typedef std::list<Sector *> SectorListType;
+
 struct Shadow {
 	std::string name;
 	Vector3d pos;
-	std::list<Sector *>planeList;
+	SectorListType planeList;
 	bool active;
 };
 
@@ -126,6 +128,8 @@ public:
 	void setShadowPlane(const char *name);
 	void addShadowPlane(const char *name);
 	void clearShadowPlanes();
+	void setupDrawShadow();
+	void finishDrawShadow();
 
 	void setConstrain(bool constrain) {
 		_constrain = constrain;
@@ -194,7 +198,7 @@ private:
 	Costume *_mumbleCostume;
 	int _mumbleChore;
 
-	Shadow _shadowArray[5];
+	Shadow *_shadowArray;
 	int _activeShadowSlot;
 
 	static Font *_sayLineFont;

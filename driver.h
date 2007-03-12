@@ -31,6 +31,7 @@
 #include "colormap.h"
 #include "font.h"
 #include "primitives.h"
+#include "actor.h"
 
 class Material;
 class Bitmap;
@@ -67,7 +68,8 @@ public:
 
 	virtual void startActorDraw(Vector3d pos, float yaw, float pitch, float roll) = 0;
 	virtual void finishActorDraw() = 0;
-	
+	virtual void setupShadower(Shadow *shadow) = 0;
+
 	virtual void set3DMode() = 0;
 
 	virtual void translateViewpoint(Vector3d pos, float pitch, float yaw, float roll) = 0;
@@ -322,6 +324,7 @@ public:
 protected:
 	int _screenWidth, _screenHeight, _screenBPP;
 	bool _isFullscreen;
+	Shadow *_currentShadowArray;
 };
 
 extern Driver *g_driver;

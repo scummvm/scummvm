@@ -33,7 +33,7 @@ class TextSplitter;
 class Sector { 
 public:
 	Sector() : _vertices(0) {}
-	~Sector() { if(_vertices) delete[] _vertices; }
+	~Sector() { if (_vertices) delete[] _vertices; }
 
 	void load(TextSplitter &ts);
 
@@ -56,8 +56,11 @@ public:
 		float angleWithEdge;
 		Vector3d edgeDir;
 	};
-	void getExitInfo(Vector3d start, Vector3d dir,
-			 struct ExitInfo *result);
+	void getExitInfo(Vector3d start, Vector3d dir, struct ExitInfo *result);
+
+	int getNumVertices() { return _numVertices; }
+	Vector3d *getVertices() { return _vertices; }
+	Vector3d getNormal() { return _normal; }
 
 private:
 	int _numVertices, _id;

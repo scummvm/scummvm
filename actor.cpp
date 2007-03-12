@@ -55,6 +55,8 @@ Actor::Actor(const char *name) :
 	_constrain = false;
 	_talkSoundName = "";
 	_activeShadowSlot = -1;
+	_shadowArray = new Shadow[5];
+	memset(_shadowArray, 0, sizeof(Shadow) * 5);
 
 	for (int i = 0; i < 10; i++) {
 		_talkCostume[i] = NULL;
@@ -587,13 +589,16 @@ void Actor::update() {
 }
 
 void Actor::draw() {
+	setupDrawShadow();
 	for (std::list<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++)
 		(*i)->setupTextures();
 
 	if (!_costumeStack.empty()) {
+		setupDrawShadow();
 		g_driver->startActorDraw(_pos, _yaw, _pitch, _roll);
 		_costumeStack.back()->draw();
 		g_driver->finishActorDraw();
+		finishDrawShadow();
 	}
 }
 
@@ -644,4 +649,15 @@ void Actor::clearShadowPlanes() {
 			shadow->planeList.pop_back();
 		}
 	}
+}
+
+void Actor::setupDrawShadow() {
+	if (_activeShadowSlot == -1)
+		return;
+
+	g_driver->setupShadower(_shadowArray);
+}
+
+void Actor::finishDrawShadow() {
+	g_driver->setupShadower(NULL);
 }

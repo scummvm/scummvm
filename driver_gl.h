@@ -52,6 +52,7 @@ public:
 
 	void startActorDraw(Vector3d pos, float yaw, float pitch, float roll);
 	void finishActorDraw();
+	void setupShadower(Shadow *shadow);
 	
 	void set3DMode();
 

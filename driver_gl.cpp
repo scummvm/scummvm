@@ -125,6 +125,9 @@ void DriverGL::finishActorDraw() {
 	glDisable(GL_TEXTURE_2D);
 }
 
+void DriverGL::setupShadower(Shadow *shadow) {
+}
+
 void DriverGL::set3DMode() {
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_DEPTH_TEST);

@@ -184,11 +184,34 @@ void DriverTinyGL::finishActorDraw() {
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPopMatrix();
 	tglDisable(TGL_TEXTURE_2D);
+
+/*	// enable to draw shadow planes (Special Sectors)
+	int k, r;
+	if (!_currentShadowArray)
+		return;
+
+	tglColor3f(0.8,0.8,0.8);
+	for (r = 0; r < 5; r++) {
+		_currentShadowArray[r].planeList.begin();
+		for (SectorListType::iterator i = _currentShadowArray[r].planeList.begin(); i != _currentShadowArray[r].planeList.end(); i++) {
+			Sector *shadowSector = *i;
+			tglBegin(TGL_POLYGON);
+			tglNormal3f(shadowSector->getNormal().x(), shadowSector->getNormal().y(), shadowSector->getNormal().z());
+			for (k = 0; k < shadowSector->getNumVertices(); k++) {
+				tglVertex3f(shadowSector->getVertices()[k].x(), shadowSector->getVertices()[k].y(), shadowSector->getVertices()[k].z());
+			}
+			tglEnd();
+		}
+	}*/
 }
 
 void DriverTinyGL::set3DMode() {
 	tglMatrixMode(TGL_MODELVIEW);
 	tglEnable(TGL_DEPTH_TEST);
+}
+
+void DriverTinyGL::setupShadower(Shadow *shadow) {
+	_currentShadowArray = shadow;
 }
 
 void DriverTinyGL::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
