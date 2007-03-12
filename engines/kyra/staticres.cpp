@@ -31,7 +31,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 16
+#define RESFILE_VERSION 17
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -71,10 +71,10 @@ enum {
 	GF_JAPANESE = 1 <<  9,
 	// other languages here
 	GF_LNGUNK	= 1 << 16,	// also used for multi language in kyra3
-	GF_AMIGA	= 1 << 17	// this is no special version flag yet!
+	GF_AMIGA	= 1 << 17
 };
 
-#define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_FMTOWNS)
+#define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_FMTOWNS | GF_AMIGA)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_ITALIAN | GF_JAPANESE | GF_LNGUNK)
 
 uint32 createFeatures(const GameFlags &flags) {
@@ -84,6 +84,8 @@ uint32 createFeatures(const GameFlags &flags) {
 		return GF_DEMO;
 	if (flags.platform == Common::kPlatformFMTowns)
 		return GF_FMTOWNS;
+	if (flags.platform == Common::kPlatformAmiga)
+		return GF_AMIGA;
 	return GF_FLOPPY;
 }
 
@@ -613,7 +615,9 @@ uint8 *StaticResource::getFile(const char *name, int &size) {
 		ext = ".DEM";
 	} else if (_engine->gameFlags().platform == Common::kPlatformFMTowns) {
 		ext = ".TNS";
-	} 
+	} else if (_engine->gameFlags().platform == Common::kPlatformAmiga) {
+		ext = ".AMG";
+	}
 	snprintf(buffer, 64, "%s%s", name, ext);
 	uint32 tempSize = 0;
 	uint8 *data = _engine->resource()->fileData(buffer, &tempSize);

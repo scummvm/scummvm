@@ -229,8 +229,9 @@ public:
 	// decoding functions
 	static void decodeFrame3(const uint8 *src, uint8 *dst, uint32 size);
 	static uint decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
-	static void decodeFrameDelta(uint8 *dst, const uint8 *src);
+	static void decodeFrameDelta(uint8 *dst, const uint8 *src, bool noXor = false);
 	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch, bool noXor);
+	static void convertAmigaGfx(uint8 *data, int w, int h, bool offscreen = true);
 
 	// maybe subclass screen for kyra3
 	static const ScreenDim _screenDimTableK3[];
@@ -270,6 +271,7 @@ private:
 	void copyScreenFromRect(int x, int y, int w, int h, const uint8 *ptr);
 	void copyScreenToRect(int x, int y, int w, int h, uint8 *ptr);
 
+	template<bool noXor> static void wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src);
 	template<bool noXor> static void wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch);
 
 	uint8 *_pagePtrs[16];

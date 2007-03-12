@@ -92,6 +92,19 @@ protected:
 	uint8 *_frameData;
 };
 
+class WSAMovieAmiga : public WSAMovieV1 {
+public:
+	WSAMovieAmiga(KyraEngine *vm);
+	int open(const char *filename, int offscreen, uint8 *palette);
+	void close();
+
+	void displayFrame(int frameNum);
+private:	
+	void processFrame(int frameNum, uint8 *dst);
+
+	uint8 *_buffer;
+};
+
 class WSAMovieV2 : public WSAMovieV1 {
 public:
 	WSAMovieV2(KyraEngine *vm);

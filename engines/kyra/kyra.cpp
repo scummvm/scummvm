@@ -794,7 +794,8 @@ void KyraEngine::freeShapes123() {
 #pragma mark -
 
 Movie *KyraEngine::createWSAMovie() {
-	// for kyra2 here could be added then WSAMovieV2
+	if (_flags.platform == Common::kPlatformAmiga)
+		return new WSAMovieAmiga(this);
 	return new WSAMovieV1(this);
 }
 

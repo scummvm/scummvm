@@ -92,7 +92,7 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 
 void SeqPlayer::makeHandShapes() {
 	debugC(9, kDebugLevelSequence, "SeqPlayer::makeHandShapes()");
-	_screen->loadBitmap("WRITING.CPS", 3, 3, 0);
+	_screen->loadBitmap("WRITING.CPS", 3, 3, _screen->_currentPalette);
 	if (_vm->gameFlags().platform == Common::kPlatformMacintosh || _vm->gameFlags().platform == Common::kPlatformAmiga) {
 		freeHandShapes();
 		
@@ -248,16 +248,28 @@ void SeqPlayer::s1_skip() {
 
 void SeqPlayer::s1_loadPalette() {
 	uint8 colNum = *_seqData++;
-	uint32 fileSize;
-	uint8 *srcData;
-	srcData = _res->fileData(_vm->seqCOLTable()[colNum], &fileSize);
-	memcpy(_screen->_currentPalette, srcData, fileSize);
-	delete[] srcData;
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		if (!colNum) {
+			memcpy(_screen->_currentPalette, _screen->_currentPalette + 576, 3*32);
+		} else if (colNum == 3) {
+			memcpy(_screen->_currentPalette, _screen->_currentPalette + 672, 3*32);
+		} else if (colNum == 4) {
+			memcpy(_screen->_currentPalette, _screen->_currentPalette + 288, 3*32);
+		}
+		_screen->setScreenPalette(_screen->_currentPalette);
+	} else {
+		uint32 fileSize;
+		uint8 *srcData;
+		srcData = _res->fileData(_vm->seqCOLTable()[colNum], &fileSize);
+		memcpy(_screen->_currentPalette, srcData, fileSize);
+		delete [] srcData;
+	}
 }
 
 void SeqPlayer::s1_loadBitmap() {
 	uint8 cpsNum = *_seqData++;
-	_screen->loadBitmap(_vm->seqCPSTable()[cpsNum], 3, 3, 0);
+	_screen->loadBitmap(_vm->seqCPSTable()[cpsNum], 3, 3, _screen->_currentPalette);
 }
 
 void SeqPlayer::s1_fadeToBlack() {
@@ -267,7 +279,10 @@ void SeqPlayer::s1_fadeToBlack() {
 void SeqPlayer::s1_printText() {
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0 };
 	uint8 txt = *_seqData++;
-	_screen->fillRect(0, 180, 319, 195, 12);
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		_screen->fillRect(0, 180, 319, 195, 0);
+	else
+		_screen->fillRect(0, 180, 319, 195, 12);
 	_screen->setTextColorMap(colorMap);
 	if (!_seqDisplayTextFlag) {
 		const char *str = _vm->seqTextsTable()[txt];
@@ -320,7 +335,10 @@ void SeqPlayer::s1_restoreTalkText() {
 }
 
 void SeqPlayer::s1_clearCurrentScreen() {
-	_screen->fillRect(10, 180, 319, 196, 0xC);
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		_screen->fillRect(10, 180, 319, 195, 0);
+	else
+		_screen->fillRect(10, 180, 319, 196, 0xC);
 }
 
 void SeqPlayer::s1_break() {
@@ -349,16 +367,29 @@ void SeqPlayer::s1_copyRegionSpecial() {
 	uint8 so = *_seqData++;
 	switch (so) {
 	case 0:
-		_screen->copyRegion(0, 0, 0, 47, 320, 77, 2, 0);
+		if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+			_screen->copyRegion(0, 0, 0, 47, 312, 76, 2, 0);
+		else
+			_screen->copyRegion(0, 0, 0, 47, 320, 77, 2, 0);
 		break;
 	case 1:
-		_screen->copyRegion(0, 0, 0, 47, 320, 56, 2, 0);
+		if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+			_screen->copyRegion(0, 0, 8, 47, 312, 55, 2, 0);
+		else
+			_screen->copyRegion(0, 0, 0, 47, 320, 56, 2, 0);
 		break;
 	case 2:
-		_screen->copyRegion(107, 72, 107, 72, 43, 87, 2, 0);
-		_screen->copyRegion(130, 159, 130, 159, 35, 17, 2, 0);
-		_screen->copyRegion(165, 105, 165, 105, 32, 9, 2, 0);
-		_screen->copyRegion(206, 83, 206, 83, 94, 93, 2, 0);
+		if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+			_screen->copyRegion(104, 72, 104, 72, 40, 87, 2, 0);
+			_screen->copyRegion(128, 159, 128, 159, 32, 17, 2, 0);
+			_screen->copyRegion(160, 105, 160, 105, 32, 9, 2, 0);
+			_screen->copyRegion(200, 83, 200, 83, 88, 93, 2, 0);
+		} else {
+			_screen->copyRegion(107, 72, 107, 72, 43, 87, 2, 0);
+			_screen->copyRegion(130, 159, 130, 159, 35, 17, 2, 0);
+			_screen->copyRegion(165, 105, 165, 105, 32, 9, 2, 0);
+			_screen->copyRegion(206, 83, 206, 83, 94, 93, 2, 0);
+		}
 		break;
 	case 3:
 		_screen->copyRegion(152, 56, 152, 56, 48, 48, 2, 0);
@@ -393,12 +424,17 @@ void SeqPlayer::s1_fillRect() {
 
 void SeqPlayer::s1_playEffect() {
 	uint8 track = *_seqData++;
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		return;
 	_vm->delay(3 * _vm->tickLength());
 	_sound->playSoundEffect(track);
 }
 
 void SeqPlayer::s1_playTrack() {
 	uint8 msg = *_seqData++;
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		return;
 
 	if (msg == 1) {
 		_sound->beginFadeOut();

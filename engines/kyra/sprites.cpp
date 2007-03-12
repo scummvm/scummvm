@@ -422,7 +422,10 @@ void Sprites::loadDAT(const char *filename, SceneExits &exits) {
 	}
 	// XXX
 	_engine->_paletteChanged = 1;
-	_screen->loadPalette(_dat + 0x17, _screen->getPalette(1) + 684, 60);
+	// FIXME: check this...
+	if (_engine->gameFlags().platform != Common::kPlatformAmiga) {
+		_screen->loadPalette(_dat + 0x17, _screen->getPalette(1) + 684, 60);
+	}
 	uint8 *data = _dat + 0x6B;
 
 	uint16 length = READ_LE_UINT16(data);

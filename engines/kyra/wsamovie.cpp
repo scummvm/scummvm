@@ -72,7 +72,10 @@ int WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
 	}
 
 	if (_numFrames & 0x8000) {
-		warning("Unhandled wsa flags 0x80");
+		// This is used in the Amiga version, the wsa playing code
+		// doesn't include any handling of it though, so we disable
+		// this warning for now.
+		//warning("Unhandled wsa flags 0x80");
 		_flags |= 0x80;
 		_numFrames &= 0x7FFF;
 	}
@@ -207,6 +210,141 @@ void WSAMovieV1::processFrame(int frameNum, uint8 *dst) {
 		Screen::decodeFrameDelta(dst, _deltaBuffer);
 	} else {
 		Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width, false);
+	}
+}
+
+#pragma mark -
+
+WSAMovieAmiga::WSAMovieAmiga(KyraEngine *vm) : WSAMovieV1(vm), _buffer(0) {}
+
+int WSAMovieAmiga::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
+	debugC(9, kDebugLevelMovie, "WSAMovieAmiga::open('%s', %d, %p)", filename, offscreenDecode, (const void *)palBuf);
+	int res = WSAMovieV1::open(filename, offscreenDecode, palBuf);
+
+	if (!res)
+		return 0;
+
+	_buffer = new uint8[_width * _height];
+	assert(_buffer);
+	return res;	
+}
+
+void WSAMovieAmiga::close() {
+	debugC(9, kDebugLevelMovie, "WSAMovieAmiga::close()");
+	if (_opened) {
+		delete [] _buffer;
+		_buffer = 0;
+	}
+	WSAMovieV1::close();
+}
+
+void WSAMovieAmiga::displayFrame(int frameNum) {
+	debugC(9, kDebugLevelMovie, "WSAMovieAmiga::displayFrame(%d)", frameNum);
+	if (frameNum >= _numFrames || !_opened)
+		return;
+
+	uint8 *dst;
+	dst = _buffer;
+	memset(_buffer, 0, _width*_height);
+
+	if (_currentFrame == _numFrames) {
+		if (!(_flags & WF_NO_FIRST_FRAME)) {
+			Screen::decodeFrameDelta(dst, _deltaBuffer, true);
+			Screen::convertAmigaGfx(dst, _width, _height);
+
+			if (_flags & WF_OFFSCREEN_DECODE) {
+				dst = _offscreenBuffer;
+				const uint8 *src = _buffer;
+				int size = _width * _height;
+
+				for (int i = 0; i < size; ++i) {
+					*dst++ ^= *src++;
+				}
+
+				dst = _buffer;
+			} else {
+				_vm->screen()->copyBlockToPage(_drawPage, _x, _y, _width, _height, _buffer);
+			}
+		}
+		_currentFrame = 0;
+	}
+
+	// try to reduce the number of needed frame operations
+	int diffCount = ABS(_currentFrame - frameNum);
+	int frameStep = 1;
+	int frameCount;
+	if (_currentFrame < frameNum) {
+		frameCount = _numFrames - frameNum + _currentFrame;
+		if (diffCount > frameCount) {
+			frameStep = -1;
+		} else {
+			frameCount = diffCount;
+		}
+	} else {
+		frameCount = _numFrames - _currentFrame + frameNum;
+		if (frameCount >= diffCount) {
+			frameStep = -1;
+			frameCount = diffCount;
+		}
+	}
+	
+	// process
+	if (frameStep > 0) {
+		uint16 cf = _currentFrame;
+		while (frameCount--) {
+			cf += frameStep;
+			processFrame(cf, dst);
+			if (cf == _numFrames) {
+				cf = 0;
+			}
+		}
+	} else {
+		uint16 cf = _currentFrame;
+		while (frameCount--) {
+			if (cf == 0) {
+				cf = _numFrames;
+			}
+			processFrame(cf, dst);
+			cf += frameStep;
+		}
+	}
+	
+	// display
+	_currentFrame = frameNum;
+	if (_flags & WF_OFFSCREEN_DECODE) {
+		_vm->screen()->copyBlockToPage(_drawPage, _x, _y, _width, _height, _offscreenBuffer);
+	}
+}
+
+void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
+	debugC(9, kDebugLevelMovie, "WSAMovieAmiga::processFrame(%d, %p)", frameNum, (const void *)dst);
+	if (!_opened)
+		return;
+	assert(frameNum <= _numFrames);
+
+	memset(dst, 0, _width*_height);
+
+	const uint8 *src = _frameData + _frameOffsTable[frameNum];
+	Screen::decodeFrame4(src, _deltaBuffer, _deltaBufferSize);
+	Screen::decodeFrameDelta(dst, _deltaBuffer, true);
+	Screen::convertAmigaGfx(dst, _width, _height);
+
+	src = dst;
+	dst = 0;
+	int dstPitch = 0;
+	if (_flags & WF_OFFSCREEN_DECODE) {
+		dst = _offscreenBuffer;
+		dstPitch = _width;
+	} else {
+		dst = _vm->screen()->getPageRect(_drawPage, _x, _y, _width, _height);
+		dstPitch = Screen::SCREEN_W;
+	}
+
+	for (int y = 0; y < _height; ++y) {
+		for (int x = 0; x < _width; ++x) {
+			*dst++ ^= *src++;			
+		}
+		dst += dstPitch - _width;
 	}
 }
 

@@ -140,11 +140,22 @@ void KyraEngine::seq_introLogos() {
 	}
 
 	_screen->clearPage(0);
-	_screen->loadBitmap("TOP.CPS", 7, 7, NULL);
-	_screen->loadBitmap("BOTTOM.CPS", 5, 5, _screen->_currentPalette);
+	
+	if (_flags.platform == Common::kPlatformAmiga) {
+		_screen->loadPalette("INTRO.PAL", _screen->_currentPalette);
+		_screen->loadBitmap("BOTTOM.CPS", 3, 5, 0);
+		_screen->loadBitmap("TOP.CPS", 3, 3, 0);
+		_screen->copyRegion(0, 0, 0, 111, 320, 64, 2, 0);
+		_screen->copyRegion(0, 91, 0, 8, 320, 109, 2, 0);
+		_screen->copyRegion(0, 0, 0, 0, 320, 190, 0, 2);
+	} else {
+		_screen->loadBitmap("TOP.CPS", 7, 7, 0);
+		_screen->loadBitmap("BOTTOM.CPS", 5, 5, _screen->_currentPalette);
+		_screen->copyRegion(0, 91, 0, 8, 320, 103, 6, 0);
+		_screen->copyRegion(0, 0, 0, 111, 320, 64, 6, 0);
+	}
+
 	_screen->_curPage = 0;
-	_screen->copyRegion(0, 91, 0, 8, 320, 103, 6, 0);
-	_screen->copyRegion(0, 0, 0, 111, 320, 64, 6, 0);
 	_screen->updateScreen();
 	_screen->fadeFromBlack();
 	
@@ -154,6 +165,12 @@ void KyraEngine::seq_introLogos() {
 		return;
 	}
 	delay(60 * _tickLength);
+
+	if (_flags.platform == Common::kPlatformAmiga) {
+		memcpy(_screen->_currentPalette, _screen->_currentPalette + 3*32, 3*32);
+		_screen->setScreenPalette(_screen->_currentPalette);
+	}
+
 	if (_seq->playSequence(_seq_KyrandiaLogo, _skipFlag) && !seq_skipSequence() || _quitFlag) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
@@ -164,38 +181,45 @@ void KyraEngine::seq_introLogos() {
 	if (_quitFlag)
 		return;
 
-	_screen->copyRegion(0, 91, 0, 8, 320, 104, 6, 2);
-	_screen->copyRegion(0, 0, 0, 112, 320, 64, 6, 2);
+	if (_flags.platform == Common::kPlatformAmiga) {
+		memcpy(_screen->_currentPalette, _screen->_currentPalette + 3*64, 3*32);
+		_screen->fadeToBlack();
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 4, 0);
+		_screen->fadeFromBlack();
+	} else {
+		_screen->copyRegion(0, 91, 0, 8, 320, 104, 6, 2);
+		_screen->copyRegion(0, 0, 0, 112, 320, 64, 6, 2);
 
-	uint32 start = _system->getMillis();
-	bool doneFlag = false;
-	int oldDistance = 0;
+		uint32 start = _system->getMillis();
+		bool doneFlag = false;
+		int oldDistance = 0;
 
-	do {
-		uint32 now = _system->getMillis();
+		do {
+			uint32 now = _system->getMillis();
 
-		// The smallest y2 we ever draw the screen for is 65.
-		int distance = (now - start) / _tickLength;
-		if (distance > 112) {
-			distance = 112;
-			doneFlag = true;
-		}
+			// The smallest y2 we ever draw the screen for is 65.
+			int distance = (now - start) / _tickLength;
+			if (distance > 112) {
+				distance = 112;
+				doneFlag = true;
+			}
 
-		if (distance > oldDistance) {
-			int y1 = 8 + distance;
-			int h1 = 168 - distance;
-			int y2 = 176 - distance;
-			int h2 = distance;
+			if (distance > oldDistance) {
+				int y1 = 8 + distance;
+				int h1 = 168 - distance;
+				int y2 = 176 - distance;
+				int h2 = distance;
 
-			_screen->copyRegion(0, y1, 0, 8, 320, h1, 2, 0);
-			if (h2 > 0)
-				_screen->copyRegion(0, 64, 0, y2, 320, h2, 4, 0);
-			_screen->updateScreen();
-		}
+				_screen->copyRegion(0, y1, 0, 8, 320, h1, 2, 0);
+				if (h2 > 0)
+					_screen->copyRegion(0, 64, 0, y2, 320, h2, 4, 0);
+				_screen->updateScreen();
+			}
 
-		oldDistance = distance;
-		delay(10);
-	} while (!doneFlag && !_quitFlag && !_abortIntroFlag);
+			oldDistance = distance;
+			delay(10);
+		} while (!doneFlag && !_quitFlag && !_abortIntroFlag);
+	}
 
 	if (_quitFlag)
 		return;
@@ -209,21 +233,22 @@ void KyraEngine::seq_introStory() {
 	_screen->clearPage(0);
 	if (_flags.isTalkie) {
 		return;
-	} else if (_flags.lang == Common::EN_ANY && _flags.platform == Common::kPlatformPC) {
-		_screen->loadBitmap("TEXT.CPS", 3, 3, 0);
+	} else if (_flags.lang == Common::EN_ANY && (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformAmiga)) {
+		_screen->loadBitmap("TEXT.CPS", 3, 3, _screen->_currentPalette);
 	} else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN) {
-		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, 0);
+		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, _screen->_currentPalette);
 	} else if (_flags.lang == Common::DE_DEU) {
-		_screen->loadBitmap("TEXT_GER.CPS", 3, 3, 0);
+		_screen->loadBitmap("TEXT_GER.CPS", 3, 3, _screen->_currentPalette);
 	} else if (_flags.lang == Common::FR_FRA) {
-		_screen->loadBitmap("TEXT_FRE.CPS", 3, 3, 0);
+		_screen->loadBitmap("TEXT_FRE.CPS", 3, 3, _screen->_currentPalette);
 	} else if (_flags.lang == Common::ES_ESP) {
-		_screen->loadBitmap("TEXT_SPA.CPS", 3, 3, 0);
+		_screen->loadBitmap("TEXT_SPA.CPS", 3, 3, _screen->_currentPalette);
 	} else if (_flags.lang == Common::IT_ITA) {
-		_screen->loadBitmap("TEXT_ITA.CPS", 3, 3, 0);
+		_screen->loadBitmap("TEXT_ITA.CPS", 3, 3, _screen->_currentPalette);
 	} else {
 		warning("no story graphics file found");
 	}
+	_screen->setScreenPalette(_screen->_currentPalette);
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 3, 0);
 
 	if (_flags.lang == Common::JA_JPN) {

@@ -448,7 +448,8 @@ void KyraEngine::startSceneScript(int brandonAlive) {
 	char fileNameBuffer[32];
 	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
 	strcat(fileNameBuffer, ".CPS");
-	_screen->loadBitmap(fileNameBuffer, 3, 3, 0);
+	// FIXME: check this hack for amiga version
+	_screen->loadBitmap(fileNameBuffer, 3, 3, (_flags.platform == Common::kPlatformAmiga ? _screen->getPalette(1) : 0));
 	_sprites->loadSceneShapes();
 	_exitListPtr = 0;
 	
@@ -846,6 +847,13 @@ void KyraEngine::initSceneScreen(int brandonAlive) {
 			memset(_screen->getPalette(0), 0, 768);
 		}
 	}
+	
+	// FIXME: hack to get the room palette working 
+	if (_flags.platform == Common::kPlatformAmiga) {
+		memcpy(_screen->getPalette(0), _screen->getPalette(1), 32*3);
+		_screen->setScreenPalette(_screen->getPalette(0));
+	}
+
 	// really call this here?
 	_screen->updateScreen();
 

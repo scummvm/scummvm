@@ -793,6 +793,10 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 	debugC(9, kDebugLevelScreen, "Screen::loadFont(%d, '%s')", fontId, filename);
 	Font *fnt = &_fonts[fontId];
 
+	// FIXME: add font support for amiga version
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		return true;
+
 	if (!fnt)
 		error("fontId %d is invalid", fontId);
 
@@ -827,14 +831,23 @@ Screen::FontId Screen::setFont(FontId fontId) {
 }
 
 int Screen::getFontHeight() const {
+	// FIXME: add font support for amiga version
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		return 0;
 	return *(_fonts[_currentFont].fontData + _fonts[_currentFont].charSizeOffset + 4);
 }
 
 int Screen::getFontWidth() const {
+	// FIXME: add font support for amiga version
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		return 0;
 	return *(_fonts[_currentFont].fontData + _fonts[_currentFont].charSizeOffset + 5);
 }
 
 int Screen::getCharWidth(uint16 c) const {
+	// FIXME: add font support for amiga version
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		return 0;
 	debugC(9, kDebugLevelScreen, "Screen::getCharWidth('%c'|%d)", c & 0xFF, c);
 	if (c & 0xFF00)
 		return SJIS_CHARSIZE >> 1;
@@ -842,6 +855,9 @@ int Screen::getCharWidth(uint16 c) const {
 }
 
 int Screen::getTextWidth(const char *str) const {
+	// FIXME: add font support for amiga version
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		return 0;
 	debugC(9, kDebugLevelScreen, "Screen::getTextWidth('%s')", str);
 
 	int curLineLen = 0;
@@ -872,6 +888,9 @@ int Screen::getTextWidth(const char *str) const {
 }
 
 void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2) {
+	// FIXME: add font support for amiga version
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		return;
 	debugC(9, kDebugLevelScreen, "Screen::printText('%s', %d, %d, 0x%X, 0x%X)", str, x, y, color1, color2);
 	uint8 cmap[2];
 	cmap[0] = color2;
@@ -1598,15 +1617,26 @@ uint Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
 	return dst - dstOrig;
 }
 
-void Screen::decodeFrameDelta(uint8 *dst, const uint8 *src) {
-	debugC(9, kDebugLevelScreen, "Screen::decodeFrameDelta(%p, %p)", (const void *)dst, (const void *)src);
+void Screen::decodeFrameDelta(uint8 *dst, const uint8 *src, bool noXor) {
+	debugC(9, kDebugLevelScreen, "Screen::decodeFrameDelta(%p, %p, %d)", (const void *)dst, (const void *)src, noXor);
+	if (noXor)
+		wrapped_decodeFrameDelta<true>(dst, src);
+	else
+		wrapped_decodeFrameDelta<false>(dst, src);
+}
+
+template <bool noXor>
+void Screen::wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src) {
 	while (1) {
 		uint8 code = *src++;
 		if (code == 0) {
 			uint8 len = *src++;
 			code = *src++;
 			while (len--) {
-				*dst++ ^= code;
+				if (noXor)
+					*dst++ = code;
+				else
+					*dst++ ^= code;
 			}
 		} else if (code & 0x80) {
 			code -= 0x80;
@@ -1622,11 +1652,17 @@ void Screen::decodeFrameDelta(uint8 *dst, const uint8 *src) {
 						uint16 len = subcode - 0x4000;
 						code = *src++;
 						while (len--) {
-							*dst++ ^= code;
+							if (noXor)
+								*dst++ = code;
+							else
+								*dst++ ^= code;
 						}
 					} else {
 						while (subcode--) {
-							*dst++ ^= *src++;
+							if (noXor)
+								*dst++ = *src++;
+							else
+								*dst++ ^= *src++;
 						}
 					}
 				} else {
@@ -1635,7 +1671,10 @@ void Screen::decodeFrameDelta(uint8 *dst, const uint8 *src) {
 			}
 		} else {
 			while (code--) {
-				*dst++ ^= *src++;
+				if (noXor)
+					*dst++ = *src++;
+				else
+					*dst++ ^= *src++;
 			}
 		}
 	}
@@ -1651,9 +1690,54 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, bool 
 	}
 }
 
+void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen) {
+	static uint8 tmp[320*200];
+
+	if (offscreen) {
+		uint8 *curLine = tmp;
+		const uint8 *src = data;
+		int hC = h;
+		while (hC--) {
+			uint8 *dst1 = curLine;
+			uint8 *dst2 = dst1 + 8000;
+			uint8 *dst3 = dst2 + 8000;
+			uint8 *dst4 = dst3 + 8000;
+			uint8 *dst5 = dst4 + 8000;
+
+			int width = w >> 3;
+			while (width--) {
+				*dst1++ = *src++;
+				*dst2++ = *src++;
+				*dst3++ = *src++;
+				*dst4++ = *src++;
+				*dst5++ = *src++;
+			}
+	
+			curLine += 40;
+		}
+	} else {
+		memcpy(tmp, data, w*h);
+	}
+
+	int planeOffset = 8000;
+	for (int y = 0; y < h; ++y) {
+		for (int x = 0; x < w; ++x) {
+			int bytePos = x/8+y*40;
+			int bitPos = 7-x&7;
+
+			byte colorIndex = 0;
+			colorIndex |= (((tmp[bytePos + planeOffset * 0] & (1 << bitPos)) >> bitPos) & 0x1) << 0;
+			colorIndex |= (((tmp[bytePos + planeOffset * 1] & (1 << bitPos)) >> bitPos) & 0x1) << 1;
+			colorIndex |= (((tmp[bytePos + planeOffset * 2] & (1 << bitPos)) >> bitPos) & 0x1) << 2;
+			colorIndex |= (((tmp[bytePos + planeOffset * 3] & (1 << bitPos)) >> bitPos) & 0x1) << 3;
+			colorIndex |= (((tmp[bytePos + planeOffset * 4] & (1 << bitPos)) >> bitPos) & 0x1) << 4;
+			*data++ = colorIndex;
+		}
+	}
+}
+
 template<bool noXor>
 void Screen::wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch) {
-	debugC(9, kDebugLevelScreen, "Screen::wrapped_decodeFrameDeltaPage(%p, %p, %d)", (const void *)dst, (const void *)src, pitch);
 	int count = 0;
 	uint8 *dstNext = dst;
 	while (1) {
@@ -2473,6 +2557,10 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 		break;
 	}
 
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		Screen::convertAmigaGfx(dstData, 320, 200, false);
+	}
+
 	delete [] srcData;
 }
 
@@ -2483,14 +2571,42 @@ void Screen::loadPalette(const char *filename, uint8 *palData) {
 
 	if (palData && fileSize) {
 		debugC(9, kDebugLevelScreen,"Loading a palette of size %i from '%s'", fileSize, filename);
-		memcpy(palData, srcData, fileSize);
+		if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+			assert(fileSize % 2 == 0);
+			assert(fileSize / 2 <= 256);
+			fileSize >>= 1;
+			const uint16 *src = (const uint16 *)srcData;
+			for (uint i = 0; i < fileSize; ++i) {
+				uint16 col = READ_BE_UINT16(src); ++src;
+				palData[2] = (col & 0xF) << 2; col >>= 4;
+				palData[1] = (col & 0xF) << 2; col >>= 4;
+				palData[0] = (col & 0xF) << 2; col >>= 4;
+				palData += 3;
+			}
+		} else {
+			memcpy(palData, srcData, fileSize);
+		}
 	}
 	delete [] srcData;
 }
 
 void Screen::loadPalette(const byte *data, uint8 *palData, int bytes) {
 	debugC(9, kDebugLevelScreen, "Screen::loadPalette(%p, %p %d)", (const void *)data, (void *)palData, bytes);
-	memcpy(palData, data, bytes);
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		assert(bytes % 2 == 0);
+		assert(bytes / 2 <= 256);
+		bytes >>= 1;
+		const uint16 *src = (const uint16 *)data;
+		for (int i = 0; i < bytes; ++i) {
+			uint16 col = READ_BE_UINT16(src); ++src;
+			palData[2] = (col & 0xF) << 2; col >>= 4;
+			palData[1] = (col & 0xF) << 2; col >>= 4;
+			palData[0] = (col & 0xF) << 2; col >>= 4;
+			palData += 3;
+		}
+	} else {
+		memcpy(palData, data, bytes);
+	}
 }
 
 // kyra3 specific
