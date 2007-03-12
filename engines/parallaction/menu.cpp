@@ -135,7 +135,7 @@ void Menu::start() {
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
 
 	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit3);
+//	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit3);
 
 	if (selectGame() == 0) {
 		newGame();
@@ -241,7 +241,7 @@ uint16 Menu::selectGame() {
 		if (_si == _di) continue;
 
 		_di = _si;
-		_vm->_graphics->copyScreen(Graphics::kBit3, Graphics::kBitFront);
+		_vm->_graphics->copyScreen(Graphics::kBit2, Graphics::kBitFront);
 
 		if (_si != 0) {
 			// load a game
@@ -251,7 +251,6 @@ uint16 Menu::selectGame() {
 			_vm->_graphics->displayString(60, 30, newGameMsg[_language]);
 		}
 
-		_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBit2);
 		_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBitBack);
 
 	}
