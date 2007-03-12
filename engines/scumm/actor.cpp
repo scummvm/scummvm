@@ -621,12 +621,6 @@ void Actor_v3::walkActor() {
 			break;
 
 		next_box = _vm->getNextBox(_walkbox, _walkdata.destbox);
-
-		// WORKAROUND: To fully fix bug #774783, we add a special case
-		// here, resulting in a different next_box value for Hitler.
-		if ((_vm->_game.id == GID_INDY3) && _vm->_roomResource == 46 && _walkbox == 1 && _walkdata.destbox == 0 && _number == 9)
-			next_box = 1;
-
 		if (next_box < 0) {
 			_moving |= MF_LAST_LEG;
 			return;
