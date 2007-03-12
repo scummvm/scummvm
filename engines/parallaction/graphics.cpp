@@ -934,9 +934,6 @@ void Gfx::setMask(byte *mask) {
 	memcpy(_buffers[kMask0], mask, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 }
 
-void Gfx::setPath(byte *path) {
-	memcpy(_buffers[kPath0], path, SCREENPATH_WIDTH*SCREEN_HEIGHT);
-}
 
 
 void Gfx::copyRect(Gfx::Buffers dstbuffer, uint16 x, uint16 y, uint16 w, uint16 h, byte *src, uint16 pitch) {
@@ -1019,17 +1016,6 @@ void Gfx::intGrottaHackMask() {
 	return;
 }
 
-uint16 Gfx::queryPath(uint16 x, uint16 y) {
-
-	byte *v6 = _buffers[kPath0];
-
-	byte _al = v6[y*40 + x/8];
-	byte _dl = 1 << (x % 8);
-
-	return _al & _dl;
-
-}
-
 int16 Gfx::queryMask(int16 v) {
 
 	for (uint16 _si = 0; _si < 3; _si++) {
@@ -1047,7 +1033,6 @@ void Gfx::initBuffers() {
 	_buffers[kBit3]   = (byte*)malloc(SCREEN_SIZE);	  // this buffer is also used by menu so it must stay this size
 
 	_buffers[kMask0] = (byte*)malloc(SCREENMASK_WIDTH * SCREEN_HEIGHT);
-	_buffers[kPath0] = (byte*)malloc(SCREENPATH_WIDTH * SCREEN_HEIGHT);
 
 	return;
 }
@@ -1079,7 +1064,6 @@ Gfx::Gfx(Parallaction* vm) :
 Gfx::~Gfx() {
 
 	free(_buffers[kMask0]);
-	free(_buffers[kPath0]);
 
 	free(_buffers[kBitFront]);
 	free(_buffers[kBitBack]);

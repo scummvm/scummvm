@@ -24,6 +24,7 @@
 #include "parallaction/graphics.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/disk.h"
+#include "parallaction/walk.h"
 
 namespace Parallaction {
 
@@ -412,7 +413,7 @@ void Disk::loadBackground(const char *filename) {
 
 	_vm->_gfx->setBackground(bg);
 	_vm->_gfx->setMask(mask);
-	_vm->_gfx->setPath(path);
+	setPath(path);
 
 	free(v4);
 
@@ -445,7 +446,7 @@ void Disk::loadMaskAndPath(const char *name) {
 	_archive.read(maskBuf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 
 	_vm->_gfx->setMask(maskBuf);
-	_vm->_gfx->setPath(pathBuf);
+	setPath(pathBuf);
 
 	return;
 }

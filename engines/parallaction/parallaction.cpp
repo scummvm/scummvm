@@ -36,6 +36,7 @@
 #include "parallaction/music.h"
 #include "parallaction/inventory.h"
 #include "parallaction/graphics.h"
+#include "parallaction/walk.h"
 #include "parallaction/zone.h"
 
 
@@ -226,6 +227,7 @@ int Parallaction::init() {
 	_location._comment = NULL;
 	_location._endComment = NULL;
 
+	initWalk();
 
 	_yourTalk._width = 0;
 	_yourTalk._height = 0;

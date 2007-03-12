@@ -24,14 +24,17 @@
 #include "parallaction/parallaction.h"
 #include "parallaction/commands.h"
 #include "parallaction/graphics.h"
+#include "parallaction/walk.h"
 #include "parallaction/zone.h"
 
 namespace Parallaction {
 
 uint16 walkFunc1(int16, int16, WalkNode *);
-uint16 queryPath(uint16 x, uint16 y);
+
 
 WalkNode _NULL_WALKNODE = { {NULL, NULL}, 0, 0 };
+
+static byte		*_buffer;
 
 static uint16 _doorData1 = 1000;
 static Zone *_zoneTrap = NULL;
@@ -227,11 +230,6 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 	free(v44);
 	return (WalkNode*)v58._node._next;
-}
-
-
-uint16 queryPath(uint16 x, uint16 y) {
-	return _vm->_gfx->queryPath(x, y);
 }
 
 
@@ -479,6 +477,23 @@ uint16 checkDoor() {
 
 	_yourself._frame = walkData2;
 	return _yourself._frame;
+}
+
+uint16 queryPath(uint16 x, uint16 y) {
+
+	byte _al = _buffer[y*40 + x/8];
+	byte _dl = 1 << (x % 8);
+
+	return _al & _dl;
+
+}
+
+void setPath(byte *path) {
+	memcpy(_buffer, path, SCREENPATH_WIDTH*SCREEN_HEIGHT);
+}
+
+void initWalk() {
+	_buffer = (byte*)malloc(SCREENPATH_WIDTH * SCREEN_HEIGHT);
 }
 
 } // namespace Parallaction

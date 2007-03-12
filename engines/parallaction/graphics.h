@@ -74,9 +74,7 @@ public:
 		kBit2,
 		kBit3,
 		// mask buffers
-		kMask0,
-		// path buffers
-		kPath0
+		kMask0
 	};
 
 public:
@@ -100,11 +98,8 @@ public:
 	// location
 	void setBackground(byte *background);
 	void setMask(byte *mask);
-	void setPath(byte *path);
 	void parseDepths(Common::SeekableReadStream &stream);
 	void parseBackground(Common::SeekableReadStream &stream);
-	void loadMaskAndPath(const char *filename);
-	uint16 queryPath(uint16 x, uint16 y);
 	int16 queryMask(int16 v);
 	void intGrottaHackMask();
 	void restoreBackground(int16 left, int16 top, uint16 width, uint16 height);
