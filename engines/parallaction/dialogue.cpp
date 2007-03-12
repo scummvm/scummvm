@@ -643,24 +643,15 @@ int16 getHoverAnswer(int16 x, int16 y, Question *q) {
 
 }
 
-//	backups background mask and path
-//
-//
-void enterDialogue() {
 
-	_vm->_gfx->backupBackgroundMask(Gfx::kMask0);
-	_vm->_gfx->backupBackgroundPath(Gfx::kPath0);
+void enterDialogue() {
 
 	return;
 }
 
-//	restores background mask and path
 //	rebuilds inventory
 //
 void exitDialogue() {
-
-	_vm->_gfx->restoreBackgroundMask(Gfx::kMask0);
-	_vm->_gfx->restoreBackgroundPath(Gfx::kPath0);
 
 	refreshInventory(_vm->_characterName);
 

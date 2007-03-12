@@ -108,10 +108,6 @@ public:
 	int16 queryMask(int16 v);
 	void intGrottaHackMask();
 	void restoreBackground(int16 left, int16 top, uint16 width, uint16 height);
-	void backupBackgroundMask(Gfx::Buffers mask);
-	void restoreBackgroundMask(Gfx::Buffers mask);
-	void backupBackgroundPath(Gfx::Buffers path);
-	void restoreBackgroundPath(Gfx::Buffers path);
 
 	// intro
 	void maskClearRectangle(uint16 left, uint16 top, uint16 right, uint16 bottom, Gfx::Buffers mask);

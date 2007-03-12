@@ -35,11 +35,6 @@ extern OSystem *g_system;
 namespace Parallaction {
 
 
-byte *	_maskBackup;
-byte *	_pathBackup;
-
-
-
 uint16	_bgLayers[4];
 
 //
@@ -800,59 +795,6 @@ void Gfx::setFont(const char* name) {
 }
 
 
-//	backups background mask
-//
-//
-void Gfx::backupBackgroundMask(Gfx::Buffers mask) {
-
-	byte *s = _buffers[mask];
-	byte *d = _maskBackup;
-
-	memcpy(d, s, SCREENMASK_WIDTH*SCREEN_HEIGHT);
-
-	return;
-}
-
-//	restores background mask
-//
-//
-void Gfx::restoreBackgroundMask(Gfx::Buffers mask) {
-
-	byte *s = _maskBackup;
-	byte *d = _buffers[mask];
-
-	memcpy(d, s, SCREENMASK_WIDTH*SCREEN_HEIGHT);
-
-	return;
-}
-
-//	backups background path
-//
-//
-void Gfx::backupBackgroundPath(Gfx::Buffers path) {
-
-	byte *s = _buffers[path];
-	byte *d = _pathBackup;
-
-	memcpy(d, s, SCREENPATH_WIDTH*SCREEN_HEIGHT);
-
-	return;
-}
-
-//
-//	restores background path
-//
-void Gfx::restoreBackgroundPath(Gfx::Buffers path) {
-
-	byte *s = _pathBackup;
-	byte *d = _buffers[path];
-
-	memcpy(d, s, SCREENPATH_WIDTH*SCREEN_HEIGHT);
-
-	return;
-}
-
-
 void Gfx::restoreBackground(int16 left, int16 top, uint16 width, uint16 height) {
 //	printf("restoreBackground(%i, %i, %i, %i)\n", left, top, width, height);
 
@@ -1106,9 +1048,6 @@ void Gfx::initBuffers() {
 
 	_buffers[kMask0] = (byte*)malloc(SCREENMASK_WIDTH * SCREEN_HEIGHT);
 	_buffers[kPath0] = (byte*)malloc(SCREENPATH_WIDTH * SCREEN_HEIGHT);
-
-	_maskBackup = (byte*)malloc(SCREENMASK_WIDTH * SCREEN_HEIGHT);
-	_pathBackup = (byte*)malloc(SCREENPATH_WIDTH * SCREEN_HEIGHT);
 
 	return;
 }
