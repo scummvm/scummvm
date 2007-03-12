@@ -460,7 +460,7 @@ const char *AgiEngine::getSavegameFilename(int num) {
 	return saveLoadSlot;
 }
 
-void AgiEngine::getSavegameDescription(int num, char *buf) {
+void AgiEngine::getSavegameDescription(int num, char *buf, bool showEmpty) {
 	char fileName[MAX_PATH];
 	Common::InSaveFile *in;
 		
@@ -468,7 +468,10 @@ void AgiEngine::getSavegameDescription(int num, char *buf) {
 	sprintf(fileName, "%s", getSavegameFilename(num));
 	if (!(in = _saveFileMan->openForLoading(fileName))) {
 		debugC(4, kDebugLevelMain | kDebugLevelSavegame, "File %s does not exist", fileName);
-		strcpy(buf, "          (empty slot)");
+		if (showEmpty)
+			strcpy(buf, "        (empty slot)");
+		else
+			*buf = 0;
 	} else {
 		debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Successfully opened %s for reading", fileName);
 		uint32 type = in->readUint32BE();
@@ -509,7 +512,7 @@ int AgiEngine::selectSlot() {
 	for (;;) {
 		char dstr[64];
 		for (i = 0; i < NUM_VISIBLE_SLOTS; i++) {
-			sprintf(dstr, "[%-32.32s]", desc[i]);
+			sprintf(dstr, "[%2d. %-28.28s]", i + _firstSlot, desc[i]);
 			printText(dstr, 0, hm + 1, vm + 4 + i,
 					(40 - 2 * hm) - 1, i == active ? MSG_BOX_COLOUR : MSG_BOX_TEXT,
 					i == active ? MSG_BOX_TEXT : MSG_BOX_COLOUR);
@@ -519,9 +522,20 @@ int AgiEngine::selectSlot() {
 		char downArrow[] = "v";
 		char scrollBar[] = " ";
 
-		int sbPos = 1 + (_firstSlot * (NUM_VISIBLE_SLOTS - 2)) / (NUM_SLOTS - NUM_VISIBLE_SLOTS);
-		if (sbPos > NUM_VISIBLE_SLOTS - 2)
+		int sbPos;
+
+		// Use the extreme scrollbar positions only if the extreme
+		// slots are in sight.
+
+		if (_firstSlot == 0)
+			sbPos = 1;
+		else if (_firstSlot == NUM_SLOTS - NUM_VISIBLE_SLOTS)
 			sbPos = NUM_VISIBLE_SLOTS - 2;
+		else {
+			sbPos = 2 + (_firstSlot * (NUM_VISIBLE_SLOTS - 4)) / (NUM_SLOTS - NUM_VISIBLE_SLOTS - 1);
+			if (sbPos >= NUM_VISIBLE_SLOTS - 3)
+				sbPos = NUM_VISIBLE_SLOTS - 3;
+		}
 
 		for (i = 1; i < NUM_VISIBLE_SLOTS - 1; i++)
 			printText(scrollBar, 35, hm + 1, vm + 4 + i, 1, MSG_BOX_COLOUR, 7, true);
@@ -680,8 +694,26 @@ int AgiEngine::saveGameDialog() {
 	_gfx->flushBlock(3 * CHAR_COLS, 11 * CHAR_LINES - 1,
 			37 * CHAR_COLS, 12 * CHAR_LINES);
 
-	getString(2, 11, 31, MAX_STRINGS);
-	_gfx->printCharacter(3, 11, _game.cursorChar, MSG_BOX_COLOUR, MSG_BOX_TEXT);
+	// The description field of the save/restore dialog holds 32 characters
+	// but we use four of them for the slot number. The input field is a
+	// bit wider than that, so we don't have to worry about leaving space
+	// for the cursor.
+
+	getString(2, 11, 28, MAX_STRINGS);
+
+	// If we're saving over an old slot, show the old description. We can't
+	// access that buffer directly, so we have to feed the characters to
+	// the input handler one at a time.
+
+	char name[40];
+	int numChars;
+
+	getSavegameDescription(slot, name, false);
+
+	for (numChars = 0; numChars < 28 && name[numChars]; numChars++)
+		handleGetstring(name[numChars]);
+
+	_gfx->printCharacter(numChars + 3, 11, _game.cursorChar, MSG_BOX_COLOUR, MSG_BOX_TEXT);
 	do {
 		mainCycle();
 	} while (_game.inputMode == INPUT_GETSTRING);

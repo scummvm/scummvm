@@ -537,7 +537,7 @@ public:
 	Common::RandomSource *_rnd;
 
 	const char *getSavegameFilename(int num);
-	void getSavegameDescription(int num, char *buf);
+	void getSavegameDescription(int num, char *buf, bool showEmpty = true);
 	int selectSlot();
 	int saveGame(const char *fileName, const char *saveName);
 	int saveGameDialog();
