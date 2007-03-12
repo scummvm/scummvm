@@ -498,13 +498,22 @@ void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstw, int dsth,
 void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor) {
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
-		dst += r2.left + r2.top * dstw;
-		src += r1.left + r1.top * srcw;
-		if (flags & (kWIFFlipY | kWIFFlipX)) {
-			warning("Unhandled Wiz flags (kWIFFlipY | kWIFFlipX)");
+		if (flags & kWIFFlipX) {
+			int l = r1.left;
+			int r = r1.right;
+			r1.left = srcw - r;
+			r1.right = srcw - l;
+		}
+		if (flags & kWIFFlipY) {
+			int t = r1.top;
+			int b = r1.bottom;
+			r1.top = srch - b;
+			r1.bottom = srch - t;
 		}
 		int h = r1.height();
 		int w = r1.width();
+		src += r1.left + r1.top * srcw;
+		dst += r2.left + r2.top * dstw;
 		if (palPtr) {
 			decompressRawWizImage<kWizRMap>(dst, dstw, src, srcw, w, h, transColor, palPtr);
 		} else {
