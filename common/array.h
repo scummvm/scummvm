@@ -100,6 +100,9 @@ public:
 	}
 
 	Array<T>& operator  =(const Array<T>& array) {
+		if (this == &array)
+			return *this;
+
 		if (_data)
 			delete [] _data;
 		_size = array._size;

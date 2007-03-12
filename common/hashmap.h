@@ -155,6 +155,9 @@ public:
 	~HashMap();
 
 	HM_t &operator =(const HM_t &map) {
+		if (this == &map)
+			return *this;
+
 		// Remove the previous content and ...
 		clear();
 		delete[] _arr;
