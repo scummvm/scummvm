@@ -77,14 +77,18 @@ struct AdjustBoxResult {	/* Result type of AdjustBox functions */
 	byte box;
 };
 
-class Actor : public Serializable {
+enum {
+	kOldInvalidBox = 255,	// For small header games
+	kNewInavlidBox = 0
+};
 
+class Actor : public Serializable {
 public:
 	static byte kInvalidBox;
 
-	static void initActorClass(ScummEngine *scumm);
-
 protected:
+	ScummEngine *_vm;
+
 	/** The position of the actor inside the virtual screen. */
 	Common::Point _pos;
 
@@ -175,11 +179,9 @@ protected:
 	ActorWalkData _walkdata;
 	int16 _animVariable[27];
 
-	static ScummEngine *_vm;
-
 public:
 
-	Actor(int id);
+	Actor(ScummEngine *scumm, int id);
 	virtual ~Actor() {}
 
 //protected:
@@ -334,7 +336,7 @@ protected:
 
 class Actor_v3 : public Actor {
 public:
-	Actor_v3(int id) : Actor(id) {}
+	Actor_v3(ScummEngine *scumm, int id) : Actor(scumm, id) {}
 
 	virtual void walkActor();
 
@@ -345,7 +347,7 @@ protected:
 
 class Actor_v2 : public Actor_v3 {
 public:
-	Actor_v2(int id) : Actor_v3(id) {}
+	Actor_v2(ScummEngine *scumm, int id) : Actor_v3(scumm, id) {}
 
 	virtual void initActor(int mode);
 	virtual void walkActor();
@@ -361,7 +363,7 @@ public:
 	byte _miscflags;
 
 public:
-	ActorC64(int id) : Actor_v2(id) {}
+	ActorC64(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {}
 	virtual void initActor(int mode) {
 		Actor_v2::initActor(mode);
 		if (mode == -1) {

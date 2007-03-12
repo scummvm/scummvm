@@ -42,18 +42,10 @@
 namespace Scumm {
 
 byte Actor::kInvalidBox = 0;
-ScummEngine *Actor::_vm = 0;
 
-void Actor::initActorClass(ScummEngine *scumm) {
-	_vm = scumm;
-	if (_vm->_game.features & GF_SMALL_HEADER) {
-		kInvalidBox = 255;
-	}
-}
-
-Actor::Actor(int id) {
+Actor::Actor(ScummEngine *scumm, int id) :
+	_vm(scumm), _number(id) {
 	assert(_vm != 0);
-	_number = id;
 }
 
 void Actor::initActor(int mode) {
@@ -492,7 +484,6 @@ void Actor::walkActor() {
 
 	_moving &= ~MF_NEW_LEG;
 	do {
-
 		if (_walkbox == kInvalidBox) {
 			setBox(_walkdata.destbox);
 			_walkdata.curbox = _walkdata.destbox;
