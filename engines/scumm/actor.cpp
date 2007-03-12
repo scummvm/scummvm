@@ -655,7 +655,7 @@ void Actor_v3::walkActor() {
 		if (calcMovementFactor(p3))
 			return;
 
-		setBox(_walkdata.destbox);
+		setBox(_walkdata.curbox);
 	} while (1);
 
 	_moving |= MF_LAST_LEG;
@@ -1467,7 +1467,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 
 	bcr->_clipOverride = _clipOverride;
 
-	if (_vm->_game.version == 4 && _boxscale & 0x8000) {
+	if (_vm->_game.version == 4 && (_boxscale & 0x8000)) {
 		bcr->_scaleX = bcr->_scaleY = _vm->getScaleFromSlot((_boxscale & 0x7fff) + 1, _pos.x, _pos.y);
 	} else {
 		bcr->_scaleX = _scalex;
