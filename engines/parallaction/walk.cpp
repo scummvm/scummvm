@@ -392,7 +392,6 @@ void jobWalk(void *parm, Job *j) {
 //	v14._height = _yourself._cnv._height;
 //	v14._data0 = _yourself._cnv._array[_yourself._frame];
 //	v14._data1 = _yourself._cnv.field_8[_yourself._frame];
-//	v14._data2 = &_yourself.field_54;
 
 	if ((_si < node->_x) && (_si < SCREEN_WIDTH) && (queryPath(_yourself._cnv._width/2 + _si + 2, _yourself._cnv._height + _di) != 0)) {
 //		printf("walk right\n");

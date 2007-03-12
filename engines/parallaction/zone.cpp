@@ -169,7 +169,7 @@ void freeZones(Node *list) {
 			break;
 
 		case kZoneGet:
-			free(z->u.get->_cnv._data2);
+			free(z->u.get->_backup);
 			_vm->_graphics->freeStaticCnv(&z->u.get->_cnv);
 			free(z->u.get);
 			break;
@@ -293,8 +293,8 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 //				_ax = (z->_flags & kFlagsClosed ? 0 : 1);
 //				vE0._data1 = doorcnv->field_8[_ax];
 
-				vE0._data2 = u->door->_background = (byte*)malloc(vE0._width*vE0._height);
-				_graphics->backupCnvBackground(&vE0, z->_limits._left, z->_limits._top);
+				u->door->_background = (byte*)malloc(vE0._width*vE0._height);
+				_graphics->backupDoorBackground(u->door, z->_limits._left, z->_limits._top);
 
 				_graphics->flatBlitCnv(&vE0, z->_limits._left, z->_limits._top, Graphics::kBitBack, vE0._data1);
 			}
@@ -311,10 +311,10 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 				StaticCnv *vE4 = &u->get->_cnv;
 				strcpy(vC8, _tokens[1]);
 				_disk->loadStatic(vC8, vE4);
-				vE4->_data2 = (byte*)malloc(vE4->_width*vE4->_height);
+				u->get->_backup = (byte*)malloc(vE4->_width*vE4->_height);
 
 				if ((z->_flags & kFlagsRemove) == 0) {
-					_graphics->backupCnvBackgroundTransparent(vE4, z->_limits._left, z->_limits._top);
+					_graphics->backupGetBackground(u->get, z->_limits._left, z->_limits._top);
 					_graphics->flatBlitCnv(vE4, z->_limits._left, z->_limits._top, Graphics::kBitBack, vE4->_data1);
 				}
 			}
@@ -371,7 +371,6 @@ void displayCharacterComment(ExamineData *data) {
 	v3C._height = _yourTalk._height;
 	v3C._data0 = _yourTalk._array[0];
 	v3C._data1 = NULL; //_yourTalk.field_8[0];
-	v3C._data2 = NULL;
 
 	_vm->_graphics->setFont("comic");
 	_vm->_graphics->flatBlitCnv(&v3C, 190, 80, Graphics::kBitFront, v3C._data1);
@@ -485,12 +484,10 @@ void jobToggleDoor(void *parm, Job *j) {
 	StaticCnv v14;
 
 	if (v18) {
-		v14._data2 = z->u.door->_background;
-//		v4 = &z->u.door._background;
-
 		v14._width = v18->_width;
 		v14._height = v18->_height;
-		_vm->_graphics->restoreCnvBackground(&v14, z->_limits._left, z->_limits._top);
+
+		_vm->_graphics->restoreZoneBackground(z->u.door->_background, z->_limits._left, z->_limits._top, v18->_width, v18->_height);
 
 		uint16 _ax = (z->_flags & kFlagsClosed ? 0 : 1);
 
@@ -525,7 +522,7 @@ void jobRemovePickedItem(void *parm, Job *j) {
 	static uint16 count = 0;
 
 	if (z->u.get->_cnv._width != 0) {
-		_vm->_graphics->restoreCnvBackground(&z->u.get->_cnv, z->_limits._left, z->_limits._top);
+		_vm->_graphics->restoreZoneBackground(z->u.get->_backup, z->_limits._left, z->_limits._top, z->u.get->_cnv._width, z->u.get->_cnv._height);
 	}
 
 	count++;
@@ -544,7 +541,7 @@ void jobDisplayDroppedItem(void *parm, Job *j) {
 
 	if (&z->u.get->_cnv != NULL) {
 		if (z->u.get->_cnv._data0 != NULL) {
-			_vm->_graphics->backupCnvBackgroundTransparent(&z->u.get->_cnv, z->_limits._left, z->_limits._top);
+			_vm->_graphics->backupGetBackground(z->u.get, z->_limits._left, z->_limits._top);
 		}
 
 		_vm->_graphics->flatBlitCnv(&z->u.get->_cnv, z->_limits._left, z->_limits._top, Graphics::kBitBack, z->u.get->_cnv._data1);

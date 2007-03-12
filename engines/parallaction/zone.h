@@ -78,6 +78,7 @@ struct Question {
 struct GetData {	// size = 24
 	uint32			_icon;
 	StaticCnv		_cnv;
+	byte		   *_backup;
 	uint16			field_14;		// unused
 	uint16			field_16;		// unused
 };

@@ -571,31 +571,29 @@ void Graphics::blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Graphics::Buf
 	return;
 }
 
-
-void Graphics::backupCnvBackground(StaticCnv *cnv, int16 x, int16 y) {
+void Graphics::backupDoorBackground(DoorData *data, int16 x, int16 y) {
 
 	byte *s = _buffers[kBit2] + x + y * SCREEN_WIDTH;
-	byte *d = cnv->_data2;
+	byte *d = data->_background;
 
-	for (uint16 i = 0; i < cnv->_height ; i++) {
-		memcpy(d, s, cnv->_width);
+	for (uint16 i = 0; i < data->_cnv._height ; i++) {
+		memcpy(d, s, data->_cnv._width);
 
 		s += SCREEN_WIDTH;
-		d += cnv->_width;
+		d += data->_cnv._width;
 	}
 
 	return;
 }
 
+void Graphics::backupGetBackground(GetData *data, int16 x, int16 y) {
 
-void Graphics::backupCnvBackgroundTransparent(StaticCnv *cnv, int16 x, int16 y) {
-
-	byte *t = cnv->_data0;
+	byte *t = data->_cnv._data0;
 	byte *s = _buffers[kBitBack] + x + y * SCREEN_WIDTH;
-	byte *d = cnv->_data2;
+	byte *d = data->_backup;
 
-	for (uint16 i = 0; i < cnv->_height ; i++) {
-		for (uint16 j = 0; j < cnv->_width ; j++) {
+	for (uint16 i = 0; i < data->_cnv._height ; i++) {
+		for (uint16 j = 0; j < data->_cnv._width ; j++) {
 			*d = (*t) ? *s : 0;
 
 			d++;
@@ -603,25 +601,26 @@ void Graphics::backupCnvBackgroundTransparent(StaticCnv *cnv, int16 x, int16 y) 
 			s++;
 		}
 
-		s += (SCREEN_WIDTH - cnv->_width);
+		s += (SCREEN_WIDTH - data->_cnv._width);
 	}
 
 	return;
 }
 
-
-//	restores a cnv backup on the background
 //
+//	copies a rectangular bitmap on the background
 //
-void Graphics::restoreCnvBackground(StaticCnv *cnv, int16 x, int16 y) {
+void Graphics::restoreZoneBackground(byte *data, int16 x, int16 y, uint16 w, uint16 h) {
 
-	byte *temp = cnv->_data0;
-	cnv->_data0 = cnv->_data2;
+	StaticCnv cnv;
 
-	flatBlitCnv(cnv, x, y, kBitBack, cnv->_data1);
-	flatBlitCnv(cnv, x, y, kBit2, cnv->_data1);
+	cnv._data0 = data;
+	cnv._data1 = NULL;
+	cnv._width = w;
+	cnv._height = h;
 
-	cnv->_data0 = temp;
+	flatBlitCnv(&cnv, x, y, kBitBack, cnv._data1);
+	flatBlitCnv(&cnv, x, y, kBit2, cnv._data1);
 
 	return;
 }

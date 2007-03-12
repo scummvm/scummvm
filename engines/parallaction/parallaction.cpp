@@ -236,7 +236,6 @@ int Parallaction::init() {
 	_yourHead._height = 0;
 	_yourHead._data0 = NULL;
 	_yourHead._data1 = NULL;
-	_yourHead._data2 = NULL;
 
 	_yourself._zone.pos._position._x = 150;
 	_yourself._zone.pos._position._y = 100;

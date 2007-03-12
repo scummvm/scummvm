@@ -61,6 +61,9 @@ extern byte _palette[];
 
 class Parallaction;
 
+struct DoorData;
+struct GetData;
+
 class Graphics {
 
 public:
@@ -90,9 +93,9 @@ public:
 	void makeCnvFromString(StaticCnv *cnv, char *text);
 	void freeCnv(Cnv *cnv);
 	void freeStaticCnv(StaticCnv *cnv);
-	void backupCnvBackground(StaticCnv *cnv, int16 x, int16 y);
-	void backupCnvBackgroundTransparent(StaticCnv *cnv, int16 x, int16 y);
-	void restoreCnvBackground(StaticCnv *cnv, int16 x, int16 y);
+	void backupDoorBackground(DoorData *data, int16 x, int16 y);
+	void backupGetBackground(GetData *data, int16 x, int16 y);
+	void restoreZoneBackground(byte *data, int16 x, int16 y, uint16 w, uint16 h);
 
 	// location
 	void setBackground(byte *background);

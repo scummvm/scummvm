@@ -67,7 +67,6 @@ struct StaticCnv {
 	uint16	_height;	//
 	byte*	_data0; 	// bitmap
 	byte*	_data1; 	// unused
-	byte*	_data2; 	// backup of underlying background
 };
 
 
