@@ -215,13 +215,6 @@ void SmushPlayer::timerCallback() {
 	_inTimer = true;
 	_inTimerCount++;
 #endif
-#ifdef __SYMBIAN32__
-	if (_closeOnTextTick) {
-		delete _base;
-		_base = NULL;
-		_closeOnTextTick = false;
-	}
-#endif
 }
 
 SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
@@ -263,9 +256,6 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
 	_inTimerCount = 0;
 	_inTimerCountRedraw = ConfMan.getInt("Smush_force_redraw");
 #endif
-#ifdef __SYMBIAN32__
-	_closeOnTextTick = false;
-#endif
 }
 
 SmushPlayer::~SmushPlayer() {
@@ -300,14 +290,6 @@ void SmushPlayer::init(int32 speed) {
 }
 
 void SmushPlayer::release() {
-#ifdef __SYMBIAN32__
-	_closeOnTextTick = true;
-	// Wait for _closeOnTextTick to be set to false to indicate file closure
-	while (_closeOnTextTick) {
-		User::After(15624);
-	}
-#endif
-
 	_vm->_smushVideoShouldFinish = true;
 
 	for (int i = 0; i < 5; i++) {
