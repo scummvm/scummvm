@@ -69,6 +69,16 @@ static const char *lastPathComponent(const Common::String &str) {
 	return cur + 1;
 }
 
+static void fixFilePath(Common::String& path) {
+	TInt len = path.size();
+	
+	for (TInt index = 0; index < len; index++) {
+		if (path[index] == '/') {	
+			path[index] = '\\';
+		}
+	}
+}
+
 AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
 	char path[MAXPATHLEN];
 	getcwd(path, MAXPATHLEN);
@@ -99,6 +109,9 @@ SymbianFilesystemNode::SymbianFilesystemNode(const String &path) {
 		_isPseudoRoot = false;
 
 	_path = path;
+	
+	fixFilePath(_path);
+
 	_displayName = lastPathComponent(_path);
 
 	TEntry fileAttribs;
