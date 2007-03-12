@@ -281,96 +281,84 @@ void Menu::selectCharacter() {
 	uint16 _dino_points = 0;
 	uint16 _dough_points = 0;
 
-
 	StaticCnv v14;
 
 	v14._data0 = (byte*)malloc(BLOCK_WIDTH*BLOCK_HEIGHT);
-	v14._data2 = v14._data0;
 	v14._width = BLOCK_WIDTH;
 	v14._height = BLOCK_HEIGHT;
 
 	_engine->changeCursor(kCursorArrow);
 	_vm->_midiPlayer->stop();
+
 	_vm->_graphics->_proportionalFont = false;
-
 	_vm->_graphics->setFont("slide");
+
 	_vm->_disk->selectArchive("disk1");
+	_vm->_disk->loadSlide("password");	// loads background into kBitBack buffer
 
-	_vm->_disk->loadSlide("password");
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);
+	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);	//
+	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit2);		//
 	_vm->_graphics->palUnk0(_palette);
-
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBitFront);
-	_vm->_graphics->copyScreen(Graphics::kBitBack, Graphics::kBit3);
 
 	while (askPassword == true) {
 
 		askPassword = false;
 		_di = 0;
-		_vm->_graphics->displayString(60, 30, introMsg1[_language]);
-		_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBit2);
+
+		_vm->_graphics->displayString(60, 30, introMsg1[_language]);			// displays message
 		_vm->_graphics->copyScreen(Graphics::kBitFront, Graphics::kBitBack);
-		_mouseButtons = kMouseNone;
 
 		while (_di < 6) {
-			do {
-				_engine->updateInput();
-				//job_eraseMouse();
-				//job_drawMouse();
-				_vm->_graphics->swapBuffers();
-				_engine->waitTime(1);
-
-			} while (_mouseButtons != kMouseLeftUp);
-
 
 			_mouseButtons = kMouseNone;
+			do {
+				_engine->updateInput();
+				_vm->_graphics->swapBuffers();
+				_engine->waitTime(1);
+			} while (_mouseButtons != kMouseLeftUp);	// waits for left click
+
 			uint16 x = _mousePos._x;
 			uint16 y = _mousePos._y;
 
-			uint16 _si = 0;
+			for (uint16 _si = 0; _si < 9; _si++) {
 
-			while (_si < 9) {
+				Common::Rect r(
+					_si * BLOCK_X_OFFSET + BLOCK_SELECTION_X,
+					BLOCK_SELECTION_Y - _si * BLOCK_Y_OFFSET,
+					(_si + 1) * BLOCK_X_OFFSET + BLOCK_SELECTION_X,
+					BLOCK_SELECTION_Y + BLOCK_HEIGHT - _si * BLOCK_Y_OFFSET
+				);
 
-				if ((_si * BLOCK_X_OFFSET + BLOCK_SELECTION_X < x) &&
-					((_si + 1) * BLOCK_X_OFFSET + BLOCK_SELECTION_X > x) &&
-					(BLOCK_SELECTION_Y - _si * BLOCK_Y_OFFSET < y) &&
-					(BLOCK_SELECTION_Y + BLOCK_HEIGHT - _si * BLOCK_Y_OFFSET > y)) {
+				if (!r.contains(x, y)) continue;
 
-					_vm->_graphics->backupCnvBackground(&v14, _si * BLOCK_X_OFFSET + BLOCK_X, BLOCK_Y - _si * BLOCK_Y_OFFSET);
+				_vm->_graphics->grabRect(Graphics::kBitFront, v14._data0, _si * BLOCK_X_OFFSET + BLOCK_X, BLOCK_Y - _si * BLOCK_Y_OFFSET, BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_WIDTH);
 
-					_vm->_graphics->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Graphics::kBitBack, 0);
-					_vm->_graphics->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Graphics::kBitFront, 0);
-					_vm->_graphics->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Graphics::kBit2, 0);
+				_vm->_graphics->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Graphics::kBitBack, 0);
+				_vm->_graphics->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Graphics::kBitFront, 0);
 
-					beep();
+				beep();
 
-					if (_dinoKey[_di] == _si) {
-						_dino_points++;  // dino
-					} else
-					if (_donnaKey[_di] == _si) {
-						_donna_points++;  // donna
-					} else
-					if (_doughKey[_di] == _si) {
-						_dough_points++;  // dough
-					} else
-						askPassword = true;
+				if (_dinoKey[_di] == _si)
+					_dino_points++;  // dino
+				if (_donnaKey[_di] == _si)
+					_donna_points++;  // donna
+				if (_doughKey[_di] == _si)
+					_dough_points++;  // dough
 
-					_di++;
-				}
-
-				_si++;
-
+				_di++;
 			}
+
+			askPassword = (_dino_points < 6 && _donna_points < 6 && _dough_points < 6);
 		}
 
-		if (askPassword == false) continue;
+		if (askPassword == false) break;
 
-		_vm->_graphics->copyScreen(Graphics::kBit3, Graphics::kBitFront);
-		_vm->_graphics->displayString(60, 30, introMsg1[_language]);
+		_vm->_graphics->copyScreen(Graphics::kBit2, Graphics::kBitFront);
+		_vm->_graphics->displayString(60, 30, introMsg2[_language]);
 
 		g_system->delayMillis(2000);
 
-		_vm->_graphics->copyScreen(Graphics::kBit3, Graphics::kBitFront);
+		_vm->_graphics->copyScreen(Graphics::kBit2, Graphics::kBitFront);
 	}
 
 
