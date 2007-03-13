@@ -108,16 +108,15 @@ byte _resBalloon[2][BALLOON_WIDTH*BALLOON_HEIGHT] = {
 	}
 };
 
-void Gfx::drawBalloon(int16 left, int16 top, uint16 width, uint16 height, uint16 winding) {
+void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
 //	printf("Gfx::drawBalloon(%i, %i, %i, %i, %i)...", left, top, width, height, winding);
 
-	width+=5;
-	floodFill(0, left, top, left+width, top+height, kBitFront);
-	floodFill(1, left+1, top+2, left+width-1, top+height-1, kBitFront);
+	floodFill(0, r.left, r.top, r.right+5, r.bottom, kBitFront);
+	floodFill(1, r.left+1, r.top+2, r.right+5-1, r.bottom-1, kBitFront);
 
 	winding = (winding == 0 ? 1 : 0);
 	byte *s = _resBalloon[winding];
-	byte *d = _buffers[kBitFront] + (left + width/2 - 5) + (top + height - 1) * SCREEN_WIDTH;
+	byte *d = _buffers[kBitFront] + (r.left + (r.width()+5)/2 - 5) + (r.bottom - 1) * SCREEN_WIDTH;
 
 	for (uint16 i = 0; i < BALLOON_HEIGHT; i++) {
 		for (uint16 j = 0; j < BALLOON_WIDTH; j++) {
@@ -490,8 +489,9 @@ void jobEraseLabel(void *parm, Job *j) {
 	if (label->_cnv._width + _si > SCREEN_WIDTH)
 		_si = SCREEN_WIDTH - label->_cnv._width;
 
-
-	_vm->_gfx->restoreBackground(Gfx::_labelPosition[1]._x, Gfx::_labelPosition[1]._y, label->_cnv._width, label->_cnv._height);
+	Common::Rect r(label->_cnv._width, label->_cnv._height);
+	r.moveTo(Gfx::_labelPosition[1]._x, Gfx::_labelPosition[1]._y);
+	_vm->_gfx->restoreBackground(r);
 
 	Gfx::_labelPosition[1]._x = Gfx::_labelPosition[0]._x;
 	Gfx::_labelPosition[1]._y = Gfx::_labelPosition[0]._y;
@@ -605,17 +605,17 @@ void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 //
 //	copies a rectangular bitmap on the background
 //
-void Gfx::restoreZoneBackground(byte *data, int16 x, int16 y, uint16 w, uint16 h) {
+void Gfx::restoreZoneBackground(const Common::Rect& r, byte *data) {
 
 	StaticCnv cnv;
 
 	cnv._data0 = data;
 	cnv._data1 = NULL;
-	cnv._width = w;
-	cnv._height = h;
+	cnv._width = r.width();
+	cnv._height = r.height();
 
-	flatBlitCnv(&cnv, x, y, kBitBack, cnv._data1);
-	flatBlitCnv(&cnv, x, y, kBit2, cnv._data1);
+	flatBlitCnv(&cnv, r.left, r.top, kBitBack, cnv._data1);
+	flatBlitCnv(&cnv, r.left, r.top, kBit2, cnv._data1);
 
 	return;
 }
@@ -795,8 +795,13 @@ void Gfx::setFont(const char* name) {
 }
 
 
-void Gfx::restoreBackground(int16 left, int16 top, uint16 width, uint16 height) {
+void Gfx::restoreBackground(const Common::Rect& r) {
 //	printf("restoreBackground(%i, %i, %i, %i)\n", left, top, width, height);
+
+	int16 left = r.left;
+	int16 top = r.top;
+	int16 width = r.width();
+	int16 height = r.height();
 
 	if (left < 0) left = 0;
 	if (top < 0) top = 0;
@@ -994,12 +999,12 @@ void Gfx::maskOpNot(uint16 x, uint16 y, uint16 unused, Gfx::Buffers mask) {
 
 
 
-void Gfx::maskClearRectangle(uint16 left, uint16 top, uint16 right, uint16 bottom, Gfx::Buffers mask) {
+void Gfx::maskClearRectangle(const Common::Rect& r, Gfx::Buffers mask) {
 
-	uint16 _di = left/4 + top*80;
+	uint16 _di = r.left/4 + r.top*80;
 
-	for (uint16 _si = top; _si < bottom; _si++) {
-		memset(&_buffers[mask][_di], 0, (right - left)/4+1);
+	for (uint16 _si = r.top; _si < r.bottom; _si++) {
+		memset(&_buffers[mask][_di], 0, r.width()/4+1);
 		_di += 80;
 	}
 

@@ -318,11 +318,14 @@ void _c_sketch(void *parm) {
 
 void _c_shade(void *parm) {
 
-	_vm->_gfx->maskClearRectangle(_rightHandAnim->_zone.pos._position._x - 36,
+	Common::Rect r(
+		_rightHandAnim->_zone.pos._position._x - 36,
 		_rightHandAnim->_zone.pos._position._y - 36,
 		_rightHandAnim->_zone.pos._position._x,
-		_rightHandAnim->_zone.pos._position._y,
-		Gfx::kMask0 );
+		_rightHandAnim->_zone.pos._position._y
+	);
+
+	_vm->_gfx->maskClearRectangle(r, Gfx::kMask0 );
 
 	return;
 

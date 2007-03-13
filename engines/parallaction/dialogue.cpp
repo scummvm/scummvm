@@ -283,13 +283,10 @@ void runDialogue(SpeakData *data) {
 				&question_height
 			);
 
-			_vm->_gfx->drawBalloon(
-				QUESTION_BALLOON_X,
-				QUESTION_BALLOON_Y,
-				question_width,
-				question_height,
-				v60->_mood & 0x10
-			);
+			Common::Rect r(question_width, question_height);
+			r.moveTo(QUESTION_BALLOON_X, QUESTION_BALLOON_Y);
+
+			_vm->_gfx->drawBalloon(r, v60->_mood & 0x10);
 
 			_vm->_gfx->displayWrappedString(
 				v60->_text,
@@ -334,13 +331,10 @@ void runDialogue(SpeakData *data) {
 						v60->_answers[_si]
 					);
 
-					_vm->_gfx->drawBalloon(
-						_answerBalloonX[_si],
-						_answerBalloonY[_si],
-						_answerBalloonW[_si],
-						_answerBalloonH[_si],
-						1
-					);
+					Common::Rect r(_answerBalloonW[_si], _answerBalloonH[_si]);
+					r.moveTo(_answerBalloonX[_si], _answerBalloonY[_si]);
+
+					_vm->_gfx->drawBalloon(r, 1);
 
 					_answerBalloonY[_si+1] = 10 + _answerBalloonY[_si] + _answerBalloonH[_si];
 
@@ -406,13 +400,10 @@ void runDialogue(SpeakData *data) {
 						strcpy(password, ".......");
 						_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
-						_vm->_gfx->drawBalloon(
-							_answerBalloonX[0],
-							_answerBalloonY[0],
-							_answerBalloonW[0],
-							_answerBalloonH[0],
-							1
-						);
+						Common::Rect r(_answerBalloonW[0], _answerBalloonH[0]);
+						r.moveTo(_answerBalloonX[0], _answerBalloonY[0]);
+
+						_vm->_gfx->drawBalloon(r, 1);
 
 						_vm->_gfx->displayWrappedString(
 							v60->_answers[0],

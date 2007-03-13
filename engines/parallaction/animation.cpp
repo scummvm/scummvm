@@ -233,8 +233,10 @@ void jobEraseAnimations(void *arg_0, Job *j) {
 
 		if (((a->_zone._flags & kFlagsActive) == 0) && ((a->_zone._flags & kFlagsRemove) == 0)) continue;
 
- // 	  printf("jobEraseAnimations %s, x: %i, y: %i, w: %i, h: %i\n", a->_zone._name, a->_zone.pos._oldposition._x, a->_zone.pos._oldposition._y, a->_cnv._width, a->_cnv._height);
-		_vm->_gfx->restoreBackground(a->_zone.pos._oldposition._x, a->_zone.pos._oldposition._y, a->_cnv._width, a->_cnv._height);
+		Common::Rect r(a->_cnv._width, a->_cnv._height);
+		r.moveTo(a->_zone.pos._oldposition._x, a->_zone.pos._oldposition._y);
+		_vm->_gfx->restoreBackground(r);
+
 		if (arg_0) {
 			a->_zone.pos._oldposition._x = a->_zone.pos._position._x;
 			a->_zone.pos._oldposition._y = a->_zone.pos._position._y;

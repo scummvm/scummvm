@@ -80,7 +80,7 @@ public:
 public:
 
 	// dialogue and text
-	void drawBalloon(int16 left, int16 top, uint16 width, uint16 height, uint16 arg_8);
+	void drawBalloon(const Common::Rect& r, uint16 arg_8);
 	void displayBalloonString(uint16 x, uint16 y, const char *text, byte color);
 	void displayString(uint16 x, uint16 y, const char *text);
 	bool displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, byte color);
@@ -93,7 +93,7 @@ public:
 	void freeStaticCnv(StaticCnv *cnv);
 	void backupDoorBackground(DoorData *data, int16 x, int16 y);
 	void backupGetBackground(GetData *data, int16 x, int16 y);
-	void restoreZoneBackground(byte *data, int16 x, int16 y, uint16 w, uint16 h);
+	void restoreZoneBackground(const Common::Rect& r, byte *data);
 
 	// location
 	void setBackground(byte *background);
@@ -102,10 +102,10 @@ public:
 	void parseBackground(Common::SeekableReadStream &stream);
 	int16 queryMask(int16 v);
 	void intGrottaHackMask();
-	void restoreBackground(int16 left, int16 top, uint16 width, uint16 height);
+	void restoreBackground(const Common::Rect& r);
 
 	// intro
-	void maskClearRectangle(uint16 left, uint16 top, uint16 right, uint16 bottom, Gfx::Buffers mask);
+	void maskClearRectangle(const Common::Rect& r, Gfx::Buffers mask);
 	void maskOpNot(uint16 x, uint16 y, uint16 unused, Gfx::Buffers mask);
 
 	// low level

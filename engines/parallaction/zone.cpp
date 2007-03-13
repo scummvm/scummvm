@@ -377,7 +377,9 @@ void displayCharacterComment(ExamineData *data) {
 
 	int16 v26, v28;
 	_vm->_gfx->getStringExtent(data->_description, 130, &v28, &v26);
-	_vm->_gfx->drawBalloon(140, 10, v28, v26, 0);
+	Common::Rect r(v28, v26);
+	r.moveTo(140, 10);
+	_vm->_gfx->drawBalloon(r, 0);
 	_vm->_gfx->displayWrappedString(data->_description, 140, 10, 130, 0);
 
 	waitUntilLeftClick();
@@ -410,7 +412,9 @@ void displayItemComment(ExamineData *data) {
 
 	_vm->_gfx->setFont("comic");
 	_vm->_gfx->getStringExtent(data->_description, 130, &v6C, &v6A);
-	_vm->_gfx->drawBalloon(0, 90, v6C, v6A, 0);
+	Common::Rect r(v6C, v6A);
+	r.moveTo(0, 90);
+	_vm->_gfx->drawBalloon(r, 0);
 	_vm->_gfx->flatBlitCnv(&_yourHead, 100, 152, Gfx::kBitFront, _yourHead._data1);
 	_vm->_gfx->displayWrappedString(data->_description, 0, 90, 130, 0);
 
@@ -487,7 +491,9 @@ void jobToggleDoor(void *parm, Job *j) {
 		v14._width = v18->_width;
 		v14._height = v18->_height;
 
-		_vm->_gfx->restoreZoneBackground(z->u.door->_background, z->_limits._left, z->_limits._top, v18->_width, v18->_height);
+		Common::Rect r(z->_limits._left, z->_limits._top, z->_limits._left+v18->_width, z->_limits._top+v18->_height);
+
+		_vm->_gfx->restoreZoneBackground(r, z->u.door->_background);
 
 		uint16 _ax = (z->_flags & kFlagsClosed ? 0 : 1);
 
@@ -522,7 +528,9 @@ void jobRemovePickedItem(void *parm, Job *j) {
 	static uint16 count = 0;
 
 	if (z->u.get->_cnv._width != 0) {
-		_vm->_gfx->restoreZoneBackground(z->u.get->_backup, z->_limits._left, z->_limits._top, z->u.get->_cnv._width, z->u.get->_cnv._height);
+		Common::Rect r(z->_limits._left, z->_limits._top, z->_limits._left + z->u.get->_cnv._width, z->_limits._top + z->u.get->_cnv._height);
+
+		_vm->_gfx->restoreZoneBackground(r, z->u.get->_backup);
 	}
 
 	count++;
