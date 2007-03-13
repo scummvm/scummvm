@@ -310,7 +310,7 @@ void Gfx::copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer) {
 
 	return;
 }
-
+/*
 void Gfx::copyRect(Gfx::Buffers srcbuffer, uint16 sx, uint16 sy, Gfx::Buffers dstbuffer, uint16 dx, uint16 dy, uint16 w, uint16 h) {
 
 	byte *s = _buffers[srcbuffer] + (sx + sy * SCREEN_WIDTH);
@@ -328,7 +328,7 @@ void Gfx::copyRect(Gfx::Buffers srcbuffer, uint16 sx, uint16 sy, Gfx::Buffers ds
 	return;
 
 }
-
+*/
 
 void Gfx::floodFill(byte color, uint16 left, uint16 top, uint16 right, uint16 bottom, Gfx::Buffers buffer) {
 //	printf("Gfx::floodFill(%i, %i, %i, %i, %i)\n", color, left, top, right, bottom);
@@ -794,7 +794,6 @@ void Gfx::setFont(const char* name) {
 
 
 void Gfx::restoreBackground(const Common::Rect& r) {
-//	printf("restoreBackground(%i, %i, %i, %i)\n", left, top, width, height);
 
 	int16 left = r.left;
 	int16 top = r.top;
@@ -810,7 +809,12 @@ void Gfx::restoreBackground(const Common::Rect& r) {
 	if (left+width >= SCREEN_WIDTH) width = SCREEN_WIDTH - left;
 	if (top+height >= SCREEN_HEIGHT) height = SCREEN_HEIGHT - top;
 
-	copyRect(kBit2, left, top, kBitBack, left, top, width, height);
+	copyRect(
+		kBitBack,
+		left, top, width, height,
+		_buffers[kBit2] + left + top * SCREEN_WIDTH,
+		SCREEN_WIDTH
+	);
 
 	return;
 }

@@ -297,16 +297,10 @@ void jobHideInventory(void *parm, Job *j) {
 		_engineFlags &= ~kEngineMouse;
 	}
 
-	_vm->_gfx->copyRect(
-		Gfx::kBit2,
-		_invPosition._x,
-		_invPosition._y,
-		Gfx::kBitBack,
-		_invPosition._x,
-		_invPosition._y,
-		INVENTORY_WIDTH,
-		_numInvLines * INVENTORYITEM_HEIGHT
-	);
+	Common::Rect r(INVENTORY_WIDTH, _numInvLines * INVENTORYITEM_HEIGHT);
+	r.moveTo(_invPosition._x, _invPosition._y);
+
+	_vm->_gfx->restoreBackground(r);
 
 	return;
 }

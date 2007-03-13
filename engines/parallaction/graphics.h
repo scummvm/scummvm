@@ -112,7 +112,6 @@ public:
 	void updateScreen();
 	void clearScreen(Gfx::Buffers buffer);
 	void copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer);
-	void copyRect(Gfx::Buffers srcbuffer, uint16 sx, uint16 sy, Gfx::Buffers dstbuffer, uint16 dx, uint16 dy, uint16 w, uint16 h);
 	void copyRect(Gfx::Buffers dstbuffer, uint16 x, uint16 y, uint16 w, uint16 h, byte *src, uint16 pitch);
 	void grabRect(Gfx::Buffers srcbuffer, byte *dst, uint16 x, uint16 y, uint16 w, uint16 h, uint16 pitch);
 	void drawBorder(Gfx::Buffers buffer, uint16 x, uint16 y, uint16 w, uint16 h, byte color);
