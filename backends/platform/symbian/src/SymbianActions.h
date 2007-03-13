@@ -69,7 +69,6 @@ public:
 
 private:
 	SymbianActions();
-	bool _right_click_needed;
 };
 
 } // namespace GUI

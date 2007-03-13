@@ -33,9 +33,6 @@
 #include "ESDL/sdlapp.h" // for CSDLApp::GetExecutablePathCStr() @ Symbian::GetExecutablePath()
 
 ////////// extern "C" ///////////////////////////////////////////////////
-
-extern Common::ConfigManager *g_config;
-
 namespace Symbian {
 
 // Show a simple Symbian Info win with Msg & exit
