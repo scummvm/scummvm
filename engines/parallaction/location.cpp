@@ -458,8 +458,12 @@ void Parallaction::doLocationEnterTransition() {
 
 	int16 v7C, v7A;
 	_vm->_gfx->getStringExtent(_vm->_location._comment, 130, &v7C, &v7A);
-	_vm->_gfx->floodFill(0, 5, 5, 10 + v7C, 5 + v7A, Gfx::kBitFront);
-	_vm->_gfx->floodFill(1, 6, 6, 9 + v7C, 4 + v7A, Gfx::kBitFront);
+
+	Common::Rect r(10 + v7C, 5 + v7A);
+	r.moveTo(5, 5);
+	_vm->_gfx->floodFill(Gfx::kBitFront, r, 0);
+	r.grow(-1);
+	_vm->_gfx->floodFill(Gfx::kBitFront, r, 1);
 	_vm->_gfx->displayWrappedString(_vm->_location._comment, 3, 5, 130, 0);
 
 	// FIXME: ???

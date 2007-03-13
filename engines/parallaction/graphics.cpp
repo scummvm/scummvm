@@ -110,8 +110,16 @@ byte _resBalloon[2][BALLOON_WIDTH*BALLOON_HEIGHT] = {
 void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
 //	printf("Gfx::drawBalloon(%i, %i, %i, %i, %i)...", left, top, width, height, winding);
 
-	floodFill(0, r.left, r.top, r.right+5, r.bottom, kBitFront);
-	floodFill(1, r.left+1, r.top+2, r.right+5-1, r.bottom-1, kBitFront);
+	Common::Rect q = r;
+
+	q.right += 5;
+	floodFill(kBitFront, q, 0);
+
+	q.left++;
+	q.top+=2;
+	q.right--;
+	q.bottom--;
+	floodFill(kBitFront, q, 1);
 
 	winding = (winding == 0 ? 1 : 0);
 	byte *s = _resBalloon[winding];
@@ -330,12 +338,12 @@ void Gfx::copyRect(Gfx::Buffers srcbuffer, uint16 sx, uint16 sy, Gfx::Buffers ds
 }
 */
 
-void Gfx::floodFill(byte color, uint16 left, uint16 top, uint16 right, uint16 bottom, Gfx::Buffers buffer) {
+void Gfx::floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color) {
 //	printf("Gfx::floodFill(%i, %i, %i, %i, %i)\n", color, left, top, right, bottom);
 
-	byte *d = _buffers[buffer] + (left + top * SCREEN_WIDTH);
-	uint16 w = right - left + 1;
-	uint16 h = bottom - top + 1;
+	byte *d = _buffers[buffer] + (r.left + r.top * SCREEN_WIDTH);
+	uint16 w = r.width() + 1;
+	uint16 h = r.height() + 1;
 
 	for (uint16 i = 0; i < h; i++) {
 		memset(d, color, w);
@@ -809,10 +817,13 @@ void Gfx::restoreBackground(const Common::Rect& r) {
 	if (left+width >= SCREEN_WIDTH) width = SCREEN_WIDTH - left;
 	if (top+height >= SCREEN_HEIGHT) height = SCREEN_HEIGHT - top;
 
+	Common::Rect q(width, height);
+	q.moveTo(left, top);
+
 	copyRect(
 		kBitBack,
-		left, top, width, height,
-		_buffers[kBit2] + left + top * SCREEN_WIDTH,
+		q,
+		_buffers[kBit2] + q.left + q.top * SCREEN_WIDTH,
 		SCREEN_WIDTH
 	);
 
@@ -943,13 +954,13 @@ void Gfx::setMask(byte *mask) {
 
 
 
-void Gfx::copyRect(Gfx::Buffers dstbuffer, uint16 x, uint16 y, uint16 w, uint16 h, byte *src, uint16 pitch) {
+void Gfx::copyRect(Gfx::Buffers dstbuffer, const Common::Rect& r, byte *src, uint16 pitch) {
 
-	byte *d = _buffers[dstbuffer] + x + SCREEN_WIDTH * y;
+	byte *d = _buffers[dstbuffer] + r.left + SCREEN_WIDTH * r.top;
 	byte *s = src;
 
-	for (uint16 _si = 0; _si < h; _si++) {
-		memcpy(d, s, w);
+	for (uint16 _si = 0; _si < r.height(); _si++) {
+		memcpy(d, s, r.width());
 
 		s += pitch;
 		d += SCREEN_WIDTH;
@@ -959,12 +970,12 @@ void Gfx::copyRect(Gfx::Buffers dstbuffer, uint16 x, uint16 y, uint16 w, uint16 
 }
 
 
-void Gfx::grabRect(Gfx::Buffers srcbuffer, byte *dst, uint16 x, uint16 y, uint16 w, uint16 h, uint16 pitch) {
+void Gfx::grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uint16 pitch) {
 
-	byte *s = _buffers[srcbuffer] + x + SCREEN_WIDTH * y;
+	byte *s = _buffers[srcbuffer] + r.left + SCREEN_WIDTH * r.top;
 
-	for (uint16 i = 0; i < h; i++) {
-		memcpy(dst, s, w);
+	for (uint16 i = 0; i < r.height(); i++) {
+		memcpy(dst, s, r.width());
 
 		s += SCREEN_WIDTH;
 		dst += pitch;

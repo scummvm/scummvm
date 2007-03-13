@@ -167,15 +167,23 @@ void _c_moveSheet(void *parm) {
 	if (x > 66)
 		x -= 16;
 
-	uint16 _ax = (x + 32 > 319) ? 319 : (x + 32);
-	_vm->_gfx->floodFill(1, x, 47, _ax, 199, Gfx::kBitBack);
-	_vm->_gfx->floodFill(1, x, 47, _ax, 199, Gfx::kBit2);
+	Common::Rect r;
+
+	r.left = x;
+	r.top = 47;
+	r.right = (x + 32 > 319) ? 319 : (x + 32);
+	r.bottom = 199;
+	_vm->_gfx->floodFill(Gfx::kBitBack, r, 1);
+	_vm->_gfx->floodFill(Gfx::kBit2, r, 1);
 
 	if (x >= 104) return;
 
-	_ax = (x + 247 > 319) ? 319 : (x + 247);
-	_vm->_gfx->floodFill(12, x+215, 47, _ax, 199, Gfx::kBitBack);
-	_vm->_gfx->floodFill(12, x+215, 47, _ax, 199, Gfx::kBit2);
+	r.left = x+215;
+	r.top = 47;
+	r.right = (x + 247 > 319) ? 319 : (x + 247);
+	r.bottom = 199;
+	_vm->_gfx->floodFill(Gfx::kBitBack, r, 12);
+	_vm->_gfx->floodFill(Gfx::kBit2, r, 12);
 
 	return;
 }

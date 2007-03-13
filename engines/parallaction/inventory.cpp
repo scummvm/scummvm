@@ -268,12 +268,12 @@ void jobShowInventory(void *parm, Job *j) {
 
 	_numInvLines = (_numInvLines + 4) / INVENTORY_ITEMS_PER_LINE;
 
+	Common::Rect r(INVENTORY_WIDTH, _numInvLines * INVENTORYITEM_HEIGHT);
+	r.moveTo(_invPosition._x, _invPosition._y);
+
 	_vm->_gfx->copyRect(
 		Gfx::kBitBack,
-		_invPosition._x,
-		_invPosition._y,
-		INVENTORY_WIDTH,
-		_numInvLines * INVENTORYITEM_HEIGHT,
+		r,
 		_buffer,
 		INVENTORY_WIDTH
 	);
