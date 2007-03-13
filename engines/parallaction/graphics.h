@@ -72,7 +72,6 @@ public:
 		kBitFront,
 		kBitBack,
 		kBit2,
-		kBit3,
 		// mask buffers
 		kMask0
 	};

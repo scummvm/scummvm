@@ -31,8 +31,7 @@
 namespace Parallaction {
 
 //
-//	inventory is kept in Gfx::kBit3 at 0 offset
-//	it is a grid made of (at most) 30 cells, 24x24 pixels each,
+//	inventory is a grid made of (at most) 30 cells, 24x24 pixels each,
 //	arranged in 6 lines
 //
 //	inventory items are stored in cnv files in a 32x24 grid
@@ -51,9 +50,10 @@ namespace Parallaction {
 #define INVENTORY_WIDTH 			(INVENTORY_ITEMS_PER_LINE*INVENTORYITEM_WIDTH)
 #define INVENTORY_HEIGHT			(INVENTORY_LINES*INVENTORYITEM_HEIGHT)
 
-extern Cnv 		_yourObjects;
-uint16			_numInvLines = 0;
-static Point	_invPosition = { 0, 0 };
+static byte		*_buffer;
+extern Cnv 		 _yourObjects;
+uint16			 _numInvLines = 0;
+static Point	 _invPosition = { 0, 0 };
 
 InventoryItem _inventory[INVENTORY_MAX_ITEMS] = {
 	{ kZoneDoor,		1 },		// open/close icon
@@ -187,19 +187,35 @@ void drawInventoryItem(uint16 pos, InventoryItem *item) {
 	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
 	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
-	_vm->_gfx->copyRect(
-		Gfx::kBit3,
-		col * INVENTORYITEM_WIDTH,
-		line * _yourObjects._height,
-		INVENTORYITEM_WIDTH,
-		_yourObjects._height,
-		_yourObjects._array[item->_index],
-		INVENTORYITEM_PITCH
-	);
+	// FIXME: this will end up in a general blit function
+	byte* s = _yourObjects._array[item->_index];
+	byte* d = _buffer + col * INVENTORYITEM_WIDTH + line * _yourObjects._height * INVENTORY_WIDTH;
+	for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
+		memcpy(d, s, INVENTORYITEM_WIDTH);
+
+		d += INVENTORY_WIDTH;
+		s += INVENTORYITEM_PITCH;
+	}
 
 	return;
 }
 
+void drawBorder(const Common::Rect& r, byte *buffer, byte color) {
+
+	byte *d = buffer + r.left + INVENTORY_WIDTH * r.top;
+
+	memset(d, color, r.width());
+
+	for (uint16 i = 0; i < r.height(); i++) {
+		d[i * INVENTORY_WIDTH] = color;
+		d[i * INVENTORY_WIDTH + r.width() - 1] = color;
+	}
+
+	d = buffer + r.left + INVENTORY_WIDTH * (r.bottom - 1);
+	memset(d, color, r.width());
+
+	return;
+}
 
 //
 //	draws a color border around the specified position in the inventory
@@ -213,14 +229,10 @@ void highlightInventoryItem(int16 pos, byte color) {
 	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
 	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
-	_vm->_gfx->drawBorder(
-		Gfx::kBit3,
-		col * INVENTORYITEM_WIDTH,
-		line * _yourObjects._height,
-		INVENTORYITEM_WIDTH,
-		_yourObjects._height,
-		color
-	);
+	Common::Rect r(INVENTORYITEM_WIDTH, _yourObjects._height);
+	r.moveTo(col * INVENTORYITEM_WIDTH, line * _yourObjects._height);
+
+	drawBorder(r, _buffer, color);
 
 	return;
 }
@@ -234,15 +246,15 @@ void extractInventoryGraphics(int16 pos, byte *dst) {
 	int16 line = pos / INVENTORY_ITEMS_PER_LINE;
 	int16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
-	_vm->_gfx->grabRect(
-		Gfx::kBit3,
-		dst,
-		col * INVENTORYITEM_WIDTH,
-		line * _yourObjects._height,
-		INVENTORYITEM_WIDTH,
-		_yourObjects._height,
-		INVENTORYITEM_PITCH
-	);
+	// FIXME: this will end up in a general blit function
+	byte* d = dst;
+	byte* s = _buffer + col * INVENTORYITEM_WIDTH + line * _yourObjects._height * INVENTORY_WIDTH;
+	for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
+		memcpy(d, s, INVENTORYITEM_WIDTH);
+
+		s += INVENTORY_WIDTH;
+		d += INVENTORYITEM_PITCH;
+	}
 
 	return;
 }
@@ -257,18 +269,14 @@ void jobShowInventory(void *parm, Job *j) {
 	_numInvLines = (_numInvLines + 4) / INVENTORY_ITEMS_PER_LINE;
 
 	_vm->_gfx->copyRect(
-		Gfx::kBit3,
-		0,
-		0,
 		Gfx::kBitBack,
 		_invPosition._x,
 		_invPosition._y,
 		INVENTORY_WIDTH,
-		_numInvLines * INVENTORYITEM_HEIGHT
+		_numInvLines * INVENTORYITEM_HEIGHT,
+		_buffer,
+		INVENTORY_WIDTH
 	);
-
-
-//	printf("done\n");
 
 	return;
 }
@@ -355,6 +363,7 @@ void redrawInventory() {
 }
 
 void initInventory() {
+	_buffer = (byte*)malloc(INVENTORY_WIDTH * INVENTORY_HEIGHT);	  // this buffer is also used by menu so it must stay this size
 	_yourObjects._count = 0;
 }
 

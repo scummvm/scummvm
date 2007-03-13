@@ -25,7 +25,6 @@
 #include "parallaction/graphics.h"
 #include "parallaction/parser.h"
 #include "parallaction/parallaction.h"
-#include "parallaction/inventory.h"
 #include "parallaction/disk.h"
 #include "parallaction/zone.h"
 
@@ -311,7 +310,6 @@ void Gfx::copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer) {
 
 	return;
 }
-
 
 void Gfx::copyRect(Gfx::Buffers srcbuffer, uint16 sx, uint16 sy, Gfx::Buffers dstbuffer, uint16 dx, uint16 dy, uint16 w, uint16 h) {
 
@@ -957,23 +955,6 @@ void Gfx::copyRect(Gfx::Buffers dstbuffer, uint16 x, uint16 y, uint16 w, uint16 
 }
 
 
-void Gfx::drawBorder(Gfx::Buffers buffer, uint16 x, uint16 y, uint16 w, uint16 h, byte color) {
-
-	byte *d = _buffers[buffer] + x + SCREEN_WIDTH * y;
-
-	memset(d, color, w);
-
-	for (uint16 i = 0; i < h; i++) {
-		d[i * SCREEN_WIDTH] = color;
-		d[i * SCREEN_WIDTH + w - 1] = color;
-	}
-
-	d = _buffers[buffer] + x + SCREEN_WIDTH * (y + h - 1);
-	memset(d, color, w);
-
-	return;
-}
-
 void Gfx::grabRect(Gfx::Buffers srcbuffer, byte *dst, uint16 x, uint16 y, uint16 w, uint16 h, uint16 pitch) {
 
 	byte *s = _buffers[srcbuffer] + x + SCREEN_WIDTH * y;
@@ -1035,8 +1016,6 @@ void Gfx::initBuffers() {
 	_buffers[kBitFront] = (byte*)malloc(SCREEN_SIZE);
 	_buffers[kBitBack]	= (byte*)malloc(SCREEN_SIZE);
 	_buffers[kBit2]   = (byte*)malloc(SCREEN_SIZE);
-	_buffers[kBit3]   = (byte*)malloc(SCREEN_SIZE);	  // this buffer is also used by menu so it must stay this size
-
 	_buffers[kMask0] = (byte*)malloc(SCREENMASK_WIDTH * SCREEN_HEIGHT);
 
 	return;
@@ -1073,7 +1052,6 @@ Gfx::~Gfx() {
 	free(_buffers[kBitFront]);
 	free(_buffers[kBitBack]);
 	free(_buffers[kBit2]);
-	free(_buffers[kBit3]);
 
 	freeCnv(&_font);
 
