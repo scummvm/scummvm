@@ -23,7 +23,6 @@
 #include "parallaction/menu.h"
 #include "parallaction/disk.h"
 #include "parallaction/music.h"
-#include "parallaction/inventory.h"
 #include "parallaction/graphics.h"
 #include "parallaction/parallaction.h"
 
