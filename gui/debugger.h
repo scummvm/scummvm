@@ -38,17 +38,9 @@ public:
 
 	int DebugPrintf(const char *format, ...);
 
-#ifndef __SYMBIAN32__ // gcc/UIQ doesn't like the debugger code for some reason? Actually get a cc1plus core dump here :)
-	// FIXME: Fingolfin asks: This code *used* to be a problem when GUI::Debugger
-	// was a template class. But is it really still causing problems, or can
-	// this hack go away now?
 	virtual void onFrame();
 
 	virtual void attach(const char *entry = 0);
-#else
-	void onFrame() {}
-	void attach(const char *entry = 0) {}
-#endif
 	bool isAttached() const { return _isAttached; }
 
 protected:
