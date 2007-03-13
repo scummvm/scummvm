@@ -95,7 +95,7 @@ Menu::Menu(Parallaction *engine) {
 }
 
 Menu::~Menu() {
-	//
+
 }
 
 
@@ -135,7 +135,6 @@ void Menu::start() {
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
-//	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit3);
 
 	if (selectGame() == 0) {
 		newGame();
@@ -145,7 +144,6 @@ void Menu::start() {
 }
 
 void Menu::newGame() {
-//	  printf("newGame()\n");
 
 	const char **v14 = introMsg3;
 
