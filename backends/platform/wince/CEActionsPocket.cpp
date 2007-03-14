@@ -146,9 +146,9 @@ void CEActionsPocket::initInstanceGame() {
 	// Save
 	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche)
 		_action_enabled[POCKET_ACTION_SAVE] = false;
-	else if (is_queen || is_saga) {
+	else if (is_queen) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
-		_key_action[POCKET_ACTION_SAVE].setAscii(286); // F5 key for FOTAQ & ITE
+		_key_action[POCKET_ACTION_SAVE].setAscii(286); // F1 key for FOTAQ
 	} else if (is_sky) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
 		_key_action[POCKET_ACTION_SAVE].setAscii(63);

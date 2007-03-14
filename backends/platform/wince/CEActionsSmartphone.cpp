@@ -142,9 +142,9 @@ void CEActionsSmartphone::initInstanceGame() {
 	// Save
 	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche)
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = false;
-	else if (is_queen || is_saga) {
+	else if (is_queen) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
-		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(286); // F1 key for FOTAQ and ITE
+		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(286); // F1 key for FOTAQ
 	} else if (is_sky) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
 		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(63);
