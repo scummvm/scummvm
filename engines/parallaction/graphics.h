@@ -157,8 +157,8 @@ protected:
 	//
 	byte mapChar(byte c);
 
-	void flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Gfx::Buffers buffer);
-	void blit(uint16 w, uint16 h, int16 x, int16 y, uint16 z, byte *data, Gfx::Buffers buffer, Gfx::Buffers mask);
+	void flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer);
+	void blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer, Gfx::Buffers mask);
 
 
 	void initBuffers();

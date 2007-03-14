@@ -356,103 +356,74 @@ void Gfx::floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color) {
 	return;
 }
 
+void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer) {
 
-void Gfx::flatBlit(uint16 w, uint16 h, int16 x, int16 y, byte *data, Gfx::Buffers buffer) {
-	debugC(9, kDebugGraphics, "Gfx::flatBlit(%i, %i, %i, %i)", w, h, x, y);
+	Common::Rect screen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	Common::Rect q(r);
 
-	// source coordinates
-	int16 left = 0, top = 0;
-	int16 right = w, bottom = h;
+	q.clip(screen);
 
-	if (x + w > SCREEN_WIDTH)
-		right = SCREEN_WIDTH - x;
-	if (y + h > SCREEN_HEIGHT)
-		bottom = SCREEN_HEIGHT - y;
+	if (!q.isValidRect()) return;
 
-	if (x < 0) {	// partially left clipped
-		left = -x;
-		x = 0;
-	}
+	Common::Point dp(q.left, q.top);
+	q.translate(screen.left - r.left, screen.top - r.top);
 
-	if (y < 0) {	// partially top clipped
-		top = -y;
-		y = 0;
-	}
+	byte *s = data + q.left + q.top * r.width();
+	byte *d = _buffers[buffer] + dp.x + dp.y * SCREEN_WIDTH;
 
-	if (left > right || top > bottom || x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT) return;	// fully clipped
-
-	byte *s = data + left + top * w;
-	byte *d = _buffers[buffer] + x + y * SCREEN_WIDTH;
-
-	debugC(9, kDebugGraphics, "Gfx::flatBlit CLIPPED (%i, %i, %i, %i) -> (%i, %i) %p %p", left, top, right, bottom, x, y, (const void*)s, (const void*)d);
-
-	for (uint16 i = top; i < bottom; i++) {
-		for (uint16 j = left; j < right; j++) {
+	for (uint16 i = q.top; i < q.bottom; i++) {
+		for (uint16 j = q.left; j < q.right; j++) {
 			if (*s != 0) *d = *s;
 			s++;
 			d++;
 		}
 
-		s += (w - right + left);
-		d += (SCREEN_WIDTH - right + left);
+		s += (r.width() - q.width());
+		d += (SCREEN_WIDTH - q.width());
 	}
 
-	debugC(9, kDebugGraphics, "Gfx::flatBlit BLITTED");
-
 	if (buffer == kBitFront) updateScreen();
-
-	debugC(9, kDebugGraphics, "Gfx::flatBlit DONE");
 
 	return;
 
 }
 
+void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer, Gfx::Buffers mask) {
 
-void Gfx::blit(uint16 w, uint16 h, int16 x, int16 y, uint16 z, byte *data, Gfx::Buffers buffer, Gfx::Buffers mask) {
-//	printf("Gfx::blit(%i, %i, %i, %i, %i)\n", w, h, x, y, z);
+	Common::Rect screen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	Common::Rect q(r);
 
-	int16 left = 0, top = 0;
-	int16 right = w, bottom = h;
+	q.clip(screen);
 
-	if (x + w > SCREEN_WIDTH) right = SCREEN_WIDTH - x;
-	if (y + h > SCREEN_HEIGHT) bottom = SCREEN_HEIGHT - y;
+	if (!q.isValidRect()) return;
 
-	if (x < 0) {	// partially left clipped
-		left = -x;
-		x = 0;
-	}
+	Common::Point dp(q.left, q.top);
+	q.translate(screen.left - r.left, screen.top - r.top);
 
-	if (y < 0) {	// partially top clipped
-		top = -y;
-		y = 0;
-	}
+	byte *s = data + q.left + q.top * r.width();
+	byte *d = _buffers[buffer] + dp.x + dp.y * SCREEN_WIDTH;
 
-	if (left > right || top > bottom || x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT) return;	// fully clipped
+	for (uint16 i = q.top; i < q.bottom; i++) {
 
-	byte *s = data + left + top * w;
-	byte *d = _buffers[buffer] + x + y * SCREEN_WIDTH;
+		uint16 n = dp.x % 4;
+		byte *m = _buffers[mask] + dp.x/4 + (dp.y + i - q.top)*SCREENMASK_WIDTH;
 
-	for (uint16 i = top; i < bottom; i++) {
-
-		uint16 r = x % 4;
-		byte *m = _buffers[mask] + x/4 + (y + i - top)*SCREENMASK_WIDTH;
-
-		for (uint16 j = left; j < right; j++) {
+		for (uint16 j = q.left; j < q.right; j++) {
 			if (*s != 0) {
-				uint16 v = ((3 << (r << 1)) & *m) >> (r << 1);
+				uint16 v = ((3 << (n << 1)) & *m) >> (n << 1);
 				if (z >= v) *d = *s;
 			}
 
-			r++;
-			if (r==4) m++;
-			r &= 0x3;
+			n++;
+			if (n==4) m++;
+			n &= 0x3;
 
 			s++;
 			d++;
 		}
 
-		s += (w - right + left);
-		d += (SCREEN_WIDTH - right + left);
+		s += (r.width() - q.right + q.left);
+		d += (SCREEN_WIDTH - q.right + q.left);
 	}
 
 	if (buffer == kBitFront) updateScreen();
@@ -562,13 +533,19 @@ void Gfx::setMousePointer(int16 index) {
 //	Cnv management
 //
 void Gfx::flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer, byte *unused) {
-	flatBlit(cnv->_width, cnv->_height, x, y, cnv->_data0, buffer);
+	Common::Rect r(cnv->_width, cnv->_height);
+	r.moveTo(x, y);
+
+	flatBlit(r, cnv->_data0, buffer);
 	return;
 }
 
 
 void Gfx::blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer, Gfx::Buffers mask) {
-	blit(cnv->_width, cnv->_height, x, y, z, cnv->_data0,  buffer, mask);
+	Common::Rect r(cnv->_width, cnv->_height);
+	r.moveTo(x, y);
+
+	blit(r, z, cnv->_data0,  buffer, mask);
 	return;
 }
 
