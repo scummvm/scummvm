@@ -133,7 +133,7 @@ void AGOSEngine::loadModule(uint music) {
 
 	f.open(filename);
 	if (f.isOpen() == false) {
-		error("loadMusic: Can't load module from '%s'", filename);
+		error("loadModule: Can't load module from '%s'", filename);
 	}
 
 	Audio::AudioStream *audioStream;
@@ -143,7 +143,7 @@ void AGOSEngine::loadModule(uint music) {
 		uint srcSize = f.size();
 		byte *srcBuf = (byte *)malloc(srcSize);
 		if (f.read(srcBuf, srcSize) != srcSize)
-			error("loadMusic: Read failed");
+			error("loadModule: Read failed");
 
 		uint dstSize = READ_BE_UINT32(srcBuf + srcSize - 4);
 		byte *dstBuf = (byte *)malloc(dstSize);
