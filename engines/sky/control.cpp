@@ -438,7 +438,7 @@ void Control::doLoadSavePanel(void) {
 
 	_savedMouse = _skyMouse->giveCurrentMouseType();
 	_savedCharSet = _skyText->giveCurrentCharSet();
-	_skyText->fnSetFont(0);
+	_skyText->fnSetFont(1);
 	_skyMouse->spriteMouse(MOUSE_NORMAL, 0, 0);
 	_lastButton = -1;
 	_curButtonText = 0;
@@ -463,7 +463,7 @@ void Control::doControlPanel(void) {
 	initPanel();
 
 	_savedCharSet = _skyText->giveCurrentCharSet();
-	_skyText->fnSetFont(0);
+	_skyText->fnSetFont(1);
 
 	_skyScreen->clearScreen();
 	if (SkyEngine::_systemVars.gameVersion < 331)
@@ -1487,7 +1487,7 @@ uint16 Control::quickXRestore(uint16 slot) {
 	_mouseClicked = false;
 
 	_savedCharSet = _skyText->giveCurrentCharSet();
-	_skyText->fnSetFont(0);
+	_skyText->fnSetFont(1);
 
 	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_system->updateScreen();
@@ -1604,7 +1604,7 @@ void Control::delay(unsigned int amount) {
 
 void Control::showGameQuitMsg(void) {
 
-	_skyText->fnSetFont(0);
+	_skyText->fnSetFont(1);
 	uint8 *textBuf1 = (uint8 *)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
 	uint8 *textBuf2 = (uint8 *)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
 	uint8 *screenData;
