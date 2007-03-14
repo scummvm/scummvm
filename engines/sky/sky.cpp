@@ -263,8 +263,6 @@ int SkyEngine::go() {
 
 	_systemVars.quitGame = false;
 
-	_mouseX = GAME_SCREEN_WIDTH / 2;
-	_mouseY = GAME_SCREEN_HEIGHT / 2;
 	_keyFlags = _keyPressed = 0;
 
 	uint16 result = 0;
@@ -303,7 +301,7 @@ int SkyEngine::go() {
 				_lastSaveTime += 30 * 1000; // try again in 30 secs
 		}
 		_skySound->checkFxQueue();
-		_skyMouse->mouseEngine((uint16)_mouseX, (uint16)_mouseY);
+		_skyMouse->mouseEngine();
 		handleKey();
 		if (_systemVars.paused) {
 			do {
@@ -532,22 +530,15 @@ void SkyEngine::delay(int32 amount) {
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
 				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED)) {
-					_mouseX = event.mouse.x;
-					_mouseY = event.mouse.y;
+					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				}
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
-#ifdef PALMOS_MODE
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
-#endif
+				_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				_skyMouse->buttonPressed(2);
 				break;
 			case OSystem::EVENT_RBUTTONDOWN:
-#ifdef PALMOS_MODE
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
-#endif
+				_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				_skyMouse->buttonPressed(1);
 				break;
 			case OSystem::EVENT_QUIT:

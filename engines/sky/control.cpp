@@ -1560,14 +1560,14 @@ void Control::delay(unsigned int amount) {
 					_keyPressed = (byte)event.kbd.ascii;
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
+				_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
-#ifdef PALMOS_MODE
+				_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
-#endif
 				_mouseClicked = true;
 				break;
 			case OSystem::EVENT_LBUTTONUP:

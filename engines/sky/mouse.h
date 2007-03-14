@@ -41,7 +41,7 @@ public:
 	Mouse(OSystem *system, Disk *skyDisk, SkyCompact *skyCompact);
 	~Mouse(void);
 
-	void mouseEngine(uint16 mouseX, uint16 mouseY);
+	void mouseEngine();
 	void replaceMouseCursors(uint16 fileNo);
 	bool fnAddHuman(void);
 	void fnSaveCoods(void);
@@ -54,6 +54,7 @@ public:
 	void spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY);
 	void useLogicInstance(Logic *skyLogic) { _skyLogic = skyLogic; };
 	void buttonPressed(uint8 button);
+	void mouseMoved(uint16 mouseX, uint16 mouseY);
 	void waitMouseNotPressed(int minDelay = 0);
 	uint16 giveMouseX(void) { return _mouseX; };
 	uint16 giveMouseY(void) { return _mouseY; };

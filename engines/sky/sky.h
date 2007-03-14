@@ -60,8 +60,6 @@ protected:
 	byte _keyPressed, _keyFlags;
 	bool _floppyIntro;
 
-	int _mouseX, _mouseY;
-
 	Sound *_skySound;
 	Disk *_skyDisk;
 	Text *_skyText;

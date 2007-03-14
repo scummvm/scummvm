@@ -216,15 +216,12 @@ void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 		CursorMan.showMouse(true);
 }
 
-void Mouse::mouseEngine(uint16 mouseX, uint16 mouseY) {
-	_mouseX = mouseX;
-	_mouseY = mouseY;
-
+void Mouse::mouseEngine() {
 	_logicClick = (_mouseB > 0); // click signal is available for Logic for one gamecycle
 
 	if (!Logic::_scriptVariables[MOUSE_STOP]) {
 		if (Logic::_scriptVariables[MOUSE_STATUS] & (1 << 1)) {
-			pointerEngine(mouseX + TOP_LEFT_X, mouseY + TOP_LEFT_Y);
+			pointerEngine(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
 			if (Logic::_scriptVariables[MOUSE_STATUS] & (1 << 2)) //buttons enabled?
 				buttonEngine1();
 		}
@@ -271,8 +268,12 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 }
 
 void Mouse::buttonPressed(uint8 button) {
-
 	_mouseB = button;
+}
+
+void Mouse::mouseMoved(uint16 mouseX, uint16 mouseY) {
+	_mouseX = mouseX;
+	_mouseY = mouseY;
 }
 
 void Mouse::buttonEngine1(void) {
