@@ -318,25 +318,6 @@ void Gfx::copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer) {
 
 	return;
 }
-/*
-void Gfx::copyRect(Gfx::Buffers srcbuffer, uint16 sx, uint16 sy, Gfx::Buffers dstbuffer, uint16 dx, uint16 dy, uint16 w, uint16 h) {
-
-	byte *s = _buffers[srcbuffer] + (sx + sy * SCREEN_WIDTH);
-	byte *d = _buffers[dstbuffer] + (dx + dy * SCREEN_WIDTH);
-
-	for (uint16 i = 0; i < h; i++) {
-		memcpy(d, s, w);
-
-		s += SCREEN_WIDTH;
-		d += SCREEN_WIDTH;
-	}
-
-	if (dstbuffer == kBitFront) updateScreen();
-
-	return;
-
-}
-*/
 
 void Gfx::floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color) {
 //	printf("Gfx::floodFill(%i, %i, %i, %i, %i)\n", color, left, top, right, bottom);
@@ -507,9 +488,6 @@ void Gfx::setMousePointer(int16 index) {
 		g_system->showMouse(true);
 
 	} else {
-
-		// FIXME: standard mouse arrow must be combined with item
-		//		  but it is not at the moment
 
 		// inventory item pointer
 		StaticCnv mouse_pointer;
