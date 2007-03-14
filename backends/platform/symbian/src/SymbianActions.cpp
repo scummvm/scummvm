@@ -142,21 +142,20 @@ void SymbianActions::initInstanceGame() {
 	// Save
 	if (is_simon || is_gob || is_kyra || is_touche) 
 		_action_enabled[ACTION_SAVE] = false;
-	else if (is_queen) {
+	else {
 		_action_enabled[ACTION_SAVE] = true;
-		_key_action[ACTION_SAVE].setAscii(SDLK_F1); // F1 key for FOTAQ
-	} else if (is_sky) {
-		_action_enabled[ACTION_SAVE] = true;
-		_key_action[ACTION_SAVE].setAscii(63); 
-	} else if (is_cine) {
-		_action_enabled[ACTION_SAVE] = true;
-		_key_action[ACTION_SAVE].setAscii(SDLK_F10); // F10
-	} else if (is_agi) {
-		_action_enabled[ACTION_SAVE] = true;
-		_key_action[ACTION_SAVE].setAscii(SDLK_ESCAPE);
-	} else {
-		_action_enabled[ACTION_SAVE] = true;
-		_key_action[ACTION_SAVE].setAscii(SDLK_F5); // F5 key
+		
+		if (is_queen) {			
+			_key_action[ACTION_SAVE].setAscii(SDLK_F1); // F1 key for FOTAQ
+		} else if (is_sky) {		
+			_key_action[ACTION_SAVE].setAscii(63); 
+		} else if (is_cine) {			
+			_key_action[ACTION_SAVE].setAscii(SDLK_F10); // F10
+		} else if (is_agi) {		
+			_key_action[ACTION_SAVE].setAscii(SDLK_ESCAPE);
+		} else {		
+			_key_action[ACTION_SAVE].setAscii(SDLK_F5); // F5 key
+		}
 	}
 
 	// Enable fast mode
