@@ -189,14 +189,14 @@ void _c_moveSheet(void *parm) {
 }
 
 
-void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Gfx::Buffers mask) {
+void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY) {
 
 	uint16 unused = 0;
 	int16 dx = newX - oldX;
 	int16 dy = newY - oldY;
 
-	_vm->_gfx->maskOpNot(oldX, oldY, unused, mask);
-	_vm->_gfx->maskOpNot(newX, newY, unused, mask);
+	_vm->_gfx->maskOpNot(oldX, oldY, unused);
+	_vm->_gfx->maskOpNot(newX, newY, unused);
 
 	if (abs(dx) >= abs(dy)) {
 
@@ -208,7 +208,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Gfx::Buffers
 					oldY++;
 					v4 -= dx;
 				}
-				_vm->_gfx->maskOpNot(i + oldX, oldY, unused, mask);
+				_vm->_gfx->maskOpNot(i + oldX, oldY, unused);
 			}
 		}
 
@@ -219,7 +219,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Gfx::Buffers
 					oldY++;
 					v4 -= abs(dx);
 				}
-				_vm->_gfx->maskOpNot(oldX - i, oldY, unused, mask);
+				_vm->_gfx->maskOpNot(oldX - i, oldY, unused);
 			}
 		}
 
@@ -230,7 +230,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Gfx::Buffers
 					oldY--;
 					v4 -= abs(dx);
 				}
-				_vm->_gfx->maskOpNot(oldX - i, oldY, unused, mask);
+				_vm->_gfx->maskOpNot(oldX - i, oldY, unused);
 			}
 		}
 
@@ -241,7 +241,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Gfx::Buffers
 					oldY--;
 					v4 -= dx;
 				}
-				_vm->_gfx->maskOpNot(i + oldX, oldY, unused, mask);
+				_vm->_gfx->maskOpNot(i + oldX, oldY, unused);
 			}
 		}
 
@@ -258,7 +258,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Gfx::Buffers
 					oldX++;
 					v4 -= dy;
 				}
-				_vm->_gfx->maskOpNot(oldX, i + oldY, unused, mask);
+				_vm->_gfx->maskOpNot(oldX, i + oldY, unused);
 			}
 		}
 
@@ -269,7 +269,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Gfx::Buffers
 					oldX--;
 					v4 -= dy;
 				}
-				_vm->_gfx->maskOpNot(oldX, i + oldY, unused, mask);
+				_vm->_gfx->maskOpNot(oldX, i + oldY, unused);
 			}
 		}
 
@@ -280,7 +280,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Gfx::Buffers
 					oldX--;
 					v4 -= abs(dy);
 				}
-				_vm->_gfx->maskOpNot(oldX, oldY - i, unused, mask);
+				_vm->_gfx->maskOpNot(oldX, oldY - i, unused);
 			}
 		}
 
@@ -291,7 +291,7 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY, Gfx::Buffers
 					oldX++;
 					v4 -= abs(dy);
 				}
-				_vm->_gfx->maskOpNot(oldX, oldY - i, unused, mask);
+				_vm->_gfx->maskOpNot(oldX, oldY - i, unused);
 			}
 		}
 
@@ -311,7 +311,7 @@ void _c_sketch(void *parm) {
 	uint16 _2 = _rightHandPositions[2*(index-1)+1];
 	uint16 _1 = _rightHandPositions[2*(index-1)];
 
-	introFunc1(_1, _2, _3, _4, Gfx::kMask0 );
+	introFunc1(_1, _2, _3, _4);
 
 	_rightHandAnim->_zone.pos._position._x = _rightHandPositions[index*2];
 	_rightHandAnim->_zone.pos._position._y = _rightHandPositions[index*2+1] - 20;
@@ -333,7 +333,7 @@ void _c_shade(void *parm) {
 		_rightHandAnim->_zone.pos._position._y
 	);
 
-	_vm->_gfx->maskClearRectangle(r, Gfx::kMask0 );
+	_vm->_gfx->maskClearRectangle(r);
 
 	return;
 

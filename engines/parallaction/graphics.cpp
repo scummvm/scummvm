@@ -382,7 +382,7 @@ void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer) {
 
 }
 
-void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer, Gfx::Buffers mask) {
+void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer) {
 
 	Common::Point dp;
 	Common::Rect q(r);
@@ -395,7 +395,7 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer,
 	for (uint16 i = q.top; i < q.bottom; i++) {
 
 		uint16 n = dp.x % 4;
-		byte *m = _buffers[mask] + dp.x/4 + (dp.y + i - q.top)*SCREENMASK_WIDTH;
+		byte *m = _buffers[kMask0] + dp.x/4 + (dp.y + i - q.top)*SCREENMASK_WIDTH;
 
 		for (uint16 j = q.left; j < q.right; j++) {
 			if (*s != 0) {
@@ -527,11 +527,11 @@ void Gfx::flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer, byt
 }
 
 
-void Gfx::blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer, Gfx::Buffers mask) {
+void Gfx::blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer) {
 	Common::Rect r(cnv->_width, cnv->_height);
 	r.moveTo(x, y);
 
-	blit(r, z, cnv->_data0,  buffer, mask);
+	blit(r, z, cnv->_data0,  buffer);
 	return;
 }
 
@@ -948,22 +948,22 @@ void Gfx::grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uin
 }
 
 
-void Gfx::maskOpNot(uint16 x, uint16 y, uint16 unused, Gfx::Buffers mask) {
+void Gfx::maskOpNot(uint16 x, uint16 y, uint16 unused) {
 
 	uint16 _ax = x + y * SCREEN_WIDTH;
-	_buffers[mask][_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
+	_buffers[kMask0][_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
 
 	return;
 }
 
 
 
-void Gfx::maskClearRectangle(const Common::Rect& r, Gfx::Buffers mask) {
+void Gfx::maskClearRectangle(const Common::Rect& r) {
 
 	uint16 _di = r.left/4 + r.top*80;
 
 	for (uint16 _si = r.top; _si < r.bottom; _si++) {
-		memset(&_buffers[mask][_di], 0, r.width()/4+1);
+		memset(&_buffers[kMask0][_di], 0, r.width()/4+1);
 		_di += 80;
 	}
 

@@ -202,7 +202,7 @@ void jobDisplayAnimations(void *parm, Job *j) {
 				_si = _vm->_gfx->queryMask(v18->_zone.pos._position._y + v18->_cnv._height);
 
 //			printf("jobDisplayAnimations %s, x: %i, y: %i, w: %i, h: %i\n", v18->_zone._name, v18->_zone.pos._position._x, v18->_zone.pos._position._y, v14._width, v14._height);
-			_vm->_gfx->blitCnv(&v14, v18->_zone.pos._position._x, v18->_zone.pos._position._y, _si, Gfx::kBitBack, Gfx::kMask0);
+			_vm->_gfx->blitCnv(&v14, v18->_zone.pos._position._x, v18->_zone.pos._position._y, _si, Gfx::kBitBack);
 
 		}
 
@@ -578,8 +578,8 @@ void jobRunScripts(void *parm, Job *j) {
 
 				if (inst->_flags & kInstMaskedPut) {
 					uint16 _si = _vm->_gfx->queryMask(inst->_opB._value);
-					_vm->_gfx->blitCnv(&v18, inst->_opA._value, inst->_opB._value, _si, Gfx::kBitBack, Gfx::kMask0 );
-					_vm->_gfx->blitCnv(&v18, inst->_opA._value, inst->_opB._value, _si, Gfx::kBit2, Gfx::kMask0 );
+					_vm->_gfx->blitCnv(&v18, inst->_opA._value, inst->_opB._value, _si, Gfx::kBitBack);
+					_vm->_gfx->blitCnv(&v18, inst->_opA._value, inst->_opB._value, _si, Gfx::kBit2);
 				} else {
 					_vm->_gfx->flatBlitCnv(&v18, inst->_opA._value, inst->_opB._value, Gfx::kBitBack, v18._data1);
 					_vm->_gfx->flatBlitCnv(&v18, inst->_opA._value, inst->_opB._value, Gfx::kBit2, v18._data1);

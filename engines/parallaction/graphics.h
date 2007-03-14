@@ -104,8 +104,8 @@ public:
 	void restoreBackground(const Common::Rect& r);
 
 	// intro
-	void maskClearRectangle(const Common::Rect& r, Gfx::Buffers mask);
-	void maskOpNot(uint16 x, uint16 y, uint16 unused, Gfx::Buffers mask);
+	void maskClearRectangle(const Common::Rect& r);
+	void maskOpNot(uint16 x, uint16 y, uint16 unused);
 
 	// low level
 	void swapBuffers();
@@ -116,7 +116,7 @@ public:
 	void grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uint16 pitch);
 	void floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color);
 	void flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer, byte *unused);
-	void blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer, Gfx::Buffers mask);
+	void blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
 
 	// palette
 	void animatePalette(byte *palette);
@@ -158,7 +158,7 @@ protected:
 	byte mapChar(byte c);
 
 	void flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer);
-	void blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer, Gfx::Buffers mask);
+	void blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer);
 
 
 	void initBuffers();
