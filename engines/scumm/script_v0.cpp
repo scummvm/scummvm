@@ -647,6 +647,9 @@ void ScummEngine_v0::o_loadRoomWithEgo() {
 	startScene(a->_room, a, obj);
 
 	getObjectXYPos(obj, x, y, dir);
+	AdjustBoxResult r = a->adjustXYToBeInBox(x, y);
+	x = r.x;
+	y = r.y;
 	a->putActor(x, y, _currentRoom);
 	a->setDirection(dir + 180);
 
@@ -742,9 +745,12 @@ void ScummEngine_v0::o_putActorAtObject() {
 	a = derefActor(getVarOrDirectByte(PARAM_1), "o_putActorAtObject");
 
 	obj = fetchScriptByte();
-	if (whereIsObject(obj) != WIO_NOT_FOUND)
+	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		getObjectXYPos(obj, x, y);
-	else {
+		AdjustBoxResult r = a->adjustXYToBeInBox(x, y);
+		x = r.x;
+		y = r.y;
+	} else {
 		x = 30;
 		y = 60;
 	}
