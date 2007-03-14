@@ -48,17 +48,19 @@ const Common::String actionNames[] = {
 	"Swap character",
 	"Skip text",	
 	"Pause", 
-	"Quit"
+	"Fast mode",
+	"Quit",
+	"Debugger"
 };
 
 #ifdef UIQ
-static const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, SDLK_F1, SDLK_F2, SDLK_F5, SDLK_PAGEDOWN, 0, 0, 0, SDLK_PAGEUP, 0, 0};
+static const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, SDLK_F1, SDLK_F2, SDLK_F5, SDLK_PAGEDOWN, 0, 0, 0, SDLK_PAGEUP, 0, 0, 0, 0};
 #elif defined (S60)
-const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0, 0, '*', '#', '9',0,0,0,0,0};
+const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0, 0, '*', '#', '9', 0, 0, 0, 0, 0, 0, 0};
 #elif defined (S90)
-const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, 0, 0, SDLK_MENU, SDLK_ESCAPE, 0, 0,0,0,0,0};
+const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, 0, 0, SDLK_MENU, SDLK_ESCAPE, 0, 0 , 0, 0, 0, 0, 0, 0};
 #else
-const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_MENU, SDLK_ESCAPE, 0, 0, 0, 0, 0, 0};
+const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_MENU, SDLK_ESCAPE, 0, 0, 0, 0, 0, 0, 0, 0};
 #endif
 
 // creator function according to Factory Pattern
@@ -138,9 +140,9 @@ void SymbianActions::initInstanceGame() {
 
 	// Initialize keys for different actions
 	// Save
-	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche) 
+	if (is_simon || is_gob || is_kyra || is_touche) 
 		_action_enabled[ACTION_SAVE] = false;
-	else if (is_queen || is_saga) {
+	else if (is_queen) {
 		_action_enabled[ACTION_SAVE] = true;
 		_key_action[ACTION_SAVE].setAscii(SDLK_F1); // F1 key for FOTAQ
 	} else if (is_sky) {
@@ -157,6 +159,11 @@ void SymbianActions::initInstanceGame() {
 		_key_action[ACTION_SAVE].setAscii(SDLK_F5); // F5 key
 	}
 
+	// Enable fast mode
+	_action_enabled[ACTION_FASTMODE] = true;
+	_key_action[ACTION_FASTMODE].setAscii('f');
+	_key_action[ACTION_FASTMODE].setFlags(KMOD_CTRL);
+	
 	// Swap character
 	_action_enabled[ACTION_SWAPCHAR] = true;
 	_key_action[ACTION_SWAPCHAR].setAscii('b'); // b
@@ -167,6 +174,11 @@ void SymbianActions::initInstanceGame() {
 	// FT Cheat
 	_action_enabled[ACTION_FT_CHEAT] = true;
 	_key_action[ACTION_FT_CHEAT].setAscii(86); // shift-V
+
+	// Enable debugger
+	_action_enabled[ACTION_DEBUGGER] = true;
+	_key_action[ACTION_DEBUGGER].setAscii('d');
+	_key_action[ACTION_DEBUGGER].setFlags(KMOD_CTRL);
 
 	// Skip text
 	if (!is_cine)

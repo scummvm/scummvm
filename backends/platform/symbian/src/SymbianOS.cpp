@@ -79,6 +79,21 @@ bool OSystem_SDL_Symbian::hasFeature(Feature f) {
 	}
 }
 
+void OSystem_SDL_Symbian::setFeatureState(Feature f, bool enable) {
+	switch(f) {	
+		case kFeatureVirtualKeyboard:				
+			if (enable) {			
+			}
+			else {
+			
+			}
+
+			return;
+		default:
+			OSystem_SDL::setFeatureState(f, enable);
+	}
+}
+
 OSystem_SDL_Symbian::zoneDesc OSystem_SDL_Symbian::_zones[TOTAL_ZONES] = {
         { 0, 0, 320, 145 },
         { 0, 145, 150, 55 },
@@ -335,11 +350,30 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Event &event) {
 			case GUI::ACTION_FT_CHEAT:
 			case GUI::ACTION_SKIP_TEXT:
 			case GUI::ACTION_PAUSE:
+			case GUI::ACTION_SWAPCHAR:
+			case GUI::ACTION_FASTMODE:
+			case GUI::ACTION_DEBUGGER:
 				{
 					GUI::Key &key = GUI::Actions::Instance()->getKeyAction(loop);
-					ev.key.keysym.sym = (SDLKey)key.ascii();
+					ev.key.keysym.sym = (SDLKey) key.ascii();
 					ev.key.keysym.scancode= key.keycode();
-					ev.key.keysym.mod = (SDLMod)key.flags();
+					ev.key.keysym.mod = (SDLMod) key.flags();
+
+					// Translate from SDL keymod event to Scummvm Key Mod Event. 
+					// This codes is also present in GP32 backend and in SDL backend as a static function
+					// Perhaps it should be shared. 
+					if(key.flags() != 0) {									
+						event.kbd.flags = 0;
+
+						if (ev.key.keysym.mod & KMOD_SHIFT)
+							event.kbd.flags |= OSystem::KBD_SHIFT;
+						
+						if (ev.key.keysym.mod & KMOD_ALT)
+							event.kbd.flags |= OSystem::KBD_ALT;
+						
+						if (ev.key.keysym.mod & KMOD_CTRL)
+							event.kbd.flags |= OSystem::KBD_CTRL;
+					}
 
 					return false;
 				}			

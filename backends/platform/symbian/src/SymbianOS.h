@@ -51,6 +51,7 @@ public:
 	bool setGraphicsMode(const char *name);
 	void quitWithErrorMsg(const char *msg);
 	virtual bool hasFeature(Feature f);
+	void setFeatureState(Feature f, bool enable);
 
 	// Set function that generates samples
 	//
