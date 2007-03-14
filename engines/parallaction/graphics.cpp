@@ -337,17 +337,30 @@ void Gfx::floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color) {
 	return;
 }
 
-void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer) {
+void screenClip(Common::Rect& r, Common::Point& p) {
+
+	int32 x = r.left;
+	int32 y = r.top;
 
 	Common::Rect screen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	r.clip(screen);
+
+	if (!r.isValidRect()) return;
+
+	p.x = r.left;
+	p.y = r.top;
+
+	r.translate(screen.left - x, screen.top - y);
+
+}
+
+void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer) {
+
+	Common::Point dp;
 	Common::Rect q(r);
 
-	q.clip(screen);
-
-	if (!q.isValidRect()) return;
-
-	Common::Point dp(q.left, q.top);
-	q.translate(screen.left - r.left, screen.top - r.top);
+	screenClip(q, dp);
 
 	byte *s = data + q.left + q.top * r.width();
 	byte *d = _buffers[buffer] + dp.x + dp.y * SCREEN_WIDTH;
@@ -371,15 +384,10 @@ void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer) {
 
 void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer, Gfx::Buffers mask) {
 
-	Common::Rect screen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	Common::Point dp;
 	Common::Rect q(r);
 
-	q.clip(screen);
-
-	if (!q.isValidRect()) return;
-
-	Common::Point dp(q.left, q.top);
-	q.translate(screen.left - r.left, screen.top - r.top);
+	screenClip(q, dp);
 
 	byte *s = data + q.left + q.top * r.width();
 	byte *d = _buffers[buffer] + dp.x + dp.y * SCREEN_WIDTH;
