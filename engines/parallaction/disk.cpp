@@ -388,13 +388,45 @@ void Disk::unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *p
 	return;
 }
 
+void Disk::parseDepths(Common::SeekableReadStream &stream) {
+	_vm->_gfx->_bgLayers[0] = stream.readByte();
+	_vm->_gfx->_bgLayers[1] = stream.readByte();
+	_vm->_gfx->_bgLayers[2] = stream.readByte();
+	_vm->_gfx->_bgLayers[3] = stream.readByte();
+}
+
+
+void Disk::parseBackground(Common::SeekableReadStream &stream) {
+
+	stream.read(_vm->_gfx->_palette, PALETTE_SIZE);
+
+	parseDepths(stream);
+
+	for (uint32 _si = 0; _si < 6; _si++) {
+		_vm->_gfx->_palettefx[_si]._timer = stream.readUint16BE();
+		_vm->_gfx->_palettefx[_si]._step = stream.readUint16BE();
+		_vm->_gfx->_palettefx[_si]._flags = stream.readUint16BE();
+		_vm->_gfx->_palettefx[_si]._first = stream.readByte();
+		_vm->_gfx->_palettefx[_si]._last = stream.readByte();
+	}
+
+#if 0
+	uint16 v147;
+	for (v147 = 0; v147 < PALETTE_SIZE; v147++) {
+		byte _al = _vm->_gfx->_palette[v147];
+		_vm->_gfx->_palette[PALETTE_SIZE+v147] = _al / 2;
+	}
+#endif
+
+}
+
 void Disk::loadBackground(const char *filename) {
 //	printf("Gfx::loadBackground(%s)\n", filename);
 
 	if (!_archive.openArchivedFile(filename))
 		errorFileNotFound(filename);
 
-	_vm->_gfx->parseBackground(_archive);
+	parseBackground(_archive);
 
 	byte *bg = (byte*)calloc(1, SCREEN_WIDTH*SCREEN_HEIGHT);
 	byte *mask = (byte*)calloc(1, SCREENMASK_WIDTH*SCREEN_HEIGHT);
@@ -440,7 +472,7 @@ void Disk::loadMaskAndPath(const char *name) {
 	byte *maskBuf = (byte*)calloc(1, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 	byte *pathBuf = (byte*)calloc(1, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 
-	_vm->_gfx->parseDepths(_archive);
+	parseDepths(_archive);
 
 	_archive.read(pathBuf, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 	_archive.read(maskBuf, SCREENMASK_WIDTH*SCREEN_HEIGHT);

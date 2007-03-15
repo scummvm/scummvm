@@ -34,7 +34,6 @@ extern OSystem *g_system;
 namespace Parallaction {
 
 
-uint16	_bgLayers[4];
 
 //
 //	proportional font glyphs width
@@ -56,16 +55,6 @@ StaticCnv	Gfx::_mouseComposedArrow;
 byte *		Gfx::_buffers[];
 
 #define PALETTE_BACKUP	PALETTE_SIZE
-
-PaletteFxRange		_palettefx[6];
-byte				_palette[PALETTE_SIZE] = {
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
 
 byte _black_palette[PALETTE_SIZE] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -874,37 +863,7 @@ void Gfx::freeStaticCnv(StaticCnv *cnv) {
 	return;
 }
 
-void Gfx::parseDepths(Common::SeekableReadStream &stream) {
-	_bgLayers[0] = stream.readByte();
-	_bgLayers[1] = stream.readByte();
-	_bgLayers[2] = stream.readByte();
-	_bgLayers[3] = stream.readByte();
-}
 
-
-void Gfx::parseBackground(Common::SeekableReadStream &stream) {
-
-	stream.read(_palette, PALETTE_SIZE);
-
-	parseDepths(stream);
-
-	for (uint32 _si = 0; _si < 6; _si++) {
-		_palettefx[_si]._timer = stream.readUint16BE();
-		_palettefx[_si]._step = stream.readUint16BE();
-		_palettefx[_si]._flags = stream.readUint16BE();
-		_palettefx[_si]._first = stream.readByte();
-		_palettefx[_si]._last = stream.readByte();
-	}
-
-#if 0
-	uint16 v147;
-	for (v147 = 0; v147 < PALETTE_SIZE; v147++) {
-		byte _al = _palette[v147];
-		_palette[PALETTE_SIZE+v147] = _al / 2;
-	}
-#endif
-
-}
 
 void Gfx::setBackground(byte *background) {
 	memcpy(_buffers[kBitBack], background, SCREEN_WIDTH*SCREEN_HEIGHT);

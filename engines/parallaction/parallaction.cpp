@@ -458,7 +458,7 @@ void Parallaction::runGame() {
 		if ((_engineFlags & kEnginePauseJobs) == 0 || (_engineFlags & kEngineInventory)) {
 			_gfx->swapBuffers();
 			byte palette[PALETTE_SIZE];
-			memcpy(palette, _palette, sizeof(palette));
+			memcpy(palette, _vm->_gfx->_palette, sizeof(palette));
 			_gfx->animatePalette(palette);
 			_gfx->setPalette(palette);
 		}

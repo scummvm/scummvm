@@ -97,8 +97,6 @@ public:
 	// location
 	void setBackground(byte *background);
 	void setMask(byte *mask);
-	void parseDepths(Common::SeekableReadStream &stream);
-	void parseBackground(Common::SeekableReadStream &stream);
 	int16 queryMask(int16 v);
 	void intGrottaHackMask();
 	void restoreBackground(const Common::Rect& r);
@@ -138,6 +136,10 @@ public:
 public:
 	static Point		_labelPosition[2];
 	static bool 		_proportionalFont;
+
+	uint16				_bgLayers[4];
+	PaletteFxRange		_palettefx[6];
+	byte				_palette[PALETTE_SIZE];
 
 protected:
 	Parallaction*		_vm;

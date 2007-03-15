@@ -282,7 +282,7 @@ extern Job     *_jEraseLabel;
 void Parallaction::showSlide(const char *name) {
 
 	_disk->loadSlide(name);
-	_gfx->palUnk0(_palette);
+	_gfx->palUnk0(_vm->_gfx->_palette);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	debugC(1, kDebugLocation, "changeLocation: new background set");
@@ -418,7 +418,7 @@ void Parallaction::changeLocation(char *location) {
 	runJobs();
 	_gfx->swapBuffers();
 
-	_gfx->palUnk0(_palette);
+	_gfx->palUnk0(_vm->_gfx->_palette);
 	if (_location._aCommands) {
 		runCommands(_location._aCommands);
 		debugC(1, kDebugLocation, "changeLocation: location acommands run");

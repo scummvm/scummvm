@@ -86,6 +86,8 @@ private:
 	void loadExternalStaticCnv(const char *filename, StaticCnv *cnv);
 	void loadBackground(const char *filename);
 	void loadMaskAndPath(const char *name);
+	void parseDepths(Common::SeekableReadStream &stream);
+	void parseBackground(Common::SeekableReadStream &stream);
 
 protected:
 	Archive		  _archive;

@@ -220,7 +220,7 @@ void _c_frankenstein(void *parm) {
 	byte pal0[PALETTE_SIZE], pal1[PALETTE_SIZE];
 
 	for (uint16 i = 0; i <= PALETTE_COLORS; i++) {
-		pal0[i] = _palette[i];
+		pal0[i] = _vm->_gfx->_palette[i];
 		pal0[i*3+1] = 0;
 		pal0[i*3+2] = 0;
 	}
@@ -234,7 +234,7 @@ void _c_frankenstein(void *parm) {
 		_vm->_gfx->setPalette(pal1);
 	}
 
-	_vm->_gfx->setPalette(_palette);
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 
 	return;
 }
@@ -282,7 +282,7 @@ void _c_finito(void *parm) {
 	cleanInventory();
 	refreshInventory(_vm->_characterName);
 
-	_vm->_gfx->palUnk0(_palette);
+	_vm->_gfx->palUnk0(_vm->_gfx->_palette);
 
 	if (gameCompleted) {
 		_vm->_gfx->setFont("slide");
