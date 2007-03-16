@@ -323,7 +323,7 @@ Widget *Dialog::findWidget(const char *name) {
 	return Widget::findWidgetInChain(_firstWidget, name);
 }
 
-void Dialog::deleteWidget(Widget *del) {
+void Dialog::removeWidget(Widget *del) {
 	if (del == _mouseWidget)
 		_mouseWidget = NULL;
 	if (del == _focusedWidget)
@@ -360,10 +360,6 @@ ButtonWidget *Dialog::addButton(GuiObject *boss, int x, int y, const Common::Str
 	}
 
 	return new ButtonWidget(boss, x, y, w, h, label, cmd, hotkey);
-}
-
-uint32 GuiObject::getMillis() {
-	return g_system->getMillis();
 }
 
 } // End of namespace GUI

@@ -82,7 +82,7 @@ protected:
 
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 	Widget *findWidget(const char *name);
-	void deleteWidget(Widget *widget);
+	void removeWidget(Widget *widget);
 
 	ButtonWidget *addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey);
 

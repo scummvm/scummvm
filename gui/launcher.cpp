@@ -892,7 +892,7 @@ void LauncherDialog::reflowLayout() {
 		}
 
 		if (_logo) {
-			deleteWidget(_logo);
+			removeWidget(_logo);
 			_logo->setNext(0);
 			delete _logo;
 			_logo = 0;

@@ -54,11 +54,6 @@ enum {
 	kKeyRepeatSustainDelay = 100
 };
 
-// HACK. FIXME. This doesn't belong here. But otherwise it creates compilation problems
-GuiObject::GuiObject(const Common::String &name) : _firstWidget(0) {
-	_name = name;
-}
-
 void GuiObject::reflowLayout() {
 	if (!_name.empty()) {
 		if ((_x = g_gui.evaluator()->getVar(_name + ".x")) == EVAL_UNDEF_VAR)

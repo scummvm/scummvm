@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+ * Copyright (C) 2002-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -66,6 +66,7 @@ protected:
 public:
 	GuiObject(int x, int y, int w, int h) : _x(x), _y(y), _w(w), _h(h), _name(""), _firstWidget(0)  { }
 	GuiObject(const Common::String &name);
+	~GuiObject();
 
 	virtual int16	getAbsX() const		{ return _x; }
 	virtual int16	getAbsY() const		{ return _y; }

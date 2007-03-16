@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	massadd.o \
 	message.o \
 	newgui.o \
+	object.o \
 	options.o \
 	PopUpWidget.o \
 	ScrollBarWidget.o \
