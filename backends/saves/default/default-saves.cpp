@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+ * Copyright (C) 2002-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,6 +19,8 @@
  * $Id$
  *
  */
+
+#if !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
 #include "common/stdafx.h"
 #include "common/savefile.h"
@@ -180,3 +182,5 @@ void DefaultSaveFileManager::listSavefiles(const char * /* prefix */, bool *mark
 	// Even better, replace this with a better design...
 	memset(marks, true, num * sizeof(bool));
 }
+
+#endif // !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
