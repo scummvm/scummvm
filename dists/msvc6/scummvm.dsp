@@ -503,6 +503,14 @@ SOURCE=..\..\gui\newgui.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\gui\object.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\gui\object.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\gui\options.cpp
 # End Source File
 # Begin Source File

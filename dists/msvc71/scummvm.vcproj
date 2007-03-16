@@ -699,6 +699,9 @@
 				RelativePath="..\..\gui\newgui.h">
 			</File>
 			<File
+				RelativePath="..\..\gui\object.cpp">
+			</File>
+			<File
 				RelativePath="..\..\gui\object.h">
 			</File>
 			<File
