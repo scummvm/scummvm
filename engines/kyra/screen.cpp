@@ -415,8 +415,10 @@ void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
 
 void Screen::setScreenPalette(const uint8 *palData) {
 	debugC(9, kDebugLevelScreen, "Screen::setScreenPalette(%p)", (const void *)palData);
+
 	if (palData != _screenPalette)
 		memcpy(_screenPalette, palData, 768);
+
 	uint8 screenPal[256 * 4];
 	for (int i = 0; i < 256; ++i) {
 		screenPal[4 * i + 0] = (palData[0] << 2) | (palData[0] & 3);
@@ -1690,7 +1692,7 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, bool 
 	}
 }
 
-void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen) {
+void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen, int planeOffset) {
 	static uint8 tmp[320*200];
 
 	if (offscreen) {
@@ -1699,10 +1701,10 @@ void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen) {
 		int hC = h;
 		while (hC--) {
 			uint8 *dst1 = curLine;
-			uint8 *dst2 = dst1 + 8000;
-			uint8 *dst3 = dst2 + 8000;
-			uint8 *dst4 = dst3 + 8000;
-			uint8 *dst5 = dst4 + 8000;
+			uint8 *dst2 = dst1 + planeOffset;
+			uint8 *dst3 = dst2 + planeOffset;
+			uint8 *dst4 = dst3 + planeOffset;
+			uint8 *dst5 = dst4 + planeOffset;
 
 			int width = w >> 3;
 			while (width--) {
@@ -1719,7 +1721,6 @@ void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen) {
 		memcpy(tmp, data, w*h);
 	}
 
-	int planeOffset = 8000;
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w; ++x) {
 			int bytePos = x/8+y*40;
@@ -1733,6 +1734,22 @@ void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen) {
 			colorIndex |= (((tmp[bytePos + planeOffset * 4] & (1 << bitPos)) >> bitPos) & 0x1) << 4;
 			*data++ = colorIndex;
 		}
+	}
+}
+
+void Screen::convertAmigaMsc(uint8 *data) {
+	Screen::convertAmigaGfx(data, 320, 200, false, 5760);
+	for (int i = 0; i < 64000; ++i) {
+		byte src = *data;
+		byte dst = 0;
+		if (!(src & 0x1)) {
+			dst |= 0x80;
+		}
+		// FIXME: this is totally wrong, correct this 
+		src >>= 1;
+		src &= 0x7;
+		dst |= src;
+		*data++ = dst;
 	}
 }
 
@@ -2282,9 +2299,8 @@ byte Screen::getShapeFlag1(int x, int y) {
 	color &= 0x80;
 	color ^= 0x80;
 
-	if (color & 0x80) {
+	if (color & 0x80)
 		return 1;
-	}
 	return 0;
 }
 
@@ -2558,7 +2574,11 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 	}
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		Screen::convertAmigaGfx(dstData, 320, 200, false);
+		const char *ext = filename + strlen(filename) - 3;
+		if (!scumm_stricmp(ext, "MSC"))
+			Screen::convertAmigaMsc(dstData);
+		else
+			Screen::convertAmigaGfx(dstData, 320, 200, false);
 	}
 
 	delete [] srcData;

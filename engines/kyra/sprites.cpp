@@ -422,7 +422,6 @@ void Sprites::loadDAT(const char *filename, SceneExits &exits) {
 	}
 	// XXX
 	_engine->_paletteChanged = 1;
-	// FIXME: check this...
 	if (_engine->gameFlags().platform != Common::kPlatformAmiga) {
 		_screen->loadPalette(_dat + 0x17, _screen->getPalette(1) + 684, 60);
 	}

@@ -231,7 +231,8 @@ public:
 	static uint decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
 	static void decodeFrameDelta(uint8 *dst, const uint8 *src, bool noXor = false);
 	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch, bool noXor);
-	static void convertAmigaGfx(uint8 *data, int w, int h, bool offscreen = true);
+	static void convertAmigaGfx(uint8 *data, int w, int h, bool offscreen = true, int planeOffset = 8000);
+	static void convertAmigaMsc(uint8 *data);
 
 	// maybe subclass screen for kyra3
 	static const ScreenDim _screenDimTableK3[];
