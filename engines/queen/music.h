@@ -30,6 +30,8 @@ class MidiParser;
 
 namespace Queen {
 
+struct tuneData;
+
 class QueenEngine;
 
 class MidiMusic : public MidiDriver {
@@ -100,6 +102,7 @@ protected:
 	uint32 _musicDataSize;
 	bool _vToggle;
 	byte *_musicData;
+	const tuneData *_tune;
 };
 
 } // End of namespace Queen

@@ -43,6 +43,8 @@ MidiMusic::MidiMusic(MidiDriver *driver, QueenEngine *vm)
 	_musicData = vm->resource()->loadFile(filename, 0, &_musicDataSize);
 	_numSongs = READ_LE_UINT16(_musicData);
 	this->open();
+
+	_tune = vm->resource()->isDemo() ? Sound::_tuneDemo : Sound::_tune;
 }
 
 MidiMusic::~MidiMusic() {
@@ -194,7 +196,7 @@ void MidiMusic::queueTuneList(int16 tuneList) {
 		return;
 	}
 
-	int mode = (_numSongs == 40) ? Sound::_tuneDemo[tuneList].mode : Sound::_tune[tuneList].mode;
+	int mode = _tune[tuneList].mode;
 	switch (mode) {
 	case 0: // random loop
 		_randomLoop = true;
@@ -210,13 +212,8 @@ void MidiMusic::queueTuneList(int16 tuneList) {
 	}
 
 	int i = 0;
-	if (_numSongs == 40) {
-		while (Sound::_tuneDemo[tuneList].tuneNum[i])
-			queueSong(Sound::_tuneDemo[tuneList].tuneNum[i++] - 1);
-	} else {
-		while (Sound::_tune[tuneList].tuneNum[i])
-			queueSong(Sound::_tune[tuneList].tuneNum[i++] - 1);
-	}
+	while (_tune[tuneList].tuneNum[i])
+		queueSong(_tune[tuneList].tuneNum[i++] - 1);
 
 	if (_randomLoop)
 		_queuePos = randomQueuePos();
