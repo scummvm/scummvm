@@ -147,7 +147,6 @@ public:
 	bool isSfxActive() const 	{ return _mixer->isSoundHandleActive(_sfxHandle); }
 
 	void setVolume(int vol);
-	int volume();
 
 protected:
 	void waitFinished(bool isSpeech);
@@ -185,7 +184,6 @@ protected:
 	int _fanfareCount, _fluteCount;
 	Audio::SoundHandle _modHandle;
 	Audio::SoundHandle _sfxHandle;
-	Common::RandomSource _rnd;
 };
 
 } // End of namespace Queen

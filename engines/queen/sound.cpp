@@ -220,11 +220,8 @@ void PCSound::playSpeech(const char *base) {
 }
 
 void PCSound::setVolume(int vol) {
+	Sound::setVolume(vol);
 	_music->setVolume(vol);
-}
-
-int PCSound::volume() {
-	return _music->getVolume();
 }
 
 void PCSound::waitFinished(bool isSpeech) {
