@@ -55,8 +55,6 @@ struct PaletteFxRange {
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
-extern byte _palette[];
-
 #define NUM_BUFFERS 6
 
 class Parallaction;
