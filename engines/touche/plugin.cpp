@@ -68,6 +68,14 @@ static const Common::ADGameDescription gameDescriptions[] = {
 		Common::kPlatformPC,
 		Common::ADGF_NO_FLAGS
 	},
+	{ // retail version - tracker item #1681643
+		"touche",
+		"",
+		AD_ENTRY1s("touche.dat", "64e95ba1decf5a5a60f8fa1840f40c62", 26529523),
+		Common::ES_ESP,
+		Common::kPlatformPC,
+		Common::ADGF_NO_FLAGS
+	},
 	{ // fan-made translation (http://www.iagtg.net/) - tracker item #1602360
 		"touche",
 		"",
