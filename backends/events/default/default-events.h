@@ -20,8 +20,8 @@
  *
  */
 
-#if !defined(BACKEND_SAVES_DEFAULT_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
-#define BACKEND_SAVES_DEFAULT_H
+#if !defined(BACKEND_EVENTS_DEFAULT_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
+#define BACKEND_EVENTS_DEFAULT_H
 
 #include "common/stdafx.h"
 #include "common/events.h"
