@@ -141,6 +141,13 @@ struct Zone : public Node {
 	Command 		*_commands;
 	Point			_moveTo;
 
+	void translate(int16 x, int16 y) {
+		_left += x;
+		_right += x;
+		_top += y;
+		_bottom += y;
+	}
+
 	uint16 width() const {
 		return _right - _left;
 	}

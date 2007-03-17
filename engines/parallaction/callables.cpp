@@ -138,18 +138,8 @@ void _c_moveSarc(void *parm) {
 	}
 
 	_introSarcData2 = 1;
-
-	_moveSarcZone1->_right += _introSarcData1;
-	_moveSarcZone1->_left += _introSarcData1;
-
-	_moveSarcZone1->_top -= (_introSarcData1 / 20);
-	_moveSarcZone1->_bottom -= (_introSarcData1 / 20);
-
-	_moveSarcZone0->_right += _introSarcData1;
-	_moveSarcZone0->_left += _introSarcData1;
-
-	_moveSarcZone0->_top -= (_introSarcData1 / 20);
-	_moveSarcZone0->_bottom -= (_introSarcData1 / 20);
+	_moveSarcZone1->translate(_introSarcData1, -_introSarcData1 / 20);
+	_moveSarcZone0->translate(_introSarcData1, -_introSarcData1 / 20);
 
 	if (_moveSarcZones[0]->_left == 35 &&
 		_moveSarcZones[1]->_left == 68 &&
