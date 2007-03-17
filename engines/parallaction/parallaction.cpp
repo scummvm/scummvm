@@ -214,30 +214,7 @@ int Parallaction::init() {
 
 	initWalk();
 
-	_vm->_char._talk._width = 0;
-	_vm->_char._talk._height = 0;
-	_vm->_char._talk._count = 0;
-	_vm->_char._talk._array = NULL;
-
-	_vm->_char._head._width = 0;
-	_vm->_char._head._height = 0;
-	_vm->_char._head._data0 = NULL;
-	_vm->_char._head._data1 = NULL;
-
-	_vm->_char._ani._zone.pos._position._x = 150;
-	_vm->_char._ani._zone.pos._position._y = 100;
 	initInventory();
-	_vm->_char._ani._z = 10;
-
-	_vm->_char._ani._zone.pos._oldposition._x = -1000;
-	_vm->_char._ani._zone.pos._oldposition._y = -1000;
-	_vm->_char._ani._frame = 0;
-
-	_vm->_char._ani._zone._flags = kFlagsActive | kFlagsNoName;
-	_vm->_char._ani._zone._type = kZoneYou;
-
-	_vm->_char._ani._zone._label._cnv._data0 = NULL;
-	_vm->_char._ani._zone._label._text = strdup("yourself");
 
 	addNode(&_animations, &_vm->_char._ani._zone);
 	_gfx = new Gfx(this);

@@ -357,7 +357,7 @@ void redrawInventory() {
 
 void initInventory() {
 	_buffer = (byte*)malloc(INVENTORY_WIDTH * INVENTORY_HEIGHT);	  // this buffer is also used by menu so it must stay this size
-	_vm->_char._objs._count = 0;
+
 }
 
 void cleanInventory() {

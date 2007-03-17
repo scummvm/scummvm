@@ -241,6 +241,32 @@ struct Character {
 	Cnv 			_normalFrames;
 	Cnv				_miniFrames;
 	Cnv 			_objs;
+
+	Character() {
+		_talk._width = 0;
+		_talk._height = 0;
+		_talk._count = 0;
+		_talk._array = NULL;
+
+		_head._width = 0;
+		_head._height = 0;
+		_head._data0 = NULL;
+		_head._data1 = NULL;
+
+		_objs._count = 0;
+
+		_ani._zone.pos._position._x = 150;
+		_ani._zone.pos._position._y = 100;
+		_ani._z = 10;
+		_ani._zone.pos._oldposition._x = -1000;
+		_ani._zone.pos._oldposition._y = -1000;
+		_ani._frame = 0;
+		_ani._zone._flags = kFlagsActive | kFlagsNoName;
+		_ani._zone._type = kZoneYou;
+		_ani._zone._label._cnv._data0 = NULL;
+		_ani._zone._label._text = strdup("yourself");
+	}
+
 };
 
 class Parallaction : public Engine {

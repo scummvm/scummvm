@@ -216,7 +216,7 @@ uint16	checkDoor();
 
 Animation  *findAnimation(const char *name);
 void		loadProgram(Animation *, char *filename);
-int16		queryBackgroundLayer(int16 v);
+
 
 
 } // namespace Parallaction
