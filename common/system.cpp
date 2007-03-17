@@ -24,6 +24,7 @@
 #include "common/stdafx.h"
 
 #include "backends/intern.h"
+#include "backends/events/default/default-events.h"
 
 #include "gui/message.h"
 
@@ -35,6 +36,12 @@
 #include "sound/mixer.h"
 
 OSystem *g_system = 0;
+
+OSystem::OSystem() {
+}
+
+OSystem::~OSystem() {
+}
 
 bool OSystem::setGraphicsMode(const char *name) {
 	if (!name)
@@ -80,3 +87,15 @@ void OSystem::stopCD() {
 
 void OSystem::updateCD() {
 }
+
+static Common::EventManager *s_eventManager = 0;
+
+Common::EventManager *OSystem::getEventManager() {
+	// FIXME/TODO: Eventually this method should be turned into an abstract one,
+	// to force backends to implement this conciously (even if they 
+	// end up returning the default event manager anyway).
+	if (!s_eventManager)
+		s_eventManager = new DefaultEventManager(this);
+	return s_eventManager;
+}
+

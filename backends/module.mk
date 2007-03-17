@@ -1,6 +1,7 @@
 MODULE := backends
 
 MODULE_OBJS := \
+	events/default/default-events.o \
 	fs/posix/posix-fs.o \
 	fs/morphos/abox-fs.o \
 	fs/windows/windows-fs.o \

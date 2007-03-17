@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2001-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,6 +37,7 @@ namespace Graphics {
 }
 
 namespace Common {
+	class EventManager;
 	class SaveFileManager;
 	class TimerManager;
 }
@@ -58,8 +59,8 @@ private:
 	OSystem& operator= (const OSystem&);
 
 protected:
-	OSystem() { }
-	virtual ~OSystem() { }
+	OSystem();
+	virtual ~OSystem();
 
 public:
 
@@ -68,7 +69,7 @@ public:
 	 * config data (including command line params etc.) are fully loaded.
 	 *
 	 * @note Subclasses should always invoke the implementation of their
-	 *       parent class. They should so so near the end of their own
+	 *       parent class. They should do so near the end of their own
 	 *       implementation.
 	 */
 	virtual void initBackend() { }
@@ -679,6 +680,9 @@ public:
 	/** @name Events and Time */
 	//@{
 
+//protected:
+	friend class Common::EventManager;
+
 	/**
 	 * The types of events backends may generate.
 	 * @see Event
@@ -793,6 +797,7 @@ public:
 	 */
 	virtual bool pollEvent(Event &event) = 0;
 
+public:
 	/** Get the number of milliseconds since the program was started. */
 	virtual uint32 getMillis() = 0;
 
@@ -800,10 +805,16 @@ public:
 	virtual void delayMillis(uint msecs) = 0;
 
 	/**
-	 * Returh the timer manager. For more information, refer to the
-	 * TimerManager documentation.
+	 * Return the timer manager singleton. For more information, refer
+	 * to the TimerManager documentation.
 	 */
 	virtual Common::TimerManager *getTimerManager() = 0;
+
+	/**
+	 * Return the event manager singleton. For more information, refer
+	 * to the EventManager documentation.
+	 */
+	virtual Common::EventManager *getEventManager();
 
 	//@}
 
