@@ -531,20 +531,17 @@ void SkyEngine::delay(int32 amount) {
 					_keyPressed = (byte)event.kbd.ascii;
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
-				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED)) {
+				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
 					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
-				}
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
-				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED)) {
+				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
 					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
-				}
 				_skyMouse->buttonPressed(2);
 				break;
 			case OSystem::EVENT_RBUTTONDOWN:
-				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED)) {
+				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
 					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
-				}
 				_skyMouse->buttonPressed(1);
 				break;
 			case OSystem::EVENT_QUIT:

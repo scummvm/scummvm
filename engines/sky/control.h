@@ -239,7 +239,6 @@ private:
 	Logic *_skyLogic;
 	Sound *_skySound;
 	OSystem *_system;
-	int _mouseX, _mouseY;
 	bool _mouseClicked;
 	byte _keyPressed;
 	int _mouseWheel;

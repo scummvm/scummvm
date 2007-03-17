@@ -391,22 +391,22 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 
 void Screen::waitForTimer(void) {
 
+	Common::EventManager *eventMan = _system->getEventManager();
 	_gotTick = false;
 	while (!_gotTick) {
 		OSystem::Event event;
 
 		_system->delayMillis(10);
-		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event));
 	}
 }
 
 void Screen::waitForSequence(void) {
+	Common::EventManager *eventMan = _system->getEventManager();
 	while (_seqInfo.running) {
 		OSystem::Event event;
 
 		_system->delayMillis(20);
-		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event));
 	}
 }

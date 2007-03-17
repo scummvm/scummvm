@@ -254,9 +254,6 @@ void Control::initPanel(void) {
 	_screenBuf = (uint8 *)malloc(GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 
-	_mouseX = _skyMouse->giveMouseX();
-	_mouseY = _skyMouse->giveMouseY();
-
 	uint16 volY = (127 - _skyMusic->giveVolume()) / 4 + 59 - MPNL_Y; // volume slider's Y coordinate
 	uint16 spdY = (SkyEngine::_systemVars.gameSpeed - 2) / SPEED_MULTIPLY;
 	spdY += MPNL_Y + 83; // speed slider's initial position
@@ -358,8 +355,9 @@ void Control::buttonControl(ConResource *pButton) {
 		} else
 			_text->setSprite(NULL);
 	}
-	int destY = (_mouseY - 16 >= 0) ? _mouseY - 16 : 0;
-	_text->setXY(_mouseX + 12, destY);
+	Common::Point mouse = _system->getEventManager()->getMousePos();
+	int destY = (mouse.y - 16 >= 0) ? mouse.y - 16 : 0;
+	_text->setXY(mouse.x + 12, destY);
 }
 
 void Control::drawTextCross(uint32 flags) {
@@ -501,8 +499,9 @@ void Control::doControlPanel(void) {
 			quitPanel = true;
 		}
 		bool haveButton = false;
+		Common::Point mouse = _system->getEventManager()->getMousePos();
 		for (uint8 lookCnt = 0; lookCnt < 9; lookCnt++) {
-			if (_controlPanLookList[lookCnt]->isMouseOver(_mouseX, _mouseY)) {
+			if (_controlPanLookList[lookCnt]->isMouseOver(mouse.x, mouse.y)) {
 				haveButton = true;
 				buttonControl(_controlPanLookList[lookCnt]);
 				if (_mouseClicked && _controlPanLookList[lookCnt]->_onClick) {
@@ -635,14 +634,15 @@ bool Control::getYesNo(char *text) {
 		}
 		_system->updateScreen();
 		delay(50);
-		if ((_mouseY >= 83) && (_mouseY <= 110)) {
-			if ((_mouseX >= 77) && (_mouseX <= 114)) { // over 'yes'
+		Common::Point mouse = _system->getEventManager()->getMousePos();
+		if ((mouse.y >= 83) && (mouse.y <= 110)) {
+			if ((mouse.x >= 77) && (mouse.x <= 114)) { // over 'yes'
 				wantMouse = MOUSE_CROSS;
 				if (_mouseClicked) {
 					quitPanel = true;
 					retVal = true;
 				}
-			} else if ((_mouseX >= 156) && (_mouseX <= 193)) { // over 'no'
+			} else if ((mouse.x >= 156) && (mouse.x <= 193)) { // over 'no'
 				wantMouse = MOUSE_CROSS;
 				if (_mouseClicked) {
 					quitPanel = true;
@@ -663,11 +663,12 @@ bool Control::getYesNo(char *text) {
 
 uint16 Control::doMusicSlide(void) {
 
-	int ofsY = _slide2->_y - _mouseY;
+	Common::Point mouse = _system->getEventManager()->getMousePos();
+	int ofsY = _slide2->_y - mouse.y;
 	uint8 volume;
 	while (_mouseClicked) {
 		delay(50);
-		int newY = ofsY + _mouseY;
+		int newY = ofsY + mouse.y;
 		if (newY < 59) newY = 59;
 		if (newY > 91) newY = 91;
 		if (newY != _slide2->_y) {
@@ -689,13 +690,14 @@ uint16 Control::doMusicSlide(void) {
 
 uint16 Control::doSpeedSlide(void) {
 
-	int ofsY = _slide->_y - _mouseY;
+	Common::Point mouse = _system->getEventManager()->getMousePos();
+	int ofsY = _slide->_y - mouse.y;
 	uint16 speedDelay = _slide->_y - (MPNL_Y + 93);
 	speedDelay *= SPEED_MULTIPLY;
 	speedDelay += 2;
 	while (_mouseClicked) {
 		delay(50);
-		int newY = ofsY + _mouseY;
+		int newY = ofsY + mouse.y;
 		if (newY < MPNL_Y + 93) newY = MPNL_Y + 93;
 		if (newY > MPNL_Y + 104) newY = MPNL_Y + 104;
 		if ((newY == 110) || (newY == 108)) newY = 109;
@@ -921,8 +923,9 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 		}
 
 		bool haveButton = false;
+		Common::Point mouse = _system->getEventManager()->getMousePos();
 		for (cnt = 0; cnt < lookListLen; cnt++)
-			if (lookList[cnt]->isMouseOver(_mouseX, _mouseY)) {
+			if (lookList[cnt]->isMouseOver(mouse.x, mouse.y)) {
 				buttonControl(lookList[cnt]);
 				haveButton = true;
 
@@ -952,10 +955,10 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 			}
 
 		if (_mouseClicked) {
-			if ((_mouseX >= GAME_NAME_X) && (_mouseX <= GAME_NAME_X + PAN_LINE_WIDTH) &&
-				(_mouseY >= GAME_NAME_Y) && (_mouseY <= GAME_NAME_Y + PAN_CHAR_HEIGHT * MAX_ON_SCREEN)) {
+			if ((mouse.x >= GAME_NAME_X) && (mouse.x <= GAME_NAME_X + PAN_LINE_WIDTH) &&
+				(mouse.y >= GAME_NAME_Y) && (mouse.y <= GAME_NAME_Y + PAN_CHAR_HEIGHT * MAX_ON_SCREEN)) {
 
-					_selectedGame = (_mouseY - GAME_NAME_Y) / PAN_CHAR_HEIGHT + _firstText;
+					_selectedGame = (mouse.y - GAME_NAME_Y) / PAN_CHAR_HEIGHT + _firstText;
 					refreshNames = true;
 			}
 		}
@@ -1562,14 +1565,10 @@ void Control::delay(unsigned int amount) {
 					_keyPressed = (byte)event.kbd.ascii;
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
-				_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
+				if (!(SkyEngine::_systemVars.systemFlags & SF_MOUSE_LOCKED))
+					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
-				_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
 				_mouseClicked = true;
 				break;
 			case OSystem::EVENT_LBUTTONUP:
