@@ -692,24 +692,24 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_BARGON,
 		"intro"
 	},
-	{ // Supplied by Trekky in the forums
+	{ // Supplied by cesardark in bug #1681649
 		{
 			"bargon",
 			"",
-			AD_ENTRY1s("intro.stk", "2f54b330d21f65b04b7c1f8cca76426c", 262109),
-			FR_FRA,
-			kPlatformAtariST,
+			AD_ENTRY1s("intro.stk", "11103b304286c23945560b391fd37e7d", 3181890),
+			ES_ESP,
+			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
 		GF_BARGON,
 		"intro"
 	},
-	{ // Supplied by cesardark in bug #1681649
+	{
 		{
 			"gob3",
 			"",
-			AD_ENTRY1s("intro.stk", "11103b304286c23945560b391fd37e7d", 3181890),
-			ES_ESP,
+			AD_ENTRY1("intro.stk", "32b0f57f5ae79a9ae97e8011df38af42"),
+			UNK_LANG,
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
