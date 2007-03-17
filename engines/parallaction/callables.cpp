@@ -116,21 +116,21 @@ void _c_moveSarc(void *parm) {
 			}
 		}
 
-		_introSarcData1 = _introSarcData3 - _moveSarcZone1->_limits._left;
+		_introSarcData1 = _introSarcData3 - _moveSarcZone1->_left;
 		a->_z = _introSarcData3;
-		a->_frame = _moveSarcZone1->_limits._top - (_introSarcData1 / 20);
-		_introSarcData3 = _moveSarcZone1->_limits._left;
+		a->_frame = _moveSarcZone1->_top - (_introSarcData1 / 20);
+		_introSarcData3 = _moveSarcZone1->_left;
 
 		if (_introSarcData1 > 0) {
-			a->_zone.pos._position._x = _introSarcData1 / 2;
+			a->_zone._left = _introSarcData1 / 2;
 		} else {
-			a->_zone.pos._position._x = -_introSarcData1 / 2;
+			a->_zone._left = -_introSarcData1 / 2;
 		}
 
 		if (_introSarcData1 > 0) {
-			a->_zone.pos._position._y = 2;
+			a->_zone._top = 2;
 		} else {
-			a->_zone.pos._position._y = -2;
+			a->_zone._top = -2;
 		}
 
 		return;
@@ -139,23 +139,23 @@ void _c_moveSarc(void *parm) {
 
 	_introSarcData2 = 1;
 
-	_moveSarcZone1->_limits._right += _introSarcData1;
-	_moveSarcZone1->_limits._left += _introSarcData1;
+	_moveSarcZone1->_right += _introSarcData1;
+	_moveSarcZone1->_left += _introSarcData1;
 
-	_moveSarcZone1->_limits._top -= (_introSarcData1 / 20);
-	_moveSarcZone1->_limits._bottom -= (_introSarcData1 / 20);
+	_moveSarcZone1->_top -= (_introSarcData1 / 20);
+	_moveSarcZone1->_bottom -= (_introSarcData1 / 20);
 
-	_moveSarcZone0->_limits._right += _introSarcData1;
-	_moveSarcZone0->_limits._left += _introSarcData1;
+	_moveSarcZone0->_right += _introSarcData1;
+	_moveSarcZone0->_left += _introSarcData1;
 
-	_moveSarcZone0->_limits._top -= (_introSarcData1 / 20);
-	_moveSarcZone0->_limits._bottom -= (_introSarcData1 / 20);
+	_moveSarcZone0->_top -= (_introSarcData1 / 20);
+	_moveSarcZone0->_bottom -= (_introSarcData1 / 20);
 
-	if (_moveSarcZones[0]->_limits._left == 35 &&
-		_moveSarcZones[1]->_limits._left == 68 &&
-		_moveSarcZones[2]->_limits._left == 101 &&
-		_moveSarcZones[3]->_limits._left == 134 &&
-		_moveSarcZones[4]->_limits._left == 167) {
+	if (_moveSarcZones[0]->_left == 35 &&
+		_moveSarcZones[1]->_left == 68 &&
+		_moveSarcZones[2]->_left == 101 &&
+		_moveSarcZones[3]->_left == 134 &&
+		_moveSarcZones[4]->_left == 167) {
 
 		a = findAnimation("finito");
 

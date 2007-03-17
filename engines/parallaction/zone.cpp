@@ -77,10 +77,10 @@ void Parallaction::parseZone(Script &script, Node *list, char *name) {
 //		printf("token[0] = %s", _tokens[0]);
 
 		if (!scumm_stricmp(_tokens[0], "limits")) {
-			z->_limits._left = atoi(_tokens[1]);
-			z->_limits._top = atoi(_tokens[2]);
-			z->_limits._right = atoi(_tokens[3]);
-			z->_limits._bottom = atoi(_tokens[4]);
+			z->_left = atoi(_tokens[1]);
+			z->_top = atoi(_tokens[2]);
+			z->_right = atoi(_tokens[3]);
+			z->_bottom = atoi(_tokens[4]);
 		}
 		if (!scumm_stricmp(_tokens[0], "moveto")) {
 			z->_moveTo._x = atoi(_tokens[1]);
@@ -131,8 +131,8 @@ void freeZones(Node *list) {
 		// WORKAROUND: this huge condition is needed because we made ZoneTypeData a collection of structs
 		// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
 		// but we need to check it separately here. The same workaround is applied in hitZone.
-		if (((z->_limits._top == -1) ||
-			((z->_limits._left == -2) && (
+		if (((z->_top == -1) ||
+			((z->_left == -2) && (
 				(((z->_type & 0xFFFF) == kZoneMerge) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj1)) != 0) || (isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj2)) != 0))) ||
 				(((z->_type & 0xFFFF) == kZoneGet) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.get->_icon)) != 0)))
 			))) &&
@@ -293,9 +293,9 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 //				vE0._data1 = doorcnv->field_8[_ax];
 
 				u->door->_background = (byte*)malloc(vE0._width*vE0._height);
-				_gfx->backupDoorBackground(u->door, z->_limits._left, z->_limits._top);
+				_gfx->backupDoorBackground(u->door, z->_left, z->_top);
 
-				_gfx->flatBlitCnv(&vE0, z->_limits._left, z->_limits._top, Gfx::kBitBack, vE0._data1);
+				_gfx->flatBlitCnv(&vE0, z->_left, z->_top, Gfx::kBitBack, vE0._data1);
 			}
 
 			if (!scumm_stricmp(_tokens[0],	"startpos")) {
@@ -313,8 +313,8 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 				u->get->_backup = (byte*)malloc(vE4->_width*vE4->_height);
 
 				if ((z->_flags & kFlagsRemove) == 0) {
-					_gfx->backupGetBackground(u->get, z->_limits._left, z->_limits._top);
-					_gfx->flatBlitCnv(vE4, z->_limits._left, z->_limits._top, Gfx::kBitBack, vE4->_data1);
+					_gfx->backupGetBackground(u->get, z->_left, z->_top);
+					_gfx->flatBlitCnv(vE4, z->_left, z->_top, Gfx::kBitBack, vE4->_data1);
 				}
 			}
 
@@ -490,7 +490,7 @@ void jobToggleDoor(void *parm, Job *j) {
 		v14._width = v18->_width;
 		v14._height = v18->_height;
 
-		Common::Rect r(z->_limits._left, z->_limits._top, z->_limits._left+v18->_width, z->_limits._top+v18->_height);
+		Common::Rect r(z->_left, z->_top, z->_left+v18->_width, z->_top+v18->_height);
 
 		_vm->_gfx->restoreZoneBackground(r, z->u.door->_background);
 
@@ -498,8 +498,8 @@ void jobToggleDoor(void *parm, Job *j) {
 
 		v14._data0 = v18->_array[_ax];
 
-		_vm->_gfx->flatBlitCnv(&v14, z->_limits._left, z->_limits._top, Gfx::kBitBack, v14._data1);
-		_vm->_gfx->flatBlitCnv(&v14, z->_limits._left, z->_limits._top, Gfx::kBit2, v14._data1);
+		_vm->_gfx->flatBlitCnv(&v14, z->_left, z->_top, Gfx::kBitBack, v14._data1);
+		_vm->_gfx->flatBlitCnv(&v14, z->_left, z->_top, Gfx::kBit2, v14._data1);
 	}
 
 	count++;
@@ -527,7 +527,7 @@ void jobRemovePickedItem(void *parm, Job *j) {
 	static uint16 count = 0;
 
 	if (z->u.get->_cnv._width != 0) {
-		Common::Rect r(z->_limits._left, z->_limits._top, z->_limits._left + z->u.get->_cnv._width, z->_limits._top + z->u.get->_cnv._height);
+		Common::Rect r(z->_left, z->_top, z->_left + z->u.get->_cnv._width, z->_top + z->u.get->_cnv._height);
 
 		_vm->_gfx->restoreZoneBackground(r, z->u.get->_backup);
 	}
@@ -548,11 +548,11 @@ void jobDisplayDroppedItem(void *parm, Job *j) {
 
 	if (&z->u.get->_cnv != NULL) {
 		if (z->u.get->_cnv._data0 != NULL) {
-			_vm->_gfx->backupGetBackground(z->u.get, z->_limits._left, z->_limits._top);
+			_vm->_gfx->backupGetBackground(z->u.get, z->_left, z->_top);
 		}
 
-		_vm->_gfx->flatBlitCnv(&z->u.get->_cnv, z->_limits._left, z->_limits._top, Gfx::kBitBack, z->u.get->_cnv._data1);
-		_vm->_gfx->flatBlitCnv(&z->u.get->_cnv, z->_limits._left, z->_limits._top, Gfx::kBit2, z->u.get->_cnv._data1);
+		_vm->_gfx->flatBlitCnv(&z->u.get->_cnv, z->_left, z->_top, Gfx::kBitBack, z->u.get->_cnv._data1);
+		_vm->_gfx->flatBlitCnv(&z->u.get->_cnv, z->_left, z->_top, Gfx::kBit2, z->u.get->_cnv._data1);
 	}
 
 	j->_count++;
@@ -581,13 +581,13 @@ Zone *hitZone(uint32 type, uint16 x, uint16 y) {
 
 		if (z->_flags & kFlagsRemove) continue;
 
-		if ((_si >= z->_limits._right)	||
-			(_si <= z->_limits._left)	||
-			(_di >= z->_limits._bottom) ||
-			(_di <= z->_limits._top)) {
+		if ((_si >= z->_right)	||
+			(_si <= z->_left)	||
+			(_di >= z->_bottom) ||
+			(_di <= z->_top)) {
 
 			// out of Zone, so look for special values
-			if ((z->_limits._left == -2) || (z->_limits._left == -3)) {
+			if ((z->_left == -2) || (z->_left == -3)) {
 
 				// WORKAROUND: this huge condition is needed because we made ZoneTypeData a collection of structs
 				// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
@@ -606,15 +606,15 @@ Zone *hitZone(uint32 type, uint16 x, uint16 y) {
 				}
 			}
 
-			if (z->_limits._left != -1)
+			if (z->_left != -1)
 				continue;
-			if (_si < _vm->_char._ani._zone.pos._position._x)
+			if (_si < _vm->_char._ani._zone._left)
 				continue;
-			if (_si > (_vm->_char._ani._zone.pos._position._x + _vm->_char._ani._cnv._width))
+			if (_si > (_vm->_char._ani._zone._left + _vm->_char._ani._cnv._width))
 				continue;
-			if (_di < _vm->_char._ani._zone.pos._position._y)
+			if (_di < _vm->_char._ani._zone._top)
 				continue;
-			if (_di > (_vm->_char._ani._zone.pos._position._y + _vm->_char._ani._cnv._height))
+			if (_di > (_vm->_char._ani._zone._top + _vm->_char._ani._cnv._height))
 				continue;
 
 		}
@@ -636,8 +636,8 @@ Zone *hitZone(uint32 type, uint16 x, uint16 y) {
 //		printf("Animation name: %s", a->_zone._name);
 
 		_a = (a->_zone._flags & kFlagsActive) ? 1 : 0;															   // _a: active Animation
-		_e = ((_si >= a->_zone.pos._position._x + a->_cnv._width) || (_si <= a->_zone.pos._position._x)) ? 0 : 1;		// _e: horizontal range
-		_f = ((_di >= a->_zone.pos._position._y + a->_cnv._height) || (_di <= a->_zone.pos._position._y)) ? 0 : 1;		// _f: vertical range
+		_e = ((_si >= a->_zone._left + a->_cnv._width) || (_si <= a->_zone._left)) ? 0 : 1;		// _e: horizontal range
+		_f = ((_di >= a->_zone._top + a->_cnv._height) || (_di <= a->_zone._top)) ? 0 : 1;		// _f: vertical range
 
 		_b = ((type != 0) || (a->_zone._type == kZoneYou)) ? 0 : 1; 										 // _b: (no type specified) AND (Animation is not the character)
 		_c = (a->_zone._type & 0xFFFF0000) ? 0 : 1; 															// _c: Animation is not an object

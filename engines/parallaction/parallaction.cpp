@@ -261,8 +261,8 @@ void Parallaction::initGame() {
 	parseLocation(_location._name);
 
 	if (_location._startPosition._x != -1000) {
-		_vm->_char._ani._zone.pos._position._x = _location._startPosition._x;
-		_vm->_char._ani._zone.pos._position._y = _location._startPosition._y;
+		_vm->_char._ani._zone._left = _location._startPosition._x;
+		_vm->_char._ani._zone._top = _location._startPosition._y;
 		_vm->_char._ani._frame = _location._startFrame;
 		_location._startPosition._y = -1000;
 		_location._startPosition._x = -1000;

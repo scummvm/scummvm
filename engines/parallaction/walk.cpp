@@ -152,11 +152,11 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 		v48 = &v58;
 
-		v20._x = _vm->_char._ani._zone.pos._position._x;
-		v20._y = _vm->_char._ani._zone.pos._position._y;
+		v20._x = _vm->_char._ani._zone._left;
+		v20._y = _vm->_char._ani._zone._top;
 
-		v8._x = _si - _vm->_char._ani._zone.pos._position._x;
-		v8._y = _di - _vm->_char._ani._zone.pos._position._y;
+		v8._x = _si - _vm->_char._ani._zone._left;
+		v8._y = _di - _vm->_char._ani._zone._top;
 		v34 = v30 = dotProduct(&v8, &v8);				// square distance from current position and target
 
 		while (_closest_node_found != 0) {
@@ -245,8 +245,8 @@ uint16 walkFunc1(int16 x, int16 y, WalkNode *Node) {
 	Point v4 = { 0, 0 };
 
 	Point foot = {
-		_vm->_char._ani._zone.pos._position._x + _vm->_char._ani._cnv._width/2,
-		_vm->_char._ani._zone.pos._position._y + _vm->_char._ani._cnv._height
+		_vm->_char._ani._zone._left + _vm->_char._ani._cnv._width/2,
+		_vm->_char._ani._zone._top + _vm->_char._ani._cnv._height
 	};
 
 	Point v8 = {
@@ -316,13 +316,13 @@ uint16 walkFunc1(int16 x, int16 y, WalkNode *Node) {
 void jobWalk(void *parm, Job *j) {
 	WalkNode *node = (WalkNode*)parm;
 
-	int16 _si = _vm->_char._ani._zone.pos._position._x;
-	int16 _di = _vm->_char._ani._zone.pos._position._y;
+	int16 _si = _vm->_char._ani._zone._left;
+	int16 _di = _vm->_char._ani._zone._top;
 
 //	debugC(1, kDebugWalk, "jobWalk to (%i, %i)", node->_x + _vm->_char._ani._cnv._width / 2, node->_y + _vm->_char._ani._cnv._height);
 
-	_vm->_char._ani._zone.pos._oldposition._x = _si;
-	_vm->_char._ani._zone.pos._oldposition._y = _di;
+	_vm->_char._ani._zone._oldposition._x = _si;
+	_vm->_char._ani._zone._oldposition._y = _di;
 
 	if ((node->_x == _si) && (node->_y == _di)) {
 		if (node->_next == NULL) {
@@ -346,8 +346,8 @@ void jobWalk(void *parm, Job *j) {
 	}
 
 	Point dist = {
-		node->_x - _vm->_char._ani._zone.pos._position._x,
-		node->_y - _vm->_char._ani._zone.pos._position._y
+		node->_x - _vm->_char._ani._zone._left,
+		node->_y - _vm->_char._ani._zone._top
 	};
 
 	if (dist._x < 0)
@@ -412,10 +412,10 @@ void jobWalk(void *parm, Job *j) {
 	}
 
 //	printf("hitZone: %i, %i\n", _si, _di);
-	_vm->_char._ani._zone.pos._position._x = _si;
-	_vm->_char._ani._zone.pos._position._y = _di;
+	_vm->_char._ani._zone._left = _si;
+	_vm->_char._ani._zone._top = _di;
 
-	if ((_si == _vm->_char._ani._zone.pos._oldposition._x) && (_di == _vm->_char._ani._zone.pos._oldposition._y)) {
+	if ((_si == _vm->_char._ani._zone._oldposition._x) && (_di == _vm->_char._ani._zone._oldposition._y)) {
 
 		j->_finished = 1;
 		checkDoor();
@@ -440,7 +440,7 @@ uint16 checkDoor() {
 	}
 
 	_engineFlags &= ~kEngineWalking;
-	Zone *z = hitZone(kZoneDoor, _vm->_char._ani._zone.pos._position._x + _vm->_char._ani._cnv._width / 2,	_vm->_char._ani._zone.pos._position._y + _vm->_char._ani._cnv._height);
+	Zone *z = hitZone(kZoneDoor, _vm->_char._ani._zone._left + _vm->_char._ani._cnv._width / 2,	_vm->_char._ani._zone._top + _vm->_char._ani._cnv._height);
 
 	if (z != NULL) {
 
@@ -458,7 +458,7 @@ uint16 checkDoor() {
 		}
 	}
 
-	z = hitZone(kZoneTrap, _vm->_char._ani._zone.pos._position._x + _vm->_char._ani._cnv._width / 2, _vm->_char._ani._zone.pos._position._y + _vm->_char._ani._cnv._height);
+	z = hitZone(kZoneTrap, _vm->_char._ani._zone._left + _vm->_char._ani._cnv._width / 2, _vm->_char._ani._zone._top + _vm->_char._ani._cnv._height);
 
 	if (z != NULL) {
 		_localFlags[_vm->_currentLocationIndex] |= kFlagsEnter;

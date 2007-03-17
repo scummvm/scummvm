@@ -124,13 +124,13 @@ struct ZoneLabel {
 };
 
 struct Zone : public Node {
-	union {
-		Rect		_limits;		// for zones
-		struct {	// for animations
-			Point	_position;
-			Point	_oldposition;
-		} pos;
-	};
+
+	int16 		_left;
+	int16		_top;
+	int16		_right;
+	int16		_bottom;
+	Point		_oldposition;
+
 	uint32			_type;
 	uint32			_flags;
 //	char*			_labeltext;

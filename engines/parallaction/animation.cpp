@@ -133,8 +133,8 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 //			if (_ax == -1) exit(-1);
 		}
 		if (!scumm_stricmp(_tokens[0], "position")) {
-			vD0->_zone.pos._position._x = atoi(_tokens[1]);
-			vD0->_zone.pos._position._y = atoi(_tokens[2]);
+			vD0->_zone._left = atoi(_tokens[1]);
+			vD0->_zone._top = atoi(_tokens[2]);
 			vD0->_z = atoi(_tokens[3]);
 		}
 		if (!scumm_stricmp(_tokens[0], "moveto")) {
@@ -145,8 +145,8 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 		fillBuffers(script, true);
 	}
 
-	vD0->_zone.pos._oldposition._x = -1000;
-	vD0->_zone.pos._oldposition._y = -1000;
+	vD0->_zone._oldposition._x = -1000;
+	vD0->_zone._oldposition._y = -1000;
 
 	vD0->_zone._flags |= 0x1000000;
 
@@ -199,16 +199,16 @@ void jobDisplayAnimations(void *parm, Job *j) {
 			if (v18->_zone._flags & kFlagsNoMasked)
 				_si = 3;
 			else
-				_si = _vm->_gfx->queryMask(v18->_zone.pos._position._y + v18->_cnv._height);
+				_si = _vm->_gfx->queryMask(v18->_zone._top + v18->_cnv._height);
 
-//			printf("jobDisplayAnimations %s, x: %i, y: %i, w: %i, h: %i\n", v18->_zone._name, v18->_zone.pos._position._x, v18->_zone.pos._position._y, v14._width, v14._height);
-			_vm->_gfx->blitCnv(&v14, v18->_zone.pos._position._x, v18->_zone.pos._position._y, _si, Gfx::kBitBack);
+//			printf("jobDisplayAnimations %s, x: %i, y: %i, w: %i, h: %i\n", v18->_zone._name, v18->_zone._left, v18->_zone._top, v14._width, v14._height);
+			_vm->_gfx->blitCnv(&v14, v18->_zone._left, v18->_zone._top, _si, Gfx::kBitBack);
 
 		}
 
 		if (((v18->_zone._flags & kFlagsActive) == 0) && (v18->_zone._flags & kFlagsRemove))   {
 			v18->_zone._flags &= ~kFlagsRemove;
-			v18->_zone.pos._oldposition._x = -1000;
+			v18->_zone._oldposition._x = -1000;
 		}
 
 		if ((v18->_zone._flags & kFlagsActive) && (v18->_zone._flags & kFlagsRemove))	{
@@ -234,12 +234,12 @@ void jobEraseAnimations(void *arg_0, Job *j) {
 		if (((a->_zone._flags & kFlagsActive) == 0) && ((a->_zone._flags & kFlagsRemove) == 0)) continue;
 
 		Common::Rect r(a->_cnv._width, a->_cnv._height);
-		r.moveTo(a->_zone.pos._oldposition._x, a->_zone.pos._oldposition._y);
+		r.moveTo(a->_zone._oldposition._x, a->_zone._oldposition._y);
 		_vm->_gfx->restoreBackground(r);
 
 		if (arg_0) {
-			a->_zone.pos._oldposition._x = a->_zone.pos._position._x;
-			a->_zone.pos._oldposition._y = a->_zone.pos._position._y;
+			a->_zone._oldposition._x = a->_zone._left;
+			a->_zone._oldposition._y = a->_zone._top;
 		}
 
 	}
@@ -327,12 +327,12 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 		break;
 
 	case INST_X:	// x
-		inst->_opA._pvalue = &a->_zone.pos._position._x;
+		inst->_opA._pvalue = &a->_zone._left;
 		inst->_opB = getLValue(inst, _tokens[1], locals, a);
 		break;
 
 	case INST_Y:	// y
-		inst->_opA._pvalue = &a->_zone.pos._position._y;
+		inst->_opA._pvalue = &a->_zone._top;
 		inst->_opB = getLValue(inst, _tokens[1], locals, a);
 		break;
 
@@ -349,10 +349,10 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 	case INST_INC:	// inc
 	case INST_DEC:	// dec
 		if (!scumm_stricmp(_tokens[1], "X")) {
-			inst->_opA._pvalue = &a->_zone.pos._position._x;
+			inst->_opA._pvalue = &a->_zone._left;
 		} else
 		if (!scumm_stricmp(_tokens[1], "Y")) {
-			inst->_opA._pvalue = &a->_zone.pos._position._y;
+			inst->_opA._pvalue = &a->_zone._top;
 		} else
 		if (!scumm_stricmp(_tokens[1], "Z")) {
 			inst->_opA._pvalue = &a->_z;
@@ -462,10 +462,10 @@ LValue getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation 
 	}
 
 	if (str[0] == 'X') {
-		v._pvalue = &a->_zone.pos._position._x;
+		v._pvalue = &a->_zone._left;
 	} else
 	if (str[0] == 'Y') {
-		v._pvalue = &a->_zone.pos._position._y;
+		v._pvalue = &a->_zone._top;
 	} else
 	if (str[0] == 'Z') {
 		v._pvalue = &a->_z;
@@ -489,7 +489,7 @@ void jobRunScripts(void *parm, Job *j) {
 	StaticCnv v18;
 	WalkNode *v4 = NULL;
 
-	if (a->_zone._flags & kFlagsCharacter) a->_z = a->_zone.pos._position._y + a->_cnv._height;
+	if (a->_zone._flags & kFlagsCharacter) a->_z = a->_zone._top + a->_cnv._height;
 	for ( ; a; a = (Animation*)a->_zone._next) {
 
 		if ((a->_zone._flags & kFlagsActing) == 0) continue;
@@ -632,7 +632,7 @@ void jobRunScripts(void *parm, Job *j) {
 
 label1:
 		if (a->_zone._flags & kFlagsCharacter)
-			a->_z = a->_zone.pos._position._y + a->_cnv._height;
+			a->_z = a->_zone._top + a->_cnv._height;
 	}
 
 	sortAnimations();
@@ -658,7 +658,7 @@ void sortAnimations() {
 	Node v14;
 	memset(&v14, 0, sizeof(Node));
 
-	_vm->_char._ani._z = _vm->_char._ani._cnv._height + _vm->_char._ani._zone._limits._top;
+	_vm->_char._ani._z = _vm->_char._ani._cnv._height + _vm->_char._ani._zone._top;
 
 	Animation *vC = (Animation*)_animations._next;
 	Node *v8;

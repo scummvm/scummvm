@@ -92,8 +92,8 @@ void Parallaction::parseLocation(const char *filename) {
 			switchBackground(_location._name, mask);
 
 			if (_tokens[2][0] != '\0') {
-				_vm->_char._ani._zone.pos._position._x = atoi(_tokens[2]);
-				_vm->_char._ani._zone.pos._position._y = atoi(_tokens[3]);
+				_vm->_char._ani._zone._left = atoi(_tokens[2]);
+				_vm->_char._ani._zone._top = atoi(_tokens[3]);
 			}
 
 			if (_tokens[4][0] != '\0') {
@@ -384,13 +384,13 @@ void Parallaction::changeLocation(char *location) {
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 	debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", _saveData1);
 
-	_vm->_char._ani._zone.pos._oldposition._x = -1000;
-	_vm->_char._ani._zone.pos._oldposition._y = -1000;
+	_vm->_char._ani._zone._oldposition._x = -1000;
+	_vm->_char._ani._zone._oldposition._y = -1000;
 
 	_vm->_char._ani.field_50 = 0;
 	if (_location._startPosition._x != -1000) {
-		_vm->_char._ani._zone.pos._position._x = _location._startPosition._x;
-		_vm->_char._ani._zone.pos._position._y = _location._startPosition._y;
+		_vm->_char._ani._zone._left = _location._startPosition._x;
+		_vm->_char._ani._zone._top = _location._startPosition._y;
 		_vm->_char._ani._frame = _location._startFrame;
 		_location._startPosition._y = -1000;
 		_location._startPosition._x = -1000;
