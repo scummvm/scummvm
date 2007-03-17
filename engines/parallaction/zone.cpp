@@ -44,7 +44,7 @@ Zone *findZone(const char *name) {
 
 	while (v4) {
 		if (!scumm_stricmp(name, v4->_label._text)) return v4;
-		v4 = (Zone*)v4->_node._next;
+		v4 = (Zone*)v4->_next;
 	}
 
 	Animation *a = findAnimation(name);
@@ -70,7 +70,7 @@ void Parallaction::parseZone(Script &script, Node *list, char *name) {
 	z->_label._text = (char*)malloc(strlen(name)+1);
 	strcpy(z->_label._text, name);
 
-	addNode(list, &z->_node);
+	addNode(list, z);
 
 	fillBuffers(script, true);
 	while (scumm_stricmp(_tokens[0], "endzone")) {
@@ -140,9 +140,9 @@ void freeZones(Node *list) {
 
 			debugC(1, kDebugLocation, "freeZones preserving zone '%s'", z->_label._text);
 
-			v8 = (Zone*)z->_node._next;
-			removeNode(&z->_node);
-			addNode(&helperNode, &z->_node);
+			v8 = (Zone*)z->_next;
+			removeNode(z);
+			addNode(&helperNode, z);
 			z = v8;
 			continue;
 		}
@@ -190,7 +190,7 @@ void freeZones(Node *list) {
 		_vm->_gfx->freeStaticCnv(&z->_label._cnv);
 		freeCommands(z->_commands);
 
-		z=(Zone*)z->_node._next;
+		z=(Zone*)z->_next;
 
 	}
 
@@ -456,7 +456,7 @@ uint16 runZone(Zone *z) {
 		if (z->_flags & kFlagsLocked) break;
 		z->_flags ^= kFlagsClosed;
 		if (z->u.door->_cnv._count == 0) break;
-		addJob(jobToggleDoor, z, kPriority18 );
+		_vm->addJob(jobToggleDoor, z, kPriority18 );
 		break;
 
 	case kZoneHear:
@@ -576,7 +576,7 @@ Zone *hitZone(uint32 type, uint16 x, uint16 y) {
 	uint16 _si = x;
 	Zone *z = (Zone*)_zones._next;
 
-	for (; z; z = (Zone*)z->_node._next) {
+	for (; z; z = (Zone*)z->_next) {
 //		printf("Zone name: %s", z->_name);
 
 		if (z->_flags & kFlagsRemove) continue;
@@ -632,7 +632,7 @@ Zone *hitZone(uint32 type, uint16 x, uint16 y) {
 	Animation *a = (Animation*)_animations._next;
 
 	int16 _a, _b, _c, _d, _e, _f;
-	for (; a; a = (Animation*)a->_zone._node._next) {
+	for (; a; a = (Animation*)a->_zone._next) {
 //		printf("Animation name: %s", a->_zone._name);
 
 		_a = (a->_zone._flags & kFlagsActive) ? 1 : 0;															   // _a: active Animation

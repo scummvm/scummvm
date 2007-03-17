@@ -87,13 +87,17 @@ struct PARALLACTIONGameDescription;
 struct Job;
 typedef void (*JobFn)(void*, Job*);
 
-struct Job {
-	Node		_node;
+struct Job : public Node {
+//	Node		_node;
 	uint16		_count; 		// # of executions left
 	uint16		_tag;			// used for ordering
 	uint16		_finished;
 	void *		_parm;
 	JobFn		_fn;
+
+public:
+	Job() : _count(0), _tag(0), _finished(0), _parm(NULL), _fn(NULL) {
+	}
 };
 
 extern Point _mousePos;
@@ -166,11 +170,7 @@ void runDialogue(SpeakData*);
 
 WalkNode *buildWalkPath(uint16 x, uint16 y);
 
-Job *addJob(JobFn fn, void *parm, uint16 tag);
-void removeJob(Job *j);
-void runJobs();
-void pauseJobs();
-void resumeJobs();
+
 
 void jobRemovePickedItem(void*, Job *j);
 void jobDisplayDroppedItem(void*, Job *j);
@@ -275,6 +275,11 @@ public:
 	char   *parseDialogueString(Script &script);
 	Dialogue   *parseDialogue(Script &script);
 
+	Job *addJob(JobFn fn, void *parm, uint16 tag);
+	void removeJob(Job *j);
+	void pauseJobs();
+	void resumeJobs();
+	void runJobs();
 
 public:
 	int getGameType() const;
@@ -333,6 +338,8 @@ protected:		// data
 	char		_characterName1[50]; 	// only used in changeCharacter
 
 	int16 _keyDown;
+
+	Job			_jobs;
 
 protected:		// members
 	bool detectGame(void);

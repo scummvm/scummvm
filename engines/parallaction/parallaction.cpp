@@ -136,20 +136,11 @@ uint16		_introSarcData2 = 1;
 
 // private stuff
 
-
-
-
 static Job	   *_jDrawInventory = NULL;
 Job	   *_jDrawLabel = NULL;
 Job	   *_jEraseLabel = NULL;
 Zone    *_hoverZone = NULL;
 static Job	   *_jRunScripts = NULL;
-
-
-
-static Job		_jobs = { { NULL, NULL }, 0, 0, 0, NULL, 0 };
-
-
 
 
 Parallaction::Parallaction(OSystem *syst) :
@@ -248,7 +239,7 @@ int Parallaction::init() {
 	_vm->_char._ani._zone._label._cnv._data0 = NULL;
 	_vm->_char._ani._zone._label._text = strdup("yourself");
 
-	addNode(&_animations, &_vm->_char._ani._zone._node);
+	addNode(&_animations, &_vm->_char._ani._zone);
 	_gfx = new Gfx(this);
 
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
@@ -902,7 +893,7 @@ void removeNode(Node *n) {
 }
 
 
-Job *addJob(JobFn fn, void *parm, uint16 tag) {
+Job *Parallaction::addJob(JobFn fn, void *parm, uint16 tag) {
 
 	Job *v8 = (Job*)malloc(sizeof(Job));
 
@@ -914,41 +905,41 @@ Job *addJob(JobFn fn, void *parm, uint16 tag) {
 
 	Job *v4 = &_jobs;
 
-	while (v4->_node._next && ((Job*)(v4->_node._next))->_tag > tag) {
-		v4 = (Job*)v4->_node._next;
+	while (v4->_next && ((Job*)(v4->_next))->_tag > tag) {
+		v4 = (Job*)v4->_next;
 	}
 
-	addNode(&v4->_node, &v8->_node);
+	addNode(v4, v8);
 	return v8;
 }
 
-void removeJob(Job *j) {
+void Parallaction::removeJob(Job *j) {
 
-	removeNode(&j->_node);
+	removeNode(j);
 	free(j);
 	return;
 }
 
-void pauseJobs() {
+void Parallaction::pauseJobs() {
 	_engineFlags |= kEnginePauseJobs;
 	return;
 }
 
-void resumeJobs() {
+void Parallaction::resumeJobs() {
 	_engineFlags &= ~kEnginePauseJobs;
 	return;
 }
 
-void runJobs() {
+void Parallaction::runJobs() {
 
 	if (_engineFlags & kEnginePauseJobs) return;
 
-	Job *j = (Job*)_jobs._node._next;
+	Job *j = (Job*)_jobs._next;
 	while (j) {
 		debugC(3, kDebugJobs, "runJobs: %i", j->_tag);
 
 		(*j->_fn)(j->_parm, j);
-		Job *v4 = (Job*)j->_node._next;
+		Job *v4 = (Job*)j->_next;
 
 		if (j->_finished == 1)
 			removeJob(j);
@@ -974,7 +965,7 @@ void jobWaitRemoveJob(void *parm, Job *j) {
 	count++;
 	if (count == 2) {
 		count = 0;
-		removeJob(arg);
+		_vm->removeJob(arg);
 		_engineFlags &= ~kEngineMouse;
 		j->_finished = 1;
 	}

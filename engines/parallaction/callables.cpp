@@ -322,7 +322,7 @@ void _c_finito(void *parm) {
 		_vm->_menu->selectCharacter();
 	}
 
-	removeNode(&_vm->_char._ani._zone._node);
+	removeNode(&_vm->_char._ani._zone);
 	_vm->_locationNames[0][0] = '\0';
 	_vm->_numLocations = 0;
 	_commandFlags = 0;
@@ -339,7 +339,7 @@ void _c_finito(void *parm) {
 
 	_engineFlags &= ~kEngineQuit;
 
-	addNode(&_animations, &_vm->_char._ani._zone._node);
+	addNode(&_animations, &_vm->_char._ani._zone);
 	_score = 0;
 
 	return;

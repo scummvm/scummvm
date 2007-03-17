@@ -32,7 +32,7 @@ namespace Parallaction {
 uint16 walkFunc1(int16, int16, WalkNode *);
 
 
-WalkNode _NULL_WALKNODE = { {NULL, NULL}, 0, 0 };
+WalkNode _NULL_WALKNODE();
 
 static byte		*_buffer;
 
@@ -117,7 +117,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 	v48->_x = to_x - _vm->_char._ani._cnv._width / 2; 		// target top left coordinates
 	v48->_y = to_y - _vm->_char._ani._cnv._height;
-	v48->_node._next = NULL;
+	v48->_next = NULL;
 	memcpy(v44, v48, sizeof(WalkNode));
 
 	uint16 v38 = walkFunc1(to_x, to_y, v44);
@@ -136,7 +136,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 	int16 _si = v48->_x;						// _si, _di: target top left coordinates
 	int16 _di = v48->_y;
-	addNode(&v58._node, &v48->_node);
+	addNode(&v58, v48);
 
 	WalkNode *_closest_node = NULL;
 
@@ -182,7 +182,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 					_closest_node = location_node;
 				}
 
-				location_node = (WalkNode*)location_node->_node._next;
+				location_node = (WalkNode*)location_node->_next;
 			}
 
 			if (_closest_node_found == 0) break;
@@ -197,7 +197,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 			debugC(1, kDebugWalk, "adding walk node (%i, %i) to path", _newnode->_x, _newnode->_y);
 
-			addNode(&v48->_node, &_newnode->_node);
+			addNode(v48, _newnode);
 			v48 = _newnode;
 		}
 
@@ -205,12 +205,12 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 		if (v38 != 0 && v34 > v38) {
 			// no alternative path (gap?)
-			freeNodeList(v58._node._next);
+			freeNodeList(v58._next);
 			debugC(1, kDebugWalk, "can't find a path node: rejecting partial path");
 			return v44;
 		} else {
-			_si = ((WalkNode*)(v58._node._next))->_x;
-			_di = ((WalkNode*)(v58._node._next))->_y;
+			_si = ((WalkNode*)(v58._next))->_x;
+			_di = ((WalkNode*)(v58._next))->_y;
 			emptyList = false;
 			_closest_node_found = 1;
 		}
@@ -221,15 +221,15 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 	WalkNode* tmp = &v58;
 	uint16 i = 1;
-	while (tmp->_node._next) {
+	while (tmp->_next) {
 		debugC(1, kDebugWalk, "node %i: %i, %i", i, tmp->_x, tmp->_y);
-		tmp = (WalkNode*)tmp->_node._next;
+		tmp = (WalkNode*)tmp->_next;
 		i++;
 	}
 
 
 	free(v44);
-	return (WalkNode*)v58._node._next;
+	return (WalkNode*)v58._next;
 }
 
 
@@ -325,7 +325,7 @@ void jobWalk(void *parm, Job *j) {
 	_vm->_char._ani._zone.pos._oldposition._y = _di;
 
 	if ((node->_x == _si) && (node->_y == _di)) {
-		if (node->_node._next == NULL) {
+		if (node->_next == NULL) {
 
 			debugC(1, kDebugWalk, "jobWalk reached last node");
 
@@ -336,8 +336,8 @@ void jobWalk(void *parm, Job *j) {
 		}
 
 
-		WalkNode *tmp = (WalkNode*)node->_node._next;
-		j->_parm = node->_node._next;
+		WalkNode *tmp = (WalkNode*)node->_next;
+		j->_parm = node->_next;
 		free(node);
 
 		debugC(1, kDebugWalk, "jobWalk moving to next node (%i, %i)", tmp->_x, tmp->_y);
@@ -419,7 +419,7 @@ void jobWalk(void *parm, Job *j) {
 
 		j->_finished = 1;
 		checkDoor();
-		freeNodeList(&node->_node);
+		freeNodeList(node);
 
 	} else {
 

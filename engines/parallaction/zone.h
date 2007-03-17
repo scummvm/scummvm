@@ -123,8 +123,8 @@ struct ZoneLabel {
 	StaticCnv		_cnv;
 };
 
-struct Zone {
-	Node			_node;
+struct Zone : public Node {
+//	Node			_node;
 	union {
 		Rect		_limits;		// for zones
 		struct {	// for animations
@@ -163,8 +163,8 @@ enum InstructionFlags {
 	kInstMaskedPut		= 8
 };
 
-struct Instruction {
-	Node	_node;
+struct Instruction : public Node {
+//	Node	_node;
 	uint32	_index;
 	uint32	_flags;
 	union {
@@ -178,8 +178,8 @@ struct Instruction {
 };
 
 
-struct Program {
-	Node			_node;
+struct Program : public Node {
+//	Node			_node;
 	LocalVariable	*_locals;
 	uint16			_loopCounter;
 	Instruction 	*_ip;

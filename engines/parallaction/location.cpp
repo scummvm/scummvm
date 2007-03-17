@@ -240,7 +240,7 @@ void parseWalkNodes(Script& script, Node *list) {
 			v4->_x = atoi(_tokens[1]) - _vm->_char._ani._cnv._width/2;
 			v4->_y = atoi(_tokens[2]) - _vm->_char._ani._cnv._height;
 
-			addNode(list, &v4->_node);
+			addNode(list, v4);
 
 		}
 
@@ -342,7 +342,7 @@ void Parallaction::changeLocation(char *location) {
 		debugC(2, kDebugLocation, "changeLocation: changed cursor");
 	}
 
-	removeNode(&_vm->_char._ani._zone._node);
+	removeNode(&_vm->_char._ani._zone);
 	debugC(2, kDebugLocation, "changeLocation: removed character from the animation list");
 
 	freeLocation();
@@ -375,7 +375,7 @@ void Parallaction::changeLocation(char *location) {
 		}
 	}
 
-	addNode(&_animations, &_vm->_char._ani._zone._node);
+	addNode(&_animations, &_vm->_char._ani._zone);
 	debugC(2, kDebugLocation, "changeLocation: new character added to the animation list");
 
 	strcpy(_saveData1, list[0].c_str());

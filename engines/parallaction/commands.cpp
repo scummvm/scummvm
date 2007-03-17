@@ -286,7 +286,7 @@ void runCommands(Command *list, Zone *z) {
 		case CMD_OPEN:	// open
 			u->_zone->_flags &= ~kFlagsClosed;
 			if (u->_zone->u.door->_cnv._count != 0) {
-				addJob(&jobToggleDoor, (void*)u->_zone, kPriority18 );
+				_vm->addJob(&jobToggleDoor, (void*)u->_zone, kPriority18 );
 			}
 			break;
 
@@ -305,7 +305,7 @@ void runCommands(Command *list, Zone *z) {
 				u->_zone->_flags &= ~kFlagsRemove;
 				u->_zone->_flags |= kFlagsActive;
 				if ((u->_zone->_type & 0xFFFF) == kZoneGet) {
-					addJob(&jobDisplayDroppedItem, u->_zone, kPriority17 );
+					_vm->addJob(&jobDisplayDroppedItem, u->_zone, kPriority17 );
 				}
 			}
 			break;
@@ -334,7 +334,7 @@ void runCommands(Command *list, Zone *z) {
 
 			WalkNode *vC = buildWalkPath(u->_move._x, u->_move._y);
 
-			addJob(&jobWalk, vC, kPriority19 );
+			_vm->addJob(&jobWalk, vC, kPriority19 );
 			_engineFlags |= kEngineWalking;
 			}
 			break;

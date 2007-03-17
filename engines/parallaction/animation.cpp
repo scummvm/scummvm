@@ -67,7 +67,7 @@ Animation *findAnimation(const char *name) {
 
 	while (v4) {
 		if (!scumm_stricmp(name, v4->_zone._label._text)) return v4;
-		v4 = (Animation*)v4->_zone._node._next;
+		v4 = (Animation*)v4->_zone._next;
 	}
 
 	return NULL;
@@ -83,7 +83,7 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 	vD0->_zone._label._text = (char*)malloc(strlen(name)+1);
 	strcpy(vD0->_zone._label._text, name);
 
-	addNode(list, &vD0->_zone._node);
+	addNode(list, &vD0->_zone);
 
 	fillBuffers(script, true);
 	while (scumm_stricmp(_tokens[0], "endanimation")) {
@@ -160,7 +160,7 @@ void  freeScript(Program *program) {
 	if (!program) return;
 
 	free(program->_locals);
-	freeNodeList(&program->_node);
+	freeNodeList(program);
 
 	return;
 }
@@ -172,7 +172,7 @@ void freeAnimations() {
 	while (v4) {
 		freeScript(v4->_program);
 		_vm->_gfx->freeCnv(&v4->_cnv);
-		v4 = (Animation*)v4->_zone._node._next;
+		v4 = (Animation*)v4->_zone._next;
 	}
 
 	return;
@@ -188,7 +188,7 @@ void jobDisplayAnimations(void *parm, Job *j) {
 
 	uint16 _si = 0;
 
-	for ( ; v18; v18 = (Animation*)v18->_zone._node._next) {
+	for ( ; v18; v18 = (Animation*)v18->_zone._next) {
 
 		if ((v18->_zone._flags & kFlagsActive) && ((v18->_zone._flags & kFlagsRemove) == 0))   {
 			v14._width = v18->_cnv._width;
@@ -229,7 +229,7 @@ void jobEraseAnimations(void *arg_0, Job *j) {
 
 	Animation *a = (Animation*)_animations._next;
 
-	for (; a; a=(Animation*)a->_zone._node._next) {
+	for (; a; a=(Animation*)a->_zone._next) {
 
 		if (((a->_zone._flags & kFlagsActive) == 0) && ((a->_zone._flags & kFlagsRemove) == 0)) continue;
 
@@ -262,7 +262,7 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 	a->_program = (Program*)malloc(sizeof(Program));
 	memset(a->_program, 0, sizeof(Program));
 	a->_program->_locals = (LocalVariable*)malloc(sizeof(LocalVariable)*10);
-	Node *vD0 = &a->_program->_node;
+	Node *vD0 = a->_program;
 
 	Instruction *vCC = (Instruction*)malloc(sizeof(Instruction));
 	memset(vCC, 0, sizeof(Instruction));
@@ -270,8 +270,8 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 	while (scumm_stricmp(_tokens[0], "endscript")) {
 
 		parseScriptLine(vCC, a, a->_program->_locals);
-		addNode(vD0, &vCC->_node);
-		vD0 = &vCC->_node;
+		addNode(vD0, vCC);
+		vD0 = vCC;
 
 		vCC = (Instruction*)malloc(sizeof(Instruction));
 		memset(vCC, 0, sizeof(Instruction));
@@ -279,11 +279,11 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 	}
 
 	vCC->_index = INST_END;
-	addNode(vD0, &vCC->_node);
+	addNode(vD0, vCC);
 
 	delete script;
 
-	a->_program->_ip = (Instruction*)a->_program->_node._next;
+	a->_program->_ip = (Instruction*)a->_program->_next;
 
 	return;
 }
@@ -490,7 +490,7 @@ void jobRunScripts(void *parm, Job *j) {
 	WalkNode *v4 = NULL;
 
 	if (a->_zone._flags & kFlagsCharacter) a->_z = a->_zone.pos._position._y + a->_cnv._height;
-	for ( ; a; a = (Animation*)a->_zone._node._next) {
+	for ( ; a; a = (Animation*)a->_zone._next) {
 
 		if ((a->_zone._flags & kFlagsActing) == 0) continue;
 		Instruction *inst = a->_program->_ip;
@@ -566,7 +566,7 @@ void jobRunScripts(void *parm, Job *j) {
 
 			case INST_MOVE: // move
 				v4 = buildWalkPath(*inst->_opA._pvalue, *inst->_opB._pvalue);
-				addJob(jobWalk, v4, kPriority19 );
+				_vm->addJob(jobWalk, v4, kPriority19 );
 				_engineFlags |= kEngineWalking;
 				break;
 
@@ -591,7 +591,7 @@ void jobRunScripts(void *parm, Job *j) {
 					a->_zone._flags &= ~kFlagsActing;
 					runCommands(a->_zone._commands, (Zone*)&a->_zone);
 				}
-				a->_program->_ip = (Instruction*)a->_program->_node._next;
+				a->_program->_ip = (Instruction*)a->_program->_next;
 				goto label1;
 
 
@@ -625,10 +625,10 @@ void jobRunScripts(void *parm, Job *j) {
 
 			}
 
-			inst = (Instruction*)inst->_node._next;
+			inst = (Instruction*)inst->_next;
 		}
 
-		a->_program->_ip = (Instruction*)inst->_node._next;
+		a->_program->_ip = (Instruction*)inst->_next;
 
 label1:
 		if (a->_zone._flags & kFlagsCharacter)
@@ -672,9 +672,9 @@ void sortAnimations() {
 			v8 = v8->_next;
 		}
 
-		v4 = (Animation*)vC->_zone._node._next;
+		v4 = (Animation*)vC->_zone._next;
 
-		addNode(v8, &vC->_zone._node);
+		addNode(v8, &vC->_zone);
 
 		vC = v4;
 	}

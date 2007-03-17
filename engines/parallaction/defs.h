@@ -38,10 +38,17 @@ struct Node {
 	Node*	_next;
 };
 
-struct WalkNode {
-	Node	_node;
+struct WalkNode : public Node {
+//	Node	_node;
 	int32	_x;
 	int32	_y;
+
+public:
+	WalkNode() : _x(0), _y(0) {
+	}
+
+	WalkNode(int32 x, int32 y) : _x(x), _y(y) {
+	}
 };
 
 struct Point {
