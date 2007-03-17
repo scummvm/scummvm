@@ -167,6 +167,12 @@
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\parallaction\walk.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\parallaction\zone.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />

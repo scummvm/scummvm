@@ -1,1 +1,377 @@
 # depslib dependency file v1.0
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\anim.cpp
+	"common/stdafx.h"
+	"common/endian.h"
+	"common/stream.h"
+	"cine/cine.h"
+	"cine/anim.h"
+	"cine/gfx.h"
+	"cine/pal.h"
+	"cine/part.h"
+	"cine/various.h"
+
+1173562730 c:\documents and settings\usoquotidiano\desktop\scummvm\common\stdafx.h
+	<portdefs.h>
+	<strings.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdarg.h>
+	<assert.h>
+	<ctype.h>
+	<time.h>
+	<math.h>
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\endian.h
+	"common/scummsys.h"
+
+1173533496 c:\documents and settings\usoquotidiano\desktop\scummvm\common\scummsys.h
+	"config.h"
+	<SDL_byteorder.h>
+	"palmversion.h"
+	"globals.h"
+	"extend.h"
+	"nds/jtypes.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\stream.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\cine.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"common/util.h"
+	"engines/engine.h"
+	"cine/texte.h"
+	"cine/rel.h"
+	"cine/script.h"
+	"cine/part.h"
+	"cine/prc.h"
+	"cine/resource.h"
+	"cine/msg.h"
+	"cine/bg.h"
+	"cine/pal.h"
+	"cine/gfx.h"
+	"cine/anim.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\util.h
+	"common/scummsys.h"
+	"common/str.h"
+	"common/array.h"
+
+1173533496 c:\documents and settings\usoquotidiano\desktop\scummvm\common\str.h
+	"common/scummsys.h"
+	"common/array.h"
+
+1173785171 c:\documents and settings\usoquotidiano\desktop\scummvm\common\array.h
+	"common/scummsys.h"
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\engine.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"common/str.h"
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\texte.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\rel.h
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\script.h
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\part.h
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\prc.h
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\resource.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\msg.h
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\bg.h
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\pal.h
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\gfx.h
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\anim.h
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\various.h
+	"common/stdafx.h"
+	"common/file.h"
+	"cine/cine.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\file.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"common/str.h"
+	"common/stream.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\bg.cpp
+	"common/stdafx.h"
+	"common/endian.h"
+	"common/stream.h"
+	"cine/cine.h"
+	"cine/various.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\bg_list.cpp
+	"common/stdafx.h"
+	"common/endian.h"
+	"common/stream.h"
+	"cine/cine.h"
+	"cine/main_loop.h"
+	"cine/object.h"
+	"cine/various.h"
+	"cine/bg_list.h"
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\main_loop.h
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\object.h
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\bg_list.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"common/savefile.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\savefile.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"common/stream.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\cine.cpp
+	"common/stdafx.h"
+	"common/file.h"
+	"common/fs.h"
+	"common/savefile.h"
+	"common/config-manager.h"
+	"common/system.h"
+	"graphics/cursorman.h"
+	"sound/mididrv.h"
+	"sound/mixer.h"
+	"cine/cine.h"
+	"cine/bg_list.h"
+	"cine/main_loop.h"
+	"cine/object.h"
+	"cine/texte.h"
+	"cine/sfx_player.h"
+	"cine/sound_driver.h"
+	"cine/various.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\fs.h
+	"common/array.h"
+	"common/str.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\config-manager.h
+	"common/array.h"
+	"common/hashmap.h"
+	"common/singleton.h"
+	"common/str.h"
+	"common/hash-str.h"
+
+1173785171 c:\documents and settings\usoquotidiano\desktop\scummvm\common\hashmap.h
+	"common/stdafx.h"
+	"common/func.h"
+	"common/str.h"
+	"common/util.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\func.h
+	"common/scummsys.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\singleton.h
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\hash-str.h
+	"common/hashmap.h"
+	"common/str.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\system.h
+	"common/scummsys.h"
+	"common/mutex.h"
+	"common/rect.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\mutex.h
+	"common/scummsys.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\rect.h
+	"common/scummsys.h"
+	"common/util.h"
+
+1173398896 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\cursorman.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"common/stack.h"
+	"common/singleton.h"
+
+1173533496 c:\documents and settings\usoquotidiano\desktop\scummvm\common\stack.h
+	"common/scummsys.h"
+	"common/array.h"
+
+1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mididrv.h
+	"common/scummsys.h"
+	"common/timer.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\timer.h
+	"common/scummsys.h"
+
+1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mixer.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"common/mutex.h"
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\sfx_player.h
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\sound_driver.h
+	"sound/audiostream.h"
+	"sound/fmopl.h"
+	"sound/mixer.h"
+
+1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\audiostream.h
+	"common/stdafx.h"
+	"common/util.h"
+	"common/scummsys.h"
+
+1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\fmopl.h
+	"common/scummsys.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\detection.cpp
+	"common/stdafx.h"
+	"base/plugins.h"
+	"common/advancedDetector.h"
+	"cine/cine.h"
+
+1173398925 c:\documents and settings\usoquotidiano\desktop\scummvm\base\plugins.h
+	"common/stdafx.h"
+	"common/array.h"
+	"common/list.h"
+	"common/singleton.h"
+	"common/util.h"
+	"base/game.h"
+
+1173533496 c:\documents and settings\usoquotidiano\desktop\scummvm\common\list.h
+	"common/scummsys.h"
+
+1173398925 c:\documents and settings\usoquotidiano\desktop\scummvm\base\game.h
+	"common/stdafx.h"
+	"common/str.h"
+	"common/array.h"
+	"common/hash-str.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\advanceddetector.h
+	"common/fs.h"
+	"base/game.h"
+	"base/plugins.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\gfx.cpp
+	"cine/cine.h"
+	"cine/various.h"
+	"common/system.h"
+	"graphics/cursorman.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\main_loop.cpp
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"common/system.h"
+	"cine/main_loop.h"
+	"cine/object.h"
+	"cine/sfx_player.h"
+	"cine/various.h"
+	"cine/bg_list.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\msg.cpp
+	"common/stdafx.h"
+	"common/endian.h"
+	"cine/msg.h"
+	"cine/various.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\object.cpp
+	"common/stdafx.h"
+	"common/endian.h"
+	"common/scummsys.h"
+	"common/util.h"
+	"cine/cine.h"
+	"cine/object.h"
+	"cine/part.h"
+	"cine/resource.h"
+	"cine/various.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\pal.cpp
+	"cine/cine.h"
+	"cine/various.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\part.cpp
+	"cine/cine.h"
+	"cine/unpack.h"
+	"cine/various.h"
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\unpack.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\prc.cpp
+	"common/stdafx.h"
+	"common/endian.h"
+	"cine/cine.h"
+	"cine/various.h"
+	"common/config-manager.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\rel.cpp
+	"common/stdafx.h"
+	"common/endian.h"
+	"cine/cine.h"
+	"cine/various.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\resource.cpp
+	"common/file.h"
+	"cine/cine.h"
+	"cine/resource.h"
+	"cine/unpack.h"
+	"cine/various.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\script.cpp
+	"common/stdafx.h"
+	"common/endian.h"
+	"cine/cine.h"
+	"cine/bg_list.h"
+	"cine/object.h"
+	"cine/sfx_player.h"
+	"cine/sound_driver.h"
+	"cine/various.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\sfx_player.cpp
+	"common/stdafx.h"
+	"common/endian.h"
+	"common/system.h"
+	"cine/cine.h"
+	"cine/sfx_player.h"
+	"cine/sound_driver.h"
+	"cine/unpack.h"
+	"cine/various.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\sound_driver.cpp
+	"common/stdafx.h"
+	"common/endian.h"
+	"cine/cine.h"
+	"cine/sound_driver.h"
+	"sound/mixer.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\texte.cpp
+	"cine/cine.h"
+	"common/file.h"
+	"cine/various.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\unpack.cpp
+	"common/stdafx.h"
+	"common/endian.h"
+	"cine/unpack.h"
+
+1173398879 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\cine\various.cpp
+	"common/stdafx.h"
+	"common/endian.h"
+	"common/savefile.h"
+	"cine/cine.h"
+	"cine/main_loop.h"
+	"cine/object.h"
+	"cine/sfx_player.h"
+	"cine/bg_list.h"
+	"cine/various.h"
+

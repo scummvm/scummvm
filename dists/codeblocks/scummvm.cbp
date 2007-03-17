@@ -11,7 +11,7 @@
 			<Target title="default">
 				<Option output="scummvm\scummvm.exe" prefix_auto="1" extension_auto="1" />
 				<Option object_output="scummvm" />
-				<Option external_deps="scummvm\engines\parallaction\libparallaction.a;scummvm\engines\queen\libqueen.a;scummvm\engines\agi\libagi.a;scummvm\engines\agos\libagos.a;scummvm\engines\saga\libsaga.a;scummvm\engines\lure\liblure.a;scummvm\engines\kyra\libkyra.a;" />
+				<Option external_deps="scummvm\engines\parallaction\libparallaction.a;scummvm\engines\agi\libagi.a;scummvm\engines\agos\libagos.a;scummvm\engines\saga\libsaga.a;scummvm\engines\lure\liblure.a;scummvm\engines\kyra\libkyra.a;" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option parameters="-d 9 --debugflags=location,disk,jobs,dialogue" />
@@ -25,6 +25,19 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-Wno-multichar" />
+			<Add option="-DDISABLE_GOB" />
+			<Add option="-DDISABLE_CINE" />
+			<Add option="-DDISABLE_LURE" />
+			<Add option="-DDISABLE_SKY" />
+			<Add option="-DDISABLE_SCUMM" />
+			<Add option="-DDISABLE_KYRA" />
+			<Add option="-DDISABLE_TOUCHE" />
+			<Add option="-DDISABLE_AGI" />
+			<Add option="-DDISABLE_AGOS" />
+			<Add option="-DDISABLE_QUEEN" />
+			<Add option="-DDISABLE_SWORD1" />
+			<Add option="-DDISABLE_SWORD2" />
+			<Add option="-DDISABLE_SAGA" />
 			<Add directory="..\.." />
 			<Add directory="..\..\engines" />
 			<Add directory="..\..\common" />
@@ -32,23 +45,20 @@
 		</Compiler>
 		<Linker>
 			<Add option="scummvm/engines/parallaction/libparallaction.a" />
-			<Add option="scummvm/engines/queen/libqueen.a" />
-			<Add option="scummvm/engines/agi/libagi.a" />
-			<Add option="scummvm\engines\agos\libagos.a" />
-			<Add option="scummvm/engines/cine/libcine.a" />
-			<Add option="scummvm\engines\gob\libgob.a" />
-			<Add option="scummvm/engines/saga/libsaga.a" />
-			<Add option="scummvm\engines\lure\liblure.a" />
-			<Add option="scummvm/engines/kyra/libkyra.a" />
-			<Add option="scummvm/engines/sword1/libsword1.a" />
-			<Add option="scummvm\engines\sword2/libsword2.a" />
-			<Add option="scummvm/engines/scumm/libscumm.a" />
-			<Add option="scummvm\engines\touche\libtouche.a" />
-			<Add option="scummvm/engines/sky/libsky.a" />
 			<Add library="SDL.dll" />
 			<Add library="winmm" />
 			<Add directory='&quot;C:\Documents and Settings\UsoQuotidiano\Documenti\soft\scummvm\SDL-1.2.9\lib&quot;' />
 		</Linker>
+		<Unit filename="..\..\backends\events\default\default-events.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\backends\events\default\default-events.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\backends\fs\windows\windows-fs.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -697,6 +707,10 @@
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\gui\object.cpp">
+			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\gui\object.h">

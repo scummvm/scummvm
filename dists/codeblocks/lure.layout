@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="" />
+	<File name="..\..\engines\lure\res_struct.h" open="0" top="0" tabpos="0">
+		<Cursor position="9288" topLine="408" />
+	</File>
 </CodeBlocks_layout_file>

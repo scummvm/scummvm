@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="" />
+	<File name="..\..\engines\gob\detection.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="7253" topLine="310" />
+	</File>
+	<File name="..\..\engines\gob\global.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1570" topLine="29" />
+	</File>
 </CodeBlocks_layout_file>

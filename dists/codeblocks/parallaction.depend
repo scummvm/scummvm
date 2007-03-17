@@ -1,1 +1,410 @@
 # depslib dependency file v1.0
+1174137321 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\animation.cpp
+	"parallaction/disk.h"
+	"parallaction/parallaction.h"
+	"parallaction/graphics.h"
+	"parallaction/music.h"
+	"parallaction/parser.h"
+	"parallaction/zone.h"
+
+1173995808 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\disk.h
+	"parallaction/defs.h"
+	"common/file.h"
+
+1174137600 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\defs.h
+	"common/stdafx.h"
+	"common/system.h"
+
+1173562730 c:\documents and settings\usoquotidiano\desktop\scummvm\common\stdafx.h
+	<portdefs.h>
+	<strings.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdarg.h>
+	<assert.h>
+	<ctype.h>
+	<time.h>
+	<math.h>
+
+1174132564 c:\documents and settings\usoquotidiano\desktop\scummvm\common\system.h
+	"common/scummsys.h"
+	"common/mutex.h"
+	"common/noncopyable.h"
+	"common/rect.h"
+
+1173533496 c:\documents and settings\usoquotidiano\desktop\scummvm\common\scummsys.h
+	"config.h"
+	<SDL_byteorder.h>
+	"palmversion.h"
+	"globals.h"
+	"extend.h"
+	"nds/jtypes.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\mutex.h
+	"common/scummsys.h"
+
+1174132564 c:\documents and settings\usoquotidiano\desktop\scummvm\common\noncopyable.h
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\rect.h
+	"common/scummsys.h"
+	"common/util.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\util.h
+	"common/scummsys.h"
+	"common/str.h"
+	"common/array.h"
+
+1173533496 c:\documents and settings\usoquotidiano\desktop\scummvm\common\str.h
+	"common/scummsys.h"
+	"common/array.h"
+
+1173785171 c:\documents and settings\usoquotidiano\desktop\scummvm\common\array.h
+	"common/scummsys.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\file.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"common/str.h"
+	"common/stream.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\stream.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+
+1174137600 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\parallaction.h
+	"engines/engine.h"
+	"parallaction/defs.h"
+	"parallaction/inventory.h"
+	"parallaction/parser.h"
+	"parallaction/disk.h"
+	"parallaction/zone.h"
+	"common/str.h"
+	"gui/dialog.h"
+	"gui/widget.h"
+
+1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\engine.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"common/str.h"
+
+1173731024 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\inventory.h
+
+1173398860 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\parser.h
+	"parallaction/defs.h"
+	"common/stream.h"
+
+1174137600 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\zone.h
+	"parallaction/defs.h"
+
+1174117751 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\dialog.h
+	"common/scummsys.h"
+	"common/str.h"
+	"gui/object.h"
+	"gui/widget.h"
+
+1174117751 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\object.h
+
+1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\widget.h
+	"common/scummsys.h"
+	"common/str.h"
+	"graphics/font.h"
+	"graphics/surface.h"
+	"gui/object.h"
+
+1173398895 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\font.h
+	"common/str.h"
+	"graphics/surface.h"
+
+1173398896 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\surface.h
+	"common/scummsys.h"
+	"common/rect.h"
+
+1174077965 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\graphics.h
+	"parallaction/defs.h"
+	"common/stream.h"
+	"common/pack-start.h"
+	"common/pack-end.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\pack-start.h
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\pack-end.h
+
+1173398860 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\music.h
+	"common/util.h"
+	"common/mutex.h"
+	"sound/mididrv.h"
+
+1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mididrv.h
+	"common/scummsys.h"
+	"common/timer.h"
+
+1174132564 c:\documents and settings\usoquotidiano\desktop\scummvm\common\timer.h
+	"common/scummsys.h"
+	"common/noncopyable.h"
+
+1173398860 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\archive.cpp
+	"common/file.h"
+	"parallaction/disk.h"
+
+1174137321 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\callables.cpp
+	"parallaction/disk.h"
+	"parallaction/parallaction.h"
+	"parallaction/graphics.h"
+	"parallaction/inventory.h"
+	"parallaction/menu.h"
+	"parallaction/music.h"
+	"parallaction/zone.h"
+	"common/file.h"
+
+1173626357 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\menu.h
+	"parallaction/defs.h"
+
+1173398860 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\debug.cpp
+	"common/stdafx.h"
+	"common/system.h"
+	"parallaction/parallaction.h"
+	"parallaction/graphics.h"
+
+1173398860 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\detection.cpp
+	"common/stdafx.h"
+	"base/plugins.h"
+	"common/advancedDetector.h"
+	"parallaction/parallaction.h"
+
+1173398925 c:\documents and settings\usoquotidiano\desktop\scummvm\base\plugins.h
+	"common/stdafx.h"
+	"common/array.h"
+	"common/list.h"
+	"common/singleton.h"
+	"common/util.h"
+	"base/game.h"
+
+1173533496 c:\documents and settings\usoquotidiano\desktop\scummvm\common\list.h
+	"common/scummsys.h"
+
+1174132564 c:\documents and settings\usoquotidiano\desktop\scummvm\common\singleton.h
+	"common/noncopyable.h"
+
+1173398925 c:\documents and settings\usoquotidiano\desktop\scummvm\base\game.h
+	"common/stdafx.h"
+	"common/str.h"
+	"common/array.h"
+	"common/hash-str.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\hash-str.h
+	"common/hashmap.h"
+	"common/str.h"
+
+1173785171 c:\documents and settings\usoquotidiano\desktop\scummvm\common\hashmap.h
+	"common/stdafx.h"
+	"common/func.h"
+	"common/str.h"
+	"common/util.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\func.h
+	"common/scummsys.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\advanceddetector.h
+	"common/fs.h"
+	"base/game.h"
+	"base/plugins.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\fs.h
+	"common/array.h"
+	"common/str.h"
+
+1174136052 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\dialogue.cpp
+	"parallaction/commands.h"
+	"parallaction/parallaction.h"
+	"parallaction/graphics.h"
+	"parallaction/disk.h"
+	"parallaction/inventory.h"
+	"parallaction/parser.h"
+	"parallaction/zone.h"
+	"common/events.h"
+
+1174137600 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\commands.h
+	"parallaction/defs.h"
+
+1174132564 c:\documents and settings\usoquotidiano\desktop\scummvm\common\events.h
+	"common/rect.h"
+	"common/system.h"
+	"common/noncopyable.h"
+
+1173995808 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\disk.cpp
+	"parallaction/defs.h"
+	"parallaction/graphics.h"
+	"parallaction/parallaction.h"
+	"parallaction/disk.h"
+	"parallaction/walk.h"
+
+1173740074 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\walk.h
+	"parallaction/defs.h"
+
+1174136052 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\graphics.cpp
+	"common/file.h"
+	"parallaction/graphics.h"
+	"parallaction/parser.h"
+	"parallaction/parallaction.h"
+	"parallaction/disk.h"
+	"parallaction/zone.h"
+
+1173909457 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\intro.cpp
+	"parallaction/parallaction.h"
+	"parallaction/menu.h"
+	"parallaction/music.h"
+	"parallaction/graphics.h"
+	"parallaction/zone.h"
+
+1174137321 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\inventory.cpp
+	"parallaction/parallaction.h"
+	"parallaction/disk.h"
+	"parallaction/zone.h"
+	"parallaction/graphics.h"
+	"parallaction/inventory.h"
+
+1173995808 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\menu.cpp
+	"parallaction/menu.h"
+	"parallaction/disk.h"
+	"parallaction/music.h"
+	"parallaction/graphics.h"
+	"parallaction/parallaction.h"
+
+1173647915 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\music.cpp
+	"common/stdafx.h"
+	"common/file.h"
+	"parallaction/parallaction.h"
+	"common/stream.h"
+	"sound/midiparser.h"
+	"parallaction/music.h"
+
+1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\midiparser.h
+	"common/scummsys.h"
+	"common/endian.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\endian.h
+	"common/scummsys.h"
+
+1174137321 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\parallaction.cpp
+	"common/stdafx.h"
+	"common/config-manager.h"
+	"common/events.h"
+	"common/file.h"
+	"common/util.h"
+	"sound/mididrv.h"
+	"sound/mixer.h"
+	"parallaction/parallaction.h"
+	"parallaction/menu.h"
+	"parallaction/parser.h"
+	"parallaction/disk.h"
+	"parallaction/music.h"
+	"parallaction/inventory.h"
+	"parallaction/graphics.h"
+	"parallaction/walk.h"
+	"parallaction/zone.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\config-manager.h
+	"common/array.h"
+	"common/hashmap.h"
+	"common/singleton.h"
+	"common/str.h"
+	"common/hash-str.h"
+
+1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mixer.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"common/mutex.h"
+
+1173398860 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\parser.cpp
+	"parallaction/defs.h"
+	"parallaction/parser.h"
+	"parallaction/parallaction.h"
+	"parallaction/disk.h"
+
+1174118148 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\saveload.cpp
+	"parallaction/parallaction.h"
+	"parallaction/disk.h"
+	"parallaction/graphics.h"
+	"parallaction/zone.h"
+	"common/savefile.h"
+	"gui/widget.h"
+	"gui/ListWidget.h"
+	"gui/message.h"
+
+1174132564 c:\documents and settings\usoquotidiano\desktop\scummvm\common\savefile.h
+	"common/stdafx.h"
+	"common/noncopyable.h"
+	"common/scummsys.h"
+	"common/stream.h"
+
+1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\listwidget.h
+	"gui/editable.h"
+	"common/str.h"
+
+1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\editable.h
+	"common/str.h"
+	"common/rect.h"
+	"gui/widget.h"
+	"gui/newgui.h"
+
+1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\newgui.h
+	"common/scummsys.h"
+	"common/singleton.h"
+	"common/stack.h"
+	"common/str.h"
+	"graphics/fontman.h"
+	"gui/theme.h"
+	"gui/widget.h"
+
+1173533496 c:\documents and settings\usoquotidiano\desktop\scummvm\common\stack.h
+	"common/scummsys.h"
+	"common/array.h"
+
+1173398895 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\fontman.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"common/singleton.h"
+	"common/str.h"
+	"common/hashmap.h"
+	"common/hash-str.h"
+	"graphics/font.h"
+
+1173562730 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\theme.h
+	"common/stdafx.h"
+	"common/system.h"
+	"common/rect.h"
+	"common/str.h"
+	"common/file.h"
+	"common/config-file.h"
+	"graphics/surface.h"
+	"graphics/fontman.h"
+
+1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\config-file.h
+	"common/config-manager.h"
+	"common/list.h"
+	"common/str.h"
+	"common/stream.h"
+
+1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\message.h
+	"gui/dialog.h"
+	"common/str.h"
+
+1173732116 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\staticres.cpp
+	"parallaction/graphics.h"
+
+1174137321 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\walk.cpp
+	"parallaction/defs.h"
+	"parallaction/parallaction.h"
+	"parallaction/commands.h"
+	"parallaction/graphics.h"
+	"parallaction/walk.h"
+	"parallaction/zone.h"
+
+1174137321 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\parallaction\zone.cpp
+	"parallaction/parser.h"
+	"parallaction/parallaction.h"
+	"parallaction/graphics.h"
+	"parallaction/inventory.h"
+	"parallaction/zone.h"
+

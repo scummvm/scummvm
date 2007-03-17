@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="default" />
-	<File name="..\..\engines\agos\agos.cpp" open="1" top="0" tabpos="1">
-		<Cursor position="1020" topLine="2" />
+	<File name="..\..\engines\agos\agos.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="1020" topLine="134" />
+	</File>
+	<File name="..\..\engines\agos\res.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="15084" topLine="474" />
+	</File>
+	<File name="..\..\engines\agos\script_e1.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="19083" topLine="737" />
+	</File>
+	<File name="..\..\engines\agos\script_s2.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="5992" topLine="180" />
 	</File>
 </CodeBlocks_layout_file>

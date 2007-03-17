@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="default" />
-	<File name="..\..\backends\fs\windows\windows-fs.cpp" open="1" top="0" tabpos="10">
-		<Cursor position="991" topLine="5" />
+	<File name="..\..\backends\events\default\default-events.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="39" />
 	</File>
-	<File name="..\..\backends\midi\windows.cpp" open="1" top="0" tabpos="2">
-		<Cursor position="1071" topLine="15" />
+	<File name="..\..\backends\events\default\default-events.h" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="13" />
+	</File>
+	<File name="..\..\backends\fs\windows\windows-fs.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="6675" topLine="207" />
+	</File>
+	<File name="..\..\backends\midi\windows.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="2922" topLine="80" />
 	</File>
 	<File name="..\..\backends\platform\sdl\events.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="5928" topLine="213" />
 	</File>
-	<File name="..\..\backends\platform\sdl\graphics.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="4474" topLine="127" />
+	<File name="..\..\backends\platform\sdl\graphics.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="47256" topLine="1698" />
 	</File>
 	<File name="..\..\backends\platform\sdl\sdl-common.h" open="0" top="0" tabpos="0">
 		<Cursor position="7253" topLine="206" />
 	</File>
-	<File name="..\..\backends\platform\sdl\sdl.cpp" open="1" top="0" tabpos="5">
-		<Cursor position="1466" topLine="10" />
+	<File name="..\..\backends\platform\sdl\sdl.cpp" open="0" top="0" tabpos="6">
+		<Cursor position="3294" topLine="88" />
 	</File>
 	<File name="..\..\backends\saves\default\default-saves.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="1794" topLine="33" />
@@ -25,11 +31,11 @@
 	<File name="..\..\backends\saves\savefile.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="1740" topLine="11" />
 	</File>
-	<File name="..\..\backends\timer\default\default-timer.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="1311" topLine="10" />
+	<File name="..\..\backends\timer\default\default-timer.cpp" open="0" top="0" tabpos="7">
+		<Cursor position="3304" topLine="82" />
 	</File>
 	<File name="..\..\base\commandLine.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="12102" topLine="287" />
+		<Cursor position="13025" topLine="298" />
 	</File>
 	<File name="..\..\base\game.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="1060" topLine="27" />
@@ -37,8 +43,8 @@
 	<File name="..\..\base\main.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="10180" topLine="267" />
 	</File>
-	<File name="..\..\base\plugins.cpp" open="1" top="0" tabpos="7">
-		<Cursor position="2592" topLine="94" />
+	<File name="..\..\base\plugins.cpp" open="0" top="0" tabpos="8">
+		<Cursor position="1245" topLine="19" />
 	</File>
 	<File name="..\..\base\plugins.h" open="0" top="0" tabpos="0">
 		<Cursor position="7833" topLine="188" />
@@ -50,13 +56,13 @@
 		<Cursor position="8666" topLine="282" />
 	</File>
 	<File name="..\..\common\array.h" open="0" top="0" tabpos="0">
-		<Cursor position="1119" topLine="129" />
+		<Cursor position="1099" topLine="46" />
 	</File>
 	<File name="..\..\common\config-file.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="7460" topLine="248" />
+		<Cursor position="4515" topLine="122" />
 	</File>
-	<File name="..\..\common\config-manager.cpp" open="1" top="0" tabpos="4">
-		<Cursor position="1205" topLine="15" />
+	<File name="..\..\common\config-manager.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="7266" topLine="205" />
 	</File>
 	<File name="..\..\common\config-manager.h" open="0" top="0" tabpos="0">
 		<Cursor position="1658" topLine="12" />
@@ -65,43 +71,52 @@
 		<Cursor position="5094" topLine="126" />
 	</File>
 	<File name="..\..\common\file.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="10706" topLine="372" />
+		<Cursor position="8437" topLine="235" />
 	</File>
 	<File name="..\..\common\file.h" open="0" top="0" tabpos="13">
 		<Cursor position="1172" topLine="12" />
 	</File>
-	<File name="..\..\common\list.h" open="0" top="0" tabpos="0">
-		<Cursor position="5703" topLine="213" />
+	<File name="..\..\common\list.h" open="1" top="0" tabpos="17">
+		<Cursor position="1602" topLine="26" />
 	</File>
 	<File name="..\..\common\mutex.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="1316" topLine="24" />
 	</File>
+	<File name="..\..\common\rect.h" open="0" top="0" tabpos="0">
+		<Cursor position="5584" topLine="130" />
+	</File>
 	<File name="..\..\common\savefile.h" open="0" top="0" tabpos="1">
-		<Cursor position="1342" topLine="10" />
+		<Cursor position="1342" topLine="55" />
 	</File>
 	<File name="..\..\common\scummsys.h" open="0" top="0" tabpos="0">
 		<Cursor position="9547" topLine="341" />
 	</File>
-	<File name="..\..\common\stdafx.h" open="1" top="0" tabpos="1">
+	<File name="..\..\common\singleton.h" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="39" />
+	</File>
+	<File name="..\..\common\stdafx.h" open="0" top="0" tabpos="1">
 		<Cursor position="3750" topLine="55" />
 	</File>
 	<File name="..\..\common\str.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="10347" topLine="401" />
 	</File>
 	<File name="..\..\common\str.h" open="0" top="0" tabpos="0">
-		<Cursor position="18" topLine="0" />
+		<Cursor position="6138" topLine="163" />
 	</File>
 	<File name="..\..\common\stream.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="1828" topLine="46" />
 	</File>
-	<File name="..\..\common\stream.h" open="1" top="0" tabpos="3">
+	<File name="..\..\common\stream.h" open="0" top="0" tabpos="3">
 		<Cursor position="11237" topLine="339" />
 	</File>
 	<File name="..\..\common\system.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="1888" topLine="29" />
 	</File>
 	<File name="..\..\common\system.h" open="0" top="0" tabpos="2">
-		<Cursor position="10641" topLine="232" />
+		<Cursor position="29061" topLine="781" />
+	</File>
+	<File name="..\..\common\timer.h" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="10" />
 	</File>
 	<File name="..\..\common\unzip.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="9067" topLine="298" />
@@ -110,9 +125,9 @@
 		<Cursor position="11348" topLine="425" />
 	</File>
 	<File name="..\..\common\util.h" open="0" top="0" tabpos="2">
-		<Cursor position="7810" topLine="35" />
+		<Cursor position="5919" topLine="185" />
 	</File>
-	<File name="..\..\engines\engine.cpp" open="1" top="0" tabpos="6">
+	<File name="..\..\engines\engine.cpp" open="0" top="0" tabpos="6">
 		<Cursor position="1299" topLine="6" />
 	</File>
 	<File name="..\..\graphics\dxa_player.cpp" open="0" top="0" tabpos="0">
@@ -128,10 +143,10 @@
 		<Cursor position="1053" topLine="0" />
 	</File>
 	<File name="..\..\graphics\surface.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="3986" topLine="134" />
+		<Cursor position="2432" topLine="171" />
 	</File>
-	<File name="..\..\graphics\surface.h" open="0" top="0" tabpos="0">
-		<Cursor position="2083" topLine="24" />
+	<File name="..\..\graphics\surface.h" open="0" top="0" tabpos="10">
+		<Cursor position="1817" topLine="25" />
 	</File>
 	<File name="..\..\gui\ListWidget.h" open="0" top="0" tabpos="0">
 		<Cursor position="1693" topLine="25" />
@@ -141,6 +156,9 @@
 	</File>
 	<File name="..\..\gui\ThemeModern.cpp" open="0" top="0" tabpos="8">
 		<Cursor position="1928" topLine="22" />
+	</File>
+	<File name="..\..\gui\debugger.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="5444" topLine="160" />
 	</File>
 	<File name="..\..\gui\dialog.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="2732" topLine="48" />
@@ -199,10 +217,10 @@
 	<File name="..\..\sound\mixer.h" open="0" top="0" tabpos="0">
 		<Cursor position="1127" topLine="161" />
 	</File>
-	<File name="..\..\sound\mods\paula.cpp" open="1" top="0" tabpos="9">
+	<File name="..\..\sound\mods\paula.cpp" open="0" top="0" tabpos="9">
 		<Cursor position="1084" topLine="4" />
 	</File>
-	<File name="..\..\sound\mods\paula.h" open="1" top="0" tabpos="8">
+	<File name="..\..\sound\mods\paula.h" open="0" top="0" tabpos="8">
 		<Cursor position="2346" topLine="39" />
 	</File>
 	<File name="..\..\sound\mp3.h" open="0" top="0" tabpos="0">
