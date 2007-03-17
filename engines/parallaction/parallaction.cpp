@@ -752,7 +752,7 @@ void Parallaction::changeCursor(int32 index) {
 
 
 
-void freeCharacterFrames() {
+void freeCharacter() {
 
 	_vm->_gfx->freeCnv(&_vm->_char._normalFrames);
 
@@ -828,7 +828,7 @@ void Parallaction::changeCharacter(const char *name) {
 	if (scumm_stricmp(v32, _characterName1)) {
 
 		if (scumm_stricmp(_characterName1, "null"))
-			freeCharacterFrames();
+			freeCharacter();
 
 		_disk->selectArchive("disk1");
 
