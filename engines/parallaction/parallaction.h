@@ -118,19 +118,8 @@ extern uint16 _introSarcData2;		 // sarcophagus stuff to be saved
 
 extern char *_globalTable[];
 extern char _saveData1[];
-//extern Point _firstPosition;		 // starting position after load game??
-//extern uint16 _firstFrame;	 // starting frame after load game??
 extern byte _mouseHidden;
 extern uint32 _commandFlags;
-
-
-
-//extern char _locationName[];
-//extern Node _walkNodes;
-//extern Command *_aCommands;
-//extern Command *_commands;
-//extern char *_comment;
-//extern char *_endComment;
 
 extern char *_objectsNames[];
 extern const char *_zoneTypeNames[];
@@ -173,11 +162,7 @@ void freeCommands(Command*);
 
 void freeZones(Node *list);
 
-void freeLocation();
-
 void runDialogue(SpeakData*);
-
-void changeCharacter(const char *name);
 
 WalkNode *buildWalkPath(uint16 x, uint16 y);
 

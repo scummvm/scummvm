@@ -58,8 +58,6 @@ uint32		_engineFlags = 0;
 char	   *_objectsNames[100];
 Zone	   *_activeZone = NULL;
 
-
-
 uint16		_score = 1;
 
 uint32		_localFlags[120] = { 0 };

@@ -73,9 +73,16 @@ struct StaticCnv {
 struct Cnv {
 	uint16	_width; 	//
 	uint16	_height;	//
-	byte**	_array; 	// frames data
 	byte**	field_8;	// unused
 	uint16	_count; 	// # of frames
+	byte**	_array; 	// frames data
+
+public:
+	byte* getFramePtr(uint16 index) {
+		if (index >= _count)
+			error("frame %i does not exist", index);
+		return _array[index];
+	}
 };
 
 struct Animation;
