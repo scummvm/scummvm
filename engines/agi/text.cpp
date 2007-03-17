@@ -310,6 +310,7 @@ int AgiEngine::messageBox(const char *s) {
  * @param b NULL-terminated list of button labels
  */
 int AgiEngine::selectionBox(const char *m, const char **b) {
+	int numButtons = 0;
 	int x, y, i, s;
 	int key, active = 0;
 	int rc = -1;
@@ -325,6 +326,7 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 
 	/* Automatically position buttons */
 	for (i = 0; b[i]; i++) {
+		numButtons++;
 		s -= CHAR_COLS * strlen(b[i]);
 	}
 
@@ -362,6 +364,16 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 		case KEY_ESCAPE:
 			rc = -1;
 			goto getout;
+		case KEY_RIGHT:
+			active++;
+			if (active >= numButtons)
+				active = 0;
+			break;
+		case KEY_LEFT:
+			active--;
+			if (active < 0)
+				active = numButtons - 1;
+			break;
 		case BUTTON_LEFT:
 			for (i = 0; b[i]; i++) {
 				if (_gfx->testButton(bx[i], by[i], b[i])) {
