@@ -35,10 +35,6 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
  	assert(_boss);
 }
 
-DefaultEventManager::~DefaultEventManager() {
-
-}
-
 bool DefaultEventManager::pollEvent(OSystem::Event &event) {
 	bool result;
 	

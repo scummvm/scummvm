@@ -48,7 +48,6 @@ class DefaultEventManager : public Common::EventManager {
 
 public:
 	DefaultEventManager(OSystem *boss);
-	~DefaultEventManager();
 
 	virtual bool pollEvent(OSystem::Event &event);
 
