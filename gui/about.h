@@ -38,7 +38,7 @@ protected:
 	byte		_modifiers;
 	bool		_willClose;
 
-	int xOff, yOff;
+	int _xOff, _yOff;
 
 	void addLine(const char *str);
 

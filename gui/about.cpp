@@ -71,8 +71,8 @@ AboutDialog::AboutDialog()
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	xOff = g_gui.evaluator()->getVar("aboutXOff");
-	yOff = g_gui.evaluator()->getVar("aboutYOff");
+	_xOff = g_gui.evaluator()->getVar("aboutXOff");
+	_yOff = g_gui.evaluator()->getVar("aboutYOff");
 	int outerBorder = g_gui.evaluator()->getVar("aboutOuterBorder");
 
 	_w = screenW - 2 * outerBorder;
@@ -81,7 +81,7 @@ AboutDialog::AboutDialog()
 	_lineHeight = g_gui.getFontHeight() + 3;
 
 	// Heuristic to compute 'optimal' dialog width
-	int maxW = _w - 2*xOff;
+	int maxW = _w - 2*_xOff;
 	_w = 0;
 	for (i = 0; i < ARRAYSIZE(credits); i++) {
 		int tmp = g_gui.getStringWidth(credits[i] + 5);
@@ -89,7 +89,7 @@ AboutDialog::AboutDialog()
 			_w = tmp;
 		}
 	}
-	_w += 2*xOff;
+	_w += 2*_xOff;
 
 	for (i = 0; i < 1; i++)
 		_lines.push_back("");
@@ -172,7 +172,7 @@ void AboutDialog::addLine(const char *str) {
 		_lines.push_back(format);
 	} else {
 		Common::StringList wrappedLines;
-		g_gui.getFont().wordWrapText(str, _w - 2 * xOff, wrappedLines);
+		g_gui.getFont().wordWrapText(str, _w - 2 * _xOff, wrappedLines);
 
 		for (Common::StringList::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
 			_lines.push_back(format + *i);
@@ -205,7 +205,7 @@ void AboutDialog::drawDialog() {
 	//       in the right way. Should be even faster...
 	const int firstLine = _scrollPos / _lineHeight;
 	const int lastLine = MIN((_scrollPos + _h) / _lineHeight + 1, (uint32)_lines.size());
-	int y = _y + yOff - (_scrollPos % _lineHeight);
+	int y = _y + _yOff - (_scrollPos % _lineHeight);
 
 	for (int line = firstLine; line < lastLine; line++) {
 		const char *str = _lines[line].c_str();
@@ -257,7 +257,7 @@ void AboutDialog::drawDialog() {
 			while (*str && *str == ' ')
 				str++;
 
-		g_gui.theme()->drawText(Common::Rect(_x + xOff, y, _x + _w - xOff, y + g_gui.theme()->getFontHeight()), str, state, align, false, 0, false);
+		g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()), str, state, align, false, 0, false);
 		y += _lineHeight;
 	}
 	g_gui.theme()->resetDrawArea();
@@ -308,8 +308,8 @@ void AboutDialog::reflowLayout() {
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	xOff = g_gui.evaluator()->getVar("aboutXOff");
-	yOff = g_gui.evaluator()->getVar("aboutYOff");
+	_xOff = g_gui.evaluator()->getVar("aboutXOff");
+	_yOff = g_gui.evaluator()->getVar("aboutYOff");
 	int outerBorder = g_gui.evaluator()->getVar("aboutOuterBorder");
 
 	_w = screenW - 2 * outerBorder;
@@ -318,7 +318,7 @@ void AboutDialog::reflowLayout() {
 	_lineHeight = g_gui.getFontHeight() + 3;
 
 	// Heuristic to compute 'optimal' dialog width
-	int maxW = _w - 2*xOff;
+	int maxW = _w - 2*_xOff;
 	_w = 0;
 	for (int i = 0; i < ARRAYSIZE(credits); i++) {
 		int tmp = g_gui.getStringWidth(credits[i] + 5);
@@ -326,7 +326,7 @@ void AboutDialog::reflowLayout() {
 			_w = tmp;
 		}
 	}
-	_w += 2*xOff;
+	_w += 2*_xOff;
 
 	_lineHeight = g_gui.getFontHeight() + 3;
 
