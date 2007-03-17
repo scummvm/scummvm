@@ -24,7 +24,6 @@
 #include "lure/luredefs.h"
 #include "lure/decode.h"
 #include "lure/surface.h"
-#include "lure/system.h"
 #include "lure/res_struct.h"
 #include "lure/res.h"
 #include "lure/strings.h"
@@ -87,7 +86,7 @@ Menu &Menu::getReference() {
 }
 
 uint8 Menu::execute() {
-	OSystem &system = System::getReference();
+	OSystem &system = *g_system;
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
 	Screen &screen = Screen::getReference();
@@ -415,7 +414,7 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	if (numEntries == 0) return 0xffff;
 	Events &e = Events::getReference();
 	Mouse &mouse = Mouse::getReference();
-	OSystem &system = System::getReference();
+	OSystem &system = *g_system;
 	Screen &screen = Screen::getReference();
 	Rect r;
 

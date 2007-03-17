@@ -42,7 +42,6 @@
 #include "lure/lure.h"
 #include "lure/intro.h"
 #include "lure/game.h"
-#include "lure/system.h"
 
 namespace Lure {
 
@@ -264,7 +263,6 @@ int LureEngine::init() {
 	_system->endGFXTransaction();
 
 	detectGame();
-	_sys = new System(_system);
 	_disk = new Disk();
 	_resources = new Resources();
 	_strings = new StringData();
@@ -292,7 +290,6 @@ LureEngine::~LureEngine() {
 	delete _strings;
 	delete _resources;
 	delete _disk;
-	delete _sys;
 }
 
 LureEngine &LureEngine::getReference() {

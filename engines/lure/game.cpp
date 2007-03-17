@@ -23,7 +23,6 @@
 #include "lure/game.h"
 #include "lure/strings.h"
 #include "lure/room.h"
-#include "lure/system.h"
 #include "lure/scripts.h"
 #include "lure/res_struct.h"
 #include "lure/animseq.h"
@@ -86,7 +85,7 @@ void Game::nextFrame() {
 }
 
 void Game::execute() {
-	OSystem &system = System::getReference();
+	OSystem &system = *g_system;
 	Room &room = Room::getReference();
 	Resources &res = Resources::getReference();
 	Events &events = Events::getReference();
@@ -287,7 +286,7 @@ void Game::playerChangeRoom() {
 
 void Game::displayChuteAnimation()
 {
-	OSystem &system = System::getReference();
+	OSystem &system = *g_system;
 	Resources &res = Resources::getReference();
 	Screen &screen = Screen::getReference();
 	Mouse &mouse = Mouse::getReference();
@@ -319,7 +318,7 @@ void Game::displayChuteAnimation()
 
 void Game::displayBarrelAnimation()
 {
-	OSystem &system = System::getReference();
+	OSystem &system = *g_system;
 	Screen &screen = Screen::getReference();
 	Mouse &mouse = Mouse::getReference();
 

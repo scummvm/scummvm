@@ -23,7 +23,6 @@
 #include "graphics/cursorman.h"
 
 #include "lure/events.h"
-#include "lure/system.h"
 #include "lure/res.h"
 
 namespace Lure {
@@ -120,16 +119,15 @@ void Mouse::popCursor() {
 }
 
 void Mouse::setPosition(int newX, int newY) {
-	System::getReference().warpMouse(newX, newY);
+	g_system->warpMouse(newX, newY);
 }
 
 void Mouse::waitForRelease() {
-	OSystem &system = System::getReference();
 	Events &e = Events::getReference();
 
 	do {
 		e.pollEvent();
-		system.delayMillis(20);
+		g_system->delayMillis(20);
 	} while (!e.quitFlag && (lButton() || rButton()));
 }
 
@@ -148,7 +146,7 @@ Events &Events::getReference() {
 
 
 bool Events::pollEvent() {
-	if (!System::getReference().pollEvent(_event)) return false;
+	if (!g_system->pollEvent(_event)) return false;
 
 	// Handle keypress
 	switch (_event.type) {
@@ -174,7 +172,6 @@ bool Events::pollEvent() {
 }
 
 void Events::waitForPress() {
-	OSystem &system = System::getReference();
 	bool keyButton = false;
 	while (!keyButton) {
 		if (pollEvent()) {
@@ -186,7 +183,7 @@ void Events::waitForPress() {
 				Mouse::getReference().waitForRelease();				
 			}
 		}
-		system.delayMillis(20);
+		g_system->delayMillis(20);
 	}
 }
 

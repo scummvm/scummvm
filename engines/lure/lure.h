@@ -33,7 +33,6 @@
 #include "lure/screen.h"
 #include "lure/events.h"
 #include "lure/menu.h"
-#include "lure/system.h"
 #include "lure/strings.h"
 #include "lure/room.h"
 
@@ -50,7 +49,6 @@ private:
 	Mouse *_mouse;
 	Events *_events;
 	Menu *_menu;
-	System *_sys;
 	StringData *_strings;
 	Room *_room;
 

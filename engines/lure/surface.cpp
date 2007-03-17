@@ -22,7 +22,6 @@
 
 #include "lure/surface.h"
 #include "lure/decode.h"
-#include "lure/system.h"
 #include "lure/events.h"
 #include "lure/screen.h"
 #include "lure/lure.h"
@@ -273,13 +272,13 @@ void Surface::createDialog(bool blackFlag) {
 }
 
 void Surface::copyToScreen(uint16 x, uint16 y) {
-	OSystem &system = System::getReference();
+	OSystem &system = *g_system;
 	system.copyRectToScreen(_data->data(), _width, x, y, _width, _height);
 	system.updateScreen();
 }
 
 void Surface::centerOnScreen() {
-	OSystem &system = System::getReference();
+	OSystem &system = *g_system;
 
 	system.copyRectToScreen(_data->data(), _width, 
 		(FULL_SCREEN_WIDTH - _width) / 2, (FULL_SCREEN_HEIGHT - _height) / 2,
@@ -389,7 +388,7 @@ Surface *Surface::getScreen(uint16 resourceId) {
 }
 
 bool Surface::getString(Common::String &line, uint32 maxSize, bool isNumeric, bool varLength, int16 x, int16 y) {
-	OSystem &system = System::getReference();
+	OSystem &system = *g_system;
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
 	Screen &screen = Screen::getReference();
@@ -623,7 +622,7 @@ void SaveRestoreDialog::toggleHightlight(int xs, int xe, int ys, int ye) {
 }
 
 bool SaveRestoreDialog::show(bool saveDialog) {
-	OSystem &system = System::getReference();
+	OSystem &system = *g_system;
 	Screen &screen = Screen::getReference();
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();

@@ -23,7 +23,6 @@
 #include "lure/res.h"
 #include "lure/disk.h"
 #include "lure/scripts.h"
-#include "lure/system.h"
 #include "common/endian.h"
 
 namespace Lure {
@@ -594,7 +593,7 @@ RoomExitCoordinateData &RoomExitCoordinates::getData(uint16 destRoomNumber) {
 // The following classes hold any sequence offsets that are being delayed
 
 SequenceDelayData::SequenceDelayData(uint16 delay, uint16 seqOffset, bool canClearFlag) {
-	OSystem &system = System::getReference();
+	OSystem &system = *g_system;
 
 	// The delay is in number of ticks (1/18th of a second) - convert to milliseconds
 	timeoutCtr = system.getMillis() + (delay * 1000 / 18);
@@ -608,7 +607,7 @@ void SequenceDelayList::add(uint16 delay, uint16 seqOffset, bool canClear) {
 }
 
 void SequenceDelayList::tick() {
-	uint32 currTime = System::getReference().getMillis();
+	uint32 currTime = g_system->getMillis();
 	SequenceDelayList::iterator i;
 
 	for (i = begin(); i != end(); i++) {

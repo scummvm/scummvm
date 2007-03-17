@@ -19,8 +19,7 @@ MODULE_OBJS := \
 	screen.o \
 	scripts.o \
 	strings.o \
-	surface.o \
-	system.o
+	surface.o
 
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS
