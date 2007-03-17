@@ -26,6 +26,7 @@
 
 #include "common/scummsys.h"
 #include "common/mutex.h"
+#include "common/noncopyable.h"
 #include "common/rect.h"
 
 namespace Audio {
@@ -52,12 +53,7 @@ namespace Common {
  * methods to create timers, to handle user input events,
  * control audio CD playback, and sound output.
  */
-class OSystem {
-private:
-	// Prevent copying OSystem objects by accident.
-	OSystem(const OSystem&);
-	OSystem& operator= (const OSystem&);
-
+class OSystem : Common::NonCopyable {
 protected:
 	OSystem();
 	virtual ~OSystem();

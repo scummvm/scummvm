@@ -24,14 +24,15 @@
 #ifndef COMMON_SINGLETON_H
 #define COMMON_SINGLETON_H
 
+#include "common/noncopyable.h"
+
 namespace Common {
 
 /**
  * Generic template base class for implementing the singleton design pattern.
  */
 template <class T>
-class Singleton
-{
+class Singleton : NonCopyable {
 private:
 	Singleton<T>(const Singleton<T>&);
 	Singleton<T>& operator= (const Singleton<T>&);

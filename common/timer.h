@@ -23,10 +23,11 @@
 #define COMMON_TIMER_H
 
 #include "common/scummsys.h"
+#include "common/noncopyable.h"
 
 namespace Common {
 
-class TimerManager {
+class TimerManager : NonCopyable {
 public:
 	typedef void (*TimerProc)(void *refCon);
 

@@ -24,6 +24,7 @@
 #define COMMON_SAVEFILE_H
 
 #include "common/stdafx.h"
+#include "common/noncopyable.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
 
@@ -70,7 +71,7 @@ public:
  * it is effectively used as such, with OSystem::getSavefileManager
  * returning the single SaveFileManager instances to be used.
  */
-class SaveFileManager {
+class SaveFileManager : NonCopyable {
 
 public:
 	virtual ~SaveFileManager() {}

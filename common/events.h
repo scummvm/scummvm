@@ -25,6 +25,7 @@
 
 #include "common/rect.h"
 #include "common/system.h"
+#include "common/noncopyable.h"
 
 namespace Common {
 
@@ -33,7 +34,7 @@ namespace Common {
  * In addition, it keeps track of the state of various input devices,
  * like keys, mouse position and buttons.
  */
-class EventManager {
+class EventManager : NonCopyable {
 public:
 	EventManager() {}
 	virtual ~EventManager() {}
@@ -79,6 +80,6 @@ public:
 	// replacing it by a generic getScreenChangeID method here
 };
 
-}
+} // End of namespace Common
 
 #endif
