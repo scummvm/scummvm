@@ -35,7 +35,6 @@ protected:
 	uint32		_scrollTime;
 	StringList	_lines;
 	uint32		_lineHeight;
-	byte		_modifiers;
 	bool		_willClose;
 
 	int _xOff, _yOff;

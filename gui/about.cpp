@@ -23,6 +23,7 @@
 #include "engines/engine.h"
 #include "base/plugins.h"
 #include "base/version.h"
+#include "common/events.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "gui/about.h"
@@ -64,7 +65,7 @@ static const char *gpl_text[] = {
 
 AboutDialog::AboutDialog()
 	: Dialog(10, 20, 300, 174),
-	_scrollPos(0), _scrollTime(0), _modifiers(0), _willClose(false) {
+	_scrollPos(0), _scrollTime(0), _willClose(false) {
 
 	int i;
 
@@ -184,7 +185,6 @@ void AboutDialog::addLine(const char *str) {
 void AboutDialog::open() {
 	_scrollTime = getMillis() + kScrollStartDelay;
 	_scrollPos = 0;
-	_modifiers = 0;
 	_willClose = false;
 
 	Dialog::open();
@@ -267,11 +267,13 @@ void AboutDialog::handleTickle() {
 	const uint32 t = getMillis();
 	int scrollOffset = ((int)t - (int)_scrollTime) / kScrollMillisPerPixel;
 	if (scrollOffset > 0) {
+		int modifiers = g_system->getEventManager()->getModifierState();
+
 		// Scroll faster when shift is pressed
-		if (_modifiers & OSystem::KBD_SHIFT)
+		if (modifiers & OSystem::KBD_SHIFT)
 			scrollOffset *= 4;
 		// Reverse scrolling when alt is pressed
-		if (_modifiers & OSystem::KBD_ALT)
+		if (modifiers & OSystem::KBD_ALT)
 			scrollOffset *= -1;
 		_scrollPos += scrollOffset;
 		_scrollTime = t;
@@ -292,13 +294,11 @@ void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void AboutDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	_modifiers = modifiers;
 	if (ascii)
 		_willClose = true;
 }
 
 void AboutDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
-	_modifiers = modifiers;
 	if (ascii && _willClose)
 		close();
 }

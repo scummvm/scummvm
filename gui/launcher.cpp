@@ -27,6 +27,7 @@
 #include "base/version.h"
 
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/fs.h"
 #include "common/util.h"
 #include "common/system.h"
@@ -479,7 +480,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 #pragma mark -
 
 LauncherDialog::LauncherDialog()
-	: Dialog(0, 0, 320, 200), _modifiers(0) {
+	: Dialog(0, 0, 320, 200) {
 	_drawingHints |= THEME_HINT_MAIN_DIALOG;
 
 	const int screenW = g_system->getOverlayWidth();
@@ -561,6 +562,8 @@ void LauncherDialog::open() {
 	// re-launch the same game again.
 	ConfMan.setActiveDomain("");
 	Dialog::open();
+	
+	updateButtons();
 }
 
 void LauncherDialog::close() {
@@ -616,7 +619,8 @@ void LauncherDialog::updateListing() {
 }
 
 void LauncherDialog::addGame() {
-	bool massAdd = (_modifiers & OSystem::KBD_SHIFT) != 0;
+	int modifiers = g_system->getEventManager()->getModifierState();
+	bool massAdd = (modifiers & OSystem::KBD_SHIFT) != 0;
 	
 	if (massAdd) {
 		MessageDialog alert("Do you really want to run the mass game detector? "
@@ -792,23 +796,13 @@ void LauncherDialog::editGame(int item) {
 }
 
 void LauncherDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	_modifiers = modifiers;
 	Dialog::handleKeyDown(ascii, keycode, modifiers);
-
-	if ((modifiers & OSystem::KBD_SHIFT) != 0) {
-		_addButton->setLabel("Mass Add...");
-		_addButton->draw();
-	}
+	updateButtons();
 }
 
 void LauncherDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
-	_modifiers = modifiers;
 	Dialog::handleKeyUp(ascii, keycode, modifiers);
-
-	if ((modifiers & OSystem::KBD_SHIFT) == 0) {
-		_addButton->setLabel("Add Game...");
-		_addButton->draw();
-	}
+	updateButtons();
 }
 
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -868,6 +862,17 @@ void LauncherDialog::updateButtons() {
 	if (enable != _removeButton->isEnabled()) {
 		_removeButton->setEnabled(enable);
 		_removeButton->draw();
+	}
+
+	// Update the label of the "Add" button depending on whether shift is pressed or not
+	int modifiers = g_system->getEventManager()->getModifierState();
+	const char *newAddButtonLabel = ((modifiers & OSystem::KBD_SHIFT) != 0)
+		? "Mass Add..."
+		: "Add Game...";
+
+	if (_addButton->getLabel() != newAddButtonLabel) {
+		_addButton->setLabel(newAddButtonLabel);
+		_addButton->draw();
 	}
 }
 

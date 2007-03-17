@@ -58,7 +58,6 @@ protected:
 #endif
 	StringList		_domains;
 	BrowserDialog	*_browser;
-	byte			_modifiers;
 
 	virtual void reflowLayout();
 
