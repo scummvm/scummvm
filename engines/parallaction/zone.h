@@ -124,7 +124,6 @@ struct ZoneLabel {
 };
 
 struct Zone : public Node {
-//	Node			_node;
 	union {
 		Rect		_limits;		// for zones
 		struct {	// for animations
@@ -164,7 +163,6 @@ enum InstructionFlags {
 };
 
 struct Instruction : public Node {
-//	Node	_node;
 	uint32	_index;
 	uint32	_flags;
 	union {
@@ -179,7 +177,6 @@ struct Instruction : public Node {
 
 
 struct Program : public Node {
-//	Node			_node;
 	LocalVariable	*_locals;
 	uint16			_loopCounter;
 	Instruction 	*_ip;

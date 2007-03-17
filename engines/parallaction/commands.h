@@ -48,8 +48,6 @@ union CommandData {
 };
 
 struct Command : public Node {
-//	Node			_node;
-
 	uint16			_id;
 	CommandData 	u;
 	uint32			_flagsOn;

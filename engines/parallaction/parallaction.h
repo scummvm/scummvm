@@ -88,7 +88,6 @@ struct Job;
 typedef void (*JobFn)(void*, Job*);
 
 struct Job : public Node {
-//	Node		_node;
 	uint16		_count; 		// # of executions left
 	uint16		_tag;			// used for ordering
 	uint16		_finished;

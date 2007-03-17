@@ -39,7 +39,6 @@ struct Node {
 };
 
 struct WalkNode : public Node {
-//	Node	_node;
 	int32	_x;
 	int32	_y;
 
