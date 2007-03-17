@@ -134,14 +134,20 @@ struct Zone : public Node {
 
 	uint32			_type;
 	uint32			_flags;
-//	char*			_labeltext;
-//	StaticCnv		_labelcnv;
 	ZoneLabel       _label;
 	uint16			field_2C;		// unused
 	uint16			field_2E;		// unused
 	ZoneTypeData	u;
 	Command 		*_commands;
 	Point			_moveTo;
+
+	uint16 width() const {
+		return _right - _left;
+	}
+
+	uint16 height() const {
+		return _bottom - _top;
+	}
 };
 
 struct LocalVariable {
@@ -199,6 +205,14 @@ struct Animation {
 	uint16		field_5A;		// unused
 	uint16		field_5C;		// unused
 	uint16		field_5E;		// unused
+
+	uint16 width() const {
+		return _cnv._width;
+	}
+
+	uint16 height() const {
+		return _cnv._height;
+	}
 };
 
 extern Node _zones;

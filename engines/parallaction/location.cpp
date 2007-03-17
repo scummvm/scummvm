@@ -237,8 +237,8 @@ void parseWalkNodes(Script& script, Node *list) {
 		if (!scumm_stricmp(_tokens[0], "COORD")) {
 
 			WalkNode *v4 = (WalkNode*)malloc(sizeof(WalkNode));
-			v4->_x = atoi(_tokens[1]) - _vm->_char._ani._cnv._width/2;
-			v4->_y = atoi(_tokens[2]) - _vm->_char._ani._cnv._height;
+			v4->_x = atoi(_tokens[1]) - _vm->_char._ani.width()/2;
+			v4->_y = atoi(_tokens[2]) - _vm->_char._ani.height();
 
 			addNode(list, v4);
 

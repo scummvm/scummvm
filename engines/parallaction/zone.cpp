@@ -610,11 +610,11 @@ Zone *hitZone(uint32 type, uint16 x, uint16 y) {
 				continue;
 			if (_si < _vm->_char._ani._zone._left)
 				continue;
-			if (_si > (_vm->_char._ani._zone._left + _vm->_char._ani._cnv._width))
+			if (_si > (_vm->_char._ani._zone._left + _vm->_char._ani.width()))
 				continue;
 			if (_di < _vm->_char._ani._zone._top)
 				continue;
-			if (_di > (_vm->_char._ani._zone._top + _vm->_char._ani._cnv._height))
+			if (_di > (_vm->_char._ani._zone._top + _vm->_char._ani.height()))
 				continue;
 
 		}
@@ -636,8 +636,8 @@ Zone *hitZone(uint32 type, uint16 x, uint16 y) {
 //		printf("Animation name: %s", a->_zone._name);
 
 		_a = (a->_zone._flags & kFlagsActive) ? 1 : 0;															   // _a: active Animation
-		_e = ((_si >= a->_zone._left + a->_cnv._width) || (_si <= a->_zone._left)) ? 0 : 1;		// _e: horizontal range
-		_f = ((_di >= a->_zone._top + a->_cnv._height) || (_di <= a->_zone._top)) ? 0 : 1;		// _f: vertical range
+		_e = ((_si >= a->_zone._left + a->width()) || (_si <= a->_zone._left)) ? 0 : 1;		// _e: horizontal range
+		_f = ((_di >= a->_zone._top + a->height()) || (_di <= a->_zone._top)) ? 0 : 1;		// _f: vertical range
 
 		_b = ((type != 0) || (a->_zone._type == kZoneYou)) ? 0 : 1; 										 // _b: (no type specified) AND (Animation is not the character)
 		_c = (a->_zone._type & 0xFFFF0000) ? 0 : 1; 															// _c: Animation is not an object

@@ -191,15 +191,15 @@ void jobDisplayAnimations(void *parm, Job *j) {
 	for ( ; v18; v18 = (Animation*)v18->_zone._next) {
 
 		if ((v18->_zone._flags & kFlagsActive) && ((v18->_zone._flags & kFlagsRemove) == 0))   {
-			v14._width = v18->_cnv._width;
-			v14._height = v18->_cnv._height;
+			v14._width = v18->width();
+			v14._height = v18->height();
 			v14._data0 = v18->_cnv._array[v18->_frame];
 //			v14._data1 = v18->_cnv.field_8[v18->_frame];
 
 			if (v18->_zone._flags & kFlagsNoMasked)
 				_si = 3;
 			else
-				_si = _vm->_gfx->queryMask(v18->_zone._top + v18->_cnv._height);
+				_si = _vm->_gfx->queryMask(v18->_zone._top + v18->height());
 
 //			printf("jobDisplayAnimations %s, x: %i, y: %i, w: %i, h: %i\n", v18->_zone._name, v18->_zone._left, v18->_zone._top, v14._width, v14._height);
 			_vm->_gfx->blitCnv(&v14, v18->_zone._left, v18->_zone._top, _si, Gfx::kBitBack);
@@ -233,7 +233,7 @@ void jobEraseAnimations(void *arg_0, Job *j) {
 
 		if (((a->_zone._flags & kFlagsActive) == 0) && ((a->_zone._flags & kFlagsRemove) == 0)) continue;
 
-		Common::Rect r(a->_cnv._width, a->_cnv._height);
+		Common::Rect r(a->width(), a->height());
 		r.moveTo(a->_zone._oldLeft, a->_zone._oldTop);
 		_vm->_gfx->restoreBackground(r);
 
@@ -489,7 +489,7 @@ void jobRunScripts(void *parm, Job *j) {
 	StaticCnv v18;
 	WalkNode *v4 = NULL;
 
-	if (a->_zone._flags & kFlagsCharacter) a->_z = a->_zone._top + a->_cnv._height;
+	if (a->_zone._flags & kFlagsCharacter) a->_z = a->_zone._top + a->height();
 	for ( ; a; a = (Animation*)a->_zone._next) {
 
 		if ((a->_zone._flags & kFlagsActing) == 0) continue;
@@ -571,8 +571,8 @@ void jobRunScripts(void *parm, Job *j) {
 				break;
 
 			case INST_PUT:	// put
-				v18._width = inst->_opBase._a->_cnv._width;
-				v18._height = inst->_opBase._a->_cnv._height;
+				v18._width = inst->_opBase._a->width();
+				v18._height = inst->_opBase._a->height();
 				v18._data0 = inst->_opBase._a->_cnv._array[inst->_opBase._a->_frame];
 				v18._data1 = NULL; // inst->_opBase._a->_cnv.field_8[inst->_opBase._a->_frame];
 
@@ -632,7 +632,7 @@ void jobRunScripts(void *parm, Job *j) {
 
 label1:
 		if (a->_zone._flags & kFlagsCharacter)
-			a->_z = a->_zone._top + a->_cnv._height;
+			a->_z = a->_zone._top + a->height();
 	}
 
 	sortAnimations();
@@ -658,7 +658,7 @@ void sortAnimations() {
 	Node v14;
 	memset(&v14, 0, sizeof(Node));
 
-	_vm->_char._ani._z = _vm->_char._ani._cnv._height + _vm->_char._ani._zone._top;
+	_vm->_char._ani._z = _vm->_char._ani.height() + _vm->_char._ani._zone._top;
 
 	Animation *vC = (Animation*)_animations._next;
 	Node *v8;

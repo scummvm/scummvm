@@ -115,8 +115,8 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	WalkNode *v48 = (WalkNode*)malloc(sizeof(WalkNode));
 	WalkNode *v44 = (WalkNode*)malloc(sizeof(WalkNode));
 
-	v48->_x = to_x - _vm->_char._ani._cnv._width / 2; 		// target top left coordinates
-	v48->_y = to_y - _vm->_char._ani._cnv._height;
+	v48->_x = to_x - _vm->_char._ani.width() / 2; 		// target top left coordinates
+	v48->_y = to_y - _vm->_char._ani.height();
 	v48->_next = NULL;
 	memcpy(v44, v48, sizeof(WalkNode));
 
@@ -245,8 +245,8 @@ uint16 walkFunc1(int16 x, int16 y, WalkNode *Node) {
 	Point v4 = { 0, 0 };
 
 	Point foot = {
-		_vm->_char._ani._zone._left + _vm->_char._ani._cnv._width/2,
-		_vm->_char._ani._zone._top + _vm->_char._ani._cnv._height
+		_vm->_char._ani._zone._left + _vm->_char._ani.width()/2,
+		_vm->_char._ani._zone._top + _vm->_char._ani.height()
 	};
 
 	Point v8 = {
@@ -297,8 +297,8 @@ uint16 walkFunc1(int16 x, int16 y, WalkNode *Node) {
 				v8._y = foot._y;
 			}
 
-			Node->_x = v4._x - _vm->_char._ani._cnv._width / 2;
-			Node->_y = v4._y - _vm->_char._ani._cnv._height;
+			Node->_x = v4._x - _vm->_char._ani.width() / 2;
+			Node->_y = v4._y - _vm->_char._ani.height();
 
 			return (x - v4._x) * (x - v4._x) + (y - v4._y) * (y - v4._y);
 		}
@@ -319,7 +319,7 @@ void jobWalk(void *parm, Job *j) {
 	int16 _si = _vm->_char._ani._zone._left;
 	int16 _di = _vm->_char._ani._zone._top;
 
-//	debugC(1, kDebugWalk, "jobWalk to (%i, %i)", node->_x + _vm->_char._ani._cnv._width / 2, node->_y + _vm->_char._ani._cnv._height);
+//	debugC(1, kDebugWalk, "jobWalk to (%i, %i)", node->_x + _vm->_char._ani.width() / 2, node->_y + _vm->_char._ani.height());
 
 	_vm->_char._ani._zone._oldLeft = _si;
 	_vm->_char._ani._zone._oldTop = _di;
@@ -386,27 +386,27 @@ void jobWalk(void *parm, Job *j) {
 	}
 
 //	StaticCnv v14;
-//	v14._width = _vm->_char._ani._cnv._width;
-//	v14._height = _vm->_char._ani._cnv._height;
+//	v14._width = _vm->_char._ani.width();
+//	v14._height = _vm->_char._ani.height();
 //	v14._data0 = _vm->_char._ani._cnv._array[_vm->_char._ani._frame];
 //	v14._data1 = _vm->_char._ani._cnv.field_8[_vm->_char._ani._frame];
 
-	if ((_si < node->_x) && (_si < SCREEN_WIDTH) && (queryPath(_vm->_char._ani._cnv._width/2 + _si + 2, _vm->_char._ani._cnv._height + _di) != 0)) {
+	if ((_si < node->_x) && (_si < SCREEN_WIDTH) && (queryPath(_vm->_char._ani.width()/2 + _si + 2, _vm->_char._ani.height() + _di) != 0)) {
 //		printf("walk right\n");
 		_si = (_si + 2 < node->_x) ? _si + 2 : node->_x;
 	}
 
-	if ((_si > node->_x) && (_si > -20) && (queryPath(_vm->_char._ani._cnv._width/2 + _si - 2, _vm->_char._ani._cnv._height + _di) != 0)) {
+	if ((_si > node->_x) && (_si > -20) && (queryPath(_vm->_char._ani.width()/2 + _si - 2, _vm->_char._ani.height() + _di) != 0)) {
 //		printf("walk left\n");
 		_si = (_si - 2 > node->_x) ? _si - 2 :node->_x;
 	}
 
-	if ((_di < node->_y) && (_di < (SCREEN_HEIGHT - _vm->_char._ani._cnv._height)) && (queryPath(_vm->_char._ani._cnv._width/2 + _si, _vm->_char._ani._cnv._height + _di + 2) != 0)) {
+	if ((_di < node->_y) && (_di < (SCREEN_HEIGHT - _vm->_char._ani.height())) && (queryPath(_vm->_char._ani.width()/2 + _si, _vm->_char._ani.height() + _di + 2) != 0)) {
 //		printf("walk down\n");
 		_di = (_di + 2 <= node->_y) ? _di + 2 : node->_y;
 	}
 
-	if ((_di > node->_y) && (_di > -20) && (queryPath(_vm->_char._ani._cnv._width/2 + _si, _vm->_char._ani._cnv._height + _di - 2) != 0)) {
+	if ((_di > node->_y) && (_di > -20) && (queryPath(_vm->_char._ani.width()/2 + _si, _vm->_char._ani.height() + _di - 2) != 0)) {
 //		printf("walk up\n");
 		_di = (_di - 2 >= node->_y) ? _di - 2 : node->_y;
 	}
@@ -440,7 +440,7 @@ uint16 checkDoor() {
 	}
 
 	_engineFlags &= ~kEngineWalking;
-	Zone *z = hitZone(kZoneDoor, _vm->_char._ani._zone._left + _vm->_char._ani._cnv._width / 2,	_vm->_char._ani._zone._top + _vm->_char._ani._cnv._height);
+	Zone *z = hitZone(kZoneDoor, _vm->_char._ani._zone._left + _vm->_char._ani.width() / 2,	_vm->_char._ani._zone._top + _vm->_char._ani.height());
 
 	if (z != NULL) {
 
@@ -458,7 +458,7 @@ uint16 checkDoor() {
 		}
 	}
 
-	z = hitZone(kZoneTrap, _vm->_char._ani._zone._left + _vm->_char._ani._cnv._width / 2, _vm->_char._ani._zone._top + _vm->_char._ani._cnv._height);
+	z = hitZone(kZoneTrap, _vm->_char._ani._zone._left + _vm->_char._ani.width() / 2, _vm->_char._ani._zone._top + _vm->_char._ani.height());
 
 	if (z != NULL) {
 		_localFlags[_vm->_currentLocationIndex] |= kFlagsEnter;
