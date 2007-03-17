@@ -21,6 +21,12 @@
  *
  */
 
+#if defined(WIN32)
+#include <windows.h>
+// winnt.h defines ARRAYSIZE, but we want our own one...
+#undef ARRAYSIZE
+#endif
+
 #include "backends/platform/sdl/sdl-common.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "common/config-manager.h"
@@ -32,10 +38,6 @@
 #include "sound/mixer.h"
 
 #include "icons/scummvm.xpm"
-
-#if defined(WIN32)
-#include <windows.h>
-#endif
 
 #if defined(__SYMBIAN32__)
 #include "SymbianOs.h"

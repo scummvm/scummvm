@@ -21,6 +21,12 @@
  *
  */
 
+#if defined(WIN32)
+#include <windows.h>
+// winnt.h defines ARRAYSIZE, but we want our own one...
+#undef ARRAYSIZE
+#endif
+
 #include "common/stdafx.h"
 
 #include "common/config-manager.h"
@@ -28,10 +34,6 @@
 #include "common/util.h"
 
 DECLARE_SINGLETON(Common::ConfigManager);
-
-#if defined(WIN32)
-#include <windows.h>
-#endif
 
 #ifdef __PLAYSTATION2__
 #include "backends/platform/ps2/systemps2.h"

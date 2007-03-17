@@ -19,6 +19,13 @@
  * $Id$
  */
 
+#if defined(WIN32)
+#include <windows.h>
+#include <direct.h>
+// winnt.h defines ARRAYSIZE, but we want our own one...
+#undef ARRAYSIZE
+#endif
+
 #include "common/stdafx.h"
 #include "engines/engine.h"
 #include "common/config-manager.h"
@@ -28,11 +35,6 @@
 #include "common/system.h"
 #include "gui/message.h"
 #include "sound/mixer.h"
-
-#if defined(WIN32)
-#include <windows.h>
-#include <direct.h>
-#endif
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone(void);
