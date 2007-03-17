@@ -15,6 +15,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added dialog which allows the user to select the GUI theme on runtime.
    - Launcher allows you to scan for games in all subfolders of a directory
      (press shift then click on "Add Game").
+   - Keyboard repeat is now handled in a centralized way, rather than on a
+     case-by-case basis. (Simply put, all engines now have keyboard repeat.)
 
  Broken Sword 1:
    - Added support for DXA cutscenes.
