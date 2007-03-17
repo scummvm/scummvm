@@ -109,7 +109,7 @@ struct MergeData {	// size = 12
 	uint32	_obj3;
 };
 
-struct ZoneTypeData {
+struct TypeData {
 	GetData 	*get;
 	SpeakData	*speak;
 	ExamineData *examine;
@@ -118,7 +118,7 @@ struct ZoneTypeData {
 	MergeData	*merge;
 };
 
-struct ZoneLabel {
+struct Label {
 	char*			_text;
 	StaticCnv		_cnv;
 };
@@ -134,10 +134,10 @@ struct Zone : public Node {
 
 	uint32			_type;
 	uint32			_flags;
-	ZoneLabel       _label;
+	Label       _label;
 	uint16			field_2C;		// unused
 	uint16			field_2E;		// unused
-	ZoneTypeData	u;
+	TypeData	u;
 	Command 		*_commands;
 	Point			_moveTo;
 

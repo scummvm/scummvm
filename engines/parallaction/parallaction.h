@@ -343,7 +343,7 @@ protected:		// data
 
 		int16       _inventoryIndex;
 		Zone*       _zone;
-		ZoneLabel*  _label;
+		Label*  _label;
 	};
 
 	bool		_skipMenu;

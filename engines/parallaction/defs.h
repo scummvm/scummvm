@@ -93,7 +93,7 @@ public:
 
 struct Animation;
 struct Zone;
-struct ZoneLabel;
+struct Label;
 
 struct Command;
 

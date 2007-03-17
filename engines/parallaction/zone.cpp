@@ -128,7 +128,7 @@ void freeZones(Node *list) {
 
 	for (; z; ) {
 
-		// WORKAROUND: this huge condition is needed because we made ZoneTypeData a collection of structs
+		// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
 		// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
 		// but we need to check it separately here. The same workaround is applied in hitZone.
 		if (((z->_top == -1) ||
@@ -208,7 +208,7 @@ void freeZones(Node *list) {
 void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 //	printf("parseZoneTypeBlock()");
 
-	ZoneTypeData *u = &z->u;
+	TypeData *u = &z->u;
 
 	switch (z->_type & 0xFFFF) {
 	case kZoneExamine:	// examine Zone alloc
@@ -589,7 +589,7 @@ Zone *hitZone(uint32 type, uint16 x, uint16 y) {
 			// out of Zone, so look for special values
 			if ((z->_left == -2) || (z->_left == -3)) {
 
-				// WORKAROUND: this huge condition is needed because we made ZoneTypeData a collection of structs
+				// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
 				// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
 				// but we need to check it separately here. The same workaround is applied in freeZones.
 				if ((((z->_type & 0xFFFF) == kZoneMerge) && (((_si == z->u.merge->_obj1) && (_di == z->u.merge->_obj2)) || ((_si == z->u.merge->_obj2) && (_di == z->u.merge->_obj1)))) ||
