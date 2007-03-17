@@ -212,7 +212,6 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		error("Interface::Interface(): not enough memory");
 	}
 
-	_textInputRepeatPhase = 0;
 	_textInput = false;
 	_statusTextInput = false;
 	_statusTextInputState = kStatusTextInputFirstRun;
@@ -316,7 +315,6 @@ void Interface::setMode(int mode) {
 		_textInput = true;
 		_textInputStringLength = strlen(_textInputString);
 		_textInputPos = _textInputStringLength + 1;
-		_textInputRepeatPhase = 0;
 		break;
 	case kPanelMap:
 		mapPanelShow();
@@ -337,14 +335,13 @@ void Interface::setMode(int mode) {
 		_textInputString[0] = 0;
 		_textInputStringLength = 0;
 		_textInputPos = _textInputStringLength + 1;
-		_textInputRepeatPhase = 0;
 		break;
 	}
 
 	draw();
 }
 
-bool Interface::processAscii(uint16 ascii, bool synthetic) {
+bool Interface::processAscii(uint16 ascii) {
 	// TODO: Checking for Esc and Enter below is a bit hackish, and
 	// and probably only works with the English version. Maybe we should
 	// add a flag to the button so it can indicate if it's the default or
@@ -352,8 +349,6 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 
 	int i;
 	PanelButton *panelButton;
-	if (!synthetic)
-		_textInputRepeatPhase = 0;
 	if (_statusTextInput) {
 		processStatusTextInput(ascii);
 		return true;
@@ -534,40 +529,6 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 		break;
 	}
 	return false;
-}
-
-#define KEYBOARD_REPEAT_DELAY1 300000L
-#define KEYBOARD_REPEAT_DELAY2 50000L
-
-void Interface::textInputRepeatCallback(void *refCon) {
-	((Interface *)refCon)->textInputRepeat();
-}
-
-void Interface::textInputStartRepeat(uint16 ascii) {
-	if (!_textInputRepeatPhase) {
-		_textInputRepeatPhase = 1;
-		_vm->_timer->removeTimerProc(&textInputRepeatCallback);
-		_vm->_timer->installTimerProc(&textInputRepeatCallback, KEYBOARD_REPEAT_DELAY1, this);
-	}
-
-	_textInputRepeatChar = ascii;
-}
-
-void Interface::textInputRepeat() {
-	if (_textInputRepeatPhase == 1) {
-		_textInputRepeatPhase = 2;
-		_vm->_timer->removeTimerProc(&textInputRepeatCallback);
-		_vm->_timer->installTimerProc(&textInputRepeatCallback, KEYBOARD_REPEAT_DELAY2, this);
-	} else if (_textInputRepeatPhase == 2) {
-		processAscii(_textInputRepeatChar, true);
-	}
-}
-
-void Interface::processKeyUp(uint16 ascii) {
-	if (_textInputRepeatPhase) {
-		_vm->_timer->removeTimerProc(&textInputRepeatCallback);
-		_textInputRepeatPhase = 0;
-	}
 }
 
 void Interface::setStatusText(const char *text, int statusColor) {
@@ -928,7 +889,6 @@ void Interface::setLoad(PanelButton *panelButton) {
 
 void Interface::processStatusTextInput(uint16 ascii) {
 
-	textInputStartRepeat(ascii);
 	switch (ascii) {
 	case 27: // esc
 		_statusTextInputState = kStatusTextInputAborted;
@@ -967,8 +927,6 @@ bool Interface::processTextInput(uint16 ascii) {
 	uint tempWidth;
 	memset(tempString, 0, SAVE_TITLE_SIZE);
 	ch[1] = 0;
-
-	textInputStartRepeat(ascii);
 
 	switch (ascii) {
 	case 13:

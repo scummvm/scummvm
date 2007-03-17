@@ -42,11 +42,6 @@
 
 namespace Sword1 {
 
-enum {
-	kKeyRepeatInitialDelay = 400,
-	kKeyRepeatSustainDelay = 100
-};
-
 enum LangStrings {
 	STR_PAUSED = 0,
 	STR_INSERT_CD_A,
@@ -171,8 +166,6 @@ Control::Control(Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMa
 	_music = pMusic;
 	_sound = pSound;
 	_lStrings = _languageStrings + SwordEngine::_systemVars.language * 20;
-	_keyRepeat = 0;
-	_keyRepeatTime = 0;
 	_selectedButton = 255;
 }
 
@@ -1053,15 +1046,9 @@ void Control::delay(uint32 msecs) {
 					_keyPressed = 8;
 				else
 					_keyPressed = (byte)event.kbd.ascii;
-				_keyRepeatTime = now + kKeyRepeatInitialDelay;
-				_keyRepeat = _keyPressed;
 				// we skip the rest of the delay and return immediately
 				// to handle keyboard input
 				return;
-			case OSystem::EVENT_KEYUP:
-				_keyRepeatTime = 0;
-				_keyRepeat = 0;
-				break;
 			case OSystem::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
@@ -1092,10 +1079,6 @@ void Control::delay(uint32 msecs) {
 			default:
 				break;
 			}
-		}
-		if (_keyRepeatTime && now > _keyRepeatTime) {
-			_keyRepeatTime += kKeyRepeatSustainDelay;
-			_keyPressed = _keyRepeat;
 		}
 
 		_system->updateScreen();

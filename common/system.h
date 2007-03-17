@@ -743,6 +743,10 @@ public:
 	struct Event {
 		/** The type of the event. */
 		EventType type;
+		/** Flag to indicate if the event is real or synthetic. E.g. keyboard
+		  * repeat events are synthetic.
+		  */
+		bool synthetic;
 		/**
 		  * Keyboard data; only valid for keyboard events (EVENT_KEYDOWN and
 		  * EVENT_KEYUP). For all other event types, content is undefined.

@@ -121,9 +121,6 @@ int SagaEngine::processInput() {
 				break;
 			}
 			break;
-		case OSystem::EVENT_KEYUP:
-			_interface->processKeyUp(event.kbd.ascii);
-			break;
 		case OSystem::EVENT_LBUTTONUP:
 			_leftMouseButtonPressed = false;
 			break;

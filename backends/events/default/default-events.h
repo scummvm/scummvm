@@ -46,6 +46,19 @@ class DefaultEventManager : public Common::EventManager {
 	int _modifierState;
 	bool _shouldQuit;
 
+	// for continuous events (keyDown)
+	enum {
+		kKeyRepeatInitialDelay = 400,
+		kKeyRepeatSustainDelay = 100
+	};
+
+	struct {
+		uint16 ascii;
+		byte flags;
+		int keycode;
+	} _currentKeyDown;
+	uint32 _keyRepeatTime;
+
 public:
 	DefaultEventManager(OSystem *boss);
 

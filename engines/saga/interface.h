@@ -222,8 +222,7 @@ public:
 	void drawStatusBar();
 	void setVerbState(int verb, int state);
 
-	bool processAscii(uint16 ascii, bool synthetic = false);
-	void processKeyUp(uint16 ascii);
+	bool processAscii(uint16 ascii);
 
 	void keyBoss();
 	void keyBossExit();
@@ -243,8 +242,6 @@ public:
 	}
 
 private:
-	static void textInputRepeatCallback(void *refCon);
-
 	void drawInventory(Surface *backBuffer);
 	void updateInventory(int pos);
 	void inventoryChangePos(int chg);
@@ -343,8 +340,6 @@ private:
 	void calcOptionSaveSlider();
 	bool processTextInput(uint16 ascii);
 	void processStatusTextInput(uint16 ascii);
-	void textInputStartRepeat(uint16 ascii);
-	void textInputRepeat(void);
 
 public:
 	void converseInit(void);
@@ -451,9 +446,6 @@ private:
 	uint _textInputMaxWidth;
 
 	uint _statusTextInputPos;
-
-	int _textInputRepeatPhase;
-	uint16 _textInputRepeatChar;
 
 	PalEntry _mapSavedPal[PAL_ENTRIES];
 	bool _mapPanelCrossHairState;

@@ -50,9 +50,7 @@ namespace GUI {
 
 enum {
 	kDoubleClickDelay = 500, // milliseconds
-	kCursorAnimateDelay = 250,
-	kKeyRepeatInitialDelay = 400,
-	kKeyRepeatSustainDelay = 100
+	kCursorAnimateDelay = 250
 };
 
 void GuiObject::reflowLayout() {
@@ -90,9 +88,6 @@ NewGui::NewGui() : _needRedraw(false),
 
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
-
-	// Reset key repeat
-	_currentKeyDown.keycode = 0;
 
 	bool loadClassicTheme = true;
 #ifndef DISABLE_FANCY_THEMES
@@ -272,21 +267,10 @@ void NewGui::runLoop() {
 			
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
-#if !defined(PALMOS_MODE)
-				// init continuous event stream
-				// not done on PalmOS because keyboard is emulated and keyup is not generated
-				_currentKeyDown.ascii = event.kbd.ascii;
-				_currentKeyDown.keycode = event.kbd.keycode;
-				_currentKeyDown.flags = event.kbd.flags;
-				_keyRepeatTime = time + kKeyRepeatInitialDelay;
-#endif
 				activeDialog->handleKeyDown(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
 				break;
 			case OSystem::EVENT_KEYUP:
 				activeDialog->handleKeyUp(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
-				if (event.kbd.keycode == _currentKeyDown.keycode)
-					// only stop firing events if it's the current key
-					_currentKeyDown.keycode = 0;
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
 				activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
@@ -327,15 +311,6 @@ void NewGui::runLoop() {
 			}
 		}
 
-		// check if event should be sent again (keydown)
-		if (_currentKeyDown.keycode != 0 && activeDialog == getTopDialog()) {
-			if (_keyRepeatTime < time) {
-				// fire event
-				activeDialog->handleKeyDown(_currentKeyDown.ascii, _currentKeyDown.keycode, _currentKeyDown.flags);
-				_keyRepeatTime = time + kKeyRepeatSustainDelay;
-			}
-		}
-
 		// Delay for a moment
 		_system->delayMillis(10);
 	}
@@ -353,7 +328,6 @@ void NewGui::runLoop() {
 
 void NewGui::saveState() {
 	// Backup old cursor
-	_currentKeyDown.keycode = 0;
 	_lastClick.x = _lastClick.y = 0;
 	_lastClick.time = 0;
 	_lastClick.count = 0;

@@ -187,7 +187,6 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 	_debugger = NULL;
 
 	_keyboardEvent.pending = false;
-	_keyboardEvent.repeat = 0;
 	_mouseEvent.pending = false;
 
 	_wantSfxDebug = false;
@@ -377,10 +376,6 @@ int Sword2Engine::go() {
 
 		if (ke) {
 			if ((ke->modifiers == OSystem::KBD_CTRL && ke->keycode == 'd') || ke->ascii == '#' || ke->ascii == '~') {
-				// HACK: We have to clear the 'repeat' flag, or
-				// it will probably trigger a keyboard repeat
-				// immediately after the debug console closes.
-				_keyboardEvent.repeat = 0;
 				_debugger->attach();
 			} else if (ke->modifiers == 0 || ke->modifiers == OSystem::KBD_SHIFT) {
 				switch (ke->keycode) {
@@ -539,8 +534,6 @@ uint32 Sword2Engine::setInputEventFilter(uint32 filter) {
 void Sword2Engine::parseInputEvents() {
 	OSystem::Event event;
 
-	uint32 now = _system->getMillis();
-
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
@@ -555,14 +548,10 @@ void Sword2Engine::parseInputEvents() {
 			}
 			if (!(_inputEventFilter & RD_KEYDOWN)) {
 				_keyboardEvent.pending = true;
-				_keyboardEvent.repeat = now + 400;
 				_keyboardEvent.ascii = event.kbd.ascii;
 				_keyboardEvent.keycode = event.kbd.keycode;
 				_keyboardEvent.modifiers = event.kbd.flags;
 			}
-			break;
-		case OSystem::EVENT_KEYUP:
-			_keyboardEvent.repeat = 0;
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
 			if (!(_inputEventFilter & RD_KEYDOWN)) {
@@ -611,12 +600,6 @@ void Sword2Engine::parseInputEvents() {
 		default:
 			break;
 		}
-	}
-
-	// Handle keyboard auto-repeat
-	if (!_keyboardEvent.pending && _keyboardEvent.repeat && now >= _keyboardEvent.repeat) {
-		_keyboardEvent.pending = true;
-		_keyboardEvent.repeat = now + 100;
 	}
 }
 

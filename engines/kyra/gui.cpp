@@ -597,8 +597,7 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 		calcCoords(_menu[i]);
 
 	_menuRestoreScreen = true;
-	_keyboardEvent.pending = 0;
-	_keyboardEvent.repeat = 0;
+	_keyPressed = 0;
 	_mousePressFlag = false;
 	
 	_toplevelMenu = 0;
@@ -835,12 +834,7 @@ void KyraEngine::gui_getInput() {
 			_mouseWheel = 1;
 			break;
 		case OSystem::EVENT_KEYDOWN:
-			_keyboardEvent.pending = true;
-			_keyboardEvent.repeat = now + 400;
-			_keyboardEvent.ascii = event.kbd.ascii;
-			break;
-		case OSystem::EVENT_KEYUP:
-			_keyboardEvent.repeat = 0;
+			_keyPressed = event.kbd.ascii;
 			break;
 		default:
 			break;
@@ -852,10 +846,6 @@ void KyraEngine::gui_getInput() {
 		lastScreenUpdate = now;
 	}
 
-	if (!_keyboardEvent.pending && _keyboardEvent.repeat && now >= _keyboardEvent.repeat) {
-		_keyboardEvent.pending = true;
-		_keyboardEvent.repeat = now + 100;
-	}
 	_system->delayMillis(3);
 }
 
@@ -1020,26 +1010,26 @@ void KyraEngine::gui_redrawTextfield() {
 void KyraEngine::gui_updateSavegameString() {
 	int length;
 
-	if (_keyboardEvent.pending && _keyboardEvent.ascii) {
+	if (_keyPressed) {
 		length = strlen(_savegameName);
 
-		if (_keyboardEvent.ascii > 31 && _keyboardEvent.ascii < 127) {
+		if (_keyPressed > 31 && _keyPressed < 127) {
 			if (length < 31) {
-				_savegameName[length] = _keyboardEvent.ascii;
+				_savegameName[length] = _keyPressed;
 				_savegameName[length+1] = 0;
 				gui_redrawTextfield();
 			}
-		} else if (_keyboardEvent.ascii == 8 ||_keyboardEvent.ascii == 127) {
+		} else if (_keyPressed == 8 ||_keyPressed == 127) {
 			if (length > 0) {
 				_savegameName[length-1] = 0;
 				gui_redrawTextfield();
 			}
-		} else if (_keyboardEvent.ascii == 13) {
+		} else if (_keyPressed == 13) {
 			_displaySubMenu = false;
 		}
 	}
 
-	_keyboardEvent.pending = false;
+	_keyPressed = 0;
 }
 
 int KyraEngine::gui_saveGame(Button *button) {

@@ -99,14 +99,6 @@ protected:
 
 	bool		_useStdCursor;
 
-	// for continuous events (keyDown)
-	struct {
-		uint16 ascii;
-		byte flags;
-		int keycode;
-	} _currentKeyDown;
-	uint32		_keyRepeatTime;
-
 	// position and time of last mouse click (used to detect double clicks)
 	struct {
 		int16 x, y;	// Position of mouse when the click occured

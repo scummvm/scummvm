@@ -227,12 +227,6 @@ struct Menu {
 	MenuItem item[6];
 };
 
-struct KeyboardEvent {
-	bool pending;
-	uint32 repeat;
-	uint8 ascii;
-};
-
 class KyraEngine : public Engine {
 	friend class MusicPlayer;
 	friend class Debugger;
@@ -839,7 +833,7 @@ protected:
 	int _gameToLoad;
 	char _savegameName[31];
 	const char *_specialSavegameString;
-	KeyboardEvent _keyboardEvent;
+	uint8 _keyPressed;
 
 	struct KyragemState {
 		uint16 nextOperation;

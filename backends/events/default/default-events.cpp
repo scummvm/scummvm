@@ -33,19 +33,40 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	_shouldQuit(false) {
 
  	assert(_boss);
+
+	// Reset key repeat
+	_currentKeyDown.keycode = 0;
 }
 
 bool DefaultEventManager::pollEvent(OSystem::Event &event) {
+	uint32 time = _boss->getMillis();
 	bool result;
 	
 	result = _boss->pollEvent(event);
 	
 	if (result) {
+		event.synthetic = false;
 		switch (event.type) {
 		case OSystem::EVENT_KEYDOWN:
+			_modifierState = event.kbd.flags;
+
+			// init continuous event stream
+			// not done on PalmOS because keyboard is emulated and keyup is not generated
+#if !defined(PALMOS_MODE)
+			_currentKeyDown.ascii = event.kbd.ascii;
+			_currentKeyDown.keycode = event.kbd.keycode;
+			_currentKeyDown.flags = event.kbd.flags;
+			_keyRepeatTime = time + kKeyRepeatInitialDelay;
+#endif
+			break;
 		case OSystem::EVENT_KEYUP:
 			_modifierState = event.kbd.flags;
+			if (event.kbd.keycode == _currentKeyDown.keycode) {
+				// Only stop firing events if it's the current key
+				_currentKeyDown.keycode = 0;
+			}
 			break;
+
 		case OSystem::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
 			break;
@@ -74,6 +95,18 @@ bool DefaultEventManager::pollEvent(OSystem::Event &event) {
 
 		default:
 			break;
+		}
+	} else {
+		// Check if event should be sent again (keydown)
+		if (_currentKeyDown.keycode != 0 && _keyRepeatTime < time) {
+			// fire event
+			event.type = OSystem::EVENT_KEYDOWN;
+			event.synthetic = true;
+			event.kbd.ascii = _currentKeyDown.ascii;
+			event.kbd.keycode = _currentKeyDown.keycode;
+			event.kbd.flags = _currentKeyDown.flags;
+			_keyRepeatTime = time + kKeyRepeatSustainDelay;
+			result = true;
 		}
 	}
 	

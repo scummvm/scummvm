@@ -200,8 +200,6 @@ protected:
 	const GameSpecificSettings *gss;
 
 	byte _keyPressed;
-	byte _keyRepeatKey;
-	uint32 _keyRepeatTime;
 
 	typedef enum {
 		FORMAT_NONE,
