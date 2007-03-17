@@ -377,23 +377,23 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 				}
 			}
 			redrawMenu(&menuData);
-			OSystem::Event event;
+			Common::Event event;
 			Common::EventManager *eventMan = _system->getEventManager();
 			while (eventMan->pollEvent(event)) {
 				const Button *button = 0;
 				switch (event.type) {
-				case OSystem::EVENT_QUIT:
+				case Common::EVENT_QUIT:
 					menuData.quit = true;
 					menuData.exit = true;
 					_flagsTable[611] = 1;
 					break;
-				case OSystem::EVENT_LBUTTONDOWN:
+				case Common::EVENT_LBUTTONDOWN:
 					button = menuData.findButtonUnderCursor(event.mouse.x, event.mouse.y);
 					if (button) {
 						handleMenuAction(&menuData, button->action);
 					}
 					break;
-				case OSystem::EVENT_KEYDOWN:
+				case Common::EVENT_KEYDOWN:
 					if (menuData.mode == kMenuSaveStateMode) {
 						if (event.kbd.keycode == 8) {
 							menuData.removeLastCharFromDescription(_saveLoadCurrentSlot);
@@ -402,10 +402,10 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 						}
 					}
 					break;
-				case OSystem::EVENT_WHEELUP:
+				case Common::EVENT_WHEELUP:
 					handleMenuAction(&menuData, kActionScrollUpSaves);
 					break;
-				case OSystem::EVENT_WHEELDOWN:
+				case Common::EVENT_WHEELDOWN:
 					handleMenuAction(&menuData, kActionScrollDownSaves);
 					break;
 				default:
@@ -536,15 +536,15 @@ int ToucheEngine::displayQuitDialog() {
 	int ret = 0;
 	bool quitLoop = false;
 	while (!quitLoop) {
-		OSystem::Event event;
+		Common::Event event;
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case OSystem::EVENT_QUIT:
+			case Common::EVENT_QUIT:
 				quitLoop = true;
 				ret = 1;
 				break;
-			case OSystem::EVENT_KEYDOWN:
+			case Common::EVENT_KEYDOWN:
 				quitLoop = true;
 				switch (_language) {
 				case Common::FR_FRA:

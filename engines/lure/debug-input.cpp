@@ -53,7 +53,7 @@ bool get_string(char *buffer, uint32 maxSize, bool isNumeric, uint16 x, uint16 y
 		}
 
 		if (e.pollEvent()) {
-			if (e.type() == OSystem::EVENT_KEYDOWN) {
+			if (e.type() == Common::EVENT_KEYDOWN) {
 				char ch = e.event().kbd.ascii;
 				uint16 keycode = e.event().kbd.keycode;
 

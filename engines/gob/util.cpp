@@ -140,32 +140,32 @@ int16 Util::getRandom(int16 max) {
 }
 
 void Util::processInput() {
-	OSystem::Event event;
+	Common::Event event;
 	Common::EventManager *eventMan = g_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case OSystem::EVENT_MOUSEMOVE:
+		case Common::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
 			break;
-		case OSystem::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONDOWN:
 			_mouseButtons |= 1;
 			break;
-		case OSystem::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
 			_mouseButtons |= 2;
 			break;
-		case OSystem::EVENT_LBUTTONUP:
+		case Common::EVENT_LBUTTONUP:
 			_mouseButtons &= ~1;
 			break;
-		case OSystem::EVENT_RBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
 			_mouseButtons &= ~2;
 			break;
-		case OSystem::EVENT_KEYDOWN:
+		case Common::EVENT_KEYDOWN:
 			addKeyToBuffer(event.kbd.keycode);
 			break;
-		case OSystem::EVENT_KEYUP:
+		case Common::EVENT_KEYUP:
 			break;
-		case OSystem::EVENT_QUIT:
+		case Common::EVENT_QUIT:
 			_vm->_quitRequested = true;
 			break;
 		default:

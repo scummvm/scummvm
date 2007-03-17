@@ -222,7 +222,7 @@ void SkyEngine::handleKey(void) {
 		return;
 	}
 
-	if (_keyFlags == OSystem::KBD_CTRL) {
+	if (_keyFlags == Common::KBD_CTRL) {
 		if (_keyPressed == 'f')
 			_fastMode ^= 1;
 		else if (_keyPressed == 'g')
@@ -512,7 +512,7 @@ void SkyEngine::gotTimerTick(void) {
 void SkyEngine::delay(int32 amount) {
 
 	Common::EventManager *eventMan = _system->getEventManager();
-	OSystem::Event event;
+	Common::Event event;
 
 	uint32 start = _system->getMillis();
 	_keyFlags = _keyPressed = 0;	//reset
@@ -523,28 +523,28 @@ void SkyEngine::delay(int32 amount) {
 	do {
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
+			case Common::EVENT_KEYDOWN:
 				_keyFlags = event.kbd.flags;
-				if (_keyFlags == OSystem::KBD_CTRL)
+				if (_keyFlags == Common::KBD_CTRL)
 					_keyPressed = event.kbd.keycode;
 				else
 					_keyPressed = (byte)event.kbd.ascii;
 				break;
-			case OSystem::EVENT_MOUSEMOVE:
+			case Common::EVENT_MOUSEMOVE:
 				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
 					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				break;
-			case OSystem::EVENT_LBUTTONDOWN:
+			case Common::EVENT_LBUTTONDOWN:
 				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
 					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				_skyMouse->buttonPressed(2);
 				break;
-			case OSystem::EVENT_RBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN:
 				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
 					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				_skyMouse->buttonPressed(1);
 				break;
-			case OSystem::EVENT_QUIT:
+			case Common::EVENT_QUIT:
 				_systemVars.quitGame = true;
 				break;
 			default:

@@ -38,15 +38,15 @@
 namespace Saga {
 
 int SagaEngine::processInput() {
-	OSystem::Event event;
+	Common::Event event;
 
 //	Point imousePt;
 
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case OSystem::EVENT_KEYDOWN:
-			if (event.kbd.flags == OSystem::KBD_CTRL) {
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == 'd')
 					_console->attach();
 			}
@@ -121,32 +121,32 @@ int SagaEngine::processInput() {
 				break;
 			}
 			break;
-		case OSystem::EVENT_LBUTTONUP:
+		case Common::EVENT_LBUTTONUP:
 			_leftMouseButtonPressed = false;
 			break;
-		case OSystem::EVENT_RBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
 			_rightMouseButtonPressed = false;
 			break;
-		case OSystem::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONDOWN:
 			_leftMouseButtonPressed = true;
 			_mousePos = event.mouse;
 			_interface->update(_mousePos, UPDATE_LEFTBUTTONCLICK);
 			break;
-		case OSystem::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
 			_rightMouseButtonPressed = true;
 			_mousePos = event.mouse;
 			_interface->update(_mousePos, UPDATE_RIGHTBUTTONCLICK);
 			break;
-		case OSystem::EVENT_WHEELUP:
+		case Common::EVENT_WHEELUP:
 			_interface->update(_mousePos, UPDATE_WHEELUP);
 			break;
-		case OSystem::EVENT_WHEELDOWN:
+		case Common::EVENT_WHEELDOWN:
 			_interface->update(_mousePos, UPDATE_WHEELDOWN);
 			break;
-		case OSystem::EVENT_MOUSEMOVE:
+		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
 			break;
-		case OSystem::EVENT_QUIT:
+		case Common::EVENT_QUIT:
 			shutDown();
 			break;
 		default:

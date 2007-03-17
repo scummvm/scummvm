@@ -70,7 +70,7 @@ public:
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 	virtual void setTimerCallback(TimerProc callback, int interval);
-	virtual bool pollEvent(Event &event);
+	virtual bool pollEvent(Common::Event &event);
 
 	virtual bool setSoundCallback(SoundProc proc, void *param);
 	virtual void clearSoundCallback();

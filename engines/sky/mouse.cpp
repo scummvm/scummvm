@@ -172,7 +172,7 @@ void Mouse::waitMouseNotPressed(int minDelay) {
 
 	bool mousePressed = true;
 	uint32 now = _system->getMillis();
-	OSystem::Event event;
+	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (mousePressed || _system->getMillis() < now + minDelay) {
 
@@ -187,7 +187,7 @@ void Mouse::waitMouseNotPressed(int minDelay) {
 
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
+			case Common::EVENT_KEYDOWN:
 				if (event.kbd.ascii == 27) {
 					minDelay = 0;
 					mousePressed = false;

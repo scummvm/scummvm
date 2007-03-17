@@ -302,11 +302,11 @@ void OSystem_DS::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, i
 	DS::setCursorIcon(buf, w, h, keycolor);
 }
 
-void OSystem_DS::addEvent(Event& e) {
+void OSystem_DS::addEvent(Common::Event& e) {
 	eventQueue[queuePos++] = e;
 }
 
-bool OSystem_DS::pollEvent(Event &event)
+bool OSystem_DS::pollEvent(Common::Event &event)
 {
 
 	if (lastPenFrame != DS::getMillis()) {
@@ -316,7 +316,7 @@ bool OSystem_DS::pollEvent(Event &event)
 			queuePos = 0;
 			// Bodge - this last event seems to be processed sometimes and not others.
 			// So we make it something harmless which won't cause any adverse effects.
-			event.type = EVENT_KEYUP;
+			event.type = Common::EVENT_KEYUP;
 			event.kbd.ascii = 0;
 			event.kbd.keycode = 0;
 			event.kbd.flags = 0;
@@ -331,7 +331,7 @@ bool OSystem_DS::pollEvent(Event &event)
 
 /*	if (lastPenFrame != DS::getMillis()) {
 		if ((eventNum == 0)) {
-			event.type = EVENT_MOUSEMOVE;
+			event.type = Common::EVENT_MOUSEMOVE;
 			event.mouse = Common::Point(DS::getPenX(), DS::getPenY());
 			eventNum = 1;
 			return true;
@@ -340,12 +340,12 @@ bool OSystem_DS::pollEvent(Event &event)
 			eventNum = 0;
 			lastPenFrame = DS::getMillis();
 			if (DS::getPenDown()) {	
-				event.type = EVENT_LBUTTONDOWN;
+				event.type = Common::EVENT_LBUTTONDOWN;
 				event.mouse = Common::Point(DS::getPenX(), DS::getPenY());
 				consolePrintf("Down %d, %d  ", event.mouse.x, event.mouse.y);
 				return true;
 			} else if (DS::getPenReleased()) {
-				event.type = EVENT_LBUTTONUP;
+				event.type = Common::EVENT_LBUTTONUP;
 				event.mouse = Common::Point(DS::getPenX(), DS::getPenY());
 				consolePrintf("Up %d, %d ", event.mouse.x, event.mouse.y);
 				return true;

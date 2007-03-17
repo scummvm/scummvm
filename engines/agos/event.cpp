@@ -299,7 +299,7 @@ void AGOSEngine::scrollEvent() {
 }
 
 void AGOSEngine::delay(uint amount) {
-	OSystem::Event event;
+	Common::Event event;
 
 	uint32 start = _system->getMillis();
 	uint32 cur = start;
@@ -335,10 +335,10 @@ void AGOSEngine::delay(uint amount) {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
+			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '0' && event.kbd.keycode <='9'
-					&& (event.kbd.flags == OSystem::KBD_ALT ||
-						event.kbd.flags == OSystem::KBD_CTRL)) {
+					&& (event.kbd.flags == Common::KBD_ALT ||
+						event.kbd.flags == Common::KBD_CTRL)) {
 					_saveLoadSlot = event.kbd.keycode - '0';
 
 					// There is no save slot 0
@@ -346,13 +346,13 @@ void AGOSEngine::delay(uint amount) {
 						_saveLoadSlot = 10;
 
 					sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
-					_saveLoadType = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
+					_saveLoadType = (event.kbd.flags == Common::KBD_ALT) ? 1 : 2;
 
 					// We should only allow a load or save when it was possible in original
 					// This stops load/save during copy protection, conversations and cut scenes
 					if (!_mouseHideCount && !_showPreposition)
 						quickLoadOrSave();
-				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
+				} else if (event.kbd.flags == Common::KBD_CTRL) {
 					if (event.kbd.keycode == 'a') {
 						GUI::Dialog *_aboutDialog;
 						_aboutDialog = new GUI::AboutDialog();
@@ -364,7 +364,7 @@ void AGOSEngine::delay(uint amount) {
 				} 
 
 				if (getGameType() == GType_PP) {
-					if (event.kbd.flags == OSystem::KBD_SHIFT)
+					if (event.kbd.flags == Common::KBD_SHIFT)
 						_variableArray[41] = 0;
 					else
 						_variableArray[41] = 1;
@@ -376,11 +376,11 @@ void AGOSEngine::delay(uint amount) {
 				else
 					_keyPressed = (byte)event.kbd.ascii;
 				break;
-			case OSystem::EVENT_MOUSEMOVE:
+			case Common::EVENT_MOUSEMOVE:
 				_sdlMouseX = event.mouse.x;
 				_sdlMouseY = event.mouse.y;
 				break;
-			case OSystem::EVENT_LBUTTONDOWN:
+			case Common::EVENT_LBUTTONDOWN:
 				if (getGameType() == GType_FF)
 					setBitFlag(89, true);
 				_leftButtonDown++;
@@ -391,19 +391,19 @@ void AGOSEngine::delay(uint amount) {
 				_sdlMouseY = event.mouse.y;
 #endif
 				break;
-			case OSystem::EVENT_LBUTTONUP:
+			case Common::EVENT_LBUTTONUP:
 				if (getGameType() == GType_FF)
 					setBitFlag(89, false);
 
 				_leftButton = 0;
 				_leftButtonCount = 0;
 				break;
-			case OSystem::EVENT_RBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN:
 				if (getGameType() == GType_FF)
 					setBitFlag(92, false);
 				_rightButtonDown++;
 				break;
-			case OSystem::EVENT_QUIT:
+			case Common::EVENT_QUIT:
 				shutdown();
 				return;
 			default:

@@ -661,16 +661,16 @@ void VQAMovie::play() {
 			if (elapsedTime >= (i * 1000) / _header.frameRate)
 				break;
 
-			OSystem::Event event;
+			Common::Event event;
 
 			Common::EventManager *eventMan = _system->getEventManager();
 			while (eventMan->pollEvent(event)) {
 				switch (event.type) {
-				case OSystem::EVENT_KEYDOWN:
+				case Common::EVENT_KEYDOWN:
 					if (event.kbd.ascii == 27)
 						return;
 					break;
-				case OSystem::EVENT_QUIT:
+				case Common::EVENT_QUIT:
 					_vm->quitGame();
 					return;
 				default:

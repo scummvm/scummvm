@@ -25,6 +25,7 @@
 
 #include <common/stdafx.h>
 #include <common/scummsys.h>
+#include "common/events.h"
 #include "dc.h"
 
 int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
@@ -84,9 +85,9 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
 	int key = pad->cond.kbd.key[p];
 	if(shift & 0x08) lmb++;
 	if(shift & 0x80) rmb++;
-	if(shift & 0x11) shiftFlags |= OSystem::KBD_CTRL;
-	if(shift & 0x44) shiftFlags |= OSystem::KBD_ALT;
-	if(shift & 0x22) shiftFlags |= OSystem::KBD_SHIFT;
+	if(shift & 0x11) shiftFlags |= Common::KBD_CTRL;
+	if(shift & 0x44) shiftFlags |= Common::KBD_ALT;
+	if(shift & 0x22) shiftFlags |= Common::KBD_SHIFT;
 	if(key >= 4 && key <= 0x1d)
 	  newkey = key+('a'-4);
 	else if(key >= 0x1e && key <= 0x26)
@@ -143,26 +144,26 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
 
   if(lmb && !lastlmb) {
     lastlmb = 1;
-    return -OSystem::EVENT_LBUTTONDOWN;
+    return -Common::EVENT_LBUTTONDOWN;
   } else if(lastlmb && !lmb) {
     lastlmb = 0;
-    return -OSystem::EVENT_LBUTTONUP;
+    return -Common::EVENT_LBUTTONUP;
   }
   if(rmb && !lastrmb) {
     lastrmb = 1;
-    return -OSystem::EVENT_RBUTTONDOWN;
+    return -Common::EVENT_RBUTTONDOWN;
   } else if(lastrmb && !rmb) {
     lastrmb = 0;
-    return -OSystem::EVENT_RBUTTONUP;
+    return -Common::EVENT_RBUTTONUP;
   }
 
   if(mouse_wheel != lastwheel)
     if(((int8)(mouse_wheel - lastwheel)) > 0) {
       lastwheel++;
-      return -OSystem::EVENT_WHEELDOWN;
+      return -Common::EVENT_WHEELDOWN;
     } else {
       --lastwheel;
-      return -OSystem::EVENT_WHEELUP;
+      return -Common::EVENT_WHEELUP;
     }
 
   if(newkey && inter && newkey != lastkey) {
@@ -187,7 +188,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
   return 0;
 }
 
-bool OSystem_Dreamcast::pollEvent(Event &event)
+bool OSystem_Dreamcast::pollEvent(Common::Event &event)
 {
   unsigned int t = Timer();
 
@@ -224,9 +225,9 @@ bool OSystem_Dreamcast::pollEvent(Event &event)
     bool processed = false, down = !(e&(1<<30));
     e &= ~(1<<30);
     if(e < 1000) {
-      event.type = (down? EVENT_KEYDOWN : EVENT_KEYUP);
+      event.type = (down? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP);
       event.kbd.keycode = e;
-      event.kbd.ascii = (e>='a' && e<='z' && (event.kbd.flags & KBD_SHIFT)?
+      event.kbd.ascii = (e>='a' && e<='z' && (event.kbd.flags & Common::KBD_SHIFT)?
 			  e &~ 0x20 : e);
       processed = true;
     } else if(down) {
@@ -236,7 +237,7 @@ bool OSystem_Dreamcast::pollEvent(Event &event)
     }
     return processed;
   } else if(_ms_cur_x != _ms_old_x || _ms_cur_y != _ms_old_y) {
-    event.type = EVENT_MOUSEMOVE;
+    event.type = Common::EVENT_MOUSEMOVE;
     _ms_old_x = _ms_cur_x;
     _ms_old_y = _ms_cur_y;
     return true;

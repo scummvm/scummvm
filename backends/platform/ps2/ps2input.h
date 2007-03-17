@@ -33,11 +33,11 @@ public:
 	Ps2Input(OSystem_PS2 *system, bool mouseLoaded, bool kbdLoaded);
 	~Ps2Input(void);
 	void newRange(uint16 minx, uint16 miny, uint16 maxx, uint16 maxy);
-	bool pollEvent(OSystem::Event *event);
+	bool pollEvent(Common::Event *event);
 	void warpTo(uint16 x, uint16 y);
 private:
 	int mapKey(int key, int mod);
-	bool getKeyEvent(OSystem::Event *event, uint16 buttonCode, bool down);
+	bool getKeyEvent(Common::Event *event, uint16 buttonCode, bool down);
 	OSystem_PS2 *_system;
 	Ps2Pad		*_pad;
 

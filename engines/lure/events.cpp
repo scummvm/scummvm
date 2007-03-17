@@ -50,21 +50,21 @@ Mouse::Mouse() {
 Mouse::~Mouse() {
 }
 
-void Mouse::handleEvent(OSystem::Event event) {
+void Mouse::handleEvent(Common::Event event) {
 	_x = (int16) event.mouse.x;
 	_y = (int16) event.mouse.y;
 
 	switch (event.type) {
-	case OSystem::EVENT_LBUTTONDOWN:
+	case Common::EVENT_LBUTTONDOWN:
 		_lButton = true;
 		break;
-	case OSystem::EVENT_LBUTTONUP:
+	case Common::EVENT_LBUTTONUP:
 		_lButton = false;
 		break;
-	case OSystem::EVENT_RBUTTONDOWN:
+	case Common::EVENT_RBUTTONDOWN:
 		_rButton = true;
 		break;
-	case OSystem::EVENT_RBUTTONUP:
+	case Common::EVENT_RBUTTONUP:
 		_rButton = false;
 		break;
 	default:
@@ -153,17 +153,17 @@ bool Events::pollEvent() {
 
 	// Handle keypress
 	switch (_event.type) {
-	case OSystem::EVENT_QUIT:
+	case Common::EVENT_QUIT:
 		quitFlag = true;
 		break;
 
-	case OSystem::EVENT_LBUTTONDOWN:
-	case OSystem::EVENT_LBUTTONUP:
-	case OSystem::EVENT_RBUTTONDOWN:
-	case OSystem::EVENT_RBUTTONUP:
-	case OSystem::EVENT_MOUSEMOVE:
-	case OSystem::EVENT_WHEELUP:
-	case OSystem::EVENT_WHEELDOWN:
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_RBUTTONUP:
+	case Common::EVENT_MOUSEMOVE:
+	case Common::EVENT_WHEELUP:
+	case Common::EVENT_WHEELDOWN:
 		Mouse::getReference().handleEvent(_event);
 		break;
 
@@ -178,10 +178,10 @@ void Events::waitForPress() {
 	bool keyButton = false;
 	while (!keyButton) {
 		if (pollEvent()) {
-			if (_event.type == OSystem::EVENT_QUIT) return;
-			else if (_event.type == OSystem::EVENT_KEYDOWN) keyButton = true;
-			else if ((_event.type == OSystem::EVENT_LBUTTONDOWN) ||
-				(_event.type == OSystem::EVENT_RBUTTONDOWN)) {
+			if (_event.type == Common::EVENT_QUIT) return;
+			else if (_event.type == Common::EVENT_KEYDOWN) keyButton = true;
+			else if ((_event.type == Common::EVENT_LBUTTONDOWN) ||
+				(_event.type == Common::EVENT_RBUTTONDOWN)) {
 				keyButton = true;
 				Mouse::getReference().waitForRelease();				
 			}

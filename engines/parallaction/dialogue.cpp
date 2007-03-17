@@ -430,14 +430,14 @@ void runDialogue(SpeakData *data) {
 							0
 						);
 
-						OSystem::Event e;
+						Common::Event e;
 
 						while (e.kbd.ascii != 0xD && passwordLen < MAX_PASSWORD_LENGTH) {
 
 							// FIXME: see comment for updateInput()
 							if (!g_system->getEventManager()->pollEvent(e)) continue;
-							if (e.type != OSystem::EVENT_KEYDOWN) continue;
-							if (e.type != OSystem::EVENT_QUIT) g_system->quit();
+							if (e.type != Common::EVENT_KEYDOWN) continue;
+							if (e.type != Common::EVENT_QUIT) g_system->quit();
 							if (!isdigit(e.kbd.ascii)) continue;
 
 							password[passwordLen] = e.kbd.ascii;

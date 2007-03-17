@@ -46,25 +46,25 @@ uint16 mouseUpdateStatus;
 uint16 dummyU16;
 
 void manageEvents(int count) {
-	OSystem::Event event;
+	Common::Event event;
 
 	Common::EventManager *eventMan = g_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case OSystem::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONDOWN:
 			mouseLeft = 1;
 			break;
-		case OSystem::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
 			mouseRight = 1;
 			break;
-		case OSystem::EVENT_MOUSEMOVE:
+		case Common::EVENT_MOUSEMOVE:
 			mouseData.X = event.mouse.x;
 			mouseData.Y = event.mouse.y;
 			break;
-		case OSystem::EVENT_QUIT:
+		case Common::EVENT_QUIT:
 			g_system->quit();
 			break;
-		case OSystem::EVENT_KEYDOWN:
+		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
 			case '\n':
 			case '\r':

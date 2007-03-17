@@ -25,6 +25,7 @@
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
+#include "common/events.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "base/main.h"
@@ -753,7 +754,7 @@ void OSystem_X11::delayMillis(uint msecs) {
 	usleep(msecs * 1000);
 }
 
-bool OSystem_X11::pollEvent(Event &scumm_event) {
+bool OSystem_X11::pollEvent(Common::Event &scumm_event) {
 	/* First, handle timers */
 	uint32 current_msecs = getMillis();
 
@@ -812,11 +813,11 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 				byte mode = 0;
 
 				if (event.xkey.state & 0x01)
-					mode |= KBD_SHIFT;
+					mode |= Common::KBD_SHIFT;
 				if (event.xkey.state & 0x04)
-					mode |= KBD_CTRL;
+					mode |= Common::KBD_CTRL;
 				if (event.xkey.state & 0x08)
-					mode |= KBD_ALT;
+					mode |= Common::KBD_ALT;
 				switch (event.xkey.keycode) {
 
 				case 9:								/* Escape on my PC */
@@ -852,7 +853,7 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 					}
 				}
 				if (keycode != -1) {
-					scumm_event.type = EVENT_KEYDOWN;
+					scumm_event.type = Common::EVENT_KEYDOWN;
 					scumm_event.kbd.keycode = keycode;
 					scumm_event.kbd.ascii = (ascii != -1 ? ascii : keycode);
 					scumm_event.kbd.flags = mode;
@@ -870,11 +871,11 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 				byte mode = 0;
 
 				if (event.xkey.state & 0x01)
-					mode |= KBD_SHIFT;
+					mode |= Common::KBD_SHIFT;
 				if (event.xkey.state & 0x04)
-					mode |= KBD_CTRL;
+					mode |= Common::KBD_CTRL;
 				if (event.xkey.state & 0x08)
-					mode |= KBD_ALT;
+					mode |= Common::KBD_ALT;
 				switch (event.xkey.keycode) {
 				case 132:							/* 'Q' on the iPAQ */
 					_report_presses = 1;
@@ -894,7 +895,7 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 					}
 				}
 				if (keycode != -1) {
-					scumm_event.type = EVENT_KEYUP;
+					scumm_event.type = Common::EVENT_KEYUP;
 					scumm_event.kbd.keycode = keycode;
 					scumm_event.kbd.ascii = (ascii != -1 ? ascii : keycode);
 					scumm_event.kbd.flags = mode;
@@ -907,12 +908,12 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 			if (_report_presses != 0) {
 				if (event.xbutton.button == 1) {
 					if (_fake_right_mouse == 0) {
-						scumm_event.type = EVENT_LBUTTONDOWN;
+						scumm_event.type = Common::EVENT_LBUTTONDOWN;
 					} else {
-						scumm_event.type = EVENT_RBUTTONDOWN;
+						scumm_event.type = Common::EVENT_RBUTTONDOWN;
 					}
 				} else if (event.xbutton.button == 3)
-					scumm_event.type = EVENT_RBUTTONDOWN;
+					scumm_event.type = Common::EVENT_RBUTTONDOWN;
 				scumm_event.mouse.x = event.xbutton.x - _scumm_x;
 				scumm_event.mouse.y = event.xbutton.y - _scumm_y;
 				return true;
@@ -923,12 +924,12 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 			if (_report_presses != 0) {
 				if (event.xbutton.button == 1) {
 					if (_fake_right_mouse == 0) {
-						scumm_event.type = EVENT_LBUTTONUP;
+						scumm_event.type = Common::EVENT_LBUTTONUP;
 					} else {
-						scumm_event.type = EVENT_RBUTTONUP;
+						scumm_event.type = Common::EVENT_RBUTTONUP;
 					}
 				} else if (event.xbutton.button == 3)
-					scumm_event.type = EVENT_RBUTTONUP;
+					scumm_event.type = Common::EVENT_RBUTTONUP;
 				scumm_event.mouse.x = event.xbutton.x - _scumm_x;
 				scumm_event.mouse.y = event.xbutton.y - _scumm_y;
 				return true;
@@ -936,7 +937,7 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 			break;
 
 		case MotionNotify:
-			scumm_event.type = EVENT_MOUSEMOVE;
+			scumm_event.type = Common::EVENT_MOUSEMOVE;
 			scumm_event.mouse.x = event.xmotion.x - _scumm_x;
 			scumm_event.mouse.y = event.xmotion.y - _scumm_y;
 			set_mouse_pos(scumm_event.mouse.x, scumm_event.mouse.y);

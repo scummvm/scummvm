@@ -62,7 +62,7 @@ class DefaultEventManager : public Common::EventManager {
 public:
 	DefaultEventManager(OSystem *boss);
 
-	virtual bool pollEvent(OSystem::Event &event);
+	virtual bool pollEvent(Common::Event &event);
 
 	virtual Common::Point getMousePos() const { return _mousePos; }
 	virtual int getButtonState() const { return _buttonState; }

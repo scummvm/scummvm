@@ -55,7 +55,7 @@ private:
 
 	void extras_palette(uint8 index, uint8 r, uint8 g, uint8 b);
 	void calc_rect(Boolean fullscreen);
-	bool check_event(Event &event, EventPtr ev);
+	bool check_event(Common::Event &event, EventPtr ev);
 	void draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color = 0);
 
 public:

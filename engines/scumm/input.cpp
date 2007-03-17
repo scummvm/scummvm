@@ -55,16 +55,16 @@ enum MouseButtonStatus {
 };
 
 void ScummEngine::parseEvents() {
-	OSystem::Event event;
+	Common::Event event;
 
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 
 		switch (event.type) {
-		case OSystem::EVENT_KEYDOWN:
+		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode >= '0' && event.kbd.keycode <= '9'
-				&& (event.kbd.flags == OSystem::KBD_ALT ||
-					event.kbd.flags == OSystem::KBD_CTRL)) {
+				&& (event.kbd.flags == Common::KBD_ALT ||
+					event.kbd.flags == Common::KBD_CTRL)) {
 				_saveLoadSlot = event.kbd.keycode - '0';
 
 				//  don't overwrite autosave (slot 0)
@@ -72,9 +72,9 @@ void ScummEngine::parseEvents() {
 					_saveLoadSlot = 10;
 
 				sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
-				_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
+				_saveLoadFlag = (event.kbd.flags == Common::KBD_ALT) ? 1 : 2;
 				_saveTemporaryState = false;
-			} else if (event.kbd.flags == OSystem::KBD_CTRL) {
+			} else if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == 'f')
 					_fastMode ^= 1;
 				else if (event.kbd.keycode == 'g')
@@ -85,7 +85,7 @@ void ScummEngine::parseEvents() {
 					_res->resourceStats();
 				else
 					_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
-			} else if (event.kbd.flags & OSystem::KBD_ALT) {
+			} else if (event.kbd.flags & Common::KBD_ALT) {
 				// The result must be 273 for Alt-W
 				// because that's what MI2 looks for in
 				// its "instant win" cheat.
@@ -126,10 +126,10 @@ void ScummEngine::parseEvents() {
 				if (event.kbd.ascii == 274) // Down
 					_keyState |= 8;
 
-				if (event.kbd.flags == OSystem::KBD_SHIFT)
+				if (event.kbd.flags == Common::KBD_SHIFT)
 					_keyState |= 16;
 
-				if (event.kbd.flags == OSystem::KBD_CTRL)
+				if (event.kbd.flags == Common::KBD_CTRL)
 					_keyState |= 32;
 
 				VAR(VAR_KEY_STATE) = _keyState;
@@ -141,8 +141,8 @@ void ScummEngine::parseEvents() {
 				_keyDownMap[_keyPressed] = true;
 			break;
 
-		case OSystem::EVENT_KEYUP:
-			// FIXME: for some reason OSystem::KBD_ALT is set sometimes
+		case Common::EVENT_KEYUP:
+			// FIXME: for some reason Common::KBD_ALT is set sometimes
 			// possible to a bug in sdl-common.cpp
 			if (event.kbd.ascii >= 512)
 				debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
@@ -153,12 +153,12 @@ void ScummEngine::parseEvents() {
 
 		// We update the mouse position whenever the mouse moves or a click occurs.
 		// The latter is done to accomodate systems with a touchpad / pen controller.
-		case OSystem::EVENT_LBUTTONDOWN:
-		case OSystem::EVENT_RBUTTONDOWN:
-		case OSystem::EVENT_MOUSEMOVE:
-			if (event.type == OSystem::EVENT_LBUTTONDOWN)
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
+		case Common::EVENT_MOUSEMOVE:
+			if (event.type == Common::EVENT_LBUTTONDOWN)
 				_leftBtnPressed |= msClicked|msDown;
-			else if (event.type == OSystem::EVENT_RBUTTONDOWN)
+			else if (event.type == Common::EVENT_RBUTTONDOWN)
 				_rightBtnPressed |= msClicked|msDown;
 			_mouse.x = event.mouse.x;
 			_mouse.y = event.mouse.y;
@@ -169,11 +169,11 @@ void ScummEngine::parseEvents() {
 				_mouse.y = _mouse.y * 4 / 7;
 			}
 			break;
-		case OSystem::EVENT_LBUTTONUP:
+		case Common::EVENT_LBUTTONUP:
 			_leftBtnPressed &= ~msDown;
 			break;
 
-		case OSystem::EVENT_RBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
 			_rightBtnPressed &= ~msDown;
 			break;
 
@@ -182,15 +182,15 @@ void ScummEngine::parseEvents() {
 		// as nothing else uses the wheel don't bother
 		// checking the gameid. Values are taken from script-14.
 
-		case OSystem::EVENT_WHEELDOWN:
+		case Common::EVENT_WHEELDOWN:
 			_keyPressed = 55;
 			break;
 
-		case OSystem::EVENT_WHEELUP:
+		case Common::EVENT_WHEELUP:
 			_keyPressed = 54;
 			break;
 
-		case OSystem::EVENT_QUIT:
+		case Common::EVENT_QUIT:
 			if (ConfMan.getBool("confirm_exit"))
 				confirmExitDialog();
 			else

@@ -65,23 +65,23 @@ void Journal::use() {
 
 	_quitMode = QM_LOOP;
 	while (_quitMode == QM_LOOP) {
-		OSystem::Event event;
+		Common::Event event;
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
+			case Common::EVENT_KEYDOWN:
 				handleKeyDown(event.kbd.ascii, event.kbd.keycode);
 				break;
-			case OSystem::EVENT_LBUTTONDOWN:
+			case Common::EVENT_LBUTTONDOWN:
 				handleMouseDown(event.mouse.x, event.mouse.y);
 				break;
-			case OSystem::EVENT_WHEELUP:
+			case Common::EVENT_WHEELUP:
 				handleMouseWheel(-1);
 				break;
-			case OSystem::EVENT_WHEELDOWN:
+			case Common::EVENT_WHEELDOWN:
 				handleMouseWheel(1);
 				break;
-			case OSystem::EVENT_QUIT:
+			case Common::EVENT_QUIT:
 				_system->quit();
 				break;
 			default:

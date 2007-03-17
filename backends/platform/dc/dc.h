@@ -114,7 +114,7 @@ class OSystem_Dreamcast : public OSystem {
 
   // Get the next event.
   // Returns true if an event was retrieved.
-  bool pollEvent(Event &event);
+  bool pollEvent(Common::Event &event);
 
   // Determine the output sample rate. Audio data provided by the sound
   // callback will be played using this rate.

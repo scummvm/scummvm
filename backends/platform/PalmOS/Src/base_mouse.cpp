@@ -42,7 +42,7 @@ bool OSystem_PalmBase::showMouse(bool visible) {
 	return last;
 }
 
-void OSystem_PalmBase::simulate_mouse(Event &event, Int8 iHoriz, Int8 iVert, Coord *xr, Coord *yr) {
+void OSystem_PalmBase::simulate_mouse(Common::Event &event, Int8 iHoriz, Int8 iVert, Coord *xr, Coord *yr) {
 	Int16 x = _mouseCurState.x;
 	Int16 y = _mouseCurState.y;
 	Int16 slow, fact;

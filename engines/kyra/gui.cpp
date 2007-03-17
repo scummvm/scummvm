@@ -800,7 +800,7 @@ void KyraEngine::calcCoords(Menu &menu) {
 }
 
 void KyraEngine::gui_getInput() {
-	OSystem::Event event;
+	Common::Event event;
 	static uint32 lastScreenUpdate = 0;
 	uint32 now = _system->getMillis();
 
@@ -808,16 +808,16 @@ void KyraEngine::gui_getInput() {
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case OSystem::EVENT_QUIT:
+		case Common::EVENT_QUIT:
 			quitGame();
 			break;
-		case OSystem::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONDOWN:
 			_mousePressFlag = true;
 			break;
-		case OSystem::EVENT_LBUTTONUP:
+		case Common::EVENT_LBUTTONUP:
 			_mousePressFlag = false;
 			break;
-		case OSystem::EVENT_MOUSEMOVE:
+		case Common::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
 			if (_flags.useHiResOverlay) {
@@ -827,13 +827,13 @@ void KyraEngine::gui_getInput() {
 			_system->updateScreen();
 			lastScreenUpdate = now;
 			break;
-		case OSystem::EVENT_WHEELUP:
+		case Common::EVENT_WHEELUP:
 			_mouseWheel = -1;
 			break;
-		case OSystem::EVENT_WHEELDOWN:
+		case Common::EVENT_WHEELDOWN:
 			_mouseWheel = 1;
 			break;
-		case OSystem::EVENT_KEYDOWN:
+		case Common::EVENT_KEYDOWN:
 			_keyPressed = event.kbd.ascii;
 			break;
 		default:
@@ -1471,15 +1471,15 @@ void KyraEngine::gui_updateMainMenuAnimation() {
 }
 
 bool KyraEngine::gui_mainMenuGetInput() {
-	OSystem::Event event;
+	Common::Event event;
 
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case OSystem::EVENT_QUIT:
+		case Common::EVENT_QUIT:
 			quitGame();
 			break;
-		case OSystem::EVENT_MOUSEMOVE:
+		case Common::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
 			if (_flags.useHiResOverlay) {
@@ -1487,7 +1487,7 @@ bool KyraEngine::gui_mainMenuGetInput() {
 				_mouseY >>= 1;
 			}
 			break;
-		case OSystem::EVENT_LBUTTONUP:
+		case Common::EVENT_LBUTTONUP:
 			return true;
 		default:
 			break;

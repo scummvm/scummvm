@@ -270,10 +270,10 @@ void AboutDialog::handleTickle() {
 		int modifiers = g_system->getEventManager()->getModifierState();
 
 		// Scroll faster when shift is pressed
-		if (modifiers & OSystem::KBD_SHIFT)
+		if (modifiers & Common::KBD_SHIFT)
 			scrollOffset *= 4;
 		// Reverse scrolling when alt is pressed
-		if (modifiers & OSystem::KBD_ALT)
+		if (modifiers & Common::KBD_ALT)
 			scrollOffset *= -1;
 		_scrollPos += scrollOffset;
 		_scrollTime = t;

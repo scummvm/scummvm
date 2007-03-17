@@ -123,7 +123,7 @@ public:
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1);
 
-	virtual bool pollEvent(Event &event);
+	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 

@@ -242,11 +242,11 @@ void NewGui::runLoop() {
 		_theme->drawAll();
 		_system->updateScreen();
 
-		OSystem::Event event;
+		Common::Event event;
 		uint32 time = _system->getMillis();
 
 		while (eventMan->pollEvent(event)) {
-			if (activeDialog != getTopDialog() && event.type != OSystem::EVENT_QUIT && event.type != OSystem::EVENT_SCREEN_CHANGED)
+			if (activeDialog != getTopDialog() && event.type != Common::EVENT_QUIT && event.type != Common::EVENT_SCREEN_CHANGED)
 				continue;
 
 			Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
@@ -266,19 +266,19 @@ void NewGui::runLoop() {
 			}
 			
 			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
+			case Common::EVENT_KEYDOWN:
 				activeDialog->handleKeyDown(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
 				break;
-			case OSystem::EVENT_KEYUP:
+			case Common::EVENT_KEYUP:
 				activeDialog->handleKeyUp(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
 				break;
-			case OSystem::EVENT_MOUSEMOVE:
+			case Common::EVENT_MOUSEMOVE:
 				activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
 				break;
 			// We don't distinguish between mousebuttons (for now at least)
-			case OSystem::EVENT_LBUTTONDOWN:
-			case OSystem::EVENT_RBUTTONDOWN:
-				button = (event.type == OSystem::EVENT_LBUTTONDOWN ? 1 : 2);
+			case Common::EVENT_LBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN:
+				button = (event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
 				if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
 							&& ABS(_lastClick.x - event.mouse.x) < 3
 							&& ABS(_lastClick.y - event.mouse.y) < 3) {
@@ -291,21 +291,21 @@ void NewGui::runLoop() {
 				_lastClick.time = time;
 				activeDialog->handleMouseDown(mouse.x, mouse.y, button, _lastClick.count);
 				break;
-			case OSystem::EVENT_LBUTTONUP:
-			case OSystem::EVENT_RBUTTONUP:
-				button = (event.type == OSystem::EVENT_LBUTTONUP ? 1 : 2);
+			case Common::EVENT_LBUTTONUP:
+			case Common::EVENT_RBUTTONUP:
+				button = (event.type == Common::EVENT_LBUTTONUP ? 1 : 2);
 				activeDialog->handleMouseUp(mouse.x, mouse.y, button, _lastClick.count);
 				break;
-			case OSystem::EVENT_WHEELUP:
+			case Common::EVENT_WHEELUP:
 				activeDialog->handleMouseWheel(mouse.x, mouse.y, -1);
 				break;
-			case OSystem::EVENT_WHEELDOWN:
+			case Common::EVENT_WHEELDOWN:
 				activeDialog->handleMouseWheel(mouse.x, mouse.y, 1);
 				break;
-			case OSystem::EVENT_QUIT:
+			case Common::EVENT_QUIT:
 				_system->quit();
 				return;
-			case OSystem::EVENT_SCREEN_CHANGED:
+			case Common::EVENT_SCREEN_CHANGED:
 				screenChange();
 				break;
 			}

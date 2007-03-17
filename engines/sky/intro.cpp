@@ -900,7 +900,7 @@ void Intro::restoreScreen(void) {
 bool Intro::escDelay(uint32 msecs) {
 
 	Common::EventManager *eventMan = _system->getEventManager();
-	OSystem::Event event;
+	Common::Event event;
 	if (_relDelay == 0) // first call, init with system time
 		_relDelay = (int32)_system->getMillis();
 
@@ -909,10 +909,10 @@ bool Intro::escDelay(uint32 msecs) {
 	int32 nDelay = 0;
 	do {
 		while (eventMan->pollEvent(event)) {
-			if (event.type == OSystem::EVENT_KEYDOWN) {
+			if (event.type == Common::EVENT_KEYDOWN) {
 				if (event.kbd.keycode == 27)
 					return false;
-			} else if (event.type == OSystem::EVENT_QUIT) {
+			} else if (event.type == Common::EVENT_QUIT) {
 				_quitProg = true;
 				return false;
 			}

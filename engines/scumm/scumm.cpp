@@ -849,12 +849,12 @@ int ScummEngine_vCUPhe::go() {
 }
 
 void ScummEngine_vCUPhe::parseEvents() {
-	OSystem::Event event;
+	Common::Event event;
 	
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case OSystem::EVENT_QUIT:
+		case Common::EVENT_QUIT:
 			_quit = true;
 			break;
 

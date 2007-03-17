@@ -38,7 +38,7 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	_currentKeyDown.keycode = 0;
 }
 
-bool DefaultEventManager::pollEvent(OSystem::Event &event) {
+bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = _boss->getMillis();
 	bool result;
 	
@@ -47,7 +47,7 @@ bool DefaultEventManager::pollEvent(OSystem::Event &event) {
 	if (result) {
 		event.synthetic = false;
 		switch (event.type) {
-		case OSystem::EVENT_KEYDOWN:
+		case Common::EVENT_KEYDOWN:
 			_modifierState = event.kbd.flags;
 
 			// init continuous event stream
@@ -59,7 +59,7 @@ bool DefaultEventManager::pollEvent(OSystem::Event &event) {
 			_keyRepeatTime = time + kKeyRepeatInitialDelay;
 #endif
 			break;
-		case OSystem::EVENT_KEYUP:
+		case Common::EVENT_KEYUP:
 			_modifierState = event.kbd.flags;
 			if (event.kbd.keycode == _currentKeyDown.keycode) {
 				// Only stop firing events if it's the current key
@@ -67,29 +67,29 @@ bool DefaultEventManager::pollEvent(OSystem::Event &event) {
 			}
 			break;
 
-		case OSystem::EVENT_MOUSEMOVE:
+		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
 			break;
 
-		case OSystem::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONDOWN:
 			_mousePos = event.mouse;
 			_buttonState |= LBUTTON;
 			break;
-		case OSystem::EVENT_LBUTTONUP:
+		case Common::EVENT_LBUTTONUP:
 			_mousePos = event.mouse;
 			_buttonState &= ~LBUTTON;
 			break;
 
-		case OSystem::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
 			_mousePos = event.mouse;
 			_buttonState |= RBUTTON;
 			break;
-		case OSystem::EVENT_RBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
 			_mousePos = event.mouse;
 			_buttonState &= ~RBUTTON;
 			break;
 
-		case OSystem::EVENT_QUIT:
+		case Common::EVENT_QUIT:
 			_shouldQuit = true;
 			break;
 
@@ -100,7 +100,7 @@ bool DefaultEventManager::pollEvent(OSystem::Event &event) {
 		// Check if event should be sent again (keydown)
 		if (_currentKeyDown.keycode != 0 && _keyRepeatTime < time) {
 			// fire event
-			event.type = OSystem::EVENT_KEYDOWN;
+			event.type = Common::EVENT_KEYDOWN;
 			event.synthetic = true;
 			event.kbd.ascii = _currentKeyDown.ascii;
 			event.kbd.keycode = _currentKeyDown.keycode;

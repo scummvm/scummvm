@@ -480,7 +480,7 @@ void OSystem_GP32::handleKbdMouse() {
 	}
 }
 
-void OSystem_GP32::fillMouseEvent(Event &event, int x, int y) {
+void OSystem_GP32::fillMouseEvent(Common::Event &event, int x, int y) {
 	event.mouse.x = x;
 	event.mouse.y = y;
 
@@ -493,7 +493,7 @@ void OSystem_GP32::fillMouseEvent(Event &event, int x, int y) {
 	//	event.mouse.y = aspect2Real(event.mouse.y);
 }
 
-bool OSystem_GP32::pollEvent(Event &event) {
+bool OSystem_GP32::pollEvent(Common::Event &event) {
 	//NP("OSys::pollEvent()");
 	GP32BtnEvent ev;
 
@@ -521,7 +521,7 @@ bool OSystem_GP32::pollEvent(Event &event) {
 			_km.y_down_count = 1;
 		}
 		if (ev.button == GPC_VK_START) {	// START = menu/enter
-			event.type = EVENT_KEYDOWN;
+			event.type = Common::EVENT_KEYDOWN;
 			if (_overlayVisible)
 				event.kbd.keycode = event.kbd.ascii = 13;
 			else
@@ -529,27 +529,27 @@ bool OSystem_GP32::pollEvent(Event &event) {
 			return true;
 		}
 		if (ev.button == GPC_VK_SELECT) {	// SELECT = pause
-			event.type = EVENT_KEYDOWN;
+			event.type = Common::EVENT_KEYDOWN;
 			event.kbd.keycode = event.kbd.ascii = 32;
 			return true;
 		}
 		if (ev.button == GPC_VK_FL) {
-			event.type = EVENT_KEYDOWN;
+			event.type = Common::EVENT_KEYDOWN;
 			event.kbd.keycode = event.kbd.ascii = '0';
 			return true;
 		}
 		if (ev.button == GPC_VK_FR) { // R = ESC
-			event.type = EVENT_KEYDOWN;
+			event.type = Common::EVENT_KEYDOWN;
 			event.kbd.keycode = event.kbd.ascii = 27;
 			return true;
 		}
 		if (ev.button == GPC_VK_FA) {
-			event.type = EVENT_LBUTTONDOWN;
+			event.type = Common::EVENT_LBUTTONDOWN;
 			fillMouseEvent(event, _km.x, _km.y);
 			return true;
 		}
 		if (ev.button == GPC_VK_FB) {
-			event.type = EVENT_RBUTTONDOWN;
+			event.type = Common::EVENT_RBUTTONDOWN;
 			fillMouseEvent(event, _km.x, _km.y);
 			return true;
 		}
@@ -560,7 +560,7 @@ bool OSystem_GP32::pollEvent(Event &event) {
 				_km.x_vel = 0;
 				_km.x_down_count = 0;
 			}
-			event.type = EVENT_MOUSEMOVE;
+			event.type = Common::EVENT_MOUSEMOVE;
 			fillMouseEvent(event, _km.x, _km.y);
 			return true;
 		}
@@ -569,7 +569,7 @@ bool OSystem_GP32::pollEvent(Event &event) {
 				_km.x_vel = 0;
 				_km.x_down_count = 0;
 			}
-			event.type = EVENT_MOUSEMOVE;
+			event.type = Common::EVENT_MOUSEMOVE;
 			fillMouseEvent(event, _km.x, _km.y);
 			return true;
 		}
@@ -578,7 +578,7 @@ bool OSystem_GP32::pollEvent(Event &event) {
 				_km.y_vel = 0;
 				_km.y_down_count = 0;
 			}
-			event.type = EVENT_MOUSEMOVE;
+			event.type = Common::EVENT_MOUSEMOVE;
 			fillMouseEvent(event, _km.x, _km.y);
 			return true;
 		}
@@ -587,13 +587,13 @@ bool OSystem_GP32::pollEvent(Event &event) {
 				_km.y_vel = 0;
 				_km.y_down_count = 0;
 			}
-			event.type = EVENT_MOUSEMOVE;
+			event.type = Common::EVENT_MOUSEMOVE;
 			fillMouseEvent(event, _km.x, _km.y);
 			return true;
 		}
 
 		if (ev.button == GPC_VK_START) {
-			event.type = EVENT_KEYUP;
+			event.type = Common::EVENT_KEYUP;
 			if (_overlayVisible)
 				event.kbd.keycode = event.kbd.ascii = 13;
 			else
@@ -601,40 +601,40 @@ bool OSystem_GP32::pollEvent(Event &event) {
 			return true;
 		}
 		if (ev.button == GPC_VK_SELECT) {
-			event.type = EVENT_KEYUP;
+			event.type = Common::EVENT_KEYUP;
 			event.kbd.keycode = event.kbd.ascii = 32;
 			return true;
 		}
 		if (ev.button == GPC_VK_FL) {
-			event.type = EVENT_KEYUP;
+			event.type = Common::EVENT_KEYUP;
 			event.kbd.keycode = event.kbd.ascii = '0';
 			return true;
 		}
 		if (ev.button == GPC_VK_FR) {
-			event.type = EVENT_KEYUP;
+			event.type = Common::EVENT_KEYUP;
 			event.kbd.keycode = event.kbd.ascii = 27;
 			return true;
 		}
 		if (ev.button == GPC_VK_FA) {
-			event.type = EVENT_LBUTTONUP;
+			event.type = Common::EVENT_LBUTTONUP;
 			fillMouseEvent(event, _km.x, _km.y);
 			return true;
 		}
 		if (ev.button == GPC_VK_FB) {
-			event.type = EVENT_RBUTTONUP;
+			event.type = Common::EVENT_RBUTTONUP;
 			fillMouseEvent(event, _km.x, _km.y);
 			return true;
 		}
 		break;
 	default:
-		error("Unknown Event!");
+		error("Unknown Common::Event!");
 	}
 
 	if (gp_getButtonPressed(GPC_VK_LEFT) ||
 		gp_getButtonPressed(GPC_VK_RIGHT) ||
 		gp_getButtonPressed(GPC_VK_UP) ||
 		gp_getButtonPressed(GPC_VK_DOWN)) {
-		event.type = EVENT_MOUSEMOVE;
+		event.type = Common::EVENT_MOUSEMOVE;
 		fillMouseEvent(event, _km.x, _km.y);
 		return true;
 	}

@@ -1325,7 +1325,7 @@ void OSystem_WINCE3::hotswapGFXMode() {
 	// Blit everything to the screen
 	internUpdateScreen();
 
-	// Make sure that an EVENT_SCREEN_CHANGED gets sent later
+	// Make sure that an Common::EVENT_SCREEN_CHANGED gets sent later
 	_modeChanged = true;
 }
 
@@ -1970,7 +1970,7 @@ void OSystem_WINCE3::drawMouse() {
 		internDrawMouse();		
 }
 
-void OSystem_WINCE3::fillMouseEvent(Event &event, int x, int y) {
+void OSystem_WINCE3::fillMouseEvent(Common::Event &event, int x, int y) {
 	event.mouse.x = x;
 	event.mouse.y = y;
 
@@ -2060,22 +2060,22 @@ void OSystem_WINCE3::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 // FIXME
 // See if some SDL mapping can be useful for HPCs
 
-bool OSystem_WINCE3::pollEvent(Event &event) {
+bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 	SDL_Event ev;
 	byte b = 0;
-	Event temp_event;
+	Common::Event temp_event;
 	DWORD currentTime;
 	bool keyEvent = false;
 
-	memset(&temp_event, 0, sizeof(Event));
-	memset(&event, 0, sizeof(Event));
+	memset(&temp_event, 0, sizeof(Common::Event));
+	memset(&event, 0, sizeof(Common::Event));
 
 	handleKbdMouse();
 
-	// If the screen mode changed, send an EVENT_SCREEN_CHANGED
+	// If the screen mode changed, send an Common::EVENT_SCREEN_CHANGED
 	if (_modeChanged) {
 		_modeChanged = false;
-		event.type = EVENT_SCREEN_CHANGED;
+		event.type = Common::EVENT_SCREEN_CHANGED;
 		_screenChangeCount++;
 		return true;
 	}
@@ -2098,7 +2098,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 					return true;
 			}
 
-			event.type = EVENT_KEYDOWN;
+			event.type = Common::EVENT_KEYDOWN;
 			event.kbd.keycode = ev.key.keysym.sym;
 			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
@@ -2117,7 +2117,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 					return true;
 			}
 
-			event.type = EVENT_KEYUP;
+			event.type = Common::EVENT_KEYUP;
 			event.kbd.keycode = ev.key.keysym.sym;
 			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
@@ -2127,16 +2127,16 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			return true;
 
 		case SDL_MOUSEMOTION:
-			event.type = EVENT_MOUSEMOVE;
+			event.type = Common::EVENT_MOUSEMOVE;
 			fillMouseEvent(event, ev.motion.x, ev.motion.y);
 			setMousePos(event.mouse.x, event.mouse.y);
 			return true;
 
 		case SDL_MOUSEBUTTONDOWN:
 			if (ev.button.button == SDL_BUTTON_LEFT)
-				temp_event.type = EVENT_LBUTTONDOWN;
+				temp_event.type = Common::EVENT_LBUTTONDOWN;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				temp_event.type = EVENT_RBUTTONDOWN;
+				temp_event.type = Common::EVENT_RBUTTONDOWN;
 			else
 				break;
 
@@ -2159,7 +2159,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 						if (temp_event.mouse.y <= 20 && _panelInitialized) {		// panel double tap?
 							swap_panel_visibility();
 						} else {		// simulate right click
-							temp_event.type = EVENT_RBUTTONDOWN;
+							temp_event.type = Common::EVENT_RBUTTONDOWN;
 							_rbutton = true;
 						}
 					}
@@ -2183,21 +2183,21 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 				}
 			} else {
 				if (!_freeLook)
-					memcpy(&event, &temp_event, sizeof(Event));
+					memcpy(&event, &temp_event, sizeof(Common::Event));
 			}
 
 			return true;
 
 		case SDL_MOUSEBUTTONUP:
 			if (ev.button.button == SDL_BUTTON_LEFT)
-				temp_event.type = EVENT_LBUTTONUP;
+				temp_event.type = Common::EVENT_LBUTTONUP;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				temp_event.type = EVENT_RBUTTONUP;
+				temp_event.type = Common::EVENT_RBUTTONUP;
 			else
 				break;
 
 			if (_rbutton) {
-				temp_event.type = EVENT_RBUTTONUP;
+				temp_event.type = Common::EVENT_RBUTTONUP;
 				_rbutton = false;
 			}
 
@@ -2208,7 +2208,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 					internUpdateScreen();
 			} else {
 				if (!_freeLook)
-					memcpy(&event, &temp_event, sizeof(Event));
+					memcpy(&event, &temp_event, sizeof(Common::Event));
 			}
 
 			return true;
@@ -2218,7 +2218,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			break;
 
 		case SDL_QUIT:
-			event.type = EVENT_QUIT;
+			event.type = Common::EVENT_QUIT;
 			return true;
 		}
 	}

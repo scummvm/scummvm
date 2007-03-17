@@ -104,9 +104,9 @@ protected:
 	// This is an implementation by the remapKey function
 	// @param SDL_Event to remap
 	// @param ScumVM event to modify if special result is requested
-	// @return true if Event has a valid return status
+	// @return true if Common::Event has a valid return status
 	//
-	bool remapKey(SDL_Event &ev, Event &event);
+	bool remapKey(SDL_Event &ev, Common::Event &event);
 
 	void setWindowCaption(const char *caption);
 

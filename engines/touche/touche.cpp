@@ -275,14 +275,14 @@ void ToucheEngine::mainLoop() {
 }
 
 void ToucheEngine::processEvents(bool handleKeyEvents) {
-	OSystem::Event event;
+	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case OSystem::EVENT_QUIT:
+		case Common::EVENT_QUIT:
 			_flagsTable[611] = 1;
 			break;
-		case OSystem::EVENT_KEYDOWN:
+		case Common::EVENT_KEYDOWN:
 			if (!handleKeyEvents) {
 				break;
 			}
@@ -300,7 +300,7 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 			} else if (event.kbd.keycode == 291) { // F10
 				_fastWalkMode = false;
 			}
-			if (event.kbd.flags == OSystem::KBD_CTRL) {
+			if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == 'd') {
 					// enable debugging stuff ?
 					_flagsTable[777] = 1;
@@ -319,25 +319,25 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 				}
 			}
 			break;
-		case OSystem::EVENT_MOUSEMOVE:
+		case Common::EVENT_MOUSEMOVE:
 			_inp_mousePos.x = event.mouse.x;
 			_inp_mousePos.y = event.mouse.y;
 			break;
-		case OSystem::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONDOWN:
 			_inp_mousePos.x = event.mouse.x;
 			_inp_mousePos.y = event.mouse.y;
 			_inp_leftMouseButtonPressed = true;
 			break;
-		case OSystem::EVENT_LBUTTONUP:
+		case Common::EVENT_LBUTTONUP:
 			_inp_mousePos.x = event.mouse.x;
 			_inp_mousePos.y = event.mouse.y;
 			break;
-		case OSystem::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
 			_inp_mousePos.x = event.mouse.x;
 			_inp_mousePos.y = event.mouse.y;
 			_inp_rightMouseButtonPressed = true;
 			break;
-		case OSystem::EVENT_RBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
 			_inp_mousePos.x = event.mouse.x;
 			_inp_mousePos.y = event.mouse.y;
 			_inp_rightMouseButtonPressed = false;

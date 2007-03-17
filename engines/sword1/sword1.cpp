@@ -702,45 +702,45 @@ uint8 SwordEngine::mainLoop(void) {
 
 void SwordEngine::delay(int32 amount) { //copied and mutilated from sky.cpp
 
-	OSystem::Event event;
+	Common::Event event;
 	uint32 start = _system->getMillis();
 
 	do {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
+			case Common::EVENT_KEYDOWN:
 				// Make sure backspace works right (this fixes a small issue on OS X)
 				if (event.kbd.keycode == 8)
 					_keyPressed = 8;
 				else
 					_keyPressed = (uint8)event.kbd.ascii;
 				break;
-			case OSystem::EVENT_MOUSEMOVE:
+			case Common::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
 				break;
-			case OSystem::EVENT_LBUTTONDOWN:
+			case Common::EVENT_LBUTTONDOWN:
 				_mouseState |= BS1L_BUTTON_DOWN;
 #if defined(_WIN32_WCE) || defined(PALMOS_MODE)
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
 #endif
 				break;
-			case OSystem::EVENT_RBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN:
 				_mouseState |= BS1R_BUTTON_DOWN;
 #if defined(_WIN32_WCE) || defined(PALMOS_MODE)
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
 #endif
 				break;
-			case OSystem::EVENT_LBUTTONUP:
+			case Common::EVENT_LBUTTONUP:
 				_mouseState |= BS1L_BUTTON_UP;
 				break;
-			case OSystem::EVENT_RBUTTONUP:
+			case Common::EVENT_RBUTTONUP:
 				_mouseState |= BS1R_BUTTON_UP;
 				break;
-			case OSystem::EVENT_QUIT:
+			case Common::EVENT_QUIT:
 				_systemVars.engineQuit = true;
 				break;
 			default:

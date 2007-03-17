@@ -40,7 +40,7 @@ void KyraEngine::waitForChatToFinish(int vocFile, int16 chatDuration, const char
 	bool runLoop = true;
 	bool drawText = textEnabled();
 	uint8 currPage;
-	OSystem::Event event;
+	Common::Event event;
 
 	//while (towns_isEscKeyPressed() )
 		//towns_getKey();
@@ -121,15 +121,15 @@ void KyraEngine::waitForChatToFinish(int vocFile, int16 chatDuration, const char
 			Common::EventManager *eventMan = _system->getEventManager();
 			while (eventMan->pollEvent(event)) {
 				switch (event.type) {
-				case OSystem::EVENT_KEYDOWN:
+				case Common::EVENT_KEYDOWN:
 					if (event.kbd.keycode == '.')
 						_skipFlag = true;
 					break;
-				case OSystem::EVENT_QUIT:
+				case Common::EVENT_QUIT:
 					quitGame();
 					runLoop = false;
 					break;
-				case OSystem::EVENT_LBUTTONDOWN:
+				case Common::EVENT_LBUTTONDOWN:
 					runLoop = false;
 					break;
 				default:

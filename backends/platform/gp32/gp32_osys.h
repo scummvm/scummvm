@@ -124,7 +124,7 @@ public:
 	void warpMouse(int x, int y);
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1);
 
-	bool pollEvent(Event &event);
+	bool pollEvent(Common::Event &event);
 	uint32 getMillis();
 	void delayMillis(uint msecs);
 
@@ -145,7 +145,7 @@ public:
 
 	void displayMessageOnOSD(const char *msg);
 
-	void fillMouseEvent(Event &event, int x, int y);
+	void fillMouseEvent(Common::Event &event, int x, int y);
 	void handleKbdMouse();
 };
 

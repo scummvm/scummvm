@@ -620,7 +620,7 @@ void LauncherDialog::updateListing() {
 
 void LauncherDialog::addGame() {
 	int modifiers = g_system->getEventManager()->getModifierState();
-	bool massAdd = (modifiers & OSystem::KBD_SHIFT) != 0;
+	bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
 	
 	if (massAdd) {
 		MessageDialog alert("Do you really want to run the mass game detector? "
@@ -866,7 +866,7 @@ void LauncherDialog::updateButtons() {
 
 	// Update the label of the "Add" button depending on whether shift is pressed or not
 	int modifiers = g_system->getEventManager()->getModifierState();
-	const char *newAddButtonLabel = ((modifiers & OSystem::KBD_SHIFT) != 0)
+	const char *newAddButtonLabel = ((modifiers & Common::KBD_SHIFT) != 0)
 		? "Mass Add..."
 		: "Add Game...";
 

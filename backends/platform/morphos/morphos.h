@@ -95,7 +95,7 @@ class OSystem_MorphOS : public OSystem
 
 		// Get the next event.
 		// Returns true if an event was retrieved.
-		virtual bool pollEvent(Event &event);
+		virtual bool pollEvent(Common::Event &event);
 
 		// Moves mouse pointer to specified position
 		virtual void warpMouse(int x, int y);

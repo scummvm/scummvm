@@ -415,7 +415,7 @@ bool Surface::getString(Common::String &line, uint32 maxSize, bool isNumeric, bo
 			if (abortFlag) break;
 
 			if (events.pollEvent()) {
-				if (events.type() == OSystem::EVENT_KEYDOWN) {
+				if (events.type() == Common::EVENT_KEYDOWN) {
 					char ch = events.event().kbd.ascii;
 					uint16 keycode = events.event().kbd.keycode;
 
@@ -684,12 +684,12 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 			if (abortFlag) break;
 
 			if (events.pollEvent()) {
-				if ((events.type() == OSystem::EVENT_KEYDOWN) &&
+				if ((events.type() == Common::EVENT_KEYDOWN) &&
 					(events.event().kbd.ascii == 27)) {
 					abortFlag = true;
 					break;
 				}
-				if (events.type() == OSystem::EVENT_MOUSEMOVE) {
+				if (events.type() == Common::EVENT_MOUSEMOVE) {
 					// Mouse movement
 					int lineNum;
 					if ((mouse.x() < (SAVE_DIALOG_X + DIALOG_EDGE_SIZE)) ||

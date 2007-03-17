@@ -124,10 +124,10 @@ void Game::execute() {
 			res.delayList().tick();
 
 			while (events.pollEvent()) {
-				if (events.type() == OSystem::EVENT_KEYDOWN) {
+				if (events.type() == Common::EVENT_KEYDOWN) {
 					uint16 roomNum = room.roomNumber();
 
-					if ((events.event().kbd.flags == OSystem::KBD_CTRL) &&
+					if ((events.event().kbd.flags == Common::KBD_CTRL) &&
 						(events.event().kbd.keycode == 'd')) {
 						// Activate the debugger
 						_debugger->attach();
@@ -171,8 +171,8 @@ void Game::execute() {
 					}
 				}
 
-				if ((events.type() == OSystem::EVENT_LBUTTONDOWN) ||
-					(events.type() == OSystem::EVENT_RBUTTONDOWN)) 
+				if ((events.type() == Common::EVENT_LBUTTONDOWN) ||
+					(events.type() == Common::EVENT_RBUTTONDOWN)) 
 					handleClick();
 			}
 
@@ -778,7 +778,7 @@ void Game::doQuit() {
 	char key = '\0';
 	do {
 		if (events.pollEvent()) {
-			if (events.event().type == OSystem::EVENT_KEYDOWN) {
+			if (events.event().type == Common::EVENT_KEYDOWN) {
 				key = events.event().kbd.ascii;
 				if ((key >= 'A') && (key <= 'Z')) key += 'a' - 'A';
 			}

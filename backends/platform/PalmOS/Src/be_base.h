@@ -95,12 +95,12 @@ private:
 	virtual void undraw_mouse() = 0;
 	
 //	virtual bool check_hard_keys() = 0;
-	virtual bool check_event(Event &event, EventPtr ev) = 0;
+	virtual bool check_event(Common::Event &event, EventPtr ev) = 0;
 	
 	virtual void timer_handler();
 	void battery_handler();
 	virtual void get_coordinates(EventPtr ev, Coord &x, Coord &y) = 0;
-	void simulate_mouse(Event &event, Int8 iHoriz, Int8 iVert, Coord *xr, Coord *yr);
+	void simulate_mouse(Common::Event &event, Int8 iHoriz, Int8 iVert, Coord *xr, Coord *yr);
 
 	virtual void sound_handler() = 0;
 	virtual bool setSoundCallback(SoundProc proc, void *param) = 0;
@@ -229,7 +229,7 @@ public:
 	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b) = 0;
 	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) = 0;
 	
-	bool pollEvent(Event &event);
+	bool pollEvent(Common::Event &event);
 	
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);

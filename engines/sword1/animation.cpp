@@ -200,19 +200,19 @@ void MoviePlayer::play(void) {
 		syncFrame();
 		updateScreen();
 		_currentFrame++;
-		OSystem::Event event;
+		Common::Event event;
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case OSystem::EVENT_SCREEN_CHANGED:
+			case Common::EVENT_SCREEN_CHANGED:
 				handleScreenChanged();
 				break;
-			case OSystem::EVENT_KEYDOWN:
+			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == 27) {
 					_snd->stopHandle(_bgSoundHandle);
 					terminated = true;
 				}
 				break;
-			case OSystem::EVENT_QUIT:
+			case Common::EVENT_QUIT:
 				_sys->quit();
 				break;
 			default:

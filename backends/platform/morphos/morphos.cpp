@@ -24,6 +24,7 @@
 
 #include "common/stdafx.h"
 #include "engines/engine.h"
+#include "common/events.h"
 #include "common/util.h"
 #include "scumm/scumm.h"
 
@@ -799,7 +800,7 @@ void OSystem_MorphOS::SwitchScalerTo(SCALERTYPE newScaler)
 	}
 }
 
-bool OSystem_MorphOS::pollEvent(Event &event)
+bool OSystem_MorphOS::pollEvent(Common::Event &event)
 {
 	IntuiMessage *ScummMsg;
 
@@ -819,14 +820,14 @@ bool OSystem_MorphOS::pollEvent(Event &event)
 				FakedIEvent.ie_Code = ScummMsg->Code;
 
 				if (ScummMsg->Qualifier & (IEQUALIFIER_LALT | IEQUALIFIER_RALT))
-					qual |= KBD_ALT;
+					qual |= Common::KBD_ALT;
 				if (ScummMsg->Qualifier & (IEQUALIFIER_LSHIFT | IEQUALIFIER_RSHIFT))
-					qual |= KBD_SHIFT;
+					qual |= Common::KBD_SHIFT;
 				if (ScummMsg->Qualifier & IEQUALIFIER_CONTROL)
-					qual |= KBD_CTRL;
+					qual |= Common::KBD_CTRL;
 				event.kbd.flags = qual;
 
-				event.type = (ScummMsg->Code & IECODE_UP_PREFIX) ? EVENT_KEYUP : EVENT_KEYDOWN;
+				event.type = (ScummMsg->Code & IECODE_UP_PREFIX) ? Common::EVENT_KEYUP : Common::EVENT_KEYDOWN;
 				ScummMsg->Code &= ~IECODE_UP_PREFIX;
 
 				if (ScummMsg->Code >= RAWKEY_F1 && ScummMsg->Code <= RAWKEY_F10)
@@ -850,16 +851,16 @@ bool OSystem_MorphOS::pollEvent(Event &event)
 					/*
 					 * Wheelmouse event
 					 */
-					event.type = (ScummMsg->Code == NM_WHEEL_UP) ? EVENT_WHEELUP : EVENT_WHEELDOWN;
+					event.type = (ScummMsg->Code == NM_WHEEL_UP) ? Common::EVENT_WHEELUP : Common::EVENT_WHEELDOWN;
 				}
 				else if (MapRawKey(&FakedIEvent, &charbuf, 1, NULL) == 1)
 				{
-					if (qual == KBD_CTRL && charbuf == 'z')
+					if (qual == Common::KBD_CTRL && charbuf == 'z')
 					{
-						event.type = EVENT_QUIT;
+						event.type = Common::EVENT_QUIT;
 						break;
 					}
-					else if (qual == KBD_ALT)
+					else if (qual == Common::KBD_ALT)
 					{
 						if (charbuf >= '0' && charbuf <= '9')
 						{
@@ -871,7 +872,7 @@ bool OSystem_MorphOS::pollEvent(Event &event)
 						}
 						else if (charbuf == 'x')
 						{
-							event.type = EVENT_QUIT;
+							event.type = Common::EVENT_QUIT;
 							break;
 						}
 						else if (charbuf == 0x0d)
@@ -916,7 +917,7 @@ bool OSystem_MorphOS::pollEvent(Event &event)
 				else if (FullScreenMode)
 					newy = newy <? (ScummScrHeight >> ScummScale)-2;
 
-				event.type = EVENT_MOUSEMOVE;
+				event.type = Common::EVENT_MOUSEMOVE;
 				event.mouse.x = newx;
 				event.mouse.y = newy;
 				set_mouse_pos(event.mouse.x, event.mouse.y);
@@ -933,19 +934,19 @@ bool OSystem_MorphOS::pollEvent(Event &event)
 				switch (ScummMsg->Code)
 				{
 					case SELECTDOWN:
-						event.type = EVENT_LBUTTONDOWN;
+						event.type = Common::EVENT_LBUTTONDOWN;
 						break;
 
 					case SELECTUP:
-						event.type = EVENT_LBUTTONUP;
+						event.type = Common::EVENT_LBUTTONUP;
 						break;
 
 					case MENUDOWN:
-						event.type = EVENT_RBUTTONDOWN;
+						event.type = Common::EVENT_RBUTTONDOWN;
 						break;
 
 					case MENUUP:
-						event.type = EVENT_RBUTTONUP;
+						event.type = Common::EVENT_RBUTTONUP;
 						break;
 
 					default:
@@ -958,7 +959,7 @@ bool OSystem_MorphOS::pollEvent(Event &event)
 			}
 
 			case IDCMP_CLOSEWINDOW:
-				event.type = EVENT_QUIT;
+				event.type = Common::EVENT_QUIT;
 				break;
 		}
 

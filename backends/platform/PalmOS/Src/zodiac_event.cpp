@@ -24,17 +24,17 @@
 
 #include "be_zodiac.h"
 
-bool OSystem_PalmZodiac::check_event(Event &event, EventPtr ev) {
+bool OSystem_PalmZodiac::check_event(Common::Event &event, EventPtr ev) {
 	if (ev->eType == keyUpEvent) {
 		switch (ev->data.keyDown.chr) {
 		case vchrActionLeft:
-			event.type = EVENT_LBUTTONUP;
+			event.type = Common::EVENT_LBUTTONUP;
 			event.mouse.x = _mouseCurState.x;
 			event.mouse.y = _mouseCurState.y;
 			return true;
 
 		case vchrActionRight:
-			event.type = EVENT_RBUTTONUP;
+			event.type = Common::EVENT_RBUTTONUP;
 			event.mouse.x = _mouseCurState.x;
 			event.mouse.y = _mouseCurState.y;
 			return true;
@@ -44,7 +44,7 @@ bool OSystem_PalmZodiac::check_event(Event &event, EventPtr ev) {
 		switch (ev->data.keyDown.chr) {
 		// F5 = menu
 		case vchrThumbWheelBack:
-			event.type = EVENT_KEYDOWN;
+			event.type = Common::EVENT_KEYDOWN;
 			event.kbd.keycode = 319;
 			event.kbd.ascii = 319;
 			event.kbd.flags = 0;
@@ -59,20 +59,20 @@ bool OSystem_PalmZodiac::check_event(Event &event, EventPtr ev) {
 			return false; // not a key
 
 		case vchrActionLeft:
-			event.type = EVENT_LBUTTONDOWN;
+			event.type = Common::EVENT_LBUTTONDOWN;
 			event.mouse.x = _mouseCurState.x;
 			event.mouse.y = _mouseCurState.y;
 			return true;
 
 		case vchrActionRight:
-			event.type = EVENT_RBUTTONDOWN;
+			event.type = Common::EVENT_RBUTTONDOWN;
 			event.mouse.x = _mouseCurState.x;
 			event.mouse.y = _mouseCurState.y;
 			return true;
 
 		// skip text
 		case vchrActionDown:
-			event.type = EVENT_KEYDOWN;
+			event.type = Common::EVENT_KEYDOWN;
 			event.kbd.keycode = '.';
 			event.kbd.ascii = '.';
 			event.kbd.flags = 0;

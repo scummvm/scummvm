@@ -23,6 +23,7 @@
 
 #include <common/stdafx.h>
 #include <common/scummsys.h>
+#include "common/events.h"
 #include "engines/engine.h"
 
 #include <ronin/ronin.h>
@@ -58,7 +59,7 @@ static const short key_codes[] =
     K('h','H'), K('j','J'), K('k','K'), K('l','L'), K(';','+'), K(':','*'),
     K('z','Z'), K('x','X'), K('c','C'), K('v','V'), K('b','B'),
     K('n','N'), K('m','M'), K(',','<'), K('.','>'), K('/','?'), K('\\','_'),
-    ~OSystem::KBD_SHIFT, ~OSystem::KBD_CTRL, ~OSystem::KBD_ALT, ' ', 8, 13
+    ~Common::KBD_SHIFT, ~Common::KBD_CTRL, ~Common::KBD_ALT, ' ', 8, 13
   };
 
 SoftKeyboard::SoftKeyboard(const OSystem_Dreamcast *_os)
@@ -96,7 +97,7 @@ void SoftKeyboard::draw(float x, float y, int transp)
     draw_trans_quad(x, y, x+w, y+24.0, bg, bg, bg, bg);
     if(key_codes[i]<0 && (shiftState & ~key_codes[i]))
       labels[0][i].draw(x+2, y+5, txt_alpha_mask|0xffffff, 0.5);
-    else if(key_codes[i]>8192 && (shiftState & OSystem::KBD_SHIFT))
+    else if(key_codes[i]>8192 && (shiftState & Common::KBD_SHIFT))
       labels[1][i].draw(x+2, y+5, txt_alpha_mask|0x000000, 0.5);
     else
       labels[0][i].draw(x+2, y+5, txt_alpha_mask|0x000000, 0.5);
@@ -148,7 +149,7 @@ int SoftKeyboard::key(int k, byte &shiftFlags)
     else {
       shiftFlags = shiftState;
       if(key_codes[keySel] > 8192)
-	return ((shiftState & OSystem::KBD_SHIFT)? (key_codes[keySel]>>8):
+	return ((shiftState & Common::KBD_SHIFT)? (key_codes[keySel]>>8):
 		key_codes[keySel]) & 0xff;
       else
 	return key_codes[keySel];

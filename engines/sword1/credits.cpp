@@ -272,13 +272,13 @@ uint8 CreditsPlayer::getPalIdx(uint8 r, uint8 g, uint8 b) {
 
 void CreditsPlayer::delay(int msecs) {
 
-	OSystem::Event event;
+	Common::Event event;
 	uint32 start = _system->getMillis();
 	do {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case OSystem::EVENT_QUIT:
+			case Common::EVENT_QUIT:
 				SwordEngine::_systemVars.engineQuit = true;
 				break;
 			default:

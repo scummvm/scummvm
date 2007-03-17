@@ -123,7 +123,7 @@ private:
 
 	void draw_mouse();
 	void undraw_mouse();
-	virtual bool check_event(Event &event, EventPtr ev);
+	virtual bool check_event(Common::Event &event, EventPtr ev);
 	virtual void extras_palette(uint8 index, uint8 r, uint8 g, uint8 b);
 	void calc_scale();
 

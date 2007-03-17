@@ -154,13 +154,13 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 		_delDialog->setList(Scumm::generateSavegameList(Scumm::g_scumm, false));
 		_delDialog->handleCommand(NULL, GUI::kListSelectionChangedCmd, 0);
 		
-		OSystem::Event event;
-		event.type = OSystem::EVENT_KEYDOWN;
+		Common::Event event;
+		event.type = Common::EVENT_KEYDOWN;
 		event.kbd.ascii = SDLK_DOWN;
 		event.kbd.keycode = SDLK_DOWN;
 		OSystem_DS::instance()->addEvent(event);
 
-		event.type = OSystem::EVENT_KEYUP;
+		event.type = Common::EVENT_KEYUP;
 		OSystem_DS::instance()->addEvent(event);
 				
 		int idx = _delDialog->runModal();
@@ -182,8 +182,8 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 void showOptionsDialog() {
 	OSystem_DS* system = OSystem_DS::instance();
 
-	OSystem::Event event;
-	event.type = OSystem::EVENT_KEYDOWN;
+	Common::Event event;
+	event.type = Common::EVENT_KEYDOWN;
 	event.kbd.keycode = 'P';		// F5
 	event.kbd.ascii = 'P';
 	event.kbd.flags = 0;
@@ -199,7 +199,7 @@ void showOptionsDialog() {
 	
 	DS::displayMode8Bit();
 
-	event.type = OSystem::EVENT_KEYDOWN;
+	event.type = Common::EVENT_KEYDOWN;
 	event.kbd.keycode = 'P';		// F5
 	event.kbd.ascii = 'P';
 	event.kbd.flags = 0;

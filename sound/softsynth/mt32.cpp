@@ -112,11 +112,11 @@ public:
 };
 
 static int eatSystemEvents() {
-	OSystem::Event event;
+	Common::Event event;
 	Common::EventManager *eventMan = g_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case OSystem::EVENT_QUIT:
+		case Common::EVENT_QUIT:
 			return 1;
 		default:
 			break;

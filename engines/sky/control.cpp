@@ -1547,7 +1547,7 @@ void Control::restartGame(void) {
 
 void Control::delay(unsigned int amount) {
 
-	OSystem::Event event;
+	Common::Event event;
 
 	uint32 start = _system->getMillis();
 	uint32 cur = start;
@@ -1557,32 +1557,32 @@ void Control::delay(unsigned int amount) {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
+			case Common::EVENT_KEYDOWN:
 				// Make sure backspace works right (this fixes a small issue on OS X)
 				if (event.kbd.keycode == 8)
 					_keyPressed = 8;
 				else
 					_keyPressed = (byte)event.kbd.ascii;
 				break;
-			case OSystem::EVENT_MOUSEMOVE:
+			case Common::EVENT_MOUSEMOVE:
 				if (!(SkyEngine::_systemVars.systemFlags & SF_MOUSE_LOCKED))
 					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				break;
-			case OSystem::EVENT_LBUTTONDOWN:
+			case Common::EVENT_LBUTTONDOWN:
 				_mouseClicked = true;
 				break;
-			case OSystem::EVENT_LBUTTONUP:
+			case Common::EVENT_LBUTTONUP:
 				_mouseClicked = false;
 				break;
-			case OSystem::EVENT_RBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN:
 				break;
-			case OSystem::EVENT_WHEELUP:
+			case Common::EVENT_WHEELUP:
 				_mouseWheel = -1;
 				break;
-			case OSystem::EVENT_WHEELDOWN:
+			case Common::EVENT_WHEELDOWN:
 				_mouseWheel = 1;
 				break;
-			case OSystem::EVENT_QUIT:
+			case Common::EVENT_QUIT:
 				SkyEngine::_systemVars.quitGame = true;
 				break;
 			default:

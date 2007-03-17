@@ -1028,7 +1028,7 @@ void Control::doRestore(void) {
 }
 
 void Control::delay(uint32 msecs) {
-	OSystem::Event event;
+	Common::Event event;
 
 	uint32 now = _system->getMillis();
 	uint32 endTime = now + msecs;
@@ -1039,7 +1039,7 @@ void Control::delay(uint32 msecs) {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
+			case Common::EVENT_KEYDOWN:
 
 				// Make sure backspace works right (this fixes a small issue on OS X)
 				if (event.kbd.keycode == 8)
@@ -1049,11 +1049,11 @@ void Control::delay(uint32 msecs) {
 				// we skip the rest of the delay and return immediately
 				// to handle keyboard input
 				return;
-			case OSystem::EVENT_MOUSEMOVE:
+			case Common::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
 				break;
-			case OSystem::EVENT_LBUTTONDOWN:
+			case Common::EVENT_LBUTTONDOWN:
 				_mouseDown = true;
 				_mouseState |= BS1L_BUTTON_DOWN;
 #if defined(_WIN32_WCE) || defined(PALMOS_MODE)
@@ -1061,19 +1061,19 @@ void Control::delay(uint32 msecs) {
 				_mouseY = event.mouse.y;
 #endif
 				break;
-			case OSystem::EVENT_LBUTTONUP:
+			case Common::EVENT_LBUTTONUP:
 				_mouseDown = false;
 				_mouseState |= BS1L_BUTTON_UP;
 				break;
-			case OSystem::EVENT_WHEELUP:
+			case Common::EVENT_WHEELUP:
 				_mouseDown = false;
 				_mouseState |= BS1_WHEEL_UP;
 				break;
-			case OSystem::EVENT_WHEELDOWN:
+			case Common::EVENT_WHEELDOWN:
 				_mouseDown = false;
 				_mouseState |= BS1_WHEEL_DOWN;
 				break;
-			case OSystem::EVENT_QUIT:
+			case Common::EVENT_QUIT:
 				SwordEngine::_systemVars.engineQuit = true;
 				break;
 			default:

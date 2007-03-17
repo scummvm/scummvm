@@ -41,13 +41,13 @@ bool OSystem_PalmOS5::check_event(Event &event, EventPtr ev) {
 	if (ev->eType == keyUpEvent) {
 		switch (ev->data.keyDown.chr) {
 		case vchrHard3:
-			event.type = EVENT_LBUTTONUP;
+			event.type = Common::EVENT_LBUTTONUP;
 			event.mouse.x = _mouseCurState.x;
 			event.mouse.y = _mouseCurState.y;
 			return true;
 
 		case vchrHard4:
-			event.type = EVENT_RBUTTONUP;
+			event.type = Common::EVENT_RBUTTONUP;
 			event.mouse.x = _mouseCurState.x;
 			event.mouse.y = _mouseCurState.y;
 			return true;
@@ -70,13 +70,13 @@ bool OSystem_PalmOS5::check_event(Event &event, EventPtr ev) {
 		return false; // not a key
 
 		case vchrHard3:
-			event.type = EVENT_RBUTTONDOWN;
+			event.type = Common::EVENT_RBUTTONDOWN;
 			event.mouse.x = _mouseCurState.x;
 			event.mouse.y = _mouseCurState.y;
 			return true;
 
 		case vchrHard4:
-			event.type = EVENT_RBUTTONDOWN;
+			event.type = Common::EVENT_RBUTTONDOWN;
 			event.mouse.x = _mouseCurState.x;
 			event.mouse.y = _mouseCurState.y;
 			return true;

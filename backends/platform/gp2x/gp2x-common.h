@@ -129,7 +129,7 @@ public:
 
 	// Get the next event.
 	// Returns true if an event was retrieved.
-	virtual bool pollEvent(Event &event); // overloaded by CE backend
+	virtual bool pollEvent(Common::Event &event); // overloaded by CE backend
 
 	// Set function that generates samples
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
@@ -384,7 +384,7 @@ protected:
 
 	/** Set the position of the virtual mouse cursor. */
 	void setMousePos(int x, int y);
-	virtual void fillMouseEvent(Event &event, int x, int y);
+	virtual void fillMouseEvent(Common::Event &event, int x, int y);
 	//void toggleMouseGrab();
 
 	virtual void internUpdateScreen();
@@ -405,7 +405,7 @@ protected:
 	void setupIcon();
 	void handleKbdMouse();
 
-	virtual bool remapKey(SDL_Event &ev, Event &event);
+	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 
 	void handleScalerHotkeys(const SDL_KeyboardEvent &key);
 

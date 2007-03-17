@@ -25,6 +25,7 @@
 #include "backends/platform/symbian/src/SymbianOS.h"
 #include "backends/platform/symbian/src/SymbianActions.h"
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "gui/Actions.h"
 #include "gui/Key.h"
 #include "gui/message.h"
@@ -248,9 +249,9 @@ void OSystem_SDL_Symbian::symbianMix(byte *samples, int len) {
  * This is an implementation by the remapKey function
  * @param SDL_Event to remap
  * @param ScumVM event to modify if special result is requested
- * @return true if Event has a valid return status
+ * @return true if Common::Event has a valid return status
  */
-bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Event &event) {
+bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 	if (GUI::Actions::Instance()->mappingActive() || ev.key.keysym.sym <= SDLK_UNKNOWN)
 		return false;
 
@@ -267,7 +268,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Event &event) {
 					_km.y_vel = 0;
 					_km.y_down_count = 0;
 				}
-				event.type = EVENT_MOUSEMOVE;
+				event.type = Common::EVENT_MOUSEMOVE;
 				fillMouseEvent(event, _km.x, _km.y);
 
 				return true;			
@@ -280,7 +281,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Event &event) {
 					_km.y_vel = 0;
 					_km.y_down_count = 0;
 				}
-				event.type = EVENT_MOUSEMOVE;
+				event.type = Common::EVENT_MOUSEMOVE;
 				fillMouseEvent(event, _km.x, _km.y);
 
 				return true;	
@@ -293,7 +294,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Event &event) {
 					_km.x_vel = 0;
 					_km.x_down_count = 0;
 				}
-				event.type = EVENT_MOUSEMOVE;
+				event.type = Common::EVENT_MOUSEMOVE;
 				fillMouseEvent(event, _km.x, _km.y);
 
 				return true;
@@ -306,19 +307,19 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Event &event) {
 					_km.x_vel = 0;
 					_km.x_down_count = 0;
 				}
-				event.type = EVENT_MOUSEMOVE;
+				event.type = Common::EVENT_MOUSEMOVE;
 				fillMouseEvent(event, _km.x, _km.y);
 
 				return true;
 
 			case GUI::ACTION_LEFTCLICK:
-				event.type = (ev.type == SDL_KEYDOWN ? EVENT_LBUTTONDOWN : EVENT_LBUTTONUP);
+				event.type = (ev.type == SDL_KEYDOWN ? Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP);
 				fillMouseEvent(event, _km.x, _km.y);
 
 				return true;
 
 			case GUI::ACTION_RIGHTCLICK:
-				event.type = (ev.type == SDL_KEYDOWN ? EVENT_RBUTTONDOWN : EVENT_RBUTTONUP);
+				event.type = (ev.type == SDL_KEYDOWN ? Common::EVENT_RBUTTONDOWN : Common::EVENT_RBUTTONUP);
 				fillMouseEvent(event, _km.x, _km.y);
 
 				return true;
@@ -338,7 +339,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Event &event) {
 						_currentZone++;
 						if (_currentZone >= TOTAL_ZONES)
 							_currentZone = 0;
-						event.type = EVENT_MOUSEMOVE;
+						event.type = Common::EVENT_MOUSEMOVE;
 						fillMouseEvent(event, _mouseXZone[_currentZone], _mouseYZone[_currentZone]);
 						SDL_WarpMouse(event.mouse.x, event.mouse.y);					
 				}
@@ -359,20 +360,20 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Event &event) {
 					ev.key.keysym.scancode= key.keycode();
 					ev.key.keysym.mod = (SDLMod) key.flags();
 
-					// Translate from SDL keymod event to Scummvm Key Mod Event. 
+					// Translate from SDL keymod event to Scummvm Key Mod Common::Event. 
 					// This codes is also present in GP32 backend and in SDL backend as a static function
 					// Perhaps it should be shared. 
 					if(key.flags() != 0) {									
 						event.kbd.flags = 0;
 
 						if (ev.key.keysym.mod & KMOD_SHIFT)
-							event.kbd.flags |= OSystem::KBD_SHIFT;
+							event.kbd.flags |= Common::KBD_SHIFT;
 						
 						if (ev.key.keysym.mod & KMOD_ALT)
-							event.kbd.flags |= OSystem::KBD_ALT;
+							event.kbd.flags |= Common::KBD_ALT;
 						
 						if (ev.key.keysym.mod & KMOD_CTRL)
-							event.kbd.flags |= OSystem::KBD_CTRL;
+							event.kbd.flags |= Common::KBD_CTRL;
 					}
 
 					return false;

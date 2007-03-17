@@ -24,6 +24,7 @@
 #define LURE_EVENTS_H
 
 #include "common/stdafx.h"
+#include "common/events.h"
 #include "common/str.h"
 #include "lure/luredefs.h"
 #include "lure/disk.h"
@@ -39,7 +40,7 @@ public:
 	Mouse();
 	~Mouse();
 	static Mouse &getReference(); 
-	void handleEvent(OSystem::Event event);
+	void handleEvent(Common::Event event);
 
 	void cursorOn();
 	void cursorOff();
@@ -59,7 +60,7 @@ public:
 
 class Events {
 private:
-	OSystem::Event _event;
+	Common::Event _event;
 public:
 	bool quitFlag;
 
@@ -68,8 +69,8 @@ public:
 
 	bool pollEvent();
 	void waitForPress();
-	OSystem::Event event() { return _event; }
-	OSystem::EventType type() { return _event.type; }
+	Common::Event event() { return _event; }
+	Common::EventType type() { return _event.type; }
 };
 
 } // End of namespace Lure

@@ -407,19 +407,19 @@ void MoviePlayer::play(SequenceTextInfo *textList, uint32 numLines, int32 leadIn
 		drawFrame();
 		updateScreen();
 
-		OSystem::Event event;
+		Common::Event event;
 
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case OSystem::EVENT_SCREEN_CHANGED:
+			case Common::EVENT_SCREEN_CHANGED:
 				handleScreenChanged();
 				break;
-			case OSystem::EVENT_QUIT:
+			case Common::EVENT_QUIT:
 				_vm->closeGame();
 				terminate = true;
 				break;
-			case OSystem::EVENT_KEYDOWN:
+			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == 27)
 					terminate = true;
 				break;

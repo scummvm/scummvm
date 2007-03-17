@@ -283,7 +283,7 @@ void Parallaction::initGlobals() {
 //
 uint16 Parallaction::updateInput() {
 
-	OSystem::Event e;
+	Common::Event e;
 	uint16 KeyDown = 0;
 
 	_mouseButtons = kMouseNone;
@@ -292,33 +292,33 @@ uint16 Parallaction::updateInput() {
 	while (eventMan->pollEvent(e)) {
 
 		switch (e.type) {
-		case OSystem::EVENT_KEYDOWN:
+		case Common::EVENT_KEYDOWN:
 			if (e.kbd.ascii == 'l') KeyDown = kEvLoadGame;
 			if (e.kbd.ascii == 's') KeyDown = kEvSaveGame;
 			break;
 
-		case OSystem::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONDOWN:
 			_mouseButtons = kMouseLeftDown;
 			break;
 
-		case OSystem::EVENT_LBUTTONUP:
+		case Common::EVENT_LBUTTONUP:
 			_mouseButtons = kMouseLeftUp;
 			break;
 
-		case OSystem::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
 			_mouseButtons = kMouseRightDown;
 			break;
 
-		case OSystem::EVENT_RBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
 			_mouseButtons = kMouseRightUp;
 			break;
 
-		case OSystem::EVENT_MOUSEMOVE:
+		case Common::EVENT_MOUSEMOVE:
 			_mousePos._x = e.mouse.x;
 			_mousePos._y = e.mouse.y;
 			break;
 
-		case OSystem::EVENT_QUIT:
+		case Common::EVENT_QUIT:
 			_system->quit();
 			break;
 
@@ -336,16 +336,16 @@ uint16 Parallaction::updateInput() {
 // FIXME: see comment for updateInput()
 void waitUntilLeftClick() {
 
-	OSystem::Event e;
+	Common::Event e;
 
 	Common::EventManager *eventMan = g_system->getEventManager();
 	for (;;) {
 		eventMan->pollEvent(e);
 
-		if (e.type == OSystem::EVENT_LBUTTONUP)
+		if (e.type == Common::EVENT_LBUTTONUP)
 			break;
 
-		if (e.type == OSystem::EVENT_QUIT) {
+		if (e.type == Common::EVENT_QUIT) {
 			g_system->quit();
 			break;
 		}

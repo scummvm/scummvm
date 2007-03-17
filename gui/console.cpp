@@ -27,6 +27,7 @@
 #include "engines/engine.h"
 #include "base/version.h"
 
+#include "common/events.h"
 #include "common/system.h"
 
 #include "graphics/font.h"
@@ -347,7 +348,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		drawLine(pos2line(_currentPos));
 		break;
 	case 256 + 24:	// pageup
-		if (modifiers == OSystem::KBD_SHIFT) {
+		if (modifiers == Common::KBD_SHIFT) {
 			_scrollLine -= _linesPerPage - 1;
 			if (_scrollLine < _firstLineInBuffer + _linesPerPage - 1)
 				_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
@@ -356,7 +357,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		}
 		break;
 	case 256 + 25:	// pagedown
-		if (modifiers == OSystem::KBD_SHIFT) {
+		if (modifiers == Common::KBD_SHIFT) {
 			_scrollLine += _linesPerPage - 1;
 			if (_scrollLine > _promptEndPos / kCharsPerLine) {
 				_scrollLine = _promptEndPos / kCharsPerLine;
@@ -368,7 +369,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		}
 		break;
 	case 256 + 22:	// home
-		if (modifiers == OSystem::KBD_SHIFT) {
+		if (modifiers == Common::KBD_SHIFT) {
 			_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
 			updateScrollBuffer();
 		} else {
@@ -377,7 +378,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		draw();
 		break;
 	case 256 + 23:	// end
-		if (modifiers == OSystem::KBD_SHIFT) {
+		if (modifiers == Common::KBD_SHIFT) {
 			_scrollLine = _promptEndPos / kCharsPerLine;
 			if (_scrollLine < _linesPerPage - 1)
 				_scrollLine = _linesPerPage - 1;
@@ -406,7 +407,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	default:
 		if (ascii == '~' || ascii == '#') {
 			slideUpAndClose();
-		} else if (modifiers == OSystem::KBD_CTRL) {
+		} else if (modifiers == Common::KBD_CTRL) {
 			specialKeys(keycode);
 		} else if ((ascii >= 32 && ascii <= 127) || (ascii >= 160 && ascii <= 255)) {
 			for (i = _promptEndPos - 1; i >= _currentPos; i--)

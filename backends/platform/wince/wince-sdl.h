@@ -69,11 +69,11 @@ public:
 	void initBackend();
 
 	// Overloaded from SDL_Common (toolbar handling)
-	bool pollEvent(Event &event);
+	bool pollEvent(Common::Event &event);
 	// Overloaded from SDL_Common (toolbar handling)
 	void drawMouse();
 	// Overloaded from SDL_Common (mouse and new scaler handling)
-	void fillMouseEvent(Event &event, int x, int y);
+	void fillMouseEvent(Common::Event &event, int x, int y);
 	// Overloaded from SDL_Common (new scaler handling)
 	void addDirtyRect(int x, int y, int w, int h, bool mouseRect = false);
 	// Overloaded from SDL_Common (new scaler handling)

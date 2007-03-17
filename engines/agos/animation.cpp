@@ -233,29 +233,29 @@ void MoviePlayer::handleNextFrame() {
 	_vm->_system->updateScreen();
 	_frameNum++;
 
-	OSystem::Event event;
+	Common::Event event;
 	Common::EventManager *eventMan = _vm->_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case OSystem::EVENT_KEYDOWN:
+		case Common::EVENT_KEYDOWN:
 			if (event.kbd.ascii == 27) {
 				_leftButtonDown = true;
 				_rightButtonDown = true;
 			}
 			break;
-		case OSystem::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONDOWN:
 			_leftButtonDown = true;
 			break;
-		case OSystem::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
 			_rightButtonDown = true;
 			break;
-		case OSystem::EVENT_LBUTTONUP:
+		case Common::EVENT_LBUTTONUP:
 			_leftButtonDown = false;
 			break;
-		case OSystem::EVENT_RBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
 			_rightButtonDown = false;
 			break;
-		case OSystem::EVENT_QUIT:
+		case Common::EVENT_QUIT:
 			_vm->_system->quit();
 			break;
 		default:

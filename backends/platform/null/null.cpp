@@ -76,7 +76,7 @@ public:
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255);
 
-	virtual bool pollEvent(Event &event);
+	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 
@@ -232,7 +232,7 @@ void OSystem_NULL::warpMouse(int x, int y) {
 void OSystem_NULL::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor) {
 }
 
-bool OSystem_NULL::pollEvent(Event &event) {
+bool OSystem_NULL::pollEvent(Common::Event &event) {
 	return false;
 }
 

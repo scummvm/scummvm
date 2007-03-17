@@ -25,6 +25,7 @@
 #include <zlib.h>
 #include "osys_psp_gu.h"
 #include "./trace.h"
+#include "common/events.h"
 
 #define PIXEL_SIZE (4)
 #define BUF_WIDTH (512)
@@ -451,7 +452,7 @@ void OSystem_PSP_GU::updateScreen() {
 	//sceKernelDcacheWritebackAll();
 }
 
-bool OSystem_PSP_GU::pollEvent(Event &event) {
+bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 	float nub_angle = -1;
 	int x, y;
 
@@ -522,7 +523,7 @@ bool OSystem_PSP_GU::pollEvent(Event &event) {
 		_kbdClut[_keySelected] = 0xffff;
 	
 		if  (buttonsChanged & PSP_CTRL_CROSS) {
-			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? OSystem::EVENT_KEYDOWN : OSystem::EVENT_KEYUP;
+			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? Common::EVENT_KEYDOWN : OSystem::EVENT_KEYUP;
 			if(_keySelected > 26) {
 				event.kbd.flags = 0;
 				switch(_keySelected) {
@@ -553,7 +554,7 @@ bool OSystem_PSP_GU::pollEvent(Event &event) {
 					case CAPS_LOCK:
 						event.kbd.ascii = 'A'+_keySelected-1;
 						event.kbd.keycode = SDLK_a + _keySelected-1;
-						event.kbd.flags = KBD_SHIFT;
+						event.kbd.flags = Common::KBD_SHIFT;
 						break;
 					case SYMBOLS:
 						if (_keySelected < 21) {

@@ -23,13 +23,14 @@
  */
 
 /*
- * GP2X: Event Handling.
+ * GP2X: Common::Event Handling.
  *
  */
 
 #include "backends/platform/gp2x/gp2x-common.h"
 #include "backends/platform/gp2x/gp2x-hw.h"
 #include "common/util.h"
+#include "common/events.h"
 
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button
@@ -78,7 +79,7 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode)
 	return key;
 }
 
-void OSystem_GP2X::fillMouseEvent(Event &event, int x, int y) {
+void OSystem_GP2X::fillMouseEvent(Common::Event &event, int x, int y) {
 	event.mouse.x = x;
 	event.mouse.y = y;
 
@@ -170,15 +171,15 @@ static byte SDLModToOSystemKeyFlags(SDLMod mod) {
 	// Yopy has no ALT key, steal the SHIFT key
 	// (which isn't used much anyway)
 	if (mod & KMOD_SHIFT)
-		b |= OSystem::KBD_ALT;
+		b |= Common::KBD_ALT;
 #else
 	if (mod & KMOD_SHIFT)
-		b |= OSystem::KBD_SHIFT;
+		b |= Common::KBD_SHIFT;
 	if (mod & KMOD_ALT)
-		b |= OSystem::KBD_ALT;
+		b |= Common::KBD_ALT;
 #endif
 	if (mod & KMOD_CTRL)
-		b |= OSystem::KBD_CTRL;
+		b |= Common::KBD_CTRL;
 
 	return b;
 }
@@ -251,17 +252,17 @@ void OSystem_GP2X::moveStick() {
 	//int GP2X_BUTTON_STATE_VOLUP           =	FALSE;
 	//int GP2X_BUTTON_STATE_VOLDOWN         =	FALSE;
 
-bool OSystem_GP2X::pollEvent(Event &event) {
+bool OSystem_GP2X::pollEvent(Common::Event &event) {
 	SDL_Event ev;
 	int axis;
 	byte b = 0;
 
 	handleKbdMouse();
 
-	// If the screen mode changed, send an EVENT_SCREEN_CHANGED
+	// If the screen mode changed, send an Common::EVENT_SCREEN_CHANGED
 	if (_modeChanged) {
 		_modeChanged = false;
-		event.type = EVENT_SCREEN_CHANGED;
+		event.type = Common::EVENT_SCREEN_CHANGED;
 		_screenChangeCount++;
 		return true;
 	}
@@ -302,7 +303,7 @@ bool OSystem_GP2X::pollEvent(Event &event) {
 	Combos:
 
 	GP2X_BUTTON_VOLUP &	GP2X_BUTTON_VOLDOWN		0 (For Monkey 2 CP)
-	GP2X_BUTTON_L &	GP2X_BUTTON_SELECT 			EVENT_QUIT (Calls Sync() to make sure SD is flushed)
+	GP2X_BUTTON_L &	GP2X_BUTTON_SELECT 			Common::EVENT_QUIT (Calls Sync() to make sure SD is flushed)
 	GP2X_BUTTON_L &	GP2X_BUTTON_Y				Toggles setZoomOnMouse() for larger then 320*240 games to scale to the point + raduis.
 	*/
 
@@ -313,14 +314,14 @@ bool OSystem_GP2X::pollEvent(Event &event) {
 			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 
 			// Alt-Return and Alt-Enter toggle full screen mode
-			if (b == KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN
+			if (b == Common::KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN
 			                  || ev.key.keysym.sym == SDLK_KP_ENTER)) {
 				setFullscreenMode(!_fullscreen);
 				break;
 			}
 
 			// Alt-S: Create a screenshot
-			if (b == KBD_ALT && ev.key.keysym.sym == 's') {
+			if (b == Common::KBD_ALT && ev.key.keysym.sym == 's') {
 				char filename[20];
 
 				for (int n = 0;; n++) {
@@ -340,7 +341,7 @@ bool OSystem_GP2X::pollEvent(Event &event) {
 			}
 
 			// Ctrl-m toggles mouse capture
-			//if (b == KBD_CTRL && ev.key.keysym.sym == 'm') {
+			//if (b == Common::KBD_CTRL && ev.key.keysym.sym == 'm') {
 			//	toggleMouseGrab();
 			//	break;
 			//}
@@ -348,25 +349,25 @@ bool OSystem_GP2X::pollEvent(Event &event) {
 //#ifdef MACOSX
 //			// On Macintosh', Cmd-Q quits
 //			if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym == 'q') {
-//				event.type = EVENT_QUIT;
+//				event.type = Common::EVENT_QUIT;
 //				return true;
 //			}
 //#elif defined(UNIX)
 //			// On other unices, Control-Q quits
 //			if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'q') {
-//				event.type = EVENT_QUIT;
+//				event.type = Common::EVENT_QUIT;
 //				return true;
 //			}
 //#else
 //			// Ctrl-z and Alt-X quit
-//			if ((b == KBD_CTRL && ev.key.keysym.sym == 'z') || (b == KBD_ALT && ev.key.keysym.sym == 'x')) {
-//				event.type = EVENT_QUIT;
+//			if ((b == Common::KBD_CTRL && ev.key.keysym.sym == 'z') || (b == Common::KBD_ALT && ev.key.keysym.sym == 'x')) {
+//				event.type = Common::EVENT_QUIT;
 //				return true;
 //			}
 //#endif
 //
 //			// Ctrl-Alt-<key> will change the GFX mode
-//			if ((b & (KBD_CTRL|KBD_ALT)) == (KBD_CTRL|KBD_ALT)) {
+//			if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
 //
 //				handleScalerHotkeys(ev.key);
 //				break;
@@ -376,7 +377,7 @@ bool OSystem_GP2X::pollEvent(Event &event) {
 			if (event_complete)
 				return true;
 
-			event.type = EVENT_KEYDOWN;
+			event.type = Common::EVENT_KEYDOWN;
 			event.kbd.keycode = ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
@@ -389,13 +390,13 @@ bool OSystem_GP2X::pollEvent(Event &event) {
 			if (event_complete)
 				return true;
 
-			event.type = EVENT_KEYUP;
+			event.type = Common::EVENT_KEYUP;
 			event.kbd.keycode = ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 
 			// Ctrl-Alt-<key> will change the GFX mode
-			if ((b & (KBD_CTRL|KBD_ALT)) == (KBD_CTRL|KBD_ALT)) {
+			if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
 				// Swallow these key up events
 				break;
 			}
@@ -403,7 +404,7 @@ bool OSystem_GP2X::pollEvent(Event &event) {
 			return true;
 			}
 		case SDL_MOUSEMOTION:
-			event.type = EVENT_MOUSEMOVE;
+			event.type = Common::EVENT_MOUSEMOVE;
 			fillMouseEvent(event, ev.motion.x, ev.motion.y);
 
 			setMousePos(event.mouse.x, event.mouse.y);
@@ -411,14 +412,14 @@ bool OSystem_GP2X::pollEvent(Event &event) {
 
 		case SDL_MOUSEBUTTONDOWN:
 			if (ev.button.button == SDL_BUTTON_LEFT)
-				event.type = EVENT_LBUTTONDOWN;
+				event.type = Common::EVENT_LBUTTONDOWN;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				event.type = EVENT_RBUTTONDOWN;
+				event.type = Common::EVENT_RBUTTONDOWN;
 #if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
 			else if (ev.button.button == SDL_BUTTON_WHEELUP)
-				event.type = EVENT_WHEELUP;
+				event.type = Common::EVENT_WHEELUP;
 			else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
-				event.type = EVENT_WHEELDOWN;
+				event.type = Common::EVENT_WHEELDOWN;
 #endif
 			else
 				break;
@@ -429,9 +430,9 @@ bool OSystem_GP2X::pollEvent(Event &event) {
 
 		case SDL_MOUSEBUTTONUP:
 			if (ev.button.button == SDL_BUTTON_LEFT)
-				event.type = EVENT_LBUTTONUP;
+				event.type = Common::EVENT_LBUTTONUP;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				event.type = EVENT_RBUTTONUP;
+				event.type = Common::EVENT_RBUTTONUP;
 			else
 				break;
 			fillMouseEvent(event, ev.button.x, ev.button.y);
@@ -443,22 +444,22 @@ bool OSystem_GP2X::pollEvent(Event &event) {
 		case SDL_JOYBUTTONDOWN:
 			_stickBtn[ev.jbutton.button] = 1;
 			if (ev.jbutton.button == JOY_BUT_LMOUSE) {
-				event.type = EVENT_LBUTTONDOWN;
+				event.type = Common::EVENT_LBUTTONDOWN;
 				fillMouseEvent(event, _km.x, _km.y);
 			} else if (ev.jbutton.button == GP2X_BUTTON_CLICK) {
-				event.type = EVENT_LBUTTONDOWN;
+				event.type = Common::EVENT_LBUTTONDOWN;
 				fillMouseEvent(event, _km.x, _km.y);
 			} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
-				event.type = EVENT_RBUTTONDOWN;
+				event.type = Common::EVENT_RBUTTONDOWN;
 				fillMouseEvent(event, _km.x, _km.y);
 			} else if (_stickBtn[JOY_BUT_COMB] && (ev.jbutton.button == JOY_BUT_EXIT)) {
-				event.type = EVENT_QUIT;
+				event.type = Common::EVENT_QUIT;
 			} else if (ev.jbutton.button < 8) {
 				moveStick();
-				event.type = EVENT_MOUSEMOVE;
+				event.type = Common::EVENT_MOUSEMOVE;
 				fillMouseEvent(event, _km.x, _km.y);
 			} else {
-				event.type = EVENT_KEYDOWN;
+				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.flags = 0;
 				switch (ev.jbutton.button) {
 					case GP2X_BUTTON_L:
@@ -475,7 +476,7 @@ bool OSystem_GP2X::pollEvent(Event &event) {
 						break;
 					case GP2X_BUTTON_SELECT:
 						if (GP2X_BUTTON_STATE_L == TRUE) {
-							event.type = EVENT_QUIT;
+							event.type = Common::EVENT_QUIT;
 						} else {
 							event.kbd.keycode = SDLK_ESCAPE;
 							event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
@@ -506,7 +507,7 @@ bool OSystem_GP2X::pollEvent(Event &event) {
 					//	if ((ev.jbutton.button == GP2X_BUTTON_L) && (ev.jbutton.button == GP2X_BUTTON_R)) {
 					//		displayMessageOnOSD("Exiting ScummVM");
 					//		//Sync();
-					//		event.type = EVENT_QUIT;
+					//		event.type = Common::EVENT_QUIT;
 					//		break;
 					//	} else if ((ev.jbutton.button == GP2X_BUTTON_L) && (ev.jbutton.button != GP2X_BUTTON_R)) {
 					//		displayMessageOnOSD("Left Trigger Pressed");
@@ -548,17 +549,17 @@ bool OSystem_GP2X::pollEvent(Event &event) {
 		case SDL_JOYBUTTONUP:
 			_stickBtn[ev.jbutton.button] = 0;
 			if (ev.jbutton.button == JOY_BUT_LMOUSE) {
-				event.type = EVENT_LBUTTONUP;
+				event.type = Common::EVENT_LBUTTONUP;
 				fillMouseEvent(event, _km.x, _km.y);
 			} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
-				event.type = EVENT_RBUTTONUP;
+				event.type = Common::EVENT_RBUTTONUP;
 				fillMouseEvent(event, _km.x, _km.y);
 			} else if (ev.jbutton.button < 8) {
 				moveStick();
-				event.type = EVENT_MOUSEMOVE;
+				event.type = Common::EVENT_MOUSEMOVE;
 				fillMouseEvent(event, _km.x, _km.y);
 			} else {
-				event.type = EVENT_KEYUP;
+				event.type = Common::EVENT_KEYUP;
 				event.kbd.flags = 0;
 				switch (ev.jbutton.button) {
 					case GP2X_BUTTON_SELECT:
@@ -596,10 +597,10 @@ bool OSystem_GP2X::pollEvent(Event &event) {
 			axis = ev.jaxis.value;
 			if ( axis > JOY_DEADZONE) {
 				axis -= JOY_DEADZONE;
-				event.type = EVENT_MOUSEMOVE;
+				event.type = Common::EVENT_MOUSEMOVE;
 			} else if ( axis < -JOY_DEADZONE ) {
 				axis += JOY_DEADZONE;
-				event.type = EVENT_MOUSEMOVE;
+				event.type = Common::EVENT_MOUSEMOVE;
 			} else
 				axis = 0;
 
@@ -644,14 +645,14 @@ bool OSystem_GP2X::pollEvent(Event &event) {
 			break;
 
 		case SDL_QUIT:
-			event.type = EVENT_QUIT;
+			event.type = Common::EVENT_QUIT;
 			return true;
 		}
 	}
 	return false;
 }
 
-bool OSystem_GP2X::remapKey(SDL_Event &ev,Event &event) {
+bool OSystem_GP2X::remapKey(SDL_Event &ev,Common::Event &event) {
 	return false;
 }
 

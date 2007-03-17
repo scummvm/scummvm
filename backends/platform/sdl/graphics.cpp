@@ -261,7 +261,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	if (_transactionMode != kTransactionCommit)
 		internUpdateScreen();
 
-	// Make sure that an EVENT_SCREEN_CHANGED gets sent later
+	// Make sure that an Common::EVENT_SCREEN_CHANGED gets sent later
 	_modeChanged = true;
 
 	return true;
@@ -500,7 +500,7 @@ void OSystem_SDL::hotswapGFXMode() {
 	// Blit everything to the screen
 	internUpdateScreen();
 
-	// Make sure that an EVENT_SCREEN_CHANGED gets sent later
+	// Make sure that an Common::EVENT_SCREEN_CHANGED gets sent later
 	_modeChanged = true;
 }
 
@@ -727,7 +727,7 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 			// Blit everything to the screen
 			internUpdateScreen();
 
-			// Make sure that an EVENT_SCREEN_CHANGED gets sent later
+			// Make sure that an Common::EVENT_SCREEN_CHANGED gets sent later
 			_modeChanged = true;
 		}
 #endif
@@ -754,7 +754,7 @@ void OSystem_SDL::setAspectRatioCorrection(bool enable) {
 				hotswapGFXMode();
 		}
 
-		// Make sure that an EVENT_SCREEN_CHANGED gets sent later
+		// Make sure that an Common::EVENT_SCREEN_CHANGED gets sent later
 		_modeChanged = true;
 	}
 }

@@ -417,7 +417,7 @@ void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 #define PAD_CHECK_TIME	40
 #define PAD_DIR_MASK	(PSP_CTRL_UP | PSP_CTRL_DOWN | PSP_CTRL_LEFT | PSP_CTRL_RIGHT)
 
-bool OSystem_PSP::pollEvent(Event &event) {
+bool OSystem_PSP::pollEvent(Common::Event &event) {
 	s8 analogStepAmountX = 0;
 	s8 analogStepAmountY = 0;
 /*	
@@ -431,14 +431,14 @@ bool OSystem_PSP::pollEvent(Event &event) {
 
 	if (buttonsChanged & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_SELECT | PSP_CTRL_SQUARE)) {
 		if (buttonsChanged & PSP_CTRL_CROSS) {
-			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? OSystem::EVENT_LBUTTONDOWN : OSystem::EVENT_LBUTTONUP;
+			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? Common::EVENT_LBUTTONDOWN : OSystem::EVENT_LBUTTONUP;
 		}
 		else if (buttonsChanged & PSP_CTRL_CIRCLE) {
-			event.type = (pad.Buttons & PSP_CTRL_CIRCLE) ? OSystem::EVENT_RBUTTONDOWN : OSystem::EVENT_RBUTTONUP;
+			event.type = (pad.Buttons & PSP_CTRL_CIRCLE) ? Common::EVENT_RBUTTONDOWN : OSystem::EVENT_RBUTTONUP;
 		}
 		else {
 			//any of the other buttons.
-			event.type = buttonsChanged & pad.Buttons ? OSystem::EVENT_KEYDOWN : OSystem::EVENT_KEYUP;
+			event.type = buttonsChanged & pad.Buttons ? Common::EVENT_KEYDOWN : OSystem::EVENT_KEYUP;
 			event.kbd.flags = 0;
 			
 			if (buttonsChanged & PSP_CTRL_LTRIGGER) {
@@ -537,7 +537,7 @@ bool OSystem_PSP::pollEvent(Event &event) {
 			}
 			
 			if ((_mouseX != newX) || (_mouseY != newY)) {
-				event.type = OSystem::EVENT_MOUSEMOVE;
+				event.type = Common::EVENT_MOUSEMOVE;
 				event.mouse.x = _mouseX = newX;
 				event.mouse.y = _mouseY = newY;
 				return true;

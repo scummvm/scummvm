@@ -649,9 +649,9 @@ int OSystem_PS2::getDefaultGraphicsMode(void) const {
 	return 0;
 }
 
-bool OSystem_PS2::pollEvent(Event &event) {
+bool OSystem_PS2::pollEvent(Common::Event &event) {
 	bool res = _input->pollEvent(&event);
-	if (res && (event.type == EVENT_MOUSEMOVE))
+	if (res && (event.type == Common::EVENT_MOUSEMOVE))
 		_screen->setMouseXy(event.mouse.x, event.mouse.y);
 	return res;
 }

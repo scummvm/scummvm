@@ -375,9 +375,9 @@ int Sword2Engine::go() {
 		KeyboardEvent *ke = keyboardEvent();
 
 		if (ke) {
-			if ((ke->modifiers == OSystem::KBD_CTRL && ke->keycode == 'd') || ke->ascii == '#' || ke->ascii == '~') {
+			if ((ke->modifiers == Common::KBD_CTRL && ke->keycode == 'd') || ke->ascii == '#' || ke->ascii == '~') {
 				_debugger->attach();
-			} else if (ke->modifiers == 0 || ke->modifiers == OSystem::KBD_SHIFT) {
+			} else if (ke->modifiers == 0 || ke->modifiers == Common::KBD_SHIFT) {
 				switch (ke->keycode) {
 				case 'p':
 					if (_gamePaused)
@@ -532,13 +532,13 @@ uint32 Sword2Engine::setInputEventFilter(uint32 filter) {
  */
 
 void Sword2Engine::parseInputEvents() {
-	OSystem::Event event;
+	Common::Event event;
 
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case OSystem::EVENT_KEYDOWN:
-			if (event.kbd.flags == OSystem::KBD_CTRL) {
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == 'f') {
 					if (_gameSpeed == 1)
 						_gameSpeed = 2;
@@ -553,48 +553,48 @@ void Sword2Engine::parseInputEvents() {
 				_keyboardEvent.modifiers = event.kbd.flags;
 			}
 			break;
-		case OSystem::EVENT_MOUSEMOVE:
+		case Common::EVENT_MOUSEMOVE:
 			if (!(_inputEventFilter & RD_KEYDOWN)) {
 				_mouse->setPos(event.mouse.x, event.mouse.y - MENUDEEP);
 			}
 			break;
-		case OSystem::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONDOWN:
 			if (!(_inputEventFilter & RD_LEFTBUTTONDOWN)) {
 				_mouseEvent.pending = true;
 				_mouseEvent.buttons = RD_LEFTBUTTONDOWN;
 			}
 			break;
-		case OSystem::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
 			if (!(_inputEventFilter & RD_RIGHTBUTTONDOWN)) {
 				_mouseEvent.pending = true;
 				_mouseEvent.buttons = RD_RIGHTBUTTONDOWN;
 			}
 			break;
-		case OSystem::EVENT_LBUTTONUP:
+		case Common::EVENT_LBUTTONUP:
 			if (!(_inputEventFilter & RD_LEFTBUTTONUP)) {
 				_mouseEvent.pending = true;
 				_mouseEvent.buttons = RD_LEFTBUTTONUP;
 			}
 			break;
-		case OSystem::EVENT_RBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
 			if (!(_inputEventFilter & RD_RIGHTBUTTONUP)) {
 				_mouseEvent.pending = true;
 				_mouseEvent.buttons = RD_RIGHTBUTTONUP;
 			}
 			break;
-		case OSystem::EVENT_WHEELUP:
+		case Common::EVENT_WHEELUP:
 			if (!(_inputEventFilter & RD_WHEELUP)) {
 				_mouseEvent.pending = true;
 				_mouseEvent.buttons = RD_WHEELUP;
 			}
 			break;
-		case OSystem::EVENT_WHEELDOWN:
+		case Common::EVENT_WHEELDOWN:
 			if (!(_inputEventFilter & RD_WHEELDOWN)) {
 				_mouseEvent.pending = true;
 				_mouseEvent.buttons = RD_WHEELDOWN;
 			}
 			break;
-		case OSystem::EVENT_QUIT:
+		case Common::EVENT_QUIT:
 			closeGame();
 			break;
 		default:

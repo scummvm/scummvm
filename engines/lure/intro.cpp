@@ -68,9 +68,9 @@ bool Introduction::delay(uint32 milliseconds) {
 		if (events.quitFlag) return true;
 
 		if (events.pollEvent()) {
-			if (events.type() == OSystem::EVENT_KEYDOWN) 
+			if (events.type() == Common::EVENT_KEYDOWN) 
 				return events.event().kbd.keycode == 27;
-			else if (events.type() == OSystem::EVENT_LBUTTONDOWN)
+			else if (events.type() == Common::EVENT_LBUTTONDOWN)
 				return false;
 		}
 

@@ -42,7 +42,7 @@ public:
 	int eventNum;
 	int lastPenFrame;
 	
-	Event eventQueue[64];
+	Common::Event eventQueue[64];
 	int queuePos;
 	
 	DSSaveFileManager saveManager;
@@ -94,7 +94,7 @@ public:
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int targetCursorScale = 1);
 
-	virtual bool pollEvent(Event &event);
+	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 
@@ -121,7 +121,7 @@ public:
 
 	virtual Common::SaveFileManager *getSavefileManager();
 	
-	void addEvent(Event& e);
+	void addEvent(Common::Event& e);
 	bool isEventQueueEmpty() { return queuePos == 0; }
 	
 	virtual bool grabRawScreen(Graphics::Surface* surf);

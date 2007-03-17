@@ -91,13 +91,13 @@ void Input::delay(uint amount) {
 	}
 	uint32 end = _system->getMillis() + amount;
 	do {
-		OSystem::Event event;
+		Common::Event event;
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			_idleTime = 0;
 			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.flags == OSystem::KBD_CTRL) {
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.flags == Common::KBD_CTRL) {
 					if (event.kbd.keycode == 'd') {
 						_debugger = true;
 					} else if (event.kbd.keycode == 'f') {
@@ -108,24 +108,24 @@ void Input::delay(uint amount) {
 				}
 				break;
 
-			case OSystem::EVENT_MOUSEMOVE:
+			case Common::EVENT_MOUSEMOVE:
 				_mouse_x = event.mouse.x;
 				_mouse_y = event.mouse.y;
 				break;
 
-			case OSystem::EVENT_LBUTTONDOWN:
+			case Common::EVENT_LBUTTONDOWN:
 				_mouseButton |= MOUSE_LBUTTON;
 				_mouse_x = event.mouse.x;
 				_mouse_y = event.mouse.y;
 				break;
 
-			case OSystem::EVENT_RBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN:
 				_mouseButton |= MOUSE_RBUTTON;
 				_mouse_x = event.mouse.x;
 				_mouse_y = event.mouse.y;
 				break;
 
-			case OSystem::EVENT_QUIT:
+			case Common::EVENT_QUIT:
 				_system->quit();
 				break;
 

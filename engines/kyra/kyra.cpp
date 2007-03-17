@@ -603,7 +603,7 @@ void KyraEngine::delayUntil(uint32 timestamp, bool updateTimers, bool update, bo
 }
 
 void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
-	OSystem::Event event;
+	Common::Event event;
 	char saveLoadSlot[20];
 	char savegameName[14];
 
@@ -612,17 +612,17 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
+			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' && 
-						(event.kbd.flags == OSystem::KBD_CTRL || event.kbd.flags == OSystem::KBD_ALT) && isMainLoop) {
+						(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && isMainLoop) {
 					sprintf(saveLoadSlot, "%s.00%d", _targetName.c_str(), event.kbd.keycode - '0');
-					if (event.kbd.flags == OSystem::KBD_CTRL)
+					if (event.kbd.flags == Common::KBD_CTRL)
 						loadGame(saveLoadSlot);
 					else {
 						sprintf(savegameName, "Quicksave %d",  event.kbd.keycode - '0');
 						saveGame(saveLoadSlot, savegameName);
 					}
-				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
+				} else if (event.kbd.flags == Common::KBD_CTRL) {
 					if (event.kbd.keycode == 'd')
 						_debugger->attach();
 					else if (event.kbd.keycode == 'q')
@@ -635,7 +635,7 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 				}
 
 				break;
-			case OSystem::EVENT_MOUSEMOVE:
+			case Common::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
 				if (_flags.useHiResOverlay) {
@@ -644,13 +644,13 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 				}
 				_animator->_updateScreen = true;
 				break;
-			case OSystem::EVENT_QUIT:
+			case Common::EVENT_QUIT:
 				quitGame();
 				break;
-			case OSystem::EVENT_LBUTTONDOWN:
+			case Common::EVENT_LBUTTONDOWN:
 				_mousePressFlag = true;
 				break;
-			case OSystem::EVENT_LBUTTONUP:
+			case Common::EVENT_LBUTTONUP:
 				_mousePressFlag = false;
 
 				_mouseX = event.mouse.x;
@@ -705,22 +705,22 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 
 void KyraEngine::waitForEvent() {
 	bool finished = false;
-	OSystem::Event event;
+	Common::Event event;
 	while (!finished && !_quitFlag) {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
+			case Common::EVENT_KEYDOWN:
 				finished = true;
 				break;
-			case OSystem::EVENT_MOUSEMOVE:
+			case Common::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
 				break;
-			case OSystem::EVENT_QUIT:
+			case Common::EVENT_QUIT:
 				quitGame();
 				break;
-			case OSystem::EVENT_LBUTTONDOWN:
+			case Common::EVENT_LBUTTONDOWN:
 				finished = true;
 				_skipFlag = true;
 				break;

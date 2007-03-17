@@ -232,7 +232,7 @@ void addKeyboardEvents() {
 			if (( (tx >= keys[r].x) && (tx <= keys[r].x + 1)) && 
 				   (ty >= keys[r].y) && (ty <= keys[r].y + 1)) {
 			   	OSystem_DS* system = OSystem_DS::instance();
-				OSystem::Event event;
+				Common::Event event;
 				
 //				consolePrintf("Key: %d\n", r);
 				if ((keys[r].character == SDLK_UNKNOWN)) {
@@ -260,11 +260,11 @@ void addKeyboardEvents() {
 				
 				//event.kbd.keycode = keys[r].character;		
 				//event.kbd.ascii = keys[r].character;		
-				event.type = OSystem::EVENT_KEYDOWN;
+				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.flags = 0;
 				system->addEvent(event);
 
-				event.type = OSystem::EVENT_KEYUP;
+				event.type = Common::EVENT_KEYUP;
 				system->addEvent(event);
 				
 				switch (keys[r].character) {

@@ -23,6 +23,7 @@
  */
 
 #include "be_base.h"
+#include "common/events.h"
 
 #ifdef STDLIB_TRACE_MEMORY
 #	include <stdlib.h>
@@ -119,7 +120,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 						event.kbd.keycode = 275;
 
 					if (event.kbd.keycode) {
-						event.type = EVENT_KEYDOWN;
+						event.type = Common::EVENT_KEYDOWN;
 						event.kbd.ascii = event.kbd.keycode;
 						event.kbd.flags = 0;
 						return true;
@@ -141,7 +142,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 
 					if (sx || sy) {
 						simulate_mouse(event, sx, sy, &x, &y);
-						event.type = EVENT_MOUSEMOVE;
+						event.type = Common::EVENT_MOUSEMOVE;
 						event.mouse.x = x;
 						event.mouse.y = y;
 						warpMouse(x, y);
@@ -156,7 +157,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			switch (ev.data.keyDown.chr) {
 			// ESC key
 			case vchrLaunch:
-				event.type = EVENT_KEYDOWN;
+				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = 27;
 				event.kbd.ascii = 27;
 				event.kbd.flags = 0;
@@ -164,7 +165,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 
 			// F5 = menu
 			case vchrMenu:
-				event.type = EVENT_KEYDOWN;
+				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = 319;
 				event.kbd.ascii = 319;
 				event.kbd.flags = 0;
@@ -206,7 +207,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			if (abs(y - event.mouse.y) <= 2 || abs(x - event.mouse.x) <= 2)
 				return false;
 
-			event.type = EVENT_MOUSEMOVE;
+			event.type = Common::EVENT_MOUSEMOVE;
 			event.mouse.x = x;
 			event.mouse.y = y;
 			warpMouse(x, y);
@@ -222,7 +223,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 						(3 - (3 * x / _screenWidth )) -
 						(3 * (3 * y / _screenHeight));
 			
-				event.type = EVENT_KEYDOWN;
+				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = num;
 				event.kbd.ascii = num;
 				event.kbd.flags = 0;
@@ -234,7 +235,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			if (y > _screenHeight || y < 0 || x > _screenWidth || x < 0)
 				return false;
 
-			event.type = ((gVars->stylusClick || _overlayVisible) ? EVENT_LBUTTONDOWN : EVENT_MOUSEMOVE);
+			event.type = ((gVars->stylusClick || _overlayVisible) ? Common::EVENT_LBUTTONDOWN : Common::EVENT_MOUSEMOVE);
 			event.mouse.x = x;
 			event.mouse.y = y;
 			warpMouse(x, y);
@@ -243,7 +244,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 		case penUpEvent:
 			get_coordinates(&ev, x, y);
 
-			event.type = ((gVars->stylusClick || _overlayVisible) ? EVENT_LBUTTONUP : EVENT_MOUSEMOVE);
+			event.type = ((gVars->stylusClick || _overlayVisible) ? Common::EVENT_LBUTTONUP : Common::EVENT_MOUSEMOVE);
 			if (y > _screenHeight || y < 0 || x > _screenWidth || x < 0)
 				return false;
 
@@ -272,15 +273,15 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 
 			if (_lastKeyModifier == kModifierNone) {
 				// for keyboard mode
-				if (ev.data.keyDown.modifiers & shiftKeyMask)	mask |= KBD_SHIFT;
-				if (ev.data.keyDown.modifiers & controlKeyMask)	mask |= KBD_CTRL;
-				if (ev.data.keyDown.modifiers & optionKeyMask)	mask |= KBD_ALT;
-				if (ev.data.keyDown.modifiers & commandKeyMask) mask |= KBD_CTRL|KBD_ALT;
+				if (ev.data.keyDown.modifiers & shiftKeyMask)	mask |= Common::KBD_SHIFT;
+				if (ev.data.keyDown.modifiers & controlKeyMask)	mask |= Common::KBD_CTRL;
+				if (ev.data.keyDown.modifiers & optionKeyMask)	mask |= Common::KBD_ALT;
+				if (ev.data.keyDown.modifiers & commandKeyMask) mask |= Common::KBD_CTRL|Common::KBD_ALT;
 			} else {
 				// for grafiti mode
-				if (_lastKeyModifier == kModifierCommand)	mask = KBD_CTRL|KBD_ALT;
-				if (_lastKeyModifier == kModifierAlt)		mask = KBD_ALT;
-				if (_lastKeyModifier == kModifierCtrl)		mask = KBD_CTRL;
+				if (_lastKeyModifier == kModifierCommand)	mask = Common::KBD_CTRL|Common::KBD_ALT;
+				if (_lastKeyModifier == kModifierAlt)		mask = Common::KBD_ALT;
+				if (_lastKeyModifier == kModifierCtrl)		mask = Common::KBD_CTRL;
 			}
 
 			if (_lastKeyModifier)
@@ -288,22 +289,22 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			_lastKeyModifier = kModifierNone;
 
 			// F1 -> F10 key
-			if  (key >= '0' && key <= '9' && mask == (KBD_CTRL|KBD_ALT)) {
+			if  (key >= '0' && key <= '9' && mask == (Common::KBD_CTRL|Common::KBD_ALT)) {
 				key = (key == '0') ? 324 : (315 + key - '1');
 				mask = 0;
 
 #ifdef STDLIB_TRACE_MEMORY
 			// print memory
-			} else if  (key == 'm' && mask == (KBD_CTRL|KBD_ALT)) {
+			} else if  (key == 'm' && mask == (Common::KBD_CTRL|Common::KBD_ALT)) {
 				printf("Used memory: %d\n", __stdlib_trace_memory);
 #endif
 			// exit
-			} else if  ((key == 'z' && mask == KBD_CTRL) || (mask == KBD_ALT && key == 'x')) {
-				event.type = EVENT_QUIT;
+			} else if  ((key == 'z' && mask == Common::KBD_CTRL) || (mask == Common::KBD_ALT && key == 'x')) {
+				event.type = Common::EVENT_QUIT;
 				return true;
 			
 			// num pad (indy fight mode)
-			} else if (key == 'n' && mask == (KBD_CTRL|KBD_ALT) && !_overlayVisible) {
+			} else if (key == 'n' && mask == (Common::KBD_CTRL|Common::KBD_ALT) && !_overlayVisible) {
 				_useNumPad = !_useNumPad;
 				draw_osd(kDrawFight, _screenDest.w - 34, _screenDest.h + 2, _useNumPad, 1);
 				displayMessageOnOSD(_useNumPad ? "Fight mode on." : "Fight mode off.");
@@ -312,7 +313,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			
 			// other keys
 			_wasKey = true;
-			event.type = EVENT_KEYDOWN;
+			event.type = Common::EVENT_KEYDOWN;
 			event.kbd.keycode = key;
 			event.kbd.ascii = key;
 			event.kbd.flags = mask;
@@ -320,7 +321,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 
 		default:
 			if (_wasKey) {
-				event.type = EVENT_KEYUP;
+				event.type = Common::EVENT_KEYUP;
 				_wasKey = false;
 				return true;
 			}

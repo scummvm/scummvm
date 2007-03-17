@@ -394,7 +394,7 @@ void Screen::waitForTimer(void) {
 	Common::EventManager *eventMan = _system->getEventManager();
 	_gotTick = false;
 	while (!_gotTick) {
-		OSystem::Event event;
+		Common::Event event;
 
 		_system->delayMillis(10);
 		while (eventMan->pollEvent(event));
@@ -404,7 +404,7 @@ void Screen::waitForTimer(void) {
 void Screen::waitForSequence(void) {
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (_seqInfo.running) {
-		OSystem::Event event;
+		Common::Event event;
 
 		_system->delayMillis(20);
 		while (eventMan->pollEvent(event));

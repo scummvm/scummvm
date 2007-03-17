@@ -851,9 +851,9 @@ void memoryReport() {
 
 void addIndyFightingKeys() {
 	OSystem_DS* system = OSystem_DS::instance();
-	OSystem::Event event;
+	Common::Event event;
 
-	event.type = OSystem::EVENT_KEYDOWN;
+	event.type = Common::EVENT_KEYDOWN;
 	event.kbd.flags = 0;
 
 	if ((getKeysDown() & KEY_L)) {
@@ -995,7 +995,7 @@ void addEventsToQueue() {
 	consolePrintf("addEventsToQueue\n");
 	#endif
 	OSystem_DS* system = OSystem_DS::instance();
-	OSystem::Event event;
+	Common::Event event;
 
 	
 
@@ -1028,7 +1028,7 @@ void addEventsToQueue() {
 				if ((getKeysDown() & KEY_B) && (!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {
 		//			consolePrintf("Pressing Esc");
 		
-					event.type = OSystem::EVENT_KEYDOWN;
+					event.type = Common::EVENT_KEYDOWN;
 					event.kbd.keycode = 27;		
 					event.kbd.ascii = 27;		
 					event.kbd.flags = 0;
@@ -1065,13 +1065,13 @@ void addEventsToQueue() {
 						} else {
 							// If we're playing sam and max, click and release the right mouse
 							// button to change verb
-							OSystem::Event event;
+							Common::Event event;
 		
-							event.type = OSystem::EVENT_RBUTTONDOWN;
+							event.type = Common::EVENT_RBUTTONDOWN;
 							event.mouse = Common::Point(getPenX(), getPenY());
 							system->addEvent(event);
 		
-							event.type = OSystem::EVENT_RBUTTONUP;
+							event.type = Common::EVENT_RBUTTONUP;
 							system->addEvent(event);
 						}
 					}
@@ -1099,10 +1099,10 @@ void addEventsToQueue() {
 		
 		updateStatus();			
 		
-		OSystem::Event event;
+		Common::Event event;
 
 		if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {
-			event.type = OSystem::EVENT_MOUSEMOVE;
+			event.type = Common::EVENT_MOUSEMOVE;
 			event.mouse = Common::Point(getPenX(), getPenY());
 			system->addEvent(event);
 			//consolePrintf("x=%d   y=%d  \n", getPenX(), getPenY());
@@ -1111,13 +1111,13 @@ void addEventsToQueue() {
 		if (!keyboardEnable) {
 			if ((mouseMode != MOUSE_HOVER) || (!displayModeIs8Bit)) {
 					if (getPenDown() && (!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {	
-						event.type = ((mouseMode == MOUSE_LEFT) || (!displayModeIs8Bit))? OSystem::EVENT_LBUTTONDOWN: OSystem::EVENT_RBUTTONDOWN;
+						event.type = ((mouseMode == MOUSE_LEFT) || (!displayModeIs8Bit))? Common::EVENT_LBUTTONDOWN: OSystem::EVENT_RBUTTONDOWN;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
 					}
 					
 					if (getPenReleased()) {
-						event.type = mouseMode == MOUSE_LEFT? OSystem::EVENT_LBUTTONUP: OSystem::EVENT_RBUTTONUP;
+						event.type = mouseMode == MOUSE_LEFT? Common::EVENT_LBUTTONUP: OSystem::EVENT_RBUTTONUP;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
 					}
@@ -1126,23 +1126,23 @@ void addEventsToQueue() {
 	
 				if (getPenHeld()) {
 					if (getKeysDown() & KEY_LEFT) {
-						event.type = OSystem::EVENT_LBUTTONDOWN;
+						event.type = Common::EVENT_LBUTTONDOWN;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
 					}
 				/*	if (getKeysReleased() & KEY_LEFT) {
-						event.type = OSystem::EVENT_LBUTTONUP;
+						event.type = Common::EVENT_LBUTTONUP;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
 					}*/
 	
 					if (getKeysDown() & KEY_RIGHT) {
-						event.type = OSystem::EVENT_RBUTTONDOWN;
+						event.type = Common::EVENT_RBUTTONDOWN;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
 					}
 					/*if (getKeysReleased() & KEY_RIGHT) {
-						event.type = OSystem::EVENT_RBUTTONUP;
+						event.type = Common::EVENT_RBUTTONUP;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
 					}*/
@@ -1164,9 +1164,9 @@ void addEventsToQueue() {
 				if (currentGame->control == CONT_SIMON) {
 					// Extra controls for Simon the Sorcerer
 					if ((getKeysDown() & KEY_DOWN)) {
-						OSystem::Event event;
+						Common::Event event;
 					
-						event.type = OSystem::EVENT_KEYDOWN;
+						event.type = Common::EVENT_KEYDOWN;
 						event.kbd.keycode = '#';		// F10 or # - show hotspots
 						event.kbd.ascii = '#';
 						event.kbd.flags = 0;
@@ -1178,9 +1178,9 @@ void addEventsToQueue() {
 				if (currentGame->control == CONT_SCUMM_ORIGINAL) {
 					// Extra controls for Scumm v1-5 games
 					if ((getKeysDown() & KEY_DOWN)) {
-						OSystem::Event event;
+						Common::Event event;
 					
-						event.type = OSystem::EVENT_KEYDOWN;
+						event.type = Common::EVENT_KEYDOWN;
 						event.kbd.keycode = '.';		// Full stop - skips current dialogue line
 						event.kbd.ascii = '.';
 						event.kbd.flags = 0;
@@ -1200,35 +1200,35 @@ void addEventsToQueue() {
 			// Front end controls
 			
 			if (leftHandedSwap(getKeysDown()) & KEY_UP) {
-				event.type = OSystem::EVENT_KEYDOWN;
+				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = SDLK_UP;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
 				system->addEvent(event);
 
-				event.type = OSystem::EVENT_KEYUP;
+				event.type = Common::EVENT_KEYUP;
 				system->addEvent(event);
 			}
 
 			if (leftHandedSwap(getKeysDown()) & KEY_DOWN) {
-				event.type = OSystem::EVENT_KEYDOWN;
+				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = SDLK_DOWN;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
 				system->addEvent(event);
 
-				event.type = OSystem::EVENT_KEYUP;
+				event.type = Common::EVENT_KEYUP;
 				system->addEvent(event);
 			}
 
 			if (leftHandedSwap(getKeysDown()) & KEY_A) {
-				event.type = OSystem::EVENT_KEYDOWN;
+				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = SDLK_RETURN;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
 				system->addEvent(event);
 
-				event.type = OSystem::EVENT_KEYUP;
+				event.type = Common::EVENT_KEYUP;
 				system->addEvent(event);
 			}
 		
@@ -1236,13 +1236,13 @@ void addEventsToQueue() {
 
 		
 		if ((getKeysDown() & KEY_START)) {
-			event.type = OSystem::EVENT_KEYDOWN;
+			event.type = Common::EVENT_KEYDOWN;
 			event.kbd.keycode = 319;		// F5
 			event.kbd.ascii = 319;
 			event.kbd.flags = 0;
 			system->addEvent(event);
 /*
-			event.type = OSystem::EVENT_KEYUP;
+			event.type = Common::EVENT_KEYUP;
 			event.kbd.keycode = 319;		// F5
 			event.kbd.ascii = 319;
 			system->addEvent(event);*/

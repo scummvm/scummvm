@@ -88,7 +88,7 @@ public:
 
 	// Get the next event.
 	// Returns true if an event was retrieved.
-	bool pollEvent(Event &event);
+	bool pollEvent(Common::Event &event);
 
 	// Set function that generates samples
 	bool setSoundCallback(SoundProc proc, void *param);

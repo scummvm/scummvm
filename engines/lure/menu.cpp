@@ -474,7 +474,7 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 				goto bail_out;
 			}
 
-			else if (e.type() == OSystem::EVENT_KEYDOWN) {
+			else if (e.type() == Common::EVENT_KEYDOWN) {
 				byte ch = e.event().kbd.ascii;
 				uint16 keycode = e.event().kbd.keycode;
 
@@ -492,11 +492,11 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 					goto bail_out;
 				}
 
-			} else if (e.type() == OSystem::EVENT_LBUTTONDOWN) {
+			} else if (e.type() == Common::EVENT_LBUTTONDOWN) {
 				//mouse.waitForRelease();
 				goto bail_out;
 
-			} else if (e.type() == OSystem::EVENT_RBUTTONDOWN) {
+			} else if (e.type() == Common::EVENT_RBUTTONDOWN) {
 				mouse.waitForRelease();
 				selectedIndex = 0xffff;
 				goto bail_out;

@@ -58,60 +58,60 @@ void AgiEngine::allowSynthetic(bool allow) {
 }
 
 void AgiEngine::processEvents() {
-	OSystem::Event event;
+	Common::Event event;
 	int key = 0;
 
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case OSystem::EVENT_QUIT:
+		case Common::EVENT_QUIT:
 			_gfx->deinitVideo();
 			_gfx->deinitMachine();
 			_system->quit();
 			break;
-		case OSystem::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONDOWN:
 			key = BUTTON_LEFT;
 			g_mouse.button = 1;
 			keyEnqueue(key);
 			g_mouse.x = event.mouse.x;
 			g_mouse.y = event.mouse.y;
 			break;
-		case OSystem::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
 			key = BUTTON_RIGHT;
 			g_mouse.button = 2;
 			keyEnqueue(key);
 			g_mouse.x = event.mouse.x;
 			g_mouse.y = event.mouse.y;
 			break;
-		case OSystem::EVENT_WHEELUP:
+		case Common::EVENT_WHEELUP:
 			key = WHEEL_UP;
 			keyEnqueue(key);
 			break;
-		case OSystem::EVENT_WHEELDOWN:
+		case Common::EVENT_WHEELDOWN:
 			key = WHEEL_DOWN;
 			keyEnqueue(key);
 			break;
-		case OSystem::EVENT_MOUSEMOVE:
+		case Common::EVENT_MOUSEMOVE:
 			g_mouse.x = event.mouse.x;
 			g_mouse.y = event.mouse.y;
 			break;
-		case OSystem::EVENT_LBUTTONUP:
-		case OSystem::EVENT_RBUTTONUP:
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
 			g_mouse.button = 0;
 			break;
-		case OSystem::EVENT_KEYDOWN:
+		case Common::EVENT_KEYDOWN:
 			_keyControl = 0;
 			_keyAlt = 0;
 
-			if (event.kbd.flags == OSystem::KBD_CTRL && event.kbd.keycode == 'd') {
+			if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'd') {
 				_console->attach();
 				break;
 			}
 
-			if (event.kbd.flags & OSystem::KBD_CTRL)
+			if (event.kbd.flags & Common::KBD_CTRL)
 				_keyControl = 1;
 
-			if (event.kbd.flags & OSystem::KBD_ALT)
+			if (event.kbd.flags & Common::KBD_ALT)
 				_keyAlt = 1;
 
 			switch (key = event.kbd.keycode) {
@@ -221,7 +221,7 @@ void AgiEngine::processEvents() {
 					key = (key & ~0x20) - 0x40;
 				else if (_keyAlt)
 					key = scancodeTable[(key & ~0x20) - 0x41] << 8;
-				else if (event.kbd.flags & OSystem::KBD_SHIFT)
+				else if (event.kbd.flags & Common::KBD_SHIFT)
 					key = event.kbd.ascii;
 				break;
 			}

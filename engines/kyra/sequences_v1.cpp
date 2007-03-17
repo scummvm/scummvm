@@ -1148,7 +1148,7 @@ void KyraEngine::seq_playCredits() {
 	_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 0, Screen::CR_NO_P_CHECK);
 	_screen->fadePalette(_screen->_currentPalette, 0x5A);
 
-	OSystem::Event event;	
+	Common::Event event;	
 	bool finished = false;
 	int bottom = 201;
 	while (!finished) {
@@ -1174,10 +1174,10 @@ void KyraEngine::seq_playCredits() {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
+			case Common::EVENT_KEYDOWN:
 				finished = true;
 				break;
-			case OSystem::EVENT_QUIT:
+			case Common::EVENT_QUIT:
 				quitGame();
 				finished = true;
 				break;
