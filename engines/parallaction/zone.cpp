@@ -581,10 +581,14 @@ Zone *hitZone(uint32 type, uint16 x, uint16 y) {
 
 		if (z->_flags & kFlagsRemove) continue;
 
-		if ((_si >= z->_right)	||
-			(_si <= z->_left)	||
-			(_di >= z->_bottom) ||
-			(_di <= z->_top)) {
+		Common::Rect r;
+		z->getRect(r);
+		r.right++;		// adjust border because Common::Rect doesn't include bottom-right edge
+		r.bottom++;
+
+		r.grow(-1);		// allows some tolerance for mouse click
+
+		if (!r.contains(_si, _di)) {
 
 			// out of Zone, so look for special values
 			if ((z->_left == -2) || (z->_left == -3)) {

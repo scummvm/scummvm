@@ -141,6 +141,13 @@ struct Zone : public Node {
 	Command 		*_commands;
 	Point			_moveTo;
 
+	void getRect(Common::Rect& r) const {
+		r.left = _left;
+		r.right = _right;
+		r.top = _top;
+		r.bottom = _bottom;
+	}
+
 	void translate(int16 x, int16 y) {
 		_left += x;
 		_right += x;
