@@ -511,6 +511,7 @@ void SkyEngine::gotTimerTick(void) {
 
 void SkyEngine::delay(int32 amount) {
 
+	Common::EventManager *eventMan = _system->getEventManager();
 	OSystem::Event event;
 
 	uint32 start = _system->getMillis();
@@ -520,7 +521,6 @@ void SkyEngine::delay(int32 amount) {
 		amount = 0;
 
 	do {
-		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
@@ -536,11 +536,15 @@ void SkyEngine::delay(int32 amount) {
 				}
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
-				_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
+				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED)) {
+					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
+				}
 				_skyMouse->buttonPressed(2);
 				break;
 			case OSystem::EVENT_RBUTTONDOWN:
-				_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
+				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED)) {
+					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
+				}
 				_skyMouse->buttonPressed(1);
 				break;
 			case OSystem::EVENT_QUIT:
