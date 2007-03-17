@@ -47,8 +47,8 @@ union CommandData {
 	} _move;
 };
 
-struct Command {
-	Node			_node;
+struct Command : public Node {
+//	Node			_node;
 
 	uint16			_id;
 	CommandData 	u;

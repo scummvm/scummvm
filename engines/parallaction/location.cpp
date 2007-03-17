@@ -213,13 +213,13 @@ void freeLocation() {
 	debugC(7, kDebugLocation, "freeLocation: comments freed");
 
 	if (_vm->_location._commands) {
-		freeNodeList(&_vm->_location._commands->_node);
+		freeNodeList(_vm->_location._commands);
 	}
 	_vm->_location._commands = NULL;
 	debugC(7, kDebugLocation, "freeLocation: commands freed");
 
 	if (_vm->_location._aCommands) {
-		freeNodeList(&_vm->_location._aCommands->_node);
+		freeNodeList(_vm->_location._aCommands);
 	}
 	_vm->_location._aCommands = NULL;
 	debugC(7, kDebugLocation, "freeLocation: acommands freed");

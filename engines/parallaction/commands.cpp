@@ -184,7 +184,7 @@ Command *parseCommands(Script &script) {
 
 		}
 
-		addNode(&root, &cmd->_node);
+		addNode(&root, cmd);
 		fillBuffers(script, true);
 
 	}
@@ -198,7 +198,7 @@ void freeCommands(Command *list) {
 	Command *cmd = list;
 
 	while (cmd) {
-		Command *v4 = (Command*)cmd->_node._next;
+		Command *v4 = (Command*)cmd->_next;
 
 		if (cmd->_id == 6) free(cmd->u._zone);	// open
 		free(cmd);
@@ -215,7 +215,7 @@ void runCommands(Command *list, Zone *z) {
 	debugC(1, kDebugLocation, "runCommands");
 
 	Command *cmd = list;
-	for ( ; cmd; cmd = (Command*)cmd->_node._next) {
+	for ( ; cmd; cmd = (Command*)cmd->_next) {
 		CommandData *u = &cmd->u;
 		uint32 v8 = _localFlags[_vm->_currentLocationIndex];
 
