@@ -518,6 +518,8 @@ private:
 	int _keyQueueStart;
 	int _keyQueueEnd;
 
+	bool _allowSynthetic;
+
 	int checkPriority(VtEntry *v);
 	int checkCollision(VtEntry *v);
 	int checkPosition(VtEntry *v);
@@ -634,6 +636,7 @@ public:
 	int showItems();
 	void selectItems(int n);
 
+	void allowSynthetic(bool);
 	void processEvents();
 
 	// Objects

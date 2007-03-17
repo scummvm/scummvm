@@ -350,6 +350,8 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 		_gfx->getKey();
 	}
 
+	AllowSyntheticEvents on(this);
+
 	debugC(4, kDebugLevelText, "waiting...");
 	for (;;) {
 		for (i = 0; b[i]; i++)

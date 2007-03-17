@@ -34,6 +34,22 @@ namespace Agi {
 #define keyDequeue(k) do { (k) = _keyQueue[_keyQueueStart++]; \
 	_keyQueueStart %= KEY_QUEUE_SIZE; } while (0)
 
+// Class to turn on synthetic events temporarily. Usually until the end of the
+// current function.
+
+class AllowSyntheticEvents {
+private:
+	AgiEngine *_vm;
+public:
+	AllowSyntheticEvents(AgiEngine *vm) : _vm(vm) {
+		_vm->allowSynthetic(true);
+	}
+
+	~AllowSyntheticEvents() {
+		_vm->allowSynthetic(false);
+	}
+};
+
 /* QNX4 has a KEY_DOWN defined which we don't need to care about */
 #undef KEY_DOWN
 

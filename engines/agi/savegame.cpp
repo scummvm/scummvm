@@ -509,6 +509,8 @@ int AgiEngine::selectSlot() {
 	for (i = 0; i < 2; i++)
 		_gfx->drawButton(buttonX[i], buttonY, buttonText[i], 0, 0, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 
+	AllowSyntheticEvents on(this);
+
 	for (;;) {
 		char dstr[64];
 		for (i = 0; i < NUM_VISIBLE_SLOTS; i++) {
