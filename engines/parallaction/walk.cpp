@@ -321,8 +321,8 @@ void jobWalk(void *parm, Job *j) {
 
 //	debugC(1, kDebugWalk, "jobWalk to (%i, %i)", node->_x + _vm->_char._ani._cnv._width / 2, node->_y + _vm->_char._ani._cnv._height);
 
-	_vm->_char._ani._zone._oldposition._x = _si;
-	_vm->_char._ani._zone._oldposition._y = _di;
+	_vm->_char._ani._zone._oldLeft = _si;
+	_vm->_char._ani._zone._oldTop = _di;
 
 	if ((node->_x == _si) && (node->_y == _di)) {
 		if (node->_next == NULL) {
@@ -415,7 +415,7 @@ void jobWalk(void *parm, Job *j) {
 	_vm->_char._ani._zone._left = _si;
 	_vm->_char._ani._zone._top = _di;
 
-	if ((_si == _vm->_char._ani._zone._oldposition._x) && (_di == _vm->_char._ani._zone._oldposition._y)) {
+	if ((_si == _vm->_char._ani._zone._oldLeft) && (_di == _vm->_char._ani._zone._oldTop)) {
 
 		j->_finished = 1;
 		checkDoor();

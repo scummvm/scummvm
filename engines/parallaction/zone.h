@@ -129,7 +129,8 @@ struct Zone : public Node {
 	int16		_top;
 	int16		_right;
 	int16		_bottom;
-	Point		_oldposition;
+	int16		_oldLeft;
+	int16		_oldTop;
 
 	uint32			_type;
 	uint32			_flags;

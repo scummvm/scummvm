@@ -145,8 +145,8 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 		fillBuffers(script, true);
 	}
 
-	vD0->_zone._oldposition._x = -1000;
-	vD0->_zone._oldposition._y = -1000;
+	vD0->_zone._oldLeft = -1000;
+	vD0->_zone._oldTop = -1000;
 
 	vD0->_zone._flags |= 0x1000000;
 
@@ -208,7 +208,7 @@ void jobDisplayAnimations(void *parm, Job *j) {
 
 		if (((v18->_zone._flags & kFlagsActive) == 0) && (v18->_zone._flags & kFlagsRemove))   {
 			v18->_zone._flags &= ~kFlagsRemove;
-			v18->_zone._oldposition._x = -1000;
+			v18->_zone._oldLeft = -1000;
 		}
 
 		if ((v18->_zone._flags & kFlagsActive) && (v18->_zone._flags & kFlagsRemove))	{
@@ -234,12 +234,12 @@ void jobEraseAnimations(void *arg_0, Job *j) {
 		if (((a->_zone._flags & kFlagsActive) == 0) && ((a->_zone._flags & kFlagsRemove) == 0)) continue;
 
 		Common::Rect r(a->_cnv._width, a->_cnv._height);
-		r.moveTo(a->_zone._oldposition._x, a->_zone._oldposition._y);
+		r.moveTo(a->_zone._oldLeft, a->_zone._oldTop);
 		_vm->_gfx->restoreBackground(r);
 
 		if (arg_0) {
-			a->_zone._oldposition._x = a->_zone._left;
-			a->_zone._oldposition._y = a->_zone._top;
+			a->_zone._oldLeft = a->_zone._left;
+			a->_zone._oldTop = a->_zone._top;
 		}
 
 	}
