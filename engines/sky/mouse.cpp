@@ -175,21 +175,23 @@ void Mouse::waitMouseNotPressed(int minDelay) {
 	OSystem::Event event;
 	while (mousePressed || _system->getMillis() < now + minDelay) {
 		Common::EventManager *eventMan = _system->getEventManager();
+
+		if (eventMan->shouldQuit()) {
+			SkyEngine::_systemVars.quitGame = true;
+			minDelay = 0;
+			mousePressed = false;
+		}
+
+		if (!eventMan->getButtonState())
+			mousePressed = false;
+
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case OSystem::EVENT_LBUTTONUP:
-				mousePressed = false;
-				break;
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.ascii == 27) {
 					minDelay = 0;
 					mousePressed = false;
 				}
-				break;
-			case OSystem::EVENT_QUIT:
-				SkyEngine::_systemVars.quitGame = true;
-				minDelay = 0;
-				mousePressed = false;
 				break;
 			default:
 				break;
