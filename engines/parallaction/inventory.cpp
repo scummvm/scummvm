@@ -51,7 +51,6 @@ namespace Parallaction {
 #define INVENTORY_HEIGHT			(INVENTORY_LINES*INVENTORYITEM_HEIGHT)
 
 static byte		*_buffer;
-extern Cnv 		 _yourObjects;
 uint16			 _numInvLines = 0;
 static Point	 _invPosition = { 0, 0 };
 
@@ -188,8 +187,8 @@ void drawInventoryItem(uint16 pos, InventoryItem *item) {
 	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
 	// FIXME: this will end up in a general blit function
-	byte* s = _yourObjects._array[item->_index];
-	byte* d = _buffer + col * INVENTORYITEM_WIDTH + line * _yourObjects._height * INVENTORY_WIDTH;
+	byte* s = _vm->_char._yourObjects._array[item->_index];
+	byte* d = _buffer + col * INVENTORYITEM_WIDTH + line * _vm->_char._yourObjects._height * INVENTORY_WIDTH;
 	for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
 		memcpy(d, s, INVENTORYITEM_WIDTH);
 
@@ -229,8 +228,8 @@ void highlightInventoryItem(int16 pos, byte color) {
 	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
 	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
-	Common::Rect r(INVENTORYITEM_WIDTH, _yourObjects._height);
-	r.moveTo(col * INVENTORYITEM_WIDTH, line * _yourObjects._height);
+	Common::Rect r(INVENTORYITEM_WIDTH, _vm->_char._yourObjects._height);
+	r.moveTo(col * INVENTORYITEM_WIDTH, line * _vm->_char._yourObjects._height);
 
 	drawBorder(r, _buffer, color);
 
@@ -248,7 +247,7 @@ void extractInventoryGraphics(int16 pos, byte *dst) {
 
 	// FIXME: this will end up in a general blit function
 	byte* d = dst;
-	byte* s = _buffer + col * INVENTORYITEM_WIDTH + line * _yourObjects._height * INVENTORY_WIDTH;
+	byte* s = _buffer + col * INVENTORYITEM_WIDTH + line * _vm->_char._yourObjects._height * INVENTORY_WIDTH;
 	for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
 		memcpy(d, s, INVENTORYITEM_WIDTH);
 
@@ -358,7 +357,7 @@ void redrawInventory() {
 
 void initInventory() {
 	_buffer = (byte*)malloc(INVENTORY_WIDTH * INVENTORY_HEIGHT);	  // this buffer is also used by menu so it must stay this size
-	_yourObjects._count = 0;
+	_vm->_char._yourObjects._count = 0;
 }
 
 void cleanInventory() {

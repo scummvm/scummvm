@@ -37,7 +37,6 @@ Node _zones = { NULL, NULL };
 Node _animations = { NULL, NULL };
 
 extern Node helperNode;
-extern StaticCnv	_yourHead;
 
 Zone *findZone(const char *name) {
 
@@ -367,9 +366,9 @@ void displayCharacterComment(ExamineData *data) {
 	if (data->_description == NULL) return;
 
 	StaticCnv v3C;
-	v3C._width = _yourTalk._width;
-	v3C._height = _yourTalk._height;
-	v3C._data0 = _yourTalk._array[0];
+	v3C._width = _vm->_char._yourTalk._width;
+	v3C._height = _vm->_char._yourTalk._height;
+	v3C._data0 = _vm->_char._yourTalk._array[0];
 	v3C._data1 = NULL; //_yourTalk.field_8[0];
 
 	_vm->_gfx->setFont("comic");
@@ -415,7 +414,7 @@ void displayItemComment(ExamineData *data) {
 	Common::Rect r(v6C, v6A);
 	r.moveTo(0, 90);
 	_vm->_gfx->drawBalloon(r, 0);
-	_vm->_gfx->flatBlitCnv(&_yourHead, 100, 152, Gfx::kBitFront, _yourHead._data1);
+	_vm->_gfx->flatBlitCnv(&_vm->_char._yourHead, 100, 152, Gfx::kBitFront, _vm->_char._yourHead._data1);
 	_vm->_gfx->displayWrappedString(data->_description, 0, 90, 130, 0);
 
 	jobEraseAnimations((void*)1, NULL);
@@ -609,13 +608,13 @@ Zone *hitZone(uint32 type, uint16 x, uint16 y) {
 
 			if (z->_limits._left != -1)
 				continue;
-			if (_si < _yourself._zone.pos._position._x)
+			if (_si < _vm->_char._yourself._zone.pos._position._x)
 				continue;
-			if (_si > (_yourself._zone.pos._position._x + _yourself._cnv._width))
+			if (_si > (_vm->_char._yourself._zone.pos._position._x + _vm->_char._yourself._cnv._width))
 				continue;
-			if (_di < _yourself._zone.pos._position._y)
+			if (_di < _vm->_char._yourself._zone.pos._position._y)
 				continue;
-			if (_di > (_yourself._zone.pos._position._y + _yourself._cnv._height))
+			if (_di > (_vm->_char._yourself._zone.pos._position._y + _vm->_char._yourself._cnv._height))
 				continue;
 
 		}

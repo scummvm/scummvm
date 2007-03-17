@@ -58,12 +58,7 @@ uint32		_engineFlags = 0;
 char	   *_objectsNames[100];
 Zone	   *_activeZone = NULL;
 
-Animation		_yourself;
-StaticCnv		_yourHead;
-Cnv		    	_yourTalk;
-Cnv 			_characterFrames;
-static Cnv		_miniCharacterFrames;
-Cnv 			_yourObjects;
+
 
 uint16		_score = 1;
 
@@ -230,32 +225,32 @@ int Parallaction::init() {
 
 	initWalk();
 
-	_yourTalk._width = 0;
-	_yourTalk._height = 0;
-	_yourTalk._count = 0;
-	_yourTalk._array = NULL;
+	_vm->_char._yourTalk._width = 0;
+	_vm->_char._yourTalk._height = 0;
+	_vm->_char._yourTalk._count = 0;
+	_vm->_char._yourTalk._array = NULL;
 
-	_yourHead._width = 0;
-	_yourHead._height = 0;
-	_yourHead._data0 = NULL;
-	_yourHead._data1 = NULL;
+	_vm->_char._yourHead._width = 0;
+	_vm->_char._yourHead._height = 0;
+	_vm->_char._yourHead._data0 = NULL;
+	_vm->_char._yourHead._data1 = NULL;
 
-	_yourself._zone.pos._position._x = 150;
-	_yourself._zone.pos._position._y = 100;
+	_vm->_char._yourself._zone.pos._position._x = 150;
+	_vm->_char._yourself._zone.pos._position._y = 100;
 	initInventory();
-	_yourself._z = 10;
+	_vm->_char._yourself._z = 10;
 
-	_yourself._zone.pos._oldposition._x = -1000;
-	_yourself._zone.pos._oldposition._y = -1000;
-	_yourself._frame = 0;
+	_vm->_char._yourself._zone.pos._oldposition._x = -1000;
+	_vm->_char._yourself._zone.pos._oldposition._y = -1000;
+	_vm->_char._yourself._frame = 0;
 
-	_yourself._zone._flags = kFlagsActive | kFlagsNoName;
-	_yourself._zone._type = kZoneYou;
+	_vm->_char._yourself._zone._flags = kFlagsActive | kFlagsNoName;
+	_vm->_char._yourself._zone._type = kZoneYou;
 
-	_yourself._zone._label._cnv._data0 = NULL;
-	_yourself._zone._label._text = strdup("yourself");
+	_vm->_char._yourself._zone._label._cnv._data0 = NULL;
+	_vm->_char._yourself._zone._label._text = strdup("yourself");
 
-	addNode(&_animations, &_yourself._zone._node);
+	addNode(&_animations, &_vm->_char._yourself._zone._node);
 	_gfx = new Gfx(this);
 
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
@@ -300,9 +295,9 @@ void Parallaction::initGame() {
 	parseLocation(_location._name);
 
 	if (_location._startPosition._x != -1000) {
-		_yourself._zone.pos._position._x = _location._startPosition._x;
-		_yourself._zone.pos._position._y = _location._startPosition._y;
-		_yourself._frame = _location._startFrame;
+		_vm->_char._yourself._zone.pos._position._x = _location._startPosition._x;
+		_vm->_char._yourself._zone.pos._position._y = _location._startPosition._y;
+		_vm->_char._yourself._frame = _location._startFrame;
 		_location._startPosition._y = -1000;
 		_location._startPosition._x = -1000;
 	}
@@ -544,8 +539,8 @@ void Parallaction::processInput(InputData *data) {
 		debugC(2, kDebugInput, "processInput: kEvWalk");
 		_hoverZone = NULL;
 		changeCursor(kCursorArrow);
-		if (_yourself._zone._flags & kFlagsRemove) break;
-		if ((_yourself._zone._flags & kFlagsActive) == 0) break;
+		if (_vm->_char._yourself._zone._flags & kFlagsRemove) break;
+		if ((_vm->_char._yourself._zone._flags & kFlagsActive) == 0) break;
 		v4 = buildWalkPath(data->_mousePos._x, data->_mousePos._y);
 		addJob(jobWalk, v4, kPriority19);
 		_engineFlags |= kEngineWalking; 								   // inhibits processing of input until walking is over
@@ -759,14 +754,14 @@ void Parallaction::changeCursor(int32 index) {
 
 void freeCharacterFrames() {
 
-	_vm->_gfx->freeCnv(&_characterFrames);
+	_vm->_gfx->freeCnv(&_vm->_char._characterFrames);
 
 	if (!IS_DUMMY_CHARACTER(_vm->_characterName)) {
-		_vm->_gfx->freeCnv(&_miniCharacterFrames);
+		_vm->_gfx->freeCnv(&_vm->_char._miniCharacterFrames);
 		_vm->freeTable(_objectsNames);
-		_vm->_gfx->freeCnv(&_yourTalk);
-		_vm->_gfx->freeStaticCnv(&_yourHead);
-		_vm->_gfx->freeCnv(&_yourObjects);
+		_vm->_gfx->freeCnv(&_vm->_char._yourTalk);
+		_vm->_gfx->freeStaticCnv(&_vm->_char._yourHead);
+		_vm->_gfx->freeCnv(&_vm->_char._yourObjects);
 	}
 
 	return;
@@ -839,15 +834,15 @@ void Parallaction::changeCharacter(const char *name) {
 
 		char path[PATH_LEN];
 		strcpy(path, v32);
-		_disk->loadFrames(path, &_characterFrames);
+		_disk->loadFrames(path, &_vm->_char._characterFrames);
 
 		if (!IS_DUMMY_CHARACTER(name)) {
-			_disk->loadHead(path, &_yourHead);
-			_disk->loadTalk(path, &_yourTalk);
-			_disk->loadObjects(name, &_yourObjects);
+			_disk->loadHead(path, &_vm->_char._yourHead);
+			_disk->loadTalk(path, &_vm->_char._yourTalk);
+			_disk->loadObjects(name, &_vm->_char._yourObjects);
 
 			sprintf(path, "mini%s", v32);
-			_disk->loadFrames(path, &_miniCharacterFrames);
+			_disk->loadFrames(path, &_vm->_char._miniCharacterFrames);
 
 			sprintf(path, "%s.tab", name);
 			initTable(path, _objectsNames);
@@ -860,9 +855,9 @@ void Parallaction::changeCharacter(const char *name) {
 	}
 
 	if (miniCharacter)
-		memcpy(&_yourself._cnv, &_miniCharacterFrames, sizeof(Cnv));
+		memcpy(&_vm->_char._yourself._cnv, &_vm->_char._miniCharacterFrames, sizeof(Cnv));
 	else
-		memcpy(&_yourself._cnv, &_characterFrames, sizeof(Cnv));
+		memcpy(&_vm->_char._yourself._cnv, &_vm->_char._characterFrames, sizeof(Cnv));
 
 	strcpy(_characterName1, v32);
 

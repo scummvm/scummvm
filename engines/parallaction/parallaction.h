@@ -28,6 +28,7 @@
 #include "parallaction/inventory.h"
 #include "parallaction/parser.h"
 #include "parallaction/disk.h"
+#include "parallaction/zone.h"
 #include "common/str.h"
 #include "gui/dialog.h"
 #include "gui/widget.h"
@@ -103,7 +104,7 @@ extern uint16 _language;
 extern Zone *_activeZone;
 extern uint32 _engineFlags;
 extern callable _callables[];
-extern Animation _yourself;
+
 extern Node _zones;
 extern Node _animations;
 extern uint32 _localFlags[];
@@ -122,9 +123,7 @@ extern char _saveData1[];
 extern byte _mouseHidden;
 extern uint32 _commandFlags;
 
-extern Cnv _yourTalk;
 
-extern Cnv _characterFrames;
 
 //extern char _locationName[];
 //extern Node _walkNodes;
@@ -251,6 +250,15 @@ struct Location {
 
 };
 
+struct Character {
+	Animation		_yourself;
+	StaticCnv		_yourHead;
+	Cnv		    	_yourTalk;
+	Cnv 			_characterFrames;
+	Cnv				_miniCharacterFrames;
+	Cnv 			_yourObjects;
+};
+
 class Parallaction : public Engine {
 
 public:
@@ -305,6 +313,7 @@ public:
 	int16	_currentLocationIndex;
 	uint16	_numLocations;
 
+	Character	_char;
 	Location	_location;
 
 	InventoryItem	_activeItem;

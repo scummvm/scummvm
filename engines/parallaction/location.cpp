@@ -92,12 +92,12 @@ void Parallaction::parseLocation(const char *filename) {
 			switchBackground(_location._name, mask);
 
 			if (_tokens[2][0] != '\0') {
-				_yourself._zone.pos._position._x = atoi(_tokens[2]);
-				_yourself._zone.pos._position._y = atoi(_tokens[3]);
+				_vm->_char._yourself._zone.pos._position._x = atoi(_tokens[2]);
+				_vm->_char._yourself._zone.pos._position._y = atoi(_tokens[3]);
 			}
 
 			if (_tokens[4][0] != '\0') {
-				_yourself._frame = atoi(_tokens[4]);
+				_vm->_char._yourself._frame = atoi(_tokens[4]);
 			}
 		}
 		if (!scumm_stricmp(_tokens[0], "DISK")) {
@@ -237,8 +237,8 @@ void parseWalkNodes(Script& script, Node *list) {
 		if (!scumm_stricmp(_tokens[0], "COORD")) {
 
 			WalkNode *v4 = (WalkNode*)malloc(sizeof(WalkNode));
-			v4->_x = atoi(_tokens[1]) - _yourself._cnv._width/2;
-			v4->_y = atoi(_tokens[2]) - _yourself._cnv._height;
+			v4->_x = atoi(_tokens[1]) - _vm->_char._yourself._cnv._width/2;
+			v4->_y = atoi(_tokens[2]) - _vm->_char._yourself._cnv._height;
 
 			addNode(list, &v4->_node);
 
@@ -342,7 +342,7 @@ void Parallaction::changeLocation(char *location) {
 		debugC(2, kDebugLocation, "changeLocation: changed cursor");
 	}
 
-	removeNode(&_yourself._zone._node);
+	removeNode(&_vm->_char._yourself._zone._node);
 	debugC(2, kDebugLocation, "changeLocation: removed character from the animation list");
 
 	freeLocation();
@@ -375,7 +375,7 @@ void Parallaction::changeLocation(char *location) {
 		}
 	}
 
-	addNode(&_animations, &_yourself._zone._node);
+	addNode(&_animations, &_vm->_char._yourself._zone._node);
 	debugC(2, kDebugLocation, "changeLocation: new character added to the animation list");
 
 	strcpy(_saveData1, list[0].c_str());
@@ -384,14 +384,14 @@ void Parallaction::changeLocation(char *location) {
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 	debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", _saveData1);
 
-	_yourself._zone.pos._oldposition._x = -1000;
-	_yourself._zone.pos._oldposition._y = -1000;
+	_vm->_char._yourself._zone.pos._oldposition._x = -1000;
+	_vm->_char._yourself._zone.pos._oldposition._y = -1000;
 
-	_yourself.field_50 = 0;
+	_vm->_char._yourself.field_50 = 0;
 	if (_location._startPosition._x != -1000) {
-		_yourself._zone.pos._position._x = _location._startPosition._x;
-		_yourself._zone.pos._position._y = _location._startPosition._y;
-		_yourself._frame = _location._startFrame;
+		_vm->_char._yourself._zone.pos._position._x = _location._startPosition._x;
+		_vm->_char._yourself._zone.pos._position._y = _location._startPosition._y;
+		_vm->_char._yourself._frame = _location._startFrame;
 		_location._startPosition._y = -1000;
 		_location._startPosition._x = -1000;
 

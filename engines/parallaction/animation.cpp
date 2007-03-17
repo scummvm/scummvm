@@ -658,7 +658,7 @@ void sortAnimations() {
 	Node v14;
 	memset(&v14, 0, sizeof(Node));
 
-	_yourself._z = _yourself._cnv._height + _yourself._zone._limits._top;
+	_vm->_char._yourself._z = _vm->_char._yourself._cnv._height + _vm->_char._yourself._zone._limits._top;
 
 	Animation *vC = (Animation*)_animations._next;
 	Node *v8;
