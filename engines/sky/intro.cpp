@@ -23,6 +23,7 @@
 #include "common/stdafx.h"
 #include "common/endian.h"
 #include "common/util.h"
+#include "common/events.h"
 #include "common/system.h"
 
 #include "sky/disk.h"
@@ -906,7 +907,8 @@ bool Intro::escDelay(uint32 msecs) {
 
 	int32 nDelay = 0;
 	do {
-		while (_system->pollEvent(event)) {
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
 			if (event.type == OSystem::EVENT_KEYDOWN) {
 				if (event.kbd.keycode == 27)
 					return false;

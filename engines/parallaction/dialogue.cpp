@@ -28,6 +28,8 @@
 #include "parallaction/parser.h"
 #include "parallaction/zone.h"
 
+#include "common/events.h"
+
 namespace Parallaction {
 
 #define SKIPPED_ANSWER		   1000
@@ -433,7 +435,7 @@ void runDialogue(SpeakData *data) {
 						while (e.kbd.ascii != 0xD && passwordLen < MAX_PASSWORD_LENGTH) {
 
 							// FIXME: see comment for updateInput()
-							if (!g_system->pollEvent(e)) continue;
+							if (!g_system->getEventManager()->pollEvent(e)) continue;
 							if (e.type != OSystem::EVENT_KEYDOWN) continue;
 							if (e.type != OSystem::EVENT_QUIT) g_system->quit();
 							if (!isdigit(e.kbd.ascii)) continue;

@@ -24,6 +24,7 @@
 #include "common/stdafx.h"
 
 #include "common/endian.h"
+#include "common/events.h"
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
@@ -233,7 +234,8 @@ void MoviePlayer::handleNextFrame() {
 	_frameNum++;
 
 	OSystem::Event event;
-	while (_vm->_system->pollEvent(event)) {
+	Common::EventManager *eventMan = _vm->_system->getEventManager();
+	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_KEYDOWN:
 			if (event.kbd.ascii == 27) {

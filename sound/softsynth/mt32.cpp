@@ -29,10 +29,11 @@
 #include "sound/softsynth/emumidi.h"
 #include "sound/mpu401.h"
 
-#include "common/util.h"
-#include "common/file.h"
 #include "common/config-manager.h"
+#include "common/events.h"
+#include "common/file.h"
 #include "common/system.h"
+#include "common/util.h"
 
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
@@ -112,7 +113,8 @@ public:
 
 static int eatSystemEvents() {
 	OSystem::Event event;
-	while (g_system->pollEvent(event)) {
+	Common::EventManager *eventMan = g_system->getEventManager();
+	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_QUIT:
 			return 1;

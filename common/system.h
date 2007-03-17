@@ -680,9 +680,6 @@ public:
 	/** @name Events and Time */
 	//@{
 
-//protected:
-	friend class Common::EventManager;
-
 	/**
 	 * The types of events backends may generate.
 	 * @see Event
@@ -789,6 +786,9 @@ public:
 		 */
 		Common::Point mouse;
 	};
+
+protected:
+	friend class DefaultEventManager;
 
 	/**
 	 * Get the next event in the event queue.

@@ -21,6 +21,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/events.h"
 #include "common/system.h"
 #include "common/savefile.h"
 
@@ -377,7 +378,8 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 			}
 			redrawMenu(&menuData);
 			OSystem::Event event;
-			while (_system->pollEvent(event)) {
+			Common::EventManager *eventMan = _system->getEventManager();
+			while (eventMan->pollEvent(event)) {
 				const Button *button = 0;
 				switch (event.type) {
 				case OSystem::EVENT_QUIT:
@@ -535,7 +537,8 @@ int ToucheEngine::displayQuitDialog() {
 	bool quitLoop = false;
 	while (!quitLoop) {
 		OSystem::Event event;
-		while (_system->pollEvent(event)) {
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_QUIT:
 				quitLoop = true;

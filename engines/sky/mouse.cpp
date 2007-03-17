@@ -21,6 +21,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/events.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "sky/disk.h"
@@ -173,7 +174,8 @@ void Mouse::waitMouseNotPressed(int minDelay) {
 	uint32 now = _system->getMillis();
 	OSystem::Event event;
 	while (mousePressed || _system->getMillis() < now + minDelay) {
-		while (_system->pollEvent(event)) {
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_LBUTTONUP:
 				mousePressed = false;

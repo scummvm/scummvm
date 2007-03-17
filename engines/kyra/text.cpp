@@ -28,6 +28,7 @@
 #include "kyra/animator.h"
 #include "kyra/sprites.h"
 
+#include "common/events.h"
 #include "common/system.h"
 #include "common/endian.h"
 
@@ -117,7 +118,8 @@ void KyraEngine::waitForChatToFinish(int vocFile, int16 chatDuration, const char
 		uint32 nextTime = loopStart + _tickLength; 
 		
 		while (_system->getMillis() < nextTime) {
-			while (_system->pollEvent(event)) {
+			Common::EventManager *eventMan = _system->getEventManager();
+			while (eventMan->pollEvent(event)) {
 				switch (event.type) {
 				case OSystem::EVENT_KEYDOWN:
 					if (event.kbd.keycode == '.')

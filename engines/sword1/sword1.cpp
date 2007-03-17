@@ -28,6 +28,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/timer.h"
+#include "common/events.h"
 #include "common/system.h"
 
 #include "sword1/resman.h"
@@ -705,7 +706,8 @@ void SwordEngine::delay(int32 amount) { //copied and mutilated from sky.cpp
 	uint32 start = _system->getMillis();
 
 	do {
-		while (_system->pollEvent(event)) {
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 				// Make sure backspace works right (this fixes a small issue on OS X)

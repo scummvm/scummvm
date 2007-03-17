@@ -22,6 +22,7 @@
 #include "common/stdafx.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/events.h"
 #include "common/system.h"
 
 #include "sword2/sword2.h"
@@ -408,7 +409,8 @@ void MoviePlayer::play(SequenceTextInfo *textList, uint32 numLines, int32 leadIn
 
 		OSystem::Event event;
 
-		while (_system->pollEvent(event)) {
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_SCREEN_CHANGED:
 				handleScreenChanged();

@@ -28,6 +28,8 @@
 #include "gob/game.h"
 #include "gob/inter.h"
 
+#include "common/events.h"
+
 namespace Gob {
 
 Util::Util(GobEngine *vm) : _vm(vm) {
@@ -139,7 +141,8 @@ int16 Util::getRandom(int16 max) {
 
 void Util::processInput() {
 	OSystem::Event event;
-	while (g_system->pollEvent(event)) {
+	Common::EventManager *eventMan = g_system->getEventManager();
+	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;

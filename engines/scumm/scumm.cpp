@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/md5.h"
+#include "common/events.h"
 #include "common/system.h"
 
 #include "gui/message.h"
@@ -850,7 +851,8 @@ int ScummEngine_vCUPhe::go() {
 void ScummEngine_vCUPhe::parseEvents() {
 	OSystem::Event event;
 	
-	while (_system->pollEvent(event)) {
+	Common::EventManager *eventMan = _system->getEventManager();
+	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_QUIT:
 			_quit = true;

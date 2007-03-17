@@ -24,6 +24,7 @@
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
+#include "common/events.h"
 #include "common/system.h"
 
 #include "cine/main_loop.h"
@@ -47,7 +48,8 @@ uint16 dummyU16;
 void manageEvents(int count) {
 	OSystem::Event event;
 
-	while (g_system->pollEvent(event)) {
+	Common::EventManager *eventMan = g_system->getEventManager();
+	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_LBUTTONDOWN:
 			mouseLeft = 1;

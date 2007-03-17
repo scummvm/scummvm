@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/stdafx.h"
+#include "common/events.h"
+
 #include "graphics/cursorman.h"
 
 #include "lure/events.h"
@@ -146,7 +149,7 @@ Events &Events::getReference() {
 
 
 bool Events::pollEvent() {
-	if (!g_system->pollEvent(_event)) return false;
+	if (!g_system->getEventManager()->pollEvent(_event)) return false;
 
 	// Handle keypress
 	switch (_event.type) {

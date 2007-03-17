@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/events.h"
 #include "common/system.h"
 #include "common/timer.h"
 
@@ -519,7 +520,8 @@ void SkyEngine::delay(int32 amount) {
 		amount = 0;
 
 	do {
-		while (_system->pollEvent(event)) {
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 				_keyFlags = event.kbd.flags;

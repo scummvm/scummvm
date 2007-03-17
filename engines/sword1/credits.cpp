@@ -32,6 +32,7 @@
 
 #include "common/file.h"
 #include "common/util.h"
+#include "common/events.h"
 #include "common/system.h"
 
 
@@ -274,7 +275,8 @@ void CreditsPlayer::delay(int msecs) {
 	OSystem::Event event;
 	uint32 start = _system->getMillis();
 	do {
-		while (_system->pollEvent(event)) {
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_QUIT:
 				SwordEngine::_systemVars.engineQuit = true;

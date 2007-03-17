@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/events.h"
 #include "common/system.h"
 
 #include "sword2/sword2.h"
@@ -540,7 +541,8 @@ void Sword2Engine::parseInputEvents() {
 
 	uint32 now = _system->getMillis();
 
-	while (_system->pollEvent(event)) {
+	Common::EventManager *eventMan = _system->getEventManager();
+	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_KEYDOWN:
 			if (event.kbd.flags == OSystem::KBD_CTRL) {

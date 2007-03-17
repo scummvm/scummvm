@@ -27,6 +27,7 @@
 #include "agos/debugger.h"
 #include "agos/intern.h"
 
+#include "common/events.h"
 #include "common/system.h"
 
 #include "gui/about.h"
@@ -331,7 +332,8 @@ void AGOSEngine::delay(uint amount) {
 			_inCallBack = false;
 		}
 
-		while (_system->pollEvent(event)) {
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '0' && event.kbd.keycode <='9'

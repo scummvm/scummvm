@@ -24,6 +24,7 @@
 #include "common/file.h"
 #include "common/util.h"
 #include "common/savefile.h"
+#include "common/events.h"
 #include "common/system.h"
 
 #include "gui/message.h"
@@ -1042,7 +1043,8 @@ void Control::delay(uint32 msecs) {
 	_mouseState = 0;
 
 	do {
-		while (_system->pollEvent(event)) {
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 

@@ -32,6 +32,7 @@
 #include "saga/script.h"
 #include "saga/isomap.h"
 
+#include "common/events.h"
 #include "common/system.h"
 
 namespace Saga {
@@ -41,7 +42,8 @@ int SagaEngine::processInput() {
 
 //	Point imousePt;
 
-	while (g_system->pollEvent(event)) {
+	Common::EventManager *eventMan = _system->getEventManager();
+	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_KEYDOWN:
 			if (event.kbd.flags == OSystem::KBD_CTRL) {

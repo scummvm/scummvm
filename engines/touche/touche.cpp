@@ -22,6 +22,7 @@
 
 #include "common/stdafx.h"
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/system.h"
 
 #include "sound/mididrv.h"
@@ -275,7 +276,8 @@ void ToucheEngine::mainLoop() {
 
 void ToucheEngine::processEvents(bool handleKeyEvents) {
 	OSystem::Event event;
-	while (_system->pollEvent(event)) {
+	Common::EventManager *eventMan = _system->getEventManager();
+	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_QUIT:
 			_flagsTable[611] = 1;

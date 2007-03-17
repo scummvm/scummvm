@@ -24,6 +24,7 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/events.h"
 #include "common/system.h"
 #include "common/savefile.h"
 
@@ -608,7 +609,8 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 
 	uint32 start = _system->getMillis();
 	do {
-		while (_system->pollEvent(event)) {
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' && 
@@ -705,7 +707,8 @@ void KyraEngine::waitForEvent() {
 	bool finished = false;
 	OSystem::Event event;
 	while (!finished && !_quitFlag) {
-		while (_system->pollEvent(event)) {
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 				finished = true;

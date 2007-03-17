@@ -21,6 +21,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/events.h"
 #include "common/system.h"
 #include "queen/journal.h"
 
@@ -65,7 +66,8 @@ void Journal::use() {
 	_quitMode = QM_LOOP;
 	while (_quitMode == QM_LOOP) {
 		OSystem::Event event;
-		while (_system->pollEvent(event)) {
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 				handleKeyDown(event.kbd.ascii, event.kbd.keycode);

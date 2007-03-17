@@ -20,6 +20,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/events.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/cursorman.h"
@@ -227,6 +228,8 @@ void NewGui::runLoop() {
 		if (_useStdCursor)
 			setupCursor();
 	}
+	
+	Common::EventManager *eventMan = _system->getEventManager();
 
 	while (!_dialogStack.empty() && activeDialog == getTopDialog()) {
 		if (_needRedraw) {
@@ -247,7 +250,7 @@ void NewGui::runLoop() {
 		OSystem::Event event;
 		uint32 time = _system->getMillis();
 
-		while (_system->pollEvent(event)) {
+		while (eventMan->pollEvent(event)) {
 			if (activeDialog != getTopDialog() && event.type != OSystem::EVENT_QUIT && event.type != OSystem::EVENT_SCREEN_CHANGED)
 				continue;
 

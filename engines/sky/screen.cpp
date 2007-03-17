@@ -22,6 +22,7 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "common/events.h"
 #include "common/system.h"
 
 #include "sky/disk.h"
@@ -395,7 +396,8 @@ void Screen::waitForTimer(void) {
 		OSystem::Event event;
 
 		_system->delayMillis(10);
-		while (_system->pollEvent(event));
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event));
 	}
 }
 
@@ -404,7 +406,8 @@ void Screen::waitForSequence(void) {
 		OSystem::Event event;
 
 		_system->delayMillis(20);
-		while (_system->pollEvent(event));
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event));
 	}
 }
 

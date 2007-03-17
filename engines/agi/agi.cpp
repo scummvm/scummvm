@@ -24,6 +24,7 @@
 
 #include "common/stdafx.h"
 
+#include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/savefile.h"
@@ -56,12 +57,13 @@ void AgiEngine::processEvents() {
 	OSystem::Event event;
 	int key = 0;
 
-	while (g_system->pollEvent(event)) {
+	Common::EventManager *eventMan = _system->getEventManager();
+	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_QUIT:
 			_gfx->deinitVideo();
 			_gfx->deinitMachine();
-			g_system->quit();
+			_system->quit();
 			break;
 		case OSystem::EVENT_LBUTTONDOWN:
 			key = BUTTON_LEFT;
@@ -236,8 +238,8 @@ void AgiEngine::agiTimerLow() {
 		processEvents();
 		if (_console->isAttached())
 			_console->onFrame();
-		g_system->delayMillis(10);
-		g_system->updateScreen();
+		_system->delayMillis(10);
+		_system->updateScreen();
 	}
 	m = g_tickTimer;
 }

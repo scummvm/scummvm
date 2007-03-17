@@ -29,6 +29,7 @@
 // The jung2.vqa movie does work, but only thanks to a grotesque hack.
 
 #include "common/stdafx.h"
+#include "common/events.h"
 #include "common/system.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
@@ -662,7 +663,8 @@ void VQAMovie::play() {
 
 			OSystem::Event event;
 
-			while (_system->pollEvent(event)) {
+			Common::EventManager *eventMan = _system->getEventManager();
+			while (eventMan->pollEvent(event)) {
 				switch (event.type) {
 				case OSystem::EVENT_KEYDOWN:
 					if (event.kbd.ascii == 27)

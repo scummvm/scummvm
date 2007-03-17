@@ -30,6 +30,7 @@
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/str.h"
+#include "common/events.h"
 #include "common/system.h"
 
 namespace Sword1 {
@@ -193,13 +194,14 @@ void MoviePlayer::play(void) {
 	}
 	_currentFrame = 0;
 	bool terminated = false;
+	Common::EventManager *eventMan = _sys->getEventManager();
 	while (!terminated && decodeFrame()) {
 		processFrame();
 		syncFrame();
 		updateScreen();
 		_currentFrame++;
 		OSystem::Event event;
-		while (_sys->pollEvent(event)) {
+		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_SCREEN_CHANGED:
 				handleScreenChanged();

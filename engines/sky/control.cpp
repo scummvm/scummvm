@@ -24,6 +24,7 @@
 #include "common/endian.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/events.h"
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/util.h"
@@ -1550,7 +1551,8 @@ void Control::delay(unsigned int amount) {
 	_keyPressed = 0;	//reset
 
 	do {
-		while (_system->pollEvent(event)) {
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 				// Make sure backspace works right (this fixes a small issue on OS X)

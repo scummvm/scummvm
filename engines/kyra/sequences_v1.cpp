@@ -30,6 +30,7 @@
 #include "kyra/animator.h"
 #include "kyra/text.h"
 
+#include "common/events.h"
 #include "common/system.h"
 #include "common/savefile.h"
 
@@ -1170,7 +1171,8 @@ void KyraEngine::seq_playCredits() {
 			_screen->updateScreen();
 		}
 
-		while (_system->pollEvent(event)) {
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 				finished = true;

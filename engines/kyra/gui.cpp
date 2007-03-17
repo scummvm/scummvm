@@ -29,6 +29,7 @@
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
+#include "common/events.h"
 #include "common/system.h"
 
 namespace Kyra {
@@ -805,7 +806,8 @@ void KyraEngine::gui_getInput() {
 	uint32 now = _system->getMillis();
 
 	_mouseWheel = 0;
-	while (_system->pollEvent(event)) {
+	Common::EventManager *eventMan = _system->getEventManager();
+	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_QUIT:
 			quitGame();
@@ -1481,7 +1483,8 @@ void KyraEngine::gui_updateMainMenuAnimation() {
 bool KyraEngine::gui_mainMenuGetInput() {
 	OSystem::Event event;
 
-	while (_system->pollEvent(event)) {
+	Common::EventManager *eventMan = _system->getEventManager();
+	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case OSystem::EVENT_QUIT:
 			quitGame();

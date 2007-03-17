@@ -22,9 +22,10 @@
 
 #include "common/stdafx.h"
 
-#include "common/util.h"
-#include "common/file.h"
 #include "common/config-manager.h"
+#include "common/events.h"
+#include "common/file.h"
+#include "common/util.h"
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
@@ -326,7 +327,8 @@ uint16 Parallaction::updateInput() {
 
 	_mouseButtons = kMouseNone;
 
-	while (g_system->pollEvent(e)) {
+	Common::EventManager *eventMan = _system->getEventManager();
+	while (eventMan->pollEvent(e)) {
 
 		switch (e.type) {
 		case OSystem::EVENT_KEYDOWN:
@@ -375,8 +377,9 @@ void waitUntilLeftClick() {
 
 	OSystem::Event e;
 
+	Common::EventManager *eventMan = g_system->getEventManager();
 	for (;;) {
-		g_system->pollEvent(e);
+		eventMan->pollEvent(e);
 
 		if (e.type == OSystem::EVENT_LBUTTONUP)
 			break;
