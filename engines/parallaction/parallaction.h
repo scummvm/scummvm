@@ -251,12 +251,12 @@ struct Location {
 };
 
 struct Character {
-	Animation		_yourself;
-	StaticCnv		_yourHead;
-	Cnv		    	_yourTalk;
-	Cnv 			_characterFrames;
-	Cnv				_miniCharacterFrames;
-	Cnv 			_yourObjects;
+	Animation		_ani;
+	StaticCnv		_head;
+	Cnv		    	_talk;
+	Cnv 			_normalFrames;
+	Cnv				_miniFrames;
+	Cnv 			_objs;
 };
 
 class Parallaction : public Engine {

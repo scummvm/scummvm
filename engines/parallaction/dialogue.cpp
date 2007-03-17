@@ -228,7 +228,7 @@ void runDialogue(SpeakData *data) {
 /*
 	// the only character which can have a dialogue inside the museum location is Dino
 	if (!scumm_stricmp(_name, "museum")) {
-		_vm->_gfx->freeCnv( &_characterFrames );
+		_vm->_gfx->freeCnv( &_normalFrames );
 		debugC(1, kDebugDialogue, "runDialogue: special trick for 'museum' location");
 	}
 */
@@ -238,7 +238,7 @@ void runDialogue(SpeakData *data) {
 	StaticCnv v5C, v48;
 
 	if (!scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0') {
-		memcpy(&v6E, &_vm->_char._yourTalk, sizeof(Cnv));
+		memcpy(&v6E, &_vm->_char._talk, sizeof(Cnv));
 		debugC(1, kDebugDialogue, "runDialogue: using default character head");
 	} else {
 		debugC(1, kDebugDialogue, "runDialogue: loading 2nd character head '%s'", _vm->_characterName);
@@ -249,8 +249,8 @@ void runDialogue(SpeakData *data) {
 	v5C._width = v6E._width;
 	v5C._height = v6E._height;
 
-	v48._width = _vm->_char._yourTalk._width;
-	v48._height = _vm->_char._yourTalk._height;
+	v48._width = _vm->_char._talk._width;
+	v48._height = _vm->_char._talk._height;
 
 	bool displayedAnswers = false;
 	int16 question_width = 0, question_height = 0;
@@ -263,8 +263,8 @@ void runDialogue(SpeakData *data) {
 
 		v5C._data0 = v6E._array[v60->_mood & 0xF];
 		v5C._data1 = NULL; // v6E.field_8[v60->_mood & 0xF];
-		v48._data0 = _vm->_char._yourTalk._array[0];
-		v48._data1 = NULL; // _yourTalk.field_8[0];
+		v48._data0 = _vm->_char._talk._array[0];
+		v48._data1 = NULL; // _talk.field_8[0];
 
 		// display Question if any
 		if (scumm_stricmp(v60->_text, "NULL")) {
@@ -502,9 +502,9 @@ void runDialogue(SpeakData *data) {
 	// that's why this hack (with hardcoded Dino) works
 	if (!scumm_stricmp(_name, "museum")) {
 		_vm->_disk->selectArchive("disk1");
-		_vm->_disk->loadFrames(_dinoName, &_characterFrames);
+		_vm->_disk->loadFrames(_dinoName, &_normalFrames);
 
-		memcpy(&_vm->_char._yourself._cnv, &_characterFrames, sizeof(Cnv));
+		memcpy(&_vm->_char._ani._cnv, &_normalFrames, sizeof(Cnv));
 
 		debugC(1, kDebugDialogue, "runDialogue: special trick for 'museum' location ok");
 	}
@@ -543,8 +543,8 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 			0
 		);
 
-		cnv->_data0 = _vm->_char._yourTalk._array[q->_answer_moods[_di] & 0xF];
-//		cnv->_data1 = _vm->_char._yourTalk.field_8[q->_answer_moods[_di] & 0xF];
+		cnv->_data0 = _vm->_char._talk._array[q->_answer_moods[_di] & 0xF];
+//		cnv->_data1 = _vm->_char._talk.field_8[q->_answer_moods[_di] & 0xF];
 
 		_vm->_gfx->flatBlitCnv(
 			cnv,
@@ -585,8 +585,8 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 				0
 			);
 
-			cnv->_data0 = _vm->_char._yourTalk._array[q->_answer_moods[_si] & 0xF];
-//			cnv->_data1 = _vm->_char._yourTalk.field_8[q->_answer_moods[_si] & 0xF];
+			cnv->_data0 = _vm->_char._talk._array[q->_answer_moods[_si] & 0xF];
+//			cnv->_data1 = _vm->_char._talk.field_8[q->_answer_moods[_si] & 0xF];
 
 			_vm->_gfx->flatBlitCnv(
 				cnv,

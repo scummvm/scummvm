@@ -175,9 +175,9 @@ void Parallaction::doSaveGame(uint16 slot, const char* name) {
 
 	sprintf(s, "%s\n", _saveData1);
 	f->writeString(s);
-	sprintf(s, "%d\n", _vm->_char._yourself._zone.pos._position._x);
+	sprintf(s, "%d\n", _vm->_char._ani._zone.pos._position._x);
 	f->writeString(s);
-	sprintf(s, "%d\n", _vm->_char._yourself._zone.pos._position._y);
+	sprintf(s, "%d\n", _vm->_char._ani._zone.pos._position._y);
 	f->writeString(s);
 	sprintf(s, "%d\n", _score);
 	f->writeString(s);

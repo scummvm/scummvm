@@ -95,7 +95,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 		if (close == right) {
 			to_x += right;
-			walkData3 = (_vm->_char._yourself._cnv._count == 20) ? 7 : 9;
+			walkData3 = (_vm->_char._ani._cnv._count == 20) ? 7 : 9;
 		} else
 		if (close == left) {
 			to_x -= left;
@@ -106,7 +106,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 		} else
 		if (close == bottom) {
 			to_y += bottom;
-			walkData3 = (_vm->_char._yourself._cnv._count == 20) ? 17 : 21;
+			walkData3 = (_vm->_char._ani._cnv._count == 20) ? 17 : 21;
 		}
 
 	}
@@ -115,8 +115,8 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	WalkNode *v48 = (WalkNode*)malloc(sizeof(WalkNode));
 	WalkNode *v44 = (WalkNode*)malloc(sizeof(WalkNode));
 
-	v48->_x = to_x - _vm->_char._yourself._cnv._width / 2; 		// target top left coordinates
-	v48->_y = to_y - _vm->_char._yourself._cnv._height;
+	v48->_x = to_x - _vm->_char._ani._cnv._width / 2; 		// target top left coordinates
+	v48->_y = to_y - _vm->_char._ani._cnv._height;
 	v48->_node._next = NULL;
 	memcpy(v44, v48, sizeof(WalkNode));
 
@@ -152,11 +152,11 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 		v48 = &v58;
 
-		v20._x = _vm->_char._yourself._zone.pos._position._x;
-		v20._y = _vm->_char._yourself._zone.pos._position._y;
+		v20._x = _vm->_char._ani._zone.pos._position._x;
+		v20._y = _vm->_char._ani._zone.pos._position._y;
 
-		v8._x = _si - _vm->_char._yourself._zone.pos._position._x;
-		v8._y = _di - _vm->_char._yourself._zone.pos._position._y;
+		v8._x = _si - _vm->_char._ani._zone.pos._position._x;
+		v8._y = _di - _vm->_char._ani._zone.pos._position._y;
 		v34 = v30 = dotProduct(&v8, &v8);				// square distance from current position and target
 
 		while (_closest_node_found != 0) {
@@ -245,8 +245,8 @@ uint16 walkFunc1(int16 x, int16 y, WalkNode *Node) {
 	Point v4 = { 0, 0 };
 
 	Point foot = {
-		_vm->_char._yourself._zone.pos._position._x + _vm->_char._yourself._cnv._width/2,
-		_vm->_char._yourself._zone.pos._position._y + _vm->_char._yourself._cnv._height
+		_vm->_char._ani._zone.pos._position._x + _vm->_char._ani._cnv._width/2,
+		_vm->_char._ani._zone.pos._position._y + _vm->_char._ani._cnv._height
 	};
 
 	Point v8 = {
@@ -297,8 +297,8 @@ uint16 walkFunc1(int16 x, int16 y, WalkNode *Node) {
 				v8._y = foot._y;
 			}
 
-			Node->_x = v4._x - _vm->_char._yourself._cnv._width / 2;
-			Node->_y = v4._y - _vm->_char._yourself._cnv._height;
+			Node->_x = v4._x - _vm->_char._ani._cnv._width / 2;
+			Node->_y = v4._y - _vm->_char._ani._cnv._height;
 
 			return (x - v4._x) * (x - v4._x) + (y - v4._y) * (y - v4._y);
 		}
@@ -316,13 +316,13 @@ uint16 walkFunc1(int16 x, int16 y, WalkNode *Node) {
 void jobWalk(void *parm, Job *j) {
 	WalkNode *node = (WalkNode*)parm;
 
-	int16 _si = _vm->_char._yourself._zone.pos._position._x;
-	int16 _di = _vm->_char._yourself._zone.pos._position._y;
+	int16 _si = _vm->_char._ani._zone.pos._position._x;
+	int16 _di = _vm->_char._ani._zone.pos._position._y;
 
-//	debugC(1, kDebugWalk, "jobWalk to (%i, %i)", node->_x + _vm->_char._yourself._cnv._width / 2, node->_y + _vm->_char._yourself._cnv._height);
+//	debugC(1, kDebugWalk, "jobWalk to (%i, %i)", node->_x + _vm->_char._ani._cnv._width / 2, node->_y + _vm->_char._ani._cnv._height);
 
-	_vm->_char._yourself._zone.pos._oldposition._x = _si;
-	_vm->_char._yourself._zone.pos._oldposition._y = _di;
+	_vm->_char._ani._zone.pos._oldposition._x = _si;
+	_vm->_char._ani._zone.pos._oldposition._y = _di;
 
 	if ((node->_x == _si) && (node->_y == _di)) {
 		if (node->_node._next == NULL) {
@@ -346,8 +346,8 @@ void jobWalk(void *parm, Job *j) {
 	}
 
 	Point dist = {
-		node->_x - _vm->_char._yourself._zone.pos._position._x,
-		node->_y - _vm->_char._yourself._zone.pos._position._y
+		node->_x - _vm->_char._ani._zone.pos._position._x,
+		node->_y - _vm->_char._ani._zone.pos._position._y
 	};
 
 	if (dist._x < 0)
@@ -359,7 +359,7 @@ void jobWalk(void *parm, Job *j) {
 
 	// walk frame selection
 	int16 v16;
-	if (_vm->_char._yourself._cnv._count == 20) {
+	if (_vm->_char._ani._cnv._count == 20) {
 
 		if (dist._x > dist._y) {
 			walkData2 = (node->_x > _si) ? 0 : 7;
@@ -386,36 +386,36 @@ void jobWalk(void *parm, Job *j) {
 	}
 
 //	StaticCnv v14;
-//	v14._width = _vm->_char._yourself._cnv._width;
-//	v14._height = _vm->_char._yourself._cnv._height;
-//	v14._data0 = _vm->_char._yourself._cnv._array[_vm->_char._yourself._frame];
-//	v14._data1 = _vm->_char._yourself._cnv.field_8[_vm->_char._yourself._frame];
+//	v14._width = _vm->_char._ani._cnv._width;
+//	v14._height = _vm->_char._ani._cnv._height;
+//	v14._data0 = _vm->_char._ani._cnv._array[_vm->_char._ani._frame];
+//	v14._data1 = _vm->_char._ani._cnv.field_8[_vm->_char._ani._frame];
 
-	if ((_si < node->_x) && (_si < SCREEN_WIDTH) && (queryPath(_vm->_char._yourself._cnv._width/2 + _si + 2, _vm->_char._yourself._cnv._height + _di) != 0)) {
+	if ((_si < node->_x) && (_si < SCREEN_WIDTH) && (queryPath(_vm->_char._ani._cnv._width/2 + _si + 2, _vm->_char._ani._cnv._height + _di) != 0)) {
 //		printf("walk right\n");
 		_si = (_si + 2 < node->_x) ? _si + 2 : node->_x;
 	}
 
-	if ((_si > node->_x) && (_si > -20) && (queryPath(_vm->_char._yourself._cnv._width/2 + _si - 2, _vm->_char._yourself._cnv._height + _di) != 0)) {
+	if ((_si > node->_x) && (_si > -20) && (queryPath(_vm->_char._ani._cnv._width/2 + _si - 2, _vm->_char._ani._cnv._height + _di) != 0)) {
 //		printf("walk left\n");
 		_si = (_si - 2 > node->_x) ? _si - 2 :node->_x;
 	}
 
-	if ((_di < node->_y) && (_di < (SCREEN_HEIGHT - _vm->_char._yourself._cnv._height)) && (queryPath(_vm->_char._yourself._cnv._width/2 + _si, _vm->_char._yourself._cnv._height + _di + 2) != 0)) {
+	if ((_di < node->_y) && (_di < (SCREEN_HEIGHT - _vm->_char._ani._cnv._height)) && (queryPath(_vm->_char._ani._cnv._width/2 + _si, _vm->_char._ani._cnv._height + _di + 2) != 0)) {
 //		printf("walk down\n");
 		_di = (_di + 2 <= node->_y) ? _di + 2 : node->_y;
 	}
 
-	if ((_di > node->_y) && (_di > -20) && (queryPath(_vm->_char._yourself._cnv._width/2 + _si, _vm->_char._yourself._cnv._height + _di - 2) != 0)) {
+	if ((_di > node->_y) && (_di > -20) && (queryPath(_vm->_char._ani._cnv._width/2 + _si, _vm->_char._ani._cnv._height + _di - 2) != 0)) {
 //		printf("walk up\n");
 		_di = (_di - 2 >= node->_y) ? _di - 2 : node->_y;
 	}
 
 //	printf("hitZone: %i, %i\n", _si, _di);
-	_vm->_char._yourself._zone.pos._position._x = _si;
-	_vm->_char._yourself._zone.pos._position._y = _di;
+	_vm->_char._ani._zone.pos._position._x = _si;
+	_vm->_char._ani._zone.pos._position._y = _di;
 
-	if ((_si == _vm->_char._yourself._zone.pos._oldposition._x) && (_di == _vm->_char._yourself._zone.pos._oldposition._y)) {
+	if ((_si == _vm->_char._ani._zone.pos._oldposition._x) && (_di == _vm->_char._ani._zone.pos._oldposition._y)) {
 
 		j->_finished = 1;
 		checkDoor();
@@ -423,7 +423,7 @@ void jobWalk(void *parm, Job *j) {
 
 	} else {
 
-		_vm->_char._yourself._frame = v16 + walkData2 + 1;
+		_vm->_char._ani._frame = v16 + walkData2 + 1;
 
 	}
 
@@ -440,7 +440,7 @@ uint16 checkDoor() {
 	}
 
 	_engineFlags &= ~kEngineWalking;
-	Zone *z = hitZone(kZoneDoor, _vm->_char._yourself._zone.pos._position._x + _vm->_char._yourself._cnv._width / 2,	_vm->_char._yourself._zone.pos._position._y + _vm->_char._yourself._cnv._height);
+	Zone *z = hitZone(kZoneDoor, _vm->_char._ani._zone.pos._position._x + _vm->_char._ani._cnv._width / 2,	_vm->_char._ani._zone.pos._position._y + _vm->_char._ani._cnv._height);
 
 	if (z != NULL) {
 
@@ -458,7 +458,7 @@ uint16 checkDoor() {
 		}
 	}
 
-	z = hitZone(kZoneTrap, _vm->_char._yourself._zone.pos._position._x + _vm->_char._yourself._cnv._width / 2, _vm->_char._yourself._zone.pos._position._y + _vm->_char._yourself._cnv._height);
+	z = hitZone(kZoneTrap, _vm->_char._ani._zone.pos._position._x + _vm->_char._ani._cnv._width / 2, _vm->_char._ani._zone.pos._position._y + _vm->_char._ani._cnv._height);
 
 	if (z != NULL) {
 		_localFlags[_vm->_currentLocationIndex] |= kFlagsEnter;
@@ -475,8 +475,8 @@ uint16 checkDoor() {
 
 //	printf("done\n");
 
-	_vm->_char._yourself._frame = walkData2;
-	return _vm->_char._yourself._frame;
+	_vm->_char._ani._frame = walkData2;
+	return _vm->_char._ani._frame;
 }
 
 uint16 queryPath(uint16 x, uint16 y) {
