@@ -732,7 +732,8 @@ void freeCharacter() {
 		_vm->_gfx->freeStaticCnv(_vm->_char._head);
 		if (_vm->_char._head) delete _vm->_char._head;
 
-		_vm->_gfx->freeCnv(&_vm->_char._objs);
+		_vm->_gfx->freeCnv(_vm->_char._objs);
+		if (_vm->_char._objs) delete _vm->_char._objs;
 	}
 
 	return;
@@ -811,7 +812,7 @@ void Parallaction::changeCharacter(const char *name) {
 		if (!IS_DUMMY_CHARACTER(name)) {
 			_vm->_char._head = _disk->loadHead(path);
 			_vm->_char._talk = _disk->loadTalk(path);
-			_disk->loadObjects(name, &_vm->_char._objs);
+			_vm->_char._objs = _disk->loadObjects(name);
 
 			sprintf(path, "mini%s", v32);
 			_disk->loadFrames(path, &_vm->_char._miniFrames);

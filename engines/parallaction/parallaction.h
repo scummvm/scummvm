@@ -240,7 +240,7 @@ struct Character {
 	Cnv		    	*_talk;
 	Cnv 			_normalFrames;
 	Cnv				_miniFrames;
-	Cnv 			_objs;
+	Cnv 			*_objs;
 
 	Character() {
 		_talk = NULL;
@@ -255,7 +255,8 @@ struct Character {
 //		_head._data0 = NULL;
 //		_head._data1 = NULL;
 
-		_objs._count = 0;
+		_objs = NULL;
+//		_objs._count = 0;
 
 		_ani._zone._left = 150;
 		_ani._zone._top = 100;

@@ -322,7 +322,7 @@ void Disk::loadFont(const char* name, Cnv* cnv) {
 
 // loads character's icons set
 
-void Disk::loadObjects(const char *name, Cnv* cnv) {
+Cnv* Disk::loadObjects(const char *name) {
 
 	if (IS_MINI_CHARACTER(name)) {
 		name += 4;
@@ -331,9 +331,9 @@ void Disk::loadObjects(const char *name, Cnv* cnv) {
 	char path[PATH_LEN];
 	sprintf(path, "%sobj", name);
 
+	Cnv* cnv = new Cnv;
 	loadExternalCnv(path, cnv);
-
-	return;
+	return cnv;
 }
 
 
