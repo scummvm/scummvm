@@ -369,11 +369,10 @@ void Disk::loadStatic(const char* name, StaticCnv* cnv) {
 	return;
 }
 
-void Disk::loadFrames(const char* name, Cnv* cnv) {
-
+Cnv* Disk::loadFrames(const char* name) {
+	Cnv* cnv = new Cnv;
 	loadCnv(name, cnv);
-
-	return;
+	return cnv;
 }
 
 //

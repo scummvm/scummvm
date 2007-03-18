@@ -237,8 +237,8 @@ struct Character {
 	Animation		_ani;
 	StaticCnv		*_head;
 	Cnv		    	*_talk;
-	Cnv 			_normalFrames;
-	Cnv				_miniFrames;
+	Cnv 			*_normalFrames;
+	Cnv				*_miniFrames;
 	Cnv 			*_objs;
 
 	Character() {
@@ -267,6 +267,9 @@ struct Character {
 		_ani._zone._type = kZoneYou;
 		_ani._zone._label._cnv._data0 = NULL;
 		_ani._zone._label._text = strdup("yourself");
+
+		_normalFrames = NULL;
+		_miniFrames = NULL;
 	}
 
 };

@@ -126,10 +126,7 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 					strcat(vC8, "tras");
 				}
 			}
-			vD0->_cnv = new Cnv;
-			_disk->loadFrames(vC8, vD0->_cnv);
-//			int16 _ax = _vm->_gfx->loadCnv(vC8, &vD0->_cnv);
-//			if (_ax == -1) exit(-1);
+			vD0->_cnv = _disk->loadFrames(vC8);
 		}
 		if (!scumm_stricmp(_tokens[0], "position")) {
 			vD0->_zone._left = atoi(_tokens[1]);

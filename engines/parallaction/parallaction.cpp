@@ -717,10 +717,13 @@ void Parallaction::changeCursor(int32 index) {
 
 void freeCharacter() {
 
-	_vm->_gfx->freeCnv(&_vm->_char._normalFrames);
+	_vm->_gfx->freeCnv(_vm->_char._normalFrames);
+	if (_vm->_char._normalFrames) delete _vm->_char._normalFrames;
 
 	if (!IS_DUMMY_CHARACTER(_vm->_characterName)) {
-		_vm->_gfx->freeCnv(&_vm->_char._miniFrames);
+		_vm->_gfx->freeCnv(_vm->_char._miniFrames);
+		if (_vm->_char._miniFrames) delete _vm->_char._miniFrames;
+
 		_vm->freeTable(_objectsNames);
 
 		_vm->_gfx->freeCnv(_vm->_char._talk);
@@ -810,7 +813,7 @@ void Parallaction::changeCharacter(const char *name) {
 
 		char path[PATH_LEN];
 		strcpy(path, v32);
-		_disk->loadFrames(path, &_vm->_char._normalFrames);
+		_vm->_char._normalFrames = _disk->loadFrames(path);
 
 		if (!IS_DUMMY_CHARACTER(name)) {
 			_vm->_char._head = _disk->loadHead(path);
@@ -818,7 +821,7 @@ void Parallaction::changeCharacter(const char *name) {
 			_vm->_char._objs = _disk->loadObjects(name);
 
 			sprintf(path, "mini%s", v32);
-			_disk->loadFrames(path, &_vm->_char._miniFrames);
+			_vm->_char._miniFrames = _disk->loadFrames(path);
 
 			sprintf(path, "%s.tab", name);
 			initTable(path, _objectsNames);
@@ -831,9 +834,9 @@ void Parallaction::changeCharacter(const char *name) {
 	}
 
 	if (miniCharacter)
-		_vm->_char._ani._cnv = &_vm->_char._miniFrames;
+		_vm->_char._ani._cnv = _vm->_char._miniFrames;
 	else
-		_vm->_char._ani._cnv = &_vm->_char._normalFrames;
+		_vm->_char._ani._cnv = _vm->_char._normalFrames;
 
 	strcpy(_characterName1, v32);
 

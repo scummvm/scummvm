@@ -267,13 +267,10 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 			if (!scumm_stricmp(_tokens[0], "file")) {
 //				printf("file: '%s'", _tokens[0]);
 
-				u->door->_cnv = new Cnv;
 				strcpy(vC8, _tokens[1]);
 
 				StaticCnv vE0;
-				_disk->loadFrames(vC8, u->door->_cnv);
-
-//				printf("door width: %i, height: %i", doorcnv->_width, doorcnv->_height );
+				u->door->_cnv = _disk->loadFrames(vC8);
 
 				vE0._width = u->door->_cnv->_width;
 				vE0._height = u->door->_cnv->_height;

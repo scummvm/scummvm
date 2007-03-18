@@ -111,7 +111,7 @@ public:
 	StaticCnv* loadHead(const char* name);
 	Cnv* loadFont(const char* name);
 	void loadStatic(const char* name, StaticCnv* cnv);
-	void loadFrames(const char* name, Cnv* cnv);
+	Cnv* loadFrames(const char* name);
 	void loadSlide(const char *filename);
 	void loadScenery(const char* background, const char* mask);
 };
