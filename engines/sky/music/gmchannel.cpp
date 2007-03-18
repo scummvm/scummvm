@@ -39,7 +39,7 @@ GmChannel::GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv
 	_veloTab = veloTab;
 
 	_musicVolume = 0x7F;
-	_lastVolume = 0xFF;
+	_currentChannelVolume = 0x7F;
 }
 
 GmChannel::~GmChannel(void) {
@@ -55,10 +55,9 @@ void GmChannel::updateVolume(uint16 pVolume) {
 	_musicVolume = pVolume;
 	if (_musicVolume > 0)
 		_musicVolume = (_musicVolume * 2) / 3 + 43;
-	if (_lastVolume < 0xFF) {
-		uint8 newVol = (_lastVolume * _musicVolume) >> 7;
-		_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x700 | (newVol << 16));
-	}
+
+	uint8 newVol = (_currentChannelVolume * _musicVolume) >> 7;
+	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x700 | (newVol << 16));
 }
 
 void GmChannel::stopNote(void) {
@@ -175,8 +174,8 @@ void GmChannel::com90_getPitch(void) {
 
 void GmChannel::com90_getChannelVolume(void) {
 
-	_lastVolume = _musicData[_channelData.eventDataPtr];
-	uint8 newVol = (uint8)((_musicData[_channelData.eventDataPtr++] * _musicVolume) >> 7);
+	_currentChannelVolume = _musicData[_channelData.eventDataPtr++];
+	uint8 newVol = (uint8)((_currentChannelVolume * _musicVolume) >> 7);
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x700 | (newVol << 16));
 }
 

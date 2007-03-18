@@ -53,7 +53,7 @@ private:
 	uint8 *_musicData;
 	uint16 _musicVolume;
 	MidiChannelType _channelData;
-	uint8 _lastVolume;
+	uint8 _currentChannelVolume;
 	//-                          normal subs
 	void setRegister(uint8 regNum, uint8 value);
 	int32 getNextEventTime(void);
