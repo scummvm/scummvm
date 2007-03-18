@@ -33,8 +33,6 @@
 namespace Gob {
 
 Util::Util(GobEngine *vm) : _vm(vm) {
-	_mouseX = 0;
-	_mouseY = 0;
 	_mouseButtons = 0;
 	for (int i = 0; i < KEYBUFSIZE; i++)
 		_keyBuffer[i] = 0;
@@ -67,7 +65,7 @@ bool Util::getKeyFromBuffer(int16& key) {
 
 
 void Util::initInput(void) {
-	_mouseX = _mouseY = _mouseButtons = 0;
+	_mouseButtons = 0;
 	_keyBufferHead = _keyBufferTail = 0;
 }
 
@@ -144,10 +142,6 @@ void Util::processInput() {
 	Common::EventManager *eventMan = g_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_MOUSEMOVE:
-			_mouseX = event.mouse.x;
-			_mouseY = event.mouse.y;
-			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_mouseButtons |= 1;
 			break;
@@ -175,8 +169,9 @@ void Util::processInput() {
 }
 
 void Util::getMouseState(int16 *pX, int16 *pY, int16 *pButtons) {
-	*pX = _mouseX;
-	*pY = _mouseY;
+	Common::Point mouse = g_system->getEventManager()->getMousePos();
+	*pX = mouse.x;
+	*pY = mouse.y;
 
 	if (pButtons != 0)
 		*pButtons = _mouseButtons;
@@ -211,27 +206,17 @@ uint32 Util::getTimeKey(void) {
 }
 
 void Util::waitMouseUp(void) {
-	int16 x;
-	int16 y;
-	int16 buttons;
-
 	do {
 		processInput();
-		getMouseState(&x, &y, &buttons);
-		if (buttons != 0) delay(10);
-	} while (buttons != 0);
+		if (_mouseButtons != 0) delay(10);
+	} while (_mouseButtons != 0);
 }
 
 void Util::waitMouseDown(void) {
-	int16 x;
-	int16 y;
-	int16 buttons;
-
 	do {
 		processInput();
-		getMouseState(&x, &y, &buttons);
-		if (buttons == 0) delay(10);
-	} while (buttons == 0);
+		if (_mouseButtons == 0) delay(10);
+	} while (_mouseButtons == 0);
 }
 
 /* NOT IMPLEMENTED */
@@ -437,11 +422,11 @@ void Util::deleteList(List * list) {
 	delete list;
 }
 
-const char Util::trStr1[] =
+static const char trStr1[] =
     "       '   + - :0123456789: <=>  abcdefghijklmnopqrstuvwxyz      abcdefghijklmnopqrstuvwxyz     ";
-const char Util::trStr2[] =
+static const char trStr2[] =
     " ueaaaaceeeiii     ooouu        aioun                                                           ";
-const char Util::trStr3[] = "                                ";
+static const char trStr3[] = "                                ";
 
 void Util::prepareStr(char *str) {
 	uint16 i;
@@ -489,8 +474,6 @@ void Util::waitMouseRelease(char drawMouse) {
 		delay(10);
 	} while (buttons != 0);
 }
-
-void Util::keyboard_release(void) {;}
 
 void Util::forceMouseUp(void) {
 	_vm->_game->_mouseButtons = 0;

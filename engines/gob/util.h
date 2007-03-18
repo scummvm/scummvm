@@ -61,9 +61,6 @@ public:
 	void waitMouseUp(void);
 	void waitMouseDown(void);
 
-	void keyboard_init(void);
-	void keyboard_release(void);
-
 	void clearPalette(void);
 
 	void asm_setPaletteBlock(char *tmpPalBuffer, int16 start, int16 end);
@@ -86,14 +83,10 @@ public:
 	void forceMouseUp(void);
 	void setScrollOffset(int16 x = -1, int16 y = -1);
 
-	static const char trStr1[];
-	static const char trStr2[];
-	static const char trStr3[];
-
 	Util(GobEngine *vm);
 
 protected:
-	int16 _mouseX, _mouseY, _mouseButtons;
+	int16 _mouseButtons;
 	int16 _keyBuffer[KEYBUFSIZE], _keyBufferHead, _keyBufferTail;
 	GobEngine *_vm;
 

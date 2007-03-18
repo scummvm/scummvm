@@ -69,7 +69,6 @@ void Init::cleanup(void) {
 		warning("cleanup: Allocated sprites left: %d", _vm->_global->_sprAllocated);
 
 	_vm->_snd->stopSound(0);
-	_vm->_util->keyboard_release();
 }
 
 void Init::initGame(char *totName) {
