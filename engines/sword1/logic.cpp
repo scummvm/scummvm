@@ -1633,7 +1633,7 @@ int Logic::fnQuitGame(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d,
 		SwordEngine::_systemVars.engineQuit = true;
 	} else
 		error("fnQuitGame() called");
-	return SCRIPT_STOP;
+	return fnQuit(cpt, id, 0, 0, 0, 0, 0, 0);;
 }
 
 int Logic::fnDeathScreen(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
