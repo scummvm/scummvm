@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2006 The ScummVM project
+ * Copyright (C) 2003-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,15 +32,16 @@ namespace Sky {
 typedef struct {
 	uint16 eventDataPtr;
 	int32 nextEventTime;
-	uint16 startOfData;
+	uint16 loopPoint;
 	uint8 midiChannelNumber;
 	uint8 note;
-	uint8 channelActive;
+	bool channelActive;
 } MidiChannelType;
 
 class GmChannel : public ChannelBase {
 public:
 	GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, const byte *pInstMap, const byte *veloTab);
+	~GmChannel(void);
 	virtual void stopNote(void);
 	virtual uint8 process(uint16 aktTime);
 	virtual void updateVolume(uint16 pVolume);
@@ -69,11 +70,11 @@ private:
 	void com90_getPitch(void);           // 5
 	void com90_getChannelVolume(void);   // 6
 	//void com90_skipTremoVibro(void);   // 7
-	void com90_rewindMusic(void);        // 8
+	void com90_loopMusic(void);        // 8
 	void com90_keyOff(void);             // 9
 	//void com90_error(void);            // 10
 	void com90_getChannelPanValue(void); // 11
-	void com90_setStartOfData(void);     // 12
+	void com90_setLoopPoint(void);     // 12
 	void com90_getChannelControl(void);     // 13
 };
 

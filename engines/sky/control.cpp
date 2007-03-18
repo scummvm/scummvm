@@ -1605,7 +1605,7 @@ void Control::delay(unsigned int amount) {
 
 void Control::showGameQuitMsg(void) {
 
-	_skyText->fnSetFont(1);
+	_skyText->fnSetFont(0);
 	uint8 *textBuf1 = (uint8 *)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
 	uint8 *textBuf2 = (uint8 *)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
 	uint8 *screenData;

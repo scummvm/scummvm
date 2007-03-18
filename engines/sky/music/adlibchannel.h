@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2006 The ScummVM project
+ * Copyright (C) 2003-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,10 +43,10 @@ typedef struct {
 typedef struct {
 	uint16 eventDataPtr;
 	int32 nextEventTime;
-	uint16 startOfData;
+	uint16 loopPoint;
 	uint8 adlibChannelNumber;
 	uint8 lastCommand;
-	uint8 channelActive;
+	bool channelActive;
 	uint8 note;
 	uint8 adlibReg1, adlibReg2;
 	InstrumentStruct *instrumentData;
@@ -54,7 +54,6 @@ typedef struct {
 	uint8 channelVolume;
 	uint8 padding; // field_12 / not used by original driver
 	uint8 tremoVibro;
-	uint8 freqDataSize;
 	uint8 freqOffset;
 	uint16 frequency;
 } AdlibChannelType;
@@ -62,42 +61,44 @@ typedef struct {
 class AdlibChannel : public ChannelBase {
 public:
 	AdlibChannel (FM_OPL *opl, uint8 *pMusicData, uint16 startOfData);
-	virtual void stopNote(void);
+	virtual ~AdlibChannel(void);
 	virtual uint8 process(uint16 aktTime);
 	virtual void updateVolume(uint16 pVolume);
 	virtual bool isActive(void);
 private:
 	FM_OPL *_opl;
 	uint8 *_musicData;
-	uint16 _musicVolume;
 	AdlibChannelType _channelData;
-	//-
+
 	InstrumentStruct *_instruments;
 	uint16 *_frequenceTable;
 	uint8 *_instrumentMap;
 	uint8 *_registerTable, *_opOutputTable;
 	uint8 *_adlibRegMirror;
-	//-                          normal subs
+	
+	// normal subs
 	void setRegister(uint8 regNum, uint8 value);
 	int32 getNextEventTime(void);
 	uint16 getNextNote(uint8 param);
 	void adlibSetupInstrument(void);
 	void setupInstrument(uint8 opcode);
 	void setupChannelVolume(uint8 volume);
-	//-                          Streamfunctions from Command90hTable
+	void stopNote(void);
+	
+	// Streamfunctions from Command90hTable
 	void com90_caseNoteOff(void);       // 0
 	void com90_stopChannel(void);       // 1
 	void com90_setupInstrument(void);   // 2
-	uint8 com90_updateTempo(void);       // 3
+	uint8 com90_updateTempo(void);      // 3
 	//void com90_dummy(void);           // 4
 	void com90_getFreqOffset(void);     // 5
 	void com90_getChannelVolume(void);  // 6
 	void com90_getTremoVibro(void);     // 7
-	void com90_rewindMusic(void);       // 8
+	void com90_loopMusic(void);         // 8
 	void com90_keyOff(void);            // 9
 	//void com90_error(void);           // 10
 	//void com90_doLodsb(void);         // 11
-	void com90_setStartOfData(void);    // 12
+	void com90_setLoopPoint(void);      // 12
 	//void com90_do_two_Lodsb(void);    // 13
 };
 

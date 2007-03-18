@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2006 The ScummVM project
+ * Copyright (C) 2003-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,14 +34,12 @@ class Disk;
 #define FILES_PER_SECTION 4
 
 typedef struct {
-	bool doReInit, doStopMusic;
 	uint8 musicToProcess;
 } Actions;
 
 class ChannelBase {
 public:
 	virtual ~ChannelBase() {};
-	virtual void stopNote(void) = 0;
 	virtual uint8 process(uint16 aktTime) = 0;
 	virtual void updateVolume(uint16 pVolume) = 0;
 	virtual bool isActive(void) = 0;
@@ -53,18 +51,18 @@ public:
 	MusicBase(Disk *pDisk);
 	virtual ~MusicBase(void);
 	void loadSection(uint8 pSection);
-	void startMusic(uint16 param) { _onNextPoll.musicToProcess = param & 0xF; }; // 4
-	void stopMusic();                                                            // 7
+	void startMusic(uint16 param);
+	void stopMusic();
 	bool musicIsPlaying(void);
-	uint8 giveVolume(void) { return (uint8)_musicVolume; };
-	uint8 giveCurrentMusic(void) { return _currentMusic; };
-	void setVolume(uint16 param);
+	uint8 giveVolume(void);
+	uint8 giveCurrentMusic(void);
+	virtual void setVolume(uint16 param) = 0;
 
 protected:
 
 	Disk *_skyDisk;
 	uint8 *_musicData;
-	uint8 _allowedCommands;
+
 	uint16 _musicDataLoc;
 	uint16 _driverFileBase;
 

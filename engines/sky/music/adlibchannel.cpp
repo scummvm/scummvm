@@ -31,10 +31,9 @@ namespace Sky {
 AdlibChannel::AdlibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfData) {
 	_opl = opl;
 	_musicData = pMusicData;
-	_channelData.startOfData = startOfData;
+	_channelData.loopPoint = startOfData;
 	_channelData.eventDataPtr = startOfData;
-	_channelData.channelActive = 1;
-	_channelData.freqDataSize = 2;
+	_channelData.channelActive = true;
 	_channelData.tremoVibro = 0;
 	_channelData.assignedInstrument = 0xFF;
 	_channelData.channelVolume = 0x7F;
@@ -75,20 +74,19 @@ AdlibChannel::AdlibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfData) {
 
 	_instrumentMap = _musicData+instrumentDataLoc;
 	_instruments = (InstrumentStruct*)(_instrumentMap+0x80);
+}
 
-	_musicVolume = 0x100;
+AdlibChannel::~AdlibChannel(void) {
+	stopNote();
 }
 
 bool AdlibChannel::isActive(void) {
 
-	return _channelData.channelActive != 0;
+	return _channelData.channelActive;
 }
 
 void AdlibChannel::updateVolume(uint16 pVolume) {
-	pVolume = (pVolume * 3) >> 1;
-	if (pVolume > 0x7F)
-		pVolume = 0x7F;
-	_musicVolume = pVolume | 128;
+	// Do nothing. The mixer handles the music volume for us.
 }
 
 /*	This class uses the same area for the register mirror as the original
@@ -118,12 +116,13 @@ int32 AdlibChannel::getNextEventTime(void) {
 		lVal = _musicData[_channelData.eventDataPtr];
 		_channelData.eventDataPtr++;
 		retV = (retV << 7) | (lVal & 0x7F);
-		if (!(lVal & 0x80)) break;
+		if (!(lVal & 0x80))
+			break;
 	}
-	if (lVal & 0x80) { // should never happen
-		return -1;
-	} else return retV;
-
+	if (lVal & 0x80) {
+		return -1; // should never happen
+	} else
+		return retV;
 }
 
 uint8 AdlibChannel::process(uint16 aktTime) {
@@ -153,27 +152,19 @@ uint8 AdlibChannel::process(uint16 aktTime) {
 				case 5: com90_getFreqOffset(); break;
 				case 6: com90_getChannelVolume(); break;
 				case 7: com90_getTremoVibro(); break;
-				case 8: com90_rewindMusic(); break;
+				case 8: com90_loopMusic(); break;
 				case 9: com90_keyOff(); break;
-				case 12: com90_setStartOfData(); break;
-				case 4: //com90_dummy();
-				case 10: //com90_error();
-				case 11: //com90_doLodsb();
-				case 13: //com90_do_two_Lodsb();
-					error("Channel: dummy music routine 0x%02X was called",opcode);
-					_channelData.channelActive = 0;
-					break;
+				case 12: com90_setLoopPoint(); break;
+				
 				default:
-					// these opcodes aren't implemented in original music driver
-					error("Channel: Not existent routine 0x%02X was called",opcode);
-					_channelData.channelActive = 0;
+					error("AdlibChannel: Unknown music opcode 0x%02X", opcode);
 					break;
 				}
 			} else {
 				// new adlib channel assignment
-				_channelData.adlibChannelNumber = opcode&0xF;
-				_channelData.adlibReg1 = _registerTable[(opcode&0xF)<<1];
-				_channelData.adlibReg2 = _registerTable[((opcode&0xF)<<1)|1];
+				_channelData.adlibChannelNumber = opcode & 0xF;
+				_channelData.adlibReg1 = _registerTable[((opcode & 0xF) << 1) | 0];
+				_channelData.adlibReg2 = _registerTable[((opcode & 0xF) << 1) | 1];
 			}
 		} else {
 			_channelData.lastCommand = opcode;
@@ -186,7 +177,8 @@ uint8 AdlibChannel::process(uint16 aktTime) {
 				opcode = _musicData[_channelData.eventDataPtr];
 				_channelData.eventDataPtr++;
 				setupChannelVolume(opcode);
-			} else _channelData.eventDataPtr++;
+			} else
+				_channelData.eventDataPtr++;
 		}
 		if (_channelData.channelActive)
 			_channelData.nextEventTime += getNextEventTime();
@@ -220,20 +212,19 @@ void AdlibChannel::setupChannelVolume(uint8 volume) {
 	uint8 resultOp;
 	uint32 resVol = ((volume + 1) * (_channelData.instrumentData->totOutLev_Op2 + 1)) << 1;
 	resVol &= 0xFFFF;
-	resVol *= (_channelData.channelVolume+1)<<1;
-	resVol >>= 8;
-	resVol *= _musicVolume;
+	resVol *= (_channelData.channelVolume + 1) << 1;
 	resVol >>= 16;
+	assert(resVol < 0x81);
 	resultOp = ((_channelData.instrumentData->scalingLevel << 6) & 0xC0) | _opOutputTable[resVol];
 	setRegister(0x40 | _channelData.adlibReg2, resultOp);
 	if (_channelData.instrumentData->feedBack & 1) {
 		resVol = ((volume + 1) * (_channelData.instrumentData->totOutLev_Op1 + 1)) << 1;
 		resVol &= 0xFFFF;
-		resVol *= (_channelData.channelVolume + 1)<<1;
-		resVol >>= 8;
-		resVol *= (_musicVolume & 0xFF);
+		resVol *= (_channelData.channelVolume + 1) << 1;
 		resVol >>= 16;
-	} else resVol = _channelData.instrumentData->totOutLev_Op1;
+	} else
+		resVol = _channelData.instrumentData->totOutLev_Op1;
+	assert(resVol < 0x81);
 	resultOp = ((_channelData.instrumentData->scalingLevel << 2) & 0xC0) | _opOutputTable[resVol];
 	setRegister(0x40 | _channelData.adlibReg1, resultOp);
 }
@@ -251,20 +242,15 @@ void AdlibChannel::adlibSetupInstrument(void) {
 	setRegister(0x20 | _channelData.adlibReg2, _channelData.instrumentData->ampMod_Op2);
 }
 
-#ifdef SCUMM_BIG_ENDIAN
-#define ENDIAN16(x) ((x >> 8) | ((x & 0xFF) << 8))
-#else
-#define ENDIAN16(x) (x)
-#endif
-
 uint16 AdlibChannel::getNextNote(uint8 param) {
 
 	int16 freqIndex = ((int16)_channelData.freqOffset) - 0x40;
-	if (freqIndex >= 0x3F) freqIndex++;
-	freqIndex *= _channelData.freqDataSize;
-	freqIndex += param<<6;
-	uint16 freqData = ENDIAN16(_frequenceTable[freqIndex % 0x300]);
-	if ((freqIndex%0x300 >= 0x1C0) || (freqIndex/0x300 > 0)) {
+	if (freqIndex >= 0x3F)
+		freqIndex++;
+	freqIndex *= 2;
+	freqIndex += param << 6;
+	uint16 freqData = FROM_LE_16(_frequenceTable[freqIndex % 0x300]);
+	if ((freqIndex % 0x300 >= 0x1C0) || (freqIndex / 0x300 > 0)) {
 		return (((freqIndex / 0x300) - 1) << 10) + (freqData & 0x7FF);
 	} else {
 		// looks like a bug. dunno why. It's what the ASM code says.
@@ -284,7 +270,7 @@ void AdlibChannel::com90_caseNoteOff(void) {
 void AdlibChannel::com90_stopChannel(void) {
 
 	stopNote();
-	_channelData.channelActive = 0;
+	_channelData.channelActive = false;
 }
 
 void AdlibChannel::com90_setupInstrument(void) {
@@ -298,16 +284,12 @@ void AdlibChannel::com90_setupInstrument(void) {
 }
 
 uint8 AdlibChannel::com90_updateTempo(void) {
-
-	uint8 retV = _musicData[_channelData.eventDataPtr];
-	_channelData.eventDataPtr++;
-	return retV;
+	return _musicData[_channelData.eventDataPtr++];
 }
 
 void AdlibChannel::com90_getFreqOffset(void) {
 
-	_channelData.freqOffset = _musicData[_channelData.eventDataPtr];
-	_channelData.eventDataPtr++;
+	_channelData.freqOffset = _musicData[_channelData.eventDataPtr++];
 	if (_channelData.note & 0x20) {
 		uint16 nextNote = getNextNote(
 			_channelData.lastCommand - 0x18 + _channelData.instrumentData->bindedEffect);
@@ -319,19 +301,17 @@ void AdlibChannel::com90_getFreqOffset(void) {
 
 void AdlibChannel::com90_getChannelVolume(void) {
 
-	_channelData.channelVolume = _musicData[_channelData.eventDataPtr];
-	_channelData.eventDataPtr++;
+	_channelData.channelVolume = _musicData[_channelData.eventDataPtr++];
 }
 
 void AdlibChannel::com90_getTremoVibro(void) {
 
-	_channelData.tremoVibro = _musicData[_channelData.eventDataPtr];
-	_channelData.eventDataPtr++;
+	_channelData.tremoVibro = _musicData[_channelData.eventDataPtr++];
 }
 
-void AdlibChannel::com90_rewindMusic(void) {
+void AdlibChannel::com90_loopMusic(void) {
 
-	_channelData.eventDataPtr = _channelData.startOfData;
+	_channelData.eventDataPtr = _channelData.loopPoint;
 }
 
 void AdlibChannel::com90_keyOff(void) {
@@ -339,9 +319,9 @@ void AdlibChannel::com90_keyOff(void) {
 	stopNote();
 }
 
-void AdlibChannel::com90_setStartOfData(void) {
+void AdlibChannel::com90_setLoopPoint(void) {
 
-	_channelData.startOfData = _channelData.eventDataPtr;
+	_channelData.loopPoint = _channelData.eventDataPtr;
 }
 
 } // End of namespace Sky

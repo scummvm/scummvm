@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2006 The ScummVM project
+ * Copyright (C) 2003-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,7 +39,7 @@ AdlibMusic::AdlibMusic(Audio::Mixer *pMixer, Disk *pDisk)
 
 	_opl = makeAdlibOPL(_sampleRate);
 
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 }
 
 AdlibMusic::~AdlibMusic(void) {
@@ -100,20 +100,35 @@ void AdlibMusic::setupChannels(uint8 *channelData) {
 	_numberOfChannels = channelData[0];
 	channelData++;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
-		uint16 chDataStart = ((channelData[(cnt << 1) | 1] << 8) | channelData[cnt << 1]) + _musicDataLoc;
+		uint16 chDataStart = READ_LE_UINT16((uint16 *)channelData + cnt) + _musicDataLoc;
 		_channels[cnt] = new AdlibChannel(_opl, _musicData, chDataStart);
-		_channels[cnt]->updateVolume(_musicVolume);
 	}
 }
 
 void AdlibMusic::startDriver(void) {
 
 	uint16 cnt = 0;
-	while (_initSequence[cnt] || _initSequence[cnt+1]) {
-		OPLWriteReg (_opl, _initSequence[cnt], _initSequence[cnt+1]);
+	while (_initSequence[cnt] || _initSequence[cnt + 1]) {
+		OPLWriteReg (_opl, _initSequence[cnt], _initSequence[cnt + 1]);
 		cnt += 2;
 	}
-	_allowedCommands = 0xD;
+}
+
+void AdlibMusic::setVolume(uint16 param) {
+	_musicVolume = param;
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, 2 * param);
+}
+
+bool AdlibMusic::isStereo(void) const { 
+	return false; 
+}
+
+bool AdlibMusic::endOfData(void) const {
+	return false; 
+}
+
+int AdlibMusic::getRate(void) const { 
+	return _sampleRate; 
 }
 
 } // End of namespace Sky

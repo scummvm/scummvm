@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2006 The ScummVM project
+ * Copyright (C) 2003-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #include "sky/music/gmchannel.h"
 #include "common/util.h"
 #include "common/system.h"
+#include "common/endian.h"
 #include "sound/mididrv.h"
 
 namespace Sky {
@@ -62,10 +63,10 @@ void MT32Music::timerCall(void) {
 	}
 }
 
-void MT32Music::setVolume(uint8 volume) {
+void MT32Music::setVolume(uint16 volume) {
 	uint8 sysEx[10] = "\x41\x10\x16\x12\x10\x00\x16\x00\x00";
 	_musicVolume = volume;
-	sysEx[7] = (volume > 100) ? 100 : volume;
+	sysEx[7] = (volume > 100) ? 100 : (uint8)volume;
 	sysEx[8] = 0x00;
 	for (uint8 cnt = 4; cnt < 8; cnt++)
 		sysEx[8] -= sysEx[cnt];
@@ -75,8 +76,8 @@ void MT32Music::setVolume(uint8 volume) {
 
 void MT32Music::setupPointers(void) {
 
-	_musicDataLoc = (_musicData[0x7DD] << 8) | _musicData[0x7DC];
-	_sysExSequence = ((_musicData[0x7E1] << 8) | _musicData[0x7E0]) + _musicData;
+	_musicDataLoc = READ_LE_UINT16(_musicData + 0x7DC);
+	_sysExSequence = READ_LE_UINT16(_musicData + 0x7E0) + _musicData;
 }
 
 void MT32Music::setupChannels(uint8 *channelData) {
@@ -84,7 +85,7 @@ void MT32Music::setupChannels(uint8 *channelData) {
 	_numberOfChannels = channelData[0];
 	channelData++;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
-		uint16 chDataStart = ((channelData[(cnt << 1) | 1] << 8) | channelData[cnt << 1]) + _musicDataLoc;
+		uint16 chDataStart = READ_LE_UINT16((uint16 *)channelData + cnt) + _musicDataLoc;
 		_channels[cnt] = new GmChannel(_musicData, chDataStart, _midiDrv, NULL, NULL);
 		_channels[cnt]->updateVolume(_musicVolume);
 	}
@@ -98,12 +99,16 @@ bool MT32Music::processPatchSysEx(uint8 *sysExData) {
 		return false;
 
 	// decompress data from stream
-	sysExBuf[0]  = 0x41; sysExBuf[1] = 0x10; sysExBuf[2] = 0x16; sysExBuf[3] = 0x12; sysExBuf[4] = 0x5;
-	sysExBuf[5]  = sysExData[0] >> 4;			// patch offset part 1
-	sysExBuf[6]  = (sysExData[0] & 0xF) << 3;	// patch offset part 2
-	sysExBuf[7]  = sysExData[1] >> 6;			// timbre group
-	sysExBuf[8]  = sysExData[1] & 0x3F;			// timbre num
-	sysExBuf[9]  = sysExData[2] & 0x3F;			// key shift
+	sysExBuf[ 0] = 0x41; 
+	sysExBuf[ 1] = 0x10; 
+	sysExBuf[ 2] = 0x16; 
+	sysExBuf[ 3] = 0x12; 
+	sysExBuf[ 4] = 0x5;
+	sysExBuf[ 5] = sysExData[0] >> 4;			// patch offset part 1
+	sysExBuf[ 6] = (sysExData[0] & 0xF) << 3;	// patch offset part 2
+	sysExBuf[ 7] = sysExData[1] >> 6;			// timbre group
+	sysExBuf[ 8] = sysExData[1] & 0x3F;			// timbre num
+	sysExBuf[ 9] = sysExData[2] & 0x3F;			// key shift
 	sysExBuf[10] = sysExData[3] & 0x7F;			// fine tune
 	sysExBuf[11] = sysExData[4] & 0x7F;         // bender range
 	sysExBuf[12] = sysExData[2] >> 6;			// assign mode
@@ -125,7 +130,10 @@ void MT32Music::startDriver(void) {
 	sysExData++;
 	uint8 sendBuf[256];
 	uint8 len;
-	sendBuf[0] = 0x41; sendBuf[1] = 0x10; sendBuf[2] = 0x16; sendBuf[3] = 0x12;
+	sendBuf[0] = 0x41;
+	sendBuf[1] = 0x10;
+	sendBuf[2] = 0x16;
+	sendBuf[3] = 0x12;
 	for (cnt = 0; cnt < timbreNum; cnt++) {
 		len = 7;
 		crc = 0;

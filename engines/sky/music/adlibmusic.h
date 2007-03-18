@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2006 The ScummVM project
+ * Copyright (C) 2003-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,9 +37,10 @@ public:
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return false; }
-	bool endOfData() const { return false; }
-	int getRate() const { return _sampleRate; }
+	bool isStereo(void) const;
+	bool endOfData(void) const;
+	int getRate(void) const;
+	virtual void setVolume(uint16 param);
 
 private:
 	FM_OPL *_opl;

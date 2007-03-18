@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2006 The ScummVM project
+ * Copyright (C) 2003-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@ class GmMusic : public MusicBase {
 public:
 	GmMusic(MidiDriver *pMidiDrv, Disk *pDisk);
 	~GmMusic(void);
+	virtual void setVolume(uint16 param);
 private:
 	static void passTimerFunc(void *param);
 	void timerCall(void);

@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2006 The ScummVM project
+ * Copyright (C) 2003-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,9 +31,9 @@ GmChannel::GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv
 	_musicData = pMusicData;
 	_midiDrv = pMidiDrv;
 	_channelData.midiChannelNumber = 0;
-	_channelData.startOfData = startOfData;
+	_channelData.loopPoint = startOfData;
 	_channelData.eventDataPtr = startOfData;
-	_channelData.channelActive = 1;
+	_channelData.channelActive = true;
 	_channelData.nextEventTime = getNextEventTime();
 	_instMap = pInstMap;
 	_veloTab = veloTab;
@@ -42,9 +42,12 @@ GmChannel::GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv
 	_lastVolume = 0xFF;
 }
 
-bool GmChannel::isActive(void) {
+GmChannel::~GmChannel(void) {
+	stopNote();
+}
 
-	return _channelData.channelActive != 0;
+bool GmChannel::isActive(void) {
+	return _channelData.channelActive;
 }
 
 void GmChannel::updateVolume(uint16 pVolume) {
@@ -74,11 +77,13 @@ int32 GmChannel::getNextEventTime(void) {
 		lVal = _musicData[_channelData.eventDataPtr];
 		_channelData.eventDataPtr++;
 		retV = (retV << 7) | (lVal & 0x7F);
-		if (!(lVal & 0x80)) break;
+		if (!(lVal & 0x80))
+			break;
 	}
 	if (lVal & 0x80) { // should never happen
 		return -1;
-	} else return retV;
+	} else
+		return retV;
 
 }
 
@@ -108,21 +113,14 @@ uint8 GmChannel::process(uint16 aktTime) {
 					break;
 				case 5: com90_getPitch(); break;
 				case 6: com90_getChannelVolume(); break;
-				case 8: com90_rewindMusic(); break;
+				case 8: com90_loopMusic(); break;
 				case 9: com90_keyOff(); break;
 				case 11: com90_getChannelPanValue(); break;
-				case 12: com90_setStartOfData(); break;
+				case 12: com90_setLoopPoint(); break;
 				case 13: com90_getChannelControl(); break;
-				case 4: //com90_dummy();
-				case 7: //com90_skipTremoVibro();
-				case 10: //com90_error();
-					error("Channel: dummy music routine 0x%02X was called",opcode);
-					_channelData.channelActive = 0;
-					break;
+				
 				default:
-					// these opcodes aren't implemented in original music driver
-					error("Channel: Not existent routine 0x%02X was called",opcode);
-					_channelData.channelActive = 0;
+					error("GmChannel: Unknown music opcode 0x%02X", opcode);
 					break;
 				}
 			} else {
@@ -154,7 +152,7 @@ void GmChannel::com90_caseNoteOff(void) {
 void GmChannel::com90_stopChannel(void) {
 
 	stopNote();
-	_channelData.channelActive = 0;
+	_channelData.channelActive = false;
 }
 
 void GmChannel::com90_setupInstrument(void) {
@@ -166,10 +164,7 @@ void GmChannel::com90_setupInstrument(void) {
 }
 
 uint8 GmChannel::com90_updateTempo(void) {
-
-	uint8 retV = _musicData[_channelData.eventDataPtr];
-	_channelData.eventDataPtr++;
-	return retV;
+	return _musicData[_channelData.eventDataPtr++];
 }
 
 void GmChannel::com90_getPitch(void) {
@@ -185,9 +180,9 @@ void GmChannel::com90_getChannelVolume(void) {
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x700 | (newVol << 16));
 }
 
-void GmChannel::com90_rewindMusic(void) {
+void GmChannel::com90_loopMusic(void) {
 
-	_channelData.eventDataPtr = _channelData.startOfData;
+	_channelData.eventDataPtr = _channelData.loopPoint;
 }
 
 void GmChannel::com90_keyOff(void) {
@@ -195,9 +190,9 @@ void GmChannel::com90_keyOff(void) {
 	_midiDrv->send((0x90 | _channelData.midiChannelNumber) | (_channelData.note << 8) | 0);
 }
 
-void GmChannel::com90_setStartOfData(void) {
+void GmChannel::com90_setLoopPoint(void) {
 
-	_channelData.startOfData = _channelData.eventDataPtr;
+	_channelData.loopPoint = _channelData.eventDataPtr;
 }
 
 void GmChannel::com90_getChannelPanValue(void) {
@@ -208,9 +203,8 @@ void GmChannel::com90_getChannelPanValue(void) {
 
 void GmChannel::com90_getChannelControl(void) {
 
-	uint8 conNum = _musicData[_channelData.eventDataPtr];
-	uint8 conDat = _musicData[_channelData.eventDataPtr + 1];
-	_channelData.eventDataPtr += 2;
+	uint8 conNum = _musicData[_channelData.eventDataPtr++];
+	uint8 conDat = _musicData[_channelData.eventDataPtr++];
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | (conNum << 8) | (conDat << 16));
 }
 

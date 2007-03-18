@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2006 The ScummVM project
+ * Copyright (C) 2003-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,13 +23,13 @@
 #include "sky/music/musicbase.h"
 #include "sky/disk.h"
 #include "common/util.h"
+#include "common/endian.h"
 
 namespace Sky {
 
 MusicBase::MusicBase(Disk *pDisk) {
 
 	_musicData = NULL;
-	_allowedCommands = 0;
 	_skyDisk = pDisk;
 	_currentMusic = 0;
 	_musicVolume = 127;
@@ -52,11 +52,9 @@ void MusicBase::loadSection(uint8 pSection) {
 		free(_musicData);
 	_currentSection = pSection;
 	_musicData = _skyDisk->loadFile(_driverFileBase + FILES_PER_SECTION * pSection);
-	_allowedCommands = 0;
+
 	_musicTempo0 = 0x78; // init constants taken from idb file, area ~0x1060
 	_musicTempo1 = 0xC0;
-	_onNextPoll.doReInit = false;
-	_onNextPoll.doStopMusic = false;
 	_onNextPoll.musicToProcess = 0;
 	_tempo = _aktTime = 0x10001;
 	_numberOfChannels = _currentMusic = 0;
@@ -73,13 +71,6 @@ bool MusicBase::musicIsPlaying(void) {
 	return false;
 }
 
-void MusicBase::setVolume(uint16 param) {
-
-	_musicVolume = param;
-	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
-		_channels[cnt]->updateVolume(_musicVolume);
-}
-
 void MusicBase::stopMusic(void) {
 
 	_mutex.lock();
@@ -89,10 +80,8 @@ void MusicBase::stopMusic(void) {
 
 void MusicBase::stopMusicInternal(void) {
 
-	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
-		_channels[cnt]->stopNote();
+	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
 		delete _channels[cnt];
-	}
 	_numberOfChannels = 0;
 }
 
@@ -101,7 +90,7 @@ void MusicBase::updateTempo(void) {
 	uint16 tempoMul = _musicTempo0 * _musicTempo1;
 	uint16 divisor = 0x4446390/ 23864;
 	_tempo = (tempoMul / divisor) << 16;
-	_tempo |= (((tempoMul%divisor) << 16) | (tempoMul / divisor)) / divisor;
+	_tempo |= (((tempoMul % divisor) << 16) | (tempoMul / divisor)) / divisor;
 }
 
 void MusicBase::loadNewMusic(void) {
@@ -117,9 +106,9 @@ void MusicBase::loadNewMusic(void) {
 	_currentMusic = _onNextPoll.musicToProcess;
 
 	if (_currentMusic != 0) {
-		musicPos = (_musicData[_musicDataLoc + 2] << 8) | _musicData[_musicDataLoc+1];
-		musicPos += _musicDataLoc+((_currentMusic-1) << 1);
-		musicPos = ((_musicData[musicPos+1] << 8) | _musicData[musicPos]) + _musicDataLoc;
+		musicPos = READ_LE_UINT16(_musicData + _musicDataLoc + 1);
+		musicPos += _musicDataLoc + ((_currentMusic - 1) << 1);
+		musicPos = READ_LE_UINT16(_musicData + musicPos) + _musicDataLoc;
 
 		_musicTempo0 = _musicData[musicPos];
 		_musicTempo1 = _musicData[musicPos+1];
@@ -134,8 +123,6 @@ void MusicBase::pollMusic(void) {
 
 	_mutex.lock();
 	uint8 newTempo;
-	if (_onNextPoll.doReInit) startDriver();
-	if (_onNextPoll.doStopMusic) stopMusicInternal();
 	if (_onNextPoll.musicToProcess != _currentMusic)
 		loadNewMusic();
 
@@ -150,6 +137,18 @@ void MusicBase::pollMusic(void) {
 	}
 	_mutex.unlock();
 	_aktTime &= 0xFFFF;
+}
+
+void MusicBase::startMusic(uint16 param) {
+	_onNextPoll.musicToProcess = param & 0xF;
+}
+
+uint8 MusicBase::giveVolume(void) { 
+	return (uint8)_musicVolume; 
+}
+	
+uint8 MusicBase::giveCurrentMusic(void) {
+	return _currentMusic;
 }
 
 } // End of namespace Sky

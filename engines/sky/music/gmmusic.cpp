@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2006 The ScummVM project
+ * Copyright (C) 2003-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #include "sky/music/gmchannel.h"
 #include "sky/sky.h"
 #include "common/util.h"
+#include "common/endian.h"
 #include "sound/mididrv.h"
 
 namespace Sky {
@@ -51,7 +52,7 @@ GmMusic::~GmMusic(void) {
 	if (_currentMusic)
 		stopMusic();
 	// Send All Sound Off and All Notes Off (for external synths)
-	for (int i = 0; i < 16; ++i) {
+	for (int i = 0; i < 16; i++) {
 		_midiDrv->send ((120 << 8) | 0xB0 | i);
 		_midiDrv->send ((123 << 8) | 0xB0 | i);
 	}
@@ -59,11 +60,18 @@ GmMusic::~GmMusic(void) {
 	delete _midiDrv;
 }
 
+void GmMusic::setVolume(uint16 param) {
+
+	_musicVolume = param;
+	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
+		_channels[cnt]->updateVolume(_musicVolume);
+}
+
 void GmMusic::timerCall(void) {
 	_timerCount += _midiDrv->getBaseTempo();
-	if (_timerCount > (1000000 / 50)) {
+	if (_timerCount > (1000 * 1000 / 50)) {
 		// call pollMusic() 50 times per second
-		_timerCount -= 1000000 / 50;
+		_timerCount -= 1000 * 1000 / 50;
 		if (_musicData != NULL)
 			pollMusic();
 	}
@@ -72,11 +80,11 @@ void GmMusic::timerCall(void) {
 void GmMusic::setupPointers(void) {
 
 	if (SkyEngine::_systemVars.gameVersion == 109) {
-		_musicDataLoc = (_musicData[0x79C] << 8) | _musicData[0x79B];
+		_musicDataLoc = READ_LE_UINT16(_musicData + 0x79B);
 		_sysExSequence = _musicData + 0x1EF2;
 	} else {
-		_musicDataLoc = (_musicData[0x7DD] << 8) | _musicData[0x7DC];
-		_sysExSequence = ((_musicData[0x7E1] << 8) | _musicData[0x7E0]) + _musicData;
+		_musicDataLoc = READ_LE_UINT16(_musicData + 0x7DC);
+		_sysExSequence = READ_LE_UINT16(_musicData + 0x7E0) + _musicData;
 	}
 }
 
@@ -85,7 +93,7 @@ void GmMusic::setupChannels(uint8 *channelData) {
 	_numberOfChannels = channelData[0];
 	channelData++;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
-		uint16 chDataStart = ((channelData[(cnt << 1) | 1] << 8) | channelData[cnt << 1]) + _musicDataLoc;
+		uint16 chDataStart = READ_LE_UINT16((uint16 *)channelData + cnt) + _musicDataLoc;
 		_channels[cnt] = new GmChannel(_musicData, chDataStart, _midiDrv, MidiDriver::_mt32ToGm, _veloTab);
 		_channels[cnt]->updateVolume(_musicVolume);
 	}
@@ -93,7 +101,7 @@ void GmMusic::setupChannels(uint8 *channelData) {
 
 void GmMusic::startDriver(void) {
 	// Send GM System On to reset channel parameters etc.
-	uint8 sysEx[] = {0x7e, 0x7f, 0x09, 0x01};
+	uint8 sysEx[] = { 0x7e, 0x7f, 0x09, 0x01 };
 	_midiDrv->sysEx(sysEx, sizeof(sysEx));
 	//_midiDrv->send(0xFF);  //ALSA can't handle this.
 	// skip all sysEx as it can't be handled anyways.
