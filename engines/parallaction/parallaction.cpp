@@ -725,7 +725,9 @@ void freeCharacter() {
 	if (!IS_DUMMY_CHARACTER(_vm->_characterName)) {
 		_vm->_gfx->freeCnv(&_vm->_char._miniFrames);
 		_vm->freeTable(_objectsNames);
-		_vm->_gfx->freeCnv(&_vm->_char._talk);
+		_vm->_gfx->freeCnv(_vm->_char._talk);
+		if (_vm->_char._talk) delete _vm->_char._talk;
+
 		_vm->_gfx->freeStaticCnv(&_vm->_char._head);
 		_vm->_gfx->freeCnv(&_vm->_char._objs);
 	}
@@ -805,7 +807,7 @@ void Parallaction::changeCharacter(const char *name) {
 
 		if (!IS_DUMMY_CHARACTER(name)) {
 			_disk->loadHead(path, &_vm->_char._head);
-			_disk->loadTalk(path, &_vm->_char._talk);
+			_vm->_char._talk = _disk->loadTalk(path);
 			_disk->loadObjects(name, &_vm->_char._objs);
 
 			sprintf(path, "mini%s", v32);

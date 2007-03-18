@@ -105,7 +105,7 @@ public:
 
 	Script* loadLocation(const char *name);
 	Script* loadScript(const char* name);
-	void loadTalk(const char *name, Cnv *cnv);
+	Cnv* loadTalk(const char *name);
 	void loadObjects(const char *name, Cnv *cnv);
 	void loadPointer(StaticCnv* cnv);
 	void loadHead(const char* name, StaticCnv* cnv);

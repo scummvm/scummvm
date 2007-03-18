@@ -219,7 +219,7 @@ void freeDialogue(Dialogue *d) {
 }
 
 
-uint16 askDialoguePassword(Dialogue *v60, StaticCnv *v48) {
+uint16 askDialoguePassword(Dialogue *q, StaticCnv *face) {
 	debugC(1, kDebugDialogue, "checkDialoguePassword()");
 
 	char password[100];
@@ -233,8 +233,8 @@ uint16 askDialoguePassword(Dialogue *v60, StaticCnv *v48) {
 		r.moveTo(_answerBalloonX[0], _answerBalloonY[0]);
 
 		_vm->_gfx->drawBalloon(r, 1);
-		_vm->_gfx->displayWrappedString(v60->_answers[0], _answerBalloonX[0], _answerBalloonY[0], MAX_BALLOON_WIDTH, 3);
-		_vm->_gfx->flatBlitCnv(v48, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y,	Gfx::kBitFront);
+		_vm->_gfx->displayWrappedString(q->_answers[0], _answerBalloonX[0], _answerBalloonY[0], MAX_BALLOON_WIDTH, 3);
+		_vm->_gfx->flatBlitCnv(face, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y,	Gfx::kBitFront);
 		_vm->_gfx->displayBalloonString(_answerBalloonX[0] + 5,	_answerBalloonY[0] + _answerBalloonH[0] - 15, "> ", 0);
 
 		Common::Event e;
@@ -350,19 +350,19 @@ void displayQuestion(Dialogue *q, StaticCnv *face) {
 	return;
 }
 
-uint16 getDialogueAnswer(Dialogue *v60, StaticCnv *v48) {
+uint16 getDialogueAnswer(Dialogue *q, StaticCnv *face) {
 
 	uint16 answer = 0;
 
-	debugC(1, kDebugDialogue, "runDialogue: showing answering face (%p)", (const void*)v48->_data0);
-	_vm->_gfx->flatBlitCnv(v48, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
+	debugC(1, kDebugDialogue, "runDialogue: showing answering face (%p)", (const void*)face->_data0);
+	_vm->_gfx->flatBlitCnv(face, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
 	debugC(1, kDebugDialogue, "runDialogue: answering face shown");
 
 	if (_askPassword == false) {
 		debugC(1, kDebugDialogue, "runDialogue: waiting for user to select answer");
-		answer = selectAnswer(v60, v48);
+		answer = selectAnswer(q, face);
 	} else {
-		answer = askDialoguePassword(v60, v48);
+		answer = askDialoguePassword(q, face);
 	}
 
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);	// erase answer screen
@@ -380,68 +380,69 @@ void runDialogue(SpeakData *data) {
 
 	_vm->_gfx->setFont("comic");
 
-	Cnv v6E;
+	Cnv* v6E;
 
 	if (!scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0') {
-		memcpy(&v6E, &_vm->_char._talk, sizeof(Cnv));
+		v6E = _vm->_char._talk;
 		debugC(1, kDebugDialogue, "runDialogue: using default character head");
 	} else {
 		debugC(1, kDebugDialogue, "runDialogue: loading 2nd character head '%s'", _vm->_characterName);
-		_vm->_disk->loadTalk(data->_name, &v6E);
+		v6E = _vm->_disk->loadTalk(data->_name);
 		debugC(1, kDebugDialogue, "runDialogue: 2nd character head loaded");
 	}
 
 	StaticCnv questioner;
-	questioner._width = v6E._width;
-	questioner._height = v6E._height;
+	questioner._width = v6E->_width;
+	questioner._height = v6E->_height;
 
 	StaticCnv answerer;
-	answerer._width = _vm->_char._talk._width;
-	answerer._height = _vm->_char._talk._height;
+	answerer._width = _vm->_char._talk->_width;
+	answerer._height = _vm->_char._talk->_height;
 
 	bool displayedAnswers = false;
 	_askPassword = false;
 	uint16 answer = 0;
 	Command *v34 = NULL;
 
-	Dialogue *v60 = data->_dialogue;
-	while (v60) {
+	Dialogue *q = data->_dialogue;
+	while (q) {
 
-		questioner._data0 = v6E._array[v60->_mood & 0xF];
+		questioner._data0 = v6E->_array[q->_mood & 0xF];
 		questioner._data1 = NULL; // v6E.field_8[v60->_mood & 0xF];
-		answerer._data0 = _vm->_char._talk._array[0];
+		answerer._data0 = _vm->_char._talk->_array[0];
 		answerer._data1 = NULL; // _talk.field_8[0];
 
-		displayQuestion(v60, &questioner);
+		displayQuestion(q, &questioner);
 
-		if (v60->_answers[0] == NULL) break;
+		if (q->_answers[0] == NULL) break;
 
 		_answerBalloonY[0] = 10;
 		displayedAnswers = false;
 
-		if (scumm_stricmp(v60->_answers[0], "NULL")) {
+		if (scumm_stricmp(q->_answers[0], "NULL")) {
 
-			displayedAnswers = displayAnswers(v60);
+			displayedAnswers = displayAnswers(q);
 
 			if (displayedAnswers == true) {
-				answer = getDialogueAnswer(v60, &answerer);
-				v34 = v60->_commands[answer];
-				v60 = (Dialogue*)v60->_following._questions[answer];
+				answer = getDialogueAnswer(q, &answerer);
+				v34 = q->_commands[answer];
+				q = (Dialogue*)q->_following._questions[answer];
 			} else {
 				debugC(1, kDebugDialogue, "runDialogue: no suitable answers found");
-				v60 = NULL;
+				q = NULL;
 			}
 		} else {
-			v60 = (Dialogue*)v60->_following._questions[answer];
+			q = (Dialogue*)q->_following._questions[answer];
 		}
 	}
 
 	debugC(1, kDebugDialogue, "runDialogue: out of dialogue loop");
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
-	if (scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0')
-		_vm->_gfx->freeCnv(&v6E);
-
+	if (scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0') {
+		_vm->_gfx->freeCnv(v6E);
+		delete v6E;
+	}
 
 	exitDialogue();
 	debugC(1, kDebugDialogue, "runDialogue: exit dialogue ok");
@@ -472,8 +473,8 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 
 	if (numAvailableAnswers == 1) {
 		_vm->_gfx->displayWrappedString(q->_answers[_di], _answerBalloonX[_di], _answerBalloonY[_di], MAX_BALLOON_WIDTH, 0);
-		cnv->_data0 = _vm->_char._talk._array[q->_answer_moods[_di] & 0xF];
-//		cnv->_data1 = _vm->_char._talk.field_8[q->_answer_moods[_di] & 0xF];
+		cnv->_data0 = _vm->_char._talk->_array[q->_answer_moods[_di] & 0xF];
+//		cnv->_data1 = _vm->_char._talk->field_8[q->_answer_moods[_di] & 0xF];
 		_vm->_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X,	ANSWER_CHARACTER_Y, Gfx::kBitFront);
 		waitUntilLeftClick();
 		return _di;
@@ -492,8 +493,8 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 				_vm->_gfx->displayWrappedString(q->_answers[v2], _answerBalloonX[v2], _answerBalloonY[v2], MAX_BALLOON_WIDTH, 3);
 
 			_vm->_gfx->displayWrappedString(q->_answers[_si], _answerBalloonX[_si],	_answerBalloonY[_si], MAX_BALLOON_WIDTH, 0);
-			cnv->_data0 = _vm->_char._talk._array[q->_answer_moods[_si] & 0xF];
-//			cnv->_data1 = _vm->_char._talk.field_8[q->_answer_moods[_si] & 0xF];
+			cnv->_data0 = _vm->_char._talk->_array[q->_answer_moods[_si] & 0xF];
+//			cnv->_data1 = _vm->_char._talk->field_8[q->_answer_moods[_si] & 0xF];
 			_vm->_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
 		}
 

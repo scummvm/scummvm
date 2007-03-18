@@ -197,7 +197,9 @@ void Disk::loadCnv(const char *filename, Cnv *cnv) {
 	return;
 }
 
-void Disk::loadTalk(const char *name, Cnv *cnv) {
+Cnv* Disk::loadTalk(const char *name) {
+
+	Cnv *cnv = new Cnv;
 
 	const char *ext = strstr(name, ".talk");
 	if (ext != NULL) {
@@ -228,6 +230,7 @@ void Disk::loadTalk(const char *name, Cnv *cnv) {
 
 	}
 
+	return cnv;
 }
 
 Script* Disk::loadLocation(const char *name) {

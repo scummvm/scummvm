@@ -366,10 +366,10 @@ void displayCharacterComment(ExamineData *data) {
 	if (data->_description == NULL) return;
 
 	StaticCnv v3C;
-	v3C._width = _vm->_char._talk._width;
-	v3C._height = _vm->_char._talk._height;
-	v3C._data0 = _vm->_char._talk._array[0];
-	v3C._data1 = NULL; //_talk.field_8[0];
+	v3C._width = _vm->_char._talk->_width;
+	v3C._height = _vm->_char._talk->_height;
+	v3C._data0 = _vm->_char._talk->_array[0];
+	v3C._data1 = NULL; //_talk->field_8[0];
 
 	_vm->_gfx->setFont("comic");
 	_vm->_gfx->flatBlitCnv(&v3C, 190, 80, Gfx::kBitFront);
