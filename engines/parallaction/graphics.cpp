@@ -418,7 +418,7 @@ void jobDisplayLabel(void *parm, Job *j) {
 
 	if (label->_cnv._width == 0)
 		return;
-	_vm->_gfx->flatBlitCnv(&label->_cnv, Gfx::_labelPosition[0]._x, Gfx::_labelPosition[0]._y, Gfx::kBitBack, label->_cnv._data1);
+	_vm->_gfx->flatBlitCnv(&label->_cnv, Gfx::_labelPosition[0]._x, Gfx::_labelPosition[0]._y, Gfx::kBitBack);
 
 	return;
 }
@@ -507,7 +507,7 @@ void Gfx::setMousePointer(int16 index) {
 //
 //	Cnv management
 //
-void Gfx::flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer, byte *unused) {
+void Gfx::flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer) {
 	Common::Rect r(cnv->_width, cnv->_height);
 	r.moveTo(x, y);
 
@@ -572,8 +572,8 @@ void Gfx::restoreZoneBackground(const Common::Rect& r, byte *data) {
 	cnv._width = r.width();
 	cnv._height = r.height();
 
-	flatBlitCnv(&cnv, r.left, r.top, kBitBack, cnv._data1);
-	flatBlitCnv(&cnv, r.left, r.top, kBit2, cnv._data1);
+	flatBlitCnv(&cnv, r.left, r.top, kBitBack);
+	flatBlitCnv(&cnv, r.left, r.top, kBit2);
 
 	return;
 }
@@ -597,7 +597,7 @@ void Gfx::displayString(uint16 x, uint16 y, const char *text) {
 		tmp._height = _font._height;
 		tmp._data0 = _font._array[c];
 
-		flatBlitCnv(&tmp, x, y, kBitFront, NULL);
+		flatBlitCnv(&tmp, x, y, kBitFront);
 
 		x += (_proportionalFont ? _glyphWidths[(int)c] : 8);
 

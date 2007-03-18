@@ -111,7 +111,11 @@ public:
 	void copyRect(Gfx::Buffers dstbuffer, const Common::Rect& r, byte *src, uint16 pitch);
 	void grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uint16 pitch);
 	void floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color);
-	void flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer, byte *unused);
+
+	// NOTE: flatBlitCnv used to have an additional unused parameter,
+	// that was always the _data1 member of the StaticCnv parameter.
+	// DOS version didn't make use of it, but it is probably needed for Amiga stuff.
+	void flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer);
 	void blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
 
 	// palette

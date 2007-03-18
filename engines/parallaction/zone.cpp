@@ -295,7 +295,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 				u->door->_background = (byte*)malloc(vE0._width*vE0._height);
 				_gfx->backupDoorBackground(u->door, z->_left, z->_top);
 
-				_gfx->flatBlitCnv(&vE0, z->_left, z->_top, Gfx::kBitBack, vE0._data1);
+				_gfx->flatBlitCnv(&vE0, z->_left, z->_top, Gfx::kBitBack);
 			}
 
 			if (!scumm_stricmp(_tokens[0],	"startpos")) {
@@ -314,7 +314,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 
 				if ((z->_flags & kFlagsRemove) == 0) {
 					_gfx->backupGetBackground(u->get, z->_left, z->_top);
-					_gfx->flatBlitCnv(vE4, z->_left, z->_top, Gfx::kBitBack, vE4->_data1);
+					_gfx->flatBlitCnv(vE4, z->_left, z->_top, Gfx::kBitBack);
 				}
 			}
 
@@ -372,7 +372,7 @@ void displayCharacterComment(ExamineData *data) {
 	v3C._data1 = NULL; //_talk.field_8[0];
 
 	_vm->_gfx->setFont("comic");
-	_vm->_gfx->flatBlitCnv(&v3C, 190, 80, Gfx::kBitFront, v3C._data1);
+	_vm->_gfx->flatBlitCnv(&v3C, 190, 80, Gfx::kBitFront);
 
 	int16 v26, v28;
 	_vm->_gfx->getStringExtent(data->_description, 130, &v28, &v26);
@@ -404,7 +404,7 @@ void displayItemComment(ExamineData *data) {
 	char v68[PATH_LEN];
 	strcpy(v68, data->_filename);
 	_vm->_disk->loadStatic(v68, &data->_cnv);
-	_vm->_gfx->flatBlitCnv(&data->_cnv, 140, (SCREEN_HEIGHT - data->_cnv._height)/2, Gfx::kBitFront, data->_cnv._data1);
+	_vm->_gfx->flatBlitCnv(&data->_cnv, 140, (SCREEN_HEIGHT - data->_cnv._height)/2, Gfx::kBitFront);
 	_vm->_gfx->freeStaticCnv(&data->_cnv);
 
 	int16 v6A = 0, v6C = 0;
@@ -414,7 +414,7 @@ void displayItemComment(ExamineData *data) {
 	Common::Rect r(v6C, v6A);
 	r.moveTo(0, 90);
 	_vm->_gfx->drawBalloon(r, 0);
-	_vm->_gfx->flatBlitCnv(&_vm->_char._head, 100, 152, Gfx::kBitFront, _vm->_char._head._data1);
+	_vm->_gfx->flatBlitCnv(&_vm->_char._head, 100, 152, Gfx::kBitFront);
 	_vm->_gfx->displayWrappedString(data->_description, 0, 90, 130, 0);
 
 	jobEraseAnimations((void*)1, NULL);
@@ -498,8 +498,8 @@ void jobToggleDoor(void *parm, Job *j) {
 
 		v14._data0 = v18->_array[_ax];
 
-		_vm->_gfx->flatBlitCnv(&v14, z->_left, z->_top, Gfx::kBitBack, v14._data1);
-		_vm->_gfx->flatBlitCnv(&v14, z->_left, z->_top, Gfx::kBit2, v14._data1);
+		_vm->_gfx->flatBlitCnv(&v14, z->_left, z->_top, Gfx::kBitBack);
+		_vm->_gfx->flatBlitCnv(&v14, z->_left, z->_top, Gfx::kBit2);
 	}
 
 	count++;
@@ -551,8 +551,8 @@ void jobDisplayDroppedItem(void *parm, Job *j) {
 			_vm->_gfx->backupGetBackground(z->u.get, z->_left, z->_top);
 		}
 
-		_vm->_gfx->flatBlitCnv(&z->u.get->_cnv, z->_left, z->_top, Gfx::kBitBack, z->u.get->_cnv._data1);
-		_vm->_gfx->flatBlitCnv(&z->u.get->_cnv, z->_left, z->_top, Gfx::kBit2, z->u.get->_cnv._data1);
+		_vm->_gfx->flatBlitCnv(&z->u.get->_cnv, z->_left, z->_top, Gfx::kBitBack);
+		_vm->_gfx->flatBlitCnv(&z->u.get->_cnv, z->_left, z->_top, Gfx::kBit2);
 	}
 
 	j->_count++;

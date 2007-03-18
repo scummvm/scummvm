@@ -581,8 +581,8 @@ void jobRunScripts(void *parm, Job *j) {
 					_vm->_gfx->blitCnv(&v18, inst->_opA._value, inst->_opB._value, _si, Gfx::kBitBack);
 					_vm->_gfx->blitCnv(&v18, inst->_opA._value, inst->_opB._value, _si, Gfx::kBit2);
 				} else {
-					_vm->_gfx->flatBlitCnv(&v18, inst->_opA._value, inst->_opB._value, Gfx::kBitBack, v18._data1);
-					_vm->_gfx->flatBlitCnv(&v18, inst->_opA._value, inst->_opB._value, Gfx::kBit2, v18._data1);
+					_vm->_gfx->flatBlitCnv(&v18, inst->_opA._value, inst->_opB._value, Gfx::kBitBack);
+					_vm->_gfx->flatBlitCnv(&v18, inst->_opA._value, inst->_opB._value, Gfx::kBit2);
 				}
 				break;
 

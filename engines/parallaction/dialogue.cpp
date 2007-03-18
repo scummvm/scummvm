@@ -234,7 +234,7 @@ uint16 askDialoguePassword(Dialogue *v60, StaticCnv *v48) {
 
 		_vm->_gfx->drawBalloon(r, 1);
 		_vm->_gfx->displayWrappedString(v60->_answers[0], _answerBalloonX[0], _answerBalloonY[0], MAX_BALLOON_WIDTH, 3);
-		_vm->_gfx->flatBlitCnv(v48, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y,	Gfx::kBitFront,	v48->_data1);
+		_vm->_gfx->flatBlitCnv(v48, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y,	Gfx::kBitFront);
 		_vm->_gfx->displayBalloonString(_answerBalloonX[0] + 5,	_answerBalloonY[0] + _answerBalloonH[0] - 15, "> ", 0);
 
 		Common::Event e;
@@ -309,7 +309,7 @@ void displayQuestion(Dialogue *v60, StaticCnv *v5C) {
 
 	debugC(1, kDebugDialogue, "runDialogue: showing question '%s'", v60->_text);
 
-	_vm->_gfx->flatBlitCnv(v5C, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y, Gfx::kBitFront, v5C->_data1);
+	_vm->_gfx->flatBlitCnv(v5C, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y, Gfx::kBitFront);
 	_vm->_gfx->getStringExtent(v60->_text, MAX_BALLOON_WIDTH, &question_width, &question_height);
 
 	Common::Rect r(question_width, question_height);
@@ -396,7 +396,7 @@ void runDialogue(SpeakData *data) {
 			if (displayedAnswers == true) {
 
 				debugC(1, kDebugDialogue, "runDialogue: showing answering face (%p)", (const void*)v48._data0);
-				_vm->_gfx->flatBlitCnv(&v48, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront, v48._data1);
+				_vm->_gfx->flatBlitCnv(&v48, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
 				debugC(1, kDebugDialogue, "runDialogue: answering face shown");
 
 				if (_askPassword == false) {
@@ -473,7 +473,7 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 		_vm->_gfx->displayWrappedString(q->_answers[_di], _answerBalloonX[_di], _answerBalloonY[_di], MAX_BALLOON_WIDTH, 0);
 		cnv->_data0 = _vm->_char._talk._array[q->_answer_moods[_di] & 0xF];
 //		cnv->_data1 = _vm->_char._talk.field_8[q->_answer_moods[_di] & 0xF];
-		_vm->_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X,	ANSWER_CHARACTER_Y, Gfx::kBitFront,	cnv->_data1);
+		_vm->_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X,	ANSWER_CHARACTER_Y, Gfx::kBitFront);
 		waitUntilLeftClick();
 		return _di;
 	}
@@ -493,7 +493,7 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 			_vm->_gfx->displayWrappedString(q->_answers[_si], _answerBalloonX[_si],	_answerBalloonY[_si], MAX_BALLOON_WIDTH, 0);
 			cnv->_data0 = _vm->_char._talk._array[q->_answer_moods[_si] & 0xF];
 //			cnv->_data1 = _vm->_char._talk.field_8[q->_answer_moods[_si] & 0xF];
-			_vm->_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront, cnv->_data1);
+			_vm->_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
 		}
 
 		g_system->delayMillis(30);
