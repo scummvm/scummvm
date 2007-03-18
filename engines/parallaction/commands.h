@@ -34,6 +34,7 @@ enum CommandFlags {
 	kFlagsGlobal		= 0x40000000
 };
 
+// TODO: turn this into a struct
 union CommandData {
 	uint32			_flags;
 	Animation * 	_animation;
@@ -45,6 +46,10 @@ union CommandData {
 		int16		 _x;
 		int16		_y;
 	} _move;
+
+	CommandData() {
+		_flags = 0;
+	}
 };
 
 struct Command : public Node {
@@ -53,6 +58,11 @@ struct Command : public Node {
 	uint32			_flagsOn;
 	uint32			_flagsOff;
 
+	Command() {
+		_id = 0;
+		_flagsOn = 0;
+		_flagsOff = 0;
+	}
 };
 
 } // namespace Parallaction

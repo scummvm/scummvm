@@ -38,7 +38,7 @@ void parseWalkNodes(Script &script, Node *list);
 
 
 void Parallaction::parseLocation(const char *filename) {
-//	printf("parseLocation(%s)", filename);
+	printf("parseLocation(%s)", filename);
     debugC(1, kDebugLocation, "parseLocation('%s')", filename);
 
 	uint16 _si = 1;
@@ -49,7 +49,7 @@ void Parallaction::parseLocation(const char *filename) {
 
 	fillBuffers(*_locationScript, true);
 	while (scumm_stricmp(_tokens[0], "ENDLOCATION")) {
-//		printf("token[0] = %s", _tokens[0]);
+		printf("token[0] = %s", _tokens[0]);
 
 		if (!scumm_stricmp(_tokens[0], "LOCATION")) {
 			// The parameter for location is 'location.mask'.

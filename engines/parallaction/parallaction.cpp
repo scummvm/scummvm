@@ -876,7 +876,7 @@ void removeNode(Node *n) {
 
 Job *Parallaction::addJob(JobFn fn, void *parm, uint16 tag) {
 
-	Job *v8 = (Job*)malloc(sizeof(Job));
+	Job *v8 = new Job;
 
 	v8->_parm = parm;
 	v8->_fn = fn;
@@ -897,7 +897,7 @@ Job *Parallaction::addJob(JobFn fn, void *parm, uint16 tag) {
 void Parallaction::removeJob(Job *j) {
 
 	removeNode(j);
-	free(j);
+	delete j;
 	return;
 }
 

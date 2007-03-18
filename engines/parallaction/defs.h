@@ -74,6 +74,11 @@ struct StaticCnv {
 	uint16	_height;	//
 	byte*	_data0; 	// bitmap
 	byte*	_data1; 	// unused
+
+	StaticCnv() {
+		_width = _height = 0;
+		_data0 = _data1 = NULL;
+	}
 };
 
 
@@ -85,6 +90,11 @@ struct Cnv {
 	byte**	_array; 	// frames data
 
 public:
+	Cnv() {
+		_width = _height = _count = 0;
+		_array = NULL;
+	}
+
 	byte* getFramePtr(uint16 index) {
 		if (index >= _count)
 			error("frame %i does not exist", index);
@@ -123,5 +133,6 @@ enum {
 
 
 #endif
+
 
 

@@ -76,9 +76,8 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 	while (scumm_stricmp(_tokens[0], "enddialogue")) {
 		if (scumm_stricmp(_tokens[0], "Question")) continue;
 
-		_questions[num_questions] = (Dialogue*)malloc(sizeof(Dialogue));
+		_questions[num_questions] = new Dialogue;
 		Dialogue *vB4 = _questions[num_questions];
-		memset(_questions[num_questions], 0, sizeof(Dialogue));
 
 		_questions_names[num_questions] = (char*)malloc(strlen(_tokens[1])+1);
 		strcpy(_questions_names[num_questions], _tokens[1]);
@@ -202,18 +201,18 @@ void freeDialogue(Dialogue *d) {
 	if (!d) return;
 
 	uint16 _si;
-	for (_si = 0; _si < 5; _si++) {
+	for (_si = 0; _si < NUM_ANSWERS; _si++) {
 		if (d->_answer_moods[_si] & 0x10)
 			freeDialogue(d->_following._questions[_si]);
 	}
 
-	for (_si = 0; _si < 5; _si++) {
+	for (_si = 0; _si < NUM_ANSWERS; _si++) {
 		freeCommands(d->_commands[_si]);
 		free(d->_answers[_si]);
 	}
 
 	free(d->_text);
-	free(d);
+	delete d;
 
 	return;
 }
@@ -305,7 +304,7 @@ bool displayAnswers(Dialogue *q) {
 
 	uint16 i = 0;
 
-	while (i < 5 && q->_answers[i]) {
+	while (i < NUM_ANSWERS && q->_answers[i]) {
 		if (displayAnswer(q, i)) {
 			displayed = true;
 		} else {
@@ -514,7 +513,7 @@ int16 getHoverAnswer(int16 x, int16 y, Question *q) {
 	int16 top = 1000;
 	int16 bottom = 1000;
 
-	for (int16 _si = 0; _si < 5; _si++) {
+	for (int16 _si = 0; _si < NUM_ANSWERS; _si++) {
 		if (q->_answers[_si] == NULL) break;
 
 		if (_answerBalloonY[_si] != SKIPPED_ANSWER) {

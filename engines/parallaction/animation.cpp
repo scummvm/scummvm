@@ -77,8 +77,7 @@ Animation *Parallaction::findAnimation(const char *name) {
 Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) {
 //	printf("parseAnimation(%s)\n", name);
 
-	Animation *vD0 = (Animation*)malloc(sizeof(Animation));
-	memset(vD0, 0, sizeof(Animation));
+	Animation *vD0 = new Animation;
 
 	vD0->_zone._label._text = (char*)malloc(strlen(name)+1);
 	strcpy(vD0->_zone._label._text, name);
@@ -158,7 +157,7 @@ void  freeScript(Program *program) {
 
 	if (!program) return;
 
-	free(program->_locals);
+	delete[] program->_locals;
 	freeNodeList(program);
 
 	return;
@@ -258,13 +257,12 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 
 	fillBuffers(*script);
 
-	a->_program = (Program*)malloc(sizeof(Program));
-	memset(a->_program, 0, sizeof(Program));
-	a->_program->_locals = (LocalVariable*)malloc(sizeof(LocalVariable)*10);
+	a->_program = new Program;
+
+	a->_program->_locals = new LocalVariable[10];
 	Node *vD0 = a->_program;
 
-	Instruction *vCC = (Instruction*)malloc(sizeof(Instruction));
-	memset(vCC, 0, sizeof(Instruction));
+	Instruction *vCC = new Instruction;
 
 	while (scumm_stricmp(_tokens[0], "endscript")) {
 
@@ -272,8 +270,7 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 		addNode(vD0, vCC);
 		vD0 = vCC;
 
-		vCC = (Instruction*)malloc(sizeof(Instruction));
-		memset(vCC, 0, sizeof(Instruction));
+		vCC = new Instruction;
 		fillBuffers(*script);
 	}
 

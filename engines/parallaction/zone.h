@@ -59,20 +59,34 @@ enum ZoneFlags {
 };
 
 
-
+#define NUM_ANSWERS		 5
 
 struct Question {
 	char*		_text;
-	char*		_answers[5];
+	char*		_answers[NUM_ANSWERS];
 	uint16		_mood;
-	uint16		_answer_moods[5];
+	uint16		_answer_moods[NUM_ANSWERS];
 	union {
-		Question*	_questions[5];
-		char*		_names[5];
+		Question*	_questions[NUM_ANSWERS];
+		char*		_names[NUM_ANSWERS];
 	} _following;
-	Command*	_commands[5];
-	uint32		_noFlags[5];
-	uint32		_yesFlags[5];
+	Command*	_commands[NUM_ANSWERS];
+	uint32		_noFlags[NUM_ANSWERS];
+	uint32		_yesFlags[NUM_ANSWERS];
+
+	Question() {
+		_text = NULL;
+		_mood = 0;
+
+		for (uint32 i = 0; i < NUM_ANSWERS; i++) {
+			_answers[i] = NULL;
+			_answer_moods[i] = 0;
+			_following._questions[i] =  NULL;
+			_commands[i] = NULL;
+			_noFlags[i] = 0;
+			_yesFlags[i] = 0;
+		}
+	}
 };
 
 struct GetData {	// size = 24
@@ -81,10 +95,20 @@ struct GetData {	// size = 24
 	byte		   *_backup;
 	uint16			field_14;		// unused
 	uint16			field_16;		// unused
+
+	GetData() {
+		_icon = 0;
+		_backup = NULL;
+	}
 };
 struct SpeakData {	// size = 36
 	char		_name[32];
 	Dialogue	*_dialogue;
+
+	SpeakData() {
+		_name[0] = '\0';
+		_dialogue = NULL;
+	}
 };
 struct ExamineData {	// size = 28
 	StaticCnv	_cnv;
@@ -92,6 +116,12 @@ struct ExamineData {	// size = 28
 	uint16		field_12;			// unused
 	char*		_description;
 	char*		_filename;
+
+	ExamineData() {
+		_opBase = 0;
+		_description = NULL;
+		_filename = NULL;
+	}
 };
 struct DoorData {	// size = 28
 	char*	_location;
@@ -99,14 +129,28 @@ struct DoorData {	// size = 28
 	byte*	_background;
 	Common::Point	_startPos;
 	uint16	_startFrame;
+
+	DoorData() {
+		_location = NULL;
+		_background = NULL;
+		_startFrame = 0;
+	}
 };
 struct HearData {	// size = 20
 	char		_name[20];
+
+	HearData() {
+		_name[0] = '\0';
+	}
 };
 struct MergeData {	// size = 12
 	uint32	_obj1;
 	uint32	_obj2;
 	uint32	_obj3;
+
+	MergeData() {
+		_obj1 = _obj2 = _obj3 = 0;
+	}
 };
 
 struct TypeData {
@@ -116,11 +160,24 @@ struct TypeData {
 	DoorData	*door;
 	HearData	*hear;
 	MergeData	*merge;
+
+	TypeData() {
+		get = NULL;
+		speak = NULL;
+		examine = NULL;
+		door = NULL;
+		hear = NULL;
+		merge = NULL;
+	}
 };
 
 struct Label {
 	char*			_text;
 	StaticCnv		_cnv;
+
+	Label() {
+		_text = NULL;
+	}
 };
 
 struct Zone : public Node {
@@ -140,6 +197,15 @@ struct Zone : public Node {
 	TypeData	u;
 	Command 		*_commands;
 	Common::Point	_moveTo;
+
+	Zone() {
+		_left = _top = _right = _bottom = 0;
+		_oldLeft = _oldTop = 0;
+
+		_type = 0;
+		_flags = 0;
+		_commands = NULL;
+	}
 
 	void getRect(Common::Rect& r) const {
 		r.left = _left;
@@ -168,12 +234,22 @@ struct LocalVariable {
 	int16		_value;
 	int16		_min;
 	int16		_max;
+
+	LocalVariable() {
+		_value = 0;
+		_min = -10000;
+		_max = 10000;
+	}
 };
 
 union LValue {
 	int16			_value;
 	int16*			_pvalue;
 	LocalVariable*	_local;
+
+	LValue() {
+		_local = NULL;
+	}
 };
 
 enum InstructionFlags {
@@ -186,7 +262,7 @@ enum InstructionFlags {
 struct Instruction : public Node {
 	uint32	_index;
 	uint32	_flags;
-	union {
+	struct {
 		Animation	*_a;
 		Zone		*_z;
 		uint32		_index;
@@ -194,6 +270,12 @@ struct Instruction : public Node {
 	} _opBase;
 	LValue	_opA;
 	LValue	_opB;
+
+	Instruction() {
+		_index = 0;
+		_flags = 0;
+		_opBase._a = NULL;
+	}
 };
 
 
@@ -202,6 +284,13 @@ struct Program : public Node {
 	uint16			_loopCounter;
 	Instruction 	*_ip;
 	Instruction 	*_loopStart;
+
+	Program() {
+		_locals = NULL;
+		_loopCounter = 0;
+		_ip = NULL;
+		_loopStart = NULL;
+	}
 };
 
 
@@ -219,6 +308,24 @@ struct Animation {
 	uint16		field_5A;		// unused
 	uint16		field_5C;		// unused
 	uint16		field_5E;		// unused
+
+	Animation() {
+
+		// FIXME: temporary hack until Animation become a subclass of Zone
+		_zone._left = _zone._top = _zone._right = _zone._bottom = 0;
+		_zone._oldLeft = _zone._oldTop = 0;
+
+		_zone._type = 0;
+		_zone._flags = 0;
+		_zone._commands = NULL;
+
+
+
+
+		_program = NULL;
+		_frame = 0;
+		_z = 0;
+	}
 
 	uint16 width() const {
 		return _cnv._width;

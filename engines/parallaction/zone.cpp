@@ -59,8 +59,7 @@ void Parallaction::parseZone(Script &script, Node *list, char *name) {
 		return;
 	}
 
-	Zone *z = (Zone*)malloc(sizeof(Zone));
-	memset(z, 0, sizeof(Zone));
+	Zone *z = new Zone;
 
 	z->_label._text = (char*)malloc(strlen(name)+1);
 	strcpy(z->_label._text, name);
@@ -147,33 +146,33 @@ void Parallaction::freeZones(Node *list) {
 		case kZoneExamine:
 			free(z->u.examine->_filename);
 			free(z->u.examine->_description);
-			free(z->u.examine);
+			delete z->u.examine;
 			break;
 
 		case kZoneDoor:
 			free(z->u.door->_location);
 			free(z->u.door->_background);
 			_vm->_gfx->freeCnv(&z->u.door->_cnv);
-			free(z->u.door);
+			delete  z->u.door;
 			break;
 
 		case kZoneSpeak:
 			freeDialogue(z->u.speak->_dialogue);
-			free(z->u.speak);
+			delete z->u.speak;
 			break;
 
 		case kZoneGet:
 			free(z->u.get->_backup);
 			_vm->_gfx->freeStaticCnv(&z->u.get->_cnv);
-			free(z->u.get);
+			delete z->u.get;
 			break;
 
 		case kZoneHear:
-			free(z->u.hear);
+			delete z->u.hear;
 			break;
 
 		case kZoneMerge:
-			free(z->u.merge);
+			delete z->u.merge;
 			break;
 
 		default:
@@ -184,6 +183,8 @@ void Parallaction::freeZones(Node *list) {
 		z->_label._text = NULL;
 		_vm->_gfx->freeStaticCnv(&z->_label._cnv);
 		freeCommands(z->_commands);
+
+		// TODO: delete Zone
 
 		z=(Zone*)z->_next;
 
@@ -207,33 +208,27 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 
 	switch (z->_type & 0xFFFF) {
 	case kZoneExamine:	// examine Zone alloc
-		u->examine = (ExamineData*)malloc(sizeof(ExamineData));
-		memset(u->examine, 0, sizeof(ExamineData));
+		u->examine = new ExamineData;
 		break;
 
 	case kZoneDoor: // door Zone alloc
-		u->door = (DoorData*)malloc(sizeof(DoorData));
-		memset(u->door, 0, sizeof(DoorData));
+		u->door = new DoorData;
 		break;
 
 	case kZoneGet:	// get Zone alloc
-		u->get = (GetData*)malloc(sizeof(GetData));
-		memset(u->get, 0, sizeof(GetData));
+		u->get = new GetData;
 		break;
 
 	case kZoneMerge:	// merge Zone alloc
-		u->merge = (MergeData*)malloc(sizeof(MergeData));
-		memset(u->merge, 0, sizeof(MergeData));
+		u->merge = new MergeData;
 		break;
 
 	case kZoneHear: // hear Zone alloc
-		u->hear = (HearData*)malloc(sizeof(HearData));
-		memset(u->hear, 0, sizeof(HearData));
+		u->hear = new HearData;
 		break;
 
 	case kZoneSpeak:	// speak Zone alloc
-		u->speak = (SpeakData*)malloc(sizeof(SpeakData));
-		memset(u->speak, 0, sizeof(SpeakData));
+		u->speak = new SpeakData;
 		break;
 
 	}

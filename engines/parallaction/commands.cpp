@@ -56,8 +56,7 @@ Command *parseCommands(Script &script) {
 	while (scumm_stricmp(_tokens[0], "ENDCOMMANDS") && scumm_stricmp(_tokens[0], "ENDZONE")) {
 //		printf("token[0] = %s", _tokens[0]);
 
-		Command *cmd = (Command*)malloc(sizeof(Command));
-		memset(cmd, 0, sizeof(Command));
+		Command *cmd = new Command;
 
 		cmd->_id = _vm->searchTable(_tokens[0], commands_names);
 		uint16 _si = 1;
@@ -200,8 +199,8 @@ void freeCommands(Command *list) {
 	while (cmd) {
 		Command *v4 = (Command*)cmd->_next;
 
-		if (cmd->_id == 6) free(cmd->u._zone);	// open
-		free(cmd);
+		if (cmd->_id == 6) delete cmd->u._zone;	// open
+		delete cmd;
 
 		cmd = v4;
 	}
@@ -349,4 +348,5 @@ void runCommands(Command *list, Zone *z) {
 }
 
 } // namespace Parallaction
+
 
