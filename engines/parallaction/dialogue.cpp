@@ -271,26 +271,26 @@ uint16 askDialoguePassword(Dialogue *v60, StaticCnv *v48) {
 
 bool _askPassword;
 
-bool displayAnswer(Dialogue *v60, uint16 _si) {
+bool displayAnswer(Dialogue *q, uint16 i) {
 
 	uint32 v28 = _localFlags[_vm->_currentLocationIndex];
-	if (v60->_yesFlags[_si] & kFlagsGlobal)
+	if (q->_yesFlags[i] & kFlagsGlobal)
 		v28 = _commandFlags | kFlagsGlobal;
 
 	// display suitable answers
-	if (((v60->_yesFlags[_si] & v28) == v60->_yesFlags[_si]) && ((v60->_noFlags[_si] & ~v28) == v60->_noFlags[_si])) {
+	if (((q->_yesFlags[i] & v28) == q->_yesFlags[i]) && ((q->_noFlags[i] & ~v28) == q->_noFlags[i])) {
 
-		_vm->_gfx->getStringExtent(v60->_answers[_si], MAX_BALLOON_WIDTH, &_answerBalloonW[_si], &_answerBalloonH[_si]);
-		debugC(1, kDebugDialogue, "runDialogue: showing answer #%i '%s'", _si, v60->_answers[_si]);
+		_vm->_gfx->getStringExtent(q->_answers[i], MAX_BALLOON_WIDTH, &_answerBalloonW[i], &_answerBalloonH[i]);
+		debugC(1, kDebugDialogue, "runDialogue: showing answer #%i '%s'", i, q->_answers[i]);
 
-		Common::Rect r(_answerBalloonW[_si], _answerBalloonH[_si]);
-		r.moveTo(_answerBalloonX[_si], _answerBalloonY[_si]);
+		Common::Rect r(_answerBalloonW[i], _answerBalloonH[i]);
+		r.moveTo(_answerBalloonX[i], _answerBalloonY[i]);
 
 		_vm->_gfx->drawBalloon(r, 1);
 
-		_answerBalloonY[_si+1] = 10 + _answerBalloonY[_si] + _answerBalloonH[_si];
-		_askPassword = _vm->_gfx->displayWrappedString(v60->_answers[_si], _answerBalloonX[_si], _answerBalloonY[_si], MAX_BALLOON_WIDTH, 3);
-		debugC(1, kDebugDialogue, "runDialogue: answer #%i shown at (%i, %i)+(%i, %i)", _si, _answerBalloonX[_si], _answerBalloonY[_si], _answerBalloonW[_si], _answerBalloonH[_si]);
+		_answerBalloonY[i+1] = 10 + _answerBalloonY[i] + _answerBalloonH[i];
+		_askPassword = _vm->_gfx->displayWrappedString(q->_answers[i], _answerBalloonX[i], _answerBalloonY[i], MAX_BALLOON_WIDTH, 3);
+		debugC(1, kDebugDialogue, "runDialogue: answer #%i shown at (%i, %i)+(%i, %i)", i, _answerBalloonX[i], _answerBalloonY[i], _answerBalloonW[i], _answerBalloonH[i]);
 
 		return true;
 	}
@@ -299,30 +299,77 @@ bool displayAnswer(Dialogue *v60, uint16 _si) {
 
 }
 
-void displayQuestion(Dialogue *v60, StaticCnv *v5C) {
+bool displayAnswers(Dialogue *q) {
 
-	int16 question_width = 0, question_height = 0;
+	bool displayed = false;
+
+	uint16 i = 0;
+
+	while (i < 5 && q->_answers[i]) {
+		if (displayAnswer(q, i)) {
+			displayed = true;
+		} else {
+			debugC(1, kDebugDialogue, "runDialogue: skipping answer #%i", i);
+			_answerBalloonY[i+1] = _answerBalloonY[i];
+			_answerBalloonY[i] = SKIPPED_ANSWER;
+		}
+		i++;
+	}
+
+	if (displayed)
+		debugC(1, kDebugDialogue, "runDialogue: all suitable answers displayed");
+	else
+		debugC(1, kDebugDialogue, "runDialogue: no suitable answers found");
+
+	return displayed;
+}
+
+void displayQuestion(Dialogue *q, StaticCnv *face) {
+
+	int16 w = 0, h = 0;
 
 	// display Question if any
-	if (!scumm_stricmp(v60->_text, "NULL")) return;
+	if (!scumm_stricmp(q->_text, "NULL")) return;
 
 
-	debugC(1, kDebugDialogue, "runDialogue: showing question '%s'", v60->_text);
+	debugC(1, kDebugDialogue, "runDialogue: showing question '%s'", q->_text);
 
-	_vm->_gfx->flatBlitCnv(v5C, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y, Gfx::kBitFront);
-	_vm->_gfx->getStringExtent(v60->_text, MAX_BALLOON_WIDTH, &question_width, &question_height);
+	_vm->_gfx->flatBlitCnv(face, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y, Gfx::kBitFront);
+	_vm->_gfx->getStringExtent(q->_text, MAX_BALLOON_WIDTH, &w, &h);
 
-	Common::Rect r(question_width, question_height);
+	Common::Rect r(w, h);
 	r.moveTo(QUESTION_BALLOON_X, QUESTION_BALLOON_Y);
 
-	_vm->_gfx->drawBalloon(r, v60->_mood & 0x10);
-	_vm->_gfx->displayWrappedString(v60->_text, QUESTION_BALLOON_X, QUESTION_BALLOON_Y, MAX_BALLOON_WIDTH, 0);
+	_vm->_gfx->drawBalloon(r, q->_mood & 0x10);
+	_vm->_gfx->displayWrappedString(q->_text, QUESTION_BALLOON_X, QUESTION_BALLOON_Y, MAX_BALLOON_WIDTH, 0);
 
 	waitUntilLeftClick();
 
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	return;
+}
+
+uint16 getDialogueAnswer(Dialogue *v60, StaticCnv *v48) {
+
+	uint16 answer = 0;
+
+	debugC(1, kDebugDialogue, "runDialogue: showing answering face (%p)", (const void*)v48->_data0);
+	_vm->_gfx->flatBlitCnv(v48, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
+	debugC(1, kDebugDialogue, "runDialogue: answering face shown");
+
+	if (_askPassword == false) {
+		debugC(1, kDebugDialogue, "runDialogue: waiting for user to select answer");
+		answer = selectAnswer(v60, v48);
+	} else {
+		answer = askDialoguePassword(v60, v48);
+	}
+
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);	// erase answer screen
+
+	debugC(1, kDebugDialogue, "runDialogue: user selected answer #%i", answer);
+
+	return answer;
 }
 
 void runDialogue(SpeakData *data) {
@@ -340,7 +387,6 @@ void runDialogue(SpeakData *data) {
 	_vm->_gfx->setFont("comic");
 
 	Cnv v6E;
-	StaticCnv v5C, v48;
 
 	if (!scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0') {
 		memcpy(&v6E, &_vm->_char._talk, sizeof(Cnv));
@@ -351,26 +397,28 @@ void runDialogue(SpeakData *data) {
 		debugC(1, kDebugDialogue, "runDialogue: 2nd character head loaded");
 	}
 
-	v5C._width = v6E._width;
-	v5C._height = v6E._height;
+	StaticCnv questioner;
+	questioner._width = v6E._width;
+	questioner._height = v6E._height;
 
-	v48._width = _vm->_char._talk._width;
-	v48._height = _vm->_char._talk._height;
+	StaticCnv answerer;
+	answerer._width = _vm->_char._talk._width;
+	answerer._height = _vm->_char._talk._height;
 
 	bool displayedAnswers = false;
 	_askPassword = false;
-	uint16 _di = 0;
+	uint16 answer = 0;
 	Command *v34 = NULL;
 
 	Dialogue *v60 = data->_dialogue;
 	while (v60) {
 
-		v5C._data0 = v6E._array[v60->_mood & 0xF];
-		v5C._data1 = NULL; // v6E.field_8[v60->_mood & 0xF];
-		v48._data0 = _vm->_char._talk._array[0];
-		v48._data1 = NULL; // _talk.field_8[0];
+		questioner._data0 = v6E._array[v60->_mood & 0xF];
+		questioner._data1 = NULL; // v6E.field_8[v60->_mood & 0xF];
+		answerer._data0 = _vm->_char._talk._array[0];
+		answerer._data1 = NULL; // _talk.field_8[0];
 
-		displayQuestion(v60, &v5C);
+		displayQuestion(v60, &questioner);
 
 		if (v60->_answers[0] == NULL) break;
 
@@ -379,56 +427,27 @@ void runDialogue(SpeakData *data) {
 
 		if (scumm_stricmp(v60->_answers[0], "NULL")) {
 
-			uint16 _si = 0;
-			while (_si < 5 && v60->_answers[_si]) {
-				if (displayAnswer(v60, _si)) {
-					displayedAnswers = true;
-				} else {
-					debugC(1, kDebugDialogue, "runDialogue: skipping answer #%i", _si);
-					_answerBalloonY[_si+1] = _answerBalloonY[_si];
-					_answerBalloonY[_si] = SKIPPED_ANSWER;
-				}
-				_si++;
-			}
-
-			debugC(1, kDebugDialogue, "runDialogue: all suitable answers displayed");
+			displayedAnswers = displayAnswers(v60);
 
 			if (displayedAnswers == true) {
-
-				debugC(1, kDebugDialogue, "runDialogue: showing answering face (%p)", (const void*)v48._data0);
-				_vm->_gfx->flatBlitCnv(&v48, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
-				debugC(1, kDebugDialogue, "runDialogue: answering face shown");
-
-				if (_askPassword == false) {
-					debugC(1, kDebugDialogue, "runDialogue: waiting for user to select answer");
-					_di = selectAnswer(v60, &v48);
-					debugC(1, kDebugDialogue, "runDialogue: user selected answer #%i", _di);
-				} else {
-					_di = askDialoguePassword(v60, &v48);
-
-				}
-
-				_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-
-				v34 = v60->_commands[_di];
-				v60 = (Dialogue*)v60->_following._questions[_di];
-
+				answer = getDialogueAnswer(v60, &answerer);
+				v34 = v60->_commands[answer];
+				v60 = (Dialogue*)v60->_following._questions[answer];
 			} else {
 				debugC(1, kDebugDialogue, "runDialogue: no suitable answers found");
 				v60 = NULL;
 			}
 		} else {
-			v60 = (Dialogue*)v60->_following._questions[_di];
+			v60 = (Dialogue*)v60->_following._questions[answer];
 		}
 	}
 
 	debugC(1, kDebugDialogue, "runDialogue: out of dialogue loop");
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
-	if (scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0') {
+	if (scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0')
 		_vm->_gfx->freeCnv(&v6E);
-		debugC(1, kDebugDialogue, "runDialogue: 2nd character head free'd");
-	}
+
 
 	exitDialogue();
 	debugC(1, kDebugDialogue, "runDialogue: exit dialogue ok");
