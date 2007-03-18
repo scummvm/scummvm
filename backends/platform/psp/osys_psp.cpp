@@ -24,17 +24,17 @@
  */
 
 #include "common/stdafx.h"
+#include "common/config-manager.h"
+#include "common/events.h"
+#include "common/rect.h"
 #include "common/scummsys.h"
 
-#include "graphics/surface.h"
-#include "common/rect.h"
 #include "osys_psp.h"
 
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
+#include "graphics/surface.h"
 #include "sound/mixer.h"
-
-#include "common/config-manager.h"
 
 #include <pspgu.h>
 
