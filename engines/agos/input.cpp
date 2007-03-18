@@ -202,8 +202,51 @@ startOver:
 				goto startOver;
 			if (_lastHitArea3 != 0)
 				break;
-			if (_dragMode != 0)
-				goto dragMode;
+			if (_dragMode != 0) {
+				ha = _lastClickRem;
+
+				if (ha == 0 || ha->item_ptr == NULL || !(ha->flags & kBFDragBox)) {
+					_dragFlag = 0;
+					_dragMode = 0;
+					_dragCount = 0;
+					_dragEnd = 0;
+					goto startOver;
+				}
+			
+				_hitAreaSubjectItem = ha->item_ptr;
+				_verbHitArea = 500;
+			
+				for (;;) {
+					processSpecialKeys();
+					hitarea_stuff_helper();
+					delay(100);
+			
+					if (_dragFlag == 0) {
+						_dragFlag = 0;
+						_dragMode = 0;
+						_dragCount = 0;
+						_dragEnd = 0;
+						goto startOver;
+					}
+			
+					if (_dragEnd != 0)
+						break;
+				}
+			
+				_dragFlag = 0;
+				_dragMode = 0;
+				_dragCount = 0;
+				_dragEnd = 0;
+			
+				boxController(_mouse.x, _mouse.y, 1);
+			
+				if (_currentBox != NULL) {
+					_hitAreaObjectItem = _currentBox->item_ptr;
+					setVerbText(ha);
+				}
+			
+				goto out_of_here;
+			}
 			hitarea_stuff_helper();
 			delay(100);
 		}
@@ -315,56 +358,6 @@ out_of_here:
 
 	if (getGameType() == GType_WW && _mouseCursor < 3)
 		_mouseCursor = 0;
-
-	return;
-
-resetDrag:
-
-	_dragFlag = 0;
-	_dragMode = 0;
-	_dragCount = 0;
-	_dragEnd = 0;
-	goto startOver;
-
-dragMode:
-	if (_lastClickRem == 0)
-		goto resetDrag;
-	
-	ha = _lastClickRem;
-	if (!(ha->flags & kBFDragBox))
-		goto resetDrag;
-
-	if (ha->item_ptr == NULL)
-		goto resetDrag;
-
-	_hitAreaSubjectItem = ha->item_ptr;
-	_verbHitArea = 500;
-
-	for (;;) {
-		processSpecialKeys();
-		hitarea_stuff_helper();
-		delay(100);
-
-		if (_dragFlag == 0)
-			goto resetDrag;
-
-		if (_dragEnd != 0)
-			break;
-	}
-
-	_dragFlag = 0;
-	_dragMode = 0;
-	_dragCount = 0;
-	_dragEnd = 0;
-
-	boxController(_mouse.x, _mouse.y, 1);
-
-	if (_currentBox != NULL) {
-		_hitAreaObjectItem = _currentBox->item_ptr;
-		setVerbText(ha);
-	}
-
-	goto out_of_here;
 }
 
 void AGOSEngine::hitarea_stuff_helper() {
