@@ -52,8 +52,8 @@ Input::Input(Common::Language language, OSystem *system) :
 	_system(system), _fastMode(false), _keyVerb(VERB_NONE),
 	_cutawayRunning(false), _canQuit(false), _cutawayQuit(false),
 	_dialogueRunning(false), _talkQuit(false), _quickSave(false),
-	_quickLoad(false), _debugger(false), _inKey(0), _mouse_x(0),
-	_mouse_y(0), _mouseButton(0), _idleTime(0) {
+	_quickLoad(false), _debugger(false), _inKey(0),
+	_mouseButton(0), _idleTime(0) {
 
 	switch (language) {
 	case Common::EN_ANY:
@@ -108,21 +108,12 @@ void Input::delay(uint amount) {
 				}
 				break;
 
-			case Common::EVENT_MOUSEMOVE:
-				_mouse_x = event.mouse.x;
-				_mouse_y = event.mouse.y;
-				break;
-
 			case Common::EVENT_LBUTTONDOWN:
 				_mouseButton |= MOUSE_LBUTTON;
-				_mouse_x = event.mouse.x;
-				_mouse_y = event.mouse.y;
 				break;
 
 			case Common::EVENT_RBUTTONDOWN:
 				_mouseButton |= MOUSE_RBUTTON;
-				_mouse_x = event.mouse.x;
-				_mouse_y = event.mouse.y;
 				break;
 
 			case Common::EVENT_QUIT:

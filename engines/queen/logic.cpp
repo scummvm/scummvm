@@ -21,9 +21,12 @@
  */
 
 #include "common/stdafx.h"
+#include "common/config-manager.h"
+#include "common/events.h"
+#include "common/system.h"
+
 #include "queen/logic.h"
 
-#include "common/config-manager.h"
 #include "queen/bankman.h"
 #include "queen/command.h"
 #include "queen/credits.h"
@@ -1174,10 +1177,11 @@ void Logic::handlePinnacleRoom() {
 	BobSlot *piton = _vm->graphics()->bob(7);
 
 	// set scrolling value to mouse position to avoid glitch
-	_vm->display()->horizontalScroll(_vm->input()->mousePosX());
+	Common::Point mouse = g_system->getEventManager()->getMousePos();
+	_vm->display()->horizontalScroll(mouse.x);
 
-	joe->x = piton->x = 3 * _vm->input()->mousePosX() / 4 + 200;
-	joe->frameNum = _vm->input()->mousePosX() / 36 + 45;
+	joe->x = piton->x = 3 * mouse.x / 4 + 200;
+	joe->frameNum = mouse.x / 36 + 45;
 
 	// bobs have been unpacked from animating objects, we don't need them
 	// to animate anymore ; so turn animation off
@@ -1193,19 +1197,18 @@ void Logic::handlePinnacleRoom() {
 	while (_vm->input()->mouseButton() == 0 || _entryObj == 0) {
 
 		_vm->update();
-		int mx = _vm->input()->mousePosX();
-		int my = _vm->input()->mousePosY();
+		mouse = g_system->getEventManager()->getMousePos();
 
 		// update screen scrolling
-		_vm->display()->horizontalScroll(mx);
+		_vm->display()->horizontalScroll(mouse.x);
 
 		// update bobs position / frame
-		joe->x = piton->x = 3 * mx / 4 + 200;
-		joe->frameNum = mx / 36 + 45;
+		joe->x = piton->x = 3 * mouse.x / 4 + 200;
+		joe->frameNum = mouse.x / 36 + 45;
 
 		_vm->display()->clearTexts(5, 5);
 
-		uint16 curObj = _vm->grid()->findObjectUnderCursor(mx, my);
+		uint16 curObj = _vm->grid()->findObjectUnderCursor(mouse.x, mouse.y);
 		if (curObj != 0 && curObj != prevObj) {
 			_entryObj = 0;
 			curObj += currentRoomData(); // global object number

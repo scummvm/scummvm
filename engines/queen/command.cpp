@@ -21,6 +21,8 @@
  */
 
 #include "common/stdafx.h"
+#include "common/events.h"
+#include "common/system.h"
 #include "queen/command.h"
 
 #include "queen/display.h"
@@ -269,10 +271,9 @@ void Command::executeCurrentAction() {
 
 void Command::updatePlayer() {
 	if (_vm->logic()->joeWalk() != JWM_MOVE) {
-		int16 cx = _vm->input()->mousePosX();
-		int16 cy = _vm->input()->mousePosY();
-		lookForCurrentObject(cx, cy);
-		lookForCurrentIcon(cx, cy);
+		Common::Point mouse = g_system->getEventManager()->getMousePos();
+		lookForCurrentObject(mouse.x, mouse.y);
+		lookForCurrentIcon(mouse.x, mouse.y);
 	}
 
 	if (_vm->input()->keyVerb() != VERB_NONE) {
@@ -530,8 +531,9 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWa
 }
 
 void Command::grabCurrentSelection() {
-	_selPosX = _vm->input()->mousePosX();
-	_selPosY = _vm->input()->mousePosY();
+	Common::Point mouse = g_system->getEventManager()->getMousePos();
+	_selPosX = mouse.x;
+	_selPosY = mouse.y;
 
 	uint16 zone = _vm->grid()->findObjectUnderCursor(_selPosX, _selPosY);
 	_state.noun = _vm->grid()->findObjectNumber(zone);

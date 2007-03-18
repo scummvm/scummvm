@@ -21,7 +21,10 @@
  */
 
 #include "common/stdafx.h"
+#include "common/events.h"
+#include "common/system.h"
 #include "common/rect.h"
+
 #include "queen/talk.h"
 
 #include "queen/bankman.h"
@@ -1268,7 +1271,8 @@ int16 Talk::selectSentence() {
 
 				_vm->update();
 
-				zone = _vm->grid()->findZoneForPos(GS_PANEL, _vm->input()->mousePosX(), _vm->input()->mousePosY());
+				Common::Point mouse = g_system->getEventManager()->getMousePos();
+				zone = _vm->grid()->findZoneForPos(GS_PANEL, mouse.x, mouse.y);
 
 				int mouseButton = _vm->input()->mouseButton();
 				_vm->input()->clearMouseButton();
@@ -1326,8 +1330,7 @@ int16 Talk::selectSentence() {
 					}
 
 					_vm->input()->clearKeyVerb();
-				}
-				else if (mouseButton) {
+				} else if (mouseButton) {
 					selectedSentence = zone;
 				}
 

@@ -83,9 +83,6 @@ public:
 
 	Verb keyVerb() const { return _keyVerb; }
 
-	int mousePosX() const { return _mouse_x; }
-	int mousePosY() const { return _mouse_y; }
-
 	int mouseButton() const { return _mouseButton; }
 	void clearMouseButton() { _mouseButton = 0; }
 
@@ -149,9 +146,6 @@ private:
 
 	//! set by delay();
 	int _inKey;
-
-	//! set by delay();
-	int _mouse_x, _mouse_y;
 
 	//! set by delay();
 	int _mouseButton;
