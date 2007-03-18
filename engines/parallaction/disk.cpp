@@ -313,11 +313,14 @@ StaticCnv* Disk::loadPointer() {
 	return cnv;
 }
 
-void Disk::loadFont(const char* name, Cnv* cnv) {
+Cnv* Disk::loadFont(const char* name) {
 	char path[PATH_LEN];
 
 	sprintf(path, "%scnv", name);
+
+	Cnv* cnv = new Cnv;
 	loadExternalCnv(path, cnv);
+	return cnv;
 }
 
 // loads character's icons set

@@ -109,7 +109,7 @@ public:
 	Cnv* loadObjects(const char *name);
 	StaticCnv* loadPointer();
 	StaticCnv* loadHead(const char* name);
-	void loadFont(const char* name, Cnv* cnv);
+	Cnv* loadFont(const char* name);
 	void loadStatic(const char* name, StaticCnv* cnv);
 	void loadFrames(const char* name, Cnv* cnv);
 	void loadSlide(const char *filename);

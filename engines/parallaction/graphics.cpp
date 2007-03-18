@@ -587,9 +587,9 @@ void Gfx::displayString(uint16 x, uint16 y, const char *text) {
 	for (uint16 i = 0; i < len; i++) {
 		byte c = mapChar(text[i]);
 
-		tmp._width = _font._width;
-		tmp._height = _font._height;
-		tmp._data0 = _font._array[c];
+		tmp._width = _font->_width;
+		tmp._height = _font->_height;
+		tmp._data0 = _font->_array[c];
 
 		flatBlitCnv(&tmp, x, y, kBitFront);
 
@@ -609,12 +609,12 @@ void Gfx::displayBalloonString(uint16 x, uint16 y, const char *text, byte color)
 
 		byte c = mapChar(text[i]);
 		uint16 w = _proportionalFont ? _glyphWidths[(int)c] : 8;
-		byte *s = _font._array[c];
+		byte *s = _font->_array[c];
 		byte *d = _buffers[kBitFront] + x + y*SCREEN_WIDTH;
 
 //		printf("%i\n", text[i]);
 
-		for (uint16 j = 0; j < _font._height; j++) {
+		for (uint16 j = 0; j < _font->_height; j++) {
 			for (uint16 k = 0; k < w; k++) {
 				*d = (*s) ? 1 : color;
 				d++;
@@ -742,8 +742,10 @@ void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* heig
 
 
 void Gfx::setFont(const char* name) {
-	freeCnv(&_font);
-	_vm->_disk->loadFont(name, &_font);
+	freeCnv(_font);
+	if (_font) delete _font;
+
+	_font = _vm->_disk->loadFont(name);
 }
 
 
@@ -782,8 +784,8 @@ void Gfx::makeCnvFromString(StaticCnv *cnv, char *text) {
 
 	uint16 len = strlen(text);
 
-	cnv->_width = _font._width * len;
-	cnv->_height = _font._height;
+	cnv->_width = _font->_width * len;
+	cnv->_height = _font->_height;
 
 //	printf("%i x %i\n", cnv->_width, cnv->_height);
 
@@ -792,10 +794,10 @@ void Gfx::makeCnvFromString(StaticCnv *cnv, char *text) {
 	for (uint16 i = 0; i < len; i++) {
 		byte c = mapChar(text[i]);
 
-		byte *s = _font._array[c];
-		byte *d = cnv->_data0 + _font._width * i;
+		byte *s = _font->_array[c];
+		byte *d = cnv->_data0 + _font->_width * i;
 
-		for (uint16 j = 0; j < _font._height; j++) {
+		for (uint16 j = 0; j < _font->_height; j++) {
 			memcpy(d, s, 8);
 
 			s += 8;
@@ -970,8 +972,9 @@ Gfx::Gfx(Parallaction* vm) :
 
 	initMouse( 0 );
 
-	_font._count = 0;
-	_font._array = NULL;
+	_font = NULL;
+//	_font._count = 0;
+//	_font._array = NULL;
 
 	return;
 }
@@ -984,7 +987,8 @@ Gfx::~Gfx() {
 	free(_buffers[kBitBack]);
 	free(_buffers[kBit2]);
 
-	freeCnv(&_font);
+	freeCnv(_font);
+	if (_font) delete _font;
 
 	return;
 }
