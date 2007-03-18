@@ -264,6 +264,7 @@ MusicInputStream::MusicInputStream(int cd, SoundFileHandle *fh, uint32 musicId, 
 
 MusicInputStream::~MusicInputStream() {
 	delete _decoder;
+	_decoder = NULL;
 }
 
 int MusicInputStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -471,12 +472,8 @@ int Sound::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 bool Sound::endOfData() const {
-	for (int i = 0; i < MAXMUS; i++) {
-		if (_musicFile[i].file.isOpen())
-			return false;
-	}
-
-	return true;
+	// The music never stops. It just goes quiet.
+	return false;
 }
 
 // ----------------------------------------------------------------------------
