@@ -184,7 +184,6 @@ void AGOSEngine::waitForInput() {
 		resetVerbs();
 	}
 
-startOver:
 	for (;;) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
@@ -198,19 +197,19 @@ startOver:
 					getGameType() == GType_WW)
 					goto out_of_here;
 			}
-			if (_lastHitArea3 == (HitArea *) -1)
-				goto startOver;
-			if (_lastHitArea3 != 0)
-				break;
-			if (_dragMode != 0)
-				break;
-			hitarea_stuff_helper();
-			delay(100);
+			if (_lastHitArea3 == (HitArea *) -1) {
+				_lastHitArea = NULL;
+				_lastHitArea3 = NULL;
+				_dragAccept = 1;
+			} else {
+				if (_lastHitArea3 != 0 || _dragMode != 0)
+					break;
+				hitarea_stuff_helper();
+				delay(100);
+			}
 		}
 
-		if (_lastHitArea3 != 0) {
-			// ...
-		} else if (_dragMode != 0) {
+		if (_lastHitArea3 == 0 && _dragMode != 0) {
 			ha = _lastClickRem;
 
 			if (ha == 0 || ha->item_ptr == NULL || !(ha->flags & kBFDragBox)) {
@@ -218,7 +217,7 @@ startOver:
 				_dragMode = 0;
 				_dragCount = 0;
 				_dragEnd = 0;
-				goto startOver;
+				continue;
 			}
 		
 			_hitAreaSubjectItem = ha->item_ptr;
@@ -234,7 +233,7 @@ startOver:
 					_dragMode = 0;
 					_dragCount = 0;
 					_dragEnd = 0;
-					goto startOver;
+					continue;
 				}
 			} while (!_dragEnd);
 		
@@ -250,7 +249,7 @@ startOver:
 				setVerbText(ha);
 			}
 		
-			goto out_of_here;
+			break;
 		}
 
 		ha = _lastHitArea;
@@ -298,9 +297,9 @@ startOver:
 					waitForSync(34);
 				}
 			}
-			if ((_verbHitArea != 0 || _hitAreaSubjectItem != ha->item_ptr && ha->flags & kBFBoxItem) &&
-					ha->item_ptr) {
-			if_1:;
+			if (ha->item_ptr && (ha->verb == 0 || _verbHitArea != 0 ||
+					(_hitAreaSubjectItem != ha->item_ptr && (ha->flags & kBFBoxItem)))
+				) {
 				_hitAreaSubjectItem = ha->item_ptr;
 				id = setVerbText(ha);
 				_nameLocked = 2;
@@ -318,11 +317,7 @@ startOver:
 				else if (getGameType() == GType_ELVIRA1)
 					lightMenuStrip(getUserFlag1(ha->item_ptr, 6));
 			} else {
-				// else 1
-				if (ha->verb == 0) {
-					if (ha->item_ptr)
-						goto if_1;
-				} else {
+				if (ha->verb != 0) {
 					if (getGameType() == GType_WW && _mouseCursor != 0 && _mouseCursor < 4) {
 						_hitAreaSubjectItem = ha->item_ptr;
 						break;
