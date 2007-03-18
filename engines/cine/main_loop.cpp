@@ -35,6 +35,11 @@
 
 namespace Cine {
 
+struct mouseStatusStruct {
+	int left;
+	int right;
+};
+
 mouseStatusStruct mouseData;
 
 uint16 mouseRight = 0;
@@ -58,8 +63,6 @@ void manageEvents(int count) {
 			mouseRight = 1;
 			break;
 		case Common::EVENT_MOUSEMOVE:
-			mouseData.X = event.mouse.x;
-			mouseData.Y = event.mouse.y;
 			break;
 		case Common::EVENT_QUIT:
 			g_system->quit();
@@ -158,8 +161,9 @@ void manageEvents(int count) {
 }
 
 void getMouseData(uint16 param, uint16 *pButton, uint16 *pX, uint16 *pY) {
-	*pX = mouseData.X;
-	*pY = mouseData.Y;
+	Common::Point mouse = g_system->getEventManager()->getMousePos();
+	*pX = mouse.x;
+	*pY = mouse.y;
 
 	*pButton = 0;
 

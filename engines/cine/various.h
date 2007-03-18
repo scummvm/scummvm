@@ -172,13 +172,6 @@ void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 par
 
 void blitScreen(byte *frontBuffer, byte *backbuffer);
 
-struct mouseStatusStruct {
-	int left;
-	int right;
-	int X;
-	int Y;
-};
-
 extern int16 additionalBgVScroll;
 
 void addSeqListElement(int16 param0, int16 param1, int16 param2, int16 param3, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8);
