@@ -553,11 +553,6 @@ void Sword2Engine::parseInputEvents() {
 				_keyboardEvent.modifiers = event.kbd.flags;
 			}
 			break;
-		case Common::EVENT_MOUSEMOVE:
-			if (!(_inputEventFilter & RD_MOUSEMOVE)) {
-				_mouse->setPos(event.mouse.x, event.mouse.y - MENUDEEP);
-			}
-			break;
 		case Common::EVENT_LBUTTONDOWN:
 			if (!(_inputEventFilter & RD_LEFTBUTTONDOWN)) {
 				_mouseEvent.pending = true;

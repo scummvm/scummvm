@@ -21,6 +21,7 @@
 
 #include "common/stdafx.h"
 #include "common/system.h"
+#include "common/events.h"
 
 #include "graphics/cursorman.h"
 
@@ -64,7 +65,6 @@ enum {
 Mouse::Mouse(Sword2Engine *vm) {
 	_vm = vm;
 
-	setPos(0, 0);
 	resetMouseList();
 
 	_mouseTouching = 0;
@@ -118,13 +118,25 @@ Mouse::~Mouse() {
 }
 
 void Mouse::getPos(int &x, int &y) {
-	x = _pos.x;
-	y = _pos.y;
+	Common::EventManager *eventMan = _vm->_system->getEventManager();
+	Common::Point pos = eventMan->getMousePos();
+
+	x = pos.x;
+	y = pos.y - MENUDEEP;
 }
 
-void Mouse::setPos(int x, int y) {
-	_pos.x = x;
-	_pos.y = y;
+int Mouse::getX() {
+	int x, y;
+
+	getPos(x, y);
+	return x;
+}
+
+int Mouse::getY() {
+	int x, y;
+
+	getPos(x, y);
+	return y;
 }
 
 /**
@@ -238,7 +250,7 @@ void Mouse::mouseEngine() {
 		systemMenuMouse();
 		break;
 	case MOUSE_holding:
-		if (_pos.y < 400) {
+		if (getY() < 400) {
 			_mouseMode = MOUSE_normal;
 			debug(5, "   releasing");
 		}
@@ -261,13 +273,15 @@ bool Mouse::heldIsInInventory() {
 #endif
 
 int Mouse::menuClick(int menu_items) {
-	if (_pos.x < RDMENU_ICONSTART)
+	int x = getX();
+
+	if (x < RDMENU_ICONSTART)
 		return -1;
 
-	if (_pos.x > RDMENU_ICONSTART + menu_items * (RDMENU_ICONWIDE + RDMENU_ICONSPACING) - RDMENU_ICONSPACING)
+	if (x > RDMENU_ICONSTART + menu_items * (RDMENU_ICONWIDE + RDMENU_ICONSPACING) - RDMENU_ICONSPACING)
 		return -1;
 
-	return (_pos.x - RDMENU_ICONSTART) / (RDMENU_ICONWIDE + RDMENU_ICONSPACING);
+	return (x - RDMENU_ICONSTART) / (RDMENU_ICONWIDE + RDMENU_ICONSPACING);
 }
 
 void Mouse::systemMenuMouse() {
@@ -287,7 +301,9 @@ void Mouse::systemMenuMouse() {
 	// If the mouse is moved off the menu, close it. Unless the player is
 	// dead, in which case the menu should always be visible.
 
-	if (_pos.y > 0 && !_vm->_logic->readVar(DEAD)) {
+	int y = getY();
+
+	if (y > 0 && !_vm->_logic->readVar(DEAD)) {
 		_mouseMode = MOUSE_normal;
 		hideMenu(RDMENU_TOP);
 		return;
@@ -300,7 +316,7 @@ void Mouse::systemMenuMouse() {
 	if (!me || !(me->buttons & RD_LEFTBUTTONDOWN))
 		return;
 
-	if (_pos.y > 0)
+	if (y > 0)
 		return;
 
 	hit = menuClick(ARRAYSIZE(icon_list));
@@ -426,7 +442,11 @@ void Mouse::dragMouse() {
 	// objects in the scene, so if the mouse moves off the inventory menu,
 	// then close it.
 
-	if (_pos.y < 400) {
+	int x, y;
+
+	getPos(x, y);
+
+	if (y < 400) {
 		_mouseMode = MOUSE_normal;
 		hideMenu(RDMENU_BOTTOM);
 		return;
@@ -477,8 +497,8 @@ void Mouse::dragMouse() {
 		// These might be required by the action script about to be run
 		ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
-		_vm->_logic->writeVar(MOUSE_X, _pos.x + screenInfo->scroll_offset_x);
-		_vm->_logic->writeVar(MOUSE_Y, _pos.y + screenInfo->scroll_offset_y);
+		_vm->_logic->writeVar(MOUSE_X, x + screenInfo->scroll_offset_x);
+		_vm->_logic->writeVar(MOUSE_Y, y + screenInfo->scroll_offset_y);
 
 		// For scripts to know what's been clicked. First used for
 		// 'room_13_turning_script' in object 'biscuits_13'
@@ -544,7 +564,7 @@ void Mouse::menuMouse() {
 
 	// If the mouse is moved off the menu, close it.
 
-	if (_pos.y < 400) {
+	if (getY() < 400) {
 		_mouseMode = MOUSE_normal;
 		hideMenu(RDMENU_BOTTOM);
 		return;
@@ -628,7 +648,11 @@ void Mouse::normalMouse() {
 	// big-object menu lock situation, of if the player is dragging an
 	// object.
 
-	if (_pos.y < 0 && !_mouseModeLocked && !_vm->_logic->readVar(OBJECT_HELD)) {
+	int x, y;
+
+	getPos(x, y);
+
+	if (y < 0 && !_mouseModeLocked && !_vm->_logic->readVar(OBJECT_HELD)) {
 		_mouseMode = MOUSE_system_menu;
 
 		if (_mouseTouching) {
@@ -647,7 +671,7 @@ void Mouse::normalMouse() {
 	// Check if the cursor has moved onto the inventory menu area. No
 	// inventory in big-object menu lock situation,
 
-	if (_pos.y > 399 && !_mouseModeLocked) {
+	if (y > 399 && !_mouseModeLocked) {
 		// If an object is being held, i.e. if the mouse cursor has a
 		// luggage, go to drag mode instead of menu mode, but the menu
 		// is still opened.
@@ -698,8 +722,8 @@ void Mouse::normalMouse() {
 
 			if (button_down) {
 				// set both (x1,y1) and (x2,y2) to this point
-				_vm->_debugger->_rectX1 = _vm->_debugger->_rectX2 = (uint32)_pos.x + screenInfo->scroll_offset_x;
-				_vm->_debugger->_rectY1 = _vm->_debugger->_rectY2 = (uint32)_pos.y + screenInfo->scroll_offset_y;
+				_vm->_debugger->_rectX1 = _vm->_debugger->_rectX2 = (uint32)x + screenInfo->scroll_offset_x;
+				_vm->_debugger->_rectY1 = _vm->_debugger->_rectY2 = (uint32)y + screenInfo->scroll_offset_y;
 				_vm->_debugger->_draggingRectangle = 1;
 			}
 		} else if (_vm->_debugger->_draggingRectangle == 1) {
@@ -711,8 +735,8 @@ void Mouse::normalMouse() {
 				_vm->_debugger->_draggingRectangle = 2;
 			} else {
 				// drag rectangle
-				_vm->_debugger->_rectX2 = (uint32)_pos.x + screenInfo->scroll_offset_x;
-				_vm->_debugger->_rectY2 = (uint32)_pos.y + screenInfo->scroll_offset_y;
+				_vm->_debugger->_rectX2 = (uint32)x + screenInfo->scroll_offset_x;
+				_vm->_debugger->_rectY2 = (uint32)y + screenInfo->scroll_offset_y;
 			}
 		} else {
 			// currently locked to avoid knocking out of place
@@ -774,8 +798,8 @@ void Mouse::normalMouse() {
 	// These might be required by the action script about to be run
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
-	_vm->_logic->writeVar(MOUSE_X, _pos.x + screenInfo->scroll_offset_x);
-	_vm->_logic->writeVar(MOUSE_Y, _pos.y + screenInfo->scroll_offset_y);
+	_vm->_logic->writeVar(MOUSE_X, x + screenInfo->scroll_offset_x);
+	_vm->_logic->writeVar(MOUSE_Y, y + screenInfo->scroll_offset_y);
 
 	if (_mouseTouching == _vm->_logic->readVar(EXIT_CLICK_ID) && (me->buttons & RD_LEFTBUTTONDOWN)) {
 		// It's the exit double click situation. Let the existing
@@ -949,7 +973,9 @@ void Mouse::mouseOnOff() {
 	// don't detect objects that are hidden behind the menu bars (ie. in
 	// the scrolled-off areas of the screen)
 
-	if (_pos.y < 0 || _pos.y > 399) {
+	int y = getY();
+
+	if (y < 0 || y > 399) {
 		pointer_type = 0;
 		_mouseTouching = 0;
 	} else {
@@ -1080,8 +1106,11 @@ void Mouse::setObjectHeld(uint32 res) {
 
 uint32 Mouse::checkMouseList() {
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
+	int x, y;
 
-	Common::Point mousePos(_pos.x + screenInfo->scroll_offset_x, _pos.y + screenInfo->scroll_offset_y);
+	getPos(x, y);
+
+	Common::Point mousePos(x + screenInfo->scroll_offset_x, y + screenInfo->scroll_offset_y);
 
 	// Number of priorities subject to implementation needs
 	for (int priority = 0; priority < 10; priority++) {
@@ -1252,9 +1281,13 @@ void Mouse::createPointerText(uint32 text_id, uint32 pointer_res) {
 	// 'text+2' to skip the first 2 bytes which form the
 	// line reference number
 
+	int x, y;
+
+	getPos(x, y);
+
 	_pointerTextBlocNo = _vm->_fontRenderer->buildNewBloc(
-		text + 2, _pos.x + xOffset,
-		_pos.y + yOffset,
+		text + 2, x + xOffset,
+		y + yOffset,
 		POINTER_TEXT_WIDTH, POINTER_TEXT_PEN,
 		RDSPR_TRANS | RDSPR_DISPLAYALIGN,
 		_vm->_speechFontId, justification);
@@ -1336,7 +1369,7 @@ void Mouse::addHuman() {
 	}
 
 	// If mouse is over menu area
-	if (_pos.y > 399) {
+	if (getY() > 399) {
 		if (_mouseMode != MOUSE_holding) {
 			// VITAL - reset things & rebuild the menu
 			_mouseMode = MOUSE_normal;
@@ -1389,7 +1422,7 @@ void Mouse::startConversation() {
 void Mouse::endConversation() {
 	hideMenu(RDMENU_BOTTOM);
 
-	if (_pos.y > 399) {
+	if (getY() > 399) {
 		// Will wait for cursor to move off the bottom menu
 		_mouseMode = MOUSE_holding;
 	}

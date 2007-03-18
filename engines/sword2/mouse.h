@@ -123,8 +123,6 @@ class Mouse {
 private:
 	Sword2Engine *_vm;
 
-	Common::Point _pos;
-
 	MouseUnit _mouseList[TOTAL_mouse_list];
 	uint32 _curMouse;
 
@@ -197,7 +195,8 @@ public:
 	~Mouse();
 
 	void getPos(int &x, int &y);
-	void setPos(int x, int y);
+	int getX();
+	int getY();
 
 	bool getObjectLabels() { return _objectLabels; }
 	void setObjectLabels(bool b) { _objectLabels = b; }

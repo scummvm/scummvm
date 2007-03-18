@@ -63,8 +63,7 @@ enum {
 	RD_RIGHTBUTTONUP		= 0x08,
 	RD_WHEELUP			= 0x10,
 	RD_WHEELDOWN			= 0x20,
-	RD_KEYDOWN			= 0x40,
-	RD_MOUSEMOVE			= 0x80
+	RD_KEYDOWN			= 0x40
 };
 
 struct MouseEvent {
