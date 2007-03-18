@@ -54,6 +54,9 @@ public:
 	WalkNode(int32 x, int32 y) : _x(x), _y(y) {
 	}
 
+	WalkNode(const WalkNode& w) : _x(w._x), _y(w._y) {
+	}
+
 	void getPoint(Common::Point &p) const {
 		p.x = _x;
 		p.y = _y;

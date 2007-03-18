@@ -111,19 +111,14 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	}
 	debugC(1, kDebugWalk, "found closest path point at (%i, %i)", to.x, to.y);
 
-	WalkNode *v48 = (WalkNode*)malloc(sizeof(WalkNode));
-	WalkNode *v44 = (WalkNode*)malloc(sizeof(WalkNode));
-
-	v48->_x = to.x - _vm->_char._ani.width() / 2; 		// target top left coordinates
-	v48->_y = to.y - _vm->_char._ani.height();
-	v48->_next = NULL;
-	memcpy(v44, v48, sizeof(WalkNode));
+	WalkNode *v48 = new WalkNode(to.x - _vm->_char._ani.width() / 2, to.y - _vm->_char._ani.height());
+	WalkNode *v44 = new WalkNode(*v48);
 
 	uint16 v38 = walkFunc1(to.x, to.y, v44);
 	if (v38 == 1) {
 		// destination directly reachable
 		debugC(1, kDebugWalk, "direct move to (%i, %i)", to.x, to.y);
-		free(v44);
+		delete v44;
 		return v48;
 	}
 
@@ -131,7 +126,6 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	debugC(1, kDebugWalk, "trying to build walk path to (%i, %i)", to.x, to.y);
 
 	WalkNode	v58;
-	memset(&v58, 0, sizeof(WalkNode));
 
 	int16 _si = v48->_x;						// _si, _di: target top left coordinates
 	int16 _di = v48->_y;
@@ -181,10 +175,8 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 			if (_closest_node_found == 0) break;
 
-			WalkNode *_newnode = (WalkNode*)malloc(sizeof(WalkNode));
-			memcpy( _newnode, _closest_node, sizeof(WalkNode));
-			v20.x = _newnode->_x;
-			v20.y = _newnode->_y;
+			WalkNode *_newnode = new WalkNode(*_closest_node);
+			_newnode->getPoint(v20);
 
 			Common::Point tmp(_si - v20.x, _di - v20.y);
 
@@ -224,7 +216,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	}
 
 
-	free(v44);
+	delete v44;
 	return (WalkNode*)v58._next;
 }
 
