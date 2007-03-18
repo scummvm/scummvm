@@ -134,6 +134,10 @@ void Parallaction::doLoadGame(uint16 slot) {
 
 	parseLocation("common");
 
+	// force reload of character to solve inventory
+	// bugs, but it's a good maneuver anyway
+	strcpy(_characterName1, "null");
+
 	strcat(_vm->_location._name, _vm->_characterName);
 	_engineFlags |= kEngineChangeLocation;
 

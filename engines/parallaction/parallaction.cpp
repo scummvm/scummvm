@@ -793,8 +793,9 @@ void Parallaction::changeCharacter(const char *name) {
 
 	if (scumm_stricmp(v32, _characterName1)) {
 
-		if (scumm_stricmp(_characterName1, "null"))
-			freeCharacter();
+		// freeCharacter takes responsibility for checking
+		// character for sanity before memory is freed
+		freeCharacter();
 
 		_disk->selectArchive("disk1");
 
