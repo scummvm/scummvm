@@ -202,59 +202,63 @@ startOver:
 				goto startOver;
 			if (_lastHitArea3 != 0)
 				break;
-			if (_dragMode != 0) {
-				ha = _lastClickRem;
+			if (_dragMode != 0)
+				break;
+			hitarea_stuff_helper();
+			delay(100);
+		}
 
-				if (ha == 0 || ha->item_ptr == NULL || !(ha->flags & kBFDragBox)) {
+		if (_lastHitArea3 != 0) {
+			// ...
+		} else if (_dragMode != 0) {
+			ha = _lastClickRem;
+
+			if (ha == 0 || ha->item_ptr == NULL || !(ha->flags & kBFDragBox)) {
+				_dragFlag = 0;
+				_dragMode = 0;
+				_dragCount = 0;
+				_dragEnd = 0;
+				goto startOver;
+			}
+		
+			_hitAreaSubjectItem = ha->item_ptr;
+			_verbHitArea = 500;
+		
+			do {
+				processSpecialKeys();
+				hitarea_stuff_helper();
+				delay(100);
+		
+				if (_dragFlag == 0) {
 					_dragFlag = 0;
 					_dragMode = 0;
 					_dragCount = 0;
 					_dragEnd = 0;
 					goto startOver;
 				}
-			
-				_hitAreaSubjectItem = ha->item_ptr;
-				_verbHitArea = 500;
-			
-				for (;;) {
-					processSpecialKeys();
-					hitarea_stuff_helper();
-					delay(100);
-			
-					if (_dragFlag == 0) {
-						_dragFlag = 0;
-						_dragMode = 0;
-						_dragCount = 0;
-						_dragEnd = 0;
-						goto startOver;
-					}
-			
-					if (_dragEnd != 0)
-						break;
-				}
-			
-				_dragFlag = 0;
-				_dragMode = 0;
-				_dragCount = 0;
-				_dragEnd = 0;
-			
-				boxController(_mouse.x, _mouse.y, 1);
-			
-				if (_currentBox != NULL) {
-					_hitAreaObjectItem = _currentBox->item_ptr;
-					setVerbText(ha);
-				}
-			
-				goto out_of_here;
+			} while (!_dragEnd);
+		
+			_dragFlag = 0;
+			_dragMode = 0;
+			_dragCount = 0;
+			_dragEnd = 0;
+		
+			boxController(_mouse.x, _mouse.y, 1);
+		
+			if (_currentBox != NULL) {
+				_hitAreaObjectItem = _currentBox->item_ptr;
+				setVerbText(ha);
 			}
-			hitarea_stuff_helper();
-			delay(100);
+		
+			goto out_of_here;
 		}
 
 		ha = _lastHitArea;
+		if (_lastHitArea == NULL) {
+			continue;
+		}
 
-		if (ha == NULL) {
-		} else if (ha->id == 0x7FFB) {
+		if (ha->id == 0x7FFB) {
 			inventoryUp(ha->window);
 		} else if (ha->id == 0x7FFC) {
 			inventoryDown(ha->window);
