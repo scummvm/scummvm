@@ -152,7 +152,9 @@ void Parallaction::freeZones(Node *list) {
 		case kZoneDoor:
 			free(z->u.door->_location);
 			free(z->u.door->_background);
-			_vm->_gfx->freeCnv(&z->u.door->_cnv);
+			_vm->_gfx->freeCnv(z->u.door->_cnv);
+			if (z->u.door->_cnv)
+				delete z->u.door->_cnv;
 			delete  z->u.door;
 			break;
 
@@ -265,19 +267,19 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 			if (!scumm_stricmp(_tokens[0], "file")) {
 //				printf("file: '%s'", _tokens[0]);
 
-				Cnv *doorcnv = &u->door->_cnv;
+				u->door->_cnv = new Cnv;
 				strcpy(vC8, _tokens[1]);
 
 				StaticCnv vE0;
-				_disk->loadFrames(vC8, doorcnv);
+				_disk->loadFrames(vC8, u->door->_cnv);
 
 //				printf("door width: %i, height: %i", doorcnv->_width, doorcnv->_height );
 
-				vE0._width = doorcnv->_width;
-				vE0._height = doorcnv->_height;
+				vE0._width = u->door->_cnv->_width;
+				vE0._height = u->door->_cnv->_height;
 
 				uint16 _ax = (z->_flags & kFlagsClosed ? 0 : 1);
-				vE0._data0 = doorcnv->_array[_ax];
+				vE0._data0 = u->door->_cnv->_array[_ax];
 
 //				_ax = (z->_flags & kFlagsClosed ? 0 : 1);
 //				vE0._data1 = doorcnv->field_8[_ax];
@@ -445,7 +447,7 @@ uint16 runZone(Zone *z) {
 	case kZoneDoor:
 		if (z->_flags & kFlagsLocked) break;
 		z->_flags ^= kFlagsClosed;
-		if (z->u.door->_cnv._count == 0) break;
+		if (z->u.door->_cnv == NULL) break;
 		_vm->addJob(&jobToggleDoor, z, kPriority18 );
 		break;
 
@@ -473,20 +475,19 @@ void jobToggleDoor(void *parm, Job *j) {
 
 	Zone *z = (Zone*)parm;
 
-	Cnv *v18 = &z->u.door->_cnv;
 	StaticCnv v14;
 
-	if (v18) {
-		v14._width = v18->_width;
-		v14._height = v18->_height;
+	if (z->u.door->_cnv) {
+		v14._width = z->u.door->_cnv->_width;
+		v14._height = z->u.door->_cnv->_height;
 
-		Common::Rect r(z->_left, z->_top, z->_left+v18->_width, z->_top+v18->_height);
+		Common::Rect r(z->_left, z->_top, z->_left+z->u.door->_cnv->_width, z->_top+z->u.door->_cnv->_height);
 
 		_vm->_gfx->restoreZoneBackground(r, z->u.door->_background);
 
 		uint16 _ax = (z->_flags & kFlagsClosed ? 0 : 1);
 
-		v14._data0 = v18->_array[_ax];
+		v14._data0 = z->u.door->_cnv->_array[_ax];
 
 		_vm->_gfx->flatBlitCnv(&v14, z->_left, z->_top, Gfx::kBitBack);
 		_vm->_gfx->flatBlitCnv(&v14, z->_left, z->_top, Gfx::kBit2);

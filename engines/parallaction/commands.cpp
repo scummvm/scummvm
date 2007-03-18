@@ -284,7 +284,7 @@ void runCommands(Command *list, Zone *z) {
 
 		case CMD_OPEN:	// open
 			u->_zone->_flags &= ~kFlagsClosed;
-			if (u->_zone->u.door->_cnv._count != 0) {
+			if (u->_zone->u.door->_cnv) {
 				_vm->addJob(&jobToggleDoor, (void*)u->_zone, kPriority18 );
 			}
 			break;
@@ -348,5 +348,6 @@ void runCommands(Command *list, Zone *z) {
 }
 
 } // namespace Parallaction
+
 
 

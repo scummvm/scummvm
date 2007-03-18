@@ -125,7 +125,7 @@ struct ExamineData {	// size = 28
 };
 struct DoorData {	// size = 28
 	char*	_location;
-	Cnv 	_cnv;
+	Cnv 	*_cnv;
 	byte*	_background;
 	Common::Point	_startPos;
 	uint16	_startFrame;
@@ -134,6 +134,7 @@ struct DoorData {	// size = 28
 		_location = NULL;
 		_background = NULL;
 		_startFrame = 0;
+		_cnv = NULL;
 	}
 };
 struct HearData {	// size = 20

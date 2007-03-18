@@ -521,11 +521,11 @@ void Gfx::backupDoorBackground(DoorData *data, int16 x, int16 y) {
 	byte *s = _buffers[kBit2] + x + y * SCREEN_WIDTH;
 	byte *d = data->_background;
 
-	for (uint16 i = 0; i < data->_cnv._height ; i++) {
-		memcpy(d, s, data->_cnv._width);
+	for (uint16 i = 0; i < data->_cnv->_height ; i++) {
+		memcpy(d, s, data->_cnv->_width);
 
 		s += SCREEN_WIDTH;
-		d += data->_cnv._width;
+		d += data->_cnv->_width;
 	}
 
 	return;
