@@ -40,8 +40,6 @@ namespace Saga {
 int SagaEngine::processInput() {
 	Common::Event event;
 
-//	Point imousePt;
-
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
@@ -129,22 +127,19 @@ int SagaEngine::processInput() {
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_leftMouseButtonPressed = true;
-			_mousePos = event.mouse;
-			_interface->update(_mousePos, UPDATE_LEFTBUTTONCLICK);
+			_interface->update(event.mouse, UPDATE_LEFTBUTTONCLICK);
 			break;
 		case Common::EVENT_RBUTTONDOWN:
 			_rightMouseButtonPressed = true;
-			_mousePos = event.mouse;
-			_interface->update(_mousePos, UPDATE_RIGHTBUTTONCLICK);
+			_interface->update(event.mouse, UPDATE_RIGHTBUTTONCLICK);
 			break;
 		case Common::EVENT_WHEELUP:
-			_interface->update(_mousePos, UPDATE_WHEELUP);
+			_interface->update(event.mouse, UPDATE_WHEELUP);
 			break;
 		case Common::EVENT_WHEELDOWN:
-			_interface->update(_mousePos, UPDATE_WHEELDOWN);
+			_interface->update(event.mouse, UPDATE_WHEELDOWN);
 			break;
 		case Common::EVENT_MOUSEMOVE:
-			_mousePos = event.mouse;
 			break;
 		case Common::EVENT_QUIT:
 			shutDown();
@@ -157,6 +152,9 @@ int SagaEngine::processInput() {
 	return SUCCESS;
 }
 
+Point SagaEngine::mousePos() const {
+	return _system->getEventManager()->getMousePos();
+}
 
 } // End of namespace Saga
 

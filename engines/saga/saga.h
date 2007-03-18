@@ -331,9 +331,7 @@ public:
 	const char *getObjectName(uint16 objectId);
 public:
 	int processInput(void);
-	const Point &mousePos() const {
-		return _mousePos;
-	}
+	Point mousePos() const;
 
 	const bool leftMouseButtonPressed() const {
 		return _leftMouseButtonPressed;
@@ -354,7 +352,6 @@ public:
 	bool _saveMarks[MAX_SAVES];
 	SaveGameHeader _saveHeader;
 
-	Point _mousePos;
 	bool _leftMouseButtonPressed;
 	bool _rightMouseButtonPressed;
 
