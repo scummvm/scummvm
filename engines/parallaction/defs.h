@@ -54,7 +54,9 @@ public:
 	WalkNode(int32 x, int32 y) : _x(x), _y(y) {
 	}
 
-	WalkNode(const WalkNode& w) : _x(w._x), _y(w._y) {
+	WalkNode(const WalkNode& w) : Node(), _x(w._x), _y(w._y) {
+		// TODO: This will not properly set _prev and _next
+		// -- not sure what would be "correct" here?
 	}
 
 	void getPoint(Common::Point &p) const {
