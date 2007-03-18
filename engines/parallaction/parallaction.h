@@ -162,7 +162,7 @@ Command *parseCommands(Script &script);
 void runCommands(Command *list, Zone *z = NULL);
 void freeCommands(Command*);
 
-void freeZones(Node *list);
+
 
 void runDialogue(SpeakData*);
 
@@ -308,6 +308,14 @@ public:
 	void resumeJobs();
 	void runJobs();
 
+	void 		freeZones(Node *list);
+	Animation  	*findAnimation(const char *name);
+	Zone 		*findZone(const char *name);
+	Zone   		*hitZone(uint32 type, uint16 x, uint16 y);
+	void 		freeAnimations();
+	void		sortAnimations();
+	void 		freeLocation();
+
 public:
 	int getGameType() const;
 	uint32 getFeatures() const;
@@ -339,6 +347,9 @@ public:
 
 	Common::Point	_mousePos;
 
+	Node 	_zones;
+	Node 	_animations;
+
 protected:		// data
 
 	struct InputData {
@@ -369,6 +380,8 @@ protected:		// data
 	int16 _keyDown;
 
 	Job			_jobs;
+
+	Node helperNode;			// used for freeZones
 
 protected:		// members
 	bool detectGame(void);

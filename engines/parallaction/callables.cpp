@@ -92,21 +92,21 @@ void _c_moveSarc(void *parm) {
 		_introSarcData2 = 0;
 		if (_moveSarcZones[0] == NULL) {
 
-			_moveSarcZones[0] = findZone("sarc1");
-			_moveSarcZones[1] = findZone("sarc2");
-			_moveSarcZones[2] = findZone("sarc3");
-			_moveSarcZones[3] = findZone("sarc4");
-			_moveSarcZones[4] = findZone("sarc5");
+			_moveSarcZones[0] = _vm->findZone("sarc1");
+			_moveSarcZones[1] = _vm->findZone("sarc2");
+			_moveSarcZones[2] = _vm->findZone("sarc3");
+			_moveSarcZones[3] = _vm->findZone("sarc4");
+			_moveSarcZones[4] = _vm->findZone("sarc5");
 
-			_moveSarcExaZones[0] = findZone("sarc1exa");
-			_moveSarcExaZones[1] = findZone("sarc2exa");
-			_moveSarcExaZones[2] = findZone("sarc3exa");
-			_moveSarcExaZones[3] = findZone("sarc4exa");
-			_moveSarcExaZones[4] = findZone("sarc5exa");
+			_moveSarcExaZones[0] = _vm->findZone("sarc1exa");
+			_moveSarcExaZones[1] = _vm->findZone("sarc2exa");
+			_moveSarcExaZones[2] = _vm->findZone("sarc3exa");
+			_moveSarcExaZones[3] = _vm->findZone("sarc4exa");
+			_moveSarcExaZones[4] = _vm->findZone("sarc5exa");
 
 		}
 
-		a = findAnimation("sposta");
+		a = _vm->findAnimation("sposta");
 
 		_moveSarcZone1 = (Zone*)parm;
 
@@ -147,7 +147,7 @@ void _c_moveSarc(void *parm) {
 		_moveSarcZones[3]->_left == 134 &&
 		_moveSarcZones[4]->_left == 167) {
 
-		a = findAnimation("finito");
+		a = _vm->findAnimation("finito");
 
 		a->_zone._flags |= (kFlagsActive | kFlagsActing);
 		_localFlags[_vm->_currentLocationIndex] |= 0x20;		// GROSS HACK: activates 'finito' flag in dinoit_museo.loc
@@ -319,17 +319,17 @@ void _c_finito(void *parm) {
 
 	_engineFlags |= kEngineQuit;
 
-	freeZones(_zones._next);
-	freeNodeList(_zones._next);
-	_zones._next = NULL;
+	_vm->freeZones(_vm->_zones._next);
+	freeNodeList(_vm->_zones._next);
+	_vm->_zones._next = NULL;
 
-	freeZones(_animations._next);
-	freeNodeList(_animations._next);
-	_animations._next = NULL;
+	_vm->freeZones(_vm->_animations._next);
+	freeNodeList(_vm->_animations._next);
+	_vm->_animations._next = NULL;
 
 	_engineFlags &= ~kEngineQuit;
 
-	addNode(&_animations, &_vm->_char._ani._zone);
+	addNode(&_vm->_animations, &_vm->_char._ani._zone);
 	_score = 0;
 
 	return;

@@ -414,7 +414,7 @@ uint16 checkDoor() {
 	}
 
 	_engineFlags &= ~kEngineWalking;
-	Zone *z = hitZone(kZoneDoor, _vm->_char._ani._zone._left + _vm->_char._ani.width() / 2,	_vm->_char._ani._zone._top + _vm->_char._ani.height());
+	Zone *z = _vm->hitZone(kZoneDoor, _vm->_char._ani._zone._left + _vm->_char._ani.width() / 2,	_vm->_char._ani._zone._top + _vm->_char._ani.height());
 
 	if (z != NULL) {
 
@@ -432,7 +432,7 @@ uint16 checkDoor() {
 		}
 	}
 
-	z = hitZone(kZoneTrap, _vm->_char._ani._zone._left + _vm->_char._ani.width() / 2, _vm->_char._ani._zone._top + _vm->_char._ani.height());
+	z = _vm->hitZone(kZoneTrap, _vm->_char._ani._zone._left + _vm->_char._ani.width() / 2, _vm->_char._ani._zone._top + _vm->_char._ani.height());
 
 	if (z != NULL) {
 		_localFlags[_vm->_currentLocationIndex] |= kFlagsEnter;

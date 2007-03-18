@@ -33,12 +33,7 @@ void freeScript(Program*);
 
 void freeDialogue(Dialogue *d);
 
-Node _zones = { NULL, NULL };
-Node _animations = { NULL, NULL };
-
-extern Node helperNode;
-
-Zone *findZone(const char *name) {
+Zone *Parallaction::findZone(const char *name) {
 
 	Zone *v4 = (Zone*)_zones._next;
 
@@ -120,7 +115,7 @@ void Parallaction::parseZone(Script &script, Node *list, char *name) {
 	return;
 }
 
-void freeZones(Node *list) {
+void Parallaction::freeZones(Node *list) {
 	debugC(1, kDebugLocation, "freeZones: kEngineQuit = %i", _engineFlags & kEngineQuit);
 
 	Zone *z = (Zone*)list;
@@ -569,7 +564,7 @@ void jobDisplayDroppedItem(void *parm, Job *j) {
 
 
 
-Zone *hitZone(uint32 type, uint16 x, uint16 y) {
+Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 //	printf("hitZone(%i, %i, %i)", type, x, y);
 
 	uint16 _di = y;

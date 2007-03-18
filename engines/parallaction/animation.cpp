@@ -53,7 +53,7 @@ namespace Parallaction {
 
 
 void	wrapLocalVar(LocalVariable *local);
-void	sortAnimations();
+
 
 LValue	getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation *a);
 
@@ -61,7 +61,7 @@ LValue	getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation 
 uint16	_numLocals = 0;
 char	_localNames[10][10];
 
-Animation *findAnimation(const char *name) {
+Animation *Parallaction::findAnimation(const char *name) {
 
 	Animation *v4 = (Animation*)_animations._next;
 
@@ -166,7 +166,7 @@ void  freeScript(Program *program) {
 
 
 
-void freeAnimations() {
+void Parallaction::freeAnimations() {
 	Animation *v4 = (Animation*)_animations._next;
 	while (v4) {
 		freeScript(v4->_program);
@@ -182,7 +182,7 @@ void freeAnimations() {
 void jobDisplayAnimations(void *parm, Job *j) {
 //	printf("jobDisplayAnimations()...\n");
 
-	Animation *v18 = (Animation*)_animations._next;
+	Animation *v18 = (Animation*)_vm->_animations._next;
 	StaticCnv v14;
 
 	uint16 _si = 0;
@@ -226,7 +226,7 @@ void jobDisplayAnimations(void *parm, Job *j) {
 void jobEraseAnimations(void *arg_0, Job *j) {
 	debugC(3, kDebugJobs, "jobEraseAnimations");
 
-	Animation *a = (Animation*)_animations._next;
+	Animation *a = (Animation*)_vm->_animations._next;
 
 	for (; a; a=(Animation*)a->_zone._next) {
 
@@ -457,7 +457,7 @@ LValue getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation 
 	}
 
 	if (str[1] == '.') {
-		a = findAnimation(&str[2]);
+		a = _vm->findAnimation(&str[2]);
 	}
 
 	if (str[0] == 'X') {
@@ -483,7 +483,7 @@ void jobRunScripts(void *parm, Job *j) {
 
 	static uint16 modCounter = 0;
 
-	Animation *a = (Animation*)_animations._next;
+	Animation *a = (Animation*)_vm->_animations._next;
 
 	StaticCnv v18;
 	WalkNode *v4 = NULL;
@@ -634,7 +634,7 @@ label1:
 			a->_z = a->_zone._top + a->height();
 	}
 
-	sortAnimations();
+	_vm->sortAnimations();
 	modCounter++;
 
 	return;
@@ -653,7 +653,7 @@ void wrapLocalVar(LocalVariable *local) {
 
 
 
-void sortAnimations() {
+void Parallaction::sortAnimations() {
 	Node v14;
 	memset(&v14, 0, sizeof(Node));
 

@@ -36,6 +36,11 @@ namespace Parallaction {
 struct Node {
 	Node*	_prev;
 	Node*	_next;
+
+	Node() {
+		_prev = NULL;
+		_next = NULL;
+	}
 };
 
 struct WalkNode : public Node {

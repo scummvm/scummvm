@@ -33,9 +33,9 @@ namespace Parallaction {
 void resolveLocationForwards();
 void switchBackground(const char* background, const char* mask);
 void parseWalkNodes(Script &script, Node *list);
-void freeAnimations();
 
-Node helperNode = { NULL, NULL };
+
+
 
 void Parallaction::parseLocation(const char *filename) {
 //	printf("parseLocation(%s)", filename);
@@ -168,7 +168,7 @@ void resolveLocationForwards() {
 //	printf("# forwards: %i", _numForwards);
 
 	for (uint16 _si = 0; _forwardedCommands[_si]; _si++) {
-		_forwardedCommands[_si]->u._animation = findAnimation(_forwardedAnimationNames[_si]);
+		_forwardedCommands[_si]->u._animation = _vm->findAnimation(_forwardedAnimationNames[_si]);
 		_forwardedCommands[_si] = NULL;
 	}
 
@@ -177,7 +177,7 @@ void resolveLocationForwards() {
 }
 
 
-void freeLocation() {
+void Parallaction::freeLocation() {
 	debugC(7, kDebugLocation, "freeLocation");
 
 	uint16 _si = 1;
@@ -194,14 +194,14 @@ void freeLocation() {
 	debugC(7, kDebugLocation, "freeLocation: walk nodes freed");
 
 	helperNode._prev = helperNode._next = NULL;
-	freeZones(_zones._next);
+	_vm->freeZones(_zones._next);
 	freeNodeList(_zones._next);
 	memcpy(&_zones, &helperNode, sizeof(Node));
 	debugC(7, kDebugLocation, "freeLocation: zones freed");
 
 	helperNode._prev = helperNode._next = NULL;
-	freeZones(_animations._next);
-	freeAnimations();
+	_vm->freeZones(_animations._next);
+	_vm->freeAnimations();
 	freeNodeList(_animations._next);
 	memcpy(&_animations, &helperNode, sizeof(Node));
 	debugC(7, kDebugLocation, "freeLocation: animations freed");

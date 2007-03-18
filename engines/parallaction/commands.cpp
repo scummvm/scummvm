@@ -88,7 +88,7 @@ Command *parseCommands(Script &script) {
 
 		case CMD_START: // start
 		case CMD_STOP:	// stop
-			cmd->u._animation = findAnimation(_tokens[_si]);
+			cmd->u._animation = _vm->findAnimation(_tokens[_si]);
 			_si++;
 			if (cmd->u._animation == NULL) {
 				strcpy(_forwardedAnimationNames[_numForwards], _tokens[_si-1]);
@@ -103,7 +103,7 @@ Command *parseCommands(Script &script) {
 		case CMD_CLOSE: // close
 		case CMD_ON:	// on
 		case CMD_OFF:	// off
-			cmd->u._zone = findZone(_tokens[_si]);
+			cmd->u._zone = _vm->findZone(_tokens[_si]);
 			_si++;
 			break;
 

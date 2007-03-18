@@ -237,21 +237,15 @@ struct Animation {
 	}
 };
 
-extern Node _zones;
-extern Node _animations;
 
-
-Zone   *findZone(const char *name);
 uint16	runZone(Zone *z);
 void	dropItem(uint16 v);
 int16	pickupItem(Zone *z);
 
 
-Zone   *hitZone(uint32 type, uint16 x, uint16 y);
 uint16	checkDoor();
 
 
-Animation  *findAnimation(const char *name);
 void		loadProgram(Animation *, char *filename);
 
 
