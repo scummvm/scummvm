@@ -1227,11 +1227,11 @@ cmd(mouse_posn) {
 cmd(shake_screen) {
 	int i;
 
-	/* AGI Mouse 1.1 uses shake.screen values between 100 and 109 to
+	/* AGIPAL uses shake.screen values between 100 and 109 to
 	 * set the palette.
 	 */
-	if ((g_agi->getFeatures() & GF_AGIMOUSE) && p0 >= 100 && p0 < 110) {
-		report("not implemented: AGI Mouse palettes\n");
+	if ((g_agi->getFeatures() & GF_AGIPAL) && p0 >= 100 && p0 < 110) {
+		report("not implemented: AGIPAL palettes\n");
 		return;
 	} else
 		g_gfx->shakeStart();
