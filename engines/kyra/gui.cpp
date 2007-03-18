@@ -496,13 +496,15 @@ void KyraEngine::setGUILabels() {
 	} else if (_flags.lang == Common::ES_ESP) {
 		offsetOn = offsetMainMenu = offsetOptions = offset = -4;
 		menuLabelGarbageOffset = 72;
+	} else if (_flags.lang == Common::DE_DEU) {
+		offset = offsetMainMenu = offsetOn = offsetOptions = 24;
 	} else if (_flags.platform == Common::kPlatformFMTowns) {
 		offset = 1;
 		offsetOptions = 10;
 		offsetOn = 0;
 		walkspeedGarbageOffset = 0;
 	}
-	
+
 	assert(offset + 27 < _guiStringsSize);
 		
 	// The Legend of Kyrandia
