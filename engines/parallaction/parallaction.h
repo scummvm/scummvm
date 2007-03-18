@@ -342,7 +342,7 @@ protected:		// data
 
 	struct InputData {
 		uint16		_event;
-		Point		_mousePos;
+		Common::Point		_mousePos;
 
 		int16       _inventoryIndex;
 		Zone*       _zone;

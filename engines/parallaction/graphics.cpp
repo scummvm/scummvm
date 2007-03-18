@@ -50,7 +50,6 @@ const byte _glyphWidths[126] = {
 };
 
 bool		Gfx::_proportionalFont = false;
-Point		Gfx::_labelPosition[2] = { { 0, 0 }, { 0, 0 } };
 byte *		Gfx::_buffers[];
 
 #define PALETTE_BACKUP	PALETTE_SIZE
@@ -417,7 +416,7 @@ void jobDisplayLabel(void *parm, Job *j) {
 
 	if (label->_cnv._width == 0)
 		return;
-	_vm->_gfx->flatBlitCnv(&label->_cnv, Gfx::_labelPosition[0]._x, Gfx::_labelPosition[0]._y, Gfx::kBitBack);
+	_vm->_gfx->flatBlitCnv(&label->_cnv, _vm->_gfx->_labelPosition[0].x, _vm->_gfx->_labelPosition[0].y, Gfx::kBitBack);
 
 	return;
 }
@@ -444,13 +443,12 @@ void jobEraseLabel(void *parm, Job *j) {
 		_si = SCREEN_WIDTH - label->_cnv._width;
 
 	Common::Rect r(label->_cnv._width, label->_cnv._height);
-	r.moveTo(Gfx::_labelPosition[1]._x, Gfx::_labelPosition[1]._y);
+	r.moveTo(_vm->_gfx->_labelPosition[1]);
 	_vm->_gfx->restoreBackground(r);
 
-	Gfx::_labelPosition[1]._x = Gfx::_labelPosition[0]._x;
-	Gfx::_labelPosition[1]._y = Gfx::_labelPosition[0]._y;
-	Gfx::_labelPosition[0]._x = _si;
-	Gfx::_labelPosition[0]._y = _di;
+	_vm->_gfx->_labelPosition[1] = _vm->_gfx->_labelPosition[0];
+	_vm->_gfx->_labelPosition[0].x = _si;
+	_vm->_gfx->_labelPosition[0].y = _di;
 
 	return;
 }

@@ -442,10 +442,10 @@ void Parallaction::processInput(InputData *data) {
 	switch (data->_event) {
 	case kEvEnterZone:
 		debugC(2, kDebugInput, "processInput: kEvEnterZone");
-		_gfx->_labelPosition[1]._x = -1000;
-		_gfx->_labelPosition[1]._y = -1000;
-		_gfx->_labelPosition[0]._x = -1000;
-		_gfx->_labelPosition[0]._y = -1000;
+		_gfx->_labelPosition[1].x = -1000;
+		_gfx->_labelPosition[1].y = -1000;
+		_gfx->_labelPosition[0].x = -1000;
+		_gfx->_labelPosition[0].y = -1000;
 		_jDrawLabel = addJob(&jobDisplayLabel, (void*)data->_label, kPriority0);
 		_jEraseLabel = addJob(&jobEraseLabel, (void*)data->_label, kPriority20);
 		break;
@@ -507,7 +507,7 @@ void Parallaction::processInput(InputData *data) {
 		changeCursor(kCursorArrow);
 		if (_vm->_char._ani._zone._flags & kFlagsRemove) break;
 		if ((_vm->_char._ani._zone._flags & kFlagsActive) == 0) break;
-		v4 = buildWalkPath(data->_mousePos._x, data->_mousePos._y);
+		v4 = buildWalkPath(data->_mousePos.x, data->_mousePos.y);
 		addJob(&jobWalk, v4, kPriority19);
 		_engineFlags |= kEngineWalking; 								   // inhibits processing of input until walking is over
 		break;
@@ -552,8 +552,8 @@ Parallaction::InputData *Parallaction::translateInput() {
 		return &_input;
 	}
 
-	_input._mousePos._x = _mousePos._x;
-	_input._mousePos._y = _mousePos._y;
+	_input._mousePos.x = _mousePos._x;
+	_input._mousePos.y = _mousePos._y;
 
 	if (((_engineFlags & kEnginePauseJobs) == 0) && ((_engineFlags & kEngineInventory) == 0)) {
 
@@ -615,8 +615,8 @@ Parallaction::InputData *Parallaction::translateInput() {
 				_input._event = kEvWalk;
 				_actionAfterWalk = true;
 				if (z->_moveTo._y != 0) {
-					_input._mousePos._x = z->_moveTo._x;
-					_input._mousePos._y = z->_moveTo._y;
+					_input._mousePos.x = z->_moveTo._x;
+					_input._mousePos.y = z->_moveTo._y;
 				}
 			}
 

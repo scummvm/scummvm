@@ -52,7 +52,7 @@ namespace Parallaction {
 
 static byte		*_buffer;
 uint16			 _numInvLines = 0;
-static Point	 _invPosition = { 0, 0 };
+static Common::Point	 _invPosition;
 
 InventoryItem _inventory[INVENTORY_MAX_ITEMS] = {
 	{ kZoneDoor,		1 },		// open/close icon
@@ -104,13 +104,13 @@ int16 Parallaction::getHoverInventoryItem(int16 x, int16 y) {
 
 	_si = (_si + 4) / INVENTORY_ITEMS_PER_LINE;
 
-	if (_invPosition._x >= _di) return -1;
-	if ((_invPosition._x + INVENTORY_WIDTH) <= _di) return -1;
+	if (_invPosition.x >= _di) return -1;
+	if ((_invPosition.x + INVENTORY_WIDTH) <= _di) return -1;
 
-	if (_invPosition._y >= y) return -1;
-	if ((_si * INVENTORYITEM_HEIGHT + _invPosition._y) <= y) return -1;
+	if (_invPosition.y >= y) return -1;
+	if ((_si * INVENTORYITEM_HEIGHT + _invPosition.y) <= y) return -1;
 
-	return ((_di - _invPosition._x) / INVENTORYITEM_WIDTH) + (INVENTORY_ITEMS_PER_LINE * ((y - _invPosition._y) / INVENTORYITEM_HEIGHT));
+	return ((_di - _invPosition.x) / INVENTORYITEM_WIDTH) + (INVENTORY_ITEMS_PER_LINE * ((y - _invPosition.y) / INVENTORYITEM_HEIGHT));
 
 }
 
@@ -268,7 +268,7 @@ void jobShowInventory(void *parm, Job *j) {
 	_numInvLines = (_numInvLines + 4) / INVENTORY_ITEMS_PER_LINE;
 
 	Common::Rect r(INVENTORY_WIDTH, _numInvLines * INVENTORYITEM_HEIGHT);
-	r.moveTo(_invPosition._x, _invPosition._y);
+	r.moveTo(_invPosition);
 
 	_vm->_gfx->copyRect(
 		Gfx::kBitBack,
@@ -297,7 +297,7 @@ void jobHideInventory(void *parm, Job *j) {
 	}
 
 	Common::Rect r(INVENTORY_WIDTH, _numInvLines * INVENTORYITEM_HEIGHT);
-	r.moveTo(_invPosition._x, _invPosition._y);
+	r.moveTo(_invPosition);
 
 	_vm->_gfx->restoreBackground(r);
 
@@ -316,19 +316,19 @@ void openInventory() {
 
 	uint16 _LOCALinventory_lines = (_si + 4) / INVENTORY_ITEMS_PER_LINE;
 
-	_invPosition._x = _mousePos._x - (INVENTORY_WIDTH / 2);
-	if (_invPosition._x < 0)
-		_invPosition._x = 0;
+	_invPosition.x = _mousePos._x - (INVENTORY_WIDTH / 2);
+	if (_invPosition.x < 0)
+		_invPosition.x = 0;
 
-	if ((_invPosition._x + INVENTORY_WIDTH) > SCREEN_WIDTH)
-		_invPosition._x = SCREEN_WIDTH - INVENTORY_WIDTH;
+	if ((_invPosition.x + INVENTORY_WIDTH) > SCREEN_WIDTH)
+		_invPosition.x = SCREEN_WIDTH - INVENTORY_WIDTH;
 
-	_invPosition._y = _mousePos._y - 2 - (_LOCALinventory_lines * INVENTORYITEM_HEIGHT);
-	if (_invPosition._y < 0)
-		_invPosition._y = 0;
+	_invPosition.y = _mousePos._y - 2 - (_LOCALinventory_lines * INVENTORYITEM_HEIGHT);
+	if (_invPosition.y < 0)
+		_invPosition.y = 0;
 
-	if (_invPosition._y > SCREEN_HEIGHT - _LOCALinventory_lines * INVENTORYITEM_HEIGHT)
-		_invPosition._y = SCREEN_HEIGHT - _LOCALinventory_lines * INVENTORYITEM_HEIGHT;
+	if (_invPosition.y > SCREEN_HEIGHT - _LOCALinventory_lines * INVENTORYITEM_HEIGHT)
+		_invPosition.y = SCREEN_HEIGHT - _LOCALinventory_lines * INVENTORYITEM_HEIGHT;
 
 	return;
 

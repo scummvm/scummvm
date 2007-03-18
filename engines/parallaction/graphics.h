@@ -136,7 +136,7 @@ public:
 	void setFont(const char* name);
 
 public:
-	static Point		_labelPosition[2];
+	Common::Point		_labelPosition[2];
 	static bool 		_proportionalFont;
 
 	uint16				_bgLayers[4];
