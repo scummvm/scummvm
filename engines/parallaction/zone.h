@@ -91,7 +91,7 @@ struct Question {
 
 struct GetData {	// size = 24
 	uint32			_icon;
-	StaticCnv		_cnv;
+	StaticCnv		*_cnv;
 	byte		   *_backup;
 	uint16			field_14;		// unused
 	uint16			field_16;		// unused
@@ -99,6 +99,7 @@ struct GetData {	// size = 24
 	GetData() {
 		_icon = 0;
 		_backup = NULL;
+		_cnv = NULL;
 	}
 };
 struct SpeakData {	// size = 36
@@ -111,7 +112,7 @@ struct SpeakData {	// size = 36
 	}
 };
 struct ExamineData {	// size = 28
-	StaticCnv	_cnv;
+	StaticCnv	*_cnv;
 	uint16		_opBase;		   // unused
 	uint16		field_12;			// unused
 	char*		_description;
@@ -121,6 +122,7 @@ struct ExamineData {	// size = 28
 		_opBase = 0;
 		_description = NULL;
 		_filename = NULL;
+		_cnv = NULL;
 	}
 };
 struct DoorData {	// size = 28

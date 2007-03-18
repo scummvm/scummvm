@@ -533,12 +533,12 @@ void Gfx::backupDoorBackground(DoorData *data, int16 x, int16 y) {
 
 void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 
-	byte *t = data->_cnv._data0;
+	byte *t = data->_cnv->_data0;
 	byte *s = _buffers[kBitBack] + x + y * SCREEN_WIDTH;
 	byte *d = data->_backup;
 
-	for (uint16 i = 0; i < data->_cnv._height ; i++) {
-		for (uint16 j = 0; j < data->_cnv._width ; j++) {
+	for (uint16 i = 0; i < data->_cnv->_height ; i++) {
+		for (uint16 j = 0; j < data->_cnv->_width ; j++) {
 			*d = (*t) ? *s : 0;
 
 			d++;
@@ -546,7 +546,7 @@ void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 			s++;
 		}
 
-		s += (SCREEN_WIDTH - data->_cnv._width);
+		s += (SCREEN_WIDTH - data->_cnv->_width);
 	}
 
 	return;

@@ -340,7 +340,7 @@ Cnv* Disk::loadObjects(const char *name) {
 }
 
 
-void Disk::loadStatic(const char* name, StaticCnv* cnv) {
+StaticCnv* Disk::loadStatic(const char* name) {
 
 	char path[PATH_LEN];
 
@@ -350,6 +350,8 @@ void Disk::loadStatic(const char* name, StaticCnv* cnv) {
 		if (!_archive.openArchivedFile(path))
 			errorFileNotFound(path);
 	}
+
+	StaticCnv* cnv = new StaticCnv;
 
 	_archive.skip(1);
 	cnv->_width = _archive.readByte();
@@ -366,7 +368,7 @@ void Disk::loadStatic(const char* name, StaticCnv* cnv) {
 	decompressChunk(compressed, cnv->_data0, size);
 	free(compressed);
 
-	return;
+	return cnv;
 }
 
 Cnv* Disk::loadFrames(const char* name) {

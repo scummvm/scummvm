@@ -165,7 +165,9 @@ void Parallaction::freeZones(Node *list) {
 
 		case kZoneGet:
 			free(z->u.get->_backup);
-			_vm->_gfx->freeStaticCnv(&z->u.get->_cnv);
+			_vm->_gfx->freeStaticCnv(z->u.get->_cnv);
+			if (z->u.get->_cnv)
+				delete z->u.get->_cnv;
 			delete z->u.get;
 			break;
 
@@ -296,14 +298,13 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 
 		case kZoneGet: // get Zone init
 			if (!scumm_stricmp(_tokens[0], "file")) {
-				StaticCnv *vE4 = &u->get->_cnv;
 				strcpy(vC8, _tokens[1]);
-				_disk->loadStatic(vC8, vE4);
-				u->get->_backup = (byte*)malloc(vE4->_width*vE4->_height);
+				u->get->_cnv = _disk->loadStatic(vC8);
+				u->get->_backup = (byte*)malloc(u->get->_cnv->_width*u->get->_cnv->_height);
 
 				if ((z->_flags & kFlagsRemove) == 0) {
 					_gfx->backupGetBackground(u->get, z->_left, z->_top);
-					_gfx->flatBlitCnv(vE4, z->_left, z->_top, Gfx::kBitBack);
+					_gfx->flatBlitCnv(u->get->_cnv, z->_left, z->_top, Gfx::kBitBack);
 				}
 			}
 
@@ -392,9 +393,10 @@ void displayItemComment(ExamineData *data) {
 
 	char v68[PATH_LEN];
 	strcpy(v68, data->_filename);
-	_vm->_disk->loadStatic(v68, &data->_cnv);
-	_vm->_gfx->flatBlitCnv(&data->_cnv, 140, (SCREEN_HEIGHT - data->_cnv._height)/2, Gfx::kBitFront);
-	_vm->_gfx->freeStaticCnv(&data->_cnv);
+	data->_cnv = _vm->_disk->loadStatic(v68);
+	_vm->_gfx->flatBlitCnv(data->_cnv, 140, (SCREEN_HEIGHT - data->_cnv->_height)/2, Gfx::kBitFront);
+	_vm->_gfx->freeStaticCnv(data->_cnv);
+	delete data->_cnv;
 
 	int16 v6A = 0, v6C = 0;
 
@@ -514,8 +516,8 @@ void jobRemovePickedItem(void *parm, Job *j) {
 
 	static uint16 count = 0;
 
-	if (z->u.get->_cnv._width != 0) {
-		Common::Rect r(z->_left, z->_top, z->_left + z->u.get->_cnv._width, z->_top + z->u.get->_cnv._height);
+	if (z->u.get->_cnv) {
+		Common::Rect r(z->_left, z->_top, z->_left + z->u.get->_cnv->_width, z->_top + z->u.get->_cnv->_height);
 
 		_vm->_gfx->restoreZoneBackground(r, z->u.get->_backup);
 	}
@@ -534,13 +536,13 @@ void jobDisplayDroppedItem(void *parm, Job *j) {
 
 	Zone *z = (Zone*)parm;
 
-	if (&z->u.get->_cnv != NULL) {
-		if (z->u.get->_cnv._data0 != NULL) {
+	if (z->u.get->_cnv) {
+		if (z->u.get->_cnv->_data0 != NULL) {
 			_vm->_gfx->backupGetBackground(z->u.get, z->_left, z->_top);
 		}
 
-		_vm->_gfx->flatBlitCnv(&z->u.get->_cnv, z->_left, z->_top, Gfx::kBitBack);
-		_vm->_gfx->flatBlitCnv(&z->u.get->_cnv, z->_left, z->_top, Gfx::kBit2);
+		_vm->_gfx->flatBlitCnv(z->u.get->_cnv, z->_left, z->_top, Gfx::kBitBack);
+		_vm->_gfx->flatBlitCnv(z->u.get->_cnv, z->_left, z->_top, Gfx::kBit2);
 	}
 
 	j->_count++;
