@@ -44,8 +44,8 @@ static uint16	walkData2 = 0; 	// next walk frame
 static int16	walkData3 = -1000; 	// unused
 
 
-int32 dotProduct(Point *p1, Point *p2) {
-	return p1->_x * p2->_x + p1->_y * p2->_y;
+int32 dotProduct(const Common::Point &p1, const Common::Point &p2) {
+	return p1.x * p2.x + p1.y * p2.y;
 }
 
 //
@@ -54,39 +54,38 @@ int32 dotProduct(Point *p1, Point *p2) {
 WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	debugC(1, kDebugWalk, "buildWalkPath to (%i, %i)", x, y);
 
-	int16 to_x = x;
-	int16 to_y = y;
+	Common::Point to(x, y);
 
 	int16 left, bottom, right, top, close, closeY, closeX;
 
 	// looks for closest usable path Point
-	if (queryPath(to_x, to_y) == 0) {
+	if (queryPath(to.x, to.y) == 0) {
 
-		right = left = to_x;
+		right = left = to.x;
 
 		do {
 			right++;
-		} while ((queryPath(right, to_y) == 0) && (right < SCREEN_WIDTH));
+		} while ((queryPath(right, to.y) == 0) && (right < SCREEN_WIDTH));
 
 		do {
 			left--;
-		} while ((queryPath(left, to_y) == 0) && (left > 0));
+		} while ((queryPath(left, to.y) == 0) && (left > 0));
 
-		right = (right == SCREEN_WIDTH) ? 1000 : right - to_x;
-		left = (left == 0) ? 1000 : to_x - left;
+		right = (right == SCREEN_WIDTH) ? 1000 : right - to.x;
+		left = (left == 0) ? 1000 : to.x - left;
 
-		top = bottom = to_y;
+		top = bottom = to.y;
 
 		do {
 			top--;
-		} while ((queryPath(to_x, top) == 0) && (top > 0));
+		} while ((queryPath(to.x, top) == 0) && (top > 0));
 
 		do {
 			bottom++;
-		} while ((queryPath(to_x, bottom) == 0) && (bottom < SCREEN_HEIGHT));
+		} while ((queryPath(to.x, bottom) == 0) && (bottom < SCREEN_HEIGHT));
 
-		top = (top == 0) ? 1000 : to_y - top;
-		bottom = (bottom == SCREEN_HEIGHT) ? 1000 : bottom - to_y;
+		top = (top == 0) ? 1000 : to.y - top;
+		bottom = (bottom == SCREEN_HEIGHT) ? 1000 : bottom - to.y;
 
 		closeX = (right >= left) ? left : right;
 		closeY = (top >= bottom) ? bottom : top;
@@ -94,42 +93,42 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 		close = (closeX >= closeY) ? closeY : closeX;
 
 		if (close == right) {
-			to_x += right;
+			to.x += right;
 			walkData3 = (_vm->_char._ani._cnv._count == 20) ? 7 : 9;
 		} else
 		if (close == left) {
-			to_x -= left;
+			to.x -= left;
 			walkData3 = 0;
 		} else
 		if (close == top) {
-			to_y -= top;
+			to.y -= top;
 		} else
 		if (close == bottom) {
-			to_y += bottom;
+			to.y += bottom;
 			walkData3 = (_vm->_char._ani._cnv._count == 20) ? 17 : 21;
 		}
 
 	}
-	debugC(1, kDebugWalk, "found closest path point at (%i, %i)", to_x, to_y);
+	debugC(1, kDebugWalk, "found closest path point at (%i, %i)", to.x, to.y);
 
 	WalkNode *v48 = (WalkNode*)malloc(sizeof(WalkNode));
 	WalkNode *v44 = (WalkNode*)malloc(sizeof(WalkNode));
 
-	v48->_x = to_x - _vm->_char._ani.width() / 2; 		// target top left coordinates
-	v48->_y = to_y - _vm->_char._ani.height();
+	v48->_x = to.x - _vm->_char._ani.width() / 2; 		// target top left coordinates
+	v48->_y = to.y - _vm->_char._ani.height();
 	v48->_next = NULL;
 	memcpy(v44, v48, sizeof(WalkNode));
 
-	uint16 v38 = walkFunc1(to_x, to_y, v44);
+	uint16 v38 = walkFunc1(to.x, to.y, v44);
 	if (v38 == 1) {
 		// destination directly reachable
-		debugC(1, kDebugWalk, "direct move to (%i, %i)", to_x, to_y);
+		debugC(1, kDebugWalk, "direct move to (%i, %i)", to.x, to.y);
 		free(v44);
 		return v48;
 	}
 
 	// path is obstructed: find alternative
-	debugC(1, kDebugWalk, "trying to build walk path to (%i, %i)", to_x, to_y);
+	debugC(1, kDebugWalk, "trying to build walk path to (%i, %i)", to.x, to.y);
 
 	WalkNode	v58;
 	memset(&v58, 0, sizeof(WalkNode));
@@ -140,9 +139,6 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 	WalkNode *_closest_node = NULL;
 
-	Point v20;
-	Point v8;
-
 	int32 v30, v34, v2C, v28;
 
 	byte _closest_node_found = 1;
@@ -152,12 +148,10 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 		v48 = &v58;
 
-		v20._x = _vm->_char._ani._zone._left;
-		v20._y = _vm->_char._ani._zone._top;
+		Common::Point v20(_vm->_char._ani._zone._left, _vm->_char._ani._zone._top);
+		Common::Point v8(_si - _vm->_char._ani._zone._left, _di - _vm->_char._ani._zone._top);
 
-		v8._x = _si - _vm->_char._ani._zone._left;
-		v8._y = _di - _vm->_char._ani._zone._top;
-		v34 = v30 = dotProduct(&v8, &v8);				// square distance from current position and target
+		v34 = v30 = dotProduct(v8, v8);				// square distance from current position and target
 
 		while (_closest_node_found != 0) {
 
@@ -168,13 +162,13 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 			// which can't be farther than the target position
 			// otherwise no _closest_node is selected
 			while (location_node != NULL) {
-				v8._x = location_node->_x - _si;
-				v8._y = location_node->_y - _di;
-				v2C = dotProduct(&v8, &v8); 			// square distance from Node to target position
+				v8.x = location_node->_x - _si;
+				v8.y = location_node->_y - _di;
+				v2C = dotProduct(v8, v8); 			// square distance from Node to target position
 
-				v8._x = location_node->_x - v20._x;
-				v8._y = location_node->_y - v20._y;
-				v28 = dotProduct(&v8, &v8); 			// square distance from Node to current position
+				v8.x = location_node->_x - v20.x;
+				v8.y = location_node->_y - v20.y;
+				v28 = dotProduct(v8, v8); 			// square distance from Node to current position
 
 				if (v2C < v34 && v28 < v30) {
 					_closest_node_found = 1;
@@ -189,10 +183,12 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 			WalkNode *_newnode = (WalkNode*)malloc(sizeof(WalkNode));
 			memcpy( _newnode, _closest_node, sizeof(WalkNode));
-			v20._x = _newnode->_x;
-			v20._y = _newnode->_y;
+			v20.x = _newnode->_x;
+			v20.y = _newnode->_y;
 
-			v34 = v30 = (_si - v20._x) * (_si - v20._x) + (_di - v20._y) * (_di - v20._y);
+			Common::Point tmp(_si - v20.x, _di - v20.y);
+
+			v34 = v30 = dotProduct(tmp, tmp);
 
 
 			debugC(1, kDebugWalk, "adding walk node (%i, %i) to path", _newnode->_x, _newnode->_y);
@@ -242,69 +238,50 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 //
 uint16 walkFunc1(int16 x, int16 y, WalkNode *Node) {
 
-	Point v4 = { 0, 0 };
+	Common::Point arg(x, y);
 
-	Point foot = {
+	Common::Point v4(0, 0);
+
+	Common::Point foot(
 		_vm->_char._ani._zone._left + _vm->_char._ani.width()/2,
 		_vm->_char._ani._zone._top + _vm->_char._ani.height()
-	};
+	);
 
-	Point v8 = {
-		foot._x,
-		foot._y
-	};
+	Common::Point v8(foot);
 
-	while (foot._x != x || foot._y != y) {
+	while (foot != arg) {
 
-		if (foot._x < x) {
-			if (queryPath(foot._x + 1, foot._y) != 0) foot._x++;
-		}
-		if (foot._x > x) {
-			if (queryPath(foot._x - 1, foot._y) != 0) foot._x--;
-		}
-		if (foot._y < y) {
-			if (queryPath(foot._x, foot._y + 1) != 0) foot._y++;
-		}
-		if (foot._y > y) {
-			if (queryPath(foot._x, foot._y - 1) != 0) foot._y--;
-		}
+		if (foot.x < x && queryPath(foot.x + 1, foot.y) != 0) foot.x++;
+		if (foot.x > x && queryPath(foot.x - 1, foot.y) != 0) foot.x--;
+		if (foot.y < y && queryPath(foot.x, foot.y + 1) != 0) foot.y++;
+		if (foot.y > y && queryPath(foot.x, foot.y - 1) != 0) foot.y--;
 
-		if ((foot._x == v8._x) && (foot._y == v8._y) && ((foot._x != x) || (foot._y != y))) {
+
+		if (foot == v8 && foot != arg) {
 			// foot couldn't move and still away from target
 
-			v4._x = foot._x;
-			v4._y = foot._y;
+			v4 = foot;
 
-			while (foot._x != x || foot._y != y) {
+			while (foot != arg) {
 
-				if (foot._x < x) {
-					if (queryPath(foot._x + 1, foot._y) == 0) foot._x++;
-				}
-				if (foot._x > x) {
-					if (queryPath(foot._x - 1, foot._y) == 0) foot._x--;
-				}
-				if (foot._y < y) {
-					if (queryPath(foot._x, foot._y + 1) == 0) foot._y++;
-				}
-				if (foot._y > y) {
-					if (queryPath(foot._x, foot._y - 1) == 0) foot._y--;
-				}
+				if (foot.x < x && queryPath(foot.x + 1, foot.y) == 0) foot.x++;
+				if (foot.x > x && queryPath(foot.x - 1, foot.y) == 0) foot.x--;
+				if (foot.y < y && queryPath(foot.x, foot.y + 1) == 0) foot.y++;
+				if (foot.y > y && queryPath(foot.x, foot.y - 1) == 0) foot.y--;
 
-				if ((foot._x == v8._x) && (foot._y == v8._y) && (foot._x != x || foot._y != y))
+				if (foot == v8 && foot != arg)
 					return 0;
 
-				v8._x = foot._x;
-				v8._y = foot._y;
+				v8 = foot;
 			}
 
-			Node->_x = v4._x - _vm->_char._ani.width() / 2;
-			Node->_y = v4._y - _vm->_char._ani.height();
+			Node->_x = v4.x - _vm->_char._ani.width() / 2;
+			Node->_y = v4.y - _vm->_char._ani.height();
 
-			return (x - v4._x) * (x - v4._x) + (y - v4._y) * (y - v4._y);
+			return (x - v4.x) * (x - v4.x) + (y - v4.y) * (y - v4.y);
 		}
 
-		v8._x = foot._x;
-		v8._y = foot._y;
+		v8 = foot;
 
 	}
 
@@ -345,15 +322,12 @@ void jobWalk(void *parm, Job *j) {
 		node = (WalkNode*)tmp;
 	}
 
-	Point dist = {
-		node->_x - _vm->_char._ani._zone._left,
-		node->_y - _vm->_char._ani._zone._top
-	};
+	Common::Point dist(node->_x - _vm->_char._ani._zone._left, node->_y - _vm->_char._ani._zone._top);
 
-	if (dist._x < 0)
-		dist._x = -dist._x;
-	if (dist._y < 0)
-		dist._y = -dist._y;
+	if (dist.x < 0)
+		dist.x = -dist.x;
+	if (dist.y < 0)
+		dist.y = -dist.y;
 
 	walkData1++;
 
@@ -361,7 +335,7 @@ void jobWalk(void *parm, Job *j) {
 	int16 v16;
 	if (_vm->_char._ani._cnv._count == 20) {
 
-		if (dist._x > dist._y) {
+		if (dist.x > dist.y) {
 			walkData2 = (node->_x > _si) ? 0 : 7;
 			walkData1 %= 12;
 			v16 = walkData1 / 2;
@@ -373,7 +347,7 @@ void jobWalk(void *parm, Job *j) {
 
 	} else {
 
-		if (dist._x > dist._y) {
+		if (dist.x > dist.y) {
 			walkData2 = (node->_x > _si) ? 0 : 9;
 			walkData1 %= 16;
 			v16 = walkData1 / 2;
