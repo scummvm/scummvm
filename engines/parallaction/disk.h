@@ -107,7 +107,7 @@ public:
 	Script* loadScript(const char* name);
 	Cnv* loadTalk(const char *name);
 	void loadObjects(const char *name, Cnv *cnv);
-	void loadPointer(StaticCnv* cnv);
+	StaticCnv* loadPointer();
 	StaticCnv* loadHead(const char* name);
 	void loadFont(const char* name, Cnv* cnv);
 	void loadStatic(const char* name, StaticCnv* cnv);

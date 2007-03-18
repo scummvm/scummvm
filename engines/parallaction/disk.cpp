@@ -307,8 +307,10 @@ StaticCnv* Disk::loadHead(const char* name) {
 }
 
 
-void Disk::loadPointer(StaticCnv* cnv) {
+StaticCnv* Disk::loadPointer() {
+	StaticCnv* cnv = new StaticCnv;
 	loadExternalStaticCnv("pointer", cnv);
+	return cnv;
 }
 
 void Disk::loadFont(const char* name, Cnv* cnv) {

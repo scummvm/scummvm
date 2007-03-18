@@ -149,7 +149,7 @@ protected:
 	static byte *		_buffers[NUM_BUFFERS];
 
 	static byte			_mouseArrow[256];
-	static StaticCnv	_mouseComposedArrow;
+	StaticCnv			*_mouseComposedArrow;
 
 	Cnv					_font;
 

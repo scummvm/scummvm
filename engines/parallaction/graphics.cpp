@@ -51,7 +51,6 @@ const byte _glyphWidths[126] = {
 
 bool		Gfx::_proportionalFont = false;
 Point		Gfx::_labelPosition[2] = { { 0, 0 }, { 0, 0 } };
-StaticCnv	Gfx::_mouseComposedArrow;
 byte *		Gfx::_buffers[];
 
 #define PALETTE_BACKUP	PALETTE_SIZE
@@ -458,7 +457,7 @@ void jobEraseLabel(void *parm, Job *j) {
 
 void Gfx::initMouse(uint16 arg_0) {
 
-	_vm->_disk->loadPointer(&_mouseComposedArrow);
+	_mouseComposedArrow = _vm->_disk->loadPointer();
 
 	byte temp[16*16];
 	memcpy(temp, _mouseArrow, 16*16);
@@ -485,17 +484,12 @@ void Gfx::setMousePointer(int16 index) {
 		g_system->showMouse(true);
 
 	} else {
-
 		// inventory item pointer
-		StaticCnv mouse_pointer;
-		memcpy(&mouse_pointer, &_mouseComposedArrow, sizeof(StaticCnv));
-		byte *v8 = mouse_pointer._data0;
+		byte *v8 = _mouseComposedArrow->_data0;
 
-	// FIXME: target offseting is not clear
+		// FIXME: target offseting is not clear
 		extractInventoryGraphics(index, v8 + 7 + 32 * 7);
-
 		g_system->setMouseCursor(v8, 32, 32, 0, 0, 0);
-
 	}
 
 	return;
