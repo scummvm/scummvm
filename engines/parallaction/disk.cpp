@@ -284,7 +284,7 @@ Script* Disk::loadScript(const char* name) {
 	return new Script(buf, true);
 }
 
-void Disk::loadHead(const char* name, StaticCnv* cnv) {
+StaticCnv* Disk::loadHead(const char* name) {
 
 	char path[PATH_LEN];
 /*
@@ -300,7 +300,9 @@ void Disk::loadHead(const char* name, StaticCnv* cnv) {
 	snprintf(path, 8, "%shead", name);
 	path[8] = '\0';
 
+	StaticCnv *cnv = new StaticCnv;
 	loadExternalStaticCnv(path, cnv);
+	return cnv;
 
 }
 

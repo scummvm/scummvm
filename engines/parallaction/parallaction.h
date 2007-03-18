@@ -236,7 +236,7 @@ struct Location {
 
 struct Character {
 	Animation		_ani;
-	StaticCnv		_head;
+	StaticCnv		*_head;
 	Cnv		    	*_talk;
 	Cnv 			_normalFrames;
 	Cnv				_miniFrames;
@@ -249,10 +249,11 @@ struct Character {
 //		_talk._count = 0;
 //		_talk._array = NULL;
 
-		_head._width = 0;
-		_head._height = 0;
-		_head._data0 = NULL;
-		_head._data1 = NULL;
+		_head = NULL;
+//		_head._width = 0;
+//		_head._height = 0;
+//		_head._data0 = NULL;
+//		_head._data1 = NULL;
 
 		_objs._count = 0;
 
