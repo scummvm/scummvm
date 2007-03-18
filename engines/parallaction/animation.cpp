@@ -138,8 +138,8 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 			vD0->_z = atoi(_tokens[3]);
 		}
 		if (!scumm_stricmp(_tokens[0], "moveto")) {
-			vD0->_zone._moveTo._x = atoi(_tokens[1]);
-			vD0->_zone._moveTo._y = atoi(_tokens[2]);
+			vD0->_zone._moveTo.x = atoi(_tokens[1]);
+			vD0->_zone._moveTo.y = atoi(_tokens[2]);
 		}
 
 		fillBuffers(script, true);

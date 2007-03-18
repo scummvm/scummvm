@@ -388,14 +388,14 @@ void Parallaction::changeLocation(char *location) {
 	_vm->_char._ani._zone._oldTop = -1000;
 
 	_vm->_char._ani.field_50 = 0;
-	if (_location._startPosition._x != -1000) {
-		_vm->_char._ani._zone._left = _location._startPosition._x;
-		_vm->_char._ani._zone._top = _location._startPosition._y;
+	if (_location._startPosition.x != -1000) {
+		_vm->_char._ani._zone._left = _location._startPosition.x;
+		_vm->_char._ani._zone._top = _location._startPosition.y;
 		_vm->_char._ani._frame = _location._startFrame;
-		_location._startPosition._y = -1000;
-		_location._startPosition._x = -1000;
+		_location._startPosition.y = -1000;
+		_location._startPosition.x = -1000;
 
-		debugC(2, kDebugLocation, "changeLocation: initial position set to x: %i, y: %i, f: %i", _location._startPosition._x, _location._startPosition._y, _location._startFrame);
+		debugC(2, kDebugLocation, "changeLocation: initial position set to x: %i, y: %i, f: %i", _location._startPosition.x, _location._startPosition.y, _location._startFrame);
 	}
 
 	byte palette[PALETTE_SIZE];

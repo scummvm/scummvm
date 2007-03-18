@@ -419,8 +419,8 @@ uint16 checkDoor() {
 	if (z != NULL) {
 
 		if ((z->_flags & kFlagsClosed) == 0) {
-			_vm->_location._startPosition._x = z->u.door->_startPos._x;
-			_vm->_location._startPosition._y = z->u.door->_startPos._y;
+			_vm->_location._startPosition.x = z->u.door->_startPos.x;
+			_vm->_location._startPosition.y = z->u.door->_startPos.y;
 			_vm->_location._startFrame = z->u.door->_startFrame;
 			strcpy( _vm->_location._name, z->u.door->_location );
 

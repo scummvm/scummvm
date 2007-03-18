@@ -83,8 +83,8 @@ void Parallaction::parseZone(Script &script, Node *list, char *name) {
 			z->_bottom = atoi(_tokens[4]);
 		}
 		if (!scumm_stricmp(_tokens[0], "moveto")) {
-			z->_moveTo._x = atoi(_tokens[1]);
-			z->_moveTo._y = atoi(_tokens[2]);
+			z->_moveTo.x = atoi(_tokens[1]);
+			z->_moveTo.y = atoi(_tokens[2]);
 		}
 		if (!scumm_stricmp(_tokens[0], "type")) {
 			if (_tokens[2][0] != '\0') {
@@ -299,8 +299,8 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 			}
 
 			if (!scumm_stricmp(_tokens[0],	"startpos")) {
-				u->door->_startPos._x = atoi(_tokens[1]);
-				u->door->_startPos._y = atoi(_tokens[2]);
+				u->door->_startPos.x = atoi(_tokens[1]);
+				u->door->_startPos.y = atoi(_tokens[2]);
 				u->door->_startFrame = atoi(_tokens[3]);
 			}
 			break;

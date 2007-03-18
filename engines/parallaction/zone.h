@@ -97,7 +97,7 @@ struct DoorData {	// size = 28
 	char*	_location;
 	Cnv 	_cnv;
 	byte*	_background;
-	Point	_startPos;
+	Common::Point	_startPos;
 	uint16	_startFrame;
 };
 struct HearData {	// size = 20
@@ -139,7 +139,7 @@ struct Zone : public Node {
 	uint16			field_2E;		// unused
 	TypeData	u;
 	Command 		*_commands;
-	Point			_moveTo;
+	Common::Point	_moveTo;
 
 	void getRect(Common::Rect& r) const {
 		r.left = _left;

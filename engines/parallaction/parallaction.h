@@ -222,7 +222,7 @@ class MidiPlayer;
 
 struct Location {
 
-	Point		_startPosition;
+	Common::Point	_startPosition;
 	uint16		_startFrame;
 	Node		_walkNodes;
 	char		_name[100];

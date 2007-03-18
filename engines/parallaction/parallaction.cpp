@@ -201,8 +201,8 @@ int Parallaction::init() {
 	memset(_locationNames, 0, 120*32);
 	_numLocations = 0;
 
-	_location._startPosition._x = -1000;
-	_location._startPosition._x = -1000;
+	_location._startPosition.x = -1000;
+	_location._startPosition.y = -1000;
 	_location._startFrame = 0;
 	_location._walkNodes._prev = NULL;
 	_location._walkNodes._next = NULL;
@@ -260,12 +260,12 @@ void Parallaction::initGame() {
 	strcpy(_saveData1, _location._name);
 	parseLocation(_location._name);
 
-	if (_location._startPosition._x != -1000) {
-		_vm->_char._ani._zone._left = _location._startPosition._x;
-		_vm->_char._ani._zone._top = _location._startPosition._y;
+	if (_location._startPosition.x != -1000) {
+		_vm->_char._ani._zone._left = _location._startPosition.x;
+		_vm->_char._ani._zone._top = _location._startPosition.y;
 		_vm->_char._ani._frame = _location._startFrame;
-		_location._startPosition._y = -1000;
-		_location._startPosition._x = -1000;
+		_location._startPosition.y = -1000;
+		_location._startPosition.x = -1000;
 	}
 
 	return;
@@ -614,9 +614,8 @@ Parallaction::InputData *Parallaction::translateInput() {
 				// else it will move to the mouse position
 				_input._event = kEvWalk;
 				_actionAfterWalk = true;
-				if (z->_moveTo._y != 0) {
-					_input._mousePos.x = z->_moveTo._x;
-					_input._mousePos.y = z->_moveTo._y;
+				if (z->_moveTo.y != 0) {
+					_input._mousePos = z->_moveTo;
 				}
 			}
 

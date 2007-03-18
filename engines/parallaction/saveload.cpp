@@ -68,10 +68,10 @@ void Parallaction::doLoadGame(uint16 slot) {
 	strcat(_vm->_location._name, ".");
 
 	f->readLine(s, 15);
-	_location._startPosition._x = atoi(s);
+	_location._startPosition.x = atoi(s);
 
 	f->readLine(s, 15);
-	_location._startPosition._y = atoi(s);
+	_location._startPosition.y = atoi(s);
 
 	f->readLine(s, 15);
 	_score = atoi(s);
