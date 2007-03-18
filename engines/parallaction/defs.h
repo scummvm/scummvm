@@ -97,7 +97,7 @@ public:
 
 	byte* getFramePtr(uint16 index) {
 		if (index >= _count)
-			error("frame %i does not exist", index);
+			return NULL;
 		return _array[index];
 	}
 };

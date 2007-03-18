@@ -779,6 +779,12 @@ void Parallaction::pickMusic(const char *location) {
 	}
 }
 
+//	FIXME: currently, changeCharacter does reload every chunk of
+//	information about the new character every time it is loaded.
+//	So, it is useless to load both mini and normal frames each
+//	since only one of them will actually be used before the
+//	following call to changeCharacter.
+//
 void Parallaction::changeCharacter(const char *name) {
 
 	bool miniCharacter = false;
@@ -825,9 +831,9 @@ void Parallaction::changeCharacter(const char *name) {
 	}
 
 	if (miniCharacter)
-		memcpy(&_vm->_char._ani._cnv, &_vm->_char._miniFrames, sizeof(Cnv));
+		_vm->_char._ani._cnv = &_vm->_char._miniFrames;
 	else
-		memcpy(&_vm->_char._ani._cnv, &_vm->_char._normalFrames, sizeof(Cnv));
+		_vm->_char._ani._cnv = &_vm->_char._normalFrames;
 
 	strcpy(_characterName1, v32);
 

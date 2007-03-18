@@ -126,7 +126,8 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 					strcat(vC8, "tras");
 				}
 			}
-			_disk->loadFrames(vC8, &vD0->_cnv);
+			vD0->_cnv = new Cnv;
+			_disk->loadFrames(vC8, vD0->_cnv);
 //			int16 _ax = _vm->_gfx->loadCnv(vC8, &vD0->_cnv);
 //			if (_ax == -1) exit(-1);
 		}
@@ -169,8 +170,11 @@ void Parallaction::freeAnimations() {
 	Animation *v4 = (Animation*)_animations._next;
 	while (v4) {
 		freeScript(v4->_program);
-		_vm->_gfx->freeCnv(&v4->_cnv);
+		_vm->_gfx->freeCnv(v4->_cnv);
+		if (v4->_cnv) delete v4->_cnv;
 		v4 = (Animation*)v4->_zone._next;
+
+		// TODO: delete Animation
 	}
 
 	return;

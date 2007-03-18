@@ -298,7 +298,7 @@ struct Program : public Node {
 struct Animation {
 	Zone		_zone;
 	Program 	*_program;
-	Cnv 		_cnv;
+	Cnv 		*_cnv;
 	int16		_frame;
 	uint16		field_50;		// unused
 	int16		_z;
@@ -328,19 +328,23 @@ struct Animation {
 	}
 
 	uint16 width() const {
-		return _cnv._width;
+		if (!_cnv) return 0;
+		return _cnv->_width;
 	}
 
 	uint16 height() const {
-		return _cnv._height;
+		if (!_cnv) return 0;
+		return _cnv->_height;
 	}
 
-	uint16 getFrameNum() {
-		return _cnv._count;
+	uint16 getFrameNum() const {
+		if (!_cnv) return 0;
+		return _cnv->_count;
 	}
 
-	byte* getFrameData(uint32 index) {
-		return _cnv.getFramePtr(index);
+	byte* getFrameData(uint32 index) const {
+		if (!_cnv) return NULL;
+		return _cnv->getFramePtr(index);
 	}
 };
 
