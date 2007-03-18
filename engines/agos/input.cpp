@@ -357,7 +357,7 @@ dragMode:
 	_dragCount = 0;
 	_dragEnd = 0;
 
-	boxController(_mouseX, _mouseY, 1);
+	boxController(_mouse.x, _mouse.y, 1);
 
 	if (_currentBox != NULL) {
 		_hitAreaObjectItem = _currentBox->item_ptr;

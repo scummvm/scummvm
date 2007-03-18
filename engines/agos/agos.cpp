@@ -259,11 +259,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_firstTimeStruct = 0;
 	_pendingDeleteTimeEvent = 0;
 
-	_mouseX = 0;
-	_mouseY = 0;
-	_mouseXOld = 0;
-	_mouseYOld = 0;
-
 	_leftButtonDown = 0;
 	_rightButtonDown = 0;
 	_noRightClick = false;
@@ -445,9 +440,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_interactY = 0;
 	_oracleMaxScrollY = 0;
 	_noOracleScroll = 0;
-
-	_sdlMouseX = 0;
-	_sdlMouseY = 0;
 
 	_backGroundBuf = 0;
 	_frontBuf = 0;

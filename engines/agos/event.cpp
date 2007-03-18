@@ -377,19 +377,12 @@ void AGOSEngine::delay(uint amount) {
 					_keyPressed = (byte)event.kbd.ascii;
 				break;
 			case Common::EVENT_MOUSEMOVE:
-				_sdlMouseX = event.mouse.x;
-				_sdlMouseY = event.mouse.y;
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				if (getGameType() == GType_FF)
 					setBitFlag(89, true);
 				_leftButtonDown++;
 				_leftButton = 1;
-
-#if defined (_WIN32_WCE) || defined(PALMOS_MODE)
-				_sdlMouseX = event.mouse.x;
-				_sdlMouseY = event.mouse.y;
-#endif
 				break;
 			case Common::EVENT_LBUTTONUP:
 				if (getGameType() == GType_FF)

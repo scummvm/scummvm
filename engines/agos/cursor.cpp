@@ -23,6 +23,7 @@
 
 #include "common/stdafx.h"
 
+#include "common/events.h"
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
@@ -308,21 +309,24 @@ void AGOSEngine::handleMouseMoved() {
 	}
 
 	CursorMan.showMouse(true);
-	pollMouseXY();
 
-	if (_mouseX <= 0)
-		_mouseX = 0;
-	if (_mouseX >= _screenWidth - 1)
-		_mouseX = _screenWidth - 1;
+	_mouse = _system->getEventManager()->getMousePos();
 
-	if (_mouseY <= 0)
-		_mouseY = 0;
-	if (_mouseY >= _screenHeight - 1)
-		_mouseY = _screenHeight - 1;
+	// Clip the mouse to the screen
+	// TODO this should not be necessary 
+	if (_mouse.x <= 0)
+		_mouse.x = 0;
+	if (_mouse.x >= _screenWidth - 1)
+		_mouse.x = _screenWidth - 1;
+
+	if (_mouse.y <= 0)
+		_mouse.y = 0;
+	if (_mouse.y >= _screenHeight - 1)
+		_mouse.y = _screenHeight - 1;
 
 	if (_defaultVerb) {
 		uint id = 101;
-		if (_mouseY >= 136)
+		if (_mouse.y >= 136)
 			id = 102;
 		if (_defaultVerb != id)
 			resetVerbs();
@@ -337,7 +341,7 @@ void AGOSEngine::handleMouseMoved() {
 
 	if (getGameType() == GType_FF) {
 		if (getBitFlag(99)) { // Oracle
-			if (_mouseX >= 10 && _mouseX <= 635 && _mouseY >= 5 && _mouseY <= 475) {
+			if (_mouse.x >= 10 && _mouse.x <= 635 && _mouse.y >= 5 && _mouse.y <= 475) {
 				setBitFlag(98, true);
 			} else {
 				if (getBitFlag(98)) {
@@ -345,7 +349,7 @@ void AGOSEngine::handleMouseMoved() {
 				}
 			}
 		} else if (getBitFlag(88)) { // Close Up
-			if (_mouseX >= 10 && _mouseX <= 635 && _mouseY >= 5 && _mouseY <= 475) {
+			if (_mouse.x >= 10 && _mouse.x <= 635 && _mouse.y >= 5 && _mouse.y <= 475) {
 				setBitFlag(87, true);
 			} else {
 				if (getBitFlag(87)) {
@@ -361,15 +365,15 @@ void AGOSEngine::handleMouseMoved() {
 	} else if (getGameType() == GType_SIMON2) {
 		if (getBitFlag(79)) {
 			if (!_vgaVar9) {
-				if (_mouseX >= 315 || _mouseX < 9)
+				if (_mouse.x >= 315 || _mouse.x < 9)
 					goto get_out2;
 				_vgaVar9 = 1;
 			}
 			if (_scrollCount == 0) {
-				if (_mouseX >= 315) {
+				if (_mouse.x >= 315) {
 					if (_scrollX != _scrollXMax)
 						_scrollFlag = 1;
-				} else if (_mouseX < 8) {
+				} else if (_mouse.x < 8) {
 					if (_scrollX != 0)
 						_scrollFlag = -1;
 				}
@@ -395,12 +399,14 @@ void AGOSEngine::handleMouseMoved() {
 		}
 	}
 
-	if (_mouseX != _mouseXOld || _mouseY != _mouseYOld)
+	// FIXME: The value of _mouseOld is *never* changed and hence
+	// always equal to (0,0). This seems like a bug.
+	if (_mouse != _mouseOld)
 		_needHitAreaRecalc++;
 
 	if (_leftButtonOld == 0 && _leftButtonCount != 0) {
 		_lastClickRem = 0;
-		boxController(_mouseX, _mouseY, 3);
+		boxController(_mouse.x, _mouse.y, 3);
 	}
 	_leftButtonOld = _leftButton;
 
@@ -437,7 +443,7 @@ void AGOSEngine::handleMouseMoved() {
 	}
 
 boxstuff:
-	boxController(_mouseX, _mouseY, x);
+	boxController(_mouse.x, _mouse.y, x);
 	_lastHitArea3 = _lastHitArea;
 	if (x == 1 && _lastHitArea == NULL)
 		_lastHitArea3 = (HitArea *) -1;
@@ -463,11 +469,6 @@ void AGOSEngine::mouseOn() {
 		_mouseHideCount--;
 
 	_lockWord &= ~1;
-}
-
-void AGOSEngine::pollMouseXY() {
-	_mouseX = _sdlMouseX;
-	_mouseY = _sdlMouseY;
 }
 
 void AGOSEngine::initMouse() {

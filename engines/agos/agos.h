@@ -356,8 +356,8 @@ protected:
 
 	TimeEvent *_firstTimeStruct, *_pendingDeleteTimeEvent;
 
-	int _mouseX, _mouseY;
-	int _mouseXOld, _mouseYOld;
+	Common::Point _mouse;
+	Common::Point _mouseOld;
 
 	byte *_mouseData;
 	byte _animatePointer;
@@ -514,8 +514,6 @@ protected:
 	char _saveLoadName[108];
 
 	bool _oopsValid;
-
-	int _sdlMouseX, _sdlMouseY;
 
 	byte *_backGroundBuf;
 	byte *_frontBuf;
@@ -777,7 +775,6 @@ protected:
 	void invertBox(HitArea * ha, byte a, byte b, byte c, byte d);
 
 	void handleMouseMoved();
-	void pollMouseXY();
 	void initMouse();
 	void loadMouseImage();
 	void drawMousePointer();

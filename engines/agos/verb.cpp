@@ -511,9 +511,9 @@ void AGOSEngine::resetVerbs() {
 		if (getGameType() == GType_SIMON2) {
 			id = 2;
 			if (!getBitFlag(79))
-				id = (_mouseY >= 136) ? 102 : 101;
+				id = (_mouse.y >= 136) ? 102 : 101;
 		} else {
-			id = (_mouseY >= 136) ? 102 : 101;
+			id = (_mouse.y >= 136) ? 102 : 101;
 		}
 
 		_defaultVerb = id;
