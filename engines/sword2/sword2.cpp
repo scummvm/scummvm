@@ -554,7 +554,7 @@ void Sword2Engine::parseInputEvents() {
 			}
 			break;
 		case Common::EVENT_MOUSEMOVE:
-			if (!(_inputEventFilter & RD_KEYDOWN)) {
+			if (!(_inputEventFilter & RD_MOUSEMOVE)) {
 				_mouse->setPos(event.mouse.x, event.mouse.y - MENUDEEP);
 			}
 			break;
