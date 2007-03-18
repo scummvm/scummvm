@@ -668,6 +668,7 @@ uint16 Control::doMusicSlide(void) {
 	uint8 volume;
 	while (_mouseClicked) {
 		delay(50);
+		mouse = _system->getEventManager()->getMousePos();
 		int newY = ofsY + mouse.y;
 		if (newY < 59) newY = 59;
 		if (newY > 91) newY = 91;
@@ -697,6 +698,7 @@ uint16 Control::doSpeedSlide(void) {
 	speedDelay += 2;
 	while (_mouseClicked) {
 		delay(50);
+		mouse = _system->getEventManager()->getMousePos();
 		int newY = ofsY + mouse.y;
 		if (newY < MPNL_Y + 93) newY = MPNL_Y + 93;
 		if (newY > MPNL_Y + 104) newY = MPNL_Y + 104;
