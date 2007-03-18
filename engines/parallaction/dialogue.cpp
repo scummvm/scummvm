@@ -377,13 +377,7 @@ void runDialogue(SpeakData *data) {
 
 	enterDialogue();
 	debugC(1, kDebugDialogue, "runDialogue: enterDialogue ok");
-/*
-	// the only character which can have a dialogue inside the museum location is Dino
-	if (!scumm_stricmp(_name, "museum")) {
-		_vm->_gfx->freeCnv( &_normalFrames );
-		debugC(1, kDebugDialogue, "runDialogue: special trick for 'museum' location");
-	}
-*/
+
 	_vm->_gfx->setFont("comic");
 
 	Cnv v6E;
@@ -451,19 +445,7 @@ void runDialogue(SpeakData *data) {
 
 	exitDialogue();
 	debugC(1, kDebugDialogue, "runDialogue: exit dialogue ok");
-/*
-	// as mentioned in the comment at the beginning of this routine, the only
-	// character which can have a dialogue inside the museum location is Dino,
-	// that's why this hack (with hardcoded Dino) works
-	if (!scumm_stricmp(_name, "museum")) {
-		_vm->_disk->selectArchive("disk1");
-		_vm->_disk->loadFrames(_dinoName, &_normalFrames);
 
-		memcpy(&_vm->_char._ani._cnv, &_normalFrames, sizeof(Cnv));
-
-		debugC(1, kDebugDialogue, "runDialogue: special trick for 'museum' location ok");
-	}
-*/
 	debugC(1, kDebugDialogue, "runDialogue: running zone commands");
 	runCommands(v34);
 
