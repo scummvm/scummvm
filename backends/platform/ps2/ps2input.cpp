@@ -125,9 +125,9 @@ bool Ps2Input::pollEvent(Common::Event *event) {
 			_mButtons = mData.buttons;
 			if (change & (PS2MOUSE_BTN1 | PS2MOUSE_BTN2)) {
 				if (change & PS2MOUSE_BTN1)
-					event->type = (_mButtons & PS2MOUSE_BTN1) ? Common::EVENT_LBUTTONDOWN : OSystem::EVENT_LBUTTONUP;
+					event->type = (_mButtons & PS2MOUSE_BTN1) ? Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP;
 				else
-					event->type = (_mButtons & PS2MOUSE_BTN2) ? Common::EVENT_RBUTTONDOWN : OSystem::EVENT_RBUTTONUP;
+					event->type = (_mButtons & PS2MOUSE_BTN2) ? Common::EVENT_RBUTTONDOWN : Common::EVENT_RBUTTONUP;
 				event->mouse.x = _posX;
 				event->mouse.y = _posY;
 				return true;
@@ -177,9 +177,9 @@ bool Ps2Input::pollEvent(Common::Event *event) {
 		if (checkPadMouse) {
 			if (btnChange & (PAD_CROSS | PAD_CIRCLE)) {
 				if (btnChange & PAD_CROSS)
-					event->type = (buttons & PAD_CROSS) ?  Common::EVENT_LBUTTONDOWN : OSystem::EVENT_LBUTTONUP;
+					event->type = (buttons & PAD_CROSS) ?  Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP;
 				else
-					event->type = (buttons & PAD_CIRCLE) ? Common::EVENT_RBUTTONDOWN : OSystem::EVENT_RBUTTONUP;
+					event->type = (buttons & PAD_CIRCLE) ? Common::EVENT_RBUTTONDOWN : Common::EVENT_RBUTTONUP;
 				event->mouse.x = _posX;
 				event->mouse.y = _posY;
 				_padLastButtons = buttons;
@@ -238,7 +238,7 @@ bool Ps2Input::getKeyEvent(Common::Event *event, uint16 buttonCode, bool down) {
 			buttonCode >>= 1;
 		}
 		if (_padCodes[entry]) {
-			event->type = (down) ? Common::EVENT_KEYDOWN : OSystem::EVENT_KEYUP;
+			event->type = (down) ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
 			event->kbd.keycode = _padCodes[entry];
 			event->kbd.flags = _padFlags[entry];
 			event->kbd.ascii = mapKey(_padCodes[entry], _padFlags[entry]);

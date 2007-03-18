@@ -1111,13 +1111,13 @@ void addEventsToQueue() {
 		if (!keyboardEnable) {
 			if ((mouseMode != MOUSE_HOVER) || (!displayModeIs8Bit)) {
 					if (getPenDown() && (!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {	
-						event.type = ((mouseMode == MOUSE_LEFT) || (!displayModeIs8Bit))? Common::EVENT_LBUTTONDOWN: OSystem::EVENT_RBUTTONDOWN;
+						event.type = ((mouseMode == MOUSE_LEFT) || (!displayModeIs8Bit))? Common::EVENT_LBUTTONDOWN: Common::EVENT_RBUTTONDOWN;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
 					}
 					
 					if (getPenReleased()) {
-						event.type = mouseMode == MOUSE_LEFT? Common::EVENT_LBUTTONUP: OSystem::EVENT_RBUTTONUP;
+						event.type = mouseMode == MOUSE_LEFT? Common::EVENT_LBUTTONUP: Common::EVENT_RBUTTONUP;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
 					}

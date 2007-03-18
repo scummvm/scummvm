@@ -523,7 +523,7 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 		_kbdClut[_keySelected] = 0xffff;
 	
 		if  (buttonsChanged & PSP_CTRL_CROSS) {
-			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? Common::EVENT_KEYDOWN : OSystem::EVENT_KEYUP;
+			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
 			if(_keySelected > 26) {
 				event.kbd.flags = 0;
 				switch(_keySelected) {

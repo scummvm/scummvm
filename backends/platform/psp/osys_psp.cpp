@@ -431,14 +431,14 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 
 	if (buttonsChanged & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_SELECT | PSP_CTRL_SQUARE)) {
 		if (buttonsChanged & PSP_CTRL_CROSS) {
-			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? Common::EVENT_LBUTTONDOWN : OSystem::EVENT_LBUTTONUP;
+			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP;
 		}
 		else if (buttonsChanged & PSP_CTRL_CIRCLE) {
-			event.type = (pad.Buttons & PSP_CTRL_CIRCLE) ? Common::EVENT_RBUTTONDOWN : OSystem::EVENT_RBUTTONUP;
+			event.type = (pad.Buttons & PSP_CTRL_CIRCLE) ? Common::EVENT_RBUTTONDOWN : Common::EVENT_RBUTTONUP;
 		}
 		else {
 			//any of the other buttons.
-			event.type = buttonsChanged & pad.Buttons ? Common::EVENT_KEYDOWN : OSystem::EVENT_KEYUP;
+			event.type = buttonsChanged & pad.Buttons ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
 			event.kbd.flags = 0;
 			
 			if (buttonsChanged & PSP_CTRL_LTRIGGER) {
