@@ -255,8 +255,6 @@ void KyraEngine::loadGame(const char *fileName) {
 	_abortWalkFlag = true;
 	_abortWalkFlag2 = false;
 	_mousePressFlag = false;
-	_mouseX = brandonX;
-	_mouseY = brandonY;
 	_system->warpMouse(brandonX, brandonY);
 
 	if (in->ioFailed())

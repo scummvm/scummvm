@@ -1377,8 +1377,9 @@ int KyraEngine::o1_waitForConfirmationMouseClick(ScriptState *script) {
 	// }
 	processButtonList(_buttonList);
 	_skipFlag = false;
-	script->variables[1] = _mouseX;
-	script->variables[2] = _mouseY;
+	Common::Point mouse = getMousePos();
+	script->variables[1] = mouse.x;
+	script->variables[2] = mouse.y;
 	return 0;
 }
 
@@ -1514,8 +1515,6 @@ int KyraEngine::o1_restoreBrandonsMovementDelay(ScriptState *script) {
 int KyraEngine::o1_setMousePos(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setMousePos(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	_system->warpMouse(stackPos(0), stackPos(1));
-	_mouseX = stackPos(0);
-	_mouseY = stackPos(1);
 	return 0;
 }
 

@@ -305,13 +305,12 @@ public:
 	void disableTimer(uint8 timer);
 
 	void delayWithTicks(int ticks);
-	
+
 	void saveGame(const char *fileName, const char *saveName);
 	void loadGame(const char *fileName);
 
-	int mouseX() { return _mouseX; }
-	int mouseY() { return _mouseY; }
-	
+	Common::Point getMousePos() const;
+
 	int setGameFlag(int flag);
 	int queryGameFlag(int flag);
 	int resetGameFlag(int flag);
@@ -531,7 +530,7 @@ protected:
 	void setBrandonPoisonFlags(int reset);
 	void resetBrandonPoisonFlags();
 
-	void processInput(int xpos, int ypos);
+	void processInput();
 	int processInputHelper(int xpos, int ypos);
 	int clickEventHandler(int xpos, int ypos);
 	void clickEventHandler2();
@@ -707,7 +706,6 @@ protected:
 	uint16 _gameSpeed;
 	uint16 _tickLength;
 	int _lang;
-	int _mouseX, _mouseY;
 	int8 _itemInHand;
 	int _mouseState;
 	bool _handleInput;

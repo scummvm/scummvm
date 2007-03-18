@@ -316,7 +316,8 @@ void KyraEngine::processButtonList(Button *list) {
 		}
 		y += _screen->_screenDimTable[list->dimTableIndex].sy;
 		
-		if (_mouseX >= x && _mouseY >= y && x + list->width >= _mouseX && y + list->height >= _mouseY) {
+		Common::Point mouse = getMousePos();
+		if (mouse.x >= x && mouse.y >= y && x + list->width >= mouse.x && y + list->height >= mouse.y) {
 			int processMouseClick = 0;
 			if (list->flags & 0x400) {
 				if (_mousePressFlag) {
@@ -820,12 +821,6 @@ void KyraEngine::gui_getInput() {
 			_mousePressFlag = false;
 			break;
 		case Common::EVENT_MOUSEMOVE:
-			_mouseX = event.mouse.x;
-			_mouseY = event.mouse.y;
-			if (_flags.useHiResOverlay) {
-				_mouseX >>= 1;
-				_mouseY >>= 1;
-			}
 			_system->updateScreen();
 			lastScreenUpdate = now;
 			break;
@@ -1378,6 +1373,7 @@ int KyraEngine::gui_scrollDown(Button *button) {
 void KyraEngine::gui_processHighlights(Menu &menu) {
 	int x1, y1, x2, y2;
 
+	Common::Point mouse = getMousePos();
 	for (int i = 0; i < menu.nrOfItems; i++) {
 		if (!menu.item[i].enabled)
 			continue;
@@ -1388,8 +1384,8 @@ void KyraEngine::gui_processHighlights(Menu &menu) {
 		x2 = x1 + menu.item[i].width;
 		y2 = y1 + menu.item[i].height;
 
-		if (_mouseX > x1 && _mouseX < x2 &&
-			_mouseY > y1 && _mouseY < y2) {
+		if (mouse.x > x1 && mouse.x < x2 &&
+			mouse.y > y1 && mouse.y < y2) {
 			
 			if (menu.highlightedItem != i) {
 				if (menu.item[menu.highlightedItem].enabled )
@@ -1481,14 +1477,6 @@ bool KyraEngine::gui_mainMenuGetInput() {
 		case Common::EVENT_QUIT:
 			quitGame();
 			break;
-		case Common::EVENT_MOUSEMOVE:
-			_mouseX = event.mouse.x;
-			_mouseY = event.mouse.y;
-			if (_flags.useHiResOverlay) {
-				_mouseX >>= 1;
-				_mouseY >>= 1;
-			}
-			break;
 		case Common::EVENT_LBUTTONUP:
 			return true;
 		default:
@@ -1541,8 +1529,9 @@ int KyraEngine::gui_handleMainMenu() {
 		gui_updateMainMenuAnimation();
 		bool mousePressed = gui_mainMenuGetInput();
 
-		if (menuRect.contains(mouseX(), mouseY())) {
-			int item = (mouseY() - menuRect.top) / fh;
+		Common::Point mouse = getMousePos();
+		if (menuRect.contains(mouse)) {
+			int item = (mouse.y - menuRect.top) / fh;
 
 			if (item != selected) {
 				gui_printString(strings[selected], textPos, menuRect.top + selected * fh, 0x80, 0, 5);

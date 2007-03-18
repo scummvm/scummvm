@@ -958,7 +958,7 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 			_currentCharacter->currentAnimFrame = 7;
 			_animator->animRefreshNPC(0);
 			_animator->updateAllObjectShapes();
-			processInput(_mouseX, _mouseY);
+			processInput();
 			return 0;
 		}
 		bool forceContinue = false;

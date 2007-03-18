@@ -575,7 +575,8 @@ void ScreenAnimator::refreshObject(AnimObject *object) {
 
 void ScreenAnimator::makeBrandonFaceMouse() {
 	debugC(9, kDebugLevelAnimator, "ScreenAnimator::makeBrandonFaceMouse()");
-	if (_vm->mouseX() >= _vm->_currentCharacter->x1) {
+	Common::Point mouse = _vm->getMousePos();
+	if (mouse.x >= _vm->_currentCharacter->x1) {
 		_vm->_currentCharacter->facing = 3;
 	} else {
 		_vm->_currentCharacter->facing = 5;

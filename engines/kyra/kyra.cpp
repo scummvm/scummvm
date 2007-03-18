@@ -265,7 +265,6 @@ int KyraEngine::init() {
 	_abortWalkFlag2 = false;
 	_talkingCharNum = -1;
 	_charSayUnk3 = -1;
-	_mouseX = _mouseY = -1;
 	memset(_currSentenceColor, 0, 3);
 	_startSentencePalIndex = -1;
 	_fadeText = false;
@@ -636,12 +635,6 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 
 				break;
 			case Common::EVENT_MOUSEMOVE:
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
-				if (_flags.useHiResOverlay) {
-					_mouseX >>= 1;
-					_mouseY >>= 1;
-				}
 				_animator->_updateScreen = true;
 				break;
 			case Common::EVENT_QUIT:
@@ -653,19 +646,12 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 			case Common::EVENT_LBUTTONUP:
 				_mousePressFlag = false;
 
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
-				if (_flags.useHiResOverlay) {
-					_mouseX >>= 1;
-					_mouseY >>= 1;
-				}
-
 				if (_abortWalkFlag2) 
 					_abortWalkFlag = true;
 
 				if (_handleInput) {
 					_handleInput = false;
-					processInput(_mouseX, _mouseY);
+					processInput();
 					_handleInput = true;
 				} else
 					_skipFlag = true;
@@ -703,6 +689,15 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 	
 }
 
+Common::Point KyraEngine::getMousePos() const {
+	Common::Point mouse = g_system->getEventManager()->getMousePos();
+	if (_flags.useHiResOverlay) {
+		mouse.x >>= 1;
+		mouse.y >>= 1;
+	}
+	return mouse;
+}
+
 void KyraEngine::waitForEvent() {
 	bool finished = false;
 	Common::Event event;
@@ -712,10 +707,6 @@ void KyraEngine::waitForEvent() {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				finished = true;
-				break;
-			case Common::EVENT_MOUSEMOVE:
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
 				break;
 			case Common::EVENT_QUIT:
 				quitGame();
@@ -843,7 +834,11 @@ void KyraEngine::resetBrandonPoisonFlags() {
 #pragma mark - Input
 #pragma mark -
 
-void KyraEngine::processInput(int xpos, int ypos) {
+void KyraEngine::processInput() {
+	Common::Point mouse = getMousePos();
+	int xpos = mouse.x;
+	int ypos = mouse.y;
+
 	debugC(9, kDebugLevelMain, "KyraEngine::processInput(%d, %d)", xpos, ypos);
 	_abortWalkFlag2 = false;
 
@@ -952,9 +947,10 @@ void KyraEngine::updateMousePointer(bool forceUpdate) {
 	int newMouseState = 0;
 	int newX = 0;
 	int newY = 0;
-	if (_mouseY <= 158) {
-		if (_mouseX >= 12) {
-			if (_mouseX >= 308) {
+	Common::Point mouse = getMousePos();
+	if (mouse.y <= 158) {
+		if (mouse.x >= 12) {
+			if (mouse.x >= 308) {
 				if (_walkBlockEast == 0xFFFF) {
 					newMouseState = -2;
 				} else {
@@ -963,7 +959,7 @@ void KyraEngine::updateMousePointer(bool forceUpdate) {
 					newX = 7;
 					newY = 5;
 				}
-			} else if (_mouseY >= 136) {
+			} else if (mouse.y >= 136) {
 				if (_walkBlockSouth == 0xFFFF) {
 					newMouseState = -2;
 				} else {
@@ -972,7 +968,7 @@ void KyraEngine::updateMousePointer(bool forceUpdate) {
 					newX = 5;
 					newY = 7;
 				}
-			} else if (_mouseY < 12) {
+			} else if (mouse.y < 12) {
 				if (_walkBlockNorth == 0xFFFF) {
 					newMouseState = -2;
 				} else {
@@ -993,8 +989,8 @@ void KyraEngine::updateMousePointer(bool forceUpdate) {
 		}
 	}
 	
-	if (_mouseX >= _entranceMouseCursorTracks[0] && _mouseY >= _entranceMouseCursorTracks[1]
-		&& _mouseX <= _entranceMouseCursorTracks[2] && _mouseY <= _entranceMouseCursorTracks[3]) {
+	if (mouse.x >= _entranceMouseCursorTracks[0] && mouse.y >= _entranceMouseCursorTracks[1]
+		&& mouse.x <= _entranceMouseCursorTracks[2] && mouse.y <= _entranceMouseCursorTracks[3]) {
 		switch (_entranceMouseCursorTracks[4]) {
 		case 0:
 			newMouseState = -6;
@@ -1044,7 +1040,7 @@ void KyraEngine::updateMousePointer(bool forceUpdate) {
 	
 	if (!newMouseState) {
 		if (_mouseState != _itemInHand || forceUpdate) {
-			if (_mouseY > 158 || (_mouseX >= 12 && _mouseX < 308 && _mouseY < 136 && _mouseY >= 12) || forceUpdate) {
+			if (mouse.y > 158 || (mouse.x >= 12 && mouse.x < 308 && mouse.y < 136 && mouse.y >= 12) || forceUpdate) {
 				_mouseState = _itemInHand;
 				_screen->hideMouse();
 				if (_itemInHand == -1) {
@@ -1073,10 +1069,13 @@ bool KyraEngine::hasClickedOnExit(int xpos, int ypos) {
 
 void KyraEngine::clickEventHandler2() {
 	debugC(9, kDebugLevelMain, "KyraEngine::clickEventHandler2()");
+
+	Common::Point mouse = getMousePos();
+
 	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
 	_scriptClick->variables[0] = _currentCharacter->sceneId;
-	_scriptClick->variables[1] = _mouseX;
-	_scriptClick->variables[2] = _mouseY;
+	_scriptClick->variables[1] = mouse.x;
+	_scriptClick->variables[2] = mouse.y;
 	_scriptClick->variables[4] = _itemInHand;
 	_scriptInterpreter->startScript(_scriptClick, 6);
 	

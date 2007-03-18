@@ -694,8 +694,9 @@ void KyraEngine::magicOutMouseItem(int animIndex, int itemPos) {
 	_screen->_curPage = 0;
 	int x = 0, y = 0;
 	if (itemPos == -1) {
-		x = _mouseX - 12;
-		y = _mouseY - 18;
+		Common::Point mouse = getMousePos();
+		x = mouse.x - 12;
+		y = mouse.y - 18;
 	} else {
 		x = _itemPosX[itemPos] - 4;
 		y = _itemPosY[itemPos] - 3;
@@ -781,8 +782,9 @@ void KyraEngine::magicInMouseItem(int animIndex, int item, int itemPos) {
 	_screen->_curPage = 0;
 	int x = 0, y = 0;
 	if (itemPos == -1) {
-		x = _mouseX - 12;
-		y = _mouseY - 18;
+		Common::Point mouse = getMousePos();
+		x = mouse.x - 12;
+		y = mouse.y - 18;
 	} else {
 		x = _itemPosX[itemPos] - 4;
 		y = _itemPosX[itemPos] - 3;
