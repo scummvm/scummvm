@@ -66,7 +66,7 @@ public:
 
 	void updateSceneAnims();
 	void setupSceneAnims();
-	void loadDAT(const char *filename, SceneExits &exits);
+	void loadDat(const char *filename, SceneExits &exits);
 	void loadSceneShapes();
 	
 	Anim _anims[MAX_NUM_ANIMS];

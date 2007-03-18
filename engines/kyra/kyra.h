@@ -503,7 +503,7 @@ protected:
 	int setCharacterPosition(int character, int *facingTable);
 	void setCharacterPositionHelper(int character, int *facingTable);
 	int getOppositeFacingDirection(int dir);
-	void loadSceneMSC();
+	void loadSceneMsc();
 	void startSceneScript(int brandonAlive);
 	void setupSceneItems();
 	void initSceneData(int facing, int unk1, int brandonAlive);

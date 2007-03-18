@@ -396,7 +396,7 @@ void Sprites::updateSceneAnims() {
 	}
 }
 
-void Sprites::loadDAT(const char *filename, SceneExits &exits) {
+void Sprites::loadDat(const char *filename, SceneExits &exits) {
 	debugC(9, kDebugLevelSprites,  "Sprites::loadDat('%s')", filename);
 	uint32 fileSize;
 

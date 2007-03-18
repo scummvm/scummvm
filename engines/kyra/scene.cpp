@@ -156,10 +156,10 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	char fileNameBuffer[32];
 	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
 	strcat(fileNameBuffer, ".DAT");
-	_sprites->loadDAT(fileNameBuffer, _sceneExits);
+	_sprites->loadDat(fileNameBuffer, _sceneExits);
 	_sprites->setupSceneAnims();
 	_scriptInterpreter->unloadScript(_scriptClickData);
-	loadSceneMSC();
+	loadSceneMsc();
 	
 	_walkBlockNorth = currentRoom->northExit;
 	_walkBlockEast = currentRoom->eastExit;
@@ -429,7 +429,7 @@ int KyraEngine::getOppositeFacingDirection(int dir) {
 	return 0;
 }
 
-void KyraEngine::loadSceneMSC() {
+void KyraEngine::loadSceneMsc() {
 	assert(_currentCharacter->sceneId < _roomTableSize);
 	int tableId = _roomTable[_currentCharacter->sceneId].nameIndex;
 	assert(tableId < _roomFilenameTableSize);
@@ -448,6 +448,7 @@ void KyraEngine::startSceneScript(int brandonAlive) {
 	char fileNameBuffer[32];
 	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
 	strcat(fileNameBuffer, ".CPS");
+	_screen->clearPage(3);
 	// FIXME: check this hack for amiga version
 	_screen->loadBitmap(fileNameBuffer, 3, 3, (_flags.platform == Common::kPlatformAmiga ? _screen->getPalette(1) : 0));
 	_sprites->loadSceneShapes();

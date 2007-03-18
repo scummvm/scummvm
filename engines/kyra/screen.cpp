@@ -1692,7 +1692,7 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, bool 
 	}
 }
 
-void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen, int planeOffset) {
+void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen) {
 	static uint8 tmp[320*200];
 
 	if (offscreen) {
@@ -1701,10 +1701,10 @@ void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen, int plan
 		int hC = h;
 		while (hC--) {
 			uint8 *dst1 = curLine;
-			uint8 *dst2 = dst1 + planeOffset;
-			uint8 *dst3 = dst2 + planeOffset;
-			uint8 *dst4 = dst3 + planeOffset;
-			uint8 *dst5 = dst4 + planeOffset;
+			uint8 *dst2 = dst1 + 8000;
+			uint8 *dst3 = dst2 + 8000;
+			uint8 *dst4 = dst3 + 8000;
+			uint8 *dst5 = dst4 + 8000;
 
 			int width = w >> 3;
 			while (width--) {
@@ -1727,30 +1727,49 @@ void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen, int plan
 			int bitPos = 7-x&7;
 
 			byte colorIndex = 0;
-			colorIndex |= (((tmp[bytePos + planeOffset * 0] & (1 << bitPos)) >> bitPos) & 0x1) << 0;
-			colorIndex |= (((tmp[bytePos + planeOffset * 1] & (1 << bitPos)) >> bitPos) & 0x1) << 1;
-			colorIndex |= (((tmp[bytePos + planeOffset * 2] & (1 << bitPos)) >> bitPos) & 0x1) << 2;
-			colorIndex |= (((tmp[bytePos + planeOffset * 3] & (1 << bitPos)) >> bitPos) & 0x1) << 3;
-			colorIndex |= (((tmp[bytePos + planeOffset * 4] & (1 << bitPos)) >> bitPos) & 0x1) << 4;
+			colorIndex |= (((tmp[bytePos + 8000 * 0] & (1 << bitPos)) >> bitPos) & 0x1) << 0;
+			colorIndex |= (((tmp[bytePos + 8000 * 1] & (1 << bitPos)) >> bitPos) & 0x1) << 1;
+			colorIndex |= (((tmp[bytePos + 8000 * 2] & (1 << bitPos)) >> bitPos) & 0x1) << 2;
+			colorIndex |= (((tmp[bytePos + 8000 * 3] & (1 << bitPos)) >> bitPos) & 0x1) << 3;
+			colorIndex |= (((tmp[bytePos + 8000 * 4] & (1 << bitPos)) >> bitPos) & 0x1) << 4;
 			*data++ = colorIndex;
 		}
 	}
 }
 
 void Screen::convertAmigaMsc(uint8 *data) {
-	Screen::convertAmigaGfx(data, 320, 200, false, 5760);
-	for (int i = 0; i < 64000; ++i) {
-		byte src = *data;
-		byte dst = 0;
-		if (!(src & 0x1)) {
-			dst |= 0x80;
-		}
-		// FIXME: this is totally wrong, correct this 
-		src >>= 1;
-		src &= 0x7;
-		dst |= src;
-		*data++ = dst;
+	byte *plane1 = data + 5760 * 1;
+	byte *plane2 = data + 5760 * 2;
+	byte *plane3 = data + 5760 * 3;
+	byte *plane4 = data + 5760 * 4;
+	byte *plane5 = data + 5760 * 5;
+	byte *plane6 = data + 5760 * 6;
+	for (int i = 0; i < 5760; ++i) {
+		byte d = plane6[i];
+		d = (plane5[i] |= d);
+		d = (plane4[i] |= d);
+		d = (plane3[i] |= d);
+		d = (plane2[i] |= d);
+		d = (plane1[i] |= d);		
 	}
+	byte dst[320*144];
+	memset(dst, 0, sizeof(dst));
+	static const byte flagTable[] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
+	for (int y = 0; y < 144; ++y) {
+		for (int x = 0; x < 320; ++x) {
+			if (!(flagTable[x&7] & data[y*40+(x>>3)]))
+				dst[y*320+x] |= 0x80;
+
+			int layer = 0;
+			for (int i = 0; i < 7; ++i) {
+				if (flagTable[x&7] & data[y*40+(x>>3)+i*5760])
+					layer = i;
+			}
+			if (layer)
+				dst[y*320+x] |= (layer+1);
+		}
+	}
+	memcpy(data, dst, 320*144);
 }
 
 template<bool noXor>

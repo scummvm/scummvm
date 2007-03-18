@@ -167,7 +167,6 @@ public:
 	int setNewShapeHeight(uint8 *shape, int height);
 	int resetShapeHeight(uint8 *shape);
 
-	void drawShapePlotPixelCallback1(uint8 *dst, uint8 color);
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
 
 	// mouse handling
@@ -231,7 +230,7 @@ public:
 	static uint decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
 	static void decodeFrameDelta(uint8 *dst, const uint8 *src, bool noXor = false);
 	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch, bool noXor);
-	static void convertAmigaGfx(uint8 *data, int w, int h, bool offscreen = true, int planeOffset = 8000);
+	static void convertAmigaGfx(uint8 *data, int w, int h, bool offscreen = true);
 	static void convertAmigaMsc(uint8 *data);
 
 	// maybe subclass screen for kyra3
