@@ -456,7 +456,7 @@ uint16 runZone(Zone *z) {
 		if (z->_flags & kFlagsLocked) break;
 		z->_flags ^= kFlagsClosed;
 		if (z->u.door->_cnv._count == 0) break;
-		_vm->addJob(jobToggleDoor, z, kPriority18 );
+		_vm->addJob(&jobToggleDoor, z, kPriority18 );
 		break;
 
 	case kZoneHear:

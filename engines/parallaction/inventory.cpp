@@ -125,7 +125,7 @@ int16 pickupItem(Zone *z) {
 	_inventory[_si]._id = MAKE_INVENTORY_ID(z->u.get->_icon);
 	_inventory[_si]._index = z->u.get->_icon;
 
-	_vm->addJob(jobRemovePickedItem, z, kPriority17 );
+	_vm->addJob(&jobRemovePickedItem, z, kPriority17 );
 
 	if (_inventory[_si]._id == 0) return 0;
 

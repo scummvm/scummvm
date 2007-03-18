@@ -360,9 +360,9 @@ void waitUntilLeftClick() {
 
 void Parallaction::runGame() {
 
-	addJob(jobEraseAnimations, (void*)1, kPriority20);
-	_jRunScripts = addJob(jobRunScripts, 0, kPriority15);
-	addJob(jobDisplayAnimations, 0, kPriority3);
+	addJob(&jobEraseAnimations, (void*)1, kPriority20);
+	_jRunScripts = addJob(&jobRunScripts, 0, kPriority15);
+	addJob(&jobDisplayAnimations, 0, kPriority3);
 
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 
@@ -508,7 +508,7 @@ void Parallaction::processInput(InputData *data) {
 		if (_vm->_char._ani._zone._flags & kFlagsRemove) break;
 		if ((_vm->_char._ani._zone._flags & kFlagsActive) == 0) break;
 		v4 = buildWalkPath(data->_mousePos._x, data->_mousePos._y);
-		addJob(jobWalk, v4, kPriority19);
+		addJob(&jobWalk, v4, kPriority19);
 		_engineFlags |= kEngineWalking; 								   // inhibits processing of input until walking is over
 		break;
 

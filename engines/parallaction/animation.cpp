@@ -566,7 +566,7 @@ void jobRunScripts(void *parm, Job *j) {
 
 			case INST_MOVE: // move
 				v4 = buildWalkPath(*inst->_opA._pvalue, *inst->_opB._pvalue);
-				_vm->addJob(jobWalk, v4, kPriority19 );
+				_vm->addJob(&jobWalk, v4, kPriority19 );
 				_engineFlags |= kEngineWalking;
 				break;
 
