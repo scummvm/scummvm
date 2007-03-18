@@ -65,7 +65,7 @@ uninstall:
 	rm -rf "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
 
 scummvmico.o: icons/scummvm.ico
-	windres dists/scummvm.rc scummvmico.o
+	$(WINDRES) dists/scummvm.rc scummvmico.o
 
 dist:
 	$(RM) $(ZIPFILE)

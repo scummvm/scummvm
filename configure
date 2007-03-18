@@ -79,6 +79,7 @@ _rm="rm -f"
 _rm_rec="$_rm -r"
 _zip="zip -q"
 _cp=cp
+_windres=windres
 _win32path="C:/scummvm"
 _aos4path="Games:ScummVM_Snapshot"
 _sdlconfig=sdl-config
@@ -537,6 +538,10 @@ gp2x)
 	_host_os=gp2x-linux
 	_host_cpu=arm
 	;;
+i586-mingw32msvc)
+	_host_os=mingw32msvc
+	_host_cpu=i586
+	;;
 *)
 	guessed_host=`$_srcdir/config.guess`
 	_host_cpu=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
@@ -742,8 +747,7 @@ if test -n "$_host"; then
 			LDFLAGS="$LDFLAGS -mcrt=newlib"
 			;;
 		m68k-atari-mint)
-			echo "Cross-compiling to $_host, forcing endianness,
-alignment and type sizes"
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 			_def_endianness='#define SCUMM_BIG_ENDIAN'
 			_def_align='#define     SCUMM_NEED_ALIGNMENT'
@@ -753,6 +757,23 @@ alignment and type sizes"
 			_ranlib=m68k-atari-mint-ranlib
 			_ar=m68k-atari-mint-ar
 			;;
+		i586-mingw32msvc)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DWIN32"
+			_def_x86='#define HAVE_X86'
+			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
+			_def_align='#undef SCUMM_NEED_ALIGNMENT'
+			_have_x86=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			_sdlconfig=i586-mingw32msvc-sdl-config
+			_windres=i586-mingw32msvc-windres
+			_ar="i586-mingw32msvc-ar cru"
+			_ranlib=i586-mingw32msvc-ranlib
+			LIBS="$LIBS -lmingw32 -lwinmm"
+			OBJS="$OBJS scummvmico.o"
+		;;
 		*)
 			echo "Cross-compiling to unknown target $_host, please add your target to configure."
 			exit 1
@@ -1427,6 +1448,7 @@ RM := $_rm
 RM_REC := $_rm_rec
 ZIP := $_zip
 CP := $_cp
+WINDRES := $_windres
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
 
