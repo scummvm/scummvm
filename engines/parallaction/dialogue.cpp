@@ -470,26 +470,10 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 	_answerBalloonY[i] = 2000;
 
 	if (numAvailableAnswers == 1) {
-
-		_vm->_gfx->displayWrappedString(
-			q->_answers[_di],
-			_answerBalloonX[_di],
-			_answerBalloonY[_di],
-			MAX_BALLOON_WIDTH,
-			0
-		);
-
+		_vm->_gfx->displayWrappedString(q->_answers[_di], _answerBalloonX[_di], _answerBalloonY[_di], MAX_BALLOON_WIDTH, 0);
 		cnv->_data0 = _vm->_char._talk._array[q->_answer_moods[_di] & 0xF];
 //		cnv->_data1 = _vm->_char._talk.field_8[q->_answer_moods[_di] & 0xF];
-
-		_vm->_gfx->flatBlitCnv(
-			cnv,
-			ANSWER_CHARACTER_X,
-			ANSWER_CHARACTER_Y,
-			Gfx::kBitFront,
-			cnv->_data1
-		);
-
+		_vm->_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X,	ANSWER_CHARACTER_Y, Gfx::kBitFront,	cnv->_data1);
 		waitUntilLeftClick();
 		return _di;
 	}
@@ -503,39 +487,16 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 		_si = getHoverAnswer(_mousePos._x, _mousePos._y, q);
 
 		if (_si != v2) {
-			if (v2 != -1) {
-				_vm->_gfx->displayWrappedString(
-					q->_answers[v2],
-					_answerBalloonX[v2],
-					_answerBalloonY[v2],
-					MAX_BALLOON_WIDTH,
-					3
-				);
-			}
+			if (v2 != -1)
+				_vm->_gfx->displayWrappedString(q->_answers[v2], _answerBalloonX[v2], _answerBalloonY[v2], MAX_BALLOON_WIDTH, 3);
 
-			_vm->_gfx->displayWrappedString(
-				q->_answers[_si],
-				_answerBalloonX[_si],
-				_answerBalloonY[_si],
-				MAX_BALLOON_WIDTH,
-				0
-			);
-
+			_vm->_gfx->displayWrappedString(q->_answers[_si], _answerBalloonX[_si],	_answerBalloonY[_si], MAX_BALLOON_WIDTH, 0);
 			cnv->_data0 = _vm->_char._talk._array[q->_answer_moods[_si] & 0xF];
 //			cnv->_data1 = _vm->_char._talk.field_8[q->_answer_moods[_si] & 0xF];
-
-			_vm->_gfx->flatBlitCnv(
-				cnv,
-				ANSWER_CHARACTER_X,
-				ANSWER_CHARACTER_Y,
-				Gfx::kBitFront,
-				cnv->_data1
-			);
-
+			_vm->_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront, cnv->_data1);
 		}
 
 		g_system->delayMillis(30);
-
 		v2 = _si;
 	}
 
