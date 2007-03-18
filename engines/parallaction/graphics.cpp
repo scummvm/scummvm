@@ -429,11 +429,11 @@ void jobEraseLabel(void *parm, Job *j) {
 	int16 _si, _di;
 
 	if (_vm->_activeItem._id != 0) {
-		_si = _mousePos._x + 16 - label->_cnv._width/2;
-		_di = _mousePos._y + 34;
+		_si = _vm->_mousePos.x + 16 - label->_cnv._width/2;
+		_di = _vm->_mousePos.y + 34;
 	} else {
-		_si = _mousePos._x + 8 - label->_cnv._width/2;
-		_di = _mousePos._y + 21;
+		_si = _vm->_mousePos.x + 8 - label->_cnv._width/2;
+		_di = _vm->_mousePos.y + 21;
 	}
 
 	if (_si < 0) _si = 0;

@@ -99,7 +99,6 @@ public:
 	}
 };
 
-extern Point _mousePos;
 extern uint16 _mouseButtons;
 
 extern uint16 _score;
@@ -337,6 +336,8 @@ public:
 	InventoryItem	_activeItem;
 
 	Script	*_locationScript;
+
+	Common::Point	_mousePos;
 
 protected:		// data
 

@@ -47,7 +47,7 @@ namespace Parallaction {
 Parallaction *_vm = NULL;
 
 // public stuff
-Point	_mousePos = { 0, 0 };
+
 uint16	_mouseButtons = 0;
 
 
@@ -314,8 +314,7 @@ uint16 Parallaction::updateInput() {
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
-			_mousePos._x = e.mouse.x;
-			_mousePos._y = e.mouse.y;
+			_mousePos = e.mouse;
 			break;
 
 		case Common::EVENT_QUIT:
@@ -477,7 +476,7 @@ void Parallaction::processInput(InputData *data) {
 			_jDrawLabel = NULL;
 			addJob(&jobWaitRemoveJob, _jEraseLabel, kPriority2);
 		}
-		if (hitZone(kZoneYou, _mousePos._x, _mousePos._y) == 0)
+		if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) == 0)
 		changeCursor(kCursorArrow);
 		removeJob(_jRunScripts);
 		_jDrawInventory = addJob(&jobShowInventory, 0, kPriority2);
@@ -552,8 +551,7 @@ Parallaction::InputData *Parallaction::translateInput() {
 		return &_input;
 	}
 
-	_input._mousePos.x = _mousePos._x;
-	_input._mousePos.y = _mousePos._y;
+	_input._mousePos = _mousePos;
 
 	if (((_engineFlags & kEnginePauseJobs) == 0) && ((_engineFlags & kEngineInventory) == 0)) {
 
@@ -564,12 +562,12 @@ Parallaction::InputData *Parallaction::translateInput() {
 			return &_input;
 		}
 
-		Zone *z = hitZone(_activeItem._id, _mousePos._x, _mousePos._y);
+		Zone *z = hitZone(_activeItem._id, _mousePos.x, _mousePos.y);
 
 		if (_mouseButtons == kMouseRightDown) {
 			// right button down shows inventory
 
-			if (hitZone(kZoneYou, _mousePos._x, _mousePos._y) && (_activeItem._id != 0)) {
+			if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) && (_activeItem._id != 0)) {
 				_activeItem._index = (_activeItem._id >> 16) & 0xFFFF;
 				_engineFlags |= kEngineDragging;
 			}
@@ -629,13 +627,13 @@ Parallaction::InputData *Parallaction::translateInput() {
 	if ((_engineFlags & kEngineInventory) == 0) return NULL;
 
 	// in inventory
-	int16 _si = getHoverInventoryItem(_mousePos._x, _mousePos._y);
+	int16 _si = getHoverInventoryItem(_mousePos.x, _mousePos.y);
 
 	if (_mouseButtons == kMouseRightUp) {
 		// right up hides inventory
 
 		_input._event = kEvCloseInventory;
-		_input._inventoryIndex = getHoverInventoryItem(_mousePos._x, _mousePos._y);
+		_input._inventoryIndex = getHoverInventoryItem(_mousePos.x, _mousePos.y);
 		highlightInventoryItem(_transCurrentHoverItem, 12); 		// disable
 
 		if ((_engineFlags & kEngineDragging) == 0) return &_input;

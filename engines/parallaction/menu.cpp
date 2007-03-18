@@ -191,17 +191,14 @@ uint16 Menu::chooseLanguage() {
 		_engine->updateInput();
 		_vm->_gfx->swapBuffers();
 
-		uint16 _di = _mousePos._x;
-		uint16 v2 = _mousePos._y;
-
 		if (_mouseButtons == kMouseLeftUp) {
 			for (uint16 _si = 0; _si < 4; _si++) {
 
-				if (80 + _si*49 >= _di) continue;
-				if (110 - _si*25 >= v2) continue;
+				if (80 + _si*49 >= _vm->_mousePos.x) continue;
+				if (110 - _si*25 >= _vm->_mousePos.y) continue;
 
-				if (128 + _si*49 <= _di) continue;
-				if (180 - _si*25 <= v2) continue;
+				if (128 + _si*49 <= _vm->_mousePos.x) continue;
+				if (180 - _si*25 <=_vm->_mousePos.y) continue;
 
 				beep();
 				return _si;
@@ -232,7 +229,7 @@ uint16 Menu::selectGame() {
 		_engine->waitTime( 1 );
 
 		_si = 0;
-		if (_mousePos._x > 160)
+		if (_vm->_mousePos.x > 160)
 			_si = 1;
 
 		if (_si == _di) continue;
@@ -313,9 +310,6 @@ void Menu::selectCharacter() {
 				_engine->waitTime(1);
 			} while (_mouseButtons != kMouseLeftUp);	// waits for left click
 
-			uint16 x = _mousePos._x;
-			uint16 y = _mousePos._y;
-
 			for (uint16 _si = 0; _si < 9; _si++) {
 
 				Common::Rect r(
@@ -325,7 +319,7 @@ void Menu::selectCharacter() {
 					BLOCK_SELECTION_Y + BLOCK_HEIGHT - _si * BLOCK_Y_OFFSET
 				);
 
-				if (!r.contains(x, y)) continue;
+				if (!r.contains(_vm->_mousePos)) continue;
 
 				r.setWidth(BLOCK_WIDTH);
 				r.setHeight(BLOCK_HEIGHT);

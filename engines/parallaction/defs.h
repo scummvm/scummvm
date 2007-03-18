@@ -55,18 +55,6 @@ public:
 	}
 };
 
-struct Point {
-	int16	_x;
-	int16	_y;
-};
-
-struct Rect {
-	int16	_left;
-	int16	_top;
-	int16	_right;
-	int16	_bottom;
-};
-
 struct SpeakData;
 struct Question;
 typedef Question Dialogue;

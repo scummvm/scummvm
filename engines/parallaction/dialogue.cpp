@@ -486,7 +486,7 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 	while (_mouseButtons != kMouseLeftUp) {
 
 		_vm->updateInput();
-		_si = getHoverAnswer(_mousePos._x, _mousePos._y, q);
+		_si = getHoverAnswer(_vm->_mousePos.x, _vm->_mousePos.y, q);
 
 		if (_si != v2) {
 			if (v2 != -1)

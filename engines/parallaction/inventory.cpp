@@ -316,14 +316,14 @@ void openInventory() {
 
 	uint16 _LOCALinventory_lines = (_si + 4) / INVENTORY_ITEMS_PER_LINE;
 
-	_invPosition.x = _mousePos._x - (INVENTORY_WIDTH / 2);
+	_invPosition.x = _vm->_mousePos.x - (INVENTORY_WIDTH / 2);
 	if (_invPosition.x < 0)
 		_invPosition.x = 0;
 
 	if ((_invPosition.x + INVENTORY_WIDTH) > SCREEN_WIDTH)
 		_invPosition.x = SCREEN_WIDTH - INVENTORY_WIDTH;
 
-	_invPosition.y = _mousePos._y - 2 - (_LOCALinventory_lines * INVENTORYITEM_HEIGHT);
+	_invPosition.y = _vm->_mousePos.y - 2 - (_LOCALinventory_lines * INVENTORYITEM_HEIGHT);
 	if (_invPosition.y < 0)
 		_invPosition.y = 0;
 
