@@ -127,7 +127,6 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 					strcat(vC8, "tras");
 				}
 			}
-
 			_disk->loadFrames(vC8, &vD0->_cnv);
 //			int16 _ax = _vm->_gfx->loadCnv(vC8, &vD0->_cnv);
 //			if (_ax == -1) exit(-1);
@@ -193,8 +192,8 @@ void jobDisplayAnimations(void *parm, Job *j) {
 		if ((v18->_zone._flags & kFlagsActive) && ((v18->_zone._flags & kFlagsRemove) == 0))   {
 			v14._width = v18->width();
 			v14._height = v18->height();
-			v14._data0 = v18->_cnv._array[v18->_frame];
-//			v14._data1 = v18->_cnv.field_8[v18->_frame];
+			v14._data0 = v18->getFrameData(v18->_frame);
+//			v14._data1 = v18->_cnv->field_8[v18->_frame];
 
 			if (v18->_zone._flags & kFlagsNoMasked)
 				_si = 3;
@@ -573,7 +572,7 @@ void jobRunScripts(void *parm, Job *j) {
 			case INST_PUT:	// put
 				v18._width = inst->_opBase._a->width();
 				v18._height = inst->_opBase._a->height();
-				v18._data0 = inst->_opBase._a->_cnv._array[inst->_opBase._a->_frame];
+				v18._data0 = inst->_opBase._a->getFrameData(inst->_opBase._a->_frame);
 				v18._data1 = NULL; // inst->_opBase._a->_cnv.field_8[inst->_opBase._a->_frame];
 
 				if (inst->_flags & kInstMaskedPut) {

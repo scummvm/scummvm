@@ -227,6 +227,14 @@ struct Animation {
 	uint16 height() const {
 		return _cnv._height;
 	}
+
+	uint16 getFrameNum() {
+		return _cnv._count;
+	}
+
+	byte* getFrameData(uint32 index) {
+		return _cnv.getFramePtr(index);
+	}
 };
 
 extern Node _zones;

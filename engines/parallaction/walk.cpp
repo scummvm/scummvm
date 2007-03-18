@@ -94,7 +94,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 		if (close == right) {
 			to.x += right;
-			walkData3 = (_vm->_char._ani._cnv._count == 20) ? 7 : 9;
+			walkData3 = (_vm->_char._ani.getFrameNum() == 20) ? 7 : 9;
 		} else
 		if (close == left) {
 			to.x -= left;
@@ -105,7 +105,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 		} else
 		if (close == bottom) {
 			to.y += bottom;
-			walkData3 = (_vm->_char._ani._cnv._count == 20) ? 17 : 21;
+			walkData3 = (_vm->_char._ani.getFrameNum() == 20) ? 17 : 21;
 		}
 
 	}
@@ -333,7 +333,7 @@ void jobWalk(void *parm, Job *j) {
 
 	// walk frame selection
 	int16 v16;
-	if (_vm->_char._ani._cnv._count == 20) {
+	if (_vm->_char._ani.getFrameNum() == 20) {
 
 		if (dist.x > dist.y) {
 			walkData2 = (node->_x > _si) ? 0 : 7;
