@@ -377,10 +377,10 @@ void runDialogue(SpeakData *data) {
 
 	Cnv* v6E;
 
-	if (!scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0') {
-		v6E = _vm->_char._talk;
-	} else {
+	if (scumm_stricmp(data->_name, "yourself") && data->_name[0] != '\0') {
 		v6E = _vm->_disk->loadTalk(data->_name);
+	} else {
+		v6E = _vm->_char._talk;
 	}
 
 	_askPassword = false;
