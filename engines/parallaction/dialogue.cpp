@@ -280,7 +280,6 @@ bool displayAnswer(Dialogue *q, uint16 i) {
 	if (((q->_yesFlags[i] & v28) == q->_yesFlags[i]) && ((q->_noFlags[i] & ~v28) == q->_noFlags[i])) {
 
 		_vm->_gfx->getStringExtent(q->_answers[i], MAX_BALLOON_WIDTH, &_answerBalloonW[i], &_answerBalloonH[i]);
-		debugC(1, kDebugDialogue, "runDialogue: showing answer #%i '%s'", i, q->_answers[i]);
 
 		Common::Rect r(_answerBalloonW[i], _answerBalloonH[i]);
 		r.moveTo(_answerBalloonX[i], _answerBalloonY[i]);
@@ -289,7 +288,6 @@ bool displayAnswer(Dialogue *q, uint16 i) {
 
 		_answerBalloonY[i+1] = 10 + _answerBalloonY[i] + _answerBalloonH[i];
 		_askPassword = _vm->_gfx->displayWrappedString(q->_answers[i], _answerBalloonX[i], _answerBalloonY[i], MAX_BALLOON_WIDTH, 3);
-		debugC(1, kDebugDialogue, "runDialogue: answer #%i shown at (%i, %i)+(%i, %i)", i, _answerBalloonX[i], _answerBalloonY[i], _answerBalloonW[i], _answerBalloonH[i]);
 
 		return true;
 	}
@@ -308,17 +306,11 @@ bool displayAnswers(Dialogue *q) {
 		if (displayAnswer(q, i)) {
 			displayed = true;
 		} else {
-			debugC(1, kDebugDialogue, "runDialogue: skipping answer #%i", i);
 			_answerBalloonY[i+1] = _answerBalloonY[i];
 			_answerBalloonY[i] = SKIPPED_ANSWER;
 		}
 		i++;
 	}
-
-	if (displayed)
-		debugC(1, kDebugDialogue, "runDialogue: all suitable answers displayed");
-	else
-		debugC(1, kDebugDialogue, "runDialogue: no suitable answers found");
 
 	return displayed;
 }
@@ -327,11 +319,7 @@ void displayQuestion(Dialogue *q, StaticCnv *face) {
 
 	int16 w = 0, h = 0;
 
-	// display Question if any
 	if (!scumm_stricmp(q->_text, "NULL")) return;
-
-
-	debugC(1, kDebugDialogue, "runDialogue: showing question '%s'", q->_text);
 
 	_vm->_gfx->flatBlitCnv(face, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y, Gfx::kBitFront);
 	_vm->_gfx->getStringExtent(q->_text, MAX_BALLOON_WIDTH, &w, &h);
@@ -353,12 +341,9 @@ uint16 getDialogueAnswer(Dialogue *q, StaticCnv *face) {
 
 	uint16 answer = 0;
 
-	debugC(1, kDebugDialogue, "runDialogue: showing answering face (%p)", (const void*)face->_data0);
 	_vm->_gfx->flatBlitCnv(face, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
-	debugC(1, kDebugDialogue, "runDialogue: answering face shown");
 
 	if (_askPassword == false) {
-		debugC(1, kDebugDialogue, "runDialogue: waiting for user to select answer");
 		answer = selectAnswer(q, face);
 	} else {
 		answer = askDialoguePassword(q, face);
@@ -375,7 +360,6 @@ void runDialogue(SpeakData *data) {
 	debugC(1, kDebugDialogue, "runDialogue: starting dialogue '%s'", data->_name);
 
 	enterDialogue();
-	debugC(1, kDebugDialogue, "runDialogue: enterDialogue ok");
 
 	_vm->_gfx->setFont("comic");
 
@@ -383,11 +367,8 @@ void runDialogue(SpeakData *data) {
 
 	if (!scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0') {
 		v6E = _vm->_char._talk;
-		debugC(1, kDebugDialogue, "runDialogue: using default character head");
 	} else {
-		debugC(1, kDebugDialogue, "runDialogue: loading 2nd character head '%s'", _vm->_characterName);
 		v6E = _vm->_disk->loadTalk(data->_name);
-		debugC(1, kDebugDialogue, "runDialogue: 2nd character head loaded");
 	}
 
 	StaticCnv questioner;
@@ -427,15 +408,14 @@ void runDialogue(SpeakData *data) {
 				v34 = q->_commands[answer];
 				q = (Dialogue*)q->_following._questions[answer];
 			} else {
-				debugC(1, kDebugDialogue, "runDialogue: no suitable answers found");
 				q = NULL;
 			}
 		} else {
 			q = (Dialogue*)q->_following._questions[answer];
 		}
 	}
-
 	debugC(1, kDebugDialogue, "runDialogue: out of dialogue loop");
+
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	if (scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0') {
@@ -444,12 +424,7 @@ void runDialogue(SpeakData *data) {
 	}
 
 	exitDialogue();
-	debugC(1, kDebugDialogue, "runDialogue: exit dialogue ok");
-
-	debugC(1, kDebugDialogue, "runDialogue: running zone commands");
 	runCommands(v34);
-
-	debugC(1, kDebugDialogue, "runDialogue: end");
 
 	return;
 
