@@ -56,7 +56,10 @@ Actor::Actor(const char *name) :
 	_talkSoundName = "";
 	_activeShadowSlot = -1;
 	_shadowArray = new Shadow[5];
-	memset(_shadowArray, 0, sizeof(Shadow) * 5);
+
+	for (int i = 0; i < 5; i++) {
+		_shadowArray[i].active = true;
+	}
 
 	for (int i = 0; i < 10; i++) {
 		_talkCostume[i] = NULL;
@@ -589,7 +592,6 @@ void Actor::update() {
 }
 
 void Actor::draw() {
-	setupDrawShadow();
 	for (std::list<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++)
 		(*i)->setupTextures();
 
