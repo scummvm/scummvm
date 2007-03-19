@@ -313,8 +313,8 @@ void _c_sketch(void *parm) {
 
 	introFunc1(_1, _2, _3, _4);
 
-	_rightHandAnim->_zone._left = _rightHandPositions[index*2];
-	_rightHandAnim->_zone._top = _rightHandPositions[index*2+1] - 20;
+	_rightHandAnim->_left = _rightHandPositions[index*2];
+	_rightHandAnim->_top = _rightHandPositions[index*2+1] - 20;
 
 	index++;
 
@@ -327,10 +327,10 @@ void _c_sketch(void *parm) {
 void _c_shade(void *parm) {
 
 	Common::Rect r(
-		_rightHandAnim->_zone._left - 36,
-		_rightHandAnim->_zone._top - 36,
-		_rightHandAnim->_zone._left,
-		_rightHandAnim->_zone._top
+		_rightHandAnim->_left - 36,
+		_rightHandAnim->_top - 36,
+		_rightHandAnim->_left,
+		_rightHandAnim->_top
 	);
 
 	_vm->_gfx->maskClearRectangle(r);

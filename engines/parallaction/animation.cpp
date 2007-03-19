@@ -66,8 +66,8 @@ Animation *Parallaction::findAnimation(const char *name) {
 	Animation *v4 = (Animation*)_animations._next;
 
 	while (v4) {
-		if (!scumm_stricmp(name, v4->_zone._label._text)) return v4;
-		v4 = (Animation*)v4->_zone._next;
+		if (!scumm_stricmp(name, v4->_label._text)) return v4;
+		v4 = (Animation*)v4->_next;
 	}
 
 	return NULL;
@@ -79,10 +79,10 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 
 	Animation *vD0 = new Animation;
 
-	vD0->_zone._label._text = (char*)malloc(strlen(name)+1);
-	strcpy(vD0->_zone._label._text, name);
+	vD0->_label._text = (char*)malloc(strlen(name)+1);
+	strcpy(vD0->_label._text, name);
 
-	addNode(list, &vD0->_zone);
+	addNode(list, vD0);
 
 	fillBuffers(script, true);
 	while (scumm_stricmp(_tokens[0], "endanimation")) {
@@ -92,22 +92,22 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 			loadProgram(vD0, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "commands")) {
-			vD0->_zone._commands = parseCommands(script);
+			vD0->_commands = parseCommands(script);
 		}
 		if (!scumm_stricmp(_tokens[0], "type")) {
 			if (_tokens[2][0] != '\0') {
-				vD0->_zone._type = ((4 + searchTable(_tokens[2], const_cast<const char **>(_objectsNames))) << 16) & 0xFFFF0000;
+				vD0->_type = ((4 + searchTable(_tokens[2], const_cast<const char **>(_objectsNames))) << 16) & 0xFFFF0000;
 			}
 			int16 _si = searchTable(_tokens[1], _zoneTypeNames);
 			if (_si != -1) {
-				vD0->_zone._type |= 1 << (_si-1);
-				if (((vD0->_zone._type & 0xFFFF) != kZoneNone) && ((vD0->_zone._type & 0xFFFF) != kZoneCommand)) {
-					parseZoneTypeBlock(script, &vD0->_zone);
+				vD0->_type |= 1 << (_si-1);
+				if (((vD0->_type & 0xFFFF) != kZoneNone) && ((vD0->_type & 0xFFFF) != kZoneCommand)) {
+					parseZoneTypeBlock(script, vD0);
 				}
 			}
 		}
 		if (!scumm_stricmp(_tokens[0], "label")) {
-			_vm->_gfx->makeCnvFromString(&vD0->_zone._label._cnv, _tokens[1]);
+			_vm->_gfx->makeCnvFromString(&vD0->_label._cnv, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "flags")) {
 			uint16 _si = 1;
@@ -115,7 +115,7 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 			do {
 				byte _al = searchTable(_tokens[_si], _zoneFlagNames);
 				_si++;
-				vD0->_zone._flags |= 1 << (_al - 1);
+				vD0->_flags |= 1 << (_al - 1);
 			} while (!scumm_stricmp(_tokens[_si++], "|"));
 		}
 		if (!scumm_stricmp(_tokens[0], "file")) {
@@ -129,22 +129,22 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 			vD0->_cnv = _disk->loadFrames(vC8);
 		}
 		if (!scumm_stricmp(_tokens[0], "position")) {
-			vD0->_zone._left = atoi(_tokens[1]);
-			vD0->_zone._top = atoi(_tokens[2]);
+			vD0->_left = atoi(_tokens[1]);
+			vD0->_top = atoi(_tokens[2]);
 			vD0->_z = atoi(_tokens[3]);
 		}
 		if (!scumm_stricmp(_tokens[0], "moveto")) {
-			vD0->_zone._moveTo.x = atoi(_tokens[1]);
-			vD0->_zone._moveTo.y = atoi(_tokens[2]);
+			vD0->_moveTo.x = atoi(_tokens[1]);
+			vD0->_moveTo.y = atoi(_tokens[2]);
 		}
 
 		fillBuffers(script, true);
 	}
 
-	vD0->_zone._oldLeft = -1000;
-	vD0->_zone._oldTop = -1000;
+	vD0->_oldLeft = -1000;
+	vD0->_oldTop = -1000;
 
-	vD0->_zone._flags |= 0x1000000;
+	vD0->_flags |= 0x1000000;
 
 	return vD0;
 }
@@ -169,7 +169,7 @@ void Parallaction::freeAnimations() {
 		freeScript(v4->_program);
 		_vm->_gfx->freeCnv(v4->_cnv);
 		if (v4->_cnv) delete v4->_cnv;
-		v4 = (Animation*)v4->_zone._next;
+		v4 = (Animation*)v4->_next;
 
 		// TODO: delete Animation
 	}
@@ -187,32 +187,32 @@ void jobDisplayAnimations(void *parm, Job *j) {
 
 	uint16 _si = 0;
 
-	for ( ; v18; v18 = (Animation*)v18->_zone._next) {
+	for ( ; v18; v18 = (Animation*)v18->_next) {
 
-		if ((v18->_zone._flags & kFlagsActive) && ((v18->_zone._flags & kFlagsRemove) == 0))   {
+		if ((v18->_flags & kFlagsActive) && ((v18->_flags & kFlagsRemove) == 0))   {
 			v14._width = v18->width();
 			v14._height = v18->height();
 			v14._data0 = v18->getFrameData(v18->_frame);
 //			v14._data1 = v18->_cnv->field_8[v18->_frame];
 
-			if (v18->_zone._flags & kFlagsNoMasked)
+			if (v18->_flags & kFlagsNoMasked)
 				_si = 3;
 			else
-				_si = _vm->_gfx->queryMask(v18->_zone._top + v18->height());
+				_si = _vm->_gfx->queryMask(v18->_top + v18->height());
 
-//			printf("jobDisplayAnimations %s, x: %i, y: %i, w: %i, h: %i\n", v18->_zone._name, v18->_zone._left, v18->_zone._top, v14._width, v14._height);
-			_vm->_gfx->blitCnv(&v14, v18->_zone._left, v18->_zone._top, _si, Gfx::kBitBack);
+//			printf("jobDisplayAnimations %s, x: %i, y: %i, w: %i, h: %i\n", v18->_name, v18->_left, v18->_top, v14._width, v14._height);
+			_vm->_gfx->blitCnv(&v14, v18->_left, v18->_top, _si, Gfx::kBitBack);
 
 		}
 
-		if (((v18->_zone._flags & kFlagsActive) == 0) && (v18->_zone._flags & kFlagsRemove))   {
-			v18->_zone._flags &= ~kFlagsRemove;
-			v18->_zone._oldLeft = -1000;
+		if (((v18->_flags & kFlagsActive) == 0) && (v18->_flags & kFlagsRemove))   {
+			v18->_flags &= ~kFlagsRemove;
+			v18->_oldLeft = -1000;
 		}
 
-		if ((v18->_zone._flags & kFlagsActive) && (v18->_zone._flags & kFlagsRemove))	{
-			v18->_zone._flags &= ~kFlagsActive;
-			v18->_zone._flags |= kFlagsRemove;
+		if ((v18->_flags & kFlagsActive) && (v18->_flags & kFlagsRemove))	{
+			v18->_flags &= ~kFlagsActive;
+			v18->_flags |= kFlagsRemove;
 		}
 
 	}
@@ -228,17 +228,17 @@ void jobEraseAnimations(void *arg_0, Job *j) {
 
 	Animation *a = (Animation*)_vm->_animations._next;
 
-	for (; a; a=(Animation*)a->_zone._next) {
+	for (; a; a=(Animation*)a->_next) {
 
-		if (((a->_zone._flags & kFlagsActive) == 0) && ((a->_zone._flags & kFlagsRemove) == 0)) continue;
+		if (((a->_flags & kFlagsActive) == 0) && ((a->_flags & kFlagsRemove) == 0)) continue;
 
 		Common::Rect r(a->width(), a->height());
-		r.moveTo(a->_zone._oldLeft, a->_zone._oldTop);
+		r.moveTo(a->_oldLeft, a->_oldTop);
 		_vm->_gfx->restoreBackground(r);
 
 		if (arg_0) {
-			a->_zone._oldLeft = a->_zone._left;
-			a->_zone._oldTop = a->_zone._top;
+			a->_oldLeft = a->_left;
+			a->_oldTop = a->_top;
 		}
 
 	}
@@ -312,7 +312,7 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 	case INST_ON:	// on
 	case INST_OFF:	// off
 	case INST_START:	// start
-		if (!scumm_stricmp(_tokens[1], a->_zone._label._text)) {
+		if (!scumm_stricmp(_tokens[1], a->_label._text)) {
 			inst->_opBase._a = a;
 		} else {
 			inst->_opBase._a = findAnimation(_tokens[1]);
@@ -324,12 +324,12 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 		break;
 
 	case INST_X:	// x
-		inst->_opA._pvalue = &a->_zone._left;
+		inst->_opA._pvalue = &a->_left;
 		inst->_opB = getLValue(inst, _tokens[1], locals, a);
 		break;
 
 	case INST_Y:	// y
-		inst->_opA._pvalue = &a->_zone._top;
+		inst->_opA._pvalue = &a->_top;
 		inst->_opB = getLValue(inst, _tokens[1], locals, a);
 		break;
 
@@ -346,10 +346,10 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 	case INST_INC:	// inc
 	case INST_DEC:	// dec
 		if (!scumm_stricmp(_tokens[1], "X")) {
-			inst->_opA._pvalue = &a->_zone._left;
+			inst->_opA._pvalue = &a->_left;
 		} else
 		if (!scumm_stricmp(_tokens[1], "Y")) {
-			inst->_opA._pvalue = &a->_zone._top;
+			inst->_opA._pvalue = &a->_top;
 		} else
 		if (!scumm_stricmp(_tokens[1], "Z")) {
 			inst->_opA._pvalue = &a->_z;
@@ -380,7 +380,7 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 		break;
 
 	case INST_PUT:	// put
-		if (!scumm_stricmp(_tokens[1], a->_zone._label._text)) {
+		if (!scumm_stricmp(_tokens[1], a->_label._text)) {
 			inst->_opBase._a = a;
 		} else {
 			inst->_opBase._a = findAnimation(_tokens[1]);
@@ -459,10 +459,10 @@ LValue getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation 
 	}
 
 	if (str[0] == 'X') {
-		v._pvalue = &a->_zone._left;
+		v._pvalue = &a->_left;
 	} else
 	if (str[0] == 'Y') {
-		v._pvalue = &a->_zone._top;
+		v._pvalue = &a->_top;
 	} else
 	if (str[0] == 'Z') {
 		v._pvalue = &a->_z;
@@ -486,17 +486,17 @@ void jobRunScripts(void *parm, Job *j) {
 	StaticCnv v18;
 	WalkNode *v4 = NULL;
 
-	if (a->_zone._flags & kFlagsCharacter) a->_z = a->_zone._top + a->height();
-	for ( ; a; a = (Animation*)a->_zone._next) {
+	if (a->_flags & kFlagsCharacter) a->_z = a->_top + a->height();
+	for ( ; a; a = (Animation*)a->_next) {
 
-		if ((a->_zone._flags & kFlagsActing) == 0) continue;
+		if ((a->_flags & kFlagsActing) == 0) continue;
 		Instruction *inst = a->_program->_ip;
 
-//		printf("Animation: %s, flags: %x\n", a->_zone._name, a->_zone._flags);
+//		printf("Animation: %s, flags: %x\n", a->_name, a->_flags);
 
-		while ((inst->_index != INST_SHOW) && (a->_zone._flags & kFlagsActing)) {
+		while ((inst->_index != INST_SHOW) && (a->_flags & kFlagsActing)) {
 
-			debugC(1, kDebugJobs, "Animation: %s, instruction: %s", a->_zone._label._text, inst->_index == INST_END ? "end" : _instructionNames[inst->_index - 1]);
+			debugC(1, kDebugJobs, "Animation: %s, instruction: %s", a->_label._text, inst->_index == INST_END ? "end" : _instructionNames[inst->_index - 1]);
 
 			switch (inst->_index) {
 			case INST_ENDLOOP:	// endloop
@@ -506,19 +506,19 @@ void jobRunScripts(void *parm, Job *j) {
 				break;
 
 			case INST_OFF:	{// off
-				inst->_opBase._a->_zone._flags |= kFlagsRemove;
+				inst->_opBase._a->_flags |= kFlagsRemove;
 //				v1C = inst->_opBase;
 				}
 				break;
 
 			case INST_ON:	// on
-				inst->_opBase._a->_zone._flags |= kFlagsActive;
-				inst->_opBase._a->_zone._flags &= ~kFlagsRemove;
+				inst->_opBase._a->_flags |= kFlagsActive;
+				inst->_opBase._a->_flags &= ~kFlagsRemove;
 				break;
 
 			case INST_START:	// start
 //				v1C = inst->_opBase;
-				inst->_opBase._a->_zone._flags |= (kFlagsActing | kFlagsActive);
+				inst->_opBase._a->_flags |= (kFlagsActing | kFlagsActive);
 				break;
 
 			case INST_LOOP: // loop
@@ -584,9 +584,9 @@ void jobRunScripts(void *parm, Job *j) {
 				break;
 
 			case INST_END:	// exit
-				if ((a->_zone._flags & kFlagsLooping) == 0) {
-					a->_zone._flags &= ~kFlagsActing;
-					runCommands(a->_zone._commands, (Zone*)&a->_zone);
+				if ((a->_flags & kFlagsLooping) == 0) {
+					a->_flags &= ~kFlagsActing;
+					runCommands(a->_commands, a);
 				}
 				a->_program->_ip = (Instruction*)a->_program->_next;
 				goto label1;
@@ -628,8 +628,8 @@ void jobRunScripts(void *parm, Job *j) {
 		a->_program->_ip = (Instruction*)inst->_next;
 
 label1:
-		if (a->_zone._flags & kFlagsCharacter)
-			a->_z = a->_zone._top + a->height();
+		if (a->_flags & kFlagsCharacter)
+			a->_z = a->_top + a->height();
 	}
 
 	_vm->sortAnimations();
@@ -655,7 +655,7 @@ void Parallaction::sortAnimations() {
 	Node v14;
 	memset(&v14, 0, sizeof(Node));
 
-	_vm->_char._ani._z = _vm->_char._ani.height() + _vm->_char._ani._zone._top;
+	_vm->_char._ani._z = _vm->_char._ani.height() + _vm->_char._ani._top;
 
 	Animation *vC = (Animation*)_animations._next;
 	Node *v8;
@@ -669,9 +669,9 @@ void Parallaction::sortAnimations() {
 			v8 = v8->_next;
 		}
 
-		v4 = (Animation*)vC->_zone._next;
+		v4 = (Animation*)vC->_next;
 
-		addNode(v8, &vC->_zone);
+		addNode(v8, vC);
 
 		vC = v4;
 	}

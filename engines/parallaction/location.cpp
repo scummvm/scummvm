@@ -92,8 +92,8 @@ void Parallaction::parseLocation(const char *filename) {
 			switchBackground(_location._name, mask);
 
 			if (_tokens[2][0] != '\0') {
-				_vm->_char._ani._zone._left = atoi(_tokens[2]);
-				_vm->_char._ani._zone._top = atoi(_tokens[3]);
+				_vm->_char._ani._left = atoi(_tokens[2]);
+				_vm->_char._ani._top = atoi(_tokens[3]);
 			}
 
 			if (_tokens[4][0] != '\0') {
@@ -343,7 +343,7 @@ void Parallaction::changeLocation(char *location) {
 		debugC(2, kDebugLocation, "changeLocation: changed cursor");
 	}
 
-	removeNode(&_vm->_char._ani._zone);
+	removeNode(&_vm->_char._ani);
 	debugC(2, kDebugLocation, "changeLocation: removed character from the animation list");
 
 	freeLocation();
@@ -376,7 +376,7 @@ void Parallaction::changeLocation(char *location) {
 		}
 	}
 
-	addNode(&_animations, &_vm->_char._ani._zone);
+	addNode(&_animations, &_vm->_char._ani);
 	debugC(2, kDebugLocation, "changeLocation: new character added to the animation list");
 
 	strcpy(_saveData1, list[0].c_str());
@@ -385,13 +385,13 @@ void Parallaction::changeLocation(char *location) {
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 	debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", _saveData1);
 
-	_vm->_char._ani._zone._oldLeft = -1000;
-	_vm->_char._ani._zone._oldTop = -1000;
+	_vm->_char._ani._oldLeft = -1000;
+	_vm->_char._ani._oldTop = -1000;
 
 	_vm->_char._ani.field_50 = 0;
 	if (_location._startPosition.x != -1000) {
-		_vm->_char._ani._zone._left = _location._startPosition.x;
-		_vm->_char._ani._zone._top = _location._startPosition.y;
+		_vm->_char._ani._left = _location._startPosition.x;
+		_vm->_char._ani._top = _location._startPosition.y;
 		_vm->_char._ani._frame = _location._startFrame;
 		_location._startPosition.y = -1000;
 		_location._startPosition.x = -1000;

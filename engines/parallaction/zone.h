@@ -184,14 +184,10 @@ struct Label {
 };
 
 struct Zone : public Node {
-
 	int16 		_left;
 	int16		_top;
 	int16		_right;
 	int16		_bottom;
-	int16		_oldLeft;
-	int16		_oldTop;
-
 	uint32			_type;
 	uint32			_flags;
 	Label       _label;
@@ -203,7 +199,6 @@ struct Zone : public Node {
 
 	Zone() {
 		_left = _top = _right = _bottom = 0;
-		_oldLeft = _oldTop = 0;
 
 		_type = 0;
 		_flags = 0;
@@ -298,8 +293,9 @@ struct Program : public Node {
 
 
 
-struct Animation {
-	Zone		_zone;
+struct Animation : public Zone  {
+	int16		_oldLeft;
+	int16		_oldTop;
 	Program 	*_program;
 	Cnv 		*_cnv;
 	int16		_frame;
@@ -313,18 +309,8 @@ struct Animation {
 	uint16		field_5E;		// unused
 
 	Animation() {
-
-		// FIXME: temporary hack until Animation become a subclass of Zone
-		_zone._left = _zone._top = _zone._right = _zone._bottom = 0;
-		_zone._oldLeft = _zone._oldTop = 0;
-
-		_zone._type = 0;
-		_zone._flags = 0;
-		_zone._commands = NULL;
-
+		_oldLeft = _oldTop = 0;
 		_cnv = NULL;
-
-
 		_program = NULL;
 		_frame = 0;
 		_z = 0;

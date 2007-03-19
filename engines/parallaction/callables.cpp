@@ -122,15 +122,15 @@ void _c_moveSarc(void *parm) {
 		_introSarcData3 = _moveSarcZone1->_left;
 
 		if (_introSarcData1 > 0) {
-			a->_zone._left = _introSarcData1 / 2;
+			a->_left = _introSarcData1 / 2;
 		} else {
-			a->_zone._left = -_introSarcData1 / 2;
+			a->_left = -_introSarcData1 / 2;
 		}
 
 		if (_introSarcData1 > 0) {
-			a->_zone._top = 2;
+			a->_top = 2;
 		} else {
-			a->_zone._top = -2;
+			a->_top = -2;
 		}
 
 		return;
@@ -149,7 +149,7 @@ void _c_moveSarc(void *parm) {
 
 		a = _vm->findAnimation("finito");
 
-		a->_zone._flags |= (kFlagsActive | kFlagsActing);
+		a->_flags |= (kFlagsActive | kFlagsActing);
 		_localFlags[_vm->_currentLocationIndex] |= 0x20;		// GROSS HACK: activates 'finito' flag in dinoit_museo.loc
 	}
 
@@ -312,7 +312,7 @@ void _c_finito(void *parm) {
 		_vm->_menu->selectCharacter();
 	}
 
-	removeNode(&_vm->_char._ani._zone);
+	removeNode(&_vm->_char._ani);
 	_vm->_locationNames[0][0] = '\0';
 	_vm->_numLocations = 0;
 	_commandFlags = 0;
@@ -329,7 +329,7 @@ void _c_finito(void *parm) {
 
 	_engineFlags &= ~kEngineQuit;
 
-	addNode(&_vm->_animations, &_vm->_char._ani._zone);
+	addNode(&_vm->_animations, &_vm->_char._ani);
 	_score = 0;
 
 	return;

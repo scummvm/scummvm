@@ -142,8 +142,8 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 		v48 = &v58;
 
-		Common::Point v20(_vm->_char._ani._zone._left, _vm->_char._ani._zone._top);
-		Common::Point v8(_si - _vm->_char._ani._zone._left, _di - _vm->_char._ani._zone._top);
+		Common::Point v20(_vm->_char._ani._left, _vm->_char._ani._top);
+		Common::Point v8(_si - _vm->_char._ani._left, _di - _vm->_char._ani._top);
 
 		v34 = v30 = dotProduct(v8, v8);				// square distance from current position and target
 
@@ -235,8 +235,8 @@ uint16 walkFunc1(int16 x, int16 y, WalkNode *Node) {
 	Common::Point v4(0, 0);
 
 	Common::Point foot(
-		_vm->_char._ani._zone._left + _vm->_char._ani.width()/2,
-		_vm->_char._ani._zone._top + _vm->_char._ani.height()
+		_vm->_char._ani._left + _vm->_char._ani.width()/2,
+		_vm->_char._ani._top + _vm->_char._ani.height()
 	);
 
 	Common::Point v8(foot);
@@ -285,13 +285,13 @@ uint16 walkFunc1(int16 x, int16 y, WalkNode *Node) {
 void jobWalk(void *parm, Job *j) {
 	WalkNode *node = (WalkNode*)parm;
 
-	int16 _si = _vm->_char._ani._zone._left;
-	int16 _di = _vm->_char._ani._zone._top;
+	int16 _si = _vm->_char._ani._left;
+	int16 _di = _vm->_char._ani._top;
 
 //	debugC(1, kDebugWalk, "jobWalk to (%i, %i)", node->_x + _vm->_char._ani.width() / 2, node->_y + _vm->_char._ani.height());
 
-	_vm->_char._ani._zone._oldLeft = _si;
-	_vm->_char._ani._zone._oldTop = _di;
+	_vm->_char._ani._oldLeft = _si;
+	_vm->_char._ani._oldTop = _di;
 
 	if ((node->_x == _si) && (node->_y == _di)) {
 		if (node->_next == NULL) {
@@ -314,7 +314,7 @@ void jobWalk(void *parm, Job *j) {
 		node = (WalkNode*)tmp;
 	}
 
-	Common::Point dist(node->_x - _vm->_char._ani._zone._left, node->_y - _vm->_char._ani._zone._top);
+	Common::Point dist(node->_x - _vm->_char._ani._left, node->_y - _vm->_char._ani._top);
 
 	if (dist.x < 0)
 		dist.x = -dist.x;
@@ -378,10 +378,10 @@ void jobWalk(void *parm, Job *j) {
 	}
 
 //	printf("hitZone: %i, %i\n", _si, _di);
-	_vm->_char._ani._zone._left = _si;
-	_vm->_char._ani._zone._top = _di;
+	_vm->_char._ani._left = _si;
+	_vm->_char._ani._top = _di;
 
-	if ((_si == _vm->_char._ani._zone._oldLeft) && (_di == _vm->_char._ani._zone._oldTop)) {
+	if ((_si == _vm->_char._ani._oldLeft) && (_di == _vm->_char._ani._oldTop)) {
 
 		j->_finished = 1;
 		checkDoor();
@@ -406,7 +406,7 @@ uint16 checkDoor() {
 	}
 
 	_engineFlags &= ~kEngineWalking;
-	Zone *z = _vm->hitZone(kZoneDoor, _vm->_char._ani._zone._left + _vm->_char._ani.width() / 2,	_vm->_char._ani._zone._top + _vm->_char._ani.height());
+	Zone *z = _vm->hitZone(kZoneDoor, _vm->_char._ani._left + _vm->_char._ani.width() / 2,	_vm->_char._ani._top + _vm->_char._ani.height());
 
 	if (z != NULL) {
 
@@ -424,7 +424,7 @@ uint16 checkDoor() {
 		}
 	}
 
-	z = _vm->hitZone(kZoneTrap, _vm->_char._ani._zone._left + _vm->_char._ani.width() / 2, _vm->_char._ani._zone._top + _vm->_char._ani.height());
+	z = _vm->hitZone(kZoneTrap, _vm->_char._ani._left + _vm->_char._ani.width() / 2, _vm->_char._ani._top + _vm->_char._ani.height());
 
 	if (z != NULL) {
 		_localFlags[_vm->_currentLocationIndex] |= kFlagsEnter;

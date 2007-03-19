@@ -327,7 +327,7 @@ void runCommands(Command *list, Zone *z) {
 			break;
 
 		case CMD_MOVE: {	// move
-			if ((_vm->_char._ani._zone._flags & kFlagsRemove) || (_vm->_char._ani._zone._flags & kFlagsActive) == 0) {
+			if ((_vm->_char._ani._flags & kFlagsRemove) || (_vm->_char._ani._flags & kFlagsActive) == 0) {
 				continue;
 			}
 

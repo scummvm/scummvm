@@ -257,16 +257,16 @@ struct Character {
 		_objs = NULL;
 //		_objs._count = 0;
 
-		_ani._zone._left = 150;
-		_ani._zone._top = 100;
+		_ani._left = 150;
+		_ani._top = 100;
 		_ani._z = 10;
-		_ani._zone._oldLeft = -1000;
-		_ani._zone._oldTop = -1000;
+		_ani._oldLeft = -1000;
+		_ani._oldTop = -1000;
 		_ani._frame = 0;
-		_ani._zone._flags = kFlagsActive | kFlagsNoName;
-		_ani._zone._type = kZoneYou;
-		_ani._zone._label._cnv._data0 = NULL;
-		_ani._zone._label._text = strdup("yourself");
+		_ani._flags = kFlagsActive | kFlagsNoName;
+		_ani._type = kZoneYou;
+		_ani._label._cnv._data0 = NULL;
+		_ani._label._text = strdup("yourself");
 
 		_normalFrames = NULL;
 		_miniFrames = NULL;

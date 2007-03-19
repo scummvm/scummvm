@@ -42,8 +42,7 @@ Zone *Parallaction::findZone(const char *name) {
 		v4 = (Zone*)v4->_next;
 	}
 
-	Animation *a = findAnimation(name);
-	return (a == NULL ? NULL : &a->_zone);
+	return findAnimation(name);
 }
 
 
@@ -602,13 +601,13 @@ Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 			if (z->_left != -1)
 				continue;
-			if (_si < _vm->_char._ani._zone._left)
+			if (_si < _vm->_char._ani._left)
 				continue;
-			if (_si > (_vm->_char._ani._zone._left + _vm->_char._ani.width()))
+			if (_si > (_vm->_char._ani._left + _vm->_char._ani.width()))
 				continue;
-			if (_di < _vm->_char._ani._zone._top)
+			if (_di < _vm->_char._ani._top)
 				continue;
-			if (_di > (_vm->_char._ani._zone._top + _vm->_char._ani.height()))
+			if (_di > (_vm->_char._ani._top + _vm->_char._ani.height()))
 				continue;
 
 		}
@@ -626,20 +625,19 @@ Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 	Animation *a = (Animation*)_animations._next;
 
 	int16 _a, _b, _c, _d, _e, _f;
-	for (; a; a = (Animation*)a->_zone._next) {
-//		printf("Animation name: %s", a->_zone._name);
+	for (; a; a = (Animation*)a->_next) {
 
-		_a = (a->_zone._flags & kFlagsActive) ? 1 : 0;															   // _a: active Animation
-		_e = ((_si >= a->_zone._left + a->width()) || (_si <= a->_zone._left)) ? 0 : 1;		// _e: horizontal range
-		_f = ((_di >= a->_zone._top + a->height()) || (_di <= a->_zone._top)) ? 0 : 1;		// _f: vertical range
+		_a = (a->_flags & kFlagsActive) ? 1 : 0;															   // _a: active Animation
+		_e = ((_si >= a->_left + a->width()) || (_si <= a->_left)) ? 0 : 1;		// _e: horizontal range
+		_f = ((_di >= a->_top + a->height()) || (_di <= a->_top)) ? 0 : 1;		// _f: vertical range
 
-		_b = ((type != 0) || (a->_zone._type == kZoneYou)) ? 0 : 1; 										 // _b: (no type specified) AND (Animation is not the character)
-		_c = (a->_zone._type & 0xFFFF0000) ? 0 : 1; 															// _c: Animation is not an object
-		_d = ((a->_zone._type & 0xFFFF0000) != type) ? 0 : 1;													// _d: Animation is an object of the same type
+		_b = ((type != 0) || (a->_type == kZoneYou)) ? 0 : 1; 										 // _b: (no type specified) AND (Animation is not the character)
+		_c = (a->_type & 0xFFFF0000) ? 0 : 1; 															// _c: Animation is not an object
+		_d = ((a->_type & 0xFFFF0000) != type) ? 0 : 1;													// _d: Animation is an object of the same type
 
-		if ((_a != 0 && _e != 0 && _f != 0) && ((_b != 0 && _c != 0) || (a->_zone._type == type) || (_d != 0))) {
+		if ((_a != 0 && _e != 0 && _f != 0) && ((_b != 0 && _c != 0) || (a->_type == type) || (_d != 0))) {
 
-			return &a->_zone;
+			return a;
 
 		}
 

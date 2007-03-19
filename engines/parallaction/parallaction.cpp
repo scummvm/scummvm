@@ -216,7 +216,7 @@ int Parallaction::init() {
 
 	initInventory();
 
-	addNode(&_animations, &_vm->_char._ani._zone);
+	addNode(&_animations, &_vm->_char._ani);
 	_gfx = new Gfx(this);
 
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
@@ -261,8 +261,8 @@ void Parallaction::initGame() {
 	parseLocation(_location._name);
 
 	if (_location._startPosition.x != -1000) {
-		_vm->_char._ani._zone._left = _location._startPosition.x;
-		_vm->_char._ani._zone._top = _location._startPosition.y;
+		_vm->_char._ani._left = _location._startPosition.x;
+		_vm->_char._ani._top = _location._startPosition.y;
 		_vm->_char._ani._frame = _location._startFrame;
 		_location._startPosition.y = -1000;
 		_location._startPosition.x = -1000;
@@ -504,8 +504,8 @@ void Parallaction::processInput(InputData *data) {
 		debugC(2, kDebugInput, "processInput: kEvWalk");
 		_hoverZone = NULL;
 		changeCursor(kCursorArrow);
-		if (_vm->_char._ani._zone._flags & kFlagsRemove) break;
-		if ((_vm->_char._ani._zone._flags & kFlagsActive) == 0) break;
+		if (_vm->_char._ani._flags & kFlagsRemove) break;
+		if ((_vm->_char._ani._flags & kFlagsActive) == 0) break;
 		v4 = buildWalkPath(data->_mousePos.x, data->_mousePos.y);
 		addJob(&jobWalk, v4, kPriority19);
 		_engineFlags |= kEngineWalking; 								   // inhibits processing of input until walking is over
