@@ -315,13 +315,19 @@ bool displayAnswers(Dialogue *q) {
 	return displayed;
 }
 
-void displayQuestion(Dialogue *q, StaticCnv *face) {
+void displayQuestion(Dialogue *q, Cnv *cnv) {
 
 	int16 w = 0, h = 0;
 
 	if (!scumm_stricmp(q->_text, "NULL")) return;
 
-	_vm->_gfx->flatBlitCnv(face, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y, Gfx::kBitFront);
+	StaticCnv face;
+	face._width = cnv->_width;
+	face._height = cnv->_height;
+	face._data0 = cnv->_array[q->_mood & 0xF];
+	face._data1 = NULL; // cnv->field_8[v60->_mood & 0xF];
+
+	_vm->_gfx->flatBlitCnv(&face, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y, Gfx::kBitFront);
 	_vm->_gfx->getStringExtent(q->_text, MAX_BALLOON_WIDTH, &w, &h);
 
 	Common::Rect r(w, h);
@@ -337,16 +343,22 @@ void displayQuestion(Dialogue *q, StaticCnv *face) {
 	return;
 }
 
-uint16 getDialogueAnswer(Dialogue *q, StaticCnv *face) {
+uint16 getDialogueAnswer(Dialogue *q, Cnv *cnv) {
 
 	uint16 answer = 0;
 
-	_vm->_gfx->flatBlitCnv(face, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
+	StaticCnv face;
+	face._width = cnv->_width;
+	face._height = cnv->_height;
+	face._data0 = cnv->_array[0];
+	face._data1 = NULL; // cnv->field_8[0];
+
+	_vm->_gfx->flatBlitCnv(&face, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
 
 	if (_askPassword == false) {
-		answer = selectAnswer(q, face);
+		answer = selectAnswer(q, &face);
 	} else {
-		answer = askDialoguePassword(q, face);
+		answer = askDialoguePassword(q, &face);
 	}
 
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);	// erase answer screen
@@ -371,14 +383,6 @@ void runDialogue(SpeakData *data) {
 		v6E = _vm->_disk->loadTalk(data->_name);
 	}
 
-	StaticCnv questioner;
-	questioner._width = v6E->_width;
-	questioner._height = v6E->_height;
-
-	StaticCnv answerer;
-	answerer._width = _vm->_char._talk->_width;
-	answerer._height = _vm->_char._talk->_height;
-
 	bool displayedAnswers = false;
 	_askPassword = false;
 	uint16 answer = 0;
@@ -387,13 +391,7 @@ void runDialogue(SpeakData *data) {
 	Dialogue *q = data->_dialogue;
 	while (q) {
 
-		questioner._data0 = v6E->_array[q->_mood & 0xF];
-		questioner._data1 = NULL; // v6E.field_8[v60->_mood & 0xF];
-		answerer._data0 = _vm->_char._talk->_array[0];
-		answerer._data1 = NULL; // _talk.field_8[0];
-
-		displayQuestion(q, &questioner);
-
+		displayQuestion(q, v6E);
 		if (q->_answers[0] == NULL) break;
 
 		_answerBalloonY[0] = 10;
@@ -402,9 +400,8 @@ void runDialogue(SpeakData *data) {
 		if (scumm_stricmp(q->_answers[0], "NULL")) {
 
 			displayedAnswers = displayAnswers(q);
-
 			if (displayedAnswers == true) {
-				answer = getDialogueAnswer(q, &answerer);
+				answer = getDialogueAnswer(q, _vm->_char._talk);
 				v34 = q->_commands[answer];
 				q = (Dialogue*)q->_following._questions[answer];
 			} else {
