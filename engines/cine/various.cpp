@@ -2979,8 +2979,13 @@ void processSeqListElement(SeqListElement *element) {
 		param1 = ptr1[1];
 		param2 = ptr1[2];
 
-		if (element->varC != 255)
+		if (element->varC != 255) {
+			// FIXME: Why is this here? Fingolfin gets lots of these
+			// in his copy of Operation Stealth (value 0 or 236) under
+			// Mac OS X. Maybe it's a endian issue? At least the graphics
+			// in the copy protection screen are partially messed up.
 			warning("processSeqListElement: varC = %d", element->varC);
+		}
 
 		if (globalVars[VAR_MOUSE_X_POS] || globalVars[VAR_MOUSE_Y_POS]) {
 			computeMove1(element, ptr1[4] + x, ptr1[5] + y, param1, param2, globalVars[VAR_MOUSE_X_POS], globalVars[VAR_MOUSE_Y_POS]);
