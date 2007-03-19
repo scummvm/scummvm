@@ -309,20 +309,7 @@ void AGOSEngine::handleMouseMoved() {
 	}
 
 	CursorMan.showMouse(true);
-
 	_mouse = _system->getEventManager()->getMousePos();
-
-	// Clip the mouse to the screen
-	// TODO this should not be necessary 
-	if (_mouse.x <= 0)
-		_mouse.x = 0;
-	if (_mouse.x >= _screenWidth - 1)
-		_mouse.x = _screenWidth - 1;
-
-	if (_mouse.y <= 0)
-		_mouse.y = 0;
-	if (_mouse.y >= _screenHeight - 1)
-		_mouse.y = _screenHeight - 1;
 
 	if (_defaultVerb) {
 		uint id = 101;
