@@ -1007,6 +1007,12 @@ bool Inter_v1::o1_writeData(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int16 dataVar;
 	int16 retSize;
 
+	// FIXME: This code tries to write to a file. But this is not portable
+	// as datafiles might not be writeable. So we should determine when
+	// precisely this function is used, and see if we can either change it
+	// to a no-op, or use the SaveFileManager instead. If we use savefiles,
+	// then corresponding read etc. file calls would have to be adapted, too.
+
 	evalExpr(0);
 	dataVar = _vm->_parse->parseVarIndex();
 	size = _vm->_parse->parseValExpr();
