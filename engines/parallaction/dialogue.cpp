@@ -383,7 +383,6 @@ void runDialogue(SpeakData *data) {
 		v6E = _vm->_disk->loadTalk(data->_name);
 	}
 
-	bool displayedAnswers = false;
 	_askPassword = false;
 	uint16 answer = 0;
 	Command *v34 = NULL;
@@ -395,22 +394,18 @@ void runDialogue(SpeakData *data) {
 		if (q->_answers[0] == NULL) break;
 
 		_answerBalloonY[0] = 10;
-		displayedAnswers = false;
 
 		if (scumm_stricmp(q->_answers[0], "NULL")) {
 
-			displayedAnswers = displayAnswers(q);
-			if (displayedAnswers == true) {
-				answer = getDialogueAnswer(q, _vm->_char._talk);
-				v34 = q->_commands[answer];
-				q = (Dialogue*)q->_following._questions[answer];
-			} else {
-				q = NULL;
-			}
-		} else {
-			q = (Dialogue*)q->_following._questions[answer];
+			if (!displayAnswers(q)) break;
+
+			answer = getDialogueAnswer(q, _vm->_char._talk);
+			v34 = q->_commands[answer];
 		}
+
+		q = (Dialogue*)q->_following._questions[answer];
 	}
+
 	debugC(1, kDebugDialogue, "runDialogue: out of dialogue loop");
 
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
