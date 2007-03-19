@@ -322,7 +322,7 @@ struct Animation {
 		_zone._flags = 0;
 		_zone._commands = NULL;
 
-
+		_cnv = NULL;
 
 
 		_program = NULL;
