@@ -410,7 +410,7 @@ void runDialogue(SpeakData *data) {
 
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
-	if (scumm_stricmp(data->_name, "yourself") || data->_name[0] == '\0') {
+	if (scumm_stricmp(data->_name, "yourself") && data->_name[0] != '\0') {
 		_vm->_gfx->freeCnv(v6E);
 		delete v6E;
 	}
