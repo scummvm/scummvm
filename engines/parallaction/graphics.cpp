@@ -472,12 +472,6 @@ void Gfx::setMousePointer(int16 index) {
 
 	if (index == kCursorArrow) {		// standard mouse pointer
 
-		StaticCnv cnv;
-
-		cnv._width = 16;
-		cnv._height = 16;
-		cnv._data0 = _mouseArrow;
-
 		g_system->setMouseCursor(_mouseArrow, 16, 16, 0, 0, 0);
 		g_system->showMouse(true);
 
@@ -971,8 +965,6 @@ Gfx::Gfx(Parallaction* vm) :
 	initMouse( 0 );
 
 	_font = NULL;
-//	_font._count = 0;
-//	_font._array = NULL;
 
 	return;
 }
