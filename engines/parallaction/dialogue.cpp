@@ -375,22 +375,17 @@ void runDialogue(SpeakData *data) {
 
 	_vm->_gfx->setFont("comic");
 
-	Cnv* v6E;
-
-	if (scumm_stricmp(data->_name, "yourself") && data->_name[0] != '\0') {
-		v6E = _vm->_disk->loadTalk(data->_name);
-	} else {
-		v6E = _vm->_char._talk;
-	}
+	bool isNpc = scumm_stricmp(data->_name, "yourself") && data->_name[0] != '\0';
+	Cnv *face = isNpc ? _vm->_disk->loadTalk(data->_name) : _vm->_char._talk;
 
 	_askPassword = false;
 	uint16 answer = 0;
-	Command *v34 = NULL;
+	Command *cmdlist = NULL;
 
 	Dialogue *q = data->_dialogue;
 	while (q) {
 
-		displayQuestion(q, v6E);
+		displayQuestion(q, face);
 		if (q->_answers[0] == NULL) break;
 
 		_answerBalloonY[0] = 10;
@@ -398,9 +393,8 @@ void runDialogue(SpeakData *data) {
 		if (scumm_stricmp(q->_answers[0], "NULL")) {
 
 			if (!displayAnswers(q)) break;
-
 			answer = getDialogueAnswer(q, _vm->_char._talk);
-			v34 = q->_commands[answer];
+			cmdlist = q->_commands[answer];
 		}
 
 		q = (Dialogue*)q->_following._questions[answer];
@@ -410,13 +404,13 @@ void runDialogue(SpeakData *data) {
 
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
-	if (scumm_stricmp(data->_name, "yourself") && data->_name[0] != '\0') {
-		_vm->_gfx->freeCnv(v6E);
-		delete v6E;
+	if (isNpc) {
+		_vm->_gfx->freeCnv(face);
+		delete face;
 	}
 
 	exitDialogue();
-	runCommands(v34);
+	runCommands(cmdlist);
 
 	return;
 
