@@ -189,10 +189,10 @@ void IMuseDigital::flushTracks() {
 }
 
 void IMuseDigital::refreshScripts() {
+	bool found = false;
+	debug(5, "refreshScripts()");
 	{
 		Common::StackLock lock(_mutex, "IMuseDigital::refreshScripts()");
-		debug(5, "refreshScripts()");
-		bool found = false;
 		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			Track *track = _track[l];
 			if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
