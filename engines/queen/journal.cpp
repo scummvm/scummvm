@@ -321,7 +321,7 @@ void Journal::handleMouseDown(int x, int y) {
 			drawConfigPanel();
 			break;
 		case ZN_MUSIC_VOLUME:
-			val = (x - 136) * QueenEngine::MAX_MUSIC_VOLUME / (266 - 136);
+			val = (x - 136) * Audio::Mixer::kMaxMixerVolume / (266 - 136);
 			_vm->sound()->setVolume(val);
 			drawConfigPanel();
 			break;
@@ -453,7 +453,7 @@ void Journal::drawConfigPanel() {
 	_vm->checkOptionSettings();
 
 	drawSlideBar(_vm->talkSpeed(), QueenEngine::MAX_TEXT_SPEED, BOB_TALK_SPEED, 164, FRAME_BLUE_PIN);
-	drawSlideBar(_vm->sound()->getVolume(), QueenEngine::MAX_MUSIC_VOLUME, BOB_MUSIC_VOLUME, 177, FRAME_GREEN_PIN);
+	drawSlideBar(_vm->sound()->getVolume(), Audio::Mixer::kMaxMixerVolume, BOB_MUSIC_VOLUME, 177, FRAME_GREEN_PIN);
 
 	drawCheckBox(_vm->sound()->sfxOn(), BOB_SFX_TOGGLE, 221, 155, FRAME_CHECK_BOX);
 	drawCheckBox(_vm->sound()->speechOn(), BOB_SPEECH_TOGGLE, 158, 155, FRAME_CHECK_BOX);

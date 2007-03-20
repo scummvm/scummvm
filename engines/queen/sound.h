@@ -76,8 +76,8 @@ public:
 
 	virtual void updateMusic() {}
 
-	virtual void setVolume(int vol)		{ _masterVolume = vol; }
-	virtual int getVolume()				{ return _masterVolume; }
+	virtual void setVolume(int vol);
+	virtual int getVolume()				{ return _musicVolume; }
 
 	void playLastSong()		{ playSong(_lastOverride); }
 
@@ -127,7 +127,7 @@ protected:
 	bool _speechSfxExists;
 
 	int16 _lastOverride;
-	int _masterVolume;
+	int _musicVolume;
 };
 
 class PCSound : public Sound {

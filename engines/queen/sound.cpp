@@ -93,7 +93,7 @@ protected:
 
 Sound::Sound(Audio::Mixer *mixer, QueenEngine *vm) :
 	_mixer(mixer), _vm(vm), _sfxToggle(true), _speechToggle(true), _musicToggle(true),
-	_speechSfxExists(false), _lastOverride(0), _masterVolume(0) {
+	_speechSfxExists(false), _lastOverride(0), _musicVolume(0) {
 }
 
 Sound *Sound::makeSoundInstance(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression) {
@@ -128,6 +128,13 @@ Sound *Sound::makeSoundInstance(Audio::Mixer *mixer, QueenEngine *vm, uint8 comp
 		warning("Unknown compression type");
 		return new SilentSound(mixer, vm);
 	}
+}
+
+void Sound::setVolume(int vol) {
+	_musicVolume = vol;
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _musicVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 }
 
 void Sound::saveState(byte *&ptr) {
@@ -221,6 +228,8 @@ void PCSound::playSpeech(const char *base) {
 
 void PCSound::setVolume(int vol) {
 	Sound::setVolume(vol);
+	// Set mixer music volume to maximum, since music volume is regulated by MusicPlayer's MIDI messages
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
 	_music->setVolume(vol);
 }
 

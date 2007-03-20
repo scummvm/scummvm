@@ -118,8 +118,7 @@ public:
 		AUTOSAVE_SLOT      = 0xFF,
 
 		MIN_TEXT_SPEED     = 4,
-		MAX_TEXT_SPEED     = 100,
-		MAX_MUSIC_VOLUME   = 255
+		MAX_TEXT_SPEED     = 100
 	};
 
 protected:
