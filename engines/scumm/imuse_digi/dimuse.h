@@ -161,7 +161,7 @@ public:
 	void startMusic(const char *soundName, int soundId, int hookId, int volume);
 	void startSfx(int soundId, int priority);
 	void startSound(int sound)
-		{ error("MusicEngine::startSound() Should be never called"); }
+		{ error("IMuseDigital::startSound(int) should be never called"); }
 
 	void saveOrLoad(Serializer *ser);
 	void resetState();
