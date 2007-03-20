@@ -180,53 +180,45 @@ bool Resource::isInPakList(const Common::String &filename) {
 }
 
 uint8 *Resource::fileData(const char *file, uint32 *size) {
-	uint8 *buffer = 0;
-	Common::File file_;
+	Common::File fileHandle;
 
 	if (size)
 		*size = 0;
 
 	// test to open it in the main dir
-	if (file_.open(file)) {
-
-		uint32 temp = file_.size();
-		buffer = new uint8[temp];
+	if (fileHandle.open(file)) {
+		uint32 fileSize = fileHandle.size();
+		uint8 *buffer = new uint8[fileSize];
 		assert(buffer);
 
-		file_.read(buffer, temp);
+		fileHandle.read(buffer, fileSize);
 
 		if (size)
-			*size = temp;
+			*size = fileSize;
 
-		file_.close();
+		return buffer;
 	} else {
 		// opens the file in a PAK File
 		Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
 
 		uint fileHash = Common::hashit_lower(file);
-		uint32 temp = 0;
 		for (;start != _pakfiles.end(); ++start) {
 			if (!(*start)->isOpen())
 				continue;
 
-			temp = (*start)->getFileSize(fileHash);
+			uint32 fileSize = (*start)->getFileSize(fileHash);
 
-			if (!temp)
+			if (!fileSize)
 				continue;
 
 			if (size)
-				*size = temp;
+				*size = fileSize;
 
-			buffer = (*start)->getFile(fileHash);
-			break;
+			return (*start)->getFile(fileHash);
 		}
 	}
 
-	if (!buffer) {
-		return 0;
-	}
-
-	return buffer;
+	return 0;
 }
 
 bool Resource::getFileHandle(const char *file, uint32 *size, Common::File &filehandle) {
