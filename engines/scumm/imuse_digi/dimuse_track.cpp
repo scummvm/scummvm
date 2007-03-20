@@ -305,12 +305,12 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 	}
 }
 
-IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
+IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(const Track *track, int fadeDelay) {
 	Common::StackLock lock(_mutex, "IMuseDigital::cloneToFadeOutTrack()");
 	assert(track);
 	Track *fadeTrack = 0;
 
-	debug(5, "IMuseDigital::cloneToFadeOutTrack(%d, %d)", track->trackId, fadeDelay);
+	debug(0, "IMuseDigital::cloneToFadeOutTrack(%d, %d)", track->trackId, fadeDelay);
 
 	if (_track[track->trackId + MAX_DIGITAL_TRACKS]->used) {
 		warning("IMuseDigital::cloneToFadeOutTrack: Not free fade track");
@@ -318,45 +318,40 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 	}
 
 	fadeTrack = _track[track->trackId + MAX_DIGITAL_TRACKS];
-	fadeTrack->pan = track->pan;
-	fadeTrack->vol = track->vol;
-	fadeTrack->volGroupId = track->volGroupId;
-	fadeTrack->priority = track->priority;
-	fadeTrack->soundId = track->soundId;
-	fadeTrack->dataOffset = track->dataOffset;
-	fadeTrack->regionOffset = track->regionOffset;
-	fadeTrack->curRegion = track->curRegion;
-	fadeTrack->curHookId = track->curHookId;
-	fadeTrack->iteration = track->iteration;
-	fadeTrack->flags = track->flags;
-	fadeTrack->mod = track->mod;
-	fadeTrack->toBeRemoved = track->toBeRemoved;
-	fadeTrack->readyToRemove = track->readyToRemove;
-	fadeTrack->souStream = track->souStream;
-	fadeTrack->started = track->started;
-	fadeTrack->stream2 = track->stream2;
-	strcpy(fadeTrack->soundName, track->soundName);
-	fadeTrack->soundType = track->soundType;
+	
+	// Clone the settings of the given track
+	memcpy(fadeTrack, track, sizeof(Track));
+
+	// Clone the soundhandle
 	fadeTrack->soundHandle = _sound->cloneSound(track->soundHandle);
 	assert(fadeTrack->soundHandle);
 
+	// Set the volume fading parameters to indicate a fade out
 	fadeTrack->volFadeDelay = fadeDelay;
 	fadeTrack->volFadeDest = 0;
 	fadeTrack->volFadeStep = (fadeTrack->volFadeDest - fadeTrack->vol) * 60 * (1000 / _callbackFps) / (1000 * fadeDelay);
 	fadeTrack->volFadeUsed = true;
 
-	Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;
-
-	if (fadeTrack->volGroupId == 1)
+	// Create an appendable output buffer
+	Audio::Mixer::SoundType type;
+	switch (fadeTrack->volGroupId) {
+	case 1:
 		type = Audio::Mixer::kSpeechSoundType;
-	if (fadeTrack->volGroupId == 2)
+		break;
+	case 2:
 		type = Audio::Mixer::kSFXSoundType;
-	if (fadeTrack->volGroupId == 3)
+		break;
+	case 3:
 		type = Audio::Mixer::kMusicSoundType;
-
-	// setup 1 second stream wrapped buffer
+		break;
+	default:
+		type = Audio::Mixer::kPlainSoundType;
+		break;
+	}
 	fadeTrack->stream = Audio::makeAppendableAudioStream(_sound->getFreq(fadeTrack->soundHandle), makeMixerFlags(fadeTrack->flags));
 	_mixer->playInputStream(type, &fadeTrack->handle, fadeTrack->stream, -1, fadeTrack->vol / 1000, fadeTrack->pan, false);
+
+	// Mark the track as, uhh, used & started (surprise, surprise :)
 	fadeTrack->started = true;
 	fadeTrack->used = true;
 

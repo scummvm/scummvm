@@ -134,7 +134,7 @@ private:
 
 	int getSoundIdByName(const char *soundName);
 	void fadeOutMusic(int fadeDelay);
-	Track *cloneToFadeOutTrack(Track *track, int fadeDelay);
+	Track *cloneToFadeOutTrack(const Track *track, int fadeDelay);
 
 	void setFtMusicState(int stateId);
 	void setFtMusicSequence(int seqId);
@@ -212,7 +212,7 @@ struct imuseComiTable {
 	char name[20];
 	byte atribPos;
 	byte hookId;
-	int16 fadeOut60TicksDelay;
+	int16 fadeOutDelay;
 	char filename[13];
 };
 
