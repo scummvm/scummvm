@@ -189,20 +189,16 @@ void IMuseDigital::flushTracks() {
 }
 
 void IMuseDigital::refreshScripts() {
-	bool found = false;
+	Common::StackLock lock(_mutex, "IMuseDigital::refreshScripts()");
 	debug(5, "refreshScripts()");
-	{
-		Common::StackLock lock(_mutex, "IMuseDigital::refreshScripts()");
-		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
-			Track *track = _track[l];
-			if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
-				found = true;
-			}
+	bool found = false;
+	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		Track *track = _track[l];
+		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
+			found = true;
 		}
 	}
-	
-	// Make sure parseScriptCmds is *not* called while the mutex is locked
-	// (else race conditions can occur).
+
 	if (!found && (_curMusicSeq != 0)) {
 		debug(5, "refreshScripts() Start Sequence");
 		parseScriptCmds(0x1001, 0, 0, 0, 0, 0, 0, 0);
