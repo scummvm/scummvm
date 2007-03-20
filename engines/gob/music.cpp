@@ -25,8 +25,8 @@
 #include "common/stdafx.h"
 #include "common/endian.h"
 
-#include "gob/music.h"
 #include "gob/gob.h"
+#include "gob/music.h"
 #include "gob/game.h"
 #include "gob/util.h"
 
@@ -97,7 +97,7 @@ Adlib::Adlib(GobEngine *vm) : _vm(vm) {
 			this, -1, 255, 0, false, true);
 }
 
-Adlib::~Adlib(void) {
+Adlib::~Adlib() {
 	Common::StackLock slock(_mutex);
 
 	_vm->_mixer->stopHandle(_handle);
@@ -163,7 +163,7 @@ void Adlib::writeOPL(byte reg, byte val) {
 	OPLWriteReg(_opl, reg, val);
 }
 
-void Adlib::setFreqs(void) {
+void Adlib::setFreqs() {
 	byte lin;
 	byte col;
 	long val = 0;
@@ -308,7 +308,7 @@ void Adlib::setKey(byte voice, byte note, bool on, bool spec) {
 	octa = note / 12;
 	freq = _freqs[_notLin[voice]][note - octa * 12];
 
-	writeOPL(0xA0 + voice,  freq & 0xff);
+	writeOPL(0xA0 + voice,  freq & 0xFF);
 	writeOPL(0xB0 + voice, (freq >> 8) | (octa << 2) | 0x20 * on);
 
 	if (!freq)
@@ -320,14 +320,14 @@ void Adlib::setVolume(byte voice, byte volume) {
 	writeOPL(0x40 + _volRegNums[voice], volume);
 }
 
-void Adlib::pollMusic(void) {
+void Adlib::pollMusic() {
 	unsigned char instr;
 	byte channel;
 	byte note;
 	byte volume;
 	uint16 tempo;
 
-	if ((_playPos > (_data + _dataSize)) && (_dataSize != (uint32) -1)) {
+	if ((_playPos > (_data + _dataSize)) && (_dataSize != 0xFFFFFFFF)) {
 		_ended = true;
 		return;
 	}
@@ -417,7 +417,7 @@ void Adlib::pollMusic(void) {
 	_samplesTillPoll = tempo * (_rate / 1000);
 }
 
-void Adlib::playBgMusic(void) {
+void Adlib::playBgMusic() {
 	for (int i = 0; i < ARRAYSIZE(_tracks); i++)
 		if (!scumm_stricmp(_vm->_game->_curTotFile, _tracks[i][0])) {
 			playTrack(_tracks[i][1]);
@@ -434,11 +434,11 @@ void Adlib::playTrack(const char *trackname) {
 	startPlay();
 }
 
-bool Adlib::load(const char *filename) {
+bool Adlib::load(const char *fileName) {
 	Common::File song;
 
 	unload();
-	song.open(filename);
+	song.open(fileName);
 	if (!song.isOpen())
 		return false;
 
@@ -455,11 +455,11 @@ bool Adlib::load(const char *filename) {
 	return true;
 }
 
-void Adlib::load(byte *data, int index) {
+void Adlib::load(byte *data, uint32 size, int index) {
 	unload();
 	_repCount = 0;
 
-	_dataSize = (uint32) -1;
+	_dataSize = size;
 	_data = data;
 	_index = index;
 
@@ -468,7 +468,7 @@ void Adlib::load(byte *data, int index) {
 	_playPos = _data + 3 + (_data[1] + 1) * 0x38;
 }
 
-void Adlib::unload(void) {
+void Adlib::unload() {
 	_playing = false;
 	_index = -1;
 

@@ -20,11 +20,11 @@
  * $Id$
  *
  */
+
 #ifndef GOB_DATAIO_H
 #define GOB_DATAIO_H
 
 #include "common/file.h"
-#include "gob/gob.h"
 
 namespace Gob {
 
@@ -41,31 +41,47 @@ public:
 		ChunkDesc() : size(0), offset(0), packed(0) { chunkName[0] = 0; }
 	};
 
-	int16 file_open(const char *path, Common::File::AccessMode mode = Common::File::kFileReadMode);
-	Common::File *file_getHandle(int16 handle);
-	int16 getChunk(const char *chunkName);
-	char freeChunk(int16 handle);
-	int32 readChunk(int16 handle, char *buf, int16 size);
-	int16 seekChunk(int16 handle, int32 pos, int16 from);
-	int32 getChunkSize(const char *chunkName);
-	void openDataFile(const char *src);
-	void closeDataFile(void);
+	int32 unpackData(char *source, char *dest);
+
+	void openDataFile(const char *src, bool itk = 0);
+	void closeDataFile(bool itk = 0);
 	char *getUnpackedData(const char *name);
 	void closeData(int16 handle);
-	int16 openData(const char *path, Common::File::AccessMode mode = Common::File::kFileReadMode);
-	int32 readData(int16 handle, char *buf, int16 size);
+	int16 openData(const char *path,
+			Common::File::AccessMode mode = Common::File::kFileReadMode);
+	int32 readData(int16 handle, char *buf, uint16 size);
+	int32 writeData(int16 handle, char *buf, uint16 size);
 	void seekData(int16 handle, int32 pos, int16 from);
 	int32 getPos(int16 handle);
 	int32 getDataSize(const char *name);
 	char *getData(const char *path);
-	char *getSmallData(const char *path);
 
 	DataIO(class GobEngine *vm);
 
 protected:
+	struct ChunkDesc *_dataFiles[MAX_DATA_FILES];
+	int16 _numDataChunks[MAX_DATA_FILES];
+	int16 _dataFileHandles[MAX_DATA_FILES];
+	bool _dataFileItk[MAX_DATA_FILES];
+	int32 _chunkPos[MAX_SLOT_COUNT * MAX_DATA_FILES];
+	int32 _chunkOffset[MAX_SLOT_COUNT * MAX_DATA_FILES];
+	int32 _chunkSize[MAX_SLOT_COUNT * MAX_DATA_FILES];
+	bool _isCurrentSlot[MAX_SLOT_COUNT * MAX_DATA_FILES];
+	int32 _packedSize;
+
 	class GobEngine *_vm;
+
+	int16 file_open(const char *path,
+			Common::File::AccessMode mode = Common::File::kFileReadMode);
+	Common::File *file_getHandle(int16 handle);
+
+	int16 getChunk(const char *chunkName);
+	char freeChunk(int16 handle);
+	int32 readChunk(int16 handle, char *buf, uint16 size);
+	int16 seekChunk(int16 handle, int32 pos, int16 from);
+	int32 getChunkSize(const char *chunkName);
 };
 
-}				// End of namespace Gob
+} // End of namespace Gob
 
-#endif
+#endif // GOB_DATAIO_H

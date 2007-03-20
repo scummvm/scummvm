@@ -20,15 +20,17 @@
  * $Id$
  *
  */
+
 #ifndef GOB_PALANIM_H
 #define GOB_PALANIM_H
+
+#include "gob/video.h"
 
 namespace Gob {
 
 class PalAnim {
 public:
-	char fadeColor(char from, char to);
-	char fadeStep(int16 oper);	// oper == 0 - fade all colors, 1, 2, 3 - red,green, blue
+	bool fadeStep(int16 oper); // 0: all colors, 1: red, 2: green, 3: blue
 	void fade(Video::PalDesc * palDesc, int16 fade, int16 all);
 
 	PalAnim(GobEngine *vm);
@@ -39,9 +41,16 @@ protected:
 	byte _toFadeRed[256];
 	byte _toFadeGreen[256];
 	byte _toFadeBlue[256];
+
+	char *_palArray[3];
+	byte *_fadeArray[3];
+
 	GobEngine *_vm;
+
+	bool fadeStepColor(int color);
+	char fadeColor(int16 from, int16 to);
 };
 
-}				// End of namespace Gob
+} // End of namespace Gob
 
-#endif	/* __PALANIM_H */
+#endif // GOB_PALANIM_H

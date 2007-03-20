@@ -20,10 +20,10 @@
  * $Id$
  *
  */
+
 #ifndef GOB_GOBLIN_H
 #define GOB_GOBLIN_H
 
-#include "gob/gob.h"
 #include "gob/util.h"
 #include "gob/sound.h"
 #include "gob/mult.h"
@@ -41,14 +41,14 @@ public:
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 	struct Gob_State {
-		int16 animation;// +0h
-		int16 layer;	// +2h
-		int16 unk0;		// +4h
-		int16 unk1;		// +6h
-		int16 sndItem;	// +8h, high/low byte - sound sample index
-		int16 freq;		// +Ah, high/low byte * 100 - frequency
-		int16 repCount;	// +Ch high/low byte - repeat count
-		int16 sndFrame;		// +Eh
+		int16 animation;
+		int16 layer;
+		int16 unk0;
+		int16 unk1;
+		int16 sndItem;  // high/low byte - sound sample index
+		int16 freq;     // high/low byte * 100 - frequency
+		int16 repCount;	// high/low byte - repeat count
+		int16 sndFrame;
 	};
 
 	typedef Gob_State *Gob_PState;
@@ -56,38 +56,38 @@ public:
 	typedef Gob_PState Gob_StateLine[6];
 
 	struct Gob_Object {
-		int16 animation;	// +0h
-		int16 state;		// +2h
-		int16 stateColumn;	// +4h
-		int16 curFrame;		// +6h
-		int16 xPos;			// +8h
-		int16 yPos;			// +Ah
-		int16 dirtyLeft;	// +Ch
-		int16 dirtyTop;		// +Eh
-		int16 dirtyRight;	// +10h
-		int16 dirtyBottom;	// +12h
-		int16 left;			// +14h
-		int16 top;			// +16h
-		int16 right;		// +18h
-		int16 bottom;		// +1ah
-		int16 nextState;	// +1ch
-		int16 multState;	// +1eh
-		int16 actionStartState;	// +20h
-		int16 curLookDir;	// +22h
-		int16 pickable;		// +24h
-		int16 relaxTime;	// +26h
-		Gob_StateLine *stateMach;	// +28h
-		Gob_StateLine *realStateMach;	// +2ch
-		char doAnim;		// +30h
-		int8 order;			// +31h
-		char noTick;		// +32h
-		char toRedraw;		// +33h
-		char type;			// +34h
-		char maxTick;		// +35h
-		char tick;			// +36h
-		char multObjIndex;	// +37h, from which play mult animations
-		char unk14;			// +38h
-		char visible;		// +39h
+		int16 animation;
+		int16 state;
+		int16 stateColumn;
+		int16 curFrame;
+		int16 xPos;
+		int16 yPos;
+		int16 dirtyLeft;
+		int16 dirtyTop;
+		int16 dirtyRight;
+		int16 dirtyBottom;
+		int16 left;
+		int16 top;
+		int16 right;
+		int16 bottom;
+		int16 nextState;
+		int16 multState;
+		int16 actionStartState;
+		int16 curLookDir;
+		int16 pickable;
+		int16 relaxTime;
+		Gob_StateLine *stateMach;
+		Gob_StateLine *realStateMach;
+		char doAnim;
+		int8 order;
+		char noTick;
+		char toRedraw;
+		char type;
+		char maxTick;
+		char tick;
+		char multObjIndex;
+		char unk14;
+		char visible;
 	};
 
 	struct Gob_Pos {
@@ -97,15 +97,14 @@ public:
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
-	Util::List *_objList;
 	Gob_Object *_goblins[4];
 	int16 _currentGoblin;
-	Snd::SoundDesc *_soundData[16];
+	SoundDesc _soundData[16];
 	int16 _gobStateLayer;
 	char _goesAtTarget;
 	char _readyToAct;
 	int16 _gobAction;	// 0 - move, 3 - do action, 4 - pick
-						// goblins  0 - picker, 1 - fighter, 2 - mage
+	// goblins: 0 - picker, 1 - fighter, 2 - mage
 	Gob_Pos _gobPositions[3];
 	int16 _gobDestX;
 	int16 _gobDestY;
@@ -183,23 +182,23 @@ public:
 	int16 _positionedGob;
 	char _noPick;
 
-	// GOB2:
+	// Gob2:
 	int16 _soundSlotsCount;
 	int16 _soundSlots[60];
-	int16 _word_2F9C0;
-	int16 _word_2F9BE;
-	int16 _word_2F9BC;
-	int16 _word_2F9BA;
-	int16 _dword_2F9B6; // index into the variables array
-	int16 _dword_2F9B2; // index into the variables array
+	bool _gob1Busy;
+	bool _gob2Busy;
+	int16 _gob1RelaxTimeVar;
+	int16 _gob2RelaxTimeVar;
+	bool _gob1NoTurn;
+	bool _gob2NoTurn;
 
 	// Functions
 	char rotateState(int16 from, int16 to);
-	void playSound(Snd::SoundDesc * snd, int16 repCount, int16 freq);
+	void playSound(SoundDesc &snd, int16 repCount, int16 freq);
 	void drawObjects(void);
 	void animateObjects(void);
 	int16 getObjMaxFrame(Gob_Object * obj);
-	int16 objIntersected(Gob_Object * obj1, Gob_Object * obj2);
+	bool objIntersected(Gob_Object * obj1, Gob_Object * obj2);
 	void setMultStates(Gob_Object * gobDesc);
 	int16 nextLayer(Gob_Object * gobDesc);
 	void showBoredom(int16 gobIndex);
@@ -217,11 +216,11 @@ public:
 	int16 treatItem(int16 action);
 	int16 doMove(Gob_Object *gobDesc, int16 cont, int16 action);
 
-	void sub_195C7(int16 index, int16 state);
-	void sub_11984(Mult::Mult_Object *obj);
-	void sub_197A6(int16 destX, int16 destY, int16 objIndex);
-	void sub_19AB7(Mult::Mult_AnimData *animData);
-	void sub_19B45(Mult::Mult_AnimData *animData);
+	void setState(int16 index, int16 state);
+	void updateLayer1(Mult::Mult_AnimData *animData);
+	void updateLayer2(Mult::Mult_AnimData *animData);
+	void move(int16 destX, int16 destY, int16 objIndex);
+	void animate(Mult::Mult_Object *obj);
 
 	virtual void handleGoblins(void) = 0;
 	virtual void placeObject(Gob_Object * objDesc, char animated,
@@ -235,7 +234,9 @@ public:
 	virtual ~Goblin();
 
 protected:
+	Util::List *_objList;
 	int16 _rotStates[4][4];
+
 	GobEngine *_vm;
 
 	int16 peekGoblin(Gob_Object *curGob);
@@ -246,13 +247,15 @@ protected:
 	void targetDummyItem(Gob_Object *gobDesc);
 	void targetItem(void);
 	void moveFindItem(int16 posX, int16 posY);
-	void moveCheckSelect(int16 framesCount, Gob_Object * gobDesc, int16 *pGobIndex, int16 *nextAct);
+	void moveCheckSelect(int16 framesCount, Gob_Object * gobDesc,
+			int16 *pGobIndex, int16 *nextAct);
 	void moveInitStep(int16 framesCount, int16 action, int16 cont,
 					  Gob_Object *gobDesc, int16 *pGobIndex, int16 *pNextAct);
 	void moveTreatRopeStairs(Gob_Object *gobDesc);
 	void playSounds(Mult::Mult_Object *obj);
 
-	virtual void movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 nextAct) = 0;
+	virtual void movePathFind(Mult::Mult_Object *obj,
+			Gob_Object *gobDesc, int16 nextAct) = 0;
 };
 
 class Goblin_v1 : public Goblin {
@@ -269,7 +272,8 @@ public:
 	virtual ~Goblin_v1() {};
 
 protected:
-	virtual void movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 nextAct);
+	virtual void movePathFind(Mult::Mult_Object *obj,
+			Gob_Object *gobDesc, int16 nextAct);
 };
 
 class Goblin_v2 : public Goblin_v1 {
@@ -286,9 +290,10 @@ public:
 	virtual ~Goblin_v2() {};
 
 protected:
-	virtual void movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 nextAct);
+	virtual void movePathFind(Mult::Mult_Object *obj,
+			Gob_Object *gobDesc, int16 nextAct);
 };
 
-}				// End of namespace Gob
+} // End of namespace Gob
 
-#endif	/* __GOBLIN_H */
+#endif // GOB_GOBLIN_H

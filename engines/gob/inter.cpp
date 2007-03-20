@@ -25,46 +25,58 @@
 #include "common/endian.h"
 
 #include "gob/gob.h"
-#include "gob/global.h"
 #include "gob/inter.h"
+#include "gob/global.h"
 #include "gob/util.h"
-#include "gob/scenery.h"
-#include "gob/parse.h"
-#include "gob/game.h"
 #include "gob/draw.h"
-#include "gob/mult.h"
-#include "gob/goblin.h"
-#include "gob/cdrom.h"
-#include "gob/map.h"
+#include "gob/game.h"
+#include "gob/parse.h"
+#include "gob/scenery.h"
+#include "gob/sound.h"
 
 namespace Gob {
 
 Inter::Inter(GobEngine *vm) : _vm(vm) {
-	int i;
+	_terminate = 0;
+	_break = false;
 
-	_noBusyWait = false;
-	_terminate = false;
-	_breakFlag = false;
-	
-	for (i = 0; i < 8; i++)
-	{
+	for (int i = 0; i < 8; i++) {
 		_animPalLowIndex[i] = 0;
 		_animPalHighIndex[i] = 0;
 		_animPalDir[i] = 0;
 	}
 
-	_soundEndTimeKey = 0;
-	_soundStopVal = 0;
 	_breakFromLevel = 0;
 	_nestLevel = 0;
+
+	_soundEndTimeKey = 0;
+	_soundStopVal = 0;
 
 	memset(_pasteBuf, 0, 300);
 	memset(_pasteSizeBuf, 0, 300);
 	_pastePos = 0;
+
+	_noBusyWait = false;
 }
 
-int16 Inter::load16(void) {
-	int16 tmp = (int16)READ_LE_UINT16(_vm->_global->_inter_execPtr);
+void Inter::initControlVars(char full) {
+	*_nestLevel = 0;
+	*_breakFromLevel = -1;
+
+	*_vm->_scenery->_pCaptureCounter = 0;
+
+	_break = false;
+	_terminate = 0;
+
+	if (full == 1) {
+		for (int i = 0; i < 8; i++)
+			_animPalDir[i] = 0;
+		_soundEndTimeKey = 0;
+	}
+}
+
+int16 Inter::load16() {
+	int16 tmp = (int16) READ_LE_UINT16(_vm->_global->_inter_execPtr);
 	_vm->_global->_inter_execPtr += 2;
 	return tmp;
 }
@@ -72,11 +84,10 @@ int16 Inter::load16(void) {
 char Inter::evalExpr(int16 *pRes) {
 	byte token;
 
-//
 	_vm->_parse->printExpr(99);
 
 	_vm->_parse->parseExpr(99, &token);
-	if (pRes == 0)
+	if (!pRes)
 		return token;
 
 	switch (token) {
@@ -93,43 +104,102 @@ char Inter::evalExpr(int16 *pRes) {
 		*pRes = 1;
 		break;
 	}
+
 	return token;
 }
 
-char Inter::evalBoolResult() {
+bool Inter::evalBoolResult() {
 	byte token;
 
 	_vm->_parse->printExpr(99);
 
 	_vm->_parse->parseExpr(99, &token);
-	if (token == 24 || (token == 20 && _vm->_global->_inter_resVal != 0))
-		return 1;
+	if ((token == 24) || ((token == 20) && _vm->_global->_inter_resVal))
+		return true;
 	else
-		return 0;
+		return false;
+}
+
+void Inter::renewTimeInVars() {
+	struct tm *t;
+	time_t now = time(NULL);
+
+	t = localtime(&now);
+
+	WRITE_VAR(5, 1900 + t->tm_year);
+	WRITE_VAR(6, t->tm_mon + 1);
+	WRITE_VAR(7, 0);
+	WRITE_VAR(8, t->tm_mday);
+	WRITE_VAR(9, t->tm_hour);
+	WRITE_VAR(10, t->tm_min);
+	WRITE_VAR(11, t->tm_sec);
+}
+
+void Inter::storeMouse() {
+	int16 x;
+	int16 y;
+
+	x = _vm->_global->_inter_mouseX;
+	y = _vm->_global->_inter_mouseY;
+	_vm->_draw->adjustCoords(1, &x, &y);
+
+	WRITE_VAR(2, x);
+	WRITE_VAR(3, y);
+	WRITE_VAR(4, _vm->_game->_mouseButtons);
+}
+
+void Inter::storeKey(int16 key) {
+	WRITE_VAR(12, _vm->_util->getTimeKey() - _vm->_game->_startTimeKey);
+
+	storeMouse();
+	WRITE_VAR(1, _vm->_snd->_playingSound);
+
+	if (key == 0x4800)
+		key = 0x0B;
+	else if (key == 0x5000)
+		key = 0x0A;
+	else if (key == 0x4D00)
+		key = 0x09;
+	else if (key == 0x4B00)
+		key = 0x08;
+	else if (key == 0x011B)
+		key = 0x1B;
+	else if (key == 0x0E08)
+		key = 0x19;
+	else if (key == 0x5300)
+		key = 0x1A;
+	else if ((key & 0xFF) != 0)
+		key &= 0xFF;
+
+	WRITE_VAR(0, key);
+
+	if (key != 0)
+		_vm->_util->clearKeyBuf();
 }
 
 void Inter::funcBlock(int16 retFlag) {
-	char cmdCount;
-	int16 counter;
+	OpFuncParams params;
 	byte cmd;
 	byte cmd2;
 
-	if (_vm->_global->_inter_execPtr == 0)
+	params.retFlag = retFlag;
+
+	if (!_vm->_global->_inter_execPtr)
 		return;
 
-	_breakFlag = false;
+	_break = false;
 	_vm->_global->_inter_execPtr++;
-	cmdCount = *_vm->_global->_inter_execPtr++;
+	params.cmdCount = *_vm->_global->_inter_execPtr++;
 	_vm->_global->_inter_execPtr += 2;
 
-	if (cmdCount == 0) {
+	if (params.cmdCount == 0) {
 		_vm->_global->_inter_execPtr = 0;
 		return;
 	}
 
-	int startaddr = _vm->_global->_inter_execPtr-_vm->_game->_totFileData;
+	int startaddr = _vm->_global->_inter_execPtr - _vm->_game->_totFileData;
 
-	counter = 0;
+	params.counter = 0;
 	do {
 		if (_terminate)
 			break;
@@ -154,37 +224,36 @@ void Inter::funcBlock(int16 retFlag) {
 			{
 				_vm->_util->longDelay(5000);
 			}
-		}
-		// (end workaround)
+		} // End of workaround
 
-		cmd = (byte)*_vm->_global->_inter_execPtr;
+		cmd = (byte) *_vm->_global->_inter_execPtr;
 		if ((cmd >> 4) >= 12) {
 			cmd2 = 16 - (cmd >> 4);
-			cmd &= 0xf;
+			cmd &= 0xF;
 		} else
 			cmd2 = 0;
 
 		_vm->_global->_inter_execPtr++;
-		counter++;
+		params.counter++;
 
 		if (cmd2 == 0)
 			cmd >>= 4;
 
-		if (executeFuncOpcode(cmd2, cmd, cmdCount, counter, retFlag))
+		if (executeFuncOpcode(cmd2, cmd, params))
 			return;
 
 		if (_vm->_quitRequested)
 			break;
 
-		if (_breakFlag) {
-			if (retFlag != 2)
+		if (_break) {
+			if (params.retFlag != 2)
 				break;
 
 			if (*_breakFromLevel == -1)
-				_breakFlag = false;
+				_break = false;
 			break;
 		}
-	} while (counter != cmdCount);
+	} while (params.counter != params.cmdCount);
 
 	_vm->_global->_inter_execPtr = 0;
 	return;
@@ -192,191 +261,21 @@ void Inter::funcBlock(int16 retFlag) {
 
 void Inter::callSub(int16 retFlag) {
 	int16 block;
-	while (!_vm->_quitRequested && _vm->_global->_inter_execPtr != 0 && (char *)_vm->_global->_inter_execPtr != _vm->_game->_totFileData) {
+
+	while (!_vm->_quitRequested && _vm->_global->_inter_execPtr &&
+			(_vm->_global->_inter_execPtr != _vm->_game->_totFileData)) {
+
 		block = *_vm->_global->_inter_execPtr;
-		if (block == 1) {
+		if (block == 1)
 			funcBlock(retFlag);
-		} else if (block == 2) {
+		else if (block == 2)
 			_vm->_game->collisionsBlock();
-		}
+		else
+			error("Unknown block type %d in Inter::callSub()", block);
 	}
 
-	if ((char *)_vm->_global->_inter_execPtr == _vm->_game->_totFileData)
-		_terminate = true;
-}
-
-void Inter::initControlVars(char full) {
-	int i;
-
-	*_nestLevel = 0;
-	*_breakFromLevel = -1;
-
-	*_vm->_scenery->_pCaptureCounter = 0;
-
-	_breakFlag = false;
-	_terminate = false;
-
-	if (full == 1) {
-		for (i = 0; i < 8; i++)
-			_animPalDir[i] = 0;
-		_soundEndTimeKey = 0;
-	}
-}
-
-void Inter::renewTimeInVars(void) {
-	struct tm *t;
-	time_t now = time(NULL);
-
-	t = localtime(&now);
-
-	WRITE_VAR(5, 1900 + t->tm_year);
-	WRITE_VAR(6, t->tm_mon + 1);
-	WRITE_VAR(7, 0);
-	WRITE_VAR(8, t->tm_mday);
-	WRITE_VAR(9, t->tm_hour);
-	WRITE_VAR(10, t->tm_min);
-	WRITE_VAR(11, t->tm_sec);
-}
-
-void Inter::manipulateMap(int16 xPos, int16 yPos, int16 item) {
-	for (int16 y = 0; y < _vm->_map->_mapHeight; y++) {
-		for (int16 x = 0; x < _vm->_map->_mapWidth; x++) {
-			if ((_vm->_map->_itemsMap[y][x] & 0xff) == item) {
-				_vm->_map->_itemsMap[y][x] &= 0xff00;
-			} else if (((_vm->_map->_itemsMap[y][x] & 0xff00) >> 8)
-					== item) {
-				_vm->_map->_itemsMap[y][x] &= 0xff;
-			}
-		}
-	}
-
-	if (xPos < _vm->_map->_mapWidth - 1) {
-		if (yPos > 0) {
-			if ((_vm->_map->_itemsMap[yPos][xPos] & 0xff00) != 0 ||
-					(_vm->_map->_itemsMap[yPos - 1][xPos] & 0xff00) !=
-					0
-					|| (_vm->_map->_itemsMap[yPos][xPos +
-						1] & 0xff00) != 0
-					|| (_vm->_map->_itemsMap[yPos - 1][xPos +
-						1] & 0xff00) != 0) {
-
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xff00)
-						+ item;
-
-				_vm->_map->_itemsMap[yPos - 1][xPos] =
-						(_vm->_map->_itemsMap[yPos -
-					1][xPos] & 0xff00) + item;
-
-				_vm->_map->_itemsMap[yPos][xPos + 1] =
-						(_vm->_map->_itemsMap[yPos][xPos +
-					1] & 0xff00) + item;
-
-				_vm->_map->_itemsMap[yPos - 1][xPos + 1] =
-						(_vm->_map->_itemsMap[yPos - 1][xPos +
-					1] & 0xff00) + item;
-			} else {
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xff) +
-						(item << 8);
-
-				_vm->_map->_itemsMap[yPos - 1][xPos] =
-						(_vm->_map->_itemsMap[yPos -
-					1][xPos] & 0xff) + (item << 8);
-
-				_vm->_map->_itemsMap[yPos][xPos + 1] =
-						(_vm->_map->_itemsMap[yPos][xPos +
-					1] & 0xff) + (item << 8);
-
-				_vm->_map->_itemsMap[yPos - 1][xPos + 1] =
-						(_vm->_map->_itemsMap[yPos - 1][xPos +
-					1] & 0xff) + (item << 8);
-			}
-		} else {
-			if ((_vm->_map->_itemsMap[yPos][xPos] & 0xff00) != 0 ||
-					(_vm->_map->_itemsMap[yPos][xPos + 1] & 0xff00) !=
-					0) {
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xff00)
-						+ item;
-
-				_vm->_map->_itemsMap[yPos][xPos + 1] =
-						(_vm->_map->_itemsMap[yPos][xPos +
-					1] & 0xff00) + item;
-			} else {
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xff) +
-						(item << 8);
-
-				_vm->_map->_itemsMap[yPos][xPos + 1] =
-						(_vm->_map->_itemsMap[yPos][xPos +
-					1] & 0xff) + (item << 8);
-			}
-		}
-	} else {
-		if (yPos > 0) {
-			if ((_vm->_map->_itemsMap[yPos][xPos] & 0xff00) != 0 ||
-					(_vm->_map->_itemsMap[yPos - 1][xPos] & 0xff00) !=
-					0) {
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xff00)
-						+ item;
-
-				_vm->_map->_itemsMap[yPos - 1][xPos] =
-						(_vm->_map->_itemsMap[yPos -
-					1][xPos] & 0xff00) + item;
-			} else {
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xff) +
-						(item << 8);
-
-				_vm->_map->_itemsMap[yPos - 1][xPos] =
-						(_vm->_map->_itemsMap[yPos -
-					1][xPos] & 0xff) + (item << 8);
-			}
-		} else {
-			if ((_vm->_map->_itemsMap[yPos][xPos] & 0xff00) != 0) {
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xff00)
-						+ item;
-			} else {
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xff) +
-						(item << 8);
-			}
-		}
-	}
-
-	if (item < 0 || item >= 20)
-		return;
-
-	if (xPos > 1 && _vm->_map->getPass(xPos - 2, yPos) == 1) {
-		_vm->_map->_itemPoses[item].x = xPos - 2;
-		_vm->_map->_itemPoses[item].y = yPos;
-		_vm->_map->_itemPoses[item].orient = 4;
-		return;
-	}
-
-	if (xPos < _vm->_map->_mapWidth - 2 && _vm->_map->getPass(xPos + 2, yPos) == 1) {
-		_vm->_map->_itemPoses[item].x = xPos + 2;
-		_vm->_map->_itemPoses[item].y = yPos;
-		_vm->_map->_itemPoses[item].orient = 0;
-		return;
-	}
-
-	if (xPos < _vm->_map->_mapWidth - 1 && _vm->_map->getPass(xPos + 1, yPos) == 1) {
-		_vm->_map->_itemPoses[item].x = xPos + 1;
-		_vm->_map->_itemPoses[item].y = yPos;
-		_vm->_map->_itemPoses[item].orient = 0;
-		return;
-	}
-
-	if (xPos > 0 && _vm->_map->getPass(xPos - 1, yPos) == 1) {
-		_vm->_map->_itemPoses[item].x = xPos - 1;
-		_vm->_map->_itemPoses[item].y = yPos;
-		_vm->_map->_itemPoses[item].orient = 4;
-		return;
-	}
+	if (_vm->_global->_inter_execPtr == _vm->_game->_totFileData)
+		_terminate = 1;
 }
 
 } // End of namespace Gob

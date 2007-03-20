@@ -20,14 +20,15 @@
  * $Id$
  *
  */
+
 #include "gob/gob.h"
 #include "gob/global.h"
 
 namespace Gob {
 
 Global::Global(GobEngine *vm) : _vm(vm) {
-	_useMouse = UNDEF;
-	_mousePresent = UNDEF;
+	for (int i = 0; i < 128; i++)
+		_pressedKeys[i] = 0;
 
 	_presentCGA = UNDEF;
 	_presentEGA = UNDEF;
@@ -36,107 +37,83 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 
 	_videoMode = 0;
 	_fakeVideoMode = 0;
-
-	/* Sound */
-	_soundFlags = 0;
-	_blasterPort = 0;
-	_disableSoundCfg = 0;
-
-	/* Mouse */
-	_disableMouseCfg = 0;
-
-	_mouseXShift = 3;
-	_mouseYShift = 3;
-
-	_mouseMaxCol = 320;
-	_mouseMaxRow = 200;
-
-	/* Language */
-	_disableLangCfg = 0x8000;
-	_language = 0x8000;
-	_languageWanted = 0x8000;
-
-	/* Timer variables */
-	_startTime = 0;
-	_timer_delta = 1000;
+	_oldMode = 3;
 
 	_frameWaitTime = 0;
 	_startFrameTime = 0;
 
-	/* Timer and delays */
-	_delayTime = 0;
+	_soundFlags = 0;
 
-	/* Joystick */
+	_language = 0x8000;
+	_languageWanted = 0x8000;
+
+	_useMouse = UNDEF;
+	_mousePresent = UNDEF;
+	_mouseXShift = 3;
+	_mouseYShift = 3;
+	_mouseMaxCol = 320;
+	_mouseMaxRow = 200;
+
 	_useJoystick = 1;
-
-	/* Data files */
-	_packedSize = 0;
-	int i;
-
-	for (i = 0; i < MAX_DATA_FILES; i++) {
-		_dataFiles[i] = 0;
-		_numDataChunks[i] = 0;
-		_dataFileHandles[i] = -1;
-	}
 
 	_primaryWidth = 0;
 	_primaryHeight = 0;
 
-	_sprAllocated = 0;
+	_colorCount = 16;
+	for (int i = 0; i < 256; i++) {
+		_redPalette[i] = 0;
+		_greenPalette[i] = 0;
+		_bluePalette[i] = 0;
+	}
 
-	_doRangeClamp = 0;
+	_unusedPalette1[ 0] = (int16) 0x0000;
+	_unusedPalette1[ 1] = (int16) 0x000B;
+	_unusedPalette1[ 2] = (int16) 0x0000;
+	_unusedPalette1[ 3] = (int16) 0x5555;
+	_unusedPalette1[ 4] = (int16) 0xAAAA;
+	_unusedPalette1[ 5] = (int16) 0xFFFF;
+	_unusedPalette1[ 6] = (int16) 0x0000;
+	_unusedPalette1[ 7] = (int16) 0x5555;
+	_unusedPalette1[ 8] = (int16) 0xAAAA;
+	_unusedPalette1[ 9] = (int16) 0xFFFF;
+	_unusedPalette1[10] = (int16) 0x0000;
+	_unusedPalette1[11] = (int16) 0x5555;
+	_unusedPalette1[12] = (int16) 0xAAAA;
+	_unusedPalette1[13] = (int16) 0xFFFF;
+	_unusedPalette1[14] = (int16) 0x0000;
+	_unusedPalette1[15] = (int16) 0x5555;
+	_unusedPalette1[16] = (int16) 0xAAAA;
+	_unusedPalette1[17] = (int16) 0xFFFF;
 
-	_setAllPalette = 0;
+	for (int i = 0; i < 16 ;i++)
+		_unusedPalette2[i] = i;
 
-	_oldMode = 3;
-	_dontSetPalette = 0;
-	_primarySurfDesc.vidPtr = 0;
-	_pPrimarySurfDesc = 0;
+	_vgaPalette[ 0].red = 0x00; _vgaPalette[ 0].green = 0x00; _vgaPalette[ 0].blue = 0x00;
+	_vgaPalette[ 1].red = 0x00; _vgaPalette[ 1].green = 0x00; _vgaPalette[ 1].blue = 0x2A;
+	_vgaPalette[ 2].red = 0x00; _vgaPalette[ 2].green = 0x2A; _vgaPalette[ 2].blue = 0x00;
+	_vgaPalette[ 3].red = 0x00; _vgaPalette[ 3].green = 0x2A; _vgaPalette[ 3].blue = 0x2A;
+	_vgaPalette[ 4].red = 0x2A; _vgaPalette[ 4].green = 0x00; _vgaPalette[ 4].blue = 0x00;
+	_vgaPalette[ 5].red = 0x2A; _vgaPalette[ 5].green = 0x00; _vgaPalette[ 5].blue = 0x2A;
+	_vgaPalette[ 6].red = 0x2A; _vgaPalette[ 6].green = 0x15; _vgaPalette[ 6].blue = 0x00;
+	_vgaPalette[ 7].red = 0x2A; _vgaPalette[ 7].green = 0x2A; _vgaPalette[ 7].blue = 0x2A;
+	_vgaPalette[ 8].red = 0x15; _vgaPalette[ 8].green = 0x15; _vgaPalette[ 8].blue = 0x15;
+	_vgaPalette[ 9].red = 0x15; _vgaPalette[ 9].green = 0x15; _vgaPalette[ 9].blue = 0x3F;
+	_vgaPalette[10].red = 0x15; _vgaPalette[10].green = 0x3F; _vgaPalette[10].blue = 0x15;
+	_vgaPalette[11].red = 0x15; _vgaPalette[11].green = 0x3F; _vgaPalette[11].blue = 0x3F;
+	_vgaPalette[12].red = 0x3F; _vgaPalette[12].green = 0x15; _vgaPalette[12].blue = 0x15;
+	_vgaPalette[13].red = 0x3F; _vgaPalette[13].green = 0x15; _vgaPalette[13].blue = 0x3F;
+	_vgaPalette[14].red = 0x3F; _vgaPalette[14].green = 0x3F; _vgaPalette[14].blue = 0x15;
+	_vgaPalette[15].red = 0x3F; _vgaPalette[15].green = 0x3F; _vgaPalette[15].blue = 0x3F;
 
 	_pPaletteDesc = 0;
 
-	_unusedPalette1[0] = (int16)0;
-	_unusedPalette1[1] = (int16)0x0b;
-	_unusedPalette1[2] = (int16)0;
-	_unusedPalette1[3] = (int16)0x5555;
-	_unusedPalette1[4] = (int16)0xAAAA;
-	_unusedPalette1[5] = (int16)0xFFFF;
-	_unusedPalette1[6] = (int16)0;
-	_unusedPalette1[7] = (int16)0x5555;
-	_unusedPalette1[8] = (int16)0xAAAA;
-	_unusedPalette1[9] = (int16)0xFFFF;
-	_unusedPalette1[10] = (int16)0;
-	_unusedPalette1[11] = (int16)0x5555;
-	_unusedPalette1[12] = (int16)0xAAAA;
-	_unusedPalette1[13] = (int16)0xFFFF;
-	_unusedPalette1[14] = (int16)0;
-	_unusedPalette1[15] = (int16)0x5555;
-	_unusedPalette1[16] = (int16)0xAAAA;
-	_unusedPalette1[17] = (int16)0xFFFF;
+	_setAllPalette = false;
+	_dontSetPalette = false;
 
-	for (i = 0; i < 16 ;i++)
-		_unusedPalette2[i] = i;
-
-	_vgaPalette[0].red = 0x00; _vgaPalette[0].green = 0x00; _vgaPalette[0].blue = 0x00;
-	_vgaPalette[1].red = 0x00; _vgaPalette[1].green = 0x00; _vgaPalette[1].blue = 0x2a;
-	_vgaPalette[2].red = 0x00; _vgaPalette[2].green = 0x2a; _vgaPalette[2].blue = 0x00;
-	_vgaPalette[3].red = 0x00; _vgaPalette[3].green = 0x2a; _vgaPalette[3].blue = 0x2a;
-	_vgaPalette[4].red = 0x2a; _vgaPalette[4].green = 0x00; _vgaPalette[4].blue = 0x00;
-	_vgaPalette[5].red = 0x2a; _vgaPalette[5].green = 0x00; _vgaPalette[5].blue = 0x2a;
-	_vgaPalette[6].red = 0x2a; _vgaPalette[6].green = 0x15; _vgaPalette[6].blue = 0x00;
-	_vgaPalette[7].red = 0x2a; _vgaPalette[7].green = 0x2a; _vgaPalette[7].blue = 0x2a;
-	_vgaPalette[8].red = 0x15; _vgaPalette[8].green = 0x15; _vgaPalette[8].blue = 0x15;
-	_vgaPalette[9].red = 0x15; _vgaPalette[9].green = 0x15; _vgaPalette[9].blue = 0x3f;
-	_vgaPalette[10].red = 0x15; _vgaPalette[10].green = 0x3f; _vgaPalette[10].blue = 0x15;
-	_vgaPalette[11].red = 0x15; _vgaPalette[11].green = 0x3f; _vgaPalette[11].blue = 0x3f;
-	_vgaPalette[12].red = 0x3f; _vgaPalette[12].green = 0x15; _vgaPalette[12].blue = 0x15;
-	_vgaPalette[13].red = 0x3f; _vgaPalette[13].green = 0x15; _vgaPalette[13].blue = 0x3f;
-	_vgaPalette[14].red = 0x3f; _vgaPalette[14].green = 0x3f; _vgaPalette[14].blue = 0x15;
-	_vgaPalette[15].red = 0x3f; _vgaPalette[15].green = 0x3f; _vgaPalette[15].blue = 0x3f;
+	_primarySurfDesc = new SurfaceDesc(0x13, 320, 200);
 
 	_debugFlag = 0;
 	_inVM = 0;
-	_colorCount = 16;
 
 	_inter_resStr[0] = 0;
 	_inter_resVal = 0;
@@ -149,16 +126,11 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 	_inter_mouseX = 0;
 	_inter_mouseY = 0;
 
-	for (i = 0; i < 128; i++)
-		_pressedKeys[i] = 0;
-
 	_savedBack = 0;
 	_savedBackSize = -1;
 }
 
 Global::~Global() {
-	if (_primarySurfDesc.vidPtr)
-		delete[] _primarySurfDesc.vidPtr;
 }
 
 } // End of namespace Gob

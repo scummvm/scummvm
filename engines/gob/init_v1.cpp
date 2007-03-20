@@ -27,8 +27,6 @@
 #include "gob/gob.h"
 #include "gob/init.h"
 #include "gob/global.h"
-#include "gob/timer.h"
-#include "gob/video.h"
 #include "gob/draw.h"
 
 namespace Gob {
@@ -36,17 +34,13 @@ namespace Gob {
 Init_v1::Init_v1(GobEngine *vm) : Init(vm) {
 }
 
-void Init_v1::soundVideo(int32 smallHeap, int16 flag) {
-	if (_vm->_global->_videoMode != 0x13 && _vm->_global->_videoMode != 0x14 && _vm->_global->_videoMode != 0)
-		error("soundVideo: Video mode 0x%x is not supported!",
-		    _vm->_global->_videoMode);
+void Init_v1::initVideo() {
+	if (_vm->_global->_videoMode)
+		_vm->validateVideoMode(_vm->_global->_videoMode);
 
 	_vm->_global->_mousePresent = 1;
 
 	_vm->_global->_inVM = 0;
-
-	_vm->_global->_sprAllocated = 0;
-	_vm->_gtimer->enableTimer();
 
 	if (_vm->_global->_videoMode == 0x13)
 		_vm->_global->_colorCount = 256;
@@ -55,7 +49,6 @@ void Init_v1::soundVideo(int32 smallHeap, int16 flag) {
 	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
 	_vm->_global->_pPaletteDesc->unused1 = _vm->_global->_unusedPalette1;
 	_vm->_global->_pPaletteDesc->unused2 = _vm->_global->_unusedPalette2;
-	_vm->_global->_pPrimarySurfDesc = &_vm->_global->_primarySurfDesc;
 
 	if (_vm->_global->_videoMode != 0)
 		_vm->_video->initSurfDesc(_vm->_global->_videoMode, 320, 200, PRIMARY_SURFACE);

@@ -19,6 +19,7 @@
  * $Id$
  *
  */
+
 #include "common/stdafx.h"
 #include "common/endian.h"
 
@@ -26,29 +27,26 @@
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/md5.h"
+#include "sound/mididrv.h"
 
 #include "gob/gob.h"
-
 #include "gob/global.h"
+#include "gob/util.h"
+#include "gob/dataio.h"
 #include "gob/game.h"
 #include "gob/sound.h"
 #include "gob/init.h"
 #include "gob/inter.h"
 #include "gob/draw.h"
-#include "gob/anim.h"
 #include "gob/cdrom.h"
 #include "gob/goblin.h"
 #include "gob/map.h"
 #include "gob/mult.h"
-#include "gob/pack.h"
 #include "gob/palanim.h"
 #include "gob/parse.h"
 #include "gob/scenery.h"
-#include "gob/timer.h"
-#include "gob/util.h"
 #include "gob/music.h"
-
-#include "sound/mididrv.h"
+#include "gob/imd.h"
 
 // Use the original saves. Just for testing purposes, will be removed later
 // The new method is more convenient, and, more importantly, endian-safe
@@ -56,8 +54,19 @@
 
 namespace Gob {
 
-
 #define MAX_TIME_DELTA 100
+
+const Common::Language GobEngine::_gobToScummVMLang[] = {
+	Common::FR_FRA,
+	Common::DE_DEU,
+	Common::EN_GRB,
+	Common::ES_ESP,
+	Common::IT_ITA,
+	Common::EN_USA,
+	Common::NL_NLD,
+	Common::KO_KOR,
+	Common::HB_ISR
+};
 
 GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	// Setup mixer
@@ -98,31 +107,28 @@ GobEngine::~GobEngine() {
 	// Stop all mixer streams (except for the permanent ones).
 	_vm->_mixer->stopAll();
 
+	delete _snd;
+	delete _adlib;
 	delete _mult;
 	delete _game;
-	delete _snd;
 	delete _global;
-	delete _draw;
-	delete _anim;
 	delete _cdrom;
-	delete _dataio;
+	delete _dataIO;
 	delete _goblin;
+	delete _imdPlayer;
 	delete _init;
 	delete _inter;
 	delete _map;
-	delete _pack;
-	delete _palanim;
+	delete _palAnim;
 	delete _parse;
 	delete _scenery;
-	delete _gtimer;
+	delete _draw;
 	delete _util;
-	delete _adlib;
 	delete _video;
 	delete[] _startTot;
 	delete[] _startTot0;
 
-	int i;
-	for (i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++)
 		delete[] _saveFiles[i];
 	delete[] _saveFiles;
 	delete[] _saveSlotFile;
@@ -186,7 +192,7 @@ void GobEngine::saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 	int32 iSize;
 	int32 oSize;
 	int32 oOff;
-	Video::SurfaceDesc *srcDesc;
+	SurfaceDesc *srcDesc;
 	Common::InSaveFile *in;
 	Common::OutSaveFile *out;
 
@@ -217,13 +223,10 @@ void GobEngine::saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 		}
 		srcDesc = _draw->_spritesArray[index];
 
-		if (_global->_savedBack)
-			_video->freeSurfDesc(_global->_savedBack);
-
 		_global->_savedBack =
-			_video->initSurfDesc(_vm->_global->_videoMode, srcDesc->width, srcDesc->height, 0);
+			_video->initSurfDesc(_vm->_global->_videoMode, srcDesc->getWidth(), srcDesc->getHeight(), 0);
 		_vm->_video->drawSprite(srcDesc, _global->_savedBack, 0, 0,
-				srcDesc->width - 1, srcDesc->height - 1, 0, 0, 0);
+				srcDesc->getWidth() - 1, srcDesc->getHeight() - 1, 0, 0, 0);
 
 		_global->_savedBackSize = _draw->getSpriteRectSize(index);
 		if (writePal)
@@ -247,7 +250,7 @@ void GobEngine::saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 	buf = _global->_inter_variables + dataVar;
 #ifndef GOB_ORIGSAVES
 	if (sFile == SAVE_CAT) {
-		if(saveGame((offset - 600) / varSize, dataVar, size, offset))
+		if (saveGame((offset - 600) / varSize, dataVar, size, offset))
 			WRITE_VAR(1, 0);
 		return;
 	} else if (offset != 0) {
@@ -271,7 +274,7 @@ void GobEngine::saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 		delete in;
 	}
 
-	if(!(out = _saveFileMan->openForSaving(sName))) {
+	if (!(out = _saveFileMan->openForSaving(sName))) {
 		warning("Can't open file \"%s\" for writing", sName);
 		delete[] oBuf;
 		return;
@@ -306,7 +309,7 @@ bool GobEngine::saveGame(int saveSlot, int16 dataVar, int32 size, int32 offset) 
 		memcpy(_saveIndex, varBuf, size);
 		memcpy(_saveIndexSizes, sizeBuf, size);
 		return true;
-	} else if((((offset - 600) % varSize) == 0) && (size == varSize)) {
+	} else if ((((offset - 600) % varSize) == 0) && (size == varSize)) {
 		if (!(out = _saveFileMan->openForSaving(getSaveSlotFile(saveSlot)))) {
 			warning("Can't open file \"%s\" for writing", getSaveSlotFile(saveSlot));
 			return false;
@@ -372,7 +375,7 @@ void GobEngine::loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 	char *buf;
 	char *sName;
 	bool readPal;
-	Video::SurfaceDesc *destDesc;
+	SurfaceDesc *destDesc;
 	Common::InSaveFile *in;
 
 	index = 0;
@@ -398,17 +401,17 @@ void GobEngine::loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 		}
 		destDesc = _draw->_spritesArray[index];
 
-		if ((destDesc->width != _global->_savedBack->width) ||
-		    (destDesc->height != _global->_savedBack->height)) {
+		if ((destDesc->getWidth() != _global->_savedBack->getWidth()) ||
+		    (destDesc->getHeight() != _global->_savedBack->getHeight())) {
 			warning("Resolution doesn't match while loading a sprite");
 			return;
 		}
 
 		_vm->_video->drawSprite(_global->_savedBack, destDesc, 0, 0,
-				destDesc->width - 1, destDesc->height - 1, 0, 0, 0);
+				destDesc->getWidth() - 1, destDesc->getHeight() - 1, 0, 0, 0);
 		if (index == 21) {
 			_video->drawSprite(_draw->_backSurface, _draw->_frontSurface, 0, 0,
-					_draw->_frontSurface->width - 1, _draw->_frontSurface->height - 1, 0, 0, 0);
+					_draw->_frontSurface->getWidth() - 1, _draw->_frontSurface->getHeight() - 1, 0, 0, 0);
 			_video->waitRetrace(_global->_videoMode);
 		}
 
@@ -430,7 +433,7 @@ void GobEngine::loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 	buf = _global->_inter_variables + dataVar;
 #ifndef GOB_ORIGSAVES
 	if (sFile == SAVE_CAT) {
-		if(loadGame((offset - 600) / varSize, dataVar, size, offset))
+		if (loadGame((offset - 600) / varSize, dataVar, size, offset))
 			WRITE_VAR(1, 0);
 		return;
 	} else if (offset != 0) {
@@ -444,7 +447,7 @@ void GobEngine::loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 		return;
 	}
 
-	if(!(in = _saveFileMan->openForLoading(sName))) {
+	if (!(in = _saveFileMan->openForLoading(sName))) {
 		warning("Can't open file \"%s\" for reading", sName);
 		return;
 	}
@@ -487,7 +490,7 @@ bool GobEngine::loadGame(int saveSlot, int16 dataVar, int32 size, int32 offset) 
 				memset(varBuf, 0, 40);
 		}
 		return true;
-	} else if((((offset - 600) % varSize) == 0) && (size == varSize)) {
+	} else if ((((offset - 600) % varSize) == 0) && (size == varSize)) {
 		if (!(in = _saveFileMan->openForLoading(getSaveSlotFile(saveSlot)))) {
 			warning("Can't load from slot %d", saveSlot);
 			return false;
@@ -554,6 +557,20 @@ uint32 GobEngine::readDataEndian(Common::InSaveFile &in, char *varBuf, byte *siz
 #endif // GOB_ORIGSAVES
 }
 
+void GobEngine::validateLanguage() {
+	if (_vm->_global->_languageWanted != _vm->_global->_language) {
+		warning("Your game version doesn't support the requested language");
+		warning("Using the first language available: %s",
+				getLangDesc(_vm->_global->_language));
+		_vm->_global->_languageWanted = _vm->_global->_language;
+	}
+}
+
+void GobEngine::validateVideoMode(int16 videoMode) {
+	if ((videoMode != 0x13) && (videoMode != 0x14))
+		error("Video mode 0x%X is not supported!", videoMode);
+}
+
 int GobEngine::init() {
 	// Detect game
 	if (!detectGame()) {
@@ -562,52 +579,47 @@ int GobEngine::init() {
 	}
 
 	_adlib = 0;
-	_snd = new Snd(this);
 	_global = new Global(this);
-	_anim = new Anim();
-	_cdrom = new CDROM(this);
-	_dataio = new DataIO(this);
-	_pack = new Pack();
-	_palanim = new PalAnim(this);
-	_gtimer = new GTimer();
 	_util = new Util(this);
+	_dataIO = new DataIO(this);
+	_palAnim = new PalAnim(this);
+	_imdPlayer = new ImdPlayer(this);
+	_cdrom = new CDROM(this);
+	_snd = new Snd(this);
 	if (_features & Gob::GF_GOB1) {
+		_init = new Init_v1(this);
+		_video = new Video_v1(this);
 		_inter = new Inter_v1(this);
 		_parse = new Parse_v1(this);
 		_mult = new Mult_v1(this);
 		_draw = new Draw_v1(this);
 		_game = new Game_v1(this);
-		_video = new Video_v1(this);
-		_init = new Init_v1(this);
 		_map = new Map_v1(this);
 		_goblin = new Goblin_v1(this);
 		_scenery = new Scenery_v1(this);
-	}
-	else if (_features & Gob::GF_GOB2) {
+	} else if (_features & Gob::GF_GOB2) {
+		_init = new Init_v2(this);
+		_video = new Video_v2(this);
 		_inter = new Inter_v2(this);
 		_parse = new Parse_v2(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
 		_game = new Game_v2(this);
-		_video = new Video_v2(this);
-		_init = new Init_v2(this);
 		_map = new Map_v2(this);
 		_goblin = new Goblin_v2(this);
 		_scenery = new Scenery_v2(this);
-	}
-	else if (_features & Gob::GF_BARGON) {
+	} else if (_features & Gob::GF_BARGON) {
+		_init = new Init_v2(this);
+		_video = new Video_v2(this);
 		_inter = new Inter_Bargon(this);
 		_parse = new Parse_v2(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_Bargon(this);
 		_game = new Game_v2(this);
-		_video = new Video_v2(this);
-		_init = new Init_v2(this);
 		_map = new Map_v2(this);
 		_goblin = new Goblin_v2(this);
 		_scenery = new Scenery_v2(this);
-	}
-	else
+	} else
 		error("GobEngine::init(): Unknown version of game engine");
 
 	_noMusic = MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL;
@@ -634,7 +646,7 @@ int GobEngine::init() {
 		_system->openCD(cd_num);
 
 	_global->_debugFlag = 1;
-	_global->_doRangeClamp = 1;
+	_video->_doRangeClamp = true;
 
 	// WORKAROUND: Some versions check the video mode to detect the system
 	if (_platform == Common::kPlatformAmiga)

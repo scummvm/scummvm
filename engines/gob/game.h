@@ -20,13 +20,13 @@
  * $Id$
  *
  */
+
 #ifndef GOB_GAME_H
 #define GOB_GAME_H
 
 #include "sound/mods/infogrames.h"
+
 #include "gob/sound.h"
-#include "gob/music.h"
-#include "gob/video.h"
 
 namespace Gob {
 
@@ -45,7 +45,7 @@ public:
 		int16 key;
 		uint16 funcEnter;
 		uint16 funcLeave;
-		int16 field_12; // New in GOB2
+		uint16 funcSub;
 	};
 
 #define szGame_TotResItem (4 + 2 + 2 + 2)
@@ -69,7 +69,7 @@ public:
 	struct ExtItem {
 		int32 offset;		// offset from the table end
 		uint16 size;
-		int16 width;		// width&0x7fff - width, width&0x8000 - pack flag
+		int16 width;		// width & 0x7FFF: width, width & 0x8000: pack flag
 		int16 height;		// not zero
 	};
 
@@ -100,37 +100,6 @@ public:
 		char *ptr;
 	};
 
-	struct ImdCoord {
-		int16 left;
-		int16 top;
-		int16 right;
-		int16 bottom;
-	};
-
-	struct Imd {
-		int16 fileHandle;
-		int16 verMin;
-		int16 framesCount;
-		int16 x;
-		int16 y;
-		int16 width;
-		int16 height;
-		int16 field_E;
-		int16 curFrame;
-		Video::Color *palette;
-		Video::SurfaceDesc *surfDesc;
-		int32 *framesPos;
-		int32 firstFramePos;
-		int16 stdX;
-		int16 stdY;
-		int16 stdWidth;
-		int16 stdHeight;
-		int32 filePos;
-		ImdCoord *frameCoords;
-		int32 frameDataSize;
-		int32 vidBufferSize;
-	};
-
 #include "common/pack-end.h"	// END STRUCT PACKING
 
 	TotResTable *_totResourceTable;
@@ -148,11 +117,7 @@ public:
 
 	int16 _extHandle;
 
-	Snd::SoundDesc *_soundSamples[60];
-	int16 _soundIds[60];
-	int8 _soundTypes[60];
-	char _soundFromExt[60];
-	bool _soundADL[60];
+	SoundDesc _soundSamples[60];
 
 	Audio::Infogrames::Instruments *_infIns;
 	Audio::Infogrames *_infogrames;
@@ -163,33 +128,6 @@ public:
 	int32 _startTimeKey;
 	int16 _mouseButtons;
 
-	// For totSub()
-	int8 _backupedCount;
-	int8 _curBackupPos;
-	int16 _cursorXDeltaArray[5];
-	int16 _cursorYDeltaArray[5];
-	TotTextTable *_totTextDataArray[5];
-	char *_totFileDataArray[5];
-	TotResTable *_totResourceTableArray[5];
-	ExtTable *_extTableArray[5];
-	int16 _extHandleArray[5];
-	char *_imFileDataArray[5];
-	char *_variablesArray[5];
-	char _curTotFileArray[5][14];
-	byte *_variablesSizesArray[5];
-
-	Imd *_imdFile;
-	char _curImdFile[15];
-	int16 _imdX;
-	int16 _imdY;
-	int16 _imdFrameDataSize;
-	int16 _imdVidBufferSize;
-	byte *_imdFrameData;
-	byte *_imdVidBuffer;
-	int8 _byte_2FC82;
-	int8 _byte_2FC83;
-	byte *_word_2FC80;
-
 	Game(GobEngine *vm);
 	virtual ~Game();
 
@@ -197,56 +135,33 @@ public:
 	char *loadTotResource(int16 id, int16 *dataSize = 0);
 
 	void capturePush(int16 left, int16 top, int16 width, int16 height);
-
 	void capturePop(char doDraw);
-	void freeSoundSlot(int16 slot);
-	void freeCollision(int16 id);
 
-	void loadSound(int16 slot, char *dataPtr, uint32 dataSize = 4294967295U);
+	void freeSoundSlot(int16 slot);
+
 	int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons, char handleMouse);
-	int16 adjustKey(int16 key);
-	int32 loadTotFile(char *path);
-	void loadExtTable(void);
-	void loadImFile(void);
 	void start(void);
 	void totSub(int8 flags, char *newTotFile);
 	void switchTotSub(int16 index, int16 skipPlay);
-	char *loadLocTexts(void);
-	Snd::SoundDesc *loadSND(const char *path, int8 arg_4);
-
-	Imd *loadImdFile(const char *path, Video::SurfaceDesc *surfDesc, int8 flags);
-	int8 openImd(const char *path, int16 x, int16 y, int16 repeat, int16 flags);
-	void closeImd(void);
-	void finishImd(Imd *imdPtr);
-	void setImdXY(Imd *imdPtr, int16 x, int16 y);
-	void playImd(int16 arg_0, int16 arg_2, int16 arg_4, int16 arg_6, int16 arg_8, int16 arg_A);
-	void playImd(const char *path, int16 x, int16 y, int16 startFrame, int16 frames,
-			bool fade, bool interruptible);
-	int16 viewImd(Game::Imd *imdPtr, int16 arg_4);
-	void imdDrawFrame(Imd *imdPtr, int16 frame, int16 x, int16 y, Video::SurfaceDesc *dest = 0);
-	void imdRenderFrame(Imd *imdPtr);
-	void imdFrameUncompressor(byte *dest, byte *src);
-	int16 sub_2C825(Imd *imdPtr);
 
 	virtual void playTot(int16 skipPlay) = 0;
+
 	virtual void clearCollisions(void) = 0;
 	virtual int16 addNewCollision(int16 id, int16 left, int16 top, int16 right,
-			int16 bottom, int16 flags, int16 key, uint16 funcEnter, uint16 funcLeave) = 0;
+			int16 bottom, int16 flags, int16 key, uint16 funcEnter,
+			uint16 funcLeave) = 0;
 	virtual void collisionsBlock(void) = 0;
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
-					InputDesc *inpDesc, int16 *collResId, int16 *collIndex) = 0;
+			InputDesc *inpDesc, int16 *collResId, int16 *collIndex) = 0;
 	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
 			char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex) = 0;
-	virtual int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
-						  int16 *pResIndex) = 0;
+	virtual int16 checkCollisions(char handleMouse, int16 deltaTime,
+			int16 *pResId, int16 *pResIndex) = 0;
+
 	virtual void prepareStart(void) = 0;
 
-	int8 _byte_2FC9B;
-	int32 _dword_2F2B6;
-
 protected:
-
 	int16 _lastCollKey;
 	int16 _lastCollAreaIndex;
 	int16 _lastCollId;
@@ -267,14 +182,37 @@ protected:
 	char _shouldPushColls;
 
 	// Capture
-	static Common::Rect _captureStack[20];
-	static int16 _captureCount;
+	Common::Rect _captureStack[20];
+	int16 _captureCount;
 
 	char _collStr[256];
 
+	// For totSub()
+	int8 _backupedCount;
+	int8 _curBackupPos;
+	int16 _cursorXDeltaArray[5];
+	int16 _cursorYDeltaArray[5];
+	TotTextTable *_totTextDataArray[5];
+	char *_totFileDataArray[5];
+	TotResTable *_totResourceTableArray[5];
+	ExtTable *_extTableArray[5];
+	int16 _extHandleArray[5];
+	char *_imFileDataArray[5];
+	char *_variablesArray[5];
+	char _curTotFileArray[5][14];
+	byte *_variablesSizesArray[5];
+
 	GobEngine *_vm;
 		
+	int16 adjustKey(int16 key);
+
+	char *loadLocTexts(void);
+	int32 loadTotFile(char *path);
+	void loadExtTable(void);
+	void loadImFile(void);
+
 	void setCollisions(void);
+	void freeCollision(int16 id);
 	void collSub(uint16 offset);
 	void collAreaSub(int16 index, int8 enter);
 	int16 openLocTextFile(char *locTextFile, int language);
@@ -287,17 +225,20 @@ protected:
 class Game_v1 : public Game {
 public:
 	virtual void playTot(int16 skipPlay);
+
 	virtual void clearCollisions(void);
 	virtual int16 addNewCollision(int16 id, int16 left, int16 top, int16 right,
-			int16 bottom, int16 flags, int16 key, uint16 funcEnter, uint16 funcLeave);
+			int16 bottom, int16 flags, int16 key, uint16 funcEnter,
+			uint16 funcLeave);
 	virtual void collisionsBlock(void);
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
-					InputDesc *inpDesc, int16 *collResId, int16 *collIndex);
+			InputDesc *inpDesc, int16 *collResId, int16 *collIndex);
 	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
 			char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex);
-	virtual int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
-						  int16 *pResIndex);
+	virtual int16 checkCollisions(char handleMouse, int16 deltaTime,
+			int16 *pResId, int16 *pResIndex);
+
 	virtual void prepareStart(void);
 
 	Game_v1(GobEngine *vm);
@@ -312,17 +253,20 @@ protected:
 class Game_v2 : public Game_v1 {
 public:
 	virtual void playTot(int16 skipPlay);
+
 	virtual void clearCollisions(void);
 	virtual int16 addNewCollision(int16 id, int16 left, int16 top, int16 right,
-			int16 bottom, int16 flags, int16 key, uint16 funcEnter, uint16 funcLeave);
+			int16 bottom, int16 flags, int16 key, uint16 funcEnter,
+			uint16 funcLeave);
 	virtual void collisionsBlock(void);
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
-					InputDesc *inpDesc, int16 *collResId, int16 *collIndex);
+			InputDesc *inpDesc, int16 *collResId, int16 *collIndex);
 	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
 			char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex);
-	virtual int16 checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
-						  int16 *pResIndex);
+	virtual int16 checkCollisions(char handleMouse, int16 deltaTime,
+			int16 *pResId, int16 *pResIndex);
+
 	virtual void prepareStart(void);
 
 	Game_v2(GobEngine *vm);
@@ -342,6 +286,6 @@ protected:
 	virtual int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex);
 };
 
-}				// End of namespace Gob
+} // End of namespace Gob
 
-#endif
+#endif // GOB_GAME_H

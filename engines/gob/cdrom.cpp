@@ -22,19 +22,20 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "sound/audiocd.h"
 
 #include "gob/gob.h"
 #include "gob/cdrom.h"
-#include "gob/dataio.h"
-#include "gob/game.h"
 #include "gob/global.h"
 #include "gob/util.h"
-#include "sound/audiocd.h"
+#include "gob/dataio.h"
+#include "gob/game.h"
 
 namespace Gob {
 
 CDROM::CDROM(GobEngine *vm) : _vm(vm) {
 	_cdPlaying = false;
+
 	_LICbuffer = 0;
 	for (int i = 0; i < 16; i++)
 		_curTrack[i] = 0;
@@ -54,50 +55,48 @@ void CDROM::readLIC(const char *fname) {
 
 	strcpy(tmp, fname);
 
-	handle = _vm->_dataio->openData(tmp);
+	handle = _vm->_dataIO->openData(tmp);
 
 	if (handle == -1)
 		return;
 
-	_vm->_dataio->closeData(handle);
+	_vm->_dataIO->closeData(handle);
 
-	_vm->_dataio->getUnpackedData(tmp);
+	_vm->_dataIO->getUnpackedData(tmp);
 
-	handle = _vm->_dataio->openData(tmp);
+	handle = _vm->_dataIO->openData(tmp);
 
-	_vm->_dataio->readData(handle, (char *)&version, 2);
+	_vm->_dataIO->readData(handle, (char *)&version, 2);
 	version = READ_LE_UINT16(&version);
 
-	_vm->_dataio->readData(handle, (char *)&startChunk, 2);
+	_vm->_dataIO->readData(handle, (char *)&startChunk, 2);
 	startChunk = READ_LE_UINT16(&startChunk);
 
-	_vm->_dataio->readData(handle, (char *)&_numTracks, 2);
+	_vm->_dataIO->readData(handle, (char *)&_numTracks, 2);
 	_numTracks = READ_LE_UINT16(&_numTracks);
 
-	if (version != 3) {
-		error("Wrong file %s (%d)", fname, version);
-		return;
-	}
+	if (version != 3)
+		error("%s: Unknown version %d", fname, version);
 
-	_vm->_dataio->seekData(handle, 50, SEEK_SET);
+	_vm->_dataIO->seekData(handle, 50, SEEK_SET);
 
 	for (int i = 0; i < startChunk; i++) {
-		_vm->_dataio->readData(handle, (char *)&pos, 2);
+		_vm->_dataIO->readData(handle, (char *)&pos, 2);
 		pos = READ_LE_UINT16(&pos);
 
 		if (!pos)
 			break;
 
-		_vm->_dataio->seekData(handle, pos, SEEK_CUR);
+		_vm->_dataIO->seekData(handle, pos, SEEK_CUR);
 	}
 
 	_LICbuffer = new byte[_numTracks * 22];
-	_vm->_dataio->readData(handle, (char *)_LICbuffer, _numTracks * 22);
+	_vm->_dataIO->readData(handle, (char *)_LICbuffer, _numTracks * 22);
 
-	_vm->_dataio->closeData(handle);
+	_vm->_dataIO->closeData(handle);
 }
 
-void CDROM::freeLICbuffer(void) {
+void CDROM::freeLICbuffer() {
 	delete[] _LICbuffer;
 	_LICbuffer = 0;
 }
@@ -208,7 +207,7 @@ void CDROM::play(uint32 from, uint32 to) {
 	_cdPlaying = true;
 }
 
-int32 CDROM::getTrackPos(void) {
+int32 CDROM::getTrackPos() {
 	uint32 curPos = _vm->_util->getTimeKey() - _startTime;
 
 	if (_cdPlaying && (_vm->_util->getTimeKey() < _trackStop))
@@ -217,17 +216,17 @@ int32 CDROM::getTrackPos(void) {
 		return -1;
 }
 
-const char *CDROM::getCurTrack(void) {
+const char *CDROM::getCurTrack() {
 	return _curTrack;
 }
 
-void CDROM::stopPlaying(void) {
+void CDROM::stopPlaying() {
 	stop();
 
 	while (getTrackPos() != -1);
 }
 
-void CDROM::stop(void) {
+void CDROM::stop() {
 	debugC(1, kDebugMusic, "CDROM::stop()");
 
 	AudioCD.stop();

@@ -20,10 +20,10 @@
  * $Id$
  *
  */
+
 #ifndef GOB_MAP_H
 #define GOB_MAP_H
 
-#include "gob/util.h"
 #include "gob/mult.h"
 
 namespace Gob {
@@ -36,9 +36,9 @@ public:
 		kDirNW = 0x4700,
 		kDirN  = 0x4800,
 		kDirNE = 0x4900,
-		kDirW  = 0x4b00,
-		kDirE  = 0x4d00,
-		kDirSW = 0x4f00,
+		kDirW  = 0x4B00,
+		kDirE  = 0x4D00,
+		kDirSW = 0x4F00,
 		kDirS  = 0x5000,
 		kDirSE = 0x5100
 	};
@@ -48,7 +48,7 @@ public:
 	struct Point {
 		int16 x;
 		int16 y;
-		int16 field_2; // Gob2
+		int16 notWalkable;
 	};
 
 #define szMap_ItemPos 3
@@ -56,7 +56,7 @@ public:
 	struct ItemPos {
 		int8 x;
 		int8 y;
-		int8 orient;		// ??
+		int8 orient;
 	};
 
 #include "common/pack-end.h"	// END STRUCT PACKING
@@ -80,18 +80,21 @@ public:
 	int16 _curGoblinY;
 	int16 _destX;
 	int16 _destY;
-	int8 _loadFromAvo;
 
 	ItemPos _itemPoses[40];
 	char _sourceFile[15];
 
+	void findNearestWalkable(int16 &gobDestX, int16 &gobDestY,
+		int16 mouseX, int16 mouseY);
+
 	void placeItem(int16 x, int16 y, int16 id);
 
 	int16 getDirection(int16 x0, int16 y0, int16 x1, int16 y1);
-	int16 checkDirectPath(Mult::Mult_Object *obj, int16 x0, int16 y0, int16 x1, int16 y1);
-	int16 checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16 i1);
-	void loadItemToObject(void);
-	void loadDataFromAvo(char *dest, int16 size);
+	int16 checkDirectPath(Mult::Mult_Object *obj, int16 x0,
+			int16 y0, int16 x1, int16 y1);
+	int16 checkLongPath(int16 x0, int16 y0,
+			int16 x1, int16 y1, int16 i0, int16 i1);
+
 	void loadMapsInitGobs(void);
 
 	virtual int8 getPass(int x, int y, int heightOff = -1) = 0;
@@ -107,11 +110,11 @@ public:
 	virtual ~Map();
 
 protected:
-	char *_avoDataPtr;
+	bool _loadFromAvo;
+
 	GobEngine *_vm;
 
 	int16 findNearestWayPoint(int16 x, int16 y);
-	uint16 loadFromAvo_LE_UINT16();
 };
 
 class Map_v1 : public Map {
@@ -121,17 +124,23 @@ public:
 	virtual void findNearestToDest(Mult::Mult_Object *obj);
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y);
 
-	virtual inline int8 getPass(int x, int y, int heightOff = -1) {
+	virtual int8 getPass(int x, int y, int heightOff = -1) {
 		return _passMap[y * _mapWidth + x];
 	}
 	
-	virtual inline void setPass(int x, int y, int8 pass, int heightOff = -1) {
+	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) {
 		_passMap[y * _mapWidth + x] = pass;
 	}
 
 	virtual void init(void);
 	Map_v1(GobEngine *vm);
 	virtual ~Map_v1();
+
+protected:
+	void loadSounds(Common::SeekableReadStream &data);
+	void loadGoblins(Common::SeekableReadStream &data, uint32 gobsPos);
+	void loadObjects(Common::SeekableReadStream &data, uint32 objsPos);
+	void loadItemToObject(Common::SeekableReadStream &data);
 };
 
 class Map_v2 : public Map_v1 {
@@ -141,13 +150,13 @@ public:
 	virtual void findNearestToDest(Mult::Mult_Object *obj);
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y);
 
-	virtual inline int8 getPass(int x, int y, int heightOff = -1) {
+	virtual int8 getPass(int x, int y, int heightOff = -1) {
 		if (heightOff == -1)
 			heightOff = _passWidth;
 		return _passMap[y * heightOff + x];
 	}
 	
-	virtual inline void setPass(int x, int y, int8 pass, int heightOff = -1) {
+	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) {
 		if (heightOff == -1)
 			heightOff = _passWidth;
 		_passMap[y * heightOff + x] = pass;
@@ -156,8 +165,11 @@ public:
 	virtual void init(void);
 	Map_v2(GobEngine *vm);
 	virtual ~Map_v2();
+
+protected:
+	void loadGoblinStates(Common::SeekableReadStream &data, int index);
 };
 
-}				// End of namespace Gob
+} // End of namespace Gob
 
-#endif	/* __MAP_H */
+#endif // GOB_MAP_H

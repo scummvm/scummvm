@@ -20,18 +20,23 @@
  * $Id$
  *
  */
+
 #ifndef GOB_DRAW_H
 #define GOB_DRAW_H
 
 #include "gob/video.h"
-#include "gob/global.h"
 
 namespace Gob {
 
-#define RENDERFLAG_NOINVALIDATE	1
-#define RENDERFLAG_CAPTUREPUSH	2
-#define RENDERFLAG_CAPTUREPOP	8
-#define RENDERFLAG_USEDELTAS 	0x10
+#define SPRITES_COUNT 50
+
+#define RENDERFLAG_NOINVALIDATE      0x001
+#define RENDERFLAG_CAPTUREPUSH       0x002
+#define RENDERFLAG_COLLISIONS        0x004
+#define RENDERFLAG_CAPTUREPOP        0x008
+#define RENDERFLAG_USEDELTAS         0x010
+#define RENDERFLAG_NOBLITINVALIDATED 0x200
+#define RENDERFLAG_SKIPOPTIONALTEXT  0x400
 
 class Draw {
 public:
@@ -40,8 +45,10 @@ public:
 		int8 base;
 		int8 width;
 		int8 height;
-		FontToSprite() : sprite(0), base(0), width(0), height() {}
+		FontToSprite() : sprite(0), base(0), width(0), height(0) {}
 	};
+
+	int16 _renderFlags;
 
 	int16 _fontIndex;
 	int16 _spriteLeft;
@@ -52,17 +59,21 @@ public:
 	int16 _destSpriteY;
 	int16 _backColor;
 	int16 _frontColor;
-	char _letterToPrint;
-	FontToSprite _fontToSprite[4];
-	int16 _destSurface;
+	int16 _transparency;
+
 	int16 _sourceSurface;
-	int16 _renderFlags;
+	int16 _destSurface;
+
+	char _letterToPrint;
+	char *_textToPrint;
+
 	int16 _backDeltaX;
 	int16 _backDeltaY;
+
+	FontToSprite _fontToSprite[4];
 	Video::FontDesc *_fonts[8];
-	char *_textToPrint;
-	int16 _transparency;
-	Video::SurfaceDesc *_spritesArray[50];
+
+	SurfaceDesc::Ptr _spritesArray[SPRITES_COUNT];
 
 	int16 _invalidatedCount;
 	int16 _invalidatedTops[30];
@@ -70,16 +81,14 @@ public:
 	int16 _invalidatedRights[30];
 	int16 _invalidatedBottoms[30];
 
-	int8 _noInvalidated;
-//	int8 doFullFlip; // Never used?!?
-	int8 _paletteCleared;
+	bool _noInvalidated;
+	// Don't blit invalidated rects when in video mode 5 or 7
+	bool _noInvalidated57;
+	bool _paletteCleared;
+	bool _applyPal;
 
-	int16 _cursorIndex;
-	int16 _transparentCursor;
-	uint32 _cursorTimeKey;
-
-	Video::SurfaceDesc *_backSurface;
-	Video::SurfaceDesc *_frontSurface;
+	SurfaceDesc::Ptr _backSurface;
+	SurfaceDesc::Ptr _frontSurface;
 
 	int16 _unusedPalette1[18];
 	int16 _unusedPalette2[16];
@@ -91,56 +100,57 @@ public:
 	// 2 (10b): Cursor would be on _frontSurface
 	// 3 (11b): Cursor would be on _backSurface and _frontSurface
 	uint8 _showCursor;
+	int16 _cursorIndex;
+	int16 _transparentCursor;
+	uint32 _cursorTimeKey;
 
 	int16 _cursorX;
 	int16 _cursorY;
 	int16 _cursorWidth;
 	int16 _cursorHeight;
 
-	int16 _cursorXDeltaVar;
-	int16 _cursorYDeltaVar;
+	int16 _cursorHotspotXVar;
+	int16 _cursorHotspotYVar;
 
-	Video::SurfaceDesc *_cursorSprites;
-	Video::SurfaceDesc *_cursorSpritesBack;
-	Video::SurfaceDesc *_scummvmCursor;
+	SurfaceDesc::Ptr _cursorSprites;
+	SurfaceDesc::Ptr _cursorSpritesBack;
+	SurfaceDesc::Ptr _scummvmCursor;
 
 	int16 _cursorAnim;
 	int8 _cursorAnimLow[40];
 	int8 _cursorAnimHigh[40];
 	int8 _cursorAnimDelays[40];
-	int8 _applyPal;
 
 	int16 _palLoadData1[4];
 	int16 _palLoadData2[4];
-		
-	int16 _word_2E8E2;
+
+	int16 _needAdjust;
 	int16 _scrollOffsetY;
 	int16 _scrollOffsetX;
-	int16 _word_2E51F;
-	Video::SurfaceDesc *_off_2E51B;
-	Video::SurfaceDesc *_off_2E517;
 
 	void invalidateRect(int16 left, int16 top, int16 right, int16 bottom);
-	void blitInvalidated(void);
-	void setPalette(void);
-	void clearPalette(void);
+	void blitInvalidated();
+	void setPalette();
+	void clearPalette();
 
-	void freeSprite(int16 index);
+	void initSpriteSurf(int16 index, int16 width, int16 height, int16 flags);
+	void freeSprite(int16 index) {
+		assert(index < SPRITES_COUNT);
+		_spritesArray[index] = 0;
+	}
 	void adjustCoords(char adjust, int16 *coord1, int16 *coord2);
 	void drawString(char *str, int16 x, int16 y, int16 color1, int16 color2,
-		int16 transp, Video::SurfaceDesc *dest, Video::FontDesc *font);
-	void printTextCentered(int16 arg_0, int16 left, int16 top, int16 right,
+			int16 transp, SurfaceDesc *dest, Video::FontDesc *font);
+	void printTextCentered(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, char *str, int16 fontIndex, int16 color);
 	int32 getSpriteRectSize(int16 index);
-	void initSpriteSurf(int16 index, int16 vidMode, int16 width, int16 height, int16 flags);
 
-	virtual void initBigSprite(int16 index, int16 width, int16 height, int16 flags) = 0;
-	virtual void printText(void) = 0;
-	virtual void spriteOperation(int16 operation) = 0;
-	virtual void blitCursor(void) = 0;
+	virtual void initScreen() = 0;
+	virtual void closeScreen() = 0;
+	virtual void blitCursor() = 0;
 	virtual void animateCursor(int16 cursor) = 0;
-	virtual void initScreen(void) = 0;
-	virtual void closeScreen(void) = 0;
+	virtual void printTotText(int16 id) = 0;
+	virtual void spriteOperation(int16 operation) = 0;
 
 	Draw(GobEngine *vm);
 	virtual ~Draw() {};
@@ -151,16 +161,12 @@ protected:
 
 class Draw_v1 : public Draw {
 public:
-	virtual void initBigSprite(int16 index, int16 width, int16 height, int16 flags) {
-		_vm->_draw->_spritesArray[index] =
-				_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, flags);
-	}
-	virtual void printText(void);
-	virtual void spriteOperation(int16 operation);
-	virtual void blitCursor(void);
+	virtual void initScreen();
+	virtual void closeScreen();
+	virtual void blitCursor();
 	virtual void animateCursor(int16 cursor);
-	virtual void initScreen(void);
-	virtual void closeScreen(void);
+	virtual void printTotText(int16 id);
+	virtual void spriteOperation(int16 operation);
 
 	Draw_v1(GobEngine *vm);
 	virtual ~Draw_v1() {};
@@ -168,18 +174,12 @@ public:
 
 class Draw_v2 : public Draw_v1 {
 public:
-	virtual void initBigSprite(int16 index, int16 width, int16 height, int16 flags) {
-		// This would init big surfaces in pieces, to avoid breaking page bounds.
-		// This isn't necessary anymore, so we don't do it.
-		initSpriteSurf(index, _vm->_global->_videoMode, width, height, flags);
-		_vm->_video->clearSurf(_spritesArray[index]);
-	}
-	virtual void printText(void);
-	virtual void spriteOperation(int16 operation);
-	virtual void blitCursor(void);
+	virtual void initScreen();
+	virtual void closeScreen();
+	virtual void blitCursor();
 	virtual void animateCursor(int16 cursor);
-	virtual void initScreen(void);
-	virtual void closeScreen(void);
+	virtual void printTotText(int16 id);
+	virtual void spriteOperation(int16 operation);
 
 	Draw_v2(GobEngine *vm);
 	virtual ~Draw_v2() {};
@@ -187,7 +187,7 @@ public:
 
 class Draw_Bargon: public Draw_v2 {
 public:
-	virtual void initScreen(void);
+	virtual void initScreen();
 
 	Draw_Bargon(GobEngine *vm);
 	virtual ~Draw_Bargon() {};
@@ -207,6 +207,6 @@ public:
 #define DRAW_FILLRECTABS 9
 #define DRAW_DRAWLETTER	10
 
-}				// End of namespace Gob
+} // End of namespace Gob
 
-#endif	/* __DRAW_H */
+#endif // GOB_DRAW_H

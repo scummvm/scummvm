@@ -25,20 +25,16 @@
 #include "common/endian.h"
 
 #include "gob/gob.h"
-#include "gob/global.h"
 #include "gob/inter.h"
+#include "gob/global.h"
 #include "gob/util.h"
-#include "gob/scenery.h"
-#include "gob/parse.h"
-#include "gob/game.h"
+#include "gob/dataio.h"
 #include "gob/draw.h"
-#include "gob/mult.h"
-#include "gob/goblin.h"
-#include "gob/cdrom.h"
+#include "gob/game.h"
+#include "gob/imd.h"
 #include "gob/palanim.h"
-#include "gob/anim.h"
-#include "gob/music.h"
-#include "gob/map.h"
+#include "gob/sound.h"
+#include "gob/video.h"
 
 namespace Gob {
 
@@ -122,18 +118,18 @@ Inter_Bargon::Inter_Bargon(GobEngine *vm) : Inter_v2(vm) {
 	setupOpcodes();
 }
 
-void Inter_Bargon::setupOpcodes(void) {
+void Inter_Bargon::setupOpcodes() {
 	static const OpcodeDrawEntryBargon opcodesDraw[256] = {
 		/* 00 */
 		OPCODE(o1_loadMult),
 		OPCODE(o2_playMult),
-		OPCODE(o1_freeMult),
+		OPCODE(o1_freeMultKeys),
 		{NULL, ""},
 		/* 04 */
 		{NULL, ""},
 		{NULL, ""},
 		{NULL, ""},
-		OPCODE(o2_initCursor),
+		OPCODE(o1_initCursor),
 		/* 08 */
 		OPCODE(o1_initCursorAnim),
 		OPCODE(o1_clearCursorAnim),
@@ -151,12 +147,12 @@ void Inter_Bargon::setupOpcodes(void) {
 		OPCODE(o2_multSub),
 		/* 14 */
 		OPCODE(o2_initMult),
-		OPCODE(o1_multFreeMult),
+		OPCODE(o1_freeMult),
 		OPCODE(o1_animate),
-		OPCODE(o1_multLoadMult),
+		OPCODE(o2_loadMultObject),
 		/* 18 */
-		OPCODE(o1_storeParams),
-		OPCODE(o2_getObjAnimSize),
+		OPCODE(o1_getAnimLayerInfo),
+		OPCODE(o1_getObjAnimSize),
 		OPCODE(o1_loadStatic),
 		OPCODE(o1_freeStatic),
 		/* 1C */
@@ -166,7 +162,7 @@ void Inter_Bargon::setupOpcodes(void) {
 		{NULL, ""},
 		/* 20 */
 		OPCODE(o2_playCDTrack),
-		OPCODE(o2_drawStub),
+		OPCODE(o2_waitCDTrackEnd),
 		OPCODE(o2_stopCD),
 		OPCODE(o2_readLIC),
 		/* 24 */
@@ -230,8 +226,8 @@ void Inter_Bargon::setupOpcodes(void) {
 		OPCODE(o2_moveGoblin),
 		OPCODE(o2_writeGoblinPos),
 		/* 54 */
-		OPCODE(o2_stub0x54),
-		OPCODE(o2_stub0x55),
+		OPCODE(o2_stopGoblin),
+		OPCODE(o2_setGoblinState),
 		OPCODE(o2_placeGoblin),
 		{NULL, ""},
 		/* 58 */
@@ -290,12 +286,12 @@ void Inter_Bargon::setupOpcodes(void) {
 		OPCODE(o2_setScrollOffset),
 		OPCODE(o2_playImd),
 		/* 84 */
-		OPCODE(o2_drawStub),
-		OPCODE(o2_stub0x85),
-		OPCODE(o2_drawStub),
-		OPCODE(o2_drawStub),
+		OPCODE(o2_getImdInfo),
+		OPCODE(o2_openItk),
+		OPCODE(o2_closeItk),
+		OPCODE(o2_setImdFrontSurf),
 		/* 88 */
-		OPCODE(o2_drawStub),
+		OPCODE(o2_resetImdFrontSurf),
 		{NULL, ""},
 		{NULL, ""},
 		{NULL, ""},
@@ -450,15 +446,15 @@ void Inter_Bargon::setupOpcodes(void) {
 		/* 00 */
 		OPCODE(o1_callSub),
 		OPCODE(o1_callSub),
-		OPCODE(o1_drawPrintText),
+		OPCODE(o1_printTotText),
 		OPCODE(o1_loadCursor),
 		/* 04 */
 		{NULL, ""},
-		OPCODE(o1_call),
+		OPCODE(o1_switch),
 		OPCODE(o1_repeatUntil),
 		OPCODE(o1_whileDo),
 		/* 08 */
-		OPCODE(o1_callBool),
+		OPCODE(o1_if),
 		OPCODE(o2_evaluateStore),
 		OPCODE(o1_loadSpriteToPos),
 		{NULL, ""},
@@ -470,8 +466,8 @@ void Inter_Bargon::setupOpcodes(void) {
 		/* 10 */
 		{NULL, ""},
 		OPCODE(o2_printText),
-		OPCODE(o2_loadTot),
-		OPCODE(o2_palLoad),
+		OPCODE(o1_loadTot),
+		OPCODE(o1_palLoad),
 		/* 14 */
 		OPCODE(o1_keyFunc),
 		OPCODE(o1_capturePush),
@@ -496,7 +492,7 @@ void Inter_Bargon::setupOpcodes(void) {
 		OPCODE(o1_putPixel),
 		OPCODE(o2_goblinFunc),
 		OPCODE(o2_createSprite),
-		OPCODE(o2_freeSprite),
+		OPCODE(o1_freeSprite),
 		/* 28 */
 		{NULL, ""},
 		{NULL, ""},
@@ -518,7 +514,7 @@ void Inter_Bargon::setupOpcodes(void) {
 		OPCODE(o1_invalidate),
 		OPCODE(o1_setBackDelta),
 		/* 38 */
-		OPCODE(o2_playSound),
+		OPCODE(o1_playSound),
 		OPCODE(o2_stopSound),
 		OPCODE(o2_loadSound),
 		OPCODE(o1_freeSoundSlot),
@@ -647,7 +643,8 @@ void Inter_Bargon::setupOpcodes(void) {
 }
 
 void Inter_Bargon::executeDrawOpcode(byte i) {
-	debugC(1, kDebugDrawOp, "opcodeDraw %d [0x%x] (%s)", i, i, getOpcodeDrawDesc(i));
+	debugC(1, kDebugDrawOp, "opcodeDraw %d [0x%X] (%s)",
+			i, i, getOpcodeDrawDesc(i));
 
 	OpcodeDrawProcBargon op = _opcodesDrawBargon[i].proc;
 
@@ -657,8 +654,9 @@ void Inter_Bargon::executeDrawOpcode(byte i) {
 		(this->*op) ();
 }
 
-bool Inter_Bargon::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag) {
-	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%x.0x%x] (%s)", i, j, i, j, getOpcodeFuncDesc(i, j));
+bool Inter_Bargon::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {
+	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%X.0x%X] (%s)",
+			i, j, i, j, getOpcodeFuncDesc(i, j));
 
 	if ((i > 4) || (j > 15)) {
 		warning("unimplemented opcodeFunc: %d.%d", i, j);
@@ -670,13 +668,14 @@ bool Inter_Bargon::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &coun
 	if (op == NULL)
 		warning("unimplemented opcodeFunc: %d.%d", i, j);
 	else
-		return (this->*op) (cmdCount, counter, retFlag);
+		return (this->*op) (params);
 
 	return false;
 }
 
-void Inter_Bargon::executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
-	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%x] (%s)", i, i, getOpcodeGoblinDesc(i));
+void Inter_Bargon::executeGoblinOpcode(int i, OpGobParams &params) {
+	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%X] (%s)",
+			i, i, getOpcodeGoblinDesc(i));
 
 	OpcodeGoblinProcBargon op = NULL;
 
@@ -695,7 +694,7 @@ void Inter_Bargon::executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr
 		warning("unimplemented opcodeGob: %d", i);
 	}
 	else
-		(this->*op) (extraData, retVarPtr, objDesc);
+		(this->*op) (params);
 }
 
 const char *Inter_Bargon::getOpcodeDrawDesc(byte i) {
@@ -716,25 +715,21 @@ const char *Inter_Bargon::getOpcodeGoblinDesc(int i) {
 	return "";
 }
 
-void Inter_Bargon::oBargon_intro0(int16 &extraData, int32 *retVarPtr,
-		Goblin::Gob_Object *objDesc) {
-	_vm->_game->playImd("scaa", 0, 160, 0, 92, 0, 1);
+void Inter_Bargon::oBargon_intro0(OpGobParams &params) {
+	_vm->_imdPlayer->play("scaa", 0, 160, 0, 92, 0, 1);
 }
 
-void Inter_Bargon::oBargon_intro1(int16 &extraData, int32 *retVarPtr,
-		Goblin::Gob_Object *objDesc) {
-	_vm->_game->playImd("scaa", 0, 160, 0, -23, 1, 1);
+void Inter_Bargon::oBargon_intro1(OpGobParams &params) {
+	_vm->_imdPlayer->play("scaa", 0, 160, 0, -23, 1, 1);
 }
 
-void Inter_Bargon::oBargon_intro2(int16 &extraData, int32 *retVarPtr,
-		Goblin::Gob_Object *objDesc) {
+void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 	int i;
 	int16 mouseX;
 	int16 mouseY;
 	int16 buttons;
-	Video::SurfaceDesc *surface;
-	Snd::SoundDesc *samples[4];
-	int8 types[4] = { 2, 2, 2, 2 };
+	SurfaceDesc *surface;
+	SoundDesc samples[4];
 	int16 comp[5] = { 0, 1, 2, 3, -1 };
 	static const char *sndFiles[] = {"1INTROII.snd", "2INTROII.snd", "1INTRO3.snd", "2INTRO3.snd"};
 
@@ -744,13 +739,13 @@ void Inter_Bargon::oBargon_intro2(int16 &extraData, int32 *retVarPtr,
 	_vm->_video->drawPackedSprite("2ille4.ims", surface);
 	_vm->_video->drawSprite(surface, _vm->_draw->_frontSurface, 0, 0, 319, 199, 320, 0, 0);
 	_vm->_util->setScrollOffset(320, 0);
-	_vm->_palanim->fade(_vm->_global->_pPaletteDesc, -2, 0);
+	_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
 	_vm->_util->longDelay(1000);
 	for (i = 320; i >= 0; i--) {
 		_vm->_util->setScrollOffset(i, 0);
 		if ((_vm->_game->checkKeys(&mouseX, &mouseY, &buttons, 0) == 0x11B) ||
 				_vm->_quitRequested) {
-			_vm->_palanim->fade(0, -2, 0);
+			_vm->_palAnim->fade(0, -2, 0);
 			_vm->_video->clearSurf(_vm->_draw->_frontSurface);
 			memset((char *) _vm->_draw->_vgaPalette, 0, 768);
 			WRITE_VAR(4, buttons);
@@ -761,44 +756,38 @@ void Inter_Bargon::oBargon_intro2(int16 &extraData, int32 *retVarPtr,
 	}
 	if (!_vm->_quitRequested)
 		_vm->_util->setScrollOffset(0, 0);
-	_vm->_video->freeSurfDesc(surface);
+	surface = 0;
 	if (VAR(57) == ((uint32) -1))
 		return;
 
 	for (i = 0; i < 4; i++)
-		samples[i] = _vm->_game->loadSND(sndFiles[i], 0);
-	_vm->_snd->playComposition(comp, 0, samples, types, 4);
+		_vm->_snd->loadSample(samples[i], sndFiles[i]);
+	_vm->_snd->playComposition(comp, 0, samples, 4);
 	_vm->_snd->waitEndPlay(true, false);
-	for (i = 0; i < 4; i++)
-		_vm->_snd->freeSoundDesc(samples[i]);
-	_vm->_palanim->fade(0, 0, 0);
+	_vm->_palAnim->fade(0, 0, 0);
 	_vm->_video->clearSurf(_vm->_draw->_frontSurface);
 }
 
-void Inter_Bargon::oBargon_intro3(int16 &extraData, int32 *retVarPtr,
-		Goblin::Gob_Object *objDesc) {
-	int i;
-	int j;
+void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 	int16 mouseX;
 	int16 mouseY;
 	int16 buttons;
 	Video::Color *palBak;
-	Snd::SoundDesc *samples[2];
-	int8 types[2] = { 2, 2 };
+	SoundDesc samples[2];
 	int16 comp[3] = { 0, 1, -1 };
 	char *palettes[4];
 	static const char *sndFiles[] = {"1INTROIV.snd", "2INTROIV.snd"};
 	static const char *palFiles[] = {"2ou2.clt", "2ou3.clt", "2ou4.clt", "2ou5.clt"};
 
-	for (i = 0; i < 2; i++)
-		samples[i] = _vm->_game->loadSND(sndFiles[i], 0);
-	for (i = 0; i < 4; i++)
-		palettes[i] = _vm->_dataio->getData(palFiles[i]);
+	for (int i = 0; i < 2; i++)
+		_vm->_snd->loadSample(samples[i], sndFiles[i]);
+	for (int i = 0; i < 4; i++)
+		palettes[i] = _vm->_dataIO->getData(palFiles[i]);
 	palBak = _vm->_global->_pPaletteDesc->vgaPal;
 
-	_vm->_snd->playComposition(comp, 0, samples, types, 2);
-	for (i = 0; i < 20; i++) {
-		for (j = 0; j < 4; j++) {
+	_vm->_snd->playComposition(comp, 0, samples, 2);
+	for (int i = 0; i < 20; i++) {
+		for (int j = 0; j < 4; j++) {
 			_vm->_global->_pPaletteDesc->vgaPal = (Video::Color *) palettes[j];
 			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 			_vm->_util->longDelay(_vm->_util->getRandom(200));
@@ -806,7 +795,7 @@ void Inter_Bargon::oBargon_intro3(int16 &extraData, int32 *retVarPtr,
 		if ((_vm->_game->checkKeys(&mouseX, &mouseY, &buttons, 0) == 0x11B) ||
 				_vm->_quitRequested) {
 			_vm->_snd->stopSound(10);
-			_vm->_palanim->fade(0, -2, 0);
+			_vm->_palAnim->fade(0, -2, 0);
 			_vm->_video->clearSurf(_vm->_draw->_frontSurface);
 			memset((char *) _vm->_draw->_vgaPalette, 0, 768);
 			WRITE_VAR(4, buttons);
@@ -818,40 +807,32 @@ void Inter_Bargon::oBargon_intro3(int16 &extraData, int32 *retVarPtr,
 	_vm->_snd->waitEndPlay(false, false);
 
 	_vm->_global->_pPaletteDesc->vgaPal = palBak;
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 		delete[] palettes[i];
-	for (i = 0; i < 2; i++)
-		_vm->_snd->freeSoundDesc(samples[i]);
 }
 
-void Inter_Bargon::oBargon_intro4(int16 &extraData, int32 *retVarPtr,
-		Goblin::Gob_Object *objDesc) {
-	_vm->_game->playImd("scba", 191, 54, 0, 0, 1, 1);
+void Inter_Bargon::oBargon_intro4(OpGobParams &params) {
+	_vm->_imdPlayer->play("scba", 191, 54, 0, 0, 1, 1);
 }
 
-void Inter_Bargon::oBargon_intro5(int16 &extraData, int32 *retVarPtr,
-		Goblin::Gob_Object *objDesc) {
-	_vm->_game->playImd("scbb", 191, 54, 0, 0, 0, 1);
+void Inter_Bargon::oBargon_intro5(OpGobParams &params) {
+	_vm->_imdPlayer->play("scbb", 191, 54, 0, 0, 0, 1);
 }
 
-void Inter_Bargon::oBargon_intro6(int16 &extraData, int32 *retVarPtr,
-		Goblin::Gob_Object *objDesc) {
-	_vm->_game->playImd("scbc", 191, 54, 0, 0, 0, 1);
+void Inter_Bargon::oBargon_intro6(OpGobParams &params) {
+	_vm->_imdPlayer->play("scbc", 191, 54, 0, 0, 0, 1);
 }
 
-void Inter_Bargon::oBargon_intro7(int16 &extraData, int32 *retVarPtr,
-		Goblin::Gob_Object *objDesc) {
-	_vm->_game->playImd("scbf", 191, 54, 0, 0, 0, 1);
+void Inter_Bargon::oBargon_intro7(OpGobParams &params) {
+	_vm->_imdPlayer->play("scbf", 191, 54, 0, 0, 0, 1);
 }
 
-void Inter_Bargon::oBargon_intro8(int16 &extraData, int32 *retVarPtr,
-		Goblin::Gob_Object *objDesc) {
-	_vm->_game->playImd("scbc", 191, 54, 0, 0, 0, 1);
+void Inter_Bargon::oBargon_intro8(OpGobParams &params) {
+	_vm->_imdPlayer->play("scbc", 191, 54, 0, 0, 0, 1);
 }
 
-void Inter_Bargon::oBargon_intro9(int16 &extraData, int32 *retVarPtr,
-		Goblin::Gob_Object *objDesc) {
-	_vm->_game->playImd("scbd", 191, 54, 0, 0, 0, 1);
+void Inter_Bargon::oBargon_intro9(OpGobParams &params) {
+	_vm->_imdPlayer->play("scbd", 191, 54, 0, 0, 0, 1);
 }
 
 } // End of namespace Gob

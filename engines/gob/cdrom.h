@@ -23,8 +23,6 @@
 #ifndef GOB_CDROM_H
 #define GOB_CDROM_H
 
-#include "gob/gob.h"
-
 namespace Gob {
 
 class CDROM {
@@ -32,16 +30,16 @@ public:
 	bool _cdPlaying;
 
 	void readLIC(const char *fname);
-	void freeLICbuffer(void);
+	void freeLICbuffer();
 
 	void startTrack(const char *s);
 	void playBgMusic();
 	void playMultMusic();
 	void play(uint32 from, uint32 to);
-	int32 getTrackPos(void);
-	const char *getCurTrack(void);
-	void stopPlaying(void);
-	void stop(void);
+	int32 getTrackPos();
+	const char *getCurTrack();
+	void stopPlaying();
+	void stop();
 	void testCD(int trySubst, const char *label);
 
 	CDROM(GobEngine *vm);
@@ -57,4 +55,4 @@ protected:
 
 } // End of namespace Gob
 
-#endif
+#endif // GOB_CDROM_H

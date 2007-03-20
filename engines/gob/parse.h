@@ -20,6 +20,7 @@
  * $Id$
  *
  */
+
 #ifndef GOB_PARSE_H
 #define GOB_PARSE_H
 
@@ -31,7 +32,7 @@ public:
 	void printExpr(char stopToken);
 	void printVarIndex(void);
 	virtual int16 parseVarIndex(void) = 0;
-	virtual int16 parseValExpr(unsigned stopToken=99) = 0;
+	virtual int16 parseValExpr(unsigned stopToken = 99) = 0;
 	virtual int16 parseExpr(char stopToken, byte *resultPtr) = 0;
 	
 	Parse(GobEngine *vm);
@@ -72,6 +73,6 @@ public:
 	virtual int16 parseExpr(char stopToken, byte *resultPtr);
 };
 
-}				// End of namespace Gob
+} // End of namespace Gob
 
-#endif
+#endif // GOB_PARSE_H

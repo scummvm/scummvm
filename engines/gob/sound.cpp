@@ -21,13 +21,66 @@
  *
  */
 
+#include "common/stdafx.h"
+#include "common/endian.h"
+
 #include "gob/gob.h"
-#include "gob/global.h"
 #include "gob/sound.h"
-#include "gob/game.h"
+#include "gob/global.h"
 #include "gob/util.h"
+#include "gob/dataio.h"
+#include "gob/game.h"
 
 namespace Gob {
+
+void SoundDesc::load(SoundType type, SoundSource src,
+		byte *data, uint32 dSize) {
+
+	free();
+
+	_source = src;
+	switch (type) {
+	case SOUND_ADL:
+		loadADL(data, dSize);
+		break;
+	case SOUND_SND:
+		loadSND(data, dSize);
+		break;
+	}
+}
+
+void SoundDesc::free() {
+	if (_source != SOUND_TOT)
+		delete[] _data;
+	_data = _dataPtr = 0;
+	_id = 0;
+}
+
+void SoundDesc::flip() {
+	if ((_type == SOUND_SND) && _data && _dataPtr) {
+		_frequency = -_frequency;
+		for (uint32 i = 0; i < _size; i++)
+			_dataPtr[i] ^= 0x80;
+	}
+}
+
+void SoundDesc::loadSND(byte *data, uint32 dSize) {
+	assert(dSize > 6);
+
+	_type = SOUND_SND;
+	_data = data;
+	_dataPtr = data + 6;
+	_frequency = MAX((int16) READ_BE_UINT16(data + 4), (int16) 4700);
+	_flag = data[0] ? (data[0] & 0x7F) : 8;
+	data[0] = 0;
+	_size = MIN(READ_BE_UINT32(data), dSize - 6);
+}
+
+void SoundDesc::loadADL(byte *data, uint32 dSize) {
+	_type = SOUND_ADL;
+	_data = _dataPtr = data;
+	_size = dSize;
+}
 
 Snd::SquareWaveStream::SquareWaveStream() {
 	_rate = 44100;
@@ -119,7 +172,6 @@ Snd::Snd(GobEngine *vm) : _vm(vm) {
 	_curFadeSamples = 0;
 
 	_compositionSamples = 0;
-	_compositionSampleTypes = 0;
 	_compositionSampleCount = 0;
 	_compositionPos = -1;
 
@@ -144,7 +196,7 @@ void Snd::speakerOn(int16 frequency, int32 length) {
 	_speakerStartTimeKey = _vm->_util->getTimeKey();
 }
 
-void Snd::speakerOff(void) {
+void Snd::speakerOff() {
 	_speakerStream.stop(_vm->_util->getTimeKey() - _speakerStartTimeKey);
 }
 
@@ -152,13 +204,17 @@ void Snd::speakerOnUpdate(uint32 milis) {
 	_speakerStream.update(milis);
 }
 
-void Snd::stopSound(int16 fadeLength) {
+void Snd::stopSound(int16 fadeLength, SoundDesc *sndDesc) {
 	Common::StackLock slock(_mutex);
+
+	if (sndDesc && (sndDesc != _curSoundDesc))
+		return;
 
 	if (fadeLength <= 0) {
 		_data = 0;
 		_end = true;
 		_playingSound = 0;
+		_curSoundDesc = 0;
 		return;
 	}
 
@@ -182,21 +238,24 @@ void Snd::waitEndPlay(bool interruptible, bool stopComp) {
 	stopSound(0);
 }
 
-void Snd::stopComposition(void) {
+void Snd::stopComposition() {
 	if (_compositionPos != -1) {
 		stopSound(0);
 		_compositionPos = -1;
 	}
 }
 
-void Snd::nextCompositionPos(void) {
+void Snd::nextCompositionPos() {
 	int8 slot;
 
-	while ((++_compositionPos < 50) && ((slot = _composition[_compositionPos]) != -1)) {
-		if ((slot >= 0) && (slot < _compositionSampleCount) &&
-				(_compositionSamples[slot] != 0) && !(_compositionSampleTypes[slot] & 8)) {
-			setSample(_compositionSamples[slot], 1, 0, 0);
-			return;
+	while ((++_compositionPos < 50) &&
+			((slot = _composition[_compositionPos]) != -1)) {
+		if ((slot >= 0) && (slot < _compositionSampleCount)) {
+			SoundDesc &sample = _compositionSamples[slot];
+			if (!sample.empty() && (sample.getType() == SOUND_SND)) {
+				setSample(sample, 1, 0, 0);
+				return;
+			}
 		}
 		if (_compositionPos == 49)
 			_compositionPos = -1;
@@ -204,15 +263,14 @@ void Snd::nextCompositionPos(void) {
 	_compositionPos = -1;
 }
 
-void Snd::playComposition(int16 *composition, int16 freqVal, SoundDesc **sndDescs,
-		int8 *sndTypes, int8 sndCount) {
+void Snd::playComposition(int16 *composition, int16 freqVal,
+		SoundDesc *sndDescs, int8 sndCount) {
 	int i;
 
 	waitEndPlay();
 	stopComposition();
 
 	_compositionSamples = sndDescs ? sndDescs : _vm->_game->_soundSamples;
-	_compositionSampleTypes = sndTypes ? sndTypes : _vm->_game->_soundTypes;
 	_compositionSampleCount = sndCount;
 
 	i = -1;
@@ -221,39 +279,22 @@ void Snd::playComposition(int16 *composition, int16 freqVal, SoundDesc **sndDesc
 		_composition[i] = composition[i];
 	} while ((i < 50) && (composition[i] != -1));
 
+	_compositionPos = -1;
 	nextCompositionPos();
 }
 
-Snd::SoundDesc *Snd::loadSoundData(const char *path) {
-	Snd::SoundDesc *sndDesc;
+void Snd::setSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
+		int16 fadeLength) {
 
-	sndDesc = new Snd::SoundDesc;
-	sndDesc->size = _vm->_dataio->getDataSize(path);
-	sndDesc->data = _vm->_dataio->getData(path);
-
-	return sndDesc;
-}
-
-void Snd::freeSoundDesc(Snd::SoundDesc *sndDesc, bool freedata) {
-	if (sndDesc == _curSoundDesc)
-		stopSound(0);
-
-	if (freedata) {
-		delete[] sndDesc->data;
-	}
-	delete sndDesc;
-}
-
-void Snd::setSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency, int16 fadeLength) {
 	if (frequency <= 0)
-		frequency = sndDesc->frequency;
+		frequency = sndDesc._frequency;
 
-	_curSoundDesc = sndDesc;
-	sndDesc->repCount = repCount - 1;
-	sndDesc->frequency = frequency;
+	_curSoundDesc = &sndDesc;
+	sndDesc._repCount = repCount - 1;
+	sndDesc._frequency = frequency;
 
-	_data = (int8 *) sndDesc->data;
-	_length = sndDesc->size;
+	_data = (int8 *) sndDesc.getData();
+	_length = sndDesc.size();
 	_freq = frequency;
 	_ratio = ((double) _freq) / _rate;
 	_offset = 0.0;
@@ -278,7 +319,27 @@ void Snd::setSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency, in
 	}
 }
 
-void Snd::playSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency, int16 fadeLength) {
+bool Snd::loadSample(SoundDesc &sndDesc, const char *fileName) {
+	byte *data;
+	uint32 size;
+
+	data = (byte *) _vm->_dataIO->getData(fileName);
+	if (!data)
+		return false;
+
+	size = _vm->_dataIO->getDataSize(fileName);
+	sndDesc.load(SOUND_SND, SOUND_FILE, data, size);
+
+	return true;
+}
+
+void Snd::freeSample(SoundDesc &sndDesc) {
+	stopSound(0, &sndDesc);
+	sndDesc.free();
+}
+
+void Snd::playSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
+		int16 fadeLength) {
 	Common::StackLock slock(_mutex);
 
 	if (!_end)
@@ -287,7 +348,7 @@ void Snd::playSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency, i
 	setSample(sndDesc, repCount, frequency, fadeLength);
 }
 
-void Snd::checkEndSample(void) {
+void Snd::checkEndSample() {
 	if (_compositionPos != -1)
 		nextCompositionPos();
 	else if ((_repCount == -1) || (--_repCount > 0)) {
@@ -328,6 +389,7 @@ int Snd::readBuffer(int16 *buffer, const int numSamples) {
 					_end = true;
 					_playingSound = 0;
 					_compositionPos = -1;
+					_curSoundDesc = 0;
 				} else {
 					_fadeVol = 255.0;
 					_fade = false;

@@ -21,10 +21,6 @@
  *
  */
 
-#include "common/stdafx.h"
-#include "common/endian.h"
-#include "graphics/cursorman.h"
-
 #include "gob/gob.h"
 #include "gob/draw.h"
 #include "gob/global.h"

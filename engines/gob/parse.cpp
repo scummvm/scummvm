@@ -25,10 +25,9 @@
 #include "common/endian.h"
 
 #include "gob/gob.h"
+#include "gob/parse.h"
 #include "gob/global.h"
 #include "gob/game.h"
-#include "gob/parse.h"
-#include "gob/util.h"
 #include "gob/inter.h"
 
 namespace Gob {
@@ -85,7 +84,7 @@ void Parse::skipExpr(char stopToken) {
 	while (1) {
 		operation = *_vm->_global->_inter_execPtr++;
 
-		if (operation >= 16 && operation <= 29) {
+		if ((operation >= 16) && (operation <= 29)) {
 			switch (operation) {
 			case 17:
 			case 18:
@@ -104,7 +103,8 @@ void Parse::skipExpr(char stopToken) {
 				break;
 
 			case 22:
-				_vm->_global->_inter_execPtr += strlen(_vm->_global->_inter_execPtr) + 1;
+				_vm->_global->_inter_execPtr +=
+					strlen(_vm->_global->_inter_execPtr) + 1;
 				break;
 
 			case 25:
@@ -126,7 +126,7 @@ void Parse::skipExpr(char stopToken) {
 				for (dim = 0; dim < dimCount; dim++)
 					skipExpr(12);
 
-				if (operation == 28 && *_vm->_global->_inter_execPtr == 13) {
+				if ((operation == 28) && (*_vm->_global->_inter_execPtr == 13)) {
 					_vm->_global->_inter_execPtr++;
 					skipExpr(12);
 				}
@@ -137,17 +137,17 @@ void Parse::skipExpr(char stopToken) {
 				skipExpr(10);
 			}
 			continue;
-		}		// if (operation >= 16 && operation <= 29)
+		} // if ((operation >= 16) && (operation <= 29))
 
 		if (operation == 9) {
 			num++;
 			continue;
 		}
 
-		if (operation == 11 || (operation >= 1 && operation <= 8))
+		if ((operation == 11) || ((operation >= 1) && (operation <= 8)))
 			continue;
 
-		if (operation >= 30 && operation <= 37)
+		if ((operation >= 30) && (operation <= 37))
 			continue;
 
 		if (operation == 10)
@@ -156,7 +156,7 @@ void Parse::skipExpr(char stopToken) {
 		if (operation != stopToken)
 			continue;
 
-		if (stopToken != 10 || num < 0)
+		if ((stopToken != 10) || (num < 0))
 			return;
 	}
 }
@@ -184,7 +184,7 @@ void Parse::printExpr_internal(char stopToken) {
 	while (1) {
 		operation = *_vm->_global->_inter_execPtr++;
 
-		if (operation >= 16 && operation <= 29) {
+		if ((operation >= 16) && (operation <= 29)) {
 			// operands
 
 			switch (operation) {
@@ -211,7 +211,8 @@ void Parse::printExpr_internal(char stopToken) {
 
 			case 22: // string immediate
 				debugN(5, "\42%s\42", _vm->_global->_inter_execPtr);
-				_vm->_global->_inter_execPtr += strlen(_vm->_global->_inter_execPtr) + 1;
+				_vm->_global->_inter_execPtr +=
+					strlen(_vm->_global->_inter_execPtr) + 1;
 				break;
 
 			case 23: // uint32 variable load
@@ -250,7 +251,7 @@ void Parse::printExpr_internal(char stopToken) {
 				if (operation == 28)
 					debugN(5, ")");
 
-				if (operation == 28 && *_vm->_global->_inter_execPtr == 13) {
+				if ((operation == 28) && (*_vm->_global->_inter_execPtr == 13)) {
 					_vm->_global->_inter_execPtr++;
 					debugN(5, "{");
 					printExpr_internal(12); // this also prints the closing }
@@ -265,7 +266,7 @@ void Parse::printExpr_internal(char stopToken) {
 					debugN(5, "rand(");
 				else if (func == 7)
 					debugN(5, "abs(");
-				else if (func == 0 || func == 1 || func == 6)
+				else if ((func == 0) || (func == 1) || (func == 6))
 					debugN(5, "sqrt(");
 				else
 					debugN(5, "id(");
@@ -273,7 +274,7 @@ void Parse::printExpr_internal(char stopToken) {
 				break;
 			}
 			continue;
-		}		// if (operation >= 16 && operation <= 29)
+		}		// if ((operation >= 16) && (operation <= 29))
 
 		// operators
 		switch (operation) {
@@ -365,7 +366,7 @@ void Parse::printExpr_internal(char stopToken) {
 			break;
 
 		default:
-			debugN(5, "<%d>", (int16)operation);
+			debugN(5, "<%d>", (int16) operation);
 			error("printExpr: invalid operator in expression");
 			break;
 		}
@@ -375,17 +376,17 @@ void Parse::printExpr_internal(char stopToken) {
 			continue;
 		}
 
-		if (operation == 11 || (operation >= 1 && operation <= 8))
+		if ((operation == 11) || ((operation >= 1) && (operation <= 8)))
 			continue;
 
-		if (operation >= 30 && operation <= 37)
+		if ((operation >= 30) && (operation <= 37))
 			continue;
 
 		if (operation == 10)
 			num--;
 
 		if (operation == stopToken) {
-			if (stopToken != 10 || num < 0) {
+			if ((stopToken != 10) || (num < 0)) {
 				return;
 			}
 		}
@@ -408,7 +409,7 @@ void Parse::printVarIndex() {
 	case 25:
 		temp = _vm->_inter->load16() * 4;
 		debugN(5, "&var_%d", temp);
-		if (operation == 25 && *_vm->_global->_inter_execPtr == 13) {
+		if ((operation == 25) && (*_vm->_global->_inter_execPtr == 13)) {
 			_vm->_global->_inter_execPtr++;
 			debugN(5, "+");
 			printExpr(12);
@@ -429,7 +430,7 @@ void Parse::printVarIndex() {
 		}
 		debugN(5, "]");
 
-		if (operation == 28 && *_vm->_global->_inter_execPtr == 13) {
+		if ((operation == 28) && (*_vm->_global->_inter_execPtr == 13)) {
 			_vm->_global->_inter_execPtr++;
 			debugN(5, "+");
 			printExpr(12);

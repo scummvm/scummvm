@@ -27,19 +27,15 @@
 #include "gob/gob.h"
 #include "gob/draw.h"
 #include "gob/global.h"
-#include "gob/video.h"
-#include "gob/game.h"
 #include "gob/util.h"
-#include "gob/scenery.h"
+#include "gob/game.h"
 #include "gob/inter.h"
 #include "gob/video.h"
-#include "gob/palanim.h"
-#include "gob/cdrom.h"
 
 namespace Gob {
 
 Draw::Draw(GobEngine *vm) : _vm(vm) {
-	int i;
+	_renderFlags = 0;
 
 	_fontIndex = 0;
 	_spriteLeft = 0;
@@ -50,73 +46,77 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_destSpriteY = 0;
 	_backColor = 0;
 	_frontColor = 0;
-	_letterToPrint = 0;
+	_transparency = 0;
 
-	_destSurface = 0;
 	_sourceSurface = 0;
-	_renderFlags = 0;
+	_destSurface = 0;
+
+	_letterToPrint = 0;
+	_textToPrint = 0;
+
 	_backDeltaX = 0;
 	_backDeltaY = 0;
 
-	for (i = 0; i < 8; i++)
+	for (int i = 0; i < 8; i++)
 		_fonts[i] = 0;
 	
-	_textToPrint = 0;
-	_transparency = 0;
-
-	for (i = 0; i < 50; i++)
+	for (int i = 0; i < SPRITES_COUNT; i++)
 		_spritesArray[i] = 0;
 
 	_invalidatedCount = 0;
-	for (i = 0; i < 30; i++) {
+	for (int i = 0; i < 30; i++) {
 		_invalidatedTops[i] = 0;
 		_invalidatedLefts[i] = 0;
 		_invalidatedRights[i] = 0;
 		_invalidatedBottoms[i] = 0;
 	}
 
-	_noInvalidated = 0;
-	_applyPal = 0;
-	_paletteCleared = 0;
+	_noInvalidated = false;
+	_noInvalidated57 = false;
+	_paletteCleared = false;
+	_applyPal = false;
 
 	_backSurface = 0;
 	_frontSurface = 0;
 
-	for (i = 0; i < 18; i++)
+	for (int i = 0; i < 18; i++)
 		_unusedPalette1[i] = 0;
-	for (i = 0; i < 16; i++)
+	for (int i = 0; i < 16; i++)
 		_unusedPalette2[i] = 0;
-	for (i = 0; i < 256; i++) {
+	for (int i = 0; i < 256; i++) {
 		_vgaPalette[i].red = 0;
 		_vgaPalette[i].blue = 0;
 		_vgaPalette[i].green = 0;
 	}
-	for (i = 0; i < 16; i++) {
+	for (int i = 0; i < 16; i++) {
 		_vgaSmallPalette[i].red = 0;
 		_vgaSmallPalette[i].blue = 0;
 		_vgaSmallPalette[i].green = 0;
 	}
+
+	_showCursor = 0;
+	_cursorIndex = 0;
+	_transparentCursor = 0;
+	_cursorTimeKey = 0;
 
 	_cursorX = 0;
 	_cursorY = 0;
 	_cursorWidth = 0;
 	_cursorHeight = 0;
 
-	_cursorXDeltaVar = -1;
-	_cursorYDeltaVar = -1;
+	_cursorHotspotXVar = -1;
+	_cursorHotspotYVar = -1;
 
-	for (i = 0; i < 40; i++) {
+	_cursorSprites = 0;
+	_cursorSpritesBack = 0;
+	_scummvmCursor = 0;
+
+	_cursorAnim = 0;
+	for (int i = 0; i < 40; i++) {
 		_cursorAnimLow[i] = 0;
 		_cursorAnimHigh[i] = 0;
 		_cursorAnimDelays[i] = 0;
 	}
-
-	_showCursor = 0;
-	_cursorIndex = 0;
-	_transparentCursor = 0;
-	_cursorSprites = 0;
-	_scummvmCursor = 0;
-	_cursorAnim = 0;
 
 	_palLoadData1[0] = 0;
 	_palLoadData1[1] = 17;
@@ -127,42 +127,25 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_palLoadData2[2] = 136;
 	_palLoadData2[3] = 204;
 
-	_cursorTimeKey = 0;
-
+	_needAdjust = 2;
 	_scrollOffsetX = 0;
 	_scrollOffsetY = 0;
-
-	warning("GOB2 Stub! _word_2E8E2, _word_2E51F, _off_2E51B, _off_2E517");
-	_word_2E8E2 = 2;
-	_word_2E51F = 0;
-	_off_2E51B = 0;
-	_off_2E517 = 0;
 }
 
 void Draw::invalidateRect(int16 left, int16 top, int16 right, int16 bottom) {
-	int16 temp;
-	int16 rect;
-	int16 i;
-
 	if (_renderFlags & RENDERFLAG_NOINVALIDATE)
 		return;
 
-	if (left > right) {
-		temp = left;
-		left = right;
-		right = temp;
-	}
-	if (top > bottom) {
-		temp = top;
-		top = bottom;
-		bottom = temp;
-	}
+	if (left > right)
+		SWAP(left, right);
+	if (top > bottom)
+		SWAP(top, bottom);
 
 	if ((left > (_vm->_video->_surfWidth - 1)) || (right < 0) ||
-			(top > (_vm->_video->_surfHeight - 1)) || (bottom < 0))
+	    (top > (_vm->_video->_surfHeight - 1)) || (bottom < 0))
 		return;
 
-	_noInvalidated = 0;
+	_noInvalidated = false;
 
 	if (_invalidatedCount >= 30) {
 		_invalidatedLefts[0] = 0;
@@ -185,22 +168,18 @@ void Draw::invalidateRect(int16 left, int16 top, int16 right, int16 bottom) {
 	if (bottom > (_vm->_video->_surfHeight - 1))
 		bottom = _vm->_video->_surfHeight - 1;
 
-	left &= 0xfff0;
-	right |= 0x000f;
+	left &= 0xFFF0;
+	right |= 0x000F;
 
-	for (rect = 0; rect < _invalidatedCount; rect++) {
+	for (int rect = 0; rect < _invalidatedCount; rect++) {
 
 		if (_invalidatedTops[rect] > top) {
 			if (_invalidatedTops[rect] > bottom) {
-				for (i = _invalidatedCount; i > rect; i--) {
-					_invalidatedLefts[i] =
-					    _invalidatedLefts[i - 1];
-					_invalidatedTops[i] =
-					    _invalidatedTops[i - 1];
-					_invalidatedRights[i] =
-					    _invalidatedRights[i - 1];
-					_invalidatedBottoms[i] =
-					    _invalidatedBottoms[i - 1];
+				for (int i = _invalidatedCount; i > rect; i--) {
+					_invalidatedLefts[i] = _invalidatedLefts[i - 1];
+					_invalidatedTops[i] = _invalidatedTops[i - 1];
+					_invalidatedRights[i] = _invalidatedRights[i - 1];
+					_invalidatedBottoms[i] = _invalidatedBottoms[i - 1];
 				}
 				_invalidatedLefts[rect] = left;
 				_invalidatedTops[rect] = top;
@@ -242,12 +221,12 @@ void Draw::invalidateRect(int16 left, int16 top, int16 right, int16 bottom) {
 	_invalidatedRights[_invalidatedCount] = right;
 	_invalidatedBottoms[_invalidatedCount] = bottom;
 	_invalidatedCount++;
-	return;
 }
 
-void Draw::blitInvalidated(void) {
-	int16 i;
-
+void Draw::blitInvalidated() {
+	if (_noInvalidated57 &&
+			((_vm->_global->_videoMode == 5) || (_vm->_global->_videoMode == 7)))
+		return;
 
 	if (_cursorIndex == 4)
 		blitCursor();
@@ -255,12 +234,12 @@ void Draw::blitInvalidated(void) {
 	if (_vm->_inter->_terminate)
 		return;
 
-	if (_noInvalidated && _applyPal == 0)
+	if (_noInvalidated && !_applyPal)
 		return;
 
 	if (_noInvalidated) {
 		setPalette();
-		_applyPal = 0;
+		_applyPal = false;
 		return;
 	}
 
@@ -268,86 +247,89 @@ void Draw::blitInvalidated(void) {
 	if (_applyPal) {
 		clearPalette();
 
-		_vm->_video->drawSprite(_backSurface, _frontSurface, 0, 0,
-				_vm->_video->_surfWidth - 1, _vm->_video->_surfHeight - 1, 0, 0, 0);
+		_vm->_video->drawSprite(_backSurface, _frontSurface,
+				0, 0, _vm->_video->_surfWidth - 1,
+				_vm->_video->_surfHeight - 1, 0, 0, 0);
 		setPalette();
 		_invalidatedCount = 0;
-		_noInvalidated = 1;
-		_applyPal = 0;
+		_noInvalidated = true;
+		_applyPal = false;
 		return;
 	}
 
-	_vm->_global->_doRangeClamp = 0;
-	for (i = 0; i < _invalidatedCount; i++) {
+	_vm->_video->_doRangeClamp = false;
+	for (int i = 0; i < _invalidatedCount; i++) {
 		_vm->_video->drawSprite(_backSurface, _frontSurface,
 		    _invalidatedLefts[i], _invalidatedTops[i],
 		    _invalidatedRights[i], _invalidatedBottoms[i],
 		    _invalidatedLefts[i], _invalidatedTops[i], 0);
 	}
-	_vm->_global->_doRangeClamp = 1;
+	_vm->_video->_doRangeClamp = true;
 
 	_invalidatedCount = 0;
-	_noInvalidated = 1;
-	_applyPal = 0;
+	_noInvalidated = true;
+	_applyPal = false;
 }
 
-void Draw::setPalette(void) {
-	if ((_vm->_global->_videoMode != 0x13) && (_vm->_global->_videoMode != 0x14))
-		error("setPalette: Video mode 0x%x is not supported!\n",
-		    _vm->_global->_videoMode);
+void Draw::setPalette() {
+	_vm->validateVideoMode(_vm->_global->_videoMode);
 
 	_vm->_global->_pPaletteDesc->unused1 = _unusedPalette1;
 	_vm->_global->_pPaletteDesc->unused2 = _unusedPalette2;
 	_vm->_global->_pPaletteDesc->vgaPal = _vgaPalette;
 	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
-	_paletteCleared = 0;
+	_paletteCleared = false;
 }
 
-void Draw::clearPalette(void) {
-	if (_paletteCleared == 0) {
-		_paletteCleared = 1;
+void Draw::clearPalette() {
+	if (!_paletteCleared) {
 		_vm->_util->clearPalette();
+		_paletteCleared = true;
 	}
 }
 
-void Draw::freeSprite(int16 index) {
-	if (_spritesArray[index] == 0)
-		return;
+void Draw::initSpriteSurf(int16 index, int16 width, int16 height,
+		int16 flags) {
 
-	_vm->_video->freeSurfDesc(_spritesArray[index]);
-
-	_spritesArray[index] = 0;
+	_spritesArray[index] =
+		_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, flags);
+	_vm->_video->clearSurf(_spritesArray[index]);
 }
 
 void Draw::adjustCoords(char adjust, int16 *coord1, int16 *coord2) {
-	if (_word_2E8E2 == 2)
+	if (_needAdjust == 2)
 		return;
 
-	if (adjust == 0) {
-		if (coord2 != 0)
-			*coord2 *= 2;
-		if (coord1 != 0)
-			*coord2 *= 2;
-	}
-	else if (adjust == 1) {
-		if (coord2 != 0)
-			*coord2 = (signed) ((unsigned) (*coord2 + 1) / 2);
-		if (coord1 != 0)
-			*coord1 = (signed) ((unsigned) (*coord1 + 1) / 2);
-	}
-	else if (adjust == 2) {
-		if (coord2 != 0)
-			*coord2 = *coord2 * 2 + 1;
-		if (coord1 != 0)
-			*coord1 = *coord1 * 2 + 1;
+	switch (adjust) {
+		case 0:
+			if (coord2)
+				*coord2 *= 2;
+			if (coord1)
+				*coord2 *= 2;
+			break;
+
+		case 1:
+			if (coord2)
+				*coord2 = (signed) ((unsigned) (*coord2 + 1) / 2);
+			if (coord1)
+				*coord1 = (signed) ((unsigned) (*coord1 + 1) / 2);
+			break;
+
+		case 2:
+			if (coord2)
+				*coord2 = *coord2 * 2 + 1;
+			if (coord1)
+				*coord1 = *coord1 * 2 + 1;
+			break;
 	}
 }
 
 void Draw::drawString(char *str, int16 x, int16 y, int16 color1, int16 color2,
-		int16 transp, Video::SurfaceDesc *dest, Video::FontDesc *font) {
+		int16 transp, SurfaceDesc *dest, Video::FontDesc *font) {
+
 	while (*str != '\0') {
 		_vm->_video->drawLetter(*str, x, y, font, transp, color1, color2, dest);
-		if (font->extraData == 0)
+		if (!font->extraData)
 			x += font->itemWidth;
 		else
 			x += *(((char *)font->extraData) + (*str - font->startItem));
@@ -355,25 +337,21 @@ void Draw::drawString(char *str, int16 x, int16 y, int16 color1, int16 color2,
 	}
 }
 
-void Draw::printTextCentered(int16 arg_0, int16 left, int16 top, int16 right,
+void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 		int16 bottom, char *str, int16 fontIndex, int16 color) {
-	char *storedIP;
-	int i;
-	int length;
-	int16 width;
-	
+
 	adjustCoords(1, &left, &top);
 	adjustCoords(1, &right, &bottom);
 
 	if (READ_LE_UINT16(_vm->_game->_totFileData + 0x7E) != 0) {
-		storedIP = _vm->_global->_inter_execPtr;
+		char *storedIP = _vm->_global->_inter_execPtr;
 		_vm->_global->_inter_execPtr = _vm->_game->_totFileData +
 			READ_LE_UINT16(_vm->_game->_totFileData + 0x7E);
-		WRITE_VAR(17, (uint32) arg_0);
+		WRITE_VAR(17, (uint32) id);
 		WRITE_VAR(18, (uint32) left);
 		WRITE_VAR(19, (uint32) top);
-		WRITE_VAR(20, (uint32) right-left+1);
-		WRITE_VAR(21, (uint32) bottom-top+1);
+		WRITE_VAR(20, (uint32) (right - left + 1));
+		WRITE_VAR(21, (uint32) (bottom - top + 1));
 		_vm->_inter->funcBlock(0);
 		_vm->_global->_inter_execPtr = storedIP;
 	}
@@ -381,21 +359,23 @@ void Draw::printTextCentered(int16 arg_0, int16 left, int16 top, int16 right,
 	if (str[0] == '\0')
 		return;
 
+	int16 width = 0;
+
 	_transparency = 1;
 	_destSpriteX = left;
 	_destSpriteY = top;
 	_fontIndex = fontIndex;
 	_frontColor = color;
 	_textToPrint = str;
-	width = 0;
-	if (_fonts[fontIndex]->extraData == 0)
-		width = strlen(str) * _fonts[fontIndex]->itemWidth;
-	else {
-		length = strlen(str);
-		for (i = 0; i < length; i++)
-			width +=
-				*(((char*)_fonts[fontIndex]->extraData) + (str[i] - _fonts[_fontIndex]->startItem));
+	if (_fonts[fontIndex]->extraData != 0) {
+		char *data = (char *) _fonts[fontIndex]->extraData;
+		int length = strlen(str);
+
+		for (int i = 0; i < length; i++)
+			width += *(data + (str[i] - _fonts[_fontIndex]->startItem));
 	}
+	else
+		width = strlen(str) * _fonts[fontIndex]->itemWidth;
 
 	adjustCoords(1, &width, 0);
 	_destSpriteX += (right - left + 1 - width) / 2;
@@ -404,19 +384,10 @@ void Draw::printTextCentered(int16 arg_0, int16 left, int16 top, int16 right,
 }
 
 int32 Draw::getSpriteRectSize(int16 index) {
-	if (_spritesArray[index] == 0)
+	if (!_spritesArray[index])
 		return 0;
 
-	return _vm->_video->getRectSize(_spritesArray[index]->width, _spritesArray[index]->height,
-			0, _vm->_global->_videoMode);
-}
-
-void Draw::initSpriteSurf(int16 index, int16 vidMode, int16 width, int16 height, int16 flags) {
-	if (index != 22)
-		_vm->_video->freeSurfDesc(_spritesArray[index]);
-
-	_spritesArray[index] =
-		_vm->_video->initSurfDesc(vidMode, width, height, flags);
+	return _spritesArray[index]->getWidth() * _spritesArray[index]->getHeight();
 }
 
 } // End of namespace Gob

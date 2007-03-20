@@ -22,24 +22,16 @@
  */
 
 #include "common/stdafx.h"
-#include "common/endian.h"
 
 #include "gob/gob.h"
 #include "gob/map.h"
-#include "gob/video.h"
-#include "gob/util.h"
-#include "gob/dataio.h"
-#include "gob/inter.h"
 #include "gob/goblin.h"
-#include "gob/sound.h"
 #include "gob/scenery.h"
 #include "gob/mult.h"
 
 namespace Gob {
 
 Map::Map(GobEngine *vm) : _vm(vm) {
-	int i;
-
 	_mapWidth = -1;
 	_mapHeight = -1;
 	_screenWidth = 0;
@@ -53,7 +45,7 @@ Map::Map(GobEngine *vm) : _vm(vm) {
 	_wayPoints = 0;
 	_bigTiles = false;
 
-	for (i = 0; i < 40; i++) {
+	for (int i = 0; i < 40; i++) {
 		_itemPoses[i].x = 0;
 		_itemPoses[i].y = 0;
 		_itemPoses[i].orient = 0;
@@ -65,14 +57,13 @@ Map::Map(GobEngine *vm) : _vm(vm) {
 	_curGoblinY = 0;
 	_destX = 0;
 	_destY = 0;
-	_loadFromAvo = 0;
 	_sourceFile[0] = 0;
-	_avoDataPtr = 0;
+
+	_loadFromAvo = false;
 }
 
 Map::~Map() {
-	if (_passMap)
-		delete[] _passMap;
+	delete[] _passMap;
 
 	if (_itemsMap) {
 		for (int i = 0; i < _mapHeight; i++)
@@ -80,15 +71,14 @@ Map::~Map() {
 		delete[] _itemsMap;
 	}
 
-	if (_wayPoints)
-		delete[] _wayPoints;
+	delete[] _wayPoints;
 }
 
 void Map::placeItem(int16 x, int16 y, int16 id) {
-	if ((_itemsMap[y][x] & 0xff00) != 0)
-		_itemsMap[y][x] = (_itemsMap[y][x] & 0xff00) | id;
+	if ((_itemsMap[y][x] & 0xFF00) != 0)
+		_itemsMap[y][x] = (_itemsMap[y][x] & 0xFF00) | id;
 	else
-		_itemsMap[y][x] = (_itemsMap[y][x] & 0x00ff) | (id << 8);
+		_itemsMap[y][x] = (_itemsMap[y][x] & 0x00FF) | (id << 8);
 }
 
 enum {
@@ -101,7 +91,7 @@ enum {
 int16 Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	int16 dir = 0;
 
-	if (x0 == x1 && y0 == y1)
+	if ((x0 == x1) && (y0 == y1))
 		return 0;
 
 	if ((x1 < 0) || (x1 > _mapWidth) || (y1 < 0) || (y1 > _mapHeight))
@@ -117,119 +107,119 @@ int16 Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	else if (x1 < x0)
 		dir |= kLeft;
 
-	if (getPass(x0, y0) == 3 && (dir & kUp)) {
-		if (getPass(x0, y0 - 1) != 0)
+	if ((getPass(x0, y0) == 3) && (dir & kUp)) {
+		if ((getPass(x0, y0 - 1) != 0))
 			return kDirN;
 	}
 
-	if (getPass(x0, y0) == 3 && (dir & kDown)) {
-		if (getPass(x0, y0 + 1) != 0)
+	if ((getPass(x0, y0) == 3) && (dir & kDown)) {
+		if ((getPass(x0, y0 + 1) != 0))
 			return kDirS;
 	}
 
-	if (getPass(x0, y0) == 6 && (dir & kUp)) {
-		if (getPass(x0, y0 - 1) != 0)
+	if ((getPass(x0, y0) == 6) && (dir & kUp)) {
+		if ((getPass(x0, y0 - 1) != 0))
 			return kDirN;
 	}
 
-	if (getPass(x0, y0) == 6 && (dir & kDown)) {
-		if (getPass(x0, y0 + 1) != 0)
+	if ((getPass(x0, y0) == 6) && (dir & kDown)) {
+		if ((getPass(x0, y0 + 1) != 0))
 			return kDirS;
 	}
 
 	if (dir == kLeft) {
-		if (x0 - 1 >= 0 && getPass(x0 - 1, y0) != 0)
+		if (((x0 - 1) >= 0) && (getPass(x0 - 1, y0) != 0))
 			return kDirW;
 		return 0;
 	}
 
 	if (dir == kRight) {
-		if (x0 + 1 < _mapWidth && getPass(x0 + 1, y0) != 0)
+		if (((x0 + 1) < _mapWidth) && (getPass(x0 + 1, y0) != 0))
 			return kDirE;
 		return 0;
 	}
 
 	if (dir == kUp) {
-		if (y0 - 1 >= 0 && getPass(x0, y0 - 1) != 0)
+		if (((y0 - 1) >= 0) && (getPass(x0, y0 - 1) != 0))
 			return kDirN;
 
-		if (y0 - 1 >= 0 && x0 - 1 >= 0
-		    && getPass(x0 - 1, y0 - 1) != 0)
+		if (((y0 - 1) >= 0) && ((x0 - 1) >= 0) &&
+		    (getPass(x0 - 1, y0 - 1) != 0))
 			return kDirNW;
 
-		if (y0 - 1 >= 0 && x0 + 1 < _mapWidth
-		    && getPass(x0 + 1, y0 - 1) != 0)
+		if (((y0 - 1) >= 0) && ((x0 + 1) < _mapWidth) &&
+		    (getPass(x0 + 1, y0 - 1) != 0))
 			return kDirNE;
 
 		return 0;
 	}
 
 	if (dir == kDown) {
-		if (y0 + 1 < _mapHeight && getPass(x0, y0 + 1) != 0)
+		if (((y0 + 1) < _mapHeight) && (getPass(x0, y0 + 1) != 0))
 			return kDirS;
 
-		if (y0 + 1 < _mapHeight && x0 - 1 >= 0
-		    && getPass(x0 - 1, y0 + 1) != 0)
+		if (((y0 + 1) < _mapHeight) && ((x0 - 1) >= 0) &&
+		    (getPass(x0 - 1, y0 + 1) != 0))
 			return kDirSW;
 
-		if (y0 + 1 < _mapHeight && x0 + 1 < _mapWidth
-		    && getPass(x0 + 1, y0 + 1) != 0)
+		if (((y0 + 1) < _mapHeight) && ((x0 + 1) < _mapWidth) &&
+		    (getPass(x0 + 1, y0 + 1) != 0))
 			return kDirSE;
 
 		return 0;
 	}
 
 	if (dir == (kRight | kUp)) {
-		if (y0 - 1 >= 0 && x0 + 1 < _mapWidth
-		    && getPass(x0 + 1, y0 - 1) != 0)
+		if (((y0 - 1) >= 0) && ((x0 + 1) < _mapWidth) &&
+		    (getPass(x0 + 1, y0 - 1) != 0))
 			return kDirNE;
 
-		if (y0 - 1 >= 0 && getPass(x0, y0 - 1) != 0)
+		if (((y0 - 1) >= 0) && (getPass(x0, y0 - 1) != 0))
 			return kDirN;
 
-		if (x0 + 1 < _mapWidth && getPass(x0 + 1, y0) != 0)
+		if (((x0 + 1) < _mapWidth) && (getPass(x0 + 1, y0) != 0))
 			return kDirE;
 
 		return 0;
 	}
 
 	if (dir == (kRight | kDown)) {
-		if (x0 + 1 < _mapWidth && y0 + 1 < _mapHeight
-		    && getPass(x0 + 1, y0 + 1) != 0)
+		if (((x0 + 1) < _mapWidth) && ((y0 + 1) < _mapHeight) &&
+		    (getPass(x0 + 1, y0 + 1) != 0))
 			return kDirSE;
 
-		if (y0 + 1 < _mapHeight && getPass(x0, y0 + 1) != 0)
+		if (((y0 + 1) < _mapHeight) && (getPass(x0, y0 + 1) != 0))
 			return kDirS;
 
-		if (x0 + 1 < _mapWidth && getPass(x0 + 1, y0) != 0)
+		if (((x0 + 1) < _mapWidth) && (getPass(x0 + 1, y0) != 0))
 			return kDirE;
 
 		return 0;
 	}
 
 	if (dir == (kLeft | kUp)) {
-		if (x0 - 1 >= 0 && y0 - 1 >= 0
-		    && getPass(x0 - 1, y0 - 1) != 0)
+		if (((x0 - 1) >= 0) && ((y0 - 1) >= 0) &&
+		    (getPass(x0 - 1, y0 - 1) != 0))
 			return kDirNW;
 
-		if (y0 - 1 >= 0 && getPass(x0, y0 - 1) != 0)
+		if (((y0 - 1) >= 0) && (getPass(x0, y0 - 1) != 0))
 			return kDirN;
 
-		if (x0 - 1 >= 0 && getPass(x0 - 1, y0) != 0)
+		if (((x0 - 1) >= 0) && (getPass(x0 - 1, y0) != 0))
 			return kDirW;
 
 		return 0;
 	}
 
 	if (dir == (kLeft | kDown)) {
-		if (x0 - 1 >= 0 && y0 + 1 < _mapHeight
-		    && getPass(x0 - 1, y0 + 1) != 0)
+		if (((x0 - 1) >= 0) && ((y0 + 1) < _mapHeight) &&
+		    (getPass(x0 - 1, y0 + 1) != 0))
 			return kDirSW;
 
-		if (y0 + 1 < _mapHeight && getPass(x0, y0 + 1) != 0)
+		if (((y0 + 1) < _mapHeight) && (getPass(x0, y0 + 1) != 0))
 			return kDirS;
 
-		if (x0 - 1 >= 0 && getPass(x0 - 1, y0) != 0)
+		if (((x0 - 1) >= 0) && (getPass(x0 - 1, y0) != 0))
 			return kDirW;
 
 		return 0;
@@ -240,14 +230,13 @@ int16 Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 int16 Map::findNearestWayPoint(int16 x, int16 y) {
 	int16 nearestWayPoint = -1;
 	int16 length;
-	int16 i;
 	int16 tmp;
 
 	length = 30000;
 
-	for (i = 0; i < _wayPointsCount; i++) {
-		if (_wayPoints[i].x < 0 || _wayPoints[i].x >= _mapWidth ||
-				_wayPoints[i].y < 0 || _wayPoints[i].y >= _mapHeight)
+	for (int i = 0; i < _wayPointsCount; i++) {
+		if ((_wayPoints[i].x < 0) || (_wayPoints[i].x >= _mapWidth) ||
+				(_wayPoints[i].y < 0) || (_wayPoints[i].y >= _mapHeight))
 			break;
 
 		tmp = ABS(x - _wayPoints[i].x) + ABS(y - _wayPoints[i].y);
@@ -261,7 +250,74 @@ int16 Map::findNearestWayPoint(int16 x, int16 y) {
 	return nearestWayPoint;
 }
 
-int16 Map::checkDirectPath(Mult::Mult_Object *obj, int16 x0, int16 y0, int16 x1, int16 y1) {
+void Map::findNearestWalkable(int16 &gobDestX, int16 &gobDestY,
+		int16 mouseX, int16 mouseY) {
+	int16 mapWidth, mapHeight;
+	int16 pos1 = -1, pos2 = -1;
+	int16 distance;
+	int16 direction;
+	int i;
+
+	mapWidth = _screenWidth / _tilesWidth;
+	mapHeight = 200 / _tilesHeight;
+	direction = 0;
+
+	for (i = 1; i <= gobDestX; i++)
+		if (getPass(gobDestX - i, gobDestY) != 0)
+			break;
+	if (i <= gobDestX)
+		pos1 = ((i - 1) * _tilesWidth) + (mouseX % _tilesWidth) + 1;
+	distance = i;
+
+	for (i = 1; (gobDestX + i) < mapWidth; i++)
+		if (getPass(gobDestX + i, gobDestY) != 0)
+			break;
+	if ((gobDestX + i) < mapWidth)
+		pos2 = (i * _tilesWidth) - (mouseX % _tilesWidth);
+
+	if ((pos2 != -1) && ((pos1 == -1) || (pos1 > pos2))) {
+		pos1 = pos2;
+		direction = 1;
+		distance = i;
+	}
+	pos2 = -1;
+
+	for (i = 1; (gobDestY + i) < mapHeight; i++)
+		if (getPass(gobDestX, gobDestY + i) != 0)
+			break;
+	if ((gobDestY + i) < mapHeight)
+		pos2 = (i * _tilesHeight) - (mouseY % _tilesHeight);
+
+	if ((pos2 != -1) && ((pos1 == -1) || (pos1 > pos2))) {
+		pos1 = pos2;
+		direction = 2;
+		distance = i;
+	}
+	pos2 = -1;
+
+	for (i = 1; i <= gobDestY; i++)
+		if (getPass(gobDestX, gobDestY - i) != 0)
+			break;
+	if (i <= gobDestY)
+		pos2 = ((i - 1) * _tilesHeight) + (mouseY % _tilesHeight) + 1;
+
+	if ((pos2 != -1) && ((pos1 == -1) || (pos1 > pos2))) {
+		direction = 3;
+		distance = i;
+	}
+
+	if (direction == 0)
+		gobDestX -= distance;
+	else if (direction == 1)
+		gobDestX += distance;
+	else if (direction == 2)
+		gobDestY += distance;
+	else if (direction == 3)
+		gobDestY -= distance;
+}
+
+int16 Map::checkDirectPath(Mult::Mult_Object *obj,
+		int16 x0, int16 y0, int16 x1, int16 y1) {
 	uint16 dir;
 
 	while (1) {
@@ -269,16 +325,16 @@ int16 Map::checkDirectPath(Mult::Mult_Object *obj, int16 x0, int16 y0, int16 x1,
 
 		if (obj) {
 			if (obj->nearestWayPoint < obj->nearestDest) {
-				if (_wayPoints[obj->nearestWayPoint + 1].field_2 == 1)
+				if (_wayPoints[obj->nearestWayPoint + 1].notWalkable == 1)
 					return 3;
 			} else if (obj->nearestWayPoint > obj->nearestDest) {
 				if (obj->nearestDest > 0)
-					if (_wayPoints[obj->nearestDest - 1].field_2 == 1)
+					if (_wayPoints[obj->nearestDest - 1].notWalkable == 1)
 						return 3;
 			}
 		}
 
-		if (x0 == x1 && y0 == y1)
+		if ((x0 == x1) && (y0 == y1))
 			return 1;
 
 		if (dir == 0)
@@ -324,20 +380,15 @@ int16 Map::checkDirectPath(Mult::Mult_Object *obj, int16 x0, int16 y0, int16 x1,
 	}
 }
 
-int16 Map::checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16 i1) {
-	uint16 dir;
-	int16 curX;
-	int16 curY;
-	int16 nextLink;
-
-	curX = x0;
-	curY = y0;
-	dir = 0;
-
-	nextLink = 1;
+int16 Map::checkLongPath(int16 x0, int16 y0,
+		int16 x1, int16 y1, int16 i0, int16 i1) {
+	uint16 dir = 0;
+	int16 curX = x0;
+	int16 curY = y0;
+	int16 nextLink = 1;
 
 	while (1) {
-		if (x0 == curX && y0 == curY)
+		if ((x0 == curX) && (y0 == curY))
 			nextLink = 1;
 
 		if (nextLink != 0) {
@@ -358,8 +409,8 @@ int16 Map::checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16
 				curY = _wayPoints[i0].y;
 			}
 		}
-		if (i0 == i1 && _wayPoints[i0].x == x0
-		    && _wayPoints[i0].y == y0) {
+		if ((i0 == i1) && (_wayPoints[i0].x == x0) &&
+		    (_wayPoints[i0].y == y0)) {
 			if (checkDirectPath(0, x0, y0, x1, y1) == 1)
 				return 1;
 			return 0;
@@ -408,61 +459,26 @@ int16 Map::checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16
 	}
 }
 
-void Map::loadDataFromAvo(char *dest, int16 size) {
-	memcpy(dest, _avoDataPtr, size);
-	_avoDataPtr += size;
-}
-
-uint16 Map::loadFromAvo_LE_UINT16() {
-	uint16 tmp = READ_LE_UINT16(_avoDataPtr);
-	_avoDataPtr += 2;
-	return tmp;
-}
-
-void Map::loadItemToObject(void) {
-	int16 flag;
-	int16 count;
-	int16 i;
-
-	flag = loadFromAvo_LE_UINT16();
-	if (flag == 0)
-		return;
-
-	_avoDataPtr += 1456;
-	count = loadFromAvo_LE_UINT16();
-	for (i = 0; i < count; i++) {
-		_avoDataPtr += 20;
-		_vm->_goblin->_itemToObject[i] = loadFromAvo_LE_UINT16();
-		_avoDataPtr += 5;
-	}
-}
-
 void Map::loadMapsInitGobs(void) {
 	int16 layer;
-	int16 i;
 
-	if (_loadFromAvo == 0)
+	if (!_loadFromAvo)
 		error("load: Loading .pas/.pos files is not supported!");
 
-	for (i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++)
 		_vm->_goblin->nextLayer(_vm->_goblin->_goblins[i]);
-	}
 
-	for (i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
+		Goblin::Gob_Object &gob = *_vm->_goblin->_goblins[i];
 
-		layer =
-		    _vm->_goblin->_goblins[i]->stateMach[_vm->_goblin->_goblins[i]->state][0]->layer;
-
-		_vm->_scenery->updateAnim(layer, 0, _vm->_goblin->_goblins[i]->animation, 0,
-		    _vm->_goblin->_goblins[i]->xPos, _vm->_goblin->_goblins[i]->yPos, 0);
-
-		_vm->_goblin->_goblins[i]->yPos = (_vm->_goblin->_gobPositions[i].y + 1) * 6 -
-		    (_vm->_scenery->_toRedrawBottom - _vm->_scenery->_animTop);
-
-		_vm->_goblin->_goblins[i]->xPos = _vm->_goblin->_gobPositions[i].x * 12 -
-		    (_vm->_scenery->_toRedrawLeft - _vm->_scenery->_animLeft);
-
-		_vm->_goblin->_goblins[i]->order = _vm->_scenery->_toRedrawBottom / 24 + 3;
+		layer = gob.stateMach[gob.state][0]->layer;
+		_vm->_scenery->updateAnim(layer, 0, gob.animation, 0,
+				gob.xPos, gob.yPos, 0);
+		gob.yPos = (_vm->_goblin->_gobPositions[i].y + 1) * 6 -
+			(_vm->_scenery->_toRedrawBottom - _vm->_scenery->_animTop);
+		gob.xPos = _vm->_goblin->_gobPositions[i].x * 12 -
+			(_vm->_scenery->_toRedrawLeft - _vm->_scenery->_animLeft);
+		gob.order = _vm->_scenery->_toRedrawBottom / 24 + 3;
 	}
 
 	_vm->_goblin->_currentGoblin = 0;
@@ -475,4 +491,4 @@ void Map::loadMapsInitGobs(void) {
 	_vm->_goblin->_goblins[2]->doAnim = 1;
 }
 
-}				// End of namespace Gob
+} // End of namespace Gob

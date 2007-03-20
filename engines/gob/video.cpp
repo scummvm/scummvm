@@ -20,12 +20,15 @@
  * $Id$
  *
  */
+
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "graphics/cursorman.h"
 
 #include "gob/gob.h"
-#include "gob/global.h"
 #include "gob/video.h"
+#include "gob/global.h"
+#include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/draw.h"
 
@@ -33,9 +36,54 @@
 
 namespace Gob {
 
-/* NOT IMPLEMENTED */
+SurfaceDesc::SurfaceDesc(int16 vidMode, int16 width, int16 height,
+		byte *vidMem) : _width(width), _height(height) {
+
+	if (vidMem) {
+		_vidMode = vidMode;
+		_ownVidMem = false;
+		_vidMem = vidMem;
+	} else {
+		_vidMode = vidMode;
+		_ownVidMem = true;
+		_vidMem = new byte[width * height];
+		assert(_vidMem);
+		memset(_vidMem, 0, width * height);
+	}
+}
+
+void SurfaceDesc::setVidMem(byte *vidMem) {
+	assert(vidMem);
+
+	if (hasOwnVidMem())
+		delete[] _vidMem;
+
+	_ownVidMem = false;
+	_vidMem = vidMem;
+}
+
+void SurfaceDesc::resize(int16 width, int16 height) {
+	if (hasOwnVidMem())
+		delete[] _vidMem;
+
+	_width = width;
+	_height = height;
+	_ownVidMem = true;
+	_vidMem = new byte[width * height];
+	assert(_vidMem);
+	memset(_vidMem, 0, width * height);
+}
+
+void SurfaceDesc::swap(SurfaceDesc &surf) {
+	SWAP(_width, surf._width);
+	SWAP(_height, surf._height);
+	SWAP(_vidMode, surf._vidMode);
+	SWAP(_ownVidMem, surf._ownVidMem);
+	SWAP(_vidMem, surf._vidMem);
+}
 
 Video::Video(GobEngine *vm) : _vm(vm) {
+	_doRangeClamp = false;
 	_videoDriver = 0;
 	_surfWidth = 320;
 	_surfHeight = 200;
@@ -47,91 +95,173 @@ char Video::initDriver(int16 vidMode) {
 	if (_videoDriver)
 		return 1;
 
-	warning("STUB: Video::initDriver");
-
-	// FIXME: Finish all this stuff :)
 	_videoDriver = new VGAVideoDriver();
-
 	return 1;
 }
 
 void Video::freeDriver() {
 	delete _videoDriver;
-	warning("STUB: Video::freeDriver");
 }
 
-int32 Video::getRectSize(int16 width, int16 height, int16 flag, int16 mode) {
-	int32 size;
+void Video::initPrimary(int16 mode) {
+	if ((mode != 3) && (mode != -1))
+		_vm->validateVideoMode(mode);
+	_vm->validateVideoMode(_vm->_global->_videoMode);
 
-	if (((mode & 0x7f) != 0x13) && ((mode & 0x7f) != 0x14))
-		warning
-		    ("Video::getRectSize: Video mode %d is not fully supported!",
-		    mode & 0x7f);
-	switch (mode & 0x7f) {
-	case 5:
-	case 7:
-		size = ((int32)((width + 3) / 4)) * height * (flag + 1);
-		break;
-	case 0x13:
-		size = (int32)width *height;
-		break;
-	case 0x14:
-	case 0x15:
-	case 0x16:
-		size = ((int32)((width + 3) / 4)) * height * 4;
-		break;
-	default:
-		size = ((int32)((width + 7) / 8)) * height * (flag + 4);
-		break;
+	if (mode == -1)
+		mode = 3;
+	_vm->_global->_oldMode = mode;
+
+	if (mode != 3)
+		Video::initDriver(mode);
+
+	if (mode != 3) {
+		initSurfDesc(mode, _surfWidth, _surfHeight, PRIMARY_SURFACE);
+
+		if (!_vm->_global->_dontSetPalette)
+			Video::setFullPalette(_vm->_global->_pPaletteDesc);
 	}
-	return size;
 }
 
-void Video::freeSurfDesc(SurfaceDesc * surfDesc) {
-	if ((surfDesc == 0) || (surfDesc == _vm->_draw->_frontSurface))
+SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height,
+		int16 flags) {
+	SurfaceDesc *descPtr = 0;
+
+	if (flags & PRIMARY_SURFACE)
+		assert((width == _surfWidth) && (height == _surfHeight));
+
+	_vm->validateVideoMode(vidMode);
+
+	if (flags & PRIMARY_SURFACE) {
+		_vm->_global->_primaryWidth = width;
+		_vm->_global->_mouseMaxCol = width;
+		_vm->_global->_primaryHeight = height;
+		_vm->_global->_mouseMaxRow = height;
+		
+		descPtr = _vm->_global->_primarySurfDesc;
+		descPtr->resize(width, height);
+		descPtr->_vidMode = vidMode;
+	} else {
+		assert(!(flags & DISABLE_SPR_ALLOC));
+
+		if (!(flags & SCUMMVM_CURSOR))
+			width = (width + 7) & 0xFFF8;
+
+		descPtr = new SurfaceDesc(vidMode, width, height);
+	}
+	return descPtr;
+}
+
+void Video::waitRetrace(bool mouse) {
+	uint32 time;
+
+	if (mouse)
+		CursorMan.showMouse((_vm->_draw->_showCursor & 2) != 0);
+	if (_vm->_global->_primarySurfDesc) {
+		time = _vm->_util->getTimeKey();
+		g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() +
+				_scrollOffsetY * _surfWidth + _scrollOffsetX, _surfWidth,
+				0, 0, 320, 200);
+		g_system->updateScreen();
+		_vm->_util->delay(MAX(1, 10 - (int)(_vm->_util->getTimeKey() - time)));
+	}
+}
+
+void Video::putPixel(int16 x, int16 y, int16 color, SurfaceDesc *dest) {
+	if ((x >= dest->getWidth()) || (x < 0) ||
+	    (y >= dest->getHeight()) || (y < 0))
 		return;
 
-	delete[] surfDesc->vidPtr;
-	if (surfDesc != _vm->_global->_pPrimarySurfDesc) {
-		_vm->_global->_sprAllocated--;
-		delete surfDesc;
+	_videoDriver->putPixel(x, y, color, dest);
+}
+
+void Video::fillRect(SurfaceDesc *dest, int16 left, int16 top, int16 right,
+		int16 bottom, int16 color) {
+
+	if (_doRangeClamp) {
+		if (left > right)
+			SWAP(left, right);
+		if (top > bottom)
+			SWAP(top, bottom);
+
+		if ((left >= dest->getWidth()) || (right < 0) ||
+		    (top >= dest->getHeight()) || (bottom < 0))
+			return;
+
+		left = CLIP(left, (int16) 0, (int16) (dest->getWidth() - 1));
+		top = CLIP(top, (int16) 0, (int16) (dest->getHeight() - 1));
+		right = CLIP(right, (int16) 0, (int16) (dest->getWidth() - 1));
+		bottom = CLIP(bottom, (int16) 0, (int16) (dest->getHeight() - 1));
+	}
+
+	_videoDriver->fillRect(dest, left, top, right, bottom, color);
+}
+
+void Video::drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1,
+		int16 y1, int16 color) {
+
+	if ((x0 == x1) || (y0 == y1))
+		Video::fillRect(dest, x0, y0, x1, y1, color);
+	else
+		_videoDriver->drawLine(dest, x0, y0, x1, y1, color);
+}
+
+/*
+ * The original's version of the Bresenham Algorithm was a bit "unclean"
+ * and produced strange edges at 45°, 135°, 225° and 315°, so using the
+ * version found in the Wikipedia article about the
+ * "Bresenham's line algorithm" instead
+ */
+void Video::drawCircle(SurfaceDesc *dest, int16 x0, int16 y0,
+		int16 radius, int16 color) {
+	int16 f = 1 - radius;
+	int16 ddFx = 0;
+	int16 ddFy = -2 * radius;
+	int16 x = 0;
+	int16 y = radius;
+
+	putPixel(x0, y0 + radius, color, dest);
+	putPixel(x0, y0 - radius, color, dest);
+	putPixel(x0 + radius, y0, color, dest);
+	putPixel(x0 - radius, y0, color, dest);
+
+	while (x < y) {
+		if (f >= 0) {
+			y--;
+			ddFy += 2;
+			f += ddFy;
+		}
+		x++;
+		ddFx += 2;
+		f += ddFx + 1;    
+		putPixel(x0 + x, y0 + y, color, dest);
+		putPixel(x0 - x, y0 + y, color, dest);
+		putPixel(x0 + x, y0 - y, color, dest);
+		putPixel(x0 - x, y0 - y, color, dest);
+		putPixel(x0 + y, y0 + x, color, dest);
+		putPixel(x0 - y, y0 + x, color, dest);
+		putPixel(x0 + y, y0 - x, color, dest);
+		putPixel(x0 - y, y0 - x, color, dest);
 	}
 }
 
-int16 Video::clampValue(int16 val, int16 max) {
-	if (val >= max)
-		val = max - 1;
-
-	if (val < 0)
-		val = 0;
-
-	return val;
+void Video::clearSurf(SurfaceDesc *dest) {
+	Video::fillRect(dest, 0, 0, dest->getWidth() - 1, dest->getHeight() - 1, 0);
 }
 
 void Video::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 	    int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) {
-	int16 temp;
 	int16 destRight;
 	int16 destBottom;
 
-	if (_vm->_global->_doRangeClamp) {
-		if (left > right) {
-			temp = left;
-			left = right;
-			right = temp;
-		}
-		if (top > bottom) {
-			temp = top;
-			top = bottom;
-			bottom = temp;
-		}
-		if (right < 0)
-			return;
-		if (bottom < 0)
-			return;
-		if (left >= source->width)
-			return;
-		if (top >= source->height)
+	if (_doRangeClamp) {
+		if (left > right)
+			SWAP(left, right);
+		if (top > bottom)
+			SWAP(top, bottom);
+
+		if ((left >= source->getWidth()) || (right < 0) ||
+		    (top >= source->getHeight()) || (bottom < 0))
 			return;
 
 		if (left < 0) {
@@ -142,12 +272,12 @@ void Video::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 			y -= top;
 			top = 0;
 		}
-		right = Video::clampValue(right, source->width);
-		bottom = Video::clampValue(bottom, source->height);
-		if (right - left >= source->width)
-			right = left + source->width - 1;
-		if (bottom - top >= source->height)
-			bottom = top + source->height - 1;
+		right = CLIP(right, (int16) 0, (int16) (source->getWidth() - 1));
+		bottom = CLIP(bottom, (int16) 0, (int16) (source->getHeight() - 1));
+		if (right - left >= source->getWidth())
+			right = left + source->getWidth() - 1;
+		if (bottom - top >= source->getHeight())
+			bottom = top + source->getHeight() - 1;
 
 		if (x < 0) {
 			left -= x;
@@ -157,256 +287,120 @@ void Video::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 			top -= y;
 			y = 0;
 		}
-		if (left > right)
-			return;
-		if (top > bottom)
-			return;
-
-		if (x >= dest->width)
-			return;
-
-		if (y >= dest->height)
+		if ((x >= dest->getWidth()) || (left > right) ||
+		    (y >= dest->getHeight()) || (top > bottom))
 			return;
 
 		destRight = x + right - left;
 		destBottom = y + bottom - top;
-		if (destRight >= dest->width)
-			right -= destRight - dest->width + 1;
+		if (destRight >= dest->getWidth())
+			right -= destRight - dest->getWidth() + 1;
 
-		if (destBottom >= dest->height)
-			bottom -= destBottom - dest->height + 1;
+		if (destBottom >= dest->getHeight())
+			bottom -= destBottom - dest->getHeight() + 1;
 	}
 
 	_videoDriver->drawSprite(source, dest, left, top, right, bottom, x, y, transp);
 }
 
-void Video::fillRect(SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom,
-	    int16 color) {
-	int16 temp;
+void Video::drawLetter(int16 item, int16 x, int16 y, FontDesc *fontDesc,
+		int16 color1, int16 color2, int16 transp, SurfaceDesc *dest) {
+	char *dataPtr;
+	char *itemData;
+	int16 itemSize;
+	int16 newItem;
+	int16 curItem;
+	int16 newItemPos;
+	int16 curItemPos;
 
-	if (_vm->_global->_doRangeClamp) {
-		if (left > right) {
-			temp = left;
-			left = right;
-			right = temp;
-		}
-		if (top > bottom) {
-			temp = top;
-			top = bottom;
-			bottom = temp;
-		}
-		if (right < 0)
-			return;
-		if (bottom < 0)
-			return;
-		if (left >= dest->width)
-			return;
-		if (top >= dest->height)
+	if (fontDesc->endItem == 0) {
+		itemSize = fontDesc->itemSize + 3;
+		dataPtr = fontDesc->dataPtr;
+		//        startItem
+		curItem = dataPtr[-2] - 1;
+
+		curItemPos = 0;
+		do {
+			newItemPos = ((curItemPos + curItem) / 2) * itemSize;
+			itemData = fontDesc->dataPtr + newItemPos;
+			newItem = (READ_LE_UINT16(itemData) & 0x7FFF);
+			if (item > newItem)
+				curItem = newItemPos - 1;
+			else
+				curItemPos = newItemPos + 1;
+		} while ((newItem != item) && (curItemPos <= curItem));
+
+		if (newItem != item)
 			return;
 
-		left = Video::clampValue(left, dest->width);
-		top = Video::clampValue(top, dest->height);
-		right = Video::clampValue(right, dest->width);
-		bottom = Video::clampValue(bottom, dest->height);
+		fontDesc->dataPtr = itemData + 3;
+		item = 0;
 	}
 
-	_videoDriver->fillRect(dest, left, top, right, bottom, color);
+	_videoDriver->drawLetter((unsigned char) item, x, y, fontDesc, color1, color2, transp, dest);
 }
 
-void Video::drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1, int16 color) {
-	if (x0 == x1 || y0 == y1) {
-		Video::fillRect(dest, x0, y0, x1, y1, color);
-		return;
-	}
-
-	_videoDriver->drawLine(dest, x0, y0, x1, y1, color);
-}
-
-void Video::putPixel(int16 x, int16 y, int16 color, SurfaceDesc *dest) {
-	if (x < 0 || y < 0 || x >= dest->width || y >= dest->height)
-		return;
-
-	_videoDriver->putPixel(x, y, color, dest);
-}
-
-void Video::clearSurf(SurfaceDesc *dest) {
-	Video::fillRect(dest, 0, 0, dest->width - 1, dest->height - 1, 0);
-}
-
-void Video::drawCircle(Video::SurfaceDesc *dest, int16 x, int16 y, int16 radius, int16 color) {
-	int16 si;
-	int16 var_18;
-	int16 var_16;
-	int16 y4;
-	int16 y3;
-	int16 x4;
-	int16 x3;
-	int16 x2;
-	int16 y2;
-	int16 x1;
-	int16 y1;
-	int16 var_4;
-	int16 var_2;
-	
-	var_2 = radius;
-	var_4 = 0;
-	si = -radius;
-	y1 = y;
-	x1 = x + radius;
-	y2 = y + radius;
-	x2 = x;
-	x3 = x - radius;
-	x4 = x;
-	y3 = y;
-	y4 = y - radius;
-	var_16 = 0;
-	var_18 = radius * 2;
-
-	while (var_2 >= var_4) {
-		putPixel(x1, y1, color, dest);
-		putPixel(x2, y2, color, dest);
-		putPixel(x3, y1, color, dest);
-		putPixel(x4, y2, color, dest);
-		putPixel(x1, y3, color, dest);
-		putPixel(x2, y4, color, dest);
-		putPixel(x3, y3, color, dest);
-		putPixel(x4, y4, color, dest);
-		y1++;
-		x2++;
-		x4--;
-		y3--;
-		var_16 += 2;
-		var_4++;
-		si += var_16 + 1;
-		if (si > 0) {
-			x1--;
-			y2--;
-			x3++;
-			y4++;
-			var_18 -= 2;
-			var_2--;
-			si -= var_18 + 1;
-		}
-	}
-}
-
-void Video::drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y,
-	    int16 transp, SurfaceDesc *dest) {
+void Video::drawPackedSprite(byte *sprBuf, int16 width, int16 height,
+		int16 x, int16 y, int16 transp, SurfaceDesc *dest) {
 
 	if (spriteUncompressor(sprBuf, width, height, x, y, transp, dest))
 		return;
 
-	if (((dest->vidMode & 0x7f) != 0x13) && ((dest->vidMode & 0x7f) != 0x14))
-		error("Video::drawPackedSprite: Video mode 0x%x is not fully supported!",
-		    dest->vidMode & 0x7f);
+	_vm->validateVideoMode(dest->_vidMode);
 
 	_videoDriver->drawPackedSprite(sprBuf, width, height, x, y, transp, dest);
 }
 
-void Video::drawPackedSprite(const char *path, SurfaceDesc * dest, int width) {
+void Video::drawPackedSprite(const char *path, SurfaceDesc *dest, int width) {
 	char *data;
 
-	data = _vm->_dataio->getData(path);
-	drawPackedSprite((byte *) data, width, dest->height, 0, 0, 0, dest);
+	data = _vm->_dataIO->getData(path);
+	drawPackedSprite((byte *) data, width, dest->getHeight(), 0, 0, 0, dest);
 	delete[] data;
 }
 
-void Video::setPalElem(int16 index, char red, char green, char blue, int16 unused,
-	    int16 vidMode) {
+void Video::setPalElem(int16 index, char red, char green, char blue,
+		int16 unused, int16 vidMode) {
 	byte pal[4];
+
+	_vm->validateVideoMode(vidMode);
 
 	_vm->_global->_redPalette[index] = red;
 	_vm->_global->_greenPalette[index] = green;
 	_vm->_global->_bluePalette[index] = blue;
+	setPalColor(pal, red, green, blue);
 
-	if ((vidMode != 0x13) && (vidMode != 0x14))
-		error("Video::setPalElem: Video mode 0x%x is not supported!",
-		    vidMode);
-
-	pal[0] = (red << 2) | (red >> 4);
-	pal[1] = (green << 2) | (green >> 4);
-	pal[2] = (blue << 2) | (blue >> 4);
-	pal[3] = 0;
 	g_system->setPalette(pal, index, 1);
 }
 
 void Video::setPalette(PalDesc *palDesc) {
-	int16 i;
 	byte pal[1024];
 	int16 numcolors;
 
-	if ((_vm->_global->_videoMode != 0x13) && (_vm->_global->_videoMode != 0x14))
-		error("Video::setPalette: Video mode 0x%x is not supported!",
-		    _vm->_global->_videoMode);
+	_vm->validateVideoMode(_vm->_global->_videoMode);
 
-	if (_vm->_global->_setAllPalette)
-		numcolors = 256;
-	else
-		numcolors = 16;
-
-	for (i = 0; i < numcolors; i++) {
-		pal[i * 4 + 0] = (palDesc->vgaPal[i].red << 2) | (palDesc->vgaPal[i].red >> 4);
-		pal[i * 4 + 1] = (palDesc->vgaPal[i].green << 2) | (palDesc->vgaPal[i].green >> 4);
-		pal[i * 4 + 2] = (palDesc->vgaPal[i].blue << 2) | (palDesc->vgaPal[i].blue >> 4);
-		pal[i * 4 + 3] = 0;
-	}
+	numcolors = _vm->_global->_setAllPalette ? 256 : 16;
+	for (int i = 0; i < numcolors; i++)
+		setPalColor(pal + i * 4, palDesc->vgaPal[i]);
 
 	g_system->setPalette(pal, 0, numcolors);
 }
 
 void Video::setFullPalette(PalDesc *palDesc) {
-	Color *colors;
-	int16 i;
-	byte pal[1024];
-
 	if (_vm->_global->_setAllPalette) {
-		colors = palDesc->vgaPal;
-		for (i = 0; i < 256; i++) {
+		byte pal[1024];
+		Color *colors = palDesc->vgaPal;
+
+		for (int i = 0; i < 256; i++) {
 			_vm->_global->_redPalette[i] = colors[i].red;
 			_vm->_global->_greenPalette[i] = colors[i].green;
 			_vm->_global->_bluePalette[i] = colors[i].blue;
+			setPalColor(pal + i * 4, colors[i]);
 		}
 
-		for (i = 0; i < 256; i++) {
-			pal[i * 4 + 0] = (colors[i].red << 2) | (colors[i].red >> 4);
-			pal[i * 4 + 1] = (colors[i].green << 2) | (colors[i].green >> 4);
-			pal[i * 4 + 2] = (colors[i].blue << 2) | (colors[i].blue >> 4);
-			pal[i * 4 + 3] = 0;
-		}
 		g_system->setPalette(pal, 0, 256);
-	} else {
+	} else
 		Video::setPalette(palDesc);
-	}
 }
 
-void Video::initPrimary(int16 mode) {
-	int16 old;
-	if (mode != 0x13 && mode != 0x14 && mode != 3 && mode != -1)
-		error("Video::initPrimary: Video mode 0x%x is not supported!",
-		    mode);
-
-	if ((_vm->_global->_videoMode != 0x13) && (_vm->_global->_videoMode != 0x14))
-		error("Video::initPrimary: Video mode 0x%x is not supported!",
-		    mode);
-
-	old = _vm->_global->_oldMode;
-	if (mode == -1)
-		mode = 3;
-
-	_vm->_global->_oldMode = mode;
-	if (mode != 3)
-		Video::initDriver(mode);
-
-	if (mode != 3) {
-		initSurfDesc(mode, _surfWidth, _vm->_video->_surfHeight, PRIMARY_SURFACE);
-
-		if (_vm->_global->_dontSetPalette)
-			return;
-
-		Video::setFullPalette(_vm->_global->_pPaletteDesc);
-	}
-}
-
-void Video::setHandlers() { _vm->_global->_setAllPalette = 1; }
-
-}				// End of namespace Gob
+} // End of namespace Gob

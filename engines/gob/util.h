@@ -20,11 +20,11 @@
  * $Id$
  *
  */
+
 #ifndef GOB_UTIL_H
 #define GOB_UTIL_H
 
 #include "gob/video.h"
-#include "gob/global.h"
 
 namespace Gob {
 
@@ -46,58 +46,60 @@ public:
 		List() : pHead(0), pTail(0) {}
 	};
 
+	uint32 getTimeKey(void);
+	int16 getRandom(int16 max);
+	void beep(int16 freq);
+
+	void delay(uint16 msecs);
+	void longDelay(uint16 msecs);
+
 	void initInput(void);
 	void processInput(void);
-	void waitKey(void);
+	void clearKeyBuf(void);
 	int16 getKey(void);
 	int16 checkKey(void);
-	int16 getRandom(int16 max);
+
 	void getMouseState(int16 *pX, int16 *pY, int16 *pButtons);
 	void setMousePos(int16 x, int16 y);
-	void longDelay(uint16 msecs);
-	void delay(uint16 msecs);
-	void beep(int16 freq);
-	uint32 getTimeKey(void);
 	void waitMouseUp(void);
 	void waitMouseDown(void);
-
-	void clearPalette(void);
-
-	void asm_setPaletteBlock(char *tmpPalBuffer, int16 start, int16 end);
-
-	void vid_waitRetrace(int16 mode);
-
-	Video::FontDesc *loadFont(const char *path);
-	void freeFont(Video::FontDesc * fontDesc);
-	static void insertStr(const char *str1, char *str2, int16 pos);
-	static void cutFromStr(char *str, int16 from, int16 cutlen);
-	void waitEndFrame();
-	void setFrameRate(int16 rate);
-
-	static void listInsertBack(List * list, void *data);
-	static void listInsertFront(List * list, void *data);
-	static void listDropFront(List * list);
-	static void deleteList(List * list);
-	static void prepareStr(char *str);
 	void waitMouseRelease(char drawMouse);
 	void forceMouseUp(void);
+
+	void clearPalette(void);
+	void setFrameRate(int16 rate);
+	void waitEndFrame();
 	void setScrollOffset(int16 x = -1, int16 y = -1);
+
+	Video::FontDesc *loadFont(const char *path);
+	void freeFont(Video::FontDesc *fontDesc);
+
+	static void insertStr(const char *str1, char *str2, int16 pos);
+	static void cutFromStr(char *str, int16 from, int16 cutlen);
+	static void prepareStr(char *str);
+
+	static void listInsertFront(List *list, void *data);
+	static void listInsertBack(List *list, void *data);
+	static void listDropFront(List *list);
+	static void deleteList(List *list);
 
 	Util(GobEngine *vm);
 
 protected:
 	int16 _mouseButtons;
-	int16 _keyBuffer[KEYBUFSIZE], _keyBufferHead, _keyBufferTail;
+	int16 _keyBuffer[KEYBUFSIZE];
+	int16 _keyBufferHead;
+	int16 _keyBufferTail;
+
 	GobEngine *_vm;
 
-	void addKeyToBuffer(int16 key);
 	bool keyBufferEmpty();
+	void addKeyToBuffer(int16 key);
 	bool getKeyFromBuffer(int16& key);
 	int16 translateKey(int16 key);
-	int16 calcDelayTime();
 	void checkJoystick();
 };
 
-}				// End of namespace Gob
+} // End of namespace Gob
 
-#endif
+#endif // GOB_UTIL_H

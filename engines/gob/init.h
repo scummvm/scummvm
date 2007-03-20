@@ -20,6 +20,7 @@
  * $Id$
  *
  */
+
 #ifndef GOB_INIT_H
 #define GOB_INIT_H
 
@@ -29,10 +30,9 @@ namespace Gob {
 
 class Init {
 public:
-	void findBestCfg(void);
 	void initGame(char *totFile);
 
-	virtual void soundVideo(int32 smallHeapSize, int16 flag) = 0;
+	virtual void initVideo() = 0;
 
 	Init(GobEngine *vm);
 	virtual ~Init() {};
@@ -47,7 +47,7 @@ protected:
 
 class Init_v1 : public Init {
 public:
-	virtual void soundVideo(int32 smallHeapSize, int16 flag);
+	virtual void initVideo();
 
 	Init_v1(GobEngine *vm);
 	virtual ~Init_v1() {};
@@ -55,12 +55,12 @@ public:
 
 class Init_v2 : public Init_v1 {
 public:
-	virtual void soundVideo(int32 smallHeapSize, int16 flag);
+	virtual void initVideo();
 
 	Init_v2(GobEngine *vm);
 	virtual ~Init_v2() {};
 };
 
-}				// End of namespace Gob
+} // End of namespace Gob
 
-#endif
+#endif // GOB_INIT_H

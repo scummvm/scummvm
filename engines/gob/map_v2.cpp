@@ -22,19 +22,16 @@
  */
 
 #include "common/stdafx.h"
-#include "common/endian.h"
 #include "common/stream.h"
 
 #include "gob/gob.h"
 #include "gob/map.h"
-#include "gob/dataio.h"
+#include "gob/global.h"
 #include "gob/goblin.h"
-#include "gob/sound.h"
 #include "gob/inter.h"
 #include "gob/game.h"
 #include "gob/parse.h"
 #include "gob/mult.h"
-#include "gob/scenery.h"
 
 namespace Gob {
 
@@ -49,24 +46,15 @@ void Map_v2::init(void) {
 }
 
 void Map_v2::loadMapObjects(char *avjFile) {
-	int i;
-	int j;
-	int k;
 	uint8 wayPointsCount;
 	int16 var;
 	int16 id;
-	int16 mapHeight;
-	int16 mapWidth;
+	int16 mapWidth, mapHeight;
 	int16 tmp;
-	int16 numData;
-	int16 statesCount;
-	int16 state;
 	char *variables;
 	char *extData;
-	uint32 dataPos1;
-	uint32 dataPos2;
-	int8 statesMask[102];
-	Mult::Mult_GobState *statesPtr;
+	uint32 tmpPos;
+	uint32 passPos;
 
 	var = _vm->_parse->parseVarIndex();
 	variables = _vm->_global->_inter_variables + var;
@@ -98,8 +86,8 @@ void Map_v2::loadMapObjects(char *avjFile) {
 	_mapWidth = _screenWidth / _tilesWidth;
 	_mapHeight = 200 / _tilesHeight;
 
-	dataPos2 = mapData.pos();
-	mapData.seek(_mapWidth * _mapHeight, SEEK_CUR);
+	passPos = mapData.pos();
+	mapData.skip(_mapWidth * _mapHeight);
 
 	if (*extData == 1)
 		wayPointsCount = _wayPointsCount = 40;
@@ -110,15 +98,15 @@ void Map_v2::loadMapObjects(char *avjFile) {
 		delete[] _wayPoints;
 
 	_wayPoints = new Point[wayPointsCount];
-	for (i = 0; i < _wayPointsCount; i++) {
+	for (int i = 0; i < _wayPointsCount; i++) {
 		_wayPoints[i].x = mapData.readSByte();
 		_wayPoints[i].y = mapData.readSByte();
-		_wayPoints[i].field_2 = mapData.readSByte();
+		_wayPoints[i].notWalkable = mapData.readSByte();
 	}
 
 	// In the original asm, this writes byte-wise into the variables-array
-	dataPos1 = mapData.pos();
-	mapData.seek(dataPos2);
+	tmpPos = mapData.pos();
+	mapData.seek(passPos);
 	if (variables != _vm->_global->_inter_variables) {
 		byte *sizes;
 
@@ -127,69 +115,86 @@ void Map_v2::loadMapObjects(char *avjFile) {
 		mapWidth = _screenWidth / _tilesWidth;
 		sizes = _vm->_global->_inter_variablesSizes +
 			(((char *) _passMap) - _vm->_global->_inter_variables);
-		for (i = 0; i < mapHeight; i++) {
-			for (j = 0; j < mapWidth; j++)
+		for (int i = 0; i < mapHeight; i++) {
+			for (int j = 0; j < mapWidth; j++)
 				setPass(j, i, mapData.readSByte());
 			memset(sizes + i * _passWidth, 0, mapWidth);
 		}
 	}
-	mapData.seek(dataPos1);
+	mapData.seek(tmpPos);
 
 	tmp = mapData.readSint16LE();
-	mapData.seek(tmp * 14, SEEK_CUR);
+	mapData.skip(tmp * 14);
 	tmp = mapData.readSint16LE();
-	mapData.seek(tmp * 14 + 28, SEEK_CUR);
+	mapData.skip(tmp * 14 + 28);
 	tmp = mapData.readSint16LE();
-	mapData.seek(tmp * 14, SEEK_CUR);
+	mapData.skip(tmp * 14);
 
 	_vm->_goblin->_gobsCount = tmp;
-	for (i = 0; i < _vm->_goblin->_gobsCount; i++) {
-		memset(statesMask, -1, 101);
-		_vm->_mult->_objects[i].goblinStates = new Mult::Mult_GobState*[101];
-		memset(_vm->_mult->_objects[i].goblinStates, 0, 101 * sizeof(Mult::Mult_GobState *));
-		mapData.read(statesMask, 100);
-		dataPos1 = mapData.pos();
-		statesCount = 0;
-		for (j = 0; j < 100; j++) {
-			if (statesMask[j] != -1) {
-				statesCount++;
-				mapData.seek(4, SEEK_CUR);
-				numData = mapData.readByte();
-				statesCount += numData;
-				mapData.seek(numData * 9, SEEK_CUR);
-			}
-		}
-		statesPtr = new Mult::Mult_GobState[statesCount];
-		_vm->_mult->_objects[i].goblinStates[0] = statesPtr;
-		mapData.seek(dataPos1);
-		for (j = 0; j < 100; j++) {
-			state = statesMask[j];
-			if (state != -1) {
-				_vm->_mult->_objects[i].goblinStates[state] = statesPtr++;
-				_vm->_mult->_objects[i].goblinStates[state][0].animation = mapData.readSint16LE();
-				_vm->_mult->_objects[i].goblinStates[state][0].layer = mapData.readSint16LE();
-				numData = mapData.readByte();
-				_vm->_mult->_objects[i].goblinStates[state][0].dataCount = numData;
-				for (k = 1; k <= numData; k++) {
-					mapData.seek(1, SEEK_CUR);
-					_vm->_mult->_objects[i].goblinStates[state][k].sndItem = mapData.readSByte();
-					mapData.seek(1, SEEK_CUR);
-					_vm->_mult->_objects[i].goblinStates[state][k].sndFrame = mapData.readByte();
-					mapData.seek(1, SEEK_CUR);
-					_vm->_mult->_objects[i].goblinStates[state][k].freq = mapData.readSint16LE();
-					_vm->_mult->_objects[i].goblinStates[state][k].repCount = mapData.readSByte();
-					_vm->_mult->_objects[i].goblinStates[state][k].speaker = mapData.readByte();
-					statesPtr++;
-				}
-			}
-		}
-	}
+	for (int i = 0; i < _vm->_goblin->_gobsCount; i++)
+		loadGoblinStates(mapData, i);
 
 	_vm->_goblin->_soundSlotsCount = _vm->_inter->load16();
-	for (i = 0; i < _vm->_goblin->_soundSlotsCount; i++)
+	for (int i = 0; i < _vm->_goblin->_soundSlotsCount; i++)
 		_vm->_goblin->_soundSlots[i] = _vm->_inter->loadSound(1);
 
 	delete[] extData;
+}
+
+void Map_v2::loadGoblinStates(Common::SeekableReadStream &data, int index) {
+	Mult::Mult_GobState *statesPtr;
+	Mult::Mult_GobState *gobState;
+	int8 indices[102];
+	uint8 statesCount;
+	uint8 dataCount;
+	int16 state;
+	uint32 tmpPos;
+
+	memset(indices, -1, 101);
+	_vm->_mult->_objects[index].goblinStates = new Mult::Mult_GobState*[101];
+	memset(_vm->_mult->_objects[index].goblinStates, 0,
+			101 * sizeof(Mult::Mult_GobState *));
+
+	data.read(indices, 100);
+	tmpPos = data.pos();
+	statesCount = 0;
+	for (int i = 0; i < 100; i++) {
+		if (indices[i] != -1) {
+			statesCount++;
+			data.skip(4);
+			dataCount = data.readByte();
+			statesCount += dataCount;
+			data.skip(dataCount * 9);
+		}
+	}
+
+	data.seek(tmpPos);
+
+	statesPtr = new Mult::Mult_GobState[statesCount];
+	_vm->_mult->_objects[index].goblinStates[0] = statesPtr;
+	for (int i = 0; i < 100; i++) {
+		state = indices[i];
+		if (state != -1) {
+			_vm->_mult->_objects[index].goblinStates[state] = statesPtr++;
+			gobState = _vm->_mult->_objects[index].goblinStates[state];
+
+			gobState[0].animation = data.readSint16LE();
+			gobState[0].layer = data.readSint16LE();
+			dataCount = data.readByte();
+			gobState[0].dataCount = dataCount;
+			for (uint8 j = 1; j <= dataCount; j++) {
+				data.skip(1);
+				gobState[j].sndItem = data.readSByte();
+				data.skip(1);
+				gobState[j].sndFrame = data.readByte();
+				data.skip(1);
+				gobState[j].freq = data.readSint16LE();
+				gobState[j].repCount = data.readSByte();
+				gobState[j].speaker = data.readByte();
+				statesPtr++;
+			}
+		}
+	}
 }
 
 void Map_v2::findNearestToGob(Mult::Mult_Object *obj) {
@@ -207,17 +212,14 @@ void Map_v2::findNearestToDest(Mult::Mult_Object *obj) {
 }
 
 void Map_v2::optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) {
-	int i;
-	int16 var_2;
-
 	if (obj->nearestWayPoint < obj->nearestDest) {
-		var_2 = obj->nearestWayPoint;
-		for (i = obj->nearestWayPoint; i <= obj->nearestDest; i++) {
+		for (int i = obj->nearestWayPoint; i <= obj->nearestDest; i++) {
 			if (checkDirectPath(obj, x, y, _wayPoints[i].x, _wayPoints[i].y) == 1)
 				obj->nearestWayPoint = i;
 		}
 	} else {
-		for (i = obj->nearestWayPoint; i >= obj->nearestDest && _wayPoints[i].field_2 != 1; i--) {
+		for (int i = obj->nearestWayPoint;
+		     i >= obj->nearestDest && (_wayPoints[i].notWalkable != 1); i--) {
 			if (checkDirectPath(obj, x, y, _wayPoints[i].x, _wayPoints[i].y) == 1)
 				obj->nearestWayPoint = i;
 		}

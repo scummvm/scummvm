@@ -20,48 +20,91 @@
  * $Id$
  *
  */
+
 #ifndef GOB_SOUND_H
 #define GOB_SOUND_H
 
+#include "common/mutex.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
 namespace Gob {
 
+enum SoundType {
+	SOUND_SND,
+	SOUND_ADL
+};
+
+enum SoundSource {
+	SOUND_FILE,
+	SOUND_TOT,
+	SOUND_EXT
+};
+
+class SoundDesc {
+public:
+	int16 _repCount;
+	int16 _frequency;
+	int16 _flag;
+	int16 _id;
+
+	byte *getData() { return _dataPtr; }
+	uint32 size() { return _size; }
+	bool empty() { return !_dataPtr; }
+	bool isId(int16 id) { return _dataPtr && _id == id; };
+	SoundType getType() { return _type; }
+
+	void load(SoundType type, SoundSource src, byte *data, uint32 dSize);
+	void free();
+	void flip();
+
+	// Which fade out length to use when the fade starts half-way through?
+	int16 calcFadeOutLength(int16 frequency) {
+		return (10 * (_size / 2)) / frequency;
+	}
+	uint32 calcLength(int16 repCount, int16 frequency, bool fade) {
+		uint32 fadeSize = fade ? _size / 2 : 0;
+		return ((_size * repCount - fadeSize) * 1000) / frequency;
+	}
+	
+	SoundDesc() : _data(0), _dataPtr(0), _size(0), _type(SOUND_SND),
+			_source(SOUND_FILE), _repCount(0), _frequency(0),
+			_flag(0), _id(0) {}
+	~SoundDesc() { free(); }
+
+private:
+	byte *_data;
+	byte *_dataPtr;
+	uint32 _size;
+
+	SoundType _type;
+	SoundSource _source;
+
+	void loadSND(byte *data, uint32 dSize);
+	void loadADL(byte *data, uint32 dSize);
+};
+
 class Snd : public Audio::AudioStream {
 public:
-	struct SoundDesc {
-		Audio::SoundHandle handle;
-		char *data;
-		uint32 size;
-		int16 repCount;
-		int16 timerTicks;
-		int16 inClocks;
-		int16 frequency;
-		int16 flag;
-		SoundDesc() : data(0), size(0), repCount(0), timerTicks(0),
-					  inClocks(0), frequency(0), flag(0) {}
-	};
-
 	char _playingSound;
 
 	Snd(GobEngine *vm);
 	~Snd();
 
 	void speakerOn(int16 frequency, int32 length);
-	void speakerOff(void);
+	void speakerOff();
 	void speakerOnUpdate(uint32 milis);
-	SoundDesc *loadSoundData(const char *path);
-	void stopSound(int16 fadeLength);
-	void playSample(SoundDesc *sndDesc, int16 repCount, int16 frequency, int16 fadeLength = 0);
-	void playComposition(int16 *composition, int16 freqVal, SoundDesc **sndDescs = 0,
-			int8 *sndTypes = 0, int8 sndCount = 60);
-	void stopComposition(void);
-	void waitEndPlay(bool interruptible = false, bool stopComp = true);
+	void stopSound(int16 fadeLength, SoundDesc *sndDesc = 0);
 
-	// This deletes sndDesc and stops playing the sample.
-	// If freedata is set, it also delete[]s the sample data.
-	void freeSoundDesc(SoundDesc *sndDesc, bool freedata=true);
+	bool loadSample(SoundDesc &sndDesc, const char *fileName);
+	void freeSample(SoundDesc &sndDesc);
+	void playSample(SoundDesc &sndDesc, int16 repCount,
+			int16 frequency, int16 fadeLength = 0);
+
+	void playComposition(int16 *composition, int16 freqVal,
+			SoundDesc *sndDescs = 0, int8 sndCount = 60);
+	void stopComposition();
+	void waitEndPlay(bool interruptible = false, bool stopComp = true);
 
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const { return false; }
@@ -70,7 +113,7 @@ public:
 	int getRate() const { return _rate; }
 
 protected:
-	// TODO: This is a very primitive square wave generator. The only thing is
+	// TODO: This is a very primitive square wave generator. The only thing it
 	//       has in common with the PC speaker is that it sounds terrible.
 	// Note: The SCUMM code has a PC speaker implementations; maybe it could be
 	//       refactored to be reusable by all engines. And DosBox also has code
@@ -107,8 +150,7 @@ protected:
 	Audio::SoundHandle *_activeHandle;
 	Audio::SoundHandle _compositionHandle;
 	
-	SoundDesc **_compositionSamples;
-	int8 *_compositionSampleTypes;
+	SoundDesc *_compositionSamples;
 	int8 _compositionSampleCount;
 	int16 _composition[50];
 	int8 _compositionPos;
@@ -138,11 +180,12 @@ protected:
 
 	GobEngine *_vm;
 
-	void setSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency, int16 fadeLength);
-	void checkEndSample(void);
-	void nextCompositionPos(void);
+	void setSample(SoundDesc &sndDesc, int16 repCount,
+			int16 frequency, int16 fadeLength);
+	void checkEndSample();
+	void nextCompositionPos();
 };
 
-}				// End of namespace Gob
+} // End of namespace Gob
 
-#endif
+#endif // GOB_SOUND_H

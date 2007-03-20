@@ -24,13 +24,10 @@
 #ifndef GOB_MUSIC_H
 #define GOB_MUSIC_H
 
+#include "common/mutex.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "sound/fmopl.h"
-#include "common/mutex.h"
-
-#include "gob/gob.h"
-#include "gob/util.h"
 
 namespace Gob {
 
@@ -44,20 +41,20 @@ public:
 	void lock() { _mutex.lock(); }
 	void unlock() { _mutex.unlock(); }
 	bool playing() const { return _playing; }
-	bool getRepeating(void) const { return _repCount != 0; }
+	bool getRepeating() const { return _repCount != 0; }
 	void setRepeating (int32 repCount) { _repCount = repCount; }
-	int getIndex(void) const { return _index; }
-	virtual void startPlay(void) { if (_data) _playing = true; }
-	virtual void stopPlay(void)
+	int getIndex() const { return _index; }
+	void startPlay() { if (_data) _playing = true; }
+	void stopPlay()
 	{
 		Common::StackLock slock(_mutex);
 		_playing = false;
 	}
-	virtual void playTrack(const char *trackname);
-	virtual void playBgMusic(void);
-	virtual bool load(const char *filename);
-	virtual void load(byte *data, int index=-1);
-	virtual void unload(void);
+	void playTrack(const char *trackname);
+	void playBgMusic();
+	bool load(const char *fileName);
+	void load(byte *data, uint32 size, int index = -1);
+	void unload();
 
 // AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -94,15 +91,15 @@ protected:
 	GobEngine *_vm;
 
 	void writeOPL(byte reg, byte val);
-	void setFreqs(void);
-	void reset(void);
+	void setFreqs();
+	void reset();
 	void setVoices();
 	void setVoice(byte voice, byte instr, bool set);
 	void setKey(byte voice, byte note, bool on, bool spec);
 	void setVolume(byte voice, byte volume);
-	void pollMusic(void);
+	void pollMusic();
 };
 
 } // End of namespace Gob
 
-#endif
+#endif // GOB_MUSIC_H

@@ -23,175 +23,33 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
-#include "graphics/cursorman.h"
 
 #include "gob/gob.h"
-#include "gob/global.h"
 #include "gob/video.h"
-#include "gob/draw.h"
-#include "gob/util.h"
 
 namespace Gob {
 
 Video_v2::Video_v2(GobEngine *vm) : Video_v1(vm) {
 }
 
-//XXX: Use this function to update the screen for now.
-//     This should be moved to a better location later on.
-void Video_v2::waitRetrace(int16, bool mouse) {
-	uint32 time;
-
-	if (mouse)
-		CursorMan.showMouse((_vm->_draw->_showCursor & 2) != 0);
-	if (_vm->_draw->_frontSurface) {
-		time = _vm->_util->getTimeKey();
-		g_system->copyRectToScreen(_vm->_draw->_frontSurface->vidPtr +
-				_scrollOffsetY * _surfWidth + _scrollOffsetX, _surfWidth,
-				0, 0, 320, 200);
-		g_system->updateScreen();
-		_vm->_util->delay(MAX(1, 10 - (int)(_vm->_util->getTimeKey() - time)));
-	}
-}
-
-void Video_v2::drawLetter(int16 item, int16 x, int16 y, FontDesc *fontDesc, int16 color1,
-	    int16 color2, int16 transp, SurfaceDesc *dest) {
-	int16 videoMode;
-
-	videoMode = dest->vidMode;
-
-	// Is that needed at all? And what does it do anyway?
-	char *dataPtr;
-	int16 itemSize;
-	int16 si; 
-	int16 di;
-	int16 dx;
-	char *var_A;
-	int16 var_10;
-	if (fontDesc->endItem == 0) {
-		itemSize = fontDesc->itemSize + 3;
-		dataPtr = fontDesc->dataPtr;
-		var_10 = dataPtr[-2] - 1;
-		si = 0;
-		do {
-			di = ((si + var_10) / 2) * itemSize;
-			var_A = fontDesc->dataPtr + di;
-			dx = (READ_LE_UINT16(var_A) & 0x7FFF);
-			if (item > dx)
-				var_10 = di - 1;
-			else
-				si = di + 1;
-		} while ((dx != item) && (si <= var_10));
-		if (dx != item)
-			return;
-		fontDesc->dataPtr = var_A + 3;
-		item = 0;
-	}
-
-	dest->vidMode &= 0x7F;
-	_videoDriver->drawLetter((unsigned char) item, x, y, fontDesc, color1, color2, transp, dest);
-	dest->vidMode = videoMode;
-}
-
-Video::SurfaceDesc *Video_v2::initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags) {
-	int8 flagsAnd2;
-	byte *vidMem = 0;
-	int32 sprSize;
-	int16 someFlags = 1;
-	SurfaceDesc *descPtr;
-
-	if ((_vm->_platform == Common::kPlatformAmiga) ||
-			(_vm->_platform == Common::kPlatformAtariST))
-		flags &= ~RETURN_PRIMARY;
-
-	if (flags != PRIMARY_SURFACE)
-		_vm->_global->_sprAllocated++;
-
-	if (flags & RETURN_PRIMARY)
-		return _vm->_draw->_frontSurface;
-
-	if ((vidMode != 0x13) && (vidMode != 0x14))
-		error("Video::initSurfDesc: Only VGA 0x13 mode is supported!");
-
-	if ((flags & PRIMARY_SURFACE) == 0)
-		vidMode += 0x80;
-
-	if (flags & 2)
-		flagsAnd2 = 1;
-	else
-		flagsAnd2 = 0;
-
-	if ((flags & SCUMMVM_CURSOR) == 0)
-		width = (width + 7) & 0xFFF8;
-
-	if (flags & PRIMARY_SURFACE) {
-		_vm->_global->_primaryWidth = width;
-		_vm->_global->_mouseMaxCol = width;
-		_vm->_global->_primaryHeight = height;
-		_vm->_global->_mouseMaxRow = height;
-		sprSize = 0;
-	} else {
-		vidMem = 0;
-		sprSize = Video::getRectSize(width, height, flagsAnd2, vidMode);
-		someFlags = 4;
-		if (flagsAnd2)
-			someFlags += 0x80;
-	}
-	if (flags & PRIMARY_SURFACE) {
-		descPtr = _vm->_draw->_frontSurface;
-		assert(descPtr);
-		if (descPtr->vidPtr != 0)
-			delete[] descPtr->vidPtr;
-		vidMem = new byte[_surfWidth * _surfHeight];
-		memset(vidMem, 0, _surfWidth * _surfHeight);
-	} else {
-		if (flags & DISABLE_SPR_ALLOC) {
-			descPtr = new SurfaceDesc;
-			// this case causes vidPtr to be set to invalid memory
-			assert(false);
-		} else {
-			descPtr = new SurfaceDesc;
-			descPtr->vidPtr = new byte[sprSize];
-			memset(descPtr->vidPtr, 0, sprSize);
-			vidMem = descPtr->vidPtr;
-		}
-	}
-	if (descPtr == 0)
-		return 0;
-
-	descPtr->width = width;
-	descPtr->height = height;
-	descPtr->flag = someFlags;
-	descPtr->vidMode = vidMode;
-	descPtr->vidPtr = vidMem;
-
-	descPtr->reserved1 = 0;
-	descPtr->reserved2 = 0;
-	return descPtr;
-}
-
 char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	    int16 x, int16 y, int16 transp, SurfaceDesc *destDesc) {
-	SurfaceDesc sourceDesc;
 	byte *memBuffer;
-	byte *srcPtr;
-	byte *destPtr;
-	byte *linePtr;
+	byte *srcPtr, *destPtr, *linePtr;
 	byte temp;
 	uint32 sourceLeft;
-	int16 curWidth;
-	int16 curHeight;
+	uint16 cmdVar;
+	int16 curWidth, curHeight;
 	int16 offset;
 	int16 counter2;
-	uint16 cmdVar;
 	int16 bufPos;
 	int16 strLen;
+	int16 lenCmd;
 
 	if (!destDesc)
 		return 1;
 
-	if (((destDesc->vidMode & 0x7f) != 0x13) && ((destDesc->vidMode & 0x7f) != 0x14))
-		error("Video::spriteUncompressor: Video mode 0x%x is not supported!",
-		    destDesc->vidMode & 0x7f);
+	_vm->validateVideoMode(destDesc->_vidMode);
 
 	if (sprBuf[0] != 1)
 		return 0;
@@ -200,22 +58,18 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 		return 0;
 
 	if (sprBuf[2] == 2) {
-		sourceDesc.width = srcWidth;
-		sourceDesc.height = srcHeight;
-		sourceDesc.vidMode = 0x93;
-		sourceDesc.vidPtr = sprBuf + 3;
+		SurfaceDesc sourceDesc(0x13, srcWidth, srcHeight, sprBuf + 3);
 		Video::drawSprite(&sourceDesc, destDesc, 0, 0, srcWidth - 1,
 		    srcHeight - 1, x, y, transp);
 		return 1;
 	} else if (sprBuf[2] == 1) {
 		memBuffer = new byte[4370];
-		if (memBuffer == 0)
-			return 0;
+		assert(memBuffer);
 
 		srcPtr = sprBuf + 3;
 		sourceLeft = READ_LE_UINT32(srcPtr);
 
-		destPtr = destDesc->vidPtr + destDesc->width * y + x;
+		destPtr = destDesc->getVidMem() + destDesc->getWidth() * y + x;
 
 		curWidth = 0;
 		curHeight = 0;
@@ -223,20 +77,14 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 		linePtr = destPtr;
 		srcPtr += 4;
 
-		int16 var_2E = 0;
-		int16 var_2F;
-		if ((READ_LE_UINT16(srcPtr + 2) == 0x5678) && (READ_LE_UINT16(srcPtr) != 0x1234)) {
+		if ((READ_LE_UINT16(srcPtr) == 0x1234) && (READ_LE_UINT16(srcPtr + 2) == 0x5678)) {
 			srcPtr += 4;
 			bufPos = 273;
-			var_2F = 18;
+			lenCmd = 18;
 		} else {
-			var_2F = 100;
+			lenCmd = 100;
 			bufPos = 4078;
 		}
-		if (transp == 0)
-			var_2E = 300;
-		else
-			var_2E = 0;
 
 		memset(memBuffer, 32, bufPos);
 
@@ -244,18 +92,18 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 		while (1) {
 			cmdVar >>= 1;
 			if ((cmdVar & 0x100) == 0) {
-				cmdVar = *srcPtr | 0xff00;
+				cmdVar = *srcPtr | 0xFF00;
 				srcPtr++;
 			}
 			if ((cmdVar & 1) != 0) {
 				temp = *srcPtr++;
-				if (temp != var_2E)
+				if ((temp != 0) || (transp == 0))
 					*destPtr = temp;
 				destPtr++;
 				curWidth++;
 				if (curWidth >= srcWidth) {
 					curWidth = 0;
-					linePtr += destDesc->width;
+					linePtr += destDesc->getWidth();
 					destPtr = linePtr;
 					curHeight++;
 					if (curHeight >= srcHeight)
@@ -269,23 +117,22 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 					break;
 			} else {
 				offset = *srcPtr++;
-				offset |= (*srcPtr & 0xf0) << 4;
-				strLen = (*srcPtr & 0x0f) + 3;
+				offset |= (*srcPtr & 0xF0) << 4;
+				strLen = (*srcPtr & 0x0F) + 3;
 				*srcPtr++;
-				if (strLen == var_2F)
+				if (strLen == lenCmd)
 					strLen = *srcPtr++ + 18;
 
-				for (counter2 = 0; counter2 < strLen;
-				    counter2++) {
+				for (counter2 = 0; counter2 < strLen; counter2++) {
 					temp = memBuffer[(offset + counter2) % 4096];
-					if (temp != var_2E)
+					if ((temp != 0) || (transp == 0))
 						*destPtr = temp;
 					destPtr++;
 
 					curWidth++;
 					if (curWidth >= srcWidth) {
 						curWidth = 0;
-						linePtr += destDesc->width;
+						linePtr += destDesc->getWidth();
 						destPtr = linePtr;
 						curHeight++;
 						if (curHeight >= srcHeight) {
@@ -297,14 +144,12 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 					bufPos++;
 					bufPos %= 4096;
 				}
-				// loc_1D4E4
 
-				if (strLen < (int32) sourceLeft)
-					sourceLeft--;
-				else {
+				if (strLen >= ((int32) sourceLeft)) {
 					delete[] memBuffer;
 					return 1;
-				}
+				} else
+					sourceLeft--;
 			}
 		}
 	} else

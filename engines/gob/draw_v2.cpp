@@ -28,798 +28,43 @@
 #include "gob/gob.h"
 #include "gob/draw.h"
 #include "gob/global.h"
-#include "gob/game.h"
 #include "gob/util.h"
+#include "gob/game.h"
 #include "gob/scenery.h"
-#include "gob/inter.h"
-#include "gob/cdrom.h"
+#include "gob/video.h"
 
 namespace Gob {
 
 Draw_v2::Draw_v2(GobEngine *vm) : Draw_v1(vm) {
 }
 
-void Draw_v2::printText(void) {
-	int i;
-	byte *dataPtr;
-	byte *ptr;
-	byte *ptr2;
-	char mask[80];
-	char str[80];
-	char buf[50];
-	char cmd;
-	int16 savedFlags;
-	int16 destX;
-	int16 destY;
-	int16 spriteRight;
-	int16 spriteBottom;
-	int16 val;
-	int16 index;
-	int16 rectLeft;
-	int16 rectTop;
-	int16 rectRight;
-	int16 rectBottom;
-	int16 fontIndex;
-	int16 strPos; // si
-	int16 frontColor;
-	int16 colId;
-	int16 strPos2;
-	int16 offX;
-	int16 offY;
-	int16 extraCmd;
-	int16 strPosBak;
-	int16 maskChar;
-	int16 width;
-	int16 size;
+void Draw_v2::initScreen() {
+	_scrollOffsetX = 0;
+	_scrollOffsetY = 0;
 
-	index = _vm->_inter->load16();
-
-	_vm->_cdrom->playMultMusic();
-
-	if ((_vm->_game->_totTextData == 0) || (_vm->_game->_totTextData->dataPtr == 0))
-		return;
-
-	if (_vm->_global->_languageWanted != _vm->_global->_language) {
-		warning("Your game version doesn't support the requested language, "
-				"using the first one available (%d)", _vm->_global->_language);
-		_vm->_global->_languageWanted = _vm->_global->_language;
-	}
-
-	size = _vm->_game->_totTextData->items[index].size;
-	dataPtr = ((byte *) _vm->_game->_totTextData->dataPtr) +
-		_vm->_game->_totTextData->items[index].offset;
-	ptr = dataPtr;
-
-	if ((_renderFlags & 0x400) && (ptr[1] & 0x80))
-		return;
-
-	destX = READ_LE_UINT16(ptr) & 0x7FFF;
-	destY = READ_LE_UINT16(ptr + 2);
-	spriteRight = READ_LE_UINT16(ptr + 4);
-	spriteBottom = READ_LE_UINT16(ptr + 6);
-	ptr += 8;
-
-	if (_renderFlags & RENDERFLAG_CAPTUREPUSH) {
-		_vm->_game->capturePush(destX, destY,
-				spriteRight - destX + 1, spriteBottom - destY + 1);
-		(*_vm->_scenery->_pCaptureCounter)++;
-	}
-
-	_destSpriteX = destX;
-	_destSpriteY = destY;
-	_spriteRight = spriteRight;
-	_spriteBottom = spriteBottom;
-	_destSurface = 21;
-
-	_backColor = *ptr++;
-	_transparency = 1;
-
-	spriteOperation(DRAW_CLEARRECT);
-
-	_backColor = 0;
-
-	savedFlags = _renderFlags;
-	_renderFlags &= ~RENDERFLAG_NOINVALIDATE;
-
-	for (; (_destSpriteX = READ_LE_UINT16(ptr)) != -1; ptr++) {
-		_destSpriteX += destX;
-		_destSpriteY = READ_LE_UINT16(ptr + 2) + destY;
-		_spriteRight = READ_LE_UINT16(ptr + 4) + destX;
-		_spriteBottom = READ_LE_UINT16(ptr + 6) + destY;
-		ptr += 8;
-
-		cmd = (*ptr & 0xf0) >> 4;
-		if (cmd == 0) {
-			_frontColor = *ptr & 0xf;
-			spriteOperation(DRAW_DRAWLINE);
-		} else if (cmd == 1) {
-			_frontColor = *ptr & 0xf;
-			spriteOperation(DRAW_DRAWBAR);
-		} else if (cmd == 2) {
-			_backColor = *ptr & 0xf;
-			spriteOperation(DRAW_FILLRECTABS);
-		}
-	}
-	ptr += 2;
-
-	// Adding the boundary check *shouldn't* pose any problems, since access behind
-	// that point should be forbidden anyway.
-	for (i = 0, ptr2 = ptr; ((ptr2 - dataPtr) < size) && (*ptr2 != 1); i++) {
-		if ((_vm->_game->_totFileData[0x29] < 0x32) && (*ptr2 > 3) && (*ptr2 < 32))
-			*ptr2 = 32;
-
-		switch (*ptr2) {
-		case 1:
-			break;
-
-		case 2:
-		case 5:
-			ptr2 += 5;
-			break;
-
-		case 3:
-		case 4:
-			ptr2 += 2;
-			break;
-
-		case 6:
-			ptr2++;
-			switch (*ptr2 & 0xC0) {
-			case 0x40:
-				ptr2 += 9;
-				break;
-			case 0x80:
-				ptr2 += 3;
-				break;
-			case 0xC0:
-				ptr2 += 11;
-				break;
-			default:
-				ptr2++;
-				break;
-			}
-			break;
-
-		case 10:
-			ptr2 += (ptr2[1] * 2) + 2;
-			break;
-
-		default:
-			ptr2++;
-			break;
-		}
-	}
-
-	ptr2++;
-
-	fontIndex = 0;
-	strPos = 0;
-	extraCmd = 0;
-	frontColor = 0;
-	colId = 0;
-	offX = 0;
-	offY = 0;
-	strPos2 = -1;
-	memset(mask, 0, 80);
-	memset(str, ' ', 80);
-	maskChar = 0;
-	_backColor = 0;
-	_transparency = 1;
+	initSpriteSurf(21, _vm->_video->_surfWidth, _vm->_video->_surfHeight, 0);
+	_backSurface = _spritesArray[21];
+	_vm->_video->clearSurf(_backSurface);
 	
-	while (true) {
-		if ((((*ptr >= 1) && (*ptr <= 7)) || (*ptr == 10)) && (strPos != 0)) {
-			str[MAX(strPos, strPos2)] = 0;
-			strPosBak = strPos;
-			width = strlen(str) * _fonts[fontIndex]->itemWidth;
-			adjustCoords(1, &width, 0);
-			if (extraCmd & 0x0F) {
-				rectLeft = offX - 2;
-				rectTop = offY - 2;
-				rectRight = offX + width + 1;
-				rectBottom = _fonts[fontIndex]->itemHeight;
-				adjustCoords(1, &rectBottom, 0);
-				rectBottom += offY + 1;
-				adjustCoords(0, &rectLeft, &rectTop);
-				adjustCoords(2, &rectRight, &rectBottom);
-				if (colId != -1)
-					_vm->_game->addNewCollision(colId + 0xD000, rectLeft, rectTop,
-							rectRight, rectBottom, 2, 0, 0, 0);
-				if (_word_2E8E2 != 2)
-					printTextCentered(extraCmd & 0x0F, rectLeft + 4, rectTop + 4,
-							rectRight - 4, rectBottom - 4, str, fontIndex, frontColor);
-				else
-					printTextCentered(extraCmd & 0x0F, rectLeft + 2, rectTop + 2,
-							rectRight - 2, rectBottom - 2, str, fontIndex, frontColor);
-			} else {
-				_destSpriteX = offX;
-				_destSpriteY = offY;
-				_fontIndex = fontIndex;
-				_frontColor = frontColor;
-				_textToPrint = str;
-				if (_word_2E8E2 != 2) {
-					if ((_destSpriteX >= destX) && (_destSpriteY >= destY)) {
-						if (((_fonts[_fontIndex]->itemHeight / 2) + _destSpriteY - 1) <= spriteBottom) {
-							while (((_destSpriteX + width - 1) > spriteRight) && (width > 0)) {
-								width -= _fonts[_fontIndex]->itemWidth / 2;
-								str[strlen(str) - 1] = '\0';
-							}
-							spriteOperation(DRAW_PRINTTEXT);
-						}
-					}
-				} else
-					spriteOperation(DRAW_PRINTTEXT);
-				width = strlen(str);
-				for (strPos = 0; strPos < width; strPos++) {
-					if (mask[strPos] == '\0') continue;
-					rectLeft = _fonts[fontIndex]->itemWidth;
-					rectTop = _fonts[fontIndex]->itemHeight;
-					adjustCoords(1, &rectLeft, &rectTop);
-					_destSpriteX = strPos * rectLeft + offX;
-					_spriteRight = _destSpriteX + rectLeft - 1;
-					_spriteBottom = offY + rectTop;
-					_destSpriteY = _spriteBottom;
-					spriteOperation(DRAW_DRAWLINE);
-				}
-			}
-			rectLeft = _fonts[_fontIndex]->itemWidth;
-			adjustCoords(1, &rectLeft, 0);
-			offX += strPosBak * rectLeft;
-			strPos = 0;
-			strPos2 = -1;
-			memset(mask, 0, 80);
-			memset(str, ' ', 80);
-		}
+	initSpriteSurf(23, 32, 16, 2);
+	_cursorSpritesBack = _spritesArray[23];
+	_cursorSprites = _cursorSpritesBack;
+	_scummvmCursor =
+		_vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, SCUMMVM_CURSOR);
 
-		if (*ptr == 1)
-			break;
-
-		cmd = *ptr;
-		switch ((uint8) cmd) {
-		case 2:
-		case 5:
-			ptr++;
-			offX = destX + (int16)READ_LE_UINT16(ptr);
-			offY = destY + (int16)READ_LE_UINT16(ptr + 2);
-			ptr += 4;
-			break;
-
-		case 3:
-			ptr++;
-			fontIndex = ((*ptr & 0xF0) >> 4) & 7;
-			frontColor = *ptr & 0x0F;
-			ptr++;
-			break;
-
-		case 4:
-			ptr++;
-			frontColor = *ptr++;
-			break;
-
-		case 6:
-			ptr++;
-			extraCmd = *ptr++;
-			colId = -1;
-			if (extraCmd & 0x80) {
-				colId = (int16)READ_LE_UINT16(ptr);
-				ptr += 2;
-			}
-			if (extraCmd & 0x40) {
-				rectLeft = destX + (int16)READ_LE_UINT16(ptr);
-				rectRight = destX + (int16)READ_LE_UINT16(ptr + 2);
-				rectTop = destY + (int16)READ_LE_UINT16(ptr + 4);
-				rectBottom = destY + (int16)READ_LE_UINT16(ptr + 6);
-				adjustCoords(2, &rectLeft, &rectTop);
-				adjustCoords(2, &rectRight, &rectBottom);
-				_vm->_game->addNewCollision(colId + 0x0D000, rectLeft, rectTop,
-						rectRight, rectBottom, 2, 0, 0, 0);
-				ptr += 8;
-			}
-			break;
-
-		case 7:
-			ptr++;
-			extraCmd = 0;
-			break;
-
-		case 8:
-			ptr++;
-			maskChar = 1;
-			break;
-
-		case 9:
-			ptr++;
-			maskChar = 0;
-			break;
-
-		case 10:
-			// loc_12C93
-			str[0] = (char)255;
-			WRITE_LE_UINT16((uint16*)(str+1), ((char *) ptr) - _vm->_game->_totTextData->dataPtr);
-			str[3] = 0;
-			ptr++;
-			i = *ptr++;
-			for (i = *ptr++; i > 0; i--) {
-				mask[strPos++] = maskChar;
-				ptr += 2;
-			}
-			break;
-
-		default:
-			str[strPos] = cmd;
-		case 32:
-			mask[strPos++] = maskChar;
-			ptr++;
-			break;
-
-		case 186:
-			cmd = ptr2[17] & 0x7f;
-			if (cmd == 0) {
-				val = READ_LE_UINT16(ptr2 + 18) * 4;
-				sprintf(buf, "%d",  VAR_OFFSET(val));
-			} else if (cmd == 1) {
-				val = READ_LE_UINT16(ptr2 + 18) * 4;
-				strcpy(buf, GET_VARO_STR(val));
-			} else {
-				val = READ_LE_UINT16(ptr2 + 18) * 4;
-				sprintf(buf, "%d",  VAR_OFFSET(val));
-				if (buf[0] == '-') {
-					while (strlen(buf) - 1 < (uint32)ptr2[17]) {
-						_vm->_util->insertStr("0", buf, 1);
-					}
-				} else {
-					while (strlen(buf) - 1 < (uint32)ptr2[17]) {
-						_vm->_util->insertStr("0", buf, 0);
-					}
-				}
-				if (_vm->_global->_language == 2)
-					_vm->_util->insertStr(".", buf, strlen(buf) + 1 - ptr2[17]);
-				else
-					_vm->_util->insertStr(",", buf, strlen(buf) + 1 - ptr2[17]);
-			}
-			memcpy(str + strPos, buf, strlen(buf));
-			memset(mask, maskChar, strlen(buf));
-			if (ptr2[17] & 0x80) {
-				strPos2 = strPos + strlen(buf);
-				strPos++;
-				ptr2 += 23;
-				ptr++;
-			} else {
-				strPos += strlen(buf);
-				if (ptr[1] != ' ') {
-					if ((ptr[1] == 2) && (((int16)READ_LE_UINT16(ptr + 4)) == _destSpriteY)) {
-						ptr += 5;
-						str[strPos] = ' ';
-						mask[strPos++] = maskChar;
-					}
-				} else {
-					str[strPos] = ' ';
-					mask[strPos++] = maskChar;
-					while (ptr[1] == ' ')
-						ptr++;
-					if ((ptr[1] == 2) && (((int16)READ_LE_UINT16(ptr + 4)) == _destSpriteY))
-						ptr += 5;
-				}
-				ptr2 += 23;
-				ptr++;
-			}
-			break;
-		}
-	}
-
-	_renderFlags = savedFlags;
-	if (!(_renderFlags & 4))
-		return;
-
-	_vm->_game->checkCollisions(0, 0, 0, 0);
-
-	if (*_vm->_scenery->_pCaptureCounter != 0) {
-		(*_vm->_scenery->_pCaptureCounter)--;
-		_vm->_game->capturePop(1);
-	}
-
-	return;
+	_spritesArray[20] = _frontSurface;
+	_spritesArray[21] = _backSurface;
 }
 
-void Draw_v2::spriteOperation(int16 operation) {
-	uint16 id;
-	char *dataBuf;
-	Game::TotResItem *itemPtr;
-	int32 offset;
-	int16 len;
-	int16 i;
-	int16 x;
-	int16 y;
-	Video::SurfaceDesc *sourceSurf;
-	Video::SurfaceDesc *destSurf;
-	bool deltaVeto;
-	int16 left;
-	int16 ratio;
-	int16 spriteLeft;
-	int16 spriteTop;
-	int16 spriteRight;
-	int16 spriteBottom;
-	int16 destSpriteX;
-	int16 destSpriteY;
-	int16 destSurface;
-	int16 sourceSurface;
-// .---
-	int8 word_2F2D2 = -1;
-// '---
-
-	if (operation & 0x10) {
-		deltaVeto = true;
-		operation &= 0x0F;
-	} else
-		deltaVeto = false;
-
-	if (_sourceSurface >= 100)
-		_sourceSurface -= 80;
-
-	if (_destSurface >= 100)
-		_destSurface -= 80;
-
-	if ((_renderFlags & RENDERFLAG_USEDELTAS) && !deltaVeto) {
-		if ((_sourceSurface == 21) && (operation != DRAW_LOADSPRITE)) {
-			_spriteLeft += _backDeltaX;
-			_spriteTop += _backDeltaY;
-		}
-
-		if (_destSurface == 21) {
-			_destSpriteX += _backDeltaX;
-			_destSpriteY += _backDeltaY;
-			if (operation == DRAW_DRAWLINE ||
-			    (operation >= DRAW_DRAWBAR
-				&& operation <= DRAW_FILLRECTABS)) {
-				_spriteRight += _backDeltaX;
-				_spriteBottom += _backDeltaY;
-			}
-		}
-	}
-
-	spriteLeft = _spriteLeft;
-	spriteTop = _spriteTop;
-	spriteRight = _spriteRight;
-	spriteBottom = _spriteLeft;
-	destSpriteX = _destSpriteX;
-	destSpriteY = _destSpriteY;
-	destSurface = _destSurface;
-	sourceSurface = _sourceSurface;
-
-//	warning("GOB2 Stub! _off_2E51B");
-	if (_off_2E51B != 0) {
-		if ((_frontSurface->height <= _destSpriteY) &&
-				((_destSurface == 20) || (_destSurface == 21))) {
-			_destSpriteY -= _frontSurface->height;
-			if (operation == DRAW_DRAWLINE ||
-			    (operation >= DRAW_DRAWBAR
-				&& operation <= DRAW_FILLRECTABS)) {
-				_spriteBottom -= _frontSurface->height;
-			}
-			if (_destSurface == 21)
-				invalidateRect(0, _frontSurface->height, _vm->_video->_surfWidth - 1,
-						_frontSurface->height + _off_2E51B->height - 1);
-			destSurface += 4;
-		}
-		if ((_frontSurface->height <= _spriteTop) && (operation == DRAW_BLITSURF)
-				&& ((_destSurface == 20) || (_destSurface == 21))) {
-			_spriteTop -= _frontSurface->height;
-			_sourceSurface += 4;
-		}
-	}
-
-	adjustCoords(0, &_destSpriteX, &_destSpriteY);
-	if ((operation != DRAW_LOADSPRITE) && (_word_2E8E2 != 2)) {
-		adjustCoords(0, &_spriteRight, &_spriteBottom);
-		adjustCoords(0, &_spriteLeft, &_spriteTop);
-		if (operation == DRAW_DRAWLETTER)
-			operation = DRAW_BLITSURF;
-		if ((operation == DRAW_DRAWLINE) &&
-				((_spriteRight == _destSpriteX) || (_spriteBottom == _destSpriteY))) {
-			operation = DRAW_FILLRECTABS;
-			_backColor = _frontColor;
-		}
-		if (operation == DRAW_DRAWLINE) {
-			if (_spriteBottom < _destSpriteY) {
-				SWAP(_spriteBottom, _destSpriteY);
-				SWAP(_spriteRight, _destSpriteX);
-			}
-		} else if ((operation == DRAW_LOADSPRITE) || (operation > DRAW_PRINTTEXT)) {
-			if (_spriteBottom < _destSpriteY)
-				SWAP(_spriteBottom, _destSpriteY);
-			if (_spriteRight < _destSpriteX)
-				SWAP(_spriteRight, _destSpriteX);
-			_spriteRight++;
-			_spriteBottom++;
-		}
-	}
-
-	sourceSurf = _spritesArray[_sourceSurface];
-	destSurf = _spritesArray[_destSurface];
-
-	switch (operation) {
-	case DRAW_BLITSURF:
-	case DRAW_DRAWLETTER:
-		if ((sourceSurf == 0) || (destSurf == 0))
-			break;
-
-		_vm->_video->drawSprite(_spritesArray[_sourceSurface],
-				_spritesArray[_destSurface],
-				_spriteLeft, spriteTop,
-				_spriteLeft + _spriteRight - 1,
-				_spriteTop + _spriteBottom - 1,
-				_destSpriteX, _destSpriteY, _transparency);
-
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			    _destSpriteX + _spriteRight - 1,
-			    _destSpriteY + _spriteBottom - 1);
-		}
-		break;
-
-	case DRAW_PUTPIXEL:
-		_vm->_video->putPixel(_destSpriteX, _destSpriteY,
-		    _frontColor, _spritesArray[_destSurface]);
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			    _destSpriteX, _destSpriteY);
-		}
-		break;
-
-	case DRAW_FILLRECT:
-		_vm->_video->fillRect(_spritesArray[_destSurface], destSpriteX,
-				_destSpriteY, _destSpriteX + _spriteRight - 1,
-				_destSpriteY + _spriteBottom - 1, _backColor);
-
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			    _destSpriteX + _spriteRight - 1,
-			    _destSpriteY + _spriteBottom - 1);
-		}
-		break;
-
-	case DRAW_DRAWLINE:
-		_vm->_video->drawLine(_spritesArray[_destSurface],
-		    _destSpriteX, _destSpriteY,
-		    _spriteRight, _spriteBottom, _frontColor);
-
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			    _spriteRight, _spriteBottom);
-		}
-		break;
-
-	case DRAW_INVALIDATE:
-		_vm->_video->drawCircle(_spritesArray[_destSurface], _destSpriteX,
-				_destSpriteY, _spriteRight, _frontColor);
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX - _spriteRight, _destSpriteY - _spriteBottom,	// !!
-			    _destSpriteX + _spriteRight,
-			    _destSpriteY + _spriteBottom);
-		}
-		break;
-
-	case DRAW_LOADSPRITE:
-		id = _spriteLeft;
-		if (id >= 30000) {
-			dataBuf =
-			    _vm->_game->loadExtData(id, &_spriteRight,
-			    &_spriteBottom);
-			_vm->_video->drawPackedSprite((byte *)dataBuf, _spriteRight,
-			    _spriteBottom, _destSpriteX,
-			    _destSpriteY, _transparency,
-			    _spritesArray[_destSurface]);
-			if (_destSurface == 21) {
-				invalidateRect(_destSpriteX,
-				    _destSpriteY,
-				    _destSpriteX + _spriteRight - 1,
-				    _destSpriteY + _spriteBottom - 1);
-			}
-			delete[] dataBuf;
-			break;
-		}
-		// Load from .TOT resources
-		itemPtr = &_vm->_game->_totResourceTable->items[id];
-		offset = itemPtr->offset;
-		if (offset >= 0) {
-			dataBuf =
-			    _vm->_game->_totResourceTable->dataPtr +
-			    szGame_TotResTable + szGame_TotResItem *
-			    _vm->_game->_totResourceTable->itemsCount + offset;
-		} else {
-			dataBuf =
-			    _vm->_game->_imFileData +
-			    (int32)READ_LE_UINT32(&((int32 *)_vm->_game->_imFileData)[-offset - 1]);
-		}
-
-		_spriteRight = itemPtr->width;
-		_spriteBottom = itemPtr->height;
-		_vm->_video->drawPackedSprite((byte *)dataBuf,
-		    _spriteRight, _spriteBottom,
-		    _destSpriteX, _destSpriteY,
-		    _transparency, _spritesArray[_destSurface]);
-
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			    _destSpriteX + _spriteRight - 1,
-			    _destSpriteY + _spriteBottom - 1);
-		}
-		break;
-
-	case DRAW_PRINTTEXT:
-		len = strlen(_textToPrint);
-		left = _destSpriteX;
-		if ((_fontIndex >= 4) || (_fontToSprite[_fontIndex].sprite == -1)) {
-			if (_fonts[_fontIndex]->extraData == 0) {
-				if (((int8) _textToPrint[0]) == -1) {
-					if (_vm->_global->_languageWanted != _vm->_global->_language) {
-						warning("Your game version doesn't support the requested language, "
-								"using the first one available (%d)",
-								_vm->_global->_language);
-						_vm->_global->_languageWanted = _vm->_global->_language;
-					}
-					dataBuf = _vm->_game->_totTextData->dataPtr + _textToPrint[1] + 1;
-					len = *dataBuf++;
-					for (i = 0; i < len; i++) {
-						_vm->_video->drawLetter(READ_LE_UINT16(dataBuf), _destSpriteX,
-								_destSpriteY, _fonts[_fontIndex], _transparency, _frontColor,
-								_backColor, _spritesArray[_destSurface]);
-						dataBuf += 2;
-					}
-				} else {
-					drawString(_textToPrint, _destSpriteX, _destSpriteY, _frontColor,
-							_backColor, _transparency, _spritesArray[_destSurface],
-							_fonts[_fontIndex]);
-					_destSpriteX += len * _fonts[_fontIndex]->itemWidth;
-				}
-			} else {
-				if (word_2F2D2 >= 0) {
-					for (i = 0; i < len; i++) {
-						_vm->_video->drawLetter(_textToPrint[i], _destSpriteX,
-								_destSpriteY, _fonts[_fontIndex], _transparency,
-								_frontColor, _backColor, _spritesArray[_destSurface]);
-						_destSpriteX += *(((char*)_fonts[_fontIndex]->extraData) +
-								(_textToPrint[i] - _fonts[_fontIndex]->startItem));
-					}
-				} else { // loc_DBE9
-					warning("Untested, does that work?");
-					// Does something different for each character depending on whether it's a space
-					// That *should* be it...
-					for (i = 0; i < len; i++) {
-						if (_textToPrint[i] == ' ')
-							_destSpriteX += _fonts[_fontIndex]->itemWidth;
-						else {
-							_vm->_video->drawLetter(_textToPrint[i],
-									_destSpriteX, _destSpriteY,
-									_fonts[_fontIndex],
-									_transparency,
-									_frontColor, _backColor,
-									_spritesArray[_destSurface]);
-							_destSpriteX +=
-								*(((char*)_fonts[_fontIndex]->extraData) + (_textToPrint[i] - _fonts[_fontIndex]->startItem));
-						}
-					}
-				}
-			}
-		} else {
-			sourceSurf = _spritesArray[_fontToSprite[_fontIndex].sprite];
-			ratio = ((sourceSurf == _frontSurface) || (sourceSurf == _backSurface)) ?
-				320 : sourceSurf->width;
-			ratio /= _fontToSprite[_fontIndex].width;
-			for (i = 0; i < len; i++) {
-				y = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) / ratio)
-					* _fontToSprite[_fontIndex].height;
-				x = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) % ratio)
-					* _fontToSprite[_fontIndex].width;
-				_vm->_video->drawSprite(_spritesArray[_fontToSprite[_fontIndex].sprite],
-						_spritesArray[_destSurface], x, y,
-						x + _fontToSprite[_fontIndex].width - 1,
-						y + _fontToSprite[_fontIndex].height - 1,
-						_destSpriteX, _destSpriteY, _transparency);
-				_destSpriteX += _fontToSprite[_fontIndex].width;
-			}
-		}
-
-		if (_destSurface == 21) {
-			invalidateRect(left, _destSpriteY,
-					_destSpriteX - 1,
-					_destSpriteY + _fonts[_fontIndex]->itemHeight - 1);
-		}
-		break;
-
-	case DRAW_DRAWBAR:
-		if (_word_2E8E2 != 2) {
-			_vm->_video->fillRect(_spritesArray[_destSurface],
-					_destSpriteX, _spriteBottom - 1,
-					_spriteRight, _spriteBottom, _frontColor);
-
-			_vm->_video->fillRect(_spritesArray[_destSurface],
-					_destSpriteX, _destSpriteY,
-					_destSpriteX + 1, _spriteBottom, _frontColor);
-
-			_vm->_video->fillRect(_spritesArray[_destSurface],
-					_spriteRight - 1, _destSpriteY,
-					_spriteRight, _spriteBottom, _frontColor);
-
-			_vm->_video->fillRect(_spritesArray[_destSurface],
-					_destSpriteX, _destSpriteY,
-					_spriteRight, _destSpriteY + 1, _frontColor);
-		} else {
-			_vm->_video->drawLine(_spritesArray[_destSurface],
-					_destSpriteX, _spriteBottom,
-					_spriteRight, _spriteBottom, _frontColor);
-
-			_vm->_video->drawLine(_spritesArray[_destSurface],
-					_destSpriteX, _destSpriteY,
-					_destSpriteX, _spriteBottom, _frontColor);
-
-			_vm->_video->drawLine(_spritesArray[_destSurface],
-					_spriteRight, _destSpriteY,
-					_spriteRight, _spriteBottom, _frontColor);
-
-			_vm->_video->drawLine(_spritesArray[_destSurface],
-					_destSpriteX, _destSpriteY,
-					_spriteRight, _destSpriteY, _frontColor);
-		}
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			    _spriteRight, _spriteBottom);
-		}
-		break;
-
-	case DRAW_CLEARRECT:
-		if ((_backColor != 16) && (_backColor != 144)) {
-			_vm->_video->fillRect(_spritesArray[_destSurface],
-			    _destSpriteX, _destSpriteY,
-			    _spriteRight, _spriteBottom,
-			    _backColor);
-		}
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			    _spriteRight, _spriteBottom);
-		}
-		break;
-
-	case DRAW_FILLRECTABS:
-		_vm->_video->fillRect(_spritesArray[_destSurface],
-		    _destSpriteX, _destSpriteY,
-		    _spriteRight, _spriteBottom, _backColor);
-
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			    _spriteRight, _spriteBottom);
-		}
-		break;
-	}
-
-	_spriteLeft = spriteLeft;
-	_spriteTop = spriteTop;
-	_spriteRight = spriteRight;
-	_spriteLeft = spriteBottom;
-	_destSpriteX = destSpriteX;
-	_destSpriteY = destSpriteY;
-	_destSurface = destSurface;
-	_sourceSurface = sourceSurface;
-
-	if (operation == DRAW_PRINTTEXT) {
-		len = _fonts[_fontIndex]->itemWidth;
-		adjustCoords(1, &len, 0);
-		_destSpriteX += len * strlen(_textToPrint);
-	}
-
-	if ((_renderFlags & RENDERFLAG_USEDELTAS) && !deltaVeto) {
-		if (_sourceSurface == 21) {
-			_spriteLeft -= _backDeltaX;
-			_spriteTop -= _backDeltaY;
-		}
-
-		if (_destSurface == 21) {
-			_destSpriteX -= _backDeltaX;
-			_destSpriteY -= _backDeltaY;
-		}
-	}
+void Draw_v2::closeScreen() {
+	freeSprite(23);
+	_cursorSprites = 0;
+	_cursorSpritesBack = 0;
+	_scummvmCursor = 0;
+	freeSprite(21);
 }
 
-void Draw_v2::blitCursor(void) {
+void Draw_v2::blitCursor() {
 	if (_cursorIndex == -1)
 		return;
 	
@@ -827,21 +72,14 @@ void Draw_v2::blitCursor(void) {
 }
 
 void Draw_v2::animateCursor(int16 cursor) {
-	int16 newX = 0;
-	int16 newY = 0;
 	Game::Collision *ptr;
-	int16 minX;
-	int16 minY;
-	int16 maxX;
-	int16 maxY;
-	int16 cursorIndex;
-	uint16 hotspotX = 0;
-	uint16 hotspotY = 0;
+	int16 cursorIndex = cursor;
+	int16 newX = 0, newY = 0;
+	uint16 hotspotX = 0, hotspotY = 0;
 
 	_showCursor |= 1;
 
 	// .-- _draw_animateCursorSUB1 ---
-	cursorIndex = cursor;
 	if (cursorIndex == -1) {
 		cursorIndex = 0;
 		for (ptr = _vm->_game->_collisionAreas; ptr->left != -1; ptr++) {
@@ -886,7 +124,7 @@ void Draw_v2::animateCursor(int16 cursor) {
 					_cursorAnim = _cursorAnimLow[_cursorIndex];
 				_cursorTimeKey = _vm->_util->getTimeKey();
 			} else {
-				if ((_noInvalidated != 0) && (_vm->_global->_inter_mouseX == _cursorX) &&
+				if (_noInvalidated && (_vm->_global->_inter_mouseX == _cursorX) &&
 						(_vm->_global->_inter_mouseY == _cursorY)) {
 					_vm->_video->waitRetrace(_vm->_global->_videoMode);
 					return;
@@ -911,24 +149,21 @@ void Draw_v2::animateCursor(int16 cursor) {
 
 		newX = _vm->_global->_inter_mouseX;
 		newY = _vm->_global->_inter_mouseY;
-		if (_cursorXDeltaVar != -1) {
-			newX -= hotspotX = (uint16) VAR(_cursorIndex + _cursorXDeltaVar);
-			newY -= hotspotY = (uint16) VAR(_cursorIndex + _cursorYDeltaVar);
+		if (_cursorHotspotXVar != -1) {
+			newX -= hotspotX = (uint16) VAR(_cursorIndex + _cursorHotspotXVar);
+			newY -= hotspotY = (uint16) VAR(_cursorIndex + _cursorHotspotYVar);
 		}
 
-		minX = MIN(newX, _cursorX);
-		minY = MIN(newY, _cursorY);
-		maxX = MAX(_cursorX, newX) + _cursorWidth - 1;
-		maxY = MAX(_cursorY, newY) + _cursorHeight - 1;
-
 		_vm->_video->clearSurf(_scummvmCursor);
-		_vm->_video->drawSprite(_cursorSprites, _scummvmCursor, cursorIndex * _cursorWidth,
-				0, (cursorIndex * _cursorWidth) + _cursorWidth - 1, _cursorHeight - 1, 0, 0, 0);
-		CursorMan.replaceCursor(_scummvmCursor->vidPtr, _cursorWidth, _cursorHeight,
-				hotspotX, hotspotY, 0);
+		_vm->_video->drawSprite(_cursorSprites, _scummvmCursor,
+				cursorIndex * _cursorWidth, 0,
+				(cursorIndex + 1) * _cursorWidth - 1,
+				_cursorHeight - 1, 0, 0, 0);
+		CursorMan.replaceCursor(_scummvmCursor->getVidMem(),
+				_cursorWidth, _cursorHeight, hotspotX, hotspotY, 0);
 
 		if (_frontSurface != _backSurface) {
-			if (_noInvalidated == 0) {
+			if (!_noInvalidated) {
 				int16 tmp = _cursorIndex;
 				_cursorIndex = -1;
 				blitInvalidated();
@@ -936,7 +171,7 @@ void Draw_v2::animateCursor(int16 cursor) {
 			} else {
 				_showCursor = 3;
 				_vm->_video->waitRetrace(_vm->_global->_videoMode);
-				if (minY < 50)
+				if (MIN(newY, _cursorY) < 50)
 					_vm->_util->delay(5);
 			}
 		}
@@ -949,61 +184,706 @@ void Draw_v2::animateCursor(int16 cursor) {
 	_cursorY = newY;
 }
 
-void Draw_v2::initScreen(void) {
-	_scrollOffsetX = 0;
-	_scrollOffsetY = 0;
+void Draw_v2::printTotText(int16 id) {
+	byte *dataPtr;
+	byte *ptr, *ptrEnd;
+	byte cmd;
+	int16 savedFlags;
+	int16 destX, destY;
+	int16 spriteRight, spriteBottom;
+	int16 val;
+	int16 rectLeft, rectTop, rectRight, rectBottom;
+	int16 size;
 
-	if (_word_2E51F != 0) {
-		_off_2E51B = new Video::SurfaceDesc;
-		memcpy(_off_2E51B, _frontSurface, sizeof(Video::SurfaceDesc));
-		_off_2E51B->height = _vm->_global->_primaryHeight - _word_2E51F;
-		_frontSurface->height -= _off_2E51B->height;
-		_frontSurface->vidPtr =
-			_off_2E51B->vidPtr + ((_off_2E51B->width * _off_2E51B->height) / 4);
+	if (!_vm->_game->_totTextData || !_vm->_game->_totTextData->dataPtr)
+		return;
 
-		_off_2E517 = new Video::SurfaceDesc;
-		memcpy(_off_2E517, _off_2E51B, sizeof(Video::SurfaceDesc));
-		_off_2E517->width = _vm->_global->_primaryWidth;
-		_off_2E517->vidPtr = _frontSurface->vidPtr +
-			((_frontSurface->width * _frontSurface->height ) / 4);
+	_vm->validateLanguage();
+
+	size = _vm->_game->_totTextData->items[id].size;
+	dataPtr = ((byte *) _vm->_game->_totTextData->dataPtr) +
+		_vm->_game->_totTextData->items[id].offset;
+	ptr = dataPtr;
+
+	if ((_renderFlags & RENDERFLAG_SKIPOPTIONALTEXT) && (ptr[1] & 0x80))
+		return;
+
+	destX = READ_LE_UINT16(ptr) & 0x7FFF;
+	destY = READ_LE_UINT16(ptr + 2);
+	spriteRight = READ_LE_UINT16(ptr + 4);
+	spriteBottom = READ_LE_UINT16(ptr + 6);
+	ptr += 8;
+
+	if (_renderFlags & RENDERFLAG_CAPTUREPUSH) {
+		_vm->_game->capturePush(destX, destY,
+				spriteRight - destX + 1, spriteBottom - destY + 1);
+		(*_vm->_scenery->_pCaptureCounter)++;
 	}
-	initBigSprite(21, _vm->_video->_surfWidth, _vm->_video->_surfHeight, 0);
-	_backSurface = _spritesArray[21];
-	_vm->_video->clearSurf(_backSurface);
+
+	_destSpriteX = destX;
+	_destSpriteY = destY;
+	_spriteRight = spriteRight;
+	_spriteBottom = spriteBottom;
+	_destSurface = 21;
+
+	_backColor = *ptr++;
+	_transparency = 1;
+
+	spriteOperation(DRAW_CLEARRECT);
+
+	_backColor = 0;
+	savedFlags = _renderFlags;
+	_renderFlags &= ~RENDERFLAG_NOINVALIDATE;
+
+	while ((_destSpriteX = READ_LE_UINT16(ptr)) != -1) {
+		_destSpriteX += destX;
+		_destSpriteY = READ_LE_UINT16(ptr + 2) + destY;
+		_spriteRight = READ_LE_UINT16(ptr + 4) + destX;
+		_spriteBottom = READ_LE_UINT16(ptr + 6) + destY;
+		ptr += 8;
+
+		cmd = *ptr++;
+		switch ((cmd & 0xF0) >> 4) {
+		case 0:
+			_frontColor = cmd & 0xF;
+			spriteOperation(DRAW_DRAWLINE);
+			break;
+		case 1:
+			_frontColor = cmd & 0xF;
+			spriteOperation(DRAW_DRAWBAR);
+			break;
+		case 2:
+			_backColor = cmd & 0xF;
+			spriteOperation(DRAW_FILLRECTABS);
+			break;
+		}
+	}
+	ptr += 2;
+
+	ptrEnd = ptr;
+	while (((ptrEnd - dataPtr) < size) && (*ptrEnd != 1)) {
+		// Converting to unknown commands/characters to spaces
+		if ((_vm->_game->_totFileData[0x29] < 0x32) && (*ptrEnd > 3) && (*ptrEnd < 32))
+			*ptrEnd = 32;
+
+		switch (*ptrEnd) {
+		case 1:
+			break;
+
+		case 2:
+		case 5:
+			ptrEnd += 5;
+			break;
+
+		case 3:
+		case 4:
+			ptrEnd += 2;
+			break;
+
+		case 6:
+			ptrEnd++;
+			switch (*ptrEnd & 0xC0) {
+			case 0x40:
+				ptrEnd += 9;
+				break;
+			case 0x80:
+				ptrEnd += 3;
+				break;
+			case 0xC0:
+				ptrEnd += 11;
+				break;
+			default:
+				ptrEnd++;
+				break;
+			}
+			break;
+
+		case 10:
+			ptrEnd += (ptrEnd[1] * 2) + 2;
+			break;
+
+		default:
+			ptrEnd++;
+			break;
+		}
+	}
+	ptrEnd++;
+
+	int16 fontIndex = 0, frontColor = 0;
+	int16 strPos = 0, strPos2 = -1, strPosBak;
+	int16 offX = 0, offY = 0;
+	int16 colId = 0;
+	int16 colCmd = 0;
+	int16 width;
+	int16 maskChar = 0;
+	char mask[80], str[80], buf[50];
+
+	memset(mask, 0, 80);
+	memset(str, ' ', 80);
+	_backColor = 0;
+	_transparency = 1;
 	
-	initBigSprite(23, 32, 16, 2);
-	_cursorSpritesBack = _spritesArray[23];
-	_cursorSprites = _cursorSpritesBack;
-	_scummvmCursor =
-		_vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, SCUMMVM_CURSOR);
+	while (true) {
+		if ((((*ptr >= 1) && (*ptr <= 7)) || (*ptr == 10)) && (strPos != 0)) {
+			str[MAX(strPos, strPos2)] = 0;
+			strPosBak = strPos;
+			width = strlen(str) * _fonts[fontIndex]->itemWidth;
+			adjustCoords(1, &width, 0);
 
-	_spritesArray[20] = _frontSurface;
-	_spritesArray[21] = _backSurface;
+			if (colCmd & 0x0F) {
+				rectLeft = offX - 2;
+				rectTop = offY - 2;
+				rectRight = offX + width + 1;
+				rectBottom = _fonts[fontIndex]->itemHeight;
+				adjustCoords(1, &rectBottom, 0);
+				rectBottom += offY + 1;
+				adjustCoords(0, &rectLeft, &rectTop);
+				adjustCoords(2, &rectRight, &rectBottom);
 
-/*	if (_word_2E51F != 0) {
-		dword_2F92D = _off_2E51B;
-		dword_2F931 = _off_2E517;
-	}*/
+				if (colId != -1)
+					_vm->_game->addNewCollision(colId + 0xD000, rectLeft, rectTop,
+							rectRight, rectBottom, 2, 0, 0, 0);
+
+				if (_needAdjust != 2)
+					printTextCentered(colCmd & 0x0F, rectLeft + 4, rectTop + 4,
+							rectRight - 4, rectBottom - 4, str, fontIndex, frontColor);
+				else
+					printTextCentered(colCmd & 0x0F, rectLeft + 2, rectTop + 2,
+							rectRight - 2, rectBottom - 2, str, fontIndex, frontColor);
+
+			} else {
+				_destSpriteX = offX;
+				_destSpriteY = offY;
+				_fontIndex = fontIndex;
+				_frontColor = frontColor;
+				_textToPrint = str;
+
+				if (_needAdjust != 2) {
+					if ((_destSpriteX >= destX) && (_destSpriteY >= destY) &&
+					    (((_fonts[_fontIndex]->itemHeight / 2) + _destSpriteY - 1) <= spriteBottom)) {
+						while (((_destSpriteX + width - 1) > spriteRight) && (width > 0)) {
+							width -= _fonts[_fontIndex]->itemWidth / 2;
+							str[strlen(str) - 1] = '\0';
+						}
+						spriteOperation(DRAW_PRINTTEXT);
+					}
+				} else
+					spriteOperation(DRAW_PRINTTEXT);
+
+				width = strlen(str);
+				for (strPos = 0; strPos < width; strPos++) {
+					if (mask[strPos] == '\0')
+						continue;
+
+					rectLeft = _fonts[fontIndex]->itemWidth;
+					rectTop = _fonts[fontIndex]->itemHeight;
+					adjustCoords(1, &rectLeft, &rectTop);
+					_destSpriteX = strPos * rectLeft + offX;
+					_spriteRight = _destSpriteX + rectLeft - 1;
+					_spriteBottom = offY + rectTop;
+					_destSpriteY = _spriteBottom;
+					spriteOperation(DRAW_DRAWLINE);
+				}
+			}
+
+			rectLeft = _fonts[_fontIndex]->itemWidth;
+			adjustCoords(1, &rectLeft, 0);
+			offX += strPosBak * rectLeft;
+			strPos = 0;
+			strPos2 = -1;
+			memset(mask, 0, 80);
+			memset(str, ' ', 80);
+		}
+
+		if (*ptr == 1)
+			break;
+
+		cmd = *ptr;
+		switch ((uint8) cmd) {
+		case 2:
+		case 5:
+			ptr++;
+			offX = destX + (int16)READ_LE_UINT16(ptr);
+			offY = destY + (int16)READ_LE_UINT16(ptr + 2);
+			ptr += 4;
+			break;
+
+		case 3:
+			ptr++;
+			fontIndex = ((*ptr & 0xF0) >> 4) & 7;
+			frontColor = *ptr & 0x0F;
+			ptr++;
+			break;
+
+		case 4:
+			ptr++;
+			frontColor = *ptr++;
+			break;
+
+		case 6:
+			ptr++;
+			colCmd = *ptr++;
+			colId = -1;
+			if (colCmd & 0x80) {
+				colId = (int16)READ_LE_UINT16(ptr);
+				ptr += 2;
+			}
+			if (colCmd & 0x40) {
+				rectLeft = destX + (int16)READ_LE_UINT16(ptr);
+				rectRight = destX + (int16)READ_LE_UINT16(ptr + 2);
+				rectTop = destY + (int16)READ_LE_UINT16(ptr + 4);
+				rectBottom = destY + (int16)READ_LE_UINT16(ptr + 6);
+				adjustCoords(2, &rectLeft, &rectTop);
+				adjustCoords(2, &rectRight, &rectBottom);
+				_vm->_game->addNewCollision(colId + 0x0D000, rectLeft, rectTop,
+						rectRight, rectBottom, 2, 0, 0, 0);
+				ptr += 8;
+			}
+			break;
+
+		case 7:
+			ptr++;
+			colCmd = 0;
+			break;
+
+		case 8:
+			ptr++;
+			maskChar = 1;
+			break;
+
+		case 9:
+			ptr++;
+			maskChar = 0;
+			break;
+
+		case 10:
+			str[0] = (char) 255;
+			WRITE_LE_UINT16((uint16 *) (str + 1),
+					((char *) ptr) - _vm->_game->_totTextData->dataPtr);
+			str[3] = 0;
+			ptr++;
+			for (int i = *ptr++; i > 0; i--) {
+				mask[strPos++] = maskChar;
+				ptr += 2;
+			}
+			break;
+
+		default:
+			str[strPos] = (char) cmd;
+		case 32:
+			mask[strPos++] = maskChar;
+			ptr++;
+			break;
+
+		case 186:
+			cmd = ptrEnd[17] & 0x7F;
+			if (cmd == 0) {
+				val = READ_LE_UINT16(ptrEnd + 18) * 4;
+				sprintf(buf, "%d",  VAR_OFFSET(val));
+			} else if (cmd == 1) {
+				val = READ_LE_UINT16(ptrEnd + 18) * 4;
+				strcpy(buf, GET_VARO_STR(val));
+			} else {
+				val = READ_LE_UINT16(ptrEnd + 18) * 4;
+				sprintf(buf, "%d",  VAR_OFFSET(val));
+				if (buf[0] == '-') {
+					while (strlen(buf) - 1 < (uint32)ptrEnd[17]) {
+						_vm->_util->insertStr("0", buf, 1);
+					}
+				} else {
+					while (strlen(buf) - 1 < (uint32)ptrEnd[17]) {
+						_vm->_util->insertStr("0", buf, 0);
+					}
+				}
+				if (_vm->_global->_language == 2)
+					_vm->_util->insertStr(".", buf, strlen(buf) + 1 - ptrEnd[17]);
+				else
+					_vm->_util->insertStr(",", buf, strlen(buf) + 1 - ptrEnd[17]);
+			}
+			memcpy(str + strPos, buf, strlen(buf));
+			memset(mask, maskChar, strlen(buf));
+			if (ptrEnd[17] & 0x80) {
+				strPos2 = strPos + strlen(buf);
+				strPos++;
+				ptrEnd += 23;
+				ptr++;
+			} else {
+				strPos += strlen(buf);
+				if (ptr[1] != ' ') {
+					if ((ptr[1] == 2) &&
+							(((int16)READ_LE_UINT16(ptr + 4)) == _destSpriteY)) {
+						ptr += 5;
+						str[strPos] = ' ';
+						mask[strPos++] = maskChar;
+					}
+				} else {
+					str[strPos] = ' ';
+					mask[strPos++] = maskChar;
+					while (ptr[1] == ' ')
+						ptr++;
+					if ((ptr[1] == 2) &&
+							(((int16)READ_LE_UINT16(ptr + 4)) == _destSpriteY))
+						ptr += 5;
+				}
+				ptrEnd += 23;
+				ptr++;
+			}
+			break;
+		}
+	}
+
+	_renderFlags = savedFlags;
+	if (!(_renderFlags & RENDERFLAG_COLLISIONS))
+		return;
+
+	_vm->_game->checkCollisions(0, 0, 0, 0);
+
+	if (*_vm->_scenery->_pCaptureCounter != 0) {
+		(*_vm->_scenery->_pCaptureCounter)--;
+		_vm->_game->capturePop(1);
+	}
 }
 
-void Draw_v2::closeScreen(void) {
-	freeSprite(23);
-	_cursorSprites = 0;
-	_cursorSpritesBack = 0;
-	_vm->_video->freeSurfDesc(_scummvmCursor);
-	_scummvmCursor = 0;
-	if (_off_2E51B != 0) {
-		memcpy(_frontSurface, _off_2E51B, sizeof(Video::SurfaceDesc));
-		_frontSurface->width = _vm->_video->_surfWidth;
-		_frontSurface->height = _vm->_video->_surfHeight;
-		delete _off_2E51B;
-		delete _off_2E517;
-		_off_2E51B = 0;
-		_off_2E517 = 0;
+void Draw_v2::spriteOperation(int16 operation) {
+	uint16 id;
+	char *dataBuf;
+	Game::TotResItem *itemPtr;
+	int32 offset;
+	int16 len;
+	int16 x, y;
+	SurfaceDesc *sourceSurf, *destSurf;
+	bool deltaVeto;
+	int16 left;
+	int16 ratio;
+	// Some handle, but always assigned to -1 in Game::loadTotFile()
+	int16 word_2F2D2 = -1;
+
+	deltaVeto = (bool) (operation & 0x10);
+	operation &= 0x0F;
+
+	if (_sourceSurface >= 100)
+		_sourceSurface -= 80;
+	if (_destSurface >= 100)
+		_destSurface -= 80;
+
+	if ((_renderFlags & RENDERFLAG_USEDELTAS) && !deltaVeto) {
+		if ((_sourceSurface == 21) && (operation != DRAW_LOADSPRITE)) {
+			_spriteLeft += _backDeltaX;
+			_spriteTop += _backDeltaY;
+		}
+
+		if (_destSurface == 21) {
+			_destSpriteX += _backDeltaX;
+			_destSpriteY += _backDeltaY;
+			if ((operation == DRAW_DRAWLINE) ||
+			   ((operation >= DRAW_DRAWBAR) &&
+			    (operation <= DRAW_FILLRECTABS))) {
+				_spriteRight += _backDeltaX;
+				_spriteBottom += _backDeltaY;
+			}
+		}
 	}
-	if (_frontSurface != _backSurface)
-		freeSprite(21);
-	_spritesArray[21] = 0;
+
+	int16 spriteLeft = _spriteLeft;
+	int16 spriteTop = _spriteTop;
+	int16 spriteRight = _spriteRight;
+	int16 spriteBottom = _spriteLeft;
+	int16 destSpriteX = _destSpriteX;
+	int16 destSpriteY = _destSpriteY;
+	int16 destSurface = _destSurface;
+	int16 sourceSurface = _sourceSurface;
+
+	adjustCoords(0, &_destSpriteX, &_destSpriteY);
+	if ((operation != DRAW_LOADSPRITE) && (_needAdjust != 2)) {
+		adjustCoords(0, &_spriteRight, &_spriteBottom);
+		adjustCoords(0, &_spriteLeft, &_spriteTop);
+
+		if (operation == DRAW_DRAWLINE) {
+			if ((_spriteRight == _destSpriteX) || (_spriteBottom == _destSpriteY)) {
+				operation = DRAW_FILLRECTABS;
+				_backColor = _frontColor;
+			}
+		} else if (operation == DRAW_DRAWLETTER)
+			operation = DRAW_BLITSURF;
+
+		if (operation == DRAW_DRAWLINE) {
+			if (_spriteBottom < _destSpriteY) {
+				SWAP(_spriteBottom, _destSpriteY);
+				SWAP(_spriteRight, _destSpriteX);
+			}
+		} else if ((operation == DRAW_LOADSPRITE) ||
+		           (operation > DRAW_PRINTTEXT)) {
+			if (_spriteBottom < _destSpriteY)
+				SWAP(_spriteBottom, _destSpriteY);
+			if (_spriteRight < _destSpriteX)
+				SWAP(_spriteRight, _destSpriteX);
+			_spriteRight++;
+			_spriteBottom++;
+		}
+	}
+
+	sourceSurf = _spritesArray[_sourceSurface];
+	destSurf = _spritesArray[_destSurface];
+
+	switch (operation) {
+	case DRAW_BLITSURF:
+	case DRAW_DRAWLETTER:
+		if (!sourceSurf || !destSurf)
+			break;
+
+		_vm->_video->drawSprite(_spritesArray[_sourceSurface],
+				_spritesArray[_destSurface],
+				_spriteLeft, spriteTop,
+				_spriteLeft + _spriteRight - 1,
+				_spriteTop + _spriteBottom - 1,
+				_destSpriteX, _destSpriteY, _transparency);
+
+		if (_destSurface == 21) {
+			invalidateRect(_destSpriteX, _destSpriteY,
+			               _destSpriteX + _spriteRight - 1,
+			               _destSpriteY + _spriteBottom - 1);
+		}
+		break;
+
+	case DRAW_PUTPIXEL:
+		_vm->_video->putPixel(_destSpriteX, _destSpriteY, _frontColor,
+		                      _spritesArray[_destSurface]);
+		if (_destSurface == 21) {
+			invalidateRect(_destSpriteX, _destSpriteY,
+			               _destSpriteX, _destSpriteY);
+		}
+		break;
+
+	case DRAW_FILLRECT:
+		_vm->_video->fillRect(_spritesArray[_destSurface], destSpriteX,
+				_destSpriteY, _destSpriteX + _spriteRight - 1,
+				_destSpriteY + _spriteBottom - 1, _backColor);
+
+		if (_destSurface == 21) {
+			invalidateRect(_destSpriteX, _destSpriteY,
+			               _destSpriteX + _spriteRight - 1,
+			               _destSpriteY + _spriteBottom - 1);
+		}
+		break;
+
+	case DRAW_DRAWLINE:
+		_vm->_video->drawLine(_spritesArray[_destSurface],
+		    _destSpriteX, _destSpriteY,
+		    _spriteRight, _spriteBottom, _frontColor);
+
+		if (_destSurface == 21) {
+			invalidateRect(_destSpriteX, _destSpriteY,
+			               _spriteRight, _spriteBottom);
+		}
+		break;
+
+	case DRAW_INVALIDATE:
+		_vm->_video->drawCircle(_spritesArray[_destSurface], _destSpriteX,
+				_destSpriteY, _spriteRight, _frontColor);
+		if (_destSurface == 21) {
+			invalidateRect(_destSpriteX - _spriteRight,
+			               _destSpriteY - _spriteBottom,
+			               _destSpriteX + _spriteRight,
+			               _destSpriteY + _spriteBottom);
+		}
+		break;
+
+	case DRAW_LOADSPRITE:
+		id = _spriteLeft;
+		if (id >= 30000) {
+			dataBuf =
+				_vm->_game->loadExtData(id, &_spriteRight, &_spriteBottom);
+			_vm->_video->drawPackedSprite((byte *) dataBuf,
+					_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
+					_transparency, _spritesArray[_destSurface]);
+			if (_destSurface == 21) {
+				invalidateRect(_destSpriteX, _destSpriteY,
+				               _destSpriteX + _spriteRight - 1,
+				               _destSpriteY + _spriteBottom - 1);
+			}
+			delete[] dataBuf;
+			break;
+		}
+		// Load from .TOT resources
+		itemPtr = &_vm->_game->_totResourceTable->items[id];
+		offset = itemPtr->offset;
+		if (offset >= 0) {
+			dataBuf = _vm->_game->_totResourceTable->dataPtr +
+					szGame_TotResTable + szGame_TotResItem *
+					_vm->_game->_totResourceTable->itemsCount + offset;
+		} else {
+			dataBuf = _vm->_game->_imFileData +
+					(int32) READ_LE_UINT32(&((int32 *) _vm->_game->_imFileData)[-offset - 1]);
+		}
+
+		_spriteRight = itemPtr->width;
+		_spriteBottom = itemPtr->height;
+		_vm->_video->drawPackedSprite((byte *) dataBuf,
+		    _spriteRight, _spriteBottom,
+		    _destSpriteX, _destSpriteY,
+		    _transparency, _spritesArray[_destSurface]);
+
+		if (_destSurface == 21) {
+			invalidateRect(_destSpriteX, _destSpriteY,
+			               _destSpriteX + _spriteRight - 1,
+			               _destSpriteY + _spriteBottom - 1);
+		}
+		break;
+
+	case DRAW_PRINTTEXT:
+		len = strlen(_textToPrint);
+		left = _destSpriteX;
+
+		if ((_fontIndex >= 4) || (_fontToSprite[_fontIndex].sprite == -1)) {
+
+			if (!_fonts[_fontIndex]->extraData) {
+				if (((int8) _textToPrint[0]) == -1) {
+					_vm->validateLanguage();
+
+					dataBuf = _vm->_game->_totTextData->dataPtr + _textToPrint[1] + 1;
+					len = *dataBuf++;
+					for (int i = 0; i < len; i++, dataBuf += 2) {
+						_vm->_video->drawLetter(READ_LE_UINT16(dataBuf), _destSpriteX,
+								_destSpriteY, _fonts[_fontIndex], _transparency, _frontColor,
+								_backColor, _spritesArray[_destSurface]);
+					}
+				} else {
+					drawString(_textToPrint, _destSpriteX, _destSpriteY, _frontColor,
+							_backColor, _transparency, _spritesArray[_destSurface],
+							_fonts[_fontIndex]);
+					_destSpriteX += len * _fonts[_fontIndex]->itemWidth;
+				}
+			} else {
+				for (int i = 0; i < len; i++) {
+					if ((word_2F2D2 < 0) || (_textToPrint[i] != ' ')) {
+						_vm->_video->drawLetter(_textToPrint[i], _destSpriteX,
+								_destSpriteY, _fonts[_fontIndex], _transparency,
+								_frontColor, _backColor, _spritesArray[_destSurface]);
+						_destSpriteX += *(((char*)_fonts[_fontIndex]->extraData) +
+								(_textToPrint[i] - _fonts[_fontIndex]->startItem));
+					}
+					else
+						_destSpriteX += _fonts[_fontIndex]->itemWidth;
+				}
+			}
+
+		} else {
+			sourceSurf = _spritesArray[_fontToSprite[_fontIndex].sprite];
+			ratio = ((sourceSurf == _frontSurface) || (sourceSurf == _backSurface)) ?
+				320 : sourceSurf->getWidth();
+			ratio /= _fontToSprite[_fontIndex].width;
+			for (int i = 0; i < len; i++) {
+				y = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) / ratio)
+					* _fontToSprite[_fontIndex].height;
+				x = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) % ratio)
+					* _fontToSprite[_fontIndex].width;
+				_vm->_video->drawSprite(_spritesArray[_fontToSprite[_fontIndex].sprite],
+						_spritesArray[_destSurface], x, y,
+						x + _fontToSprite[_fontIndex].width - 1,
+						y + _fontToSprite[_fontIndex].height - 1,
+						_destSpriteX, _destSpriteY, _transparency);
+				_destSpriteX += _fontToSprite[_fontIndex].width;
+			}
+		}
+
+		if (_destSurface == 21) {
+			invalidateRect(left, _destSpriteY,
+			               _destSpriteX - 1,
+			               _destSpriteY + _fonts[_fontIndex]->itemHeight - 1);
+		}
+		break;
+
+	case DRAW_DRAWBAR:
+		if (_needAdjust != 2) {
+			_vm->_video->fillRect(_spritesArray[_destSurface],
+					_destSpriteX, _spriteBottom - 1,
+					_spriteRight, _spriteBottom, _frontColor);
+
+			_vm->_video->fillRect(_spritesArray[_destSurface],
+					_destSpriteX, _destSpriteY,
+					_destSpriteX + 1, _spriteBottom, _frontColor);
+
+			_vm->_video->fillRect(_spritesArray[_destSurface],
+					_spriteRight - 1, _destSpriteY,
+					_spriteRight, _spriteBottom, _frontColor);
+
+			_vm->_video->fillRect(_spritesArray[_destSurface],
+					_destSpriteX, _destSpriteY,
+					_spriteRight, _destSpriteY + 1, _frontColor);
+		} else {
+			_vm->_video->drawLine(_spritesArray[_destSurface],
+					_destSpriteX, _spriteBottom,
+					_spriteRight, _spriteBottom, _frontColor);
+
+			_vm->_video->drawLine(_spritesArray[_destSurface],
+					_destSpriteX, _destSpriteY,
+					_destSpriteX, _spriteBottom, _frontColor);
+
+			_vm->_video->drawLine(_spritesArray[_destSurface],
+					_spriteRight, _destSpriteY,
+					_spriteRight, _spriteBottom, _frontColor);
+
+			_vm->_video->drawLine(_spritesArray[_destSurface],
+					_destSpriteX, _destSpriteY,
+					_spriteRight, _destSpriteY, _frontColor);
+		}
+		if (_destSurface == 21) {
+			invalidateRect(_destSpriteX, _destSpriteY,
+			               _spriteRight, _spriteBottom);
+		}
+		break;
+
+	case DRAW_CLEARRECT:
+		if ((_backColor != 16) && (_backColor != 144)) {
+			_vm->_video->fillRect(_spritesArray[_destSurface],
+			    _destSpriteX, _destSpriteY,
+			    _spriteRight, _spriteBottom,
+			    _backColor);
+		}
+		if (_destSurface == 21) {
+			invalidateRect(_destSpriteX, _destSpriteY,
+			               _spriteRight, _spriteBottom);
+		}
+		break;
+
+	case DRAW_FILLRECTABS:
+		_vm->_video->fillRect(_spritesArray[_destSurface],
+		    _destSpriteX, _destSpriteY,
+		    _spriteRight, _spriteBottom, _backColor);
+
+		if (_destSurface == 21) {
+			invalidateRect(_destSpriteX, _destSpriteY,
+			               _spriteRight, _spriteBottom);
+		}
+		break;
+	}
+
+	_spriteLeft = spriteLeft;
+	_spriteTop = spriteTop;
+	_spriteRight = spriteRight;
+	_spriteLeft = spriteBottom;
+	_destSpriteX = destSpriteX;
+	_destSpriteY = destSpriteY;
+	_destSurface = destSurface;
+	_sourceSurface = sourceSurface;
+
+	if (operation == DRAW_PRINTTEXT) {
+		len = _fonts[_fontIndex]->itemWidth;
+		adjustCoords(1, &len, 0);
+		_destSpriteX += len * strlen(_textToPrint);
+	}
+
+	if ((_renderFlags & RENDERFLAG_USEDELTAS) && !deltaVeto) {
+		if (_sourceSurface == 21) {
+			_spriteLeft -= _backDeltaX;
+			_spriteTop -= _backDeltaY;
+		}
+
+		if (_destSurface == 21) {
+			_destSpriteX -= _backDeltaX;
+			_destSpriteY -= _backDeltaY;
+		}
+	}
 }
 
 } // End of namespace Gob

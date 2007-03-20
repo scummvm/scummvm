@@ -20,18 +20,18 @@
  * $Id$
  *
  */
+
 #ifndef GOB_GLOBAL_H
 #define GOB_GLOBAL_H
 
-#include "gob/dataio.h"
-#include "gob/video.h"
-
 #include "common/file.h"
+
+#include "gob/video.h"
 
 namespace Gob {
 
 #define VIDMODE_CGA	0x05
-#define VIDMODE_EGA	0x0d
+#define VIDMODE_EGA	0x0D
 #define VIDMODE_VGA	0x13
 #define VIDMODE_HER	7
 
@@ -46,14 +46,14 @@ namespace Gob {
 #define YES	1
 #define UNDEF	2
 
-#define F1_KEY	0x3b00
-#define F2_KEY	0x3c00
-#define F3_KEY	0x3d00
-#define F4_KEY	0x3e00
-#define F5_KEY	0x3f00
+#define F1_KEY	0x3B00
+#define F2_KEY	0x3C00
+#define F3_KEY	0x3D00
+#define F4_KEY	0x3E00
+#define F5_KEY	0x3F00
 #define F6_KEY	0x4000
-#define ESCAPE	0x001b
-#define ENTER	0x000d
+#define ESCAPE	0x001B
+#define ENTER	0x000D
 
 #define MAX_FILES	30
 
@@ -68,9 +68,6 @@ class Global {
 public:
 	char _pressedKeys[128];
 
-	char _useMouse;
-	int16 _mousePresent;
-
 	int16 _presentCGA;
 	int16 _presentEGA;
 	int16 _presentVGA;
@@ -78,80 +75,48 @@ public:
 
 	int16 _videoMode;
 	int16 _fakeVideoMode;
-
-	int16 _disableVideoCfg;
-
-	uint16 _soundFlags;
-	int16 _disableSoundCfg;
-	int16 _blasterPort;
-
-	uint16 _disableLangCfg;
-	uint16 _language;
-	uint16 _languageWanted;
-
-	// Timer variables
-	int32 _startTime;
-	int16 _timer_delta;
+	int16 _oldMode;
 
 	int16 _frameWaitTime;
 	int32 _startFrameTime;
 
-	// Mouse
-	int16 _disableMouseCfg;
+	uint16 _soundFlags;
 
+	uint16 _language;
+	uint16 _languageWanted;
+
+	char _useMouse;
+	int16 _mousePresent;
 	int16 _mouseXShift;
 	int16 _mouseYShift;
 	int16 _mouseMaxCol;
 	int16 _mouseMaxRow;
 
-	// Timer and delays
-	int16 _delayTime;
-
-	// Joystick
 	char _useJoystick;
 
-	// Files
 	Common::File _filesHandles[MAX_FILES];
-
-	// Data files
-	struct DataIO::ChunkDesc *_dataFiles[MAX_DATA_FILES];
-	int16 _numDataChunks[MAX_DATA_FILES];
-	int16 _dataFileHandles[MAX_DATA_FILES];
-	int32 _chunkPos[MAX_SLOT_COUNT * MAX_DATA_FILES];
-	int32 _chunkOffset[MAX_SLOT_COUNT * MAX_DATA_FILES];
-	int32 _chunkSize[MAX_SLOT_COUNT * MAX_DATA_FILES];
-	char _isCurrentSlot[MAX_SLOT_COUNT * MAX_DATA_FILES];
-	int32 _packedSize;
-
-	int16 _sprAllocated;
 
 	int16 _primaryWidth;
 	int16 _primaryHeight;
 
-	int16 _doRangeClamp;
-
+	int16 _colorCount;
 	char _redPalette[256];
 	char _greenPalette[256];
 	char _bluePalette[256];
-
-	int16 _setAllPalette;
-
-	Video::SurfaceDesc _primarySurfDesc;
-	Video::SurfaceDesc *_pPrimarySurfDesc;
-
-	int16 _oldMode;
-	char _dontSetPalette;
-
-	Video::PalDesc *_pPaletteDesc;
 
 	int16 _unusedPalette1[18];
 	int16 _unusedPalette2[16];
 	Video::Color _vgaPalette[16];
 	Video::PalDesc _paletteStruct;
+	Video::PalDesc *_pPaletteDesc;
+
+	bool _setAllPalette;
+	bool _dontSetPalette;
+
+	SurfaceDesc::Ptr _primarySurfDesc;
 
 	int16 _debugFlag;
 	int16 _inVM;
-	int16 _colorCount;
 
 	char _inter_resStr[200];
 	int32 _inter_resVal;
@@ -167,27 +132,21 @@ public:
 	// While using the notepad or changing the font, the original executable
 	// temporarily dumps Draw::_backSurface to a file. Since that's not really
 	// a nice thing to do, we work around it.
-	Video::SurfaceDesc *_savedBack;
+	SurfaceDesc::Ptr _savedBack;
 	Video::Color _savedPal[256];
 	int32 _savedBackSize;
 
-	inline void clearVars(uint32 count)
+	void clearVars(uint32 count)
 	{
-		uint32 i;
+		uint32 size = count * 4;
 
-		for (i = 0; i < count; i++) {
-			_inter_variablesSizes[i * 4] = 3;
-			_inter_variablesSizes[i * 4 + 1] = 0;
-			_inter_variablesSizes[i * 4 + 2] = 0;
-			_inter_variablesSizes[i * 4 + 3] = 0;
-			_inter_variables[i * 4] = 0;
-			_inter_variables[i * 4 + 1] = 0;
-			_inter_variables[i * 4 + 2] = 0;
-			_inter_variables[i * 4 + 3] = 0;
-		}
+		memset(_inter_variables, 0, size);
+		memset(_inter_variablesSizes, 0, size);
+		for (uint32 i = 0; i < size; i += 4)
+			_inter_variablesSizes[i] = 3;
 	}
 
-	inline void writeVarSizeStr(uint32 offset, uint32 len) {
+	void writeVarSizeStr(uint32 offset, uint32 len) {
 		uint32 i;
 		uint32 inVar;
 		uint32 varOff;
@@ -203,19 +162,19 @@ public:
 		memset(_inter_variablesSizes + offset, 0, len);
 	}
 
-	inline void writeVar(uint32 offset, uint32 val) {
+	void writeVar(uint32 offset, uint32 val) {
 		(*(uint32 *)(_inter_variables + offset)) = val;
 		writeVarSize(offset, 3);
 	}
-	inline void writeVar(uint32 offset, uint16 val) {
+	void writeVar(uint32 offset, uint16 val) {
 		(*(uint16 *)(_inter_variables + offset)) = val;
 		writeVarSize(offset, 1);
 	}
-	inline void writeVar(uint32 offset, uint8 val) {
+	void writeVar(uint32 offset, uint8 val) {
 		(*(uint8 *)(_inter_variables + offset)) = val;
 		writeVarSize(offset, 0);
 	}
-	inline void writeVar(uint32 offset, const char *str) {
+	void writeVar(uint32 offset, const char *str) {
 		writeVarSizeStr(offset, strlen(str));
 		strcpy(_inter_variables + offset, str);
 	}
@@ -226,7 +185,7 @@ public:
 protected:
 	GobEngine *_vm;
 
-	inline void writeVarSize(uint32 offset, byte n) {
+	void writeVarSize(uint32 offset, byte n) {
 		uint32 i;
 		uint32 inVar;
 		uint32 varOff;
@@ -249,4 +208,4 @@ protected:
 
 } // End of namespace Gob
 
-#endif
+#endif // GOB_GLOBAL_H

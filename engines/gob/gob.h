@@ -36,30 +36,19 @@ class Snd;
 class Video;
 class Global;
 class Draw;
-class Anim;
 class CDROM;
 class DataIO;
 class Goblin;
+class ImdPlayer;
 class Init;
 class Inter;
 class Map;
 class Mult;
-class Pack;
 class PalAnim;
 class Parse;
 class Scenery;
-class GTimer;
 class Util;
 class Adlib;
-
-/*
-#define	VAR_OFFSET(offs)		(*(uint32 *)(_vm->_global->_inter_variables + (offs)))
-#define	VAR(var)			VAR_OFFSET((var) << 2)
-#define VAR_ADDRESS(var)		(&VAR(var))
-
-#define	WRITE_VAR_OFFSET(offs, val)	(VAR_OFFSET(offs) = (val))
-#define WRITE_VAR(var, val)		WRITE_VAR_OFFSET((var) << 2, (val))
-*/
 
 #define VARP(offs)			(_vm->_global->_inter_variables + (offs))
 #define WRITE_VARO_UINT32(offs, val)	_vm->_global->writeVar(offs, (uint32) (val))
@@ -114,12 +103,62 @@ enum SaveFiles {
 	SAVE_BLO      // Notes
 };
 
+// A "smart" reference counting templated class
+template<typename T>
+class ReferenceCounter {
+public:
+	class Ptr {
+	public:
+		T* operator-> () { return _p; }
+		T& operator* () { return *_p; }
+		operator T*() { return _p; }
+
+		Ptr(T* p) : _p(p) { ++_p->_references; }
+		Ptr() : _p(0) { }
+
+		~Ptr() {
+			if (_p && (--_p->_references == 0))
+				delete _p;
+		}
+
+		Ptr(const Ptr& p) : _p(p._p) { ++_p->_references; }
+
+		Ptr& operator= (const Ptr& p) {
+			++p._p->_references;
+			if (_p && (--_p->_references == 0))
+				delete _p;
+			_p = p._p;
+			return *this;
+		}
+		Ptr* operator= (const Ptr* p) {
+			if (p)
+				++p->_p->_references;
+			if (_p && (--_p->_references == 0))
+				delete _p;
+
+			_p = p ? p->_p : 0;
+			return this;
+		}
+
+	private:
+		T* _p;
+	};
+
+	ReferenceCounter() : _references(0) { }
+	virtual ~ReferenceCounter() {}
+
+private:
+	unsigned _references;
+	friend class Ptr;
+};
+
 class GobEngine : public Engine {
 protected:
 	char **_saveFiles;
 	char *_saveSlotFile;
 	char _saveIndex[600];
 	byte _saveIndexSizes[600];
+	GobEngine *_vm;
 
 	int go();
 	int init();
@@ -133,10 +172,7 @@ protected:
 	bool detectGame();
 
 public:
-	GobEngine(OSystem *syst);
-	virtual ~GobEngine();
-
-	void shutdown();
+	static const Common::Language _gobToScummVMLang[];
 
 	Common::RandomSource _rnd;
 
@@ -149,34 +185,42 @@ public:
 	bool _noMusic;
 	bool _quitRequested;
 
+	Global *_global;
+	Util *_util;
+	DataIO *_dataIO;
 	Game *_game;
 	Snd *_snd;
 	Video *_video;
-	Global *_global;
 	Draw *_draw;
-	Anim *_anim;
 	CDROM *_cdrom;
-	DataIO *_dataio;
 	Goblin *_goblin;
 	Init *_init;
 	Map *_map;
 	Mult *_mult;
-	Pack *_pack;
-	PalAnim *_palanim;
+	PalAnim *_palAnim;
 	Parse *_parse;
 	Scenery *_scenery;
-	GTimer *_gtimer;
-	Util *_util;
 	Inter *_inter;
 	Adlib *_adlib;
-	GobEngine *_vm;
+	ImdPlayer *_imdPlayer;
 
-	void writeVarDebug(uint32 offs, uint32 v);
+	void shutdown();
 
 	int32 getSaveSize(enum SaveFiles sFile);
 	void saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset);
 	void loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset);
+	const char *getLangDesc(int16 language) {
+		if ((language < 0) || (language > 8))
+			language = 2;
+		return Common::getLanguageDescription(_gobToScummVMLang[language]);
+	}
+	void validateLanguage();
+	void validateVideoMode(int16 videoMode);
+
+	GobEngine(OSystem *syst);
+	virtual ~GobEngine();
 };
 
 } // End of namespace Gob
-#endif
+
+#endif // GOB_GOB_H

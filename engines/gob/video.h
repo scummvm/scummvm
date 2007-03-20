@@ -20,39 +20,43 @@
  * $Id$
  *
  */
+
 #ifndef GOB_VIDEO_H
 #define GOB_VIDEO_H
 
-#include "common/stdafx.h"
-#include "common/util.h"
 #include "gob/gob.h"
 
 namespace Gob {
 
-#define VID_SET_CURSOR(val) { _AH = 1; _CX = (val); geninterrupt(0x10); }
-#define VID_RESTORE_MODE { _AX = 3; geninterrupt(0x10); }
+// Some Surfaces are simultaneous in Draw::spritesArray and discrete
+// variables, so it's a references counting class that cleans
+// up its own mess
+class SurfaceDesc : public ReferenceCounter<SurfaceDesc> {
+public:
+	int16 _vidMode;
 
-#define TEXT_VID_SEG 	0xB800
-#define TEXT_VID_OFF 	0
-#define TEXT_COL_COUNT	80
-#define TEXT_ROW_COUNT	25
+	int16 getWidth() { return _width; }
+	int16 getHeight() { return _height; }
+	byte *getVidMem() { return _vidMem; }
+	bool hasOwnVidMem() { return _ownVidMem; }
 
-extern int16 setAllPalette;
+	void setVidMem(byte *vidMem);
+	void resize(int16 width, int16 height);
+	void swap(SurfaceDesc &surf);
+	void swap(SurfaceDesc *surf) { assert(surf); swap(*surf); }
+
+	SurfaceDesc(int16 vidMode, int16 width, int16 height, byte *vidMem = 0);
+	~SurfaceDesc() { if (_ownVidMem) delete[] _vidMem; }
+
+private:
+	int16 _width;
+	int16 _height;
+	byte *_vidMem;
+	bool _ownVidMem;
+};
 
 class Video {
 public:
-	struct SurfaceDesc {
-		int16 width;
-		int16 height;
-		int8 reserved1;
-		int8 flag;
-		int16 vidMode;
-		byte *vidPtr;
-		int16 reserved2;
-		SurfaceDesc() : width(0), height(0), reserved1(0), flag(0),
-						  vidMode(0), vidPtr(0), reserved2(0) {}
-	};
-
 	struct FontDesc {
 		char *dataPtr;
 		int8 itemWidth;
@@ -90,42 +94,56 @@ public:
 		PalDesc() : vgaPal(0), unused1(0), unused2(0) {}
 	};
 
+	bool _doRangeClamp;
 	int16 _surfWidth;
 	int16 _surfHeight;
 	int16 _scrollOffsetX;
 	int16 _scrollOffsetY;
 
+	void freeDriver();
+	void initPrimary(int16 mode);
+	SurfaceDesc *initSurfDesc(int16 vidMode, int16 width,
+			int16 height, int16 flags);
+	void waitRetrace(bool mouse = true);
+
+	void putPixel(int16 x, int16 y, int16 color, SurfaceDesc *dest);
+	void fillRect(SurfaceDesc *dest, int16 left, int16 top,
+			int16 right, int16 bottom, int16 color);
+	void drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1,
+				  int16 color);
+	void drawCircle(SurfaceDesc *dest, int16 x0, int16 y0,
+			int16 radius, int16 color);
+	void clearSurf(SurfaceDesc *dest);
+	void drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
+			int16 left, int16 top, int16 right, int16 bottom,
+			int16 x, int16 y, int16 transp);
+	void drawLetter(int16 item, int16 x, int16 y, FontDesc *fontDesc,
+			int16 color1, int16 color2, int16 transp, SurfaceDesc *dest);
+	void drawPackedSprite(byte *sprBuf, int16 width, int16 height,
+			int16 x, int16 y, int16 transp, SurfaceDesc *dest);
+	void drawPackedSprite(const char *path, SurfaceDesc *dest,
+			int width = 320);
+
+	void setPalColor(byte *pal, byte red, byte green, byte blue) {
+		pal[0] = red << 2;
+		pal[1] = green << 2;
+		pal[2] = blue << 2;
+		pal[3] = 0;
+	}
+	void setPalColor(byte *pal, Color &color) {
+		setPalColor(pal, color.red, color.green, color.blue);
+	}
+	void setPalElem(int16 index, char red, char green, char blue,
+			int16 unused, int16 vidMode);
+	void setPalette(PalDesc *palDesc);
+	void setFullPalette(PalDesc *palDesc);
+
+	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth,
+			int16 srcHeight, int16 x, int16 y, int16 transp,
+			SurfaceDesc *destDesc) = 0;
+
 	Video(class GobEngine *vm);
 	virtual ~Video() {};
-	int32 getRectSize(int16 width, int16 height, int16 flag, int16 mode);
-	void freeSurfDesc(SurfaceDesc * surfDesc);
-	int16 clampValue(int16 val, int16 max);
-	void drawSprite(SurfaceDesc * source, SurfaceDesc * dest, int16 left,
-					int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
-	void fillRect(SurfaceDesc * dest, int16 left, int16 top, int16 right, int16 bottom,
-				  int16 color);
-	void drawLine(SurfaceDesc * dest, int16 x0, int16 y0, int16 x1, int16 y1,
-				  int16 color);
-	void putPixel(int16 x, int16 y, int16 color, SurfaceDesc * dest);
-	void drawCircle(Video::SurfaceDesc *dest, int16 x, int16 y, int16 radius, int16 color);
-	void clearSurf(SurfaceDesc * dest);
-	void drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y,
-						  int16 transp, SurfaceDesc * dest);
-	void drawPackedSprite(const char *path, SurfaceDesc * dest, int width = 320);
-	void setPalElem(int16 index, char red, char green, char blue, int16 unused,
-					int16 vidMode);
-	void setPalette(PalDesc * palDesc);
-	void setFullPalette(PalDesc * palDesc);
-	void initPrimary(int16 mode);
-	void freeDriver(void);
-	void setHandlers();
-
-	virtual void drawLetter(int16 item, int16 x, int16 y, FontDesc * fontDesc,
-			int16 color1, int16 color2, int16 transp, SurfaceDesc * dest) = 0;
-	virtual SurfaceDesc *initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags) = 0;
-	virtual void waitRetrace(int16, bool mouse = true) = 0;
-	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-			int16 x, int16 y, int16 transp, SurfaceDesc * destDesc) = 0;
 
 protected:
 	class VideoDriver *_videoDriver;
@@ -136,12 +154,8 @@ protected:
 
 class Video_v1 : public Video {
 public:
-	virtual void drawLetter(int16 item, int16 x, int16 y, FontDesc * fontDesc,
-			int16 color1, int16 color2, int16 transp, SurfaceDesc * dest);
-	virtual SurfaceDesc *initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags);
-	virtual void waitRetrace(int16, bool mouse = true);
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-			int16 x, int16 y, int16 transp, SurfaceDesc * destDesc);
+			int16 x, int16 y, int16 transp, SurfaceDesc *destDesc);
 
 	Video_v1(GobEngine *vm);
 	virtual ~Video_v1() {};
@@ -149,12 +163,8 @@ public:
 
 class Video_v2 : public Video_v1 {
 public:
-	virtual void drawLetter(int16 item, int16 x, int16 y, FontDesc * fontDesc,
-			int16 color1, int16 color2, int16 transp, SurfaceDesc * dest);
-	virtual SurfaceDesc *initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags);
-	virtual void waitRetrace(int16, bool mouse = true);
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-			int16 x, int16 y, int16 transp, SurfaceDesc * destDesc);
+			int16 x, int16 y, int16 transp, SurfaceDesc *destDesc);
 
 	Video_v2(GobEngine *vm);
 	virtual ~Video_v2() {};
@@ -164,14 +174,14 @@ class VideoDriver {
 public:
 	VideoDriver() {}
 	virtual ~VideoDriver() {}
-	virtual void drawSprite(Video::SurfaceDesc *source, Video::SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) = 0;
-	virtual void fillRect(Video::SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, byte color) = 0;
-	virtual void putPixel(int16 x, int16 y, byte color, Video::SurfaceDesc *dest) = 0;
-	virtual void drawLetter(unsigned char item, int16 x, int16 y, Video::FontDesc *fontDesc, byte color1, byte color2, byte transp, Video::SurfaceDesc *dest) = 0;
-	virtual void drawLine(Video::SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1, byte color) = 0;
-	virtual void drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, Video::SurfaceDesc *dest) = 0;
+	virtual void drawSprite(SurfaceDesc *source, SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) = 0;
+	virtual void fillRect(SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, byte color) = 0;
+	virtual void putPixel(int16 x, int16 y, byte color, SurfaceDesc *dest) = 0;
+	virtual void drawLetter(unsigned char item, int16 x, int16 y, Video::FontDesc *fontDesc, byte color1, byte color2, byte transp, SurfaceDesc *dest) = 0;
+	virtual void drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1, byte color) = 0;
+	virtual void drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, SurfaceDesc *dest) = 0;
 };
 
-}				// End of namespace Gob
+} // End of namespace Gob
 
-#endif
+#endif // GOB_VIDEO_H

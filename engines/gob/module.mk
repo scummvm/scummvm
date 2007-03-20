@@ -1,7 +1,6 @@
 MODULE := engines/gob
 
 MODULE_OBJS := \
-	anim.o \
 	cdrom.o \
 	dataio.o \
 	detection.o \
@@ -18,6 +17,7 @@ MODULE_OBJS := \
 	goblin.o \
 	goblin_v1.o \
 	goblin_v2.o \
+	imd.o \
 	init.o \
 	init_v1.o \
 	init_v2.o \
@@ -32,7 +32,6 @@ MODULE_OBJS := \
 	mult_v1.o \
 	mult_v2.o \
 	music.o \
-	pack.o \
 	palanim.o \
 	parse.o \
 	parse_v1.o \
@@ -41,7 +40,6 @@ MODULE_OBJS := \
 	scenery_v1.o \
 	scenery_v2.o \
 	sound.o \
-	timer.o \
 	util.o \
 	video.o \
 	video_v1.o \

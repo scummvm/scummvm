@@ -27,39 +27,32 @@
 #include "gob/gob.h"
 #include "gob/init.h"
 #include "gob/global.h"
-#include "gob/timer.h"
-#include "gob/video.h"
 #include "gob/draw.h"
+#include "gob/video.h"
 
 namespace Gob {
 
 Init_v2::Init_v2(GobEngine *vm) : Init_v1(vm) {
 }
 
-void Init_v2::soundVideo(int32 smallHeap, int16 flag) {
-	if (_vm->_global->_videoMode != 0x13 && _vm->_global->_videoMode != 0x14 &&
-			_vm->_global->_videoMode != 0)
-		error("soundVideo: Video mode 0x%x is not supported!",
-		    _vm->_global->_videoMode);
+void Init_v2::initVideo() {
+	if (_vm->_global->_videoMode)
+		_vm->validateVideoMode(_vm->_global->_videoMode);
 
-	_vm->_draw->_frontSurface = &_vm->_global->_primarySurfDesc;
-	_vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_video->_surfWidth,
-			_vm->_video->_surfHeight, 0x80);
+	_vm->_draw->_frontSurface = _vm->_global->_primarySurfDesc;
+	_vm->_video->initSurfDesc(_vm->_global->_videoMode,
+			_vm->_video->_surfWidth, _vm->_video->_surfHeight, 0x80);
 
 	_vm->_global->_mousePresent = 1;
 
 	_vm->_global->_inVM = 0;
 
-	_vm->_global->_sprAllocated = 0;
-	_vm->_gtimer->enableTimer();
-
-	if ((_vm->_platform == Common::kPlatformPC) || (_vm->_platform == Common::kPlatformMacintosh)) {
-		if ((_vm->_global->_videoMode == 0x13) || (_vm->_global->_videoMode == 0x14))
-			_vm->_global->_colorCount = 256;
-		else
-			_vm->_global->_colorCount = 16;
-	} else
-		_vm->_global->_colorCount = 16;
+	_vm->_global->_colorCount = 16;
+	if (((_vm->_platform == Common::kPlatformPC) ||
+	     (_vm->_platform == Common::kPlatformMacintosh)) &&
+	    ((_vm->_global->_videoMode == 0x13) ||
+	     (_vm->_global->_videoMode == 0x14)))
+		_vm->_global->_colorCount = 256;
 
 	_vm->_global->_pPaletteDesc = &_vm->_global->_paletteStruct;
 	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
