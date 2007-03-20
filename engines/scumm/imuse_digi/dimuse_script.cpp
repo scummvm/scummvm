@@ -165,11 +165,13 @@ void IMuseDigital::flushTracks() {
 	debug(5, "flushTracks()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && (track->readyToRemove)) {
+		if (track->used && track->readyToRemove) {
 			if (track->stream) {
-				if (!track->stream->endOfStream()) {
-	 				track->stream->finish();
-	 			}
+				// Finalize the appendable stream
+ 				track->stream->finish();
+ 				// There might still be some data left in the buffers of the
+ 				// appendable stream. We play it nice and wait till all of it
+ 				// played.
 				if (track->stream->endOfStream()) {
 					_mixer->stopHandle(track->handle);
 					delete track->stream;
@@ -378,24 +380,30 @@ int32 IMuseDigital::getCurMusicLipSyncHeight(int syncId) {
 }
 
 void IMuseDigital::stopAllSounds() {
-	debug(5, "IMuseDigital::stopAllSounds");
+	Common::StackLock lock(_mutex, "IMuseDigital::stopAllSounds()");
+	debug(0, "IMuseDigital::stopAllSounds");
 
-	for (;;) {
-		bool foundNotRemoved = false;
-		for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
-			Track *track = _track[l];
-			if (track->used) {
-				track->toBeRemoved = true;
-				foundNotRemoved = true;
+	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
+		Track *track = _track[l];
+		if (track->used) {
+			// Stop the sound output, *now*. No need to use toBeRemoved etc.
+			// as we are protected by a mutex, and this method is never called
+			// from IMuseDigital::callback either.
+			if (track->stream) {
+				_mixer->stopHandle(track->handle);
+				delete track->stream;
+				track->stream = NULL;
+				_sound->closeSound(track->soundHandle);
+				track->soundHandle = NULL;
+			} else if (track->stream2) {
+				_mixer->stopHandle(track->handle);
+				delete track->stream2;
+				track->stream2 = NULL;
 			}
+			
+			// Mark the track as unused
+			track->used = false;
 		}
-		if (!foundNotRemoved)
-			break;
-		flushTracks();
-		_vm->_system->delayMillis(50);
-#if defined(_WIN32_WCE) || defined (PALMOS_MODE) || defined(__SYMBIAN32__)
-		_vm->parseEvents(); // timers are events, we need to consume them
-#endif
 	}
 }
 

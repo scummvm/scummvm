@@ -67,8 +67,8 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, int fps)
 }
 
 IMuseDigital::~IMuseDigital() {
-	stopAllSounds();
 	_vm->_timer->removeTimerProc(timer_handler);
+	stopAllSounds();
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		delete _track[l];
 	}
