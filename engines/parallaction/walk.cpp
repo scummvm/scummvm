@@ -41,11 +41,71 @@ static Zone *_zoneTrap = NULL;
 
 static uint16	walkData1 = 0;
 static uint16	walkData2 = 0; 	// next walk frame
+#if 0
 static int16	walkData3 = -1000; 	// unused
-
+#endif
 
 int32 dotProduct(const Common::Point &p1, const Common::Point &p2) {
 	return p1.x * p2.x + p1.y * p2.y;
+}
+
+// adjusts position towards nearest walkable point
+//
+void correctPathPoint(Common::Point &to) {
+
+	if (queryPath(to.x, to.y)) return;
+
+	int16 right = to.x;
+	int16 left = to.x;
+	do {
+		right++;
+	} while ((queryPath(right, to.y) == 0) && (right < SCREEN_WIDTH));
+	do {
+		left--;
+	} while ((queryPath(left, to.y) == 0) && (left > 0));
+	right = (right == SCREEN_WIDTH) ? 1000 : right - to.x;
+	left = (left == 0) ? 1000 : to.x - left;
+
+
+	int16 top = to.y;
+	int16 bottom = to.y;
+	do {
+		top--;
+	} while ((queryPath(to.x, top) == 0) && (top > 0));
+	do {
+		bottom++;
+	} while ((queryPath(to.x, bottom) == 0) && (bottom < SCREEN_HEIGHT));
+	top = (top == 0) ? 1000 : to.y - top;
+	bottom = (bottom == SCREEN_HEIGHT) ? 1000 : bottom - to.y;
+
+
+	int16 closeX = (right >= left) ? left : right;
+	int16 closeY = (top >= bottom) ? bottom : top;
+	int16 close = (closeX >= closeY) ? closeY : closeX;
+	if (close == right) {
+		to.x += right;
+#if 0
+		walkData3 = (_vm->_char._ani.getFrameNum() == 20) ? 7 : 9;
+#endif
+	} else
+	if (close == left) {
+		to.x -= left;
+#if 0
+		walkData3 = 0;
+#endif
+	} else
+	if (close == top) {
+		to.y -= top;
+	} else
+	if (close == bottom) {
+		to.y += bottom;
+#if 0
+		walkData3 = (_vm->_char._ani.getFrameNum() == 20) ? 17 : 21;
+#endif
+	}
+
+	return;
+
 }
 
 //
@@ -55,60 +115,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	debugC(1, kDebugWalk, "buildWalkPath to (%i, %i)", x, y);
 
 	Common::Point to(x, y);
-
-	int16 left, bottom, right, top, close, closeY, closeX;
-
-	// looks for closest usable path Point
-	if (queryPath(to.x, to.y) == 0) {
-
-		right = left = to.x;
-
-		do {
-			right++;
-		} while ((queryPath(right, to.y) == 0) && (right < SCREEN_WIDTH));
-
-		do {
-			left--;
-		} while ((queryPath(left, to.y) == 0) && (left > 0));
-
-		right = (right == SCREEN_WIDTH) ? 1000 : right - to.x;
-		left = (left == 0) ? 1000 : to.x - left;
-
-		top = bottom = to.y;
-
-		do {
-			top--;
-		} while ((queryPath(to.x, top) == 0) && (top > 0));
-
-		do {
-			bottom++;
-		} while ((queryPath(to.x, bottom) == 0) && (bottom < SCREEN_HEIGHT));
-
-		top = (top == 0) ? 1000 : to.y - top;
-		bottom = (bottom == SCREEN_HEIGHT) ? 1000 : bottom - to.y;
-
-		closeX = (right >= left) ? left : right;
-		closeY = (top >= bottom) ? bottom : top;
-
-		close = (closeX >= closeY) ? closeY : closeX;
-
-		if (close == right) {
-			to.x += right;
-			walkData3 = (_vm->_char._ani.getFrameNum() == 20) ? 7 : 9;
-		} else
-		if (close == left) {
-			to.x -= left;
-			walkData3 = 0;
-		} else
-		if (close == top) {
-			to.y -= top;
-		} else
-		if (close == bottom) {
-			to.y += bottom;
-			walkData3 = (_vm->_char._ani.getFrameNum() == 20) ? 17 : 21;
-		}
-
-	}
+	correctPathPoint(to);
 	debugC(1, kDebugWalk, "found closest path point at (%i, %i)", to.x, to.y);
 
 	WalkNode *v48 = new WalkNode(to.x - _vm->_char._ani.width() / 2, to.y - _vm->_char._ani.height());
@@ -225,8 +232,8 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 //	x,y : top left coordinates
 //
 //	0 : Point not reachable
-//	1 : Point reachable
-//	other values: square distance to target (not reachable)
+//	1 : Point reachable in a straight line
+//	other values: square distance to target (point not reachable in a straight line)
 //
 uint16 walkFunc1(int16 x, int16 y, WalkNode *Node) {
 
@@ -281,40 +288,30 @@ uint16 walkFunc1(int16 x, int16 y, WalkNode *Node) {
 	return 1;
 }
 
+void clipMove(Common::Point& pos, const WalkNode* from) {
 
-void jobWalk(void *parm, Job *j) {
-	WalkNode *node = (WalkNode*)parm;
-
-	int16 _si = _vm->_char._ani._left;
-	int16 _di = _vm->_char._ani._top;
-
-//	debugC(1, kDebugWalk, "jobWalk to (%i, %i)", node->_x + _vm->_char._ani.width() / 2, node->_y + _vm->_char._ani.height());
-
-	_vm->_char._ani._oldLeft = _si;
-	_vm->_char._ani._oldTop = _di;
-
-	if ((node->_x == _si) && (node->_y == _di)) {
-		if (node->_next == NULL) {
-
-			debugC(1, kDebugWalk, "jobWalk reached last node");
-
-			j->_finished = 1;
-			checkDoor();
-			free(node);
-			return;
-		}
-
-
-		WalkNode *tmp = (WalkNode*)node->_next;
-		j->_parm = node->_next;
-		free(node);
-
-		debugC(1, kDebugWalk, "jobWalk moving to next node (%i, %i)", tmp->_x, tmp->_y);
-
-		node = (WalkNode*)tmp;
+	if ((pos.x < from->_x) && (pos.x < SCREEN_WIDTH) && (queryPath(_vm->_char._ani.width()/2 + pos.x + 2, _vm->_char._ani.height() + pos.y) != 0)) {
+		pos.x = (pos.x + 2 < from->_x) ? pos.x + 2 : from->_x;
 	}
 
-	Common::Point dist(node->_x - _vm->_char._ani._left, node->_y - _vm->_char._ani._top);
+	if ((pos.x > from->_x) && (pos.x > -20) && (queryPath(_vm->_char._ani.width()/2 + pos.x - 2, _vm->_char._ani.height() + pos.y) != 0)) {
+		pos.x = (pos.x - 2 > from->_x) ? pos.x - 2 : from->_x;
+	}
+
+	if ((pos.y < from->_y) && (pos.y < (SCREEN_HEIGHT - _vm->_char._ani.height())) && (queryPath(_vm->_char._ani.width()/2 + pos.x, _vm->_char._ani.height() + pos.y + 2) != 0)) {
+		pos.y = (pos.y + 2 <= from->_y) ? pos.y + 2 : from->_y;
+	}
+
+	if ((pos.y > from->_y) && (pos.y > -20) && (queryPath(_vm->_char._ani.width()/2 + pos.x, _vm->_char._ani.height() + pos.y- 2) != 0)) {
+		pos.y = (pos.y - 2 >= from->_y) ? pos.y - 2 :from->_y;
+	}
+
+	return;
+}
+
+int16 selectWalkFrame(const Common::Point& pos, const WalkNode* from) {
+
+	Common::Point dist(from->_x - pos.x, from->_y - pos.y);
 
 	if (dist.x < 0)
 		dist.x = -dist.x;
@@ -328,11 +325,11 @@ void jobWalk(void *parm, Job *j) {
 	if (_vm->_char._ani.getFrameNum() == 20) {
 
 		if (dist.x > dist.y) {
-			walkData2 = (node->_x > _si) ? 0 : 7;
+			walkData2 = (from->_x > pos.x) ? 0 : 7;
 			walkData1 %= 12;
 			v16 = walkData1 / 2;
 		} else {
-			walkData2 = (node->_y > _di) ? 14 : 17;
+			walkData2 = (from->_y > pos.y) ? 14 : 17;
 			walkData1 %= 8;
 			v16 = walkData1 / 4;
 		}
@@ -340,57 +337,69 @@ void jobWalk(void *parm, Job *j) {
 	} else {
 
 		if (dist.x > dist.y) {
-			walkData2 = (node->_x > _si) ? 0 : 9;
+			walkData2 = (from->_x > pos.x) ? 0 : 9;
 			walkData1 %= 16;
 			v16 = walkData1 / 2;
 		} else {
-			walkData2 = (node->_y > _di) ? 18 : 21;
+			walkData2 = (from->_y > pos.y) ? 18 : 21;
 			walkData1 %= 8;
 			v16 = walkData1 / 4;
 		}
 
 	}
 
-//	StaticCnv v14;
-//	v14._width = _vm->_char._ani.width();
-//	v14._height = _vm->_char._ani.height();
-//	v14._data0 = _vm->_char._ani._cnv._array[_vm->_char._ani._frame];
-//	v14._data1 = _vm->_char._ani._cnv.field_8[_vm->_char._ani._frame];
+	return v16;
+}
 
-	if ((_si < node->_x) && (_si < SCREEN_WIDTH) && (queryPath(_vm->_char._ani.width()/2 + _si + 2, _vm->_char._ani.height() + _di) != 0)) {
-//		printf("walk right\n");
-		_si = (_si + 2 < node->_x) ? _si + 2 : node->_x;
+WalkNode* getNextPathNode(const Common::Point& pos, WalkNode* curNode) {
+
+	if ((curNode->_x == pos.x) && (curNode->_y == pos.y)) {
+
+		if (curNode->_next == NULL) return NULL;
+
+		WalkNode *tmp = curNode;
+		curNode = (WalkNode*)curNode->_next;
+		free(tmp);
+
+		debugC(1, kDebugWalk, "jobWalk moving to next node (%i, %i)", tmp->_x, tmp->_y);
 	}
 
-	if ((_si > node->_x) && (_si > -20) && (queryPath(_vm->_char._ani.width()/2 + _si - 2, _vm->_char._ani.height() + _di) != 0)) {
-//		printf("walk left\n");
-		_si = (_si - 2 > node->_x) ? _si - 2 :node->_x;
+	return curNode;
+
+}
+
+void jobWalk(void *parm, Job *j) {
+	WalkNode *node = (WalkNode*)parm;
+
+	Common::Point pos(_vm->_char._ani._left, _vm->_char._ani._top);
+
+	_vm->_char._ani._oldLeft = pos.x;
+	_vm->_char._ani._oldTop = pos.y;
+
+	node = getNextPathNode(pos, node);
+	if (node == NULL) {
+		debugC(1, kDebugWalk, "jobWalk reached last node");
+		j->_finished = 1;
+		checkDoor();
+		free(node);
+		return;
 	}
+	j->_parm = node;
 
-	if ((_di < node->_y) && (_di < (SCREEN_HEIGHT - _vm->_char._ani.height())) && (queryPath(_vm->_char._ani.width()/2 + _si, _vm->_char._ani.height() + _di + 2) != 0)) {
-//		printf("walk down\n");
-		_di = (_di + 2 <= node->_y) ? _di + 2 : node->_y;
-	}
+	// selectWalkFrame must be performed before position is changed by clipMove
+	int16 v16 = selectWalkFrame(pos, node);
 
-	if ((_di > node->_y) && (_di > -20) && (queryPath(_vm->_char._ani.width()/2 + _si, _vm->_char._ani.height() + _di - 2) != 0)) {
-//		printf("walk up\n");
-		_di = (_di - 2 >= node->_y) ? _di - 2 : node->_y;
-	}
+	clipMove(pos, node);
 
-//	printf("hitZone: %i, %i\n", _si, _di);
-	_vm->_char._ani._left = _si;
-	_vm->_char._ani._top = _di;
+	_vm->_char._ani._left = pos.x;
+	_vm->_char._ani._top = pos.y;
 
-	if ((_si == _vm->_char._ani._oldLeft) && (_di == _vm->_char._ani._oldTop)) {
-
+	if ((pos.x == _vm->_char._ani._oldLeft) && (pos.y == _vm->_char._ani._oldTop)) {
 		j->_finished = 1;
 		checkDoor();
 		freeNodeList(node);
-
 	} else {
-
 		_vm->_char._ani._frame = v16 + walkData2 + 1;
-
 	}
 
 	return;
@@ -463,5 +472,6 @@ void initWalk() {
 }
 
 } // namespace Parallaction
+
 
 
