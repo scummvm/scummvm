@@ -45,7 +45,7 @@ int IMuseDigital::allocSlot(int priority) {
 	}
 
 	if (trackId == -1) {
-		debug(5, "IMuseDigital::startSound(): All slots are full");
+		debug(5, "IMuseDigital::allocSlot(): All slots are full");
 		for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			Track *track = _track[l];
 			if (track->used && !track->toBeRemoved &&
@@ -57,9 +57,9 @@ int IMuseDigital::allocSlot(int priority) {
 		if (lowest_priority <= priority) {
 			assert(trackId != -1);
 			_track[trackId]->toBeRemoved = true;
-			debug(5, "IMuseDigital::startSound(): Removed sound %d from track %d", _track[trackId]->soundId, trackId);
+			debug(5, "IMuseDigital::allocSlot(): Removed sound %d from track %d", _track[trackId]->soundId, trackId);
 		} else {
-			debug(5, "IMuseDigital::startSound(): Priority sound too low");
+			debug(5, "IMuseDigital::allocSlot(): Priority sound too low");
 			return -1;
 		}
 	}
