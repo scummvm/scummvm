@@ -107,6 +107,7 @@ SOURCEPATH ..\..\..\..\sound
 //STOP_AUTO_OBJECTS_SOUND_//
 
 sourcepath ..\..\..\..
+source	   backends\events\default\default-events.cpp
 source	   backends\timer\default\default-timer.cpp
 source	   backends\saves\savefile.cpp
 source	   backends\saves\default\default-saves.cpp
