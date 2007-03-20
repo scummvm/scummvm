@@ -114,6 +114,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		track->iteration = 0;
 		track->souStream = true;
 		track->soundName[0] = 0;
+		track->soundHandle = NULL;
 	} else {
 		track->souStream = false;
 		strcpy(track->soundName, soundName);
@@ -323,6 +324,8 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(const Track *track, int f
 	memcpy(fadeTrack, track, sizeof(Track));
 
 	// Clone the soundhandle
+	// FIXME: Shouldn't we check here whether track->soundHandle is NULL, resp. whether stream2
+	// is being used (as in, we are using compressed data)...
 	fadeTrack->soundHandle = _sound->cloneSound(track->soundHandle);
 	assert(fadeTrack->soundHandle);
 
