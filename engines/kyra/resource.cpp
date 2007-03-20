@@ -51,9 +51,8 @@ Resource::Resource(KyraEngine *engine) {
 			return;
 
 		// only VRM file we need in the *whole* game for kyra1
-		if (_engine->gameFlags().isTalkie) {
+		if (_engine->gameFlags().isTalkie)
 			loadPakFile("CHAPTER1.VRM");
-		}
 	} else if (_engine->game() == GI_KYRA3) {
 		// load the installation package file for kyra3
 		INSFile *insFile = new INSFile("WESTWOOD.001");
@@ -66,9 +65,8 @@ Resource::Resource(KyraEngine *engine) {
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
 
-	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
+	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly))
 		error("invalid game path '%s'", dir.path().c_str());
-	}
 
 	if (_engine->game() == GI_KYRA1 && _engine->gameFlags().isTalkie) {
 		static const char *list[] = {
@@ -125,6 +123,7 @@ Resource::~Resource() {
 bool Resource::loadPakFile(const Common::String &filename, const bool forcePC) {
 	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
 	uint hash = Common::hashit_lower(filename.c_str());
+
 	for (;start != _pakfiles.end(); ++start) {
 		if ((*start)->filename() == hash) {
 			(*start)->open();
@@ -140,13 +139,12 @@ bool Resource::loadPakFile(const Common::String &filename, const bool forcePC) {
 		return false;
 	}
 
-	PAKFile *file = 0;
-
-	file = new PAKFile(filename.c_str(), handle.name(), handle, (_engine->gameFlags().platform == Common::kPlatformAmiga) && !forcePC);
+	PAKFile *file = new PAKFile(filename.c_str(), handle.name(), handle, (_engine->gameFlags().platform == Common::kPlatformAmiga) && !forcePC);
 	handle.close();
 
 	if (!file)
 		return false;
+
 	if (!file->isValid()) {
 		warning("'%s' is no valid pak file", filename.c_str());
 		delete file;
@@ -239,9 +237,8 @@ bool Resource::getFileHandle(const char *file, uint32 *size, Common::File &fileh
 		if (!(*size))
 			continue;
 
-		if ((*start)->getFileHandle(fileHash, filehandle)) {
+		if ((*start)->getFileHandle(fileHash, filehandle))
 			return true;
-		}
 	}
 	
 	return false;
@@ -271,6 +268,7 @@ uint32 Resource::getFileSize(const char *file) {
 bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 	Common::File tempHandle;
 	uint32 size = 0;
+
 	if (!getFileHandle(file, &size, tempHandle))
 		return false;
 
@@ -287,8 +285,6 @@ bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 // Pak file manager
 #define PAKFile_Iterate Common::List<PakChunk>::iterator start=_files.begin();start != _files.end(); ++start
 PAKFile::PAKFile(const char *file, const char *physfile, Common::File &pakfile, bool isAmiga) : ResourceFile() {
-	_isAmiga = isAmiga;
-
 	_open = false;
 
 	if (!pakfile.isOpen()) {
@@ -299,14 +295,18 @@ PAKFile::PAKFile(const char *file, const char *physfile, Common::File &pakfile, 
 	uint32 off = pakfile.pos();
 	uint32 filesize = pakfile.size();
 
-	// works with the file
 	uint32 pos = 0, startoffset = 0, endoffset = 0;
 
-	if (!_isAmiga) {
+	if (!isAmiga)
 		startoffset = pakfile.readUint32LE();
-	} else {
+	else
 		startoffset = pakfile.readUint32BE();
+
+	if (startoffset > filesize) {
+		warning("PAK file '%s' is corrupted", file);
+		return;
 	}
+
 	pos += 4;
 
 	while (pos < filesize) {
@@ -318,7 +318,10 @@ PAKFile::PAKFile(const char *file, const char *physfile, Common::File &pakfile, 
 		pakfile.seek(pos);
 		
 		// Read in the header
-		pakfile.read(&buffer, 64);
+		if (pakfile.read(&buffer, 64) < 5) {
+			warning("PAK file '%s' is corrupted", file);
+			return;
+		}
 		
 		// Quit now if we encounter an empty string
 		if (!(*((const char*)buffer)))
@@ -327,20 +330,29 @@ PAKFile::PAKFile(const char *file, const char *physfile, Common::File &pakfile, 
 		chunk._name = Common::hashit_lower((const char*)buffer);
 		nameLength = strlen((const char*)buffer) + 1; 
 
-		if (!_isAmiga) {
+		if (nameLength > 60) {
+			warning("PAK file '%s' is corrupted", file);
+			return;
+		}
+
+		if (!isAmiga)
 			endoffset = READ_LE_UINT32(buffer + nameLength);
-		} else {
+		else
 			endoffset = READ_BE_UINT32(buffer + nameLength);
-		}
 
-		if (endoffset == 0) {
+		if (!endoffset) {
 			endoffset = filesize;
+		} else if (endoffset > filesize || startoffset > endoffset) {
+			warning("PAK file '%s' is corrupted", file);
+			return;
 		}
 
-		chunk._start = startoffset;
-		chunk._size = endoffset - startoffset;
+		if (startoffset != endoffset) {
+			chunk._start = startoffset;
+			chunk._size = endoffset - startoffset;
 
-		_files.push_back(chunk);
+			_files.push_back(chunk);
+		}
 
 		if (endoffset == filesize)
 			break;
@@ -369,6 +381,7 @@ uint8 *PAKFile::getFile(uint hash) {
 			Common::File pakfile;
 			if (!openFile(pakfile))
 				return false;
+
 			pakfile.seek(start->_start, SEEK_CUR);
 			uint8 *buffer = new uint8[start->_size];
 			assert(buffer);
@@ -386,6 +399,7 @@ bool PAKFile::getFileHandle(uint hash, Common::File &filehandle) {
 		if (start->_name == hash) {
 			if (!openFile(filehandle))
 				return false;
+
 			filehandle.seek(start->_start, SEEK_CUR);
 			return true;
 		}
@@ -404,9 +418,8 @@ uint32 PAKFile::getFileSize(uint hash) {
 bool PAKFile::openFile(Common::File &filehandle) {
 	filehandle.close();
 
-	if (!filehandle.open(_physfile)) {
+	if (!filehandle.open(_physfile))
 		return false;
-	}
 
 	filehandle.seek(_physOffset, SEEK_CUR);
 	return true;
@@ -481,9 +494,9 @@ uint8 *INSFile::getFile(uint hash) {
 	for (INSFile_Iterate) {
 		if (start->_name == hash) {
 			Common::File pakfile;
-			if (!pakfile.open(_physfile)) {
+			if (!pakfile.open(_physfile))
 				return false;
-			}
+
 			pakfile.seek(start->_start);
 			uint8 *buffer = new uint8[start->_size];
 			assert(buffer);
@@ -497,9 +510,9 @@ uint8 *INSFile::getFile(uint hash) {
 bool INSFile::getFileHandle(uint hash, Common::File &filehandle) {
 	for (INSFile_Iterate) {
 		if (start->_name == hash) {
-			if (!filehandle.open(_physfile)) {
+			if (!filehandle.open(_physfile)) 
 				return false;
-			}
+
 			filehandle.seek(start->_start, SEEK_CUR);
 			return true;
 		}

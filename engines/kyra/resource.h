@@ -74,8 +74,6 @@ public:
 private:
 	bool openFile(Common::File &filehandle);
 
-	bool _isAmiga;
-
 	Common::String _physfile;
 	uint32 _physOffset;
 
