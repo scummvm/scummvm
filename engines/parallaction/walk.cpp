@@ -134,25 +134,27 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 	WalkNode	v58;
 
-	int16 _si = v48->_x;						// _si, _di: target top left coordinates
-	int16 _di = v48->_y;
+	Common::Point stop(v48->_x, v48->_y);
 	addNode(&v58, v48);
 
 	WalkNode *_closest_node = NULL;
 
 	int32 v30, v34, v2C, v28;
 
+	Common::Point pos(_vm->_char._ani._left, _vm->_char._ani._top);
+
 	byte _closest_node_found = 1;
 	bool emptyList = true;
+
+	Common::Point v8;
 
 	do {
 
 		v48 = &v58;
 
-		Common::Point v20(_vm->_char._ani._left, _vm->_char._ani._top);
-		Common::Point v8(_si - _vm->_char._ani._left, _di - _vm->_char._ani._top);
+		Common::Point v20(pos);
 
-		v34 = v30 = dotProduct(v8, v8);				// square distance from current position and target
+		v34 = v30 = pos.sqrDist(stop);				// square distance from current position and target
 
 		while (_closest_node_found != 0) {
 
@@ -163,13 +165,10 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 			// which can't be farther than the target position
 			// otherwise no _closest_node is selected
 			while (location_node != NULL) {
-				v8.x = location_node->_x - _si;
-				v8.y = location_node->_y - _di;
-				v2C = dotProduct(v8, v8); 			// square distance from Node to target position
 
-				v8.x = location_node->_x - v20.x;
-				v8.y = location_node->_y - v20.y;
-				v28 = dotProduct(v8, v8); 			// square distance from Node to current position
+				location_node->getPoint(v8);
+				v2C = v8.sqrDist(stop);
+				v28 = v8.sqrDist(v20);
 
 				if (v2C < v34 && v28 < v30) {
 					_closest_node_found = 1;
@@ -185,10 +184,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 			WalkNode *_newnode = new WalkNode(*_closest_node);
 			_newnode->getPoint(v20);
 
-			Common::Point tmp(_si - v20.x, _di - v20.y);
-
-			v34 = v30 = dotProduct(tmp, tmp);
-
+			v34 = v30 = v20.sqrDist(stop);
 
 			debugC(1, kDebugWalk, "adding walk node (%i, %i) to path", _newnode->_x, _newnode->_y);
 
@@ -204,8 +200,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 			debugC(1, kDebugWalk, "can't find a path node: rejecting partial path");
 			return v44;
 		} else {
-			_si = ((WalkNode*)(v58._next))->_x;
-			_di = ((WalkNode*)(v58._next))->_y;
+			((WalkNode*)(v58._next))->getPoint(stop);
 			emptyList = false;
 			_closest_node_found = 1;
 		}
@@ -373,8 +368,7 @@ void jobWalk(void *parm, Job *j) {
 
 	Common::Point pos(_vm->_char._ani._left, _vm->_char._ani._top);
 
-	_vm->_char._ani._oldLeft = pos.x;
-	_vm->_char._ani._oldTop = pos.y;
+	_vm->_char._ani._oldPos = pos;
 
 	node = getNextPathNode(pos, node);
 	if (node == NULL) {
@@ -394,7 +388,7 @@ void jobWalk(void *parm, Job *j) {
 	_vm->_char._ani._left = pos.x;
 	_vm->_char._ani._top = pos.y;
 
-	if ((pos.x == _vm->_char._ani._oldLeft) && (pos.y == _vm->_char._ani._oldTop)) {
+	if (pos == _vm->_char._ani._oldPos) {
 		j->_finished = 1;
 		checkDoor();
 		freeNodeList(node);

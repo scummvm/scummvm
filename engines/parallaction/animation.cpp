@@ -141,8 +141,8 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 		fillBuffers(script, true);
 	}
 
-	vD0->_oldLeft = -1000;
-	vD0->_oldTop = -1000;
+	vD0->_oldPos.x = -1000;
+	vD0->_oldPos.y = -1000;
 
 	vD0->_flags |= 0x1000000;
 
@@ -207,7 +207,7 @@ void jobDisplayAnimations(void *parm, Job *j) {
 
 		if (((v18->_flags & kFlagsActive) == 0) && (v18->_flags & kFlagsRemove))   {
 			v18->_flags &= ~kFlagsRemove;
-			v18->_oldLeft = -1000;
+			v18->_oldPos.x = -1000;
 		}
 
 		if ((v18->_flags & kFlagsActive) && (v18->_flags & kFlagsRemove))	{
@@ -233,12 +233,12 @@ void jobEraseAnimations(void *arg_0, Job *j) {
 		if (((a->_flags & kFlagsActive) == 0) && ((a->_flags & kFlagsRemove) == 0)) continue;
 
 		Common::Rect r(a->width(), a->height());
-		r.moveTo(a->_oldLeft, a->_oldTop);
+		r.moveTo(a->_oldPos);
 		_vm->_gfx->restoreBackground(r);
 
 		if (arg_0) {
-			a->_oldLeft = a->_left;
-			a->_oldTop = a->_top;
+			a->_oldPos.x = a->_left;
+			a->_oldPos.y = a->_top;
 		}
 
 	}

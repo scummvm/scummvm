@@ -385,8 +385,8 @@ void Parallaction::changeLocation(char *location) {
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 	debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", _saveData1);
 
-	_vm->_char._ani._oldLeft = -1000;
-	_vm->_char._ani._oldTop = -1000;
+	_vm->_char._ani._oldPos.x = -1000;
+	_vm->_char._ani._oldPos.y = -1000;
 
 	_vm->_char._ani.field_50 = 0;
 	if (_location._startPosition.x != -1000) {

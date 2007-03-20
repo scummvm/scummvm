@@ -260,8 +260,8 @@ struct Character {
 		_ani._left = 150;
 		_ani._top = 100;
 		_ani._z = 10;
-		_ani._oldLeft = -1000;
-		_ani._oldTop = -1000;
+		_ani._oldPos.x = -1000;
+		_ani._oldPos.y = -1000;
 		_ani._frame = 0;
 		_ani._flags = kFlagsActive | kFlagsNoName;
 		_ani._type = kZoneYou;

@@ -219,11 +219,11 @@ struct Zone : public Node {
 		_bottom += y;
 	}
 
-	uint16 width() const {
+	virtual uint16 width() const {
 		return _right - _left;
 	}
 
-	uint16 height() const {
+	virtual uint16 height() const {
 		return _bottom - _top;
 	}
 };
@@ -294,8 +294,8 @@ struct Program : public Node {
 
 
 struct Animation : public Zone  {
-	int16		_oldLeft;
-	int16		_oldTop;
+
+	Common::Point	_oldPos;
 	Program 	*_program;
 	Cnv 		*_cnv;
 	int16		_frame;
@@ -309,19 +309,18 @@ struct Animation : public Zone  {
 	uint16		field_5E;		// unused
 
 	Animation() {
-		_oldLeft = _oldTop = 0;
 		_cnv = NULL;
 		_program = NULL;
 		_frame = 0;
 		_z = 0;
 	}
 
-	uint16 width() const {
+	virtual uint16 width() const {
 		if (!_cnv) return 0;
 		return _cnv->_width;
 	}
 
-	uint16 height() const {
+	virtual uint16 height() const {
 		if (!_cnv) return 0;
 		return _cnv->_height;
 	}
