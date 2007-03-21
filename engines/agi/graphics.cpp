@@ -22,6 +22,7 @@
  *
  */
 
+#include "common/file.h"
 #include "common/stdafx.h"
 
 #include "graphics/cursorman.h"
@@ -373,6 +374,40 @@ void GfxMgr::gfxSetPalette() {
 		pal[i * 4 + 3] = 0;
 	}
 	g_system->setPalette(pal, 0, 32);
+}
+
+//Gets AGIPAL Data
+void GfxMgr::setAGIPal(int p0) {
+	//report("Using AGIPAL hack\n");
+	Common::File agipal;
+
+	char filename[15];
+	uint32 fileSize;
+	sprintf(filename, "pal.%d", p0);
+	agipal.open(filename);
+	fileSize = agipal.size();
+	byte *palData = (byte *)malloc(fileSize);
+	agipal.read(palData, fileSize);
+	agipal.close();
+
+	//Chunk0 holds colors 0-7
+	for (int i = 0; i < 8 * 3; i++)
+		_agipalPalette[i] = palData[i];
+	
+
+	//Chunk1 is the same as the chunk0
+	//Chunk2 chunk holds colors 8-15
+	int pos = 8 * 3;
+	for (int i = 24; i < 8 * 3 * 2; i++)
+		_agipalPalette[i] = palData[pos + i];
+
+	//Chunk3 is the same as the chunk2
+	//Chunks4-7 are duplicates of chunks0-3
+
+	initPalette(_agipalPalette);
+	gfxSetPalette();
+	free(palData);
+	palData = 0;
 }
 
 /* put a block onto the screen */

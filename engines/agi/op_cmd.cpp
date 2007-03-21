@@ -1231,7 +1231,7 @@ cmd(shake_screen) {
 	 * set the palette.
 	 */
 	if ((g_agi->getFeatures() & GF_AGIPAL) && p0 >= 100 && p0 < 110) {
-		report("not implemented: AGIPAL palettes\n");
+		g_gfx->setAGIPal(p0);
 		return;
 	} else
 		g_gfx->shakeStart();
