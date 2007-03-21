@@ -108,6 +108,53 @@ void correctPathPoint(Common::Point &to) {
 
 }
 
+uint32 buildSubPath(const Common::Point& pos, const Common::Point& stop, WalkNode* root) {
+
+	WalkNode *v48 = root;
+
+	uint32 v28 = 0;
+	uint32 v2C = 0;
+	uint32 v34 = pos.sqrDist(stop);				// square distance from current position and target
+	uint32 v30 = v34;
+
+	Common::Point v20(pos);
+
+	while (true) {
+
+		WalkNode *nearestNode = NULL;
+		WalkNode *locNode = (WalkNode*)_vm->_location._walkNodes._next;
+
+		// scans location path nodes searching for the nearest Node
+		// which can't be farther than the target position
+		// otherwise no _closest_node is selected
+		while (locNode != NULL) {
+
+			Common::Point v8;
+			locNode->getPoint(v8);
+			v2C = v8.sqrDist(stop);
+			v28 = v8.sqrDist(v20);
+
+			if (v2C < v34 && v28 < v30) {
+				v30 = v28;
+				nearestNode = locNode;
+			}
+
+			locNode = (WalkNode*)locNode->_next;
+		}
+
+		if (nearestNode == NULL) break;
+
+		nearestNode->getPoint(v20);
+		v34 = v30 = v20.sqrDist(stop);
+
+		addNode(v48, new WalkNode(*nearestNode));
+		v48 = (WalkNode*)v48->_next;
+	}
+
+	return v34;
+
+}
+
 //
 //	x, y: mouse click (foot) coordinates
 //
@@ -130,72 +177,26 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	}
 
 	// path is obstructed: find alternative
-	debugC(1, kDebugWalk, "trying to build walk path to (%i, %i)", to.x, to.y);
 
 	WalkNode	v58;
-
-	Common::Point stop(v48->_x, v48->_y);
 	addNode(&v58, v48);
 
-	WalkNode *_closest_node = NULL;
-
-	int32 v30, v34, v2C, v28;
-
+	Common::Point stop(v48->_x, v48->_y);
 	Common::Point pos(_vm->_char._ani._left, _vm->_char._ani._top);
 
 	bool emptyList = true;
-
-	Common::Point v8;
 
 	do {
 
 		v48 = &v58;
 
-		Common::Point v20(pos);
-
-		v34 = v30 = pos.sqrDist(stop);				// square distance from current position and target
-
-		while (true) {
-
-			_closest_node = NULL;
-			WalkNode *location_node = (WalkNode*)_vm->_location._walkNodes._next;
-
-			// scans location path nodes searching for the nearest Node
-			// which can't be farther than the target position
-			// otherwise no _closest_node is selected
-			while (location_node != NULL) {
-
-				location_node->getPoint(v8);
-				v2C = v8.sqrDist(stop);
-				v28 = v8.sqrDist(v20);
-
-				if (v2C < v34 && v28 < v30) {
-					v30 = v28;
-					_closest_node = location_node;
-				}
-
-				location_node = (WalkNode*)location_node->_next;
-			}
-
-			if (_closest_node == NULL) break;
-
-			WalkNode *_newnode = new WalkNode(*_closest_node);
-			_newnode->getPoint(v20);
-
-			v34 = v30 = v20.sqrDist(stop);
-
-			debugC(1, kDebugWalk, "adding walk node (%i, %i) to path", _newnode->_x, _newnode->_y);
-
-			addNode(v48, _newnode);
-			v48 = _newnode;
-		}
+		uint32 v34 = buildSubPath(pos, stop, v48);
 
 		if (!emptyList) break;
 
 		if (v38 != 0 && v34 > v38) {
 			// no alternative path (gap?)
 			freeNodeList(v58._next);
-			debugC(1, kDebugWalk, "can't find a path node: rejecting partial path");
 			return v44;
 		}
 
@@ -203,8 +204,6 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 		emptyList = false;
 
 	} while (true);
-
-	debugC(1, kDebugWalk, "walk path completed");
 
 	delete v44;
 	return (WalkNode*)v58._next;

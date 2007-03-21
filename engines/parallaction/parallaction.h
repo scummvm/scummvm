@@ -162,13 +162,7 @@ Command *parseCommands(Script &script);
 void runCommands(Command *list, Zone *z = NULL);
 void freeCommands(Command*);
 
-
-
 void runDialogue(SpeakData*);
-
-WalkNode *buildWalkPath(uint16 x, uint16 y);
-
-
 
 void jobRemovePickedItem(void*, Job *j);
 void jobDisplayDroppedItem(void*, Job *j);

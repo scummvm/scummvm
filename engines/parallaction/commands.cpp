@@ -23,6 +23,7 @@
 #include "parallaction/parallaction.h"
 #include "parallaction/parser.h"
 #include "parallaction/commands.h"
+#include "parallaction/walk.h"
 #include "parallaction/zone.h"
 
 namespace Parallaction {
