@@ -143,7 +143,6 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 	Common::Point pos(_vm->_char._ani._left, _vm->_char._ani._top);
 
-	byte _closest_node_found = 1;
 	bool emptyList = true;
 
 	Common::Point v8;
@@ -156,9 +155,9 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 		v34 = v30 = pos.sqrDist(stop);				// square distance from current position and target
 
-		while (_closest_node_found != 0) {
+		while (true) {
 
-			_closest_node_found = 0;
+			_closest_node = NULL;
 			WalkNode *location_node = (WalkNode*)_vm->_location._walkNodes._next;
 
 			// scans location path nodes searching for the nearest Node
@@ -171,7 +170,6 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 				v28 = v8.sqrDist(v20);
 
 				if (v2C < v34 && v28 < v30) {
-					_closest_node_found = 1;
 					v30 = v28;
 					_closest_node = location_node;
 				}
@@ -179,7 +177,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 				location_node = (WalkNode*)location_node->_next;
 			}
 
-			if (_closest_node_found == 0) break;
+			if (_closest_node == NULL) break;
 
 			WalkNode *_newnode = new WalkNode(*_closest_node);
 			_newnode->getPoint(v20);
@@ -199,24 +197,14 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 			freeNodeList(v58._next);
 			debugC(1, kDebugWalk, "can't find a path node: rejecting partial path");
 			return v44;
-		} else {
-			((WalkNode*)(v58._next))->getPoint(stop);
-			emptyList = false;
-			_closest_node_found = 1;
 		}
+
+		((WalkNode*)(v58._next))->getPoint(stop);
+		emptyList = false;
 
 	} while (true);
 
 	debugC(1, kDebugWalk, "walk path completed");
-
-	WalkNode* tmp = &v58;
-	uint16 i = 1;
-	while (tmp->_next) {
-		debugC(1, kDebugWalk, "node %i: %i, %i", i, tmp->_x, tmp->_y);
-		tmp = (WalkNode*)tmp->_next;
-		i++;
-	}
-
 
 	delete v44;
 	return (WalkNode*)v58._next;
