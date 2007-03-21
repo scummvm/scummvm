@@ -11,10 +11,13 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for Bargon Attack.
 
  General:
-   - Better compression for DXA movies.
    - Added dialog which allows the user to select the GUI theme on runtime.
-   - Launcher allows you to scan for games in all subfolders of a directory
-     (press shift then click on "Add Game").
+   - Added 'Mass Add' feature to the Launcher, which allows you to scan for
+     all games in all subfolders of a given directory (to use it, press
+     shift then click on "Add Game").
+   - Improved the way the auto detector generates target names, it now takes
+     a game's variant, language and platform into account.
+   - Improved compression for DXA movies.
    - Keyboard repeat is now handled in a centralized way, rather than on a
      case-by-case basis. (Simply put, all engines now have keyboard repeat.)
 
@@ -30,15 +33,17 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Improved support for international versions.
 
  Queen:
-   - Fixed some sound glitches.
    - Added support for Amiga versions.
+   - Fixed some sound glitches.
 
  SCUMM:
-   - Fixed many (sometimes serious) actor walking issues, specifically
-     in Zak McKracken and Maniac Mansion.
    - Added support for non-interactive demos of HE games (CUP).
    - Improved A/V syncing in SMUSH videos (affects Dig, FT, COMI).
-   - Several other minor fixes.
+   - Improved speed of the NES sound code.
+   - Fixed many (sometimes serious) actor walking issues, specifically
+     in Zak McKracken and Maniac Mansion, by rewriting the walking code
+     for these games.
+   - Fixed several other issues.
 
  Simon:
    - Renamed Simon engine to AGOS.
@@ -50,7 +55,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - TOOO: Mention DLDI support
 
  WinCE Port:
-   - Now using a GCC toolchain for building.
+   - Switched to using a GCC toolchain for building.
 
 0.9.1 (2006-10-29)
  New Ports:
