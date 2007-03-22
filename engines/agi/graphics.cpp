@@ -378,7 +378,12 @@ void GfxMgr::gfxSetPalette() {
 
 //Gets AGIPAL Data
 void GfxMgr::setAGIPal(int p0) {
-	//report("Using AGIPAL hack\n");
+	//If 0 from savefile, do not use
+	if (p0 == 0)
+		return;
+	
+	_agipalFileNum = p0;
+	
 	Common::File agipal;
 
 	char filename[15];
@@ -406,8 +411,15 @@ void GfxMgr::setAGIPal(int p0) {
 
 	initPalette(_agipalPalette);
 	gfxSetPalette();
+
+	debug(1, "Using AGIPAL palette from pal.%d", p0);
+
 	free(palData);
 	palData = 0;
+}
+
+int GfxMgr::getAGIPalFileNum() {
+	return _agipalFileNum;
 }
 
 /* put a block onto the screen */

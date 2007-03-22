@@ -36,12 +36,13 @@
 #include "agi/keyboard.h"
 #include "agi/menu.h"
 
-#define SAVEGAME_VERSION 2
+#define SAVEGAME_VERSION 3
 
 /*
  * Version 0 (Sarien): view table has 64 entries
  * Version 1 (Sarien): view table has 256 entries (needed in KQ3)
  * Version 2 (ScummVM): first ScummVM version
+ * Version 3 (ScummVM): adding AGIPAL save/load support
  */
 
 namespace Agi {
@@ -199,6 +200,10 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 		out->writeSint16BE(ptr->parm7);
 	}
 	out->writeByte(0);
+
+	//Write which file number AGIPAL is using (0 if not being used)
+	if ((getFeatures() & GF_AGIPAL))
+		out->writeSint16BE(_gfx->getAGIPalFileNum());
 
 	out->finalize();
 	if (out->ioFailed())
@@ -433,6 +438,10 @@ int AgiEngine::loadGame(const char *fileName) {
 		replayImageStackCall(t, parm[0], parm[1], parm[2],
 				parm[3], parm[4], parm[5], parm[6]);
 	}
+
+	//Load AGIPAL Data 
+	if ((getFeatures() & GF_AGIPAL) && (saveVersion >= 3))
+		_gfx->setAGIPal(in->readSint16BE());
 
 	delete in;	
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Closed %s", fileName);

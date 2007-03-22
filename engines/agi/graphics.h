@@ -47,12 +47,14 @@ private:
 	uint8 *_shakeH, *_shakeV;
 
 	uint8 _agipalPalette[16 * 3];
+	int _agipalFileNum;
 
 public:
 	GfxMgr(AgiEngine *vm) {
 		_vm = vm;
 		_shakeH = NULL;
 		_shakeV = NULL;
+		_agipalFileNum = 0;
 	}
 
 	void gfxPutBlock(int x1, int y1, int x2, int y2);
@@ -83,6 +85,7 @@ public:
 	void restoreBlock(int, int, int, int, uint8 *);
 	void initPalette(uint8 *);
 	void setAGIPal(int);
+	int getAGIPalFileNum();
 	void drawFrame(int x1, int y1, int x2, int y2, int c1, int c2);
 
 	void putPixel(int, int, int);
