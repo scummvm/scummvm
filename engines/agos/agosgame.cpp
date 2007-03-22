@@ -480,6 +480,33 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE
 	},
 
+	// Waxworks - Spanish DOS Floppy
+	{
+		{
+			"waxworks",
+			"Floppy",
+
+			{
+	{ "gamepc",		GAME_BASEFILE,	"b0d513069920a5e2eac2ea5d290692f1", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"ef1b8ad3494cf103dc10a99fe152ef9a", -1},
+	{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e", -1},
+	{ "roomslst",		GAME_RMSLFILE,	"e3758c46ab8f3c23a1ac012bd607108d", -1},
+	{ "start",		GAME_RESTFILE,	"036b647973d6884cdfc2042a3d12df83", -1},
+	{ "stripped.txt",	GAME_STRFILE,	"f259e3e07a1cde8d0404a767d815e12c", -1},
+	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0", -1},
+	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::ES_ESP,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_WW,
+		GID_WAXWORKS,
+		GF_OLD_BUNDLE
+	},
+
 	// Simon the Sorcerer 1 - English Acorn Floppy
 	{
 		{
