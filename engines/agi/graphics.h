@@ -50,12 +50,7 @@ private:
 	int _agipalFileNum;
 
 public:
-	GfxMgr(AgiEngine *vm) {
-		_vm = vm;
-		_shakeH = NULL;
-		_shakeV = NULL;
-		_agipalFileNum = 0;
-	}
+	GfxMgr(AgiEngine *vm);
 
 	void gfxPutBlock(int x1, int y1, int x2, int y2);
 

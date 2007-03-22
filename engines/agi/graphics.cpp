@@ -116,6 +116,13 @@ static struct UpdateBlock update = {
 	MAX_INT, MAX_INT, 0, 0
 };
 
+GfxMgr::GfxMgr(AgiEngine *vm) : _vm(vm) {
+	_shakeH = NULL;
+	_shakeV = NULL;
+	_agipalFileNum = 0;
+}
+
+
 /*
  *  Layer 4:  640x480?  ==================  User display
  *                              ^

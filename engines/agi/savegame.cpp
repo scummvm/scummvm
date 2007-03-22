@@ -202,8 +202,7 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 	out->writeByte(0);
 
 	//Write which file number AGIPAL is using (0 if not being used)
-	if ((getFeatures() & GF_AGIPAL))
-		out->writeSint16BE(_gfx->getAGIPalFileNum());
+	out->writeSint16BE(_gfx->getAGIPalFileNum());
 
 	out->finalize();
 	if (out->ioFailed())
@@ -440,7 +439,7 @@ int AgiEngine::loadGame(const char *fileName) {
 	}
 
 	//Load AGIPAL Data 
-	if ((getFeatures() & GF_AGIPAL) && (saveVersion >= 3))
+	if (saveVersion >= 3)
 		_gfx->setAGIPal(in->readSint16BE());
 
 	delete in;	
