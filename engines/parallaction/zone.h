@@ -204,6 +204,8 @@ struct Zone : public Node {
 		_flags = 0;
 		_commands = NULL;
 	}
+	
+	virtual ~Zone() {}
 
 	void getRect(Common::Rect& r) const {
 		r.left = _left;
@@ -314,6 +316,8 @@ struct Animation : public Zone  {
 		_frame = 0;
 		_z = 0;
 	}
+	
+	virtual ~Animation() {}
 
 	virtual uint16 width() const {
 		if (!_cnv) return 0;
