@@ -178,35 +178,27 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 
 	// path is obstructed: find alternative
 
-	WalkNode	v58;
-	addNode(&v58, v48);
+	WalkNode	dummy;
+	addNode(&dummy, v48);
 
 	Common::Point stop(v48->_x, v48->_y);
 	Common::Point pos(_vm->_char._ani._left, _vm->_char._ani._top);
 
-	bool emptyList = true;
+	v48 = &dummy;
+	uint32 v34 = buildSubPath(pos, stop, v48);
+	if (v38 != 0 && v34 > v38) {
+		// no alternative path (gap?)
+		freeNodeList(dummy._next);
+		return v44;
+	}
 
-	do {
+	((WalkNode*)(dummy._next))->getPoint(stop);
 
-		v48 = &v58;
-
-		uint32 v34 = buildSubPath(pos, stop, v48);
-
-		if (!emptyList) break;
-
-		if (v38 != 0 && v34 > v38) {
-			// no alternative path (gap?)
-			freeNodeList(v58._next);
-			return v44;
-		}
-
-		((WalkNode*)(v58._next))->getPoint(stop);
-		emptyList = false;
-
-	} while (true);
+	v48 = &dummy;
+	buildSubPath(pos, stop, v48);
 
 	delete v44;
-	return (WalkNode*)v58._next;
+	return (WalkNode*)dummy._next;
 }
 
 
