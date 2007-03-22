@@ -68,8 +68,6 @@ private:
 	bool getTextBit(uint8 **data, uint32 *bitPos);
 	void makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&data, uint8 color, uint16 bufPitch);
 
-	void patchChar(byte *charSetPtr, int width, int height, int c, const uint16 *data);
-	void patchLINCCharset();
 	bool patchMessage(uint32 textNum);
 
 	Disk *_skyDisk;

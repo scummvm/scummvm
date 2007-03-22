@@ -51,6 +51,12 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Kyrandia:
    - Added support for FM-Towns version (both English and Japanese).
 
+ BASS:
+   - Fixed long-standing font bug. We were using the control panel font for
+     LINC space and terminals, and the LINC font in the control panel. This
+     caused many character glitches (some of which we used to work around) in
+     LINC space and terminals, particularly in non-English languages.
+
  Nintendo DS Port:
    - TOOO: Mention DLDI support
 
