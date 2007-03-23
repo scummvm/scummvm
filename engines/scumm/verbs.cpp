@@ -557,6 +557,16 @@ void ScummEngine::checkExecVerbs() {
 			_mouseAndKeyboardStat = numpad[_mouseAndKeyboardStat - '0'];
 		}
 
+		if (_game.platform == Common::kPlatformFMTowns && (_game.id == GID_ZAK || _game.id == GID_INDY3)) {
+			// HACK: In the FM-Towns games Indy3 and Zak the most significant bit is set for special keys
+			// like F5 (=0x8005) or joystick buttons (mask 0xFE00, e.g. SELECT=0xFE40 for the save/load menu).
+			// Hence the distinction with (_mouseAndKeyboardStat < MBS_MAX_KEY) between mouse- and key-events is not applicable
+			// to this games, so we have to remap the special keys here.
+			if(_mouseAndKeyboardStat == 319) {
+				_mouseAndKeyboardStat = 0x8005;
+			}
+		}
+
 		// Generic keyboard input
 		runInputScript(4, _mouseAndKeyboardStat, 1);
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
