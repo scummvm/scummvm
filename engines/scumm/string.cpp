@@ -709,9 +709,16 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		_charset->_left -= _charset->getStringWidth(a, buf) / 2;
 	}
 
-	if (_game.version >= 5 && !buf[0]) {
-		buf[0] = ' ';
-		buf[1] = 0;
+	if (!buf[0]) {
+		if (_game.version >= 5) {
+			buf[0] = ' ';
+			buf[1] = 0;
+		} else {
+			_charset->_str.left = _charset->_left;
+			_charset->_str.top = _charset->_top;
+			_charset->_str.right = _charset->_left;
+			_charset->_str.bottom = _charset->_top;
+		}
 	}
 
 	for (i = 0; (c = buf[i++]) != 0;) {
