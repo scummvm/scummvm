@@ -688,25 +688,28 @@ void ScummEngine::drawString(int a, const byte *msg) {
 
 	fontHeight = _charset->getFontHeight();
 
-	// trim from the right
-	byte *tmp = buf;
-	space = NULL;
-	while (*tmp) {
-		if (*tmp == ' ') {
-			if (!space)
-				space = tmp;
-		} else {
-			space = NULL;
+	if (_game.version >= 4) {
+		// trim from the right
+		byte *tmp = buf;
+		space = NULL;
+		while (*tmp) {
+			if (*tmp == ' ') {
+				if (!space)
+					space = tmp;
+			} else {
+				space = NULL;
+			}
+			tmp++;
 		}
-		tmp++;
+		if (space)
+			*space = '\0';
 	}
-	if (space)
-		*space = '\0';
+
 	if (_charset->_center) {
 		_charset->_left -= _charset->getStringWidth(a, buf) / 2;
 	}
 
-	if (!buf[0]) {
+	if (_game.version >= 5 && !buf[0]) {
 		buf[0] = ' ';
 		buf[1] = 0;
 	}
@@ -798,7 +801,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		_nextTop = _charset->_top;
 	}
 
-	_string[a].xpos = _charset->_str.right + 8;	// Indy3: Fixes Grail Diary text positioning
+	_string[a].xpos = _charset->_str.right;
 }
 
 int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize) {
