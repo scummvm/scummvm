@@ -25,6 +25,7 @@
 
 #include "common/config-file.h"
 #include "common/config-manager.h"
+#include "common/savefile.h"
 #include "common/str.h"
 
 #include "scumm/actor.h"
@@ -403,13 +404,20 @@ void ScummEngine_v80he::o80_getFileSize() {
 	copyScriptString(filename, sizeof(filename));
 	convertFilePath(filename);
 
-	Common::File f;
-	if (!f.open((char *)filename)) {
+	Common::SeekableReadStream *f = _saveFileMan->openForLoading((const char *)filename);
+	if (!f) {
+		Common::File *file = new Common::File();
+		file->open((const char *)filename, Common::File::kFileReadMode);
+		f = file;
+	}
+
+	if (!f) {
 		push(-1);
 	} else {
-		push(f.size());
-		f.close();
+		push(f->size());
 	}
+
+	delete f;
 }
 
 void ScummEngine_v80he::o80_stringToInt() {
