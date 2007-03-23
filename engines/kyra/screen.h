@@ -288,7 +288,7 @@ private:
 	uint8 *_saveLoadPage[8];
 
 	uint8 *_screenPalette;
-	uint8 *_palettes[3];
+	uint8 *_palettes[6];
 
 	Font _fonts[FID_NUM];
 	uint8 _textColorsMap[16];

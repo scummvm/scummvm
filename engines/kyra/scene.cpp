@@ -450,7 +450,7 @@ void KyraEngine::startSceneScript(int brandonAlive) {
 	strcat(fileNameBuffer, ".CPS");
 	_screen->clearPage(3);
 	// FIXME: check this hack for amiga version
-	_screen->loadBitmap(fileNameBuffer, 3, 3, (_flags.platform == Common::kPlatformAmiga ? _screen->getPalette(1) : 0));
+	_screen->loadBitmap(fileNameBuffer, 3, 3, (_flags.platform == Common::kPlatformAmiga ? _screen->getPalette(0) : 0));
 	_sprites->loadSceneShapes();
 	_exitListPtr = 0;
 	
@@ -824,35 +824,55 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 }
 
 void KyraEngine::initSceneScreen(int brandonAlive) {
-	if (_unkScreenVar1 && !queryGameFlag(0xA0)) {
-		for (int i = 0; i < 60; ++i) {
-			uint16 col = _screen->getPalette(0)[684+i];
-			col += _screen->getPalette(1)[684+i] << 1;
-			col >>= 2;
-			_screen->getPalette(0)[684+i] = col;
-		}
-		_screen->setScreenPalette(_screen->getPalette(0));
-	}
-
-	if (_unkScreenVar2 == 1) {
-		_screen->shuffleScreen(8, 8, 304, 128, 2, 0, _unkScreenVar3, false);
-	} else {
-		_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
-	}
-
-	if (_unkScreenVar1 && _paletteChanged) {
-		if (!queryGameFlag(0xA0)) {
-			memcpy(_screen->getPalette(0) + 684, _screen->getPalette(1) + 684, 60);
-			_screen->setScreenPalette(_screen->getPalette(0));
-		} else {
-			memset(_screen->getPalette(0), 0, 768);
-		}
-	}
-	
-	// FIXME: hack to get the room palette working 
 	if (_flags.platform == Common::kPlatformAmiga) {
-		memcpy(_screen->getPalette(0), _screen->getPalette(1), 32*3);
-		_screen->setScreenPalette(_screen->getPalette(0));
+		if (_unkScreenVar1 && !queryGameFlag(0xF0)) {
+			memset(_screen->getPalette(2), 0, 32*3);
+			if (_currentCharacter->sceneId != 117 || !queryGameFlag(0xB3)) {
+				_screen->setScreenPalette(_screen->getPalette(2));
+			}
+		}
+
+		if (_unkScreenVar2 == 1)
+			_screen->shuffleScreen(8, 8, 304, 128, 2, 0, _unkScreenVar3, false);
+		else
+			_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
+
+		if (_unkScreenVar1 && !queryGameFlag(0xA0)) {
+			if (_currentCharacter->sceneId == 45 && _paletteChanged) {
+				memcpy(_screen->getPalette(0) + 12*3, _screen->getPalette(4) + 12*3, 2);
+			}
+
+			if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245 && (_brandonStatusBit & 1)) {
+				memcpy(_screen->getPalette(0), _screen->getPalette(0) + 320*3, 64);
+			}
+
+			_screen->setScreenPalette(_screen->getPalette(0));
+		}
+	} else {
+		if (_unkScreenVar1 && !queryGameFlag(0xA0)) {
+			for (int i = 0; i < 60; ++i) {
+				uint16 col = _screen->getPalette(0)[684+i];
+				col += _screen->getPalette(1)[684+i] << 1;
+				col >>= 2;
+				_screen->getPalette(0)[684+i] = col;
+			}
+			_screen->setScreenPalette(_screen->getPalette(0));
+		}
+
+		if (_unkScreenVar2 == 1) {
+			_screen->shuffleScreen(8, 8, 304, 128, 2, 0, _unkScreenVar3, false);
+		} else {
+			_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
+		}
+
+		if (_unkScreenVar1 && _paletteChanged) {
+			if (!queryGameFlag(0xA0)) {
+				memcpy(_screen->getPalette(0) + 684, _screen->getPalette(1) + 684, 60);
+				_screen->setScreenPalette(_screen->getPalette(0));
+			} else {
+				memset(_screen->getPalette(0), 0, 768);
+			}
+		}
 	}
 
 	// really call this here?

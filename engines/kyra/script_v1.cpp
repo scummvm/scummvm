@@ -268,8 +268,20 @@ int KyraEngine::o1_runSceneAnimUntilDone(ScriptState *script) {
 }
 
 int KyraEngine::o1_fadeSpecialPalette(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "o1_fadeSpecialPalette(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	_screen->fadeSpecialPalette(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	if (_flags.platform == Common::kPlatformAmiga) {
+		debugC(3, kDebugLevelScriptFuncs, "o1_fadeSpecialPalette(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+		if (_currentCharacter->sceneId != 45) {
+			if (stackPos(0) == 13) {
+				memcpy(_screen->getPalette(0), _screen->getPalette(0) + 384*3, 32*3);
+				_screen->setScreenPalette(_screen->getPalette(0));
+			}
+		} else {
+			warning("o1_fadeSpecialPalette not implemented");
+		}
+	} else { 
+		debugC(3, kDebugLevelScriptFuncs, "o1_fadeSpecialPalette(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+		_screen->fadeSpecialPalette(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	}
 	return 0;
 }
 
@@ -1549,21 +1561,36 @@ int KyraEngine::o1_fadeEntirePalette(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_fadeEntirePalette(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	int cmd = stackPos(0);
 	uint8 *fadePal = 0;
-	if (cmd == 0) {
-		fadePal = _screen->getPalette(2);
-		uint8 *screenPal = _screen->getPalette(0);
-		uint8 *backUpPal = _screen->getPalette(3);
+
+	if (_flags.platform == Common::kPlatformAmiga) {
+		if (cmd == 0) {
+			fadePal = _screen->getPalette(2);
+			memset(fadePal, 0, 32*3);
+			memcpy(_screen->getPalette(4), _screen->getPalette(0), 32*3);
+		} else if (cmd == 1) {
+			fadePal = _screen->getPalette(0);
+			memcpy(_screen->getPalette(0), _screen->getPalette(4), 32*3);
+		} else if (cmd == 2) {
+			fadePal = _screen->getPalette(0);
+			memset(_screen->getPalette(2), 0, 32*3);
+		}
+	} else {
+		if (cmd == 0) {
+			fadePal = _screen->getPalette(2);
+			uint8 *screenPal = _screen->getPalette(0);
+			uint8 *backUpPal = _screen->getPalette(3);
 		
-		memcpy(backUpPal, screenPal, sizeof(uint8)*768);
-		memset(fadePal, 0, sizeof(uint8)*768);
-	} else if (cmd == 1) {
-		//fadePal = _screen->getPalette(3);
-		warning("unimplemented o1_fadeEntirePalette function");
-		return 0;
-	} else if (cmd == 2) {
-		memset(_screen->getPalette(2), 0, 768);
-		memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
-		fadePal = _screen->getPalette(0);
+			memcpy(backUpPal, screenPal, sizeof(uint8)*768);
+			memset(fadePal, 0, sizeof(uint8)*768);
+		} else if (cmd == 1) {
+			//fadePal = _screen->getPalette(3);
+			warning("unimplemented o1_fadeEntirePalette function");
+			return 0;
+		} else if (cmd == 2) {
+			memset(_screen->getPalette(2), 0, 768);
+			memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
+			fadePal = _screen->getPalette(0);
+		}
 	}
 	
 	_screen->fadePalette(fadePal, stackPos(1));

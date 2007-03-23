@@ -415,14 +415,20 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 	if (_engine->_northExitHeight & 1)
 		_engine->_northExitHeight += 1;
 
-	if (_engine->queryGameFlag(0xA0)) {
-		memcpy(_screen->getPalette(1), _screen->getPalette(3), 768);
-	} else {
-		memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
-	}
 	// XXX
 	_engine->_paletteChanged = 1;
-	if (_engine->gameFlags().platform != Common::kPlatformAmiga) {
+
+	if (_engine->gameFlags().platform == Common::kPlatformAmiga) {
+		if (_engine->queryGameFlag(0xA0))
+			memcpy(_screen->getPalette(3), _screen->getPalette(4), 32*3);
+		else
+			memcpy(_screen->getPalette(3), _screen->getPalette(0), 32*3);	
+	} else {
+		if (_engine->queryGameFlag(0xA0))
+			memcpy(_screen->getPalette(1), _screen->getPalette(3), 768);
+		else
+			memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
+
 		_screen->loadPalette(_dat + 0x17, _screen->getPalette(1) + 684, 60);
 	}
 	uint8 *data = _dat + 0x6B;

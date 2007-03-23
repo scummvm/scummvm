@@ -1438,6 +1438,9 @@ void KyraEngine::gui_redrawHighlight(Menu menu) {
 }
 
 void KyraEngine::gui_fadePalette() {
+	if (_flags.platform == Common::kPlatformAmiga)
+		return;
+
 	static int16 menuPalIndexes[] = {248, 249, 250, 251, 252, 253, 254, -1};
 	int index = 0;
 
@@ -1456,6 +1459,9 @@ void KyraEngine::gui_fadePalette() {
 }
 
 void KyraEngine::gui_restorePalette() {
+	if (_flags.platform == Common::kPlatformAmiga)
+		return;
+
 	memcpy(_screen->_currentPalette, _screen->getPalette(2), 768);
 	_screen->fadePalette(_screen->_currentPalette, 2);
 }

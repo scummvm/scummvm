@@ -54,9 +54,13 @@ Screen::~Screen() {
 	delete [] _screenPalette;
 	delete [] _decodeShapeBuffer;
 	delete [] _animBlockPtr;
-	for (int i = 0; i < ARRAYSIZE(_palettes); ++i) {
-		delete [] _palettes[i];
+
+	if (_vm->gameFlags().platform != Common::kPlatformAmiga) {
+		for (int i = 0; i < ARRAYSIZE(_palettes); ++i) {
+			delete [] _palettes[i];
+		}
 	}
+
 	delete [] _bitBlitRects;
 	for (int i = 0; i < ARRAYSIZE(_saveLoadPage); ++i) {
 		delete [] _saveLoadPage[i];
@@ -120,17 +124,31 @@ bool Screen::init() {
 		_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr;
 	}
 	memset(_shapePages, 0, sizeof(_shapePages));
-	_currentPalette = new uint8[768];
-	assert(_currentPalette);
-	memset(_currentPalette, 0, 768);
+
+	memset(_palettes, 0, sizeof(_palettes));
 	_screenPalette = new uint8[768];
 	assert(_screenPalette);
 	memset(_screenPalette, 0, 768);
-	for (int i = 0; i < ARRAYSIZE(_palettes); ++i) {
-		_palettes[i] = new uint8[768];
-		assert(_palettes[i]);
-		memset(_palettes[i], 0, 768);
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		_currentPalette = new uint8[1248];
+		assert(_currentPalette);
+		memset(_currentPalette, 0, 1248);
+
+		for (int i = 0; i < 6; ++i) {
+			_palettes[i] = _currentPalette + (i+1)*96;
+		}
+	} else {
+		_currentPalette = new uint8[768];
+		assert(_currentPalette);
+		memset(_currentPalette, 0, 768);
+		for (int i = 0; i < 3; ++i) {
+			_palettes[i] = new uint8[768];
+			assert(_palettes[i]);
+			memset(_palettes[i], 0, 768);
+		}
 	}
+
 	setScreenPalette(_currentPalette);
 	_curDim = &_screenDimTable[0];
 	_charWidth = 0;
@@ -416,18 +434,19 @@ void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
 void Screen::setScreenPalette(const uint8 *palData) {
 	debugC(9, kDebugLevelScreen, "Screen::setScreenPalette(%p)", (const void *)palData);
 
+	int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
 	if (palData != _screenPalette)
-		memcpy(_screenPalette, palData, 768);
+		memcpy(_screenPalette, palData, colors*3);
 
 	uint8 screenPal[256 * 4];
-	for (int i = 0; i < 256; ++i) {
+	for (int i = 0; i < colors; ++i) {
 		screenPal[4 * i + 0] = (palData[0] << 2) | (palData[0] & 3);
 		screenPal[4 * i + 1] = (palData[1] << 2) | (palData[1] & 3);
 		screenPal[4 * i + 2] = (palData[2] << 2) | (palData[2] & 3);
 		screenPal[4 * i + 3] = 0;
 		palData += 3;
 	}
-	_system->setPalette(screenPal, 0, 256);
+	_system->setPalette(screenPal, 0, colors);
 }
 
 void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
@@ -2304,7 +2323,7 @@ void Screen::copyScreenToRect(int x, int y, int w, int h, uint8 *ptr) {
 
 uint8 *Screen::getPalette(int num) {
 	debugC(9, kDebugLevelScreen, "Screen::getPalette(%d)", num);
-	assert(num >= 0 && num < ARRAYSIZE(_palettes)+1);
+	assert(num >= 0 && num < (_vm->gameFlags().platform == Common::kPlatformAmiga ? 6 : 4));
 	if (num == 0) {
 		return _currentPalette;
 	}
