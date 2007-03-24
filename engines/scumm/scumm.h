@@ -328,6 +328,10 @@ enum ResTypes {
 	rtNumTypes = 22
 };
 
+enum ResIds {
+	RESID_IQ_EPISODE = 7,
+	RESID_IQ_SERIES = 9
+};
 
 
 /**

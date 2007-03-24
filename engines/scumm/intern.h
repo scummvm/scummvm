@@ -82,6 +82,8 @@ protected:
 	int getWordVararg(int *ptr);
 	void saveVars();
 	void loadVars();
+	void saveIQPoints();
+	void loadIQPoints();
 
 	virtual int getVar();
 	virtual int getVarOrDirectByte(byte mask);

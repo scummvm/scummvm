@@ -870,15 +870,7 @@ void ScummEngine_v5::o5_saveLoadVars() {
 
 void ScummEngine_v5::saveVars() {
 	int a, b;
-
-	// FIXME: This opcode is currently a stub. It is needed for at least two things:
-	// * storing save game names in Indy 3 (and maybe others)
-	// * storing the global IQ (Indy Quotient) in Indy 3
-	// The former is not so important as we have our own save system, but the
-	// latter one of course is a desirable feature.
-	// So implementing this would be nice indeed. Not sure what the filename
-	// should be -- either base it on the target name, or base it on the gameid.
-	// Both approaches have their merits, though.
+	static char filename[256];
 
 	while ((_opcode = fetchScriptByte()) != 0) {
 		switch (_opcode & 0x1F) {
@@ -892,17 +884,25 @@ void ScummEngine_v5::saveVars() {
 		case 0x02: // write a range of string variables
 			a = getVarOrDirectByte(PARAM_1);
 			b = getVarOrDirectByte(PARAM_2);
-			debug(0, "stub saveVars: strings %d -> %d", a, b);
+
+			if (a == RESID_IQ_EPISODE && b == RESID_IQ_EPISODE) {
+				if (_game.id == GID_INDY3) {
+					saveIQPoints();
+				}
+				break;
+			}
+			// FIXME: changing savegame-names not supported
 			break;
 		case 0x03: // open file
 			a = resStrLen(_scriptPointer);
-			debug(0, "stub saveVars to %s", _scriptPointer);
+			strncpy(filename, (const char *)_scriptPointer, a);
+			filename[a] = '\0';
 			_scriptPointer += a + 1;
 			break;
 		case 0x04:
 			return;
 		case 0x1F: // close file
-			debug(0, "stub saveVars close file");
+			filename[0] = '\0';
 			return;
 		}
 	}
@@ -910,10 +910,8 @@ void ScummEngine_v5::saveVars() {
 
 void ScummEngine_v5::loadVars() {
 	int a, b;
+	static char filename[256];
 
-	// FIXME: See ScummEngine_v5::saveVars
-
-//	Common::hexdump(_scriptPointer, 64);
 	while ((_opcode = fetchScriptByte()) != 0) {
 		switch (_opcode & 0x1F) {
 		case 0x01: // read a range of variables
@@ -926,19 +924,95 @@ void ScummEngine_v5::loadVars() {
 		case 0x02: // read a range of string variables
 			a = getVarOrDirectByte(PARAM_1);
 			b = getVarOrDirectByte(PARAM_2);
-			debug(0, "stub loadVars: strings %d -> %d", a, b);
+
+			int slot;
+			int slotSize;
+			byte* slotContent;
+			int savegameId;
+			char name[32];
+			bool avail_saves[100];
+
+			if (a == RESID_IQ_SERIES && b == RESID_IQ_SERIES) {
+				// Zak256 loads the IQ script-slot but does not use it -> ignore it
+				if(_game.id == GID_INDY3) {
+					loadIQPoints();
+				}
+				break;
+			} 
+			
+			listSavegames(avail_saves, ARRAYSIZE(avail_saves));							
+			for (slot = a; slot <= b; ++slot) {
+				slotSize = getResourceSize(rtString, slot);
+				slotContent = getResourceAddress(rtString, slot);
+
+				// load savegame names
+				savegameId = slot - a + 1;
+				if (avail_saves[savegameId] && getSavegameName(savegameId, name)) {
+					int pos;
+					char *ptr = name;
+					// slotContent ends with {'\0','@'} -> max. length = slotSize-2
+					for (pos = 0; pos < slotSize - 2; ++pos) {
+						if (!ptr[pos]) 
+							break;
+						// replace special characters
+						if(ptr[pos] >= 32 && ptr[pos] <= 122 && ptr[pos] != 64)
+							slotContent[pos] = ptr[pos];
+						else
+							slotContent[pos] = '_';
+					}
+					slotContent[pos] = '\0';						
+				} else {
+					slotContent[0] = '\0';
+				}
+			}
 			break;
 		case 0x03: // open file
 			a = resStrLen(_scriptPointer);
-			debug(0, "stub loadVars from %s", _scriptPointer);
+			strncpy(filename, (const char *)_scriptPointer, a);
+			filename[a] = '\0';
 			_scriptPointer += a + 1;
 			break;
 		case 0x04:
 			return;
 		case 0x1F: // close file
-			debug(0, "stub loadVars close file");
+			filename[0] = '\0';
 			return;
 		}
+	}
+}
+
+void ScummEngine_v5::saveIQPoints() {
+	// save series IQ-points
+	Common::OutSaveFile *file;
+	char filename[256];
+
+	sprintf(filename, "%s.iq", _targetName.c_str());
+	file = _saveFileMan->openForSaving(filename);
+	if (file != NULL) {
+		int size = getResourceSize(rtString, RESID_IQ_EPISODE);
+		byte *ptr = getResourceAddress(rtString, RESID_IQ_EPISODE);
+		file->write(ptr, size);
+		delete file;
+	}
+}
+
+void ScummEngine_v5::loadIQPoints() {
+	// load series IQ-points
+	Common::InSaveFile *file;
+	char filename[256];
+
+	sprintf(filename, "%s.iq", _targetName.c_str());
+	file = _saveFileMan->openForLoading(filename);
+	if (file != NULL) {
+		int size = getResourceSize(rtString, RESID_IQ_SERIES);
+		byte *ptr = getResourceAddress(rtString, RESID_IQ_SERIES);
+		byte *tmp = (byte*)malloc(size);
+		int nread = file->read(tmp, size);
+		if (nread == size) {
+			memcpy(ptr, tmp, size); 
+		}
+		free(tmp);
+		delete file;
 	}
 }
 
@@ -1124,8 +1198,12 @@ void ScummEngine_v5::o5_getActorY() {
 void ScummEngine_v5::o5_saveLoadGame() {
 	getResultPos();
 	byte a = getVarOrDirectByte(PARAM_1);
-	byte slot = (a & 0x1F) + 1;
+	byte slot = a & 0x1F;
 	byte result = 0;
+
+	// Slot numbers in older games start with 0, in newer games with 1
+	if (_game.version <= 2)
+		slot++;
 
 	if ((_game.id == GID_MANIAC) && (_game.version <= 1)) {
 		// Convert older load/save screen
