@@ -50,6 +50,9 @@ union CommandData {
 	CommandData() {
 		_flags = 0;
 	}
+
+	~CommandData() {
+	}
 };
 
 struct Command : public Node {
@@ -62,6 +65,10 @@ struct Command : public Node {
 		_id = 0;
 		_flagsOn = 0;
 		_flagsOff = 0;
+	}
+
+	~Command() {
+
 	}
 };
 

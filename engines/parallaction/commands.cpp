@@ -200,7 +200,7 @@ void freeCommands(Command *list) {
 	while (cmd) {
 		Command *v4 = (Command*)cmd->_next;
 
-		if (cmd->_id == 6) delete cmd->u._zone;	// open
+		if (cmd->_id == CMD_LOCATION) free(cmd->u._string);
 		delete cmd;
 
 		cmd = v4;

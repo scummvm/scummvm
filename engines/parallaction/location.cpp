@@ -196,14 +196,18 @@ void Parallaction::freeLocation() {
 	helperNode._prev = helperNode._next = NULL;
 	_vm->freeZones(_zones._next);
 	freeNodeList(_zones._next);
-	memcpy(&_zones, &helperNode, sizeof(Node));
+	_zones._next = helperNode._next;
+	_zones._prev = helperNode._prev;
+//	memcpy(&_zones, &helperNode, sizeof(Node));
 	debugC(7, kDebugLocation, "freeLocation: zones freed");
 
 	helperNode._prev = helperNode._next = NULL;
 	_vm->freeZones(_animations._next);
 	_vm->freeAnimations();
 	freeNodeList(_animations._next);
-	memcpy(&_animations, &helperNode, sizeof(Node));
+	_animations._next = helperNode._next;
+	_animations._prev = helperNode._prev;
+//	memcpy(&_animations, &helperNode, sizeof(Node));
 	debugC(7, kDebugLocation, "freeLocation: animations freed");
 
 	if (_vm->_location._comment) {

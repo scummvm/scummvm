@@ -41,6 +41,10 @@ struct Node {
 		_prev = NULL;
 		_next = NULL;
 	}
+
+	virtual ~Node() {
+
+	}
 };
 
 struct WalkNode : public Node {
