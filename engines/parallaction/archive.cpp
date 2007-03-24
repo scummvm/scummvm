@@ -27,6 +27,24 @@
 
 namespace Parallaction {
 
+//	this PSEUDOID is used here to tell ONE archive from the others, namely the 'fr' archive in the
+//  amiga demo of Nippon Safes. It's the only archive using different internal offsets.
+//
+#define PSEUDOID_OFS				5
+
+#define ID_SMALL_ARCHIVE			5		// marks the aforementioned 'fr' archive
+
+#define ARCHIVE_FILENAMES_OFS		0x16
+
+#define NORMAL_ARCHIVE_FILES_NUM	384
+#define SMALL_ARCHIVE_FILES_NUM		180
+
+#define NORMAL_ARCHIVE_SIZES_OFS	0x3016
+#define SMALL_ARCHIVE_SIZES_OFS		0x1696
+
+#define NORMAL_ARCHIVE_DATA_OFS		0x4000
+#define SMALL_ARCHIVE_DATA_OFS		0x1966
+
 Archive::Archive() {
 	resetArchivedFile();
 }
@@ -37,29 +55,28 @@ void Archive::open(const char *file) {
 	if (_archive.isOpen())
 		close();
 
-	uint32	offset = DIRECTORY_OFFSET_IN_FILE;
 	char	path[PATH_LEN];
 
 	strcpy(path, file);
 	if (!_archive.open(path))
 		error("archive '%s' not found", path);
 
-	_archive.skip(22);
-	_archive.read(_archiveDir, MAX_ARCHIVE_ENTRIES*32);
+	_archive.seek(PSEUDOID_OFS);
+	uint32 pseudoid = _archive.readByte();
 
-	uint16 i;
-	for (i = 0; i < MAX_ARCHIVE_ENTRIES; i++) {
-		_archiveOffsets[i] = offset;
+	_numFiles = (pseudoid == ID_SMALL_ARCHIVE) ? SMALL_ARCHIVE_FILES_NUM : NORMAL_ARCHIVE_FILES_NUM;
 
-		uint32 len = _archive.readUint32BE();
-//		if (len>0) printf("%i) %s - [%i bytes]\n", i, _archiveDir[i], len);
+	_archive.seek(ARCHIVE_FILENAMES_OFS);
+	_archive.read(_archiveDir, _numFiles*32);
 
-		_archiveLenghts[i] = len;
-		offset += len;
+	_archive.seek((pseudoid == ID_SMALL_ARCHIVE) ? SMALL_ARCHIVE_SIZES_OFS : NORMAL_ARCHIVE_SIZES_OFS);
+
+	uint32 dataOffset = (pseudoid == ID_SMALL_ARCHIVE) ? SMALL_ARCHIVE_DATA_OFS : NORMAL_ARCHIVE_DATA_OFS;
+	for (uint16 i = 0; i < _numFiles; i++) {
+		_archiveOffsets[i] = dataOffset;
+		_archiveLenghts[i] = _archive.readUint32BE();
+		dataOffset += _archiveLenghts[i];
 	}
-
-//	printf("%i entries found\n", i);
-//	printf("%i bytes of data\n", offset);
 
 	return;
 }
@@ -80,10 +97,10 @@ bool Archive::openArchivedFile(const char *filename) {
 	resetArchivedFile();
 
 	uint16 i = 0;
-	for ( ; i < MAX_ARCHIVE_ENTRIES; i++) {
+	for ( ; i < _numFiles; i++) {
 		if (!scumm_stricmp(_archiveDir[i], filename)) break;
 	}
-	if (i == MAX_ARCHIVE_ENTRIES) return false;
+	if (i == _numFiles) return false;
 
 	debugC(1, kDebugDisk, "file '%s' found in slot %i", filename, i);
 

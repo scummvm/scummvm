@@ -35,8 +35,6 @@ namespace Parallaction {
 
 #define MAX_ARCHIVE_ENTRIES 		384
 
-#define DIRECTORY_OFFSET_IN_FILE	0x4000
-
 class Parallaction;
 class Gfx;
 class Script;
@@ -55,6 +53,8 @@ protected:
 	uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
 
 	Common::File 	_archive;
+
+	uint32			_numFiles;
 
 protected:
 	void resetArchivedFile();
@@ -78,6 +78,35 @@ public:
 
 class Disk {
 
+protected:
+	Archive		  _archive;
+	char		  _languageDir[3];
+	Parallaction *_vm;
+
+public:
+	Disk(Parallaction *vm);
+	virtual ~Disk();
+
+	void selectArchive(const char *name);
+	void setLanguage(uint16 language);
+
+	virtual Script* loadLocation(const char *name) = 0;
+	virtual Script* loadScript(const char* name) = 0;
+	virtual Cnv* loadTalk(const char *name) = 0;
+	virtual Cnv* loadObjects(const char *name) = 0;
+	virtual StaticCnv* loadPointer() = 0;
+	virtual StaticCnv* loadHead(const char* name) = 0;
+	virtual Cnv* loadFont(const char* name) = 0;
+	virtual StaticCnv* loadStatic(const char* name) = 0;
+	virtual Cnv* loadFrames(const char* name) = 0;
+	virtual void loadSlide(const char *filename) = 0;
+	virtual void loadScenery(const char* background, const char* mask) = 0;
+
+
+};
+
+class DosDisk : public Disk {
+
 private:
 	uint16 decompressChunk(byte *src, byte *dst, uint16 size);
 	void unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *path);
@@ -90,18 +119,30 @@ private:
 	void parseBackground(Common::SeekableReadStream &stream);
 
 protected:
-	Archive		  _archive;
-	char		  _languageDir[3];
-
-	Parallaction *_vm;
 	Gfx	 *_gfx;
 
 public:
-	Disk(Parallaction *vm);
-	virtual ~Disk();
+	DosDisk(Parallaction *vm);
+	virtual ~DosDisk();
 
-	void selectArchive(const char *name);
-	void setLanguage(uint16 language);
+	Script* loadLocation(const char *name);
+	Script* loadScript(const char* name);
+	Cnv* loadTalk(const char *name);
+	Cnv* loadObjects(const char *name);
+	StaticCnv* loadPointer();
+	StaticCnv* loadHead(const char* name);
+	Cnv* loadFont(const char* name);
+	StaticCnv* loadStatic(const char* name);
+	Cnv* loadFrames(const char* name);
+	void loadSlide(const char *filename);
+	void loadScenery(const char* background, const char* mask);
+};
+
+class AmigaDisk : public Disk {
+
+public:
+	AmigaDisk(Parallaction *vm);
+	virtual ~AmigaDisk();
 
 	Script* loadLocation(const char *name);
 	Script* loadScript(const char* name);

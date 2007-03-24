@@ -148,24 +148,8 @@ Parallaction::Parallaction(OSystem *syst) :
 
 	// FIXME
 	_vm = this;
-	_disk = new Disk(this);
 
-	_skipMenu = false;
 
-	_transCurrentHoverItem = 0;
-	_actionAfterWalk = false;  // actived when the character needs to move before taking an action
-	_activeItem._index = 0;
-	_activeItem._id = 0;
-	_procCurrentHoverItem = -1;
-
-	_locationScript = NULL;
-
-	_musicData1 = 0;
-	strcpy(_characterName1, "null");
-
-	_midiPlayer = 0;
-
-	_baseTime = 0;
 
 	Common::File::addDefaultDirectory( _gameDataPath );
 
@@ -193,6 +177,28 @@ int Parallaction::init() {
 		GUIErrorMessage("No valid games were found in the specified directory.");
 		return -1;
 	}
+
+	_skipMenu = false;
+
+	_transCurrentHoverItem = 0;
+	_actionAfterWalk = false;  // actived when the character needs to move before taking an action
+	_activeItem._index = 0;
+	_activeItem._id = 0;
+	_procCurrentHoverItem = -1;
+
+	_locationScript = NULL;
+
+	_musicData1 = 0;
+	strcpy(_characterName1, "null");
+
+	_midiPlayer = 0;
+
+	_baseTime = 0;
+
+	if (getPlatform() == Common::kPlatformPC)
+		_disk = new DosDisk(this);
+	else
+		_disk = new AmigaDisk(this);
 
 	_engineFlags = 0;
 

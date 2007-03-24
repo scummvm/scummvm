@@ -28,11 +28,17 @@
 
 namespace Parallaction {
 
-Disk::Disk(Parallaction* vm) : _vm(vm) {
+
+Disk::Disk(Parallaction *vm) : _vm(vm) {
 
 }
 
 Disk::~Disk() {
+
+}
+
+void Disk::selectArchive(const char *name) {
+	_archive.open(name);
 }
 
 void Disk::setLanguage(uint16 language) {
@@ -62,10 +68,24 @@ void Disk::setLanguage(uint16 language) {
 	return;
 }
 
+
+
+#pragma mark -
+
+
+
+DosDisk::DosDisk(Parallaction* vm) : Disk(vm) {
+
+}
+
+DosDisk::~DosDisk() {
+}
+
+
 //
 // decompress a graphics block
 //
-uint16 Disk::decompressChunk(byte *src, byte *dst, uint16 size) {
+uint16 DosDisk::decompressChunk(byte *src, byte *dst, uint16 size) {
 
 	uint16 written = 0;
 	uint16 read = 0;
@@ -101,7 +121,7 @@ uint16 Disk::decompressChunk(byte *src, byte *dst, uint16 size) {
 //
 // loads a cnv from an external file
 //
-void Disk::loadExternalCnv(const char *filename, Cnv *cnv) {
+void DosDisk::loadExternalCnv(const char *filename, Cnv *cnv) {
 //	printf("Gfx::loadExternalCnv(%s)...", filename);
 
 	char path[PATH_LEN];
@@ -131,7 +151,7 @@ void Disk::loadExternalCnv(const char *filename, Cnv *cnv) {
 	return;
 }
 
-void Disk::loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
+void DosDisk::loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
 
 	char path[PATH_LEN];
 
@@ -156,7 +176,7 @@ void Disk::loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
 	return;
 }
 
-void Disk::loadCnv(const char *filename, Cnv *cnv) {
+void DosDisk::loadCnv(const char *filename, Cnv *cnv) {
 //	printf("Gfx::loadCnv(%s)\n", filename);
 
 	char path[PATH_LEN];
@@ -197,7 +217,7 @@ void Disk::loadCnv(const char *filename, Cnv *cnv) {
 	return;
 }
 
-Cnv* Disk::loadTalk(const char *name) {
+Cnv* DosDisk::loadTalk(const char *name) {
 
 	Cnv *cnv = new Cnv;
 
@@ -233,7 +253,7 @@ Cnv* Disk::loadTalk(const char *name) {
 	return cnv;
 }
 
-Script* Disk::loadLocation(const char *name) {
+Script* DosDisk::loadLocation(const char *name) {
 
 	char archivefile[PATH_LEN];
 
@@ -267,7 +287,7 @@ Script* Disk::loadLocation(const char *name) {
 
 }
 
-Script* Disk::loadScript(const char* name) {
+Script* DosDisk::loadScript(const char* name) {
 
 	char vC8[PATH_LEN];
 
@@ -284,7 +304,7 @@ Script* Disk::loadScript(const char* name) {
 	return new Script(buf, true);
 }
 
-StaticCnv* Disk::loadHead(const char* name) {
+StaticCnv* DosDisk::loadHead(const char* name) {
 
 	char path[PATH_LEN];
 /*
@@ -307,13 +327,13 @@ StaticCnv* Disk::loadHead(const char* name) {
 }
 
 
-StaticCnv* Disk::loadPointer() {
+StaticCnv* DosDisk::loadPointer() {
 	StaticCnv* cnv = new StaticCnv;
 	loadExternalStaticCnv("pointer", cnv);
 	return cnv;
 }
 
-Cnv* Disk::loadFont(const char* name) {
+Cnv* DosDisk::loadFont(const char* name) {
 	char path[PATH_LEN];
 
 	sprintf(path, "%scnv", name);
@@ -325,7 +345,7 @@ Cnv* Disk::loadFont(const char* name) {
 
 // loads character's icons set
 
-Cnv* Disk::loadObjects(const char *name) {
+Cnv* DosDisk::loadObjects(const char *name) {
 
 	if (IS_MINI_CHARACTER(name)) {
 		name += 4;
@@ -340,7 +360,7 @@ Cnv* Disk::loadObjects(const char *name) {
 }
 
 
-StaticCnv* Disk::loadStatic(const char* name) {
+StaticCnv* DosDisk::loadStatic(const char* name) {
 
 	char path[PATH_LEN];
 
@@ -371,7 +391,7 @@ StaticCnv* Disk::loadStatic(const char* name) {
 	return cnv;
 }
 
-Cnv* Disk::loadFrames(const char* name) {
+Cnv* DosDisk::loadFrames(const char* name) {
 	Cnv* cnv = new Cnv;
 	loadCnv(name, cnv);
 	return cnv;
@@ -387,7 +407,7 @@ Cnv* Disk::loadFrames(const char* name) {
 //
 
 
-void Disk::unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *path) {
+void DosDisk::unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *path) {
 
 	// update mask, path and screen
 	for (uint16 i = 0; i < SCREEN_WIDTH; i++) {
@@ -399,7 +419,7 @@ void Disk::unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *p
 	return;
 }
 
-void Disk::parseDepths(Common::SeekableReadStream &stream) {
+void DosDisk::parseDepths(Common::SeekableReadStream &stream) {
 	_vm->_gfx->_bgLayers[0] = stream.readByte();
 	_vm->_gfx->_bgLayers[1] = stream.readByte();
 	_vm->_gfx->_bgLayers[2] = stream.readByte();
@@ -407,7 +427,7 @@ void Disk::parseDepths(Common::SeekableReadStream &stream) {
 }
 
 
-void Disk::parseBackground(Common::SeekableReadStream &stream) {
+void DosDisk::parseBackground(Common::SeekableReadStream &stream) {
 
 	stream.read(_vm->_gfx->_palette, PALETTE_SIZE);
 
@@ -431,7 +451,7 @@ void Disk::parseBackground(Common::SeekableReadStream &stream) {
 
 }
 
-void Disk::loadBackground(const char *filename) {
+void DosDisk::loadBackground(const char *filename) {
 //	printf("Gfx::loadBackground(%s)\n", filename);
 
 	if (!_archive.openArchivedFile(filename))
@@ -473,7 +493,7 @@ void Disk::loadBackground(const char *filename) {
 //	mask and path are normally combined (via OR) into the background picture itself
 //	read the comment on the top of this file for more
 //
-void Disk::loadMaskAndPath(const char *name) {
+void DosDisk::loadMaskAndPath(const char *name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.msk", name);
 
@@ -494,13 +514,13 @@ void Disk::loadMaskAndPath(const char *name) {
 	return;
 }
 
-void Disk::loadSlide(const char *filename) {
+void DosDisk::loadSlide(const char *filename) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.slide", filename);
 	loadBackground(path);
 }
 
-void Disk::loadScenery(const char *name, const char *mask) {
+void DosDisk::loadScenery(const char *name, const char *mask) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.dyn", name);
 	loadBackground(path);
@@ -512,8 +532,66 @@ void Disk::loadScenery(const char *name, const char *mask) {
 
 }
 
-void Disk::selectArchive(const char *name) {
-	_archive.open(name);
+
+
+#pragma mark -
+
+
+
+AmigaDisk::AmigaDisk(Parallaction *vm) : Disk(vm) {
+
 }
+
+
+AmigaDisk::~AmigaDisk() {
+
+}
+
+Script* AmigaDisk::loadLocation(const char *name) {
+	return NULL;
+}
+
+Script* AmigaDisk::loadScript(const char* name) {
+	return NULL;
+}
+
+Cnv* AmigaDisk::loadTalk(const char *name) {
+	return NULL;
+}
+
+Cnv* AmigaDisk::loadObjects(const char *name) {
+	return NULL;
+}
+
+StaticCnv* AmigaDisk::loadPointer() {
+	return NULL;
+}
+
+StaticCnv* AmigaDisk::loadHead(const char* name) {
+	return NULL;
+}
+
+Cnv* AmigaDisk::loadFont(const char* name) {
+	return NULL;
+}
+
+StaticCnv* AmigaDisk::loadStatic(const char* name) {
+	return NULL;
+}
+
+Cnv* AmigaDisk::loadFrames(const char* name) {
+	return NULL;
+}
+
+void AmigaDisk::loadSlide(const char *filename) {
+	return;
+}
+
+void AmigaDisk::loadScenery(const char* background, const char* mask) {
+	return;
+}
+
+
+
 
 } // namespace Parallaction
