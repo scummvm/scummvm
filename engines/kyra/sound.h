@@ -49,9 +49,9 @@
 #include "common/file.h"
 #include "common/mutex.h"
 
-#include "sound/mididrv.h"
 #include "sound/midiparser.h"
 #include "sound/mixer.h"
+#include "sound/softsynth/ym2612.h"
 
 #include "kyra/kyra.h"
 
@@ -84,8 +84,8 @@ public:
 
 	virtual void beginFadeOut() = 0;
 
-	void enableMusic(bool enable) { _musicEnabled = enable; }
-	bool musicEnabled() const { return _musicEnabled; }
+	void enableMusic(int enable) { _musicEnabled = enable; }
+	int musicEnabled() const { return _musicEnabled; }
 	void enableSFX(bool enable) { _sfxEnabled = enable; }
 	bool sfxEnabled() const { return _sfxEnabled; }
 
@@ -93,10 +93,10 @@ public:
 	void voiceUnload() {}
 	bool voiceIsPlaying();
 	void voiceStop();
-	
+
 protected:
 	const char *soundFilename(uint file) { return (file < _soundFileListSize) ? _soundFileList[file] : ""; }
-	bool _musicEnabled;
+	int _musicEnabled;
 	bool _sfxEnabled;
 
 	KyraEngine *_engine;
@@ -129,14 +129,14 @@ public:
 
 	void setVolume(int volume);
 	int getVolume();
-	
+
 	void loadSoundFile(uint file);
-	
+
 	void playTrack(uint8 track);
 	void haltTrack();
-	
+
 	void playSoundEffect(uint8 track);
-	
+
 	void beginFadeOut();
 private:
 	void play(uint8 track);
@@ -231,7 +231,8 @@ private:
 	Common::Mutex _mutex;
 };
 
-class SoundTowns : public Sound {
+class FMT_EuphonyDriver;
+class SoundTowns : public MidiDriver, public Sound {
 public:
 	SoundTowns(KyraEngine *engine, Audio::Mixer *mixer);
 	~SoundTowns();
@@ -249,23 +250,47 @@ public:
 
 	void playSoundEffect(uint8);
 
-	void beginFadeOut() { /* TODO */ }
+	void beginFadeOut();
+
+	//MidiDriver interface implementation
+	int open();
+	void close();
+	void send(uint32 b);
+	void metaEvent(byte type, byte *data, uint16 length) {}
+
+	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
+	uint32 getBaseTempo(void);
+
+	//Channel allocation functions
+	MidiChannel *allocateChannel()		{ return 0; }
+	MidiChannel *getPercussionChannel()	{ return 0; }
+
+	static float semitoneAndSampleRate_to_sampleStep(int8 semiTone, int8 semiToneRootkey,
+		uint32 sampleRate, uint32 outputRate, int32 pitchWheel);
 private:
-	void stopSoundEffect();
-	void setPitch(uint8 *&data, uint32 &size, int8 sourcePitch, int8 targetPitch);
+	bool loadInstruments();
+	void playEuphonyTrack(uint32 offset, int loop);
+
+	static void onTimer(void *data);
 
 	int _lastTrack;
 	Audio::AudioStream *_currentSFX;
 	Audio::SoundHandle _sfxHandle;
+
 	int _currentTrackTable;
-	bool _sfxIsPlaying;
 	uint _sfxFileIndex;
 	uint8 *_sfxFileData;
+
+	FMT_EuphonyDriver * _driver;
+	MidiParser * _parser;
+	uint8 *_musicTrackData;
+
+	Common::Mutex _mutex;
 
 	static const char *_sfxFiles[];
 	static const int _sfxFilenum;
 	static const uint8 _sfxBTTable[256];
-	const uint8 *_sfxWDTable;	
+	const uint8 *_sfxWDTable;
 };
 
 class MixedSoundDriver : public Sound {
@@ -300,7 +325,7 @@ public:
 	~SoundDigital();
 
 	bool init();
-	
+
 	int playSound(Common::File *fileHandle, bool loop = false, bool fadeIn = false, int channel = -1);
 	bool isPlaying(int channel);
 	void stopSound(int channel);

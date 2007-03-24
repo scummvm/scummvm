@@ -790,7 +790,7 @@ protected:
 
 	uint8 _configTextspeed;
 	uint8 _configWalkspeed;
-	bool _configMusic;
+	int _configMusic;
 	bool _configSounds;
 	uint8 _configVoice;
 
@@ -891,6 +891,7 @@ protected:
 	const char *_textSpeedString;
 	const char *_onString;
 	const char *_offString;
+	const char *_onCDString;
 		
 	int _itemList_Size;
 	int _takenList_Size;

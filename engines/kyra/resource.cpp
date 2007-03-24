@@ -88,6 +88,11 @@ Resource::Resource(KyraEngine *engine) {
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			Common::String filename = file->name();
 			filename.toUppercase();
+
+			// No real PAK file!
+			if (filename == "TWMUSIC.PAK")
+				continue;
+
 			if (filename.hasSuffix("PAK") || filename.hasSuffix("APK")) {
 				if (!loadPakFile(file->name())) {
 					error("couldn't open pakfile '%s'", file->name().c_str());

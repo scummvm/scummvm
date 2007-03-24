@@ -37,7 +37,7 @@ namespace Kyra {
 
 Sound::Sound(KyraEngine *engine, Audio::Mixer *mixer)
 	: _engine(engine), _mixer(mixer), _currentVocFile(0), _vocHandle(), _compressHandle(),
-	_musicEnabled(true), _sfxEnabled(true), _soundFileList(0), _soundFileListSize(0) {
+	_musicEnabled(1), _sfxEnabled(true), _soundFileList(0), _soundFileListSize(0) {
 }
 
 Sound::~Sound() {
@@ -450,14 +450,9 @@ void KyraEngine::snd_playTheme(int file, int track) {
 
 void KyraEngine::snd_playSoundEffect(int track) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playSoundEffect(%d)", track);
-	if (_flags.platform == Common::kPlatformFMTowns) {
-		if (track == 49) {
-			snd_playWanderScoreViaMap(56, 1);
-			return;
-		} else if (track == 0 || track == 1 || track == 10) {
-			// I don't know what's supposed to happen here, but calling playSoundEffect will lead to crash
-			return;
-		}
+	if (_flags.platform == Common::kPlatformFMTowns && track == 49) {
+		snd_playWanderScoreViaMap(56, 1);
+		return;
 	}
 	_sound->playSoundEffect(track);
 }

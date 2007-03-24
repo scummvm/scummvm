@@ -38,6 +38,7 @@ void KyraEngine::registerDefaultSettings() {
 	// Most settings already have sensible defaults. This one, however, is
 	// specific to the Kyra engine.
 	ConfMan.registerDefault("walkspeed", 2);
+	ConfMan.registerDefault("cdaudio", _flags.platform == Common::kPlatformFMTowns);
 }
 
 void KyraEngine::readSettings() {
@@ -55,7 +56,7 @@ void KyraEngine::readSettings() {
 		_configTextspeed = 2;	// Fast
 
 	_configWalkspeed = ConfMan.getInt("walkspeed");
-	_configMusic = ConfMan.getBool("music_mute") ? 0 : 1;
+	_configMusic = ConfMan.getBool("music_mute") ? 0 : ((ConfMan.getBool("cdaudio") && _flags.platform == Common::kPlatformFMTowns) ? 2 : 1);	
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 
 	_sound->enableMusic(_configMusic);
@@ -96,6 +97,7 @@ void KyraEngine::writeSettings() {
 	ConfMan.setInt("talkspeed", talkspeed);
 	ConfMan.setInt("walkspeed", _configWalkspeed);
 	ConfMan.setBool("music_mute", _configMusic == 0);
+	ConfMan.setBool("cdaudio", _configMusic == 2);
 	ConfMan.setBool("sfx_mute", _configSounds == 0);
 
 	switch (_configVoice) {
@@ -563,6 +565,7 @@ void KyraEngine::setGUILabels() {
 	_textSpeedString = _guiStrings[25 + offsetOptions];
 	_onString =  _guiStrings[20 + offsetOn];
 	_offString =  _guiStrings[21 + offset];
+	_onCDString = _guiStrings[21];
 }
 
 int KyraEngine::buttonMenuCallback(Button *caller) {
@@ -1214,10 +1217,17 @@ int KyraEngine::gui_gameControlsMenu(Button *button) {
 void KyraEngine::gui_setupControls(Menu &menu) {
 	debugC(9, kDebugLevelGUI, "KyraEngine::gui_setupControls()");
 
-	if (_configMusic)
-		menu.item[0].itemString = _onString; //"On"
-	else
-		menu.item[0].itemString = _offString; //"Off"
+	switch (_configMusic) {
+		case 0:
+			menu.item[0].itemString = _offString; //"Off"
+			break;
+		case 1:
+			menu.item[0].itemString = _onString; //"On"
+			break;
+		case 2:
+			menu.item[0].itemString = _onCDString; //"On + CD"
+			break;
+	}
 
 	if (_configSounds)
 		menu.item[1].itemString = _onString; //"On"
@@ -1299,7 +1309,7 @@ int KyraEngine::gui_controlsChangeMusic(Button *button) {
 	debugC(9, kDebugLevelGUI, "KyraEngine::gui_controlsChangeMusic()");
 	processMenuButton(button);
 
-	_configMusic = !_configMusic;
+	_configMusic = ++_configMusic % (_flags.platform == Common::kPlatformFMTowns ? 3 : 2);
 	gui_setupControls(_menu[5]);
 	return 0;
 }
