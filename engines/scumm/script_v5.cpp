@@ -858,7 +858,6 @@ void ScummEngine_v5::o5_getStringWidth() {
 	width = _charset->getStringWidth(0, ptr);
 
 	setResult(width);
-	debug(0, "o5_getStringWidth, result %d", width);
 }
 
 void ScummEngine_v5::o5_saveLoadVars() {
