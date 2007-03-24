@@ -35,6 +35,7 @@ namespace Parallaction {
 
 #define MAX_ARCHIVE_ENTRIES 		384
 
+class Table;
 class Parallaction;
 class Gfx;
 class Script;
@@ -101,7 +102,7 @@ public:
 	virtual Cnv* loadFrames(const char* name) = 0;
 	virtual void loadSlide(const char *filename) = 0;
 	virtual void loadScenery(const char* background, const char* mask) = 0;
-
+	virtual Table* loadTable(const char* name) = 0;
 
 };
 
@@ -136,6 +137,7 @@ public:
 	Cnv* loadFrames(const char* name);
 	void loadSlide(const char *filename);
 	void loadScenery(const char* background, const char* mask);
+	Table* loadTable(const char* name);
 };
 
 class AmigaDisk : public Disk {
@@ -155,6 +157,7 @@ public:
 	Cnv* loadFrames(const char* name);
 	void loadSlide(const char *filename);
 	void loadScenery(const char* background, const char* mask);
+	Table* loadTable(const char* name);
 };
 
 } // namespace Parallaction

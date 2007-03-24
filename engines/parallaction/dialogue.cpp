@@ -64,7 +64,7 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 //	printf("parseDialogue()\n");
 	uint16 num_questions = 0;
 	uint16 v50[20];
-	char *_questions_names[20];
+	Table _questions_names(20);
 	Question *_questions[20];
 
 	for (uint16 _si = 0; _si < 20; _si++) {
@@ -79,8 +79,7 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 		_questions[num_questions] = new Dialogue;
 		Dialogue *vB4 = _questions[num_questions];
 
-		_questions_names[num_questions] = (char*)malloc(strlen(_tokens[1])+1);
-		strcpy(_questions_names[num_questions], _tokens[1]);
+		_questions_names.addData(_tokens[1]);
 
 		vB4->_text = parseDialogueString(script);
 //		printf("Question: '%s'\n", vB4->_text);
@@ -93,24 +92,24 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 		fillBuffers(script, true);
 		while (scumm_stricmp(_tokens[0], "endquestion")) {	// parse answers
 
-			const char** v60 = const_cast<const char **>(_localFlagNames);
-			uint16 v56 = 1;
-
 			if (_tokens[1][0]) {
+
+				Table* v60 = _localFlagNames;
+				uint16 v56 = 1;
 
 				if (!scumm_stricmp(_tokens[1], "global")) {
 					v56 = 2;
-					v60 = const_cast<const char **>(_globalTable);
+					v60 = _globalTable;
 					vB4->_yesFlags[_di] |= kFlagsGlobal;
 				}
 
 				do {
 
 					if (!scumm_strnicmp(_tokens[v56], "no", 2)) {
-						byte _al = _vm->searchTable(_tokens[v56]+2, v60);
+						byte _al = v60->lookup(_tokens[v56]+2);
 						vB4->_noFlags[_di] |= 1 << (_al - 1);
 					} else {
-						byte _al = _vm->searchTable(_tokens[v56], v60);
+						byte _al = v60->lookup(_tokens[v56]);
 						vB4->_yesFlags[_di] |= 1 << (_al - 1);
 					}
 
@@ -142,14 +141,12 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 
 	}
 
-	_questions_names[num_questions] = NULL;
-
 	for (uint16 _si = 0; _si <num_questions; _si++) {
 
 		for (uint16 v5A = 0; v5A < 5; v5A++) {
 			if (_questions[_si]->_answers[v5A] == 0) continue;
 
-			int16 v58 = _vm->searchTable(_questions[_si]->_following._names[v5A], const_cast<const char **>(_questions_names));
+			int16 v58 = _questions_names.lookup(_questions[_si]->_following._names[v5A]);
 			free(_questions[_si]->_following._names[v5A]);
 
 			if (v58 == -1) {
@@ -165,9 +162,6 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 			}
 		}
 	}
-
-	for (uint16 _si = 0; _si < num_questions; _si++)
-		free(_questions_names[_si]);
 
 	return _questions[0];
 }

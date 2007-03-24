@@ -80,9 +80,9 @@ void Parallaction::parseZone(Script &script, Node *list, char *name) {
 		}
 		if (!scumm_stricmp(_tokens[0], "type")) {
 			if (_tokens[2][0] != '\0') {
-				z->_type = (4 + searchTable(_tokens[2], const_cast<const char **>(_objectsNames))) << 16;
+				z->_type = (4 + _objectsNames->lookup(_tokens[2])) << 16;
 			}
-			int16 _si = searchTable(_tokens[1], _zoneTypeNames);
+			int16 _si = _zoneTypeNames->lookup(_tokens[1]);
 			if (_si != -1) {
 				z->_type |= 1 << (_si - 1);
 				parseZoneTypeBlock(script, z);
@@ -100,7 +100,7 @@ void Parallaction::parseZone(Script &script, Node *list, char *name) {
 			uint16 _si = 1;
 
 			do {
-				char _al = searchTable(_tokens[_si], _zoneFlagNames);
+				char _al = _zoneFlagNames->lookup(_tokens[_si]);
 				_si++;
 				z->_flags |= 1 << (_al - 1);
 			} while (!scumm_stricmp(_tokens[_si++], "|"));
@@ -307,19 +307,19 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 			}
 
 			if (!scumm_stricmp(_tokens[0], "icon")) {
-				u->get->_icon = 4 + searchTable(_tokens[1], const_cast<const char **>(_objectsNames));
+				u->get->_icon = 4 + _objectsNames->lookup(_tokens[1]);
 			}
 			break;
 
 		case kZoneMerge: // merge Zone init
 			if (!scumm_stricmp(_tokens[0], "obj1")) {
-				u->merge->_obj1 = 4 + searchTable(_tokens[1], const_cast<const char **>(_objectsNames));
+				u->merge->_obj1 = 4 + _objectsNames->lookup(_tokens[1]);
 			}
 			if (!scumm_stricmp(_tokens[0], "obj2")) {
-				u->merge->_obj2 = 4 + searchTable(_tokens[1], const_cast<const char **>(_objectsNames));
+				u->merge->_obj2 = 4 + _objectsNames->lookup(_tokens[1]);
 			}
 			if (!scumm_stricmp(_tokens[0], "newobj")) {
-				u->merge->_obj3 = 4 + searchTable(_tokens[1], const_cast<const char **>(_objectsNames));
+				u->merge->_obj3 = 4 + _objectsNames->lookup(_tokens[1]);
 			}
 			break;
 

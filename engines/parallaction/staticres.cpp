@@ -20,7 +20,9 @@
  *
  */
 
+#include "parallaction/parallaction.h"
 #include "parallaction/graphics.h"
+
 
 namespace Parallaction {
 
@@ -45,7 +47,7 @@ byte Gfx::_mouseArrow[256] = {
 
 
 
-const char *_zoneFlagNames[] = {
+const char *_zoneFlagNamesRes[] = {
 	"closed",
 	"active",
 	"remove",
@@ -57,11 +59,10 @@ const char *_zoneFlagNames[] = {
 	"looping",
 	"added",
 	"character",
-	"nowalk",
-	0
+	"nowalk"
 };
 
-const char *_zoneTypeNames[] = {
+const char *_zoneTypeNamesRes[] = {
 	"examine",
 	"door",
 	"get",
@@ -73,8 +74,7 @@ const char *_zoneTypeNames[] = {
 	"none",
 	"trap",
 	"yourself",
-	"Command",
-	0
+	"Command"
 };
 
 const char _gameNames[10][20] = {
@@ -90,7 +90,7 @@ const char _gameNames[10][20] = {
 	"GAME10"
 };
 
-const char *commands_names[] = {
+const char *_commandsNamesRes[] = {
 	"set",
 	"clear",
 	"start",
@@ -106,11 +106,10 @@ const char *commands_names[] = {
 	"drop",
 	"quit",
 	"move",
-	"stop",
-	0
+	"stop"
 };
 
-const char *_instructionNames[] = {
+const char *_instructionNamesRes[] = {
 	"on",
 	"off",
 	"x",
@@ -128,11 +127,10 @@ const char *_instructionNames[] = {
 	"wait",
 	"start",
 	"sound",
-	"move",
-	0
+	"move"
 };
 
-const char *_callableNames[] = {
+const char *_callableNamesRes[] = {
 	"HBOff",
 	"Projector",
 	"StartIntro",
@@ -157,8 +155,7 @@ const char *_callableNames[] = {
 	"Frankenstain",
 	"Finito",
 	"Ridux",
-	"TestResult",
-	0
+	"TestResult"
 };
 
 
@@ -236,6 +233,20 @@ const char *_minidinoName = "minidino";
 const char *_minidonnaName = "minidonna";
 const char *_minidoughName = "minidough";
 const char *_minidrkiName = "minidrki";
+
+
+void Parallaction::initResources() {
+
+	_callableNames = new Table(ARRAYSIZE(_callableNamesRes), _callableNamesRes);
+	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes), _instructionNamesRes);
+	_zoneFlagNames = new Table(ARRAYSIZE(_zoneFlagNamesRes), _zoneFlagNamesRes);
+	_zoneTypeNames = new Table(ARRAYSIZE(_zoneTypeNamesRes), _zoneTypeNamesRes);
+	_commandsNames = new Table(ARRAYSIZE(_commandsNamesRes), _commandsNamesRes);
+
+	_localFlagNames = new Table(120);
+	_localFlagNames->addData("visited");
+
+}
 
 
 } // namespace Parallaction

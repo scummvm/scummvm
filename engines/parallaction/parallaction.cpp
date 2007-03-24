@@ -55,50 +55,11 @@ char		_saveData1[30] = { '\0' };
 uint16		_language = 0;
 char		_slideText[2][40];
 uint32		_engineFlags = 0;
-char	   *_objectsNames[100];
 Zone	   *_activeZone = NULL;
 
 uint16		_score = 1;
 
 uint32		_localFlags[120] = { 0 };
-
-static char tmp_visited_str[] = "visited";
-
-char *_localFlagNames[32] = {
-	tmp_visited_str, // "visited",
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0
-};
-
 Command *	_forwardedCommands[20] = {
 	NULL,
 	NULL,
@@ -125,8 +86,6 @@ Command *	_forwardedCommands[20] = {
 char		_forwardedAnimationNames[20][20];
 uint16		_numForwards = 0;
 char		_soundFile[20];
-
-char	   *_globalTable[32];
 
 byte		_mouseHidden = 0;
 
@@ -167,6 +126,19 @@ Parallaction::Parallaction(OSystem *syst) :
 Parallaction::~Parallaction() {
 	delete _midiPlayer;
 	delete _disk;
+	delete _globalTable;
+
+	if (_objectsNames)
+		delete _objectsNames;
+
+	delete _callableNames;
+	delete _commandsNames;
+	delete _instructionNames;
+	delete _zoneTypeNames;
+	delete _zoneFlagNames;
+
+	if (_localFlagNames)
+		delete _localFlagNames;
 }
 
 
@@ -177,6 +149,11 @@ int Parallaction::init() {
 		GUIErrorMessage("No valid games were found in the specified directory.");
 		return -1;
 	}
+
+	_objectsNames = NULL;
+	_globalTable = NULL;
+	_localFlagNames = NULL;
+	initResources();
 
 	_skipMenu = false;
 
@@ -278,8 +255,7 @@ void Parallaction::initGame() {
 }
 
 void Parallaction::initGlobals() {
-
-	initTable("global.tab", _globalTable);
+	_globalTable = _disk->loadTable("global");
 }
 
 // FIXME: the engine has 3 event loops. The following routine hosts the main one,
@@ -721,7 +697,7 @@ void Parallaction::changeCursor(int32 index) {
 
 
 
-void freeCharacter() {
+void Parallaction::freeCharacter() {
 
 	_vm->_gfx->freeCnv(_vm->_char._normalFrames);
 	if (_vm->_char._normalFrames) delete _vm->_char._normalFrames;
@@ -730,7 +706,8 @@ void freeCharacter() {
 		_vm->_gfx->freeCnv(_vm->_char._miniFrames);
 		if (_vm->_char._miniFrames) delete _vm->_char._miniFrames;
 
-		_vm->freeTable(_objectsNames);
+		if (_objectsNames) delete _objectsNames;
+		_objectsNames = NULL;
 
 		_vm->_gfx->freeCnv(_vm->_char._talk);
 		if (_vm->_char._talk) delete _vm->_char._talk;
@@ -829,8 +806,7 @@ void Parallaction::changeCharacter(const char *name) {
 			sprintf(path, "mini%s", v32);
 			_vm->_char._miniFrames = _disk->loadFrames(path);
 
-			sprintf(path, "%s.tab", name);
-			initTable(path, _objectsNames);
+			_objectsNames = _disk->loadTable(name);
 
 			refreshInventory(name);
 
@@ -970,64 +946,42 @@ void jobWaitRemoveJob(void *parm, Job *j) {
 }
 
 
-void Parallaction::initTable(const char *path, char** table) {
-//	printf("initTable(%s)\n", path);
 
-	Common::File	stream;
+Table::Table(uint32 size) : _size(size), _used(0), _disposeMemory(true) {
+	_data = (char**)malloc(sizeof(char*)*size);
+}
 
-	if (!stream.open(path))
-		errorFileNotFound(path);
+Table::Table(uint32 size, const char **data) : _size(size), _used(size), _disposeMemory(false) {
+	_data = const_cast<char**>(data);
+}
 
-	uint16 count = 0;
+Table::~Table() {
 
-	fillBuffers(stream);
+	if (!_disposeMemory) return;
 
-	while (scumm_stricmp(_tokens[0], "ENDTABLE")) {
+	for (uint32 i = 0; i < _used; i++)
+		free(_data[i]);
 
-		table[count] = (char*)malloc(strlen(_tokens[0])+1);
-		strcpy(table[count], _tokens[0]);
-
-		count++;
-		fillBuffers(stream);
-	}
-
-	table[count] = NULL;
-
-	stream.close();
-
-	return;
+	free(_data);
 
 }
 
-void Parallaction::freeTable(char** table) {
+void Table::addData(const char* s) {
 
-	uint16 count = 0;
+	if (!(_used < _size))
+		error("Table overflow");
 
-	while (table[count]) {
-
-		free(table[count]);
-		table[count] = NULL;
-
-		count++;
-	}
-
-	return;
+	_data[_used++] = strdup(s);
 
 }
 
-int16 Parallaction::searchTable(const char *s, const char **table) {
+int16 Table::lookup(const char* s) {
 
-	int16 count = 0;
-
-	if (!s) return 0;
-
-	while (table[count]) {
-		if (!scumm_stricmp(table[count], s)) return count + 1;
-		count++;
+	for (uint16 i = 0; i < _used; i++) {
+		if (!scumm_stricmp(_data[i], s)) return i + 1;
 	}
 
 	return -1;
 }
-
 
 } // namespace Parallaction

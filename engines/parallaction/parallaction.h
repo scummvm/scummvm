@@ -118,19 +118,12 @@ extern char _slideText[][40];
 extern uint16 _introSarcData3;		 // sarcophagus stuff to be saved
 extern uint16 _introSarcData2;		 // sarcophagus stuff to be saved
 
-extern char *_globalTable[];
 extern char _saveData1[];
 extern byte _mouseHidden;
 extern uint32 _commandFlags;
 
-extern char *_objectsNames[];
-extern const char *_zoneTypeNames[];
-extern const char *_zoneFlagNames[];
-extern char *_localFlagNames[];
-extern const char *commands_names[];
-
-extern const char *_instructionNames[];
-extern const char *_callableNames[];
+extern const char *_instructionNamesRes[];
+extern const char *_commandsNamesRes[];
 
 extern const char *_dinoName;
 extern const char *_donnaName;
@@ -264,6 +257,26 @@ struct Character {
 
 };
 
+
+class Table {
+
+	char	**_data;
+	uint16	_size;
+	uint16	_used;
+	bool	_disposeMemory;
+
+public:
+	Table(uint32 size);
+	Table(uint32 size, const char** data);
+
+	~Table();
+
+	void addData(const char* s);
+
+	int16 lookup(const char* s);
+};
+
+
 class Parallaction : public Engine {
 
 public:
@@ -283,9 +296,9 @@ public:
 
 	void waitTime(uint32 t);
 
-	static void initTable(const char *path, char **table);
-	static void freeTable(char** table);
-	static int16 searchTable(const char *s, const char **table);
+//	static void initTable(const char *path, char **table);
+//	static void freeTable(char** table);
+//	static int16 searchTable(const char *s, const char **table);
 
 	void parseLocation(const char *filename);
 	void changeCursor(int32 index);
@@ -300,6 +313,15 @@ public:
 	void pauseJobs();
 	void resumeJobs();
 	void runJobs();
+
+	Table		*_globalTable;
+	Table		*_objectsNames;
+	Table		*_zoneTypeNames;
+	Table		*_zoneFlagNames;
+	Table		*_commandsNames;
+	Table		*_callableNames;
+	Table		*_instructionNames;
+	Table		*_localFlagNames;
 
 	void 		freeZones(Node *list);
 	Animation  	*findAnimation(const char *name);
@@ -418,6 +440,9 @@ protected:		// members
 
 	Command 	*parseCommands(Script &script);
 	void 		freeCommands(Command*);
+	void 		freeCharacter();
+
+	void 		initResources();
 
 };
 

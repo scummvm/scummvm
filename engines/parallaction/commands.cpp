@@ -59,7 +59,7 @@ Command *Parallaction::parseCommands(Script &script) {
 
 		Command *cmd = new Command;
 
-		cmd->_id = _vm->searchTable(_tokens[0], commands_names);
+		cmd->_id = _commandsNames->lookup(_tokens[0]);
 		uint16 _si = 1;
 
 //		printf("cmd id = %i", cmd->_id);
@@ -68,9 +68,9 @@ Command *Parallaction::parseCommands(Script &script) {
 		case CMD_SET:	// set
 		case CMD_CLEAR: // clear
 		case CMD_TOGGLE:	// toggle
-			if (_vm->searchTable(_tokens[1], const_cast<const char **>(_globalTable)) == -1) {
+			if (_globalTable->lookup(_tokens[1]) == -1) {
 				do {
-					char _al = _vm->searchTable(_tokens[_si], const_cast<const char **>(_localFlagNames));
+					char _al = _localFlagNames->lookup(_tokens[_si]);
 					_si++;
 					cmd->u._flags |= 1 << (_al - 1);
 				} while (!scumm_stricmp(_tokens[_si++], "|"));
@@ -78,7 +78,7 @@ Command *Parallaction::parseCommands(Script &script) {
 			} else {
 				cmd->u._flags |= kFlagsGlobal;
 				do {
-					char _al = _vm->searchTable(_tokens[1], const_cast<const char **>(_globalTable));
+					char _al = _globalTable->lookup(_tokens[1]);
 					_si++;
 					cmd->u._flags |= 1 << (_al - 1);
 				} while (!scumm_stricmp(_tokens[_si++], "|"));
@@ -114,12 +114,12 @@ Command *Parallaction::parseCommands(Script &script) {
 			break;
 
 		case CMD_CALL:	// call
-			cmd->u._callable = _vm->searchTable(_tokens[_si], _callableNames) - 1;
+			cmd->u._callable = _callableNames->lookup(_tokens[_si]) - 1;
 			_si++;
 			break;
 
 		case CMD_DROP:	// drop
-			cmd->u._object = _vm->searchTable(_tokens[_si], const_cast<const char **>(_objectsNames));
+			cmd->u._object = _objectsNames->lookup(_tokens[_si]);
 			_si++;
 			break;
 
@@ -146,10 +146,10 @@ Command *Parallaction::parseCommands(Script &script) {
 					cmd->_flagsOn |= kFlagsEnter;
 				} else
 				if (!scumm_strnicmp(_tokens[_si], "no", 2)) {
-					byte _al = _vm->searchTable(&_tokens[_si][2], const_cast<const char **>(_localFlagNames));
+					byte _al = _localFlagNames->lookup(&_tokens[_si][2]);
 					cmd->_flagsOff |= 1 << (_al - 1);
 				} else {
-					byte _al = _vm->searchTable(_tokens[_si], const_cast<const char **>(_localFlagNames));
+					byte _al = _localFlagNames->lookup(_tokens[_si]);
 					cmd->_flagsOn |= 1 << (_al - 1);
 				}
 
@@ -171,10 +171,10 @@ Command *Parallaction::parseCommands(Script &script) {
 					cmd->_flagsOn |= kFlagsEnter;
 				} else
 				if (!scumm_strnicmp(_tokens[_si], "no", 2)) {
-					byte _al = _vm->searchTable(&_tokens[_si][2], const_cast<const char **>(_globalTable));
+					byte _al = _globalTable->lookup(&_tokens[_si][2]);
 					cmd->_flagsOff |= 1 << (_al - 1);
 				} else {
-					byte _al = _vm->searchTable(_tokens[_si], const_cast<const char **>(_globalTable));
+					byte _al = _globalTable->lookup(_tokens[_si]);
 					cmd->_flagsOn |= 1 << (_al - 1);
 				}
 
@@ -229,7 +229,7 @@ void Parallaction::runCommands(Command *list, Zone *z) {
 		if ((cmd->_flagsOn & v8) != cmd->_flagsOn) continue;
 		if ((cmd->_flagsOff & ~v8) != cmd->_flagsOff) continue;
 
-		debugC(1, kDebugLocation, "runCommands: %s (on: %x, off: %x)", commands_names[cmd->_id-1], cmd->_flagsOn, cmd->_flagsOff);
+		debugC(1, kDebugLocation, "runCommands: %s (on: %x, off: %x)", _commandsNamesRes[cmd->_id-1], cmd->_flagsOn, cmd->_flagsOff);
 
 		switch (cmd->_id) {
 

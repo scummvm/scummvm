@@ -38,7 +38,7 @@ void parseWalkNodes(Script &script, Node *list);
 
 
 void Parallaction::parseLocation(const char *filename) {
-	printf("parseLocation(%s)", filename);
+//	printf("parseLocation(%s)", filename);
     debugC(1, kDebugLocation, "parseLocation('%s')", filename);
 
 	uint16 _si = 1;
@@ -49,7 +49,7 @@ void Parallaction::parseLocation(const char *filename) {
 
 	fillBuffers(*_locationScript, true);
 	while (scumm_stricmp(_tokens[0], "ENDLOCATION")) {
-		printf("token[0] = %s", _tokens[0]);
+//		printf("token[0] = %s", _tokens[0]);
 
 		if (!scumm_stricmp(_tokens[0], "LOCATION")) {
 			// The parameter for location is 'location.mask'.
@@ -106,11 +106,9 @@ void Parallaction::parseLocation(const char *filename) {
 		if (!scumm_stricmp(_tokens[0], "LOCALFLAGS")) {
 			_si = 1;	// _localFlagNames[0] = 'visited'
 			while (_tokens[_si][0] != '\0') {
-				_localFlagNames[_si] = (char*)malloc(strlen(_tokens[_si])+1);
-				strcpy(_localFlagNames[_si], _tokens[_si]);
+				_localFlagNames->addData(_tokens[_si]);
 				_si++;
 			}
-			_localFlagNames[_si] = 0;
 		}
 		if (!scumm_stricmp(_tokens[0], "COMMANDS")) {
 			_location._commands = parseCommands(*_locationScript);
@@ -125,7 +123,7 @@ void Parallaction::parseLocation(const char *filename) {
 				_si = 1;
 
 				do {
-					byte _al = searchTable(_tokens[_si], const_cast<const char **>(_localFlagNames));
+					byte _al = _localFlagNames->lookup(_tokens[_si]);
 					_localFlags[_currentLocationIndex] |= 1 << (_al - 1);
 
 					_si++;
@@ -180,14 +178,12 @@ void resolveLocationForwards() {
 void Parallaction::freeLocation() {
 	debugC(7, kDebugLocation, "freeLocation");
 
-	uint16 _si = 1;
-	while (_localFlagNames[_si] != 0) {
-		free(_localFlagNames[_si]);
-		_localFlagNames[_si] = NULL;
-		_si++;
-	}
-	debugC(7, kDebugLocation, "freeLocation: localflags names freed");
+	if (_localFlagNames)
+		delete _localFlagNames;
+	_localFlagNames = new Table(120);
+	_localFlagNames->addData("visited");
 
+	debugC(7, kDebugLocation, "freeLocation: localflags names freed");
 
 	freeNodeList(_vm->_location._walkNodes._next);
 	_vm->_location._walkNodes._next = NULL;

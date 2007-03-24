@@ -68,8 +68,6 @@ void Disk::setLanguage(uint16 language) {
 	return;
 }
 
-
-
 #pragma mark -
 
 
@@ -532,6 +530,26 @@ void DosDisk::loadScenery(const char *name, const char *mask) {
 
 }
 
+Table* DosDisk::loadTable(const char* name) {
+	char path[PATH_LEN];
+	sprintf(path, "%s.tab", name);
+
+	Common::File	stream;
+	if (!stream.open(path))
+		errorFileNotFound(path);
+
+	Table *t = new Table(100);
+
+	fillBuffers(stream);
+	while (scumm_stricmp(_tokens[0], "ENDTABLE")) {
+		t->addData(_tokens[0]);
+		fillBuffers(stream);
+	}
+
+	stream.close();
+
+	return t;
+}
 
 
 #pragma mark -
@@ -591,7 +609,23 @@ void AmigaDisk::loadScenery(const char* background, const char* mask) {
 	return;
 }
 
+Table* AmigaDisk::loadTable(const char* name) {
 
+	char path[PATH_LEN];
+	sprintf(path, "%s.table", name);
+
+	_archive.openArchivedFile(path);
+
+	Table *t = new Table(100);
+
+	fillBuffers(_archive);
+	while (scumm_stricmp(_tokens[0], "ENDTABLE")) {
+		t->addData(_tokens[0]);
+		fillBuffers(_archive);
+	}
+
+	return t;
+}
 
 
 } // namespace Parallaction

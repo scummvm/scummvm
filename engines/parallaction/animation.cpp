@@ -97,9 +97,9 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 		}
 		if (!scumm_stricmp(_tokens[0], "type")) {
 			if (_tokens[2][0] != '\0') {
-				vD0->_type = ((4 + searchTable(_tokens[2], const_cast<const char **>(_objectsNames))) << 16) & 0xFFFF0000;
+				vD0->_type = ((4 + _objectsNames->lookup(_tokens[2])) << 16) & 0xFFFF0000;
 			}
-			int16 _si = searchTable(_tokens[1], _zoneTypeNames);
+			int16 _si = _zoneTypeNames->lookup(_tokens[1]);
 			if (_si != -1) {
 				vD0->_type |= 1 << (_si-1);
 				if (((vD0->_type & 0xFFFF) != kZoneNone) && ((vD0->_type & 0xFFFF) != kZoneCommand)) {
@@ -114,7 +114,7 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 			uint16 _si = 1;
 
 			do {
-				byte _al = searchTable(_tokens[_si], _zoneFlagNames);
+				byte _al = _zoneFlagNames->lookup(_tokens[_si]);
 				_si++;
 				vD0->_flags |= 1 << (_al - 1);
 			} while (!scumm_stricmp(_tokens[_si++], "|"));
@@ -304,7 +304,7 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 		a = findAnimation(&_tokens[1][2]);
 	}
 
-	int16 _si = searchTable(_tokens[0], _instructionNames);
+	int16 _si = _instructionNames->lookup(_tokens[0]);
 	inst->_index = _si;
 
 //	printf("token[0] = %s (%i)\n", _tokens[0], inst->_index);
@@ -395,7 +395,7 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 		break;
 
 	case INST_CALL: {	// call
-		int16 _ax = searchTable(_tokens[1], _callableNames);
+		int16 _ax = _callableNames->lookup(_tokens[1]);
 		inst->_opBase._index = _ax - 1;
 		if (_ax - 1 < 0) exit(0);
 	}
@@ -497,7 +497,7 @@ void jobRunScripts(void *parm, Job *j) {
 
 		while ((inst->_index != INST_SHOW) && (a->_flags & kFlagsActing)) {
 
-			debugC(1, kDebugJobs, "Animation: %s, instruction: %s", a->_label._text, inst->_index == INST_END ? "end" : _instructionNames[inst->_index - 1]);
+			debugC(1, kDebugJobs, "Animation: %s, instruction: %s", a->_label._text, inst->_index == INST_END ? "end" : _instructionNamesRes[inst->_index - 1]);
 
 			switch (inst->_index) {
 			case INST_ENDLOOP:	// endloop
