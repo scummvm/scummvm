@@ -59,6 +59,8 @@ protected:
 		uint16 xStrips, yStrips;
 		bool isDrawn;
 	} _flashlight;
+	
+	char _saveLoadVarsFilename[256];
 
 public:
 	ScummEngine_v5(OSystem *syst, const DetectorResult &dr);

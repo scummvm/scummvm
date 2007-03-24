@@ -860,6 +860,15 @@ void ScummEngine_v5::o5_getStringWidth() {
 	setResult(width);
 }
 
+enum StringIds {
+	// The string IDs used by Indy3 to store the episode resp. series IQ points.
+	// Note that we save the episode IQ points but load the series IQ points,
+	// which matches the original Indy3 save/load code. See also the notes
+	// on Feature Request #1666521.
+	STRINGID_IQ_EPISODE = 7,
+	STRINGID_IQ_SERIES = 9
+};
+
 void ScummEngine_v5::o5_saveLoadVars() {
 	if (fetchScriptByte() == 1)
 		saveVars();
@@ -869,7 +878,6 @@ void ScummEngine_v5::o5_saveLoadVars() {
 
 void ScummEngine_v5::saveVars() {
 	int a, b;
-	static char filename[256];
 
 	while ((_opcode = fetchScriptByte()) != 0) {
 		switch (_opcode & 0x1F) {
@@ -884,7 +892,7 @@ void ScummEngine_v5::saveVars() {
 			a = getVarOrDirectByte(PARAM_1);
 			b = getVarOrDirectByte(PARAM_2);
 
-			if (a == RESID_IQ_EPISODE && b == RESID_IQ_EPISODE) {
+			if (a == STRINGID_IQ_EPISODE && b == STRINGID_IQ_EPISODE) {
 				if (_game.id == GID_INDY3) {
 					saveIQPoints();
 				}
@@ -894,14 +902,14 @@ void ScummEngine_v5::saveVars() {
 			break;
 		case 0x03: // open file
 			a = resStrLen(_scriptPointer);
-			strncpy(filename, (const char *)_scriptPointer, a);
-			filename[a] = '\0';
+			strncpy(_saveLoadVarsFilename, (const char *)_scriptPointer, a);
+			_saveLoadVarsFilename[a] = '\0';
 			_scriptPointer += a + 1;
 			break;
 		case 0x04:
 			return;
 		case 0x1F: // close file
-			filename[0] = '\0';
+			_saveLoadVarsFilename[0] = '\0';
 			return;
 		}
 	}
@@ -909,7 +917,6 @@ void ScummEngine_v5::saveVars() {
 
 void ScummEngine_v5::loadVars() {
 	int a, b;
-	static char filename[256];
 
 	while ((_opcode = fetchScriptByte()) != 0) {
 		switch (_opcode & 0x1F) {
@@ -931,7 +938,7 @@ void ScummEngine_v5::loadVars() {
 			char name[32];
 			bool avail_saves[100];
 
-			if (a == RESID_IQ_SERIES && b == RESID_IQ_SERIES) {
+			if (a == STRINGID_IQ_SERIES && b == STRINGID_IQ_SERIES) {
 				// Zak256 loads the IQ script-slot but does not use it -> ignore it
 				if(_game.id == GID_INDY3) {
 					loadIQPoints();
@@ -967,44 +974,42 @@ void ScummEngine_v5::loadVars() {
 			break;
 		case 0x03: // open file
 			a = resStrLen(_scriptPointer);
-			strncpy(filename, (const char *)_scriptPointer, a);
-			filename[a] = '\0';
+			strncpy(_saveLoadVarsFilename, (const char *)_scriptPointer, a);
+			_saveLoadVarsFilename[a] = '\0';
 			_scriptPointer += a + 1;
 			break;
 		case 0x04:
 			return;
 		case 0x1F: // close file
-			filename[0] = '\0';
+			_saveLoadVarsFilename[0] = '\0';
 			return;
 		}
 	}
 }
 
 void ScummEngine_v5::saveIQPoints() {
-	// save series IQ-points
+	// save Indy3 IQ-points
 	Common::OutSaveFile *file;
-	char filename[256];
+	Common::String filename = _targetName + ".iq";
 
-	sprintf(filename, "%s.iq", _targetName.c_str());
-	file = _saveFileMan->openForSaving(filename);
+	file = _saveFileMan->openForSaving(filename.c_str());
 	if (file != NULL) {
-		int size = getResourceSize(rtString, RESID_IQ_EPISODE);
-		byte *ptr = getResourceAddress(rtString, RESID_IQ_EPISODE);
+		int size = getResourceSize(rtString, STRINGID_IQ_EPISODE);
+		byte *ptr = getResourceAddress(rtString, STRINGID_IQ_EPISODE);
 		file->write(ptr, size);
 		delete file;
 	}
 }
 
 void ScummEngine_v5::loadIQPoints() {
-	// load series IQ-points
+	// load Indy3 IQ-points
 	Common::InSaveFile *file;
-	char filename[256];
+	Common::String filename = _targetName + ".iq";
 
-	sprintf(filename, "%s.iq", _targetName.c_str());
-	file = _saveFileMan->openForLoading(filename);
+	file = _saveFileMan->openForLoading(filename.c_str());
 	if (file != NULL) {
-		int size = getResourceSize(rtString, RESID_IQ_SERIES);
-		byte *ptr = getResourceAddress(rtString, RESID_IQ_SERIES);
+		int size = getResourceSize(rtString, STRINGID_IQ_SERIES);
+		byte *ptr = getResourceAddress(rtString, STRINGID_IQ_SERIES);
 		byte *tmp = (byte*)malloc(size);
 		int nread = file->read(tmp, size);
 		if (nread == size) {
