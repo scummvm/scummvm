@@ -567,6 +567,23 @@ void ScummEngine::checkExecVerbs() {
 			}
 		}
 
+		if ((_game.platform == Common::kPlatformFMTowns && _game.id == GID_ZAK) &&
+			(_mouseAndKeyboardStat >= 315 && _mouseAndKeyboardStat <= 318)) {
+			// Hack: Handle switching to a person via F1-F4 keys.
+			// This feature isn't available in the scripts of the FM-TOWNS verison.
+			int fKey = _mouseAndKeyboardStat - 314;
+			int switchSlot = getVerbSlot(36, 0);
+			// check if switch-verb is enabled
+			if (_verbs[switchSlot].curmode == 1) {
+				// Check if person is available (see script 23 from ZAK_FM-TOWNS and script 4 from ZAK_PC).
+				// Zak: Var[144 Bit 15], Annie: Var[145 Bit 0], Melissa: Var[145 Bit 1], Leslie: Var[145 Bit 2]
+				if (!readVar(0x890E + fKey)) {
+					runInputScript(1, 36 + fKey, 0);
+				}
+			}
+			return;
+		}
+
 		// Generic keyboard input
 		runInputScript(4, _mouseAndKeyboardStat, 1);
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
