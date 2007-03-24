@@ -854,7 +854,7 @@ public:
 	/**
 	 * Return the SaveFileManager, used to store and load savestates
 	 * and other modifiable persistent game data. For more information,
-	 * refer to the TimerManager documentation.
+	 * refer to the SaveFileManager documentation.
 	 */
 	virtual Common::SaveFileManager *getSavefileManager() = 0;
 
