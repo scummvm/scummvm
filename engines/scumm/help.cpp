@@ -259,17 +259,6 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("o", "Upper right item");
 			ADD_BIND("l", "Lower right item");
 			ADD_LINE;
-			ADD_TEXT("Switching characters:");
-			if (gameId == GID_MANIAC) {
-				ADD_BIND("F1", "Dave");
-				ADD_BIND("F2", "Second kid");
-				ADD_BIND("F3", "Third kid");
-			} else {
-				ADD_BIND("F1", "Zak");
-				ADD_BIND("F2", "Annie");
-				ADD_BIND("F3", "Melissa");
-				ADD_BIND("F4", "Leslie");
-			}
 		} else if (gameId == GID_INDY3 || gameId == GID_ZAK) {
 			// Indy3, or FM-TOWNS Zak
 			ADD_TEXT("Inventory:");
@@ -281,6 +270,19 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("m", "Lower right item");
 			ADD_BIND("o", "Scroll list up");
 			ADD_BIND("l", "Scroll list down");
+			ADD_LINE;
+		}
+		if (gameId == GID_MANIAC) {
+			ADD_TEXT("Switching characters:");
+			ADD_BIND("F1", "Dave");
+			ADD_BIND("F2", "Second kid");
+			ADD_BIND("F3", "Third kid");
+		} else if (gameId == GID_ZAK) {
+			ADD_TEXT("Switching characters:");
+			ADD_BIND("F1", "Zak");
+			ADD_BIND("F2", "Annie");
+			ADD_BIND("F3", "Melissa");
+			ADD_BIND("F4", "Leslie");
 		}
 		break;
 	case 5:
