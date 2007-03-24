@@ -27,12 +27,12 @@
 
 namespace Parallaction {
 
-//	this PSEUDOID is used here to tell ONE archive from the others, namely the 'fr' archive in the
-//  amiga demo of Nippon Safes. It's the only archive using different internal offsets.
+//	HACK: one archive ('fr') in Nippon Safes Demo for Amiga uses different
+//  internal offsets than all the other archives. When an archive is opened
+//  its size if checked against SIZEOF_SMALL_ARCHIVE ('fr' size) so Archive
+//  can behave properly.
 //
-#define PSEUDOID_OFS				5
-
-#define ID_SMALL_ARCHIVE			5		// marks the aforementioned 'fr' archive
+#define SIZEOF_SMALL_ARCHIVE      	12778
 
 #define ARCHIVE_FILENAMES_OFS		0x16
 
@@ -61,17 +61,16 @@ void Archive::open(const char *file) {
 	if (!_archive.open(path))
 		error("archive '%s' not found", path);
 
-	_archive.seek(PSEUDOID_OFS);
-	uint32 pseudoid = _archive.readByte();
+	bool isSmallArchive = _archive.size() == SIZEOF_SMALL_ARCHIVE;
 
-	_numFiles = (pseudoid == ID_SMALL_ARCHIVE) ? SMALL_ARCHIVE_FILES_NUM : NORMAL_ARCHIVE_FILES_NUM;
+	_numFiles = (isSmallArchive) ? SMALL_ARCHIVE_FILES_NUM : NORMAL_ARCHIVE_FILES_NUM;
 
 	_archive.seek(ARCHIVE_FILENAMES_OFS);
 	_archive.read(_archiveDir, _numFiles*32);
 
-	_archive.seek((pseudoid == ID_SMALL_ARCHIVE) ? SMALL_ARCHIVE_SIZES_OFS : NORMAL_ARCHIVE_SIZES_OFS);
+	_archive.seek((isSmallArchive) ? SMALL_ARCHIVE_SIZES_OFS : NORMAL_ARCHIVE_SIZES_OFS);
 
-	uint32 dataOffset = (pseudoid == ID_SMALL_ARCHIVE) ? SMALL_ARCHIVE_DATA_OFS : NORMAL_ARCHIVE_DATA_OFS;
+	uint32 dataOffset = (isSmallArchive) ? SMALL_ARCHIVE_DATA_OFS : NORMAL_ARCHIVE_DATA_OFS;
 	for (uint16 i = 0; i < _numFiles; i++) {
 		_archiveOffsets[i] = dataOffset;
 		_archiveLenghts[i] = _archive.readUint32BE();
@@ -95,6 +94,9 @@ void Archive::close() {
 
 bool Archive::openArchivedFile(const char *filename) {
 	resetArchivedFile();
+
+	if (!_archive.isOpen())
+		error("Archive::openArchivedFile: the archive is not open");
 
 	uint16 i = 0;
 	for ( ; i < _numFiles; i++) {
