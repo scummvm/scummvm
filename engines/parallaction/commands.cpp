@@ -46,7 +46,7 @@ namespace Parallaction {
 #define CMD_STOP			16
 
 
-Command *parseCommands(Script &script) {
+Command *Parallaction::parseCommands(Script &script) {
 //	printf("parseCommands()");
 
 	Node root;
@@ -193,7 +193,7 @@ Command *parseCommands(Script &script) {
 }
 
 
-void freeCommands(Command *list) {
+void Parallaction::freeCommands(Command *list) {
 
 	Command *cmd = list;
 
@@ -211,7 +211,7 @@ void freeCommands(Command *list) {
 
 
 
-void runCommands(Command *list, Zone *z) {
+void Parallaction::runCommands(Command *list, Zone *z) {
 	debugC(1, kDebugLocation, "runCommands");
 
 	Command *cmd = list;

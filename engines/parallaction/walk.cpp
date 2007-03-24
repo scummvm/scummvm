@@ -402,7 +402,7 @@ uint16 checkDoor() {
 			_zoneTrap = NULL;
 
 		} else {
-			runCommands(z->_commands, z);
+			_vm->runCommands(z->_commands, z);
 		}
 	}
 
@@ -410,13 +410,13 @@ uint16 checkDoor() {
 
 	if (z != NULL) {
 		_localFlags[_vm->_currentLocationIndex] |= kFlagsEnter;
-		runCommands(z->_commands, z);
+		_vm->runCommands(z->_commands, z);
 		_localFlags[_vm->_currentLocationIndex] &= ~kFlagsEnter;
 		_zoneTrap = z;
 	} else
 	if (_zoneTrap != NULL) {
 		_localFlags[_vm->_currentLocationIndex] |= kFlagsExit;
-		runCommands(_zoneTrap->_commands, _zoneTrap);
+		_vm->runCommands(_zoneTrap->_commands, _zoneTrap);
 		_localFlags[_vm->_currentLocationIndex] &= ~kFlagsExit;
 		_zoneTrap = NULL;
 	}

@@ -29,9 +29,8 @@
 
 namespace Parallaction {
 
-void freeScript(Program*);
 
-void freeDialogue(Dialogue *d);
+
 
 Zone *Parallaction::findZone(const char *name) {
 
@@ -418,7 +417,7 @@ void displayItemComment(ExamineData *data) {
 
 
 
-uint16 runZone(Zone *z) {
+uint16 Parallaction::runZone(Zone *z) {
 	debugC(3, kDebugLocation, "runZone (%s)", z->_label._text);
 
 	uint16 subtype = z->_type & 0xFFFF;

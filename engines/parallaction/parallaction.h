@@ -158,11 +158,7 @@ void addNode(Node *list, Node *n);
 void removeNode(Node *n);
 void freeNodeList(Node *list);
 
-Command *parseCommands(Script &script);
-void runCommands(Command *list, Zone *z = NULL);
-void freeCommands(Command*);
 
-void runDialogue(SpeakData*);
 
 void jobRemovePickedItem(void*, Job *j);
 void jobDisplayDroppedItem(void*, Job *j);
@@ -313,6 +309,11 @@ public:
 	void		sortAnimations();
 	void 		freeLocation();
 
+	uint16		runZone(Zone*);
+	void 		runDialogue(SpeakData*);
+	void 		freeDialogue(Dialogue *d);
+	void 		runCommands(Command *list, Zone *z = NULL);
+
 public:
 	int getGameType() const;
 	uint32 getFeatures() const;
@@ -412,6 +413,11 @@ protected:		// members
 
 	void 		pickMusic(const char *location);
 	void		selectCharacterMusic(const char *name);
+
+	void 		freeScript(Program*);
+
+	Command 	*parseCommands(Script &script);
+	void 		freeCommands(Command*);
 
 };
 

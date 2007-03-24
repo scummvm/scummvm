@@ -204,7 +204,7 @@ struct Zone : public Node {
 		_flags = 0;
 		_commands = NULL;
 	}
-	
+
 	virtual ~Zone() {}
 
 	void getRect(Common::Rect& r) const {
@@ -316,7 +316,7 @@ struct Animation : public Zone  {
 		_frame = 0;
 		_z = 0;
 	}
-	
+
 	virtual ~Animation() {}
 
 	virtual uint16 width() const {
@@ -341,12 +341,8 @@ struct Animation : public Zone  {
 };
 
 
-uint16	runZone(Zone *z);
 void	dropItem(uint16 v);
 int16	pickupItem(Zone *z);
-
-
-uint16	checkDoor();
 
 
 void		loadProgram(Animation *, char *filename);

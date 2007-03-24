@@ -196,7 +196,7 @@ char *Parallaction::parseDialogueString(Script &script) {
 }
 
 
-void freeDialogue(Dialogue *d) {
+void Parallaction::freeDialogue(Dialogue *d) {
 
 	if (!d) return;
 
@@ -368,7 +368,7 @@ uint16 getDialogueAnswer(Dialogue *q, Cnv *cnv) {
 	return answer;
 }
 
-void runDialogue(SpeakData *data) {
+void Parallaction::runDialogue(SpeakData *data) {
 	debugC(1, kDebugDialogue, "runDialogue: starting dialogue '%s'", data->_name);
 
 	enterDialogue();

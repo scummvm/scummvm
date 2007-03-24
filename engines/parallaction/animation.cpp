@@ -152,7 +152,7 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 
 
 
-void  freeScript(Program *program) {
+void  Parallaction::freeScript(Program *program) {
 
 	if (!program) return;
 
@@ -587,7 +587,7 @@ void jobRunScripts(void *parm, Job *j) {
 			case INST_END:	// exit
 				if ((a->_flags & kFlagsLooping) == 0) {
 					a->_flags &= ~kFlagsActing;
-					runCommands(a->_commands, a);
+					_vm->runCommands(a->_commands, a);
 				}
 				a->_program->_ip = (Instruction*)a->_program->_next;
 				goto label1;
