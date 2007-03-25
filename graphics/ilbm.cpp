@@ -27,7 +27,6 @@
 
 namespace Graphics {
 
-
 static char * ID2string(IFF_ID id) {
 	static char str[] = "abcd";
 
@@ -38,7 +37,6 @@ static char * ID2string(IFF_ID id) {
 
 	return str;
 }
-
 
 #define ID_FORM     MKID_BE('FORM')
 /* EA IFF 85 group identifier */
@@ -78,7 +76,7 @@ page 376) */
 /* EA IFF 85 Generic character string chunk */
 #define ID_NAME     MKID_BE('NAME')
 /* EA IFF 85 Generic Name of art, music, etc. chunk */
-#define ID_TEXT     MKID_BE('TEXT'))
+#define ID_TEXT     MKID_BE('TEXT')
 /* EA IFF 85 Generic unformatted ASCII text chunk */
 #define ID_copy     MKID_BE('(c) ')
 /* EA IFF 85 Generic Copyright text chunk */
@@ -181,9 +179,6 @@ IFFDecoder::IFFDecoder(Common::ReadStream &input) : _formChunk(&input), _chunk(&
 	}
 }
 
-IFFDecoder::~IFFDecoder() {
-}
-
 void IFFDecoder::decode(Surface &surface, byte *&colors) {
 	_surface = &surface;
 	_colors = colors;
@@ -222,11 +217,8 @@ void IFFDecoder::decode(Surface &surface, byte *&colors) {
 
 		_chunk.feed();
 		_formChunk.incBytesRead(_chunk.size);
-
 	}
 }
-
-
 
 bool PBMDecoder::isTypeSupported(IFF_ID type) {
 	return type == ID_PBM;
@@ -274,16 +266,6 @@ void PBMDecoder::readBody() {
 
 }
 
-PBMDecoder::PBMDecoder(Common::ReadStream &input) : IFFDecoder(input) {
-
-}
-
-PBMDecoder::~PBMDecoder() {
-
-}
-
-
-
 void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
 	IFF_ID typeId;
 	BMHD bitmapHeader;
@@ -292,7 +274,7 @@ void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
 	uint32 colorCount = 0, i, j, si;
 	byte byteRun;
 	byte idx;
-	colors = NULL;
+	colors = 0; 
 	si = 0;
 
 	formChunk.readHeader();
@@ -388,3 +370,4 @@ void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
 }
 
 }	// End of namespace Graphics
+

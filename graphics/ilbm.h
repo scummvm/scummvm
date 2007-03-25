@@ -26,7 +26,6 @@ namespace Graphics {
 
 void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors);
 
-
 typedef uint32 IFF_ID;
 
 struct Chunk {
@@ -94,7 +93,6 @@ struct Chunk {
 	}
 };
 
-
 struct BMHD {
 	uint16 width, height;
 	uint16 x, y;
@@ -105,14 +103,18 @@ struct BMHD {
 	uint16 transparentColor;
 	byte xAspect, yAspect;
 	uint16 pageWidth, pageHeight;
+
 	BMHD() {
 		memset(this, 0, sizeof(*this));
 	}
 };
 
-
-
 class IFFDecoder {
+public:
+	IFFDecoder(Common::ReadStream &input);
+	virtual ~IFFDecoder() {}
+
+	virtual void decode(Surface &surface, byte *&colors);
 
 protected:
 	Chunk 	_formChunk;
@@ -130,29 +132,17 @@ protected:
 
 	virtual void readBMHD();
 	virtual void readCMAP();
-
-public:
-	IFFDecoder(Common::ReadStream &input);
-	virtual ~IFFDecoder();
-
-	virtual void decode(Surface &surface, byte *&colors);
-
 };
 
-
-
 class PBMDecoder : public IFFDecoder {
-
+public:
+	PBMDecoder(Common::ReadStream &input) : IFFDecoder(input) {}
 protected:
 	bool isTypeSupported(IFF_ID type);
 	void readBody();
-
-public:
-	PBMDecoder(Common::ReadStream &input);
-	~PBMDecoder();
-
 };
 
 }	// End of namespace Graphics
 
 #endif
+
