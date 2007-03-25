@@ -23,75 +23,10 @@
 #include "common/endian.h"
 #include "common/stream.h"
 #include "graphics/surface.h"
+#include "graphics/ilbm.h"
 
 namespace Graphics {
 
-typedef uint32 IFF_ID;
-
-struct Chunk {
-	IFF_ID id;
-	uint32 size;
-	uint32 bytesRead;
-	Common::ReadStream *_input;
-
-	Chunk(Common::ReadStream *input): _input(input) {
-		size = bytesRead = 0;
-	}
-
-	void incBytesRead(uint32 inc) {
-		bytesRead += inc;
-		if (bytesRead > size) {
-			error("Chunk overead");
-		}
-	}
-
-	void readHeader() {
-		id = _input->readUint32BE();
-		size = _input->readUint32BE();
-		bytesRead = 0;
-	}
-
-	bool eos() {
-		return (size - bytesRead) == 0;
-	}
-
-	void feed() {
-		if (size % 2) {
-			size++;
-		}
-		while (!_input->eos() && !eos()) {
-			readByte();
-		}
-	}
-
-	byte readByte() {
-		incBytesRead(1);
-		return _input->readByte();
-	}
-
-	int8 readSByte() {
-		incBytesRead(1);
-		return _input->readSByte();
-	}
-
-	uint16 readUint16() {
-		incBytesRead(2);
-		return _input->readUint16BE();
-	}
-
-	uint32 readUint32() {
-		incBytesRead(4);
-		return _input->readUint32BE();
-	}
-
-	int16 readSint16() {
-		return (int16)readUint16();
-	}
-
-	int32 readSint32() {
-		return (int32)readUint32();
-	}
-};
 
 static char * ID2string(IFF_ID id) {
 	static char str[] = "abcd";
@@ -104,21 +39,6 @@ static char * ID2string(IFF_ID id) {
 	return str;
 }
 
-
-struct BMHD {
-	uint16 width, height;
-	uint16 x, y;
-	byte depth;
-	byte masking;
-	byte pack;
-	byte flags;
-	uint16 transparentColor;
-	byte xAspect, yAspect;
-	uint16 pageWidth, pageHeight;
-	BMHD() {
-		memset(this, 0, sizeof(*this));
-	}
-};
 
 #define ID_FORM     MKID_BE('FORM')
 /* EA IFF 85 group identifier */
@@ -217,6 +137,151 @@ page 376) */
 /* ? */
 #define ID_TINY     MKID_BE('TINY')
 /* ? */
+
+
+void IFFDecoder::readBMHD() {
+
+	_bitmapHeader.width = _chunk.readUint16();
+	_bitmapHeader.height = _chunk.readUint16();
+	_bitmapHeader.x = _chunk.readUint16();
+	_bitmapHeader.y = _chunk.readUint16();
+
+	_bitmapHeader.depth = _chunk.readByte();
+	_bitmapHeader.masking = _chunk.readByte();
+	_bitmapHeader.pack = _chunk.readByte();
+	_bitmapHeader.flags = _chunk.readByte();
+	_bitmapHeader.transparentColor = _chunk.readUint16();
+	_bitmapHeader.xAspect = _chunk.readByte();
+	_bitmapHeader.yAspect = _chunk.readByte();
+	_bitmapHeader.pageWidth = _chunk.readUint16();
+	_bitmapHeader.pageHeight = _chunk.readUint16();
+
+
+	_colorCount = 1 << _bitmapHeader.depth;
+	_colors = (byte*)malloc(sizeof(*_colors) * _colorCount * 3);
+	_surface->create(_bitmapHeader.width, _bitmapHeader.height, 1);
+
+}
+
+void IFFDecoder::readCMAP() {
+	if (_colors == NULL) {
+		error("wrong input chunk sequence");
+	}
+	for (uint32 i = 0; i < _colorCount; i++) {
+		_colors[i * 3 + 0] = _chunk.readByte();
+		_colors[i * 3 + 1] = _chunk.readByte();
+		_colors[i * 3 + 2] = _chunk.readByte();
+	}
+}
+
+IFFDecoder::IFFDecoder(Common::ReadStream &input) : _formChunk(&input), _chunk(&input), _colorCount(0) {
+	_formChunk.readHeader();
+	if (_formChunk.id != ID_FORM) {
+		error("IFFDecoder input is not a FORM type IFF file");
+	}
+}
+
+IFFDecoder::~IFFDecoder() {
+}
+
+void IFFDecoder::decode(Surface &surface, byte *&colors) {
+	_surface = &surface;
+	_colors = colors;
+
+	if (!isTypeSupported(_formChunk.readUint32())) {
+		error( "IFFDecoder input is not a valid subtype");
+	}
+
+	while (!_formChunk.eos()) {
+		_formChunk.incBytesRead(8);
+		_chunk.readHeader();
+
+		switch (_chunk.id) {
+		case ID_BMHD:
+			readBMHD();
+			break;
+
+		case ID_CMAP:
+			readCMAP();
+			break;
+
+		case ID_BODY:
+			readBODY();
+			break;
+
+		case ID_CRNG:
+//				readCRNG();
+			break;
+
+		case ID_GRAB: case ID_TINY: case ID_DPPS:
+			break;
+
+		default:
+			error("unknown chunk : %s\n", ID2string(_chunk.id));
+		}
+
+		_chunk.feed();
+		_formChunk.incBytesRead(_chunk.size);
+
+	}
+}
+
+
+
+bool PBMDecoder::isTypeSupported(IFF_ID type) {
+	return type == ID_PBM;
+}
+
+void PBMDecoder::readBody() {
+	byte byteRun;
+	byte idx;
+	uint32 si = 0, i, j;
+
+	if (_bitmapHeader.depth > 8) {
+		error("PBMDecoder depth > 8");
+	}
+
+	if ((_bitmapHeader.pack != 0) && (_bitmapHeader.pack != 1)) {
+		error("PBMDecoder unsupported pack");
+	}
+
+	switch (_bitmapHeader.pack) {
+	case 0:
+		while (!_chunk.eos()) {
+			idx = _chunk.readByte();
+			((byte*)_surface->pixels)[si++] = idx;
+		}
+		break;
+	case 1:
+		while (!_chunk.eos()) {
+			byteRun = _chunk.readByte();
+			if (byteRun <= 127) {
+				i = byteRun + 1;
+				for (j = 0; j < i; j++){
+					idx = _chunk.readByte();
+					((byte*)_surface->pixels)[si++] = idx;
+				}
+			} else if (byteRun != 128) {
+				i = (256 - byteRun) + 1;
+				idx = _chunk.readByte();
+				for (j = 0; j < i; j++) {
+					((byte*)_surface->pixels)[si++] = idx;
+				}
+			}
+		}
+		break;
+	}
+
+}
+
+PBMDecoder::PBMDecoder(Common::ReadStream &input) : IFFDecoder(input) {
+
+}
+
+PBMDecoder::~PBMDecoder() {
+
+}
+
 
 
 void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
