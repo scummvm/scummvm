@@ -144,7 +144,7 @@ public:
 	MidiParser_EuD();
 
 	bool loadMusic (byte *data, uint32 unused = 0);
-	void setTempo(uint32 tempo);
+	void setTempo(int32 tempo);
 protected:
 	void parseNextEvent (EventInfo &info);
 	void resetTracking();
@@ -188,6 +188,8 @@ public:
 	bool isStereo() const { return true; }
 	int getRate() const { return _mixer->getOutputRate(); }
 
+	void fading(bool status = true);
+
 protected:
 	void nextTick(int16 *buf1, int buflen);
 	int volume(int val = -1) { if (val >= 0) _volume = val; return _volume; }
@@ -200,6 +202,8 @@ protected:
 	MidiChannel_EuD * _channel[16];
 
 	int _volume;
+	bool _fading;
+	int16 _fadestate;
 
 	uint8 *_fmInstruments;
 	uint8 *_waveInstruments;
@@ -523,11 +527,13 @@ void MidiChannel_EuD_WAVE::velocity(int velo) {
 }
 
 FMT_EuphonyDriver::FMT_EuphonyDriver(Audio::Mixer *mixer)
-	: MidiDriver_Emulated(mixer) {
+: MidiDriver_Emulated(mixer) {
+
+	_volume = 255;
+	_fadestate = 300;
 
 	MidiDriver_YM2612::createLookupTables();
 
-	_volume = 255;
 	for (uint8 i = 0; i < 6; i++)
 		_channel[i] = _fChannel[i] = new MidiChannel_EuD_FM;
 	for (uint8 i = 0; i < 8; i++)
@@ -538,6 +544,7 @@ FMT_EuphonyDriver::FMT_EuphonyDriver(Audio::Mixer *mixer)
 	memset(_waveSounds, 0, sizeof(uint8*) * 10);
 
 	rate(getRate());
+	fading(0);
 }
 
 FMT_EuphonyDriver::~FMT_EuphonyDriver() {
@@ -610,6 +617,7 @@ void FMT_EuphonyDriver::send(byte chan, uint32 b) {
 		break; // Not supported.
 	case 0xB0: // Control Change
 		if (param1 == 0x79) {
+			fading(0);
 			for (int i = 0; i < 15; i++) {
 				if (_channel[i]) {
 					_channel[i]->controlChange(param1, param2);
@@ -710,19 +718,33 @@ void FMT_EuphonyDriver::nextTick(int16 *buf1, int buflen) {
 	}
 
 	for (int i = 0; i < buflen; ++i) {
-		buf1[i*2] = buf1[i*2+1] =((buf0[i] * volume()) >> 9) & 0xffff;
+		int s = int( float(buf0[i] * volume()) * float((float)_fadestate / 300) );
+		buf1[i*2] = buf1[i*2+1] = (s >> 9) & 0xffff;
+	}
+
+	if (_fading) {
+		if (_fadestate)
+			_fadestate--;
+		else
+			_fading = false;
 	}
 }
 
-void FMT_EuphonyDriver::rate(uint16 r)
-{
+void FMT_EuphonyDriver::rate(uint16 r) {
 	for (uint8 i = 0; i < 16; i++) {
 		if (_channel[i])
 			_channel[i]->rate(r);
 	}
 }
 
-MidiParser_EuD::MidiParser_EuD() : MidiParser() {
+void FMT_EuphonyDriver::fading(bool status) {
+	_fading = status;
+	if (!_fading)
+		_fadestate = 300;
+}
+
+MidiParser_EuD::MidiParser_EuD() : MidiParser(),
+	_firstBaseTickStep(0x33), _nextBaseTickStep(0x33), _initialTempo(0x5a) {
 }
 
 void MidiParser_EuD::parseNextEvent(EventInfo &info) {
@@ -789,7 +811,7 @@ void MidiParser_EuD::parseNextEvent(EventInfo &info) {
 			_nextBaseTickStep = pos[1];
 			pos += 6;
 		} else if (cmd == 0xF8) {
-			uint16 tempo = pos[4] | (pos[5] << 7);
+			int16 tempo = pos[4] | (pos[5] << 7);
 			setTempo(tempo);
 			pos += 6;
 		} else if (cmd == 0xFD || cmd == 0xFE) {
@@ -807,7 +829,7 @@ void MidiParser_EuD::parseNextEvent(EventInfo &info) {
 			info.ext.data = pos;
 			break;
 		} else {
-			error("Unknown Euphony music event 0x%02X", (int) cmd);
+			error("Unknown Euphony music event 0x%02X", (int)cmd);
 			memset(&info, 0, sizeof(info));
 			pos = 0;
 			break;
@@ -838,14 +860,27 @@ bool MidiParser_EuD::loadMusic(byte *data, uint32) {
 	return true;
 }
 
-void MidiParser_EuD::setTempo(uint32 tempo) {
-	if (tempo)
-		MidiParser::setTempo(60000000 / tempo);
+void MidiParser_EuD::setTempo(int32 tempo) {
+	if (!tempo) {
+		MidiParser::setTempo(0);
+		return;
+	}
+
+	if (tempo < 0)
+		tempo = 0;
+	if (tempo > 0x1F4)
+		tempo = 0x1F4;
+
+	tempo = 0x4C4B4 / (tempo + 0x1E);
+	while (tempo < 0x451)
+		tempo <<= 1;
+	tempo <<= 8;
+
+	MidiParser::setTempo(tempo);
 }
 
 void MidiParser_EuD::resetTracking() {
 	MidiParser::resetTracking();
-
 	_nextBaseTickStep = _firstBaseTickStep;
 	_baseTick = 0;
 	setTempo(_initialTempo);
@@ -1101,8 +1136,12 @@ void SoundTowns::playSoundEffect(uint8 track) {
 }
 
 void SoundTowns::beginFadeOut() {
-	//int vol = 255;
-	haltTrack();
+	_lastTrack = -1;
+	_driver->fading();
+
+	// TODO: this should fade out too
+	AudioCD.stop();
+	AudioCD.updateCD();
 }
 
 int SoundTowns::open() {
