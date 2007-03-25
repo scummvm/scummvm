@@ -867,7 +867,6 @@ other games.
         Cmd-q                  - Quit (Mac OS X)
         Ctrl-q                 - Quit (other unices including Linux)
         Ctrl-z OR Alt-x        - Quit (other platforms)
-        Keyboard Arrow Keys    - Simulate mouse movement
         Ctrl-f                 - Toggle fast mode
         Ctrl-m                 - Toggle mouse capture
         Ctrl-Alt 1-8           - Switch between graphics filters
