@@ -82,7 +82,6 @@ typedef signed int Err;
 #define MSG_BOX_LINE	0x04	/* Red */
 #define STATUS_FG	0x00		/* Black */
 #define	STATUS_BG	0x0f		/* White */
-#define PATCH_LOGIC				/* disable copy protection on some games */
 
 #define ADD_PIC 1
 #define ADD_VIEW 2
@@ -653,7 +652,6 @@ public:
 	int decodeLogic(int);
 	void unloadLogic(int);
 	int runLogic(int);
-	void patchLogic(int n);
 
 	void debugConsole(int, int, const char *);
 	int testIfCode(int);

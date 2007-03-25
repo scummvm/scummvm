@@ -21,7 +21,6 @@ MODULE_OBJS = \
 	op_cmd.o \
 	op_dbg.o \
 	op_test.o \
-	patches.o \
 	picture.o \
 	predictive.o \
 	savegame.o \

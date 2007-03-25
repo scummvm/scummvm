@@ -487,11 +487,6 @@ int AgiEngine::agiLoadResource(int r, int n) {
 	int i;
 
 	i = _loader->loadResource(r, n);
-#ifdef PATCH_LOGIC
-	if (r == rLOGIC)
-		patchLogic(n);
-#endif
-
 	return i;
 }
 
