@@ -144,7 +144,8 @@ public:
 	MidiParser_EuD();
 
 	bool loadMusic (byte *data, uint32 unused = 0);
-	void setTempo(int32 tempo);
+	int32 calculateTempo(int16 val);
+
 protected:
 	void parseNextEvent (EventInfo &info);
 	void resetTracking();
@@ -155,9 +156,11 @@ protected:
 	byte * _adjVelo;
 	int8 * _adjNote;
 
+	byte _tempo[3];
+
 	uint8 _firstBaseTickStep;
 	uint8 _nextBaseTickStep;
-	uint8 _initialTempo;
+	uint32 _initialTempo;
 	uint32 _baseTick;
 };
 
@@ -744,7 +747,8 @@ void FMT_EuphonyDriver::fading(bool status) {
 }
 
 MidiParser_EuD::MidiParser_EuD() : MidiParser(),
-	_firstBaseTickStep(0x33), _nextBaseTickStep(0x33), _initialTempo(0x5a) {
+	_firstBaseTickStep(0x33), _nextBaseTickStep(0x33) {
+		_initialTempo = calculateTempo(0x5a);
 }
 
 void MidiParser_EuD::parseNextEvent(EventInfo &info) {
@@ -764,7 +768,7 @@ void MidiParser_EuD::parseNextEvent(EventInfo &info) {
 				info.delta = (tick < last) ? 0 : (tick - last);
 
 				info.event = 0x90 | _channel[chan];
-				info.length = pos[7] | (pos[8] << 4);
+				info.length = pos[7] | (pos[8] << 4) | (pos[9] << 8) | (pos[10] << 12);
 
 				int8 note = (int8) pos[4];
 				if (_adjNote[chan]) {
@@ -811,9 +815,16 @@ void MidiParser_EuD::parseNextEvent(EventInfo &info) {
 			_nextBaseTickStep = pos[1];
 			pos += 6;
 		} else if (cmd == 0xF8) {
-			int16 tempo = pos[4] | (pos[5] << 7);
-			setTempo(tempo);
+			int32 tempo = calculateTempo(pos[4] | (pos[5] << 7));
+			info.event = 0xff;
+			info.length = 3;
+			info.ext.type = 0x51;
+			_tempo[0] = (tempo >> 16) & 0xff;
+			_tempo[1] = (tempo >> 8) & 0xff;
+			_tempo[2] = tempo & 0xff;
+			info.ext.data = (byte*) _tempo;
 			pos += 6;
+			break;
 		} else if (cmd == 0xFD || cmd == 0xFE) {
 			// End of track.
 			if (_autoLoop)
@@ -848,7 +859,7 @@ bool MidiParser_EuD::loadMusic(byte *data, uint32) {
 	_adjNote = (int8*) data + 0x3D4;
 
 	_firstBaseTickStep = data[0x804];
-	_initialTempo = (data[0x805] > 0xfc) ? 0x5a : data[0x805];
+	_initialTempo = calculateTempo((data[0x805] > 0xfc) ? 0x5a : data[0x805]);
 
 	_num_tracks = 1;
 	_ppqn = 120;
@@ -860,11 +871,8 @@ bool MidiParser_EuD::loadMusic(byte *data, uint32) {
 	return true;
 }
 
-void MidiParser_EuD::setTempo(int32 tempo) {
-	if (!tempo) {
-		MidiParser::setTempo(0);
-		return;
-	}
+int32 MidiParser_EuD::calculateTempo(int16 val) {
+	int32 tempo = val;
 
 	if (tempo < 0)
 		tempo = 0;
@@ -876,7 +884,7 @@ void MidiParser_EuD::setTempo(int32 tempo) {
 		tempo <<= 1;
 	tempo <<= 8;
 
-	MidiParser::setTempo(tempo);
+	return tempo;
 }
 
 void MidiParser_EuD::resetTracking() {
