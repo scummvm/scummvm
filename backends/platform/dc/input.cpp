@@ -219,7 +219,7 @@ bool OSystem_Dreamcast::pollEvent(Common::Event &event)
   }
   event.kbd.ascii = event.kbd.keycode = 0;
   if(e<0) {
-    event.type = (EventType)-e;
+    event.type = (Common::EventType)-e;
     return true;
   } else if(e>0) {
     bool processed = false, down = !(e&(1<<30));
@@ -242,7 +242,7 @@ bool OSystem_Dreamcast::pollEvent(Common::Event &event)
     _ms_old_y = _ms_cur_y;
     return true;
   } else {
-    event.type = (EventType)0;
+    event.type = (Common::EventType)0;
     return false;
   }
 }
