@@ -135,7 +135,8 @@ page 376) */
 /* ? */
 #define ID_TINY     MKID_BE('TINY')
 /* ? */
-
+#define ID_DPPV     MKID_BE('DPPV')
+/* ? */
 
 void IFFDecoder::readBMHD() {
 
@@ -156,19 +157,22 @@ void IFFDecoder::readBMHD() {
 
 
 	_colorCount = 1 << _bitmapHeader.depth;
-	_colors = (byte*)malloc(sizeof(*_colors) * _colorCount * 3);
+	*_colors = (byte*)malloc(sizeof(**_colors) * _colorCount * 3);
 	_surface->create(_bitmapHeader.width, _bitmapHeader.height, 1);
 
 }
 
+void IFFDecoder::readCRNG() {
+}
+
 void IFFDecoder::readCMAP() {
-	if (_colors == NULL) {
+	if (*_colors == NULL) {
 		error("wrong input chunk sequence");
 	}
 	for (uint32 i = 0; i < _colorCount; i++) {
-		_colors[i * 3 + 0] = _chunk.readByte();
-		_colors[i * 3 + 1] = _chunk.readByte();
-		_colors[i * 3 + 2] = _chunk.readByte();
+		(*_colors)[i * 3 + 0] = _chunk.readByte();
+		(*_colors)[i * 3 + 1] = _chunk.readByte();
+		(*_colors)[i * 3 + 2] = _chunk.readByte();
 	}
 }
 
@@ -181,7 +185,8 @@ IFFDecoder::IFFDecoder(Common::ReadStream &input) : _formChunk(&input), _chunk(&
 
 void IFFDecoder::decode(Surface &surface, byte *&colors) {
 	_surface = &surface;
-	_colors = colors;
+	_colors = &colors;
+	*_colors = 0;
 
 	if (!isTypeSupported(_formChunk.readUint32())) {
 		error( "IFFDecoder input is not a valid subtype");
@@ -205,10 +210,10 @@ void IFFDecoder::decode(Surface &surface, byte *&colors) {
 			break;
 
 		case ID_CRNG:
-//				readCRNG();
+			readCRNG();
 			break;
 
-		case ID_GRAB: case ID_TINY: case ID_DPPS:
+		case ID_GRAB: case ID_TINY: case ID_DPPS: case ID_DPPV: case ID_CAMG:
 			break;
 
 		default:
@@ -224,7 +229,7 @@ bool PBMDecoder::isTypeSupported(IFF_ID type) {
 	return type == ID_PBM;
 }
 
-void PBMDecoder::readBody() {
+void PBMDecoder::readBODY() {
 	byte byteRun;
 	byte idx;
 	uint32 si = 0, i, j;
@@ -266,6 +271,110 @@ void PBMDecoder::readBody() {
 
 }
 
+
+bool ILBMDecoder::isTypeSupported(IFF_ID type) {
+	return type == ID_ILBM;
+}
+
+void ILBMDecoder::expandLine(byte *buf, uint32 width) {
+
+	byte byteRun;
+	byte idx;
+
+	uint32 si = 0, i, j;
+
+	while (si != width) {
+		byteRun = _chunk.readByte();
+		if (byteRun <= 127) {
+			i = byteRun + 1;
+			for (j = 0; j < i; j++){
+				idx = _chunk.readByte();
+				buf[si++] = idx;
+			}
+		} else if (byteRun != 128) {
+			i = (256 - byteRun) + 1;
+			idx = _chunk.readByte();
+			for (j = 0; j < i; j++) {
+				buf[si++] = idx;
+			}
+		}
+	}
+
+}
+
+void ILBMDecoder::fillPlane(byte *out, byte* buf, uint32 width, uint32 plane) {
+
+	byte src, idx, set;
+	byte mask = 1 << plane;
+
+	for (uint32 j = 0; j < _bitmapHeader.width; j++) {
+		src = buf[j >> 3];
+		idx = 7 - (j & 7);
+		set = src & (1 << idx);
+
+		if (set)
+			out[j] |= mask;
+	}
+
+}
+
+void ILBMDecoder::readBODY() {
+
+	if (_bitmapHeader.depth > 8) {
+		error("ILBMDecoder depth > 8");
+	}
+
+	if (_bitmapHeader.pack != 1) {
+		error("ILBMDecoder unsupported pack");
+	}
+
+	if (_bitmapHeader.masking == 1) {
+		error("ILBMDecoder mask not supported");
+	}
+
+	uint32 scanWidth = _bitmapHeader.width >> 3;
+	byte *scan = (byte*)malloc(scanWidth);
+	byte *out = (byte*)_surface->pixels;
+
+	switch (_bitmapHeader.pack) {
+//	case 0:
+//		while (!_chunk.eos()) {
+//			idx = _chunk.readByte();
+//			((byte*)_surface->pixels)[si++] = idx;
+//		}
+//		break;
+	case 1:
+		for (uint32 line = 0; line < _bitmapHeader.height; line++) {
+
+			for (uint32 plane = 0; plane < _bitmapHeader.depth; plane++) {
+				expandLine(scan, scanWidth);
+				fillPlane(out, scan, scanWidth, plane);
+			}
+
+			out += _bitmapHeader.width;
+		}
+		break;
+	}
+
+	free(scan);
+
+}
+
+void ILBMDecoder::readCRNG() {
+	// TODO: implement this. May require changing decode(), too, or adding
+	// another parameter to ILBMDecoder constructor
+}
+
+ILBMDecoder::ILBMDecoder(Common::ReadStream &input) : IFFDecoder(input) {
+
+}
+
+ILBMDecoder::~ILBMDecoder() {
+
+}
+
+
+
 void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
 	IFF_ID typeId;
 	BMHD bitmapHeader;
@@ -274,7 +383,7 @@ void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
 	uint32 colorCount = 0, i, j, si;
 	byte byteRun;
 	byte idx;
-	colors = 0; 
+	colors = 0;
 	si = 0;
 
 	formChunk.readHeader();

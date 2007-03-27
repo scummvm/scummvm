@@ -125,13 +125,14 @@ protected:
 	uint32 	_colorCount;
 
 	Surface *_surface;
-	byte    *_colors;
+	byte    **_colors;
 
 	virtual bool isTypeSupported(IFF_ID type) = 0;
 	virtual void readBODY() = 0;
 
 	virtual void readBMHD();
 	virtual void readCMAP();
+	virtual void readCRNG();
 };
 
 class PBMDecoder : public IFFDecoder {
@@ -139,7 +140,23 @@ public:
 	PBMDecoder(Common::ReadStream &input) : IFFDecoder(input) {}
 protected:
 	bool isTypeSupported(IFF_ID type);
-	void readBody();
+	void readBODY();
+};
+
+
+
+class ILBMDecoder : public IFFDecoder {
+
+protected:
+	bool isTypeSupported(IFF_ID type);
+	void readBODY();
+	void readCRNG();
+	void expandLine(byte *buf, uint32 width);
+	void fillPlane(byte *out, byte* buf, uint32 width, uint32 plane);
+
+public:
+	ILBMDecoder(Common::ReadStream &input);
+	~ILBMDecoder();
 };
 
 }	// End of namespace Graphics
