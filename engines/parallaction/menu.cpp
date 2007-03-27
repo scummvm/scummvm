@@ -100,9 +100,9 @@ Menu::~Menu() {
 
 void Menu::start() {
 
-	_vm->_disk->selectArchive("disk1");
-	_vm->_gfx->_proportionalFont = false;
+	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
 
+	_vm->_gfx->_proportionalFont = false;
 	_vm->_gfx->setFont("slide");
 
 	_vm->_disk->loadSlide("intro");
@@ -117,26 +117,23 @@ void Menu::start() {
 
 	g_system->delayMillis(2000);
 
-	_vm->_disk->loadSlide("lingua");
-	_vm->_gfx->palUnk0(_vm->_gfx->_palette);
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	if (_vm->getPlatform() == Common::kPlatformPC) {
 
-	_vm->_gfx->displayString(60, 30, "SELECT LANGUAGE");
+		_vm->_disk->loadSlide("lingua");
+		_vm->_gfx->palUnk0(_vm->_gfx->_palette);
+		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
-	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
-	_language = chooseLanguage();
+		_vm->_gfx->displayString(60, 30, "SELECT LANGUAGE");
 
-	_vm->_disk->setLanguage(_language);
+		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
+		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
+		_language = chooseLanguage();
 
-	_vm->_disk->loadSlide("restore");
-	_vm->_gfx->palUnk0(_vm->_gfx->_palette);
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+		_vm->_disk->setLanguage(_language);
 
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
-
-	if (selectGame() == 0) {
-		newGame();
+		if (selectGame() == 0) {
+			newGame();
+		}
 	}
 
 	return;
@@ -218,6 +215,14 @@ uint16 Menu::chooseLanguage() {
 uint16 Menu::selectGame() {
 //	  printf("selectGame()\n");
 
+
+	_vm->_disk->loadSlide("restore");
+	_vm->_gfx->palUnk0(_vm->_gfx->_palette);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
+
+
 	uint16 _si = 0;
 	uint16 _di = 3;
 
@@ -286,7 +291,8 @@ void Menu::selectCharacter() {
 	_vm->_gfx->_proportionalFont = false;
 	_vm->_gfx->setFont("slide");
 
-	_vm->_disk->selectArchive("disk1");
+	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
+
 	_vm->_disk->loadSlide("password");	// loads background into kBitBack buffer
 
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);	//

@@ -792,11 +792,12 @@ void Parallaction::changeCharacter(const char *name) {
 		// character for sanity before memory is freed
 		freeCharacter();
 
-		_disk->selectArchive("disk1");
+		_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
 
 		char path[PATH_LEN];
 		strcpy(path, v32);
 		_vm->_char._normalFrames = _disk->loadFrames(path);
+
 
 		if (!IS_DUMMY_CHARACTER(name)) {
 			_vm->_char._head = _disk->loadHead(path);
