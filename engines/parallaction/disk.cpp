@@ -25,6 +25,7 @@
 #include "parallaction/parallaction.h"
 #include "parallaction/disk.h"
 #include "parallaction/walk.h"
+#include "graphics/ilbm.h"
 
 namespace Parallaction {
 
@@ -427,7 +428,9 @@ void DosDisk::parseDepths(Common::SeekableReadStream &stream) {
 
 void DosDisk::parseBackground(Common::SeekableReadStream &stream) {
 
-	stream.read(_vm->_gfx->_palette, PALETTE_SIZE);
+	byte pal[96];
+	stream.read(pal, PALETTE_SIZE);
+	_vm->_gfx->setPalette(pal);
 
 	parseDepths(stream);
 
@@ -555,6 +558,166 @@ Table* DosDisk::loadTable(const char* name) {
 #pragma mark -
 
 
+/* the decoder presented here is taken from pplib by Stuart Caie. The
+ * following statement comes from the original source.
+ *
+ * pplib 1.0: a simple PowerPacker decompression and decryption library
+ * placed in the Public Domain on 2003-09-18 by Stuart Caie.
+ */
+
+#define PP_READ_BITS(nbits, var) do {                            \
+  bit_cnt = (nbits); (var) = 0;                                  \
+  while (bits_left < bit_cnt) {                                  \
+    if (buf < src) return 0;                                     \
+    bit_buffer |= *--buf << bits_left;                           \
+    bits_left += 8;                                              \
+  }                                                              \
+  bits_left -= bit_cnt;                                          \
+  while (bit_cnt--) {                                            \
+    (var) = ((var) << 1) | (bit_buffer & 1);                     \
+    bit_buffer >>= 1;                                            \
+  }                                                              \
+} while (0)
+
+#define PP_BYTE_OUT(byte) do {                                   \
+  if (out <= dest) return 0;                                     \
+  *--out = (byte); written++;                                    \
+} while (0)
+
+
+class DecrunchStream : public Common::SeekableReadStream {
+
+	SeekableReadStream *_stream;
+	bool				_dispose;
+
+private:
+	int ppDecrunchBuffer(byte *src, byte *dest, uint32 src_len, uint32 dest_len) {
+
+		byte *buf, *out, *dest_end, *off_lens, bits_left = 0, bit_cnt;
+		uint32 bit_buffer = 0, x, todo, offbits, offset, written = 0;
+
+		if (src == NULL || dest == NULL) return 0;
+
+		/* set up input and output pointers */
+		off_lens = src; src = &src[4];
+		buf = &src[src_len];
+
+		out = dest_end = &dest[dest_len];
+
+		/* skip the first few bits */
+		PP_READ_BITS(src[src_len + 3], x);
+
+		/* while there are input bits left */
+		while (written < dest_len) {
+			PP_READ_BITS(1, x);
+			if (x == 0) {
+				  /* bit==0: literal, then match. bit==1: just match */
+				  todo = 1; do { PP_READ_BITS(2, x); todo += x; } while (x == 3);
+				  while (todo--) { PP_READ_BITS(8, x); PP_BYTE_OUT(x); }
+
+				  /* should we end decoding on a literal, break out of the main loop */
+				  if (written == dest_len) break;
+			}
+
+			/* match: read 2 bits for initial offset bitlength / match length */
+			PP_READ_BITS(2, x);
+			offbits = off_lens[x];
+			todo = x+2;
+			if (x == 3) {
+				PP_READ_BITS(1, x);
+				if (x == 0) offbits = 7;
+				PP_READ_BITS(offbits, offset);
+				do { PP_READ_BITS(3, x); todo += x; } while (x == 7);
+			}
+			else {
+				PP_READ_BITS(offbits, offset);
+			}
+			if (&out[offset] >= dest_end) return 0; /* match_overflow */
+			while (todo--) { x = out[offset]; PP_BYTE_OUT(x); }
+		}
+
+		/* all output bytes written without error */
+		return 1;
+	}
+
+	uint16 getCrunchType(uint32 signature) {
+
+		byte eff;
+
+		switch (signature) {
+		case 0x50503230: /* PP20 */
+			eff = 4;
+			break;
+		case 0x50504C53: /* PPLS */
+			error("PPLS crunched files are not supported");
+			eff = 8;
+			break;
+		case 0x50583230: /* PX20 */
+			error("PX20 crunched files are not supported");
+			eff = 6;
+			break;
+		default:
+			eff = 0;
+
+		}
+
+		return eff;
+	}
+
+public:
+	DecrunchStream(Common::SeekableReadStream &stream) {
+
+		_dispose = false;
+
+		uint32 signature = stream.readUint32BE();
+		if (getCrunchType(signature) == 0) {
+			stream.seek(0, SEEK_SET);
+			_stream = &stream;
+			return;
+		}
+
+		stream.seek(4, SEEK_END);
+		uint32 decrlen = stream.readUint32BE() >> 8;
+		byte *dest = (byte*)malloc(decrlen);
+
+		uint32 crlen = stream.size() - 4;
+		byte *src = (byte*)malloc(crlen);
+		stream.seek(4, SEEK_SET);
+		stream.read(src, crlen);
+
+		ppDecrunchBuffer(src, dest, crlen-8, decrlen);
+
+		free(src);
+		_stream = new Common::MemoryReadStream(dest, decrlen, true);
+		_dispose = true;
+	}
+
+	~DecrunchStream() {
+		if (_dispose) delete _stream;
+	}
+
+	uint32 size() const {
+		return _stream->size();
+	}
+
+	uint32 pos() const {
+		return _stream->pos();
+	}
+
+	bool eos() const {
+		return _stream->eos();
+	}
+
+	void seek(int32 offs, int whence = SEEK_SET) {
+		_stream->seek(offs, whence);
+	}
+
+	uint32 read(void *dataPtr, uint32 dataSize) {
+		return _stream->read(dataPtr, dataSize);
+	}
+};
+
+
 
 AmigaDisk::AmigaDisk(Parallaction *vm) : Disk(vm) {
 
@@ -566,63 +729,118 @@ AmigaDisk::~AmigaDisk() {
 }
 
 Script* AmigaDisk::loadLocation(const char *name) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadLocation '%s'", name);
 	return NULL;
 }
 
 Script* AmigaDisk::loadScript(const char* name) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadScript '%s'", name);
 	return NULL;
 }
 
 Cnv* AmigaDisk::loadTalk(const char *name) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadTalk '%s'", name);
 	return NULL;
 }
 
 Cnv* AmigaDisk::loadObjects(const char *name) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadObjects '%s'", name);
 	return NULL;
 }
 
 StaticCnv* AmigaDisk::loadPointer() {
+	debugC(1, kDebugDisk, "AmigaDisk::loadPointer");
 	return NULL;
 }
 
 StaticCnv* AmigaDisk::loadHead(const char* name) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadHead '%s'", name);
 	return NULL;
 }
 
 Cnv* AmigaDisk::loadFont(const char* name) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadFont '%s'", name);
 	return NULL;
 }
 
 StaticCnv* AmigaDisk::loadStatic(const char* name) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadStatic '%s'", name);
 	return NULL;
 }
 
 Cnv* AmigaDisk::loadFrames(const char* name) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadFrames '%s'", name);
 	return NULL;
 }
 
-void AmigaDisk::loadSlide(const char *filename) {
+void AmigaDisk::loadSlide(const char *name) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadSlide '%s'", name);
+
+	char path[PATH_LEN];
+	sprintf(path, "%s.pp", name);
+
+	if (!_archive.openArchivedFile(path))
+		error("can't open archived file %s", path);
+
+	DecrunchStream stream(_archive);
+
+	Graphics::Surface surf;
+	byte *pal;
+
+	// CRNG headers may be safely ignored for slides
+	Graphics::ILBMDecoder decoder(stream);
+	decoder.decode(surf, pal);
+
+	for (uint32 i = 0; i < 96; i++)
+		pal[i] >>= 2;
+
+
+	_vm->_gfx->setPalette(pal);
+	free(pal);
+
+	_vm->_gfx->setBackground(static_cast<byte*>(surf.pixels));
+
+	surf.free();
+
 	return;
 }
 
 void AmigaDisk::loadScenery(const char* background, const char* mask) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadScenery '%s', '%s'", background, mask);
 	return;
 }
 
 Table* AmigaDisk::loadTable(const char* name) {
+	printf("AmigaDisk::loadTable\n");
 
 	char path[PATH_LEN];
 	sprintf(path, "%s.table", name);
 
-	_archive.openArchivedFile(path);
+	Common::SeekableReadStream *stream;
+
+	if (!scumm_stricmp(name, "global")) {
+		Common::File *s = new Common::File;
+		if (!s->open(path))
+			error("can't open %s", path);
+
+		stream = s;
+	} else {
+		if (!_archive.openArchivedFile(path))
+			error("can't open archived file %s", path);
+
+//		DecrunchStream *s = new DecrunchStream(_archive);
+		stream = &_archive;
+	}
 
 	Table *t = new Table(100);
 
-	fillBuffers(_archive);
+	fillBuffers(*stream);
 	while (scumm_stricmp(_tokens[0], "ENDTABLE")) {
 		t->addData(_tokens[0]);
-		fillBuffers(_archive);
+		fillBuffers(*stream);
 	}
+
+	delete stream;
 
 	return t;
 }
