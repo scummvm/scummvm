@@ -119,7 +119,7 @@ protected:
 			int32 samplingRate;
 			int32 keyOffset;
 			int32 keyNote;
-			int8 *_samples;
+			const int8 *_samples;
 		} * _snd[8];
 		struct Env {
 			EuD_ChannelState state;
@@ -342,7 +342,7 @@ void MidiChannel_EuD_WAVE::controlChange(byte control, byte value) {
 void MidiChannel_EuD_WAVE::sysEx_customInstrument(uint32 type, const byte *fmInst) {
 	if (type == 0x80) {
 		for (uint8 i = 0; i < 8; i++) {
-			byte ** pos = (byte **) fmInst;
+			const byte * const* pos = (const byte * const*) fmInst;
 			for (uint8 ii = 0; ii < 10; ii++) {
 				if (_voice->id[i] == *(pos[ii] + 8)) {
 					if (!_voice->_snd[i])
@@ -355,8 +355,8 @@ void MidiChannel_EuD_WAVE::sysEx_customInstrument(uint32 type, const byte *fmIns
 					_voice->_snd[i]->loopLength = READ_LE_UINT32(pos[ii] + 20);
 					_voice->_snd[i]->samplingRate = READ_LE_UINT16(pos[ii] + 24);
 					_voice->_snd[i]->keyOffset = READ_LE_UINT16(pos[ii] + 26);
-					_voice->_snd[i]->keyNote = *(uint8*)(pos[ii] + 28);
-					_voice->_snd[i]->_samples = (int8*)(pos[ii] + 32);
+					_voice->_snd[i]->keyNote = *(const uint8*)(pos[ii] + 28);
+					_voice->_snd[i]->_samples = (const int8*)(pos[ii] + 32);
 				}
 			}
 		}
@@ -397,7 +397,7 @@ void MidiChannel_EuD_WAVE::nextTick(int32 *outbuf, int buflen) {
 
 	int32 looplength = _voice->_snd[_current]->loopLength;
 	int32 numsamples = _voice->_snd[_current]->numSamples;
-	int8 * samples = _voice->_snd[_current]->_samples;
+	const int8 * samples = _voice->_snd[_current]->_samples;
 
 	for (int i = 0; i < buflen; i++) {
 		if (looplength > 0) {
