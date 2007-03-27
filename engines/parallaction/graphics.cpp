@@ -134,7 +134,6 @@ void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
 //
 
 void Gfx::setPalette(byte *palette) {
-//	printf("setPalette()\n");
 //	memcpy(_palette, palette, PALETTE_SIZE);
 
 	byte syspal[PALETTE_COLORS*4];
@@ -162,7 +161,7 @@ void Gfx::palUnk0(byte *palette) {
 		palette[PALETTE_BACKUP+i] = _palette[i]/2;
 	}
 #endif
-	Gfx::setPalette(palette);
+//	Gfx::setPalette(palette);
 
 	return;
 }
