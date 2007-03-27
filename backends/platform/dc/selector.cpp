@@ -26,6 +26,7 @@
 #include <engines/engine.h>
 #include <base/plugins.h>
 #include <common/fs.h>
+#include <common/events.h>
 #include "dc.h"
 #include "icon.h"
 #include "label.h"
