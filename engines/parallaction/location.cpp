@@ -255,20 +255,20 @@ void parseWalkNodes(Script& script, Node *list) {
 void switchBackground(const char* background, const char* mask) {
 //	printf("switchBackground(%s)", name);
 
-	byte palette[PALETTE_SIZE];
+	Gfx::Palette pal;
 
 	uint16 v2 = 0;
 	if (!scumm_stricmp(background, "final")) {
 		_vm->_gfx->clearScreen(Gfx::kBitBack);
 		for (uint16 _si = 0; _si <= 93; ) {
-			palette[_si] = v2;
-			palette[_si+1] = v2;
-			palette[_si+2] = v2;
+			pal[_si] = v2;
+			pal[_si+1] = v2;
+			pal[_si+2] = v2;
 			v2 += 4;
 			_si += 3;
 		}
 
-		_vm->_gfx->palUnk0(palette);
+		_vm->_gfx->extendPalette(pal);
 	}
 
 	_vm->_disk->loadScenery(background, mask);
@@ -283,7 +283,7 @@ extern Job     *_jEraseLabel;
 void Parallaction::showSlide(const char *name) {
 
 	_disk->loadSlide(name);
-	_gfx->palUnk0(_vm->_gfx->_palette);
+	_gfx->extendPalette(_vm->_gfx->_palette);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	debugC(1, kDebugLocation, "changeLocation: new background set");
@@ -401,7 +401,7 @@ void Parallaction::changeLocation(char *location) {
 
 	byte palette[PALETTE_SIZE];
 	for (uint16 _si = 0; _si < PALETTE_SIZE; _si++) palette[_si] = 0;
-	_gfx->palUnk0(palette);
+	_gfx->extendPalette(palette);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	if (_location._commands) {
 		runCommands(_location._commands);
@@ -419,7 +419,7 @@ void Parallaction::changeLocation(char *location) {
 	runJobs();
 	_gfx->swapBuffers();
 
-	_gfx->palUnk0(_vm->_gfx->_palette);
+	_gfx->extendPalette(_vm->_gfx->_palette);
 	if (_location._aCommands) {
 		runCommands(_location._aCommands);
 		debugC(1, kDebugLocation, "changeLocation: location acommands run");
@@ -443,11 +443,11 @@ void Parallaction::changeLocation(char *location) {
 void Parallaction::doLocationEnterTransition() {
 	debugC(1, kDebugLocation, "doLocationEnterTransition");
 
-	byte v60[PALETTE_SIZE];
 	if (_localFlags[_currentLocationIndex] & kFlagsVisited) return; // visited
 
-	_vm->_gfx->buildBWPalette(v60);
-	_vm->_gfx->setPalette(v60);
+	byte pal[PALETTE_SIZE];
+	_vm->_gfx->buildBWPalette(pal);
+	_vm->_gfx->setPalette(pal, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
 
 	jobRunScripts(NULL, NULL);
 	jobEraseAnimations(NULL, NULL);
@@ -481,8 +481,8 @@ void Parallaction::doLocationEnterTransition() {
 	// fades maximum intensity palette towards approximation of main palette
 	for (uint16 _si = 0; _si<6; _si++) {
 		waitTime( 1 );
-		_vm->_gfx->quickFadePalette(v60);
-		_vm->_gfx->setPalette(v60);
+		_vm->_gfx->quickFadePalette(pal);
+		_vm->_gfx->setPalette(pal);
 	}
 
 	debugC(1, kDebugLocation, "doLocationEnterTransition completed");

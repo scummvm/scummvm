@@ -33,8 +33,6 @@ extern OSystem *g_system;
 
 namespace Parallaction {
 
-
-
 //
 //	proportional font glyphs width
 //
@@ -51,18 +49,6 @@ const byte _glyphWidths[126] = {
 
 bool		Gfx::_proportionalFont = false;
 byte *		Gfx::_buffers[];
-
-#define PALETTE_BACKUP	PALETTE_SIZE
-
-byte _black_palette[PALETTE_SIZE] = {
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
-
 
 #define BALLOON_WIDTH	12
 #define BALLOON_HEIGHT	10
@@ -128,90 +114,31 @@ void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
 }
 
 
+void Gfx::setPalette(Palette pal, uint32 first, uint32 num) {
+//	printf("setPalette(%i, %i)\n", first, num);
 
-//
-//	palette management
-//
-
-void Gfx::setPalette(byte *palette) {
-//	memcpy(_palette, palette, PALETTE_SIZE);
+	if (first + num > PALETTE_COLORS)
+		error("wrong parameters for setPalette()");
 
 	byte syspal[PALETTE_COLORS*4];
 
-	for (uint32 i = 0; i < PALETTE_COLORS; i++) {
-		syspal[i*4]   = (palette[i*3] << 2) | (palette[i*3] >> 4);
-		syspal[i*4+1] = (palette[i*3+1] << 2) | (palette[i*3+1] >> 4);
-		syspal[i*4+2] = (palette[i*3+2] << 2) | (palette[i*3+2] >> 4);
+	for (uint32 i = first; i < first+num; i++) {
+		syspal[i*4]   = (pal[i*3] << 2) | (pal[i*3] >> 4);
+		syspal[i*4+1] = (pal[i*3+1] << 2) | (pal[i*3+1] >> 4);
+		syspal[i*4+2] = (pal[i*3+2] << 2) | (pal[i*3+2] >> 4);
 		syspal[i*4+3] = 0;
 	}
 
-	g_system->setPalette(syspal, 0, PALETTE_COLORS);
+	g_system->setPalette(syspal, first, num);
 	g_system->updateScreen();
-	return;
-}
-
-void Gfx::getBlackPalette(byte *palette) {
-	memcpy(palette, _black_palette, PALETTE_SIZE);
-	return;
-}
-
-void Gfx::palUnk0(byte *palette) {
-#if 0
-	for (uint16 i = 0; i < PALETTE_SIZE; i++) {
-		palette[PALETTE_BACKUP+i] = _palette[i]/2;
-	}
-#endif
-//	Gfx::setPalette(palette);
 
 	return;
 }
 
-void Gfx::buildBWPalette(byte *palette) {
-
-	for (uint16 i = 0; i < PALETTE_COLORS; i++) {
-		byte max;
-
-		if (_palette[i*3+1] > _palette[i*3+2]) {
-			max = _palette[i*3+1];
-		} else {
-			max = _palette[i*3+2];
-		}
-
-		if (_palette[i*3] > max) {
-			max = _palette[i*3];
-		} else {
-			if (_palette[i*3+1] > _palette[i*3+2]) {
-				max = _palette[i*3+1];
-			} else {
-				max = _palette[i*3+2];
-			}
-		}
-
-		palette[i*3] = max;
-		palette[i*3+1] = max;
-		palette[i*3+2] = max;
-	}
-
-	return;
-}
-
-void Gfx::fadePalette(byte *palette) {
-
-	for (uint16 i = 0; i < PALETTE_SIZE; i++)
-		if (palette[i] < _palette[i]) palette[i]++;
-
-
-	return;
-}
-
-void Gfx::quickFadePalette(byte *palette) {
-
-	for (uint16 i = 0; i < PALETTE_SIZE; i++) {
-		if (palette[i] == _palette[i]) continue;
-		palette[i] += (palette[i] < _palette[i] ? 4 : -4);
-	}
-
-	return;
+void Gfx::setBlackPalette() {
+	Palette pal;
+	memset(pal, 0, PALETTE_SIZE);
+	setPalette(pal);
 }
 
 //
@@ -219,7 +146,7 @@ void Gfx::quickFadePalette(byte *palette) {
 //
 //	FIXME: the effect is different from the original
 //
-void Gfx::animatePalette(byte *palette) {
+void Gfx::animatePalette() {
 // printf("Gfx::animatePalette()\n");
 
 	byte tmp[3];
@@ -240,11 +167,11 @@ void Gfx::animatePalette(byte *palette) {
 			tmp[1] = _palette[_palettefx[i]._first * 3 + 1];
 			tmp[2] = _palette[_palettefx[i]._first * 3 + 2];
 
-			memmove(palette+_palettefx[i]._first*3, _palette+(_palettefx[i]._first+1)*3, (_palettefx[i]._last - _palettefx[i]._first)*3);
+			memmove(_palette+_palettefx[i]._first*3, _palette+(_palettefx[i]._first+1)*3, (_palettefx[i]._last - _palettefx[i]._first)*3);
 
-			palette[_palettefx[i]._last * 3]	 = tmp[0];
-			palette[_palettefx[i]._last * 3 + 1] = tmp[1];
-			palette[_palettefx[i]._last * 3 + 2] = tmp[2];
+			_palette[_palettefx[i]._last * 3]	 = tmp[0];
+			_palette[_palettefx[i]._last * 3 + 1] = tmp[1];
+			_palette[_palettefx[i]._last * 3 + 2] = tmp[2];
 
 		} else {											// backward
 
@@ -252,19 +179,64 @@ void Gfx::animatePalette(byte *palette) {
 			tmp[1] = _palette[_palettefx[i]._last * 3 + 1];
 			tmp[2] = _palette[_palettefx[i]._last * 3 + 2];
 
-			memmove(palette+(_palettefx[i]._first+1)*3, _palette+_palettefx[i]._first*3, (_palettefx[i]._last - _palettefx[i]._first)*3);
+			memmove(_palette+(_palettefx[i]._first+1)*3, _palette+_palettefx[i]._first*3, (_palettefx[i]._last - _palettefx[i]._first)*3);
 
-			palette[_palettefx[i]._first * 3]	  = tmp[0];
-			palette[_palettefx[i]._first * 3 + 1] = tmp[1];
-			palette[_palettefx[i]._first * 3 + 2] = tmp[2];
+			_palette[_palettefx[i]._first * 3]	  = tmp[0];
+			_palette[_palettefx[i]._first * 3 + 1] = tmp[1];
+			_palette[_palettefx[i]._first * 3 + 2] = tmp[2];
 
 		}
 
 	}
 
+	setPalette(_palette);
+
 	return;
 }
 
+void Gfx::fadePalette(Palette pal) {
+	for (uint16 i = 0; i < PALETTE_SIZE; i++)
+		if (pal[i] < _palette[i]) pal[i]++;
+
+	return;
+}
+
+void Gfx::buildBWPalette(Palette pal) {
+
+	for (uint16 i = 0; i < BASE_PALETTE_COLORS; i++) {
+		byte max;
+
+		max = MAX(_palette[i*3+1], _palette[i*3+2]);
+		max = MAX(max, _palette[i*3]);
+
+		pal[i*3] = max;
+		pal[i*3+1] = max;
+		pal[i*3+2] = max;
+	}
+
+	return;
+}
+
+void Gfx::quickFadePalette(Palette pal) {
+
+	for (uint16 i = 0; i < PALETTE_SIZE; i++) {
+		if (pal[i] == _palette[i]) continue;
+		pal[i] += (pal[i] < _palette[i] ? 4 : -4);
+	}
+
+	return;
+}
+
+void Gfx::extendPalette(Palette pal) {
+
+	for (uint16 i = 0; i < BASE_PALETTE_COLORS; i++) {
+		pal[(i+FIRST_EHB_COLOR)*3] = pal[i*3] / 2;
+		pal[(i+FIRST_EHB_COLOR)*3+1] = pal[i*3+1] / 2;
+		pal[(i+FIRST_EHB_COLOR)*3+2] = pal[i*3+2] / 2;
+	}
+
+	setPalette(pal);
+}
 
 
 
@@ -950,16 +922,12 @@ Gfx::Gfx(Parallaction* vm) :
 	_vm(vm) {
 
 	g_system->beginGFXTransaction();
-
 	g_system->initSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-
 	g_system->endGFXTransaction();
 
 	initBuffers();
 
-	byte palette[PALETTE_SIZE];
-	getBlackPalette(palette);
-	setPalette(palette);
+	setBlackPalette();
 
 	initMouse( 0 );
 

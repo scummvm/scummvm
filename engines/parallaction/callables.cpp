@@ -63,15 +63,14 @@ void _c_score(void *parm) {
 }
 
 void _c_fade(void *parm) {
-	byte palette[PALETTE_SIZE];
-	_vm->_gfx->getBlackPalette(palette);
-	_vm->_gfx->setPalette(palette);
+	_vm->_gfx->setBlackPalette();
 
 	_vm->_gfx->swapBuffers();
 
+	Gfx::Palette pal;
 	for (uint16 _di = 0; _di < 64; _di++) {
-		_vm->_gfx->fadePalette(palette);
-		_vm->_gfx->setPalette(palette);
+		_vm->_gfx->fadePalette(pal);
+		_vm->_gfx->setPalette(pal);
 	}
 
 	_vm->waitTime( 1 );
@@ -202,26 +201,113 @@ void _c_setMask(void *parm) {
 	return;
 }
 
-void _c_endComment(void *parm) {
+void _c_endComment(void *param) {
 
+	byte* _enginePal = _vm->_gfx->_palette;
+	Gfx::Palette pal;
+
+	uint32 si;
+	for (si = 0; si < 32; si++) {
+
+		byte al = _enginePal[si*3+1];
+		if (al > _enginePal[si*3+2]) {
+			al = _enginePal[si*3+1];
+		} else {
+			al = _enginePal[si*3+2];
+		}
+
+		if (al < _enginePal[si*3]) {
+			al = _enginePal[si*3];
+		} else {
+			al = _enginePal[si*3+1];
+		}
+
+		if (al > _enginePal[si*3+2]) {
+			al = _enginePal[si*3+1];
+		} else {
+			al = _enginePal[si*3+2];
+		}
+
+		pal[si*3] = al;
+		pal[si*3+2] = al;
+		pal[si*3+1] = al;
+
+	}
+
+	int16 w = 0, h = 0;
+	_vm->_gfx->getStringExtent(_vm->_location._endComment, 130, &w, &h);
+
+	Common::Rect r(w+5, h+5);
+	r.moveTo(5, 5);
+	_vm->_gfx->floodFill(Gfx::kBitFront, r, 0);
+
+	r.setWidth(w+3);
+	r.setHeight(w+4);
+	r.moveTo(7, 7);
+	_vm->_gfx->floodFill(Gfx::kBitFront, r, 1);
+
+	_vm->_gfx->setFont("comic");
+	_vm->_gfx->displayWrappedString(_vm->_location._endComment, 3, 5, 130, 0);
+
+	uint32 di = 0;
+	for (di = 0; di < PALETTE_COLORS; di++) {
+		for (si = 0; si <= 93; si +=3) {
+
+			char al;
+
+			if (_enginePal[si] != pal[si]) {
+				al = _enginePal[si];
+				if (al > pal[si])
+					al = 1;
+				else
+					al = -1;
+				_enginePal[si] += al;
+			}
+
+			if (_enginePal[si+1] != pal[si+1]) {
+				al = _enginePal[si+1];
+				if (al > pal[si+1])
+					al = 1;
+				else
+					al = -1;
+				_enginePal[si+1] += al;
+			}
+
+			if (_enginePal[si+2] != pal[si+2]) {
+				al = _enginePal[si+2];
+				if (al > pal[si+2])
+					al = 1;
+				else
+					al = -1;
+				_enginePal[si+2] += al;
+			}
+
+		}
+
+		_vm->_gfx->setPalette(_enginePal);
+	}
+
+	waitUntilLeftClick();
+
+	return;
 }
 
 void _c_frankenstein(void *parm) {
-	byte pal0[PALETTE_SIZE], pal1[PALETTE_SIZE];
+	Gfx::Palette pal0;
 
-	for (uint16 i = 0; i <= PALETTE_COLORS; i++) {
-		pal0[i] = _vm->_gfx->_palette[i];
-		pal0[i*3+1] = 0;
-		pal0[i*3+2] = 0;
+	for (uint16 i = 0; i <= BASE_PALETTE_COLORS; i++) {
+		pal0[(i+FIRST_BASE_COLOR)] = _vm->_gfx->_palette[i];
+		pal0[(i+FIRST_BASE_COLOR)*3+1] = 0;
+		pal0[(i+FIRST_BASE_COLOR)*3+2] = 0;
+		pal0[(i+FIRST_EHB_COLOR)*3+1] = 0;
+		pal0[(i+FIRST_EHB_COLOR)*3+2] = 0;
 	}
-
-	_vm->_gfx->getBlackPalette(pal1);
 
 	for (uint16 _di = 0; _di < 30; _di++) {
 		g_system->delayMillis(20);
-		_vm->_gfx->setPalette(pal0);
+		_vm->_gfx->setPalette(pal0, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
 		g_system->delayMillis(20);
-		_vm->_gfx->setPalette(pal1);
+		_vm->_gfx->setPalette(pal0, FIRST_EHB_COLOR, EHB_PALETTE_COLORS);
 	}
 
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
@@ -272,7 +358,7 @@ void _c_finito(void *parm) {
 	cleanInventory();
 	refreshInventory(_vm->_characterName);
 
-	_vm->_gfx->palUnk0(_vm->_gfx->_palette);
+	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
 
 	if (gameCompleted) {
 		_vm->_gfx->setFont("slide");

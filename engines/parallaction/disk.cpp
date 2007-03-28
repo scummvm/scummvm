@@ -428,9 +428,8 @@ void DosDisk::parseDepths(Common::SeekableReadStream &stream) {
 
 void DosDisk::parseBackground(Common::SeekableReadStream &stream) {
 
-	byte pal[96];
-	stream.read(pal, PALETTE_SIZE);
-	_vm->_gfx->setPalette(pal);
+	stream.read(_vm->_gfx->_palette, BASE_PALETTE_SIZE);
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 
 	parseDepths(stream);
 
@@ -441,14 +440,6 @@ void DosDisk::parseBackground(Common::SeekableReadStream &stream) {
 		_vm->_gfx->_palettefx[_si]._first = stream.readByte();
 		_vm->_gfx->_palettefx[_si]._last = stream.readByte();
 	}
-
-#if 0
-	uint16 v147;
-	for (v147 = 0; v147 < PALETTE_SIZE; v147++) {
-		byte _al = _vm->_gfx->_palette[v147];
-		_vm->_gfx->_palette[PALETTE_SIZE+v147] = _al / 2;
-	}
-#endif
 
 }
 
@@ -744,7 +735,7 @@ Cnv* AmigaDisk::loadTalk(const char *name) {
 }
 
 Cnv* AmigaDisk::loadObjects(const char *name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadObjects '%s'", name);
+	debugC(1, kDebugDisk, "AmigaDisk::loadObjects");
 	return NULL;
 }
 
@@ -791,12 +782,12 @@ void AmigaDisk::loadSlide(const char *name) {
 	Graphics::ILBMDecoder decoder(stream);
 	decoder.decode(surf, pal);
 
-	for (uint32 i = 0; i < 96; i++)
-		pal[i] >>= 2;
+	for (uint32 i = 0; i < PALETTE_SIZE; i++)
+		_vm->_gfx->_palette[i] = pal[i] >> 2;
 
-
-	_vm->_gfx->setPalette(pal);
 	free(pal);
+
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 
 	_vm->_gfx->setBackground(static_cast<byte*>(surf.pixels));
 
@@ -811,7 +802,7 @@ void AmigaDisk::loadScenery(const char* background, const char* mask) {
 }
 
 Table* AmigaDisk::loadTable(const char* name) {
-	printf("AmigaDisk::loadTable\n");
+//	printf("AmigaDisk::loadTable\n");
 
 	char path[PATH_LEN];
 	sprintf(path, "%s.table", name);

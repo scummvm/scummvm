@@ -38,8 +38,18 @@ namespace Parallaction {
 #define SCREENMASK_WIDTH	SCREEN_WIDTH/4
 #define SCREENPATH_WIDTH	SCREEN_WIDTH/8
 
-#define PALETTE_COLORS		32
-#define PALETTE_SIZE		PALETTE_COLORS*3
+#define BASE_PALETTE_COLORS		32
+#define FIRST_BASE_COLOR		0
+#define LAST_BASE_COLOR			(FIRST_BASE_COLOR+BASE_PALETTE_COLORS-1)
+
+#define EHB_PALETTE_COLORS		32										// extra half-brite colors for amiga
+#define FIRST_EHB_COLOR			(LAST_BASE_COLOR+1)
+#define LAST_EHB_COLOR			(FIRST_EHB_COLOR+EHB_PALETTE_COLORS-1)
+
+#define PALETTE_COLORS			(BASE_PALETTE_COLORS+EHB_PALETTE_COLORS)
+
+#define BASE_PALETTE_SIZE		BASE_PALETTE_COLORS*3
+#define PALETTE_SIZE			PALETTE_COLORS*3
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 
@@ -65,6 +75,8 @@ struct GetData;
 class Gfx {
 
 public:
+	typedef byte Palette[PALETTE_SIZE];
+
 	enum Buffers {
 		// bit buffers
 		kBitFront,
@@ -119,13 +131,13 @@ public:
 	void blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
 
 	// palette
-	void animatePalette(byte *palette);
-	void setPalette(byte *palette);
-	void getBlackPalette(byte *palette);
-	void palUnk0(byte *palette);
-	void buildBWPalette(byte *palette);
-	void quickFadePalette(byte *palette);
-	void fadePalette(byte *palette);
+	void setPalette(Palette palette, uint32 first = FIRST_BASE_COLOR, uint32 num = PALETTE_COLORS);
+	void setBlackPalette();
+	void animatePalette();
+	void fadePalette(Palette palette);
+	void buildBWPalette(Palette palette);
+	void quickFadePalette(Palette palette);
+	void extendPalette(Palette palette);
 
 	// init
 	Gfx(Parallaction* vm);
@@ -141,7 +153,7 @@ public:
 
 	uint16				_bgLayers[4];
 	PaletteFxRange		_palettefx[6];
-	byte				_palette[PALETTE_SIZE];
+	Palette				_palette;
 
 protected:
 	Parallaction*		_vm;
