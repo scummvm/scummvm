@@ -588,8 +588,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 	if (frame >= layerPtr->framesCount)
 		return;
 
-	if (flags & 1) // Do capture
-	{
+	if (flags & 1) { // Do capture
 		updateAnim(layer, frame, animation, 0, drawDeltaX, drawDeltaY, 0);
 
 		if (_toRedrawLeft == -12345)

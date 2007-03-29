@@ -45,8 +45,7 @@ public:
 	void setRepeating (int32 repCount) { _repCount = repCount; }
 	int getIndex() const { return _index; }
 	void startPlay() { if (_data) _playing = true; }
-	void stopPlay()
-	{
+	void stopPlay() {
 		Common::StackLock slock(_mutex);
 		_playing = false;
 	}

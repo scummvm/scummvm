@@ -893,8 +893,8 @@ void Mult_v2::animate() {
 				if ((animObj1.newRight >= animObj2.newLeft) &&
 						(animObj2.newRight >= animObj1.newLeft) &&
 						(animObj1.newBottom >= animObj2.newTop) &&
-						(animObj2.newBottom >= animObj1.newTop))
-				{
+						(animObj2.newBottom >= animObj1.newTop)) {
+
 					_vm->_scenery->_toRedrawLeft = animObj2.newLeft;
 					_vm->_scenery->_toRedrawRight = animObj2.newRight;
 					_vm->_scenery->_toRedrawTop = animObj2.newTop;

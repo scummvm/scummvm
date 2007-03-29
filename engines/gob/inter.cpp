@@ -220,8 +220,8 @@ void Inter::funcBlock(int16 retFlag) {
 				(startaddr == 0x0B92 && addr == 0x0C93 && // Castle
 				 !strncmp(_vm->_game->_curTotFile, "avt019.tot", 10)) ||
 				(startaddr == 0x17D9 && addr == 0x18DA && // Finale
-				 !strncmp(_vm->_game->_curTotFile, "avt022.tot", 10)))
-			{
+				 !strncmp(_vm->_game->_curTotFile, "avt022.tot", 10))) {
+
 				_vm->_util->longDelay(5000);
 			}
 		} // End of workaround

@@ -132,8 +132,7 @@ public:
 	Video::Color _savedPal[256];
 	int32 _savedBackSize;
 
-	void clearVars(uint32 count)
-	{
+	void clearVars(uint32 count) {
 		uint32 size = count * 4;
 
 		memset(_inter_variables, 0, size);
