@@ -388,41 +388,36 @@ void GfxMgr::setAGIPal(int p0) {
 	//If 0 from savefile, do not use
 	if (p0 == 0)
 		return;
-	
-	_agipalFileNum = p0;
-	
-	Common::File agipal;
 
 	char filename[15];
-	uint32 fileSize;
 	sprintf(filename, "pal.%d", p0);
-	agipal.open(filename);
-	fileSize = agipal.size();
-	byte *palData = (byte *)malloc(fileSize);
-	agipal.read(palData, fileSize);
-	agipal.close();
+
+	Common::File agipal;
+	if (!agipal.open(filename))
+		error("Couldn't open AGIPAL palette file '%s'", filename);
 
 	//Chunk0 holds colors 0-7
-	for (int i = 0; i < 8 * 3; i++)
-		_agipalPalette[i] = palData[i];
-	
+	agipal.read(&_agipalPalette[0], 24);
 
 	//Chunk1 is the same as the chunk0
+
 	//Chunk2 chunk holds colors 8-15
-	int pos = 8 * 3;
-	for (int i = 24; i < 8 * 3 * 2; i++)
-		_agipalPalette[i] = palData[pos + i];
+	agipal.seek(24, SEEK_CUR);
+	agipal.read(&_agipalPalette[24], 24);
 
 	//Chunk3 is the same as the chunk2
+
 	//Chunks4-7 are duplicates of chunks0-3
+
+	if (agipal.ioFailed())
+		error("Couldn't read AGIPAL palette from '%s'", filename);
+
+	_agipalFileNum = p0;
 
 	initPalette(_agipalPalette);
 	gfxSetPalette();
 
-	debug(1, "Using AGIPAL palette from pal.%d", p0);
-
-	free(palData);
-	palData = 0;
+	debug(1, "Using AGIPAL palette from '%s'", filename);
 }
 
 int GfxMgr::getAGIPalFileNum() {
