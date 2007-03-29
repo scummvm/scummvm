@@ -625,7 +625,7 @@ void ImdPlayer::play(const char *path, int16 x, int16 y, bool interruptible) {
 	int16 buttons;
 
 	_vm->_util->setFrameRate(12);
-	if(!openImd(path, x, y, 0, 2))
+	if (!openImd(path, x, y, 0, 2))
 		return;
 
 	_vm->_video->fillRect(_vm->_draw->_frontSurface, x, y,
@@ -650,7 +650,7 @@ void ImdPlayer::play(const char *path, int16 x, int16 y, int16 startFrame,
 	int endFrame;
 
 	_vm->_util->setFrameRate(12);
-	if(!openImd(path, x, y, 0, 0))
+	if (!openImd(path, x, y, 0, 0))
 		return;
 
 	_vm->_video->fillRect(_vm->_draw->_frontSurface, x, y,

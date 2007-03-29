@@ -563,7 +563,7 @@ void Mult_v2::drawStatics(bool &stop) {
 				_multData->staticKeys[_counter].layer;
 			
 			staticIndex = _multData->staticIndices[i];
-			while(_vm->_scenery->getStaticLayersCount(staticIndex) <=
+			while (_vm->_scenery->getStaticLayersCount(staticIndex) <=
 					_vm->_scenery->_curStaticLayer) {
 				_vm->_scenery->_curStaticLayer -=
 					_vm->_scenery->getStaticLayersCount(staticIndex);
