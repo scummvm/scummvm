@@ -160,20 +160,12 @@ void Init::initGame(char *totName) {
 		_vm->_cdrom->readLIC("gob.lic");
 
 		_vm->_draw->_cursorIndex = -1;
-		imdHandle = _vm->_dataIO->openData("coktel2.imd");
+		imdHandle = _vm->_dataIO->openData("coktel.imd");
 		if (imdHandle >= 0) {
 			_vm->_dataIO->closeData(imdHandle);
 			_vm->_draw->initScreen();
-			_vm->_imdPlayer->play("coktel2", -1, -1, true);
+			_vm->_imdPlayer->play("coktel", -1, -1, true);
 			_vm->_draw->closeScreen();
-		} else {
-			imdHandle = _vm->_dataIO->openData("coktel.imd");
-			if (imdHandle >= 0) {
-				_vm->_dataIO->closeData(imdHandle);
-				_vm->_draw->initScreen();
-				_vm->_imdPlayer->play("coktel", -1, -1, true);
-				_vm->_draw->closeScreen();
-			}
 		}
 
 		_vm->_game->start();
