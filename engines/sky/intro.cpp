@@ -923,6 +923,7 @@ bool Intro::escDelay(uint32 msecs) {
 		else if (nDelay > 15)
 			nDelay = 15;
 		_system->delayMillis(nDelay);
+		_system->updateScreen();
 	} while (nDelay == 15);
 	return true;
 }
