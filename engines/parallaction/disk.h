@@ -111,8 +111,8 @@ class DosDisk : public Disk {
 private:
 	uint16 decompressChunk(byte *src, byte *dst, uint16 size);
 	void unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *path);
-	void loadExternalCnv(const char *filename, Cnv *cnv);
-	void loadCnv(const char *filename, Cnv *cnv);
+	Cnv* loadExternalCnv(const char *filename);
+	Cnv* loadCnv(const char *filename);
 	void loadExternalStaticCnv(const char *filename, StaticCnv *cnv);
 	void loadBackground(const char *filename);
 	void loadMaskAndPath(const char *name);

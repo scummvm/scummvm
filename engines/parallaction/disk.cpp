@@ -120,7 +120,7 @@ uint16 DosDisk::decompressChunk(byte *src, byte *dst, uint16 size) {
 //
 // loads a cnv from an external file
 //
-void DosDisk::loadExternalCnv(const char *filename, Cnv *cnv) {
+Cnv* DosDisk::loadExternalCnv(const char *filename) {
 //	printf("Gfx::loadExternalCnv(%s)...", filename);
 
 	char path[PATH_LEN];
@@ -132,22 +132,15 @@ void DosDisk::loadExternalCnv(const char *filename, Cnv *cnv) {
 	if (!stream.open(path))
 		errorFileNotFound(path);
 
-	cnv->_count = stream.readByte();
-	cnv->_width = stream.readByte();
-	cnv->_height = stream.readByte();
+	uint16 numFrames = stream.readByte();
+	uint16 width = stream.readByte();
+	uint16 height = stream.readByte();
 
-	cnv->_array = (byte**)malloc(cnv->_count * sizeof(byte*));
+	uint32 decsize = numFrames * width * height;
+	byte *data = (byte*)malloc(decsize);
+	stream.read(data, decsize);
 
-	uint16 size = cnv->_width*cnv->_height;
-	for (uint16 i = 0; i < cnv->_count; i++) {
-		cnv->_array[i] = (byte*)malloc(size);
-		stream.read(cnv->_array[i], size);
-	}
-
-//	printf("done\n");
-
-
-	return;
+	return new Cnv(numFrames, width, height, data);
 }
 
 void DosDisk::loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
@@ -175,7 +168,7 @@ void DosDisk::loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
 	return;
 }
 
-void DosDisk::loadCnv(const char *filename, Cnv *cnv) {
+Cnv* DosDisk::loadCnv(const char *filename) {
 //	printf("Gfx::loadCnv(%s)\n", filename);
 
 	char path[PATH_LEN];
@@ -187,69 +180,50 @@ void DosDisk::loadCnv(const char *filename, Cnv *cnv) {
 			errorFileNotFound(path);
 	}
 
-	cnv->_count = _archive.readByte();
-	cnv->_width = _archive.readByte();
-	cnv->_height = _archive.readByte();
+	uint16 numFrames = _archive.readByte();
+	uint16 width = _archive.readByte();
+	uint16 height = _archive.readByte();
 
-	uint16 framesize = cnv->_width*cnv->_height;
+	uint32 rawsize = _archive.size() - 3;
+	byte *buf = (byte*)malloc(rawsize);
+	_archive.read(buf, rawsize);
 
-	cnv->_array = (byte**)malloc(cnv->_count * sizeof(byte*));
+	uint32 decsize = numFrames * width * height;
+	byte *data = (byte*)malloc(decsize);
+	decompressChunk(buf, data, decsize);
 
-	uint32 size = _archive.size() - 3;
-
-	byte *buf = (byte*)malloc(size);
-	_archive.read(buf, size);
-
-	byte *s = buf;
-
-	for (uint16 i = 0; i < cnv->_count; i++) {
-		cnv->_array[i] = (byte*)malloc(framesize);
-		uint16 read = decompressChunk(s, cnv->_array[i], framesize);
-
-//		printf("frame %i decompressed: %i --> %i\n", i, read, framesize);
-
-		s += read;
-	}
-
-	free(buf);
-
-	return;
+	return new Cnv(numFrames, width, height, data);
 }
 
 Cnv* DosDisk::loadTalk(const char *name) {
 
-	Cnv *cnv = new Cnv;
-
 	const char *ext = strstr(name, ".talk");
 	if (ext != NULL) {
 		// npc talk
-		loadCnv(name, cnv);
-
-	} else {
-		// character talk
-/*
-		if (scumm_stricmp(name, _doughName) &&
-			scumm_stricmp(name, _dinoName) &&
-			scumm_stricmp(name, _donnaName) &&
-			scumm_stricmp(name, _drkiName)) return;
-*/
-		char v20[PATH_LEN];
-		char *v24 = const_cast<char*>(name);
-		if (IS_MINI_CHARACTER(v24)) {
-			v24+=4;
-		}
-
-		if (_engineFlags & kEngineTransformedDonna) {
-			sprintf(v20, "%stta", v24);
-		} else {
-			sprintf(v20, "%stal", v24);
-		}
-
-		loadExternalCnv(v20, cnv);
+		return loadCnv(name);
 
 	}
 
-	return cnv;
+	// character talk
+/*
+	if (scumm_stricmp(name, _doughName) &&
+		scumm_stricmp(name, _dinoName) &&
+		scumm_stricmp(name, _donnaName) &&
+		scumm_stricmp(name, _drkiName)) return;
+*/
+	char v20[PATH_LEN];
+	char *v24 = const_cast<char*>(name);
+	if (IS_MINI_CHARACTER(v24)) {
+		v24+=4;
+	}
+
+	if (_engineFlags & kEngineTransformedDonna) {
+		sprintf(v20, "%stta", v24);
+	} else {
+		sprintf(v20, "%stal", v24);
+	}
+
+	return loadExternalCnv(v20);
 }
 
 Script* DosDisk::loadLocation(const char *name) {
@@ -334,12 +308,8 @@ StaticCnv* DosDisk::loadPointer() {
 
 Cnv* DosDisk::loadFont(const char* name) {
 	char path[PATH_LEN];
-
 	sprintf(path, "%scnv", name);
-
-	Cnv* cnv = new Cnv;
-	loadExternalCnv(path, cnv);
-	return cnv;
+	return loadExternalCnv(path);
 }
 
 // loads character's icons set
@@ -352,10 +322,7 @@ Cnv* DosDisk::loadObjects(const char *name) {
 
 	char path[PATH_LEN];
 	sprintf(path, "%sobj", name);
-
-	Cnv* cnv = new Cnv;
-	loadExternalCnv(path, cnv);
-	return cnv;
+	return loadExternalCnv(path);
 }
 
 
@@ -391,9 +358,7 @@ StaticCnv* DosDisk::loadStatic(const char* name) {
 }
 
 Cnv* DosDisk::loadFrames(const char* name) {
-	Cnv* cnv = new Cnv;
-	loadCnv(name, cnv);
-	return cnv;
+	return loadCnv(name);
 }
 
 //

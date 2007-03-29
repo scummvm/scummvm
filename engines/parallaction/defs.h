@@ -88,34 +88,32 @@ struct StaticCnv {
 };
 
 
-struct Cnv {
+class Cnv {
+	uint16	_count; 	// # of frames
 	uint16	_width; 	//
 	uint16	_height;	//
 	byte**	field_8;	// unused
-	uint16	_count; 	// # of frames
-	byte**	_array; 	// frames data
+	byte*	_data;
 
 public:
 	Cnv() {
 		_width = _height = _count = 0;
-		_array = NULL;
+		_data = NULL;
+	}
+
+	Cnv(uint16 numFrames, uint16 width, uint16 height, byte* data) : _count(numFrames), _width(width), _height(height), _data(data) {
+
 	}
 
 	~Cnv() {
-		if (_count == 0 || _array == NULL) return;
-
-		for (uint16 _si = 0; _si < _count; _si++) {
-			if (_array[_si])
-				free(_array[_si]);
-		}
-
-		free(_array);
+		if (_count == 0 || _data == NULL) return;
+		free(_data);
 	}
 
 	byte* getFramePtr(uint16 index) {
 		if (index >= _count)
 			return NULL;
-		return _array[index];
+		return &_data[index * _width * _height];
 	}
 };
 
