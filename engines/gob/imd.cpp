@@ -1217,8 +1217,13 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 }
 
 inline void ImdPlayer::waitEndSoundSlice() {
+	uint32 timeKey = _vm->_util->getTimeKey();
+	int32 waitTime = _soundSliceLength;
+
 	_vm->_video->retrace();
-	_vm->_util->delay(_soundSliceLength);
+	waitTime -= _vm->_util->getTimeKey() - timeKey;
+	if (waitTime > 0)
+	_vm->_util->delay(waitTime);
 }
 
 } // End of namespace Gob
