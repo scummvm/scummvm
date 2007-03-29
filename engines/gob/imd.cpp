@@ -718,7 +718,7 @@ void ImdPlayer::play(int16 frame, uint16 palCmd,
 
 	_vm->_draw->_showCursor = 0;
 
-  if ((frame < 0) || (frame > lastFrame))
+	if ((frame < 0) || (frame > lastFrame))
 		return;
 
 	palCmd &= 0x3F;
@@ -1223,7 +1223,7 @@ inline void ImdPlayer::waitEndSoundSlice() {
 	_vm->_video->retrace();
 	waitTime -= _vm->_util->getTimeKey() - timeKey;
 	if (waitTime > 0)
-	_vm->_util->delay(waitTime);
+		_vm->_util->delay(waitTime);
 }
 
 } // End of namespace Gob
