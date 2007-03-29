@@ -1472,24 +1472,36 @@ void Inter_v2::o2_playImd() {
 	palEnd = _vm->_parse->parseValExpr();
 	palCmd = 1 << (flags & 0x3F);
 	
-	if (!_vm->_imdPlayer->openImd(imd, x, y, startFrame, flags))
+	if (!_vm->_imdPlayer->openImd(imd, x, y, startFrame, flags)) {
+		WRITE_VAR(11, -1);
 		return;
+	}
 
 	close = (lastFrame == -1);
 	if (lastFrame < 0)
 		lastFrame = _vm->_imdPlayer->_curImd->framesCount - 1;
+	if (startFrame == -2) {
+		startFrame = lastFrame = 0;
+		close = false;
+	}
 
 	for (int i = startFrame; i <= lastFrame; i++) {
 		_vm->_imdPlayer->play(i, palCmd, palStart, palEnd, 0, lastFrame);
 		WRITE_VAR(11, i);
+
+		if (_vm->_quitRequested)
+			break;
 
 		if (breakKey != 0) {
 			_vm->_util->getMouseState(&_vm->_global->_inter_mouseX,
 					&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons);
 
 			storeKey(_vm->_util->checkKey());
-			if (VAR(0) == (unsigned) breakKey)
+			if (VAR(0) == (unsigned) breakKey) {
+				if (_vm->_imdPlayer->_soundStage == 2)
+					_vm->_snd->stopSound(0);
 				return;
+			}
 		}
 	}
 
@@ -1553,15 +1565,9 @@ void Inter_v2::o2_resetImdFrontSurf() {
 	_vm->_imdPlayer->_frontSurf = 21;
 	if (_vm->_imdPlayer->_frontMem) {
 		_vm->_imdPlayer->_frontMem = _vm->_draw->_frontSurface->getVidMem();
-		_vm->_video->drawSprite(_vm->_draw->_backSurface,
-				_vm->_draw->_frontSurface, 0, 0,
-				_vm->_draw->_backSurface->getWidth() - 1,
-				_vm->_draw->_backSurface->getHeight() - 1, 0, 0, 0);
+		_vm->_draw->forceBlit();
 	} else
-		_vm->_video->drawSprite(_vm->_draw->_frontSurface,
-				_vm->_draw->_backSurface, 0, 0,
-				_vm->_draw->_backSurface->getWidth() - 1,
-				_vm->_draw->_backSurface->getHeight() - 1, 0, 0, 0);
+		_vm->_draw->forceBlit(true);
 }
 
 bool Inter_v2::o2_evaluateStore(OpFuncParams &params) {
@@ -1811,7 +1817,6 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	int16 dataVar;
 	int16 handle;
 	char *buf;
-	char tmp[4];
 
 	evalExpr(0);
 	dataVar = _vm->_parse->parseVarIndex();
@@ -1861,13 +1866,12 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 
 	_vm->_draw->animateCursor(4);
 	if (offset < 0)
-		_vm->_dataIO->seekData(handle, -offset - 1, 2);
+		_vm->_dataIO->seekData(handle, -offset - 1, SEEK_END);
 	else
-		_vm->_dataIO->seekData(handle, offset, 0);
+		_vm->_dataIO->seekData(handle, offset, SEEK_SET);
 
 	if (((dataVar >> 2) == 59) && (size == 4)) {
-		retSize = _vm->_dataIO->readData(handle, tmp, 4);
-		WRITE_VAR(59, READ_LE_UINT32(tmp));
+		WRITE_VAR(59, _vm->_dataIO->readUint32(handle));
 		// The scripts in some versions divide through 256^3 then,
 		// effectively doing a LE->BE conversion
 		if ((_vm->_platform != Common::kPlatformPC) && (VAR(59) < 256))
@@ -2037,6 +2041,8 @@ int16 Inter_v2::loadSound(int16 search) {
 		source = SOUND_EXT;
 
 		dataPtr = (byte *) _vm->_game->loadExtData(id, 0, 0, &dataSize);
+		if (_vm->_game->_totFileData[0x29] >= 51)
+			_vm->_snd->convToSigned(dataPtr, dataSize);
 	} else {
 		int16 totSize;
 
@@ -2069,7 +2075,7 @@ void Inter_v2::animPalette() {
 			continue;
 
 		if (first) {
-			_vm->_video->waitRetrace(_vm->_global->_videoMode);
+			_vm->_video->waitRetrace();
 			first = false;
 		}
 

@@ -33,6 +33,17 @@
 
 namespace Gob {
 
+void SoundDesc::set(SoundType type, SoundSource src,
+		byte *data, uint32 dSize) {
+
+	free();
+
+	_type = type;
+	_source = src;
+	_data = _dataPtr = data;
+	_size = dSize;
+}
+
 void SoundDesc::load(SoundType type, SoundSource src,
 		byte *data, uint32 dSize) {
 
@@ -223,6 +234,12 @@ void Snd::stopSound(int16 fadeLength, SoundDesc *sndDesc) {
 	_fadeSamples = (int) (fadeLength * (((double) _rate) / 10.0));
 	_fadeVolStep = 255.0 / ((double) _fadeSamples);
 	_curFadeSamples = 0;
+}
+
+void Snd::setRepeating(int32 repCount) {
+	Common::StackLock slock(_mutex);
+
+	_repCount = repCount;
 }
 
 void Snd::waitEndPlay(bool interruptible, bool stopComp) {

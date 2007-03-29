@@ -152,19 +152,23 @@ SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height,
 	return descPtr;
 }
 
-void Video::waitRetrace(bool mouse) {
-	uint32 time;
-
+void Video::retrace(bool mouse) {
 	if (mouse)
 		CursorMan.showMouse((_vm->_draw->_showCursor & 2) != 0);
 	if (_vm->_global->_primarySurfDesc) {
-		time = _vm->_util->getTimeKey();
 		g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() +
 				_scrollOffsetY * _surfWidth + _scrollOffsetX, _surfWidth,
 				0, 0, 320, 200);
 		g_system->updateScreen();
-		_vm->_util->delay(MAX(1, 10 - (int)(_vm->_util->getTimeKey() - time)));
 	}
+}
+
+void Video::waitRetrace(bool mouse) {
+	uint32 time;
+
+	time = _vm->_util->getTimeKey();
+	retrace(mouse);
+	_vm->_util->delay(MAX(1, 10 - (int)(_vm->_util->getTimeKey() - time)));
 }
 
 void Video::putPixel(int16 x, int16 y, int16 color, SurfaceDesc *dest) {
@@ -401,6 +405,21 @@ void Video::setFullPalette(PalDesc *palDesc) {
 		g_system->setPalette(pal, 0, 256);
 	} else
 		Video::setPalette(palDesc);
+}
+
+void Video::setPalette(Color *palette) {
+	Color *palBak;
+	bool setAllPalBak;
+
+	palBak = _vm->_global->_pPaletteDesc->vgaPal;
+	setAllPalBak = _vm->_global->_setAllPalette;
+
+	_vm->_global->_pPaletteDesc->vgaPal = palette;
+	_vm->_global->_setAllPalette = true;
+	setFullPalette(_vm->_global->_pPaletteDesc);
+
+	_vm->_global->_setAllPalette = setAllPalBak;
+	_vm->_global->_pPaletteDesc->vgaPal = palBak;
 }
 
 } // End of namespace Gob

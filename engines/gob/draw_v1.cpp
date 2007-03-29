@@ -99,7 +99,7 @@ void Draw_v1::animateCursor(int16 cursor) {
 			} else {
 				if (_noInvalidated && (_vm->_global->_inter_mouseX == _cursorX) &&
 						(_vm->_global->_inter_mouseY == _cursorY)) {
-					_vm->_video->waitRetrace(_vm->_global->_videoMode);
+					_vm->_video->waitRetrace();
 					return;
 				}
 			}
@@ -144,7 +144,7 @@ void Draw_v1::animateCursor(int16 cursor) {
 				blitInvalidated();
 				_cursorIndex = tmp;
 			} else {
-				_vm->_video->waitRetrace(_vm->_global->_videoMode);
+				_vm->_video->waitRetrace();
 				if (MIN(newY, _cursorY) < 50)
 					_vm->_util->delay(5);
 				_showCursor = 0;

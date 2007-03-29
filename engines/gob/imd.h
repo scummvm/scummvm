@@ -25,6 +25,7 @@
 #define GOB_IMD_H
 
 #include "gob/video.h"
+#include "gob/sound.h"
 
 namespace Gob {
 
@@ -41,7 +42,7 @@ public:
 	};
 
 	struct Imd {
-		int16 fileHandle;
+		int16 handle;
 		int16 verMin;
 		int16 framesCount;
 		int16 x;
@@ -58,10 +59,10 @@ public:
 		int16 stdY;
 		int16 stdWidth;
 		int16 stdHeight;
-		int32 filePos;
 		ImdCoord *frameCoords;
 		int32 frameDataSize;
 		int32 vidBufferSize;
+		Video::Color *extraPalette;
 	};
 
 #include "common/pack-end.h"	// END STRUCT PACKING
@@ -72,38 +73,65 @@ public:
 	byte *_frontMem;
 	int32 _frameDelay;
 
+	uint8 _soundStage; // (0: no sound, 1: loaded, 2: playing)
+
 	ImdPlayer(GobEngine *vm);
 	virtual ~ImdPlayer();
 
 	Imd *loadImdFile(const char *path, SurfaceDesc *surfDesc, int8 flags);
-	void finishImd(Imd *imdPtr);
-	int8 openImd(const char *path, int16 x, int16 y, int16 repeat, int16 flags);
-	void closeImd(void);
-	void setXY(Imd *imdPtr, int16 x, int16 y);
+	void finishImd(Imd *&imdPtr);
 
-	void play(int16 arg_0, uint16 palCmd, int16 palStart,
-			int16 playEnd, int16 palFrame, int16 arg_A);
+	int8 openImd(const char *path, int16 x, int16 y,
+			int16 startFrame, int16 flags);
+	void closeImd(void);
+
+	void play(int16 frame, uint16 palCmd, int16 palStart, int16 palEnd,
+			int16 palFrame, int16 lastFrame);
+	void play(const char *path, int16 x, int16 y, bool interruptible);
 	void play(const char *path, int16 x, int16 y, int16 startFrame,
 			int16 frames, bool fade, bool interruptible);
-	int16 view(ImdPlayer::Imd *imdPtr, int16 arg_4);
-	void drawFrame(Imd *imdPtr, int16 frame, int16 x, int16 y,
-			SurfaceDesc *dest = 0);
-	void renderframe(Imd *imdPtr);
-	void frameUncompressor(byte *dest, byte *src);
-	int16 sub_2C825(Imd *imdPtr);
 
 protected:
 	char _curFile[15];
 
 	int16 _curX;
 	int16 _curY;
+	int16 _left;
+	int16 _top;
+	int16 _right;
+	int16 _bottom;
 
-	uint16 _frameDataSize;
-	uint16 _vidBufferSize;
 	byte *_frameData;
 	byte *_vidBuffer;
 
+	bool _noSound;
+	byte *_soundBuffer;
+
+	int16 _soundFreq;
+	uint16 _soundSliceSize;
+	int16 _soundSlicesCount;
+
+	uint16 _soundSliceLength;
+	uint16 _curSoundSlice;
+	SoundDesc _soundDesc;
+
 	GobEngine *_vm;
+
+	void copyPalette(int16 palStart, int16 palEnd);
+	void flipFrontMem();
+	void drawFrame(int16 frame);
+	void setXY(Imd *imdPtr, int16 x, int16 y);
+
+	void seekFrame(Imd *imdPtr, int16 frame, int16 from, bool restart = false);
+	uint16 checkFrameType(Imd *imdPtr, int16 frame);
+	void drawFrame(Imd *imdPtr, int16 frame, int16 x, int16 y,
+			SurfaceDesc *dest = 0);
+
+	uint32 view(ImdPlayer::Imd *imdPtr, int16 arg_4);
+	void renderFrame(Imd *imdPtr);
+	void frameUncompressor(byte *dest, byte *src);
+
+	void waitEndSoundSlice();
 };
 
 } // End of namespace Gob

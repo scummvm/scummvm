@@ -352,28 +352,22 @@ void Game::loadExtTable(void) {
 	if (_extHandle < 0)
 		return;
 
-	_vm->_dataIO->readData(_extHandle, (char *) &count, 2);
-	count = FROM_LE_16(count);
+	count = _vm->_dataIO->readUint16(_extHandle);
 
-	_vm->_dataIO->seekData(_extHandle, 0, 0);
+	_vm->_dataIO->seekData(_extHandle, 0, SEEK_SET);
 	_extTable = new ExtTable;
 	_extTable->items = 0;
 	if (count)
 		_extTable->items = new ExtItem[count];
 
-	_vm->_dataIO->readData(_extHandle, (char *) &_extTable->itemsCount, 2);
-	_extTable->itemsCount = FROM_LE_16(_extTable->itemsCount);
-	_vm->_dataIO->readData(_extHandle, (char *) &_extTable->unknown, 1);
+	_extTable->itemsCount = _vm->_dataIO->readUint16(_extHandle);
+	_extTable->unknown = _vm->_dataIO->readByte(_extHandle);
 
 	for (int i = 0; i < count; i++) {
-		_vm->_dataIO->readData(_extHandle, (char *) &_extTable->items[i].offset, 4);
-		_extTable->items[i].offset = FROM_LE_32(_extTable->items[i].offset);
-		_vm->_dataIO->readData(_extHandle, (char *) &_extTable->items[i].size, 2);
-		_extTable->items[i].size = FROM_LE_16(_extTable->items[i].size);
-		_vm->_dataIO->readData(_extHandle, (char *) &_extTable->items[i].width, 2);
-		_extTable->items[i].width = FROM_LE_16(_extTable->items[i].width);
-		_vm->_dataIO->readData(_extHandle, (char *) &_extTable->items[i].height, 2);
-		_extTable->items[i].height = FROM_LE_16(_extTable->items[i].height);
+		_extTable->items[i].offset = _vm->_dataIO->readUint32(_extHandle);
+		_extTable->items[i].size = _vm->_dataIO->readUint16(_extHandle);
+		_extTable->items[i].width = _vm->_dataIO->readUint16(_extHandle);
+		_extTable->items[i].height = _vm->_dataIO->readUint16(_extHandle);
 	}
 }
 

@@ -104,6 +104,7 @@ public:
 	void initPrimary(int16 mode);
 	SurfaceDesc *initSurfDesc(int16 vidMode, int16 width,
 			int16 height, int16 flags);
+	void retrace(bool mouse = true);
 	void waitRetrace(bool mouse = true);
 
 	void putPixel(int16 x, int16 y, int16 color, SurfaceDesc *dest);
@@ -137,6 +138,7 @@ public:
 			int16 unused, int16 vidMode);
 	void setPalette(PalDesc *palDesc);
 	void setFullPalette(PalDesc *palDesc);
+	void setPalette(Color *palette);
 
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth,
 			int16 srcHeight, int16 x, int16 y, int16 transp,

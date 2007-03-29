@@ -336,7 +336,7 @@ void Mult::doPalAnim() {
 	}
 
 	if (_vm->_global->_colorCount == 256) {
-		_vm->_video->waitRetrace(_vm->_global->_videoMode);
+		_vm->_video->waitRetrace();
 
 		palPtr = _vm->_global->_pPaletteDesc->vgaPal;
 		for (_counter = 0; _counter < 16; _counter++, palPtr++)

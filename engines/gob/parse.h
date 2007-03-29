@@ -59,7 +59,7 @@ public:
 	virtual ~Parse_v1() {};
 
 	virtual int16 parseVarIndex(void);
-	virtual int16 parseValExpr(unsigned stopToken=99);
+	virtual int16 parseValExpr(unsigned stopToken = 99);
 	virtual int16 parseExpr(char stopToken, byte *resultPtr);
 };
 
@@ -69,7 +69,7 @@ public:
 	virtual ~Parse_v2() {};
 
 	virtual int16 parseVarIndex(void);
-	virtual int16 parseValExpr(unsigned stopToken=99);
+	virtual int16 parseValExpr(unsigned stopToken = 99);
 	virtual int16 parseExpr(char stopToken, byte *resultPtr);
 };
 

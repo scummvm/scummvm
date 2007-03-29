@@ -34,6 +34,7 @@
 #include "gob/game.h"
 #include "gob/sound.h"
 #include "gob/video.h"
+#include "gob/imd.h"
 
 namespace Gob {
 
@@ -55,6 +56,7 @@ void Init::cleanup(void) {
 void Init::initGame(char *totName) {
 	int16 handle2;
 	int16 handle;
+	int16 imdHandle;
 	char *infBuf;
 	char *infPtr;
 	char *infEnd;
@@ -144,8 +146,7 @@ void Init::initGame(char *totName) {
 	if (handle >= 0) {
 		// Get variables count
 		_vm->_dataIO->seekData(handle, 0x2C, SEEK_SET);
-		_vm->_dataIO->readData(handle, (char *) &varsCount, 2);
-		varsCount = FROM_LE_16(varsCount);
+		varsCount = _vm->_dataIO->readUint16(handle);
 		_vm->_dataIO->closeData(handle);
 
 		_vm->_global->_inter_variables = new char[varsCount * 4];
@@ -157,6 +158,24 @@ void Init::initGame(char *totName) {
 
 		_vm->_cdrom->testCD(1, "GOB");
 		_vm->_cdrom->readLIC("gob.lic");
+
+		_vm->_draw->_cursorIndex = -1;
+		imdHandle = _vm->_dataIO->openData("coktel2.imd");
+		if (imdHandle >= 0) {
+			_vm->_dataIO->closeData(imdHandle);
+			_vm->_draw->initScreen();
+			_vm->_imdPlayer->play("coktel2", -1, -1, true);
+			_vm->_draw->closeScreen();
+		} else {
+			imdHandle = _vm->_dataIO->openData("coktel.imd");
+			if (imdHandle >= 0) {
+				_vm->_dataIO->closeData(imdHandle);
+				_vm->_draw->initScreen();
+				_vm->_imdPlayer->play("coktel", -1, -1, true);
+				_vm->_draw->closeScreen();
+			}
+		}
+
 		_vm->_game->start();
 
 		_vm->_cdrom->stopPlaying();

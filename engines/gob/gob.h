@@ -109,11 +109,14 @@ class ReferenceCounter {
 public:
 	class Ptr {
 	public:
-		T* operator-> () { return _p; }
-		T& operator* () { return *_p; }
+		bool operator==(const Ptr &p) const { return _p == p._p; }
+		bool operator==(const ReferenceCounter *p) const { return _p == p; }
+
+		T *operator-> () { return _p; }
+		T &operator* () { return *_p; }
 		operator T*() { return _p; }
 
-		Ptr(T* p) : _p(p) { ++_p->_references; }
+		Ptr(T *p) : _p(p) { ++_p->_references; }
 		Ptr() : _p(0) { }
 
 		~Ptr() {
@@ -121,16 +124,16 @@ public:
 				delete _p;
 		}
 
-		Ptr(const Ptr& p) : _p(p._p) { ++_p->_references; }
+		Ptr(const Ptr &p) : _p(p._p) { ++_p->_references; }
 
-		Ptr& operator= (const Ptr& p) {
+		Ptr &operator= (const Ptr &p) {
 			++p._p->_references;
 			if (_p && (--_p->_references == 0))
 				delete _p;
 			_p = p._p;
 			return *this;
 		}
-		Ptr* operator= (const Ptr* p) {
+		Ptr *operator= (const Ptr *p) {
 			if (p)
 				++p->_p->_references;
 			if (_p && (--_p->_references == 0))
@@ -141,7 +144,7 @@ public:
 		}
 
 	private:
-		T* _p;
+		T *_p;
 	};
 
 	ReferenceCounter() : _references(0) { }

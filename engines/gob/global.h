@@ -55,8 +55,6 @@ namespace Gob {
 #define ESCAPE	0x001B
 #define ENTER	0x000D
 
-#define MAX_FILES	30
-
 /* Video drivers */
 #define UNK_DRIVER	0
 #define VGA_DRIVER	1
@@ -93,8 +91,6 @@ public:
 	int16 _mouseMaxRow;
 
 	char _useJoystick;
-
-	Common::File _filesHandles[MAX_FILES];
 
 	int16 _primaryWidth;
 	int16 _primaryHeight;

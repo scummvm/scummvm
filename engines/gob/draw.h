@@ -144,6 +144,7 @@ public:
 	void printTextCentered(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, char *str, int16 fontIndex, int16 color);
 	int32 getSpriteRectSize(int16 index);
+	void forceBlit(bool backwards = false);
 
 	virtual void initScreen() = 0;
 	virtual void closeScreen() = 0;

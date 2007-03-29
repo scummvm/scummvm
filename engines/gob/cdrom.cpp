@@ -66,14 +66,9 @@ void CDROM::readLIC(const char *fname) {
 
 	handle = _vm->_dataIO->openData(tmp);
 
-	_vm->_dataIO->readData(handle, (char *)&version, 2);
-	version = READ_LE_UINT16(&version);
-
-	_vm->_dataIO->readData(handle, (char *)&startChunk, 2);
-	startChunk = READ_LE_UINT16(&startChunk);
-
-	_vm->_dataIO->readData(handle, (char *)&_numTracks, 2);
-	_numTracks = READ_LE_UINT16(&_numTracks);
+	version = _vm->_dataIO->readUint16(handle);
+	startChunk = _vm->_dataIO->readUint16(handle);
+	_numTracks = _vm->_dataIO->readUint16(handle);
 
 	if (version != 3)
 		error("%s: Unknown version %d", fname, version);
@@ -81,8 +76,7 @@ void CDROM::readLIC(const char *fname) {
 	_vm->_dataIO->seekData(handle, 50, SEEK_SET);
 
 	for (int i = 0; i < startChunk; i++) {
-		_vm->_dataIO->readData(handle, (char *)&pos, 2);
-		pos = READ_LE_UINT16(&pos);
+		pos = _vm->_dataIO->readUint16(handle);
 
 		if (!pos)
 			break;
@@ -91,7 +85,7 @@ void CDROM::readLIC(const char *fname) {
 	}
 
 	_LICbuffer = new byte[_numTracks * 22];
-	_vm->_dataIO->readData(handle, (char *)_LICbuffer, _numTracks * 22);
+	_vm->_dataIO->readData(handle, (char *) _LICbuffer, _numTracks * 22);
 
 	_vm->_dataIO->closeData(handle);
 }

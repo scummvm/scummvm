@@ -54,6 +54,7 @@ public:
 	bool isId(int16 id) { return _dataPtr && _id == id; };
 	SoundType getType() { return _type; }
 
+	void set(SoundType type, SoundSource src, byte *data, uint32 dSize);
 	void load(SoundType type, SoundSource src, byte *data, uint32 dSize);
 	void free();
 	void flip();
@@ -104,7 +105,13 @@ public:
 	void playComposition(int16 *composition, int16 freqVal,
 			SoundDesc *sndDescs = 0, int8 sndCount = 60);
 	void stopComposition();
+	void setRepeating(int32 repCount);
 	void waitEndPlay(bool interruptible = false, bool stopComp = true);
+
+	static void convToSigned(byte *buffer, int length) {
+		while (length-- > 0)
+			*buffer++ ^= 0x80;
+	}
 
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const { return false; }

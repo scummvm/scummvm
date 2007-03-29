@@ -2215,7 +2215,6 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 	int16 dataVar;
 	int16 offset;
 	int16 handle;
-	char buf[4];
 
 	evalExpr(0);
 	dataVar = _vm->_parse->parseVarIndex();
@@ -2230,14 +2229,13 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 	if (handle >= 0) {
 		_vm->_draw->animateCursor(4);
 		if (offset < 0)
-			_vm->_dataIO->seekData(handle, -offset - 1, 2);
+			_vm->_dataIO->seekData(handle, -offset - 1, SEEK_END);
 		else
-			_vm->_dataIO->seekData(handle, offset, 0);
+			_vm->_dataIO->seekData(handle, offset, SEEK_SET);
 
-		if (((dataVar >> 2) == 59) && (size == 4)) {
-			retSize = _vm->_dataIO->readData(handle, buf, 4);
-			WRITE_VAR(59, READ_LE_UINT32(buf));
-		} else
+		if (((dataVar >> 2) == 59) && (size == 4))
+			WRITE_VAR(59, _vm->_dataIO->readUint32(handle));
+		else
 			retSize = _vm->_dataIO->readData(handle,
 					_vm->_global->_inter_variables + dataVar, size);
 
@@ -3009,7 +3007,7 @@ void Inter_v1::animPalette() {
 	if (_animPalDir[0] == 0)
 		return;
 
-	_vm->_video->waitRetrace(_vm->_global->_videoMode);
+	_vm->_video->waitRetrace();
 
 	if (_animPalDir[0] == -1) {
 		col = _vm->_draw->_vgaSmallPalette[_animPalLowIndex[0]];

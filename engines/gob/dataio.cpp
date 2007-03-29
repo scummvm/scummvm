@@ -39,6 +39,14 @@ DataIO::DataIO(GobEngine *vm) : _vm(vm) {
 	_packedSize = 0;
 }
 
+DataIO::~DataIO() {
+	for (int i = 0; i < MAX_DATA_FILES; i++) {
+		if (_dataFiles[i])
+			file_getHandle(_dataFileHandles[i])->close();
+		delete[] _dataFiles[i];
+	}
+}
+
 int32 DataIO::unpackData(char *sourceBuf, char *destBuf) {
 	uint32 realSize;
 	uint32 counter;
@@ -104,7 +112,7 @@ int32 DataIO::unpackData(char *sourceBuf, char *destBuf) {
 }
 
 Common::File *DataIO::file_getHandle(int16 handle) {
-	return &_vm->_global->_filesHandles[handle];
+	return &_filesHandles[handle];
 }
 
 int16 DataIO::file_open(const char *path, Common::File::AccessMode mode) {
@@ -156,7 +164,7 @@ int16 DataIO::getChunk(const char *chunkName) {
 }
 
 char DataIO::freeChunk(int16 handle) {
-	if ((handle >= 50) && (handle < 100)) {
+	if ((handle >= 50) && (handle < 128)) {
 		handle -= 50;
 		_chunkPos[(handle / 10) * MAX_SLOT_COUNT + (handle % 10)] = -1;
 		return 0;
@@ -170,7 +178,7 @@ int32 DataIO::readChunk(int16 handle, char *buf, uint16 size) {
 	int16 i;
 	int32 offset;
 
-	if ((handle < 50) || (handle >= 100))
+	if ((handle < 50) || (handle >= 128))
 		return -2;
 
 	file = (handle - 50) / 10;
@@ -204,7 +212,7 @@ int16 DataIO::seekChunk(int16 handle, int32 pos, int16 from) {
 	int16 file;
 	int16 slot;
 
-	if ((handle < 50) || (handle >= 100))
+	if ((handle < 50) || (handle >= 128))
 		return -1;
 
 	file = (handle - 50) / 10;
@@ -214,6 +222,19 @@ int16 DataIO::seekChunk(int16 handle, int32 pos, int16 from) {
 		_chunkPos[file * MAX_SLOT_COUNT + slot] = pos;
 	else
 		_chunkPos[file * MAX_SLOT_COUNT + slot] += pos;
+
+	return _chunkPos[file * MAX_SLOT_COUNT + slot];
+}
+
+uint32 DataIO::getChunkPos(int16 handle) {
+	int16 file;
+	int16 slot;
+
+	if ((handle < 50) || (handle >= 128))
+		return 0xFFFFFFFF;
+
+	file = (handle - 50) / 10;
+	slot = (handle - 50) % 10;
 
 	return _chunkPos[file * MAX_SLOT_COUNT + slot];
 }
@@ -370,6 +391,27 @@ int32 DataIO::readData(int16 handle, char *buf, uint16 size) {
 	return file_getHandle(handle)->read(buf, size);
 }
 
+byte DataIO::readByte(int16 handle) {
+	char buf;
+
+	readData(handle, &buf, 1);
+	return ((byte) buf);
+}
+
+uint16 DataIO::readUint16(int16 handle) {
+	char buf[2];
+
+	readData(handle, buf, 2);
+	return READ_LE_UINT16(buf);
+}
+
+uint32 DataIO::readUint32(int16 handle) {
+	char buf[4];
+
+	readData(handle, buf, 4);
+	return READ_LE_UINT32(buf);
+}
+
 int32 DataIO::writeData(int16 handle, char *buf, uint16 size) {
 	return file_getHandle(handle)->write(buf, size);
 }
@@ -384,7 +426,13 @@ void DataIO::seekData(int16 handle, int32 pos, int16 from) {
 	file_getHandle(handle)->seek(pos, from);
 }
 
-int32 DataIO::getPos(int16 handle) {
+uint32 DataIO::getPos(int16 handle) {
+	uint32 resPos;
+
+	resPos = getChunkPos(handle);
+	if (resPos != 0xFFFFFFFF)
+		return resPos;
+
 	return file_getHandle(handle)->pos();
 }
 

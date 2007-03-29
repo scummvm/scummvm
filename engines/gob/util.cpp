@@ -66,7 +66,7 @@ void Util::delay(uint16 msecs) {
 void Util::longDelay(uint16 msecs) {
 	uint32 time = g_system->getMillis() + msecs;
 	do {
-		_vm->_video->waitRetrace(_vm->_global->_videoMode);
+		_vm->_video->waitRetrace();
 		processInput();
 		delay(15);
 	} while (!_vm->_quitRequested && (g_system->getMillis() < time));
@@ -275,7 +275,7 @@ void Util::setFrameRate(int16 rate) {
 void Util::waitEndFrame() {
 	int32 time;
 
-	_vm->_video->waitRetrace(_vm->_global->_videoMode);
+	_vm->_video->waitRetrace();
 
 	time = getTimeKey() - _vm->_global->_startFrameTime;
 	if ((time > 1000) || (time < 0)) {
@@ -297,7 +297,7 @@ void Util::setScrollOffset(int16 x, int16 y) {
 	processInput();
 	_vm->_video->_scrollOffsetX = x >= 0 ? x : _vm->_draw->_scrollOffsetX;
 	_vm->_video->_scrollOffsetY = y >= 0 ? y : _vm->_draw->_scrollOffsetY;
-	_vm->_video->waitRetrace(_vm->_global->_videoMode);
+	_vm->_video->waitRetrace();
 }
 
 Video::FontDesc *Util::loadFont(const char *path) {

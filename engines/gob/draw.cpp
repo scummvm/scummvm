@@ -246,10 +246,7 @@ void Draw::blitInvalidated() {
 	_showCursor = (_showCursor & ~2) | ((_showCursor & 1) << 1);
 	if (_applyPal) {
 		clearPalette();
-
-		_vm->_video->drawSprite(_backSurface, _frontSurface,
-				0, 0, _vm->_video->_surfWidth - 1,
-				_vm->_video->_surfHeight - 1, 0, 0, 0);
+		forceBlit();
 		setPalette();
 		_invalidatedCount = 0;
 		_noInvalidated = true;
@@ -388,6 +385,26 @@ int32 Draw::getSpriteRectSize(int16 index) {
 		return 0;
 
 	return _spritesArray[index]->getWidth() * _spritesArray[index]->getHeight();
+}
+
+void Draw::forceBlit(bool backwards) {
+	if ((_frontSurface == 0) || (_backSurface == 0))
+		return;
+	if (_frontSurface == _backSurface)
+		return;
+	if (_spritesArray[20] != _frontSurface)
+		return;
+	if (_spritesArray[21] != _backSurface)
+		return;
+
+	if (backwards)
+		_vm->_video->drawSprite(_frontSurface, _backSurface, 0, 0,
+				_frontSurface->getWidth() - 1, _frontSurface->getHeight() - 1,
+				0, 0, 0);
+	else
+		_vm->_video->drawSprite(_backSurface, _frontSurface, 0, 0,
+				_backSurface->getWidth() - 1, _backSurface->getHeight() - 1,
+				0, 0, 0);
 }
 
 } // End of namespace Gob

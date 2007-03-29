@@ -410,9 +410,8 @@ void GobEngine::loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 		_vm->_video->drawSprite(_global->_savedBack, destDesc, 0, 0,
 				destDesc->getWidth() - 1, destDesc->getHeight() - 1, 0, 0, 0);
 		if (index == 21) {
-			_video->drawSprite(_draw->_backSurface, _draw->_frontSurface, 0, 0,
-					_draw->_frontSurface->getWidth() - 1, _draw->_frontSurface->getHeight() - 1, 0, 0, 0);
-			_video->waitRetrace(_global->_videoMode);
+			_vm->_draw->forceBlit();
+			_video->waitRetrace();
 		}
 
 		WRITE_VAR(1, 0);

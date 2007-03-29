@@ -176,7 +176,7 @@ void PalAnim::fade(Video::PalDesc *palDesc, int16 fadeV, int16 allColors) {
 	if (allColors == 0) {
 		do {
 			stop = fadeStep(0);
-			_vm->_video->waitRetrace(_vm->_global->_videoMode);
+			_vm->_video->waitRetrace();
 
 			if (fadeV > 0)
 				_vm->_util->delay(fadeV);
@@ -190,17 +190,17 @@ void PalAnim::fade(Video::PalDesc *palDesc, int16 fadeV, int16 allColors) {
 
 	if (allColors == 1) {
 		do {
-			_vm->_video->waitRetrace(_vm->_global->_videoMode);
+			_vm->_video->waitRetrace();
 			stop = fadeStep(1);
 		} while (!stop);
 
 		do {
-			_vm->_video->waitRetrace(_vm->_global->_videoMode);
+			_vm->_video->waitRetrace();
 			stop = fadeStep(2);
 		} while (!stop);
 
 		do {
-			_vm->_video->waitRetrace(_vm->_global->_videoMode);
+			_vm->_video->waitRetrace();
 			stop = fadeStep(3);
 		} while (!stop);
 

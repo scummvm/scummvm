@@ -24,10 +24,14 @@
 #ifndef GOB_DATAIO_H
 #define GOB_DATAIO_H
 
+#include "common/stdafx.h"
+#include "common/endian.h"
+
 #include "common/file.h"
 
 namespace Gob {
 
+#define MAX_FILES	30
 #define MAX_DATA_FILES	8
 #define MAX_SLOT_COUNT	4
 
@@ -50,15 +54,20 @@ public:
 	int16 openData(const char *path,
 			Common::File::AccessMode mode = Common::File::kFileReadMode);
 	int32 readData(int16 handle, char *buf, uint16 size);
+	byte readByte(int16 handle);
+	uint16 readUint16(int16 handle);
+	uint32 readUint32(int16 handle);
 	int32 writeData(int16 handle, char *buf, uint16 size);
 	void seekData(int16 handle, int32 pos, int16 from);
-	int32 getPos(int16 handle);
+	uint32 getPos(int16 handle);
 	int32 getDataSize(const char *name);
 	char *getData(const char *path);
 
 	DataIO(class GobEngine *vm);
+	~DataIO();
 
 protected:
+	Common::File _filesHandles[MAX_FILES];
 	struct ChunkDesc *_dataFiles[MAX_DATA_FILES];
 	int16 _numDataChunks[MAX_DATA_FILES];
 	int16 _dataFileHandles[MAX_DATA_FILES];
@@ -79,6 +88,7 @@ protected:
 	char freeChunk(int16 handle);
 	int32 readChunk(int16 handle, char *buf, uint16 size);
 	int16 seekChunk(int16 handle, int32 pos, int16 from);
+	uint32 getChunkPos(int16 handle);
 	int32 getChunkSize(const char *chunkName);
 };
 
