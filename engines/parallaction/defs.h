@@ -88,7 +88,7 @@ struct StaticCnv {
 };
 
 
-class Cnv {
+struct Cnv {
 	uint16	_count; 	// # of frames
 	uint16	_width; 	//
 	uint16	_height;	//
