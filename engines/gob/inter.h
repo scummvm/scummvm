@@ -117,15 +117,15 @@ protected:
 	typedef void (Inter_v1::*OpcodeDrawProcV1)();
 	typedef bool (Inter_v1::*OpcodeFuncProcV1)(OpFuncParams &);
 	typedef void (Inter_v1::*OpcodeGoblinProcV1)(OpGobParams &);
-  struct OpcodeDrawEntryV1 {
+	struct OpcodeDrawEntryV1 {
 		OpcodeDrawProcV1 proc;
 		const char *desc;
 	};
-  struct OpcodeFuncEntryV1 {
+	struct OpcodeFuncEntryV1 {
 		OpcodeFuncProcV1 proc;
 		const char *desc;
 	};
-  struct OpcodeGoblinEntryV1 {
+	struct OpcodeGoblinEntryV1 {
 		OpcodeGoblinProcV1 proc;
 		const char *desc;
 	};
@@ -312,15 +312,15 @@ protected:
 	typedef void (Inter_v2::*OpcodeDrawProcV2)();
 	typedef bool (Inter_v2::*OpcodeFuncProcV2)(OpFuncParams &);
 	typedef void (Inter_v2::*OpcodeGoblinProcV2)(OpGobParams &);
-  struct OpcodeDrawEntryV2 {
+	struct OpcodeDrawEntryV2 {
 		OpcodeDrawProcV2 proc;
 		const char *desc;
 	};
-  struct OpcodeFuncEntryV2 {
+	struct OpcodeFuncEntryV2 {
 		OpcodeFuncProcV2 proc;
 		const char *desc;
 	};
-  struct OpcodeGoblinEntryV2 {
+	struct OpcodeGoblinEntryV2 {
 		OpcodeGoblinProcV2 proc;
 		const char *desc;
 	};
@@ -398,15 +398,15 @@ protected:
 	typedef void (Inter_Bargon::*OpcodeDrawProcBargon)();
 	typedef bool (Inter_Bargon::*OpcodeFuncProcBargon)(OpFuncParams &);
 	typedef void (Inter_Bargon::*OpcodeGoblinProcBargon)(OpGobParams &);
-  struct OpcodeDrawEntryBargon {
+	struct OpcodeDrawEntryBargon {
 		OpcodeDrawProcBargon proc;
 		const char *desc;
 		};
-  struct OpcodeFuncEntryBargon {
+	struct OpcodeFuncEntryBargon {
 		OpcodeFuncProcBargon proc;
 		const char *desc;
 		};
-  struct OpcodeGoblinEntryBargon {
+	struct OpcodeGoblinEntryBargon {
 		OpcodeGoblinProcBargon proc;
 		const char *desc;
 		};

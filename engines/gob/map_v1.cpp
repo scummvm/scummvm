@@ -48,9 +48,9 @@ void Map_v1::init(void) {
 
 	_itemsMap = new int16*[_mapHeight];
 	 for (int i = 0; i < _mapHeight; i++) {
-    _itemsMap[i] = new int16[_mapWidth];
+		_itemsMap[i] = new int16[_mapWidth];
 		memset(_itemsMap[i], 0, _mapWidth * sizeof(int16));
-  }
+	}
 
 	_wayPointsCount = 40;
 	_wayPoints = new Point[40];
