@@ -187,7 +187,7 @@ void drawInventoryItem(uint16 pos, InventoryItem *item) {
 	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
 	// FIXME: this will end up in a general blit function
-	byte* s = _vm->_char._objs->_array[item->_index];
+	byte* s = _vm->_char._objs->getFramePtr(item->_index);
 	byte* d = _buffer + col * INVENTORYITEM_WIDTH + line * _vm->_char._objs->_height * INVENTORY_WIDTH;
 	for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
 		memcpy(d, s, INVENTORYITEM_WIDTH);

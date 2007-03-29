@@ -229,7 +229,6 @@ struct Character {
 //		._width = 0;
 //		_talk._height = 0;
 //		_talk._count = 0;
-//		_talk._array = NULL;
 
 		_head = NULL;
 //		_head._width = 0;

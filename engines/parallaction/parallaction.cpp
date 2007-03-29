@@ -696,24 +696,26 @@ void Parallaction::changeCursor(int32 index) {
 
 void Parallaction::freeCharacter() {
 
-	_vm->_gfx->freeCnv(_vm->_char._normalFrames);
-	if (_vm->_char._normalFrames) delete _vm->_char._normalFrames;
+	if (_vm->_char._normalFrames)
+		delete _vm->_char._normalFrames;
 
 	if (!IS_DUMMY_CHARACTER(_vm->_characterName)) {
-		_vm->_gfx->freeCnv(_vm->_char._miniFrames);
-		if (_vm->_char._miniFrames) delete _vm->_char._miniFrames;
+		if (_vm->_char._miniFrames)
+			delete _vm->_char._miniFrames;
 
-		if (_objectsNames) delete _objectsNames;
+		if (_objectsNames)
+			delete _objectsNames;
 		_objectsNames = NULL;
 
-		_vm->_gfx->freeCnv(_vm->_char._talk);
-		if (_vm->_char._talk) delete _vm->_char._talk;
+		if (_vm->_char._talk)
+			delete _vm->_char._talk;
 
 		_vm->_gfx->freeStaticCnv(_vm->_char._head);
-		if (_vm->_char._head) delete _vm->_char._head;
+		if (_vm->_char._head)
+			delete _vm->_char._head;
 
-		_vm->_gfx->freeCnv(_vm->_char._objs);
-		if (_vm->_char._objs) delete _vm->_char._objs;
+		if (_vm->_char._objs)
+			delete _vm->_char._objs;
 	}
 
 	return;

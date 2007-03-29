@@ -552,7 +552,7 @@ void Gfx::displayString(uint16 x, uint16 y, const char *text) {
 
 		tmp._width = _font->_width;
 		tmp._height = _font->_height;
-		tmp._data0 = _font->_array[c];
+		tmp._data0 = _font->getFramePtr(c);
 
 		flatBlitCnv(&tmp, x, y, kBitFront);
 
@@ -572,7 +572,7 @@ void Gfx::displayBalloonString(uint16 x, uint16 y, const char *text, byte color)
 
 		byte c = mapChar(text[i]);
 		uint16 w = _proportionalFont ? _glyphWidths[(int)c] : 8;
-		byte *s = _font->_array[c];
+		byte *s = _font->getFramePtr(c);
 		byte *d = _buffers[kBitFront] + x + y*SCREEN_WIDTH;
 
 //		printf("%i\n", text[i]);
@@ -705,7 +705,6 @@ void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* heig
 
 
 void Gfx::setFont(const char* name) {
-	freeCnv(_font);
 	if (_font) delete _font;
 
 	_font = _vm->_disk->loadFont(name);
@@ -757,7 +756,7 @@ void Gfx::makeCnvFromString(StaticCnv *cnv, char *text) {
 	for (uint16 i = 0; i < len; i++) {
 		byte c = mapChar(text[i]);
 
-		byte *s = _font->_array[c];
+		byte *s = _font->getFramePtr(c);
 		byte *d = cnv->_data0 + _font->_width * i;
 
 		for (uint16 j = 0; j < _font->_height; j++) {
@@ -783,31 +782,6 @@ byte Gfx::mapChar(byte c) {
 
 	return c - 0x20;
 }
-
-
-void Gfx::freeCnv(Cnv *cnv) {
-//	printf("Gfx::freeCnv()\n");
-
-	if (!cnv) return;
-	if (cnv->_count == 0) return;
-	if (!cnv->_array) return;
-
-	for (uint16 _si = 0; _si < cnv->_count; _si++) {
-		if (cnv->_array[_si]) {
-			free(cnv->_array[_si]);
-		}
-		cnv->_array[_si] = NULL;
-	}
-
-	if (cnv->_array)
-		free(cnv->_array);
-
-	cnv->_count = 0;
-	cnv->_array = NULL;
-
-	return;
-}
-
 
 
 void Gfx::freeStaticCnv(StaticCnv *cnv) {
@@ -944,7 +918,6 @@ Gfx::~Gfx() {
 	free(_buffers[kBitBack]);
 	free(_buffers[kBit2]);
 
-	freeCnv(_font);
 	if (_font) delete _font;
 
 	return;

@@ -318,7 +318,7 @@ void displayQuestion(Dialogue *q, Cnv *cnv) {
 	StaticCnv face;
 	face._width = cnv->_width;
 	face._height = cnv->_height;
-	face._data0 = cnv->_array[q->_mood & 0xF];
+	face._data0 = cnv->getFramePtr(q->_mood & 0xF);
 	face._data1 = NULL; // cnv->field_8[v60->_mood & 0xF];
 
 	_vm->_gfx->flatBlitCnv(&face, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y, Gfx::kBitFront);
@@ -344,7 +344,7 @@ uint16 getDialogueAnswer(Dialogue *q, Cnv *cnv) {
 	StaticCnv face;
 	face._width = cnv->_width;
 	face._height = cnv->_height;
-	face._data0 = cnv->_array[0];
+	face._data0 = cnv->getFramePtr(0);
 	face._data1 = NULL; // cnv->field_8[0];
 
 	_vm->_gfx->flatBlitCnv(&face, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
@@ -399,7 +399,6 @@ void Parallaction::runDialogue(SpeakData *data) {
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	if (isNpc) {
-		_vm->_gfx->freeCnv(face);
 		delete face;
 	}
 
@@ -427,7 +426,7 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 
 	if (numAvailableAnswers == 1) {
 		_vm->_gfx->displayWrappedString(q->_answers[_di], _answerBalloonX[_di], _answerBalloonY[_di], MAX_BALLOON_WIDTH, 0);
-		cnv->_data0 = _vm->_char._talk->_array[q->_answer_moods[_di] & 0xF];
+		cnv->_data0 = _vm->_char._talk->getFramePtr(q->_answer_moods[_di] & 0xF);
 //		cnv->_data1 = _vm->_char._talk->field_8[q->_answer_moods[_di] & 0xF];
 		_vm->_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X,	ANSWER_CHARACTER_Y, Gfx::kBitFront);
 		waitUntilLeftClick();
@@ -447,7 +446,7 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 				_vm->_gfx->displayWrappedString(q->_answers[v2], _answerBalloonX[v2], _answerBalloonY[v2], MAX_BALLOON_WIDTH, 3);
 
 			_vm->_gfx->displayWrappedString(q->_answers[_si], _answerBalloonX[_si],	_answerBalloonY[_si], MAX_BALLOON_WIDTH, 0);
-			cnv->_data0 = _vm->_char._talk->_array[q->_answer_moods[_si] & 0xF];
+			cnv->_data0 = _vm->_char._talk->getFramePtr(q->_answer_moods[_si] & 0xF);
 //			cnv->_data1 = _vm->_char._talk->field_8[q->_answer_moods[_si] & 0xF];
 			_vm->_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
 		}

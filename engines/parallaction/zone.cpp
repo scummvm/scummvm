@@ -150,7 +150,6 @@ void Parallaction::freeZones(Node *list) {
 		case kZoneDoor:
 			free(z->u.door->_location);
 			free(z->u.door->_background);
-			_vm->_gfx->freeCnv(z->u.door->_cnv);
 			if (z->u.door->_cnv)
 				delete z->u.door->_cnv;
 			delete  z->u.door;
@@ -276,7 +275,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 				vE0._height = u->door->_cnv->_height;
 
 				uint16 _ax = (z->_flags & kFlagsClosed ? 0 : 1);
-				vE0._data0 = u->door->_cnv->_array[_ax];
+				vE0._data0 = u->door->_cnv->getFramePtr(_ax);
 
 //				_ax = (z->_flags & kFlagsClosed ? 0 : 1);
 //				vE0._data1 = doorcnv->field_8[_ax];
@@ -356,7 +355,7 @@ void displayCharacterComment(ExamineData *data) {
 	StaticCnv v3C;
 	v3C._width = _vm->_char._talk->_width;
 	v3C._height = _vm->_char._talk->_height;
-	v3C._data0 = _vm->_char._talk->_array[0];
+	v3C._data0 = _vm->_char._talk->getFramePtr(0);
 	v3C._data1 = NULL; //_talk->field_8[0];
 
 	_vm->_gfx->setFont("comic");
@@ -484,7 +483,7 @@ void jobToggleDoor(void *parm, Job *j) {
 
 		uint16 _ax = (z->_flags & kFlagsClosed ? 0 : 1);
 
-		v14._data0 = z->u.door->_cnv->_array[_ax];
+		v14._data0 = z->u.door->_cnv->getFramePtr(_ax);
 
 		_vm->_gfx->flatBlitCnv(&v14, z->_left, z->_top, Gfx::kBitBack);
 		_vm->_gfx->flatBlitCnv(&v14, z->_left, z->_top, Gfx::kBit2);

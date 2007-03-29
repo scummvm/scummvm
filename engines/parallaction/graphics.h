@@ -98,7 +98,6 @@ public:
 
 	// cnv management
 	void makeCnvFromString(StaticCnv *cnv, char *text);
-	void freeCnv(Cnv *cnv);
 	void freeStaticCnv(StaticCnv *cnv);
 	void backupDoorBackground(DoorData *data, int16 x, int16 y);
 	void backupGetBackground(GetData *data, int16 x, int16 y);

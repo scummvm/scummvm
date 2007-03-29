@@ -101,6 +101,17 @@ public:
 		_array = NULL;
 	}
 
+	~Cnv() {
+		if (_count == 0 || _array == NULL) return;
+
+		for (uint16 _si = 0; _si < _count; _si++) {
+			if (_array[_si])
+				free(_array[_si]);
+		}
+
+		free(_array);
+	}
+
 	byte* getFramePtr(uint16 index) {
 		if (index >= _count)
 			return NULL;

@@ -168,7 +168,6 @@ void Parallaction::freeAnimations() {
 	Animation *v4 = (Animation*)_animations._next;
 	while (v4) {
 		freeScript(v4->_program);
-		_vm->_gfx->freeCnv(v4->_cnv);
 		if (v4->_cnv) delete v4->_cnv;
 		v4 = (Animation*)v4->_next;
 
