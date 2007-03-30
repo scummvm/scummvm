@@ -920,11 +920,11 @@ bool Intro::escDelay(uint32 msecs) {
 		nDelay = _relDelay - _system->getMillis();
 		if (nDelay < 0)
 			nDelay = 0;
-		else if (nDelay > 15)
-			nDelay = 15;
+		else if (nDelay > 40)
+			nDelay = 40;
 		_system->delayMillis(nDelay);
 		_system->updateScreen();
-	} while (nDelay == 15);
+	} while (nDelay == 40);
 	return true;
 }
 
