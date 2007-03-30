@@ -134,6 +134,8 @@ void Menu::start() {
 		if (selectGame() == 0) {
 			newGame();
 		}
+	} else {
+		_vm->_disk->setLanguage(1);
 	}
 
 	return;
