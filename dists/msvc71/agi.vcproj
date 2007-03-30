@@ -210,7 +210,7 @@
 			RelativePath="..\..\engines\agi\predictive.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\savegame.cpp">
+			RelativePath="..\..\engines\agi\saveload.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\agi\sound.cpp">

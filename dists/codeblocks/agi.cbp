@@ -177,7 +177,7 @@
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
-		<Unit filename="..\..\engines\agi\savegame.cpp">
+		<Unit filename="..\..\engines\agi\saveload.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>

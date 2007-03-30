@@ -23,7 +23,7 @@ MODULE_OBJS = \
 	op_test.o \
 	picture.o \
 	predictive.o \
-	savegame.o \
+	saveload.o \
 	sound.o \
 	sprite.o \
 	text.o \
