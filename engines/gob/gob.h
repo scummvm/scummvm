@@ -103,6 +103,12 @@ enum SaveFiles {
 	SAVE_BLO      // Notes
 };
 
+inline char *strncpy0(char *dest, const char *src, size_t n) {
+	strncpy(dest, src, n);
+	dest[n] = 0;
+	return dest;
+}
+
 // A "smart" reference counting templated class
 template<typename T>
 class ReferenceCounter {

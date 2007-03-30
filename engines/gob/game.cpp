@@ -292,7 +292,7 @@ int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
 
 	_vm->_util->processInput();
 
-	if (_vm->_mult->_multData && (_vm->_global->_inter_variables != 0) &&
+	if (_vm->_mult->_multData && _vm->_global->_inter_variables &&
 			(VAR(58) != 0)) {
 		if (_vm->_mult->_multData->frameStart != (int) VAR(58) - 1)
 			_vm->_mult->_multData->frameStart++;
@@ -308,9 +308,6 @@ int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
 		_vm->_snd->stopSound(_vm->_inter->_soundStopVal);
 		_vm->_inter->_soundEndTimeKey = 0;
 	}
-
-	if (_vm->_global->_useMouse == 0)
-		error("checkKeys: Can't work without mouse!");
 
 	_vm->_util->getMouseState(pMouseX, pMouseY, pButtons);
 
@@ -436,7 +433,7 @@ void Game::totSub(int8 flags, char *newTotFile) {
 		_vm->_global->_inter_variablesSizes = 0;
 	}
 
-	strcpy(_curTotFile, newTotFile);
+	strncpy0(_curTotFile, newTotFile, 9);
 	strcat(_curTotFile, ".TOT");
 
 	if (_vm->_inter->_terminate != 0)

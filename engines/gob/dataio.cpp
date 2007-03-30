@@ -277,9 +277,11 @@ void DataIO::openDataFile(const char *src, bool itk) {
 	char path[128];
 	int16 file;
 
-	strcpy(path, src);
-	if (!strchr(path, '.'))
+	strncpy0(path, src, 127);
+	if (!strchr(path, '.')) {
+		path[123] = 0;
 		strcat(path, ".stk");
+	}
 
 	for (file = 0; file < MAX_DATA_FILES; file++)
 		if (_dataFiles[file] == 0)
@@ -441,7 +443,8 @@ int32 DataIO::getDataSize(const char *name) {
 	int32 chunkSz;
 	Common::File file;
 
-	strcpy(buf, name);
+	strncpy0(buf, name, 127);
+
 	chunkSz = getChunkSize(buf);
 	if (chunkSz >= 0)
 		return chunkSz;

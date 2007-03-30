@@ -53,7 +53,7 @@ void CDROM::readLIC(const char *fname) {
 
 	*_curTrack = 0;
 
-	strcpy(tmp, fname);
+	strncpy0(tmp, fname, 79);
 
 	handle = _vm->_dataIO->openData(tmp);
 
@@ -171,7 +171,7 @@ void CDROM::startTrack(const char *trackname) {
 		return;
 	}
 
-	strcpy(_curTrack, trackname);
+	strncpy0(_curTrack, trackname, 15);
 
 	stopPlaying();
 

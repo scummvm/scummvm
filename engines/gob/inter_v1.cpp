@@ -1432,7 +1432,7 @@ bool Inter_v1::o1_loadTot(OpFuncParams &params) {
 	if ((*_vm->_global->_inter_execPtr & 0x80) != 0) {
 		_vm->_global->_inter_execPtr++;
 		evalExpr(0);
-		strcpy(buf, _vm->_global->_inter_resStr);
+		strncpy0(buf, _vm->_global->_inter_resStr, 15);
 	} else {
 		size = *_vm->_global->_inter_execPtr++;
 		for (int i = 0; i < size; i++)
@@ -1948,7 +1948,7 @@ bool Inter_v1::o1_strToLong(OpFuncParams &params) {
 	int32 res;
 
 	strVar = _vm->_parse->parseVarIndex();
-	strcpy(str, GET_VARO_STR(strVar));
+	strncpy0(str, GET_VARO_STR(strVar), 19);
 	res = atol(str);
 
 	destVar = _vm->_parse->parseVarIndex();

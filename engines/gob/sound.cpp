@@ -313,6 +313,10 @@ void Snd::setSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
 	_data = (int8 *) sndDesc.getData();
 	_length = sndDesc.size();
 	_freq = frequency;
+
+	if ((frequency % 100) == 0)
+		_freq--;
+
 	_ratio = ((double) _freq) / _rate;
 	_offset = 0.0;
 	_frac = 0;

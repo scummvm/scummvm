@@ -92,7 +92,7 @@ public:
 			int16 frames, bool fade, bool interruptible);
 
 protected:
-	char _curFile[15];
+	char _curFile[18];
 
 	int16 _curX;
 	int16 _curY;

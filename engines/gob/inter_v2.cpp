@@ -1074,7 +1074,7 @@ void Inter_v2::o2_readLIC() {
 	char path[40];
 	
 	evalExpr(0);
-	strcpy(path, _vm->_global->_inter_resStr);
+	strncpy0(path, _vm->_global->_inter_resStr, 35);
 	strcat(path, ".LIC");
 
 	_vm->_cdrom->readLIC(path);
@@ -1460,7 +1460,7 @@ void Inter_v2::o2_playImd() {
 
 	evalExpr(0);
 	_vm->_global->_inter_resStr[8] = 0;
-	strcpy(imd, _vm->_global->_inter_resStr);
+	strncpy0(imd, _vm->_global->_inter_resStr, 127);
 
 	x = _vm->_parse->parseValExpr();
 	y = _vm->_parse->parseValExpr();
@@ -1542,7 +1542,7 @@ void Inter_v2::o2_openItk() {
 	char fileName[32];
 
 	evalExpr(0);
-	strcpy(fileName, _vm->_global->_inter_resStr);
+	strncpy0(fileName, _vm->_global->_inter_resStr, 27);
 	strcat(fileName, ".ITK");
 
 	_vm->_dataIO->openDataFile(fileName, true);
@@ -1920,7 +1920,7 @@ void Inter_v2::o2_loadInfogramesIns(OpGobParams &params) {
 	if (_vm->_noMusic)
 		return;
 
-	strcpy(fileName, GET_VAR_STR(varName));
+	strncpy0(fileName, GET_VAR_STR(varName), 15);
 	strcat(fileName, ".INS");
 	debugC(1, kDebugMusic, "Loading Infogrames instrument file \"%s\"",
 			fileName);
@@ -1950,7 +1950,7 @@ void Inter_v2::o2_playInfogrames(OpGobParams &params) {
 	if (_vm->_noMusic)
 		return;
 
-	strcpy(fileName, GET_VAR_STR(varName));
+	strncpy0(fileName, GET_VAR_STR(varName), 15);
 	strcat(fileName, ".DUM");
 	debugC(1, kDebugMusic, "Playing Infogrames music file \"%s\"", fileName);
 
@@ -2026,7 +2026,7 @@ int16 Inter_v2::loadSound(int16 search) {
 
 		source = SOUND_FILE;
 
-		strcpy(sndfile, _vm->_global->_inter_execPtr);
+		strncpy0(sndfile, _vm->_global->_inter_execPtr, 9);
 		_vm->_global->_inter_execPtr += 9;
 
 		if (type == SOUND_ADL)

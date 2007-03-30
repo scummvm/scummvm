@@ -1025,7 +1025,7 @@ void Game_v1::collisionsBlock(void) {
 
 			if ((_collisionAreas[i].flags & 0x0F) > 8) {
 				char *ptr;
-				strcpy(_tempStr, GET_VARO_STR(_collisionAreas[i].key));
+				strncpy0(_tempStr, GET_VARO_STR(_collisionAreas[i].key), 255);
 				while ((ptr = strchr(_tempStr, ' ')) != 0) {
 					_vm->_util->cutFromStr(_tempStr, (ptr - _tempStr), 1);
 					ptr = strchr(_tempStr, ' ');
@@ -1037,14 +1037,14 @@ void Game_v1::collisionsBlock(void) {
 			    ((_collisionAreas[i].flags & 0x0F) <= 8)) {
 				str = descArray[var_24].ptr;
 
-				strcpy(_tempStr, GET_VARO_STR(_collisionAreas[i].key));
+				strncpy0(_tempStr, GET_VARO_STR(_collisionAreas[i].key), 255);
 
 				if ((_collisionAreas[i].flags & 0x0F) < 7)
 					_vm->_util->prepareStr(_tempStr);
 
 				int16 pos = 0;
 				do {
-					strcpy(_collStr, str);
+					strncpy0(_collStr, str, 255);
 					pos += strlen(str) + 1;
 
 					str += strlen(str) + 1;
@@ -1115,7 +1115,7 @@ int16 Game_v1::multiEdit(int16 time, int16 index, int16 *pCurPos,
 		if ((collArea->flags & 0x0F) > 10)
 			continue;
 
-		strcpy(_tempStr, GET_VARO_STR(collArea->key));
+		strncpy0(_tempStr, GET_VARO_STR(collArea->key), 255);
 
 		_vm->_draw->_destSpriteX = collArea->left;
 		_vm->_draw->_destSpriteY = collArea->top;
@@ -1278,10 +1278,10 @@ int16 Game_v1::inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 	editSize = width / pFont->itemWidth;
 
 	while (1) {
-		strcpy(_tempStr, str);
+		strncpy0(_tempStr, str, 254);
 		strcat(_tempStr, " ");
 		if (strlen(_tempStr) > editSize)
-			strcpy(_tempStr, str);
+			strncpy0(_tempStr, str, 255);
 
 		_vm->_draw->_destSpriteX = xPos;
 		_vm->_draw->_destSpriteY = yPos;

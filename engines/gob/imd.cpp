@@ -92,8 +92,11 @@ ImdPlayer::Imd *ImdPlayer::loadImdFile(const char *path, SurfaceDesc *surfDesc, 
 	uint32 framesPosPos = 0;
 	uint32 framesCordsPos = 0;
 
-	strcpy(buf, path);
-	strcat(buf, ".IMD");
+	strncpy0(buf, path, 17);
+	if (!strchr(buf, '.')) {
+		buf[13] = 0;
+		strcat(buf, ".IMD");
+	}
 
 	handle = _vm->_dataIO->openData(buf);
 
@@ -196,7 +199,6 @@ ImdPlayer::Imd *ImdPlayer::loadImdFile(const char *path, SurfaceDesc *surfDesc, 
 		assert(_soundBuffer);
 		memset(_soundBuffer, 0, _soundSliceSize * _soundSlicesCount);
 
-		_vm->_snd->stopSound(0);
 		_soundDesc.set(SOUND_SND, SOUND_TOT, _soundBuffer,
 				_soundSliceSize * _soundSlicesCount);
 
@@ -279,7 +281,7 @@ int8 ImdPlayer::openImd(const char *path, int16 x, int16 y,
 
 		_curX = _curImd->x;
 		_curY = _curImd->y;
-		strcpy(_curFile, src);
+		strncpy0(_curFile, src, 17);
 
 		delete[] _frameData;
 		_frameData = new byte[_curImd->frameDataSize + 500];
@@ -852,7 +854,7 @@ inline void ImdPlayer::drawFrame(int16 frame) {
 }
 
 inline void ImdPlayer::copyPalette(int16 palStart, int16 palEnd) {
-	if (palStart == -1)
+	if ((palStart == -1) || (palEnd == -1))
 		memcpy((char *) _vm->_global->_pPaletteDesc->vgaPal,
 				(char *) _curImd->palette, 768);
 	else

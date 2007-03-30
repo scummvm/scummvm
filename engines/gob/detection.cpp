@@ -798,12 +798,60 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB2,
 		"intro"
 	},
-	{ // Supplied by paul66 in bug report #1652352
+	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
+		{
+			"gob3cd",
+			"v1.02",
+			AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
+			EN_ANY,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB2,
+		"intro"
+	},
+	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
 		{
 			"gob3cd",
 			"v1.02",
 			AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
 			DE_DEU,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB2,
+		"intro"
+	},
+	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
+		{
+			"gob3cd",
+			"v1.02",
+			AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
+			FR_FRA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB2,
+		"intro"
+	},
+	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
+		{
+			"gob3cd",
+			"v1.02",
+			AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
+			IT_ITA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB2,
+		"intro"
+	},
+	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
+		{
+			"gob3cd",
+			"v1.02",
+			AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
+			ES_ESP,
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
@@ -946,6 +994,18 @@ static const GOBGameDescription fallbackDescs[] = {
 		GF_BARGON,
 		"intro"
 	},
+	{
+		{
+			"gob3cd",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB2 | GF_CD,
+		"intro"
+	},
 };
 
 static const ADFileBasedFallback fileBased[] = {
@@ -955,6 +1015,7 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[2], { "intro.stk", "disk2.stk", "disk3.stk", 0 } },
 	{ &fallbackDescs[3], { "intro.stk", "gobnew.lic", 0 } },
 	{ &fallbackDescs[4], { "intro.stk", "scaa.imd", "scba.imd", "scbf.imd", 0 } },
+	{ &fallbackDescs[5], { "intro.stk", "mus_gob3.lic", 0 } },
 	{ 0, { 0 } }
 };
 

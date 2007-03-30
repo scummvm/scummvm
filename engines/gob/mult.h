@@ -156,7 +156,7 @@ public:
 		int16 field_4;
 		int16 field_6;
 		uint16 flags;
-		int16 field_A;
+		int16 palFrame;
 		int16 lastFrame;
 		int8 palStart;
 		int8 palEnd;

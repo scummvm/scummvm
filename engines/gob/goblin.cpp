@@ -1221,7 +1221,7 @@ void Goblin::loadObjects(char *source) {
 
 	freeObjects();
 	initList();
-	strcpy(_vm->_map->_sourceFile, source);
+	strncpy0(_vm->_map->_sourceFile, source, 14);
 
 	_vm->_map->_sourceFile[strlen(_vm->_map->_sourceFile) - 4] = 0;
 	_vm->_map->loadMapObjects(source);

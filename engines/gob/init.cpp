@@ -136,10 +136,10 @@ void Init::initGame(char *totName) {
 	}
 
 	if (totName) {
-		strcpy(buffer, totName);
+		strncpy0(buffer, totName, 15);
 		strcat(buffer, ".tot");
 	} else
-		strcpy(buffer, _vm->_startTot);
+		strncpy0(buffer, _vm->_startTot, 19);
 
 	handle = _vm->_dataIO->openData(buffer);
 
@@ -152,7 +152,6 @@ void Init::initGame(char *totName) {
 		_vm->_global->_inter_variables = new char[varsCount * 4];
 		_vm->_global->_inter_variablesSizes = new byte[varsCount * 4];
 		_vm->_global->clearVars(varsCount);
-		WRITE_VAR(58, 1);
 
 		strcpy(_vm->_game->_curTotFile, buffer);
 

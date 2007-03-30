@@ -482,7 +482,7 @@ void Draw_v2::printTotText(int16 id) {
 				sprintf(buf, "%d",  VAR_OFFSET(val));
 			} else if (cmd == 1) {
 				val = READ_LE_UINT16(ptrEnd + 18) * 4;
-				strcpy(buf, GET_VARO_STR(val));
+				strncpy0(buf, GET_VARO_STR(val), 19);
 			} else {
 				val = READ_LE_UINT16(ptrEnd + 18) * 4;
 				sprintf(buf, "%d",  VAR_OFFSET(val));

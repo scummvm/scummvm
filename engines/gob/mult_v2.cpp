@@ -268,7 +268,7 @@ void Mult_v2::loadImds(Common::SeekableReadStream &data) {
 			_multData->imdKeys[i][j].field_4 = data.readSint16LE();
 			_multData->imdKeys[i][j].field_6 = data.readSint16LE();
 			_multData->imdKeys[i][j].flags = data.readUint16LE();
-			_multData->imdKeys[i][j].field_A = data.readSint16LE();
+			_multData->imdKeys[i][j].palFrame = data.readSint16LE();
 			_multData->imdKeys[i][j].lastFrame = data.readSint16LE();
 			_multData->imdKeys[i][j].palStart = data.readSByte();
 			_multData->imdKeys[i][j].palEnd = data.readSByte();
@@ -462,8 +462,10 @@ void Mult_v2::multSub(uint16 multindex) {
 	for (int i = 0; i < 4; i++) {
 		_multData->imdKeysIndices[index][i] = 0;
 		for (int j = 0; j < _multData->imdKeysCount[i]; j++)
-			if (_multData->imdKeys[i][j].frame >= firstFrame)
+			if (_multData->imdKeys[i][j].frame >= firstFrame) {
 				_multData->imdKeysIndices[index][i] = j;
+				break;
+			}
 	}
 
 	_multData->animKeysStartFrames[index] = startFrame;
@@ -998,12 +1000,9 @@ void Mult_v2::animate() {
 void Mult_v2::playImd(char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 		int16 startFrame) {
 	int16 x, y;
-	int16 repeat = 0;
 	int16 palStart, palEnd;
-	int16 lastFrame;
+	int16 baseFrame, palFrame, lastFrame;
 	uint16 flags;
-	int16 di;
-	int16 var_6;
 
 	if (_vm->_draw->_renderFlags & 0x100) {
 		x = VAR(55);
@@ -1022,26 +1021,27 @@ void Mult_v2::playImd(char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 
 	palStart = key.palStart;
 	palEnd = key.palEnd;
-	di = key.field_A;
+	palFrame = key.palFrame;
 	lastFrame = key.lastFrame;
 
-	if ((di == -1) && (lastFrame == -1))
-		if (startFrame > 0)
+	if ((palFrame != -1) && (lastFrame != -1))
+		if ((lastFrame - palFrame) < startFrame)
 			if (!(key.flags & 0x4000)) {
 				_vm->_imdPlayer->closeImd();
 				return;
 			}
 
-	if (!_vm->_imdPlayer->openImd(imdFile, x, y, repeat, flags))
+	if (!_vm->_imdPlayer->openImd(imdFile, x, y, 0, flags))
 		return;
 
-	if (di == -1)
-		di = 0;
+	if (palFrame == -1)
+		palFrame = 0;
 	if (lastFrame == -1)
 		lastFrame = _vm->_imdPlayer->_curImd->framesCount - 1;
 
-	var_6 = startFrame % (lastFrame - di + 1);
-	_vm->_imdPlayer->play(var_6 + di, flags & 0x7F, palStart, palEnd, di, lastFrame);
+	baseFrame = startFrame % (lastFrame - palFrame + 1);
+	_vm->_imdPlayer->play(baseFrame + palFrame, flags & 0x7F,
+			palStart, palEnd, palFrame, lastFrame);
 }
 
 void Mult_v2::advanceObjects(int16 index) {
@@ -1136,12 +1136,13 @@ void Mult_v2::advanceObjects(int16 index) {
 			int dir;
 			int startFrame;
 
-			fileN = -_multData->imdKeys[i][_multData->imdIndices[i]].imdFile - 2;
+			Mult_ImdKey &key = _multData->imdKeys[i][_multData->imdIndices[i]];
+
+			fileN = -key.imdFile - 2;
 			if (fileN < 0)
 				return;
 
-			Mult_ImdKey &key = _multData->imdKeys[i][_multData->imdIndices[i]];
-
+			imdFile = _multData->imdFiles + fileN * 14;
 			dir = _multData->animDirection;
 			startFrame = frame - key.frame;
 			if ((dir != 1) && (--startFrame > 0))

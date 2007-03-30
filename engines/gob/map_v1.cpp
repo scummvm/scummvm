@@ -141,13 +141,14 @@ void Map_v1::loadMapObjects(char *avjFile) {
 void Map_v1::loadSounds(Common::SeekableReadStream &data) {
 	int16 count;
 	int16 handle;
-	char buf[128];
+	char buf[19];
 	char sndNames[20][14];
 
 	count = data.readUint16LE();
 
 	for (int i = 0; i < count; i++) {
 		data.read(buf, 14);
+		buf[14] = 0;
 		strcat(buf, ".SND");
 		strcpy(sndNames[i], buf);
 	}
