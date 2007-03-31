@@ -224,7 +224,7 @@ void Logic::arAnim() {
 	// On character boundary. Have we been told to wait?
 	// if not - are WE colliding?
 
-	if (_compact->waitingFor == 0xffff) { // 1st cycle of re-route does
+	if (_compact->waitingFor == 0xffff) { // 1st cycle of re-route does not require collision checks
 		mainAnim();
 		return;
 	}

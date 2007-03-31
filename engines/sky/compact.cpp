@@ -272,8 +272,12 @@ Compact *SkyCompact::fetchCptInfo(uint16 cptId, uint16 *elems, uint16 *type, cha
 		*elems = _cptSizes[cptId >> 12][cptId & 0xFFF];
 	if (type)
 		*type  = _cptTypes[cptId >> 12][cptId & 0xFFF];
-	if (name)
-		strcpy(name, _cptNames[cptId >> 12][cptId & 0xFFF]);
+	if (name) {
+		if (_cptNames[cptId >> 12][cptId & 0xFFF] != NULL)
+			strcpy(name, _cptNames[cptId >> 12][cptId & 0xFFF]);
+		else
+			strcpy(name, "(null)");
+	}
 	return fetchCpt(cptId);
 }
 

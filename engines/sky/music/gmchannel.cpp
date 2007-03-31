@@ -83,7 +83,6 @@ int32 GmChannel::getNextEventTime(void) {
 		return -1;
 	} else
 		return retV;
-
 }
 
 uint8 GmChannel::process(uint16 aktTime) {
