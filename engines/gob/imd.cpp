@@ -60,6 +60,9 @@ ImdPlayer::ImdPlayer(GobEngine *vm) : _vm(vm) {
 	_noSound = true;
 	_soundBuffer = 0;
 
+	_soundWaited = 0;
+	_skipFrames = 0;
+
 	_soundFreq = 0;
 	_soundSliceSize = 0;
 	_soundSlicesCount = 0;
@@ -185,9 +188,9 @@ ImdPlayer::Imd *ImdPlayer::loadImdFile(const char *path, SurfaceDesc *surfDesc, 
 		if (_soundSlicesCount < 0)
 			_soundSlicesCount = -_soundSlicesCount - 1;
 
-		if (_soundSlicesCount >= 40) {
+		if (_soundSlicesCount > 40) {
 			warning("%s: More than 40 sound slices found (%d)",
-					buf, _soundSlicesCount + 1);
+					buf, _soundSlicesCount);
 			finishImd(imdPtr);
 			return 0;
 		}
@@ -195,12 +198,14 @@ ImdPlayer::Imd *ImdPlayer::loadImdFile(const char *path, SurfaceDesc *surfDesc, 
 		_soundSliceLength = 1000 / (_soundFreq / _soundSliceSize);
 
 		delete[] _soundBuffer;
-		_soundBuffer = new byte[_soundSliceSize * _soundSlicesCount];
+		// Allocate one slice more than necessary so that the first one won't
+		// get overwritten too fast after starting the, initially full, buffer
+		_soundBuffer = new byte[_soundSliceSize * (_soundSlicesCount + 1)];
 		assert(_soundBuffer);
-		memset(_soundBuffer, 0, _soundSliceSize * _soundSlicesCount);
+		memset(_soundBuffer, 0, _soundSliceSize * (_soundSlicesCount + 1));
 
 		_soundDesc.set(SOUND_SND, SOUND_TOT, _soundBuffer,
-				_soundSliceSize * _soundSlicesCount);
+				_soundSliceSize * (_soundSlicesCount + 1));
 
 		_curSoundSlice = 0;
 		_soundStage = 1;
@@ -1106,7 +1111,7 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 				memset(soundBuf, 0, _soundSliceSize);
 
 			if (!hasNextCmd)
-				_curSoundSlice = (_curSoundSlice + 1) % _soundSlicesCount;
+				_curSoundSlice = (_curSoundSlice + 1) % (_soundSlicesCount + 1);
 		}
 
 		// Set palette
@@ -1196,6 +1201,8 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 		_vm->_snd->stopSound(0);
 		_vm->_snd->playSample(_soundDesc, -1, _soundFreq);
 		_soundStage = 2;
+		_soundWaited = imdPtr->curFrame * _soundSliceLength;
+		_skipFrames = 0;
 	}
 
 	imdPtr->x = xBak;
@@ -1208,7 +1215,7 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 		// Clear the remaining sound buffer
 		if (_curSoundSlice > 0)
 			memset(_soundBuffer + _curSoundSlice * _soundSliceSize, 0,
-					_soundSliceSize * _soundSlicesCount -
+					_soundSliceSize * (_soundSlicesCount + 1) -
 					_curSoundSlice * _soundSliceSize);
 
 		_vm->_snd->setRepeating(0);
@@ -1219,13 +1226,29 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 }
 
 inline void ImdPlayer::waitEndSoundSlice() {
-	uint32 timeKey = _vm->_util->getTimeKey();
-	int32 waitTime = _soundSliceLength;
+	if (_soundStage != 2)
+		return;
 
-	_vm->_video->retrace();
-	waitTime -= _vm->_util->getTimeKey() - timeKey;
-	if (waitTime > 0)
-		_vm->_util->delay(waitTime);
+	if (_skipFrames == 0) {
+		uint32 timeKey = _vm->_util->getTimeKey();
+		int32 waitTime = (_curImd->curFrame * _soundSliceLength) - _soundWaited;
+
+		_vm->_video->retrace();
+		waitTime -= _vm->_util->getTimeKey() - timeKey;
+
+		if (waitTime > 0) {
+			timeKey = _vm->_util->getTimeKey();
+			_vm->_util->delay(waitTime);
+			_soundWaited += _vm->_util->getTimeKey() - timeKey;
+		} else {
+			_skipFrames = -waitTime / _soundSliceLength;
+			_soundWaited =
+				((_curImd->curFrame + _skipFrames) * _soundSliceLength) +
+				(-waitTime % _soundSliceLength);
+			warning("IMD A/V sync broken, skipping %d frame(s)", _skipFrames + 1);
+		}
+	} else
+		_skipFrames--;
 }
 
 } // End of namespace Gob

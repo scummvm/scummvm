@@ -163,6 +163,7 @@ void Init::initGame(char *totName) {
 		if (imdHandle >= 0) {
 			_vm->_dataIO->closeData(imdHandle);
 			_vm->_draw->initScreen();
+			_vm->_util->longDelay(200); // Letting everything settle
 			_vm->_imdPlayer->play("coktel", -1, -1, true);
 			_vm->_draw->closeScreen();
 		}

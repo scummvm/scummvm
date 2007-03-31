@@ -107,6 +107,9 @@ protected:
 	bool _noSound;
 	byte *_soundBuffer;
 
+	uint32 _soundWaited;
+	uint32 _skipFrames;
+
 	int16 _soundFreq;
 	uint16 _soundSliceSize;
 	int16 _soundSlicesCount;
