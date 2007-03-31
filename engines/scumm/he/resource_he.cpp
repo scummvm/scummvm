@@ -1497,7 +1497,7 @@ void ScummEngine_v70he::readRoomsOffsets() {
 	num = READ_LE_UINT16(_heV7RoomOffsets);
 	ptr = _heV7RoomOffsets + 2;
 	for (i = 0; i < num; i++) {
-		_res->roomoffs[rtRoom][i] = READ_LE_UINT32(ptr);
+		_res->roomoffs[rtRoom][i] = (int32)READ_LE_UINT32(ptr);
 		ptr += 4;
 	}
 }

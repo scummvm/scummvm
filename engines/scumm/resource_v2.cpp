@@ -91,36 +91,28 @@ void ScummEngine_v2::readClassicIndexFile() {
 	}
 	_fileHandle->seek(_numRooms, SEEK_CUR);
 	for (i = 0; i < _numRooms; i++) {
-		_res->roomoffs[rtRoom][i] = _fileHandle->readUint16LE();
-		if (_res->roomoffs[rtRoom][i] == 0xFFFF)
-			_res->roomoffs[rtRoom][i] = 0xFFFFFFFF;
+		_res->roomoffs[rtRoom][i] = _fileHandle->readSint16LE();
 	}
 
 	for (i = 0; i < _numCostumes; i++) {
 		_res->roomno[rtCostume][i] = _fileHandle->readByte();
 	}
 	for (i = 0; i < _numCostumes; i++) {
-		_res->roomoffs[rtCostume][i] = _fileHandle->readUint16LE();
-		if (_res->roomoffs[rtCostume][i] == 0xFFFF)
-			_res->roomoffs[rtCostume][i] = 0xFFFFFFFF;
+		_res->roomoffs[rtCostume][i] = _fileHandle->readSint16LE();
 	}
 
 	for (i = 0; i < _numScripts; i++) {
 		_res->roomno[rtScript][i] = _fileHandle->readByte();
 	}
 	for (i = 0; i < _numScripts; i++) {
-		_res->roomoffs[rtScript][i] = _fileHandle->readUint16LE();
-		if (_res->roomoffs[rtScript][i] == 0xFFFF)
-			_res->roomoffs[rtScript][i] = 0xFFFFFFFF;
+		_res->roomoffs[rtScript][i] = _fileHandle->readSint16LE();
 	}
 
 	for (i = 0; i < _numSounds; i++) {
 		_res->roomno[rtSound][i] = _fileHandle->readByte();
 	}
 	for (i = 0; i < _numSounds; i++) {
-		_res->roomoffs[rtSound][i] = _fileHandle->readUint16LE();
-		if (_res->roomoffs[rtSound][i] == 0xFFFF)
-			_res->roomoffs[rtSound][i] = 0xFFFFFFFF;
+		_res->roomoffs[rtSound][i] = _fileHandle->readSint16LE();
 	}
 }
 

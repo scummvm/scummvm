@@ -350,7 +350,7 @@ protected:
 	byte *status[rtNumTypes];
 public:
 	byte *roomno[rtNumTypes];
-	uint32 *roomoffs[rtNumTypes];
+	int32 *roomoffs[rtNumTypes];
 	uint32 *globsize[rtNumTypes];
 
 protected:
@@ -723,7 +723,7 @@ protected:
 	int _resourceHeaderSize;
 	byte _resourceMapper[128];
 	byte *_heV7DiskOffsets;
-	uint32 *_heV7RoomIntOffsets;
+	int32 *_heV7RoomIntOffsets;
 	const byte *_resourceLastSearchBuf; // FIXME: need to put it to savefile?
 	uint32 _resourceLastSearchSize;    // FIXME: need to put it to savefile?
 

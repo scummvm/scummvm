@@ -52,9 +52,7 @@ void ScummEngine_v3old::readResTypeList(int id) {
 			_res->roomno[id][i] = _fileHandle->readByte();
 	}
 	for (i = 0; i < num; i++) {
-		_res->roomoffs[id][i] = _fileHandle->readUint16LE();
-		if (_res->roomoffs[id][i] == 0xFFFF)
-			_res->roomoffs[id][i] = 0xFFFFFFFF;
+		_res->roomoffs[id][i] = _fileHandle->readSint16LE();
 	}
 }
 

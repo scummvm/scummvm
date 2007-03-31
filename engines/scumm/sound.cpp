@@ -1221,7 +1221,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		debugC(DEBUG_SOUND, "FMUS file %s", buffer);
 		if (dmuFile.open(buffer) == false) {
 			error("Can't open music file %s*", buffer);
-			_res->roomoffs[type][idx] = 0xFFFFFFFF;
+			_res->roomoffs[type][idx] = -1;
 			return 0;
 		}
 		dmuFile.seek(4, SEEK_SET);
@@ -1245,7 +1245,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		}
 		error("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
 	}
-	_res->roomoffs[type][idx] = 0xFFFFFFFF;
+	_res->roomoffs[type][idx] = -1;
 	return 0;
 }
 
@@ -2107,7 +2107,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 		_fileHandle->read(_res->createResource(type, idx, ro_size - 4), ro_size - 4);
 		return 1;
 	}
-	_res->roomoffs[type][idx] = 0xFFFFFFFF;
+	_res->roomoffs[type][idx] = -1;
 	return 0;
 }
 

@@ -86,14 +86,14 @@ void ScummEngine::openRoom(const int room) {
 	// room 0 contains the data which is used to create the roomno / roomoffs
 	// tables -- hence obviously we mustn't use those when loading room 0.
 	const uint32 diskNumber = room ? _res->roomno[rtRoom][room] : 0;
-	const uint32 room_offs = room ? _res->roomoffs[rtRoom][room] : 0;
+	const int32 room_offs = room ? _res->roomoffs[rtRoom][room] : 0;
 
 	// FIXME: Since room_offs is const, clearly the following loop either
 	// is never entered, or loops forever (if it wasn't for the return/error
 	// statements in it, that is). -> This should be cleaned up!
 	// Maybe we should re-enabled the looping properly, to deal with disc
 	// changes in COMI ?
-	while (room_offs != 0xFFFFFFFF) {
+	while (room_offs != -1) {
 
 		if (room_offs != 0 && room != 0 && _game.heversion < 98) {
 			_fileOffset = _res->roomoffs[rtRoom][room];
@@ -159,7 +159,7 @@ void ScummEngine::closeRoom() {
 /** Delete the currently loaded room offsets. */
 void ScummEngine::deleteRoomOffsets() {
 	for (int i = 0; i < _numRooms; i++) {
-		if (_res->roomoffs[rtRoom][i] != 0xFFFFFFFF)
+		if (_res->roomoffs[rtRoom][i] != -1)
 			_res->roomoffs[rtRoom][i] = 0;
 	}
 }
@@ -179,10 +179,10 @@ void ScummEngine::readRoomsOffsets() {
 	num = _fileHandle->readByte();
 	while (num--) {
 		room = _fileHandle->readByte();
-		if (_res->roomoffs[rtRoom][room] != 0xFFFFFFFF) {
-			_res->roomoffs[rtRoom][room] = _fileHandle->readUint32LE();
+		if (_res->roomoffs[rtRoom][room] != -1) {
+			_res->roomoffs[rtRoom][room] = _fileHandle->readSint32LE();
 		} else {
-			_fileHandle->readUint32LE();
+			_fileHandle->readSint32LE();
 		}
 	}
 }
@@ -516,7 +516,7 @@ void ScummEngine::readResTypeList(int id) {
 		_res->roomno[id][i] = _fileHandle->readByte();
 	}
 	for (i = 0; i < num; i++) {
-		_res->roomoffs[id][i] = _fileHandle->readUint32LE();
+		_res->roomoffs[id][i] = _fileHandle->readSint32LE();
 
 		if (id == rtRoom && _game.heversion >= 70)
 			_heV7RoomIntOffsets[i] = _res->roomoffs[id][i];
@@ -546,7 +546,7 @@ void ResourceManager::allocResTypeData(int id, uint32 tag, int num_, const char 
 
 	if (mode_) {
 		roomno[id] = (byte *)calloc(num_, sizeof(byte));
-		roomoffs[id] = (uint32 *)calloc(num_, sizeof(uint32));
+		roomoffs[id] = (int32 *)calloc(num_, sizeof(int32));
 	}
 
 	if (_vm->_game.heversion >= 70) {
@@ -623,7 +623,7 @@ void ScummEngine::ensureResourceLoaded(int type, int i) {
 
 int ScummEngine::loadResource(int type, int idx) {
 	int roomNr;
-	uint32 fileOffs;
+	int32 fileOffs;
 	uint32 size, tag;
 
 	debugC(DEBUG_RESOURCE, "loadResource(%s,%d)", resTypeFromId(type), idx);
@@ -650,7 +650,7 @@ int ScummEngine::loadResource(int type, int idx) {
 			fileOffs = 0;
 	} else {
 		fileOffs = _res->roomoffs[type][idx];
-		if (fileOffs == 0xFFFFFFFF)
+		if (fileOffs < 0)
 			return 0;
 	}
 
@@ -1301,7 +1301,7 @@ void ScummEngine::allocateArrays() {
 
 	if (_game.heversion >= 70) {
 		_res->allocResTypeData(rtSpoolBuffer, 0, 9, "spool buffer", 1);
-		_heV7RoomIntOffsets = (uint32 *)calloc(_numRooms, sizeof(uint32));
+		_heV7RoomIntOffsets = (int32 *)calloc(_numRooms, sizeof(uint32));
 	}
 }
 
