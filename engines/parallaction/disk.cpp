@@ -29,6 +29,92 @@
 
 namespace Parallaction {
 
+class RLEDecoder : public Common::ReadStream {
+
+	Common::ReadStream *_input;
+
+	byte		_rembuf[257];
+	int32		_pos;
+
+	int32		_toBeRead;
+	byte*		_dst;
+	int32		_read;
+
+	void store(byte b) {
+		if (_toBeRead > 0) {
+			*_dst++ = b;
+			_read++;
+		} else {
+			assert(_pos < 257);
+			_rembuf[_pos++] = b;
+		}
+
+		_toBeRead--;
+	}
+
+	void feed() {
+		byte* src = _rembuf;
+
+		int32 len = MIN(_pos, _toBeRead);
+
+		while (len) {
+			*_dst++ = *src++;
+
+			_read++;
+			_toBeRead--;
+		}
+	}
+
+	void unpack() {
+
+		byte byteRun;
+		byte idx;
+
+		uint32 i, j;
+
+		while (_toBeRead > 0 && !_input->eos()) {
+			byteRun = _input->readByte();
+			if (byteRun <= 127) {
+				i = byteRun + 1;
+				for (j = 0; j < i; j++) {
+					idx = _input->readByte();
+					store(idx);
+				}
+			} else if (byteRun != 128) {
+				i = (256 - byteRun) + 1;
+				idx = _input->readByte();
+				for (j = 0; j < i; j++) {
+					store(idx);
+				}
+			}
+		}
+
+	}
+
+public:
+	RLEDecoder(Common::ReadStream *input) : _input(input), _pos(0) {
+	}
+
+	~RLEDecoder() {
+	}
+
+	bool eos() const {
+		return _input->eos() & (_pos == 0);
+	}
+
+	uint32 read(void *dataPtr, uint32 dataSize) {
+		_toBeRead = (int32)dataSize;
+		_dst = (byte*)dataPtr;
+		_read = 0;
+
+		feed();
+		unpack();
+		return _read;
+	}
+
+};
+
+
 
 Disk::Disk(Parallaction *vm) : _vm(vm) {
 
@@ -78,42 +164,6 @@ DosDisk::DosDisk(Parallaction* vm) : Disk(vm) {
 }
 
 DosDisk::~DosDisk() {
-}
-
-
-//
-// decompress a graphics block
-//
-uint16 DosDisk::decompressChunk(byte *src, byte *dst, uint16 size) {
-
-	uint16 written = 0;
-	uint16 read = 0;
-	uint16 len = 0;
-
-	for (; written != size; written += len) {
-
-		len = src[read];
-		read++;
-
-		if (len <= 127) {
-			// copy run
-
-			len++;
-			memcpy(dst+written, src+read, len);
-			read += len;
-
-		} else {
-			// expand run
-
-			len = 257 - len;
-			memset(dst+written, src[read], len);
-			read++;
-
-		}
-
-	}
-
-	return read;
 }
 
 
@@ -184,13 +234,11 @@ Cnv* DosDisk::loadCnv(const char *filename) {
 	uint16 width = _archive.readByte();
 	uint16 height = _archive.readByte();
 
-	uint32 rawsize = _archive.size() - 3;
-	byte *buf = (byte*)malloc(rawsize);
-	_archive.read(buf, rawsize);
-
 	uint32 decsize = numFrames * width * height;
 	byte *data = (byte*)malloc(decsize);
-	decompressChunk(buf, data, decsize);
+
+	RLEDecoder decoder(&_archive);
+	decoder.read(data, decsize);
 
 	return new Cnv(numFrames, width, height, data);
 }
@@ -343,16 +391,11 @@ StaticCnv* DosDisk::loadStatic(const char* name) {
 	cnv->_width = _archive.readByte();
 	cnv->_height = _archive.readByte();
 
-	uint16 compressedsize = _archive.size() - 3;
-	byte *compressed = (byte*)malloc(compressedsize);
-
 	uint16 size = cnv->_width*cnv->_height;
 	cnv->_data0 = (byte*)malloc(size);
 
-	_archive.read(compressed, compressedsize);
-
-	decompressChunk(compressed, cnv->_data0, size);
-	free(compressed);
+	RLEDecoder decoder(&_archive);
+	decoder.read(cnv->_data0, size);
 
 	return cnv;
 }
@@ -420,14 +463,12 @@ void DosDisk::loadBackground(const char *filename) {
 	byte *mask = (byte*)calloc(1, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 	byte *path = (byte*)calloc(1, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 
-	byte *v4 = (byte*)malloc(SCREEN_SIZE);
-	_archive.read(v4, SCREEN_SIZE);
-
 	byte v144[SCREEN_WIDTH];
 
-	byte *s = v4;
+	RLEDecoder decoder(&_archive);
+
 	for (uint16 i = 0; i < SCREEN_HEIGHT; i++) {
-		s += decompressChunk(s, v144, SCREEN_WIDTH);
+		decoder.read(v144, SCREEN_WIDTH);
 		unpackBackgroundScanline(v144, bg+SCREEN_WIDTH*i, mask+SCREENMASK_WIDTH*i, path+SCREENPATH_WIDTH*i);
 	}
 
@@ -435,7 +476,7 @@ void DosDisk::loadBackground(const char *filename) {
 	_vm->_gfx->setMask(mask);
 	setPath(path);
 
-	free(v4);
+//	free(v4);
 
 	free(bg);
 	free(mask);
@@ -686,7 +727,7 @@ AmigaDisk::~AmigaDisk() {
 
 #define NUM_PLANES		5
 
-// FIXME: multi-frames bitmaps looks jagged
+// FIXME: no mask is loaded
 void AmigaDisk::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 planeSize) {
 
 	byte s0, s1, s2, s3, s4, mask, t0, t1, t2, t3, t4;
@@ -1000,7 +1041,13 @@ void AmigaDisk::loadScenery(const char* background, const char* mask) {
 	delete decoder;
 	delete stream;
 
-	sprintf(path, "%s.mask.pp", background);
+	// FIXME: ILBMDecoder properly reads a LBM file and
+	// outputs a usable 8-bits bitmap, but that's not what
+	// we need here. Masks must be 2-bits bitmaps, so the
+	// following code must be changed to use RLEDecoder
+	// to access the raw mask data, and another - not yet
+	// written - filter to properly reorder planes.
+/*	sprintf(path, "%s.mask.pp", background);
 	if (!_archive.openArchivedFile(path))
 		error("can't open mask file %s", path);
 	stream = new DecrunchStream(_archive);
@@ -1010,16 +1057,18 @@ void AmigaDisk::loadScenery(const char* background, const char* mask) {
 	surf.free();
 	delete decoder;
 	delete stream;
-
+*/
 	sprintf(path, "%s.path.pp", background);
 	if (!_archive.openArchivedFile(path))
 		error("can't open path file %s", path);
 	stream = new DecrunchStream(_archive);
-	decoder = new Graphics::ILBMDecoder(*stream);
-	decoder->decode(surf, pal);
-	setPath(static_cast<byte*>(surf.pixels));
-	surf.free();
-	delete decoder;
+	stream->seek(0x120, SEEK_SET);	// skip IFF/ILBM header
+	RLEDecoder stream2(stream);
+	byte *buf = (byte*)malloc(SCREENMASK_WIDTH*SCREEN_HEIGHT);
+	stream2.read(buf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
+	setPath(buf);
+	free(buf);
+
 	delete stream;
 
 	return;
