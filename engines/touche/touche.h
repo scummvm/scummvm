@@ -611,13 +611,13 @@ protected:
 	int displayQuitDialog();
 	void displayTextMode(int str);
 
+	Common::Point getMousePos();
 
 	MidiPlayer *_midiPlayer;
 
 	Common::Language _language;
 	Common::RandomSource _rnd;
 
-	Common::Point _inp_mousePos;
 	bool _inp_leftMouseButtonPressed;
 	bool _inp_rightMouseButtonPressed;
 	int _disabledInputCounter;

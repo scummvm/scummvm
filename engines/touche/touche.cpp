@@ -237,6 +237,12 @@ void ToucheEngine::writeConfigurationSettings() {
 	ConfMan.flushToDisk();
 }
 
+Common::Point ToucheEngine::getMousePos() {
+	Common::EventManager *eventMan = _system->getEventManager();
+
+	return eventMan->getMousePos();
+}
+
 void ToucheEngine::mainLoop() {
 	restart();
 
@@ -320,27 +326,13 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 				}
 			}
 			break;
-		case Common::EVENT_MOUSEMOVE:
-			_inp_mousePos.x = event.mouse.x;
-			_inp_mousePos.y = event.mouse.y;
-			break;
 		case Common::EVENT_LBUTTONDOWN:
-			_inp_mousePos.x = event.mouse.x;
-			_inp_mousePos.y = event.mouse.y;
 			_inp_leftMouseButtonPressed = true;
 			break;
-		case Common::EVENT_LBUTTONUP:
-			_inp_mousePos.x = event.mouse.x;
-			_inp_mousePos.y = event.mouse.y;
-			break;
 		case Common::EVENT_RBUTTONDOWN:
-			_inp_mousePos.x = event.mouse.x;
-			_inp_mousePos.y = event.mouse.y;
 			_inp_rightMouseButtonPressed = true;
 			break;
 		case Common::EVENT_RBUTTONUP:
-			_inp_mousePos.x = event.mouse.x;
-			_inp_mousePos.y = event.mouse.y;
 			_inp_rightMouseButtonPressed = false;
 			break;
 		default:
@@ -1412,8 +1404,9 @@ void ToucheEngine::setDefaultCursor(int num) {
 }
 
 void ToucheEngine::handleLeftMouseButtonClickOnInventory() {
+	Common::Point mousePos = getMousePos();
 	for (int area = 0; area < ARRAYSIZE(_inventoryAreasTable); ++area) {
-		if (_inventoryAreasTable[area].contains(_inp_mousePos)) {
+		if (_inventoryAreasTable[area].contains(mousePos)) {
 			if (area >= kInventoryObject1 && area <= kInventoryObject6) {
 				int item = _inventoryVar1[area - 6 + *_inventoryVar2];
 				_flagsTable[119] = _currentCursorObject;
@@ -1496,9 +1489,10 @@ void ToucheEngine::handleLeftMouseButtonClickOnInventory() {
 }
 
 void ToucheEngine::handleRightMouseButtonClickOnInventory() {
+	Common::Point mousePos = getMousePos();
 	for (int area = kInventoryObject1; area <= kInventoryObject6; ++area) {
 		const Common::Rect &r = _inventoryAreasTable[area];
-		if (r.contains(_inp_mousePos)) {
+		if (r.contains(mousePos)) {
 			int item = _inventoryVar1[area - 6 + *_inventoryVar2] | 0x1000;
 			for (uint i = 0; i < _programHitBoxTable.size(); ++i) {
 				const ProgramHitBoxData *hitBox = &_programHitBoxTable[i];
@@ -1520,7 +1514,7 @@ void ToucheEngine::handleMouseInput(int flag) {
 	if (_disabledInputCounter != 0 || _flagsTable[618] != 0) {
 		_inp_rightMouseButtonPressed = false;
 	}
-	if (_inp_mousePos.y < _roomAreaRect.height()) {
+	if (getMousePos().y < _roomAreaRect.height()) {
 		handleMouseClickOnRoom(flag);
 	} else {
 		handleMouseClickOnInventory(flag);
@@ -1538,8 +1532,9 @@ void ToucheEngine::handleMouseClickOnRoom(int flag) {
 			drawConversationString(_conversationReplyNum, 0xD6);
 		}
 		_conversationReplyNum = -1;
-		int keyCharNewPosX = _flagsTable[614] + _inp_mousePos.x;
-		int keyCharNewPosY = _flagsTable[615] + _inp_mousePos.y;
+		Common::Point mousePos = getMousePos();
+		int keyCharNewPosX = _flagsTable[614] + mousePos.x;
+		int keyCharNewPosY = _flagsTable[615] + mousePos.y;
 		for (uint i = 0; i < _programHitBoxTable.size(); ++i) {
 			if (_programHitBoxTable[i].item & 0x1000) {
 				break;
@@ -1568,8 +1563,8 @@ void ToucheEngine::handleMouseClickOnRoom(int flag) {
 							str = _programHitBoxTable[i].defaultStr;
 						}
 						hitBox = &keyChar->prevBoundingRect;
-						hitPosX = _inp_mousePos.x;
-						hitPosY = _inp_mousePos.y;
+						hitPosX = mousePos.x;
+						hitPosY = mousePos.y;
 					}
 				}
 				break;
@@ -1603,7 +1598,7 @@ void ToucheEngine::handleMouseClickOnRoom(int flag) {
 							}
 						}
 						const char *strData = getString(str);
-						int strPosY = _inp_mousePos.y - 22;
+						int strPosY = mousePos.y - 22;
 						if (_currentCursorObject != 0) {
 							strPosY -= 8;
 						}
@@ -1611,7 +1606,7 @@ void ToucheEngine::handleMouseClickOnRoom(int flag) {
 							strPosY = 1;
 						}
 						int strWidth = getStringWidth(str);
-						int strPosX = _inp_mousePos.x - strWidth / 2;
+						int strPosX = mousePos.x - strWidth / 2;
 						strPosX = CLIP<int>(strPosX, 0, kScreenWidth - strWidth - 1);
 						if (_talkTextSpeed != 0) {
 							--_talkTextSpeed;
@@ -1640,7 +1635,7 @@ void ToucheEngine::handleMouseClickOnRoom(int flag) {
 						}
 					} else {
 						if (_inp_rightMouseButtonPressed && !itemDisabled && !itemSelected) {
-							int act = handleActionMenuUnderCursor(_programHitBoxTable[i].actions, _inp_mousePos.x, _inp_mousePos.y, str);
+							int act = handleActionMenuUnderCursor(_programHitBoxTable[i].actions, mousePos.x, mousePos.y, str);
 							_inp_rightMouseButtonPressed = false;
 							int16 facing = (keyCharNewPosX <= _keyCharsTable[_currentKeyCharNum].xPos) ? 3 : 0;
 							_keyCharsTable[_currentKeyCharNum].facingDirection = facing;
@@ -1686,9 +1681,10 @@ void ToucheEngine::handleMouseClickOnInventory(int flag) {
 	}
 	if (_hideInventoryTexts && _giveItemToCounter == 0) {
 		if (!_conversationAreaCleared) {
-			if (_inp_mousePos.x >= 40) {
-				if (_inp_mousePos.y >= 328) {
-					int replyNum = (_inp_mousePos.y - 328) / kTextHeight;
+			Common::Point mousePos = getMousePos();
+			if (mousePos.x >= 40) {
+				if (mousePos.y >= 328) {
+					int replyNum = (mousePos.y - 328) / kTextHeight;
 					if (replyNum >= 4) {
 						replyNum = 3;
 					}
@@ -1711,7 +1707,7 @@ void ToucheEngine::handleMouseClickOnInventory(int flag) {
 				}
 				_conversationReplyNum = -1;
 				if (_inp_leftMouseButtonPressed) {
-					int replyNum = _inp_mousePos.y - _roomAreaRect.height();
+					int replyNum = mousePos.y - _roomAreaRect.height();
 					if (replyNum < 40) {
 						scrollUpConversationChoice();
 					} else {
@@ -1832,8 +1828,9 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 	Common::Rect rect(0, y, kScreenWidth, y + h);
 	i = -1;
 	while (_inp_rightMouseButtonPressed && _flagsTable[611] == 0) {
-		if (rect.contains(_inp_mousePos)) {
-			int c = (_inp_mousePos.y - y) / kTextHeight;
+		Common::Point mousePos = getMousePos();
+		if (rect.contains(mousePos)) {
+			int c = (mousePos.y - y) / kTextHeight;
 			if (c != i) {
 				if (i >= 0) {
 					drawY = y + i * kTextHeight;
