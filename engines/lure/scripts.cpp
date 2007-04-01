@@ -112,6 +112,7 @@ void Script::deactivateHotspot(uint16 hotspotId, uint16 v2, uint16 v3) {
 	if (hotspotId < START_NONVISUAL_HOTSPOT_ID) 
 		rsc.deactivateHotspot(hotspotId);
 	HotspotData *hs = rsc.getHotspot(hotspotId);
+	hs->roomNumber = 0xffff;
 	hs->flags |= 0x20;
 	if (hotspotId < START_NONVISUAL_HOTSPOT_ID) 
 		hs->layer = 0xff;
