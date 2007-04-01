@@ -237,10 +237,8 @@ void ToucheEngine::writeConfigurationSettings() {
 	ConfMan.flushToDisk();
 }
 
-Common::Point ToucheEngine::getMousePos() {
-	Common::EventManager *eventMan = _system->getEventManager();
-
-	return eventMan->getMousePos();
+Common::Point ToucheEngine::getMousePos() const {
+	return _eventMan->getMousePos();
 }
 
 void ToucheEngine::mainLoop() {

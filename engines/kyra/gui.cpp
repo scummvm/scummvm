@@ -811,8 +811,7 @@ void KyraEngine::gui_getInput() {
 	uint32 now = _system->getMillis();
 
 	_mouseWheel = 0;
-	Common::EventManager *eventMan = _system->getEventManager();
-	while (eventMan->pollEvent(event)) {
+	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 			quitGame();
@@ -1487,8 +1486,7 @@ void KyraEngine::gui_updateMainMenuAnimation() {
 bool KyraEngine::gui_mainMenuGetInput() {
 	Common::Event event;
 
-	Common::EventManager *eventMan = _system->getEventManager();
-	while (eventMan->pollEvent(event)) {
+	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 			quitGame();

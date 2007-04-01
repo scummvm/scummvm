@@ -332,8 +332,7 @@ void AGOSEngine::delay(uint amount) {
 			_inCallBack = false;
 		}
 
-		Common::EventManager *eventMan = _system->getEventManager();
-		while (eventMan->pollEvent(event)) {
+		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '0' && event.kbd.keycode <='9'

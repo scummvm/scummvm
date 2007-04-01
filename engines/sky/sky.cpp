@@ -511,7 +511,6 @@ void SkyEngine::gotTimerTick(void) {
 
 void SkyEngine::delay(int32 amount) {
 
-	Common::EventManager *eventMan = _system->getEventManager();
 	Common::Event event;
 
 	uint32 start = _system->getMillis();
@@ -521,7 +520,7 @@ void SkyEngine::delay(int32 amount) {
 		amount = 0;
 
 	do {
-		while (eventMan->pollEvent(event)) {
+		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				_keyFlags = event.kbd.flags;

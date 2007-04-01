@@ -40,8 +40,7 @@ namespace Saga {
 int SagaEngine::processInput() {
 	Common::Event event;
 
-	Common::EventManager *eventMan = _system->getEventManager();
-	while (eventMan->pollEvent(event)) {
+	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.flags == Common::KBD_CTRL) {
@@ -153,7 +152,7 @@ int SagaEngine::processInput() {
 }
 
 Point SagaEngine::mousePos() const {
-	return _system->getEventManager()->getMousePos();
+	return _eventMan->getMousePos();
 }
 
 } // End of namespace Saga

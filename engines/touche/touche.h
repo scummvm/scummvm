@@ -611,7 +611,7 @@ protected:
 	int displayQuitDialog();
 	void displayTextMode(int str);
 
-	Common::Point getMousePos();
+	Common::Point getMousePos() const;
 
 	MidiPlayer *_midiPlayer;
 

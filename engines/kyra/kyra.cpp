@@ -608,8 +608,7 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 
 	uint32 start = _system->getMillis();
 	do {
-		Common::EventManager *eventMan = _system->getEventManager();
-		while (eventMan->pollEvent(event)) {
+		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' && 
@@ -690,7 +689,7 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 }
 
 Common::Point KyraEngine::getMousePos() const {
-	Common::Point mouse = g_system->getEventManager()->getMousePos();
+	Common::Point mouse = _eventMan->getMousePos();
 	if (_flags.useHiResOverlay) {
 		mouse.x >>= 1;
 		mouse.y >>= 1;
@@ -702,8 +701,7 @@ void KyraEngine::waitForEvent() {
 	bool finished = false;
 	Common::Event event;
 	while (!finished && !_quitFlag) {
-		Common::EventManager *eventMan = _system->getEventManager();
-		while (eventMan->pollEvent(event)) {
+		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				finished = true;

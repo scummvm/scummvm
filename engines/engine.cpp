@@ -48,6 +48,7 @@ Engine::Engine(OSystem *syst)
 	: _system(syst),
 		_mixer(_system->getMixer()),
 		_timer(_system->getTimerManager()),
+		_eventMan(_system->getEventManager()),
 		_saveFileMan(_system->getSavefileManager()),
 		_targetName(ConfMan.getActiveDomainName()),
 		_gameDataPath(ConfMan.get("path")) {

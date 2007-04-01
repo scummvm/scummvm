@@ -118,8 +118,7 @@ void KyraEngine::waitForChatToFinish(int vocFile, int16 chatDuration, const char
 		uint32 nextTime = loopStart + _tickLength; 
 		
 		while (_system->getMillis() < nextTime) {
-			Common::EventManager *eventMan = _system->getEventManager();
-			while (eventMan->pollEvent(event)) {
+			while (_eventMan->pollEvent(event)) {
 				switch (event.type) {
 				case Common::EVENT_KEYDOWN:
 					if (event.kbd.keycode == '.')

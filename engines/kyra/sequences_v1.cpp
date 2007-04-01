@@ -1171,8 +1171,7 @@ void KyraEngine::seq_playCredits() {
 			_screen->updateScreen();
 		}
 
-		Common::EventManager *eventMan = _system->getEventManager();
-		while (eventMan->pollEvent(event)) {
+		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				finished = true;

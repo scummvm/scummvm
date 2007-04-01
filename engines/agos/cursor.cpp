@@ -309,7 +309,7 @@ void AGOSEngine::handleMouseMoved() {
 	}
 
 	CursorMan.showMouse(true);
-	_mouse = _system->getEventManager()->getMousePos();
+	_mouse = _eventMan->getMousePos();
 
 	if (_defaultVerb) {
 		uint id = 101;

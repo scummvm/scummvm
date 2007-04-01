@@ -706,8 +706,7 @@ void SwordEngine::delay(int32 amount) { //copied and mutilated from sky.cpp
 	uint32 start = _system->getMillis();
 
 	do {
-		Common::EventManager *eventMan = _system->getEventManager();
-		while (eventMan->pollEvent(event)) {
+		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				// Make sure backspace works right (this fixes a small issue on OS X)

@@ -31,6 +31,7 @@ namespace Audio {
 	class Mixer;
 }
 namespace Common {
+	class EventManager;
 	class SaveFileManager;
 	class TimerManager;
 }
@@ -45,6 +46,7 @@ public:
 	Common::TimerManager * _timer;
 
 protected:
+	Common::EventManager *_eventMan;
 	Common::SaveFileManager *_saveFileMan;
 
 	const Common::String _targetName; // target name for saves

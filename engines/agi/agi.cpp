@@ -61,8 +61,7 @@ void AgiEngine::processEvents() {
 	Common::Event event;
 	int key = 0;
 
-	Common::EventManager *eventMan = _system->getEventManager();
-	while (eventMan->pollEvent(event)) {
+	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 			_gfx->deinitVideo();
