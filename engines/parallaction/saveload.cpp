@@ -132,7 +132,7 @@ void Parallaction::doLoadGame(uint16 slot) {
 
 //	refreshInventory(_vm->_characterName);
 
-	parseLocation("common");
+//	parseLocation("common");
 
 	// force reload of character to solve inventory
 	// bugs, but it's a good maneuver anyway

@@ -820,6 +820,8 @@ void Parallaction::changeCharacter(const char *name) {
 	else
 		_vm->_char._ani._cnv = _vm->_char._normalFrames;
 
+	parseLocation("common");
+
 	strcpy(_characterName1, v32);
 
 	return;
