@@ -1850,7 +1850,7 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 		}
 		processEvents(false);
 		_system->updateScreen();
-		_system->delayMillis(50);
+		_system->delayMillis(10);
 	}
 
 	const int action = (i >= 0) ? actionsTable[i] : -26;
