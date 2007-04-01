@@ -70,7 +70,7 @@ private:
 protected:
 	Screen *_scr;
 	Audio::Mixer *_snd;
-	OSystem *_sys;
+	OSystem *_system;
 
 	uint32 _id;
 

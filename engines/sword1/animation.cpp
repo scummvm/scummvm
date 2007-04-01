@@ -63,7 +63,7 @@ static const char *sequenceList[20] = {
 ///////////////////////////////////////////////////////////////////////////////
 
 MoviePlayer::MoviePlayer(Screen *scr, Audio::Mixer *snd, OSystem *sys)
-	: _scr(scr), _snd(snd), _sys(sys) {
+	: _scr(scr), _snd(snd), _system(sys) {
 	_bgSoundStream = NULL;
 	_ticks = 0;
 	_frameBuffer = NULL;
@@ -87,7 +87,7 @@ void MoviePlayer::updatePalette(byte *pal, bool packed) {
 		else
 			*p++ = 0;
 	}
-	_sys->setPalette(palette, 0, 256);
+	_system->setPalette(palette, 0, 256);
 	_forceFrame = true;
 }
 
@@ -112,7 +112,7 @@ bool MoviePlayer::checkSkipFrame(void) {
 		if ((_snd->getSoundElapsedTime(_bgSoundHandle) * 12) / 1000 < _currentFrame + 1)
 			return false;
 	} else {
-		if (_sys->getMillis() <= _ticks)
+		if (_system->getMillis() <= _ticks)
 			return false;
 	}
 	_framesSkipped++;
@@ -127,17 +127,17 @@ void MoviePlayer::syncFrame(void) {
 	}
 	if (_bgSoundStream) {
 		while (_snd->isSoundHandleActive(_bgSoundHandle) && (_snd->getSoundElapsedTime(_bgSoundHandle) * 12) / 1000 < _currentFrame) {
-			_sys->delayMillis(10);
+			_system->delayMillis(10);
 		}
 
 		// In case the background sound ends prematurely, update _ticks
 		// so that we can still fall back on the no-sound sync case for
 		// the subsequent frames.
 
-		_ticks = _sys->getMillis();
+		_ticks = _system->getMillis();
 	} else {
-		while (_sys->getMillis() < _ticks) {
-			_sys->delayMillis(10);
+		while (_system->getMillis() < _ticks) {
+			_system->delayMillis(10);
 		}
 	}
 }
@@ -187,14 +187,14 @@ bool MoviePlayer::load(uint32 id) {
 void MoviePlayer::play(void) {
 	_scr->clearScreen();
 	_framesSkipped = 0;
-	_ticks = _sys->getMillis();
+	_ticks = _system->getMillis();
 	_bgSoundStream = Audio::AudioStream::openStreamFile(sequenceList[_id]);
 	if (_bgSoundStream) {
 		_snd->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSoundHandle, _bgSoundStream);
 	}
 	_currentFrame = 0;
 	bool terminated = false;
-	Common::EventManager *eventMan = _sys->getEventManager();
+	Common::EventManager *eventMan = _system->getEventManager();
 	while (!terminated && decodeFrame()) {
 		processFrame();
 		syncFrame();
@@ -213,7 +213,7 @@ void MoviePlayer::play(void) {
 				}
 				break;
 			case Common::EVENT_QUIT:
-				_sys->quit();
+				_system->quit();
 				break;
 			default:
 				break;
@@ -221,7 +221,7 @@ void MoviePlayer::play(void) {
 		}
 	}
 	while (_snd->isSoundHandleActive(_bgSoundHandle))
-		_sys->delayMillis(100);
+		_system->delayMillis(100);
 
 	// It's tempting to call _screen->fullRefresh() here to restore the old
 	// palette. However, that causes glitches with DXA movies, here the
@@ -353,8 +353,8 @@ void MoviePlayerDXA::processFrame(void) {
 void MoviePlayerDXA::updateScreen(void) {
 	// Using _drawBuffer directly should work, as long as we don't do any
 	// post-processing of the frame.
-	_sys->copyRectToScreen(_drawBuffer, _frameWidth, _frameX, _frameY, _frameWidth, _frameHeight);
-	_sys->updateScreen();
+	_system->copyRectToScreen(_drawBuffer, _frameWidth, _frameX, _frameY, _frameWidth, _frameHeight);
+	_system->updateScreen();
 }
 
 #endif
@@ -398,7 +398,7 @@ void MoviePlayerMPEG::insertOverlay(OverlayColor *buf, uint8 *ovl, OverlayColor 
 
 bool MoviePlayerMPEG::load(uint32 id) {
 	if (MoviePlayer::load(id)) {
-		_anim = new AnimationState(this, _scr, _sys);
+		_anim = new AnimationState(this, _scr, _system);
 		return _anim->init(sequenceList[id]);
 	}
 	return false;
@@ -422,7 +422,7 @@ bool MoviePlayerMPEG::initOverlays(uint32 id) {
 		uint8 *pal = ovlFile.fetchFile(12);
 		_introPal = (OverlayColor*)malloc(256 * sizeof(OverlayColor));
 		for (uint16 cnt = 0; cnt < 256; cnt++)
-			_introPal[cnt] = _sys->RGBToColor(pal[cnt * 3 + 0], pal[cnt * 3 + 1], pal[cnt * 3 + 2]);
+			_introPal[cnt] = _system->RGBToColor(pal[cnt * 3 + 0], pal[cnt * 3 + 1], pal[cnt * 3 + 2]);
 	}
 
 	return true;
