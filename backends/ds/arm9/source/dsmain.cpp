@@ -1214,10 +1214,9 @@ void updateStatus() {
 		setIcon(0, 208, 150, offs, 0, true);
 	
 		if (indyFightState) {
-			setIcon(1, (190 - 32), 150, 3, (indyFightRight? 0: ATTR1_FLIP_X), true);
-			consolePrintf("%d\n", indyFightRight);
+			setIcon(2, (190 - 32), 150, 3, (indyFightRight? 0: ATTR1_FLIP_X), true);
 		} else {
-			setIcon(1, 0, 0, 0, 0, false);
+			setIcon(2, 0, 0, 0, 0, false);
 		}
 		
 		if (triggeredIconTimeout > 0) {
@@ -2098,7 +2097,7 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.9.1a beta3 ");
+	consolePrintf("Version 0.9.1a ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Supports: Lucasarts SCUMM\n");
@@ -2204,7 +2203,7 @@ int main(void)
 		// If not found, init CF/SD driver
 		if (!initGBAMP(mode)) {
 			consolePrintf("\nNo file system was found.\n");
-			consolePrintf("View the README_DLDI.TXT file\n");
+			consolePrintf("View the README.TXT file\n");
 			consolePrintf("for more information.\n");
 
 			while (1);
