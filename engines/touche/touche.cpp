@@ -25,6 +25,7 @@
 #include "common/events.h"
 #include "common/system.h"
 
+#include "graphics/cursorman.h"
 #include "sound/mididrv.h"
 
 #include "touche/midi.h"
@@ -1389,14 +1390,14 @@ void ToucheEngine::drawHitBoxes() {
 
 void ToucheEngine::showCursor(bool show) {
 	debugC(9, kDebugEngine, "ToucheEngine::showCursor()");
-	_system->showMouse(show);
+	CursorMan.showMouse(show);
 }
 
 void ToucheEngine::setCursor(int num) {
 	debugC(9, kDebugEngine, "ToucheEngine::setCursor(%d)", num);
 	_currentCursorObject = num;
 	res_loadImage(num, _mouseData);
-	_system->setMouseCursor(_mouseData, kCursorWidth, kCursorHeight, kCursorWidth / 2, kCursorHeight / 2, 0);
+	CursorMan.replaceCursor(_mouseData, kCursorWidth, kCursorHeight, kCursorWidth / 2, kCursorHeight / 2, 0);
 }
 
 void ToucheEngine::setDefaultCursor(int num) {
