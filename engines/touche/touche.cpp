@@ -268,14 +268,18 @@ void ToucheEngine::mainLoop() {
 			fadePaletteFromFlags();
 		}
 
-		_system->updateScreen();
-		int delay = _system->getMillis() - frameTimeStamp;
-		delay = (_fastMode ? 10 : kCycleDelay) - delay;
-		if (delay < 1) {
-			delay = 1;
+		uint32 nextFrame = frameTimeStamp + (_fastMode ? 10 : kCycleDelay);
+		uint32 now = _system->getMillis();
+		if (nextFrame < now) {
+			nextFrame = now + 1;
 		}
-		_system->delayMillis(delay);
-		frameTimeStamp = _system->getMillis();
+		while (now < nextFrame) {
+			processEvents();
+			_system->updateScreen();
+			now = _system->getMillis();
+			_system->delayMillis((nextFrame - now >= 10) ? 10 : nextFrame - now);
+		}
+		frameTimeStamp = nextFrame;
 	}
 
 	writeConfigurationSettings();
