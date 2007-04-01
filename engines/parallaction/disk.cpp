@@ -684,35 +684,39 @@ AmigaDisk::~AmigaDisk() {
 
 }
 
-// FIXME: unpacking doesn't work
-void AmigaDisk::unpackBitmap(byte *dst, byte *src, uint16 height, uint16 bytesPerPlane) {
+#define NUM_PLANES		5
+
+// FIXME: multi-frames bitmaps looks jagged
+void AmigaDisk::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 planeSize) {
 
 	byte s0, s1, s2, s3, s4, mask, t0, t1, t2, t3, t4;
 
-	for (uint32 k = 0; k < height; k++) {
-		for (uint32 i = 0; i < bytesPerPlane; i++) {
-			s0 = src[i];
-			s1 = src[i+bytesPerPlane];
-			s2 = src[i+bytesPerPlane*2];
-			s3 = src[i+bytesPerPlane*3];
-			s4 = src[i+bytesPerPlane*4];
+	for (uint32 i = 0; i < numFrames; i++) {
+		for (uint32 j = 0; j < planeSize; j++) {
+			s0 = src[j];
+			s1 = src[j+planeSize];
+			s2 = src[j+planeSize*2];
+			s3 = src[j+planeSize*3];
+			s4 = src[j+planeSize*4];
 
-			for (uint32 j = 0; j < 8; j++) {
-				mask = 1 << (7 - j);
-				t0 = (s0 & mask ? 1 : 0);
-				t1 = (s1 & mask ? 1 : 0);
-				t2 = (s2 & mask ? 1 : 0);
-				t3 = (s3 & mask ? 1 : 0);
-				t4 = (s4 & mask ? 1 : 0);
-				*dst++ = t0 + (t1 << 1) + (t2 << 2) + (t3 << 3) + (t4 << 4);
+			for (uint32 k = 0; k < 8; k++) {
+				mask = 1 << (7 - k);
+				t0 = (s0 & mask ? 1 << 0 : 0);
+				t1 = (s1 & mask ? 1 << 1 : 0);
+				t2 = (s2 & mask ? 1 << 2 : 0);
+				t3 = (s3 & mask ? 1 << 3 : 0);
+				t4 = (s4 & mask ? 1 << 4 : 0);
+				*dst++ = t0 | t1 | t2 | t3 | t4;
 			}
-		}
-	}
 
+		}
+
+		src += planeSize * NUM_PLANES;
+	}
 }
 
 StaticCnv* AmigaDisk::makeStaticCnv(Common::SeekableReadStream &stream) {
-#define NUM_PLANES		5
+
 
 	uint16 numFrames = stream.readByte();
 	uint16 width = stream.readByte();
@@ -720,14 +724,16 @@ StaticCnv* AmigaDisk::makeStaticCnv(Common::SeekableReadStream &stream) {
 
 	assert(numFrames == 1 && (width & 7) == 0);
 
-	uint32 rawsize = (width * height * NUM_PLANES) / 8;
+	byte bytesPerPlane = width / 8;
+
+	uint32 rawsize = bytesPerPlane * NUM_PLANES * height;
 	byte *buf = (byte*)malloc(rawsize);
 	stream.read(buf, rawsize);
 
 	uint32 decsize = width * height;
 	byte *data = (byte*)calloc(decsize, 1);
 
-	unpackBitmap(data, buf, height, width / 8);
+	unpackBitmap(data, buf, 1, height * bytesPerPlane);
 
 	free(buf);
 
@@ -738,11 +744,9 @@ StaticCnv* AmigaDisk::makeStaticCnv(Common::SeekableReadStream &stream) {
 	cnv->_data1 = NULL;
 
 	return cnv;
-#undef NUM_PLANES
 }
 
 Cnv* AmigaDisk::makeCnv(Common::SeekableReadStream &stream) {
-#define NUM_PLANES		5
 
 	uint16 numFrames = stream.readByte();
 	uint16 width = stream.readByte();
@@ -750,21 +754,22 @@ Cnv* AmigaDisk::makeCnv(Common::SeekableReadStream &stream) {
 
 	assert((width & 7) == 0);
 
-	uint32 rawsize = (numFrames * width * height * NUM_PLANES) / 8;
+	byte bytesPerPlane = width / 8;
+
+	uint32 rawsize = numFrames * bytesPerPlane * NUM_PLANES * height;
 	byte *buf = (byte*)malloc(rawsize);
 	stream.read(buf, rawsize);
 
 	uint32 decsize = numFrames * width * height;
 	byte *data = (byte*)calloc(decsize, 1);
 
-	unpackBitmap(data, buf, height, width / 8);
+	unpackBitmap(data, buf, numFrames, height * bytesPerPlane);
 
 	free(buf);
 
 	return new Cnv(numFrames, width, height, data);
-#undef NUM_PLANES
 }
-
+#undef NUM_PLANES
 
 Script* AmigaDisk::loadLocation(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadLocation '%s'", name);

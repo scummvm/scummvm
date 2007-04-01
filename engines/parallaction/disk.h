@@ -145,7 +145,7 @@ class AmigaDisk : public Disk {
 protected:
 	Cnv* makeCnv(Common::SeekableReadStream &stream);
 	StaticCnv* makeStaticCnv(Common::SeekableReadStream &stream);
-	void unpackBitmap(byte *dst, byte *src, uint16 height, uint16 bytesPerPlane);
+	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 planeSize);
 
 public:
 	AmigaDisk(Parallaction *vm);
