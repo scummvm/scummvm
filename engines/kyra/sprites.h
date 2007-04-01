@@ -61,7 +61,7 @@ struct Anim {
 class Sprites {
 public:
 
-	Sprites(KyraEngine *engine, OSystem *system);
+	Sprites(KyraEngine *vm, OSystem *system);
 	~Sprites();
 
 	void updateSceneAnims();
@@ -80,7 +80,7 @@ public:
 protected:
 	void freeSceneShapes();
 
-	KyraEngine *_engine;
+	KyraEngine *_vm;
 	Resource *_res;
 	OSystem *_system;
 	Screen *_screen;

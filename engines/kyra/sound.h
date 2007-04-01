@@ -65,7 +65,7 @@ class AUDStream;
 
 class Sound {
 public:
-	Sound(KyraEngine *engine, Audio::Mixer *mixer);
+	Sound(KyraEngine *vm, Audio::Mixer *mixer);
 	virtual ~Sound();
 
 	virtual bool init() = 0;
@@ -99,7 +99,7 @@ protected:
 	int _musicEnabled;
 	bool _sfxEnabled;
 
-	KyraEngine *_engine;
+	KyraEngine *_vm;
 	Audio::Mixer *_mixer;
 private:
 	const char * const *_soundFileList;
@@ -121,7 +121,7 @@ class AdlibDriver;
 
 class SoundAdlibPC : public Sound {
 public:
-	SoundAdlibPC(KyraEngine *engine, Audio::Mixer *mixer);
+	SoundAdlibPC(KyraEngine *vm, Audio::Mixer *mixer);
 	~SoundAdlibPC();
 
 	bool init();
@@ -164,7 +164,7 @@ private:
 
 class SoundMidiPC : public MidiDriver, public Sound {
 public:
-	SoundMidiPC(KyraEngine *engine, Audio::Mixer *mixer, MidiDriver *driver);
+	SoundMidiPC(KyraEngine *vm, Audio::Mixer *mixer, MidiDriver *driver);
 	~SoundMidiPC();
 
 	bool init() { return true; }
@@ -234,7 +234,7 @@ private:
 class FMT_EuphonyDriver;
 class SoundTowns : public MidiDriver, public Sound {
 public:
-	SoundTowns(KyraEngine *engine, Audio::Mixer *mixer);
+	SoundTowns(KyraEngine *vm, Audio::Mixer *mixer);
 	~SoundTowns();
 
 	bool init();
@@ -295,7 +295,7 @@ private:
 
 class MixedSoundDriver : public Sound {
 public:
-	MixedSoundDriver(KyraEngine *engine, Audio::Mixer *mixer, Sound *music, Sound *sfx) : Sound(engine, mixer), _music(music), _sfx(sfx) {}
+	MixedSoundDriver(KyraEngine *vm, Audio::Mixer *mixer, Sound *music, Sound *sfx) : Sound(vm, mixer), _music(music), _sfx(sfx) {}
 	~MixedSoundDriver() { delete _music; delete _sfx; }
 
 	bool init() { return _music->init() | _sfx->init(); }

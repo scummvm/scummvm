@@ -102,7 +102,7 @@ protected:
 
 class Resource {
 public:
-	Resource(KyraEngine *engine);
+	Resource(KyraEngine *vm);
 	~Resource();
 	
 	bool loadPakFile(const Common::String &filename, const bool forcePC = false);
@@ -119,7 +119,7 @@ public:
 	bool loadFileToBuf(const char *file, void *buf, uint32 maxSize); 
 
 protected:
-	KyraEngine *_engine;
+	KyraEngine *_vm;
 	Common::List<ResourceFile*> _pakfiles;
 };
 
@@ -207,7 +207,7 @@ struct Room;
 
 class StaticResource {
 public:
-	StaticResource(KyraEngine *engine) : _engine(engine), _resList(), _fileLoader(0), _builtIn(0), _filenameTable(0) {}
+	StaticResource(KyraEngine *vm) : _vm(vm), _resList(), _fileLoader(0), _builtIn(0), _filenameTable(0) {}
 	~StaticResource() { deinit(); }
 	
 	static bool checkKyraDat();
@@ -228,7 +228,7 @@ public:
 	bool prefetchId(int id);
 	void unloadId(int id);
 private:
-	KyraEngine *_engine;
+	KyraEngine *_vm;
 
 	struct FilenameTable;
 	struct ResData;

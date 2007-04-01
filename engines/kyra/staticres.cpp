@@ -214,10 +214,10 @@ bool StaticResource::init() {
 		{ 0, 0, 0 }
 	};
 
-	if (_engine->game() == GI_KYRA1) {
+	if (_vm->game() == GI_KYRA1) {
 		_builtIn = 0;
 		_filenameTable = kyra1StaticRes;
-	} else if (_engine->game() == GI_KYRA2 || _engine->game() == GI_KYRA3) {
+	} else if (_vm->game() == GI_KYRA2 || _vm->game() == GI_KYRA3) {
 		return true;
 	} else {
 		error("unknown game ID");
@@ -240,11 +240,11 @@ bool StaticResource::init() {
 	if (version != RESFILE_VERSION) {
 		error("invalid KYRA.DAT file version (%d, required %d)", version, RESFILE_VERSION);
 	}
-	if (gameID != _engine->game()) {
+	if (gameID != _vm->game()) {
 		error("invalid game id (%d)", gameID);
 	}
 
-	uint32 gameFeatures = createFeatures(_engine->gameFlags());
+	uint32 gameFeatures = createFeatures(_vm->gameFlags());
 	if ((featuresValue & GAME_FLAGS) != gameFeatures) {
 		error("your data file has a different game flags (0x%.08X has the data and your version has 0x%.08X)", (featuresValue & GAME_FLAGS), gameFeatures);
 	}
@@ -416,7 +416,7 @@ const void *StaticResource::getData(int id, int requesttype, int &size) {
 bool StaticResource::loadLanguageTable(const char *filename, void *&ptr, int &size) {
 	char file[64];
 	for (int i = 0; languages[i].ext; ++i) {
-		if (languages[i].flags != createLanguage(_engine->gameFlags())) {
+		if (languages[i].flags != createLanguage(_vm->gameFlags())) {
 			continue;
 		}
 			
@@ -609,18 +609,18 @@ void StaticResource::freePaletteTable(void *&ptr, int &size) {
 uint8 *StaticResource::getFile(const char *name, int &size) {
 	char buffer[64];
 	const char *ext = "";
-	if (_engine->gameFlags().isTalkie) {
+	if (_vm->gameFlags().isTalkie) {
 		ext = ".CD";
-	} else if (_engine->gameFlags().isDemo) {
+	} else if (_vm->gameFlags().isDemo) {
 		ext = ".DEM";
-	} else if (_engine->gameFlags().platform == Common::kPlatformFMTowns) {
+	} else if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 		ext = ".TNS";
-	} else if (_engine->gameFlags().platform == Common::kPlatformAmiga) {
+	} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 		ext = ".AMG";
 	}
 	snprintf(buffer, 64, "%s%s", name, ext);
 	uint32 tempSize = 0;
-	uint8 *data = _engine->resource()->fileData(buffer, &tempSize);
+	uint8 *data = _vm->resource()->fileData(buffer, &tempSize);
 	size = tempSize;
 	return data;
 }

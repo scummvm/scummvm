@@ -35,10 +35,10 @@
 #include "kyra/screen.h"
 
 namespace Kyra {
-Resource::Resource(KyraEngine *engine) {
-	_engine = engine;
+Resource::Resource(KyraEngine *vm) {
+	_vm = vm;
 
-	if (_engine->game() == GI_KYRA1) {
+	if (_vm->game() == GI_KYRA1) {
 		// we're loading KYRA.DAT here too (but just for Kyrandia 1)
 		if (!loadPakFile("KYRA.DAT", true) || !StaticResource::checkKyraDat()) {
 			GUI::MessageDialog errorMsg("You're missing the 'KYRA.DAT' file or it got corrupted, (re)get it from the ScummVM website");
@@ -47,13 +47,13 @@ Resource::Resource(KyraEngine *engine) {
 		}
 
 		// We only need kyra.dat for the demo.
-		if (_engine->gameFlags().isDemo)
+		if (_vm->gameFlags().isDemo)
 			return;
 
 		// only VRM file we need in the *whole* game for kyra1
-		if (_engine->gameFlags().isTalkie)
+		if (_vm->gameFlags().isTalkie)
 			loadPakFile("CHAPTER1.VRM");
-	} else if (_engine->game() == GI_KYRA3) {
+	} else if (_vm->game() == GI_KYRA3) {
 		// load the installation package file for kyra3
 		INSFile *insFile = new INSFile("WESTWOOD.001");
 		assert(insFile);
@@ -68,7 +68,7 @@ Resource::Resource(KyraEngine *engine) {
 	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly))
 		error("invalid game path '%s'", dir.path().c_str());
 
-	if (_engine->game() == GI_KYRA1 && _engine->gameFlags().isTalkie) {
+	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().isTalkie) {
 		static const char *list[] = {
 			"ADL.PAK", "CHAPTER1.VRM", "COL.PAK", "FINALE.PAK", "INTRO1.PAK", "INTRO2.PAK",
 			"INTRO3.PAK", "INTRO4.PAK", "MISC.PAK",	"SND.PAK", "STARTUP.PAK", "XMI.PAK",
@@ -100,9 +100,9 @@ Resource::Resource(KyraEngine *engine) {
 			}
 		}
 
-		if (_engine->gameFlags().platform == Common::kPlatformFMTowns) {
+		if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 			Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
-			uint unloadHash = (_engine->gameFlags().lang == Common::EN_ANY) ? Common::hashit_lower("JMC.PAK") : Common::hashit_lower("EMC.PAK");
+			uint unloadHash = (_vm->gameFlags().lang == Common::EN_ANY) ? Common::hashit_lower("JMC.PAK") : Common::hashit_lower("EMC.PAK");
 
 			for (;start != _pakfiles.end(); ++start) {
 				if ((*start)->filename() == unloadHash) {
@@ -144,7 +144,7 @@ bool Resource::loadPakFile(const Common::String &filename, const bool forcePC) {
 		return false;
 	}
 
-	PAKFile *file = new PAKFile(filename.c_str(), handle.name(), handle, (_engine->gameFlags().platform == Common::kPlatformAmiga) && !forcePC);
+	PAKFile *file = new PAKFile(filename.c_str(), handle.name(), handle, (_vm->gameFlags().platform == Common::kPlatformAmiga) && !forcePC);
 	handle.close();
 
 	if (!file)

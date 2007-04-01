@@ -2213,10 +2213,10 @@ const int SoundAdlibPC::_kyra1SoundTriggers[] = {
 
 const int SoundAdlibPC::_kyra1NumSoundTriggers = ARRAYSIZE(SoundAdlibPC::_kyra1SoundTriggers);
 
-SoundAdlibPC::SoundAdlibPC(KyraEngine *engine, Audio::Mixer *mixer)
-	: Sound(engine, mixer), _driver(0), _trackEntries(), _soundDataPtr(0) {
+SoundAdlibPC::SoundAdlibPC(KyraEngine *vm, Audio::Mixer *mixer)
+	: Sound(vm, mixer), _driver(0), _trackEntries(), _soundDataPtr(0) {
 	memset(_trackEntries, 0, sizeof(_trackEntries));
-	_v2 = (_engine->gameFlags().gameID == GI_KYRA2);
+	_v2 = (_vm->gameFlags().gameID == GI_KYRA2);
 	_driver = new AdlibDriver(mixer, _v2);
 	assert(_driver);
 
@@ -2284,7 +2284,7 @@ void SoundAdlibPC::playTrack(uint8 track) {
 void SoundAdlibPC::haltTrack() {
 	unk1();
 	unk2();
-	//_engine->_system->delayMillis(3 * 60);
+	//_vm->_system->delayMillis(3 * 60);
 }
 
 void SoundAdlibPC::playSoundEffect(uint8 track) {
@@ -2305,7 +2305,7 @@ void SoundAdlibPC::play(uint8 track) {
 
 	while ((_driver->callback(16, 0) & 8)) {
 		// We call the system delay and not the game delay to avoid concurrency issues.
-		_engine->_system->delayMillis(10);
+		_vm->_system->delayMillis(10);
 	}
 
 	if (_sfxPlayingSound != -1) {
@@ -2359,7 +2359,7 @@ void SoundAdlibPC::loadSoundFile(uint file) {
 	char filename[25];
 	sprintf(filename, "%s.ADL", soundFilename(file));
 
-	file_data = _engine->resource()->fileData(filename, &file_size);
+	file_data = _vm->resource()->fileData(filename, &file_size);
 	if (!file_data) {
 		warning("Couldn't find music file: '%s'", filename);
 		return;
@@ -2400,7 +2400,7 @@ void SoundAdlibPC::loadSoundFile(uint file) {
 
 void SoundAdlibPC::unk1() {
 	playSoundEffect(0);
-	//_engine->_system->delayMillis(5 * 60);
+	//_vm->_system->delayMillis(5 * 60);
 }
 
 void SoundAdlibPC::unk2() {

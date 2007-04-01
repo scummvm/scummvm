@@ -33,10 +33,10 @@
 
 namespace Kyra {
 
-Sprites::Sprites(KyraEngine *engine, OSystem *system) {
-	_engine = engine;
-	_res = engine->resource();
-	_screen = engine->screen();
+Sprites::Sprites(KyraEngine *vm, OSystem *system) {
+	_vm = vm;
+	_res = vm->resource();
+	_screen = vm->screen();
 	_system = system;
 	_dat = 0;
 	memset(_anims, 0, sizeof(_anims));
@@ -76,8 +76,8 @@ void Sprites::setupSceneAnims() {
 			_anims[i].unk2 = READ_LE_UINT16(data);
 			data += 4;
 
-			if ((_engine->_northExitHeight & 0xFF) > READ_LE_UINT16(data))
-				_anims[i].drawY = _engine->_northExitHeight & 0xFF;
+			if ((_vm->_northExitHeight & 0xFF) > READ_LE_UINT16(data))
+				_anims[i].drawY = _vm->_northExitHeight & 0xFF;
 			else
 				_anims[i].drawY = READ_LE_UINT16(data);
 			data += 4;
@@ -183,7 +183,7 @@ void Sprites::updateSceneAnims() {
 			data += 2;
 			debugC(6, kDebugLevelSprites, "func: Set time to wait");
 			debugC(6, kDebugLevelSprites, "Time %i", READ_LE_UINT16(data));
-			_anims[i].nextRun = _system->getMillis() + READ_LE_UINT16(data) * _engine->tickLength();
+			_anims[i].nextRun = _system->getMillis() + READ_LE_UINT16(data) * _vm->tickLength();
 			_anims[i].nextRun -= _system->getMillis() - _anims[i].lastRefresh;
 			data += 2;
 			break;
@@ -195,7 +195,7 @@ void Sprites::updateSceneAnims() {
 			data += 2;
 			debugC(6, kDebugLevelSprites, "Maximum time %i", READ_LE_UINT16(data));
 			data += 2;
-			_anims[i].nextRun = _system->getMillis() + rndNr * _engine->tickLength();
+			_anims[i].nextRun = _system->getMillis() + rndNr * _vm->tickLength();
 			_anims[i].nextRun -= _system->getMillis() - _anims[i].lastRefresh;
 			break;
 		case 0xFF8C:
@@ -315,45 +315,45 @@ void Sprites::updateSceneAnims() {
 			data += 2;
 			debugC(6, kDebugLevelSprites, "func: Set Brandon's X coordinate");
 			debugC(6, kDebugLevelSprites, "X %i", READ_LE_UINT16(data));
-			_engine->currentCharacter()->x1 = READ_LE_UINT16(data);
+			_vm->currentCharacter()->x1 = READ_LE_UINT16(data);
 			data += 2;
 			break;
 		case 0xFFAE:
 			data += 2;
 			debugC(6, kDebugLevelSprites, "func: Set Brandon's Y coordinate");
 			debugC(6, kDebugLevelSprites, "Y %i", READ_LE_UINT16(data));
-			_engine->currentCharacter()->y1 = READ_LE_UINT16(data);
+			_vm->currentCharacter()->y1 = READ_LE_UINT16(data);
 			data += 2;
 			break;
 		case 0xFFAF:
 			data += 2;
 			debugC(6, kDebugLevelSprites, "func: Set Brandon's sprite");
 			debugC(6, kDebugLevelSprites, "Sprite %i", READ_LE_UINT16(data));
-			_engine->currentCharacter()->currentAnimFrame = READ_LE_UINT16(data);
+			_vm->currentCharacter()->currentAnimFrame = READ_LE_UINT16(data);
 			data += 2;
 			break;
 		case 0xFFAA:
 			data += 2;
 			debugC(6, kDebugLevelSprites, "func: Reset Brandon's sprite");
-			_engine->animator()->actors()->sceneAnimPtr = 0;
-			_engine->animator()->actors()->bkgdChangeFlag = 1;
-			_engine->animator()->actors()->refreshFlag = 1;
-			_engine->animator()->restoreAllObjectBackgrounds();
-			_engine->animator()->flagAllObjectsForRefresh();
-			_engine->animator()->updateAllObjectShapes();
+			_vm->animator()->actors()->sceneAnimPtr = 0;
+			_vm->animator()->actors()->bkgdChangeFlag = 1;
+			_vm->animator()->actors()->refreshFlag = 1;
+			_vm->animator()->restoreAllObjectBackgrounds();
+			_vm->animator()->flagAllObjectsForRefresh();
+			_vm->animator()->updateAllObjectShapes();
 			break;
 		case 0xFFAB:
 			data += 2;
 			debugC(6, kDebugLevelSprites, "func: Update Brandon's sprite");
-			_engine->animator()->animRefreshNPC(0);
-			_engine->animator()->flagAllObjectsForRefresh();
-			_engine->animator()->updateAllObjectShapes();
+			_vm->animator()->animRefreshNPC(0);
+			_vm->animator()->flagAllObjectsForRefresh();
+			_vm->animator()->updateAllObjectShapes();
 			break;
 		case 0xFFB0:
 			data += 2;
 			debugC(6, kDebugLevelSprites, "func: Play sound");
 			debugC(6, kDebugLevelSprites, "Sound index %i", READ_LE_UINT16(data));
-			_engine->snd_playSoundEffect(READ_LE_UINT16(data));
+			_vm->snd_playSoundEffect(READ_LE_UINT16(data));
 			data += 2;
 			break;
 		case 0xFFB1:
@@ -373,7 +373,7 @@ void Sprites::updateSceneAnims() {
 			debugC(6, kDebugLevelSprites, "Percentage %i", READ_LE_UINT16(data));
 			rndNr = _rnd.getRandomNumber(100);
 			if (rndNr <= READ_LE_UINT16(data))
-				_engine->snd_playSoundEffect(sound);
+				_vm->snd_playSoundEffect(sound);
 			data += 2;
 			break;
 		case 0xFFA7:
@@ -411,20 +411,20 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 	assert(fileSize > 0x6D);
 
 	memcpy(_drawLayerTable, (_dat + 0x0D), 8);
-	_engine->_northExitHeight = READ_LE_UINT16(_dat + 0x15);
-	if (_engine->_northExitHeight & 1)
-		_engine->_northExitHeight += 1;
+	_vm->_northExitHeight = READ_LE_UINT16(_dat + 0x15);
+	if (_vm->_northExitHeight & 1)
+		_vm->_northExitHeight += 1;
 
 	// XXX
-	_engine->_paletteChanged = 1;
+	_vm->_paletteChanged = 1;
 
-	if (_engine->gameFlags().platform == Common::kPlatformAmiga) {
-		if (_engine->queryGameFlag(0xA0))
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		if (_vm->queryGameFlag(0xA0))
 			memcpy(_screen->getPalette(3), _screen->getPalette(4), 32*3);
 		else
 			memcpy(_screen->getPalette(3), _screen->getPalette(0), 32*3);	
 	} else {
-		if (_engine->queryGameFlag(0xA0))
+		if (_vm->queryGameFlag(0xA0))
 			memcpy(_screen->getPalette(1), _screen->getPalette(3), 768);
 		else
 			memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
@@ -549,7 +549,7 @@ void Sprites::loadSceneShapes() {
 
 void Sprites::refreshSceneAnimObject(uint8 animNum, uint8 shapeNum, uint16 x, uint16 y, bool flipX, bool unkFlag) {
 	debugC(9, kDebugLevelSprites,  "Sprites::refreshSceneAnimObject(%i, %i, %i, %i, %i, %i", animNum, shapeNum, x, y, flipX, unkFlag);
-	AnimObject &anim = _engine->animator()->sprites()[animNum];
+	AnimObject &anim = _vm->animator()->sprites()[animNum];
 	anim.refreshFlag = 1;
 	anim.bkgdChangeFlag = 1;
 

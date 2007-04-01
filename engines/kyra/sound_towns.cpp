@@ -894,7 +894,7 @@ void MidiParser_EuD::resetTracking() {
 	setTempo(_initialTempo);
 }
 
-SoundTowns::SoundTowns(KyraEngine *engine, Audio::Mixer *mixer) : Sound(engine, mixer), _lastTrack(-1),
+SoundTowns::SoundTowns(KyraEngine *vm, Audio::Mixer *mixer) : Sound(vm, mixer), _lastTrack(-1),
 	 _currentSFX(0), _sfxFileData(0), _sfxFileIndex((uint)-1), _sfxWDTable(0), _parser(0), _musicTrackData(0) {
 
 	_driver = new FMT_EuphonyDriver(_mixer);
@@ -920,9 +920,9 @@ SoundTowns::~SoundTowns() {
 }
 
 bool SoundTowns::init() {
-	_engine->checkCD();
+	_vm->checkCD();
 	int unused = 0;
-	_sfxWDTable = _engine->staticres()->loadRawData(kKyra1TownsSFXTable, unused);
+	_sfxWDTable = _vm->staticres()->loadRawData(kKyra1TownsSFXTable, unused);
 
 	return loadInstruments();
 }
@@ -1049,7 +1049,7 @@ void SoundTowns::loadSoundFile(uint file) {
 		return;
 	_sfxFileIndex = file;
 	delete [] _sfxFileData;
-	_sfxFileData = _engine->resource()->fileData(soundFilename(file), 0);
+	_sfxFileData = _vm->resource()->fileData(soundFilename(file), 0);
 }
 
 void SoundTowns::playSoundEffect(uint8 track) {
@@ -1182,7 +1182,7 @@ bool SoundTowns::loadInstruments() {
 		_musicTrackData = new uint8[0xC58A];
 
 	memset(_musicTrackData, 0, 0xC58A);
-	uint8 * twm = _engine->resource()->fileData("twmusic.pak", 0);
+	uint8 * twm = _vm->resource()->fileData("twmusic.pak", 0);
 	if (!twm)
 		return false;
 	Screen::decodeFrame4(twm, _musicTrackData, 0x8BF0);
@@ -1201,7 +1201,7 @@ void SoundTowns::playEuphonyTrack(uint32 offset, int loop) {
 		_musicTrackData = new uint8[0xC58A];
 
 	memset(_musicTrackData, 0, 0xC58A);
-	uint8 * twm = _engine->resource()->fileData("twmusic.pak", 0);
+	uint8 * twm = _vm->resource()->fileData("twmusic.pak", 0);
 	Screen::decodeFrame4(twm + 0x4b70 + offset, _musicTrackData, 0xC58A);
 	delete [] twm;
 

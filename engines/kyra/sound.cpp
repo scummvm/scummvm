@@ -35,8 +35,8 @@
 
 namespace Kyra {
 
-Sound::Sound(KyraEngine *engine, Audio::Mixer *mixer)
-	: _engine(engine), _mixer(mixer), _currentVocFile(0), _vocHandle(), _compressHandle(),
+Sound::Sound(KyraEngine *vm, Audio::Mixer *mixer)
+	: _vm(vm), _mixer(mixer), _currentVocFile(0), _vocHandle(), _compressHandle(),
 	_musicEnabled(1), _sfxEnabled(true), _soundFileList(0), _soundFileListSize(0) {
 }
 
@@ -54,7 +54,7 @@ void Sound::voicePlay(const char *file) {
 		strcat(filenamebuffer, _supportedCodes[i].fileext);
 
 		_compressHandle.close();
-		_engine->resource()->getFileHandle(filenamebuffer, &fileSize, _compressHandle);
+		_vm->resource()->getFileHandle(filenamebuffer, &fileSize, _compressHandle);
 		if (!_compressHandle.isOpen())
 			continue;
 		
@@ -67,7 +67,7 @@ void Sound::voicePlay(const char *file) {
 		strcpy(filenamebuffer, file);
 		strcat(filenamebuffer, ".VOC");
 		
-		fileData = _engine->resource()->fileData(filenamebuffer, &fileSize);
+		fileData = _vm->resource()->fileData(filenamebuffer, &fileSize);
 		if (!fileData)
 			return;
 
@@ -94,7 +94,7 @@ bool Sound::voiceIsPlaying() {
 
 #pragma mark -
 
-SoundMidiPC::SoundMidiPC(KyraEngine *engine, Audio::Mixer *mixer, MidiDriver *driver) : Sound(engine, mixer) {
+SoundMidiPC::SoundMidiPC(KyraEngine *vm, Audio::Mixer *mixer, MidiDriver *driver) : Sound(vm, mixer) {
 	_driver = driver;
 	_passThrough = false;
 	_eventFromMusic = false;
@@ -250,7 +250,7 @@ void SoundMidiPC::loadSoundFile(uint file) {
 	sprintf(filename, "%s.%s", soundFilename(file), _useC55 ? "C55" : "XMI");
 
 	uint32 size;
-	uint8 *data = (_engine->resource())->fileData(filename, &size);
+	uint8 *data = (_vm->resource())->fileData(filename, &size);
 
 	if (!data) {
 		warning("couldn't load '%s'", filename);
@@ -287,7 +287,7 @@ void SoundMidiPC::loadSoundEffectFile(uint file) {
 	sprintf(filename, "%s.%s", soundFilename(file), _useC55 ? "C55" : "XMI");
 
 	uint32 size;
-	uint8 *data = (_engine->resource())->fileData(filename, &size);
+	uint8 *data = (_vm->resource())->fileData(filename, &size);
 
 	if (!data) {
 		warning("couldn't load '%s'", filename);
@@ -356,8 +356,8 @@ void SoundMidiPC::onTimer(void *refCon) {
 	// this should be set to the fadeToBlack value
 	static const uint32 musicFadeTime = 2 * 1000;
 
-	if (music->_fadeMusicOut && music->_fadeStartTime + musicFadeTime > music->_engine->_system->getMillis()) {
-		byte volume = (byte)((musicFadeTime - (music->_engine->_system->getMillis() - music->_fadeStartTime)) * 255 / musicFadeTime);
+	if (music->_fadeMusicOut && music->_fadeStartTime + musicFadeTime > music->_vm->_system->getMillis()) {
+		byte volume = (byte)((musicFadeTime - (music->_vm->_system->getMillis() - music->_fadeStartTime)) * 255 / musicFadeTime);
 		music->setVolume(volume);
 	} else if (music->_fadeStartTime) {
 		music->_fadeStartTime = 0;
@@ -428,7 +428,7 @@ void SoundMidiPC::playSoundEffect(uint8 track) {
 
 void SoundMidiPC::beginFadeOut() {
 	_fadeMusicOut = true;
-	_fadeStartTime = _engine->_system->getMillis();
+	_fadeStartTime = _vm->_system->getMillis();
 }
 
 #pragma mark -
