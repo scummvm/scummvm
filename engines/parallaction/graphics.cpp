@@ -147,7 +147,7 @@ void Gfx::setBlackPalette() {
 //	FIXME: the effect is different from the original
 //
 void Gfx::animatePalette() {
-// printf("Gfx::animatePalette()\n");
+//	printf("Gfx::animatePalette()\n");
 
 	byte tmp[3];
 
@@ -902,6 +902,8 @@ Gfx::Gfx(Parallaction* vm) :
 	initBuffers();
 
 	setBlackPalette();
+
+	memset(_palettefx, 0, sizeof(_palettefx));
 
 	initMouse( 0 );
 

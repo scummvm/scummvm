@@ -882,11 +882,29 @@ Cnv* AmigaDisk::loadFont(const char* name) {
 StaticCnv* AmigaDisk::loadStatic(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadStatic '%s'", name);
 
-	if (!_archive.openArchivedFile(name))
-		error("can't open static '%s' from archive", name);
+	Common::SeekableReadStream *s;
+	bool dispose = false;
 
-	DecrunchStream stream(_archive);
-	return makeStaticCnv(stream);
+	char path[PATH_LEN];
+	sprintf(path, "%s.pp", name);
+	if (!_archive.openArchivedFile(path)) {
+		if (!_archive.openArchivedFile(name))
+			error("can't open static '%s' from archive", name);
+
+		s = &_archive;
+	} else {
+		DecrunchStream *stream = new DecrunchStream(_archive);
+		s = stream;
+
+		dispose = true;
+	}
+
+	StaticCnv *cnv = makeStaticCnv(*s);
+
+	if (dispose)
+		delete s;
+
+	return cnv;
 }
 
 Cnv* AmigaDisk::loadFrames(const char* name) {
