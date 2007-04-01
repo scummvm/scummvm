@@ -563,7 +563,8 @@ int ToucheEngine::displayQuitDialog() {
 				break;
 			}
 		}
-		_system->delayMillis(50);
+		_system->delayMillis(10);
+		_system->updateScreen();
 	}
 	clearStatusString();
 	return ret;
