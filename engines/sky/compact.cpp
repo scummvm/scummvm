@@ -267,7 +267,7 @@ Compact *SkyCompact::fetchCpt(uint16 cptId) {
 	assert(((cptId >> 12) < _numDataLists) && ((cptId & 0xFFF) < _dataListLen[cptId >> 12]));
 	
 	if (gDebugLevel >= 8) {
-		debug(8, "Loading Compact %s [%s] (%04d,%d)", _cptNames[cptId >> 12][cptId & 0xFFF], nameForType(_cptTypes[cptId >> 12][cptId & 0xFFF]), cptId >> 12, cptId & 0xFFF);
+		debug(8, "Loading Compact %s [%s] (%04X=%d,%d)", _cptNames[cptId >> 12][cptId & 0xFFF], nameForType(_cptTypes[cptId >> 12][cptId & 0xFFF]), cptId, cptId >> 12, cptId & 0xFFF);
 	}		
 
 	return _compacts[cptId >> 12][cptId & 0xFFF];
