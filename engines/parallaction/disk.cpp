@@ -29,7 +29,7 @@
 
 namespace Parallaction {
 
-class RLEDecoder : public Common::ReadStream {
+class RLEStream : public Common::ReadStream {
 
 	Common::ReadStream *_input;
 
@@ -92,10 +92,10 @@ class RLEDecoder : public Common::ReadStream {
 	}
 
 public:
-	RLEDecoder(Common::ReadStream *input) : _input(input), _pos(0) {
+	RLEStream(Common::ReadStream *input) : _input(input), _pos(0) {
 	}
 
-	~RLEDecoder() {
+	~RLEStream() {
 	}
 
 	bool eos() const {
@@ -237,7 +237,7 @@ Cnv* DosDisk::loadCnv(const char *filename) {
 	uint32 decsize = numFrames * width * height;
 	byte *data = (byte*)malloc(decsize);
 
-	RLEDecoder decoder(&_archive);
+	RLEStream decoder(&_archive);
 	decoder.read(data, decsize);
 
 	return new Cnv(numFrames, width, height, data);
@@ -394,7 +394,7 @@ StaticCnv* DosDisk::loadStatic(const char* name) {
 	uint16 size = cnv->_width*cnv->_height;
 	cnv->_data0 = (byte*)malloc(size);
 
-	RLEDecoder decoder(&_archive);
+	RLEStream decoder(&_archive);
 	decoder.read(cnv->_data0, size);
 
 	return cnv;
@@ -465,7 +465,7 @@ void DosDisk::loadBackground(const char *filename) {
 
 	byte v144[SCREEN_WIDTH];
 
-	RLEDecoder decoder(&_archive);
+	RLEStream decoder(&_archive);
 
 	for (uint16 i = 0; i < SCREEN_HEIGHT; i++) {
 		decoder.read(v144, SCREEN_WIDTH);
@@ -582,7 +582,7 @@ Table* DosDisk::loadTable(const char* name) {
 } while (0)
 
 
-class DecrunchStream : public Common::SeekableReadStream {
+class PowerPackerStream : public Common::SeekableReadStream {
 
 	SeekableReadStream *_stream;
 	bool				_dispose;
@@ -662,7 +662,7 @@ private:
 	}
 
 public:
-	DecrunchStream(Common::SeekableReadStream &stream) {
+	PowerPackerStream(Common::SeekableReadStream &stream) {
 
 		_dispose = false;
 
@@ -689,7 +689,7 @@ public:
 		_dispose = true;
 	}
 
-	~DecrunchStream() {
+	~PowerPackerStream() {
 		if (_dispose) delete _stream;
 	}
 
@@ -826,7 +826,7 @@ Script* AmigaDisk::loadLocation(const char *name) {
 	if (!_archive.openArchivedFile(path))
 		error("can't find location file '%s'", path);
 
-	DecrunchStream stream(_archive);
+	PowerPackerStream stream(_archive);
 
 	uint32 size = stream.size();
 	char *buf = (char*)malloc(size+1);
@@ -865,7 +865,7 @@ Cnv* AmigaDisk::loadTalk(const char *name) {
 			error("can't open talk '%s' from archive", path);
 	}
 
-	DecrunchStream stream(_archive);
+	PowerPackerStream stream(_archive);
 	return makeCnv(stream);
 }
 
@@ -878,7 +878,7 @@ Cnv* AmigaDisk::loadObjects(const char *name) {
 	if (!_archive.openArchivedFile(path))
 		error("can't open objects '%s' from archive", path);
 
-	DecrunchStream stream(_archive);
+	PowerPackerStream stream(_archive);
 	return makeCnv(stream);
 }
 
@@ -902,7 +902,7 @@ StaticCnv* AmigaDisk::loadHead(const char* name) {
 	if (!_archive.openArchivedFile(path))
 		error("can't open frames '%s' from archive", path);
 
-	DecrunchStream stream(_archive);
+	PowerPackerStream stream(_archive);
 	return makeStaticCnv(stream);
 }
 
@@ -939,7 +939,7 @@ StaticCnv* AmigaDisk::loadStatic(const char* name) {
 
 		s = &_archive;
 	} else {
-		DecrunchStream *stream = new DecrunchStream(_archive);
+		PowerPackerStream *stream = new PowerPackerStream(_archive);
 		s = stream;
 
 		dispose = true;
@@ -971,7 +971,7 @@ Cnv* AmigaDisk::loadFrames(const char* name) {
 		s = &_archive;
 	}
 	else {
-		DecrunchStream *stream = new DecrunchStream(_archive);
+		PowerPackerStream *stream = new PowerPackerStream(_archive);
 		s = stream;
 		dispose = true;
 	}
@@ -993,7 +993,7 @@ void AmigaDisk::loadSlide(const char *name) {
 	if (!_archive.openArchivedFile(path))
 		error("can't open archived file %s", path);
 
-	DecrunchStream stream(_archive);
+	PowerPackerStream stream(_archive);
 
 	Graphics::Surface surf;
 	byte *pal;
@@ -1023,13 +1023,13 @@ void AmigaDisk::loadScenery(const char* background, const char* mask) {
 	byte *pal;
 	char path[PATH_LEN];
 	Graphics::ILBMDecoder *decoder;
-	DecrunchStream *stream;
+	PowerPackerStream *stream;
 
 	sprintf(path, "%s.bkgnd.pp", background);
 	if (!_archive.openArchivedFile(path))
 		error("can't open background file %s", path);
 
-	stream = new DecrunchStream(_archive);
+	stream = new PowerPackerStream(_archive);
 	decoder = new Graphics::ILBMDecoder(*stream);
 	decoder->decode(surf, pal);
 	for (uint32 i = 0; i < PALETTE_SIZE; i++)
@@ -1044,13 +1044,13 @@ void AmigaDisk::loadScenery(const char* background, const char* mask) {
 	// FIXME: ILBMDecoder properly reads a LBM file and
 	// outputs a usable 8-bits bitmap, but that's not what
 	// we need here. Masks must be 2-bits bitmaps, so the
-	// following code must be changed to use RLEDecoder
+	// following code must be changed to use RLEStream
 	// to access the raw mask data, and another - not yet
 	// written - filter to properly reorder planes.
 /*	sprintf(path, "%s.mask.pp", background);
 	if (!_archive.openArchivedFile(path))
 		error("can't open mask file %s", path);
-	stream = new DecrunchStream(_archive);
+	stream = new PowerPackerStream(_archive);
 	decoder = new Graphics::ILBMDecoder(*stream);
 	decoder->decode(surf, pal);
 	_vm->_gfx->setMask(static_cast<byte*>(surf.pixels));
@@ -1061,9 +1061,9 @@ void AmigaDisk::loadScenery(const char* background, const char* mask) {
 	sprintf(path, "%s.path.pp", background);
 	if (!_archive.openArchivedFile(path))
 		error("can't open path file %s", path);
-	stream = new DecrunchStream(_archive);
+	stream = new PowerPackerStream(_archive);
 	stream->seek(0x120, SEEK_SET);	// skip IFF/ILBM header
-	RLEDecoder stream2(stream);
+	RLEStream stream2(stream);
 	byte *buf = (byte*)malloc(SCREENMASK_WIDTH*SCREEN_HEIGHT);
 	stream2.read(buf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 	setPath(buf);
