@@ -32,7 +32,7 @@ class Parallaction;
 class Menu {
 
 public:
-	Menu(Parallaction *engine);
+	Menu(Parallaction *vm);
 	virtual 	~Menu();
 
 	void		start();
@@ -47,7 +47,7 @@ public:
 
 
 protected:
-	Parallaction*	_engine;
+	Parallaction*	_vm;
 
 
 };

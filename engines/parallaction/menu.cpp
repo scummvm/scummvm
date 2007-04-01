@@ -89,8 +89,8 @@ static uint16 _donnaKey[] = { 0, 2, 8, 5, 5, 1 };
 static uint16 _doughKey[] = { 1, 7 ,7, 2, 2, 6 };
 
 
-Menu::Menu(Parallaction *engine) {
-	_engine = engine;
+Menu::Menu(Parallaction *vm) {
+	_vm = vm;
 }
 
 Menu::~Menu() {
@@ -177,17 +177,17 @@ void Menu::newGame() {
 	selectCharacter();
 
 	char *v4 = strchr(_vm->_location._name, '.') + 1;
-	strcpy(_engine->_characterName, v4);
+	strcpy(_vm->_characterName, v4);
 
 	return; // start game
 }
 
 uint16 Menu::chooseLanguage() {
 
-	_engine->changeCursor(kCursorArrow);
+	_vm->changeCursor(kCursorArrow);
 
 	do {
-		_engine->updateInput();
+		_vm->updateInput();
 		_vm->_gfx->swapBuffers();
 
 		if (_mouseButtons == kMouseLeftUp) {
@@ -204,7 +204,7 @@ uint16 Menu::chooseLanguage() {
 			}
 		}
 
-		_engine->waitTime( 1 );
+		_vm->waitTime( 1 );
 
 	} while (true);
 
@@ -228,12 +228,12 @@ uint16 Menu::selectGame() {
 	uint16 _si = 0;
 	uint16 _di = 3;
 
-	_engine->updateInput();
+	_vm->updateInput();
 	while (_mouseButtons != kMouseLeftUp) {
 
-		_engine->updateInput();
+		_vm->updateInput();
 		_vm->_gfx->swapBuffers();
-		_engine->waitTime( 1 );
+		_vm->waitTime( 1 );
 
 		_si = 0;
 		if (_vm->_mousePos.x > 160)
@@ -261,7 +261,7 @@ uint16 Menu::selectGame() {
 	// load game
 
 	strcpy(_vm->_location._name, "fogne");
-	strcpy(_engine->_characterName, "dough");
+	strcpy(_vm->_characterName, "dough");
 
 	_vm->loadGame();
 
@@ -287,7 +287,7 @@ void Menu::selectCharacter() {
 	v14._width = BLOCK_WIDTH;
 	v14._height = BLOCK_HEIGHT;
 
-	_engine->changeCursor(kCursorArrow);
+	_vm->changeCursor(kCursorArrow);
 	_vm->_midiPlayer->stop();
 
 	_vm->_gfx->_proportionalFont = false;
@@ -313,9 +313,9 @@ void Menu::selectCharacter() {
 
 			_mouseButtons = kMouseNone;
 			do {
-				_engine->updateInput();
+				_vm->updateInput();
 				_vm->_gfx->swapBuffers();
-				_engine->waitTime(1);
+				_vm->waitTime(1);
 			} while (_mouseButtons != kMouseLeftUp);	// waits for left click
 
 			for (uint16 _si = 0; _si < 9; _si++) {
