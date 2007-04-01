@@ -1345,7 +1345,7 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 			}
 		}
 	} else if (_res->mode[type] == 2 && ser->getVersion() >= VER(23)) {
-		// Save/load only a list of resource numbers that need reloaded.
+		// Save/load only a list of resource numbers that need to be reloaded.
 		if (ser->isSaving()) {
 			ser->saveUint16(_res->address[type][idx] ? 1 : 0);
 		} else {
