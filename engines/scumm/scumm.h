@@ -328,6 +328,9 @@ enum ResTypes {
 	rtNumTypes = 22
 };
 
+enum {
+	RES_INVALID_OFFSET = 0xFFFFFFFF
+};
 
 /**
  * The 'resource manager' class. Currently doesn't really deserve to be called
@@ -350,7 +353,7 @@ protected:
 	byte *status[rtNumTypes];
 public:
 	byte *roomno[rtNumTypes];
-	int32 *roomoffs[rtNumTypes];
+	uint32 *roomoffs[rtNumTypes];
 	uint32 *globsize[rtNumTypes];
 
 protected:
@@ -723,7 +726,7 @@ protected:
 	int _resourceHeaderSize;
 	byte _resourceMapper[128];
 	byte *_heV7DiskOffsets;
-	int32 *_heV7RoomIntOffsets;
+	uint32 *_heV7RoomIntOffsets;
 	const byte *_resourceLastSearchBuf; // FIXME: need to put it to savefile?
 	uint32 _resourceLastSearchSize;    // FIXME: need to put it to savefile?
 
