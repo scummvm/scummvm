@@ -360,8 +360,10 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 		menuData.exit = false;
 		menuData.mode = kMenuSettingsMode;
 		int curMode = -1;
+		bool doRedraw = false;
 		while (!menuData.quit) {
 			if (menuData.mode != curMode) {
+				doRedraw = true;
 				setupMenu(menuData.mode, &menuData);
 				curMode = menuData.mode;
 				if (menuData.mode == kMenuLoadStateMode || menuData.mode == kMenuSaveStateMode) {
@@ -376,7 +378,6 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 					}
 				}
 			}
-			redrawMenu(&menuData);
 			Common::Event event;
 			Common::EventManager *eventMan = _system->getEventManager();
 			while (eventMan->pollEvent(event)) {
@@ -391,6 +392,7 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 					button = menuData.findButtonUnderCursor(event.mouse.x, event.mouse.y);
 					if (button) {
 						handleMenuAction(&menuData, button->action);
+						doRedraw = true;
 					}
 					break;
 				case Common::EVENT_KEYDOWN:
@@ -400,21 +402,28 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 						} else {
 							menuData.addCharToDescription(_saveLoadCurrentSlot, (char)event.kbd.ascii);
 						}
+						doRedraw = true;
 					}
 					break;
 				case Common::EVENT_WHEELUP:
 					handleMenuAction(&menuData, kActionScrollUpSaves);
+					doRedraw = true;
 					break;
 				case Common::EVENT_WHEELDOWN:
 					handleMenuAction(&menuData, kActionScrollDownSaves);
+					doRedraw = true;
 					break;
 				default:
 					break;
 				}
 			}
-			updateScreenArea(90, 102, 460, 196);
+			if (doRedraw) {
+				redrawMenu(&menuData);
+				updateScreenArea(90, 102, 460, 196);
+				doRedraw = false;
+			}
 			_system->updateScreen();
-			_system->delayMillis(50);
+			_system->delayMillis(10);
 		}
 		_fullRedrawCounter = 2;
 		if (!menuData.exit && _flagsTable[611] != 0) {
