@@ -684,49 +684,240 @@ AmigaDisk::~AmigaDisk() {
 
 }
 
+// FIXME: unpacking doesn't work
+void AmigaDisk::unpackBitmap(byte *dst, byte *src, uint16 height, uint16 bytesPerPlane) {
+
+	byte s0, s1, s2, s3, s4, mask, t0, t1, t2, t3, t4;
+
+	for (uint32 k = 0; k < height; k++) {
+		for (uint32 i = 0; i < bytesPerPlane; i++) {
+			s0 = src[i];
+			s1 = src[i+bytesPerPlane];
+			s2 = src[i+bytesPerPlane*2];
+			s3 = src[i+bytesPerPlane*3];
+			s4 = src[i+bytesPerPlane*4];
+
+			for (uint32 j = 0; j < 8; j++) {
+				mask = 1 << (7 - j);
+				t0 = (s0 & mask ? 1 : 0);
+				t1 = (s1 & mask ? 1 : 0);
+				t2 = (s2 & mask ? 1 : 0);
+				t3 = (s3 & mask ? 1 : 0);
+				t4 = (s4 & mask ? 1 : 0);
+				*dst++ = t0 + (t1 << 1) + (t2 << 2) + (t3 << 3) + (t4 << 4);
+			}
+		}
+	}
+
+}
+
+StaticCnv* AmigaDisk::makeStaticCnv(Common::SeekableReadStream &stream) {
+#define NUM_PLANES		5
+
+	uint16 numFrames = stream.readByte();
+	uint16 width = stream.readByte();
+	uint16 height = stream.readByte();
+
+	assert(numFrames == 1 && (width & 7) == 0);
+
+	uint32 rawsize = (width * height * NUM_PLANES) / 8;
+	byte *buf = (byte*)malloc(rawsize);
+	stream.read(buf, rawsize);
+
+	uint32 decsize = width * height;
+	byte *data = (byte*)calloc(decsize, 1);
+
+	unpackBitmap(data, buf, height, width / 8);
+
+	free(buf);
+
+	StaticCnv *cnv = new StaticCnv();
+	cnv->_width = width;
+	cnv->_height = height;
+	cnv->_data0 = data;
+	cnv->_data1 = NULL;
+
+	return cnv;
+#undef NUM_PLANES
+}
+
+Cnv* AmigaDisk::makeCnv(Common::SeekableReadStream &stream) {
+#define NUM_PLANES		5
+
+	uint16 numFrames = stream.readByte();
+	uint16 width = stream.readByte();
+	uint16 height = stream.readByte();
+
+	assert((width & 7) == 0);
+
+	uint32 rawsize = (numFrames * width * height * NUM_PLANES) / 8;
+	byte *buf = (byte*)malloc(rawsize);
+	stream.read(buf, rawsize);
+
+	uint32 decsize = numFrames * width * height;
+	byte *data = (byte*)calloc(decsize, 1);
+
+	unpackBitmap(data, buf, height, width / 8);
+
+	free(buf);
+
+	return new Cnv(numFrames, width, height, data);
+#undef NUM_PLANES
+}
+
+
 Script* AmigaDisk::loadLocation(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadLocation '%s'", name);
-	return NULL;
+
+	char path[PATH_LEN];
+
+	sprintf(path, "%s%s%s.loc.pp", _vm->_characterName, _languageDir, name);
+
+	_languageDir[2] = '\0';
+	_archive.open(_languageDir);
+	_languageDir[2] = '/';
+
+	if (!_archive.openArchivedFile(path))
+		error("can't find location file '%s'", path);
+
+	DecrunchStream stream(_archive);
+
+	uint32 size = stream.size();
+	char *buf = (char*)malloc(size+1);
+	stream.read(buf, size);
+	buf[size] = '\0';
+
+	return new Script(buf, true);
 }
 
 Script* AmigaDisk::loadScript(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadScript '%s'", name);
-	return NULL;
+
+	char vC8[PATH_LEN];
+
+	sprintf(vC8, "%s.script", name);
+
+	if (!_archive.openArchivedFile(vC8))
+		errorFileNotFound(vC8);
+
+	uint32 size = _archive.size();
+	char *buf = (char*)malloc(size+1);
+	_archive.read(buf, size);
+	buf[size] = '\0';
+
+	return new Script(buf, true);
 }
 
 Cnv* AmigaDisk::loadTalk(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadTalk '%s'", name);
-	return NULL;
+
+	char path[PATH_LEN];
+	sprintf(path, "%s.talk.pp", name);
+	if (!_archive.openArchivedFile(path)) {
+		sprintf(path, "%s.talk.dd", name);
+		if (!_archive.openArchivedFile(path))
+			error("can't open talk '%s' from archive", path);
+	}
+
+	DecrunchStream stream(_archive);
+	return makeCnv(stream);
 }
 
 Cnv* AmigaDisk::loadObjects(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadObjects");
-	return NULL;
+
+	char path[PATH_LEN];
+	sprintf(path, "%s.objs.pp", name);
+
+	if (!_archive.openArchivedFile(path))
+		error("can't open objects '%s' from archive", path);
+
+	DecrunchStream stream(_archive);
+	return makeCnv(stream);
 }
+
 
 StaticCnv* AmigaDisk::loadPointer() {
 	debugC(1, kDebugDisk, "AmigaDisk::loadPointer");
-	return NULL;
+
+	Common::File stream;
+	if (!stream.open("pointer"))
+		error("can't open pointer file");
+
+	return makeStaticCnv(stream);
 }
 
 StaticCnv* AmigaDisk::loadHead(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadHead '%s'", name);
-	return NULL;
+
+	char path[PATH_LEN];
+	sprintf(path, "%s.head", name);
+
+	if (!_archive.openArchivedFile(path))
+		error("can't open frames '%s' from archive", path);
+
+	DecrunchStream stream(_archive);
+	return makeStaticCnv(stream);
 }
 
 Cnv* AmigaDisk::loadFont(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadFont '%s'", name);
-	return NULL;
+
+	char path[PATH_LEN];
+	if (scumm_stricmp(name, "topaz"))
+		sprintf(path, "%sfont", name);
+	else
+		strcpy(path, "introfont");
+
+	if (!_archive.openArchivedFile(path))
+		error("can't open font '%s' from archive", path);
+
+	// FIXME: actually read data from font file and create
+	// real font instead of this dummy one
+	byte *data = (byte*)malloc(256*8*8);
+	memset(data, 0, 256*8*8);
+	return new Cnv(256, 8, 8, data);
 }
 
 StaticCnv* AmigaDisk::loadStatic(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadStatic '%s'", name);
-	return NULL;
+
+	if (!_archive.openArchivedFile(name))
+		error("can't open static '%s' from archive", name);
+
+	DecrunchStream stream(_archive);
+	return makeStaticCnv(stream);
 }
 
 Cnv* AmigaDisk::loadFrames(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadFrames '%s'", name);
-	return NULL;
+
+	if (IS_MINI_CHARACTER(name))
+		return NULL;
+
+	Common::SeekableReadStream *s;
+	bool dispose = false;
+
+	char path[PATH_LEN];
+	sprintf(path, "%s.pp", name);
+	if (!_archive.openArchivedFile(path)) {
+		if (!_archive.openArchivedFile(name))
+			error("can't open frames '%s' from archive", name);
+
+		s = &_archive;
+	}
+	else {
+		DecrunchStream *stream = new DecrunchStream(_archive);
+		s = stream;
+		dispose = true;
+	}
+
+	Cnv *cnv = makeCnv(*s);
+
+	if (dispose)
+		delete s;
+
+	return cnv;
 }
 
 void AmigaDisk::loadSlide(const char *name) {
@@ -763,14 +954,61 @@ void AmigaDisk::loadSlide(const char *name) {
 
 void AmigaDisk::loadScenery(const char* background, const char* mask) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadScenery '%s', '%s'", background, mask);
+
+	Graphics::Surface surf;
+	byte *pal;
+	char path[PATH_LEN];
+	Graphics::ILBMDecoder *decoder;
+	DecrunchStream *stream;
+
+	sprintf(path, "%s.bkgnd.pp", background);
+	if (!_archive.openArchivedFile(path))
+		error("can't open background file %s", path);
+
+	stream = new DecrunchStream(_archive);
+	decoder = new Graphics::ILBMDecoder(*stream);
+	decoder->decode(surf, pal);
+	for (uint32 i = 0; i < PALETTE_SIZE; i++)
+		_vm->_gfx->_palette[i] = pal[i] >> 2;
+	free(pal);
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
+	_vm->_gfx->setBackground(static_cast<byte*>(surf.pixels));
+	surf.free();
+	delete decoder;
+	delete stream;
+
+	sprintf(path, "%s.mask.pp", background);
+	if (!_archive.openArchivedFile(path))
+		error("can't open mask file %s", path);
+	stream = new DecrunchStream(_archive);
+	decoder = new Graphics::ILBMDecoder(*stream);
+	decoder->decode(surf, pal);
+	_vm->_gfx->setMask(static_cast<byte*>(surf.pixels));
+	surf.free();
+	delete decoder;
+	delete stream;
+
+	sprintf(path, "%s.path.pp", background);
+	if (!_archive.openArchivedFile(path))
+		error("can't open path file %s", path);
+	stream = new DecrunchStream(_archive);
+	decoder = new Graphics::ILBMDecoder(*stream);
+	decoder->decode(surf, pal);
+	setPath(static_cast<byte*>(surf.pixels));
+	surf.free();
+	delete decoder;
+	delete stream;
+
 	return;
 }
 
 Table* AmigaDisk::loadTable(const char* name) {
-//	printf("AmigaDisk::loadTable\n");
+	debugC(1, kDebugDisk, "AmigaDisk::loadTable '%s'", name);
 
 	char path[PATH_LEN];
 	sprintf(path, "%s.table", name);
+
+	bool dispose = false;
 
 	Common::SeekableReadStream *stream;
 
@@ -779,12 +1017,12 @@ Table* AmigaDisk::loadTable(const char* name) {
 		if (!s->open(path))
 			error("can't open %s", path);
 
+		dispose = true;
 		stream = s;
 	} else {
 		if (!_archive.openArchivedFile(path))
 			error("can't open archived file %s", path);
 
-//		DecrunchStream *s = new DecrunchStream(_archive);
 		stream = &_archive;
 	}
 
@@ -796,7 +1034,8 @@ Table* AmigaDisk::loadTable(const char* name) {
 		fillBuffers(*stream);
 	}
 
-	delete stream;
+	if (dispose)
+		delete stream;
 
 	return t;
 }
