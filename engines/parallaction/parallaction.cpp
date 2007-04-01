@@ -189,7 +189,12 @@ int Parallaction::init() {
 	_location._startFrame = 0;
 	_location._walkNodes._prev = NULL;
 	_location._walkNodes._next = NULL;
-	strcpy(_location._name, "fogne");
+
+	if (getFeatures() & GF_DEMO)
+		strcpy(_location._name, "fognedemo");
+	else
+		strcpy(_location._name, "fogne");
+
 	_location._aCommands = NULL;
 	_location._commands = NULL;
 	_location._comment = NULL;
@@ -820,7 +825,8 @@ void Parallaction::changeCharacter(const char *name) {
 	else
 		_vm->_char._ani._cnv = _vm->_char._normalFrames;
 
-	parseLocation("common");
+	if (!(getFeatures() & GF_DEMO))
+		parseLocation("common");
 
 	strcpy(_characterName1, v32);
 

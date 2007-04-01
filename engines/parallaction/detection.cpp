@@ -90,7 +90,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::ADGF_DEMO
 		},
 		GType_Nippon,
-		0,
+		GF_DEMO,
 	},
 
 

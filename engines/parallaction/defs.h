@@ -144,6 +144,10 @@ enum {
 	kDebugInput = 1 << 6
 };
 
+enum {
+	GF_DEMO = 1 << 0
+};
+
 } // namespace Parallaction
 
 
