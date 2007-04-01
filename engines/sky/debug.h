@@ -51,6 +51,9 @@ protected:
 	bool Cmd_Info(int argc, const char **argv);
 	bool Cmd_ScriptVar(int argc, const char **argv);
 	bool Cmd_Section(int argc, const char **argv);
+	bool Cmd_LogicList(int argc, const char **argv);
+
+	void dumpCompact(uint16 cptId);
 
 	Logic *_logic;
 	Mouse *_mouse;
@@ -63,7 +66,6 @@ protected:
 
 class Debug {
 public:
-	static void fetchCompact(uint32 a);
 	static void logic(uint32 logic);
 	static void script(uint32 command, uint16 *scriptData);
 	static void mcode(uint32 mcode, uint32 a, uint32 b, uint32 c);

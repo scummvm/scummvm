@@ -35,189 +35,6 @@
 
 namespace Sky {
 
-static const char *section_0_compacts[] = {
-	"UNDEFINED",
-	"joey",
-	"joey_park",
-	"foster",
-	"std_menu_logic",
-	"text_mouse",
-	"gallcard_menu",
-	"rs_mega_alive",
-	"citycard_menu",
-	"shades_menu",
-	"putty_menu",
-	"lightbulb_menu",
-	"low_get_seq",
-	"mini_shrug_seq",
-	"sml_up_mid_get_seq",
-	"new_grid",
-	"lamb",
-	"floor",
-	"coordinate_test",
-	"save_restore_mouse",
-	"whole_screen",
-	"l_talk_s2",
-	"r_talk_s2",
-	"text_1",
-	"text_2",
-	"text_3",
-	"text_4",
-	"text_5",
-	"text_6",
-	"text_7",
-	"text_8",
-	"text_9",
-	"text_10",
-	"text_11",
-	"wd40_menu",
-	"skey_menu",
-	"secateurs_menu",
-	"rope_menu",
-	"plaster_menu",
-	"new_cable_menu",
-	"shrug_seq",
-	"rad_shrug_seq",
-	"brick_menu",
-	"tongs_menu",
-	"talk1",
-	"talk2",
-	"menu_bar",
-	"left_arrow",
-	"right_arrow",
-	"dog_food_menu",
-	"UNDEFINED",
-	"blank1",
-	"blank2",
-	"blank3",
-	"blank4",
-	"blank5",
-	"blank6",
-	"blank7",
-	"blank8",
-	"blank9",
-	"blank10",
-	"blank11",
-	"UNDEFINED",
-	"crow_bar_menu",
-	"sarnie_menu",
-	"spanner_menu",
-	"joeyb_menu",
-	"low_floor",
-	"UNDEFINED",
-	"stairs",
-	"upstairs",
-	"anita_card_menu",
-	"rs_lamb_to_three",
-	"rs_lamb_start_2",
-	"anchor_menu",
-	"magazine_menu",
-	"tape_menu",
-	"glass_menu",
-	"rs_lamb_start_3",
-	"ticket_menu",
-	"s29_fast_list",
-	"s6_fast_list",
-	"fast_list_sc3",
-	"s9_fast_list",
-	"s10_fast_list",
-	"bar",
-	"s11_fast_list",
-	"fast_list_0",
-	"s0_fast_list",
-	"s7_fast_list",
-	"door",
-	"s28_fast_list",
-	"swing_list",
-	"UNDEFINED",
-	"UNDEFINED",
-	"outside_ledge",
-	"UNDEFINED",
-	"r1_door",
-	"UNDEFINED",
-	"UNDEFINED",
-	"UNDEFINED",
-	"UNDEFINED",
-	"fast_list_sc90",
-	"UNDEFINED",
-	"UNDEFINED",
-	"small_door",
-	"sc85_fast_list",
-	"sc85_chip_list",
-	"sc85_logic_list",
-	"sc85_mouse_list",
-	"sc85_palette",
-	"right_exit0",
-	"UNDEFINED",
-	"UNDEFINED",
-	"UNDEFINED",
-	"s2_floor",
-	"UNDEFINED",
-	"s101_chip_list",
-	"s101_pal",
-	"s101_mouse",
-	"s101_logic",
-	"full_screen",
-	"cancel_button",
-	"button_0",
-	"button_1",
-	"button_2",
-	"button_3",
-	"button_4",
-	"button_5",
-	"button_6",
-	"button_7",
-	"button_8",
-	"button_9",
-	"rs_left_arrow",
-	"rs_right_arrow",
-	"rs_blank",
-	"monitor",
-	"anita",
-	"UNDEFINED",
-	"UNDEFINED",
-	"UNDEFINED",
-	"baby_logic_list",
-	"rs_l_arr_linc",
-	"rs_r_arr_linc",
-	"rs_blanks_linc",
-	"s5_fast_list",
-	"but_e",
-	"but_0",
-	"but_1",
-	"but_2",
-	"but_3",
-	"but_4",
-	"but_5",
-	"but_6",
-	"but_7",
-	"but_8",
-	"but_9",
-	"UNDEFINED",
-	"s102_chip_list",
-	"s102_pal",
-	"s102_logic",
-	"s102_mouse",
-	"restart_butt",
-	"restart_seq",
-	"restore_butt",
-	"restore_seq",
-	"seq1_pal",
-	"seq2_pal",
-	"seq3_pal",
-	"fast_intro",
-	"chip_intro",
-	"fast_intro_2",
-	"fast_intro_3",
-	"retina_scan",
-	"retina_scan_cdt",
-	"exit_butt",
-	"exit_seq",
-	"forklift_cpt",
-	"forklift1_cdt",
-	"forklift2_cdt"
-};
-
 static const char *logic_table_names[] = {
 	"return",
 	"Logic::script",
@@ -1244,16 +1061,6 @@ static const char *scriptVars[] = {
 	"man_loc3"
 };
 
-void Debug::fetchCompact(uint32 a) {
-	uint32 sectionNum = (a & 0xf000) >> 12;
-	uint32 compactNum = (a & 0x0fff);
-
-	if (sectionNum == 0)
-		debug(8, "Loading Compact %d (%s) from section %d", compactNum, section_0_compacts[compactNum], sectionNum);
-	else
-		debug(8, "Loading Compact %d from section %d", compactNum, sectionNum);
-}
-
 void Debug::logic(uint32 logic) {
 	debug(6, "LOGIC: %s", logic_table_names[logic]);
 }
@@ -1287,6 +1094,7 @@ Debugger::Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCo
 	DCmd_Register("logiccmd",   WRAP_METHOD(Debugger, Cmd_LogicCommand));
 	DCmd_Register("scriptvar",  WRAP_METHOD(Debugger, Cmd_ScriptVar));
 	DCmd_Register("section",    WRAP_METHOD(Debugger, Cmd_Section));
+	DCmd_Register("logiclist",  WRAP_METHOD(Debugger, Cmd_LogicList));
 }
 
 Debugger::~Debugger() {} // we need this here for __SYMBIAN32__
@@ -1312,50 +1120,104 @@ bool Debugger::Cmd_ReloadGrid(int argc, const char **argv) {
 	return true;
 }
 
+static const char *logicTypes[] = {
+	"(none)", "SCRIPT", "AUTOROUTE", "AR_ANIM", "AR_TURNING", "ALT", "MOD_ANIM", "TURNING", "CURSOR", "TALK", "LISTEN",
+	"STOPPED", "CHOOSE", "FRAMES", "PAUSE", "WAIT_SYNC", "SIMPLE MOD"
+};
+
+static const char *noYes[] = { "no", "yes" };
+
+void Debugger::dumpCompact(uint16 cptId) {
+	uint16 type, size;
+	char name[256];
+	Compact *cpt = _skyCompact->fetchCptInfo(cptId, &size, &type, name);
+
+	if (type == COMPACT) {
+		DebugPrintf("Compact %s: id = %04X, section %d, id %d\n", name, cptId, cptId >> 12, cptId & 0xFFF);
+		DebugPrintf("logic      : %04X: %s\n", cpt->logic, (cpt->logic <= 16) ? logicTypes[cpt->logic] : "unknown");
+		DebugPrintf("status     : %04X\n", cpt->status);
+		DebugPrintf("           : background  : %s\n", noYes[(cpt->status &  ST_BACKGROUND) >> 0]);
+		DebugPrintf("           : foreground  : %s\n", noYes[(cpt->status &  ST_FOREGROUND) >> 1]);
+		DebugPrintf("           : sort list   : %s\n", noYes[(cpt->status &        ST_SORT) >> 2]);
+		DebugPrintf("           : recreate    : %s\n", noYes[(cpt->status &    ST_RECREATE) >> 3]);
+		DebugPrintf("           : mouse       : %s\n", noYes[(cpt->status &       ST_MOUSE) >> 4]);
+		DebugPrintf("           : collision   : %s\n", noYes[(cpt->status &   ST_COLLISION) >> 5]);
+		DebugPrintf("           : logic       : %s\n", noYes[(cpt->status &       ST_LOGIC) >> 6]);
+		DebugPrintf("           : on grid     : %s\n", noYes[(cpt->status &   ST_GRID_PLOT) >> 7]);
+		DebugPrintf("           : ar priority : %s\n", noYes[(cpt->status & ST_AR_PRIORITY) >> 8]);
+		DebugPrintf("sync       : %04X\n", cpt->sync);
+		DebugPrintf("screen     : %d\n", cpt->screen);
+		_skyCompact->fetchCptInfo(cpt->place, NULL, NULL, name);
+		DebugPrintf("place      : %04X: %s\n", cpt->place, name);
+		_skyCompact->fetchCptInfo(cpt->getToTableId, NULL, NULL, name);
+		DebugPrintf("get to tab : %04X: %s\n", cpt->getToTableId, name);
+		DebugPrintf("x/y        : %d/%d\n", cpt->xcood, cpt->ycood);
+	} else {
+		DebugPrintf("Can't dump binary data\n");
+	}
+}
+
 bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Example: %s foster\n", argv[0]);
+		DebugPrintf("Example: \"%s foster\" dumps compact \"foster\"\n", argv[0]);
+		DebugPrintf("Example: \"%s list 1\" lists all compacts from section 1\n", argv[0]);
+		DebugPrintf("Example: \"%s list 1 all\" lists all entities from section 1\n", argv[0]);
 		return true;
 	}
-
-	int i;
-	int numCompacts = ARRAYSIZE(section_0_compacts);
 
 	if (0 == strcmp(argv[1], "list")) {
-		for (i = 0; i < numCompacts; ++i) {
-			DebugPrintf("%s\n", section_0_compacts[i]);
+		bool showAll = false;
+		int sectionNumber = -1;
+		if (argc >= 3) {
+			sectionNumber = atoi(argv[2]);
+			if (sectionNumber >= _skyCompact->giveNumDataLists()) {
+				DebugPrintf("Section number %d does not exist\n", sectionNumber);
+				return true;
+			}
+			if ((argc == 4) && (scumm_stricmp(argv[3], "all") == 0))
+				showAll = true;
 		}
-		return true;
-	}
-
-	Compact *cpt = 0;
-
-	for (i = 0; i < numCompacts; ++i) {
-		if (0 == strcmp(section_0_compacts[i], argv[1])) {
-			cpt = _skyCompact->fetchCpt(i);
-			break;
+		for (int sec = 0; sec < _skyCompact->giveNumDataLists(); sec++) {
+			if ((sectionNumber == -1) || (sectionNumber == sec)) {
+				DebugPrintf("Compacts in section %d:\n", sec);
+				if (showAll) {
+					char line[256];
+					char *linePos = line;
+					for (int cpt = 0; cpt < _skyCompact->giveDataListLen(sec); cpt++) {
+						if (cpt != 0) {
+							if ((cpt % 3) == 0) {
+								DebugPrintf("%s\n", line);
+								linePos = line;
+							} else
+								linePos += sprintf(linePos, ", ");
+						}
+						uint16 cptId = (uint16)((sec << 12) | cpt);
+						uint16 type, size;
+						char name[256];
+						_skyCompact->fetchCptInfo(cptId, &size, &type, name);
+						linePos += sprintf(linePos, "%04X: %10s %22s", cptId, _skyCompact->nameForType(type), name);
+					}
+					if (linePos != line)
+						DebugPrintf("%s\n", line);
+				} else {
+					for (int cpt = 0; cpt < _skyCompact->giveDataListLen(sec); cpt++) {
+						uint16 cptId = (uint16)((sec << 12) | cpt);
+						uint16 type, size;
+						char name[256];
+						_skyCompact->fetchCptInfo(cptId, &size, &type, name);
+						if (type == COMPACT)
+							DebugPrintf("%04X: %s\n", cptId, name);
+					}
+				}
+			}
 		}
-	}
-
-	if (cpt) {
-		DebugPrintf("------Compact %d ('%s')------\n", i, section_0_compacts[i]);
-		DebugPrintf("logic      : %d\n", cpt->logic);
-		DebugPrintf("status     : %d\n", cpt->status);
-		DebugPrintf("sync       : %d\n", cpt->sync);
-		DebugPrintf("screen     : %d\n", cpt->screen);
-		DebugPrintf("x/y        : %d/%d\n", cpt->xcood, cpt->ycood);
-		DebugPrintf("place cpt  : %d\n", cpt->place);
-		DebugPrintf("getToFlag  : %d\n", cpt->getToFlag);
-		DebugPrintf("mode       : %d\n", cpt->mode);
-		// Mega / extCompact info
-		/*if (cpt->extCompact) {
-			DebugPrintf("waitingFor : %d\n", cpt->extCompact->waitingFor);
-			DebugPrintf("arTargetX/Y: %d/%d\n", cpt->extCompact->arTargetX, cpt->extCompact->arTargetY);
-		}*/
 	} else {
-		DebugPrintf("Unknown compact: '%s'\n", argv[1]);
+		uint16 cptId = _skyCompact->findCptId(argv[1]);
+		if (cptId == 0)
+			DebugPrintf("Unknown compact: '%s'\n", argv[1]);
+		else
+			dumpCompact(cptId);
 	}
-
 	return true;
 }
 
@@ -1452,6 +1314,28 @@ bool Debugger::Cmd_Section(int argc, const char **argv) {
 		DebugPrintf("Unknown section '%s'\n", argv[1]);
 	}
 
+	return true;
+}
+
+bool Debugger::Cmd_LogicList(int argc, const char **argv) {
+	if (argc != 1)
+		DebugPrintf("%s does not expect any parameters\n", argv[0]);
+
+	char cptName[256];
+	uint16 numElems, type;
+	uint16 *logicList = (uint16 *)_skyCompact->fetchCptInfo(Logic::_scriptVariables[LOGIC_LIST_NO], &numElems, &type, cptName);
+	DebugPrintf("Current LogicList: %04X (%s)\n", Logic::_scriptVariables[LOGIC_LIST_NO], cptName);
+	while (*logicList != 0) {
+		if (*logicList == 0xFFFF) {
+			uint16 newList = logicList[1];
+			logicList = (uint16 *)_skyCompact->fetchCptInfo(newList, &numElems, &type, cptName);
+			DebugPrintf("New List: %04X (%s)\n", newList, cptName);
+		} else {
+			_skyCompact->fetchCptInfo(*logicList, &numElems, &type, cptName);
+			DebugPrintf(" Cpt %04X (%s) (%s)\n", *logicList, cptName, _skyCompact->nameForType(type));
+			logicList++;
+		}
+	}
 	return true;
 }
 

@@ -27,6 +27,8 @@
 #include "sky/compact.h"
 #include "gui/message.h"
 
+extern int gDebugLevel;
+
 namespace Sky {
 
 #define	SKY_CPT_SIZE	419427	
@@ -263,6 +265,11 @@ Compact *SkyCompact::fetchCpt(uint16 cptId) {
 	if (cptId == 0xFFFF) // is this really still necessary?
 		return NULL;
 	assert(((cptId >> 12) < _numDataLists) && ((cptId & 0xFFF) < _dataListLen[cptId >> 12]));
+	
+	if (gDebugLevel >= 8) {
+		debug(8, "Loading Compact %s [%s] (%04=%d,%d)", _cptNames[cptId >> 12][cptId & 0xFFF], nameForType(_cptTypes[cptId >> 12][cptId & 0xFFF]), cptId >> 12, cptId & 0xFFF);
+	}		
+
 	return _compacts[cptId >> 12][cptId & 0xFFF];
 }
 
@@ -279,6 +286,13 @@ Compact *SkyCompact::fetchCptInfo(uint16 cptId, uint16 *elems, uint16 *type, cha
 			strcpy(name, "(null)");
 	}
 	return fetchCpt(cptId);
+}
+
+const char *SkyCompact::nameForType(uint16 type) {
+	if (type >= NUM_CPT_TYPES)
+		return "unknown";
+	else
+		return _typeNames[type];
 }
 
 uint16 *SkyCompact::getSub(Compact *cpt, uint16 mode) {
@@ -457,5 +471,16 @@ uint16 SkyCompact::giveDataListLen(uint16 listNum) {
 	else
 		return _dataListLen[listNum];
 }
+
+const char *SkyCompact::_typeNames[NUM_CPT_TYPES] = {
+	"null",
+	"COMPACT",
+	"TURNTABLE",
+	"ANIM SEQ",
+	"UNKNOWN",
+	"GETTOTABLE",
+	"AR BUFFER",
+	"MAIN LIST"
+};
 
 } // End of namespace Sky

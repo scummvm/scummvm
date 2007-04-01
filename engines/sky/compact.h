@@ -50,7 +50,8 @@ enum CptTypeIds {
 	MISCBIN,
 	GETTOTAB,
 	ROUTEBUF,
-	MAINLIST
+	MAINLIST,
+	NUM_CPT_TYPES
 };
 
 namespace Sky {
@@ -75,6 +76,7 @@ public:
 	uint16 findCptId(const char *cptName);
 	uint16 giveNumDataLists(void);
 	uint16 giveDataListLen(uint16 listNum);
+	const char *nameForType(uint16 type);
 private:
 	uint16  _numDataLists;
 	uint16  *_dataListLen;
@@ -86,6 +88,7 @@ private:
 	uint16  **_cptTypes;
 	Common::File	*_cptFile;
 	uint32	_resetDataPos;
+	static const char *_typeNames[NUM_CPT_TYPES];
 };
 
 } // End of namespace Sky
