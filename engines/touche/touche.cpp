@@ -285,8 +285,7 @@ void ToucheEngine::mainLoop() {
 
 void ToucheEngine::processEvents(bool handleKeyEvents) {
 	Common::Event event;
-	Common::EventManager *eventMan = _system->getEventManager();
-	while (eventMan->pollEvent(event)) {
+	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 			_flagsTable[611] = 1;

@@ -379,8 +379,7 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 				}
 			}
 			Common::Event event;
-			Common::EventManager *eventMan = _system->getEventManager();
-			while (eventMan->pollEvent(event)) {
+			while (_eventMan->pollEvent(event)) {
 				const Button *button = 0;
 				switch (event.type) {
 				case Common::EVENT_QUIT:
@@ -546,8 +545,7 @@ int ToucheEngine::displayQuitDialog() {
 	bool quitLoop = false;
 	while (!quitLoop) {
 		Common::Event event;
-		Common::EventManager *eventMan = _system->getEventManager();
-		while (eventMan->pollEvent(event)) {
+		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 				quitLoop = true;
