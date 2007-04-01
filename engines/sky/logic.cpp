@@ -2513,12 +2513,11 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 	if (SkyEngine::isCDVersion())
 		speechFileFound = _skySound->startSpeech((uint16)textNum);
 
-	
-	// Calculate the point where the character is
-	int x = (((uint32) (target->xcood)) * GAME_SCREEN_WIDTH) >> 9;
-	int y = ((((uint32) (target->ycood)) * GAME_SCREEN_HEIGHT) >> 9);
 
 	// Set the focus region to that area
+	// Calculate the point where the character is
+	int x = target->xcood - TOP_LEFT_X;
+	int y = target->ycood - TOP_LEFT_Y;
 	// TODO: Make the box size change based on the object that has the focus
 	Common::Rect rect(x - 96, y - 64, x + 96, y + 64);
 	_skyScreen->setFocusRectangle(rect);
