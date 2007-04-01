@@ -273,12 +273,12 @@ void ToucheEngine::mainLoop() {
 		if (nextFrame < now) {
 			nextFrame = now + 1;
 		}
-		while (now < nextFrame) {
+		do {
 			processEvents();
 			_system->updateScreen();
+			_system->delayMillis(10);
 			now = _system->getMillis();
-			_system->delayMillis((nextFrame - now >= 10) ? 10 : nextFrame - now);
-		}
+		} while (now < nextFrame && !_fastMode);
 		frameTimeStamp = nextFrame;
 	}
 
