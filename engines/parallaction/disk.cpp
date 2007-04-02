@@ -758,8 +758,7 @@ void AmigaDisk::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 plan
 
 StaticCnv* AmigaDisk::makeStaticCnv(Common::SeekableReadStream &stream) {
 
-
-	uint16 numFrames = stream.readByte();
+	stream.skip(1);
 	uint16 width = stream.readByte();
 	uint16 height = stream.readByte();
 
@@ -815,16 +814,18 @@ Cnv* AmigaDisk::makeCnv(Common::SeekableReadStream &stream) {
 Script* AmigaDisk::loadLocation(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadLocation '%s'", name);
 
-	char path[PATH_LEN];
-
-	sprintf(path, "%s%s%s.loc.pp", _vm->_characterName, _languageDir, name);
-
 	_languageDir[2] = '\0';
 	_archive.open(_languageDir);
 	_languageDir[2] = '/';
 
-	if (!_archive.openArchivedFile(path))
-		error("can't find location file '%s'", path);
+	char path[PATH_LEN];
+	sprintf(path, "%s%s%s.loc.pp", _vm->_characterName, _languageDir, name);
+	if (!_archive.openArchivedFile(path)) {
+		sprintf(path, "%s%s.loc.pp", _languageDir, name);
+		if (!_archive.openArchivedFile(path)) {
+			error("can't find location file '%s'", path);
+		}
+	}
 
 	PowerPackerStream stream(_archive);
 
@@ -1083,7 +1084,8 @@ void AmigaDisk::loadScenery(const char* background, const char* mask) {
 
 	sprintf(path, "%s.path.pp", background);
 	if (!_archive.openArchivedFile(path))
-		error("can't open path file %s", path);
+		return;	// no errors if missing path files: not every location has one
+
 	stream = new PowerPackerStream(_archive);
 	stream->seek(0x120, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
 	stream2 = new RLEStream(stream);
