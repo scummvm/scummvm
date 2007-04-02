@@ -177,7 +177,12 @@ void QueenEngine::update(bool checkPlayerInput) {
 	_graphics->update(_logic->currentRoom());
 	_logic->update();
 
-	_input->delay();
+	int frameDelay = (_lastUpdateTime + Input::DELAY_NORMAL - _system->getMillis());
+	if (frameDelay <= 0) {
+		frameDelay = 1;
+	}
+	_input->delay(frameDelay);
+	_lastUpdateTime = _system->getMillis();
 
 	if (!_resource->isInterview()) {
 		_display->palCustomScroll(_logic->currentRoom());
@@ -333,7 +338,7 @@ int QueenEngine::go() {
 	if (ConfMan.hasKey("save_slot") && canLoadOrSave()) {
 		loadGameState(ConfMan.getInt("save_slot"));
 	}
-	_lastSaveTime = _system->getMillis();
+	_lastSaveTime = _lastUpdateTime = _system->getMillis();
 	_quit = false;
 	while (!_quit) {
 		if (_logic->newRoom() > 0) {

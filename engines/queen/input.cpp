@@ -81,11 +81,10 @@ Input::Input(Common::Language language, OSystem *system) :
 	}
 }
 
-void Input::delay() {
-	delay(_fastMode ? DELAY_SHORT : DELAY_NORMAL);
-}
-
 void Input::delay(uint amount) {
+	if (_fastMode && amount > DELAY_SHORT) {
+		amount = DELAY_SHORT;
+	}
 	if (_idleTime < DELAY_SCREEN_BLANKER) {
 		_idleTime += amount;
 	}

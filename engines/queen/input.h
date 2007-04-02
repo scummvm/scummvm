@@ -46,10 +46,6 @@ public:
 
 	Input(Common::Language language, OSystem *system);
 
-	//! calls the other delay() with a value adjusted depending on _fastMode
-	void delay();
-
-	//! moved QueenEngine::delay() here
 	void delay(uint amount);
 
 	//! convert input to verb
