@@ -702,6 +702,18 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_BARGON,
 		"intro"
 	},
+	{ // Supplied by paul66 in bug #1692667
+		{
+			"bargon",
+			"",
+			AD_ENTRY1s("intro.stk", "da3c54be18ab73fbdb32db24624a9c23", 3181825),
+			DE_DEU,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_BARGON,
+		"intro"
+	},
 	{
 		{
 			"gob3",
