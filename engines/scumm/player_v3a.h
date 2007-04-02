@@ -63,7 +63,8 @@ private:
 	struct sfxChan {
 		int id;
 		int dur;
-		// SFX will eventually have pitch bends
+		uint32 rate;
+		int32 delta;
 	};
 
 	struct instData {

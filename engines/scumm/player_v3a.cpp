@@ -223,24 +223,27 @@ void Player_V3A::startSound(int nr) {
 		int rate = 3579545 / READ_BE_UINT16(data + 20);
 		char *sound = (char *)malloc(size);
 		int vol = (data[24] << 1) | (data[24] >> 5);	// if I boost this to 0-255, it gets too loud and starts to clip
-		memcpy(sound,data + READ_BE_UINT16(data + 8),size);
+		memcpy(sound, data + READ_BE_UINT16(data + 8), size);
 		int loopStart = 0, loopEnd = 0;
-		bool looped = false;
-		if ((READ_BE_UINT16(data + 16) || READ_BE_UINT16(data + 6))) {
+		int loopcount = data[27];
+		if (loopcount > 1) {
 			loopStart = READ_BE_UINT16(data + 10) - READ_BE_UINT16(data + 8);
 			loopEnd = READ_BE_UINT16(data + 14);
-			looped = true;
 		}
 		int i = getSfxChan();
-		if (i == -1)
-		{
+		if (i == -1) {
 			free(sound);
 			return;
 		}
 		_sfx[i].id = nr;
-		_sfx[i].dur = looped ? -1 : (1 + 60 * size / rate);
-		if ((_vm->_game.id == GID_INDY3) && (nr == 60))
-			_sfx[i].dur = 240;
+		_sfx[i].dur = 1 + loopcount * 60 * size / rate;
+		if (READ_BE_UINT16(data + 16)) {
+			_sfx[i].rate = READ_BE_UINT16(data + 20) << 16;
+			_sfx[i].delta = (int32)READ_BE_UINT32(data + 32);
+			_sfx[i].dur = READ_BE_UINT32(data + 40);
+		} else {
+			_sfx[i].delta = 0;
+		}
 		_mod->startChannel(nr | 0x100, sound, size, rate, vol, loopStart, loopEnd);
 	}
 }
@@ -262,6 +265,15 @@ void Player_V3A::playMusic() {
 	}
 	for (i = 0; i < V3A_MAXSFX; i++) {
 		if (_sfx[i].id) {
+			if (_sfx[i].delta) {
+				uint16 oldrate = _sfx[i].rate >> 16;
+				_sfx[i].rate += _sfx[i].delta;
+				if (_sfx[i].rate < (55 << 16))
+					_sfx[i].rate = 55 << 16;	// at rates below 55, frequency
+				uint16 newrate = _sfx[i].rate >> 16;	// exceeds 65536, which is bad
+				if (oldrate != newrate)
+					_mod->setChannelFreq(_sfx[i].id | 0x100, 3579545 / newrate);
+			}
 			_sfx[i].dur--;
 			if (_sfx[i].dur)
 				continue;
@@ -320,8 +332,7 @@ void Player_V3A::playMusic() {
 			memcpy(data + _wavetable[inst]->_ilen[oct], _wavetable[inst]->_ldat[oct], _wavetable[inst]->_llen[oct]);
 
 		i = getMusChan();
-		if (i == -1)
-		{
+		if (i == -1) {
 			free(data);
 			return;
 		}
