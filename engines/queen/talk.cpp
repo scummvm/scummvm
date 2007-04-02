@@ -1271,7 +1271,7 @@ int16 Talk::selectSentence() {
 
 				_vm->update();
 
-				Common::Point mouse = g_system->getEventManager()->getMousePos();
+				Common::Point mouse = _vm->input()->getMousePos();
 				zone = _vm->grid()->findZoneForPos(GS_PANEL, mouse.x, mouse.y);
 
 				int mouseButton = _vm->input()->mouseButton();

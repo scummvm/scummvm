@@ -24,9 +24,14 @@
 #define QUEEN_INPUT_H
 
 #include "common/util.h"
+#include "common/rect.h"
 #include "queen/defs.h"
 
 class OSystem;
+
+namespace Common {
+	class EventManager;
+}
 
 namespace Queen {
 
@@ -36,7 +41,7 @@ public:
 	//! Adjust here to change delays!
 	enum {
 		DELAY_SHORT  =  10,
-		DELAY_NORMAL = 100,
+		DELAY_NORMAL = 100, // 5 * 20ms
 		DELAY_SCREEN_BLANKER = 5 * 60 * 1000
 	};
 	enum {
@@ -79,6 +84,8 @@ public:
 
 	Verb keyVerb() const { return _keyVerb; }
 
+	Common::Point getMousePos() const;
+
 	int mouseButton() const { return _mouseButton; }
 	void clearMouseButton() { _mouseButton = 0; }
 
@@ -109,6 +116,8 @@ private:
 
 	//! used to get keyboard and mouse events
 	OSystem *_system;
+
+	Common::EventManager *_eventMan;
 
 	//! some cutaways require update() run faster
 	bool _fastMode;

@@ -49,10 +49,10 @@ const Verb Input::_verbKeys[] = {
 };
 
 Input::Input(Common::Language language, OSystem *system) :
-	_system(system), _fastMode(false), _keyVerb(VERB_NONE),
-	_cutawayRunning(false), _canQuit(false), _cutawayQuit(false),
-	_dialogueRunning(false), _talkQuit(false), _quickSave(false),
-	_quickLoad(false), _debugger(false), _inKey(0),
+	_system(system), _eventMan(system->getEventManager()), _fastMode(false),
+	_keyVerb(VERB_NONE), _cutawayRunning(false), _canQuit(false),
+	_cutawayQuit(false), _dialogueRunning(false), _talkQuit(false),
+	_quickSave(false), _quickLoad(false), _debugger(false), _inKey(0),
 	_mouseButton(0), _idleTime(0) {
 
 	switch (language) {
@@ -91,8 +91,7 @@ void Input::delay(uint amount) {
 	uint32 end = _system->getMillis() + amount;
 	do {
 		Common::Event event;
-		Common::EventManager *eventMan = _system->getEventManager();
-		while (eventMan->pollEvent(event)) {
+		while (_eventMan->pollEvent(event)) {
 			_idleTime = 0;
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
@@ -160,7 +159,7 @@ int Input::checkKeys() {
 	case KEY_DIGIT_4:
 		_keyVerb = VERB_DIGIT_4;
 		break;
-	case KEY_ESCAPE: // slip cutaway / dialogue
+	case KEY_ESCAPE: // skip cutaway / dialogue
 		if (_canQuit) {
 			if (_cutawayRunning) {
 				debug(6, "[Input::checkKeys] Setting _cutawayQuit to true");
@@ -204,5 +203,8 @@ int Input::checkKeys() {
 	return inKey;
 }
 
+Common::Point Input::getMousePos() const {
+	return _eventMan->getMousePos();
+}
 
 } // End of namespace Queen

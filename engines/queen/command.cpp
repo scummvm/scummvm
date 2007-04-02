@@ -271,7 +271,7 @@ void Command::executeCurrentAction() {
 
 void Command::updatePlayer() {
 	if (_vm->logic()->joeWalk() != JWM_MOVE) {
-		Common::Point mouse = g_system->getEventManager()->getMousePos();
+		Common::Point mouse = _vm->input()->getMousePos();
 		lookForCurrentObject(mouse.x, mouse.y);
 		lookForCurrentIcon(mouse.x, mouse.y);
 	}
@@ -531,7 +531,7 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWa
 }
 
 void Command::grabCurrentSelection() {
-	Common::Point mouse = g_system->getEventManager()->getMousePos();
+	Common::Point mouse = _vm->input()->getMousePos();
 	_selPosX = mouse.x;
 	_selPosY = mouse.y;
 

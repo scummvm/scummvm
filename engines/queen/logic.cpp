@@ -1177,7 +1177,7 @@ void Logic::handlePinnacleRoom() {
 	BobSlot *piton = _vm->graphics()->bob(7);
 
 	// set scrolling value to mouse position to avoid glitch
-	Common::Point mouse = g_system->getEventManager()->getMousePos();
+	Common::Point mouse = _vm->input()->getMousePos();
 	_vm->display()->horizontalScroll(mouse.x);
 
 	joe->x = piton->x = 3 * mouse.x / 4 + 200;
@@ -1197,7 +1197,7 @@ void Logic::handlePinnacleRoom() {
 	while (_vm->input()->mouseButton() == 0 || _entryObj == 0) {
 
 		_vm->update();
-		mouse = g_system->getEventManager()->getMousePos();
+		mouse = _vm->input()->getMousePos();
 
 		// update screen scrolling
 		_vm->display()->horizontalScroll(mouse.x);
