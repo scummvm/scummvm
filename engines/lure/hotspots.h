@@ -68,11 +68,14 @@ private:
 	static void droppingTorchAnimHandler(Hotspot &h);
 	static void playerSewerExitAnimHandler(Hotspot &h);
 	static void fireAnimHandler(Hotspot &h);
+	static void goewinCaptiveAnimHandler(Hotspot &h);
 	static void prisonerAnimHandler(Hotspot &h);
 	static void catrionaAnimHandler(Hotspot &h);
 	static void morkusAnimHandler(Hotspot &h);
 	static void talkAnimHandler(Hotspot &h);
 	static void headAnimHandler(Hotspot &h);
+	static void sellerAnimHandler(Hotspot &h);
+	static void skorlGaurdAnimHandler(Hotspot &h);
 	static void rackSerfAnimHandler(Hotspot &h);
 
 public:

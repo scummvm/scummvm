@@ -1984,7 +1984,7 @@ void Hotspot::loadFromStream(Common::ReadStream *stream) {
 
 HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 	switch (procOffset) {
-	case 0x4F82:
+	case STANDARD_CHARACTER_TICK_PROC:
 		return standardCharacterAnimHandler;
 	case VOICE_TICK_PROC_ID:
 		return voiceBubbleAnimHandler;
@@ -2008,6 +2008,8 @@ HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 		return playerSewerExitAnimHandler;
 	case 0x8009:
 		return fireAnimHandler;
+	case 0x8180:
+		return goewinCaptiveAnimHandler;
 	case 0x81B3:
 		return prisonerAnimHandler;
 	case 0x81F3:
@@ -2016,6 +2018,10 @@ HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 		return morkusAnimHandler;
 	case 0x8241:
 		return headAnimHandler;
+	case 0x82A0:
+		return sellerAnimHandler;
+	case 0x85ce:
+		return skorlGaurdAnimHandler;
 	case 0x882A:
 		return rackSerfAnimHandler;
 	case TALK_TICK_PROC_ID:
@@ -2810,6 +2816,15 @@ void HotspotTickHandlers::fireAnimHandler(Hotspot &h) {
 	h.setOccupied(true);
 }
 
+void HotspotTickHandlers::goewinCaptiveAnimHandler(Hotspot &h) {
+	if (h.actionCtr() > 0) {
+		if (h.executeScript()) {
+			h.setTickProc(STANDARD_CHARACTER_TICK_PROC);
+			h.setActionCtr(0);
+		}
+	}
+}
+
 void HotspotTickHandlers::prisonerAnimHandler(Hotspot &h) {
 	ValueTableData &fields = Resources::getReference().fieldList();
 	Common::RandomSource rnd;
@@ -3089,6 +3104,23 @@ void HotspotTickHandlers::headAnimHandler(Hotspot &h) {
 	}
 
 	h.setFrameNumber(frameNumber);
+}
+
+void HotspotTickHandlers::sellerAnimHandler(Hotspot &h) {
+	h.handleTalkDialog();
+	if (h.frameCtr() > 0) {
+		h.decrFrameCtr();
+		return;
+	}
+	
+	// TODO: Decode remainder of sellers tick proc
+}
+
+void HotspotTickHandlers::skorlGaurdAnimHandler(Hotspot &h) {
+	h.handleTalkDialog();
+
+	// Set the frame number
+	h.setFrameNumber(h.actionCtr());
 }
 
 void HotspotTickHandlers::rackSerfAnimHandler(Hotspot &h) {

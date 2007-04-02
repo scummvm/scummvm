@@ -239,6 +239,7 @@ enum Action {
 #define GAME_FRAME_DELAY 80
 
 // Tick proc constants
+#define STANDARD_CHARACTER_TICK_PROC 0x4f82 
 #define TALK_TICK_PROC_ID 0x8ABD
 #define PLAYER_TICK_PROC_ID 0x5E44
 #define VOICE_TICK_PROC_ID 0x625E
