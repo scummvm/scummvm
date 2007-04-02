@@ -763,7 +763,7 @@ StaticCnv* AmigaDisk::makeStaticCnv(Common::SeekableReadStream &stream) {
 	uint16 width = stream.readByte();
 	uint16 height = stream.readByte();
 
-	assert(numFrames == 1 && (width & 7) == 0);
+	assert((width & 7) == 0);
 
 	byte bytesPerPlane = width / 8;
 
@@ -861,8 +861,12 @@ Cnv* AmigaDisk::loadTalk(const char *name) {
 	sprintf(path, "%s.talk.pp", name);
 	if (!_archive.openArchivedFile(path)) {
 		sprintf(path, "%s.talk.dd", name);
-		if (!_archive.openArchivedFile(path))
-			error("can't open talk '%s' from archive", path);
+		if (!_archive.openArchivedFile(path)) {
+			sprintf(path, "%s.pp", name);
+			if (!_archive.openArchivedFile(path)) {
+				error("can't open talk '%s' from archive", path);
+			}
+		}
 	}
 
 	PowerPackerStream stream(_archive);
@@ -1016,6 +1020,28 @@ void AmigaDisk::loadSlide(const char *name) {
 	return;
 }
 
+// FIXME: mask values are not computed correctly for level 1 and 2
+void buildMask(byte* buf) {
+
+	byte mask0[16] = { 0, 0x80, 0x20, 0xA0, 8, 0x84, 0x28, 0xA8, 2, 0x82, 0x22, 0xA2, 0xA, 0x8A, 0x2A, 0xAA };
+	byte mask1[16] = { 0, 0x40, 0x10, 0x50, 4, 0x42, 0x14, 0x54, 1, 0x41, 0x11, 0x51, 0x5, 0x45, 0x15, 0x55 };
+
+	byte plane0[40];
+	byte plane1[40];
+
+	for (uint32 i = 0; i < 200; i++) {
+
+		memcpy(plane0, buf, 40);
+		memcpy(plane1, buf+40, 40);
+
+		for (uint32 j = 0; j < 40; j++) {
+			*buf++ = mask0[(plane0[j] & 0xF0) >> 4] | mask1[(plane1[j] & 0xF0) >> 4];
+			*buf++ = mask0[plane0[j] & 0xF] | mask1[plane1[j] & 0xF];
+		}
+
+	}
+}
+
 void AmigaDisk::loadScenery(const char* background, const char* mask) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadScenery '%s', '%s'", background, mask);
 
@@ -1041,35 +1067,32 @@ void AmigaDisk::loadScenery(const char* background, const char* mask) {
 	delete decoder;
 	delete stream;
 
-	// FIXME: ILBMDecoder properly reads a LBM file and
-	// outputs a usable 8-bits bitmap, but that's not what
-	// we need here. Masks must be 2-bits bitmaps, so the
-	// following code must be changed to use RLEStream
-	// to access the raw mask data, and another - not yet
-	// written - filter to properly reorder planes.
-/*	sprintf(path, "%s.mask.pp", background);
+	sprintf(path, "%s.mask.pp", background);
 	if (!_archive.openArchivedFile(path))
 		error("can't open mask file %s", path);
 	stream = new PowerPackerStream(_archive);
-	decoder = new Graphics::ILBMDecoder(*stream);
-	decoder->decode(surf, pal);
-	_vm->_gfx->setMask(static_cast<byte*>(surf.pixels));
-	surf.free();
-	delete decoder;
+	stream->seek(0x126, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
+	RLEStream *stream2 = new RLEStream(stream);
+	byte *buf = (byte*)malloc(SCREENMASK_WIDTH*SCREEN_HEIGHT);
+	stream2->read(buf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
+	buildMask(buf);
+	_vm->_gfx->setMask(buf);
+	free(buf);
 	delete stream;
-*/
+	delete stream2;
+
 	sprintf(path, "%s.path.pp", background);
 	if (!_archive.openArchivedFile(path))
 		error("can't open path file %s", path);
 	stream = new PowerPackerStream(_archive);
-	stream->seek(0x120, SEEK_SET);	// skip IFF/ILBM header
-	RLEStream stream2(stream);
-	byte *buf = (byte*)malloc(SCREENMASK_WIDTH*SCREEN_HEIGHT);
-	stream2.read(buf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
+	stream->seek(0x120, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
+	stream2 = new RLEStream(stream);
+	buf = (byte*)malloc(SCREENPATH_WIDTH*SCREEN_HEIGHT);
+	stream2->read(buf, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 	setPath(buf);
 	free(buf);
-
 	delete stream;
+	delete stream2;
 
 	return;
 }
