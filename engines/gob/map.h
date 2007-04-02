@@ -100,7 +100,7 @@ public:
 	virtual int8 getPass(int x, int y, int heightOff = -1) = 0;
 	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) = 0;
 
-	virtual void loadMapObjects(char *avjFile) = 0;
+	virtual void loadMapObjects(const char *avjFile) = 0;
 	virtual void findNearestToGob(Mult::Mult_Object *obj) = 0;
 	virtual void findNearestToDest(Mult::Mult_Object *obj) = 0;
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) = 0;
@@ -119,7 +119,7 @@ protected:
 
 class Map_v1 : public Map {
 public:
-	virtual void loadMapObjects(char *avjFile);
+	virtual void loadMapObjects(const char *avjFile);
 	virtual void findNearestToGob(Mult::Mult_Object *obj);
 	virtual void findNearestToDest(Mult::Mult_Object *obj);
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y);
@@ -145,7 +145,7 @@ protected:
 
 class Map_v2 : public Map_v1 {
 public:
-	virtual void loadMapObjects(char *avjFile);
+	virtual void loadMapObjects(const char *avjFile);
 	virtual void findNearestToGob(Mult::Mult_Object *obj);
 	virtual void findNearestToDest(Mult::Mult_Object *obj);
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y);

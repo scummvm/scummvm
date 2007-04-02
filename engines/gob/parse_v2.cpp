@@ -36,7 +36,7 @@ Parse_v2::Parse_v2(GobEngine *vm) : Parse_v1(vm) {
 
 int16 Parse_v2::parseVarIndex() {
 	int16 temp2;
-	char *arrDesc;
+	byte *arrDesc;
 	int16 dim;
 	int16 dimCount;
 	int16 operation;
@@ -99,13 +99,13 @@ int16 Parse_v2::parseVarIndex() {
 	}
 }
 
-int16 Parse_v2::parseValExpr(unsigned stopToken) {
+int16 Parse_v2::parseValExpr(byte stopToken) {
 	int16 values[20];
 	byte operStack[20];
 	int16 *valPtr;
 	byte *operPtr;
 	byte *arrDesc;
-	unsigned operation;
+	byte operation;
 	int16 temp2;
 	int16 dim;
 	int16 dimCount;
@@ -141,7 +141,7 @@ int16 Parse_v2::parseValExpr(unsigned stopToken) {
 			case 28:
 				temp = _vm->_inter->load16();
 				dimCount = *_vm->_global->_inter_execPtr++;
-				arrDesc = (byte*) _vm->_global->_inter_execPtr;
+				arrDesc = _vm->_global->_inter_execPtr;
 				_vm->_global->_inter_execPtr += dimCount;
 				offset = 0;
 				for (dim = 0; dim < dimCount; dim++) {
@@ -180,7 +180,7 @@ int16 Parse_v2::parseValExpr(unsigned stopToken) {
 				break;
 
 			case 21:
-				*valPtr = *((int8 *) _vm->_global->_inter_execPtr++);
+				*valPtr = (int8) *_vm->_global->_inter_execPtr++;
 				break;
 
 			case 23:
@@ -351,7 +351,7 @@ int16 Parse_v2::parseValExpr(unsigned stopToken) {
 	}
 }
 
-int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
+int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 	int32 values[20];
 	byte operStack[20];
 	int32 prevPrevVal;
@@ -360,14 +360,14 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 	int32 *valPtr;
 	byte *operPtr;
 	byte *arrDescPtr;
-	char var_C;
+	byte var_C;
 	byte operation;
 	int16 dimCount;
 	int16 temp;
 	int16 temp2;
 	int16 offset;
 	int16 dim;
-	char var_1A;
+	bool var_1A;
 	int16 stkPos;
 	int16 brackStart;
 
@@ -394,7 +394,7 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 					*operPtr = operation - 6;
 				temp = _vm->_inter->load16();
 				dimCount = *_vm->_global->_inter_execPtr++;
-				arrDescPtr = (byte *) _vm->_global->_inter_execPtr;
+				arrDescPtr = _vm->_global->_inter_execPtr;
 				_vm->_global->_inter_execPtr += dimCount;
 				offset = 0;
 				for (dim = 0; dim < dimCount; dim++) {
@@ -444,14 +444,14 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 
 			case 21:
 				*operPtr = 20;
-				*valPtr = (int8) (*_vm->_global->_inter_execPtr++);
+				*valPtr = (int8) *_vm->_global->_inter_execPtr++;
 				break;
 
 			case 22:
 				*operPtr = 22;
 				*valPtr = encodePtr(_vm->_global->_inter_execPtr, kExecPtr);
 				_vm->_global->_inter_execPtr +=
-					strlen(_vm->_global->_inter_execPtr) + 1;
+					strlen((char *) _vm->_global->_inter_execPtr) + 1;
 				break;
 
 			case 23:
@@ -536,11 +536,11 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 			switch (operPtr[-1]) {
 			case 2:
 				if (operPtr[-2] == 22) {
-					if (decodePtr(valPtr[-2]) != _vm->_global->_inter_resStr) {
-						strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-2]));
-						valPtr[-2] = encodePtr(_vm->_global->_inter_resStr, kResStr);
+					if ((char *) decodePtr(valPtr[-2]) != _vm->_global->_inter_resStr) {
+						strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-2]));
+						valPtr[-2] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
 					}
-					strcat(_vm->_global->_inter_resStr, decodePtr(valPtr[0]));
+					strcat(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[0]));
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
@@ -581,7 +581,7 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 		if ((operation == stopToken) || (operation == 30) ||
 				(operation == 31) || (operation == 10)) {
 			while (stkPos >= 2) {
-				var_1A = 0;
+				var_1A = false;
 				if ((operPtr[-2] == 9) &&
 						((operation == 10) || (operation == stopToken))) {
 					operPtr[-2] = operPtr[-1];
@@ -658,12 +658,12 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 					if (operStack[brackStart] == 20) {
 						values[brackStart] += valPtr[-1];
 					} else if (operStack[brackStart] == 22) {
-						if (decodePtr(values[brackStart]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, decodePtr(values[brackStart]));
+						if ((char *) decodePtr(values[brackStart]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(values[brackStart]));
 							values[brackStart] =
-								encodePtr(_vm->_global->_inter_resStr, kResStr);
+								encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
 						}
-						strcat(_vm->_global->_inter_resStr, decodePtr(valPtr[-1]));
+						strcat(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1]));
 					}
 					stkPos -= 2;
 					operPtr -= 2;
@@ -735,11 +735,11 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 						if (valPtr[-3] < valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if (decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr(_vm->_global->_inter_resStr, kResStr);
+						if ((char *) decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
 						}
-						if (strcmp(_vm->_global->_inter_resStr, decodePtr(valPtr[-1])) < 0)
+						if (strcmp(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1])) < 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -754,11 +754,11 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 						if (valPtr[-3] <= valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if (decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr(_vm->_global->_inter_resStr, kResStr);
+						if ((char *) decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
 						}
-						if (strcmp(_vm->_global->_inter_resStr, decodePtr(valPtr[-1])) <= 0)
+						if (strcmp(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1])) <= 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -773,11 +773,11 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 						if (valPtr[-3] > valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if (decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr(_vm->_global->_inter_resStr, kResStr);
+						if ((char *) decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
 						}
-						if (strcmp(_vm->_global->_inter_resStr, decodePtr(valPtr[-1])) > 0)
+						if (strcmp(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1])) > 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -792,11 +792,11 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 						if (valPtr[-3] >= valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if (decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr(_vm->_global->_inter_resStr, kResStr);
+						if ((char *) decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
 						}
-						if (strcmp(_vm->_global->_inter_resStr, decodePtr(valPtr[-1])) >= 0)
+						if (strcmp(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1])) >= 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -811,11 +811,11 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 						if (valPtr[-3] == valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if (decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr(_vm->_global->_inter_resStr, kResStr);
+						if ((char *) decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
 						}
-						if (strcmp(_vm->_global->_inter_resStr, decodePtr(valPtr[-1])) == 0)
+						if (strcmp(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1])) == 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -830,12 +830,12 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 						if (valPtr[-3] != valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if (decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr(_vm->_global->_inter_resStr, kResStr);
+						if ((char *) decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
 						}
 						if (scumm_stricmp(_vm->_global->_inter_resStr,
-									decodePtr(valPtr[-1])) != 0)
+									(char *) decodePtr(valPtr[-1])) != 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -844,11 +844,11 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 					break;
 
 				default:
-					var_1A = 1;
+					var_1A = true;
 					break;
 				}	// switch
 
-				if (var_1A != 0)
+				if (var_1A)
 					break;
 			}	// while (stkPos >= 2)
 
@@ -902,8 +902,8 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 				break;
 
 			case 22:
-				if (decodePtr(values[0]) != _vm->_global->_inter_resStr)
-					strcpy(_vm->_global->_inter_resStr, decodePtr(values[0]));
+				if ((char *) decodePtr(values[0]) != _vm->_global->_inter_resStr)
+					strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(values[0]));
 				break;
 
 			case 11:
@@ -933,11 +933,11 @@ int16 Parse_v2::parseExpr(char stopToken, byte *arg_2) {
 					if (operPtr[-3] == 20) {
 						valPtr[-3] += valPtr[-1];
 					} else if (operPtr[-3] == 22) {
-						if (decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr(_vm->_global->_inter_resStr, kResStr);
+						if ((char *) decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
 						}
-						strcat(_vm->_global->_inter_resStr, decodePtr(valPtr[-1]));
+						strcat(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1]));
 					}
 					stkPos -= 2;
 					operPtr -= 2;

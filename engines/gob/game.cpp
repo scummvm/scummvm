@@ -85,8 +85,8 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_curBackupPos = 0;
 	
 	for (int i = 0; i < 5; i++) {
-		_cursorXDeltaArray[i] = 0;
-		_cursorYDeltaArray[i] = 0;
+		_cursorHotspotXArray[i] = 0;
+		_cursorHotspotYArray[i] = 0;
 		_totTextDataArray[i] = 0;
 		_totFileDataArray[i] = 0;
 		_totResourceTableArray[i] = 0;
@@ -105,7 +105,7 @@ Game::~Game() {
 		_soundSamples[i].free();
 }
 
-char *Game::loadExtData(int16 itemId, int16 *pResWidth,
+byte *Game::loadExtData(int16 itemId, int16 *pResWidth,
 		int16 *pResHeight, uint32 *dataSize) {
 	int16 commonHandle;
 	int16 itemsCount;
@@ -117,9 +117,9 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth,
 	int16 handle;
 	int32 tableSize;
 	char path[20];
-	char *dataBuf;
-	char *packedBuf;
-	char *dataPtr;
+	byte *dataBuf;
+	byte *packedBuf;
+	byte *dataPtr;
 
 	itemId -= 30000;
 	if (_extTable == 0)
@@ -162,18 +162,18 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth,
 	_vm->_dataIO->seekData(handle, offset + tableSize, SEEK_SET);
 	realSize = size;
 	if (isPacked)
-		dataBuf = new char[size + 2];
+		dataBuf = new byte[size + 2];
 	else
-		dataBuf = new char[size];
+		dataBuf = new byte[size];
 
 	dataPtr = dataBuf;
 	while (size > 32000) {
 		// BUG: huge->far conversion. Need normalization?
-		_vm->_dataIO->readData(handle, (char *) dataPtr, 32000);
+		_vm->_dataIO->readData(handle, dataPtr, 32000);
 		size -= 32000;
 		dataPtr += 32000;
 	}
-	_vm->_dataIO->readData(handle, (char *) dataPtr, size);
+	_vm->_dataIO->readData(handle, dataPtr, size);
 	if (commonHandle != -1) {
 		_vm->_dataIO->closeData(commonHandle);
 		_extHandle = _vm->_dataIO->openData(_curExtFile);
@@ -182,7 +182,7 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth,
 	if (isPacked) {
 		packedBuf = dataBuf;
 		realSize = READ_LE_UINT32(packedBuf);
-		dataBuf = new char[realSize];
+		dataBuf = new byte[realSize];
 		_vm->_dataIO->unpackData(packedBuf, dataBuf);
 		delete[] packedBuf;
 	}
@@ -254,7 +254,7 @@ void Game::capturePop(char doDraw) {
 	_vm->_draw->freeSprite(30 + _captureCount);
 }
 
-char *Game::loadTotResource(int16 id, int16 *dataSize) {
+byte *Game::loadTotResource(int16 id, int16 *dataSize) {
 	TotResItem *itemPtr;
 	int32 offset;
 
@@ -324,7 +324,7 @@ int16 Game::adjustKey(int16 key) {
 	return key - 0x20;
 }
 
-int32 Game::loadTotFile(char *path) {
+int32 Game::loadTotFile(const char *path) {
 	int16 handle;
 	int32 size;
 
@@ -403,14 +403,14 @@ void Game::start(void) {
 }
 
 // flagbits: 0 = freeInterVariables, 1 = skipPlay
-void Game::totSub(int8 flags, char *newTotFile) {
+void Game::totSub(int8 flags, const char *newTotFile) {
 	int8 curBackupPos;
 
 	if (_backupedCount >= 5)
 		return;
 
-	_cursorXDeltaArray[_backupedCount] = _vm->_draw->_cursorHotspotXVar;
-	_cursorYDeltaArray[_backupedCount] = _vm->_draw->_cursorHotspotYVar;
+	_cursorHotspotXArray[_backupedCount] = _vm->_draw->_cursorHotspotXVar;
+	_cursorHotspotYArray[_backupedCount] = _vm->_draw->_cursorHotspotYVar;
 	_totTextDataArray[_backupedCount] = _totTextData;
 	_totFileDataArray[_backupedCount] = _totFileData;
 	_totResourceTableArray[_backupedCount] = _totResourceTable;
@@ -451,7 +451,7 @@ void Game::totSub(int8 flags, char *newTotFile) {
 
 	popCollisions();
 
-	if ((flags & 1) && (_vm->_global->_inter_variables != 0)) {
+	if ((flags & 1) && _vm->_global->_inter_variables) {
 		delete[] _vm->_global->_inter_variables;
 		delete[] _vm->_global->_inter_variablesSizes;
 	}
@@ -459,8 +459,8 @@ void Game::totSub(int8 flags, char *newTotFile) {
 	_backupedCount--;
 	_curBackupPos = curBackupPos;
 
-	_vm->_draw->_cursorHotspotXVar = _cursorXDeltaArray[_backupedCount];
-	_vm->_draw->_cursorHotspotYVar = _cursorYDeltaArray[_backupedCount];
+	_vm->_draw->_cursorHotspotXVar = _cursorHotspotXArray[_backupedCount];
+	_vm->_draw->_cursorHotspotYVar = _cursorHotspotYArray[_backupedCount];
 	_totTextData = _totTextDataArray[_backupedCount];
 	_totFileData = _totFileDataArray[_backupedCount];
 	_totResourceTable = _totResourceTableArray[_backupedCount];
@@ -485,8 +485,8 @@ void Game::switchTotSub(int16 index, int16 skipPlay) {
 	curBackupPos = _curBackupPos;
 	backupedCount = _backupedCount;
 	if (_curBackupPos == _backupedCount) {
-		_cursorXDeltaArray[_backupedCount] = _vm->_draw->_cursorHotspotXVar;
-		_cursorYDeltaArray[_backupedCount] = _vm->_draw->_cursorHotspotYVar;
+		_cursorHotspotXArray[_backupedCount] = _vm->_draw->_cursorHotspotXVar;
+		_cursorHotspotYArray[_backupedCount] = _vm->_draw->_cursorHotspotYVar;
 		_totTextDataArray[_backupedCount] = _totTextData;
 		_totFileDataArray[_backupedCount] = _totFileData;
 		_totResourceTableArray[_backupedCount] = _totResourceTable;
@@ -502,8 +502,8 @@ void Game::switchTotSub(int16 index, int16 skipPlay) {
 	if (index >= 0)
 		_curBackupPos--;
 
-	_vm->_draw->_cursorHotspotXVar = _cursorXDeltaArray[_curBackupPos];
-	_vm->_draw->_cursorHotspotYVar = _cursorYDeltaArray[_curBackupPos];
+	_vm->_draw->_cursorHotspotXVar = _cursorHotspotXArray[_curBackupPos];
+	_vm->_draw->_cursorHotspotYVar = _cursorHotspotYArray[_curBackupPos];
 	_totTextData = _totTextDataArray[_curBackupPos];
 	_totFileData = _totFileDataArray[_curBackupPos];
 	_totResourceTable = _totResourceTableArray[_curBackupPos];
@@ -530,8 +530,8 @@ void Game::switchTotSub(int16 index, int16 skipPlay) {
 
 	_curBackupPos = curBackupPos;
 	_backupedCount = backupedCount;
-	_vm->_draw->_cursorHotspotXVar = _cursorXDeltaArray[_curBackupPos];
-	_vm->_draw->_cursorHotspotYVar = _cursorYDeltaArray[_curBackupPos];
+	_vm->_draw->_cursorHotspotXVar = _cursorHotspotXArray[_curBackupPos];
+	_vm->_draw->_cursorHotspotYVar = _cursorHotspotYArray[_curBackupPos];
 	_totTextData = _totTextDataArray[_curBackupPos];
 	_totFileData = _totFileDataArray[_curBackupPos];
 	_totResourceTable = _totResourceTableArray[_curBackupPos];
@@ -586,7 +586,7 @@ int16 Game::openLocTextFile(char *locTextFile, int language) {
 	return _vm->_dataIO->openData(locTextFile);
 }
 
-char *Game::loadLocTexts(void) {
+byte *Game::loadLocTexts(void) {
 	char locTextFile[20];
 	int16 handle;
 	int i;
@@ -618,7 +618,7 @@ char *Game::loadLocTexts(void) {
 }
 
 void Game::setCollisions(void) {
-	char *savedIP;
+	byte *savedIP;
 	int16 left;
 	int16 top;
 	int16 width;
@@ -657,7 +657,7 @@ void Game::setCollisions(void) {
 }
 
 void Game::collSub(uint16 offset) {
-	char *savedIP;
+	byte *savedIP;
 	int16 collStackSize;
 
 	savedIP = _vm->_global->_inter_execPtr;

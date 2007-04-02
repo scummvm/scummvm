@@ -140,7 +140,7 @@ ImdPlayer::Imd *ImdPlayer::loadImdFile(const char *path, SurfaceDesc *surfDesc, 
 	if (flags & 3) {
 		imdPtr->palette = new Video::Color[256];
 		assert(imdPtr->palette);
-		_vm->_dataIO->readData(handle, (char *) imdPtr->palette, 768);
+		_vm->_dataIO->readData(handle, (byte *) imdPtr->palette, 768);
 	} else
 		_vm->_dataIO->seekData(handle, 768, SEEK_CUR);
 
@@ -441,7 +441,7 @@ void ImdPlayer::renderFrame(Imd *imdPtr) {
 	byte *dataPtr = 0;
 	byte *srcPtr = 0;
 
-	dataPtr = (byte *) _frameData;
+	dataPtr = _frameData;
 	imdX = imdPtr->x;
 	imdY = imdPtr->y;
 	imdW = imdPtr->width;
@@ -459,7 +459,7 @@ void ImdPlayer::renderFrame(Imd *imdPtr) {
 
 	srcPtr = dataPtr;
 	if (type & 0x80) { // Frame data is compressed
-		srcPtr = (byte *) _vidBuffer;
+		srcPtr = _vidBuffer;
 		type &= 0x7F;
 		if ((type == 2) && (imdW == sW)) {
 			frameUncompressor(imdVidMem, dataPtr);
@@ -951,7 +951,7 @@ uint16 ImdPlayer::checkFrameType(Imd *imdPtr, int16 frame) {
 
 		// Frame video data
 		if (cmd != 0) {
-			_vm->_dataIO->readData(imdPtr->handle, (char *) _frameData, 5);
+			_vm->_dataIO->readData(imdPtr->handle, _frameData, 5);
 			retVal |= _frameData[0];
 		} else
 			retVal |= 0x800;
@@ -1070,8 +1070,7 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 		}
 
 		if (_soundStage != 0) {
-			char *soundBuf =
-				(char *) (_soundBuffer + _curSoundSlice * _soundSliceSize);
+			byte *soundBuf = _soundBuffer + _curSoundSlice * _soundSliceSize;
 
 			if (!hasNextCmd)
 				waitEndSoundSlice();
@@ -1082,7 +1081,7 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 				if (!hasNextCmd && !_noSound) {
 					_vm->_dataIO->readData(imdPtr->handle, soundBuf,
 							_soundSliceSize);
-					_vm->_snd->convToSigned((byte *) soundBuf, _soundSliceSize);
+					_vm->_snd->convToSigned(soundBuf, _soundSliceSize);
 				} else
 					_vm->_dataIO->seekData(imdPtr->handle,
 							_soundSliceSize, SEEK_CUR);
@@ -1094,8 +1093,7 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 				int dataLength = _soundSliceSize * _soundSlicesCount;
 
 				if (!hasNextCmd && !_noSound) {
-					_vm->_dataIO->readData(imdPtr->handle,
-							(char *) _soundBuffer, dataLength);
+					_vm->_dataIO->readData(imdPtr->handle, _soundBuffer, dataLength);
 					_vm->_snd->convToSigned(_soundBuffer, dataLength);
 
 					_curSoundSlice = _soundSlicesCount - 1;
@@ -1120,14 +1118,13 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 			retVal |= 0x10;
 			if (imdPtr->extraPalette) {
 				_vm->_dataIO->readData(imdPtr->handle,
-						(char *) imdPtr->extraPalette, 768);
+						(byte *) imdPtr->extraPalette, 768);
 				_vm->_video->setPalette(imdPtr->extraPalette);
 			} else if (imdPtr->palette)
 				_vm->_dataIO->readData(imdPtr->handle,
-						(char *) imdPtr->palette, 768);
+						(byte *) imdPtr->palette, 768);
 			else
-				_vm->_dataIO->readData(imdPtr->handle,
-						(char *) _frameData, 768);
+				_vm->_dataIO->readData(imdPtr->handle, _frameData, 768);
 
 			cmd = _vm->_dataIO->readUint16(imdPtr->handle);
 		}
@@ -1151,8 +1148,7 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 
 			retVal |= 1;
 			cmd = _vm->_dataIO->readUint32(imdPtr->handle);
-			_vm->_dataIO->readData(imdPtr->handle,
-					(char *) _frameData, cmd + 2);
+			_vm->_dataIO->readData(imdPtr->handle, _frameData, cmd + 2);
 
 			if (imdPtr->surfDesc) {
 				int16 left = imdPtr->x;
@@ -1186,7 +1182,7 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 		// Frame video data
 		} else if (cmd != 0) {
 
-			_vm->_dataIO->readData(imdPtr->handle, (char *) _frameData, cmd + 2);
+			_vm->_dataIO->readData(imdPtr->handle, _frameData, cmd + 2);
 			if (imdPtr->surfDesc)
 				renderFrame(imdPtr);
 

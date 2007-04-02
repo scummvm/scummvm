@@ -62,7 +62,7 @@ public:
 		int16 itemsCount;
 		byte unknown;
 		TotResItem *items;
-		char *dataPtr;
+		byte *dataPtr;
 	};
 
 #define szGame_ExtItem (4 + 2 + 2 + 2)
@@ -90,14 +90,14 @@ public:
 	struct TotTextTable {
 		int16 itemsCount;
 		TotTextItem *items;
-		char *dataPtr;
+		byte *dataPtr;
 	};
 
 	struct InputDesc {
 		int16 fontIndex;
 		int16 backColor;
 		int16 frontColor;
-		char *ptr;
+		byte *ptr;
 	};
 
 #include "common/pack-end.h"	// END STRUCT PACKING
@@ -112,8 +112,8 @@ public:
 	char _curTotFile[14];
 	char _curExtFile[14];
 
-	char *_imFileData;
-	char *_totFileData;
+	byte *_imFileData;
+	byte *_totFileData;
 
 	int16 _extHandle;
 
@@ -131,8 +131,8 @@ public:
 	Game(GobEngine *vm);
 	virtual ~Game();
 
-	char *loadExtData(int16 dataId, int16 *pResWidth, int16 *pResHeight, uint32 *dataSize = 0);
-	char *loadTotResource(int16 id, int16 *dataSize = 0);
+	byte *loadExtData(int16 dataId, int16 *pResWidth, int16 *pResHeight, uint32 *dataSize = 0);
+	byte *loadTotResource(int16 id, int16 *dataSize = 0);
 
 	void capturePush(int16 left, int16 top, int16 width, int16 height);
 	void capturePop(char doDraw);
@@ -141,7 +141,7 @@ public:
 
 	int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons, char handleMouse);
 	void start(void);
-	void totSub(int8 flags, char *newTotFile);
+	void totSub(int8 flags, const char *newTotFile);
 	void switchTotSub(int16 index, int16 skipPlay);
 
 	virtual void playTot(int16 skipPlay) = 0;
@@ -156,7 +156,7 @@ public:
 	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
 			char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex) = 0;
-	virtual int16 checkCollisions(char handleMouse, int16 deltaTime,
+	virtual int16 checkCollisions(byte handleMouse, int16 deltaTime,
 			int16 *pResId, int16 *pResIndex) = 0;
 
 	virtual void prepareStart(void) = 0;
@@ -168,7 +168,7 @@ protected:
 
 	int16 _activeCollResId;
 	int16 _activeCollIndex;
-	char _handleMouse;
+	byte _handleMouse;
 	char _forceHandleMouse;
 
 	char _tempStr[256];
@@ -190,15 +190,15 @@ protected:
 	// For totSub()
 	int8 _backupedCount;
 	int8 _curBackupPos;
-	int16 _cursorXDeltaArray[5];
-	int16 _cursorYDeltaArray[5];
+	int16 _cursorHotspotXArray[5];
+	int16 _cursorHotspotYArray[5];
 	TotTextTable *_totTextDataArray[5];
-	char *_totFileDataArray[5];
+	byte *_totFileDataArray[5];
 	TotResTable *_totResourceTableArray[5];
 	ExtTable *_extTableArray[5];
 	int16 _extHandleArray[5];
-	char *_imFileDataArray[5];
-	char *_variablesArray[5];
+	byte *_imFileDataArray[5];
+	byte *_variablesArray[5];
 	char _curTotFileArray[5][14];
 	byte *_variablesSizesArray[5];
 
@@ -206,8 +206,8 @@ protected:
 		
 	int16 adjustKey(int16 key);
 
-	char *loadLocTexts(void);
-	int32 loadTotFile(char *path);
+	byte *loadLocTexts(void);
+	int32 loadTotFile(const char *path);
 	void loadExtTable(void);
 	void loadImFile(void);
 
@@ -236,7 +236,7 @@ public:
 	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
 			char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex);
-	virtual int16 checkCollisions(char handleMouse, int16 deltaTime,
+	virtual int16 checkCollisions(byte handleMouse, int16 deltaTime,
 			int16 *pResId, int16 *pResIndex);
 
 	virtual void prepareStart(void);
@@ -264,7 +264,7 @@ public:
 	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
 			char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex);
-	virtual int16 checkCollisions(char handleMouse, int16 deltaTime,
+	virtual int16 checkCollisions(byte handleMouse, int16 deltaTime,
 			int16 *pResId, int16 *pResIndex);
 
 	virtual void prepareStart(void);

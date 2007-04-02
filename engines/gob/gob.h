@@ -165,7 +165,7 @@ class GobEngine : public Engine {
 protected:
 	char **_saveFiles;
 	char *_saveSlotFile;
-	char _saveIndex[600];
+	byte _saveIndex[600];
 	byte _saveIndexSizes[600];
 	GobEngine *_vm;
 
@@ -175,8 +175,8 @@ protected:
 	const char *getSaveSlotFile(int slot);
 	bool saveGame(int saveSlot, int16 dataVar, int32 size, int32 offset);
 	bool loadGame(int saveSlot, int16 dataVar, int32 size, int32 offset);
-	uint32 writeDataEndian(Common::OutSaveFile &out, char *varBuf, byte *sizeBuf, int32 size);
-	uint32 readDataEndian(Common::InSaveFile &in, char *varBuf, byte *sizeBuf, int32 size);
+	uint32 writeDataEndian(Common::OutSaveFile &out, byte *varBuf, byte *sizeBuf, int32 size);
+	uint32 readDataEndian(Common::InSaveFile &in, byte *varBuf, byte *sizeBuf, int32 size);
 
 	bool detectGame();
 

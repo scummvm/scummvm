@@ -205,7 +205,7 @@ public:
 	void switchGoblin(int16 index);
 	void zeroObjects(void);
 	void freeAllObjects(void);
-	void loadObjects(char *source);
+	void loadObjects(const char *source);
 	void initVarPointers(void);
 	void saveGobDataToVars(int16 xPos, int16 yPos, int16 someVal);
 	void loadGobDataFromVars(void);

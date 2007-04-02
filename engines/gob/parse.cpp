@@ -35,7 +35,7 @@ namespace Gob {
 Parse::Parse(GobEngine *vm) : _vm(vm) {
 }
 
-int32 Parse::encodePtr(char *ptr, int type) {
+int32 Parse::encodePtr(byte *ptr, int type) {
 	int32 offset = 0;
 
 	switch (type) {
@@ -46,7 +46,7 @@ int32 Parse::encodePtr(char *ptr, int type) {
 		offset = ptr - _vm->_global->_inter_variables;
 		break;
 	case kResStr:
-		offset = ptr - _vm->_global->_inter_resStr;
+		offset = ptr - ((byte *) _vm->_global->_inter_resStr);
 		break;
 	default:
 		error("encodePtr: Unknown pointer type");
@@ -55,8 +55,8 @@ int32 Parse::encodePtr(char *ptr, int type) {
 	return (type << 28) | offset;
 }
 
-char *Parse::decodePtr(int32 n) {
-	char *ptr;
+byte *Parse::decodePtr(int32 n) {
+	byte *ptr;
 
 	switch (n >> 28) {
 	case kExecPtr:
@@ -66,7 +66,7 @@ char *Parse::decodePtr(int32 n) {
 		ptr = _vm->_global->_inter_variables;
 		break;
 	case kResStr:
-		ptr = _vm->_global->_inter_resStr;
+		ptr = (byte *) _vm->_global->_inter_resStr;
 		break;
 	default:
 		error("decodePtr: Unknown pointer type");
@@ -76,7 +76,7 @@ char *Parse::decodePtr(int32 n) {
 
 void Parse::skipExpr(char stopToken) {
 	int16 dimCount;
-	char operation;
+	byte operation;
 	int16 num;
 	int16 dim;
 
@@ -104,7 +104,7 @@ void Parse::skipExpr(char stopToken) {
 
 			case 22:
 				_vm->_global->_inter_execPtr +=
-					strlen(_vm->_global->_inter_execPtr) + 1;
+					strlen((char *) _vm->_global->_inter_execPtr) + 1;
 				break;
 
 			case 25:
@@ -165,7 +165,7 @@ void Parse::printExpr(char stopToken) {
 	// Expression printing disabled by default
 	return;
 
-	char* savedPos = _vm->_global->_inter_execPtr;
+	byte *savedPos = _vm->_global->_inter_execPtr;
 	printExpr_internal(stopToken);
 
 	// restore IP to start of expression
@@ -174,11 +174,11 @@ void Parse::printExpr(char stopToken) {
 
 void Parse::printExpr_internal(char stopToken) {
 	int16 dimCount;
-	char operation;
+	byte operation;
 	int16 num;
 	int16 dim;
-	char *arrDesc;
-	char func;
+	byte *arrDesc;
+	byte func;
 
 	num = 0;
 	while (1) {
@@ -212,7 +212,7 @@ void Parse::printExpr_internal(char stopToken) {
 			case 22: // string immediate
 				debugN(5, "\42%s\42", _vm->_global->_inter_execPtr);
 				_vm->_global->_inter_execPtr +=
-					strlen(_vm->_global->_inter_execPtr) + 1;
+					strlen((char *) _vm->_global->_inter_execPtr) + 1;
 				break;
 
 			case 23: // uint32 variable load
@@ -243,7 +243,7 @@ void Parse::printExpr_internal(char stopToken) {
 				_vm->_global->_inter_execPtr += dimCount;
 				for (dim = 0; dim < dimCount; dim++) {
 					printExpr_internal(12);
-					debugN(5, " of %d", (int16)arrDesc[dim]);
+					debugN(5, " of %d", (int16) arrDesc[dim]);
 					if (dim != dimCount - 1)
 						debugN(5, ",");
 				}
@@ -395,13 +395,13 @@ void Parse::printExpr_internal(char stopToken) {
 
 
 void Parse::printVarIndex() {
-	char *arrDesc;
+	byte *arrDesc;
 	int16 dim;
 	int16 dimCount;
 	int16 operation;
 	int16 temp;
 
-	char *pos = _vm->_global->_inter_execPtr;
+	byte *pos = _vm->_global->_inter_execPtr;
 
 	operation = *_vm->_global->_inter_execPtr++;
 	switch (operation) {
@@ -424,7 +424,7 @@ void Parse::printVarIndex() {
 		_vm->_global->_inter_execPtr += dimCount;
 		for (dim = 0; dim < dimCount; dim++) {
 			printExpr(12);
-			debugN(5, " of %d", (int16)arrDesc[dim]);
+			debugN(5, " of %d", (int16) arrDesc[dim]);
 			if (dim != dimCount - 1)
 				debugN(5, ",");
 		}

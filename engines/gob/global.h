@@ -118,8 +118,8 @@ public:
 	int32 _inter_resVal;
 
 	byte *_inter_variablesSizes; // 0: single byte, 1: two bytes, 3: four bytes
-	char *_inter_variables;
-	char *_inter_execPtr;
+	byte *_inter_variables;
+	byte *_inter_execPtr;
 	int16 _inter_animDataSize;
 
 	int16 _inter_mouseX;
@@ -171,7 +171,7 @@ public:
 	}
 	void writeVar(uint32 offset, const char *str) {
 		writeVarSizeStr(offset, strlen(str));
-		strcpy(_inter_variables + offset, str);
+		strcpy((char *) (_inter_variables + offset), str);
 	}
 
 	Global(GobEngine *vm);

@@ -74,7 +74,7 @@ void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y,
 	byte *src, *dst;
 	uint16 data;
 
-	src = ((byte *) fontDesc->dataPtr) +
+	src = fontDesc->dataPtr +
 		(item - fontDesc->startItem) * (fontDesc->itemSize & 0xFF);
 	dst = dest->getVidMem() + x + dest->getWidth() * y;
 

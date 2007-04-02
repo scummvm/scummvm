@@ -226,7 +226,7 @@ void Inter::funcBlock(int16 retFlag) {
 			}
 		} // End of workaround
 
-		cmd = (byte) *_vm->_global->_inter_execPtr;
+		cmd = *_vm->_global->_inter_execPtr;
 		if ((cmd >> 4) >= 12) {
 			cmd2 = 16 - (cmd >> 4);
 			cmd &= 0xF;
@@ -260,7 +260,7 @@ void Inter::funcBlock(int16 retFlag) {
 }
 
 void Inter::callSub(int16 retFlag) {
-	int16 block;
+	byte block;
 
 	while (!_vm->_quitRequested && _vm->_global->_inter_execPtr &&
 			(_vm->_global->_inter_execPtr != _vm->_game->_totFileData)) {

@@ -186,8 +186,8 @@ void GobEngine::saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 	int16 index;
 	bool writePal;
 	char *sName;
-	char *buf;
-	char *oBuf;
+	byte *buf;
+	byte *oBuf;
 	int32 retSize;
 	int32 iSize;
 	int32 oSize;
@@ -266,7 +266,7 @@ void GobEngine::saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 
 	oOff = offset < 0 ? MAX((int32) 0, iSize - (-offset - 1)) : offset;
 	oSize = MAX(iSize, oOff + size);
-	oBuf = new char[oSize];
+	oBuf = new byte[oSize];
 	memset(oBuf, 0, oSize);
 
 	if (in) {
@@ -298,7 +298,7 @@ void GobEngine::saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 
 bool GobEngine::saveGame(int saveSlot, int16 dataVar, int32 size, int32 offset) {
 	int32 varSize;
-	char *varBuf;
+	byte *varBuf;
 	byte *sizeBuf;
 	Common::OutSaveFile *out;
 
@@ -330,13 +330,13 @@ bool GobEngine::saveGame(int saveSlot, int16 dataVar, int32 size, int32 offset) 
 	}
 }
 
-uint32 GobEngine::writeDataEndian(Common::OutSaveFile &out, char *varBuf, byte *sizeBuf,
+uint32 GobEngine::writeDataEndian(Common::OutSaveFile &out, byte *varBuf, byte *sizeBuf,
 		int32 size) {
 
 #ifndef GOB_ORIGSAVES
 
 	int i;
-	char tmp[4];
+	byte tmp[4];
 	uint32 written;
 
 	written = 0;
@@ -372,7 +372,7 @@ void GobEngine::loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 	int32 sSize;
 	int32 retSize;
 	int16 index;
-	char *buf;
+	byte *buf;
 	char *sName;
 	bool readPal;
 	SurfaceDesc *destDesc;
@@ -473,7 +473,7 @@ void GobEngine::loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, in
 bool GobEngine::loadGame(int saveSlot, int16 dataVar, int32 size, int32 offset) {
 	int i;
 	int32 varSize;
-	char *varBuf;
+	byte *varBuf;
 	byte *sizeBuf;
 	Common::InSaveFile *in;
 
@@ -509,18 +509,18 @@ bool GobEngine::loadGame(int saveSlot, int16 dataVar, int32 size, int32 offset) 
 	}
 }
 
-uint32 GobEngine::readDataEndian(Common::InSaveFile &in, char *varBuf, byte *sizeBuf,
+uint32 GobEngine::readDataEndian(Common::InSaveFile &in, byte *varBuf, byte *sizeBuf,
 		int32 size) {
 
 #ifndef GOB_ORIGSAVES
 
 	uint32 read;
-	char *vars;
-	char *sizes;
+	byte *vars;
+	byte *sizes;
 	int i;
 
-	vars = new char[size];
-	sizes = new char[size];
+	vars = new byte[size];
+	sizes = new byte[size];
 
 	read = in.read(vars, size);
 	if (in.read(sizes, size) != read) {

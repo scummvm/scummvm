@@ -201,7 +201,7 @@ void Draw_v2::printTotText(int16 id) {
 	_vm->validateLanguage();
 
 	size = _vm->_game->_totTextData->items[id].size;
-	dataPtr = ((byte *) _vm->_game->_totTextData->dataPtr) +
+	dataPtr = _vm->_game->_totTextData->dataPtr +
 		_vm->_game->_totTextData->items[id].offset;
 	ptr = dataPtr;
 
@@ -459,7 +459,7 @@ void Draw_v2::printTotText(int16 id) {
 		case 10:
 			str[0] = (char) 255;
 			WRITE_LE_UINT16((uint16 *) (str + 1),
-					((char *) ptr) - _vm->_game->_totTextData->dataPtr);
+					ptr - _vm->_game->_totTextData->dataPtr);
 			str[3] = 0;
 			ptr++;
 			for (int i = *ptr++; i > 0; i--) {
@@ -546,7 +546,7 @@ void Draw_v2::printTotText(int16 id) {
 
 void Draw_v2::spriteOperation(int16 operation) {
 	uint16 id;
-	char *dataBuf;
+	byte *dataBuf;
 	Game::TotResItem *itemPtr;
 	int32 offset;
 	int16 len;
@@ -693,7 +693,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 		if (id >= 30000) {
 			dataBuf =
 				_vm->_game->loadExtData(id, &_spriteRight, &_spriteBottom);
-			_vm->_video->drawPackedSprite((byte *) dataBuf,
+			_vm->_video->drawPackedSprite(dataBuf,
 					_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
 					_transparency, _spritesArray[_destSurface]);
 			if (_destSurface == 21) {
@@ -718,7 +718,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 
 		_spriteRight = itemPtr->width;
 		_spriteBottom = itemPtr->height;
-		_vm->_video->drawPackedSprite((byte *) dataBuf,
+		_vm->_video->drawPackedSprite(dataBuf,
 		    _spriteRight, _spriteBottom,
 		    _destSpriteX, _destSpriteY,
 		    _transparency, _spritesArray[_destSurface]);
@@ -759,7 +759,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 						_vm->_video->drawLetter(_textToPrint[i], _destSpriteX,
 								_destSpriteY, _fonts[_fontIndex], _transparency,
 								_frontColor, _backColor, _spritesArray[_destSurface]);
-						_destSpriteX += *(((char*)_fonts[_fontIndex]->extraData) +
+						_destSpriteX += *(_fonts[_fontIndex]->extraData +
 								(_textToPrint[i] - _fonts[_fontIndex]->startItem));
 					}
 					else

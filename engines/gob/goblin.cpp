@@ -1214,7 +1214,7 @@ void Goblin::freeAllObjects(void) {
 	freeObjects();
 }
 
-void Goblin::loadObjects(char *source) {
+void Goblin::loadObjects(const char *source) {
 	zeroObjects();
 	for (int i = 0; i < 20; i++)
 		_itemToObject[i] = 100;

@@ -94,7 +94,7 @@ int16 Scenery::loadStatic(char search) {
 	int16 picsCount;
 	int16 resId;
 	int16 sceneryIndex;
-	char *extData = 0;
+	byte *extData = 0;
 	byte *dataPtr;
 	Static *ptr;
 	int16 pictDescId;
@@ -130,9 +130,9 @@ int16 Scenery::loadStatic(char search) {
 
 	if (resId >= 30000) {
 		extData = _vm->_game->loadExtData(resId, 0, 0);
-		dataPtr = (byte *) extData;
+		dataPtr = extData;
 	} else
-		dataPtr = (byte *) _vm->_game->loadTotResource(resId);
+		dataPtr = _vm->_game->loadTotResource(resId);
 
 	ptr = &_statics[sceneryIndex];
 
@@ -396,7 +396,7 @@ int16 Scenery::loadAnim(char search) {
 	int16 j;
 	int16 sceneryIndex;
 	int16 framesCount;
-	char *extData;
+	byte *extData;
 	byte *dataPtr;
 	Animation *ptr;
 	int16 pictDescId;
@@ -428,9 +428,9 @@ int16 Scenery::loadAnim(char search) {
 
 	if (resId >= 30000) {
 		extData = _vm->_game->loadExtData(resId, 0, 0);
-		dataPtr = (byte *) extData;
+		dataPtr = extData;
 	} else
-		dataPtr = (byte *) _vm->_game->loadTotResource(resId);
+		dataPtr = _vm->_game->loadTotResource(resId);
 
 	ptr = &_animations[sceneryIndex];
 

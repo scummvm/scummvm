@@ -47,12 +47,10 @@ DataIO::~DataIO() {
 	}
 }
 
-int32 DataIO::unpackData(char *sourceBuf, char *destBuf) {
+int32 DataIO::unpackData(byte *src, byte *dest) {
 	uint32 realSize;
 	uint32 counter;
 	uint16 cmd;
-	byte *src;
-	byte *dest;
 	byte *tmpBuf;
 	int16 off;
 	byte len;
@@ -61,14 +59,13 @@ int32 DataIO::unpackData(char *sourceBuf, char *destBuf) {
 	tmpBuf = new byte[4114];
 	assert(tmpBuf);
 
-	counter = realSize = READ_LE_UINT32(sourceBuf);
+	counter = realSize = READ_LE_UINT32(src);
 
 	for (int i = 0; i < 4078; i++)
 		tmpBuf[i] = 0x20;
 	tmpIndex = 4078;
 
-	src = (byte *) (sourceBuf + 4);
-	dest = (byte *) destBuf;
+	src += 4;
 
 	cmd = 0;
 	while (1) {
@@ -172,7 +169,7 @@ char DataIO::freeChunk(int16 handle) {
 	return 1;
 }
 
-int32 DataIO::readChunk(int16 handle, char *buf, uint16 size) {
+int32 DataIO::readChunk(int16 handle, byte *buf, uint16 size) {
 	int16 file;
 	int16 slot;
 	int16 i;
@@ -328,12 +325,12 @@ void DataIO::closeDataFile(bool itk) {
 	}
 }
 
-char *DataIO::getUnpackedData(const char *name) {
+byte *DataIO::getUnpackedData(const char *name) {
 	int32 realSize;
 	int16 chunk;
-	char *unpackBuf;
-	char *packBuf;
-	char *ptr;
+	byte *unpackBuf;
+	byte *packBuf;
+	byte *ptr;
 	int32 sizeLeft;
 
 	realSize = getChunkSize(name);
@@ -344,10 +341,10 @@ char *DataIO::getUnpackedData(const char *name) {
 	if (chunk == -1)
 		return 0;
 
-	unpackBuf = new char[realSize];
+	unpackBuf = new byte[realSize];
 	assert(unpackBuf);
 
-	packBuf = new char[_packedSize];
+	packBuf = new byte[_packedSize];
 	assert(packBuf);
 
 	sizeLeft = _packedSize;
@@ -383,7 +380,7 @@ int16 DataIO::openData(const char *path, Common::File::AccessMode mode) {
 	return file_open(path, mode);
 }
 
-int32 DataIO::readData(int16 handle, char *buf, uint16 size) {
+int32 DataIO::readData(int16 handle, byte *buf, uint16 size) {
 	int32 res;
 
 	res = readChunk(handle, buf, size);
@@ -394,27 +391,27 @@ int32 DataIO::readData(int16 handle, char *buf, uint16 size) {
 }
 
 byte DataIO::readByte(int16 handle) {
-	char buf;
+	byte buf;
 
 	readData(handle, &buf, 1);
 	return ((byte) buf);
 }
 
 uint16 DataIO::readUint16(int16 handle) {
-	char buf[2];
+	byte buf[2];
 
 	readData(handle, buf, 2);
 	return READ_LE_UINT16(buf);
 }
 
 uint32 DataIO::readUint32(int16 handle) {
-	char buf[4];
+	byte buf[4];
 
 	readData(handle, buf, 4);
 	return READ_LE_UINT32(buf);
 }
 
-int32 DataIO::writeData(int16 handle, char *buf, uint16 size) {
+int32 DataIO::writeData(int16 handle, byte *buf, uint16 size) {
 	return file_getHandle(handle)->write(buf, size);
 }
 
@@ -458,9 +455,9 @@ int32 DataIO::getDataSize(const char *name) {
 	return chunkSz;
 }
 
-char *DataIO::getData(const char *path) {
-	char *data;
-	char *ptr;
+byte *DataIO::getData(const char *path) {
+	byte *data;
+	byte *ptr;
 	int32 size;
 	int16 handle;
 
@@ -469,7 +466,7 @@ char *DataIO::getData(const char *path) {
 		return data;
 
 	size = getDataSize(path);
-	data = new char[size];
+	data = new byte[size];
 	assert(data);
 
 	handle = openData(path);

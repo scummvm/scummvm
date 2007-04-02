@@ -121,7 +121,7 @@ public:
 		int16 frame;
 		int16 cmd;
 		char unknown[18];
-		char script[6];
+		byte script[6];
 	};
 
 	struct Mult_PalKey {
@@ -209,7 +209,7 @@ public:
 		int16 imdIndices[4];
 		char *imdFiles;
 		char *somepointer10; // ?
-		char *execPtr;
+		byte *execPtr;
 	};
 
 #include "common/pack-end.h"	// END STRUCT PACKING
@@ -326,7 +326,7 @@ protected:
 	virtual void newCycleAnim(Mult_Object &animObj);
 
 	void loadImds(Common::SeekableReadStream &data);
-	void playImd(char *imdFile, Mult_ImdKey &key, int16 dir, int16 startFrame);
+	void playImd(const char *imdFile, Mult_ImdKey &key, int16 dir, int16 startFrame);
 
 	void advanceObjects(int16 index);
 	void advanceAllObjects();

@@ -53,7 +53,7 @@ void Init::cleanup(void) {
 	_vm->_dataIO->closeDataFile();
 }
 
-void Init::initGame(char *totName) {
+void Init::initGame(const char *totName) {
 	int16 handle2;
 	int16 handle;
 	int16 imdHandle;
@@ -108,7 +108,7 @@ void Init::initGame(char *totName) {
 	} else {
 		_vm->_dataIO->closeData(handle);
 
-		infPtr = _vm->_dataIO->getData("intro.inf");
+		infPtr = (char *) _vm->_dataIO->getData("intro.inf");
 		infBuf = infPtr;
 
 		infEnd = infBuf + _vm->_dataIO->getDataSize("intro.inf");
@@ -149,7 +149,7 @@ void Init::initGame(char *totName) {
 		varsCount = _vm->_dataIO->readUint16(handle);
 		_vm->_dataIO->closeData(handle);
 
-		_vm->_global->_inter_variables = new char[varsCount * 4];
+		_vm->_global->_inter_variables = new byte[varsCount * 4];
 		_vm->_global->_inter_variablesSizes = new byte[varsCount * 4];
 		_vm->_global->clearVars(varsCount);
 

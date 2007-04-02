@@ -45,23 +45,23 @@ public:
 		ChunkDesc() : size(0), offset(0), packed(0) { chunkName[0] = 0; }
 	};
 
-	int32 unpackData(char *source, char *dest);
+	int32 unpackData(byte *src, byte *dest);
 
 	void openDataFile(const char *src, bool itk = 0);
 	void closeDataFile(bool itk = 0);
-	char *getUnpackedData(const char *name);
+	byte *getUnpackedData(const char *name);
 	void closeData(int16 handle);
 	int16 openData(const char *path,
 			Common::File::AccessMode mode = Common::File::kFileReadMode);
-	int32 readData(int16 handle, char *buf, uint16 size);
+	int32 readData(int16 handle, byte *buf, uint16 size);
 	byte readByte(int16 handle);
 	uint16 readUint16(int16 handle);
 	uint32 readUint32(int16 handle);
-	int32 writeData(int16 handle, char *buf, uint16 size);
+	int32 writeData(int16 handle, byte *buf, uint16 size);
 	void seekData(int16 handle, int32 pos, int16 from);
 	uint32 getPos(int16 handle);
 	int32 getDataSize(const char *name);
-	char *getData(const char *path);
+	byte *getData(const char *path);
 
 	DataIO(class GobEngine *vm);
 	~DataIO();
@@ -86,7 +86,7 @@ protected:
 
 	int16 getChunk(const char *chunkName);
 	char freeChunk(int16 handle);
-	int32 readChunk(int16 handle, char *buf, uint16 size);
+	int32 readChunk(int16 handle, byte *buf, uint16 size);
 	int16 seekChunk(int16 handle, int32 pos, int16 from);
 	uint32 getChunkPos(int16 handle);
 	int32 getChunkSize(const char *chunkName);

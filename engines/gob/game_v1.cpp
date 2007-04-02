@@ -54,8 +54,8 @@ void Game_v1::playTot(int16 skipPlay) {
 	int16 breakFrom;
 	int16 nestLevel;
 	int32 variablesCount;
-	char *filePtr;
-	char *savedIP;
+	byte *filePtr;
+	byte *savedIP;
 
 	if (skipPlay < 0)
 		skipPlay = 0;
@@ -128,14 +128,14 @@ void Game_v1::playTot(int16 skipPlay) {
 			debugC(4, kDebugFileIO, "IMA: %s", _curImaFile);
 			debugC(4, kDebugFileIO, "EXT: %s", _curExtFile);
 
-			filePtr = (char *) _totFileData + 0x30;
+			filePtr = _totFileData + 0x30;
 
 			_totTextData = 0;
 			if (READ_LE_UINT32(filePtr) != (uint32) -1) {
 				_totTextData = new TotTextTable;
 				_totTextData->dataPtr =
-					(_totFileData + READ_LE_UINT32((char *) _totFileData + 0x30));
-				Common::MemoryReadStream totTextData((byte *) _totTextData->dataPtr,
+					(_totFileData + READ_LE_UINT32(_totFileData + 0x30));
+				Common::MemoryReadStream totTextData(_totTextData->dataPtr,
 						4294967295U);
 
 				_totTextData->itemsCount = totTextData.readSint16LE();
@@ -147,13 +147,13 @@ void Game_v1::playTot(int16 skipPlay) {
 				}
 			}
 
-			filePtr = (char *) _totFileData + 0x34;
+			filePtr = _totFileData + 0x34;
 			_totResourceTable = 0;
 			if (READ_LE_UINT32(filePtr) != (uint32) -1) {
 				_totResourceTable = new TotResTable;
 				_totResourceTable->dataPtr =
-					_totFileData + READ_LE_UINT32((char *) _totFileData + 0x34);
-				Common::MemoryReadStream totResTable((byte *) _totResourceTable->dataPtr,
+					_totFileData + READ_LE_UINT32( _totFileData + 0x34);
+				Common::MemoryReadStream totResTable(_totResourceTable->dataPtr,
 						4294967295U);
 
 				_totResourceTable->itemsCount = totResTable.readSint16LE();
@@ -173,17 +173,16 @@ void Game_v1::playTot(int16 skipPlay) {
 			loadExtTable();
 
 			_vm->_global->_inter_animDataSize =
-				READ_LE_UINT16((char *) _totFileData + 0x38);
-			if (_vm->_global->_inter_variables == 0) {
-				variablesCount = READ_LE_UINT16((char *) _totFileData + 0x2C);
-				_vm->_global->_inter_variables = new char[variablesCount * 4];
+				READ_LE_UINT16(_totFileData + 0x38);
+			if (!_vm->_global->_inter_variables) {
+				variablesCount = READ_LE_UINT16(_totFileData + 0x2C);
+				_vm->_global->_inter_variables = new byte[variablesCount * 4];
 				_vm->_global->_inter_variablesSizes = new byte[variablesCount * 4];
 				_vm->_global->clearVars(variablesCount);
 			}
 
-			_vm->_global->_inter_execPtr = (char *) _totFileData;
-			_vm->_global->_inter_execPtr +=
-				READ_LE_UINT32((char *) _totFileData + 0x64);
+			_vm->_global->_inter_execPtr = _totFileData;
+			_vm->_global->_inter_execPtr += READ_LE_UINT32(_totFileData + 0x64);
 
 			_vm->_inter->renewTimeInVars();
 
@@ -197,7 +196,7 @@ void Game_v1::playTot(int16 skipPlay) {
 			if (_totToLoad[0] != 0)
 				_vm->_inter->_terminate = 0;
 
-			variablesCount = READ_LE_UINT32((char *) _totFileData + 0x2C);
+			variablesCount = READ_LE_UINT32(_totFileData + 0x2C);
 			_vm->_draw->blitInvalidated();
 			delete[] _totFileData;
 			_totFileData = 0;
@@ -336,9 +335,9 @@ void Game_v1::popCollisions(void) {
 	delete[] _collStack[_collStackSize];
 }
 
-int16 Game_v1::checkCollisions(char handleMouse, int16 deltaTime,
+int16 Game_v1::checkCollisions(byte handleMouse, int16 deltaTime,
 		int16 *pResId, int16 *pResIndex) {
-	char *savedIP;
+	byte *savedIP;
 	int16 resIndex;
 	int16 key;
 	int16 oldIndex;
@@ -362,7 +361,7 @@ int16 Game_v1::checkCollisions(char handleMouse, int16 deltaTime,
 
 		if ((_lastCollKey != 0) && ((_lastCollId & 0x8000) != 0)) {
 			savedIP = _vm->_global->_inter_execPtr;
-			_vm->_global->_inter_execPtr = (char *) _totFileData +
+			_vm->_global->_inter_execPtr = _totFileData +
 			    _collisionAreas[_lastCollAreaIndex].funcEnter;
 
 			_vm->_inter->funcBlock(0);
@@ -429,7 +428,7 @@ int16 Game_v1::checkCollisions(char handleMouse, int16 deltaTime,
 			if ((_lastCollKey != 0) &&
 			    (_collisionAreas[_lastCollAreaIndex].funcLeave != 0)) {
 				savedIP = _vm->_global->_inter_execPtr;
-				_vm->_global->_inter_execPtr = (char *) _totFileData +
+				_vm->_global->_inter_execPtr = _totFileData +
 				    _collisionAreas[_lastCollAreaIndex].funcLeave;
 
 				_vm->_inter->funcBlock(0);
@@ -469,7 +468,7 @@ int16 Game_v1::checkCollisions(char handleMouse, int16 deltaTime,
 					if ((_lastCollKey != 0) &&
 						(_collisionAreas[_lastCollAreaIndex].funcLeave != 0)) {
 						savedIP = _vm->_global->_inter_execPtr;
-						_vm->_global->_inter_execPtr = (char *) _totFileData +
+						_vm->_global->_inter_execPtr = _totFileData +
 						    _collisionAreas[_lastCollAreaIndex].funcLeave;
 
 						_vm->_inter->funcBlock(0);
@@ -482,7 +481,7 @@ int16 Game_v1::checkCollisions(char handleMouse, int16 deltaTime,
 				if ((_lastCollKey != 0) &&
 				    (_collisionAreas[_lastCollAreaIndex].funcLeave != 0)) {
 					savedIP = _vm->_global->_inter_execPtr;
-					_vm->_global->_inter_execPtr = (char *) _totFileData +
+					_vm->_global->_inter_execPtr = _totFileData +
 					    _collisionAreas[_lastCollAreaIndex].funcLeave;
 
 					_vm->_inter->funcBlock(0);
@@ -494,7 +493,7 @@ int16 Game_v1::checkCollisions(char handleMouse, int16 deltaTime,
 
 				if ((_lastCollKey != 0) && ((_lastCollId & 0x8000) != 0)) {
 					savedIP = _vm->_global->_inter_execPtr;
-					_vm->_global->_inter_execPtr = (char *) _totFileData +
+					_vm->_global->_inter_execPtr = _totFileData +
 					    _collisionAreas[_lastCollAreaIndex].funcEnter;
 
 					_vm->_inter->funcBlock(0);
@@ -513,7 +512,7 @@ int16 Game_v1::checkCollisions(char handleMouse, int16 deltaTime,
 					if (key != _lastCollKey) {
 						if ((_lastCollKey != 0) && ((oldId & 0x8000) != 0)) {
 							savedIP = _vm->_global->_inter_execPtr;
-							_vm->_global->_inter_execPtr = (char *) _totFileData +
+							_vm->_global->_inter_execPtr = _totFileData +
 							    _collisionAreas[oldIndex].funcLeave;
 
 							_vm->_inter->funcBlock(0);
@@ -523,7 +522,7 @@ int16 Game_v1::checkCollisions(char handleMouse, int16 deltaTime,
 						_lastCollKey = key;
 						if ((_lastCollKey != 0) && ((_lastCollId & 0x8000) != 0)) {
 							savedIP = _vm->_global->_inter_execPtr;
-							_vm->_global->_inter_execPtr = (char *) _totFileData +
+							_vm->_global->_inter_execPtr = _totFileData +
 							    _collisionAreas[_lastCollAreaIndex].funcEnter;
 
 							_vm->_inter->funcBlock(0);
@@ -588,9 +587,9 @@ void Game_v1::prepareStart(void) {
 void Game_v1::collisionsBlock(void) {
 	InputDesc descArray[20];
 	int16 array[250];
-	char count;
+	byte count;
 	int16 collResId;
-	char *startIP;
+	byte *startIP;
 	int16 curCmd;
 	int16 cmd;
 	int16 cmdHigh;
@@ -617,7 +616,7 @@ void Game_v1::collisionsBlock(void) {
 	int16 collStackPos;
 	Collision *collPtr;
 	int16 timeKey;
-	char *savedIP;
+	byte *savedIP;
 
 	if (_shouldPushColls)
 		pushCollisions(1);
@@ -626,10 +625,10 @@ void Game_v1::collisionsBlock(void) {
 	_vm->_global->_inter_execPtr++;
 	count = *_vm->_global->_inter_execPtr++;
 	_handleMouse = _vm->_global->_inter_execPtr[0];
-	deltaTime = 1000 * (byte) _vm->_global->_inter_execPtr[1];
-	descIndex2 = (byte) _vm->_global->_inter_execPtr[2];
-	stackPos2 = (byte) _vm->_global->_inter_execPtr[3];
-	descIndex = (byte) _vm->_global->_inter_execPtr[4];
+	deltaTime = 1000 * _vm->_global->_inter_execPtr[1];
+	descIndex2 = _vm->_global->_inter_execPtr[2];
+	stackPos2 = _vm->_global->_inter_execPtr[3];
+	descIndex = _vm->_global->_inter_execPtr[4];
 
 	if ((stackPos2 != 0) || (descIndex != 0))
 		deltaTime /= 100;
@@ -649,7 +648,7 @@ void Game_v1::collisionsBlock(void) {
 
 		if ((cmd & 0x40) != 0) {
 			cmd -= 0x40;
-			cmdHigh = (byte) *_vm->_global->_inter_execPtr;
+			cmdHigh = *_vm->_global->_inter_execPtr;
 			_vm->_global->_inter_execPtr++;
 			cmdHigh <<= 8;
 		} else
@@ -701,7 +700,7 @@ void Game_v1::collisionsBlock(void) {
 				addNewCollision(curCmd + 0x8000, left, top, left + width *
 						_vm->_draw->_fonts[descArray[index].fontIndex]->itemWidth - 1,
 						top + height - 1, cmd, key, 0,
-						_vm->_global->_inter_execPtr - (char *) _totFileData);
+						_vm->_global->_inter_execPtr - _totFileData);
 
 				_vm->_global->_inter_execPtr += 2;
 				_vm->_global->_inter_execPtr +=
@@ -722,7 +721,7 @@ void Game_v1::collisionsBlock(void) {
 			addNewCollision(curCmd + 0x8000, left, top,
 			    left + width - 1, top + height - 1,
 			    (flags << 4) + cmdHigh + 2, key,
-			    _vm->_global->_inter_execPtr - (char *) _totFileData, 0);
+			    _vm->_global->_inter_execPtr - _totFileData, 0);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr +=
@@ -742,7 +741,7 @@ void Game_v1::collisionsBlock(void) {
 			    left + width - 1,
 			    top + height - 1,
 			    (flags << 4) + cmdHigh + 2, key, 0,
-			    _vm->_global->_inter_execPtr - (char *) _totFileData);
+			    _vm->_global->_inter_execPtr - _totFileData);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr +=
@@ -760,8 +759,8 @@ void Game_v1::collisionsBlock(void) {
 			addNewCollision(curCmd + 0x8000, left, top,
 			    left + width - 1, top + height - 1,
 			    cmd + cmdHigh, key,
-			    startIP - (char *) _totFileData,
-			    _vm->_global->_inter_execPtr - (char *) _totFileData);
+			    startIP - _totFileData,
+			    _vm->_global->_inter_execPtr - _totFileData);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr +=
@@ -783,8 +782,8 @@ void Game_v1::collisionsBlock(void) {
 			addNewCollision(curCmd + 0x8000, left, top,
 			    left + width - 1, top + height - 1,
 			    (flags << 4) + cmd + cmdHigh, key,
-			    startIP - (char *) _totFileData,
-			    _vm->_global->_inter_execPtr - (char *) _totFileData);
+			    startIP - _totFileData,
+			    _vm->_global->_inter_execPtr - _totFileData);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr +=
@@ -899,7 +898,7 @@ void Game_v1::collisionsBlock(void) {
 								timeKey = _vm->_util->getTimeKey();
 								savedIP = _vm->_global->_inter_execPtr;
 								_vm->_global->_inter_execPtr =
-									(char *) _totFileData + collPtr->funcLeave;
+									_totFileData + collPtr->funcLeave;
 								_shouldPushColls = 1;
 								savedCollStackSize = _collStackSize;
 								_vm->_inter->funcBlock(0);
@@ -988,7 +987,7 @@ void Game_v1::collisionsBlock(void) {
 
 		if (_collisionAreas[_activeCollIndex].funcEnter != 0) {
 			savedIP = _vm->_global->_inter_execPtr;
-			_vm->_global->_inter_execPtr = (char *) _totFileData +
+			_vm->_global->_inter_execPtr = _totFileData +
 			    _collisionAreas[_activeCollIndex].funcEnter;
 
 			_shouldPushColls = 1;
@@ -1035,7 +1034,7 @@ void Game_v1::collisionsBlock(void) {
 
 			if (((_collisionAreas[i].flags & 0x0F) >= 5) &&
 			    ((_collisionAreas[i].flags & 0x0F) <= 8)) {
-				str = descArray[var_24].ptr;
+				str = (char *) descArray[var_24].ptr;
 
 				strncpy0(_tempStr, GET_VARO_STR(_collisionAreas[i].key), 255);
 
@@ -1074,7 +1073,7 @@ void Game_v1::collisionsBlock(void) {
 
 	savedIP = 0;
 	if (!_vm->_inter->_terminate) {
-		savedIP = (char *) _totFileData +
+		savedIP = _totFileData +
 		    _collisionAreas[_activeCollIndex].funcLeave;
 
 		WRITE_VAR(2, _vm->_global->_inter_mouseX);

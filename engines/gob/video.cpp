@@ -309,8 +309,8 @@ void Video::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 
 void Video::drawLetter(int16 item, int16 x, int16 y, FontDesc *fontDesc,
 		int16 color1, int16 color2, int16 transp, SurfaceDesc *dest) {
-	char *dataPtr;
-	char *itemData;
+	byte *dataPtr;
+	byte *itemData;
 	int16 itemSize;
 	int16 newItem;
 	int16 curItem;
@@ -321,7 +321,7 @@ void Video::drawLetter(int16 item, int16 x, int16 y, FontDesc *fontDesc,
 		itemSize = fontDesc->itemSize + 3;
 		dataPtr = fontDesc->dataPtr;
 		//        startItem
-		curItem = dataPtr[-2] - 1;
+		curItem = READ_LE_UINT16(dataPtr - 2) - 1;
 
 		curItemPos = 0;
 		do {
@@ -356,10 +356,10 @@ void Video::drawPackedSprite(byte *sprBuf, int16 width, int16 height,
 }
 
 void Video::drawPackedSprite(const char *path, SurfaceDesc *dest, int width) {
-	char *data;
+	byte *data;
 
 	data = _vm->_dataIO->getData(path);
-	drawPackedSprite((byte *) data, width, dest->getHeight(), 0, 0, 0, dest);
+	drawPackedSprite(data, width, dest->getHeight(), 0, 0, 0, dest);
 	delete[] data;
 }
 

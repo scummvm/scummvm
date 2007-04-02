@@ -57,9 +57,9 @@ void Map_v1::init(void) {
 	memset(_wayPoints, 0, sizeof(Point));
 }
 
-void Map_v1::loadMapObjects(char *avjFile) {
+void Map_v1::loadMapObjects(const char *avjFile) {
 	char avoName[128];
-	char *dataBuf;
+	byte *dataBuf;
 	int16 handle;
 	int16 tmp;
 	int32 flag;
@@ -80,7 +80,7 @@ void Map_v1::loadMapObjects(char *avjFile) {
 		_loadFromAvo = false;
 		dataBuf = _vm->_dataIO->getData(avjFile);
 	}
-	Common::MemoryReadStream mapData((byte *) dataBuf, 4294967295U);
+	Common::MemoryReadStream mapData(dataBuf, 4294967295U);
 
 	if (_loadFromAvo) {
 		mapData.read(_passMap, _mapHeight * _mapWidth);
@@ -111,11 +111,11 @@ void Map_v1::loadMapObjects(char *avjFile) {
 	objDataCount = mapData.readUint16LE();
 
 	gobsPos = mapData.pos();
-	Common::MemoryReadStream gobsData((byte *) dataBuf + gobsPos, 4294967295U);
+	Common::MemoryReadStream gobsData(dataBuf + gobsPos, 4294967295U);
 	mapData.skip(gobDataCount * 8);
 
 	objsPos = mapData.pos();
-	Common::MemoryReadStream objsData((byte *) dataBuf + objsPos, 4294967295U);
+	Common::MemoryReadStream objsData(dataBuf + objsPos, 4294967295U);
 	mapData.skip(objDataCount * 8);
 
 	loadGoblins(mapData, gobsPos);

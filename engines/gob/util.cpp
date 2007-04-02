@@ -302,7 +302,7 @@ void Util::setScrollOffset(int16 x, int16 y) {
 
 Video::FontDesc *Util::loadFont(const char *path) {
 	Video::FontDesc *fontDesc = new Video::FontDesc;
-	char *data;
+	byte *data;
 
 	if (!fontDesc)
 		return 0;

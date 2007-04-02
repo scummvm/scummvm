@@ -173,7 +173,7 @@ void Draw_v1::printTotText(int16 id) {
 	if (!_vm->_game->_totTextData || !_vm->_game->_totTextData->dataPtr)
 		return;
 
-	dataPtr = ((byte *) _vm->_game->_totTextData->dataPtr) +
+	dataPtr = _vm->_game->_totTextData->dataPtr +
 		_vm->_game->_totTextData->items[id].offset;
 	ptr = dataPtr;
 
@@ -321,7 +321,7 @@ void Draw_v1::printTotText(int16 id) {
 
 void Draw_v1::spriteOperation(int16 operation) {
 	uint16 id;
-	char *dataBuf;
+	byte *dataBuf;
 	Game::TotResItem *itemPtr;
 	int32 offset;
 	int16 len;
@@ -414,7 +414,7 @@ void Draw_v1::spriteOperation(int16 operation) {
 		if (id >= 30000) {
 			dataBuf =
 			    _vm->_game->loadExtData(id, &_spriteRight, &_spriteBottom);
-			_vm->_video->drawPackedSprite((byte *) dataBuf,
+			_vm->_video->drawPackedSprite(dataBuf,
 					_spriteRight, _spriteBottom,
 					_destSpriteX, _destSpriteY,
 					_transparency, _spritesArray[_destSurface]);
@@ -444,7 +444,7 @@ void Draw_v1::spriteOperation(int16 operation) {
 
 		_spriteRight = itemPtr->width;
 		_spriteBottom = itemPtr->height;
-		_vm->_video->drawPackedSprite((byte *) dataBuf,
+		_vm->_video->drawPackedSprite(dataBuf,
 		    _spriteRight, _spriteBottom,
 		    _destSpriteX, _destSpriteY,
 		    _transparency, _spritesArray[_destSurface]);

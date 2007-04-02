@@ -64,6 +64,7 @@ void Mult_v2::loadMult(int16 resId) {
 	bool hasImds;
 	
 	index = (resId & 0x8000) ? *_vm->_global->_inter_execPtr++ : 0;
+	resId &= 0x7FFF;
 
 	debugC(4, kDebugGameFlow, "Loading mult %d", index);
 
@@ -997,7 +998,7 @@ void Mult_v2::animate() {
 
 }
 
-void Mult_v2::playImd(char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
+void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 		int16 startFrame) {
 	int16 x, y;
 	int16 palStart, palEnd;

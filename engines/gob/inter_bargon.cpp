@@ -775,7 +775,7 @@ void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 	Video::Color *palBak;
 	SoundDesc samples[2];
 	int16 comp[3] = { 0, 1, -1 };
-	char *palettes[4];
+	byte *palettes[4];
 	static const char *sndFiles[] = {"1INTROIV.snd", "2INTROIV.snd"};
 	static const char *palFiles[] = {"2ou2.clt", "2ou3.clt", "2ou4.clt", "2ou5.clt"};
 

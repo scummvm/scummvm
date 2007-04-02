@@ -722,7 +722,7 @@ const char *Inter_v2::getOpcodeGoblinDesc(int i) {
 	return "";
 }
 
-void Inter_v2::checkSwitchTable(char **ppExec) {
+void Inter_v2::checkSwitchTable(byte **ppExec) {
 	byte cmd;
 	int16 len;
 	int32 value;
@@ -796,7 +796,7 @@ void Inter_v2::checkSwitchTable(char **ppExec) {
 			}
 		}
 
-		if (found && (*ppExec == 0))
+		if (found && !*ppExec)
 			*ppExec = _vm->_global->_inter_execPtr;
 
 		_vm->_global->_inter_execPtr +=
@@ -808,7 +808,7 @@ void Inter_v2::checkSwitchTable(char **ppExec) {
 		return;
 
 	_vm->_global->_inter_execPtr++;
-	if (*ppExec == 0)
+	if (!*ppExec)
 		*ppExec = _vm->_global->_inter_execPtr;
 
 	_vm->_global->_inter_execPtr +=
@@ -958,7 +958,7 @@ void Inter_v2::o2_loadMultObject() {
 	int16 objIndex;
 	int16 animation;
 	int16 layer;
-	char *multData;
+	byte *multData;
 
 	objIndex = _vm->_parse->parseValExpr();
 	val = _vm->_parse->parseValExpr();
@@ -968,7 +968,7 @@ void Inter_v2::o2_loadMultObject() {
 
 	debugC(4, kDebugGameFlow, "Loading mult object %d", objIndex);
 
-	multData = (char *) _vm->_mult->_objects[objIndex].pAnimData;
+	multData = (byte *) _vm->_mult->_objects[objIndex].pAnimData;
 	for (int i = 0; i < 11; i++) {
 		if (*_vm->_global->_inter_execPtr != 99)
 			multData[i] = _vm->_parse->parseValExpr();
@@ -1125,7 +1125,7 @@ void Inter_v2::o2_totSub() {
 		strcpy(totFile, _vm->_global->_inter_resStr);
 	} else {
 		for (i = 0; i < length; i++)
-			totFile[i] = *_vm->_global->_inter_execPtr++;
+			totFile[i] = (char) *_vm->_global->_inter_execPtr++;
 		totFile[i] = 0;
 	}
 
@@ -1133,7 +1133,7 @@ void Inter_v2::o2_totSub() {
 	if (!scumm_stricmp(totFile, "edit"))
 		_vm->_util->forceMouseUp();
 
-	flags = (byte) *_vm->_global->_inter_execPtr++;
+	flags = *_vm->_global->_inter_execPtr++;
 	_vm->_game->totSub(flags, totFile);
 }
 
@@ -1571,7 +1571,7 @@ void Inter_v2::o2_resetImdFrontSurf() {
 }
 
 bool Inter_v2::o2_evaluateStore(OpFuncParams &params) {
-	char *savedPos;
+	byte *savedPos;
 	int16 varOff;
 	int16 token;
 	int16 result;
@@ -1642,13 +1642,13 @@ bool Inter_v2::o2_printText(OpFuncParams &params) {
 	}
 
 	do {
-		for (i = 0; (*_vm->_global->_inter_execPtr != '.') &&
-				((byte) *_vm->_global->_inter_execPtr != 200);
+		for (i = 0; (((char) *_vm->_global->_inter_execPtr) != '.') &&
+				(*_vm->_global->_inter_execPtr != 200);
 				i++, _vm->_global->_inter_execPtr++) {
-			buf[i] = *_vm->_global->_inter_execPtr;
+			buf[i] = (char) *_vm->_global->_inter_execPtr;
 		}
 
-		if ((byte) *_vm->_global->_inter_execPtr != 200) {
+		if (*_vm->_global->_inter_execPtr != 200) {
 			_vm->_global->_inter_execPtr++;
 			switch (*_vm->_global->_inter_execPtr) {
 			case 16:
@@ -1681,7 +1681,7 @@ bool Inter_v2::o2_printText(OpFuncParams &params) {
 			buf[i] = 0;
 
 		_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
-	} while ((byte) *_vm->_global->_inter_execPtr != 200);
+	} while (*_vm->_global->_inter_execPtr != 200);
 
 	_vm->_global->_inter_execPtr++;
 
@@ -1816,13 +1816,16 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	int32 offset;
 	int16 dataVar;
 	int16 handle;
-	char *buf;
+	byte *buf;
 
 	evalExpr(0);
 	dataVar = _vm->_parse->parseVarIndex();
 	size = _vm->_parse->parseValExpr();
 	evalExpr(0);
 	offset = _vm->_global->_inter_resVal;
+
+	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
+			_vm->_global->_inter_resStr, dataVar, size, offset);
 
 	if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf")) {
 		_vm->loadGameData(SAVE_CAT, dataVar, size, offset);
@@ -1896,6 +1899,9 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 	size = _vm->_parse->parseValExpr();
 	evalExpr(0);
 	offset = _vm->_global->_inter_resVal;
+
+	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes at %d)",
+			_vm->_global->_inter_resStr, dataVar, size, offset);
 
 	if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf"))
 		_vm->saveGameData(SAVE_CAT, dataVar, size, offset);
@@ -2010,12 +2016,20 @@ int16 Inter_v2::loadSound(int16 search) {
 	} else {
 		id = load16();
 
-		for (slot = 0; slot < 60; slot++)
+		for (slot = 0; slot < 60; slot++) {
 			if (_vm->_game->_soundSamples[slot].isId(id))
 				return slot | 0x8000;
+		}
 
-		for (slot = 59; slot >= 0; slot--)
-			if (_vm->_game->_soundSamples[slot].empty()) break;
+		for (slot = 59; slot >= 0; slot--) {
+			if (_vm->_game->_soundSamples[slot].empty())
+				break;
+		}
+
+		if (slot == -1) {
+			warning("Inter_v2::loadSound(): No free slot to load sound (id = %d)", id);
+			return 0;
+		}
 	}
 	
 	_vm->_game->freeSoundSlot(slot);
@@ -2026,7 +2040,7 @@ int16 Inter_v2::loadSound(int16 search) {
 
 		source = SOUND_FILE;
 
-		strncpy0(sndfile, _vm->_global->_inter_execPtr, 9);
+		strncpy0(sndfile, (const char *) _vm->_global->_inter_execPtr, 9);
 		_vm->_global->_inter_execPtr += 9;
 
 		if (type == SOUND_ADL)

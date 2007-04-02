@@ -329,7 +329,7 @@ void Draw::drawString(char *str, int16 x, int16 y, int16 color1, int16 color2,
 		if (!font->extraData)
 			x += font->itemWidth;
 		else
-			x += *(((char *)font->extraData) + (*str - font->startItem));
+			x += *(font->extraData + (*str - font->startItem));
 		str++;
 	}
 }
@@ -341,7 +341,8 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 	adjustCoords(1, &right, &bottom);
 
 	if (READ_LE_UINT16(_vm->_game->_totFileData + 0x7E) != 0) {
-		char *storedIP = _vm->_global->_inter_execPtr;
+		byte *storedIP = _vm->_global->_inter_execPtr;
+
 		_vm->_global->_inter_execPtr = _vm->_game->_totFileData +
 			READ_LE_UINT16(_vm->_game->_totFileData + 0x7E);
 		WRITE_VAR(17, (uint32) id);
@@ -350,6 +351,7 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 		WRITE_VAR(20, (uint32) (right - left + 1));
 		WRITE_VAR(21, (uint32) (bottom - top + 1));
 		_vm->_inter->funcBlock(0);
+
 		_vm->_global->_inter_execPtr = storedIP;
 	}
 	
@@ -365,7 +367,7 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 	_frontColor = color;
 	_textToPrint = str;
 	if (_fonts[fontIndex]->extraData != 0) {
-		char *data = (char *) _fonts[fontIndex]->extraData;
+		byte *data = _fonts[fontIndex]->extraData;
 		int length = strlen(str);
 
 		for (int i = 0; i < length; i++)

@@ -58,14 +58,14 @@ private:
 class Video {
 public:
 	struct FontDesc {
-		char *dataPtr;
+		byte *dataPtr;
 		int8 itemWidth;
 		int8 itemHeight;
 		int8 startItem;
 		int8 endItem;
 		int8 itemSize;
 		int8 bitWidth;
-		void *extraData;
+		byte *extraData;
 		FontDesc() : dataPtr(0), itemWidth(0), itemHeight(0), startItem(0),
 			               endItem(0), itemSize(0), bitWidth(0) {}
 	};

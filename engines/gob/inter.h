@@ -65,8 +65,8 @@ public:
 
 protected:
 	struct OpFuncParams {
-		char cmdCount;
-		int16 counter;
+		byte cmdCount;
+		byte counter;
 		int16 retFlag;
 	};
 	struct OpGobParams {
@@ -98,7 +98,7 @@ protected:
 	virtual const char *getOpcodeFuncDesc(byte i, byte j) = 0;
 	virtual const char *getOpcodeGoblinDesc(int i) = 0;
 
-	virtual void checkSwitchTable(char **ppExec) = 0;
+	virtual void checkSwitchTable(byte **ppExec) = 0;
 
 	void o_drawNOP() {}
 	bool o_funcNOP(OpFuncParams &params) { return false; }
@@ -142,7 +142,7 @@ protected:
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
 	virtual const char *getOpcodeGoblinDesc(int i);
 
-	virtual void checkSwitchTable(char **ppExec);
+	virtual void checkSwitchTable(byte **ppExec);
 
 	void o1_loadMult();
 	void o1_playMult();
@@ -337,7 +337,7 @@ protected:
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
 	virtual const char *getOpcodeGoblinDesc(int i);
 
-	virtual void checkSwitchTable(char **ppExec);
+	virtual void checkSwitchTable(byte **ppExec);
 
 	void o2_playMult();
 	void o2_setRenderFlags();

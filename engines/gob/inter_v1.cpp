@@ -720,7 +720,7 @@ const char *Inter_v1::getOpcodeGoblinDesc(int i) {
 	return "";
 }
 
-void Inter_v1::checkSwitchTable(char **ppExec) {
+void Inter_v1::checkSwitchTable(byte **ppExec) {
 	int16 len;
 	int32 value;
 	bool found;
@@ -988,7 +988,7 @@ void Inter_v1::o1_animate() {
 void Inter_v1::o1_loadMultObject() {
 	int16 val;
 	int16 objIndex;
-	char *multData;
+	byte *multData;
 
 	evalExpr(&objIndex);
 	evalExpr(&val);
@@ -998,7 +998,7 @@ void Inter_v1::o1_loadMultObject() {
 
 	debugC(4, kDebugGameFlow, "Loading mult object %d", objIndex);
 
-	multData = (char *) _vm->_mult->_objects[objIndex].pAnimData;
+	multData = (byte *) _vm->_mult->_objects[objIndex].pAnimData;
 	for (int i = 0; i < 11; i++) {
 		if (READ_LE_UINT16(_vm->_global->_inter_execPtr) != 99) {
 			evalExpr(&val);
@@ -1119,7 +1119,7 @@ void Inter_v1::o1_freeFontToSprite() {
 }
 
 bool Inter_v1::o1_callSub(OpFuncParams &params) {
-	char *storedIP;
+	byte *storedIP;
 	uint32 offset;
 
 	storedIP = _vm->_global->_inter_execPtr;
@@ -1143,7 +1143,7 @@ bool Inter_v1::o1_callSub(OpFuncParams &params) {
 		return false;
 	}
 
-	_vm->_global->_inter_execPtr = (char *) _vm->_game->_totFileData + offset;
+	_vm->_global->_inter_execPtr = _vm->_game->_totFileData + offset;
 
 	if ((params.counter == params.cmdCount) && (params.retFlag == 2))
 		return true;
@@ -1162,13 +1162,13 @@ bool Inter_v1::o1_printTotText(OpFuncParams &params) {
 bool Inter_v1::o1_loadCursor(OpFuncParams &params) {
 	Game::TotResItem *itemPtr;
 	int16 width, height;
-	char *dataBuf;
+	byte *dataBuf;
 	int32 offset;
 	int16 id;
 	int8 index;
 
 	id = load16();
-	index = *_vm->_global->_inter_execPtr++;
+	index = (int8) *_vm->_global->_inter_execPtr++;
 	itemPtr = &_vm->_game->_totResourceTable->items[id];
 	offset = itemPtr->offset;
 
@@ -1189,7 +1189,7 @@ bool Inter_v1::o1_loadCursor(OpFuncParams &params) {
 			index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
 			_vm->_draw->_cursorHeight - 1, 0);
 
-	_vm->_video->drawPackedSprite((byte*) dataBuf, width, height,
+	_vm->_video->drawPackedSprite(dataBuf, width, height,
 			index * _vm->_draw->_cursorWidth, 0, 0, _vm->_draw->_cursorSprites);
 	_vm->_draw->_cursorAnimLow[index] = 0;
 
@@ -1197,10 +1197,10 @@ bool Inter_v1::o1_loadCursor(OpFuncParams &params) {
 }
 
 bool Inter_v1::o1_switch(OpFuncParams &params) {
-	char *callAddr;
+	byte *callAddr;
 
 	checkSwitchTable(&callAddr);
-	char *storedIP = _vm->_global->_inter_execPtr;
+	byte *storedIP = _vm->_global->_inter_execPtr;
 	_vm->_global->_inter_execPtr = callAddr;
 
 	if ((params.counter == params.cmdCount) && (params.retFlag == 2))
@@ -1213,7 +1213,7 @@ bool Inter_v1::o1_switch(OpFuncParams &params) {
 }
 
 bool Inter_v1::o1_repeatUntil(OpFuncParams &params) {
-	char *blockPtr;
+	byte *blockPtr;
 	int16 size;
 	bool flag;
 
@@ -1239,8 +1239,8 @@ bool Inter_v1::o1_repeatUntil(OpFuncParams &params) {
 }
 
 bool Inter_v1::o1_whileDo(OpFuncParams &params) {
-	char *blockPtr;
-	char *savedIP;
+	byte *blockPtr;
+	byte *savedIP;
 	bool flag;
 	int16 size;
 
@@ -1280,13 +1280,14 @@ bool Inter_v1::o1_whileDo(OpFuncParams &params) {
 bool Inter_v1::o1_if(OpFuncParams &params) {
 	byte cmd;
 	bool boolRes;
+	byte *storedIP;
 	
 	boolRes = evalBoolResult();
 	if (boolRes) {
 		if ((params.counter == params.cmdCount) && (params.retFlag == 2))
 			return true;
 
-		char *storedIP = _vm->_global->_inter_execPtr;
+		storedIP = _vm->_global->_inter_execPtr;
 		funcBlock(0);
 		_vm->_global->_inter_execPtr = storedIP;
 
@@ -1296,7 +1297,7 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 		debugC(5, kDebugGameFlow, "cmd = %d",
 				(int16) *_vm->_global->_inter_execPtr);
 
-		cmd = (byte) (*_vm->_global->_inter_execPtr) >> 4;
+		cmd = *_vm->_global->_inter_execPtr >> 4;
 		_vm->_global->_inter_execPtr++;
 		if (cmd != 12)
 			return false;
@@ -1310,7 +1311,7 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 		debugC(5, kDebugGameFlow, "cmd = %d",
 				(int16) *_vm->_global->_inter_execPtr);
 
-		cmd = (byte) (*_vm->_global->_inter_execPtr) >> 4;
+		cmd = *_vm->_global->_inter_execPtr >> 4;
 		_vm->_global->_inter_execPtr++;
 		if (cmd != 12)
 			return false;
@@ -1318,9 +1319,10 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 		if ((params.counter == params.cmdCount) && (params.retFlag == 2))
 			return true;
 
-		char *storedIP = _vm->_global->_inter_execPtr;
+		storedIP = _vm->_global->_inter_execPtr;
 		funcBlock(0);
 		_vm->_global->_inter_execPtr = storedIP;
+
 		_vm->_global->_inter_execPtr +=
 			READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
 	}
@@ -1328,7 +1330,7 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 }
 
 bool Inter_v1::o1_evaluateStore(OpFuncParams &params) {
-	char *savedPos;
+	byte *savedPos;
 	int16 token;
 	int16 result;
 	int16 varOff;
@@ -1361,7 +1363,7 @@ bool Inter_v1::o1_loadSpriteToPos(OpFuncParams &params) {
 	_vm->_draw->_destSpriteY = _vm->_parse->parseValExpr();
 
 	_vm->_draw->_transparency = *_vm->_global->_inter_execPtr & 1;
-	_vm->_draw->_destSurface = (*_vm->_global->_inter_execPtr >> 1) - 1;
+	_vm->_draw->_destSurface = ((int16) (*_vm->_global->_inter_execPtr >> 1)) - 1;
 	if (_vm->_draw->_destSurface < 0)
 		_vm->_draw->_destSurface = 101;
 
@@ -1392,13 +1394,13 @@ bool Inter_v1::o1_printText(OpFuncParams &params) {
 	}
 
 	do {
-		for (i = 0; (*_vm->_global->_inter_execPtr != '.') &&
-				((byte) *_vm->_global->_inter_execPtr != 200);
+		for (i = 0; (((char) *_vm->_global->_inter_execPtr) != '.') &&
+				(*_vm->_global->_inter_execPtr != 200);
 				i++, _vm->_global->_inter_execPtr++) {
-			buf[i] = *_vm->_global->_inter_execPtr;
+			buf[i] = (char) *_vm->_global->_inter_execPtr;
 		}
 
-		if ((byte) *_vm->_global->_inter_execPtr != 200) {
+		if (*_vm->_global->_inter_execPtr != 200) {
 			_vm->_global->_inter_execPtr++;
 			switch (*_vm->_global->_inter_execPtr) {
 			case 23:
@@ -1418,7 +1420,7 @@ bool Inter_v1::o1_printText(OpFuncParams &params) {
 			buf[i] = 0;
 
 		_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
-	} while ((byte) *_vm->_global->_inter_execPtr != 200);
+	} while (*_vm->_global->_inter_execPtr != 200);
 
 	_vm->_global->_inter_execPtr++;
 
@@ -1434,7 +1436,7 @@ bool Inter_v1::o1_loadTot(OpFuncParams &params) {
 		evalExpr(0);
 		strncpy0(buf, _vm->_global->_inter_resStr, 15);
 	} else {
-		size = *_vm->_global->_inter_execPtr++;
+		size = (int8) *_vm->_global->_inter_execPtr++;
 		for (int i = 0; i < size; i++)
 			buf[i] = *_vm->_global->_inter_execPtr++;
 
@@ -1451,7 +1453,7 @@ bool Inter_v1::o1_loadTot(OpFuncParams &params) {
 
 bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 	int index1, index2;
-	char *palPtr;
+	byte *palPtr;
 	byte cmd;
 
 	cmd = *_vm->_global->_inter_execPtr++;

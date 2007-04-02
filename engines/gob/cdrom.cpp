@@ -85,7 +85,7 @@ void CDROM::readLIC(const char *fname) {
 	}
 
 	_LICbuffer = new byte[_numTracks * 22];
-	_vm->_dataIO->readData(handle, (char *) _LICbuffer, _numTracks * 22);
+	_vm->_dataIO->readData(handle, _LICbuffer, _numTracks * 22);
 
 	_vm->_dataIO->closeData(handle);
 }

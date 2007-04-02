@@ -45,14 +45,14 @@ Map_v2::~Map_v2() {
 void Map_v2::init(void) {
 }
 
-void Map_v2::loadMapObjects(char *avjFile) {
+void Map_v2::loadMapObjects(const char *avjFile) {
 	uint8 wayPointsCount;
 	int16 var;
 	int16 id;
 	int16 mapWidth, mapHeight;
 	int16 tmp;
-	char *variables;
-	char *extData;
+	byte *variables;
+	byte *extData;
 	uint32 tmpPos;
 	uint32 passPos;
 
@@ -67,7 +67,7 @@ void Map_v2::loadMapObjects(char *avjFile) {
 	}
 
 	extData = _vm->_game->loadExtData(id, 0, 0);
-	Common::MemoryReadStream mapData((byte *) extData, 4294967295U);
+	Common::MemoryReadStream mapData(extData, 4294967295U);
 
 	if (mapData.readByte() == 3) {
 		_screenWidth = 640;
@@ -114,7 +114,7 @@ void Map_v2::loadMapObjects(char *avjFile) {
 		mapHeight = 200 / _tilesHeight;
 		mapWidth = _screenWidth / _tilesWidth;
 		sizes = _vm->_global->_inter_variablesSizes +
-			(((char *) _passMap) - _vm->_global->_inter_variables);
+			(((byte *) _passMap) - _vm->_global->_inter_variables);
 		for (int i = 0; i < mapHeight; i++) {
 			for (int j = 0; j < mapWidth; j++)
 				setPass(j, i, mapData.readSByte());

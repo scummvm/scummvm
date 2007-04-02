@@ -30,7 +30,7 @@ namespace Gob {
 
 class Init {
 public:
-	void initGame(char *totFile);
+	void initGame(const char *totFile);
 
 	virtual void initVideo() = 0;
 
