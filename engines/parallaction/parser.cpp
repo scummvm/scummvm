@@ -29,13 +29,12 @@ namespace Parallaction {
 
 char			_tokens[20][40];
 
-Script::Script(const char* s, bool disposeSource) : _src(s), _disposeSource(disposeSource) {
-	_pos = const_cast<char*>(_src);
+Script::Script(Common::SeekableReadStream *input, bool disposeSource) : _input(input), _disposeSource(disposeSource) {
 }
 
 Script::~Script() {
 	if (_disposeSource)
-		free(const_cast<char*>(_src));
+		delete _input;
 }
 
 char *Script::readLine(char *buf, size_t bufSize) {
@@ -44,12 +43,13 @@ char *Script::readLine(char *buf, size_t bufSize) {
 	char v2 = 0;
 	for ( _si = 0; _si<bufSize; _si++) {
 
-		v2 = *_pos++;
-		if (v2 == 0xA || v2 == -1) break;
-		if (v2 != -1 && _si < bufSize) buf[_si] = v2;
+		v2 = _input->readSByte();
+
+		if (v2 == 0xA || _input->eos()) break;
+		if (!_input->eos() && _si < bufSize) buf[_si] = v2;
 	}
 
-	if (_si == 0 && v2 == -1)
+	if (_si == 0 && _input->eos())
 		return 0;
 
 	buf[_si] = 0xA;

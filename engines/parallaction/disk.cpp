@@ -116,6 +116,47 @@ public:
 };
 
 
+/*
+	This stream class is just a wrapper around Archive, so
+	deallocation is not a problem. In fact, this class doesn't
+	delete its input (Archive) stream.
+*/
+class DummyArchiveStream : public Common::SeekableReadStream {
+
+	Archive *_input;
+
+public:
+	DummyArchiveStream(Archive &input) : _input(&input) {
+
+	}
+
+	~DummyArchiveStream() {
+		// this class exists to provide this empty destructor
+	}
+
+	bool eos() const {
+		return _input->eos();
+	}
+
+	uint32 read(void* data, uint32 dataSize) {
+		return _input->read(data, dataSize);
+	}
+
+	uint32 pos() const {
+		return _input->pos();
+	}
+
+	uint32 size() const {
+		return _input->size();
+	}
+
+	void seek(int32 offset, int whence) {
+		_input->seek(offset, whence);
+	}
+
+};
+
+
 
 Disk::Disk(Parallaction *vm) : _vm(vm) {
 
@@ -131,7 +172,7 @@ void Disk::errorFileNotFound(const char *s) {
 
 
 void Disk::selectArchive(const char *name) {
-	_archive.open(name);
+	_resArchive.open(name);
 }
 
 void Disk::setLanguage(uint16 language) {
@@ -157,6 +198,10 @@ void Disk::setLanguage(uint16 language) {
 		error("unknown language");
 
 	}
+
+	_languageDir[2] = '\0';
+	_locArchive.open(_languageDir);
+	_languageDir[2] = '/';
 
 	return;
 }
@@ -230,20 +275,20 @@ Cnv* DosDisk::loadCnv(const char *filename) {
 	char path[PATH_LEN];
 
 	strcpy(path, filename);
-	if (!_archive.openArchivedFile(path)) {
+	if (!_resArchive.openArchivedFile(path)) {
 		sprintf(path, "%s.pp", filename);
-		if (!_archive.openArchivedFile(path))
+		if (!_resArchive.openArchivedFile(path))
 			errorFileNotFound(path);
 	}
 
-	uint16 numFrames = _archive.readByte();
-	uint16 width = _archive.readByte();
-	uint16 height = _archive.readByte();
+	uint16 numFrames = _resArchive.readByte();
+	uint16 width = _resArchive.readByte();
+	uint16 height = _resArchive.readByte();
 
 	uint32 decsize = numFrames * width * height;
 	byte *data = (byte*)malloc(decsize);
 
-	RLEStream decoder(&_archive);
+	RLEStream decoder(&_resArchive);
 	decoder.read(data, decsize);
 
 	return new Cnv(numFrames, width, height, data);
@@ -289,23 +334,13 @@ Script* DosDisk::loadLocation(const char *name) {
 	strcat(archivefile, name);
 	strcat(archivefile, ".loc");
 
-	_languageDir[2] = '\0';
-	_archive.open(_languageDir);
-	_languageDir[2] = '/';
-
-	if (!_archive.openArchivedFile(archivefile)) {
+	if (!_locArchive.openArchivedFile(archivefile)) {
 		sprintf(archivefile, "%s%s.loc", _languageDir, name);
-		if (!_archive.openArchivedFile(archivefile))
+		if (!_locArchive.openArchivedFile(archivefile))
 			errorFileNotFound(name);
 	}
 
-	uint32 size = _archive.size();
-	char *buf = (char*)malloc(size+1);
-	_archive.read(buf, size);
-	buf[size] = '\0';
-
-	return new Script(buf, true);
-
+	return new Script(new DummyArchiveStream(_locArchive), true);
 }
 
 Script* DosDisk::loadScript(const char* name) {
@@ -314,15 +349,10 @@ Script* DosDisk::loadScript(const char* name) {
 
 	sprintf(vC8, "%s.script", name);
 
-	if (!_archive.openArchivedFile(vC8))
+	if (!_resArchive.openArchivedFile(vC8))
 		errorFileNotFound(vC8);
 
-	uint32 size = _archive.size();
-	char *buf = (char*)malloc(size+1);
-	_archive.read(buf, size);
-	buf[size] = '\0';
-
-	return new Script(buf, true);
+	return new Script(new DummyArchiveStream(_resArchive), true);
 }
 
 StaticCnv* DosDisk::loadHead(const char* name) {
@@ -369,22 +399,22 @@ StaticCnv* DosDisk::loadStatic(const char* name) {
 	char path[PATH_LEN];
 
 	strcpy(path, name);
-	if (!_archive.openArchivedFile(path)) {
+	if (!_resArchive.openArchivedFile(path)) {
 		sprintf(path, "%s.pp", name);
-		if (!_archive.openArchivedFile(path))
+		if (!_resArchive.openArchivedFile(path))
 			errorFileNotFound(path);
 	}
 
 	StaticCnv* cnv = new StaticCnv;
 
-	_archive.skip(1);
-	cnv->_width = _archive.readByte();
-	cnv->_height = _archive.readByte();
+	_resArchive.skip(1);
+	cnv->_width = _resArchive.readByte();
+	cnv->_height = _resArchive.readByte();
 
 	uint16 size = cnv->_width*cnv->_height;
 	cnv->_data0 = (byte*)malloc(size);
 
-	RLEStream decoder(&_archive);
+	RLEStream decoder(&_resArchive);
 	decoder.read(cnv->_data0, size);
 
 	return cnv;
@@ -447,17 +477,17 @@ void DosDisk::parseBackground(Common::SeekableReadStream &stream) {
 
 void DosDisk::loadBackground(const char *filename) {
 
-	if (!_archive.openArchivedFile(filename))
+	if (!_resArchive.openArchivedFile(filename))
 		errorFileNotFound(filename);
 
-	parseBackground(_archive);
+	parseBackground(_resArchive);
 
 	byte *bg = (byte*)calloc(1, SCREEN_WIDTH*SCREEN_HEIGHT);
 	byte *mask = (byte*)calloc(1, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 	byte *path = (byte*)calloc(1, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 
 
-	RLEStream stream(&_archive);
+	RLEStream stream(&_resArchive);
 	unpackBackground(&stream, bg, mask, path);
 
 	_vm->_gfx->setBackground(bg);
@@ -481,16 +511,16 @@ void DosDisk::loadMaskAndPath(const char *name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.msk", name);
 
-	if (!_archive.openArchivedFile(path))
+	if (!_resArchive.openArchivedFile(path))
 		errorFileNotFound(name);
 
 	byte *maskBuf = (byte*)calloc(1, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 	byte *pathBuf = (byte*)calloc(1, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 
-	parseDepths(_archive);
+	parseDepths(_resArchive);
 
-	_archive.read(pathBuf, SCREENPATH_WIDTH*SCREEN_HEIGHT);
-	_archive.read(maskBuf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
+	_resArchive.read(pathBuf, SCREENPATH_WIDTH*SCREEN_HEIGHT);
+	_resArchive.read(maskBuf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 
 	_vm->_gfx->setMask(maskBuf);
 	setPath(pathBuf);
@@ -702,45 +732,6 @@ public:
 
 
 
-/*
-	This stream class is just a wrapper around Archive, so
-	deallocation is not a problem. In fact, this class doesn't
-	delete its input (Archive) stream.
-*/
-class DummyArchiveStream : public Common::SeekableReadStream {
-
-	Archive *_input;
-
-public:
-	DummyArchiveStream(Archive &input) : _input(&input) {
-
-	}
-
-	~DummyArchiveStream() {
-		// this class exists to provide this empty destructor
-	}
-
-	bool eos() const {
-		return _input->eos();
-	}
-
-	uint32 read(void* data, uint32 dataSize) {
-		return _input->read(data, dataSize);
-	}
-
-	uint32 pos() const {
-		return _input->pos();
-	}
-
-	uint32 size() const {
-		return _input->size();
-	}
-
-	void seek(int32 offset, int whence) {
-		_input->seek(offset, whence);
-	}
-
-};
 
 
 
@@ -842,27 +833,16 @@ Cnv* AmigaDisk::makeCnv(Common::SeekableReadStream &stream) {
 Script* AmigaDisk::loadLocation(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadLocation '%s'", name);
 
-	_languageDir[2] = '\0';
-	_archive.open(_languageDir);
-	_languageDir[2] = '/';
-
 	char path[PATH_LEN];
 	sprintf(path, "%s%s%s.loc.pp", _vm->_characterName, _languageDir, name);
-	if (!_archive.openArchivedFile(path)) {
+	if (!_locArchive.openArchivedFile(path)) {
 		sprintf(path, "%s%s.loc.pp", _languageDir, name);
-		if (!_archive.openArchivedFile(path)) {
+		if (!_locArchive.openArchivedFile(path)) {
 			errorFileNotFound(name);
 		}
 	}
 
-	PowerPackerStream stream(_archive);
-
-	uint32 size = stream.size();
-	char *buf = (char*)malloc(size+1);
-	stream.read(buf, size);
-	buf[size] = '\0';
-
-	return new Script(buf, true);
+	return new Script(new PowerPackerStream(_locArchive), true);
 }
 
 Script* AmigaDisk::loadScript(const char* name) {
@@ -872,15 +852,10 @@ Script* AmigaDisk::loadScript(const char* name) {
 
 	sprintf(vC8, "%s.script", name);
 
-	if (!_archive.openArchivedFile(vC8))
+	if (!_resArchive.openArchivedFile(vC8))
 		errorFileNotFound(vC8);
 
-	uint32 size = _archive.size();
-	char *buf = (char*)malloc(size+1);
-	_archive.read(buf, size);
-	buf[size] = '\0';
-
-	return new Script(buf, true);
+	return new Script(new DummyArchiveStream(_resArchive), true);
 }
 
 Cnv* AmigaDisk::loadTalk(const char *name) {
@@ -948,7 +923,7 @@ Cnv* AmigaDisk::loadFont(const char* name) {
 	else
 		strcpy(path, "introfont");
 
-	if (!_archive.openArchivedFile(path))
+	if (!_resArchive.openArchivedFile(path))
 		errorFileNotFound(path);
 
 	// FIXME: actually read data from font file and create
@@ -971,20 +946,20 @@ StaticCnv* AmigaDisk::loadStatic(const char* name) {
 
 Common::SeekableReadStream *AmigaDisk::openArchivedFile(const char* name, bool errorOnFileNotFound) {
 
-	if (_archive.openArchivedFile(name)) {
-		return new DummyArchiveStream(_archive);
+	if (_resArchive.openArchivedFile(name)) {
+		return new DummyArchiveStream(_resArchive);
 	}
 
 	char path[PATH_LEN];
 
 	sprintf(path, "%s.pp", name);
-	if (_archive.openArchivedFile(path)) {
-		return new PowerPackerStream(_archive);
+	if (_resArchive.openArchivedFile(path)) {
+		return new PowerPackerStream(_resArchive);
 	}
 
 	sprintf(path, "%s.dd", name);
-	if (_archive.openArchivedFile(path)) {
-		return new PowerPackerStream(_archive);
+	if (_resArchive.openArchivedFile(path)) {
+		return new PowerPackerStream(_resArchive);
 	}
 
 	if (errorOnFileNotFound)
@@ -1119,10 +1094,10 @@ Table* AmigaDisk::loadTable(const char* name) {
 		dispose = true;
 		stream = s;
 	} else {
-		if (!_archive.openArchivedFile(path))
+		if (!_resArchive.openArchivedFile(path))
 			errorFileNotFound(path);
 
-		stream = &_archive;
+		stream = &_resArchive;
 	}
 
 	Table *t = new Table(100);

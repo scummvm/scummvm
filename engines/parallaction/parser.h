@@ -28,7 +28,6 @@
 
 namespace Parallaction {
 
-void	parseInit(char *s);
 char   *parseNextLine(char *s, uint16 count);
 uint16 fillBuffers(Common::SeekableReadStream &stream, bool errorOnEOF = false);
 char   *parseNextToken(char *s, char *tok, uint16 count, const char *brk);
@@ -37,12 +36,11 @@ extern char _tokens[][40];
 
 class Script : public Common::SeekableReadStream {
 
-	const char*	const _src;
+	Common::SeekableReadStream *_input;
 	bool	_disposeSource;
-	char*	_pos;
 
 public:
-	Script(const char* s, bool _disposeSource = false);
+	Script(Common::SeekableReadStream *, bool _disposeSource = false);
 	~Script();
 
 	uint32 read(void *dataPtr, uint32 dataSize);

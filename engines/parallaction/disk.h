@@ -80,9 +80,10 @@ public:
 class Disk {
 
 protected:
-	Archive		  _archive;
-	char		  _languageDir[3];
-	Parallaction *_vm;
+	Archive			_resArchive;
+	Archive			_locArchive;
+	char		  	_languageDir[3];
+	Parallaction 	*_vm;
 
 protected:
 	void errorFileNotFound(const char *s);
