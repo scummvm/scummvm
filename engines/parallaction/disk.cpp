@@ -34,7 +34,8 @@ class RLEStream : public Common::ReadStream {
 	Common::ReadStream *_input;
 
 	byte		_rembuf[257];
-	int32		_pos;
+	int32		_wpos;
+	int32		_rpos;
 
 	int32		_toBeRead;
 	byte*		_dst;
@@ -44,29 +45,29 @@ class RLEStream : public Common::ReadStream {
 		if (_toBeRead > 0) {
 			*_dst++ = b;
 			_read++;
+			_wpos = 0;
+			_rpos = 0;
 		} else {
-			assert(_pos < 257);
-			_rembuf[_pos++] = b;
+			assert(_wpos < 257);
+			_rembuf[_wpos++] = b;
+			_rpos = 0;
 		}
 
 		_toBeRead--;
 	}
 
 	void feed() {
-		byte* src = _rembuf;
+		int32 len = MIN(_wpos - _rpos, _toBeRead);
+		if (len == 0) return;
 
-		int32 len = MIN(_pos, _toBeRead);
+		memcpy(_dst, _rembuf + _rpos, len);
 
-		while (len) {
-			*_dst++ = *src++;
-
-			_read++;
-			_toBeRead--;
-		}
+		_rpos += len;
+		_read += len;
+		_toBeRead -= len;
 	}
 
 	void unpack() {
-
 		byte byteRun;
 		byte idx;
 
@@ -92,14 +93,14 @@ class RLEStream : public Common::ReadStream {
 	}
 
 public:
-	RLEStream(Common::ReadStream *input) : _input(input), _pos(0) {
+	RLEStream(Common::ReadStream *input) : _input(input), _wpos(0), _rpos(0) {
 	}
 
 	~RLEStream() {
 	}
 
 	bool eos() const {
-		return _input->eos() & (_pos == 0);
+		return _input->eos() & (_rpos == _wpos);
 	}
 
 	uint32 read(void *dataPtr, uint32 dataSize) {
@@ -123,6 +124,11 @@ Disk::Disk(Parallaction *vm) : _vm(vm) {
 Disk::~Disk() {
 
 }
+
+void Disk::errorFileNotFound(const char *s) {
+	error("File '%s' not found", s);
+}
+
 
 void Disk::selectArchive(const char *name) {
 	_archive.open(name);
@@ -193,7 +199,7 @@ Cnv* DosDisk::loadExternalCnv(const char *filename) {
 	return new Cnv(numFrames, width, height, data);
 }
 
-void DosDisk::loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
+StaticCnv *DosDisk::loadExternalStaticCnv(const char *filename) {
 
 	char path[PATH_LEN];
 
@@ -204,7 +210,7 @@ void DosDisk::loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
 	if (!stream.open(path))
 		errorFileNotFound(path);
 
-	cnv->_width = cnv->_height = 0;
+	StaticCnv *cnv = new StaticCnv;
 
 	stream.skip(1);
 	cnv->_width = stream.readByte();
@@ -215,7 +221,7 @@ void DosDisk::loadExternalStaticCnv(const char *filename, StaticCnv *cnv) {
 	cnv->_data0 = (byte*)malloc(size);
 	stream.read(cnv->_data0, size);
 
-	return;
+	return cnv;
 }
 
 Cnv* DosDisk::loadCnv(const char *filename) {
@@ -253,12 +259,6 @@ Cnv* DosDisk::loadTalk(const char *name) {
 	}
 
 	// character talk
-/*
-	if (scumm_stricmp(name, _doughName) &&
-		scumm_stricmp(name, _dinoName) &&
-		scumm_stricmp(name, _donnaName) &&
-		scumm_stricmp(name, _drkiName)) return;
-*/
 	char v20[PATH_LEN];
 	char *v24 = const_cast<char*>(name);
 	if (IS_MINI_CHARACTER(v24)) {
@@ -296,7 +296,7 @@ Script* DosDisk::loadLocation(const char *name) {
 	if (!_archive.openArchivedFile(archivefile)) {
 		sprintf(archivefile, "%s%s.loc", _languageDir, name);
 		if (!_archive.openArchivedFile(archivefile))
-			error("can't find location file '%s'", name);
+			errorFileNotFound(name);
 	}
 
 	uint32 size = _archive.size();
@@ -328,12 +328,7 @@ Script* DosDisk::loadScript(const char* name) {
 StaticCnv* DosDisk::loadHead(const char* name) {
 
 	char path[PATH_LEN];
-/*
-	if (scumm_stricmp(name, _doughName) &&
-		scumm_stricmp(name, _dinoName) &&
-		scumm_stricmp(name, _donnaName) &&
-		scumm_stricmp(name, _drkiName)) return;
-*/
+
 	if (IS_MINI_CHARACTER(name)) {
 		name += 4;
 	}
@@ -341,18 +336,14 @@ StaticCnv* DosDisk::loadHead(const char* name) {
 	snprintf(path, 8, "%shead", name);
 	path[8] = '\0';
 
-	StaticCnv *cnv = new StaticCnv;
-	loadExternalStaticCnv(path, cnv);
-	return cnv;
-
+	return loadExternalStaticCnv(path);
 }
 
 
 StaticCnv* DosDisk::loadPointer() {
-	StaticCnv* cnv = new StaticCnv;
-	loadExternalStaticCnv("pointer", cnv);
-	return cnv;
+	return loadExternalStaticCnv("pointer");
 }
+
 
 Cnv* DosDisk::loadFont(const char* name) {
 	char path[PATH_LEN];
@@ -360,7 +351,6 @@ Cnv* DosDisk::loadFont(const char* name) {
 	return loadExternalCnv(path);
 }
 
-// loads character's icons set
 
 Cnv* DosDisk::loadObjects(const char *name) {
 
@@ -412,19 +402,23 @@ Cnv* DosDisk::loadFrames(const char* name) {
 //	* mask data [bits 6-7] (z buffer)
 //	* path data [bit 8] (walkable areas)
 //
+void DosDisk::unpackBackground(Common::ReadStream *stream, byte *screen, byte *mask, byte *path) {
 
+	byte b;
+	uint32 i = 0;
 
-void DosDisk::unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *path) {
+	while (!stream->eos()) {
+		b = stream->readByte();
 
-	// update mask, path and screen
-	for (uint16 i = 0; i < SCREEN_WIDTH; i++) {
-		path[i/8] |= ((src[i] & 0x80) >> 7) << (i & 7);
-		mask[i/4] |= ((src[i] & 0x60) >> 5) << ((i & 3) << 1);
-		screen[i] = src[i] & 0x1F;
+		path[i/8] |= ((b & 0x80) >> 7) << (i & 7);
+		mask[i/4] |= ((b & 0x60) >> 5) << ((i & 3) << 1);
+		screen[i] = b & 0x1F;
+		i++;
 	}
 
 	return;
 }
+
 
 void DosDisk::parseDepths(Common::SeekableReadStream &stream) {
 	_vm->_gfx->_bgLayers[0] = stream.readByte();
@@ -452,7 +446,6 @@ void DosDisk::parseBackground(Common::SeekableReadStream &stream) {
 }
 
 void DosDisk::loadBackground(const char *filename) {
-//	printf("Gfx::loadBackground(%s)\n", filename);
 
 	if (!_archive.openArchivedFile(filename))
 		errorFileNotFound(filename);
@@ -463,20 +456,13 @@ void DosDisk::loadBackground(const char *filename) {
 	byte *mask = (byte*)calloc(1, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 	byte *path = (byte*)calloc(1, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 
-	byte v144[SCREEN_WIDTH];
 
-	RLEStream decoder(&_archive);
-
-	for (uint16 i = 0; i < SCREEN_HEIGHT; i++) {
-		decoder.read(v144, SCREEN_WIDTH);
-		unpackBackgroundScanline(v144, bg+SCREEN_WIDTH*i, mask+SCREENMASK_WIDTH*i, path+SCREENPATH_WIDTH*i);
-	}
+	RLEStream stream(&_archive);
+	unpackBackground(&stream, bg, mask, path);
 
 	_vm->_gfx->setBackground(bg);
 	_vm->_gfx->setMask(mask);
 	setPath(path);
-
-//	free(v4);
 
 	free(bg);
 	free(mask);
@@ -865,7 +851,7 @@ Script* AmigaDisk::loadLocation(const char *name) {
 	if (!_archive.openArchivedFile(path)) {
 		sprintf(path, "%s%s.loc.pp", _languageDir, name);
 		if (!_archive.openArchivedFile(path)) {
-			error("can't find location file '%s'", path);
+			errorFileNotFound(name);
 		}
 	}
 
@@ -934,7 +920,7 @@ StaticCnv* AmigaDisk::loadPointer() {
 
 	Common::File stream;
 	if (!stream.open("pointer"))
-		error("can't open pointer file");
+		errorFileNotFound("pointer");
 
 	return makeStaticCnv(stream);
 }
@@ -963,7 +949,7 @@ Cnv* AmigaDisk::loadFont(const char* name) {
 		strcpy(path, "introfont");
 
 	if (!_archive.openArchivedFile(path))
-		error("can't open font '%s' from archive", path);
+		errorFileNotFound(path);
 
 	// FIXME: actually read data from font file and create
 	// real font instead of this dummy one
@@ -1002,7 +988,7 @@ Common::SeekableReadStream *AmigaDisk::openArchivedFile(const char* name, bool e
 	}
 
 	if (errorOnFileNotFound)
-		error("can't open file '%s' from current archive", name);
+		errorFileNotFound(name);
 
 	return NULL;
 }
@@ -1128,13 +1114,13 @@ Table* AmigaDisk::loadTable(const char* name) {
 	if (!scumm_stricmp(name, "global")) {
 		Common::File *s = new Common::File;
 		if (!s->open(path))
-			error("can't open %s", path);
+			errorFileNotFound(path);
 
 		dispose = true;
 		stream = s;
 	} else {
 		if (!_archive.openArchivedFile(path))
-			error("can't open archived file %s", path);
+			errorFileNotFound(path);
 
 		stream = &_archive;
 	}

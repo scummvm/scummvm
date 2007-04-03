@@ -61,9 +61,6 @@ void beep() {
 	return;
 }
 
-void errorFileNotFound(const char *s) {
-	error("File '%s' not found", s);
-}
 
 
 

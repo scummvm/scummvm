@@ -84,6 +84,9 @@ protected:
 	char		  _languageDir[3];
 	Parallaction *_vm;
 
+protected:
+	void errorFileNotFound(const char *s);
+
 public:
 	Disk(Parallaction *vm);
 	virtual ~Disk();
@@ -109,10 +112,10 @@ public:
 class DosDisk : public Disk {
 
 private:
-	void unpackBackgroundScanline(byte *src, byte *screen, byte *mask, byte *path);
+	void unpackBackground(Common::ReadStream *stream, byte *screen, byte *mask, byte *path);
 	Cnv* loadExternalCnv(const char *filename);
 	Cnv* loadCnv(const char *filename);
-	void loadExternalStaticCnv(const char *filename, StaticCnv *cnv);
+	StaticCnv *loadExternalStaticCnv(const char *filename);
 	void loadBackground(const char *filename);
 	void loadMaskAndPath(const char *name);
 	void parseDepths(Common::SeekableReadStream &stream);
