@@ -1439,7 +1439,6 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 		// variants, would require me to look at a sufficiently large
 		// sample collection of HE games (assuming I had the time :).
 		
-		
 		// TODO: For Mac versions in container file, we can sometimes
 		// distinguish the demo from the regular version by looking
 		// at the content of the container file and then looking for
@@ -1499,14 +1498,9 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	Common::List<DetectorResult> results;
 
 	detectGames(fslist, results, 0);
-	
-	
+
 	// TODO: We still don't handle the FM-TOWNS demos (like zakloom) very well.
 	// In particular, they are detected as ZakTowns, which is bad.
-	
-	// TODO: We don't detect the language for COMI and Dig yet; this could be
-	// changed if we looked for LANGUAGE.TAB resp. LANGUAGE.BND and then
-	// computed checksums for these (or just looked at their size).
 	
 	for (Common::List<DetectorResult>::iterator x = results.begin(); x != results.end(); ++x) {
 		GameDescriptor dg(x->game.gameid, findDescriptionFromGameID(x->game.gameid),
@@ -1573,13 +1567,12 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 		}
 	}
 
-
+	// Fetch the list of files in the current directory
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
 	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
 		return kInvalidPathError;
 	}
-
 
 	// Invoke the detector, but fixed to the specified gameid.
 	Common::List<DetectorResult> results;
@@ -1589,7 +1582,7 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 	if (results.empty()) {
 		return kNoGameDataFoundError;
 	}
-	
+
 	// No unique match found. If a platform override is present, try to
 	// narrow down the list a bit more.
 	if (results.size() > 1 && ConfMan.hasKey("platform")) {
@@ -1602,19 +1595,19 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 			}
 		}
 	}
-	
+
 	// If we narrowed it down too much, abort
 	if (results.empty()) {
 		warning("Engine_SCUMM_create: Game data inconsistent with platform override");
 		return kNoGameDataFoundError;
 	}
 
-	// Still no unique match found -> we just use the first one
+	// Still no unique match found -> print a warning
 	if (results.size() > 1) {
 		warning("Engine_SCUMM_create: No unique game candidate found, using first one");
 	}
-	
 
+	// Simply use the first match
 	DetectorResult res(*(results.begin()));
 	debug(1, "Using gameid %s, variant %s, extra %s", res.game.gameid, res.game.variant, res.extra);
 
@@ -1634,27 +1627,22 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 		debug(1, "Using MD5 '%s'", res.md5.c_str());
 	}
 
-	// TODO: Do we really still need / want the platform override ?
-
-
 	// Check for a user override of the platform. We allow the user to override
 	// the platform, to make it possible to add games which are not yet in 
 	// our MD5 database but require a specific platform setting.
+	// TODO: Do we really still need / want the platform override ?
 	if (ConfMan.hasKey("platform"))
 		res.game.platform = Common::parsePlatform(ConfMan.get("platform"));
-
 
 	// Language override
 	if (ConfMan.hasKey("language"))
 		res.language = Common::parseLanguage(ConfMan.get("language"));
 
-
 	// V3 FM-TOWNS games *always* should use the corresponding music driver,
 	// anything else makes no sense for them.
 	// TODO: Maybe allow the null driver, too?
-	if (res.game.platform == Common::kPlatformFMTowns && res.game.version == 3) {
+	if (res.game.platform == Common::kPlatformFMTowns && res.game.version == 3)
 		res.game.midi = MDT_TOWNS;
-	}
 
 	// Finally, we have massaged the GameDescriptor to our satisfaction, and can
 	// instantiate the appropriate game engine. Hooray!
