@@ -71,10 +71,10 @@ public:
 	virtual void displayFrame(int frameNum);
 
 	enum WSAFlags {
-		WF_MASKED_BLIT = 0x1,		
 		WF_OFFSCREEN_DECODE = 0x10,
 		WF_NO_FIRST_FRAME = 0x40,
-		WF_HAS_PALETTE = 0x100
+		WF_HAS_PALETTE = 0x100,
+		WF_XOR = 0x200
 	};
 
 protected:

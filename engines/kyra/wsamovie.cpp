@@ -146,7 +146,7 @@ void WSAMovieV1::displayFrame(int frameNum) {
 			if (_flags & WF_OFFSCREEN_DECODE) {
 				Screen::decodeFrameDelta(dst, _deltaBuffer);
 			} else {
-				Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width, true);
+				Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width, (_flags & WF_XOR) == 0);
 			}
 		}
 		_currentFrame = 0;
@@ -384,9 +384,8 @@ int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 		}
 	}
 	
-	if (flags & 2) {
-		_flags |= WF_MASKED_BLIT;
-	}
+	if (flags & 2)
+		_flags |= WF_XOR;
 	
 	if (!(unk1 & 2)) {
 		_flags |= WF_OFFSCREEN_DECODE;
