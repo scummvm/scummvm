@@ -716,6 +716,48 @@ public:
 
 
 
+/*
+	This stream class is just a wrapper around Archive, so
+	deallocation is not a problem. In fact, this class doesn't
+	delete its input (Archive) stream.
+*/
+class DummyArchiveStream : public Common::SeekableReadStream {
+
+	Archive *_input;
+
+public:
+	DummyArchiveStream(Archive &input) : _input(&input) {
+
+	}
+
+	~DummyArchiveStream() {
+		// this class exists to provide this empty destructor
+	}
+
+	bool eos() const {
+		return _input->eos();
+	}
+
+	uint32 read(void* data, uint32 dataSize) {
+		return _input->read(data, dataSize);
+	}
+
+	uint32 pos() const {
+		return _input->pos();
+	}
+
+	uint32 size() const {
+		return _input->size();
+	}
+
+	void seek(int32 offset, int whence) {
+		_input->seek(offset, whence);
+	}
+
+};
+
+
+
 AmigaDisk::AmigaDisk(Parallaction *vm) : Disk(vm) {
 
 }
@@ -858,33 +900,32 @@ Script* AmigaDisk::loadScript(const char* name) {
 Cnv* AmigaDisk::loadTalk(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadTalk '%s'", name);
 
+	Common::SeekableReadStream *s;
+
 	char path[PATH_LEN];
-	sprintf(path, "%s.talk.pp", name);
-	if (!_archive.openArchivedFile(path)) {
-		sprintf(path, "%s.talk.dd", name);
-		if (!_archive.openArchivedFile(path)) {
-			sprintf(path, "%s.pp", name);
-			if (!_archive.openArchivedFile(path)) {
-				error("can't open talk '%s' from archive", path);
-			}
-		}
+	sprintf(path, "%s.talk", name);
+	s = openArchivedFile(path, false);
+	if (s == NULL) {
+		s = openArchivedFile(name, true);
 	}
 
-	PowerPackerStream stream(_archive);
-	return makeCnv(stream);
+	Cnv *cnv = makeCnv(*s);
+	delete s;
+
+	return cnv;
 }
 
 Cnv* AmigaDisk::loadObjects(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadObjects");
 
 	char path[PATH_LEN];
-	sprintf(path, "%s.objs.pp", name);
+	sprintf(path, "%s.objs", name);
+	Common::SeekableReadStream *s = openArchivedFile(path, true);
 
-	if (!_archive.openArchivedFile(path))
-		error("can't open objects '%s' from archive", path);
+	Cnv *cnv = makeCnv(*s);
+	delete s;
 
-	PowerPackerStream stream(_archive);
-	return makeCnv(stream);
+	return cnv;
 }
 
 
@@ -904,11 +945,12 @@ StaticCnv* AmigaDisk::loadHead(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.head", name);
 
-	if (!_archive.openArchivedFile(path))
-		error("can't open frames '%s' from archive", path);
+	Common::SeekableReadStream *s = openArchivedFile(path, true);
+	StaticCnv *cnv = makeStaticCnv(*s);
 
-	PowerPackerStream stream(_archive);
-	return makeStaticCnv(stream);
+	delete s;
+
+	return cnv;
 }
 
 Cnv* AmigaDisk::loadFont(const char* name) {
@@ -933,29 +975,36 @@ Cnv* AmigaDisk::loadFont(const char* name) {
 StaticCnv* AmigaDisk::loadStatic(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadStatic '%s'", name);
 
-	Common::SeekableReadStream *s;
-	bool dispose = false;
-
-	char path[PATH_LEN];
-	sprintf(path, "%s.pp", name);
-	if (!_archive.openArchivedFile(path)) {
-		if (!_archive.openArchivedFile(name))
-			error("can't open static '%s' from archive", name);
-
-		s = &_archive;
-	} else {
-		PowerPackerStream *stream = new PowerPackerStream(_archive);
-		s = stream;
-
-		dispose = true;
-	}
-
+	Common::SeekableReadStream *s = openArchivedFile(name, true);
 	StaticCnv *cnv = makeStaticCnv(*s);
 
-	if (dispose)
-		delete s;
+	delete s;
 
 	return cnv;
+}
+
+Common::SeekableReadStream *AmigaDisk::openArchivedFile(const char* name, bool errorOnFileNotFound) {
+
+	if (_archive.openArchivedFile(name)) {
+		return new DummyArchiveStream(_archive);
+	}
+
+	char path[PATH_LEN];
+
+	sprintf(path, "%s.pp", name);
+	if (_archive.openArchivedFile(path)) {
+		return new PowerPackerStream(_archive);
+	}
+
+	sprintf(path, "%s.dd", name);
+	if (_archive.openArchivedFile(path)) {
+		return new PowerPackerStream(_archive);
+	}
+
+	if (errorOnFileNotFound)
+		error("can't open file '%s' from current archive", name);
+
+	return NULL;
 }
 
 Cnv* AmigaDisk::loadFrames(const char* name) {
@@ -964,27 +1013,9 @@ Cnv* AmigaDisk::loadFrames(const char* name) {
 	if (IS_MINI_CHARACTER(name))
 		return NULL;
 
-	Common::SeekableReadStream *s;
-	bool dispose = false;
-
-	char path[PATH_LEN];
-	sprintf(path, "%s.pp", name);
-	if (!_archive.openArchivedFile(path)) {
-		if (!_archive.openArchivedFile(name))
-			error("can't open frames '%s' from archive", name);
-
-		s = &_archive;
-	}
-	else {
-		PowerPackerStream *stream = new PowerPackerStream(_archive);
-		s = stream;
-		dispose = true;
-	}
-
+	Common::SeekableReadStream *s = openArchivedFile(name, true);
 	Cnv *cnv = makeCnv(*s);
-
-	if (dispose)
-		delete s;
+	delete s;
 
 	return cnv;
 }
@@ -992,31 +1023,24 @@ Cnv* AmigaDisk::loadFrames(const char* name) {
 void AmigaDisk::loadSlide(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadSlide '%s'", name);
 
-	char path[PATH_LEN];
-	sprintf(path, "%s.pp", name);
-
-	if (!_archive.openArchivedFile(path))
-		error("can't open archived file %s", path);
-
-	PowerPackerStream stream(_archive);
+	Common::SeekableReadStream *s = openArchivedFile(name, true);
 
 	Graphics::Surface surf;
 	byte *pal;
 
 	// CRNG headers may be safely ignored for slides
-	Graphics::ILBMDecoder decoder(stream);
+	Graphics::ILBMDecoder decoder(*s);
 	decoder.decode(surf, pal);
 
 	for (uint32 i = 0; i < PALETTE_SIZE; i++)
 		_vm->_gfx->_palette[i] = pal[i] >> 2;
-
 	free(pal);
-
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 
 	_vm->_gfx->setBackground(static_cast<byte*>(surf.pixels));
-
 	surf.free();
+
+	delete s;
 
 	return;
 }
@@ -1049,51 +1073,43 @@ void AmigaDisk::loadScenery(const char* background, const char* mask) {
 	Graphics::Surface surf;
 	byte *pal;
 	char path[PATH_LEN];
-	Graphics::ILBMDecoder *decoder;
-	PowerPackerStream *stream;
 
-	sprintf(path, "%s.bkgnd.pp", background);
-	if (!_archive.openArchivedFile(path))
-		error("can't open background file %s", path);
-
-	stream = new PowerPackerStream(_archive);
-	decoder = new Graphics::ILBMDecoder(*stream);
-	decoder->decode(surf, pal);
+	sprintf(path, "%s.bkgnd", background);
+	Common::SeekableReadStream *s = openArchivedFile(path, true);
+	Graphics::ILBMDecoder decoder(*s);
+	decoder.decode(surf, pal);
 	for (uint32 i = 0; i < PALETTE_SIZE; i++)
 		_vm->_gfx->_palette[i] = pal[i] >> 2;
 	free(pal);
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->setBackground(static_cast<byte*>(surf.pixels));
 	surf.free();
-	delete decoder;
-	delete stream;
+	delete s;
 
-	sprintf(path, "%s.mask.pp", background);
-	if (!_archive.openArchivedFile(path))
-		error("can't open mask file %s", path);
-	stream = new PowerPackerStream(_archive);
-	stream->seek(0x126, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
-	RLEStream *stream2 = new RLEStream(stream);
+	sprintf(path, "%s.mask", background);
+	s = openArchivedFile(path, true);
+	s->seek(0x126, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
+	RLEStream *stream2 = new RLEStream(s);
 	byte *buf = (byte*)malloc(SCREENMASK_WIDTH*SCREEN_HEIGHT);
 	stream2->read(buf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 	buildMask(buf);
 	_vm->_gfx->setMask(buf);
 	free(buf);
-	delete stream;
+	delete s;
 	delete stream2;
 
-	sprintf(path, "%s.path.pp", background);
-	if (!_archive.openArchivedFile(path))
+	sprintf(path, "%s.path", background);
+	s = openArchivedFile(path, false);
+	if (s == NULL)
 		return;	// no errors if missing path files: not every location has one
 
-	stream = new PowerPackerStream(_archive);
-	stream->seek(0x120, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
-	stream2 = new RLEStream(stream);
+	s->seek(0x120, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
+	stream2 = new RLEStream(s);
 	buf = (byte*)malloc(SCREENPATH_WIDTH*SCREEN_HEIGHT);
 	stream2->read(buf, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 	setPath(buf);
 	free(buf);
-	delete stream;
+	delete s;
 	delete stream2;
 
 	return;

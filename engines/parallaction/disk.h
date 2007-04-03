@@ -145,6 +145,7 @@ protected:
 	Cnv* makeCnv(Common::SeekableReadStream &stream);
 	StaticCnv* makeStaticCnv(Common::SeekableReadStream &stream);
 	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 planeSize);
+	Common::SeekableReadStream *openArchivedFile(const char* name, bool errorOnFileNotFound = false);
 
 public:
 	AmigaDisk(Parallaction *vm);
