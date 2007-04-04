@@ -701,16 +701,13 @@ void Parallaction::changeCursor(int32 index) {
 
 void Parallaction::freeCharacter() {
 
-	if (_vm->_char._normalFrames)
-		delete _vm->_char._normalFrames;
-
 	if (!IS_DUMMY_CHARACTER(_vm->_characterName)) {
-		if (_vm->_char._miniFrames)
-			delete _vm->_char._miniFrames;
-
 		if (_objectsNames)
 			delete _objectsNames;
 		_objectsNames = NULL;
+
+		if (_vm->_char._ani._cnv)
+			delete _vm->_char._ani._cnv;
 
 		if (_vm->_char._talk)
 			delete _vm->_char._talk;
@@ -769,28 +766,22 @@ void Parallaction::pickMusic(const char *location) {
 	}
 }
 
-//	FIXME: currently, changeCharacter does reload every chunk of
-//	information about the new character every time it is loaded.
-//	So, it is useless to load both mini and normal frames each
-//	since only one of them will actually be used before the
-//	following call to changeCharacter.
-//
+
 void Parallaction::changeCharacter(const char *name) {
 
-	bool miniCharacter = false;
-
+	char baseName[20];
 	if (IS_MINI_CHARACTER(name)) {
-		name+=4;
-		miniCharacter = true;
+		strcpy(baseName, name+4);
+	} else {
+		strcpy(baseName, name);
 	}
 
-	char v32[20];
-	strcpy(v32, name);
-
+	char fullName[20];
+	strcpy(fullName, name);
 	if (_engineFlags & kEngineTransformedDonna)
-		strcat(v32, "tras");
+		strcat(fullName, "tras");
 
-	if (scumm_stricmp(v32, _characterName1)) {
+	if (scumm_stricmp(fullName, _characterName1)) {
 
 		// freeCharacter takes responsibility for checking
 		// character for sanity before memory is freed
@@ -798,37 +789,24 @@ void Parallaction::changeCharacter(const char *name) {
 
 		_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
 
-		char path[PATH_LEN];
-		strcpy(path, v32);
-		_vm->_char._normalFrames = _disk->loadFrames(path);
-
-
 		if (!IS_DUMMY_CHARACTER(name)) {
-			_vm->_char._head = _disk->loadHead(path);
-			_vm->_char._talk = _disk->loadTalk(path);
-			_vm->_char._objs = _disk->loadObjects(name);
+			_vm->_char._head = _disk->loadHead(baseName);
+			_vm->_char._talk = _disk->loadTalk(baseName);
+			_vm->_char._objs = _disk->loadObjects(baseName);
+			_objectsNames = _disk->loadTable(baseName);
+			refreshInventory(baseName);
 
-			sprintf(path, "mini%s", v32);
-			_vm->_char._miniFrames = _disk->loadFrames(path);
-
-			_objectsNames = _disk->loadTable(name);
-
-			refreshInventory(name);
+			_vm->_char._ani._cnv = _disk->loadFrames(fullName);
 
 			if (scumm_stricmp(name, "night") && scumm_stricmp(name, "intsushi"))
 				selectCharacterMusic(name);
 		}
 	}
 
-	if (miniCharacter)
-		_vm->_char._ani._cnv = _vm->_char._miniFrames;
-	else
-		_vm->_char._ani._cnv = _vm->_char._normalFrames;
-
 	if (!(getFeatures() & GF_DEMO))
 		parseLocation("common");
 
-	strcpy(_characterName1, v32);
+	strcpy(_characterName1, fullName);
 
 	return;
 }
