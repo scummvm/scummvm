@@ -1146,30 +1146,6 @@ bool Inter_v1::o1_callSub(OpFuncParams &params) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return false;
 	}
-	// TODO: DELETE ME! ---.
-if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (_vm->_platform == Common::kPlatformAmiga) && (offset == 1722) && !scumm_stricmp(_vm->_game->_curTotFile, "intro0.tot"))
-	return false;
-if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 361) && !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot))
-	return false;
-if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 348) && !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot))
-	return false;
-if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 1263) && !scumm_stricmp(_vm->_game->_curTotFile, "intro5.tot"))
-	return false;
-if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 1202) && !scumm_stricmp(_vm->_game->_curTotFile, "intro5.tot"))
-	return false;
-if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 2613) && !scumm_stricmp(_vm->_game->_curTotFile, "intro016.tot"))
-	return false;
-if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 2688) && !scumm_stricmp(_vm->_game->_curTotFile, "intro016.tot"))
-	return false;
-if (!_vm->_copyProtection && (_vm->_features & GF_BARGON) && (offset == 5462) && !scumm_stricmp(_vm->_game->_curTotFile, "ecran0.tot"))
-	return false;
-if (!_vm->_copyProtection && (_vm->_features & GF_BARGON) && (offset == 5451) && !scumm_stricmp(_vm->_game->_curTotFile, "ecran0.tot"))
-	return false;
-if (!_vm->_copyProtection && (_vm->_features & GF_GOB3) && (offset == 1406) && !scumm_stricmp(_vm->_game->_curTotFile, "demo.tot"))
-	return false;
-if (!_vm->_copyProtection && (_vm->_features & GF_GOB3) && (offset == 888) && !scumm_stricmp(_vm->_game->_curTotFile, "demo.tot"))
-	return false;
-	// TODO: DELETE ME! ---'
 
 	_vm->_global->_inter_execPtr = _vm->_game->_totFileData + offset;
 
