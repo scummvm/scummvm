@@ -167,7 +167,7 @@ void CDROM::startTrack(const char *trackname) {
 	}
 
 	if (!matchPtr) {
-		warning("Track %s not found", trackname);
+		warning("Track \"%s\" not found", trackname);
 		return;
 	}
 

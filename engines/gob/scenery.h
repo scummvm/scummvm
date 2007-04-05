@@ -147,6 +147,8 @@ protected:
 	Animation _animations[10];
 
 	GobEngine *_vm;
+
+	void updateStatic(int16 orderFrom, byte index, byte layer);
 };
 
 class Scenery_v1 : public Scenery {

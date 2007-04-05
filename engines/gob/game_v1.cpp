@@ -290,7 +290,7 @@ int16 Game_v1::addNewCollision(int16 id, int16 left, int16 top,
 		ptr->funcLeave = funcLeave;
 		return i;
 	}
-	error("addNewCollision: Collision array full!\n");
+	error("Game_v1::addNewCollision(): Collision array full!\n");
 	return 0;
 }
 

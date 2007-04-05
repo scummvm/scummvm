@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef GOB_INTERPRET_H
-#define GOB_INTERPRET_H
+#ifndef GOB_INTER_H
+#define GOB_INTER_H
 
 #include "gob/goblin.h"
 
@@ -401,15 +401,15 @@ protected:
 	struct OpcodeDrawEntryBargon {
 		OpcodeDrawProcBargon proc;
 		const char *desc;
-		};
+	};
 	struct OpcodeFuncEntryBargon {
 		OpcodeFuncProcBargon proc;
 		const char *desc;
-		};
+	};
 	struct OpcodeGoblinEntryBargon {
 		OpcodeGoblinProcBargon proc;
 		const char *desc;
-		};
+	};
 	const OpcodeDrawEntryBargon *_opcodesDrawBargon;
 	const OpcodeFuncEntryBargon *_opcodesFuncBargon;
 	const OpcodeGoblinEntryBargon *_opcodesGoblinBargon;
@@ -435,6 +435,43 @@ protected:
 	void oBargon_intro9(OpGobParams &params);
 };
 
+class Inter_v3 : public Inter_v2 {
+public:
+	Inter_v3(GobEngine *vm);
+	virtual ~Inter_v3() {};
+
+protected:
+	typedef void (Inter_v3::*OpcodeDrawProcV3)();
+	typedef bool (Inter_v3::*OpcodeFuncProcV3)(OpFuncParams &);
+	typedef void (Inter_v3::*OpcodeGoblinProcV3)(OpGobParams &);
+	struct OpcodeDrawEntryV3 {
+		OpcodeDrawProcV3 proc;
+		const char *desc;
+	};
+	struct OpcodeFuncEntryV3 {
+		OpcodeFuncProcV3 proc;
+		const char *desc;
+	};
+	struct OpcodeGoblinEntryV3 {
+		OpcodeGoblinProcV3 proc;
+		const char *desc;
+	};
+	const OpcodeDrawEntryV3 *_opcodesDrawV3;
+	const OpcodeFuncEntryV3 *_opcodesFuncV3;
+	const OpcodeGoblinEntryV3 *_opcodesGoblinV3;
+	static const int _goblinFuncLookUp[][2];
+
+	virtual void setupOpcodes();
+	virtual void executeDrawOpcode(byte i);
+	virtual bool executeFuncOpcode(byte i, byte j, OpFuncParams &params);
+	virtual void executeGoblinOpcode(int i, OpGobParams &params);
+	virtual const char *getOpcodeDrawDesc(byte i);
+	virtual const char *getOpcodeFuncDesc(byte i, byte j);
+	virtual const char *getOpcodeGoblinDesc(int i);
+
+	bool o3_getTotTextItemPart(OpFuncParams &params);
+};
+
 } // End of namespace Gob
 
-#endif // GOB_INTERPRET_H
+#endif // GOB_INTER_H

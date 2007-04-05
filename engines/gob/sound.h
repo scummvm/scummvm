@@ -57,7 +57,7 @@ public:
 	void set(SoundType type, SoundSource src, byte *data, uint32 dSize);
 	void load(SoundType type, SoundSource src, byte *data, uint32 dSize);
 	void free();
-	void flip();
+	void convToSigned();
 
 	// Which fade out length to use when the fade starts half-way through?
 	int16 calcFadeOutLength(int16 frequency) {

@@ -67,12 +67,10 @@ void SoundDesc::free() {
 	_id = 0;
 }
 
-void SoundDesc::flip() {
-	if ((_type == SOUND_SND) && _data && _dataPtr) {
-		_frequency = -_frequency;
+void SoundDesc::convToSigned() {
+	if ((_type == SOUND_SND) && _data && _dataPtr)
 		for (uint32 i = 0; i < _size; i++)
 			_dataPtr[i] ^= 0x80;
-	}
 }
 
 void SoundDesc::loadSND(byte *data, uint32 dSize) {

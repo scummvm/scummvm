@@ -285,12 +285,12 @@ void DataIO::openDataFile(const char *src, bool itk) {
 			break;
 
 	if (file == MAX_DATA_FILES)
-		error("openDataFile: Data file slots are full");
+		error("DataIO::openDataFile(): Data file slots are full");
 
 	_dataFileHandles[file] = file_open(path);
 
 	if (_dataFileHandles[file] == -1)
-		error("openDataFile: Can't open %s data file", path);
+		error("DataIO::openDataFile(): Can't open data file \"%s\"", path);
 
 	_dataFileItk[file] = itk;
 	_numDataChunks[file] = file_getHandle(_dataFileHandles[file])->readUint16LE();
@@ -447,7 +447,7 @@ int32 DataIO::getDataSize(const char *name) {
 		return chunkSz;
 
 	if (!file.open(buf))
-		error("getDataSize: Can't find data(%s)", name);
+		error("DataIO::getDataSize(): Can't find data \"%s\"", name);
 
 	chunkSz = file.size();
 	file.close();

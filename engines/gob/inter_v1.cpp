@@ -1120,28 +1120,56 @@ void Inter_v1::o1_freeFontToSprite() {
 
 bool Inter_v1::o1_callSub(OpFuncParams &params) {
 	byte *storedIP;
-	uint32 offset;
+	uint16 offset;
 
+	offset = load16();
 	storedIP = _vm->_global->_inter_execPtr;
-	offset = READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
 	debugC(5, kDebugGameFlow, "tot = \"%s\", offset = %d",
 			_vm->_game->_curTotFile, offset);
+
+	if (offset < 128) {
+		warning("Inter_v1::o1_callSub(): Offset %d points into the header. "
+				"Skipping call", offset);
+		return false;
+	}
 
 	// Skipping the copy protection screen in Gobliiins
 	if (!_vm->_copyProtection && (_vm->_features & GF_GOB1) && (offset == 3905)
 			&& !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot)) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
-		_vm->_global->_inter_execPtr += 2;
 		return false;
 	}
 	// Skipping the copy protection screen in Gobliins 2
 	if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 1746)
 			&& !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot0)) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
-		_vm->_global->_inter_execPtr += 2;
 		return false;
 	}
+	// TODO: DELETE ME! ---.
+if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (_vm->_platform == Common::kPlatformAmiga) && (offset == 1722) && !scumm_stricmp(_vm->_game->_curTotFile, "intro0.tot"))
+	return false;
+if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 361) && !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot))
+	return false;
+if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 348) && !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot))
+	return false;
+if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 1263) && !scumm_stricmp(_vm->_game->_curTotFile, "intro5.tot"))
+	return false;
+if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 1202) && !scumm_stricmp(_vm->_game->_curTotFile, "intro5.tot"))
+	return false;
+if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 2613) && !scumm_stricmp(_vm->_game->_curTotFile, "intro016.tot"))
+	return false;
+if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 2688) && !scumm_stricmp(_vm->_game->_curTotFile, "intro016.tot"))
+	return false;
+if (!_vm->_copyProtection && (_vm->_features & GF_BARGON) && (offset == 5462) && !scumm_stricmp(_vm->_game->_curTotFile, "ecran0.tot"))
+	return false;
+if (!_vm->_copyProtection && (_vm->_features & GF_BARGON) && (offset == 5451) && !scumm_stricmp(_vm->_game->_curTotFile, "ecran0.tot"))
+	return false;
+if (!_vm->_copyProtection && (_vm->_features & GF_GOB3) && (offset == 1406) && !scumm_stricmp(_vm->_game->_curTotFile, "demo.tot"))
+	return false;
+if (!_vm->_copyProtection && (_vm->_features & GF_GOB3) && (offset == 888) && !scumm_stricmp(_vm->_game->_curTotFile, "demo.tot"))
+	return false;
+	// TODO: DELETE ME! ---'
 
 	_vm->_global->_inter_execPtr = _vm->_game->_totFileData + offset;
 
@@ -1149,7 +1177,7 @@ bool Inter_v1::o1_callSub(OpFuncParams &params) {
 		return true;
 
 	callSub(2);
-	_vm->_global->_inter_execPtr = storedIP + 2;
+	_vm->_global->_inter_execPtr = storedIP;
 
 	return false;
 }

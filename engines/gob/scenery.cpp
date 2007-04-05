@@ -303,7 +303,7 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 	}
 }
 
-void Scenery::updateStatic(int16 orderFrom) {
+void Scenery::updateStatic(int16 orderFrom, byte index, byte layer) {
 	StaticLayer *layerPtr;
 	PieceDesc **pictPtr;
 	StaticPlane *planePtr;
@@ -318,14 +318,11 @@ void Scenery::updateStatic(int16 orderFrom) {
 	int16 top;
 	int16 bottom;
 
-	if (_curStatic == -1)
+	if (layer >= _statics[index].layersCount)
 		return;
 
-	if (_curStaticLayer >= _statics[_curStatic].layersCount)
-		return;
-
-	layerPtr = &_statics[_curStatic].layers[_curStaticLayer];
-	pictPtr = _statics[_curStatic].pieces;
+	layerPtr = &_statics[index].layers[layer];
+	pictPtr = _statics[index].pieces;
 
 	planeCount = layerPtr->planeCount;
 
@@ -381,12 +378,23 @@ void Scenery::updateStatic(int16 orderFrom) {
 				    _toRedrawBottom - _vm->_draw->_destSpriteY + 1;
 
 			_vm->_draw->_sourceSurface =
-			    _staticPictToSprite[_curStatic * 7 + pictIndex];
+			    _staticPictToSprite[index * 7 + pictIndex];
 			_vm->_draw->_destSurface = 21;
 			_vm->_draw->_transparency = planePtr->transp ? 3 : 0;
 			_vm->_draw->spriteOperation(DRAW_BLITSURF);
 		}
 	}
+}
+
+void Scenery::updateStatic(int16 orderFrom) {
+	if (_curStatic == -1)
+		return;
+
+	updateStatic(orderFrom, _curStatic & 0xFF, _curStaticLayer & 0xFF);
+
+	if (_curStatic & 0xFF00)
+		updateStatic(orderFrom, (_curStatic >> 8) & 0xFF,
+				(_curStaticLayer >> 8) & 0xFF);
 }
 
 int16 Scenery::loadAnim(char search) {

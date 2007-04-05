@@ -116,6 +116,8 @@ int16 Parse_v2::parseValExpr(byte stopToken) {
 	static int16 flag = 0;
 	int16 oldflag;
 
+	memset(values, 0, 20 * sizeof(int16));
+
 	oldflag = flag;
 	if (flag == 0) {
 		flag = 1;
@@ -388,10 +390,7 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 			case 26:
 			case 27:
 			case 28:
-				if ((operation == 27) || (operation == 16))
-					*operPtr = 20;
-				else
-					*operPtr = operation - 6;
+				*operPtr = (operation == 28) ? 22 : 20;
 				temp = _vm->_inter->load16();
 				dimCount = *_vm->_global->_inter_execPtr++;
 				arrDescPtr = _vm->_global->_inter_execPtr;
@@ -481,11 +480,6 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 				parseExpr(10, 0);
 
 				switch (operation) {
-				case 5:
-					_vm->_global->_inter_resVal =
-						_vm->_global->_inter_resVal * _vm->_global->_inter_resVal;
-					break;
-
 				case 0:
 				case 1:
 				case 6:
@@ -500,20 +494,27 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 					_vm->_global->_inter_resVal = curVal;
 					break;
 
-				case 10:
+				case 5:
 					_vm->_global->_inter_resVal =
-						_vm->_util->getRandom(_vm->_global->_inter_resVal);
+						_vm->_global->_inter_resVal * _vm->_global->_inter_resVal;
 					break;
 
 				case 7:
 					if (_vm->_global->_inter_resVal < 0)
 						_vm->_global->_inter_resVal = -_vm->_global->_inter_resVal;
 					break;
+
+				case 10:
+					_vm->_global->_inter_resVal =
+						_vm->_util->getRandom(_vm->_global->_inter_resVal);
+					break;
 				}
+
 				*operPtr = 20;
 				*valPtr = _vm->_global->_inter_resVal;
 				break;
 			}
+
 			if ((stkPos > 0) && ((operPtr[-1] == 1) || (operPtr[-1] == 11))) {
 				stkPos--;
 				operPtr--;
@@ -522,12 +523,8 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 				if (*operPtr == 1) {
 					*operPtr = 20;
 					valPtr[0] = -valPtr[1];
-				} else if (*operPtr == 11) {
-					if (operPtr[1] == 23)
-						*operPtr = 24;
-					else
-						*operPtr = 23;
-				}
+				} else
+					*operPtr = (operPtr[1] == 23) ? 24 : 23;
 			}
 
 			if (stkPos <= 0)
@@ -600,11 +597,7 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 							operPtr--;
 							valPtr--;
 						} else if (operPtr[-2] == 11) {
-							if (operPtr[-1] == 23)
-								operPtr[-2] = 24;
-							else
-								operPtr[-2] = 23;
-
+							operPtr[-2] = (operPtr[-1] == 23) ? 24 : 23;
 							stkPos--;
 							operPtr--;
 							valPtr--;
@@ -619,6 +612,7 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 							operPtr -= 2;
 							valPtr -= 2;
 							break;
+
 						case 6:
 							valPtr[-3] /= valPtr[-1];
 							stkPos -= 2;
@@ -897,6 +891,11 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 				*arg_2 = operStack[0];
 
 			switch (operStack[0]) {
+			case 11:
+				if (arg_2 != 0)
+					*arg_2 ^= 1;
+				break;
+
 			case 20:
 				_vm->_global->_inter_resVal = values[0];
 				break;
@@ -904,11 +903,6 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 			case 22:
 				if ((char *) decodePtr(values[0]) != _vm->_global->_inter_resStr)
 					strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(values[0]));
-				break;
-
-			case 11:
-				if (arg_2 != 0)
-					*arg_2 ^= 1;
 				break;
 
 			case 23:

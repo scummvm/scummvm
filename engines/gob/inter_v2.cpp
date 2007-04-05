@@ -747,7 +747,7 @@ void Inter_v2::checkSwitchTable(byte **ppExec) {
 		break;
 	
 	default:
-		value = READ_VARO_UINT16(value);
+		value = (int16) READ_VARO_UINT16(value);
 		break;
 	}
 
@@ -1377,6 +1377,10 @@ void Inter_v2::o2_initScreen() {
 	if (height > 0)
 		_vm->_video->_surfHeight = height;
 	
+	if (offY != 0)
+		warning("Inter_v2::o2_initScreen(): Stub: Horizontal split (%d/%d)",
+				_vm->_video->_surfHeight - offY, offY);
+
 	_vm->_draw->closeScreen();
 	_vm->_util->clearPalette();
 	memset(_vm->_global->_redPalette, 0, 256);
@@ -2033,7 +2037,6 @@ int16 Inter_v2::loadSound(int16 search) {
 	}
 	
 	_vm->_game->freeSoundSlot(slot);
-	_vm->_game->_soundSamples[slot]._id = id;
 
 	if (id == -1) {
 		char sndfile[14];
@@ -2055,8 +2058,6 @@ int16 Inter_v2::loadSound(int16 search) {
 		source = SOUND_EXT;
 
 		dataPtr = (byte *) _vm->_game->loadExtData(id, 0, 0, &dataSize);
-		if (_vm->_game->_totFileData[0x29] >= 51)
-			_vm->_snd->convToSigned(dataPtr, dataSize);
 	} else {
 		int16 totSize;
 
@@ -2068,10 +2069,7 @@ int16 Inter_v2::loadSound(int16 search) {
 	
 	if (dataPtr) {
 		_vm->_game->_soundSamples[slot].load(type, source, dataPtr, dataSize);
-
-		if ((source == SOUND_EXT) && (type == SOUND_SND))
-			if (_vm->_game->_totFileData[0x29] >= 51)
-				_vm->_game->_soundSamples[slot].flip();
+		_vm->_game->_soundSamples[slot]._id = id;
 	}
 
 	return slot;

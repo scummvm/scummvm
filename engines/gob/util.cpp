@@ -428,7 +428,7 @@ void Util::listInsertBack(List *list, void *data) {
 	if (list->pHead != 0) {
 		if (list->pTail == 0) {
 			list->pTail = list->pHead;
-			warning("listInsertBack: Broken list");
+			warning("Util::listInsertBack(): Broken list");
 		}
 
 		node = new ListNode;

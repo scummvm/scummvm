@@ -463,7 +463,7 @@ void Map::loadMapsInitGobs(void) {
 	int16 layer;
 
 	if (!_loadFromAvo)
-		error("load: Loading .pas/.pos files is not supported!");
+		error("Map::loadMapsInitGobs(): Loading .pas/.pos files is not supported!");
 
 	for (int i = 0; i < 3; i++)
 		_vm->_goblin->nextLayer(_vm->_goblin->_goblins[i]);

@@ -203,7 +203,7 @@ void Game::capturePush(int16 left, int16 top, int16 width, int16 height) {
 	int16 right;
 
 	if (_captureCount == 20)
-		error("capturePush: Capture stack overflow!");
+		error("Game::capturePush(): Capture stack overflow!");
 
 	_captureStack[_captureCount].left = left;
 	_captureStack[_captureCount].top = top;

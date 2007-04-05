@@ -618,6 +618,17 @@ int GobEngine::init() {
 		_map = new Map_v2(this);
 		_goblin = new Goblin_v2(this);
 		_scenery = new Scenery_v2(this);
+	} else if (_features & Gob::GF_GOB3) {
+		_init = new Init_v2(this);
+		_video = new Video_v2(this);
+		_inter = new Inter_v3(this);
+		_parse = new Parse_v2(this);
+		_mult = new Mult_v2(this);
+		_draw = new Draw_v2(this);
+		_game = new Game_v2(this);
+		_map = new Map_v2(this);
+		_goblin = new Goblin_v2(this);
+		_scenery = new Scenery_v2(this);
 	} else
 		error("GobEngine::init(): Unknown version of game engine");
 
@@ -625,7 +636,7 @@ int GobEngine::init() {
 	if (!_noMusic && !(_platform == Common::kPlatformAmiga) &&
 		 !(_platform == Common::kPlatformAtariST) &&
 	   (((_platform == Common::kPlatformMacintosh) && (_features & Gob::GF_GOB1)) ||
-	     (_features & Gob::GF_GOB2)))
+	     (_features & Gob::GF_GOB2) || (_features & Gob::GF_GOB3)))
 		_adlib = new Adlib(this);
 	_vm = this;
 

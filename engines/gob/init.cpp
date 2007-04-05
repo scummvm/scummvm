@@ -32,6 +32,7 @@
 #include "gob/cdrom.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/palanim.h"
 #include "gob/sound.h"
 #include "gob/video.h"
 #include "gob/imd.h"
@@ -158,13 +159,33 @@ void Init::initGame(const char *totName) {
 		_vm->_cdrom->testCD(1, "GOB");
 		_vm->_cdrom->readLIC("gob.lic");
 
-		_vm->_draw->_cursorIndex = -1;
+		// Search for a Coktel logo animation or image to display
 		imdHandle = _vm->_dataIO->openData("coktel.imd");
 		if (imdHandle >= 0) {
 			_vm->_dataIO->closeData(imdHandle);
 			_vm->_draw->initScreen();
+			_vm->_draw->_cursorIndex = -1;
 			_vm->_util->longDelay(200); // Letting everything settle
 			_vm->_imdPlayer->play("coktel", -1, -1, true);
+			_vm->_draw->closeScreen();
+		} else if ((imdHandle = _vm->_dataIO->openData("coktel.clt")) >= 0) {
+			_vm->_draw->initScreen();
+			_vm->_util->clearPalette();
+			_vm->_dataIO->readData(imdHandle, (byte *) _vm->_draw->_vgaPalette, 768);
+			_vm->_dataIO->closeData(imdHandle);
+			imdHandle = _vm->_dataIO->openData("coktel.ims");
+			if (imdHandle >= 0) {
+				byte *sprBuf;
+
+				_vm->_dataIO->closeData(imdHandle);
+				sprBuf = _vm->_dataIO->getData("coktel.ims");
+				_vm->_video->drawPackedSprite(sprBuf, 320, 200, 0, 0, 0,
+						_vm->_draw->_frontSurface);
+				_vm->_palAnim->fade(_palDesc, 0, 0);
+				_vm->_util->delay(500);
+
+				delete[] sprBuf;
+			}
 			_vm->_draw->closeScreen();
 		}
 

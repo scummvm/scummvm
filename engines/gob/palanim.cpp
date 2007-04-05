@@ -80,12 +80,12 @@ bool PalAnim::fadeStep(int16 oper) {
 	byte newBlue;
 
 	if (_vm->_global->_colorCount != 256)
-		error("fadeStep: Only 256 color mode is supported!");
+		error("PalAnim::fadeStep(): Only 256 color mode is supported!");
 
 	if (oper == 0) {
 		if (_vm->_global->_setAllPalette) {
 			if (_vm->_global->_inVM != 0)
-				error("fade: _vm->_global->_inVM != 0 not supported.");
+				error("PalAnim::fadeStep(): _vm->_global->_inVM != 0 not supported.");
 
 			for (int i = 0; i < 256; i++) {
 				newRed = fadeColor(_vm->_global->_redPalette[i], _toFadeRed[i]);
@@ -156,7 +156,7 @@ void PalAnim::fade(Video::PalDesc *palDesc, int16 fadeV, int16 allColors) {
 		}
 	} else {
 		if (_vm->_global->_inVM != 0)
-			error("fade: _vm->_global->_inVM != 0 is not supported");
+			error("PalAnim::fade(): _vm->_global->_inVM != 0 is not supported");
 
 		if (!palDesc) {
 			for (i = 0; i < 256; i++) {

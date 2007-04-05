@@ -49,7 +49,7 @@ int32 Parse::encodePtr(byte *ptr, int type) {
 		offset = ptr - ((byte *) _vm->_global->_inter_resStr);
 		break;
 	default:
-		error("encodePtr: Unknown pointer type");
+		error("Parse::encodePtr(): Unknown pointer type");
 	}
 	assert((offset & 0xF0000000) == 0);
 	return (type << 28) | offset;
@@ -69,7 +69,7 @@ byte *Parse::decodePtr(int32 n) {
 		ptr = (byte *) _vm->_global->_inter_resStr;
 		break;
 	default:
-		error("decodePtr: Unknown pointer type");
+		error("Parse::decodePtr(): Unknown pointer type");
 	}
 	return ptr + (n & 0x0FFFFFFF);
 }
@@ -367,7 +367,7 @@ void Parse::printExpr_internal(char stopToken) {
 
 		default:
 			debugN(5, "<%d>", (int16) operation);
-			error("printExpr: invalid operator in expression");
+			error("Parse::printExpr(): invalid operator in expression");
 			break;
 		}
 
