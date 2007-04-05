@@ -50,8 +50,8 @@ namespace Gob {
 
 const int Inter_v2::_goblinFuncLookUp[][2] = {
 	{0, 0},
-	{2, 1},
-	{3, 2},
+	{1, 1},
+	{2, 2},
 	{4, 3},
 	{5, 4},
 	{6, 5},
@@ -556,8 +556,8 @@ void Inter_v2::setupOpcodes() {
 	static const OpcodeGoblinEntryV2 opcodesGoblin[71] = {
 		/* 00 */
 		OPCODE(o2_loadInfogramesIns),
-		{NULL, ""},
-		{NULL, ""},
+		OPCODE(o2_startInfogrames),
+		OPCODE(o2_stopInfogrames),
 		{NULL, ""},
 		/* 04 */
 		{NULL, ""},
@@ -1937,6 +1937,7 @@ void Inter_v2::o2_loadInfogramesIns(OpGobParams &params) {
 
 	if (_vm->_game->_infogrames) {
 		_vm->_mixer->stopHandle(_vm->_game->_infHandle);
+		delete _vm->_game->_infogrames;
 		_vm->_game->_infogrames = 0;
 	}
 
@@ -1976,6 +1977,7 @@ void Inter_v2::o2_playInfogrames(OpGobParams &params) {
 
 	if (_vm->_game->_infIns) {
 		_vm->_mixer->stopHandle(_vm->_game->_infHandle);
+		delete _vm->_game->_infogrames;
 		_vm->_game->_infogrames =
 			new Audio::Infogrames(*_vm->_game->_infIns, true,
 					_vm->_mixer->getOutputRate(),
@@ -1987,8 +1989,27 @@ void Inter_v2::o2_playInfogrames(OpGobParams &params) {
 			_vm->_game->_infogrames = 0;
 		} else
 			_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType,
-					&_vm->_game->_infHandle, _vm->_game->_infogrames);
+					&_vm->_game->_infHandle, _vm->_game->_infogrames,
+					-1, 255, 0, false);
 	}
+}
+
+void Inter_v2::o2_startInfogrames(OpGobParams &params) {
+	load16();
+
+	if (_vm->_game->_infogrames &&
+			!_vm->_mixer->isSoundHandleActive(_vm->_game->_infHandle)) {
+		_vm->_game->_infogrames->restart();
+		_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType,
+				&_vm->_game->_infHandle, _vm->_game->_infogrames,
+				-1, 255, 0, false);
+	}
+}
+
+void Inter_v2::o2_stopInfogrames(OpGobParams &params) {
+	load16();
+
+	_vm->_mixer->stopHandle(_vm->_game->_infHandle);
 }
 
 void Inter_v2::o2_handleGoblins(OpGobParams &params) {

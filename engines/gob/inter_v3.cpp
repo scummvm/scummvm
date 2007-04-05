@@ -36,8 +36,8 @@ namespace Gob {
 
 const int Inter_v3::_goblinFuncLookUp[][2] = {
 	{0, 0},
-	{2, 1},
-	{3, 2},
+	{1, 1},
+	{2, 2},
 	{4, 3},
 	{5, 4},
 	{6, 5},
@@ -542,8 +542,8 @@ void Inter_v3::setupOpcodes() {
 	static const OpcodeGoblinEntryV3 opcodesGoblin[71] = {
 		/* 00 */
 		OPCODE(o2_loadInfogramesIns),
-		{NULL, ""},
-		{NULL, ""},
+		OPCODE(o2_startInfogrames),
+		OPCODE(o2_stopInfogrames),
 		{NULL, ""},
 		/* 04 */
 		{NULL, ""},

@@ -386,6 +386,8 @@ protected:
 	bool o2_writeData(OpFuncParams &params);
 	void o2_loadInfogramesIns(OpGobParams &params);
 	void o2_playInfogrames(OpGobParams &params);
+	void o2_startInfogrames(OpGobParams &params);
+	void o2_stopInfogrames(OpGobParams &params);
 	void o2_handleGoblins(OpGobParams &params);
 };
 
