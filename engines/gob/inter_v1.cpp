@@ -697,8 +697,7 @@ void Inter_v1::executeGoblinOpcode(int i, OpGobParams &params) {
 		_vm->_global->_inter_execPtr -= 2;
 		int16 cmd = load16();
 		_vm->_global->_inter_execPtr += cmd * 2;
-	}
-	else
+	} else
 		(this->*op) (params);
 }
 

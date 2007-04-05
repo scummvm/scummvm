@@ -27,6 +27,8 @@
 #include "gob/gob.h"
 #include "gob/inter.h"
 #include "gob/global.h"
+#include "gob/dataio.h"
+#include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/parse.h"
 
@@ -516,7 +518,7 @@ void Inter_v3::setupOpcodes() {
 		OPCODE(o1_waitEndPlay),
 		OPCODE(o1_playComposition),
 		OPCODE(o2_getFreeMem),
-		OPCODE(o2_checkData),
+		OPCODE(o3_checkData),
 		/* 40 */
 		{NULL, ""},
 		OPCODE(o1_prepareStr),
@@ -534,8 +536,8 @@ void Inter_v3::setupOpcodes() {
 		OPCODE(o1_loadFont),
 		/* 4C */
 		OPCODE(o1_freeFont),
-		OPCODE(o2_readData),
-		OPCODE(o2_writeData),
+		OPCODE(o3_readData),
+		OPCODE(o3_writeData),
 		OPCODE(o1_manageDataFile),
 	};
 
@@ -685,8 +687,7 @@ void Inter_v3::executeGoblinOpcode(int i, OpGobParams &params) {
 		_vm->_global->_inter_execPtr -= 2;
 		val = load16();
 		_vm->_global->_inter_execPtr += val << 1;
-	}
-	else
+	} else
 		(this->*op) (params);
 }
 
@@ -877,6 +878,132 @@ bool Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
 			break;
 		}
 	}
+
+	return false;
+}
+
+bool Inter_v3::o3_checkData(OpFuncParams &params) {
+	int16 handle;
+	int16 varOff;
+	int32 size;
+
+	evalExpr(0);
+	varOff = _vm->_parse->parseVarIndex();
+
+	size = -1;
+	handle = 1;
+	if (!scumm_stricmp(_vm->_global->_inter_resStr, "intro.$$$"))
+		size = _vm->getSaveSize(SAVE_SAV);
+	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf"))
+		warning("Gob3 Stub: Requested save file size");
+	else {
+		handle = _vm->_dataIO->openData(_vm->_global->_inter_resStr);
+
+		if (handle >= 0) {
+			_vm->_dataIO->closeData(handle);
+			size = _vm->_dataIO->getDataSize(_vm->_global->_inter_resStr);
+		} else
+			warning("File \"%s\" not found", _vm->_global->_inter_resStr);
+	}
+	if (size == -1)
+		handle = -1;
+
+	WRITE_VAR_OFFSET(varOff, handle);
+	WRITE_VAR(16, (uint32) size);
+
+	return false;
+}
+
+bool Inter_v3::o3_readData(OpFuncParams &params) {
+	int32 retSize;
+	int32 size;
+	int32 offset;
+	int16 dataVar;
+	int16 handle;
+	byte *buf;
+
+	evalExpr(0);
+	dataVar = _vm->_parse->parseVarIndex();
+	size = _vm->_parse->parseValExpr();
+	evalExpr(0);
+	offset = _vm->_global->_inter_resVal;
+
+	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
+			_vm->_global->_inter_resStr, dataVar, size, offset);
+
+	if (!scumm_stricmp(_vm->_global->_inter_resStr, "intro.$$$")) {
+		_vm->loadGameData(SAVE_SAV, dataVar, size, offset);
+		return false;
+	} else if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf")) {
+		warning("Gob3 Stub: Game state loading");
+		return false;
+	}
+
+	if (size < 0) {
+		warning("Attempted to read a raw sprite from file \"%s\"",
+				_vm->_global->_inter_resStr);
+		return false ;
+	} else if (size == 0) {
+		dataVar = 0;
+		size = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
+	}
+
+	buf = _vm->_global->_inter_variables + dataVar;
+	memset(_vm->_global->_inter_variablesSizes + dataVar, 0, size);
+
+	if (_vm->_global->_inter_resStr[0] == 0) {
+		WRITE_VAR(1, size);
+		return false;
+	}
+
+	WRITE_VAR(1, 1);
+	handle = _vm->_dataIO->openData(_vm->_global->_inter_resStr);
+
+	if (handle < 0)
+		return false;
+
+	_vm->_draw->animateCursor(4);
+	if (offset < 0)
+		_vm->_dataIO->seekData(handle, -offset - 1, SEEK_END);
+	else
+		_vm->_dataIO->seekData(handle, offset, SEEK_SET);
+
+	if (((dataVar >> 2) == 59) && (size == 4)) {
+		WRITE_VAR(59, _vm->_dataIO->readUint32(handle));
+		// The scripts in some versions divide through 256^3 then,
+		// effectively doing a LE->BE conversion
+		if ((_vm->_platform != Common::kPlatformPC) && (VAR(59) < 256))
+			WRITE_VAR(59, SWAP_BYTES_32(VAR(59)));
+	} else
+		retSize = _vm->_dataIO->readData(handle, buf, size);
+
+	if (retSize == size)
+		WRITE_VAR(1, 0);
+
+	_vm->_dataIO->closeData(handle);
+	return false;
+}
+
+bool Inter_v3::o3_writeData(OpFuncParams &params) {
+	int32 offset;
+	int32 size;
+	int16 dataVar;
+
+	evalExpr(0);
+	dataVar = _vm->_parse->parseVarIndex();
+	size = _vm->_parse->parseValExpr();
+	evalExpr(0);
+	offset = _vm->_global->_inter_resVal;
+
+	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes at %d)",
+			_vm->_global->_inter_resStr, dataVar, size, offset);
+
+	if (!scumm_stricmp(_vm->_global->_inter_resStr, "intro.$$$"))
+		_vm->saveGameData(SAVE_SAV, dataVar, size, offset);
+	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf"))
+		warning("Gob3 Stub: Game state saving");
+	else
+		warning("Attempted to write to file \"%s\"", _vm->_global->_inter_resStr);
 
 	return false;
 }

@@ -699,8 +699,7 @@ void Inter_v2::executeGoblinOpcode(int i, OpGobParams &params) {
 		_vm->_global->_inter_execPtr -= 2;
 		val = load16();
 		_vm->_global->_inter_execPtr += val << 1;
-	}
-	else
+	} else
 		(this->*op) (params);
 }
 
@@ -831,8 +830,7 @@ void Inter_v2::o2_setRenderFlags() {
 	
 	if (expr & 0x8000) {
 		_vm->_draw->_renderFlags |= expr & 0x3FFF;
-	}
-	else {
+	} else {
 		if (expr & 0x4000)
 			_vm->_draw->_renderFlags &= expr & 0x3FFF;
 		else
@@ -1587,8 +1585,7 @@ bool Inter_v2::o2_evaluateStore(OpFuncParams &params) {
 	if (*_vm->_global->_inter_execPtr == 99) {
 		_vm->_global->_inter_execPtr++;
 		loopCount = *_vm->_global->_inter_execPtr++;
-	}
-	else
+	} else
 		loopCount = 1;
 
 	for (int i = 0; i < loopCount; i++) {
@@ -1785,6 +1782,7 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 	evalExpr(0);
 	varOff = _vm->_parse->parseVarIndex();
 
+	size = -1;
 	handle = 1;
 	if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf"))
 		size = _vm->getSaveSize(SAVE_CAT);
@@ -1800,10 +1798,8 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 		if (handle >= 0) {
 			_vm->_dataIO->closeData(handle);
 			size = _vm->_dataIO->getDataSize(_vm->_global->_inter_resStr);
-		} else {
-			size = -1;
+		} else
 			warning("File \"%s\" not found", _vm->_global->_inter_resStr);
-		}
 	}
 	if (size == -1)
 		handle = -1;
@@ -1834,16 +1830,13 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf")) {
 		_vm->loadGameData(SAVE_CAT, dataVar, size, offset);
 		return false;
-	}
-	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.cat")) {
+	} else if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.cat")) {
 		_vm->loadGameData(SAVE_CAT, dataVar, size, offset);
 		return false;
-	}
-	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "save.inf")) {
+	} else if (!scumm_stricmp(_vm->_global->_inter_resStr, "save.inf")) {
 		_vm->loadGameData(SAVE_SAV, dataVar, size, offset);
 		return false;
-	}
-	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "bloc.inf")) {
+	} else if (!scumm_stricmp(_vm->_global->_inter_resStr, "bloc.inf")) {
 		_vm->loadGameData(SAVE_BLO, dataVar, size, offset);
 		return false;
 	}

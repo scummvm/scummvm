@@ -692,8 +692,7 @@ void Inter_Bargon::executeGoblinOpcode(int i, OpGobParams &params) {
 		val = load16();
 		_vm->_global->_inter_execPtr += val << 1;
 		warning("unimplemented opcodeGob: %d", i);
-	}
-	else
+	} else
 		(this->*op) (params);
 }
 
