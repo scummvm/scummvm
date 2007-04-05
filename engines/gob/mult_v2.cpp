@@ -652,6 +652,10 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 	Mult_AnimData &animData = *(animObj.pAnimData);
 	int nAnim = animData.animation;
 	int nLayer = animData.layer;
+
+	if (_vm->_scenery->getAnimLayersCount(nAnim) <= nLayer)
+		return;
+
 	Scenery::AnimLayer *animLayer = _vm->_scenery->getAnimLayer(nAnim, nLayer);
 
 	if (animData.animType == 4) {
