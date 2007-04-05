@@ -1375,9 +1375,7 @@ void Inter_v2::o2_initScreen() {
 	if (height > 0)
 		_vm->_video->_surfHeight = height;
 	
-	if (offY != 0)
-		warning("Inter_v2::o2_initScreen(): Stub: Horizontal split (%d/%d)",
-				_vm->_video->_surfHeight - offY, offY);
+	_vm->_video->_splitHeight = _vm->_video->_surfHeight - offY;
 
 	_vm->_draw->closeScreen();
 	_vm->_util->clearPalette();

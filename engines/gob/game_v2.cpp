@@ -444,6 +444,46 @@ int16 Game_v2::checkCollisions(byte handleMouse, int16 deltaTime, int16 *pResId,
 		key = checkKeys(&_vm->_global->_inter_mouseX,
 				&_vm->_global->_inter_mouseY, &_mouseButtons, handleMouse);
 
+		if ((_vm->_global->_videoMode == 0x14) && (handleMouse != 0)) {
+			int16 cursorRight;
+			int16 screenRight;
+			
+			if ((_vm->_global->_inter_mouseX == 0) &&
+				  (_vm->_draw->_scrollOffsetX > 0)) {
+				uint16 off;
+
+				off = MIN(_vm->_draw->_cursorWidth, _vm->_draw->_scrollOffsetX);
+				off = MAX(off / 2, 1);
+				_vm->_draw->_scrollOffsetX -= off;
+				_vm->_global->_inter_mouseX -= off;
+				_vm->_global->_inter_mouseX =
+					MAX(_vm->_global->_inter_mouseX, (int16) 1);
+			}
+
+			_vm->_global->_inter_mouseX += _vm->_draw->_scrollOffsetX;
+			cursorRight = _vm->_global->_inter_mouseX + _vm->_draw->_cursorWidth;
+			screenRight = _vm->_draw->_scrollOffsetX + 320;
+
+			if ((cursorRight >= screenRight) &&
+			    (screenRight < _vm->_video->_surfWidth)) {
+				uint16 off;
+				int16 max;
+
+				off = MIN(_vm->_draw->_cursorWidth,
+						(int16) (_vm->_video->_surfWidth - screenRight));
+				off = MAX(off / 2, 1);
+				max = _vm->_video->_surfWidth - _vm->_draw->_cursorWidth;
+
+				_vm->_draw->_scrollOffsetX += off;
+				_vm->_global->_inter_mouseX += off - 1; 
+				_vm->_global->_inter_mouseX = MIN(_vm->_global->_inter_mouseX, max);
+			}
+
+			_vm->_util->setScrollOffset();
+			_vm->_util->setMousePos(MAX(0, _vm->_global->_inter_mouseX -
+						_vm->_draw->_scrollOffsetX), _vm->_global->_inter_mouseY);
+		}
+
 		if ((handleMouse == 0) && (_mouseButtons != 0)) {
 			_vm->_util->waitMouseRelease(0);
 			key = 3;
