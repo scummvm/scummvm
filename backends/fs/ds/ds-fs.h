@@ -21,9 +21,6 @@
 #define _DS_FS_H
 
 
-#include "stdafx.h"
-#include "common/array.h"
-#include "common/str.h"
 
 //#include <NDS/ARM9/console.h>
 #include "fs.h"
@@ -105,13 +102,40 @@ public:
 };
 
 
-// FIXME: Why is assert redefined ? And why here (this is definitely the wrong place).
 
-#ifdef assert
-#undef assert
-#endif
 
-#define assert(s) if (!(s)) consolePrintf("Assertion failed: '##s##' at file %s, line %d\n", __FILE__, __LINE__)
+struct fileHandle {
+	int pos;
+	bool used;
+	char* data;
+	int size;
+	
+	DSSaveFile* sramFile;
+};
+
+
+#undef stderr
+#undef stdout
+#undef stdin
+
+#define stdout ((DS::fileHandle*) -1)
+#define stderr ((DS::fileHandle*) -2)
+#define stdin ((DS::fileHandle*) -3)
+
+#define FILE DS::fileHandle
+	
+// Please do not remove any of these prototypes that appear not to be required.
+FILE* 	std_fopen(const char* name, const char* mode);
+void 	std_fclose(FILE* handle);
+int 	std_getc(FILE* handle);
+size_t 	std_fread(const void* ptr, size_t size, size_t numItems, FILE* handle);
+size_t 	std_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle);
+bool 	std_feof(FILE* handle);
+long int std_ftell(FILE* handle);
+int 	std_fseek(FILE* handle, long int offset, int whence);
+void 	std_clearerr(FILE* handle);
+void 	std_cwd(char* dir);
+void 	std_fflush(FILE* handle);
 
 }
 

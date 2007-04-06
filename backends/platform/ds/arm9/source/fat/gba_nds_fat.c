@@ -22,7 +22,8 @@
 #include "disc_io.h"
 #include <string.h>
 #ifdef NDS
- #include <nds/ipc.h>	// Time on the NDS
+// #include <nds/ipc.h>	// Time on the NDS
+ #include <NDS/scummvm_ipc.h>
 #endif
 //----------------------------------------------------------------
 // Data	types

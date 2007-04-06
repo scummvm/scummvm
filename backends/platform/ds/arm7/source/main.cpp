@@ -25,7 +25,7 @@
 // -- modified by Darkain and others
 //////////////////////////////////////////////////////////////////////
 
-#define USE_LIBCARTRESET
+//#define USE_LIBCARTRESET
  
 #include <nds.h>
  
@@ -424,7 +424,6 @@ void InterruptTimer3() {
     uint32 temp=0;
     uint8 ct[sizeof(IPC->curtime)];
 	static int heartbeat = 0;
-    
     // Update the heartbeat
     heartbeat++;
  
@@ -512,8 +511,7 @@ void InterruptTimer3() {
  #ifdef USE_DEBUGGER
     Wifi_Update(); // update wireless in vblank
  #endif
- }
- 
+} 
 
 //////////////////////////////////////////////////////////////////////
 
@@ -571,6 +569,7 @@ void reboot() {
 
 
 int main(int argc, char ** argv) {
+
 	
 #ifdef USE_DEBUGGER
   REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;
@@ -639,6 +638,7 @@ int main(int argc, char ** argv) {
 	if (IPC->reset) {
 		powerOff();
 	}
+
 	swiWaitForVBlank();
   }
   return 0;

@@ -35,7 +35,14 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 	int maxx, minx, ofoff;
 	int update;
 	/* Note: Must be unsigned to use AGDS cyrillic characters! */
+#ifdef __DS__
+	// On the DS, a compiler bug causes the text to render incorrectly, because
+	// GCC tries to optimisie out writes to this pointer (tested on DevkitARM v19b and v20)
+	// Making this pointer volatile fixes this.
+	volatile const unsigned char *m;
+#else
 	const unsigned char *m;
+#endif
 
 	/* kludge! */
 	update = 1;
@@ -81,6 +88,7 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 				}
 
 				x1++;
+				
 				/* DF: changed the len-1 to len... */
 				if (x1 == len && m[1] != '\n')
 					y1++, x1 = foff = 0;

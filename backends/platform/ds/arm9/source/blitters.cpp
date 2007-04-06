@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
- 
+
 #include "stdafx.h"
 #define CHARSET_MASK_TRANSPARENCY 253
 
@@ -298,8 +298,8 @@ static inline void Rescale_320x1555Scanline_To_256x1555Scanline(u16* dest, const
 
 void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* palette, int destStride, int srcStride)
 {
-	u32* fastRam = (u32 *) (0x37F8000 + 16384);
-    
+	u32 fastRam[768];
+
     // Palette lookup -> 0_888
     for(size_t i=0; i<256; ++i)
     {

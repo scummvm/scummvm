@@ -1,12 +1,13 @@
 #BUILD_PLUGINS = 1
-libndsdir = $(DEVKITPRO)/libnds
+#libndsdir = $(DEVKITPRO)/libnds
+libndsdir = /home/neil/devkitpro/libnds
 
 # Select the build you want by uncommenting one of the following lines:
 
 DS_BUILD_A = 1
 #DS_BUILD_B = 1
 #DS_BUILD_C = 1
-
+#DS_BUILD_D = 1
 
 # Uncomment the following line to build in support for MP3 audio
 # using libmad:
@@ -42,6 +43,7 @@ ifdef DS_BUILD_A
 	DISABLE_CINE = 1
 	DISABLE_AGI = 1
 	DISABLE_TOUCHE = 1
+	DISABLE_PARALLACTION = 1
 	BUILD=scummvm-A
 endif
 
@@ -63,6 +65,7 @@ ifdef DS_BUILD_B
 	DISABLE_CINE = 1
 	DISABLE_AGI = 1
 	DISABLE_TOUCHE = 1
+	DISABLE_PARALLACTION = 1
 	BUILD=scummvm-B
 endif
 
@@ -84,7 +87,30 @@ ifdef DS_BUILD_C
 	DISABLE_CINE = 1
 	DISABLE_AGI = 1
 	DISABLE_TOUCHE = 1
+	DISABLE_PARALLACTION = 1
 	BUILD=scummvm-C
+endif
+
+ifdef DS_BUILD_D
+	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_D
+	LOGO = logoc.bmp
+	DISABLE_HE = 1
+	DISABLE_SCUMM = 1
+	DISABLE_SCUMM_7_8 = 1
+	DISABLE_AGOS = 1
+	DISABLE_SKY = 1
+	DISABLE_SWORD1 = 1
+	DISABLE_SWORD2 = 1
+	DISABLE_QUEEN = 1
+	DISABLE_SAGA = 1
+	DISABLE_KYRA = 1
+	DISABLE_GOB = 1
+	DISABLE_LURE = 1
+	#DISABLE_CINE = 1
+	#DISABLE_AGI = 1
+	DISABLE_TOUCHE = 1
+	DISABLE_PARALLACTION = 1
+	BUILD=scummvm-A
 endif
 
 
@@ -108,7 +134,7 @@ CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor	 -Wno-non-virtual-dtor \
 		-fno-exceptions -fno-rtti
 
 ASFLAGS = -mcpu=arm9tdmi -mthumb-interwork
-DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES
+DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES -DDISABLE_DEFAULT_SAVEFILEMANAGER
 ifdef USE_MAD
 	DEFINES += -DUSE_MAD
 endif
@@ -156,7 +182,7 @@ PORT_OBJS :=	$(portdir)/source/blitters.o $(portdir)/source/cdaudio.o $(portdir)
 		$(portdir)/../../../fs/ds/ds-fs.o $(portdir)/source/gbampsave.o $(portdir)/source/scummhelp.o\
 		$(portdir)/source/osystem_ds.o $(portdir)/source/portdefs.o $(portdir)/source/ramsave.o\
 		$(portdir)/source/scummconsole.o $(portdir)/source/touchkeyboard.o $(portdir)/source/zipreader.o\
-		$(portdir)/source/dsoptions.o
+		$(portdir)/source/dsoptions.o $(portdir)/source/keys.o
 		
 DATA_OBJS := $(portdir)/data/icons.o $(portdir)/data/keyboard.o $(portdir)/data/keyboard_pal.o $(portdir)/data/default_font.o
 			
@@ -252,7 +278,7 @@ ifndef HAVE_GCC3
 .cpp.o:
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
+#	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
 	$(CAT) "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
 	$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
 else

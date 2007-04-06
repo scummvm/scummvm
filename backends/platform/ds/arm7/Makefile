@@ -68,7 +68,7 @@ endif
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:=	$(DEVKITPRO)/libnds $(DEVKITPRO)/libnds/nds
+LIBDIRS	:=	/home/neil/devkitpro/libnds home/neil/devkitpro/libnds/nds
  
  
 #---------------------------------------------------------------------------------

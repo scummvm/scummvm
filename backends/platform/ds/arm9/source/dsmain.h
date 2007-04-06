@@ -116,6 +116,11 @@ void 	setGameSize(int width, int height);
 int		getGameWidth();
 int		getGameHeight();
 
+// Fast RAM allocation (ITCM)
+void	fastRamReset();
+void*	fastRamAlloc(int size);
+
+
 }
 
 

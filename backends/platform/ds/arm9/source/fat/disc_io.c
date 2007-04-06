@@ -358,10 +358,10 @@ void disc_getDldiId(char* id) {
 bool disc_setDsSlotInterface (void)
 {
 #ifdef ARM9
-	WAIT_CR &= ~(1<<11);
+	REG_EXEMEMCNT &= ~(1<<11);
 #endif
 #ifdef ARM7
-	WAIT_CR |= (1<<11);
+	REG_EXEMEMCNT |= (1<<11);
 #endif
 
 	active_interface = DLDI_GetInterface();

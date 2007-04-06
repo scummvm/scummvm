@@ -131,13 +131,13 @@ bool capsLockState;
 bool closed;
 
 void restoreVRAM(int tileBase, int mapBase, u16* saveSpace) {
-	for (int r = 0; r < 32 * 32; r++) {
+/*	for (int r = 0; r < 32 * 32; r++) {
 		((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase))[r] = *saveSpace++;
 	}
 	
 	for (int r = 0; r < 4096; r++) {
 		((u16 *) CHAR_BASE_BLOCK_SUB(tileBase))[r]	= *saveSpace++;
-	}
+	}*/
 }
 
 void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {

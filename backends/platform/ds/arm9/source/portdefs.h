@@ -33,17 +33,45 @@ typedef signed int s32;
 
 //#define double float
 
-#define CT_NO_TRANSPARENCY
+// Somebody removed these from scummsys.h, but they're still required, so I'm adding them here
+// in the hope that they'll stay.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+#include <ctype.h>
+#include <math.h>
+#include <time.h>
 
+
+#define CT_NO_TRANSPARENCY
+#include "scummconsole.h"
+
+
+
+//#undef assert
+//#define assert(expr) consolePrintf("Asserted!")
+#define NO_DEBUG_MSGS
+
+#ifdef assert
 #undef assert
-#define assert(expr) consolePrintf("Asserted!")
-//#define NO_DEBUG_MSGS
+#endif
+
+#define assert(s) if (!(s)) consolePrintf("Assertion failed: '##s##' at file %s, line %d\n", __FILE__, __LINE__)
+
 #include "ds-fs.h"
 
 //#define debug(fmt, ...) consolePrintf(fmt, ##__VA_ARGS__)
 //#define debug(fmt, ...) debug(0, fmt, ##__VA_ARGS__)
 #define time(t) DS_time(t)
 //#define memcpy(dest, src, size) DS_memcpy(dest, src, size)
+
+#define ITCM_DATA	__attribute__((section(".itcm")))
+
+
+
+#include "common/array.h"
+#include "common/str.h"
 
 time_t DS_time(time_t* t);
 time_t DS_time(long* t);

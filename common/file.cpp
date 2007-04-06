@@ -70,16 +70,6 @@
 	//#undef getc
 	//#undef ferror
 	
-	#define FILE void
-	
-	FILE* 	std_fopen(const char* name, const char* mode);
-	void 	std_fclose(FILE* handle);
-	size_t 	std_fread(const void* ptr, size_t size, size_t numItems, FILE* handle);
-	size_t 	std_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle);
-	bool 	std_feof(FILE* handle);
-	long int std_ftell(FILE* handle);
-	int 	std_fseek(FILE* handle, long int offset, int whence);
-	void 	std_clearerr(FILE* handle);
 
 	//void 	std_fprintf(FILE* handle, const char* fmt, ...);	// used in common/util.cpp
 	//void 	std_fflush(FILE* handle);	// used in common/util.cpp

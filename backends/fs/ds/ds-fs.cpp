@@ -22,7 +22,7 @@
 #include "str.h"
 #include "fs.h"
 #include "common/util.h"
-#include <NDS/ARM9/console.h> //basic print funcionality
+//#include <NDS/ARM9/console.h> //basic print funcionality
 #include "ds-fs.h"
 #include "dsmain.h"
 #include "gba_nds_fat.h"
@@ -30,29 +30,7 @@
 
 namespace DS {
 
-struct fileHandle {
-	int pos;
-	bool used;
-	char* data;
-	int size;
-	
-	DSSaveFile* sramFile;
-};
 
-#define FILE DS::fileHandle
-
-// FIXME: The following definition for stdin etc. are duplicated in common/util.cpp.
-// This should be fixed, e.g. by moving this (and the declarations of fileHandle,
-// the various functions etc.) into a separate header file which includes by util.cpp,
-// file.cpp and ds-fs.cpp
-
-#undef stderr
-#undef stdout
-#undef stdin
-
-#define stdout ((DS::fileHandle*) -1)
-#define stderr ((DS::fileHandle*) -2)
-#define stdin ((DS::fileHandle*) -3)
 
 
 //////////////////////////////////////////////////////////////
@@ -751,7 +729,7 @@ char* std_fgets(char* str, int size, FILE* file) {
 			p++;
 			file->sramFile->read((char *) &str[p], 1);
 //			consolePrintf("%d,", str[p]);
-		} while ((str[p] >= 32) && (!feof(file)) && (p < size));
+		} while ((str[p] >= 32) && (!std_feof(file)) && (p < size));
 		str[p + 1] = 0;
 		file->pos++;
 //		consolePrintf("Read:%s\n", str);

@@ -18,7 +18,7 @@
  *
  */
 
-#include "portdefs.h"
+#include "stdafx.h"
 #include <string.h>
 #include "nds/dma.h"
 #include "osystem_ds.h"

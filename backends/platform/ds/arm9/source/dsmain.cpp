@@ -42,13 +42,14 @@
 // - Delete saves?
 // - Software scaler?
 // - 100% scale
+// - Find out what's going wrong when you turn the console off
 
 #define USE_LIBCARTRESET
 //#define USE_BUILT_IN_DRIVER_SELECTION
 
 #include <nds.h>
 
-#include <ARM9/console.h> //basic print funcionality
+//#include <ARM9/console.h> //basic print funcionality
 
 #include <stdlib.h>
 #include "dsmain.h"
@@ -74,6 +75,7 @@
 #include "disc_io.h"
 #include "blitters.h"
 #include "cartreset_nolibfat.h"
+#include "keys.h"
 
 namespace DS {
 
@@ -231,9 +233,10 @@ bool penDown;
 bool penHeld;
 bool penReleased;
 bool penDownLastFrame;
-f32 penX, penY;
+s32 penX, penY;
 int keysDownSaved;
 int keysReleasedSaved;
+int keysChangedSaved;
 
 bool penDownSaved;
 bool penReleasedSaved;
@@ -241,11 +244,19 @@ int penDownFrames;
 int touchXOffset = 0;
 int touchYOffset = 0;
 
+int triggeredIcon = 0;
+int triggeredIconTimeout = 0;
+
 u16 savedPalEntry255 = RGB15(31, 31, 31);
 
 
 extern "C" int scummvm_main(int argc, char *argv[]);
+Common::EventType getKeyEvent(int key);
+int getKeysChanged();
+
 void updateStatus();
+void triggerIcon(int imageNum);
+void setIcon(int num, int x, int y, int imageNum, int flags, bool enable);
 
 TransferSound soundControl;
 
@@ -469,11 +480,11 @@ void displayMode8Bit() {
 		videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); 
 		videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
 	
-		vramSetBankA(VRAM_A_MAIN_BG_0x6000000);
-		vramSetBankB(VRAM_B_MAIN_BG_0x6020000);
+		vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
+		vramSetBankB(VRAM_B_MAIN_BG_0x06020000);
 	
-		vramSetBankC(VRAM_C_SUB_BG_0x6200000);
-		vramSetBankD(VRAM_D_MAIN_BG_0x6040000);
+		vramSetBankC(VRAM_C_SUB_BG_0x06200000);
+		vramSetBankD(VRAM_D_MAIN_BG_0x06040000);
 		
 		vramSetBankH(VRAM_H_LCD);
 	
@@ -489,11 +500,11 @@ void displayMode8Bit() {
 		videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); 
 		videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
 	
-		vramSetBankA(VRAM_A_MAIN_BG_0x6000000);
-		vramSetBankB(VRAM_B_MAIN_BG_0x6020000);
+		vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
+		vramSetBankB(VRAM_B_MAIN_BG_0x06020000);
 	
-		vramSetBankC(VRAM_C_SUB_BG_0x6200000);
-		vramSetBankD(VRAM_D_MAIN_BG_0x6040000);
+		vramSetBankC(VRAM_C_SUB_BG_0x06200000);
+		vramSetBankD(VRAM_D_MAIN_BG_0x06040000);
 		
 		vramSetBankH(VRAM_H_LCD);
 	
@@ -855,6 +866,8 @@ void addIndyFightingKeys() {
 
 	event.type = Common::EVENT_KEYDOWN;
 	event.kbd.flags = 0;
+	
+	consolePrintf("Fight keys\n");
 
 	if ((getKeysDown() & KEY_L)) {
 		indyFightRight = false;
@@ -864,22 +877,28 @@ void addIndyFightingKeys() {
 		indyFightRight = true;
 	}
 
-	if ((getKeysDown() & KEY_UP)) {
+	consolePrintf("ifr:%d\n", indyFightRight);
+
+	if ((getKeysChanged() & KEY_UP)) {
+		event.type = getKeyEvent(KEY_UP);
 		event.kbd.keycode = '8';
 		event.kbd.ascii = '8';
 		system->addEvent(event);
 	}
-	if ((getKeysDown() & KEY_LEFT)) {
+	if ((getKeysChanged() & KEY_LEFT)) {
+		event.type = getKeyEvent(KEY_LEFT);
 		event.kbd.keycode = '4';
 		event.kbd.ascii = '4';
 		system->addEvent(event);
 	}
-	if ((getKeysDown() & KEY_RIGHT)) {
+	if ((getKeysChanged() & KEY_RIGHT)) {
+		event.type = getKeyEvent(KEY_RIGHT);
 		event.kbd.keycode = '6';
 		event.kbd.ascii = '6';
 		system->addEvent(event);
 	}	
-	if ((getKeysDown() & KEY_DOWN)) {
+	if ((getKeysChanged() & KEY_DOWN)) {
+		event.type = getKeyEvent(KEY_DOWN);
 		event.kbd.keycode = '2';
 		event.kbd.ascii = '2';
 		system->addEvent(event);
@@ -887,17 +906,20 @@ void addIndyFightingKeys() {
 	
 	if (indyFightRight) {
 	
-		if ((getKeysDown() & KEY_X)) {
+		if ((getKeysChanged() & KEY_X)) {
+			event.type = getKeyEvent(KEY_X);
 			event.kbd.keycode = '9';
 			event.kbd.ascii = '9';
 			system->addEvent(event);
 		}
-		if ((getKeysDown() & KEY_A)) {
+		if ((getKeysChanged() & KEY_A)) {
+			event.type = getKeyEvent(KEY_A);
 			event.kbd.keycode = '6';
 			event.kbd.ascii = '6';
 			system->addEvent(event);
 		}
-		if ((getKeysDown() & KEY_B)) {
+		if ((getKeysChanged() & KEY_B)) {
+			event.type = getKeyEvent(KEY_B);
 			event.kbd.keycode = '3';
 			event.kbd.ascii = '3';
 			system->addEvent(event);
@@ -905,17 +927,20 @@ void addIndyFightingKeys() {
 
 	} else {
 
-		if ((getKeysDown() & KEY_X)) {
+		if ((getKeysChanged() & KEY_X)) {
+			event.type = getKeyEvent(KEY_X);
 			event.kbd.keycode = '7';
 			event.kbd.ascii = '7';
 			system->addEvent(event);
 		}
-		if ((getKeysDown() & KEY_A)) {
+		if ((getKeysChanged() & KEY_A)) {
+			event.type = getKeyEvent(KEY_A);
 			event.kbd.keycode = '4';
 			event.kbd.ascii = '4';
 			system->addEvent(event);
 		}
-		if ((getKeysDown() & KEY_B)) {
+		if ((getKeysChanged() & KEY_B)) {
+			event.type = getKeyEvent(KEY_B);
 			event.kbd.keycode = '1';
 			event.kbd.ascii = '1';
 			system->addEvent(event);
@@ -924,7 +949,8 @@ void addIndyFightingKeys() {
 	}
 	
 	
-	if ((getKeysDown() & KEY_Y)) {
+	if ((getKeysChanged() & KEY_Y)) {
+		event.type = getKeyEvent(KEY_Y);
 		event.kbd.keycode = '5';
 		event.kbd.ascii = '5';
 		system->addEvent(event);
@@ -967,8 +993,10 @@ void setKeyboardEnable(bool en) {
 		if (displayModeIs8Bit) {
 			// Copy the sub screen VRAM from the top screen - they should always be
 			// the same.
+			u16* buffer = get8BitBackBuffer();
+
 			for (int r = 0; r < (512 * 256) >> 1; r++) {
-				BG_GFX_SUB[r] = get8BitBackBuffer()[r];
+				BG_GFX_SUB[r] = buffer[r];
 			}
 			
 			SUB_DISPLAY_CR &= ~DISPLAY_BG1_ACTIVE;	// Turn off keyboard layer
@@ -1024,14 +1052,12 @@ void addEventsToQueue() {
 
 			if (!indyFightState) {
 
-				
-				if ((getKeysDown() & KEY_B) && (!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {
-		//			consolePrintf("Pressing Esc");
-		
-					event.type = Common::EVENT_KEYDOWN;
+				if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {	
 					event.kbd.keycode = 27;		
 					event.kbd.ascii = 27;		
 					event.kbd.flags = 0;
+
+					event.type = getKeyEvent(KEY_B);
 					system->addEvent(event);
 				}
 		
@@ -1149,7 +1175,7 @@ void addEventsToQueue() {
 				}
 			}
 			
-			if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))  && (displayModeIs8Bit)) {
+			if (((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) || (indyFightState))  && (displayModeIs8Bit)) {
 				// Controls specific to the control method
 			
 			
@@ -1163,10 +1189,10 @@ void addEventsToQueue() {
 
 				if (currentGame->control == CONT_SIMON) {
 					// Extra controls for Simon the Sorcerer
-					if ((getKeysDown() & KEY_DOWN)) {
+					if ((getKeysChanged() & KEY_DOWN)) {
 						Common::Event event;
 					
-						event.type = Common::EVENT_KEYDOWN;
+						event.type = getKeyEvent(KEY_DOWN);
 						event.kbd.keycode = '#';		// F10 or # - show hotspots
 						event.kbd.ascii = '#';
 						event.kbd.flags = 0;
@@ -1177,10 +1203,10 @@ void addEventsToQueue() {
 	
 				if (currentGame->control == CONT_SCUMM_ORIGINAL) {
 					// Extra controls for Scumm v1-5 games
-					if ((getKeysDown() & KEY_DOWN)) {
+					if ((getKeysChanged() & KEY_DOWN)) {
 						Common::Event event;
 					
-						event.type = Common::EVENT_KEYDOWN;
+						event.type = getKeyEvent(KEY_DOWN);
 						event.kbd.keycode = '.';		// Full stop - skips current dialogue line
 						event.kbd.ascii = '.';
 						event.kbd.flags = 0;
@@ -1199,55 +1225,39 @@ void addEventsToQueue() {
 		if (!displayModeIs8Bit) {
 			// Front end controls
 			
-			if (leftHandedSwap(getKeysDown()) & KEY_UP) {
-				event.type = Common::EVENT_KEYDOWN;
+			if (leftHandedSwap(getKeysChanged()) & KEY_UP) {
+				event.type = getKeyEvent(leftHandedSwap(KEY_UP));
 				event.kbd.keycode = SDLK_UP;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
 				system->addEvent(event);
-
-				event.type = Common::EVENT_KEYUP;
-				system->addEvent(event);
 			}
 
-			if (leftHandedSwap(getKeysDown()) & KEY_DOWN) {
-				event.type = Common::EVENT_KEYDOWN;
+			if (leftHandedSwap(getKeysChanged()) & KEY_DOWN) {
+				event.type = getKeyEvent(leftHandedSwap(KEY_DOWN));
 				event.kbd.keycode = SDLK_DOWN;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
 				system->addEvent(event);
-
-				event.type = Common::EVENT_KEYUP;
-				system->addEvent(event);
 			}
 
 			if (leftHandedSwap(getKeysDown()) & KEY_A) {
-				event.type = Common::EVENT_KEYDOWN;
+				event.type = getKeyEvent(leftHandedSwap(KEY_A));
 				event.kbd.keycode = SDLK_RETURN;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
-				system->addEvent(event);
-
-				event.type = Common::EVENT_KEYUP;
 				system->addEvent(event);
 			}
 		
 		}
 
 		
-		if ((getKeysDown() & KEY_START)) {
-			event.type = Common::EVENT_KEYDOWN;
+		if ((getKeysChanged() & KEY_START)) {
+			event.type = getKeyEvent(KEY_START);
 			event.kbd.keycode = 319;		// F5
 			event.kbd.ascii = 319;
 			event.kbd.flags = 0;
 			system->addEvent(event);
-/*
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = 319;		// F5
-			event.kbd.ascii = 319;
-			system->addEvent(event);*/
-			
-//			consolePrintf("Pressing F5");
 		}
 
 		
@@ -1262,17 +1272,31 @@ void addEventsToQueue() {
 	}
 }
 
+
+		
+void triggerIcon(int imageNum) {
+	triggeredIcon = imageNum;
+	triggeredIconTimeout = 120;	
+}
+	
+
+void setIcon(int num, int x, int y, int imageNum, int flags, bool enable) {
+	sprites[num].attribute[0] = ATTR0_BMP | y | (!enable? ATTR0_DISABLED: 0); 
+	sprites[num].attribute[1] = ATTR1_SIZE_32 | x | flags;
+	sprites[num].attribute[2] = ATTR2_ALPHA(1)| (imageNum * 16);
+}
+
 void updateStatus() {
 	int offs;
 
 	if (displayModeIs8Bit) {
 		switch (mouseMode) {
 			case MOUSE_LEFT: {
-				offs = 16;
+				offs = 1;
 				break;
 			}
 			case MOUSE_RIGHT: {
-				offs = 32;
+				offs = 2;
 				break;
 			}
 			case MOUSE_HOVER: {
@@ -1286,25 +1310,28 @@ void updateStatus() {
 			}
 		}
 	
-		
-		sprites[0].attribute[0] = ATTR0_BMP | 150; 
-		sprites[0].attribute[1] = ATTR1_SIZE_32 | 208;
-		sprites[0].attribute[2] = ATTR2_ALPHA(1)| offs;
+		setIcon(0, 208, 150, offs, 0, true);
 	
 		if (indyFightState) {
-			sprites[2].attribute[0] = ATTR0_BMP | 150; 
-			sprites[2].attribute[1] = ATTR1_SIZE_32 | (190 - 32) | (indyFightRight? 0: ATTR1_FLIP_X);
-			sprites[2].attribute[2] = ATTR2_ALPHA(1)| 48;
+			setIcon(1, (190 - 32), 150, 3, (indyFightRight? 0: ATTR1_FLIP_X), true);
+			consolePrintf("%d\n", indyFightRight);
 		} else {
-			sprites[2].attribute[0] = ATTR0_DISABLED; 
-			sprites[2].attribute[1] = 0;
-			sprites[2].attribute[2] = 0;
+//			setIcon(1, 0, 0, 0, 0, false);
 		}
+		
+		if (triggeredIconTimeout > 0) {
+			triggeredIconTimeout--;
+			setIcon(4, 16, 150, triggeredIcon, 0, true);
+		} else {
+			setIcon(4, 0, 0, 0, 0, false);
+		}
+		
 	} else {
-		sprites[0].attribute[0] = ATTR0_DISABLED; 
-		sprites[1].attribute[0] = ATTR0_DISABLED; 
-		sprites[2].attribute[0] = ATTR0_DISABLED; 
-		sprites[3].attribute[0] = ATTR0_DISABLED; 
+		setIcon(0, 0, 0, 0, 0, false);
+		setIcon(1, 0, 0, 0, 0, false);
+		setIcon(2, 0, 0, 0, 0, false);
+		setIcon(3, 0, 0, 0, 0, false);
+		setIcon(4, 0, 0, 0, 0, false);
 	}
 
 	if ((keyboardIcon) && (!keyboardEnable) && (!displayModeIs8Bit)) {
@@ -1372,15 +1399,15 @@ void setMainScreenScale(int x, int y) {
 	}
 }
 
-void setZoomedScreenScroll(int x, int y) {
+void setZoomedScreenScroll(int x, int y, bool shake) {
 	if (gameScreenSwap) {
-		BG3_CX = x + (((frameCount & 1) == 0)? 64: 0);
+		BG3_CX = x + ((shake && ((frameCount & 1) == 0))? 64: 0);
 		BG3_CY = y;
 		
 		touchX = x >> 8;
 		touchY = y >> 8;
 	} else {
-		SUB_BG3_CX = x + (((frameCount & 1) == 0)? 64: 0);
+		SUB_BG3_CX = x + ((shake && (frameCount & 1) == 0)? 64: 0);
 		SUB_BG3_CY = y;
 	}
 }
@@ -1505,29 +1532,62 @@ void VBlankHandler(void) {
 
 	static int ratio = ( 320 << 8) / SCUMM_GAME_WIDTH;
 	
+	bool zooming = false;
 	
 	if ((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) {
 		if ((getKeysHeld() & KEY_A) && (subScreenScale < ratio)) {
-			subScreenScale += 2;
+			subScreenScale += 1;
+			zooming = true;
 		}
 		
 		if ((getKeysHeld() & KEY_B) && (subScreenScale > 128)) {
-			subScreenScale -=2;
+			subScreenScale -=1;
+			zooming = true;
 		}
 	}
 
-
+	
 	int xCenter = subScTargetX + ((subScreenWidth >> 1) << 8);
 	int yCenter = subScTargetY + ((subScreenHeight >> 1) << 8);
+
 	
 	if (twoHundredPercentFixedScale) {
 		subScreenWidth = 256 >> 1;
 		subScreenHeight = 192 >> 1;
 	} else {
-		subScreenWidth = SCUMM_GAME_WIDTH * subScreenScale >> 8;
+		subScreenWidth = (((SCUMM_GAME_HEIGHT * 256) / 192) * subScreenScale) >> 8;
 		subScreenHeight = SCUMM_GAME_HEIGHT * subScreenScale >> 8;
+		
+		if ( ((subScreenWidth) > 256 - 8) && ((subScreenWidth) < 256 + 8) ) {
+			subScreenWidth = 256;
+			subScreenHeight = 192;
+			if (zooming) {
+				subScX = subScTargetX;
+				subScY = subScTargetY;
+			 	triggerIcon(0);
+			}
+		} else if ( ((subScreenWidth) > 128 - 8) && ((subScreenWidth) < 128 + 8) ) {
+			subScreenWidth = 128;
+			subScreenHeight = 96;
+			if (zooming) {
+				subScX = subScTargetX;
+				subScY = subScTargetY;
+				triggerIcon(1);
+			}
+		} else if (subScreenWidth > 256) {
+			subScreenWidth = 320;
+			subScreenHeight = 200;
+			if (zooming) {
+				subScX = subScTargetX;
+				subScY = subScTargetY;
+				triggerIcon(2);
+			}
+		} else {
+			triggerIcon(-1);
+		}
 	}
 	
+
 	subScTargetX = xCenter - ((subScreenWidth >> 1) << 8);
 	subScTargetY = yCenter - ((subScreenHeight >> 1) << 8);
 	
@@ -1595,8 +1655,8 @@ void VBlankHandler(void) {
 				scY = 0;
 			}
 			
-			setZoomedScreenScroll(subScX, subScY);
-			setZoomedScreenScale(subScreenWidth, (subScreenHeight * 256) / 192);
+			setZoomedScreenScroll(subScX, subScY, (subScreenWidth != 256) && (subScreenWidth != 128));
+			setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
 	
 		
 			setMainScreenScroll(scX << 8, (scY << 8) + (shakePos << 8));
@@ -1612,15 +1672,15 @@ void VBlankHandler(void) {
 				scY = 0;
 			}
 		
-			setZoomedScreenScroll(subScX, subScY);
-			setZoomedScreenScale(subScreenWidth, (subScreenHeight * 256) / 192);
+			setZoomedScreenScroll(subScX, subScY, (subScreenWidth != 256) && (subScreenWidth != 128));
+			setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
 	
 			setMainScreenScroll(64, (scY << 8) + (shakePos << 8));
 			setMainScreenScale(320, 256);		// 1:1 scale
 			
 		}
 	} else {
-		setZoomedScreenScroll(0, 0);
+		setZoomedScreenScroll(0, 0, true);
 		setZoomedScreenScale(320, 256);
 
 		setMainScreenScroll(0, 0);
@@ -1794,7 +1854,7 @@ void initHardware() {
 	}
 
 	WAIT_CR &= ~(0x0080);
-	REG_WRAM_CNT = 0;
+//	REG_WRAM_CNT = 0;
 
 }
 
@@ -1903,6 +1963,7 @@ void keysUpdate() {
 	scanKeys();
 	keysDownSaved |= leftHandedSwap(keysDown());
 	keysReleasedSaved |= leftHandedSwap(keysUp());
+	keysChangedSaved = keysDownSaved | keysReleasedSaved;
 }
 
 int getKeysDown() {
@@ -1917,9 +1978,24 @@ int getKeysReleased() {
 	return keysReleasedSaved;
 }
 
+int getKeysChanged() {
+	return keysChangedSaved;
+}
+
+Common::EventType getKeyEvent(int key) {
+	if (getKeysDown() & key) {
+		return Common::EVENT_KEYDOWN;
+	} else if (getKeysReleased() & key) {
+		return Common::EVENT_KEYUP;
+	} else {
+		return (Common::EventType) 0;
+	}
+}
+
 void consumeKeys() {
 	keysDownSaved = 0;
 	keysReleasedSaved = 0;
+	keysChangedSaved = 0;
 }
 
 bool getPenDown() {
@@ -1991,6 +2067,26 @@ void setIndyFightState(bool st) {
 bool getIndyFightState() {
 	return indyFightState;
 }
+
+///////////////////
+// Fast Ram
+///////////////////
+
+#define FAST_RAM_SIZE (30000)
+
+u8* fastRamPointer;
+u8 fastRamData[FAST_RAM_SIZE] ITCM_DATA;
+
+void* fastRamAlloc(int size) {
+	void* result = (void *) fastRamPointer;
+	fastRamPointer += size;
+	return (void *) (result);
+}
+
+void fastRamReset() {
+	fastRamPointer = fastRamData;
+}
+
 
 /////////////////
 // GBAMP
@@ -2152,6 +2248,7 @@ int main(void)
 	
 	indyFightState = false;
 	indyFightRight = true;
+
 
 	// CPU speed = 67108864
 	// 8 frames = 2946   368.5 bytes per fr
@@ -2358,6 +2455,8 @@ int main(void)
 	char* argv[2] = {"/scummvmds", "--config=scummvmb.ini"};
 #elif defined(DS_BUILD_C)
 	char* argv[2] = {"/scummvmds", "--config=scummvmc.ini"};
+#elif defined(DS_BUILD_D)
+	char* argv[2] = {"/scummvmds", "--config=scummvmd.ini"};
 #endif
 
 

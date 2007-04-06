@@ -19,6 +19,7 @@
 #include "disc_io.h"
 #ifdef NDS
 #include <nds/memory.h>
+#include <nds.h>
 #endif
 
 extern IO_INTERFACE _io_dldi;
@@ -28,7 +29,8 @@ extern u8 _dldi_driver_name;
 // export interface
 static inline LPIO_INTERFACE DLDI_GetInterface(void) {
 #ifdef NDS
-	WAIT_CR &= ~(ARM9_OWNS_ROM | ARM9_OWNS_CARD);
+	// NDM: I'm really not sure about this change ARM9 - ARM7
+	REG_EXEMEMCNT &= ~(ARM7_OWNS_ROM | ARM7_OWNS_CARD);
 #endif // defined NDS
 	return &_io_dldi;
 }

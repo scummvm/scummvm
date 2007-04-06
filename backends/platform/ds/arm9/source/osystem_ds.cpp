@@ -320,9 +320,11 @@ bool OSystem_DS::pollEvent(Common::Event &event)
 			event.kbd.ascii = 0;
 			event.kbd.keycode = 0;
 			event.kbd.flags = 0;
+			consolePrintf("type: %d\n", event.type);
 			return false;
 		} else {
 			event = eventQueue[eventNum++];
+			consolePrintf("type: %d\n", event.type);
 			return true;
 		}
 	}

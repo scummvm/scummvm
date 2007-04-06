@@ -22,6 +22,7 @@
 #ifndef _OSYSTEM_DS_H_
 #define _OSYSTEM_DS_H_
 #include "common/system.h"
+#include "common/events.h"
 #include "nds.h"
 #include "ramsave.h"
 #include "gbampsave.h"
