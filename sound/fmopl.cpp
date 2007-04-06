@@ -62,7 +62,8 @@ static Common::RandomSource oplRnd;			/* OPL random number generator */
 /* sinwave entries */
 /* used static memory = SIN_ENT * 4 (byte) */
 #ifdef __DS__
-#define SIN_ENT 1024
+#include "dsmain.h"
+#define SIN_ENT 256
 #else
 #define SIN_ENT 2048
 #endif
@@ -638,14 +639,17 @@ static int OPLOpenTable(void) {
 		ENV_CURVE = (int *)calloc(2 * 4096 + 1, sizeof(int));
 #endif
 
+#ifdef __DS__
+	DS::fastRamReset();
+
+	TL_TABLE = (int *) DS::fastRamAlloc(TL_MAX * 2 * sizeof(int *));
+	SIN_TABLE = (int **) DS::fastRamAlloc(SIN_ENT * 4 * sizeof(int *));
+#else
+
 	/* allocate dynamic tables */
 	if((TL_TABLE = (int *)malloc(TL_MAX * 2 * sizeof(int))) == NULL)
 		return 0;
 
-#ifdef __DS__
-	// On the DS, use fast RAM for the sine table, since it thrashes the cache otherwise
-	SIN_TABLE = ((int **) (0x37F8000));
-#else
 	if((SIN_TABLE = (int **)malloc(SIN_ENT * 4 * sizeof(int *))) == NULL) {
 		free(TL_TABLE);
 		return 0;
@@ -657,6 +661,7 @@ static int OPLOpenTable(void) {
 		free(SIN_TABLE);
 		return 0;
 	}
+
 	if((VIB_TABLE = (int *)malloc(VIB_ENT * 2 * sizeof(int))) == NULL) {
 		free(TL_TABLE);
 		free(SIN_TABLE);
@@ -995,6 +1000,7 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length) {
 	uint vibCnt = OPL->vibCnt;
 	uint8 rythm = OPL->rythm & 0x20;
 	OPL_CH *CH, *R_CH;
+
 
 	if((void *)OPL != cur_chip) {
 		cur_chip = (void *)OPL;
