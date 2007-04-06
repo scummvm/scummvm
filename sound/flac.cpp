@@ -332,16 +332,22 @@ int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 		FLAC__StreamDecoderState state = getStreamDecoderState();
 
 		// Keep poking FLAC to process more samples until we completely satisfied the request
-		for (; _requestedSamples > 0 && state == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC; state = getStreamDecoderState()) {
+		while (_requestedSamples > 0 && state == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC) {
 			assert(_sampleCache.bufFill == 0);
 			assert(_requestedSamples % numChannels == 0);
 			processSingleBlock();
+			state = getStreamDecoderState();
+			
+			if (state == FLAC__STREAM_DECODER_END_OF_STREAM) {
+				_lastSampleWritten = true;
+			}
 
 			// If we reached the end of the stream, and looping is enabled: Try to rewind
 			if (_lastSampleWritten && _numLoops != 1) {
 				if (_numLoops != 0)
 					_numLoops--;
 				seekAbsolute(_firstSample);
+				state = getStreamDecoderState();
 			}
 		}
 
