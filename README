@@ -883,7 +883,7 @@ other games.
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-d                 - Starts the debugger
         Ctrl-g                 - Runs in really REALLY fast mode
-        Ctrl-t                 - Switch been 'Speech only',
+        Ctrl-t                 - Switch between 'Speech only',
                                  'Speech and Subtitles' and 'Subtitles only'
         Tilde (~)              - Show/hide the debugging console
         Ctrl-s                 - Shows memory consumption
