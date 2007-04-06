@@ -150,7 +150,6 @@ void MP3InputStream::decodeMP3Data() {
 			if (!readMP3Data()) {
 				// We tried to read more data but failed -> end of stream reached
 				_eos = true;
-				break;
 			}
 		}
 
@@ -214,7 +213,7 @@ void MP3InputStream::decodeMP3Data() {
 			rewind();
 		}
 
-	} while (_stream.error == MAD_ERROR_BUFLEN);
+	} while (!_eos && _stream.error == MAD_ERROR_BUFLEN);
 	
 	if (_stream.error != MAD_ERROR_NONE)
 		_eos = true;
