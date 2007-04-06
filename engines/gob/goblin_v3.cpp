@@ -35,7 +35,7 @@ bool Goblin_v3::isMovement(int8 state) {
 		return true;
 	if ((state >= 40) && (state < 44))
 		return true;
-	if ((state == 26) || (state == 26))
+	if ((state == 26) || (state == 27))
 		return true;
 	if ((state == 38) || (state == 39))
 		return true;
