@@ -157,7 +157,7 @@ void  Parallaction::freeScript(Program *program) {
 	if (!program) return;
 
 	delete[] program->_locals;
-	freeNodeList(program);
+	freeNodeList(&program->_start);
 
 	return;
 }
@@ -261,7 +261,7 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 	a->_program = new Program;
 
 	a->_program->_locals = new LocalVariable[10];
-	Node *vD0 = a->_program;
+	Node *vD0 = &a->_program->_start;
 
 	Instruction *vCC = new Instruction;
 
@@ -280,7 +280,7 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 
 	delete script;
 
-	a->_program->_ip = (Instruction*)a->_program->_next;
+	a->_program->_ip = (Instruction*)a->_program->_start._next;
 
 	return;
 }
@@ -588,7 +588,7 @@ void jobRunScripts(void *parm, Job *j) {
 					a->_flags &= ~kFlagsActing;
 					_vm->runCommands(a->_commands, a);
 				}
-				a->_program->_ip = (Instruction*)a->_program->_next;
+				a->_program->_ip = (Instruction*)a->_program->_start._next;
 				goto label1;
 
 

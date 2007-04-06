@@ -279,11 +279,12 @@ struct Instruction : public Node {
 };
 
 
-struct Program : public Node {
+struct Program {
 	LocalVariable	*_locals;
 	uint16			_loopCounter;
 	Instruction 	*_ip;
 	Instruction 	*_loopStart;
+	Instruction		_start;
 
 	Program() {
 		_locals = NULL;
