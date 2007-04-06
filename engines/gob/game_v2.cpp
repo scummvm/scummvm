@@ -448,19 +448,20 @@ int16 Game_v2::checkCollisions(byte handleMouse, int16 deltaTime, int16 *pResId,
 			int16 cursorRight;
 			int16 screenRight;
 			
-			if ((_vm->_global->_inter_mouseX == 0) &&
+			if ((_vm->_global->_inter_mouseX == _vm->_draw->_scrollOffsetX) &&
 				  (_vm->_draw->_scrollOffsetX > 0)) {
 				uint16 off;
+				int16 min;
 
 				off = MIN(_vm->_draw->_cursorWidth, _vm->_draw->_scrollOffsetX);
 				off = MAX(off / 2, 1);
+				min = _vm->_draw->_scrollOffsetX - off + 1;
+
 				_vm->_draw->_scrollOffsetX -= off;
 				_vm->_global->_inter_mouseX -= off;
-				_vm->_global->_inter_mouseX =
-					MAX(_vm->_global->_inter_mouseX, (int16) 1);
+				_vm->_global->_inter_mouseX = MAX(_vm->_global->_inter_mouseX, min);
 			}
 
-			_vm->_global->_inter_mouseX += _vm->_draw->_scrollOffsetX;
 			cursorRight = _vm->_global->_inter_mouseX + _vm->_draw->_cursorWidth;
 			screenRight = _vm->_draw->_scrollOffsetX + 320;
 

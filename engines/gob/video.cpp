@@ -90,6 +90,9 @@ Video::Video(GobEngine *vm) : _vm(vm) {
 	_scrollOffsetX = 0;
 	_scrollOffsetY = 0;
 	_splitHeight = 200;
+
+	_curSparse = 0;
+	_lastSparse = 0xFFFFFFFF;
 }
 
 char Video::initDriver(int16 vidMode) {
@@ -174,6 +177,17 @@ void Video::waitRetrace(bool mouse) {
 	time = _vm->_util->getTimeKey();
 	retrace(mouse);
 	_vm->_util->delay(MAX(1, 10 - (int)(_vm->_util->getTimeKey() - time)));
+}
+
+void Video::sparseRetrace(int max) {
+	uint32 timeKey = _vm->_util->getTimeKey();
+
+	if ((_curSparse++ > max) || ((timeKey - _lastSparse) > 1000)) {
+		_curSparse = 0;
+		retrace(false);
+	}
+
+	_lastSparse = timeKey;
 }
 
 void Video::putPixel(int16 x, int16 y, int16 color, SurfaceDesc *dest) {

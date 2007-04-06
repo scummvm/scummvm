@@ -2152,8 +2152,8 @@ bool Inter_v1::o1_istrlen(OpFuncParams &params) {
 bool Inter_v1::o1_setMousePos(OpFuncParams &params) {
 	_vm->_global->_inter_mouseX = _vm->_parse->parseValExpr();
 	_vm->_global->_inter_mouseY = _vm->_parse->parseValExpr();
-	_vm->_global->_inter_mouseX -= _vm->_draw->_scrollOffsetX;
-	_vm->_global->_inter_mouseY -= _vm->_draw->_scrollOffsetY;
+	_vm->_global->_inter_mouseX -= _vm->_video->_scrollOffsetX;
+	_vm->_global->_inter_mouseY -= _vm->_video->_scrollOffsetY;
 	if (_vm->_global->_useMouse != 0)
 		_vm->_util->setMousePos(_vm->_global->_inter_mouseX,
 				_vm->_global->_inter_mouseY);

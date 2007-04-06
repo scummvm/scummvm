@@ -398,51 +398,14 @@ void Goblin_v2::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 		animData->animation = animation;
 		animData->frame = 0;
 	} else {
-		if (((animData->state >= 0) && (animData->state < 8)) ||
-				(animData->state == 38) || (animData->state == 39)) {
+		if (isMovement(animData->state)) {
 			state = animData->nextState;
 			if (animData->frame == ((framesCount + 1) / 2)) {
 				gobX = obj->goblinX;
 				gobY = obj->goblinY;
-				switch (state) {
-				case 0:
-					obj->goblinX--;
-					break;
 
-				case 1:
-					obj->goblinX--;
-					obj->goblinY--;
-					break;
+				advMovement(obj, state);
 
-				case 2:
-				case 38:
-					obj->goblinY--;
-					break;
-
-				case 3:
-					obj->goblinX++;
-					obj->goblinY--;
-					break;
-
-				case 4:
-					obj->goblinX++;
-					break;
-
-				case 5:
-					obj->goblinX++;
-					obj->goblinY++;
-					break;
-
-				case 6:
-				case 39:
-					obj->goblinY++;
-					break;
-
-				case 7:
-					obj->goblinX--;
-					obj->goblinY++;
-					break;
-				}
 				if (animData->state != state) {
 					animation = obj->goblinStates[state][0].animation;
 					layer = obj->goblinStates[state][0].layer;
@@ -475,45 +438,9 @@ void Goblin_v2::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 			animData->state = state;
 			gobX = obj->goblinX;
 			gobY = obj->goblinY;
-			switch (state) {
-			case 0:
-				obj->goblinX--;
-				break;
 
-			case 1:
-				obj->goblinX--;
-				obj->goblinY--;
-				break;
+			advMovement(obj, state);
 
-			case 2:
-			case 38:
-				obj->goblinY--;
-				break;
-
-			case 3:
-				obj->goblinX++;
-				obj->goblinY--;
-				break;
-
-			case 4:
-				obj->goblinX++;
-				break;
-
-			case 5:
-				obj->goblinX++;
-				obj->goblinY++;
-				break;
-
-			case 6:
-			case 39:
-				obj->goblinY++;
-				break;
-
-			case 7:
-				obj->goblinX--;
-				obj->goblinY++;
-				break;
-			}
 			_vm->_scenery->updateAnim(layer, 0, animation, 0, *obj->pPosX, *obj->pPosY, 0);
 			if (_vm->_map->_bigTiles)
 				*obj->pPosY = ((gobY + 1) * _vm->_map->_tilesHeight) -
@@ -684,6 +611,57 @@ void Goblin_v2::handleGoblins(void) {
 				gob2DestX--;
 			move(gob2DestX, gob2DestY, 1);
 		}
+	}
+}
+
+bool Goblin_v2::isMovement(int8 state) {
+	if ((state >= 0) && (state < 8))
+		return true;
+	if ((state == 38) || (state == 39))
+		return true;
+
+	return false;
+}
+
+void Goblin_v2::advMovement(Mult::Mult_Object *obj, int8 state) {
+	switch (state) {
+	case 0:
+		obj->goblinX--;
+		break;
+
+	case 1:
+		obj->goblinX--;
+		obj->goblinY--;
+		break;
+
+	case 2:
+	case 38:
+		obj->goblinY--;
+		break;
+
+	case 3:
+		obj->goblinX++;
+		obj->goblinY--;
+		break;
+
+	case 4:
+		obj->goblinX++;
+		break;
+
+	case 5:
+		obj->goblinX++;
+		obj->goblinY++;
+		break;
+
+	case 6:
+	case 39:
+		obj->goblinY++;
+		break;
+
+	case 7:
+		obj->goblinX--;
+		obj->goblinY++;
+		break;
 	}
 }
 

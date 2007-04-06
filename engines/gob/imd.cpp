@@ -177,6 +177,8 @@ ImdPlayer::Imd *ImdPlayer::loadImdFile(const char *path, SurfaceDesc *surfDesc, 
 		framesCordsPos = _vm->_dataIO->readUint32(handle);
 
 	_noSound = true;
+	_soundStage = 0;
+	_soundWaited = 0;
 	if (imdPtr->verMin & 0x4000) {
 		_soundFreq = _vm->_dataIO->readUint16(handle);
 		_soundSliceSize = _vm->_dataIO->readUint16(handle);

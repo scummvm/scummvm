@@ -107,6 +107,7 @@ public:
 			int16 height, int16 flags);
 	void retrace(bool mouse = true);
 	void waitRetrace(bool mouse = true);
+	void sparseRetrace(int max);
 
 	void putPixel(int16 x, int16 y, int16 color, SurfaceDesc *dest);
 	void fillRect(SurfaceDesc *dest, int16 left, int16 top,
@@ -150,6 +151,10 @@ public:
 
 protected:
 	class VideoDriver *_videoDriver;
+
+	int _curSparse;
+	uint32 _lastSparse;
+
 	GobEngine *_vm;
 
 	char initDriver(int16 vidMode);

@@ -502,7 +502,7 @@ void Inter_v3::setupOpcodes() {
 		/* 30 */
 		OPCODE(o1_returnTo),
 		OPCODE(o1_loadSpriteContent),
-		OPCODE(o1_copySprite),
+		OPCODE(o3_copySprite),
 		OPCODE(o1_fillRect),
 		/* 34 */
 		OPCODE(o1_drawLine),
@@ -879,6 +879,15 @@ bool Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
 		}
 	}
 
+	return false;
+}
+
+bool Inter_v3::o3_copySprite(OpFuncParams &params) {
+	o1_copySprite(params);
+
+	// For the close-up "fading" in the CD version
+	if (_vm->_draw->_destSurface == 20)
+		_vm->_video->sparseRetrace(20);
 	return false;
 }
 

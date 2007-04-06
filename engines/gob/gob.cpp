@@ -627,7 +627,7 @@ int GobEngine::init() {
 		_draw = new Draw_v2(this);
 		_game = new Game_v2(this);
 		_map = new Map_v2(this);
-		_goblin = new Goblin_v2(this);
+		_goblin = new Goblin_v3(this);
 		_scenery = new Scenery_v2(this);
 	} else
 		error("GobEngine::init(): Unknown version of game engine");

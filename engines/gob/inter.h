@@ -472,6 +472,7 @@ protected:
 	virtual const char *getOpcodeGoblinDesc(int i);
 
 	bool o3_getTotTextItemPart(OpFuncParams &params);
+	bool o3_copySprite(OpFuncParams &params);
 	bool o3_checkData(OpFuncParams &params);
 	bool o3_readData(OpFuncParams &params);
 	bool o3_writeData(OpFuncParams &params);

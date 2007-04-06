@@ -196,8 +196,8 @@ int16 Util::checkKey(void) {
 
 void Util::getMouseState(int16 *pX, int16 *pY, int16 *pButtons) {
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
-	*pX = mouse.x;
-	*pY = mouse.y;
+	*pX = mouse.x + _vm->_video->_scrollOffsetX;
+	*pY = mouse.y + _vm->_video->_scrollOffsetY;
 
 	if (pButtons != 0)
 		*pButtons = _mouseButtons;

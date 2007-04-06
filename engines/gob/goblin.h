@@ -254,6 +254,8 @@ protected:
 	void moveTreatRopeStairs(Gob_Object *gobDesc);
 	void playSounds(Mult::Mult_Object *obj);
 
+	virtual bool isMovement(int8 state) = 0;
+	virtual void advMovement(Mult::Mult_Object *obj, int8 state) = 0;
 	virtual void movePathFind(Mult::Mult_Object *obj,
 			Gob_Object *gobDesc, int16 nextAct) = 0;
 };
@@ -272,6 +274,8 @@ public:
 	virtual ~Goblin_v1() {};
 
 protected:
+	virtual bool isMovement(int8 state) { return false; }
+	virtual void advMovement(Mult::Mult_Object *obj, int8 state) {}
 	virtual void movePathFind(Mult::Mult_Object *obj,
 			Gob_Object *gobDesc, int16 nextAct);
 };
@@ -290,8 +294,20 @@ public:
 	virtual ~Goblin_v2() {};
 
 protected:
+	virtual bool isMovement(int8 state);
+	virtual void advMovement(Mult::Mult_Object *obj, int8 state);
 	virtual void movePathFind(Mult::Mult_Object *obj,
 			Gob_Object *gobDesc, int16 nextAct);
+};
+
+class Goblin_v3 : public Goblin_v2 {
+public:
+	Goblin_v3(GobEngine *vm);
+	virtual ~Goblin_v3() {};
+
+protected:
+	virtual bool isMovement(int8 state);
+	virtual void advMovement(Mult::Mult_Object *obj, int8 state);
 };
 
 } // End of namespace Gob

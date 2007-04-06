@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	goblin.o \
 	goblin_v1.o \
 	goblin_v2.o \
+	goblin_v3.o \
 	imd.o \
 	init.o \
 	init_v1.o \
