@@ -872,9 +872,7 @@ Job *Parallaction::addJob(JobFn fn, void *parm, uint16 tag) {
 }
 
 void Parallaction::removeJob(Job *j) {
-
-	removeNode(j);
-	delete j;
+	j->_finished = 1;
 	return;
 }
 
@@ -896,11 +894,14 @@ void Parallaction::runJobs() {
 	while (j) {
 		debugC(3, kDebugJobs, "runJobs: %i", j->_tag);
 
-		(*j->_fn)(j->_parm, j);
 		Job *v4 = (Job*)j->_next;
 
-		if (j->_finished == 1)
-			removeJob(j);
+		if (j->_finished == 1) {
+			removeNode(j);
+			delete j;
+		} else {
+			(*j->_fn)(j->_parm, j);
+		}
 
 		j = v4;
 	}
