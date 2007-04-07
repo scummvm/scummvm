@@ -79,25 +79,17 @@ struct Answer {
 	uint32		_noFlags;
 	uint32		_yesFlags;
 
-	Answer() {
-		_text = NULL;
-		_mood = 0;
-		_following._question =  NULL;
-		_commands = NULL;
-		_noFlags = 0;
-		_yesFlags = 0;
-	}
+	Answer();
+	~Answer();
 };
 
 struct Question {
 	char*		_text;
 	uint16		_mood;
-	Answer		_answers[NUM_ANSWERS];
+	Answer*		_answers[NUM_ANSWERS];
 
-	Question() {
-		_text = NULL;
-		_mood = 0;
-	}
+	Question();
+	~Question();
 };
 
 typedef Question Dialogue;

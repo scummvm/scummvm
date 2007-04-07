@@ -624,7 +624,7 @@ Zone::~Zone() {
 		break;
 
 	case kZoneSpeak:
-		_vm->freeDialogue(u.speak->_dialogue);
+		delete u.speak->_dialogue;
 		delete u.speak;
 		break;
 

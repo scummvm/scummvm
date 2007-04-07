@@ -352,7 +352,6 @@ public:
 
 	uint16		runZone(Zone*);
 	void 		runDialogue(SpeakData*);
-	void 		freeDialogue(Dialogue *d);
 	void 		runCommands(Command *list, Zone *z = NULL);
 
 public:
