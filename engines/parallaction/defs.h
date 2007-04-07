@@ -60,7 +60,9 @@ public:
 	}
 
 	iterator erase(iterator pos) {
-		return erase(pos, pos);
+		if (pos != Common_List::end())
+			delete *pos;
+		return Common_List::erase(pos);
 	}
 
 	iterator erase(iterator first, iterator last) {
