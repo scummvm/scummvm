@@ -245,27 +245,21 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 
 	a->_program = new Program;
 
-	a->_program->_locals = new LocalVariable[10];
-	Node *vD0 = &a->_program->_start;
-
 	Instruction *vCC = new Instruction;
 
 	while (scumm_stricmp(_tokens[0], "endscript")) {
-
 		parseScriptLine(vCC, a, a->_program->_locals);
-		addNode(vD0, vCC);
-		vD0 = vCC;
-
+		a->_program->_instructions.push_back(vCC);
 		vCC = new Instruction;
 		fillBuffers(*script);
 	}
 
+	// TODO: use List<>::end() to detect the end of the program
 	vCC->_index = INST_END;
-	addNode(vD0, vCC);
+	a->_program->_instructions.push_back(vCC);
+	a->_program->_ip = a->_program->_instructions.begin();
 
 	delete script;
-
-	a->_program->_ip = (Instruction*)a->_program->_start._next;
 
 	return;
 }
@@ -475,15 +469,15 @@ void jobRunScripts(void *parm, Job *j) {
 	for ( ; a; a = (Animation*)a->_next) {
 
 		if ((a->_flags & kFlagsActing) == 0) continue;
-		Instruction *inst = a->_program->_ip;
+		InstructionList::iterator inst = a->_program->_ip;
 
 //		printf("Animation: %s, flags: %x\n", a->_name, a->_flags);
 
-		while ((inst->_index != INST_SHOW) && (a->_flags & kFlagsActing)) {
+		while (((*inst)->_index != INST_SHOW) && (a->_flags & kFlagsActing)) {
 
-			debugC(1, kDebugJobs, "Animation: %s, instruction: %s", a->_label._text, inst->_index == INST_END ? "end" : _instructionNamesRes[inst->_index - 1]);
+			debugC(1, kDebugJobs, "Animation: %s, instruction: %s", a->_label._text, (*inst)->_index == INST_END ? "end" : _instructionNamesRes[(*inst)->_index - 1]);
 
-			switch (inst->_index) {
+			switch ((*inst)->_index) {
 			case INST_ENDLOOP:	// endloop
 				if (--a->_program->_loopCounter > 0) {
 					inst = a->_program->_loopStart;
@@ -491,26 +485,26 @@ void jobRunScripts(void *parm, Job *j) {
 				break;
 
 			case INST_OFF:	{// off
-				inst->_opBase._a->_flags |= kFlagsRemove;
-//				v1C = inst->_opBase;
+				(*inst)->_opBase._a->_flags |= kFlagsRemove;
+//				v1C = (*inst)->_opBase;
 				}
 				break;
 
 			case INST_ON:	// on
-				inst->_opBase._a->_flags |= kFlagsActive;
-				inst->_opBase._a->_flags &= ~kFlagsRemove;
+				(*inst)->_opBase._a->_flags |= kFlagsActive;
+				(*inst)->_opBase._a->_flags &= ~kFlagsRemove;
 				break;
 
 			case INST_START:	// start
-//				v1C = inst->_opBase;
-				inst->_opBase._a->_flags |= (kFlagsActing | kFlagsActive);
+//				v1C = (*inst)->_opBase;
+				(*inst)->_opBase._a->_flags |= (kFlagsActing | kFlagsActive);
 				break;
 
 			case INST_LOOP: // loop
-				if (inst->_flags & kInstUsesLiteral) {
-					a->_program->_loopCounter = inst->_opBase._loopCounter._value;
+				if ((*inst)->_flags & kInstUsesLiteral) {
+					a->_program->_loopCounter = (*inst)->_opBase._loopCounter._value;
 				} else {
-					a->_program->_loopCounter = *inst->_opBase._loopCounter._pvalue;
+					a->_program->_loopCounter = *(*inst)->_opBase._loopCounter._pvalue;
 				}
 				a->_program->_loopStart = inst;
 				break;
@@ -519,52 +513,52 @@ void jobRunScripts(void *parm, Job *j) {
 			case INST_DEC: {	// dec
 				int16 _si = 0;
 				int16 _ax = 0, _bx = 0;
-				if (inst->_flags & kInstUsesLiteral) {
-					_si = inst->_opB._value;
+				if ((*inst)->_flags & kInstUsesLiteral) {
+					_si = (*inst)->_opB._value;
 				} else {
-					_si = *inst->_opB._pvalue;
+					_si = *(*inst)->_opB._pvalue;
 				}
-				if (inst->_flags & kInstMod) {	// mod
+				if ((*inst)->_flags & kInstMod) {	// mod
 					_bx = (_si > 0 ? _si : -_si);
 					if (modCounter % _bx != 0) break;
 
 					_si = (_si > 0 ?  1 : -1);
 				}
-				if (inst->_flags & kInstUsesLocal) {	// local
-					if (inst->_index == INST_INC) _ax = _si;
+				if ((*inst)->_flags & kInstUsesLocal) {	// local
+					if ((*inst)->_index == INST_INC) _ax = _si;
 					else _ax = -_si;
 
-					inst->_opA._local->_value += _ax;
-					wrapLocalVar(inst->_opA._local);
+					(*inst)->_opA._local->_value += _ax;
+					wrapLocalVar((*inst)->_opA._local);
 					break;
 				}
 
 				// built-in variable (x, y, z, f)
-				if (inst->_index == INST_INC) _ax = _si;
+				if ((*inst)->_index == INST_INC) _ax = _si;
 				else _ax = -_si;
-				*inst->_opA._pvalue += _ax;
+				*(*inst)->_opA._pvalue += _ax;
 			}
 			break;
 
 			case INST_MOVE: // move
-				v4 = buildWalkPath(*inst->_opA._pvalue, *inst->_opB._pvalue);
+				v4 = buildWalkPath(*(*inst)->_opA._pvalue, *(*inst)->_opB._pvalue);
 				_vm->addJob(&jobWalk, v4, kPriority19 );
 				_engineFlags |= kEngineWalking;
 				break;
 
 			case INST_PUT:	// put
-				v18._width = inst->_opBase._a->width();
-				v18._height = inst->_opBase._a->height();
-				v18._data0 = inst->_opBase._a->getFrameData(inst->_opBase._a->_frame);
-				v18._data1 = NULL; // inst->_opBase._a->_cnv.field_8[inst->_opBase._a->_frame];
+				v18._width = (*inst)->_opBase._a->width();
+				v18._height = (*inst)->_opBase._a->height();
+				v18._data0 = (*inst)->_opBase._a->getFrameData((*inst)->_opBase._a->_frame);
+				v18._data1 = NULL; // (*inst)->_opBase._a->_cnv.field_8[(*inst)->_opBase._a->_frame];
 
-				if (inst->_flags & kInstMaskedPut) {
-					uint16 _si = _vm->_gfx->queryMask(inst->_opB._value);
-					_vm->_gfx->blitCnv(&v18, inst->_opA._value, inst->_opB._value, _si, Gfx::kBitBack);
-					_vm->_gfx->blitCnv(&v18, inst->_opA._value, inst->_opB._value, _si, Gfx::kBit2);
+				if ((*inst)->_flags & kInstMaskedPut) {
+					uint16 _si = _vm->_gfx->queryMask((*inst)->_opB._value);
+					_vm->_gfx->blitCnv(&v18, (*inst)->_opA._value, (*inst)->_opB._value, _si, Gfx::kBitBack);
+					_vm->_gfx->blitCnv(&v18, (*inst)->_opA._value, (*inst)->_opB._value, _si, Gfx::kBit2);
 				} else {
-					_vm->_gfx->flatBlitCnv(&v18, inst->_opA._value, inst->_opB._value, Gfx::kBitBack);
-					_vm->_gfx->flatBlitCnv(&v18, inst->_opA._value, inst->_opB._value, Gfx::kBit2);
+					_vm->_gfx->flatBlitCnv(&v18, (*inst)->_opA._value, (*inst)->_opB._value, Gfx::kBitBack);
+					_vm->_gfx->flatBlitCnv(&v18, (*inst)->_opA._value, (*inst)->_opB._value, Gfx::kBit2);
 				}
 				break;
 
@@ -573,12 +567,12 @@ void jobRunScripts(void *parm, Job *j) {
 					a->_flags &= ~kFlagsActing;
 					_vm->runCommands(a->_commands, a);
 				}
-				a->_program->_ip = (Instruction*)a->_program->_start._next;
+				a->_program->_ip = a->_program->_instructions.begin();
 				goto label1;
 
 
 			case INST_CALL: // call
-				_callables[inst->_opBase._index](0);
+				_callables[(*inst)->_opBase._index](0);
 				break;
 
 			case INST_WAIT: // wait
@@ -586,31 +580,31 @@ void jobRunScripts(void *parm, Job *j) {
 				break;
 
 			case INST_SOUND:	// sound
-				_activeZone = inst->_opBase._z;
+				_activeZone = (*inst)->_opBase._z;
 				break;
 
 			default: {			// INST_SET, INST_X, INST_Y, INST_Z, INST_F
 				int16 _si;
-				if (inst->_flags & kInstUsesLiteral) {
-					_si = inst->_opB._value;
+				if ((*inst)->_flags & kInstUsesLiteral) {
+					_si = (*inst)->_opB._value;
 				} else {
-					_si = *inst->_opB._pvalue;
+					_si = *(*inst)->_opB._pvalue;
 				}
 
-				if (inst->_flags & kInstUsesLocal) {
-					inst->_opA._local->_value = _si;
+				if ((*inst)->_flags & kInstUsesLocal) {
+					(*inst)->_opA._local->_value = _si;
 				} else {
-					*inst->_opA._pvalue = _si;
+					*(*inst)->_opA._pvalue = _si;
 				}
 				}
 				break;
 
 			}
 
-			inst = (Instruction*)inst->_next;
+			inst++;
 		}
 
-		a->_program->_ip = (Instruction*)inst->_next;
+		a->_program->_ip = ++inst;
 
 label1:
 		if (a->_flags & kFlagsCharacter)
@@ -705,15 +699,12 @@ byte* Animation::getFrameData(uint32 index) const {
 
 
 Program::Program() {
-	_locals = NULL;
 	_loopCounter = 0;
-	_ip = NULL;
-	_loopStart = NULL;
+	_locals = new LocalVariable[10];
 }
 
 Program::~Program() {
 	delete[] _locals;
-	freeNodeList(&_start);
 }
 
 

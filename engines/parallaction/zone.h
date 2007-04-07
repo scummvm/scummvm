@@ -23,6 +23,8 @@
 #ifndef PARALLACTION_ZONE_H
 #define PARALLACTION_ZONE_H
 
+#include "common/list.h"
+
 #include "parallaction/defs.h"
 #include "parallaction/graphics.h"
 
@@ -262,13 +264,15 @@ struct Instruction : public Node {
 	}
 };
 
+typedef Common::List<Instruction*> InstructionList;
 
 struct Program {
 	LocalVariable	*_locals;
 	uint16			_loopCounter;
-	Instruction 	*_ip;
-	Instruction 	*_loopStart;
-	Instruction		_start;
+
+	InstructionList::iterator	_ip;
+	InstructionList::iterator	_loopStart;
+	InstructionList				_instructions;
 
 	Program();
 	~Program();
