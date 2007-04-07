@@ -68,15 +68,8 @@ struct Command : public Node {
 	uint32			_flagsOn;
 	uint32			_flagsOff;
 
-	Command() {
-		_id = 0;
-		_flagsOn = 0;
-		_flagsOff = 0;
-	}
-
-	~Command() {
-
-	}
+	Command();
+	~Command();
 };
 
 } // namespace Parallaction

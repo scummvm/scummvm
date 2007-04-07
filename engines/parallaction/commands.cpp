@@ -199,10 +199,7 @@ void Parallaction::freeCommands(Command *list) {
 
 	while (cmd) {
 		Command *v4 = (Command*)cmd->_next;
-
-		if (cmd->_id == CMD_LOCATION) free(cmd->u._string);
 		delete cmd;
-
 		cmd = v4;
 	}
 
@@ -345,6 +342,18 @@ void Parallaction::runCommands(Command *list, Zone *z) {
 	debugC(1, kDebugLocation, "runCommands completed");
 
 	return;
+
+}
+
+Command::Command() {
+	_id = 0;
+	_flagsOn = 0;
+	_flagsOff = 0;
+}
+
+Command::~Command() {
+
+	if (_id == CMD_LOCATION) free(u._string);
 
 }
 
