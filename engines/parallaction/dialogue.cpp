@@ -384,7 +384,8 @@ void Parallaction::runDialogue(SpeakData *data) {
 	}
 
 	exitDialogue();
-	runCommands(*cmdlist);
+	if (cmdlist)
+		runCommands(*cmdlist);
 
 	return;
 

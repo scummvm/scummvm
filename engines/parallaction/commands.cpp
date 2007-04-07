@@ -49,9 +49,6 @@ namespace Parallaction {
 void Parallaction::parseCommands(Script &script, CommandList& list) {
 //	printf("parseCommands()");
 
-	Node root;
-	memset(&root, 0, sizeof(root));
-
 	fillBuffers(script, true);
 
 	while (scumm_stricmp(_tokens[0], "ENDCOMMANDS") && scumm_stricmp(_tokens[0], "ENDZONE")) {
@@ -184,7 +181,7 @@ void Parallaction::parseCommands(Script &script, CommandList& list) {
 
 		}
 
-		addNode(&root, cmd);
+		list.push_front(cmd);	// NOTE: command lists are written backwards in scripts
 		fillBuffers(script, true);
 
 	}
