@@ -21,33 +21,41 @@
  */
 
 #include "common/stdafx.h"
-#include "wince-sdl.h"
-
-#include "common/util.h"
-#include "engines/engine.h"
-#include "base/main.h"
-#include "base/plugins.h"
-#include "common/timer.h"
-#include "sound/mixer.h"
+#include "backends/platform/wince/wince-sdl.h"
 
 #include "common/config-manager.h"
-#include "backends/timer/default/default-timer.h"
+#include "common/events.h"
+#include "common/util.h"
+#include "common/timer.h"
 
-#include "scumm/scumm.h"
+#include "engines/engine.h"
 
-#include "resource.h"
+#include "base/main.h"
+#include "base/plugins.h"
 
-#include "gui/Actions.h"
-#include "CEActionsPocket.h"
-#include "CEActionsSmartphone.h"
-#include "ItemAction.h"
-#include "gui/KeysDialog.h"
-
-#include "gui/message.h"
-
+#include "sound/mixer.h"
 #include "sound/fmopl.h"
 
-#include "CEException.h"
+#include "backends/timer/default/default-timer.h"
+
+// FIXME: The following #include is necessary for the evil _monkeyKeyboard hack.
+// Fingolfin says: It would be a lot better to get this resolved in a cleaner way.
+// E.g. by using setFeatureState in the SCUMM engine in the appropriate place.
+// Even an "#ifdef WINCE" in the SCUMM engine would probably be nicer than this :/
+#include "engines/scumm/scumm.h"
+
+#include "backends/platform/wince/resource.h"
+
+#include "gui/Actions.h"
+#include "gui/KeysDialog.h"
+#include "gui/message.h"
+
+#include "backends/platform/wince/CEActionsPocket.h"
+#include "backends/platform/wince/CEActionsSmartphone.h"
+#include "backends/platform/wince/CEgui/ItemAction.h"
+
+
+#include "backends/platform/wince/CEException.h"
 
 #ifdef USE_VORBIS
 #ifndef USE_TREMOR
