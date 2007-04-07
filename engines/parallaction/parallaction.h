@@ -319,7 +319,6 @@ public:
 	void 		runDialogue(SpeakData*);
 
 	void 		runCommands(CommandList& list, Zone *z = NULL);
-	void 		freeCommands(CommandList& list);		// to be phased out soon
 
 	Animation  	*findAnimation(const char *name);
 	void		sortAnimations();

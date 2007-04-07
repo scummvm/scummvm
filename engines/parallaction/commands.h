@@ -73,6 +73,9 @@ struct Command : public Node {
 	~Command();
 };
 
+//typedef Common::List<Command*> CommandList;
+typedef ManagedList<Command*> CommandList;
+
 } // namespace Parallaction
 
 #endif

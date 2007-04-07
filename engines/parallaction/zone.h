@@ -26,6 +26,7 @@
 #include "common/list.h"
 
 #include "parallaction/defs.h"
+#include "parallaction/commands.h"
 #include "parallaction/graphics.h"
 
 
@@ -67,8 +68,6 @@ enum ZoneFlags {
 
 struct Command;
 struct Question;
-
-typedef Common::List<Command*> CommandList;
 
 struct Answer {
 	char*		_text;
@@ -263,7 +262,8 @@ struct Instruction : public Node {
 	}
 };
 
-typedef Common::List<Instruction*> InstructionList;
+//typedef Common::List<Instruction*> InstructionList;
+typedef ManagedList<Instruction*> InstructionList;
 
 struct Program {
 	LocalVariable	*_locals;

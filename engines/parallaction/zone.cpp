@@ -650,7 +650,6 @@ Zone::~Zone() {
 	free(_label._text);
 	_label._text = NULL;
 	_vm->_gfx->freeStaticCnv(&_label._cnv);
-	_vm->freeCommands(_commands);
 
 }
 

@@ -219,11 +219,10 @@ void Parallaction::freeLocation() {
 	_location._comment = NULL;
 	debugC(7, kDebugLocation, "freeLocation: comments freed");
 
-	// TODO (LIST): this should be _location._commands.clear();
-	freeCommands(_location._commands);
+	_location._commands.clear();
 	debugC(7, kDebugLocation, "freeLocation: commands freed");
 
-	freeCommands(_location._aCommands);
+	_location._aCommands.clear();
 	debugC(7, kDebugLocation, "freeLocation: acommands freed");
 
 	return;

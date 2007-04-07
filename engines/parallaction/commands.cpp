@@ -189,22 +189,6 @@ void Parallaction::parseCommands(Script &script, CommandList& list) {
 }
 
 
-void Parallaction::freeCommands(CommandList &list) {
-
-	CommandList::iterator it = list.begin();
-
-	while ( it != list.end() ) {
-		delete *it;
-		it++;
-	}
-
-	list.clear();
-
-	return;
-}
-
-
-
 void Parallaction::runCommands(CommandList& list, Zone *z) {
 	debugC(1, kDebugLocation, "runCommands");
 

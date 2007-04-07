@@ -497,8 +497,6 @@ Answer::~Answer() {
 	if (_mood & 0x10)
 		delete _following._question;
 
-	_vm->freeCommands(_commands);
-
 	if (_text)
 		free(_text);
 

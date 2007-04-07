@@ -23,6 +23,9 @@
 #ifndef PARALLACTION_DEFS_H
 #define PARALLACTION_DEFS_H
 
+#include "common/stdafx.h"
+#include "common/list.h"
+
 namespace Parallaction {
 
 // TODO (LIST): this struct won't be used anymore as soon as List<> is enforced throughout the code.
@@ -40,6 +43,33 @@ struct Node {
 	}
 };
 
+template <class T>
+class ManagedList : public Common::List<T> {
+
+public:
+
+	typedef typename Common::List<T> 				Common_List;
+	typedef typename Common::List<T>::iterator 		iterator;
+
+	~ManagedList() {
+		clear();
+	}
+
+	void clear() {
+		erase(Common_List::begin(), Common_List::end());
+	}
+
+	iterator erase(iterator pos) {
+		return erase(pos, pos);
+	}
+
+	iterator erase(iterator first, iterator last) {
+		for (iterator it = first; it != last; it++)
+			delete *it;
+		return Common_List::erase(first, last);
+	}
+
+};
 
 } // namespace Parallaction
 
