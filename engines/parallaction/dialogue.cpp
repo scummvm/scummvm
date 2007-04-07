@@ -102,17 +102,17 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 				if (!scumm_stricmp(_tokens[1], "global")) {
 					v56 = 2;
 					v60 = _globalTable;
-					vB4->_yesFlags[_di] |= kFlagsGlobal;
+					vB4->_answers[_di]._yesFlags |= kFlagsGlobal;
 				}
 
 				do {
 
 					if (!scumm_strnicmp(_tokens[v56], "no", 2)) {
 						byte _al = v60->lookup(_tokens[v56]+2);
-						vB4->_noFlags[_di] |= 1 << (_al - 1);
+						vB4->_answers[_di]._noFlags |= 1 << (_al - 1);
 					} else {
 						byte _al = v60->lookup(_tokens[v56]);
-						vB4->_yesFlags[_di] |= 1 << (_al - 1);
+						vB4->_answers[_di]._yesFlags |= 1 << (_al - 1);
 					}
 
 					v56++;
@@ -121,17 +121,17 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 
 			}
 
-			vB4->_answers[_di] = parseDialogueString(script);
+			vB4->_answers[_di]._text = parseDialogueString(script);
 
 //			printf("answer[%i]: '%s'\n", _di, vB4->_answers[_di]);
 
 			fillBuffers(script, true);
-			vB4->_answer_moods[_di] = atoi(_tokens[0]);
-			vB4->_following._names[_di] = parseDialogueString(script);
+			vB4->_answers[_di]._mood = atoi(_tokens[0]);
+			vB4->_answers[_di]._following._name = parseDialogueString(script);
 
 			fillBuffers(script, true);
 			if (!scumm_stricmp(_tokens[0], "commands")) {
-				vB4->_commands[_di] = parseCommands(script);
+				vB4->_answers[_di]._commands = parseCommands(script);
 				fillBuffers(script, true);
 			}
 
@@ -146,18 +146,18 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 	for (uint16 _si = 0; _si <num_questions; _si++) {
 
 		for (uint16 v5A = 0; v5A < 5; v5A++) {
-			if (_questions[_si]->_answers[v5A] == 0) continue;
+			if (_questions[_si]->_answers[v5A]._text == 0) continue;
 
-			int16 v58 = _questions_names.lookup(_questions[_si]->_following._names[v5A]);
-			free(_questions[_si]->_following._names[v5A]);
+			int16 v58 = _questions_names.lookup(_questions[_si]->_answers[v5A]._following._name);
+			free(_questions[_si]->_answers[v5A]._following._name);
 
 			if (v58 == -1) {
-				_questions[_si]->_following._questions[v5A] = 0;
+				_questions[_si]->_answers[v5A]._following._question = 0;
 			} else {
-				_questions[_si]->_following._questions[v5A] = _questions[v58-1];
+				_questions[_si]->_answers[v5A]._following._question = _questions[v58-1];
 
 				if (v50[v58]) {
-					_questions[_si]->_answer_moods[v5A] |= 0x10;
+					_questions[_si]->_answers[v5A]._mood |= 0x10;
 				}
 
 				v50[v58] = 1;
@@ -198,13 +198,13 @@ void Parallaction::freeDialogue(Dialogue *d) {
 
 	uint16 _si;
 	for (_si = 0; _si < NUM_ANSWERS; _si++) {
-		if (d->_answer_moods[_si] & 0x10)
-			freeDialogue(d->_following._questions[_si]);
+		if (d->_answers[_si]._mood & 0x10)
+			freeDialogue(d->_answers[_si]._following._question);
 	}
 
 	for (_si = 0; _si < NUM_ANSWERS; _si++) {
-		freeCommands(d->_commands[_si]);
-		free(d->_answers[_si]);
+		freeCommands(d->_answers[_si]._commands);
+		free(d->_answers[_si]._text);
 	}
 
 	free(d->_text);
@@ -228,7 +228,7 @@ uint16 askDialoguePassword(Dialogue *q, StaticCnv *face) {
 		r.moveTo(_answerBalloonX[0], _answerBalloonY[0]);
 
 		_vm->_gfx->drawBalloon(r, 1);
-		_vm->_gfx->displayWrappedString(q->_answers[0], _answerBalloonX[0], _answerBalloonY[0], MAX_BALLOON_WIDTH, 3);
+		_vm->_gfx->displayWrappedString(q->_answers[0]._text, _answerBalloonX[0], _answerBalloonY[0], MAX_BALLOON_WIDTH, 3);
 		_vm->_gfx->flatBlitCnv(face, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y,	Gfx::kBitFront);
 		_vm->_gfx->displayBalloonString(_answerBalloonX[0] + 5,	_answerBalloonY[0] + _answerBalloonH[0] - 15, "> ", 0);
 
@@ -269,13 +269,13 @@ bool _askPassword;
 bool displayAnswer(Dialogue *q, uint16 i) {
 
 	uint32 v28 = _localFlags[_vm->_currentLocationIndex];
-	if (q->_yesFlags[i] & kFlagsGlobal)
+	if (q->_answers[i]._yesFlags & kFlagsGlobal)
 		v28 = _commandFlags | kFlagsGlobal;
 
 	// display suitable answers
-	if (((q->_yesFlags[i] & v28) == q->_yesFlags[i]) && ((q->_noFlags[i] & ~v28) == q->_noFlags[i])) {
+	if (((q->_answers[i]._yesFlags & v28) == q->_answers[i]._yesFlags) && ((q->_answers[i]._noFlags & ~v28) == q->_answers[i]._noFlags)) {
 
-		_vm->_gfx->getStringExtent(q->_answers[i], MAX_BALLOON_WIDTH, &_answerBalloonW[i], &_answerBalloonH[i]);
+		_vm->_gfx->getStringExtent(q->_answers[i]._text, MAX_BALLOON_WIDTH, &_answerBalloonW[i], &_answerBalloonH[i]);
 
 		Common::Rect r(_answerBalloonW[i], _answerBalloonH[i]);
 		r.moveTo(_answerBalloonX[i], _answerBalloonY[i]);
@@ -283,7 +283,7 @@ bool displayAnswer(Dialogue *q, uint16 i) {
 		_vm->_gfx->drawBalloon(r, 1);
 
 		_answerBalloonY[i+1] = 10 + _answerBalloonY[i] + _answerBalloonH[i];
-		_askPassword = _vm->_gfx->displayWrappedString(q->_answers[i], _answerBalloonX[i], _answerBalloonY[i], MAX_BALLOON_WIDTH, 3);
+		_askPassword = _vm->_gfx->displayWrappedString(q->_answers[i]._text, _answerBalloonX[i], _answerBalloonY[i], MAX_BALLOON_WIDTH, 3);
 
 		return true;
 	}
@@ -298,7 +298,7 @@ bool displayAnswers(Dialogue *q) {
 
 	uint16 i = 0;
 
-	while (i < NUM_ANSWERS && q->_answers[i]) {
+	while (i < NUM_ANSWERS && q->_answers[i]._text) {
 		if (displayAnswer(q, i)) {
 			displayed = true;
 		} else {
@@ -382,18 +382,18 @@ void Parallaction::runDialogue(SpeakData *data) {
 	while (q) {
 
 		displayQuestion(q, face);
-		if (q->_answers[0] == NULL) break;
+		if (q->_answers[0]._text == NULL) break;
 
 		_answerBalloonY[0] = 10;
 
-		if (scumm_stricmp(q->_answers[0], "NULL")) {
+		if (scumm_stricmp(q->_answers[0]._text, "NULL")) {
 
 			if (!displayAnswers(q)) break;
 			answer = getDialogueAnswer(q, _vm->_char._talk);
-			cmdlist = q->_commands[answer];
+			cmdlist = q->_answers[answer]._commands;
 		}
 
-		q = (Dialogue*)q->_following._questions[answer];
+		q = (Dialogue*)q->_answers[answer]._following._question;
 	}
 
 	debugC(1, kDebugDialogue, "runDialogue: out of dialogue loop");
@@ -418,7 +418,7 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 	int16 _di = 0;
 
 	int16 i = 0;
-	for (; q->_answers[i]; i++) {
+	for (; q->_answers[i]._text; i++) {
 		if (_answerBalloonY[i] == SKIPPED_ANSWER) continue;
 
 		_di = i;
@@ -427,9 +427,9 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 	_answerBalloonY[i] = 2000;
 
 	if (numAvailableAnswers == 1) {
-		_vm->_gfx->displayWrappedString(q->_answers[_di], _answerBalloonX[_di], _answerBalloonY[_di], MAX_BALLOON_WIDTH, 0);
-		cnv->_data0 = _vm->_char._talk->getFramePtr(q->_answer_moods[_di] & 0xF);
-//		cnv->_data1 = _vm->_char._talk->field_8[q->_answer_moods[_di] & 0xF];
+		_vm->_gfx->displayWrappedString(q->_answers[_di]._text, _answerBalloonX[_di], _answerBalloonY[_di], MAX_BALLOON_WIDTH, 0);
+		cnv->_data0 = _vm->_char._talk->getFramePtr(q->_answers[_di]._mood & 0xF);
+//		cnv->_data1 = _vm->_char._talk->field_8[q->_answers[_di]._mood & 0xF];
 		_vm->_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X,	ANSWER_CHARACTER_Y, Gfx::kBitFront);
 		waitUntilLeftClick();
 		return _di;
@@ -445,11 +445,11 @@ int16 selectAnswer(Question *q, StaticCnv *cnv) {
 
 		if (_si != v2) {
 			if (v2 != -1)
-				_vm->_gfx->displayWrappedString(q->_answers[v2], _answerBalloonX[v2], _answerBalloonY[v2], MAX_BALLOON_WIDTH, 3);
+				_vm->_gfx->displayWrappedString(q->_answers[v2]._text, _answerBalloonX[v2], _answerBalloonY[v2], MAX_BALLOON_WIDTH, 3);
 
-			_vm->_gfx->displayWrappedString(q->_answers[_si], _answerBalloonX[_si],	_answerBalloonY[_si], MAX_BALLOON_WIDTH, 0);
-			cnv->_data0 = _vm->_char._talk->getFramePtr(q->_answer_moods[_si] & 0xF);
-//			cnv->_data1 = _vm->_char._talk->field_8[q->_answer_moods[_si] & 0xF];
+			_vm->_gfx->displayWrappedString(q->_answers[_si]._text, _answerBalloonX[_si],	_answerBalloonY[_si], MAX_BALLOON_WIDTH, 0);
+			cnv->_data0 = _vm->_char._talk->getFramePtr(q->_answers[_si]._mood & 0xF);
+//			cnv->_data1 = _vm->_char._talk->field_8[q->_answers[_si]._mood & 0xF];
 			_vm->_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
 		}
 
@@ -470,7 +470,7 @@ int16 getHoverAnswer(int16 x, int16 y, Question *q) {
 	int16 bottom = 1000;
 
 	for (int16 _si = 0; _si < NUM_ANSWERS; _si++) {
-		if (q->_answers[_si] == NULL) break;
+		if (q->_answers[_si]._text == NULL) break;
 
 		if (_answerBalloonY[_si] != SKIPPED_ANSWER) {
 			top = _answerBalloonY[_si];

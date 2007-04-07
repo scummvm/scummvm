@@ -66,32 +66,37 @@ enum ZoneFlags {
 #define NUM_ANSWERS		 5
 
 struct Command;
+struct Question;
+
+struct Answer {
+	char*		_text;
+	uint16		_mood;
+	union {
+		Question*	_question;
+		char*		_name;
+	} _following;
+	Command*	_commands;
+	uint32		_noFlags;
+	uint32		_yesFlags;
+
+	Answer() {
+		_text = NULL;
+		_mood = 0;
+		_following._question =  NULL;
+		_commands = NULL;
+		_noFlags = 0;
+		_yesFlags = 0;
+	}
+};
 
 struct Question {
 	char*		_text;
-	char*		_answers[NUM_ANSWERS];
 	uint16		_mood;
-	uint16		_answer_moods[NUM_ANSWERS];
-	union {
-		Question*	_questions[NUM_ANSWERS];
-		char*		_names[NUM_ANSWERS];
-	} _following;
-	Command*	_commands[NUM_ANSWERS];
-	uint32		_noFlags[NUM_ANSWERS];
-	uint32		_yesFlags[NUM_ANSWERS];
+	Answer		_answers[NUM_ANSWERS];
 
 	Question() {
 		_text = NULL;
 		_mood = 0;
-
-		for (uint32 i = 0; i < NUM_ANSWERS; i++) {
-			_answers[i] = NULL;
-			_answer_moods[i] = 0;
-			_following._questions[i] =  NULL;
-			_commands[i] = NULL;
-			_noFlags[i] = 0;
-			_yesFlags[i] = 0;
-		}
 	}
 };
 
