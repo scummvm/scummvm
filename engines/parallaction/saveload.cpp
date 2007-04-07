@@ -62,10 +62,10 @@ void Parallaction::doLoadGame(uint16 slot) {
 
 	f->readLine(s, 29);
 
-	f->readLine(_vm->_characterName, 15);
-	f->readLine(_vm->_location._name, 15);
+	f->readLine(_characterName, 15);
+	f->readLine(_location._name, 15);
 
-	strcat(_vm->_location._name, ".");
+	strcat(_location._name, ".");
 
 	f->readLine(s, 15);
 	_location._startPosition.x = atoi(s);
@@ -116,19 +116,19 @@ void Parallaction::doLoadGame(uint16 slot) {
 	delete f;
 
 	_engineFlags &= ~kEngineTransformedDonna;
-	if (!scumm_stricmp(_vm->_characterName, "donnatras")) {
+	if (!scumm_stricmp(_characterName, "donnatras")) {
 		_engineFlags |= kEngineTransformedDonna;
-		strcpy(_vm->_characterName, "donna");
+		strcpy(_characterName, "donna");
 	}
-	if (!scumm_stricmp(_vm->_characterName, "minidonnatras")) {
+	if (!scumm_stricmp(_characterName, "minidonnatras")) {
 		_engineFlags |= kEngineTransformedDonna;
-		strcpy(_vm->_characterName, _minidonnaName);
+		strcpy(_characterName, _minidonnaName);
 	}
 
-	if (IS_MINI_CHARACTER(_vm->_characterName)) {
-		strcpy(filename, _vm->_characterName+4);
+	if (IS_MINI_CHARACTER(_characterName)) {
+		strcpy(filename, _characterName+4);
 	} else {
-		strcpy(filename, _vm->_characterName);
+		strcpy(filename, _characterName);
 	}
 //	strcat(filename, ".tab");
 //	freeTable(_objectsNames);
@@ -142,7 +142,7 @@ void Parallaction::doLoadGame(uint16 slot) {
 	// bugs, but it's a good maneuver anyway
 	strcpy(_characterName1, "null");
 
-	strcat(_vm->_location._name, _vm->_characterName);
+	strcat(_location._name, _characterName);
 	_engineFlags |= kEngineChangeLocation;
 
 	return;
@@ -175,17 +175,17 @@ void Parallaction::doSaveGame(uint16 slot, const char* name) {
 	f->writeString("\n");
 
 	if (_engineFlags & kEngineTransformedDonna) {
-		sprintf(s, "%stras\n", _vm->_characterName);
+		sprintf(s, "%stras\n", _characterName);
 	} else {
-		sprintf(s, "%s\n", _vm->_characterName);
+		sprintf(s, "%s\n", _characterName);
 	}
 	f->writeString(s);
 
 	sprintf(s, "%s\n", _saveData1);
 	f->writeString(s);
-	sprintf(s, "%d\n", _vm->_char._ani._left);
+	sprintf(s, "%d\n", _char._ani._left);
 	f->writeString(s);
-	sprintf(s, "%d\n", _vm->_char._ani._top);
+	sprintf(s, "%d\n", _char._ani._top);
 	f->writeString(s);
 	sprintf(s, "%d\n", _score);
 	f->writeString(s);
@@ -206,7 +206,7 @@ void Parallaction::doSaveGame(uint16 slot, const char* name) {
 
 	delete f;
 
-	refreshInventory(_vm->_characterName);
+	refreshInventory(_characterName);
 
 	return;
 
@@ -343,7 +343,7 @@ int Parallaction::buildSaveFileList(Common::StringList& l) {
 
 int Parallaction::selectSaveFile(uint16 arg_0, const char* caption, const char* button) {
 
-	SaveLoadChooser* slc = new SaveLoadChooser(caption, button, _vm);
+	SaveLoadChooser* slc = new SaveLoadChooser(caption, button, this);
 
 	Common::StringList l;
 
@@ -382,7 +382,7 @@ void Parallaction::loadGame() {
 
 void Parallaction::saveGame() {
 
-	if (!scumm_stricmp(_vm->_location._name, "caveau"))
+	if (!scumm_stricmp(_location._name, "caveau"))
 		return;
 
 	int slot = selectSaveFile( 1, "Save file", "Save" );

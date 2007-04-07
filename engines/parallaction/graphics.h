@@ -110,7 +110,7 @@ public:
 };
 
 
-#define NUM_BUFFERS 6
+#define NUM_BUFFERS 4
 
 class Parallaction;
 
@@ -194,37 +194,23 @@ public:
 public:
 	Common::Point		_labelPosition[2];
 	static bool 		_proportionalFont;
-
 	uint16				_bgLayers[4];
 	PaletteFxRange		_palettefx[6];
 	Palette				_palette;
 
 protected:
 	Parallaction*		_vm;
-
 	static byte *		_buffers[NUM_BUFFERS];
-
 	static byte			_mouseArrow[256];
 	StaticCnv			*_mouseComposedArrow;
-
 	Cnv					*_font;
 
-
 protected:
-
-	//
-	//	maps a character for representation
-	//
 	byte mapChar(byte c);
-
 	void flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer);
 	void blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer);
-
-
 	void initBuffers();
 	void initMouse(uint16 arg_0);
-
-
 };
 
 

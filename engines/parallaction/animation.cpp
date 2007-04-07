@@ -56,7 +56,6 @@ namespace Parallaction {
 void	wrapLocalVar(LocalVariable *local);
 
 
-LValue	getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation *a);
 
 
 uint16	_numLocals = 0;
@@ -108,7 +107,7 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 			}
 		}
 		if (!scumm_stricmp(_tokens[0], "label")) {
-			_vm->_gfx->makeCnvFromString(&vD0->_label._cnv, _tokens[1]);
+			_gfx->makeCnvFromString(&vD0->_label._cnv, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "flags")) {
 			uint16 _si = 1;
@@ -414,7 +413,7 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 	return;
 }
 
-LValue getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation *a) {
+LValue Parallaction::getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation *a) {
 
 	LValue v;
 
@@ -434,7 +433,7 @@ LValue getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation 
 	}
 
 	if (str[1] == '.') {
-		a = _vm->findAnimation(&str[2]);
+		a = findAnimation(&str[2]);
 	}
 
 	if (str[0] == 'X') {
@@ -634,7 +633,7 @@ void Parallaction::sortAnimations() {
 	Node v14;
 	memset(&v14, 0, sizeof(Node));
 
-	_vm->_char._ani._z = _vm->_char._ani.height() + _vm->_char._ani._top;
+	_char._ani._z = _char._ani.height() + _char._ani._top;
 
 	Animation *vC = (Animation*)_animations._next;
 	Node *v8;

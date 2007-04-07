@@ -94,7 +94,7 @@ void Parallaction::parseZone(Script &script, Node *list, char *name) {
 		}
 		if (!scumm_stricmp(_tokens[0], "label")) {
 //			printf("label: %s", _tokens[1]);
-			_vm->_gfx->makeCnvFromString(&z->_label._cnv, _tokens[1]);
+			_gfx->makeCnvFromString(&z->_label._cnv, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "flags")) {
 			uint16 _si = 1;
@@ -302,28 +302,28 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 //
 //	works on the frontbuffer
 //
-void displayCharacterComment(ExamineData *data) {
+void Parallaction::displayCharacterComment(ExamineData *data) {
 	if (data->_description == NULL) return;
 
 	StaticCnv v3C;
-	v3C._width = _vm->_char._talk->_width;
-	v3C._height = _vm->_char._talk->_height;
-	v3C._data0 = _vm->_char._talk->getFramePtr(0);
+	v3C._width = _char._talk->_width;
+	v3C._height = _char._talk->_height;
+	v3C._data0 = _char._talk->getFramePtr(0);
 	v3C._data1 = NULL; //_talk->field_8[0];
 
-	_vm->_gfx->setFont("comic");
-	_vm->_gfx->flatBlitCnv(&v3C, 190, 80, Gfx::kBitFront);
+	_gfx->setFont("comic");
+	_gfx->flatBlitCnv(&v3C, 190, 80, Gfx::kBitFront);
 
 	int16 v26, v28;
-	_vm->_gfx->getStringExtent(data->_description, 130, &v28, &v26);
+	_gfx->getStringExtent(data->_description, 130, &v28, &v26);
 	Common::Rect r(v28, v26);
 	r.moveTo(140, 10);
-	_vm->_gfx->drawBalloon(r, 0);
-	_vm->_gfx->displayWrappedString(data->_description, 140, 10, 130, 0);
+	_gfx->drawBalloon(r, 0);
+	_gfx->displayWrappedString(data->_description, 140, 10, 130, 0);
 
 	waitUntilLeftClick();
 
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	return;
 }
@@ -337,32 +337,32 @@ void displayCharacterComment(ExamineData *data) {
 //	works on the frontbuffer
 //
 
-void displayItemComment(ExamineData *data) {
+void Parallaction::displayItemComment(ExamineData *data) {
 
 	if (data->_description == NULL) return;
 
 	char v68[PATH_LEN];
 	strcpy(v68, data->_filename);
-	data->_cnv = _vm->_disk->loadStatic(v68);
-	_vm->_gfx->flatBlitCnv(data->_cnv, 140, (SCREEN_HEIGHT - data->_cnv->_height)/2, Gfx::kBitFront);
-	_vm->_gfx->freeStaticCnv(data->_cnv);
+	data->_cnv = _disk->loadStatic(v68);
+	_gfx->flatBlitCnv(data->_cnv, 140, (SCREEN_HEIGHT - data->_cnv->_height)/2, Gfx::kBitFront);
+	_gfx->freeStaticCnv(data->_cnv);
 	delete data->_cnv;
 
 	int16 v6A = 0, v6C = 0;
 
-	_vm->_gfx->setFont("comic");
-	_vm->_gfx->getStringExtent(data->_description, 130, &v6C, &v6A);
+	_gfx->setFont("comic");
+	_gfx->getStringExtent(data->_description, 130, &v6C, &v6A);
 	Common::Rect r(v6C, v6A);
 	r.moveTo(0, 90);
-	_vm->_gfx->drawBalloon(r, 0);
-	_vm->_gfx->flatBlitCnv(_vm->_char._head, 100, 152, Gfx::kBitFront);
-	_vm->_gfx->displayWrappedString(data->_description, 0, 90, 130, 0);
+	_gfx->drawBalloon(r, 0);
+	_gfx->flatBlitCnv(_vm->_char._head, 100, 152, Gfx::kBitFront);
+	_gfx->displayWrappedString(data->_description, 0, 90, 130, 0);
 
 	jobEraseAnimations((void*)1, NULL);
 
 	waitUntilLeftClick();
 
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	return;
 }
@@ -397,7 +397,7 @@ uint16 Parallaction::runZone(Zone *z) {
 		if (z->_flags & kFlagsLocked) break;
 		z->_flags ^= kFlagsClosed;
 		if (z->u.door->_cnv == NULL) break;
-		_vm->addJob(&jobToggleDoor, z, kPriority18 );
+		addJob(&jobToggleDoor, z, kPriority18 );
 		break;
 
 	case kZoneHear:
@@ -552,13 +552,13 @@ Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 			if (z->_left != -1)
 				continue;
-			if (_si < _vm->_char._ani._left)
+			if (_si < _char._ani._left)
 				continue;
-			if (_si > (_vm->_char._ani._left + _vm->_char._ani.width()))
+			if (_si > (_char._ani._left + _char._ani.width()))
 				continue;
-			if (_di < _vm->_char._ani._top)
+			if (_di < _char._ani._top)
 				continue;
-			if (_di > (_vm->_char._ani._top + _vm->_char._ani.height()))
+			if (_di > (_char._ani._top + _char._ani.height()))
 				continue;
 
 		}

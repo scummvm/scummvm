@@ -91,6 +91,34 @@ enum {
 	kMouseRightDown 	= 4
 };
 
+enum EngineFlags {
+	kEngineQuit 			= (1 << 0),
+	kEnginePauseJobs		= (1 << 1),
+	kEngineInventory		= (1 << 2),
+	kEngineWalking			= (1 << 3),
+	kEngineChangeLocation	= (1 << 4),
+	kEngineMouse			= (1 << 5),
+	kEngineDragging 		= (1 << 6),
+	kEngineTransformedDonna		= (1 << 7)
+};
+
+enum {
+	kEvNone 			= 0,
+	kEvEnterZone   		= 1,
+	kEvExitZone    		= 2,
+	kEvAction	  		= 3,
+	kEvOpenInventory	= 4,
+	kEvCloseInventory	= 5,
+	kEvHoverInventory	= 6,
+	kEvWalk 	  		= 7,
+	kEvQuitGame 		= 1000,
+	kEvSaveGame 		= 2000,
+	kEvLoadGame 		= 4000
+};
+
+enum {
+	kCursorArrow = -1
+};
 
 enum ParallactionGameType {
 	GType_Nippon = 1,
@@ -98,6 +126,8 @@ enum ParallactionGameType {
 };
 
 struct PARALLACTIONGameDescription;
+
+
 
 struct Job;
 typedef void (*JobFn)(void*, Job*);
@@ -121,40 +151,33 @@ struct Credit {
 
 typedef void (*callable)(void*);
 
-extern uint16 _mouseButtons;
-
-extern uint16 _score;
-extern uint16 _language;
-extern Zone *_activeZone;
-extern uint32 _engineFlags;
-extern callable _callables[];
-
-extern Node _zones;
-extern Node _animations;
-extern uint32 _localFlags[];
-extern Command *_forwardedCommands[];
-extern char _forwardedAnimationNames[][20];
-extern uint16 _numForwards;
-extern char _soundFile[];
-extern char _slideText[][40];
-extern uint16 _introSarcData3;		 // sarcophagus stuff to be saved
-extern uint16 _introSarcData2;		 // sarcophagus stuff to be saved
-
-extern char _saveData1[];
-extern byte _mouseHidden;
-extern uint32 _commandFlags;
-
-extern const char *_instructionNamesRes[];
-extern const char *_commandsNamesRes[];
-
-extern const char *_dinoName;
-extern const char *_donnaName;
-extern const char *_doughName;
-extern const char *_drkiName;
-extern const char *_minidinoName;
-extern const char *_minidonnaName;
-extern const char *_minidoughName;
-extern const char *_minidrkiName;
+extern uint16 		_mouseButtons;
+extern uint16 		_score;
+extern uint16 		_language;
+extern Zone 		*_activeZone;
+extern uint32 		_engineFlags;
+extern callable 	_callables[];
+extern uint32 		_localFlags[];
+extern Command 		*_forwardedCommands[];
+extern char 		_forwardedAnimationNames[][20];
+extern uint16 		_numForwards;
+extern char 		_soundFile[];
+extern char 		_slideText[][40];
+extern uint16 		_introSarcData3;		 // sarcophagus stuff to be saved
+extern uint16 		_introSarcData2;		 // sarcophagus stuff to be saved
+extern char 		_saveData1[];
+extern byte 		_mouseHidden;
+extern uint32 		_commandFlags;
+extern const char 	*_instructionNamesRes[];
+extern const char 	*_commandsNamesRes[];
+extern const char 	*_dinoName;
+extern const char 	*_donnaName;
+extern const char 	*_doughName;
+extern const char 	*_drkiName;
+extern const char 	*_minidinoName;
+extern const char 	*_minidonnaName;
+extern const char 	*_minidoughName;
+extern const char 	*_minidrkiName;
 
 // Various ways of detecting character modes used to exist
 // inside the engine, so they have been unified in the two
@@ -191,36 +214,6 @@ void jobHideInventory(void *parm, Job *j);
 void jobEraseLabel(void *parm, Job *j);
 
 
-enum EngineFlags {
-	kEngineQuit 			= (1 << 0),
-	kEnginePauseJobs		= (1 << 1),
-	kEngineInventory		= (1 << 2),
-	kEngineWalking			= (1 << 3),
-	kEngineChangeLocation	= (1 << 4),
-	kEngineMouse			= (1 << 5),
-	kEngineDragging 		= (1 << 6),
-	kEngineTransformedDonna		= (1 << 7)
-};
-
-enum {
-	kEvNone 			= 0,
-	kEvEnterZone   		= 1,
-	kEvExitZone    		= 2,
-	kEvAction	  		= 3,
-	kEvOpenInventory	= 4,
-	kEvCloseInventory	= 5,
-	kEvHoverInventory	= 6,
-	kEvWalk 	  		= 7,
-	kEvQuitGame 		= 1000,
-	kEvSaveGame 		= 2000,
-	kEvLoadGame 		= 4000
-};
-
-enum {
-	kCursorArrow = -1
-};
-
-
 
 class Gfx;
 class Menu;
@@ -250,18 +243,8 @@ struct Character {
 
 	Character() {
 		_talk = NULL;
-//		._width = 0;
-//		_talk._height = 0;
-//		_talk._count = 0;
-
 		_head = NULL;
-//		_head._width = 0;
-//		_head._height = 0;
-//		_head._data0 = NULL;
-//		_head._data1 = NULL;
-
 		_objs = NULL;
-//		_objs._count = 0;
 
 		_ani._left = 150;
 		_ani._top = 100;
@@ -305,35 +288,42 @@ public:
 	~Parallaction();
 
 	int init();
-
 	int go();
-
 
 	void loadGame();
 	void saveGame();
 
-	uint16 updateInput();
+	uint16 		updateInput();
 
-	void waitTime(uint32 t);
+	void 		waitTime(uint32 t);
 
-//	static void initTable(const char *path, char **table);
-//	static void freeTable(char** table);
-//	static int16 searchTable(const char *s, const char **table);
-	void 		freeCommands(CommandList& list);
+	void 		parseLocation(const char *filename);
+	void 		changeCursor(int32 index);
+	void 		changeCharacter(const char *name);
 
-	void parseLocation(const char *filename);
-	void changeCursor(int32 index);
-	void changeCharacter(const char *name);
+	char   		*parseComment(Script &script);
+	char   		*parseDialogueString(Script &script);
+	Dialogue	*parseDialogue(Script &script);
 
-	char   *parseComment(Script &script);
-	char   *parseDialogueString(Script &script);
-	Dialogue   *parseDialogue(Script &script);
+	Job 		*addJob(JobFn fn, void *parm, uint16 tag);
+	void 		removeJob(Job *j);
+	void 		pauseJobs();
+	void 		resumeJobs();
+	void 		runJobs();
 
-	Job *addJob(JobFn fn, void *parm, uint16 tag);
-	void removeJob(Job *j);
-	void pauseJobs();
-	void resumeJobs();
-	void runJobs();
+	Zone 		*findZone(const char *name);
+	Zone   		*hitZone(uint32 type, uint16 x, uint16 y);
+	uint16		runZone(Zone*);
+	void 		freeZones(Node *list);
+
+	void 		runDialogue(SpeakData*);
+
+	void 		runCommands(CommandList& list, Zone *z = NULL);
+	void 		freeCommands(CommandList& list);		// to be phased out soon
+
+	Animation  	*findAnimation(const char *name);
+	void		sortAnimations();
+	void 		freeAnimations();
 
 	Table		*_globalTable;
 	Table		*_objectsNames;
@@ -344,17 +334,7 @@ public:
 	Table		*_instructionNames;
 	Table		*_localFlagNames;
 
-	void 		freeZones(Node *list);
-	Animation  	*findAnimation(const char *name);
-	Zone 		*findZone(const char *name);
-	Zone   		*hitZone(uint32 type, uint16 x, uint16 y);
-	void 		freeAnimations();
-	void		sortAnimations();
-	void 		freeLocation();
 
-	uint16		runZone(Zone*);
-	void 		runDialogue(SpeakData*);
-	void 		runCommands(CommandList& list, Zone *z = NULL);
 
 public:
 	int getGameType() const;
@@ -369,21 +349,19 @@ public:
 
 	MidiPlayer *_midiPlayer;
 
-	Gfx*	_gfx;
-	Menu*	_menu;
-	char	_characterName[30];
-	Disk*	_disk;
+	Gfx*			_gfx;
+	Menu*			_menu;
+	Disk*			_disk;
 
-	char	_locationNames[120][32];
-	int16	_currentLocationIndex;
-	uint16	_numLocations;
+	Character		_char;
+	char			_characterName[30];
 
-	Character	_char;
-	Location	_location;
+	char			_locationNames[120][32];
+	int16			_currentLocationIndex;
+	uint16			_numLocations;
+	Location		_location;
 
 	InventoryItem	_activeItem;
-
-	Script	*_locationScript;
 
 	Common::Point	_mousePos;
 
@@ -393,12 +371,11 @@ public:
 protected:		// data
 
 	struct InputData {
-		uint16		_event;
-		Common::Point		_mousePos;
-
-		int16       _inventoryIndex;
-		Zone*       _zone;
-		Label*  _label;
+		uint16			_event;
+		Common::Point	_mousePos;
+		int16       	_inventoryIndex;
+		Zone*       	_zone;
+		Label*  		_label;
 	};
 
 	bool		_skipMenu;
@@ -414,14 +391,14 @@ protected:		// data
 
 	uint32		_baseTime;
 
-	uint16		_musicData1;	  // only used in changeLocation
+	uint16		_musicData1;	  		// only used in changeLocation
 	char		_characterName1[50]; 	// only used in changeCharacter
 
 	int16 _keyDown;
 
 	Job			_jobs;
 
-	Node helperNode;			// used for freeZones
+	Node 		helperNode;			// used for freeZones: to be removed
 
 protected:		// members
 	bool detectGame(void);
@@ -436,7 +413,8 @@ protected:		// members
 	void		doSaveGame(uint16 slot, const char* name);
 
 	void		runGame();
-	InputData * translateInput();
+
+	InputData 	*translateInput();
 	void		processInput(InputData*);
 
 	int16		getHoverInventoryItem(int16 x, int16 y);
@@ -445,23 +423,45 @@ protected:		// members
 	void		resetTimer();
 
 	void		doLocationEnterTransition();
-	void		parseZone(Script &script, Node *list, char *name);
-	Animation * parseAnimation(Script &script, Node *list, char *name);
-	void		parseScriptLine(Instruction *inst, Animation *a, LocalVariable *locals);
-	void		parseZoneTypeBlock(Script &script, Zone *z);
-	void		loadProgram(Animation *a, char *filename);
 	void		changeLocation(char *location);
 	void 		showSlide(const char *name);
+	void 		resolveLocationForwards();
+	void 		switchBackground(const char* background, const char* mask);
+	void 		freeLocation();
+
+	void		parseZone(Script &script, Node *list, char *name);
+	void		parseZoneTypeBlock(Script &script, Zone *z);
+	void 		parseWalkNodes(Script& script, Node *list);
+	void 		displayCharacterComment(ExamineData *data);
+	void 		displayItemComment(ExamineData *data);
+
+	Animation * parseAnimation(Script &script, Node *list, char *name);
+	void		parseScriptLine(Instruction *inst, Animation *a, LocalVariable *locals);
+	void		loadProgram(Animation *a, char *filename);
+	LValue		getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation *a);
+
+	void		parseCommands(Script &script, CommandList&);
 
 	void 		pickMusic(const char *location);
 	void		selectCharacterMusic(const char *name);
 
-	void		parseCommands(Script &script, CommandList&);
 	void 		freeCharacter();
-
 
 	void 		initResources();
 
+	uint16 		askDialoguePassword(Dialogue *q, StaticCnv *face);
+	bool 		displayAnswer(Dialogue *q, uint16 i);
+	bool 		displayAnswers(Dialogue *q);
+	void 		displayQuestion(Dialogue *q, Cnv *cnv);
+	uint16 		getDialogueAnswer(Dialogue *q, Cnv *cnv);
+	int16 		selectAnswer(Question *q, StaticCnv *cnv);
+	void 		enterDialogue();
+	void 		exitDialogue();
+
+	void 		addInventoryItem(uint16 item);
+	void 		dropItem(uint16 item);
+	int16 		pickupItem(Zone *z);
+	int16 		isItemInInventory(int32 v);
 };
 
 // FIXME: remove global

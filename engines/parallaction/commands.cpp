@@ -85,7 +85,7 @@ void Parallaction::parseCommands(Script &script, CommandList& list) {
 
 		case CMD_START: // start
 		case CMD_STOP:	// stop
-			cmd->u._animation = _vm->findAnimation(_tokens[_si]);
+			cmd->u._animation = findAnimation(_tokens[_si]);
 			_si++;
 			if (cmd->u._animation == NULL) {
 				strcpy(_forwardedAnimationNames[_numForwards], _tokens[_si-1]);
@@ -100,7 +100,7 @@ void Parallaction::parseCommands(Script &script, CommandList& list) {
 		case CMD_CLOSE: // close
 		case CMD_ON:	// on
 		case CMD_OFF:	// off
-			cmd->u._zone = _vm->findZone(_tokens[_si]);
+			cmd->u._zone = findZone(_tokens[_si]);
 			_si++;
 			break;
 
@@ -213,7 +213,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 
 		Command *cmd = *it;
 		CommandData *u = &cmd->u;
-		uint32 v8 = _localFlags[_vm->_currentLocationIndex];
+		uint32 v8 = _localFlags[_currentLocationIndex];
 
 		if (_engineFlags & kEngineQuit)
 			break;
@@ -234,7 +234,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 				cmd->u._flags &= ~kFlagsGlobal;
 				_commandFlags |= cmd->u._flags;
 			} else {
-				_localFlags[_vm->_currentLocationIndex] |= cmd->u._flags;
+				_localFlags[_currentLocationIndex] |= cmd->u._flags;
 			}
 			break;
 
@@ -243,7 +243,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 				cmd->u._flags &= ~kFlagsGlobal;
 				_commandFlags &= ~cmd->u._flags;
 			} else {
-				_localFlags[_vm->_currentLocationIndex] &= ~cmd->u._flags;
+				_localFlags[_currentLocationIndex] &= ~cmd->u._flags;
 			}
 			break;
 
@@ -252,7 +252,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 				cmd->u._flags &= ~kFlagsGlobal;
 				_commandFlags ^= cmd->u._flags;
 			} else {
-				_localFlags[_vm->_currentLocationIndex] ^= cmd->u._flags;
+				_localFlags[_currentLocationIndex] ^= cmd->u._flags;
 			}
 			break;
 
@@ -282,7 +282,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 		case CMD_OPEN:	// open
 			u->_zone->_flags &= ~kFlagsClosed;
 			if (u->_zone->u.door->_cnv) {
-				_vm->addJob(&jobToggleDoor, (void*)u->_zone, kPriority18 );
+				addJob(&jobToggleDoor, (void*)u->_zone, kPriority18 );
 			}
 			break;
 
@@ -301,7 +301,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 				u->_zone->_flags &= ~kFlagsRemove;
 				u->_zone->_flags |= kFlagsActive;
 				if ((u->_zone->_type & 0xFFFF) == kZoneGet) {
-					_vm->addJob(&jobDisplayDroppedItem, u->_zone, kPriority17 );
+					addJob(&jobDisplayDroppedItem, u->_zone, kPriority17 );
 				}
 			}
 			break;
@@ -311,7 +311,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 			break;
 
 		case CMD_LOCATION:	// location
-			strcpy(_vm->_location._name, u->_string);
+			strcpy(_location._name, u->_string);
 			_engineFlags |= kEngineChangeLocation;
 			break;
 
@@ -324,13 +324,13 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 			break;
 
 		case CMD_MOVE: {	// move
-			if ((_vm->_char._ani._flags & kFlagsRemove) || (_vm->_char._ani._flags & kFlagsActive) == 0) {
+			if ((_char._ani._flags & kFlagsRemove) || (_char._ani._flags & kFlagsActive) == 0) {
 				continue;
 			}
 
 			WalkNode *vC = buildWalkPath(u->_move._x, u->_move._y);
 
-			_vm->addJob(&jobWalk, vC, kPriority19 );
+			addJob(&jobWalk, vC, kPriority19 );
 			_engineFlags |= kEngineWalking;
 			}
 			break;

@@ -115,7 +115,7 @@ int16 Parallaction::getHoverInventoryItem(int16 x, int16 y) {
 }
 
 
-int16 pickupItem(Zone *z) {
+int16 Parallaction::pickupItem(Zone *z) {
 
 	uint16 _si;
 	for (_si = 0; _inventory[_si]._id != 0; _si++) ;
@@ -125,17 +125,17 @@ int16 pickupItem(Zone *z) {
 	_inventory[_si]._id = MAKE_INVENTORY_ID(z->u.get->_icon);
 	_inventory[_si]._index = z->u.get->_icon;
 
-	_vm->addJob(&jobRemovePickedItem, z, kPriority17 );
+	addJob(&jobRemovePickedItem, z, kPriority17 );
 
 	if (_inventory[_si]._id == 0) return 0;
 
-	refreshInventoryItem(_vm->_characterName, _si);
+	refreshInventoryItem(_characterName, _si);
 
 	return 0;
 }
 
 
-void addInventoryItem(uint16 item) {
+void Parallaction::addInventoryItem(uint16 item) {
 
 	uint16 _si = 0;
 	while (_inventory[_si]._id != 0) _si++;
@@ -143,13 +143,13 @@ void addInventoryItem(uint16 item) {
 	_inventory[_si]._id = MAKE_INVENTORY_ID(item);
 	_inventory[_si]._index = item;
 
-	refreshInventoryItem(_vm->_characterName, _si);
+	refreshInventoryItem(_characterName, _si);
 
 	return;
 }
 
 
-void dropItem(uint16 v) {
+void Parallaction::dropItem(uint16 v) {
 
 	uint16 _di = 0;
 	for (uint16 _si = 0; _si < INVENTORY_MAX_ITEMS - 1; _si++) {
@@ -163,13 +163,13 @@ void dropItem(uint16 v) {
 		memcpy(&_inventory[_si], &_inventory[_si+1], sizeof(InventoryItem));
 	}
 
-	refreshInventory(_vm->_characterName);
+	refreshInventory(_characterName);
 
 	return;
 }
 
 
-int16 isItemInInventory(int32 v) {
+int16 Parallaction::isItemInInventory(int32 v) {
 
 	for (uint16 _si = 0; _si < INVENTORY_MAX_ITEMS; _si++) {
 		if (_inventory[_si]._id == (uint)v)

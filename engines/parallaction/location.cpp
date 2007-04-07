@@ -43,10 +43,10 @@ void Parallaction::parseLocation(const char *filename) {
     debugC(1, kDebugLocation, "parseLocation('%s')", filename);
 
 	uint16 _si = 1;
-	_vm->_gfx->_proportionalFont = false;
-	_vm->_gfx->setFont("topaz");
+	_gfx->_proportionalFont = false;
+	_gfx->setFont("topaz");
 
-	_locationScript = _disk->loadLocation(filename);
+	Script *_locationScript = _disk->loadLocation(filename);
 
 	fillBuffers(*_locationScript, true);
 	while (scumm_stricmp(_tokens[0], "ENDLOCATION")) {
@@ -93,12 +93,12 @@ void Parallaction::parseLocation(const char *filename) {
 			switchBackground(_location._name, mask);
 
 			if (_tokens[2][0] != '\0') {
-				_vm->_char._ani._left = atoi(_tokens[2]);
-				_vm->_char._ani._top = atoi(_tokens[3]);
+				_char._ani._left = atoi(_tokens[2]);
+				_char._ani._top = atoi(_tokens[3]);
 			}
 
 			if (_tokens[4][0] != '\0') {
-				_vm->_char._ani._frame = atoi(_tokens[4]);
+				_char._ani._frame = atoi(_tokens[4]);
 			}
 		}
 		if (!scumm_stricmp(_tokens[0], "DISK")) {
@@ -112,7 +112,7 @@ void Parallaction::parseLocation(const char *filename) {
 			}
 		}
 		if (!scumm_stricmp(_tokens[0], "COMMANDS")) {
-			 parseCommands(*_locationScript, _location._commands);
+			parseCommands(*_locationScript, _location._commands);
 		}
 		if (!scumm_stricmp(_tokens[0], "ACOMMANDS")) {
 			parseCommands(*_locationScript, _location._aCommands);
@@ -157,17 +157,16 @@ void Parallaction::parseLocation(const char *filename) {
 	resolveLocationForwards();
 
 	delete _locationScript;
-	_locationScript = NULL;
 
 	return;
 }
 
-void resolveLocationForwards() {
+void Parallaction::resolveLocationForwards() {
 //	printf("resolveLocationForwards()");
 //	printf("# forwards: %i", _numForwards);
 
 	for (uint16 _si = 0; _forwardedCommands[_si]; _si++) {
-		_forwardedCommands[_si]->u._animation = _vm->findAnimation(_forwardedAnimationNames[_si]);
+		_forwardedCommands[_si]->u._animation = findAnimation(_forwardedAnimationNames[_si]);
 		_forwardedCommands[_si] = NULL;
 	}
 
@@ -187,15 +186,15 @@ void Parallaction::freeLocation() {
 	debugC(7, kDebugLocation, "freeLocation: localflags names freed");
 
 	// TODO (LIST): this should be replaced by a call to _location._walkNodes.clear()
-	freeNodeList(_vm->_location._walkNodes._next);
-	_vm->_location._walkNodes._next = NULL;
+	freeNodeList(_location._walkNodes._next);
+	_location._walkNodes._next = NULL;
 	debugC(7, kDebugLocation, "freeLocation: walk nodes freed");
 
 	// TODO (LIST): helperNode should be rendered useless by the use of a Common::List<>
 	// to store Zones and Animations. Right now, it holds a list of Zones to be preserved
 	// but that'll pretty meaningless with a single list approach.
 	helperNode._prev = helperNode._next = NULL;
-	_vm->freeZones(_zones._next);
+	freeZones(_zones._next);
 	freeNodeList(_zones._next);
 	_zones._next = helperNode._next;
 	_zones._prev = helperNode._prev;
@@ -206,25 +205,25 @@ void Parallaction::freeLocation() {
 	// to store Zones and Animations. Right now, it holds a list of Zones to be preserved
 	// but that'll pretty meaningless with a single list approach.
 	helperNode._prev = helperNode._next = NULL;
-	_vm->freeZones(_animations._next);
-	_vm->freeAnimations();
+	freeZones(_animations._next);
+	freeAnimations();
 	freeNodeList(_animations._next);
 	_animations._next = helperNode._next;
 	_animations._prev = helperNode._prev;
 //	memcpy(&_animations, &helperNode, sizeof(Node));
 	debugC(7, kDebugLocation, "freeLocation: animations freed");
 
-	if (_vm->_location._comment) {
-		free(_vm->_location._comment);
+	if (_location._comment) {
+		free(_location._comment);
 	}
-	_vm->_location._comment = NULL;
+	_location._comment = NULL;
 	debugC(7, kDebugLocation, "freeLocation: comments freed");
 
 	// TODO (LIST): this should be _location._commands.clear();
-	freeCommands(_vm->_location._commands);
+	freeCommands(_location._commands);
 	debugC(7, kDebugLocation, "freeLocation: commands freed");
 
-	freeCommands(_vm->_location._aCommands);
+	freeCommands(_location._aCommands);
 	debugC(7, kDebugLocation, "freeLocation: acommands freed");
 
 	return;
@@ -232,7 +231,7 @@ void Parallaction::freeLocation() {
 
 
 
-void parseWalkNodes(Script& script, Node *list) {
+void Parallaction::parseWalkNodes(Script& script, Node *list) {
 
 	fillBuffers(script, true);
 	while (scumm_stricmp(_tokens[0], "ENDNODES")) {
@@ -240,8 +239,8 @@ void parseWalkNodes(Script& script, Node *list) {
 		if (!scumm_stricmp(_tokens[0], "COORD")) {
 
 			WalkNode *v4 = new WalkNode(
-				atoi(_tokens[1]) - _vm->_char._ani.width()/2,
-				atoi(_tokens[2]) - _vm->_char._ani.height()
+				atoi(_tokens[1]) - _char._ani.width()/2,
+				atoi(_tokens[2]) - _char._ani.height()
 			);
 
 			addNode(list, v4);
@@ -255,14 +254,14 @@ void parseWalkNodes(Script& script, Node *list) {
 
 }
 
-void switchBackground(const char* background, const char* mask) {
+void Parallaction::switchBackground(const char* background, const char* mask) {
 //	printf("switchBackground(%s)", name);
 
 	Gfx::Palette pal;
 
 	uint16 v2 = 0;
 	if (!scumm_stricmp(background, "final")) {
-		_vm->_gfx->clearScreen(Gfx::kBitBack);
+		_gfx->clearScreen(Gfx::kBitBack);
 		for (uint16 _si = 0; _si <= 93; ) {
 			pal[_si] = v2;
 			pal[_si+1] = v2;
@@ -271,10 +270,10 @@ void switchBackground(const char* background, const char* mask) {
 			_si += 3;
 		}
 
-		_vm->_gfx->extendPalette(pal);
+		_gfx->extendPalette(pal);
 	}
 
-	_vm->_disk->loadScenery(background, mask);
+	_disk->loadScenery(background, mask);
 
 	return;
 }
@@ -286,7 +285,7 @@ extern Job     *_jEraseLabel;
 void Parallaction::showSlide(const char *name) {
 
 	_disk->loadSlide(name);
-	_gfx->extendPalette(_vm->_gfx->_palette);
+	_gfx->extendPalette(_gfx->_palette);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	debugC(1, kDebugLocation, "changeLocation: new background set");
@@ -346,7 +345,7 @@ void Parallaction::changeLocation(char *location) {
 		debugC(2, kDebugLocation, "changeLocation: changed cursor");
 	}
 
-	removeNode(&_vm->_char._ani);
+	removeNode(&_char._ani);
 	debugC(2, kDebugLocation, "changeLocation: removed character from the animation list");
 
 	freeLocation();
@@ -379,7 +378,7 @@ void Parallaction::changeLocation(char *location) {
 		}
 	}
 
-	addNode(&_animations, &_vm->_char._ani);
+	addNode(&_animations, &_char._ani);
 	debugC(2, kDebugLocation, "changeLocation: new character added to the animation list");
 
 	strcpy(_saveData1, list[0].c_str());
@@ -388,14 +387,14 @@ void Parallaction::changeLocation(char *location) {
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 	debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", _saveData1);
 
-	_vm->_char._ani._oldPos.x = -1000;
-	_vm->_char._ani._oldPos.y = -1000;
+	_char._ani._oldPos.x = -1000;
+	_char._ani._oldPos.y = -1000;
 
-	_vm->_char._ani.field_50 = 0;
+	_char._ani.field_50 = 0;
 	if (_location._startPosition.x != -1000) {
-		_vm->_char._ani._left = _location._startPosition.x;
-		_vm->_char._ani._top = _location._startPosition.y;
-		_vm->_char._ani._frame = _location._startFrame;
+		_char._ani._left = _location._startPosition.x;
+		_char._ani._top = _location._startPosition.y;
+		_char._ani._frame = _location._startFrame;
 		_location._startPosition.y = -1000;
 		_location._startPosition.x = -1000;
 
@@ -423,7 +422,7 @@ void Parallaction::changeLocation(char *location) {
 	runJobs();
 	_gfx->swapBuffers();
 
-	_gfx->extendPalette(_vm->_gfx->_palette);
+	_gfx->extendPalette(_gfx->_palette);
 	if (_location._aCommands.size() > 0) {
 		runCommands(_location._aCommands);
 		debugC(1, kDebugLocation, "changeLocation: location acommands run");
@@ -450,26 +449,26 @@ void Parallaction::doLocationEnterTransition() {
 	if (_localFlags[_currentLocationIndex] & kFlagsVisited) return; // visited
 
 	byte pal[PALETTE_SIZE];
-	_vm->_gfx->buildBWPalette(pal);
-	_vm->_gfx->setPalette(pal, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
+	_gfx->buildBWPalette(pal);
+	_gfx->setPalette(pal, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
 
 	jobRunScripts(NULL, NULL);
 	jobEraseAnimations(NULL, NULL);
 	jobDisplayAnimations(NULL, NULL);
 
-	_vm->_gfx->setFont("comic");
-	_vm->_gfx->swapBuffers();
-	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
+	_gfx->setFont("comic");
+	_gfx->swapBuffers();
+	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
 	int16 v7C, v7A;
-	_vm->_gfx->getStringExtent(_vm->_location._comment, 130, &v7C, &v7A);
+	_gfx->getStringExtent(_location._comment, 130, &v7C, &v7A);
 
 	Common::Rect r(10 + v7C, 5 + v7A);
 	r.moveTo(5, 5);
-	_vm->_gfx->floodFill(Gfx::kBitFront, r, 0);
+	_gfx->floodFill(Gfx::kBitFront, r, 0);
 	r.grow(-1);
-	_vm->_gfx->floodFill(Gfx::kBitFront, r, 1);
-	_vm->_gfx->displayWrappedString(_vm->_location._comment, 3, 5, 130, 0);
+	_gfx->floodFill(Gfx::kBitFront, r, 1);
+	_gfx->displayWrappedString(_location._comment, 3, 5, 130, 0);
 
 	// FIXME: ???
 #if 0
@@ -480,13 +479,13 @@ void Parallaction::doLocationEnterTransition() {
 
 	waitUntilLeftClick();
 
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront );
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront );
 
 	// fades maximum intensity palette towards approximation of main palette
 	for (uint16 _si = 0; _si<6; _si++) {
 		waitTime( 1 );
-		_vm->_gfx->quickFadePalette(pal);
-		_vm->_gfx->setPalette(pal);
+		_gfx->quickFadePalette(pal);
+		_gfx->setPalette(pal);
 	}
 
 	debugC(1, kDebugLocation, "doLocationEnterTransition completed");
