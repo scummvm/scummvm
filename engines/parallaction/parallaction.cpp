@@ -811,6 +811,8 @@ void Parallaction::changeCharacter(const char *name) {
 	return;
 }
 
+// TODO (LIST): this rouinte basically performs List<>::clear()
+// so it will become useless
 void freeNodeList(Node *list) {
 
 	while (list) {
@@ -822,7 +824,7 @@ void freeNodeList(Node *list) {
 	return;
 }
 
-
+// TODO (LIST): this routine will be removed
 void addNode(Node *list, Node *n) {
 
 	Node *v4 = list->_next;
@@ -838,6 +840,7 @@ void addNode(Node *list, Node *n) {
 	return;
 }
 
+// TODO (LIST): this routine will be removed
 void removeNode(Node *n) {
 
 	Node *v4 = n->_next;
@@ -863,11 +866,13 @@ Job *Parallaction::addJob(JobFn fn, void *parm, uint16 tag) {
 
 	Job *v4 = &_jobs;
 
+	// TODO (LIST): the loop will be useless once we have an ordered
+	// list _jobs. So this code will just be: _jobs.insert(v8)
 	while (v4->_next && ((Job*)(v4->_next))->_tag > tag) {
 		v4 = (Job*)v4->_next;
 	}
-
 	addNode(v4, v8);
+
 	return v8;
 }
 

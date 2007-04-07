@@ -81,10 +81,14 @@ void Parallaction::doLoadGame(uint16 slot) {
 
 	f->readLine(s, 15);
 
+	// TODO (LIST): the very same code can be found in _c_finito().
+	// Why aren't we clearing Animations too, anyway?
 	_engineFlags |= kEngineQuit;
+
 	freeZones(_zones._next);
 	freeNodeList(_zones._next);
 	_zones._next = NULL;
+
 	_engineFlags &= ~kEngineQuit;
 
 	_numLocations = atoi(s);

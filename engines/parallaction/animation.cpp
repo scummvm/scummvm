@@ -151,27 +151,12 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 }
 
 
-
-void  Parallaction::freeScript(Program *program) {
-
-	if (!program) return;
-
-	delete[] program->_locals;
-	freeNodeList(&program->_start);
-
-	return;
-}
-
-
-
 void Parallaction::freeAnimations() {
 	Animation *v4 = (Animation*)_animations._next;
 	while (v4) {
-		freeScript(v4->_program);
-		if (v4->_cnv) delete v4->_cnv;
-		v4 = (Animation*)v4->_next;
-
-		// TODO: delete Animation
+		Animation *v = (Animation*)v4->_next;
+		delete v4;
+		v4 = (Animation*)v;
 	}
 
 	return;
@@ -681,6 +666,54 @@ void Parallaction::sortAnimations() {
 	_animations._next->_prev = &_animations;
 
 	return;
+}
+
+Animation::Animation() {
+	_cnv = NULL;
+	_program = NULL;
+	_frame = 0;
+	_z = 0;
+}
+
+Animation::~Animation() {
+	if (_program)
+		delete _program;
+
+	if (_cnv)
+		delete _cnv;
+}
+
+uint16 Animation::width() const {
+	if (!_cnv) return 0;
+	return _cnv->_width;
+}
+
+uint16 Animation::height() const {
+	if (!_cnv) return 0;
+	return _cnv->_height;
+}
+
+uint16 Animation::getFrameNum() const {
+	if (!_cnv) return 0;
+	return _cnv->_count;
+}
+
+byte* Animation::getFrameData(uint32 index) const {
+	if (!_cnv) return NULL;
+	return _cnv->getFramePtr(index);
+}
+
+
+Program::Program() {
+	_locals = NULL;
+	_loopCounter = 0;
+	_ip = NULL;
+	_loopStart = NULL;
+}
+
+Program::~Program() {
+	delete[] _locals;
+	freeNodeList(&_start);
 }
 
 

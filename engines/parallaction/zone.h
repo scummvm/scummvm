@@ -184,50 +184,26 @@ struct Label {
 };
 
 struct Zone : public Node {
-	int16 		_left;
-	int16		_top;
-	int16		_right;
-	int16		_bottom;
+	int16 			_left;
+	int16			_top;
+	int16			_right;
+	int16			_bottom;
 	uint32			_type;
 	uint32			_flags;
-	Label       _label;
+	Label       	_label;
 	uint16			field_2C;		// unused
 	uint16			field_2E;		// unused
-	TypeData	u;
+	TypeData		u;
 	Command 		*_commands;
 	Common::Point	_moveTo;
 
-	Zone() {
-		_left = _top = _right = _bottom = 0;
+	Zone();
+	virtual ~Zone();
 
-		_type = 0;
-		_flags = 0;
-		_commands = NULL;
-	}
-
-	virtual ~Zone() {}
-
-	void getRect(Common::Rect& r) const {
-		r.left = _left;
-		r.right = _right;
-		r.top = _top;
-		r.bottom = _bottom;
-	}
-
-	void translate(int16 x, int16 y) {
-		_left += x;
-		_right += x;
-		_top += y;
-		_bottom += y;
-	}
-
-	virtual uint16 width() const {
-		return _right - _left;
-	}
-
-	virtual uint16 height() const {
-		return _bottom - _top;
-	}
+	void getRect(Common::Rect& r) const;
+	void translate(int16 x, int16 y);
+	virtual uint16 width() const;
+	virtual uint16 height() const;
 };
 
 struct LocalVariable {
@@ -286,12 +262,8 @@ struct Program {
 	Instruction 	*_loopStart;
 	Instruction		_start;
 
-	Program() {
-		_locals = NULL;
-		_loopCounter = 0;
-		_ip = NULL;
-		_loopStart = NULL;
-	}
+	Program();
+	~Program();
 };
 
 
@@ -311,34 +283,12 @@ struct Animation : public Zone  {
 	uint16		field_5C;		// unused
 	uint16		field_5E;		// unused
 
-	Animation() {
-		_cnv = NULL;
-		_program = NULL;
-		_frame = 0;
-		_z = 0;
-	}
-
-	virtual ~Animation() {}
-
-	virtual uint16 width() const {
-		if (!_cnv) return 0;
-		return _cnv->_width;
-	}
-
-	virtual uint16 height() const {
-		if (!_cnv) return 0;
-		return _cnv->_height;
-	}
-
-	uint16 getFrameNum() const {
-		if (!_cnv) return 0;
-		return _cnv->_count;
-	}
-
-	byte* getFrameData(uint32 index) const {
-		if (!_cnv) return NULL;
-		return _cnv->getFramePtr(index);
-	}
+	Animation();
+	virtual ~Animation();
+	virtual uint16 width() const;
+	virtual uint16 height() const;
+	uint16 getFrameNum() const;
+	byte* getFrameData(uint32 index) const;
 };
 
 

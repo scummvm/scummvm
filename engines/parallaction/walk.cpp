@@ -188,6 +188,7 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 	uint32 v34 = buildSubPath(pos, stop, v48);
 	if (v38 != 0 && v34 > v38) {
 		// no alternative path (gap?)
+		// TODO (LIST): tempPath.clear()
 		freeNodeList(dummy._next);
 		return v44;
 	}
@@ -370,6 +371,7 @@ void jobWalk(void *parm, Job *j) {
 	if (pos == _vm->_char._ani._oldPos) {
 		j->_finished = 1;
 		checkDoor();
+		//TODO (LIST): this should become path.clear()
 		freeNodeList(node);
 	} else {
 		_vm->_char._ani._frame = v16 + walkData2 + 1;

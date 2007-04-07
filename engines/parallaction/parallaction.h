@@ -293,6 +293,7 @@ public:
 //	static void initTable(const char *path, char **table);
 //	static void freeTable(char** table);
 //	static int16 searchTable(const char *s, const char **table);
+	void 		freeCommands(Command*);
 
 	void parseLocation(const char *filename);
 	void changeCursor(int32 index);
@@ -430,11 +431,9 @@ protected:		// members
 	void 		pickMusic(const char *location);
 	void		selectCharacterMusic(const char *name);
 
-	void 		freeScript(Program*);
-
 	Command 	*parseCommands(Script &script);
-	void 		freeCommands(Command*);
 	void 		freeCharacter();
+
 
 	void 		initResources();
 

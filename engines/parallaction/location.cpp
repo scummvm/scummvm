@@ -185,10 +185,14 @@ void Parallaction::freeLocation() {
 
 	debugC(7, kDebugLocation, "freeLocation: localflags names freed");
 
+	// TODO (LIST): this should be replaced by a call to _location._walkNodes.clear()
 	freeNodeList(_vm->_location._walkNodes._next);
 	_vm->_location._walkNodes._next = NULL;
 	debugC(7, kDebugLocation, "freeLocation: walk nodes freed");
 
+	// TODO (LIST): helperNode should be rendered useless by the use of a Common::List<>
+	// to store Zones and Animations. Right now, it holds a list of Zones to be preserved
+	// but that'll pretty meaningless with a single list approach.
 	helperNode._prev = helperNode._next = NULL;
 	_vm->freeZones(_zones._next);
 	freeNodeList(_zones._next);
@@ -197,6 +201,9 @@ void Parallaction::freeLocation() {
 //	memcpy(&_zones, &helperNode, sizeof(Node));
 	debugC(7, kDebugLocation, "freeLocation: zones freed");
 
+	// TODO (LIST): helperNode should be rendered useless by the use of a Common::List<>
+	// to store Zones and Animations. Right now, it holds a list of Zones to be preserved
+	// but that'll pretty meaningless with a single list approach.
 	helperNode._prev = helperNode._next = NULL;
 	_vm->freeZones(_animations._next);
 	_vm->freeAnimations();
@@ -212,6 +219,7 @@ void Parallaction::freeLocation() {
 	_vm->_location._comment = NULL;
 	debugC(7, kDebugLocation, "freeLocation: comments freed");
 
+	// TODO (LIST): this should be _location._commands.clear();
 	if (_vm->_location._commands) {
 		freeNodeList(_vm->_location._commands);
 	}

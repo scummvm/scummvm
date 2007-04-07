@@ -133,62 +133,15 @@ void Parallaction::freeZones(Node *list) {
 			debugC(1, kDebugLocation, "freeZones preserving zone '%s'", z->_label._text);
 
 			v8 = (Zone*)z->_next;
-			removeNode(z);
-			addNode(&helperNode, z);
+			removeNode(z);					// HelperNode holds a list of zones to be preserved. There's code in freeLocation to deal with this too.
+			addNode(&helperNode, z);		// Can't we simply delete the other zones in the list and keep the good ones?
 			z = v8;
 			continue;
 		}
 
-
-		switch (z->_type & 0xFFFF) {
-		case kZoneExamine:
-			free(z->u.examine->_filename);
-			free(z->u.examine->_description);
-			delete z->u.examine;
-			break;
-
-		case kZoneDoor:
-			free(z->u.door->_location);
-			free(z->u.door->_background);
-			if (z->u.door->_cnv)
-				delete z->u.door->_cnv;
-			delete  z->u.door;
-			break;
-
-		case kZoneSpeak:
-			freeDialogue(z->u.speak->_dialogue);
-			delete z->u.speak;
-			break;
-
-		case kZoneGet:
-			free(z->u.get->_backup);
-			_vm->_gfx->freeStaticCnv(z->u.get->_cnv);
-			if (z->u.get->_cnv)
-				delete z->u.get->_cnv;
-			delete z->u.get;
-			break;
-
-		case kZoneHear:
-			delete z->u.hear;
-			break;
-
-		case kZoneMerge:
-			delete z->u.merge;
-			break;
-
-		default:
-			break;
-		}
-
-		free(z->_label._text);
-		z->_label._text = NULL;
-		_vm->_gfx->freeStaticCnv(&z->_label._cnv);
-		freeCommands(z->_commands);
-
-		// TODO: delete Zone
-
-		z=(Zone*)z->_next;
-
+		Zone *z2 = (Zone*)z->_next;
+		delete z;
+		z = z2;
 	}
 
 	return;
@@ -642,7 +595,87 @@ Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 	}
 
 	return NULL;
+}
+
+
+Zone::Zone() {
+	_left = _top = _right = _bottom = 0;
+
+	_type = 0;
+	_flags = 0;
+	_commands = NULL;
+}
+
+Zone::~Zone() {
+
+	switch (_type & 0xFFFF) {
+	case kZoneExamine:
+		free(u.examine->_filename);
+		free(u.examine->_description);
+		delete u.examine;
+		break;
+
+	case kZoneDoor:
+		free(u.door->_location);
+		free(u.door->_background);
+		if (u.door->_cnv)
+			delete u.door->_cnv;
+		delete u.door;
+		break;
+
+	case kZoneSpeak:
+		_vm->freeDialogue(u.speak->_dialogue);
+		delete u.speak;
+		break;
+
+	case kZoneGet:
+		free(u.get->_backup);
+		_vm->_gfx->freeStaticCnv(u.get->_cnv);
+		if (u.get->_cnv)
+			delete u.get->_cnv;
+		delete u.get;
+		break;
+
+	case kZoneHear:
+		delete u.hear;
+		break;
+
+	case kZoneMerge:
+		delete u.merge;
+		break;
+
+	default:
+		break;
+	}
+
+	free(_label._text);
+	_label._text = NULL;
+	_vm->_gfx->freeStaticCnv(&_label._cnv);
+	_vm->freeCommands(_commands);
 
 }
+
+void Zone::getRect(Common::Rect& r) const {
+	r.left = _left;
+	r.right = _right;
+	r.top = _top;
+	r.bottom = _bottom;
+}
+
+void Zone::translate(int16 x, int16 y) {
+	_left += x;
+	_right += x;
+	_top += y;
+	_bottom += y;
+}
+
+uint16 Zone::width() const {
+	return _right - _left;
+}
+
+uint16 Zone::height() const {
+	return _bottom - _top;
+}
+
 
 } // namespace Parallaction

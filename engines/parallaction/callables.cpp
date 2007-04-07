@@ -398,23 +398,29 @@ void _c_finito(void *parm) {
 		_vm->_menu->selectCharacter();
 	}
 
+	// this code saves main character animation from being removed from the following code
 	removeNode(&_vm->_char._ani);
 	_vm->_locationNames[0][0] = '\0';
 	_vm->_numLocations = 0;
 	_commandFlags = 0;
 
+	// this flag tells freeZones to unconditionally remove *all* Zones
 	_engineFlags |= kEngineQuit;
 
+	// TODO (LIST): this sequence should be just _zones.clear()
 	_vm->freeZones(_vm->_zones._next);
 	freeNodeList(_vm->_zones._next);
 	_vm->_zones._next = NULL;
 
+	// TODO (LIST): this sequence should be just _animations.clear()
 	_vm->freeZones(_vm->_animations._next);
 	freeNodeList(_vm->_animations._next);
 	_vm->_animations._next = NULL;
 
+	// this dangerous flag can now be cleared
 	_engineFlags &= ~kEngineQuit;
 
+	// main character animation is restored
 	addNode(&_vm->_animations, &_vm->_char._ani);
 	_score = 0;
 
