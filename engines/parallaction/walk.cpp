@@ -453,7 +453,7 @@ WalkNode::WalkNode() : _x(0), _y(0) {
 WalkNode::WalkNode(int32 x, int32 y) : _x(x), _y(y) {
 }
 
-WalkNode::WalkNode(const WalkNode& w) : _x(w._x), _y(w._y) {
+WalkNode::WalkNode(const WalkNode& w) : Node(), _x(w._x), _y(w._y) {
 }
 
 void WalkNode::getPoint(Common::Point &p) const {
