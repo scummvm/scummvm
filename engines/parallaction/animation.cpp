@@ -705,6 +705,12 @@ Program::Program() {
 
 Program::~Program() {
 	delete[] _locals;
+
+	InstructionList::iterator it = _instructions.begin();
+	for (; it != _instructions.end(); it++)
+		delete *it;
+
+	_instructions.clear();
 }
 
 
