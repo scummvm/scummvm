@@ -24,6 +24,8 @@
 #define PARALLACTION_ZONE_H
 
 #include "parallaction/defs.h"
+#include "parallaction/graphics.h"
+
 
 namespace Parallaction {
 
@@ -61,6 +63,8 @@ enum ZoneFlags {
 
 #define NUM_ANSWERS		 5
 
+struct Command;
+
 struct Question {
 	char*		_text;
 	char*		_answers[NUM_ANSWERS];
@@ -88,6 +92,8 @@ struct Question {
 		}
 	}
 };
+
+typedef Question Dialogue;
 
 struct GetData {	// size = 24
 	uint32			_icon;
@@ -234,6 +240,8 @@ enum InstructionFlags {
 	kInstMod			= 4,
 	kInstMaskedPut		= 8
 };
+
+struct Animation;
 
 struct Instruction : public Node {
 	uint32	_index;

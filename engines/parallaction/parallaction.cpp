@@ -601,7 +601,7 @@ Parallaction::InputData *Parallaction::translateInput() {
 				}
 			}
 
-			beep();
+//			beep();
 			changeCursor(kCursorArrow);
 			return &_input;
 		}

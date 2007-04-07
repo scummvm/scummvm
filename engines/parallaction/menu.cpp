@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/stdafx.h"
+#include "common/system.h"
+
 #include "parallaction/menu.h"
 #include "parallaction/disk.h"
 #include "parallaction/music.h"
@@ -199,7 +202,7 @@ uint16 Menu::chooseLanguage() {
 				if (128 + _si*49 <= _vm->_mousePos.x) continue;
 				if (180 - _si*25 <=_vm->_mousePos.y) continue;
 
-				beep();
+//				beep();
 				return _si;
 			}
 		}
@@ -337,7 +340,7 @@ void Menu::selectCharacter() {
 				_vm->_gfx->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Gfx::kBitBack);
 				_vm->_gfx->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Gfx::kBitFront);
 
-				beep();
+//				beep();
 
 				if (_dinoKey[_di] == _si)
 					_dino_points++;  // dino

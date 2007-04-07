@@ -23,6 +23,10 @@
 #ifndef PARALLACTION_COMMANDS_H
 #define PARALLACTION_COMMANDS_H
 
+
+#include "common/stdafx.h"
+#include "common/scummsys.h"
+
 #include "parallaction/defs.h"
 
 namespace Parallaction {
@@ -33,6 +37,9 @@ enum CommandFlags {
 	kFlagsEnter 		= 0x20000000,
 	kFlagsGlobal		= 0x40000000
 };
+
+struct Zone;
+struct Animation;
 
 // TODO: turn this into a struct
 union CommandData {

@@ -23,8 +23,9 @@
 #ifndef PARALLACTION_PARSER_H
 #define PARALLACTION_PARSER_H
 
-#include "parallaction/defs.h"
 #include "common/stream.h"
+
+#include "parallaction/defs.h"
 
 namespace Parallaction {
 

@@ -23,6 +23,7 @@
 #include "common/file.h"
 
 #include "parallaction/disk.h"
+#include "parallaction/parallaction.h"
 
 
 namespace Parallaction {

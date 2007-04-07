@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/stdafx.h"
+
 #include "parallaction/commands.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/graphics.h"

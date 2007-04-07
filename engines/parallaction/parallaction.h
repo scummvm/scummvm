@@ -41,6 +41,21 @@ namespace GUI {
 
 namespace Parallaction {
 
+enum {
+	kDebugDisk = 1 << 0,
+	kDebugWalk = 1 << 1,
+	kDebugLocation = 1 << 2,
+	kDebugDialogue = 1 << 3,
+	kDebugGraphics = 1 << 4,
+	kDebugJobs = 1 << 5,
+	kDebugInput = 1 << 6
+};
+
+enum {
+	GF_DEMO = 1 << 0
+};
+
+
 // high values mean high priority
 
 enum {
@@ -99,6 +114,13 @@ public:
 	}
 };
 
+struct Credit {
+	const char *_role;
+	const char *_name;
+};
+
+typedef void (*callable)(void*);
+
 extern uint16 _mouseButtons;
 
 extern uint16 _score;
@@ -144,6 +166,8 @@ extern const char *_minidrkiName;
 // with a lowercase 'd'.
 #define IS_MINI_CHARACTER(s) (((s)[0] == 'm'))
 #define IS_DUMMY_CHARACTER(s) (((s)[0] == 'D'))
+
+#define PATH_LEN	200
 
 void waitUntilLeftClick();
 

@@ -23,8 +23,11 @@
 #ifndef PARALLACTION_GRAPHICS_H
 #define PARALLACTION_GRAPHICS_H
 
-#include "parallaction/defs.h"
+#include "common/rect.h"
 #include "common/stream.h"
+
+
+#include "parallaction/defs.h"
 
 
 namespace Parallaction {
@@ -64,6 +67,48 @@ struct PaletteFxRange {
 };
 
 #include "common/pack-end.h"	// END STRUCT PACKING
+
+struct StaticCnv {
+	uint16	_width; 	//
+	uint16	_height;	//
+	byte*	_data0; 	// bitmap
+	byte*	_data1; 	// unused
+
+	StaticCnv() {
+		_width = _height = 0;
+		_data0 = _data1 = NULL;
+	}
+};
+
+struct Cnv {
+	uint16	_count; 	// # of frames
+	uint16	_width; 	//
+	uint16	_height;	//
+	byte**	field_8;	// unused
+	byte*	_data;
+
+public:
+	Cnv() {
+		_width = _height = _count = 0;
+		_data = NULL;
+	}
+
+	Cnv(uint16 numFrames, uint16 width, uint16 height, byte* data) : _count(numFrames), _width(width), _height(height), _data(data) {
+
+	}
+
+	~Cnv() {
+		if (_count == 0 || _data == NULL) return;
+		free(_data);
+	}
+
+	byte* getFramePtr(uint16 index) {
+		if (index >= _count)
+			return NULL;
+		return &_data[index * _width * _height];
+	}
+};
+
 
 #define NUM_BUFFERS 6
 

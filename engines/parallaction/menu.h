@@ -23,6 +23,8 @@
 #ifndef PARALLACTION_MENU_H
 #define PARALLACTION_MENU_H
 
+#include "common/rect.h"
+
 #include "parallaction/defs.h"
 
 namespace Parallaction {

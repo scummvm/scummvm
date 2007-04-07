@@ -20,6 +20,12 @@
  *
  */
 
+
+#include "common/stdafx.h"
+#include "common/system.h"
+
+#include "common/file.h"
+
 #include "parallaction/disk.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/graphics.h"
@@ -27,8 +33,6 @@
 #include "parallaction/menu.h"
 #include "parallaction/music.h"
 #include "parallaction/zone.h"
-
-#include "common/file.h"
 
 namespace Parallaction {
 

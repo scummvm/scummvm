@@ -40,6 +40,9 @@ class Parallaction;
 class Gfx;
 class Script;
 
+struct Cnv;
+struct StaticCnv;
+
 class Archive : public Common::SeekableReadStream {
 
 protected:
