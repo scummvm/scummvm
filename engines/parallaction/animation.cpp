@@ -93,7 +93,7 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 			loadProgram(vD0, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "commands")) {
-			vD0->_commands = parseCommands(script);
+			 parseCommands(script, vD0->_commands);
 		}
 		if (!scumm_stricmp(_tokens[0], "type")) {
 			if (_tokens[2][0] != '\0') {

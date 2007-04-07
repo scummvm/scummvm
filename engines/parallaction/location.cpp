@@ -112,10 +112,10 @@ void Parallaction::parseLocation(const char *filename) {
 			}
 		}
 		if (!scumm_stricmp(_tokens[0], "COMMANDS")) {
-			_location._commands = parseCommands(*_locationScript);
+			 parseCommands(*_locationScript, _location._commands);
 		}
 		if (!scumm_stricmp(_tokens[0], "ACOMMANDS")) {
-			_location._aCommands = parseCommands(*_locationScript);
+			parseCommands(*_locationScript, _location._aCommands);
 		}
 		if (!scumm_stricmp(_tokens[0], "FLAGS")) {
 			if ((_localFlags[_currentLocationIndex] & kFlagsVisited) == 0) {
@@ -221,16 +221,10 @@ void Parallaction::freeLocation() {
 	debugC(7, kDebugLocation, "freeLocation: comments freed");
 
 	// TODO (LIST): this should be _location._commands.clear();
-	if (_vm->_location._commands) {
-		freeNodeList(_vm->_location._commands);
-	}
-	_vm->_location._commands = NULL;
+	freeCommands(_vm->_location._commands);
 	debugC(7, kDebugLocation, "freeLocation: commands freed");
 
-	if (_vm->_location._aCommands) {
-		freeNodeList(_vm->_location._aCommands);
-	}
-	_vm->_location._aCommands = NULL;
+	freeCommands(_vm->_location._aCommands);
 	debugC(7, kDebugLocation, "freeLocation: acommands freed");
 
 	return;
@@ -412,7 +406,8 @@ void Parallaction::changeLocation(char *location) {
 	for (uint16 _si = 0; _si < PALETTE_SIZE; _si++) palette[_si] = 0;
 	_gfx->extendPalette(palette);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-	if (_location._commands) {
+
+	if (_location._commands.size() > 0) {
 		runCommands(_location._commands);
 		runJobs();
 		_gfx->swapBuffers();
@@ -429,7 +424,7 @@ void Parallaction::changeLocation(char *location) {
 	_gfx->swapBuffers();
 
 	_gfx->extendPalette(_vm->_gfx->_palette);
-	if (_location._aCommands) {
+	if (_location._aCommands.size() > 0) {
 		runCommands(_location._aCommands);
 		debugC(1, kDebugLocation, "changeLocation: location acommands run");
 	}

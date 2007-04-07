@@ -133,7 +133,7 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 
 			fillBuffers(script, true);
 			if (!scumm_stricmp(_tokens[0], "commands")) {
-				vB4->_answers[_di]->_commands = parseCommands(script);
+				parseCommands(script, vB4->_answers[_di]->_commands);
 				fillBuffers(script, true);
 			}
 
@@ -355,7 +355,7 @@ void Parallaction::runDialogue(SpeakData *data) {
 
 	_askPassword = false;
 	uint16 answer = 0;
-	Command *cmdlist = NULL;
+	CommandList *cmdlist = NULL;
 
 	Dialogue *q = data->_dialogue;
 	while (q) {
@@ -369,7 +369,7 @@ void Parallaction::runDialogue(SpeakData *data) {
 
 			if (!displayAnswers(q)) break;
 			answer = getDialogueAnswer(q, _vm->_char._talk);
-			cmdlist = q->_answers[answer]->_commands;
+			cmdlist = &q->_answers[answer]->_commands;
 		}
 
 		q = (Dialogue*)q->_answers[answer]->_following._question;
@@ -384,7 +384,7 @@ void Parallaction::runDialogue(SpeakData *data) {
 	}
 
 	exitDialogue();
-	runCommands(cmdlist);
+	runCommands(*cmdlist);
 
 	return;
 
@@ -488,7 +488,6 @@ Answer::Answer() {
 	_text = NULL;
 	_mood = 0;
 	_following._question =  NULL;
-	_commands = NULL;
 	_noFlags = 0;
 	_yesFlags = 0;
 }
@@ -497,8 +496,7 @@ Answer::~Answer() {
 	if (_mood & 0x10)
 		delete _following._question;
 
-	if (_commands)
-		_vm->freeCommands(_commands);
+	_vm->freeCommands(_commands);
 
 	if (_text)
 		free(_text);

@@ -195,8 +195,6 @@ int Parallaction::init() {
 	else
 		strcpy(_location._name, "fogne");
 
-	_location._aCommands = NULL;
-	_location._commands = NULL;
 	_location._comment = NULL;
 	_location._endComment = NULL;
 
@@ -352,7 +350,7 @@ void Parallaction::runGame() {
 
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 
-	if (_location._commands)
+	if (_location._commands.size() > 0)
 		runCommands(_location._commands);
 
 	runJobs();
@@ -364,7 +362,7 @@ void Parallaction::runGame() {
 
 	changeCursor(kCursorArrow);
 
-	if (_location._aCommands)
+	if (_location._aCommands.size() > 0)
 		runCommands(_location._aCommands);
 
 	while ((_engineFlags & kEngineQuit) == 0) {

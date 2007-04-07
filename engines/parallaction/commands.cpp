@@ -46,7 +46,7 @@ namespace Parallaction {
 #define CMD_STOP			16
 
 
-Command *Parallaction::parseCommands(Script &script) {
+void Parallaction::parseCommands(Script &script, CommandList& list) {
 //	printf("parseCommands()");
 
 	Node root;
@@ -189,30 +189,32 @@ Command *Parallaction::parseCommands(Script &script) {
 
 	}
 
-	return (Command*)root._next;
 }
 
 
-void Parallaction::freeCommands(Command *list) {
+void Parallaction::freeCommands(CommandList &list) {
 
-	Command *cmd = list;
+	CommandList::iterator it = list.begin();
 
-	while (cmd) {
-		Command *v4 = (Command*)cmd->_next;
-		delete cmd;
-		cmd = v4;
+	while ( it != list.end() ) {
+		delete *it;
+		it++;
 	}
+
+	list.clear();
 
 	return;
 }
 
 
 
-void Parallaction::runCommands(Command *list, Zone *z) {
+void Parallaction::runCommands(CommandList& list, Zone *z) {
 	debugC(1, kDebugLocation, "runCommands");
 
-	Command *cmd = list;
-	for ( ; cmd; cmd = (Command*)cmd->_next) {
+	CommandList::iterator it = list.begin();
+	for ( ; it != list.end(); it++) {
+
+		Command *cmd = *it;
 		CommandData *u = &cmd->u;
 		uint32 v8 = _localFlags[_vm->_currentLocationIndex];
 

@@ -90,7 +90,7 @@ void Parallaction::parseZone(Script &script, Node *list, char *name) {
 			}
 		}
 		if (!scumm_stricmp(_tokens[0], "commands")) {
-			z->_commands = parseCommands(script);
+			 parseCommands(script, z->_commands);
 		}
 		if (!scumm_stricmp(_tokens[0], "label")) {
 //			printf("label: %s", _tokens[1]);
@@ -603,7 +603,6 @@ Zone::Zone() {
 
 	_type = 0;
 	_flags = 0;
-	_commands = NULL;
 }
 
 Zone::~Zone() {

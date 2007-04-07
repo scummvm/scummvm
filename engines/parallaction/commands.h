@@ -41,6 +41,7 @@ enum CommandFlags {
 struct Zone;
 struct Animation;
 
+
 // TODO: turn this into a struct
 union CommandData {
 	uint32			_flags;

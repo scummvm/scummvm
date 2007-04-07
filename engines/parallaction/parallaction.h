@@ -226,6 +226,8 @@ class Gfx;
 class Menu;
 class MidiPlayer;
 
+
+
 struct Location {
 
 	Common::Point	_startPosition;
@@ -233,8 +235,8 @@ struct Location {
 	Node		_walkNodes;
 	char		_name[100];
 
-	Command    *_aCommands;
-	Command    *_commands;
+	CommandList		_aCommands;
+	CommandList		_commands;
 	char	   *_comment;
 	char	   *_endComment;
 
@@ -317,7 +319,7 @@ public:
 //	static void initTable(const char *path, char **table);
 //	static void freeTable(char** table);
 //	static int16 searchTable(const char *s, const char **table);
-	void 		freeCommands(Command*);
+	void 		freeCommands(CommandList& list);
 
 	void parseLocation(const char *filename);
 	void changeCursor(int32 index);
@@ -352,7 +354,7 @@ public:
 
 	uint16		runZone(Zone*);
 	void 		runDialogue(SpeakData*);
-	void 		runCommands(Command *list, Zone *z = NULL);
+	void 		runCommands(CommandList& list, Zone *z = NULL);
 
 public:
 	int getGameType() const;
@@ -454,7 +456,7 @@ protected:		// members
 	void 		pickMusic(const char *location);
 	void		selectCharacterMusic(const char *name);
 
-	Command 	*parseCommands(Script &script);
+	void		parseCommands(Script &script, CommandList&);
 	void 		freeCharacter();
 
 

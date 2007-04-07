@@ -68,6 +68,8 @@ enum ZoneFlags {
 struct Command;
 struct Question;
 
+typedef Common::List<Command*> CommandList;
+
 struct Answer {
 	char*		_text;
 	uint16		_mood;
@@ -75,7 +77,7 @@ struct Answer {
 		Question*	_question;
 		char*		_name;
 	} _following;
-	Command*	_commands;
+	CommandList	_commands;
 	uint32		_noFlags;
 	uint32		_yesFlags;
 
@@ -199,7 +201,7 @@ struct Zone : public Node {
 	uint16			field_2C;		// unused
 	uint16			field_2E;		// unused
 	TypeData		u;
-	Command 		*_commands;
+	CommandList 	_commands;
 	Common::Point	_moveTo;
 
 	Zone();
