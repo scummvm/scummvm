@@ -451,6 +451,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	0a295b80f9a9edf818e8e161a0e83830	-1	fr	All	HE 80	-	-	gist974, ThierryFR
 	fce4b8010704b103acfeea9413788f32	-1	de	All	HE 80	-	-	Joachim Eberhard
+	8e9830a6f2702be5b22c8fa0a6aaf977	-1	nl	Mac	HE 80	-	-	daniel9
 	5057fb0e99e5aa29df1836329232f101	-1	All	Windows	HE 80	-	-	sev
 	ac62d50e39492ee3738b4e83a5ac780f	-1	nl	Windows	HE 80	-	-	joostp
 	151071053a1d0021198216713939521d	-1	en	Windows	HE 80	-	-	vampir_raziel
