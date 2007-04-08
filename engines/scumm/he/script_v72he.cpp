@@ -2155,13 +2155,15 @@ void ScummEngine_v72he::o72_writeINI() {
 	case 6: // number
 		value = pop();
 		copyScriptString(option, sizeof(option));
-		ConfMan.setInt((char *)option, value);
 		debug(1, "o72_writeINI: Option %s Value %d", option, value);
+
+		ConfMan.setInt((char *)option, value);
 		break;
 	case 77: // HE 100
 	case 7: // string
 		copyScriptString(string, sizeof(string));
 		copyScriptString(option, sizeof(option));
+		debug(1, "o72_writeINI: Option %s String %s", option, string);
 
 		// Filter out useless setting
 		if (!strcmp((char *)option, "HETest"))
@@ -2176,7 +2178,6 @@ void ScummEngine_v72he::o72_writeINI() {
 			return;
 
 		ConfMan.set((char *)option, (char *)string);
-		debug(1, "o72_writeINI: Option %s String %s", option, string);
 		break;
 	default:
 		error("o72_writeINI: default type %d", subOp);
