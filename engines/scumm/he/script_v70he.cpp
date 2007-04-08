@@ -354,7 +354,7 @@ void ScummEngine_v70he::setupOpcodes() {
 		OPCODE(o70_findBox),
 		/* F8 */
 		OPCODE(o6_invalid),
-		OPCODE(o70_setFilePath),
+		OPCODE(o70_createDirectory),
 		OPCODE(o70_setSystemMessage),
 		OPCODE(o70_polygonOps),
 		/* FC */
@@ -1062,15 +1062,15 @@ void ScummEngine_v70he::o70_findBox() {
 	push(getSpecialBox(x, y));
 }
 
-void ScummEngine_v70he::o70_setFilePath() {
+void ScummEngine_v70he::o70_createDirectory() {
 	int len;
-	byte filename[100];
+	byte directoryName[100];
 
-	convertMessageToString(_scriptPointer, filename, sizeof(filename));
+	convertMessageToString(_scriptPointer, directoryName, sizeof(directoryName));
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	debug(1,"stub o70_setFilePath(%s)", filename);
+	debug(1,"stub o70_createDirectory(%s)", directoryName);
 }
 
 void ScummEngine_v70he::o70_setSystemMessage() {

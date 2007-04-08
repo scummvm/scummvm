@@ -71,7 +71,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* 14 */
 		OPCODE(o6_loadRoomWithEgo),
 		OPCODE(o6_invalid),
-		OPCODE(o72_setFilePath),
+		OPCODE(o72_createDirectory),
 		OPCODE(o100_createSound),
 		/* 18 */
 		OPCODE(o6_cutscene),

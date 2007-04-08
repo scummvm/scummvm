@@ -357,7 +357,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o70_findBox),
 		/* F8 */
 		OPCODE(o72_getResourceSize),
-		OPCODE(o72_setFilePath),
+		OPCODE(o72_createDirectory),
 		OPCODE(o72_setSystemMessage),
 		OPCODE(o70_polygonOps),
 		/* FC */
@@ -2124,6 +2124,9 @@ void ScummEngine_v72he::o72_readINI() {
 	case 7: // string
 		writeVar(0, 0);
 		if (!strcmp((char *)option, "SaveGamePath")) {
+			// We set SaveGamePath in order to detect where it used
+			// in convertFilePath and to avoid warning about invalid
+			// path in Macintosh verisons.
 			data = defineArray(0, kStringArray, 0, 0, 0, 1);
 			memcpy(data, (const char *)"*", 1);
 		} else {
@@ -2220,11 +2223,11 @@ void ScummEngine_v72he::o72_getResourceSize() {
 	push(size);
 }
 
-void ScummEngine_v72he::o72_setFilePath() {
-	byte filename[255];
+void ScummEngine_v72he::o72_createDirectory() {
+	byte directoryName[255];
 
-	copyScriptString(filename, sizeof(filename));
-	debug(1,"o72_setFilePath: %s", filename);
+	copyScriptString(directoryName, sizeof(directoryName));
+	debug(1,"o72_createDirectory: %s", directoryName);
 }
 
 void ScummEngine_v72he::o72_setSystemMessage() {

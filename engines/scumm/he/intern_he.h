@@ -197,7 +197,7 @@ protected:
 	void o70_writeINI();
 	void o70_getStringLenForWidth();
 	void o70_getCharIndexInString();
-	void o70_setFilePath();
+	void o70_createDirectory();
 	void o70_findBox();
 	void o70_setSystemMessage();
 	void o70_polygonOps();
@@ -346,7 +346,7 @@ protected:
 	void o72_readINI();
 	void o72_writeINI();
 	void o72_getResourceSize();
-	void o72_setFilePath();
+	void o72_createDirectory();
 	void o72_setSystemMessage();
 
 	byte VAR_NUM_ROOMS;

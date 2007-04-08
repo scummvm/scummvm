@@ -354,7 +354,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o70_findBox),
 		/* F8 */
 		OPCODE(o72_getResourceSize),
-		OPCODE(o72_setFilePath),
+		OPCODE(o72_createDirectory),
 		OPCODE(o72_setSystemMessage),
 		OPCODE(o70_polygonOps),
 		/* FC */
