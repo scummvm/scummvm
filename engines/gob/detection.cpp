@@ -875,19 +875,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			"gob3",
 			"Interactive Demo",
 			AD_ENTRY1("intro.stk", "7aebd94e49c2c5c518c9e7b74f25de9d"),
-			UNK_LANG,
-			kPlatformPC,
-			Common::ADGF_DEMO
-		},
-		GF_GOB3,
-		"intro"
-	},
-	{
-		{
-			"gob3",
-			"Non-interactive Demo",
-			AD_ENTRY1("intro.stk", "b9b898fccebe02b69c086052d5024a55"),
-			UNK_LANG,
+			FR_FRA,
 			kPlatformPC,
 			Common::ADGF_DEMO
 		},
@@ -899,6 +887,18 @@ static const GOBGameDescription gameDescriptions[] = {
 			"gob3",
 			"Interactive Demo 2",
 			AD_ENTRY1("intro.stk", "e5dcbc9f6658ebb1e8fe26bc4da0806d"),
+			FR_FRA,
+			kPlatformPC,
+			Common::ADGF_DEMO
+		},
+		GF_GOB3,
+		"intro"
+	},
+	{
+		{
+			"gob3",
+			"Non-interactive Demo",
+			AD_ENTRY1("intro.stk", "b9b898fccebe02b69c086052d5024a55"),
 			UNK_LANG,
 			kPlatformPC,
 			Common::ADGF_DEMO
