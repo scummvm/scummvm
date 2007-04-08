@@ -48,6 +48,7 @@ class PalAnim;
 class Parse;
 class Scenery;
 class Util;
+class SaveLoad;
 class Adlib;
 
 #define VARP(offs)			(_vm->_global->_inter_variables + (offs))
@@ -94,13 +95,6 @@ enum {
 	kDebugFileIO = 1 << 6,
 	kDebugGraphics = 1 << 7,
 	kDebugCollisions = 1 << 8
-};
-
-enum SaveFiles {
-	SAVE_CAT = 0, // Saves
-	SAVE_SAV,     // Holds a sprite, normally a cache for Draw::_backBuffer
-	              // (see Global::_savedBack)
-	SAVE_BLO      // Notes
 };
 
 inline char *strncpy0(char *dest, const char *src, size_t n) {
@@ -163,20 +157,10 @@ private:
 
 class GobEngine : public Engine {
 protected:
-	char **_saveFiles;
-	char *_saveSlotFile;
-	byte _saveIndex[600];
-	byte _saveIndexSizes[600];
 	GobEngine *_vm;
 
 	int go();
 	int init();
-
-	const char *getSaveSlotFile(int slot);
-	bool saveGame(int saveSlot, int16 dataVar, int32 size, int32 offset);
-	bool loadGame(int saveSlot, int16 dataVar, int32 size, int32 offset);
-	uint32 writeDataEndian(Common::OutSaveFile &out, byte *varBuf, byte *sizeBuf, int32 size);
-	uint32 readDataEndian(Common::InSaveFile &in, byte *varBuf, byte *sizeBuf, int32 size);
 
 	bool detectGame();
 
@@ -210,14 +194,12 @@ public:
 	Parse *_parse;
 	Scenery *_scenery;
 	Inter *_inter;
+	SaveLoad *_saveLoad;
 	Adlib *_adlib;
 	ImdPlayer *_imdPlayer;
 
 	void shutdown();
 
-	int32 getSaveSize(enum SaveFiles sFile);
-	void saveGameData(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset);
-	void loadGameData(enum SaveFiles sFile, int16 dataVar, int32 size, int32 offset);
 	const char *getLangDesc(int16 language) {
 		if ((language < 0) || (language > 8))
 			language = 2;

@@ -38,6 +38,9 @@ MODULE_OBJS := \
 	parse.o \
 	parse_v1.o \
 	parse_v2.o \
+	saveload.o \
+	saveload_v2.o \
+	saveload_v3.o \
 	scenery.o \
 	scenery_v1.o \
 	scenery_v2.o \

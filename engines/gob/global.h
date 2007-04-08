@@ -125,13 +125,6 @@ public:
 	int16 _inter_mouseX;
 	int16 _inter_mouseY;
 
-	// While using the notepad or changing the font, the original executable
-	// temporarily dumps Draw::_backSurface to a file. Since that's not really
-	// a nice thing to do, we work around it.
-	SurfaceDesc::Ptr _savedBack;
-	Video::Color _savedPal[256];
-	int32 _savedBackSize;
-
 	void clearVars(uint32 count) {
 		uint32 size = count * 4;
 

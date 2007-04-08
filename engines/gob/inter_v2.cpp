@@ -43,6 +43,7 @@
 #include "gob/scenery.h"
 #include "gob/sound.h"
 #include "gob/video.h"
+#include "gob/saveload.h"
 
 namespace Gob {
 
@@ -1776,21 +1777,16 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 	int16 handle;
 	int16 varOff;
 	int32 size;
+	SaveType type;
 
 	evalExpr(0);
 	varOff = _vm->_parse->parseVarIndex();
 
 	size = -1;
 	handle = 1;
-	if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf"))
-		size = _vm->getSaveSize(SAVE_CAT);
-	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.cat"))
-		size = _vm->getSaveSize(SAVE_CAT);
-	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "save.inf"))
-		size = _vm->getSaveSize(SAVE_SAV);
-	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "bloc.inf"))
-		size = _vm->getSaveSize(SAVE_BLO);
-	else {
+
+	type = _vm->_saveLoad->getSaveType(_vm->_global->_inter_resStr);
+	if (type == kSaveNone) {
 		handle = _vm->_dataIO->openData(_vm->_global->_inter_resStr);
 
 		if (handle >= 0) {
@@ -1798,9 +1794,14 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 			size = _vm->_dataIO->getDataSize(_vm->_global->_inter_resStr);
 		} else
 			warning("File \"%s\" not found", _vm->_global->_inter_resStr);
-	}
+	} else
+		size = _vm->_saveLoad->getSize(type);
+
 	if (size == -1)
 		handle = -1;
+
+	debugC(2, kDebugFileIO, "Requested size of file \"%s\": %d",
+			_vm->_global->_inter_resStr, size);
 
 	WRITE_VAR_OFFSET(varOff, handle);
 	WRITE_VAR(16, (uint32) size);
@@ -1815,6 +1816,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	int16 dataVar;
 	int16 handle;
 	byte *buf;
+	SaveType type;
 
 	evalExpr(0);
 	dataVar = _vm->_parse->parseVarIndex();
@@ -1825,17 +1827,11 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
 			_vm->_global->_inter_resStr, dataVar, size, offset);
 
-	if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf")) {
-		_vm->loadGameData(SAVE_CAT, dataVar, size, offset);
-		return false;
-	} else if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.cat")) {
-		_vm->loadGameData(SAVE_CAT, dataVar, size, offset);
-		return false;
-	} else if (!scumm_stricmp(_vm->_global->_inter_resStr, "save.inf")) {
-		_vm->loadGameData(SAVE_SAV, dataVar, size, offset);
-		return false;
-	} else if (!scumm_stricmp(_vm->_global->_inter_resStr, "bloc.inf")) {
-		_vm->loadGameData(SAVE_BLO, dataVar, size, offset);
+	type = _vm->_saveLoad->getSaveType(_vm->_global->_inter_resStr);
+	if (type != kSaveNone) {
+		WRITE_VAR(1, 1);
+		if (_vm->_saveLoad->load(type, dataVar, size, offset))
+			WRITE_VAR(1, 0);
 		return false;
 	}
 
@@ -1888,6 +1884,7 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 	int32 offset;
 	int32 size;
 	int16 dataVar;
+	SaveType type;
 
 	evalExpr(0);
 	dataVar = _vm->_parse->parseVarIndex();
@@ -1898,15 +1895,13 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes at %d)",
 			_vm->_global->_inter_resStr, dataVar, size, offset);
 
-	if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.inf"))
-		_vm->saveGameData(SAVE_CAT, dataVar, size, offset);
-	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "cat.cat"))
-		_vm->saveGameData(SAVE_CAT, dataVar, size, offset);
-	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "save.inf"))
-		_vm->saveGameData(SAVE_SAV, dataVar, size, offset);
-	else if (!scumm_stricmp(_vm->_global->_inter_resStr, "bloc.inf"))
-		_vm->saveGameData(SAVE_BLO, dataVar, size, offset);
-	else
+	WRITE_VAR(1, 1);
+
+	type = _vm->_saveLoad->getSaveType(_vm->_global->_inter_resStr);
+	if (type != kSaveNone) {
+		if (_vm->_saveLoad->save(type, dataVar, size, offset))
+			WRITE_VAR(1, 0);
+	} else
 		warning("Attempted to write to file \"%s\"", _vm->_global->_inter_resStr);
 
 	return false;
