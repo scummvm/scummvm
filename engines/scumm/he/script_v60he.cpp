@@ -403,16 +403,12 @@ int ScummEngine_v60he::convertFilePath(byte *dst) {
 	debug(1, "convertFilePath: original filePath is %s", dst);
 
 	int len = resStrLen(dst);
-	if (dst[0] == ':') {
+	if (_game.platform == Common::kPlatformMacintosh) {
 		// Switch all : to / for portablity
-		int j = 0;
-		for (int i = 1; i < len; i++) {
+		for (int i = 0; i < len; i++) {
 			if (dst[i] == ':')
-				dst[j++] = '/';
-			else
-				dst[j++] = dst[i];
+				dst[i] = '/';
 		}
-		dst[j] = 0;
 	} else {
 		// Switch all \ to / for portablity
 		for (int i = 0; i < len; i++) {
@@ -423,9 +419,11 @@ int ScummEngine_v60he::convertFilePath(byte *dst) {
 
 	// Strip path
 	int r = 0;
-	if (dst[0] == '.' && dst[1] == '/') {
+	if (dst[0] == '.' && dst[1] == '/') { // Game Data Path
 		r = 2;
-	} else if (dst[0] == 'c' && dst[1] == ':') {
+	} else if (dst[0] == '*' && dst[1] == '/') { // Save Game Path (HE72 - HE100)
+		r = 2;
+	} else if (dst[0] == 'c' && dst[1] == ':') { // Save Game Path (HE60 - HE71)
 		for (r = len; r != 0; r--) {
 			if (dst[r - 1] == '/')
 				break;

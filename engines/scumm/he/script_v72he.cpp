@@ -1049,6 +1049,8 @@ void ScummEngine_v72he::o72_roomOps() {
 
 	case 221:
 		copyScriptString(filename, sizeof(filename));
+		debug(1, "o72_roomOps: case 221: filename %s", filename);
+
 		_saveLoadFlag = pop();
 		_saveLoadSlot = 1;
 		_saveTemporaryState = true;
@@ -1721,14 +1723,6 @@ void ScummEngine_v72he::o72_openFile() {
 	const char *filename = (char *)buffer + convertFilePath(buffer);
 	debug(1, "Final filename to %s", filename);
 
-	// Work around for lost, to avoid debug code been triggered.
-	// The 'TEST.FYL' file is always deleted after been created
-	// but we currently don't support deleting files.
-	if (!strcmp(filename, "TEST.FYL")) {
-		push(-1);
-		return;
-	}
-
 	slot = -1;
 	for (i = 1; i < 17; i++) {
 		if (_hInFileTable[i] == 0 && _hOutFileTable[i] == 0) {
@@ -1870,6 +1864,7 @@ void ScummEngine_v72he::o72_deleteFile() {
 	byte filename[256];
 
 	copyScriptString(filename, sizeof(filename));
+
 	debug(1, "stub o72_deleteFile(%s)", filename);
 }
 
@@ -2108,8 +2103,6 @@ void ScummEngine_v72he::copyArrayHelper(ArrayHeader *ah, int idx2, int idx1, int
 void ScummEngine_v72he::o72_readINI() {
 	byte option[128];
 	byte *data;
-	const char *entry;
-	int len;
 
 	copyScriptString(option, sizeof(option));
 	byte subOp = fetchScriptByte();
@@ -2117,7 +2110,9 @@ void ScummEngine_v72he::o72_readINI() {
 	switch (subOp) {
 	case 43: // HE 100
 	case 6: // number
-		if (!strcmp((char *)option, "NoPrinting")) {
+		if (!strcmp((char *)option, "NoFontsInstalled")) {
+			push(1);
+		} else if (!strcmp((char *)option, "NoPrinting")) {
 			push(1);
 		} else if (!strcmp((char *)option, "TextOn")) {
 			push(ConfMan.getBool("subtitles"));
@@ -2127,13 +2122,16 @@ void ScummEngine_v72he::o72_readINI() {
 		break;
 	case 77: // HE 100
 	case 7: // string
-		entry = (ConfMan.get((char *)option).c_str());
-
 		writeVar(0, 0);
-		len = resStrLen((const byte *)entry);
-		data = defineArray(0, kStringArray, 0, 0, 0, len);
-		memcpy(data, entry, len);
-
+		if (!strcmp((char *)option, "SaveGamePath")) {
+			data = defineArray(0, kStringArray, 0, 0, 0, 1);
+			memcpy(data, (const char *)"*", 1);
+		} else {
+			const char *entry = (ConfMan.get((char *)option).c_str());
+			int len = resStrLen((const byte *)entry);
+			data = defineArray(0, kStringArray, 0, 0, 0, len);
+			memcpy(data, entry, len);
+		}
 		push(readVar(0));
 		break;
 	default:
