@@ -1110,7 +1110,7 @@ void Wiz::displayWizImage(WizImage *pwi) {
 }
 
 uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int shadow, int field_390, const Common::Rect *clipBox, int flags, int dstResNum, int palette) {
-	debug(2, "drawWizImage(resNum %d, x1 %d y1 %d flags 0x%X zorder %d shadow %d field_390 %d dstResNum %d palette %d)", resNum, x1, y1, flags, zorder, shadow, field_390, dstResNum, palette);
+	debug(3, "drawWizImage(resNum %d, x1 %d y1 %d flags 0x%X zorder %d shadow %d field_390 %d dstResNum %d palette %d)", resNum, x1, y1, flags, zorder, shadow, field_390, dstResNum, palette);
 	uint8 *dataPtr;
 	uint8 *dst = NULL;
 
@@ -1139,7 +1139,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 	uint32 comp   = READ_LE_UINT32(wizh + 0x0);
 	uint32 width  = READ_LE_UINT32(wizh + 0x4);
 	uint32 height = READ_LE_UINT32(wizh + 0x8);
-	debug(2, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d", comp, width, height);
+	debug(3, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d", comp, width, height);
 
 	uint8 *wizd = _vm->findWrappedBlock(MKID_BE('WIZD'), dataPtr, state, 0);
 	assert(wizd);
@@ -1363,7 +1363,7 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, i
 }
 
 void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int flags, int shadow, int dstResNum, int palette) {
-	debug(2, "drawWizPolygonTransform(resNum %d, flags 0x%X, shadow %d dstResNum %d palette %d)", resNum, flags, shadow, dstResNum, palette);
+	debug(3, "drawWizPolygonTransform(resNum %d, flags 0x%X, shadow %d dstResNum %d palette %d)", resNum, flags, shadow, dstResNum, palette);
 	int i;
 
 	if (flags & 0x800000) {
@@ -1888,7 +1888,7 @@ void Wiz::remapWizImagePal(const WizParameters *params) {
 void Wiz::processWizImage(const WizParameters *params) {
 	byte filename[260];
 
-	debug(2, "processWizImage: processMode %d", params->processMode);
+	debug(3, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
 	case 0:
 		// Used in racedemo
