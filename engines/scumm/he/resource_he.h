@@ -56,9 +56,17 @@ namespace Scumm {
 #define IMAGE_DOS_SIGNATURE    0x5A4D     /* MZ */
 #define IMAGE_NT_SIGNATURE     0x00004550 /* PE00 */
 
+/* The following symbols below and another group a few lines below are defined in
+ * the windows header, at least in wince and most likely in plain win32 as well.
+ * Defining them out silences a redefinition warning in gcc.
+ * If the same problem arises in win32 builds as well, please replace
+ * _WIN32_WCE with _WIN32 which is also defined in the wince platform.
+ */
+#ifndef _WIN32_WCE
 #define IMAGE_SCN_CNT_CODE			0x00000020
 #define IMAGE_SCN_CNT_INITIALIZED_DATA		0x00000040
 #define IMAGE_SCN_CNT_UNINITIALIZED_DATA	0x00000080
+#endif
 
 // Only IMAGE_DIRECTORY_ENTRY_RESOURCE is used:
 #define	IMAGE_DIRECTORY_ENTRY_EXPORT		0
@@ -77,6 +85,7 @@ namespace Scumm {
 #define	IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT	13
 #define	IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR	14
 
+#ifndef _WIN32_WCE
 // Only RT_GROUP_CURSOR and RT_GROUP_ICON are used
 #define RT_CURSOR        1
 #define RT_BITMAP        2
@@ -91,6 +100,7 @@ namespace Scumm {
 #define RT_MESSAGELIST   11
 #define RT_GROUP_CURSOR  12
 #define RT_GROUP_ICON    14
+#endif
 
 #define RETURN_IF_BAD_POINTER(r, x) \
 	if (!check_offset(fi->memory, fi->total_size, fi->file->name(), &(x), sizeof(x))) \
