@@ -100,7 +100,7 @@ int WaveAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	int retVal = 0;
 
 	while (retVal < numSamples && _samplesLeft > 0) {
-		int samples = MIN((int)_samplesLeft, numSamples);
+		int samples = MIN((int)_samplesLeft, numSamples - retVal);
 		retVal += samples;
 		_samplesLeft -= samples;
 		while (samples > 0) {
