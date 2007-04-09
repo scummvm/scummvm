@@ -426,9 +426,6 @@ void Goblin_v2::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 		}
 
 		if (animData->frame >= framesCount) {
-			if (animData->nextState == -1) // TODO: This should never happen
-				return;
-
 			state = animData->nextState;
 			animation = obj->goblinStates[state][0].animation;
 			layer = obj->goblinStates[state][0].layer;

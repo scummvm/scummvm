@@ -107,4 +107,25 @@ void Goblin_v3::advMovement(Mult::Mult_Object *obj, int8 state) {
 	}
 }
 
+void Goblin_v3::placeObject(Gob_Object *objDesc, char animated,
+		int16 index, int16 x, int16 y, int16 state) {
+
+	Mult::Mult_Object &obj = _vm->_mult->_objects[index];
+	Mult::Mult_AnimData &objAnim = *(obj.pAnimData);
+
+	if ((state != -1) && (obj.goblinStates[state] != 0)) {
+		if (state == 8)
+			objAnim.curLookDir = 0;
+		else if (state == 9)
+			objAnim.curLookDir = 4;
+		else if (state == 28)
+			objAnim.curLookDir = 6;
+		else if (state == 29)
+			objAnim.curLookDir = 2;
+	}
+
+	Goblin_v2::placeObject(objDesc, animated, index, x, y, state);
+
+}
+
 } // End of namespace Gob

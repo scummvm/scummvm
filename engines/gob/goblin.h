@@ -302,6 +302,9 @@ protected:
 
 class Goblin_v3 : public Goblin_v2 {
 public:
+	virtual void placeObject(Gob_Object * objDesc, char animated,
+			int16 index, int16 x, int16 y, int16 state);
+
 	Goblin_v3(GobEngine *vm);
 	virtual ~Goblin_v3() {};
 
