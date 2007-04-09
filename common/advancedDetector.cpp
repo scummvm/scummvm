@@ -411,7 +411,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 		printf("and its version/language/etc.:\n");
 
 		for (StringMap::const_iterator file = filesMD5.begin(); file != filesMD5.end(); ++file)
-			printf("  %s: '%s', %d\n", file->_key.c_str(), file->_value.c_str(), filesSize[file->_key]);
+			printf("  \"%s\", \"%s\", %d\n", file->_key.c_str(), file->_value.c_str(), filesSize[file->_key]);
 
 		printf("\n");
 	}
