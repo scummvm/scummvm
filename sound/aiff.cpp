@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: wave.cpp 25926 2007-03-02 15:26:22Z fingolfin $
+ * $Id$
  *
  */
 
