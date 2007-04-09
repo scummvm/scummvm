@@ -909,7 +909,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"gob3",
-			"Non-interactive Demo",
+			"Interactive Demo 3",
 			AD_ENTRY1s("intro.stk", "9e20ad7b471b01f84db526da34eaf0a2", 395561),
 			EN_ANY,
 			kPlatformPC,
