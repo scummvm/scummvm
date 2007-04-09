@@ -393,7 +393,7 @@ void Scenery::updateStatic(int16 orderFrom) {
 	updateStatic(orderFrom, _curStatic & 0xFF, _curStaticLayer & 0xFF);
 
 	if (_curStatic & 0xFF00)
-		updateStatic(orderFrom, (_curStatic >> 8) & 0xFF,
+		updateStatic(orderFrom, ((_curStatic >> 8) & 0xFF) - 1,
 				(_curStaticLayer >> 8) & 0xFF);
 }
 
