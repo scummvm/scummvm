@@ -512,7 +512,7 @@ void NORETURN CDECL error(const char *s, ...) {
 	// Print the error message to stderr
 #ifdef __GP32__
 	printf("ERROR: %s\n", buf_output);
-#elif !defined(_WIN32_WCE)
+#else
 	fprintf(stderr, "%s!\n", buf_output);
 #endif
 
@@ -539,13 +539,15 @@ void NORETURN CDECL error(const char *s, ...) {
 	TCHAR buf_output_unicode[1024];
 	MultiByteToWideChar(CP_ACP, 0, buf_output, strlen(buf_output) + 1, buf_output_unicode, sizeof(buf_output_unicode));
 	OutputDebugString(buf_output_unicode);
+#ifndef DEBUG
+	drawError(buf_output);
+#else
+	int cmon_break_into_the_debugger_if_you_please = *(int *)(buf_output + 1);	// bus error
+	printf("%d", cmon_break_into_the_debugger_if_you_please);			// don't optimize the int out
+#endif
 #else
 	OutputDebugString(buf_output);
 #endif
-#endif
-
-#if defined ( _WIN32_WCE )
-	drawError(buf_output);
 #endif
 
 #ifdef PALMOS_MODE
@@ -573,7 +575,7 @@ void CDECL warning(const char *s, ...) {
 #ifdef __GP32__ //ph0x FIXME: implement fprint?
 	printf("WARNING: %s\n", buf);
 #else
-#if !defined (_WIN32_WCE) && !defined (__SYMBIAN32__)
+#if !defined (__SYMBIAN32__)
 	fprintf(stderr, "WARNING: %s!\n", buf);
 #endif
 #endif
