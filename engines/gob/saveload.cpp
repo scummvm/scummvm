@@ -396,7 +396,7 @@ bool SaveLoad::loadSprite(Common::ReadStream &in, int32 size) {
 		return false;
 	}
 
-	buf = new byte[MAX(768, size)];
+	buf = new byte[MAX<int>(768, size)];
 	assert(buf);
 
 	if (readPal) {
