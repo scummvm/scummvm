@@ -908,6 +908,18 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"gob3",
+			"Non-interactive Demo",
+			AD_ENTRY1s("intro.stk", "9e20ad7b471b01f84db526da34eaf0a2", 395561),
+			EN_ANY,
+			kPlatformPC,
+			Common::ADGF_DEMO
+		},
+		GF_GOB3,
+		"intro"
+	},
+	{
+		{
 			"woodruff",
 			"",
 			AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
