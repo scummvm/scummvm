@@ -76,6 +76,7 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_activeCollIndex = 0;
 	_handleMouse = 0;
 	_forceHandleMouse = 0;
+	_menuLevel = 0;
 
 	_tempStr[0] = 0;
 	_curImaFile[0] = 0;

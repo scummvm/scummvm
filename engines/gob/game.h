@@ -170,6 +170,7 @@ protected:
 	int16 _activeCollIndex;
 	byte _handleMouse;
 	char _forceHandleMouse;
+	uint32 _menuLevel;
 
 	char _tempStr[256];
 

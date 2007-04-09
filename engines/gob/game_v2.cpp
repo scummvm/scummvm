@@ -277,7 +277,11 @@ void Game_v2::playTot(int16 skipPlay) {
 		_vm->_global->_inter_execPtr = _totFileData;
 		_vm->_global->_inter_execPtr +=
 			READ_LE_UINT16(_totFileData + (skipPlay << 1) + 0x66);
+
+		_menuLevel++;
 		_vm->_inter->callSub(2);
+		_menuLevel--;
+
 		if (_vm->_inter->_terminate != 0)
 			_vm->_inter->_terminate = 2;
 	}
@@ -444,7 +448,9 @@ int16 Game_v2::checkCollisions(byte handleMouse, int16 deltaTime, int16 *pResId,
 		key = checkKeys(&_vm->_global->_inter_mouseX,
 				&_vm->_global->_inter_mouseY, &_mouseButtons, handleMouse);
 
-		if ((_vm->_global->_videoMode == 0x14) && (handleMouse != 0)) {
+		if ((_vm->_global->_videoMode == 0x14) && (handleMouse != 0) &&
+				(_menuLevel == 0)) {
+
 			int16 cursorRight;
 			int16 screenRight;
 			
