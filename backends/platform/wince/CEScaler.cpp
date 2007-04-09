@@ -128,8 +128,19 @@ void PocketPCLandscapeAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr
 	}
 }
 
+#ifdef ARM
+extern "C" {
+  void PocketPCHalfARM(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height, int mask, int round);
+  // Rounding constants and masks used for different pixel formats
+  int roundingconstants[] = { 0x00200802, 0x00201002 };
+  int redbluegreenMasks[] = { 0x03E07C1F, 0x07E0F81F };
+}
+#endif
 
 void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+#ifdef ARM
+     PocketPCHalfARM(srcPtr, srcPitch, dstPtr, dstPitch, width, height, redbluegreenMasks[maskUsed],roundingconstants[maskUsed]);
+#else
 	uint8 *work;
 	int i;
 	uint16 srcPitch16 = (uint16)(srcPitch / sizeof(uint16));
@@ -151,6 +162,7 @@ void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 		srcPtr += 2 * srcPitch;
 		dstPtr += dstPitch;
 	}
+#endif
 }
 
 
