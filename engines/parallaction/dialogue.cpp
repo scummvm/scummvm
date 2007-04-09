@@ -354,11 +354,13 @@ void Parallaction::runDialogue(SpeakData *data) {
 	Cnv *face = isNpc ? _disk->loadTalk(data->_name) : _char._talk;
 
 	_askPassword = false;
-	uint16 answer = 0;
 	CommandList *cmdlist = NULL;
 
+	uint16 answer;
 	Dialogue *q = data->_dialogue;
 	while (q) {
+
+		answer = 0;
 
 		displayQuestion(q, face);
 		if (q->_answers[0] == NULL) break;
@@ -366,13 +368,12 @@ void Parallaction::runDialogue(SpeakData *data) {
 		_answerBalloonY[0] = 10;
 
 		if (scumm_stricmp(q->_answers[0]->_text, "NULL")) {
-
 			if (!displayAnswers(q)) break;
 			answer = getDialogueAnswer(q, _char._talk);
 			cmdlist = &q->_answers[answer]->_commands;
 		}
 
-		q = (Dialogue*)q->_answers[answer]->_following._question;
+		q = q->_answers[answer]->_following._question;
 	}
 
 	debugC(1, kDebugDialogue, "runDialogue: out of dialogue loop");
