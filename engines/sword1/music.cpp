@@ -37,29 +37,28 @@
 
 namespace Sword1 {
 
-class WaveAudioStream : public Audio::AudioStream {
+class BaseAudioStream : public Audio::AudioStream {
 public:
-	WaveAudioStream(Common::SeekableReadStream *source, bool loop);
-	virtual ~WaveAudioStream();
+	BaseAudioStream(Common::SeekableReadStream *source, bool loop);
+	virtual ~BaseAudioStream();
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 	virtual bool isStereo() const { return _isStereo; }
 	virtual bool endOfData() const { return (_samplesLeft == 0); }
 	virtual int getRate() const { return _rate; }
-private:
+protected:
 	Common::SeekableReadStream	*_sourceStream;
 	uint8	*_sampleBuf;
-	uint32	 _rate;
-	bool	 _isStereo;
-	uint32	 _samplesLeft;
-	uint16	 _bitsPerSample;
-	bool	 _loop;
-	
-	void rewind();
+	uint32	_rate;
+	bool	_isStereo;
+	uint32	_samplesLeft;
+	uint16	_bitsPerSample;
+	bool	_loop;
+
+	virtual void rewind() = 0;
+	virtual void reinit(int size, int rate, byte flags);
 };
 
-WaveAudioStream::WaveAudioStream(Common::SeekableReadStream *source, bool loop) {
-	// TODO: honor the loop flag
-
+BaseAudioStream::BaseAudioStream(Common::SeekableReadStream *source, bool loop) {
 	_sourceStream = source;
 	_sampleBuf = (uint8*)malloc(SMP_BUFSIZE);
 
@@ -68,35 +67,23 @@ WaveAudioStream::WaveAudioStream(Common::SeekableReadStream *source, bool loop) 
 	_bitsPerSample = 16;
 	_rate = 22050;
 	_loop = loop;
-	
-	rewind();
-	
-	if (_samplesLeft == 0)
-		_loop = false;
 }
 
-WaveAudioStream::~WaveAudioStream() {
+BaseAudioStream::~BaseAudioStream() {
 	free(_sampleBuf);
 }
 
-void WaveAudioStream::rewind() {
-	int rate, size;
-	byte flags;
-	
-	_sourceStream->seek(0);
-
-	if (Audio::loadWAVFromStream(*_sourceStream, size, rate, flags)) {
-		_isStereo = (flags & Audio::Mixer::FLAG_STEREO) != 0;
-		_rate = rate;
-		assert((uint)size <= (_sourceStream->size() - _sourceStream->pos()));
-		_bitsPerSample = ((flags & Audio::Mixer::FLAG_16BITS) != 0) ? 16 : 8;
-		_samplesLeft = (size * 8) / _bitsPerSample;
-		if ((_bitsPerSample != 16) && (_bitsPerSample != 8))
-			error("WaveAudioStream: unknown wave type");
-	}
+void BaseAudioStream::reinit(int size, int rate, byte flags) {
+	_isStereo = (flags & Audio::Mixer::FLAG_STEREO) != 0;
+	_rate = rate;
+	assert((uint)size <= (_sourceStream->size() - _sourceStream->pos()));
+	_bitsPerSample = ((flags & Audio::Mixer::FLAG_16BITS) != 0) ? 16 : 8;
+	_samplesLeft = (size * 8) / _bitsPerSample;
+	if ((_bitsPerSample != 16) && (_bitsPerSample != 8))
+		error("BaseAudioStream: unknown sound type");
 }
 
-int WaveAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+int BaseAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	int retVal = 0;
 
 	while (retVal < numSamples && _samplesLeft > 0) {
@@ -107,11 +94,9 @@ int WaveAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 			int readBytes = MIN(samples * (_bitsPerSample >> 3), SMP_BUFSIZE);
 			_sourceStream->read(_sampleBuf, readBytes);
 			if (_bitsPerSample == 16) {
-				readBytes >>= 1;
-				samples -= readBytes;
-				int16 *src = (int16*)_sampleBuf;
-				while (readBytes--)
-					*buffer++ = (int16)READ_LE_UINT16(src++);
+				samples -= (readBytes / 2);
+				memcpy(buffer, _sampleBuf, readBytes);
+				buffer += (readBytes / 2);
 			} else {
 				samples -= readBytes;
 				int8 *src = (int8*)_sampleBuf;
@@ -128,46 +113,57 @@ int WaveAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	return retVal;
 }
 
-class AiffAudioStream : public Audio::AudioStream {
+class WaveAudioStream : public BaseAudioStream {
 public:
-	AiffAudioStream(Common::SeekableReadStream *source, bool loop);
-	virtual ~AiffAudioStream();
+	WaveAudioStream(Common::SeekableReadStream *source, bool loop);
 	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return _isStereo; }
-	virtual bool endOfData() const { return (_samplesLeft == 0); }
-	virtual int getRate() const { return _rate; }
 private:
-	Common::SeekableReadStream	*_sourceStream;
-	uint8	*_sampleBuf;
-	uint32	 _rate;
-	bool	 _isStereo;
-	uint32	 _samplesLeft;
-	uint16	 _bitsPerSample;
-	bool	 _loop;
-	
-	void rewind();
+	virtual void rewind();
 };
 
-AiffAudioStream::AiffAudioStream(Common::SeekableReadStream *source, bool loop) {
-	// TODO: honor the loop flag
-
-	_sourceStream = source;
-	_sampleBuf = (uint8*)malloc(SMP_BUFSIZE);
-
-	_samplesLeft = 0;
-	_isStereo = false;
-	_bitsPerSample = 16;
-	_rate = 22050;
-	_loop = loop;
-	
+WaveAudioStream::WaveAudioStream(Common::SeekableReadStream *source, bool loop) : BaseAudioStream(source, loop) {
 	rewind();
-	
+
 	if (_samplesLeft == 0)
 		_loop = false;
 }
 
-AiffAudioStream::~AiffAudioStream() {
-	free(_sampleBuf);
+void WaveAudioStream::rewind() {
+	int rate, size;
+	byte flags;
+
+	_sourceStream->seek(0);
+
+	if (Audio::loadWAVFromStream(*_sourceStream, size, rate, flags)) {
+		reinit(size, rate, flags);
+	}
+}
+
+int WaveAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	int retVal = BaseAudioStream::readBuffer(buffer, numSamples);
+
+	if (_bitsPerSample == 16) {
+		for (int i = 0; i < retVal; i++) {
+			buffer[i] = (int16)READ_LE_UINT16(buffer + i);
+		}
+	}
+
+	return retVal;
+}
+
+class AiffAudioStream : public BaseAudioStream {
+public:
+	AiffAudioStream(Common::SeekableReadStream *source, bool loop);
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+private:
+	void rewind();
+};
+
+AiffAudioStream::AiffAudioStream(Common::SeekableReadStream *source, bool loop) : BaseAudioStream(source, loop) {
+	rewind();
+
+	if (_samplesLeft == 0)
+		_loop = false;
 }
 
 void AiffAudioStream::rewind() {
@@ -177,42 +173,16 @@ void AiffAudioStream::rewind() {
 	_sourceStream->seek(0);
 
 	if (Audio::loadAIFFFromStream(*_sourceStream, size, rate, flags)) {
-		_isStereo = (flags & Audio::Mixer::FLAG_STEREO) != 0;
-		_rate = rate;
-		assert((uint)size <= (_sourceStream->size() - _sourceStream->pos()));
-		_bitsPerSample = ((flags & Audio::Mixer::FLAG_16BITS) != 0) ? 16 : 8;
-		_samplesLeft = (size * 8) / _bitsPerSample;
-		if ((_bitsPerSample != 16) && (_bitsPerSample != 8))
-			error("AiffAudioStream: unknown wave type");
+		reinit(size, rate, flags);
 	}
 }
 
 int AiffAudioStream::readBuffer(int16 *buffer, const int numSamples) {
-	int retVal = 0;
+	int retVal = BaseAudioStream::readBuffer(buffer, numSamples);
 
-	while (retVal < numSamples && _samplesLeft > 0) {
-		int samples = MIN((int)_samplesLeft, numSamples - retVal);
-		retVal += samples;
-		_samplesLeft -= samples;
-		while (samples > 0) {
-			int readBytes = MIN(samples * (_bitsPerSample >> 3), SMP_BUFSIZE);
-			_sourceStream->read(_sampleBuf, readBytes);
-			if (_bitsPerSample == 16) {
-				readBytes >>= 1;
-				samples -= readBytes;
-				int16 *src = (int16*)_sampleBuf;
-				while (readBytes--)
-					*buffer++ = (int16)READ_BE_UINT16(src++);
-			} else {
-				samples -= readBytes;
-				int8 *src = (int8*)_sampleBuf;
-				while (readBytes--)
-					*buffer++ = (int16)*src++ << 8;
-			}
-		}
-
-		if (!_samplesLeft && _loop) {
-			rewind();
+	if (_bitsPerSample == 16) {
+		for (int i = 0; i < retVal; i++) {
+			buffer[i] = (int16)READ_BE_UINT16(buffer + i);
 		}
 	}
 	
