@@ -143,6 +143,7 @@ void OSystem_PSP_GU::initSize(uint width, uint height) {
 	_offscreen = (unsigned byte *)_overlayBuffer + _overlayWidth * _overlayHeight * sizeof(OverlayColor);
 	bzero(_offscreen, width * height);
 	clearOverlay();
+	memset(_palette, 0xffff, 256 * sizeof(unsigned short));
 	_kbdClut[0] = 0xffff;
 	_kbdClut[246] = 0x4ccc;
 	_kbdClut[247] = 0x0000;
