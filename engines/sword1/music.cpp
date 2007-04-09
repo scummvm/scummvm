@@ -27,6 +27,7 @@
 #include "common/system.h"
 
 #include "sword1/music.h"
+#include "sound/aiff.h"
 #include "sound/mixer.h"
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
@@ -127,6 +128,97 @@ int WaveAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	return retVal;
 }
 
+class AiffAudioStream : public Audio::AudioStream {
+public:
+	AiffAudioStream(Common::SeekableReadStream *source, bool loop);
+	virtual ~AiffAudioStream();
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual bool isStereo() const { return _isStereo; }
+	virtual bool endOfData() const { return (_samplesLeft == 0); }
+	virtual int getRate() const { return _rate; }
+private:
+	Common::SeekableReadStream	*_sourceStream;
+	uint8	*_sampleBuf;
+	uint32	 _rate;
+	bool	 _isStereo;
+	uint32	 _samplesLeft;
+	uint16	 _bitsPerSample;
+	bool	 _loop;
+	
+	void rewind();
+};
+
+AiffAudioStream::AiffAudioStream(Common::SeekableReadStream *source, bool loop) {
+	// TODO: honor the loop flag
+
+	_sourceStream = source;
+	_sampleBuf = (uint8*)malloc(SMP_BUFSIZE);
+
+	_samplesLeft = 0;
+	_isStereo = false;
+	_bitsPerSample = 16;
+	_rate = 22050;
+	_loop = loop;
+	
+	rewind();
+	
+	if (_samplesLeft == 0)
+		_loop = false;
+}
+
+AiffAudioStream::~AiffAudioStream() {
+	free(_sampleBuf);
+}
+
+void AiffAudioStream::rewind() {
+	int rate, size;
+	byte flags;
+	
+	_sourceStream->seek(0);
+
+	if (Audio::loadAIFFFromStream(*_sourceStream, size, rate, flags)) {
+		_isStereo = (flags & Audio::Mixer::FLAG_STEREO) != 0;
+		_rate = rate;
+		assert((uint)size <= (_sourceStream->size() - _sourceStream->pos()));
+		_bitsPerSample = ((flags & Audio::Mixer::FLAG_16BITS) != 0) ? 16 : 8;
+		_samplesLeft = (size * 8) / _bitsPerSample;
+		if ((_bitsPerSample != 16) && (_bitsPerSample != 8))
+			error("AiffAudioStream: unknown wave type");
+	}
+}
+
+int AiffAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	int retVal = 0;
+
+	while (retVal < numSamples && _samplesLeft > 0) {
+		int samples = MIN((int)_samplesLeft, numSamples - retVal);
+		retVal += samples;
+		_samplesLeft -= samples;
+		while (samples > 0) {
+			int readBytes = MIN(samples * (_bitsPerSample >> 3), SMP_BUFSIZE);
+			_sourceStream->read(_sampleBuf, readBytes);
+			if (_bitsPerSample == 16) {
+				readBytes >>= 1;
+				samples -= readBytes;
+				int16 *src = (int16*)_sampleBuf;
+				while (readBytes--)
+					*buffer++ = (int16)READ_BE_UINT16(src++);
+			} else {
+				samples -= readBytes;
+				int8 *src = (int8*)_sampleBuf;
+				while (readBytes--)
+					*buffer++ = (int16)*src++ << 8;
+			}
+		}
+
+		if (!_samplesLeft && _loop) {
+			rewind();
+		}
+	}
+	
+	return retVal;
+}
+
 // This means fading takes 3 seconds.
 #define FADE_LENGTH 3
 
@@ -155,6 +247,12 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 		sprintf(fileName, "%s.wav", fileBase);
 		if (_file.open(fileName))
 			_audioSource = new WaveAudioStream(&_file, loop);
+	}
+
+	if (!_audioSource) {
+		sprintf(fileName, "%s.aif", fileBase);
+		if (_file.open(fileName))
+			_audioSource = new AiffAudioStream(&_file, loop);
 	}
 	
 	if (!_audioSource)

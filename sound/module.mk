@@ -2,6 +2,7 @@ MODULE := sound
 
 MODULE_OBJS := \
 	adpcm.o \
+	aiff.o \
 	audiocd.o \
 	audiostream.o \
 	flac.o \
