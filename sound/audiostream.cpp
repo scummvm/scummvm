@@ -305,6 +305,7 @@ int AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 
 		assert(buf.start <= _pos && _pos <= buf.end);
 		const int samplesLeftInCurBuffer = buf.end - _pos;
 		if (samplesLeftInCurBuffer == 0) {
+			delete [] buf.start;
 			_bufferQueue.erase(_bufferQueue.begin());
 			_pos = 0;
 			continue;
