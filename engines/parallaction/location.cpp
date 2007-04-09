@@ -195,22 +195,13 @@ void Parallaction::freeLocation() {
 	// but that'll pretty meaningless with a single list approach.
 	helperNode._prev = helperNode._next = NULL;
 	freeZones(_zones._next);
-	freeNodeList(_zones._next);
 	_zones._next = helperNode._next;
 	_zones._prev = helperNode._prev;
-//	memcpy(&_zones, &helperNode, sizeof(Node));
 	debugC(7, kDebugLocation, "freeLocation: zones freed");
 
-	// TODO (LIST): helperNode should be rendered useless by the use of a Common::List<>
-	// to store Zones and Animations. Right now, it holds a list of Zones to be preserved
-	// but that'll pretty meaningless with a single list approach.
-	helperNode._prev = helperNode._next = NULL;
-	freeZones(_animations._next);
 	freeAnimations();
-	freeNodeList(_animations._next);
-	_animations._next = helperNode._next;
-	_animations._prev = helperNode._prev;
-//	memcpy(&_animations, &helperNode, sizeof(Node));
+	_animations._next = 0;
+	_animations._prev = 0;
 	debugC(7, kDebugLocation, "freeLocation: animations freed");
 
 	if (_location._comment) {

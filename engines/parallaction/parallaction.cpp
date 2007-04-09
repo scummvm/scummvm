@@ -805,19 +805,6 @@ void Parallaction::changeCharacter(const char *name) {
 	return;
 }
 
-// TODO (LIST): this rouinte basically performs List<>::clear()
-// so it will become useless
-void freeNodeList(Node *list) {
-
-	while (list) {
-		Node *v4 = list->_next;
-		free(list);
-		list = v4;
-	}
-
-	return;
-}
-
 // TODO (LIST): this routine will be removed
 void addNode(Node *list, Node *n) {
 

@@ -199,7 +199,7 @@ void waitUntilLeftClick();
 
 void addNode(Node *list, Node *n);
 void removeNode(Node *n);
-void freeNodeList(Node *list);
+
 
 
 

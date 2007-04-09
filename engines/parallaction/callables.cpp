@@ -413,12 +413,10 @@ void _c_finito(void *parm) {
 
 	// TODO (LIST): this sequence should be just _zones.clear()
 	_vm->freeZones(_vm->_zones._next);
-	freeNodeList(_vm->_zones._next);
 	_vm->_zones._next = NULL;
 
 	// TODO (LIST): this sequence should be just _animations.clear()
-	_vm->freeZones(_vm->_animations._next);
-	freeNodeList(_vm->_animations._next);
+	_vm->freeAnimations();
 	_vm->_animations._next = NULL;
 
 	// this dangerous flag can now be cleared
