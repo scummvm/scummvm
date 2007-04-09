@@ -23,15 +23,18 @@
 #ifndef PARALLACTION_H
 #define PARALLACTION_H
 
+#include "common/str.h"
+#include "gui/dialog.h"
+#include "gui/widget.h"
+
 #include "engines/engine.h"
+
 #include "parallaction/defs.h"
 #include "parallaction/inventory.h"
 #include "parallaction/parser.h"
 #include "parallaction/disk.h"
+#include "parallaction/walk.h"
 #include "parallaction/zone.h"
-#include "common/str.h"
-#include "gui/dialog.h"
-#include "gui/widget.h"
 
 namespace GUI {
 	class ListWidget;
@@ -224,9 +227,9 @@ class MidiPlayer;
 struct Location {
 
 	Common::Point	_startPosition;
-	uint16		_startFrame;
-	Node		_walkNodes;
-	char		_name[100];
+	uint16			_startFrame;
+	WalkNodeList	_walkNodes;
+	char			_name[100];
 
 	CommandList		_aCommands;
 	CommandList		_commands;
@@ -240,8 +243,9 @@ struct Character {
 	StaticCnv		*_head;
 	Cnv		    	*_talk;
 	Cnv 			*_objs;
+	PathBuilder		_builder;
 
-	Character() {
+	Character() : _builder(&_ani) {
 		_talk = NULL;
 		_head = NULL;
 		_objs = NULL;
@@ -430,7 +434,7 @@ protected:		// members
 
 	void		parseZone(Script &script, Node *list, char *name);
 	void		parseZoneTypeBlock(Script &script, Zone *z);
-	void 		parseWalkNodes(Script& script, Node *list);
+	void 		parseWalkNodes(Script& script, WalkNodeList &list);
 	void 		displayCharacterComment(ExamineData *data);
 	void 		displayItemComment(ExamineData *data);
 

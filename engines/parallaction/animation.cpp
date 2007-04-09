@@ -152,6 +152,7 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 
 void Parallaction::freeAnimations() {
 	Animation *v4 = (Animation*)_animations._next;
+
 	while (v4) {
 		Animation *v = (Animation*)v4->_next;
 		delete v4;
@@ -462,7 +463,6 @@ void jobRunScripts(void *parm, Job *j) {
 	Animation *a = (Animation*)_vm->_animations._next;
 
 	StaticCnv v18;
-	WalkNode *v4 = NULL;
 
 	if (a->_flags & kFlagsCharacter) a->_z = a->_top + a->height();
 	for ( ; a; a = (Animation*)a->_next) {
@@ -539,10 +539,11 @@ void jobRunScripts(void *parm, Job *j) {
 			}
 			break;
 
-			case INST_MOVE: // move
-				v4 = buildWalkPath(*(*inst)->_opA._pvalue, *(*inst)->_opB._pvalue);
+			case INST_MOVE: { // move
+				WalkNodeList *v4 = _vm->_char._builder.buildPath(*(*inst)->_opA._pvalue, *(*inst)->_opB._pvalue);
 				_vm->addJob(&jobWalk, v4, kPriority19 );
 				_engineFlags |= kEngineWalking;
+			}
 				break;
 
 			case INST_PUT:	// put
@@ -631,7 +632,6 @@ void wrapLocalVar(LocalVariable *local) {
 
 void Parallaction::sortAnimations() {
 	Node v14;
-	memset(&v14, 0, sizeof(Node));
 
 	_char._ani._z = _char._ani.height() + _char._ani._top;
 
@@ -654,8 +654,8 @@ void Parallaction::sortAnimations() {
 		vC = v4;
 	}
 
-	memcpy(&_animations, &v14, sizeof(Node));
-
+	_animations._prev = v14._prev;
+	_animations._next = v14._next;
 	_animations._next->_prev = &_animations;
 
 	return;

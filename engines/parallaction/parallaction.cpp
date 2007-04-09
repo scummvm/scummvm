@@ -185,8 +185,6 @@ int Parallaction::init() {
 	_location._startPosition.x = -1000;
 	_location._startPosition.y = -1000;
 	_location._startFrame = 0;
-	_location._walkNodes._prev = NULL;
-	_location._walkNodes._next = NULL;
 
 	if (getFeatures() & GF_DEMO)
 		strcpy(_location._name, "fognedemo");
@@ -416,7 +414,6 @@ void Parallaction::runGame() {
 
 void Parallaction::processInput(InputData *data) {
 	Zone *z;
-	WalkNode *v4;
 
 	switch (data->_event) {
 	case kEvEnterZone:
@@ -480,15 +477,16 @@ void Parallaction::processInput(InputData *data) {
 		_procCurrentHoverItem = data->_inventoryIndex;
 		break;
 
-	case kEvWalk:
+	case kEvWalk: {
 		debugC(2, kDebugInput, "processInput: kEvWalk");
 		_hoverZone = NULL;
 		changeCursor(kCursorArrow);
 		if (_vm->_char._ani._flags & kFlagsRemove) break;
 		if ((_vm->_char._ani._flags & kFlagsActive) == 0) break;
-		v4 = buildWalkPath(data->_mousePos.x, data->_mousePos.y);
+		WalkNodeList *v4 = _vm->_char._builder.buildPath(data->_mousePos.x, data->_mousePos.y);
 		addJob(&jobWalk, v4, kPriority19);
 		_engineFlags |= kEngineWalking; 								   // inhibits processing of input until walking is over
+		}
 		break;
 
 	case kEvQuitGame:

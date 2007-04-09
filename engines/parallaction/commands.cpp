@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/stdafx.h"
+
 #include "parallaction/parallaction.h"
 #include "parallaction/parser.h"
 #include "parallaction/commands.h"
@@ -312,7 +314,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 				continue;
 			}
 
-			WalkNode *vC = buildWalkPath(u->_move._x, u->_move._y);
+			WalkNodeList *vC = _vm->_char._builder.buildPath(u->_move._x, u->_move._y);
 
 			addJob(&jobWalk, vC, kPriority19 );
 			_engineFlags |= kEngineWalking;

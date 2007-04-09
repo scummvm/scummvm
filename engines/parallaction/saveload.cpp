@@ -20,17 +20,17 @@
  *
  */
 
-
-#include "parallaction/parallaction.h"
-#include "parallaction/disk.h"
-#include "parallaction/graphics.h"
-#include "parallaction/zone.h"
-
+#include "common/stdafx.h"
 #include "common/savefile.h"
 
 #include "gui/widget.h"
 #include "gui/ListWidget.h"
 #include "gui/message.h"
+
+#include "parallaction/parallaction.h"
+#include "parallaction/disk.h"
+#include "parallaction/graphics.h"
+#include "parallaction/zone.h"
 
 /* Nippon Safes savefiles are called 'game.0' to 'game.9'. The game conventiently allows users to
  * give meanigful name to savegames, and it uses an extra file 'savegame' to keep track of these

@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/stdafx.h"
+
 #include "parallaction/parallaction.h"
 #include "parallaction/menu.h"
 #include "parallaction/music.h"

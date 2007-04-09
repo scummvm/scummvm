@@ -27,7 +27,10 @@
 
 namespace Parallaction {
 
-struct WalkNode : public Node {
+struct Animation;
+struct Job;
+
+struct WalkNode {
 	int32	_x;
 	int32	_y;
 
@@ -39,14 +42,30 @@ public:
 	void getPoint(Common::Point &p) const;
 };
 
+typedef ManagedList<WalkNode*> WalkNodeList;
 
-WalkNode 	*buildWalkPath(uint16 x, uint16 y);
+//WalkNode 	*buildWalkPath(uint16 x, uint16 y);
 void 		 jobWalk(void*, Job *j);
 uint16		 checkDoor();
 void 		 setPath(byte *path);
 void		 initWalk();
 uint16 		 queryPath(uint16 x, uint16 y);
 
+class PathBuilder {
+
+	Animation 		*_anim;
+
+	WalkNodeList 	*_list;
+	WalkNodeList 	_subPath;
+
+	void correctPathPoint(Common::Point &to);
+	uint32 buildSubPath(const Common::Point& pos, const Common::Point& stop);
+
+public:
+	PathBuilder(Animation *anim);
+	WalkNodeList* buildPath(uint16 x, uint16 y);
+
+};
 
 
 }

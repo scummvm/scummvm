@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/stdafx.h"
 
 #include "parallaction/parallaction.h"
 #include "parallaction/disk.h"

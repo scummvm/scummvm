@@ -31,9 +31,6 @@ namespace Parallaction {
 
 uint16 walkFunc1(int16, int16, WalkNode *);
 
-
-WalkNode _NULL_WALKNODE();
-
 static byte		*_buffer;
 
 static uint16 _doorData1 = 1000;
@@ -41,17 +38,11 @@ static Zone *_zoneTrap = NULL;
 
 static uint16	walkData1 = 0;
 static uint16	walkData2 = 0; 	// next walk frame
-#if 0
-static int16	walkData3 = -1000; 	// unused
-#endif
 
-int32 dotProduct(const Common::Point &p1, const Common::Point &p2) {
-	return p1.x * p2.x + p1.y * p2.y;
-}
 
 // adjusts position towards nearest walkable point
 //
-void correctPathPoint(Common::Point &to) {
+void PathBuilder::correctPathPoint(Common::Point &to) {
 
 	if (queryPath(to.x, to.y)) return;
 
@@ -84,71 +75,61 @@ void correctPathPoint(Common::Point &to) {
 	int16 close = (closeX >= closeY) ? closeY : closeX;
 	if (close == right) {
 		to.x += right;
-#if 0
-		walkData3 = (_vm->_char._ani.getFrameNum() == 20) ? 7 : 9;
-#endif
 	} else
 	if (close == left) {
 		to.x -= left;
-#if 0
-		walkData3 = 0;
-#endif
 	} else
 	if (close == top) {
 		to.y -= top;
 	} else
 	if (close == bottom) {
 		to.y += bottom;
-#if 0
-		walkData3 = (_vm->_char._ani.getFrameNum() == 20) ? 17 : 21;
-#endif
 	}
 
 	return;
 
 }
 
-uint32 buildSubPath(const Common::Point& pos, const Common::Point& stop, WalkNode* root) {
-
-	WalkNode *v48 = root;
+uint32 PathBuilder::buildSubPath(const Common::Point& pos, const Common::Point& stop) {
 
 	uint32 v28 = 0;
 	uint32 v2C = 0;
 	uint32 v34 = pos.sqrDist(stop);				// square distance from current position and target
 	uint32 v30 = v34;
 
+	_subPath.clear();
+
 	Common::Point v20(pos);
 
 	while (true) {
 
-		WalkNode *nearestNode = NULL;
-		WalkNode *locNode = (WalkNode*)_vm->_location._walkNodes._next;
+		WalkNodeList::iterator nearest = _vm->_location._walkNodes.end();
+		WalkNodeList::iterator locNode = _vm->_location._walkNodes.begin();
 
 		// scans location path nodes searching for the nearest Node
 		// which can't be farther than the target position
 		// otherwise no _closest_node is selected
-		while (locNode != NULL) {
+		while (locNode != _vm->_location._walkNodes.end()) {
 
 			Common::Point v8;
-			locNode->getPoint(v8);
+			(*locNode)->getPoint(v8);
 			v2C = v8.sqrDist(stop);
 			v28 = v8.sqrDist(v20);
 
 			if (v2C < v34 && v28 < v30) {
 				v30 = v28;
-				nearestNode = locNode;
+				nearest = locNode;
 			}
 
-			locNode = (WalkNode*)locNode->_next;
+			locNode++;
 		}
 
-		if (nearestNode == NULL) break;
+		if (nearest == _vm->_location._walkNodes.end()) break;
 
-		nearestNode->getPoint(v20);
+		(*nearest)->getPoint(v20);
 		v34 = v30 = v20.sqrDist(stop);
 
-		addNode(v48, new WalkNode(*nearestNode));
-		v48 = (WalkNode*)v48->_next;
+		_subPath.push_back(new WalkNode(**nearest));
 	}
 
 	return v34;
@@ -158,8 +139,8 @@ uint32 buildSubPath(const Common::Point& pos, const Common::Point& stop, WalkNod
 //
 //	x, y: mouse click (foot) coordinates
 //
-WalkNode *buildWalkPath(uint16 x, uint16 y) {
-	debugC(1, kDebugWalk, "buildWalkPath to (%i, %i)", x, y);
+WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
+	debugC(1, kDebugWalk, "PathBuilder::buildPath to (%i, %i)", x, y);
 
 	Common::Point to(x, y);
 	correctPathPoint(to);
@@ -173,33 +154,35 @@ WalkNode *buildWalkPath(uint16 x, uint16 y) {
 		// destination directly reachable
 		debugC(1, kDebugWalk, "direct move to (%i, %i)", to.x, to.y);
 		delete v44;
-		return v48;
+
+		_list = new WalkNodeList;
+		_list->push_back(v48);
+		return _list;
 	}
 
-	// path is obstructed: find alternative
-
-	WalkNode	dummy;
-	addNode(&dummy, v48);
+	// path is obstructed: look for alternative
+	_list = new WalkNodeList;
+	_list->push_back(v48);
 
 	Common::Point stop(v48->_x, v48->_y);
 	Common::Point pos(_vm->_char._ani._left, _vm->_char._ani._top);
 
-	v48 = &dummy;
-	uint32 v34 = buildSubPath(pos, stop, v48);
+	uint32 v34 = buildSubPath(pos, stop);
 	if (v38 != 0 && v34 > v38) {
 		// no alternative path (gap?)
-		// TODO (LIST): tempPath.clear()
-		freeNodeList(dummy._next);
-		return v44;
+		_list->clear();
+		_list->push_back(v44);
+		return _list;
 	}
+	_list->insert(_list->begin(), _subPath.begin(), _subPath.end());
 
-	((WalkNode*)(dummy._next))->getPoint(stop);
+	(*_list->begin())->getPoint(stop);
 
-	v48 = &dummy;
-	buildSubPath(pos, stop, v48);
+	buildSubPath(pos, stop);
+	_list->insert(_list->begin(), _subPath.begin(), _subPath.end());
 
 	delete v44;
-	return (WalkNode*)dummy._next;
+	return _list;
 }
 
 
@@ -326,53 +309,42 @@ int16 selectWalkFrame(const Common::Point& pos, const WalkNode* from) {
 	return v16;
 }
 
-WalkNode* getNextPathNode(const Common::Point& pos, WalkNode* curNode) {
-
-	if ((curNode->_x == pos.x) && (curNode->_y == pos.y)) {
-
-		if (curNode->_next == NULL) return NULL;
-
-		WalkNode *tmp = curNode;
-		curNode = (WalkNode*)curNode->_next;
-		free(tmp);
-
-		debugC(1, kDebugWalk, "jobWalk moving to next node (%i, %i)", tmp->_x, tmp->_y);
-	}
-
-	return curNode;
-
+void finalizeWalk(WalkNodeList *list) {
+	checkDoor();
+	delete list;
 }
 
 void jobWalk(void *parm, Job *j) {
-	WalkNode *node = (WalkNode*)parm;
+	WalkNodeList *list = (WalkNodeList*)parm;
 
 	Common::Point pos(_vm->_char._ani._left, _vm->_char._ani._top);
-
 	_vm->_char._ani._oldPos = pos;
 
-	node = getNextPathNode(pos, node);
-	if (node == NULL) {
+	WalkNodeList::iterator it = list->begin();
+
+	if ((*it)->_x == pos.x && (*it)->_y == pos.y) {
+		debugC(1, kDebugWalk, "jobWalk moving to next node (%i, %i)", (*it)->_x, (*it)->_y);
+		it = list->erase(it);
+	}
+	if (it == list->end()) {
 		debugC(1, kDebugWalk, "jobWalk reached last node");
 		j->_finished = 1;
-		checkDoor();
-		free(node);
+		finalizeWalk(list);
 		return;
 	}
-	j->_parm = node;
+	j->_parm = list;
 
 	// selectWalkFrame must be performed before position is changed by clipMove
-	int16 v16 = selectWalkFrame(pos, node);
-
-	clipMove(pos, node);
+	int16 v16 = selectWalkFrame(pos, *it);
+	clipMove(pos, *it);
 
 	_vm->_char._ani._left = pos.x;
 	_vm->_char._ani._top = pos.y;
 
 	if (pos == _vm->_char._ani._oldPos) {
+		debugC(1, kDebugWalk, "jobWalk was blocked by an unforeseen obstacle");
 		j->_finished = 1;
-		checkDoor();
-		//TODO (LIST): this should become path.clear()
-		freeNodeList(node);
+		finalizeWalk(list);
 	} else {
 		_vm->_char._ani._frame = v16 + walkData2 + 1;
 	}
@@ -453,7 +425,7 @@ WalkNode::WalkNode() : _x(0), _y(0) {
 WalkNode::WalkNode(int32 x, int32 y) : _x(x), _y(y) {
 }
 
-WalkNode::WalkNode(const WalkNode& w) : Node(), _x(w._x), _y(w._y) {
+WalkNode::WalkNode(const WalkNode& w) : _x(w._x), _y(w._y) {
 }
 
 void WalkNode::getPoint(Common::Point &p) const {
@@ -461,6 +433,8 @@ void WalkNode::getPoint(Common::Point &p) const {
 	p.y = _y;
 }
 
+PathBuilder::PathBuilder(Animation *anim) : _anim(anim), _list(0) {
+}
 
 
 } // namespace Parallaction

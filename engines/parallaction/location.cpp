@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/stdafx.h"
+
 #include "parallaction/parallaction.h"
 #include "parallaction/graphics.h"
 #include "parallaction/disk.h"
@@ -143,7 +145,7 @@ void Parallaction::parseLocation(const char *filename) {
 			parseZone(*_locationScript, &_zones, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "NODES")) {
-			parseWalkNodes(*_locationScript, &_location._walkNodes);
+			parseWalkNodes(*_locationScript, _location._walkNodes);
 		}
 		if (!scumm_stricmp(_tokens[0], "ANIMATION")) {
 			parseAnimation(*_locationScript, &_animations, _tokens[1]);
@@ -185,9 +187,7 @@ void Parallaction::freeLocation() {
 
 	debugC(7, kDebugLocation, "freeLocation: localflags names freed");
 
-	// TODO (LIST): this should be replaced by a call to _location._walkNodes.clear()
-	freeNodeList(_location._walkNodes._next);
-	_location._walkNodes._next = NULL;
+	_location._walkNodes.clear();
 	debugC(7, kDebugLocation, "freeLocation: walk nodes freed");
 
 	// TODO (LIST): helperNode should be rendered useless by the use of a Common::List<>
@@ -230,7 +230,7 @@ void Parallaction::freeLocation() {
 
 
 
-void Parallaction::parseWalkNodes(Script& script, Node *list) {
+void Parallaction::parseWalkNodes(Script& script, WalkNodeList &list) {
 
 	fillBuffers(script, true);
 	while (scumm_stricmp(_tokens[0], "ENDNODES")) {
@@ -242,8 +242,7 @@ void Parallaction::parseWalkNodes(Script& script, Node *list) {
 				atoi(_tokens[2]) - _char._ani.height()
 			);
 
-			addNode(list, v4);
-
+			list.push_front(v4);
 		}
 
 		fillBuffers(script, true);

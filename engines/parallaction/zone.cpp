@@ -606,6 +606,7 @@ Zone::Zone() {
 }
 
 Zone::~Zone() {
+	printf("~Zone(%s)\n", _label._text);
 
 	switch (_type & 0xFFFF) {
 	case kZoneExamine:
