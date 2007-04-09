@@ -105,8 +105,8 @@ void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 	    (y >= dest->getHeight()) || (y < 0))
 		return;
 
-	int16 width = (right - left) + 1;
-	int16 height = (bottom - top) + 1;
+	int16 width = MIN((right - left) + 1, (int) dest->getWidth());
+	int16 height = MIN((bottom - top) + 1, (int) dest->getHeight());
 
 	byte *srcPos = source->getVidMem() + (top * source->getWidth()) + left;
 	byte *destPos = dest->getVidMem() + (y * dest->getWidth()) + x;

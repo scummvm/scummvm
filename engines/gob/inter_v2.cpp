@@ -1409,10 +1409,14 @@ void Inter_v2::o2_scroll() {
 	int16 curX;
 	int16 curY;
 
-	startX = _vm->_parse->parseValExpr();
-	startY = _vm->_parse->parseValExpr();
-	endX = _vm->_parse->parseValExpr();
-	endY = _vm->_parse->parseValExpr();
+	startX = CLIP((int) _vm->_parse->parseValExpr(), 0,
+			_vm->_video->_surfWidth - 320);
+	startY = CLIP((int) _vm->_parse->parseValExpr(), 0,
+			_vm->_video->_surfHeight - 200);
+	endX = CLIP((int) _vm->_parse->parseValExpr(), 0,
+			_vm->_video->_surfWidth - 320);
+	endY = CLIP((int) _vm->_parse->parseValExpr(), 0,
+			_vm->_video->_surfHeight - 200);
 	stepX = _vm->_parse->parseValExpr();
 	stepY = _vm->_parse->parseValExpr();
 

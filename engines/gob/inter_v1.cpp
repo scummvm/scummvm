@@ -1775,7 +1775,7 @@ bool Inter_v1::o1_return(OpFuncParams &params) {
 		_break = true;
 
 	_vm->_global->_inter_execPtr = 0;
-	return false;
+	return true;
 }
 
 bool Inter_v1::o1_renewTimeInVars(OpFuncParams &params) {
