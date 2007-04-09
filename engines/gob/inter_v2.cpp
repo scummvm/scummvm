@@ -2016,11 +2016,14 @@ int16 Inter_v2::loadSound(int16 search) {
 	byte *dataPtr;
 	int16 id;
 	int16 slot;
+	uint16 slotIdMask;
 	uint32 dataSize;
 	SoundType type;
 	SoundSource source;
 
 	type = SOUND_SND;
+	slotIdMask = 0;
+
 	if (!search) {
 		slot = _vm->_parse->parseValExpr();
 		if (slot < 0) {
@@ -2031,19 +2034,23 @@ int16 Inter_v2::loadSound(int16 search) {
 	} else {
 		id = load16();
 
-		for (slot = 0; slot < 60; slot++) {
-			if (_vm->_game->_soundSamples[slot].isId(id))
-				return slot | 0x8000;
-		}
-
-		for (slot = 59; slot >= 0; slot--) {
-			if (_vm->_game->_soundSamples[slot].empty())
+		for (slot = 0; slot < 60; slot++)
+			if (_vm->_game->_soundSamples[slot].isId(id)) {
+				slotIdMask = 0x8000;
 				break;
-		}
+			}
 
-		if (slot == -1) {
-			warning("Inter_v2::loadSound(): No free slot to load sound (id = %d)", id);
-			return 0;
+		if (slot == 60) {
+			for (slot = 59; slot >= 0; slot--) {
+				if (_vm->_game->_soundSamples[slot].empty())
+					break;
+			}
+
+			if (slot == -1) {
+				warning("Inter_v2::loadSound(): No free slot to load sound "
+						"(id = %d)", id);
+				return 0;
+			}
 		}
 	}
 	
@@ -2083,7 +2090,7 @@ int16 Inter_v2::loadSound(int16 search) {
 		_vm->_game->_soundSamples[slot]._id = id;
 	}
 
-	return slot;
+	return slot | slotIdMask;
 }
 
 void Inter_v2::animPalette() {
