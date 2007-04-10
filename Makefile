@@ -110,20 +110,15 @@ scummvm-static: $(OBJS)
 		-lSystemStubs \
 		-lz
 
-# Target for building the PDF version of the README
-doc/readme.pdf: doc/readme.tex doc/*.tex
-	cd doc && pdflatex readme.tex 
-	cd doc && pdflatex readme.tex 
-
 # Special target to create a snapshot disk image for Mac OS X
-osxsnap: bundle doc/readme.pdf
+# TODO: Replace AUTHORS by Credits.rtf
+osxsnap: bundle credits
 	mkdir ScummVM-snapshot
+	cp AUTHORS ./ScummVM-snapshot/Authors
 	cp COPYING ./ScummVM-snapshot/License
 	cp NEWS ./ScummVM-snapshot/News
-	cp AUTHORS ./ScummVM-snapshot/Authors
+	cp README ./ScummVM-snapshot/ScummVM\ ReadMe
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
-	cp doc/readme.pdf ./ScummVM-snapshot/ScummVM\ ReadMe
-	/Developer/Tools/SetFile -t 'PDF ' -c prvw ./ScummVM-snapshot/ScummVM\ ReadMe
 	/Developer/Tools/CpMac -r $(bundle_name) ./ScummVM-snapshot/
 	cp dists/macosx/DS_Store ./ScummVM-snapshot/.DS_Store
 	cp dists/macosx/background.jpg ./ScummVM-snapshot/background.jpg
