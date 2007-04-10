@@ -135,7 +135,7 @@ struct PARALLACTIONGameDescription;
 struct Job;
 typedef void (*JobFn)(void*, Job*);
 
-struct Job : public Node {
+struct Job {
 	uint16		_count; 		// # of executions left
 	uint16		_tag;			// used for ordering
 	uint16		_finished;
@@ -146,6 +146,9 @@ public:
 	Job() : _count(0), _tag(0), _finished(0), _parm(NULL), _fn(NULL) {
 	}
 };
+
+typedef Job* JobPointer;
+typedef ManagedList<JobPointer> JobList;
 
 struct Credit {
 	const char *_role;
@@ -399,7 +402,7 @@ protected:		// data
 
 	int16 _keyDown;
 
-	Job			_jobs;
+	JobList		_jobs;
 
 	Node 		helperNode;			// used for freeZones: to be removed
 

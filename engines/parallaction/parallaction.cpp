@@ -834,6 +834,14 @@ void removeNode(Node *n) {
 	return;
 }
 
+/*
+	helper function to provide *descending* ordering of the job list
+	(higher priorities values comes first in the list)
+*/
+int compareJobPriority(const JobPointer &j1, const JobPointer &j2) {
+	if (j1->_tag == j2->_tag) return 0;
+	return (j1->_tag >= j2->_tag ? -1 : 1);
+}
 
 Job *Parallaction::addJob(JobFn fn, void *parm, uint16 tag) {
 
@@ -845,14 +853,7 @@ Job *Parallaction::addJob(JobFn fn, void *parm, uint16 tag) {
 	v8->_finished = 0;
 	v8->_count = 0;
 
-	Job *v4 = &_jobs;
-
-	// TODO (LIST): the loop will be useless once we have an ordered
-	// list _jobs. So this code will just be: _jobs.insert(v8)
-	while (v4->_next && ((Job*)(v4->_next))->_tag > tag) {
-		v4 = (Job*)v4->_next;
-	}
-	addNode(v4, v8);
+	_jobs.insertSorted(v8, compareJobPriority);
 
 	return v8;
 }
@@ -876,21 +877,21 @@ void Parallaction::runJobs() {
 
 	if (_engineFlags & kEnginePauseJobs) return;
 
-	Job *j = (Job*)_jobs._next;
-	while (j) {
-		debugC(3, kDebugJobs, "runJobs: %i", j->_tag);
-
-		Job *v4 = (Job*)j->_next;
-
-		if (j->_finished == 1) {
-			removeNode(j);
-			delete j;
-		} else {
-			(*j->_fn)(j->_parm, j);
-		}
-
-		j = v4;
+	JobList::iterator it = _jobs.begin();
+	while (it != _jobs.end()) {
+		if ((*it)->_finished == 1)
+			it = _jobs.erase(it);
+		else
+			it++;
 	}
+
+	it = _jobs.begin();
+	while (it != _jobs.end()) {
+		debugC(3, kDebugJobs, "runJobs: %i", (*it)->_tag);
+		(*(*it)->_fn)((*it)->_parm, (*it));
+		it++;
+	}
+
 
 	return;
 }

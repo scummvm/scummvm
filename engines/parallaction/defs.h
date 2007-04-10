@@ -51,6 +51,8 @@ public:
 	typedef typename Common::List<T> 				Common_List;
 	typedef typename Common::List<T>::iterator 		iterator;
 
+	typedef int (*CompareFunction) (const T& a, const T& b);
+
 	~ManagedList() {
 		clear();
 	}
@@ -71,12 +73,24 @@ public:
 		return Common_List::erase(first, last);
 	}
 
+	// keeps list ordered in *ascending* order, as expressed by the compare function
+	void insertSorted(const T& element, CompareFunction compare) {
+		iterator it = Common_List::begin();
+		for ( ; it != Common_List::end(); it++)
+			if (compare(element, *it) < 0) break;
+
+		if (it == Common_List::end())
+			Common_List::push_back(element);
+		else
+			Common_List::insert(it, element);
+	}
 };
 
 } // namespace Parallaction
 
 
 #endif
+
 
 
 
