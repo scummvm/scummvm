@@ -1255,6 +1255,7 @@ void Hotspot::doGive(HotspotData *hotspot) {
 	ValueTableData &fields = res.fieldList();
 	fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
 	fields.setField(USE_HOTSPOT_ID, usedId);
+	_data->useHotspotId = usedId;
 
 	if (usedHotspot->roomNumber != hotspotId()) {
 		// Item to be used is not in character's inventory - say "What???"
@@ -1899,9 +1900,9 @@ void Hotspot::startTalk(HotspotData *charHotspot, uint16 id) {
 	setTickProc(TALK_TICK_PROC_ID);    
 	
 	// Signal the character that they're being talked to
-	charHotspot->useHotspotId = _hotspotId;
-	setUseHotspotId(charHotspot->hotspotId);
-
+	charHotspot->talkDestCharacterId = _hotspotId;
+	_data->talkDestCharacterId = charHotspot->hotspotId;
+	
 	// Set the active talk data
 	res.setTalkStartEntry(0);
 	res.setTalkData(id);
@@ -2900,8 +2901,7 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Player talk anim handler state = %d", res.getTalkState());
 	switch (res.getTalkState()) {
 	case TALK_NONE:
-		talkDestCharacter = h.useHotspotId();
-		h.setUseHotspotId(0);
+		talkDestCharacter = h.resource()->talkDestCharacterId;
 		assert(talkDestCharacter != 0);
 		// Fall through to TALK_START
 
