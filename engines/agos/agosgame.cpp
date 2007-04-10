@@ -1259,14 +1259,14 @@ static const AGOSGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// Simon the Sorcerer 2 - English DOS Floppy alternate? with Russian patch
+	// Simon the Sorcerer 2 - English DOS Floppy with Russian patch
 	{
 		{
 			"simon2",
 			"Floppy",
 
 			{
-	{ "game32",		GAME_BASEFILE,	"eb8bde3685842a8fd38f60bc476ef8e9", -1},
+	{ "game32",		GAME_BASEFILE,	"7edfc633dd50f8caa719c478443db70b", -1},
 	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
 	{ "simon2.gme",		GAME_GMEFILE,	"aa6840420899a31874204f90bb214108", -1},
 	{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", -1},
