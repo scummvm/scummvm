@@ -1242,54 +1242,6 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "game32",		GAME_BASEFILE,	"27c8e7feada80c75b70b9c2f6088d519", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"ee92d1f84893195a60449f2430d07285", -1},
-	{ "simon2.gme",		GAME_GMEFILE,	"eefcc32b1f2c0482c1a59a963a146345", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", -1},
-	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
-	{ NULL, 0, NULL, 0}
-			},
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-
-		GType_SIMON2,
-		GID_SIMON2DOS,
-		0
-	},
-
-	// Simon the Sorcerer 2 - English DOS Floppy with Russian patch
-	{
-		{
-			"simon2",
-			"Floppy",
-
-			{
-	{ "game32",		GAME_BASEFILE,	"7edfc633dd50f8caa719c478443db70b", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"ee92d1f84893195a60449f2430d07285", -1},
-	{ "simon2.gme",		GAME_GMEFILE,	"eefcc32b1f2c0482c1a59a963a146345", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", -1},
-	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
-	{ NULL, 0, NULL, 0}
-			},
-			Common::RU_RUS,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-
-		GType_SIMON2,
-		GID_SIMON2DOS,
-		0
-	},
-
-	// Simon the Sorcerer 2 - English DOS Floppy alternate?
-	{
-		{
-			"simon2",
-			"Floppy",
-
-			{
 	{ "game32",		GAME_BASEFILE,	"604d04315935e77624bd356ac926e068", -1},
 	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
 	{ "simon2.gme",		GAME_GMEFILE,	"aa6840420899a31874204f90bb214108", -1},
@@ -1702,30 +1654,6 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ "gsptr30",		GAME_BASEFILE,	"a76ea940076b5d9316796dea225a9b69", -1},
 	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
 	{ "simon2.gme",		GAME_GMEFILE,	"9609a933c541fed2e00c6c3479d7c181", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"6de6292c9ac11bfb2e70fdb0f773ba85", -1},
-	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
-	{ NULL, 0, NULL, 0}
-			},
-			Common::DE_DEU,
-			Common::kPlatformWindows,
-			Common::ADGF_NO_FLAGS
-		},
-
-		GType_SIMON2,
-		GID_SIMON2TALKIE,
-		GF_TALKIE
-	},
-
-	// Simon the Sorcerer 2 - German Windows CD 1.1
-	{
-		{
-			"simon2",
-			"CD",
-
-			{
-	{ "gsptr30",		GAME_BASEFILE,	"9e858b3bb189c134c3a5f34c3385a8d3", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"ee92d1f84893195a60449f2430d07285", -1},
-	{ "simon2.gme",		GAME_GMEFILE,	"16d574da07e93bcae43cee353dab8c7e", -1},
 	{ "stripped.txt",	GAME_STRFILE,	"6de6292c9ac11bfb2e70fdb0f773ba85", -1},
 	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
 	{ NULL, 0, NULL, 0}
