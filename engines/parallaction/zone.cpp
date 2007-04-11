@@ -34,12 +34,8 @@ namespace Parallaction {
 
 Zone *Parallaction::findZone(const char *name) {
 
-	Zone *v4 = (Zone*)_zones._next;
-
-	while (v4) {
-		if (!scumm_stricmp(name, v4->_label._text)) return v4;
-		v4 = (Zone*)v4->_next;
-	}
+	for (ZoneList::iterator it = _zones.begin(); it != _zones.end(); it++)
+		if (!scumm_stricmp((*it)->_label._text, name)) return *it;
 
 	return findAnimation(name);
 }
@@ -47,7 +43,7 @@ Zone *Parallaction::findZone(const char *name) {
 
 
 
-void Parallaction::parseZone(Script &script, Node *list, char *name) {
+void Parallaction::parseZone(Script &script, ZoneList &list, char *name) {
 //	printf("parseZone(%s)", name);
 
 	if (findZone(name)) {
@@ -62,7 +58,7 @@ void Parallaction::parseZone(Script &script, Node *list, char *name) {
 	z->_label._text = (char*)malloc(strlen(name)+1);
 	strcpy(z->_label._text, name);
 
-	addNode(list, z);
+	list.push_front(z);
 
 	fillBuffers(script, true);
 	while (scumm_stricmp(_tokens[0], "endzone")) {
@@ -112,13 +108,14 @@ void Parallaction::parseZone(Script &script, Node *list, char *name) {
 	return;
 }
 
-void Parallaction::freeZones(Node *list) {
+void Parallaction::freeZones() {
 	debugC(1, kDebugLocation, "freeZones: kEngineQuit = %i", _engineFlags & kEngineQuit);
 
-	Zone *z = (Zone*)list;
-	Zone *v8 = NULL;
+	ZoneList::iterator it = _zones.begin();
 
-	for (; z; ) {
+	while ( it != _zones.end() ) {
+
+		Zone* z = *it;
 
 		// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
 		// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
@@ -132,16 +129,12 @@ void Parallaction::freeZones(Node *list) {
 
 			debugC(1, kDebugLocation, "freeZones preserving zone '%s'", z->_label._text);
 
-			v8 = (Zone*)z->_next;
-			removeNode(z);					// HelperNode holds a list of zones to be preserved. There's code in freeLocation to deal with this too.
-			addNode(&helperNode, z);		// Can't we simply delete the other zones in the list and keep the good ones?
-			z = v8;
-			continue;
-		}
+			it++;
 
-		Zone *z2 = (Zone*)z->_next;
-		delete z;
-		z = z2;
+		} else
+
+			it = _zones.erase(it);
+
 	}
 
 	return;
@@ -514,10 +507,11 @@ Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 	uint16 _di = y;
 	uint16 _si = x;
-	Zone *z = (Zone*)_zones._next;
 
-	for (; z; z = (Zone*)z->_next) {
+	for (ZoneList::iterator it = _zones.begin(); it != _zones.end(); it++) {
 //		printf("Zone name: %s", z->_name);
+
+		Zone *z = *it;
 
 		if (z->_flags & kFlagsRemove) continue;
 
@@ -573,10 +567,11 @@ Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 	}
 
-	Animation *a = (Animation*)_animations._next;
 
 	int16 _a, _b, _c, _d, _e, _f;
-	for (; a; a = (Animation*)a->_next) {
+	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
+
+		Animation *a = *it;
 
 		_a = (a->_flags & kFlagsActive) ? 1 : 0;															   // _a: active Animation
 		_e = ((_si >= a->_left + a->width()) || (_si <= a->_left)) ? 0 : 1;		// _e: horizontal range

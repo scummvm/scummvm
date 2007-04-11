@@ -87,8 +87,7 @@ void Parallaction::doLoadGame(uint16 slot) {
 	// need to invoke freeZones here with kEngineQuit set, because the
 	// call in changeLocation preserve certain zones.
 	_engineFlags |= kEngineQuit;
-	freeZones(_zones._next);
-	_zones._next = NULL;
+	freeZones();
 	_engineFlags &= ~kEngineQuit;
 
 	_numLocations = atoi(s);

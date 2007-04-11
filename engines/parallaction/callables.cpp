@@ -403,7 +403,7 @@ void _c_finito(void *parm) {
 	}
 
 	// this code saves main character animation from being removed from the following code
-	removeNode(&_vm->_char._ani);
+	_vm->_animations.remove(&_vm->_char._ani);
 	_vm->_locationNames[0][0] = '\0';
 	_vm->_numLocations = 0;
 	_commandFlags = 0;
@@ -412,18 +412,16 @@ void _c_finito(void *parm) {
 	_engineFlags |= kEngineQuit;
 
 	// TODO (LIST): this sequence should be just _zones.clear()
-	_vm->freeZones(_vm->_zones._next);
-	_vm->_zones._next = NULL;
+	_vm->freeZones();
 
 	// TODO (LIST): this sequence should be just _animations.clear()
 	_vm->freeAnimations();
-	_vm->_animations._next = NULL;
 
 	// this dangerous flag can now be cleared
 	_engineFlags &= ~kEngineQuit;
 
 	// main character animation is restored
-	addNode(&_vm->_animations, &_vm->_char._ani);
+	_vm->_animations.push_front(&_vm->_char._ani);
 	_score = 0;
 
 	return;

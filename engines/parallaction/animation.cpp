@@ -63,18 +63,14 @@ char	_localNames[10][10];
 
 Animation *Parallaction::findAnimation(const char *name) {
 
-	Animation *v4 = (Animation*)_animations._next;
-
-	while (v4) {
-		if (!scumm_stricmp(name, v4->_label._text)) return v4;
-		v4 = (Animation*)v4->_next;
-	}
+	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++)
+		if (!scumm_stricmp((*it)->_label._text, name)) return *it;
 
 	return NULL;
 }
 
 
-Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) {
+Animation *Parallaction::parseAnimation(Script& script, AnimationList &list, char *name) {
 //	printf("parseAnimation(%s)\n", name);
 
 	Animation *vD0 = new Animation;
@@ -82,7 +78,7 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 	vD0->_label._text = (char*)malloc(strlen(name)+1);
 	strcpy(vD0->_label._text, name);
 
-	addNode(list, vD0);
+	list.push_front(vD0);
 
 	fillBuffers(script, true);
 	while (scumm_stricmp(_tokens[0], "endanimation")) {
@@ -151,14 +147,7 @@ Animation *Parallaction::parseAnimation(Script& script, Node *list, char *name) 
 
 
 void Parallaction::freeAnimations() {
-	Animation *v4 = (Animation*)_animations._next;
-
-	while (v4) {
-		Animation *v = (Animation*)v4->_next;
-		delete v4;
-		v4 = (Animation*)v;
-	}
-
+	_animations.clear();
 	return;
 }
 
@@ -167,12 +156,13 @@ void Parallaction::freeAnimations() {
 void jobDisplayAnimations(void *parm, Job *j) {
 //	printf("jobDisplayAnimations()...\n");
 
-	Animation *v18 = (Animation*)_vm->_animations._next;
 	StaticCnv v14;
 
 	uint16 _si = 0;
 
-	for ( ; v18; v18 = (Animation*)v18->_next) {
+	for (AnimationList::iterator it = _vm->_animations.begin(); it != _vm->_animations.end(); it++) {
+
+		Animation *v18 = *it;
 
 		if ((v18->_flags & kFlagsActive) && ((v18->_flags & kFlagsRemove) == 0))   {
 			v14._width = v18->width();
@@ -211,9 +201,9 @@ void jobDisplayAnimations(void *parm, Job *j) {
 void jobEraseAnimations(void *arg_0, Job *j) {
 	debugC(3, kDebugJobs, "jobEraseAnimations");
 
-	Animation *a = (Animation*)_vm->_animations._next;
+	for (AnimationList::iterator it = _vm->_animations.begin(); it != _vm->_animations.end(); it++) {
 
-	for (; a; a=(Animation*)a->_next) {
+		Animation *a = *it;
 
 		if (((a->_flags & kFlagsActive) == 0) && ((a->_flags & kFlagsRemove) == 0)) continue;
 
@@ -460,12 +450,13 @@ void jobRunScripts(void *parm, Job *j) {
 
 	static uint16 modCounter = 0;
 
-	Animation *a = (Animation*)_vm->_animations._next;
-
 	StaticCnv v18;
 
-	if (a->_flags & kFlagsCharacter) a->_z = a->_top + a->height();
-	for ( ; a; a = (Animation*)a->_next) {
+	for (AnimationList::iterator it = _vm->_animations.begin(); it != _vm->_animations.end(); it++) {
+
+		Animation *a = *it;
+
+		if (a->_flags & kFlagsCharacter) a->_z = a->_top + a->height();
 
 		if ((a->_flags & kFlagsActing) == 0) continue;
 		InstructionList::iterator inst = a->_program->_ip;
@@ -628,36 +619,15 @@ void wrapLocalVar(LocalVariable *local) {
 	return;
 }
 
+int compareAnimationZ(const AnimationPointer &a1, const AnimationPointer &a2) {
+	if (a1->_z == a2->_z) return 0;
+	return (a1->_z < a2->_z ? -1 : 1);
+}
 
 
 void Parallaction::sortAnimations() {
-	Node v14;
-
 	_char._ani._z = _char._ani.height() + _char._ani._top;
-
-	Animation *vC = (Animation*)_animations._next;
-	Node *v8;
-	Animation *v4;
-
-	while (vC) {
-
-		v8 = &v14;
-
-		while ((v8->_next != NULL) && (vC->_z >= ((Animation*)(v8->_next))->_z)) {
-			v8 = v8->_next;
-		}
-
-		v4 = (Animation*)vC->_next;
-
-		addNode(v8, vC);
-
-		vC = v4;
-	}
-
-	_animations._prev = v14._prev;
-	_animations._next = v14._next;
-	_animations._next->_prev = &_animations;
-
+	_animations.sort(compareAnimationZ);
 	return;
 }
 

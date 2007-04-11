@@ -189,7 +189,7 @@ struct Label {
 	}
 };
 
-struct Zone : public Node {
+struct Zone {
 	int16 			_left;
 	int16			_top;
 	int16			_right;
@@ -211,6 +211,9 @@ struct Zone : public Node {
 	virtual uint16 width() const;
 	virtual uint16 height() const;
 };
+
+typedef Zone* ZonePointer;
+typedef ManagedList<ZonePointer> ZoneList;
 
 struct LocalVariable {
 	int16		_value;
@@ -243,7 +246,7 @@ enum InstructionFlags {
 
 struct Animation;
 
-struct Instruction : public Node {
+struct Instruction {
 	uint32	_index;
 	uint32	_flags;
 	struct {
@@ -302,6 +305,8 @@ struct Animation : public Zone  {
 	byte* getFrameData(uint32 index) const;
 };
 
+typedef Animation* AnimationPointer;
+typedef ManagedList<AnimationPointer> AnimationList;
 
 void	dropItem(uint16 v);
 int16	pickupItem(Zone *z);

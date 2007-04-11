@@ -200,11 +200,6 @@ extern const char 	*_minidrkiName;
 
 void waitUntilLeftClick();
 
-void addNode(Node *list, Node *n);
-void removeNode(Node *n);
-
-
-
 
 void jobRemovePickedItem(void*, Job *j);
 void jobDisplayDroppedItem(void*, Job *j);
@@ -321,7 +316,7 @@ public:
 	Zone 		*findZone(const char *name);
 	Zone   		*hitZone(uint32 type, uint16 x, uint16 y);
 	uint16		runZone(Zone*);
-	void 		freeZones(Node *list);
+	void 		freeZones();
 
 	void 		runDialogue(SpeakData*);
 
@@ -371,8 +366,8 @@ public:
 
 	Common::Point	_mousePos;
 
-	Node 	_zones;
-	Node 	_animations;
+	ZoneList 		_zones;
+	AnimationList 	_animations;
 
 protected:		// data
 
@@ -404,8 +399,6 @@ protected:		// data
 
 	JobList		_jobs;
 
-	Node 		helperNode;			// used for freeZones: to be removed
-
 protected:		// members
 	bool detectGame(void);
 
@@ -435,13 +428,13 @@ protected:		// members
 	void 		switchBackground(const char* background, const char* mask);
 	void 		freeLocation();
 
-	void		parseZone(Script &script, Node *list, char *name);
+	void		parseZone(Script &script, ZoneList &list, char *name);
 	void		parseZoneTypeBlock(Script &script, Zone *z);
 	void 		parseWalkNodes(Script& script, WalkNodeList &list);
 	void 		displayCharacterComment(ExamineData *data);
 	void 		displayItemComment(ExamineData *data);
 
-	Animation * parseAnimation(Script &script, Node *list, char *name);
+	Animation * parseAnimation(Script &script, AnimationList &list, char *name);
 	void		parseScriptLine(Instruction *inst, Animation *a, LocalVariable *locals);
 	void		loadProgram(Animation *a, char *filename);
 	LValue		getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation *a);

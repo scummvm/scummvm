@@ -35,8 +35,6 @@ namespace Parallaction {
 
 void resolveLocationForwards();
 void switchBackground(const char* background, const char* mask);
-void parseWalkNodes(Script &script, Node *list);
-
 
 
 
@@ -142,13 +140,13 @@ void Parallaction::parseLocation(const char *filename) {
 			_location._endComment = parseComment(*_locationScript);
 		}
 		if (!scumm_stricmp(_tokens[0], "ZONE")) {
-			parseZone(*_locationScript, &_zones, _tokens[1]);
+			parseZone(*_locationScript, _zones, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "NODES")) {
 			parseWalkNodes(*_locationScript, _location._walkNodes);
 		}
 		if (!scumm_stricmp(_tokens[0], "ANIMATION")) {
-			parseAnimation(*_locationScript, &_animations, _tokens[1]);
+			parseAnimation(*_locationScript, _animations, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "SOUND")) {
 			strcpy(_soundFile, _tokens[1]);
@@ -193,15 +191,10 @@ void Parallaction::freeLocation() {
 	// TODO (LIST): helperNode should be rendered useless by the use of a Common::List<>
 	// to store Zones and Animations. Right now, it holds a list of Zones to be preserved
 	// but that'll pretty meaningless with a single list approach.
-	helperNode._prev = helperNode._next = NULL;
-	freeZones(_zones._next);
-	_zones._next = helperNode._next;
-	_zones._prev = helperNode._prev;
+	freeZones();
 	debugC(7, kDebugLocation, "freeLocation: zones freed");
 
 	freeAnimations();
-	_animations._next = 0;
-	_animations._prev = 0;
 	debugC(7, kDebugLocation, "freeLocation: animations freed");
 
 	if (_location._comment) {
@@ -334,7 +327,7 @@ void Parallaction::changeLocation(char *location) {
 		debugC(2, kDebugLocation, "changeLocation: changed cursor");
 	}
 
-	removeNode(&_char._ani);
+	_animations.remove(&_char._ani);
 	debugC(2, kDebugLocation, "changeLocation: removed character from the animation list");
 
 	freeLocation();
@@ -367,7 +360,7 @@ void Parallaction::changeLocation(char *location) {
 		}
 	}
 
-	addNode(&_animations, &_char._ani);
+	_animations.push_front(&_char._ani);
 	debugC(2, kDebugLocation, "changeLocation: new character added to the animation list");
 
 	strcpy(_saveData1, list[0].c_str());

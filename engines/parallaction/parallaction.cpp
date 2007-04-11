@@ -198,7 +198,7 @@ int Parallaction::init() {
 
 	initInventory();
 
-	addNode(&_animations, &_vm->_char._ani);
+	_animations.push_front(&_vm->_char._ani);
 	_gfx = new Gfx(this);
 
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
@@ -801,35 +801,6 @@ void Parallaction::changeCharacter(const char *name) {
 		parseLocation("common");
 
 	strcpy(_characterName1, fullName);
-
-	return;
-}
-
-// TODO (LIST): this routine will be removed
-void addNode(Node *list, Node *n) {
-
-	Node *v4 = list->_next;
-
-	if (v4 != NULL) {
-		v4->_prev = n;
-	}
-
-	n->_next = v4;
-	list->_next = n;
-	n->_prev = list;
-
-	return;
-}
-
-// TODO (LIST): this routine will be removed
-void removeNode(Node *n) {
-
-	Node *v4 = n->_next;
-	if (v4 != NULL) {
-		v4->_prev = n->_prev;
-	}
-
-	n->_prev->_next = n->_next;
 
 	return;
 }

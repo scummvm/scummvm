@@ -63,7 +63,7 @@ union CommandData {
 	}
 };
 
-struct Command : public Node {
+struct Command {
 	uint16			_id;
 	CommandData 	u;
 	uint32			_flagsOn;
