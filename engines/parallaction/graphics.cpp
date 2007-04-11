@@ -883,17 +883,6 @@ int16 Gfx::queryMask(int16 v) {
 	return 3;
 }
 
-void Gfx::initBuffers() {
-
-	_buffers[kBitFront] = (byte*)malloc(SCREEN_SIZE);
-	_buffers[kBitBack]	= (byte*)malloc(SCREEN_SIZE);
-	_buffers[kBit2]   = (byte*)malloc(SCREEN_SIZE);
-	_buffers[kMask0] = (byte*)malloc(SCREENMASK_WIDTH * SCREEN_HEIGHT);
-
-	return;
-}
-
-
 Gfx::Gfx(Parallaction* vm) :
 	_vm(vm) {
 
@@ -901,7 +890,10 @@ Gfx::Gfx(Parallaction* vm) :
 	g_system->initSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	g_system->endGFXTransaction();
 
-	initBuffers();
+	_buffers[kBitFront] = (byte*)malloc(SCREEN_SIZE);
+	_buffers[kBitBack]	= (byte*)malloc(SCREEN_SIZE);
+	_buffers[kBit2]   = (byte*)malloc(SCREEN_SIZE);
+	_buffers[kMask0] = (byte*)malloc(SCREENMASK_WIDTH * SCREEN_HEIGHT);
 
 	setBlackPalette();
 
@@ -917,7 +909,6 @@ Gfx::Gfx(Parallaction* vm) :
 Gfx::~Gfx() {
 
 	free(_buffers[kMask0]);
-
 	free(_buffers[kBitFront]);
 	free(_buffers[kBitBack]);
 	free(_buffers[kBit2]);

@@ -1030,6 +1030,31 @@ void buildMask(byte* buf) {
 	}
 }
 
+class BackgroundDecoder : public Graphics::ILBMDecoder {
+
+	PaletteFxRange *_range;
+	uint32			_i;
+
+protected:
+	void readCRNG() {
+		_range[_i]._timer = _chunk.readUint16();
+		_range[_i]._step = _chunk.readUint16();
+		_range[_i]._flags = _chunk.readUint16();
+		_range[_i]._first = _chunk.readByte();
+		_range[_i]._last = _chunk.readByte();
+
+		_i++;
+	}
+
+public:
+	BackgroundDecoder(Common::ReadStream &input, PaletteFxRange *range) : ILBMDecoder(input), _range(range), _i(0) {
+	}
+
+	uint32	getNumRanges() {
+		return _i;
+	}
+};
+
 void AmigaDisk::loadScenery(const char* background, const char* mask) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadScenery '%s', '%s'", background, mask);
 
@@ -1039,7 +1064,7 @@ void AmigaDisk::loadScenery(const char* background, const char* mask) {
 
 	sprintf(path, "%s.bkgnd", background);
 	Common::SeekableReadStream *s = openArchivedFile(path, true);
-	Graphics::ILBMDecoder decoder(*s);
+	BackgroundDecoder decoder(*s, _vm->_gfx->_palettefx);
 	decoder.decode(surf, pal);
 	for (uint32 i = 0; i < PALETTE_SIZE; i++)
 		_vm->_gfx->_palette[i] = pal[i] >> 2;
