@@ -393,13 +393,13 @@ void ImdPlayer::setXY(ImdPlayer::Imd *imdPtr, int16 x, int16 y) {
 	if (imdPtr->frameCoords) {
 		for (i = 0; i < imdPtr->framesCount; i++) {
 			if (imdPtr->frameCoords[i].left != -1) {
-				imdPtr->frameCoords[i].left -=
+				imdPtr->frameCoords[i].left =
 					imdPtr->frameCoords[i].left - imdPtr->x + x;
-				imdPtr->frameCoords[i].top -=
+				imdPtr->frameCoords[i].top =
 					imdPtr->frameCoords[i].top - imdPtr->y + y;
-				imdPtr->frameCoords[i].right -=
+				imdPtr->frameCoords[i].right =
 					imdPtr->frameCoords[i].right - imdPtr->x + x;
-				imdPtr->frameCoords[i].bottom -=
+				imdPtr->frameCoords[i].bottom =
 					imdPtr->frameCoords[i].bottom - imdPtr->y + y;
 			}
 		}
@@ -421,7 +421,8 @@ void ImdPlayer::drawFrame(Imd *imdPtr, int16 frame, int16 x, int16 y,
 		_vm->_video->drawSprite(imdPtr->surfDesc, dest,
 				imdPtr->frameCoords[frame].left, imdPtr->frameCoords[frame].top,
 				imdPtr->frameCoords[frame].right, imdPtr->frameCoords[frame].bottom,
-				imdPtr->frameCoords[frame].left, imdPtr->frameCoords[frame].top, 1);
+				imdPtr->frameCoords[frame].left + x,
+				imdPtr->frameCoords[frame].top + y, 1);
 	else if (imdPtr->stdX != -1)
 		_vm->_video->drawSprite(imdPtr->surfDesc, dest,
 				imdPtr->stdX, imdPtr->stdY, imdPtr->stdX + imdPtr->stdWidth - 1,
