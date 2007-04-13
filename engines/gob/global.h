@@ -125,6 +125,9 @@ public:
 	int16 _inter_mouseX;
 	int16 _inter_mouseY;
 
+	// Can be 1, 2 or 3 for normal, double and triple speed, respectively
+	uint8 _speedFactor;
+
 	void clearVars(uint32 count) {
 		uint32 size = count * 4;
 

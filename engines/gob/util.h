@@ -91,6 +91,8 @@ protected:
 	int16 _keyBufferHead;
 	int16 _keyBufferTail;
 
+	uint8 _fastMode;
+
 	GobEngine *_vm;
 
 	bool keyBufferEmpty();

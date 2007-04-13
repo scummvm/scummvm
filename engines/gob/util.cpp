@@ -42,10 +42,11 @@ Util::Util(GobEngine *vm) : _vm(vm) {
 		_keyBuffer[i] = 0;
 	_keyBufferHead = 0;
 	_keyBufferTail = 0;
+	_fastMode = 0;
 }
 
 uint32 Util::getTimeKey(void) {
-	return g_system->getMillis();
+	return g_system->getMillis() * _vm->_global->_speedFactor;
 }
 
 int16 Util::getRandom(int16 max) {
@@ -60,16 +61,17 @@ void Util::beep(int16 freq) {
 }
 
 void Util::delay(uint16 msecs) {
-	g_system->delayMillis(msecs);
+	g_system->delayMillis(msecs / _vm->_global->_speedFactor);
 }
 
 void Util::longDelay(uint16 msecs) {
-	uint32 time = g_system->getMillis() + msecs;
+	uint32 time = g_system->getMillis() * _vm->_global->_speedFactor + msecs;
 	do {
 		_vm->_video->waitRetrace();
 		processInput();
 		delay(15);
-	} while (!_vm->_quitRequested && (g_system->getMillis() < time));
+	} while (!_vm->_quitRequested &&
+	         ((g_system->getMillis() * _vm->_global->_speedFactor) < time));
 }
 
 void Util::initInput(void) {
@@ -103,6 +105,13 @@ void Util::processInput(bool scroll) {
 			_mouseButtons &= ~2;
 			break;
 		case Common::EVENT_KEYDOWN:
+			if (event.kbd.flags == Common::KBD_CTRL) {
+				if (event.kbd.keycode == 'f')
+					_fastMode ^= 1;
+				else if (event.kbd.keycode == 'g')
+					_fastMode ^= 2;
+				break;
+			}
 			addKeyToBuffer(event.kbd.keycode);
 			break;
 		case Common::EVENT_KEYUP:
@@ -115,6 +124,7 @@ void Util::processInput(bool scroll) {
 		}
 	}
 
+	_vm->_global->_speedFactor = MIN(_fastMode + 1, 3);
 	if (scroll && hasMove)
 		_vm->_game->evaluateScroll(x, y);
 }
@@ -190,7 +200,7 @@ int16 Util::getKey(void) {
 		processInput();
 
 		if (keyBufferEmpty())
-			g_system->delayMillis(10);
+			g_system->delayMillis(10 / _vm->_global->_speedFactor);
 	}
 	return translateKey(key);
 }
