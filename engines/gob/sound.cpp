@@ -382,9 +382,9 @@ void Snd::checkEndSample() {
 }
 
 int Snd::readBuffer(int16 *buffer, const int numSamples) {
-	for (int i = 0; i < numSamples; i++) {
-		Common::StackLock slock(_mutex);
+	Common::StackLock slock(_mutex);
 
+	for (int i = 0; i < numSamples; i++) {
 		if (!_data)
 			return i;
 		if (_end || (_offset >= _length))
