@@ -308,9 +308,11 @@ bool SaveLoad::saveTempSprite(int16 dataVar, int32 size, int32 offset) {
 bool SaveLoad::loadTempSprite(uint32 index, bool palette) {
 	SurfaceDesc *sprite;
 
-	if (palette)
+	if (palette) {
 		memcpy((char *) _vm->_global->_pPaletteDesc->vgaPal,
 				(char *) _tempPal, 768);
+		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+	}
 
 	sprite = _vm->_draw->_spritesArray[index];
 
@@ -409,6 +411,7 @@ bool SaveLoad::loadSprite(Common::ReadStream &in, int32 size) {
 
 		memcpy((char *) _vm->_global->_pPaletteDesc->vgaPal,
 				(char *) buf, 768);
+		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 	}
 
 	nRead = in.read(buf, size);
