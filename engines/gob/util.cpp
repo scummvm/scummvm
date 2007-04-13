@@ -77,12 +77,19 @@ void Util::initInput(void) {
 	_keyBufferHead = _keyBufferTail = 0;
 }
 
-void Util::processInput() {
+void Util::processInput(bool scroll) {
 	Common::Event event;
 	Common::EventManager *eventMan = g_system->getEventManager();
+	int16 x, y;
+	bool hasMove = false;
 
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
+		case Common::EVENT_MOUSEMOVE:
+			hasMove = true;
+			x = event.mouse.x;
+			y = event.mouse.y;
+			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_mouseButtons |= 1;
 			break;
@@ -107,6 +114,9 @@ void Util::processInput() {
 			break;
 		}
 	}
+
+	if (scroll && hasMove)
+		_vm->_game->evaluateScroll(x, y);
 }
 
 void Util::clearKeyBuf(void) {

@@ -139,6 +139,8 @@ public:
 
 	void freeSoundSlot(int16 slot);
 
+	void evaluateScroll(int16 x, int16 y);
+
 	int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons, char handleMouse);
 	void start(void);
 	void totSub(int8 flags, const char *newTotFile);

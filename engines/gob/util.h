@@ -54,7 +54,7 @@ public:
 	void longDelay(uint16 msecs);
 
 	void initInput(void);
-	void processInput(void);
+	void processInput(bool scroll = false);
 	void clearKeyBuf(void);
 	int16 getKey(void);
 	int16 checkKey(void);

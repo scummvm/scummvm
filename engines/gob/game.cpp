@@ -288,10 +288,43 @@ void Game::freeSoundSlot(int16 slot) {
 	_vm->_snd->freeSample(sample);
 }
 
+void Game::evaluateScroll(int16 x, int16 y) {
+	if ((_handleMouse == 0) || (_menuLevel > 0))
+		return;
+
+	if (_vm->_global->_videoMode != 0x14)
+		return;
+
+	if ((x == 0) && (_vm->_draw->_scrollOffsetX > 0)) {
+		uint16 off;
+
+		off = MIN(_vm->_draw->_cursorWidth, _vm->_draw->_scrollOffsetX);
+		off = MAX(off / 2, 1);
+		_vm->_draw->_scrollOffsetX -= off;
+	}
+
+	int16 cursorRight = x + _vm->_draw->_cursorWidth;
+	int16 screenRight = _vm->_draw->_scrollOffsetX + 320;
+
+	if ((cursorRight >= 320) && (screenRight < _vm->_video->_surfWidth)) {
+		uint16 off;
+
+		off = MIN(_vm->_draw->_cursorWidth,
+				(int16) (_vm->_video->_surfWidth - screenRight));
+		off = MAX(off / 2, 1);
+
+		_vm->_draw->_scrollOffsetX += off;
+
+		_vm->_util->setMousePos(320 - _vm->_draw->_cursorWidth, y);
+	}
+
+	_vm->_util->setScrollOffset();
+}
+
 int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
 		int16 *pButtons, char handleMouse) {
 
-	_vm->_util->processInput();
+	_vm->_util->processInput(true);
 
 	if (_vm->_mult->_multData && _vm->_global->_inter_variables &&
 			(VAR(58) != 0)) {
