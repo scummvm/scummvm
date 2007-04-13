@@ -524,7 +524,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	strings.getString(descId, _desc, itemName, destCharName);
 
 	// Apply word wrapping to figure out the needed size of the dialog
-	Surface::wordWrap(_desc, TALK_DIALOG_WIDTH - TALK_DIALOG_EDGE_SIZE * 2 - 2,
+	Surface::wordWrap(_desc, TALK_DIALOG_WIDTH - (TALK_DIALOG_EDGE_SIZE + 3) * 2,
 		_lines, _numLines);
 
 	_surface = new Surface(TALK_DIALOG_WIDTH, 
