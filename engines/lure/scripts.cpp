@@ -439,6 +439,21 @@ void Script::setVillageSkorlTickProc(uint16 v1, uint16 v2, uint16 v3) {
 	hotspot->tickProcOffset = 0x7efa;
 }
 
+// Barman serving the player
+
+void Script::barmanServe(uint16 v1, uint16 v2, uint16 v3) {
+	Resources &res = Resources::getReference();
+	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
+	BarEntry &barEntry = res.barmanLists().getDetails(player->roomNumber());
+	
+	for (int index = 0; index < NUM_SERVE_CUSTOMERS; ++index) {
+		if (barEntry.customers[index].hotspotId == PLAYER_ID) {
+			barEntry.customers[index].serveFlags |= 5;
+			break;
+		}
+	}
+}
+
 // Stores the current number of groats in the general field
 
 void Script::getNumGroats(uint16 v1, uint16 v2, uint16 v3) {
@@ -534,6 +549,7 @@ SequenceMethodRecord scriptMethods[] = {
 	{50, Script::givePlayerItem},
 	{51, Script::decreaseNumGroats},
 	{54, Script::setVillageSkorlTickProc},
+	{56, Script::barmanServe},
 	{57, Script::getNumGroats},
 	{62, Script::animationLoad},
 	{63, Script::addActions},

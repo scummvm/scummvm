@@ -116,6 +116,7 @@ public:
 	static void givePlayerItem(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void decreaseNumGroats(uint16 characterId, uint16 numGroats, uint16 v3);
 	static void setVillageSkorlTickProc(uint16 v1, uint16 v2, uint16 v3);
+	static void barmanServe(uint16 v1, uint16 v2, uint16 v3);
 	static void getNumGroats(uint16 v1, uint16 v2, uint16 v3);
 	static void animationLoad(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void addActions(uint16 hotspotId, uint16 actions, uint16 v3);
