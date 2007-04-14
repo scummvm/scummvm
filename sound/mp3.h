@@ -36,9 +36,6 @@ namespace Common {
 namespace Audio {
 
 class AudioStream;
-class DigitalTrackInfo;
-
-DigitalTrackInfo *getMP3Track(int track);
 
 /**
  * Create a new AudioStream from the MP3 data in the given

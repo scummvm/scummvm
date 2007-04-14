@@ -36,9 +36,6 @@ namespace Common {
 namespace Audio {
 
 class AudioStream;
-class DigitalTrackInfo;
-
-DigitalTrackInfo *getVorbisTrack(int track);
 
 /**
  * Create a new AudioStream from the Ogg Vorbis data in the given

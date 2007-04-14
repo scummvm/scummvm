@@ -32,15 +32,6 @@
 namespace Audio {
 
 
-class DigitalTrackInfo {
-public:
-	virtual ~DigitalTrackInfo() {}
-
-	virtual void play(Mixer *mixer, SoundHandle *handle, int numLoops, int startFrame, int duration) = 0;
-//	virtual void stop();
-};
-
-
 class AudioCDManager : public Common::Singleton<AudioCDManager> {
 public:
 	struct Status {
