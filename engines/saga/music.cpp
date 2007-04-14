@@ -393,8 +393,9 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	sprintf(trackName[1], "track%02d", realTrackNumber);
 	Audio::AudioStream *stream = 0;
 	for (int i = 0; i < 2; ++i) {
+		// We multiply by 40 / 3 = 1000 / 75 to convert frames to milliseconds
 		// FIXME: Do we really want a duration of 10000 frames = 133 seconds, or is that just a random value?
-		stream = Audio::AudioStream::openStreamFile(trackName[i], 0, 10000, (flags == MUSIC_LOOP) ? 0 : 1);
+		stream = Audio::AudioStream::openStreamFile(trackName[i], 0, 10000 * 40 / 3, (flags == MUSIC_LOOP) ? 0 : 1);
 		if (stream) {
 			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
 			return;
