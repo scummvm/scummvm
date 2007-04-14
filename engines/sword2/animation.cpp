@@ -169,12 +169,12 @@ bool MoviePlayer::checkSkipFrame() {
 	return true;
 }
 
-void MoviePlayer::syncFrame() {
+bool MoviePlayer::syncFrame() {
 	_ticks += 83;
 
 	if (checkSkipFrame()) {
 		warning("Skipped frame %d", _currentFrame);
-		return;
+		return false;
 	}
 
 	if (_bgSoundStream) {
@@ -192,6 +192,8 @@ void MoviePlayer::syncFrame() {
 			_system->delayMillis(10);
 		}
 	}
+
+	return true;
 }
 
 void MoviePlayer::drawFrame() {
@@ -403,9 +405,10 @@ void MoviePlayer::play(SequenceTextInfo *textList, uint32 numLines, int32 leadIn
 			_vm->_sound->playMovieSound(leadOut, kLeadOutSound);
 		}
 
-		syncFrame();
-		drawFrame();
-		updateScreen();
+		if (syncFrame()) {
+			drawFrame();
+			updateScreen();
+		}
 
 		Common::Event event;
 
@@ -809,13 +812,13 @@ bool MoviePlayerDummy::decodeFrame() {
 	return true;
 }
 
-void MoviePlayerDummy::syncFrame() {
+bool MoviePlayerDummy::syncFrame() {
 	if (_numSpeechLines == 0 || _currentFrame < _firstSpeechFrame) {
 		_ticks = _system->getMillis();
-		return;
+		return false;
 	}
 
-	MoviePlayer::syncFrame();
+	return MoviePlayer::syncFrame();
 }
 
 void MoviePlayerDummy::drawFrame() {

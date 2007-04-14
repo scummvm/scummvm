@@ -90,7 +90,7 @@ protected:
 	virtual bool initOverlays(uint32 id);
 	virtual bool decodeFrame(void) = 0;
 	virtual void processFrame(void) = 0;
-	virtual void syncFrame(void);
+	virtual bool syncFrame(void);
 	virtual void updateScreen(void) = 0;
 };
 

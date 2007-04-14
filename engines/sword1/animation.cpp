@@ -119,11 +119,11 @@ bool MoviePlayer::checkSkipFrame(void) {
 	return true;
 }
 
-void MoviePlayer::syncFrame(void) {
+bool MoviePlayer::syncFrame(void) {
 	_ticks += 83;
 	if (checkSkipFrame()) {
 		warning("Skipped frame %d", _currentFrame);
-		return;
+		return false;
 	}
 	if (_bgSoundStream) {
 		while (_snd->isSoundHandleActive(_bgSoundHandle) && (_snd->getSoundElapsedTime(_bgSoundHandle) * 12) / 1000 < _currentFrame) {
@@ -140,6 +140,7 @@ void MoviePlayer::syncFrame(void) {
 			_system->delayMillis(10);
 		}
 	}
+	return true;
 }
 
 /**
@@ -197,8 +198,8 @@ void MoviePlayer::play(void) {
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (!terminated && decodeFrame()) {
 		processFrame();
-		syncFrame();
-		updateScreen();
+		if (syncFrame())
+			updateScreen();
 		_currentFrame++;
 		Common::Event event;
 		while (eventMan->pollEvent(event)) {

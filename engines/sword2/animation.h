@@ -106,7 +106,7 @@ protected:
 	virtual void clearFrame();
 	virtual void updateScreen();
 	virtual bool decodeFrame() = 0;
-	virtual void syncFrame();
+	virtual bool syncFrame();
 	virtual void drawFrame();
 	virtual void drawTextObject();
 	virtual void undrawTextObject();
@@ -123,7 +123,7 @@ public:
 class MoviePlayerDummy : public MoviePlayer {
 protected:
 	bool decodeFrame();
-	void syncFrame();
+	bool syncFrame();
 	void drawFrame();
 	void drawTextObject();
 	void undrawTextObject();
