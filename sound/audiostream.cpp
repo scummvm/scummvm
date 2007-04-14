@@ -59,36 +59,29 @@ struct StreamFileFormat {
 static const StreamFileFormat STREAM_FILEFORMATS[] = {
 	/* decoderName,		fileExt, openStreamFuntion */
 #ifdef USE_FLAC
-	{ "Flac",			"flac", makeFlacStream },
-	{ "Flac",			"fla",  makeFlacStream },
+	{ "Flac",			".flac", makeFlacStream },
+	{ "Flac",			".fla",  makeFlacStream },
 #endif
 #ifdef USE_VORBIS
-	{ "Ogg Vorbis",		"ogg",  makeVorbisStream },
+	{ "Ogg Vorbis",		".ogg",  makeVorbisStream },
 #endif
 #ifdef USE_MAD
-	{ "MPEG Layer 3",	"mp3",  makeMP3Stream },
+	{ "MPEG Layer 3",	".mp3",  makeMP3Stream },
 #endif
 
 	{ NULL, NULL, NULL } // Terminator
 };
 
-AudioStream* AudioStream::openStreamFile(const char *filename) {
-	char buffer[1024];
-	const uint len = strlen(filename);
-	assert(len+6 < sizeof(buffer)); // we need a bigger buffer if wrong
-
-	memcpy(buffer, filename, len);
-	buffer[len] = '.';
-	char *ext = &buffer[len+1];
-
+AudioStream* AudioStream::openStreamFile(const Common::String &basename, uint32 startTime, uint32 duration, uint numLoops) {
 	AudioStream* stream = NULL;
 	Common::File *fileHandle = new Common::File();
 
 	for (int i = 0; i < ARRAYSIZE(STREAM_FILEFORMATS)-1 && stream == NULL; ++i) {
-		strcpy(ext, STREAM_FILEFORMATS[i].fileExtension);
-		fileHandle->open(buffer);
+		Common::String filename = basename + STREAM_FILEFORMATS[i].fileExtension;
+		fileHandle->open(filename);
 		if (fileHandle->isOpen()) {
-			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, true, 0, 0, 1);
+			// Create the stream object
+			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, true, startTime, duration, numLoops);
 			fileHandle = 0;
 			break;
 		}
@@ -97,7 +90,7 @@ AudioStream* AudioStream::openStreamFile(const char *filename) {
 	delete fileHandle;
 
 	if (stream == NULL) {
-		debug(1, "AudioStream: Could not open compressed AudioFile %s", filename);
+		debug(1, "AudioStream: Could not open compressed AudioFile %s", basename.c_str());
 	}
 
 	return stream;

@@ -83,11 +83,14 @@ public:
 	 * Tries to load a file by trying all available formats.
 	 * In case of an error, the file handle will be closed, but deleting
 	 * it is still the responsibilty of the caller.
-	 * @param filename	a filename without an extension
+	 * @param basename	a filename without an extension
+	 * @param startTime	the (optional) time offset in milliseconds from which to start playback 
+	 * @param duration	the (optional) time in milliseconds specifying how long to play
+	 * @param numLoops	how often the data shall be looped (0 = infinite)
 	 * @return	an Audiostream ready to use in case of success;
 	 *			NULL in case of an error (e.g. invalid/nonexisting file)
 	 */
-	static AudioStream* openStreamFile(const char *filename);
+	static AudioStream* openStreamFile(const Common::String &basename, uint32 startTime = 0, uint32 duration = 0, uint numLoops = 1);
 };
 
 /**
