@@ -623,10 +623,10 @@ void AGOSEngine::oe1_playTune() {
 			if (getPlatform() == Common::kPlatformAmiga)
 				_mixer->stopHandle(_modHandle);
 			else
-				midi.stop();
+				_midi.stop();
 		} else {
 			loadMusic(music);
-			midi.startTrack(track);
+			_midi.startTrack(track);
 		}
 	}
 }

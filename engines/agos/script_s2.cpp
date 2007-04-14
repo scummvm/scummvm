@@ -124,11 +124,11 @@ void AGOSEngine::os2_playTune() {
 	// effectively preloaded so there's no latency when
 	// starting playback).
 
-	midi.setLoop(loop != 0);
+	_midi.setLoop(loop != 0);
 	if (_lastMusicPlayed != music)
 		_nextMusicToPlay = music;
 	else
-		midi.startTrack(track);
+		_midi.startTrack(track);
 }
 
 void AGOSEngine::os2_screenTextPObj() {

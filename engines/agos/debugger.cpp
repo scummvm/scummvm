@@ -48,12 +48,12 @@ Debugger::Debugger(AGOSEngine *vm)
 
 
 void Debugger::preEnter() {
-	//_vm->midi.pause(1);
+	//_vm->_midi.pause(1);
 }
 
 
 void Debugger::postEnter() {
-	//_vm->midi.pause(0);
+	//_vm->_midi.pause(0);
 }
 
 
@@ -85,7 +85,7 @@ bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
 		if (music <= range) {
 			_vm->loadMusic(music);
 			if (_vm->getGameType() == GType_SIMON2)
-				_vm->midi.startTrack(0);
+				_vm->_midi.startTrack(0);
 		} else
 			DebugPrintf("Music out of range (0 - %d)\n", range);
 	} else

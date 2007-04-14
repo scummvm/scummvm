@@ -163,22 +163,22 @@ void AGOSEngine::loadMusic(uint music) {
 	char buf[4];
 
 	if (getGameType() == GType_SIMON2) {
-		midi.stop();
+		_midi.stop();
 		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
 		_gameFile->read(buf, 4);
 		if (!memcmp(buf, "FORM", 4)) {
 			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-			midi.loadXMIDI(_gameFile);
+			_midi.loadXMIDI(_gameFile);
 		} else {
 			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-			midi.loadMultipleSMF(_gameFile);
+			_midi.loadMultipleSMF(_gameFile);
 		}
 
 		_lastMusicPlayed = music;
 		_nextMusicToPlay = -1;
 	} else if (getGameType() == GType_SIMON1) {
-		midi.stop();
-		midi.setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
+		_midi.stop();
+		_midi.setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
 		// Support for compressed music from the ScummVM Music Enhancement Project
 		AudioCD.stop();
@@ -201,13 +201,13 @@ void AGOSEngine::loadMusic(uint music) {
 			_gameFile->read(buf, 4);
 			if (!memcmp(buf, "GMF\x1", 4)) {
 				_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-				midi.loadSMF(_gameFile, music);
+				_midi.loadSMF(_gameFile, music);
 			} else {
 				_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-				midi.loadMultipleSMF(_gameFile);
+				_midi.loadMultipleSMF(_gameFile);
 			}
 
-			midi.startTrack(0);
+			_midi.startTrack(0);
 		} else {
 			char filename[15];
 			File f;
@@ -217,11 +217,11 @@ void AGOSEngine::loadMusic(uint music) {
 				error("loadMusic: Can't load music from '%s'", filename);
 
 			if (getFeatures() & GF_DEMO)
-				midi.loadS1D(&f);
+				_midi.loadS1D(&f);
 			else
-				midi.loadSMF(&f, music);
+				_midi.loadSMF(&f, music);
 
-			midi.startTrack(0);
+			_midi.startTrack(0);
 		}
 	} else {
 		if (getPlatform() == Common::kPlatformAmiga) {
@@ -229,8 +229,8 @@ void AGOSEngine::loadMusic(uint music) {
 		} else if (getPlatform() == Common::kPlatformAtariST) {
 			// TODO: Add support for music formats used
 		} else {
-			midi.stop();
-			midi.setLoop(true); // Must do this BEFORE loading music.
+			_midi.stop();
+			_midi.setLoop(true); // Must do this BEFORE loading music.
 
 			char filename[15];
 			File f;
@@ -239,14 +239,14 @@ void AGOSEngine::loadMusic(uint music) {
 			if (f.isOpen() == false)
 				error("loadMusic: Can't load music from '%s'", filename);
 
-			midi.loadS1D(&f);
-			midi.startTrack(0);
+			_midi.loadS1D(&f);
+			_midi.startTrack(0);
 		}
 	}
 }
 
 void AGOSEngine::playSting(uint a) {
-	if (!midi._enable_sfx)
+	if (!_midi._enable_sfx)
 		return;
 
 	char filename[15];
@@ -265,8 +265,8 @@ void AGOSEngine::playSting(uint a) {
 		error("playSting: Can't read sting %d offset", a);
 
 	mus_file.seek(mus_offset, SEEK_SET);
-	midi.loadSMF(&mus_file, a, true);
-	midi.startTrack(0);
+	_midi.loadSMF(&mus_file, a, true);
+	_midi.startTrack(0);
 }
 
 static const byte elvira1_soundTable[100] = {

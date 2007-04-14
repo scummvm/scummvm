@@ -540,19 +540,19 @@ bool AGOSEngine::processSpecialKeys() {
 				_speech ^= 1;
 		}
 	case '+':
-		midi.setVolume(midi.getVolume() + 16);
+		_midi.setVolume(_midi.getVolume() + 16);
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 16);
 		break;
 	case '-':
-		midi.setVolume(midi.getVolume() - 16);
+		_midi.setVolume(_midi.getVolume() - 16);
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) - 16);
 		break;
 	case 'm':
-		midi.pause(_musicPaused ^= 1);
+		_midi.pause(_musicPaused ^= 1);
 		break;
 	case 's':
 		if (getGameId() == GID_SIMON1DOS)
-			midi._enable_sfx ^= 1;
+			_midi._enable_sfx ^= 1;
 		else
 			_sound->effectsPause(_effectsPaused ^= 1);
 		break;

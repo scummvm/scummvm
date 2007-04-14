@@ -145,8 +145,8 @@ void AGOSEngine::vc69_playSeq() {
 	// specifying a non-valid track number (999 or -1)
 	// as a means of stopping what music is currently
 	// playing.
-	midi.setLoop(loop != 0);
-	midi.startTrack(track);
+	_midi.setLoop(loop != 0);
+	_midi.startTrack(track);
 }
 
 void AGOSEngine::vc70_joinSeq() {
@@ -160,9 +160,9 @@ void AGOSEngine::vc70_joinSeq() {
 	// track and, if not, whether to switch to
 	// a different track upon completion.
 	if (track != 0xFFFF && track != 999)
-		midi.queueTrack(track, loop != 0);
+		_midi.queueTrack(track, loop != 0);
 	else
-		midi.setLoop(loop != 0);
+		_midi.setLoop(loop != 0);
 }
 
 void AGOSEngine::vc71_ifSeqWaiting() {
@@ -170,7 +170,7 @@ void AGOSEngine::vc71_ifSeqWaiting() {
 	// This command skips the next instruction
 	// unless (1) there is a track playing, AND
 	// (2) there is a track queued to play after it.
-	if (!midi.isPlaying(true))
+	if (!_midi.isPlaying(true))
 		vcSkipNextInstruction();
 }
 
@@ -192,10 +192,10 @@ void AGOSEngine::vc72_segue() {
 	int16 loop = vcReadNextWord();
 
 	if (track == -1 || track == 999) {
-		midi.stop();
+		_midi.stop();
 	} else {
-		midi.setLoop(loop != 0);
-		midi.startTrack(track);
+		_midi.setLoop(loop != 0);
+		_midi.startTrack(track);
 	}
 }
 

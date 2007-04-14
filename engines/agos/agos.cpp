@@ -73,7 +73,7 @@ static const GameSpecificSettings puzzlepack_settings = {
 #endif
 
 AGOSEngine::AGOSEngine(OSystem *syst)
-	: Engine(syst), midi() {
+	: Engine(syst) {
 	_vcPtr = 0;
 	_vc_get_out_of_code = 0;
 	_gameOffsetsPtr = 0;
@@ -517,16 +517,16 @@ int AGOSEngine::init() {
 		}
 	}
 
-	midi.mapMT32toGM (getGameType() != GType_SIMON2 && !_native_mt32);
+	_midi.mapMT32toGM (getGameType() != GType_SIMON2 && !_native_mt32);
 
-	midi.setDriver(driver);
-	int ret = midi.open();
+	_midi.setDriver(driver);
+	int ret = _midi.open();
 	if (ret)
-		warning("MIDI Player init failed: \"%s\"", midi.getErrorName (ret));
-	midi.setVolume(ConfMan.getInt("music_volume"));
+		warning("MIDI Player init failed: \"%s\"", _midi.getErrorName (ret));
+	_midi.setVolume(ConfMan.getInt("music_volume"));
 
 	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1)
-		midi.pause(_musicPaused ^= 1);
+		_midi.pause(_musicPaused ^= 1);
 
 	// allocate buffers
 	_backGroundBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
@@ -544,7 +544,7 @@ int AGOSEngine::init() {
 
 	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {
 		if (getGameId() == GID_SIMON1DOS)
-			midi._enable_sfx ^= 1;
+			_midi._enable_sfx ^= 1;
 		else
 			_sound->effectsPause(_effectsPaused ^= 1);
 	}
@@ -776,7 +776,7 @@ void AGOSEngine::setupGame() {
 AGOSEngine::~AGOSEngine() {
 	delete _gameFile;
 
-	midi.close();
+	_midi.close();
 
 	free(_itemHeapPtr - _itemHeapCurPos);
 	free(_tablesHeapPtr - _tablesHeapCurPos);
@@ -819,14 +819,14 @@ void AGOSEngine::pause() {
 	bool ambient_status = _ambientPaused;
 	bool music_status = _musicPaused;
 
-	midi.pause(true);
+	_midi.pause(true);
 	_sound->ambientPause(true);
 	while (_pause) {
 		delay(1);
 		if (_keyPressed == 'p')
 			_pause = 0;
 	}
-	midi.pause(music_status);
+	_midi.pause(music_status);
 	_sound->ambientPause(ambient_status);
 }
 
@@ -896,7 +896,7 @@ int AGOSEngine::go() {
 void AGOSEngine::shutdown() {
 	delete _gameFile;
 
-	midi.close();
+	_midi.close();
 
 	free(_stringTabPtr);
 	free(_itemArrayPtr);

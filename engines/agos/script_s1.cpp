@@ -100,7 +100,7 @@ void AGOSEngine::os1_playTune() {
 	if (music != _lastMusicPlayed) {
 		_lastMusicPlayed = music;
 		loadMusic(music);
-		midi.startTrack(track);
+		_midi.startTrack(track);
 	}
 }
 
