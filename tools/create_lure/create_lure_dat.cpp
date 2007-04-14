@@ -273,6 +273,11 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)
 			r->tickProcOffset = entry.tickProcOffset;
 			r->flags = entry.flags;
 
+			// Special check for the tinderbox hotspot to set it's room number correctly - the original 
+			// game used this as a backup against people trying to hack the copy protection
+			if (startId[tableNum] + hotspotIndex == 0x271C)
+				r->roomNumber = TO_LE_16(28);
+
 			// Find the walk-to coordinates for the hotspot
 			walkCtr = 0;
 			while ((walkCtr < walkNumEntries) &&
@@ -467,6 +472,7 @@ void read_anim_data(byte *&data, uint16 &totalSize) {
 	add_anim_record(0x5c95);
 	add_anim_record(0x5ce9);		// Blacksmith in bar?
 	add_anim_record(0x5915);		// Blacksmith hammering
+	add_anim_record(0x59ED);		// Ewan's alternate animation
 
 	// Get the animation data records
 	AnimRecord inRec;
