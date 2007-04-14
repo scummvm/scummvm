@@ -106,7 +106,7 @@ public:
 	static void increaseNumGroats(uint16 characterId, uint16 numGroats, uint16 v3);
 	static void enableHotspot(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void transformPlayer(uint16 v1, uint16 v2, uint16 v3);
-	static void room14DoorClose(uint16 v1, uint16 v2, uint16 v3);
+	static void jailClose(uint16 v1, uint16 v2, uint16 v3);
 	static void checkDroppedDesc(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void doorClose(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void displayMessage(uint16 messageId, uint16 characterId, uint16 unknownVal);

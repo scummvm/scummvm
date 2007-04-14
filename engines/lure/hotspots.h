@@ -218,7 +218,7 @@ public:
 	void loadFromStream(Common::ReadStream *stream);
 };
 
-enum HotspotPrecheckResult {PC_EXECUTE, PC_NOT_IN_ROOM, PC_UNKNOWN, PC_INITIAL, PC_EXCESS};
+enum HotspotPrecheckResult {PC_EXECUTE, PC_NOT_IN_ROOM, PC_FAILED, PC_WAIT, PC_EXCESS};
 
 enum BarPlaceResult {BP_KEEP_TRYING, BP_GOT_THERE, BP_FAIL};
 

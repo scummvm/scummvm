@@ -804,7 +804,7 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 		(hotspot->hotspotId == NELLIE_ID)) {
 		// Check for a bar place
 		if (getBarPlace() == BP_KEEP_TRYING)
-			return PC_INITIAL;
+			return PC_WAIT;
 	} else if (hotspot->roomNumber != roomNumber()) {
 		// loc_884
 		if (actionCtr() == 0) 
@@ -822,32 +822,33 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 		} 
 
 		if ((hotspot->hotspotId >= FIRST_NONCHARACTER_ID) || 
-			(hotspot->characterMode == CHARMODE_8) ||
-			(hotspot->characterMode == CHARMODE_4) ||
-			(hotspot->characterMode == CHARMODE_7)) {
+			(hotspot->characterMode == CHARMODE_INTERACTING) ||
+			(hotspot->characterMode == CHARMODE_WAIT_FOR_PLAYER) ||
+			(hotspot->characterMode == CHARMODE_WAIT_FOR_INTERACT)) {
 			// loc_880
 			if (characterWalkingCheck(hotspot))
-				return PC_INITIAL;
+				return PC_WAIT;
 		} else {
 			// loc_886
 			setActionCtr(0);
 			converse(0, 0xE);
-			return PC_UNKNOWN;
+			return PC_FAILED;
 		}
 	} else {
 		setActionCtr(1);
 		if ((hotspot->hotspotId >= FIRST_NONCHARACTER_ID) ||
-			((hotspot->actionHotspotId != _hotspotId) && (hotspot->characterMode == CHARMODE_4))) {
+			((hotspot->actionHotspotId != _hotspotId) && 
+			 (hotspot->characterMode == CHARMODE_WAIT_FOR_PLAYER))) {
 			// loc_880
 			if (characterWalkingCheck(hotspot))
-				return PC_INITIAL;
+				return PC_WAIT;
 
 		} else if (hotspot->actionHotspotId != _hotspotId) {
 			if (fields.getField(88) == 2) {
 				// loc_882
 				hotspot->v2b = 0x2A;
 				hotspot->useHotspotId = _hotspotId;
-				return PC_INITIAL;
+				return PC_WAIT;
 			} else {
 				converse(NOONE_ID, 5);
 				setDelayCtr(4);
@@ -858,7 +859,7 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 	// loc_888
 	setActionCtr(0);
 	if (hotspot->hotspotId < FIRST_NONCHARACTER_ID) {
-		hotspot->characterMode = CHARMODE_8;
+		hotspot->characterMode = CHARMODE_INTERACTING;
 		hotspot->delayCtr = 30;
 		hotspot->actionHotspotId = hotspot->hotspotId;
 	}
@@ -1110,7 +1111,7 @@ void Hotspot::doGet(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
 
-	if (result == PC_INITIAL) return;
+	if (result == PC_WAIT) return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1151,7 +1152,7 @@ void Hotspot::doOperate(HotspotData *hotspot) {
 	Action action = _currentActions.top().supportData().action();
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_INITIAL) return;
+	if (result == PC_WAIT) return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1186,7 +1187,7 @@ void Hotspot::doOpen(HotspotData *hotspot) {
 	}
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_INITIAL) return;
+	if (result == PC_WAIT) return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1240,7 +1241,7 @@ void Hotspot::doClose(HotspotData *hotspot) {
 	}
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_INITIAL) return;
+	if (result == PC_WAIT) return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1296,7 +1297,7 @@ void Hotspot::doUse(HotspotData *hotspot) {
 	}
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_INITIAL) return;
+	if (result == PC_WAIT) return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1339,7 +1340,7 @@ void Hotspot::doGive(HotspotData *hotspot) {
 	}
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_INITIAL) return;
+	if (result == PC_WAIT) return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1383,7 +1384,7 @@ void Hotspot::doTalkTo(HotspotData *hotspot) {
 		(hotspot->hotspotId != 0x3EB))) {
 
 		HotspotPrecheckResult result = actionPrecheck(hotspot);
-		if (result == PC_INITIAL) return;
+		if (result == PC_WAIT) return;
 		else if (result != PC_EXECUTE) {
 			endAction();
 			return;
@@ -1421,7 +1422,7 @@ void Hotspot::doTell(HotspotData *hotspot) {
 	assert(character);
 
 	HotspotPrecheckResult hsResult = actionPrecheck(hotspot);
-	if (hsResult == PC_INITIAL) return;
+	if (hsResult == PC_WAIT) return;
 	else if (hsResult != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1472,7 +1473,7 @@ void Hotspot::doLookAt(HotspotData *hotspot) {
 		if (!*tempId) {
 			// Hotspot wasn't in the list
 			HotspotPrecheckResult result = actionPrecheck(hotspot);
-			if (result == PC_INITIAL) return;
+			if (result == PC_WAIT) return;
 			else if (result != PC_EXECUTE) {
 				endAction();
 				return;
@@ -1509,7 +1510,7 @@ void Hotspot::doLookThrough(HotspotData *hotspot) {
 		if (!*tempId) {
 			// Hotspot wasn't in the list
 			HotspotPrecheckResult result = actionPrecheck(hotspot);
-			if (result == PC_INITIAL) return;
+			if (result == PC_WAIT) return;
 			else if (result != PC_EXECUTE) {
 				endAction();
 				return;
@@ -1546,7 +1547,7 @@ void Hotspot::doAsk(HotspotData *hotspot) {
 	_data->useHotspotId = usedId;
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_INITIAL) return;
+	if (result == PC_WAIT) return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1682,7 +1683,7 @@ void Hotspot::doBribe(HotspotData *hotspot) {
 	fields.setField(USE_HOTSPOT_ID, hotspot->hotspotId);
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_INITIAL) return;
+	if (result == PC_WAIT) return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1744,7 +1745,7 @@ void Hotspot::doLockUnlock(HotspotData *hotspot) {
 	fields.setField(USE_HOTSPOT_ID, hotspot->hotspotId);
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
-	if (result == PC_INITIAL) return;
+	if (result == PC_WAIT) return;
 	else if (result != PC_EXECUTE) {
 		endAction();
 		return;
@@ -1791,7 +1792,7 @@ void Hotspot::npcHeySir(HotspotData *hotspot) {
 
 	// Get the character to remain in place for a while
 	setDelayCtr(130);
-	setCharacterMode(CHARMODE_4);
+	setCharacterMode(CHARMODE_WAIT_FOR_PLAYER);
 
 	// Set the talk override to the specified Id
 	CharacterScheduleEntry &entry = _currentActions.top().supportData();
@@ -1877,7 +1878,7 @@ void Hotspot::npcDispatchAction(HotspotData *hotspot) {
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
 	if (result == PC_EXECUTE) {
 		endAction();
-	} else if (result != PC_INITIAL) {
+	} else if (result != PC_WAIT) {
 		CharacterScheduleEntry *newEntry = Resources::getReference().
 			charSchedules().getEntry(entry.param(0), entry.parent());
 		_currentActions.top().setSupportData(newEntry);
@@ -2228,8 +2229,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		debugC(ERROR_DETAILED, kLureDebugAnimations, "char mode = %d, delay ctr = %d", 
 			h.characterMode(), h.delayCtr());
 
-		if (h.characterMode() == CHARMODE_6) {
-			// TODO: Figure out what mode 6 is
+		if (h.characterMode() == CHARMODE_PLAYER_WAIT) {
 			h.updateMovement();
 			if (bumpedPlayer) return;
 		} else {
@@ -2256,7 +2256,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		h.setCharacterMode(CHARMODE_NONE);
 		h.pathFinder().clear();
 
-		if ((currentMode == CHARMODE_4) || (currentMode == CHARMODE_7)) {
+		if ((currentMode == CHARMODE_WAIT_FOR_PLAYER) || (currentMode == CHARMODE_WAIT_FOR_INTERACT)) {
 			// TODO: HS[33h]=0
 			h.showMessage(1);
 		}
@@ -2353,7 +2353,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 				h.setDestHotspot(0xffff);
 
 			if (bumpedPlayer)
-				h.setCharacterMode(CHARMODE_6);
+				h.setCharacterMode(CHARMODE_PLAYER_WAIT);
 
 		} else {
 			debugC(ERROR_DETAILED, kLureDebugAnimations, "Character is blocked from moving");
@@ -2649,7 +2649,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 				res.pausedList().reset(h.hotspotId());
 				h.setBlockedState(BS_NONE);
 				h.currentActions().pop();
-				h.setCharacterMode(CHARMODE_6);
+				h.setCharacterMode(CHARMODE_PLAYER_WAIT);
 				h.setDelayCtr(7);
 				return;
 
@@ -2698,7 +2698,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 				if (room.cursorState() == CS_BUMPED)
 					room.setCursorState(CS_NONE);
 				if (fields.playerPendingPos().isSet) {
-					h.setCharacterMode(CHARMODE_6);
+					h.setCharacterMode(CHARMODE_PLAYER_WAIT);
 					h.setDelayCtr(IDLE_COUNTDOWN_SIZE);
 					return;
 				}
