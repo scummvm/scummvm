@@ -641,6 +641,7 @@ void Resources::saveToStream(Common::WriteStream *stream)
 	_activeHotspots.saveToStream(stream);
 	_fieldList.saveToStream(stream);
 	_randomActions.saveToStream(stream);
+	_barmanLists.saveToStream(stream);
 }
 
 void Resources::loadFromStream(Common::ReadStream *stream) {
@@ -652,6 +653,8 @@ void Resources::loadFromStream(Common::ReadStream *stream) {
 	_fieldList.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading random actions");
 	_randomActions.loadFromStream(stream);
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading barman lists");
+	_barmanLists.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Finished loading");
 }
 

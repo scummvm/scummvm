@@ -691,6 +691,33 @@ public:
 	int check(uint16 charId, int numImpinging, uint16 *impingingList);
 };
 
+struct ServeEntry {
+	uint16 hotspotId;
+	uint8 serveFlags;
+};
+
+#define NUM_SERVE_CUSTOMERS 4
+
+enum BarmanGraphicType {BG_RANDOM = 0, BG_BEER = 1, BG_EXTRA1 = 2, BG_EXTRA2 = 3};
+
+struct BarEntry {
+	uint16 roomNumber;
+	uint16 barmanId;
+	ServeEntry customers[NUM_SERVE_CUSTOMERS];
+	uint16 *graphics[4];
+	uint16 gridLine;
+	ServeEntry *currentCustomer;
+};
+
+class BarmanLists {
+public:
+	BarEntry &getDetails(uint16 roomNumber);
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
+};
+
+enum BarmanAction {WALK_AROUND = 1, POLISH_BAR = 2, WAIT = 3, WAIT_DIALOG = 4, SERVE_BEER = 5};
+
 enum StringEnum {S_CREDITS = 25, S_RESTART_GAME = 26, S_SAVE_GAME = 27, S_RESTORE_GAME = 28, 
 	S_QUIT = 29, S_FAST_TEXT = 30, S_SLOW_TEXT = 31, S_SOUND_ON = 32, S_SOUND_OFF = 33, 
 	S_NOTHING = 34, S_FOR = 35, S_TO = 36, S_ON = 37, S_AND_THEN = 38,

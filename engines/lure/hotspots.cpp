@@ -80,6 +80,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_exitCtr = 0;
 	_walkFlag = true;
 	_startRoomNumber = 0;
+	_supportValue = 0;
 
 	if (_data->npcSchedule != 0) {
 		CharacterScheduleEntry *entry = resources.charSchedules().getEntry(_data->npcSchedule);
@@ -799,10 +800,10 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
 
-	if ((hotspot->hotspotId == 0x420) || (hotspot->hotspotId == 0x436) ||
-		(hotspot->hotspotId == 0x429)) {
-		// TODO: figure out specific handling code - sub_213
-		if (0)
+	if ((hotspot->hotspotId == SID_ID) || (hotspot->hotspotId == EWAN_ID) ||
+		(hotspot->hotspotId == NELLIE_ID)) {
+		// Check for a bar place
+		if (getBarPlace() == BP_KEEP_TRYING)
 			return PC_INITIAL;
 	} else if (hotspot->roomNumber != roomNumber()) {
 		// loc_884
@@ -862,6 +863,79 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 		hotspot->actionHotspotId = hotspot->hotspotId;
 	}
 	return PC_EXECUTE;
+}
+
+BarPlaceResult Hotspot::getBarPlace() {
+	Resources &res = Resources::getReference();
+	BarEntry &barEntry = res.barmanLists().getDetails(roomNumber());
+
+	if (actionCtr() != 0) {
+		// Already at bar 
+		// Find the character's slot in the bar entry list
+		for (int index = 0; index < NUM_SERVE_CUSTOMERS; ++index) {
+			if (barEntry.customers[index].hotspotId == hotspotId()) 
+				return ((barEntry.customers[index].serveFlags & 0x80) == 0) ? BP_GOT_THERE : BP_KEEP_TRYING;
+		}
+
+		setActionCtr(0);
+		return BP_KEEP_TRYING;
+	}
+
+	// Try and find a bar place
+	if (!findClearBarPlace())
+		return BP_KEEP_TRYING;
+
+	// First scan for any existing entry for the character
+	int index = -1;
+	while (++index < NUM_SERVE_CUSTOMERS) {
+		if (barEntry.customers[index].hotspotId == hotspotId()) 
+			break;
+	}
+	if (index == NUM_SERVE_CUSTOMERS) {
+		// Not already present - so scan for an empty slot
+		index = -1;
+		while (++index < NUM_SERVE_CUSTOMERS) {
+			if (barEntry.customers[index].hotspotId == 0) 
+			break;
+		}
+
+		if (index == NUM_SERVE_CUSTOMERS)
+			// No slots available, so flag to keep trying
+			return BP_KEEP_TRYING;
+	}
+
+	// Set up the slot entry for the character
+	barEntry.customers[index].hotspotId = hotspotId();
+	barEntry.customers[index].serveFlags = 0x82;
+	setActionCtr(1);
+	updateMovement();
+	setDirection(UP);
+
+	return BP_KEEP_TRYING;
+}
+
+bool Hotspot::findClearBarPlace() {
+	// Check if character has reached the bar
+	Resources &res = Resources::getReference();
+	BarEntry &barEntry = res.barmanLists().getDetails(roomNumber());
+	if ((y() + heightCopy()) < ((barEntry.gridLine << 3) + 24)) 
+		return true;
+
+	RoomPathsData &paths = res.getRoom(roomNumber())->paths;
+	
+	// Scan backwards from the right side for 4 free blocks along the bar line block 
+	int numFree = 0;
+	for (int x = ROOM_PATHS_WIDTH - 1; x >= 0; --x) {
+		if (paths.isOccupied(x, barEntry.gridLine))
+			numFree = 0;
+		else if (++numFree == 4) {
+			// Start character walking to the found position
+			walkTo(x * 8, (barEntry.gridLine << 3) + 8);
+			return false;
+		}
+	}
+
+	return false;
 }
 
 bool Hotspot::characterWalkingCheck(HotspotData *hotspot) {
@@ -1944,6 +2018,7 @@ void Hotspot::saveToStream(Common::WriteStream *stream) {
 	stream->writeUint16LE(_exitCtr);
 	stream->writeByte(_walkFlag);
 	stream->writeUint16LE(_startRoomNumber);
+	stream->writeUint16LE(_supportValue);
 }
 
 void Hotspot::loadFromStream(Common::ReadStream *stream) {
@@ -1979,6 +2054,7 @@ void Hotspot::loadFromStream(Common::ReadStream *stream) {
 	_exitCtr = stream->readUint16LE();
 	_walkFlag = stream->readByte() != 0;
 	_startRoomNumber = stream->readUint16LE();
+	_supportValue = stream->readUint16LE();
 }
 
 /*------------------------------------------------------------------------*/
@@ -2020,7 +2096,7 @@ HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 	case 0x8241:
 		return headAnimHandler;
 	case 0x82A0:
-		return sellerAnimHandler;
+		return barmanAnimHandler;
 	case 0x85ce:
 		return skorlGaurdAnimHandler;
 	case 0x882A:
@@ -2806,6 +2882,7 @@ void HotspotTickHandlers::playerSewerExitAnimHandler(Hotspot &h) {
 
 		// Setup Ratpouch
 		Hotspot *ratpouchHotspot = res.getActiveHotspot(RATPOUCH_ID);
+		assert(ratpouchHotspot);
 		ratpouchHotspot->setCharacterMode(CHARMODE_NONE);
 		ratpouchHotspot->setDelayCtr(0);
 		ratpouchHotspot->setActions(0x821C00);
@@ -3106,14 +3183,214 @@ void HotspotTickHandlers::headAnimHandler(Hotspot &h) {
 	h.setFrameNumber(frameNumber);
 }
 
-void HotspotTickHandlers::sellerAnimHandler(Hotspot &h) {
+void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
+	Resources &res = Resources::getReference();
+	Room &room = Room::getReference();
+	BarEntry &barEntry = res.barmanLists().getDetails(h.roomNumber());
+	Common::RandomSource rnd;
+	static bool ewanXOffset = false;
+
 	h.handleTalkDialog();
-	if (h.frameCtr() > 0) {
-		h.decrFrameCtr();
+	if (h.delayCtr() > 0) {
+		h.setDelayCtr(h.delayCtr() - 1);
 		return;
 	}
 	
-	// TODO: Decode remainder of sellers tick proc
+	if (h.frameCtr() == 0) {
+		// Barman not currently doing something
+		if (barEntry.currentCustomer != NULL) {
+			// A customer has been set to be served
+			Hotspot *servee = res.getActiveHotspot(barEntry.currentCustomer->hotspotId);
+			if (servee != NULL) {
+				// Check whether the character is still at the bar
+				if ((servee->y() + servee->heightCopy()) >= ((barEntry.gridLine << 3) + 24)) {
+					// Customer has left - nullify their entry
+					barEntry.currentCustomer->hotspotId = 0;
+					barEntry.currentCustomer->serveFlags = 0;
+					barEntry.currentCustomer = NULL;
+				}
+				else if (servee->hotspotId() != PLAYER_ID) {
+					// Any other NPC character, so serve them
+					barEntry.currentCustomer->serveFlags = 0;
+				} else {
+					// Servee is the player, flag to stop the barman until the player walks away
+					barEntry.currentCustomer->serveFlags &= 0x7f;
+
+					if ((barEntry.currentCustomer->serveFlags & 7) != 0) {
+						// Barman needs to do something
+						h.setFrameCtr(barEntry.currentCustomer->serveFlags);
+						barEntry.currentCustomer->serveFlags &= 0xf8;
+
+					} else if (!h.useHotspotId() == 0) {
+						// Player is not currently talking
+						// Clear entry from list
+						barEntry.currentCustomer->hotspotId = 0;
+						barEntry.currentCustomer->serveFlags = 0;
+						barEntry.currentCustomer = NULL;
+						// Set the barman to polish the bar
+						h.setFrameCtr(2);
+					}
+				}
+				
+				return;
+			}
+		}
+
+		// Check for any customer waiting to be served
+		for (int index = 0; index < NUM_SERVE_CUSTOMERS; ++index) {
+			if ((barEntry.customers[index].serveFlags & 0x80) != 0) {
+				// Found one to serve
+				barEntry.customers[index].serveFlags = 0;
+				barEntry.currentCustomer = &barEntry.customers[index];
+				Hotspot *hotspot = res.getActiveHotspot(barEntry.customers[index].hotspotId);
+				assert(hotspot);
+//DEBUG/TODO: Reaching here too early, so servee's x can be outside the bar range
+				h.setSupportValue(hotspot->x());    // Save the position to move to
+				h.setFrameCtr(0x80);				// Flag for movement
+				return;
+			}
+		}
+
+		// At this point, no customers need servering. Empty the table
+		barEntry.currentCustomer = NULL;
+		for (int index = 0; index < NUM_SERVE_CUSTOMERS; ++index) {
+			barEntry.customers[index].hotspotId = 0;
+			barEntry.customers[index].serveFlags = 0;
+		}
+
+		// Choose a random action for the barman to do - walk around, polish the bar, or wait
+		h.setFrameCtr(rnd.getRandomNumber(2) + 1);
+	}
+
+	// At this point the barman is known to be doing something
+
+	if ((h.frameCtr() & 0x80) != 0)	{
+		// Bit 7 being set indicates the barman is moving to a destination
+		int16 xDiff = h.x() - h.supportValue();
+		if (ABS(xDiff) >= 2) {
+			// Keep the barman moving
+			if (xDiff > 0) {
+				// Moving left
+				h.setPosition(h.x() - 2, h.y());
+				h.setActionCtr(h.actionCtr() + 1);
+				if ((h.actionCtr() >= 12) || (h.actionCtr() < 6))
+					h.setActionCtr(6);
+			} else {
+				// Moving right
+				h.setPosition(h.x() + 2, h.y());
+				h.setActionCtr(h.actionCtr() + 1);
+				if (h.actionCtr() >= 6) h.setActionCtr(0);
+			}
+		} else {
+			// Stop the barman moving
+			h.setActionCtr(12);
+			h.setFrameCtr(h.frameCtr() & 0x7f);
+		}
+
+		h.setFrameNumber(h.actionCtr());
+		return;
+	}
+
+	// All other actions
+	uint16 xp, id;
+	uint16 *frameList;
+	uint16 frameNumber;
+
+	BarmanAction action = (BarmanAction) (h.frameCtr() & 0x3F);
+	switch (action) {
+	case WALK_AROUND:
+		// Wander around between the ends of the bar
+		if (h.hotspotId() == EWAN_ID)
+			xp = rnd.getRandomNumber(51) + 94;
+		else
+			xp = rnd.getRandomNumber(85) + 117;  
+
+		h.setSupportValue(xp);
+		h.setFrameCtr(0x83);
+		return;
+
+	case POLISH_BAR:
+	case SERVE_BEER:
+		if (action == SERVE_BEER) {
+			// Serving a beer
+			if ((h.frameCtr() & 0x40) == 0)
+				h.setSupportValue(h.resource()->flags2);
+
+		} else {
+			// Polishing the bar
+			if ((h.frameCtr() & 0x40) == 0) {
+				// New polish beginning
+				id = BG_RANDOM << 8;
+
+				if (h.hotspotId() == EWAN_ID) {
+					HotspotData *player = res.getHotspot(PLAYER_ID);
+					HotspotData *gwyn = res.getHotspot(GOEWIN_ID);
+					HotspotData *wayne = res.getHotspot(WAYNE_ID);
+
+					if ((player->roomNumber != 35) && (gwyn->roomNumber != 35) && (wayne->roomNumber != 35))
+					{
+						if (rnd.getRandomNumber(1) == 1)
+							id = BG_EXTRA1 << 8;
+						else
+						{
+							// Set up alternate animation
+							h.setWidth(32);
+							h.setAnimation(EWAN_ALT_ANIM_ID);
+							ewanXOffset = true;
+							h.setPosition(h.x() - 8, h.y());
+							id = BG_EXTRA2 << 8;
+						}
+					}
+				}
+
+				h.setSupportValue(id);
+			}
+		}
+
+		// At this point, either a polish or a beer serve is in progress
+		h.setFrameCtr(h.frameCtr() | 0x40);
+		h.setSupportValue(h.supportValue() + 1);  // Move to next frame
+		frameList = barEntry.graphics[h.supportValue() >> 8];
+		frameNumber = frameList[h.supportValue() & 0xff];
+
+		if (frameNumber != 0)
+		{
+			h.setActionCtr(frameNumber);
+			h.setFrameNumber(frameNumber);
+			return;
+		}
+
+		if (h.hotspotId() == EWAN_ID)
+		{
+			// Make sure Ewan is back to his standard animation
+			h.setWidth(16);
+			h.setAnimation(EWAN_ANIM_ID);
+			
+			if (ewanXOffset) {
+				h.setPosition(h.x() + 8, h.y());
+				ewanXOffset = false;
+			}
+		}
+		break;
+
+	case WAIT_DIALOG:
+		if (room.isDialogActive()) {
+			h.setFrameNumber(h.actionCtr());
+			return;
+		}
+		break;
+
+	case WAIT:
+		// Immediate break, since the code outside the switch handles stopping the barman
+		break;
+	}
+
+	// If this point is reached, then the barman should stop whatever he's doing
+	if (action != WAIT_DIALOG)
+		h.setDelayCtr(10);
+	h.setFrameCtr(0);
+	h.setActionCtr(12);
+	h.setFrameNumber(h.actionCtr());
 }
 
 void HotspotTickHandlers::skorlGaurdAnimHandler(Hotspot &h) {

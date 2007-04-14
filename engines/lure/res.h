@@ -71,6 +71,7 @@ private:
 	RandomActionList _randomActions;
 	RoomExitIndexedHotspotList _indexedRoomExitHospots;
 	PausedCharacterList _pausedList;
+	BarmanLists _barmanLists;
 	StringList _stringList;
 
 	int numCharOffsets;
@@ -126,6 +127,7 @@ public:
 	RandomActionList &randomActions() { return _randomActions; }
 	RoomExitIndexedHotspotList &exitHotspots() { return _indexedRoomExitHospots; }
 	PausedCharacterList &pausedList() { return _pausedList; }
+	BarmanLists &barmanLists() { return _barmanLists; }
 	StringList &stringList() { return _stringList; }
 	uint16 getCharOffset(int index) { 
 		if (index >= numCharOffsets) 

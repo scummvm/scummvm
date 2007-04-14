@@ -31,7 +31,7 @@ namespace Lure {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 16
+#define LURE_DAT_MINOR 17
 
 #define LURE_DEBUG 1
 
@@ -229,7 +229,11 @@ enum Action {
 #define FIRST_NONCHARACTER_ID 0x408
 #define SACK_ID 0x40D
 #define PRISONER_ID 0x412
+#define SID_ID 0x420
 #define TRANSFORM_ID 0x425
+#define NELLIE_ID 0x429
+#define EWAN_ID 0x436
+#define WAYNE_ID 0x3f1
 #define START_EXIT_ID 0x2710
 #define BOTTLE_HOTSPOT_ID 0x2710
 #define BRICKS_ID 0x2714
@@ -257,6 +261,8 @@ enum Action {
 #define SERF_ANIM_ID 0x58A0
 #define BLACKSMITH_STANDARD 0x8a12
 #define BLACKSMITH_HAMMERING_ANIM_ID 0x9c11
+#define EWAN_ANIM_ID 0x59E4
+#define EWAN_ALT_ANIM_ID 0x59ED
 
 #define CONVERSE_COUNTDOWN_SIZE 40
 #define IDLE_COUNTDOWN_SIZE 15

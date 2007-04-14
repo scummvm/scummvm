@@ -106,6 +106,7 @@ public:
 	void setShowInfo(bool value) { _showInfo = value; }
 	void setTalkDialog(uint16 srcCharacterId, uint16 destCharacterId, uint16 usedId, uint16 stringId);
 	void setCursorState(CursorState state) { _cursorState = state; }
+	bool isDialogActive() { return _talkDialog != NULL; }
 	bool checkInTalkDialog();
 	char *statusLine() { return _statusLine; }
 	void saveToStream(Common::WriteStream *stream);

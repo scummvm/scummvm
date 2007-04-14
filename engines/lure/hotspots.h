@@ -74,7 +74,7 @@ private:
 	static void morkusAnimHandler(Hotspot &h);
 	static void talkAnimHandler(Hotspot &h);
 	static void headAnimHandler(Hotspot &h);
-	static void sellerAnimHandler(Hotspot &h);
+	static void barmanAnimHandler(Hotspot &h);
 	static void skorlGaurdAnimHandler(Hotspot &h);
 	static void rackSerfAnimHandler(Hotspot &h);
 
@@ -220,6 +220,8 @@ public:
 
 enum HotspotPrecheckResult {PC_EXECUTE, PC_NOT_IN_ROOM, PC_UNKNOWN, PC_INITIAL, PC_EXCESS};
 
+enum BarPlaceResult {BP_KEEP_TRYING, BP_GOT_THERE, BP_FAIL};
+
 #define MAX_NUM_FRAMES 16
 
 class Hotspot {
@@ -265,6 +267,7 @@ private:
 	uint8 _exitCtr;
 	bool _walkFlag;
 	uint16 _startRoomNumber;
+	uint16 _supportValue; 
 	
 	// Support methods
 	uint16 getTalkId(HotspotData *charHotspot);
@@ -273,6 +276,8 @@ private:
 
 	// Action support methods
 	HotspotPrecheckResult actionPrecheck(HotspotData *hotspot);
+	BarPlaceResult getBarPlace();
+	bool findClearBarPlace();
 	bool characterWalkingCheck(HotspotData *hotspot);
 	bool doorCloseCheck(uint16 doorId);
 	void resetDirection();
@@ -388,6 +393,13 @@ public:
 	void setWalkFlag(bool value) { _walkFlag = value; }
 	void setStartRoomNumber(uint16 value) { _startRoomNumber = value; }
 	void setSize(uint16 newWidth, uint16 newHeight);
+	void setWidth(uint16 newWidth) {
+		_width = newWidth;
+		_frameWidth = newWidth;
+	}
+	void setHeight(uint16 newHeight) { 
+		_height = newHeight;
+	}
 	void setScript(uint16 offset) {
 		assert(_data != NULL);
 		_sequenceOffset = offset;
@@ -449,6 +461,8 @@ public:
 		assert(_data);
 		_data->v2b = value;
 	}
+	uint16 supportValue() { return _supportValue; }
+	void setSupportValue(uint16 value) { _supportValue = value; }
 
 	void copyTo(Surface *dest);
 	bool executeScript();

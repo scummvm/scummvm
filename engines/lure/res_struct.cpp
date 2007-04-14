@@ -35,6 +35,38 @@ int actionNumParams[NPC_JUMP_ADDRESS+1] = {0,
 	1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 0, 1,
 	0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1};
 
+// Barman related frame lists
+
+uint16 basicPolish[] = {8+13,8+14,8+15,8+16,8+17,8+18,8+17,8+16,8+15,8+14,
+	8+15,8+16,8+17,8+18,8+17,8+16,8+15,8+14,8+13,0};
+
+uint16 sidsFetch[] = {12+1,12+2,12+3,12+4,12+5,12+6,12+5,12+6,12+5,12+4,12+3,12+7,12+8,0};
+
+uint16 nelliesScratch[] = {11+1,11+2,11+3,11+4,11+5,11+4,11+5,11+4,11+5,11+4,11+3,11+2,11+1,0};
+
+uint16 nelliesFetch[] = {1,2,3,4,5,4,5,4,3,2,6,7,0};
+
+uint16 ewansFetch[] = {13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,0};
+
+uint16 ewanExtraGraphic1[]= {
+	28,29,30,31,32,33,34,35,36,37,
+	38,39,40,41,42,43,44,45,46,47,
+	48,
+	40,39,38,37,36,35,34,33,32,31,30,29,28,
+	0};
+
+uint16 ewanExtraGraphic2[] = {
+	1,2,3,4,5,6,7,8,9,
+	10,11,12,13,14,15,16,17,18,19,
+	20,21,22,23,24,0};
+
+BarEntry barList[3] = {
+	{29, SID_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&basicPolish[0], &sidsFetch[0], NULL, NULL}, 13, NULL},
+	{32, NELLIE_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&nelliesScratch[0], &nelliesFetch[0], NULL, NULL}, 14, NULL},
+	{35, EWAN_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&ewansFetch[0], &ewansFetch[0], 
+		&ewanExtraGraphic1[0], &ewanExtraGraphic2[0]}, 16, NULL}
+};
+
 // Room data holding class
 
 RoomData::RoomData(RoomResource *rec, MemoryBlock *pathData) { 
@@ -969,6 +1001,45 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 	}
 
 	return result;
+}
+
+// Wrapper class for the barman lists
+
+BarEntry &BarmanLists::getDetails(uint16 roomNumber)
+{
+	for (int index = 0; index < 3; ++index)
+		if (barList[index].roomNumber == roomNumber)
+			return barList[index];
+	error("Invalid room %d specified for barman details retrieval", roomNumber);
+}
+
+void BarmanLists::saveToStream(Common::WriteStream *stream)
+{
+	for (int index = 0; index < 2; ++index)
+	{
+		uint16 value = (barList[index].currentCustomer - &barList[index].customers[0]) / sizeof(BarEntry);
+		stream->writeUint16LE(value);
+		for (int ctr = 0; ctr < NUM_SERVE_CUSTOMERS; ++ctr)
+		{
+			stream->writeUint16LE(barList[index].customers[ctr].hotspotId);
+			stream->writeByte(barList[index].customers[ctr].serveFlags);
+		}
+	}
+}
+
+void BarmanLists::loadFromStream(Common::ReadStream *stream)
+{
+	for (int index = 0; index < 2; ++index)
+	{
+		int16 value = stream->readUint16LE();
+		barList[index].currentCustomer = (value == 0) ? NULL : &barList[index].customers[value];
+
+		for (int ctr = 0; ctr < NUM_SERVE_CUSTOMERS; ++ctr)
+		{
+			barList[index].customers[ctr].hotspotId = stream->readUint16LE();
+			barList[index].customers[ctr].serveFlags = stream->readByte();
+		}
+	}
 }
 
 // String list resource class
