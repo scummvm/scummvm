@@ -925,12 +925,12 @@ bool Hotspot::findClearBarPlace() {
 	
 	// Scan backwards from the right side for 4 free blocks along the bar line block 
 	int numFree = 0;
-	for (int x = ROOM_PATHS_WIDTH - 1; x >= 0; --x) {
-		if (paths.isOccupied(x, barEntry.gridLine))
+	for (int xp = ROOM_PATHS_WIDTH - 1; xp >= 0; --xp) {
+		if (paths.isOccupied(xp, barEntry.gridLine))
 			numFree = 0;
 		else if (++numFree == 4) {
 			// Start character walking to the found position
-			walkTo(x * 8, (barEntry.gridLine << 3) + 8);
+			walkTo(xp * 8, (barEntry.gridLine << 3) + 8);
 			return false;
 		}
 	}
