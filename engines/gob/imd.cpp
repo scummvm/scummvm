@@ -58,9 +58,8 @@ ImdPlayer::ImdPlayer(GobEngine *vm) : _vm(vm) {
 	_frameDelay = 0;
 
 	_noSound = true;
-	_soundBuffer = 0;
 
-	_soundWaited = 0;
+	_soundStartTime = 0;
 	_skipFrames = 0;
 
 	_soundFreq = 0;
@@ -68,8 +67,9 @@ ImdPlayer::ImdPlayer(GobEngine *vm) : _vm(vm) {
 	_soundSlicesCount = 0;
 
 	_soundSliceLength = 0;
-	_curSoundSlice = 0;
 	_soundStage = 0;
+
+	_audioStream = 0;
 }
 
 ImdPlayer::~ImdPlayer() {
@@ -82,7 +82,6 @@ ImdPlayer::~ImdPlayer() {
 	delete[] _frameData;
 	delete[] _vidBuffer;
 	delete[] _frontMem;
-	delete[] _soundBuffer;
 	delete _curImd;
 }
 
@@ -178,7 +177,6 @@ ImdPlayer::Imd *ImdPlayer::loadImdFile(const char *path, SurfaceDesc *surfDesc, 
 
 	_noSound = true;
 	_soundStage = 0;
-	_soundWaited = 0;
 	if (imdPtr->verMin & 0x4000) {
 		_soundFreq = _vm->_dataIO->readUint16(handle);
 		_soundSliceSize = _vm->_dataIO->readUint16(handle);
@@ -199,19 +197,10 @@ ImdPlayer::Imd *ImdPlayer::loadImdFile(const char *path, SurfaceDesc *surfDesc, 
 
 		_soundSliceLength = 1000 / (_soundFreq / _soundSliceSize);
 
-		delete[] _soundBuffer;
-		// Allocate one slice more than necessary so that the first one won't
-		// get overwritten too fast after starting the, initially full, buffer
-		_soundBuffer = new byte[_soundSliceSize * (_soundSlicesCount + 1)];
-		assert(_soundBuffer);
-		memset(_soundBuffer, 0, _soundSliceSize * (_soundSlicesCount + 1));
-
-		_soundDesc.set(SOUND_SND, SOUND_TOT, _soundBuffer,
-				_soundSliceSize * (_soundSlicesCount + 1));
-
-		_curSoundSlice = 0;
 		_soundStage = 1;
 		_noSound = false;
+
+		_audioStream = Audio::makeAppendableAudioStream(_soundFreq, 0);
 	}
 
 	if (imdPtr->verMin & 0x2000) {
@@ -253,7 +242,6 @@ void ImdPlayer::finishImd(ImdPlayer::Imd *&imdPtr) {
 	if (!imdPtr)
 		return;
 
-	_soundDesc.free();
 	if (_soundStage == 2)
 		_vm->_snd->stopSound(0);
 
@@ -265,6 +253,12 @@ void ImdPlayer::finishImd(ImdPlayer::Imd *&imdPtr) {
 	delete[] imdPtr->extraPalette;
 
 	delete imdPtr;
+
+	if (_audioStream) {
+		_audioStream->finish();
+		_vm->_mixer->stopHandle(_audioHandle);
+		_audioStream = 0;
+	}
 }
 
 int8 ImdPlayer::openImd(const char *path, int16 x, int16 y,
@@ -374,10 +368,8 @@ void ImdPlayer::closeImd(void) {
 
 	delete[] _frameData;
 	delete[] _vidBuffer;
-	delete[] _soundBuffer;
 	_frameData = 0;
 	_vidBuffer = 0;
-	_soundBuffer = 0;
 
 	_curImd = 0;
 }
@@ -416,18 +408,18 @@ void ImdPlayer::drawFrame(Imd *imdPtr, int16 frame, int16 x, int16 y,
 
 	if (frame == 0)
 		_vm->_video->drawSprite(imdPtr->surfDesc, dest, 0, 0,
-				imdPtr->width - 1, imdPtr->height - 1, x, y, 1);
+				imdPtr->width - 1, imdPtr->height - 1, x, y, 0);
 	else if (imdPtr->frameCoords && (imdPtr->frameCoords[frame].left != -1))
 		_vm->_video->drawSprite(imdPtr->surfDesc, dest,
 				imdPtr->frameCoords[frame].left, imdPtr->frameCoords[frame].top,
 				imdPtr->frameCoords[frame].right, imdPtr->frameCoords[frame].bottom,
 				imdPtr->frameCoords[frame].left + x,
-				imdPtr->frameCoords[frame].top + y, 1);
+				imdPtr->frameCoords[frame].top + y, 0);
 	else if (imdPtr->stdX != -1)
 		_vm->_video->drawSprite(imdPtr->surfDesc, dest,
 				imdPtr->stdX, imdPtr->stdY, imdPtr->stdX + imdPtr->stdWidth - 1,
 				imdPtr->stdY + imdPtr->stdHeight - 1, x + imdPtr->stdX,
-				y + imdPtr->stdY, 1);
+				y + imdPtr->stdY, 0);
 	else
 		_vm->_video->drawSprite(imdPtr->surfDesc, dest, 0, 0,
 				imdPtr->width - 1, imdPtr->height - 1, x, y, 0);
@@ -1073,7 +1065,7 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 		}
 
 		if (_soundStage != 0) {
-			byte *soundBuf = _soundBuffer + _curSoundSlice * _soundSliceSize;
+			byte *soundBuf;
 
 			if (!hasNextCmd)
 				waitEndSoundSlice();
@@ -1082,9 +1074,13 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 			if (cmd == 0xFF00) {
 
 				if (!hasNextCmd && !_noSound) {
+					soundBuf = new byte[_soundSliceSize];
+					assert(soundBuf);
+
 					_vm->_dataIO->readData(imdPtr->handle, soundBuf,
 							_soundSliceSize);
 					_vm->_snd->convToSigned(soundBuf, _soundSliceSize);
+					_audioStream->queueBuffer(soundBuf, _soundSliceSize);
 				} else
 					_vm->_dataIO->seekData(imdPtr->handle,
 							_soundSliceSize, SEEK_CUR);
@@ -1096,23 +1092,28 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 				int dataLength = _soundSliceSize * _soundSlicesCount;
 
 				if (!hasNextCmd && !_noSound) {
-					_vm->_dataIO->readData(imdPtr->handle, _soundBuffer, dataLength);
-					_vm->_snd->convToSigned(_soundBuffer, dataLength);
+					soundBuf = new byte[dataLength];
+					assert(soundBuf);
 
-					_curSoundSlice = _soundSlicesCount - 1;
+					_vm->_dataIO->readData(imdPtr->handle, soundBuf, dataLength);
+					_vm->_snd->convToSigned(soundBuf, dataLength);
+
 					_soundStage = 1;
 					startSound = true;
+					_audioStream->queueBuffer(soundBuf, dataLength);
 				} else
 					_vm->_dataIO->seekData(imdPtr->handle, dataLength, SEEK_CUR);
 
 				cmd = _vm->_dataIO->readUint16(imdPtr->handle);
 
 			// Clear sound slice
-			} else if (!hasNextCmd && (!_noSound))
-				memset(soundBuf, 0, _soundSliceSize);
+			} else if (!hasNextCmd && (!_noSound)) {
+				soundBuf = new byte[_soundSliceSize];
+				assert(soundBuf);
 
-			if (!hasNextCmd)
-				_curSoundSlice = (_curSoundSlice + 1) % (_soundSlicesCount + 1);
+				memset(soundBuf, 0, _soundSliceSize);
+				_audioStream->queueBuffer(soundBuf, _soundSliceSize);
+			}
 		}
 
 		// Set palette
@@ -1198,10 +1199,10 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 
 	if (startSound) {
 		_vm->_snd->stopSound(0);
-		_vm->_snd->playSample(_soundDesc, -1, _soundFreq);
-		_soundStage = 2;
-		_soundWaited = imdPtr->curFrame * _soundSliceLength;
+		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_audioHandle, _audioStream);
+		_soundStartTime = _vm->_util->getTimeKey();
 		_skipFrames = 0;
+		_soundStage = 2;
 	}
 
 	imdPtr->x = xBak;
@@ -1210,15 +1211,11 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 	imdPtr->height = heightBak;
 
 	imdPtr->curFrame++;
-	if ((imdPtr->curFrame == (imdPtr->framesCount - 1)) && (_soundStage == 2)) {
-		// Clear the remaining sound buffer
-		if (_curSoundSlice > 0)
-			memset(_soundBuffer + _curSoundSlice * _soundSliceSize, 0,
-					_soundSliceSize * (_soundSlicesCount + 1) -
-					_curSoundSlice * _soundSliceSize);
-
-		_vm->_snd->setRepeating(0);
-		_vm->_snd->waitEndPlay();
+	if ((imdPtr->curFrame == imdPtr->framesCount) && (_soundStage == 2)) {
+		waitEndSoundSlice();
+		_audioStream->finish();
+		_vm->_mixer->stopHandle(_audioHandle);
+		_audioStream = 0;
 	}
 
 	return retVal;
@@ -1229,23 +1226,18 @@ inline void ImdPlayer::waitEndSoundSlice() {
 		return;
 
 	if (_skipFrames == 0) {
-		uint32 timeKey = _vm->_util->getTimeKey();
-		int32 waitTime = (_curImd->curFrame * _soundSliceLength) - _soundWaited;
 
 		_vm->_video->retrace();
-		waitTime -= _vm->_util->getTimeKey() - timeKey;
 
-		if (waitTime > 0) {
-			timeKey = _vm->_util->getTimeKey();
-			_vm->_util->delay(waitTime);
-			_soundWaited += _vm->_util->getTimeKey() - timeKey;
-		} else {
+		int32 waitTime = (_curImd->curFrame * _soundSliceLength) -
+			(_vm->_util->getTimeKey() - _soundStartTime);
+
+		if (waitTime < 0) {
 			_skipFrames = -waitTime / _soundSliceLength;
-			_soundWaited =
-				((_curImd->curFrame + _skipFrames) * _soundSliceLength) +
-				(-waitTime % _soundSliceLength);
 			warning("IMD A/V sync broken, skipping %d frame(s)", _skipFrames + 1);
-		}
+		} else if (waitTime > 0)
+			_vm->_util->delay(waitTime);
+
 	} else
 		_skipFrames--;
 }

@@ -105,18 +105,17 @@ protected:
 	byte *_vidBuffer;
 
 	bool _noSound;
-	byte *_soundBuffer;
 
-	uint32 _soundWaited;
+	uint32 _soundStartTime;
 	uint32 _skipFrames;
 
 	int16 _soundFreq;
 	uint16 _soundSliceSize;
 	int16 _soundSlicesCount;
-
 	uint16 _soundSliceLength;
-	uint16 _curSoundSlice;
-	SoundDesc _soundDesc;
+
+	Audio::AppendableAudioStream *_audioStream;
+	Audio::SoundHandle _audioHandle;
 
 	GobEngine *_vm;
 
