@@ -30,33 +30,12 @@
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
-#include "sound/mp3.h"
-#include "sound/vorbis.h"
-#include "sound/flac.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 
 namespace Saga {
 
 #define BUFFER_SIZE 4096
-
-struct TrackFormat {
-	Audio::DigitalTrackInfo* (*openTrackFunction)(int);
-};
-
-static const TrackFormat TRACK_FORMATS[] = {
-#ifdef USE_FLAC
-	{ Audio::getFlacTrack },
-#endif
-#ifdef USE_VORBIS
-	{ Audio::getVorbisTrack },
-#endif
-#ifdef USE_MAD
-	{ Audio::getMP3Track },
-#endif
-
-	{ NULL } // Terminator
-};
 
 // I haven't decided yet if it's a good idea to make looping part of the audio
 // stream class, or if I should use a "wrapper" class, like I did for Broken
