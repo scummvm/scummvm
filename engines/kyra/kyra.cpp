@@ -505,21 +505,20 @@ void KyraEngine::startup() {
 	_animator->initAnimStateList();
 	setCharactersInDefaultScene();
 
-	if (!_scriptInterpreter->loadScript("_STARTUP.EMC", _npcScriptData)) {
+	if (!_scriptInterpreter->loadScript("_STARTUP.EMC", _npcScriptData))
 		error("Could not load \"_STARTUP.EMC\" script");
-	}
 	_scriptInterpreter->initScript(_scriptMain, _npcScriptData);
-	if (!_scriptInterpreter->startScript(_scriptMain, 0)) {
+
+	if (!_scriptInterpreter->startScript(_scriptMain, 0))
 		error("Could not start script function 0 of script \"_STARTUP.EMC\"");
-	}
-	while (_scriptInterpreter->validScript(_scriptMain)) {
+
+	while (_scriptInterpreter->validScript(_scriptMain))
 		_scriptInterpreter->runScript(_scriptMain);
-	}
 	
 	_scriptInterpreter->unloadScript(_npcScriptData);
-	if (!_scriptInterpreter->loadScript("_NPC.EMC", _npcScriptData)) {
+
+	if (!_scriptInterpreter->loadScript("_NPC.EMC", _npcScriptData))
 		error("Could not load \"_NPC.EMC\" script");
-	}
 	
 	snd_playTheme(1);
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);

@@ -28,15 +28,15 @@
 namespace Kyra {
 struct ScriptData {
 	byte *text;
-	byte *data;
-	byte *ordr;
+	uint16 *data;
+	uint16 *ordr;
 	uint16 dataSize;
 	
 	int opcodeTable;	// indicates which opcode table to use (for Kyra3 and Kyra2)
 };
 
 struct ScriptState {
-	byte *ip;
+	uint16 *ip;
 	const ScriptData *dataPtr;
 	int16 retValue;
 	uint16 bp;
@@ -59,9 +59,9 @@ public:
 	
 	bool runScript(ScriptState *script);
 protected:
-	uint32 getFORMBlockSize(byte *&data) const;
-	uint32 getIFFBlockSize(byte *start, byte *&data, uint32 maxSize, const uint32 chunk) const;
-	bool loadIFFBlock(byte *start, byte *&data, uint32 maxSize, const uint32 chunk, byte *loadTo, uint32 ptrSize) const;
+	uint32 getFORMBlockSize(const byte *&data) const;
+	uint32 getIFFBlockSize(const byte *start, const byte *&data, uint32 maxSize, const uint32 chunk) const;
+	bool loadIFFBlock(const byte *start, const byte *&data, uint32 maxSize, const uint32 chunk, void *loadTo, uint32 ptrSize) const;
 	
 	KyraEngine *_vm;
 	int16 _parameter;

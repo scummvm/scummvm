@@ -33,7 +33,7 @@
 
 namespace Kyra {
 #define stackPos(x) script->stack[script->sp+x]
-#define stackPosString(x) (char*)&script->dataPtr->text[READ_BE_UINT16(&((uint16 *)script->dataPtr->text)[stackPos(x)])]
+#define stackPosString(x) (const char*)&script->dataPtr->text[READ_BE_UINT16(&((uint16 *)script->dataPtr->text)[stackPos(x)])]
 
 int KyraEngine::o1_magicInMouseItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_magicInMouseItem(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
@@ -437,7 +437,7 @@ int KyraEngine::o1_setScaleMode(ScriptState *script) {
 int KyraEngine::o1_openWSAFile(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_openWSAFile(%p) ('%s', %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3));
 	
-	char *filename = stackPosString(0);
+	const char *filename = stackPosString(0);
 	int wsaIndex = stackPos(1);
 	
 	_movieObjects[wsaIndex]->open(filename, (stackPos(3) != 0) ? 1 : 0, 0);
