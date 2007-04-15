@@ -65,9 +65,11 @@ private:
 	static void playerAnimHandler(Hotspot &h);
 	static void followerAnimHandler(Hotspot &h);
 	static void skorlAnimHandler(Hotspot &h);
+	static void sonicRatAnimHandler(Hotspot &h);
 	static void droppingTorchAnimHandler(Hotspot &h);
 	static void playerSewerExitAnimHandler(Hotspot &h);
 	static void fireAnimHandler(Hotspot &h);
+	static void teaAnimHandler(Hotspot &h);
 	static void goewinCaptiveAnimHandler(Hotspot &h);
 	static void prisonerAnimHandler(Hotspot &h);
 	static void catrionaAnimHandler(Hotspot &h);
@@ -76,6 +78,8 @@ private:
 	static void headAnimHandler(Hotspot &h);
 	static void barmanAnimHandler(Hotspot &h);
 	static void skorlGaurdAnimHandler(Hotspot &h);
+	static void gargoyleAnimHandler(Hotspot &h);
+	static void skullAnimHandler(Hotspot &h);
 	static void rackSerfAnimHandler(Hotspot &h);
 
 public:
@@ -246,7 +250,6 @@ private:
 	uint8 _layer;
 	uint16 _sequenceOffset;
 	uint16 _tickCtr;
-	uint32 _actions;
 	uint8 _colourOffset;
 	bool _persistant;
 	HotspotOverrideData *_override;
@@ -410,7 +413,10 @@ public:
 		_layer = newLayer;
 		_data->layer = newLayer;
 	}
-	void setActions(uint32 newActions) { _actions = newActions; }
+	void setActions(uint32 newActions) { 
+		assert(_data);
+		_data->actions = newActions;
+	}
 	void setCharRectY(uint16 value) { _charRectY = value; }
 	void setSkipFlag(bool value) { _skipFlag = value; }
 	CharacterMode characterMode() {

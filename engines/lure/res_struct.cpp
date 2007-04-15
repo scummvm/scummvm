@@ -1079,7 +1079,6 @@ ValueTableData::ValueTableData() {
 	_playerPendingPos.isSet = false;
 	_flags = GAMEFLAG_4 | GAMEFLAG_1;
 	_hdrFlagMask = 1;
-	_wanderingCharsLoaded = false;
 
 	for (uint16 index = 0; index < NUM_VALUE_FIELDS; ++index)
 		_fieldList[index] = 0;
@@ -1126,7 +1125,6 @@ void ValueTableData::saveToStream(Common::WriteStream *stream)
 	stream->writeSint16LE(_playerPendingPos.pos.y);
 	stream->writeByte(_flags);
 	stream->writeByte(_hdrFlagMask);
-	stream->writeByte(_wanderingCharsLoaded);
 	
 	// Write out the special fields
 	for (int index = 0; index < NUM_VALUE_FIELDS; ++index)
@@ -1145,7 +1143,6 @@ void ValueTableData::loadFromStream(Common::ReadStream *stream)
 	_playerPendingPos.pos.y = stream->readSint16LE();
 	_flags = stream->readByte();
 	_hdrFlagMask = stream->readByte();
-	_wanderingCharsLoaded = stream->readByte() != 0;
 	
 	// Read in the field list
 	for (int index = 0; index < NUM_VALUE_FIELDS; ++index)

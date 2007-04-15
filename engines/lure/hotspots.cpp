@@ -64,7 +64,6 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_layer = res->layer;
 	_sequenceOffset = res->sequenceOffset;
 	_tickCtr = res->tickTimeout;
-	_actions = res->actions;
 	_colourOffset = res->colourOffset;
 
 	_override = resources.getHotspotOverride(res->hotspotId);
@@ -2006,7 +2005,6 @@ void Hotspot::saveToStream(Common::WriteStream *stream) {
 	stream->writeByte(_layer);
 	stream->writeUint16LE(_sequenceOffset);
 	stream->writeUint16LE(_tickCtr);
-	stream->writeUint32LE(_actions);
 	stream->writeByte(_colourOffset);
 	stream->writeUint16LE(_animId);
 	stream->writeUint16LE(_frameNumber);
@@ -2042,7 +2040,6 @@ void Hotspot::loadFromStream(Common::ReadStream *stream) {
 	_layer = stream->readByte();
 	_sequenceOffset = stream->readUint16LE();
 	_tickCtr = stream->readUint16LE();
-	_actions = stream->readUint32LE();
 	_colourOffset = stream->readByte();
 	setAnimation(stream->readUint16LE());
 	setFrameNumber(stream->readUint16LE());
@@ -2062,6 +2059,8 @@ void Hotspot::loadFromStream(Common::ReadStream *stream) {
 
 HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 	switch (procOffset) {
+	case 0x41BD:
+		return defaultHandler;
 	case STANDARD_CHARACTER_TICK_PROC:
 		return standardCharacterAnimHandler;
 	case VOICE_TICK_PROC_ID:
@@ -2080,12 +2079,16 @@ HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 		return standardAnimHandler2;
 	case 0x7F3A:
 		return standardAnimHandler;
+	case 0x7F54:
+		return sonicRatAnimHandler;
 	case 0x7F69:
 		return droppingTorchAnimHandler;
 	case 0x7FA1:
 		return playerSewerExitAnimHandler;
 	case 0x8009:
 		return fireAnimHandler;
+	case 0x813F:
+		return teaAnimHandler;
 	case 0x8180:
 		return goewinCaptiveAnimHandler;
 	case 0x81B3:
@@ -2100,12 +2103,18 @@ HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 		return barmanAnimHandler;
 	case 0x85ce:
 		return skorlGaurdAnimHandler;
+	case 0x862D:
+		return gargoyleAnimHandler;
+	case 0x86FA:
+	case 0x86FF:
+		return skullAnimHandler;
 	case 0x882A:
 		return rackSerfAnimHandler;
 	case TALK_TICK_PROC_ID:
 		return talkAnimHandler;
 	default:
-		return defaultHandler;
+		error("Unknown tick proc %xh for hotspot", procOffset);
+//		return defaultHandler;
 	}
 }
 
@@ -2681,11 +2690,10 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 		// The character is currently moving
 		h.setOccupied(false);
 
-		if ((h.destHotspotId() != 0) && (h.destHotspotId() != 0xffff)) {
-			// Player is walking to a room exit hotspot
+		if (h.destHotspotId() != 0) {
 			RoomExitJoinData *joinRec = res.getExitJoin(h.destHotspotId());
-			if (joinRec->blocked) {
-				// Exit now blocked, so stop walking
+			if ((joinRec != NULL) && (joinRec->blocked)) {
+				// Player is walking to a blocked room exit, so stop walking
 				actions.pop();
 				h.setOccupied(true);
 				break;
@@ -2753,18 +2761,6 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 
 	// If some action is in progress, do standard handling
 	if (h.characterMode() != CHARMODE_IDLE) {
-		standardCharacterAnimHandler(h);
-		return;
-	}
-
-	if (fields.wanderingCharsLoaded()) {
-		// Start Ratpouch to sewer exit to meet player
-		fields.wanderingCharsLoaded() = false;
-		h.setBlockedFlag(false);
-		CharacterScheduleEntry *newEntry = res.charSchedules().getEntry(RETURN_SUPPORT_ID);
-		h.currentActions().addFront(DISPATCH_ACTION, newEntry, 7);
-		h.setActionCtr(0);
-
 		standardCharacterAnimHandler(h);
 		return;
 	}
@@ -2841,6 +2837,16 @@ void HotspotTickHandlers::skorlAnimHandler(Hotspot &h) {
 	standardCharacterAnimHandler(h);
 }
 
+void HotspotTickHandlers::sonicRatAnimHandler(Hotspot &h) {
+	if (h.actionCtr() == 0) {
+		HotspotData *player = Resources::getReference().getHotspot(PLAYER_ID);
+		if (Support::charactersIntersecting(h.resource(), player))
+			h.setActionCtr(1);
+	} else {
+		standardAnimHandler(h);
+	}
+}
+
 void HotspotTickHandlers::droppingTorchAnimHandler(Hotspot &h) {
 	if (h.frameCtr() > 0) 
 		h.setFrameCtr(h.frameCtr() - 1);
@@ -2886,12 +2892,29 @@ void HotspotTickHandlers::playerSewerExitAnimHandler(Hotspot &h) {
 		ratpouchHotspot->setCharacterMode(CHARMODE_NONE);
 		ratpouchHotspot->setDelayCtr(0);
 		ratpouchHotspot->setActions(0x821C00);
+
+		// Ratpouch has previously been moved to room 8. Start him moving to room 7
+		ratpouchHotspot->currentActions().clear();
+		ratpouchHotspot->currentActions().addFront(DISPATCH_ACTION, 7);
 	}
 }
 
 void HotspotTickHandlers::fireAnimHandler(Hotspot &h) {
 	standardAnimHandler(h);
 	h.setOccupied(true);
+}
+
+void HotspotTickHandlers::teaAnimHandler(Hotspot &h) {
+	if (h.frameCtr() > 0) {
+		h.decrFrameCtr();
+		return;
+	}
+
+	if (h.executeScript()) {
+		// Signal that the tea is done
+		h.setScript(0xB82);
+		Resources::getReference().fieldList().setField(27, 1);
+	}
 }
 
 void HotspotTickHandlers::goewinCaptiveAnimHandler(Hotspot &h) {
@@ -3398,6 +3421,18 @@ void HotspotTickHandlers::skorlGaurdAnimHandler(Hotspot &h) {
 
 	// Set the frame number
 	h.setFrameNumber(h.actionCtr());
+}
+
+void HotspotTickHandlers::gargoyleAnimHandler(Hotspot &h) {
+	h.handleTalkDialog();
+}
+
+void HotspotTickHandlers::skullAnimHandler(Hotspot &h) {
+	Resources &res = Resources::getReference();
+	RoomExitJoinData *joinRec = res.getExitJoin(
+		(h.hotspotId() == 0x42f) ? 0x272A : 0x272C);
+
+	h.setFrameNumber(joinRec->blocked ? 0 : 1);
 }
 
 void HotspotTickHandlers::rackSerfAnimHandler(Hotspot &h) {

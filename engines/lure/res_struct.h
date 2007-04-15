@@ -796,7 +796,6 @@ private:
 	PlayerPendingPosition _playerPendingPos;
 	uint8 _flags;
 	uint8 _hdrFlagMask;
-	bool _wanderingCharsLoaded;
 
 	uint16 _fieldList[NUM_VALUE_FIELDS];
 	bool isKnownField(uint16 fieldIndex);
@@ -814,7 +813,6 @@ public:
 	uint8 &hdrFlagMask() { return _hdrFlagMask; }
 	PlayerNewPosition &playerNewPos() { return _playerNewPos; }
 	PlayerPendingPosition &playerPendingPos() { return _playerPendingPos; }
-	bool &wanderingCharsLoaded() { return _wanderingCharsLoaded; }
 
 	void saveToStream(Common::WriteStream *stream);
 	void loadFromStream(Common::ReadStream *stream);
