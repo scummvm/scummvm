@@ -6,8 +6,8 @@ MODULE_OBJS := \
 	gui.o \
 	items.o \
 	kyra.o \
-	kyra2.o \
-	kyra3.o \
+	kyra_v2.o \
+	kyra_v3.o \
 	plugin.o \
 	resource.o \
 	saveload.o \

@@ -21,7 +21,7 @@
  */
 
 #include "kyra/kyra.h"
-#include "kyra/kyra2.h"
+#include "kyra/kyra_v2.h"
 #include "kyra/screen.h"
 #include "kyra/wsamovie.h"
 #include "kyra/sound.h"

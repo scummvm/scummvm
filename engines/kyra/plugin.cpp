@@ -20,8 +20,8 @@
  */
 
 #include "kyra/kyra.h"
-#include "kyra/kyra2.h"
-#include "kyra/kyra3.h"
+#include "kyra/kyra_v2.h"
+#include "kyra/kyra_v3.h"
 
 #include "common/config-manager.h"
 #include "common/advancedDetector.h"
@@ -71,9 +71,11 @@ const KYRAGameDescription adGameDescs[] = {
 
 	{ { "kyra1", "Demo", AD_ENTRY1("DEMO1.WSA", "fb722947d94897512b13b50cc84fd648"), Common::EN_ANY, Common::kPlatformPC, Common::ADGF_DEMO }, KYRA1_DEMO_FLAGS },
 
-	{ { "kyra2", 0, AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"), Common::UNK_LANG, Common::kPlatformPC, Common::ADGF_NO_FLAGS }, KYRA2_CD_FLAGS }, // CD version
+	{ { "kyra2", 0, AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"), Common::EN_ANY, Common::kPlatformPC, Common::ADGF_NO_FLAGS }, KYRA2_CD_FLAGS }, // CD version
+	{ { "kyra2", 0, AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"), Common::DE_DEU, Common::kPlatformPC, Common::ADGF_NO_FLAGS }, KYRA2_CD_FLAGS }, // CD version
+	{ { "kyra2", 0, AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"), Common::FR_FRA, Common::kPlatformPC, Common::ADGF_NO_FLAGS }, KYRA2_CD_FLAGS }, // CD version
 
-	{ { "kyra2", "Demo", AD_ENTRY1("GENERAL.PAK", "35825783e5b60755fd520360079f9c15"), Common::UNK_LANG, Common::kPlatformPC, Common::ADGF_DEMO }, KYRA2_DEMO_FLAGS },
+	{ { "kyra2", "Demo", AD_ENTRY1("GENERAL.PAK", "35825783e5b60755fd520360079f9c15"), Common::EN_ANY, Common::kPlatformPC, Common::ADGF_DEMO }, KYRA2_DEMO_FLAGS },
 
 	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), Common::EN_ANY, Common::kPlatformPC, Common::ADGF_NO_FLAGS }, KYRA3_CD_FLAGS },
 	{ { "kyra3", 0, AD_ENTRY1("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587"), Common::DE_DEU, Common::kPlatformPC, Common::ADGF_NO_FLAGS }, KYRA3_CD_FLAGS },

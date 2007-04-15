@@ -24,8 +24,8 @@
 #include "common/endian.h"
 #include "common/md5.h"
 #include "kyra/kyra.h"
-#include "kyra/kyra2.h"
-#include "kyra/kyra3.h"
+#include "kyra/kyra_v2.h"
+#include "kyra/kyra_v3.h"
 #include "kyra/screen.h"
 #include "kyra/resource.h"
 
