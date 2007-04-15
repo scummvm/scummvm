@@ -1011,6 +1011,8 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 	_top = yBak = imdPtr->y;
 	_bottom = heightBak= imdPtr->height;
 	_right = widthBak = imdPtr->width;
+	_right += _left - 1;
+	_bottom += _top - 1;
 
 	if ((frame == 0) && (imdPtr->verMin & 0x800))
 		_vm->_video->setPalette(imdPtr->palette);
@@ -1106,7 +1108,7 @@ uint32 ImdPlayer::view(Imd *imdPtr, int16 frame) {
 
 				cmd = _vm->_dataIO->readUint16(imdPtr->handle);
 
-			// Clear sound slice
+			// Empty sound slice
 			} else if (!hasNextCmd && (!_noSound)) {
 				soundBuf = new byte[_soundSliceSize];
 				assert(soundBuf);
