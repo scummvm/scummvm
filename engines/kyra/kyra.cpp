@@ -505,7 +505,7 @@ void KyraEngine::startup() {
 	_animator->initAnimStateList();
 	setCharactersInDefaultScene();
 
-	if (!_scriptInterpreter->loadScript("_STARTUP.EMC", _npcScriptData, 0)) {
+	if (!_scriptInterpreter->loadScript("_STARTUP.EMC", _npcScriptData)) {
 		error("Could not load \"_STARTUP.EMC\" script");
 	}
 	_scriptInterpreter->initScript(_scriptMain, _npcScriptData);
@@ -517,7 +517,7 @@ void KyraEngine::startup() {
 	}
 	
 	_scriptInterpreter->unloadScript(_npcScriptData);
-	if (!_scriptInterpreter->loadScript("_NPC.EMC", _npcScriptData, 0)) {
+	if (!_scriptInterpreter->loadScript("_NPC.EMC", _npcScriptData)) {
 		error("Could not load \"_NPC.EMC\" script");
 	}
 	

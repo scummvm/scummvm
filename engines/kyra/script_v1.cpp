@@ -151,9 +151,8 @@ int KyraEngine::o1_walkPlayerToPoint(ScriptState *script) {
 		enableTimer(18);
 	}
 
-	if (reinitScript) {
+	if (reinitScript)
 		_scriptInterpreter->initScript(script, script->dataPtr);
-	}
 
 	if (_sceneChangeState) {
 		_sceneChangeState = 0;

@@ -31,14 +31,13 @@ struct ScriptData {
 	byte *data;
 	byte *ordr;
 	uint16 dataSize;
-	uint16 mustBeFreed;
 	
-	int opcodeTable;	// indicates which opcode table to use (for Kyra3)
+	int opcodeTable;	// indicates which opcode table to use (for Kyra3 and Kyra2)
 };
 
 struct ScriptState {
 	byte *ip;
-	ScriptData *dataPtr;
+	const ScriptData *dataPtr;
 	int16 retValue;
 	uint16 bp;
 	uint16 sp;
@@ -49,12 +48,11 @@ struct ScriptState {
 class ScriptHelper {
 public:
 	ScriptHelper(KyraEngine *vm);
-	virtual ~ScriptHelper();
 	
-	bool loadScript(const char *filename, ScriptData *data, byte *specialPtr = 0);
+	bool loadScript(const char *filename, ScriptData *data);
 	void unloadScript(ScriptData *data);
 	
-	void initScript(ScriptState *scriptState, ScriptData *data);
+	void initScript(ScriptState *scriptState, const ScriptData *data);
 	bool startScript(ScriptState *script, int function);
 	
 	bool validScript(ScriptState *script);
@@ -100,3 +98,4 @@ private:
 } // end of namespace Kyra
 
 #endif
+
