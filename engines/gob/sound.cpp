@@ -33,6 +33,8 @@
 
 namespace Gob {
 
+#define FRAC_BITS 16
+
 void SoundDesc::set(SoundType type, SoundSource src,
 		byte *data, uint32 dSize) {
 
@@ -168,15 +170,18 @@ Snd::Snd(GobEngine *vm) : _vm(vm) {
 	_length = 0;
 	_freq = 0;
 	_repCount = 0;
-	_offset = 0.0;
 
-	_frac = 0.0;
+	_offset = 0;
+	_offsetFrac = 0;
+	_offsetInc = 0;
+	_offsetIncFrac = 0;
+
 	_cur = 0;
 	_last = 0;
 
 	_fade = false;
-	_fadeVol = 255.0;
-	_fadeVolStep = 0.0;
+	_fadeVol = 65536;
+	_fadeVolStep = 0;
 	_fadeSamples = 0;
 	_curFadeSamples = 0;
 
@@ -228,9 +233,9 @@ void Snd::stopSound(int16 fadeLength, SoundDesc *sndDesc) {
 	}
 
 	_fade = true;
-	_fadeVol = 255.0;
+	_fadeVol = 65536;
 	_fadeSamples = (int) (fadeLength * (((double) _rate) / 10.0));
-	_fadeVolStep = 255.0 / ((double) _fadeSamples);
+	_fadeVolStep = MAX(1U, 65536 / _fadeSamples);
 	_curFadeSamples = 0;
 }
 
@@ -312,29 +317,31 @@ void Snd::setSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
 	_length = sndDesc.size();
 	_freq = frequency;
 
-	if ((frequency % 100) == 0)
-		_freq--;
-
-	_ratio = ((double) _freq) / _rate;
-	_offset = 0.0;
-	_frac = 0;
-	_last = _cur;
-	_cur = _data[0];
 	_repCount = repCount;
 	_end = false;
 	_playingSound = 1;
 
+	_offset = 0;
+	_offsetFrac = 0;
+
+	uint32 incr = (_freq << FRAC_BITS) / _rate;
+	_offsetInc = incr >> FRAC_BITS;
+	_offsetIncFrac = incr & ((1UL << FRAC_BITS) - 1);
+
+	_last = _cur;
+	_cur = _data[0];
+
 	_curFadeSamples = 0;
 	if (fadeLength == 0) {
 		_fade = false;
-		_fadeVol = 255.0;
+		_fadeVol = 65536;
 		_fadeSamples = 0;
-		_fadeVolStep = 0.0;
+		_fadeVolStep = 0;
 	} else {
 		_fade = true;
-		_fadeVol = 0.0;
+		_fadeVol = 0;
 		_fadeSamples = (int) (fadeLength * (((double) _rate) / 10.0));
-		_fadeVolStep = -(255.0 / ((double) _fadeSamples));
+		_fadeVolStep = - MAX(1U, 65536 / _fadeSamples);
 	}
 }
 
@@ -371,8 +378,8 @@ void Snd::checkEndSample() {
 	if (_compositionPos != -1)
 		nextCompositionPos();
 	else if ((_repCount == -1) || (--_repCount > 0)) {
-		_offset = 0.0;
-		_frac = 0.0;
+		_offset = 0;
+		_offsetFrac = 0;
 		_end = false;
 		_playingSound = 1;
 	} else {
@@ -384,6 +391,9 @@ void Snd::checkEndSample() {
 int Snd::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock slock(_mutex);
 
+	int16 val;
+	uint32 tmp, oldOffset;
+
 	for (int i = 0; i < numSamples; i++) {
 		if (!_data)
 			return i;
@@ -392,16 +402,25 @@ int Snd::readBuffer(int16 *buffer, const int numSamples) {
 		if (_end)
 			return i;
 
-		*buffer++ = (int16) ((_last + (_cur - _last) * _frac) * _fadeVol);
-		_frac += _ratio;
-		_offset += _ratio;
-		while ((_frac > 1) && (_offset < _length)) {
-			_frac -= 1;
+		// Linear interpolation. See sound/rate.cpp
+
+		val = _last + (((_cur - _last) * _offsetFrac +
+					(1UL << (FRAC_BITS - 1))) >> FRAC_BITS) << 8;
+		*buffer++ = (((int32) val) * _fadeVol) >> 16;
+		
+		oldOffset = _offset;
+
+		tmp = _offsetFrac + _offsetIncFrac;
+		_offset += _offsetInc + (tmp >> FRAC_BITS);
+		_offsetFrac = tmp & ((1UL << FRAC_BITS) - 1);
+
+		if (oldOffset < _offset) {
 			_last = _cur;
-			_cur = _data[(int) _offset];
+			_cur = _data[oldOffset];
 		}
 
 		if (_fade) {
+
 			if (++_curFadeSamples >= _fadeSamples) {
 				if (_fadeVolStep > 0) {
 					_data = 0;
@@ -410,11 +429,15 @@ int Snd::readBuffer(int16 *buffer, const int numSamples) {
 					_compositionPos = -1;
 					_curSoundDesc = 0;
 				} else {
-					_fadeVol = 255.0;
+					_fadeVol = 65536;
 					_fade = false;
 				}
 			} else
 				_fadeVol -= _fadeVolStep;
+
+			if (_fadeVol < 0)
+				_fadeVol = 0;
+
 		}
 	}
 	return numSamples;

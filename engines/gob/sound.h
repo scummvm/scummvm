@@ -171,16 +171,18 @@ protected:
 	uint32 _rate;
 	int32 _freq;
 	int32 _repCount;
-	double _offset;
-	double _ratio;
 
-	double _frac;
+	uint32 _offset;
+	uint32 _offsetFrac;
+	uint32 _offsetInc;
+	uint32 _offsetIncFrac;
+
 	int16 _cur;
 	int16 _last;
 
 	bool _fade;
-	double _fadeVol;
-	double _fadeVolStep;
+	int32 _fadeVol;
+	int32 _fadeVolStep;
 	uint8 _fadeLength;
 	uint32 _fadeSamples;
 	uint32 _curFadeSamples;
