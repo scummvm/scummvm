@@ -111,10 +111,7 @@ uint8 Menu::execute() {
 					// If necessary, remove prior menu
 					if (_selectedMenu) {
 						toggleHighlight(_selectedMenu);
-//						screen.updateArea(_selectedMenu->xstart(), MENUBAR_Y_SIZE,
-//							_surfaceMenu->width(), _surfaceMenu->height());
-						screen.updateArea(0, MENUBAR_Y_SIZE, FULL_SCREEN_WIDTH, 
-							_surfaceMenu->height());
+						screen.updateArea(0, 0, FULL_SCREEN_WIDTH, _surfaceMenu->height() + 8);
 						delete _surfaceMenu;
 						_surfaceMenu = NULL;
 						_selectedIndex = 0;
