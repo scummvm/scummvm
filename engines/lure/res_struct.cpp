@@ -825,8 +825,8 @@ RandomActionSet::RandomActionSet(uint16 *&offset) {
 }
 
 RandomActionSet::~RandomActionSet() {
-	delete _types;
-	delete _ids;
+	delete [] _types;
+	delete [] _ids;
 }
 
 RandomActionSet *RandomActionList::getRoom(uint16 roomNumber) {
