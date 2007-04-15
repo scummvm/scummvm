@@ -439,6 +439,14 @@ void Script::setVillageSkorlTickProc(uint16 v1, uint16 v2, uint16 v3) {
 	hotspot->tickProcOffset = 0x7efa;
 }
 
+// Free Goewin from captivity
+
+void Script::freeGoewin(uint16 v1, uint16 v2, uint16 v3) {
+	HotspotData *goewin = Resources::getReference().getHotspot(GOEWIN_ID);
+	goewin->actions = 0x820C00;   // Enable Talk To, Give, Bribe, and Ask for
+	goewin->actionCtr = 1;
+}
+
 // Barman serving the player
 
 void Script::barmanServe(uint16 v1, uint16 v2, uint16 v3) {
@@ -459,6 +467,16 @@ void Script::barmanServe(uint16 v1, uint16 v2, uint16 v3) {
 void Script::getNumGroats(uint16 v1, uint16 v2, uint16 v3) {
 	ValueTableData fields = Resources::getReference().fieldList();
 	fields.setField(GENERAL, fields.numGroats());
+}
+
+// Enables the talk action on the two gargoyles
+
+void Script::enableGargoylesTalk(uint16 v1, uint16 v2, uint16 v3) {
+	Resources &res = Resources::getReference();
+	HotspotData *g1 = res.getHotspot(0x42C);
+	HotspotData *g2 = res.getHotspot(0x42D);
+	g1->actions = 1 << (TALK_TO - 1);
+	g2->actions = 1 << (TALK_TO - 1);
 }
 
 // Loads the specified animation, completely bypassing the standard process
@@ -549,8 +567,10 @@ SequenceMethodRecord scriptMethods[] = {
 	{50, Script::givePlayerItem},
 	{51, Script::decreaseNumGroats},
 	{54, Script::setVillageSkorlTickProc},
+	{55, Script::freeGoewin},
 	{56, Script::barmanServe},
 	{57, Script::getNumGroats},
+	{59, Script::enableGargoylesTalk},
 	{62, Script::animationLoad},
 	{63, Script::addActions},
 	{64, Script::randomToGeneral},
@@ -911,9 +931,9 @@ bool HotspotScript::execute(Hotspot *h)
 		opcode = nextVal(scriptData, offset);
 
 		switch (opcode) {
-		case S2_OPCODE_TIMEOUT:
+		case S2_OPCODE_FRAME_CTR:
 			param1 = nextVal(scriptData, offset);
-			debugC(ERROR_DETAILED, kLureDebugScripts, "SET TIMEOUT = %d", param1);
+			debugC(ERROR_DETAILED, kLureDebugScripts, "SET FRAME_CTR = %d", param1);
 
 			h->setTickCtr(param1);
 			h->setScript(offset);
@@ -964,22 +984,21 @@ bool HotspotScript::execute(Hotspot *h)
 			h->setAnimation(param1);
 			break;
 
-		case S2_OPCODE_UNKNOWN_247:
+		case S2_OPCODE_PLAY_SOUND:
 			param1 = nextVal(scriptData, offset);
 			param2 = nextVal(scriptData, offset);
-			debugC(ERROR_DETAILED, kLureDebugScripts, "SUB_247(%d,%d)", param1, param2);
-
+			debugC(ERROR_DETAILED, kLureDebugScripts, "PLAY_SOUND(%d,%d)", param1, param2);
 //			warning("UNKNOWN_247 stub called");
 			break;
 
-		case S2_OPCODE_UNKNOWN_258:
+		case S2_OPCODE_STOP_SOUND:
 			param1 = nextVal(scriptData, offset);
-			debugC(ERROR_DETAILED, kLureDebugScripts, "SUB_258()");
+			debugC(ERROR_DETAILED, kLureDebugScripts, "STOP_SOUND()");
 //			warning("UNKNOWN_258 stub called");
 			break;
 
 		case S2_OPCODE_ACTIONS:
-			param1 = nextVal(scriptData, offset) << 4;
+			param1 = nextVal(scriptData, offset);
 			param2 = nextVal(scriptData, offset);
 			actions = (uint32) param1 | ((uint32) param2 << 16);
 
