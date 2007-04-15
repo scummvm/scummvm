@@ -637,7 +637,7 @@ protected:
 
 	virtual void resetVerbs();
 	virtual void setVerb(HitArea * ha);
-	void hitarea_leave(HitArea * ha, bool state = false);
+	virtual void hitarea_leave(HitArea * ha, bool state = false);
 	void leaveHitAreaById(uint hitarea_id);
 
 	void sendSync(uint a);
@@ -695,21 +695,7 @@ protected:
 	void clearMenuStrip();
 	void doMenuStrip(uint menuNum);
 
-	void checkLinkBox();
- 	void hyperLinkOn(uint16 x);
- 	void hyperLinkOff();
-	void linksUp();
-	void linksDown();
-	void oracleTextUp();
-	void oracleTextDown();
-	void listSaveGames(int n);
-	void saveUserGame(int slot);
-	void windowBackSpace(WindowBlock *window);
-
 	void oracleLogo();
-	void scrollOracle();
-	void scrollOracleUp();
-	void scrollOracleDown();
 	void swapCharacterLogo();
 
 	void mouseOff();
@@ -740,8 +726,6 @@ protected:
 	void endCutscene();
 	void runSubroutine101();
 
-	void checkUp(WindowBlock *window);
-	void checkDown(WindowBlock *window);
 	virtual void inventoryUp(WindowBlock *window);
 	virtual void inventoryDown(WindowBlock *window);
 
@@ -761,14 +745,11 @@ protected:
 	void displayName(HitArea * ha);
 	void resetNameWindow();
 	void displayBoxStars();
-	void invertBox_FF(HitArea *ha, bool state);
 	void invertBox(HitArea * ha, byte a, byte b, byte c, byte d);
 
 	void handleMouseMoved();
 	void initMouse();
-	void loadMouseImage();
 	virtual void drawMousePointer();
-	void drawMousePart(int image, byte x, byte y);
 
 	void addArrows(WindowBlock *window);
 	void removeArrows(WindowBlock *window, uint num);
@@ -817,12 +798,6 @@ protected:
 
 	void renderStringAmiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 	void renderString(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
-
-	void boxTextMessage(const char *x);
-	void boxTextMsg(const char *x);
-	void printBox();
-	uint16 getBoxSize();
-	uint16 checkFit(char *Ptr, int width, int lines);
 
 	void writeChar(WindowBlock *window, int x, int y, int offs, int val);
 
@@ -1160,7 +1135,7 @@ protected:
 	void fillBackGroundFromBack(uint lines);
 	void fillBackFromFront(uint x, uint y, uint w, uint h);
 
-	void print_char_helper_1(const byte *src, uint len);
+	virtual void print_char_helper_1(const byte *src, uint len);
 	void clsCheck(WindowBlock *window);
 
 	void quickLoadOrSave();
@@ -1180,7 +1155,7 @@ protected:
 	void openTextWindow();
 	void tidyIconArray(uint i);
 
-	void windowNewLine(WindowBlock *window);
+	virtual void windowNewLine(WindowBlock *window);
 	void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr);
 
 	void loadMusic(uint music);
@@ -1362,6 +1337,12 @@ public:
 
 	virtual void executeOpcode(int opcode);
 
+	void boxTextMessage(const char *x);
+	void boxTextMsg(const char *x);
+	void printBox();
+	uint16 getBoxSize();
+	uint16 checkFit(char *Ptr, int width, int lines);
+
 	void oww_moveDirn();
 	void oww_goto();
 	void oww_addTextBox();
@@ -1470,8 +1451,6 @@ public:
 
 	virtual void executeOpcode(int opcode);
 
-	virtual void drawMousePointer();
-
 	void off_chance();
 	void off_jumpOut();
 	void off_addTextBox();
@@ -1515,15 +1494,42 @@ protected:
 
 	const OpcodeEntryFeeble *_opcodesFeeble;
 
+	void drawMousePart(int image, byte x, byte y);
+	virtual void drawMousePointer();
+
 	virtual void resetVerbs();
 	virtual void setVerb(HitArea * ha);
+	virtual void hitarea_leave(HitArea * ha, bool state = false);
+	void invertBox(HitArea *ha, bool state);
 
-	virtual void inventoryUp(WindowBlock *window);
-	virtual void inventoryDown(WindowBlock *window);
+	virtual void windowNewLine(WindowBlock *window);
 
 	virtual void clearName();
 
 	virtual void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
+
+	virtual void print_char_helper_1(const byte *src, uint len);
+
+	void checkLinkBox();
+ 	void hyperLinkOn(uint16 x);
+ 	void hyperLinkOff();
+	void linksUp();
+	void linksDown();
+
+	void checkUp(WindowBlock *window);
+	void checkDown(WindowBlock *window);
+	virtual void inventoryUp(WindowBlock *window);
+	virtual void inventoryDown(WindowBlock *window);
+
+	void oracleTextUp();
+	void oracleTextDown();
+	void scrollOracle();
+	void scrollOracleUp();
+	void scrollOracleDown();
+
+	void listSaveGames(int n);
+	void saveUserGame(int slot);
+	void windowBackSpace(WindowBlock *window);
 };
 
 class AGOSEngine_PuzzlePack : public AGOSEngine_Feeble {
@@ -1561,6 +1567,8 @@ protected:
 	const OpcodeEntryPuzzlePack *_opcodesPuzzlePack;
 
 	virtual void resetVerbs();
+
+	void loadMouseImage();
 };
 
 } // End of namespace AGOS

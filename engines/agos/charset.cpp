@@ -28,6 +28,37 @@
 
 namespace AGOS {
 
+void AGOSEngine_Feeble::print_char_helper_1(const byte *src, uint len) {
+	if (_textWindow == NULL)
+		return;
+
+	while (len-- != 0) {
+		if (getBitFlag(93)) {
+			if (_curWindow == 3) {
+				if ((_newLines >= _textWindow->scrollY) && (_newLines < (_textWindow->scrollY + 3)))
+					windowPutChar(*src);
+				if (*src == '\n')		// Do two top lines of text only
+					_newLines++;
+				src++;
+			}
+		} else {
+			if (getBitFlag(94)) {
+				if (_curWindow == 3) {
+					if (_newLines == (_textWindow->scrollY + 7))
+						windowPutChar(*src);
+					if (*src == '\n')	// Do two top lines of text only
+						_newLines++;
+					src++;
+				}
+			} else {
+				if (getBitFlag(92))
+					delay(50);
+				windowPutChar(*src++);
+			}
+		}
+	}
+}
+
 void AGOSEngine::print_char_helper_1(const byte *src, uint len) {
 	uint idx;
 
@@ -35,40 +66,14 @@ void AGOSEngine::print_char_helper_1(const byte *src, uint len) {
 		return;
 
 	while (len-- != 0) {
-		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			if (getBitFlag(93)) {
-				if (_curWindow == 3) {
-					if ((_newLines >= _textWindow->scrollY) && (_newLines < (_textWindow->scrollY + 3)))
-						windowPutChar(*src);
-					if (*src == '\n')		// Do two top lines of text only
-						_newLines++;
-					src++;
-				}
-			} else {
-				if (getBitFlag(94)) {
-					if (_curWindow == 3) {
-						if (_newLines == (_textWindow->scrollY + 7))
-							windowPutChar(*src);
-						if (*src == '\n')	// Do two top lines of text only
-							_newLines++;
-						src++;
-					}
-				} else {
-					if (getBitFlag(92))
-						delay(50);
-					windowPutChar(*src++);
-				}
-			}
-		} else {
-			if (*src != 12 && _textWindow->iconPtr != NULL &&
-					_fcsData1[idx = getWindowNum(_textWindow)] != 2) {
-	
-				_fcsData1[idx] = 2;
-				_fcsData2[idx] = 1;
-			}
+		if (*src != 12 && _textWindow->iconPtr != NULL &&
+				_fcsData1[idx = getWindowNum(_textWindow)] != 2) {
 
-			windowPutChar(*src++);
+			_fcsData1[idx] = 2;
+			_fcsData2[idx] = 1;
 		}
+
+		windowPutChar(*src++);
 	}
 }
 
@@ -666,36 +671,40 @@ void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 	}
 }
 
-void AGOSEngine::windowNewLine(WindowBlock *window) {
-	if (getGameType() == GType_FF) {
-		if (_noOracleScroll == 0) {
-			if (window->height < window->textRow + 30) {
-				if (!getBitFlag(94)) {
-					_noOracleScroll = 1;
-					if (getBitFlag(92)) {
-						_noOracleScroll = 0;
-						checkLinkBox();
-						scrollOracle();
-						linksUp();
-						window->scrollY++;
-						_oracleMaxScrollY++;
-					} else {
-						_oracleMaxScrollY++;
-						checkLinkBox();
-					}
+void AGOSEngine_Feeble::windowNewLine(WindowBlock *window) {
+	if (_noOracleScroll == 0) {
+		if (window->height < window->textRow + 30) {
+			if (!getBitFlag(94)) {
+				_noOracleScroll = 1;
+				if (getBitFlag(92)) {
+					_noOracleScroll = 0;
+					checkLinkBox();
+					scrollOracle();
+					linksUp();
+					window->scrollY++;
+					_oracleMaxScrollY++;
+				} else {
+					_oracleMaxScrollY++;
+					checkLinkBox();
 				}
-			} else {
-				window->textRow += 15;
-				checkLinkBox();
 			}
 		} else {
-			_oracleMaxScrollY++;
+			window->textRow += 15;
 			checkLinkBox();
 		}
 	} else {
-		if (window->textRow != window->height)
-			window->textRow++;
+		_oracleMaxScrollY++;
+		checkLinkBox();
 	}
+
+	window->textColumn = 0;
+	window->textColumnOffset = 0;
+	window->textLength = 0;
+}
+
+void AGOSEngine::windowNewLine(WindowBlock *window) {
+	if (window->textRow != window->height)
+		window->textRow++;
 
 	window->textColumn = 0;
 	window->textColumnOffset = 0;

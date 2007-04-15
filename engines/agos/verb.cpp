@@ -591,10 +591,12 @@ void AGOSEngine::setVerb(HitArea *ha) {
 	_currentVerbBox = ha;
 }
 
+void AGOSEngine_Feeble::hitarea_leave(HitArea *ha, bool state) {
+	invertBox(ha, state);
+}
+
 void AGOSEngine::hitarea_leave(HitArea *ha, bool state) {
-	if (getGameType() == GType_FF) {
-		invertBox_FF(ha, state);
-	} else if (getGameType() == GType_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		invertBox(ha, 231, 229, 230, 1);
 	} else {
 		invertBox(ha, 223, 213, 218, 5);
@@ -607,77 +609,6 @@ void AGOSEngine::leaveHitAreaById(uint hitarea_id) {
 		hitarea_leave(ha);
 }
 
-void AGOSEngine::checkUp(WindowBlock *window) {
-	uint16 j, k;
-
-	if (((_variableArray[31] - _variableArray[30]) == 40) && (_variableArray[31] > 52)) {
-		k = (((_variableArray[31] / 52) - 2) % 3);
-		j = k * 6;
-		if (!isBoxDead(j + 201)) {
-			uint index = getWindowNum(window);
-			drawIconArray(index, window->iconPtr->itemRef, 0, window->iconPtr->classMask);
-			animate(4, 9, k + 34, 0, 0, 0);	
-		}
-	}
-	if ((_variableArray[31] - _variableArray[30]) == 76) {
-		k = ((_variableArray[31] / 52) % 3);
-		j = k * 6;
-		if (isBoxDead(j + 201)) {
-			animate(4, 9, k + 31, 0, 0, 0);
-			undefineBox(j + 201);
-			undefineBox(j + 202);
-			undefineBox(j + 203);
-			undefineBox(j + 204);
-			undefineBox(j + 205);
-			undefineBox(j + 206);
-		}
-		_variableArray[31] -= 52;
-		_iOverflow = 1;
-	}
-}
-
-void AGOSEngine::checkDown(WindowBlock *window) {
-	uint16 j, k;
-
-	if (((_variableArray[31] - _variableArray[30]) == 24) && (_iOverflow == 1)) {
-		uint index = getWindowNum(window);
-		drawIconArray(index, window->iconPtr->itemRef, 0, window->iconPtr->classMask);
-		k = ((_variableArray[31] / 52) % 3);
-		animate(4, 9, k + 25, 0, 0, 0);	
-		_variableArray[31] += 52;
-	}
-	if (((_variableArray[31] - _variableArray[30]) == 40) && (_variableArray[30] > 52)) {
-		k = (((_variableArray[31] / 52) + 1) % 3);
-		j = k * 6;
-		if (isBoxDead(j + 201)) {
-			animate(4, 9, k + 28, 0, 0, 0);
-			undefineBox(j + 201);
-			undefineBox(j + 202);
-			undefineBox(j + 203);
-			undefineBox(j + 204);
-			undefineBox(j + 205);
-			undefineBox(j + 206);
-		}
-	}
-}
-
-void AGOSEngine_Feeble::inventoryUp(WindowBlock *window) {
-	_marks = 0;
-	checkUp(window);
-	animate(4, 9, 21, 0 ,0, 0);	
-	while (1) {
-		if (_currentBox->id != 0x7FFB || !getBitFlag(89))
-			break;
-		checkUp(window);
-		delay(1);
-	}
-	waitForMark(2);
-	checkUp(window);
-	sendSync(922);
-	waitForMark(1);
-	checkUp(window);
-}
-
 void AGOSEngine::inventoryUp(WindowBlock *window) {
 	if (window->iconPtr->line == 0)
 		return;
@@ -686,23 +617,6 @@ void AGOSEngine::inventoryUp(WindowBlock *window) {
 	uint index = getWindowNum(window);
 	drawIconArray(index, window->iconPtr->itemRef, window->iconPtr->line - 1, window->iconPtr->classMask);
 	mouseOn();
-}
-
-void AGOSEngine_Feeble::inventoryDown(WindowBlock *window) {
-	_marks = 0;
-	checkDown(window);
-	animate(4, 9, 23, 0, 0, 0);	
-	while (1) {
-		if (_currentBox->id != 0x7FFC || !getBitFlag(89))
-		break;
-		checkDown(window);
-		delay(1);
-	}
-	waitForMark(2);
-	checkDown(window);
-	sendSync(924);
-	waitForMark(1);
-	checkDown(window);
 }
 
 void AGOSEngine::inventoryDown(WindowBlock *window) {
@@ -870,7 +784,7 @@ void AGOSEngine::displayName(HitArea *ha) {
 		_lastNameOn = ha;
 }
 
-void AGOSEngine::invertBox_FF(HitArea *ha, bool state) {
+void AGOSEngine_Feeble::invertBox(HitArea *ha, bool state) {
 	if (getBitFlag(205) || getBitFlag(206)) {
 		if (state != 0) {
 			_mouseAnimMax = _oldMouseAnimMax;

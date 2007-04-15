@@ -490,7 +490,7 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 }
 
 // String code for boxes in Waxworks
-uint16 AGOSEngine::getBoxSize() {
+uint16 AGOSEngine_Waxworks::getBoxSize() {
 	int x;
 	switch (_boxLineCount) {
 	case 1: x = _lineCounts[0];
@@ -634,7 +634,7 @@ uint16 AGOSEngine::getBoxSize() {
 }
 
 
-uint16 AGOSEngine::checkFit(char *Ptr, int width, int lines) {
+uint16 AGOSEngine_Waxworks::checkFit(char *Ptr, int width, int lines) {
 	int countw = 0;
 	int countl = 0;
 	char *x = NULL;
@@ -659,7 +659,7 @@ uint16 AGOSEngine::checkFit(char *Ptr, int width, int lines) {
 	return 1;
 }
 
-void AGOSEngine::boxTextMessage(const char *x) {
+void AGOSEngine_Waxworks::boxTextMessage(const char *x) {
 	char *BoxBufferPtr = _boxBuffer;
 	sprintf(BoxBufferPtr, "%s\n", x);
 	_lineCounts[_boxLineCount] += strlen(x);
@@ -669,7 +669,7 @@ void AGOSEngine::boxTextMessage(const char *x) {
 	_boxCR = 1;
 }
 
-void AGOSEngine::boxTextMsg(const char *x) {
+void AGOSEngine_Waxworks::boxTextMsg(const char *x) {
 	char *BoxBufferPtr = _boxBuffer;
 	sprintf(BoxBufferPtr, "%s", x);
 	_lineCounts[_boxLineCount] += strlen(x);
@@ -677,7 +677,7 @@ void AGOSEngine::boxTextMsg(const char *x) {
 	_boxCR = 0;
 }
 
-void AGOSEngine::printBox() {
+void AGOSEngine_Waxworks::printBox() {
 	char *BoxBufferPtr = 0;
 	uint16 BoxSize;
 	_linePtrs[0] = _boxBuffer;
