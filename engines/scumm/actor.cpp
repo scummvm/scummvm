@@ -1850,7 +1850,7 @@ void ScummEngine::resetV1ActorTalkColor() {
 #ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v7::actorTalk(const byte *msg) {
 	Actor *a;
-	bool stringWrap;
+	bool stringWrap = false;
 
 	convertMessageToString(msg, _charsetBuffer, sizeof(_charsetBuffer));
 
