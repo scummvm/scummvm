@@ -1827,6 +1827,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	size = _vm->_parse->parseValExpr();
 	evalExpr(0);
 	offset = _vm->_global->_inter_resVal;
+	retSize = 0;
 
 	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
 			_vm->_global->_inter_resStr, dataVar, size, offset);
@@ -2023,6 +2024,7 @@ int16 Inter_v2::loadSound(int16 search) {
 
 	type = SOUND_SND;
 	slotIdMask = 0;
+	dataSize = 0;
 
 	if (!search) {
 		slot = _vm->_parse->parseValExpr();

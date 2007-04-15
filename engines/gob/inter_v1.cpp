@@ -2227,6 +2227,7 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 	dataVar = _vm->_parse->parseVarIndex();
 	size = _vm->_parse->parseValExpr();
 	offset = _vm->_parse->parseValExpr();
+	retSize = 0;
 
 	if (_vm->_game->_extHandle >= 0)
 		_vm->_dataIO->closeData(_vm->_game->_extHandle);

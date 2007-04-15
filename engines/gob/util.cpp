@@ -82,7 +82,7 @@ void Util::initInput(void) {
 void Util::processInput(bool scroll) {
 	Common::Event event;
 	Common::EventManager *eventMan = g_system->getEventManager();
-	int16 x, y;
+	int16 x = 0, y = 0;
 	bool hasMove = false;
 
 	while (eventMan->pollEvent(event)) {
