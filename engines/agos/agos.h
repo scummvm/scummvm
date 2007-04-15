@@ -630,8 +630,8 @@ protected:
 	void defineBox(int id, int x, int y, int width, int height, int flags, int verb, Item *item_ptr);
 	HitArea *findEmptyHitArea();
 
-	void resetVerbs();
-	void setVerb(HitArea * ha);
+	virtual void resetVerbs();
+	virtual void setVerb(HitArea * ha);
 	void hitarea_leave(HitArea * ha, bool state = false);
 	void leaveHitAreaById(uint hitarea_id);
 
@@ -737,8 +737,8 @@ protected:
 
 	void checkUp(WindowBlock *window);
 	void checkDown(WindowBlock *window);
-	void inventoryUp(WindowBlock *window);
-	void inventoryDown(WindowBlock *window);
+	virtual void inventoryUp(WindowBlock *window);
+	virtual void inventoryDown(WindowBlock *window);
 
 	WindowBlock *openWindow(uint x, uint y, uint w, uint h, uint flags, uint fillColor, uint textColor);
 	uint getWindowNum(WindowBlock *window);
@@ -752,7 +752,7 @@ protected:
 	HitArea *findBox(uint hitarea_id);
 	void boxController(uint x, uint y, uint mode);
 	void handleVerbClicked(uint verb);
-	void clearName();
+	virtual void clearName();
 	void displayName(HitArea * ha);
 	void resetNameWindow();
 	void displayBoxStars();
@@ -1471,8 +1471,15 @@ public:
 
 	virtual void drawMousePointer();
 protected:
-	virtual void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
+	virtual void resetVerbs();
+	virtual void setVerb(HitArea * ha);
 
+	virtual void inventoryUp(WindowBlock *window);
+	virtual void inventoryDown(WindowBlock *window);
+
+	virtual void clearName();
+
+	virtual void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
 private:
 };
 
@@ -1483,6 +1490,8 @@ public:
 
 	virtual void setupOpcodes(OpcodeProc *op);
 
+protected:
+	virtual void resetVerbs();
 private:
 };
 
