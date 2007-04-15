@@ -180,7 +180,7 @@ byte StringData::readBit() {
 	return result;
 }
 
-void StringData::initPosition(uint16 stringId) {
+bool StringData::initPosition(uint16 stringId) {
 	uint16 roomNumber = Room::getReference().roomNumber();
 	byte *stringTable;
 	
@@ -234,7 +234,7 @@ void StringData::initPosition(uint16 stringId) {
 		if (readBit() == 0) break;
 		_srcPos += 2;
 	}
-	readBit();
+	return readBit() != 0;
 }
 
 // readCharatcer
@@ -262,14 +262,15 @@ char StringData::readCharacter() {
 }
 
 void StringData::getString(uint16 stringId, char *dest, const char *hotspotName, 
-							  const char *characterName) {
+		const char *characterName, int hotspotArticle, int characterArticle) {
+	const char *articles[4] = {"the ", "a ", "an ", ""};
 	char ch;
 	strcpy(dest, "");
 	char *destPos = dest;
 	stringId &= 0x1fff;      // Strip off any article identifier
 	if (stringId == 0) return;
 
-	initPosition(stringId);
+	bool includeArticles = initPosition(stringId);
 
 	ch = readCharacter();
 	while (ch != '\0') {
@@ -277,9 +278,12 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 			// Copy over hotspot or action 
 			ch = readCharacter();
 			const char *p = (ch == '1') ? hotspotName : characterName;
+			int article = !includeArticles ? 3 : ((ch == 1) ? hotspotArticle : characterArticle);
+
 			if (p != NULL) {
-				strcpy(destPos, p);
-				destPos += strlen(p);
+				strcpy(destPos, articles[article]);
+				strcat(destPos, p);
+				destPos += strlen(destPos);
 			}
 		} else if ((uint8) ch >= 0xa0) {
 			const char *p = getName((uint8) ch - 0xa0);
@@ -305,15 +309,6 @@ char *StringData::getName(uint8 nameIndex) {
 
 	uint16 nameStart = *((uint16 *) (_names->data() + (nameIndex * 2)));
 	return (char *) (_names->data() + nameStart);
-}
-
-// getStringWithArticle
-// Fills a buffer with the string specified by a given string Id with a definite article prefix
-
-void StringData::getStringWithArticle(uint16 stringId, char *dest) {
-	const char *articles[4] = {"the ", "a ", "an ", ""};
-	strcpy(dest, articles[stringId >> 14]);
-	getString(stringId, dest + strlen(dest));
 }
 
 } // namespace Lure

@@ -50,7 +50,7 @@ private:
 	byte _bitMask;
 
 	void add(const char *sequence, char ascii);
-	void initPosition(uint16 stringId);
+	bool initPosition(uint16 stringId);
 	char readCharacter();
 	byte readBit();
 public:
@@ -58,11 +58,11 @@ public:
 	~StringData();
 	static StringData &getReference();
 
-	void getString(uint16 stringId, char *dest, const char *hotspotName, const char *characterName);
+	void getString(uint16 stringId, char *dest, const char *hotspotName, const char *characterName,
+		int hotspotArticle = 3, int characterArticle = 3);
 	void getString(uint16 stringId, char *dest) {
 		getString(stringId, dest, NULL, NULL);
 	}
-	void getStringWithArticle(uint16 stringId, char *dest);
 	char *getName(uint8 nameIndex);
 };
 

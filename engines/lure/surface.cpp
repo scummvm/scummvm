@@ -504,6 +504,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	char srcCharName[MAX_DESC_SIZE];
 	char destCharName[MAX_DESC_SIZE];
 	char itemName[MAX_DESC_SIZE];
+	int characterArticle, hotspotArticle = 3;
 
 	HotspotData *talkingChar = res.getHotspot(characterId);
 	HotspotData *destCharacter = (destCharacterId == 0) ? NULL : 
@@ -512,16 +513,19 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 		res.getHotspot(activeItemId);
 	assert(talkingChar);
 
-	strings.getString(talkingChar->nameId, srcCharName);
+	strings.getString(talkingChar->nameId & 0x1fff, srcCharName);
+	characterArticle = talkingChar->nameId >> 14;
 
 	strcpy(destCharName, "");
 	if (destCharacter != NULL)
 		strings.getString(destCharacter->nameId, destCharName);
 	strcpy(itemName, "");
-	if (itemHotspot != NULL)
-		strings.getStringWithArticle(itemHotspot->nameId, itemName);
+	if (itemHotspot != NULL) {
+		strings.getString(itemHotspot->nameId & 0x1fff, itemName);
+		hotspotArticle = itemHotspot->nameId >> 14;
+	}
 
-	strings.getString(descId, _desc, itemName, destCharName);
+	strings.getString(descId, _desc, itemName, destCharName, hotspotArticle, characterArticle);
 
 	// Apply word wrapping to figure out the needed size of the dialog
 	Surface::wordWrap(_desc, TALK_DIALOG_WIDTH - (TALK_DIALOG_EDGE_SIZE + 3) * 2,
