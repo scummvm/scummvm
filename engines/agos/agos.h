@@ -1566,6 +1566,8 @@ protected:
 
 	const OpcodeEntryPuzzlePack *_opcodesPuzzlePack;
 
+	virtual void drawMousePointer();
+
 	virtual void resetVerbs();
 
 	void loadMouseImage();

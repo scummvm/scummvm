@@ -502,6 +502,14 @@ void AGOSEngine_PuzzlePack::loadMouseImage() {
 	memcpy(_mouseData, src, _maxCursorWidth * _maxCursorHeight);
 }
 
+void AGOSEngine_PuzzlePack::drawMousePointer() {
+	if (getGameId() == GID_DIMP) {
+		AGOSEngine::drawMousePointer();
+	} else {
+		CursorMan.replaceCursor(_mouseData, _maxCursorWidth, _maxCursorHeight, 37, 48, 0);
+	}
+}
+
 void AGOSEngine_Feeble::drawMousePart(int image, byte x, byte y) {
 	VgaPointersEntry *vpe = &_vgaBufferPointers[7];
 	byte *src;
@@ -586,9 +594,7 @@ void AGOSEngine_Feeble::drawMousePointer() {
 }
 
 void AGOSEngine::drawMousePointer() {
-	if (getGameType() == GType_PP && getGameId() != GID_DIMP) {
-		CursorMan.replaceCursor(_mouseData, _maxCursorWidth, _maxCursorHeight, 37, 48, 0);
-	} else if (getGameType() == GType_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		CursorMan.replaceCursor(_simon2_cursors[_mouseCursor], 16, 16, 7, 7);
 	} else if (getGameType() == GType_SIMON1) {
 		CursorMan.replaceCursor(_mouseData, 16, 16, 0, 0, 0xFF);
