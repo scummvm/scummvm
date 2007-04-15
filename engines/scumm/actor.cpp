@@ -1862,21 +1862,16 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	}
 	if (_actorToPrintStrFor == 0xFF) {
 		setTalkingActor(0xFF);
+		_charsetColor = (byte)_string[0].color;
 	} else {
 		a = derefActor(_actorToPrintStrFor, "actorTalk");
 		setTalkingActor(a->_number);
 		if (!_string[0].no_talk_anim) {
 			a->runActorTalkScript(a->_talkStartFrame);
-			_useTalkAnims = true;
 		}
-	}
-
-	if (getTalkingActor() > 0x7F) {
-		_charsetColor = (byte)_string[0].color;
-	} else {
-		a = derefActor(getTalkingActor(), "actorTalk(2)");
 		_charsetColor = a->_talkColor;
 	}
+
 	_charsetBufPos = 0;
 	_talkDelay = 0;
 	_haveMsg = 1;
