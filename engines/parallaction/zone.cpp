@@ -601,7 +601,7 @@ Zone::Zone() {
 }
 
 Zone::~Zone() {
-	printf("~Zone(%s)\n", _label._text);
+//	printf("~Zone(%s)\n", _label._text);
 
 	switch (_type & 0xFFFF) {
 	case kZoneExamine:
@@ -642,11 +642,6 @@ Zone::~Zone() {
 	default:
 		break;
 	}
-
-	free(_label._text);
-	_label._text = NULL;
-	_vm->_gfx->freeStaticCnv(&_label._cnv);
-
 }
 
 void Zone::getRect(Common::Rect& r) const {
@@ -669,6 +664,16 @@ uint16 Zone::width() const {
 
 uint16 Zone::height() const {
 	return _bottom - _top;
+}
+
+Label::Label() {
+	_text = NULL;
+}
+
+Label::~Label() {
+	_vm->_gfx->freeStaticCnv(&_cnv);
+	if (_text)
+		free(_text);
 }
 
 

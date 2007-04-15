@@ -184,9 +184,8 @@ struct Label {
 	char*			_text;
 	StaticCnv		_cnv;
 
-	Label() {
-		_text = NULL;
-	}
+	Label();
+	~Label();
 };
 
 struct Zone {

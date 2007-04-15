@@ -182,7 +182,7 @@ WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
 	_list->insert(_list->begin(), _subPath.begin(), _subPath.end());
 
 	for (WalkNodeList::iterator it = _list->begin(); it != _list->end(); it++)
-		printf("node (%i, %i)\n", (*it)->_x, (*it)->_y);
+//		printf("node (%i, %i)\n", (*it)->_x, (*it)->_y);
 
 	delete v44;
 	return _list;

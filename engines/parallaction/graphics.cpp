@@ -897,6 +897,9 @@ Gfx::Gfx(Parallaction* vm) :
 
 	setBlackPalette();
 
+	_bgLayers[0] = _bgLayers[1] = _bgLayers[2] = _bgLayers[3] = 0;
+
+	memset(_palette, 0, sizeof(_palette));
 	memset(_palettefx, 0, sizeof(_palettefx));
 
 	initMouse( 0 );

@@ -139,6 +139,8 @@ Parallaction::~Parallaction() {
 
 	if (_localFlagNames)
 		delete _localFlagNames;
+
+	delete _gfx;
 }
 
 
