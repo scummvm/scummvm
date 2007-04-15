@@ -191,10 +191,9 @@ void AGOSEngine::vc62_fastFadeOut() {
 		}
 
 		if (getGameType() == GType_SIMON1) {
-			uint16 params[5];						/* parameters to vc10_draw */
 			VgaSprite *vsp;
 			VgaPointersEntry *vpe;
-			const byte *vcPtrOrg = _vcPtr;
+			VC10_state state;
 
 			vsp = _vgaSprites;
 			while (vsp->id != 0) {
@@ -208,13 +207,13 @@ void AGOSEngine::vc62_fastFadeOut() {
 					_curVgaFile2 = vpe->vgaFile2;
 					_windowNum = vsp->windowNum;
 
-					params[0] = READ_BE_UINT16(&vsp->image);
-					params[1] = READ_BE_UINT16(&vsp->palette);
-					params[2] = READ_BE_UINT16(&vsp->x);
-					params[3] = READ_BE_UINT16(&vsp->y);
-					params[4] = READ_BE_UINT16(&vsp->flags);
-					_vcPtr = (byte *)params;
-					vc10_draw();
+					state.image = vsp->image;
+					state.palette = (vsp->palette & 15) * 16;
+					state.x = vsp->x;
+					state.y = vsp->y;
+					state.flags = vsp->flags;
+
+					drawImage_init(&state);
 
 					_windowNum = palmode;
 					_curVgaFile1 = old_file_1;
@@ -223,7 +222,6 @@ void AGOSEngine::vc62_fastFadeOut() {
 				}
 				vsp++;
 			}
-			_vcPtr = vcPtrOrg;
 		}
 
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
