@@ -330,14 +330,6 @@
 			RelativePath="..\..\engines\lure\surface.h"
 			>
 		</File>
-		<File
-			RelativePath="..\..\engines\lure\system.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\system.h"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
