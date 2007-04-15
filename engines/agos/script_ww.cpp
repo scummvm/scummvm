@@ -29,70 +29,271 @@
 
 namespace AGOS {
 
-void AGOSEngine_Waxworks::setupOpcodes(OpcodeProc *op) {
-	AGOSEngine::setupOpcodes(op);
+#define OPCODE(x)	_OPCODE(AGOSEngine_Waxworks, x)
 
-	op[8] = &AGOSEngine::oe1_isNotAt;
-	op[9] = &AGOSEngine::oe1_sibling;
-	op[10] = &AGOSEngine::oe1_notSibling;
-	op[21] = &AGOSEngine::oe1_isIn;
-	op[22] = &AGOSEngine::oe1_isNotIn;
-	op[24] = &AGOSEngine::oe1_isPlayer;
-	op[29] = &AGOSEngine::oe1_canPut;
-	op[34] = &AGOSEngine::oe1_copyof;
-	op[37] = &AGOSEngine::oe1_whatO;
-	op[35] = &AGOSEngine::oe1_copyfo;
-	op[39] = &AGOSEngine::oe1_weigh;
-	op[54] = &AGOSEngine::oww_moveDirn;
-	op[55] = &AGOSEngine::oww_goto;
-	op[65] = &AGOSEngine::oww_addTextBox;
-	op[66] = &AGOSEngine::oww_setShortText;
-	op[67] = &AGOSEngine::oww_setLongText;
-	op[70] = &AGOSEngine::oww_printLongText;
-	op[83] = &AGOSEngine::oe1_rescan;
-	op[85] = &AGOSEngine::oww_whereTo;
-	op[89] = &AGOSEngine::oe2_loadGame;
-	op[94] = &AGOSEngine::oe1_findMaster;
-	op[95] = &AGOSEngine::oe1_nextMaster;
-	op[98] = &AGOSEngine::oe1_animate;
-	op[99] = &AGOSEngine::oe1_stopAnimate;
-	op[105] = &AGOSEngine::oww_menu;
-	op[106] = &AGOSEngine::oww_textMenu;
-	op[127] = &AGOSEngine::os1_playTune;
-	op[135] = &AGOSEngine::oww_pauseGame;
-	op[144] = &AGOSEngine::oe2_setDoorOpen;
-	op[145] = &AGOSEngine::oe2_setDoorClosed;
-	op[146] = &AGOSEngine::oe2_setDoorLocked;
-	op[147] = &AGOSEngine::oe2_setDoorClosed;
-	op[148] = &AGOSEngine::oe2_ifDoorOpen;
-	op[149] = &AGOSEngine::oe2_ifDoorClosed;
-	op[150] = &AGOSEngine::oe2_ifDoorLocked;
-	op[175] = &AGOSEngine::oe2_getDollar2;
-	op[179] = &AGOSEngine::oe2_isAdjNoun;
-	op[180] = &AGOSEngine::oe2_b2Set;
-	op[181] = &AGOSEngine::oe2_b2Clear;
-	op[182] = &AGOSEngine::oe2_b2Zero;
-	op[183] = &AGOSEngine::oe2_b2NotZero;
-	op[184] = &AGOSEngine::oww_boxMessage;
-	op[185] = &AGOSEngine::oww_boxMsg;
-	op[186] = &AGOSEngine::oww_boxLongText;
-	op[187] = &AGOSEngine::oww_printBox;
-	op[188] = &AGOSEngine::oww_boxPObj;
-	op[189] = &AGOSEngine::oww_lockZones;
-	op[190] = &AGOSEngine::oww_unlockZones;
+void AGOSEngine_Waxworks::setupOpcodes() {
+	static const OpcodeEntryWaxworks opcodes[] = {
+		/* 00 */
+		OPCODE(o_invalid),
+		OPCODE(o_at),
+		OPCODE(o_notAt),
+		OPCODE(o_invalid),
+		/* 04 */
+		OPCODE(o_invalid),
+		OPCODE(o_carried),
+		OPCODE(o_notCarried),
+		OPCODE(o_isAt),
+		/* 08 */
+		OPCODE(oe1_isNotAt),
+		OPCODE(oe1_sibling),
+		OPCODE(oe1_notSibling),
+		OPCODE(o_zero),
+		/* 12 */
+		OPCODE(o_notZero),
+		OPCODE(o_eq),
+		OPCODE(o_notEq),
+		OPCODE(o_gt),
+		/* 16 */
+		OPCODE(o_lt),
+		OPCODE(o_eqf),
+		OPCODE(o_notEqf),
+		OPCODE(o_ltf),
+		/* 20 */
+		OPCODE(o_gtf),
+		OPCODE(oe1_isIn),
+		OPCODE(oe1_isNotIn),
+		OPCODE(o_chance),
+		/* 24 */
+		OPCODE(oe1_isPlayer),
+		OPCODE(o_isRoom),
+		OPCODE(o_isObject),
+		OPCODE(o_state),
+		/* 28 */
+		OPCODE(o_oflag),
+		OPCODE(oe1_canPut),
+		OPCODE(o_invalid),
+		OPCODE(o_destroy),
+		/* 32 */
+		OPCODE(o_invalid),
+		OPCODE(o_place),
+		OPCODE(oe1_copyof),
+		OPCODE(oe1_copyfo),
+		/* 36 */
+		OPCODE(o_copyff),
+		OPCODE(oe1_whatO),
+		OPCODE(o_invalid),
+		OPCODE(oe1_weigh),
+		/* 40 */
+		OPCODE(o_invalid),
+		OPCODE(o_clear),
+		OPCODE(o_let),
+		OPCODE(o_add),
+		/* 44 */
+		OPCODE(o_sub),
+		OPCODE(o_addf),
+		OPCODE(o_subf),
+		OPCODE(o_mul),
+		/* 48 */
+		OPCODE(o_div),
+		OPCODE(o_mulf),
+		OPCODE(o_divf),
+		OPCODE(o_mod),
+		/* 52 */
+		OPCODE(o_modf),
+		OPCODE(o_random),
+		OPCODE(oww_moveDirn),
+		OPCODE(oww_goto),
+		/* 56 */
+		OPCODE(o_oset),
+		OPCODE(o_oclear),
+		OPCODE(o_putBy),
+		OPCODE(o_inc),
+		/* 60 */
+		OPCODE(o_dec),
+		OPCODE(o_setState),
+		OPCODE(o_print),
+		OPCODE(o_message),
+		/* 64 */
+		OPCODE(o_msg),
+		OPCODE(oww_addTextBox),
+		OPCODE(oww_setShortText),
+		OPCODE(oww_setLongText),
+		/* 68 */
+		OPCODE(o_end),
+		OPCODE(o_done),
+		OPCODE(o_invalid),
+		OPCODE(o_process),
+		/* 72 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 76 */
+		OPCODE(o_when),
+		OPCODE(o_if1),
+		OPCODE(o_if2),
+		OPCODE(o_isCalled),
+		/* 80 */
+		OPCODE(o_is),
+		OPCODE(o_invalid),
+		OPCODE(o_debug),
+		OPCODE(oe1_rescan),
+		/* 84 */
+		OPCODE(o_invalid),
+		OPCODE(oww_whereTo),
+		OPCODE(o_invalid),
+		OPCODE(o_comment),
+		/* 88 */
+		OPCODE(o_invalid),
+		OPCODE(oe2_loadGame),
+		OPCODE(o_getParent),
+		OPCODE(o_getNext),
+		/* 92 */
+		OPCODE(o_getChildren),
+		OPCODE(o_invalid),
+		OPCODE(oe1_findMaster),
+		OPCODE(oe1_nextMaster),
+		/* 96 */
+		OPCODE(o_picture),
+		OPCODE(o_loadZone),
+		OPCODE(oe1_animate),
+		OPCODE(oe1_stopAnimate),
+		/* 100 */
+		OPCODE(o_killAnimate),
+		OPCODE(o_defWindow),
+		OPCODE(o_window),
+		OPCODE(o_cls),
+		/* 104 */
+		OPCODE(o_closeWindow),
+		OPCODE(oww_menu),
+		OPCODE(oww_textMenu),
+		OPCODE(o_addBox),
+		/* 108 */
+		OPCODE(o_delBox),
+		OPCODE(o_enableBox),
+		OPCODE(o_disableBox),
+		OPCODE(o_moveBox),
+		/* 112 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_doIcons),
+		OPCODE(o_isClass),
+		/* 116 */
+		OPCODE(o_setClass),
+		OPCODE(o_unsetClass),
+		OPCODE(o_invalid),
+		OPCODE(o_waitSync),
+		/* 120 */
+		OPCODE(o_sync),
+		OPCODE(o_defObj),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 124 */
+		OPCODE(o_invalid),
+		OPCODE(o_here),
+		OPCODE(o_doClassIcons),
+		OPCODE(o_playTune),
+		/* 128 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_setAdjNoun),
+		OPCODE(o_invalid),
+		/* 132 */
+		OPCODE(o_saveUserGame),
+		OPCODE(o_loadUserGame),
+		OPCODE(o_invalid),
+		OPCODE(oww_pauseGame),
+		/* 136 */
+		OPCODE(o_copysf),
+		OPCODE(o_restoreIcons),
+		OPCODE(o_freezeZones),
+		OPCODE(o_placeNoIcons),
+		/* 140 */
+		OPCODE(o_clearTimers),
+		OPCODE(o_setDollar),
+		OPCODE(o_isBox),
+		OPCODE(oe2_doTable),
+		/* 144 */
+		OPCODE(oe2_setDoorOpen),
+		OPCODE(oe2_setDoorClosed),
+		OPCODE(oe2_setDoorLocked),
+		OPCODE(oe2_setDoorClosed),
+		/* 148 */
+		OPCODE(oe2_ifDoorOpen),
+		OPCODE(oe2_ifDoorClosed),
+		OPCODE(oe2_ifDoorLocked),
+		OPCODE(oe2_storeItem),
+		/* 152 */
+		OPCODE(oe2_getItem),
+		OPCODE(oe2_bSet),
+		OPCODE(oe2_bClear),
+		OPCODE(oe2_bZero),
+		/* 156 */
+		OPCODE(oe2_bNotZero),
+		OPCODE(oe2_getOValue),
+		OPCODE(oe2_setOValue),
+		OPCODE(o_invalid),
+		/* 160 */
+		OPCODE(oe2_ink),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 164 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 168 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 172 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(oe2_getDollar2),
+		/* 176 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(oe2_isAdjNoun),
+		/* 180 */
+		OPCODE(oe2_b2Set),
+		OPCODE(oe2_b2Clear),
+		OPCODE(oe2_b2Zero),
+		OPCODE(oe2_b2NotZero),
+		/* 184 */
+		OPCODE(oww_boxMessage),
+		OPCODE(oww_boxMsg),
+		OPCODE(oww_boxLongText),
+		OPCODE(oww_printBox),
+		/* 188 */
+		OPCODE(oww_boxPObj),
+		OPCODE(oww_lockZones),
+		OPCODE(oww_unlockZones),
+	};
+
+	_opcodesWaxworks = opcodes;
+	_numOpcodes = 191;
+}
+
+void AGOSEngine_Waxworks::executeOpcode(int opcode) {
+	OpcodeProcWaxworks op = _opcodesWaxworks[opcode].proc;
+	(this->*op) ();
 }
 
 // -----------------------------------------------------------------------
 // Waxworks Opcodes
 // -----------------------------------------------------------------------
 
-void AGOSEngine::oww_moveDirn() {
+void AGOSEngine_Waxworks::oww_moveDirn() {
 	// 54: move direction
 	int16 d = getVarOrByte();
 	moveDirn_ww(me(), d);
 }
 
-void AGOSEngine::oww_goto() {
+void AGOSEngine_Waxworks::oww_goto() {
 	// 55: set itemA parent
 	uint item = getNextItemID();
 	if (derefItem(item) == NULL) {
@@ -102,7 +303,7 @@ void AGOSEngine::oww_goto() {
 	setItemParent(me(), derefItem(item));
 }
 
-void AGOSEngine::oww_addTextBox() {
+void AGOSEngine_Waxworks::oww_addTextBox() {
 	// 65: add hit area
 	uint id = getVarOrWord();
 	uint x = getVarOrWord();
@@ -114,7 +315,7 @@ void AGOSEngine::oww_addTextBox() {
 		defineBox(id, x, y, w, h, (number << 8) + 129, 208, _dummyItem2);
 }
 
-void AGOSEngine::oww_setShortText() {
+void AGOSEngine_Waxworks::oww_setShortText() {
 	// 66: set item name
 	uint var = getVarOrByte();
 	uint stringId = getNextStringID();
@@ -123,7 +324,7 @@ void AGOSEngine::oww_setShortText() {
 	}
 }
 
-void AGOSEngine::oww_setLongText() {
+void AGOSEngine_Waxworks::oww_setLongText() {
 	// 67: set item description
 	uint var = getVarOrByte();
 	uint stringId = getNextStringID();
@@ -140,13 +341,13 @@ void AGOSEngine::oww_setLongText() {
 	}
 }
 
-void AGOSEngine::oww_printLongText() {
+void AGOSEngine_Waxworks::oww_printLongText() {
 	// 70: show string from array
 	const char *str = (const char *)getStringPtrByID(_longText[getVarOrByte()]);
 	showMessageFormat("%s\n", str);
 }
 
-void AGOSEngine::oww_whereTo() {
+void AGOSEngine_Waxworks::oww_whereTo() {
 	// 85: where to
 	Item *i = getNextItemPtr();
 	int16 d = getVarOrByte();
@@ -158,18 +359,18 @@ void AGOSEngine::oww_whereTo() {
 		_objectItem = derefItem(getExitOf(i, d));
 }
 
-void AGOSEngine::oww_menu() {
+void AGOSEngine_Waxworks::oww_menu() {
 	// 105: set agos menu
 	_agosMenu = getVarOrByte();
 }
 
-void AGOSEngine::oww_textMenu() {
+void AGOSEngine_Waxworks::oww_textMenu() {
 	// 106: set text menu
 	byte slot = getVarOrByte();
 	_textMenu[slot] = getVarOrByte();
 }
 
-void AGOSEngine::oww_pauseGame() {
+void AGOSEngine_Waxworks::oww_pauseGame() {
 	// 135: pause game
 	HitArea *ha;
 
@@ -200,27 +401,27 @@ void AGOSEngine::oww_pauseGame() {
 	_gameStoppedClock = time(NULL) - pauseTime + _gameStoppedClock;
 }
 
-void AGOSEngine::oww_boxMessage() {
+void AGOSEngine_Waxworks::oww_boxMessage() {
 	// 184:  print message to box
 	boxTextMessage((const char *)getStringPtrByID(getNextStringID()));
 }
 
-void AGOSEngine::oww_boxMsg() {
+void AGOSEngine_Waxworks::oww_boxMsg() {
 	// 185:  print msg to box
 	boxTextMsg((const char *)getStringPtrByID(getNextStringID()));
 }
 
-void AGOSEngine::oww_boxLongText() {
+void AGOSEngine_Waxworks::oww_boxLongText() {
 	// 186: print long text to box
 	boxTextMsg((const char *)getStringPtrByID(_longText[getVarOrByte()]));
 }
 
-void AGOSEngine::oww_printBox() {
+void AGOSEngine_Waxworks::oww_printBox() {
 	// 187: print box
 	printBox();
 }
 
-void AGOSEngine::oww_boxPObj() {
+void AGOSEngine_Waxworks::oww_boxPObj() {
 	// 188: print object name to box
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
 
@@ -228,12 +429,12 @@ void AGOSEngine::oww_boxPObj() {
 		boxTextMsg((const char *)getStringPtrByID(subObject->objectFlagValue[0]));
 }
 
-void AGOSEngine::oww_lockZones() {
+void AGOSEngine_Waxworks::oww_lockZones() {
 	// 189: lock zone
 	_vgaMemBase = _vgaMemPtr;
 }
 
-void AGOSEngine::oww_unlockZones() {
+void AGOSEngine_Waxworks::oww_unlockZones() {
 	// 190: unlock zone
 	_vgaMemPtr = _vgaFrozenBase;
 	_vgaMemBase = _vgaFrozenBase;

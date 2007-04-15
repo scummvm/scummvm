@@ -124,6 +124,15 @@ struct GameSpecificSettings;
 
 class Debugger;
 
+// This is to help devices with small memory (PDA, smartphones, ...)
+// to save a bit of memory used by opcode names in the AGOS engine.
+
+#ifndef REDUCE_MEMORY_USAGE
+#	define _OPCODE(ver, x)	{ &ver::x, #x }
+#else
+#	define _OPCODE(ver, x)	{ &ver::x, "" }
+#endif
+
 class AGOSEngine : public Engine {
 	friend class Debugger;
 	friend class MoviePlayer;
@@ -131,12 +140,7 @@ class AGOSEngine : public Engine {
 	GUI::Debugger *getDebugger();
 
 public:
-	typedef void (AGOSEngine::*OpcodeProc) ();
-
-	virtual void setupOpcodes(OpcodeProc *op);
-
-	void setupOpcodes();
-	OpcodeProc _opcode_table[300];
+	virtual void setupOpcodes();
 	int _numOpcodes;
 
 	typedef void (AGOSEngine::*VgaOpcodeProc) ();
@@ -574,6 +578,7 @@ protected:
 	bool checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub);
 
 	int runScript();
+	virtual void executeOpcode(int opcode) = 0;
 
 	byte getByte();
 	int getNextWord();
@@ -951,6 +956,7 @@ public:
 	int getScriptReturn();
 
 	// Opcodes, common
+	void o_invalid();
 	void o_at();
 	void o_notAt();
 	void o_carried();
@@ -1033,6 +1039,7 @@ public:
 	void o_defObj();
 	void o_here();
 	void o_doClassIcons();
+	void o_playTune();
 	void o_setAdjNoun();
 	void o_saveUserGame();
 	void o_loadUserGame();
@@ -1044,63 +1051,6 @@ public:
 	void o_setDollar();
 	void o_isBox();
 
-	// Opcodes, Elvira 1
-	void oe1_present();
-	void oe1_notPresent();
-	void oe1_worn();
-	void oe1_notWorn();
-	void oe1_notCarried();
-	void oe1_isNotAt();
-	void oe1_sibling();
-	void oe1_notSibling();
-	void oe1_isIn();
-	void oe1_isNotIn();
-	void oe1_isPlayer();
-	void oe1_canPut();
-	void oe1_create();
-	void oe1_copyof();
-	void oe1_copyfo();
-	void oe1_whatO();
-	void oe1_weigh();
-	void oe1_setFF();
-	void oe1_moveDirn();
-	void oe1_score();
-	void oe1_look();
-	void oe1_doClass();
-	void oe1_pObj();
-	void oe1_pName();
-	void oe1_pcName();
-	void oe1_isCalled();
-	void oe1_cFlag();
-	void oe1_rescan();
-	void oe1_setUserItem();
-	void oe1_getUserItem();
-	void oe1_whereTo();
-	void oe1_doorExit();
-	void oe1_saveGame();
-	void oe1_loadGame();
-	void oe1_clearUserItem();
-	void oe1_findMaster();
-	void oe1_nextMaster();
-	void oe1_animate();
-	void oe1_stopAnimate();
-	void oe1_menu();
-	void oe1_enableInput();
-	void oe1_setTime();
-	void oe1_ifTime();
-	void oe1_playTune();
-	void oe1_bitClear();
-	void oe1_bitSet();
-	void oe1_bitTest();
-	void oe1_zoneDisk();
-	void oe1_printStats();
-	void oe1_stopTune();
-	void oe1_printPlayerDamage();
-	void oe1_printMonsterDamage();
-	void oe1_pauseGame();
-	void oe1_printPlayerHit();
-	void oe1_printMonsterHit();
-
 	int16 levelOf(Item *item); 
 	int16 moreText(Item *i);
 	void lobjFunc(Item *i, const char *f);
@@ -1108,152 +1058,6 @@ public:
 	uint continueOrQuit();
 	void printScroll();
 	void synchChain(Item *i);
-
-	// Opcodes, Elvira 2
-	void oe2_moveDirn();
-	void oe2_doClass();
-	void oe2_pObj();
-	void oe2_loadGame();
-	void oe2_drawItem();
-	void oe2_doTable();
-	void oe2_pauseGame();
-	void oe2_setDoorOpen();
-	void oe2_setDoorClosed();
-	void oe2_setDoorLocked();
-	void oe2_ifDoorOpen();
-	void oe2_ifDoorClosed();
-	void oe2_ifDoorLocked();
-	void oe2_storeItem();
-	void oe2_getItem();
-	void oe2_bSet();
-	void oe2_bClear();
-	void oe2_bZero();
-	void oe2_bNotZero();
-	void oe2_getOValue();
-	void oe2_setOValue();
-	void oe2_ink();
-	void oe2_printStats();
-	void oe2_setSuperRoom();
-	void oe2_getSuperRoom();
-	void oe2_setExitOpen();
-	void oe2_setExitClosed();
-	void oe2_setExitLocked();
-	void oe2_ifExitOpen();
-	void oe2_ifExitClosed();
-	void oe2_ifExitLocked();
-	void oe2_unk174();
-	void oe2_getDollar2();
-	void oe2_setSRExit();
-	void oe2_unk177();
-	void oe2_unk178();
-	void oe2_isAdjNoun();
-	void oe2_b2Set();
-	void oe2_b2Clear();
-	void oe2_b2Zero();
-	void oe2_b2NotZero();
-
-	// Opcodes, Waxworks
-	void oww_moveDirn();
-	void oww_goto();
-	void oww_addTextBox();
-	void oww_setShortText();
-	void oww_setLongText();
-	void oww_whereTo();
-	void oww_menu();
-	void oww_textMenu();
-	void oww_pauseGame();
-	void oww_boxMessage();
-	void oww_boxMsg();
-	void oww_boxLongText();
-	void oww_printBox();
-	void oww_boxPObj();
-	void oww_lockZones();
-	void oww_unlockZones();
-
-	// Opcodes, Simon 1
-	void oww_printLongText();
-	void os1_animate();
-	void os1_playTune();
-	void os1_pauseGame();
-	void os1_screenTextBox();
-	void os1_screenTextMsg();
-	void os1_playEffect();
-	void os1_screenTextPObj();
-	void os1_getPathPosn();
-	void os1_scnTxtLongText();
-	void os1_mouseOn();
-	void os1_mouseOff();
-	void os1_loadBeard();
-	void os1_unloadBeard();
-	void os1_unloadZone();
-	void os1_loadStrings();
-	void os1_unfreezeZones();
-	void os1_specialFade();
-
-	// Opcodes, Simon 2
-	void os2_printLongText();
-	void os2_rescan();
-	void os2_animate();
-	void os2_stopAnimate();
-	void os2_playTune();
-	void os2_screenTextPObj();
-	void os2_mouseOn();
-	void os2_mouseOff();
-	void os2_isShortText();
-	void os2_clearMarks();
-	void os2_waitMark();
-
-	// Opcodes, Feeble Files
-	void off_chance();
-	void off_jumpOut();
-	void off_addTextBox();
-	void off_printLongText();
-	void off_addBox();
-	void off_oracleTextDown();
-	void off_oracleTextUp();
-	void off_ifTime();
-	void off_setTime();
-	void off_saveUserGame();
-	void off_loadUserGame();
-	void off_listSaveGames();
-	void off_checkCD();
-	void off_screenTextBox();
-	void off_isAdjNoun();
-	void off_hyperLinkOn();
-	void off_hyperLinkOff();
-	void off_checkPaths();
-	void off_screenTextPObj();
-	void off_mouseOn();
-	void off_mouseOff();
-	void off_loadVideo();
-	void off_playVideo();
-	void off_centreScroll();
-	void off_resetPVCount();
-	void off_setPathValues();
-	void off_stopClock();
-	void off_restartClock();
-	void off_setColour();
-	void off_b3Set();
-	void off_b3Clear();
-	void off_b3Zero();
-	void off_b3NotZero();
-
-	// Opcodes, Puzzle Pack
-	void opp_iconifyWindow();
-	void opp_restoreOopsPosition();
-	void opp_loadMouseImage();
-	void opp_message();
-	void opp_setShortText();
-	void opp_loadHiScores();
-	void opp_checkHiScores();
-	void opp_sync();
-	void opp_saveUserGame();
-	void opp_loadUserGame();
-	void opp_saveOopsPosition();
-	void opp_resetGameTime();
-	void opp_resetPVCount();
-	void opp_setPathValues();
-	void opp_restartClock();
 
 protected:
 	bool drawImage_clip(VC10_state *state);
@@ -1415,10 +1219,75 @@ public:
 	AGOSEngine_Elvira1(OSystem *system);
 	//~AGOSEngine_Elvira1();
 
-
-	virtual void setupOpcodes(OpcodeProc *op);
+	virtual void setupOpcodes();
 	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
-private:
+
+	virtual void executeOpcode(int opcode);
+
+	void oe1_present();
+	void oe1_notPresent();
+	void oe1_worn();
+	void oe1_notWorn();
+	void oe1_notCarried();
+	void oe1_isNotAt();
+	void oe1_sibling();
+	void oe1_notSibling();
+	void oe1_isIn();
+	void oe1_isNotIn();
+	void oe1_isPlayer();
+	void oe1_canPut();
+	void oe1_create();
+	void oe1_copyof();
+	void oe1_copyfo();
+	void oe1_whatO();
+	void oe1_weigh();
+	void oe1_setFF();
+	void oe1_moveDirn();
+	void oe1_score();
+	void oe1_look();
+	void oe1_doClass();
+	void oe1_pObj();
+	void oe1_pName();
+	void oe1_pcName();
+	void oe1_isCalled();
+	void oe1_cFlag();
+	void oe1_rescan();
+	void oe1_setUserItem();
+	void oe1_getUserItem();
+	void oe1_whereTo();
+	void oe1_doorExit();
+	void oe1_saveGame();
+	void oe1_loadGame();
+	void oe1_clearUserItem();
+	void oe1_findMaster();
+	void oe1_nextMaster();
+	void oe1_animate();
+	void oe1_stopAnimate();
+	void oe1_menu();
+	void oe1_enableInput();
+	void oe1_setTime();
+	void oe1_ifTime();
+	void oe1_playTune();
+	void oe1_bitClear();
+	void oe1_bitSet();
+	void oe1_bitTest();
+	void oe1_zoneDisk();
+	void oe1_printStats();
+	void oe1_stopTune();
+	void oe1_printPlayerDamage();
+	void oe1_printMonsterDamage();
+	void oe1_pauseGame();
+	void oe1_printPlayerHit();
+	void oe1_printMonsterHit();
+
+protected:
+	typedef void (AGOSEngine_Elvira1::*OpcodeProcElvira1) ();
+	struct OpcodeEntryElvira1 {
+		OpcodeProcElvira1 proc;
+		const char *desc;
+	};
+
+	const OpcodeEntryElvira1 *_opcodesElvira1;
 };
 
 class AGOSEngine_Elvira2 : public AGOSEngine_Elvira1 {
@@ -1426,9 +1295,61 @@ public:
 	AGOSEngine_Elvira2(OSystem *system);
 	//~AGOSEngine_Elvira2();
 
-	virtual void setupOpcodes(OpcodeProc *op);
+	virtual void setupOpcodes();
 	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
-private:
+
+	virtual void executeOpcode(int opcode);
+
+	void oe2_moveDirn();
+	void oe2_doClass();
+	void oe2_pObj();
+	void oe2_loadGame();
+	void oe2_drawItem();
+	void oe2_doTable();
+	void oe2_pauseGame();
+	void oe2_setDoorOpen();
+	void oe2_setDoorClosed();
+	void oe2_setDoorLocked();
+	void oe2_ifDoorOpen();
+	void oe2_ifDoorClosed();
+	void oe2_ifDoorLocked();
+	void oe2_storeItem();
+	void oe2_getItem();
+	void oe2_bSet();
+	void oe2_bClear();
+	void oe2_bZero();
+	void oe2_bNotZero();
+	void oe2_getOValue();
+	void oe2_setOValue();
+	void oe2_ink();
+	void oe2_printStats();
+	void oe2_setSuperRoom();
+	void oe2_getSuperRoom();
+	void oe2_setExitOpen();
+	void oe2_setExitClosed();
+	void oe2_setExitLocked();
+	void oe2_ifExitOpen();
+	void oe2_ifExitClosed();
+	void oe2_ifExitLocked();
+	void oe2_unk174();
+	void oe2_getDollar2();
+	void oe2_setSRExit();
+	void oe2_unk177();
+	void oe2_unk178();
+	void oe2_isAdjNoun();
+	void oe2_b2Set();
+	void oe2_b2Clear();
+	void oe2_b2Zero();
+	void oe2_b2NotZero();
+
+protected:
+	typedef void (AGOSEngine_Elvira2::*OpcodeProcElvira2) ();
+	struct OpcodeEntryElvira2 {
+		OpcodeProcElvira2 proc;
+		const char *desc;
+	};
+
+	const OpcodeEntryElvira2 *_opcodesElvira2;
 };
 
 class AGOSEngine_Waxworks : public AGOSEngine_Elvira2 {
@@ -1436,9 +1357,37 @@ public:
 	AGOSEngine_Waxworks(OSystem *system);
 	//~AGOSEngine_Waxworks();
 
-	virtual void setupOpcodes(OpcodeProc *op);
+	virtual void setupOpcodes();
 	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
-private:
+
+	virtual void executeOpcode(int opcode);
+
+	void oww_moveDirn();
+	void oww_goto();
+	void oww_addTextBox();
+	void oww_setShortText();
+	void oww_setLongText();
+	void oww_printLongText();
+	void oww_whereTo();
+	void oww_menu();
+	void oww_textMenu();
+	void oww_pauseGame();
+	void oww_boxMessage();
+	void oww_boxMsg();
+	void oww_boxLongText();
+	void oww_printBox();
+	void oww_boxPObj();
+	void oww_lockZones();
+	void oww_unlockZones();
+
+protected:
+	typedef void (AGOSEngine_Waxworks::*OpcodeProcWaxworks) ();
+	struct OpcodeEntryWaxworks {
+		OpcodeProcWaxworks proc;
+		const char *desc;
+	};
+
+	const OpcodeEntryWaxworks *_opcodesWaxworks;
 };
 
 class AGOSEngine_Simon1 : public AGOSEngine_Waxworks {
@@ -1446,9 +1395,37 @@ public:
 	AGOSEngine_Simon1(OSystem *system);
 	//~AGOSEngine_Simon1();
 
-	virtual void setupOpcodes(OpcodeProc *op);
+	virtual void setupOpcodes();
 	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
-private:
+
+	virtual void executeOpcode(int opcode);
+
+	// Opcodes, Simon 1
+	void os1_animate();
+	void os1_pauseGame();
+	void os1_screenTextBox();
+	void os1_screenTextMsg();
+	void os1_playEffect();
+	void os1_screenTextPObj();
+	void os1_getPathPosn();
+	void os1_scnTxtLongText();
+	void os1_mouseOn();
+	void os1_mouseOff();
+	void os1_loadBeard();
+	void os1_unloadBeard();
+	void os1_unloadZone();
+	void os1_loadStrings();
+	void os1_unfreezeZones();
+	void os1_specialFade();
+
+protected:
+	typedef void (AGOSEngine_Simon1::*OpcodeProcSimon1) ();
+	struct OpcodeEntrySimon1 {
+		OpcodeProcSimon1 proc;
+		const char *desc;
+	};
+
+	const OpcodeEntrySimon1 *_opcodesSimon1;
 };
 
 class AGOSEngine_Simon2 : public AGOSEngine_Simon1 {
@@ -1456,9 +1433,31 @@ public:
 	AGOSEngine_Simon2(OSystem *system);
 	//~AGOSEngine_Simon2();
 
-	virtual void setupOpcodes(OpcodeProc *op);
+	virtual void setupOpcodes();
 	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
-private:
+
+	virtual void executeOpcode(int opcode);
+
+	void os2_printLongText();
+	void os2_rescan();
+	void os2_animate();
+	void os2_stopAnimate();
+	void os2_playTune();
+	void os2_screenTextPObj();
+	void os2_mouseOn();
+	void os2_mouseOff();
+	void os2_isShortText();
+	void os2_clearMarks();
+	void os2_waitMark();
+
+protected:
+	typedef void (AGOSEngine_Simon2::*OpcodeProcSimon2) ();
+	struct OpcodeEntrySimon2 {
+		OpcodeProcSimon2 proc;
+		const char *desc;
+	};
+
+	const OpcodeEntrySimon2 *_opcodesSimon2;
 };
 
 class AGOSEngine_Feeble : public AGOSEngine_Simon2 {
@@ -1466,11 +1465,56 @@ public:
 	AGOSEngine_Feeble(OSystem *system);
 	//~AGOSEngine_Feeble();
 
-	virtual void setupOpcodes(OpcodeProc *op);
+	virtual void setupOpcodes();
 	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
 
+	virtual void executeOpcode(int opcode);
+
 	virtual void drawMousePointer();
+
+	void off_chance();
+	void off_jumpOut();
+	void off_addTextBox();
+	void off_printLongText();
+	void off_addBox();
+	void off_oracleTextDown();
+	void off_oracleTextUp();
+	void off_ifTime();
+	void off_setTime();
+	void off_saveUserGame();
+	void off_loadUserGame();
+	void off_listSaveGames();
+	void off_checkCD();
+	void off_screenTextBox();
+	void off_isAdjNoun();
+	void off_hyperLinkOn();
+	void off_hyperLinkOff();
+	void off_checkPaths();
+	void off_screenTextPObj();
+	void off_mouseOn();
+	void off_mouseOff();
+	void off_loadVideo();
+	void off_playVideo();
+	void off_centreScroll();
+	void off_resetPVCount();
+	void off_setPathValues();
+	void off_stopClock();
+	void off_restartClock();
+	void off_setColour();
+	void off_b3Set();
+	void off_b3Clear();
+	void off_b3Zero();
+	void off_b3NotZero();
+
 protected:
+	typedef void (AGOSEngine_Feeble::*OpcodeProcFeeble) ();
+	struct OpcodeEntryFeeble {
+		OpcodeProcFeeble proc;
+		const char *desc;
+	};
+
+	const OpcodeEntryFeeble *_opcodesFeeble;
+
 	virtual void resetVerbs();
 	virtual void setVerb(HitArea * ha);
 
@@ -1480,7 +1524,6 @@ protected:
 	virtual void clearName();
 
 	virtual void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
-private:
 };
 
 class AGOSEngine_PuzzlePack : public AGOSEngine_Feeble {
@@ -1488,11 +1531,36 @@ public:
 	AGOSEngine_PuzzlePack(OSystem *system);
 	//~AGOSEngine_PuzzlePack();
 
-	virtual void setupOpcodes(OpcodeProc *op);
+	virtual void setupOpcodes();
+
+	virtual void executeOpcode(int opcode);
+
+	void opp_iconifyWindow();
+	void opp_restoreOopsPosition();
+	void opp_loadMouseImage();
+	void opp_message();
+	void opp_setShortText();
+	void opp_loadHiScores();
+	void opp_checkHiScores();
+	void opp_sync();
+	void opp_saveUserGame();
+	void opp_loadUserGame();
+	void opp_saveOopsPosition();
+	void opp_resetGameTime();
+	void opp_resetPVCount();
+	void opp_setPathValues();
+	void opp_restartClock();
 
 protected:
+	typedef void (AGOSEngine_PuzzlePack::*OpcodeProcPuzzlePack) ();
+	struct OpcodeEntryPuzzlePack {
+		OpcodeProcPuzzlePack proc;
+		const char *desc;
+	};
+
+	const OpcodeEntryPuzzlePack *_opcodesPuzzlePack;
+
 	virtual void resetVerbs();
-private:
 };
 
 } // End of namespace AGOS

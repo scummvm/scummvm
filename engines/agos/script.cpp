@@ -36,128 +36,8 @@ extern bool isSmartphone(void);
 
 namespace AGOS {
 
-void AGOSEngine::setupOpcodes(OpcodeProc *op) {
-	// A common set of opcodes for Elvira 2 and later.
-
-	op[1] = &AGOSEngine::o_at;
-	op[2] = &AGOSEngine::o_notAt;
-	op[5] = &AGOSEngine::o_carried;
-	op[6] = &AGOSEngine::o_notCarried;
-	op[7] = &AGOSEngine::o_isAt;
-	op[11] = &AGOSEngine::o_zero;
-	op[12] = &AGOSEngine::o_notZero;
-	op[13] = &AGOSEngine::o_eq;
-	op[14] = &AGOSEngine::o_notEq;
-	op[15] = &AGOSEngine::o_gt;
-	op[16] = &AGOSEngine::o_lt;
-	op[17] = &AGOSEngine::o_eqf;
-	op[18] = &AGOSEngine::o_notEqf;
-	op[19] = &AGOSEngine::o_ltf;
-	op[20] = &AGOSEngine::o_gtf;
-	op[23] = &AGOSEngine::o_chance;
-	op[25] = &AGOSEngine::o_isRoom;
-	op[26] = &AGOSEngine::o_isObject;
-	op[27] = &AGOSEngine::o_state;
-	op[28] = &AGOSEngine::o_oflag;
-	op[31] = &AGOSEngine::o_destroy;
-	op[33] = &AGOSEngine::o_place;
-	op[36] = &AGOSEngine::o_copyff;
-	op[41] = &AGOSEngine::o_clear;
-	op[42] = &AGOSEngine::o_let;
-	op[43] = &AGOSEngine::o_add;
-	op[44] = &AGOSEngine::o_sub;
-	op[45] = &AGOSEngine::o_addf;
-	op[46] = &AGOSEngine::o_subf;
-	op[47] = &AGOSEngine::o_mul;
-	op[48] = &AGOSEngine::o_div;
-	op[49] = &AGOSEngine::o_mulf;
-	op[50] = &AGOSEngine::o_divf;
-	op[51] = &AGOSEngine::o_mod;
-	op[52] = &AGOSEngine::o_modf;
-	op[53] = &AGOSEngine::o_random;
-	op[55] = &AGOSEngine::o_goto;
-	op[56] = &AGOSEngine::o_oset;
-	op[57] = &AGOSEngine::o_oclear;
-	op[58] = &AGOSEngine::o_putBy;
-	op[59] = &AGOSEngine::o_inc;
-	op[60] = &AGOSEngine::o_dec;
-	op[61] = &AGOSEngine::o_setState;
-	op[62] = &AGOSEngine::o_print;
-	op[63] = &AGOSEngine::o_message;
-	op[64] = &AGOSEngine::o_msg;
-	op[68] = &AGOSEngine::o_end;
-	op[69] = &AGOSEngine::o_done;
-	op[71] = &AGOSEngine::o_process;
-	op[76] = &AGOSEngine::o_when;
-	op[77] = &AGOSEngine::o_if1;
-	op[78] = &AGOSEngine::o_if2;
-	op[79] = &AGOSEngine::o_isCalled;
-	op[80] = &AGOSEngine::o_is;
-	op[82] = &AGOSEngine::o_debug;
-	op[87] = &AGOSEngine::o_comment;
-	op[90] = &AGOSEngine::o_getParent;
-	op[91] = &AGOSEngine::o_getNext;
-	op[92] = &AGOSEngine::o_getChildren;
-	op[96] = &AGOSEngine::o_picture;
-	op[97] = &AGOSEngine::o_loadZone;
-	op[100] = &AGOSEngine::o_killAnimate;
-	op[101] = &AGOSEngine::o_defWindow;
-	op[102] = &AGOSEngine::o_window;
-	op[103] = &AGOSEngine::o_cls;
-	op[104] = &AGOSEngine::o_closeWindow;
-	op[107] = &AGOSEngine::o_addBox;
-	op[108] = &AGOSEngine::o_delBox;
-	op[109] = &AGOSEngine::o_enableBox;
-	op[110] = &AGOSEngine::o_disableBox;
-	op[111] = &AGOSEngine::o_moveBox;
-	op[114] = &AGOSEngine::o_doIcons;
-	op[115] = &AGOSEngine::o_isClass;
-	op[116] = &AGOSEngine::o_setClass;
-	op[117] = &AGOSEngine::o_unsetClass;
-	op[119] = &AGOSEngine::o_waitSync;
-	op[120] = &AGOSEngine::o_sync;
-	op[121] = &AGOSEngine::o_defObj;
-	op[125] = &AGOSEngine::o_here;
-	op[126] = &AGOSEngine::o_doClassIcons;
-	op[130] = &AGOSEngine::o_setAdjNoun;
-	op[132] = &AGOSEngine::o_saveUserGame;
-	op[133] = &AGOSEngine::o_loadUserGame;
-	op[136] = &AGOSEngine::o_copysf;
-	op[137] = &AGOSEngine::o_restoreIcons;
-	op[138] = &AGOSEngine::o_freezeZones;
-	op[139] = &AGOSEngine::o_placeNoIcons;
-	op[140] = &AGOSEngine::o_clearTimers;
-	op[141] = &AGOSEngine::o_setDollar;
-	op[142] = &AGOSEngine::o_isBox;
-	op[143] = &AGOSEngine::oe2_doTable;
-	op[151] = &AGOSEngine::oe2_storeItem;
-	op[152] = &AGOSEngine::oe2_getItem;
-	op[153] = &AGOSEngine::oe2_bSet;
-	op[154] = &AGOSEngine::oe2_bClear;
-	op[155] = &AGOSEngine::oe2_bZero;
-	op[156] = &AGOSEngine::oe2_bNotZero;
-	op[157] = &AGOSEngine::oe2_getOValue;
-	op[158] = &AGOSEngine::oe2_setOValue;
-	op[160] = &AGOSEngine::oe2_ink;
-}
-
 void AGOSEngine::setupOpcodes() {
-	memset(_opcode_table, 0, sizeof(_opcode_table));
-	_numOpcodes = ARRAYSIZE(_opcode_table);
-
-	switch (getGameType()) {
-	case GType_ELVIRA1:
-	case GType_ELVIRA2:
-	case GType_WW:
-	case GType_SIMON1:
-	case GType_SIMON2:
-	case GType_FF:
-	case GType_PP:
-		setupOpcodes(_opcode_table);
-		break;
-	default:
-		error("setupOpcodes: Unknown game");
-	}
+	error("setupOpcodes: Unknown game");
 }
 
 void AGOSEngine::setScriptCondition(bool cond) {
@@ -179,6 +59,11 @@ int AGOSEngine::getScriptReturn() {
 // -----------------------------------------------------------------------
 // Common Opcodes
 // -----------------------------------------------------------------------
+
+void AGOSEngine::o_invalid() {
+	// TODO: Better error reporting
+	error("Invalid opcode");
+}
 
 void AGOSEngine::o_at() {
 	// 1: ptrA parent is
@@ -815,6 +700,18 @@ void AGOSEngine::o_doClassIcons() {
 	mouseOn();
 }
 
+void AGOSEngine::o_playTune() {
+	// 127:  play tune
+	int music = getVarOrWord();
+	int track = getVarOrWord();
+
+	if (music != _lastMusicPlayed) {
+		_lastMusicPlayed = music;
+		loadMusic(music);
+		_midi.startTrack(track);
+	}
+}
+
 void AGOSEngine::o_setAdjNoun() {
 	// 130: set adj noun
 	uint var = getVarOrByte();
@@ -1027,10 +924,10 @@ int AGOSEngine::runScript() {
 		setScriptCondition(true);
 		setScriptReturn(0);
 
-		if (opcode > _numOpcodes || !_opcode_table[opcode])
+		if (opcode > _numOpcodes)
 			error("Invalid opcode '%d' encountered", opcode);
 
-		(this->*_opcode_table[opcode]) ();
+		executeOpcode(opcode);
 	} while (getScriptCondition() != flag && !getScriptReturn());
 
 	return getScriptReturn();
