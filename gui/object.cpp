@@ -31,10 +31,8 @@ GuiObject::GuiObject(const Common::String &name) : _firstWidget(0) {
 }
 
 GuiObject::~GuiObject() {
-/* TODO: Enable this at some point? Right now it causes crashes
 	delete _firstWidget;
 	_firstWidget = 0;
-*/
 }
 
 uint32 GuiObject::getMillis() {

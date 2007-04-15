@@ -71,6 +71,7 @@ void TabWidget::init() {
 }
 
 TabWidget::~TabWidget() {
+	_firstWidget = 0;
 	for (uint i = 0; i < _tabs.size(); ++i) {
 		delete _tabs[i].firstWidget;
 		_tabs[i].firstWidget = 0;

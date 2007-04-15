@@ -54,7 +54,6 @@ private:
 public:
 	Dialog(int x, int y, int w, int h, bool dimsInactive = true);
 	Dialog(const Common::String &name, bool dimsInactive = true);
-	virtual ~Dialog();
 
 	virtual int runModal();
 

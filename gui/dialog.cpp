@@ -65,11 +65,6 @@ Dialog::Dialog(const Common::String &name, bool dimsInactive_)
 	}
 }
 
-Dialog::~Dialog() {
-	delete _firstWidget;
-	_firstWidget = 0;
-}
-
 int Dialog::runModal() {
 	// Open up
 	open();
