@@ -990,7 +990,7 @@ void AGOSEngine::printScroll() {
 	state.surf_addr = getBackBuf();
 	state.surf_pitch = _dxSurfacePitch;
 
-	drawImages(&state);
+	drawImage(&state);
 }
 
 } // End of namespace AGOS

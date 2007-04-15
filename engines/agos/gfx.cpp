@@ -166,7 +166,7 @@ void AGOSEngine::decodeRow(byte *dst, const byte *src, int width) {
 	}
 }
 
-bool AGOSEngine::drawImages_clip(VC10_state *state) {
+bool AGOSEngine::drawImage_clip(VC10_state *state) {
 	const uint16 *vlut;
 	uint maxWidth, maxHeight;
 	int cur;
@@ -224,7 +224,7 @@ bool AGOSEngine::drawImages_clip(VC10_state *state) {
 	return 1;
 }
 
-void AGOSEngine::drawImages_Feeble(VC10_state *state) {
+void AGOSEngine::drawImage_Feeble(VC10_state *state) {
 	if (state->flags & kDFCompressed) {
 		if (state->flags & kDFScaled) {
 			state->surf_addr = getScaleBuf();
@@ -293,7 +293,7 @@ void AGOSEngine::drawImages_Feeble(VC10_state *state) {
 				scaleClip(_scaleHeight, _scaleWidth, _scaleY, _scaleX, _scaleY + _scrollY);
 			}
 		} else {
-			if (drawImages_clip(state) == 0)
+			if (drawImage_clip(state) == 0)
 				return;
 
 			state->surf_addr += state->x + state->y * state->surf_pitch;
@@ -359,7 +359,7 @@ void AGOSEngine::drawImages_Feeble(VC10_state *state) {
 			}
 		}
 	} else {
-		if (drawImages_clip(state) == 0)
+		if (drawImage_clip(state) == 0)
 			return;
 
 		state->surf_addr += state->x + state->y * state->surf_pitch;
@@ -387,10 +387,10 @@ void AGOSEngine::drawImages_Feeble(VC10_state *state) {
 	} 
 }
 
-void AGOSEngine::drawImages_Simon(VC10_state *state) {
+void AGOSEngine::drawImage_Simon(VC10_state *state) {
 	const uint16 *vlut = &_videoWindows[_windowNum * 4];
 
-	if (drawImages_clip(state) == 0)
+	if (drawImage_clip(state) == 0)
 		return;
 
 	uint xoffs, yoffs;
@@ -583,12 +583,12 @@ void AGOSEngine::drawImages_Simon(VC10_state *state) {
 	}
 }
 
-void AGOSEngine::drawImages_Amiga(VC10_state *state) {
+void AGOSEngine::drawImage_Amiga(VC10_state *state) {
 	uint8 *dst;
 	const byte *src;
 	const uint16 *vlut = &_videoWindows[_windowNum * 4];
 
-	if (drawImages_clip(state) == 0)
+	if (drawImage_clip(state) == 0)
 		return;
 
 	uint xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
@@ -638,10 +638,10 @@ void AGOSEngine::drawImages_Amiga(VC10_state *state) {
 	}
 }
 
-void AGOSEngine::drawImages(VC10_state *state) {
+void AGOSEngine::drawImage(VC10_state *state) {
 	const uint16 *vlut = &_videoWindows[_windowNum * 4];
 
-	if (drawImages_clip(state) == 0)
+	if (drawImage_clip(state) == 0)
 		return;
 
 	uint xoffs, yoffs;

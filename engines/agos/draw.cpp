@@ -27,6 +27,7 @@
 
 #include "agos/agos.h"
 #include "agos/intern.h"
+#include "agos/vga.h"
 
 namespace AGOS {
 
@@ -53,8 +54,7 @@ byte *AGOSEngine::getScaleBuf() {
 void AGOSEngine::animateSprites() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
-	const byte *vc_ptr_org = _vcPtr;
-	uint16 params[5];							// parameters to vc10
+	VC10_state state;
 
 	if (_paletteFlag == 2)
 		_paletteFlag = 1;
@@ -84,25 +84,13 @@ void AGOSEngine::animateSprites() {
 		_vgaCurSpriteId = vsp->id;
 		_vgaCurSpritePriority = vsp->priority;
 
-		params[0] = readUint16Wrapper(&vsp->image);
-		if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
-			params[1] = readUint16Wrapper(&vsp->x);
-			params[2] = readUint16Wrapper(&vsp->y);
-			params[3] = READ_BE_UINT16(&vsp->flags);
-		} else {
-			params[1] = readUint16Wrapper(&vsp->palette);
-			params[2] = readUint16Wrapper(&vsp->x);
-			params[3] = readUint16Wrapper(&vsp->y);
+		state.image = vsp->image;
+		state.palette = (vsp->palette & 15) * 16;
+		state.x = vsp->x;
+		state.y = vsp->y;
+		state.flags = vsp->flags;
 
-			if (getGameType() == GType_SIMON1) {
-				params[4] = READ_BE_UINT16(&vsp->flags);
-			} else {
-				*(byte *)(&params[4]) = (byte)vsp->flags;
-			}
-		}
-
-		_vcPtr = (const byte *)params;
-		vc10_draw();
+		drawImage_init(&state);
 
 		vsp++;
 	}
@@ -111,14 +99,12 @@ void AGOSEngine::animateSprites() {
 		memset(_backBuf, 0, _screenWidth * _screenHeight);
 
 	_updateScreen = true;
-	_vcPtr = vc_ptr_org;
 }
 
 void AGOSEngine::animateSpritesDebug() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
-	const byte *vc_ptr_org = _vcPtr;
-	uint16 params[5];							// parameters to vc10_draw
+	VC10_state state;
 
 	if (_paletteFlag == 2)
 		_paletteFlag = 1;
@@ -137,38 +123,25 @@ void AGOSEngine::animateSpritesDebug() {
 		if (vsp->image)
 			printf("id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n",
 							vsp->id, vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
-		params[0] = readUint16Wrapper(&vsp->image);
-		if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
-			params[1] = readUint16Wrapper(&vsp->x);
-			params[2] = readUint16Wrapper(&vsp->y);
-			params[3] = READ_BE_UINT16(&vsp->flags);
-		} else {
-			params[1] = readUint16Wrapper(&vsp->palette);
-			params[2] = readUint16Wrapper(&vsp->x);
-			params[3] = readUint16Wrapper(&vsp->y);
 
-			if (getGameType() == GType_SIMON1) {
-				params[4] = READ_BE_UINT16(&vsp->flags);
-			} else {
-				*(byte *)(&params[4]) = (byte)vsp->flags;
-			}
-		}
+		state.image = vsp->image;
+		state.palette = (vsp->palette & 15) * 16;
+		state.x = vsp->x;
+		state.y = vsp->y;
+		state.flags = vsp->flags;
 
-		_vcPtr = (const byte *)params;
-		vc10_draw();
+		drawImage_init(&state);
 
 		vsp++;
 	}
 
 	_updateScreen = true;
-	_vcPtr = vc_ptr_org;
 }
 
 void AGOSEngine::animateSpritesByY() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
-	const byte *vc_ptr_org = _vcPtr;
-	uint16 params[5];							// parameters to vc10
+	VC10_state state;
 	int16 spriteTable[180][2];
 	
 	byte *src;
@@ -216,6 +189,7 @@ void AGOSEngine::animateSpritesByY() {
 		}
 
 		vsp = &_vgaSprites[slot];
+
 		vsp->windowNum &= 0x7FFF;
 
 		vpe = &_vgaBufferPointers[vsp->zoneNum];
@@ -226,18 +200,16 @@ void AGOSEngine::animateSpritesByY() {
 		_vgaCurSpriteId = vsp->id;
 		_vgaCurSpritePriority = vsp->priority;
 
-		params[0] = readUint16Wrapper(&vsp->image);
-		params[1] = readUint16Wrapper(&vsp->palette);
-		params[2] = readUint16Wrapper(&vsp->x);
-		params[3] = readUint16Wrapper(&vsp->y);
-		*(byte *)(&params[4]) = (byte)vsp->flags;
+		state.image = vsp->image;
+		state.palette = 0;
+		state.x = vsp->x;
+		state.y = vsp->y;
+		state.flags = vsp->flags;
 
-		_vcPtr = (const byte *)params;
-		vc10_draw();
+		drawImage_init(&state);
 	}
 
 	_updateScreen = true;
-	_vcPtr = vc_ptr_org;
 }
 
 void AGOSEngine::displayBoxStars() {

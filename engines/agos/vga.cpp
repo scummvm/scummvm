@@ -578,30 +578,20 @@ byte *AGOSEngine::vc10_flip(const byte *src, uint w, uint h) {
 }
 
 void AGOSEngine::vc10_draw() {
-	byte *p2;
-	uint width, height;
-	byte flags;
 	VC10_state state;
 
 	state.image = (int16)vcReadNextWord();
-	if (state.image == 0)
-		return;
 
+	state.palette = 0;
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		state.palette = (_vcPtr[0] * 16);
 		_vcPtr += 2;
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		state.palette = (_vcPtr[1] * 16);
 		_vcPtr += 2;
-	} else {
-		state.palette = 0;
 	}
 
 	state.x = (int16)vcReadNextWord();
-	state.x -= _scrollX;
-
 	state.y = (int16)vcReadNextWord();
-	state.y -= _scrollY;
 
 	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
 		state.flags = vcReadNextByte();
@@ -609,11 +599,25 @@ void AGOSEngine::vc10_draw() {
 		state.flags = vcReadNextWord();
 	}
 
-	if (state.image < 0)
-		state.image = vcReadVar(-state.image);
+	drawImage_init(&state);
+}
 
-	p2 = _curVgaFile2 + state.image * 8;
-	state.depack_src = _curVgaFile2 + readUint32Wrapper(p2);
+void AGOSEngine::drawImage_init(VC10_state *state) {
+	if (state->image == 0)
+		return;
+
+	byte *p2;
+	uint width, height;
+	byte flags;
+
+	state->x -= _scrollX;
+	state->y -= _scrollY;
+
+	if (state->image < 0)
+		state->image = vcReadVar(-state->image);
+
+	p2 = _curVgaFile2 + state->image * 8;
+	state->depack_src = _curVgaFile2 + readUint32Wrapper(p2);
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		width = READ_LE_UINT16(p2 + 6);
 		height = READ_LE_UINT16(p2 + 4) & 0x7FFF;
@@ -628,74 +632,74 @@ void AGOSEngine::vc10_draw() {
 		return;
 
 	if (_dumpImages)
-		dumpSingleBitmap(_vgaCurZoneNum, state.image, state.depack_src, width, height,
-											 state.palette);
-	state.width = state.draw_width = width;		/* cl */
-	state.height = state.draw_height = height;	/* ch */
+		dumpSingleBitmap(_vgaCurZoneNum, state->image, state->depack_src, width, height,
+											 state->palette);
+	state->width = state->draw_width = width;	/* cl */
+	state->height = state->draw_height = height;	/* ch */
 
-	state.depack_cont = -0x80;
+	state->depack_cont = -0x80;
 
-	state.x_skip = 0;				/* colums to skip = bh */
-	state.y_skip = 0;				/* rows to skip   = bl */
+	state->x_skip = 0;				/* colums to skip = bh */
+	state->y_skip = 0;				/* rows to skip   = bl */
 
 	if (getFeatures() & GF_PLANAR) {
-		state.depack_src = convertImage(&state, ((flags & 0x80) != 0));
+		state->depack_src = convertImage(state, ((flags & 0x80) != 0));
 
 		// converted planar clip is already uncompressed
-		if (state.flags & kDFCompressedFlip) {
-			state.flags &= ~kDFCompressedFlip;
-			state.flags |= kDFFlip;
+		if (state->flags & kDFCompressedFlip) {
+			state->flags &= ~kDFCompressedFlip;
+			state->flags |= kDFFlip;
 		}
-		if (state.flags & kDFCompressed) {
-			state.flags &= ~kDFCompressed;
+		if (state->flags & kDFCompressed) {
+			state->flags &= ~kDFCompressed;
 		}
 	} else if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		if (flags & 0x80) {
-			state.flags |= kDFCompressed;
+			state->flags |= kDFCompressed;
 		}
 	} else {
-		if (flags & 0x80 && !(state.flags & kDFCompressedFlip)) {
-			if (state.flags & kDFFlip) {
-				state.flags &= ~kDFFlip;
-				state.flags |= kDFCompressedFlip;
+		if (flags & 0x80 && !(state->flags & kDFCompressedFlip)) {
+			if (state->flags & kDFFlip) {
+				state->flags &= ~kDFFlip;
+				state->flags |= kDFCompressedFlip;
 			} else {
-				state.flags |= kDFCompressed;
+				state->flags |= kDFCompressed;
 			}
 		}
 	}
 
 	uint maxWidth = (getGameType() == GType_FF || getGameType() == GType_PP) ? 640 : 20;
 	if ((getGameType() == GType_SIMON2 || getGameType() == GType_FF) && width > maxWidth) {
-		horizontalScroll(&state);
+		horizontalScroll(state);
 		return;
 	}
 	if (getGameType() == GType_FF && height > 480) {
-		verticalScroll(&state);
+		verticalScroll(state);
 		return;
 	}
 
 	if (getGameType() != GType_FF && getGameType() != GType_PP) {
-		if (state.flags & kDFCompressedFlip) {
-			state.depack_src = vc10_uncompressFlip(state.depack_src, width, height);
-		} else if (state.flags & kDFFlip) {
-			state.depack_src = vc10_flip(state.depack_src, width, height);
+		if (state->flags & kDFCompressedFlip) {
+			state->depack_src = vc10_uncompressFlip(state->depack_src, width, height);
+		} else if (state->flags & kDFFlip) {
+			state->depack_src = vc10_flip(state->depack_src, width, height);
 		}
 	}
 
-	state.surf2_addr = getFrontBuf();
-	state.surf2_pitch = _dxSurfacePitch;
+	state->surf2_addr = getFrontBuf();
+	state->surf2_pitch = _dxSurfacePitch;
 
-	state.surf_addr = getBackBuf();
-	state.surf_pitch = _dxSurfacePitch;
+	state->surf_addr = getBackBuf();
+	state->surf_pitch = _dxSurfacePitch;
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		drawImages_Feeble(&state);
+		drawImage_Feeble(state);
 	} else if (getFeatures() & GF_32COLOR) {
-		drawImages_Amiga(&state);
+		drawImage_Amiga(state);
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-		drawImages_Simon(&state);
+		drawImage_Simon(state);
 	} else {
-		drawImages(&state);
+		drawImage(state);
 	}
 }
 

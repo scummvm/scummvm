@@ -134,6 +134,8 @@ struct VC10_state {
 	int8 depack_cont;
 
 	byte depack_dest[480];
+
+	VC10_state() { memset(this, 0, sizeof(*this)); }
 };
 
 byte *vc10_depackColumn(VC10_state *vs);
