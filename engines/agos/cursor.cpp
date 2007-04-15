@@ -436,10 +436,7 @@ boxstuff:
 		_lastHitArea3 = (HitArea *) -1;
 
 get_out:
-	if (getGameType() == GType_FF)
-		drawMousePointer_FF();
-	else
-		drawMousePointer();
+	drawMousePointer();
 
 	_needHitAreaRecalc = 0;
 	_litBoxFlag = 0;
@@ -545,7 +542,7 @@ void AGOSEngine::drawMousePointer() {
 	}
 }
 
-void AGOSEngine::drawMousePointer_FF() {
+void AGOSEngine_Feeble::drawMousePointer() {
 	uint cursor;
 	int image, offs;
 

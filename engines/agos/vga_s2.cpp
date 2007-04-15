@@ -28,8 +28,8 @@
 
 namespace AGOS {
 
-void AGOSEngine::setupSimon2VideoOpcodes(VgaOpcodeProc *op) {
-	setupSimon1VideoOpcodes(op);
+void AGOSEngine_Simon2::setupVideoOpcodes(VgaOpcodeProc *op) {
+	AGOSEngine_Simon1::setupVideoOpcodes(op);
 
 	op[56] = &AGOSEngine::vc56_delayLong;
 	op[58] = &AGOSEngine::vc58_changePriority;

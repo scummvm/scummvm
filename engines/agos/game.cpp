@@ -26,6 +26,7 @@
 #include "base/plugins.h"
 
 #include "common/advancedDetector.h"
+#include "common/config-manager.h"
 
 #include "agos/agos.h"
 
@@ -102,8 +103,54 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(AGOS, AGOS::AGOSEngine, detectionParams);
+GameList Engine_AGOS_gameIDList() {
+	return GameList(simonGames);
+}
+ 
+GameDescriptor Engine_AGOS_findGameID(const char *gameid) {
+	return Common::AdvancedDetector::findGameID(gameid, detectionParams);
+}
 
+GameList Engine_AGOS_detectGames(const FSList &fslist) {
+	return Common::AdvancedDetector::detectAllGames(fslist, detectionParams);
+}
+
+PluginError Engine_AGOS_create(OSystem *syst, Engine **engine) {
+	assert(engine);
+	const char *gameid = ConfMan.get("gameid").c_str();
+	
+	//const AGOSGameDescription gd = (const AGOSGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	//if (gd == 0) {
+	//	return kNoGameDataFoundError;
+	//}
+
+	if (!scumm_stricmp("elvira1", gameid)) {
+		*engine = new AGOS::AGOSEngine_Elvira1(syst);
+	} else if (!scumm_stricmp("elvira2", gameid)) {
+		*engine = new AGOS::AGOSEngine_Elvira2(syst);
+	} else if (!scumm_stricmp("waxworks", gameid)) {
+		*engine = new AGOS::AGOSEngine_Waxworks(syst);
+	} else if (!scumm_stricmp("simon1", gameid)) {
+		*engine = new AGOS::AGOSEngine_Simon1(syst);
+	} else if (!scumm_stricmp("simon2", gameid)) {
+		*engine = new AGOS::AGOSEngine_Simon2(syst);
+	} else if (!scumm_stricmp("feeble", gameid)) {
+		*engine = new AGOS::AGOSEngine_Feeble(syst);
+
+	} else if (!scumm_stricmp("jumble", gameid)) {
+		*engine = new AGOS::AGOSEngine_PuzzlePack(syst);
+	} else if (!scumm_stricmp("puzzle", gameid)) {
+		*engine = new AGOS::AGOSEngine_PuzzlePack(syst);
+	} else if (!scumm_stricmp("swampy", gameid)) {
+		*engine = new AGOS::AGOSEngine_PuzzlePack(syst);
+
+	} else {
+		error("AGOS engine created with invalid gameid");
+	}
+
+	return kNoError;
+}
+ 
 REGISTER_PLUGIN(AGOS, "AGOS", "AGOS (C) Adventure Soft");
 
 namespace AGOS {

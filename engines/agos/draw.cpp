@@ -96,7 +96,6 @@ void AGOSEngine::animateSprites() {
 void AGOSEngine::animateSpritesDebug() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
-	VC10_state state;
 
 	if (_paletteFlag == 2)
 		_paletteFlag = 1;
@@ -127,7 +126,6 @@ void AGOSEngine::animateSpritesDebug() {
 void AGOSEngine::animateSpritesByY() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
-	VC10_state state;
 	int16 spriteTable[180][2];
 	
 	byte *src;

@@ -27,8 +27,8 @@
 
 namespace AGOS {
 
-void AGOSEngine::setupSimon2Opcodes(OpcodeProc *op) {
-	setupCommonOpcodes(op);
+void AGOSEngine_Simon2::setupOpcodes(OpcodeProc *op) {
+	AGOSEngine::setupOpcodes(op);
 
 	op[65] = &AGOSEngine::oww_addTextBox;
 	op[66] = &AGOSEngine::oww_setShortText;

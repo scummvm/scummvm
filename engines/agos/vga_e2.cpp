@@ -31,8 +31,8 @@
 
 namespace AGOS {
 
-void AGOSEngine::setupElvira2VideoOpcodes(VgaOpcodeProc *op) {
-	setupCommonVideoOpcodes(op);
+void AGOSEngine_Elvira2::setupVideoOpcodes(VgaOpcodeProc *op) {
+	AGOSEngine::setupVideoOpcodes(op);
 
 	op[17] = &AGOSEngine::vc17_waitEnd;
 	op[19] = &AGOSEngine::vc19_loop;

@@ -36,7 +36,7 @@ extern bool isSmartphone(void);
 
 namespace AGOS {
 
-void AGOSEngine::setupCommonOpcodes(OpcodeProc *op) {
+void AGOSEngine::setupOpcodes(OpcodeProc *op) {
 	// A common set of opcodes for Elvira 2 and later.
 
 	op[1] = &AGOSEngine::o_at;
@@ -147,25 +147,13 @@ void AGOSEngine::setupOpcodes() {
 
 	switch (getGameType()) {
 	case GType_ELVIRA1:
-		setupElvira1Opcodes(_opcode_table);
-		break;
 	case GType_ELVIRA2:
-		setupElvira2Opcodes(_opcode_table);
-		break;
 	case GType_WW:
-		setupWaxworksOpcodes(_opcode_table);
-		break;
 	case GType_SIMON1:
-		setupSimon1Opcodes(_opcode_table);
-		break;
 	case GType_SIMON2:
-		setupSimon2Opcodes(_opcode_table);
-		break;
 	case GType_FF:
-		setupFeebleOpcodes(_opcode_table);
-		break;
 	case GType_PP:
-		setupPuzzleOpcodes(_opcode_table);
+		setupOpcodes(_opcode_table);
 		break;
 	default:
 		error("setupOpcodes: Unknown game");

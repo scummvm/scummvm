@@ -243,14 +243,6 @@ void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 }
 
 void AGOSEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask) {
-	if (getGameType() == GType_FF) {
-		drawIconArray_FF(num, itemRef, line, classMask);
-	} else {
-		drawIconArray_Simon(num, itemRef, line, classMask);
-	}
-}
-
-void AGOSEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int classMask) {
 	Item *item_ptr_org = itemRef;
 	WindowBlock *window;
 	uint width, height;
@@ -350,7 +342,7 @@ void AGOSEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int clas
 	}
 }
 
-void AGOSEngine::drawIconArray_FF(uint num, Item *itemRef, int line, int classMask) {
+void AGOSEngine_Feeble::drawIconArray(uint num, Item *itemRef, int line, int classMask) {
 	Item *item_ptr_org = itemRef;
 	WindowBlock *window;
 	uint16 flagnumber = 201;

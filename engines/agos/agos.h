@@ -130,17 +130,10 @@ class AGOSEngine : public Engine {
 
 	GUI::Debugger *getDebugger();
 
+public:
 	typedef void (AGOSEngine::*OpcodeProc) ();
 
-	void setupCommonOpcodes(OpcodeProc *op);
-
-	void setupElvira1Opcodes(OpcodeProc *op);
-	void setupElvira2Opcodes(OpcodeProc *op);
-	void setupWaxworksOpcodes(OpcodeProc *op);
-	void setupSimon1Opcodes(OpcodeProc *op);
-	void setupSimon2Opcodes(OpcodeProc *op);
-	void setupFeebleOpcodes(OpcodeProc *op);
-	void setupPuzzleOpcodes(OpcodeProc *op);
+	virtual void setupOpcodes(OpcodeProc *op);
 
 	void setupOpcodes();
 	OpcodeProc _opcode_table[300];
@@ -152,16 +145,8 @@ class AGOSEngine : public Engine {
 	VgaOpcodeProc _vga_opcode_table[100];
 	uint _numVideoOpcodes;
 
-	void setupCommonVideoOpcodes(VgaOpcodeProc *op);
+	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
 
-	void setupElvira1VideoOpcodes(VgaOpcodeProc *op);
-	void setupElvira2VideoOpcodes(VgaOpcodeProc *op);
-	void setupWaxworksVideoOpcodes(VgaOpcodeProc *op);
-	void setupSimon1VideoOpcodes(VgaOpcodeProc *op);
-	void setupSimon2VideoOpcodes(VgaOpcodeProc *op);
-	void setupFeebleVideoOpcodes(VgaOpcodeProc *op);
-
-public:
 	const AGOSGameDescription *_gameDescription;
 
 	bool initGame(void);
@@ -777,8 +762,7 @@ protected:
 	void handleMouseMoved();
 	void initMouse();
 	void loadMouseImage();
-	void drawMousePointer();
-	void drawMousePointer_FF();
+	virtual void drawMousePointer();
 	void drawMousePart(int image, byte x, byte y);
 
 	void addArrows(WindowBlock *window);
@@ -788,9 +772,10 @@ protected:
 	bool hasIcon(Item *item);
 	uint itemGetIconNumber(Item *item);
 	uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
-	void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
-	void drawIconArray_FF(uint i, Item *item_ptr, int line, int classMask);
-	void drawIconArray_Simon(uint i, Item *item_ptr, int line, int classMask);
+
+	virtual void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
+
+
 	void removeIconArray(uint num);
 
 	void loadIconData();	
@@ -1423,6 +1408,82 @@ protected:
 	int displaySaveGameList(int curpos, bool load, char *dst);
 
 	char *genSaveName(int slot);
+};
+
+class AGOSEngine_Elvira1 : public AGOSEngine {
+public:
+	AGOSEngine_Elvira1(OSystem *system);
+	//~AGOSEngine_Elvira1();
+
+
+	virtual void setupOpcodes(OpcodeProc *op);
+	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
+private:
+};
+
+class AGOSEngine_Elvira2 : public AGOSEngine_Elvira1 {
+public:
+	AGOSEngine_Elvira2(OSystem *system);
+	//~AGOSEngine_Elvira2();
+
+	virtual void setupOpcodes(OpcodeProc *op);
+	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
+private:
+};
+
+class AGOSEngine_Waxworks : public AGOSEngine_Elvira2 {
+public:
+	AGOSEngine_Waxworks(OSystem *system);
+	//~AGOSEngine_Waxworks();
+
+	virtual void setupOpcodes(OpcodeProc *op);
+	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
+private:
+};
+
+class AGOSEngine_Simon1 : public AGOSEngine_Waxworks {
+public:
+	AGOSEngine_Simon1(OSystem *system);
+	//~AGOSEngine_Simon1();
+
+	virtual void setupOpcodes(OpcodeProc *op);
+	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
+private:
+};
+
+class AGOSEngine_Simon2 : public AGOSEngine_Simon1 {
+public:
+	AGOSEngine_Simon2(OSystem *system);
+	//~AGOSEngine_Simon2();
+
+	virtual void setupOpcodes(OpcodeProc *op);
+	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
+private:
+};
+
+class AGOSEngine_Feeble : public AGOSEngine_Simon2 {
+public:
+	AGOSEngine_Feeble(OSystem *system);
+	//~AGOSEngine_Feeble();
+
+	virtual void setupOpcodes(OpcodeProc *op);
+	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
+
+	virtual void drawMousePointer();
+protected:
+	virtual void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
+
+private:
+};
+
+class AGOSEngine_PuzzlePack : public AGOSEngine_Feeble {
+public:
+	AGOSEngine_PuzzlePack(OSystem *system);
+	//~AGOSEngine_PuzzlePack();
+
+	virtual void setupOpcodes(OpcodeProc *op);
+
+private:
 };
 
 } // End of namespace AGOS

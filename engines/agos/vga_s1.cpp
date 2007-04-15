@@ -29,8 +29,8 @@
 
 namespace AGOS {
 
-void AGOSEngine::setupSimon1VideoOpcodes(VgaOpcodeProc *op) {
-	setupCommonVideoOpcodes(op);
+void AGOSEngine_Simon1::setupVideoOpcodes(VgaOpcodeProc *op) {
+	AGOSEngine::setupVideoOpcodes(op);
 
 	op[11] = &AGOSEngine::vc11_clearPathFinder;
 	op[17] = &AGOSEngine::vc17_setPathfinderItem;

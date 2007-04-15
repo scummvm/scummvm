@@ -31,8 +31,8 @@
 
 namespace AGOS {
 
-void AGOSEngine::setupWaxworksVideoOpcodes(VgaOpcodeProc *op) {
-	setupElvira2VideoOpcodes(op);
+void AGOSEngine_Waxworks::setupVideoOpcodes(VgaOpcodeProc *op) {
+	AGOSEngine_Elvira2::setupVideoOpcodes(op);
 
 	op[58] = &AGOSEngine::vc58_checkCodeWheel;
 	op[60] = &AGOSEngine::vc60_stopAnimation;

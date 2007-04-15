@@ -33,8 +33,8 @@ extern bool isSmartphone(void);
 
 namespace AGOS {
 
-void AGOSEngine::setupSimon1Opcodes(OpcodeProc *op) {
-	setupCommonOpcodes(op);
+void AGOSEngine_Simon1::setupOpcodes(OpcodeProc *op) {
+	AGOSEngine::setupOpcodes(op);
 
 	op[65] = &AGOSEngine::oww_addTextBox;
 	op[66] = &AGOSEngine::oww_setShortText;

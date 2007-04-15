@@ -28,8 +28,8 @@
 
 namespace AGOS {
 
-void AGOSEngine::setupFeebleVideoOpcodes(VgaOpcodeProc *op) {
-	setupSimon2VideoOpcodes(op);
+void AGOSEngine_Feeble::setupVideoOpcodes(VgaOpcodeProc *op) {
+	AGOSEngine_Simon2::setupVideoOpcodes(op);
 
 	op[75] = &AGOSEngine::vc75_setScale;
 	op[76] = &AGOSEngine::vc76_setScaleXOffs;

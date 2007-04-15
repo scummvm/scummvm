@@ -30,8 +30,8 @@
 
 namespace AGOS {
 
-void AGOSEngine::setupFeebleOpcodes(OpcodeProc *op) {
-	setupCommonOpcodes(op);
+void AGOSEngine_Feeble::setupOpcodes(OpcodeProc *op) {
+	AGOSEngine::setupOpcodes(op);
 
 	op[23] = &AGOSEngine::off_chance;
 	op[37] = &AGOSEngine::off_jumpOut;

@@ -33,7 +33,7 @@
 namespace AGOS {
 
 // Opcode tables
-void AGOSEngine::setupCommonVideoOpcodes(VgaOpcodeProc *op) {
+void AGOSEngine::setupVideoOpcodes(VgaOpcodeProc *op) {
 	op[1] = &AGOSEngine::vc1_fadeOut;
 	op[2] = &AGOSEngine::vc2_call;
 	op[3] = &AGOSEngine::vc3_loadSprite;
@@ -81,7 +81,7 @@ void AGOSEngine::setupCommonVideoOpcodes(VgaOpcodeProc *op) {
 	op[55] = &AGOSEngine::vc55_moveBox;
 }
 
-void AGOSEngine::setupElvira1VideoOpcodes(VgaOpcodeProc *op) {
+void AGOSEngine_Elvira1::setupVideoOpcodes(VgaOpcodeProc *op) {
 	op[1] = &AGOSEngine::vc1_fadeOut;
 	op[2] = &AGOSEngine::vc2_call;
 	op[3] = &AGOSEngine::vc3_loadSprite;
@@ -130,23 +130,13 @@ void AGOSEngine::setupVgaOpcodes() {
 
 	switch (getGameType()) {
 	case GType_ELVIRA1:
-		setupElvira1VideoOpcodes(_vga_opcode_table);
-		break;
 	case GType_ELVIRA2:
-		setupElvira2VideoOpcodes(_vga_opcode_table);
-		break;
 	case GType_WW:
-		setupWaxworksVideoOpcodes(_vga_opcode_table);
-		break;
 	case GType_SIMON1:
-		setupSimon1VideoOpcodes(_vga_opcode_table);
-		break;
 	case GType_SIMON2:
-		setupSimon2VideoOpcodes(_vga_opcode_table);
-		break;
 	case GType_FF:
 	case GType_PP:
-		setupFeebleVideoOpcodes(_vga_opcode_table);
+		setupVideoOpcodes(_vga_opcode_table);
 		break;
 	default:
 		error("setupVgaOpcodes: Unknown game");

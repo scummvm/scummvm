@@ -29,8 +29,8 @@
 
 namespace AGOS {
 
-void AGOSEngine::setupPuzzleOpcodes(OpcodeProc *op) {
-	setupCommonOpcodes(op);
+void AGOSEngine_PuzzlePack::setupOpcodes(OpcodeProc *op) {
+	AGOSEngine::setupOpcodes(op);
 
 	op[23] = &AGOSEngine::off_chance;
 	op[30] = &AGOSEngine::opp_iconifyWindow;

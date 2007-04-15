@@ -28,7 +28,7 @@
 
 namespace AGOS {
 
-void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
+void AGOSEngine_Elvira1::setupOpcodes(OpcodeProc *op) {
 	op[0] = &AGOSEngine::o_at;
 	op[1] = &AGOSEngine::o_notAt;
 	op[2] = &AGOSEngine::oe1_present;

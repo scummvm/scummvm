@@ -72,6 +72,35 @@ static const GameSpecificSettings puzzlepack_settings = {
 };
 #endif
 
+
+AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system)
+	: AGOSEngine_Feeble(system) {
+}
+
+AGOSEngine_Feeble::AGOSEngine_Feeble(OSystem *system)
+	: AGOSEngine_Simon2(system) {
+}
+
+AGOSEngine_Simon2::AGOSEngine_Simon2(OSystem *system)
+	: AGOSEngine_Simon1(system) {
+}
+
+AGOSEngine_Simon1::AGOSEngine_Simon1(OSystem *system)
+	: AGOSEngine_Waxworks(system) {
+}
+
+AGOSEngine_Waxworks::AGOSEngine_Waxworks(OSystem *system)
+	: AGOSEngine_Elvira2(system) {
+}
+
+AGOSEngine_Elvira2::AGOSEngine_Elvira2(OSystem *system)
+	: AGOSEngine_Elvira1(system) {
+}
+
+AGOSEngine_Elvira1::AGOSEngine_Elvira1(OSystem *system)
+	: AGOSEngine(system) {
+}
+
 AGOSEngine::AGOSEngine(OSystem *syst)
 	: Engine(syst) {
 	_vcPtr = 0;
