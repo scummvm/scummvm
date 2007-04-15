@@ -834,6 +834,8 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		MKLINE(StringTab, _default.overhead, sleByte, VER(8)),
 		MKLINE(StringTab, no_talk_anim, sleByte, VER(8)),
 		MKLINE(StringTab, _default.no_talk_anim, sleByte, VER(8)),
+		MKLINE(StringTab, wrapping, sleByte, VER(71)),
+		MKLINE(StringTab, _default.wrapping, sleByte, VER(71)),
 		MKEND()
 	};
 

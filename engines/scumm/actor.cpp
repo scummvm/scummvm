@@ -1850,6 +1850,7 @@ void ScummEngine::resetV1ActorTalkColor() {
 #ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v7::actorTalk(const byte *msg) {
 	Actor *a;
+	bool stringWrap;
 
 	convertMessageToString(msg, _charsetBuffer, sizeof(_charsetBuffer));
 
@@ -1882,9 +1883,15 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	if (_game.version == 7)
 		VAR(VAR_HAVE_MSG) = 0xFF;
 	_haveActorSpeechMsg = true;
+	if (_game.version == 8) {
+		stringWrap = _string[0].wrapping;
+		_string[0].wrapping = true;
+	}
 	CHARSET_1();
-	if (_game.version == 8)
+	if (_game.version == 8) {
 		VAR(VAR_HAVE_MSG) = (_string[0].no_talk_anim) ? 2 : 1;
+		_string[0].wrapping = stringWrap;
+	}
 }
 #endif
 

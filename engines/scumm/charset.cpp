@@ -348,6 +348,44 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	return width;
 }
 
+int CharsetRenderer::getStringHeight(const byte *text) {
+	int pos = 0;
+	int height = 0;
+	byte chr;
+	int oldID = getCurID();
+
+	while ((chr = text[pos++]) != 0) {
+		if (chr == '\n' || chr == '\r')
+			break;
+		if (chr == '@')
+			continue;
+		if (chr == 255 || (_vm->_game.version <= 6 && chr == 254)) {
+			chr = text[pos++];
+			if (chr == 3) { // 'WAIT'
+				height += getFontHeight();
+				break;
+			}
+			if (chr == 10 || chr == 21 || chr == 12 || chr == 13) {
+				pos += 2;
+				continue;
+			}
+			if (chr == 9 || chr == 1 || chr == 2) { // 'Newline'
+				height += getFontHeight();
+				continue;
+			}
+			if (chr == 14) {
+				int set = text[pos] | (text[pos + 1] << 8);
+				pos += 2;
+				setCurID(set);
+				continue;
+			}
+		}
+	}
+
+	setCurID(oldID);
+	return height + getFontHeight();
+}
+
 void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	int lastspace = -1;
 	int curw = 1;

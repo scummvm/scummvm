@@ -243,6 +243,7 @@ struct StringSlot {
 	bool center;
 	bool overhead;
 	bool no_talk_anim;
+	bool wrapping;
 };
 
 struct StringTab : StringSlot {
@@ -1169,7 +1170,7 @@ protected:
 	virtual void printString(int m, const byte *msg);
 
 	virtual bool handleNextCharsetCode(Actor *a, int *c);
-	void CHARSET_1();
+	virtual void CHARSET_1();
 	void drawString(int a, const byte *msg);
 	void debugMessage(const byte *msg);
 	void showMessageDialog(const byte *msg);

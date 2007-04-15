@@ -73,6 +73,7 @@ public:
 	virtual void drawChar(int chr, const Graphics::Surface &s, int x, int y) {}
 
 	int getStringWidth(int a, const byte *str);
+	int getStringHeight(const byte *text);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	void translateColor();
 
