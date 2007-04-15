@@ -109,6 +109,15 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS( str.hasSuffix("hahah"), false );
 	}
 
+	void test_contains( void )
+	{
+		Common::String str("this/is/a/test, haha");
+		TS_ASSERT_EQUALS( str.contains(""), true );
+		TS_ASSERT_EQUALS( str.contains("haha"), true );
+		TS_ASSERT_EQUALS( str.contains("hahb"), false );
+		TS_ASSERT_EQUALS( str.contains("test"), true );
+	}
+
 	void test_toLowercase( void )
 	{
 		Common::String str("Test it, NOW! 42");

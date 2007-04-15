@@ -211,6 +211,11 @@ bool String::hasSuffix(const char *x) const {
 	return *x == 0;
 }
 
+bool String::contains(const char *x) const {
+	assert(x != 0);
+	return strstr(c_str(), x) != NULL;
+}
+
 void String::deleteLastChar() {
 	deleteChar(_len - 1);
 }
