@@ -31,7 +31,7 @@ namespace AGOS {
 
 byte *vc10_depackColumn(VC10_state * vs) {
 	int8 a = vs->depack_cont;
-	const byte *src = vs->depack_src;
+	const byte *src = vs->srcPtr;
 	byte *dst = vs->depack_dest;
 	uint16 dh = vs->dh;
 	byte color;
@@ -66,7 +66,7 @@ byte *vc10_depackColumn(VC10_state * vs) {
 	}
 
 get_out:;
-	vs->depack_src = src;
+	vs->srcPtr = src;
 	vs->depack_cont = a;
 	return vs->depack_dest + vs->y_skip;
 }
@@ -368,7 +368,7 @@ void AGOSEngine::drawImage_Feeble(VC10_state *state) {
 		byte *dst;
 		uint count;
 
-		src = state->depack_src + state->width * state->y_skip;
+		src = state->srcPtr + state->width * state->y_skip;
 		dst = state->surf_addr;
 		do {
 			for (count = 0; count != state->draw_width; count++) {
@@ -455,7 +455,7 @@ void AGOSEngine::drawImage_Simon(VC10_state *state) {
 
 		if (state->flags & kDFCompressed) {
 			byte *dstPtr = state->surf_addr;
-			src = state->depack_src;
+			src = state->srcPtr;
 			/* AAAAAAAA BBBBBBBB CCCCCCCC DDDDDDDD EEEEEEEE
 			 * aaaaabbb bbcccccd ddddeeee efffffgg ggghhhhh
 			 */
@@ -502,7 +502,7 @@ void AGOSEngine::drawImage_Simon(VC10_state *state) {
 				dstPtr += _screenWidth;
 			} while (--state->draw_height);
 		} else {
-			src = state->depack_src + (state->width * state->y_skip * 16) + (state->x_skip * 8);
+			src = state->srcPtr + (state->width * state->y_skip * 16) + (state->x_skip * 8);
 			dst = state->surf_addr;
 
 			state->draw_width *= 2;
@@ -562,7 +562,7 @@ void AGOSEngine::drawImage_Simon(VC10_state *state) {
 			byte *dst;
 			uint count;
 
-			src = state->depack_src + (state->width * state->y_skip) * 8;
+			src = state->srcPtr + (state->width * state->y_skip) * 8;
 			dst = state->surf_addr;
 			state->x_skip *= 4;
 
@@ -598,7 +598,7 @@ void AGOSEngine::drawImage_Amiga(VC10_state *state) {
 	state->surf_addr += xoffs + yoffs * state->surf2_pitch;
 
 	if (state->flags & kDFMasked) {
-		const byte *mask = state->depack_src + (state->width * state->y_skip * 16) + (state->x_skip * 8);
+		const byte *mask = state->srcPtr + (state->width * state->y_skip * 16) + (state->x_skip * 8);
 		src = state->surf2_addr;
 		dst = state->surf_addr;
 
@@ -622,7 +622,7 @@ void AGOSEngine::drawImage_Amiga(VC10_state *state) {
 			mask += state->width * 16;
 		} while (--h);
 	} else {
-		src = state->depack_src + (state->width * state->y_skip * 16) + (state->x_skip * 8);
+		src = state->srcPtr + (state->width * state->y_skip * 16) + (state->x_skip * 8);
 		dst = state->surf_addr;
 
 		state->draw_width *= 2;
@@ -722,7 +722,7 @@ void AGOSEngine::drawImage(VC10_state *state) {
 		byte *dst;
 		uint count;
 
-		src = state->depack_src + (state->width * state->y_skip) * 8;
+		src = state->srcPtr + (state->width * state->y_skip) * 8;
 		dst = state->surf_addr;
 		state->x_skip *= 4;
 
@@ -753,7 +753,7 @@ void AGOSEngine::horizontalScroll(VC10_state *state) {
 	else
 		_scrollXMax = state->width * 2 - 40;
 	_scrollYMax = 0;
-	_scrollImage = state->depack_src;
+	_scrollImage = state->srcPtr;
 	_scrollHeight = state->height;
 	if (_variableArrayPtr[34] < 0)
 		state->x = _variableArrayPtr[251];
@@ -765,9 +765,9 @@ void AGOSEngine::horizontalScroll(VC10_state *state) {
 	dst = getBackBuf();
 
 	if (getGameType() == GType_FF)
-		src = state->depack_src + _scrollX / 2;
+		src = state->srcPtr + _scrollX / 2;
 	else
-		src = state->depack_src + _scrollX * 4;
+		src = state->srcPtr + _scrollX * 4;
 
 	for (w = 0; w < _screenWidth; w += 8) {
 		decodeColumn(dst, src + readUint32Wrapper(src), state->height);
@@ -783,7 +783,7 @@ void AGOSEngine::verticalScroll(VC10_state *state) {
 
 	_scrollXMax = 0;
 	_scrollYMax = state->height - 480;
-	_scrollImage = state->depack_src;
+	_scrollImage = state->srcPtr;
 	_scrollWidth = state->width;
 	if (_variableArrayPtr[34] < 0)
 		state->y = _variableArrayPtr[250];
@@ -793,7 +793,7 @@ void AGOSEngine::verticalScroll(VC10_state *state) {
 	vcWriteVar(250, _scrollY);
 
 	dst = getBackBuf();
-	src = state->depack_src + _scrollY / 2;
+	src = state->srcPtr + _scrollY / 2;
 
 	for (h = 0; h < _screenHeight; h += 8) {
 		decodeRow(dst, src + READ_LE_UINT32(src), state->width);

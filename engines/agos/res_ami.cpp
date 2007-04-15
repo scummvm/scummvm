@@ -141,7 +141,7 @@ byte *AGOSEngine::convertImage(VC10_state *state, bool compressed) {
 		}
 	}
 
-	const byte *src = state->depack_src;
+	const byte *src = state->srcPtr;
 	int width = state->width * 16;
 	int height = state->height;
 

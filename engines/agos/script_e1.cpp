@@ -970,7 +970,7 @@ void AGOSEngine::printScroll() {
 	VC10_state state;
 	VgaPointersEntry *vpe = &_vgaBufferPointers[1];
 
-	state.depack_src  = vpe->vgaFile2 + READ_BE_UINT32(vpe->vgaFile2 + 9 * 8);
+	state.srcPtr  = vpe->vgaFile2 + READ_BE_UINT32(vpe->vgaFile2 + 9 * 8);
 
 	state.palette = 0;
 	state.x = 10;

@@ -207,13 +207,7 @@ void AGOSEngine::vc62_fastFadeOut() {
 					_curVgaFile2 = vpe->vgaFile2;
 					_windowNum = vsp->windowNum;
 
-					state.image = vsp->image;
-					state.palette = (vsp->palette & 15) * 16;
-					state.x = vsp->x;
-					state.y = vsp->y;
-					state.flags = vsp->flags;
-
-					drawImage_init(&state);
+					drawImage_init(vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
 
 					_windowNum = palmode;
 					_curVgaFile1 = old_file_1;

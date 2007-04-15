@@ -130,7 +130,7 @@ struct VC10_state {
 
 	uint16 dl, dh;
 
-	const byte *depack_src;
+	const byte *srcPtr;
 	int8 depack_cont;
 
 	byte depack_dest[480];

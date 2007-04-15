@@ -27,7 +27,6 @@
 
 #include "agos/agos.h"
 #include "agos/intern.h"
-#include "agos/vga.h"
 
 namespace AGOS {
 
@@ -54,7 +53,6 @@ byte *AGOSEngine::getScaleBuf() {
 void AGOSEngine::animateSprites() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
-	VC10_state state;
 
 	if (_paletteFlag == 2)
 		_paletteFlag = 1;
@@ -84,13 +82,7 @@ void AGOSEngine::animateSprites() {
 		_vgaCurSpriteId = vsp->id;
 		_vgaCurSpritePriority = vsp->priority;
 
-		state.image = vsp->image;
-		state.palette = (vsp->palette & 15) * 16;
-		state.x = vsp->x;
-		state.y = vsp->y;
-		state.flags = vsp->flags;
-
-		drawImage_init(&state);
+		drawImage_init(vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
 
 		vsp++;
 	}
@@ -124,13 +116,7 @@ void AGOSEngine::animateSpritesDebug() {
 			printf("id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n",
 							vsp->id, vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
 
-		state.image = vsp->image;
-		state.palette = (vsp->palette & 15) * 16;
-		state.x = vsp->x;
-		state.y = vsp->y;
-		state.flags = vsp->flags;
-
-		drawImage_init(&state);
+		drawImage_init(vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
 
 		vsp++;
 	}
@@ -200,13 +186,7 @@ void AGOSEngine::animateSpritesByY() {
 		_vgaCurSpriteId = vsp->id;
 		_vgaCurSpritePriority = vsp->priority;
 
-		state.image = vsp->image;
-		state.palette = 0;
-		state.x = vsp->x;
-		state.y = vsp->y;
-		state.flags = vsp->flags;
-
-		drawImage_init(&state);
+		drawImage_init(vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
 	}
 
 	_updateScreen = true;

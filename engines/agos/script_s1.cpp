@@ -81,7 +81,7 @@ void AGOSEngine::os1_animate() {
 	uint windowNum = getVarOrByte();
 	uint x = getVarOrWord();
 	uint y = getVarOrWord();
-	uint palette = getVarOrWord();
+	uint palette = (getVarOrWord() & 15);
 
 	if (getFeatures() & GF_TALKIE && vgaSpriteId >= 400) {
 		_lastVgaWaitFor = 0;

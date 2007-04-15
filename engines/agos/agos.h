@@ -1273,7 +1273,7 @@ public:
 protected:
 	bool drawImage_clip(VC10_state *state);
 
-	void drawImage_init(VC10_state *state);
+	void drawImage_init(uint16 image, uint16 palette, uint16 x, uint16 y, uint16 flags);
 
 	void drawImage(VC10_state *state);
 	void drawImage_Amiga(VC10_state *state);

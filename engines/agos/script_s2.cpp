@@ -95,7 +95,7 @@ void AGOSEngine::os2_animate() {
 	uint windowNum = getVarOrByte();
 	uint x = getVarOrWord();
 	uint y = getVarOrWord();
-	uint palette = getVarOrWord();
+	uint palette = (getVarOrWord() & 15);
 
 	_lockWord |= 0x40;
 	animate(windowNum, zoneNum, vgaSpriteId, x, y, palette);
