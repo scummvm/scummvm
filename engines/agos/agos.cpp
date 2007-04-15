@@ -112,6 +112,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_keyPressed = 0;
 
 	_gameFile = 0;
+	_opcode = 0;
 
 	_itemMemSize = 0;
 	_tableMemSize = 0;

@@ -394,8 +394,6 @@ void AGOSEngine_Elvira1::setupOpcodes() {
 }
 
 void AGOSEngine_Elvira1::executeOpcode(int opcode) {
-	printf("opcode %d\n", opcode);
-
 	OpcodeProcElvira1 op = _opcodesElvira1[opcode].proc;
 	(this->*op) ();
 }

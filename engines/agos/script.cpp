@@ -61,8 +61,7 @@ int AGOSEngine::getScriptReturn() {
 // -----------------------------------------------------------------------
 
 void AGOSEngine::o_invalid() {
-	// TODO: Better error reporting
-	error("Invalid opcode");
+	error("Invalid opcode %d", _opcode);
 }
 
 void AGOSEngine::o_at() {
@@ -883,7 +882,6 @@ void AGOSEngine::writeVariable(uint variable, uint16 contents) {
 }
 
 int AGOSEngine::runScript() {
-	int opcode;
 	bool flag;
 
 	do {
@@ -891,12 +889,12 @@ int AGOSEngine::runScript() {
 			dumpOpcode(_codePtr);
 
 		if (getGameType() == GType_ELVIRA1) {
-			opcode = getVarOrWord();
-			if (opcode == 10000)
+			_opcode = getVarOrWord();
+			if (_opcode == 10000)
 				return 0;
 		} else {
-			opcode = getByte();
-			if (opcode == 0xFF)
+			_opcode = getByte();
+			if (_opcode == 0xFF)
 				return 0;
 		}
 
@@ -906,17 +904,17 @@ int AGOSEngine::runScript() {
 		/* Invert condition? */
 		flag = false;
 		if (getGameType() == GType_ELVIRA1) {
-			if (opcode == 203) {
+			if (_opcode == 203) {
 				flag = true;
-				opcode = getVarOrWord();
-				if (opcode == 10000)
+				_opcode = getVarOrWord();
+				if (_opcode == 10000)
 					return 0;
 			}
 		} else {
-			if (opcode == 0) {
+			if (_opcode == 0) {
 				flag = true;
-				opcode = getByte();
-				if (opcode == 0xFF)
+				_opcode = getByte();
+				if (_opcode == 0xFF)
 					return 0;
 			}
 		}
@@ -924,10 +922,10 @@ int AGOSEngine::runScript() {
 		setScriptCondition(true);
 		setScriptReturn(0);
 
-		if (opcode > _numOpcodes)
-			error("Invalid opcode '%d' encountered", opcode);
+		if (_opcode > _numOpcodes)
+			error("Invalid opcode '%d' encountered", _opcode);
 
-		executeOpcode(opcode);
+		executeOpcode(_opcode);
 	} while (getScriptCondition() != flag && !getScriptReturn());
 
 	return getScriptReturn();

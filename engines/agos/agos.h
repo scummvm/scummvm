@@ -141,7 +141,7 @@ class AGOSEngine : public Engine {
 
 public:
 	virtual void setupOpcodes();
-	int _numOpcodes;
+	int _numOpcodes, _opcode;
 
 	typedef void (AGOSEngine::*VgaOpcodeProc) ();
 
