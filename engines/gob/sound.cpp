@@ -235,7 +235,7 @@ void Snd::stopSound(int16 fadeLength, SoundDesc *sndDesc) {
 	_fade = true;
 	_fadeVol = 65536;
 	_fadeSamples = (int) (fadeLength * (((double) _rate) / 10.0));
-	_fadeVolStep = MAX(1U, 65536 / _fadeSamples);
+	_fadeVolStep = MAX(1UL, 65536 / _fadeSamples);
 	_curFadeSamples = 0;
 }
 
@@ -341,7 +341,7 @@ void Snd::setSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
 		_fade = true;
 		_fadeVol = 0;
 		_fadeSamples = (int) (fadeLength * (((double) _rate) / 10.0));
-		_fadeVolStep = - MAX(1U, 65536 / _fadeSamples);
+		_fadeVolStep = - (int32)MAX(1UL, 65536 / _fadeSamples);
 	}
 }
 
@@ -404,8 +404,8 @@ int Snd::readBuffer(int16 *buffer, const int numSamples) {
 
 		// Linear interpolation. See sound/rate.cpp
 
-		val = _last + (((_cur - _last) * _offsetFrac +
-					(1UL << (FRAC_BITS - 1))) >> FRAC_BITS) << 8;
+		val = _last + ((((_cur - _last) * _offsetFrac +
+					(1UL << (FRAC_BITS - 1))) >> FRAC_BITS) << 8);
 		*buffer++ = (((int32) val) * _fadeVol) >> 16;
 		
 		oldOffset = _offset;

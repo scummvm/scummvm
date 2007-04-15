@@ -133,7 +133,7 @@ byte *Game::loadExtData(int16 itemId, int16 *pResWidth,
 
 	offset = item->offset;
 	size = item->size;
-	isPacked = (bool) (item->width & 0x8000);
+	isPacked = (item->width & 0x8000) != 0;
 
 	if (pResWidth != 0) {
 		*pResWidth = item->width & 0x7FFF;

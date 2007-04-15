@@ -2004,12 +2004,12 @@ void Inter_v2::o2_stopInfogrames(OpGobParams &params) {
 }
 
 void Inter_v2::o2_handleGoblins(OpGobParams &params) {
-	_vm->_goblin->_gob1NoTurn = (bool) VAR(load16());
-	_vm->_goblin->_gob2NoTurn = (bool) VAR(load16());
+	_vm->_goblin->_gob1NoTurn = VAR(load16()) != 0;
+	_vm->_goblin->_gob2NoTurn = VAR(load16()) != 0;
 	_vm->_goblin->_gob1RelaxTimeVar = load16();
 	_vm->_goblin->_gob2RelaxTimeVar = load16();
-	_vm->_goblin->_gob1Busy = (bool) VAR(load16());
-	_vm->_goblin->_gob2Busy = (bool) VAR(load16());
+	_vm->_goblin->_gob1Busy = VAR(load16()) != 0;
+	_vm->_goblin->_gob2Busy = VAR(load16()) != 0;
 	_vm->_goblin->handleGoblins();
 }
 

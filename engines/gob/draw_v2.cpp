@@ -558,7 +558,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 	// Some handle, but always assigned to -1 in Game::loadTotFile()
 	int16 word_2F2D2 = -1;
 
-	deltaVeto = (bool) (operation & 0x10);
+	deltaVeto = (operation & 0x10) != 0;
 	operation &= 0x0F;
 
 	if (_sourceSurface >= 100)
