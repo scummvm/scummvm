@@ -250,7 +250,7 @@ void _c_endComment(void *param) {
 	r.moveTo(7, 7);
 	_vm->_gfx->floodFill(Gfx::kBitFront, r, 1);
 
-	_vm->_gfx->setFont("comic");
+	_vm->_gfx->setFont(kFontDialogue);
 	_vm->_gfx->displayWrappedString(_vm->_location._endComment, 3, 5, 130, 0);
 
 	uint32 di = 0;
@@ -365,7 +365,7 @@ void _c_finito(void *parm) {
 	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
 
 	if (gameCompleted) {
-		_vm->_gfx->setFont("slide");
+		_vm->_gfx->setFont(kFontMenu);
 		_vm->_gfx->_proportionalFont = false;
 		uint16 _ax = _vm->_gfx->getStringWidth(v4C[_language]);
 		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 70, v4C[_language]);
@@ -384,7 +384,7 @@ void _c_finito(void *parm) {
 
 		_engineFlags |= kEngineChangeLocation;
 	} else {
-		_vm->_gfx->setFont("slide");
+		_vm->_gfx->setFont(kFontMenu);
 		_vm->_gfx->_proportionalFont = false;
 		uint16 _ax = _vm->_gfx->getStringWidth(v8C[_language]);
 		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 70, v8C[_language]);
@@ -436,7 +436,7 @@ void _c_testResult(void *parm) {
 	_vm->_gfx->swapBuffers();
 	_vm->parseLocation("common");
 
-	_vm->_gfx->setFont("slide");
+	_vm->_gfx->setFont(kFontMenu);
 	_vm->_gfx->_proportionalFont = false;
 
 	uint16 _ax = _vm->_gfx->getStringWidth(_slideText[0]);

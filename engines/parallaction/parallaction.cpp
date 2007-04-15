@@ -174,8 +174,10 @@ int Parallaction::init() {
 
 	if (getPlatform() == Common::kPlatformPC)
 		_disk = new DosDisk(this);
-	else
+	else {
 		_disk = new AmigaDisk(this);
+		_disk->selectArchive("disk0");
+	}
 
 	_engineFlags = 0;
 

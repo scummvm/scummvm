@@ -117,6 +117,12 @@ class Parallaction;
 struct DoorData;
 struct GetData;
 
+enum Fonts {
+	kFontDialogue = 0,
+	kFontLabel = 1,
+	kFontMenu = 2
+};
+
 class Gfx {
 
 public:
@@ -189,7 +195,7 @@ public:
 
 	void setMousePointer(int16 index);
 
-	void setFont(const char* name);
+	void setFont(Fonts name);
 
 public:
 	Common::Point		_labelPosition[2];
@@ -204,6 +210,7 @@ protected:
 	static byte			_mouseArrow[256];
 	StaticCnv			*_mouseComposedArrow;
 	Cnv					*_font;
+	Cnv					*_fonts[3];
 
 protected:
 	byte mapChar(byte c);

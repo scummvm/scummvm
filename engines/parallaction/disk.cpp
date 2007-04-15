@@ -920,10 +920,7 @@ Cnv* AmigaDisk::loadFont(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadFont '%s'", name);
 
 	char path[PATH_LEN];
-	if (scumm_stricmp(name, "topaz"))
-		sprintf(path, "%sfont", name);
-	else
-		strcpy(path, "introfont");
+	sprintf(path, "%sfont", name);
 
 	if (!_resArchive.openArchivedFile(path))
 		errorFileNotFound(path);

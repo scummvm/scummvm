@@ -304,7 +304,7 @@ void Parallaction::displayCharacterComment(ExamineData *data) {
 	v3C._data0 = _char._talk->getFramePtr(0);
 	v3C._data1 = NULL; //_talk->field_8[0];
 
-	_gfx->setFont("comic");
+	_gfx->setFont(kFontDialogue);
 	_gfx->flatBlitCnv(&v3C, 190, 80, Gfx::kBitFront);
 
 	int16 v26, v28;
@@ -343,7 +343,7 @@ void Parallaction::displayItemComment(ExamineData *data) {
 
 	int16 v6A = 0, v6C = 0;
 
-	_gfx->setFont("comic");
+	_gfx->setFont(kFontDialogue);
 	_gfx->getStringExtent(data->_description, 130, &v6C, &v6A);
 	Common::Rect r(v6C, v6A);
 	r.moveTo(0, 90);

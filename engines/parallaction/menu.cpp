@@ -106,7 +106,7 @@ void Menu::start() {
 	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
 
 	_vm->_gfx->_proportionalFont = false;
-	_vm->_gfx->setFont("slide");
+	_vm->_gfx->setFont(kFontMenu);
 
 	_vm->_disk->loadSlide("intro");
 	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
@@ -294,7 +294,7 @@ void Menu::selectCharacter() {
 	_vm->_midiPlayer->stop();
 
 	_vm->_gfx->_proportionalFont = false;
-	_vm->_gfx->setFont("slide");
+	_vm->_gfx->setFont(kFontMenu);
 
 	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
 

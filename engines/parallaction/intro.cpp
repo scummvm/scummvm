@@ -134,7 +134,7 @@ void _c_startIntro(void *parm) {
 
 void _c_endIntro(void *parm) {
 
-	_vm->_gfx->setFont("slide");
+	_vm->_gfx->setFont(kFontMenu);
 	_vm->_gfx->_proportionalFont = false;
 
 	uint16 _di;

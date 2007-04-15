@@ -348,7 +348,7 @@ void Parallaction::runDialogue(SpeakData *data) {
 
 	enterDialogue();
 
-	_gfx->setFont("comic");
+	_gfx->setFont(kFontDialogue);
 
 	bool isNpc = scumm_stricmp(data->_name, "yourself") && data->_name[0] != '\0';
 	Cnv *face = isNpc ? _disk->loadTalk(data->_name) : _char._talk;

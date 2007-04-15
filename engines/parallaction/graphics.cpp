@@ -706,10 +706,9 @@ void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* heig
 }
 
 
-void Gfx::setFont(const char* name) {
-	if (_font) delete _font;
-
-	_font = _vm->_disk->loadFont(name);
+void Gfx::setFont(Fonts name) {
+	assert(name < 3);
+	_font = _fonts[name];
 }
 
 
@@ -904,6 +903,16 @@ Gfx::Gfx(Parallaction* vm) :
 
 	initMouse( 0 );
 
+	if (_vm->getPlatform() == Common::kPlatformPC) {
+		_fonts[kFontDialogue] = _vm->_disk->loadFont("comic");
+		_fonts[kFontLabel] = _vm->_disk->loadFont("topaz");
+		_fonts[kFontMenu] = _vm->_disk->loadFont("slide");
+	} else {
+		_fonts[kFontDialogue] = _vm->_disk->loadFont("comic");
+		_fonts[kFontLabel] = _vm->_disk->loadFont("intro");
+		_fonts[kFontMenu] = _vm->_disk->loadFont("slide");
+	}
+
 	_font = NULL;
 
 	return;
@@ -916,7 +925,9 @@ Gfx::~Gfx() {
 	free(_buffers[kBitBack]);
 	free(_buffers[kBit2]);
 
-	if (_font) delete _font;
+	delete _fonts[kFontDialogue];
+	delete _fonts[kFontLabel];
+	delete _fonts[kFontMenu];
 
 	return;
 }

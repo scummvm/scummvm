@@ -44,7 +44,7 @@ void Parallaction::parseLocation(const char *filename) {
 
 	uint16 _si = 1;
 	_gfx->_proportionalFont = false;
-	_gfx->setFont("topaz");
+	_gfx->setFont(kFontLabel);
 
 	Script *_locationScript = _disk->loadLocation(filename);
 
@@ -273,7 +273,7 @@ void Parallaction::showSlide(const char *name) {
 	debugC(1, kDebugLocation, "changeLocation: new background set");
 
 	_gfx->_proportionalFont = false;
-	_gfx->setFont("slide");
+	_gfx->setFont(kFontMenu);
 
 	uint16 _ax = strlen(_slideText[0]);
 	_ax <<= 3;	// text width
@@ -438,7 +438,7 @@ void Parallaction::doLocationEnterTransition() {
 	jobEraseAnimations(NULL, NULL);
 	jobDisplayAnimations(NULL, NULL);
 
-	_gfx->setFont("comic");
+	_gfx->setFont(kFontDialogue);
 	_gfx->swapBuffers();
 	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
