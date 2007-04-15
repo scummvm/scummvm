@@ -762,7 +762,7 @@ void ScummEngine_v8::CHARSET_1() {
 				}
 			}
 			if (subtitlePos.y < _screenHeight - 10) {
-				((ScummEngine_v7 *)this)->addSubtitleToQueue(subtitleBuffer + substring[i].pos, subtitlePos, _charsetColor, _charset->getCurID());
+				addSubtitleToQueue(subtitleBuffer + substring[i].pos, subtitlePos, _charsetColor, _charset->getCurID());
 			}
 			subtitlePos.y += _charset->getFontHeight();
 		}
@@ -782,7 +782,7 @@ void ScummEngine_v8::CHARSET_1() {
 					subtitlePos.x = 10;
 				}
 				if (subtitlePos.y < _screenHeight - 10) {
-					((ScummEngine_v7 *)this)->addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
+					addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
 					subtitlePos.y += _charset->getFontHeight();
 				}
 				subtitleLine = subtitleBuffer;
