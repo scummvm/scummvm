@@ -961,7 +961,7 @@ uint16 ImdPlayer::checkFrameType(Imd *imdPtr, int16 frame) {
 }
 
 void ImdPlayer::seekFrame(Imd *imdPtr, int16 frame, int16 from, bool restart) {
-	uint32 framePos;
+	uint32 framePos = 0;
 
 	if (!imdPtr)
 		return;
