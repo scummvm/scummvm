@@ -463,9 +463,8 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 			case 0xFF84:
 				data += 2;
 				_spriteDefStart = data;
-				while (READ_LE_UINT16(data) != 0xFF85) {
+				while (READ_LE_UINT16(data) != 0xFF85)
 					data += 2;
-				}
 				data += 2;
 				break;
 			case 0xFF86:
@@ -575,16 +574,17 @@ int Sprites::getDrawLayer(int y) {
 	for (int i = 0; i < ARRAYSIZE(_drawLayerTable); ++i) {
 		uint8 temp = _drawLayerTable[i];
 		if (temp) {
-			if (temp <= y) {
+			if (temp <= y)
 				returnValue = i;
-			}
 		}
 	}
-	if (returnValue <= 0) {
+
+	if (returnValue <= 0)
 		returnValue = 1;
-	} else if (returnValue >= 7) {
+	else if (returnValue >= 7)
 		returnValue = 6;
-	}
+
 	return returnValue;
 }
 } // end of namespace Kyra
+

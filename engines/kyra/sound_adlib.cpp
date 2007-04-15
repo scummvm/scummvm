@@ -558,9 +558,8 @@ int AdlibDriver::snd_unkOpcode3(va_list &list) {
 		Channel &channel = _channels[_curChannel];
 		channel.priority = 0;
 		channel.dataptr = 0;
-		if (value != 9) {
+		if (value != 9)
 			noteOff(channel);
-		}
 		++value;
 	}
 
@@ -720,9 +719,8 @@ void AdlibDriver::executePrograms() {
 			if ((_syncJumpMask & (1 << _curChannel)) == 0)
 				continue;
 
-			if (_channels[_curChannel].dataptr && !_channels[_curChannel].lock) {
+			if (_channels[_curChannel].dataptr && !_channels[_curChannel].lock)
 				forceUnlock = false;
-			}
 		}
 
 		if (forceUnlock) {
@@ -735,20 +733,17 @@ void AdlibDriver::executePrograms() {
 	for (_curChannel = 9; _curChannel >= 0; --_curChannel) {
 		int result = 1;
 
-		if (!_channels[_curChannel].dataptr) {
+		if (!_channels[_curChannel].dataptr)
 			continue;
-		}
 
-		if (_channels[_curChannel].lock && (_syncJumpMask & (1 << _curChannel))) {
+		if (_channels[_curChannel].lock && (_syncJumpMask & (1 << _curChannel)))
 			continue;
-		}
-	
+
 		Channel &channel = _channels[_curChannel];
 		_curRegOffset = _regOffset[_curChannel];
 
-		if (channel.tempoReset) {
+		if (channel.tempoReset)
 			channel.tempo = _tempo;
-		}
 
 		uint8 backup = channel.position;
 		channel.position += channel.tempo;
@@ -936,9 +931,8 @@ void AdlibDriver::setupDuration(uint8 duration, Channel &channel) {
 		channel.duration = duration + (getRandomNr() & channel.durationRandomness);
 		return;
 	}
-	if (channel.fractionalSpacing) {
+	if (channel.fractionalSpacing)
 		channel.spacing2 = (duration >> 3) * channel.fractionalSpacing;
-	}
 	channel.duration = duration;
 }
 
@@ -1228,9 +1222,8 @@ void AdlibDriver::secondaryEffect1(Channel &channel) {
 	uint8 temp = channel.unk18;
 	channel.unk18 += channel.unk19;
 	if (channel.unk18 < temp) {
-		if (--channel.unk21 < 0) {
+		if (--channel.unk21 < 0)
 			channel.unk21 = channel.unk20;
-		}
 		writeOPL(channel.unk22 + _curRegOffset, _soundData[channel.offset + channel.unk21]);
 	}
 }
@@ -1336,9 +1329,8 @@ int AdlibDriver::update_setBaseOctave(uint8 *&dataptr, Channel &channel, uint8 v
 
 int AdlibDriver::update_stopChannel(uint8 *&dataptr, Channel &channel, uint8 value) {
 	channel.priority = 0;
-	if (_curChannel != 9) {
+	if (_curChannel != 9)
 		noteOff(channel);
-	}
 	dataptr = 0;
 	return 2;
 }
@@ -1388,9 +1380,8 @@ int AdlibDriver::update_waitForEndOfProgram(uint8 *&dataptr, Channel &channel, u
 	uint8 *ptr = getProgram(value);
 	uint8 chan = *ptr;
 
-	if (!_channels[chan].dataptr) {
+	if (!_channels[chan].dataptr)
 		return 0;
-	}
 
 	dataptr -= 2;
 	return 2;
@@ -1454,9 +1445,8 @@ int AdlibDriver::updateCallback24(uint8 *&dataptr, Channel &channel, uint8 value
 		}
 	}
 
-	if (!(value & _unkValue4)) {
+	if (!(value & _unkValue4))
 		++_unkValue5;
-	}
 
 	dataptr -= 2;
 	channel.duration = 1;
@@ -2225,7 +2215,7 @@ SoundAdlibPC::SoundAdlibPC(KyraEngine *vm, Audio::Mixer *mixer)
 
 	if (_v2) {
 		// TODO: Figure out if Kyra 2 uses sound triggers at all.
-		_soundTriggers = NULL;
+		_soundTriggers = 0;
 		_numSoundTriggers = 0;
 	} else {
 		_soundTriggers = _kyra1SoundTriggers;
@@ -2250,9 +2240,8 @@ void SoundAdlibPC::process() {
 	if (trigger < _numSoundTriggers) {
 		int soundId = _soundTriggers[trigger];
 
-		if (soundId) {
+		if (soundId)
 			playTrack(soundId);
-		}
 	} else {
 		warning("Unknown sound trigger %d", trigger);
 		// TODO: At this point, we really want to clear the trigger...
@@ -2408,3 +2397,4 @@ void SoundAdlibPC::unk2() {
 }
 
 } // end of namespace Kyra
+

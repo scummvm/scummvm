@@ -43,20 +43,17 @@ KyraEngine_v2::~KyraEngine_v2() {
 int KyraEngine_v2::init() {
 	KyraEngine::init();
 
-	if (_res->getFileSize("6.FNT")) {
+	if (_res->getFileSize("6.FNT"))
 		_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
-	}
-	if (_res->getFileSize("8FAT.FNT")) {
+	if (_res->getFileSize("8FAT.FNT"))
 		_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
-	}
 	_screen->loadFont(Screen::FID_GOLDFONT_FNT, "GOLDFONT.FNT");
 	_screen->setAnimBlockPtr(3500);
 	_screen->setScreenDim(0);
 	
 	assert(_introStringsSize == 21);
-	for (int i = 0; i < 21; i++) {
+	for (int i = 0; i < 21; i++)
 		_introStringsDuration[i] = strlen(_introStrings[i]) * 8;
-	}
 	
 	// No mouse display in demo
 	if (_flags.isDemo)
@@ -127,3 +124,4 @@ void KyraEngine_v2::mainMenu() {
 }
 
 } // end of namespace Kyra
+

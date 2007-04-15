@@ -318,7 +318,7 @@ void MidiChannel_EuD_WAVE::controlChange(byte control, byte value) {
 			// pan position
 			break;
 		case 0x79:
-		// Reset controller
+			// Reset controller
 			for (uint8 i = 0; i < 8; i++) {
 				if (_voice->_snd[i])
 					delete _voice->_snd[i];
@@ -1300,3 +1300,4 @@ const uint8 SoundTowns::_sfxBTTable[256] = {
 };
 
 } // end of namespace Kyra
+

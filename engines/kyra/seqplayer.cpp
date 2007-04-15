@@ -74,11 +74,11 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 	uint16 numShapes = READ_LE_UINT16(data);
 	if (shape < numShapes) {
 		uint32 offs = 0;
-		if (_vm->gameFlags().useAltShapeHeader) {
+		if (_vm->gameFlags().useAltShapeHeader)
 			offs = READ_LE_UINT32(data + 2 + shape * 4);
-		} else {
+		else
 			offs = READ_LE_UINT16(data + 2 + shape * 2);
-		}
+
 		if (offs != 0) {
 			data += offs;
 			uint16 sz = READ_LE_UINT16(data + 6);
@@ -139,9 +139,8 @@ void SeqPlayer::s1_wsaOpen() {
 void SeqPlayer::s1_wsaClose() {
 	uint8 wsaObj = *_seqData++;
 	assert(wsaObj < ARRAYSIZE(_seqMovies));
-	if (_seqMovies[wsaObj].movie) {
+	if (_seqMovies[wsaObj].movie)
 		_seqMovies[wsaObj].movie->close();
-	}
 }
 
 void SeqPlayer::s1_wsaPlayFrame() {
@@ -207,23 +206,21 @@ void SeqPlayer::s1_shuffleScreen() {
 
 void SeqPlayer::s1_copyView() {
 	int y = 128;
-	if (!_copyViewOffs) {
+	if (!_copyViewOffs)
 		y -= 8;
-	}
-	if (_specialBuffer && !_copyViewOffs) {
+
+	if (_specialBuffer && !_copyViewOffs)
 		_screen->copyToPage0(16, y, 3, _specialBuffer);
-	} else {
+	else
 		_screen->copyRegion(0, 16, 0, 16, 320, y, 2, 0);
-	}
 }
 
 void SeqPlayer::s1_loopInit() {
 	uint8 seqLoop = *_seqData++;
-	if (seqLoop < ARRAYSIZE(_seqLoopTable)) {
+	if (seqLoop < ARRAYSIZE(_seqLoopTable))
 		_seqLoopTable[seqLoop].ptr = _seqData;
-	} else {
+	else
 		_seqQuitFlag = true;
-	}
 }
 
 void SeqPlayer::s1_loopInc() {
@@ -250,13 +247,13 @@ void SeqPlayer::s1_loadPalette() {
 	uint8 colNum = *_seqData++;
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		if (!colNum) {
+		if (!colNum)
 			memcpy(_screen->_currentPalette, _screen->_currentPalette + 576, 3*32);
-		} else if (colNum == 3) {
+		else if (colNum == 3)
 			memcpy(_screen->_currentPalette, _screen->_currentPalette + 672, 3*32);
-		} else if (colNum == 4) {
+		else if (colNum == 4)
 			memcpy(_screen->_currentPalette, _screen->_currentPalette + 288, 3*32);
-		}
+
 		_screen->setScreenPalette(_screen->_currentPalette);
 	} else {
 		uint32 fileSize;
@@ -304,31 +301,28 @@ void SeqPlayer::s1_printTalkText() {
 	uint8 fillColor = *_seqData++;
 	int b;
 	if (_seqTalkTextPrinted && !_seqTalkTextRestored) {
-		if (_seqWsaCurDecodePage != 0 && !_specialBuffer) {
+		if (_seqWsaCurDecodePage != 0 && !_specialBuffer)
 			b = 2;
-		} else {
+		else
 			b = 0;
-		}
 		_vm->text()->restoreTalkTextMessageBkgd(2, b);
 	}
 	_seqTalkTextPrinted = true;
 	_seqTalkTextRestored = false;
-	if (_seqWsaCurDecodePage != 0 && !_specialBuffer) {
+	if (_seqWsaCurDecodePage != 0 && !_specialBuffer)
 		b = 2;
-	} else {
+	else
 		b = 0;
-	}
 	_vm->text()->printTalkTextMessage(_vm->seqTextsTable()[txt], x, y, fillColor, b, 2);
 }
 
 void SeqPlayer::s1_restoreTalkText() {
 	if (_seqTalkTextPrinted && !_seqTalkTextRestored) {
 		int b;
-		if (_seqWsaCurDecodePage != 0 && !_specialBuffer) {
+		if (_seqWsaCurDecodePage != 0 && !_specialBuffer)
 			b = 2;
-		} else {
+		else
 			b = 0;
-		}
 		_vm->text()->restoreTalkTextMessageBkgd(2, b);
 		_seqTalkTextRestored = true;
 	}
@@ -358,12 +352,11 @@ void SeqPlayer::s1_copyRegion() {
 void SeqPlayer::s1_copyRegionSpecial() {
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 0, 12, 12, 0, 0, 0, 0, 0 };
 	const char *copyStr = 0;
-	if (!_vm->gameFlags().isTalkie) {
+	if (!_vm->gameFlags().isTalkie)
 		copyStr = "Copyright (c) 1992 Westwood Studios";
-	} else {
+	else
 		copyStr = "Copyright (c) 1992,1993 Westwood Studios";
-	}
-	
+
 	uint8 so = *_seqData++;
 	switch (so) {
 	case 0:
@@ -625,9 +618,9 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		if (skipSeq && _vm->seq_skipSequence()) {
 			while (1) {
 				uint8 code = *_seqData;
-				if (commands[code].proc == &SeqPlayer::s1_endOfScript || commands[code].proc == &SeqPlayer::s1_break) {
+				if (commands[code].proc == &SeqPlayer::s1_endOfScript || commands[code].proc == &SeqPlayer::s1_break)
 					break;
-				}
+
 				_seqData += commands[code].len;
 			}
 			skipSeq = false;
@@ -644,11 +637,11 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 				_screen->printText(charStr, _seqDisplayedTextX, 180, 0xF, 0xC);
 				_seqDisplayedTextX += _screen->getCharWidth(charStr[0]);
 				++_seqDisplayedChar;
-				if (_vm->seqTextsTable()[_seqDisplayedText][_seqDisplayedChar] == '\0') {
+
+				if (_vm->seqTextsTable()[_seqDisplayedText][_seqDisplayedChar] == '\0')
 					_seqDisplayedTextTimer = 0xFFFFFFFF;
-				} else {
+				else
 					_seqDisplayedTextTimer = _system->getMillis() + 1000 / ((_vm->gameFlags().lang == Common::FR_FRA) ? 120 : 60);
-				}
 			}
 		}
 
@@ -670,3 +663,4 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 
 
 } // End of namespace Kyra
+

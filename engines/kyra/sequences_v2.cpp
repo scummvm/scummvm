@@ -111,9 +111,9 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 			_screen->updateScreen();
 			
 			uint32 currTime = _system->getMillis();
-			if (seqDelay <= currTime && mayEndLoop)
+			if (seqDelay <= currTime && mayEndLoop) {
 				break;
-			else {
+			} else {
 				uint32 loopTime = currTime - startTime;
 				delay(loopTime < _tickLength ? loopTime : _tickLength);
 			}
@@ -307,9 +307,9 @@ void KyraEngine_v2::seq_introOverviewOver1(int currentFrame) {
 void KyraEngine_v2::seq_introOverviewForest(int currentFrame) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introOverviewForest(%i)", currentFrame);
 	
-	if (currentFrame == 11)
+	if (currentFrame == 11) {
 		seq_waitForChatsToFinish();
-	else if(currentFrame == 12) {
+	} else if(currentFrame == 12) {
 		delay(25);
 		seq_playIntroChat(2);
 	}
@@ -327,9 +327,9 @@ void KyraEngine_v2::seq_introOverviewDragon(int currentFrame) {
 int KyraEngine_v2::seq_introTitle(int seqNum) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introtitle(%i)", seqNum);
 	
-	if (seqNum == 1)
+	if (seqNum == 1) {
 		_sound->playTrack(3);
-	else if (seqNum == 25) {
+	} else if (seqNum == 25) {
 		// XXX: handle menu
 		return 200;
 	}
@@ -481,3 +481,4 @@ void KyraEngine_v2::seq_unloadWSA(int wsaNum) {
 }
 
 } // end of namespace Kyra
+

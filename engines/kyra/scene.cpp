@@ -43,24 +43,23 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	_handleInput = false;
 	_abortWalkFlag = false;
 	_abortWalkFlag2 = false;
-	// just used for fm towns version, it should only load the sfx music file there
+
 	if (_flags.platform == Common::kPlatformFMTowns) {
 		int newSfxFile = -1;
-		if (_currentCharacter->sceneId == 7 && sceneId == 24) {
+		if (_currentCharacter->sceneId == 7 && sceneId == 24)
 			newSfxFile = 2;
-		} else if (_currentCharacter->sceneId == 25 && sceneId == 109) {
+		else if (_currentCharacter->sceneId == 25 && sceneId == 109)
 			newSfxFile = 3;
-		} else if (_currentCharacter->sceneId == 120 && sceneId == 37) {
+		else if (_currentCharacter->sceneId == 120 && sceneId == 37)
 			newSfxFile = 4;
-		} else if (_currentCharacter->sceneId == 52 && sceneId == 199) {
+		else if (_currentCharacter->sceneId == 52 && sceneId == 199)
 			newSfxFile = 5;
-		} else if (_currentCharacter->sceneId == 37 && sceneId == 120) {
+		else if (_currentCharacter->sceneId == 37 && sceneId == 120)
 			newSfxFile = 3;
-		} else if (_currentCharacter->sceneId == 109 && sceneId == 25) {
+		else if (_currentCharacter->sceneId == 109 && sceneId == 25)
 			newSfxFile = 2;
-		} else if (_currentCharacter->sceneId == 24 && sceneId == 7) {
+		else if (_currentCharacter->sceneId == 24 && sceneId == 7)
 			newSfxFile = 1;
-		}
 		
 		if (newSfxFile != -1) {
 			_curSfxFile = newSfxFile;
@@ -128,16 +127,14 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 		moveCharacterToPos(0, facing, xpos, ypos);
 	}
 	
-	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i) {
+	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i)
 		_movieObjects[i]->close();
-	}
 	
 	if (!brandonAlive) {
 		_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
 		_scriptInterpreter->startScript(_scriptClick, 5);
-		while (_scriptInterpreter->validScript(_scriptClick)) {
+		while (_scriptInterpreter->validScript(_scriptClick))
 			_scriptInterpreter->runScript(_scriptClick);
-		}
 	}
 	
 	memset(_entranceMouseCursorTracks, 0xFFFF, sizeof(uint16)*4);
@@ -166,22 +163,17 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	_walkBlockSouth = currentRoom->southExit;
 	_walkBlockWest = currentRoom->westExit;
 	
-	if (_walkBlockNorth == 0xFFFF) {
+	if (_walkBlockNorth == 0xFFFF)
 		_screen->blockOutRegion(0, 0, 320, (_northExitHeight & 0xFF)+3);
-	}
-	if (_walkBlockEast == 0xFFFF) {
+	if (_walkBlockEast == 0xFFFF)
 		_screen->blockOutRegion(312, 0, 8, 139);
-	}
-	if (_walkBlockSouth == 0xFFFF) {
+	if (_walkBlockSouth == 0xFFFF)
 		_screen->blockOutRegion(0, 135, 320, 8);
-	}
-	if (_walkBlockWest == 0xFFFF) {
+	if (_walkBlockWest == 0xFFFF)
 		_screen->blockOutRegion(0, 0, 8, 139);
-	}
 	
-	if (!brandonAlive) {
+	if (!brandonAlive)
 		updatePlayerItemsForScene();
-	}
 
 	startSceneScript(brandonAlive);
 	setupSceneItems();
@@ -190,9 +182,8 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	
 	_loopFlag2 = 0;
 	_screen->showMouse();
-	if (!brandonAlive) {
+	if (!brandonAlive)
 		seq_poisonDeathNow(0);
-	}
 	updateMousePointer(true);
 	_changedScene = true;
 }
@@ -200,6 +191,7 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 void KyraEngine::transcendScenes(int roomIndex, int roomName) {
 	debugC(9, kDebugLevelMain, "KyraEngine::transcendScenes(%d, %d)", roomIndex, roomName);
 	assert(roomIndex < _roomTableSize);
+
 	if (_flags.isTalkie) {
 		char file[32];
 		assert(roomIndex < _roomTableSize);
@@ -209,6 +201,7 @@ void KyraEngine::transcendScenes(int roomIndex, int roomName) {
 		strcat(file, ".VRM");
 		_res->unloadPakFile(file);
 	}
+
 	_roomTable[roomIndex].nameIndex = roomName;
 	_unkScreenVar2 = 1;
 	_unkScreenVar3 = 1;
@@ -238,6 +231,7 @@ void KyraEngine::moveCharacterToPos(int character, int facing, int xpos, int ypo
 	disableTimer(14);
 	disableTimer(18);
 	uint32 nextFrame = 0;
+
 	switch (facing) {
 	case 0:
 		while (ypos < ch->y1) {
@@ -274,6 +268,7 @@ void KyraEngine::moveCharacterToPos(int character, int facing, int xpos, int ypo
 	default:
 		break;
 	}
+
 	enableTimer(19);
 	enableTimer(14);
 	enableTimer(18);
@@ -288,13 +283,13 @@ void KyraEngine::setCharacterPositionWithUpdate(int character) {
 	_animator->updateAllObjectShapes();
 	updateTextFade();
 
-	if (_currentCharacter->sceneId == 210) {
+	if (_currentCharacter->sceneId == 210)
 		updateKyragemFading();
-	}
 }
 
 int KyraEngine::setCharacterPosition(int character, int *facingTable) {
 	debugC(9, kDebugLevelMain, "KyraEngine::setCharacterPosition(%d, %p)", character, (const void *)facingTable);
+
 	if (character == 0) {
 		_currentCharacter->x1 += _charXPosTable[_currentCharacter->facing];
 		_currentCharacter->y1 += _charYPosTable[_currentCharacter->facing];
@@ -303,9 +298,8 @@ int KyraEngine::setCharacterPosition(int character, int *facingTable) {
 	} else {
 		_characterList[character].x1 += _charXPosTable[_characterList[character].facing];
 		_characterList[character].y1 += _charYPosTable[_characterList[character].facing];
-		if (_characterList[character].sceneId == _currentCharacter->sceneId) {
+		if (_characterList[character].sceneId == _currentCharacter->sceneId)
 			setCharacterPositionHelper(character, 0);
-		}
 	}
 	return 0;
 }
@@ -335,24 +329,21 @@ void KyraEngine::setCharacterPositionHelper(int character, int *facingTable) {
 			if (facing - 1 != 0) {
 				if (facing != 4) {
 					if (facing == 3 || facing == 5) {
-						if (facingIsFour[character] > 2) {
+						if (facingIsFour[character] > 2)
 							facing = 4;
-						}
 						resetTables = true;
 					}
 				} else {
 					++facingIsFour[character];
 				}
 			} else {
-				if (facingIsZero[character] > 2) {
+				if (facingIsZero[character] > 2)
 					facing = 0;
-				}
 				resetTables = true;
 			}
 		} else {
-			if (facingIsZero[character] > 2) {
+			if (facingIsZero[character] > 2)
 				facing = 0;
-			}
 			resetTables = true;
 		}
 		
@@ -373,35 +364,26 @@ void KyraEngine::setCharacterPositionHelper(int character, int *facingTable) {
 	};
 	
 	if (facing == 0) {
-		if (maxAnimationFrame[36+character] > ch->currentAnimFrame) {
+		if (maxAnimationFrame[36+character] > ch->currentAnimFrame)
 			ch->currentAnimFrame = maxAnimationFrame[36+character];
-		}
-		if (maxAnimationFrame[30+character] < ch->currentAnimFrame) {
+		if (maxAnimationFrame[30+character] < ch->currentAnimFrame)
 			ch->currentAnimFrame = maxAnimationFrame[36+character];
-		}
 	} else if (facing == 4) {
-		if (maxAnimationFrame[18+character] > ch->currentAnimFrame) {
+		if (maxAnimationFrame[18+character] > ch->currentAnimFrame)
 			ch->currentAnimFrame = maxAnimationFrame[18+character];
-		}
-		if (maxAnimationFrame[12+character] < ch->currentAnimFrame) {
+		if (maxAnimationFrame[12+character] < ch->currentAnimFrame)
 			ch->currentAnimFrame = maxAnimationFrame[18+character];
-		}
 	} else {
-		if (maxAnimationFrame[18+character] < ch->currentAnimFrame) {
+		if (maxAnimationFrame[18+character] < ch->currentAnimFrame)
 			ch->currentAnimFrame = maxAnimationFrame[30+character];
-		}
-		if (maxAnimationFrame[character] == ch->currentAnimFrame) {
+		if (maxAnimationFrame[character] == ch->currentAnimFrame)
 			ch->currentAnimFrame = maxAnimationFrame[6+character];
-		}
-		if (maxAnimationFrame[character] < ch->currentAnimFrame) {
+		if (maxAnimationFrame[character] < ch->currentAnimFrame)
 			ch->currentAnimFrame = maxAnimationFrame[6+character]+2;
-		}
 	}
 	
-	if (character == 0) {
-		if (_brandonStatusBit & 0x10)
-			ch->currentAnimFrame = 88;
-	}
+	if (character == 0 && (_brandonStatusBit & 0x10))
+		ch->currentAnimFrame = 88;
 	
 	_animator->animRefreshNPC(character);
 }
@@ -455,9 +437,8 @@ void KyraEngine::startSceneScript(int brandonAlive) {
 	_exitListPtr = 0;
 	
 	_scaleMode = 1;	
-	for (int i = 0; i < 145; ++i) {
+	for (int i = 0; i < 145; ++i)
 		_scaleTable[i] = 256;
-	}
 	
 	clearNoDropRects();
 	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
@@ -469,9 +450,8 @@ void KyraEngine::startSceneScript(int brandonAlive) {
 	_scriptClick->variables[0] = _currentCharacter->sceneId;
 	_scriptClick->variables[7] = brandonAlive;
 	
-	while (_scriptInterpreter->validScript(_scriptClick)) {
+	while (_scriptInterpreter->validScript(_scriptClick))
 		_scriptInterpreter->runScript(_scriptClick);
-	}
 }
 
 void KyraEngine::initSceneData(int facing, int unk1, int brandonAlive) {
@@ -512,26 +492,20 @@ void KyraEngine::initSceneData(int facing, int unk1, int brandonAlive) {
 			break;
 		}
 		
-		if ((uint8)(_northExitHeight & 0xFF) + 2 >= ypos) {
+		if ((uint8)(_northExitHeight & 0xFF) + 2 >= ypos)
 			ypos = (_northExitHeight & 0xFF) + 4;
-		}
-		if (xpos >= 308) {
+		if (xpos >= 308)
 			xpos = 304;
-		}
-		if ((uint8)(_northExitHeight >> 8) - 2 <= ypos) {
+		if ((uint8)(_northExitHeight >> 8) - 2 <= ypos)
 			ypos = (_northExitHeight >> 8) - 4;
-		}
-		if (xpos <= 12) {
+		if (xpos <= 12)
 			xpos = 16;
-		}
 	}
 	
-	if (_brandonPosX > -1) {
+	if (_brandonPosX > -1)
 		xpos = _brandonPosX;
-	}
-	if (_brandonPosY > -1) {
+	if (_brandonPosY > -1)
 		ypos = _brandonPosY;
-	}
 	
 	int16 ypos2 = 0;
 	if (_brandonPosX > -1 && _brandonPosY > -1) {
@@ -640,23 +614,20 @@ void KyraEngine::initSceneData(int facing, int unk1, int brandonAlive) {
 	
 	initSceneObjectList(brandonAlive);
 	
-	if (unk1 && brandonAlive == 0) {
+	if (unk1 && brandonAlive == 0)
 		moveCharacterToPos(0, facing, xpos2, ypos2);
-	}
 	
 	_scriptClick->variables[4] = _itemInHand;
 	_scriptClick->variables[7] = brandonAlive;
 	_scriptInterpreter->startScript(_scriptClick, 3);
-	while (_scriptInterpreter->validScript(_scriptClick)) {
+	while (_scriptInterpreter->validScript(_scriptClick))
 		_scriptInterpreter->runScript(_scriptClick);
-	}
 }
 
 void KyraEngine::initSceneObjectList(int brandonAlive) {
 	debugC(9, kDebugLevelMain, "KyraEngine::initSceneObjectList(%d)", brandonAlive);
-	for (int i = 0; i < 28; ++i) {
+	for (int i = 0; i < 28; ++i)
 		_animator->actors()[i].active = 0;
-	}
 	
 	int startAnimFrame = 0;
 	
@@ -668,6 +639,7 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 	startAnimFrame = _currentCharacter->currentAnimFrame-7;
 	int xOffset = _defaultShapeTable[startAnimFrame].xOffset;
 	int yOffset = _defaultShapeTable[startAnimFrame].yOffset;
+
 	if (_scaleMode) {
 		curAnimState->x1 = _currentCharacter->x1;
 		curAnimState->y1 = _currentCharacter->y1;
@@ -681,6 +653,7 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 		curAnimState->x1 = _currentCharacter->x1 + xOffset;
 		curAnimState->y1 = _currentCharacter->y1 + yOffset;
 	}
+
 	curAnimState->x2 = curAnimState->x1;
 	curAnimState->y2 = curAnimState->y1;
 	curAnimState->refreshFlag = 1;
@@ -727,11 +700,10 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 		curAnimState->refreshFlag = 1;
 		curAnimState->bkgdChangeFlag = 1;
 		
-		if (ch->facing >= 1 && ch->facing <= 3) {
+		if (ch->facing >= 1 && ch->facing <= 3)
 			curAnimState->flags |= 1;
-		} else if (ch->facing >= 5 && ch->facing <= 7) {
+		else if (ch->facing >= 5 && ch->facing <= 7)
 			curAnimState->flags &= 0xFFFFFFFE;
-		}
 		
 		_animator->addObjectToQueue(curAnimState);
 		
@@ -827,9 +799,8 @@ void KyraEngine::initSceneScreen(int brandonAlive) {
 	if (_flags.platform == Common::kPlatformAmiga) {
 		if (_unkScreenVar1 && !queryGameFlag(0xF0)) {
 			memset(_screen->getPalette(2), 0, 32*3);
-			if (_currentCharacter->sceneId != 117 || !queryGameFlag(0xB3)) {
+			if (_currentCharacter->sceneId != 117 || !queryGameFlag(0xB3))
 				_screen->setScreenPalette(_screen->getPalette(2));
-			}
 		}
 
 		if (_unkScreenVar2 == 1)
@@ -838,13 +809,11 @@ void KyraEngine::initSceneScreen(int brandonAlive) {
 			_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
 
 		if (_unkScreenVar1 && !queryGameFlag(0xA0)) {
-			if (_currentCharacter->sceneId == 45 && _paletteChanged) {
+			if (_currentCharacter->sceneId == 45 && _paletteChanged)
 				memcpy(_screen->getPalette(0) + 12*3, _screen->getPalette(4) + 12*3, 2);
-			}
 
-			if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245 && (_brandonStatusBit & 1)) {
+			if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245 && (_brandonStatusBit & 1))
 				memcpy(_screen->getPalette(0), _screen->getPalette(0) + 320*3, 64);
-			}
 
 			_screen->setScreenPalette(_screen->getPalette(0));
 		}
@@ -859,11 +828,10 @@ void KyraEngine::initSceneScreen(int brandonAlive) {
 			_screen->setScreenPalette(_screen->getPalette(0));
 		}
 
-		if (_unkScreenVar2 == 1) {
+		if (_unkScreenVar2 == 1)
 			_screen->shuffleScreen(8, 8, 304, 128, 2, 0, _unkScreenVar3, false);
-		} else {
+		else
 			_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
-		}
 
 		if (_unkScreenVar1 && _paletteChanged) {
 			if (!queryGameFlag(0xA0)) {
@@ -902,11 +870,12 @@ void KyraEngine::initSceneScreen(int brandonAlive) {
 
 int KyraEngine::handleSceneChange(int xpos, int ypos, int unk1, int frameReset) {
 	debugC(9, kDebugLevelMain, "KyraEngine::handleSceneChange(%d, %d, %d, %d)", xpos, ypos, unk1, frameReset);
-	if (queryGameFlag(0xEF)) {
+	if (queryGameFlag(0xEF))
 		unk1 = 0;
-	}
+
 	int sceneId = _currentCharacter->sceneId;
 	_pathfinderFlag = 0;
+
 	if (xpos < 12) {
 		if (_roomTable[sceneId].westExit != 0xFFFF) {
 			xpos = 12;
@@ -938,31 +907,32 @@ int KyraEngine::handleSceneChange(int xpos, int ypos, int unk1, int frameReset) 
 	int temp = xpos - _currentCharacter->x1;
 	if (ABS(temp) < 4) {
 		temp = ypos - _currentCharacter->y1;
-		if (ABS(temp) < 2) {
+		if (ABS(temp) < 2)
 			return 0;
-		}
 	}
 	
 	int x = (int16)(_currentCharacter->x1 & 0xFFFC);
 	int y = (int16)(_currentCharacter->y1 & 0xFFFE);
 	xpos = (int16)(xpos & 0xFFFC);
 	ypos = (int16)(ypos & 0xFFFE);
+	
 	int ret = findWay(x, y, xpos, ypos, _movFacingTable, 150);
 	_pathfinderFlag = 0;
-	if (ret >= _lastFindWayRet) {
+
+	if (ret >= _lastFindWayRet)
 		_lastFindWayRet = ret;
-	}
-	if (ret == 0x7D00 || ret == 0) {
+
+	if (ret == 0x7D00 || ret == 0)
 		return 0;
-	}
+
 	return processSceneChange(_movFacingTable, unk1, frameReset);
 }
 
 int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 	debugC(9, kDebugLevelMain, "KyraEngine::processSceneChange(%p, %d, %d)", (const void *)table, unk1, frameReset);
-	if (queryGameFlag(0xEF)) {
+	if (queryGameFlag(0xEF))
 		unk1 = 0;
-	}
+
 	int *tableStart = table;
 	_sceneChangeState = 0;
 	_loopFlag2 = 0;
@@ -1013,23 +983,22 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 			}
 		}
 		
-		if (forceContinue || !running) {
+		if (forceContinue || !running)
 			continue;
-		}
 		
 		int temp = 0;
-		if (table == tableStart || table[1] == 8) {
+		if (table == tableStart || table[1] == 8)
 			temp = setCharacterPosition(0, 0);
-		} else {
+		else
 			temp = setCharacterPosition(0, table);
-		}
-		if (temp) {
+
+		if (temp)
 			++table;
-		}
 		
 		nextFrame = getTimerDelay(5) * _tickLength + _system->getMillis();
 		while (_system->getMillis() < nextFrame) {
 			updateGameTimers();
+
 			if (_currentCharacter->sceneId == 210) {
 				updateKyragemFading();
 				if (seq_playEnd() || _beadStateVar == 4 || _beadStateVar == 5) {
@@ -1038,14 +1007,15 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 					break;
 				}
 			}
+
 			if ((nextFrame - _system->getMillis()) >= 10)
 				delay(10, true);
 		}
 	}
 	
-	if (frameReset && !(_brandonStatusBit & 2)) {
+	if (frameReset && !(_brandonStatusBit & 2))
 		_currentCharacter->currentAnimFrame = 7;
-	}
+
 	_animator->animRefreshNPC(0);
 	_animator->updateAllObjectShapes();
 	return returnValue;
@@ -1054,9 +1024,8 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 int KyraEngine::changeScene(int facing) {
 	debugC(9, kDebugLevelMain, "KyraEngine::changeScene(%d)", facing);
 	if (queryGameFlag(0xEF)) {
-		if (_currentCharacter->sceneId == 5) {
+		if (_currentCharacter->sceneId == 5)
 			return 0;
-		}
 	}
 	
 	int xpos = _charXPosTable[facing] + _currentCharacter->x1;
@@ -1069,7 +1038,7 @@ int KyraEngine::changeScene(int facing) {
 	
 	if (_exitListPtr) {
 		int16 *ptr = _exitListPtr;
-		// this loop should be only entered on time, seems to be some hack in the original
+		// this loop should be only entered one time, seems to be some hack in the original
 		while (true) {
 			if (*ptr == -1)
 				break;
@@ -1078,12 +1047,14 @@ int KyraEngine::changeScene(int facing) {
 				ptr += 10;
 				break;
 			}
+
 			_brandonPosX = ptr[6];
 			_brandonPosY = ptr[7];
 			uint16 sceneId = ptr[5];
 			facing = ptr[4];
 			int unk1 = ptr[8];
 			int unk2 = ptr[9];
+
 			if (sceneId == 0xFFFF) {
 				switch (facing) {
 				case 0:
@@ -1179,12 +1150,14 @@ void KyraEngine::setCharactersInDefaultScene() {
 	for (int i = 1; i < 5; ++i) {
 		Character *cur = &_characterList[i];
 		//cur->field_20 = 0;
+
 		const uint32 *curTable = defaultSceneTable[i-1];
 		cur->sceneId = curTable[0];
-		if (cur->sceneId == _currentCharacter->sceneId) {
+
+		if (cur->sceneId == _currentCharacter->sceneId)
 			//++cur->field_20;
 			cur->sceneId = curTable[1/*cur->field_20*/];
-		}
+
 		//cur->field_23 = curTable[cur->field_20+1];
 	}
 }
@@ -1199,6 +1172,7 @@ void KyraEngine::setCharactersPositions(int character) {
 		0x67, 0x67, 0x60, 0x5A, 0x71,
 		0x76
 	};
+
 	assert(character < ARRAYSIZE(initXPosTable));
 	Character *edit = &_characterList[character];
 	edit->x1 = edit->x2 = initXPosTable[character];
@@ -1291,9 +1265,8 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 				}
 			}
 			
-			if (temp != 0x7D00 || tempValue != 0x7D00) {
+			if (temp != 0x7D00 || tempValue != 0x7D00)
 				break;
-			}
 		}
 		
 		if (temp < tempValue) {
@@ -1315,10 +1288,10 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 		}
 		x = curX;
 		y = curY;
-		if (curX == toX && curY == toY) {
+		if (curX == toX && curY == toY)
 			break;
-		}
 	}
+
 	delete [] pathTable1;
 	delete [] pathTable2;
 	moveTable[lastUsedEntry] = 8;
@@ -1351,9 +1324,8 @@ int KyraEngine::findSubPath(int x, int y, int toX, int toY, int *moveTable, int 
 		while (true) {
 			changePosTowardsFacing(xpos1, ypos1, facingTable1[start*8 + newFacing2]);
 			if (!lineIsPassable(xpos1, ypos1)) {
-				if (facingTable1[start*8 + newFacing2] == newFacing) {
+				if (facingTable1[start*8 + newFacing2] == newFacing)
 					return 0x7D00;
-				}
 				newFacing2 = facingTable1[start*8 + newFacing2];
 				xpos1 = x;
 				ypos1 = y;
@@ -1378,19 +1350,20 @@ int KyraEngine::findSubPath(int x, int y, int toX, int toY, int *moveTable, int 
 				}
 			}
 		}
+
 		moveTable[position++] = newFacing;
 		x = xpos1;
 		y = ypos1;
-		if (x == toX && y == toY) {
+
+		if (x == toX && y == toY)
 			return position;
-		}
 		
-		if (xpos1 == xpos2 && ypos1 == ypos2) {
+		if (xpos1 == xpos2 && ypos1 == ypos2)
 			break;
-		}
 		
 		newFacing = facingTable3[start*8 + newFacing];
 	}
+
 	return 0x7D00;
 }
 
@@ -1432,6 +1405,7 @@ int KyraEngine::getFacingFromPointToPoint(int x, int y, int toX, int toY) {
 	} else {
 		facingEntry <<= 1;
 	}
+
 	assert(facingEntry < ARRAYSIZE(facingTable));
 	return facingTable[facingEntry];
 }
@@ -1471,13 +1445,11 @@ bool KyraEngine::lineIsPassable(int x, int y) {
 			return true;
 	}
 	
-	if (y > 137) {
+	if (y > 137)
 		return false;
-	}
 
-	if (y < 0) {
+	if (y < 0)
 		y = 0;
-	}
 	
 	int ypos = 8;
 	if (_scaleMode) {
@@ -1541,19 +1513,19 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 			}
 			
 			if (tempPosition == moveTable && *tempPosition == 9) {
-				while (*tempPosition != 8 && *tempPosition == 9) {
+				while (*tempPosition != 8 && *tempPosition == 9)
 					++tempPosition;
-				}
-				if (*tempPosition == 8) {
+
+				if (*tempPosition == 8)
 					return 0;
-				}
 			}
 			
 			oldPosition = tempPosition;
 			curPosition = oldPosition+1;
-			while (*curPosition != 8 && *curPosition == 9) {
+
+			while (*curPosition != 8 && *curPosition == 9)
 				++curPosition;
-			}
+
 			continue;
 		}
 		
@@ -1566,20 +1538,19 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 				curPosition = oldPosition;
 				oldPosition = tempPosition;
 				while (true) {
-					if (tempPosition == moveTable) {
+					if (tempPosition == moveTable)
 						break;
-					}
+
 					--tempPosition;
-					if (*tempPosition != 9) {
+					if (*tempPosition != 9)
 						break;
-					}
+
 				}
 			} else {
 				while (true) {
 					++curPosition;
-					if (*curPosition != 9) {
+					if (*curPosition != 9)
 						break;
-					}
 				}
 			}
 			continue;
@@ -1588,11 +1559,11 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 		tempPosition = oldPosition;
 		oldPosition = curPosition;
 		++retValue;
+
 		while (true) {
 			++curPosition;
-			if (*curPosition != 9) {
+			if (*curPosition != 9)
 				break;
-			}
 		}
 	}
 
@@ -1614,9 +1585,11 @@ void KyraEngine::setupSceneResource(int sceneId) {
 		strcpy(file, _roomFilenameTable[tableId]);
 		strcat(file, ".VRM");
 		_res->unloadPakFile(file);
+
 		strcpy(file, _roomFilenameTable[tableId]);
 		strcat(file, ".PAK");
-		_res->unloadPakFile(file);	
+		_res->unloadPakFile(file);
+
 		strcpy(file, _roomFilenameTable[tableId]);
 		strcat(file, ".APK");
 		_res->unloadPakFile(file);
@@ -1632,10 +1605,12 @@ void KyraEngine::setupSceneResource(int sceneId) {
 	strcat(file, ".VRM");
 	if (Common::File::exists(file))
 		_res->loadPakFile(file);
+
 	strcpy(file, _roomFilenameTable[tableId]);
 	strcat(file, ".PAK");
 	if (Common::File::exists(file))
 		_res->loadPakFile(file);
+
 	strcpy(file, _roomFilenameTable[tableId]);
 	strcat(file, ".APK");
 	if (Common::File::exists(file))
@@ -1643,3 +1618,4 @@ void KyraEngine::setupSceneResource(int sceneId) {
 }
 
 } // end of namespace Kyra
+

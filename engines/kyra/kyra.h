@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KYRA_H
-#define KYRA_H
+#ifndef KYRA_KYRA_H
+#define KYRA_KYRA_H
 
 #include "engines/engine.h"
 #include "common/rect.h"
@@ -264,6 +264,7 @@ public:
 	typedef void (KyraEngine::*IntroProc)();
 	typedef int (KyraEngine::*OpcodeProc)(ScriptState *script);
 
+	// static data access
 	const char * const*seqWSATable() { return _seq_WSATable; }
 	const char * const*seqCPSTable() { return _seq_CPSTable; }
 	const char * const*seqCOLTable() { return _seq_COLTable; }
@@ -272,9 +273,60 @@ public:
 	const uint8 * const*palTable1() { return &_specialPalettes[0]; }
 	const uint8 * const*palTable2() { return &_specialPalettes[29]; }
 
+	// sequences
+	// -> misc
 	bool seq_skipSequence() const;
+
+private:
+	// -> demo
+	void seq_demo();
+
+	// -> intro
+	void seq_intro();
+	void seq_introLogos();
+	void seq_introStory();
+	void seq_introMalcolmTree();
+	void seq_introKallakWriting();
+	void seq_introKallakMalcolm();
+
+	// -> ingame animations
+	void seq_createAmuletJewel(int jewel, int page, int noSound, int drawOnly);
+	void seq_brandonHealing();
+	void seq_brandonHealing2();
+	void seq_poisonDeathNow(int now);
+	void seq_poisonDeathNowAnim();
+	void seq_playFluteAnimation();
+	void seq_winterScroll1();
+	void seq_winterScroll2();
+	void seq_makeBrandonInv();
+	void seq_makeBrandonNormal();
+	void seq_makeBrandonNormal2();
+	void seq_makeBrandonWisp();
+	void seq_dispelMagicAnimation();
+	void seq_fillFlaskWithWater(int item, int type);
+	void seq_playDrinkPotionAnim(int item, int unk2, int flags);
+	void seq_brandonToStone();
+
+	// -> end fight
+	int seq_playEnd();
+	void seq_playEnding();
+
+	int handleMalcolmFlag();
+	int handleBeadState();
+	void initBeadState(int x, int y, int x2, int y2, int unk1, BeadState *ptr);
+	int processBead(int x, int y, int &x2, int &y2, BeadState *ptr);
+
+	// -> credits
+	void seq_playCredits();
+
+public:
+	// delay
 	void delayUntil(uint32 timestamp, bool updateGameTimers = false, bool update = false, bool isMainLoop = false);
 	void delay(uint32 millis, bool update = false, bool isMainLoop = false);
+	void delayWithTicks(int ticks);
+	void waitForEvent();
+
+	// TODO
 	void quitGame();
 
 	void registerDefaultSettings();
@@ -292,10 +344,6 @@ public:
 	bool speechEnabled();
 	bool textEnabled();
 	
-	void drawSentenceCommand(const char *sentence, int unk1);
-	void updateSentenceCommand(const char *str1, const char *str2, int unk1);
-	void updateTextFade();
-
 	void updateGameTimers();
 	void clearNextEventTickCount();
 	void setTimerCountdown(uint8 timer, int32 countdown);
@@ -303,8 +351,6 @@ public:
 	int16 getTimerDelay(uint8 timer);
 	void enableTimer(uint8 timer);
 	void disableTimer(uint8 timer);
-
-	void delayWithTicks(int ticks);
 
 	void saveGame(const char *fileName, const char *saveName);
 	void loadGame(const char *fileName);
@@ -317,6 +363,7 @@ public:
 	
 	virtual int runOpcode(ScriptState *script, uint8 opcode);
 protected:
+	// Opcodes
 	int o1_magicInMouseItem(ScriptState *script);
 	int o1_characterSays(ScriptState *script);
 	int o1_pauseTicks(ScriptState *script);
@@ -476,77 +523,80 @@ protected:
 	int o1_vocLoad(ScriptState *script);
 
 protected:
-
 	virtual int go();
 	virtual int init();
 
-	void startup();
-	void mainLoop();
-	int initCharacterChat(int8 charNum);
-	int8 getChatPartnerNum();
-	void backupChatPartnerAnimFrame(int8 charNum);
-	void restoreChatPartnerAnimFrame(int8 charNum);
-	void endCharacterChat(int8 charNum, int16 arg_4);
-	void waitForChatToFinish(int vocFile, int16 chatDuration, const char *str, uint8 charNum);
-	void characterSays(int vocFile, const char *chatStr, int8 charNum, int8 chatDuration);
-
-	void setCharactersPositions(int character);
-	
-	void setupSceneResource(int sceneId);
-	
-	void enterNewScene(int sceneId, int facing, int unk1, int unk2, int brandonAlive);
-	void transcendScenes(int roomIndex, int roomName);
-	void setSceneFile(int roomIndex, int roomName);
-	void moveCharacterToPos(int character, int facing, int xpos, int ypos);
-	void setCharacterPositionWithUpdate(int character);
-	int setCharacterPosition(int character, int *facingTable);
-	void setCharacterPositionHelper(int character, int *facingTable);
-	int getOppositeFacingDirection(int dir);
-	void loadSceneMsc();
-	void startSceneScript(int brandonAlive);
-	void setupSceneItems();
-	void initSceneData(int facing, int unk1, int brandonAlive);
-	void clearNoDropRects();
-	void addToNoDropRects(int x, int y, int w, int h);
-	byte findFreeItemInScene(int scene);
-	byte findItemAtPos(int x, int y);
-	void placeItemInGenericMapScene(int item, int index);
-	void initSceneObjectList(int brandonAlive);
-	void initSceneScreen(int brandonAlive);
-	int findDuplicateItemShape(int shape);
-	int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize);
-	int findSubPath(int x, int y, int toX, int toY, int *moveTable, int start, int end);
-	int getFacingFromPointToPoint(int x, int y, int toX, int toY);
-	void changePosTowardsFacing(int &x, int &y, int facing);
-	bool lineIsPassable(int x, int y);
-	int getMoveTableSize(int *moveTable);
-	int handleSceneChange(int xpos, int ypos, int unk1, int frameReset);
-	int processSceneChange(int *table, int unk1, int frameReset);
-	int changeScene(int facing);
-	void createMouseItem(int item);
-	void destroyMouseItem();
-	void setMouseItem(int item);
-	void wipeDownMouseItem(int xpos, int ypos);
-	void setBrandonPoisonFlags(int reset);
-	void resetBrandonPoisonFlags();
-
+	// input
 	void processInput();
 	int processInputHelper(int xpos, int ypos);
 	int clickEventHandler(int xpos, int ypos);
 	void clickEventHandler2();
 	void updateMousePointer(bool forceUpdate = false);
 	bool hasClickedOnExit(int xpos, int ypos);
-	int checkForNPCScriptRun(int xpos, int ypos);
-	void runNpcScript(int func);
-	
-	int countItemsInScene(uint16 sceneId);
-	int processItemDrop(uint16 sceneId, uint8 item, int x, int y, int unk1, int unk2);
-	void exchangeItemWithMouseItem(uint16 sceneId, int itemIndex);
+
+	// scene
+	// -> init
+	void loadSceneMsc();
+	void startSceneScript(int brandonAlive);
+	void setupSceneItems();
+	void initSceneData(int facing, int unk1, int brandonAlive);
+	void initSceneObjectList(int brandonAlive);
+	void initSceneScreen(int brandonAlive);
+	void setupSceneResource(int sceneId);
+
+	// -> process
+	void enterNewScene(int sceneId, int facing, int unk1, int unk2, int brandonAlive);
+	int handleSceneChange(int xpos, int ypos, int unk1, int frameReset);
+	int processSceneChange(int *table, int unk1, int frameReset);
+	int changeScene(int facing);
+
+	// -> modification
+	void transcendScenes(int roomIndex, int roomName);
+	void setSceneFile(int roomIndex, int roomName);
+
+	// -> pathfinder
+	int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize);
+	int findSubPath(int x, int y, int toX, int toY, int *moveTable, int start, int end);
+	int getFacingFromPointToPoint(int x, int y, int toX, int toY);
+	void changePosTowardsFacing(int &x, int &y, int facing);
+	bool lineIsPassable(int x, int y);
+	int getMoveTableSize(int *moveTable);
+
+	// -> item handling 
+	// --> misc
 	void addItemToRoom(uint16 sceneId, uint8 item, int itemIndex, int x, int y);
-	int checkNoDropRects(int x, int y);
-	int isDropable(int x, int y);
+
+	// --> drop handling
 	void itemDropDown(int x, int y, int destX, int destY, byte freeItem, int item);
+	int processItemDrop(uint16 sceneId, uint8 item, int x, int y, int unk1, int unk2);
 	void dropItem(int unk1, int item, int x, int y, int unk2);
+
+	// --> dropped item handling
+	int countItemsInScene(uint16 sceneId);
+	void exchangeItemWithMouseItem(uint16 sceneId, int itemIndex);
+	byte findFreeItemInScene(int scene);
+	byte findItemAtPos(int x, int y);
+
+	// --> drop area handling
+	void addToNoDropRects(int x, int y, int w, int h);
+	void clearNoDropRects();
+	int isDropable(int x, int y);
+	int checkNoDropRects(int x, int y);
+
+	// --> player items handling:
+	void updatePlayerItemsForScene();
+
+	// items
+	// -> misc
+	void placeItemInGenericMapScene(int item, int index);
+
+	// -> mouse item
+	void createMouseItem(int item);
+	void destroyMouseItem();
+	void setMouseItem(int item);
+
+	// -> graphics effects
+	void wipeDownMouseItem(int xpos, int ypos);
 	void itemSpecialFX(int x, int y, int item);
 	void itemSpecialFX1(int x, int y, int item);
 	void itemSpecialFX2(int x, int y, int item);
@@ -554,63 +604,78 @@ protected:
 	void magicInMouseItem(int animIndex, int item, int itemPos);
 	void specialMouseItemFX(int shape, int x, int y, int animIndex, int tableIndex, int loopStart, int maxLoops);
 	void processSpecialMouseItemFX(int shape, int x, int y, int tableValue, int loopStart, int maxLoops);
-	void updatePlayerItemsForScene();
+
+	// character
+	// -> movement
+	void moveCharacterToPos(int character, int facing, int xpos, int ypos);
+	void setCharacterPositionWithUpdate(int character);
+	int setCharacterPosition(int character, int *facingTable);
+	void setCharacterPositionHelper(int character, int *facingTable);
+	int getOppositeFacingDirection(int dir);
+	void setCharactersPositions(int character);
+
+	// -> brandon
+	void setBrandonPoisonFlags(int reset);
+	void resetBrandonPoisonFlags();
+
+	// chat
+	// -> process
+	void characterSays(int vocFile, const char *chatStr, int8 charNum, int8 chatDuration);
+	void waitForChatToFinish(int vocFile, int16 chatDuration, const char *str, uint8 charNum);
+
+	// -> initialization
+	int initCharacterChat(int8 charNum);
+	void backupChatPartnerAnimFrame(int8 charNum);
+	void restoreChatPartnerAnimFrame(int8 charNum);
+	int8 getChatPartnerNum();
+
+	// -> deinitialization
+	void endCharacterChat(int8 charNum, int16 arg_4);
+
+	// graphics
+	// -> misc
+	int findDuplicateItemShape(int shape);
+	void updateKyragemFading();
+
+	// -> interface
+	void loadMainScreen(int page = 3);
 	void redrawInventory(int page);
-	
+public:
+	void drawSentenceCommand(const char *sentence, int unk1);
+	void updateSentenceCommand(const char *str1, const char *str2, int unk1);
+	void updateTextFade();
+
+protected:
+	// -> amulet
 	void drawJewelPress(int jewel, int drawSpecial);
 	void drawJewelsFadeOutStart();
 	void drawJewelsFadeOutEnd(int jewel);
+
+	// -> shape handling
 	void setupShapes123(const Shape *shapeTable, int endShape, int flags);
 	void freeShapes123();
 
-	void seq_demo();
-	void seq_intro();
-	void seq_introLogos();
-	void seq_introStory();
-	void seq_introMalcolmTree();
-	void seq_introKallakWriting();
-	void seq_introKallakMalcolm();
-	void seq_createAmuletJewel(int jewel, int page, int noSound, int drawOnly);
-	void seq_brandonHealing();
-	void seq_brandonHealing2();
-	void seq_poisonDeathNow(int now);
-	void seq_poisonDeathNowAnim();
-	void seq_playFluteAnimation();
-	void seq_winterScroll1();
-	void seq_winterScroll2();
-	void seq_makeBrandonInv();
-	void seq_makeBrandonNormal();
-	void seq_makeBrandonNormal2();
-	void seq_makeBrandonWisp();
-	void seq_dispelMagicAnimation();
-	void seq_fillFlaskWithWater(int item, int type);
-	void seq_playDrinkPotionAnim(int item, int unk2, int flags);
-	int seq_playEnd();
-	void seq_brandonToStone();
-	void seq_playEnding();
-	void seq_playCredits();
-	void updateKyragemFading();
+	// misc (TODO)
+	void startup();
+	void mainLoop();
+	
+	int checkForNPCScriptRun(int xpos, int ypos);
+	void runNpcScript(int func);
 	
 	void setupOpcodeTable();
 	const OpcodeProc *_opcodeTable;
 	int _opcodeTableSize;
 	
-	void waitForEvent();
 	void loadMouseShapes();
 	void loadCharacterShapes();
 	void loadSpecialEffectShapes();
 	void loadItems();
 	void loadButtonShapes();
 	void initMainButtonList();
-	void loadMainScreen(int page = 3);
 	void setCharactersInDefaultScene();
 	void setupPanPages();
 	void freePanPages();
 	void closeFinalWsa();
-	int handleMalcolmFlag();
-	int handleBeadState();
-	void initBeadState(int x, int y, int x2, int y2, int unk1, BeadState *ptr);
-	int processBead(int x, int y, int &x2, int &y2, BeadState *ptr);
 	
 	void setTimer19();
 	void setupTimers();
@@ -702,7 +767,7 @@ protected:
 	bool _mousePressFlag;
 	int8 _mouseWheel;
 	uint8 _flagsTable[69];
-	uint8 *_shapes[377];
+	uint8 *_shapes[377]; // TODO: the first 4 entries seem to be screen backup rects, move them in the future out of the shape data
 	uint16 _gameSpeed;
 	uint16 _tickLength;
 	int _lang;
@@ -1013,3 +1078,4 @@ public:
 } // End of namespace Kyra
 
 #endif
+

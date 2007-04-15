@@ -141,17 +141,15 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 	flags.platform = gd->desc.platform;
 
 	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
-	if (platform != Common::kPlatformUnknown) {
+	if (platform != Common::kPlatformUnknown)
 		flags.platform = platform;
-	}
 
 	if (flags.lang == Common::UNK_LANG) {
 		Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
-		if (lang != Common::UNK_LANG) {
+		if (lang != Common::UNK_LANG)
 			flags.lang = lang;
-		} else {
+		else
 			flags.lang = Common::EN_ANY;
-		}
 	}
 
 	if (!scumm_stricmp("kyra1", gameid)) {
@@ -167,3 +165,4 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 }
 
 REGISTER_PLUGIN(KYRA, "Legend of Kyrandia Engine", "The Legend of Kyrandia (C) Westwood Studios");
+

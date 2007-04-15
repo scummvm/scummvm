@@ -81,9 +81,8 @@ Resource::Resource(KyraEngine *vm) {
 		}
 
 		Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
-		for (;start != _pakfiles.end(); ++start) {
+		for (;start != _pakfiles.end(); ++start)
 			(*start)->protect();
-		}
 	} else {
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			Common::String filename = file->name();
@@ -94,9 +93,8 @@ Resource::Resource(KyraEngine *vm) {
 				continue;
 
 			if (filename.hasSuffix("PAK") || filename.hasSuffix("APK")) {
-				if (!loadPakFile(file->name())) {
+				if (!loadPakFile(file->name()))
 					error("couldn't open pakfile '%s'", file->name().c_str());
-				}
 			}
 		}
 
@@ -534,3 +532,4 @@ uint32 INSFile::getFileSize(uint hash) {
 }
 
 } // end of namespace Kyra
+

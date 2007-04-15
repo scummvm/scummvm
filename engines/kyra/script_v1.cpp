@@ -113,9 +113,8 @@ int KyraEngine::o1_runNPCScript(ScriptState *script) {
 int KyraEngine::o1_setSpecialExitList(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setSpecialExitList(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
 	
-	for (int i = 0; i < 10; ++i) {
+	for (int i = 0; i < 10; ++i)
 		_exitList[i] = stackPos(i);
-	}
 	_exitListPtr = _exitList;
 	
 	return 0;
@@ -178,11 +177,10 @@ int KyraEngine::o1_dropItemInScene(ScriptState *script) {
 		_animator->animAddGameItem(freeItem, sceneId);
 		_animator->updateAllObjectShapes();
 	} else {
-		if (item == 43) {
+		if (item == 43)
 			placeItemInGenericMapScene(item, 0);
-		} else {
+		else
 			placeItemInGenericMapScene(item, 1);
-		}
 	}
 	return 0;
 }
@@ -236,9 +234,8 @@ int KyraEngine::o1_getElapsedSeconds(ScriptState *script) {
 
 int KyraEngine::o1_mouseIsPointer(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_mouseIsPointer(%p) ()", (const void *)script);
-	if (_itemInHand == -1) {
+	if (_itemInHand == -1)
 		return 1;
-	}
 	return 0;
 }
 
@@ -419,17 +416,14 @@ int KyraEngine::o1_setScaleMode(ScriptState *script) {
 	int setValue1 = stackPos(1);
 	int start2 = stackPos(2);
 	int setValue2 = stackPos(3);
-	for (int i = 0; i < len; ++i) {
+	for (int i = 0; i < len; ++i)
 		_scaleTable[i] = setValue1;
-	}
 	int temp = setValue2 - setValue1;
 	int temp2 = start2 - len;
-	for (int i = len, offset = 0; i < start2; ++i, ++offset) {
+	for (int i = len, offset = 0; i < start2; ++i, ++offset)
 		_scaleTable[i] = (offset * temp) / temp2 + setValue1;
-	}
-	for (int i = start2; i < 145; ++i) {
+	for (int i = start2; i < 145; ++i)
 		_scaleTable[i] = setValue2;
-	}
 	_scaleMode = 1;
 	return _scaleMode;
 }
@@ -450,9 +444,8 @@ int KyraEngine::o1_closeWSAFile(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_closeWSAFile(%p) (%d)", (const void *)script, stackPos(0));
 	
 	int wsaIndex = stackPos(0);
-	if (_movieObjects[wsaIndex]) {
+	if (_movieObjects[wsaIndex])
 		_movieObjects[wsaIndex]->close();
-	}
 	
 	return 0;
 }
@@ -603,9 +596,8 @@ int KyraEngine::o1_popBrandonIntoScene(ScriptState *script) {
 	}
 	
 	int scaleModeBackup = _scaleMode;
-	if (changeScaleMode) {
+	if (changeScaleMode)
 		_scaleMode = 1;
-	}
 	
 	_animator->animRefreshNPC(0);
 	_animator->preserveAllBackgrounds();
@@ -701,9 +693,8 @@ int KyraEngine::o1_changeCharactersFacing(ScriptState *script) {
 	int newAnimFrame = stackPos(2);
 	
 	_animator->restoreAllObjectBackgrounds();
-	if (newAnimFrame != -1) {
+	if (newAnimFrame != -1)
 		_characterList[character].currentAnimFrame = newAnimFrame;
-	}
 	_characterList[character].facing = facing;
 	_animator->animRefreshNPC(character);
 	_animator->preserveAllBackgrounds();
@@ -795,7 +786,7 @@ int KyraEngine::o1_displayWSASequentialFrames(ScriptState *script) {
 	// Workaround for bug #1498221 "KYRA1: Glitches when meeting Zanthia"
 	// the original didn'to do a forced screen update after displaying a wsa frame
 	// while we have to do it, which make brandon disappear for a short moment,
-	// which shouldn't happen. So we're not updating the screen for this special
+	// what shouldn't happen. So we're not updating the screen for this special
 	// case too.
 	if (startFrame == 18 && endFrame == 18 && _currentRoom == 45) {
 		_movieObjects[wsaIndex]->displayFrame(18);
@@ -841,6 +832,7 @@ int KyraEngine::o1_displayWSASequentialFrames(ScriptState *script) {
 				--frame;
 			}
 		}
+
 		if (_skipFlag)
 			break;
 		else
@@ -858,13 +850,11 @@ int KyraEngine::o1_drawCharacterStanding(ScriptState *script) {
 	int newFacing = stackPos(2);
 	int updateShapes = stackPos(3);
 	_characterList[character].currentAnimFrame = animFrame;
-	if (newFacing != -1) {
+	if (newFacing != -1)
 		_characterList[character].facing = newFacing;
-	}
 	_animator->animRefreshNPC(character);
-	if (updateShapes) {
+	if (updateShapes)
 		_animator->updateAllObjectShapes();
-	}
 	return 0;
 }
 
@@ -1026,12 +1016,12 @@ int KyraEngine::o1_walkCharacterToPoint(ScriptState *script) {
 	uint32 nextFrame;
 	int findWayReturn = findWay(_characterList[character].x1, _characterList[character].y1, toX, toY, _movFacingTable, 150);
 	_pathfinderFlag2 = 0;
-	if (_lastFindWayRet < findWayReturn) {
+
+	if (_lastFindWayRet < findWayReturn)
 		_lastFindWayRet = findWayReturn;
-	}
-	if (findWayReturn == 0x7D00 || findWayReturn == 0) {
+	if (findWayReturn == 0x7D00 || findWayReturn == 0)
 		return 0;
-	}
+
 	int *curPos = _movFacingTable;
 	bool running = true;
 	while (running) {
@@ -1079,9 +1069,8 @@ int KyraEngine::o1_walkCharacterToPoint(ScriptState *script) {
 			break;
 		}
 		
-		if (forceContinue || !running) {
+		if (forceContinue || !running)
 			continue;
-		}
 		
 		setCharacterPosition(character, 0);
 		++curPos;
@@ -1106,13 +1095,12 @@ int KyraEngine::o1_specialEventDisplayBrynnsNote(ScriptState *script) {
 	_screen->savePageToDisk("HIDPAGE.TMP", 2);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 	if (_flags.isTalkie) {
-		if (_flags.lang == Common::EN_ANY) {
+		if (_flags.lang == Common::EN_ANY)
 			_screen->loadBitmap("NOTEENG.CPS", 3, 3, 0);
-		} else if (_flags.lang == Common::FR_FRA) {
+		else if (_flags.lang == Common::FR_FRA)
 			_screen->loadBitmap("NOTEFRE.CPS", 3, 3, 0);
-		} else if (_flags.lang == Common::DE_DEU) {
+		else if (_flags.lang == Common::DE_DEU)
 			_screen->loadBitmap("NOTEGER.CPS", 3, 3, 0);
-		}
 	} else {
 		_screen->loadBitmap("NOTE.CPS", 3, 3, 0);
 	}
@@ -1146,7 +1134,7 @@ int KyraEngine::o1_fatPrint(ScriptState *script) {
 	// Workround for bug #1582672 ("KYRA1: Text crippled and drawn wrong")
 	// I'm not sure how the original handels this, since it seems to call
 	// printText also, maybe it fails somewhere inside...
-	// TODO: fix the reason for this workaround ;-)
+	// TODO: fix the reason for this workaround
 	if (_currentRoom == 117)
 		return 0;
 	_text->printText(stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
@@ -1203,15 +1191,16 @@ int KyraEngine::o1_dispelMagicAnimation(ScriptState *script) {
 
 int KyraEngine::o1_findBrightestFireberry(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_findBrightestFireberry(%p) ()", (const void *)script);
-	if (_currentCharacter->sceneId >= 187 && _currentCharacter->sceneId <= 198) {
+	if (_currentCharacter->sceneId >= 187 && _currentCharacter->sceneId <= 198)
 		return 29;
-	}
+
 	if (_currentCharacter->sceneId == 133 || _currentCharacter->sceneId == 137 ||
-		_currentCharacter->sceneId == 165 || _currentCharacter->sceneId == 173) {
+		_currentCharacter->sceneId == 165 || _currentCharacter->sceneId == 173)
 		return 29;
-	}
+
 	if (_itemInHand == 28)
 		return 28;
+
 	int brightestFireberry = 107;
 	if (_itemInHand >= 29 && _itemInHand <= 33)
 		brightestFireberry = _itemInHand;
@@ -1309,18 +1298,14 @@ int KyraEngine::o1_makeAmuletAppear(ScriptState *script) {
 			nextTime = _system->getMillis() + 5 * _tickLength;
 			
 			uint8 code = _amuleteAnim[i];
-			if (code == 3 || code == 7) {
+			if (code == 3 || code == 7)
 				snd_playSoundEffect(0x71);
-			}
 			
-			if (code == 5) {
+			if (code == 5)
 				snd_playSoundEffect(0x72);
-			}
 			
-			if (code == 14) {
+			if (code == 14)
 				snd_playSoundEffect(0x73);
-			}
-			
 			
 			amulet.displayFrame(code);
 			_animator->_updateScreen = true;
@@ -1345,8 +1330,10 @@ int KyraEngine::o1_drawItemShapeIntoScene(ScriptState *script) {
 	int y = stackPos(2);
 	int flags = stackPos(3);
 	int onlyHidPage = stackPos(4);
+
 	if (flags)
 		flags = 1;
+
 	if (onlyHidPage) {
 		_screen->drawShape(2, _shapes[220+item], x, y, 0, flags);
 	} else {
@@ -1471,17 +1458,15 @@ int KyraEngine::o1_getCharactersMovementDelay(ScriptState *script) {
 
 int KyraEngine::o1_getBirthstoneGem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_getBirthstoneGem(%p) (%d)", (const void *)script, stackPos(0));
-	if (stackPos(0) < 4) {
+	if (stackPos(0) < 4)
 		return _birthstoneGemTable[stackPos(0)];
-	}
 	return 0;
 }
 
 int KyraEngine::o1_queryBrandonStatusBit(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_queryBrandonStatusBit(%p) (%d)", (const void *)script, stackPos(0));
-	if (_brandonStatusBit & stackPos(0)) {
+	if (_brandonStatusBit & stackPos(0))
 		return 1;
-	}
 	return 0;
 }
 
@@ -1493,11 +1478,10 @@ int KyraEngine::o1_playFluteAnimation(ScriptState *script) {
 
 int KyraEngine::o1_playWinterScrollSequence(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_playWinterScrollSequence(%p) (%d)", (const void *)script, stackPos(0));
-	if (!stackPos(0)) {
+	if (!stackPos(0))
 		seq_winterScroll2();
-	} else {
+	else
 		seq_winterScroll1();
-	}
 	return 0;
 }
 
@@ -1620,21 +1604,19 @@ int KyraEngine::o1_setCauldronState(ScriptState *script) {
 
 int KyraEngine::o1_queryCrystalState(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_queryCrystalState(%p) (%d)", (const void *)script, stackPos(0));
-	if (!stackPos(0)) {
+	if (!stackPos(0))
 		return _crystalState[0];
-	} else if (stackPos(0) == 1) {
+	else if (stackPos(0) == 1)
 		return _crystalState[1];
-	}
 	return -1;
 }
 
 int KyraEngine::o1_setCrystalState(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setCrystalState(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	if (!stackPos(0)) {
+	if (!stackPos(0))
 		_crystalState[0] = stackPos(1);
-	} else if (stackPos(0) == 1) {
+	else if (stackPos(0) == 1)
 		_crystalState[1] = stackPos(1);
-	}
 	return stackPos(1);
 }
 
@@ -1649,11 +1631,12 @@ int KyraEngine::o1_shrinkBrandonDown(ScriptState *script) {
 	checkAmuletAnimFlags();
 	int scaleValue = _scaleTable[_currentCharacter->y1];
 	int scale = 0;
-	if (_scaleMode) {
+
+	if (_scaleMode)
 		scale = scaleValue;
-	} else {
+	else
 		scale = 256;
-	}
+
 	int scaleModeBackUp = _scaleMode;
 	_scaleMode = 1;
 	int scaleEnd = scale >> 1;
@@ -1672,11 +1655,11 @@ int KyraEngine::o1_growBrandonUp(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_growBrandonUp(%p) ()", (const void *)script);
 	int scaleValue = _scaleTable[_currentCharacter->y1];
 	int scale = 0;
-	if (_scaleMode) {
+	if (_scaleMode)
 		scale = scaleValue;
-	} else {
+	else
 		scale = 256;
-	}
+
 	int scaleModeBackUp = _scaleMode;
 	_scaleMode = 1;
 	for (int curScale = scale >> 1; curScale <= scale; ++curScale) {
@@ -1831,3 +1814,4 @@ int KyraEngine::o1_dummy(ScriptState *script) {
 }
 
 } // end of namespace Kyra
+

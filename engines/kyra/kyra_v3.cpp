@@ -117,9 +117,8 @@ int KyraEngine_v3::init() {
 	_mouseSHPBuf = _res->fileData("MOUSE.SHP", 0);
 	assert(_mouseSHPBuf);
 
-	for (int i = 0; i <= 6; ++i) {
+	for (int i = 0; i <= 6; ++i)
 		_gameShapes[i] = _screen->getPtrToShape(_mouseSHPBuf, i);
-	}
 
 	initItems();
 
@@ -244,11 +243,10 @@ void KyraEngine_v3::playMenuAudioFile() {
 	Common::File *handle = new Common::File();
 	uint32 temp = 0;
 	_res->getFileHandle(_menuAudioFile, &temp, *handle);
-	if (handle->isOpen()) {
+	if (handle->isOpen())
 		_musicSoundChannel = _soundDigital->playSound(handle, true);
-	} else {
+	else
 		delete handle;
-	}
 }
 
 void KyraEngine_v3::playMusicTrack(int track, int force) {
@@ -256,11 +254,10 @@ void KyraEngine_v3::playMusicTrack(int track, int force) {
 	
 	// XXX byte_2C87C compare
 	
-	if (_musicSoundChannel != -1 && !_soundDigital->isPlaying(_musicSoundChannel)) {
+	if (_musicSoundChannel != -1 && !_soundDigital->isPlaying(_musicSoundChannel))
 		force = 1;
-	} else if (_musicSoundChannel == -1) {
+	else if (_musicSoundChannel == -1)
 		force = 1;
-	}
 	
 	if (track == _curMusicTrack && !force)
 		return;
@@ -273,11 +270,10 @@ void KyraEngine_v3::playMusicTrack(int track, int force) {
 		Common::File *handle = new Common::File();
 		uint32 temp = 0;
 		_res->getFileHandle(_soundList[track], &temp, *handle);
-		if (handle->isOpen()) {
+		if (handle->isOpen())
 			_musicSoundChannel = _soundDigital->playSound(handle);
-		} else {
+		else
 			delete handle;
-		}
 	}
 	
 	_musicSoundChannel = track;
@@ -559,18 +555,16 @@ uint8 *KyraEngine_v3::allocTableSpace(uint8 *buf, int size, int id) {
 		*(uint32*)(buf2 + 16) = unkValue1 + size;
 		memcpy(_tableBuffer1 + entries * 14 + 12, _tableBuffer1 + unk1 * 14 + 12, 14);
 	} else {
-		if (usedEntry > unk1) {
+		if (usedEntry > unk1)
 			memcpy(buf2 + 12, _tableBuffer1 + unk1 * 14 + 12, 14);
-		}
 		int temp = *(uint16*)(_tableBuffer1 + 2) - 1;
 		*(uint16*)(_tableBuffer1 + 2) = temp;
 		temp = *(uint16*)(_tableBuffer1 + 4) - 1;
 		*(uint16*)(_tableBuffer1 + 4) = temp;
 	}
 
-	for (int i = unk1; i > ok; --i) {
+	for (int i = unk1; i > ok; --i)
 		memcpy(_tableBuffer1 + i * 14 + 12, _tableBuffer1 + (i-1) * 14 + 12, 14);
-	}
 
 	buf2 = _tableBuffer1 + ok * 14;
 
@@ -613,9 +607,8 @@ uint8 *KyraEngine_v3::findIdInTable(uint8 *buf, int id) {
 	uint32 idVal = id;
 	uint8 *ptr = (uint8*)bsearch(&idVal, _tableBuffer1 + 12, *(uint16*)(_tableBuffer1), 14, &tableIdCompare);
 
-	if (!ptr) {
+	if (!ptr)
 		return 0;
-	}
 
 	return _tableBuffer2 + *(uint32*)(ptr + 4);
 }
@@ -633,15 +626,13 @@ void KyraEngine_v3::initItems() {
 
 	_screen->loadBitmap("ITEMS.CSH", 3, 3, 0);
 
-	for (int i = 248; i <= 319; ++i) {
+	for (int i = 248; i <= 319; ++i)
 		addShapeToTable(_screen->getCPagePtr(3), i, i-248);
-	}
 
 	_screen->loadBitmap("ITEMS2.CSH", 3, 3, 0);
 
-	for (int i = 320; i <= 397; ++i) {
+	for (int i = 320; i <= 397; ++i)
 		addShapeToTable(_screen->getCPagePtr(3), i, i-320);
-	}
 
 	uint32 size = 0;
 	uint8 *itemsDat = _res->fileData("_ITEMS.DAT", &size);
@@ -703,3 +694,4 @@ bool KyraEngine_v3::loadLanguageFile(const char *file, uint8 *&buffer) {
 }
 
 } // end of namespace Kyra
+

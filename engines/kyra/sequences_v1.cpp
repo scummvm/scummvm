@@ -89,9 +89,8 @@ void KyraEngine::seq_demo() {
 void KyraEngine::seq_intro() {
 	debugC(9, kDebugLevelMain, "KyraEngine::seq_intro()");
 
-	if (_flags.isTalkie) {
+	if (_flags.isTalkie)
 		_res->loadPakFile("INTRO.VRM");
-	}
 	
 	static const IntroProc introProcTable[] = {
 		&KyraEngine::seq_introLogos,
@@ -113,17 +112,18 @@ void KyraEngine::seq_intro() {
 	if (_flags.platform != Common::kPlatformFMTowns)
 		snd_playTheme(0, 2);
 	_text->setTalkCoords(144);
-	for (int i = 0; i < ARRAYSIZE(introProcTable) && !seq_skipSequence(); ++i) {
+
+	for (int i = 0; i < ARRAYSIZE(introProcTable) && !seq_skipSequence(); ++i)
 		(this->*introProcTable[i])();
-	}
+
 	_text->setTalkCoords(136);
 	delay(30 * _tickLength);
 	_seq->setCopyViewOffs(false);
 	_sound->haltTrack();
 	_sound->voiceStop();
-	if (_flags.isTalkie) {
+
+	if (_flags.isTalkie)
 		_res->unloadPakFile("INTRO.VRM");
-	}
 }
 
 void KyraEngine::seq_introLogos() {
@@ -232,23 +232,23 @@ void KyraEngine::seq_introStory() {
 	debugC(9, kDebugLevelMain, "KyraEngine::seq_introStory()");
 	_screen->clearPage(3);
 	_screen->clearPage(0);
-	if (_flags.isTalkie) {
+
+	if (_flags.isTalkie)
 		return;
-	} else if (_flags.lang == Common::EN_ANY && (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformAmiga)) {
+	else if (_flags.lang == Common::EN_ANY && (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformAmiga))
 		_screen->loadBitmap("TEXT.CPS", 3, 3, _screen->_currentPalette);
-	} else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN) {
+	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN)
 		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, _screen->_currentPalette);
-	} else if (_flags.lang == Common::DE_DEU) {
+	else if (_flags.lang == Common::DE_DEU)
 		_screen->loadBitmap("TEXT_GER.CPS", 3, 3, _screen->_currentPalette);
-	} else if (_flags.lang == Common::FR_FRA) {
+	else if (_flags.lang == Common::FR_FRA)
 		_screen->loadBitmap("TEXT_FRE.CPS", 3, 3, _screen->_currentPalette);
-	} else if (_flags.lang == Common::ES_ESP) {
+	else if (_flags.lang == Common::ES_ESP)
 		_screen->loadBitmap("TEXT_SPA.CPS", 3, 3, _screen->_currentPalette);
-	} else if (_flags.lang == Common::IT_ITA) {
+	else if (_flags.lang == Common::IT_ITA)
 		_screen->loadBitmap("TEXT_ITA.CPS", 3, 3, _screen->_currentPalette);
-	} else {
+	else
 		warning("no story graphics file found");
-	}
 	_screen->setScreenPalette(_screen->_currentPalette);
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 3, 0);
 
@@ -691,11 +691,12 @@ void KyraEngine::seq_makeBrandonNormal2() {
 	_animator->setBrandonAnimSeqSize(4, 48);
 	_currentCharacter->currentAnimFrame = 7;
 	_animator->animRefreshNPC(0);
-	if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245) {
+
+	if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245)
 		_screen->fadeSpecialPalette(31, 234, 13, 4);
-	} else if (_currentCharacter->sceneId >= 118 && _currentCharacter->sceneId <= 186) {
+	else if (_currentCharacter->sceneId >= 118 && _currentCharacter->sceneId <= 186)
 		_screen->fadeSpecialPalette(14, 228, 15, 4);
-	}
+
 	freeShapes123();
 	_screen->showMouse();
 }
@@ -721,21 +722,23 @@ void KyraEngine::seq_makeBrandonWisp() {
 		delayWithTicks(8);
 	}
 	_brandonStatusBit |= 2;
-	if (_currentCharacter->sceneId >= 109 && _currentCharacter->sceneId <= 198) {
+
+	if (_currentCharacter->sceneId >= 109 && _currentCharacter->sceneId <= 198)
 		setTimerCountdown(14, 18000);
-	} else {
+	else
 		setTimerCountdown(14, 7200);
-	}
+
 	_animator->_brandonDrawFrame = 113;
 	_brandonStatusBit0x02Flag = 1;
 	_currentCharacter->currentAnimFrame = 113;
 	_animator->animRefreshNPC(0);
 	_animator->updateAllObjectShapes();
-	if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245) {
+
+	if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245)
 		_screen->fadeSpecialPalette(30, 234, 13, 4);
-	} else if (_currentCharacter->sceneId >= 118 && _currentCharacter->sceneId <= 186) {
+	else if (_currentCharacter->sceneId >= 118 && _currentCharacter->sceneId <= 186)
 		_screen->fadeSpecialPalette(14, 228, 15, 4);
-	}
+
 	freeShapes123();
 	_screen->showMouse();
 }
@@ -909,12 +912,12 @@ void KyraEngine::seq_playDrinkPotionAnim(int item, int unk2, int flags) {
 
 int KyraEngine::seq_playEnd() {
 	debugC(9, kDebugLevelMain, "KyraEngine::seq_playEnd()");
-	if (_endSequenceSkipFlag) {
+	if (_endSequenceSkipFlag)
 		return 0;
-	}
-	if (_deathHandler == 8) {
+
+	if (_deathHandler == 8)
 		return 0;
-	}
+
 	_screen->_curPage = 2;
 	if (_endSequenceNeedLoading) {
 		snd_playWanderScoreViaMap(50, 1);
@@ -959,9 +962,8 @@ int KyraEngine::seq_playEnd() {
 			return 1;
 		} else {
 			_endSequenceSkipFlag = 1;
-			if (_text->printed()) {
+			if (_text->printed())
 				_text->restoreTalkTextMessageBkgd(2, 0);
-			}
 			_screen->_curPage = 0;
 			_screen->hideMouse();
 			_screen->fadeSpecialPalette(32, 228, 20, 60);
@@ -979,11 +981,10 @@ int KyraEngine::seq_playEnd() {
 			snd_playSoundEffect(0x40);
 			for (int i = 0; i < 22; ++i) {
 				delayUntil(nextTime);
-				if (i == 4) {
+				if (i == 4)
 					snd_playSoundEffect(0x3E);
-				} else if (i == 20) {
+				else if (i == 20)
 					snd_playSoundEffect(0x0E);
-				}
 				nextTime = _system->getMillis() + 8 * _tickLength;
 				_finalA->displayFrame(i);
 				_screen->updateScreen();
@@ -1452,10 +1453,13 @@ int KyraEngine::handleBeadState() {
 					beadState1.y = y;
 				}
 			}
+
 			_screen->copyCurPageBlock(x >> 3, y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
 			_screen->drawShape(2, _panPagesTable[_lastDisplayedPanPage++], x, y, 0, 0);
+
 			if (_lastDisplayedPanPage > 17)
 				_lastDisplayedPanPage = 0;
+
 			_screen->addBitBlitRect(x, y, beadState1.width2, beadState1.height);
 		}
 		break;
@@ -1465,19 +1469,21 @@ int KyraEngine::handleBeadState() {
 			timer1 = _system->getMillis() + 4 * _tickLength;
 			_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
 			_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
+
 			beadState1.x = beadState1.dstX + table1[beadState1.tableIndex];
 			beadState1.y = beadState1.dstY + table2[beadState1.tableIndex];
 			_screen->copyCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+
 			_screen->drawShape(2, _panPagesTable[_lastDisplayedPanPage++], beadState1.x, beadState1.y, 0, 0);
-			if (_lastDisplayedPanPage >= 17) {
+			if (_lastDisplayedPanPage >= 17)
 				_lastDisplayedPanPage = 0;
-			}
+
 			_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
+
 			++beadState1.tableIndex;
-			if (beadState1.tableIndex > 24) {
+			if (beadState1.tableIndex > 24)
 				beadState1.tableIndex = 0;
 				_unkEndSeqVar4 = 1;
-			}
 			if (_system->getMillis() > timer2 && _malcolmFlag == 7 && !_unkAmuletVar && !_text->printed()) {
 				snd_playSoundEffect(0x0B);
 				if (_currentCharacter->x1 > 233 && _currentCharacter->x1 < 305 && _currentCharacter->y1 > 85 && _currentCharacter->y1 < 105 &&
@@ -1491,9 +1497,9 @@ int KyraEngine::handleBeadState() {
 					beadState1.unk9 = _currentCharacter->y1 - 30;
 				}
 					
-				if (_text->printed()) {
+				if (_text->printed())
 					_text->restoreTalkTextMessageBkgd(2, 0);
-				}
+
 				initBeadState(beadState1.x, beadState1.y, beadState1.unk8, beadState1.unk9, 12, &beadState2);
 				_lastDisplayedPanPage = 18;
 			}
@@ -1569,9 +1575,8 @@ int KyraEngine::handleBeadState() {
 				beadState1.y = y;
 				_screen->copyCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
 				_screen->drawShape(2, _panPagesTable[_lastDisplayedPanPage++], x, y, 0, 0);
-				if (_lastDisplayedPanPage > 17) {
+				if (_lastDisplayedPanPage > 17)
 					_lastDisplayedPanPage = 0;
-				}
 				_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
 			}
 		}
@@ -1595,21 +1600,20 @@ void KyraEngine::initBeadState(int x, int y, int x2, int y2, int unk, BeadState 
 	int xDiff = x2 - x;
 	int yDiff = y2 - y;
 	int unk1 = 0, unk2 = 0;
-	if (xDiff > 0) {
+	if (xDiff > 0)
 		unk1 = 1;
-	} else if (xDiff == 0) {
+	else if (xDiff == 0)
 		unk1 = 0;
-	} else {
+	else
 		unk1 = -1;
-	}
 	
-	if (yDiff > 0) {
+	
+	if (yDiff > 0)
 		unk2 = 1;
-	} else if (yDiff == 0) {
+	else if (yDiff == 0)
 		unk2 = 0;
-	} else {
+	else
 		unk2 = -1;
-	}
 	
 	xDiff = ABS(xDiff);
 	yDiff = ABS(yDiff);
@@ -1626,9 +1630,8 @@ void KyraEngine::initBeadState(int x, int y, int x2, int y2, int unk, BeadState 
 
 int KyraEngine::processBead(int x, int y, int &x2, int &y2, BeadState *ptr) {
 	debugC(9, kDebugLevelMain, "KyraEngine::processBead(%d, %d, %p, %p, %p)", x, y, (const void *)&x2, (const void *)&y2, (const void *)ptr);
-	if (x == ptr->dstX && y == ptr->dstY) {
+	if (x == ptr->dstX && y == ptr->dstY)
 		return 1;
-	}
 	
 	int xPos = x, yPos = y;
 	if (ptr->width >= ptr->height) {
@@ -1652,13 +1655,11 @@ int KyraEngine::processBead(int x, int y, int &x2, int &y2, BeadState *ptr) {
 	}
 	
 	int temp = ABS(x - ptr->dstX);
-	if (ptr->unk9 > temp) {
+	if (ptr->unk9 > temp)
 		xPos = ptr->dstX;
-	}
 	temp = ABS(y - ptr->dstY);
-	if (ptr->unk9 > temp) {
+	if (ptr->unk9 > temp)
 		yPos = ptr->dstY;
-	}
 	x2 = xPos;
 	y2 = yPos;
 	return 0;
@@ -1789,20 +1790,22 @@ void KyraEngine::drawJewelPress(int jewel, int drawSpecial) {
 	debugC(9, kDebugLevelMain, "KyraEngine::drawJewelPress(%d, %d)", jewel, drawSpecial);
 	_screen->hideMouse();
 	int shape = 0;
-	if (drawSpecial) {
+
+	if (drawSpecial)
 		shape = 0x14E;
-	} else {
+	else
 		shape = jewel + 0x149;
-	}
+
 	snd_playSoundEffect(0x45);
 	_screen->drawShape(0, _shapes[4+shape], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
 	_screen->updateScreen();
 	delayWithTicks(2);
-	if (drawSpecial) {
+
+	if (drawSpecial)
 		shape = 0x148;
-	} else {
+	else
 		shape = jewel + 0x143;
-	}
+
 	_screen->drawShape(0, _shapes[4+shape], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
 	_screen->updateScreen();
 	_screen->showMouse();
@@ -1815,18 +1818,14 @@ void KyraEngine::drawJewelsFadeOutStart() {
 	static const uint16 jewelTable3[] = { 0x166, 0x160, 0x15C, 0x157, 0x152, 0xFFFF };
 	static const uint16 jewelTable4[] = { 0x165, 0x161, 0x15B, 0x156, 0x151, 0xFFFF };
 	for (int i = 0; jewelTable1[i] != 0xFFFF; ++i) {
-		if (queryGameFlag(0x57)) {
+		if (queryGameFlag(0x57))
 			_screen->drawShape(0, _shapes[4+jewelTable1[i]], _amuletX2[2], _amuletY2[2], 0, 0);
-		}
-		if (queryGameFlag(0x59)) {
+		if (queryGameFlag(0x59))
 			_screen->drawShape(0, _shapes[4+jewelTable3[i]], _amuletX2[4], _amuletY2[4], 0, 0);
-		}
-		if (queryGameFlag(0x56)) {
+		if (queryGameFlag(0x56))
 			_screen->drawShape(0, _shapes[4+jewelTable2[i]], _amuletX2[1], _amuletY2[1], 0, 0);
-		}
-		if (queryGameFlag(0x58)) {
+		if (queryGameFlag(0x58))
 			_screen->drawShape(0, _shapes[4+jewelTable4[i]], _amuletX2[3], _amuletY2[3], 0, 0);
-		}
 		_screen->updateScreen();
 		delayWithTicks(3);
 	}
@@ -1836,36 +1835,34 @@ void KyraEngine::drawJewelsFadeOutEnd(int jewel) {
 	debugC(9, kDebugLevelMain, "KyraEngine::drawJewelsFadeOutEnd(%d)", jewel);
 	static const uint16 jewelTable[] = { 0x153, 0x158, 0x15D, 0x162, 0x148, 0xFFFF };
 	int newDelay = 0;
+
 	switch (jewel - 1) {
 	case 2:
-		if (_currentCharacter->sceneId >= 109 && _currentCharacter->sceneId <= 198) {
+		if (_currentCharacter->sceneId >= 109 && _currentCharacter->sceneId <= 198)
 			newDelay = 18900;
-		} else {
+		else
 			newDelay = 8100;
-		}
 		break;
 			
 	default:
 		newDelay = 3600;
 		break;
 	}
+
 	setGameFlag(0xF1);
 	setTimerCountdown(19, newDelay);
 	_screen->hideMouse();
 	for (int i = 0; jewelTable[i] != 0xFFFF; ++i) {
 		uint16 shape = jewelTable[i];
-		if (queryGameFlag(0x57)) {
+		if (queryGameFlag(0x57))
 			_screen->drawShape(0, _shapes[4+shape], _amuletX2[2], _amuletY2[2], 0, 0);
-		}
-		if (queryGameFlag(0x59)) {
+		if (queryGameFlag(0x59))
 			_screen->drawShape(0, _shapes[4+shape], _amuletX2[4], _amuletY2[4], 0, 0);
-		}
-		if (queryGameFlag(0x56)) {
+		if (queryGameFlag(0x56))
 			_screen->drawShape(0, _shapes[4+shape], _amuletX2[1], _amuletY2[1], 0, 0);
-		}
-		if (queryGameFlag(0x58)) {
+		if (queryGameFlag(0x58))
 			_screen->drawShape(0, _shapes[4+shape], _amuletX2[3], _amuletY2[3], 0, 0);
-		}
+
 		_screen->updateScreen();
 		delayWithTicks(3);
 	}
@@ -1873,3 +1870,4 @@ void KyraEngine::drawJewelsFadeOutEnd(int jewel) {
 }
 
 } // end of namespace Kyra
+

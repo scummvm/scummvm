@@ -237,22 +237,18 @@ bool StaticResource::init() {
 	delete [] temp;
 	temp = 0;
 	
-	if (version != RESFILE_VERSION) {
+	if (version != RESFILE_VERSION)
 		error("invalid KYRA.DAT file version (%d, required %d)", version, RESFILE_VERSION);
-	}
-	if (gameID != _vm->game()) {
+	if (gameID != _vm->game())
 		error("invalid game id (%d)", gameID);
-	}
 
 	uint32 gameFeatures = createFeatures(_vm->gameFlags());
-	if ((featuresValue & GAME_FLAGS) != gameFeatures) {
+	if ((featuresValue & GAME_FLAGS) != gameFeatures)
 		error("your data file has a different game flags (0x%.08X has the data and your version has 0x%.08X)", (featuresValue & GAME_FLAGS), gameFeatures);
-	}
 
 	// load all tables for now
-	if (!prefetchId(-1)) {
+	if (!prefetchId(-1))
 		error("couldn't load all needed resources from 'KYRA.DAT'");
-	}
 	return true;
 }
 
@@ -285,21 +281,18 @@ const uint8 * const*StaticResource::loadPaletteTable(int id, int &entries) {
 
 bool StaticResource::prefetchId(int id) {
 	if (id == -1) {
-		for (int i = 0; _filenameTable[i].filename; ++i) {
+		for (int i = 0; _filenameTable[i].filename; ++i)
 			prefetchId(_filenameTable[i].id);
-		}
 		return true;
 	}
 	const void *ptr = 0;
 	int type = -1, size = -1;
 
-	if (checkResList(id, type, ptr, size)) {
+	if (checkResList(id, type, ptr, size))
 		return true;
-	}
 
-	if (checkForBuiltin(id, type, size)) {
+	if (checkForBuiltin(id, type, size))
 		return true;
-	}
 
 	const FilenameTable *filename = searchFile(id);
 	if (!filename)
@@ -311,9 +304,8 @@ bool StaticResource::prefetchId(int id) {
 	ResData data;
 	data.id = id;
 	data.type = filetype->type;
-	if (!(this->*(filetype->load))(filename->filename, data.data, data.size)) {
+	if (!(this->*(filetype->load))(filename->filename, data.data, data.size))
 		return false;
-	}
 	_resList.push_back(data);
 
 	return true;
@@ -376,9 +368,8 @@ const StaticResource::FileType *StaticResource::getFiletype(int type) {
 		return 0;
 
 	for (int i = 0; _fileLoader[i].load; ++i) {
-		if (_fileLoader[i].type == type) {
+		if (_fileLoader[i].type == type)
 			return &_fileLoader[i];
-		}
 	}
 
 	return 0;
@@ -416,9 +407,8 @@ const void *StaticResource::getData(int id, int requesttype, int &size) {
 bool StaticResource::loadLanguageTable(const char *filename, void *&ptr, int &size) {
 	char file[64];
 	for (int i = 0; languages[i].ext; ++i) {
-		if (languages[i].flags != createLanguage(_vm->gameFlags())) {
+		if (languages[i].flags != createLanguage(_vm->gameFlags()))
 			continue;
-		}
 			
 		strcpy(file, filename);
 		strcat(file, languages[i].ext);
@@ -576,9 +566,8 @@ void StaticResource::freeRawData(void *&ptr, int &size) {
 
 void StaticResource::freeStringTable(void *&ptr, int &size) {
 	char **data = (char**)ptr;
-	while (size--) {
+	while (size--)
 		delete [] data[size];
-	}
 	ptr = 0;
 	size = 0;
 }
@@ -599,9 +588,8 @@ void StaticResource::freeRoomTable(void *&ptr, int &size) {
 
 void StaticResource::freePaletteTable(void *&ptr, int &size) {
 	uint8 **data = (uint8**)ptr;
-	while (size--) {
+	while (size--)
 		delete [] data[size];
-	}
 	ptr = 0;
 	size = 0;
 }
@@ -609,15 +597,14 @@ void StaticResource::freePaletteTable(void *&ptr, int &size) {
 uint8 *StaticResource::getFile(const char *name, int &size) {
 	char buffer[64];
 	const char *ext = "";
-	if (_vm->gameFlags().isTalkie) {
+	if (_vm->gameFlags().isTalkie)
 		ext = ".CD";
-	} else if (_vm->gameFlags().isDemo) {
+	else if (_vm->gameFlags().isDemo)
 		ext = ".DEM";
-	} else if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+	else if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
 		ext = ".TNS";
-	} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+	else if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		ext = ".AMG";
-	}
 	snprintf(buffer, 64, "%s%s", name, ext);
 	uint32 tempSize = 0;
 	uint8 *data = _vm->resource()->fileData(buffer, &tempSize);
@@ -1471,3 +1458,4 @@ const char *KyraEngine_v3::_languageExtension[] = {
 const int KyraEngine_v3::_languageExtensionSize = ARRAYSIZE(KyraEngine_v3::_languageExtension);
 
 } // End of namespace Kyra
+
