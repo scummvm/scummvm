@@ -109,7 +109,7 @@ void AGOSEngine_Elvira1::setupOpcodes() {
 		OPCODE(oe1_weigh),
 		/* 60 */
 		OPCODE(oe1_setFF),
-		OPCODE(o_invalid),
+		OPCODE(o_clear),
 		OPCODE(o_invalid),
 		OPCODE(o_invalid),
 		/* 64 */
@@ -394,6 +394,8 @@ void AGOSEngine_Elvira1::setupOpcodes() {
 }
 
 void AGOSEngine_Elvira1::executeOpcode(int opcode) {
+	printf("opcode %d\n", opcode);
+
 	OpcodeProcElvira1 op = _opcodesElvira1[opcode].proc;
 	(this->*op) ();
 }
