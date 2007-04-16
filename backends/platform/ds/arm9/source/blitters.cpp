@@ -19,7 +19,10 @@
  */
 
 #include "stdafx.h"
+#include "blitters.h"
 #define CHARSET_MASK_TRANSPARENCY 253
+
+#define PERFECT_5_TO_4_RESCALING
 
 namespace DS {
 
@@ -149,6 +152,7 @@ void ComputeDivBy5TableIFN()
     }                
 }
 
+#ifdef PERFECT_5_TO_4_RESCALING
 static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3, u16 s4,
                                                     u16* dest)
 {
@@ -223,6 +227,44 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
     ((u32*)dest)[0] = d10;
     ((u32*)dest)[1] = d32;
 }
+#else
+static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3, u16 s4,
+                                                    u16* dest)
+{
+    u32 ar0bs0 = s0 & 0xFC1F;
+    u32 ar0bs1 = s1 & 0xFC1F;
+    u32 ar0bs2 = s2 & 0xFC1F;
+    u32 ar0bs3 = s3 & 0xFC1F;
+    u32 ar0bs4 = s4 & 0xFC1F;
+
+    u32 gs0 = s0 & 0x03E0;
+    u32 gs1 = s1 & 0x03E0;
+    u32 gs2 = s2 & 0x03E0;
+    u32 gs3 = s3 & 0x03E0;
+    u32 gs4 = s4 & 0x03E0;
+        
+    u32 ar0bd0 = (3*ar0bs0 +   ar0bs1) >> 2;
+    u32 ar0bd1 = (  ar0bs1 +   ar0bs2) >> 1;
+    u32 ar0bd2 = (  ar0bs2 +   ar0bs3) >> 1;
+    u32 ar0bd3 = (  ar0bs3 + 3*ar0bs4) >> 2;
+    
+    u32 gd0 = (3*gs0 +   gs1) >> 2;
+    u32 gd1 = (  gs1 +   gs2) >> 1;
+    u32 gd2 = (  gs2 +   gs3) >> 1;
+    u32 gd3 = (  gs3 + 3*gs4) >> 2;
+
+    u32 d0 = ar0bd0 | gd0;
+    u32 d1 = ar0bd1 | gd1;
+    u32 d2 = ar0bd2 | gd2;
+    u32 d3 = ar0bd3 | gd3;
+    
+    u32 d10 = (d1 << 16) | d0;
+    u32 d32 = (d3 << 16) | d2;
+    
+    ((u32*)dest)[0] = d10;
+    ((u32*)dest)[1] = d32;
+}
+#endif
 
 static inline void RescaleBlock_5x8888_To_4x1555( u32 s0, u32 s1, u32 s2, u32 s3, u32 s4,
                                                     u16* dest)
@@ -262,6 +304,7 @@ static inline void RescaleBlock_5x8888_To_4x1555( u32 s0, u32 s1, u32 s2, u32 s3
 }
 
 // Can't work in place
+#ifdef PERFECT_5_TO_4_RESCALING
 static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const u8* src, const u32* palette)
 {
     ComputeDivBy5TableIFN();
@@ -277,6 +320,21 @@ static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const
         RescaleBlock_5x8888_To_4x1555(s0, s1, s2, s3, s4, dest+4*i);
     }
 }
+#else
+static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const u8* src, const u16* palette)
+{
+    for(size_t i=0; i<64; ++i)
+    {
+        u16 s0 = palette[src[5*i+0]];
+        u16 s1 = palette[src[5*i+1]];
+        u16 s2 = palette[src[5*i+2]];
+        u16 s3 = palette[src[5*i+3]];
+        u16 s4 = palette[src[5*i+4]];
+
+        RescaleBlock_5x1555_To_4x1555(s0, s1, s2, s3, s4, dest+4*i);
+    }
+}
+#endif
 
 
 // Can work in place, because it's a contraction
@@ -296,6 +354,7 @@ static inline void Rescale_320x1555Scanline_To_256x1555Scanline(u16* dest, const
     }
 }
 
+#ifdef PERFECT_5_TO_4_RESCALING
 void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* palette, int destStride, int srcStride)
 {
 	u32 fastRam[768];
@@ -316,6 +375,18 @@ void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* p
 		Rescale_320xPAL8Scanline_To_256x1555Scanline(dest + i*destStride, src + i *srcStride, fastRam);			
 	}
 }
+#else
+void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* palette, int destStride, int srcStride)
+{
+	u16 fastRam[256];
+    memcpy(fastRam, palette, 256*2);
+
+	for(size_t i=0; i<200; ++i)
+	{
+		Rescale_320xPAL8Scanline_To_256x1555Scanline(dest + i*destStride, src + i *srcStride, fastRam);			
+	}
+}
+#endif
 
 void Rescale_320x256x1555_To_256x256x1555(u16* dest, const u16* src, int destStride, int srcStride)
 {
