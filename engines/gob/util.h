@@ -64,7 +64,7 @@ public:
 	void waitMouseUp(void);
 	void waitMouseDown(void);
 	void waitMouseRelease(char drawMouse);
-	void forceMouseUp(void);
+	void forceMouseUp(bool onlyWhenSynced = false);
 
 	void clearPalette(void);
 	void setFrameRate(int16 rate);

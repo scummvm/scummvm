@@ -261,7 +261,10 @@ void Util::waitMouseRelease(char drawMouse) {
 	} while (buttons != 0);
 }
 
-void Util::forceMouseUp(void) {
+void Util::forceMouseUp(bool onlyWhenSynced) {
+	if (onlyWhenSynced && (_vm->_game->_mouseButtons != _mouseButtons))
+		return;
+
 	_vm->_game->_mouseButtons = 0;
 	_mouseButtons = 0;
 }
