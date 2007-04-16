@@ -22,7 +22,7 @@
 #include "blitters.h"
 #define CHARSET_MASK_TRANSPARENCY 253
 
-#define PERFECT_5_TO_4_RESCALING
+//#define PERFECT_5_TO_4_RESCALING
 
 namespace DS {
 
@@ -231,11 +231,11 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
 static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3, u16 s4,
                                                     u16* dest)
 {
-    u32 ar0bs0 = s0 & 0xFC1F;
-    u32 ar0bs1 = s1 & 0xFC1F;
-    u32 ar0bs2 = s2 & 0xFC1F;
-    u32 ar0bs3 = s3 & 0xFC1F;
-    u32 ar0bs4 = s4 & 0xFC1F;
+    u32 ar0bs0 = s0 & 0x7C1F;
+    u32 ar0bs1 = s1 & 0x7C1F;
+    u32 ar0bs2 = s2 & 0x7C1F;
+    u32 ar0bs3 = s3 & 0x7C1F;
+    u32 ar0bs4 = s4 & 0x7C1F;
 
     u32 gs0 = s0 & 0x03E0;
     u32 gs1 = s1 & 0x03E0;
@@ -253,13 +253,13 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
     u32 gd2 = (  gs2 +   gs3) >> 1;
     u32 gd3 = (  gs3 + 3*gs4) >> 2;
 
-    u32 d0 = ar0bd0 | gd0;
-    u32 d1 = ar0bd1 | gd1;
-    u32 d2 = ar0bd2 | gd2;
-    u32 d3 = ar0bd3 | gd3;
+    u32 d0 = (ar0bd0 & 0xFC1F) | (gd0 & 0x03E0);
+    u32 d1 = (ar0bd1 & 0xFC1F) | (gd1 & 0x03E0);
+    u32 d2 = (ar0bd2 & 0xFC1F) | (gd2 & 0x03E0);
+    u32 d3 = (ar0bd3 & 0xFC1F) | (gd3 & 0x03E0);
     
-    u32 d10 = (d1 << 16) | d0;
-    u32 d32 = (d3 << 16) | d2;
+    u32 d10 = 0x80008000 | (d1 << 16) | d0;
+    u32 d32 = 0x80008000 | (d3 << 16) | d2;
     
     ((u32*)dest)[0] = d10;
     ((u32*)dest)[1] = d32;
@@ -379,7 +379,8 @@ void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* p
 void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* palette, int destStride, int srcStride)
 {
 	u16 fastRam[256];
-    memcpy(fastRam, palette, 256*2);
+    for(size_t i=0; i<128;; ++i)
+        ((u32*)fastRam)[i] = ((const u32*)palette)[i];
 
 	for(size_t i=0; i<200; ++i)
 	{
