@@ -128,6 +128,8 @@ public:
 	int32 _startTimeKey;
 	int16 _mouseButtons;
 
+	bool _noScroll;
+
 	Game(GobEngine *vm);
 	virtual ~Game();
 

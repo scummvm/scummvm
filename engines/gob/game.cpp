@@ -77,6 +77,7 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_handleMouse = 0;
 	_forceHandleMouse = 0;
 	_menuLevel = 0;
+	_noScroll = true;
 
 	_tempStr[0] = 0;
 	_curImaFile[0] = 0;
@@ -292,7 +293,7 @@ void Game::evaluateScroll(int16 x, int16 y) {
 	if ((_handleMouse == 0) || (_menuLevel > 0))
 		return;
 
-	if (_vm->_global->_videoMode != 0x14)
+	if (_noScroll || (_vm->_global->_videoMode != 0x14))
 		return;
 
 	if ((x == 0) && (_vm->_draw->_scrollOffsetX > 0)) {

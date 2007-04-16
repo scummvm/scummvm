@@ -191,7 +191,7 @@ int GobEngine::init() {
 		_scenery = new Scenery_v2(this);
 		_saveLoad = new SaveLoad_v2(this, _targetName.c_str());
 	} else if (_features & Gob::GF_GOB3) {
-		_init = new Init_v2(this);
+		_init = new Init_v3(this);
 		_video = new Video_v2(this);
 		_inter = new Inter_v3(this);
 		_parse = new Parse_v2(this);
