@@ -81,6 +81,10 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\parallaction\font.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\parallaction\graphics.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
