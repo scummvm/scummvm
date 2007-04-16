@@ -68,6 +68,26 @@ struct PaletteFxRange {
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
+class Font {
+
+	byte _color;
+
+
+public:
+	Font() {}
+	virtual ~Font() {}
+
+	virtual void setColor(byte color) {
+		_color = color;
+	}
+	virtual uint32 getStringWidth(const char *s) = 0;
+	virtual uint16 height() = 0;
+
+	virtual void drawString(byte* buffer, uint32 pitch, const char *s) = 0;
+
+
+};
+
 struct StaticCnv {
 	uint16	_width; 	//
 	uint16	_height;	//
@@ -195,6 +215,7 @@ public:
 
 	void setMousePointer(int16 index);
 
+	void initFonts();
 	void setFont(Fonts name);
 
 public:
@@ -209,8 +230,8 @@ protected:
 	static byte *		_buffers[NUM_BUFFERS];
 	static byte			_mouseArrow[256];
 	StaticCnv			*_mouseComposedArrow;
-	Cnv					*_font;
-	Cnv					*_fonts[3];
+	Font				*_font;
+	Font				*_fonts[3];
 
 protected:
 	byte mapChar(byte c);

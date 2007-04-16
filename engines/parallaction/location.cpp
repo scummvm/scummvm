@@ -459,6 +459,7 @@ void Parallaction::doLocationEnterTransition() {
 	} while (_mouseButtons != kMouseLeftUp);
 #endif
 
+	_gfx->updateScreen();
 	waitUntilLeftClick();
 
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront );

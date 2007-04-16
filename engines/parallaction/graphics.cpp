@@ -34,7 +34,7 @@
 extern OSystem *g_system;
 
 namespace Parallaction {
-
+/*
 //
 //	proportional font glyphs width
 //
@@ -48,7 +48,7 @@ const byte _glyphWidths[126] = {
   0x08, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x04, 0x04, 0x04,
   0x05, 0x06, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x04, 0x06, 0x05, 0x05, 0x05, 0x05
 };
-
+*/
 bool		Gfx::_proportionalFont = false;
 byte *		Gfx::_buffers[];
 
@@ -537,68 +537,31 @@ void Gfx::restoreZoneBackground(const Common::Rect& r, byte *data) {
 	return;
 }
 
+void Gfx::makeCnvFromString(StaticCnv *cnv, char *text) {
+	assert(_font == _fonts[kFontLabel]);
 
+	cnv->_width = _font->getStringWidth(text);
+	cnv->_height = _font->height();
+	cnv->_data0 = (byte*)malloc(cnv->_width * cnv->_height);
 
-//
-//	strings
-//
-void Gfx::displayString(uint16 x, uint16 y, const char *text) {
-	if (text == NULL)
-		return;
-
-	uint16 len = strlen(text);
-	StaticCnv tmp;
-
-	for (uint16 i = 0; i < len; i++) {
-		byte c = mapChar(text[i]);
-
-		tmp._width = _font->_width;
-		tmp._height = _font->_height;
-		tmp._data0 = _font->getFramePtr(c);
-
-		flatBlitCnv(&tmp, x, y, kBitFront);
-
-		x += (_proportionalFont ? _glyphWidths[(int)c] : 8);
-
-	}
-
-	return;
+	_font->drawString(cnv->_data0, cnv->_width, text);
 }
 
+void Gfx::displayString(uint16 x, uint16 y, const char *text) {
+	assert(_font == _fonts[kFontMenu]);
+
+	byte *dst = _buffers[kBitFront] + x + y*SCREEN_WIDTH;
+	_font->drawString(dst, SCREEN_WIDTH, text);
+}
 
 void Gfx::displayBalloonString(uint16 x, uint16 y, const char *text, byte color) {
+	assert(_font == _fonts[kFontDialogue]);
 
-	uint16 len = strlen(text);
+	byte *dst = _buffers[kBitFront] + x + y*SCREEN_WIDTH;
 
-	for (uint16 i = 0; i < len; i++) {
-
-		byte c = mapChar(text[i]);
-		uint16 w = _proportionalFont ? _glyphWidths[(int)c] : 8;
-		byte *s = _font->getFramePtr(c);
-		byte *d = _buffers[kBitFront] + x + y*SCREEN_WIDTH;
-
-//		printf("%i\n", text[i]);
-
-		for (uint16 j = 0; j < _font->_height; j++) {
-			for (uint16 k = 0; k < w; k++) {
-				*d = (*s) ? 1 : color;
-				d++;
-				s++;
-			}
-
-			s += (8 - w);
-			d += (SCREEN_WIDTH - w);
-		}
-
-		x += w;
-	}
-
-	updateScreen();
-
-	return;
+	_font->setColor(color);
+	_font->drawString(dst, SCREEN_WIDTH, text);
 }
-
-
 
 bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, byte color) {
 //	printf("Gfx::displayWrappedString(%s, %i, %i, %i, %i)...", text, x, y, maxwidth, color);
@@ -646,28 +609,9 @@ bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, 
 
 }
 
-
-
 uint16 Gfx::getStringWidth(const char *text) {
-	if (text == NULL) return 0;
-
-	uint16 len = strlen(text);
-
-	if (_proportionalFont == 0) {
-		// fixed font
-		return len*8;
-	}
-
-	// proportional font
-	uint16 w = 0;
-	for (uint16 i = 0; i < len; i++) {
-		byte c = mapChar(text[i]);
-		w += _glyphWidths[(int)c];
-	}
-
-	return w;
+	return _font->getStringWidth(text);
 }
-
 
 void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height) {
 
@@ -740,50 +684,6 @@ void Gfx::restoreBackground(const Common::Rect& r) {
 
 	return;
 }
-
-
-void Gfx::makeCnvFromString(StaticCnv *cnv, char *text) {
-//	printf("makeCnvFromString('%s')\n", text);
-
-	uint16 len = strlen(text);
-
-	cnv->_width = _font->_width * len;
-	cnv->_height = _font->_height;
-
-//	printf("%i x %i\n", cnv->_width, cnv->_height);
-
-	cnv->_data0 = (byte*)malloc(cnv->_width * cnv->_height);
-
-	for (uint16 i = 0; i < len; i++) {
-		byte c = mapChar(text[i]);
-
-		byte *s = _font->getFramePtr(c);
-		byte *d = cnv->_data0 + _font->_width * i;
-
-		for (uint16 j = 0; j < _font->_height; j++) {
-			memcpy(d, s, 8);
-
-			s += 8;
-			d += cnv->_width;
-		}
-	}
-
-	return;
-}
-
-//
-//	internal character mapping
-//
-byte Gfx::mapChar(byte c) {
-
-	if (c == 0xA5) return 0x5F;
-	if (c == 0xDF) return 0x60;
-
-	if (c > 0x7F) return c - 0x7F;
-
-	return c - 0x20;
-}
-
 
 void Gfx::freeStaticCnv(StaticCnv *cnv) {
 //	printf("free_static_cnv()\n");
@@ -902,16 +802,7 @@ Gfx::Gfx(Parallaction* vm) :
 	memset(_palettefx, 0, sizeof(_palettefx));
 
 	initMouse( 0 );
-
-	if (_vm->getPlatform() == Common::kPlatformPC) {
-		_fonts[kFontDialogue] = _vm->_disk->loadFont("comic");
-		_fonts[kFontLabel] = _vm->_disk->loadFont("topaz");
-		_fonts[kFontMenu] = _vm->_disk->loadFont("slide");
-	} else {
-		_fonts[kFontDialogue] = _vm->_disk->loadFont("comic");
-		_fonts[kFontLabel] = _vm->_disk->loadFont("intro");
-		_fonts[kFontMenu] = _vm->_disk->loadFont("slide");
-	}
+	initFonts();
 
 	_font = NULL;
 

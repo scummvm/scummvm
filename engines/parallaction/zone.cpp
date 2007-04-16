@@ -314,6 +314,8 @@ void Parallaction::displayCharacterComment(ExamineData *data) {
 	_gfx->drawBalloon(r, 0);
 	_gfx->displayWrappedString(data->_description, 140, 10, 130, 0);
 
+	_gfx->updateScreen();
+
 	waitUntilLeftClick();
 
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
@@ -352,9 +354,9 @@ void Parallaction::displayItemComment(ExamineData *data) {
 	_gfx->displayWrappedString(data->_description, 0, 90, 130, 0);
 
 	jobEraseAnimations((void*)1, NULL);
+	_gfx->updateScreen();
 
 	waitUntilLeftClick();
-
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	return;

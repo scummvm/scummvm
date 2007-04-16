@@ -377,10 +377,10 @@ StaticCnv* DosDisk::loadPointer() {
 }
 
 
-Cnv* DosDisk::loadFont(const char* name) {
+Font* DosDisk::loadFont(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%scnv", name);
-	return loadExternalCnv(path);
+	return createFont(name, loadExternalCnv(path));
 }
 
 
@@ -916,7 +916,7 @@ StaticCnv* AmigaDisk::loadHead(const char* name) {
 	return cnv;
 }
 
-Cnv* AmigaDisk::loadFont(const char* name) {
+Font* AmigaDisk::loadFont(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadFont '%s'", name);
 
 	char path[PATH_LEN];
@@ -925,11 +925,7 @@ Cnv* AmigaDisk::loadFont(const char* name) {
 	if (!_resArchive.openArchivedFile(path))
 		errorFileNotFound(path);
 
-	// FIXME: actually read data from font file and create
-	// real font instead of this dummy one
-	byte *data = (byte*)malloc(256*8*8);
-	memset(data, 0, 256*8*8);
-	return new Cnv(256, 8, 8, data);
+	return createFont(name, _resArchive);
 }
 
 StaticCnv* AmigaDisk::loadStatic(const char* name) {
@@ -992,7 +988,7 @@ void AmigaDisk::loadSlide(const char *name) {
 	Graphics::ILBMDecoder decoder(*s);
 	decoder.decode(surf, pal);
 
-	for (uint32 i = 0; i < PALETTE_SIZE; i++)
+	for (uint32 i = 0; i < BASE_PALETTE_COLORS * 3; i++)
 		_vm->_gfx->_palette[i] = pal[i] >> 2;
 	free(pal);
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);

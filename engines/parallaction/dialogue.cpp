@@ -225,6 +225,7 @@ uint16 Parallaction::askDialoguePassword(Dialogue *q, StaticCnv *face) {
 			password[passwordLen] = '\0';
 
 			_gfx->displayBalloonString(_answerBalloonX[0] + 5, _answerBalloonY[0] + _answerBalloonH[0] - 15, password, 0);
+			_gfx->updateScreen();
 
 			g_system->delayMillis(20);
 		}
@@ -286,6 +287,7 @@ bool Parallaction::displayAnswers(Dialogue *q) {
 		}
 		i++;
 	}
+	_gfx->updateScreen();
 
 	return displayed;
 }
@@ -310,6 +312,7 @@ void Parallaction::displayQuestion(Dialogue *q, Cnv *cnv) {
 
 	_gfx->drawBalloon(r, q->_mood & 0x10);
 	_gfx->displayWrappedString(q->_text, QUESTION_BALLOON_X, QUESTION_BALLOON_Y, MAX_BALLOON_WIDTH, 0);
+	_gfx->updateScreen();
 
 	waitUntilLeftClick();
 
@@ -412,6 +415,7 @@ int16 Parallaction::selectAnswer(Question *q, StaticCnv *cnv) {
 		cnv->_data0 = _char._talk->getFramePtr(q->_answers[_di]->_mood & 0xF);
 //		cnv->_data1 = _char._talk->field_8[q->_answers[_di]->_mood & 0xF];
 		_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X,	ANSWER_CHARACTER_Y, Gfx::kBitFront);
+		_gfx->updateScreen();
 		waitUntilLeftClick();
 		return _di;
 	}
@@ -434,6 +438,7 @@ int16 Parallaction::selectAnswer(Question *q, StaticCnv *cnv) {
 			_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
 		}
 
+		_gfx->updateScreen();
 		g_system->delayMillis(30);
 		v2 = _si;
 	}

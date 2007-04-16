@@ -106,21 +106,19 @@ void Menu::start() {
 	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
 
 	_vm->_gfx->_proportionalFont = false;
-	_vm->_gfx->setFont(kFontMenu);
 
 	_vm->_disk->loadSlide("intro");
 	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-
 	g_system->delayMillis(2000);
 
 	_vm->_disk->loadSlide("minintro");
 	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-
 	g_system->delayMillis(2000);
 
 	if (_vm->getPlatform() == Common::kPlatformPC) {
+		_vm->_gfx->setFont(kFontMenu);
 
 		_vm->_disk->loadSlide("lingua");
 		_vm->_gfx->extendPalette(_vm->_gfx->_palette);
@@ -164,6 +162,7 @@ void Menu::newGame() {
 	_ax = (SCREEN_WIDTH - _vm->_gfx->getStringWidth(v14[3])) / 2;
 	_vm->_gfx->displayString(_ax, 120, v14[3]);
 
+	_vm->_gfx->updateScreen();
 	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
 
@@ -255,6 +254,7 @@ uint16 Menu::selectGame() {
 			_vm->_gfx->displayString(60, 30, newGameMsg[_language]);
 		}
 
+		_vm->_gfx->updateScreen();
 		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
 	}
@@ -359,6 +359,7 @@ void Menu::selectCharacter() {
 
 		_vm->_gfx->copyScreen(Gfx::kBit2, Gfx::kBitFront);
 		_vm->_gfx->displayString(60, 30, introMsg2[_language]);
+		_vm->_gfx->updateScreen();
 
 		g_system->delayMillis(2000);
 

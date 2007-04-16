@@ -39,6 +39,7 @@ class Table;
 class Parallaction;
 class Gfx;
 class Script;
+class Font;
 
 struct Cnv;
 struct StaticCnv;
@@ -104,7 +105,7 @@ public:
 	virtual Cnv* loadObjects(const char *name) = 0;
 	virtual StaticCnv* loadPointer() = 0;
 	virtual StaticCnv* loadHead(const char* name) = 0;
-	virtual Cnv* loadFont(const char* name) = 0;
+	virtual Font* loadFont(const char* name) = 0;
 	virtual StaticCnv* loadStatic(const char* name) = 0;
 	virtual Cnv* loadFrames(const char* name) = 0;
 	virtual void loadSlide(const char *filename) = 0;
@@ -124,6 +125,7 @@ private:
 	void loadMaskAndPath(const char *name);
 	void parseDepths(Common::SeekableReadStream &stream);
 	void parseBackground(Common::SeekableReadStream &stream);
+	Font *createFont(const char *name, Cnv* cnv);
 
 protected:
 	Gfx	 *_gfx;
@@ -138,7 +140,7 @@ public:
 	Cnv* loadObjects(const char *name);
 	StaticCnv* loadPointer();
 	StaticCnv* loadHead(const char* name);
-	Cnv* loadFont(const char* name);
+	Font* loadFont(const char* name);
 	StaticCnv* loadStatic(const char* name);
 	Cnv* loadFrames(const char* name);
 	void loadSlide(const char *filename);
@@ -153,6 +155,7 @@ protected:
 	StaticCnv* makeStaticCnv(Common::SeekableReadStream &stream);
 	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 planeSize);
 	Common::SeekableReadStream *openArchivedFile(const char* name, bool errorOnFileNotFound = false);
+	Font *createFont(const char *name, Common::SeekableReadStream &stream);
 
 public:
 	AmigaDisk(Parallaction *vm);
@@ -164,7 +167,7 @@ public:
 	Cnv* loadObjects(const char *name);
 	StaticCnv* loadPointer();
 	StaticCnv* loadHead(const char* name);
-	Cnv* loadFont(const char* name);
+	Font* loadFont(const char* name);
 	StaticCnv* loadStatic(const char* name);
 	Cnv* loadFrames(const char* name);
 	void loadSlide(const char *filename);
