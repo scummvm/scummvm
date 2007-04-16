@@ -379,7 +379,7 @@ void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* p
 void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* palette, int destStride, int srcStride)
 {
 	u16 fastRam[256];
-    for(size_t i=0; i<128;; ++i)
+    for(size_t i=0; i<128; ++i)
         ((u32*)fastRam)[i] = ((const u32*)palette)[i];
 
 	for(size_t i=0; i<200; ++i)
