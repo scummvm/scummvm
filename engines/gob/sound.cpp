@@ -404,8 +404,8 @@ int Snd::readBuffer(int16 *buffer, const int numSamples) {
 
 		// Linear interpolation. See sound/rate.cpp
 
-		val = _last + ((((_cur - _last) * _offsetFrac +
-					(1UL << (FRAC_BITS - 1))) >> FRAC_BITS) << 8);
+		val = (_last + (((_cur - _last) * _offsetFrac +
+					(1UL << (FRAC_BITS - 1))) >> FRAC_BITS)) << 8;
 		*buffer++ = (((int32) val) * _fadeVol) >> 16;
 		
 		oldOffset = _offset;
