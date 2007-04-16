@@ -576,7 +576,7 @@ begin_credits("Credits");
 
 	  begin_section("PocketPC / WinCE");
 		  add_person("Nicolas Bacca", "arisme", "");
-		  add_person("Kostas Nakos", "knakos", "");
+		  add_person("Kostas Nakos", "Jubanka", "");
 	  end_section();
 
 	  begin_section("PlayStation 2");
@@ -733,6 +733,7 @@ begin_credits("Credits");
 		  add_person("Andreas Karlsson", "Sprawl", "Initial port for EPOC/SymbianOS");
 		  add_person("Claudio Matsuoka", "", "Daily Linux builds");
 		  add_person("Thomas Mayer", "", "PSP port contributions");
+		  add_person("", "n0p", "Windows CE port aspect ratio correction scaler and right click input method");
 		  add_person("Mikesch Nepomuk", "", "MI1 VGA floppy patches");
 		  add_person("Nicolas Noble", "pixels", "Config file and ALSA support");
 		  add_person("", "Quietust", "Sound support for Amiga SCUMM V2/V3 games, MM NES support");
@@ -741,6 +742,7 @@ begin_credits("Credits");
 		  add_person("Daniel Schepler", "", "Final MI1 CD music support, initial Ogg Vorbis support");
 		  add_person("Andr&eacute; Souza", "", "SDL-based OpenGL renderer");
 		  add_person("Tim Phillips", "realmz", "Initial MI1 CD music support");
+		  add_person("Robin Watts", "", "ARM assembly routines for the Windows CE port");
 	  end_persons();
 	end_section();
 

@@ -226,6 +226,8 @@ Other contributions
      Andreas Karlsson      - Initial port for EPOC/SymbianOS
      Claudio Matsuoka      - Daily Linux builds
      Thomas Mayer          - PSP port contributions
+     n0p                   - Windows CE port aspect ratio correction scaler
+                             and right click input method
      Mikesch Nepomuk       - MI1 VGA floppy patches
      Nicolas Noble         - Config file and ALSA support
      Quietust              - Sound support for Amiga SCUMM V2/V3 games, MM
@@ -236,6 +238,7 @@ Other contributions
                              support
      Andre Souza           - SDL-based OpenGL renderer
      Tim Phillips          - Initial MI1 CD music support
+     Robin Watts           - ARM assembly routines for the Windows CE port
 
    And to all the contributors, users, and beta testers we've missed. Thanks!
 
