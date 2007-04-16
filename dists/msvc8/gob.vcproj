@@ -284,6 +284,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\init_v3.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\inter.cpp"
 			>
 		</File>
