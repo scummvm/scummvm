@@ -112,7 +112,7 @@ void Util::processInput(bool scroll) {
 					_fastMode ^= 2;
 				break;
 			}
-			addKeyToBuffer(event.kbd.keycode);
+			addKeyToBuffer(event.kbd.ascii);
 			break;
 		case Common::EVENT_KEYUP:
 			break;
@@ -171,16 +171,16 @@ int16 Util::translateKey(int16 key) {
 		{274, 0x5000}, // Down arrow
 		{275, 0x4D00}, // Right arrow
 		{276, 0x4B00}, // Left arrow
-		{282, 0x3B00}, // F1
-		{283, 0x3C00}, // F2
-		{284, 0x3D00}, // F3
-		{285, 0x3E00}, // F4
-		{286, 0x011B}, // F5
-		{287, 0x4000}, // F6
-		{288, 0x4100}, // F7
-		{289, 0x4200}, // F8
-		{290, 0x4300}, // F9
-		{291, 0x4400}  // F10
+		{315, 0x3B00}, // F1
+		{316, 0x3C00}, // F2
+		{317, 0x3D00}, // F3
+		{318, 0x3E00}, // F4
+		{319, 0x011B}, // F5
+		{320, 0x4000}, // F6
+		{321, 0x4100}, // F7
+		{322, 0x4200}, // F8
+		{323, 0x4300}, // F9
+		{324, 0x4400}  // F10
 	};
 
 	for (int i = 0; i < ARRAYSIZE(keys); i++)
