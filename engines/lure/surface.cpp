@@ -670,7 +670,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 
 	// Write out any existing save names
 	for (index = 0; index < numSaves; ++index)
-		s->writeString(DIALOG_EDGE_SIZE, SR_SAVEGAME_NAMES_Y, saveNames[index]->c_str(), true);
+		s->writeString(DIALOG_EDGE_SIZE, SR_SAVEGAME_NAMES_Y + (index * 8), saveNames[index]->c_str(), true);
 
 	// Display the dialog
 	s->copyTo(&screen.screen(), SAVE_DIALOG_X, SAVE_DIALOG_Y);
