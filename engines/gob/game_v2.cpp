@@ -407,7 +407,7 @@ int16 Game_v2::checkCollisions(byte handleMouse, int16 deltaTime, int16 *pResId,
 	int16 newkey;
 	uint32 timeKey;
 
-	_handleMouse = handleMouse;
+	_scrollHandleMouse = handleMouse != 0;
 
 	if (deltaTime >= -1) {
 		_lastCollKey = 0;

@@ -129,6 +129,7 @@ public:
 	int16 _mouseButtons;
 
 	bool _noScroll;
+	bool _scrollHandleMouse;
 
 	Game(GobEngine *vm);
 	virtual ~Game();

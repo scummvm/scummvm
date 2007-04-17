@@ -78,6 +78,7 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_forceHandleMouse = 0;
 	_menuLevel = 0;
 	_noScroll = true;
+	_scrollHandleMouse = false;
 
 	_tempStr[0] = 0;
 	_curImaFile[0] = 0;
@@ -290,7 +291,7 @@ void Game::freeSoundSlot(int16 slot) {
 }
 
 void Game::evaluateScroll(int16 x, int16 y) {
-	if ((_handleMouse == 0) || (_menuLevel > 0))
+	if (!_scrollHandleMouse || (_menuLevel > 0))
 		return;
 
 	if (_noScroll || (_vm->_global->_videoMode != 0x14))
