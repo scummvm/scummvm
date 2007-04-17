@@ -104,6 +104,8 @@ void Mult::initAll(void) {
 	_objects = 0;
 	_animSurf = 0;
 	_renderData = 0;
+
+	_vm->_scenery->init();
 }
 
 void Mult::freeAll(void) {
@@ -113,7 +115,6 @@ void Mult::freeAll(void) {
 		_vm->_scenery->freeAnim(i);
 		_vm->_scenery->freeStatic(i);
 	}
-	_vm->_scenery->init();
 }
 
 void Mult::freeMult() {
