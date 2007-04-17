@@ -75,7 +75,7 @@ private:
 	static void catrionaAnimHandler(Hotspot &h);
 	static void morkusAnimHandler(Hotspot &h);
 	static void talkAnimHandler(Hotspot &h);
-	static void headAnimHandler(Hotspot &h);
+	static void grubAnimHandler(Hotspot &h);
 	static void barmanAnimHandler(Hotspot &h);
 	static void skorlGaurdAnimHandler(Hotspot &h);
 	static void gargoyleAnimHandler(Hotspot &h);

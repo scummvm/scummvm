@@ -2098,7 +2098,7 @@ HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 	case 0x820E:
 		return morkusAnimHandler;
 	case 0x8241:
-		return headAnimHandler;
+		return grubAnimHandler;
 	case 0x82A0:
 		return barmanAnimHandler;
 	case 0x85ce:
@@ -3188,21 +3188,25 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 	}
 }
 
-void HotspotTickHandlers::headAnimHandler(Hotspot &h) {
+void HotspotTickHandlers::grubAnimHandler(Hotspot &h) {
 	Resources &res = Resources::getReference();
+	h.handleTalkDialog();
+
 	Hotspot *character = res.getActiveHotspot(PLAYER_ID);
 	uint16 frameNumber = 0;
 
 	if (character->y() < 79) {
-		// TODO: 
-		//character = res.getActiveHotspot(RATPOUCH_ID);
-		frameNumber = 1;
-	} else {
-		if (character->x() < 72) frameNumber = 0;
-		else if (character->x() < 172) frameNumber = 1;
-		else frameNumber = 2;
+		// If player is behind Grub, use Ratpouch if possible
+		Hotspot *ratpouch = res.getActiveHotspot(RATPOUCH_ID);
+		if ((ratpouch != NULL) && (ratpouch->roomNumber() == h.roomNumber()))
+			character = ratpouch;
 	}
 
+	if (character->x() < 72) frameNumber = 0;
+	else if (character->x() < 172) frameNumber = 1;
+	else frameNumber = 2;
+
+	h.setActionCtr(frameNumber);
 	h.setFrameNumber(frameNumber);
 }
 
