@@ -884,7 +884,7 @@ void read_room_exit_coordinate_data(byte *&data, uint16 &totalSize)
 
 	// Post process the list to adjust data
 	RoomExitCoordinateEntryResource *rec = (RoomExitCoordinateEntryResource *) data;
-	for (roomNum = 0; roomNum < EXIT_COORDINATES_NUM_ROOMS; ++roomNum, ++rec) {
+	for (roomNum = 1; roomNum <= EXIT_COORDINATES_NUM_ROOMS; ++roomNum, ++rec) {
 		for (entryNum = 0; entryNum < ROOM_EXIT_COORDINATES_NUM_ENTRIES; ++entryNum) {
 			if ((rec->entries[entryNum].x != 0) || (rec->entries[entryNum].y != 0)) {
 				rec->entries[entryNum].x = TO_LE_16(FROM_LE_16(rec->entries[entryNum].x) - 0x80);
@@ -897,6 +897,10 @@ void read_room_exit_coordinate_data(byte *&data, uint16 &totalSize)
 		for (entryNum = 0; entryNum < ROOM_EXIT_COORDINATES_ENTRY_NUM_ROOMS; ++entryNum) {
 			rec->roomIndex[entryNum] = TO_LE_16(FROM_LE_16(rec->roomIndex[entryNum]) / 6);
 		}
+
+		// Bugfix for the original game data to get to room #27 via rooms #10 or #11 
+		if ((roomNum == 10) || (roomNum == 11))
+			rec->roomIndex[26] = 1;
 	}
 }
 
