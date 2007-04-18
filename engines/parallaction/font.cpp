@@ -251,18 +251,22 @@ class AmigaFont : public Font {
 		uint16	_accessors;	// unused
 		byte	_loChar;
 		byte	_hiChar;
-		byte	*_charData;
+		uint32	_charData;
 		uint16	_modulo;
-		CharLoc	*_charLoc;
-		uint16	*_charSpace;
-		uint16	*_charKern;
+		uint32	_charLoc;
+		uint32	_charSpace;
+		uint32	_charKern;
 	};
 #include "common/pack-end.h"
 
 	AmigaDiskFont	*_font;
 	uint32		_dataSize;
 	byte		*_data;
-	bool			_proportional;
+	bool		_proportional;
+	byte		*_charData;
+	CharLoc		*_charLoc;
+	uint16		*_charSpace;
+	uint16		*_charKern;
 
 	byte			*_cp;
 	uint32		_pitch;
@@ -304,11 +308,17 @@ AmigaFont::AmigaFont(Common::SeekableReadStream &stream) {
 	_font->_xSize = FROM_BE_16(_font->_xSize);
 	_font->_baseline = FROM_BE_16(_font->_baseline);
 	_font->_modulo = FROM_BE_16(_font->_modulo);
-
+/*
 	_font->_charLoc = (CharLoc*)(_data + FROM_BE_32((uint32)_font->_charLoc));
 	_font->_charData = _data + FROM_BE_32((uint32)_font->_charData);
 	_font->_charSpace = (uint16*)(_data + FROM_BE_32((uint32)_font->_charSpace));
 	_font->_charKern = (uint16*)(_data + FROM_BE_32((uint32)_font->_charKern));
+*/
+	_charLoc = (CharLoc*)(_data + FROM_BE_32(_font->_charLoc));
+	_charData = _data + FROM_BE_32(_font->_charData);
+	_charSpace = (uint16*)(_data + FROM_BE_32(_font->_charSpace));
+	_charKern = (uint16*)(_data + FROM_BE_32(_font->_charKern));
+
 /*
 	printf("H = %i, W = %i\n", _font->_ySize, _font->_xSize);
 	printf("_data = %p\n", _data);
@@ -327,19 +337,19 @@ AmigaFont::~AmigaFont() {
 }
 
 uint16 AmigaFont::getSpacing(char c) {
-	return FROM_BE_16(_proportional  ? _font->_charSpace[c] : _font->_xSize);
+	return FROM_BE_16(_proportional  ? _charSpace[c] : _font->_xSize);
 }
 
 uint16 AmigaFont::getKerning(char c) {
-	return FROM_BE_16(_font->_charKern[c]);
+	return FROM_BE_16(_charKern[c]);
 }
 
 uint16 AmigaFont::getPixels(char c) {
-	return FROM_BE_16(_font->_charLoc[c]._length);
+	return FROM_BE_16(_charLoc[c]._length);
 }
 
 uint16 AmigaFont::getOffset(char c) {
-	return FROM_BE_16(_font->_charLoc[c]._offset);
+	return FROM_BE_16(_charLoc[c]._offset);
 }
 
 void AmigaFont::blitData(char c) {
@@ -348,7 +358,7 @@ void AmigaFont::blitData(char c) {
 	int bitOffset = getOffset(c);
 
 	byte *d = _cp;
-	byte *s = _font->_charData;
+	byte *s = _charData;
 
 	for (int i = 0; i < _font->_ySize; i++) {
 
