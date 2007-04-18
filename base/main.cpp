@@ -64,6 +64,8 @@ static bool launcherDialog(OSystem &system) {
 		system.initSize(320, 200);
 	system.endGFXTransaction();
 
+	// Set initial window caption
+	system.setWindowCaption(gScummVMFullVersion);
 
 	// Clear the main screen
 	system.clearScreen();
@@ -269,9 +271,6 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// Init the backend. Must take place after all config data (including
 	// the command line params) was read.
 	system.initBackend();
-
-	// Set initial window caption
-	system.setWindowCaption(gScummVMFullVersion);
 
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain()) {
