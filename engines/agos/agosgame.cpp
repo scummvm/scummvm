@@ -1018,6 +1018,30 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// Simon the Sorcerer 1 - English DOS CD with Russian patch
+	{
+		{
+			"simon1",
+			"CD",
+
+			{
+	{ "gamepc",		GAME_BASEFILE,	"3fac46064f69e5298f4f027f204c5aab", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
+	{ "simon.gme",		GAME_GMEFILE,	"91321f0d806f8d9fef71a00e58581427", -1},
+	{ "stripped.txt",	GAME_STRFILE,	"ef51ac74c946881ae4d7ca66cc7a0d1e", -1},
+	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_SIMON1,
+		GID_SIMON1TALKIE,
+		GF_TALKIE
+	},
+
 	// Simon the Sorcerer 1 - French DOS CD
 	{
 		{
@@ -1178,30 +1202,6 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
-			Common::kPlatformWindows,
-			Common::ADGF_NO_FLAGS
-		},
-
-		GType_SIMON1,
-		GID_SIMON1TALKIE,
-		GF_TALKIE
-	},
-
-	// Simon the Sorcerer 1 - English Windows CD with Russian patch
-	{
-		{
-			"simon1",
-			"CD",
-
-			{
-	{ "gamepc",		GAME_BASEFILE,	"4536a706412b36d628f12142bfa97af0", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
-	{ "simon.gme",		GAME_GMEFILE,	"b1b18d0731b64c0738c5cc4a2ee792fc", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"a27e87a9ba21212d769804b3df47bfb2", -1},
-	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
-	{ NULL, 0, NULL, 0}
-			},
-			Common::RU_RUS,
 			Common::kPlatformWindows,
 			Common::ADGF_NO_FLAGS
 		},
