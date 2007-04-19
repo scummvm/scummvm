@@ -10,5 +10,5 @@ Exec=scummvm
 Icon=scummvm.xpm
 Terminal=false
 Type=Application
-Categories=Game;AdventureGame;
+Categories=Application;Game;AdventureGame;
 StartupNotify=false
