@@ -303,6 +303,12 @@
 				RelativePath="..\..\sound\adpcm.h">
 			</File>
 			<File
+				RelativePath="..\..\sound\aiff.cpp">
+			</File>
+			<File
+				RelativePath="..\..\sound\aiff.h">
+			</File>
+			<File
 				RelativePath="..\..\sound\audiocd.cpp">
 			</File>
 			<File
@@ -593,6 +599,16 @@
 				</File>
 				<File
 					RelativePath="..\..\backends\saves\savefile.cpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="events"
+				Filter="">
+				<File
+					RelativePath="..\..\backends\events\default\default-events.cpp">
+				</File>
+				<File
+					RelativePath="..\..\backends\events\default\default-events.h">
 				</File>
 			</Filter>
 		</Filter>

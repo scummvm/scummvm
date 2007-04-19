@@ -198,9 +198,6 @@
 			RelativePath="..\..\engines\agi\opcodes.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\patches.cpp">
-		</File>
-		<File
 			RelativePath="..\..\engines\agi\picture.cpp">
 		</File>
 		<File

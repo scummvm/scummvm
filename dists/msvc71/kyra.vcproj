@@ -134,16 +134,16 @@
 			RelativePath="..\..\engines\kyra\kyra.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra2.cpp">
+			RelativePath="..\..\engines\kyra\kyra_v2.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra2.h">
+			RelativePath="..\..\engines\kyra\kyra_v2.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra3.cpp">
+			RelativePath="..\..\engines\kyra\kyra_v3.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra3.h">
+			RelativePath="..\..\engines\kyra\kyra_v3.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\plugin.cpp">
