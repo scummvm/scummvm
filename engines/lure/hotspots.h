@@ -459,13 +459,13 @@ public:
 		assert(_data);
 		_data->useHotspotId = value;
 	}
-	uint16 v2b() {
+	uint16 talkGate() {
 		assert(_data);
-		return _data->v2b;
+		return _data->talkGate;
 	}
-	void setV2b(uint16 value) {
+	void setTalkGate(uint16 value) {
 		assert(_data);
-		_data->v2b = value;
+		_data->talkGate = value;
 	}
 	uint16 supportValue() { return _supportValue; }
 	void setSupportValue(uint16 value) { _supportValue = value; }

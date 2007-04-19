@@ -225,6 +225,7 @@ enum Action {
 #define PLAYER_ID 0x3E8
 #define RATPOUCH_ID 0x3E9
 #define SKORL_ID 0x3EA
+#define BLACKSMITH_ID 0x3EB
 #define GOEWIN_ID 0x3EF
 #define FIRST_NONCHARACTER_ID 0x408
 #define SACK_ID 0x40D

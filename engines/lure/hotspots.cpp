@@ -659,12 +659,15 @@ void Hotspot::converse(uint16 destCharacterId, uint16 messageId, bool standStill
 		// in case the destination is already in process of talking
 		HotspotData *hotspot = Resources::getReference().getHotspot(destCharacterId);
 		_data->talkCountdown += hotspot->talkCountdown;
+		
+		_data->talkDestCharacterId = _hotspotId;
+		_data->talkGate = 0;
 	}
 
 	if (standStill) {
 		setDelayCtr(_data->talkCountdown);
 		_data->characterMode = CHARMODE_CONVERSING;
-		//TODO: HS[3Eh]=use_hotspot_id, HS[40h]=active_hotspot_id
+		//TODO: HS[3Eh]=character_hotspot_id, HS[40h]=active_hotspot_id
 	}
 }
 
@@ -845,8 +848,8 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 		} else if (hotspot->actionHotspotId != _hotspotId) {
 			if (fields.getField(88) == 2) {
 				// loc_882
-				hotspot->v2b = 0x2A;
-				hotspot->useHotspotId = _hotspotId;
+				hotspot->talkGate = 0x2A;
+				hotspot->talkDestCharacterId = _hotspotId;
 				return PC_WAIT;
 			} else {
 				converse(NOONE_ID, 5);
@@ -1349,7 +1352,7 @@ void Hotspot::doGive(HotspotData *hotspot) {
 	endAction();
 
 	if ((hotspot->hotspotId != PRISONER_ID) || (usedId != BOTTLE_HOTSPOT_ID)) 
-		showMessage(7);
+		showMessage(7, hotspot->hotspotId);
 	
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, GIVE);
 
@@ -1380,7 +1383,7 @@ void Hotspot::doTalkTo(HotspotData *hotspot) {
 	fields.setField(USE_HOTSPOT_ID, hotspot->hotspotId);
 
 	if ((hotspot->hotspotId != SKORL_ID) && ((hotspot->roomNumber != 28) || 
-		(hotspot->hotspotId != 0x3EB))) {
+		(hotspot->hotspotId != BLACKSMITH_ID))) {
 
 		HotspotPrecheckResult result = actionPrecheck(hotspot);
 		if (result == PC_WAIT) return;
@@ -2156,14 +2159,14 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 
 	// Handle any active hotspot the character is using (for example, if the player is
 	// talking to a character, this stops them from moving for the duration)
-	if (h.useHotspotId() != 0) {
-		debugC(ERROR_DETAILED, kLureDebugAnimations, "Use Hotspot Id = %xh, v2b = %d",
-			h.useHotspotId(), h.v2b());
-		if (h.v2b() == 0x2A) {
-			fields.setField(ACTIVE_HOTSPOT_ID, h.v2b());
-			fields.setField(USE_HOTSPOT_ID, h.useHotspotId());
+	if (h.resource()->talkDestCharacterId != 0) {
+		debugC(ERROR_DETAILED, kLureDebugAnimations, "Use Hotspot Id = %xh, talk_gate = %d",
+			h.resource()->talkDestCharacterId, h.talkGate());
+		if (h.talkGate() == 0x2A) {
+			fields.setField(ACTIVE_HOTSPOT_ID, h.talkGate());
+			fields.setField(USE_HOTSPOT_ID, h.resource()->talkDestCharacterId);
 			Script::execute(h.script());
-			h.setUseHotspotId(0);
+			h.resource()->talkDestCharacterId = 0;
 		} else {
 			h.updateMovement();
 			return;
@@ -3248,7 +3251,7 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 						h.setFrameCtr(barEntry.currentCustomer->serveFlags);
 						barEntry.currentCustomer->serveFlags &= 0xf8;
 
-					} else if (!h.useHotspotId() == 0) {
+					} else if (h.resource()->talkDestCharacterId == 0) {
 						// Player is not currently talking
 						// Clear entry from list
 						barEntry.currentCustomer->hotspotId = 0;
@@ -3271,7 +3274,6 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 				barEntry.currentCustomer = &barEntry.customers[index];
 				Hotspot *hotspot = res.getActiveHotspot(barEntry.customers[index].hotspotId);
 				assert(hotspot);
-//DEBUG/TODO: Reaching here too early, so servee's x can be outside the bar range
 				h.setSupportValue(hotspot->x());    // Save the position to move to
 				h.setFrameCtr(0x80);				// Flag for movement
 				return;

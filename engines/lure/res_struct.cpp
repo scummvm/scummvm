@@ -339,9 +339,8 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	talkMessageId = 0;
 	talkDestCharacterId = 0;
 	talkCountdown = 0;
-	pauseCtr = 0;
 	useHotspotId = 0;
-	v2b = 0;
+	pauseCtr = 0;
 	actionHotspotId = 0;
 	talkOverride = 0;
 }
@@ -381,7 +380,7 @@ void HotspotData::saveToStream(WriteStream *stream) {
 	stream->writeUint16LE(pauseCtr);
 	stream->writeUint16LE(useHotspotId);
 	stream->writeUint16LE(use2HotspotId);
-	stream->writeUint16LE(v2b);
+	stream->writeUint16LE(talkGate);
 	stream->writeUint16LE(actionHotspotId);
 	stream->writeUint16LE(talkOverride);
 }
@@ -421,7 +420,7 @@ void HotspotData::loadFromStream(ReadStream *stream) {
 	pauseCtr = stream->readUint16LE();
 	useHotspotId = stream->readUint16LE();
 	use2HotspotId = stream->readUint16LE();
-	v2b = stream->readUint16LE();
+	talkGate = stream->readUint16LE();
 	actionHotspotId = stream->readUint16LE();
 	talkOverride = stream->readUint16LE();
 }

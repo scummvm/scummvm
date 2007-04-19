@@ -435,11 +435,12 @@ public:
 	uint16 talkDestCharacterId;
 	uint16 talkCountdown;
 	uint16 pauseCtr;
-	uint16 useHotspotId;
-	uint16 use2HotspotId;
-	uint16 v2b;
+	uint16 useHotspotId;	
+	uint16 talkGate;
 	uint16 actionHotspotId;
 	uint16 talkOverride;
+
+	uint16 use2HotspotId;
 
 	void enable() { flags |= 0x80; }
 	void disable() { flags &= 0x7F; }
