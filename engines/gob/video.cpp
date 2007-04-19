@@ -89,7 +89,9 @@ Video::Video(GobEngine *vm) : _vm(vm) {
 	_surfHeight = 200;
 	_scrollOffsetX = 0;
 	_scrollOffsetY = 0;
-	_splitHeight = 200;
+	_splitHeight1 = 200;
+	_splitHeight2 = 0;
+	_splitStart = 0;
 
 	_curSparse = 0;
 	_lastSparse = 0xFFFFFFFF;
@@ -162,11 +164,11 @@ void Video::retrace(bool mouse) {
 	if (_vm->_global->_primarySurfDesc) {
 		g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() +
 				_scrollOffsetY * _surfWidth + _scrollOffsetX, _surfWidth,
-				0, 0, 320, _splitHeight);
-		if (_splitHeight < _surfHeight)
+				0, 0, 320, _splitHeight1);
+		if (_splitHeight2 > 0)
 			g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() +
-					_splitHeight * _surfWidth, _surfWidth, 0, _splitHeight, 320,
-					_surfHeight - _splitHeight);
+					_splitStart * _surfWidth, _surfWidth, 0,
+					200 - _splitHeight2, 320, _splitHeight2);
 		g_system->updateScreen();
 	}
 }

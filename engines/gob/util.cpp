@@ -125,8 +125,13 @@ void Util::processInput(bool scroll) {
 	}
 
 	_vm->_global->_speedFactor = MIN(_fastMode + 1, 3);
-	if (scroll && hasMove)
+	if (scroll && hasMove) {
+		if (y >= (200 - _vm->_video->_splitHeight2)) {
+			y = 200 - _vm->_video->_splitHeight2 - 1;
+			_vm->_util->setMousePos(x, y);
+		}
 		_vm->_game->evaluateScroll(x, y);
+	}
 }
 
 void Util::clearKeyBuf(void) {

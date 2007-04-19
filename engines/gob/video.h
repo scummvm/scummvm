@@ -99,7 +99,9 @@ public:
 	int16 _surfHeight;
 	int16 _scrollOffsetX;
 	int16 _scrollOffsetY;
-	int16 _splitHeight;
+	int16 _splitHeight1;
+	int16 _splitHeight2;
+	int16 _splitStart;
 
 	void freeDriver();
 	void initPrimary(int16 mode);

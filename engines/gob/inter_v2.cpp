@@ -1376,7 +1376,9 @@ void Inter_v2::o2_initScreen() {
 	if (height > 0)
 		_vm->_video->_surfHeight = height;
 	
-	_vm->_video->_splitHeight = _vm->_video->_surfHeight - offY;
+	_vm->_video->_splitHeight1 = MIN(200, _vm->_video->_surfHeight - offY);
+	_vm->_video->_splitHeight2 = offY;
+	_vm->_video->_splitStart = _vm->_video->_surfHeight - offY;
 
 	_vm->_draw->closeScreen();
 	_vm->_util->clearPalette();
