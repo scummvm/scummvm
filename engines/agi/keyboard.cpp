@@ -92,6 +92,11 @@ int AgiEngine::doPollKeyboard() {
 	/* If a key is ready, rip it */
 	if (_gfx->keypress()) {
 		key = _gfx->getKey();
+
+		if ((getFeatures() & GF_MANHUNTER) && (key == KEY_ENTER) &&
+			(_game.inputMode == INPUT_NONE))
+			key = 0x20; // Set Enter key to Space in Manhunter when there's no text input
+
 		debugC(3, kDebugLevelInput, "key %02x pressed", key);
 	}
 

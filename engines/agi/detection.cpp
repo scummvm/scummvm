@@ -897,7 +897,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
-		0,
+		GF_MANHUNTER,
 		0x3149,
 	},
 
@@ -913,7 +913,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
-		0,
+		GF_MANHUNTER,
 		0x3149,
 	},
 
@@ -929,7 +929,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
-		0,
+		GF_MANHUNTER,
 		0x3149,
 	},
 
@@ -946,7 +946,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
-		0,
+		GF_MANHUNTER,
 		0x3149,
 	},
 
@@ -962,7 +962,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
-		0,
+		GF_MANHUNTER,
 		0x3149,
 	},
 
@@ -978,7 +978,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
-		0,
+		GF_MANHUNTER,
 		0x3149,
 	},
 
@@ -994,7 +994,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
-		0,
+		GF_MANHUNTER,
 		0x3086,
 	},
 
@@ -1010,7 +1010,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
-		0,
+		GF_MANHUNTER,
 		0x3149,
 	},
 
@@ -1026,7 +1026,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
-		0,
+		GF_MANHUNTER,
 		0x3149,
 	},
 
