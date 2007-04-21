@@ -1230,6 +1230,14 @@ void ScummEngine_v7::loadLanguageBundle() {
 	ScummFile file;
 	int32 size;
 
+	// if game is manually set to English, don't try to load localized text
+	if ((_language == Common::EN_ANY) || (_language == Common::EN_USA) || (_language == Common::EN_GRB)) {
+		warning("Language file is forced to be ignored");
+
+		_existLanguageFile = false;
+		return;
+	}
+
 	if (_game.id == GID_DIG) {
 		openFile(file, "language.bnd");
 	} else if (_game.id == GID_CMI) {
