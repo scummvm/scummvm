@@ -513,7 +513,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
-		0,
+		GF_ESC_MENU,
 		0x2917,
 	},
 
@@ -529,7 +529,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
-		0,
+		GF_ESC_MENU,
 		0x2440,
 	},
 
@@ -545,7 +545,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
-		0,
+		GF_ESC_MENU,
 		0x2440,
 	},
 
@@ -561,7 +561,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
-		0,
+		GF_ESC_MENU,
 		0x2440,		// XXX: any major differences from 2.411 to 2.440?
 	},
 
@@ -577,7 +577,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
-		0,
+		GF_ESC_MENU,
 		0x2917,
 	},
 

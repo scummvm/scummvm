@@ -102,8 +102,8 @@ int AgiEngine::handleController(int key) {
 	VtEntry *v = &_game.viewTable[0];
 	int i;
 
-	/* The Black Cauldron needs KEY_ESCAPE to use menus */
-	if (key == 0 /*|| key == KEY_ESCAPE */ )
+	/* AGI 3.149 games need KEY_ESCAPE to use menus */
+	if (key == 0 || (key == KEY_ESCAPE && (getFeatures() & GF_ESC_MENU)) )
 		return false;
 
 	debugC(3, kDebugLevelInput, "key = %04x", key);
