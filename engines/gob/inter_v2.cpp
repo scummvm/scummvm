@@ -975,7 +975,7 @@ void Inter_v2::o2_loadMultObject() {
 			_vm->_global->_inter_execPtr++;
 	}
 
-	if (_vm->_goblin->_gobsCount < 0)
+	if (_vm->_goblin->_gobsCount <= objIndex)
 		return;
 
 	Mult::Mult_Object &obj = _vm->_mult->_objects[objIndex];
