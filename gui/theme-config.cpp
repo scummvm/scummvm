@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+ * Copyright (C) 2006-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -284,14 +284,15 @@ const char *Theme::_defaultConfigINI =
 "gameoptions_ok=(prev.x2 + 10) prev.y prev.w prev.h\n"
 "\n"
 "### keys dialog\n"
-"keysdialog=(w / 20) (h / 10) (w - w / 10) (h - h / 5)\n"
+"keysdialog=(w / 20) (h / 10) (w - w / 10) (h - h / 4)\n"
 "set_parent=keysdialog\n"
-"keysdialog_map=(parent.w - buttonWidth - 10) 20 buttonWidth buttonHeight\n"
+"keysdialog_map=(parent.w - buttonWidth - 10) (10 + 2 * kLineHeight) buttonWidth buttonHeight\n"
 "keysdialog_ok=prev.x (prev.y2 + 4) prev.w prev.h\n"
 "keysdialog_cancel=prev.x (prev.y2 + 4) prev.w prev.h\n"
-"keysdialog_list=10 10 (prev.x - 20) (parent.h - kLineHeight * 4 - self.y)\n"
-"keysdialog_action=prev.x (parent.h - kLineHeight * 3) (parent.w - self.x * 2) kLineHeight\n"
-"keysdialog_mapping=prev.x (prev.y + kLineHeight) prev.w prev.h\n"
+"keysdialog_action=10 10 (parent.w - 20) kLineHeight\n"
+"keysdialog_action.align=kTextAlignCenter\n"
+"keysdialog_list=prev.x (prev.y + 2 * kLineHeight) (parent.w - buttonWidth - 30) (parent.h - kLineHeight * 6)\n"
+"keysdialog_mapping=prev.x (prev.y + prev.h + kLineHeight) (parent.w - buttonWidth - 20) kLineHeight\n"
 "\n"
 "### mass add dialog\n"
 "massadddialog=10 20 300 174\n"

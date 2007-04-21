@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2001-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,16 +31,6 @@
 
 namespace GUI {
 
-/*
-using GUI::ListWidget;
-using GUI::kListNumberingZero;
-using GUI::WIDGET_CLEARBG;
-using GUI::kListSelectionChangedCmd;
-using GUI::kCloseCmd;
-using GUI::StaticTextWidget;
-using GUI::CommandSender;
-*/
-
 enum {
 	kMapCmd					= 'map ',
 	kOKCmd					= 'ok  '
@@ -60,7 +50,7 @@ KeysDialog::KeysDialog(const Common::String &title)
 	_actionsList->setNumberingMode(kListNumberingZero);
 
 	_actionTitle = new StaticTextWidget(this, "keysdialog_action", title);
-	_keyMapping = new StaticTextWidget(this, "keysdialog_mapping", "");
+	_keyMapping = new StaticTextWidget(this, "keysdialog_mapping", "Select an action and click 'Map'");
 
 	_actionTitle->setFlags(WIDGET_CLEARBG);
 	_keyMapping->setFlags(WIDGET_CLEARBG);
@@ -82,26 +72,26 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 	case kListSelectionChangedCmd:
 		if (_actionsList->getSelected() >= 0) {
-				char selection[100];
+			char selection[100];
 #ifdef __SYMBIAN32__
-				uint16 key = Actions::Instance()->getMapping(_actionsList->getSelected());
-				
-				if (key != 0) {
-					// ScummVM mappings for F1-F9 are different from SDL so remap back to sdl
-					if (key >= 315 && key <= 323) {
-						key = key - 315 + SDLK_F1;
-					}
-				}
+			uint16 key = Actions::Instance()->getMapping(_actionsList->getSelected());
 
-				if (key != 0)
-					sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey)key));
-				else
-					sprintf(selection, "Associated key : none");
+			if (key != 0) {
+				// ScummVM mappings for F1-F9 are different from SDL so remap back to sdl
+				if (key >= 315 && key <= 323) {
+					key = key - 315 + SDLK_F1;
+				}
+			}
+
+			if (key != 0)
+				sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey)key));
+			else
+				sprintf(selection, "Associated key : none");
 #else
-				sprintf(selection, "Associated key : %s", CEDevice::getKeyName(Actions::Instance()->getMapping((ActionType)(_actionsList->getSelected()))).c_str());
+			sprintf(selection, "Associated key : %s", CEDevice::getKeyName(Actions::Instance()->getMapping((ActionType)(_actionsList->getSelected()))).c_str());
 #endif
-				_keyMapping->setLabel(selection);
-				_keyMapping->draw();
+			_keyMapping->setLabel(selection);
+			_keyMapping->draw();
 		}
 		break;
 	case kMapCmd:
@@ -109,29 +99,29 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 				_actionTitle->setLabel("Please select an action");
 		}
 		else {
-				char selection[100];
+			char selection[100];
 
-				_actionSelected = _actionsList->getSelected();
+			_actionSelected = _actionsList->getSelected();
 #ifdef __SYMBIAN32__
-				uint16 key = Actions::Instance()->getMapping(_actionSelected);
-				if (key != 0) {
-					// ScummVM mappings for F1-F9 are different from SDL so remap back to sdl
-					if (key >= 315 && key <= 323) {
-						key = key - 315 + SDLK_F1;
-					}
-
-					sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey)key));
+			uint16 key = Actions::Instance()->getMapping(_actionSelected);
+			if (key != 0) {
+				// ScummVM mappings for F1-F9 are different from SDL so remap back to sdl
+				if (key >= 315 && key <= 323) {
+					key = key - 315 + SDLK_F1;
 				}
-				else
-					sprintf(selection, "Associated key : none");
+
+				sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey)key));
+			}
+			else
+				sprintf(selection, "Associated key : none");
 #else
-				sprintf(selection, "Associated key : %s", CEDevice::getKeyName(Actions::Instance()->getMapping((ActionType)_actionSelected)).c_str());
+			sprintf(selection, "Associated key : %s", CEDevice::getKeyName(Actions::Instance()->getMapping((ActionType)_actionSelected)).c_str());
 #endif
-				_actionTitle->setLabel("Press the key to associate");
-				_keyMapping->setLabel(selection);
-				_keyMapping->draw();
-				Actions::Instance()->beginMapping(true);
-				_actionsList->setEnabled(false);
+			_actionTitle->setLabel("Press the key to associate");
+			_keyMapping->setLabel(selection);
+			_keyMapping->draw();
+			Actions::Instance()->beginMapping(true);
+			_actionsList->setEnabled(false);
 		}
 		_actionTitle->draw();
 		break;
@@ -147,9 +137,9 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 }
 
 void KeysDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers){
-		if (!Actions::Instance()->mappingActive()) {
-			Dialog::handleKeyDown(ascii,keycode,modifiers);
-		}
+	if (!Actions::Instance()->mappingActive()) {
+		Dialog::handleKeyDown(ascii,keycode,modifiers);
+	}
 }
 
 void KeysDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
