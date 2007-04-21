@@ -479,18 +479,21 @@ void Script::doVerb() {
 
 	if (scriptEntrypointNumber > 0) {
 
-		event.type = kEvTOneshot;
-		event.code = kScriptEvent;
-		event.op = kEventExecNonBlocking;
-		event.time = 0;
-		event.param = scriptModuleNumber;
-		event.param2 = scriptEntrypointNumber;
-		event.param3 = _pendingVerb;		// Action
-		event.param4 = _pendingObject[0];	// Object
-		event.param5 = _pendingObject[1];	// With Object
-		event.param6 = (objectType == kGameObjectActor) ? _pendingObject[0] : ID_PROTAG;		// Actor
+		// WORKAROUND: Fixes bug #1690045 "ITE: Item description missing / ScummVM crash"
+		if (!(_vm->_scene->currentSceneNumber() == 278 && (_pendingObject[0] == 16419 || _pendingObject[1] == 16419))) {
+			event.type = kEvTOneshot;
+			event.code = kScriptEvent;
+			event.op = kEventExecNonBlocking;
+			event.time = 0;
+			event.param = scriptModuleNumber;
+			event.param2 = scriptEntrypointNumber;
+			event.param3 = _pendingVerb;		// Action
+			event.param4 = _pendingObject[0];	// Object
+			event.param5 = _pendingObject[1];	// With Object
+			event.param6 = (objectType == kGameObjectActor) ? _pendingObject[0] : ID_PROTAG;		// Actor
 
-		_vm->_events->queue(&event);
+			_vm->_events->queue(&event);
+		}
 
 	} else {
 		_vm->getExcuseInfo(_pendingVerb, excuseText, excuseSampleResourceId);
