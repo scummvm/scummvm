@@ -54,7 +54,7 @@ TARGET = scummvm.exe
 OBJS := 
 MODULE_DIRS += .
 
-OBJS += CEActionsPocket.o CEDevice.o CEKeysDialog.o CEScaler.o \
+OBJS += CEActionsPocket.o CEDevice.o CEScaler.o \
         CEActionsSmartphone.o CELauncherDialog.o wince-sdl.o 
 OBJS += CEgui/GUIElement.o CEgui/Panel.o CEgui/SDL_ImageResource.o \
         CEgui/ItemAction.o CEgui/PanelItem.o CEgui/Toolbar.o \
