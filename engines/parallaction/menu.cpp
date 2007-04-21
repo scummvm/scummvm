@@ -108,12 +108,12 @@ void Menu::start() {
 	_vm->_gfx->_proportionalFont = false;
 
 	_vm->_disk->loadSlide("intro");
-	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	g_system->delayMillis(2000);
 
 	_vm->_disk->loadSlide("minintro");
-	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	g_system->delayMillis(2000);
 
@@ -121,7 +121,7 @@ void Menu::start() {
 		_vm->_gfx->setFont(kFontMenu);
 
 		_vm->_disk->loadSlide("lingua");
-		_vm->_gfx->extendPalette(_vm->_gfx->_palette);
+		_vm->_gfx->setPalette(_vm->_gfx->_palette);
 		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 		_vm->_gfx->displayString(60, 30, "SELECT LANGUAGE");
@@ -147,7 +147,7 @@ void Menu::newGame() {
 	const char **v14 = introMsg3;
 
 	_vm->_disk->loadScenery("test", NULL);
-	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->swapBuffers();
 
 	uint16 _ax = (SCREEN_WIDTH - _vm->_gfx->getStringWidth(v14[0])) / 2;
@@ -221,7 +221,7 @@ uint16 Menu::selectGame() {
 
 
 	_vm->_disk->loadSlide("restore");
-	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
@@ -302,7 +302,7 @@ void Menu::selectCharacter() {
 
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);	//
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);		//
-	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 
 	while (askPassword == true) {
 

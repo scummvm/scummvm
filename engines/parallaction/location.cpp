@@ -252,7 +252,7 @@ void Parallaction::switchBackground(const char* background, const char* mask) {
 			_si += 3;
 		}
 
-		_gfx->extendPalette(pal);
+		_gfx->setPalette(pal);
 	}
 
 	_disk->loadScenery(background, mask);
@@ -267,7 +267,7 @@ extern Job     *_jEraseLabel;
 void Parallaction::showSlide(const char *name) {
 
 	_disk->loadSlide(name);
-	_gfx->extendPalette(_gfx->_palette);
+	_gfx->setPalette(_gfx->_palette);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	debugC(1, kDebugLocation, "changeLocation: new background set");
@@ -385,7 +385,7 @@ void Parallaction::changeLocation(char *location) {
 
 	byte palette[PALETTE_SIZE];
 	for (uint16 _si = 0; _si < PALETTE_SIZE; _si++) palette[_si] = 0;
-	_gfx->extendPalette(palette);
+	_gfx->setPalette(palette);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	if (_location._commands.size() > 0) {
@@ -404,7 +404,7 @@ void Parallaction::changeLocation(char *location) {
 	runJobs();
 	_gfx->swapBuffers();
 
-	_gfx->extendPalette(_gfx->_palette);
+	_gfx->setPalette(_gfx->_palette);
 	if (_location._aCommands.size() > 0) {
 		runCommands(_location._aCommands);
 		debugC(1, kDebugLocation, "changeLocation: location acommands run");
@@ -432,7 +432,7 @@ void Parallaction::doLocationEnterTransition() {
 
 	byte pal[PALETTE_SIZE];
 	_gfx->buildBWPalette(pal);
-	_gfx->setPalette(pal, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
+	_gfx->setPalette(pal);
 
 	jobRunScripts(NULL, NULL);
 	jobEraseAnimations(NULL, NULL);

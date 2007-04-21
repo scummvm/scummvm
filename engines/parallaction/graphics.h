@@ -201,13 +201,15 @@ public:
 	void blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
 
 	// palette
-	void setPalette(Palette palette, uint32 first = FIRST_BASE_COLOR, uint32 num = PALETTE_COLORS);
+	void setPalette(Palette palette, uint32 first = FIRST_BASE_COLOR, uint32 num = BASE_PALETTE_COLORS);
 	void setBlackPalette();
 	void animatePalette();
 	void fadePalette(Palette palette);
 	void buildBWPalette(Palette palette);
 	void quickFadePalette(Palette palette);
-	void extendPalette(Palette palette);
+
+	// amiga specific
+	void setHalfbriteMode(bool enable);
 
 	// init
 	Gfx(Parallaction* vm);
@@ -232,6 +234,7 @@ protected:
 	StaticCnv			*_mouseComposedArrow;
 	Font				*_font;
 	Font				*_fonts[3];
+	bool				_halfbrite;
 
 protected:
 	byte mapChar(byte c);

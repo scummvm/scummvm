@@ -336,6 +336,8 @@ void Parallaction::displayItemComment(ExamineData *data) {
 
 	if (data->_description == NULL) return;
 
+	_gfx->setHalfbriteMode(true);
+
 	char v68[PATH_LEN];
 	strcpy(v68, data->_filename);
 	data->_cnv = _disk->loadStatic(v68);
@@ -357,6 +359,8 @@ void Parallaction::displayItemComment(ExamineData *data) {
 	_gfx->updateScreen();
 
 	waitUntilLeftClick();
+
+	_gfx->setHalfbriteMode(false);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	return;

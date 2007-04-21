@@ -362,7 +362,7 @@ void _c_finito(void *parm) {
 	cleanInventory();
 	refreshInventory(_vm->_characterName);
 
-	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 
 	if (gameCompleted) {
 		_vm->_gfx->setFont(kFontMenu);

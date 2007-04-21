@@ -119,19 +119,44 @@ void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
 void Gfx::setPalette(Palette pal, uint32 first, uint32 num) {
 //	printf("setPalette(%i, %i)\n", first, num);
 
-	if (first + num > PALETTE_COLORS)
+	if (first + num > BASE_PALETTE_COLORS)
 		error("wrong parameters for setPalette()");
 
-	byte syspal[PALETTE_COLORS*4];
+	byte sysBasePal[EHB_PALETTE_COLORS*4];
+	byte sysExtraPal[BASE_PALETTE_COLORS*4];
 
+	byte r, g, b;
+	uint32 j = 0;
 	for (uint32 i = first; i < first+num; i++) {
-		syspal[i*4]   = (pal[i*3] << 2) | (pal[i*3] >> 4);
-		syspal[i*4+1] = (pal[i*3+1] << 2) | (pal[i*3+1] >> 4);
-		syspal[i*4+2] = (pal[i*3+2] << 2) | (pal[i*3+2] >> 4);
-		syspal[i*4+3] = 0;
+		r = (pal[i*3] << 2) | (pal[i*3] >> 4);
+		g = (pal[i*3+1] << 2) | (pal[i*3+1] >> 4);
+		b = (pal[i*3+2] << 2) | (pal[i*3+2] >> 4);
+
+		sysBasePal[j*4]   = r;
+		sysBasePal[j*4+1] = g;
+		sysBasePal[j*4+2] = b;
+		sysBasePal[j*4+3] = 0;
+
+		if (_vm->getPlatform() == Common::kPlatformAmiga) {
+			sysExtraPal[j*4]   = r >> 1;
+			sysExtraPal[j*4+1] = g >> 1;
+			sysExtraPal[j*4+2] = b >> 1;
+			sysExtraPal[j*4+3] = 0;
+		} else {
+			sysExtraPal[j*4]   = 0;
+			sysExtraPal[j*4+1] = 0;
+			sysExtraPal[j*4+2] = 0;
+			sysExtraPal[j*4+3] = 0;
+		}
+
+		j++;
 	}
 
-	g_system->setPalette(syspal, first, num);
+	g_system->setPalette(sysBasePal, first, num);
+
+	if (_vm->getPlatform() == Common::kPlatformAmiga)
+		g_system->setPalette(sysExtraPal, first+FIRST_EHB_COLOR, num);
+
 	g_system->updateScreen();
 
 	return;
@@ -197,7 +222,7 @@ void Gfx::animatePalette() {
 }
 
 void Gfx::fadePalette(Palette pal) {
-	for (uint16 i = 0; i < PALETTE_SIZE; i++)
+	for (uint16 i = 0; i < BASE_PALETTE_COLORS * 3; i++)
 		if (pal[i] < _palette[i]) pal[i]++;
 
 	return;
@@ -221,7 +246,7 @@ void Gfx::buildBWPalette(Palette pal) {
 
 void Gfx::quickFadePalette(Palette pal) {
 
-	for (uint16 i = 0; i < PALETTE_SIZE; i++) {
+	for (uint16 i = 0; i < BASE_PALETTE_COLORS * 3; i++) {
 		if (pal[i] == _palette[i]) continue;
 		pal[i] += (pal[i] < _palette[i] ? 4 : -4);
 	}
@@ -229,17 +254,20 @@ void Gfx::quickFadePalette(Palette pal) {
 	return;
 }
 
-void Gfx::extendPalette(Palette pal) {
+void Gfx::setHalfbriteMode(bool enable) {
+	if (_vm->getPlatform() != Common::kPlatformAmiga) return;
+	if (enable == _halfbrite) return;
 
-	for (uint16 i = 0; i < BASE_PALETTE_COLORS; i++) {
-		pal[(i+FIRST_EHB_COLOR)*3] = pal[i*3] / 2;
-		pal[(i+FIRST_EHB_COLOR)*3+1] = pal[i*3+1] / 2;
-		pal[(i+FIRST_EHB_COLOR)*3+2] = pal[i*3+2] / 2;
-	}
+	byte *buf = _buffers[kBitBack];
+	for (uint32 i = 0; i < SCREEN_SIZE; i++)
+		*buf++ ^= 0x20;
 
-	setPalette(pal);
+	buf = _buffers[kBitFront];
+	for (uint32 i = 0; i < SCREEN_SIZE; i++)
+		*buf++ ^= 0x20;
+
+	_halfbrite = !_halfbrite;
 }
-
 
 
 void Gfx::updateScreen() {
@@ -803,6 +831,8 @@ Gfx::Gfx(Parallaction* vm) :
 
 	initMouse( 0 );
 	initFonts();
+
+	_halfbrite = false;
 
 	_font = NULL;
 
