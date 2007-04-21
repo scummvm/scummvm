@@ -156,7 +156,7 @@ int SagaEngine::init() {
 
 	// Detect game and open resource files
 	if (!initGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
+		GUIErrorMessage("Error loading game resources.");
 		return FAILURE;
 	}
 
