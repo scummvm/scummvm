@@ -419,6 +419,15 @@ int AgiEngine::agiInit() {
 	if (ec == errOK)
 		ec = _loader->loadResource(rLOGIC, 0);
 
+
+	if (ConfMan.hasKey("save_slot")) {
+		char saveNameBuffer[256];
+
+		snprintf (saveNameBuffer, 256, "%s.%03d", _targetName.c_str(), ConfMan.getInt("save_slot"));
+
+		loadGame(saveNameBuffer);
+	}
+
 	return ec;
 }
 
