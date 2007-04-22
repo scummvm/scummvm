@@ -57,8 +57,9 @@ void Script::activateHotspot(uint16 hotspotId, uint16 v2, uint16 v3) {
 void Script::setHotspotScript(uint16 hotspotId, uint16 scriptIndex, uint16 v3) {
 	Resources &r = Resources::getReference();
 	uint16 offset = r.getHotspotScript(scriptIndex);
-	HotspotData *rsc = r.getHotspot(hotspotId);
-	rsc->sequenceOffset = offset;
+	Hotspot *hotspot = r.getActiveHotspot(hotspotId);
+	assert(hotspot);
+	hotspot->setScript(offset);
 }
 
 void Script::method2(uint16 v1, uint16 v2, uint16 v3) {
@@ -330,6 +331,21 @@ void Script::enableHotspot(uint16 hotspotId, uint16 v2, uint16 v3) {
 	hotspot->flags = (hotspot->flags & 0xdf) | 0x80;
 }
 
+// Display a message
+
+void Script::displayMessage2(uint16 messageId, uint16 hotspotId, uint16 v3) {
+	Hotspot *hotspot = Resources::getReference().getActiveHotspot(hotspotId);
+	assert(hotspot);
+	hotspot->showMessage(messageId);
+}
+
+void Script::startOilBurner(uint16 v1, uint16 v2, uint16 v3) {
+	Hotspot *hotspot = Resources::getReference().getActiveHotspot(OIL_BURNER_ID);
+	assert(hotspot);
+	hotspot->setPosition(152, hotspot->y());
+	hotspot->setTickProc(STANDARD_ANIM_TICK_PROC);
+}
+
 // Transforms the player
 
 void Script::transformPlayer(uint16 v1, uint16 v2, uint16 v3) {
@@ -556,7 +572,9 @@ SequenceMethodRecord scriptMethods[] = {
 	{33, Script::cutSack},
 	{34, Script::increaseNumGroats},
 	{35, Script::enableHotspot},
-	{37, Script::transformPlayer},
+	{36, Script::displayMessage2},
+	{37, Script::startOilBurner},
+	{38, Script::transformPlayer},
 	{39, Script::jailClose},
 	{40, Script::checkDroppedDesc},
 	{42, Script::doorClose},

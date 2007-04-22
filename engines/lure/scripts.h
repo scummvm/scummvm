@@ -105,6 +105,8 @@ public:
 	static void cutSack(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void increaseNumGroats(uint16 characterId, uint16 numGroats, uint16 v3);
 	static void enableHotspot(uint16 hotspotId, uint16 v2, uint16 v3);
+	static void displayMessage2(uint16 messageId, uint16 hotspotId, uint16 v3);
+	static void startOilBurner(uint16 v1, uint16 v2, uint16 v3);
 	static void transformPlayer(uint16 v1, uint16 v2, uint16 v3);
 	static void jailClose(uint16 v1, uint16 v2, uint16 v3);
 	static void checkDroppedDesc(uint16 hotspotId, uint16 v2, uint16 v3);

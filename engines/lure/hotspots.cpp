@@ -487,14 +487,26 @@ void Hotspot::setDirection(Direction dir) {
 // Makes the character face the given hotspot
 
 void Hotspot::faceHotspot(HotspotData *hotspot) {
+	Resources &res = Resources::getReference();
+	Room &room = Room::getReference();
+	Screen &screen = Screen::getReference();
+
 	if (hotspot->hotspotId >= START_NONVISUAL_HOTSPOT_ID) {
 		// Non visual hotspot
 		setDirection(hotspot->nonVisualDirection());
 
 	} else {
 		// Visual hotspot
-		int xp = x() - hotspot->startX;
-		int yp = y() + heightCopy() - (hotspot->startY + hotspot->heightCopy);
+		int xp, yp;
+		
+		HotspotOverrideData *hsEntry = res.getHotspotOverride(hotspot->hotspotId);
+		if (hsEntry != NULL) {
+			xp = x() - hsEntry->xs;
+			yp = y() + heightCopy() - (hsEntry->ys + hotspot->heightCopy);
+		} else {
+			xp = x() - hotspot->startX;
+			yp = y() + heightCopy() - (hotspot->startY + hotspot->heightCopy);
+		}
 
 		if (ABS(yp) >= ABS(xp)) {
 			if (yp < 0) setDirection(DOWN);
@@ -506,8 +518,8 @@ void Hotspot::faceHotspot(HotspotData *hotspot) {
 	}
 
 	if (hotspotId() == PLAYER_ID) {
-		Room::getReference().update();
-		Screen::getReference().update();
+		room.update();
+		screen.update();
 	}
 }
 
@@ -819,7 +831,7 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 		if (actionCtr() >= 6) {
 			warning("actionCtr exceeded");
 			setActionCtr(0);
-			converse(0, 0xD);
+			converse(NOONE_ID, 0xD);
 			return PC_EXCESS;
 		} 
 
@@ -833,11 +845,12 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 		} else {
 			// loc_886
 			setActionCtr(0);
-			converse(0, 0xE);
+			converse(NOONE_ID, 0xE);
 			return PC_FAILED;
 		}
 	} else {
 		setActionCtr(1);
+
 		if ((hotspot->hotspotId >= FIRST_NONCHARACTER_ID) ||
 			((hotspot->actionHotspotId != _hotspotId) && 
 			 (hotspot->characterMode == CHARMODE_WAIT_FOR_PLAYER))) {
@@ -846,15 +859,14 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 				return PC_WAIT;
 
 		} else if (hotspot->actionHotspotId != _hotspotId) {
-			if (fields.getField(88) == 2) {
-				// loc_882
-				hotspot->talkGate = 0x2A;
-				hotspot->talkDestCharacterId = _hotspotId;
-				return PC_WAIT;
-			} else {
+			if (fields.getField(82) != 2) {
 				converse(NOONE_ID, 5);
 				setDelayCtr(4);
 			}
+
+			hotspot->talkGate = 0x2A;
+			hotspot->talkDestCharacterId = _hotspotId;
+			return PC_WAIT;
 		} 
 	}
 
@@ -1369,7 +1381,7 @@ void Hotspot::doGive(HotspotData *hotspot) {
 		} else if (sequenceOffset == 0) {
 			// Move item into character's inventory
 			HotspotData *usedItem = res.getHotspot(usedId);
-			usedItem->roomNumber = hotspotId();
+			usedItem->roomNumber = hotspot->hotspotId;
 		} else if (sequenceOffset > 1) {
 			showMessage(result);
 		}
@@ -1979,6 +1991,7 @@ void Hotspot::startTalk(HotspotData *charHotspot, uint16 id) {
 	// Signal the character that they're being talked to
 	charHotspot->talkDestCharacterId = _hotspotId;
 	_data->talkDestCharacterId = charHotspot->hotspotId;
+	_data->talkGate = 0;
 	
 	// Set the active talk data
 	res.setTalkStartEntry(0);
@@ -2078,9 +2091,9 @@ HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 		return followerAnimHandler;
 	case 0x7EFA:
 		return skorlAnimHandler;
-	case 0x7F37:
+	case STANDARD_ANIM_2_TICK_PROC:
 		return standardAnimHandler2;
-	case 0x7F3A:
+	case STANDARD_ANIM_TICK_PROC:
 		return standardAnimHandler;
 	case 0x7F54:
 		return sonicRatAnimHandler;
@@ -2090,6 +2103,8 @@ HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 		return playerSewerExitAnimHandler;
 	case 0x8009:
 		return fireAnimHandler;
+	case 0x80C6:
+		return sparkleAnimHandler;
 	case 0x813F:
 		return teaAnimHandler;
 	case 0x8180:
@@ -2907,6 +2922,46 @@ void HotspotTickHandlers::fireAnimHandler(Hotspot &h) {
 	h.setOccupied(true);
 }
 
+void HotspotTickHandlers::sparkleAnimHandler(Hotspot &h) {
+	Resources &res = Resources::getReference();
+	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
+	ValueTableData &fields = res.fieldList();
+
+	h.setRoomNumber(player->roomNumber());
+	h.setPosition(player->x() - 14, player->y() - 10);
+	h.setActionCtr(h.actionCtr() + 1);
+	if (h.actionCtr() == 6) {
+		uint16 animId;
+		if ((fields.getField(11) == 2) || (fields.getField(28) != 0)) {
+			fields.setField(28, 0);
+			animId = PLAYER_ANIM_ID;
+		} else {
+			fields.setField(28, fields.getField(28) + 1);
+			animId = SELENA_ANIM_ID;
+		}
+
+		player->setAnimation(animId);
+	}
+
+	if (h.executeScript()) {
+		HotspotData *data = h.resource();
+		res.deactivateHotspot(&h);
+		data->roomNumber = 0x1A8;
+
+		if (fields.getField(28) != 0) {
+			Hotspot *ratpouch = res.getActiveHotspot(RATPOUCH_ID);
+			assert(ratpouch);
+			ratpouch->converse(NOONE_ID, 0x854, false);
+
+			uint16 dataId = res.getCharOffset(4);
+			CharacterScheduleEntry *entry = res.charSchedules().getEntry(dataId);
+
+			ratpouch->currentActions().addFront(DISPATCH_ACTION, entry, ratpouch->roomNumber());
+			ratpouch->setActionCtr(0);
+		}
+	}
+}
+
 void HotspotTickHandlers::teaAnimHandler(Hotspot &h) {
 	if (h.frameCtr() > 0) {
 		h.decrFrameCtr();
@@ -3099,10 +3154,13 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 			selectedLine, descId);
 
 		// Get the response the destination character will say
-		if (descId != TALK_MAGIC_ID) 
+		if (descId != TALK_MAGIC_ID) {
 			// Set up to display the question and response in talk dialogs
 			h.converse(talkDestCharacter, descId, false);
-		res.setTalkState(TALK_RESPOND_2);
+			res.setTalkState(TALK_RESPOND_2);
+		} else {
+			res.setTalkState(TALK_RESPOND_3);
+		}
 		break;
 
 	case TALK_RESPOND_2:
@@ -3114,6 +3172,8 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 		if (res.getTalkingCharacter() != 0)
 			return;
 
+	case TALK_RESPOND_3:
+		// Respond
 		selectedLine = res.getTalkSelection();
 		entry = talkSelections[selectedLine-1];
 

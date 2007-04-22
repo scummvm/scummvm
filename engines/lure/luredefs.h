@@ -31,7 +31,7 @@ namespace Lure {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 17
+#define LURE_DAT_MINOR 18
 
 #define LURE_DEBUG 1
 
@@ -231,6 +231,7 @@ enum Action {
 #define SACK_ID 0x40D
 #define PRISONER_ID 0x412
 #define SID_ID 0x420
+#define OIL_BURNER_ID 0x424
 #define TRANSFORM_ID 0x425
 #define NELLIE_ID 0x429
 #define EWAN_ID 0x436
@@ -245,10 +246,12 @@ enum Action {
 
 // Tick proc constants
 #define STANDARD_CHARACTER_TICK_PROC 0x4f82 
-#define TALK_TICK_PROC_ID 0x8ABD
 #define PLAYER_TICK_PROC_ID 0x5E44
 #define VOICE_TICK_PROC_ID 0x625E
 #define PUZZLED_TICK_PROC_ID 0x6571
+#define STANDARD_ANIM_2_TICK_PROC 0x7F37
+#define STANDARD_ANIM_TICK_PROC 0x7f3a
+#define TALK_TICK_PROC_ID 0x8ABD
 
 // String constants
 #define STRANGER_ID 0x17A
@@ -264,6 +267,8 @@ enum Action {
 #define BLACKSMITH_HAMMERING_ANIM_ID 0x9c11
 #define EWAN_ANIM_ID 0x59E4
 #define EWAN_ALT_ANIM_ID 0x59ED
+#define PLAYER_ANIM_ID 0x5C80
+#define SELENA_ANIM_ID 0x5CAA
 
 #define CONVERSE_COUNTDOWN_SIZE 40
 #define IDLE_COUNTDOWN_SIZE 15
