@@ -878,6 +878,7 @@ other games.
                                  stretches the image to use 320x240 pixels
                                  instead, or a multiple thereof
         Alt-Enter              - Toggles full screen/windowed
+        Alt-s                  - Make a screenshot (SDL backend only)
 
     SCUMM:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
@@ -886,7 +887,6 @@ other games.
         Ctrl-t                 - Switch between 'Speech only',
                                  'Speech and Subtitles' and 'Subtitles only'
         Tilde (~)              - Show/hide the debugging console
-        Ctrl-s                 - Shows memory consumption
         [ and ]                - Music volume, down/up
         - and +                - Text speed, slower/faster
         F5                     - Displays a save/load box
