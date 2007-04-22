@@ -473,6 +473,8 @@ void read_anim_data(byte *&data, uint16 &totalSize) {
 	add_anim_record(0x5ce9);		// Blacksmith in bar?
 	add_anim_record(0x5915);		// Blacksmith hammering
 	add_anim_record(0x59ED);		// Ewan's alternate animation
+	add_anim_record(0x5CAA);		// Selena animation
+	add_anim_record(0x5D28);		// Goewin animation
 
 	// Get the animation data records
 	AnimRecord inRec;

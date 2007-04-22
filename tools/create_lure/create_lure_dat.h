@@ -27,7 +27,7 @@
 #include "common/endian.h"
 
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 17
+#define VERSION_MINOR 18
 #define ENGLISH_LURE 
 
 #define DATA_SEGMENT 0xac50
