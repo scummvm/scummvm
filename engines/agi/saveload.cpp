@@ -215,7 +215,7 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 	return errOK;
 }
 
-int AgiEngine::loadGame(const char *fileName) {
+int AgiEngine::loadGame(const char *fileName, bool checkId) {
 	char description[31], saveVersion, loadId[8];
 	int i, vtEntries = MAX_VIEWTABLE;
 	uint8 t;
@@ -251,7 +251,7 @@ int AgiEngine::loadGame(const char *fileName) {
 	_game.state = in->readByte();
 	
 	in->read(loadId, 8);
-	if (strcmp(loadId, _game.id)) {
+	if (strcmp(loadId, _game.id) && checkId) {
 		delete in;	
 		warning("This save seems to be from a different AGI game (save from %s, running %s), not loaded", loadId, _game.id);
 		return errBadFileOpen;

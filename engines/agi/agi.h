@@ -545,7 +545,7 @@ public:
 	int saveGame(const char *fileName, const char *saveName);
 	int saveGameDialog();
 	int saveGameSimple();
-	int loadGame(const char *fileName);
+	int loadGame(const char *fileName, bool checkId = true);
 	int loadGameDialog();
 	int loadGameSimple();
 

@@ -425,7 +425,7 @@ int AgiEngine::agiInit() {
 
 		snprintf (saveNameBuffer, 256, "%s.%03d", _targetName.c_str(), ConfMan.getInt("save_slot"));
 
-		loadGame(saveNameBuffer);
+		loadGame(saveNameBuffer, false); // Do not check game id
 	}
 
 	return ec;
