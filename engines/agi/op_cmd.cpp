@@ -1233,8 +1233,14 @@ cmd(shake_screen) {
 	if ((g_agi->getFeatures() & GF_AGIPAL) && p0 >= 101 && p0 < 110) {
 		g_gfx->setAGIPal(p0);
 		return;
-	} else
-		g_gfx->shakeStart();
+	} 
+
+	// Disables input while shaking to prevent bug
+	// #1678230: AGI: Entering text while screen is shaking
+	int originalValue = game.inputEnabled;
+	game.inputEnabled = 0;
+
+	g_gfx->shakeStart();
 
 	g_sprites->commitBoth();		/* Fixes SQ1 demo */
 	for (i = 4 * p0; i; i--) {
@@ -1243,6 +1249,9 @@ cmd(shake_screen) {
 		g_agi->mainCycle();
 	}
 	g_gfx->shakeEnd();
+
+	//Sets input back to what it was
+	game.inputEnabled = originalValue;
 }
 
 static void (*agiCommand[183])(uint8 *) = {
