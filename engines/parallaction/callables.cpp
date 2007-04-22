@@ -450,4 +450,16 @@ void _c_testResult(void *parm) {
 	return;
 }
 
+void _c_offSound(void*) {
+	// TODO: to be implemented
+}
+
+void _c_startMusic(void*) {
+	// TODO: to be implemented
+}
+
+void _c_closeMusic(void*) {
+	// TODO: to be implemented
+}
+
 } // namespace Parallaction

@@ -341,4 +341,67 @@ void _c_shade(void *parm) {
 
 }
 
+void _c_projector(void*) {
+
+	static int dword_16032 = 0;
+
+//	Bitmap bm;
+//	InitBitMap(&bm);
+
+	if (dword_16032 != 0) {
+/*		// keep drawing spotlight in its final place
+		_vm->_gfx->flatBlitCnv(&scnv, 110, 25, Gfx::kBitFront);
+		BltBitMap(&bm, 0, 0, &_screen._bitMap, 110, 25, a3->??, a3->??, 0x20, 0x20);
+*/		return;
+	}
+
+	_vm->_gfx->setHalfbriteMode(true);
+/*
+	// move spot light around the stage
+	int d7, d6;
+	for (d7 = 0; d7 < 150; d7++) {
+
+		if (d7 < 100) {
+			int d1 = d7;
+			if (d1 < 0)
+				d1++;
+
+			d1 >>= 1;
+			d6 = 50 - d1;
+		} else {
+			int d1 = d7 / 100;
+			if (d1 < 0)
+				d1++;
+
+			d1 >>= 1;
+			d6 = d1;
+		}
+
+		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+20, d6, a3->??, a3->??, 0x20, 0x20);
+		sub_1590C(d6 + a3->??);
+		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+20, d6, a3->??, a3->??, 0xFA, 0x20);
+	}
+
+	for (d7 = 50; d7 > -10; d7--) {
+		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+120, d6, a3->??, a3->??, 0x20, 0x20);
+		sub_1590C(d6 + a3->??);
+		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+120, d6, a3->??, a3->??, 0xFA, 0x20);
+	}
+
+	BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+120, d6, a3->??, a3->??, 0x20, 0x20);
+	_vm->_gfx->flatBlitCnv(&scnv, d7+120, d6, Gfx::kBitFront);
+*/
+
+	dword_16032 = 1;
+	return;
+}
+
+void _c_HBOff(void*) {
+	_vm->_gfx->setHalfbriteMode(false);
+}
+
+void _c_HBOn(void*) {
+	_vm->_gfx->setHalfbriteMode(true);
+}
+
 } // namespace Parallaction

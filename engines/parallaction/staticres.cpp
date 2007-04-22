@@ -160,8 +160,9 @@ const char *_callableNamesRes[] = {
 	"TestResult"
 };
 
+typedef void (*callable)(void*);
 
-void _c_play_boogie(void*);
+
 void _c_play_boogie(void*);
 void _c_startIntro(void*);
 void _c_endIntro(void*);
@@ -170,7 +171,6 @@ void _c_sketch(void*);
 void _c_shade(void*);
 void _c_score(void*);
 void _c_fade(void*);
-void _c_play_boogie(void*);
 void _c_moveSarc(void*);
 void _c_contaFoglie(void*);
 void _c_zeroFoglie(void*);
@@ -185,35 +185,14 @@ void _c_ridux(void*);
 void _c_testResult(void*);
 void _c_null(void*);
 
-typedef void (*callable)(void*);
+void _c_projector(void*);
+void _c_HBOff(void*);
+void _c_offSound(void*);
+void _c_startMusic(void*);
+void _c_closeMusic(void*);
+void _c_HBOn(void*);
 
-callable _callables[] = {
-	_c_play_boogie,
-	_c_play_boogie,
-	_c_startIntro,
-	_c_endIntro,
-	_c_moveSheet,
-	_c_sketch,
-	_c_shade,
-	_c_score,
-	_c_null,
-	_c_null,
-	_c_null,
-	_c_fade,
-	_c_play_boogie,
-	_c_moveSarc,
-	_c_contaFoglie,
-	_c_zeroFoglie,
-	_c_trasformata,
-	_c_offMouse,
-	_c_onMouse,
-	_c_setMask,
-	_c_endComment,
-	_c_frankenstein,
-	_c_finito,
-	_c_ridux,
-	_c_testResult
-};
+callable _callables[25];
 
 
 Credit _credits[] = {
@@ -247,6 +226,60 @@ void Parallaction::initResources() {
 
 	_localFlagNames = new Table(120);
 	_localFlagNames->addData("visited");
+
+	if (getPlatform() == Common::kPlatformPC) {
+		_callables[0] = 	_c_play_boogie;
+		_callables[1] = 	_c_play_boogie;
+		_callables[2] = 	_c_startIntro;
+		_callables[3] = 	_c_endIntro;
+		_callables[4] = 	_c_moveSheet;
+		_callables[5] = 	_c_sketch;
+		_callables[6] = 	_c_shade;
+		_callables[7] = 	_c_score;
+		_callables[8] = 	_c_null;
+		_callables[9] = 	_c_null;
+		_callables[10] = 	_c_null;
+		_callables[11] = 	_c_fade;
+		_callables[12] = 	_c_play_boogie;
+		_callables[13] = 	_c_moveSarc;
+		_callables[14] = 	_c_contaFoglie;
+		_callables[15] = 	_c_zeroFoglie;
+		_callables[16] = 	_c_trasformata;
+		_callables[17] = 	_c_offMouse;
+		_callables[18] = 	_c_onMouse;
+		_callables[19] = 	_c_setMask;
+		_callables[20] = 	_c_endComment;
+		_callables[21] = 	_c_frankenstein;
+		_callables[22] = 	_c_finito;
+		_callables[23] = 	_c_ridux;
+		_callables[24] = 	_c_testResult;
+	} else {
+		_callables[0] = 	_c_projector;
+		_callables[1] = 	_c_HBOff;
+		_callables[2] = 	_c_startIntro;
+		_callables[3] = 	_c_endIntro;
+		_callables[4] = 	_c_moveSheet;
+		_callables[5] = 	_c_sketch;
+		_callables[6] = 	_c_shade;
+		_callables[7] = 	_c_score;
+		_callables[8] = 	_c_offSound;
+		_callables[9] = 	_c_startMusic;
+		_callables[10] = 	_c_closeMusic;
+		_callables[11] = 	_c_fade;
+		_callables[12] = 	_c_HBOn;
+		_callables[13] = 	_c_moveSarc;
+		_callables[14] = 	_c_contaFoglie;
+		_callables[15] = 	_c_zeroFoglie;
+		_callables[16] = 	_c_trasformata;
+		_callables[17] = 	_c_offMouse;
+		_callables[18] = 	_c_onMouse;
+		_callables[19] = 	_c_setMask;
+		_callables[20] = 	_c_endComment;
+		_callables[21] = 	_c_frankenstein;
+		_callables[22] = 	_c_finito;
+		_callables[23] = 	_c_ridux;
+		_callables[24] = 	_c_testResult;
+	}
 
 }
 
