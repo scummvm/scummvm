@@ -223,7 +223,6 @@ public:
 
 public:
 	Common::Point		_labelPosition[2];
-	static bool 		_proportionalFont;
 	uint16				_bgLayers[4];
 	PaletteFxRange		_palettefx[6];
 	Palette				_palette;

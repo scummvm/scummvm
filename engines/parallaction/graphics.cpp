@@ -49,7 +49,6 @@ const byte _glyphWidths[126] = {
   0x05, 0x06, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x04, 0x06, 0x05, 0x05, 0x05, 0x05
 };
 */
-bool		Gfx::_proportionalFont = false;
 byte *		Gfx::_buffers[];
 
 #define BALLOON_WIDTH	12
@@ -615,7 +614,6 @@ bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, 
 	bool rv = false;
 	uint16 linewidth = 0;
 
-	_proportionalFont = true;
 	uint16 rx = x + 10;
 	uint16 ry = y + 4;
 
@@ -663,8 +661,6 @@ void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* heig
 	uint16 lines = 0;
 	uint16 w = 0;
 	*width = 0;
-
-	_proportionalFont = true;
 
 	char token[40];
 

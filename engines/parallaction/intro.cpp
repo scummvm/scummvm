@@ -135,7 +135,6 @@ void _c_startIntro(void *parm) {
 void _c_endIntro(void *parm) {
 
 	_vm->_gfx->setFont(kFontMenu);
-	_vm->_gfx->_proportionalFont = false;
 
 	uint16 _di;
 	for (uint16 _si = 0; _si < 7; _si++) {

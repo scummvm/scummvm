@@ -43,7 +43,6 @@ void Parallaction::parseLocation(const char *filename) {
     debugC(1, kDebugLocation, "parseLocation('%s')", filename);
 
 	uint16 _si = 1;
-	_gfx->_proportionalFont = false;
 	_gfx->setFont(kFontLabel);
 
 	Script *_locationScript = _disk->loadLocation(filename);
@@ -272,7 +271,6 @@ void Parallaction::showSlide(const char *name) {
 
 	debugC(1, kDebugLocation, "changeLocation: new background set");
 
-	_gfx->_proportionalFont = false;
 	_gfx->setFont(kFontMenu);
 
 	uint16 _ax = strlen(_slideText[0]);
