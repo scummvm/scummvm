@@ -229,10 +229,6 @@ protected:
 
 };
 
-// this flags comes from Aros Projects
-#define FPB_PROPORTIONAL     5
-#define FPF_PROPORTIONAL (1<<5)
-
 class AmigaFont : public Font {
 
 #include "common/pack-start.h"
@@ -262,7 +258,6 @@ class AmigaFont : public Font {
 	AmigaDiskFont	*_font;
 	uint32		_dataSize;
 	byte		*_data;
-	bool		_proportional;
 	byte		*_charData;
 	CharLoc		*_charLoc;
 	uint16		*_charSpace;
@@ -316,13 +311,6 @@ AmigaFont::AmigaFont(Common::SeekableReadStream &stream) {
 		_charSpace = (uint16*)(_data + FROM_BE_32(_font->_charSpace));
 	if (_font->_charKern != 0)
 		_charKern = (uint16*)(_data + FROM_BE_32(_font->_charKern));
-
-	_proportional = (_font->_flags & FPF_PROPORTIONAL);
-
-	printf("xSize = %i\n", _font->_xSize);
-	printf("charKern = %p\n", _charKern);
-	printf("charSpace = %p\n", _charSpace);
-	printf("proportional = %i\n", _proportional);
 
 }
 
