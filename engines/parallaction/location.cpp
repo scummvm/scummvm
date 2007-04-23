@@ -279,6 +279,7 @@ void Parallaction::showSlide(const char *name) {
 	_ax <<= 3;	// text width
 	uint16 _dx = (SCREEN_WIDTH - _ax) >> 1; // center text
 	_gfx->displayString(_dx, 14, _slideText[0]); // displays text on screen
+	_gfx->updateScreen();
 
 	waitUntilLeftClick();
 
