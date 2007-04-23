@@ -135,7 +135,15 @@ uint32 PathBuilder::buildSubPath(const Common::Point& pos, const Common::Point& 
 	return v34;
 
 }
+#if 0
+void printNodes(WalkNodeList *list, const char* text) {
+	printf("%s\n-------------------\n", text);
+	for (WalkNodeList::iterator it = list->begin(); it != list->end(); it++)
+		printf("node [%p] (%i, %i)\n", *it, (*it)->_x, (*it)->_y);
 
+	return;
+}
+#endif
 //
 //	x, y: mouse click (foot) coordinates
 //
@@ -163,10 +171,12 @@ WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
 	// path is obstructed: look for alternative
 	_list = new WalkNodeList;
 	_list->push_back(v48);
+#if 0
+	printNodes(_list, "start");
+#endif
 
 	Common::Point stop(v48->_x, v48->_y);
 	Common::Point pos(_vm->_char._ani._left, _vm->_char._ani._top);
-
 	uint32 v34 = buildSubPath(pos, stop);
 	if (v38 != 0 && v34 > v38) {
 		// no alternative path (gap?)
@@ -175,14 +185,16 @@ WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
 		return _list;
 	}
 	_list->insert(_list->begin(), _subPath.begin(), _subPath.end());
+#if 0
+	printNodes(_list, "first segment");
+#endif
 
 	(*_list->begin())->getPoint(stop);
-
 	buildSubPath(pos, stop);
 	_list->insert(_list->begin(), _subPath.begin(), _subPath.end());
-
-	for (WalkNodeList::iterator it = _list->begin(); it != _list->end(); it++)
-//		printf("node (%i, %i)\n", (*it)->_x, (*it)->_y);
+#if 0
+	printNodes(_list, "complete");
+#endif
 
 	delete v44;
 	return _list;
@@ -325,9 +337,11 @@ void jobWalk(void *parm, Job *j) {
 
 	WalkNodeList::iterator it = list->begin();
 
-	if ((*it)->_x == pos.x && (*it)->_y == pos.y) {
-		debugC(1, kDebugWalk, "jobWalk moving to next node (%i, %i)", (*it)->_x, (*it)->_y);
-		it = list->erase(it);
+	if (it != list->end()) {
+		if ((*it)->_x == pos.x && (*it)->_y == pos.y) {
+			debugC(1, kDebugWalk, "jobWalk reached node (%i, %i)", (*it)->_x, (*it)->_y);
+			it = list->erase(it);
+		}
 	}
 	if (it == list->end()) {
 		debugC(1, kDebugWalk, "jobWalk reached last node");
@@ -425,7 +439,7 @@ void initWalk() {
 WalkNode::WalkNode() : _x(0), _y(0) {
 }
 
-WalkNode::WalkNode(int32 x, int32 y) : _x(x), _y(y) {
+WalkNode::WalkNode(int16 x, int16 y) : _x(x), _y(y) {
 }
 
 WalkNode::WalkNode(const WalkNode& w) : _x(w._x), _y(w._y) {

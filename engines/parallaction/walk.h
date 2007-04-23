@@ -31,12 +31,12 @@ struct Animation;
 struct Job;
 
 struct WalkNode {
-	int32	_x;
-	int32	_y;
+	int16	_x;
+	int16	_y;
 
 public:
 	WalkNode();
-	WalkNode(int32 x, int32 y);
+	WalkNode(int16 x, int16 y);
 	WalkNode(const WalkNode& w);
 
 	void getPoint(Common::Point &p) const;
@@ -56,7 +56,7 @@ class PathBuilder {
 	Animation 		*_anim;
 
 	WalkNodeList 	*_list;
-	WalkNodeList 	_subPath;
+	Common::List<WalkNode*> 	_subPath;
 
 	void correctPathPoint(Common::Point &to);
 	uint32 buildSubPath(const Common::Point& pos, const Common::Point& stop);
