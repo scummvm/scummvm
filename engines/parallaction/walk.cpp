@@ -420,11 +420,13 @@ uint16 checkDoor() {
 
 uint16 queryPath(uint16 x, uint16 y) {
 
+	// NOTE: a better solution would have us mirror each byte in the mask in the loading routine
+	// AmigaDisk::loadPath() instead of doing it here.
+
 	byte _al = _buffer[y*40 + x/8];
-	byte _dl = 1 << (x % 8);
+	byte _dl = (_vm->getPlatform() == Common::kPlatformPC) ? (x & 7) : (7 - (x & 7));
 
-	return _al & _dl;
-
+	return _al & (1 << _dl);
 }
 
 void setPath(byte *path) {
