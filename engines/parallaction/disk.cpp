@@ -985,8 +985,8 @@ void AmigaDisk::loadSlide(const char *name) {
 // FIXME: mask values are not computed correctly for level 1 and 2
 void buildMask(byte* buf) {
 
-	byte mask0[16] = { 0, 0x80, 0x20, 0xA0, 8, 0x84, 0x28, 0xA8, 2, 0x82, 0x22, 0xA2, 0xA, 0x8A, 0x2A, 0xAA };
-	byte mask1[16] = { 0, 0x40, 0x10, 0x50, 4, 0x42, 0x14, 0x54, 1, 0x41, 0x11, 0x51, 0x5, 0x45, 0x15, 0x55 };
+	byte mask1[16] = { 0, 0x80, 0x20, 0xA0, 8, 0x88, 0x28, 0xA8, 2, 0x82, 0x22, 0xA2, 0xA, 0x8A, 0x2A, 0xAA };
+	byte mask0[16] = { 0, 0x40, 0x10, 0x50, 4, 0x44, 0x14, 0x54, 1, 0x41, 0x11, 0x51, 0x5, 0x45, 0x15, 0x55 };
 
 	byte plane0[40];
 	byte plane1[40];
@@ -1057,6 +1057,20 @@ void AmigaDisk::loadMask(const char *name) {
 	sprintf(path, "%s.mask", name);
 
 	Common::SeekableReadStream *s = openArchivedFile(path, true);
+	s->seek(0x30, SEEK_SET);
+
+	byte r, g, b;
+	for (uint i = 0; i < 4; i++) {
+		r = s->readByte();
+		g = s->readByte();
+		b = s->readByte();
+
+		_vm->_gfx->_bgLayers[i] = (((r << 4) & 0xF00) | (g & 0xF0) | (b >> 4)) & 0xFF;
+
+//		printf("rgb = (%x, %x, %x) -> %x\n", r, g, b, _vm->_gfx->_bgLayers[i]);
+	}
+
+
 	s->seek(0x126, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
 	RLEStream stream(s);
 
