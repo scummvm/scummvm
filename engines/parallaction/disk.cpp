@@ -978,26 +978,7 @@ Cnv* AmigaDisk::loadFrames(const char* name) {
 
 void AmigaDisk::loadSlide(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadSlide '%s'", name);
-
-	Common::SeekableReadStream *s = openArchivedFile(name, true);
-
-	Graphics::Surface surf;
-	byte *pal;
-
-	// CRNG headers may be safely ignored for slides
-	Graphics::ILBMDecoder decoder(*s);
-	decoder.decode(surf, pal);
-
-	for (uint32 i = 0; i < BASE_PALETTE_COLORS * 3; i++)
-		_vm->_gfx->_palette[i] = pal[i] >> 2;
-	free(pal);
-	_vm->_gfx->setPalette(_vm->_gfx->_palette);
-
-	_vm->_gfx->setBackground(static_cast<byte*>(surf.pixels));
-	surf.free();
-
-	delete s;
-
+	loadBackground(name);
 	return;
 }
 
@@ -1048,18 +1029,17 @@ public:
 	}
 };
 
-void AmigaDisk::loadScenery(const char* background, const char* mask) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadScenery '%s', '%s'", background, mask);
+
+void AmigaDisk::loadBackground(const char *name) {
+
+	Common::SeekableReadStream *s = openArchivedFile(name, true);
+	BackgroundDecoder decoder(*s, _vm->_gfx->_palettefx);
 
 	Graphics::Surface surf;
 	byte *pal;
-	char path[PATH_LEN];
 
-	sprintf(path, "%s.bkgnd", background);
-	Common::SeekableReadStream *s = openArchivedFile(path, true);
-	BackgroundDecoder decoder(*s, _vm->_gfx->_palettefx);
 	decoder.decode(surf, pal);
-	for (uint32 i = 0; i < PALETTE_SIZE; i++)
+	for (uint32 i = 0; i < BASE_PALETTE_COLORS * 3; i++)
 		_vm->_gfx->_palette[i] = pal[i] >> 2;
 	free(pal);
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
@@ -1067,31 +1047,60 @@ void AmigaDisk::loadScenery(const char* background, const char* mask) {
 	surf.free();
 	delete s;
 
-	sprintf(path, "%s.mask", background);
-	s = openArchivedFile(path, true);
+	return;
+
+}
+
+void AmigaDisk::loadMask(const char *name) {
+
+	char path[PATH_LEN];
+	sprintf(path, "%s.mask", name);
+
+	Common::SeekableReadStream *s = openArchivedFile(path, true);
 	s->seek(0x126, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
-	RLEStream *stream2 = new RLEStream(s);
+	RLEStream stream(s);
+
 	byte *buf = (byte*)malloc(SCREENMASK_WIDTH*SCREEN_HEIGHT);
-	stream2->read(buf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
+	stream.read(buf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 	buildMask(buf);
 	_vm->_gfx->setMask(buf);
 	free(buf);
 	delete s;
-	delete stream2;
 
-	sprintf(path, "%s.path", background);
-	s = openArchivedFile(path, false);
+	return;
+}
+
+void AmigaDisk::loadPath(const char *name) {
+
+	char path[PATH_LEN];
+	sprintf(path, "%s.path", name);
+
+	Common::SeekableReadStream *s = openArchivedFile(path, false);
 	if (s == NULL)
 		return;	// no errors if missing path files: not every location has one
 
+
 	s->seek(0x120, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
-	stream2 = new RLEStream(s);
-	buf = (byte*)malloc(SCREENPATH_WIDTH*SCREEN_HEIGHT);
-	stream2->read(buf, SCREENPATH_WIDTH*SCREEN_HEIGHT);
+
+	RLEStream stream(s);
+	byte *buf = (byte*)malloc(SCREENPATH_WIDTH*SCREEN_HEIGHT);
+	stream.read(buf, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 	setPath(buf);
 	free(buf);
 	delete s;
-	delete stream2;
+
+	return;
+}
+
+void AmigaDisk::loadScenery(const char* background, const char* mask) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadScenery '%s', '%s'", background, mask);
+
+	char path[PATH_LEN];
+	sprintf(path, "%s.bkgnd", background);
+
+	loadBackground(path);
+	loadMask(background);
+	loadPath(background);
 
 	return;
 }

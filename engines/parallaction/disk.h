@@ -156,6 +156,9 @@ protected:
 	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 planeSize);
 	Common::SeekableReadStream *openArchivedFile(const char* name, bool errorOnFileNotFound = false);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
+	void loadMask(const char *name);
+	void loadPath(const char *name);
+	void loadBackground(const char *name);
 
 public:
 	AmigaDisk(Parallaction *vm);
