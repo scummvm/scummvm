@@ -31,12 +31,13 @@
 namespace Parallaction {
 
 
+extern byte _amigaTopazFont[];
+
 class DosFont : public Font {
 
 protected:
 	// drawing properties
 	byte		*_cp;
-	byte		_color;
 
 	Cnv			*_data;
 	byte		_pitch;
@@ -67,10 +68,6 @@ public:
 
 	void setData() {
 
-	}
-
-	void setColor(byte color) {
-		_color = color;
 	}
 
 	uint32 getStringWidth(const char *s) {
@@ -127,7 +124,10 @@ protected:
 
 		for (uint16 j = 0; j < height(); j++) {
 			for (uint16 k = 0; k < w; k++) {
-				*dst = (*src) ? 1 : _color;
+
+				if (!*src)
+					*dst = _color;
+
 				dst++;
 				src++;
 			}
@@ -270,20 +270,17 @@ class AmigaFont : public Font {
 
 	byte			*_cp;
 	uint32		_pitch;
-	byte			_color;
 
 protected:
-	uint16 getSpacing(char c);
-	void blitData(char c);
-	uint16 getKerning(char c);
-	uint16 getPixels(char c);
-	uint16 getOffset(char c);
-	uint16 width(char c);
+	uint16 getSpacing(byte c);
+	void blitData(byte c);
+	uint16 getKerning(byte c);
+	uint16 getPixels(byte c);
+	uint16 getOffset(byte c);
+	uint16 width(byte c);
 	uint16 height();
 
-	void drawChar(char c);
-
-	char	mapChar(byte c);
+	byte	mapChar(byte c);
 
 public:
 	AmigaFont(Common::SeekableReadStream &stream);
@@ -308,27 +305,25 @@ AmigaFont::AmigaFont(Common::SeekableReadStream &stream) {
 	_font->_xSize = FROM_BE_16(_font->_xSize);
 	_font->_baseline = FROM_BE_16(_font->_baseline);
 	_font->_modulo = FROM_BE_16(_font->_modulo);
-/*
-	_font->_charLoc = (CharLoc*)(_data + FROM_BE_32((uint32)_font->_charLoc));
-	_font->_charData = _data + FROM_BE_32((uint32)_font->_charData);
-	_font->_charSpace = (uint16*)(_data + FROM_BE_32((uint32)_font->_charSpace));
-	_font->_charKern = (uint16*)(_data + FROM_BE_32((uint32)_font->_charKern));
-*/
+
 	_charLoc = (CharLoc*)(_data + FROM_BE_32(_font->_charLoc));
 	_charData = _data + FROM_BE_32(_font->_charData);
-	_charSpace = (uint16*)(_data + FROM_BE_32(_font->_charSpace));
-	_charKern = (uint16*)(_data + FROM_BE_32(_font->_charKern));
 
-/*
-	printf("H = %i, W = %i\n", _font->_ySize, _font->_xSize);
-	printf("_data = %p\n", _data);
-	printf("_charLoc = %p (%x)\n", _font->_charLoc, _font->_charLoc[0]._offset);
-	printf("_charData = %p\n", _font->_charData);
-	printf("_charSpace = %p\n", _font->_charSpace);
-	printf("_charKern = %p\n", _font->_charKern);
-*/
+	_charSpace = 0;
+	_charKern = 0;
 
-	_proportional = (_font->_flags & FPF_PROPORTIONAL) == FPF_PROPORTIONAL;
+	if (_font->_charSpace != 0)
+		_charSpace = (uint16*)(_data + FROM_BE_32(_font->_charSpace));
+	if (_font->_charKern != 0)
+		_charKern = (uint16*)(_data + FROM_BE_32(_font->_charKern));
+
+	_proportional = (_font->_flags & FPF_PROPORTIONAL);
+
+	printf("xSize = %i\n", _font->_xSize);
+	printf("charKern = %p\n", _charKern);
+	printf("charSpace = %p\n", _charSpace);
+	printf("proportional = %i\n", _proportional);
+
 }
 
 AmigaFont::~AmigaFont() {
@@ -336,23 +331,23 @@ AmigaFont::~AmigaFont() {
 		free(_data);
 }
 
-uint16 AmigaFont::getSpacing(char c) {
-	return FROM_BE_16(_proportional  ? _charSpace[c] : _font->_xSize);
+uint16 AmigaFont::getSpacing(byte c) {
+	return (_charSpace == 0) ? _font->_xSize : FROM_BE_16(_charSpace[c]);
 }
 
-uint16 AmigaFont::getKerning(char c) {
-	return FROM_BE_16(_charKern[c]);
+uint16 AmigaFont::getKerning(byte c) {
+	return (_charKern == 0) ? 0 : FROM_BE_16(_charKern[c]);
 }
 
-uint16 AmigaFont::getPixels(char c) {
+uint16 AmigaFont::getPixels(byte c) {
 	return FROM_BE_16(_charLoc[c]._length);
 }
 
-uint16 AmigaFont::getOffset(char c) {
+uint16 AmigaFont::getOffset(byte c) {
 	return FROM_BE_16(_charLoc[c]._offset);
 }
 
-void AmigaFont::blitData(char c) {
+void AmigaFont::blitData(byte c) {
 
 	int num = getPixels(c);
 	int bitOffset = getOffset(c);
@@ -378,7 +373,8 @@ void AmigaFont::blitData(char c) {
 
 }
 
-uint16 AmigaFont::width(char c) {
+uint16 AmigaFont::width(byte c) {
+//	printf("kern(%i) = %i, space(%i) = %i\t", c, getKerning(c), c, getSpacing(c));
 	return getKerning(c) + getSpacing(c);
 }
 
@@ -386,7 +382,7 @@ uint16 AmigaFont::height() {
 	return _font->_ySize;
 }
 
-char AmigaFont::mapChar(byte c) {
+byte AmigaFont::mapChar(byte c) {
 
 	if (c < _font->_loChar || c > _font->_hiChar)
 		error("character '%c (%x)' not supported by font", c, c);
@@ -411,7 +407,7 @@ void AmigaFont::drawString(byte *buffer, uint32 pitch, const char *s) {
 	_cp = buffer;
 	_pitch = pitch;
 
-	char c;
+	byte c;
 
 	while (*s) {
 		c = mapChar(*s);
@@ -453,7 +449,10 @@ void Gfx::initFonts() {
 		_fonts[kFontMenu] = _vm->_disk->loadFont("slide");
 	} else {
 		_fonts[kFontDialogue] = _vm->_disk->loadFont("comic");
-		_fonts[kFontLabel] = _vm->_disk->loadFont("intro");
+
+		Common::MemoryReadStream stream(_amigaTopazFont, 2600, false);
+		_fonts[kFontLabel] = new AmigaFont(stream);
+
 		_fonts[kFontMenu] = _vm->_disk->loadFont("slide");
 	}
 

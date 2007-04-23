@@ -568,17 +568,34 @@ void Gfx::restoreZoneBackground(const Common::Rect& r, byte *data) {
 void Gfx::makeCnvFromString(StaticCnv *cnv, char *text) {
 	assert(_font == _fonts[kFontLabel]);
 
-	cnv->_width = _font->getStringWidth(text);
-	cnv->_height = _font->height();
-	cnv->_data0 = (byte*)malloc(cnv->_width * cnv->_height);
+	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		cnv->_width = _font->getStringWidth(text) + 16;
+		cnv->_height = 10;
+		cnv->_data0 = (byte*)malloc(cnv->_width * cnv->_height);
+		memset(cnv->_data0, 0, cnv->_width * cnv->_height);
 
-	_font->drawString(cnv->_data0, cnv->_width, text);
+		_font->setColor(7);
+		_font->drawString(cnv->_data0 + 1, cnv->_width, text);
+		_font->drawString(cnv->_data0 + 1 + cnv->_width * 2, cnv->_width, text);
+		_font->drawString(cnv->_data0 + cnv->_width, cnv->_width, text);
+		_font->drawString(cnv->_data0 + 2 + cnv->_width, cnv->_width, text);
+		_font->setColor(1);
+		_font->drawString(cnv->_data0 + 1 + cnv->_width, cnv->_width, text);
+	} else {
+		cnv->_width = _font->getStringWidth(text);
+		cnv->_height = _font->height();
+		cnv->_data0 = (byte*)malloc(cnv->_width * cnv->_height);
+		memset(cnv->_data0, 0, cnv->_width * cnv->_height);
+		_font->drawString(cnv->_data0, cnv->_width, text);
+	}
+
 }
 
 void Gfx::displayString(uint16 x, uint16 y, const char *text) {
 	assert(_font == _fonts[kFontMenu]);
 
 	byte *dst = _buffers[kBitFront] + x + y*SCREEN_WIDTH;
+	_font->setColor(1);
 	_font->drawString(dst, SCREEN_WIDTH, text);
 }
 

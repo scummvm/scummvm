@@ -70,6 +70,7 @@ struct PaletteFxRange {
 
 class Font {
 
+protected:
 	byte _color;
 
 
