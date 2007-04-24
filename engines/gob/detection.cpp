@@ -414,6 +414,18 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB2,
 		"intro"
 	},
+	{ // Supplied by bgk in bug report #1706861
+		{
+			"gob2",
+			"",
+			AD_ENTRY1s("intro.stk", "4b13c02d1069b86bcfec80f4e474b98b", 554680),
+			FR_FRA,
+			kPlatformAtariST,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB2,
+		"intro"
+	},
 	{
 		{
 			"gob2cd",
