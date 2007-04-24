@@ -1236,7 +1236,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
-		0,
+		GF_SQ1,
 		0x2440,
 	},
 
@@ -1252,7 +1252,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
-		0,
+		GF_SQ1,
 		0x2272,
 	},
 
@@ -1268,7 +1268,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
-		0,
+		GF_SQ1,
 		0x2440,
 	},
 
@@ -1284,7 +1284,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
-		0,
+		GF_SQ1,
 		0x2440,
 	},
 
@@ -1300,7 +1300,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
-		0,
+		GF_SQ1,
 		0x2917,
 	},
 
@@ -1316,7 +1316,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
-		0,
+		GF_SQ1,
 		0x2089,
 	},
 
@@ -1332,7 +1332,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
-		0,
+		GF_SQ1,
 		0x2272,
 	},
 
@@ -1348,7 +1348,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V2,
-		0,
+		GF_SQ1,
 		0x2440,
 	},
 

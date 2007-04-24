@@ -111,7 +111,8 @@ enum AgiGameFeatures {
 	GF_MACGOLDRUSH = (1 << 5),
 	GF_FANMADE =     (1 << 6),
 	GF_ESC_MENU =    (1 << 7),
-	GF_MANHUNTER =   (1 << 8)
+	GF_MANHUNTER =   (1 << 8),
+	GF_SQ1 =         (1 << 9)
 };
 
 struct AGIGameDescription;

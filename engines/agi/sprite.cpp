@@ -618,10 +618,12 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 		/* add rectangle around object, don't clobber control
 		 * info in priority data. The box extends to the end of
 		 * its priority band!
-		 *
-		 * SQ1 needs +1 (see bug #810331)
 		 */
-		y3 = (y2 / 12) * 12 + 1;
+		y3 = (y2 / 12) * 12;
+
+		// SQ1 needs +1 (see bug #810331)
+		if (_vm->getFeatures() & GF_SQ1)
+			y3++;
 
 		// don't let box extend below y.
 		if (y3 > y2) y3 = y2;
