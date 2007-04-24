@@ -762,6 +762,18 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB3,
 		"intro"
 	},
+	{ // Supplied by Paranoimia on #scummvm
+		{
+			"gob3",
+			"",
+			AD_ENTRY1s("intro.stk", "fe8144daece35538085adb59c2d29613", 159402),
+			IT_ITA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB3,
+		"intro"
+	},
 	{
 		{
 			"gob3",
