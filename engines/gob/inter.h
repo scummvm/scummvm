@@ -108,7 +108,7 @@ protected:
 class Inter_v1 : public Inter {
 public:
 	Inter_v1(GobEngine *vm);
-	virtual ~Inter_v1() {};
+	virtual ~Inter_v1() {}
 
 	virtual int16 loadSound(int16 slot);
 	virtual void animPalette();
@@ -303,7 +303,7 @@ protected:
 class Inter_v2 : public Inter_v1 {
 public:
 	Inter_v2(GobEngine *vm);
-	virtual ~Inter_v2() {};
+	virtual ~Inter_v2() {}
 
 	virtual int16 loadSound(int16 search);
 	virtual void animPalette();
@@ -394,7 +394,7 @@ protected:
 class Inter_Bargon : public Inter_v2 {
 public:
 	Inter_Bargon(GobEngine *vm);
-	virtual ~Inter_Bargon() {};
+	virtual ~Inter_Bargon() {}
 
 protected:
 	typedef void (Inter_Bargon::*OpcodeDrawProcBargon)();
@@ -440,7 +440,7 @@ protected:
 class Inter_v3 : public Inter_v2 {
 public:
 	Inter_v3(GobEngine *vm);
-	virtual ~Inter_v3() {};
+	virtual ~Inter_v3() {}
 
 protected:
 	typedef void (Inter_v3::*OpcodeDrawProcV3)();

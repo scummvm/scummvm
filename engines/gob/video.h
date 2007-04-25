@@ -149,7 +149,7 @@ public:
 			SurfaceDesc *destDesc) = 0;
 
 	Video(class GobEngine *vm);
-	virtual ~Video() {};
+	virtual ~Video() {}
 
 protected:
 	class VideoDriver *_videoDriver;

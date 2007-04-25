@@ -51,7 +51,7 @@ public:
 	byte *getData() { return _dataPtr; }
 	uint32 size() { return _size; }
 	bool empty() { return !_dataPtr; }
-	bool isId(int16 id) { return _dataPtr && _id == id; };
+	bool isId(int16 id) { return _dataPtr && _id == id; }
 	SoundType getType() { return _type; }
 
 	void set(SoundType type, SoundSource src, byte *data, uint32 dSize);

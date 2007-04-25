@@ -191,7 +191,7 @@ public:
 	virtual void initScreen();
 
 	Draw_Bargon(GobEngine *vm);
-	virtual ~Draw_Bargon() {};
+	virtual ~Draw_Bargon() {}
 };
 
 // Draw operations

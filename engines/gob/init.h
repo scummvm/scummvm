@@ -66,7 +66,7 @@ public:
 	virtual void initVideo();
 
 	Init_v3(GobEngine *vm);
-	virtual ~Init_v3() {};
+	virtual ~Init_v3() {}
 };
 
 } // End of namespace Gob

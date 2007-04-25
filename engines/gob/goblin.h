@@ -306,7 +306,7 @@ public:
 			int16 index, int16 x, int16 y, int16 state);
 
 	Goblin_v3(GobEngine *vm);
-	virtual ~Goblin_v3() {};
+	virtual ~Goblin_v3() {}
 
 protected:
 	virtual bool isMovement(int8 state);
