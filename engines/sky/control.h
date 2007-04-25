@@ -133,10 +133,10 @@ struct AllocedMem {
 class ConResource {
 public:
 	ConResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen);
-	virtual ~ConResource(void) {};
-	void setSprite(void *pSpData) { _spriteData = (dataFileHeader*)pSpData; };
-	void setText(uint32 pText) { if (pText) _text = pText + 0x7000; else _text = 0; };
-	void setXY(uint16 x, uint16 y) { _x = x; _y = y; };
+	virtual ~ConResource(void) {}
+	void setSprite(void *pSpData) { _spriteData = (dataFileHeader*)pSpData; }
+	void setText(uint32 pText) { if (pText) _text = pText + 0x7000; else _text = 0; }
+	void setXY(uint16 x, uint16 y) { _x = x; _y = y; }
 	bool isMouseOver(uint32 mouseX, uint32 mouseY);
 	virtual void drawToScreen(bool doMask);
 

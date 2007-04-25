@@ -81,7 +81,7 @@ public:
 class ScummFont : public Font {
 public:
 	virtual int getFontHeight() const { return 8; }
-	virtual int getMaxCharWidth() const { return 8; };
+	virtual int getMaxCharWidth() const { return 8; }
 
 	virtual int getCharWidth(byte chr) const;
 	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
@@ -126,7 +126,7 @@ public:
 	~NewFont();
 
 	virtual int getFontHeight() const { return desc.height; }
-	virtual int getMaxCharWidth() const { return desc.maxwidth; };
+	virtual int getMaxCharWidth() const { return desc.maxwidth; }
 
 	virtual int getCharWidth(byte chr) const;
 	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;

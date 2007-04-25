@@ -71,14 +71,14 @@ public:
 	void startSequence(uint16 fileNum);
 	void startSequenceItem(uint16 itemNum);
 	void stopSequence(void);
-	bool sequenceRunning(void) { return _seqInfo.running; };
+	bool sequenceRunning(void) { return _seqInfo.running; }
 	void waitForSequence(void);
-	uint32 seqFramesLeft(void) { return _seqInfo.framesLeft; };
-	uint8 *giveCurrent(void) { return _currentScreen; };
+	uint32 seqFramesLeft(void) { return _seqInfo.framesLeft; }
+	uint8 *giveCurrent(void) { return _currentScreen; }
 	void halvePalette(void);
 
 	//- regular screen.asm routines
-	void forceRefresh(void) { memset(_gameGrid, 0x80, GRID_X * GRID_Y); };
+	void forceRefresh(void) { memset(_gameGrid, 0x80, GRID_X * GRID_Y); }
 	void fnFadeUp(uint32 palNum, uint32 scroll);
 	void fnFadeDown(uint32 scroll);
 	void fnDrawScreen(uint32 palette, uint32 scroll);

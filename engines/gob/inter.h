@@ -61,7 +61,7 @@ public:
 	virtual void animPalette() = 0;
 
 	Inter(GobEngine *vm);
-	virtual ~Inter() {};
+	virtual ~Inter() {}
 
 protected:
 	struct OpFuncParams {

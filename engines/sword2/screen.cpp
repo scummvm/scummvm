@@ -798,7 +798,7 @@ struct CreditsLine {
 	CreditsLine() {
 		str = NULL;
 		sprite = NULL;
-	};
+	}
 
 	~CreditsLine() {
 		free(str);

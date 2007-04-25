@@ -154,7 +154,7 @@ public:
 	virtual void spriteOperation(int16 operation) = 0;
 
 	Draw(GobEngine *vm);
-	virtual ~Draw() {};
+	virtual ~Draw() {}
 
 protected:
 	GobEngine *_vm;
@@ -170,7 +170,7 @@ public:
 	virtual void spriteOperation(int16 operation);
 
 	Draw_v1(GobEngine *vm);
-	virtual ~Draw_v1() {};
+	virtual ~Draw_v1() {}
 };
 
 class Draw_v2 : public Draw_v1 {
@@ -183,7 +183,7 @@ public:
 	virtual void spriteOperation(int16 operation);
 
 	Draw_v2(GobEngine *vm);
-	virtual ~Draw_v2() {};
+	virtual ~Draw_v2() {}
 };
 
 class Draw_Bargon: public Draw_v2 {

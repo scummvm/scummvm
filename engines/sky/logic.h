@@ -143,7 +143,7 @@ public:
 		Sound *skySound);
 	~Logic(void);
 	void engine();
-	void useControlInstance(Control *control) { _skyControl = control; };
+	void useControlInstance(Control *control) { _skyControl = control; }
 
 	uint16 mouseScript(uint32 scrNum, Compact *scriptComp);
 

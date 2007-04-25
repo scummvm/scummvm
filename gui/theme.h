@@ -183,7 +183,7 @@ public:
 			break;
 		};
 		return Graphics::kTextAlignCenter;
-	};
+	}
 	
 	TextAlign convertAligment(Graphics::TextAlignment align) const {
 		switch (align) {

@@ -82,7 +82,7 @@ public:
 	StringResource() :
 		_nbStrings(0),
 		_lastId(-1) {
-	};
+	}
 	~StringResource() {
 		for (int32 i = 0; i < _nbStrings; i++) {
 			delete []_strings[i].string;

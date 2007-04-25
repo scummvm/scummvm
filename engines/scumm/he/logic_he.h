@@ -40,11 +40,11 @@ public:
 	int getFromArray(int arg0, int idx2, int idx1);
 	void putInArray(int arg0, int idx2, int idx1, int val);
 
-	void beforeBootScript(void) {};
-	void initOnce() {};
-	void startOfFrame() {};
-	void endOfFrame() {};
-	void processKeyStroke(int keyPressed) {};
+	void beforeBootScript(void) {}
+	void initOnce() {}
+	void startOfFrame() {}
+	void endOfFrame() {}
+	void processKeyStroke(int keyPressed) {}
 
 	virtual int versionID();
 	virtual int32 dispatch(int op, int numArgs, int32 *args);

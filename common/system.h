@@ -352,14 +352,14 @@ public:
 	 *       of the relevant methods simply do nothing.
 	 * @see endGFXTransaction
 	 */
-	virtual void beginGFXTransaction() {};
+	virtual void beginGFXTransaction() {}
 
 
 	/**
 	 * End (and thereby commit) the current GFX transaction.
 	 * @see beginGFXTransaction
 	 */
-	virtual void endGFXTransaction() {};
+	virtual void endGFXTransaction() {}
 
 
 	/**
@@ -656,7 +656,7 @@ public:
 	 * @see setPalette
 	 * @see kFeatureCursorHasPalette
 	 */
-	virtual void setCursorPalette(const byte *colors, uint start, uint num) {};
+	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
 
 	/**
 	 * Disable or enable cursor palette.
@@ -668,7 +668,7 @@ public:
 	 * @see setPalette
 	 * @see kFeatureCursorHasPalette
 	 */
-	virtual void disableCursorPalette(bool disable) {};
+	virtual void disableCursorPalette(bool disable) {}
 
 	//@}
 

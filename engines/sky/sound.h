@@ -70,7 +70,7 @@ public:
 	void playSound(uint16 sound, uint16 volume, uint8 channel);
 	void fnStartFx(uint32 sound, uint8 channel);
 	bool startSpeech(uint16 textNum);
-	bool speechFinished(void) { return !_mixer->isSoundHandleActive(_ingameSpeech); };
+	bool speechFinished(void) { return !_mixer->isSoundHandleActive(_ingameSpeech); }
 	void fnPauseFx(void);
 	void fnUnPauseFx(void);
 	void fnStopFx(void);

@@ -36,7 +36,7 @@ public:
 	virtual int16 parseExpr(byte stopToken, byte *resultPtr) = 0;
 	
 	Parse(GobEngine *vm);
-	virtual ~Parse() {};
+	virtual ~Parse() {}
 
 protected:
 	enum PointerType {
@@ -56,7 +56,7 @@ protected:
 class Parse_v1 : public Parse {
 public:
 	Parse_v1(GobEngine *vm);
-	virtual ~Parse_v1() {};
+	virtual ~Parse_v1() {}
 
 	virtual int16 parseVarIndex(void);
 	virtual int16 parseValExpr(byte stopToken = 99);
@@ -66,7 +66,7 @@ public:
 class Parse_v2 : public Parse_v1 {
 public:
 	Parse_v2(GobEngine *vm);
-	virtual ~Parse_v2() {};
+	virtual ~Parse_v2() {}
 
 	virtual int16 parseVarIndex(void);
 	virtual int16 parseValExpr(byte stopToken = 99);

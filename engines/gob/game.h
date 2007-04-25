@@ -248,7 +248,7 @@ public:
 	virtual void prepareStart(void);
 
 	Game_v1(GobEngine *vm);
-	virtual ~Game_v1() {};
+	virtual ~Game_v1() {}
 
 protected:
 	virtual void pushCollisions(char all);
@@ -276,7 +276,7 @@ public:
 	virtual void prepareStart(void);
 
 	Game_v2(GobEngine *vm);
-	virtual ~Game_v2() {};
+	virtual ~Game_v2() {}
 
 protected:
 	struct CollLast {

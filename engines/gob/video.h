@@ -168,7 +168,7 @@ public:
 			int16 x, int16 y, int16 transp, SurfaceDesc *destDesc);
 
 	Video_v1(GobEngine *vm);
-	virtual ~Video_v1() {};
+	virtual ~Video_v1() {}
 };
 
 class Video_v2 : public Video_v1 {
@@ -177,7 +177,7 @@ public:
 			int16 x, int16 y, int16 transp, SurfaceDesc *destDesc);
 
 	Video_v2(GobEngine *vm);
-	virtual ~Video_v2() {};
+	virtual ~Video_v2() {}
 };
 
 class VideoDriver {

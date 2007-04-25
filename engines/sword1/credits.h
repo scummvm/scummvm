@@ -40,7 +40,7 @@ public:
 	uint8 *fetchFile(uint32 fileId, uint32 *size = NULL);
 	uint8 *decompressFile(uint32 fileId);
 	void enterPath(uint32 id);
-	void backToRoot(void) { _bufPos = _buf; };
+	void backToRoot(void) { _bufPos = _buf; }
 private:
 	uint8 *_bufPos;
 	uint8 *_buf;
