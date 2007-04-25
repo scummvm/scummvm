@@ -76,6 +76,7 @@ static const char *credits[] = {
 "\\C\\c0""",
 "\\C\\c1""SAGA",
 "\\C\\c0""Torbj\366rn Andersson",
+"\\C\\c0""Filippos Karapetis",
 "\\C\\c0""Andrew Kurushin",
 "\\C\\c0""Eugene Sandulenko",
 "\\C\\c0""",
