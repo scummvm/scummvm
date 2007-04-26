@@ -1227,12 +1227,15 @@ cmd(mouse_posn) {
 cmd(shake_screen) {
 	int i;
 
-	/* AGIPAL uses shake.screen values between 101 and 109 to
-	 * set the palette.
-	 */
-	if ((g_agi->getFeatures() & GF_AGIPAL) && p0 >= 101 && p0 < 110) {
-		g_gfx->setAGIPal(p0);
-		return;
+	// AGIPAL uses shake.screen values between 101 and 109 to
+	// set the palette.
+	if (p0 >= 101 && p0 < 110) {
+		if (g_agi->getFeatures() & GF_AGIPAL) {
+			g_gfx->setAGIPal(p0);
+			return;
+		} else {
+			warning("It looks like GF_AGIPAL flag is missing");
+		}
 	} 
 
 	// Disables input while shaking to prevent bug
