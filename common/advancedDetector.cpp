@@ -315,7 +315,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 			debug(3, "+ %s", tstr.c_str());
 			if (!filesMD5.contains(tstr)) {
 				if (testFile.open(file->_key)) {
-					filesSize[tstr] = filesSize[tstr2] = (int32)testFile.size();
+					filesSize[tstr] = (int32)testFile.size();
 					testFile.close();
 
 					if (md5_file_string(file->_key.c_str(), md5str, params.md5Bytes)) {
