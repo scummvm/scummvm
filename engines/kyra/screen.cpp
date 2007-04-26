@@ -1596,8 +1596,10 @@ uint Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
 
 				memset(dst, *src++, len); dst += len;
 			} else {
-				if (code == 0xFF)
-					len = READ_LE_UINT16(src); src += 2;
+				if (code == 0xFF) {
+					len = READ_LE_UINT16(src);
+					src += 2;
+				}
 
 				int offs = READ_LE_UINT16(src); src += 2;
 				if (len > count)
