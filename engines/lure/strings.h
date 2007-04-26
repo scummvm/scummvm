@@ -35,7 +35,7 @@ public:
 	char _ascii;
 
 	CharacterEntry(uint8 numBits, uint32 sequence, char ascii): _numBits(numBits),
-		_sequence(sequence), _ascii(ascii) {};
+		_sequence(sequence), _ascii(ascii) {}
 };
 
 #define MAX_NUM_CHARS 218

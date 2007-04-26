@@ -747,7 +747,7 @@ protected:
 	// Kyra 2 and 3 main menu
 
 	static const char *_mainMenuStrings[];
-	virtual void gui_initMainMenu() {};
+	virtual void gui_initMainMenu() {}
 	int gui_handleMainMenu();
 	virtual void gui_updateMainMenuAnimation();
 	void gui_drawMainMenu(const char * const *strings, int select);

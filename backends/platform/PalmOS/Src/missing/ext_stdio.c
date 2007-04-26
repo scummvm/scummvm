@@ -34,7 +34,7 @@ enum {
 };
 
 FILE gStdioOutput = {0,0,0,0,0,0};
-static void dummy(Boolean) {};
+static void dummy(Boolean) {}
 
 static LedProc	gStdioLedProc = dummy;
 static UInt16	gStdioVolRefNum = vfsInvalidVolRef;

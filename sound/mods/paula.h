@@ -86,7 +86,7 @@ protected:
 		} else
 			*buf++ += tmp;
 	}
-	virtual void interrupt(void) {};
+	virtual void interrupt(void) {}
 };
 
 } // End of namespace Audio

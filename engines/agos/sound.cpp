@@ -116,21 +116,21 @@ bool LoopingAudioStream::endOfData() const {
 
 class WavSound : public BaseSound {
 public:
-	WavSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian) {};
-	WavSound(Audio::Mixer *mixer, File *file, uint32 *offsets) : BaseSound(mixer, file, offsets) {};
+	WavSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian) {}
+	WavSound(Audio::Mixer *mixer, File *file, uint32 *offsets) : BaseSound(mixer, file, offsets) {}
 	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };
 
 class VocSound : public BaseSound {
 public:
-	VocSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian) {};
+	VocSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian) {}
 	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };
 
 class RawSound : public BaseSound {
 public:
-	RawSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian) {};
+	RawSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian) {}
 	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };
 
@@ -267,7 +267,7 @@ void RawSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle,
 #ifdef USE_MAD
 class MP3Sound : public BaseSound {
 public:
-	MP3Sound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
+	MP3Sound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {}
 	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };
@@ -296,7 +296,7 @@ void MP3Sound::playSound(uint sound, uint loopSound, Audio::SoundHandle *handle,
 #ifdef USE_VORBIS
 class VorbisSound : public BaseSound {
 public:
-	VorbisSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
+	VorbisSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {}
 	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };
@@ -325,7 +325,7 @@ void VorbisSound::playSound(uint sound, uint loopSound, Audio::SoundHandle *hand
 #ifdef USE_FLAC
 class FlacSound : public BaseSound {
 public:
-	FlacSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
+	FlacSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {}
 	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, uint loopSound, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };

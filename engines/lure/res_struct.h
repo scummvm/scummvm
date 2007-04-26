@@ -303,7 +303,7 @@ class RoomPathsData {
 private:
 	byte _data[ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH];
 public:
-	RoomPathsData() {};
+	RoomPathsData() {}
 	RoomPathsData(byte *srcData) { load(srcData); }
 
 	void load(byte *srcData) {

@@ -45,8 +45,8 @@ typedef struct {
 
 class OSystem_PalmOS5Ex : public OSystem_PalmOS5 {
 private:
-//	void timer_handler() {};
-	void sound_handler() {};
+//	void timer_handler() {}
+	void sound_handler() {}
 //	void int_quit();
 
 	SndStreamVariableBufferCallback sound_callback();

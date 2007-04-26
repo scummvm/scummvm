@@ -166,7 +166,7 @@ private:
 	Direction _direction;
 	int _numSteps;
 public:
-	WalkingActionEntry(Direction dir, int steps): _direction(dir), _numSteps(steps) {};
+	WalkingActionEntry(Direction dir, int steps): _direction(dir), _numSteps(steps) {}
 	Direction direction() { return _direction; }
 	int &rawSteps() { return _numSteps; }
 	int numSteps();

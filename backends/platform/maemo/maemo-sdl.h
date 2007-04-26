@@ -33,7 +33,7 @@
 
 class OSystem_MAEMO : public OSystem_SDL {
 public:
-	OSystem_MAEMO() {};
+	OSystem_MAEMO() {}
 
 	void loadGFXMode();
 };

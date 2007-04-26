@@ -176,7 +176,7 @@ public:
 	void initBackend();
 
 /*
-	virtual void setFeatureState(Feature f, bool enable) {};
+	virtual void setFeatureState(Feature f, bool enable) {}
 
 
 	bool hasFeature(Feature f);
