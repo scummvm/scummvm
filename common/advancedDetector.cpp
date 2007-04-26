@@ -354,7 +354,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 				break;
 			}
 			if (fileDesc->md5 != NULL) {
-				if (strcmp(fileDesc->md5, filesMD5[tstr].c_str())) {
+				if (fileDesc->md5 != filesMD5[tstr]) {
 					debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesMD5[tstr].c_str());
 					fileMissing = true;
 					break;
