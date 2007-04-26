@@ -254,6 +254,8 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 	IntMap filesSize;
 	IntMap allFiles;
 
+	File testFile;
+
 	String tstr;
 	
 	uint i;
@@ -280,17 +282,15 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 	if (fslist != 0) {
 		// Get the information of the existing files
 		for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
-			Common::File f;
-
 			if (file->isDirectory()) continue;
 			tstr = file->name();
 			tstr.toLowercase();
 
-			// Strip the trailing dot
+			// Strip any trailing dot
 			if (tstr.lastChar() == '.')
 				tstr.deleteLastChar();
 
-			allFiles[tstr] = 1;
+			allFiles[tstr] = true;
 
 			debug(3, "+ %s", tstr.c_str());
 
@@ -302,15 +302,13 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 
 			debug(3, "> %s: %s", tstr.c_str(), md5str);
 
-			if (f.open(file->path())) {
-				filesSize[tstr] = (int32)f.size();
-				f.close();
+			if (testFile.open(file->path())) {
+				filesSize[tstr] = (int32)testFile.size();
+				testFile.close();
 			}
 		}
 	} else {
 		// Get the information of the requested files
-		File testFile;
-
 		for (StringSet::const_iterator file = filesList.begin(); file != filesList.end(); ++file) {
 			tstr = file->_key;
 
@@ -425,8 +423,6 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 
 		// First we create list of files required for detection.
 		// The filenames can be different than the MD5 based match ones.
-		File testFile;
-
 		for (; ptr->desc; ptr++) {
 			filenames = ptr->filenames;
 			for (; *filenames; filenames++) {
@@ -435,7 +431,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 
 				if (!allFiles.contains(tstr)) {
 					if (testFile.open(tstr) || testFile.open(tstr + ".")) {
-						allFiles[tstr] = 1;
+						allFiles[tstr] = true;
 						testFile.close();
 					}
 				}
