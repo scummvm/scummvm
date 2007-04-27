@@ -40,20 +40,23 @@ namespace Cruise {
 
 //SoundDriver *g_soundDriver;
 //SfxPlayer *g_sfxPlayer;
-Common::SaveFileManager *g_saveFileMan;
+Common::SaveFileManager * g_saveFileMan;
 
 CruiseEngine *g_cruise;
 
-CruiseEngine::CruiseEngine(OSystem *syst) : Engine(syst) {
-	Common::addSpecialDebugLevel(kCruiseDebugScript, "Script", "Script debug level");
+CruiseEngine::CruiseEngine(OSystem * syst) : Engine(syst) {
+	Common::addSpecialDebugLevel(kCruiseDebugScript, "Script",
+	    "Script debug level");
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
 	}
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
+	    ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
+	    ConfMan.getInt("music_volume"));
 
 	g_cruise = this;
 }
@@ -64,10 +67,10 @@ CruiseEngine::~CruiseEngine() {
 int CruiseEngine::init() {
 	// Detect game
 	if (!initGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
+		GUIErrorMessage
+		    ("No valid games were found in the specified directory.");
 		return -1;
 	}
-	
 	// Initialize backend
 	_system->beginGFXTransaction();
 	initCommonGFX(false);
@@ -87,16 +90,16 @@ int CruiseEngine::go() {
 	return 0;
 }
 
-
 void CruiseEngine::initialize() {
 
 	fadeVar = 0;
-	ptr_something = (ctpVar19Struct*)mallocAndZero(sizeof(ctpVar19Struct)*0x200);
+	ptr_something =
+	    (ctpVar19Struct *) mallocAndZero(sizeof(ctpVar19Struct) * 0x200);
 
 	/*volVar1 = 0;
-	fileData1 = 0;*/
+	 * fileData1 = 0; */
 
-	/*PAL_fileHandle = -1;*/
+	/*PAL_fileHandle = -1; */
 
 	// video init stuff
 

@@ -21,13 +21,13 @@
  * $Id$
  *
  */
-#ifndef _BACKGROUND_H_
-#define _BACKGROUND_H_
+
+#ifndef CRUISE_BACKGROUND_H
+#define CRUISE_BACKGROUND_H
 
 namespace Cruise {
 
-struct backgroundTableStruct
-{
+struct backgroundTableStruct {
 	char name[9];
 	char extention[6];
 };
@@ -36,11 +36,11 @@ typedef struct backgroundTableStruct backgroundTableStruct;
 
 extern short int cvtPalette[0x20];
 extern int CVTLoaded;
-extern uint8* backgroundPtrtable[8];
+extern uint8 *backgroundPtrtable[8];
 extern backgroundTableStruct backgroundTable[8];
 
-int loadBackground(char* name, int idx);
+int loadBackground(char *name, int idx);
+
 } // End of namespace Cruise
 
 #endif
-

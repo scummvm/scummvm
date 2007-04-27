@@ -28,195 +28,192 @@ namespace Cruise {
 
 backgroundIncrustStruct backgroundIncrustHead;
 
-void resetBackgroundIncrustList(backgroundIncrustStruct* pHead)
-{
-  pHead->next = NULL;
-  pHead->prev = NULL;
+void resetBackgroundIncrustList(backgroundIncrustStruct *pHead) {
+	pHead->next = NULL;
+	pHead->prev = NULL;
 }
 
 // blit background to another one
-void addBackgroundIncrustSub1(int fileIdx, int X, int Y, char* ptr2, int16 scale, char* destBuffer, char* dataPtr)
-{
-  if(*dataPtr == 0)
-  {
-    ASSERT(0);
-  }
+void addBackgroundIncrustSub1(int fileIdx, int X, int Y, char *ptr2,
+	    int16 scale, char *destBuffer, char *dataPtr) {
+	if (*dataPtr == 0) {
+		ASSERT(0);
+	}
 
-  buildPolyModel(X, Y, scale, ptr2, destBuffer, dataPtr);
+	buildPolyModel(X, Y, scale, ptr2, destBuffer, dataPtr);
 }
 
-backgroundIncrustStruct* addBackgroundIncrust(int16 overlayIdx,int16 objectIdx,backgroundIncrustStruct* pHead,int16 scriptNumber,int16 scriptOverlay, int16 backgroundIdx, int16 param4)
-{
-  uint8* backgroundPtr;
-  uint8* ptr;
-  objectParamsQuery params;
-  backgroundIncrustStruct* newElement;
-  backgroundIncrustStruct* currentHead;
-  backgroundIncrustStruct* currentHead2;
+backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,
+    	int16 objectIdx, backgroundIncrustStruct *pHead, int16 scriptNumber,
+	    int16 scriptOverlay, int16 backgroundIdx, int16 param4) {
+	uint8 *backgroundPtr;
+	uint8 *ptr;
+	objectParamsQuery params;
+	backgroundIncrustStruct *newElement;
+	backgroundIncrustStruct *currentHead;
+	backgroundIncrustStruct *currentHead2;
 
-  getMultipleObjectParam(overlayIdx,objectIdx,&params);
+	getMultipleObjectParam(overlayIdx, objectIdx, &params);
 
-  ptr = filesDatabase[params.fileIdx].subData.ptr;
+	ptr = filesDatabase[params.fileIdx].subData.ptr;
 
-  if(!ptr)
-  {
-    return NULL;
-  }
+	if (!ptr) {
+		return NULL;
+	}
 
-  if(filesDatabase[params.fileIdx].subData.resourceType != 4 && filesDatabase[params.fileIdx].subData.resourceType != 8)
-  {
-    return NULL;
-  }
+	if (filesDatabase[params.fileIdx].subData.resourceType != 4
+	    && filesDatabase[params.fileIdx].subData.resourceType != 8) {
+		return NULL;
+	}
 
-  backgroundPtr = backgroundPtrtable[backgroundIdx];
+	backgroundPtr = backgroundPtrtable[backgroundIdx];
 
-  if(!backgroundPtr)
-  {
-    ASSERT(0);
-    return NULL;
-  }
+	if (!backgroundPtr) {
+		ASSERT(0);
+		return NULL;
+	}
 
-  currentHead = pHead;
-  currentHead2 = currentHead->next;
+	currentHead = pHead;
+	currentHead2 = currentHead->next;
 
-  while(currentHead2)
-  {
-    currentHead = currentHead2;
-    currentHead2 = currentHead->next;
-  }
+	while (currentHead2) {
+		currentHead = currentHead2;
+		currentHead2 = currentHead->next;
+	}
 
-  newElement = (backgroundIncrustStruct*)mallocAndZero(sizeof(backgroundIncrustStruct));
+	newElement =
+	    (backgroundIncrustStruct *)
+	    mallocAndZero(sizeof(backgroundIncrustStruct));
 
-  if(!newElement)
-    return NULL;
+	if (!newElement)
+		return NULL;
 
-  newElement->next = currentHead->next;
-  currentHead->next = newElement;
+	newElement->next = currentHead->next;
+	currentHead->next = newElement;
 
-  if(!currentHead2)
-  {
-    currentHead2 = pHead;
-  }
+	if (!currentHead2) {
+		currentHead2 = pHead;
+	}
 
-  newElement->prev = currentHead2->prev;
-  currentHead2->prev = newElement;
+	newElement->prev = currentHead2->prev;
+	currentHead2->prev = newElement;
 
-  newElement->objectIdx = objectIdx;
-  newElement->field_6 = param4;
-  newElement->backgroundIdx = backgroundIdx;
-  newElement->overlayIdx = overlayIdx;
-  newElement->scriptNumber = scriptNumber;
-  newElement->scriptOverlayIdx = scriptOverlay;
-  newElement->X = params.X;
-  newElement->Y = params.Y;
-  newElement->scale = params.scale;
-  newElement->field_E = params.fileIdx;
-  newElement->var34 = filesDatabase[params.fileIdx].subData.index;
-  newElement->ptr = NULL;
-  strcpy(newElement->name, filesDatabase[params.fileIdx].subData.name);
+	newElement->objectIdx = objectIdx;
+	newElement->field_6 = param4;
+	newElement->backgroundIdx = backgroundIdx;
+	newElement->overlayIdx = overlayIdx;
+	newElement->scriptNumber = scriptNumber;
+	newElement->scriptOverlayIdx = scriptOverlay;
+	newElement->X = params.X;
+	newElement->Y = params.Y;
+	newElement->scale = params.scale;
+	newElement->field_E = params.fileIdx;
+	newElement->var34 = filesDatabase[params.fileIdx].subData.index;
+	newElement->ptr = NULL;
+	strcpy(newElement->name, filesDatabase[params.fileIdx].subData.name);
 
-  if(filesDatabase[params.fileIdx].subData.resourceType == 4) // sprite
-  {
-    int width = filesDatabase[params.fileIdx].width;
-    int height = filesDatabase[params.fileIdx].height; 
+	if (filesDatabase[params.fileIdx].subData.resourceType == 4)	// sprite
+	{
+		int width = filesDatabase[params.fileIdx].width;
+		int height = filesDatabase[params.fileIdx].height;
 
-    currentTransparent = filesDatabase[params.fileIdx].subData.transparency;
-    mainDrawSub4(width, height, NULL, (char*)filesDatabase[params.fileIdx].subData.ptr, newElement->Y, newElement->X, (char*)backgroundPtr, (char*)filesDatabase[params.fileIdx].subData.ptr);
- //   ASSERT(0);
-  }
-  else // poly
-  {
-   /* if(param4 == 1)
-    {
-      int var_A;
-      int var_8;
-      int var_6;
-      char* var_10;
+		currentTransparent =
+		    filesDatabase[params.fileIdx].subData.transparency;
+		mainDrawSub4(width, height, NULL,
+		    (char *)filesDatabase[params.fileIdx].subData.ptr,
+		    newElement->Y, newElement->X, (char *)backgroundPtr,
+		    (char *)filesDatabase[params.fileIdx].subData.ptr);
+		//   ASSERT(0);
+	} else			// poly
+	{
+		/* if(param4 == 1)
+		 * {
+		 * int var_A;
+		 * int var_8;
+		 * int var_6;
+		 * char* var_10;
+		 * 
+		 * mainDrawSub1Sub1(lvar[3], newElement->X, newElement->Y, &var_A, &var_8, &var_6, &var_10, lvar[4], filesDatabase[lvar[3]].subData.ptr);
+		 * ASSERT(0);
+		 * } */
 
-      mainDrawSub1Sub1(lvar[3], newElement->X, newElement->Y, &var_A, &var_8, &var_6, &var_10, lvar[4], filesDatabase[lvar[3]].subData.ptr);
-      ASSERT(0);
-    }*/
+		addBackgroundIncrustSub1(params.fileIdx, newElement->X,
+		    newElement->Y, NULL, params.scale, (char *)backgroundPtr,
+		    (char *)filesDatabase[params.fileIdx].subData.ptr);
+	}
 
-    addBackgroundIncrustSub1(params.fileIdx, newElement->X, newElement->Y, NULL, params.scale, (char*)backgroundPtr, (char*)filesDatabase[params.fileIdx].subData.ptr );
-  }
- 
-  return newElement;
+	return newElement;
 }
 
-void loadBackgroundIncrustFromSave(FILE* fileHandle)
-{
-  int16 numEntry;
-  backgroundIncrustStruct* ptr1;
-  backgroundIncrustStruct* ptr2;
-  int32 i;
+void loadBackgroundIncrustFromSave(FILE *fileHandle) {
+	int16 numEntry;
+	backgroundIncrustStruct *ptr1;
+	backgroundIncrustStruct *ptr2;
+	int32 i;
 
-  fread(&numEntry,2,1,fileHandle);
+	fread(&numEntry, 2, 1, fileHandle);
 
-  ptr1 = &backgroundIncrustHead;
-  ptr2 = &backgroundIncrustHead;
+	ptr1 = &backgroundIncrustHead;
+	ptr2 = &backgroundIncrustHead;
 
-  for(i=0;i<numEntry;i++)
-  {
-    backgroundIncrustStruct* current = (backgroundIncrustStruct*)mallocAndZero(sizeof(backgroundIncrustStruct));
-    
-    fseek(fileHandle, 4, SEEK_CUR);
+	for (i = 0; i < numEntry; i++) {
+		backgroundIncrustStruct *current =
+		    (backgroundIncrustStruct *)
+		    mallocAndZero(sizeof(backgroundIncrustStruct));
 
-	  fread(&current->objectIdx,2,1,fileHandle);
-	  fread(&current->field_6,2,1,fileHandle);
-	  fread(&current->overlayIdx,2,1,fileHandle);
-	  fread(&current->X,2,1,fileHandle);
-	  fread(&current->Y,2,1,fileHandle);
-	  fread(&current->field_E,2,1,fileHandle);
-	  fread(&current->scale,2,1,fileHandle);
-	  fread(&current->backgroundIdx,2,1,fileHandle);
-	  fread(&current->scriptNumber,2,1,fileHandle);
-	  fread(&current->scriptOverlayIdx,2,1,fileHandle);
-	  fread(&current->ptr,4,1,fileHandle);
-	  fread(&current->field_1C,4,1,fileHandle);
-	  fread(&current->size,2,1,fileHandle);
-	  fread(&current->field_22,2,1,fileHandle);
-	  fread(&current->field_24,2,1,fileHandle);
-	  fread(current->name,14,1,fileHandle);
-	  fread(&current->var34,2,1,fileHandle);
+		fseek(fileHandle, 4, SEEK_CUR);
 
-    if(current->size)
-    {
-      current->ptr = (uint8*)mallocAndZero(current->size);
-      fread(current->ptr,current->size,1,fileHandle);
-    }
+		fread(&current->objectIdx, 2, 1, fileHandle);
+		fread(&current->field_6, 2, 1, fileHandle);
+		fread(&current->overlayIdx, 2, 1, fileHandle);
+		fread(&current->X, 2, 1, fileHandle);
+		fread(&current->Y, 2, 1, fileHandle);
+		fread(&current->field_E, 2, 1, fileHandle);
+		fread(&current->scale, 2, 1, fileHandle);
+		fread(&current->backgroundIdx, 2, 1, fileHandle);
+		fread(&current->scriptNumber, 2, 1, fileHandle);
+		fread(&current->scriptOverlayIdx, 2, 1, fileHandle);
+		fread(&current->ptr, 4, 1, fileHandle);
+		fread(&current->field_1C, 4, 1, fileHandle);
+		fread(&current->size, 2, 1, fileHandle);
+		fread(&current->field_22, 2, 1, fileHandle);
+		fread(&current->field_24, 2, 1, fileHandle);
+		fread(current->name, 14, 1, fileHandle);
+		fread(&current->var34, 2, 1, fileHandle);
 
-    current->next = NULL;
-    ptr2 = current;
-    current->prev = backgroundIncrustHead.prev;
-    backgroundIncrustHead.prev = current;
-    ptr2 = current->next;
-  }
+		if (current->size) {
+			current->ptr = (uint8 *) mallocAndZero(current->size);
+			fread(current->ptr, current->size, 1, fileHandle);
+		}
+
+		current->next = NULL;
+		ptr2 = current;
+		current->prev = backgroundIncrustHead.prev;
+		backgroundIncrustHead.prev = current;
+		ptr2 = current->next;
+	}
 }
 
-void regenerateBackgroundIncrust(backgroundIncrustStruct* pHead)
-{
-  printf("Need to regenerate backgroundIncrust\n");
+void regenerateBackgroundIncrust(backgroundIncrustStruct *pHead) {
+	printf("Need to regenerate backgroundIncrust\n");
 }
 
-void freeBackgroundIncrustList(backgroundIncrustStruct* pHead)
-{
-  backgroundIncrustStruct* pCurrent = pHead->next;
+void freeBackgroundIncrustList(backgroundIncrustStruct *pHead) {
+	backgroundIncrustStruct *pCurrent = pHead->next;
 
-  while(pCurrent)
-  {
-    backgroundIncrustStruct* pNext = pCurrent->next;
+	while (pCurrent) {
+		backgroundIncrustStruct *pNext = pCurrent->next;
 
-    if(pCurrent->ptr)
-    {
-      free(pCurrent->ptr);
-    }
+		if (pCurrent->ptr) {
+			free(pCurrent->ptr);
+		}
 
-    free(pCurrent);
+		free(pCurrent);
 
-    pCurrent = pNext;
-  }
+		pCurrent = pNext;
+	}
 
-  resetBackgroundIncrustList(pHead);
+	resetBackgroundIncrustList(pHead);
 }
 
 } // End of namespace Cruise

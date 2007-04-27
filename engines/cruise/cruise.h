@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef CRUISE_H
-#define CRUISE_H
+#ifndef CRUISE_CRUISE_H
+#define CRUISE_CRUISE_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
@@ -41,30 +41,30 @@ enum CruiseGameType {
 
 struct CRUISEGameDescription;
 
-class CruiseEngine : public Engine {
+class CruiseEngine:public Engine {
 
-protected:
+      protected:
 	int init();
 	int go();
 	void shutdown();
-	
+
 	bool initGame();
 
-public:
-	CruiseEngine(OSystem *syst);
-	virtual ~CruiseEngine();
+      public:
+	     CruiseEngine(OSystem * syst);
+	     virtual ~ CruiseEngine();
 
 	int getGameType() const;
 	uint32 getFeatures() const;
-	Common::Language getLanguage() const;
-	Common::Platform getPlatform() const;
+	      Common::Language getLanguage() const;
+	      Common::Platform getPlatform() const;
 
 	bool loadSaveDirectory(void);
 	void makeSystemMenu(void);
 
 	const CRUISEGameDescription *_gameDescription;
 
-private:
+      private:
 	void initialize(void);
 	bool makeLoad(char *saveName);
 	void mainLoop(int bootScriptIdx);
@@ -99,8 +99,7 @@ enum {
 	kCmpLT = (1 << 2)
 };
 
-
-extern Common::SaveFileManager *g_saveFileMan; // TEMP
+extern Common::SaveFileManager * g_saveFileMan;	// TEMP
 
 } // End of namespace Cruise
 

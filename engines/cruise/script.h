@@ -22,26 +22,24 @@
  *
  */
 
-#ifndef _SCRIPT_H_
-#define _SCRIPT_H_
+#ifndef CRUISE_SCRIPT_H
+#define CRUISE_SCRIPT_H
 
 namespace Cruise {
 
-enum scriptTypeEnum
-{
-  scriptType_Minus20 = -20,
-  scriptType_Minus30 = -30,
-  scriptType_20 = 20,
-  scriptType_30 = 30
+enum scriptTypeEnum {
+	scriptType_Minus20 = -20,
+	scriptType_Minus30 = -30,
+	scriptType_20 = 20,
+	scriptType_30 = 30
 };
 
 typedef enum scriptTypeEnum scriptTypeEnum;
 
-struct scriptInstanceStruct
-{
-	struct scriptInstanceStruct* nextScriptPtr;
+struct scriptInstanceStruct {
+	struct scriptInstanceStruct *nextScriptPtr;
 	int16 var4;
-	uint8* var6;
+	uint8 *var6;
 	int16 varA;
 	int16 scriptNumber;
 	int16 overlayNumber;
@@ -59,14 +57,16 @@ typedef struct scriptInstanceStruct scriptInstanceStruct;
 
 extern scriptInstanceStruct scriptHandle1;
 extern scriptInstanceStruct scriptHandle2;
-extern scriptInstanceStruct* currentScriptPtr;
+extern scriptInstanceStruct *currentScriptPtr;
 
 void setupFuncArray(void);
 uint8 getByteFromScript(void);
 
-int removeScript(int overlay,int idx,scriptInstanceStruct* headPtr);
-uint8* attacheNewScriptToTail(int16 overlayNumber,scriptInstanceStruct* scriptHandlePtr,int16 param, int16 arg0, int16 arg1, int16 arg2, scriptTypeEnum scriptType);
-void manageScripts(scriptInstanceStruct* scriptHandle);
+int removeScript(int overlay, int idx, scriptInstanceStruct * headPtr);
+uint8 *attacheNewScriptToTail(int16 overlayNumber,
+    scriptInstanceStruct * scriptHandlePtr, int16 param, int16 arg0,
+    int16 arg1, int16 arg2, scriptTypeEnum scriptType);
+void manageScripts(scriptInstanceStruct * scriptHandle);
 
 } // End of namespace Cruise
 

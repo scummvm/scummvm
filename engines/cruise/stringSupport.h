@@ -22,15 +22,15 @@
  *
  */
 
-#ifndef _STRING_SUPPORT_H_
-#define _STRING_SUPPORT_H_
+#ifndef CRUISE_STRING_SUPPORT_H
+#define CRSUIE_STRING_SUPPORT_H
 
 namespace Cruise {
 
-void strcpyuint8(void* dest, const void* source);
-void strcatuint8(void* dest, const void* source);
-uint8 strcmpuint8(const void* string1, const void* string2);
-FILE* fopenuint8(void* name, const void* param);
+void strcpyuint8(void *dest, const void *source);
+void strcatuint8(void *dest, const void *source);
+uint8 strcmpuint8(const void *string1, const void *string2);
+FILE *fopenuint8(void *name, const void *param);
 
 } // End of namespace Cruise
 

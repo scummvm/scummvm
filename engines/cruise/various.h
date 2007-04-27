@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef _VARIOUS_H_
-#define _VARIOUS_H_
+#ifndef CRUISE_VARIOUS_H
+#define CRUISE_VARIOUS_H
 
 #include "cruise/cell.h"
 
@@ -33,11 +33,14 @@ extern uint16 var0;
 extern uint16 fadeVar;
 extern uint16 main15;
 
-int16 readB16(void* ptr);
+int16 readB16(void *ptr);
 
-void createTextObject(int overlayIdx, int oldVar8, cellStruct *pObject, int scriptNumber, int scriptOverlayNumber, int backgroundPlane, int16 color, int oldVar2, int oldVar4, int oldVar6);
-void removeObjectFromList(int ovlNumber, int objectIdx, cellStruct* objPtr, int backgroundPlane, int arg);
-int16 Op_InitializeStateSub(int ovlIdx,int param1,int param2);
+void createTextObject(int overlayIdx, int oldVar8, cellStruct * pObject,
+    int scriptNumber, int scriptOverlayNumber, int backgroundPlane,
+    int16 color, int oldVar2, int oldVar4, int oldVar6);
+void removeObjectFromList(int ovlNumber, int objectIdx, cellStruct * objPtr,
+    int backgroundPlane, int arg);
+int16 Op_InitializeStateSub(int ovlIdx, int param1, int param2);
 
 } // End of namespace Cruise
 

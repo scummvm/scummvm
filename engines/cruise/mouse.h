@@ -22,16 +22,16 @@
  *
  */
 
-#ifndef _MOUSE_H_
-#define _MOUSE_H_
+#ifndef CRUISE_MOUSE_H
+#define CRUISE_MOUSE_H
 
 namespace Cruise {
 
 extern int16 main10;
 
-void getMouseStatus(int16* pMouseVar, int16* pMouseX, int16* pMouseButton, int16* pMouseY);
+void getMouseStatus(int16 * pMouseVar, int16 * pMouseX, int16 * pMouseButton,
+    int16 * pMouseY);
 
 } // End of namespace Cruise
 
 #endif
-

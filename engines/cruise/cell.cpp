@@ -27,133 +27,123 @@
 
 namespace Cruise {
 
-void resetPtr(cellStruct* ptr)
-{
-  ptr->next = NULL;
-  ptr->prev = NULL;
+void resetPtr(cellStruct *ptr) {
+	ptr->next = NULL;
+	ptr->prev = NULL;
 }
 
-void loadSavegameDataSub2(FILE * f)
-{
-  unsigned short int n_chunks;
-  int i;
-  cellStruct *p;
-  cellStruct *t;
+void loadSavegameDataSub2(FILE *f) {
+	unsigned short int n_chunks;
+	int i;
+	cellStruct *p;
+	cellStruct *t;
 
-  cellHead.next = NULL; // Not in ASM code, but I guess the variable is defaulted
-                          // to this value in the .exe
+	cellHead.next = NULL;	// Not in ASM code, but I guess the variable is defaulted
+	// to this value in the .exe
 
-  fread(&n_chunks, 2, 1, f);
-  // BIG ENDIAN MACHINES, PLEASE SWAP IT
+	fread(&n_chunks, 2, 1, f);
+	// BIG ENDIAN MACHINES, PLEASE SWAP IT
 
-  p = &cellHead;
+	p = &cellHead;
 
-  for (i = 0; i < n_chunks; i++)
-  {
-    t = (cellStruct *) mallocAndZero(sizeof(cellStruct));
+	for (i = 0; i < n_chunks; i++) {
+		t = (cellStruct *) mallocAndZero(sizeof(cellStruct));
 
-    fseek(f, 4, SEEK_CUR);
-    fread(&t->idx, 1, 0x30, f);
+		fseek(f, 4, SEEK_CUR);
+		fread(&t->idx, 1, 0x30, f);
 
-    t->next = NULL;
+		t->next = NULL;
 		p->next = t;
-    t->prev = cellHead.prev;
-    cellHead.prev = t;
-    p = t;
-  }
+		t->prev = cellHead.prev;
+		cellHead.prev = t;
+		p = t;
+	}
 }
 
-cellStruct* addCell(int16 overlayIdx,int16 param2,cellStruct* pHead,int16 scriptType,int16 scriptNumber,int16 scriptOverlay, int16 param3, int16 param4)
-{
-  int16 var;
+cellStruct *addCell(int16 overlayIdx, int16 param2, cellStruct *pHead,
+	    int16 scriptType, int16 scriptNumber, int16 scriptOverlay, int16 param3,
+    	int16 param4) {
+	int16 var;
 
-  cellStruct* newElement;
-  cellStruct* currentHead = pHead;
-  cellStruct* currentHead2;
-  cellStruct* currentHead3;
+	cellStruct *newElement;
+	cellStruct *currentHead = pHead;
+	cellStruct *currentHead2;
+	cellStruct *currentHead3;
 
-  if(getSingleObjectParam(overlayIdx,param2,2,&var)<0)
-  {
-    return 0;
-  }
+	if (getSingleObjectParam(overlayIdx, param2, 2, &var) < 0) {
+		return 0;
+	}
 
-  currentHead3 = currentHead;
-  currentHead2 = currentHead->next;
+	currentHead3 = currentHead;
+	currentHead2 = currentHead->next;
 
-  while(currentHead2)
-  {
-    if(currentHead2->type == 3)
-    {
-      break;
-    }
+	while (currentHead2) {
+		if (currentHead2->type == 3) {
+			break;
+		}
 
-    if(currentHead2->type != 5)
-    {
-      int16 lvar2;
+		if (currentHead2->type != 5) {
+			int16 lvar2;
 
-      getSingleObjectParam(currentHead2->overlay,currentHead2->idx,2,&lvar2);
+			getSingleObjectParam(currentHead2->overlay,
+			    currentHead2->idx, 2, &lvar2);
 
-      if(lvar2 > var)
-        break;
-    }
+			if (lvar2 > var)
+				break;
+		}
 
-    currentHead3 = currentHead2;
-    currentHead2 = currentHead2->next;
-  }
+		currentHead3 = currentHead2;
+		currentHead2 = currentHead2->next;
+	}
 
-  if(currentHead2)
-  {
-    if( (currentHead2->overlay == overlayIdx) &&
-        (currentHead2->backgroundPlane == param3) &&
-        (currentHead2->idx == param2) &&
-        (currentHead2->type == param4))
+	if (currentHead2) {
+		if ((currentHead2->overlay == overlayIdx) &&
+		    (currentHead2->backgroundPlane == param3) &&
+		    (currentHead2->idx == param2) &&
+		    (currentHead2->type == param4))
 
-    return NULL;
-  }
+			return NULL;
+	}
 
-  currentHead = currentHead2;
+	currentHead = currentHead2;
 
-  newElement = (cellStruct*)mallocAndZero(sizeof(cellStruct));
+	newElement = (cellStruct *) mallocAndZero(sizeof(cellStruct));
 
-  if(!newElement)
-    return 0;
+	if (!newElement)
+		return 0;
 
-  newElement->next = currentHead3->next;
-  currentHead3->next = newElement;
+	newElement->next = currentHead3->next;
+	currentHead3->next = newElement;
 
-  newElement->idx = param2;
-  newElement->type = param4;
-  newElement->backgroundPlane = param3;
-  newElement->overlay = overlayIdx;
-  newElement->freeze = 0;
-  newElement->field_16 = scriptNumber;
-  newElement->field_18 = scriptOverlay;
-  newElement->gfxPtr = NULL;
-  newElement->followObjectIdx = param2;
-  newElement->followObjectOverlayIdx = overlayIdx;
-  newElement->field_1A = scriptType;
-  newElement->field_20 = 0;
-  newElement->field_22 = 0;
-  newElement->nextAnimDelay = 0;
-  newElement->field_2C = 0;
-  newElement->currentAnimDelay = 0;
-  newElement->field_2A = 0;
-  newElement->animStep = 0;
-  newElement->field_30 = 0;
+	newElement->idx = param2;
+	newElement->type = param4;
+	newElement->backgroundPlane = param3;
+	newElement->overlay = overlayIdx;
+	newElement->freeze = 0;
+	newElement->field_16 = scriptNumber;
+	newElement->field_18 = scriptOverlay;
+	newElement->gfxPtr = NULL;
+	newElement->followObjectIdx = param2;
+	newElement->followObjectOverlayIdx = overlayIdx;
+	newElement->field_1A = scriptType;
+	newElement->field_20 = 0;
+	newElement->field_22 = 0;
+	newElement->nextAnimDelay = 0;
+	newElement->field_2C = 0;
+	newElement->currentAnimDelay = 0;
+	newElement->field_2A = 0;
+	newElement->animStep = 0;
+	newElement->field_30 = 0;
 
-  if(currentHead)
-  {
-    newElement->prev = currentHead->prev;
-    currentHead->prev = newElement;
-  }
-  else
-  {
-    newElement->prev = pHead->prev;
-    pHead->prev = newElement;
-  }
-  
-  return newElement;
+	if (currentHead) {
+		newElement->prev = currentHead->prev;
+		currentHead->prev = newElement;
+	} else {
+		newElement->prev = pHead->prev;
+		pHead->prev = newElement;
+	}
+
+	return newElement;
 }
 
-
-}
+} // End of namespace Cruise

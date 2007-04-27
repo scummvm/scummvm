@@ -22,28 +22,32 @@
  *
  */
 
+#ifndef CRUISE_MENU_H
+#define CRUISE_MENU_H
+
 namespace Cruise {
 
-struct menuStruct
-{
-  const char* stringPtr;
-  gfxEntryStruct* gfx;
-  int x;
-  int y;
-  int numElements;
-  menuElementStruct* ptrNextElement;
+struct menuStruct {
+	const char *stringPtr;
+	gfxEntryStruct *gfx;
+	int x;
+	int y;
+	int numElements;
+	menuElementStruct *ptrNextElement;
 };
 
 typedef struct menuStruct menuStruct;
 
-extern menuStruct* menuTable[8];
+extern menuStruct *menuTable[8];
 
-menuStruct* createMenu(int X, int Y, const char* menuName);
-void addSelectableMenuEntry(int var0, int var1, menuStruct* pMenu, int var2, int color, const char* menuText);
-void updateMenuMouse(int mouseX, int mouseY, menuStruct* pMenu);
-int processMenu(menuStruct* pMenu);
-void freeMenu(menuStruct* pMenu);
+menuStruct *createMenu(int X, int Y, const char *menuName);
+void addSelectableMenuEntry(int var0, int var1, menuStruct * pMenu, int var2,
+    int color, const char *menuText);
+void updateMenuMouse(int mouseX, int mouseY, menuStruct * pMenu);
+int processMenu(menuStruct * pMenu);
+void freeMenu(menuStruct * pMenu);
 int playerMenu(int menuX, int menuY);
 
-
 } // End of namespace Cruise
+
+#endif

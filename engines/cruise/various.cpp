@@ -30,158 +30,140 @@ uint16 var0 = 0;
 uint16 fadeVar;
 uint16 main15;
 
-int16 readB16(void* ptr)
-{
+int16 readB16(void *ptr) {
 	int16 temp;
 
-	temp = *(int16*)ptr;
+	temp = *(int16 *) ptr;
 	flipShort(&temp);
 
 	return temp;
 }
 
-void freeObject(cellStruct* objPtr)
-{
-  if(objPtr)
-  {
-  /*  if(objPtr->next)
-      free(objPtr->next); */
+void freeObject(cellStruct *objPtr) {
+	if (objPtr) {
+		/*  if(objPtr->next)
+		 * free(objPtr->next); */
 
-    //free(objPtr);
-  }
+		//free(objPtr);
+	}
 }
 
-void removeObjectFromList(int ovlNumber, int objectIdx, cellStruct* objPtr, int backgroundPlane, int arg)
-{
-  cellStruct* currentObj = objPtr->next;
-  cellStruct* previous;
+void removeObjectFromList(int ovlNumber, int objectIdx, cellStruct *objPtr,
+    int backgroundPlane, int arg) {
+	cellStruct *currentObj = objPtr->next;
+	cellStruct *previous;
 
-  while(currentObj)
-  {
-    cellStruct* si;
+	while (currentObj) {
+		cellStruct *si;
 
-    si = currentObj;
+		si = currentObj;
 
-    if( (si->overlay == ovlNumber || ovlNumber == -1) &&
-        (si->idx == objectIdx || objectIdx == -1) &&
-        (si->type == arg || arg == -1) &&
-        (si->backgroundPlane == backgroundPlane || backgroundPlane == -1) )
-    {
-      si->type = -1;
-    }
+		if ((si->overlay == ovlNumber || ovlNumber == -1) &&
+		    (si->idx == objectIdx || objectIdx == -1) &&
+		    (si->type == arg || arg == -1) &&
+		    (si->backgroundPlane == backgroundPlane
+			|| backgroundPlane == -1)) {
+			si->type = -1;
+		}
 
-    currentObj = si->next;
-  }
+		currentObj = si->next;
+	}
 
-  previous = objPtr;
-  currentObj = objPtr->next;
+	previous = objPtr;
+	currentObj = objPtr->next;
 
-  while(currentObj)
-  {
-    cellStruct* si;
+	while (currentObj) {
+		cellStruct *si;
 
-    si = currentObj;
+		si = currentObj;
 
-    if(si->type == -1)
-    {
-      cellStruct* dx;
-      previous->next = si->next;
+		if (si->type == -1) {
+			cellStruct *dx;
+			previous->next = si->next;
 
-      dx = si->next;
+			dx = si->next;
 
-      if(!si->next)
-      {
-        dx = objPtr;
-      }
+			if (!si->next) {
+				dx = objPtr;
+			}
 
-      dx->prev = si->prev;
+			dx->prev = si->prev;
 
-      freeObject(si);
+			freeObject(si);
 
-      free(si);
+			free(si);
 
-      currentObj = dx;
-    }
-    else
-    {
-      currentObj = si->next;
-      previous = si;
-    }
-  }
+			currentObj = dx;
+		} else {
+			currentObj = si->next;
+			previous = si;
+		}
+	}
 }
 
-char* getText(int textIndex, int overlayIndex)
-{
-  if(!overlayTable[overlayIndex].ovlData)
-  {
-    return NULL;
-  }
+char *getText(int textIndex, int overlayIndex) {
+	if (!overlayTable[overlayIndex].ovlData) {
+		return NULL;
+	}
 
-  if(!overlayTable[overlayIndex].ovlData->stringTable)
-  {
-    return NULL;
-  }
+	if (!overlayTable[overlayIndex].ovlData->stringTable) {
+		return NULL;
+	}
 
-  return overlayTable[overlayIndex].ovlData->stringTable[textIndex].string;
+	return overlayTable[overlayIndex].ovlData->stringTable[textIndex].
+	    string;
 }
 
-void createTextObject(int overlayIdx, int oldVar8, cellStruct *pObject, int scriptNumber, int scriptOverlayNumber, int backgroundPlane, int16 color, int oldVar2, int oldVar4, int oldVar6)
-{
-  char* ax;
-  cellStruct* savePObject = pObject;
-  cellStruct* cx;
+void createTextObject(int overlayIdx, int oldVar8, cellStruct *pObject,
+    int scriptNumber, int scriptOverlayNumber, int backgroundPlane,
+    int16 color, int oldVar2, int oldVar4, int oldVar6) {
+	char *ax;
+	cellStruct *savePObject = pObject;
+	cellStruct *cx;
 
-  cellStruct* pNewElement;
-  cellStruct* si = pObject->next;
-  cellStruct* var_2;
+	cellStruct *pNewElement;
+	cellStruct *si = pObject->next;
+	cellStruct *var_2;
 
-  while(si)
-  {
-    pObject = si;
-    si = si->next;
-  }
+	while (si) {
+		pObject = si;
+		si = si->next;
+	}
 
-  var_2 = si;
+	var_2 = si;
 
-  pNewElement = (cellStruct*)malloc(sizeof(cellStruct));
+	pNewElement = (cellStruct *) malloc(sizeof(cellStruct));
 
-  pNewElement->next = pObject->next;
-  pObject->next = pNewElement;
+	pNewElement->next = pObject->next;
+	pObject->next = pNewElement;
 
-  pNewElement->idx = oldVar8;
-  pNewElement->type = 5;
-  pNewElement->backgroundPlane = backgroundPlane;
-  pNewElement->overlay = overlayIdx;
-  pNewElement->field_A = oldVar6;
-  pNewElement->field_C = oldVar4;
-  pNewElement->spriteIdx = oldVar2;
-  pNewElement->field_10 = color;
-  pNewElement->freeze = 0;
-  pNewElement->field_16 = scriptNumber;
-  pNewElement->field_18 = scriptOverlayNumber;
-  pNewElement->gfxPtr = NULL;
+	pNewElement->idx = oldVar8;
+	pNewElement->type = 5;
+	pNewElement->backgroundPlane = backgroundPlane;
+	pNewElement->overlay = overlayIdx;
+	pNewElement->field_A = oldVar6;
+	pNewElement->field_C = oldVar4;
+	pNewElement->spriteIdx = oldVar2;
+	pNewElement->field_10 = color;
+	pNewElement->freeze = 0;
+	pNewElement->field_16 = scriptNumber;
+	pNewElement->field_18 = scriptOverlayNumber;
+	pNewElement->gfxPtr = NULL;
 
-  if(var_2)
-  {
-    cx = var_2;
-  }
-  else
-  {
-    cx = savePObject;
-  }
+	if (var_2) {
+		cx = var_2;
+	} else {
+		cx = savePObject;
+	}
 
-  pNewElement->prev = cx->prev;
-  cx->prev = pNewElement;
+	pNewElement->prev = cx->prev;
+	cx->prev = pNewElement;
 
-  ax = getText(oldVar8, overlayIdx);
+	ax = getText(oldVar8, overlayIdx);
 
-  if(ax)
-  {
-    pNewElement->gfxPtr = renderText(oldVar2, (uint8*)ax);
-  }
+	if (ax) {
+		pNewElement->gfxPtr = renderText(oldVar2, (uint8 *) ax);
+	}
 }
 
 } // End of namespace Cruise
-
-
-

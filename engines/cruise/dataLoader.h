@@ -22,16 +22,16 @@
  *
  */
 
-#ifndef _DATALOADER_H_
-#define _DATALOADER_H_
+#ifndef CRUISE_DATALOADER_H
+#define CRUISE_DATALOADER_H
 
 namespace Cruise {
 
-int loadData(uint8* name, int startIdx);
-int loadFileMode2(uint8* name, int param, int startIdx, int numIdx);
-int loadFileSub1(uint8** ptr, uint8* name, uint8* ptr2);
+int loadData(uint8 * name, int startIdx);
+int loadFileMode2(uint8 * name, int param, int startIdx, int numIdx);
+int loadFileSub1(uint8 ** ptr, uint8 * name, uint8 * ptr2);
 
-int loadFullBundle(uint8* name, int startIdx);
+int loadFullBundle(uint8 * name, int startIdx);
 
 } // End of namespace Cruise
 

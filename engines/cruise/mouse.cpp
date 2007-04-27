@@ -28,16 +28,16 @@ namespace Cruise {
 
 int16 main10;
 
-void getMouseStatus(int16* pMouseVar, int16* pMouseX, int16* pMouseButton, int16* pMouseY)
-{
- // mouseStatusStruct localStatus;
+void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton,
+	    int16 *pMouseY) {
+	// mouseStatusStruct localStatus;
 
- // OSystem_GetMouseStatus(&localStatus);
+	// OSystem_GetMouseStatus(&localStatus);
 
-  *pMouseX = 0;
-  *pMouseY = 0;
+	*pMouseX = 0;
+	*pMouseY = 0;
 
-  *pMouseButton = 0;
+	*pMouseButton = 0;
 /*
   if(localStatus.left)
     *pMouseButton |= 1;

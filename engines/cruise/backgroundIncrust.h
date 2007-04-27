@@ -22,14 +22,14 @@
  *
  */
 
-#ifndef _BACKGROUNDINCRUST_H_
-#define _BACKGROUNDINCRUST_H_
+#ifndef CRUISE_BACKGROUNDINCRUST_H
+#define CRUISE_BACKGROUNDINCRUST_H
 
 namespace Cruise {
 
 struct backgroundIncrustStruct {
-	struct backgroundIncrustStruct* next;
-	struct backgroundIncrustStruct* prev;
+	struct backgroundIncrustStruct *next;
+	struct backgroundIncrustStruct *prev;
 
 	uint16 objectIdx;
 	uint16 field_6;
@@ -41,7 +41,7 @@ struct backgroundIncrustStruct {
 	uint16 backgroundIdx;
 	uint16 scriptNumber;
 	uint16 scriptOverlayIdx;
-	uint8* ptr;
+	uint8 *ptr;
 	int32 field_1C;
 	int16 size;
 	uint16 field_22;
@@ -54,13 +54,14 @@ typedef struct backgroundIncrustStruct backgroundIncrustStruct;
 
 extern backgroundIncrustStruct backgroundIncrustHead;
 
-void resetBackgroundIncrustList(backgroundIncrustStruct* pHead);
-backgroundIncrustStruct* addBackgroundIncrust(int16 overlayIdx,int16 param2,backgroundIncrustStruct* pHead,int16 scriptNumber,int16 scriptOverlay, int16 backgroundIdx, int16 param4);
-void loadBackgroundIncrustFromSave(FILE* fileHandle);
-void regenerateBackgroundIncrust(backgroundIncrustStruct* pHead);
-void freeBackgroundIncrustList(backgroundIncrustStruct* pHead);
+void resetBackgroundIncrustList(backgroundIncrustStruct * pHead);
+backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx, int16 param2,
+    backgroundIncrustStruct * pHead, int16 scriptNumber, int16 scriptOverlay,
+    int16 backgroundIdx, int16 param4);
+void loadBackgroundIncrustFromSave(FILE * fileHandle);
+void regenerateBackgroundIncrust(backgroundIncrustStruct * pHead);
+void freeBackgroundIncrustList(backgroundIncrustStruct * pHead);
 
 } // End of namespace Cruise
 
 #endif
-

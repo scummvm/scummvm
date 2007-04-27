@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef _CRUISE_H_
-#define _CRUISE_H_
+#ifndef CRUISE_CRUISE_MAIN_H
+#define CRUISE_CRUISE_MAIN_H
 
 #include <string.h>
 #include <stdlib.h>
@@ -66,35 +66,37 @@ namespace Cruise {
 #define ASSERT_PTR assert
 #define ASSERT assert
 
-
 int32 decomp(uint8 * in, uint8 * out, int32 size);
 
-ovlData3Struct* getOvlData3Entry(int32 scriptNumber, int32 param);
-ovlData3Struct* scriptFunc1Sub2(int32 scriptNumber, int32 param);
-int16 loadShort(void* ptr);
+ovlData3Struct *getOvlData3Entry(int32 scriptNumber, int32 param);
+ovlData3Struct *scriptFunc1Sub2(int32 scriptNumber, int32 param);
+int16 loadShort(void *ptr);
 void resetFileEntry(int32 entryNumber);
-void saveShort(void* ptr, int16 var);
-void* mallocAndZero(int32 size);
-uint8* mainProc14(uint16 overlay, uint16 idx);
-void printInfoBlackBox(const char* string);
+void saveShort(void *ptr, int16 var);
+void *mallocAndZero(int32 size);
+uint8 *mainProc14(uint16 overlay, uint16 idx);
+void printInfoBlackBox(const char *string);
 void waitForPlayerInput(void);
-int loadCtp(uint8* ctpName);
-void loadPakedFileToMem(int fileIdx, uint8* buffer);
+int loadCtp(uint8 * ctpName);
+void loadPakedFileToMem(int fileIdx, uint8 * buffer);
 int loadScriptSub1(int scriptIdx, int param);
 void resetFileEntryRange(int param1, int param2);
-int getProcParam(int overlayIdx, int param2, uint8* name);
-void changeScriptParamInList(int param1, int param2, scriptInstanceStruct* pScriptInstance,int newValue, int param3);
-uint8* getDataFromData3(ovlData3Struct* ptr, int param);
-int32 prepareWordRender(int32 param, int32 var1,int16* out2, uint8* ptr3,uint8* string);
-void removeExtention(const char* name, char* buffer);
-void resetRaster(uint8* rasterPtr, int32 rasterSize);
+int getProcParam(int overlayIdx, int param2, uint8 * name);
+void changeScriptParamInList(int param1, int param2,
+    scriptInstanceStruct * pScriptInstance, int newValue, int param3);
+uint8 *getDataFromData3(ovlData3Struct * ptr, int param);
+int32 prepareWordRender(int32 param, int32 var1, int16 * out2, uint8 * ptr3,
+    uint8 * string);
+void removeExtention(const char *name, char *buffer);
+void resetRaster(uint8 * rasterPtr, int32 rasterSize);
 void changeCursor(uint16 cursorType);
-void resetPtr2(scriptInstanceStruct* ptr);
-void getFileExtention(const char* name,char* buffer);
+void resetPtr2(scriptInstanceStruct * ptr);
+void getFileExtention(const char *name, char *buffer);
 void *allocAndZero(int size);
 void freeStuff2(void);
-char* getObjectName(int index, uint8* string);
+char *getObjectName(int index, uint8 * string);
 void mainLoop(void);
+
 } // End of namespace Cruise
 
 #endif

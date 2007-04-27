@@ -22,14 +22,12 @@
  *
  */
 
-#ifndef _FONTCHARACTERTABLE_H_
-#define _FONTCHARACTERTABLE_H_
+#ifndef CRUISE_FONTCHARACTERTABLE_H
+#define CRUISE_FONTCHARACTERTABLE_H
 
 namespace Cruise {
 
 extern short int fontCharacterTable[256];
 
-} // End of namespace Cruise
-
+}				// End of namespace Cruise
 #endif
-

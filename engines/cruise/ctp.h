@@ -22,41 +22,39 @@
  *
  */
 
-#ifndef _CTP_H_
-#define _CTP_H_
+#ifndef CRUISE_CTP_H
+#define CRUISE_CTP_H
 
 namespace Cruise {
 
-struct ctpVar19SubStruct
-{
-  uint16 boxIdx;	//0
-  uint16 type;		//2
-  uint16 minX;		//4
-  uint16 maxX;		//6
-  uint16 minY;		//8
-  uint16 maxY;		//A
+struct ctpVar19SubStruct {
+	uint16 boxIdx;		//0
+	uint16 type;		//2
+	uint16 minX;		//4
+	uint16 maxX;		//6
+	uint16 minY;		//8
+	uint16 maxY;		//A
 };
 
 typedef struct ctpVar19SubStruct ctpVar19SubStruct;
 
-struct ctpVar19Struct
-{
-  struct ctpVar19Struct* field_0; //0
-  ctpVar19SubStruct subStruct;
+struct ctpVar19Struct {
+	struct ctpVar19Struct *field_0;	//0
+	ctpVar19SubStruct subStruct;
 };
 
 typedef struct ctpVar19Struct ctpVar19Struct;
 
-extern ctpVar19Struct* ptr_something;
-extern ctpVar19Struct* polyStruct;
-extern ctpVar19Struct* ctpVar11;
-extern ctpVar19Struct* ctpVar13;
-extern ctpVar19Struct* ctpVar15;
+extern ctpVar19Struct *ptr_something;
+extern ctpVar19Struct *polyStruct;
+extern ctpVar19Struct *ctpVar11;
+extern ctpVar19Struct *ctpVar13;
+extern ctpVar19Struct *ctpVar15;
 
-extern uint8* ctpVar17;
-extern ctpVar19Struct* ctpVar19;
+extern uint8 *ctpVar17;
+extern ctpVar19Struct *ctpVar19;
 
-int loadCtp(uint8* ctpName);
+int loadCtp(uint8 * ctpName);
 int ctpProc2(int varX, int varY, int paramX, int paramY);
 
 } // End of namespace Cruise

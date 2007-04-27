@@ -31,6 +31,7 @@
 #include "cruise/cruise.h"
 
 namespace Cruise {
+
 struct CRUISEGameDescription {
 	Common::ADGameDescription desc;
 
@@ -60,7 +61,7 @@ namespace Cruise {
 
 static const CRUISEGameDescription gameDescriptions[] = {
 	{
-		{
+	    {
 			"cruise",
 			"",
 			AD_ENTRY1("D1", "41a7a4d426dbd048eb369cfee4bb2717"),
@@ -70,9 +71,9 @@ static const CRUISEGameDescription gameDescriptions[] = {
 		},
 		GType_CRUISE,
 		0,
-	},
+    },
 	{
-		{
+	    {
 			"cruise",
 			"",
 			AD_ENTRY1("D1", "a90d2b9ead6b4d812cd14268672cf178"),
@@ -83,7 +84,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 		GType_CRUISE,
 		0,
 	},
-	{ AD_TABLE_END_MARKER, 0, 0 }
+	{AD_TABLE_END_MARKER, 0, 0}
 };
 
 }
@@ -117,6 +118,7 @@ namespace Cruise {
 
 bool CruiseEngine::initGame() {
 	_gameDescription = (const CRUISEGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+
 	return (_gameDescription != 0);
 }
 

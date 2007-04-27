@@ -22,13 +22,12 @@
  *
  */
 
-#ifndef _LINKER_H_
-#define _LINKER_H_
+#ifndef CRUISE_LINKER_H
+#define CRUISE_LINKER_H
 
 namespace Cruise {
 
 void updateAllScriptsImports(void);
 
-} // End of namespace Cruise
-
+}				// End of namespace Cruise
 #endif

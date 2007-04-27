@@ -22,42 +22,39 @@
  *
  */
 
-#ifndef _VARS_H_
-#define _VARS_H_
+#ifndef CRUISE_VARS_H
+#define CRUISE_VARS_H
 
 #include "common/file.h"
 
 namespace Cruise {
 
-struct menuElementSubStruct
-{
-  struct menuElementSubStruct* pNext;
-  int16 var2;
-  int16 var4;
+struct menuElementSubStruct {
+	struct menuElementSubStruct *pNext;
+	int16 var2;
+	int16 var4;
 };
 
 typedef struct menuElementSubStruct menuElementSubStruct;
 
-struct menuElementStruct
-{
-  struct menuElementStruct* next;
-  const char* string;
-  int x;
-  int y;
-  int varA;
-  int varC;
-  unsigned char color;
-  gfxEntryStruct* gfx;
-  menuElementSubStruct* ptrSub;
+struct menuElementStruct {
+	struct menuElementStruct *next;
+	const char *string;
+	int x;
+	int y;
+	int varA;
+	int varC;
+	unsigned char color;
+	gfxEntryStruct *gfx;
+	menuElementSubStruct *ptrSub;
 };
 
 typedef struct menuElementStruct menuElementStruct;
 
-typedef int32(*opcodeTypeFunction)(void);
-typedef int16(*opcodeFunction)(void);
+typedef int32(*opcodeTypeFunction) (void);
+typedef int16(*opcodeFunction) (void);
 
-
-extern uint8* _systemFNT;
+extern uint8 *_systemFNT;
 extern int16 fontFileIndex;
 
 extern uint8 video2;
@@ -74,15 +71,13 @@ extern int16 currentActiveBackgroundPlane;
 extern int16 main5;
 extern int16 var22;
 
-
-struct mediumVarStruct
-{
+struct mediumVarStruct {
 	uint8 name[16];
 	int16 field_10;
 	int16 field_12;
 	int16 field_14;
 	int16 field_16;
-	uint8* ptr;
+	uint8 *ptr;
 	int16 field_1C;
 	int16 field_1E;
 	int16 field_20;
@@ -90,36 +85,32 @@ struct mediumVarStruct
 
 typedef struct mediumVarStruct mediumVarStruct;
 
-struct filesDataStruct
-{
-	uint8* field_0;
-	uint8* field_4;
+struct filesDataStruct {
+	uint8 *field_0;
+	uint8 *field_4;
 };
 
 typedef struct filesDataStruct filesDataStruct;
 
-struct filesData2Struct
-{
+struct filesData2Struct {
 	int16 field_0;
 	int16 field_2;
 };
 
 typedef struct filesData2Struct filesData2Struct;
 
-struct fileName
-{
+struct fileName {
 	uint8 name[13];
 };
 
 typedef struct fileName fileName;
 
-struct setHeaderEntry
-{
-	int16 field_0;        // offset ptr part 1
-	int16 field_2;        // offset ptr part 2
+struct setHeaderEntry {
+	int16 field_0;		// offset ptr part 1
+	int16 field_2;		// offset ptr part 2
 	int16 width;
 	int16 height;
-	int16 type;           // resource type, ie. sprites 0,1,4,5 and 8
+	int16 type;		// resource type, ie. sprites 0,1,4,5 and 8
 	int16 transparency;
 	int16 field_C;
 	int16 field_E;
@@ -127,43 +118,39 @@ struct setHeaderEntry
 
 typedef struct setHeaderEntry setHeaderEntry;
 
-struct volumeDataStruct
-{
+struct volumeDataStruct {
 	char ident[10];
-	fileName* ptr;
+	fileName *ptr;
 	int16 diskNumber;
 	int32 size;
 };
 
 typedef struct volumeDataStruct volumeDataStruct;
 
-struct fileEntry
-{
+struct fileEntry {
 	uint8 name[14];
 	int32 offset;
 	int32 size;
 	int32 extSize;
-	int32 unk3;				// unused
+	int32 unk3;		// unused
 };
 
 typedef struct fileEntry fileEntry;
 
-struct dataFileEntrySub
-{
-	uint8* ptr;
-	int16 index;					// sprite index
-	char  name[14];
-	int16 transparency;			// sprite transparency
-	uint8* ptr2;
-	uint8  resourceType;			// sprite and image type 2,4,8 , fnt = 7, spl = 6
-	uint8  field_1B;
+struct dataFileEntrySub {
+	uint8 *ptr;
+	int16 index;		// sprite index
+	char name[14];
+	int16 transparency;	// sprite transparency
+	uint8 *ptr2;
+	uint8 resourceType;	// sprite and image type 2,4,8 , fnt = 7, spl = 6
+	uint8 field_1B;
 	int16 field_1C;
 };
 
 typedef struct dataFileEntrySub dataFileEntrySub;
 
-struct dataFileEntry
-{
+struct dataFileEntry {
 	int16 widthInColumn;
 	int16 width;
 	int16 resType;
@@ -173,8 +160,7 @@ struct dataFileEntry
 
 typedef struct dataFileEntry dataFileEntry;
 
-struct systemStringsStruct
-{
+struct systemStringsStruct {
 	int8 param;
 	uint8 string[12];
 	uint8 bootScriptName[8];
@@ -202,7 +188,6 @@ extern int16 main22;
 extern int16 main7;
 extern int16 main8;
 
-
 extern int16 currentDiskNumber;
 
 extern Common::File currentVolumeFile;
@@ -210,7 +195,7 @@ extern Common::File currentVolumeFile;
 extern int16 currentCursor;
 
 extern int16 volumeNumEntry;
-extern fileEntry* volumePtrToFileDescriptor;
+extern fileEntry *volumePtrToFileDescriptor;
 
 extern uint32 volumeFileDescriptorSize;
 extern int16 volumeSizeOfEntry;
@@ -232,8 +217,8 @@ extern actorStruct actorHead;
 
 extern int16 setup1;
 
-extern uint8* currentData3DataPtr;
-extern uint8* scriptDataPtrTable[7];
+extern uint8 *currentData3DataPtr;
+extern uint8 *scriptDataPtrTable[7];
 
 extern int16 currentScriptOpcodeType;
 
@@ -278,26 +263,26 @@ extern int16 var48;
 extern int16 flagCt;
 
 extern int8 var50[64];
-extern int16 palette[256*3];
+extern int16 palette[256 * 3];
 
 extern systemStringsStruct systemStrings;
 
 extern uint8 currentCtpName[40];
 
 extern int16 saveVar1;
-extern uint8 saveVar2[97]; // recheck size
+extern uint8 saveVar2[97];	// recheck size
 
-extern int16 numberOfWalkboxes;		// saveVar3
-extern int16 walkboxType[15];			// saveVar4	// Type: 0x00 - non walkable, 0x01 - walkable, 0x02 - exit zone
-extern int16 walkboxChange[15];		// saveVar5 // walkbox can change its type: 0x00 - not changeable, 0x01 - changeable
+extern int16 numberOfWalkboxes;	// saveVar3
+extern int16 walkboxType[15];	// saveVar4     // Type: 0x00 - non walkable, 0x01 - walkable, 0x02 - exit zone
+extern int16 walkboxChange[15];	// saveVar5 // walkbox can change its type: 0x00 - not changeable, 0x01 - changeable
 												// Assumption: To change the type: walkboxType[i] -= walkboxChane[i] and vice versa
 extern uint8 saveVar6[16];
 
 extern int32 loadFileVar1;
 
 extern int16 ctpVar1;
-extern int16 ctp_routeCoordCount;			// ctpVar2  // number of path-finding coordinates
-extern int16 ctp_routeCoords[20][2];			// ctpVar3	// path-finding coordinates array
+extern int16 ctp_routeCoordCount;	// ctpVar2  // number of path-finding coordinates
+extern int16 ctp_routeCoords[20][2];	// ctpVar3      // path-finding coordinates array
 
 /* ctp_routeCoords:
 
@@ -305,7 +290,7 @@ extern int16 ctp_routeCoords[20][2];			// ctpVar3	// path-finding coordinates ar
 	coordinate information with x (2 bytes) and y (2 bytes)
 */
 
-extern int16  ctp_routes[20][10]; // path-finding line information
+extern int16 ctp_routes[20][10];	// path-finding line information
 
 /* ctp_routes:
    
@@ -317,9 +302,9 @@ extern int16  ctp_routes[20][10]; // path-finding line information
    for the 20 * i slice the root x,y is routeCoords[i], routeCoords[i+2]
    the unused rest of the slice if filled up with 0xFF
 */
-extern uint16 ctp_walkboxTable[15 * 40];	// ctpVar5	// walkboxes coordinates and lines
-extern int8  ctpVar6[32];
-extern int16 ctp_scale[15];				// ctpVar7  // scaling information for walkboxes
+extern uint16 ctp_walkboxTable[15 * 40];	// ctpVar5      // walkboxes coordinates and lines
+extern int8 ctpVar6[32];
+extern int16 ctp_scale[15];	// ctpVar7  // scaling information for walkboxes
 extern int16 ctpVar8[200];
 
 extern int16 ctpVar14;
@@ -328,8 +313,8 @@ extern int16 bgVar1;
 extern int16 bgVar2;
 extern int16 bgVar3;
 
-extern uint8 globalScreen[320*200];
-extern uint8 scaledScreen[640*400];
+extern uint8 globalScreen[320 * 200];
+extern uint8 scaledScreen[640 * 400];
 
 //extern OSystem *osystem;
 

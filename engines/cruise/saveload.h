@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef _LOADSAVE_H_
-#define _LOADSAVE_H_
+#ifndef CRUISE_SAVELOAD_H
+#define CRUISE_SAVELOAD_H
 
 namespace Cruise {
 

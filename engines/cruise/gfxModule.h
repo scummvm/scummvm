@@ -22,24 +22,22 @@
  *
  */
 
-#ifndef _GFXMODULE_H_
-#define _GFXMODULE_H_
+#ifndef CRUISE_GFXMODULE_H
+#define CRUISE_GFXMODULE_H
 
 namespace Cruise {
 
-struct gfxModuleDataStruct
-{
+struct gfxModuleDataStruct {
 	int field_1;
 	int useTandy;
 	int useEGA;
 	int useVGA;
 
-	uint8* pPage00;
-	uint8* pPage10;
+	uint8 *pPage00;
+	uint8 *pPage10;
 };
 
-struct palEntry
-{
+struct palEntry {
 	uint8 R;
 	uint8 G;
 	uint8 B;
@@ -51,22 +49,22 @@ typedef struct palEntry palEntry;
 
 extern gfxModuleDataStruct gfxModuleData;
 extern palEntry lpalette[256];
-extern short globalAtariScreen[320*200/4];
+extern short globalAtariScreen[320 * 200 / 4];
 
-void gfxModuleData_gfxClearFrameBuffer(uint8* ptr);
-void gfxModuleData_setPal(uint8* ptr);
+void gfxModuleData_gfxClearFrameBuffer(uint8 * ptr);
+void gfxModuleData_setPal(uint8 * ptr);
 void gfxModuleData_field_90(void);
 void gfxModuleData_gfxWaitVSync(void);
 void gfxModuleData_flip(void);
-void gfxModuleData_field_64(char* sourceBuffer, int width, int height, char* dest, int x, int y, int color);
-void gfxModuleData_gfxCopyScreen(char* sourcePtr,char* destPtr);
-void gfxModuleData_field_60(char* sourcePtr, int width, int height, char* destPtr, int x, int y);
+void gfxModuleData_field_64(char *sourceBuffer, int width, int height,
+    char *dest, int x, int y, int color);
+void gfxModuleData_gfxCopyScreen(char *sourcePtr, char *destPtr);
+void gfxModuleData_field_60(char *sourcePtr, int width, int height,
+    char *destPtr, int x, int y);
 void gfxModuleData_flipScreen(void);
-void gfxModuleData_setPal256(int16* ptr);
+void gfxModuleData_setPal256(int16 * ptr);
 void flip(void);
-
 
 } // End of namespace Cruise
 
 #endif
-

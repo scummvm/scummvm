@@ -26,7 +26,7 @@
 
 namespace Cruise {
 
-uint8* _systemFNT;
+uint8 *_systemFNT;
 
 uint8 video2 = 1;
 uint8 video3 = 3;
@@ -69,7 +69,7 @@ Common::File currentVolumeFile;
 int16 currentCursor;
 
 int16 volumeNumEntry;
-fileEntry* volumePtrToFileDescriptor = NULL;
+fileEntry *volumePtrToFileDescriptor = NULL;
 
 uint32 volumeFileDescriptorSize;
 int16 volumeSizeOfEntry;
@@ -89,16 +89,14 @@ cellStruct cellHead;
 
 opcodeTypeFunction opcodeTypeTable[64];
 
-
 int16 positionInStack;
 
 actorStruct actorHead;
 
-
 int16 setup1;
 
-uint8* currentData3DataPtr;
-uint8* scriptDataPtrTable[7];
+uint8 *currentData3DataPtr;
+uint8 *scriptDataPtrTable[7];
 
 int16 currentScriptOpcodeType;
 
@@ -142,30 +140,30 @@ int16 var48;
 int16 flagCt;
 
 int8 var50[64];
-int16 palette[256*3];
+int16 palette[256 * 3];
 
 systemStringsStruct systemStrings;
 
 uint8 currentCtpName[40];
 
 int16 saveVar1;
-uint8 saveVar2[97]; // recheck size
+uint8 saveVar2[97];		// recheck size
 
-int16 numberOfWalkboxes;		// saveVar3
+int16 numberOfWalkboxes;	// saveVar3
 int16 walkboxType[15];		// saveVar4
-int16 walkboxChange[15];		// saveVar5
+int16 walkboxChange[15];	// saveVar5
 
 uint8 saveVar6[16];
 
 int32 loadFileVar1;
 
 int16 ctpVar1 = 0;
-int16 ctp_routeCoordCount;		// ctpVar2
-int16 ctp_routeCoords[20][2];		// ctpVar3
-int16  ctp_routes[20][10];
+int16 ctp_routeCoordCount;	// ctpVar2
+int16 ctp_routeCoords[20][2];	// ctpVar3
+int16 ctp_routes[20][10];
 uint16 ctp_walkboxTable[15 * 40];	// ctpVar5
-int8  ctpVar6[32];
-int16 ctp_scale[15];				//  ctpVar7
+int8 ctpVar6[32];
+int16 ctp_scale[15];		//  ctpVar7
 int16 ctpVar8[200];
 
 int16 ctpVar14;
@@ -174,8 +172,8 @@ int16 bgVar1;
 int16 bgVar2;
 int16 bgVar3;
 
-uint8 globalScreen[320*200];
-uint8 scaledScreen[640*400];
+uint8 globalScreen[320 * 200];
+uint8 scaledScreen[640 * 400];
 
 //OSystem *osystem;
 

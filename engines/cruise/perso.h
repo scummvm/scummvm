@@ -22,34 +22,33 @@
  *
  */
 
-#ifndef _PERSO_H_
-#define _PERSO_H_
+#ifndef CRUISE_PERSO_H
+#define CRUISE_PERSO_H
 
 namespace Cruise {
 
 #define NUM_NODES 20
 
-struct persoStruct
-{
-  int16 inc_droite; // 2
-  int16 inc_droite0; // 2
-  int16 inc_chemin; // 2
-  int16 coordinates[400][2]; // 1600
-  int16 solution[NUM_NODES+3][2]; //((20+3)*2*2)
-  int16 inc_jo1; // 2
-  int16 inc_jo2; // 2
-  int16 dir_perso; // 2
-  int16 inc_jo0; // 2
+struct persoStruct {
+	int16 inc_droite;	// 2
+	int16 inc_droite0;	// 2
+	int16 inc_chemin;	// 2
+	int16 coordinates[400][2];	// 1600
+	int16 solution[NUM_NODES + 3][2];	//((20+3)*2*2)
+	int16 inc_jo1;		// 2
+	int16 inc_jo2;		// 2
+	int16 dir_perso;	// 2
+	int16 inc_jo0;		// 2
 };
 
 typedef struct persoStruct persoStruct;
 
-extern persoStruct* persoTable[10];
+extern persoStruct *persoTable[10];
 extern int16 computedVar14;
 
 void freePerso(int persoIdx);
 void freeAllPerso(void);
-void affiche_chemin(int16 persoIdx, int16* returnVar);
+void affiche_chemin(int16 persoIdx, int16 * returnVar);
 
 } // End of namespace Cruise
 

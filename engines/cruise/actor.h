@@ -22,25 +22,24 @@
  *
  */
 
-#ifndef _ACTOR_H_
-#define _ACTOR_H_
+#ifndef CRUISE_ACTOR_H
+#define CRUISE_ACTOR_H
 
 namespace Cruise {
 
-enum animPhase
-{
-  ANIM_PHASE_WAIT = 0,
-  ANIM_PHASE_STATIC = 1,
-  ANIM_PHASE_MOVE = 2,
-  ANIM_PHASE_STATIC_END = 3,
-  ANIM_PHASE_END = 4
+enum animPhase {
+	ANIM_PHASE_WAIT = 0,
+	ANIM_PHASE_STATIC = 1,
+	ANIM_PHASE_MOVE = 2,
+	ANIM_PHASE_STATIC_END = 3,
+	ANIM_PHASE_END = 4
 };
 
 typedef enum animPhase animPhase;
 
 struct actorStruct {
-	struct actorStruct* next;
-	struct actorStruct* prev;
+	struct actorStruct *next;
+	struct actorStruct *prev;
 
 	int16 idx;
 	int16 type;
@@ -65,10 +64,13 @@ struct actorStruct {
 
 typedef struct actorStruct actorStruct;
 
-int16 mainProc13(int overlayIdx, int param1, actorStruct* pStartEntry, int param2);
-actorStruct* findActor(int overlayIdx, int param1, actorStruct* pStartEntry, int param2);
+int16 mainProc13(int overlayIdx, int param1, actorStruct * pStartEntry,
+    int param2);
+actorStruct *findActor(int overlayIdx, int param1, actorStruct * pStartEntry,
+    int param2);
 void processAnimation(void);
 void getPixel(int x, int y);
+
 } // End of namespace Cruise
 
 #endif

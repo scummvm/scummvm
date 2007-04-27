@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef _CELL_H_
-#define _CELL_H_
+#ifndef CRUISE_CELL_H
+#define CRUISE_CELL_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
@@ -32,16 +32,15 @@ namespace Cruise {
 
 struct gfxEntryStruct;
 
-struct cellStruct
-{
-	struct cellStruct* next;
-	struct cellStruct* prev;
+struct cellStruct {
+	struct cellStruct *next;
+	struct cellStruct *prev;
 	int16 idx;
 	int16 type;
-	int16 overlay ;
-	int16 field_A ;
-	int16 field_C ;
-	int16 spriteIdx ;
+	int16 overlay;
+	int16 field_A;
+	int16 field_C;
+	int16 spriteIdx;
 	int16 field_10;
 	int16 backgroundPlane;
 	int16 freeze;
@@ -59,15 +58,17 @@ struct cellStruct
 	int16 field_2C;
 	int16 currentAnimDelay;
 	int16 field_30;
-	gfxEntryStruct* gfxPtr;
+	gfxEntryStruct *gfxPtr;
 };
 
 extern cellStruct cellHead;
 
-void resetPtr(cellStruct* ptr);
+void resetPtr(cellStruct * ptr);
 void loadSavegameDataSub2(FILE * f);
-cellStruct* addCell(int16 overlayIdx,int16 param2,cellStruct* pHead,int16 scriptType,int16 scriptNumber,int16 scriptOverlay, int16 param3, int16 param4);
+cellStruct *addCell(int16 overlayIdx, int16 param2, cellStruct * pHead,
+    int16 scriptType, int16 scriptNumber, int16 scriptOverlay, int16 param3,
+    int16 param4);
 
-}
+} // End of namespace Cruise
 
 #endif

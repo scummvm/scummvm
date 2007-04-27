@@ -26,304 +26,333 @@
 
 namespace Cruise {
 
-exportEntryStruct* parseExport(int* out1, int* pExportedFuncionIdx, char* buffer)
-{
-  char localBuffer[256];
-  uint8 functionName[256];
-  uint8 overlayName[256];
-  char* dotPtr;
-  char* ptr2;
-  int idx;
-  int numExport;
-  exportEntryStruct* currentExportEntry;
-  uint8* entity1Name;
-  int i;
-  
-  *out1 = 0;
-  *pExportedFuncionIdx = 0;
+exportEntryStruct *parseExport(int *out1, int *pExportedFuncionIdx,
+	    char *buffer) {
+	char localBuffer[256];
+	uint8 functionName[256];
+	uint8 overlayName[256];
+	char *dotPtr;
+	char *ptr2;
+	int idx;
+	int numExport;
+	exportEntryStruct *currentExportEntry;
+	uint8 *entity1Name;
+	int i;
 
-  strcpyuint8(localBuffer, buffer);
-  dotPtr = strchr(localBuffer,'.');
+	*out1 = 0;
+	*pExportedFuncionIdx = 0;
 
-  if(dotPtr)
-  {
-    strcpyuint8(functionName,dotPtr+1);
-    *dotPtr = 0;
+	strcpyuint8(localBuffer, buffer);
+	dotPtr = strchr(localBuffer, '.');
 
-    strcpyuint8(overlayName,localBuffer);
-  }
-  else
-  {
-    overlayName[0] = 0;
-    
-    strcpyuint8(functionName,buffer);
-  }
+	if (dotPtr) {
+		strcpyuint8(functionName, dotPtr + 1);
+		*dotPtr = 0;
 
-  ptr2 = strchr((char*)functionName,':');
+		strcpyuint8(overlayName, localBuffer);
+	} else {
+		overlayName[0] = 0;
 
-  if(ptr2)
-  {
-    *ptr2 = 0;
+		strcpyuint8(functionName, buffer);
+	}
 
-    *out1 = 1;
-  }
+	ptr2 = strchr((char *)functionName, ':');
 
-  strToUpper(overlayName);
-  strToUpper(functionName);
-  if(strlen((char*)overlayName) == 0)
-    return NULL;
+	if (ptr2) {
+		*ptr2 = 0;
 
-  idx = findOverlayByName2(overlayName);
+		*out1 = 1;
+	}
 
-  if(idx == -4)
-    return(NULL);
+	strToUpper(overlayName);
+	strToUpper(functionName);
+	if (strlen((char *)overlayName) == 0)
+		return NULL;
 
-  if(overlayTable[idx].alreadyLoaded == 0)
-    return(NULL);
+	idx = findOverlayByName2(overlayName);
 
-  if(!overlayTable[idx].ovlData)
-    return(NULL);
+	if (idx == -4)
+		return (NULL);
 
-  numExport = overlayTable[idx].ovlData->numExport;
-  currentExportEntry = overlayTable[idx].ovlData->exportDataPtr;
-  entity1Name = overlayTable[idx].ovlData->exportNamesPtr;
+	if (overlayTable[idx].alreadyLoaded == 0)
+		return (NULL);
 
-  if(!entity1Name)
-    return(0);
+	if (!overlayTable[idx].ovlData)
+		return (NULL);
 
-  for(i=0;i<numExport;i++)
-  {
-    uint8 exportedName[256];
-    uint8* name = entity1Name + currentExportEntry->offsetToName;
+	numExport = overlayTable[idx].ovlData->numExport;
+	currentExportEntry = overlayTable[idx].ovlData->exportDataPtr;
+	entity1Name = overlayTable[idx].ovlData->exportNamesPtr;
 
-    strcpyuint8(exportedName,name);
-    strToUpper(exportedName);
-    
-    if(!strcmpuint8(functionName,exportedName))
-    {
-      *pExportedFuncionIdx = idx;
+	if (!entity1Name)
+		return (0);
 
-      return(currentExportEntry);
-    }
+	for (i = 0; i < numExport; i++) {
+		uint8 exportedName[256];
+		uint8 *name = entity1Name + currentExportEntry->offsetToName;
 
-    currentExportEntry++;
-  }
+		strcpyuint8(exportedName, name);
+		strToUpper(exportedName);
 
-  return(NULL);
+		if (!strcmpuint8(functionName, exportedName)) {
+			*pExportedFuncionIdx = idx;
+
+			return (currentExportEntry);
+		}
+
+		currentExportEntry++;
+	}
+
+	return (NULL);
 }
 
-
-int updateScriptImport(int ovlIdx)
-{
-  char buffer[256];
-  ovlDataStruct* ovlData;
-  int numData3;
-  int size5;
-  int numImport;
-  int param;
-  int var_32;
-  ovlData3Struct* pScript;
+int updateScriptImport(int ovlIdx) {
+	char buffer[256];
+	ovlDataStruct *ovlData;
+	int numData3;
+	int size5;
+	int numImport;
+	int param;
+	int var_32;
+	ovlData3Struct *pScript;
 //  char* importDataPtr;
 //  char* namePtr;
 //  char* linkDataPtr;
-  
-  if(!overlayTable[ovlIdx].ovlData)
-    return(-4);
 
-  ovlData = overlayTable[ovlIdx].ovlData;
+	if (!overlayTable[ovlIdx].ovlData)
+		return (-4);
 
-  numData3 = ovlData->numScripts1;
-  size5 = ovlData->numScripts2;
-  numImport = ovlData->numImport;
-  param = 0;
+	ovlData = overlayTable[ovlIdx].ovlData;
 
-    // do it for the 2 first string types
-  do
-  {
+	numData3 = ovlData->numScripts1;
+	size5 = ovlData->numScripts2;
+	numImport = ovlData->numImport;
+	param = 0;
 
-    int i = 0;
+	// do it for the 2 first string types
+	do {
 
-    if(param == 0)
-    {
-      var_32 = numData3;
-    }
-    else
-    {
-      var_32 = size5;
-    }
+		int i = 0;
 
-    if(var_32)
-    {
-      do
-      {
-        importScriptStruct* ptrImportData;
-        uint8* ptrImportName;
-        uint8* ptrData;
+		if (param == 0) {
+			var_32 = numData3;
+		} else {
+			var_32 = size5;
+		}
 
-        int var_22 = 0;
+		if (var_32) {
+			do {
+				importScriptStruct *ptrImportData;
+				uint8 *ptrImportName;
+				uint8 *ptrData;
 
-        if(param == 0)
-        {
-          pScript = getOvlData3Entry(ovlIdx, i);
-        }
-        else
-        {
-          pScript = scriptFunc1Sub2(ovlIdx, i);
-        }
+				int var_22 = 0;
 
-        ptrImportData = (importScriptStruct*) (pScript->dataPtr + pScript->offsetToImportData); // import data
-        ptrImportName = pScript->dataPtr + pScript->offsetToImportName; // import name
-        ptrData = pScript->dataPtr;
+				if (param == 0) {
+					pScript = getOvlData3Entry(ovlIdx, i);
+				} else {
+					pScript = scriptFunc1Sub2(ovlIdx, i);
+				}
 
-        var_22 = 0;
+				ptrImportData = (importScriptStruct *) (pScript->dataPtr + pScript->offsetToImportData);	// import data
+				ptrImportName = pScript->dataPtr + pScript->offsetToImportName;	// import name
+				ptrData = pScript->dataPtr;
 
-        if(pScript->numImport > 0)
-        {
-          int counter = pScript->numImport;
+				var_22 = 0;
 
-          do
-          {
-            int param2 = ptrImportData->type;
+				if (pScript->numImport > 0) {
+					int counter = pScript->numImport;
 
-            if(param2 != 70)
-            {
-              exportEntryStruct* ptrDest2;
-              int out1;
-              int out2;
+					do {
+						int param2 =
+						    ptrImportData->type;
 
-              strcpyuint8(buffer,ptrImportName + ptrImportData->offsetToName);
-              ptrDest2 = parseExport(&out1,&out2,buffer);
+						if (param2 != 70) {
+							exportEntryStruct
+							    * ptrDest2;
+							int out1;
+							int out2;
 
-              if(ptrDest2 && out2)
-              {
-                int temp = ptrImportData->offset;
-                if(out1) //is sub function... (ie  'invent.livre:s')
-                {
-                  uint8* ptr = ptrData + temp;
+							strcpyuint8(buffer,
+							    ptrImportName +
+							    ptrImportData->
+							    offsetToName);
+							ptrDest2 =
+							    parseExport(&out1,
+							    &out2, buffer);
 
-                  *(ptr+1) = out2;
-                  *(int16*)(ptr+2) = ptrDest2->idx;
+							if (ptrDest2 && out2) {
+								int temp =
+								    ptrImportData->
+								    offset;
+								if (out1)	//is sub function... (ie  'invent.livre:s')
+								{
+									uint8 *ptr = ptrData + temp;
 
-                  flipShort((int16*)(ptr+2));
-                }
-                else
-                {
-                  if(param2 == 20 || param2 == 30 || param2 == 40 || param2 == 50 ) // this patch a double push
-                  {
-                    uint8* ptr = ptrData + temp;
+									*(ptr +
+									    1)
+									    =
+									    out2;
+									*(int16
+									    *)
+									    (ptr
+									    +
+									    2)
+									    =
+									    ptrDest2->
+									    idx;
 
-                    *(ptr+1) = 0;
-                    *(ptr+2) = out2; // update the overlay number
+									flipShort
+									    (
+									    (int16
+										*)
+									    (ptr + 2));
+								} else {
+									if (param2 == 20 || param2 == 30 || param2 == 40 || param2 == 50)	// this patch a double push
+									{
+										uint8
+										    *
+										    ptr
+										    =
+										    ptrData
+										    +
+										    temp;
 
-                    *(int16*)(ptr+4) = ptrDest2->idx;
+										*(ptr + 1) = 0;
+										*(ptr + 2) = out2;	// update the overlay number
 
-                    flipShort((int16*)(ptr+4));
-                  }
-                  else
-                  {
-                    int var_4 = ptrDest2->var4;
+										*(int16 *) (ptr + 4) = ptrDest2->idx;
 
-                    if(var_4&1)
-                    {
-                      param2 = 8;
-                    }
-                    else
-                    {
-                      param2 = 16;
-                    }
+										flipShort
+										    (
+										    (int16
+											*)
+										    (ptr + 4));
+									} else {
+										int var_4 = ptrDest2->var4;
 
-                    if(var_4>=0 && var_4<=3)
-                    {
-                      param2 |= 5;
-                    }
-                    else
-                    {
-                      param2 |= 6;
-                    }
+										if (var_4 & 1) {
+											param2
+											    =
+											    8;
+										} else {
+											param2
+											    =
+											    16;
+										}
 
-                    *(ptrData + temp) = param2;
-                    *(ptrData + temp + 1 ) = out2;
+										if (var_4 >= 0 && var_4 <= 3) {
+											param2
+											    |=
+											    5;
+										} else {
+											param2
+											    |=
+											    6;
+										}
 
-                    *(int16*)(ptrData + temp + 2) = ptrDest2->idx;
+										*(ptrData + temp) = param2;
+										*(ptrData + temp + 1) = out2;
 
-                    flipShort((int16*)(ptrData + temp + 2));
-                  }
-                }
-              }
-            }
+										*(int16 *) (ptrData + temp + 2) = ptrDest2->idx;
 
-            ptrImportData++;
-          }while(--counter);
-        }
+										flipShort
+										    (
+										    (int16
+											*)
+										    (ptrData
+											+
+											temp
+											+
+											2));
+									}
+								}
+							}
+						}
 
-      }while(++i<var_32);
-      
-    }
+						ptrImportData++;
+					} while (--counter);
+				}
 
-  }while(++param<2);
+			} while (++i < var_32);
 
-  if(ovlData->importDataPtr && ovlData->importNamePtr && numImport)
-  {
-    int numImport2 = numImport;
-    int i;
+		}
 
-    for(i=0;i<numImport2;i++)
-    {
-      int out1;
-      int foundExportIdx;
-      exportEntryStruct* pFoundExport;
-      int linkType;
-      int linkEntryIdx;
+	} while (++param < 2);
 
-      strcpyuint8(buffer,ovlData->importNamePtr + ovlData->importDataPtr[i].nameOffset);
+	if (ovlData->importDataPtr && ovlData->importNamePtr && numImport) {
+		int numImport2 = numImport;
+		int i;
 
-      pFoundExport = parseExport(&out1,&foundExportIdx,buffer);
+		for (i = 0; i < numImport2; i++) {
+			int out1;
+			int foundExportIdx;
+			exportEntryStruct *pFoundExport;
+			int linkType;
+			int linkEntryIdx;
 
-      linkType = ovlData->importDataPtr[i].linkType;
-      linkEntryIdx = ovlData->importDataPtr[i].linkIdx;
+			strcpyuint8(buffer,
+			    ovlData->importNamePtr +
+			    ovlData->importDataPtr[i].nameOffset);
 
-      if(pFoundExport && foundExportIdx)
-      {
-        switch(linkType)
-        {
-        case 0: // var
-          {
-            ovlData->linkDataPtr[linkEntryIdx].varIdx = foundExportIdx;
-            ovlData->linkDataPtr[linkEntryIdx].varNameOffset = pFoundExport->offsetToName;
-            break;
-          }
-        case 1: // string
-          {
-            ovlData->linkDataPtr[linkEntryIdx].stringIdx = foundExportIdx;
-            ovlData->linkDataPtr[linkEntryIdx].stringNameOffset = pFoundExport->offsetToName;
-            break;
-          }
-        case 2: // proc
-          {
-            ovlData->linkDataPtr[linkEntryIdx].procIdx = foundExportIdx;
-            ovlData->linkDataPtr[linkEntryIdx].procNameOffset = pFoundExport->offsetToName;
-            break;
-          }
-        }
-      }
-    }
-  }
+			pFoundExport =
+			    parseExport(&out1, &foundExportIdx, buffer);
 
-  return(0);
+			linkType = ovlData->importDataPtr[i].linkType;
+			linkEntryIdx = ovlData->importDataPtr[i].linkIdx;
+
+			if (pFoundExport && foundExportIdx) {
+				switch (linkType) {
+				case 0:	// var
+					{
+						ovlData->
+						    linkDataPtr[linkEntryIdx].
+						    varIdx = foundExportIdx;
+						ovlData->
+						    linkDataPtr[linkEntryIdx].
+						    varNameOffset =
+						    pFoundExport->offsetToName;
+						break;
+					}
+				case 1:	// string
+					{
+						ovlData->
+						    linkDataPtr[linkEntryIdx].
+						    stringIdx = foundExportIdx;
+						ovlData->
+						    linkDataPtr[linkEntryIdx].
+						    stringNameOffset =
+						    pFoundExport->offsetToName;
+						break;
+					}
+				case 2:	// proc
+					{
+						ovlData->
+						    linkDataPtr[linkEntryIdx].
+						    procIdx = foundExportIdx;
+						ovlData->
+						    linkDataPtr[linkEntryIdx].
+						    procNameOffset =
+						    pFoundExport->offsetToName;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	return (0);
 }
 
 // check that the newly loaded isn't used by the already loaded overlays
-void updateAllScriptsImports(void)
-{
-  int i;
+void updateAllScriptsImports(void) {
+	int i;
 
-  for(i=0;i<90;i++)
-  {
-    if(overlayTable[i].ovlData && overlayTable[i].alreadyLoaded)
-    {
-      updateScriptImport(i);
-    }
-  }
+	for (i = 0; i < 90; i++) {
+		if (overlayTable[i].ovlData && overlayTable[i].alreadyLoaded) {
+			updateScriptImport(i);
+		}
+	}
 }
 
 } // End of namespace Cruise

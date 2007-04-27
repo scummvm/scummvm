@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef _FUNCTION_H_
-#define _FUNCTION_H_
+#ifndef CRUISE_FUNCTION_H
+#define CRUISE_FUNCTION_H
 
 namespace Cruise {
 
@@ -36,4 +36,3 @@ int16 subOp23(int param1, int param2);
 } // End of namespace Cruise
 
 #endif
-

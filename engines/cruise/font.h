@@ -22,27 +22,30 @@
  *
  */
 
-#ifndef _FONT_H_
-#define _FONT_H_
+#ifndef CRUISE_FONT_H
+#define CRUISE_FONT_H
 
 namespace Cruise {
 
-void loadFNT(const void* fileName);
+void loadFNT(const void *fileName);
 void loadSystemFont(void);
 
 //////////////////////////////////////////////////
-void flipShort(int16* var);
-void flipShort(uint16* var);
-void flipLong(int32* var); // TODO: move away
-void flipLong(uint32* var); // TODO: move away
-void flipGen(void* var, int32 length);
+void flipShort(int16 * var);
+void flipShort(uint16 * var);
+void flipLong(int32 * var);	// TODO: move away
+void flipLong(uint32 * var);	// TODO: move away
+void flipGen(void *var, int32 length);
 
-int32 getLineHeight(int16 charCount, uint8* fontPtr, uint8* fontPrt_Desc);						// fontProc1
-int32 getTextLineCount(int32 rightBorder_X, int32 wordSpacingWidth, uint8* ptr, uint8* textString);	// fontProc2
+int32 getLineHeight(int16 charCount, uint8 * fontPtr, uint8 * fontPrt_Desc);	// fontProc1
+int32 getTextLineCount(int32 rightBorder_X, int32 wordSpacingWidth, uint8 * ptr, uint8 * textString);	// fontProc2
 
-void renderWord(uint8* fontPtr_Data, uint8* outBufferPtr, int32 drawPosPixel_X, int32 heightOff, int32 height, int32 param4, int32 stringRenderBufferSize, int32 width , int32 charWidth);
-gfxEntryStruct* renderText(int inRightBorder_X, uint8* string);
-void drawString(int32 x, int32 y, uint8* string, uint8* buffer, uint8 color, int32 inRightBorder_X);
+void renderWord(uint8 * fontPtr_Data, uint8 * outBufferPtr,
+    int32 drawPosPixel_X, int32 heightOff, int32 height, int32 param4,
+    int32 stringRenderBufferSize, int32 width, int32 charWidth);
+gfxEntryStruct *renderText(int inRightBorder_X, uint8 * string);
+void drawString(int32 x, int32 y, uint8 * string, uint8 * buffer, uint8 color,
+    int32 inRightBorder_X);
 
 } // End of namespace Cruise
 

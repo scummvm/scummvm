@@ -31,55 +31,46 @@ stackElementStruct scriptStack[SIZE_STACK];
 
 // VAR
 
-void pushVar(int16 var)
-{
-  if(positionInStack<SIZE_STACK)
-  {
-    scriptStack[positionInStack].data.shortVar = var;
-    scriptStack[positionInStack].type = STACK_SHORT;
-    positionInStack++;
-  }
+void pushVar(int16 var) {
+	if (positionInStack < SIZE_STACK) {
+		scriptStack[positionInStack].data.shortVar = var;
+		scriptStack[positionInStack].type = STACK_SHORT;
+		positionInStack++;
+	}
 }
 
-int16 popVar(void)
-{
-  if(positionInStack<=0)
-  {
-    return(0);
-  }
+int16 popVar(void) {
+	if (positionInStack <= 0) {
+		return (0);
+	}
 
-  positionInStack--;
-  
-  ASSERT(scriptStack[positionInStack].type == STACK_SHORT);
+	positionInStack--;
 
-  return(scriptStack[positionInStack].data.shortVar);
+	ASSERT(scriptStack[positionInStack].type == STACK_SHORT);
+
+	return (scriptStack[positionInStack].data.shortVar);
 }
 
 //// PTR
 
-void pushPtr(void* ptr)
-{
-  if(positionInStack<SIZE_STACK)
-  {
-    scriptStack[positionInStack].data.ptrVar = ptr;
-    scriptStack[positionInStack].type = STACK_PTR;
-    positionInStack++;
-  }
+void pushPtr(void *ptr) {
+	if (positionInStack < SIZE_STACK) {
+		scriptStack[positionInStack].data.ptrVar = ptr;
+		scriptStack[positionInStack].type = STACK_PTR;
+		positionInStack++;
+	}
 }
 
-void* popPtr()
-{
-  if(positionInStack<=0)
-  {
-    return(0);
-  }
+void *popPtr() {
+	if (positionInStack <= 0) {
+		return (0);
+	}
 
-  positionInStack--;
-  
-  ASSERT(scriptStack[positionInStack].type == STACK_PTR);
+	positionInStack--;
 
-  return(scriptStack[positionInStack].data.ptrVar);
+	ASSERT(scriptStack[positionInStack].type == STACK_PTR);
+
+	return (scriptStack[positionInStack].data.ptrVar);
 }
 
 } // End of namespace Cruise
-

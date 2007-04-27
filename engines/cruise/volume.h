@@ -22,23 +22,23 @@
  *
  */
 
-#ifndef _VOLUME_H_
-#define _VOLUME_H_
+#ifndef CRUISE_VOLUME_H
+#define CRUISE_VOLUME_H
 
 namespace Cruise {
 
 int16 readVolCnf(void);
-int16 findFileInDisks(uint8* fileName);
-int16 fileExist(uint8* fileName);
+int16 findFileInDisks(uint8 * fileName);
+int16 fileExist(uint8 * fileName);
 void freeDisk(void);
-int16 findFileInList(uint8* fileName);
+int16 findFileInList(uint8 * fileName);
 
 ////////////////
 
-void strToUpper(uint8* fileName);
-void drawMsgString(uint8* string);
+void strToUpper(uint8 * fileName);
+void drawMsgString(uint8 * string);
 void askDisk(int16 discNumber);
-void setObjectPosition(int16 param1,int16 param2,int16 param3,int16 param4);
+void setObjectPosition(int16 param1, int16 param2, int16 param3, int16 param4);
 
 } // End of namespace Cruise
 

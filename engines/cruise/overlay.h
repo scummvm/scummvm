@@ -22,39 +22,36 @@
  *
  */
 
-#ifndef _OVERLAY_H_
-#define _OVERLAY_H_
+#ifndef CRUISE_OVERLAY_H
+#define CRUISE_OVERLAY_H
 
 namespace Cruise {
 
-struct importScriptStruct
-{
-  uint16 var0;
-  uint16 var1;
-  uint16 type;
-  uint16 offset;
-  uint16 offsetToName;
+struct importScriptStruct {
+	uint16 var0;
+	uint16 var1;
+	uint16 type;
+	uint16 offset;
+	uint16 offsetToName;
 };
 
 typedef struct importScriptStruct importScriptStruct;
 
-struct exportEntryStruct
-{
-    uint16 var0;
-    uint16 var2;
-    uint16 var4;
-    uint16 idx;
-    uint16 offsetToName;
+struct exportEntryStruct {
+	uint16 var0;
+	uint16 var2;
+	uint16 var4;
+	uint16 idx;
+	uint16 offsetToName;
 };
 
 typedef struct exportEntryStruct exportEntryStruct;
 
-struct ovlData3Struct
-{
-	uint8* dataPtr; //0
-	short int sizeOfData; //4
-	short int offsetToSubData3; //6
-	short int offsetToImportData; //8
+struct ovlData3Struct {
+	uint8 *dataPtr;		//0
+	short int sizeOfData;	//4
+	short int offsetToSubData3;	//6
+	short int offsetToImportData;	//8
 	short int offsetToSubData2;
 	short int offsetToImportName;
 	short int offsetToSubData5;
@@ -68,52 +65,48 @@ struct ovlData3Struct
 
 typedef struct ovlData3Struct ovlData3Struct;
 
-struct stringEntryStruct
-{
-	char* string;
+struct stringEntryStruct {
+	char *string;
 	short int length;
 	short int idx;
 };
 
 typedef struct stringEntryStruct stringEntryStruct;
 
-struct linkDataStruct
-{
-  uint16 field_0;
-  uint16 field_2;
-  uint16 field_4;
-  uint16 varIdx;
-  uint16 varNameOffset;
-  uint16 stringIdx;
-  uint16 stringNameOffset;
-  uint16 procIdx;
-  uint16 procNameOffset;
+struct linkDataStruct {
+	uint16 field_0;
+	uint16 field_2;
+	uint16 field_4;
+	uint16 varIdx;
+	uint16 varNameOffset;
+	uint16 stringIdx;
+	uint16 stringNameOffset;
+	uint16 procIdx;
+	uint16 procNameOffset;
 
-  int16 field_12;
-  int16 field_14;
-  int16 field_16;
-  int16 field_18;
-  int16 field_1A;
-  int16 field_1C;
-  int16 field_1E;
-  int16 field_20;
+	int16 field_12;
+	int16 field_14;
+	int16 field_16;
+	int16 field_18;
+	int16 field_1A;
+	int16 field_1C;
+	int16 field_1E;
+	int16 field_20;
 };
 
 typedef struct linkDataStruct linkDataStruct;
 
-struct importDataStruct
-{
-  uint16 var0; // 0
-  uint16 var1; // 2
-  uint16 linkType; // 4
-  uint16 linkIdx; // 6
-  uint16 nameOffset;
+struct importDataStruct {
+	uint16 var0;		// 0
+	uint16 var1;		// 2
+	uint16 linkType;	// 4
+	uint16 linkIdx;		// 6
+	uint16 nameOffset;
 };
 
 typedef struct importDataStruct importDataStruct;
 
-struct objDataStruct
-{
+struct objDataStruct {
 	int16 var0;
 	int16 var1;
 	int16 var2;
@@ -125,8 +118,7 @@ struct objDataStruct
 
 typedef struct objDataStruct objDataStruct;
 
-struct objectParams
-{
+struct objectParams {
 	int16 X;
 	int16 Y;
 	int16 baseFileIdx;
@@ -137,23 +129,22 @@ struct objectParams
 
 typedef struct objectParams objectParams;
 
-struct ovlDataStruct
-{
-	ovlData3Struct* data3Table;
-	uint8* ptr1;
-	objDataStruct* objDataTable;
-	objectParams* objData2SourceTable;
-	objectParams* objData2WorkTable;
-	stringEntryStruct* stringTable;
-	exportEntryStruct* exportDataPtr;
-	importDataStruct* importDataPtr;
-	linkDataStruct* linkDataPtr;
-	uint8* specialString1;
-	uint8* specialString2;
-	uint8* importNamePtr;
-	uint8* exportNamesPtr;
-	uint8* data4Ptr;
-	uint8* ptr8;
+struct ovlDataStruct {
+	ovlData3Struct *data3Table;
+	uint8 *ptr1;
+	objDataStruct *objDataTable;
+	objectParams *objData2SourceTable;
+	objectParams *objData2WorkTable;
+	stringEntryStruct *stringTable;
+	exportEntryStruct *exportDataPtr;
+	importDataStruct *importDataPtr;
+	linkDataStruct *linkDataPtr;
+	uint8 *specialString1;
+	uint8 *specialString2;
+	uint8 *importNamePtr;
+	uint8 *exportNamesPtr;
+	uint8 *data4Ptr;
+	uint8 *ptr8;
 	unsigned short int numScripts1;
 	unsigned short int numScripts2;
 	unsigned short int numExport;
@@ -174,10 +165,9 @@ struct ovlDataStruct
 
 typedef struct ovlDataStruct ovlDataStruct;
 
-struct overlayStruct
-{
+struct overlayStruct {
 	char overlayName[14];
-	ovlDataStruct* ovlData;
+	ovlDataStruct *ovlData;
 	short int alreadyLoaded;
 	char field_14;
 	char field_15;
@@ -206,11 +196,10 @@ extern overlayStruct overlayTable[90];
 extern int numOfLoadedOverlay;
 
 void initOverlayTable(void);
-int loadOverlay(uint8* scriptName);
-int32 findOverlayByName2(uint8* name);
-int findOverlayByName(const char* overlayName);
-int releaseOverlay(const char* name);
-
+int loadOverlay(uint8 * scriptName);
+int32 findOverlayByName2(uint8 * name);
+int findOverlayByName(const char *overlayName);
+int releaseOverlay(const char *name);
 
 } // End of namespace Cruise
 

@@ -22,30 +22,27 @@
  *
  */
 
-#ifndef _STACK_H_
-#define _STACK_H_
+#ifndef CRUISE_STACK_H
+#define CRUISE_STACK_H
 
 namespace Cruise {
 
 #define SIZE_STACK 0x200
 
-enum stackElementTypeEnum
-{
-    STACK_SHORT,
-    STACK_PTR
+enum stackElementTypeEnum {
+	STACK_SHORT,
+	STACK_PTR
 };
 
 typedef enum stackElementTypeEnum stackElementTypeEnum;
 
-struct stackElementStruct
-{
-    stackElementTypeEnum type;
-    
-    union
-    {
-        void* ptrVar;
-        int16 shortVar;
-    } data;
+struct stackElementStruct {
+	stackElementTypeEnum type;
+
+	union {
+		void *ptrVar;
+		int16 shortVar;
+	} data;
 };
 
 typedef struct stackElementStruct stackElementStruct;
@@ -53,8 +50,8 @@ typedef struct stackElementStruct stackElementStruct;
 int16 popVar(void);
 void pushVar(int16 var);
 
-void pushPtr(void* ptr);
-void* popPtr(void);
+void pushPtr(void *ptr);
+void *popPtr(void);
 
 } // End of namespace Cruise
 
