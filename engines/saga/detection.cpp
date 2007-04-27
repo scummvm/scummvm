@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+ * Copyright (C) 2004-2007 The ScummVM project
  *
  * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
  *
@@ -94,11 +94,7 @@ static const Common::ADObsoleteGameID obsoleteGameIDsTable[] = {
 	{0, 0, Common::kPlatformUnknown}
 };
 
-namespace Saga {
-
-#include "detection_tables.h"
-
-}
+#include "saga/detection_tables.h"
 
 static const Common::ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
