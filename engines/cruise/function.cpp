@@ -1047,11 +1047,13 @@ int16 Op_removeBackgroundIncrust(void)
 
 int16 Op_D(void) // TODO: palette manipulation
 {
+  /*
   int var_4 = popVar();
   int var_6 = popVar();
   int var_8 = popVar();
   int si = popVar();
   int di = popVar();
+  */
 
   return 0;
 }
@@ -1081,11 +1083,13 @@ int16 Op_releaseOverlay(void)
 
 int16 Op_drawLine(void)
 {
+  /*
   int di = popVar();
   int var_2 = popVar();
   int var_4 = popVar();
   int var_6 = popVar();
   uint8* ptr = (uint8*)popPtr();
+  */
 
   //drawLinePtr(var_6, var_4, var_2, ptr);
 

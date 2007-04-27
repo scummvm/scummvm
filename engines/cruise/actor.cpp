@@ -492,7 +492,7 @@ void	explore( int depart, int arrivee )
 void	chemin0( int depart, int arrivee )
 {
 	int	i;
-	int	y=30;
+	//int	y=30;
 	
 	prem  = 0;
 	prem2 = 0;
@@ -510,7 +510,7 @@ void	chemin0( int depart, int arrivee )
 void valide_noeud( int16 table[], int16 p, int *nclick, int16 solution0[20+3][2] )
 {
 	int	a, b, d, i, p1, x1, x2, y1, y2;
-	int	y=30;
+	//int	y=30;
 
 	table[*nclick]=p;
 	table[(*nclick)+1]=-1;	

@@ -1474,14 +1474,14 @@ void mainLoop(void)
   #define SLEEP_GRAN 1         /* Granularity of sleep */
 
   int frames=0;                   /* Number of frames displayed */
-  int32 t_start,t_left;
-  uint32 t_end;
+  //int32 t_start,t_left;
+  //uint32 t_end;
   int32 q=0;                     /* Dummy */
 
   int enableUser = 0;
-  int16 mouseX;
-  int16 mouseY;
-  int16 mouseButton;
+  //int16 mouseX;
+  //int16 mouseY;
+  //int16 mouseButton;
 
   scriptNameBuffer[0] = 0;
   systemStrings.bootScriptName[0] = 0;
