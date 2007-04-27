@@ -1,0 +1,41 @@
+MODULE := engines/cruise
+
+MODULE_OBJS := \
+	actor.o \
+	background.o \
+	backgroundIncrust.o \
+	cruise.o \
+	cruise_main.o \
+	ctp.o \
+	dataLoader.o \
+	decompiler.o \
+	delphine-unpack.o \
+	detection.o \
+	font.o \
+	fontCharacterTable.o \
+	function.o \
+	gfxModule.o \
+	linker.o \
+	loadSave.o \
+	mainDraw.o \
+	menu.o \
+	mouse.o \
+	object.o \
+	overlay.o \
+	perso.o \
+	polys.o \
+	script.o \
+	stack.o \
+	stringSupport.o \
+	various.o \
+	vars.o \
+	volume.o
+
+# This module can be built as a plugin
+ifdef BUILD_PLUGINS
+PLUGIN := 1
+endif
+
+# Include common rules 
+include $(srcdir)/rules.mk
+
