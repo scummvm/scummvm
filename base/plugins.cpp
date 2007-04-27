@@ -126,6 +126,9 @@ public:
 		#ifndef DISABLE_PARALLACTION
 		LINK_PLUGIN(PARALLACTION)
 		#endif
+		#ifndef DISABLE_CRUISE
+		LINK_PLUGIN(CRUISE)
+		#endif
 
 		return pl;
 	}
