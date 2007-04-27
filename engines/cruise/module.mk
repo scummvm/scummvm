@@ -16,7 +16,6 @@ MODULE_OBJS := \
 	function.o \
 	gfxModule.o \
 	linker.o \
-	loadSave.o \
 	mainDraw.o \
 	menu.o \
 	mouse.o \
@@ -24,6 +23,7 @@ MODULE_OBJS := \
 	overlay.o \
 	perso.o \
 	polys.o \
+	saveload.o \
 	script.o \
 	stack.o \
 	stringSupport.o \
