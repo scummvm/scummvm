@@ -1336,7 +1336,7 @@ if test "$_build_parallaction" = yes ; then
 	echo "    Parallaction"
 fi
 if test "$_build_cruise" = yes ; then
-	echo "    Cruise for a Corpse"
+	echo "    Cinematique evo 2"
 fi
 
 echo
