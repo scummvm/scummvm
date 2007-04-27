@@ -2429,30 +2429,6 @@ void Screen::rectClip(int &x, int &y, int w, int h) {
 		y = 200 - h;
 }
 
-void Screen::backUpRect0(int xpos, int ypos) {
-	debugC(9, kDebugLevelScreen, "Screen::backUpRect0(%d, %d)", xpos, ypos);
-	rectClip(xpos, ypos, 3<<3, 24);
-	copyRegionToBuffer(_curPage, xpos, ypos, 3<<3, 24, _vm->shapes()[0]);
-}
-
-void Screen::restoreRect0(int xpos, int ypos) {
-	debugC(9, kDebugLevelScreen, "Screen::restoreRect0(%d, %d)", xpos, ypos);
-	rectClip(xpos, ypos, 3<<3, 24);
-	copyBlockToPage(_curPage, xpos, ypos, 3<<3, 24, _vm->shapes()[0]);
-}
-
-void Screen::backUpRect1(int xpos, int ypos) {
-	debugC(9, kDebugLevelScreen, "Screen::backUpRect1(%d, %d)", xpos, ypos);
-	rectClip(xpos, ypos, 4<<3, 32);
-	copyRegionToBuffer(_curPage, xpos, ypos, 4<<3, 32, _vm->shapes()[1]);
-}
-
-void Screen::restoreRect1(int xpos, int ypos) {
-	debugC(9, kDebugLevelScreen, "Screen::restoreRect1(%d, %d)", xpos, ypos);
-	rectClip(xpos, ypos, 4<<3, 32);
-	copyBlockToPage(_curPage, xpos, ypos, 4<<3, 32, _vm->shapes()[1]);
-}
-
 int Screen::getDrawLayer(int x, int y) {
 	debugC(9, kDebugLevelScreen, "Screen::getDrawLayer(%d, %d)", x, y);
 	int xpos = x - 8;

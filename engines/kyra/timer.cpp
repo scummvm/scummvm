@@ -259,16 +259,16 @@ void KyraEngine::drawAmulet() {
 	int i = 0;
 	while (amuletTable1[i] != -1) {
 		if (queryGameFlag(87))
-			_screen->drawShape(0, _shapes[4+amuletTable1[i]], _amuletX[0], _amuletY[0], 0, 0);
+			_screen->drawShape(0, _shapes[amuletTable1[i]], _amuletX[0], _amuletY[0], 0, 0);
 
 		if (queryGameFlag(89))
-			_screen->drawShape(0, _shapes[4+amuletTable2[i]], _amuletX[1], _amuletY[1], 0, 0);
+			_screen->drawShape(0, _shapes[amuletTable2[i]], _amuletX[1], _amuletY[1], 0, 0);
 
 		if (queryGameFlag(86))
-			_screen->drawShape(0, _shapes[4+amuletTable3[i]], _amuletX[2], _amuletY[2], 0, 0);
+			_screen->drawShape(0, _shapes[amuletTable3[i]], _amuletX[2], _amuletY[2], 0, 0);
 
 		if (queryGameFlag(88))
-			_screen->drawShape(0, _shapes[4+amuletTable4[i]], _amuletX[3], _amuletY[3], 0, 0);
+			_screen->drawShape(0, _shapes[amuletTable4[i]], _amuletX[3], _amuletY[3], 0, 0);
 
 		_screen->updateScreen();
 		delayWithTicks(3);

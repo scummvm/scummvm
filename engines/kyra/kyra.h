@@ -583,8 +583,14 @@ protected:
 	int isDropable(int x, int y);
 	int checkNoDropRects(int x, int y);
 
-	// --> player items handling:
+	// --> player items handling
 	void updatePlayerItemsForScene();
+
+	// --> item GFX handling
+	void backUpItemRect0(int xpos, int ypos);
+	void restoreItemRect0(int xpos, int ypos);
+	void backUpItemRect1(int xpos, int ypos);
+	void restoreItemRect1(int xpos, int ypos);
 
 	// items
 	// -> misc
@@ -767,7 +773,8 @@ protected:
 	bool _mousePressFlag;
 	int8 _mouseWheel;
 	uint8 _flagsTable[69];
-	uint8 *_shapes[377]; // TODO: the first 4 entries seem to be screen backup rects, move them in the future out of the shape data
+	uint8 *_itemBkgBackUp[2];
+	uint8 *_shapes[373];
 	uint16 _gameSpeed;
 	uint16 _tickLength;
 	int _lang;

@@ -708,16 +708,16 @@ void KyraEngine::initStaticResource() {
 void KyraEngine::loadMouseShapes() {
 	_screen->loadBitmap("MOUSE.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
-	_shapes[4] = _screen->encodeShape(0, 0, 8, 10, 0);
-	_shapes[5] = _screen->encodeShape(0, 0x17, 0x20, 7, 0);
-	_shapes[6] = _screen->encodeShape(0x50, 0x12, 0x10, 9, 0);
-	_shapes[7] = _screen->encodeShape(0x60, 0x12, 0x10, 11, 0);
-	_shapes[8] = _screen->encodeShape(0x70, 0x12, 0x10, 9, 0);
-	_shapes[9] = _screen->encodeShape(0x80, 0x12, 0x10, 11, 0);
-	_shapes[10] = _screen->encodeShape(0x90, 0x12, 0x10, 10, 0);
-	_shapes[364] = _screen->encodeShape(0x28, 0, 0x10, 13, 0);
+	_shapes[0] = _screen->encodeShape(0, 0, 8, 10, 0);
+	_shapes[1] = _screen->encodeShape(0, 0x17, 0x20, 7, 0);
+	_shapes[2] = _screen->encodeShape(0x50, 0x12, 0x10, 9, 0);
+	_shapes[3] = _screen->encodeShape(0x60, 0x12, 0x10, 11, 0);
+	_shapes[4] = _screen->encodeShape(0x70, 0x12, 0x10, 9, 0);
+	_shapes[5] = _screen->encodeShape(0x80, 0x12, 0x10, 11, 0);
+	_shapes[6] = _screen->encodeShape(0x90, 0x12, 0x10, 10, 0);
+	_shapes[360] = _screen->encodeShape(0x28, 0, 0x10, 13, 0);
 	_screen->setMouseCursor(1, 1, 0);
-	_screen->setMouseCursor(1, 1, _shapes[4]);
+	_screen->setMouseCursor(1, 1, _shapes[0]);
 	_screen->setShapePages(5, 3);
 }
 
@@ -729,7 +729,7 @@ void KyraEngine::loadCharacterShapes() {
 		assert(i < _defaultShapeTableSize);
 		Shape *shape = &_defaultShapeTable[i];
 		if (shape->imageIndex == 0xFF) {
-			_shapes[i+7+4] = 0;
+			_shapes[i+7] = 0;
 			continue;
 		}
 		if (shape->imageIndex != curImage) {
@@ -737,7 +737,7 @@ void KyraEngine::loadCharacterShapes() {
 			_screen->loadBitmap(_characterImageTable[shape->imageIndex], 3, 3, 0);
 			curImage = shape->imageIndex;
 		}
-		_shapes[i+7+4] = _screen->encodeShape(shape->x<<3, shape->y, shape->w<<3, shape->h, 1);
+		_shapes[i+7] = _screen->encodeShape(shape->x<<3, shape->y, shape->w<<3, shape->h, 1);
 	}
 	_screen->_curPage = videoPage;
 }
@@ -748,16 +748,16 @@ void KyraEngine::loadSpecialEffectShapes() {
  
 	int currShape; 
 	for (currShape = 173; currShape < 183; currShape++)
-		_shapes[4 + currShape] = _screen->encodeShape((currShape-173) * 24, 0, 24, 24, 1);
+		_shapes[currShape] = _screen->encodeShape((currShape-173) * 24, 0, 24, 24, 1);
  
 	for (currShape = 183; currShape < 190; currShape++)
-		_shapes[4 + currShape] = _screen->encodeShape((currShape-183) * 24, 24, 24, 24, 1);
+		_shapes[currShape] = _screen->encodeShape((currShape-183) * 24, 24, 24, 24, 1);
  
 	for (currShape = 190; currShape < 201; currShape++)
-		_shapes[4 + currShape] = _screen->encodeShape((currShape-190) * 24, 48, 24, 24, 1);
+		_shapes[currShape] = _screen->encodeShape((currShape-190) * 24, 48, 24, 24, 1);
  
 	for (currShape = 201; currShape < 206; currShape++)
-		_shapes[4 + currShape] = _screen->encodeShape((currShape-201) * 16, 106, 16, 16, 1);
+		_shapes[currShape] = _screen->encodeShape((currShape-201) * 16, 106, 16, 16, 1);
 }
 
 void KyraEngine::loadItems() {
@@ -766,28 +766,28 @@ void KyraEngine::loadItems() {
 	_screen->loadBitmap("JEWELS3.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
 
-	_shapes[327] = 0;
+	_shapes[323] = 0;
 
 	for (shape = 1; shape < 6; shape++ )
-		_shapes[327 + shape] = _screen->encodeShape((shape - 1) * 32, 0, 32, 17, 0);
+		_shapes[323 + shape] = _screen->encodeShape((shape - 1) * 32, 0, 32, 17, 0);
 
 	for (shape = 330; shape <= 334; shape++)
-		_shapes[4 + shape] = _screen->encodeShape((shape-330) * 32, 102, 32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape-330) * 32, 102, 32, 17, 0);
 
 	for (shape = 335; shape <= 339; shape++)
-		_shapes[4 + shape] = _screen->encodeShape((shape-335) * 32, 17,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape-335) * 32, 17,  32, 17, 0);
 
 	for (shape = 340; shape <= 344; shape++)
-		_shapes[4 + shape] = _screen->encodeShape((shape-340) * 32, 34,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape-340) * 32, 34,  32, 17, 0);
 
 	for (shape = 345; shape <= 349; shape++)
-		_shapes[4 + shape] = _screen->encodeShape((shape-345) * 32, 51,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape-345) * 32, 51,  32, 17, 0);
 
 	for (shape = 350; shape <= 354; shape++)
-		_shapes[4 + shape] = _screen->encodeShape((shape-350) * 32, 68,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape-350) * 32, 68,  32, 17, 0);
 
 	for (shape = 355; shape <= 359; shape++)
-		_shapes[4 + shape] = _screen->encodeShape((shape-355) * 32, 85,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape-355) * 32, 85,  32, 17, 0);
 
 
 	_screen->loadBitmap("ITEMS.CPS", 3, 3, 0);
@@ -797,9 +797,9 @@ void KyraEngine::loadItems() {
 		shape = findDuplicateItemShape(i);
 
 		if (shape != -1)
-			_shapes[220 + i] = _shapes[220 + shape];
+			_shapes[216 + i] = _shapes[216 + shape];
 		else
-			_shapes[220 + i] = _screen->encodeShape( (i % 20) * 16, i/20 * 16, 16, 16, 0);
+			_shapes[216 + i] = _screen->encodeShape( (i % 20) * 16, i/20 * 16, 16, 16, 0);
 	}
 
 	uint32 size;

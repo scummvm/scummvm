@@ -173,7 +173,7 @@ int KyraEngine::buttonInventoryCallback(Button *caller) {
 			snd_playSoundEffect(0x35);
 			_screen->hideMouse();
 			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, 12);
-			_screen->drawShape(0, _shapes[220+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
+			_screen->drawShape(0, _shapes[216+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
 			setMouseItem(inventoryItem);
 			updateSentenceCommand(_itemList[inventoryItem], _takenList[1], 179);
 			_screen->showMouse();
@@ -182,8 +182,8 @@ int KyraEngine::buttonInventoryCallback(Button *caller) {
 		} else {
 			snd_playSoundEffect(0x32);
 			_screen->hideMouse();
-			_screen->drawShape(0, _shapes[220+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
-			_screen->setMouseCursor(1, 1, _shapes[4]);
+			_screen->drawShape(0, _shapes[216+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
+			_screen->setMouseCursor(1, 1, _shapes[0]);
 			updateSentenceCommand(_itemList[_itemInHand], _placedList[0], 179);
 			_screen->showMouse();
 			_currentCharacter->inventoryItems[itemOffset] = _itemInHand;

@@ -634,7 +634,7 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 	AnimObject *curAnimState = _animator->actors();
 	curAnimState->active = 1;
 	curAnimState->drawY = _currentCharacter->y1;
-	curAnimState->sceneAnimPtr = _shapes[4+_currentCharacter->currentAnimFrame];
+	curAnimState->sceneAnimPtr = _shapes[_currentCharacter->currentAnimFrame];
 	curAnimState->animFrameNumber = _currentCharacter->currentAnimFrame;
 	startAnimFrame = _currentCharacter->currentAnimFrame-7;
 	int xOffset = _defaultShapeTable[startAnimFrame].xOffset;
@@ -676,7 +676,7 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 		}
 		
 		curAnimState->drawY = ch->y1;
-		curAnimState->sceneAnimPtr = _shapes[4+ch->currentAnimFrame];
+		curAnimState->sceneAnimPtr = _shapes[ch->currentAnimFrame];
 		curAnimState->animFrameNumber = ch->currentAnimFrame;
 		startAnimFrame = ch->currentAnimFrame-7;
 		xOffset = _defaultShapeTable[startAnimFrame].xOffset;
@@ -754,7 +754,7 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 		byte curItem = curRoom->itemsTable[i];
 		if (curItem != 0xFF) {
 			curAnimState->drawY = curRoom->itemsYPos[i];
-			curAnimState->sceneAnimPtr = _shapes[220+curItem];
+			curAnimState->sceneAnimPtr = _shapes[216+curItem];
 			curAnimState->animFrameNumber = (int16)0xFFFF;
 			curAnimState->y1 = curRoom->itemsYPos[i];
 			curAnimState->x1 = curRoom->itemsXPos[i];

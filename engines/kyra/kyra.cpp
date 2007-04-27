@@ -403,7 +403,10 @@ KyraEngine::~KyraEngine() {
 	delete [] _scrollDownButton.process0PtrShape;
 	delete [] _scrollDownButton.process1PtrShape;
 	delete [] _scrollDownButton.process2PtrShape;
-		
+
+	delete [] _itemBkgBackUp[0];
+	delete [] _itemBkgBackUp[1];	
+
 	for (int i = 0; i < ARRAYSIZE(_shapes); ++i) {
 		if (_shapes[i] != 0) {
 			delete [] _shapes[i];
@@ -468,18 +471,15 @@ void KyraEngine::startup() {
 	resetBrandonPoisonFlags();
 	_screen->_curPage = 0;
 	// XXX
-	for (int i = 0; i < 0x0C; ++i) {
+	for (int i = 0; i < 12; ++i) {
 		int size = _screen->getRectSize(3, 24);
-		_shapes[365+i] = new byte[size];
+		_shapes[361+i] = new byte[size];
 	}
-	_shapes[0] = new uint8[_screen->getRectSize(3, 24)];
-	memset(_shapes[0], 0, _screen->getRectSize(3, 24));
-	_shapes[1] = new uint8[_screen->getRectSize(4, 32)];
-	memset(_shapes[1], 0, _screen->getRectSize(4, 32));
-	_shapes[2] = new uint8[_screen->getRectSize(8, 69)];
-	memset(_shapes[2], 0, _screen->getRectSize(8, 69));
-	_shapes[3] = new uint8[_screen->getRectSize(8, 69)];
-	memset(_shapes[3], 0, _screen->getRectSize(8, 69));
+
+	_itemBkgBackUp[0] = new uint8[_screen->getRectSize(3, 24)];
+	memset(_itemBkgBackUp[0], 0, _screen->getRectSize(3, 24));
+	_itemBkgBackUp[1] = new uint8[_screen->getRectSize(4, 32)];
+	memset(_itemBkgBackUp[1], 0, _screen->getRectSize(4, 32));
 
 	for (int i = 0; i < _roomTableSize; ++i) {
 		for (int item = 0; item < 12; ++item) {
@@ -523,7 +523,7 @@ void KyraEngine::startup() {
 	
 	if (_abortIntroFlag && _skipIntroFlag) {
 		_menuDirectlyToLoad = true;
-		_screen->setMouseCursor(1, 1, _shapes[4]);
+		_screen->setMouseCursor(1, 1, _shapes[0]);
 		_screen->showMouse();
 		buttonMenuCallback(0);
 		_menuDirectlyToLoad = false;
@@ -548,7 +548,7 @@ void KyraEngine::mainLoop() {
 			snd_playWanderScoreViaMap(0, 1);
 			snd_playSoundEffect(49);
 			_screen->hideMouse();
-			_screen->setMouseCursor(1, 1, _shapes[4]);
+			_screen->setMouseCursor(1, 1, _shapes[0]);
 			destroyMouseItem();
 			_screen->showMouse();
 			buttonMenuCallback(0);
@@ -744,7 +744,7 @@ void KyraEngine::setupShapes123(const Shape *shapeTable, int endShape, int flags
 	debugC(9, kDebugLevelMain, "KyraEngine::setupShapes123(%p, %d, %d)", (const void *)shapeTable, endShape, flags);
 
 	for (int i = 123; i <= 172; ++i)
-		_shapes[4+i] = 0;
+		_shapes[i] = 0;
 
 	uint8 curImage = 0xFF;
 	int curPageBackUp = _screen->_curPage;
@@ -759,7 +759,7 @@ void KyraEngine::setupShapes123(const Shape *shapeTable, int endShape, int flags
 			_screen->loadBitmap(_characterImageTable[newImage], 8, 8, 0);
 			curImage = newImage;
 		}
-		_shapes[4+i] = _screen->encodeShape(shapeTable[i-123].x<<3, shapeTable[i-123].y, shapeTable[i-123].w<<3, shapeTable[i-123].h, shapeFlags);
+		_shapes[i] = _screen->encodeShape(shapeTable[i-123].x<<3, shapeTable[i-123].y, shapeTable[i-123].w<<3, shapeTable[i-123].h, shapeFlags);
 		assert(i-7 < _defaultShapeTableSize);
 		_defaultShapeTable[i-7].xOffset = shapeTable[i-123].xOffset;
 		_defaultShapeTable[i-7].yOffset = shapeTable[i-123].yOffset;
@@ -773,8 +773,8 @@ void KyraEngine::freeShapes123() {
 	debugC(9, kDebugLevelMain, "KyraEngine::freeShapes123()");
 
 	for (int i = 123; i <= 172; ++i) {
-		delete [] _shapes[4+i];
-		_shapes[4+i] = 0;
+		delete [] _shapes[i];
+		_shapes[i] = 0;
 	}
 }
 
@@ -1031,7 +1031,7 @@ void KyraEngine::updateMousePointer(bool forceUpdate) {
 	if ((newMouseState && _mouseState != newMouseState) || (newMouseState && forceUpdate)) {
 		_mouseState = newMouseState;
 		_screen->hideMouse();
-		_screen->setMouseCursor(newX, newY, _shapes[4+shape]);
+		_screen->setMouseCursor(newX, newY, _shapes[shape]);
 		_screen->showMouse();
 	}
 	
@@ -1041,9 +1041,9 @@ void KyraEngine::updateMousePointer(bool forceUpdate) {
 				_mouseState = _itemInHand;
 				_screen->hideMouse();
 				if (_itemInHand == -1) {
-					_screen->setMouseCursor(1, 1, _shapes[4]);
+					_screen->setMouseCursor(1, 1, _shapes[0]);
 				} else {
-					_screen->setMouseCursor(8, 15, _shapes[220+_itemInHand]);
+					_screen->setMouseCursor(8, 15, _shapes[216+_itemInHand]);
 				}
 				_screen->showMouse();
 			}

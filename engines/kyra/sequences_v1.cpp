@@ -314,7 +314,7 @@ void KyraEngine::seq_createAmuletJewel(int jewel, int page, int noSound, int dra
 	_screen->hideMouse();
 	if (!drawOnly) {
 		for (int i = 0; specialJewelTable[i] != 0xFFFF; ++i) {
-			_screen->drawShape(page, _shapes[4+specialJewelTable[i]], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
+			_screen->drawShape(page, _shapes[specialJewelTable[i]], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
 			_screen->updateScreen();
 			delayWithTicks(3);
 		}
@@ -340,13 +340,13 @@ void KyraEngine::seq_createAmuletJewel(int jewel, int page, int noSound, int dra
 		
 		if (opcodes) {
 			for (int i = 0; opcodes[i] != 0xFFFF; ++i) {
-				_screen->drawShape(page, _shapes[4+opcodes[i]], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
+				_screen->drawShape(page, _shapes[opcodes[i]], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
 				_screen->updateScreen();
 				delayWithTicks(3);
 			}
 		}
 	}
-	_screen->drawShape(page, _shapes[327+jewel], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
+	_screen->drawShape(page, _shapes[323+jewel], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
 	_screen->updateScreen();
 	_screen->showMouse();
 	setGameFlag(0x55+jewel);
@@ -1797,7 +1797,7 @@ void KyraEngine::drawJewelPress(int jewel, int drawSpecial) {
 		shape = jewel + 0x149;
 
 	snd_playSoundEffect(0x45);
-	_screen->drawShape(0, _shapes[4+shape], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
+	_screen->drawShape(0, _shapes[shape], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
 	_screen->updateScreen();
 	delayWithTicks(2);
 
@@ -1806,7 +1806,7 @@ void KyraEngine::drawJewelPress(int jewel, int drawSpecial) {
 	else
 		shape = jewel + 0x143;
 
-	_screen->drawShape(0, _shapes[4+shape], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
+	_screen->drawShape(0, _shapes[shape], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
 	_screen->updateScreen();
 	_screen->showMouse();
 }
@@ -1819,13 +1819,13 @@ void KyraEngine::drawJewelsFadeOutStart() {
 	static const uint16 jewelTable4[] = { 0x165, 0x161, 0x15B, 0x156, 0x151, 0xFFFF };
 	for (int i = 0; jewelTable1[i] != 0xFFFF; ++i) {
 		if (queryGameFlag(0x57))
-			_screen->drawShape(0, _shapes[4+jewelTable1[i]], _amuletX2[2], _amuletY2[2], 0, 0);
+			_screen->drawShape(0, _shapes[jewelTable1[i]], _amuletX2[2], _amuletY2[2], 0, 0);
 		if (queryGameFlag(0x59))
-			_screen->drawShape(0, _shapes[4+jewelTable3[i]], _amuletX2[4], _amuletY2[4], 0, 0);
+			_screen->drawShape(0, _shapes[jewelTable3[i]], _amuletX2[4], _amuletY2[4], 0, 0);
 		if (queryGameFlag(0x56))
-			_screen->drawShape(0, _shapes[4+jewelTable2[i]], _amuletX2[1], _amuletY2[1], 0, 0);
+			_screen->drawShape(0, _shapes[jewelTable2[i]], _amuletX2[1], _amuletY2[1], 0, 0);
 		if (queryGameFlag(0x58))
-			_screen->drawShape(0, _shapes[4+jewelTable4[i]], _amuletX2[3], _amuletY2[3], 0, 0);
+			_screen->drawShape(0, _shapes[jewelTable4[i]], _amuletX2[3], _amuletY2[3], 0, 0);
 		_screen->updateScreen();
 		delayWithTicks(3);
 	}
@@ -1855,13 +1855,13 @@ void KyraEngine::drawJewelsFadeOutEnd(int jewel) {
 	for (int i = 0; jewelTable[i] != 0xFFFF; ++i) {
 		uint16 shape = jewelTable[i];
 		if (queryGameFlag(0x57))
-			_screen->drawShape(0, _shapes[4+shape], _amuletX2[2], _amuletY2[2], 0, 0);
+			_screen->drawShape(0, _shapes[shape], _amuletX2[2], _amuletY2[2], 0, 0);
 		if (queryGameFlag(0x59))
-			_screen->drawShape(0, _shapes[4+shape], _amuletX2[4], _amuletY2[4], 0, 0);
+			_screen->drawShape(0, _shapes[shape], _amuletX2[4], _amuletY2[4], 0, 0);
 		if (queryGameFlag(0x56))
-			_screen->drawShape(0, _shapes[4+shape], _amuletX2[1], _amuletY2[1], 0, 0);
+			_screen->drawShape(0, _shapes[shape], _amuletX2[1], _amuletY2[1], 0, 0);
 		if (queryGameFlag(0x58))
-			_screen->drawShape(0, _shapes[4+shape], _amuletX2[3], _amuletY2[3], 0, 0);
+			_screen->drawShape(0, _shapes[shape], _amuletX2[3], _amuletY2[3], 0, 0);
 
 		_screen->updateScreen();
 		delayWithTicks(3);

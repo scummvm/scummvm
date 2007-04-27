@@ -202,10 +202,6 @@ public:
 	void blockInRegion(int x, int y, int width, int height);
 	void blockOutRegion(int x, int y, int width, int height);
 
-	void backUpRect0(int xpos, int ypos);
-	void restoreRect0(int xpos, int ypos);
-	void backUpRect1(int xpos, int ypos);
-	void restoreRect1(int xpos, int ypos);
 	void copyBackgroundBlock(int x, int page, int flag);
 	void copyBackgroundBlock2(int x);
 

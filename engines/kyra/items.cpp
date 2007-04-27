@@ -183,7 +183,7 @@ void KyraEngine::createMouseItem(int item) {
 void KyraEngine::destroyMouseItem() {
 	debugC(9, kDebugLevelMain, "KyraEngine::destroyMouseItem()");
 	_screen->hideMouse();
-	_screen->setMouseCursor(1, 1, _shapes[4]);
+	_screen->setMouseCursor(1, 1, _shapes[0]);
 	_itemInHand = -1;
 	_screen->showMouse();
 }
@@ -191,9 +191,9 @@ void KyraEngine::destroyMouseItem() {
 void KyraEngine::setMouseItem(int item) {
 	debugC(9, kDebugLevelMain, "KyraEngine::setMouseItem(%d)", item);
 	if (item == -1)
-		_screen->setMouseCursor(1, 1, _shapes[10]);
+		_screen->setMouseCursor(1, 1, _shapes[6]);
 	else
-		_screen->setMouseCursor(8, 15, _shapes[220+item]);
+		_screen->setMouseCursor(8, 15, _shapes[216+item]);
 }
 
 void KyraEngine::wipeDownMouseItem(int xpos, int ypos) {
@@ -203,22 +203,22 @@ void KyraEngine::wipeDownMouseItem(int xpos, int ypos) {
 	xpos -= 8;
 	ypos -= 15;
 	_screen->hideMouse();
-	_screen->backUpRect1(xpos, ypos);
+	backUpItemRect1(xpos, ypos);
 	int y = ypos;
 	int height = 16;
 	
 	while (height >= 0) {
-		_screen->restoreRect1(xpos, ypos);
-		_screen->setNewShapeHeight(_shapes[220+_itemInHand], height);
+		restoreItemRect1(xpos, ypos);
+		_screen->setNewShapeHeight(_shapes[216+_itemInHand], height);
 		uint32 nextTime = _system->getMillis() + 1 * _tickLength;
-		_screen->drawShape(0, _shapes[220+_itemInHand], xpos, y, 0, 0);
+		_screen->drawShape(0, _shapes[216+_itemInHand], xpos, y, 0, 0);
 		_screen->updateScreen();
 		y += 2;
 		height -= 2;
 		delayUntil(nextTime);
 	}	
-	_screen->restoreRect1(xpos, ypos);
-	_screen->resetShapeHeight(_shapes[220+_itemInHand]);
+	restoreItemRect1(xpos, ypos);
+	_screen->resetShapeHeight(_shapes[216+_itemInHand]);
 	destroyMouseItem();
 	_screen->showMouse();
 }
@@ -523,18 +523,18 @@ void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem,
 		int drawX = x - 8;
 		int drawY = 0;
 		
-		_screen->backUpRect0(drawX, y - 16);
+		backUpItemRect0(drawX, y - 16);
 		
 		while (tempY < destY) {
-			_screen->restoreRect0(drawX, tempY - 16);
+			restoreItemRect0(drawX, tempY - 16);
 			tempY += addY;
 			if (tempY > destY)
 				tempY = destY;
 			++addY;
 			drawY = tempY - 16;
-			_screen->backUpRect0(drawX, drawY);
+			backUpItemRect0(drawX, drawY);
 			uint32 nextTime = _system->getMillis() + 1 * _tickLength;
-			_screen->drawShape(0, _shapes[220+item], drawX, drawY, 0, 0);
+			_screen->drawShape(0, _shapes[216+item], drawX, drawY, 0, 0);
 			_screen->updateScreen();
 			delayUntil(nextTime);
 		}
@@ -561,7 +561,7 @@ void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem,
 			while (--startAddY) {
 				drawX = (unkX >> 4) - 8;
 				drawY = tempY - 16;
-				_screen->restoreRect0(drawX, drawY);
+				restoreItemRect0(drawX, drawY);
 				tempY += addY;
 				unkX += xDiff;
 				if (tempY > destY)
@@ -569,15 +569,15 @@ void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem,
 				++addY;
 				drawX = (unkX >> 4) - 8;
 				drawY = tempY - 16;
-				_screen->backUpRect0(drawX, drawY);
+				backUpItemRect0(drawX, drawY);
 				uint32 nextTime = _system->getMillis() + 1 * _tickLength;
-				_screen->drawShape(0, _shapes[220+item], drawX, drawY, 0, 0);
+				_screen->drawShape(0, _shapes[216+item], drawX, drawY, 0, 0);
 				_screen->updateScreen();
 				delayUntil(nextTime);
 			}
-			_screen->restoreRect0(drawX, drawY);
+			restoreItemRect0(drawX, drawY);
 		} else {
-			_screen->restoreRect0(drawX, tempY - 16);
+			restoreItemRect0(drawX, tempY - 16);
 		}
 	}
 	currentRoom->itemsXPos[freeItem] = destX;
@@ -610,22 +610,22 @@ void KyraEngine::itemSpecialFX(int x, int y, int item) {
 
 void KyraEngine::itemSpecialFX1(int x, int y, int item) {
 	debugC(9, kDebugLevelMain, "KyraEngine::itemSpecialFX1(%d, %d, %d)", x, y, item);
-	uint8 *shape = _shapes[220+item];
+	uint8 *shape = _shapes[216+item];
 	x -= 8;
 	int startY = y;
 	y -= 15;
 	_screen->hideMouse();
-	_screen->backUpRect0(x, y);
+	backUpItemRect0(x, y);
 	for (int i = 1; i <= 16; ++i) {
 		_screen->setNewShapeHeight(shape, i);
 		--startY;
-		_screen->restoreRect0(x, y);
+		restoreItemRect0(x, y);
 		uint32 nextTime = _system->getMillis() + 1 * _tickLength;
 		_screen->drawShape(0, shape, x, startY, 0, 0);
 		_screen->updateScreen();
 		delayUntil(nextTime);
 	}
-	_screen->restoreRect0(x, y);
+	restoreItemRect0(x, y);
 	_screen->showMouse();
 }
 
@@ -634,27 +634,27 @@ void KyraEngine::itemSpecialFX2(int x, int y, int item) {
 	x -= 8;
 	y -= 15;
 	int yAdd = (int8)(((16 - _itemTable[item].height) >> 1) & 0xFF);
-	_screen->backUpRect0(x, y);
+	backUpItemRect0(x, y);
 	if (item >= 80 && item <= 89)
 		snd_playSoundEffect(55);
 	
 	for (int i = 201; i <= 205; ++i) {
-		_screen->restoreRect0(x, y);
+		restoreItemRect0(x, y);
 		uint32 nextTime = _system->getMillis() + 3 * _tickLength;
-		_screen->drawShape(0, _shapes[4+i], x, y + yAdd, 0, 0);
+		_screen->drawShape(0, _shapes[i], x, y + yAdd, 0, 0);
 		_screen->updateScreen();
 		delayUntil(nextTime);
 	}
 	
 	for (int i = 204; i >= 201; --i) {
-		_screen->restoreRect0(x, y);
+		restoreItemRect0(x, y);
 		uint32 nextTime = _system->getMillis() + 3 * _tickLength;
-		_screen->drawShape(0, _shapes[220+item], x, y, 0, 0);
-		_screen->drawShape(0, _shapes[4+i], x, y + yAdd, 0, 0);
+		_screen->drawShape(0, _shapes[216+item], x, y, 0, 0);
+		_screen->drawShape(0, _shapes[i], x, y + yAdd, 0, 0);
 		_screen->updateScreen();
 		delayUntil(nextTime);
 	}
-	_screen->restoreRect0(x, y);
+	restoreItemRect0(x, y);
 }
 
 void KyraEngine::magicOutMouseItem(int animIndex, int itemPos) {
@@ -696,14 +696,14 @@ void KyraEngine::magicOutMouseItem(int animIndex, int itemPos) {
 	else
 		snd_playSoundEffect(0x37);
 	_screen->hideMouse();
-	_screen->backUpRect1(x, y);
+	backUpItemRect1(x, y);
 
 	for (int shape = _magicMouseItemStartFrame[animIndex]; shape <= _magicMouseItemEndFrame[animIndex]; ++shape) {
-		_screen->restoreRect1(x, y);
+		restoreItemRect1(x, y);
 		uint32 nextTime = _system->getMillis() + 4 * _tickLength;
-		_screen->drawShape(0, _shapes[220+_itemInHand], x + 4, y + 3, 0, 0);
+		_screen->drawShape(0, _shapes[216+_itemInHand], x + 4, y + 3, 0, 0);
 		if (tableIndex == -1)
-			_screen->drawShape(0, _shapes[4+shape], x, y, 0, 0);
+			_screen->drawShape(0, _shapes[shape], x, y, 0, 0);
 		else
 			specialMouseItemFX(shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
 		_screen->updateScreen();
@@ -711,25 +711,25 @@ void KyraEngine::magicOutMouseItem(int animIndex, int itemPos) {
 	}
 	
 	if (itemPos != -1) {
-		_screen->restoreRect1(x, y);
+		restoreItemRect1(x, y);
 		_screen->fillRect(_itemPosX[itemPos], _itemPosY[itemPos], _itemPosX[itemPos] + 15, _itemPosY[itemPos] + 15, 12, 0);
-		_screen->backUpRect1(x, y);
+		backUpItemRect1(x, y);
 	}
 	
 	for (int shape = _magicMouseItemStartFrame2[animIndex]; shape <= _magicMouseItemEndFrame2[animIndex]; ++shape) {
-		_screen->restoreRect1(x, y);
+		restoreItemRect1(x, y);
 		uint32 nextTime = _system->getMillis() + 4 * _tickLength;
-		_screen->drawShape(0, _shapes[220+_itemInHand], x + 4, y + 3, 0, 0);
+		_screen->drawShape(0, _shapes[216+_itemInHand], x + 4, y + 3, 0, 0);
 		if (tableIndex == -1)
-			_screen->drawShape(0, _shapes[4+shape], x, y, 0, 0);
+			_screen->drawShape(0, _shapes[shape], x, y, 0, 0);
 		else
 			specialMouseItemFX(shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
 		_screen->updateScreen();
 		delayUntil(nextTime);
 	}
-	_screen->restoreRect1(x, y);
+	restoreItemRect1(x, y);
 	if (itemPos == -1) {
-		_screen->setMouseCursor(1, 1, _shapes[4]);
+		_screen->setMouseCursor(1, 1, _shapes[0]);
 		_itemInHand = -1;
 	} else {
 		_characterList[0].inventoryItems[itemPos] = 0xFF;
@@ -773,17 +773,17 @@ void KyraEngine::magicInMouseItem(int animIndex, int item, int itemPos) {
 	}
 	
 	_screen->hideMouse();
-	_screen->backUpRect1(x, y);
+	backUpItemRect1(x, y);
 	if (animIndex == 2)
 		snd_playSoundEffect(0x5E);
 	else
 		snd_playSoundEffect(0x37);
 	
 	for (int shape = _magicMouseItemStartFrame[animIndex]; shape <= _magicMouseItemEndFrame[animIndex]; ++shape) {
-		_screen->restoreRect1(x, y);
+		restoreItemRect1(x, y);
 		uint32 nextTime = _system->getMillis() + 4 * _tickLength;
 		if (tableIndex == -1)
-			_screen->drawShape(0, _shapes[4+shape], x, y, 0, 0);
+			_screen->drawShape(0, _shapes[shape], x, y, 0, 0);
 		else
 			specialMouseItemFX(shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
 		_screen->updateScreen();
@@ -791,23 +791,23 @@ void KyraEngine::magicInMouseItem(int animIndex, int item, int itemPos) {
 	}
 	
 	for (int shape = _magicMouseItemStartFrame2[animIndex]; shape <= _magicMouseItemEndFrame2[animIndex]; ++shape) {
-		_screen->restoreRect1(x, y);
+		restoreItemRect1(x, y);
 		uint32 nextTime = _system->getMillis() + 4 * _tickLength;
 		if (tableIndex == -1)
-			_screen->drawShape(0, _shapes[4+shape], x, y, 0, 0);
+			_screen->drawShape(0, _shapes[shape], x, y, 0, 0);
 		else
 			specialMouseItemFX(shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
 		_screen->updateScreen();
 		delayUntil(nextTime);
 	}
-	_screen->restoreRect1(x, y);
+	restoreItemRect1(x, y);
 	if (itemPos == -1) {
-		_screen->setMouseCursor(8, 15, _shapes[220+item]);
+		_screen->setMouseCursor(8, 15, _shapes[216+item]);
 		_itemInHand = item;
 	} else {
 		_characterList[0].inventoryItems[itemPos] = item;
 		_screen->hideMouse();
-		_screen->drawShape(0, _shapes[220+item], _itemPosX[itemPos], _itemPosY[itemPos], 0, 0);
+		_screen->drawShape(0, _shapes[216+item], _itemPosX[itemPos], _itemPosY[itemPos], 0, 0);
 		_screen->showMouse();
 	}
 	_screen->showMouse();
@@ -840,7 +840,7 @@ void KyraEngine::specialMouseItemFX(int shape, int x, int y, int animIndex, int 
 void KyraEngine::processSpecialMouseItemFX(int shape, int x, int y, int tableValue, int loopStart, int maxLoops) {
 	debugC(9, kDebugLevelMain, "KyraEngine::processSpecialMouseItemFX(%d, %d, %d, %d, %d, %d)", shape, x, y, tableValue, loopStart, maxLoops);
 	uint8 shapeColorTable[16];
-	uint8 *shapePtr = _shapes[4+shape] + 10;
+	uint8 *shapePtr = _shapes[shape] + 10;
 	if (_flags.useAltShapeHeader)
 		shapePtr += 2;
 
@@ -853,7 +853,7 @@ void KyraEngine::processSpecialMouseItemFX(int shape, int x, int y, int tableVal
 				shapeColorTable[i2] = (i + tableValue) - loopStart;
 		}
 	}
-	_screen->drawShape(0, _shapes[4+shape], x, y, 0, 0x8000, shapeColorTable);
+	_screen->drawShape(0, _shapes[shape], x, y, 0, 0x8000, shapeColorTable);
 }
 
 void KyraEngine::updatePlayerItemsForScene() {
@@ -863,7 +863,7 @@ void KyraEngine::updatePlayerItemsForScene() {
 		if (_itemInHand > 33)
 			_itemInHand = 33;
 		_screen->hideMouse();
-		_screen->setMouseCursor(8, 15, _shapes[220+_itemInHand]);
+		_screen->setMouseCursor(8, 15, _shapes[216+_itemInHand]);
 		_screen->showMouse();
 	}
 	
@@ -905,12 +905,36 @@ void KyraEngine::redrawInventory(int page) {
 		_screen->fillRect(_itemPosX[i], _itemPosY[i], _itemPosX[i] + 15, _itemPosY[i] + 15, 12, page);
 		if (_currentCharacter->inventoryItems[i] != 0xFF) {
 			uint8 item = _currentCharacter->inventoryItems[i];
-			_screen->drawShape(page, _shapes[220+item], _itemPosX[i], _itemPosY[i], 0, 0);
+			_screen->drawShape(page, _shapes[216+item], _itemPosX[i], _itemPosY[i], 0, 0);
 		}
 	}
 	_screen->showMouse();
 	_screen->_curPage = videoPageBackUp;
 	_screen->updateScreen();
+}
+
+void KyraEngine::backUpItemRect0(int xpos, int ypos) {
+	debugC(9, kDebugLevelMain, "KyraEngine::backUpItemRect0(%d, %d)", xpos, ypos);
+	_screen->rectClip(xpos, ypos, 3<<3, 24);
+	_screen->copyRegionToBuffer(_screen->_curPage, xpos, ypos, 3<<3, 24, _itemBkgBackUp[0]);
+}
+
+void KyraEngine::restoreItemRect0(int xpos, int ypos) {
+	debugC(9, kDebugLevelMain, "KyraEngine::restoreItemRect0(%d, %d)", xpos, ypos);
+	_screen->rectClip(xpos, ypos, 3<<3, 24);
+	_screen->copyBlockToPage(_screen->_curPage, xpos, ypos, 3<<3, 24, _itemBkgBackUp[0]);
+}
+
+void KyraEngine::backUpItemRect1(int xpos, int ypos) {
+	debugC(9, kDebugLevelMain, "KyraEngine::backUpItemRect1(%d, %d)", xpos, ypos);
+	_screen->rectClip(xpos, ypos, 4<<3, 32);
+	_screen->copyRegionToBuffer(_screen->_curPage, xpos, ypos, 4<<3, 32, _itemBkgBackUp[1]);
+}
+
+void KyraEngine::restoreItemRect1(int xpos, int ypos) {
+	debugC(9, kDebugLevelMain, "KyraEngine::restoreItemRect1(%d, %d)", xpos, ypos);
+	_screen->rectClip(xpos, ypos, 4<<3, 32);
+	_screen->copyBlockToPage(_screen->_curPage, xpos, ypos, 4<<3, 32, _itemBkgBackUp[1]);
 }
 
 } // end of namespace Kyra
