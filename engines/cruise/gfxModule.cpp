@@ -635,8 +635,8 @@ void flip()
 {
 	int i;
 	byte paletteRGBA[256 * 4];
-	uint8* outPtr = scaledScreen;
-	uint8* inPtr  = globalScreen;
+	//uint8* outPtr = scaledScreen;
+	//uint8* inPtr  = globalScreen;
 
 
 	for(i=0;i<256;i++)

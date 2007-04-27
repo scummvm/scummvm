@@ -728,7 +728,7 @@ int getCursorFromObject(int mouseX, int mouseY, int* outX, int* outY)
 
               if((var_4 != var_16) && (var_2 != var_14))
               {
-                objectParamsQuery params;
+                params;
                 getMultipleObjectParam(var_16, var_14, &params);
 
                 var_C = params.X;
@@ -893,7 +893,7 @@ int buildInventorySub1(int overlayIdx, int objIdx)
 
 void buildInventory(int X, int Y)
 {
-  int numObjectInInventory;
+  int numObjectInInventory = 0;
   menuStruct* pMenu;
   
   pMenu = createMenu(X, Y, "Inventaire");
@@ -1131,7 +1131,7 @@ int callInventoryObject(int param0, int param1, int x, int y)
                             {
                               if(var_22->specialString1)
                               {
-                                char* ptr = getObjectName(var_34->varNameOffset, var_22->specialString1);
+                                ptr = getObjectName(var_34->varNameOffset, var_22->specialString1);
 
                                 var_2C = 1;
 
@@ -1163,8 +1163,8 @@ int processInventory(void)
 
     if(pMenuElementSub)
     {
-      int var2;
-      int var4;
+      //int var2;
+      //int var4;
 
       var2 = pMenuElementSub->var2;
       var4 = pMenuElementSub->var4;
@@ -1190,9 +1190,9 @@ int processInput(void)
 {
   menuStruct* var_5C;
 
-  int16 mouseX;
-  int16 mouseY;
-  int16 button;
+  int16 mouseX = 0;
+  int16 mouseY = 0;
+  int16 button = 0;
 
   /*if(inputSub1keyboad())
   {
@@ -1476,7 +1476,7 @@ void mainLoop(void)
   int frames=0;                   /* Number of frames displayed */
   //int32 t_start,t_left;
   //uint32 t_end;
-  int32 q=0;                     /* Dummy */
+  //int32 q=0;                     /* Dummy */
 
   int enableUser = 0;
   //int16 mouseX;

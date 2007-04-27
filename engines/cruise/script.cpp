@@ -63,7 +63,7 @@ int32 opcodeType0(void) // load opcode
     }
   case 1:
     {
-      uint8* ptr;
+      uint8* ptr = 0;
       int byte1 = getByteFromScript();
       int byte2 = getByteFromScript();
       short int short1 = getShortFromScript();
@@ -153,7 +153,7 @@ int32 opcodeType0(void) // load opcode
 
       int var_E = byte1 & 7;
       
-      uint8* ptr;
+      uint8* ptr = 0;
 
       if(!var_E)
       {
@@ -243,7 +243,7 @@ int32 opcodeType1(void) // save opcode
 
       int var_C = short1;
 
-      uint8* ptr;
+      uint8* ptr = 0;
       int type2;
 
       if(!var_6)
@@ -405,8 +405,8 @@ int32 opcodeType4(void) // test
 {
   int boolVar = 0;
 
-  int var1 = popVar();
-  int var2 = popVar();
+  var1 = popVar();
+  var2 = popVar();
 
   switch(currentScriptOpcodeType)
   {
@@ -480,8 +480,8 @@ int32 opcodeType6(void)
 
 int32 opcodeType7(void)
 {
-  int var1 = popVar();
-  int var2 = popVar();
+  var1 = popVar();
+  var2 = popVar();
 
   pushVar(var1);
   pushVar(var2);

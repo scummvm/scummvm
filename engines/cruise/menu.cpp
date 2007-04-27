@@ -214,7 +214,7 @@ int processMenu(menuStruct* pMenu)
 int playerMenu(int menuX, int menuY)
 {
   int retourMenu;
-  int restartGame = 0;
+  //int restartGame = 0;
 
   if(entrerMenuJoueur && affichePasMenuJoueur)
   {
@@ -294,13 +294,13 @@ void freeMenu(menuStruct* pMenu)
 
     while(pSub)
     {
-      menuElementSubStruct* next;
+      menuElementSubStruct* nextSub;
 
-      next = pSub->pNext;
+      nextSub = pSub->pNext;
 
       free(pSub);
 
-      pSub=next;
+      pSub=nextSub;
     }
 
     if(pElement->gfx)

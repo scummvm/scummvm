@@ -437,7 +437,7 @@ int16 Op_7Sub(int ovlIdx,int objIdx,int param2)
 int16 getSingleObjectParam(int16 overlayIdx,int16 param2,int16 param3,int16* returnParam)
 {
 	int var_A = 0;
-	char* ptr3 = NULL;
+	//char* ptr3 = NULL;
   objDataStruct* ptr;
   ovlDataStruct* ovlData;
   objectParams* ptr2;

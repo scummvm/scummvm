@@ -447,8 +447,8 @@ int loadOverlay(uint8* scriptName)
 
     if(scriptNotLoadedBefore)
     {
-      int var1;
-      int var2;
+      //int var1;
+      //int var2;
       
       overlayTable[scriptIdx].field_14 = (char)setup1;
 
@@ -532,10 +532,10 @@ int loadOverlay(uint8* scriptName)
   if(ovlData->specialString1Length /*|| ovlData->specialString2Length*/ || ovlData->stringTable)
   {
     int i;
-    int unpackedSize;
-    int fileIdx;
-    uint8 fileName[50];
-    char* unpackedBuffer;
+    //int unpackedSize;
+    //int fileIdx;
+    //uint8 fileName[50];
+    //char* unpackedBuffer;
     
     strcpyuint8(fileName,scriptName);
 

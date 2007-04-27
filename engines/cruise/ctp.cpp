@@ -89,7 +89,7 @@ void loadCtpSub2(short int coordCount, short int* ptr)	    // coordCount = ctp_r
 	}
 }
 
-void getWalkBoxCenter(int boxIdx, uint16* walkboxTable)
+void getWalkBoxCenter(int boxIdx, uint16* _walkboxTable)
 {
 	int minX = 1000;
 	int minY = 1000;
@@ -97,12 +97,12 @@ void getWalkBoxCenter(int boxIdx, uint16* walkboxTable)
 	int maxY = -1;
 
 	ASSERT(boxIdx <= 15);				// max number of walkboxes is 16
-	ASSERT(walkboxTable[boxIdx * 40]);	// we should never have an empty walk box
+	ASSERT(_walkboxTable[boxIdx * 40]);	// we should never have an empty walk box
 
-	if(walkboxTable[boxIdx * 40] > 0)
+	if(_walkboxTable[boxIdx * 40] > 0)
 	{
-		int numPoints    = walkboxTable[boxIdx * 40];
-		uint16* pCurrentPtr = walkboxTable + (boxIdx * 40) + 1;
+		int numPoints    = _walkboxTable[boxIdx * 40];
+		uint16* pCurrentPtr = _walkboxTable + (boxIdx * 40) + 1;
 
 		int i;
 
@@ -169,7 +169,7 @@ void renderCTPWalkBox(int X1, int Y1, int X2, int scale, int Y2, uint16* walkbox
 }
 
 // this process the walkboxes
-void loadCtpSub1(int boxIdx, int scale, uint16* walkboxTable, ctpVar19Struct* param4)
+void loadCtpSub1(int boxIdx, int scale, uint16* _walkboxTable, ctpVar19Struct* param4)
 {
 	int minX = 1000;
 	int minY = 1000;
@@ -186,20 +186,20 @@ void loadCtpSub1(int boxIdx, int scale, uint16* walkboxTable, ctpVar19Struct* pa
 	//  int ax;
 	//  int var_2;
 	int var_E;
-	int var_C = 1000;
-	int var_A = 0;
+	//int var_C = 1000;
+	//int var_A = 0;
 	ctpVar19SubStruct* subStruct;
 
 	ASSERT(boxIdx <= 15);
 
-	if(walkboxTable[boxIdx * 40] > 0) // is walkbox used ?
+	if(_walkboxTable[boxIdx * 40] > 0) // is walkbox used ?
 	{
-		getWalkBoxCenter(boxIdx, walkboxTable);
+		getWalkBoxCenter(boxIdx, _walkboxTable);
 
 		currentWalkBoxCenterYBis = currentWalkBoxCenterY;
 		currentWalkBoxCenterXBis = currentWalkBoxCenterX;
 		// + 512
-		renderCTPWalkBox(currentWalkBoxCenterX, currentWalkBoxCenterY, currentWalkBoxCenterX, scale + 0x200, currentWalkBoxCenterY, walkboxTable + boxIdx * 40);
+		renderCTPWalkBox(currentWalkBoxCenterX, currentWalkBoxCenterY, currentWalkBoxCenterX, scale + 0x200, currentWalkBoxCenterY, _walkboxTable + boxIdx * 40);
 
 		var_1C = param4;
 		var_12 = var_1C + 1; // next
@@ -245,7 +245,7 @@ void loadCtpSub1(int boxIdx, int scale, uint16* walkboxTable, ctpVar19Struct* pa
 		{
 			int i;
 			int numPoints;
-			uint16* pCurrentPtr = walkboxTable + boxIdx * 40;
+			uint16* pCurrentPtr = _walkboxTable + boxIdx * 40;
 
 			numPoints = *(pCurrentPtr++);
 

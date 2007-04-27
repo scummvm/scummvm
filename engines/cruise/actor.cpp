@@ -640,7 +640,7 @@ void valide_noeud( int16 table[], int16 p, int *nclick, int16 solution0[20+3][2]
 }
 
 //computePathfinding(returnVar2, params.X, params.Y, var34, var35, currentActor->stepX, currentActor->stepY);
-int16 computePathfinding(int16* pSolution, int16 X, int16 Y, int16 destX, int16 destY, int16 stepX, int16 stepY, int16 oldPathId)
+int16 computePathfinding(int16* pSolution, int16 _X, int16 _Y, int16 destX, int16 destY, int16 stepX, int16 stepY, int16 oldPathId)
 {
   persoStruct* perso;
   int num;
@@ -689,8 +689,8 @@ int16 computePathfinding(int16* pSolution, int16 X, int16 Y, int16 destX, int16 
     perso->inc_jo1 = stepX;
     perso->inc_jo2 = stepY;
 
-    *(ptr++) = X;
-    *(ptr++) = Y;
+    *(ptr++) = _X;
+    *(ptr++) = _Y;
     *(ptr++) = pSolution[0] = destX;
     *(ptr++) = pSolution[1] = destY;
     *(ptr++) = -1;
@@ -707,7 +707,7 @@ int16 computePathfinding(int16* pSolution, int16 X, int16 Y, int16 destX, int16 
 	ctpVar19=ctpVar11;
 	flag_aff_chemin=0;
 
-	if (X==destX && Y==destY)
+	if (_X==destX && _Y==destY)
 	{
 		pSolution[0]=-1;
 		pSolution[1]=-1;
@@ -717,12 +717,12 @@ int16 computePathfinding(int16* pSolution, int16 X, int16 Y, int16 destX, int16 
 
 /******* cherche le premier noeud ******/
 
-  getPixel(X,Y);
+  getPixel(_X,_Y);
 
   pSolution[4] = computedVar14;
 
-  x_mouse = X;
-  y_mouse = Y;
+  x_mouse = _X;
+  y_mouse = _Y;
 
 	if (!flag_obstacle || (point_select=point_proche(ctp_routeCoords))==-1)
 	{

@@ -322,6 +322,14 @@ int loadFileMode2(uint8* name, int startIdx, int currentEntryIdx, int numIdx)
       loadFNTSub(ptr, startIdx);
       break;
     }
+  case type_UNK:
+	{
+	  break;  
+	}
+  case type_SPL:
+	{
+	  break;  
+	}
   }
   return 0;
 }
@@ -356,6 +364,14 @@ int loadFullBundle(uint8* name, int startIdx)
       loadFNTSub(ptr, startIdx);
       break;
     }
+  case type_UNK:
+	{
+	  break;  
+	}
+  case type_SPL:
+	{
+	  break;  
+	}
   }
 
   return 0;

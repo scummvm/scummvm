@@ -62,7 +62,7 @@ int32 getTextLineCount(int32 rightBorder_X, int32 wordSpacingWidth, uint8* ptr, 
 	int32 var_6      = 0;
 	int32 lineLength = 0;
 
-	uint8* tempPtr;
+	uint8* tempPtr = 0;
 
 	if(!*localString)
 	{
@@ -505,7 +505,7 @@ void drawString(int32 x, int32 y, uint8* string, uint8* buffer, uint8 color, int
 
 		do
 		{
-			uint8 character = *(string++);
+			character = *(string++);
 
 			short int data = fontCharacterTable[character];
 
@@ -698,7 +698,7 @@ gfxEntryStruct* renderText(int inRightBorder_X, uint8* string)
 		// draw textline, character wise
 		do
 		{
-			uint8 character = *(string++);
+			character = *(string++);
 
 			short int charData = fontCharacterTable[character];     // get character position
 
