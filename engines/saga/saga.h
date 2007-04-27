@@ -299,107 +299,7 @@ struct GameFontDescription {
 	uint32 fontResourceId;
 };
 
-struct PanelButton {
-	PanelButtonType type;
-	int xOffset;
-	int yOffset;
-	int width;
-	int height;
-	int id;
-	uint16 ascii;
-	int state;
-	int upSpriteNumber;
-	int downSpriteNumber;
-	int overSpriteNumber;
-};
-
-struct GameDisplayInfo {
-	int logicalWidth;
-	int logicalHeight;
-
-	int pathStartY;
-	int sceneHeight;
-
-	int statusXOffset;
-	int statusYOffset;
-	int statusWidth;
-	int statusHeight;
-	int statusTextY;
-	int statusTextColor;
-	int statusBGColor;
-
-	int saveReminderXOffset;
-	int saveReminderYOffset;
-	int saveReminderWidth;
-	int saveReminderHeight;
-	int saveReminderFirstSpriteNumber;
-	int saveReminderSecondSpriteNumber;
-
-	int leftPortraitXOffset;
-	int leftPortraitYOffset;
-	int rightPortraitXOffset;
-	int rightPortraitYOffset;
-
-	int inventoryUpButtonIndex;
-	int inventoryDownButtonIndex;
-	int inventoryRows;
-	int inventoryColumns;
-
-	int mainPanelXOffset;
-	int mainPanelYOffset;
-	int mainPanelButtonsCount;
-	PanelButton *mainPanelButtons;
-
-	int converseMaxTextWidth;
-	int converseTextHeight;
-	int converseTextLines;
-	int converseUpButtonIndex;
-	int converseDownButtonIndex;
-
-	int conversePanelXOffset;
-	int conversePanelYOffset;
-	int conversePanelButtonsCount;
-	PanelButton *conversePanelButtons;
-
-	int optionSaveFilePanelIndex;
-	int optionSaveFileSliderIndex;
-	uint32 optionSaveFileVisible;
-
-	int optionPanelXOffset;
-	int optionPanelYOffset;
-	int optionPanelButtonsCount;
-	PanelButton *optionPanelButtons;
-
-	int quitPanelXOffset;
-	int quitPanelYOffset;
-	int quitPanelWidth;
-	int quitPanelHeight;
-	int quitPanelButtonsCount;
-	PanelButton *quitPanelButtons;
-
-	int loadPanelXOffset;
-	int loadPanelYOffset;
-	int loadPanelWidth;
-	int loadPanelHeight;
-	int loadPanelButtonsCount;
-	PanelButton *loadPanelButtons;
-
-	int saveEditIndex;
-	int savePanelXOffset;
-	int savePanelYOffset;
-	int savePanelWidth;
-	int savePanelHeight;
-	int savePanelButtonsCount;
-	PanelButton *savePanelButtons;
-
-	int protectEditIndex;
-	int protectPanelXOffset;
-	int protectPanelYOffset;
-	int protectPanelWidth;
-	int protectPanelHeight;
-	int protectPanelButtonsCount;
-	PanelButton *protectPanelButtons;
-};
+struct GameDisplayInfo;
 
 struct GameSoundInfo {
 	GameSoundTypes resourceType;
@@ -692,9 +592,6 @@ public:
 	Common::String _gameTitle;
 	Common::Rect _displayClip;
 
-protected:
-	GameDisplayInfo _gameDisplayInfo;
-
 public:
 	int32 _frameCount;
 
@@ -725,9 +622,9 @@ public:
 	const Common::ADGameFileDescription *getFilesDescriptions() const;
 
 	const Common::Rect &getDisplayClip() const { return _displayClip;}
-	int getDisplayWidth() const { return _gameDisplayInfo.logicalWidth; }
-	int getDisplayHeight() const { return _gameDisplayInfo.logicalHeight;}
-	const GameDisplayInfo & getDisplayInfo() { return _gameDisplayInfo; }
+	int getDisplayWidth() const;
+	int getDisplayHeight() const;
+	const GameDisplayInfo &getDisplayInfo();
 
 	const char *getTextString(int textStringId);
 	void getExcuseInfo(int verb, const char *&textString, int &soundResourceId);

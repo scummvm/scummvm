@@ -29,11 +29,11 @@
 #include "common/config-manager.h"
 #include "common/advancedDetector.h"
 
+#include "saga/displayinfo.h"
 #include "saga/rscfile.h"
 #include "saga/interface.h"
 #include "saga/scene.h"
 #include "saga/sagaresnames.h"
-
 
 namespace Saga {
 struct SAGAGameDescription {
@@ -42,7 +42,6 @@ struct SAGAGameDescription {
 	int gameType;
 	int gameId;
 	uint32 features;
-	const GameDisplayInfo *gameDisplayInfo;
 	int startSceneNumber;
 	const GameResourceDescription *resourceDescription;
 	int fontsCount;
@@ -128,11 +127,24 @@ bool SagaEngine::initGame() {
 	if (_gameDescription == 0)
 		return false;
 
-	_gameDisplayInfo = *_gameDescription->gameDisplayInfo;
-	_displayClip.right = _gameDisplayInfo.logicalWidth;
-	_displayClip.bottom = _gameDisplayInfo.logicalHeight;
+	_displayClip.right = getDisplayInfo().logicalWidth;
+	_displayClip.bottom = getDisplayInfo().logicalHeight;
 
 	return _resource->createContexts();
+}
+
+const GameDisplayInfo &SagaEngine::getDisplayInfo() {
+	return _gameDescription->gameType == GType_ITE ? ITE_DisplayInfo : IHNM_DisplayInfo;
+}
+
+int SagaEngine::getDisplayWidth() const {
+	const GameDisplayInfo &di = _gameDescription->gameType == GType_ITE ? ITE_DisplayInfo : IHNM_DisplayInfo;
+	return di.logicalWidth;
+}
+
+int SagaEngine::getDisplayHeight() const {
+	const GameDisplayInfo &di = _gameDescription->gameType == GType_ITE ? ITE_DisplayInfo : IHNM_DisplayInfo;
+	return di.logicalHeight;
 }
 
 } // End of namespace Saga

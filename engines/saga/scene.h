@@ -278,9 +278,9 @@ class Scene {
 
 	int getHeight() const {
 		if (_vm->_interface->getMode() == kPanelChapterSelection)
-			return _vm->_gameDisplayInfo.logicalHeight;
+			return _vm->getDisplayInfo().logicalHeight;
 		else
-			return _vm->_gameDisplayInfo.sceneHeight;
+			return _vm->getDisplayInfo().sceneHeight;
 	}
 
  private:

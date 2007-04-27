@@ -28,6 +28,7 @@
 #include "saga/gfx.h"
 #include "saga/actor.h"
 #include "saga/console.h"
+#include "saga/displayinfo.h"
 #include "saga/events.h"
 #include "saga/font.h"
 #include "saga/objectmap.h"

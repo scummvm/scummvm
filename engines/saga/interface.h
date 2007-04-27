@@ -29,6 +29,7 @@
 
 #include "common/savefile.h"
 
+#include "saga/displayinfo.h"
 #include "saga/sprite.h"
 #include "saga/script.h"
 
