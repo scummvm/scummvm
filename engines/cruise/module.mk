@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	actor.o \
 	background.o \
 	backgroundIncrust.o \
+	cell.o \
 	cruise.o \
 	cruise_main.o \
 	ctp.o \
