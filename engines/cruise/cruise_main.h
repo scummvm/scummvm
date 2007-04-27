@@ -76,7 +76,7 @@ void resetFileEntry(int32 entryNumber);
 void saveShort(void* ptr, int16 var);
 void* mallocAndZero(int32 size);
 uint8* mainProc14(uint16 overlay, uint16 idx);
-void printInfoBlackBox(char* string);
+void printInfoBlackBox(const char* string);
 void waitForPlayerInput(void);
 int loadCtp(uint8* ctpName);
 void loadPakedFileToMem(int fileIdx, uint8* buffer);

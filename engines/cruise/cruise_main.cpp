@@ -346,7 +346,7 @@ uint8* getDataFromData3(ovlData3Struct* ptr, int param)
   }
 }
 
-void printInfoBlackBox(char* string)
+void printInfoBlackBox(const char* string)
 {
 }
 
@@ -728,7 +728,6 @@ int getCursorFromObject(int mouseX, int mouseY, int* outX, int* outY)
 
               if((var_4 != var_16) && (var_2 != var_14))
               {
-                params;
                 getMultipleObjectParam(var_16, var_14, &params);
 
                 var_C = params.X;
@@ -1111,7 +1110,7 @@ int callInventoryObject(int param0, int param1, int x, int y)
 
                   if(var_22)
                   {
-                    if(var_34->varNameOffset>=0)
+                    if(true /*var_34->varNameOffset>=0*/) // FIXME: This check is always true since varNameOffset is unsigned
                     {
                       if(var_22->specialString1)
                       {

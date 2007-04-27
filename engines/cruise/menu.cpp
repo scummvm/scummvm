@@ -28,7 +28,7 @@ namespace Cruise {
 
 menuStruct* menuTable[8];
 
-menuStruct* createMenu(int X, int Y, char* menuName)
+menuStruct* createMenu(int X, int Y, const char* menuName)
 {
   menuStruct* entry;
 

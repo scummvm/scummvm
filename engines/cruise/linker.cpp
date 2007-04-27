@@ -269,7 +269,6 @@ int updateScriptImport(int ovlIdx)
 
     for(i=0;i<numImport2;i++)
     {
-      char buffer[256];
       int out1;
       int foundExportIdx;
       exportEntryStruct* pFoundExport;

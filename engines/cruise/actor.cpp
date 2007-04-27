@@ -442,7 +442,7 @@ void	explore( int depart, int arrivee )
 				D=0;
 				for ( i=0; i < idsol; i++ )
 				{
-					D = D+ctp_routeCoords[sol[i]][sol[i+1]];
+					D = D+ctp_routeCoords[(int)sol[i]][(int)sol[i+1]];
 					Fsol[i]=sol[i];
 				}
 				prem2=0;

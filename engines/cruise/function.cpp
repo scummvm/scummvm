@@ -984,7 +984,7 @@ void removeBackgroundIncrust(int overlay, int idx, backgroundIncrustStruct* pHea
         (pCurrent->X == var_4) &&
         (pCurrent->Y == var_6))
     {
-      pCurrent->field_6 = -1;
+      pCurrent->field_6 = (uint16)-1;
     }
 
     pCurrent = pCurrent->next;
@@ -995,7 +995,7 @@ void removeBackgroundIncrust(int overlay, int idx, backgroundIncrustStruct* pHea
 
   while(pCurrent)
   {
-    if(pCurrent->field_6 == -1)
+    if(pCurrent->field_6 == (uint16)-1)
     {
       backgroundIncrustStruct* pNext = pCurrent->next;
       backgroundIncrustStruct* bx = pCurrentHead;

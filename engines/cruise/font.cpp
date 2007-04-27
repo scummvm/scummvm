@@ -507,7 +507,7 @@ void drawString(int32 x, int32 y, uint8* string, uint8* buffer, uint8 color, int
 		{
 			character = *(string++);
 
-			short int data = fontCharacterTable[character];
+			short int data = fontCharacterTable[(int)character];
 
 			if(character)
 			{
@@ -700,7 +700,7 @@ gfxEntryStruct* renderText(int inRightBorder_X, uint8* string)
 		{
 			character = *(string++);
 
-			short int charData = fontCharacterTable[character];     // get character position
+			short int charData = fontCharacterTable[(int)character];     // get character position
 
 			if(character)
 			{

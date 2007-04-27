@@ -26,7 +26,7 @@ namespace Cruise {
 
 struct menuStruct
 {
-  char* stringPtr;
+  const char* stringPtr;
   gfxEntryStruct* gfx;
   int x;
   int y;
@@ -38,7 +38,7 @@ typedef struct menuStruct menuStruct;
 
 extern menuStruct* menuTable[8];
 
-menuStruct* createMenu(int X, int Y, char* menuName);
+menuStruct* createMenu(int X, int Y, const char* menuName);
 void addSelectableMenuEntry(int var0, int var1, menuStruct* pMenu, int var2, int color, char* menuText);
 void updateMenuMouse(int mouseX, int mouseY, menuStruct* pMenu);
 int processMenu(menuStruct* pMenu);

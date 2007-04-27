@@ -128,7 +128,7 @@ void getPolyData(int fileIndex, int X, int Y, int *outScale, int *outY, int *out
 
 		newFileIndex += fileIndex;
 
-		if(newFileIndex >= 0)
+		if(true /*newFileIndex >= 0*/)	// FIXME: comparison is always true due to limited range of data type
 		{
 			if(filesDatabase[newFileIndex].resType == 0 && filesDatabase[newFileIndex].subData.ptr)
 			{
