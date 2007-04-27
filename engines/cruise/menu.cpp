@@ -46,7 +46,7 @@ menuStruct* createMenu(int X, int Y, const char* menuName)
 }
 
 // TODO: rewrite to remove the goto
-void addSelectableMenuEntry(int var0, int var1, menuStruct* pMenu, int var2, int color, char* menuText)
+void addSelectableMenuEntry(int param0, int param1, menuStruct* pMenu, int param2, int color, const char* menuText)
 {
   menuElementStruct* di;
   menuElementStruct* var_6;
@@ -63,7 +63,7 @@ void addSelectableMenuEntry(int var0, int var1, menuStruct* pMenu, int var2, int
       do
       {
         di = var_6;
-        if(var2)
+        if(param2)
         {
           if(!strcmp(var_6->string, menuText))
           {
@@ -72,8 +72,8 @@ void addSelectableMenuEntry(int var0, int var1, menuStruct* pMenu, int var2, int
             ASSERT(pSubStruct);
 
             pSubStruct->pNext = NULL;
-            pSubStruct->var2 = var0;
-            pSubStruct->var4 = var1;
+            pSubStruct->var2 = param0;
+            pSubStruct->var4 = param1;
 
             pSubStructCurrent = pNewElement->ptrSub;
 
@@ -125,8 +125,8 @@ void addSelectableMenuEntry(int var0, int var1, menuStruct* pMenu, int var2, int
     pNewElement->ptrSub = pSubStruct;
 
     pSubStruct->pNext = NULL;
-    pSubStruct->var2 = var0;
-    pSubStruct->var4 = var1;
+    pSubStruct->var2 = param0;
+    pSubStruct->var4 = param1;
 
     pMenu->numElements++;
   }

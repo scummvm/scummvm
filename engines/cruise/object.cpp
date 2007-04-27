@@ -282,7 +282,7 @@ void setObjectPosition(int16 param1,int16 objIdx,int16 param3,int16 param4)
 void Op_7Sub1(int16 param1, int16 param2, objectStruct* objPtr)
 {
   int16 var;
-  objectStruct* var8;
+  objectStruct* var8_;
   objectStruct* var40;
   objectStruct* var3E;
   objectStruct* currentObjPtrPrevious;
@@ -297,7 +297,7 @@ void Op_7Sub1(int16 param1, int16 param2, objectStruct* objPtr)
   match = NULL;
   var40 = NULL;
   var3E = NULL;
-  var8 = objPtr;
+  var8_ = objPtr;
 
   while(currentObjPtr2)
   {
@@ -351,7 +351,7 @@ void Op_7Sub1(int16 param1, int16 param2, objectStruct* objPtr)
 
       if(var>var2)
       {
-        var8 = currentObjPtr2;
+        var8_ = currentObjPtr2;
       }
 
       currentObjPtrPrevious=currentObjPtrPrevious->next;
@@ -364,14 +364,14 @@ void Op_7Sub1(int16 param1, int16 param2, objectStruct* objPtr)
   {
     objectStruct* temp;
 
-    temp = var8->next;
+    temp = var8_->next;
 
-    var8->next = var40;
+    var8_->next = var40;
     match->next = temp;
 
-    if(objPtr!=var8)
+    if(objPtr!=var8_)
     {
-      var40->prev = var8;
+      var40->prev = var8_;
     }
 
     if(!temp)

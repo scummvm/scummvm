@@ -41,7 +41,7 @@ typedef struct menuElementSubStruct menuElementSubStruct;
 struct menuElementStruct
 {
   struct menuElementStruct* next;
-  char* string;
+  const char* string;
   int x;
   int y;
   int varA;
