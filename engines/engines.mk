@@ -90,3 +90,9 @@ DEFINES += -DDISABLE_PARALLACTION
 else
 MODULES += engines/parallaction
 endif
+
+ifdef DISABLE_CRUISE
+DEFINES += -DDISABLE_CRUISE
+else
+MODULES += engines/cruise
+endif

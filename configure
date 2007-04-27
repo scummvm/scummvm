@@ -62,6 +62,7 @@ _build_cine=yes
 _build_agi=yes
 _build_touche=yes
 _build_parallaction=no
+_build_cruise=no
 _need_memalign=no
 _build_plugins=no
 _nasm=auto
@@ -337,6 +338,7 @@ Optional Features:
   --disable-agi            don't build the AGI engine
   --disable-touche         don't build the Touche: The Adventures of the Fifth Musketeer engine
   --enable-parallaction    build the Parallaction engine
+  --enable-cruise          build the Cruise for a Corpse engine
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
   --disable-mt32emu        don't enable the integrated MT-32 emulator
@@ -407,6 +409,7 @@ for ac_option in $@; do
       --disable-agi)            _build_agi=no ;;
       --disable-touche)         _build_touche=no ;;
       --enable-parallaction)    _build_parallaction=yes ;;
+      --enable-cruise)          _build_cruise=yes ;;
       --disable-hq-scalers)     _build_hq_scalers=no ;;
       --disable-scalers)        _build_scalers=no ;;
       --enable-alsa)            _alsa=yes       ;;
@@ -698,6 +701,7 @@ add_flag_to_config_mk $_build_cine         'DISABLE_CINE'
 add_flag_to_config_mk $_build_agi          'DISABLE_AGI'
 add_flag_to_config_mk $_build_touche       'DISABLE_TOUCHE'
 add_flag_to_config_mk $_build_parallaction 'DISABLE_PARALLACTION'
+add_flag_to_config_mk $_build_cruise       'DISABLE_CRUISE'
 add_flag_to_config_mk $_build_hq_scalers   'DISABLE_HQ_SCALERS'
 add_flag_to_config_mk $_build_scalers      'DISABLE_SCALERS'
 
@@ -1330,6 +1334,9 @@ if test "$_build_touche" = yes ; then
 fi
 if test "$_build_parallaction" = yes ; then
 	echo "    Parallaction"
+fi
+if test "$_build_cruise" = yes ; then
+	echo "    Cruise for a Corpse"
 fi
 
 echo
