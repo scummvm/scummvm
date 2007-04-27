@@ -8,9 +8,9 @@ MODULE_OBJS := \
 	cursor.o \
 	debug.o \
 	debugger.o \
+	detection.o \
 	draw.o \
 	event.o \
-	game.o \
 	gfx.o \
 	icons.o \
 	input.o \

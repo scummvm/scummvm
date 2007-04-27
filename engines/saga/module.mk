@@ -4,10 +4,10 @@ MODULE_OBJS := \
 	actor.o \
 	animation.o \
 	console.o \
+	detection.o \
 	events.o \
 	font.o \
 	font_map.o \
-	game.o \
 	gfx.o \
 	ihnm_introproc.o \
 	image.o \
