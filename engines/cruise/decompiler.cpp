@@ -787,7 +787,7 @@ int decompFunction(void)
       }
     case 0x5:
       {
-        sprintf(tempbuffer,"_addObject(%s,%s,%s)",popDecomp(),popDecomp(),popDecomp());
+        sprintf(tempbuffer,"_addCell(%s,%s,%s)",popDecomp(),popDecomp(),popDecomp());
         pushDecomp(tempbuffer);
         break;
       }
@@ -905,7 +905,7 @@ int decompFunction(void)
       }
     case 0x16:
       {
-        sprintf(tempbuffer,"_op_16(%s,%s,%s,%s,%s,%s)",popDecomp(),popDecomp(),popDecomp(),popDecomp(),popDecomp(),popDecomp());
+        sprintf(tempbuffer,"_Op_FreezeCell(%s,%s,%s,%s,%s,%s)",popDecomp(),popDecomp(),popDecomp(),popDecomp(),popDecomp(),popDecomp());
         pushDecomp(tempbuffer);
         break;
       }
@@ -917,13 +917,13 @@ int decompFunction(void)
       }
     case 0x18:
       {
-        sprintf(tempbuffer,"_op_18(%s,%s,%s,%s,%s,%s,%s)",popDecomp(),popDecomp(),popDecomp(),popDecomp(),popDecomp(),popDecomp(),popDecomp());
+        sprintf(tempbuffer,"_Op_AddAnimation(%s,%s,%s,%s,%s,%s,%s)",popDecomp(),popDecomp(),popDecomp(),popDecomp(),popDecomp(),popDecomp(),popDecomp());
         pushDecomp(tempbuffer);
         break;
       }
     case 0x19:
       {
-        sprintf(tempbuffer,"_op_19(%s,%s,%s)",popDecomp(),popDecomp(),popDecomp());
+        sprintf(tempbuffer,"_Op_RemoveAnimation(%s,%s,%s)",popDecomp(),popDecomp(),popDecomp());
         pushDecomp(tempbuffer);
         break;
       }
@@ -1140,13 +1140,13 @@ int decompFunction(void)
       }
     case 0x5C:
       {
-        sprintf(tempbuffer,"_op_5C(%s,%s)",popDecomp(),popDecomp());
+        sprintf(tempbuffer,"_Op_AddCellC(%s,%s)",popDecomp(),popDecomp());
         pushDecomp(tempbuffer);
         break;
       }
     case 0x5E:
       {
-        sprintf(tempbuffer,"_op_5E(%s)",popDecomp());
+        sprintf(tempbuffer,"_Op_AddCellE(%s)",popDecomp());
         pushDecomp(tempbuffer);
         break;
       }
@@ -1307,19 +1307,19 @@ int decompFunction(void)
       }
     case 0x76:
       {
-        sprintf(tempbuffer,"_op_76(%s,%s)",popDecomp(),popDecomp());
+        sprintf(tempbuffer,"_Op_InitializeState6(%s,%s)",popDecomp(),popDecomp());
         pushDecomp(tempbuffer);
         break;
       }
     case 0x77:
       {
-        sprintf(tempbuffer,"_op_77(%s)",popDecomp());
+        sprintf(tempbuffer,"_Op_InitializeState7(%s)",popDecomp());
         pushDecomp(tempbuffer);
         break;
       }
     case 0x78:
       {
-        sprintf(tempbuffer,"_op_78(%s)",popDecomp());
+        sprintf(tempbuffer,"_Op_InitializeState8(%s)",popDecomp());
         pushDecomp(tempbuffer);
         break;
       }
@@ -1331,13 +1331,13 @@ int decompFunction(void)
       }
     case 0x7B:
       {
-        sprintf(tempbuffer,"_op_7B(%s)",popDecomp());
+        sprintf(tempbuffer,"_Op_InitializeStateB(%s)",popDecomp());
         pushDecomp(tempbuffer);
         break;
       }
     case 0x7C:
       {
-        sprintf(tempbuffer,"_op_7C(%s)",popDecomp());
+        sprintf(tempbuffer,"_Op_InitializeStateC(%s)",popDecomp());
         pushDecomp(tempbuffer);
         break;
       }

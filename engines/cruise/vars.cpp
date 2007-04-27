@@ -85,7 +85,7 @@ int16 bootOverlayNumber;
 
 int16 initVar5[12];
 
-objectStruct objectHead;
+cellStruct cellHead;
 
 opcodeTypeFunction opcodeTypeTable[64];
 
@@ -128,7 +128,7 @@ int16 var24;
 int16 automaticMode;
 int16 var34;
 int16 var35;
-int16 animationStart;
+bool animationStart;
 
 int16 main17;
 int16 var39;

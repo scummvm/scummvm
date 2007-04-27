@@ -36,7 +36,7 @@ struct drawVar1Struct
 	short int field_4;
 	short int field_6;
 	short int field_8;
-	objectStruct* field_A;
+	cellStruct* field_A;
 };
 
 typedef struct drawVar1Struct drawVar1Struct;
@@ -54,7 +54,7 @@ void mainDraw6(void)
 
 		if(pCurrent->field_6 == 5)
 		{
-			Op_7Sub(pCurrent->field_2, pCurrent->field_4, pCurrent->field_8);
+			Op_InitializeStateSub(pCurrent->field_2, pCurrent->field_4, pCurrent->field_8);
 		}
 		else
 		{
@@ -563,7 +563,7 @@ void buildPolyModel(int positionX, int positionY, int scale, char* ptr2, char* d
 }
 
 // draw poly sprite (OLD: mainDrawSub1)
-void mainDrawPolygons(int fileIndex, objectStruct* pObject, int X, int scale, int Y, char* destBuffer, char* dataPtr)
+void mainDrawPolygons(int fileIndex, cellStruct* pObject, int X, int scale, int Y, char* destBuffer, char* dataPtr)
 {
 	int   newX;
 	int   newY;
@@ -625,7 +625,7 @@ void mainDrawPolygons(int fileIndex, objectStruct* pObject, int X, int scale, in
 
 	if(pObject)
 	{
-		objectStruct* pCurrentObject = pObject;
+		cellStruct* pCurrentObject = pObject;
 
 		do
 		{
@@ -701,7 +701,7 @@ void mainSprite(int globalX, int globalY, gfxEntryStruct* pGfxPtr, uint8* ouputP
 	}
 }
 
-void mainDrawSub4(int objX1, int var_6, objectStruct* currentObjPtr, char* data1, int objY2, int objX2, char* output, char* data2)
+void mainDrawSub4(int objX1, int var_6, cellStruct* currentObjPtr, char* data1, int objY2, int objX2, char* output, char* data2)
 {
 	int x = 0;
 	int y = 0;
@@ -724,7 +724,7 @@ void mainDrawSub4(int objX1, int var_6, objectStruct* currentObjPtr, char* data1
 	}
 }
 
-void mainDraw5(int overlayIdx, int idx, int field_28, objectStruct* pObject, int newVal)
+void mainDraw5(int overlayIdx, int idx, int field_28, cellStruct* pObject, int newVal)
 {
 	drawVar1Struct* pNewEntry;
 
@@ -916,13 +916,14 @@ int getValueFromObjectQuerry(objectParamsQuery* params, int idx)
 void mainDraw(int16 param)
 {
 	uint8* bgPtr;
-	objectStruct* currentObjPtr;
+	cellStruct* currentObjPtr;
 	int16 currentObjIdx;
 	int16 objX1 = 0;
 	int16 objY1 = 0;
 	int16 objZ1 = 0;
 	int16 objX2;
 	int16 objY2;
+	int16 objZ2;
 	int16 spriteHeight;
 
 
@@ -940,31 +941,24 @@ void mainDraw(int16 param)
 
 	drawVar1.next = NULL;
 
-	currentObjPtr = objectHead.next;
+	currentObjPtr = cellHead.next;
 
 #ifdef _DEBUG
-	polyOutputBuffer = (char*)bgPtr;
-	drawCtp();
+/*	polyOutputBuffer = (char*)bgPtr;
+	drawCtp(); */
 #endif
 
-	//-------------------------------------------------- DRAW OBJECTS TYPE 4 -----------------------------------------//
+	//-------------------------------------------------- PROCESS SPRITES -----------------------------------------//
 
 	while(currentObjPtr)
 	{
-		if((currentActiveBackgroundPlane == currentObjPtr->backgroundPlane) && (currentObjPtr->hide == 0) && (currentObjPtr->type == 4))
+		if((currentActiveBackgroundPlane == currentObjPtr->backgroundPlane) && (currentObjPtr->freeze == 0) && (currentObjPtr->type == OBJ_SPRITE))
 		{
-			int16 fileIdx;
 			objectParamsQuery params;
 
 			currentObjIdx = currentObjPtr->idx;
 
-			if((currentObjPtr->followObjectOverlayIdx == currentObjPtr->overlay) && (currentObjPtr->followObjectIdx == currentObjPtr->idx))
-			{
-				objX1 = 0;
-				objY1 = 0;
-				objZ1 = 0;
-			}
-			else
+			if((currentObjPtr->followObjectOverlayIdx != currentObjPtr->overlay) || (currentObjPtr->followObjectIdx != currentObjPtr->idx))
 			{	
 				// Declaring this twice ?
 				// objectParamsQuery params;
@@ -975,73 +969,75 @@ void mainDraw(int16 param)
 				objY1 = params.Y;
 				objZ1 = params.fileIdx;
 			}
+			else
+			{
+				objX1 = 0;
+				objY1 = 0;
+				objZ1 = 0;
+			}
 
 			getMultipleObjectParam(currentObjPtr->overlay, currentObjIdx, &params);
 
 			objX2 = objX1 + params.X;
 			objY2 = objY1 + params.Y;
+			objZ2 = params.fileIdx;
 
-			fileIdx = params.fileIdx;
-
-			if(fileIdx >= 0)
+			if(objZ2 >= 0)
 			{
-				fileIdx += objZ1;
+				objZ2 += objZ1;
 			}
 
-			if((params.var5 >= 0) && (fileIdx >= 0) && filesDatabase[fileIdx].subData.ptr)
+			if((params.var5 >= 0) && (objZ2 >= 0) && filesDatabase[objZ2].subData.ptr)
 			{
-				if(filesDatabase[fileIdx].subData.resourceType == 8)
+				if(filesDatabase[objZ2].subData.resourceType == 8) // Poly
 				{
-					mainDrawPolygons(fileIdx, currentObjPtr, objX2, params.scale, objY2, (char*)gfxModuleData.pPage10, (char*)filesDatabase[fileIdx].subData.ptr); // poly
+					mainDrawPolygons(objZ2, currentObjPtr, objX2, params.scale, objY2, (char*)gfxModuleData.pPage10, (char*)filesDatabase[objZ2].subData.ptr); // poly
 				}
-				else if(filesDatabase[fileIdx].subData.resourceType == 6)
-				{
-				}
-				else if(filesDatabase[fileIdx].resType == 1)
+				else if(filesDatabase[objZ2].subData.resourceType == 6) // sound
 				{
 				}
-				else if(filesDatabase[fileIdx].subData.resourceType == 4)
+				else if(filesDatabase[objZ2].resType == 1) //(num plan == 1)
 				{
-					objX1        = filesDatabase[fileIdx].width;	// width
-					spriteHeight = filesDatabase[fileIdx].height;	// height
+				}
+				else if(filesDatabase[objZ2].subData.resourceType == 4)
+				{
+					objX1        = filesDatabase[objZ2].width;	// width
+					spriteHeight = filesDatabase[objZ2].height;	// height
 
-					if(filesDatabase[fileIdx].subData.ptr)
+					if(filesDatabase[objZ2].subData.ptr)
 					{
-						currentTransparent = filesDatabase[fileIdx].subData.transparency;
+						currentTransparent = filesDatabase[objZ2].subData.transparency;
 
-						mainDrawSub4(objX1, spriteHeight, currentObjPtr, (char*)filesDatabase[fileIdx].subData.ptr, objY2, objX2, (char*)gfxModuleData.pPage10, (char*)filesDatabase[fileIdx].subData.ptr);
+						mainDrawSub4(objX1, spriteHeight, currentObjPtr, (char*)filesDatabase[objZ2].subData.ptr, objY2, objX2, (char*)gfxModuleData.pPage10, (char*)filesDatabase[objZ2].subData.ptr);
 					}
 				}
 			}
 
-			if((currentObjPtr->field_26 != 0) && (param == 0))
+			if((currentObjPtr->animStep != 0) && (param == 0))
 			{
 				if(currentObjPtr->currentAnimDelay <= 0) 
 				{
 					int newVal;
-					objX1 = 1;
+					bool change = true;
 
-					newVal = getValueFromObjectQuerry(&params,currentObjPtr->field_28) + currentObjPtr->field_26;
+					newVal = getValueFromObjectQuerry(&params,currentObjPtr->field_28) + currentObjPtr->animStep;
 
-					if(currentObjPtr->field_26 > 0)
+					if(currentObjPtr->animStep > 0)
 					{
-						if(currentObjPtr->field_22 < newVal)
-						{
-							if(currentObjPtr->field_30 >= 0)
+						if(newVal > currentObjPtr->field_22)
+						{			
+							if(currentObjPtr->field_30)
+							{
+								newVal = currentObjPtr->field_20;
+								currentObjPtr->field_30--;
+							}
+							else
 							{
 								int16 data2;
-
-								newVal = currentObjPtr->field_20;
-
-								if(currentObjPtr->field_30 > 0)
-								{
-									currentObjPtr->field_30--;
-								}
-
 								data2 = currentObjPtr->field_20;
 
-								objX1 = 0;
-								currentObjPtr->field_26 = 0;
+								change = false;
+								currentObjPtr->animStep = 0;
 
 								if(currentObjPtr->field_2A) // should we resume the script ?
 								{
@@ -1049,11 +1045,10 @@ void mainDraw(int16 param)
 									{
 										changeScriptParamInList(currentObjPtr->field_18, currentObjPtr->field_16, &scriptHandle2, 0, -1);
 									}
-									else
-										if(currentObjPtr->field_1A == 30)
-										{
-											changeScriptParamInList(currentObjPtr->field_18, currentObjPtr->field_16, &scriptHandle1, 0, -1);
-										}
+									else if(currentObjPtr->field_1A == 30)
+									{
+										changeScriptParamInList(currentObjPtr->field_18, currentObjPtr->field_16, &scriptHandle1, 0, -1);
+									}
 								}
 								newVal = data2;
 							}
@@ -1072,22 +1067,21 @@ void mainDraw(int16 param)
 						currentObjPtr->currentAnimDelay = currentObjPtr->nextAnimDelay;
 					}
 
-					if(currentObjPtr->field_2C >= 0 && (currentObjPtr->field_2C == newVal) && currentObjPtr->field_2A != 0)
+					if((currentObjPtr->field_2C >= 0) && (currentObjPtr->field_2C == newVal) && (currentObjPtr->field_2A != 0))
 					{
 						if(currentObjPtr->field_1A == 20)
 						{
 							changeScriptParamInList(currentObjPtr->field_18, currentObjPtr->field_16, &scriptHandle2, 0, -1);
 						}
-						else
-							if(currentObjPtr->field_1A == 30)
-							{
-								changeScriptParamInList(currentObjPtr->field_18, currentObjPtr->field_16, &scriptHandle1, 0, -1);
-							}
+						else if(currentObjPtr->field_1A == 30)
+						{
+							changeScriptParamInList(currentObjPtr->field_18, currentObjPtr->field_16, &scriptHandle1, 0, -1);
+						}
 
-							currentObjPtr->field_2A = 0;
+						currentObjPtr->field_2A = 0;
 					}
 
-					if(objX1)
+					if(change)
 					{
 						mainDraw5(currentObjPtr->overlay, currentObjPtr->idx, currentObjPtr->field_28, currentObjPtr, newVal);
 					}
@@ -1109,11 +1103,11 @@ void mainDraw(int16 param)
 
 	//-------------------------------------------------- DRAW OBJECTS TYPE 5 -----------------------------------------//
 
-	currentObjPtr = objectHead.next;
+	currentObjPtr = cellHead.next;
 
 	while(currentObjPtr)
 	{
-		if(currentObjPtr->type == 5 && currentObjPtr->hide == 0)
+		if(currentObjPtr->type == 5 && currentObjPtr->freeze == 0)
 		{
 			mainSprite(currentObjPtr->field_A, currentObjPtr->field_C, currentObjPtr->gfxPtr, gfxModuleData.pPage10, currentObjPtr->field_10, currentObjPtr->spriteIdx);
 			var20 = 1;

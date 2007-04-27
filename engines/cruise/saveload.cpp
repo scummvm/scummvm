@@ -96,36 +96,6 @@ void loadScriptsFromSave(FILE* fileHandle,scriptInstanceStruct* entry)
   }
 }
 
-void loadSavegameDataSub2(FILE * f)
-{
-  unsigned short int n_chunks;
-  int i;
-  objectStruct *p;
-  objectStruct *t;
-
-  objectHead.next = NULL; // Not in ASM code, but I guess the variable is defaulted
-                          // to this value in the .exe
-
-  fread(&n_chunks, 2, 1, f);
-  // BIG ENDIAN MACHINES, PLEASE SWAP IT
-
-  p = &objectHead;
-
-  for (i = 0; i < n_chunks; i++)
-  {
-    t = (objectStruct *) mallocAndZero(sizeof(objectStruct));
-
-    fseek(f, 4, SEEK_CUR);
-    fread(&t->idx, 1, 0x30, f);
-
-    t->next = NULL;
-		p->next = t;
-    t->prev = objectHead.prev;
-    objectHead.prev = t;
-    p = t;
-  }
-}
-
 void loadSavegameActor(FILE* fileHandle)
 {
   short int numEntry;
@@ -140,7 +110,7 @@ void loadSavegameActor(FILE* fileHandle)
   {
     actorStruct* current = (actorStruct*)mallocAndZero(sizeof(actorStruct));
     fseek(fileHandle, 4, SEEK_CUR);
-    fread(&current->var4,0x26,1,fileHandle);
+    fread(current,0x26,1,fileHandle);
 
     current->next = NULL;
     ptr->next = current;
@@ -209,7 +179,7 @@ int loadSavegameData(int saveGameIdx)
   char saveIdentBuffer[6];
   int j;
   int initVar1Save;
-  objectStruct* currentObjectHead;
+  cellStruct* currentcellHead;
 
   sprintf(buffer,"CR.%d",saveGameIdx);
 
@@ -268,7 +238,9 @@ int loadSavegameData(int saveGameIdx)
   fread(&var31,2,1,fileHandle);
   fread(&var34,2,1,fileHandle);
   fread(&var35,2,1,fileHandle);
-  fread(&animationStart,2,1,fileHandle);
+  int16 bTemp;
+  fread(&bTemp,2,1,fileHandle);
+  animationStart = bTemp;
   fread(&currentActiveBackgroundPlane,2,1,fileHandle);
   fread(&initVar3,2,1,fileHandle);
   fread(&initVar2,2,1,fileHandle);
@@ -413,28 +385,28 @@ int loadSavegameData(int saveGameIdx)
 
   saveVar6[0] = 0;
 
-  currentObjectHead = objectHead.next;
+  currentcellHead = cellHead.next;
 
-  while(currentObjectHead)
+  while(currentcellHead)
   {
-    if(currentObjectHead->type == 5)
+    if(currentcellHead->type == 5)
     {
-      uint8* ptr = mainProc14(currentObjectHead->overlay,currentObjectHead->idx);
+      uint8* ptr = mainProc14(currentcellHead->overlay,currentcellHead->idx);
 
       ASSERT(0);
 
       if(ptr)
       {
         ASSERT(0);
-        //*(int16*)(currentobjectHead->datas+0x2E) = getSprite(ptr,*(int16*)(currentobjectHead->datas+0xE));
+        //*(int16*)(currentcellHead->datas+0x2E) = getSprite(ptr,*(int16*)(currentcellHead->datas+0xE));
       }
       else
       {
-        //*(int16*)(currentobjectHead->datas+0x2E) = 0;
+        //*(int16*)(currentcellHead->datas+0x2E) = 0;
       }
     }
 
-    currentObjectHead = currentObjectHead->next;
+    currentcellHead = currentcellHead->next;
   }
 
   //TODO: here, restart music

@@ -22,53 +22,52 @@
  *
  */
 
-#ifndef _ACTOR_H_
-#define _ACTOR_H_
+#ifndef _CELL_H_
+#define _CELL_H_
+
+#include "common/stdafx.h"
+#include "common/scummsys.h"
 
 namespace Cruise {
 
-enum animPhase
+struct gfxEntryStruct;
+
+struct cellStruct
 {
-  ANIM_PHASE_WAIT = 0,
-  ANIM_PHASE_STATIC = 1,
-  ANIM_PHASE_MOVE = 2,
-  ANIM_PHASE_STATIC_END = 3,
-  ANIM_PHASE_END = 4
-};
-
-typedef enum animPhase animPhase;
-
-struct actorStruct {
-	struct actorStruct* next;
-	struct actorStruct* prev;
-
+	struct cellStruct* next;
+	struct cellStruct* prev;
 	int16 idx;
 	int16 type;
-	int16 overlayNumber;
-	int16 x_dest;
-	int16 y_dest;
-	int16 x;
-	int16 y;
-	int16 startDirection;
-	int16 nextDirection;
-	int16 endDirection;
-	int16 stepX;
-	int16 stepY;
-	int16 pathId;
-	animPhase phase;
-	int16 counter;
-	int16 poly;
-	int16 flag;
-	int16 start;
+	int16 overlay ;
+	int16 field_A ;
+	int16 field_C ;
+	int16 spriteIdx ;
+	int16 field_10;
+	int16 backgroundPlane;
 	int16 freeze;
+	int16 field_16;
+	int16 field_18;
+	int16 field_1A;
+	int16 followObjectOverlayIdx;
+	int16 followObjectIdx;
+	int16 field_20;
+	int16 field_22;
+	int16 nextAnimDelay;
+	int16 animStep;
+	int16 field_28;
+	int16 field_2A;
+	int16 field_2C;
+	int16 currentAnimDelay;
+	int16 field_30;
+	gfxEntryStruct* gfxPtr;
 };
 
-typedef struct actorStruct actorStruct;
+extern cellStruct cellHead;
 
-int16 mainProc13(int overlayIdx, int param1, actorStruct* pStartEntry, int param2);
-actorStruct* findActor(int overlayIdx, int param1, actorStruct* pStartEntry, int param2);
-void processAnimation(void);
-void getPixel(int x, int y);
-} // End of namespace Cruise
+void resetPtr(cellStruct* ptr);
+void loadSavegameDataSub2(FILE * f);
+cellStruct* addCell(int16 overlayIdx,int16 param2,cellStruct* pHead,int16 scriptType,int16 scriptNumber,int16 scriptOverlay, int16 param3, int16 param4);
+
+}
 
 #endif

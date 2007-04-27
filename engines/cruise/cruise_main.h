@@ -45,7 +45,7 @@
 #include "cruise/various.h"
 #include "cruise/stringSupport.h"
 #include "cruise/function.h"
-#include "cruise/loadSave.h"
+#include "cruise/saveload.h"
 #include "cruise/linker.h"
 #include "cruise/mouse.h"
 #include "cruise/gfxModule.h"
@@ -89,7 +89,6 @@ int32 prepareWordRender(int32 param, int32 var1,int16* out2, uint8* ptr3,uint8* 
 void removeExtention(const char* name, char* buffer);
 void resetRaster(uint8* rasterPtr, int32 rasterSize);
 void changeCursor(uint16 cursorType);
-void resetPtr(objectStruct* ptr);
 void resetPtr2(scriptInstanceStruct* ptr);
 void getFileExtention(const char* name,char* buffer);
 void *allocAndZero(int size);

@@ -32,15 +32,15 @@ int16 mainProc13(int overlayIdx, int param1, actorStruct* pStartEntry, int param
 
   while(pCurrentEntry)
   {
-    if( (pCurrentEntry->overlayNumber == overlayIdx || overlayIdx == -1) &&
-        (pCurrentEntry->var4 == param1 || param1 == -1) &&
-        (pCurrentEntry->type == param2 || param2 == -1) &&
-        (pCurrentEntry->pathId != -2))
-    {
-      return 0;
-    }
-    
-    pCurrentEntry = pCurrentEntry->next;
+	if( (pCurrentEntry->overlayNumber == overlayIdx || overlayIdx == -1) &&
+		(pCurrentEntry->idx == param1 || param1 == -1) &&
+		(pCurrentEntry->type == param2 || param2 == -1) &&
+		(pCurrentEntry->pathId != -2))
+	{
+	  return 0;
+	}
+	
+	pCurrentEntry = pCurrentEntry->next;
   }
 
   return 1;
@@ -52,14 +52,14 @@ actorStruct* findActor(int overlayIdx, int param1, actorStruct* pStartEntry, int
 
   while(pCurrentEntry)
   {
-    if( (pCurrentEntry->overlayNumber == overlayIdx || overlayIdx == -1) &&
-        (pCurrentEntry->var4 == param1 || param1 == -1) &&
-        (pCurrentEntry->type == param2 || param2 == -1) )
-    {
-      return pCurrentEntry;
-    }
-    
-    pCurrentEntry = pCurrentEntry->next;
+	if( (pCurrentEntry->overlayNumber == overlayIdx || overlayIdx == -1) &&
+		(pCurrentEntry->idx == param1 || param1 == -1) &&
+		(pCurrentEntry->type == param2 || param2 == -1) )
+	{
+	  return pCurrentEntry;
+	}
+	
+	pCurrentEntry = pCurrentEntry->next;
   }
 
   return NULL;
@@ -79,34 +79,34 @@ void getPixel(int x, int y)
 
   while ( polygone->field_0 != (ctpVar19Struct*)-1)
   {
-    tableau = &polygone->subStruct;
+	tableau = &polygone->subStruct;
 
-    x_min = tableau->minX;
-    x_max = tableau->maxX;
-    y_min = tableau->minY;
-    y_max = tableau->maxY;
+	x_min = tableau->minX;
+	x_max = tableau->maxX;
+	y_min = tableau->minY;
+	y_max = tableau->maxY;
 
-    computedVar14 = tableau->boxIdx;	/* numero polygone	*/
+	computedVar14 = tableau->boxIdx;	/* numero polygone	*/
 
-    if ( walkboxChange[computedVar14]==0 && ((x>=x_min && x<=x_max) && (y>=y_min && y<=y_max)) )
-    {
-      // click was in given box
-    /*  u = y-y_min;
+	if ( walkboxChange[computedVar14]==0 && ((x>=x_min && x<=x_max) && (y>=y_min && y<=y_max)) )
+	{
+	  // click was in given box
+	/*  u = y-y_min;
 
-      //tableau+=u;
-      tableau = &polygone[u].subStruct;
+	  //tableau+=u;
+	  tableau = &polygone[u].subStruct;
 
-      x_min = tableau->minX;
-      x_max = tableau->maxX;
+	  x_min = tableau->minX;
+	  x_max = tableau->maxX;
 
-      if ( (x>=x_min && x<=x_max) ) */
-      {		
-        flag_obstacle=walkboxType[computedVar14];	/* sa couleur */
+	  if ( (x>=x_min && x<=x_max) ) */
+	  {		
+		flag_obstacle=walkboxType[computedVar14];	/* sa couleur */
 
-        return;
-      }
-    }
-    polygone = polygone->field_0;
+		return;
+	  }
+	}
+	polygone = polygone->field_0;
   }
 
   flag_obstacle=0;
@@ -153,31 +153,31 @@ void polydroite(int x1, int y1, int x2, int y2)
 
   if(dx<0)
   {
-    dx = -dx;
-    mD0 = -1;
+	dx = -dx;
+	mD0 = -1;
   }
 
   if(dy<0)
   {
-    dy = -dy;
-    mD1 = -1;
+	dy = -dy;
+	mD1 = -1;
   }
 
   if(dx<dy)
   {
-    mA0 = 0;
-    bp = dx;
-    cx = dy;
+	mA0 = 0;
+	bp = dx;
+	cx = dy;
 
-    mA1 = mD1;
+	mA1 = mD1;
   }
   else
   {
-    mA1 = 0;
-    bp = dy;
-    cx = dx;
+	mA1 = 0;
+	bp = dy;
+	cx = dx;
 
-    mA0 = mD0;
+	mA0 = mD0;
   }
 
   bp=bp*2;
@@ -194,35 +194,35 @@ void polydroite(int x1, int y1, int x2, int y2)
 
   if(flag_obstacle==0)
   {
-    flag_obstacle = 1;
-    return;
+	flag_obstacle = 1;
+	return;
   }
 
   while(--cx)
   {
-    if(dx>0)
-    {
-      ax+=mD0;
-      bx+=mD1;
-      dx+=si;
-    }
-    else
-    {
-      ax+=mA0;
-      bx+=mA1;
-      dx+=bp;
-    }
+	if(dx>0)
+	{
+	  ax+=mD0;
+	  bx+=mD1;
+	  dx+=si;
+	}
+	else
+	{
+	  ax+=mA0;
+	  bx+=mA1;
+	  dx+=bp;
+	}
 
-    getPixel(ax, bx);
+	getPixel(ax, bx);
 
-    X = ax;
-    Y = bx;
+	X = ax;
+	Y = bx;
 
-    if(flag_obstacle==0)
-    {
-      flag_obstacle = 1;
-      return;
-    }
+	if(flag_obstacle==0)
+	{
+	  flag_obstacle = 1;
+	  return;
+	}
   }
 
   flag_obstacle = 0;
@@ -256,31 +256,31 @@ void poly2(int x1, int y1, int x2, int y2)
 
   if(dx<0)
   {
-    dx = -dx;
-    mD0 = -1;
+	dx = -dx;
+	mD0 = -1;
   }
 
   if(dy<0)
   {
-    dy = -dy;
-    mD1 = -1;
+	dy = -dy;
+	mD1 = -1;
   }
 
   if(dx<dy)
   {
-    mA0 = 0;
-    bp = dx;
-    cx = dy;
+	mA0 = 0;
+	bp = dx;
+	cx = dy;
 
-    mA1 = mD1;
+	mA1 = mD1;
   }
   else
   {
-    mA1 = 0;
-    bp = dy;
-    cx = dx;
+	mA1 = 0;
+	bp = dy;
+	cx = dx;
 
-    mA0 = mD0;
+	mA0 = mD0;
   }
 
   bp=bp*2;
@@ -297,35 +297,35 @@ void poly2(int x1, int y1, int x2, int y2)
 
   if(flag_obstacle!=0)
   {
-    flag_obstacle = 1;
-    return;
+	flag_obstacle = 1;
+	return;
   }
 
   while(--cx)
   {
-    if(dx>0)
-    {
-      ax+=mD0;
-      bx+=mD1;
-      dx+=si;
-    }
-    else
-    {
-      ax+=mA0;
-      bx+=mA1;
-      dx+=bp;
-    }
+	if(dx>0)
+	{
+	  ax+=mD0;
+	  bx+=mD1;
+	  dx+=si;
+	}
+	else
+	{
+	  ax+=mA0;
+	  bx+=mA1;
+	  dx+=bp;
+	}
 
-    getPixel(ax, bx);
+	getPixel(ax, bx);
 
-    X = ax;
-    Y = bx;
+	X = ax;
+	Y = bx;
 
-    if(flag_obstacle!=0)
-    {
-      flag_obstacle = 1;
-      return;
-    }
+	if(flag_obstacle!=0)
+	{
+	  flag_obstacle = 1;
+	  return;
+	}
   }
 
   flag_obstacle = 0;
@@ -340,57 +340,57 @@ int	point_proche( int16 table[][2] )
 
   if ( nclick_noeud == 1 )
   {
-    x  = x_mouse;
-    y  = y_mouse;
-    x1 = table_ptselect[0][0];
-    y1 = table_ptselect[0][1];
+	x  = x_mouse;
+	y  = y_mouse;
+	x1 = table_ptselect[0][0];
+	y1 = table_ptselect[0][1];
 
-    ctpVar19 = ctpVar15;
+	ctpVar19 = ctpVar15;
 
-    getPixel( x, y );
+	getPixel( x, y );
 
-    if ( !flag_obstacle )
-    {	
-      ctpVar19 = ctpVar11;
+	if ( !flag_obstacle )
+	{	
+	  ctpVar19 = ctpVar11;
 
-      getPixel( x, y );
+	  getPixel( x, y );
 
-      if ( flag_obstacle )
-      {
-        polydroite( x1, y1, x, y );
-      }
-      ctpVar19 = ctpVar15;
-    }
-    if ( !flag_obstacle )	/* dans flag_obstacle --> couleur du point */
-    {
-      x1 = table_ptselect[0][0];
-      y1 = table_ptselect[0][1];
+	  if ( flag_obstacle )
+	  {
+		polydroite( x1, y1, x, y );
+	  }
+	  ctpVar19 = ctpVar15;
+	}
+	if ( !flag_obstacle )	/* dans flag_obstacle --> couleur du point */
+	{
+	  x1 = table_ptselect[0][0];
+	  y1 = table_ptselect[0][1];
 
-      poly2( x, y, x1, y1 );
+	  poly2( x, y, x1, y1 );
 
-      x_mouse = X;
-      y_mouse = Y;
-    } 
+	  x_mouse = X;
+	  y_mouse = Y;
+	} 
   }
   ctpVar19 = ctpVar11;
   
   p = -1;
   for ( i=0; i < ctp_routeCoordCount; i++ )
   {
-    x = table[i][0];
-    y = table[i][1];
+	x = table[i][0];
+	y = table[i][1];
 
-    ctpProc2( x_mouse, y_mouse, x, y );
-    if ( ctpVar14 < d1 )
-    {
-      polydroite( x_mouse, y_mouse, x, y );
+	ctpProc2( x_mouse, y_mouse, x, y );
+	if ( ctpVar14 < d1 )
+	{
+	  polydroite( x_mouse, y_mouse, x, y );
 
-      if ( !flag_obstacle && ctp_routes[i][0] > 0 )
-      {
-        d1 = ctpVar14;
-        p  = i;
-      }
-    }
+	  if ( !flag_obstacle && ctp_routes[i][0] > 0 )
+	  {
+		d1 = ctpVar14;
+		p  = i;
+	  }
+	}
   }
 
   return ( p );
@@ -532,11 +532,11 @@ void valide_noeud( int16 table[], int16 p, int *nclick, int16 solution0[20+3][2]
 		flag_aff_chemin=1;
 		ctpVar19=ctpVar15;
 
-    // can we go there directly ?
+	// can we go there directly ?
 		polydroite(x1,y1,x2,y2);
-    ////////////////
-    flag_obstacle = 0;
-    ////////////////
+	////////////////
+	flag_obstacle = 0;
+	////////////////
 		if (!flag_obstacle)
 		{
 			solution0[0][0]=x1;
@@ -557,7 +557,7 @@ void valide_noeud( int16 table[], int16 p, int *nclick, int16 solution0[20+3][2]
 		}
 		else	
 		{
-      // no, we take the fastest way
+	  // no, we take the fastest way
 			solution[0]=-1;
 			if (ctp_routes[select_noeud[0]][0]>0) 
 				chemin0(table[0],table[1]);
@@ -647,47 +647,47 @@ int16 computePathfinding(int16* pSolution, int16 _X, int16 _Y, int16 destX, int1
 
   if(!polyStruct)
   {
-    pSolution[0] = -1;
-    pSolution[1] = -1;
+	pSolution[0] = -1;
+	pSolution[1] = -1;
 
-    return -1;
+	return -1;
   }
 
   if(oldPathId >= 0)
   {
-    if(persoTable[oldPathId])
-    {
-      freePerso(oldPathId);
-    }
+	if(persoTable[oldPathId])
+	{
+	  freePerso(oldPathId);
+	}
   }
 
   if(!flagCt)
   {
-    int i;
-    int16* ptr;
+	int i;
+	int16* ptr;
 
-    for(i=0;i<10;i++) // 10 = num perso
-    {
-      if(!persoTable[i])
-      {
-        break;
-      }
-    }
+	for(i=0;i<10;i++) // 10 = num perso
+	{
+	  if(!persoTable[i])
+	  {
+		break;
+	  }
+	}
 
-    if(i == 10)
-    {
-      pSolution[0] = -1;
-      pSolution[1] = -1;
+	if(i == 10)
+	{
+	  pSolution[0] = -1;
+	  pSolution[1] = -1;
 
-      return -1;
-    }
+	  return -1;
+	}
 
-    perso = persoTable[i] = (persoStruct*)malloc(sizeof(persoStruct));
+	perso = persoTable[i] = (persoStruct*)malloc(sizeof(persoStruct));
 
-    ptr = perso->solution[0];
+	ptr = perso->solution[0];
 
-    perso->inc_jo1 = stepX;
-    perso->inc_jo2 = stepY;
+	perso->inc_jo1 = stepX;
+	perso->inc_jo2 = stepY;
 
     *(ptr++) = _X;
     *(ptr++) = _Y;
@@ -695,12 +695,12 @@ int16 computePathfinding(int16* pSolution, int16 _X, int16 _Y, int16 destX, int1
     *(ptr++) = pSolution[1] = destY;
     *(ptr++) = -1;
 
-    pSolution[4] = computedVar14;
+	pSolution[4] = computedVar14;
 
-    perso->inc_droite = 0;
-    perso->inc_chemin = 0;
+	perso->inc_droite = 0;
+	perso->inc_chemin = 0;
 
-    return i;
+	return i;
   }
 
   nclick_noeud=0;
@@ -783,7 +783,7 @@ void	set_anim( int ovl, int obj, int start, int x, int y, int mat, int state )
 
 	newf = abs(mat)-1;
 
-	zoom = subOp22(y);
+	zoom = computeZoom(y);
 	if (mat<0) zoom=-zoom;
 
 	setObjectPosition(ovl,obj,0, x);
@@ -827,183 +827,184 @@ int raoul_invstat[][13]=
 
 };
 
-void processActors(void)
+void processAnimation(void)
 {
   objectParamsQuery params;
   int16 returnVar2[5];
   actorStruct* currentActor = &actorHead;
+  actorStruct* nextActor;
 
-  while(currentActor->next)
+  while(currentActor)
   {
-    currentActor = currentActor->next;
+	nextActor = currentActor->next;
 
-    if(!currentActor->freeze && ((currentActor->type == 0) || (currentActor->type == 1)))
-    {
-      getMultipleObjectParam(currentActor->overlayNumber,currentActor->var4,&params);
+	if(!currentActor->freeze && ((currentActor->type == 0) || (currentActor->type == 1)))
+	{
+	  getMultipleObjectParam(currentActor->overlayNumber,currentActor->idx,&params);
 
-      if(((animationStart && !currentActor->flag) || (!animationStart && currentActor->x_dest != -1 && currentActor->y_dest != -1)) && (currentActor->type == 0))
-      {
-        // mouse animation
-        if(!animationStart)
-        {
-          var34 = currentActor->x_dest;
-          var35 = currentActor->y_dest;
+	  if(((animationStart && !currentActor->flag) || (!animationStart && currentActor->x_dest != -1 && currentActor->y_dest != -1)) && (currentActor->type == 0))
+	  {
+		// mouse animation
+		if(!animationStart)
+		{
+		  var34 = currentActor->x_dest;
+		  var35 = currentActor->y_dest;
 
-          currentActor->x_dest = -1;
-          currentActor->y_dest = -1;
+		  currentActor->x_dest = -1;
+		  currentActor->y_dest = -1;
 
-          currentActor->flag = 1;
-        }
+		  currentActor->flag = 1;
+		}
 
-        currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, var34, var35, currentActor->stepX, currentActor->stepY, currentActor->pathId);
+		currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, var34, var35, currentActor->stepX, currentActor->stepY, currentActor->pathId);
 
-        if(currentActor->pathId == -1)
-        {
-          if((currentActor->endDirection != -1) && (currentActor->endDirection != currentActor->startDirection))
-          {
-            currentActor->phase = ANIM_PHASE_STATIC_END;
-            currentActor->nextDirection = currentActor->endDirection;
-            currentActor->endDirection = -1;
-            currentActor->counter = 0;
-          }
-          else
-          {
-            currentActor->pathId = -2;
-            currentActor->flag = 0;
-            currentActor->endDirection = -1;
-            currentActor->phase = ANIM_PHASE_WAIT;
-          }
-        }
-        else
-        {
-          currentActor->phase = ANIM_PHASE_STATIC;
-          currentActor->counter = -1;
-        }
-      }
-      else
-      if((currentActor->type == 1) && (currentActor->x_dest != -1) && (currentActor->y_dest != -1))
-      {
-        // track animation
-        currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, currentActor->x_dest, currentActor->y_dest, currentActor->stepX, currentActor->stepY, currentActor->pathId);
+		if(currentActor->pathId == -1)
+		{
+		  if((currentActor->endDirection != -1) && (currentActor->endDirection != currentActor->startDirection))
+		  {
+			currentActor->phase = ANIM_PHASE_STATIC_END;
+			currentActor->nextDirection = currentActor->endDirection;
+			currentActor->endDirection = -1;
+			currentActor->counter = 0;
+		  }
+		  else
+		  {
+			currentActor->pathId = -2;
+			currentActor->flag = 0;
+			currentActor->endDirection = -1;
+			currentActor->phase = ANIM_PHASE_WAIT;
+		  }
+		}
+		else
+		{
+		  currentActor->phase = ANIM_PHASE_STATIC;
+		  currentActor->counter = -1;
+		}
+	  }
+	  else
+	  if((currentActor->type == 1) && (currentActor->x_dest != -1) && (currentActor->y_dest != -1))
+	  {
+		// track animation
+		currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, currentActor->x_dest, currentActor->y_dest, currentActor->stepX, currentActor->stepY, currentActor->pathId);
 
-        currentActor->x_dest = -1;
-        currentActor->y_dest = -1;
+		currentActor->x_dest = -1;
+		currentActor->y_dest = -1;
 
-        if(currentActor->pathId == -1)
-        {
-          if((currentActor->endDirection != -1) && (currentActor->endDirection != currentActor->startDirection))
-          {
-            currentActor->phase = ANIM_PHASE_STATIC_END;
-            currentActor->nextDirection = currentActor->endDirection;
-            currentActor->endDirection = -1;
-            currentActor->counter = 0;
-          }
-          else
-          {
-            currentActor->pathId = -2;
-            currentActor->flag = 0;
-            currentActor->endDirection = -1;
-            currentActor->phase = ANIM_PHASE_WAIT;
-          }
-        }
-        else
-        {
-          currentActor->phase = ANIM_PHASE_STATIC;
-          currentActor->counter = -1;
-        }
-      }
+		if(currentActor->pathId == -1)
+		{
+		  if((currentActor->endDirection != -1) && (currentActor->endDirection != currentActor->startDirection))
+		  {
+			currentActor->phase = ANIM_PHASE_STATIC_END;
+			currentActor->nextDirection = currentActor->endDirection;
+			currentActor->endDirection = -1;
+			currentActor->counter = 0;
+		  }
+		  else
+		  {
+			currentActor->pathId = -2;
+			currentActor->flag = 0;
+			currentActor->endDirection = -1;
+			currentActor->phase = ANIM_PHASE_WAIT;
+		  }
+		}
+		else
+		{
+		  currentActor->phase = ANIM_PHASE_STATIC;
+		  currentActor->counter = -1;
+		}
+	  }
 
-      animationStart = 0;
+	  animationStart = false;
 
-      if(currentActor->pathId >= 0 || currentActor->phase == ANIM_PHASE_STATIC_END)
-      {
-        switch(currentActor->phase)
-        {
-        case ANIM_PHASE_STATIC_END:
-        case ANIM_PHASE_STATIC:
-          {
-            if(currentActor->counter == -1 && currentActor->phase == ANIM_PHASE_STATIC)
-            {
-              affiche_chemin(currentActor->pathId, returnVar2);
+	  if(currentActor->pathId >= 0 || currentActor->phase == ANIM_PHASE_STATIC_END)
+	  {
+		switch(currentActor->phase)
+		{
+		case ANIM_PHASE_STATIC_END:
+		case ANIM_PHASE_STATIC:
+		  {
+			if(currentActor->counter == -1 && currentActor->phase == ANIM_PHASE_STATIC)
+			{
+			  affiche_chemin(currentActor->pathId, returnVar2);
 
-              if(returnVar2[0] == -1)
-              {
-                currentActor->pathId = -2;
-                currentActor->flag = 0;
-                currentActor->endDirection = -1;
-                currentActor->phase = ANIM_PHASE_WAIT;
-                break;
-              }
+			  if(returnVar2[0] == -1)
+			  {
+				currentActor->pathId = -2;
+				currentActor->flag = 0;
+				currentActor->endDirection = -1;
+				currentActor->phase = ANIM_PHASE_WAIT;
+				break;
+			  }
 
 							currentActor->x = returnVar2[0];
 							currentActor->y = returnVar2[1];
 							currentActor->nextDirection = returnVar2[2];	
 							currentActor->poly = returnVar2[4];
-              currentActor->counter = 0;
+			  currentActor->counter = 0;
 
-              if (currentActor->startDirection == currentActor->nextDirection)
-                currentActor->phase = ANIM_PHASE_MOVE;
-            }
+			  if (currentActor->startDirection == currentActor->nextDirection)
+				currentActor->phase = ANIM_PHASE_MOVE;
+			}
 
-            if ((currentActor->counter>=0) && ((currentActor->phase==ANIM_PHASE_STATIC_END) || (currentActor->phase==ANIM_PHASE_STATIC)))
-            {
-              int newA;
+			if ((currentActor->counter>=0) && ((currentActor->phase==ANIM_PHASE_STATIC_END) || (currentActor->phase==ANIM_PHASE_STATIC)))
+			{
+			  int newA;
 							int inc = 1;
-              int t_inc = currentActor->startDirection-1;
+			  int t_inc = currentActor->startDirection-1;
 
 							if (t_inc<0)
-                t_inc=3;
+				t_inc=3;
 
-              if (currentActor->nextDirection==t_inc)
-                inc=-1;
+			  if (currentActor->nextDirection==t_inc)
+				inc=-1;
 
 							if (inc>0)
-                newA = raoul_stat[currentActor->startDirection][currentActor->counter++];
+				newA = raoul_stat[currentActor->startDirection][currentActor->counter++];
 							else
-                newA = raoul_invstat[currentActor->startDirection][currentActor->counter++];
+				newA = raoul_invstat[currentActor->startDirection][currentActor->counter++];
 
 							if (newA==0)	
 							{
 								currentActor->startDirection = currentActor->startDirection+inc;
 
 								if (currentActor->startDirection>3)
-                  currentActor->startDirection=0;
+				  currentActor->startDirection=0;
 
 								if (currentActor->startDirection<0)
-                  currentActor->startDirection=3;
+				  currentActor->startDirection=3;
 
 								currentActor->counter=0;
 
 								if (currentActor->startDirection==currentActor->nextDirection)	
 								{
 									if (currentActor->phase == ANIM_PHASE_STATIC)
-                    currentActor->phase = ANIM_PHASE_MOVE;
+					currentActor->phase = ANIM_PHASE_MOVE;
 									else
-                    currentActor->phase = ANIM_PHASE_END;
+					currentActor->phase = ANIM_PHASE_END;
 								}
 								else
 								{	
 									newA = raoul_stat[currentActor->startDirection][currentActor->counter++];
 
 									if (inc==-1)
-                    newA=-newA;
+										newA=-newA;
 
-									set_anim(currentActor->overlayNumber,currentActor->var4,currentActor->start,params.X,params.Y,newA,currentActor->poly);
+									set_anim(currentActor->overlayNumber,currentActor->idx,currentActor->start,params.X,params.Y,newA,currentActor->poly);
 									break;
 								}
 							}
 							else 
 							{
-								set_anim(currentActor->overlayNumber,currentActor->var4,currentActor->start,params.X,params.Y,newA,currentActor->poly);
+								set_anim(currentActor->overlayNumber,currentActor->idx,currentActor->start,params.X,params.Y,newA,currentActor->poly);
 								break;
 							}
-            }
-            break;
-          }
-        case ANIM_PHASE_MOVE:
-          {
-            if (currentActor->counter>=1)
-            {
+			}
+			break;
+		  }
+		case ANIM_PHASE_MOVE:
+		  {
+			if (currentActor->counter>=1)
+			{
 								affiche_chemin(currentActor->pathId,returnVar2);
 								if (returnVar2[0]==-1) 
 								{ 
@@ -1035,46 +1036,47 @@ void processActors(void)
 									}
 									*/
 								}
-            }
+			}
 
-            if (currentActor->phase==ANIM_PHASE_MOVE)
-            {	
-              int newA;
+			if (currentActor->phase==ANIM_PHASE_MOVE)
+			{	
+			  int newA;
 
-              currentActor->startDirection = currentActor->nextDirection;
+			  currentActor->startDirection = currentActor->nextDirection;
 
-              newA = raoul_move[currentActor->startDirection][currentActor->counter++];
-              if (!newA) 
-              {
-                currentActor->counter=0;
-                newA = raoul_move[currentActor->startDirection][currentActor->counter++];
-              }
-              set_anim(currentActor->overlayNumber,currentActor->var4,currentActor->start,currentActor->x,currentActor->y,newA,currentActor->poly);
-              break;
-            }
+			  newA = raoul_move[currentActor->startDirection][currentActor->counter++];
+			  if (!newA) 
+			  {
+				currentActor->counter=0;
+				newA = raoul_move[currentActor->startDirection][currentActor->counter++];
+			  }
+			  set_anim(currentActor->overlayNumber,currentActor->idx,currentActor->start,currentActor->x,currentActor->y,newA,currentActor->poly);
+			  break;
+			}
 
-            break;
-          }
-        case ANIM_PHASE_END:
-          {
-            int newA = raoul_end[currentActor->startDirection][0];
+			break;
+		  }
+		case ANIM_PHASE_END:
+		  {
+			int newA = raoul_end[currentActor->startDirection][0];
 
-			set_anim(currentActor->overlayNumber,currentActor->var4,currentActor->start,currentActor->x,currentActor->y,newA,currentActor->poly);
+			set_anim(currentActor->overlayNumber,currentActor->idx,currentActor->start,currentActor->x,currentActor->y,newA,currentActor->poly);
 
 			currentActor->pathId = -2; 
 			currentActor->phase=ANIM_PHASE_WAIT;
 			currentActor->flag=0;	
 			currentActor->endDirection=-1;	
-            break;
-          }
-        default:
-          {
-            printf("Unimplemented currentActor->phase=%d in processActors()\n", currentActor->phase);
-           // exit(1);
-          }
-        }
-      }
-    }
+			break;
+		  }
+		default:
+		  {
+			printf("Unimplemented currentActor->phase=%d in processAnimation()\n", currentActor->phase);
+		   // exit(1);
+		  }
+		}
+	  }
+	}
+	currentActor = nextActor;
   }
 }
 } // End of namespace Cruise

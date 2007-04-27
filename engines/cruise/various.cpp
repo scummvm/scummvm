@@ -40,7 +40,7 @@ int16 readB16(void* ptr)
 	return temp;
 }
 
-void freeObject(objectStruct* objPtr)
+void freeObject(cellStruct* objPtr)
 {
   if(objPtr)
   {
@@ -51,14 +51,14 @@ void freeObject(objectStruct* objPtr)
   }
 }
 
-void removeObjectFromList(int ovlNumber, int objectIdx, objectStruct* objPtr, int backgroundPlane, int arg)
+void removeObjectFromList(int ovlNumber, int objectIdx, cellStruct* objPtr, int backgroundPlane, int arg)
 {
-  objectStruct* currentObj = objPtr->next;
-  objectStruct* previous;
+  cellStruct* currentObj = objPtr->next;
+  cellStruct* previous;
 
   while(currentObj)
   {
-    objectStruct* si;
+    cellStruct* si;
 
     si = currentObj;
 
@@ -78,13 +78,13 @@ void removeObjectFromList(int ovlNumber, int objectIdx, objectStruct* objPtr, in
 
   while(currentObj)
   {
-    objectStruct* si;
+    cellStruct* si;
 
     si = currentObj;
 
     if(si->type == -1)
     {
-      objectStruct* dx;
+      cellStruct* dx;
       previous->next = si->next;
 
       dx = si->next;
@@ -125,15 +125,15 @@ char* getText(int textIndex, int overlayIndex)
   return overlayTable[overlayIndex].ovlData->stringTable[textIndex].string;
 }
 
-void createTextObject(int overlayIdx, int oldVar8, objectStruct *pObject, int scriptNumber, int scriptOverlayNumber, int backgroundPlane, int16 color, int oldVar2, int oldVar4, int oldVar6)
+void createTextObject(int overlayIdx, int oldVar8, cellStruct *pObject, int scriptNumber, int scriptOverlayNumber, int backgroundPlane, int16 color, int oldVar2, int oldVar4, int oldVar6)
 {
   char* ax;
-  objectStruct* savePObject = pObject;
-  objectStruct* cx;
+  cellStruct* savePObject = pObject;
+  cellStruct* cx;
 
-  objectStruct* pNewElement;
-  objectStruct* si = pObject->next;
-  objectStruct* var_2;
+  cellStruct* pNewElement;
+  cellStruct* si = pObject->next;
+  cellStruct* var_2;
 
   while(si)
   {
@@ -143,7 +143,7 @@ void createTextObject(int overlayIdx, int oldVar8, objectStruct *pObject, int sc
 
   var_2 = si;
 
-  pNewElement = (objectStruct*)malloc(sizeof(objectStruct));
+  pNewElement = (cellStruct*)malloc(sizeof(cellStruct));
 
   pNewElement->next = pObject->next;
   pObject->next = pNewElement;
@@ -156,7 +156,7 @@ void createTextObject(int overlayIdx, int oldVar8, objectStruct *pObject, int sc
   pNewElement->field_C = oldVar4;
   pNewElement->spriteIdx = oldVar2;
   pNewElement->field_10 = color;
-  pNewElement->hide = 0;
+  pNewElement->freeze = 0;
   pNewElement->field_16 = scriptNumber;
   pNewElement->field_18 = scriptOverlayNumber;
   pNewElement->gfxPtr = NULL;

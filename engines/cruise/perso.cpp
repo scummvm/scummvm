@@ -230,7 +230,7 @@ void processActorWalk(int16 resx_y[4], int16* inc_droite, int16* inc_droite0, in
 	resx_y[0]=cor_joueur[*inc_droite][0];
 	resx_y[1]=cor_joueur[*inc_droite][1];
 	resx_y[2]=*dir_perso;
-	resx_y[3]=subOp22(resx_y[1]);
+	resx_y[3]=computeZoom(resx_y[1]);
 
 	getPixel(resx_y[0],resx_y[1]);
 	resx_y[4]=computedVar14;

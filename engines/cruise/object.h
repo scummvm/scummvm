@@ -38,37 +38,7 @@ struct gfxEntryStruct
 
 typedef struct gfxEntryStruct gfxEntryStruct;
 
-struct objectStruct
-{
-  struct objectStruct* next;
-  struct objectStruct* prev;
-  int16 idx;
-  int16 type;
-  int16 overlay ;
-  int16 field_A ;
-  int16 field_C ;
-  int16 spriteIdx ;
-  int16 field_10;
-  int16 backgroundPlane;
-  int16 hide;
-  int16 field_16;
-  int16 field_18;
-  int16 field_1A;
-  int16 followObjectOverlayIdx;
-  int16 followObjectIdx;
-  int16 field_20;
-  int16 field_22;
-  int16 nextAnimDelay;
-  int16 field_26;
-  int16 field_28;
-  int16 field_2A;
-  int16 field_2C;
-  int16 currentAnimDelay;
-  int16 field_30;
-  gfxEntryStruct* gfxPtr;
-};
-
-typedef struct objectStruct objectStruct;
+#define	OBJ_SPRITE 4
 
 struct objectParamsQuery
 {
@@ -84,7 +54,6 @@ struct objectParamsQuery
 
 typedef struct objectParamsQuery objectParamsQuery;
 
-objectStruct* addObject(int16 overlayIdx,int16 param2,objectStruct* pHead,int16 scriptType,int16 scriptNumber,int16 scriptOverlay, int16 param3, int16 param4);
 objDataStruct* getObjectDataFromOverlay(int ovlIdx,int objIdx);
 int16 getSingleObjectParam(int16 overlayIdx,int16 param2,int16 param3,int16* returnParam);
 int16 getMultipleObjectParam(int16 overlayIdx,int16 objectIdx,objectParamsQuery* returnParam);

@@ -26,7 +26,7 @@
 #include "common/events.h"
 
 #include "cruise/cruise_main.h"
-#include <time.h>
+#include "cruise/cell.h"
 
 namespace Cruise {
 
@@ -219,12 +219,6 @@ void resetPtr2(scriptInstanceStruct* ptr)
 {
   ptr->nextScriptPtr = NULL;
   ptr->scriptNumber = -1;
-}
-
-void resetPtr(objectStruct* ptr)
-{
-  ptr->next = NULL;
-  ptr->prev = NULL;
 }
 
 void resetActorPtr(actorStruct* ptr)
@@ -540,7 +534,7 @@ int initAllData(void)
   resetPtr2(&scriptHandle2);
   resetPtr2(&scriptHandle1);
 
-  resetPtr(&objectHead);
+  resetPtr(&cellHead);
 
   resetActorPtr(&actorHead);
   resetBackgroundIncrustList(&backgroundIncrustHead);
@@ -699,7 +693,7 @@ int getCursorFromObject(int mouseX, int mouseY, int* outX, int* outY)
 
   char objectName[80];
 
-  objectStruct* currentObject = objectHead.prev;
+  cellStruct* currentObject = cellHead.prev;
 
   while(currentObject)
   {
@@ -713,7 +707,7 @@ int getCursorFromObject(int mouseX, int mouseY, int* outX, int* outY)
 
           if(strlen(objectName))
           {
-            if(currentObject->hide == 0)
+            if(currentObject->freeze == 0)
             {
               var_2 = currentObject->idx;
               var_4 = currentObject->overlay;
@@ -1520,11 +1514,11 @@ void mainLoop(void)
       removeFinishedScripts(&scriptHandle1);
       removeFinishedScripts(&scriptHandle2);
 
-      processActors();
+      processAnimation();
 
       if(var0)
       {
-        ASSERT(0);
+       // ASSERT(0);
     /*    main3 = 0;
         var24 = 0;
         var23 = 0;

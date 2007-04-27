@@ -118,99 +118,6 @@ int16 getMultipleObjectParam(int16 overlayIdx,int16 objectIdx,objectParamsQuery*
   return 0;
 }
 
-objectStruct* addObject(int16 overlayIdx,int16 param2,objectStruct* pHead,int16 scriptType,int16 scriptNumber,int16 scriptOverlay, int16 param3, int16 param4)
-{
-  int16 var;
-
-  objectStruct* newElement;
-  objectStruct* currentHead = pHead;
-  objectStruct* currentHead2;
-  objectStruct* currentHead3;
-
-  if(getSingleObjectParam(overlayIdx,param2,2,&var)<0)
-  {
-    return 0;
-  }
-
-  currentHead3 = currentHead;
-  currentHead2 = currentHead->next;
-
-  while(currentHead2)
-  {
-    if(currentHead2->type == 3)
-    {
-      break;
-    }
-
-    if(currentHead2->type != 5)
-    {
-      int16 lvar2;
-
-      getSingleObjectParam(currentHead2->overlay,currentHead2->idx,2,&lvar2);
-
-      if(lvar2 > var)
-        break;
-    }
-
-    currentHead3 = currentHead2;
-    currentHead2 = currentHead2->next;
-  }
-
-  if(currentHead2)
-  {
-    if( (currentHead2->overlay == overlayIdx) &&
-        (currentHead2->backgroundPlane == param3) &&
-        (currentHead2->idx == param2) &&
-        (currentHead2->type == param4))
-
-    return NULL;
-  }
-
-  currentHead = currentHead2;
-
-  newElement = (objectStruct*)mallocAndZero(sizeof(objectStruct));
-
-  if(!newElement)
-    return 0;
-
-  newElement->next = currentHead3->next;
-  currentHead3->next = newElement;
-
-  newElement->idx = param2;
-  newElement->type = param4;
-  newElement->backgroundPlane = param3;
-  newElement->overlay = overlayIdx;
-  newElement->hide = 0;
-  newElement->field_16 = scriptNumber;
-  newElement->field_18 = scriptOverlay;
-  newElement->gfxPtr = NULL;
-  newElement->followObjectIdx = param2;
-  newElement->followObjectOverlayIdx = overlayIdx;
-  newElement->field_1A = scriptType;
-  newElement->field_20 = 0;
-  newElement->field_22 = 0;
-  newElement->nextAnimDelay = 0;
-  newElement->field_2C = 0;
-  newElement->currentAnimDelay = 0;
-  newElement->field_2A = 0;
-  newElement->field_26 = 0;
-  newElement->field_30 = 0;
-
-  if(currentHead)
-  {
-    newElement->prev = currentHead->prev;
-    currentHead->prev = newElement;
-  }
-  else
-  {
-    newElement->prev = pHead->prev;
-    pHead->prev = newElement;
-  }
-  
-
-  return newElement;
-}
-
 void setObjectPosition(int16 param1,int16 objIdx,int16 param3,int16 param4)
 {
 	objDataStruct* ptr;
@@ -279,15 +186,15 @@ void setObjectPosition(int16 param1,int16 objIdx,int16 param3,int16 param4)
 	}
 }
 
-void Op_7Sub1(int16 param1, int16 param2, objectStruct* objPtr)
+void Op_InitializeStateSub1(int16 param1, int16 param2, cellStruct* objPtr)
 {
   int16 var;
-  objectStruct* var8_;
-  objectStruct* var40;
-  objectStruct* var3E;
-  objectStruct* currentObjPtrPrevious;
-  objectStruct* currentObjPtr2;
-  objectStruct* match;
+  cellStruct* var8_;
+  cellStruct* var40;
+  cellStruct* var3E;
+  cellStruct* currentObjPtrPrevious;
+  cellStruct* currentObjPtr2;
+  cellStruct* match;
 
   getSingleObjectParam(param1,param2,2,&var);
 
@@ -362,7 +269,7 @@ void Op_7Sub1(int16 param1, int16 param2, objectStruct* objPtr)
 
   if(match)
   {
-    objectStruct* temp;
+    cellStruct* temp;
 
     temp = var8_->next;
 
@@ -383,7 +290,7 @@ void Op_7Sub1(int16 param1, int16 param2, objectStruct* objPtr)
   }
 }
 
-int16 Op_7Sub(int ovlIdx,int objIdx,int param2)
+int16 Op_InitializeStateSub(int ovlIdx,int objIdx,int param2)
 {
   objDataStruct* ptr;
 //  uint16 param;
@@ -401,7 +308,7 @@ int16 Op_7Sub(int ovlIdx,int objIdx,int param2)
   case 0:
     {
       globalVars[overlayTable[ovlIdx].field_14 + ptr->var6] = param2;
-      Op_7Sub1(ovlIdx,param2,&objectHead);
+      Op_InitializeStateSub1(ovlIdx,param2,&cellHead);
       break;
     }
   case 1:
@@ -421,12 +328,12 @@ int16 Op_7Sub(int ovlIdx,int objIdx,int param2)
 
       destEntry->var5 = param2;
 
-      Op_7Sub1(ovlIdx,param2,&objectHead);
+      Op_InitializeStateSub1(ovlIdx,param2,&cellHead);
       break;
     }
   default:
     {
-      printf("Unsupported param = %d in Op_7Sub\n",ptr->var1);
+      printf("Unsupported param = %d in Op_InitializeStateSub\n",ptr->var1);
      // exit(1);
     }
   }

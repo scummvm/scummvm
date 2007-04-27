@@ -225,8 +225,6 @@ extern int16 bootOverlayNumber;
 
 extern int16 initVar5[12];
 
-extern objectStruct objectHead;
-
 extern opcodeTypeFunction opcodeTypeTable[64];
 
 extern int16 positionInStack;
@@ -265,7 +263,7 @@ extern int16 var24;
 extern int16 automaticMode;
 extern int16 var34;
 extern int16 var35;
-extern int16 animationStart;
+extern bool animationStart;
 
 extern int16 main17;
 extern int16 var39;

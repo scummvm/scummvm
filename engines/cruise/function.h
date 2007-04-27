@@ -30,7 +30,7 @@ namespace Cruise {
 extern int flag_obstacle;
 void setupOpcodeTable(void);
 int32 opcodeType8(void);
-int16 subOp22(int param);
+int16 computeZoom(int param);
 int16 subOp23(int param1, int param2);
 
 } // End of namespace Cruise
