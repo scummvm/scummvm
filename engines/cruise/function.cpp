@@ -1449,7 +1449,7 @@ int16 Op_6C(void)
   return temp;
 }
 
-void configureAllObjects(int overlayIdx, cellStruct* pObject, int _var4, int var0, int var1, int _var2, int _var3)
+void configureAllObjects(int overlayIdx, cellStruct* pObject, int _var4, int _var0, int _var1, int _var2, int _var3)
 {
   while(pObject)
   {
@@ -1461,9 +1461,9 @@ void configureAllObjects(int overlayIdx, cellStruct* pObject, int _var4, int var
         {
           if((pObject->backgroundPlane == _var2) || (_var2 == -1))
           {
-            if((pObject->freeze == var1) || (var1 == -1))
+            if((pObject->freeze == _var1) || (_var1 == -1))
             {
-              pObject->freeze = var0;
+              pObject->freeze = _var0;
             }
           }
         }
