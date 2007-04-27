@@ -354,8 +354,8 @@ int16 Op_isFileLoaded(void)
 
 int16 Op_resetFilesEntries(void)
 {
-  int var1;
-  int var2;
+  //int var1;
+  //int var2;
 
   var1 = popVar();
   var2 = popVar();
@@ -713,7 +713,7 @@ int16 Op_2F(void)
 
 int16 Op_8(void)
 {
-  int var1 = popVar();
+  var1 = popVar();
   int objectIdx = popVar();
   int ovlNumber = popVar();
 
@@ -1324,11 +1324,11 @@ int16 Op_1E(void) // setup actor position
 {
   actorStruct* pActor;
 
-  int var0 = popVar();
+  var0 = popVar();
   int actorY = popVar();
   int actorX = popVar();
-  int var1 = popVar();
-  int var2 = popVar();
+  var1 = popVar();
+  var2 = popVar();
   int overlay = popVar();
 
   if(!overlay)
@@ -1433,8 +1433,8 @@ int16 Op_19(void)
 
 int16 Op_6C(void)
 {
-  int var0;
-  int var1;
+  //int var0;
+  //int var1;
   int temp;
 
   var0 = popVar();
@@ -1478,12 +1478,14 @@ void configureAllObjects(int overlayIdx, objectStruct* pObject, int var4, int va
 
 int16 Op_16(void)
 {
+  /*
   int var0;
   int var1;
   int var2;
   int var3;
   int var4;
   int var5;
+  */
 
   var0 = popVar();
   var1 = popVar();
@@ -1517,11 +1519,13 @@ void Op_60Sub(int overlayIdx, actorStruct* pActorHead, int var0, int var1, int v
 
 int16 Op_60(void)
 {
+  /*
   int var0;
   int var1;
   int var2;
   int var3;
   int var4;
+  */
 
   var0 = popVar();
   var1 = popVar();
