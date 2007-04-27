@@ -96,7 +96,7 @@ static const Common::ADObsoleteGameID obsoleteGameIDsTable[] = {
 
 namespace Saga {
 
-#include "sagagame.cpp"
+#include "detection_tables.h"
 
 }
 
