@@ -83,7 +83,7 @@ class AmigaSoundMan : public SoundMan {
 
 public:
 	AmigaSoundMan(Parallaction *vm);
-	AmigaSoundMan::~AmigaSoundMan();
+	~AmigaSoundMan();
 	void playMusic();
 	void stopMusic();
 
