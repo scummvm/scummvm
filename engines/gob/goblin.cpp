@@ -977,39 +977,48 @@ void Goblin::moveFindItem(int16 posX, int16 posY) {
 			break;
 		}
 
-		_pressedMapX = posX / 12;
-		_pressedMapY = posY / 6;
+		_pressedMapX = CLIP(posX / 12, 0, _vm->_map->_mapWidth - 1);
+		_pressedMapY = CLIP(posY / 6, 0, _vm->_map->_mapHeight - 1);
 
 		if ((_vm->_map->_itemsMap[_pressedMapY][_pressedMapX] == 0) && (i < 20)) {
 
-			if (_vm->_map->_itemsMap[_pressedMapY + 1][_pressedMapX] != 0) {
+			if ((_pressedMapY < (_vm->_map->_mapHeight - 1)) &&
+					(_vm->_map->_itemsMap[_pressedMapY + 1][_pressedMapX] != 0)) {
 				_pressedMapY++;
-			} else if (_vm->_map->_itemsMap[_pressedMapY + 1][_pressedMapX + 1] != 0) {
+			} else if ((_pressedMapX < (_vm->_map->_mapWidth - 1)) &&
+					(_pressedMapY < (_vm->_map->_mapHeight - 1)) &&
+					(_vm->_map->_itemsMap[_pressedMapY + 1][_pressedMapX + 1] != 0)) {
 				_pressedMapX++;
 				_pressedMapY++;
-			} else if (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX + 1] != 0) {
+			} else if ((_pressedMapX < (_vm->_map->_mapWidth - 1)) &&
+					(_vm->_map->_itemsMap[_pressedMapY][_pressedMapX + 1] != 0)) {
 				_pressedMapX++;
-			} else if (_vm->_map->_itemsMap[_pressedMapY - 1][_pressedMapX + 1] != 0) {
+			} else if ((_pressedMapX < (_vm->_map->_mapWidth - 1)) &&
+					(_pressedMapY > 0) &&
+					(_vm->_map->_itemsMap[_pressedMapY - 1][_pressedMapX + 1] != 0)) {
 				_pressedMapX++;
 				_pressedMapY--;
-			} else if (_vm->_map->_itemsMap[_pressedMapY - 1][_pressedMapX] != 0) {
+			} else if ((_pressedMapY > 0) &&
+					(_vm->_map->_itemsMap[_pressedMapY - 1][_pressedMapX] != 0)) {
 				_pressedMapY--;
-			} else if (_vm->_map->_itemsMap[_pressedMapY - 1][_pressedMapX - 1] != 0) {
+			} else if ((_pressedMapY > 0) && (_pressedMapX > 0) &&
+					(_vm->_map->_itemsMap[_pressedMapY - 1][_pressedMapX - 1] != 0)) {
 				_pressedMapY--;
 				_pressedMapX--;
-			} else if (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX - 1] != 0) {
+			} else if ((_pressedMapX > 0) &&
+					(_vm->_map->_itemsMap[_pressedMapY][_pressedMapX - 1] != 0)) {
 				_pressedMapX--;
-			} else if (_vm->_map->_itemsMap[_pressedMapY + 1][_pressedMapX - 1] != 0) {
+			} else if ((_pressedMapX > 0) &&
+					(_pressedMapY < (_vm->_map->_mapHeight - 1)) &&
+					(_vm->_map->_itemsMap[_pressedMapY + 1][_pressedMapX - 1] != 0)) {
 				_pressedMapX--;
 				_pressedMapY++;
 			}
 		}
 	} else {
-		_pressedMapX = posX / 12;
-		_pressedMapY = posY / 6;
+		_pressedMapX = CLIP(posX / 12, 0, _vm->_map->_mapWidth - 1);
+		_pressedMapY = CLIP(posY / 6, 0, _vm->_map->_mapHeight - 1);
 	}
-	_pressedMapX = CLIP((int) _pressedMapX, 0, _vm->_map->_mapWidth - 1);
-	_pressedMapY = CLIP((int) _pressedMapY, 0, _vm->_map->_mapHeight - 1);
 }
 
 void Goblin::moveCheckSelect(int16 framesCount, Gob_Object *gobDesc,
