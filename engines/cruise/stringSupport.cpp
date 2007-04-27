@@ -26,24 +26,24 @@
 
 namespace Cruise {
 
-void strcpyuint8(void* dest, void* source)
+void strcpyuint8(void* dest, const void* source)
 {
-  strcpy((char*)dest,(char*)source);
+  strcpy((char*)dest,(const char*)source);
 }
 
-void strcatuint8(void* dest, void* source)
+void strcatuint8(void* dest, const void* source)
 {
-  strcat((char*)dest,(char*)source);
+  strcat((char*)dest,(const char*)source);
 }
 
-uint8 strcmpuint8(void* string1, void* string2)
+uint8 strcmpuint8(const void* string1, const void* string2)
 {
   return strcmp((char*)string1,(char*)string2);
 }
 
-FILE* fopenuint8(void* name, void* param)
+FILE* fopenuint8(void* name, const void* param)
 {
-  return fopen((char*)name,(char*)param);
+  return fopen((char*)name,(const char*)param);
 }
 
 } // End of namespace Cruise

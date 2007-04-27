@@ -27,7 +27,7 @@
 
 namespace Cruise {
 
-void loadFNT(void* fileName);
+void loadFNT(const void* fileName);
 void loadSystemFont(void);
 
 //////////////////////////////////////////////////

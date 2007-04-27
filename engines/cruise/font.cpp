@@ -121,7 +121,7 @@ int32 getTextLineCount(int32 rightBorder_X, int32 wordSpacingWidth, uint8* ptr, 
 	}
 }
 
-void loadFNT(void* fileNameChar)
+void loadFNT(const void* fileNameChar)
 {
 	uint8    header[6];
 	int32   fontSize;

@@ -34,7 +34,7 @@ enum fileTypeEnum
   type_UNK,
   type_SPL,
   type_SET,
-  type_FNT,
+  type_FNT
 };
 
 typedef enum fileTypeEnum fileTypeEnum;

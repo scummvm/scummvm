@@ -27,10 +27,10 @@
 
 namespace Cruise {
 
-void strcpyuint8(void* dest, void* source);
-void strcatuint8(void* dest, void* source);
-uint8 strcmpuint8(void* string1, void* string2);
-FILE* fopenuint8(void* name, void* param);
+void strcpyuint8(void* dest, const void* source);
+void strcatuint8(void* dest, const void* source);
+uint8 strcmpuint8(const void* string1, const void* string2);
+FILE* fopenuint8(void* name, const void* param);
 
 } // End of namespace Cruise
 

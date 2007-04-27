@@ -33,7 +33,7 @@ enum animPhase
   ANIM_PHASE_STATIC = 1,
   ANIM_PHASE_MOVE = 2,
   ANIM_PHASE_STATIC_END = 3,
-  ANIM_PHASE_END = 4,
+  ANIM_PHASE_END = 4
 };
 
 typedef enum animPhase animPhase;
