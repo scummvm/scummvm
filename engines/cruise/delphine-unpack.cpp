@@ -65,13 +65,13 @@ uint16 swap16(uint16 r)
 }
 
 int32 decomp(uint8 * in, uint8 * out, int32 size) {
-    uint8 bit;      // Carry flag
-    uint8 nbits;    // cl
-    uint8 byte;     // ch
-    uint16 counter; // bp
-    uint16 var;     // variable at 5C58
-    uint16 ptr;
-    uint16 flags;
+    uint8 bit = 0;      // Carry flag
+    uint8 nbits = 0;    // cl
+    uint8 byte = 0;     // ch
+    uint16 counter = 0; // bp
+    uint16 var = 0;     // variable at 5C58
+    uint16 ptr = 0;
+    uint16 flags = 0;
     enum {
       DO_COPY,
       DO_UNPACK

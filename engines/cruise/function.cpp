@@ -1047,13 +1047,13 @@ int16 Op_removeBackgroundIncrust(void)
 
 int16 Op_D(void) // TODO: palette manipulation
 {
-  /*
-  int var_4 = popVar();
-  int var_6 = popVar();
-  int var_8 = popVar();
-  int si = popVar();
-  int di = popVar();
-  */
+  var_4 = popVar();
+  var_6 = popVar();
+  var_8 = popVar();
+  //int si = popVar();
+  //int di = popVar();
+  popVar();
+  popVar();
 
   return 0;
 }
@@ -1090,6 +1090,12 @@ int16 Op_drawLine(void)
   int var_6 = popVar();
   uint8* ptr = (uint8*)popPtr();
   */
+
+  popVar();
+  popVar();
+  popVar();
+  popVar();
+  popPtr();
 
   //drawLinePtr(var_6, var_4, var_2, ptr);
 
@@ -1451,21 +1457,21 @@ int16 Op_6C(void)
   return temp;
 }
 
-void configureAllObjects(int overlayIdx, objectStruct* pObject, int var4, int var0, int var1, int var2, int var3)
+void configureAllObjects(int overlayIdx, objectStruct* pObject, int _var4, int _var0, int _var1, int _var2, int _var3)
 {
   while(pObject)
   {
     if((pObject->overlay == overlayIdx) || (overlayIdx == -1))
     {
-      if((pObject->idx == var4) || (var4 == -1))
+      if((pObject->idx == _var4) || (_var4 == -1))
       {
-        if((pObject->type == var3) || (var3 == -1))
+        if((pObject->type == _var3) || (_var3 == -1))
         {
-          if((pObject->backgroundPlane == var2) || (var2 == -1))
+          if((pObject->backgroundPlane == _var2) || (_var2 == -1))
           {
-            if((pObject->hide == var1) || (var1 == -1))
+            if((pObject->hide == _var1) || (_var1 == -1))
             {
-              pObject->hide = var0;
+              pObject->hide = _var0;
             }
           }
         }
@@ -1504,15 +1510,15 @@ int16 Op_16(void)
   return 0;
 }
 
-void Op_60Sub(int overlayIdx, actorStruct* pActorHead, int var0, int var1, int var2, int var3)
+void Op_60Sub(int overlayIdx, actorStruct* pActorHead, int _var0, int _var1, int _var2, int _var3)
 {
-  actorStruct* pActor = findActor(overlayIdx, var0, pActorHead, var3);
+  actorStruct* pActor = findActor(overlayIdx, _var0, pActorHead, _var3);
 
   if(pActor)
   {
-    if((pActor->freeze == var2) || (var2 == -1))
+    if((pActor->freeze == _var2) || (_var2 == -1))
     {
-      pActor->freeze = var1;
+      pActor->freeze = _var1;
     }
   }
 }
@@ -1550,7 +1556,7 @@ int16 Op_6F(void)
   assert(numArgs == 0);
 
   {
-    int var = popVar();
+    popVar();
     char* string = (char*)popPtr();
 
     printf("partial opcode 6F sprintf (%s)\n", string);
@@ -1571,9 +1577,9 @@ int16 Op_6E(void)
 
 int16 Op_72(void)
 {
-  int var0 = popVar();
+  var0 = popVar();
   char* ptr = (char*)popPtr();
-  int var1 = popVar();
+  var1 = popVar();
 
   if(!var1)
     var1 = currentScriptPtr->overlayNumber;
