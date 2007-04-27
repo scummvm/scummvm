@@ -26,53 +26,69 @@
 #include "common/util.h"
 #include "common/mutex.h"
 
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
 #include "sound/mididrv.h"
+
+#include "parallaction/defs.h"
 
 class MidiParser;
 
 namespace Parallaction {
 
-class MidiPlayer : public MidiDriver {
+class Parallaction;
+class MidiPlayer;
+
+class SoundMan {
+
+protected:
+	Parallaction 	*_vm;
+	Audio::Mixer 	*_mixer;
+	char			_musicFile[PATH_LEN];
+
 public:
+	SoundMan(Parallaction *vm);
+	virtual ~SoundMan() {}
 
-	enum {
-		NUM_CHANNELS = 16
-	};
+	void setMusicFile(const char *filename);
 
-	MidiPlayer(MidiDriver *driver);
-	~MidiPlayer();
+	virtual void playMusic() = 0;
+	virtual void stopMusic() = 0;
 
-	void play(const char *filename);
-	void stop();
-	void updateTimer();
-	void adjustVolume(int diff);
-	void setVolume(int volume);
-	int getVolume() const { return _masterVolume; }
-	void setLooping(bool loop) { _isLooping = loop; }
+	virtual void playCharacterMusic(const char *character) = 0;
+	virtual void playLocationMusic(const char *location) = 0;
 
-	// MidiDriver interface
-	int open();
-	void close();
-	void send(uint32 b);
-	void metaEvent(byte type, byte *data, uint16 length);
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
+	void setMusicVolume(int value);
+};
 
-private:
+class DosSoundMan : public SoundMan {
 
-	static void timerCallback(void *p);
+	MidiPlayer 	*_midiPlayer;
+	int			_musicData1;
 
-	MidiDriver *_driver;
-	MidiParser *_parser;
-	uint8 *_midiData;
-	bool _isLooping;
-	bool _isPlaying;
-	int _masterVolume;
-	MidiChannel *_channelsTable[NUM_CHANNELS];
-	uint8 _channelsVolume[NUM_CHANNELS];
-	Common::Mutex _mutex;
+public:
+	DosSoundMan(Parallaction *vm, MidiDriver *midiDriver);
+	~DosSoundMan();
+	void playMusic();
+	void stopMusic();
+
+	void playCharacterMusic(const char *character);
+	void playLocationMusic(const char *location);
+};
+
+class AmigaSoundMan : public SoundMan {
+
+	Audio::AudioStream *_musicStream;
+	Audio::SoundHandle	_musicHandle;
+
+public:
+	AmigaSoundMan(Parallaction *vm);
+	AmigaSoundMan::~AmigaSoundMan();
+	void playMusic();
+	void stopMusic();
+
+	void playCharacterMusic(const char *character);
+	void playLocationMusic(const char *location);
 };
 
 } // namespace Parallaction

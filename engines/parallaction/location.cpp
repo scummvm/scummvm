@@ -150,6 +150,10 @@ void Parallaction::parseLocation(const char *filename) {
 		if (!scumm_stricmp(_tokens[0], "SOUND")) {
 			strcpy(_soundFile, _tokens[1]);
 		}
+		if (!scumm_stricmp(_tokens[0], "MUSIC")) {
+			if (getPlatform() == Common::kPlatformAmiga)
+				_soundMan->setMusicFile(_tokens[1]);
+		}
 		fillBuffers(*_locationScript, true);
 	}
 
@@ -307,7 +311,7 @@ void Parallaction::showSlide(const char *name) {
 void Parallaction::changeLocation(char *location) {
 	debugC(1, kDebugLocation, "changeLocation to '%s'", location);
 
-	pickMusic(location);
+	_soundMan->playLocationMusic(location);
 
 	// WORKAROUND: this if-statement has been added to avoid crashes caused by
 	// execution of label jobs after a location switch. The other workaround in

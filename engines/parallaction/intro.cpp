@@ -126,7 +126,12 @@ extern Credit _credits[];
 
 void _c_startIntro(void *parm) {
 	_rightHandAnim = _vm->findAnimation("righthand");
-	_vm->_midiPlayer->play("intro");
+
+	if (_vm->getPlatform() == Common::kPlatformPC) {
+		_vm->_soundMan->setMusicFile("intro");
+		_vm->_soundMan->playMusic();
+	}
+
 	_engineFlags |= kEngineMouse;
 
 	return;
@@ -144,6 +149,8 @@ void _c_endIntro(void *parm) {
 		_di = _vm->_gfx->getStringWidth(_credits[_si]._name);
 		_vm->_gfx->displayString((SCREEN_WIDTH - _di)/2, 100, _credits[_si]._name);
 
+		_vm->_gfx->updateScreen();
+
 		for (uint16 v2 = 0; v2 < 100; v2++) {
 			_vm->updateInput();
 			if (_mouseButtons != kMouseLeftUp)
@@ -155,8 +162,12 @@ void _c_endIntro(void *parm) {
 
 	waitUntilLeftClick();
 
-	_engineFlags &= ~kEngineMouse;
-	_vm->_menu->selectCharacter();
+	if (_vm->getFeatures() & GF_DEMO) {
+		_engineFlags |= kEngineQuit;
+	} else {
+		_engineFlags &= ~kEngineMouse;
+		_vm->_menu->selectCharacter();
+	}
 
 	return;
 }

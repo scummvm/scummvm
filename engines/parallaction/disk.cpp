@@ -569,6 +569,16 @@ Table* DosDisk::loadTable(const char* name) {
 	return t;
 }
 
+Common::ReadStream* DosDisk::loadMusic(const char* name) {
+	char path[PATH_LEN];
+	sprintf(path, "%s.mid", name);
+
+	Common::File *stream = new Common::File;
+	if (!stream->open(path))
+		errorFileNotFound(path);
+
+	return stream;
+}
 
 #pragma mark -
 
@@ -1155,6 +1165,10 @@ Table* AmigaDisk::loadTable(const char* name) {
 		delete stream;
 
 	return t;
+}
+
+Common::ReadStream* AmigaDisk::loadMusic(const char* name) {
+	return openArchivedFile(name);
 }
 
 

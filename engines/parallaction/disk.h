@@ -111,7 +111,7 @@ public:
 	virtual void loadSlide(const char *filename) = 0;
 	virtual void loadScenery(const char* background, const char* mask) = 0;
 	virtual Table* loadTable(const char* name) = 0;
-
+	virtual Common::ReadStream* loadMusic(const char* name) = 0;
 };
 
 class DosDisk : public Disk {
@@ -146,6 +146,7 @@ public:
 	void loadSlide(const char *filename);
 	void loadScenery(const char* background, const char* mask);
 	Table* loadTable(const char* name);
+	Common::ReadStream* loadMusic(const char* name);
 };
 
 class AmigaDisk : public Disk {
@@ -176,6 +177,7 @@ public:
 	void loadSlide(const char *filename);
 	void loadScenery(const char* background, const char* mask);
 	Table* loadTable(const char* name);
+	Common::ReadStream* loadMusic(const char* name);
 };
 
 } // namespace Parallaction

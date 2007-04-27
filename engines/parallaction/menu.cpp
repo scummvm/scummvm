@@ -289,7 +289,7 @@ void Menu::selectCharacter() {
 	v14._height = BLOCK_HEIGHT;
 
 	_vm->changeCursor(kCursorArrow);
-	_vm->_midiPlayer->stop();
+	_vm->_soundMan->stopMusic();
 
 	_vm->_gfx->setFont(kFontMenu);
 

@@ -28,6 +28,8 @@
 
 namespace Parallaction {
 
+#define PATH_LEN	200
+
 template <class T>
 class ManagedList : public Common::List<T> {
 

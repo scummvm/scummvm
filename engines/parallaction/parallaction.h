@@ -196,8 +196,6 @@ extern const char 	*_minidrkiName;
 #define IS_MINI_CHARACTER(s) (((s)[0] == 'm'))
 #define IS_DUMMY_CHARACTER(s) (((s)[0] == 'D'))
 
-#define PATH_LEN	200
-
 void waitUntilLeftClick();
 
 
@@ -218,7 +216,7 @@ void jobEraseLabel(void *parm, Job *j);
 
 class Gfx;
 class Menu;
-class MidiPlayer;
+class SoundMan;
 
 
 
@@ -347,8 +345,7 @@ private:
 	const PARALLACTIONGameDescription *_gameDescription;
 
 public:
-
-	MidiPlayer *_midiPlayer;
+	SoundMan		*_soundMan;
 
 	Gfx*			_gfx;
 	Menu*			_menu;
@@ -391,8 +388,6 @@ protected:		// data
 	int16		_transCurrentHoverItem;
 
 	uint32		_baseTime;
-
-	uint16		_musicData1;	  		// only used in changeLocation
 	char		_characterName1[50]; 	// only used in changeCharacter
 
 	int16 _keyDown;
@@ -440,9 +435,6 @@ protected:		// members
 	LValue		getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation *a);
 
 	void		parseCommands(Script &script, CommandList&);
-
-	void 		pickMusic(const char *location);
-	void		selectCharacterMusic(const char *name);
 
 	void 		freeCharacter();
 

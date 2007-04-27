@@ -55,7 +55,8 @@ void _c_play_boogie(void *parm) {
 		return;
 	flag = 0;
 
-	_vm->_midiPlayer->play("boogie2");
+	_vm->_soundMan->setMusicFile("boogie2");
+	_vm->_soundMan->playMusic();
 
 	return;
 }
@@ -452,11 +453,11 @@ void _c_offSound(void*) {
 }
 
 void _c_startMusic(void*) {
-	// TODO: to be implemented
+	_vm->_soundMan->playMusic();
 }
 
 void _c_closeMusic(void*) {
-	// TODO: to be implemented
+	_vm->_soundMan->stopMusic();
 }
 
 } // namespace Parallaction

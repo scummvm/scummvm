@@ -124,7 +124,7 @@ Parallaction::Parallaction(OSystem *syst) :
 
 
 Parallaction::~Parallaction() {
-	delete _midiPlayer;
+	delete _soundMan;
 	delete _disk;
 	delete _globalTable;
 
@@ -165,10 +165,10 @@ int Parallaction::init() {
 	_activeItem._id = 0;
 	_procCurrentHoverItem = -1;
 
-	_musicData1 = 0;
+//	_musicData1 = 0;
 	strcpy(_characterName1, "null");
 
-	_midiPlayer = 0;
+	_soundMan = 0;
 
 	_baseTime = 0;
 
@@ -205,11 +205,14 @@ int Parallaction::init() {
 	_animations.push_front(&_vm->_char._ani);
 	_gfx = new Gfx(this);
 
-	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
-	_midiPlayer = new MidiPlayer(driver);
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	if (getPlatform() == Common::kPlatformPC) {
+		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+		_soundMan = new DosSoundMan(this, driver);
+		_soundMan->setMusicVolume(ConfMan.getInt("music_volume"));
+	} else {
+		_soundMan = new AmigaSoundMan(this);
+	}
 
 	return 0;
 }
@@ -721,50 +724,6 @@ void Parallaction::freeCharacter() {
 	return;
 }
 
-void Parallaction::selectCharacterMusic(const char *name) {
-	if (IS_MINI_CHARACTER(name))
-		name+=4;
-
-	if (!scumm_stricmp(name, _dinoName)) {
-		_midiPlayer->play("dino");
-	} else if (!scumm_stricmp(name, _donnaName)) {
-		_midiPlayer->play("donna");
-	} else {
-		_midiPlayer->play("nuts");
-	}
-
-	return;
-}
-
-void Parallaction::pickMusic(const char *location) {
-	if (_musicData1 != 0) {
-		selectCharacterMusic(_vm->_characterName);
-		_musicData1 = 0;
-		debugC(2, kDebugLocation, "changeLocation: started character specific music");
-	}
-
-	if (!scumm_stricmp(location, "night") || !scumm_stricmp(location, "intsushi")) {
-		_vm->_midiPlayer->play("soft");
-
-		debugC(2, kDebugLocation, "changeLocation: started music 'soft'");
-	}
-
-	if (!scumm_stricmp(location, "museo") ||
-		!scumm_stricmp(location, "caveau") ||
-		!scumm_strnicmp(location, "plaza1", 6) ||
-		!scumm_stricmp(location, "estgrotta") ||
-		!scumm_stricmp(location, "intgrottadopo") ||
-		!scumm_stricmp(location, "endtgz") ||
-		!scumm_stricmp(location, "common")) {
-
-		_vm->_midiPlayer->stop();
-		_musicData1 = 1;
-
-		debugC(2, kDebugLocation, "changeLocation: music stopped");
-	}
-}
-
-
 void Parallaction::changeCharacter(const char *name) {
 
 	char baseName[20];
@@ -796,8 +755,7 @@ void Parallaction::changeCharacter(const char *name) {
 
 			_vm->_char._ani._cnv = _disk->loadFrames(fullName);
 
-			if (scumm_stricmp(name, "night") && scumm_stricmp(name, "intsushi"))
-				selectCharacterMusic(name);
+			_soundMan->playCharacterMusic(name);
 		}
 	}
 

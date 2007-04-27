@@ -22,16 +22,61 @@
 
 #include "common/stdafx.h"
 #include "common/file.h"
-#include "parallaction/parallaction.h"
 
 #include "common/stream.h"
 
+#include "sound/mixer.h"
 #include "sound/midiparser.h"
+#include "sound/mods/protracker.h"
 
 #include "parallaction/music.h"
+#include "parallaction/parallaction.h"
 
 
 namespace Parallaction {
+
+class MidiPlayer : public MidiDriver {
+public:
+
+	enum {
+		NUM_CHANNELS = 16
+	};
+
+	MidiPlayer(MidiDriver *driver);
+	~MidiPlayer();
+
+	void play(const char *filename);
+	void stop();
+	void updateTimer();
+	void adjustVolume(int diff);
+	void setVolume(int volume);
+	int getVolume() const { return _masterVolume; }
+	void setLooping(bool loop) { _isLooping = loop; }
+
+	// MidiDriver interface
+	int open();
+	void close();
+	void send(uint32 b);
+	void metaEvent(byte type, byte *data, uint16 length);
+	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
+	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
+	MidiChannel *allocateChannel() { return 0; }
+	MidiChannel *getPercussionChannel() { return 0; }
+
+private:
+
+	static void timerCallback(void *p);
+
+	MidiDriver *_driver;
+	MidiParser *_parser;
+	uint8 *_midiData;
+	bool _isLooping;
+	bool _isPlaying;
+	int _masterVolume;
+	MidiChannel *_channelsTable[NUM_CHANNELS];
+	uint8 _channelsVolume[NUM_CHANNELS];
+	Common::Mutex _mutex;
+};
 
 MidiPlayer::MidiPlayer(MidiDriver *driver)
 	: _driver(driver), _parser(0), _midiData(0), _isLooping(false), _isPlaying(false), _masterVolume(0) {
@@ -179,5 +224,122 @@ void MidiPlayer::timerCallback(void *p) {
 
 	player->updateTimer();
 }
+
+
+DosSoundMan::DosSoundMan(Parallaction *vm, MidiDriver *midiDriver) : SoundMan(vm), _musicData1(0) {
+	_midiPlayer = new MidiPlayer(midiDriver);
+}
+
+DosSoundMan::~DosSoundMan() {
+	delete _midiPlayer;
+}
+
+void DosSoundMan::playMusic() {
+	_midiPlayer->play(_musicFile);
+}
+
+void DosSoundMan::stopMusic() {
+	_midiPlayer->stop();
+}
+
+void DosSoundMan::playCharacterMusic(const char *character) {
+
+	if (!scumm_stricmp(_vm->_location._name, "night") ||
+		!scumm_stricmp(_vm->_location._name, "intsushi")) {
+		return;
+	}
+
+	char *name = const_cast<char*>(character);
+
+	if (IS_MINI_CHARACTER(name))
+		name+=4;
+
+	if (!scumm_stricmp(name, _dinoName)) {
+		setMusicFile("dino");
+	} else
+	if (!scumm_stricmp(name, _donnaName)) {
+		setMusicFile("dough");
+	} else
+	if (!scumm_stricmp(name, _doughName)) {
+		setMusicFile("nuts");
+	} else {
+		warning("unknown character '%s' in DosSoundMan::playCharacterMusic", character);
+		return;
+	}
+
+	playMusic();
+}
+
+void DosSoundMan::playLocationMusic(const char *location) {
+	if (_musicData1 != 0) {
+		playCharacterMusic(_vm->_characterName);
+		_musicData1 = 0;
+		debugC(2, kDebugLocation, "changeLocation: started character specific music");
+	}
+
+	if (!scumm_stricmp(location, "night") || !scumm_stricmp(location, "intsushi")) {
+		setMusicFile("nuts");
+		playMusic();
+
+		debugC(2, kDebugLocation, "changeLocation: started music 'soft'");
+	}
+
+	if (!scumm_stricmp(location, "museo") ||
+		!scumm_stricmp(location, "caveau") ||
+		!scumm_strnicmp(location, "plaza1", 6) ||
+		!scumm_stricmp(location, "estgrotta") ||
+		!scumm_stricmp(location, "intgrottadopo") ||
+		!scumm_stricmp(location, "endtgz") ||
+		!scumm_stricmp(location, "common")) {
+
+		stopMusic();
+		_musicData1 = 1;
+
+		debugC(2, kDebugLocation, "changeLocation: music stopped");
+	}
+}
+
+AmigaSoundMan::AmigaSoundMan(Parallaction *vm) : SoundMan(vm) {
+	_musicStream = 0;
+}
+
+AmigaSoundMan::~AmigaSoundMan() {
+	stopMusic();
+}
+
+void AmigaSoundMan::playMusic() {
+	stopMusic();
+
+	Common::ReadStream *stream = _vm->_disk->loadMusic(_musicFile);
+	_musicStream = Audio::makeProtrackerStream(stream);
+	delete stream;
+
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _musicStream, -1, 255, 0, false, true);
+}
+
+void AmigaSoundMan::stopMusic() {
+	_mixer->stopHandle(_musicHandle);
+	delete _musicStream;
+}
+
+void AmigaSoundMan::playCharacterMusic(const char *character) {
+}
+
+void AmigaSoundMan::playLocationMusic(const char *location) {
+}
+
+
+SoundMan::SoundMan(Parallaction *vm) : _vm(vm) {
+	_mixer = _vm->_mixer;
+}
+
+void SoundMan::setMusicVolume(int value) {
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, value);
+}
+
+void SoundMan::setMusicFile(const char *filename) {
+	strcpy(_musicFile, filename);
+}
+
 
 } // namespace Parallaction
