@@ -32,7 +32,7 @@
 #include "graphics/surface.h"
 
 #include "scumm/gfx.h"
-#include "scumm/plugin.h"
+#include "scumm/detection.h"
 #include "scumm/script.h"
 
 #include "sound/mididrv.h"

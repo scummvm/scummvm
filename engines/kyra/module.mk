@@ -3,12 +3,12 @@ MODULE := engines/kyra
 MODULE_OBJS := \
 	animator.o \
 	debugger.o \
+	detection.o \
 	gui.o \
 	items.o \
 	kyra.o \
 	kyra_v2.o \
 	kyra_v3.o \
-	plugin.o \
 	resource.o \
 	saveload.o \
 	scene.o \

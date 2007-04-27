@@ -30,7 +30,7 @@
 #include "common/list.h"
 #include "common/md5.h"
 
-#include "scumm/plugin.h"
+#include "scumm/detection.h"
 #include "scumm/scumm.h"
 #include "scumm/intern.h"
 #include "scumm/he/intern_he.h"

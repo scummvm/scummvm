@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef SCUMM_PLUGIN_H
-#define SCUMM_PLUGIN_H
+#ifndef SCUMM_DETECTION_H
+#define SCUMM_DETECTION_H
 
 #include "common/util.h"
 

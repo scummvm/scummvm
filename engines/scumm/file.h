@@ -25,7 +25,7 @@
 
 #include "common/file.h"
 
-#include "scumm/plugin.h"
+#include "scumm/detection.h"
 
 namespace Scumm {
 
