@@ -47,7 +47,7 @@ Common::Platform CruiseEngine::getPlatform() const { return _gameDescription->de
 
 static const PlainGameDescriptor cruiseGames[] = {
 	{"cruise", "Cinematique evo.2 engine game"},
-	{"cruise", "Cruise for a corps"},
+	{"cruise", "Cruise for a corpse"},
 	{0, 0}
 };
 
@@ -71,7 +71,18 @@ static const CRUISEGameDescription gameDescriptions[] = {
 		GType_CRUISE,
 		0,
 	},
-
+	{
+		{
+			"cruise",
+			"",
+			AD_ENTRY1("D1", "a90d2b9ead6b4d812cd14268672cf178"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_CRUISE,
+		0,
+	},
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
