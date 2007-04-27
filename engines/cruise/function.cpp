@@ -1047,11 +1047,14 @@ int16 Op_removeBackgroundIncrust(void)
 
 int16 Op_D(void) // TODO: palette manipulation
 {
-  var_4 = popVar();
-  var_6 = popVar();
-  var_8 = popVar();
+  //var_4 = popVar();
+  //var_6 = popVar();
+  //var_8 = popVar();
   //int si = popVar();
   //int di = popVar();
+  popVar();
+  popVar();
+  popVar();
   popVar();
   popVar();
 
