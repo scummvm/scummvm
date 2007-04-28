@@ -128,6 +128,15 @@
 			RelativePath="..\..\engines\saga\console.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\saga\detection.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\saga\detection_tables.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\saga\displayinfo.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\saga\events.cpp">
 		</File>
 		<File
@@ -141,9 +150,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\saga\font_map.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\game.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\saga\gfx.cpp">
@@ -225,9 +231,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\saga\saga.h">
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\sagagame.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\saga\sagaresnames.h">

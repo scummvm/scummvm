@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="windows-1250"?>
+<?xml version="1.0" encoding="Windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="agos"
-	ProjectGUID="{E0EC9C72-A33E-49DA-B1DC-BB44B9799BFA}"
+	Name="cruise"
+	ProjectGUID="{CD9AEE36-CEBD-40CE-A6B3-B71523AB8DEC}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="agos_Debug"
-			IntermediateDirectory="agos_Debug"
+			OutputDirectory="cruise_Debug"
+			IntermediateDirectory="cruise_Debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -37,7 +37,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/agos.lib"/>
+				OutputFile="$(OutDir)/cruise.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -59,10 +59,9 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="agos_Release"
-			IntermediateDirectory="agos_Release"
+			OutputDirectory="cruise_Release"
+			IntermediateDirectory="cruise_Release"
 			ConfigurationType="4"
-			ATLMinimizesCRunTimeLibraryUsage="TRUE"
 			CharacterSet="2"
 			WholeProgramOptimization="FALSE">
 			<Tool
@@ -72,12 +71,13 @@
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
 				AdditionalIncludeDirectories="../..;../../engines"
-				PreprocessorDefinitions="WIN32;USE_ZLIB;USE_MAD;USE_VORBIS"
+				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				StringPooling="TRUE"
 				ExceptionHandling="TRUE"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="FALSE"
+				DisableLanguageExtensions="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
@@ -86,7 +86,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/agos.lib"/>
+				OutputFile="$(OutDir)/cruise.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -111,160 +111,175 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\engines\agos\agos.cpp">
+			RelativePath="..\..\engines\cruise\actor.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\agos.h">
+			RelativePath="..\..\engines\cruise\actor.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\animation.cpp">
+			RelativePath="..\..\engines\cruise\background.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\animation.h">
+			RelativePath="..\..\engines\cruise\background.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\charset.cpp">
+			RelativePath="..\..\engines\cruise\backgroundIncrust.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\contain.cpp">
+			RelativePath="..\..\engines\cruise\backgroundIncrust.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\cursor.cpp">
+			RelativePath="..\..\engines\cruise\cell.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\debug.cpp">
+			RelativePath="..\..\engines\cruise\cell.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\debug.h">
+			RelativePath="..\..\engines\cruise\cruise.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\debugger.cpp">
+			RelativePath="..\..\engines\cruise\cruise.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\debugger.h">
+			RelativePath="..\..\engines\cruise\cruise_main.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\detection.cpp">
+			RelativePath="..\..\engines\cruise\cruise_main.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\detection_tables.h">
+			RelativePath="..\..\engines\cruise\ctp.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\draw.cpp">
+			RelativePath="..\..\engines\cruise\ctp.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\event.cpp">
+			RelativePath="..\..\engines\cruise\dataLoader.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\gfx.cpp">
+			RelativePath="..\..\engines\cruise\dataLoader.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\icons.cpp">
+			RelativePath="..\..\engines\cruise\decompiler.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\input.cpp">
+			RelativePath="..\..\engines\cruise\delphine-unpack.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\intern.h">
+			RelativePath="..\..\engines\cruise\detection.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\items.cpp">
+			RelativePath="..\..\engines\cruise\font.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\menus.cpp">
+			RelativePath="..\..\engines\cruise\font.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\midi.cpp">
+			RelativePath="..\..\engines\cruise\fontCharacterTable.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\midi.h">
+			RelativePath="..\..\engines\cruise\fontCharacterTable.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\midiparser_s1d.cpp">
+			RelativePath="..\..\engines\cruise\function.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\oracle.cpp">
+			RelativePath="..\..\engines\cruise\function.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\res.cpp">
+			RelativePath="..\..\engines\cruise\gfxModule.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\res_ami.cpp">
+			RelativePath="..\..\engines\cruise\gfxModule.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\res_snd.cpp">
+			RelativePath="..\..\engines\cruise\linker.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\rooms.cpp">
+			RelativePath="..\..\engines\cruise\linker.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\saveload.cpp">
+			RelativePath="..\..\engines\cruise\mainDraw.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script.cpp">
+			RelativePath="..\..\engines\cruise\mainDraw.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script_e1.cpp">
+			RelativePath="..\..\engines\cruise\menu.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script_e2.cpp">
+			RelativePath="..\..\engines\cruise\menu.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script_ff.cpp">
+			RelativePath="..\..\engines\cruise\mouse.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script_pp.cpp">
+			RelativePath="..\..\engines\cruise\mouse.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script_s1.cpp">
+			RelativePath="..\..\engines\cruise\object.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script_s2.cpp">
+			RelativePath="..\..\engines\cruise\object.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script_ww.cpp">
+			RelativePath="..\..\engines\cruise\overlay.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\sound.cpp">
+			RelativePath="..\..\engines\cruise\overlay.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\sound.h">
+			RelativePath="..\..\engines\cruise\perso.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\string.cpp">
+			RelativePath="..\..\engines\cruise\perso.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\subroutine.cpp">
+			RelativePath="..\..\engines\cruise\polys.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\verb.cpp">
+			RelativePath="..\..\engines\cruise\polys.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\vga.cpp">
+			RelativePath="..\..\engines\cruise\saveload.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\vga.h">
+			RelativePath="..\..\engines\cruise\saveload.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\vga_e2.cpp">
+			RelativePath="..\..\engines\cruise\script.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\vga_ff.cpp">
+			RelativePath="..\..\engines\cruise\script.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\vga_s1.cpp">
+			RelativePath="..\..\engines\cruise\stack.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\vga_s2.cpp">
+			RelativePath="..\..\engines\cruise\stack.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\vga_ww.cpp">
+			RelativePath="..\..\engines\cruise\stringSupport.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\window.cpp">
+			RelativePath="..\..\engines\cruise\stringSupport.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\zones.cpp">
+			RelativePath="..\..\engines\cruise\various.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\cruise\various.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\cruise\vars.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\cruise\vars.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\cruise\volume.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\cruise\volume.h">
 		</File>
 	</Files>
 	<Globals>

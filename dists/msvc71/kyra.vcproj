@@ -122,6 +122,9 @@
 			RelativePath="..\..\engines\kyra\debugger.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\detection.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\gui.cpp">
 		</File>
 		<File
@@ -144,9 +147,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\kyra_v3.h">
-		</File>
-		<File
-			RelativePath="..\..\engines\kyra\plugin.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\resource.cpp">

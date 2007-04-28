@@ -144,6 +144,9 @@
 			RelativePath="..\..\engines\parallaction\disk.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\font.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\graphics.cpp">
 		</File>
 		<File
@@ -193,6 +196,9 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\walk.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\walk.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\zone.cpp">
