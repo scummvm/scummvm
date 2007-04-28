@@ -625,8 +625,13 @@ void AGOSEngine::addArrows(WindowBlock *window) {
 		ha->window = window;
 		ha->verb = 1;
 
-		stopAnimate(128);
-		animate(0, 1, 128, 0, 0, 14);
+		if (getFeatures() & GF_32COLOR) {
+			// TODO: Manually draws arrows
+		} else {
+			stopAnimate(128);
+			uint8 palette = (getGameId() == GID_SIMON1CD32) ? 15: 14;
+			animate(0, 1, 128, 0, 0, palette);
+		}
 	} else if (getGameType() == GType_WW) {
 		ha->x = 255;
 		ha->y = 170;
@@ -664,7 +669,11 @@ void AGOSEngine::addArrows(WindowBlock *window) {
 
 void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
 	if (getGameType() == GType_SIMON1) {
-		stopAnimate(128);
+		if (getFeatures() & GF_32COLOR) {
+			// TODO: Manually removes arrows
+		} else {
+			stopAnimate(128);
+		}
 	} else if (getGameType() == GType_WW) {
 		setBitFlag(22, false);
 		setWindowImageEx(6, 103);
