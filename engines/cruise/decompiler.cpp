@@ -837,7 +837,7 @@ int decompFunction(void) {
 		}
 	case 0x8:
 		{
-			sprintf(tempbuffer, "_removeObjectFromList(%s,%s,%s)",
+			sprintf(tempbuffer, "_removeCell(%s,%s,%s)",
 			    popDecomp(), popDecomp(), popDecomp());
 			pushDecomp(tempbuffer);
 			break;

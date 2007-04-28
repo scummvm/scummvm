@@ -185,8 +185,7 @@ int updateResFileEntry(int height, int width, int entryNumber, int resType) {
 		return (-2);
 
 	filesDatabase[entryNumber].widthInColumn = width;
-	filesDatabase[entryNumber].subData.ptr2 =
-	    filesDatabase[entryNumber].subData.ptr + size;
+	filesDatabase[entryNumber].subData.ptr2 = filesDatabase[entryNumber].subData.ptr + size;
 	filesDatabase[entryNumber].width = width / 8;
 	filesDatabase[entryNumber].resType = resType;
 	filesDatabase[entryNumber].height = height;
@@ -225,16 +224,14 @@ int createResFileEntry(int width, int height, int resType) {
 		width = (width * 8) / 5;
 	}
 
-	filesDatabase[entryNumber].subData.ptr =
-	    (uint8 *) mallocAndZero(size + div);
+	filesDatabase[entryNumber].subData.ptr = (uint8 *) mallocAndZero(size + div);
 
 	if (filesDatabase[entryNumber].subData.ptr) {
 		return (-2);
 	}
 
 	filesDatabase[entryNumber].widthInColumn = width;
-	filesDatabase[entryNumber].subData.ptr2 =
-	    filesDatabase[entryNumber].subData.ptr + size;
+	filesDatabase[entryNumber].subData.ptr2 = filesDatabase[entryNumber].subData.ptr + size;
 	filesDatabase[entryNumber].width = width / 8;
 	filesDatabase[entryNumber].resType = resType;
 	filesDatabase[entryNumber].height = height;

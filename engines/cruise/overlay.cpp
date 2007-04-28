@@ -420,9 +420,9 @@ int loadOverlay(uint8 *scriptName) {
 			scriptPtr += 2;
 			flipShort(&ovlData->objDataTable[i].var0);
 
-			ovlData->objDataTable[i].var1 = *(int16 *) scriptPtr;
+			ovlData->objDataTable[i].type = *(int16 *) scriptPtr;
 			scriptPtr += 2;
-			flipShort(&ovlData->objDataTable[i].var1);
+			flipShort(&ovlData->objDataTable[i].type);
 
 			ovlData->objDataTable[i].var2 = *(int16 *) scriptPtr;
 			scriptPtr += 2;
@@ -440,16 +440,16 @@ int loadOverlay(uint8 *scriptName) {
 			scriptPtr += 2;
 			flipShort(&ovlData->objDataTable[i].var5);
 
-			ovlData->objDataTable[i].var6 = *(int16 *) scriptPtr;
+			ovlData->objDataTable[i].stateTableIdx = *(int16 *) scriptPtr;
 			scriptPtr += 2;
-			flipShort(&ovlData->objDataTable[i].var6);
+			flipShort(&ovlData->objDataTable[i].stateTableIdx);
 		}
 
 		if (scriptNotLoadedBefore) {
 			//int var1;
 			//int var2;
 
-			overlayTable[scriptIdx].field_14 = (char)setup1;
+			overlayTable[scriptIdx].state = (char)setup1;
 
 			var1 = loadScriptSub1(scriptIdx, 3);
 			var2 = loadScriptSub1(scriptIdx, 0);
@@ -733,11 +733,11 @@ int releaseOverlay(const char *name) {
     overlayTable[overlayIdx].var16 = NULL;
   } */
 
-	removeScript(overlayIdx, -1, &scriptHandle2);
-	removeScript(overlayIdx, -1, &scriptHandle2);
+	removeScript(overlayIdx, -1, &procHead);
+	removeScript(overlayIdx, -1, &procHead);
 
-	removeScript(overlayIdx, -1, &scriptHandle1);
-	removeScript(overlayIdx, -1, &scriptHandle1);
+	removeScript(overlayIdx, -1, &relHead);
+	removeScript(overlayIdx, -1, &relHead);
 
 	printf("releaseOverlay: finish !\n");
 

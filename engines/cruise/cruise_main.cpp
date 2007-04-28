@@ -480,8 +480,8 @@ int initAllData(void) {
 
 	initBigVar3();
 
-	resetPtr2(&scriptHandle2);
-	resetPtr2(&scriptHandle1);
+	resetPtr2(&procHead);
+	resetPtr2(&relHead);
 
 	resetPtr(&cellHead);
 
@@ -579,9 +579,8 @@ int initAllData(void) {
 	if (bootOverlayNumber) {
 		positionInStack = 0;
 
-		attacheNewScriptToTail(bootOverlayNumber, &scriptHandle2, 0,
-		    20, 0, 0, scriptType_20);
-		scriptFunc2(bootOverlayNumber, &scriptHandle2, 1, 0);
+		attacheNewScriptToTail(bootOverlayNumber, &procHead, 0, 20, 0, 0, scriptType_PROC);
+		scriptFunc2(bootOverlayNumber, &procHead, 1, 0);
 	}
 
 	strcpyuint8(systemStrings.bootScriptName, "AUTO00");
@@ -878,7 +877,7 @@ int buildInventorySub1(int overlayIdx, int objIdx) {
 	    getObjectDataFromOverlay(overlayIdx, objIdx);
 
 	if (pObjectData) {
-		return pObjectData->var1;
+		return pObjectData->type;
 	} else {
 		return -11;
 	}
@@ -1029,7 +1028,7 @@ int callInventoryObject(int param0, int param1, int x, int y) {
 						    var_34->stringNameOffset) {
 							if (pObject) {
 								if (pObject->
-								    var1 !=
+								    type !=
 								    3) {
 									char var_214[80];
 									char var_1C4[80];
@@ -1163,7 +1162,7 @@ int callInventoryObject(int param0, int param1, int x, int y) {
 														if (strlen(var_214)) {
 															attacheNewScriptToTail
 															    (var_1E,
-															    &scriptHandle1,
+															    &relHead,
 															    var_34->
 															    field_2,
 															    30,
@@ -1171,7 +1170,7 @@ int callInventoryObject(int param0, int param1, int x, int y) {
 															    scriptNumber,
 															    currentScriptPtr->
 															    overlayNumber,
-															    scriptType_30);
+															    scriptType_REL);
 														} else {
 															if (var_22->specialString1) {
 																ptr = getObjectName(var_34->varNameOffset, var_22->specialString1);
@@ -1531,11 +1530,11 @@ void mainLoop(void) {
 				enableUser = 0;
 			}
 
-			manageScripts(&scriptHandle1);
-			manageScripts(&scriptHandle2);
+			manageScripts(&relHead);
+			manageScripts(&procHead);
 
-			removeFinishedScripts(&scriptHandle1);
-			removeFinishedScripts(&scriptHandle2);
+			removeFinishedScripts(&relHead);
+			removeFinishedScripts(&procHead);
 
 			processAnimation();
 

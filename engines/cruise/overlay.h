@@ -106,14 +106,19 @@ struct importDataStruct {
 
 typedef struct importDataStruct importDataStruct;
 
+#define MULTIPLE 0
+#define VARIABLE 1
+#define UNIQUE   2
+#define THEME    3
+
 struct objDataStruct {
 	int16 var0;
-	int16 var1;
+	int16 type;
 	int16 var2;
 	int16 var3;
 	int16 var4;
 	int16 var5;
-	int16 var6;
+	int16 stateTableIdx;
 };
 
 typedef struct objDataStruct objDataStruct;
@@ -121,10 +126,10 @@ typedef struct objDataStruct objDataStruct;
 struct objectParams {
 	int16 X;
 	int16 Y;
-	int16 baseFileIdx;
-	int16 var3;
+	int16 Z;
+	int16 frame;
 	int16 scale;
-	int16 var5;
+	int16 state;
 };
 
 typedef struct objectParams objectParams;
@@ -169,7 +174,7 @@ struct overlayStruct {
 	char overlayName[14];
 	ovlDataStruct *ovlData;
 	short int alreadyLoaded;
-	char field_14;
+	char state;
 	char field_15;
 	char field_16;
 	char field_17;

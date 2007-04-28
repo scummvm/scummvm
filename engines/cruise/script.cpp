@@ -26,8 +26,8 @@
 
 namespace Cruise {
 
-scriptInstanceStruct scriptHandle1;
-scriptInstanceStruct scriptHandle2;
+scriptInstanceStruct relHead;
+scriptInstanceStruct procHead;
 
 scriptInstanceStruct *currentScriptPtr;
 

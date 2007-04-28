@@ -64,10 +64,13 @@ struct actorStruct {
 
 typedef struct actorStruct actorStruct;
 
-int16 mainProc13(int overlayIdx, int param1, actorStruct * pStartEntry,
-    int param2);
-actorStruct *findActor(int overlayIdx, int param1, actorStruct * pStartEntry,
-    int param2);
+extern int raoul_move[][13];
+extern int raoul_end[][13];
+extern int raoul_stat[][13];
+extern int raoul_invstat[][13];
+
+int16 mainProc13(int overlayIdx, int param1, actorStruct * pStartEntry, int param2);
+actorStruct *findActor(int overlayIdx, int param1, actorStruct * pStartEntry, int param2);
 void processAnimation(void);
 void getPixel(int x, int y);
 

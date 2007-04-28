@@ -30,19 +30,6 @@ namespace Cruise {
 
 opcodeFunction opcodeTablePtr[256];
 
-struct actorTableStruct {
-	int data[13];
-};
-
-typedef struct actorTableStruct actorTableStruct;
-
-actorTableStruct actorTable1[] = {
-	{ { 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
-	{ { 38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
-	{ { 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
-	{ {-38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
-};
-
 int16 Op_LoadOverlay(void) {
 	uint8 *originalScriptName;
 	uint8 scriptName[38];
@@ -116,9 +103,9 @@ int16 Op_startScript(void) {
 	}
 
 	ptr =
-	    attacheNewScriptToTail(ovlIdx, &scriptHandle2, scriptIdx,
+	    attacheNewScriptToTail(ovlIdx, &procHead, scriptIdx,
 	    currentScriptPtr->type, currentScriptPtr->scriptNumber,
-	    currentScriptPtr->overlayNumber, scriptType_Minus20);
+	    currentScriptPtr->overlayNumber, scriptType_MinusPROC);
 
 	if (!ptr)
 		return (0);
@@ -156,9 +143,7 @@ int16 Op_AddProc(void) {
 	if (!overlay)
 		return (0);
 
-	attacheNewScriptToTail(overlay, &scriptHandle2, pop2,
-	    currentScriptPtr->type, currentScriptPtr->scriptNumber,
-	    currentScriptPtr->overlayNumber, scriptType_20);
+	attacheNewScriptToTail(overlay, &procHead, pop2, currentScriptPtr->type, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_PROC);
 
 	if (pop1 > 0) {
 		printf("Unsupported art send in op6!\n");
@@ -287,8 +272,7 @@ int16 Op_RemoveMessage(void) {
 		overlay = currentScriptPtr->overlayNumber;
 	}
 
-	removeObjectFromList(overlay, idx, &cellHead,
-	    currentActiveBackgroundPlane, 5);
+	removeCell(&cellHead, overlay, idx, 5, currentActiveBackgroundPlane);
 
 	return (0);
 }
@@ -349,7 +333,7 @@ int16 Op_RemoveProc(void) {
 		overlay = currentScriptPtr->overlayNumber;
 	}
 
-	removeScript(overlay, idx, &scriptHandle2);
+	removeScript(overlay, idx, &procHead);
 
 	return (0);
 }
@@ -423,10 +407,10 @@ int16 Op_changeCutSceneState(void) {
 int16 Op_62(void) {
 	if (currentScriptPtr->var1A == 20) {
 		changeScriptParamInList(currentScriptPtr->var18,
-		    currentScriptPtr->var16, &scriptHandle2, 9997, -1);
+		    currentScriptPtr->var16, &procHead, 9997, -1);
 	} else if (currentScriptPtr->var1A == 30) {
 		changeScriptParamInList(currentScriptPtr->var18,
-		    currentScriptPtr->var16, &scriptHandle1, 9997, -1);
+		    currentScriptPtr->var16, &relHead, 9997, -1);
 	}
 
 	return 0;
@@ -541,7 +525,7 @@ int16 Op_InitializeState(void) {
 	if (!ovlIdx)
 		ovlIdx = currentScriptPtr->overlayNumber;
 
-	Op_InitializeStateSub(ovlIdx, objIdx, param1);
+	objInit(ovlIdx, objIdx, param1);
 
 	return (0);
 }
@@ -613,38 +597,34 @@ int16 Op_GetMouseClick3(void) {
 }
 
 int16 Op_AddCell(void) {
-	int16 param1 = popVar();
-	int16 param2 = popVar();
+	int16 objType = popVar();
+	int16 objIdx = popVar();
 	int16 overlayIdx = popVar();
 
 	if (!overlayIdx)
 		overlayIdx = currentScriptPtr->overlayNumber;
 
-	addCell(overlayIdx, param2, &cellHead, currentScriptPtr->type,
-	    currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber,
-	    currentActiveBackgroundPlane, param1);
+	addCell(&cellHead, overlayIdx, objIdx, objType, currentActiveBackgroundPlane, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, currentScriptPtr->type);
 
 	return 0;
 }
 
-int16 Op_2F(void) {
-	int16 param1 = popVar();
-	int16 param2 = popVar();
+int16 Op_AddBackgroundIncrust(void) {
 
+	int16 objType = popVar();
+	int16 objIdx = popVar();
 	int16 overlayIdx = popVar();
 
 	if (!overlayIdx)
 		overlayIdx = currentScriptPtr->overlayNumber;
 
-	addBackgroundIncrust(overlayIdx, param2, &backgroundIncrustHead,
-	    currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber,
-	    currentActiveBackgroundPlane, param1);
+	addBackgroundIncrust(overlayIdx, objIdx, &backgroundIncrustHead, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, currentActiveBackgroundPlane, objType);
 
 	return 0;
 }
 
 int16 Op_RemoveCell(void) {
-	var1 = popVar();
+	int objType = popVar();
 	int objectIdx = popVar();
 	int ovlNumber = popVar();
 
@@ -652,8 +632,7 @@ int16 Op_RemoveCell(void) {
 		ovlNumber = currentScriptPtr->overlayNumber;
 	}
 
-	removeObjectFromList(ovlNumber, objectIdx, &cellHead,
-	    currentActiveBackgroundPlane, var1);
+	removeCell(&cellHead, ovlNumber, objectIdx, objType, currentActiveBackgroundPlane);
 
 	return 0;
 }
@@ -669,10 +648,10 @@ int16 Op_SetFontFileIndex(void) {
 int16 Op_63(void) {
 	if (currentScriptPtr->var1A == 0x14) {
 		changeScriptParamInList(currentScriptPtr->var18,
-		    currentScriptPtr->var16, &scriptHandle2, 0, -1);
+		    currentScriptPtr->var16, &procHead, 0, -1);
 	} else if (currentScriptPtr->var1A == 0x1E) {
 		changeScriptParamInList(currentScriptPtr->var18,
-		    currentScriptPtr->var16, &scriptHandle1, 0, -1);
+		    currentScriptPtr->var16, &relHead, 0, -1);
 	}
 
 	return 0;
@@ -770,47 +749,39 @@ int16 Op_AutoCell(void) {
 	if (!overlay)
 		overlay = currentScriptPtr->overlayNumber;
 
-	pObject =
-	    addCell(overlay, obj, &cellHead, currentScriptPtr->type,
-	    currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber,
-	    currentActiveBackgroundPlane, 4);
+	pObject = addCell(&cellHead, overlay, obj, 4, currentActiveBackgroundPlane, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, currentScriptPtr->type);
 
 	if (!pObject)
 		return 0;
 
-	pObject->field_2C = signal;
-	pObject->field_30 = loop;
-	pObject->nextAnimDelay = wait;
+	pObject->animSignal = signal;
+	pObject->animLoop = loop;
+	pObject->animWait = wait;
 	pObject->animStep = animStep;
-	pObject->field_22 = end;
-	pObject->field_20 = start;
-	pObject->field_2A = type;
-	pObject->field_28 = change;
+	pObject->animEnd = end;
+	pObject->animStart = start;
+	pObject->animType = type;
+	pObject->animChange = change;
 
 	if (type) {
-		if (currentScriptPtr->type == 20) {
-			changeScriptParamInList(currentScriptPtr->
-			    overlayNumber, currentScriptPtr->scriptNumber,
-			    &scriptHandle2, 9996, -1);
-		} else if (currentScriptPtr->type == 30) {
-			changeScriptParamInList(currentScriptPtr->
-			    overlayNumber, currentScriptPtr->scriptNumber,
-			    &scriptHandle1, 9996, -1);
+		if (currentScriptPtr->type == scriptType_PROC) {
+			changeScriptParamInList(currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, &procHead, 9996, -1);
+		} else if (currentScriptPtr->type == scriptType_REL) {
+			changeScriptParamInList(currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, &relHead, 9996, -1);
 		}
 	}
 
 	if (change == 5) {
-		Op_InitializeStateSub(pObject->overlay, pObject->idx, start);
+		objInit(pObject->overlay, pObject->idx, start);
 	} else {
-		setObjectPosition(pObject->overlay, pObject->idx,
-		    pObject->field_28, start);
+		setObjectPosition(pObject->overlay, pObject->idx, pObject->animChange, start);
 	}
 
 	if (wait < 0) {
 		objectParamsQuery params;
 
 		getMultipleObjectParam(overlay, obj, &params);
-		pObject->currentAnimDelay = params.var6 - 1;
+		pObject->animCounter = params.var6 - 1;
 	}
 
 	return 0;
@@ -927,7 +898,7 @@ void removeBackgroundIncrust(int overlay, int idx,
 	}
 }
 
-int16 Op_removeBackgroundIncrust(void) {
+int16 Op_RemoveBackgroundIncrust(void) {
 	int idx = popVar();
 	int overlay = popVar();
 
@@ -1178,11 +1149,11 @@ int16 Op_AddAnimation(void) {
 			si->stepX = stepX;
 			si->stepY = stepY;
 
-			int newFrame = ABS(actorTable1[direction].data[0]) - 1;
+			int newFrame = ABS(raoul_end[direction][0]) - 1;
 
 			int zoom = computeZoom(params.Y);
 
-			if (actorTable1[direction].data[0] < 0) {
+			if (raoul_end[direction][0] < 0) {
 				zoom = -zoom;
 			}
 
@@ -1332,47 +1303,19 @@ int16 Op_6C(void) {
 	return temp;
 }
 
-void configureAllObjects(int overlayIdx, cellStruct * pObject, int _var4,
-	    int _var0, int _var1, int _var2, int _var3) {
-	while (pObject) {
-		if ((pObject->overlay == overlayIdx) || (overlayIdx == -1)) {
-			if ((pObject->idx == _var4) || (_var4 == -1)) {
-				if ((pObject->type == _var3) || (_var3 == -1)) {
-					if ((pObject->backgroundPlane == _var2) || (_var2 == -1)) {
-						if ((pObject->freeze == _var1) || (_var1 == -1)) {
-							pObject->freeze = _var0;
-						}
-					}
-				}
-			}
-		}
-
-		pObject = pObject->next;
-	}
-}
-
 int16 Op_FreezeCell(void) {
-	/*
-	 * int var0;
-	 * int var1;
-	 * int var2;
-	 * int var3;
-	 * int var4;
-	 * int var5;
-	 */
+	int newFreezz = popVar();
+	int oldFreeze = popVar();
+	int backgroundPlante = popVar();
+	int objType = popVar();
+	int objIdx = popVar();
+	int overlayIdx = popVar();
 
-	var0 = popVar();
-	var1 = popVar();
-	var2 = popVar();
-	var3 = popVar();
-	var4 = popVar();
-	var5 = popVar();
-
-	if (!var5) {
-		var5 = currentScriptPtr->overlayNumber;
+	if (!overlayIdx) {
+		overlayIdx = currentScriptPtr->overlayNumber;
 	}
 
-	configureAllObjects(var5, &cellHead, var4, var0, var1, var2, var3);
+	freezeCell(&cellHead, overlayIdx, objIdx, objType, backgroundPlante, oldFreeze, newFreezz);
 
 	return 0;
 }
@@ -1509,8 +1452,8 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x2B] = Op_2B;
 	opcodeTablePtr[0x2C] = Op_2C;
 	opcodeTablePtr[0x2E] = Op_releaseOverlay;
-	opcodeTablePtr[0x2F] = Op_2F;
-	opcodeTablePtr[0x30] = Op_removeBackgroundIncrust;
+	opcodeTablePtr[0x2F] = Op_AddBackgroundIncrust;
+	opcodeTablePtr[0x30] = Op_RemoveBackgroundIncrust;
 	opcodeTablePtr[0x32] = Op_freeBackgroundInscrustList;
 	opcodeTablePtr[0x37] = Op_37;
 	opcodeTablePtr[0x38] = Op_removeBackground;

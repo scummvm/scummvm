@@ -264,8 +264,8 @@ int loadSavegameData(int saveGameIdx) {
 	fread(mediumVar, 0x880, 1, fileHandle);
 
 	loadSavegameDataSub1(fileHandle);
-	loadScriptsFromSave(fileHandle, &scriptHandle2);
-	loadScriptsFromSave(fileHandle, &scriptHandle1);
+	loadScriptsFromSave(fileHandle, &procHead);
+	loadScriptsFromSave(fileHandle, &relHead);
 
 	loadSavegameDataSub2(fileHandle);
 	loadBackgroundIncrustFromSave(fileHandle);

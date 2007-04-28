@@ -38,26 +38,26 @@ struct cellStruct {
 	int16 idx;
 	int16 type;
 	int16 overlay;
-	int16 field_A;
+	int16 x;
 	int16 field_C;
 	int16 spriteIdx;
 	int16 color;
 	int16 backgroundPlane;
 	int16 freeze;
-	int16 field_16;
-	int16 field_18;
-	int16 field_1A;
+	int16 parent;
+	int16 parentOverlay;
+	int16 parentType;
 	int16 followObjectOverlayIdx;
 	int16 followObjectIdx;
-	int16 field_20;
-	int16 field_22;
-	int16 nextAnimDelay;
+	int16 animStart;
+	int16 animEnd;
+	int16 animWait;
 	int16 animStep;
-	int16 field_28;
-	int16 field_2A;
-	int16 field_2C;
-	int16 currentAnimDelay;
-	int16 field_30;
+	int16 animChange;
+	int16 animType;
+	int16 animSignal;
+	int16 animCounter;
+	int16 animLoop;
 	gfxEntryStruct *gfxPtr;
 };
 
@@ -65,9 +65,11 @@ extern cellStruct cellHead;
 
 void resetPtr(cellStruct * ptr);
 void loadSavegameDataSub2(FILE * f);
-cellStruct *addCell(int16 overlayIdx, int16 param2, cellStruct * pHead,
-    int16 scriptType, int16 scriptNumber, int16 scriptOverlay, int16 param3,
-    int16 param4);
+cellStruct *addCell(cellStruct *pHead, int16 overlayIdx, int16 objIdx, int16 type, int16 backgroundPlane, int16 scriptOverlay, int16 scriptNumber, int16 scriptType);
+void createTextObject(int overlayIdx, int oldVar8, cellStruct * pObject, int scriptNumber, int scriptOverlayNumber, int backgroundPlane, int16 color, int oldVar2, int oldVar4, int oldVar6);
+void removeCell(cellStruct *objPtr, int ovlNumber, int objectIdx, int objType, int backgroundPlane );
+void freezeCell(cellStruct * pObject, int overlayIdx, int objIdx, int objType, int backgroundPlane, int oldFreeze, int newFreeze );
+void sortCells(int16 param1, int16 param2, cellStruct *objPtr);
 
 } // End of namespace Cruise
 

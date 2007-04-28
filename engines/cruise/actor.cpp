@@ -774,11 +774,7 @@ void processAnimation(void) {
 			getMultipleObjectParam(currentActor->overlayNumber,
 			    currentActor->idx, &params);
 
-			if (((animationStart && !currentActor->flag)
-				|| (!animationStart
-				    && currentActor->x_dest != -1
-				    && currentActor->y_dest != -1))
-			    && (currentActor->type == 0)) {
+			if (((animationStart && !currentActor->flag) || (!animationStart && currentActor->x_dest != -1 && currentActor->y_dest != -1)) && (currentActor->type == 0)) {
 				// mouse animation
 				if (!animationStart) {
 					var34 = currentActor->x_dest;
@@ -790,11 +786,7 @@ void processAnimation(void) {
 					currentActor->flag = 1;
 				}
 
-				currentActor->pathId =
-				    computePathfinding(returnVar2, params.X,
-				    params.Y, var34, var35,
-				    currentActor->stepX, currentActor->stepY,
-				    currentActor->pathId);
+				currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, var34, var35, currentActor->stepX, currentActor->stepY, currentActor->pathId);
 
 				if (currentActor->pathId == -1) {
 					if ((currentActor->endDirection != -1)
@@ -1136,31 +1128,19 @@ void processAnimation(void) {
 					}
 				case ANIM_PHASE_END:
 					{
-						int newA =
-						    raoul_end[currentActor->
-						    startDirection][0];
+						int newA = raoul_end[currentActor->startDirection][0];
 
-						set_anim(currentActor->
-						    overlayNumber,
-						    currentActor->idx,
-						    currentActor->start,
-						    currentActor->x,
-						    currentActor->y, newA,
-						    currentActor->poly);
+						set_anim(currentActor->overlayNumber, currentActor->idx, currentActor->start, currentActor->x, currentActor->y, newA, currentActor->poly);
 
 						currentActor->pathId = -2;
-						currentActor->phase =
-						    ANIM_PHASE_WAIT;
+						currentActor->phase = ANIM_PHASE_WAIT;
 						currentActor->flag = 0;
-						currentActor->endDirection =
-						    -1;
+						currentActor->endDirection = -1;
 						break;
 					}
 				default:
 					{
-						printf
-						    ("Unimplemented currentActor->phase=%d in processAnimation()\n",
-						    currentActor->phase);
+						printf("Unimplemented currentActor->phase=%d in processAnimation()\n", currentActor->phase);
 						// exit(1);
 					}
 				}

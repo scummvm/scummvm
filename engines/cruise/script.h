@@ -28,10 +28,10 @@
 namespace Cruise {
 
 enum scriptTypeEnum {
-	scriptType_Minus20 = -20,
+	scriptType_MinusPROC = -20,
 	scriptType_Minus30 = -30,
-	scriptType_20 = 20,
-	scriptType_30 = 30
+	scriptType_PROC = 20,
+	scriptType_REL = 30
 };
 
 typedef enum scriptTypeEnum scriptTypeEnum;
@@ -55,8 +55,8 @@ struct scriptInstanceStruct {
 
 typedef struct scriptInstanceStruct scriptInstanceStruct;
 
-extern scriptInstanceStruct scriptHandle1;
-extern scriptInstanceStruct scriptHandle2;
+extern scriptInstanceStruct relHead;
+extern scriptInstanceStruct procHead;
 extern scriptInstanceStruct *currentScriptPtr;
 
 void setupFuncArray(void);

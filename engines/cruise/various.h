@@ -35,13 +35,8 @@ extern uint16 main15;
 
 int16 readB16(void *ptr);
 
-void createTextObject(int overlayIdx, int oldVar8, cellStruct * pObject,
-    int scriptNumber, int scriptOverlayNumber, int backgroundPlane,
-    int16 color, int oldVar2, int oldVar4, int oldVar6);
-void removeObjectFromList(int ovlNumber, int objectIdx, cellStruct * objPtr,
-    int backgroundPlane, int arg);
-int16 Op_InitializeStateSub(int ovlIdx, int param1, int param2);
-
+int16 objInit(int ovlIdx, int param1, int param2);
+char *getText(int textIndex, int overlayIndex);
 } // End of namespace Cruise
 
 #endif
