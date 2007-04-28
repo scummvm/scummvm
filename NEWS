@@ -62,6 +62,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  WinCE Port:
    - Switched to using a GCC toolchain for building.
+   - Major update to the SDL lib. Better, faster, more compatible :-)
 
 0.9.1 (2006-10-29)
  New Ports:
