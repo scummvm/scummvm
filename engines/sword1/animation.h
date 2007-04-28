@@ -58,9 +58,24 @@ enum {
 #define INTRO_LOGO_OVLS 12
 #define INTRO_TEXT_OVLS 8
 
+class MovieText {
+public:
+	uint16 _startFrame;
+	uint16 _endFrame;
+	char *_text;
+	MovieText(int startFrame, int endFrame, char *text) {
+		_startFrame = startFrame;
+		_endFrame = endFrame;
+		_text = strdup(text);
+	}
+	~MovieText() {
+		free(_text);
+	}
+};
+
 class MoviePlayer {
 public:
-	MoviePlayer(Screen *scr, Audio::Mixer *snd, OSystem *sys);
+	MoviePlayer(Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system);
 	virtual ~MoviePlayer(void);
 	virtual bool load(uint32 id);
 	void play(void);
@@ -68,13 +83,17 @@ public:
 private:
 	bool checkSkipFrame(void);
 protected:
-	Screen *_scr;
+	Screen *_screen;
+	Text *_textMan;
 	Audio::Mixer *_snd;
 	OSystem *_system;
+	Common::Array<MovieText *> _movieTexts;
+	byte *_textSpriteBuf;
+	int _textX, _textY, _textWidth, _textHeight;
+	byte _black, _white;
 
 	uint32 _id;
 
-	byte *_frameBuffer;
 	uint _currentFrame;
 	int _framesSkipped;
 	bool _forceFrame;
@@ -100,7 +119,7 @@ class MoviePlayerDXA : public MoviePlayer, ::Graphics::DXAPlayer {
 protected:
 	virtual void setPalette(byte *pal);
 public:
-	MoviePlayerDXA(Screen *scr, Audio::Mixer *snd, OSystem *sys);
+	MoviePlayerDXA(Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system);
 	virtual ~MoviePlayerDXA(void);
 	bool load(uint32 id);
 protected:
@@ -117,10 +136,10 @@ protected:
 class AnimationState : public Graphics::BaseAnimationState {
 private:
 	MoviePlayer *_player;
-	Screen *_scr;
+	Screen *_screen;
 
 public:
-	AnimationState(MoviePlayer *player, Screen *scr, OSystem *sys);
+	AnimationState(MoviePlayer *player, Screen *screen, OSystem *system);
 	~AnimationState(void);
 	OverlayColor *giveRgbBuffer(void);
 
@@ -137,7 +156,7 @@ protected:
 
 class MoviePlayerMPEG : public MoviePlayer {
 public:
-	MoviePlayerMPEG(Screen *scr, Audio::Mixer *snd, OSystem *sys);
+	MoviePlayerMPEG(Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system);
 	virtual ~MoviePlayerMPEG(void);
 	bool load(uint32 id);
 protected:
@@ -173,7 +192,7 @@ private:
 	FileQueue *_queue;
 };
 
-MoviePlayer *makeMoviePlayer(uint32 id, Screen *scr, Audio::Mixer *snd, OSystem *sys);
+MoviePlayer *makeMoviePlayer(uint32 id, Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system);
 
 } // End of namespace Sword1
 

@@ -34,9 +34,6 @@ namespace Sword1 {
 
 #define OVERLAP 3
 #define SPACE ' '
-#define BORDER_COL		200
-#define LETTER_COL		193
-#define NO_COL			0		// sprite background - 0 for transparency
 #define MAX_LINES		30
 
 
@@ -49,14 +46,13 @@ Text::Text(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion) {
 
 	_joinWidth = charWidth( SPACE ) - 2 * OVERLAP;
 	_charHeight = _resMan->getUint16(_resMan->fetchFrame(_font, 0)->height); // all chars have the same height
-	_textBlocks[0] = _textBlocks[1] = NULL;
+	for (int i = 0; i < MAX_TEXT_OBS; i++)
+		_textBlocks[i] = NULL;
 }
 
 Text::~Text(void) {
-	if (_textBlocks[0])
-		free(_textBlocks[0]);
-	if (_textBlocks[1])
-		free(_textBlocks[1]);
+	for (int i = 0; i < MAX_TEXT_OBS; i++)
+		free(_textBlocks[i]);
 	//_resMan->resClose(_fontId); => wiped automatically by _resMan->flush();
 }
 
@@ -175,14 +171,14 @@ FrameHeader *Text::giveSpriteData(uint32 textTarget) {
 	// textTarget is the resource ID of the Compact linking the textdata.
 	// that's 0x950000 for slot 0 and 0x950001 for slot 1. easy, huh? :)
 	textTarget &= ITM_ID;
-	assert(textTarget <= 1);
+	assert(textTarget < MAX_TEXT_OBS);
 
 	return _textBlocks[textTarget];
 }
 
 void Text::releaseText(uint32 id) {
 	id &= ITM_ID;
-	assert(id <= 1);
+	assert(id < MAX_TEXT_OBS);
 	if (_textBlocks[id]) {
 		free(_textBlocks[id]);
 		_textBlocks[id] = NULL;
