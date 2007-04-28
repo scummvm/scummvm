@@ -227,7 +227,7 @@ int loadSavegameData(int saveGameIdx) {
 	fread(&var35, 2, 1, fileHandle);
 	int16 bTemp;
 	fread(&bTemp, 2, 1, fileHandle);
-	animationStart = bTemp;
+	animationStart = bTemp != 0;
 	fread(&currentActiveBackgroundPlane, 2, 1, fileHandle);
 	fread(&initVar3, 2, 1, fileHandle);
 	fread(&initVar2, 2, 1, fileHandle);
