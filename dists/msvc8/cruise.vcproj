@@ -4,6 +4,7 @@
 	Version="8,00"
 	Name="cruise"
 	ProjectGUID="{8863B00B-059A-471E-876D-A955ECEFD0D2}"
+	RootNamespace="cruise"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -90,6 +91,7 @@
 			IntermediateDirectory="cruise_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"

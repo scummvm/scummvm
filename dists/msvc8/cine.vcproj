@@ -4,6 +4,7 @@
 	Version="8,00"
 	Name="cine"
 	ProjectGUID="{1CA4AC50-5426-433A-8B5E-FFE39568098E}"
+	RootNamespace="cine"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -90,6 +91,7 @@
 			IntermediateDirectory="cine_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"

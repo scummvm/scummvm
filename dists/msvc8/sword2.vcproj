@@ -4,6 +4,7 @@
 	Version="8,00"
 	Name="sword2"
 	ProjectGUID="{6CC3E421-779D-4E80-8100-520886A0F9FF}"
+	RootNamespace="sword2"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -90,6 +91,7 @@
 			IntermediateDirectory="sword2_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"

@@ -108,6 +108,7 @@
 			IntermediateDirectory="scummvm_Release"
 			ConfigurationType="1"
 			CharacterSet="2"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -162,9 +163,10 @@
 				SuppressStartupBanner="true"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="false"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				EntryPointSymbol="WinMainCRTStartup"
 				TargetMachine="1"
 			/>
 			<Tool
