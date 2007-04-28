@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
-	Name="saga"
-	ProjectGUID="{676DB4C5-9A3E-4EE1-8483-EBB79DC0700E}"
+	Name="cruise"
+	ProjectGUID="{8863B00B-059A-471E-876D-A955ECEFD0D2}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -16,8 +16,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="saga_Debug"
-			IntermediateDirectory="saga_Debug"
+			OutputDirectory="cruise_Debug"
+			IntermediateDirectory="cruise_Debug"
 			ConfigurationType="4"
 			CharacterSet="2"
 			>
@@ -66,7 +66,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/saga.lib"
+				OutputFile="$(OutDir)/cruise.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -86,8 +86,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="saga_Release"
-			IntermediateDirectory="saga_Release"
+			OutputDirectory="cruise_Release"
+			IntermediateDirectory="cruise_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
 			>
@@ -136,7 +136,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/saga.lib"
+				OutputFile="$(OutDir)/cruise.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -159,227 +159,231 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\engines\saga\actor.cpp"
+			RelativePath="..\..\engines\cruise\actor.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\actor.h"
+			RelativePath="..\..\engines\cruise\actor.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\animation.cpp"
+			RelativePath="..\..\engines\cruise\background.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\animation.h"
+			RelativePath="..\..\engines\cruise\background.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\console.cpp"
+			RelativePath="..\..\engines\cruise\backgroundIncrust.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\console.h"
+			RelativePath="..\..\engines\cruise\backgroundIncrust.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\detection.cpp"
+			RelativePath="..\..\engines\cruise\cell.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\detection_tables.h"
+			RelativePath="..\..\engines\cruise\cell.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\displayinfo.h"
+			RelativePath="..\..\engines\cruise\cruise.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\events.cpp"
+			RelativePath="..\..\engines\cruise\cruise.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\events.h"
+			RelativePath="..\..\engines\cruise\cruise_main.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\font.cpp"
+			RelativePath="..\..\engines\cruise\cruise_main.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\font.h"
+			RelativePath="..\..\engines\cruise\ctp.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\font_map.cpp"
+			RelativePath="..\..\engines\cruise\ctp.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\gfx.cpp"
+			RelativePath="..\..\engines\cruise\dataLoader.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\gfx.h"
+			RelativePath="..\..\engines\cruise\dataLoader.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\ihnm_introproc.cpp"
+			RelativePath="..\..\engines\cruise\decompiler.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\image.cpp"
+			RelativePath="..\..\engines\cruise\delphine-unpack.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\input.cpp"
+			RelativePath="..\..\engines\cruise\detection.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\interface.cpp"
+			RelativePath="..\..\engines\cruise\font.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\interface.h"
+			RelativePath="..\..\engines\cruise\font.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\isomap.cpp"
+			RelativePath="..\..\engines\cruise\fontCharacterTable.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\isomap.h"
+			RelativePath="..\..\engines\cruise\fontCharacterTable.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\ite_introproc.cpp"
+			RelativePath="..\..\engines\cruise\function.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\itedata.cpp"
+			RelativePath="..\..\engines\cruise\function.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\itedata.h"
+			RelativePath="..\..\engines\cruise\gfxModule.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\list.h"
+			RelativePath="..\..\engines\cruise\gfxModule.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\music.cpp"
+			RelativePath="..\..\engines\cruise\linker.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\music.h"
+			RelativePath="..\..\engines\cruise\linker.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\objectmap.cpp"
+			RelativePath="..\..\engines\cruise\mainDraw.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\objectmap.h"
+			RelativePath="..\..\engines\cruise\mainDraw.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\palanim.cpp"
+			RelativePath="..\..\engines\cruise\menu.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\palanim.h"
+			RelativePath="..\..\engines\cruise\menu.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\puzzle.cpp"
+			RelativePath="..\..\engines\cruise\mouse.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\puzzle.h"
+			RelativePath="..\..\engines\cruise\mouse.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\render.cpp"
+			RelativePath="..\..\engines\cruise\object.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\render.h"
+			RelativePath="..\..\engines\cruise\object.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\rscfile.cpp"
+			RelativePath="..\..\engines\cruise\overlay.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\rscfile.h"
+			RelativePath="..\..\engines\cruise\overlay.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\saga.cpp"
+			RelativePath="..\..\engines\cruise\perso.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\saga.h"
+			RelativePath="..\..\engines\cruise\perso.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\sagaresnames.h"
+			RelativePath="..\..\engines\cruise\polys.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\saveload.cpp"
+			RelativePath="..\..\engines\cruise\polys.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\scene.cpp"
+			RelativePath="..\..\engines\cruise\saveload.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\scene.h"
+			RelativePath="..\..\engines\cruise\saveload.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\script.cpp"
+			RelativePath="..\..\engines\cruise\script.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\script.h"
+			RelativePath="..\..\engines\cruise\script.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\sfuncs.cpp"
+			RelativePath="..\..\engines\cruise\stack.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\sndres.cpp"
+			RelativePath="..\..\engines\cruise\stack.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\sndres.h"
+			RelativePath="..\..\engines\cruise\stringSupport.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\sound.cpp"
+			RelativePath="..\..\engines\cruise\stringSupport.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\sound.h"
+			RelativePath="..\..\engines\cruise\various.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\sprite.cpp"
+			RelativePath="..\..\engines\cruise\various.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\sprite.h"
+			RelativePath="..\..\engines\cruise\vars.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\sthread.cpp"
+			RelativePath="..\..\engines\cruise\vars.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\stream.h"
+			RelativePath="..\..\engines\cruise\volume.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\cruise\volume.h"
 			>
 		</File>
 	</Files>

@@ -204,15 +204,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\agos\detection.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\detection_tables.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\agos\draw.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\agos\event.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agos\game.cpp"
 			>
 		</File>
 		<File

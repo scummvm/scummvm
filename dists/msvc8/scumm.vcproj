@@ -528,6 +528,18 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\scumm\detection.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\detection.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\detection_tables.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\scumm\dialogs.cpp"
 			>
 		</File>
@@ -645,14 +657,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\player_v3a.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\plugin.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\plugin.h"
 			>
 		</File>
 		<File

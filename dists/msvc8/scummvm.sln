@@ -45,6 +45,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "touche", "touche.vcproj", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "parallaction", "parallaction.vcproj", "{0068957B-E2E1-4988-8C87-D541D84DAF20}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cruise", "cruise.vcproj", "{8863B00B-059A-471E-876D-A955ECEFD0D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -111,6 +113,10 @@ Global
 		{0068957B-E2E1-4988-8C87-D541D84DAF20}.Debug|Win32.Build.0 = Debug|Win32
 		{0068957B-E2E1-4988-8C87-D541D84DAF20}.Release|Win32.ActiveCfg = Release|Win32
 		{0068957B-E2E1-4988-8C87-D541D84DAF20}.Release|Win32.Build.0 = Release|Win32
+		{8863B00B-059A-471E-876D-A955ECEFD0D2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8863B00B-059A-471E-876D-A955ECEFD0D2}.Debug|Win32.Build.0 = Debug|Win32
+		{8863B00B-059A-471E-876D-A955ECEFD0D2}.Release|Win32.ActiveCfg = Release|Win32
+		{8863B00B-059A-471E-876D-A955ECEFD0D2}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

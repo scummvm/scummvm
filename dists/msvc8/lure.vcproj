@@ -199,6 +199,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\lure\detection.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\lure\disk.cpp"
 			>
 		</File>

@@ -205,6 +205,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\font.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\graphics.cpp"
 			>
 		</File>
@@ -270,6 +274,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\walk.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\walk.h"
 			>
 		</File>
 		<File
