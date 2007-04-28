@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2001-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,36 +23,32 @@
 #ifndef CEACTIONSSMARTPHONE
 #define CEACTIONSSMARTPHONE
 
-//#ifdef WIN32_PLATFORM_WFSP
-
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-
-
 #include "wince-sdl.h"
 #include "gui/Key.h"
-
 #include "gui/Actions.h"
 
-#define SMARTPHONE_ACTION_VERSION 4
+#define SMARTPHONE_ACTION_VERSION 5
 
 enum smartphoneActionType {
-        SMARTPHONE_ACTION_UP = 0,
-        SMARTPHONE_ACTION_DOWN,
-        SMARTPHONE_ACTION_LEFT,
-        SMARTPHONE_ACTION_RIGHT,
-        SMARTPHONE_ACTION_LEFTCLICK,
-        SMARTPHONE_ACTION_RIGHTCLICK,
-        SMARTPHONE_ACTION_SAVE,
-        SMARTPHONE_ACTION_SKIP,
-        SMARTPHONE_ACTION_ZONE,
-		SMARTPHONE_ACTION_FT_CHEAT,
-		SMARTPHONE_ACTION_BINDKEYS,
-		SMARTPHONE_ACTION_KEYBOARD,
-		SMARTPHONE_ACTION_ROTATE,
+	SMARTPHONE_ACTION_UP = 0,
+	SMARTPHONE_ACTION_DOWN,
+	SMARTPHONE_ACTION_LEFT,
+	SMARTPHONE_ACTION_RIGHT,
+	SMARTPHONE_ACTION_LEFTCLICK,
+	SMARTPHONE_ACTION_RIGHTCLICK,
+	SMARTPHONE_ACTION_SAVE,
+	SMARTPHONE_ACTION_SKIP,
+	SMARTPHONE_ACTION_ZONE,
+	SMARTPHONE_ACTION_FT_CHEAT,
+	SMARTPHONE_ACTION_BINDKEYS,
+	SMARTPHONE_ACTION_KEYBOARD,
+	SMARTPHONE_ACTION_ROTATE,
+	SMARTPHONE_ACTION_QUIT,
 
-		SMARTPHONE_ACTION_LAST
+	SMARTPHONE_ACTION_LAST
 };
 
 
@@ -78,5 +74,3 @@ class CEActionsSmartphone : public GUI::Actions {
 	};
 
 #endif
-
-//#endif

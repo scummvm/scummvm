@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2001-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,25 +20,15 @@
  *
  */
 
-//#define SIMU_SMARTPHONE 1
-
-//#ifdef WIN32_PLATFORM_WFSP
-
 #include "common/stdafx.h"
 #include "CEActionsSmartphone.h"
 #include "EventsBuffer.h"
-
 #include "gui/message.h"
-
 #include "scumm/scumm.h"
-
 #include "common/config-manager.h"
-
 #include "gui/KeysDialog.h"
 
-#ifdef _WIN32_WCE
 #define		KEY_ALL_SKIP	3457
-#endif
 
 const String smartphoneActionNames[] = {
 	"Up",
@@ -53,14 +43,11 @@ const String smartphoneActionNames[] = {
 	"FT Cheat",
 	"Bind Keys",
 	"Keyboard",
-	"Rotate"
+	"Rotate",
+	"Quit"
 };
 
-#ifdef SIMU_SMARTPHONE
-const int ACTIONS_SMARTPHONE_DEFAULT[] = { 0x111, 0x112, 0x114, 0x113, 0x11a, 0x11b, VK_LWIN, VK_ESCAPE, VK_F8, 0, VK_RETURN, 0, 0 };
-#else
-const int ACTIONS_SMARTPHONE_DEFAULT[] = { '4', '6', '8', '2', 0x11a, 0x11b, '0', VK_ESCAPE, '9', 0, VK_RETURN, 0, 0 };
-#endif
+const int ACTIONS_SMARTPHONE_DEFAULT[] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_F3, SDLK_ESCAPE, SDLK_9, SDLK_8, SDLK_F4, SDLK_RETURN, SDLK_5, SDLK_0 };
 
 void CEActionsSmartphone::init() {
 	_instance = new CEActionsSmartphone();
@@ -98,22 +85,18 @@ void CEActionsSmartphone::initInstanceMain(OSystem *mainSystem) {
 	_CESystem = static_cast<OSystem_WINCE3*>(mainSystem);
 
 	GUI_Actions::initInstanceMain(mainSystem);
-	// Mouse Up
+
+	// These actions are always on
 	_action_enabled[SMARTPHONE_ACTION_UP] = true;
-	// Mouse Down
 	_action_enabled[SMARTPHONE_ACTION_DOWN] = true;
-	// Mouse Left
 	_action_enabled[SMARTPHONE_ACTION_LEFT] = true;
-	// Mouse Right
 	_action_enabled[SMARTPHONE_ACTION_RIGHT] = true;
-	// Left Click
 	_action_enabled[SMARTPHONE_ACTION_LEFTCLICK] = true;
-	// Right Click
 	_action_enabled[SMARTPHONE_ACTION_RIGHTCLICK] = true;
-	// Show virtual keyboard
 	_action_enabled[SMARTPHONE_ACTION_KEYBOARD] = true;
-	// Rotate display
 	_action_enabled[SMARTPHONE_ACTION_ROTATE] = true;
+	_action_enabled[SMARTPHONE_ACTION_QUIT] = true;
+	_action_enabled[SMARTPHONE_ACTION_BINDKEYS] = true;
 }
 
 void CEActionsSmartphone::initInstanceGame() {
@@ -239,9 +222,14 @@ bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
 		case SMARTPHONE_ACTION_ROTATE:
 			_CESystem->smartphone_rotate_display();
 			return true;
+		case SMARTPHONE_ACTION_QUIT:
+			{
+				GUI::MessageDialog alert("   Are you sure you want to quit ?   ", "Yes", "No");
+				if (alert.runModal() == GUI::kMessageOK)
+					_mainSystem->quit();
+				return true;
+			}
 	}
 
 	return false;
 }
-
-//#endif
