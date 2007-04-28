@@ -20,6 +20,8 @@
  *
  */
 
+// NOTE: formatted for tabstop=4
+
 #include "common/stdafx.h"
 #include "backends/platform/wince/wince-sdl.h"
 
@@ -1328,7 +1330,7 @@ void OSystem_WINCE3::hotswapGFXMode() {
 	SDL_FreeSurface(old_overlayscreen);
 	SDL_FreeSurface(old_tmpscreen2);
 
-	// Blit everything to the screen
+	// Blit everything back to the screen
 	internUpdateScreen();
 
 	// Make sure that a Common::EVENT_SCREEN_CHANGED gets sent later -> FIXME this crashes when no game has been loaded.
@@ -1353,8 +1355,12 @@ void OSystem_WINCE3::update_keyboard() {
 void OSystem_WINCE3::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	static bool old_overlayVisible = false;
+	int numRectsOut = 0;
+	int16 routx, routy, routw, routh;
+
 	assert(_hwscreen != NULL);
 
+	// bail if the application is minimized, be nice to OS
 	if (!_hasfocus) {
 		Sleep(20);
 		return;
@@ -1418,7 +1424,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 	// Only draw anything if necessary
 	if (_numDirtyRects > 0) {
 
-		SDL_Rect *r;
+		SDL_Rect *r, *rout;
 		SDL_Rect dst;
 		uint32 srcPitch, dstPitch;
 		SDL_Rect *last_rect = _dirtyRectList + _numDirtyRects;
@@ -1427,8 +1433,9 @@ void OSystem_WINCE3::internUpdateScreen() {
 
 		for (r = _dirtyRectList; r != last_rect; ++r) {
 			dst = *r;
-			dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
+			dst.x++;	// Shift rect by one since 2xSai needs to access the data around
 			dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
+					// NOTE: This is also known as BLACK MAGIC, copied from the sdl backend
 			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
 				error("SDL_BlitSurface failed: %s", SDL_GetError());
 		}
@@ -1439,68 +1446,49 @@ void OSystem_WINCE3::internUpdateScreen() {
 		srcPitch = srcSurf->pitch;
 		dstPitch = _hwscreen->pitch;
 
-		for (r = _dirtyRectList; r != last_rect; ++r) {
-			register int dst_y = r->y + _currentShakePos;
-			register int dst_h = 0;
+		for (r = _dirtyRectList, rout = _dirtyRectOut; r != last_rect; ++r) {
+			// transform
+			routx = r->x * _scaleFactorXm / _scaleFactorXd;				// locate position in scaled screen
+			routy = (r->y + _currentShakePos) * _scaleFactorYm / _scaleFactorYd;	// adjust for shake offset
+			routw = r->w * _scaleFactorXm / _scaleFactorXd;
+			routh = r->h * _scaleFactorYm / _scaleFactorYd;
 
-			// Check if the toolbar is overwritten
-			if (!_forceFull && toolbarVisible && r->y + r->h >= toolbarOffset)
-				_toolbarHandler.forceRedraw();
-
-			if (dst_y < _screenHeight) {
-				dst_h = r->h;
-				if (dst_h > _screenHeight - dst_y)
-					dst_h = _screenHeight - dst_y;
-
-				dst_y *= _scaleFactorYm;
-				dst_y /= _scaleFactorYd;
-
-				if (_adjustAspectRatio) {
-					dst_h = real2Aspect(dst_h);
-
-					// clip inside platform screen (landscape,bottom only)
-					if (_orientationLandscape && !_zoomDown && dst_y+dst_h > _platformScreenWidth)
-						dst_h = _platformScreenWidth - dst_y;
+			// clipping destination rectangle inside device screen (more strict, also more tricky but more stable)
+			// note that all current scalers do not make dst rect exceed left/right, unless chosen badly (FIXME)
+			if (_zoomDown)	routy -= 240;			// adjust for zoom position
+			if (routy + routh < 0)	continue;
+			if (_orientationLandscape) {
+				if (routy > _platformScreenWidth)	continue;
+				if (routy + routh > _platformScreenWidth) {
+					routh = _platformScreenWidth - routy;
+					r->h = routh * _scaleFactorYd / _scaleFactorYm;
 				}
-
-				if (!_zoomDown)
-					_scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-						(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + dst_y * dstPitch, dstPitch, r->w, dst_h);
-				else {
-					_scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-						(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + (dst_y - 240) * dstPitch, dstPitch, r->w, dst_h);
+			} else {
+				if (routy > _platformScreenHeight)	continue;
+				if (routy + routh > _platformScreenHeight) {
+					routh = _platformScreenHeight - routy;
+					r->h = routh * _scaleFactorYd / _scaleFactorYm;
 				}
-
 			}
 
-			r->x = r->x * _scaleFactorXm / _scaleFactorXd;
-			if (!_zoomDown)
-				r->y = dst_y;
-			else
-				r->y = dst_y - 240;
-			r->w = r->w * _scaleFactorXm / _scaleFactorXd;
-			if (!_adjustAspectRatio)
-				r->h = dst_h * _scaleFactorYm / _scaleFactorYd;
-			else
-				r->h = dst_h;
+			// check if the toolbar is overwritten
+			if (toolbarVisible && r->y + r->h >= toolbarOffset)
+				_toolbarHandler.forceRedraw();
+
+			// blit it (with added voodoo from the sdl backend, shifting the source rect again)
+			_scalerProc(	(byte *)srcSurf->pixels + (r->x * 2 + 2)+ (r->y + 1) * srcPitch, srcPitch,
+					(byte *)_hwscreen->pixels + routx * 2 + routy * dstPitch, dstPitch,
+					r->w, r->h);
+
+			// add this rect to output
+			rout->x = routx;	rout->y = routy;
+			rout->w = routw;	rout->h = routh;
+			numRectsOut++;
+			rout++;
+	 		
 		}
 		SDL_UnlockSurface(srcSurf);
 		SDL_UnlockSurface(_hwscreen);
-
-		// Readjust the dirty rect list in case we are doing a full update.
-		// This is necessary if shaking is active.
-		if (_forceFull) {
-			_dirtyRectList[0].y = 0;
-			_dirtyRectList[0].h = (_adjustAspectRatio ? 240 : (_zoomUp || _zoomDown ? _screenHeight / 2 : _screenHeight)) * _scaleFactorYm / _scaleFactorYd;
-			if (_orientationLandscape)
-			{
-				if (_dirtyRectList[0].h > _platformScreenWidth)
-					_dirtyRectList[0].h = _platformScreenWidth; // clip
-			} else {
-				if (_dirtyRectList[0].h > _platformScreenHeight)
-					_dirtyRectList[0].h = _platformScreenHeight; // clip
-			}
-		}
 	}
 	// Add the toolbar if needed
 	SDL_Rect toolbar_rect[1];
@@ -1552,8 +1540,8 @@ void OSystem_WINCE3::internUpdateScreen() {
 	}
 
 	// Finally, blit all our changes to the screen
-	if (_numDirtyRects > 0)
-		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
+	if (numRectsOut > 0)
+		SDL_UpdateRects(_hwscreen, numRectsOut, _dirtyRectOut);
 
 	_numDirtyRects = 0;
 	_forceFull = false;
@@ -2180,7 +2168,6 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 					_orientationLandscape = _newOrientation;
 					ConfMan.setInt("landscape", _orientationLandscape);
 					ConfMan.flushToDisk();
-					//setGraphicsMode(GFX_NORMAL);
 					hotswapGFXMode();
 				}
 			} else {
