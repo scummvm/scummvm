@@ -27,6 +27,7 @@
 #include "gob/gob.h"
 #include "gob/dataio.h"
 #include "gob/global.h"
+#include "gob/util.h"
 
 namespace Gob {
 
@@ -305,6 +306,13 @@ void DataIO::openDataFile(const char *src, bool itk) {
 		dataDesc[i].size = file_getHandle(_dataFileHandles[file])->readUint32LE();
 		dataDesc[i].offset = file_getHandle(_dataFileHandles[file])->readUint32LE();
 		dataDesc[i].packed = file_getHandle(_dataFileHandles[file])->readByte();
+
+		// Replacing cyrillic characters
+		Util::replaceChar(dataDesc[i].chunkName, (char) 0x85, 'E');
+		Util::replaceChar(dataDesc[i].chunkName, (char) 0x8A, 'K');
+		Util::replaceChar(dataDesc[i].chunkName, (char) 0x8E, 'O');
+		Util::replaceChar(dataDesc[i].chunkName, (char) 0x91, 'C');
+		Util::replaceChar(dataDesc[i].chunkName, (char) 0x92, 'T');
 	}
 
 	for (int i = 0; i < _numDataChunks[file]; i++)

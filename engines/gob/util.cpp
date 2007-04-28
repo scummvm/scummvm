@@ -393,6 +393,11 @@ void Util::cutFromStr(char *str, int16 from, int16 cutlen) {
 	} while (str[i] != 0);
 }
 
+void Util::replaceChar(char *str, char c1, char c2) {
+	while ((str = strchr(str, c1)))
+		*str = c2;
+}
+
 static const char trStr1[] =
 	"       '   + - :0123456789: <=>  abcdefghijklmnopqrstuvwxyz      "
 	"abcdefghijklmnopqrstuvwxyz     ";
