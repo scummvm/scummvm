@@ -95,7 +95,7 @@ void PocketPCLandscapeAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr
 	uint16 srcPitch16 = (uint16)(srcPitch / sizeof(uint16));
 	uint16 dstPitch16 = (uint16)(dstPitch / sizeof(uint16));
 
-	for (i = 0; i < height/6; i++) {
+	for (i = 0; i < height/5; i++) {
 		for (j=0; j < width; j++) {
 			p1 = *((uint16*)inbuf+j); inbuf += srcPitch16;
 			*((uint16*)outbuf+j) = p1; outbuf += dstPitch16;
@@ -187,7 +187,6 @@ void PocketPCHalfZoom(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint3
 	}
 }
 
-//#ifdef WIN32_PLATFORM_WFSP
 void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *work;
 	int i;
@@ -218,5 +217,3 @@ void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, ui
 		}
 	}
 }
-//#endif
-
