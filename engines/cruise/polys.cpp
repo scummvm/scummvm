@@ -50,8 +50,8 @@ void vline(int x, int y1, int y2, char c) {
 
 void bsubline_1(int x1, int y1, int x2, int y2, char c) {
 	int x, y, ddx, ddy, e;
-	ddx = abs(x2 - x1);
-	ddy = abs(y2 - y1) << 1;
+	ddx = ABS(x2 - x1);
+	ddy = ABS(y2 - y1) << 1;
 	e = ddx - ddy;
 	ddx <<= 1;
 
@@ -76,8 +76,8 @@ void bsubline_1(int x1, int y1, int x2, int y2, char c) {
 void bsubline_2(int x1, int y1, int x2, int y2, char c) {
 
 	int x, y, ddx, ddy, e;
-	ddx = abs(x2 - x1) << 1;
-	ddy = abs(y2 - y1);
+	ddx = ABS(x2 - x1) << 1;
+	ddy = ABS(y2 - y1);
 	e = ddy - ddx;
 	ddy <<= 1;
 
@@ -103,8 +103,8 @@ void bsubline_3(int x1, int y1, int x2, int y2, char c) {
 
 	int x, y, ddx, ddy, e;
 
-	ddx = abs(x1 - x2) << 1;
-	ddy = abs(y2 - y1);
+	ddx = ABS(x1 - x2) << 1;
+	ddy = ABS(y2 - y1);
 	e = ddy - ddx;
 	ddy <<= 1;
 
@@ -130,8 +130,8 @@ void bsubline_4(int x1, int y1, int x2, int y2, char c) {
 
 	int x, y, ddx, ddy, e;
 
-	ddy = abs(y2 - y1) << 1;
-	ddx = abs(x1 - x2);
+	ddy = ABS(y2 - y1) << 1;
+	ddx = ABS(x1 - x2);
 	e = ddx - ddy;
 	ddx <<= 1;
 

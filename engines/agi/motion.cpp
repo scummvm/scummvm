@@ -110,7 +110,7 @@ void AgiEngine::motionFollowEgo(VtEntry *v) {
 		while ((v->direction = _rnd->getRandomNumber(8)) == 0) {
 		}
 
-		d = (abs(egoY - objY) + abs(egoX - objX)) / 2;
+		d = (ABS(egoY - objY) + ABS(egoX - objX)) / 2;
 
 		if (d < v->stepSize) {
 			v->parm3 = v->stepSize;

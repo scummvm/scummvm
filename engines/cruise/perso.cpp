@@ -23,6 +23,7 @@
  */
 
 #include "cruise/cruise_main.h"
+#include "common/util.h"
 
 namespace Cruise {
 
@@ -62,9 +63,9 @@ int direction(int x1, int y1, int x2, int y2, int inc_jo1, int inc_jo2) {
 	int h, v, h1, v1;
 
 	h1 = x1 - x2;
-	h = abs(h1);
+	h = ABS(h1);
 	v1 = y1 - y2;
-	v = abs(v1);
+	v = ABS(v1);
 
 	if (v > h) {
 		if (h > 30)

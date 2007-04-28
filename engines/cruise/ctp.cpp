@@ -23,6 +23,7 @@
  */
 
 #include "cruise/cruise_main.h"
+#include "common/util.h"
 
 namespace Cruise {
 
@@ -44,8 +45,8 @@ int ctpVarUnk;
 uint8 walkboxTable[0x12];
 
 int ctpProc2(int varX, int varY, int paramX, int paramY) {
-	int diffX = abs(paramX - varX);
-	int diffY = abs(paramY - varY);
+	int diffX = ABS(paramX - varX);
+	int diffY = ABS(paramY - varY);
 
 	if (diffX > diffY) {
 		diffY = diffX;

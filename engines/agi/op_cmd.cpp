@@ -1014,7 +1014,7 @@ cmd(distance) {
 		y1 = v0->yPos;
 		x2 = v1->xPos + v1->xSize / 2;
 		y2 = v1->yPos;
-		d = abs(x1 - x2) + abs(y1 - y2);
+		d = ABS(x1 - x2) + ABS(y1 - y2);
 		if (d > 0xfe)
 			d = 0xfe;
 	} else {

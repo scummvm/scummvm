@@ -717,7 +717,7 @@ int16 computePathfinding(int16 *pSolution, int16 _X, int16 _Y, int16 destX,
 void set_anim(int ovl, int obj, int start, int x, int y, int mat, int state) {
 	int newf, zoom;
 
-	newf = abs(mat) - 1;
+	newf = ABS(mat) - 1;
 
 	zoom = computeZoom(y);
 	if (mat < 0)

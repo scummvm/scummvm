@@ -24,6 +24,7 @@
 
 #include "cruise/cruise_main.h"
 #include "cruise/cell.h"
+#include "common/util.h"
 
 namespace Cruise {
 
@@ -857,7 +858,7 @@ int16 Op_InitializeStateB(void) {
 	int sign;
 
 	if (di) {
-		sign = di / (abs(di));
+		sign = di / (ABS(di));
 	} else {
 		sign = 0;
 	}
@@ -1180,7 +1181,7 @@ int16 Op_AddAnimation(void) {
 			si->stepX = stepX;
 			si->stepY = stepY;
 
-			int newFrame = abs(actorTable1[direction].data[0]) - 1;
+			int newFrame = ABS(actorTable1[direction].data[0]) - 1;
 
 			int zoom = computeZoom(params.Y);
 

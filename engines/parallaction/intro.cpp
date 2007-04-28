@@ -210,13 +210,13 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY) {
 	_vm->_gfx->maskOpNot(oldX, oldY, unused);
 	_vm->_gfx->maskOpNot(newX, newY, unused);
 
-	if (abs(dx) >= abs(dy)) {
+	if (ABS(dx) >= ABS(dy)) {
 
-		int16 v4 = abs(dy);
+		int16 v4 = ABS(dy);
 		if (dx >= 0 && dy >= 0) {
 			for (uint16 i = 1; i < dx; i++) {
 				v4 += dy;
-				if (abs(dx) < v4) {
+				if (ABS(dx) < v4) {
 					oldY++;
 					v4 -= dx;
 				}
@@ -225,22 +225,22 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY) {
 		}
 
 		if (dx < 0 && dy >= 0) {
-			for (uint16 i = 1; i > abs(dx); i++) {
+			for (uint16 i = 1; i > ABS(dx); i++) {
 				v4 += dy;
-				if (abs(dx) < v4) {
+				if (ABS(dx) < v4) {
 					oldY++;
-					v4 -= abs(dx);
+					v4 -= ABS(dx);
 				}
 				_vm->_gfx->maskOpNot(oldX - i, oldY, unused);
 			}
 		}
 
 		if (dx < 0 && dy < 0) {
-			for (uint16 i = 1; i > abs(dx); i++) {
+			for (uint16 i = 1; i > ABS(dx); i++) {
 				v4 += dy;
-				if (abs(v4) > abs(dx)) {
+				if (ABS(v4) > ABS(dx)) {
 					oldY--;
-					v4 -= abs(dx);
+					v4 -= ABS(dx);
 				}
 				_vm->_gfx->maskOpNot(oldX - i, oldY, unused);
 			}
@@ -259,9 +259,9 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY) {
 
 	}
 
-	if (abs(dy) < abs(dx)) {
+	if (ABS(dy) < ABS(dx)) {
 
-		int16 v4 = abs(dx);
+		int16 v4 = ABS(dx);
 
 		if (dx >= 0 && dy >= 0) {
 			for (uint16 i = 1; i < dy; i++) {
@@ -286,22 +286,22 @@ void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY) {
 		}
 
 		if (dx < 0 && dy < 0) {
-			for (uint16 i = 1; i < abs(dy); i++) {
-				v4 -= abs(dx);
-				if (v4 > abs(dy)) {
+			for (uint16 i = 1; i < ABS(dy); i++) {
+				v4 -= ABS(dx);
+				if (v4 > ABS(dy)) {
 					oldX--;
-					v4 -= abs(dy);
+					v4 -= ABS(dy);
 				}
 				_vm->_gfx->maskOpNot(oldX, oldY - i, unused);
 			}
 		}
 
 		if (dx >= 0 && dy < 0) {
-			for (uint16 i = 1; i < abs(dy); i++) {
-				v4 += abs(dx);
-				if (v4 > abs(dy)) {
+			for (uint16 i = 1; i < ABS(dy); i++) {
+				v4 += ABS(dx);
+				if (v4 > ABS(dy)) {
 					oldX++;
-					v4 -= abs(dy);
+					v4 -= ABS(dy);
 				}
 				_vm->_gfx->maskOpNot(oldX, oldY - i, unused);
 			}
