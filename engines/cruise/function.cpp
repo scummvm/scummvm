@@ -953,8 +953,7 @@ int16 Op_SetColor(void)	{
 
 #define convertRatio 36.571428571428571428571428571429
 
-	for(i=startIdx; i<=endIdx; i++)
-	{
+	for(i=startIdx; i<=endIdx; i++) {
 		R = (int)(colorR*convertRatio);
 		G = (int)(colorG*convertRatio);
 		B = (int)(colorB*convertRatio);
@@ -972,9 +971,7 @@ int16 Op_SetColor(void)	{
 			lpalette[colorIdx].R = R;
 			lpalette[colorIdx].G = G;
 			lpalette[colorIdx].B = B;
-		}
-		else
-		{
+		} else {
 			lpalette[i].R = R;
 			lpalette[i].G = G;
 			lpalette[i].B = B;
