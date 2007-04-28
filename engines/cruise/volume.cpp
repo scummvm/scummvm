@@ -175,19 +175,6 @@ void strToUpper(uint8 *fileName) {
 	} while (character);
 }
 
-int16 fileExist(uint8 *fileName) {
-	FILE *fHandle;
-
-	fHandle = fopenuint8(fileName, "rb");
-
-	if (fHandle) {
-		fclose(fHandle);
-		return (0);
-	}
-
-	return (1);
-}
-
 void freeDisk(void) {
 	if (currentVolumeFile.isOpen()) {
 		currentVolumeFile.close();
@@ -243,7 +230,7 @@ void askDisk(int16 discNumber) {
 	strcatuint8(string, diskNumberString);
 	strcatuint8(string, " EN ");
 
-//      while(fileExist(fileName))
+	//while (Common::File::exists((const char*)fileName))
 	{
 		if (!messageDrawn) {
 			drawMsgString(string);

@@ -29,7 +29,6 @@ namespace Cruise {
 
 int16 readVolCnf(void);
 int16 findFileInDisks(uint8 * fileName);
-int16 fileExist(uint8 * fileName);
 void freeDisk(void);
 int16 findFileInList(uint8 * fileName);
 

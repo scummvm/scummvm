@@ -38,8 +38,4 @@ uint8 strcmpuint8(const void *string1, const void *string2) {
 	return strcmp((char *)string1, (char *)string2);
 }
 
-FILE *fopenuint8(void *name, const void *param) {
-	return fopen((char *)name, (const char *)param);
-}
-
 } // End of namespace Cruise

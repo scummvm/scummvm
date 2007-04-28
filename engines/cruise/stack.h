@@ -27,6 +27,8 @@
 
 namespace Cruise {
 
+// TODO: Replace this with Common::Stack
+
 #define SIZE_STACK 0x200
 
 enum stackElementTypeEnum {
