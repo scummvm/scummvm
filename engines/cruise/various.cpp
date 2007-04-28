@@ -117,6 +117,7 @@ char *getText(int textIndex, int overlayIndex) {
 void createTextObject(int overlayIdx, int oldVar8, cellStruct *pObject,
     int scriptNumber, int scriptOverlayNumber, int backgroundPlane,
     int16 color, int oldVar2, int oldVar4, int oldVar6) {
+
 	char *ax;
 	cellStruct *savePObject = pObject;
 	cellStruct *cx;
@@ -144,7 +145,7 @@ void createTextObject(int overlayIdx, int oldVar8, cellStruct *pObject,
 	pNewElement->field_A = oldVar6;
 	pNewElement->field_C = oldVar4;
 	pNewElement->spriteIdx = oldVar2;
-	pNewElement->field_10 = color;
+	pNewElement->color = color;
 	pNewElement->freeze = 0;
 	pNewElement->field_16 = scriptNumber;
 	pNewElement->field_18 = scriptOverlayNumber;

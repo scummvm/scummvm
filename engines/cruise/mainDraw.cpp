@@ -1085,7 +1085,7 @@ void mainDraw(int16 param) {
 	mainDraw6();
 	var20 = 0;
 
-	//-------------------------------------------------- DRAW OBJECTS TYPE 5 -----------------------------------------//
+	//-------------------------------------------------- DRAW OBJECTS TYPE 5 (MSG)-----------------------------------------//
 
 	currentObjPtr = cellHead.next;
 
@@ -1093,7 +1093,7 @@ void mainDraw(int16 param) {
 		if (currentObjPtr->type == 5 && currentObjPtr->freeze == 0) {
 			mainSprite(currentObjPtr->field_A,
 			    currentObjPtr->field_C, currentObjPtr->gfxPtr,
-			    gfxModuleData.pPage10, currentObjPtr->field_10,
+			    gfxModuleData.pPage10, currentObjPtr->color,
 			    currentObjPtr->spriteIdx);
 			var20 = 1;
 		}

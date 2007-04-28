@@ -598,7 +598,7 @@ gfxEntryStruct *renderText(int inRightBorder_X, uint8 *string) {
 
 	do {
 		int spacesCount = 0;	// si
-		char character = *string;
+		unsigned char character = *string;
 		short int strPixelLength;	// var_16
 		uint8 *ptrStringEnd;	// var_4     //ok
 		int drawPosPixel_X;	// di
@@ -628,7 +628,7 @@ gfxEntryStruct *renderText(int inRightBorder_X, uint8 *string) {
 		do {
 			character = *(string++);
 
-			short int charData = fontCharacterTable[(int)character];	// get character position
+			short int charData = fontCharacterTable[character];	// get character position
 
 			if (character) {
 				if (character == ' ' || character == 0x7C) {

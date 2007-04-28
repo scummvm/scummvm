@@ -703,7 +703,7 @@ int16 Op_AddMessage(void) {
 
 	if (color == -1) {
 		color = 0;
-		//ASSERT(0);
+		ASSERT(0);
 		//color = calcTabSomething();
 	} else {
 		if (CVTLoaded) {
@@ -939,17 +939,46 @@ int16 Op_removeBackgroundIncrust(void) {
 	return 0;
 }
 
-int16 Op_SetColor(void)	{	// TODO: palette manipulation
-	//var_4 = popVar();
-	//var_6 = popVar();
-	//var_8 = popVar();
-	//int si = popVar();
-	//int di = popVar();
-	popVar();
-	popVar();
-	popVar();
-	popVar();
-	popVar();
+int16 Op_SetColor(void)	{
+	int colorB = popVar();
+	int colorG = popVar();
+	int colorR = popVar();
+	int endIdx = popVar();
+	int startIdx = popVar();
+
+	int i;
+
+	int R,G,B;
+
+#define convertRatio 36.571428571428571428571428571429
+
+	for(i=startIdx; i<=endIdx; i++)
+	{
+		R = (int)(colorR*convertRatio);
+		G = (int)(colorG*convertRatio);
+		B = (int)(colorB*convertRatio);
+
+		if (R > 0xFF)
+			R = 0xFF;
+		if (G > 0xFF)
+			G = 0xFF;
+		if (B > 0xFF)
+			B = 0xFF;
+
+		if (CVTLoaded) {
+			int colorIdx = cvtPalette[i];
+			
+			lpalette[colorIdx].R = R;
+			lpalette[colorIdx].G = G;
+			lpalette[colorIdx].B = B;
+		}
+		else
+		{
+			lpalette[i].R = R;
+			lpalette[i].G = G;
+			lpalette[i].B = B;
+		}
+	}
 
 	return 0;
 }

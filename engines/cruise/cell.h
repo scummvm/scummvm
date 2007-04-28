@@ -41,7 +41,7 @@ struct cellStruct {
 	int16 field_A;
 	int16 field_C;
 	int16 spriteIdx;
-	int16 field_10;
+	int16 color;
 	int16 backgroundPlane;
 	int16 freeze;
 	int16 field_16;
