@@ -94,19 +94,36 @@ bundle: scummvm-static
 # location of additional libs for OS X usually /sw/ for fink or
 # /opt/local/ for darwinports
 OSXOPT=/sw
+
+# Static libaries, used for the scummvm-static target
+OSX_STATIC_LIBS := `sdl-config --static-libs`
+
+ifdef USE_VORBIS
+OSX_STATIC_LIBS += \
+		$(OSXOPT)/lib/libvorbisfile.a \
+		$(OSXOPT)/lib/libvorbis.a \
+		$(OSXOPT)/lib/libogg.a
+endif
+
+ifdef USE_FLAC
+OSX_STATIC_LIBS += $(OSXOPT)/lib/libFLAC.a
+endif
+
+ifdef USE_MAD
+OSX_STATIC_LIBS += $(OSXOPT)/lib/libmad.a
+endif
+
+ifdef USE_MPEG2
+OSX_STATIC_LIBS += $(OSXOPT)/lib/libmpeg2.a
+endif
+
 # Special target to create a static linked binary for Mac OS X.
 # We use -force_cpusubtype_ALL to ensure the binary runs on every
 # PowerPC machine.
 scummvm-static: $(OBJS)
 	$(CXX) $(LDFLAGS) -force_cpusubtype_ALL -o scummvm-static $(OBJS) \
-		`sdl-config --static-libs` \
 		-framework CoreMIDI \
-		$(OSXOPT)/lib/libmad.a \
-		$(OSXOPT)/lib/libvorbisfile.a \
-		$(OSXOPT)/lib/libvorbis.a \
-		$(OSXOPT)/lib/libogg.a \
-		$(OSXOPT)/lib/libmpeg2.a \
-		$(OSXOPT)/lib/libFLAC.a \
+		$(OSX_STATIC_LIBS) \
 		-lSystemStubs \
 		-lz
 
