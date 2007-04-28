@@ -131,7 +131,7 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 #endif
 
 
-#if defined(SCUMM_NEED_ALIGNMENT) || defined(SCUMM_BIG_ENDIAN)
+#if defined(SCUMM_NEED_ALIGNMENT) || !defined(SCUMM_LITTLE_ENDIAN)
 	FORCEINLINE uint16 READ_LE_UINT16(const void *ptr) {
 		const byte *b = (const byte *)ptr;
 		return (b[1] << 8) + b[0];
@@ -168,7 +168,7 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 #endif
 
 
-#if defined(SCUMM_NEED_ALIGNMENT) || defined(SCUMM_LITTLE_ENDIAN)
+#if defined(SCUMM_NEED_ALIGNMENT) || !defined(SCUMM_BIG_ENDIAN)
 	FORCEINLINE uint16 READ_BE_UINT16(const void *ptr) {
 		const byte *b = (const byte *)ptr;
 		return (b[0] << 8) + b[1];
