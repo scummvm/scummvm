@@ -839,65 +839,6 @@ int16 Op_InitializeStateB(void) {
 	return si;
 }
 
-void removeBackgroundIncrust(int overlay, int idx,
-    backgroundIncrustStruct * pHead) {
-	objectParamsQuery params;
-	int var_4;
-	int var_6;
-
-	backgroundIncrustStruct *pCurrent;
-	backgroundIncrustStruct *pCurrentHead;
-
-	getMultipleObjectParam(overlay, idx, &params);
-
-	var_4 = params.X;
-	var_6 = params.Y;
-
-	pCurrent = pHead->next;
-
-	while (pCurrent) {
-		if ((pCurrent->overlayIdx == overlay || overlay == -1) &&
-		    (pCurrent->objectIdx == idx || idx == -1) &&
-		    (pCurrent->X == var_4) && (pCurrent->Y == var_6)) {
-			pCurrent->field_6 = (uint16) - 1;
-		}
-
-		pCurrent = pCurrent->next;
-	}
-
-	pCurrentHead = pHead;
-	pCurrent = pHead->next;
-
-	while (pCurrent) {
-		if (pCurrent->field_6 == (uint16) - 1) {
-			backgroundIncrustStruct *pNext = pCurrent->next;
-			backgroundIncrustStruct *bx = pCurrentHead;
-			backgroundIncrustStruct *cx;
-
-			bx->next = pNext;
-			cx = pNext;
-
-			if (!pNext) {
-				cx = pHead;
-			}
-
-			bx = cx;
-			bx->prev = pCurrent->next;
-
-			if (pCurrent->ptr) {
-				free(pCurrent->ptr);
-			}
-
-			free(pCurrent);
-
-			pCurrent = pNext;
-		} else {
-			pCurrentHead = pCurrent;
-			pCurrent = pCurrent->next;
-		}
-	}
-}
-
 int16 Op_RemoveBackgroundIncrust(void) {
 	int idx = popVar();
 	int overlay = popVar();
@@ -1001,7 +942,7 @@ int16 Op_61(void) {
 	return si;
 }
 
-int16 Op_1A(void) {
+int16 Op_SetZoom(void) {
 	var46 = popVar();
 	var45 = popVar();
 	var42 = popVar();
@@ -1028,8 +969,7 @@ int16 Op_22(void) {
 	return (computeZoom(popVar()));
 }
 
-actorStruct *addAnimation(actorStruct * pHead, int overlay, int objIdx,
-	    int param, int param2) {
+actorStruct *addAnimation(actorStruct * pHead, int overlay, int objIdx, int param, int param2) {
 	actorStruct *pPrevious = pHead;
 	actorStruct *pCurrent = pHead->next;
 
@@ -1071,6 +1011,68 @@ actorStruct *addAnimation(actorStruct * pHead, int overlay, int objIdx,
 	pNewElement->freeze = 0;
 
 	return pNewElement;
+}
+
+int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType)
+{
+	actorStruct* pl;
+	actorStruct* pl2;
+	actorStruct* pl3;
+	actorStruct* pl4;
+
+	int dir = 0;
+
+	pl = pHead;
+	pl2 = pl;
+	pl = pl2->next;
+
+	while(pl)
+	{
+		pl2 = pl;
+
+		if(((pl->overlayNumber == overlay) || (overlay == -1)) &&
+			((pl->idx == objIdx) || (objIdx == -1)) &&
+			((pl->type == objType) || (objType == -1)))
+		{
+			pl->type = -1;
+		}
+
+		pl = pl2->next;
+	}
+
+	pl = pHead;
+	pl2 = pl;
+	pl = pl2->next;
+
+	while(pl)
+	{
+		if(pl->type == -1)
+		{
+			pl4 = pl->next;
+			pl2->next = pl4;
+			pl3 = pl4;
+
+			if(pl3 == NULL)
+				pl3 = pHead;
+
+			pl3->prev = pl->prev;
+
+			dir = pl->startDirection;
+
+			if(pl->idx >= 0)
+				freePerso(pl->idx);
+
+			free(pl);
+			pl = pl4;
+		}
+		else
+		{
+			pl2 = pl;
+			pl = pl2->next;
+		}
+	}
+
+	return dir;
 }
 
 int flag_obstacle;		// computedVar14Bis
@@ -1157,8 +1159,7 @@ int16 Op_AddAnimation(void) {
 				zoom = -zoom;
 			}
 
-			checkCollisionWithWalkBoxesBoundingBoxes(params.X,
-			    params.Y);
+			checkCollisionWithWalkBoxesBoundingBoxes(params.X, params.Y);
 
 			setObjectPosition(overlay, obj, 3, newFrame + start);
 			setObjectPosition(overlay, obj, 4, zoom);
@@ -1172,13 +1173,15 @@ int16 Op_AddAnimation(void) {
 }
 
 int16 Op_RemoveAnimation(void) {
-	popVar();
-	popVar();
-	popVar();
+	int objType = popVar();
+	int objIdx = popVar();
+	int ovlIdx = popVar();
 
-	printf("Partial op 19 (remove actor)\n");
+	if (!ovlIdx) {
+		ovlIdx = currentScriptPtr->overlayNumber;
+	}
 
-	return 0;
+	return removeAnimation(&actorHead, ovlIdx, objIdx, objType);
 }
 
 int16 Op_regenerateBackgroundIncrust(void) {
@@ -1441,7 +1444,7 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x17] = Op_LoadCt;
 	opcodeTablePtr[0x18] = Op_AddAnimation;
 	opcodeTablePtr[0x19] = Op_RemoveAnimation;
-	opcodeTablePtr[0x1A] = Op_1A;
+	opcodeTablePtr[0x1A] = Op_SetZoom;
 	opcodeTablePtr[0x1E] = Op_1E;
 	opcodeTablePtr[0x21] = Op_21;
 	opcodeTablePtr[0x22] = Op_22;

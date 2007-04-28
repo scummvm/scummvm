@@ -99,7 +99,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,
 	currentHead2->prev = newElement;
 
 	newElement->objectIdx = objectIdx;
-	newElement->field_6 = param4;
+	newElement->type = param4;
 	newElement->backgroundIdx = backgroundIdx;
 	newElement->overlayIdx = overlayIdx;
 	newElement->scriptNumber = scriptNumber;
@@ -137,9 +137,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,
 		 * ASSERT(0);
 		 * } */
 
-		addBackgroundIncrustSub1(params.fileIdx, newElement->X,
-		    newElement->Y, NULL, params.scale, (char *)backgroundPtr,
-		    (char *)filesDatabase[params.fileIdx].subData.ptr);
+		addBackgroundIncrustSub1(params.fileIdx, newElement->X, newElement->Y, NULL, params.scale, (char *)backgroundPtr, (char *)filesDatabase[params.fileIdx].subData.ptr);
 	}
 
 	return newElement;
@@ -164,7 +162,7 @@ void loadBackgroundIncrustFromSave(FILE *fileHandle) {
 		fseek(fileHandle, 4, SEEK_CUR);
 
 		fread(&current->objectIdx, 2, 1, fileHandle);
-		fread(&current->field_6, 2, 1, fileHandle);
+		fread(&current->type, 2, 1, fileHandle);
 		fread(&current->overlayIdx, 2, 1, fileHandle);
 		fread(&current->X, 2, 1, fileHandle);
 		fread(&current->Y, 2, 1, fileHandle);
@@ -214,6 +212,64 @@ void freeBackgroundIncrustList(backgroundIncrustStruct *pHead) {
 	}
 
 	resetBackgroundIncrustList(pHead);
+}
+
+void removeBackgroundIncrust(int overlay, int idx, backgroundIncrustStruct * pHead) {
+	objectParamsQuery params;
+	int var_4;
+	int var_6;
+
+	backgroundIncrustStruct *pCurrent;
+	backgroundIncrustStruct *pCurrentHead;
+
+	getMultipleObjectParam(overlay, idx, &params);
+
+	var_4 = params.X;
+	var_6 = params.Y;
+
+	pCurrent = pHead->next;
+
+	while (pCurrent) {
+		if ((pCurrent->overlayIdx == overlay || overlay == -1) &&
+		    (pCurrent->objectIdx == idx || idx == -1) &&
+		    (pCurrent->X == var_4) && (pCurrent->Y == var_6)) {
+			pCurrent->type = - 1;
+		}
+
+		pCurrent = pCurrent->next;
+	}
+
+	pCurrentHead = pHead;
+	pCurrent = pHead->next;
+
+	while (pCurrent) {
+		if (pCurrent->type == - 1) {
+			backgroundIncrustStruct *pNext = pCurrent->next;
+			backgroundIncrustStruct *bx = pCurrentHead;
+			backgroundIncrustStruct *cx;
+
+			bx->next = pNext;
+			cx = pNext;
+
+			if (!pNext) {
+				cx = pHead;
+			}
+
+			bx = cx;
+			bx->prev = pCurrent->next;
+
+			if (pCurrent->ptr) {
+				free(pCurrent->ptr);
+			}
+
+			free(pCurrent);
+
+			pCurrent = pNext;
+		} else {
+			pCurrentHead = pCurrent;
+			pCurrent = pCurrent->next;
+		}
+	}
 }
 
 } // End of namespace Cruise

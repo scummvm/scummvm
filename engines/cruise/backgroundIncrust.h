@@ -32,7 +32,7 @@ struct backgroundIncrustStruct {
 	struct backgroundIncrustStruct *prev;
 
 	uint16 objectIdx;
-	uint16 field_6;
+	int16 type;
 	uint16 overlayIdx;
 	uint16 X;
 	uint16 Y;
@@ -61,6 +61,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx, int16 param2,
 void loadBackgroundIncrustFromSave(FILE * fileHandle);
 void regenerateBackgroundIncrust(backgroundIncrustStruct * pHead);
 void freeBackgroundIncrustList(backgroundIncrustStruct * pHead);
+void removeBackgroundIncrust(int overlay, int idx, backgroundIncrustStruct * pHead);
 
 } // End of namespace Cruise
 
