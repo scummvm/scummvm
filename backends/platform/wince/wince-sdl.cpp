@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2001-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -258,7 +258,10 @@ void OSystem_WINCE3::initBackend()
 	// Initialize global key mapping
 	GUI::Actions::init();
 	GUI_Actions::Instance()->initInstanceMain(this);
-	GUI_Actions::Instance()->loadMapping();
+	if (!GUI_Actions::Instance()->loadMapping()) {	// error during loading means not present/wrong version
+		warning("Setting default action mappings.");
+		GUI_Actions::Instance()->saveMapping();	// write defaults
+	}
 
 	loadDeviceConfiguration();
 
@@ -306,7 +309,7 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	_panelVisible(true), _panelStateForced(false), _forceHideMouse(false),
 	_freeLook(false), _forcePanelInvisible(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
 	_scalersChanged(false), _monkeyKeyboard(false), _lastKeyPressed(0), _tapTime(0),
-	_saveToolbarState(false), _saveActiveToolbar(NAME_MAIN_PANEL), _rbutton(false),
+	_saveToolbarState(false), _saveActiveToolbar(NAME_MAIN_PANEL), _rbutton(false), _hasfocus(true),
 	_usesEmulatedMouse(false), _mouseBackupOld(NULL), _mouseBackupToolbar(NULL), _mouseBackupDim(0)
 {
 	_isSmartphone = CEDevice::isSmartphone();
@@ -320,6 +323,7 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	create_toolbar();
 
 	_mixer = 0;
+	_screen = NULL;
 }
 
 void OSystem_WINCE3::swap_panel_visibility() {
@@ -851,18 +855,16 @@ void OSystem_WINCE3::update_game_settings() {
 		panel->add(NAME_ITEM_BINDKEYS, new ItemAction(ITEM_BINDKEYS, POCKET_ACTION_BINDKEYS));
 		// portrait/landscape - screen dependent
 		// FIXME : will still display the portrait/landscape icon when using a scaler (but will be disabled)
-		if (_screenWidth <= 320 && (isOzone() || !CEDevice::hasDesktopResolution())) {
-			if (ConfMan.hasKey("landscape"))
-				if (ConfMan.get("landscape")[0] > 57) {
-					_newOrientation = _orientationLandscape = ConfMan.getBool("landscape");
-					//ConfMan.removeKey("landscape", "");
-					ConfMan.setInt("landscape", _orientationLandscape);
-				} else
-					_newOrientation = _orientationLandscape = ConfMan.getInt("landscape");
-			else
-				_newOrientation = _orientationLandscape = 0;
-			panel->add(NAME_ITEM_ORIENTATION, new ItemSwitch(ITEM_VIEW_LANDSCAPE, ITEM_VIEW_PORTRAIT, &_newOrientation, 2));
-		}
+		if (ConfMan.hasKey("landscape"))
+			if (ConfMan.get("landscape")[0] > 57) {
+				_newOrientation = _orientationLandscape = ConfMan.getBool("landscape");
+				//ConfMan.removeKey("landscape", "");
+				ConfMan.setInt("landscape", _orientationLandscape);
+			} else
+				_newOrientation = _orientationLandscape = ConfMan.getInt("landscape");
+		else
+			_newOrientation = _orientationLandscape = 0;
+		panel->add(NAME_ITEM_ORIENTATION, new ItemSwitch(ITEM_VIEW_LANDSCAPE, ITEM_VIEW_PORTRAIT, &_newOrientation, 2));
 		_toolbarHandler.add(NAME_MAIN_PANEL, *panel);
 		_toolbarHandler.setActive(NAME_MAIN_PANEL);
 		_toolbarHandler.setVisible(true);
@@ -1177,46 +1179,42 @@ void OSystem_WINCE3::loadGFXMode() {
 		error("_screen failed");
 
 	// Create the surface that contains the scaled graphics in 16 bit mode
-
 	// Always use full screen mode to have a "clean screen"
-	displayWidth = _screenWidth * _scaleFactorXm / _scaleFactorXd;
-	displayHeight = _screenHeight * _scaleFactorYm / _scaleFactorYd;
+	if (!_adjustAspectRatio) {
+		displayWidth = _screenWidth * _scaleFactorXm / _scaleFactorXd;
+		displayHeight = _screenHeight * _scaleFactorYm / _scaleFactorYd;
+	} else {
+		displayWidth = _screenWidth;
+		displayHeight = _screenHeight;
+	}
 	if (_screenHeight == 400)	// touche engine fixup
 		displayHeight += 80 * _scaleFactorYm / _scaleFactorYd;
-
-	// FIXME
-	if (displayWidth <= GetSystemMetrics(SM_CXSCREEN)) { // no rotation
-		displayWidth = GetSystemMetrics(SM_CXSCREEN);
-		displayHeight = GetSystemMetrics(SM_CYSCREEN);
-	} else if (displayHeight > GetSystemMetrics(SM_CXSCREEN))  // rotating, clip height
-		displayHeight = GetSystemMetrics(SM_CXSCREEN);
-	
-	if (_orientationLandscape == 2) flags |= SDL_FLIPVIDEO;
+	switch (_orientationLandscape) {
+		case 1:
+			flags |= SDL_LANDSCVIDEO;
+			break;
+		case 2:
+			flags |= SDL_INVLNDVIDEO;
+			break;
+		default:
+			flags |= SDL_PORTRTVIDEO;
+	}
 	_hwscreen = SDL_SetVideoMode(displayWidth, displayHeight, 16, flags);
 
 	if (_hwscreen == NULL) {
-		// DON'T use error(), as this tries to bring up the debug
-		// console, which WON'T WORK now that _hwscreen is hosed.
-
-		// FIXME: We should be able to continue the game without
-		// shutting down or bringing up the debug console, but at
-		// this point we've already screwed up all our member vars.
-		// We need to find a way to call SDL_VideoModeOK *before*
-		// that happens and revert to all the old settings if we
-		// can't pull off the switch to the new settings.
-		//
-		// Fingolfin says: the "easy" way to do that is not to modify
-		// the member vars before we are sure everything is fine. Think
-		// of "transactions, commit, rollback" style... we use local vars
-		// in place of the member vars, do everything etc. etc.. In case
-		// of a failure, rollback is trivial. Only if everything worked fine
-		// do we "commit" the changed values to the member vars.
 		warning("SDL_SetVideoMode says we can't switch to that mode");
 		quit();
 	}
 
-	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
+	// see what orientation sdl finally accepted
+	if (_hwscreen->flags & SDL_PORTRTVIDEO)
+		_orientationLandscape = _newOrientation	= 0;
+	else if (_hwscreen->flags & SDL_LANDSCVIDEO)
+		_orientationLandscape = _newOrientation	= 1;
+	else
+		_orientationLandscape = _newOrientation	= 2;
 
+	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
 	// Distinguish 555 and 565 mode
 	if (_hwscreen->format->Rmask == 0x7C00)
 		InitScalers(555);
@@ -1248,7 +1246,7 @@ void OSystem_WINCE3::loadGFXMode() {
 	}
 
 	// Toolbar
-	uint16 *toolbar_screen = (uint16 *)calloc(320 * 40, sizeof(uint16));
+	uint16 *toolbar_screen = (uint16 *)calloc(320 * 40, sizeof(uint16));	// FIXME: leaking memory here
 	_toolbarLow = SDL_CreateRGBSurfaceFrom(toolbar_screen, 320, 40, 16, 320 * 2, _hwscreen->format->Rmask, _hwscreen->format->Gmask, _hwscreen->format->Bmask, _hwscreen->format->Amask);
 
 	if (_toolbarLow == NULL)
@@ -1333,8 +1331,8 @@ void OSystem_WINCE3::hotswapGFXMode() {
 	// Blit everything to the screen
 	internUpdateScreen();
 
-	// Make sure that an Common::EVENT_SCREEN_CHANGED gets sent later
-	_modeChanged = true;
+	// Make sure that a Common::EVENT_SCREEN_CHANGED gets sent later -> FIXME this crashes when no game has been loaded.
+//	_modeChanged = true;
 }
 
 void OSystem_WINCE3::update_keyboard() {
@@ -1356,6 +1354,11 @@ void OSystem_WINCE3::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	static bool old_overlayVisible = false;
 	assert(_hwscreen != NULL);
+
+	if (!_hasfocus) {
+		Sleep(20);
+		return;
+	}
 
 	update_keyboard();
 
@@ -1452,12 +1455,13 @@ void OSystem_WINCE3::internUpdateScreen() {
 				dst_y *= _scaleFactorYm;
 				dst_y /= _scaleFactorYd;
 
-				if (_adjustAspectRatio)
+				if (_adjustAspectRatio) {
 					dst_h = real2Aspect(dst_h);
 
-				// clip inside platform screen (landscape,bottom only)
-				if (_orientationLandscape && !_zoomDown && dst_y+dst_h > _screenHeight)
-					dst_h = _screenHeight - dst_y;
+					// clip inside platform screen (landscape,bottom only)
+					if (_orientationLandscape && !_zoomDown && dst_y+dst_h > _platformScreenWidth)
+						dst_h = _platformScreenWidth - dst_y;
+				}
 
 				if (!_zoomDown)
 					_scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
@@ -1561,30 +1565,6 @@ bool OSystem_WINCE3::saveScreenshot(const char *filename) {
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 	SDL_SaveBMP(_hwscreen, filename);
 	return true;
-}
-
-// FIXME
-// Reuse static or proper mapping
-
-static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode)
-{
-	if (GUI::Actions::Instance()->mappingActive())
-		return key;
-
-	if (key >= SDLK_F1 && key <= SDLK_F9) {
-		return key - SDLK_F1 + 315;
-	} else if (key >= SDLK_KP0 && key <= SDLK_KP9) {
-		return key - SDLK_KP0 + '0';
-	} else if (key >= SDLK_UP && key <= SDLK_PAGEDOWN) {
-		return key;
-	} else if (unicode) {
-		return unicode;
-	} else if (key >= 'a' && key <= 'z' && mod & KMOD_SHIFT) {
-		return key & ~0x20;
-	} else if (key >= SDLK_NUMLOCK && key <= SDLK_EURO) {
-		return 0;
-	}
-	return key;
 }
 
 void OSystem_WINCE3::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
@@ -2048,9 +2028,7 @@ void OSystem_WINCE3::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 				else
 					h = 240 - y;
 			}
-		}
-		else
-		if (_zoomDown) {
+		} else if (_zoomDown) {
 			if (y + h >= 240) {
 				if (y < 240) {
 					h = 240 - y;
@@ -2065,8 +2043,24 @@ void OSystem_WINCE3::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 	OSystem_SDL::addDirtyRect(x, y, w, h, false);
 }
 
-// FIXME
-// See if some SDL mapping can be useful for HPCs
+static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode)
+{
+	if (GUI::Actions::Instance()->mappingActive())
+		return key;
+
+	if (key >= SDLK_KP0 && key <= SDLK_KP9) {
+		return key - SDLK_KP0 + '0';
+	} else if (key >= SDLK_UP && key <= SDLK_PAGEDOWN) {
+		return key;
+	} else if (unicode) {
+		return unicode;
+	} else if (key >= 'a' && key <= 'z' && mod & KMOD_SHIFT) {
+		return key & ~0x20;
+	} else if (key >= SDLK_NUMLOCK && key <= SDLK_EURO) {
+		return 0;
+	}
+	return key;
+}
 
 bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 	SDL_Event ev;
@@ -2182,11 +2176,11 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 			if (_toolbarHandler.action(temp_event.mouse.x, temp_event.mouse.y, true)) {
 				if (!_toolbarHandler.drawn())
 					internUpdateScreen();
-				if (_newOrientation != _orientationLandscape && _mode == GFX_NORMAL) {
+				if (_newOrientation != _orientationLandscape){
 					_orientationLandscape = _newOrientation;
 					ConfMan.setInt("landscape", _orientationLandscape);
 					ConfMan.flushToDisk();
-					setGraphicsMode(GFX_NORMAL);
+					//setGraphicsMode(GFX_NORMAL);
 					hotswapGFXMode();
 				}
 			} else {
@@ -2228,18 +2222,29 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 		case SDL_QUIT:
 			event.type = Common::EVENT_QUIT;
 			return true;
+		
+		case SDL_ACTIVEEVENT:
+			if (ev.active.state & SDL_APPMOUSEFOCUS)
+				warning("%s mouse focus.", ev.active.gain ? "Got" : "Lost");
+			if (ev.active.state & SDL_APPINPUTFOCUS)
+				warning("%s input focus.", ev.active.gain ? "Got" : "Lost");
+			if (ev.active.state & SDL_APPACTIVE)
+				warning("%s total focus.", ev.active.gain ? "Got" : "Lost");
+			if (ev.active.state & SDL_APPINPUTFOCUS) {
+				_hasfocus = ev.active.gain;
+				SDL_PauseAudio(!_hasfocus);
+				_forceFull |= _hasfocus;
+			}
+			break;
 		}
 	}
 
-	// Simulate repeated key for Smartphones
-
-	if (!keyEvent)
-		if (_lastKeyPressed)
-			if (currentTime > _keyRepeatTime + _keyRepeatTrigger) {
-				_keyRepeatTime = currentTime;
-				_keyRepeat++;
-				GUI_Actions::Instance()->performMapped(_lastKeyPressed, true);
-			}
+	// Simulate repeated key for backend
+	if (!keyEvent && _lastKeyPressed && currentTime > _keyRepeatTime + _keyRepeatTrigger) {
+		_keyRepeatTime = currentTime;
+		_keyRepeat++;
+		GUI_Actions::Instance()->performMapped(_lastKeyPressed, true);
+	}
 
 	return false;
 }
