@@ -207,6 +207,7 @@ private:
 	int _scaleFactorYm;		// scaler Y *
 	int _scaleFactorYd;		// scaler Y /
 	bool _scalersChanged;
+	bool _hasfocus;			// scummvm has the top window
 
 	static int _platformScreenWidth;
 	static int _platformScreenHeight;
