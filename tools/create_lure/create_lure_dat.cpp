@@ -269,7 +269,8 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)
 			r->scriptLoadFlag = entry.scriptLoadFlag;
 			r->loadOffset = entry.loadOffset;
 			r->colourOffset = entry.colourOffset;
-			r->sequenceOffset = entry.sequenceOffset;
+			r->hotspotScriptOffset = entry.hotspotScriptOffset;
+			r->talkScriptOffset = entry.talkScriptOffset;
 			r->tickProcOffset = entry.tickProcOffset;
 			r->flags = entry.flags;
 
