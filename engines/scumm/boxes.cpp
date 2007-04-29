@@ -443,7 +443,9 @@ byte ScummEngine::getNumBoxes() {
 	if (!ptr)
 		return 0;
 	if (_game.version == 8)
-		return (byte) READ_LE_UINT32(ptr);
+		return (byte)READ_LE_UINT32(ptr);
+	else if (_game.features >= 5)
+		return (byte)READ_LE_UINT16(ptr);
 	else
 		return ptr[0];
 }
