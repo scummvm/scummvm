@@ -62,7 +62,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_talkX = res->talkX;
 	_talkY = res->talkY;
 	_layer = res->layer;
-	_sequenceOffset = res->sequenceOffset;
+	_hotspotScriptOffset = res->hotspotScriptOffset;
 	_tickCtr = res->tickTimeout;
 	_colourOffset = res->colourOffset;
 
@@ -404,7 +404,7 @@ void Hotspot::setSize(uint16 newWidth, uint16 newHeight) {
 }
 
 bool Hotspot::executeScript() {
-	if (_data->sequenceOffset == 0xffff)
+	if (_data->hotspotScriptOffset == 0xffff)
 		return false;
 	else
 		return HotspotScript::execute(this);
@@ -672,7 +672,7 @@ void Hotspot::converse(uint16 destCharacterId, uint16 messageId, bool standStill
 		HotspotData *hotspot = Resources::getReference().getHotspot(destCharacterId);
 		_data->talkCountdown += hotspot->talkCountdown;
 		
-		_data->talkDestCharacterId = _hotspotId;
+		_data->talkDestCharacterId = destCharacterId;
 		_data->talkGate = 0;
 	}
 
@@ -845,7 +845,7 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 		} else {
 			// loc_886
 			setActionCtr(0);
-			converse(NOONE_ID, 0xE);
+			showMessage(14, NOONE_ID);
 			return PC_FAILED;
 		}
 	} else {
@@ -860,7 +860,7 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 
 		} else if (hotspot->actionHotspotId != _hotspotId) {
 			if (fields.getField(82) != 2) {
-				converse(NOONE_ID, 5);
+				showMessage(5, hotspot->hotspotId);
 				setDelayCtr(4);
 			}
 
@@ -2019,7 +2019,7 @@ void Hotspot::saveToStream(Common::WriteStream *stream) {
 	stream->writeUint16LE(_talkX);
 	stream->writeUint16LE(_talkY);
 	stream->writeByte(_layer);
-	stream->writeUint16LE(_sequenceOffset);
+	stream->writeUint16LE(_hotspotScriptOffset);
 	stream->writeUint16LE(_tickCtr);
 	stream->writeByte(_colourOffset);
 	stream->writeUint16LE(_animId);
@@ -2054,7 +2054,7 @@ void Hotspot::loadFromStream(Common::ReadStream *stream) {
 	_talkX = stream->readUint16LE();
 	_talkY = stream->readUint16LE();
 	_layer = stream->readByte();
-	_sequenceOffset = stream->readUint16LE();
+	_hotspotScriptOffset = stream->readUint16LE();
 	_tickCtr = stream->readUint16LE();
 	_colourOffset = stream->readByte();
 	setAnimation(stream->readUint16LE());
@@ -2180,7 +2180,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		if (h.talkGate() == 0x2A) {
 			fields.setField(ACTIVE_HOTSPOT_ID, h.talkGate());
 			fields.setField(USE_HOTSPOT_ID, h.resource()->talkDestCharacterId);
-			Script::execute(h.script());
+			Script::execute(h.talkScript());
 			h.resource()->talkDestCharacterId = 0;
 		} else {
 			h.updateMovement();
@@ -2970,7 +2970,7 @@ void HotspotTickHandlers::teaAnimHandler(Hotspot &h) {
 
 	if (h.executeScript()) {
 		// Signal that the tea is done
-		h.setScript(0xB82);
+		h.setHotspotScript(0xB82);
 		Resources::getReference().fieldList().setField(27, 1);
 	}
 }
@@ -2997,14 +2997,14 @@ void HotspotTickHandlers::prisonerAnimHandler(Hotspot &h) {
 	if (h.actionCtr() != 0) {
 		if (h.executeScript() == 0) {
 			h.setActionCtr(0);
-			h.setScript(0x3E0);
+			h.setHotspotScript(0x3E0);
 		}
 		return;
 	}
 
 	if ((fields.getField(PRISONER_DEAD) == 0) && (rnd.getRandomNumber(65536) >= 6)) {
 		h.setActionCtr(1);
-		h.setScript(0x3F6);
+		h.setHotspotScript(0x3F6);
 	}
 }
 
@@ -3028,7 +3028,7 @@ void HotspotTickHandlers::morkusAnimHandler(Hotspot &h) {
 	if (h.executeScript()) {
 		// Script is done - set new script to one of two alternates randomly
 		Common::RandomSource rnd;
-		h.setScript(rnd.getRandomNumber(100) >= 50 ? 0x54 : 0); 
+		h.setHotspotScript(rnd.getRandomNumber(100) >= 50 ? 0x54 : 0); 
 		h.setFrameCtr(20 + rnd.getRandomNumber(63));
 	}
 }
@@ -3514,7 +3514,7 @@ void HotspotTickHandlers::rackSerfAnimHandler(Hotspot &h) {
 
 	switch (h.actionCtr()) {
 	case 1:
-		h.setScript(RACK_SERF_SCRIPT_ID_1);
+		h.setHotspotScript(RACK_SERF_SCRIPT_ID_1);
 		h.setActionCtr(2);
 		break;
 
@@ -3524,7 +3524,7 @@ void HotspotTickHandlers::rackSerfAnimHandler(Hotspot &h) {
 		break;
 
 	case 3:
-		h.setScript(RACK_SERF_SCRIPT_ID_2);
+		h.setHotspotScript(RACK_SERF_SCRIPT_ID_2);
 		h.setActionCtr(4);
 		h.setLayer(2);
 

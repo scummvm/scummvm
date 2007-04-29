@@ -59,7 +59,7 @@ void Script::setHotspotScript(uint16 hotspotId, uint16 scriptIndex, uint16 v3) {
 	uint16 offset = r.getHotspotScript(scriptIndex);
 	Hotspot *hotspot = r.getActiveHotspot(hotspotId);
 	assert(hotspot);
-	hotspot->setScript(offset);
+	hotspot->setHotspotScript(offset);
 }
 
 void Script::method2(uint16 v1, uint16 v2, uint16 v3) {
@@ -265,7 +265,7 @@ void Script::setBlockingHotspotScript(uint16 charId, uint16 scriptIndex, uint16 
 	uint16 offset = r.getHotspotScript(scriptIndex);
 
 	Hotspot *hs = r.getActiveHotspot(charId);
-	hs->setScript(offset);
+	hs->setHotspotScript(offset);
 	hs->currentActions().top().setAction(EXEC_HOTSPOT_SCRIPT);
 	hs->setOccupied(true);
 }
@@ -359,7 +359,7 @@ void Script::transformPlayer(uint16 v1, uint16 v2, uint16 v3) {
 	
 	Hotspot *activeHotspot = res.addHotspot(TRANSFORM_ID);
 	activeHotspot->setFrameNumber(0);
-	activeHotspot->setScript(0x630);
+	activeHotspot->setHotspotScript(0x630);
 }
 
 // Marks the jail door in room 14 for closing
@@ -394,6 +394,15 @@ void Script::doorOpen(uint16 hotspotId, uint16 v2, uint16 v3) {
 	RoomExitJoinData *joinRec = Resources::getReference().getExitJoin(hotspotId);
 	if (!joinRec) error("Tried to close a non-door");
 	joinRec->blocked = 0;
+}
+
+// Makes the specified NPC wait for the player to walk to them
+
+void Script::npcWait(uint16 hotspotId, uint16 v2, uint16 v3) {
+       Hotspot *hotspot = Resources::getReference().getActiveHotspot(hotspotId);
+       assert(hotspot);
+       hotspot->setCharacterMode(CHARMODE_WAIT_FOR_INTERACT);
+       hotspot->setDelayCtr(130);
 }
 
 // Lookup the given message Id for the specified character and display in a dialog
@@ -579,6 +588,7 @@ SequenceMethodRecord scriptMethods[] = {
 	{40, Script::checkDroppedDesc},
 	{42, Script::doorClose},
 	{44, Script::doorOpen},
+	{45, Script::npcWait},
 	{47, Script::displayMessage},
 	{48, Script::setNewSupportData},
 	{49, Script::setSupportData},
@@ -936,7 +946,7 @@ bool HotspotScript::execute(Hotspot *h)
 {
 	Resources &r = Resources::getReference();
 	MemoryBlock *scriptData = r.hotspotScriptData();
-	uint16 offset = h->script();
+	uint16 offset = h->hotspotScript();
 	int16 opcode = 0;
 	int16 param1, param2;
 	uint32 actions;
@@ -954,7 +964,7 @@ bool HotspotScript::execute(Hotspot *h)
 			debugC(ERROR_DETAILED, kLureDebugScripts, "SET FRAME_CTR = %d", param1);
 
 			h->setTickCtr(param1);
-			h->setScript(offset);
+			h->setHotspotScript(offset);
 			breakFlag = true;
 			break;
 
@@ -1029,7 +1039,7 @@ bool HotspotScript::execute(Hotspot *h)
 			debugC(ERROR_DETAILED, kLureDebugScripts, "SET FRAME NUMBER = %d", opcode);
 
 			h->setFrameNumber(opcode);
-			h->setScript(offset);
+			h->setHotspotScript(offset);
 			breakFlag = true;
 			break;
 		}

@@ -321,10 +321,11 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	talkY = rec->talkY;
 	colourOffset = FROM_LE_16(rec->colourOffset);
 	animRecordId = FROM_LE_16(rec->animRecordId);
-	sequenceOffset = FROM_LE_16(rec->sequenceOffset);
+	hotspotScriptOffset = FROM_LE_16(rec->hotspotScriptOffset);
+	talkScriptOffset = FROM_LE_16(rec->talkScriptOffset);
 	tickProcOffset = FROM_LE_16(rec->tickProcOffset);
 	tickTimeout = FROM_LE_16(rec->tickTimeout);
-	tickSequenceOffset = FROM_LE_16(rec->tickSequenceOffset);
+	tickScriptOffset = FROM_LE_16(rec->tickScriptOffset);
 	npcSchedule = FROM_LE_16(rec->npcSchedule);
 	characterMode = (CharacterMode) FROM_LE_16(rec->characterMode);
 	delayCtr = FROM_LE_16(rec->delayCtr);
@@ -362,10 +363,10 @@ void HotspotData::saveToStream(WriteStream *stream) {
 	stream->writeUint16LE(widthCopy);
 	stream->writeUint16LE(heightCopy);
 	stream->writeUint16LE(yCorrection);
-	stream->writeUint16LE(sequenceOffset);
+	stream->writeUint16LE(hotspotScriptOffset);
 	stream->writeUint16LE(tickProcOffset);
 	stream->writeUint16LE(tickTimeout);
-	stream->writeUint16LE(tickSequenceOffset);
+	stream->writeUint16LE(tickScriptOffset);
 	stream->writeUint16LE(characterMode);
 	stream->writeUint16LE(delayCtr);
 
@@ -402,10 +403,10 @@ void HotspotData::loadFromStream(ReadStream *stream) {
 	widthCopy = stream->readUint16LE();
 	heightCopy = stream->readUint16LE();
 	yCorrection = stream->readUint16LE();
-	sequenceOffset = stream->readUint16LE();
+	hotspotScriptOffset = stream->readUint16LE();
 	tickProcOffset = stream->readUint16LE();
 	tickTimeout = stream->readUint16LE();
-	tickSequenceOffset = stream->readUint16LE();
+	tickScriptOffset = stream->readUint16LE();
 	characterMode = (CharacterMode) stream->readUint16LE();
 	delayCtr = stream->readUint16LE();
 

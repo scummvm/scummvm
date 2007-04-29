@@ -78,10 +78,11 @@ struct HotspotResource {
 	int8 talkY;
 	uint16 colourOffset;
 	uint16 animRecordId;
-	uint16 sequenceOffset;
+	uint16 hotspotScriptOffset;
+	uint16 talkScriptOffset;
 	uint16 tickProcOffset;
 	uint16 tickTimeout;
-	uint16 tickSequenceOffset;
+	uint16 tickScriptOffset;
 	uint16 npcSchedule;
 	uint16 characterMode;
 	uint16 delayCtr;
@@ -416,10 +417,11 @@ public:
 	int8 talkY;
 	uint16 colourOffset;
 	uint16 animRecordId;
-	uint16 sequenceOffset;
+	uint16 hotspotScriptOffset;
+	uint16 talkScriptOffset;
 	uint16 tickProcOffset;
 	uint16 tickTimeout;
-	uint16 tickSequenceOffset;
+	uint16 tickScriptOffset;
 	uint16 npcSchedule;
 	CharacterMode characterMode;
 	uint16 delayCtr;

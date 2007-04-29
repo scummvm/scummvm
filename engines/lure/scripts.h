@@ -113,6 +113,7 @@ public:
 	static void doorClose(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void displayMessage(uint16 messageId, uint16 characterId, uint16 unknownVal);
 	static void doorOpen(uint16 hotspotId, uint16 v2, uint16 v3);
+	static void npcWait(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void setNewSupportData(uint16 hotspotId, uint16 index, uint16 v3);
 	static void setSupportData(uint16 hotspotId, uint16 index, uint16 v3);
 	static void givePlayerItem(uint16 hotspotId, uint16 v2, uint16 v3);

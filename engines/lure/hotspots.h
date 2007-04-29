@@ -249,7 +249,7 @@ private:
 	uint16 _frameNumber;
 	Direction _direction;
 	uint8 _layer;
-	uint16 _sequenceOffset;
+	uint16 _hotspotScriptOffset;
 	uint16 _tickCtr;
 	uint8 _colourOffset;
 	bool _persistant;
@@ -359,7 +359,11 @@ public:
 	uint16 yCorrection() { return _yCorrection; }
 	uint16 charRectY() { return _charRectY; }
 	uint16 roomNumber() { return _roomNumber; }
-	uint16 script() { return _sequenceOffset; }
+	uint16 talkScript() { 
+		assert(_data);
+		return _data->talkScriptOffset; 
+	}
+	uint16 hotspotScript() { return _hotspotScriptOffset; }
 	uint8 layer() { return _layer; }
 	uint16 tickCtr() { return _tickCtr; }
 	bool skipFlag() { return _skipFlag; }
@@ -404,10 +408,10 @@ public:
 	void setHeight(uint16 newHeight) { 
 		_height = newHeight;
 	}
-	void setScript(uint16 offset) {
+	void setHotspotScript(uint16 offset) {
 		assert(_data != NULL);
-		_sequenceOffset = offset;
-		_data->sequenceOffset = offset; 
+		_hotspotScriptOffset = offset;
+		_data->hotspotScriptOffset = offset; 
 	}
 	void setLayer(uint8 newLayer) {
 		assert(_data != NULL);

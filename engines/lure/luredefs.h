@@ -31,7 +31,7 @@ namespace Lure {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 18
+#define LURE_DAT_MINOR 19
 
 #define LURE_DEBUG 1
 
