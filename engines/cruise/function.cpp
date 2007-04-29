@@ -879,14 +879,9 @@ int16 Op_SetColor(void)	{
 
 		if (CVTLoaded) {
 			int colorIdx = cvtPalette[i];
-			
-			lpalette[colorIdx].R = R;
-			lpalette[colorIdx].G = G;
-			lpalette[colorIdx].B = B;
+			gfxModuleData_setPalColor(colorIdx, R, G, B);
 		} else {
-			lpalette[i].R = R;
-			lpalette[i].G = G;
-			lpalette[i].B = B;
+			gfxModuleData_setPalColor(i, R, G, B);
 		}
 	}
 

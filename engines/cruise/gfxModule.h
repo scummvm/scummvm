@@ -48,10 +48,11 @@ typedef struct gfxModuleDataStruct gfxModuleDataStruct;
 typedef struct palEntry palEntry;
 
 extern gfxModuleDataStruct gfxModuleData;
-extern palEntry lpalette[256];
 extern short globalAtariScreen[320 * 200 / 4];
 
 void gfxModuleData_gfxClearFrameBuffer(uint8 * ptr);
+void gfxModuleData_setDirtyColors(int min, int max);
+void gfxModuleData_setPalColor(int idx, int r, int g, int b);
 void gfxModuleData_setPal(uint8 * ptr);
 void gfxModuleData_field_90(void);
 void gfxModuleData_gfxWaitVSync(void);

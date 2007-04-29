@@ -36,6 +36,9 @@ char screen[320 * 200];
 palEntry lpalette[256];
 short globalAtariScreen[320 * 200 / 4];
 
+int palDirtyMin = 256;
+int palDirtyMax = -1;
+
 gfxModuleDataStruct gfxModuleData = {
 	0,			// field_1
 	0,			// use Tandy
@@ -533,6 +536,20 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 	}*/
 }
 
+void gfxModuleData_setDirtyColors(int min, int max) {
+	if (min < palDirtyMin)
+		palDirtyMin = min;
+	if (max > palDirtyMax)
+		palDirtyMax = max;
+}
+
+void gfxModuleData_setPalColor(int idx, int r, int g, int b) {
+	lpalette[idx].R = r;
+	lpalette[idx].G = g;
+	lpalette[idx].B = b;
+	gfxModuleData_setDirtyColors(idx, idx);
+}
+
 void gfxModuleData_setPal256(int16 *ptr) {
 	int R;
 	int G;
@@ -549,6 +566,8 @@ void gfxModuleData_setPal256(int16 *ptr) {
 		lpalette[i].B = B;
 		lpalette[i].A = 255;
 	}
+
+	gfxModuleData_setDirtyColors(0, 255);
 }
 
 void gfxModuleData_setPal(uint8 *ptr) {
@@ -578,8 +597,9 @@ void gfxModuleData_setPal(uint8 *ptr) {
 		lpalette[i].G = G;
 		lpalette[i].B = B;
 		lpalette[i].A = 255;
-
 	}
+
+	gfxModuleData_setDirtyColors(0, 16);
 }
 
 void gfxModuleData_field_90(void) {
@@ -619,13 +639,17 @@ void flip() {
 	//uint8* outPtr = scaledScreen;
 	//uint8* inPtr  = globalScreen;
 
-	for (i = 0; i < 256; i++) {
-		paletteRGBA[i * 4 + 0] = lpalette[i].R;
-		paletteRGBA[i * 4 + 1] = lpalette[i].G;
-		paletteRGBA[i * 4 + 2] = lpalette[i].B;
-		paletteRGBA[i * 4 + 3] = 0xFF;
+	if (palDirtyMax != -1) {
+		for (i = palDirtyMin; i < palDirtyMax; i++) {
+			paletteRGBA[i * 4 + 0] = lpalette[i].R;
+			paletteRGBA[i * 4 + 1] = lpalette[i].G;
+			paletteRGBA[i * 4 + 2] = lpalette[i].B;
+			paletteRGBA[i * 4 + 3] = 0xFF;
+		}
+		g_system->setPalette(paletteRGBA, palDirtyMin, palDirtyMax - palDirtyMin + 1);
+		palDirtyMin = 256;
+		palDirtyMax = -1;
 	}
-	g_system->setPalette(paletteRGBA, 0, 16);
 
 	g_system->copyRectToScreen(globalScreen, 320, 0, 0, 320, 200);
 	g_system->updateScreen();
