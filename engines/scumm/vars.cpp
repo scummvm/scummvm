@@ -712,12 +712,16 @@ void ScummEngine::resetScummVars() {
 					Common::File f;
 					for (int i = 82; i < 85; i++) {
 						sprintf(buf, "%d.LFL", i);
-						if (!Common::File::exists(buf))
+						if (!Common::File::exists(buf)) {
+							// TODO: Instead of a hard error, try to fall back to adlib?
 							error("Native MIDI support requires Roland patch from LucasArts, but %s is missing", buf);
+						}
 					}
 				} else if (_game.id == GID_MONKEY_EGA) {
-					if (!Common::File::exists("DISK09.LEC"))
+					if (!Common::File::exists("DISK09.LEC")) {
+						// TODO: Instead of a hard error, try to fall back to adlib?
 						error("Native MIDI support requires Roland patch from LucasArts, but DISK09.LEC is missing");
+					}
 				}
 				VAR(VAR_SOUNDCARD) = 4;
 			} else {
