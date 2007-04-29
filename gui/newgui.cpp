@@ -134,6 +134,7 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 	}
 
 	delete _theme;
+	_theme = 0;
 
 	if (style.compareToIgnoreCase("classic (builtin)") == 0) {
 		_theme = new ThemeClassic(_system, style);
