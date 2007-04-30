@@ -55,11 +55,17 @@ void Script::activateHotspot(uint16 hotspotId, uint16 v2, uint16 v3) {
 // Sets a hotspot's animation script offset from a master table of offsets
 
 void Script::setHotspotScript(uint16 hotspotId, uint16 scriptIndex, uint16 v3) {
-	Resources &r = Resources::getReference();
-	uint16 offset = r.getHotspotScript(scriptIndex);
-	Hotspot *hotspot = r.getActiveHotspot(hotspotId);
-	assert(hotspot);
-	hotspot->setHotspotScript(offset);
+	Resources &res = Resources::getReference();
+	uint16 offset = res.getHotspotScript(scriptIndex);
+	Hotspot *hotspot = res.getActiveHotspot(hotspotId);
+
+	if (hotspot != NULL) {
+		hotspot->setHotspotScript(offset);
+	} else {
+		HotspotData *hs = res.getHotspot(hotspotId);
+		assert(hs);
+		hs->hotspotScriptOffset = offset;
+	}
 }
 
 void Script::method2(uint16 v1, uint16 v2, uint16 v3) {
@@ -607,16 +613,16 @@ SequenceMethodRecord scriptMethods[] = {
 	{0xff, NULL}};
 
 const char *scriptOpcodes[] = {
-	"ABORT", "ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "NOT_EQUALS", "EQUALS",
-		"GT", "LT", "LT2", "GT2", "AND", "OR", "LOGICAL_AND", "LOGICAL_OR",
+	"ABORT", "ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "EQUALS", "NOT_EQUALS",
+		"LT", "GT", "LTE", "GTE", "AND", "OR", "LOGICAL_AND", "LOGICAL_OR",
 		"GET_FIELD", "SET_FIELD", "PUSH", "SUBROUTINE", "EXEC", "END",
 		"COND_JUMP", "JUMP", "ABORT2", "ABORT3", "RANDOM"
 };
 
 const char *scriptMethodNames[67] = {
-	"ACTIVATE HOTSPOT", "SET HOTSPOT SCRIPT", NULL, NULL, "CLEAR SEQUENCE DELAY LIST",
-	"DEACTIVATE HOTSPOT SET", "DEACTIVATE HOTSPOT", "RESET PATHFINDER",
-	"ADD DELAYED SCRIPT", NULL,
+	"ACTIVATE HOTSPOT", "SET HOTSPOT SCRIPT", NULL, "SET HOTSPOT FLAG MASK", 
+	"CLEAR SEQUENCE DELAY LIST", "DEACTIVATE HOTSPOT SET", "DEACTIVATE HOTSPOT", 
+	"RESET PATHFINDER",	"ADD DELAYED SCRIPT", NULL,
 
 	"IS CHARACTER IN ROOM", "SET HOTSPOT DESC", "SET HOTSPOT NAME",
 	"PLAY SOUND", NULL, NULL, "DISPLAY DIALOG", NULL, "REMOTE ROOM VIEW SETUP",
@@ -627,14 +633,15 @@ const char *scriptMethodNames[67] = {
 	"DECREMENT # INVENTORY ITEMS", "SET TALKING",
 
 	"SET ACTION CTR", "START SPEAKING", "DISABLE HOTSPOT", "CUT SACK",
-	"INCREASE # GROATS", "ENABLE HOTSPOT", NULL, "TRANSFORM PLAYER",
-	NULL, "ROOM 14 CLOSE DOOR",
+	"INCREASE # GROATS", "ENABLE HOTSPOT", "DISPLAY MESSAGE 2", "START OIL BURNER"
+	"TRANSFORM PLAYER", "JAIL CLOSE",
 
-	"CHECK DROPPED DESC", NULL, "CLOSE DOOR", NULL, "OPEN DOOR", NULL, NULL,
+	"CHECK DROPPED DESC", NULL, "CLOSE DOOR", NULL, "OPEN DOOR", "NPC WAIT", NULL,
 	"DISPLAY MESSAGE", "SET NEW ACTION SUPPORT DATA", "SET ACTION SUPPORT DATA",
 	
 	"GIVE PLAYER ITEM", "DECREASE # GROATS", NULL, NULL,
-	"SET VILLAGE SKORL TICK PROC", NULL, NULL, "GET # GROATS", NULL, NULL,
+	"SET VILLAGE SKORL TICK PROC", "FREE GOEWIN", "BARMAN SERVE", "GET # GROATS", 
+	NULL, "ENABLE GARGOYLE TALK",
 
 	NULL, "KILL PLAYER", "ANIMATION LOAD", "ADD ACTIONS", "RANDOM TO GENERAL", 
 	"CHECK CELL DOOR", "METHOD 66"
@@ -708,12 +715,12 @@ uint16 Script::execute(uint16 startOffset) {
 			case S_OPCODE_SUBTRACT:
 			case S_OPCODE_MULTIPLY:
 			case S_OPCODE_DIVIDE:
-			case S_OPCODE_NOT_EQUALS:
 			case S_OPCODE_EQUALS:
-			case S_OPCODE_GT:
+			case S_OPCODE_NOT_EQUALS:
 			case S_OPCODE_LT:
-			case S_OPCODE_LT2:
-			case S_OPCODE_GT2:
+			case S_OPCODE_GT:
+			case S_OPCODE_LTE:
+			case S_OPCODE_GTE:
 			case S_OPCODE_AND:
 			case S_OPCODE_OR:
 			case S_OPCODE_LOGICAL_AND:
@@ -761,28 +768,36 @@ uint16 Script::execute(uint16 startOffset) {
 			param = v2 % v1;      // remainder
 			break;
 
-		case S_OPCODE_NOT_EQUALS:
-			stack.push((stack.pop() != stack.pop()) ? 0 : 1);
-			break;
-
 		case S_OPCODE_EQUALS:
-			stack.push((stack.pop() == stack.pop()) ? 0 : 1);
+			stack.push((stack.pop() == stack.pop()) ? 1 : 0);
 			break;
 
-		case S_OPCODE_GT:
-			stack.push((stack.pop() > stack.pop()) ? 1 : 0);
+		case S_OPCODE_NOT_EQUALS:
+			stack.push((stack.pop() != stack.pop()) ? 1 : 0);
 			break;
 
 		case S_OPCODE_LT:
-			stack.push((stack.pop() < stack.pop()) ? 1 : 0);
+			v1 = stack.pop();
+			v2 = stack.pop();
+			stack.push(v2 < v1 ? 1 : 0);
 			break;
 
-		case S_OPCODE_LT2:
-			stack.push((stack.pop() < stack.pop()) ? 1 : 0);
+		case S_OPCODE_GT:
+			v1 = stack.pop();
+			v2 = stack.pop();
+			stack.push(v2 > v1 ? 1 : 0);
 			break;
 
-		case S_OPCODE_GT2:
-			stack.push((stack.pop() > stack.pop()) ? 1 : 0);
+		case S_OPCODE_LTE:
+			v1 = stack.pop();
+			v2 = stack.pop();
+			stack.push(v2 <= v1 ? 1 : 0);
+			break;
+
+		case S_OPCODE_GTE:
+			v1 = stack.pop();
+			v2 = stack.pop();
+			stack.push(v2 >= v1 ? 1 : 0);
 			break;
 
 		case S_OPCODE_AND:
@@ -794,22 +809,24 @@ uint16 Script::execute(uint16 startOffset) {
 			break;
 
 		case S_OPCODE_LOGICAL_AND:
-			stack.push(((stack.pop() != 0) && (stack.pop() != 0)) ? 1 : 0);
+			v1 = stack.pop();
+			v2 = stack.pop();
+			stack.push(((v1 != 0) && (v2 != 0)) ? 1 : 0);
 			break;
 
 		case S_OPCODE_LOGICAL_OR:
-			stack.push(((stack.pop() != 0) || (stack.pop() != 0)) ? 1 : 0);
+			v1 = stack.pop();
+			v2 = stack.pop();
+			stack.push(((v1 != 0) || (v2 != 0)) ? 1 : 0);
 			break;
 
 		case S_OPCODE_GET_FIELD:
-			// Opcode not yet fully implemented
 			fieldNum = param >> 1;
 			v1 = fields.getField(fieldNum);
 			stack.push(v1);
 			break;
 
 		case S_OPCODE_SET_FIELD:
-			// Opcode not yet fully implemented
 			fieldNum = param >> 1;
 			v1 = stack.pop();
 			fields.setField(fieldNum, v1);
@@ -902,8 +919,8 @@ uint16 Script::execute(uint16 startOffset) {
 			case S_OPCODE_EQUALS:
 			case S_OPCODE_GT:
 			case S_OPCODE_LT:
-			case S_OPCODE_LT2:
-			case S_OPCODE_GT2:
+			case S_OPCODE_LTE:
+			case S_OPCODE_GTE:
 			case S_OPCODE_AND:
 			case S_OPCODE_OR:
 			case S_OPCODE_LOGICAL_AND:
