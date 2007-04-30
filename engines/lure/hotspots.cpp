@@ -1101,7 +1101,7 @@ void Hotspot::doAction(Action action, HotspotData *hotspot) {
 		&Hotspot::npcSetSupportOffset,
 		&Hotspot::npcSupportOffsetConditional,
 		&Hotspot::npcDispatchAction, 
-		&Hotspot::npcUnknown3, 
+		&Hotspot::npcTalkNpcToNpc, 
 		&Hotspot::npcPause, 
 		&Hotspot::npcStartTalking,
 		&Hotspot::npcJumpAddress};
@@ -1903,8 +1903,38 @@ void Hotspot::npcDispatchAction(HotspotData *hotspot) {
 	}
 }
 
-void Hotspot::npcUnknown3(HotspotData *hotspot) {
-	warning("npcUnknown3: Not yet implemented");
+void Hotspot::npcTalkNpcToNpc(HotspotData *hotspot) {
+	Resources &res = Resources::getReference();
+	ValueTableData &fields = res.fieldList();
+	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
+	fields.setField(USE_HOTSPOT_ID, hotspot->hotspotId);
+
+	HotspotPrecheckResult result = actionPrecheck(hotspot);
+	if (result == PC_WAIT) return;
+	else if (result != PC_EXECUTE) {
+		endAction();
+		return;
+	}
+
+	// If dest is already talking, keep exiting until they're free
+	if (hotspot->talkCountdown != 0) 
+		return;
+
+	// Handle the source's talk message
+	if (entry.param(1) != 0) {
+		converse(hotspot->hotspotId, entry.param(1));
+		resource()->talkCountdown = entry.param(2);
+		resource()->delayCtr = entry.param(2);
+	}
+
+	// Handle the destination's response message
+	if (entry.param(3) != 0) {
+		Hotspot *destHotspot = res.getActiveHotspot(hotspot->hotspotId);
+		assert(destHotspot);
+		destHotspot->converse(this->hotspotId(), entry.param(3));
+	}
+
 	endAction();
 }
 
@@ -2075,6 +2105,7 @@ void Hotspot::loadFromStream(Common::ReadStream *stream) {
 
 HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
 	switch (procOffset) {
+	case 0:
 	case 0x41BD:
 		return defaultHandler;
 	case STANDARD_CHARACTER_TICK_PROC:

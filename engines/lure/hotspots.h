@@ -316,7 +316,7 @@ private:
 	void npcSetSupportOffset(HotspotData *hotspot); 
 	void npcSupportOffsetConditional(HotspotData *hotspot);
 	void npcDispatchAction(HotspotData *hotspot); 
-	void npcUnknown3(HotspotData *hotspot); 
+	void npcTalkNpcToNpc(HotspotData *hotspot); 
 	void npcPause(HotspotData *hotspot); 
 	void npcStartTalking(HotspotData *hotspot);
 	void npcJumpAddress(HotspotData *hotspot);
