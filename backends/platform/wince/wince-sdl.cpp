@@ -330,6 +330,8 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 
 void OSystem_WINCE3::swap_panel_visibility() {
 	//if (!_forcePanelInvisible && !_panelStateForced) {
+		if (_zoomDown || _zoomUp)	return;
+
 		if (_panelVisible) {
 			if (_toolbarHandler.activeName() == NAME_PANEL_KEYBOARD)
 				_panelVisible = !_panelVisible;
@@ -341,6 +343,7 @@ void OSystem_WINCE3::swap_panel_visibility() {
 			_panelVisible = !_panelVisible;
 		}
 		_toolbarHandler.setVisible(_panelVisible);
+		_toolbarHighDrawn = false;
 
 		if (_screenHeight > 240)
 			addDirtyRect(0, 400, 640, 80);
@@ -423,6 +426,7 @@ void OSystem_WINCE3::swap_zoom_up() {
 		_scaleFactorYd = 2;
 		_scalerProc = PocketPCHalf;
 		_zoomUp = false;
+		_zoomDown = false;
 	}
 	else
 	{
@@ -436,9 +440,8 @@ void OSystem_WINCE3::swap_zoom_up() {
 			_scaleFactorYd = 1;
 			_scalerProc = PocketPCHalfZoom;
 		}
-		else
-			_zoomDown = false;
-
+		
+		_zoomDown = false;
 		_zoomUp = true;
 	}
 	// redraw whole screen
@@ -454,6 +457,7 @@ void OSystem_WINCE3::swap_zoom_down() {
 		_scaleFactorYd = 2;
 		_scalerProc = PocketPCHalf;
 		_zoomDown = false;
+		_zoomUp = false;
 	}
 	else
 	{
@@ -467,9 +471,8 @@ void OSystem_WINCE3::swap_zoom_down() {
 			_scaleFactorYd = 1;
 			_scalerProc = PocketPCHalfZoom;
 		}
-		else
-			_zoomUp = false;
 
+		_zoomUp = false;
 		_zoomDown = true;
 	}
 	// redraw whole screen
@@ -1248,7 +1251,8 @@ void OSystem_WINCE3::loadGFXMode() {
 	}
 
 	// Toolbar
-	uint16 *toolbar_screen = (uint16 *)calloc(320 * 40, sizeof(uint16));	// FIXME: leaking memory here
+	_toolbarHighDrawn = false;
+	uint16 *toolbar_screen = (uint16 *)calloc(320 * 40, sizeof(uint16));	// *not* leaking memory here
 	_toolbarLow = SDL_CreateRGBSurfaceFrom(toolbar_screen, 320, 40, 16, 320 * 2, _hwscreen->format->Rmask, _hwscreen->format->Gmask, _hwscreen->format->Bmask, _hwscreen->format->Amask);
 
 	if (_toolbarLow == NULL)
@@ -1331,6 +1335,7 @@ void OSystem_WINCE3::hotswapGFXMode() {
 	SDL_FreeSurface(old_tmpscreen2);
 
 	// Blit everything back to the screen
+	_toolbarHighDrawn = false;
 	internUpdateScreen();
 
 	// Make sure that a Common::EVENT_SCREEN_CHANGED gets sent later -> FIXME this crashes when no game has been loaded.
@@ -1507,8 +1512,6 @@ void OSystem_WINCE3::internUpdateScreen() {
 				SDL_UnlockSurface(_toolbarLow);
 				_toolbarHighDrawn = true;
 			}
-			else
-				_toolbarHighDrawn = false;
 			toolbar_rect[0].w *= 2;
 			toolbar_rect[0].h *= 2;
 			toolbarSurface = _toolbarHigh;
@@ -2078,6 +2081,7 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 		switch(ev.type) {
 		case SDL_KEYDOWN:
 			// KMOD_RESERVED is used if the key has been injected by an external buffer
+			// warning("down %X %s", ev.key.keysym.sym, SDL_GetKeyName((SDLKey)ev.key.keysym.sym));
 			if (ev.key.keysym.mod != KMOD_RESERVED) {
 				keyEvent = true;
 				_lastKeyPressed = ev.key.keysym.sym;
@@ -2099,6 +2103,7 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 
 		case SDL_KEYUP:
 			// KMOD_RESERVED is used if the key has been injected by an external buffer
+			// warning("up %X %s", ev.key.keysym.sym, SDL_GetKeyName((SDLKey)ev.key.keysym.sym));
 			if (ev.key.keysym.mod != KMOD_RESERVED) {
 				keyEvent = true;
 				_lastKeyPressed = 0;
@@ -2163,9 +2168,11 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 
 			if (_toolbarHandler.action(temp_event.mouse.x, temp_event.mouse.y, true)) {
 				if (!_toolbarHandler.drawn())
+					_toolbarHighDrawn = false;
 					internUpdateScreen();
 				if (_newOrientation != _orientationLandscape){
 					_orientationLandscape = _newOrientation;
+					_toolbarHighDrawn = false;
 					ConfMan.setInt("landscape", _orientationLandscape);
 					ConfMan.flushToDisk();
 					hotswapGFXMode();
@@ -2194,6 +2201,7 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 
 			if (_toolbarHandler.action(temp_event.mouse.x, temp_event.mouse.y, false)) {
 				if (!_toolbarHandler.drawn())
+					_toolbarHighDrawn = false;
 					internUpdateScreen();
 			} else {
 				if (!_freeLook)
