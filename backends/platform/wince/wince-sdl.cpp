@@ -927,6 +927,9 @@ void OSystem_WINCE3::initSize(uint w, uint h) {
 	if (w == 320 && h == 200 && !_hasSmartphoneResolution)
 		h = 240; // use the extra 40 pixels height for the toolbar
 
+	if (h == 400)	// touche engine fixup
+		h += 80;
+
 	if (!_hasSmartphoneResolution)
 		if (h == 240)
 			_toolbarHandler.setOffset(200);
@@ -1192,8 +1195,7 @@ void OSystem_WINCE3::loadGFXMode() {
 		displayWidth = _screenWidth;
 		displayHeight = _screenHeight;
 	}
-	if (_screenHeight == 400)	// touche engine fixup
-		displayHeight += 80 * _scaleFactorYm / _scaleFactorYd;
+
 	switch (_orientationLandscape) {
 		case 1:
 			flags |= SDL_LANDSCVIDEO;
@@ -1462,6 +1464,10 @@ void OSystem_WINCE3::internUpdateScreen() {
 			// note that all current scalers do not make dst rect exceed left/right, unless chosen badly (FIXME)
 			if (_zoomDown)	routy -= 240;			// adjust for zoom position
 			if (routy + routh < 0)	continue;
+			if (routy < 0) {
+				routh += routy;
+				routy = 0;
+			}
 			if (_orientationLandscape) {
 				if (routy > _platformScreenWidth)	continue;
 				if (routy + routh > _platformScreenWidth) {
