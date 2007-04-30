@@ -180,7 +180,7 @@ void CEActionsPocket::initInstanceGame() {
 	// Freelook
 	_action_enabled[POCKET_ACTION_FREELOOK] = true;
 	// Zoom
-	if (is_sword1 || is_sword2 || is_comi) {
+	if (is_sword1 || is_sword2 || is_comi || is_touche) {
 		_zoom_needed = true;
 		_action_enabled[POCKET_ACTION_ZOOM_UP] = true;
 		_action_enabled[POCKET_ACTION_ZOOM_DOWN] = true;
