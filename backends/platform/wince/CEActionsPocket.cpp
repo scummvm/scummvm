@@ -240,9 +240,9 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 		case POCKET_ACTION_CURSOR:
 			_CESystem->swap_mouse_visibility();
 			return true;
-        case POCKET_ACTION_FREELOOK:
-             _CESystem->swap_freeLook();
-             return true;
+		case POCKET_ACTION_FREELOOK:
+			_CESystem->swap_freeLook();
+			return true;
 		case POCKET_ACTION_ZOOM_UP:
 			_CESystem->swap_zoom_up();
 			return true;
