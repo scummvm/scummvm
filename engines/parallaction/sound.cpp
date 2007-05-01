@@ -308,7 +308,7 @@ AmigaSoundMan::~AmigaSoundMan() {
 }
 
 void AmigaSoundMan::playSfx(const char *filename, uint channel, bool looping, int volume, int rate) {
-	if (channel < 0 || channel >= NUM_AMIGA_CHANNELS) {
+	if (channel >= NUM_AMIGA_CHANNELS) {
 		warning("unknown sfx channel");
 		return;
 	}
@@ -344,7 +344,7 @@ void AmigaSoundMan::playSfx(const char *filename, uint channel, bool looping, in
 }
 
 void AmigaSoundMan::stopSfx(uint channel) {
-	if (channel < 0 || channel >= NUM_AMIGA_CHANNELS) {
+	if (channel >= NUM_AMIGA_CHANNELS) {
 		warning("unknown sfx channel");
 		return;
 	}
