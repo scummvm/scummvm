@@ -43,6 +43,7 @@
 #define DISABLE_AGI
 #define DISABLE_TOUCHE
 #define DISABLE_PARALLACTION
+#define DISABLE_CRUISE
 
 // ScummVM
 #define DISABLE_HQ_SCALERS
@@ -50,23 +51,24 @@
 //#define CT_NO_TRANSPARENCY
 //#define REDUCE_MEMORY_USAGE
 
-// PalmOS
-//#define STDLIB_TRACE_MEMORY
-//#define _DEBUG
-
-#define PALMOS_MODE
-//#define COMPILE_ZODIAC
-#define COMPILE_OS5
+#include "compile_base.h"
 
 //#define DISABLE_ADLIB
 //#define DISABLE_LIGHTSPEED
 
 #ifdef COMPILE_ZODIAC
-#	define DISABLE_SONY
+#	undef	DISABLE_FANCY_THEMES
+#	define	USE_ZLIB
+// set an external ZLIB since save/load implementation
+// doesn't support built-in zodiac version which is 1.1.4
+// (seen inflateInit2 which err on "MAX_WBITS + 32")
+#	define	USE_ZLIB_EXTERNAL
+#	define	DISABLE_SONY
 #endif
 
 #ifdef COMPILE_OS5
-#	define DISABLE_TAPWAVE
+#	define	DISABLE_TAPWAVE
+#	define	USE_ZLIB
 #endif
 
 #endif

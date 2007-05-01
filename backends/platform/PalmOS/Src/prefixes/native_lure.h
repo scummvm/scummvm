@@ -4,4 +4,8 @@
 #include "native_common.h"
 #undef DISABLE_LURE
 
+#undef USE_MAD
+#undef USE_VORBIS
+#undef USE_TREMOR
+
 #endif
