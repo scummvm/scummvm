@@ -29,19 +29,33 @@ GlobalsType global;
 
 
 PACE_CLASS_WRAPPER(Err)
-	StatShow_68k(void) {
+	__68k_StatShow(void) {
 	PACE_PIN_EXEC_NP(pinStatShow, Err)
 }
 
 PACE_CLASS_WRAPPER(Err)
-	StatHide_68k(void) {
+	__68k_StatHide(void) {
 	PACE_PIN_EXEC_NP(pinStatHide, Err)
 }
 
 PACE_CLASS_WRAPPER(Err)
-	PINSetInputAreaState_68k(UInt16 state) {
+	__68k_PINSetInputAreaState(UInt16 state) {
 	PACE_PARAMS_INIT()
 	PACE_PARAMS_ADD16(state)
 	PACE_PARAMS_END()
 	PACE_PIN_EXEC(pinPINSetInputAreaState, Err)
 }
+
+PACE_CLASS_WRAPPER(Err)
+	__68k_SysSetOrientation(UInt16 orientation) {
+	PACE_PARAMS_INIT()
+	PACE_PARAMS_ADD16(orientation)
+	PACE_PARAMS_END()
+	PACE_PIN_EXEC(pinSysSetOrientation, Err)
+}
+
+PACE_CLASS_WRAPPER(UInt16)
+	__68k_SysGetOrientation(void) {
+	PACE_PIN_EXEC_NP(pinSysGetOrientation, UInt16)
+}
+

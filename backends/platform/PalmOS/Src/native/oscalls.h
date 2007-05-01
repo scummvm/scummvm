@@ -29,9 +29,17 @@
 extern "C" {
 #endif
 
-Err StatShow_68k();
-Err StatHide_68k();
-Err PINSetInputAreaState_68k(UInt16 state);
+#ifdef PALMOS_ARM
+#	define __68K(a)	__68k_##a
+#else
+#	define __68K(a)	a
+#endif
+
+Err __68k_StatShow();
+Err __68k_StatHide();
+Err __68k_PINSetInputAreaState(UInt16 state);
+Err __68k_SysSetOrientation(UInt16 orientation);
+UInt16 __68k_SysGetOrientation(void);
 
 #ifdef __cplusplus
 }
