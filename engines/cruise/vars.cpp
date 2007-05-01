@@ -64,7 +64,11 @@ int16 main8;
 
 int16 currentDiskNumber = 1;
 
+#ifdef PALMOS_MODE
+Common::File *_currentVolumeFile;
+#else
 Common::File currentVolumeFile;
+#endif
 
 int16 currentCursor;
 

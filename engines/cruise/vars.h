@@ -190,7 +190,12 @@ extern int16 main8;
 
 extern int16 currentDiskNumber;
 
+#ifdef PALMOS_MODE
+extern Common::File *_currentVolumeFile;
+#define currentVolumeFile	(*_currentVolumeFile)
+#else
 extern Common::File currentVolumeFile;
+#endif
 
 extern int16 currentCursor;
 

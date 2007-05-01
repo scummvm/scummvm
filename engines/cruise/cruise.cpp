@@ -45,6 +45,11 @@ Common::SaveFileManager * g_saveFileMan;
 CruiseEngine *g_cruise;
 
 CruiseEngine::CruiseEngine(OSystem * syst) : Engine(syst) {
+
+#ifdef PALMOS_MODE
+	_currentVolumeFile = new Common::File();
+#endif
+
 	Common::addSpecialDebugLevel(kCruiseDebugScript, "Script",
 	    "Script debug level");
 
@@ -62,6 +67,9 @@ CruiseEngine::CruiseEngine(OSystem * syst) : Engine(syst) {
 }
 
 CruiseEngine::~CruiseEngine() {
+#ifdef PALMOS_MODE
+	delete _currentVolumeFile;
+#endif
 }
 
 int CruiseEngine::init() {
