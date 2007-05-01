@@ -27,7 +27,7 @@
 
 namespace Graphics {
 
-class Surface;
+struct Surface;
 
 
 struct BMHD {
@@ -117,8 +117,8 @@ protected:
 	byte	*_wStoragePos;
 	byte	*_rStoragePos;
 
-	int32	_outSize;
 	byte*	_out;
+	byte*	_outEnd;
 	int32	_fed;
 	int32	_unpacked;
 

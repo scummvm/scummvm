@@ -245,8 +245,8 @@ bool PackBitsReadStream::eos() const {
 }
 
 uint32 PackBitsReadStream::read(void *dataPtr, uint32 dataSize) {
-	_outSize = (int32)dataSize;
 	_out = (byte*)dataPtr;
+	_outEnd = _out + dataSize;
 
 	feed();
 	unpack();
@@ -254,7 +254,7 @@ uint32 PackBitsReadStream::read(void *dataPtr, uint32 dataSize) {
 }
 
 void PackBitsReadStream::store(byte b) {
-	if (_outSize > 0) {
+	if (_out < _outEnd) {
 		*_out++ = b;
 		_unpacked++;
 		_wStoragePos = _storage;
@@ -264,20 +264,18 @@ void PackBitsReadStream::store(byte b) {
 	}
 
 	_rStoragePos = _storage;
-	_outSize--;
 }
 
 void PackBitsReadStream::feed() {
 	_fed = 0;
 
-	int len = MIN(_wStoragePos - _rStoragePos, _outSize);
+	int len = MIN(_wStoragePos - _rStoragePos, _outEnd - _out);
 	if (len == 0) return;
 
 	for (int i = 0; i < len; i++)
 		*_out++ = *_rStoragePos++;
 
 	_fed = len;
-	_outSize -= len;
 }
 
 void PackBitsReadStream::unpack() {
@@ -287,7 +285,7 @@ void PackBitsReadStream::unpack() {
 	uint32 i, j;
 	_unpacked = 0;
 
-	while (_outSize > 0 && !_input->eos()) {
+	while (_out < _outEnd && !_input->eos()) {
 		byteRun = _input->readByte();
 		if (byteRun <= 127) {
 			i = byteRun + 1;
