@@ -29,7 +29,7 @@
 #include "sound/midiparser.h"
 #include "sound/mods/protracker.h"
 
-#include "parallaction/music.h"
+#include "parallaction/sound.h"
 #include "parallaction/parallaction.h"
 
 

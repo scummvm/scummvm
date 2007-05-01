@@ -23,7 +23,7 @@
 #include "parallaction/disk.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/graphics.h"
-#include "parallaction/music.h"
+#include "parallaction/sound.h"
 #include "parallaction/parser.h"
 #include "parallaction/walk.h"
 #include "parallaction/zone.h"

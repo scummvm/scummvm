@@ -31,7 +31,7 @@
 #include "parallaction/graphics.h"
 #include "parallaction/inventory.h"
 #include "parallaction/menu.h"
-#include "parallaction/music.h"
+#include "parallaction/sound.h"
 #include "parallaction/zone.h"
 
 namespace Parallaction {

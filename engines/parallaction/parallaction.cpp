@@ -34,7 +34,7 @@
 #include "parallaction/menu.h"
 #include "parallaction/parser.h"
 #include "parallaction/disk.h"
-#include "parallaction/music.h"
+#include "parallaction/sound.h"
 #include "parallaction/inventory.h"
 #include "parallaction/graphics.h"
 #include "parallaction/walk.h"
