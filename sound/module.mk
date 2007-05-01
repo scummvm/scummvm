@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	aiff.o \
 	audiocd.o \
 	audiostream.o \
+	iff.o \
 	flac.o \
 	fmopl.o \
 	mididrv.o \

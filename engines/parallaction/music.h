@@ -27,6 +27,7 @@
 #include "common/mutex.h"
 
 #include "sound/audiostream.h"
+#include "sound/iff.h"
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
 
@@ -50,14 +51,14 @@ public:
 	SoundMan(Parallaction *vm);
 	virtual ~SoundMan() {}
 
-	void setMusicFile(const char *filename);
+	virtual void playSfx(const char *filename, uint channel, bool looping, int volume = -1, int rate = -1) { }
+	virtual void stopSfx(uint channel) { }
 
+	void setMusicFile(const char *filename);
 	virtual void playMusic() = 0;
 	virtual void stopMusic() = 0;
-
 	virtual void playCharacterMusic(const char *character) = 0;
 	virtual void playLocationMusic(const char *location) = 0;
-
 	void setMusicVolume(int value);
 };
 
@@ -76,16 +77,29 @@ public:
 	void playLocationMusic(const char *location);
 };
 
+#define NUM_AMIGA_CHANNELS 4
+
 class AmigaSoundMan : public SoundMan {
 
 	Audio::AudioStream *_musicStream;
 	Audio::SoundHandle	_musicHandle;
+
+	struct Channel {
+		Audio::Voice8Header	header;
+		byte				*data;
+		uint32				dataSize;
+		Audio::SoundHandle	handle;
+		uint32				flags;
+	} _channels[NUM_AMIGA_CHANNELS];
 
 public:
 	AmigaSoundMan(Parallaction *vm);
 	~AmigaSoundMan();
 	void playMusic();
 	void stopMusic();
+
+	void playSfx(const char *filename, uint channel, bool looping, int volume, int rate);
+	void stopSfx(uint channel);
 
 	void playCharacterMusic(const char *character);
 	void playLocationMusic(const char *location);

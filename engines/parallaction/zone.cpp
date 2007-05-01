@@ -26,6 +26,7 @@
 #include "parallaction/graphics.h"
 #include "parallaction/inventory.h"
 #include "parallaction/zone.h"
+#include "parallaction/music.h"
 
 namespace Parallaction {
 
@@ -271,6 +272,10 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 		case kZoneHear: // hear Zone init
 			if (!scumm_stricmp(_tokens[0], "sound")) {
 				strcpy(u->hear->_name, _tokens[1]);
+				z->u.hear->_channel = atoi(_tokens[2]);
+			}
+			if (!scumm_stricmp(_tokens[0], "freq")) {
+				z->u.hear->_freq = atoi(_tokens[1]);
 			}
 			break;
 
@@ -400,7 +405,7 @@ uint16 Parallaction::runZone(Zone *z) {
 		break;
 
 	case kZoneHear:
-		strcpy(_soundFile, z->u.hear->_name);
+		_soundMan->playSfx(z->u.hear->_name, z->u.hear->_channel, (z->_flags & kFlagsLooping) == kFlagsLooping, 60);
 		break;
 
 	case kZoneSpeak:

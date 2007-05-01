@@ -26,6 +26,10 @@
 #include "parallaction/defs.h"
 #include "common/file.h"
 
+namespace Audio {
+	class AudioStream;
+}
+
 namespace Parallaction {
 
 //------------------------------------------------------
@@ -112,6 +116,7 @@ public:
 	virtual void loadScenery(const char* background, const char* mask) = 0;
 	virtual Table* loadTable(const char* name) = 0;
 	virtual Common::ReadStream* loadMusic(const char* name) = 0;
+	virtual Common::ReadStream* loadSound(const char* name) = 0;
 };
 
 class DosDisk : public Disk {
@@ -147,6 +152,7 @@ public:
 	void loadScenery(const char* background, const char* mask);
 	Table* loadTable(const char* name);
 	Common::ReadStream* loadMusic(const char* name);
+	Common::ReadStream* loadSound(const char* name);
 };
 
 class AmigaDisk : public Disk {
@@ -178,6 +184,7 @@ public:
 	void loadScenery(const char* background, const char* mask);
 	Table* loadTable(const char* name);
 	Common::ReadStream* loadMusic(const char* name);
+	Common::ReadStream* loadSound(const char* name);
 };
 
 } // namespace Parallaction

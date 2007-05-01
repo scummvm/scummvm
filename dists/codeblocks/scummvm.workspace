@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="ScummVM">
-		<Project filename="scummvm.cbp">
+		<Project filename="scummvm.cbp" active="1">
 			<Depends filename="parallaction.cbp" />
 		</Project>
-		<Project filename="parallaction.cbp" active="1" />
+		<Project filename="parallaction.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

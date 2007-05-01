@@ -307,6 +307,53 @@ AmigaSoundMan::~AmigaSoundMan() {
 	stopMusic();
 }
 
+void AmigaSoundMan::playSfx(const char *filename, uint channel, bool looping, int volume, int rate) {
+	if (channel < 0 || channel >= NUM_AMIGA_CHANNELS) {
+		warning("unknown sfx channel");
+		return;
+	}
+
+	Channel *ch = &_channels[channel];
+	Common::ReadStream *stream = _vm->_disk->loadSound(filename);
+	Audio::A8SVXDecoder decoder(*stream, ch->header, ch->data, ch->dataSize);
+	decoder.decode();
+	delete stream;
+
+	uint32 loopStart, loopEnd, flags;
+	if (looping) {
+		// the standard way to loop 8SVX audio implies use of the oneShotHiSamples and
+		// repeatHiSamples fields, but Nippon Safes handles loops according to flags
+		// set in its location scripts and always operates on the whole data.
+		loopStart = 0;
+		loopEnd = ch->header.oneShotHiSamples + ch->header.repeatHiSamples;
+		flags = Audio::Mixer::FLAG_LOOP;
+	} else {
+		loopStart = loopEnd = 0;
+		flags = 0;
+	}
+
+	if (volume == -1) {
+		volume = ch->header.volume;
+	}
+
+	if (rate == -1) {
+		rate = ch->header.samplesPerSec;
+	}
+
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &ch->handle, ch->data, ch->dataSize, rate, flags, -1, volume, 0, loopStart, loopEnd);
+}
+
+void AmigaSoundMan::stopSfx(uint channel) {
+	if (channel < 0 || channel >= NUM_AMIGA_CHANNELS) {
+		warning("unknown sfx channel");
+		return;
+	}
+
+	_mixer->stopHandle(_channels[channel].handle);
+	free(_channels[channel].data);
+	_channels[channel].data = 0;
+}
+
 void AmigaSoundMan::playMusic() {
 	stopMusic();
 
@@ -314,7 +361,7 @@ void AmigaSoundMan::playMusic() {
 	_musicStream = Audio::makeProtrackerStream(stream);
 	delete stream;
 
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _musicStream, -1, 255, 0, false, true);
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _musicStream, -1, 255, 0, false, false);
 }
 
 void AmigaSoundMan::stopMusic() {

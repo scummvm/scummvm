@@ -147,8 +147,12 @@ struct DoorData {	// size = 28
 };
 struct HearData {	// size = 20
 	char		_name[20];
+	int			_channel;
+	int			_freq;
 
 	HearData() {
+		_channel = -1;
+		_freq = -1;
 		_name[0] = '\0';
 	}
 };

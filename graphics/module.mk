@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	fonts/newfont_big.o \
 	fonts/newfont.o \
 	fonts/scummfont.o \
+	iff.o \
 	ilbm.o \
 	imagedec.o \
 	imageman.o \

@@ -22,101 +22,19 @@
 
 #include "common/stdafx.h"
 
+#include "graphics/iff.h"
+
 #include "parallaction/defs.h"
 #include "parallaction/graphics.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/disk.h"
 #include "parallaction/walk.h"
-#include "graphics/ilbm.h"
+
+namespace Audio {
+	AudioStream *make8SVXStream(Common::ReadStream &input);
+}
 
 namespace Parallaction {
-
-class RLEStream : public Common::ReadStream {
-
-	Common::ReadStream *_input;
-
-	byte		_rembuf[257];
-	int32		_wpos;
-	int32		_rpos;
-
-	int32		_toBeRead;
-	byte*		_dst;
-	int32		_read;
-
-	void store(byte b) {
-		if (_toBeRead > 0) {
-			*_dst++ = b;
-			_read++;
-			_wpos = 0;
-			_rpos = 0;
-		} else {
-			assert(_wpos < 257);
-			_rembuf[_wpos++] = b;
-			_rpos = 0;
-		}
-
-		_toBeRead--;
-	}
-
-	void feed() {
-		int32 len = MIN(_wpos - _rpos, _toBeRead);
-		if (len == 0) return;
-
-		memcpy(_dst, _rembuf + _rpos, len);
-
-		_rpos += len;
-		_read += len;
-		_toBeRead -= len;
-	}
-
-	void unpack() {
-		byte byteRun;
-		byte idx;
-
-		uint32 i, j;
-
-		while (_toBeRead > 0 && !_input->eos()) {
-			byteRun = _input->readByte();
-			if (byteRun <= 127) {
-				i = byteRun + 1;
-				for (j = 0; j < i; j++) {
-					idx = _input->readByte();
-					store(idx);
-				}
-			} else if (byteRun != 128) {
-				i = (256 - byteRun) + 1;
-				idx = _input->readByte();
-				for (j = 0; j < i; j++) {
-					store(idx);
-				}
-			}
-		}
-
-	}
-
-public:
-	RLEStream(Common::ReadStream *input) : _input(input), _wpos(0), _rpos(0) {
-	}
-
-	~RLEStream() {
-	}
-
-	bool eos() const {
-		return _input->eos() & (_rpos == _wpos);
-	}
-
-	uint32 read(void *dataPtr, uint32 dataSize) {
-		_toBeRead = (int32)dataSize;
-		_dst = (byte*)dataPtr;
-		_read = 0;
-
-		feed();
-		unpack();
-		return _read;
-	}
-
-};
-
 
 /*
 	This stream class is just a wrapper around Archive, so
@@ -290,7 +208,7 @@ Cnv* DosDisk::loadCnv(const char *filename) {
 	uint32 decsize = numFrames * width * height;
 	byte *data = (byte*)malloc(decsize);
 
-	RLEStream decoder(&_resArchive);
+	Graphics::PackBitsReadStream decoder(_resArchive);
 	decoder.read(data, decsize);
 
 	return new Cnv(numFrames, width, height, data);
@@ -416,7 +334,7 @@ StaticCnv* DosDisk::loadStatic(const char* name) {
 	uint16 size = cnv->_width*cnv->_height;
 	cnv->_data0 = (byte*)malloc(size);
 
-	RLEStream decoder(&_resArchive);
+	Graphics::PackBitsReadStream decoder(_resArchive);
 	decoder.read(cnv->_data0, size);
 
 	return cnv;
@@ -489,7 +407,7 @@ void DosDisk::loadBackground(const char *filename) {
 	byte *path = (byte*)calloc(1, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 
 
-	RLEStream stream(&_resArchive);
+	Graphics::PackBitsReadStream stream(_resArchive);
 	unpackBackground(&stream, bg, mask, path);
 
 	_vm->_gfx->setBackground(bg);
@@ -579,6 +497,16 @@ Common::ReadStream* DosDisk::loadMusic(const char* name) {
 
 	return stream;
 }
+
+
+Common::ReadStream* DosDisk::loadSound(const char* name) {
+	return NULL;
+}
+
+
+
+
+
 
 #pragma mark -
 
@@ -741,7 +669,6 @@ public:
 		return _stream->read(dataPtr, dataSize);
 	}
 };
-
 
 
 
@@ -1020,18 +947,42 @@ class BackgroundDecoder : public Graphics::ILBMDecoder {
 	uint32			_i;
 
 protected:
-	void readCRNG() {
-		_range[_i]._timer = _chunk.readUint16();
-		_range[_i]._step = _chunk.readUint16();
-		_range[_i]._flags = _chunk.readUint16();
-		_range[_i]._first = _chunk.readByte();
-		_range[_i]._last = _chunk.readByte();
+	void readCRNG(Common::IFFChunk &chunk) {
+		_range[_i]._timer = chunk.readUint16BE();
+		_range[_i]._step = chunk.readUint16BE();
+		_range[_i]._flags = chunk.readUint16BE();
+		_range[_i]._first = chunk.readByte();
+		_range[_i]._last = chunk.readByte();
 
 		_i++;
 	}
 
 public:
-	BackgroundDecoder(Common::ReadStream &input, PaletteFxRange *range) : ILBMDecoder(input), _range(range), _i(0) {
+	BackgroundDecoder(Common::ReadStream &input, Graphics::Surface &surface, byte *&colors, PaletteFxRange *range) :
+		Graphics::ILBMDecoder(input, surface, colors), _range(range), _i(0) {
+	}
+
+	void decode() {
+		Common::IFFChunk *chunk;
+		while ((chunk = nextChunk()) != 0) {
+			switch (chunk->id) {
+			case ID_BMHD:
+				readBMHD(*chunk);
+				break;
+
+			case ID_CMAP:
+				readCMAP(*chunk);
+				break;
+
+			case ID_BODY:
+				readBODY(*chunk);
+				break;
+
+			case ID_CRNG:
+				readCRNG(*chunk);
+				break;
+			}
+		}
 	}
 
 	uint32	getNumRanges() {
@@ -1043,12 +994,12 @@ public:
 void AmigaDisk::loadBackground(const char *name) {
 
 	Common::SeekableReadStream *s = openArchivedFile(name, true);
-	BackgroundDecoder decoder(*s, _vm->_gfx->_palettefx);
 
 	Graphics::Surface surf;
 	byte *pal;
+	BackgroundDecoder decoder(*s, surf, pal, _vm->_gfx->_palettefx);
+	decoder.decode();
 
-	decoder.decode(surf, pal);
 	for (uint32 i = 0; i < BASE_PALETTE_COLORS * 3; i++)
 		_vm->_gfx->_palette[i] = pal[i] >> 2;
 	free(pal);
@@ -1082,7 +1033,7 @@ void AmigaDisk::loadMask(const char *name) {
 
 
 	s->seek(0x126, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
-	RLEStream stream(s);
+	Graphics::PackBitsReadStream stream(*s);
 
 	byte *buf = (byte*)malloc(SCREENMASK_WIDTH*SCREEN_HEIGHT);
 	stream.read(buf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
@@ -1106,7 +1057,7 @@ void AmigaDisk::loadPath(const char *name) {
 
 	s->seek(0x120, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
 
-	RLEStream stream(s);
+	Graphics::PackBitsReadStream stream(*s);
 	byte *buf = (byte*)malloc(SCREENPATH_WIDTH*SCREEN_HEIGHT);
 	stream.read(buf, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 	setPath(buf);
@@ -1169,6 +1120,15 @@ Table* AmigaDisk::loadTable(const char* name) {
 
 Common::ReadStream* AmigaDisk::loadMusic(const char* name) {
 	return openArchivedFile(name);
+}
+
+Common::ReadStream* AmigaDisk::loadSound(const char* name) {
+	char path[PATH_LEN];
+	sprintf(path, "%s.snd", name);
+
+	openArchivedFile(path);
+
+	return new DummyArchiveStream(_resArchive);
 }
 
 

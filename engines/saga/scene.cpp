@@ -45,7 +45,7 @@
 #include "saga/rscfile.h"
 #include "saga/sagaresnames.h"
 
-#include "graphics/ilbm.h"
+#include "graphics/iff.h"
 #include "common/util.h"
 
 namespace Saga {
@@ -594,7 +594,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	Event event;
 	Event *q_event;
 	static PalEntry current_pal[PAL_ENTRIES];
-	
+
 	if ((_vm->getGameType() == GType_IHNM) && (loadSceneParams->chapter != NO_CHAPTER_CHANGE)) {
 		if (loadSceneParams->loadFlag != kLoadBySceneNumber) {
 			error("loadScene wrong usage");
@@ -680,7 +680,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 			_vm->_resource->loadResource(_sceneContext, _resourceList[i].resourceId,
 				_resourceList[i].buffer, _resourceList[i].size);
 
-			
+
 			if (_resourceList[i].size >= 6) {
 				if (!memcmp(_resourceList[i].buffer, "DUMMY!", 6)) {
 					_resourceList[i].invalid = true;
@@ -897,7 +897,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 void Scene::loadSceneDescriptor(uint32 resourceId) {
 	byte *sceneDescriptorData;
 	size_t sceneDescriptorDataLength;
-	
+
 	memset(&_sceneDescription, 0, sizeof(_sceneDescription));
 
 	if (resourceId == 0) {
@@ -970,7 +970,7 @@ void Scene::processSceneResources() {
 	SAGAResourceTypes resType;
 
 	getResourceTypes(types, typesCount);
-	
+
 	// Process the scene resource list
 	for (i = 0; i < _resourceListCount; i++) {
 		if (_resourceList[i].invalid) {

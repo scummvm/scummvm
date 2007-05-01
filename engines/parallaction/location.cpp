@@ -154,6 +154,10 @@ void Parallaction::parseLocation(const char *filename) {
 			if (getPlatform() == Common::kPlatformAmiga)
 				_soundMan->setMusicFile(_tokens[1]);
 		}
+		if (!scumm_stricmp(_tokens[0], "SOUND")) {
+//			if (getPlatform() == Common::kPlatformAmiga)
+//				_soundMan->loadSfx(_tokens[1], atoi(_tokens[2]));
+		}
 		fillBuffers(*_locationScript, true);
 	}
 
@@ -180,6 +184,11 @@ void Parallaction::resolveLocationForwards() {
 
 void Parallaction::freeLocation() {
 	debugC(7, kDebugLocation, "freeLocation");
+
+	_soundMan->stopSfx(0);
+	_soundMan->stopSfx(1);
+	_soundMan->stopSfx(2);
+	_soundMan->stopSfx(3);
 
 	if (_localFlagNames)
 		delete _localFlagNames;
@@ -412,6 +421,8 @@ void Parallaction::changeLocation(char *location) {
 		runCommands(_location._aCommands);
 		debugC(1, kDebugLocation, "changeLocation: location acommands run");
 	}
+
+//	_soundMan->playSfx(0);
 
 	debugC(1, kDebugLocation, "changeLocation completed");
 

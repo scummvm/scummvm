@@ -449,7 +449,10 @@ void _c_testResult(void *parm) {
 }
 
 void _c_offSound(void*) {
-	// TODO: to be implemented
+	_vm->_soundMan->stopSfx(0);
+	_vm->_soundMan->stopSfx(1);
+	_vm->_soundMan->stopSfx(2);
+	_vm->_soundMan->stopSfx(3);
 }
 
 void _c_startMusic(void*) {
