@@ -198,7 +198,7 @@ byte *Game::loadExtData(int16 itemId, int16 *pResWidth,
 void Game::freeCollision(int16 id) {
 	for (int i = 0; i < 250; i++) {
 		if (_collisionAreas[i].id == id)
-			_collisionAreas[i].left = -1;
+			_collisionAreas[i].left = 0xFFFF;
 	}
 }
 
@@ -675,13 +675,13 @@ byte *Game::loadLocTexts(void) {
 
 void Game::setCollisions(void) {
 	byte *savedIP;
-	int16 left;
-	int16 top;
-	int16 width;
-	int16 height;
+	uint16 left;
+	uint16 top;
+	uint16 width;
+	uint16 height;
 	Collision *collArea;
 
-	for (collArea = _collisionAreas; collArea->left != -1; collArea++) {
+	for (collArea = _collisionAreas; collArea->left != 0xFFFF; collArea++) {
 		if (((collArea->id & 0xC000) != 0x8000) || (collArea->funcSub == 0))
 			continue;
 
@@ -691,7 +691,8 @@ void Game::setCollisions(void) {
 		top = _vm->_parse->parseValExpr();
 		width = _vm->_parse->parseValExpr();
 		height = _vm->_parse->parseValExpr();
-		if ((_vm->_draw->_renderFlags & RENDERFLAG_CAPTUREPOP) && (left != -1)) {
+		if ((_vm->_draw->_renderFlags & RENDERFLAG_CAPTUREPOP) &&
+				(left != 0xFFFF)) {
 			left += _vm->_draw->_backDeltaX;
 			top += _vm->_draw->_backDeltaY;
 		}

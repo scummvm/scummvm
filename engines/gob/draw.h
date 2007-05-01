@@ -139,6 +139,9 @@ public:
 		_spritesArray[index] = 0;
 	}
 	void adjustCoords(char adjust, int16 *coord1, int16 *coord2);
+	void adjustCoords(char adjust, uint16 *coord1, uint16 *coord2) {
+		adjustCoords(adjust, (int16 *) coord1, (int16 *) coord2);
+	}
 	void drawString(char *str, int16 x, int16 y, int16 color1, int16 color2,
 			int16 transp, SurfaceDesc *dest, Video::FontDesc *font);
 	void printTextCentered(int16 id, int16 left, int16 top, int16 right,

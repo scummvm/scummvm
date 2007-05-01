@@ -257,12 +257,12 @@ void Game_v1::playTot(int16 skipPlay) {
 void Game_v1::clearCollisions() {
 	for (int i = 0; i < 250; i++) {
 		_collisionAreas[i].id = 0;
-		_collisionAreas[i].left = -1;
+		_collisionAreas[i].left = 0xFFFF;
 	}
 }
 
-int16 Game_v1::addNewCollision(int16 id, int16 left, int16 top,
-		int16 right, int16 bottom, int16 flags, int16 key,
+int16 Game_v1::addNewCollision(int16 id, uint16 left, uint16 top,
+		uint16 right, uint16 bottom, int16 flags, int16 key,
 		uint16 funcEnter, uint16 funcLeave) {
 	Collision *ptr;
 
@@ -275,7 +275,7 @@ int16 Game_v1::addNewCollision(int16 id, int16 left, int16 top,
 			funcEnter, funcLeave);
 
 	for (int i = 0; i < 250; i++) {
-		if (_collisionAreas[i].left != -1)
+		if (_collisionAreas[i].left != 0xFFFF)
 			continue;
 
 		ptr = &_collisionAreas[i];
@@ -300,7 +300,7 @@ void Game_v1::pushCollisions(char all) {
 	int16 size;
 
 	debugC(1, kDebugCollisions, "pushCollisions");
-	for (size = 0, srcPtr = _collisionAreas; srcPtr->left != -1; srcPtr++) {
+	for (size = 0, srcPtr = _collisionAreas; srcPtr->left != 0xFFFF; srcPtr++) {
 		if (all || (srcPtr->id & 0x8000))
 			size++;
 	}
@@ -310,10 +310,10 @@ void Game_v1::pushCollisions(char all) {
 	_collStackElemSizes[_collStackSize] = size;
 	_collStackSize++;
 
-	for (srcPtr = _collisionAreas; srcPtr->left != -1; srcPtr++) {
+	for (srcPtr = _collisionAreas; srcPtr->left != 0xFFFF; srcPtr++) {
 		if (all || (srcPtr->id & 0x8000)) {
 			memcpy(destPtr, srcPtr, sizeof(Collision));
-			srcPtr->left = -1;
+			srcPtr->left = 0xFFFF;
 			destPtr++;
 		}
 	}
@@ -326,7 +326,7 @@ void Game_v1::popCollisions(void) {
 	debugC(1, kDebugCollisions, "popCollision");
 
 	_collStackSize--;
-	for (destPtr = _collisionAreas; destPtr->left != -1; destPtr++);
+	for (destPtr = _collisionAreas; destPtr->left != 0xFFFF; destPtr++);
 
 	srcPtr = _collStack[_collStackSize];
 	memcpy(destPtr, srcPtr,
@@ -595,10 +595,10 @@ void Game_v1::collisionsBlock(void) {
 	int16 cmdHigh;
 	int16 key;
 	int16 flags;
-	int16 left;
-	int16 top;
-	int16 width;
-	int16 height;
+	uint16 left;
+	uint16 top;
+	uint16 width;
+	uint16 height;
 	int16 var_22;
 	int16 index;
 	int16 curEditIndex;
@@ -693,7 +693,7 @@ void Game_v1::collisionsBlock(void) {
 				_vm->_global->_inter_execPtr += _vm->_inter->load16();
 			}
 
-			if (left == -1)
+			if (left == 0xFFFF)
 				break;
 
 			if ((cmd & 1) == 0) {
@@ -802,7 +802,7 @@ void Game_v1::collisionsBlock(void) {
 
 			if (key == 0x1C0D) {
 				for (i = 0; i < 250; i++) {
-					if (_collisionAreas[i].left == -1)
+					if (_collisionAreas[i].left == 0xFFFF)
 						continue;
 
 					if ((_collisionAreas[i].id & 0x8000) == 0)
@@ -833,7 +833,7 @@ void Game_v1::collisionsBlock(void) {
 		if (_activeCollResId == 0) {
 			if (key != 0) {
 				for (i = 0; i < 250; i++) {
-					if (_collisionAreas[i].left == -1)
+					if (_collisionAreas[i].left == 0xFFFF)
 						continue;
 
 					if ((_collisionAreas[i].id & 0x8000) == 0)
@@ -850,7 +850,7 @@ void Game_v1::collisionsBlock(void) {
 
 				if (_activeCollResId == 0) {
 					for (i = 0; i < 250; i++) {
-						if (_collisionAreas[i].left == -1)
+						if (_collisionAreas[i].left == 0xFFFF)
 							continue;
 
 						if ((_collisionAreas[i].id & 0x8000) == 0)
@@ -878,7 +878,7 @@ void Game_v1::collisionsBlock(void) {
 						collPtr = _collisionAreas;
 
 						for (i = 0, collPtr = _collisionAreas;
-								collPtr->left != -1; i++, collPtr++) {
+								collPtr->left != 0xFFFF; i++, collPtr++) {
 
 							if ((collPtr->id & 0x8000) == 0)
 								continue;
@@ -923,7 +923,7 @@ void Game_v1::collisionsBlock(void) {
 						if (descIndex != 0) {
 							counter = 0;
 							for (i = 0; i < 250; i++) {
-								if (_collisionAreas[i].left == -1)
+								if (_collisionAreas[i].left == 0xFFFF)
 									continue;
 
 								if ((_collisionAreas[i].id & 0x8000) == 0)
@@ -939,7 +939,7 @@ void Game_v1::collisionsBlock(void) {
 							}
 						} else {
 							for (i = 0; i < 250; i++) {
-								if (_collisionAreas[i].left == -1)
+								if (_collisionAreas[i].left == 0xFFFF)
 									continue;
 
 								if ((_collisionAreas[i].id & 0x8000) == 0)
@@ -955,7 +955,7 @@ void Game_v1::collisionsBlock(void) {
 					if (descIndex2 != 0) {
 						counter = 0;
 						for (i = 0; i < 250; i++) {
-							if (_collisionAreas[i].left == -1)
+							if (_collisionAreas[i].left == 0xFFFF)
 								continue;
 
 							if ((_collisionAreas[i].id & 0x8000) == 0)
@@ -1010,7 +1010,7 @@ void Game_v1::collisionsBlock(void) {
 		var_24 = 0;
 		var_26 = 1;
 		for (i = 0; i < 250; i++) {
-			if (_collisionAreas[i].left == -1)
+			if (_collisionAreas[i].left == 0xFFFF)
 				continue;
 
 			if ((_collisionAreas[i].id & 0x8000) == 0)
@@ -1102,7 +1102,7 @@ int16 Game_v1::multiEdit(int16 time, int16 index, int16 *pCurPos,
 	for (i = 0; i < 250; i++) {
 		collArea = &_collisionAreas[i];
 
-		if (collArea->left == -1)
+		if (collArea->left == 0xFFFF)
 			continue;
 
 		if ((collArea->id & 0x8000) == 0)
@@ -1145,7 +1145,7 @@ int16 Game_v1::multiEdit(int16 time, int16 index, int16 *pCurPos,
 		for (i = 0; i < 250; i++) {
 			collArea = &_collisionAreas[i];
 
-			if (collArea->left == -1)
+			if (collArea->left == 0xFFFF)
 				continue;
 
 			if ((collArea->id & 0x8000) == 0)
@@ -1194,7 +1194,7 @@ int16 Game_v1::multiEdit(int16 time, int16 index, int16 *pCurPos,
 			for (i = 0; i < 250; i++) {
 				collArea = &_collisionAreas[i];
 
-				if (collArea->left == -1)
+				if (collArea->left == 0xFFFF)
 					continue;
 
 				if ((collArea->id & 0x8000) == 0)
@@ -1487,7 +1487,7 @@ int16 Game_v1::checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
 	*resIndex = 0;
 
 	ptr = _collisionAreas;
-	for (i = 0; ptr->left != -1; ptr++, i++) {
+	for (i = 0; ptr->left != 0xFFFF; ptr++, i++) {
 		if (all) {
 			if ((ptr->flags & 0xF) > 1)
 				continue;
