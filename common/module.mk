@@ -7,7 +7,6 @@ MODULE_OBJS := \
 	file.o \
 	fs.o \
 	hashmap.o \
-	iff_container.o \
 	md5.o \
 	mutex.o \
 	str.o \
