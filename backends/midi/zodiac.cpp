@@ -25,8 +25,7 @@
 
 #ifndef DISABLE_TAPWAVE
 
-#include "TwTraps.h"
-#include "TwMidi.h"
+#include <tapwave.h>
 
 
 class MidiDriver_Zodiac:public MidiDriver_MPU401 {
