@@ -982,15 +982,15 @@ bool OSystem_WINCE3::update_scalers() {
 	_adjustAspectRatio = false;
 
 	if (CEDevice::hasPocketPCResolution()) {
-		if (!_orientationLandscape && (_screenWidth == 320 || !_screenWidth)) {
+		if ( 	(!_orientationLandscape && (_screenWidth == 320 || !_screenWidth)) 
+			|| CEDevice::hasSquareQVGAResolution() ) {
 			_scaleFactorXm = 3;
 			_scaleFactorXd = 4;
 			_scaleFactorYm = 1;
 			_scaleFactorYd = 1;
 			_scalerProc = PocketPCPortrait;
 			_modeFlags = 0;
-		}
-		if ( _orientationLandscape && (_screenWidth == 320 || !_screenWidth)) {
+		} else if ( _orientationLandscape && (_screenWidth == 320 || !_screenWidth)) {
 			Common::String gameid(ConfMan.get("gameid"));	// consider removing this check and start honoring the _adjustAspectRatio flag
 			if (!_panelVisible && !_hasSmartphoneResolution  && !_overlayVisible && !(strncmp(gameid.c_str(), "zak", 3) == 0)) {
 				_scaleFactorXm = 1;
@@ -1008,16 +1008,14 @@ bool OSystem_WINCE3::update_scalers() {
 				_scalerProc = Normal1x;
 				_modeFlags = 0;
 			}
-		}
-		if (_screenWidth == 640 && !(isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
+		} else 	if (_screenWidth == 640 && !(isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
 			_scaleFactorXm = 1;
 			_scaleFactorXd = 2;
 			_scaleFactorYm = 1;
 			_scaleFactorYd = 2;
 			_scalerProc = PocketPCHalf;
 			_modeFlags = 0;
-		}
-		if (_screenWidth == 640 && (isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
+		} else 	if (_screenWidth == 640 && (isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
 			_scaleFactorXm = 1;
 			_scaleFactorXd = 1;
 			_scaleFactorYm = 1;
@@ -1028,6 +1026,7 @@ bool OSystem_WINCE3::update_scalers() {
 
 		return true;
 	}
+
 	if (CEDevice::hasSmartphoneResolution()) {
 		if (_screenWidth > 320)
 			error("Game resolution not supported on Smartphone");

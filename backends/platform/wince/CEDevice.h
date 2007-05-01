@@ -34,6 +34,7 @@ class CEDevice {
 		static void end();
 		static void wakeUp();
 		static bool hasPocketPCResolution();
+		static bool hasSquareQVGAResolution();
 		static bool hasDesktopResolution();
 		static bool hasWideResolution();
 		static bool hasSmartphoneResolution();

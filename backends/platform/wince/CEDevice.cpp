@@ -73,6 +73,10 @@ void CEDevice::wakeUp() {
 	}
 }
 
+bool CEDevice::hasSquareQVGAResolution() {
+	return (OSystem_WINCE3::getScreenWidth() == 240 && OSystem_WINCE3::getScreenWidth() == 240);
+}
+
 bool CEDevice::hasPocketPCResolution() {
 	if (OSystem_WINCE3::isOzone() && hasWideResolution())
 		return true;
