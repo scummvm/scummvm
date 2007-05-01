@@ -76,13 +76,13 @@ void CEDevice::wakeUp() {
 bool CEDevice::hasPocketPCResolution() {
 	if (OSystem_WINCE3::isOzone() && hasWideResolution())
 		return true;
-	return (OSystem_WINCE3::getScreenWidth() < 320 && OSystem_WINCE3::getScreenWidth() >= 240);
+	return (OSystem_WINCE3::getScreenWidth() <= 320 && OSystem_WINCE3::getScreenWidth() >= 240);
 }
 
 bool CEDevice::hasDesktopResolution() {
 	if (OSystem_WINCE3::isOzone() && hasWideResolution())
 		return true;
-	return (OSystem_WINCE3::getScreenWidth() >= 320);
+	return (OSystem_WINCE3::getScreenWidth() > 320);
 }
 
 bool CEDevice::hasWideResolution() {
