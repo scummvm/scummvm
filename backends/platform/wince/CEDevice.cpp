@@ -32,16 +32,58 @@ static HANDLE (WINAPI* _SetPowerRequirement)(PVOID,int,ULONG,PVOID,ULONG) = NULL
 static DWORD (WINAPI* _ReleasePowerRequirement)(HANDLE) = NULL;
 static HANDLE _hPowerManagement = NULL;
 static DWORD _lastTime = 0;
+static DWORD REG_bat = 0, REG_ac = 0, REG_disp = 0, bat_timeout = 0;
 #ifdef __GNUC__
 extern "C" void WINAPI SystemIdleTimerReset(void);
-#define SPI_GETPLATFORMTYPE 257
+#define SPI_GETPLATFORMTYPE 		257
+#define SPI_SETBATTERYIDLETIMEOUT	251
+#define SPI_GETBATTERYIDLETIMEOUT	252
 #endif
-
 
 #define TIMER_TRIGGER 9000
 
-// Power management code borrowed from MoDaCo & Betaplayer. Thanks !
+DWORD CEDevice::reg_access(TCHAR *key, TCHAR *val, DWORD data) {
+	HKEY regkey;
+	DWORD tmpval, cbdata;
+
+	if (RegOpenKeyEx(HKEY_CURRENT_USER, key, 0, 0, &regkey) != ERROR_SUCCESS)
+		return data;
+
+	cbdata = sizeof(DWORD);
+	if (RegQueryValueEx(regkey, val, NULL, NULL, (LPBYTE) &tmpval, &cbdata) != ERROR_SUCCESS)
+	{
+		RegCloseKey(regkey);
+		return data;
+	}
+
+	cbdata = sizeof(DWORD);
+	if (RegSetValueEx(regkey, val, 0, REG_DWORD, (LPBYTE) &data, cbdata) != ERROR_SUCCESS)
+	{
+		RegCloseKey(regkey);
+		return data;
+	}
+
+	RegCloseKey(regkey);
+	return tmpval;
+}
+
+void CEDevice::backlight_xchg() {
+	HANDLE h;
+
+	REG_bat = reg_access(TEXT("ControlPanel\\BackLight"), TEXT("BatteryTimeout"), REG_bat);
+	REG_ac = reg_access(TEXT("ControlPanel\\BackLight"), TEXT("ACTimeout"), REG_ac);
+	REG_disp = reg_access(TEXT("ControlPanel\\Power"), TEXT("Display"), REG_disp);
+
+	h = CreateEvent(NULL, FALSE, FALSE, TEXT("BackLightChangeEvent"));
+	if (h)
+	{
+		SetEvent(h);
+		CloseHandle(h);
+	}
+}
+
 void CEDevice::init() {
+	// 2003+ power management code borrowed from MoDaCo & Betaplayer. Thanks !
 	HINSTANCE dll = LoadLibrary(TEXT("aygshell.dll"));
 	if (dll) {
 		*(FARPROC*)&_SHIdleTimerReset = GetProcAddress(dll, MAKEINTRESOURCE(2006));
@@ -55,12 +97,20 @@ void CEDevice::init() {
 	if (_SetPowerRequirement)
 		_hPowerManagement = _SetPowerRequirement((PVOID) TEXT("BKL1:"), 0, 1, (PVOID) NULL, 0);
 	_lastTime = GetTickCount();
+
+	// older devices
+	REG_bat = REG_ac = REG_disp = 2 * 60 * 60 * 1000;	// 2hrs should do it
+	backlight_xchg();
+	SystemParametersInfo(SPI_GETBATTERYIDLETIMEOUT, 0, (void *) &bat_timeout, 0);
+	SystemParametersInfo(SPI_SETBATTERYIDLETIMEOUT, 60 * 60 * 2, NULL, SPIF_SENDCHANGE);	
 }
 
 void CEDevice::end() {
-	if (_ReleasePowerRequirement && _hPowerManagement) {
+	if (_ReleasePowerRequirement && _hPowerManagement)
 		_ReleasePowerRequirement(_hPowerManagement);
-	}
+
+	backlight_xchg();
+	SystemParametersInfo(SPI_SETBATTERYIDLETIMEOUT, bat_timeout, NULL, SPIF_SENDCHANGE);	
 }
 
 void CEDevice::wakeUp() {
@@ -74,7 +124,7 @@ void CEDevice::wakeUp() {
 }
 
 bool CEDevice::hasSquareQVGAResolution() {
-	return (OSystem_WINCE3::getScreenWidth() == 240 && OSystem_WINCE3::getScreenWidth() == 240);
+	return (OSystem_WINCE3::getScreenWidth() == 240 && OSystem_WINCE3::getScreenHeight() == 240);
 }
 
 bool CEDevice::hasPocketPCResolution() {
