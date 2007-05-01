@@ -64,6 +64,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Switched to using a GCC toolchain for building.
    - Major update to the SDL lib. Better, faster, more compatible :-)
 
+ PalmOS Port:
+   - Now use PalmOS Porting SDK which enable use of C standard library
+
 0.9.1 (2006-10-29)
  New Ports:
    - Added Nintendo DS port.
