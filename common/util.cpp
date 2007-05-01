@@ -551,6 +551,7 @@ void NORETURN CDECL error(const char *s, ...) {
 #endif
 
 #ifdef PALMOS_MODE
+	extern void PalmFatalError(const char *err);
 	PalmFatalError(buf_output);
 #endif
 
