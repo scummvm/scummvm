@@ -393,7 +393,10 @@ void OSystem_WINCE3::swap_smartphone_keyboard() {
 	_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
 	_panelVisible = !_panelVisible;
 	_toolbarHandler.setVisible(_panelVisible);
-	addDirtyRect(0, 0, 320, 40);
+	if (_screenHeight > 240)
+		addDirtyRect(0, 0, 640, 80);
+	else
+		addDirtyRect(0, 0, 320, 40);
 	internUpdateScreen();
 }
 
