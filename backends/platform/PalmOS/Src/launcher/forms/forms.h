@@ -18,5 +18,6 @@ HANDLER(CardSlot)
 HANDLER(Skins)
 HANDLER(Music)
 HANDLER(Info)
+HANDLER(Selector)
 
 #endif

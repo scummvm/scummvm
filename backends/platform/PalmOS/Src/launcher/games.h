@@ -180,8 +180,8 @@ static const struct {
 } engines[] = {
 	{ "agos",			"AGOS Engine" },
 	{ "sky",			"Beneath a Steel Sky" },
-	{ "sword1",			"Broken Sword 1" },
-	{ "sword2",			"Broken Sword 2" },
+	{ "sword1",			"Broken Sword I" },
+	{ "sword2",			"Broken Sword II" },
 	{ "cine",			"Delphine Cinematique v1.0" },
 	{ "queen",			"Flight of the Amazon Queen" },
 	{ "lure",			"Lure of the Tempress" },
@@ -194,7 +194,6 @@ static const struct {
 	{ "touche",			"Touche: The Adventures of the Fifth Musketeer" },
 	{ "cruise",			"Cruise for a Corpse" },
 };
-
 
 // protos
 Err		GamOpenDatabase		();

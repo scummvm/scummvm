@@ -43,7 +43,6 @@ GlobalsPreferencePtr gPrefs;
 GlobalsDataPtr gVars;
 
 Boolean bDirectMode = false;
-Boolean bStartScumm = false;
 Boolean bLaunched	= false;
 
 /***********************************************************************
@@ -200,6 +199,10 @@ static Boolean AppHandleEvent(EventPtr eventP) {
 				FrmSetEventHandler(frmP, InfoFormHandleEvent);
 				break;
 
+			case EngineForm:
+				FrmSetEventHandler(frmP, SelectorFormHandleEvent);
+				break;
+
 			default:
 //				ErrFatalDisplay("Invalid Form Load Event");
 				break;
@@ -230,9 +233,6 @@ static void AppEventLoop(void) {
 
 	do {
 		EvtGetEvent(&event, evtNoWait);
-
-		if(bStartScumm)
-			bStartScumm = StartScummVM();
 
 		if (! SysHandleEvent(&event))
 			if (! MenuHandleEvent(0, &event, &error))
@@ -330,7 +330,7 @@ static UInt32 ScummVMPalmMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags) {
 				FrmGotoForm(MainForm);
 			}else {
 				GamUnselect();
-				bStartScumm = true;
+				FrmGotoForm(EngineForm);
 			}
 
 			AppEventLoop();

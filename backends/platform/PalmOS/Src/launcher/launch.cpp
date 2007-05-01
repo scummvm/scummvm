@@ -29,7 +29,6 @@
 #include "games.h"
 #include "start.h"
 #include "rumble.h"
-#include "extend.h"
 #include "globals.h"
 #include "features.h"
 #include "formUtil.h"
@@ -188,15 +187,12 @@ onError:
 #undef CHECK_FILE
 #undef BUILD_FILE
 
-Boolean StartScummVM() {
+Boolean StartScummVM(Int16 engine) {
 	Char **argvP;
 	UInt8 lightspeed, argc	= 0;
 	UInt32 stackSize;
 	Boolean toLauncher, direct, isARM;
-	UInt8 engine;
 	Char num[6];
-
-	UInt16 index = GamGetSelected();
 
 	argvP = ArgsInit();
 	direct = false;
@@ -204,38 +200,10 @@ Boolean StartScummVM() {
 	// start command line (exec name)
 	ArgsAdd(&argvP[argc], "-", NULL, &argc);
 
+	UInt16 index = GamGetSelected();
 	// no game selected
 	if (index == dmMaxRecordIndex) {
-		ListPtr listP;
-		UInt16 whichButton;
-		
-		// init form
-		FormPtr frmP = FrmInitForm(EngineForm);
-		listP = (ListType *)FrmGetObjectPtr(frmP, FrmGetObjectIndex(frmP, EngineListList));
-		itemsText = (Char **)MemPtrNew(ENGINE_COUNT * sizeof(Char *));
-		
-		for (int i = 0; i < ENGINE_COUNT; i++)
-			itemsText[i] = (Char *)engines[i].nameP;
-			
-		LstSetListChoices (listP, itemsText, ENGINE_COUNT);
-		LstSetSelection(listP, 0);	
-		
-		whichButton = FrmDoDialog(frmP);
-		engine = LstGetSelection(listP);
-
-		FrmDeleteForm(frmP);
-		MemPtrFree(itemsText);
-		itemsText = NULL;
-		
-		if (whichButton == EngineCancelButton) {
-			if (bDirectMode) {
-				// and force exit if nothing selected
-				EventType event;
-				event.eType = keyDownEvent;
-				event.data.keyDown.chr = vchrLaunch;
-				event.data.keyDown.modifiers = commandKeyMask;
-				EvtAddUniqueEventToQueue(&event, 0, true);
-			}
+		if (engine == NO_ENGINE) {
 			// free args
 			ArgsFree(argvP);
 			return false;
@@ -244,6 +212,7 @@ Boolean StartScummVM() {
 		// default values
 		if (bDirectMode)
 			gPrefs->card.volRefNum = parseCards();	// always use the first removable card available (?)
+
 		gVars->filter		= true;
 		gVars->palmVolume	= 50;
 		gVars->fmQuality	= FM_QUALITY_INI;
