@@ -241,11 +241,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\music.cpp"
+			RelativePath="..\..\engines\parallaction\sound.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\music.h"
+			RelativePath="..\..\engines\parallaction\sound.h"
 			>
 		</File>
 		<File
