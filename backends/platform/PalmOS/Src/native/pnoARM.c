@@ -56,29 +56,4 @@ unsigned long PNO_Main(const void *emulStateP, void *userData68KP, Call68KFuncTy
 	return PilotMain(sysAppLaunchCmdNormalLaunch, userData68KP, 0);
 }
 
- //
- // The following functions provide malloc/free support to Metrowerks
- // Standard Library (MSL). This feature requires the MSL library be
- // built with _MSL_OS_DIRECT_MALLOC enabled.
- //
-void*
-__sys_alloc(UInt32 size)
-{
-    void * ptr = malloc(size);
-    ErrFatalDisplayIf(ptr == NULL, "out of memory");
-    return ptr;
-}
-
-void
-__sys_free(void* ptr)
-{
-    (void) MemPtrFree(ptr);
-}
-
-UInt32
-__sys_pointer_size(void* ptr)
-{
-    return (UInt32) MemPtrSize(ptr);
-}
-
 #endif

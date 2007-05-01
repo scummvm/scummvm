@@ -101,31 +101,6 @@ static void relocate(void)
 }
 
 /*
- * The following functions provide malloc/free support to Metrowerks
- * Standard Library (MSL). This feature requires the MSL library be
- * built with _MSL_OS_DIRECT_MALLOC enabled.
- */
-void*
-__sys_alloc(size_t size)
-{
-    void * ptr = MemPtrNew(size);
-    ErrFatalDisplayIf(ptr == NULL, "out of memory");
-    return ptr;
-}
-
-void
-__sys_free(void* ptr)
-{
-    (void) MemPtrFree(ptr);
-}
-
-size_t
-__sys_pointer_size(void* ptr)
-{
-    return (size_t) MemPtrSize(ptr);
-}
-
-/*
  * This is the real entrypoint for Tapwave Native Application. It
  * depends on various CodeWarrior 9.2 compiler/linker/runtime features.
  */
