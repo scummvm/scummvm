@@ -437,7 +437,7 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 				_vm->_interface->setMode(kPanelSceneSubstitute);
 
 				if (file.open(sceneSubstitutes[i].image)) {
-					Graphics::decodeILBM(file, bbmBuffer, pal);
+					Graphics::decodePBM(file, bbmBuffer, pal);
 					colors = pal;
 					rect.setWidth(bbmBuffer.w);
 					rect.setHeight(bbmBuffer.h);

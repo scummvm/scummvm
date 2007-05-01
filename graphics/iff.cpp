@@ -304,7 +304,7 @@ void PackBitsReadStream::unpack() {
 }
 
 
-void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
+void decodePBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
 	PBMDecoder decoder(input, surface, colors);
 	decoder.decode();
 }

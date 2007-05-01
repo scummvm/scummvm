@@ -92,11 +92,7 @@ public:
 	void decode();
 };
 
-/*
-	TODO: rename this routine to decodePBM, and update the SAGA code that's
-	using it. The routine has already been implemented using the above PBMDecoder.
-*/
-void decodeILBM(Common::ReadStream &input, Surface &surface, byte *&colors);
+void decodePBM(Common::ReadStream &input, Surface &surface, byte *&colors);
 
 
 /*
