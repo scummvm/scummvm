@@ -85,10 +85,11 @@ using namespace CEGUI;
 #define NAME_ITEM_ORIENTATION		"Orientation"
 #define NAME_ITEM_BINDKEYS		"Bindkeys"
 
-// Given to the true main, needed for backend adaptation
-
-static FILE *stdout_file;
-static FILE *stderr_file;
+// stdin/err redirection
+#define STDOUT_FNAME "\\scummvm_stdout.txt"
+#define STDERR_FNAME "\\scummvm_stderr.txt"
+static FILE *stdout_file = NULL, *stderr_file = NULL;
+static char stdout_fname[MAX_PATH], stderr_fname[MAX_PATH];
 
 // Static member inits
 typedef void (*SoundProc)(void *param, byte *buf, int len);
@@ -126,14 +127,19 @@ static const OSystem::GraphicsMode s_supportedGraphicsModesHigh[] = {
 	{0, 0, 0}
 };
 
-#define STDOUT_FNAME "\\scummvm_stdout.txt"
-#define STDERR_FNAME "\\scummvm_stderr.txt"
 
 // ********************************************************************************************
 
 bool isSmartphone() {
 	//return _isSmartphone;
 	return _hasSmartphoneResolution;
+}
+
+const TCHAR *ASCIItoUnicode(const char *str) {
+	static TCHAR ustr[MAX_PATH];	// size good enough
+
+	MultiByteToWideChar(CP_ACP, 0, str, strlen(str) + 1, ustr, sizeof(ustr) / sizeof(TCHAR));
+	return ustr;
 }
 
 // MAIN
@@ -155,7 +161,7 @@ OSystem *OSystem_WINCE3_create() {
 }
 
 int SDL_main(int argc, char **argv) {
-
+	FILE *newfp = NULL;
 #ifdef __GNUC__
 	// Due to incomplete crt0.o implementation, we go through the constructor function
 	// list provided by the linker and init all of them
@@ -172,32 +178,35 @@ int SDL_main(int argc, char **argv) {
 	CEDevice::init();
 	OSystem_WINCE3::initScreenInfos();
 	
-	/* Avoid print problems - this file will be put in RAM anyway */
-#ifndef __GNUC__
-	stdout_file = fopen(STDOUT_FNAME, "w");
-	stderr_file = fopen(STDERR_FNAME, "w");
-#else
 	/* Redirect standard input and standard output */
-	FILE *newfp = _wfreopen(TEXT(STDOUT_FNAME), TEXT("w"), stdout);
+	strcpy(stdout_fname, getcwd(NULL, MAX_PATH));
+	strcpy(stderr_fname, getcwd(NULL, MAX_PATH));
+	strcat(stdout_fname, STDOUT_FNAME);
+	strcat(stderr_fname, STDERR_FNAME);
+#ifndef __GNUC__
+	stdout_file = fopen(stdout_fname, "w");
+	stderr_file = fopen(stderr_fname, "w");
+#else
+	stdout_file = newfp = _wfreopen(ASCIItoUnicode(stdout_fname), TEXT("w"), stdout);
 	if (newfp == NULL) {
 #if !defined(stdout)
-		stdout = fopen(STDOUT_FNAME, "w");
+		stdout = fopen(stdout_fname, "w");
 		stdout_file = stdout;
 #else
-		newfp = fopen(STDOUT_FNAME, "w");
+		newfp = fopen(stdout_fname, "w");
 		if (newfp) {
 			*stdout = *newfp;
 			stdout_file = stdout;
 		}
 #endif
 	}
-	newfp = _wfreopen(TEXT(STDERR_FNAME), TEXT("w"), stderr);
+	stderr_file = newfp = _wfreopen(ASCIItoUnicode(stderr_fname), TEXT("w"), stderr);
 	if (newfp == NULL) {
 #if !defined(stderr)
-		stderr = fopen(STDERR_FNAME, "w");
+		stderr = fopen(stderr_fname, "w");
 		stderr_file = stderr;
 #else
-		newfp = fopen(STDERR_FNAME, "w");
+		newfp = fopen(stderr_fname, "w");
 		if (newfp) {
 			*stderr = *newfp;
 			stderr_file = stderr;
@@ -216,7 +225,6 @@ int SDL_main(int argc, char **argv) {
 
 		// Invoke the actual ScummVM main entry point:
 		res = scummvm_main(argc, argv);
-		//res = scummvm_main(0, NULL);
 		g_system->quit();	// TODO: Consider removing / replacing this!
 #if !defined(DEBUG) && !defined(__GNUC__)
 	}
@@ -2254,8 +2262,8 @@ void OSystem_WINCE3::quit() {
 	fclose(stdout_file);
 	fclose(stderr_file);
 	if (gDebugLevel <= 0) {
-		DeleteFile(TEXT("\\scummvm_stdout.txt"));
-		DeleteFile(TEXT("\\scummvm_stderr.txt"));
+		DeleteFile(ASCIItoUnicode(stdout_fname));
+		DeleteFile(ASCIItoUnicode(stderr_fname));
 	}
 	CEDevice::end();
 	OSystem_SDL::quit();
