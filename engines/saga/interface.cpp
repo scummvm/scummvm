@@ -69,14 +69,14 @@ static int verbTypeToTextStringsIdLUT[2][kVerbTypeIdsMax] = {
 	-1,
 	-1},
 	{-1, 
-	3, //TODO:check
-	2, 
-	1, 
-	5, 
-	6, //TODO:check
-	8, //TODO:check
-	7, 
-	4}
+	kVerbIHNMWalk,
+	kVerbIHNMLookAt,
+	kVerbIHNMTake, 
+	kVerbIHNMUse, 
+	kVerbIHNMTalkTo,
+	kVerbIHNMSwallow,
+	kVerbIHNMGive, 
+	kVerbIHNMPush}
 };
 
 Interface::Interface(SagaEngine *vm) : _vm(vm) {
@@ -1939,7 +1939,8 @@ void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, KnownCo
 		textId = verbTypeToTextStringsIdLUT[0][panelButton->id];
 		text = _vm->getTextString(textId);
 	} else {
-		textId = verbTypeToTextStringsIdLUT[1][panelButton->id];
+		// This -2 has been placed because of the changes in the ids in IHNM_MainPanelButtons
+		textId = verbTypeToTextStringsIdLUT[1][panelButton->id - 2];
 		text = _vm->_script->_mainStrings.getString(textId + 1);
 		textShadowKnownColor = kKnownColorTransparent;
 	}
