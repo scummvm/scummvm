@@ -364,6 +364,7 @@ void CardSlotCreateDirs() {
 		VFSDirCreate(gPrefs->card.volRefNum, "/PALM/Programs/ScummVM/Saved");
 		VFSDirCreate(gPrefs->card.volRefNum, "/PALM/Programs/ScummVM/Audio");
 		VFSDirCreate(gPrefs->card.volRefNum, "/PALM/Programs/ScummVM/Mods");
+		VFSDirCreate(gPrefs->card.volRefNum, "/PALM/Programs/ScummVM/Themes");
 	}
 }
 
