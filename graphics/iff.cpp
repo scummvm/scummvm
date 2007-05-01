@@ -19,9 +19,10 @@
  * $Id$
  */
 
-
 #include "graphics/iff.h"
 #include "graphics/surface.h"
+
+#include "common/util.h"
 
 
 namespace Common {
