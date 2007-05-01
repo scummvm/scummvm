@@ -22,12 +22,10 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include "PalmVersion.h"
+#include <MSL_PalmOS.h>
 
 #include "globals.h"
-#include "extend.h"
 #include "args.h"
 #include "palmdefs.h"
 
@@ -49,6 +47,7 @@ GlobalsDataPtr gVars = &g_vars;
 UInt32 g_stackSize;
 
 extern "C" void __destroy_global_chain(void);
+extern void DrawStatus(Boolean show);
 
 static void palm_main(int argc, char **argvP)  {
 #ifdef COMPILE_OS5
@@ -88,12 +87,11 @@ static void Go() {
 	MemMove(gVars, tmp, sizeof(GlobalsDataType));
 
 	// init STDIO
-	StdioSetCacheSize(0);
-	StdioInit(gVars->VFS.volRefNum, "/PALM/Programs/ScummVM/scumm.log");
+	stdio_set_cache(0);
+	stdio_init(gVars->VFS.volRefNum, "/PALM/Programs/ScummVM/scumm.log");
 	if (gVars->indicator.showLED)
-		StdioSetLedProc(DrawStatus);
-	StdioSetCacheSize(gVars->VFS.cacheSize);
-	gUnistdCWD = SCUMMVM_SAVEPATH;
+		stdio_set_led(DrawStatus);
+	stdio_set_cache(gVars->VFS.cacheSize);
 
 	// get args
 	FtrGet(appFileCreator, ftrArgsData, (UInt32 *)&argvP);
@@ -108,7 +106,7 @@ static void Go() {
 
 	// release 
 	if (HWR_INIT(INIT_VIBRATOR))	RumbleRelease();
-	StdioRelease();
+	stdio_release();
 
 #ifdef DEBUG_ARM
 	AdnDebugNativeUnregister();
