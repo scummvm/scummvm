@@ -15,10 +15,10 @@ MODULE_OBJS := \
 	inventory.o \
 	location.o \
 	menu.o \
-	music.o \
 	parser.o \
 	parallaction.o \
 	saveload.o \
+	sound.o \
 	staticres.o \
 	walk.o \
 	zone.o
