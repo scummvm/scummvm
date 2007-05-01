@@ -19,6 +19,7 @@ enum {
 	kOptSonyPa1LibAPI		=	1 <<	0x0D,
 	kOptGoLcdAPI			=	1 <<	0x0E,
 	kOptLightspeedAPI		=	1 <<	0x0F,
+	kOptModeRotatable		=	1 <<	0x10,
 
 	kOptDeviceProcX86		=	1 <<	0x1F	// DEBUG only
 };
