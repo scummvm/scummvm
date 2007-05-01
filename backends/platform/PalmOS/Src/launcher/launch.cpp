@@ -455,7 +455,11 @@ Boolean StartScummVM() {
 
 	// gVars values 
 	// (gVars->HRrefNum defined in checkHRmode on Clié)
+#ifndef _DEBUG_ENGINE
 	gVars->VFS.volRefNum	= (gPrefs->card.autoDetect ? vfsInvalidVolRef : gPrefs->card.volRefNum);
+#else
+	gVars->VFS.volRefNum	= gPrefs->card.volRefNum;
+#endif
 	gVars->vibrator			= gPrefs->vibrator;
 	gVars->stdPalette		= gPrefs->stdPalette;
 	gVars->VFS.cacheSize	= (gPrefs->card.useCache ? gPrefs->card.cacheSize : 0);
