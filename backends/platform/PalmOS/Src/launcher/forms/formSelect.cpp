@@ -27,6 +27,7 @@
 #include "formUtil.h"
 #include "games.h"
 #include "start.h"
+#include "common/util.h"
 
 static Char **items = NULL;
 Int16 selectedEngine = -1;
@@ -146,21 +147,21 @@ static const struct {
 	int size;
 	const char **listP;
 } supported[] = {
-	{	10, engine_agos },
-	{	1, engine_sky },
-	{	2, engine_sword1 },
-	{	2, engine_sword2 },
-	{	2, engine_cine },
-	{	1, engine_queen },
-	{	1, engine_lure },
-	{	6, engine_gob },
-	{	3, engine_kyra },
-	{	1, engine_parallaction },
-	{	2, engine_saga },
-	{	10, engine_scumm },
-	{	22, engine_agi },
-	{	1, engine_touche },
-	{	1, engine_cruise }
+	{ ARRAYSIZE(engine_agos), engine_agos },
+	{ ARRAYSIZE(engine_sky), engine_sky },
+	{ ARRAYSIZE(engine_sword1), engine_sword1 },
+	{ ARRAYSIZE(engine_sword2), engine_sword2 },
+	{ ARRAYSIZE(engine_cine), engine_cine },
+	{ ARRAYSIZE(engine_queen), engine_queen },
+	{ ARRAYSIZE(engine_lure), engine_lure },
+	{ ARRAYSIZE(engine_gob), engine_gob },
+	{ ARRAYSIZE(engine_kyra), engine_kyra },
+	{ ARRAYSIZE(engine_parallaction), engine_parallaction },
+	{ ARRAYSIZE(engine_saga), engine_saga },
+	{ ARRAYSIZE(engine_scumm), engine_scumm },
+	{ ARRAYSIZE(engine_agi), engine_agi },
+	{ ARRAYSIZE(engine_touche), engine_touche },
+	{ ARRAYSIZE(engine_cruise), engine_cruise }
 };
 
 static void SelectorSetList(Int16 sel) {
