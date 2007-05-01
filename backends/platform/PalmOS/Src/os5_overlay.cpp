@@ -31,7 +31,7 @@ void OSystem_PalmOS5::showOverlay() {
 
 	undraw_mouse();
 	_overlayVisible = true;
-	clearOverlay();	
+	clearOverlay();
 }
 
 void OSystem_PalmOS5::hideOverlay() {

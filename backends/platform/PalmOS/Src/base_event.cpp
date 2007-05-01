@@ -81,7 +81,7 @@ void OSystem_PalmBase::battery_handler() {
 	}
 }
 
-bool OSystem_PalmBase::pollEvent(Event &event) {
+bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 	::EventType ev;
 	Boolean handled;
 	UInt32 keyCurrentState;
@@ -92,52 +92,60 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 	sound_handler();
 
 	for(;;) {
-#if defined(COMPILE_OS5) && defined(PALMOS_ARM)
-		SysEventGet(&ev, evtNoWait);
-#else
-		EvtGetEvent(&ev, evtNoWait);
-#endif
-		// check for hardkey repeat for mouse emulation
-		keyCurrentState = KeyCurrentState();
-		// check_hard_keys();
+		// if it was a key pressed, let the keyup event raise
+		if (_wasKey) {
+			// check for hardkey repeat for mouse emulation
+			keyCurrentState = KeyCurrentState();
 
-		if (!(keyCurrentState & _keyMouseMask)) {
-			_lastKeyRepeat = 0;
-		} else {
-			if (getMillis() >= (_keyMouseRepeat + _keyMouseDelay)) {
-				_keyMouseRepeat = getMillis();
+			if (!(keyCurrentState & _keyExtraMask)) {
+				_lastKeyRepeat = 0;
+
+			} else if (getMillis() >= (_keyExtraRepeat + _keyExtraDelay)) {
+				_keyExtraRepeat = getMillis();
 
 				if (gVars->arrowKeys) {
-					event.kbd.keycode = 0;
+/*					if		HARD_KEY(Up,	chrUpArrow)
+					else if	HARD_KEY(Down,	chrDownArrow)
+					else if	HARD_KEY(Left,	chrLeftArrow)
+					else if	HARD_KEY(Right,	chrRightArrow)
+*/
+				} else {
+					// button released ?
+					if (_keyExtraPressed) {
+						if (_keyExtraPressed & _keyExtra.bitActionA) {
+							if (!(keyCurrentState & _keyExtra.bitActionA)) {
+								_keyExtraPressed &= ~_keyExtra.bitActionA;
 
-					if (keyCurrentState & _keyMouse.bitUp)
-						event.kbd.keycode = 273;
-					else if (keyCurrentState & _keyMouse.bitDown)
-						event.kbd.keycode = 274;
-					else if (keyCurrentState & _keyMouse.bitLeft)
-						event.kbd.keycode = 276;
-					else if (keyCurrentState & _keyMouse.bitRight)
-						event.kbd.keycode = 275;
+								event.type = Common::EVENT_LBUTTONUP;
+								event.mouse.x = _mouseCurState.x;
+								event.mouse.y = _mouseCurState.y;
+								return true;
+							}
+						}
 
-					if (event.kbd.keycode) {
-						event.type = Common::EVENT_KEYDOWN;
-						event.kbd.ascii = event.kbd.keycode;
-						event.kbd.flags = 0;
-						return true;
+						if (_keyExtraPressed & _keyExtra.bitActionB) {
+							if (!(keyCurrentState & _keyExtra.bitActionB)) {
+								_keyExtraPressed &= ~_keyExtra.bitActionB;
+
+								event.type = Common::EVENT_RBUTTONUP;
+								event.mouse.x = _mouseCurState.x;
+								event.mouse.y = _mouseCurState.y;
+								return true;
+							}
+						}
 					}
 
-				} else {
 					Int8 sx = 0;
 					Int8 sy = 0;
 
-					if (keyCurrentState & _keyMouse.bitUp)
+					if (keyCurrentState & _keyExtra.bitUp)
 						sy = -1;
-					else if (keyCurrentState & _keyMouse.bitDown)
+					else if (keyCurrentState & _keyExtra.bitDown)
 						sy = +1;
 						
-					if (keyCurrentState & _keyMouse.bitLeft)
+					if (keyCurrentState & _keyExtra.bitLeft)
 						sx = -1;
-					else if (keyCurrentState & _keyMouse.bitRight)
+					else if (keyCurrentState & _keyExtra.bitRight)
 						sx = +1;
 
 					if (sx || sy) {
@@ -148,12 +156,42 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 						warpMouse(x, y);
 
 						return true;
-					}
+					}			
 				}
 			}
 		}
 
-		if (ev.eType == keyDownEvent) {
+#if defined(COMPILE_OS5) && defined(PALMOS_ARM)
+		SysEventGet(&ev, evtNoWait);
+#else
+		EvtGetEvent(&ev, evtNoWait);
+#endif
+
+		if (ev.eType == keyUpEvent) {
+			int k = 0;
+			switch (ev.data.keyUp.chr) {
+
+			// arrow keys
+			case chrUpArrow:
+				k = 273; break;
+			case chrDownArrow:
+				k = 274; break;
+			case chrLeftArrow:
+				k = 275; break;
+			case chrRightArrow:
+				k = 276; break;
+			}
+
+			if (k) {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = k;
+				event.kbd.ascii = k;
+				event.kbd.flags = 0;
+				return true;
+			}
+
+		} else if (ev.eType == keyDownEvent) {
+			int k = 0;
 			switch (ev.data.keyDown.chr) {
 			// ESC key
 			case vchrLaunch:
@@ -180,6 +218,24 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			case vchrContrast:
 				// do nothing
 				return true;
+
+			// arrow keys
+			case chrUpArrow:
+				k = 273; break;
+			case chrDownArrow:
+				k = 274; break;
+			case chrLeftArrow:
+				k = 275; break;
+			case chrRightArrow:
+				k = 276; break;
+			}
+
+			if (k) {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = k;
+				event.kbd.ascii = k;
+				event.kbd.flags = 0;
+				return true;
 			}
 		}
 
@@ -192,10 +248,12 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 						((ev.data.keyDown.chr == vchrAttnStateChanged) || 
 						(ev.data.keyDown.chr == vchrAttnUnsnooze))); 
 
+
 		// graffiti strokes, auto-off, etc...
 		if (!handled)
 			if (SysHandleEvent(&ev))
 				continue;
+
 
 		switch(ev.eType) {
 		case penMoveEvent:
@@ -222,7 +280,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 				num += 9 -
 						(3 - (3 * x / _screenWidth )) -
 						(3 * (3 * y / _screenHeight));
-			
+
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = num;
 				event.kbd.ascii = num;
@@ -252,7 +310,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			event.mouse.y = y;
 			warpMouse(x, y);
 			return true;
-		
+
 		case keyDownEvent:
 			if (ev.data.keyDown.chr == vchrCommand &&
 				(ev.data.keyDown.modifiers & commandKeyMask)) {
@@ -302,7 +360,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			} else if  ((key == 'z' && mask == Common::KBD_CTRL) || (mask == Common::KBD_ALT && key == 'x')) {
 				event.type = Common::EVENT_QUIT;
 				return true;
-			
+
 			// num pad (indy fight mode)
 			} else if (key == 'n' && mask == (Common::KBD_CTRL|Common::KBD_ALT) && !_overlayVisible) {
 				_useNumPad = !_useNumPad;
@@ -310,7 +368,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 				displayMessageOnOSD(_useNumPad ? "Fight mode on." : "Fight mode off.");
 				return false;
 			}
-			
+
 			// other keys
 			_wasKey = true;
 			event.type = Common::EVENT_KEYDOWN;
@@ -320,7 +378,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			return true;
 
 		default:
-			if (_wasKey) {
+			if (_wasKey && ev.eType != keyHoldEvent) {
 				event.type = Common::EVENT_KEYUP;
 				_wasKey = false;
 				return true;

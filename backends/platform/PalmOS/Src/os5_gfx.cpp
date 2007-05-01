@@ -28,11 +28,6 @@
 #include <PenInputMgr.h>
 #include <palmOneResources.h>
 
-#ifdef PALMOS_ARM
-#include <System/WIP.h>
-#include <Libraries/AIA/palmOneStatusBarMgrARM.h>
-#endif
-
 #include "oscalls.h"
 
 void OSystem_PalmOS5::int_initSize(uint w, uint h) {
@@ -63,8 +58,6 @@ void OSystem_PalmOS5::load_gfx_mode() {
 	_ratio.width = (gVars->screenFullHeight * _screenWidth / _screenHeight);
 	_ratio.height = (gVars->screenFullWidth * _screenHeight / _screenWidth);
 
-	_mouseBackupP = (byte *)MemPtrNew(MAX_MOUSE_W * MAX_MOUSE_H * 2); // *2 if 16bit
-	_mouseDataP = (byte *)MemPtrNew(MAX_MOUSE_W * MAX_MOUSE_H);
 	_offScreenP	= (byte *)malloc(_screenWidth * _screenHeight);
 
 	MemSet(_offScreenP, _screenWidth * _screenHeight, 0);
@@ -74,6 +67,11 @@ void OSystem_PalmOS5::load_gfx_mode() {
 	UInt32 depth = 16;
 	WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
 	clearScreen();
+
+	if (OPTIONS_TST(kOptModeRotatable)) {
+		_sysOldOrientation = __68K(SysGetOrientation());
+		__68K(SysSetOrientation(sysOrientationLandscape));
+	}
 
 	gVars->indicator.on = RGBToColor(0,255,0);
 	gVars->indicator.off = RGBToColor(0,0,0);
@@ -97,13 +95,6 @@ void OSystem_PalmOS5::hotswap_gfx_mode(int mode) {
 	if (_mode != GFX_NORMAL && !_isSwitchable)
 		return;
 
-#ifdef PALMOS_ARM
-	UInt32 device;
-	Boolean isT3 = false;
-	if (!FtrGet(sysFileCSystem, sysFtrNumOEMDeviceID, &device))
-		isT3 = (device == kPalmOneDeviceIDTungstenT3);
-#endif
-
 	if (_workScreenH)
 		WinDeleteWindow(_workScreenH, false);
 	_workScreenH = NULL;
@@ -117,17 +108,9 @@ void OSystem_PalmOS5::hotswap_gfx_mode(int mode) {
 		_stretched = (_screenWidth > gVars->screenWidth);
 
 		if (OPTIONS_TST(kOptCollapsible)) {
-#ifdef PALMOS_ARM
-			if (isT3) {
-				//AiaSetInputAreaState(aiaInputAreaShow);
-				StatShow_68k();
-				PINSetInputAreaState_68k(pinInputAreaOpen);
-			} else
-#endif
-			{
-				StatShow();
-				PINSetInputAreaState(pinInputAreaOpen);
-			}
+			//AiaSetInputAreaState(aiaInputAreaShow); // For T3 ??
+			__68K(StatShow());
+			__68K(PINSetInputAreaState(pinInputAreaOpen));
 		}
 
 		if (_stretched) {
@@ -143,18 +126,10 @@ void OSystem_PalmOS5::hotswap_gfx_mode(int mode) {
 		_stretched = true;
 
 		if (OPTIONS_TST(kOptCollapsible)) {
-#ifdef PALMOS_ARM
 			// T3 DIA library is 68k base, there is no possible native call
-			if (isT3) {
-				//AiaSetInputAreaState(aiaInputAreaFullScreen);
-				PINSetInputAreaState_68k(pinInputAreaClosed);
-				StatHide_68k();
-			} else
-#endif
-			{
-				PINSetInputAreaState(pinInputAreaClosed);
-				StatHide();
-			}
+			//AiaSetInputAreaState(aiaInputAreaFullScreen);
+			__68K(PINSetInputAreaState(pinInputAreaClosed));
+			__68K(StatHide());
 		}
 
 		calc_rect(true);
@@ -182,8 +157,7 @@ void OSystem_PalmOS5::unload_gfx_mode() {
 		return;	
 	_gfxLoaded = false;
 	
-	MemPtrFree(_mouseBackupP);
-	MemPtrFree(_mouseDataP);
+	// mouse data freed in quit()
 	free(_offScreenP);
 
 	if (_workScreenH)
@@ -197,6 +171,9 @@ void OSystem_PalmOS5::unload_gfx_mode() {
 	UInt32 depth = 8;
 	WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
 	clearScreen();
+
+	if (OPTIONS_TST(kOptModeRotatable))
+		__68K(SysSetOrientation(_sysOldOrientation));
 
 	WinSetCoordinateSystem(_sysOldCoord);
 }

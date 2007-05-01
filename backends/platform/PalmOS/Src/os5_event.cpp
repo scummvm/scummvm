@@ -37,19 +37,12 @@ void OSystem_PalmOS5::get_coordinates(EventPtr ev, Coord &x, Coord &y) {
 	}
 }
 
-bool OSystem_PalmOS5::check_event(Event &event, EventPtr ev) {
+bool OSystem_PalmOS5::check_event(Common::Event &event, EventPtr ev) {
 	if (ev->eType == keyUpEvent) {
-		switch (ev->data.keyDown.chr) {
+		switch (ev->data.keyUp.chr) {
 		case vchrHard3:
-			event.type = Common::EVENT_LBUTTONUP;
-			event.mouse.x = _mouseCurState.x;
-			event.mouse.y = _mouseCurState.y;
-			return true;
-
 		case vchrHard4:
-			event.type = Common::EVENT_RBUTTONUP;
-			event.mouse.x = _mouseCurState.x;
-			event.mouse.y = _mouseCurState.y;
+			// will be handled by hard keys
 			return true;
 		}
 
@@ -59,23 +52,24 @@ bool OSystem_PalmOS5::check_event(Event &event, EventPtr ev) {
 		// hot swap gfx
 //	case 0x1B04:
 		case vchrHard1:
-			printf("swap\n");
 			if (OPTIONS_TST(kOptCollapsible))
 				hotswap_gfx_mode(_mode == GFX_WIDE ? GFX_NORMAL: GFX_WIDE);
 			return false; // not a key
 
 //	case 0x1B05:
 		case vchrHard2:
-		setFeatureState(kFeatureAspectRatioCorrection, 0);
-		return false; // not a key
+			setFeatureState(kFeatureAspectRatioCorrection, 0);
+			return false; // not a key
 
 		case vchrHard3:
-			event.type = Common::EVENT_RBUTTONDOWN;
+			_keyExtraPressed |= _keyExtra.bitActionA;
+			event.type = Common::EVENT_LBUTTONDOWN;
 			event.mouse.x = _mouseCurState.x;
 			event.mouse.y = _mouseCurState.y;
 			return true;
 
 		case vchrHard4:
+			_keyExtraPressed |= _keyExtra.bitActionB;
 			event.type = Common::EVENT_RBUTTONDOWN;
 			event.mouse.x = _mouseCurState.x;
 			event.mouse.y = _mouseCurState.y;

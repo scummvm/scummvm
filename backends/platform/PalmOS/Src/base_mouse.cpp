@@ -26,20 +26,51 @@
 
 void OSystem_PalmBase::warpMouse(int x, int y) {
 	if (x != _mouseCurState.x || y != _mouseCurState.y) {
+		x = x >= _screenWidth  ? _screenWidth  - 1 : x;
+		y = y >= _screenHeight ? _screenHeight - 1 : y;
+
 		_mouseCurState.x = x;
 		_mouseCurState.y = y;
-		undraw_mouse();
 	}
 }
 
 bool OSystem_PalmBase::showMouse(bool visible) {
-	if (_mouseVisible == visible)
-		return visible;
-	
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
 
 	return last;
+}
+
+void OSystem_PalmBase::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale) {
+	if (w == 0 || h == 0)
+		return;
+
+	_mouseHotspotX = hotspotX;
+	_mouseHotspotY = hotspotY;
+
+	_mouseKeyColor = keycolor;
+
+	if (_mouseCurState.w != w || _mouseCurState.h != h) {
+		_mouseCurState.w = w;
+		_mouseCurState.h = h;
+		
+		if (_mouseDataP)
+			free(_mouseDataP);
+		
+		if (_mouseBackupP)
+			free(_mouseBackupP);
+
+		_mouseDataP = (byte *)malloc(w * h);
+		_mouseBackupP = (byte *)malloc(w * h * 2); // if 16bit = *2
+	}
+
+	if (!_mouseBackupP) {
+		free(_mouseDataP);
+		_mouseDataP = NULL;
+	}
+
+	if (_mouseDataP)
+		memcpy(_mouseDataP, buf, w * h);
 }
 
 void OSystem_PalmBase::simulate_mouse(Common::Event &event, Int8 iHoriz, Int8 iVert, Coord *xr, Coord *yr) {

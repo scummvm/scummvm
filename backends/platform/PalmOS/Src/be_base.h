@@ -25,9 +25,13 @@
 #ifndef BE_BASE_H
 #define BE_BASE_H
 
+#include "PalmVersion.h"
+#include "globals.h"
+
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "common/events.h"
 
 namespace Audio {
 	class Mixer;
@@ -50,6 +54,12 @@ enum {
 	kModifierAlt,
 	kModifierCtrl,
 	kModifierCount
+};
+
+// Mouse button event
+enum {
+	vchrMouseLeft = vchrHardKeyMax - 2,
+	vchrMouseRight = vchrHardKeyMax - 1
 };
 
 // OSD resource id
@@ -94,7 +104,6 @@ private:
 	virtual void draw_mouse() = 0;
 	virtual void undraw_mouse() = 0;
 	
-//	virtual bool check_hard_keys() = 0;
 	virtual bool check_event(Common::Event &event, EventPtr ev) = 0;
 	
 	virtual void timer_handler();
@@ -107,12 +116,10 @@ private:
 	virtual void clearSoundCallback() = 0;
 
 protected:
+	OSystem_PalmBase();
+
 	virtual void draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color = 0);
 
-	enum {
-		MAX_MOUSE_W = 80,
-		MAX_MOUSE_H = 80
-	};
 	struct MousePos {
 		int16 x,y,w,h;
 	};
@@ -145,13 +152,15 @@ protected:
 	Boolean _overlayVisible;
 	Boolean _redawOSD, _setPalette;
 
-	UInt32 _keyMouseMask, _keyMouseRepeat, _keyMouseDelay;
+	UInt32 _keyExtraMask, _keyExtraPressed, _keyExtraRepeat, _keyExtraDelay;
 	struct {
 		UInt32 bitUp;
 		UInt32 bitDown;
 		UInt32 bitLeft;
 		UInt32 bitRight;
-	} _keyMouse;
+		UInt32 bitActionA;	// left mouse button
+		UInt32 bitActionB;	// right mouse button
+	} _keyExtra;
 	
 	bool _mouseVisible;
 	bool _mouseDrawn;
@@ -163,7 +172,7 @@ protected:
 	byte *_mouseDataP, *_mouseBackupP;
 	
 
-	eventsEnum _wasKey;
+	bool _wasKey;
 	UInt8 _lastKeyModifier;
 	UInt32 _lastKeyRepeat;
 	Boolean _useNumPad, _showBatLow;
@@ -172,11 +181,10 @@ protected:
 	int _samplesPerSec;
 
 public:
-	OSystem_PalmBase();
 	void initBackend();
 
 /*
-	virtual void setFeatureState(Feature f, bool enable) {}
+	virtual void setFeatureState(Feature f, bool enable) {};
 
 
 	bool hasFeature(Feature f);
@@ -216,7 +224,7 @@ public:
 
 	bool showMouse(bool visible);
 	void warpMouse(int x, int y);
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale) = 0;
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale);
 
 	virtual void showOverlay() = 0;
 	virtual void hideOverlay() = 0;
