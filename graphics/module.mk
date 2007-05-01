@@ -10,7 +10,6 @@ MODULE_OBJS := \
 	fonts/newfont.o \
 	fonts/scummfont.o \
 	iff.o \
-	ilbm.o \
 	imagedec.o \
 	imageman.o \
 	mpeg_player.o \
