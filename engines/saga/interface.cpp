@@ -697,14 +697,20 @@ void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *p
 	text = _vm->getTextString(panelButton->id);
 	panel->calcPanelButtonRect(panelButton, rect);
 	if (panelButton->xOffset < 0) {
-		textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
+		if (_vm->getGameType() == GType_ITE)
+			textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
+		else
+			textWidth = _vm->_font->getStringWidth(kKnownFontVerb, text, 0, kFontNormal);
 		rect.left += 2 + (panel->imageWidth - 1 - textWidth) / 2;
 	}
 
 	textPoint.x = rect.left;
 	textPoint.y = rect.top + 1;
 
-	_vm->_font->textDraw(kKnownFontMedium, ds, text, textPoint, _vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
+	if (_vm->getGameType() == GType_ITE)
+		_vm->_font->textDraw(kKnownFontMedium, ds, text, textPoint, _vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
+	else
+		_vm->_font->textDraw(kKnownFontVerb, ds, text, textPoint, _vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
 }
 
 void Interface::drawOption() {
@@ -1897,7 +1903,6 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	}
 	text = _vm->getTextString(textId);
 
-	// TODO: This looks like to be the proper font for IHNM, check for validity
 	if (_vm->getGameType() == GType_ITE) {
 		textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
 		textHeight = _vm->_font->getHeight(kKnownFontMedium);
@@ -1918,7 +1923,6 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	panel->calcPanelButtonRect(panelButton, rect);
 	drawButtonBox(ds, rect, kButton, panelButton->state > 0);
 
-	// TODO: This looks like to be the proper font for IHNM, check for validity
 	if (_vm->getGameType() == GType_ITE)
 		_vm->_font->textDraw(kKnownFontMedium, ds, text, point,
 			_vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);

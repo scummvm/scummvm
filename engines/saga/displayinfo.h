@@ -319,9 +319,16 @@ static PanelButton IHNM_ConversePanelButtons[] = {
 
 static PanelButton IHNM_OptionPanelButtons[] = {
 	//TODO: Add the rest of the buttons
-	//TODO: Those coordinates might not be pixel perfect, check with the original interpreter
-	{kPanelButtonOption,	20,150,	200,25,	kTextQuitGame,'q',0,	0,0,0}, //quit
-	{kPanelButtonOption,	20,175,	200,25,	kTextContinuePlaying,'c',0,	0,0,0}, //continue
+	{kPanelButtonOptionText,28,36,	0,0,	kTextReadingSpeed,'-',0, 0,0,0},	// text: read speed
+	{kPanelButtonOptionText,60,61,	0,0,	kTextMusic,'-',0, 0,0,0},			// text: music
+	{kPanelButtonOptionText,60,86,	0,0,	kTextSound,'-',0, 0,0,0},			// text: noise
+	// TODO: Add Voices text here
+	{kPanelButtonOption,	154,30, 79,23,	kTextReadingSpeed,'r',0,	0,0,0},	//read speed
+	{kPanelButtonOption,	154,55, 79,23,	kTextMusic,'m',0,	0,0,0},			//music
+	{kPanelButtonOption,	154,80, 79,23,	kTextSound,'n',0,	0,0,0},			//sound-noise
+	// TODO: Add Voices widget here
+	{kPanelButtonOption,	19,149,	200,25,	kTextQuitGame,'q',0,	0,0,0},		//quit
+	{kPanelButtonOption,	19,177,	200,25,	kTextContinuePlaying,'c',0,	0,0,0}, //continue
 	//.....
 };
 
@@ -380,7 +387,7 @@ static const GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 
 	-1, -1,		// save file index
 	0,			// optionSaveFileVisible
-	100, 75,	// option panel offsets
+	92, 46,		// option panel offsets
 	ARRAYSIZE(IHNM_OptionPanelButtons),
 	IHNM_OptionPanelButtons,
 
