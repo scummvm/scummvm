@@ -65,7 +65,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Major update to the SDL lib. Better, faster, more compatible :-)
 
  PalmOS Port:
-   - Now use PalmOS Porting SDK which enable use of C standard library
+   - Now using PalmOS Porting SDK which enables use of the C standard library
 
 0.9.1 (2006-10-29)
  New Ports:
