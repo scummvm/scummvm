@@ -480,7 +480,7 @@ void Script::doVerb() {
 	if (scriptEntrypointNumber > 0) {
 
 		// WORKAROUND: Fixes bug #1690045 "ITE: Item description missing / ScummVM crash"
-		if (!(_vm->_scene->currentSceneNumber() == 278 && (_pendingObject[0] == 16419 || _pendingObject[1] == 16419))) {
+		if (!(_vm->_scene->currentSceneNumber() == 278 && (_pendingObject[0] == 16419 || _pendingObject[1] == 16419) && _vm->getGameType() == GType_ITE)) {
 			event.type = kEvTOneshot;
 			event.code = kScriptEvent;
 			event.op = kEventExecNonBlocking;
