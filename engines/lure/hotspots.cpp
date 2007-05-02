@@ -4118,6 +4118,7 @@ void CurrentActionEntry::saveToStream(WriteStream *stream) {
 		if (_dynamicSupportData)
 		{
 			// Write out the dynamic data
+			stream->writeByte(supportData().action());
 			stream->writeSint16LE(supportData().numParams());
 			for (int index = 0; index < supportData().numParams(); ++index)
 				stream->writeUint16LE(supportData().param(index));
