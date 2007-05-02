@@ -719,7 +719,6 @@ void Interface::drawOption() {
 	Rect rect2;
 	PanelButton *panelButton;
 	Point textPoint;
-	if (_optionSaveFileSlider == NULL) return;//TODO:REMOVE
 	
 	backBuffer = _vm->_gfx->getBackBuffer();
 
@@ -737,8 +736,16 @@ void Interface::drawOption() {
 	}
 
 	if (_optionSaveRectTop.height() > 0) {
-		backBuffer->drawRect(_optionSaveRectTop, kITEColorDarkGrey);
+		if (_vm->getGameType() == GType_ITE) {
+			backBuffer->drawRect(_optionSaveRectTop, kITEColorDarkGrey);
+		} else {
+			// TODO: Draw the button graphic properly for IHNM
+		}
 	}
+
+	// FIXME: The _optionSaveFileSlider checks exist for IHNM, where 
+	// _optionSaveFileSlider is not initialized correctly yet
+	if (_optionSaveFileSlider == NULL) return; //TODO:REMOVE
 
 	drawButtonBox(backBuffer, _optionSaveRectSlider, kSlider, _optionSaveFileSlider->state > 0);
 
@@ -1890,8 +1897,14 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	}
 	text = _vm->getTextString(textId);
 
-	textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
-	textHeight = _vm->_font->getHeight(kKnownFontMedium);
+	// TODO: This looks like to be the proper font for IHNM, check for validity
+	if (_vm->getGameType() == GType_ITE) {
+		textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
+		textHeight = _vm->_font->getHeight(kKnownFontMedium);
+	} else {
+		textWidth = _vm->_font->getStringWidth(kKnownFontVerb, text, 0, kFontNormal);
+		textHeight = _vm->_font->getHeight(kKnownFontVerb);
+	}
 
 	point.x = panel->x + panelButton->xOffset + (panelButton->width / 2) - (textWidth / 2);
 	point.y = panel->y + panelButton->yOffset + (panelButton->height / 2) - (textHeight / 2);
@@ -1905,8 +1918,13 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	panel->calcPanelButtonRect(panelButton, rect);
 	drawButtonBox(ds, rect, kButton, panelButton->state > 0);
 
-	_vm->_font->textDraw(kKnownFontMedium, ds, text, point,
-		_vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
+	// TODO: This looks like to be the proper font for IHNM, check for validity
+	if (_vm->getGameType() == GType_ITE)
+		_vm->_font->textDraw(kKnownFontMedium, ds, text, point,
+			_vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
+	else
+		_vm->_font->textDraw(kKnownFontVerb, ds, text, point,
+			_vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
 }
 
 void Interface::drawPanelButtonArrow(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {

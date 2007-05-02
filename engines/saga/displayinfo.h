@@ -318,11 +318,19 @@ static PanelButton IHNM_ConversePanelButtons[] = {
 };
 
 static PanelButton IHNM_OptionPanelButtons[] = {
-	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+	//TODO: Add the rest of the buttons
+	//TODO: Those coordinates might not be pixel perfect, check with the original interpreter
+	{kPanelButtonOption,	20,150,	200,25,	kTextQuitGame,'q',0,	0,0,0}, //quit
+	{kPanelButtonOption,	20,175,	200,25,	kTextContinuePlaying,'c',0,	0,0,0}, //continue
+	//.....
 };
 
 static PanelButton IHNM_QuitPanelButtons[] = {
-	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+	//FIXME: Show the correct quit dialog background 
+	//TODO: Those coordinates might not be pixel perfect, check with the original interpreter
+	{kPanelButtonQuit,		25,80,	80,25,	kTextQuit,'q',0, 0,0,0},
+	{kPanelButtonQuit,		155,80,	80,25,	kTextCancel,'c',0, 0,0,0},
+	{kPanelButtonQuitText, -1,5,	0,0,	kTextQuitTheGameQuestion,'-',0, 0,0,0},
 };
 
 static PanelButton IHNM_LoadPanelButtons[] = {
@@ -372,12 +380,12 @@ static const GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 
 	-1, -1,		// save file index
 	0,			// optionSaveFileVisible
-	0, 0,		// option panel offsets
+	100, 75,	// option panel offsets
 	ARRAYSIZE(IHNM_OptionPanelButtons),
 	IHNM_OptionPanelButtons,
 
-	0,0,			// quit panel offsets
-	0,0,			// quit panel width & height
+	190,180,		// quit panel offsets
+	260,115,		// quit panel width & height
 	ARRAYSIZE(IHNM_QuitPanelButtons),
 	IHNM_QuitPanelButtons,
 
