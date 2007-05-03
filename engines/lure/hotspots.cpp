@@ -780,7 +780,8 @@ void Hotspot::handleTalkDialog() {
 		// Talking is finish - stop talking and free voice animation
 		debugC(ERROR_DETAILED, kLureDebugAnimations, "Talk dialog close");
 		room.setTalkDialog(0, 0, 0, 0);
-		res.setTalkingCharacter(0);
+		_data->talkDestCharacterId = 0;
+		_data->talkGate = 0;
 	}
 
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Talk handler method end");
@@ -1924,7 +1925,7 @@ void Hotspot::npcTalkNpcToNpc(HotspotData *hotspot) {
 	// Handle the source's talk message
 	if (entry.param(1) != 0) {
 		converse(hotspot->hotspotId, entry.param(1));
-		resource()->talkCountdown = entry.param(2);
+		resource()->talkCountdown += entry.param(2);
 		resource()->delayCtr = entry.param(2);
 	}
 
