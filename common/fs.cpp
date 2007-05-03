@@ -23,7 +23,7 @@
 
 #include "backends/fs/abstract-fs.h"
 #include "common/util.h"
-
+#include "backends/fs/FilesystemFactoryMaker.cpp"
 
 FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) {
 	_realNode = realNode;
@@ -43,10 +43,12 @@ FilesystemNode::FilesystemNode(const FilesystemNode &node) {
 }
 
 FilesystemNode::FilesystemNode(const Common::String &p) {
+	AbstractFilesystemFactory *factory = FilesystemFactoryMaker::makeFactory();
+	
 	if (p.empty() || p == ".")
-		_realNode = AbstractFilesystemNode::getCurrentDirectory();
+		_realNode = factory->makeCurrentDirectoryFileNode();
 	else
-		_realNode = AbstractFilesystemNode::getNodeForPath(p);
+		_realNode = factory->makeFileNodePath(p);
 	_refCount = new int(1);
 }
 
@@ -65,7 +67,7 @@ void FilesystemNode::decRefCount() {
 	}
 }
 
-FilesystemNode &FilesystemNode::operator  =(const FilesystemNode &node) {
+FilesystemNode &FilesystemNode::operator= (const FilesystemNode &node) {
 	if (node._refCount)
 		++(*node._refCount);
 
@@ -87,7 +89,7 @@ FilesystemNode FilesystemNode::getParent() const {
 	if (_realNode == 0)
 		return *this;
 
-	AbstractFilesystemNode *node = _realNode->parent();
+	AbstractFilesystemNode *node = _realNode->getParent();
 	if (node == 0) {
 		return *this;
 	} else {
@@ -100,7 +102,7 @@ FilesystemNode FilesystemNode::getChild(const Common::String &n) const {
 		return *this;
 
 	assert(_realNode->isDirectory());
-	AbstractFilesystemNode *node = _realNode->child(n);
+	AbstractFilesystemNode *node = _realNode->getChild(n);
 	return FilesystemNode(node);
 }
 
@@ -110,7 +112,7 @@ bool FilesystemNode::listDir(FSList &fslist, ListMode mode) const {
 
 	AbstractFSList tmp;
 	
-	if (!_realNode->listDir(tmp, mode))
+	if (!_realNode->getChildren(tmp, mode))
 		return false;
 	
 	fslist.clear();
@@ -129,19 +131,18 @@ bool FilesystemNode::isDirectory() const {
 
 Common::String FilesystemNode::displayName() const {
 	assert(_realNode);
-	return _realNode->displayName();
+	return _realNode->getDisplayName();
 }
 
 Common::String FilesystemNode::name() const {
 	assert(_realNode);
-	return _realNode->name();
+	return _realNode->getName();
 }
 
 Common::String FilesystemNode::path() const {
 	assert(_realNode);
-	return _realNode->path();
+	return _realNode->getPath();
 }
-
 
 bool FilesystemNode::operator< (const FilesystemNode& node) const
 {

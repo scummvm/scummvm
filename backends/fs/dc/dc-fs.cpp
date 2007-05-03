@@ -22,40 +22,59 @@
 #if defined(__DC__)
 
 #include "common/stdafx.h"
-
 #include "backends/fs/abstract-fs.h"
 
 #include <ronin/cdfs.h>
 #include <stdio.h>
 #include <unistd.h>
 
-/*
- * Implementation of the ScummVM file system API based on ronin.
+/**
+ * Implementation of the ScummVM file system API based on POSIX.
+ * 
+ * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
-
 class RoninCDFilesystemNode : public AbstractFilesystemNode {
 protected:
 	String _displayName;
+	String _path;
 	bool _isDirectory;
 	bool _isValid;
-	String _path;
 
 public:
+	/**
+	 * Creates a RoninCDFilesystemNode with the root node as path.
+	 */
 	RoninCDFilesystemNode();
+	
+	/**
+	 * Creates a RoninCDFilesystemNode for a given path.
+	 * 
+	 * @param path String with the path the new node should point to.
+	 * @param verify true if the isValid and isDirectory flags should be verified during the construction.
+	 */
 	RoninCDFilesystemNode(const String &path, bool verify);
 
-	virtual String displayName() const { return _displayName; }
-	virtual String name() const { return _displayName; }
-	virtual bool isValid() const { return _isValid; }
+	virtual String getDisplayName() const { return _displayName; }
+	virtual String getName() const { return _displayName; }
+	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
-	virtual String path() const { return _path; }
+	virtual bool isValid() const { return _isValid; }
 
-	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
-	virtual AbstractFilesystemNode *parent() const;
-	virtual AbstractFilesystemNode *child(const String &n) const;
+	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode) const;
+	virtual AbstractFilesystemNode *getParent() const;
 };
 
-
+/**
+ * Returns the last component of a given path.
+ * 
+ * Examples:
+ * 			/foo/bar.txt would return /bar.txt
+ * 			/foo/bar/    would return /bar/
+ *  
+ * @param str String containing the path.
+ * @return Pointer to the first char of the last component inside str.
+ */
 static const char *lastPathComponent(const Common::String &str) {
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
@@ -65,22 +84,6 @@ static const char *lastPathComponent(const Common::String &str) {
 	}
 
 	return cur + 1;
-}
-
-
-AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
-	// Since there is no way to _set_ the current directory,
-	// it will always be /...
-
-	return getRoot();
-}
-
-AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
-	return new RoninCDFilesystemNode();
-}
-
-AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &path) {
-	return new RoninCDFilesystemNode(path, true);
 }
 
 RoninCDFilesystemNode::RoninCDFilesystemNode() {
@@ -115,10 +118,23 @@ RoninCDFilesystemNode::RoninCDFilesystemNode(const String &p, bool verify) {
 	}
 }
 
-bool RoninCDFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
+AbstractFilesystemNode *RoninCDFilesystemNode::getChild(const String &n) const {
+	// FIXME: Pretty lame implementation! We do no error checking to speak
+	// of, do not check if this is a special node, etc.
 	assert(_isDirectory);
-	DIR *dirp = opendir(_path.c_str());
+	
+	String newPath(_path);
+	if (_path.lastChar() != '/')
+		newPath += '/';
+	newPath += n;
 
+	return new RoninCDFilesystemNode(newPath, true);
+}
+
+bool RoninCDFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode) const {
+	assert(_isDirectory);
+	
+	DIR *dirp = opendir(_path.c_str());
 	struct dirent *dp;
 
 	if (dirp == NULL)
@@ -147,35 +163,22 @@ bool RoninCDFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const
 
 		if (entry._isDirectory)
 			entry._path += "/";
+			
 		myList.push_back(new RoninCDFilesystemNode(entry));
 	}
 	closedir(dirp);
+	
 	return true;
 }
 
-AbstractFilesystemNode *RoninCDFilesystemNode::parent() const {
+AbstractFilesystemNode *RoninCDFilesystemNode::getParent() const {
 	if (_path == "/")
 		return 0;
 
 	const char *start = _path.c_str();
 	const char *end = lastPathComponent(_path);
 
-	RoninCDFilesystemNode *p = new RoninCDFilesystemNode(String(start, end - start), false);
-
-	return p;
-}
-
-AbstractFilesystemNode *RoninCDFilesystemNode::child(const String &n) const {
-	// FIXME: Pretty lame implementation! We do no error checking to speak
-	// of, do not check if this is a special node, etc.
-	assert(_isDirectory);
-	String newPath(_path);
-	if (_path.lastChar() != '/')
-		newPath += '/';
-	newPath += n;
-	RoninCDFilesystemNode *p = new RoninCDFilesystemNode(newPath, true);
-
-	return p;
+	return new RoninCDFilesystemNode(String(start, end - start), false);
 }
 
 #endif // defined(__DC__)

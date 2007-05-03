@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project, contribution by Hans-Jörg Frieden and Juha Niemimäki
+ * Copyright (C) 2005-2006 The ScummVM project, contribution by Hans-Jï¿½rg Frieden and Juha Niemimï¿½ki
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,57 +35,72 @@
 #include <common/stdafx.h>
 
 #include "common/util.h"
-
 #include "engines/engine.h"
 #include "backends/fs/abstract-fs.h"
 
 #define ENTER() /* debug(6, "Enter") */
 #define LEAVE() /* debug(6, "Leave") */
 
-
 const uint32 kExAllBufferSize = 40960; // TODO: is this okay for sure?
 
+/**
+ * Implementation of the ScummVM file system API.
+ * 
+ * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
+ */
 class AmigaOSFilesystemNode : public AbstractFilesystemNode {
-	protected:
-		BPTR _pFileLock;
-		String _sDisplayName;
-		bool _bIsDirectory;
-		bool _bIsValid;
-		String _sPath;
+protected:
+	BPTR _pFileLock;
+	String _sDisplayName;
+	String _sPath;
+	bool _bIsDirectory;
+	bool _bIsValid;
 
-	public:
-		AmigaOSFilesystemNode();
-		AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayName = 0);
-		AmigaOSFilesystemNode(const String &p);
+public:
+	/**
+	 * Creates a AmigaOSFilesystemNode with the root node as path.
+	 */
+	AmigaOSFilesystemNode();
+	
+	/**
+	 * Creates a AmigaOSFilesystemNode for a given path.
+	 * 
+	 * @param path String with the path the new node should point to.
+	 */
+	AmigaOSFilesystemNode(const String &p);
+	
+	/**
+	 * FIXME: document this constructor.
+	 */
+	AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayName = 0);
 
-	    // Note: Copy constructor is needed because it duplicates the file lock
-		AmigaOSFilesystemNode(const AmigaOSFilesystemNode &node);
-		
-		virtual ~AmigaOSFilesystemNode();
+    /**
+     * Copy constructor.
+     * 
+     * @note Needed because it duplicates the file lock
+     */
+	AmigaOSFilesystemNode(const AmigaOSFilesystemNode &node);
+	
+	/**
+	 * Destructor.
+	 */
+	virtual ~AmigaOSFilesystemNode();
 
-		virtual String displayName() const { return _sDisplayName; };
-		virtual String name() const { return _sDisplayName; };
-		virtual bool isValid() const { return _bIsValid; };
-		virtual bool isDirectory() const { return _bIsDirectory; };
-		virtual String path() const { return _sPath; };
-
-		virtual bool listDir(AbstractFSList &list, ListMode mode) const;
-		virtual AbstractFSList listVolumes() const;
-		virtual AbstractFilesystemNode *parent() const;
-		virtual AbstractFilesystemNode *child(const String &n) const;
+	virtual String getDisplayName() const { return _sDisplayName; };
+	virtual String getName() const { return _sDisplayName; };
+	virtual String getPath() const { return _sPath; };
+	virtual bool isValid() const { return _bIsValid; };
+	virtual bool isDirectory() const { return _bIsDirectory; };
+	
+	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode) const;
+	virtual AbstractFilesystemNode *getParent() const;
+	
+	/**
+	 * Creates a list with all the volumes present in the root node.
+	 */
+	virtual AbstractFSList listVolumes() const;
 };
-
-AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
-	return AbstractFilesystemNode::getRoot();
-}
-
-AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
-	return new AmigaOSFilesystemNode();
-}
-
-AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String	&path) {
-	return new AmigaOSFilesystemNode(path);
-}
 
 AmigaOSFilesystemNode::AmigaOSFilesystemNode() {
 	ENTER();
@@ -96,7 +111,6 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode() {
 	_pFileLock = 0;
 	LEAVE();
 }
-
 
 AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 	ENTER();
@@ -147,7 +161,6 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 				const char c = _sPath.lastChar();
 				if (c != '/' && c != ':')
 					_sPath += '/';
-
 			}
 			else {
 				//_bIsDirectory = false;
@@ -167,7 +180,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 	int bufSize = MAXPATHLEN;
 	_pFileLock = 0;
 
-	while (1) {
+	while (true) {
 		char *n = new char[bufSize];
 		if (IDOS->NameFromLock(pLock, (STRPTR)n, bufSize) != DOSFALSE) {
 			_sPath = n;
@@ -183,6 +196,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 			delete [] n;
 			return;
 		}
+		
 		bufSize *= 2;
 		delete [] n;
 	}
@@ -235,7 +249,31 @@ AmigaOSFilesystemNode::~AmigaOSFilesystemNode() {
 	LEAVE();
 }
 
-bool AmigaOSFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
+AbstractFilesystemNode *AmigaOSFilesystemNode::getChild(const String &n) const {
+	if (!_bIsDirectory) {
+		debug(6, "Not a directory");
+		return 0;
+	}
+
+	String newPath(_sPath);
+
+	if (_sPath.lastChar() != '/')
+		newPath += '/';
+
+	newPath += n;
+	BPTR lock = IDOS->Lock(newPath.c_str(), SHARED_LOCK);
+
+	if (!lock) {
+		debug(6, "Bad path");
+		return 0;
+	}
+
+	IDOS->UnLock(lock);
+
+	return new AmigaOSFilesystemNode(newPath);
+}
+
+bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode) const {
 	ENTER();
 
 	if (!_bIsValid) {
@@ -305,10 +343,11 @@ bool AmigaOSFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const
 	}
 
 	LEAVE();
+	
 	return true;
 }
 
-AbstractFilesystemNode *AmigaOSFilesystemNode::parent() const {
+AbstractFilesystemNode *AmigaOSFilesystemNode::getParent() const {
 	ENTER();
 
 	if (!_bIsDirectory) {
@@ -334,33 +373,8 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::parent() const {
 		node = new AmigaOSFilesystemNode();
 
 	LEAVE();
-	return node;
-}
-
-AbstractFilesystemNode *AmigaOSFilesystemNode::child(const String &n) const {
 	
-	if (!_bIsDirectory) {
-		debug(6, "Not a directory");
-		return 0;
-	}
-
-	String newPath(_sPath);
-
-	if (_sPath.lastChar() != '/')
-		newPath += '/';
-
-	newPath += n;
-
-	BPTR lock = IDOS->Lock(newPath.c_str(), SHARED_LOCK);
-
-	if (!lock) {
-		debug(6, "Bad path");
-		return 0;
-	}
-
-	IDOS->UnLock(lock);
-
-	return new AmigaOSFilesystemNode(newPath);
+	return node;
 }
 
 AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
@@ -428,7 +442,8 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
 	IDOS->UnLockDosList(kLockFlags);
 
 	LEAVE();
+	
 	return myList;
 }
 
-#endif
+#endif //defined(__amigaos4__)

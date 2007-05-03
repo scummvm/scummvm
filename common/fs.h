@@ -30,7 +30,6 @@
 class FilesystemNode;
 class AbstractFilesystemNode;
 
-
 /**
  * List of multiple file system nodes. E.g. the contents of a given directory.
  * This is subclass instead of just a typedef so that we can use forward
@@ -38,9 +37,8 @@ class AbstractFilesystemNode;
  */
 class FSList : public Common::Array<FilesystemNode> {};
 
-
 /**
- * FilesystemNode provides an abstraction for file pathes, allowing for portable
+ * FilesystemNode provides an abstraction for file paths, allowing for portable
  * file system browsing. To this ends, multiple or single roots have to be supported
  * (compare Unix with a single root, Windows with multiple roots C:, D:, ...).
  *
@@ -64,8 +62,8 @@ class FSList : public Common::Array<FilesystemNode> {};
  */
 class FilesystemNode {
 private:
-	AbstractFilesystemNode *_realNode;
 	int *_refCount;
+	AbstractFilesystemNode *_realNode;
 
 	FilesystemNode(AbstractFilesystemNode *realNode);
 
@@ -110,43 +108,13 @@ public:
 	/**
 	 * Copy operator.
 	 */
-	FilesystemNode &operator  =(const FilesystemNode &node);
-
+	FilesystemNode &operator= (const FilesystemNode &node);
+	
 	/**
-	 * Checks if the FilesystemNode is valid for any usage
+	 * Compare the name of this node to the name of another. Directories
+	 * go before normal files.
 	 */
-	bool isValid() const;
-
-	/**
-	 * Get the parent node of this node. If this node has no parent node,
-	 * then it returns a duplicate of this node.
-	 */
-	FilesystemNode getParent() const;
-
-	/**
-	 * Fetch a child node of this node, with the given name. Only valid for
-	 * directory nodes (an assertion is triggered otherwise). If no no child
-	 * node with the given name exists, an invalid node is returned.
-	 */
-	FilesystemNode getChild(const Common::String &name) const;
-
-	/**
-	 * Return a list of child nodes of this directory node. If called on a node
-	 * that does not represent a directory, false is returned.
-	 * @return true if succesful, false otherwise (e.g. when the directory does not exist).
-	 * @todo Rename this to listChildren or getChildren.
-	 */
-	virtual bool listDir(FSList &fslist, ListMode mode = kListDirectoriesOnly) const;
-
-	/**
-	 * Is this node pointing to a directory?
-	 * @todo Currently we assume that a valid node that is not a directory
-	 * automatically is a file (ignoring things like symlinks). That might
-	 * actually be OK... but we could still add an isFile method. Or even replace
-	 * isValid and isDirectory by a getType() method that can return values like
-	 * kDirNodeType, kFileNodeType, kInvalidNodeType.
-	 */
-	virtual bool isDirectory() const;
+	bool operator< (const FilesystemNode& node) const;
 
 	/**
 	 * Return a human readable string for this node, usable for display (e.g.
@@ -180,15 +148,51 @@ public:
 	virtual Common::String path() const;
 
 	/**
-	 * Compare the name of this node to the name of another. Directories
-	 * go before normal files.
+	 * Fetch a child node of this node, with the given name. Only valid for
+	 * directory nodes (an assertion is triggered otherwise).
+	 * If no child node with the given name exists, an invalid node is returned.
 	 */
-	bool operator< (const FilesystemNode& node) const;
+	FilesystemNode getChild(const Common::String &name) const;
+	
+	/**
+	 * Return a list of child nodes of this directory node. If called on a node
+	 * that does not represent a directory, false is returned.
+	 * 
+	 * @return true if succesful, false otherwise (e.g. when the directory does not exist).
+	 * @todo Rename this to listChildren or getChildren.
+	 */
+	virtual bool listDir(FSList &fslist, ListMode mode = kListDirectoriesOnly) const;	
+	
+	/**
+	 * Get the parent node of this node. If this node has no parent node,
+	 * then it returns a duplicate of this node.
+	 */
+	FilesystemNode getParent() const;
+
+	/**
+	 * Indicates whether this path refers to a directory or not.
+	 * 
+	 * @todo Currently we assume that a valid node that is not a directory
+	 * automatically is a file (ignoring things like symlinks). That might
+	 * actually be OK... but we could still add an isFile method. Or even replace
+	 * isValid and isDirectory by a getType() method that can return values like
+	 * kDirNodeType, kFileNodeType, kInvalidNodeType.
+	 */
+	virtual bool isDirectory() const;
+	
+	/**
+	 * Indicates whether this path is valid or not for usage.
+	 */
+	bool isValid() const;
 
 protected:
+	/**
+	 * Decreases the reference count to the FilesystemNode, and if necessary,
+	 * deletes the corresponding underlying references.
+	 */
 	void decRefCount();
 };
 
 //} // End of namespace Common
 
-#endif
+#endif //COMMON_FS_H

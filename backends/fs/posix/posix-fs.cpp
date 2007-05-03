@@ -22,7 +22,6 @@
 #if defined(UNIX)
 
 #include "common/stdafx.h"
-
 #include "backends/fs/abstract-fs.h"
 
 #ifdef MACOSX
@@ -34,33 +33,59 @@
 #include <stdio.h>
 #include <unistd.h>
 
-/*
+/**
  * Implementation of the ScummVM file system API based on POSIX.
+ * 
+ * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
-
 class POSIXFilesystemNode : public AbstractFilesystemNode {
 protected:
 	String _displayName;
+	String _path;
 	bool _isDirectory;
 	bool _isValid;
-	String _path;
 
 public:
+	/**
+	 * Creates a POSIXFilesystemNode with the root node as path.
+	 */
 	POSIXFilesystemNode();
+	
+	/**
+	 * Creates a POSIXFilesystemNode for a given path.
+	 * 
+	 * @param path String with the path the new node should point to.
+	 * @param verify true if the isValid and isDirectory flags should be verified during the construction.
+	 */
 	POSIXFilesystemNode(const String &path, bool verify);
-
-	virtual String displayName() const { return _displayName; }
-	virtual String name() const { return _displayName; }
-	virtual bool isValid() const { return _isValid; }
+	
+	virtual String getDisplayName() const { return _displayName; }
+	virtual String getName() const { return _displayName; }
+	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
-	virtual String path() const { return _path; }
-
-	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
-	virtual AbstractFilesystemNode *parent() const;
-	virtual AbstractFilesystemNode *child(const String &n) const;
+	virtual bool isValid() const { return _isValid; }
+	
+	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode) const;
+	virtual AbstractFilesystemNode *getParent() const;
+	
+private:
+	/**
+	 * Tests and sets the _isValid and _isDirectory flags, using the stat() function.
+	 */
+	virtual void setFlags();
 };
 
-
+/**
+ * Returns the last component of a given path.
+ * 
+ * Examples:
+ * 			/foo/bar.txt would return /bar.txt
+ * 			/foo/bar/    would return /bar/
+ *  
+ * @param str String containing the path.
+ * @return Pointer to the first char of the last component inside str.
+ */
 static const char *lastPathComponent(const Common::String &str) {
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
@@ -72,18 +97,10 @@ static const char *lastPathComponent(const Common::String &str) {
 	return cur + 1;
 }
 
-AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
-	char buf[MAXPATHLEN];
-	getcwd(buf, MAXPATHLEN);
-	return new POSIXFilesystemNode(buf, true);
-}
-
-AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
-	return new POSIXFilesystemNode();
-}
-
-AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &path) {
-	return new POSIXFilesystemNode(path, true);
+void POSIXFilesystemNode::setFlags() {
+	struct stat st;
+	_isValid = (0 == stat(_path.c_str(), &st));
+	_isDirectory = _isValid ? S_ISDIR(st.st_mode) : false;	
 }
 
 POSIXFilesystemNode::POSIXFilesystemNode() {
@@ -124,22 +141,33 @@ POSIXFilesystemNode::POSIXFilesystemNode(const String &p, bool verify) {
 	_isDirectory = true;
 
 	if (verify) {
-		struct stat st;
-		_isValid = (0 == stat(_path.c_str(), &st));
-		_isDirectory = _isValid ? S_ISDIR(st.st_mode) : false;
+		setFlags();
 	}
 }
 
-bool POSIXFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
+AbstractFilesystemNode *POSIXFilesystemNode::getChild(const String &n) const {
+	// FIXME: Pretty lame implementation! We do no error checking to speak
+	// of, do not check if this is a special node, etc.
 	assert(_isDirectory);
-	DIR *dirp = opendir(_path.c_str());
+	
+	String newPath(_path);
+	if (_path.lastChar() != '/')
+		newPath += '/';
+	newPath += n;
+	
+	return new POSIXFilesystemNode(newPath, true);
+}
 
+bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode) const {
+	assert(_isDirectory);
+	
+	DIR *dirp = opendir(_path.c_str());
 	struct dirent *dp;
 
 	if (dirp == NULL)
 		return false;
 
-	// ... loop over dir entries using readdir
+	// loop over dir entries using readdir
 	while ((dp = readdir(dirp)) != NULL) {
 		// Skip 'invisible' files
 		if (dp->d_name[0] == '.')
@@ -153,18 +181,18 @@ bool POSIXFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 		POSIXFilesystemNode entry(newPath, false);
 
 #if defined(SYSTEM_NOT_SUPPORTING_D_TYPE)
-		// TODO: d_type is not part of POSIX, so it might not be supported
-		// on some of our targets. For those systems where it isn't supported,
-		// add this #elif case, which tries to use stat() instead.
-		struct stat st;
-		entry._isValid = (0 == stat(entry._path.c_str(), &st));
-		entry._isDirectory = entry._isValid ? S_ISDIR(st.st_mode) : false;
+		/* TODO: d_type is not part of POSIX, so it might not be supported
+		 * on some of our targets. For those systems where it isn't supported,
+		 * add this #elif case, which tries to use stat() instead.
+		 * 
+		 * The d_type method is used to avoid costly recurrent stat() calls in big
+		 * directories.
+		 */
+		entry.setFlags();
 #else
 		if (dp->d_type == DT_UNKNOWN) {
 			// Fall back to stat()
-			struct stat st;
-			entry._isValid = (0 == stat(entry._path.c_str(), &st));
-			entry._isDirectory = entry._isValid ? S_ISDIR(st.st_mode) : false;
+			entry.setFlags();
 		} else {
 			entry._isValid = (dp->d_type == DT_DIR) || (dp->d_type == DT_REG) || (dp->d_type == DT_LNK);
 			if (dp->d_type == DT_LNK) {
@@ -191,35 +219,22 @@ bool POSIXFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 
 		if (entry._isDirectory)
 			entry._path += "/";
+			
 		myList.push_back(new POSIXFilesystemNode(entry));
 	}
 	closedir(dirp);
+	
 	return true;
 }
 
-AbstractFilesystemNode *POSIXFilesystemNode::parent() const {
+AbstractFilesystemNode *POSIXFilesystemNode::getParent() const {
 	if (_path == "/")
 		return 0;
 
 	const char *start = _path.c_str();
 	const char *end = lastPathComponent(_path);
 
-	POSIXFilesystemNode *p = new POSIXFilesystemNode(String(start, end - start), false);
-
-	return p;
+	return new POSIXFilesystemNode(String(start, end - start), false);
 }
 
-AbstractFilesystemNode *POSIXFilesystemNode::child(const String &n) const {
-	// FIXME: Pretty lame implementation! We do no error checking to speak
-	// of, do not check if this is a special node, etc.
-	assert(_isDirectory);
-	String newPath(_path);
-	if (_path.lastChar() != '/')
-		newPath += '/';
-	newPath += n;
-	POSIXFilesystemNode *p = new POSIXFilesystemNode(newPath, true);
-
-	return p;
-}
-
-#endif // defined(UNIX)
+#endif //#if defined(UNIX)

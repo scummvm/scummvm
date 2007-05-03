@@ -31,33 +31,55 @@
 #include <f32file.h>
 #include <bautils.h>
 
-/*
+/**
  * Implementation of the ScummVM file system API based on POSIX.
+ * 
+ * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
-
 class SymbianFilesystemNode : public AbstractFilesystemNode {
 protected:
 	String _displayName;
+	String _path;
 	bool _isDirectory;
 	bool _isValid;
-	String _path;
 	bool _isPseudoRoot;
 
 public:
+	/**
+	 * Creates a SymbianFilesystemNode with the root node as path.
+	 * 
+	 * @param aIsRoot true if the node will be a pseudo root, false otherwise.
+	 */
 	SymbianFilesystemNode(bool aIsRoot);
+	
+	/**
+	 * Creates a SymbianFilesystemNode for a given path.
+	 * 
+	 * @param path String with the path the new node should point to.
+	 */
 	SymbianFilesystemNode(const String &path);
-	virtual String displayName() const { return _displayName; }
-	virtual String name() const { return _displayName; }
-	virtual bool isValid() const { return _isValid; }
+	
+	virtual String getDisplayName() const { return _displayName; }
+	virtual String getName() const { return _displayName; }
+	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
-	virtual String path() const { return _path; }
+	virtual bool isValid() const { return _isValid; }
 
-	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
-	virtual AbstractFilesystemNode *parent() const;
-	virtual AbstractFilesystemNode *child(const String &n) const;
+	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode) const;
+	virtual AbstractFilesystemNode *getParent() const;
 };
 
-
+/**
+ * Returns the last component of a given path.
+ * 
+ * Examples:
+ * 			c:\foo\bar.txt would return "\bar.txt"
+ * 			c:\foo\bar\    would return "\bar\"
+ *  
+ * @param str Path to obtain the last component from.
+ * @return Pointer to the first char of the last component inside str.
+ */
 static const char *lastPathComponent(const Common::String &str) {
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
@@ -69,6 +91,11 @@ static const char *lastPathComponent(const Common::String &str) {
 	return cur + 1;
 }
 
+/**
+ * Fixes the path by changing all slashes to backslashes.
+ * 
+ * @param path String with the path to be fixed.
+ */
 static void fixFilePath(Common::String& path) {
 	TInt len = path.size();
 	
@@ -77,20 +104,6 @@ static void fixFilePath(Common::String& path) {
 			path[index] = '\\';
 		}
 	}
-}
-
-AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
-	char path[MAXPATHLEN];
-	getcwd(path, MAXPATHLEN);
-	return new SymbianFilesystemNode(path);
-}
-
-AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
-	return new SymbianFilesystemNode(true);
-}
-
-AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &path) {
-	return new SymbianFilesystemNode(path);
 }
 
 SymbianFilesystemNode::SymbianFilesystemNode(bool aIsRoot) {
@@ -128,7 +141,26 @@ SymbianFilesystemNode::SymbianFilesystemNode(const String &path) {
 	}
 }
 
-bool SymbianFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
+AbstractFilesystemNode *SymbianFilesystemNode::getChild(const String &n) const {
+	assert(_isDirectory);
+	String newPath(_path);
+
+	if (_path.lastChar() != '\\')
+		newPath += '\\';
+	newPath += n;
+
+	TPtrC8 ptr((const unsigned char*) newPath.c_str(), newPath.size());
+	TFileName fname;
+	fname.Copy(ptr);
+	TBool isFolder = EFalse;
+	BaflUtils::IsFolder(CEikonEnv::Static()->FsSession(), fname, isFolder);
+	if(!isFolder)
+		return 0;
+
+	return new SymbianFilesystemNode(newPath);
+}
+
+bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode) const {
 	assert(_isDirectory);
 
 	if (_isPseudoRoot) {
@@ -199,18 +231,18 @@ bool SymbianFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const
 			}
 			CleanupStack::PopAndDestroy(dirPtr);
 		}
-
 	}
+	
 	return true;
 }
 
-AbstractFilesystemNode *SymbianFilesystemNode::parent() const {
+AbstractFilesystemNode *SymbianFilesystemNode::getParent() const {
 	SymbianFilesystemNode *p =NULL;
 
 	// Root node is its own parent. Still we can't just return this
 	// as the GUI code will call delete on the old node.
 	if (!_isPseudoRoot && _path.size() > 3) {
-		p=new SymbianFilesystemNode(false);
+		p = new SymbianFilesystemNode(false);
 		const char *start = _path.c_str();
 		const char *end = lastPathComponent(_path);
 
@@ -221,29 +253,10 @@ AbstractFilesystemNode *SymbianFilesystemNode::parent() const {
 	}
 	else
 	{
-		p=new SymbianFilesystemNode(true);
+		p = new SymbianFilesystemNode(true);
 	}
+	
 	return p;
 }
 
-AbstractFilesystemNode *SymbianFilesystemNode::child(const String &n) const {
-	assert(_isDirectory);
-	String newPath(_path);
-
-	if (_path.lastChar() != '\\')
-		newPath += '\\';
-	newPath += n;
-
-	TPtrC8 ptr((const unsigned char*) newPath.c_str(), newPath.size());
-	TFileName fname;
-	fname.Copy(ptr);
-	TBool isFolder = EFalse;
-	BaflUtils::IsFolder(CEikonEnv::Static()->FsSession(), fname, isFolder);
-	if(!isFolder)
-		return 0;
-
-	SymbianFilesystemNode *p = new SymbianFilesystemNode(newPath);
-	return p;
-}
-
-#endif // defined(__SYMBIAN32__)
+#endif //#if defined (__SYMBIAN32__)

@@ -46,75 +46,72 @@ protected:
 	typedef FilesystemNode::ListMode ListMode;
 
 	/**
-	 * The parent node of this directory.
-	 * The parent of the root is the root itself.
-	 */
-	virtual AbstractFilesystemNode *parent() const = 0;
-
-	/**
-	 * The child node with the given name. If no child with this name
+	 * Returns the child node with the given name. If no child with this name
 	 * exists, returns 0. When called on a non-directory node, it should
 	 * handle this gracefully by returning 0.
 	 *
+	 * Example:
+	 * 			Calling getChild() for a node with path "/foo/bar" using name="file.txt",
+	 * 			would produce a new node with "/foo/bar/file.txt" as path.
+	 * 
+	 * @note This function will append a separator char (\ or /) to the end of the
+	 * path if needed.
+	 * 
 	 * @note Handling calls on non-dir nodes gracefully makes it possible to
 	 * switch to a lazy type detection scheme in the future.
+	 * 
+	 * @param name String containing the name of the child to create a new node.
 	 */
-	virtual AbstractFilesystemNode *child(const String &name) const = 0;
-
+	virtual AbstractFilesystemNode *getChild(const String &name) const = 0;
 
 	/**
-	 * Returns a special node representing the FS root. The starting point for
-	 * any file system browsing.
-	 * On Unix, this will be simply the node for / (the root directory).
-	 * On Windows, it will be a special node which "contains" all drives (C:, D:, E:).
+	 * The parent node of this directory.
+	 * The parent of the root is the root itself.
 	 */
-	static AbstractFilesystemNode *getRoot();
-
-	/**
-	 * Returns a node representing the "current directory". If your system does
-	 * not support this concept, you can either try to emulate it or
-	 * simply return some "sensible" default directory node, e.g. the same
-	 * value as getRoot() returns.
-	 */
-	static AbstractFilesystemNode *getCurrentDirectory();
-
-
-	/**
-	 * Construct a node based on a path; the path is in the same format as it
-	 * would be for calls to fopen().
-	 *
-	 * Furthermore getNodeForPath(oldNode.path()) should create a new node
-	 * identical to oldNode. Hence, we can use the "path" value for persistent
-	 * storage e.g. in the config file.
-	 *
-	 * @todo: This is of course a place where non-portable code easily will sneak
-	 *        in, because the format of the path used here is not well-defined.
-	 *        So we really should reconsider this API and try to come up with
-	 *        something which is more portable but still flexible enough for our
-	 *        purposes.
-	 */
-	static AbstractFilesystemNode *getNodeForPath(const String &path);
-
+	virtual AbstractFilesystemNode *getParent() const = 0;
 
 public:
+	/**
+	 * Destructor.
+	 */
 	virtual ~AbstractFilesystemNode() {}
 
-	virtual String name() const = 0;
+	/**
+	 * Return a list of child nodes of this directory node. If called on a node
+	 * that does not represent a directory, false is returned.
+	 * 
+	 * @param list List to put the contents of the directory in.
+	 * @param mode Mode to use while listing the directory.
+	 * @return true if succesful, false otherwise (e.g. when the directory does not exist).
+	 */
+	virtual bool getChildren(AbstractFSList &list, ListMode mode) const = 0;
+
+	/**
+	 * Returns a human readable path string.
+	 * 
+	 * @note By default, this method returns the value of getName().
+	 */
+	virtual String getDisplayName() const { return getName(); }
+
+	/**
+	 * Returns a string with an architecture dependent path description.
+	 */
+	virtual String getName() const = 0;
 	
-	// By default, we use the actual file name as 'display name'.
-	virtual String displayName() const { return name(); }
-
-	virtual bool isValid() const = 0;
-
+	/**
+	 * Returns the 'path' of the current node, usable in fopen().
+	 */
+	virtual String getPath() const = 0;
+	
+	/**
+	 * Indicates whether this path refers to a directory or not.
+	 */
 	virtual bool isDirectory() const = 0;
 	
 	/**
-	 * Return the 'path' of the current node, usable in fopen(). See also
-	 * the static getNodeForPath() method.
+	 * Indicates whether this path is valid or not for usage.
 	 */
-	virtual String path() const = 0;
-	virtual bool listDir(AbstractFSList &list, ListMode mode) const = 0;
-
+	virtual bool isValid() const = 0;
 
 	/* TODO:
 	bool exists();
@@ -123,9 +120,8 @@ public:
 	bool isFile();
 
 	bool isReadable();
-	bool isWriteable();
+	bool isWritable();
 	*/
 };
-
 
 #endif
