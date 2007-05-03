@@ -51,9 +51,9 @@ private:
 	static const int _engFontSize;
 	static const uint8 _engFontData[];
 
-	static const uint16 _locFontOffs[];
-	static const int _locFontSize;
-	static const uint8 _locFontData[];
+	static const uint16 _freFontOffs[];
+	static const int _freFontSize;
+	static const uint8 _freFontData[];
 
 	static const uint16 _spaFontOffs[];
 	static const int _spaFontSize;

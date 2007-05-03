@@ -31,9 +31,12 @@ void Graphics::setupFont(Common::Language language) {
 	switch (language) {
 	case Common::FR_FRA:
 	case Common::DE_DEU:
-		_fontOffs = _locFontOffs;
-		_fontSize = _locFontSize;
-		_fontData = _locFontData;
+		// TODO: dump the charset data in the original german version executable.
+		// For now, just re-use the french charset data (it contains the "eszett"
+		// character)
+		_fontOffs = _freFontOffs;
+		_fontSize = _freFontSize;
+		_fontData = _freFontData;
 		break;
 	case Common::ES_ESP:
 		_fontOffs = _spaFontOffs;
