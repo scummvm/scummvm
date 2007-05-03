@@ -36,6 +36,10 @@ void Graphics::setupFont(Common::Language language) {
 		_fontData = _locFontData;
 		break;
 	case Common::ES_ESP:
+		_fontOffs = _spaFontOffs;
+		_fontSize = _spaFontSize;
+		_fontData = _spaFontData;
+		break;
 	case Common::IT_ITA:
 	case Common::EN_ANY:
 	default:

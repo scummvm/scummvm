@@ -55,6 +55,10 @@ private:
 	static const int _locFontSize;
 	static const uint8 _locFontData[];
 
+	static const uint16 _spaFontOffs[];
+	static const int _spaFontSize;
+	static const uint8 _spaFontData[];
+
 	static const uint16 *_fontOffs;
 	static int _fontSize;
 	static const uint8 *_fontData;
