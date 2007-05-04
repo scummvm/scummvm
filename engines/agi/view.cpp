@@ -51,9 +51,8 @@ void AgiEngine::lSetCel(VtEntry *v, int n) {
 	// It seems there's either a bug with KQ4's logic script 120 (the intro script)
 	// or flag 64 is not set correctly, which causes the erroneous behavior from the actors
 	// Check below in lSetLoop for the second part of this workaround
-	if (getFeatures() & GF_KQ4)
-		if (!(v->flags & UPDATE) && (v->currentView == 172))
-			return;
+	if (getFeatures() & GF_KQ4 && !(v->flags & UPDATE) && (v->currentView == 172))
+		return;
 
 	currentVc = &currentVl->cel[n];
 	v->celData = currentVc;
@@ -81,9 +80,8 @@ void AgiEngine::lSetLoop(VtEntry *v, int n) {
 	// WORKAROUND: This is the second part of the hack to fix the KQ4 introduction.
 	// Refer above to function lSetCel for the first part and an explanation
 	// FIXME: Remove this workaround
-	if (getFeatures() & GF_KQ4)
-		if (!(v->flags & UPDATE) && (v->currentView == 172))
-			return;
+	if (getFeatures() & GF_KQ4 && !(v->flags & UPDATE) && (v->currentView == 172))
+		return;
 
 	v->loopData = &_game.views[v->currentView].loop[n];
 }
