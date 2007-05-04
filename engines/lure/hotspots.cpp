@@ -566,7 +566,7 @@ void Hotspot::setOccupied(bool occupiedFlag) {
 
 	int xp = x() >> 3;
 	int yp = (y() - 8 + heightCopy() - 4) >> 3;
-	int widthVal = MAX((widthCopy() >> 3), 1);
+	int widthVal = MAX(((widthCopy() - 1) >> 3), 1);
 
 	// Handle cropping for screen left
 	if (xp < 0) {
