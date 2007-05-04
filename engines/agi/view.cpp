@@ -41,9 +41,19 @@ void AgiEngine::lSetCel(VtEntry *v, int n) {
 	if (currentVl->numCels == 0)
 		return;
 
-	if (!(v->flags & UPDATE)
-			&& (agiGetRelease() >= 0x3000))
-		return;
+	// WORKAROUND: This is a very nasty hack to fix a bug in the KQ4 introduction
+	// In its original form, it caused a lot of regressions, including KQ4 bugs and crashes
+	// Refer to Sarien bug #588899 for the original issue
+	// Modifying this workaround to only work for a specific view in the KQ4 intro fixes several 
+	// ScummVM bugs. Refer to bugs #1660486, #1660169, #1660192, #1660162 and #1660354
+	// FIXME: Remove this workaround and investigate the reason for the erroneous actor behavior
+	// in the KQ4 introduction
+	// It seems there's either a bug with KQ4's logic script 120 (the intro script)
+	// or flag 64 is not set correctly, which causes the erroneous behavior from the actors
+	// Check below in lSetLoop for the second part of this workaround
+	if (getFeatures() & GF_KQ4)
+		if (!(v->flags & UPDATE) && (v->currentView == 172))
+			return;
 
 	currentVc = &currentVl->cel[n];
 	v->celData = currentVc;
@@ -68,8 +78,12 @@ void AgiEngine::lSetLoop(VtEntry *v, int n) {
 	if (v->currentCel >= v->numCels)
 		v->currentCel = 0;
 
-	if (!(v->flags & UPDATE) && (agiGetRelease() >= 0x3000))
-		return;
+	// WORKAROUND: This is the second part of the hack to fix the KQ4 introduction.
+	// Refer above to function lSetCel for the first part and an explanation
+	// FIXME: Remove this workaround
+	if (getFeatures() & GF_KQ4)
+		if (!(v->flags & UPDATE) && (v->currentView == 172))
+			return;
 
 	v->loopData = &_game.views[v->currentView].loop[n];
 }

@@ -104,7 +104,7 @@ int AgiEngine::handleController(int key) {
 	int i;
 
 	/* AGI 3.149 games need KEY_ESCAPE to use menus */
-	if (key == 0 || (key == KEY_ESCAPE && (getFeatures() & GF_ESC_MENU)) )
+	if (key == 0 || (key == KEY_ESCAPE && (getFeatures() & GF_ESC_MENU || getFeatures() & GF_KQ4)) )
 		return false;
 
 	if ((getFeatures() & GF_MANHUNTER) && (key == KEY_ENTER) &&

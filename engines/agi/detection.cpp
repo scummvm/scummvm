@@ -737,7 +737,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
-		GF_ESC_MENU,
+		GF_KQ4,
 		0x3086,
 	},
 
@@ -753,7 +753,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
-		GF_ESC_MENU,
+		GF_KQ4,
 		0x3086,
 	},
 
@@ -769,7 +769,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
-		GF_ESC_MENU,
+		GF_KQ4,
 		0x3086,
 	},
 
@@ -785,7 +785,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
-		GF_ESC_MENU,
+		GF_KQ4,
 		0x3086,
 	},
 
@@ -801,7 +801,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_V3,
-		GF_ESC_MENU,
+		GF_KQ4,
 		0x3149,
 	},
 
