@@ -50,7 +50,6 @@ void AgiEngine::lSetCel(VtEntry *v, int n) {
 	// in the KQ4 introduction
 	// It seems there's either a bug with KQ4's logic script 120 (the intro script)
 	// or flag 64 is not set correctly, which causes the erroneous behavior from the actors
-	// Check below in lSetLoop for the second part of this workaround
 	if (getFeatures() & GF_KQ4 && !(v->flags & UPDATE) && (v->currentView == 172))
 		return;
 
@@ -76,12 +75,6 @@ void AgiEngine::lSetLoop(VtEntry *v, int n) {
 	v->numCels = currentVl->numCels;
 	if (v->currentCel >= v->numCels)
 		v->currentCel = 0;
-
-	// WORKAROUND: This is the second part of the hack to fix the KQ4 introduction.
-	// Refer above to function lSetCel for the first part and an explanation
-	// FIXME: Remove this workaround
-	if (getFeatures() & GF_KQ4 && !(v->flags & UPDATE) && (v->currentView == 172))
-		return;
 
 	v->loopData = &_game.views[v->currentView].loop[n];
 }
@@ -282,6 +275,30 @@ void AgiEngine::setLoop(VtEntry *v, int n) {
  * @param n number of AGI view resource
  */
 void AgiEngine::setView(VtEntry *v, int n) {
+
+	uint16 viewFlags = 0;
+
+	// When setting a view to the view table, if there's already another view set in that
+	// view table entry and it's still drawn, erase the existing view before setting the new one
+	// Fixes bug #1658643: AGI: SQ1 (2.2 DOS ENG) Graphic error, ego leaves behind copy
+	if (v->viewData != NULL) {
+		if (v->currentView != n && v->flags & DRAWN) {
+			viewFlags = v->flags;			// Store the flags for the view
+			_sprites->eraseUpdSprites();
+			if (v->flags & UPDATE) {
+				v->flags &= ~DRAWN;
+			} else {
+				_sprites->eraseNonupdSprites();
+				v->flags &= ~DRAWN;
+				_sprites->blitNonupdSprites();
+			}
+			_sprites->blitUpdSprites();
+
+			_sprites->commitBlock(v->xPos, v->yPos - v->ySize + 1, v->xPos + v->xSize - 1, v->yPos);
+			v->flags = viewFlags;			// Restore the view's flags
+		}
+	}
+
 	v->viewData = &_game.views[n];
 	v->currentView = n;
 	v->numLoops = v->viewData->numLoops;
