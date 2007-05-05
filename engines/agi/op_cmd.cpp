@@ -238,6 +238,24 @@ cmd(get_priority) {
 cmd(set_priority) {
 	vt.flags |= FIXED_PRIORITY;
 	vt.priority = p1;
+
+	// WORKAROUND: this fixes bug #1712585 in KQ4 (dwarf sprite priority)
+	// For this scene, ego (Rosella) hasn't got a fixed priority till script 54
+	// explicitly sets priority 8 for her, so that she can walk back to the table
+	// without being drawn over the other dwarfs
+	// It seems that in this scene, ego's priority is set to 8, but the priority of
+	// the last dwarf with the soup bowls (view 152) is also set to 8, which causes
+	// the dwarf to be drawn behind ego
+	// With this workaround, when the game scripts set the priority of view 152
+	// (seventh dwarf with soup bowls), ego's priority is set to 7
+	// The game script itself sets priotity 8 for ego before she starts walking, 
+	// and then releases the fixed priority set on ego after ego is seated
+	// Therefore, this workaround only affects that specific part of this scene
+	// Ego is set to object 19 by script 54
+	if (g_agi->getFeatures() & GF_KQ4 && vt.currentView == 152) {
+		game.viewTable[19].flags |= FIXED_PRIORITY;
+		game.viewTable[19].priority = 7;
+	}
 }
 
 cmd(set_priority_f) {
