@@ -1194,7 +1194,7 @@ void OSystem_WINCE3::loadGFXMode() {
 	// Create the surface that contains the 8 bit game data
 	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth, _screenHeight, 8, 0, 0, 0, 0);
 	if (_screen == NULL)
-		error("_screen failed");
+		error("_screen failed (%s)", SDL_GetError());
 
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	// Always use full screen mode to have a "clean screen"
@@ -1219,7 +1219,7 @@ void OSystem_WINCE3::loadGFXMode() {
 	_hwscreen = SDL_SetVideoMode(displayWidth, displayHeight, 16, flags);
 
 	if (_hwscreen == NULL) {
-		warning("SDL_SetVideoMode says we can't switch to that mode");
+		warning("SDL_SetVideoMode says we can't switch to that mode (%s)", SDL_GetError());
 		quit();
 	}
 
@@ -1243,23 +1243,23 @@ void OSystem_WINCE3::loadGFXMode() {
 	_tmpscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth + 3, _screenHeight + 3, 16, _hwscreen->format->Rmask, _hwscreen->format->Gmask, _hwscreen->format->Bmask, _hwscreen->format->Amask);
 
 	if (_tmpscreen == NULL)
-		error("_tmpscreen creation failed");
+		error("_tmpscreen creation failed (%s)", SDL_GetError());
 
 	// Overlay
 	if (CEDevice::hasDesktopResolution()) {
 		_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth * _scaleFactorXm / _scaleFactorXd, _overlayHeight * _scaleFactorYm / _scaleFactorYd, 16, 0, 0, 0, 0);
 		if (_overlayscreen == NULL)
-			error("_overlayscreen failed");
+			error("_overlayscreen failed (%s)", SDL_GetError());
 		_tmpscreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth * _scaleFactorXm / _scaleFactorXd + 3, _overlayHeight * _scaleFactorYm / _scaleFactorYd + 3, 16, 0, 0, 0, 0);
 		if (_tmpscreen2 == NULL)
-			error("_tmpscreen2 failed");
+			error("_tmpscreen2 failed (%s)", SDL_GetError());
 	} else {
 		_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16, 0, 0, 0, 0);
 		if (_overlayscreen == NULL)
-			error("_overlayscreen failed");
+			error("_overlayscreen failed (%s)", SDL_GetError());
 		_tmpscreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth + 3, _overlayHeight + 3, 16, 0, 0, 0, 0);
 		if (_tmpscreen2 == NULL)
-			error("_tmpscreen2 failed");
+			error("_tmpscreen2 failed (%s)", SDL_GetError());
 	}
 
 	// Toolbar
@@ -1268,14 +1268,14 @@ void OSystem_WINCE3::loadGFXMode() {
 	_toolbarLow = SDL_CreateRGBSurfaceFrom(toolbar_screen, 320, 40, 16, 320 * 2, _hwscreen->format->Rmask, _hwscreen->format->Gmask, _hwscreen->format->Bmask, _hwscreen->format->Amask);
 
 	if (_toolbarLow == NULL)
-		error("_toolbarLow failed");
+		error("_toolbarLow failed (%s)", SDL_GetError());
 
 	if (_screenHeight > 240) {
 		uint16 *toolbar_screen = (uint16 *)calloc(640 * 80, sizeof(uint16));
 		_toolbarHigh = SDL_CreateRGBSurfaceFrom(toolbar_screen, 640, 80, 16, 640 * 2, _hwscreen->format->Rmask, _hwscreen->format->Gmask, _hwscreen->format->Bmask, _hwscreen->format->Amask);
 
 		if (_toolbarHigh == NULL)
-			error("_toolbarHigh failed");
+			error("_toolbarHigh failed (%s)", SDL_GetError());
 	} else
 		_toolbarHigh = NULL;
 
