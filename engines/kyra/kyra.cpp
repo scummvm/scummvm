@@ -49,10 +49,6 @@ namespace Kyra {
 
 KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	: Engine(system) {
-	setupOpcodeTable();
-	setupButtonData();
-	setupMenu();
-
 	_flags = flags;
 
 	_seq_Forest = _seq_KallakWriting = _seq_KyrandiaLogo = _seq_KallakMalcolm =
@@ -122,10 +118,6 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	Common::addSpecialDebugLevel(kDebugLevelGUI, "GUI", "GUI debug level");
 	Common::addSpecialDebugLevel(kDebugLevelSequence, "Sequence", "Sequence debug level");
 	Common::addSpecialDebugLevel(kDebugLevelMovie, "Movie", "Movie debug level");
-}
-
-KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
-	: KyraEngine(system, flags) {
 }
 
 int KyraEngine::init() {
@@ -214,6 +206,10 @@ int KyraEngine::init() {
 
 	_sound->setVolume(255);
 	_sound->loadSoundFile(0);
+
+	setupOpcodeTable();
+	setupButtonData();
+	setupMenu();
 
 	_paletteChanged = 1;
 	_currentCharacter = 0;
@@ -423,10 +419,6 @@ KyraEngine::~KyraEngine() {
 		delete [] _sceneAnimTable[i];
 }
 
-KyraEngine_v1::~KyraEngine_v1() {
-
-}
-
 int KyraEngine::go() {
 	if (_res->getFileSize("6.FNT"))
 		_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
@@ -503,7 +495,7 @@ void KyraEngine::startup() {
 	_animator->initAnimStateList();
 	setCharactersInDefaultScene();
 
-	if (!_scriptInterpreter->loadScript("_STARTUP.EMC", _npcScriptData))
+	if (!_scriptInterpreter->loadScript("_STARTUP.EMC", _npcScriptData, &_opcodes))
 		error("Could not load \"_STARTUP.EMC\" script");
 	_scriptInterpreter->initScript(_scriptMain, _npcScriptData);
 
@@ -515,7 +507,7 @@ void KyraEngine::startup() {
 	
 	_scriptInterpreter->unloadScript(_npcScriptData);
 
-	if (!_scriptInterpreter->loadScript("_NPC.EMC", _npcScriptData))
+	if (!_scriptInterpreter->loadScript("_NPC.EMC", _npcScriptData, &_opcodes))
 		error("Could not load \"_NPC.EMC\" script");
 	
 	snd_playTheme(1);
@@ -1141,17 +1133,6 @@ void KyraEngine::runNpcScript(int func) {
 	
 	while (_scriptInterpreter->validScript(_npcScript))
 		_scriptInterpreter->runScript(_npcScript);
-}
-
-int KyraEngine::runOpcode(ScriptState *script, uint8 opcode) {
-	debugC(9, kDebugLevelMain | kDebugLevelScript, "KyraEngine::runOpcode(%p, %d)", (void *)script, opcode);
-	assert(script);
-	assert(opcode < _opcodeTableSize);
-
-	if (_opcodeTable[opcode] == &KyraEngine::o1_dummy)
-		warning("calling unimplemented opcode(0x%.02X)", opcode);
-
-	return (this->*_opcodeTable[opcode])(script);
 }
 
 } // End of namespace Kyra

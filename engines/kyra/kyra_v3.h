@@ -48,6 +48,8 @@ private:
 	void preinit();
 	void realInit();
 
+	void setupOpcodeTable() {}
+
 	SoundDigital *_soundDigital;
 	
 	// sound specific

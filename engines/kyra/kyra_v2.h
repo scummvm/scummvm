@@ -81,6 +81,8 @@ public:
 	int go();
 
 private:
+	void setupOpcodeTable() {}
+
 	void seq_playSequences(int startSeq, int endSeq = -1);
 	int seq_introWestwood(int seqNum);
 	int seq_introTitle(int seqNum);
@@ -115,7 +117,6 @@ private:
 	static const int _introStringsSize;
 	
 	int _introStringsDuration[21];
-	
 };
 
 } // end of namespace Kyra

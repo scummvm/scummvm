@@ -22,7 +22,7 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/script.h"
 #include "kyra/screen.h"
 #include "kyra/sprites.h"
@@ -35,13 +35,13 @@ namespace Kyra {
 #define stackPos(x) script->stack[script->sp+x]
 #define stackPosString(x) (const char*)&script->dataPtr->text[READ_BE_UINT16(&((uint16 *)script->dataPtr->text)[stackPos(x)])]
 
-int KyraEngine::o1_magicInMouseItem(ScriptState *script) {
+int KyraEngine_v1::o1_magicInMouseItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_magicInMouseItem(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	magicInMouseItem(stackPos(0), stackPos(1), -1);
 	return 0;
 }
 
-int KyraEngine::o1_characterSays(ScriptState *script) {
+int KyraEngine_v1::o1_characterSays(ScriptState *script) {
 	_skipFlag = false;
 	if (_flags.isTalkie) {
 		debugC(3, kDebugLevelScriptFuncs, "o1_characterSays(%p) (%d, '%s', %d, %d)", (const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3));
@@ -72,7 +72,7 @@ int KyraEngine::o1_characterSays(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_pauseTicks(ScriptState *script) {
+int KyraEngine_v1::o1_pauseTicks(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_pauseTicks(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	if (stackPos(1)) {
 		warning("STUB: special o1_pauseTicks");
@@ -84,33 +84,33 @@ int KyraEngine::o1_pauseTicks(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_drawSceneAnimShape(ScriptState *script) {
+int KyraEngine_v1::o1_drawSceneAnimShape(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_drawSceneAnimShape(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	_screen->drawShape(stackPos(4), _sprites->_sceneShapes[stackPos(0)], stackPos(1), stackPos(2), 0, (stackPos(3) != 0) ? 1 : 0);
 	return 0;
 }
 
-int KyraEngine::o1_queryGameFlag(ScriptState *script) {
+int KyraEngine_v1::o1_queryGameFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_queryGameFlag(%p) (0x%X)", (const void *)script, stackPos(0));
 	return queryGameFlag(stackPos(0));
 }
 
-int KyraEngine::o1_setGameFlag(ScriptState *script) {
+int KyraEngine_v1::o1_setGameFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setGameFlag(%p) (0x%X)", (const void *)script, stackPos(0));
 	return setGameFlag(stackPos(0));
 }
 
-int KyraEngine::o1_resetGameFlag(ScriptState *script) {
+int KyraEngine_v1::o1_resetGameFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_resetGameFlag(%p) (0x%X)", (const void *)script, stackPos(0));
 	return resetGameFlag(stackPos(0));
 }
 
-int KyraEngine::o1_runNPCScript(ScriptState *script) {
+int KyraEngine_v1::o1_runNPCScript(ScriptState *script) {
 	warning("STUB: o1_runNPCScript");
 	return 0;
 }
 
-int KyraEngine::o1_setSpecialExitList(ScriptState *script) {
+int KyraEngine_v1::o1_setSpecialExitList(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setSpecialExitList(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
 	
 	for (int i = 0; i < 10; ++i)
@@ -120,19 +120,19 @@ int KyraEngine::o1_setSpecialExitList(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_blockInWalkableRegion(ScriptState *script) {
+int KyraEngine_v1::o1_blockInWalkableRegion(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_blockInWalkableRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	_screen->blockInRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
 	return 0;
 }
 
-int KyraEngine::o1_blockOutWalkableRegion(ScriptState *script) {
+int KyraEngine_v1::o1_blockOutWalkableRegion(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_blockOutWalkableRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	_screen->blockOutRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
 	return 0;
 }
 
-int KyraEngine::o1_walkPlayerToPoint(ScriptState *script) {
+int KyraEngine_v1::o1_walkPlayerToPoint(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_walkPlayerToPoint(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 
 	int normalTimers = stackPos(2);
@@ -160,7 +160,7 @@ int KyraEngine::o1_walkPlayerToPoint(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_dropItemInScene(ScriptState *script) {
+int KyraEngine_v1::o1_dropItemInScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_dropItemInScene(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	int item = stackPos(0);
 	int xpos = stackPos(1);
@@ -185,7 +185,7 @@ int KyraEngine::o1_dropItemInScene(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_drawAnimShapeIntoScene(ScriptState *script) {
+int KyraEngine_v1::o1_drawAnimShapeIntoScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_drawAnimShapeIntoScene(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	_screen->hideMouse();
 	_animator->restoreAllObjectBackgrounds();
@@ -203,49 +203,49 @@ int KyraEngine::o1_drawAnimShapeIntoScene(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_createMouseItem(ScriptState *script) {
+int KyraEngine_v1::o1_createMouseItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_createMouseItem(%p) (%d)", (const void *)script, stackPos(0));
 	createMouseItem(stackPos(0));
 	return 0;
 }
 
-int KyraEngine::o1_savePageToDisk(ScriptState *script) {
+int KyraEngine_v1::o1_savePageToDisk(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_savePageToDisk(%p) ('%s', %d)", (const void *)script, stackPosString(0), stackPos(1));
 	_screen->savePageToDisk(stackPosString(0), stackPos(1));
 	return 0;
 }
 
-int KyraEngine::o1_sceneAnimOn(ScriptState *script) {
+int KyraEngine_v1::o1_sceneAnimOn(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_sceneAnimOn(%p) (%d)", (const void *)script, stackPos(0));
 	_sprites->_anims[stackPos(0)].play = true;
 	return 0;
 }
 
-int KyraEngine::o1_sceneAnimOff(ScriptState *script) {
+int KyraEngine_v1::o1_sceneAnimOff(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_sceneAnimOff(%p) (%d)", (const void *)script, stackPos(0));
 	_sprites->_anims[stackPos(0)].play = false;
 	return 0;
 }
 
-int KyraEngine::o1_getElapsedSeconds(ScriptState *script) {
+int KyraEngine_v1::o1_getElapsedSeconds(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_getElapsedSeconds(%p) ()", (const void *)script);
 	return _system->getMillis() / 1000;
 }
 
-int KyraEngine::o1_mouseIsPointer(ScriptState *script) {
+int KyraEngine_v1::o1_mouseIsPointer(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_mouseIsPointer(%p) ()", (const void *)script);
 	if (_itemInHand == -1)
 		return 1;
 	return 0;
 }
 
-int KyraEngine::o1_destroyMouseItem(ScriptState *script) {
+int KyraEngine_v1::o1_destroyMouseItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_destroyMouseItem(%p) ()", (const void *)script);
 	destroyMouseItem();
 	return 0;
 }
 
-int KyraEngine::o1_runSceneAnimUntilDone(ScriptState *script) {
+int KyraEngine_v1::o1_runSceneAnimUntilDone(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_runSceneAnimUntilDone(%p) (%d)", (const void *)script, stackPos(0));
 	_screen->hideMouse();
 	_animator->restoreAllObjectBackgrounds();
@@ -263,7 +263,7 @@ int KyraEngine::o1_runSceneAnimUntilDone(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_fadeSpecialPalette(ScriptState *script) {
+int KyraEngine_v1::o1_fadeSpecialPalette(ScriptState *script) {
 	if (_flags.platform == Common::kPlatformAmiga) {
 		debugC(3, kDebugLevelScriptFuncs, "o1_fadeSpecialPalette(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 		if (_currentCharacter->sceneId != 45) {
@@ -281,42 +281,42 @@ int KyraEngine::o1_fadeSpecialPalette(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_playAdlibSound(ScriptState *script) {
+int KyraEngine_v1::o1_playAdlibSound(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_playAdlibSound(%p) (%d)", (const void *)script, stackPos(0));
 	snd_playSoundEffect(stackPos(0));
 	return 0;
 }
 
-int KyraEngine::o1_playAdlibScore(ScriptState *script) {
+int KyraEngine_v1::o1_playAdlibScore(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_playAdlibScore(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	snd_playWanderScoreViaMap(stackPos(0), stackPos(1));
 	return 0;
 }
 
-int KyraEngine::o1_phaseInSameScene(ScriptState *script) {
+int KyraEngine_v1::o1_phaseInSameScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_phaseInSameScene(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	transcendScenes(stackPos(0), stackPos(1));
 	return 0;
 }
 
-int KyraEngine::o1_setScenePhasingFlag(ScriptState *script) {
+int KyraEngine_v1::o1_setScenePhasingFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setScenePhasingFlag(%p) ()", (const void *)script);
 	_scenePhasingFlag = 1;
 	return 1;
 }
 
-int KyraEngine::o1_resetScenePhasingFlag(ScriptState *script) {
+int KyraEngine_v1::o1_resetScenePhasingFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_resetScenePhasingFlag(%p) ()", (const void *)script);
 	_scenePhasingFlag = 0;
 	return 0;
 }
 
-int KyraEngine::o1_queryScenePhasingFlag(ScriptState *script) {
+int KyraEngine_v1::o1_queryScenePhasingFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_queryScenePhasingFlag(%p) ()", (const void *)script);
 	return _scenePhasingFlag;
 }
 
-int KyraEngine::o1_sceneToDirection(ScriptState *script) {
+int KyraEngine_v1::o1_sceneToDirection(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_sceneToDirection(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	assert(stackPos(0) < _roomTableSize);
 	Room *curRoom = &_roomTable[stackPos(0)];
@@ -346,7 +346,7 @@ int KyraEngine::o1_sceneToDirection(ScriptState *script) {
 	return returnValue;
 }
 
-int KyraEngine::o1_setBirthstoneGem(ScriptState *script) {
+int KyraEngine_v1::o1_setBirthstoneGem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setBirthstoneGem(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	int index = stackPos(0);
 	if (index < 4 && index >= 0) {
@@ -356,19 +356,19 @@ int KyraEngine::o1_setBirthstoneGem(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_placeItemInGenericMapScene(ScriptState *script) {
+int KyraEngine_v1::o1_placeItemInGenericMapScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_placeItemInGenericMapScene(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	placeItemInGenericMapScene(stackPos(0), stackPos(1));
 	return 0;
 }
 
-int KyraEngine::o1_setBrandonStatusBit(ScriptState *script) {
+int KyraEngine_v1::o1_setBrandonStatusBit(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setBrandonStatusBit(%p) (%d)", (const void *)script, stackPos(0));
 	_brandonStatusBit |= stackPos(0);
 	return 0;
 }
 
-int KyraEngine::o1_pauseSeconds(ScriptState *script) {
+int KyraEngine_v1::o1_pauseSeconds(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_pauseSeconds(%p) (%d)", (const void *)script, stackPos(0));
 	if (stackPos(0) > 0 && !_skipFlag)
 		delay(stackPos(0)*1000, true);
@@ -376,41 +376,41 @@ int KyraEngine::o1_pauseSeconds(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_getCharactersLocation(ScriptState *script) {
+int KyraEngine_v1::o1_getCharactersLocation(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_getCharactersLocation(%p) (%d)", (const void *)script, stackPos(0));
 	return _characterList[stackPos(0)].sceneId;
 }
 
-int KyraEngine::o1_runNPCSubscript(ScriptState *script) {
+int KyraEngine_v1::o1_runNPCSubscript(ScriptState *script) {
 	warning("STUB: o1_runNPCSubscript");
 	return 0;
 }
 
-int KyraEngine::o1_magicOutMouseItem(ScriptState *script) {
+int KyraEngine_v1::o1_magicOutMouseItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_magicOutMouseItem(%p) (%d)", (const void *)script, stackPos(0));
 	magicOutMouseItem(stackPos(0), -1);
 	return 0;
 }
 
-int KyraEngine::o1_internalAnimOn(ScriptState *script) {
+int KyraEngine_v1::o1_internalAnimOn(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_internalAnimOn(%p) (%d)", (const void *)script, stackPos(0));
 	_animator->sprites()[stackPos(0)].active = 1;
 	return 0;
 }
 
-int KyraEngine::o1_forceBrandonToNormal(ScriptState *script) {
+int KyraEngine_v1::o1_forceBrandonToNormal(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_forceBrandonToNormal(%p) ()", (const void *)script);
 	checkAmuletAnimFlags();
 	return 0;
 }
 
-int KyraEngine::o1_poisonDeathNow(ScriptState *script) {
+int KyraEngine_v1::o1_poisonDeathNow(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_poisonDeathNow(%p) ()", (const void *)script);
 	seq_poisonDeathNow(1);
 	return 0;
 }
 
-int KyraEngine::o1_setScaleMode(ScriptState *script) {
+int KyraEngine_v1::o1_setScaleMode(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setScaleMode(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int len = stackPos(0);
 	int setValue1 = stackPos(1);
@@ -428,7 +428,7 @@ int KyraEngine::o1_setScaleMode(ScriptState *script) {
 	return _scaleMode;
 }
 
-int KyraEngine::o1_openWSAFile(ScriptState *script) {
+int KyraEngine_v1::o1_openWSAFile(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_openWSAFile(%p) ('%s', %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3));
 	
 	const char *filename = stackPosString(0);
@@ -440,7 +440,7 @@ int KyraEngine::o1_openWSAFile(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_closeWSAFile(ScriptState *script) {
+int KyraEngine_v1::o1_closeWSAFile(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_closeWSAFile(%p) (%d)", (const void *)script, stackPos(0));
 	
 	int wsaIndex = stackPos(0);
@@ -450,7 +450,7 @@ int KyraEngine::o1_closeWSAFile(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_runWSAFromBeginningToEnd(ScriptState *script) {
+int KyraEngine_v1::o1_runWSAFromBeginningToEnd(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_runWSAFromBeginningToEnd(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	
 	_screen->hideMouse();
@@ -491,7 +491,7 @@ int KyraEngine::o1_runWSAFromBeginningToEnd(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_displayWSAFrame(ScriptState *script) {
+int KyraEngine_v1::o1_displayWSAFrame(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_displayWSAFrame(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	int frame = stackPos(0);
 	int xpos = stackPos(1);
@@ -518,13 +518,13 @@ int KyraEngine::o1_displayWSAFrame(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_enterNewScene(ScriptState *script) {
+int KyraEngine_v1::o1_enterNewScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_enterNewScene(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	enterNewScene(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	return 0;
 }
 
-int KyraEngine::o1_setSpecialEnterXAndY(ScriptState *script) {
+int KyraEngine_v1::o1_setSpecialEnterXAndY(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setSpecialEnterXAndY(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	_brandonPosX = stackPos(0);
 	_brandonPosY = stackPos(1);
@@ -533,7 +533,7 @@ int KyraEngine::o1_setSpecialEnterXAndY(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_runWSAFrames(ScriptState *script) {
+int KyraEngine_v1::o1_runWSAFrames(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_runWSAFrames(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	int xpos = stackPos(0);
 	int ypos = stackPos(1);
@@ -560,7 +560,7 @@ int KyraEngine::o1_runWSAFrames(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_popBrandonIntoScene(ScriptState *script) {
+int KyraEngine_v1::o1_popBrandonIntoScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_popBrandonIntoScene(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int changeScaleMode = stackPos(3);
 	int xpos = (int16)(stackPos(0) & 0xFFFC);
@@ -609,7 +609,7 @@ int KyraEngine::o1_popBrandonIntoScene(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_restoreAllObjectBackgrounds(ScriptState *script) {
+int KyraEngine_v1::o1_restoreAllObjectBackgrounds(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_restoreAllObjectBackgrounds(%p) (%d)", (const void *)script, stackPos(0));
 	int disable = stackPos(0);
 	int activeBackup = 0;
@@ -623,20 +623,20 @@ int KyraEngine::o1_restoreAllObjectBackgrounds(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_setCustomPaletteRange(ScriptState *script) {
+int KyraEngine_v1::o1_setCustomPaletteRange(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setCustomPaletteRange(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	memcpy(_screen->getPalette(1) + stackPos(1)*3, _specialPalettes[stackPos(0)], stackPos(2)*3);
 	return 0;
 }
 
-int KyraEngine::o1_loadPageFromDisk(ScriptState *script) {
+int KyraEngine_v1::o1_loadPageFromDisk(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_loadPageFromDisk(%p) ('%s', %d)", (const void *)script, stackPosString(0), stackPos(1));
 	_screen->loadPageFromDisk(stackPosString(0), stackPos(1));
 	_animator->_updateScreen = true;
 	return 0;
 }
 
-int KyraEngine::o1_customPrintTalkString(ScriptState *script) {
+int KyraEngine_v1::o1_customPrintTalkString(ScriptState *script) {
 	if (_flags.isTalkie) {
 		debugC(3, kDebugLevelScriptFuncs, "o1_customPrintTalkString(%p) (%d, '%s', %d, %d, %d)", (const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF);
 
@@ -656,7 +656,7 @@ int KyraEngine::o1_customPrintTalkString(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_restoreCustomPrintBackground(ScriptState *script) {
+int KyraEngine_v1::o1_restoreCustomPrintBackground(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_restoreCustomPrintBackground(%p) ()", (const void *)script);
 	snd_voiceWaitForFinish();
 	snd_stopVoice();
@@ -664,29 +664,29 @@ int KyraEngine::o1_restoreCustomPrintBackground(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_hideMouse(ScriptState *script) {
+int KyraEngine_v1::o1_hideMouse(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_hideMouse(%p) ()", (const void *)script);
 	_screen->hideMouse();
 	return 0;
 }
 
-int KyraEngine::o1_showMouse(ScriptState *script) {
+int KyraEngine_v1::o1_showMouse(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_showMouse(%p) ()", (const void *)script);
 	_screen->showMouse();
 	return 0;
 }
 
-int KyraEngine::o1_getCharacterX(ScriptState *script) {
+int KyraEngine_v1::o1_getCharacterX(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_getCharacterX(%p) (%d)", (const void *)script, stackPos(0));
 	return _characterList[stackPos(0)].x1;
 }
 
-int KyraEngine::o1_getCharacterY(ScriptState *script) {
+int KyraEngine_v1::o1_getCharacterY(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_getCharacterY(%p) (%d)", (const void *)script, stackPos(0));
 	return _characterList[stackPos(0)].y1;
 }
 
-int KyraEngine::o1_changeCharactersFacing(ScriptState *script) {
+int KyraEngine_v1::o1_changeCharactersFacing(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_changeCharactersFacing(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	int character = stackPos(0);
 	int facing = stackPos(1);
@@ -704,7 +704,7 @@ int KyraEngine::o1_changeCharactersFacing(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_copyWSARegion(ScriptState *script) {
+int KyraEngine_v1::o1_copyWSARegion(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_copyWSARegion(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	int xpos = stackPos(0);
 	int ypos = stackPos(1);
@@ -717,7 +717,7 @@ int KyraEngine::o1_copyWSARegion(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_printText(ScriptState *script) {
+int KyraEngine_v1::o1_printText(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_printText(%p) ('%s', %d, %d, 0x%X, 0x%X)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	if (_flags.lang == Common::JA_JPN && stackPos(3) == 7)
 		_screen->printText(stackPosString(0), stackPos(1), stackPos(2), 0, 0x80);
@@ -727,18 +727,18 @@ int KyraEngine::o1_printText(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_random(ScriptState *script) {
+int KyraEngine_v1::o1_random(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_random(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	assert(stackPos(0) < stackPos(1));
 	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
 }
 
-int KyraEngine::o1_loadSoundFile(ScriptState *script) {
+int KyraEngine_v1::o1_loadSoundFile(ScriptState *script) {
 	warning("STUB: o1_loadSoundFile");
 	return 0;
 }
 
-int KyraEngine::o1_displayWSAFrameOnHidPage(ScriptState *script) {
+int KyraEngine_v1::o1_displayWSAFrameOnHidPage(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_displayWSAFrameOnHidPage(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	int frame = stackPos(0);
 	int xpos = stackPos(1);
@@ -767,7 +767,7 @@ int KyraEngine::o1_displayWSAFrameOnHidPage(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_displayWSASequentialFrames(ScriptState *script) {
+int KyraEngine_v1::o1_displayWSASequentialFrames(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_displayWSASequentialFrames(%p) (%d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6));
 	int startFrame = stackPos(0);
 	int endFrame = stackPos(1);
@@ -843,7 +843,7 @@ int KyraEngine::o1_displayWSASequentialFrames(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_drawCharacterStanding(ScriptState *script) {
+int KyraEngine_v1::o1_drawCharacterStanding(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_drawCharacterStanding(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int character = stackPos(0);
 	int animFrame = stackPos(1);
@@ -858,13 +858,13 @@ int KyraEngine::o1_drawCharacterStanding(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_internalAnimOff(ScriptState *script) {
+int KyraEngine_v1::o1_internalAnimOff(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_internalAnimOff(%p) (%d)", (const void *)script, stackPos(0));
 	_animator->sprites()[stackPos(0)].active = 0;
 	return 0;
 }
 
-int KyraEngine::o1_changeCharactersXAndY(ScriptState *script) {
+int KyraEngine_v1::o1_changeCharactersXAndY(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_changeCharactersXAndY(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	Character *ch = &_characterList[stackPos(0)];
 	int16 x = stackPos(1);
@@ -880,25 +880,25 @@ int KyraEngine::o1_changeCharactersXAndY(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_clearSceneAnimatorBeacon(ScriptState *script) {
+int KyraEngine_v1::o1_clearSceneAnimatorBeacon(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_clearSceneAnimatorBeacon(%p) ()", (const void *)script);
 	_sprites->_sceneAnimatorBeaconFlag = 0;
 	return 0;
 }
 
-int KyraEngine::o1_querySceneAnimatorBeacon(ScriptState *script) {
+int KyraEngine_v1::o1_querySceneAnimatorBeacon(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_querySceneAnimatorBeacon(%p) ()", (const void *)script);
 	return _sprites->_sceneAnimatorBeaconFlag;
 }
 
-int KyraEngine::o1_refreshSceneAnimator(ScriptState *script) {
+int KyraEngine_v1::o1_refreshSceneAnimator(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_refreshSceneAnimator(%p) ()", (const void *)script);
 	_sprites->updateSceneAnims();
 	_animator->updateAllObjectShapes();
 	return 0;
 }
 
-int KyraEngine::o1_placeItemInOffScene(ScriptState *script) {
+int KyraEngine_v1::o1_placeItemInOffScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_placeItemInOffScene(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int item = stackPos(0);
 	int xpos = stackPos(1);
@@ -917,7 +917,7 @@ int KyraEngine::o1_placeItemInOffScene(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_wipeDownMouseItem(ScriptState *script) {
+int KyraEngine_v1::o1_wipeDownMouseItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_wipeDownMouseItem(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	_screen->hideMouse();
 	wipeDownMouseItem(stackPos(1), stackPos(2));
@@ -926,7 +926,7 @@ int KyraEngine::o1_wipeDownMouseItem(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_placeCharacterInOtherScene(ScriptState *script) {
+int KyraEngine_v1::o1_placeCharacterInOtherScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_placeCharacterInOtherScene(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	int id = stackPos(0);
 	int sceneId = stackPos(1);
@@ -943,18 +943,18 @@ int KyraEngine::o1_placeCharacterInOtherScene(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_getKey(ScriptState *script) {
+int KyraEngine_v1::o1_getKey(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_getKey(%p) ()", (const void *)script);
 	waitForEvent();
 	return 0;
 }
 
-int KyraEngine::o1_specificItemInInventory(ScriptState *script) {
+int KyraEngine_v1::o1_specificItemInInventory(ScriptState *script) {
 	warning("STUB: o1_specificItemInInventory");
 	return 0;
 }
 
-int KyraEngine::o1_popMobileNPCIntoScene(ScriptState *script) {
+int KyraEngine_v1::o1_popMobileNPCIntoScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_popMobileNPCIntoScene(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), (int16)(stackPos(4) & 0xFFFC), (int8)(stackPos(5) & 0xFE));
 	int character = stackPos(0);
 	int sceneId = stackPos(1);
@@ -975,22 +975,22 @@ int KyraEngine::o1_popMobileNPCIntoScene(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_mobileCharacterInScene(ScriptState *script) {
+int KyraEngine_v1::o1_mobileCharacterInScene(ScriptState *script) {
 	warning("STUB: o1_mobileCharacterInScene");
 	return 0;
 }
 
-int KyraEngine::o1_hideMobileCharacter(ScriptState *script) {
+int KyraEngine_v1::o1_hideMobileCharacter(ScriptState *script) {
 	warning("STUB: o1_hideMobileCharacter");
 	return 0;
 }
 
-int KyraEngine::o1_unhideMobileCharacter(ScriptState *script) {
+int KyraEngine_v1::o1_unhideMobileCharacter(ScriptState *script) {
 	warning("STUB: o1_unhideMobileCharacter");
 	return 0;
 }
 
-int KyraEngine::o1_setCharactersLocation(ScriptState *script) {
+int KyraEngine_v1::o1_setCharactersLocation(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setCharactersLocation(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	Character *ch = &_characterList[stackPos(0)];
 	AnimObject *animObj = &_animator->actors()[stackPos(0)];
@@ -1007,7 +1007,7 @@ int KyraEngine::o1_setCharactersLocation(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_walkCharacterToPoint(ScriptState *script) {
+int KyraEngine_v1::o1_walkCharacterToPoint(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_walkCharacterToPoint(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	int character = stackPos(0);
 	int toX = stackPos(1);
@@ -1089,7 +1089,7 @@ int KyraEngine::o1_walkCharacterToPoint(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_specialEventDisplayBrynnsNote(ScriptState *script) {
+int KyraEngine_v1::o1_specialEventDisplayBrynnsNote(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_specialEventDisplayBrynnsNote(%p) ()", (const void *)script);
 	_screen->hideMouse();
 	_screen->savePageToDisk("HIDPAGE.TMP", 2);
@@ -1111,7 +1111,7 @@ int KyraEngine::o1_specialEventDisplayBrynnsNote(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_specialEventRemoveBrynnsNote(ScriptState *script) {
+int KyraEngine_v1::o1_specialEventRemoveBrynnsNote(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_specialEventRemoveBrynnsNote(%p) ()", (const void *)script);
 	_screen->hideMouse();
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
@@ -1122,13 +1122,13 @@ int KyraEngine::o1_specialEventRemoveBrynnsNote(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_setLogicPage(ScriptState *script) {
+int KyraEngine_v1::o1_setLogicPage(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setLogicPage(%p) (%d)", (const void *)script, stackPos(0));
 	_screen->_curPage = stackPos(0);
 	return stackPos(0);
 }
 
-int KyraEngine::o1_fatPrint(ScriptState *script) {
+int KyraEngine_v1::o1_fatPrint(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_fatPrint(%p) ('%s', %d, %d, %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 
 	// Workround for bug #1582672 ("KYRA1: Text crippled and drawn wrong")
@@ -1141,13 +1141,13 @@ int KyraEngine::o1_fatPrint(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_preserveAllObjectBackgrounds(ScriptState *script) {
+int KyraEngine_v1::o1_preserveAllObjectBackgrounds(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_preserveAllObjectBackgrounds(%p) ()", (const void *)script);
 	_animator->preserveAllBackgrounds();
 	return 0;
 }
 
-int KyraEngine::o1_updateSceneAnimations(ScriptState *script) {
+int KyraEngine_v1::o1_updateSceneAnimations(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_updateSceneAnimations(%p) (%d)", (const void *)script, stackPos(0));
 	int times = stackPos(0);
 	while (times--) {
@@ -1157,23 +1157,23 @@ int KyraEngine::o1_updateSceneAnimations(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_sceneAnimationActive(ScriptState *script) {
+int KyraEngine_v1::o1_sceneAnimationActive(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_sceneAnimationActive(%p) (%d)", (const void *)script, stackPos(0));
 	return _sprites->_anims[stackPos(0)].play;
 }
 
-int KyraEngine::o1_setCharactersMovementDelay(ScriptState *script) {
+int KyraEngine_v1::o1_setCharactersMovementDelay(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setCharactersMovementDelay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	setTimerDelay(stackPos(0)+5, stackPos(1));
 	return 0;
 }
 
-int KyraEngine::o1_getCharactersFacing(ScriptState *script) {
+int KyraEngine_v1::o1_getCharactersFacing(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_getCharactersFacing(%p) (%d)", (const void *)script, stackPos(0));
 	return _characterList[stackPos(0)].facing;
 }
 
-int KyraEngine::o1_bkgdScrollSceneAndMasksRight(ScriptState *script) {
+int KyraEngine_v1::o1_bkgdScrollSceneAndMasksRight(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_bkgdScrollSceneAndMasksRight(%p) (%d)", (const void *)script, stackPos(0));
 	_screen->copyBackgroundBlock(stackPos(0), 2, 0);
 	_screen->copyBackgroundBlock2(stackPos(0));
@@ -1183,13 +1183,13 @@ int KyraEngine::o1_bkgdScrollSceneAndMasksRight(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_dispelMagicAnimation(ScriptState *script) {
+int KyraEngine_v1::o1_dispelMagicAnimation(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_dispelMagicAnimation(%p) ()", (const void *)script);
 	seq_dispelMagicAnimation();
 	return 0;
 }
 
-int KyraEngine::o1_findBrightestFireberry(ScriptState *script) {
+int KyraEngine_v1::o1_findBrightestFireberry(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_findBrightestFireberry(%p) ()", (const void *)script);
 	if (_currentCharacter->sceneId >= 187 && _currentCharacter->sceneId <= 198)
 		return 29;
@@ -1233,7 +1233,7 @@ int KyraEngine::o1_findBrightestFireberry(ScriptState *script) {
 	return brightestFireberry;
 }
 
-int KyraEngine::o1_setFireberryGlowPalette(ScriptState *script) {
+int KyraEngine_v1::o1_setFireberryGlowPalette(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setFireberryGlowPalette(%p) (%d)", (const void *)script, stackPos(0));
 	int palIndex = 0;
 	switch (stackPos(0)) {
@@ -1270,19 +1270,19 @@ int KyraEngine::o1_setFireberryGlowPalette(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_setDeathHandlerFlag(ScriptState *script) {
+int KyraEngine_v1::o1_setDeathHandlerFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setDeathHandlerFlag(%p) (%d)", (const void *)script, stackPos(0));
 	_deathHandler = stackPos(0);
 	return 0;
 }
 
-int KyraEngine::o1_drinkPotionAnimation(ScriptState *script) {
+int KyraEngine_v1::o1_drinkPotionAnimation(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_drinkPotionAnimation(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	seq_playDrinkPotionAnim(stackPos(0), stackPos(1), stackPos(2));
 	return 0;
 }
 
-int KyraEngine::o1_makeAmuletAppear(ScriptState *script) {
+int KyraEngine_v1::o1_makeAmuletAppear(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_makeAmuletAppear(%p) ()", (const void *)script);
 	WSAMovieV1 amulet(this);
 	amulet.open("AMULET.WSA", 1, 0);
@@ -1323,7 +1323,7 @@ int KyraEngine::o1_makeAmuletAppear(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_drawItemShapeIntoScene(ScriptState *script) {
+int KyraEngine_v1::o1_drawItemShapeIntoScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_drawItemShapeIntoScene(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	int item = stackPos(0);
 	int x = stackPos(1);
@@ -1350,13 +1350,13 @@ int KyraEngine::o1_drawItemShapeIntoScene(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_setCharactersCurrentFrame(ScriptState *script) {
+int KyraEngine_v1::o1_setCharactersCurrentFrame(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setCharactersCurrentFrame(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	_characterList[stackPos(0)].currentAnimFrame = stackPos(1);
 	return 0;
 }
 
-int KyraEngine::o1_waitForConfirmationMouseClick(ScriptState *script) {
+int KyraEngine_v1::o1_waitForConfirmationMouseClick(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_waitForConfirmationMouseClick(%p) ()", (const void *)script);
 	// if (mouseEnabled) {
 	while (!_mousePressFlag) {
@@ -1381,39 +1381,39 @@ int KyraEngine::o1_waitForConfirmationMouseClick(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_pageFlip(ScriptState *script) {
+int KyraEngine_v1::o1_pageFlip(ScriptState *script) {
 	warning("STUB: o1_pageFlip");
 	return 0;
 }
 
-int KyraEngine::o1_setSceneFile(ScriptState *script) {
+int KyraEngine_v1::o1_setSceneFile(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setSceneFile(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	setSceneFile(stackPos(0), stackPos(1));
 	return 0;
 }
 
-int KyraEngine::o1_getItemInMarbleVase(ScriptState *script) {
+int KyraEngine_v1::o1_getItemInMarbleVase(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_getItemInMarbleVase(%p) ()", (const void *)script);
 	return _marbleVaseItem;
 }
 
-int KyraEngine::o1_setItemInMarbleVase(ScriptState *script) {
+int KyraEngine_v1::o1_setItemInMarbleVase(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setItemInMarbleVase(%p) (%d)", (const void *)script, stackPos(0));
 	_marbleVaseItem = stackPos(0);
 	return 0;
 }
 
-int KyraEngine::o1_addItemToInventory(ScriptState *script) {
+int KyraEngine_v1::o1_addItemToInventory(ScriptState *script) {
 	warning("STUB: o1_addItemToInventory");
 	return 0;
 }
 
-int KyraEngine::o1_intPrint(ScriptState *script) {
+int KyraEngine_v1::o1_intPrint(ScriptState *script) {
 	warning("STUB: o1_intPrint");
 	return 0;
 }
 
-int KyraEngine::o1_shakeScreen(ScriptState *script) {
+int KyraEngine_v1::o1_shakeScreen(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_shakeScreen(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	int waitTicks = stackPos(1);
 	int times = stackPos(0);
@@ -1426,57 +1426,57 @@ int KyraEngine::o1_shakeScreen(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_createAmuletJewel(ScriptState *script) {
+int KyraEngine_v1::o1_createAmuletJewel(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_createAmuletJewel(%p) (%d)", (const void *)script, stackPos(0));
 	seq_createAmuletJewel(stackPos(0), 0, 0, 0);
 	return 0;
 }
 
-int KyraEngine::o1_setSceneAnimCurrXY(ScriptState *script) {
+int KyraEngine_v1::o1_setSceneAnimCurrXY(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setSceneAnimCurrXY(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	_sprites->_anims[stackPos(0)].x = stackPos(1);
 	_sprites->_anims[stackPos(0)].y = stackPos(2);
 	return 0;
 }
 
-int KyraEngine::o1_poisonBrandonAndRemaps(ScriptState *script) {
+int KyraEngine_v1::o1_poisonBrandonAndRemaps(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_poisonBrandonAndRemaps(%p) ()", (const void *)script);
 	setBrandonPoisonFlags(1);
 	return 0;
 }
 
-int KyraEngine::o1_fillFlaskWithWater(ScriptState *script) {
+int KyraEngine_v1::o1_fillFlaskWithWater(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_fillFlaskWithWater(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	seq_fillFlaskWithWater(stackPos(0), stackPos(1));
 	return 0;
 }
 
-int KyraEngine::o1_getCharactersMovementDelay(ScriptState *script) {
+int KyraEngine_v1::o1_getCharactersMovementDelay(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_getCharactersMovementDelay(%p) (%d)", (const void *)script, stackPos(0));
 	return getTimerDelay(stackPos(0)+5);
 }
 
-int KyraEngine::o1_getBirthstoneGem(ScriptState *script) {
+int KyraEngine_v1::o1_getBirthstoneGem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_getBirthstoneGem(%p) (%d)", (const void *)script, stackPos(0));
 	if (stackPos(0) < 4)
 		return _birthstoneGemTable[stackPos(0)];
 	return 0;
 }
 
-int KyraEngine::o1_queryBrandonStatusBit(ScriptState *script) {
+int KyraEngine_v1::o1_queryBrandonStatusBit(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_queryBrandonStatusBit(%p) (%d)", (const void *)script, stackPos(0));
 	if (_brandonStatusBit & stackPos(0))
 		return 1;
 	return 0;
 }
 
-int KyraEngine::o1_playFluteAnimation(ScriptState *script) {
+int KyraEngine_v1::o1_playFluteAnimation(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_playFluteAnimation(%p) ()", (const void *)script);
 	seq_playFluteAnimation();
 	return 0;
 }
 
-int KyraEngine::o1_playWinterScrollSequence(ScriptState *script) {
+int KyraEngine_v1::o1_playWinterScrollSequence(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_playWinterScrollSequence(%p) (%d)", (const void *)script, stackPos(0));
 	if (!stackPos(0))
 		seq_winterScroll2();
@@ -1485,40 +1485,40 @@ int KyraEngine::o1_playWinterScrollSequence(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_getIdolGem(ScriptState *script) {
+int KyraEngine_v1::o1_getIdolGem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_getIdolGem(%p) (%d)", (const void *)script, stackPos(0));
 	return _idolGemsTable[stackPos(0)];
 }
 
-int KyraEngine::o1_setIdolGem(ScriptState *script) {
+int KyraEngine_v1::o1_setIdolGem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setIdolGem(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	_idolGemsTable[stackPos(0)] = stackPos(1);
 	return 0;
 }
 
-int KyraEngine::o1_totalItemsInScene(ScriptState *script) {
+int KyraEngine_v1::o1_totalItemsInScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_totalItemsInScene(%p) (%d)", (const void *)script, stackPos(0));
 	return countItemsInScene(stackPos(0));
 }
 
-int KyraEngine::o1_restoreBrandonsMovementDelay(ScriptState *script) {
+int KyraEngine_v1::o1_restoreBrandonsMovementDelay(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_restoreBrandonsMovementDelay(%p) ()", (const void *)script);
 	setWalkspeed(_configWalkspeed);	
 	return 0;
 }
 
-int KyraEngine::o1_setMousePos(ScriptState *script) {
+int KyraEngine_v1::o1_setMousePos(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setMousePos(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	_system->warpMouse(stackPos(0), stackPos(1));
 	return 0;
 }
 
-int KyraEngine::o1_getMouseState(ScriptState *script) {
+int KyraEngine_v1::o1_getMouseState(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_getMouseState(%p) ()", (const void *)script);
 	return _mouseState;
 }
 
-int KyraEngine::o1_setEntranceMouseCursorTrack(ScriptState *script) {
+int KyraEngine_v1::o1_setEntranceMouseCursorTrack(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setEntranceMouseCursorTrack(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	_entranceMouseCursorTracks[0] = stackPos(0);
 	_entranceMouseCursorTracks[1] = stackPos(1);
@@ -1528,19 +1528,19 @@ int KyraEngine::o1_setEntranceMouseCursorTrack(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_itemAppearsOnGround(ScriptState *script) {
+int KyraEngine_v1::o1_itemAppearsOnGround(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_itemAppearsOnGround(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	processItemDrop(_currentCharacter->sceneId, stackPos(0), stackPos(1), stackPos(2), 2, 0);
 	return 0;
 }
 
-int KyraEngine::o1_setNoDrawShapesFlag(ScriptState *script) {
+int KyraEngine_v1::o1_setNoDrawShapesFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setNoDrawShapesFlag(%p) (%d)", (const void *)script, stackPos(0));
 	_animator->_noDrawShapesFlag = stackPos(0);
 	return 0;
 }
 
-int KyraEngine::o1_fadeEntirePalette(ScriptState *script) {
+int KyraEngine_v1::o1_fadeEntirePalette(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_fadeEntirePalette(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	int cmd = stackPos(0);
 	uint8 *fadePal = 0;
@@ -1580,7 +1580,7 @@ int KyraEngine::o1_fadeEntirePalette(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_itemOnGroundHere(ScriptState *script) {
+int KyraEngine_v1::o1_itemOnGroundHere(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_itemOnGroundHere(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	assert(stackPos(0) < _roomTableSize);
 	Room *curRoom = &_roomTable[stackPos(0)];
@@ -1591,18 +1591,18 @@ int KyraEngine::o1_itemOnGroundHere(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_queryCauldronState(ScriptState *script) {
+int KyraEngine_v1::o1_queryCauldronState(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_queryCauldronState(%p) ()", (const void *)script);
 	return _cauldronState;
 }
 
-int KyraEngine::o1_setCauldronState(ScriptState *script) {
+int KyraEngine_v1::o1_setCauldronState(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setCauldronState(%p) (%d)", (const void *)script, stackPos(0));
 	_cauldronState = stackPos(0);
 	return _cauldronState;
 }
 
-int KyraEngine::o1_queryCrystalState(ScriptState *script) {
+int KyraEngine_v1::o1_queryCrystalState(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_queryCrystalState(%p) (%d)", (const void *)script, stackPos(0));
 	if (!stackPos(0))
 		return _crystalState[0];
@@ -1611,7 +1611,7 @@ int KyraEngine::o1_queryCrystalState(ScriptState *script) {
 	return -1;
 }
 
-int KyraEngine::o1_setCrystalState(ScriptState *script) {
+int KyraEngine_v1::o1_setCrystalState(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setCrystalState(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	if (!stackPos(0))
 		_crystalState[0] = stackPos(1);
@@ -1620,12 +1620,12 @@ int KyraEngine::o1_setCrystalState(ScriptState *script) {
 	return stackPos(1);
 }
 
-int KyraEngine::o1_setPaletteRange(ScriptState *script) {
+int KyraEngine_v1::o1_setPaletteRange(ScriptState *script) {
 	warning("STUB: o1_setPaletteRange");
 	return 0;
 }
 
-int KyraEngine::o1_shrinkBrandonDown(ScriptState *script) {
+int KyraEngine_v1::o1_shrinkBrandonDown(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_shrinkBrandonDown(%p) (%d)", (const void *)script, stackPos(0));
 	int delayTime = stackPos(0);
 	checkAmuletAnimFlags();
@@ -1651,7 +1651,7 @@ int KyraEngine::o1_shrinkBrandonDown(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_growBrandonUp(ScriptState *script) {
+int KyraEngine_v1::o1_growBrandonUp(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_growBrandonUp(%p) ()", (const void *)script);
 	int scaleValue = _scaleTable[_currentCharacter->y1];
 	int scale = 0;
@@ -1672,33 +1672,33 @@ int KyraEngine::o1_growBrandonUp(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_setBrandonScaleXAndY(ScriptState *script) {
+int KyraEngine_v1::o1_setBrandonScaleXAndY(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setBrandonScaleXAndY(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	_animator->_brandonScaleX = stackPos(0);
 	_animator->_brandonScaleY = stackPos(1);
 	return 0;
 }
 
-int KyraEngine::o1_resetScaleMode(ScriptState *script) {
+int KyraEngine_v1::o1_resetScaleMode(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_resetScaleMode(%p) ()", (const void *)script);
 	_scaleMode = 0;
 	return 0;
 }
 
-int KyraEngine::o1_getScaleDepthTableValue(ScriptState *script) {
+int KyraEngine_v1::o1_getScaleDepthTableValue(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_getScaleDepthTableValue(%p) (%d)", (const void *)script, stackPos(0));
 	assert(stackPos(0) < ARRAYSIZE(_scaleTable));
 	return _scaleTable[stackPos(0)];
 }
 
-int KyraEngine::o1_setScaleDepthTableValue(ScriptState *script) {
+int KyraEngine_v1::o1_setScaleDepthTableValue(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setScaleDepthTableValue(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	assert(stackPos(0) < ARRAYSIZE(_scaleTable));
 	_scaleTable[stackPos(0)] = stackPos(1);
 	return stackPos(1);
 }
 
-int KyraEngine::o1_message(ScriptState *script) {
+int KyraEngine_v1::o1_message(ScriptState *script) {
 	if (_flags.isTalkie) {
 		debugC(3, kDebugLevelScriptFuncs, "o1_message(%p) (%d, '%s', %d)", (const void *)script, stackPos(0), stackPosString(1), stackPos(2));
 		drawSentenceCommand(stackPosString(1), stackPos(2));
@@ -1710,65 +1710,65 @@ int KyraEngine::o1_message(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_checkClickOnNPC(ScriptState *script) {
+int KyraEngine_v1::o1_checkClickOnNPC(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_checkClickOnNPC(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	return checkForNPCScriptRun(stackPos(0), stackPos(1));
 }
 
-int KyraEngine::o1_getFoyerItem(ScriptState *script) {
+int KyraEngine_v1::o1_getFoyerItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_getFoyerItem(%p) (%d)", (const void *)script, stackPos(0));
 	assert(stackPos(0) < ARRAYSIZE(_foyerItemTable));
 	return _foyerItemTable[stackPos(0)];
 }
 
-int KyraEngine::o1_setFoyerItem(ScriptState *script) {
+int KyraEngine_v1::o1_setFoyerItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setFoyerItem(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	assert(stackPos(0) < ARRAYSIZE(_foyerItemTable));
 	_foyerItemTable[stackPos(0)] = stackPos(1);
 	return stackPos(1);
 }
 
-int KyraEngine::o1_setNoItemDropRegion(ScriptState *script) {
+int KyraEngine_v1::o1_setNoItemDropRegion(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setNoItemDropRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	addToNoDropRects(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	return 0;
 }
 
-int KyraEngine::o1_walkMalcolmOn(ScriptState *script) {
+int KyraEngine_v1::o1_walkMalcolmOn(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_walkMalcolmOn(%p) ()", (const void *)script);
 	if (!_malcolmFlag)
 		_malcolmFlag = 1;
 	return 0;
 }
 
-int KyraEngine::o1_passiveProtection(ScriptState *script) {
+int KyraEngine_v1::o1_passiveProtection(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_passiveProtection(%p) ()", (const void *)script);
 	return 1;
 }
 
-int KyraEngine::o1_setPlayingLoop(ScriptState *script) {
+int KyraEngine_v1::o1_setPlayingLoop(ScriptState *script) {
 	warning("STUB: o1_setPlayingLoop");
 	return 0;
 }
 
-int KyraEngine::o1_brandonToStoneSequence(ScriptState *script) {
+int KyraEngine_v1::o1_brandonToStoneSequence(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_brandonToStoneSequence(%p) ()", (const void *)script);
 	seq_brandonToStone();
 	return 0;
 }
 
-int KyraEngine::o1_brandonHealingSequence(ScriptState *script) {
+int KyraEngine_v1::o1_brandonHealingSequence(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_brandonHealingSequence(%p) ()", (const void *)script);
 	seq_brandonHealing();
 	return 0;
 }
 
-int KyraEngine::o1_protectCommandLine(ScriptState *script) {
+int KyraEngine_v1::o1_protectCommandLine(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_protectCommandLine(%p) (%d)", (const void *)script, stackPos(0));
 	return stackPos(0);
 }
 
-int KyraEngine::o1_pauseMusicSeconds(ScriptState *script) {
+int KyraEngine_v1::o1_pauseMusicSeconds(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_pauseMusicSeconds(%p) ()", (const void *)script);
 	// if music disabled
 	//     return
@@ -1776,18 +1776,18 @@ int KyraEngine::o1_pauseMusicSeconds(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_resetMaskRegion(ScriptState *script) {
+int KyraEngine_v1::o1_resetMaskRegion(ScriptState *script) {
 	warning("STUB: o1_resetMaskRegion");
 	return 0;
 }
 
-int KyraEngine::o1_setPaletteChangeFlag(ScriptState *script) {
+int KyraEngine_v1::o1_setPaletteChangeFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_setPaletteChangeFlag(%p) (%d)", (const void *)script, stackPos(0));
 	_paletteChanged = stackPos(0);
 	return _paletteChanged;
 }
 
-int KyraEngine::o1_fillRect(ScriptState *script) {
+int KyraEngine_v1::o1_fillRect(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_fillRect(%p) (%d, %d, %d, %d, %d, 0x%X)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	int videoPageBackup = _screen->_curPage;
 	_screen->_curPage = stackPos(0);
@@ -1796,19 +1796,19 @@ int KyraEngine::o1_fillRect(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::o1_vocUnload(ScriptState *script) {
+int KyraEngine_v1::o1_vocUnload(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_vocUnload(%p) ()", (const void *)script);
 	// this should unload all voc files (not needed)
 	return 0;
 }
 
-int KyraEngine::o1_vocLoad(ScriptState *script) {
+int KyraEngine_v1::o1_vocLoad(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_vocLoad(%p) (%d)", (const void *)script, stackPos(0));
 	// this should load the specified voc file (not needed)
 	return 0;
 }
 
-int KyraEngine::o1_dummy(ScriptState *script) {
+int KyraEngine_v1::o1_dummy(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o1_dummy(%p) ()", (const void *)script);
 	return 0;
 }

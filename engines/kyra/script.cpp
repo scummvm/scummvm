@@ -68,7 +68,7 @@ ScriptHelper::ScriptHelper(KyraEngine *vm) : _vm(vm) {
 #undef COMMAND
 }
 
-bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData) {
+bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, const Common::Array<const Opcode*> *opcodes) {
 	uint32 size = 0;
 	uint8 *data = _vm->resource()->fileData(filename, &size);	
 	const byte *curData = data;
@@ -134,6 +134,8 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData) {
 
 	while (chunkSize--)
 		scriptData->data[chunkSize] = READ_BE_UINT16(&scriptData->data[chunkSize]);
+
+	scriptData->opcodes = opcodes;
 	
 	delete [] data;
 	return true;
@@ -375,7 +377,17 @@ void ScriptHelper::c1_subSP(ScriptState* script) {
 }
 
 void ScriptHelper::c1_execOpcode(ScriptState* script) {
-	script->retValue = _vm->runOpcode(script, (uint8)_parameter);
+	uint8 opcode = _parameter;
+
+	assert(script->dataPtr->opcodes);
+	assert(opcode < script->dataPtr->opcodes->size());
+
+	if ((*script->dataPtr->opcodes)[opcode]) {
+		script->retValue = (*(*script->dataPtr->opcodes)[opcode])(script);
+	} else {
+		script->retValue = 0;
+		warning("calling unimplemented opcode(0x%.02X)", opcode);
+	}
 }
 
 void ScriptHelper::c1_ifNotJmp(ScriptState* script) {

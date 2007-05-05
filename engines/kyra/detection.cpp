@@ -20,6 +20,7 @@
  */
 
 #include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/kyra_v2.h"
 #include "kyra/kyra_v3.h"
 

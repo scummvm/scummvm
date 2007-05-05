@@ -26,13 +26,39 @@
 #include "kyra/kyra.h"
 
 namespace Kyra {
+
+struct ScriptState;
+
+struct Opcode {
+	virtual ~Opcode() {}
+
+	virtual operator bool() const = 0;
+
+	virtual int operator()(ScriptState*) const = 0;
+};
+
+template<class T>
+struct OpcodeImpl : public Opcode {
+	T *vm;
+	typedef int (T::*Callback)(ScriptState*);
+	Callback callback;
+
+	OpcodeImpl(T *v, Callback c) : Opcode(), vm(v), callback(c) {} 
+
+	operator bool() const { return callback != 0; }
+
+	int operator()(ScriptState *state) const {
+		return (vm->*callback)(state);
+	}
+};
+
 struct ScriptData {
 	byte *text;
 	uint16 *data;
 	uint16 *ordr;
 	uint16 dataSize;
-	
-	int opcodeTable;	// indicates which opcode table to use (for Kyra3 and Kyra2)
+
+	const Common::Array<const Opcode*> *opcodes;
 };
 
 struct ScriptState {
@@ -49,7 +75,7 @@ class ScriptHelper {
 public:
 	ScriptHelper(KyraEngine *vm);
 	
-	bool loadScript(const char *filename, ScriptData *data);
+	bool loadScript(const char *filename, ScriptData *data, const Common::Array<const Opcode*> *opcodes);
 	void unloadScript(ScriptData *data);
 	
 	void initScript(ScriptState *scriptState, const ScriptData *data);
