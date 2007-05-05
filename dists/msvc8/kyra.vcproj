@@ -197,6 +197,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\kyra_v1.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\kyra_v1.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\kyra_v2.cpp"
 			>
 		</File>
