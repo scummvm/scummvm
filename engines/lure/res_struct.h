@@ -311,6 +311,7 @@ public:
 		memcpy(_data, srcData, ROOM_PATHS_SIZE);
 	}
 	bool isOccupied(int x, int y);
+	bool isOccupied(int x, int y, int width);
 	void setOccupied(int x, int y, int width);
 	void clearOccupied(int x, int y, int width);
 	void decompress(RoomPathsDecompressedData &dataOut, int characterWidth);

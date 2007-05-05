@@ -158,6 +158,15 @@ bool RoomPathsData::isOccupied(int x, int y) {
 	return (_data[y * 5 + (x >> 3)] & (0x80 >> (x % 8))) != 0;
 }
 
+bool RoomPathsData::isOccupied(int x, int y, int width) {
+	for (int blockCtr = 0; blockCtr < width; ++blockCtr) {
+		if (isOccupied(x + 8 * blockCtr, y))
+			return true;
+	}
+
+	return false;
+}
+
 void RoomPathsData::setOccupied(int x, int y, int width) {
 	if ((x < 0) || (y < 0) || (x >= ROOM_PATHS_WIDTH) || (y >= ROOM_PATHS_HEIGHT))
 		return;
@@ -212,6 +221,8 @@ void RoomPathsData::decompress(RoomPathsDecompressedData &dataOut, int character
 		*pOut-- = 0;
 
 	for (int y = 0; y < ROOM_PATHS_HEIGHT; ++y) {
+		charState = false;
+
 		for (int x = 0; x < (ROOM_PATHS_WIDTH / 8); ++x) {
 			// Get next byte, which containing bits for 8 blocks
 			v = *pIn--;		

@@ -536,7 +536,6 @@ void Hotspot::setRandomDest() {
 	RoomData *roomData = res.getRoom(roomNumber());
 	Common::Rect &rect = roomData->walkBounds;
 	Common::RandomSource rnd;
-	int tryCtr = 0;
 	int16 xp, yp;
 
 	if (_currentActions.isEmpty())
@@ -545,13 +544,15 @@ void Hotspot::setRandomDest() {
 		_currentActions.top().setAction(START_WALKING);
 	_walkFlag = true;
 
-	while (tryCtr ++ <= 20) {
+	// Try up to 20 times to find an unoccupied destination 
+	for (int tryCtr = 0; tryCtr < 20; ++tryCtr) {
 		xp = rect.left + rnd.getRandomNumber(rect.right - rect.left);
-		yp = rect.left + rnd.getRandomNumber(rect.right - rect.left);
+		yp = rect.left + rnd.getRandomNumber(rect.bottom - rect.top);
 		setDestPosition(xp, yp);
 		setDestHotspot(0);
 
-		if (!roomData->paths.isOccupied(xp, yp) && !roomData->paths.isOccupied(xp, yp)) 
+		// Check if three sequential blocks at chosen destination are unoccupied
+		if (!roomData->paths.isOccupied(xp, yp, 3))  
 			break;
 	}
 }
