@@ -116,37 +116,19 @@ int16 Parallaction::getHoverInventoryItem(int16 x, int16 y) {
 }
 
 
-int16 Parallaction::pickupItem(Zone *z) {
-
-	uint16 _si;
-	for (_si = 0; _inventory[_si]._id != 0; _si++) ;
-	if (_si == INVENTORY_MAX_ITEMS)
-		return -1;
-
-	_inventory[_si]._id = MAKE_INVENTORY_ID(z->u.get->_icon);
-	_inventory[_si]._index = z->u.get->_icon;
-
-	addJob(&jobRemovePickedItem, z, kPriority17 );
-
-	if (_inventory[_si]._id == 0) return 0;
-
-	refreshInventoryItem(_characterName, _si);
-
-	return 0;
-}
-
-
-void Parallaction::addInventoryItem(uint16 item) {
+int Parallaction::addInventoryItem(uint16 item) {
 
 	uint16 _si = 0;
 	while (_inventory[_si]._id != 0) _si++;
+	if (_si == INVENTORY_MAX_ITEMS)
+		return -1;
 
 	_inventory[_si]._id = MAKE_INVENTORY_ID(item);
 	_inventory[_si]._index = item;
 
 	refreshInventoryItem(_characterName, _si);
 
-	return;
+	return 0;
 }
 
 

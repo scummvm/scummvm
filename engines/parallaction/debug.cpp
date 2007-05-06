@@ -26,6 +26,8 @@
 #include "parallaction/parallaction.h"
 #include "parallaction/graphics.h"
 
+#include "parallaction/debug.h"
+
 namespace Parallaction {
 
 
@@ -54,14 +56,62 @@ const char *_jobDescriptions[] = {
 	"21 - erase mouse"
 };
 
-void beep() {
-//	sound(1500);
-//	delay(100);
-//	nosound();
-	return;
+Debugger::Debugger(Parallaction *vm)
+	: GUI::Debugger() {
+	_vm = vm;
+
+	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("location",    WRAP_METHOD(Debugger, Cmd_Location));
+	DCmd_Register("give",    WRAP_METHOD(Debugger, Cmd_Give));
 }
 
 
+void Debugger::preEnter() {
+}
 
+
+void Debugger::postEnter() {
+}
+
+bool Debugger::Cmd_Location(int argc, const char **argv) {
+
+	char *character = _vm->_characterName;
+	char *location = _vm->_location._name;
+
+	switch (argc) {
+	case 3:
+		character = const_cast<char*>(argv[2]);
+		// fallthru is intentional here
+
+	case 2:
+		location = const_cast<char*>(argv[1]);
+		sprintf(_vm->_location._name, "%s.%s", location, character);
+		// TODO: check if location exists
+		_engineFlags |= kEngineChangeLocation;
+		break;
+
+	case 1:
+		DebugPrintf("location <location name> [character name]\n");
+
+	}
+
+	return true;
+}
+
+
+bool Debugger::Cmd_Give(int argc, const char **argv) {
+
+	if (argc == 1) {
+		DebugPrintf("give <item name>\n");
+	} else {
+		int index = _vm->_objectsNames->lookup(argv[1]);
+		if (index != -1)
+			_vm->addInventoryItem(index + 4);
+		else
+			DebugPrintf("invalid item name '%s'\n", argv[1]);
+	}
+
+	return true;
+}
 
 } // namespace Parallaction

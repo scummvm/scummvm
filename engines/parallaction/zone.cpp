@@ -457,12 +457,17 @@ void jobToggleDoor(void *parm, Job *j) {
 
 
 
-
-
-
 //
 //	ZONE TYPE: GET
 //
+
+int16 Parallaction::pickupItem(Zone *z) {
+	int r = addInventoryItem(z->u.get->_icon);
+	if (r == 0)
+		addJob(&jobRemovePickedItem, z, kPriority17 );
+
+	return r;
+}
 
 void jobRemovePickedItem(void *parm, Job *j) {
 

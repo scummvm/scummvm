@@ -281,6 +281,7 @@ public:
 
 
 class Parallaction : public Engine {
+	friend class Debugger;
 
 public:
 
@@ -368,6 +369,8 @@ public:
 
 protected:		// data
 
+	Debugger	*_debugger;
+
 	struct InputData {
 		uint16			_event;
 		Common::Point	_mousePos;
@@ -449,7 +452,7 @@ protected:		// members
 	void 		enterDialogue();
 	void 		exitDialogue();
 
-	void 		addInventoryItem(uint16 item);
+	int 		addInventoryItem(uint16 item);
 	void 		dropItem(uint16 item);
 	int16 		pickupItem(Zone *z);
 	int16 		isItemInInventory(int32 v);

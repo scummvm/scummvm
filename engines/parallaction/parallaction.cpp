@@ -31,6 +31,7 @@
 #include "sound/mixer.h"
 
 #include "parallaction/parallaction.h"
+#include "parallaction/debug.h"
 #include "parallaction/menu.h"
 #include "parallaction/parser.h"
 #include "parallaction/disk.h"
@@ -124,6 +125,8 @@ Parallaction::Parallaction(OSystem *syst) :
 
 
 Parallaction::~Parallaction() {
+	delete _debugger;
+
 	delete _soundMan;
 	delete _disk;
 	delete _globalTable;
@@ -214,6 +217,8 @@ int Parallaction::init() {
 		_soundMan = new AmigaSoundMan(this);
 	}
 
+	_debugger = new Debugger(this);
+
 	return 0;
 }
 
@@ -283,6 +288,8 @@ uint16 Parallaction::updateInput() {
 		case Common::EVENT_KEYDOWN:
 			if (e.kbd.ascii == 'l') KeyDown = kEvLoadGame;
 			if (e.kbd.ascii == 's') KeyDown = kEvSaveGame;
+			if (e.kbd.flags == Common::KBD_CTRL && e.kbd.keycode == 'd')
+				_debugger->attach();
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
@@ -315,6 +322,9 @@ uint16 Parallaction::updateInput() {
 		}
 
 	}
+
+	if (_debugger->isAttached())
+		_debugger->onFrame();
 
 	return KeyDown;
 
