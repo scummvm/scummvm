@@ -568,7 +568,8 @@ byte *AGOSEngine::vc10_flip(const byte *src, uint w, uint h) {
 }
 
 void AGOSEngine::vc10_draw() {
-	uint16 image, palette, x, y, flags;
+	uint16 palette, x, y, flags;
+	int16 image;
 
 	image = (int16)vcReadNextWord();
 
@@ -593,7 +594,7 @@ void AGOSEngine::vc10_draw() {
 	drawImage_init(image, palette, x, y, flags);
 }
 
-void AGOSEngine::drawImage_init(uint16 image, uint16 palette, uint16 x, uint16 y, uint16 flags) {
+void AGOSEngine::drawImage_init(int16 image, uint16 palette, uint16 x, uint16 y, uint16 flags) {
 	if (image == 0)
 		return;
 
