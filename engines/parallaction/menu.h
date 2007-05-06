@@ -41,6 +41,7 @@ public:
 	void		selectCharacter();
 
 protected:
+	void 		splash();
 	void		newGame();
 	uint16		chooseLanguage();
 	uint16		selectGame();

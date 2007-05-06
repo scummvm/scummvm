@@ -193,11 +193,6 @@ int Parallaction::init() {
 	_location._startPosition.y = -1000;
 	_location._startFrame = 0;
 
-	if (getFeatures() & GF_DEMO)
-		strcpy(_location._name, "fognedemo");
-	else
-		strcpy(_location._name, "fogne");
-
 	_location._comment = NULL;
 	_location._endComment = NULL;
 

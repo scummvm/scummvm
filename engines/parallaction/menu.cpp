@@ -94,6 +94,7 @@ static uint16 _doughKey[] = { 1, 7 ,7, 2, 2, 6 };
 
 Menu::Menu(Parallaction *vm) {
 	_vm = vm;
+
 }
 
 Menu::~Menu() {
@@ -105,6 +106,20 @@ void Menu::start() {
 
 	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
 
+	splash();
+
+	_language = chooseLanguage();
+	_vm->_disk->setLanguage(_language);
+
+	int game = selectGame();
+	if (game == 0)
+		newGame();
+
+	return;
+}
+
+void Menu::splash() {
+
 	_vm->_disk->loadSlide("intro");
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
@@ -115,32 +130,16 @@ void Menu::start() {
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	g_system->delayMillis(2000);
 
-	if (_vm->getPlatform() == Common::kPlatformPC) {
-		_vm->_gfx->setFont(kFontMenu);
-
-		_vm->_disk->loadSlide("lingua");
-		_vm->_gfx->setPalette(_vm->_gfx->_palette);
-		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-
-		_vm->_gfx->displayString(60, 30, "SELECT LANGUAGE");
-
-		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
-		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
-		_language = chooseLanguage();
-
-		_vm->_disk->setLanguage(_language);
-
-		if (selectGame() == 0) {
-			newGame();
-		}
-	} else {
-		_vm->_disk->setLanguage(1);
-	}
-
-	return;
 }
 
 void Menu::newGame() {
+
+	if (_vm->getFeatures() & GF_DEMO) {
+		// character screen is not shown on demo
+		// so user warps to the playable intro
+		strcpy(_vm->_location._name, "fognedemo");
+		return;
+	}
 
 	const char **v14 = introMsg3;
 
@@ -156,7 +155,6 @@ void Menu::newGame() {
 	_vm->_gfx->updateScreen();
 	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
-
 	_mouseButtons = kMouseNone;
 
 	for (; _mouseButtons != kMouseLeftUp; ) {
@@ -164,8 +162,10 @@ void Menu::newGame() {
 		if (_mouseButtons == kMouseRightUp) break;
 	}
 
-	if (_mouseButtons != kMouseRightUp)
+	if (_mouseButtons != kMouseRightUp) {
+		strcpy(_vm->_location._name, "fogne");
 		return;    // show intro
+	}
 
 	selectCharacter();
 
@@ -176,6 +176,25 @@ void Menu::newGame() {
 }
 
 uint16 Menu::chooseLanguage() {
+
+	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		// TODO: should return the language ID supported by this version
+		// this can be done with some flags in the detection structures
+		return 1;
+	}
+
+	// user can choose language in dos version
+
+	_vm->_gfx->setFont(kFontMenu);
+
+	_vm->_disk->loadSlide("lingua");
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+
+	_vm->_gfx->displayString(60, 30, "SELECT LANGUAGE");
+
+	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 
 	_vm->changeCursor(kCursorArrow);
 
@@ -210,6 +229,9 @@ uint16 Menu::chooseLanguage() {
 uint16 Menu::selectGame() {
 //	  printf("selectGame()\n");
 
+	if (_vm->getFeatures() & GF_DEMO) {
+		return 0;	// can't load a savegame in demo versions
+	}
 
 	_vm->_disk->loadSlide("restore");
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
@@ -254,6 +276,11 @@ uint16 Menu::selectGame() {
 
 	// load game
 
+	// TODO: allow the user to change her mind in this screen, that is
+	// don't force her to start at the intro when she closes her load
+	// game window without picking a savegame.
+	// The 2 strcpy's below act as workaround to prevent crashes for
+	// time being.
 	strcpy(_vm->_location._name, "fogne");
 	strcpy(_vm->_characterName, "dough");
 
