@@ -214,6 +214,7 @@ void jobEraseLabel(void *parm, Job *j);
 
 
 
+class Debugger;
 class Gfx;
 class Menu;
 class SoundMan;
