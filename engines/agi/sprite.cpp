@@ -622,7 +622,7 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 		y3 = (y2 / 12) * 12;
 
 		// SQ1 needs +1 (see bug #810331)
-		if (_vm->getFeatures() & GF_SQ1)
+		if (_vm->getGameID() == GID_SQ1)
 			y3++;
 
 		// don't let box extend below y.

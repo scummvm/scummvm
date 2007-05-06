@@ -252,7 +252,7 @@ cmd(set_priority) {
 	// and then releases the fixed priority set on ego after ego is seated
 	// Therefore, this workaround only affects that specific part of this scene
 	// Ego is set to object 19 by script 54
-	if (g_agi->getFeatures() & GF_KQ4 && vt.currentView == 152) {
+	if (g_agi->getGameID() == GID_KQ4 && vt.currentView == 152) {
 		game.viewTable[19].flags |= FIXED_PRIORITY;
 		game.viewTable[19].priority = 7;
 	}

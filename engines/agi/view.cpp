@@ -50,7 +50,7 @@ void AgiEngine::lSetCel(VtEntry *v, int n) {
 	// in the KQ4 introduction
 	// It seems there's either a bug with KQ4's logic script 120 (the intro script)
 	// or flag 64 is not set correctly, which causes the erroneous behavior from the actors
-	if (getFeatures() & GF_KQ4 && !(v->flags & UPDATE) && (v->currentView == 172))
+	if (getGameID() == GID_KQ4 && !(v->flags & UPDATE) && (v->currentView == 172))
 		return;
 
 	currentVc = &currentVl->cel[n];

@@ -103,11 +103,11 @@ int AgiEngine::handleController(int key) {
 	VtEntry *v = &_game.viewTable[0];
 	int i;
 
-	/* AGI 3.149 games need KEY_ESCAPE to use menus */
-	if (key == 0 || (key == KEY_ESCAPE && (getFeatures() & GF_ESC_MENU || getFeatures() & GF_KQ4)) )
+	/* AGI 3.149 games and The Black Cauldron need KEY_ESCAPE to use menus */
+	if (key == 0 || (key == KEY_ESCAPE && agiGetRelease() != 0x3149 && getGameID() != GID_BC) )
 		return false;
 
-	if ((getFeatures() & GF_MANHUNTER) && (key == KEY_ENTER) &&
+	if ((getGameID() == GID_MH1 || getGameID() == GID_MH2) && (key == KEY_ENTER) &&
 		(_game.inputMode == INPUT_NONE))
 		key = 0x20; // Set Enter key to Space in Manhunter when there's no text input
 
