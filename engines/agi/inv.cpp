@@ -91,18 +91,21 @@ int AgiEngine::showItems() {
 
 void AgiEngine::selectItems(int n) {
 	int fsel = 0;
+	bool exit_select = false;
 
-	for (;;) {
+	while (!exit_select) {
 		if (n > 0)
 			printItem(fsel, STATUS_BG, STATUS_FG);
 
 		switch (waitAnyKey()) {
 		case KEY_ENTER:
 			setvar(vSelItem, _intobj[fsel]);
-			goto exit_select;
+			exit_select = true;
+			break;
 		case KEY_ESCAPE:
 			setvar(vSelItem, 0xff);
-			goto exit_select;
+			exit_select = true;
+			break;
 		case KEY_UP:
 			if (fsel >= 2)
 				fsel -= 2;
@@ -127,19 +130,20 @@ void AgiEngine::selectItems(int n) {
 					showItems();
 					printItem(fsel, STATUS_BG, STATUS_FG);
 					_gfx->doUpdate();
-					goto exit_select;
+					exit_select = true;
 				}
 				break;
 			}
 		default:
 			break;
 		}
-
-		showItems();
-		_gfx->doUpdate();
+		
+		if (!exit_select) {
+			showItems();
+			_gfx->doUpdate();
+		}
 	}
 
-exit_select:
 	debugC(6, kDebugLevelInventory, "selected: %d", fsel);
 }
 

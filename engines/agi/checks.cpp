@@ -74,21 +74,21 @@ int AgiEngine::checkCollision(VtEntry *v) {
 			continue;
 
 		/* Same y, return error! */
-		if (v->yPos == u->yPos)
-			goto return_1;
+		if (v->yPos == u->yPos) {
+			debugC(4, kDebugLevelSprites, "check returns 1 (object %d)", v->entry);
+			return 1;
+		}
 
 		/* Crossed the baseline, return error! */
 		if ((v->yPos > u->yPos && v->yPos2 < u->yPos2) ||
 				(v->yPos < u->yPos && v->yPos2 > u->yPos2)) {
-			goto return_1;
+			debugC(4, kDebugLevelSprites, "check returns 1 (object %d)", v->entry);
+			return 1;
 		}
 	}
 
 	return 0;
 
- return_1:
-	debugC(4, kDebugLevelSprites, "check returns 1 (object %d)", v->entry);
-	return 1;
 }
 
 int AgiEngine::checkPriority(VtEntry *v) {
@@ -104,8 +104,15 @@ int AgiEngine::checkPriority(VtEntry *v) {
 	water = 0;
 	pass = 1;
 
-	if (v->priority == 0x0f)
-		goto check_ego;
+	if (v->priority == 0x0f) {
+		// Check ego
+		if (v->entry == 0) {
+			setflag(fEgoTouchedP2, trigger ? true : false);
+			setflag(fEgoWater, water ? true : false);
+		}
+
+		return pass;
+	}		
 
 	water = 1;
 
@@ -147,7 +154,7 @@ int AgiEngine::checkPriority(VtEntry *v) {
 			pass = 0;
 	}
 
-check_ego:
+	// Check ego
 	if (v->entry == 0) {
 		setflag(fEgoTouchedP2, trigger ? true : false);
 		setflag(fEgoWater, water ? true : false);

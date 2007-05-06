@@ -229,8 +229,9 @@ int AgiEngine::testIfCode(int lognum) {
 	uint8 orTest = false;
 	uint16 lastIp = ip;
 	uint8 p[16] = { 0 };
+	bool end_test = false;
 
-	while (retval && !game.quitProgNow) {
+	while (retval && !game.quitProgNow && !end_test) {
 		if (_debug.enabled && (_debug.logic0 || lognum))
 			debugConsole(lognum, lTEST_MODE, NULL);
 
@@ -240,7 +241,8 @@ int AgiEngine::testIfCode(int lognum) {
 
 		switch (op) {
 		case 0xFF:	/* END IF, TEST true */
-			goto end_test;
+			end_test = true;
+			break;
 		case 0xFD:
 			notTest = !notTest;
 			continue;
@@ -251,7 +253,7 @@ int AgiEngine::testIfCode(int lognum) {
 			if (orTest) {
 				ec = false;
 				retval = false;
-				goto end_test;
+				end_test = true;
 			}
 
 			orTest = true;
@@ -259,7 +261,8 @@ int AgiEngine::testIfCode(int lognum) {
 
 		case 0x00:
 			/* return true? */
-			goto end_test;
+			end_test = true;
+			break;
 		case 0x01:
 			ec = testEqual(p[0], p[1]);
 			if (p[0] == 11)
@@ -333,62 +336,63 @@ int AgiEngine::testIfCode(int lognum) {
 			break;
 		default:
 			ec = false;
-			goto end_test;
+			end_test = true;
 		}
 
-		if (op <= 0x12)
-			ip += logicNamesTest[op].numArgs;
+		if (!end_test) {
+			if (op <= 0x12)
+				ip += logicNamesTest[op].numArgs;
 
-		/* exchange ec value */
-		if (notTest)
-			ec = !ec;
+			/* exchange ec value */
+			if (notTest)
+				ec = !ec;
 
-		/* not is only enabled for 1 test command */
-		notTest = false;
+			/* not is only enabled for 1 test command */
+			notTest = false;
 
-		if (orTest && ec) {
-			/* a true inside an OR statement passes
-			 * ENTIRE statement scan for end of OR
-			 */
+			if (orTest && ec) {
+				/* a true inside an OR statement passes
+				 * ENTIRE statement scan for end of OR
+				 */
 
-			/* CM: test for opcode < 0xfc changed from 'op' to
-			 *     '*(code+ip)', to avoid problem with the 0xfd (NOT)
-			 *     opcode byte. Changed a bad ip += ... ip++ construct.
-			 *     This should fix the crash with Larry's logic.0 code:
-			 *
-			 *     if ((isset(4) ||
-			 *          !isset(2) ||
-			 *          v30 == 2 ||
-			 *          v30 == 1)) {
-			 *       goto Label1;
-			 *     }
-			 *
-			 *     The bytecode is: 
-			 *     ff fc 07 04 fd 07 02 01 1e 02 01 1e 01 fc ff
-			 */
+				/* CM: test for opcode < 0xfc changed from 'op' to
+				 *     '*(code+ip)', to avoid problem with the 0xfd (NOT)
+				 *     opcode byte. Changed a bad ip += ... ip++ construct.
+				 *     This should fix the crash with Larry's logic.0 code:
+				 *
+				 *     if ((isset(4) ||
+				 *          !isset(2) ||
+				 *          v30 == 2 ||
+				 *          v30 == 1)) {
+				 *       goto Label1;
+				 *     }
+				 *
+				 *     The bytecode is: 
+				 *     ff fc 07 04 fd 07 02 01 1e 02 01 1e 01 fc ff
+				 */
 
-			/* find end of OR */
-			while (*(code + ip) != 0xFC) {
-				if (*(code + ip) == 0x0E) {	/* said */
+				/* find end of OR */
+				while (*(code + ip) != 0xFC) {
+					if (*(code + ip) == 0x0E) {	/* said */
+						ip++;
+						/* cover count + ^words */
+						ip += 1 + ((*(code + ip)) * 2);
+						continue;
+					}
+
+					if (*(code + ip) < 0xFC)
+						ip += logicNamesTest[*(code + ip)].numArgs;
 					ip++;
-					/* cover count + ^words */
-					ip += 1 + ((*(code + ip)) * 2);
-					continue;
 				}
-
-				if (*(code + ip) < 0xFC)
-					ip += logicNamesTest[*(code + ip)].numArgs;
 				ip++;
-			}
-			ip++;
 
-			orTest = false;
-			retval = true;
-		} else {
-			retval = orTest ? retval || ec : retval && ec;
+				orTest = false;
+				retval = true;
+			} else {
+				retval = orTest ? retval || ec : retval && ec;
+			}
 		}
 	}
-      end_test:
 
 	/* if false, scan for end of IP? */
 	if (retval)
