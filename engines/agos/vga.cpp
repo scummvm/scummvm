@@ -689,15 +689,7 @@ void AGOSEngine::drawImage_init(int16 image, uint16 palette, uint16 x, uint16 y,
 	state.surf_addr = getBackBuf();
 	state.surf_pitch = _dxSurfacePitch;
 
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		drawImage_Feeble(&state);
-	} else if (getFeatures() & GF_32COLOR) {
-		drawImage_Amiga(&state);
-	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-		drawImage_Simon(&state);
-	} else {
-		drawImage(&state);
-	}
+	drawImage(&state);
 }
 
 void AGOSEngine::vc12_delay() {
@@ -712,8 +704,8 @@ void AGOSEngine::vc12_delay() {
 		num = vcReadVarOrWord() * _frameRate;
 	}
 
-	// Work around to allow inventory arrows to be
-	// shown in some versions of Simon the Sorcerer 1
+	// Work around to allow inventory arrows to be shown
+	// in non-Windows versions of Simon the Sorcerer 1
 	if ((getGameType() == GType_SIMON1) && vsp->id == 128)
 		num = 0;
 	else

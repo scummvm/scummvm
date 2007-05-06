@@ -1039,10 +1039,7 @@ protected:
 
 	void drawImage_init(int16 image, uint16 palette, uint16 x, uint16 y, uint16 flags);
 
-	void drawImage(VC10_state *state);
-	void drawImage_Amiga(VC10_state *state);
-	void drawImage_Simon(VC10_state *state);
-	void drawImage_Feeble(VC10_state *state);
+	virtual void drawImage(VC10_state *state);
 
 	void scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY);
 	void horizontalScroll(VC10_state *state);
@@ -1407,6 +1404,8 @@ protected:
 	};
 
 	const OpcodeEntrySimon1 *_opcodesSimon1;
+
+	virtual void drawImage(VC10_state *state);
 };
 
 class AGOSEngine_Simon2 : public AGOSEngine_Simon1 {
@@ -1493,6 +1492,8 @@ protected:
 	};
 
 	const OpcodeEntryFeeble *_opcodesFeeble;
+
+	virtual void drawImage(VC10_state *state);
 
 	void drawMousePart(int image, byte x, byte y);
 	virtual void drawMousePointer();
