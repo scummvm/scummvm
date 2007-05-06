@@ -148,9 +148,9 @@ public:
 	void palToBlack(PalEntry *src_pal, double percent);
 	void blackToPal(PalEntry *src_pal, double percent);
 	void showCursor(bool state);
+	void setCursor(CursorType cursorType = kCursorNormal);
 
 private:
-	void setCursor(CursorType cursorType = kCursorNormal);
 	int _init;
 	Surface _backBuffer;
 	byte _currentPal[PAL_ENTRIES * 4];

@@ -437,6 +437,12 @@ int Events::handleOneShot(Event *event) {
 		case kEventHide:
 			_vm->_gfx->showCursor(false);
 			break;
+		case kEventSetNormalCursor:
+			_vm->_gfx->setCursor(kCursorNormal);
+			break;
+		case kEventSetBusyCursor:
+			_vm->_gfx->setCursor(kCursorBusy);
+			break;
 		default:
 			break;
 		}

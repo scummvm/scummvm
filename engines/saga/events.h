@@ -97,6 +97,8 @@ enum EventOps {
 	// CURSOR events
 	kEventShow = 1,
 	// kEventHide = 2, // reused
+	kEventSetNormalCursor = 3,
+	kEventSetBusyCursor = 4,
 	// GRAPHICS events
 	kEventFillRect = 1,
 	// kEventSetFlag = 4, // reused
