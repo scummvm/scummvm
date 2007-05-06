@@ -141,13 +141,9 @@ void _c_endIntro(void *parm) {
 
 	_vm->_gfx->setFont(kFontMenu);
 
-	uint16 _di;
 	for (uint16 _si = 0; _si < 7; _si++) {
-		_di = _vm->_gfx->getStringWidth(_credits[_si]._role);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _di)/2, 80, _credits[_si]._role);
-
-		_di = _vm->_gfx->getStringWidth(_credits[_si]._name);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _di)/2, 100, _credits[_si]._name);
+		_vm->_gfx->displayCenteredString(80, _credits[_si]._role);
+		_vm->_gfx->displayCenteredString(100, _credits[_si]._name);
 
 		_vm->_gfx->updateScreen();
 

@@ -247,7 +247,7 @@ void _c_endComment(void *param) {
 	_vm->_gfx->floodFill(Gfx::kBitFront, r, 0);
 
 	r.setWidth(w+3);
-	r.setHeight(w+4);
+	r.setHeight(h+3);
 	r.moveTo(7, 7);
 	_vm->_gfx->floodFill(Gfx::kBitFront, r, 1);
 
@@ -367,14 +367,10 @@ void _c_finito(void *parm) {
 
 	if (gameCompleted) {
 		_vm->_gfx->setFont(kFontMenu);
-		uint16 _ax = _vm->_gfx->getStringWidth(v4C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 70, v4C[_language]);
-		_ax = _vm->_gfx->getStringWidth(v3C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 100, v3C[_language]);
-		_ax = _vm->_gfx->getStringWidth(v2C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 130, v2C[_language]);
-		_ax = _vm->_gfx->getStringWidth(v1C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 160, v1C[_language]);
+		_vm->_gfx->displayCenteredString(70, v4C[_language]);
+		_vm->_gfx->displayCenteredString(100, v3C[_language]);
+		_vm->_gfx->displayCenteredString(130, v2C[_language]);
+		_vm->_gfx->displayCenteredString(160, v1C[_language]);
 
 		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBit2);
@@ -385,14 +381,10 @@ void _c_finito(void *parm) {
 		_engineFlags |= kEngineChangeLocation;
 	} else {
 		_vm->_gfx->setFont(kFontMenu);
-		uint16 _ax = _vm->_gfx->getStringWidth(v8C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 70, v8C[_language]);
-		_ax = _vm->_gfx->getStringWidth(v7C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 100, v7C[_language]);
-		_ax = _vm->_gfx->getStringWidth(v6C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 130, v6C[_language]);
-		_ax = _vm->_gfx->getStringWidth(v5C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 160, v5C[_language]);
+		_vm->_gfx->displayCenteredString(70, v8C[_language]);
+		_vm->_gfx->displayCenteredString(100, v7C[_language]);
+		_vm->_gfx->displayCenteredString(130, v6C[_language]);
+		_vm->_gfx->displayCenteredString(160, v5C[_language]);
 
 		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBit2);
@@ -437,10 +429,8 @@ void _c_testResult(void *parm) {
 
 	_vm->_gfx->setFont(kFontMenu);
 
-	uint16 _ax = _vm->_gfx->getStringWidth(_slideText[0]);
-	_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 38, _slideText[0]);
-	_ax = _vm->_gfx->getStringWidth(_slideText[1]);
-	_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 58, _slideText[1]);
+	_vm->_gfx->displayCenteredString(38, _slideText[0]);
+	_vm->_gfx->displayCenteredString(58, _slideText[1]);
 
 	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBit2);

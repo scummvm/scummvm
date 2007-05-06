@@ -148,17 +148,10 @@ void Menu::newGame() {
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->swapBuffers();
 
-	uint16 _ax = (SCREEN_WIDTH - _vm->_gfx->getStringWidth(v14[0])) / 2;
-	_vm->_gfx->displayString(_ax, 50, v14[0]);
-
-	_ax = (SCREEN_WIDTH - _vm->_gfx->getStringWidth(v14[1])) / 2;
-	_vm->_gfx->displayString(_ax, 70, v14[1]);
-
-	_ax = (SCREEN_WIDTH - _vm->_gfx->getStringWidth(v14[2])) / 2;
-	_vm->_gfx->displayString(_ax, 100, v14[2]);
-
-	_ax = (SCREEN_WIDTH - _vm->_gfx->getStringWidth(v14[3])) / 2;
-	_vm->_gfx->displayString(_ax, 120, v14[3]);
+	_vm->_gfx->displayCenteredString(50, v14[0]);
+	_vm->_gfx->displayCenteredString(70, v14[1]);
+	_vm->_gfx->displayCenteredString(100, v14[2]);
+	_vm->_gfx->displayCenteredString(120, v14[3]);
 
 	_vm->_gfx->updateScreen();
 	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);

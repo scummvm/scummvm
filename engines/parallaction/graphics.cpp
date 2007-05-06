@@ -598,6 +598,11 @@ void Gfx::displayString(uint16 x, uint16 y, const char *text) {
 	_font->drawString(dst, SCREEN_WIDTH, text);
 }
 
+void Gfx::displayCenteredString(uint16 y, const char *text) {
+	uint16 x = (SCREEN_WIDTH - getStringWidth(text)) / 2;
+	displayString(x, y, text);
+}
+
 void Gfx::displayBalloonString(uint16 x, uint16 y, const char *text, byte color) {
 	assert(_font == _fonts[kFontDialogue]);
 
