@@ -670,7 +670,18 @@ cmd(draw) {
 	g_sprites->eraseUpdSprites();
 	vt.flags |= DRAWN;
 
-	if (g_agi->agiGetRelease() <= 0x2440)	/* See bug #546562 */
+	// WORKAROUND: This fixes a bug with AGI Fanmade game Space Trek.
+	// The original workaround checked if AGI version was <= 2.440, which could
+	// cause regressions with some AGI games. The original workaround no longer
+	// works for Space Trek in ScummVM, as all fanmade games are set to use
+	// AGI version 2.917, but it applies to all other games where AGI version is
+	// <= 2.440, which was not the original purpose of this workaround. It is 
+	// assumed that this bug is caused by AGI Studio, so this applies to all 
+	// fanmade games only.
+	// TODO: Investigate this further and check if any other fanmade AGI
+	// games are affected. If yes, then it'd be best to set this for Space
+	// Trek only
+	if (g_agi->getFeatures() & GF_FANMADE)	/* See Sarien bug #546562 */
 		vt.flags |= ANIMATED;
 
 	g_sprites->blitUpdSprites();
