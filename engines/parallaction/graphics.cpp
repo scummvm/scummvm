@@ -787,7 +787,7 @@ void Gfx::grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uin
 }
 
 
-void Gfx::maskOpNot(uint16 x, uint16 y, uint16 unused) {
+void Gfx::plotMaskPixel(uint16 x, uint16 y, byte color) {
 
 	uint16 _ax = x + y * SCREEN_WIDTH;
 	_buffers[kMask0][_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
@@ -797,12 +797,12 @@ void Gfx::maskOpNot(uint16 x, uint16 y, uint16 unused) {
 
 
 
-void Gfx::maskClearRectangle(const Common::Rect& r) {
+void Gfx::fillMaskRect(const Common::Rect& r, byte color) {
 
 	uint16 _di = r.left/4 + r.top*80;
 
 	for (uint16 _si = r.top; _si < r.bottom; _si++) {
-		memset(&_buffers[kMask0][_di], 0, r.width()/4+1);
+		memset(&_buffers[kMask0][_di], color, r.width()/4+1);
 		_di += 80;
 	}
 

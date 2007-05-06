@@ -184,8 +184,8 @@ public:
 	void restoreBackground(const Common::Rect& r);
 
 	// intro
-	void maskClearRectangle(const Common::Rect& r);
-	void maskOpNot(uint16 x, uint16 y, uint16 unused);
+	void fillMaskRect(const Common::Rect& r, byte color);
+	void plotMaskPixel(uint16 x, uint16 y, byte color);
 
 	// low level
 	void swapBuffers();

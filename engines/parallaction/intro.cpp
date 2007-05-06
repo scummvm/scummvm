@@ -28,6 +28,8 @@
 #include "parallaction/graphics.h"
 #include "parallaction/zone.h"
 
+#include "graphics/primitives.h"
+
 namespace Parallaction {
 
 static Animation *_rightHandAnim;
@@ -123,7 +125,6 @@ static uint16 _rightHandPositions[684] = {
 
 extern Credit _credits[];
 
-
 void _c_startIntro(void *parm) {
 	_rightHandAnim = _vm->findAnimation("righthand");
 
@@ -196,133 +197,24 @@ void _c_moveSheet(void *parm) {
 	return;
 }
 
-
-void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY) {
-
-	uint16 unused = 0;
-	int16 dx = newX - oldX;
-	int16 dy = newY - oldY;
-
-	_vm->_gfx->maskOpNot(oldX, oldY, unused);
-	_vm->_gfx->maskOpNot(newX, newY, unused);
-
-	if (ABS(dx) >= ABS(dy)) {
-
-		int16 v4 = ABS(dy);
-		if (dx >= 0 && dy >= 0) {
-			for (uint16 i = 1; i < dx; i++) {
-				v4 += dy;
-				if (ABS(dx) < v4) {
-					oldY++;
-					v4 -= dx;
-				}
-				_vm->_gfx->maskOpNot(i + oldX, oldY, unused);
-			}
-		}
-
-		if (dx < 0 && dy >= 0) {
-			for (uint16 i = 1; i > ABS(dx); i++) {
-				v4 += dy;
-				if (ABS(dx) < v4) {
-					oldY++;
-					v4 -= ABS(dx);
-				}
-				_vm->_gfx->maskOpNot(oldX - i, oldY, unused);
-			}
-		}
-
-		if (dx < 0 && dy < 0) {
-			for (uint16 i = 1; i > ABS(dx); i++) {
-				v4 += dy;
-				if (ABS(v4) > ABS(dx)) {
-					oldY--;
-					v4 -= ABS(dx);
-				}
-				_vm->_gfx->maskOpNot(oldX - i, oldY, unused);
-			}
-		}
-
-		if (dx >= 0 && dy < 0) {
-			for (uint16 i = 1; i < dx; i++) {
-				v4 -= dy;
-				if (v4 > dx) {
-					oldY--;
-					v4 -= dx;
-				}
-				_vm->_gfx->maskOpNot(i + oldX, oldY, unused);
-			}
-		}
-
-	}
-
-	if (ABS(dy) < ABS(dx)) {
-
-		int16 v4 = ABS(dx);
-
-		if (dx >= 0 && dy >= 0) {
-			for (uint16 i = 1; i < dy; i++) {
-				v4 += dx;
-				if (v4 > dy) {
-					oldX++;
-					v4 -= dy;
-				}
-				_vm->_gfx->maskOpNot(oldX, i + oldY, unused);
-			}
-		}
-
-		if (dx < 0 && dy >= 0) {
-			for (uint16 i = 1; i < dy; i++) {
-				v4 -= dx;
-				if (v4 > dy) {
-					oldX--;
-					v4 -= dy;
-				}
-				_vm->_gfx->maskOpNot(oldX, i + oldY, unused);
-			}
-		}
-
-		if (dx < 0 && dy < 0) {
-			for (uint16 i = 1; i < ABS(dy); i++) {
-				v4 -= ABS(dx);
-				if (v4 > ABS(dy)) {
-					oldX--;
-					v4 -= ABS(dy);
-				}
-				_vm->_gfx->maskOpNot(oldX, oldY - i, unused);
-			}
-		}
-
-		if (dx >= 0 && dy < 0) {
-			for (uint16 i = 1; i < ABS(dy); i++) {
-				v4 += ABS(dx);
-				if (v4 > ABS(dy)) {
-					oldX++;
-					v4 -= ABS(dy);
-				}
-				_vm->_gfx->maskOpNot(oldX, oldY - i, unused);
-			}
-		}
-
-	}
-
-
-	return;
+void plotPixel(int x, int y, int color, void *data) {
+	_vm->_gfx->plotMaskPixel(x, y, color);
 }
-
 
 void _c_sketch(void *parm) {
 
 	static uint16 index = 1;
 
-	uint16 _4 = _rightHandPositions[2*index+1];
-	uint16 _3 = _rightHandPositions[2*index];
-	uint16 _2 = _rightHandPositions[2*(index-1)+1];
-	uint16 _1 = _rightHandPositions[2*(index-1)];
+	uint16 newy = _rightHandPositions[2*index+1];
+	uint16 newx = _rightHandPositions[2*index];
 
-	introFunc1(_1, _2, _3, _4);
+	uint16 oldy = _rightHandPositions[2*(index-1)+1];
+	uint16 oldx = _rightHandPositions[2*(index-1)];
 
-	_rightHandAnim->_left = _rightHandPositions[index*2];
-	_rightHandAnim->_top = _rightHandPositions[index*2+1] - 20;
+	Graphics::drawLine(oldx, oldy, newx, newy, 0, plotPixel, NULL);
+
+	_rightHandAnim->_left = newx;
+	_rightHandAnim->_top = newy - 20;
 
 	index++;
 
@@ -341,7 +233,7 @@ void _c_shade(void *parm) {
 		_rightHandAnim->_top
 	);
 
-	_vm->_gfx->maskClearRectangle(r);
+	_vm->_gfx->fillMaskRect(r, 0);
 
 	return;
 
