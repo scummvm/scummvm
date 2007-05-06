@@ -329,7 +329,9 @@ static PanelButton IHNM_OptionPanelButtons[] = {
 	// TODO: Add Voices widget here
 	{kPanelButtonOption,	19,149,	200,25,	kTextQuitGame,'q',0,	0,0,0},		//quit
 	{kPanelButtonOption,	19,177,	200,25,	kTextContinuePlaying,'c',0,	0,0,0}, //continue
-	//.....
+	// TODO: Implement load/save
+	{kPanelButtonOption,	244,164, 79,23,	kTextLoad,'l',0,	0,0,0},			//load
+	{kPanelButtonOption,	335,164, 79,23,	kTextSave,'s',0,	0,0,0},			//save
 };
 
 static PanelButton IHNM_QuitPanelButtons[] = {

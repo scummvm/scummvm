@@ -725,6 +725,7 @@ void Interface::drawOption() {
 	Rect rect2;
 	PanelButton *panelButton;
 	Point textPoint;
+	Point point;
 	
 	backBuffer = _vm->_gfx->getBackBuffer();
 
@@ -733,6 +734,15 @@ void Interface::drawOption() {
 
 	for (i = 0; i < _optionPanel.buttonsCount; i++) {
 		panelButton = &_optionPanel.buttons[i];
+
+		// TODO: This probably works for the button background, but the resources are still not loeaded
+		// (_optionPanel.sprites)
+		/*
+		point.x = _optionPanel.x + panelButton->xOffset;
+		point.y = _optionPanel.y + panelButton->yOffset;
+		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _optionPanel.sprites, i, point, 256);
+		*/
+
 		if (panelButton->type == kPanelButtonOption) {
 			drawPanelButtonText(backBuffer, &_optionPanel, panelButton);
 		}
