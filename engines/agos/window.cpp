@@ -215,8 +215,8 @@ void AGOSEngine::waitWindow(WindowBlock *window) {
 		windowPutChar(window, *message);
 
 	ha = findEmptyHitArea();
-	ha->x = 96;
-	ha->y = 62;
+	ha->x = (window->width / 2 + window->x - 3) * 8; 
+	ha->y = window->height * 8 + window->y - 8;
 	ha->width = 48;
 	ha->height = 8;
 	ha->flags = kBFBoxInUse;
