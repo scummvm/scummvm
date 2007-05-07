@@ -282,6 +282,17 @@ void Game::playerChangeRoom() {
 	player->setPosition(newPos.x, newPos.y);
 	player->setOccupied(true);
 	room.setRoomNumber(roomNum, false);
+
+	// Special check for change back from Selena
+	if ((roomNum != 31) && (roomNum != 14) && (fields.getField(74) != 0)) {
+		uint16 v = fields.getField(29);
+		if (v != 0) {
+			--v;
+			fields.setField(29, v);
+			if (v == 0) 
+				res.delayList().add(2, 0xCB7, true);
+		}
+	}
 }
 
 void Game::displayChuteAnimation()
