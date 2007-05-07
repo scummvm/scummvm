@@ -589,6 +589,21 @@ cmd(draw_pic) {
 	g_sprites->blitBoth();
 	game.pictureShown = 0;
 	debugC(6, kDebugLevelScripts, "--- end of draw pic %d ---", _v[p0]);
+
+	// WORKAROUND for a script bug which exists in SQ1, logic scripts
+	// 20 and 110. Flag 103 is not reset correctly, which leads to erroneous
+	// behavior from view 46 (the spider droid). View 46 is supposed to
+	// follow ego and explode when it comes in contact with him. However, as
+	// flag 103 is not reset correctly, when the player goes down the path
+	// and back up, the spider is always at the base of the path (since it 
+	// can't go up) and kills the player when he goes down at ground level 
+	// (although the spider droid sprite itself seems to be correctly positioned). 
+	// With this workaround, when the player goes back to picture 20 (1 screen 
+	// above the ground), flag 103 is reset, thereby fixing this issue. Note 
+	// that this is a script bug and occurs in the original interpreter as well.
+	// Fixes bug #1658514: AGI: SQ1 (2.2 DOS ENG) bizzare exploding roger
+	if (g_agi->getGameID() == GID_SQ1 && _v[p0] == 20)
+		g_agi->setflag(103, false);
 }
 
 cmd(show_pic) {
