@@ -396,6 +396,9 @@ void AGOSEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask)
 	if (getGameType() == GType_SIMON2) {
 		width = 100;
 		height = 40;
+	} else if (getGameType() == GType_WW) {
+		width = window->width / 3;
+		height = window->height / 2;
 	} else {
 		width = window->width / 3;
 		height = window->height / 3;
@@ -446,7 +449,7 @@ void AGOSEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask)
 					drawIcon(window, itemGetIconNumber(itemRef), x_pos, y_pos);
 					window->iconPtr->iconArray[k].boxCode =
 						setupIconHitArea(window, 0, x_pos, y_pos, itemRef);
-				} else if (getGameType() == GType_SIMON1) {
+				} else if (getGameType() == GType_SIMON1 || getGameType() == GType_WW) {
 					drawIcon(window, itemGetIconNumber(itemRef), x_pos * 3, y_pos);
 					window->iconPtr->iconArray[k].boxCode =
 						setupIconHitArea(window, 0, x_pos * 3, y_pos, itemRef);
@@ -707,7 +710,7 @@ void AGOSEngine_Waxworks::addArrows(WindowBlock *window) {
 	ha->width = 9;
 	ha->height = 11;
 	ha->flags = kBFBoxInUse | kBFNoTouchName;
-	ha->id = 0x7FFB;
+	ha->id = 0x7FFC;
 	ha->priority = 100;
 	ha->window = window;
 	ha->verb = 1;
@@ -739,7 +742,7 @@ void AGOSEngine_Elvira2::addArrows(WindowBlock *window) {
 	ha->width = 12;
 	ha->height = 10;
 	ha->flags = kBFBoxInUse;
-	ha->id = 0x7FFB;
+	ha->id = 0x7FFC;
 	ha->priority = 100;
 	ha->window = window;
 	ha->verb = 1;
@@ -770,7 +773,7 @@ void AGOSEngine::addArrows(WindowBlock *window) {
 	ha->width = 16;
 	ha->height = 19;
 	ha->flags = kBFBoxInUse;
-	ha->id = 0x7FFB;
+	ha->id = 0x7FFC;
 	ha->priority = 100;
 	ha->window = window;
 	ha->verb = 1;
