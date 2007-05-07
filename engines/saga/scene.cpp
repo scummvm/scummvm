@@ -596,13 +596,11 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	static PalEntry current_pal[PAL_ENTRIES];
 
 	// Change the cursor to an hourglass in IHNM
-	if (_vm->getGameType() == GType_IHNM) {
-		event.type = kEvTOneshot;
-		event.code = kCursorEvent;
-		event.op = kEventSetBusyCursor;
-		event.time = 0;
-		_vm->_events->queue(&event);
-	}
+	event.type = kEvTOneshot;
+	event.code = kCursorEvent;
+	event.op = kEventSetBusyCursor;
+	event.time = 0;
+	_vm->_events->queue(&event);
 
 	if ((_vm->getGameType() == GType_IHNM) && (loadSceneParams->chapter != NO_CHAPTER_CHANGE)) {
 		if (loadSceneParams->loadFlag != kLoadBySceneNumber) {
@@ -901,13 +899,11 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	}
 
 	// Change the cursor back to a crosshair in IHNM
-	if (_vm->getGameType() == GType_IHNM) {
-		event.type = kEvTOneshot;
-		event.code = kCursorEvent;
-		event.op = kEventSetNormalCursor;
-		event.time = 0;
-		_vm->_events->queue(&event);
-	}
+	event.type = kEvTOneshot;
+	event.code = kCursorEvent;
+	event.op = kEventSetNormalCursor;
+	event.time = 0;
+	_vm->_events->queue(&event);
 }
 
 void Scene::loadSceneDescriptor(uint32 resourceId) {

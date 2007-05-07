@@ -438,10 +438,13 @@ int Events::handleOneShot(Event *event) {
 			_vm->_gfx->showCursor(false);
 			break;
 		case kEventSetNormalCursor:
-			_vm->_gfx->setCursor(kCursorNormal);
+			// in ITE there is just one cursor
+			if (_vm->getGameType() == GType_IHNM)
+				_vm->_gfx->setCursor(kCursorNormal);
 			break;
 		case kEventSetBusyCursor:
-			_vm->_gfx->setCursor(kCursorBusy);
+			if (_vm->getGameType() == GType_IHNM)
+				_vm->_gfx->setCursor(kCursorBusy);
 			break;
 		default:
 			break;
