@@ -213,7 +213,7 @@ void AgiEngine::updatePosition() {
 			x = 0;
 			border = 4;
 		} else if (x <= 0 && agiGetRelease() == 0x3086) {	/* KQ4 */
-			x = 0;	/* See bug #590462 */
+			x = 0;	/* See Sarien bug #590462 */
 			border = 4;
 		} else if (v->entry == 0 && x == 0 && v->flags & ADJ_EGO_XY) {
 			/* Extra test to walk west clicking the mouse */

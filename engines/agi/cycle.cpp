@@ -252,7 +252,7 @@ process_key:
 				goto process_key;
 			}
 
-			/* commented out to close bug #438872
+			/* commented out to close Sarien bug #438872
 			 * if (key) game.keypress = key;
 			 */
 		}

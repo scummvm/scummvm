@@ -216,7 +216,7 @@ void AgiEngine::unloadView(int n) {
 	if (~_game.dirView[n].flags & RES_LOADED)
 		return;
 
-	/* Rebuild sprite list, see bug #779302 */
+	/* Rebuild sprite list, see Sarien bug #779302 */
 	_sprites->eraseBoth();
 	_sprites->blitBoth();
 	_sprites->commitBoth();

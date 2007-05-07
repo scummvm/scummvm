@@ -1074,7 +1074,7 @@ cmd(get_string) {
 	col = p3;
 
 	/* Workaround for SQLC bug.
-	 * See bug #792125 for details
+	 * See Sarien bug #792125 for details
 	 */
 	if (row > 24)
 		row = 24;
@@ -1195,7 +1195,7 @@ cmd(echo_line) {
 cmd(clear_lines) {
 	uint8 l;
 
-	/* Residence 44 calls clear.lines(24,0,0), see bug #558423 */
+	/* Residence 44 calls clear.lines(24,0,0), see Sarien bug #558423 */
 	l = p1 ? p1 : p0;
 
 	g_agi->clearLines(p0, l, p2);
