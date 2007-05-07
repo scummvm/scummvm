@@ -132,14 +132,14 @@ PluginError Engine_AGOS_create(OSystem *syst, Engine **engine) {
 		*engine = new AGOS::AGOSEngine_Simon2(syst);
 	} else if (!scumm_stricmp("feeble", gameid)) {
 		*engine = new AGOS::AGOSEngine_Feeble(syst);
-
+	} else if (!scumm_stricmp("dimp", gameid)) {
+		*engine = new AGOS::AGOSEngine_PuzzlePack(syst);
 	} else if (!scumm_stricmp("jumble", gameid)) {
 		*engine = new AGOS::AGOSEngine_PuzzlePack(syst);
 	} else if (!scumm_stricmp("puzzle", gameid)) {
 		*engine = new AGOS::AGOSEngine_PuzzlePack(syst);
 	} else if (!scumm_stricmp("swampy", gameid)) {
 		*engine = new AGOS::AGOSEngine_PuzzlePack(syst);
-
 	} else {
 		error("AGOS engine created with invalid gameid");
 	}
