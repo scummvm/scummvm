@@ -284,6 +284,7 @@ protected:
 	byte _boxStarHeight;
 
 	char _boxBuffer[310];
+	char *_boxBufferPtr;
 	int _boxLineCount;
 	int _lineCounts[6];
 	char *_linePtrs[6];

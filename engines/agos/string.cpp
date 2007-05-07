@@ -681,26 +681,25 @@ uint16 AGOSEngine_Waxworks::checkFit(char *Ptr, int width, int lines) {
 }
 
 void AGOSEngine_Waxworks::boxTextMessage(const char *x) {
-	char *BoxBufferPtr = _boxBuffer;
-	sprintf(BoxBufferPtr, "%s\n", x);
+	sprintf(_boxBufferPtr, "%s\n", x);
 	_lineCounts[_boxLineCount] += strlen(x);
-	BoxBufferPtr += strlen(x) + 1;
+	_boxBufferPtr += strlen(x) + 1;
 	_boxLineCount++;
-	_linePtrs[_boxLineCount] = BoxBufferPtr;
+	_linePtrs[_boxLineCount] = _boxBufferPtr;
 	_boxCR = 1;
 }
 
 void AGOSEngine_Waxworks::boxTextMsg(const char *x) {
-	char *BoxBufferPtr = _boxBuffer;
-	sprintf(BoxBufferPtr, "%s", x);
+	sprintf(_boxBufferPtr, "%s", x);
 	_lineCounts[_boxLineCount] += strlen(x);
-	BoxBufferPtr += strlen(x);
+	_boxBufferPtr += strlen(x);
 	_boxCR = 0;
 }
 
 void AGOSEngine_Waxworks::printBox() {
-	char *BoxBufferPtr = 0;
 	uint16 BoxSize;
+
+	*_boxBufferPtr = 0;
 	_linePtrs[0] = _boxBuffer;
 	if (_boxCR == 0)
 		_boxLineCount++;
@@ -754,11 +753,11 @@ void AGOSEngine_Waxworks::printBox() {
 	_textWindow->textLength = 0;
 	justifyStart();
 	waitForSync(99);
-	BoxBufferPtr = _boxBuffer;
-	while (*BoxBufferPtr)
-		justifyOutPut(*BoxBufferPtr++);
+	_boxBufferPtr = _boxBuffer;
+	while (*_boxBufferPtr)
+		justifyOutPut(*_boxBufferPtr++);
 	_boxLineCount = 0;
-	BoxBufferPtr = _boxBuffer;
+	_boxBufferPtr = _boxBuffer;
 	_lineCounts[0] = 0;
 	_lineCounts[1] = 0;
 	_lineCounts[2] = 0;

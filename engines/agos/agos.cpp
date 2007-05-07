@@ -386,6 +386,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_boxLineCount = 0;
 	_boxCR = 0;
 	memset(_boxBuffer, 0, sizeof(_boxBuffer));
+	_boxBufferPtr = _boxBuffer;
 
 	_linePtrs[0] = 0;
 	_linePtrs[1] = 0;
