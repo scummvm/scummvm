@@ -113,14 +113,14 @@ enum DrawFlags {
 };
 
 struct VC10_state {
-	int image;
+	int16 image;
 	uint16 flags;
 	byte palette;
 
-	int x, y;
-	int width, height;
-	uint draw_width, draw_height;
-	uint x_skip, y_skip;
+	int16 x, y;
+	uint16 width, height;
+	uint16 draw_width, draw_height;
+	uint16 x_skip, y_skip;
 
 	byte *surf2_addr;
 	uint surf2_pitch;
