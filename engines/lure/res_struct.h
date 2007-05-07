@@ -359,7 +359,11 @@ public:
 	uint32 unknown;
 };
 
-typedef ManagedList<RoomExitJoinData *> RoomExitJoinList;
+class RoomExitJoinList: public ManagedList<RoomExitJoinData *> {
+public:
+	void saveToStream(WriteStream *stream);
+	void loadFromStream(ReadStream *stream);
+};
 
 class HotspotActionData {
 public:

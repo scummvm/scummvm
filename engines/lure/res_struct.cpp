@@ -211,14 +211,14 @@ void RoomPathsData::decompress(RoomPathsDecompressedData &dataOut, int character
 	uint16 *pOut = &dataOut[DECODED_PATHS_WIDTH * DECODED_PATHS_HEIGHT - 1];
 	byte v;
 	int paddingCtr;
-	int charWidth = (characterWidth - 1) >> 3;
+	int charWidth = characterWidth >> 3;
 	int charCtr = 0;
 	bool charState = false;
 
 	// Handle padding for last row, including left/right edge padding, as
 	// well as the right column of the second row
 	for (paddingCtr = 0; paddingCtr < (DECODED_PATHS_WIDTH + 1); ++paddingCtr)
-		*pOut-- = 0;
+		*pOut-- = 0xffff;
 
 	for (int y = 0; y < ROOM_PATHS_HEIGHT; ++y) {
 		charState = false;
@@ -258,15 +258,15 @@ void RoomPathsData::decompress(RoomPathsDecompressedData &dataOut, int character
 		}
 
 		// Store 2 words to allow off-screen row-start/prior row end
-		*pOut-- = 0;
-		*pOut-- = 0;
+		*pOut-- = 0xffff;
+		*pOut-- = 0xffff;
 		charState = false;
 	}
 
 	// Handle padding for final top row - no need for end column, as end of prior
 	// row provided padding for it
 	for (paddingCtr = 0; paddingCtr < (ROOM_PATHS_WIDTH + 1); ++paddingCtr)
-		*pOut-- = 0;
+		*pOut-- = 0xffff;
 }
 
 // Room exit joins class
@@ -283,6 +283,44 @@ RoomExitJoinData::RoomExitJoinData(RoomExitJoinResource *rec) {
 	h2OpenSound = rec->h2OpenSound;
 	h2CloseSound = rec->h2CloseSound;
 	blocked = rec->blocked;
+}
+
+void RoomExitJoinList::saveToStream(WriteStream *stream) {
+	for (RoomExitJoinList::iterator i = begin(); i != end(); ++i) {
+		RoomExitJoinData *rec = *i;
+		stream->writeUint16LE(rec->hotspot1Id);
+		stream->writeUint16LE(rec->hotspot2Id);
+		stream->writeByte(rec->h1CurrentFrame);
+		stream->writeByte(rec->h1DestFrame);
+		stream->writeByte(rec->h2CurrentFrame);
+		stream->writeByte(rec->h2DestFrame);
+		stream->writeByte(rec->blocked);
+	}
+
+	// Write end of list marker
+	stream->writeUint16LE(0xffff);
+}
+
+void RoomExitJoinList::loadFromStream(ReadStream *stream) {
+	for (RoomExitJoinList::iterator i = begin(); i != end(); ++i) {
+		RoomExitJoinData *rec = *i;
+
+		uint16 hotspot1Id = stream->readUint16LE();
+		if (hotspot1Id == 0xffff) error("Invalid room exit join list");
+		uint16 hotspot2Id = stream->readUint16LE();
+
+		if ((rec->hotspot1Id != hotspot1Id) || (rec->hotspot2Id != hotspot2Id))
+			break;
+
+		rec->h1CurrentFrame = stream->readByte();
+		rec->h1DestFrame = stream->readByte();
+		rec->h2CurrentFrame = stream->readByte();
+		rec->h2DestFrame = stream->readByte();
+		rec->blocked = stream->readByte();
+	}
+
+	// Read final end of list marker
+	stream->readUint16LE();
 }
 
 // Hotspot action record
