@@ -680,7 +680,7 @@ void AGOSEngine_Simon1::addArrows(WindowBlock *window) {
 		// TODO: Manually draws arrows
 	} else {
 		stopAnimate(128);
-		uint8 palette = (getGameId() == GID_SIMON1CD32) ? 15: 14;
+		uint8 palette = (getPlatform() == Common::kPlatformAmiga) ? 15: 14;
 		animate(0, 1, 128, 0, 0, palette);
 	}
 }
