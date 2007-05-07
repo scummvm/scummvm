@@ -63,7 +63,7 @@ void AGOSEngine::loadIconData() {
 
 // Thanks to Stuart Caie for providing the original
 // C conversion upon which this function is based.
-static void decompressIconAmiga(byte *dst, byte *src, uint width, uint height, byte base, uint pitch, bool decompress = true) {
+static void decompressIconPlanar(byte *dst, byte *src, uint width, uint height, byte base, uint pitch, bool decompress = true) {
 	byte icon_pln[288];
 	byte *i, *o, *srcPtr, x, y;
 
@@ -203,7 +203,7 @@ void AGOSEngine_Simon1::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 		src = _iconFilePtr;
 		src += READ_BE_UINT32(&((uint32 *)src)[icon]);
 		uint8 color = (getFeatures() & GF_32COLOR) ? 16 : 240;
-		decompressIconAmiga(dst, src, 24, 24, color, _dxSurfacePitch);
+		decompressIconPlanar(dst, src, 24, 24, color, _dxSurfacePitch);
 	} else {
 		src = _iconFilePtr;
 		src += READ_LE_UINT16(&((uint16 *)src)[icon]);
@@ -225,9 +225,8 @@ void AGOSEngine_Waxworks::drawIcon(WindowBlock *window, uint icon, uint x, uint 
 
 	uint8 color = dst[0] & 0xF0;
 	if (getPlatform() == Common::kPlatformAmiga) {
-		src = _iconFilePtr;
-		src += READ_BE_UINT32(&((uint32 *)src)[icon]);
-		decompressIconAmiga(dst, src, 24, 20, color, _dxSurfacePitch);
+		// TODO
+		return;
 	} else {
 		src = _iconFilePtr;
 		src += READ_LE_UINT16(&((uint16 *)src)[icon]);
@@ -248,15 +247,15 @@ void AGOSEngine_Elvira2::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 	dst += (y * 8 + window->y) * _dxSurfacePitch;
 
 	uint color = dst[0] & 0xF0;
-	if (getPlatform() == Common::kPlatformAmiga) {
+	if (getFeatures() & GF_PLANAR) {
 		src = _iconFilePtr;
 		src += READ_BE_UINT32(&((uint32 *)src)[icon]);
-		decompressIconAmiga(dst, src, 24, 24, color, _dxSurfacePitch);
+		decompressIconPlanar(dst, src, 24, 24, color, _dxSurfacePitch);
 	} else {
 		src = _iconFilePtr;
 		src += READ_LE_UINT16(&((uint16 *)src)[icon]);
-	decompressIcon(dst, src, 24, 12, color, _dxSurfacePitch);
-		}
+		decompressIcon(dst, src, 24, 12, color, _dxSurfacePitch);
+	}
 
 	_lockWord &= ~0x8000;
 }
@@ -271,9 +270,13 @@ void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 	dst += (x + window->x) * 8;
 	dst += (y * 8 + window->y) * _dxSurfacePitch;
 
-	src = _iconFilePtr;
-	src += icon * 288;
-	decompressIconAmiga(dst, src, 24, 24, 16, _dxSurfacePitch, false);
+	if (getFeatures() & GF_PLANAR) {
+		// TODO
+	} else {
+		src = _iconFilePtr;
+		src += icon * 288;
+		decompressIconPlanar(dst, src, 24, 24, 16, _dxSurfacePitch, false);
+	}
 
 	_lockWord &= ~0x8000;
 }
