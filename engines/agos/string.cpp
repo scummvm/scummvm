@@ -289,7 +289,162 @@ bool AGOSEngine::printNameOf(Item *item, uint x, uint y) {
 	return true;
 }
 
-void AGOSEngine::printInteractText(uint16 num, const char *string) {
+void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *string, int16 x, int16 y, int16 width) {
+	char convertedString[320];
+	char *convertedString2 = convertedString;
+	int16 height, talkDelay;
+	int stringLength = strlen(string);
+	int padding, lettersPerRow, lettersPerRowJustified;
+	const int textHeight = 10;
+
+	height = textHeight;
+	lettersPerRow = width / 6;
+	lettersPerRowJustified = stringLength / (stringLength / lettersPerRow + 1) + 1;
+
+	talkDelay = (stringLength + 3) / 3;
+	if ((getGameType() == GType_SIMON1) && (getFeatures() & GF_TALKIE)) {
+		if (_variableArray[141] == 0)
+			_variableArray[141] = 9;
+		_variableArray[85] = _variableArray[141] * talkDelay;
+	} else {
+		if (_variableArray[86] == 0)
+			talkDelay /= 2;
+		if (_variableArray[86] == 2)
+			talkDelay *= 2;
+		_variableArray[85] = talkDelay * 5;
+	}
+
+	assert(stringLength > 0);
+
+	while (stringLength > 0) {
+		int pos = 0;
+		if (stringLength > lettersPerRow) {
+			int removeLastWord = 0;
+			if (lettersPerRow > lettersPerRowJustified) {
+				pos = lettersPerRowJustified;
+				while (string[pos] != ' ')
+					pos++;
+				if (pos > lettersPerRow)
+					removeLastWord = 1;
+			}
+			if (lettersPerRow <= lettersPerRowJustified || removeLastWord) {
+				pos = lettersPerRow;
+				while (string[pos] != ' ' && pos > 0)
+					pos--;
+			}
+			height += textHeight;
+			y -= textHeight;
+		} else
+			pos = stringLength;
+		padding = (lettersPerRow - pos) % 2 ?
+			(lettersPerRow - pos) / 2 + 1 : (lettersPerRow - pos) / 2;
+		while (padding--)
+			*convertedString2++ = ' ';
+		stringLength -= pos;
+		while (pos--)
+			*convertedString2++ = *string++;
+		*convertedString2++ = '\n';
+		string++; // skip space
+		stringLength--; // skip space
+	}
+	*(convertedString2 - 1) = '\0';
+
+	if (getGameType() == GType_SIMON1)
+		stopAnimate(vgaSpriteId + 199);
+	else
+		stopAnimateSimon2(2, vgaSpriteId);
+
+	if (getPlatform() == Common::kPlatformAmiga) {
+		color = color * 3 + 1;
+		renderStringAmiga(vgaSpriteId, color, width, height, convertedString);
+	} else {
+		color = color * 3 + 192;
+		renderString(vgaSpriteId, color, width, height, convertedString);
+	}
+
+	int b = 4;
+	if (!getBitFlag(133))
+		b = 3;
+
+	x /= 8;
+	if (y < 2)
+		y = 2;
+
+	if (getGameType() == GType_SIMON1)
+		animate(b, 2, vgaSpriteId + 199, x, y, 12);
+	else
+		animate(b, 2, vgaSpriteId, x, y, 12);
+}
+
+// The Feeble Files specific
+void AGOSEngine_Feeble::printScreenText(uint vgaSpriteId, uint color, const char *string, int16 x, int16 y, int16 width) {
+	char convertedString[320];
+	char *convertedString2 = convertedString;
+	const char *string2 = string;
+	int16 height, talkDelay;
+	int stringLength = strlen(string);
+	int lettersPerRow, lettersPerRowJustified;
+	const int textHeight = 15;
+
+	height = textHeight;
+	lettersPerRow = width / 6;
+	lettersPerRowJustified = stringLength / (stringLength / lettersPerRow + 1) + 1;
+
+	talkDelay = (stringLength + 3) / 3;
+		if (_variableArray[86] == 0)
+			talkDelay /= 2;
+		if (_variableArray[86] == 2)
+			talkDelay *= 2;
+		_variableArray[85] = talkDelay * 5;
+
+	assert(stringLength > 0);
+
+	uint16 b, pixels, spaces;
+
+	while (1) {
+		string2 = getPixelLength(string, width, pixels);
+		if (*string2 == 0) {
+			spaces = (width - pixels) / 12;
+			if (spaces != 0)
+				spaces--;
+			while (spaces) {
+	   				*convertedString2++ = ' ';
+	   				spaces--;
+			}
+			strcpy(convertedString2, string);
+			break;
+		}
+		while (*string2 != ' ') {
+			byte chr = *string2;
+			pixels -= charWidth[chr];
+			string2--;
+		}
+		spaces = (width - pixels) / 12;
+		if (spaces != 0)
+			spaces--;
+		while (spaces) {
+	   			*convertedString2++ = ' ';
+	    		spaces--;
+		}
+		b = string2 - string;
+		strncpy(convertedString2, string, b);
+		convertedString2 += b;
+		*convertedString2++ = '\n';
+		height += textHeight;
+		y -= textHeight;
+		if (y < 2)
+		    y = 2;
+		string = string2;
+	}
+
+	stopAnimateSimon2(2, vgaSpriteId);
+
+	renderString(1, color, width, height, convertedString);
+
+	animate(4, 2, vgaSpriteId, x, y, 12);
+}
+
+void AGOSEngine_Feeble::printInteractText(uint16 num, const char *string) {
 	char convertedString[320];
 	char *convertedString2 = convertedString;
 	const char *string2 = string;
@@ -344,7 +499,7 @@ void AGOSEngine::printInteractText(uint16 num, const char *string) {
 	_interactY += height;
 }
 
-void AGOSEngine::sendInteractText(uint16 num, const char *fmt, ...) {
+void AGOSEngine_Feeble::sendInteractText(uint16 num, const char *fmt, ...) {
 	va_list arglist;
 	char string[256];
 
@@ -355,141 +510,7 @@ void AGOSEngine::sendInteractText(uint16 num, const char *fmt, ...) {
 	printInteractText(num, string);
 }
 
-void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *string, int16 x, int16 y, int16 width) {
-	char convertedString[320];
-	char *convertedString2 = convertedString;
-	const char *string2 = string;
-	int16 height, talkDelay;
-	int stringLength = strlen(string);
-	int padding, lettersPerRow, lettersPerRowJustified;
-	const int textHeight = (getGameType() == GType_FF) ? 15: 10;
-
-	height = textHeight;
-	lettersPerRow = width / 6;
-	lettersPerRowJustified = stringLength / (stringLength / lettersPerRow + 1) + 1;
-
-	talkDelay = (stringLength + 3) / 3;
-	if ((getGameType() == GType_SIMON1) && (getFeatures() & GF_TALKIE)) {
-		if (_variableArray[141] == 0)
-			_variableArray[141] = 9;
-		_variableArray[85] = _variableArray[141] * talkDelay;
-	} else {
-		if (_variableArray[86] == 0)
-			talkDelay /= 2;
-		if (_variableArray[86] == 2)
-			talkDelay *= 2;
-		_variableArray[85] = talkDelay * 5;
-	}
-
-	assert(stringLength > 0);
-
-	if (getGameType() == GType_FF) {
-		uint16 b, pixels, spaces;
-
-		while (1) {
-			string2 = getPixelLength(string, width, pixels);
-			if (*string2 == 0) {
-				spaces = (width - pixels) / 12;
-				if (spaces != 0)
-					spaces--;
-				while (spaces) {
-	    				*convertedString2++ = ' ';
-	    				spaces--;
-				}
-				strcpy(convertedString2, string);
-				break;
-			}
-			while (*string2 != ' ') {
-				byte chr = *string2;
-				pixels -= charWidth[chr];
-				string2--;
-			}
-			spaces = (width - pixels) / 12;
-			if (spaces != 0)
-				spaces--;
-			while (spaces) {
-	    			*convertedString2++ = ' ';
-		    		spaces--;
-			}
-			b = string2 - string;
-			strncpy(convertedString2, string, b);
-			convertedString2 += b;
-			*convertedString2++ = '\n';
-			height += textHeight;
-			y -= textHeight;
-			if (y < 2)
-			    y = 2;
-			string = string2;
-		}
-	} else {
-		while (stringLength > 0) {
-			int pos = 0;
-			if (stringLength > lettersPerRow) {
-				int removeLastWord = 0;
-				if (lettersPerRow > lettersPerRowJustified) {
-					pos = lettersPerRowJustified;
-					while (string[pos] != ' ')
-						pos++;
-					if (pos > lettersPerRow)
-						removeLastWord = 1;
-				}
-				if (lettersPerRow <= lettersPerRowJustified || removeLastWord) {
-					pos = lettersPerRow;
-					while (string[pos] != ' ' && pos > 0)
-						pos--;
-				}
-				height += textHeight;
-				y -= textHeight;
-			} else
-				pos = stringLength;
-			padding = (lettersPerRow - pos) % 2 ?
-				(lettersPerRow - pos) / 2 + 1 : (lettersPerRow - pos) / 2;
-			while (padding--)
-				*convertedString2++ = ' ';
-			stringLength -= pos;
-			while (pos--)
-				*convertedString2++ = *string++;
-			*convertedString2++ = '\n';
-			string++; // skip space
-			stringLength--; // skip space
-		}
-		*(convertedString2 - 1) = '\0';
-	}
-
-	if (getGameType() == GType_SIMON1)
-		stopAnimate(vgaSpriteId + 199);
-	else
-		stopAnimateSimon2(2, vgaSpriteId);
-
-	if (getGameType() == GType_FF) {
-		renderString(1, color, width, height, convertedString);
-	} else {
-		if (getPlatform() == Common::kPlatformAmiga) {
-			color = color * 3 + 1;
-			renderStringAmiga(vgaSpriteId, color, width, height, convertedString);
-		} else {
-			color = color * 3 + 192;
-			renderString(vgaSpriteId, color, width, height, convertedString);
-		}
-	}
-
-	int b = 4;
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-		if (!getBitFlag(133))
-			b = 3;
-
-		x /= 8;
-		if (y < 2)
-			y = 2;
-	}
-
-	if (getGameType() == GType_SIMON1)
-		animate(b, 2, vgaSpriteId + 199, x, y, 12);
-	else
-		animate(b, 2, vgaSpriteId, x, y, 12);
-}
-
-// String code for boxes in Waxworks
+// Waxworks specific
 uint16 AGOSEngine_Waxworks::getBoxSize() {
 	int x;
 	switch (_boxLineCount) {
@@ -745,41 +766,6 @@ void AGOSEngine_Waxworks::printBox() {
 	_lineCounts[4] = 0;
 	_lineCounts[5] = 0;
 	changeWindow(0);
-}
-
-// String code for statistics in Elvira 1/2
-void AGOSEngine::writeChar(WindowBlock *window, int x, int y, int offs, int val) {
-	int chr;
-
-	// Clear background of first digit
-	window->textColumnOffset = offs;
-	window->text_color = 0;
-	windowDrawChar(window, x * 8, y, 129);
-
-	if (val != -1) {
-		// Print first digit
-		chr = val / 10 + 48;
-		window->text_color = 15;
-		windowDrawChar(window, x * 8, y, chr);
-	}
-
-	offs += 6;
-	if (offs >= 7) {
-		offs -= 8;
-		x++;
-	}
-
-	// Clear background of second digit
-	window->textColumnOffset = offs;
-	window->text_color = 0;
-	windowDrawChar(window, x * 8, y, 129);
-
-	if (val != -1) {
-		// Print second digit
-		chr = val % 10 + 48;
-		window->text_color = 15;
-		windowDrawChar(window, x * 8, y, chr);
-	}
 }
 
 } // End of namespace AGOS

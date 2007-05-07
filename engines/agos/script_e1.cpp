@@ -525,7 +525,7 @@ void AGOSEngine_Elvira1::oe1_setFF() {
 void AGOSEngine_Elvira1::oe1_moveDirn() {
 	// 54: move direction
 	int16 d = readVariable(getVarOrWord());
-	moveDirn_e1(me(), d);
+	moveDirn(me(), d);
 }
 
 void AGOSEngine_Elvira1::oe1_score() {

@@ -158,7 +158,69 @@ Item *AGOSEngine::getExitOf_e1(Item *item, uint16 d) {
 	return derefItem(x->parent);
 }
 
-void AGOSEngine::moveDirn_e1(Item *i, uint x) {
+void AGOSEngine_Waxworks::moveDirn(Item *i, uint x) {
+	Item *d;
+	uint16 n;
+
+	if (i->parent == 0)
+		return;
+
+	n = getExitOf(derefItem(i->parent), x);
+	if (derefItem(n) == NULL) {
+		loadRoomItems(n);
+		n = getExitOf(derefItem(i->parent), x);
+	}
+
+	d = derefItem(n);
+	if (d) {
+		n = getDoorState(derefItem(i->parent), x);
+		if (n == 1) {
+			if (!canPlace(i, d))
+				setItemParent(i, d);
+		}
+	}
+}
+
+void AGOSEngine_Elvira2::moveDirn(Item *i, uint x) {
+	SubSuperRoom *sr;
+	Item *d, *p;
+	uint16 a, n;
+
+	if (i->parent == 0)
+		return;
+
+	p = derefItem(i->parent);
+	if (findChildOfType(p, 4)) {
+		n = getExitState(p, _superRoomNumber,x);
+		if (n == 1) {
+			sr = (SubSuperRoom *)findChildOfType(p, 4);
+			switch (x) {
+				case 0: a = -(sr->roomX); break;
+				case 1: a = 1; break;
+				case 2: a = sr->roomX; break;
+				case 3: a = 0xFFFF; break;
+				case 4: a = -(sr->roomX * sr->roomY); break;
+				case 5: a = (sr->roomX * sr->roomY); break;
+				default: return;
+			}
+			_superRoomNumber += a;
+		}
+		return;
+	}
+
+	n = getExitOf(derefItem(i->parent), x);
+
+	d = derefItem(n);
+	if (d) {
+		n = getDoorState(derefItem(i->parent), x);
+		if (n == 1) {
+			if (!canPlace(i, d))
+				setItemParent(i, d);
+		}
+	}
+}
+
+void AGOSEngine::moveDirn(Item *i, uint x) {
 	Item *d, *p;
 
 	p = derefItem(i->parent);
@@ -189,7 +251,7 @@ void AGOSEngine::moveDirn_e1(Item *i, uint x) {
 }
 
 // Elvira 2 specific
-int AGOSEngine::changeExitStates(SubSuperRoom *sr, int n, int d, uint16 s) {
+int AGOSEngine_Elvira2::changeExitStates(SubSuperRoom *sr, int n, int d, uint16 s) {
 	int b, bd;
 	uint16 mask = 3;
 	uint16 bs = s;
@@ -250,7 +312,7 @@ int AGOSEngine::changeExitStates(SubSuperRoom *sr, int n, int d, uint16 s) {
 	return 1;
 }
 
-uint16 AGOSEngine::getExitState(Item *i, uint16 x, uint16 d) {
+uint16 AGOSEngine_Elvira2::getExitState(Item *i, uint16 x, uint16 d) {
 	SubSuperRoom *sr;
 	uint16 mask = 3;
 	uint16 n;
@@ -266,13 +328,13 @@ uint16 AGOSEngine::getExitState(Item *i, uint16 x, uint16 d) {
 	return n;
 }
 
-void AGOSEngine::setExitState(Item *i, uint16 n, uint16 d, uint16 s) {
+void AGOSEngine_Elvira2::setExitState(Item *i, uint16 n, uint16 d, uint16 s) {
 	SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, 4);
 	if (sr)
 		changeExitStates(sr, n, d, s);
 }
 
-void AGOSEngine::setSRExit(Item *i, int n, int d, uint16 s) {
+void AGOSEngine_Elvira2::setSRExit(Item *i, int n, int d, uint16 s) {
 	uint16 mask = 3;
 
 	SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, 4);
@@ -286,74 +348,8 @@ void AGOSEngine::setSRExit(Item *i, int n, int d, uint16 s) {
 	}
 }
 
-void AGOSEngine::moveDirn_e2(Item *i, uint x) {
-	SubSuperRoom *sr;
-	Item *d, *p;
-	uint16 a, n;
-
-	if (i->parent == 0)
-		return;
-
-	p = derefItem(i->parent);
-	if (findChildOfType(p, 4)) {
-		n = getExitState(p, _superRoomNumber,x);
-		if (n == 1) {
-			sr = (SubSuperRoom *)findChildOfType(p, 4);
-			switch (x) {
-				case 0: a = -(sr->roomX); break;
-				case 1: a = 1; break;
-				case 2: a = sr->roomX; break;
-				case 3: a = 0xFFFF; break;
-				case 4: a = -(sr->roomX * sr->roomY); break;
-				case 5: a = (sr->roomX * sr->roomY); break;
-				default: return;
-			}
-			_superRoomNumber += a;
-		}
-		return;
-	}
-
-	n = getExitOf(derefItem(i->parent), x);
-	if (derefItem(n) == NULL) {
-		loadRoomItems(n);
-		n=getExitOf(derefItem(i->parent), x);
-	}
-
-	d = derefItem(n);
-	if (d) {
-		n = getDoorState(derefItem(i->parent), x);
-		if (n == 1) {
-			if (!canPlace(i, d))
-				setItemParent(i, d);
-		}
-	}
-}
-
 // Waxworks specific
-void AGOSEngine::moveDirn_ww(Item *i, uint x) {
-	Item *d;
-	uint16 n;
-
-	if (i->parent == 0)
-		return;
-
-	n = getExitOf(derefItem(i->parent), x);
-	if (derefItem(n) == NULL) {
-		loadRoomItems(n);
-		n = getExitOf(derefItem(i->parent), x);
-	}
-
-	d = derefItem(n);
-	if (d) {
-		n = getDoorState(derefItem(i->parent), x);
-		if (n == 1) {
-			if (!canPlace(i, d))
-				setItemParent(i, d);
-		}
-	}
-}
-
-bool AGOSEngine::loadRoomItems(uint item) {
+bool AGOSEngine_Waxworks::loadRoomItems(uint item) {
 	byte *p;
 	uint i, min_num, max_num;
 	char filename[30];

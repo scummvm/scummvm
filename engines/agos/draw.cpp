@@ -399,11 +399,11 @@ void AGOSEngine::updateScreen() {
 		}
 	}
 
-	_system->copyRectToScreen(_backBuf, _screenWidth, 0, 0, _screenWidth, _screenHeight);
+	_system->copyRectToScreen(getBackBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	_system->updateScreen();
 
 	if (getGameId() != GID_DIMP)
-		memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
+		memcpy(getBackBuf(), getFrontBuf(), _screenWidth * _screenHeight);
 
 	if (getGameType() == GType_FF && _scrollFlag) {
 		scrollScreen();

@@ -287,14 +287,6 @@ File *AGOSEngine::openTablesFile_gme(const char *filename) {
 }
 
 bool AGOSEngine::loadTablesIntoMem(uint subr_id) {
-	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2)
-		return loadTablesOldIntoMem(subr_id);
-	else
-		return loadTablesNewIntoMem(subr_id);
-}
-
-
-bool AGOSEngine::loadTablesOldIntoMem(uint subr_id) {
 	byte *p;
 	uint16 min_num, max_num, file_num;
 	File *in;
@@ -343,7 +335,7 @@ bool AGOSEngine::loadTablesOldIntoMem(uint subr_id) {
 	return 0;
 }
 
-bool AGOSEngine::loadTablesNewIntoMem(uint subr_id) {
+bool AGOSEngine_Waxworks::loadTablesIntoMem(uint subr_id) {
 	byte *p;
 	int i;
 	uint min_num, max_num;

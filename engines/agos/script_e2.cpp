@@ -279,7 +279,7 @@ void AGOSEngine_Elvira2::executeOpcode(int opcode) {
 void AGOSEngine_Elvira2::oe2_moveDirn() {
 	// 54: move direction
 	int16 d = getVarOrByte();
-	moveDirn_e2(me(), d);
+	moveDirn(me(), d);
 }
 
 void AGOSEngine_Elvira2::oe2_doClass() {

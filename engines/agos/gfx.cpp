@@ -777,7 +777,7 @@ void AGOSEngine::verticalScroll(VC10_state *state) {
 	}
 }
 
-void AGOSEngine::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
+void AGOSEngine_Feeble::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
 	Common::Rect srcRect, dstRect;
 	float factor, xscale;
 

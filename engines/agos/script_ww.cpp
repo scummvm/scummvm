@@ -101,7 +101,7 @@ void AGOSEngine_Waxworks::setupOpcodes() {
 		/* 52 */
 		OPCODE(o_modf),
 		OPCODE(o_random),
-		OPCODE(oww_moveDirn),
+		OPCODE(oe2_moveDirn),
 		OPCODE(oww_goto),
 		/* 56 */
 		OPCODE(o_oset),
@@ -286,12 +286,6 @@ void AGOSEngine_Waxworks::executeOpcode(int opcode) {
 // -----------------------------------------------------------------------
 // Waxworks Opcodes
 // -----------------------------------------------------------------------
-
-void AGOSEngine_Waxworks::oww_moveDirn() {
-	// 54: move direction
-	int16 d = getVarOrByte();
-	moveDirn_ww(me(), d);
-}
 
 void AGOSEngine_Waxworks::oww_goto() {
 	// 55: set itemA parent
