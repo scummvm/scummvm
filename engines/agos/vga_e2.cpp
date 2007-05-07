@@ -70,9 +70,14 @@ void AGOSEngine::vc45_setWindowPalette() {
 
 	const uint16 *vlut = &_videoWindows[num * 4];
 	uint16 *dst = (uint16 *)getBackBuf() + vlut[0] * 8 + vlut[1] * _dxSurfacePitch / 2;
+	uint width = vlut[2] * 8;
+
+	if (getGameType() == GType_ELVIRA2 && num == 7) {
+		dst -= 4;
+		width += 4;
+	}
 
 	for (uint h = 0; h < vlut[3]; h++) {
-		uint width = vlut[2] * 8;
 		for (uint w = 0; w < width; w++) {
 			dst[w] &= 0xF0F;
 			dst[w] |= color * 16;
