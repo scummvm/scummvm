@@ -567,7 +567,7 @@ void Hotspot::setOccupied(bool occupiedFlag) {
 
 	int xp = x() >> 3;
 	int yp = (y() - 8 + heightCopy() - 4) >> 3;
-	int widthVal = MAX(((widthCopy() - 1) >> 3), 1);
+	int widthVal = MAX(widthCopy() >> 3, 1);
 
 	// Handle cropping for screen left
 	if (xp < 0) {
@@ -2325,6 +2325,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot standard character point 6");
 	CurrentAction action = actions.action();
+	PathFinderResult pfResult;
 
 	switch (action) {
 	case NO_ACTION:
@@ -2374,14 +2375,15 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot standard character processing path");
 		res.pausedList().scan(h);
 		
-		if (!pathFinder.process()) break;
+		pfResult = pathFinder.process();
+		if (pfResult == PF_UNFINISHED) break;
 
 		debugC(ERROR_DETAILED, kLureDebugAnimations, 
-			"pathFinder done: result = %d", pathFinder.result());
+			"pathFinder done: result = %d", pfResult);
 
 		// Post-processing checks
-		if ((pathFinder.result() == PF_OK) || 
-			((h.destHotspotId() == 0) && (pathFinder.result() == PF_DEST_OCCUPIED))) {
+		if ((pfResult == PF_OK) || 
+			((h.destHotspotId() == 0) && (pfResult == PF_DEST_OCCUPIED))) {
 			// Standard processing
 			debugC(ERROR_DETAILED, kLureDebugAnimations, "Standard result handling");
 
@@ -2641,6 +2643,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 	}
 
 	CurrentAction action = actions.action();
+	PathFinderResult pfResult;
 
 	switch (action) {
 	case NO_ACTION:
@@ -2693,16 +2696,16 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 		h.setCharacterMode(CHARMODE_NONE);
 		res.pausedList().scan(h);
 
-		if (!pathFinder.process()) break;
+		pfResult = pathFinder.process();
+		if (pfResult == PF_UNFINISHED) break;
 
 		// Pathfinding is now complete 
 		pathFinder.list(buffer);
 		debugC(ERROR_DETAILED, kLureDebugAnimations, 
 			"Pathfind processing done; result=%d, walkFlag=%d\n%s", 
-			pathFinder.result(), h.walkFlag(), buffer);
+			pfResult, h.walkFlag(), buffer);
 
-		if ((pathFinder.result() != PF_OK) && 
-			(h.walkFlag() || (pathFinder.result() != PF_DEST_OCCUPIED))) { 
+		if ((pfResult != PF_OK) && (h.walkFlag() || (pfResult != PF_DEST_OCCUPIED))) { 
 			
 			debugC(ERROR_DETAILED, kLureDebugAnimations, "Blocked state checking");
 			if (h.blockedState() == BS_FINAL) {
@@ -3682,6 +3685,7 @@ int WalkingActionEntry::numSteps() {
 
 PathFinder::PathFinder(Hotspot *h) { 
 	_hotspot = h;
+	_inUse = false;
 	_list.clear(); 
 	_stepCtr = 0; 
 }
@@ -3696,12 +3700,13 @@ void PathFinder::clear() {
 void PathFinder::reset(RoomPathsData &src) {
 	clear();
 	src.decompress(_layer, _hotspot->widthCopy());
+	_inUse = true;
 }
 
 // Does the next stage of processing to figure out a path to take to a given
 // destination. Returns true if the path finding has been completed
 
-bool PathFinder::process() {
+PathFinderResult PathFinder::process() {
 	bool returnFlag = _inProgress;
 	// Check whether the pathfinding can be broken by the countdown counter
 	bool breakFlag = (PATHFIND_COUNTDOWN != 0);
@@ -3714,6 +3719,7 @@ bool PathFinder::process() {
 	uint16 numSteps = 0, savedSteps = 0;
 	bool altFlag;
 	uint16 *pCurrent;
+	PathFinderResult result = PF_UNFINISHED;
 
 	if (!_inProgress) {
 		// Following code only done during first call to method
@@ -3743,7 +3749,7 @@ bool PathFinder::process() {
 		// Flag starting/ending cells
 		*_pSrc = 1;
 		_destOccupied = *_pDest != 0;
-		_result = _destOccupied ? PF_DEST_OCCUPIED : PF_OK;
+		result = _destOccupied ? PF_DEST_OCCUPIED : PF_OK;
 		*_pDest = 0;
 
 		// Set up the current pointer, adjusting away from edges if necessary 
@@ -3778,7 +3784,7 @@ bool PathFinder::process() {
 				if (!returnFlag) {
 					processCell(&_layer[(_yChangeStart + _yCtr * _yChangeInc) * DECODED_PATHS_WIDTH +
 						(_xChangeStart + _xCtr * _xChangeInc)]);
-					if (breakFlag && (_countdownCtr <= 0)) return false;
+					if (breakFlag && (_countdownCtr <= 0)) return PF_UNFINISHED;
 				} else {
 					returnFlag = false;
 				}
@@ -3794,7 +3800,7 @@ bool PathFinder::process() {
 			// At least one cell populated, so go repeat loop
 			_cellPopulated = false;
 		} else {
-			_result = PF_NO_PATH;
+			result = PF_PART_PATH;
 			scanFlag = true;
 			break;
 		}
@@ -3819,9 +3825,8 @@ bool PathFinder::process() {
 		scanLine(ROOM_PATHS_HEIGHT - _destY, DECODED_PATHS_WIDTH, pTemp, v); 
 
 		if (pTemp == _pDest) {
-			_result = PF_NO_WALK;
 			clear();
-			return true;
+			return PF_NO_WALK;
 		}
 
 		_pDest = pTemp;
@@ -3837,6 +3842,9 @@ bool PathFinder::process() {
 	// walking steps in reverse order until source is reached
 	int stageCtr;
 	for (stageCtr = 0; stageCtr < 3; ++stageCtr) {
+		// Clear out any previously determined directions
+		clear();
+
 		altFlag = stageCtr == 1;
 		pCurrent = _pDest;
 
@@ -3898,14 +3906,11 @@ bool PathFinder::process() {
 		if ((stageCtr == 1) && (numSteps <= savedSteps))
 			// Less steps were needed, so break out
 			break;
-
-		// Clear out any previously determined directions
-		clear();
 	}
 
 	// Add a final move if necessary
 
-	if (_result == PF_OK) {
+	if (result == PF_OK) {
 		if (_xDestPos < 0) 
 			addBack(LEFT, -_xDestPos);
 		else if (_xDestPos > 0) 
@@ -3916,7 +3921,7 @@ final_step:
 	if (_xPos < 0) add(RIGHT, -_xPos);
 	else if (_xPos > 0) add(LEFT, _xPos);
 
-	return true;
+	return result;
 }
 
 void PathFinder::list(char *buffer) {
@@ -4039,39 +4044,45 @@ void PathFinder::initVars() {
 	if (_yDestCurrent >= (FULL_SCREEN_HEIGHT - MENUBAR_Y_SIZE))
 		_yDestCurrent = FULL_SCREEN_HEIGHT - MENUBAR_Y_SIZE - 1;
 
-	_result = PF_OK;
-
 	// Subtract an amount from the countdown counter to compensate for
 	// the time spent decompressing the walkable areas set for the room
 	_countdownCtr -= 700;
 }
 
 void PathFinder::saveToStream(Common::WriteStream *stream) {
-	// Note: current saving process only handles the PathFinder correctly
-	// if all pathfinding is done in one go (ie. multiple calls pathfinding
-	// isn't supported)
+	stream->writeByte(_inUse);
 
-	ManagedList<WalkingActionEntry *>::iterator i;
-	for (i = _list.begin(); i != _list.end(); ++i) {
-		WalkingActionEntry *entry = *i;
-		stream->writeByte(entry->direction());
-		stream->writeSint16LE(entry->rawSteps());
+	if (_inUse) {
+		// Save the path finding plane
+		stream->write(_layer, sizeof(RoomPathsDecompressedData));
+
+		// Save any active step sequence
+		ManagedList<WalkingActionEntry *>::iterator i;
+		for (i = _list.begin(); i != _list.end(); ++i) {
+			WalkingActionEntry *entry = *i;
+			stream->writeByte(entry->direction());
+			stream->writeSint16LE(entry->rawSteps());
+		}
+		stream->writeByte(0xff);
+		stream->writeSint16LE(_stepCtr);
 	}
-	stream->writeByte(0xff);
-	stream->writeByte(_result);
-	stream->writeSint16LE(_stepCtr);
 }
 
 void PathFinder::loadFromStream(Common::ReadStream *stream) {
 	_inProgress = false;
-	_list.clear();
-	uint8 direction;
-	while ((direction = stream->readByte()) != 0xff) {
-		int steps = stream->readSint16LE();
-		_list.push_back(new WalkingActionEntry((Direction) direction, steps));
+	_inUse = stream->readByte() != 0;
+
+	if (_inUse) {
+		stream->read(_layer, sizeof(RoomPathsDecompressedData));
+
+		_list.clear();
+		uint8 direction;
+		while ((direction = stream->readByte()) != 0xff) {
+			int steps = stream->readSint16LE();
+			_list.push_back(new WalkingActionEntry((Direction) direction, steps));
+		}
+		_stepCtr = stream->readSint16LE();
 	}
-	_result = (PathFinderResult)stream->readByte();
-	_stepCtr = stream->readSint16LE();
 }
 
 // Current action entry class methods

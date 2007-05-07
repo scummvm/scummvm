@@ -172,11 +172,12 @@ public:
 	int numSteps();
 };
 
-enum PathFinderResult {PF_OK, PF_DEST_OCCUPIED, PF_NO_PATH, PF_NO_WALK};
+enum PathFinderResult {PF_UNFINISHED, PF_OK, PF_DEST_OCCUPIED, PF_PART_PATH, PF_NO_WALK};
 
 class PathFinder {
 private:
 	Hotspot *_hotspot;
+	bool _inUse;
 	ManagedList<WalkingActionEntry *> _list;
 	RoomPathsDecompressedData _layer;
 	int _stepCtr;
@@ -189,7 +190,6 @@ private:
 	int16 _xDestCurrent, _yDestCurrent;
 	bool _destOccupied;
 	bool _cellPopulated;
-	PathFinderResult _result;
 	uint16 *_pSrc, *_pDest;
 	int _xChangeInc, _xChangeStart;
 	int _yChangeInc, _yChangeStart;
@@ -209,7 +209,7 @@ public:
 	PathFinder(Hotspot *h);
 	void clear();
 	void reset(RoomPathsData &src);
-	bool process();
+	PathFinderResult process();
 	void list(char *buffer);
 	void list() { list(NULL); }
 
@@ -217,7 +217,6 @@ public:
 	WalkingActionEntry &top() { return **_list.begin(); }
 	bool isEmpty() { return _list.empty(); }
 	int &stepCtr() { return _stepCtr; }
-	PathFinderResult result() { return _result; }
 
 	void saveToStream(Common::WriteStream *stream);
 	void loadFromStream(Common::ReadStream *stream);
