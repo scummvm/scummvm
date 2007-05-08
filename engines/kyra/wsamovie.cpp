@@ -50,8 +50,10 @@ int WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
 	_deltaBufferSize = READ_LE_UINT16(wsaData); wsaData += 2;
 	_offscreenBuffer = NULL;
 	_flags = 0;
-	if (_vm->gameFlags().useAltShapeHeader)
-		flags = READ_LE_UINT16(wsaData); wsaData += 2;
+	if (_vm->gameFlags().useAltShapeHeader) {
+		flags = READ_LE_UINT16(wsaData); 
+		wsaData += 2;
+	}
 	
 	uint32 offsPal = 0;
 	if (flags & 1) {
@@ -86,11 +88,13 @@ int WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
 	_frameOffsTable[0] = 0;
 	uint32 frameDataOffs = READ_LE_UINT32(wsaData); wsaData += 4;
 	bool firstFrame = true;
+
 	if (frameDataOffs == 0) {
 		firstFrame = false;
 		frameDataOffs = READ_LE_UINT32(wsaData);
 		_flags |= WF_NO_FIRST_FRAME;
 	}
+
 	for (int i = 1; i < _numFrames + 2; ++i) {
 		_frameOffsTable[i] = READ_LE_UINT32(wsaData) - frameDataOffs;
 		wsaData += 4;
