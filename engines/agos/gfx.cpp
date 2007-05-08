@@ -478,7 +478,7 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 				} while (--h);
 			} while (++w != state->draw_width);
 		}
-	} else if ((((_lockWord & 0x20) && state->palette == 0) || state->palette == 0xC0)) {
+	} else if (((_lockWord & 0x20) && state->palette == 0) || state->palette == 0xC0) {
 		const byte *src;
 		byte *dst;
 		uint h, i;
@@ -644,13 +644,10 @@ void AGOSEngine::drawImage(VC10_state *state) {
 			xoffs = (vlut[0] * 2 + state->x) * 8;
 			yoffs = vlut[1] + state->y;
 		//}
-	} else {
-		xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
-		yoffs = (vlut[1] - _videoWindows[17] + state->y);
 	}
 
-	state->surf2_addr += xoffs + yoffs * state->surf_pitch;
-	state->surf_addr += xoffs + yoffs * state->surf2_pitch;
+	state->surf_addr += xoffs + yoffs * state->surf_pitch;
+	state->surf2_addr += xoffs + yoffs * state->surf2_pitch;
 
 	if (state->flags & kDFUseFrontBuf) {
 		state->surf_addr = state->surf2_addr;
@@ -701,13 +698,17 @@ void AGOSEngine::drawImage(VC10_state *state) {
 		dst = state->surf_addr;
 		state->x_skip *= 4;
 
+		uint8 extraPal = 0;
+		if (getGameType() == GType_ELVIRA1 && (state->flags & kDFNonTrans) && yoffs > 133)
+			extraPal = 16;
+
 		do {
 			for (count = 0; count != state->draw_width; count++) {
 				byte color;
-				color = (src[count + state->x_skip] / 16);
+				color = (src[count + state->x_skip] / 16) + extraPal;
 				if ((state->flags & kDFNonTrans) || color)
 					dst[count * 2] = color | state->palette;
-				color = (src[count + state->x_skip] & 15);
+				color = (src[count + state->x_skip] & 15) + extraPal;
 				if ((state->flags & kDFNonTrans) || color)
 					dst[count * 2 + 1] = color | state->palette;
 			}
