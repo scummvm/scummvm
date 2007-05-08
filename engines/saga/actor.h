@@ -622,15 +622,19 @@ private:
 			(testPoint.y < 0) || (testPoint.y >= _yCellCount));
 	}
 	void setPathCell(const Point &testPoint, int8 value) {
+#ifdef ACTOR_DEBUG
 		if (!validPathCellPoint(testPoint)) {
 			error("Actor::setPathCell wrong point");
 		}
+#endif
 		_pathCell[testPoint.x + testPoint.y * _xCellCount] = value;
 	}
 	int8 getPathCell(const Point &testPoint) {
+#ifdef ACTOR_DEBUG
 		if (!validPathCellPoint(testPoint)) {
 			error("Actor::getPathCell wrong point");
 		}
+#endif
 		return _pathCell[testPoint.x + testPoint.y * _xCellCount];
 	}
 	bool scanPathLine(const Point &point1, const Point &point2);
