@@ -421,13 +421,13 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 			uint h = state->draw_height;
 			do {
 				for (uint i = 0; i != state->draw_width; i++) {
-					if ((getGameType() == GType_SIMON1) && getBitFlag(88)) {
+					if (getGameType() == GType_SIMON1 && getBitFlag(88)) {
 						/* transparency */
-						if (mask[i] & 1 && (dst[i] & 1) == 0x20)
+						if (mask[i] && (dst[i] & 16))
 							dst[i] = src[i];
 					} else {
 						/* no transparency */
-						if (mask[i] & 1)
+						if (mask[i])
 							dst[i] = src[i];
 					}
 				}
@@ -435,8 +435,7 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 				src += state->surf2_pitch;
 				mask += state->width * 16;
 			} while (--h);
-
-		} else {
+		} else if (state->flags & kDFCompressed) {
 			byte *mask, *src, *dst;
 			byte h;
 			uint w;
@@ -455,28 +454,57 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 
 				h = state->draw_height;
 				do {
-					if ((getGameType() == GType_SIMON1) && getBitFlag(88)) {
+					if (getGameType() == GType_SIMON1 && getBitFlag(88)) {
 						/* transparency */
-							if (mask[0] & 0xF0) {
-								if ((dst[0] & 0x0F0) == 0x20)
-									dst[0] = src[0];
-							}
-							if (mask[0] & 0x0F) {
-								if ((dst[1] & 0x0F0) == 0x20)
-									dst[1] = src[1];
-							}
+						if ((mask[0] & 0xF0) && (dst[0] & 0x0F0) == 0x20)
+							dst[0] = src[0];
+						if ((mask[0] & 0x0F) && (dst[1] & 0x0F0) == 0x20)
+							dst[1] = src[1];
 					} else {
 						/* no transparency */
-							if (mask[0] & 0xF0)
-								dst[0] = src[0];
-							if (mask[0] & 0x0F)
-								dst[1] = src[1];
+						if (mask[0] & 0xF0)
+							dst[0] = src[0];
+						if (mask[0] & 0x0F)
+							dst[1] = src[1];
 					}
 					mask++;
 					dst += state->surf_pitch;
 					src += state->surf2_pitch;
 				} while (--h);
 			} while (++w != state->draw_width);
+		} else {
+			const byte *src, *mask;
+			byte *dst;
+			uint count;
+
+			mask = state->srcPtr + (state->width * state->y_skip) * 8;
+			src = state->surf2_addr;
+			dst = state->surf_addr;
+
+			state->x_skip *= 4;
+
+			do {
+				for (count = 0; count != state->draw_width; count++) {
+					if (getGameType() == GType_SIMON1 && getBitFlag(88)) {
+						/* transparency */
+						if (mask[count + state->x_skip] & 0xF0)
+							if ((dst[count * 2] & 0xF0) == 0x20)
+								dst[count * 2] = src[count * 2];
+						if (mask[count + state->x_skip] & 0x0F)
+							if ((dst[count * 2 + 1] & 0x0F) == 0x20)
+								dst[count * 2 + 1] = src[count * 2 + 1];
+					} else {
+						/* no transparency */
+						if (mask[count + state->x_skip] & 0xF0)
+							dst[count * 2] = src[count * 2];
+						if (mask[count + state->x_skip] & 0x0F)
+							dst[count * 2 + 1] = src[count * 2 + 1];
+					}
+				}
+				src += _screenWidth;
+				dst += _screenWidth;
+				mask += state->width * 8;
+			} while (--state->draw_height);
 		}
 	} else if (((_lockWord & 0x20) && state->palette == 0) || state->palette == 0xC0) {
 		const byte *src;
