@@ -619,7 +619,7 @@ void AGOSEngine::drawImage(VC10_state *state) {
 	if (drawImage_clip(state) == 0)
 		return;
 
-	uint xoffs, yoffs;
+	uint xoffs = 0, yoffs = 0;
 	if (getGameType() == GType_ELVIRA1) {
 		//if (_windowNum != 2 && _windowNum != 3 && _windowNum != 6) {
 		//	xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
