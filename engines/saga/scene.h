@@ -34,6 +34,8 @@
 
 namespace Saga {
 
+//#define SCENE_DEBUG // for scene debugging
+
 #define SCENE_DOORS_MAX 16
 
 #define NO_CHAPTER_CHANGE -2
@@ -233,13 +235,55 @@ class Scene {
 
 	void getBGMaskInfo(int &width, int &height, byte *&buffer, size_t &bufferLength);
 	int isBGMaskPresent() { return _bgMask.loaded; }
-	int getBGMaskType(const Point &testPoint);
-	bool validBGMaskPoint(const Point &testPoint);
+
+	int getBGMaskType(const Point &testPoint) {
+		uint offset;
+		if (!_bgMask.loaded) {
+			return 0;
+		}
+		offset = testPoint.x + testPoint.y * _bgMask.w;
+
+		#ifdef SCENE_DEBUG
+		if (offset >= _bgMask.buf_len) {
+			error("Scene::getBGMaskType offset 0x%X exceed bufferLength 0x%X", offset, (int)_bgMask.buf_len);
+		}
+		#endif
+
+		return (_bgMask.buf[offset] >> 4) & 0x0f;
+	}
+
+	bool validBGMaskPoint(const Point &testPoint) {
+		#ifdef SCENE_DEBUG
+		if (!_bgMask.loaded) {
+			error("Scene::validBGMaskPoint _bgMask not loaded");
+		}
+		#endif
+
+		return !((testPoint.x < 0) || (testPoint.x >= _bgMask.w) ||
+			(testPoint.y < 0) || (testPoint.y >= _bgMask.h));
+	}
+
 	bool canWalk(const Point &testPoint);
 	bool offscreenPath(Point &testPoint);
 
-	void setDoorState(int doorNumber, int doorState);
-	int getDoorState(int doorNumber);
+	void setDoorState(int doorNumber, int doorState) {
+		#ifdef SCENE_DEBUG
+		if ((doorNumber < 0) || (doorNumber >= SCENE_DOORS_MAX))
+			error("Scene::setDoorState wrong doorNumber");
+		#endif
+
+		_sceneDoors[doorNumber] = doorState;
+	}
+
+	int getDoorState(int doorNumber) {
+		#ifdef SCENE_DEBUG
+		if ((doorNumber < 0) || (doorNumber >= SCENE_DOORS_MAX))
+			error("Scene::getDoorState wrong doorNumber");
+		#endif
+
+		return _sceneDoors[doorNumber];
+	}
+
 	void initDoorsState();
 
 	void getBGInfo(BGInfo &bgInfo);
@@ -257,9 +301,11 @@ class Scene {
 	bool isSceneLoaded() const { return _sceneLoaded; }
 
 	int getSceneResourceId(int sceneNumber) {
+	#ifdef SCENE_DEBUG
 		if ((sceneNumber < 0) || (sceneNumber >= _sceneCount)) {
  			error("getSceneResourceId: wrong sceneNumber %i", sceneNumber);
 		}
+	#endif
 		return _sceneLUT[sceneNumber];
 	}
 	int currentSceneNumber() const { return _sceneNumber; }

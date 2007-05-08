@@ -502,28 +502,6 @@ void Scene::getBGInfo(BGInfo &bgInfo) {
 	bgInfo.bounds.setHeight(_bg.h);
 }
 
-int Scene::getBGMaskType(const Point &testPoint) {
-	uint offset;
-	if (!_bgMask.loaded) {
-		return 0;
-	}
-	offset = testPoint.x + testPoint.y * _bgMask.w;
-	if (offset >= _bgMask.buf_len) {
-		error("Scene::getBGMaskType offset 0x%X exceed bufferLength 0x%X", offset, (int)_bgMask.buf_len);
-	}
-
-	return (_bgMask.buf[offset] >> 4) & 0x0f;
-}
-
-bool Scene::validBGMaskPoint(const Point &testPoint) {
-	if (!_bgMask.loaded) {
-		error("Scene::validBGMaskPoint _bgMask not loaded");
-	}
-
-	return !((testPoint.x < 0) || (testPoint.x >= _bgMask.w) ||
-		(testPoint.y < 0) || (testPoint.y >= _bgMask.h));
-}
-
 bool Scene::canWalk(const Point &testPoint) {
 	int maskType;
 
@@ -569,20 +547,6 @@ void Scene::getBGMaskInfo(int &width, int &height, byte *&buffer, size_t &buffer
 	height = _bgMask.h;
 	buffer = _bgMask.buf;
 	bufferLength = _bgMask.buf_len;
-}
-
-void Scene::setDoorState(int doorNumber, int doorState) {
-	if ((doorNumber < 0) || (doorNumber >= SCENE_DOORS_MAX))
-		error("Scene::setDoorState wrong doorNumber");
-
-	_sceneDoors[doorNumber] = doorState;
-}
-
-int Scene::getDoorState(int doorNumber) {
-	if ((doorNumber < 0) || (doorNumber >= SCENE_DOORS_MAX))
-		error("Scene::getDoorState wrong doorNumber");
-
-	return _sceneDoors[doorNumber];
 }
 
 void Scene::initDoorsState() {
