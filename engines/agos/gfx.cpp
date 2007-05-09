@@ -628,7 +628,7 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 	if (getFeatures() & GF_32COLOR)
 		state->palette = 0xC0;
 
-	uint16 xoffs, yoffs;
+	uint16 xoffs = 0, yoffs = 0;
 	if (!_oldDrawMethod) {
 		if (getGameType() == GType_SIMON1 && (_subroutine == 2923 || _subroutine == 2926)) {
 			// Allow one section of Simon the Sorcerer 1 introduction to be displayed
@@ -796,7 +796,7 @@ void AGOSEngine::drawImage(VC10_state *state) {
 	if (drawImage_clip(state) == 0)
 		return;
 
-	uint16 xoffs, yoffs;
+	uint16 xoffs = 0, yoffs = 0;
 	if (getGameType() == GType_WW) {
 		if (_windowNum == 4 || (_windowNum >= 10 && _windowNum <= 27)) {
 			state->surf_addr = _window4BackScn;
@@ -1302,8 +1302,8 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 		uint height = _videoWindows[updateWindow * 4 + 3];
 
 		byte *dst = getBackGround() + xoffs + yoffs * _screenWidth;
-		byte *src;
-		uint srcWidth;
+		byte *src = dst;
+		uint srcWidth = 0;
 
 		if (getGameType() == GType_SIMON2) {
 			src = _window4BackScn + xoffs + yoffs * 320;
