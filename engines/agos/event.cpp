@@ -123,6 +123,7 @@ void AGOSEngine::killAllTimers() {
 		next = cur->next;
 		delTimeEvent(cur);
 	}
+	_clickOnly = 0;
 }
 
 bool AGOSEngine::kickoffTimeEvents() {
@@ -164,31 +165,29 @@ bool AGOSEngine::isVgaQueueEmpty() {
 }
 
 void AGOSEngine::haltAnimation() {
-	VgaTimerEntry *vte = _vgaTimerList;
+	if (_lockWord & 0x10)
+		return;
 
 	_lockWord |= 0x10;
 
-	while (vte->delay) {
-		vte->delay += 10;
+	if (_updateScreen != false) {
+		updateScreen();
+		_updateScreen = false;
 	}
 }
 
 void AGOSEngine::restartAnimation() {
+	if (!(_lockWord & 0x10))
+		return;
+
+	updateScreen();
 	_lockWord &= ~0x10;
+
+	// Check picture queue
 }
 
 void AGOSEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum) {
 	VgaTimerEntry *vte;
-
-	// When Simon talks to the Golum about stew in French version of
-	// Simon the Sorcerer 1 the code_ptr is at wrong location for
-	// sprite 200. This  was a bug in the original game, which
-	// caused several glitches in this scene.
-	// We work around the problem by correcting the code_ptr for sprite
-	// 200 in this scene, if it is wrong.
-	if (getGameType() == GType_SIMON1 && _language == Common::FR_FRA &&
-		(code_ptr - _vgaBufferPointers[curZoneNum].vgaFile1 == 4) && (cur_sprite == 200) && (curZoneNum == 2))
-		code_ptr += 0x66;
 
 	_lockWord |= 1;
 

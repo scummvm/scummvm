@@ -703,12 +703,16 @@ void AGOSEngine_Feeble::windowNewLine(WindowBlock *window) {
 }
 
 void AGOSEngine::windowNewLine(WindowBlock *window) {
-	if (window->textRow != window->height)
-		window->textRow++;
-
 	window->textColumn = 0;
 	window->textColumnOffset = 0;
 	window->textLength = 0;
+
+	if (window->textRow == window->height) {
+		// TODO
+		debug(0, "Window Scroll");
+	} else {
+		window->textRow++;
+	}
 }
 
 #ifdef PALMOS_68K

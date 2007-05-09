@@ -123,6 +123,18 @@ void AGOSEngine::colorWindow(WindowBlock *window) {
 			dst += _screenWidth;
 		}
 	} else {
+		if (getGameType() == GType_ELVIRA2 && window->y == 146) {
+			if (window->fill_color == 1) {
+				_displayPalette[33 * 4 + 0] = 48 * 4;
+				_displayPalette[33 * 4 + 1] = 40 * 4;
+				_displayPalette[33 * 4 + 2] = 32 * 4;
+			} else {
+				_displayPalette[33 * 4 + 0] = 56 * 4;
+				_displayPalette[33 * 4 + 1] = 56 * 4;
+				_displayPalette[33 * 4 + 2] = 40 * 4;
+			}
+		}
+
 		dst = getFrontBuf() + _dxSurfacePitch * window->y + window->x * 8;
 		h = window->height * 8;
 		w = window->width * 8;
@@ -170,7 +182,7 @@ void AGOSEngine::restoreBlock(uint h, uint w, uint y, uint x) {
 	uint i;
 
 	dst = getFrontBuf();
-	src = _backGroundBuf;
+	src = getBackGround();
 
 	dst += y * _dxSurfacePitch;
 	src += y * _dxSurfacePitch;

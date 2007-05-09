@@ -110,7 +110,7 @@ void AGOSEngine::vc61() {
 
 	if (a == 6) {
 		src = _curVgaFile2 + 800;
-		dstPtr = getBackBuf();
+		dstPtr = getFrontBuf();
 		memcpy(dstPtr, src, 64000);
 		tmp = 4 - 1;
 	} else {
@@ -218,14 +218,21 @@ void AGOSEngine::vc62_fastFadeOut() {
 			}
 		}
 
-		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
-		// in lower half of screen
-		if ((getGameType() == GType_SIMON1) && (_subroutine == 2923 || _subroutine == 2926)) {
-			clearSurfaces(200);
-		} else if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		if (getGameType() == GType_FF || getGameType() == GType_PP) {
 			clearSurfaces(480);
+		} else if (getGameType() == GType_WW) {
+			memset(getFrontBuf(), 0, _screenWidth * _screenHeight);
+		} else if (!_oldDrawMethod) {
+			// Allow one section of Simon the Sorcerer 1 introduction to be displayed
+			// in lower half of screen
+			if ((getGameType() == GType_SIMON1) && (_subroutine == 2923 || _subroutine == 2926)) {
+				clearSurfaces(200);
+			} else {
+				clearSurfaces(_windowNum == 4 ? 134 : 200);
+			}
 		} else {
-			clearSurfaces(_windowNum == 4 ? 134 : 200);
+			if (_windowNum != 4)
+				memset(getFrontBuf(), 0, _screenWidth * _screenHeight);
 		}
 	}
 	if (getGameType() == GType_SIMON2) {

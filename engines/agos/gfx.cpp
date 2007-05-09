@@ -224,6 +224,70 @@ bool AGOSEngine::drawImage_clip(VC10_state *state) {
 	return 1;
 }
 
+void AGOSEngine_Feeble::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
+	Common::Rect srcRect, dstRect;
+	float factor, xscale;
+
+	srcRect.left = 0;
+	srcRect.top = 0;
+	srcRect.right = w;
+	srcRect.bottom = h;
+
+	if (scrollY > _baseY)
+		factor = 1 + ((scrollY - _baseY) * _scale);
+	else
+		factor = 1 - ((_baseY - scrollY) * _scale);
+
+	xscale = ((w * factor) / 2);
+
+	dstRect.left   = (int16)(x - xscale);
+	if (dstRect.left > _screenWidth - 1)
+		return;
+	dstRect.top    = (int16)(y - (h * factor));
+	if (dstRect.top > _screenHeight - 1)
+		return;
+
+	dstRect.right  = (int16)(x + xscale);
+	dstRect.bottom = y;
+
+	_feebleRect = dstRect;
+
+	_variableArray[20] = _feebleRect.top;
+	_variableArray[21] = _feebleRect.left;
+	_variableArray[22] = _feebleRect.bottom;
+	_variableArray[23] = _feebleRect.right;
+
+	debug(5, "Left %d Right %d Top %d Bottom %d", dstRect.left, dstRect.right, dstRect.top, dstRect.bottom);
+
+	// Unlike normal rectangles in ScummVM, it seems that in the case of
+	// the destination rectangle the bottom and right coordinates are
+	// considered to be inside the rectangle. For the source rectangle,
+	// I believe that they are not.
+
+	int scaledW = dstRect.width() + 1;
+	int scaledH = dstRect.height() + 1;
+
+	byte *src = getScaleBuf();
+	byte *dst = getBackBuf();
+
+	dst += _dxSurfacePitch * dstRect.top + dstRect.left;
+
+	for (int dstY = 0; dstY < scaledH; dstY++) {
+		if (dstRect.top + dstY >= 0 && dstRect.top + dstY < _screenHeight) {
+			int srcY = (dstY * h) / scaledH;
+			byte *srcPtr = src + _dxSurfacePitch * srcY;
+			byte *dstPtr = dst + _dxSurfacePitch * dstY;
+			for (int dstX = 0; dstX < scaledW; dstX++) {
+				if (dstRect.left + dstX >= 0 && dstRect.left + dstX < _screenWidth) {
+					int srcX = (dstX * w) / scaledW;
+					if (srcPtr[srcX])
+						dstPtr[dstX] = srcPtr[srcX];
+				}
+			}
+		}
+	}
+}
+
 void AGOSEngine_Feeble::drawImage(VC10_state *state) {
 	if (state->flags & kDFCompressed) {
 		if (state->flags & kDFScaled) {
@@ -387,6 +451,174 @@ void AGOSEngine_Feeble::drawImage(VC10_state *state) {
 	} 
 }
 
+void AGOSEngine_Simon1::drawMaskedImage(VC10_state *state) {
+	if (getFeatures() & GF_32COLOR) {
+		const byte *mask = state->srcPtr + (state->width * state->y_skip * 16) + (state->x_skip * 8);
+		byte *src = state->surf2_addr;
+		byte *dst = state->surf_addr;
+
+		state->draw_width *= 2;
+
+		uint h = state->draw_height;
+		do {
+			for (uint i = 0; i != state->draw_width; i++) {
+				if (getGameType() == GType_SIMON1 && getBitFlag(88)) {
+					/* transparency */
+					if (mask[i] && (dst[i] & 16))
+						dst[i] = src[i];
+				} else {
+					/* no transparency */
+					if (mask[i])
+						dst[i] = src[i];
+				}
+			}
+			dst += state->surf_pitch;
+			src += state->surf2_pitch;
+			mask += state->width * 16;
+		} while (--h);
+	} else if (state->flags & kDFCompressed) {
+		byte *mask, *src, *dst;
+		byte h;
+		uint w;
+
+		state->x_skip *= 4;
+		state->dl = state->width;
+		state->dh = state->height;
+
+		vc10_skip_cols(state);
+
+		w = 0;
+		do {
+			mask = vc10_depackColumn(state);	/* esi */
+			src = state->surf2_addr + w * 2;	/* ebx */
+			dst = state->surf_addr + w * 2;		/* edi */
+
+			h = state->draw_height;
+			do {
+				if (getGameType() == GType_SIMON1 && getBitFlag(88)) {
+					/* transparency */
+					if ((mask[0] & 0xF0) && (dst[0] & 0x0F0) == 0x20)
+						dst[0] = src[0];
+					if ((mask[0] & 0x0F) && (dst[1] & 0x0F0) == 0x20)
+						dst[1] = src[1];
+				} else {	
+					/* no transparency */
+					if (mask[0] & 0xF0)
+						dst[0] = src[0];
+					if (mask[0] & 0x0F)
+						dst[1] = src[1];
+				}
+				mask++;
+				dst += state->surf_pitch;
+				src += state->surf2_pitch;
+			} while (--h);
+		} while (++w != state->draw_width);
+	} else {
+		const byte *src, *mask;
+		byte *dst;
+		uint count;
+
+		mask = state->srcPtr + (state->width * state->y_skip) * 8;
+		src = state->surf2_addr;
+		dst = state->surf_addr;
+
+		state->x_skip *= 4;
+
+		do {
+			for (count = 0; count != state->draw_width; count++) {
+				if (getGameType() == GType_SIMON1 && getBitFlag(88)) {
+					/* transparency */
+					if (mask[count + state->x_skip] & 0xF0)
+						if ((dst[count * 2] & 0xF0) == 0x20)
+							dst[count * 2] = src[count * 2];
+					if (mask[count + state->x_skip] & 0x0F)
+						if ((dst[count * 2 + 1] & 0x0F) == 0x20)
+							dst[count * 2 + 1] = src[count * 2 + 1];
+				} else {
+					/* no transparency */
+					if (mask[count + state->x_skip] & 0xF0)
+						dst[count * 2] = src[count * 2];
+					if (mask[count + state->x_skip] & 0x0F)
+						dst[count * 2 + 1] = src[count * 2 + 1];
+				}
+			}
+			src += _screenWidth;
+			dst += _screenWidth;
+			mask += state->width * 8;
+		} while (--state->draw_height);
+	}
+}
+
+void AGOSEngine_Simon1::draw32ColorImage(VC10_state *state) {
+	const byte *src;
+	byte *dst;
+	uint h, i;
+
+	if (state->flags & kDFCompressed) {
+		byte *dstPtr = state->surf_addr;
+		src = state->srcPtr;
+		/* AAAAAAAA BBBBBBBB CCCCCCCC DDDDDDDD EEEEEEEE
+		 * aaaaabbb bbcccccd ddddeeee efffffgg ggghhhhh
+		 */
+
+		do {
+			uint count = state->draw_width / 4;
+
+			dst = dstPtr;
+			do {
+				uint32 bits = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | (src[3]);
+				byte color;
+
+				color = (byte)((bits >> (32 - 5)) & 31);
+				if ((state->flags & kDFNonTrans) || color)
+					dst[0] = color;
+				color = (byte)((bits >> (32 - 10)) & 31);
+				if ((state->flags & kDFNonTrans) || color)
+					dst[1] = color;
+				color = (byte)((bits >> (32 - 15)) & 31);
+				if ((state->flags & kDFNonTrans) || color)
+					dst[2] = color;
+				color = (byte)((bits >> (32 - 20)) & 31);
+				if ((state->flags & kDFNonTrans) || color)
+					dst[3] = color;
+				color = (byte)((bits >> (32 - 25)) & 31);
+				if ((state->flags & kDFNonTrans) || color)
+					dst[4] = color;
+				color = (byte)((bits >> (32 - 30)) & 31);
+				if ((state->flags & kDFNonTrans) || color)
+					dst[5] = color;
+
+				bits = (bits << 8) | src[4];
+
+				color = (byte)((bits >> (40 - 35)) & 31);
+				if ((state->flags & kDFNonTrans) || color)
+					dst[6] = color;
+				color = (byte)((bits) & 31);
+				if ((state->flags & kDFNonTrans) || color)
+					dst[7] = color;
+
+				dst += 8;
+				src += 5;
+			} while (--count);
+			dstPtr += _screenWidth;
+		} while (--state->draw_height);
+	} else {
+		src = state->srcPtr + (state->width * state->y_skip * 16) + (state->x_skip * 8);
+		dst = state->surf_addr;
+
+		state->draw_width *= 2;
+
+		h = state->draw_height;
+		do {
+			for (i = 0; i != state->draw_width; i++)
+				if ((state->flags & kDFNonTrans) || src[i])
+					dst[i] = src[i];
+			dst += _screenWidth;
+			src += state->width * 16;
+		} while (--h);
+	}
+}
+
 void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 	const uint16 *vlut = &_videoWindows[_windowNum * 4];
 
@@ -396,294 +628,107 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 	if (getFeatures() & GF_32COLOR)
 		state->palette = 0xC0;
 
-	uint xoffs, yoffs;
-	if (getGameType() == GType_SIMON1 && (_subroutine == 2923 || _subroutine == 2926)) {
-		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
-		// in lower half of screen
-		xoffs = state->x * 8;
-		yoffs = state->y;
-	} else {
+	uint16 xoffs, yoffs;
+	if (!_oldDrawMethod) {
+		if (getGameType() == GType_SIMON1 && (_subroutine == 2923 || _subroutine == 2926)) {
+			// Allow one section of Simon the Sorcerer 1 introduction to be displayed
+			// in lower half of screen
+			xoffs = state->x * 8;
+			yoffs = state->y;
+		} else {
+			xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
+			yoffs = (vlut[1] - _videoWindows[17] + state->y);
+		}
+	} else if (getGameType() == GType_SIMON2) {
+		state->surf2_addr = getBackGround();
+		state->surf2_pitch = _screenWidth;
+
+		state->surf_addr = _window4BackScn;
+		state->surf_pitch = _screenWidth;
+
 		xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
 		yoffs = (vlut[1] - _videoWindows[17] + state->y);
-	}
 
-	state->surf2_addr += xoffs + yoffs * state->surf_pitch;
-	state->surf_addr += xoffs + yoffs * state->surf2_pitch;
+		uint xmax = (xoffs + state->draw_width * 2);
+		uint ymax = (yoffs + state->draw_height);
+		setMoveRect(xoffs, yoffs, xmax, ymax);
 
-	if (state->flags & kDFMasked) {
-		if (getFeatures() & GF_32COLOR) {
-			const byte *mask = state->srcPtr + (state->width * state->y_skip * 16) + (state->x_skip * 8);
-			byte *src = state->surf2_addr;
-			byte *dst = state->surf_addr;
+		_window4Flag = 1;
+	} else if (getGameType() == GType_SIMON1) {
+		if (_windowNum == 3 || _windowNum == 4 || _windowNum >= 10) {
+			if (_windowNum == 3) {
+				state->surf2_addr = getBackGround();
+				state->surf2_pitch = _screenWidth;
 
-			state->draw_width *= 2;
+				state->surf_addr = getBackGround();
+				state->surf_pitch = _screenWidth;
+			} else {
+				state->surf2_addr = getBackGround();
+				state->surf2_pitch = _screenWidth;
 
-			uint h = state->draw_height;
-			do {
-				for (uint i = 0; i != state->draw_width; i++) {
-					if (getGameType() == GType_SIMON1 && getBitFlag(88)) {
-						/* transparency */
-						if (mask[i] && (dst[i] & 16))
-							dst[i] = src[i];
-					} else {
-						/* no transparency */
-						if (mask[i])
-							dst[i] = src[i];
-					}
-				}
-				dst += state->surf_pitch;
-				src += state->surf2_pitch;
-				mask += state->width * 16;
-			} while (--h);
-		} else if (state->flags & kDFCompressed) {
-			byte *mask, *src, *dst;
-			byte h;
-			uint w;
-
-			state->x_skip *= 4;
-			state->dl = state->width;
-			state->dh = state->height;
-
-			vc10_skip_cols(state);
-
-			w = 0;
-			do {
-				mask = vc10_depackColumn(state);	/* esi */
-				src = state->surf2_addr + w * 2;	/* ebx */
-				dst = state->surf_addr + w * 2;		/* edi */
-
-				h = state->draw_height;
-				do {
-					if (getGameType() == GType_SIMON1 && getBitFlag(88)) {
-						/* transparency */
-						if ((mask[0] & 0xF0) && (dst[0] & 0x0F0) == 0x20)
-							dst[0] = src[0];
-						if ((mask[0] & 0x0F) && (dst[1] & 0x0F0) == 0x20)
-							dst[1] = src[1];
-					} else {
-						/* no transparency */
-						if (mask[0] & 0xF0)
-							dst[0] = src[0];
-						if (mask[0] & 0x0F)
-							dst[1] = src[1];
-					}
-					mask++;
-					dst += state->surf_pitch;
-					src += state->surf2_pitch;
-				} while (--h);
-			} while (++w != state->draw_width);
-		} else {
-			const byte *src, *mask;
-			byte *dst;
-			uint count;
-
-			mask = state->srcPtr + (state->width * state->y_skip) * 8;
-			src = state->surf2_addr;
-			dst = state->surf_addr;
-
-			state->x_skip *= 4;
-
-			do {
-				for (count = 0; count != state->draw_width; count++) {
-					if (getGameType() == GType_SIMON1 && getBitFlag(88)) {
-						/* transparency */
-						if (mask[count + state->x_skip] & 0xF0)
-							if ((dst[count * 2] & 0xF0) == 0x20)
-								dst[count * 2] = src[count * 2];
-						if (mask[count + state->x_skip] & 0x0F)
-							if ((dst[count * 2 + 1] & 0x0F) == 0x20)
-								dst[count * 2 + 1] = src[count * 2 + 1];
-					} else {
-						/* no transparency */
-						if (mask[count + state->x_skip] & 0xF0)
-							dst[count * 2] = src[count * 2];
-						if (mask[count + state->x_skip] & 0x0F)
-							dst[count * 2 + 1] = src[count * 2 + 1];
-					}
-				}
-				src += _screenWidth;
-				dst += _screenWidth;
-				mask += state->width * 8;
-			} while (--state->draw_height);
-		}
-	} else if (((_lockWord & 0x20) && state->palette == 0) || state->palette == 0xC0) {
-		const byte *src;
-		byte *dst;
-		uint h, i;
-
-		if (state->flags & kDFCompressed) {
-			byte *dstPtr = state->surf_addr;
-			src = state->srcPtr;
-			/* AAAAAAAA BBBBBBBB CCCCCCCC DDDDDDDD EEEEEEEE
-			 * aaaaabbb bbcccccd ddddeeee efffffgg ggghhhhh
-			 */
-
-			do {
-				uint count = state->draw_width / 4;
-
-				dst = dstPtr;
-				do {
-					uint32 bits = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | (src[3]);
-					byte color;
-
-					color = (byte)((bits >> (32 - 5)) & 31);
-					if ((state->flags & kDFNonTrans) || color)
-						dst[0] = color;
-					color = (byte)((bits >> (32 - 10)) & 31);
-					if ((state->flags & kDFNonTrans) || color)
-						dst[1] = color;
-					color = (byte)((bits >> (32 - 15)) & 31);
-					if ((state->flags & kDFNonTrans) || color)
-						dst[2] = color;
-					color = (byte)((bits >> (32 - 20)) & 31);
-					if ((state->flags & kDFNonTrans) || color)
-						dst[3] = color;
-					color = (byte)((bits >> (32 - 25)) & 31);
-					if ((state->flags & kDFNonTrans) || color)
-						dst[4] = color;
-					color = (byte)((bits >> (32 - 30)) & 31);
-					if ((state->flags & kDFNonTrans) || color)
-						dst[5] = color;
-
-					bits = (bits << 8) | src[4];
-
-					color = (byte)((bits >> (40 - 35)) & 31);
-					if ((state->flags & kDFNonTrans) || color)
-						dst[6] = color;
-					color = (byte)((bits) & 31);
-					if ((state->flags & kDFNonTrans) || color)
-						dst[7] = color;
-
-					dst += 8;
-					src += 5;
-				} while (--count);
-				dstPtr += _screenWidth;
-			} while (--state->draw_height);
-		} else {
-			src = state->srcPtr + (state->width * state->y_skip * 16) + (state->x_skip * 8);
-			dst = state->surf_addr;
-
-			state->draw_width *= 2;
-
-			h = state->draw_height;
-			do {
-				for (i = 0; i != state->draw_width; i++)
-					if ((state->flags & kDFNonTrans) || src[i])
-						dst[i] = src[i];
-				dst += _screenWidth;
-				src += state->width * 16;
-			} while (--h);
-		}
-	} else {
-		if (getGameType() == GType_SIMON2 && state->flags & kDFUseFrontBuf && getBitFlag(171)) {
-			state->surf_addr = state->surf2_addr;
-			state->surf_pitch = state->surf2_pitch;
-		}
-
-		if (state->flags & kDFCompressed) {
-			uint w, h;
-			byte *src, *dst, *dstPtr;
-
-			state->x_skip *= 4;				/* reached */
-
-			state->dl = state->width;
-			state->dh = state->height;
-
-			vc10_skip_cols(state);
-
-			dstPtr = state->surf_addr;
-			if (!(state->flags & kDFNonTrans) && (state->flags & 0x40)) { /* reached */
-				dstPtr += vcReadVar(252);
+				state->surf_addr = _window4BackScn;
+				state->surf_pitch = _screenWidth;
 			}
-			w = 0;
-			do {
-				byte color;
 
-				src = vc10_depackColumn(state);
-				dst = dstPtr;
+			xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
+			yoffs = (vlut[1] - _videoWindows[17] + state->y);
 
-				h = 0;
-				do {
-					color = (*src / 16);
-					if ((state->flags & kDFNonTrans) || color != 0)
-						dst[0] = color | state->palette;
-					color = (*src & 15);
-					if ((state->flags & kDFNonTrans) || color != 0)
-						dst[1] = color | state->palette;
-					dst += _screenWidth;
-					src++;
-				} while (++h != state->draw_height);
-				dstPtr += 2;
-			} while (++w != state->draw_width);
+			uint xmax = (xoffs + state->draw_width * 2);
+			uint ymax = (yoffs + state->draw_height);
+			setMoveRect(xoffs, yoffs, xmax, ymax);
+
+			_window4Flag = 1;
 		} else {
-			const byte *src;
-			byte *dst;
-			uint count;
+			state->surf2_addr = getBackGround();
+			state->surf2_pitch = _screenWidth;
 
-			src = state->srcPtr + (state->width * state->y_skip) * 8;
-			dst = state->surf_addr;
-			state->x_skip *= 4;
+			state->surf_addr = getFrontBuf();
+			state->surf_pitch = _screenWidth;
 
-			do {
-				for (count = 0; count != state->draw_width; count++) {
-					byte color;
-					color = (src[count + state->x_skip] / 16);
-					if ((state->flags & kDFNonTrans) || color)
-						dst[count * 2] = color | state->palette;
-					color = (src[count + state->x_skip] & 15);
-					if ((state->flags & kDFNonTrans) || color)
-						dst[count * 2 + 1] = color | state->palette;
-				}
-				dst += _screenWidth;
-				src += state->width * 8;
-			} while (--state->draw_height);
+			xoffs = (vlut[0] * 2 + state->x) * 8;
+			yoffs = vlut[1] + state->y;
 		}
-	}
-}
-
-void AGOSEngine::drawImage(VC10_state *state) {
-	const uint16 *vlut = &_videoWindows[_windowNum * 4];
-
-	if (drawImage_clip(state) == 0)
-		return;
-
-	uint xoffs = 0, yoffs = 0;
-	if (getGameType() == GType_ELVIRA1) {
-		//if (_windowNum != 2 && _windowNum != 3 && _windowNum != 6) {
-		//	xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
-		//	yoffs = (vlut[1] - _videoWindows[17] + state->y);
-		//} else {
-			xoffs = (vlut[0] * 2 + state->x) * 8;
-			yoffs = vlut[1] + state->y;
-		//}
-	} else if (getGameType() == GType_ELVIRA2) {
-		//if (_windowNum == 4 || _windowNum >= 10) {
-		//	xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
-		//	yoffs = (vlut[1] - _videoWindows[17] + state->y);
-		//} else {
-			xoffs = (vlut[0] * 2 + state->x) * 8;
-			yoffs = vlut[1] + state->y;
-		//}
-	} else if (getGameType() == GType_WW) {
-		//if (_windowNum == 4 || (_windowNum >= 10 && _windowNum < 28)) {
-		//	xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
-		//	yoffs = (vlut[1] - _videoWindows[17] + state->y);
-		//} else {
-			xoffs = (vlut[0] * 2 + state->x) * 8;
-			yoffs = vlut[1] + state->y;
-		//}
 	}
 
 	state->surf_addr += xoffs + yoffs * state->surf_pitch;
 	state->surf2_addr += xoffs + yoffs * state->surf2_pitch;
 
-	if (state->flags & kDFUseFrontBuf) {
+	if (_backFlag == 1) {
+		drawBackGroundImage(state);
+	} else if (state->flags & kDFMasked) {
+		drawMaskedImage(state);
+	} else if (((_lockWord & 0x20) && state->palette == 0) || state->palette == 0xC0) {
+		draw32ColorImage(state);
+	} else {
+		drawVertImage(state);
+	}
+}
+
+void AGOSEngine::drawBackGroundImage(VC10_state *state) {
+	const byte *src;
+	byte *dst;
+	uint h, i;
+
+	src = state->srcPtr + (_screenWidth * state->y_skip) + (state->x_skip * 8);
+	dst = state->surf_addr;
+
+	state->draw_width *= 2;
+
+	h = state->draw_height;
+	do {
+		for (i = 0; i != state->draw_width; i++)
+			dst[i] = src[i] + state->paletteMod;
+		dst += state->surf_pitch;
+		src += _screenWidth;
+	} while (--h);
+}
+
+void AGOSEngine::drawVertImage(VC10_state *state) {
+	if (getGameType() == GType_SIMON2 && (state->flags & kDFUseFrontBuf) && getBitFlag(171) &&
+		!_oldDrawMethod) {
 		state->surf_addr = state->surf2_addr;
 		state->surf_pitch = state->surf2_pitch;
 	}
-
-	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
-		state->palette = state->surf_addr[0] & 0xF0;
 
 	if (state->flags & kDFCompressed) {
 		uint w, h;
@@ -697,6 +742,9 @@ void AGOSEngine::drawImage(VC10_state *state) {
 		vc10_skip_cols(state);
 
 		dstPtr = state->surf_addr;
+		if (!(state->flags & kDFNonTrans) && (state->flags & 0x40)) { /* reached */
+			dstPtr += vcReadVar(252);
+		}
 		w = 0;
 		do {
 			byte color;
@@ -712,7 +760,7 @@ void AGOSEngine::drawImage(VC10_state *state) {
 				color = (*src & 15);
 				if ((state->flags & kDFNonTrans) || color != 0)
 					dst[1] = color | state->palette;
-				dst += _screenWidth;
+				dst += state->surf_pitch;
 				src++;
 			} while (++h != state->draw_height);
 			dstPtr += 2;
@@ -726,26 +774,112 @@ void AGOSEngine::drawImage(VC10_state *state) {
 		dst = state->surf_addr;
 		state->x_skip *= 4;
 
-		uint8 extraPal = 0;
-		if (getGameType() == GType_ELVIRA1 && (state->flags & kDFNonTrans) && yoffs > 133)
-			extraPal = 16;
-
 		do {
 			for (count = 0; count != state->draw_width; count++) {
 				byte color;
-				color = (src[count + state->x_skip] / 16) + extraPal;
+				color = (src[count + state->x_skip] / 16) + state->paletteMod;
 				if ((state->flags & kDFNonTrans) || color)
 					dst[count * 2] = color | state->palette;
-				color = (src[count + state->x_skip] & 15) + extraPal;
+				color = (src[count + state->x_skip] & 15) + state->paletteMod;
 				if ((state->flags & kDFNonTrans) || color)
 					dst[count * 2 + 1] = color | state->palette;
 			}
-			dst += _screenWidth;
+			dst += state->surf_pitch;
 			src += state->width * 8;
 		} while (--state->draw_height);
 	}
 }
 
+void AGOSEngine::drawImage(VC10_state *state) {
+	const uint16 *vlut = &_videoWindows[_windowNum * 4];
+
+	if (drawImage_clip(state) == 0)
+		return;
+
+	uint16 xoffs, yoffs;
+	if (getGameType() == GType_WW) {
+		if (_windowNum == 4 || (_windowNum >= 10 && _windowNum <= 27)) {
+			state->surf_addr = _window4BackScn;
+			state->surf_pitch = _videoWindows[18] * 16;
+
+			xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
+			yoffs = (vlut[1] - _videoWindows[17] + state->y);
+
+			uint xmax = (xoffs + state->draw_width * 2);
+			uint ymax = (yoffs + state->draw_height);
+			setMoveRect(xoffs, yoffs, xmax, ymax);
+
+			_window4Flag = 1;
+		} else {
+			state->surf_addr = getFrontBuf();
+			state->surf_pitch = _screenWidth;
+
+			xoffs = (vlut[0] * 2 + state->x) * 8;
+			yoffs = vlut[1] + state->y;
+		}
+	} else if (getGameType() == GType_ELVIRA2) {
+		if (_windowNum == 4 || _windowNum >= 10) {
+			state->surf_addr = _window4BackScn;
+			state->surf_pitch = _videoWindows[18] * 16;
+
+			xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
+			yoffs = (vlut[1] - _videoWindows[17] + state->y);
+
+			uint xmax = (xoffs + state->draw_width * 2);
+			uint ymax = (yoffs + state->draw_height);
+			setMoveRect(xoffs, yoffs, xmax, ymax);
+
+			_window4Flag = 1;
+		} else {
+			state->surf_addr = getFrontBuf();
+			state->surf_pitch = _screenWidth;
+
+			xoffs = (vlut[0] * 2 + state->x) * 8;
+			yoffs = vlut[1] + state->y;
+		}
+	} else if (getGameType() == GType_ELVIRA1) {
+		if (_windowNum == 6) {
+			state->surf_addr = _window6BackScn;
+			state->surf_pitch = 48;	
+
+			xoffs = state->x * 8;
+			yoffs = state->y;
+		} else if (_windowNum == 2 || _windowNum == 3) {
+			state->surf_addr = getFrontBuf();
+			state->surf_pitch = _screenWidth;
+
+			xoffs = (vlut[0] * 2 + state->x) * 8;
+			yoffs = vlut[1] + state->y;
+
+		} else {
+			state->surf_addr = _window4BackScn;
+			state->surf_pitch = _videoWindows[18] * 16;
+
+			xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
+			yoffs = (vlut[1] - _videoWindows[17] + state->y);
+
+			uint xmax = (xoffs + state->draw_width * 2);
+			uint ymax = (yoffs + state->draw_height);
+			setMoveRect(xoffs, yoffs, xmax, ymax);
+
+			_window4Flag = 1;
+		}
+	}
+
+	state->surf_addr += xoffs + yoffs * state->surf_pitch;
+
+	if (getGameType() == GType_ELVIRA1 && (state->flags & kDFNonTrans) && yoffs > 133)
+		state->paletteMod = 16;
+
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
+		state->palette = state->surf_addr[0] & 0xF0;
+
+	if (_backFlag == 1) {
+		drawBackGroundImage(state);
+	} else {
+		drawVertImage(state);
+	}
+}
 
 void AGOSEngine::horizontalScroll(VC10_state *state) {
 	const byte *src;
@@ -766,7 +900,11 @@ void AGOSEngine::horizontalScroll(VC10_state *state) {
 
 	vcWriteVar(251, _scrollX);
 
-	dst = getBackBuf();
+	if (!_oldDrawMethod) {
+		dst = getBackBuf();
+	} else {
+		dst = _window4BackScn;
+	}
 
 	if (getGameType() == GType_FF)
 		src = state->srcPtr + _scrollX / 2;
@@ -778,6 +916,10 @@ void AGOSEngine::horizontalScroll(VC10_state *state) {
 		dst += 8;
 		src += 4;
 	}
+
+	setMoveRect(0, 0, 320, _scrollHeight);
+
+	_window4Flag = 1;
 }
 
 void AGOSEngine::verticalScroll(VC10_state *state) {
@@ -803,70 +945,6 @@ void AGOSEngine::verticalScroll(VC10_state *state) {
 		decodeRow(dst, src + READ_LE_UINT32(src), state->width);
 		dst += 8 * state->width;
 		src += 4;
-	}
-}
-
-void AGOSEngine_Feeble::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
-	Common::Rect srcRect, dstRect;
-	float factor, xscale;
-
-	srcRect.left = 0;
-	srcRect.top = 0;
-	srcRect.right = w;
-	srcRect.bottom = h;
-
-	if (scrollY > _baseY)
-		factor = 1 + ((scrollY - _baseY) * _scale);
-	else
-		factor = 1 - ((_baseY - scrollY) * _scale);
-
-	xscale = ((w * factor) / 2);
-
-	dstRect.left   = (int16)(x - xscale);
-	if (dstRect.left > _screenWidth - 1)
-		return;
-	dstRect.top    = (int16)(y - (h * factor));
-	if (dstRect.top > _screenHeight - 1)
-		return;
-
-	dstRect.right  = (int16)(x + xscale);
-	dstRect.bottom = y;
-
-	_feebleRect = dstRect;
-
-	_variableArray[20] = _feebleRect.top;
-	_variableArray[21] = _feebleRect.left;
-	_variableArray[22] = _feebleRect.bottom;
-	_variableArray[23] = _feebleRect.right;
-
-	debug(5, "Left %d Right %d Top %d Bottom %d", dstRect.left, dstRect.right, dstRect.top, dstRect.bottom);
-
-	// Unlike normal rectangles in ScummVM, it seems that in the case of
-	// the destination rectangle the bottom and right coordinates are
-	// considered to be inside the rectangle. For the source rectangle,
-	// I believe that they are not.
-
-	int scaledW = dstRect.width() + 1;
-	int scaledH = dstRect.height() + 1;
-
-	byte *src = getScaleBuf();
-	byte *dst = getBackBuf();
-
-	dst += _dxSurfacePitch * dstRect.top + dstRect.left;
-
-	for (int dstY = 0; dstY < scaledH; dstY++) {
-		if (dstRect.top + dstY >= 0 && dstRect.top + dstY < _screenHeight) {
-			int srcY = (dstY * h) / scaledH;
-			byte *srcPtr = src + _dxSurfacePitch * srcY;
-			byte *dstPtr = dst + _dxSurfacePitch * dstY;
-			for (int dstX = 0; dstX < scaledW; dstX++) {
-				if (dstRect.left + dstX >= 0 && dstRect.left + dstX < _screenWidth) {
-					int srcX = (dstX * w) / scaledW;
-					if (srcPtr[srcX])
-						dstPtr[dstX] = srcPtr[srcX];
-				}
-			}
-		}
 	}
 }
 
@@ -1074,6 +1152,9 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool vgaScript) {
 			b += sizeof(ImageHeader_Simon);
 		}
 		assert(READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == vga_res_id);
+
+		if (!vgaScript && _oldDrawMethod)
+			clearVideoWindow(_windowNum, READ_BE_UINT16(&((ImageHeader_Simon *) b)->color));
 	} else {
 		b = bb + READ_BE_UINT16(bb + 10);
 		b += 20;
@@ -1089,7 +1170,7 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool vgaScript) {
 		assert(READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == vga_res_id);
 
 		if (!vgaScript)
-			clearWindow(_windowNum, READ_BE_UINT16(&((ImageHeader_WW *) b)->color));
+			clearVideoWindow(_windowNum, READ_BE_UINT16(&((ImageHeader_WW *) b)->color));
 	}
 
 	if (_startVgaScript) {
@@ -1117,6 +1198,8 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool vgaScript) {
 }
 
 void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vga_res) {
+	_window3Flag = 0;
+
 	if (mode == 4) {
 		vc29_stopAllSounds();
 
@@ -1151,10 +1234,10 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 		vc27_resetSprite();
 	}
 
-	if (vga_res_id == 0) {
+	if (!vga_res_id) {
 		if (getGameType() == GType_SIMON1) {
 			_unkPalFlag = true;
-		} else if (getGameType() == GType_SIMON2) {
+		} else if (getGameType() == GType_SIMON2 && !_oldDrawMethod) {
 			_useBackGround = true;
 			_restoreWindow6 = true;
 		}
@@ -1187,7 +1270,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 		fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
 		fillBackGroundFromBack(_screenHeight);
 		_syncFlag2 = 1;
-	} else if (getGameType() == GType_SIMON2) {
+	} else if (getGameType() == GType_SIMON2 && !_oldDrawMethod) { 
 		if (!_useBackGround) {
 			num_lines = _windowNum == 4 ? 134 : 200;
 			_boxStarHeight = num_lines;
@@ -1196,7 +1279,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 			_syncFlag2 = 1;
 		}
 		_useBackGround = false;
-	} else if (getGameType() == GType_SIMON1) {
+	} else if (getGameType() == GType_SIMON1 && !_oldDrawMethod) {
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
 		// in lower half of screen
 		if (_subroutine == 2923 || _subroutine == 2926)
@@ -1209,21 +1292,90 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 		_syncFlag2 = 1;
 		_timer5 = 0;
 	} else {
-		num_lines = _windowNum == 4 ? 134 : 200;
-		fillFrontFromBack(0, 0, _screenWidth, num_lines);
-		fillBackGroundFromBack(num_lines);
+		if (_window3Flag == 1) {
+			clearVideoBackGround(3, 0); // (window, color)
+		}
+
+		uint xoffs = _videoWindows[updateWindow * 4 + 0] * 16;
+		uint yoffs = _videoWindows[updateWindow * 4 + 1];
+		uint width = _videoWindows[updateWindow * 4 + 2] * 16;
+		uint height = _videoWindows[updateWindow * 4 + 3];
+
+		byte *dst = getBackGround() + xoffs + yoffs * _screenWidth;
+		byte *src;
+		uint srcWidth;
+
+		if (getGameType() == GType_SIMON2) {
+			src = _window4BackScn + xoffs + yoffs * 320;
+			srcWidth = 320;
+		} else if (getGameType() == GType_SIMON1) {
+			if (updateWindow == 4) {
+				src = _window4BackScn;
+				srcWidth = _videoWindows[18] * 16;
+			} else if (updateWindow >= 10) {
+				src = _window4BackScn + xoffs + yoffs * 320;
+				srcWidth = _videoWindows[18] * 16;
+			} else if (updateWindow == 0) {
+				src = getFrontBuf() + xoffs + yoffs * _screenWidth;
+				srcWidth = _screenWidth;
+			} else {
+				_lockWord &= ~0x20;
+				return;
+			}
+		} else if (getGameType() == GType_WW) {
+			if (updateWindow == 4 || updateWindow >= 10) {
+				src = _window4BackScn;
+				srcWidth = _videoWindows[18] * 16;
+			} else if (updateWindow == 3 || updateWindow == 9) {
+				src = getFrontBuf() + xoffs + yoffs * _screenWidth;
+				srcWidth = _screenWidth;
+			} else {
+				_lockWord &= ~0x20;
+				return;
+			}
+		} else if (getGameType() == GType_ELVIRA2) {
+			if (updateWindow == 4 || updateWindow >= 10) {
+				src = _window4BackScn;
+				srcWidth = _videoWindows[18] * 16;
+			} else if (updateWindow == 3) {
+				src = getFrontBuf() + xoffs + yoffs * _screenWidth;
+				srcWidth = _screenWidth;
+			} else {
+				_lockWord &= ~0x20;
+				return;
+			}
+		} else if (getGameType() == GType_ELVIRA1) {
+			if (updateWindow == 6) {
+				_window6Flag = 1;
+				src = _window6BackScn;
+				srcWidth = 48;
+			} else if (updateWindow == 2 || updateWindow == 3) {
+				src = getFrontBuf() + xoffs + yoffs * _screenWidth;
+				srcWidth = _screenWidth;
+			} else {
+				src = _window4BackScn;
+				srcWidth = _videoWindows[18] * 16;
+			}
+		}
+
+		for (; height > 0; height--) {
+			memcpy(dst, src, width);
+			dst += _screenWidth;
+			src += srcWidth;
+		}
+
+		if (getGameType() == GType_ELVIRA1 && updateWindow == 3 && _bottomPalette != 0) {
+			dst = getFrontBuf() + 42560;
+			int size = 21440;
+
+			while (size--) {
+				*dst += 0x10;
+				dst++;
+			}
+		}
+
 		_syncFlag2 = 1;
 		_timer5 = 0;
-	}
-
-	if (getGameType() == GType_ELVIRA1 && updateWindow == 3 && _bottomPalette != 0) {
-		byte *dst = getBackBuf() + 42560;
-		int size = 21440;
-
-		while (size--) {
-			*dst += 0x10;
-			dst++;
-		}
 	}
 
 	_lockWord &= ~0x20;

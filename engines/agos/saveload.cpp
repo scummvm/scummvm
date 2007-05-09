@@ -118,15 +118,21 @@ char *AGOSEngine::genSaveName(int slot) {
 		sprintf(buf, "feeble.%.3d", slot);
 	} else if (getGameType() == GType_SIMON2) {
 		sprintf(buf, "simon2.%.3d", slot);
-	} else {
+	} else if (getGameType() == GType_SIMON1) {
 		sprintf(buf, "simon1.%.3d", slot);
+	} else if (getGameType() == GType_WW) {
+		sprintf(buf, "waxworks.%.3d", slot);
+	} else if (getGameType() == GType_ELVIRA2) {
+		sprintf(buf, "elvira2.%.3d", slot);
+	} else if (getGameType() == GType_ELVIRA1) {
+		sprintf(buf, "elvira1.%.3d", slot);
 	}
 	return buf;
 }
 
 void AGOSEngine::quickLoadOrSave() {
 	// Quick load & save is only supported complete version of Simon the Sorcerer 1/2
-	if (getGameType() != GType_SIMON1 && getGameType() != GType_SIMON2 ||
+	if (getGameType() == GType_PP || getGameType() == GType_FF ||
 		(getFeatures() & GF_DEMO)) {
 		return;
 	}

@@ -310,7 +310,7 @@ void AGOSEngine_Elvira2::oe2_pObj() {
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
 
 	if (subObject != NULL && subObject->objectFlags & kOFText)
-		showMessageFormat((const char *)getStringPtrByID(subObject->objectFlagValue[0]));
+		showMessageFormat("%s\n", (const char *)getStringPtrByID(subObject->objectFlagValue[0])); // Difference
 }
 
 void AGOSEngine_Elvira2::oe2_loadGame() {

@@ -56,7 +56,7 @@ struct AnimationHeader_Feeble {
 // Simon 1/2
 struct ImageHeader_Simon {
 	uint16 id;
-	uint16 x_1;
+	uint16 color;
 	uint16 x_2;
 	uint16 scriptOffs;
 };
@@ -116,6 +116,7 @@ struct VC10_state {
 	int16 image;
 	uint16 flags;
 	byte palette;
+	byte paletteMod;
 
 	int16 x, y;
 	uint16 width, height;

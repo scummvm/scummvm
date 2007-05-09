@@ -68,21 +68,37 @@ void AGOSEngine::vc45_setWindowPalette() {
 	uint num = vcReadNextWord();
 	uint color = vcReadNextWord();
 
-	const uint16 *vlut = &_videoWindows[num * 4];
-	uint16 *dst = (uint16 *)getBackBuf() + vlut[0] * 8 + vlut[1] * _dxSurfacePitch / 2;
-	uint width = vlut[2] * 8;
+	if (num == 4) {
+		const uint16 *vlut = &_videoWindows[num * 4];
+		uint16 *dst = (uint16 *)_window4BackScn;
+		uint width = vlut[2] * 16 / 2;
+		uint height = vlut[3];
 
-	if (getGameType() == GType_ELVIRA2 && num == 7) {
-		dst -= 4;
-		width += 4;
-	}
-
-	for (uint h = 0; h < vlut[3]; h++) {
-		for (uint w = 0; w < width; w++) {
-			dst[w] &= 0xF0F;
-			dst[w] |= color * 16;
+		for (uint h = 0; h < height; h++) {
+			for (uint w = 0; w < width; w++) {
+				dst[w] &= 0xF0F;
+				dst[w] |= color * 16;
+			}
+			dst += width;
 		}
-		dst += _dxSurfacePitch / 2;
+	} else {
+		const uint16 *vlut = &_videoWindows[num * 4];
+		uint16 *dst = (uint16 *)getFrontBuf() + vlut[0] * 8 + vlut[1] * _dxSurfacePitch / 2;
+		uint width = vlut[2] * 16 / 2;
+		uint height = vlut[3];
+
+		if (getGameType() == GType_ELVIRA2 && num == 7) {
+			dst -= 4;
+			width += 4;
+		}
+
+		for (uint h = 0; h < height; h++) {
+			for (uint w = 0; w < width; w++) {
+				dst[w] &= 0xF0F;
+				dst[w] |= color * 16;
+			}
+			dst += _dxSurfacePitch / 2;
+		}
 	}
 }
 
@@ -211,7 +227,7 @@ void AGOSEngine::vc55_moveBox() {
 
 void AGOSEngine::vc56_fullScreen() {
 	byte *src = _curVgaFile2 + 32;
-	byte *dst = getBackBuf();
+	byte *dst = getFrontBuf();
 
 	memcpy(dst, src + 768, _screenHeight * _screenWidth);
 	//fullFade();

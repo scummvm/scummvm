@@ -522,7 +522,7 @@ int AGOSEngine::startSubroutine(Subroutine *sub) {
 	// WORKAROUND: Bit Flag 171 isn't set when Simon rides the lion to the
 	// goblin camp in non-English versions. Bit Flag 171 is required to display 
 	// the red trail between locations on the map, during the ride.
-	if (getGameType() == GType_SIMON2) {
+	if (getGameType() == GType_SIMON2 && !_oldDrawMethod) {
 		if (sub->id == 13020)
 			setBitFlag(171, true);
 		if (sub->id == 13021)

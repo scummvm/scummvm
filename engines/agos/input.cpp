@@ -174,6 +174,7 @@ void AGOSEngine::waitForInput() {
 	_verbHitArea = 0;
 	_hitAreaSubjectItem = NULL;
 	_hitAreaObjectItem = NULL;
+	_clickOnly = 0;
 	_nameLocked = 0;
 
 	if (getGameType() == GType_WW) {

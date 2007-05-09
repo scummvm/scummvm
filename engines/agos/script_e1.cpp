@@ -608,9 +608,9 @@ void AGOSEngine_Elvira1::oe1_pName() {
 void AGOSEngine_Elvira1::oe1_pcName() {
 	// 115:
 	Item *i = getNextItemPtr();
-	Common::String name = (const char *)getStringPtrByID(i->itemName);
-	name.toUppercase();
-	showMessageFormat("%s", name.c_str());
+
+	// TODO: Change first letter to upper case.
+	showMessageFormat("%s\n", (const byte *)getStringPtrByID(i->itemName)); // Difference
 }
 
 void AGOSEngine_Elvira1::oe1_isCalled() {
@@ -815,6 +815,8 @@ void AGOSEngine_Elvira1::oe1_enableInput() {
 
 	_lastHitArea3 = 0;
 	_lastHitArea = 0;
+
+	_clickOnly = 1;
 }
 
 void AGOSEngine_Elvira1::oe1_setTime() {
@@ -1207,12 +1209,6 @@ void AGOSEngine::printScroll() {
 	state.depack_cont = -0x80;
 	state.x_skip = 0;
 	state.y_skip = 0;
-
-	state.surf2_addr = getFrontBuf();
-	state.surf2_pitch = _dxSurfacePitch;
-
-	state.surf_addr = getBackBuf();
-	state.surf_pitch = _dxSurfacePitch;
 
 	drawImage(&state);
 }

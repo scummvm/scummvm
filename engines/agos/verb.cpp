@@ -682,7 +682,17 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 						_variableArray[500] = best_ha->verb & 0xBFFF;
 					}
 				}
-			} 
+
+				if (_clickOnly != 0 && best_ha->id < 8) {
+					uint id = best_ha->id;
+					if (id >= 4)
+						id -= 4;
+
+					invertBox(findBox(id), 0, 0, 0, 0);
+					_clickOnly = 0;
+					return;
+				}
+			}
 
 			if (best_ha->flags & kBFDragBox) {
 				_lastClickRem = best_ha;

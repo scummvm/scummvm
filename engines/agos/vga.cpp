@@ -210,6 +210,17 @@ bool AGOSEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 	return item->state == b;
 }
 
+void AGOSEngine::dirtyBackGround() {
+	AnimTable *animTable = _screenAnim1;
+	while (animTable->srcPtr) {
+		if (animTable->id == _vgaCurSpriteId) {
+			animTable->window |= 0x8000;
+			break;
+		}
+		animTable++;
+	}
+}
+
 VgaSprite *AGOSEngine::findCurSprite() {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
@@ -400,19 +411,22 @@ void AGOSEngine::vc3_loadSprite() {
 		return;
 	}
 
-	windowNum = vcReadNextWord();		/* 0 */
+	windowNum = vcReadNextWord();
+	if (getGameType() == GType_SIMON1 && windowNum == 3) {
+		_window3Flag = 1;
+	}
 
 	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
-		zoneNum = vcReadNextWord();	/* 0 */
-		vgaSpriteId = vcReadNextWord();	/* 2 */
+		zoneNum = vcReadNextWord();
+		vgaSpriteId = vcReadNextWord();
 	} else {
-		vgaSpriteId = vcReadNextWord();	/* 2 */
+		vgaSpriteId = vcReadNextWord();
 		zoneNum = vgaSpriteId / 100;
 	}
 
-	x = vcReadNextWord();			/* 4 */
-	y = vcReadNextWord();			/* 6 */
-	palette = vcReadNextWord();		/* 8 */
+	x = vcReadNextWord();
+	y = vcReadNextWord();
+	palette = vcReadNextWord();
 
 	old_file_1 = _curVgaFile1;
 
@@ -607,6 +621,7 @@ void AGOSEngine::drawImage_init(int16 image, uint16 palette, uint16 x, uint16 y,
 		state.image = vcReadVar(-state.image);
 
 	state.palette = palette * 16;
+	state.paletteMod = 0;
 
 	state.x = x - _scrollX;
 	state.y = y - _scrollY;
@@ -718,12 +733,18 @@ void AGOSEngine::vc12_delay() {
 void AGOSEngine::vc13_addToSpriteX() {
 	VgaSprite *vsp = findCurSprite();
 	vsp->x += (int16)vcReadNextWord();
+
+	vsp->windowNum |= 0x8000;
+	dirtyBackGround();
 	_vgaSpriteChanged++;
 }
 
 void AGOSEngine::vc14_addToSpriteY() {
 	VgaSprite *vsp = findCurSprite();
 	vsp->y += (int16)vcReadNextWord();
+
+	vsp->windowNum |= 0x8000;
+	dirtyBackGround();
 	_vgaSpriteChanged++;
 }
 
@@ -951,6 +972,8 @@ void AGOSEngine::vc24_setSpriteXY() {
 		vsp->flags = vcReadNextWord();
 	}
 
+	vsp->windowNum |= 0x8000;
+	dirtyBackGround();
 	_vgaSpriteChanged++;
 }
 
@@ -963,6 +986,8 @@ void AGOSEngine::vc25_halt_sprite() {
 		vsp++;
 	}
 	_vcPtr = (byte *)&_vc_get_out_of_code;
+
+	dirtyBackGround();
 	_vgaSpriteChanged++;
 }
 
@@ -1021,6 +1046,14 @@ void AGOSEngine::vc27_resetSprite() {
 				memcpy(vte2, vte2 + 1, sizeof(VgaTimerEntry));
 				vte2++;
 			}
+		}
+	}
+
+	if (_lockWord & 0x20) {
+		AnimTable *animTable = _screenAnim1;
+		while (animTable->srcPtr) {
+			animTable->srcPtr = 0;
+			animTable++;
 		}
 	}
 
@@ -1083,8 +1116,20 @@ void AGOSEngine::vc31_setWindow() {
 }
 
 void AGOSEngine::vc32_saveScreen() {
-	// TODO
-	debug(0, "vc32_saveScreen: stub");
+	uint xoffs = _videoWindows[4 * 4 + 0] * 16;
+	uint yoffs = _videoWindows[4 * 4 + 1];
+	uint width = _videoWindows[4 * 4 + 2] * 16;
+	uint height = _videoWindows[4 * 4 + 3];
+
+	byte *dst = getBackGround() + xoffs + yoffs * _screenWidth;
+	byte *src = _window4BackScn;
+	uint srcWidth = _videoWindows[4 * 4 + 2] * 16;
+
+	for (; height > 0; height--) {
+		memcpy(dst, src, width);
+		dst += _screenWidth;
+		src += srcWidth;
+	}
 }
 
 void AGOSEngine::vc33_setMouseOn() {
@@ -1111,24 +1156,65 @@ void AGOSEngine::vc34_setMouseOff() {
 	_leftButtonDown = 0;
 }
 
-void AGOSEngine::clearWindow(uint num, uint color) {
+void AGOSEngine::clearVideoBackGround(uint num, uint color) {
+	debug(0, "clearVideoBackGround: num %d color %d", num, color);
+
+	const uint16 *vlut = &_videoWindows[num * 4];
+	byte *dst = getBackGround() + vlut[0] * 16 + (vlut[1] * (vlut[2] * 16));
+
+	for (uint h = 0; h < vlut[3]; h++) {
+		memset(dst, color, vlut[2] * 16);
+		dst += _screenWidth;
+	}
+}
+
+void AGOSEngine::clearVideoWindow(uint num, uint color) {
 	if (getGameType() == GType_ELVIRA1) {
 		if (num == 2 || num == 6)
 			return;
 	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		if (num != 4 && num < 10)
 			return;
+	} else if (getGameType() == GType_SIMON1) {
+		if (num != 4)
+			return;
 	}
 
-	if (num == 3) {
-		memset(getBackBuf(), 0, _screenWidth * _screenHeight);
-	} else { 
+	debug(0, "clearVideoWindow: num %d color %d", num, color);
+
+	if (getGameType() == GType_SIMON2) {
 		const uint16 *vlut = &_videoWindows[num * 4];
-		byte *dst = getBackBuf() + vlut[0] * 16 + vlut[1] * _dxSurfacePitch;
+		uint xoffs = vlut[0] * 16;
+		uint yoffs = vlut[1];
+		uint dstWidth = _videoWindows[18] * 16;
+		byte *dst =  _window4BackScn + xoffs + yoffs * dstWidth;
+
+		setMoveRect(0, 0, vlut[2] * 16, vlut[3]);
 
 		for (uint h = 0; h < vlut[3]; h++) {
-			memset(dst, 0, vlut[2] * 16);
-			dst += _screenWidth;
+			memset(dst, color, vlut[2] * 16);
+			dst += dstWidth;
+		}
+
+		_window4Flag = 1;
+	} else {
+		if (getGameType() == GType_ELVIRA1 && num == 3) {
+			memset(getFrontBuf(), color, _screenWidth * _screenHeight);
+		} else if (num == 4) {
+			const uint16 *vlut = &_videoWindows[num * 4];
+			uint xoffs = (vlut[0] - _videoWindows[16]) * 16;
+			uint yoffs = (vlut[1] - _videoWindows[17]);
+			uint dstWidth = _videoWindows[18] * 16;
+			byte *dst =  _window4BackScn + xoffs + yoffs * dstWidth;
+
+			setMoveRect(0, 0, vlut[2] * 16, vlut[3]);
+
+			for (uint h = 0; h < vlut[3]; h++) {
+				memset(dst, color, vlut[2] * 16);
+				dst += dstWidth;
+			}
+
+			_window4Flag = 1;
 		}
 	}
 }
@@ -1136,7 +1222,23 @@ void AGOSEngine::clearWindow(uint num, uint color) {
 void AGOSEngine::vc35_clearWindow() {
 	uint16 num = vcReadNextWord();
 	uint16 color = vcReadNextWord();
-	clearWindow(num, color);
+
+	// Clear video window
+	clearVideoWindow(num, color);
+
+	// Clear video background
+	if (getGameType() == GType_ELVIRA1) {
+		if (num == 2 || num == 6)
+			return;
+	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+		if (num != 4 && num < 10)
+			return;
+	} else if (getGameType() == GType_SIMON1) {
+		if (num != 4)
+			return;
+	}
+
+	clearVideoBackGround(num, color);
 }
 
 void AGOSEngine::vc36_setWindowImage() {
@@ -1147,7 +1249,7 @@ void AGOSEngine::vc36_setWindowImage() {
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		_copyPartialMode = 2;
 	} else if (getGameType() == GType_SIMON1) {
-		if (windowNum == 16) {
+		if (windowNum == 16 && !_oldDrawMethod) {
 			_copyPartialMode = 2;
 		} else {
 			setWindowImage(windowNum, vga_res);

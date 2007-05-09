@@ -199,6 +199,9 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_copyPartialMode = 0;
 	_fastMode = 0;
 	_useBackGround = 0;
+	
+	_oldDrawMethod = 0;
+	_backFlag = 0;
 
 	_debugMode = 0;
 	_startMainScript = false;
@@ -291,6 +294,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_leftButtonDown = 0;
 	_rightButtonDown = 0;
+	_clickOnly = 0;
 	_noRightClick = false;
 
 	_leftButton = 0;
@@ -477,6 +481,17 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_backBuf = 0;
 	_scaleBuf = 0;
 
+	_window3Flag = 0;
+	_window4Flag = 0;
+	_window6Flag = 0;
+	_window4BackScn = 0;
+	_window6BackScn = 0;
+
+	_moveXMin = 0;
+	_moveYMin = 0;
+	_moveXMax = 0;
+	_moveYMax = 0;
+
 	_vc10BasePtrOld = 0;
 	memcpy (_hebrewCharWidths,
 		"\x5\x5\x4\x6\x5\x3\x4\x5\x6\x3\x5\x5\x4\x6\x5\x3\x4\x6\x5\x6\x6\x6\x5\x5\x5\x6\x5\x6\x6\x6\x6\x6", 32);
@@ -509,6 +524,12 @@ int AGOSEngine::init() {
 	if (!initGame()) {
 		GUIErrorMessage("No valid games were found in the specified directory.");
 		return -1;
+	}
+
+	// TODO: Enable for Simon the Sorcerer 1/2 when complete
+	if (getGameType() == GType_WW || getGameType() == GType_ELVIRA2 ||
+		getGameType() == GType_ELVIRA1) {
+		_oldDrawMethod = true;
 	}
 
 	if (getGameId() == GID_DIMP) {
@@ -562,9 +583,25 @@ int AGOSEngine::init() {
 	// allocate buffers
 	_backGroundBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
 	_frontBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
-	_backBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
-	if (getGameType() == GType_FF || getGameType() == GType_PP)
+
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		_scaleBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
+	}
+
+	if (!_oldDrawMethod) {
+		_backBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
+	} else {
+		if (getGameType() == GType_SIMON2) {
+			_window4BackScn = (byte *)calloc(_screenWidth * _screenHeight, 1);
+		} else if (getGameType() == GType_SIMON1) {
+			_window4BackScn = (byte *)calloc(_screenWidth * 134, 1);
+		} else if (getGameType() == GType_WW || getGameType() == GType_ELVIRA2) {
+			_window4BackScn = (byte *)calloc(224 * 127, 1);
+		} else if (getGameType() == GType_ELVIRA1) {
+			_window4BackScn = (byte *)calloc(224 * 127, 1);
+			_window6BackScn = (byte *)calloc(48 * 80, 1);
+		}
+	}
 
 	setupGame();
 
@@ -850,6 +887,9 @@ AGOSEngine::~AGOSEngine() {
 	free(_frontBuf);
 	free(_backBuf);
 	free(_scaleBuf);
+
+	free(_window4BackScn);
+	free(_window6BackScn);
 
 	free(_variableArray);
 	free(_variableArray2);

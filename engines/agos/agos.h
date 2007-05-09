@@ -83,9 +83,9 @@ struct VgaPointersEntry {
 
 struct VgaSprite {
 	uint16 id;
-	uint16 image;
+	int16 image;
 	uint16 palette;
-	uint16 x, y;									/* actually signed numbers */
+	int16 x, y;
 	uint16 flags;
 	uint16 priority;
 	uint16 windowNum, zoneNum;
@@ -106,6 +106,17 @@ struct VgaTimerEntry {
 	uint16 sprite_id;
 	uint16 cur_vga_file;
 	VgaTimerEntry() { memset(this, 0, sizeof(*this)); }
+};
+
+struct AnimTable {
+	const byte *srcPtr;
+	int16 x;
+	int16 y;
+	uint16 width;
+	uint16 height;
+	uint16 window;
+	uint16 id;
+	AnimTable() { memset(this, 0, sizeof(*this)); }
 };
 
 enum SIMONGameType {
@@ -262,6 +273,9 @@ protected:
 	bool _fastMode;
 	bool _useBackGround;
 
+	bool _oldDrawMethod;
+	bool _backFlag;
+
 	uint16 _debugMode;
 	uint16 _language;
 	bool _copyProtection;
@@ -361,6 +375,7 @@ protected:
 	byte _leftButtonDown;
 	byte _leftButton, _leftButtonCount, _leftButtonOld;
 	byte _rightButtonDown;
+	bool _clickOnly;
 	bool _noRightClick;
 
 	Item *_dummyItem1;
@@ -450,10 +465,11 @@ protected:
 
 	HitArea _hitAreas[250];
 
+	AnimTable _screenAnim1[60];
 	VgaPointersEntry _vgaBufferPointers[450];
 	VgaSprite _vgaSprites[200];
-	VgaSleepStruct _waitSyncTable[60];
 	VgaSleepStruct _waitEndTable[60];
+	VgaSleepStruct _waitSyncTable[60];
 
 	const uint16 *_pathFindArray[100];
 
@@ -471,6 +487,15 @@ protected:
 	byte *_planarBuf;
 	byte _videoBuf1[32000];
 	uint16 _videoWindows[128];
+
+	uint16 _window3Flag;
+	uint16 _window4Flag;
+	uint16 _window6Flag;
+	byte *_window4BackScn;
+	byte *_window6BackScn;
+
+	uint16 _moveXMin, _moveYMin;
+	uint16 _moveXMax, _moveYMax;
 
 	VgaTimerEntry _vgaTimerList[205];
 
@@ -1025,6 +1050,10 @@ protected:
 	void drawImage_init(int16 image, uint16 palette, uint16 x, uint16 y, uint16 flags);
 
 	virtual void drawImage(VC10_state *state);
+	void drawBackGroundImage(VC10_state *state);
+	void drawVertImage(VC10_state *state);
+
+	void setMoveRect(uint16 x, uint16 y, uint16 width, uint16 height);
 
 	void horizontalScroll(VC10_state *state);
 	void verticalScroll(VC10_state *state);
@@ -1041,7 +1070,9 @@ protected:
 	void checkScrollY(int16 y, int16 ypos);
 	void centreScroll();
 
-	void clearWindow(uint windowNum, uint color);
+	void clearVideoWindow(uint windowNum, uint color);
+	void clearVideoBackGround(uint windowNum, uint color);
+
 	void setPaletteSlot(uint srcOffs, uint dstOffs);
 	void checkWaitEndTable();
 
@@ -1099,6 +1130,11 @@ protected:
 	void animateSprites();
 	void animateSpritesDebug();
 	void animateSpritesByY();
+
+	void dirtyClips();
+	void dirtyBackGround();
+	void restoreBackGround();
+	void saveBackGround(VgaSprite *vsp);
 
 	void clearSurfaces(uint num_lines);
 	void updateScreen();
@@ -1416,6 +1452,8 @@ protected:
 	const OpcodeEntrySimon1 *_opcodesSimon1;
 
 	virtual void drawImage(VC10_state *state);
+	void drawMaskedImage(VC10_state *state);
+	void draw32ColorImage(VC10_state *state);
 
 	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
 

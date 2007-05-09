@@ -69,8 +69,15 @@ void AGOSEngine::animateSprites() {
 		return;
 	}
 
-	vsp = _vgaSprites;
+	if (_oldDrawMethod) {
+		if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+			dirtyClips();
+		}
 
+		restoreBackGround();
+	}
+
+	vsp = _vgaSprites;
 	while (vsp->id != 0) {
 		vsp->windowNum &= 0x7FFF;
 
@@ -82,15 +89,117 @@ void AGOSEngine::animateSprites() {
 		_vgaCurSpriteId = vsp->id;
 		_vgaCurSpritePriority = vsp->priority;
 
-		drawImage_init(vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
+		if (_oldDrawMethod) {
+			saveBackGround(vsp);
+		}
 
+		drawImage_init(vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
 		vsp++;
 	}
 
 	if (_drawImagesDebug)
 		memset(_backBuf, 0, _screenWidth * _screenHeight);
 
+	if (_window6Flag == 1)
+		_window6Flag++;
+
+	if (_window4Flag == 1)
+		_window4Flag++;
+
 	_updateScreen = true;
+}
+
+void AGOSEngine::dirtyClips() {
+	// TODO
+}
+
+void AGOSEngine::restoreBackGround() {
+	AnimTable *animTable;
+	uint images = 0;
+
+	animTable = _screenAnim1;
+	while (animTable->srcPtr) {
+		animTable++;
+		images++;
+	}
+
+	while (images--) {
+		animTable--;
+
+		if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
+			!(animTable->window & 0x8000)) {
+			//continue;
+		}
+
+		animTable->window &= 0x7FFF;
+		_windowNum = animTable->window;	
+
+		VC10_state state;
+		state.srcPtr  = animTable->srcPtr;
+		state.height = state.draw_height = animTable->height;
+		state.width = state.draw_width = animTable->width;
+		state.y = animTable->y;
+		state.x = animTable->x;
+		state.palette = 0;
+		state.paletteMod = 0;
+		state.flags = kDFNonTrans;
+
+		_backFlag = 1;
+		drawImage(&state);
+
+		//if (getGameType() != GType_SIMON1 && getGameType() != GType_SIMON2) {
+			animTable->srcPtr = 0;
+		//}
+	}
+	_backFlag = 0;
+
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		AnimTable *animTableTmp;
+
+		animTable = animTableTmp = _screenAnim1;
+		while (animTable->srcPtr != 0) {
+			if (!(animTable->window & 8000)) {
+				memcpy(animTableTmp, animTable, sizeof(AnimTable));
+				animTableTmp++;
+			}
+			animTable++;
+		}
+		animTableTmp->id = 0;
+	}
+}
+
+void AGOSEngine::saveBackGround(VgaSprite *vsp) {
+	if ((vsp->flags & 4) || !vsp->image)
+		return;
+
+	AnimTable *animTable = _screenAnim1;
+
+	while (animTable->srcPtr)
+		animTable++;
+
+	const byte *ptr = _curVgaFile2 + vsp->image * 8;
+	int16 x = vsp->x - _scrollX;
+	int16 y = vsp->y - _scrollY;
+
+	if (_window3Flag == 1) {
+		animTable->srcPtr = (const byte *)_window4BackScn;
+	} else {
+		uint xoffs = (_videoWindows[vsp->windowNum * 4 + 0] * 2 + x) * 8;
+		uint yoffs = (_videoWindows[vsp->windowNum * 4 + 1] + y);
+		animTable->srcPtr = getBackGround() + xoffs + yoffs * _screenWidth;
+	}
+
+	animTable->x = x;
+	animTable->y = y;
+
+	animTable->width = READ_BE_UINT16(ptr + 6) / 16;
+	if (vsp->flags & 40) {
+		animTable->width++;
+	}
+
+	animTable->height = ptr[5];
+	animTable->window = vsp->windowNum;
+	animTable->id = vsp->id;
 }
 
 void AGOSEngine::animateSpritesDebug() {
@@ -289,9 +398,15 @@ void AGOSEngine::displayBoxStars() {
 }
 
 void AGOSEngine::scrollScreen() {
-	byte *dst = getFrontBuf();
+	byte *dst;
 	const byte *src;
 	uint x, y;
+
+	if (!_oldDrawMethod) {
+		dst = getFrontBuf();
+	} else {
+		dst = getBackGround();
+	}
 
 	if (_scrollXMax == 0) {
 		uint screenSize = 8 * _screenWidth;
@@ -340,8 +455,16 @@ void AGOSEngine::scrollScreen() {
 		_scrollX += _scrollFlag;
 		vcWriteVar(251, _scrollX);
 
-		memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
-		memcpy(_backGroundBuf, _backBuf, _scrollHeight * _screenWidth);
+		if (!_oldDrawMethod) {
+			memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
+			memcpy(_backGroundBuf, _backBuf, _scrollHeight * _screenWidth);
+		} else {
+			memcpy(_window4BackScn, _backGroundBuf, _scrollHeight * _screenWidth);
+		}
+
+		setMoveRect(0, 0, 320, _scrollHeight);
+
+		_window4Flag = 1;
 	}
 
 	_scrollFlag = 0;
@@ -390,6 +513,20 @@ void AGOSEngine::fillBackGroundFromBack(uint lines) {
 	memcpy(_backGroundBuf, _backBuf, lines * _screenWidth);
 }
 
+void AGOSEngine::setMoveRect(uint16 x, uint16 y, uint16 width, uint16 height) {
+	if (x < _moveXMin)
+		_moveXMin = x;
+
+	if (y < _moveYMin)
+		_moveYMin = y;
+
+	if (width > _moveXMax)
+		_moveXMax = width;
+
+	if (height > _moveYMax)
+		_moveYMax = height;
+}
+
 void AGOSEngine::updateScreen() {
 	if (_fastFadeInFlag == 0 && _paletteFlag == 1) {
 		_paletteFlag = 0;
@@ -399,11 +536,63 @@ void AGOSEngine::updateScreen() {
 		}
 	}
 
-	_system->copyRectToScreen(getBackBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
-	_system->updateScreen();
+	if (_oldDrawMethod) {
+		if (_window4Flag == 2) {
+			_window4Flag = 0;
 
-	if (getGameId() != GID_DIMP)
-		memcpy(getBackBuf(), getFrontBuf(), _screenWidth * _screenHeight);
+			uint16 srcWidth, width, height;
+			byte *dst = getFrontBuf();
+
+			const byte *src = _window4BackScn;
+			if (_window3Flag == 1) {
+				src = getBackGround();
+			}
+
+			dst += (_moveYMin + _videoWindows[17]) * _screenWidth;
+			dst += (_videoWindows[16] * 16) + _moveXMin;
+
+			src += (_videoWindows[18] * 16 * _moveYMin);
+			src += _moveXMin;
+
+			srcWidth = _videoWindows[18] * 16;
+		
+			width = _moveXMax - _moveXMin;
+			height = _moveYMax - _moveYMin;
+
+			for (; height > 0; height--) {
+				memcpy(dst, src, width);
+				dst += _screenWidth;
+				src += srcWidth;
+			}
+
+			_moveXMin = 0xFFFF;
+			_moveYMin = 0xFFFF;
+			_moveXMax = 0;
+			_moveYMax = 0;
+		}
+		
+		 if (_window6Flag == 2) {
+			_window6Flag = 0;
+
+			byte *src = _window6BackScn;
+			byte *dst = getFrontBuf() + 16320;
+			for (int i = 0; i < 80; i++) {
+				memcpy(dst, src, 48);
+				dst += _screenWidth;
+				src += 48;
+			}
+		} 
+	
+		_system->copyRectToScreen(getFrontBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
+		_system->updateScreen();
+	} else {
+		_system->copyRectToScreen(getBackBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
+		_system->updateScreen();
+
+		if (getGameId() != GID_DIMP)
+			memcpy(getBackBuf(), getFrontBuf(), _screenWidth * _screenHeight);
+
+	}
 
 	if (getGameType() == GType_FF && _scrollFlag) {
 		scrollScreen();

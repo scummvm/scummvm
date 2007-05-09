@@ -103,18 +103,27 @@ void AGOSEngine::vc32_copyVar() {
 void AGOSEngine::vc37_addToSpriteY() {
 	VgaSprite *vsp = findCurSprite();
 	vsp->y += vcReadVar(vcReadNextWord());
+
+	vsp->windowNum |= 0x8000;
+	dirtyBackGround();
 	_vgaSpriteChanged++;
 }
 
 void AGOSEngine::vc45_setSpriteX() {
 	VgaSprite *vsp = findCurSprite();
 	vsp->x = vcReadVar(vcReadNextWord());
+
+	vsp->windowNum |= 0x8000;
+	dirtyBackGround();
 	_vgaSpriteChanged++;
 }
 
 void AGOSEngine::vc46_setSpriteY() {
 	VgaSprite *vsp = findCurSprite();
 	vsp->y = vcReadVar(vcReadNextWord());
+
+	vsp->windowNum |= 0x8000;
+	dirtyBackGround();
 	_vgaSpriteChanged++;
 }
 
@@ -209,6 +218,8 @@ void AGOSEngine::vc61_setMaskImage() {
 	vsp->y += vcReadNextWord();
 	vsp->flags = kDFMasked | kDFUseFrontBuf;
 
+	vsp->windowNum |= 0x8000;
+	dirtyBackGround();
 	_vgaSpriteChanged++;
 }
 
