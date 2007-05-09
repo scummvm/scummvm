@@ -5,12 +5,13 @@
 	$DefaultTopMacros = "
 		MACRO			USE_ZLIB			// LIB:zlib.lib
 		MACRO			USE_MAD				// LIB:libmad.lib
-		//MACRO			USE_TREMOR			// LIB:libtremor.lib
+		MACRO			USE_TREMOR			// LIB:libtremor.lib
 	";
 		
 	$DefaultBottomMacros = "
 		MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
 		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
+		MACRO			DISABLE_PARALLACTION	// LIB:scummvm_parallaction.lib		
 	";
 
 	##
@@ -125,7 +126,7 @@ if (1) # all regular combo's
 		//MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
 		//MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		//MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
-
+		//MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 	$DefaultBottomMacros";
 
 	# now one for each ready-for-release engine
