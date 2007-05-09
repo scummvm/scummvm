@@ -463,10 +463,6 @@ inline int clamp(int minValue, int value, int maxValue) {
 	}
 }
 
-inline int integerCompare(int i1, int i2) {
-	return ((i1) > (i2) ? 1 : ((i1) < (i2) ? -1 : 0));
-}
-
 inline int objectTypeId(uint16 objectId) {
 	return objectId >> OBJECT_TYPE_SHIFT;
 }

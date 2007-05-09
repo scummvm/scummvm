@@ -88,6 +88,45 @@ static int tileCommonObjectCompare(const CommonObjectDataPointer& obj1, const Co
 	return 1;
 }
 
+inline int16 int16Compare(int16 i1, int16 i2) {
+	return ((i1) > (i2) ? 1 : ((i1) < (i2) ? -1 : 0));
+}
+
+inline int16 quickDistance(const Point &point1, const Point &point2) {
+	Point delta;
+	delta.x = ABS(point1.x - point2.x) / 2;
+	delta.y = ABS(point1.y - point2.y);
+	return ((delta.x < delta.y) ? (delta.y + delta.x / 2) : (delta.x + delta.y / 2));
+}
+
+inline void calcDeltaS(const Point &point1, const Point &point2, Point &delta, Point &s) {
+
+	delta.x = point2.x - point1.x;
+	if (delta.x == 0) {
+		s.x = 0;
+	} else {
+		if (delta.x > 0) {
+			s.x = 1;
+		} else {
+			s.x = -1;
+			delta.x = -delta.x;
+		}
+	}
+
+
+	delta.y = point2.y - point1.y;
+	if (delta.y == 0) {
+		s.y = 0;
+	} else {
+		if (delta.y > 0) {
+			s.y = 1;
+		} else {
+			s.y = -1;
+			delta.y = -delta.y;
+		}
+	}
+}
+
 // Lookup table to convert 8 cardinal directions to 4
 static const int actorDirectectionsLUT[8] = {
 	ACTOR_DIRECTION_BACK,	// kDirUp
@@ -101,14 +140,14 @@ static const int actorDirectectionsLUT[8] = {
 };
 
 static const PathDirectionData pathDirectionLUT[8][3] = {
-	{ { 0,  0, -1 }, { 7, -1, -1 }, { 4,  1, -1 } },
-	{ { 1,  1,  0 }, { 4,  1, -1 }, { 5,  1,  1 } },
-	{ { 2,  0,  1 }, { 5,  1,  1 }, { 6, -1,  1 } },
-	{ { 3, -1,  0 }, { 6, -1,  1 }, { 7, -1, -1 } },
-	{ { 0,  0, -1 }, { 1,  1,  0 }, { 4,  1, -1 } },
-	{ { 1,  1,  0 }, { 2,  0,  1 }, { 5,  1,  1 } },
-	{ { 2,  0,  1 }, { 3, -1,  0 }, { 6, -1,  1 } },
-	{ { 3, -1,  0 }, { 0,  0, -1 }, { 7, -1, -1 } }
+	{ { 0, Point( 0, -1) }, { 7, Point(-1, -1) }, { 4, Point( 1, -1) } },
+	{ { 1, Point( 1,  0) }, { 4, Point( 1, -1) }, { 5, Point( 1,  1) } },
+	{ { 2, Point( 0,  1) }, { 5, Point( 1,  1) }, { 6, Point(-1,  1) } },
+	{ { 3, Point(-1,  0) }, { 6, Point(-1,  1) }, { 7, Point(-1, -1) } },
+	{ { 0, Point( 0, -1) }, { 1, Point( 1,  0) }, { 4, Point( 1, -1) } },
+	{ { 1, Point( 1,  0) }, { 2, Point( 0,  1) }, { 5, Point( 1,  1) } },
+	{ { 2, Point( 0,  1) }, { 3, Point(-1,  0) }, { 6, Point(-1,  1) } },
+	{ { 3, Point(-1,  0) }, { 0, Point( 0, -1) }, { 7, Point(-1, -1) } }
 };
 
 static const int pathDirectionLUT2[8][2] = {
@@ -2605,51 +2644,57 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 bool Actor::scanPathLine(const Point &point1, const Point &point2) {
 	Point point;
 	Point delta;
-	bool interchange = false;
+	Point s;
 	Point fDelta;
-	int errterm;
-	int s1;
-	int s2;
-	int i;
+	int16 errterm;
 
+	calcDeltaS(point1, point2, delta, s);
 	point = point1;
-	delta.x = ABS(point1.x - point2.x);
-	delta.y = ABS(point1.y - point2.y);
-	s1 = integerCompare(point2.x, point1.x);
-	s2 = integerCompare(point2.y, point1.y);
-
-	if (delta.y > delta.x) {
-		SWAP(delta.y, delta.x);
-		interchange = true;
-	}
 
 	fDelta.x = delta.x * 2;
 	fDelta.y = delta.y * 2;
 
-	errterm = fDelta.y - delta.x;
+	if (delta.y > delta.x) {
 
-	for (i = 0; i < delta.x; i++) {
-		while (errterm >= 0) {
-			if (interchange) {
-				point.x += s1;
-			} else {
-				point.y += s2;
+		errterm = fDelta.x - delta.y;
+
+		while (delta.y > 0) {
+			while (errterm >= 0) {
+				point.x += s.x;
+				errterm -= fDelta.y;
 			}
-			errterm -= fDelta.x;
+			
+			point.y += s.y;		
+			errterm += fDelta.x;
+
+			if (!validPathCellPoint(point)) {
+				return false;
+			}
+			if (getPathCell(point) == kPathCellBarrier) {
+				return false;
+			}
+			delta.y--;
 		}
+	} else {
 
-		if (interchange)
-			point.y += s2;
-		else
-			point.x += s1;
+		errterm = fDelta.y - delta.x;
 
-		errterm += fDelta.y;
+		while (delta.x > 0) {
+			while (errterm >= 0) {
+				point.y += s.y;
+				errterm -= fDelta.x;
+			}
+			
+			point.x += s.x;
+			errterm += fDelta.y;
 
-		if (!validPathCellPoint(point)) {
-			return false;
-		}
-		if (getPathCell(point) == kPathCellBarrier) {
-			return false;
+			if (!validPathCellPoint(point)) {
+				return false;
+			}
+			if (getPathCell(point) == kPathCellBarrier) {
+				return false;
+			}
+			delta.x--;
 		}
 	}
 	return true;
@@ -2675,8 +2720,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 
 	for (startDirection = 0; startDirection < 4; startDirection++) {
 		newPathDirection = addPathDirectionListData();
-		newPathDirection->x = fromPoint.x;
-		newPathDirection->y = fromPoint.y;
+		newPathDirection->coord = fromPoint;
 		newPathDirection->direction = startDirection;
 	}
 
@@ -2694,8 +2738,9 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 		pathDirection = &_pathDirectionList[i];
 		for (directionCount = 0; directionCount < 3; directionCount++) {
 			samplePathDirection = &pathDirectionLUT[pathDirection->direction][directionCount];
-			nextPoint.x = samplePathDirection->x + pathDirection->x;
-			nextPoint.y = samplePathDirection->y + pathDirection->y;
+			nextPoint = pathDirection->coord;
+			nextPoint.x += samplePathDirection->coord.x;
+			nextPoint.y += samplePathDirection->coord.y;
 
 			if (!validPathCellPoint(nextPoint)) {
 				continue;
@@ -2711,8 +2756,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 			addDebugPoint(nextPoint, samplePathDirection->direction + 96);
 #endif
 			newPathDirection = addPathDirectionListData();
-			newPathDirection->x = nextPoint.x;
-			newPathDirection->y = nextPoint.y;
+			newPathDirection->coord = nextPoint;
 			newPathDirection->direction = samplePathDirection->direction;
 			++pointCounter;
 			if (nextPoint == toPoint) {
@@ -2783,8 +2827,8 @@ void Actor::pathToNode() {
 		--point;
 		point2 = *point;
 		if (direction == 0) {
-			delta.x = integerCompare(point2.x, point1.x);
-			delta.y = integerCompare(point2.y, point1.y);
+			delta.x = int16Compare(point2.x, point1.x);
+			delta.y = int16Compare(point2.y, point1.y);
 			direction++;
 		}
 		if ((point1.x + delta.x != point2.x) || (point1.y + delta.y != point2.y)) {
@@ -2801,47 +2845,56 @@ int pathLine(Point *pointList, const Point &point1, const Point &point2) {
 	Point point;
 	Point delta;
 	Point tempPoint;
-	int s1;
-	int s2;
+	Point s;
 	bool interchange = false;
-	int errterm;
-	int i;
+	int16 errterm;
+	int16 res;
 
-	delta.x = ABS(point2.x - point1.x);
-	delta.y = ABS(point2.y - point1.y);
+	calcDeltaS(point1, point2, delta, s);
+
 	point = point1;
-	s1 = integerCompare(point2.x, point1.x);
-	s2 = integerCompare(point2.y, point1.y);
-
-	if (delta.y > delta.x) {
-		SWAP(delta.y, delta.x);
-		interchange = true;
-	}
 
 	tempPoint.x = delta.x * 2;
 	tempPoint.y = delta.y * 2;
 
-	errterm = tempPoint.y - delta.x;
+	if (delta.y > delta.x) {
+		
+		errterm = tempPoint.x - delta.y;
+		res = delta.y;
 
-	for (i = 0; i < delta.x; i++) {
-		while (errterm >= 0) {
-			if (interchange) {
-				point.x += s1;
-			} else {
-				point.y += s2;
+		while (delta.y > 0) {
+			while (errterm >= 0) {
+				point.x += s.x;
+				errterm -= tempPoint.y;
 			}
-			errterm -= tempPoint.x;
-		}
-		if (interchange) {
-			point.y += s2;
-		} else {
-			point.x += s1;
-		}
-		errterm += tempPoint.y;
 
-		pointList[i] = point;
+			point.y += s.y;
+			errterm += tempPoint.x;
+
+			*pointList = point;
+			pointList++;
+			delta.y--;
+		}
+	} else {
+
+		errterm = tempPoint.y - delta.x;
+		res = delta.x;
+
+		while (delta.x > 0) {
+			while (errterm >= 0) {
+				point.y += s.y;
+				errterm -= tempPoint.x;
+			}
+
+			point.x += s.x;
+			errterm += tempPoint.y;
+
+			*pointList = point;
+			pointList++;
+			delta.x--;
+		}
 	}
-	return delta.x;
+	return res;
 }
 
 void Actor::nodeToPath() {
