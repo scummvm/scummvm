@@ -2846,7 +2846,6 @@ int pathLine(Point *pointList, const Point &point1, const Point &point2) {
 	Point delta;
 	Point tempPoint;
 	Point s;
-	bool interchange = false;
 	int16 errterm;
 	int16 res;
 
