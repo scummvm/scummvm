@@ -91,7 +91,7 @@ static const PlainGameDescriptor agiGames[] = {
 
 namespace Agi {
 
-#define FANMADE_ILFV(id, name,md5,lang,features,ver) {	\
+#define FANMADE_ILVF(id,name,md5,lang,ver,features) {	\
 		{ \
 			id, \
 			name, \
@@ -102,18 +102,20 @@ namespace Agi {
 		}, \
 		GID_FANMADE, \
 		GType_V2, \
-		features, \
+		(GF_FANMADE|features), \
 		ver, \
 	}
-#define FANMADE_LV(name,md5,lang,ver) FANMADE_ILFV("agi-fanmade",name,md5,lang,GF_FANMADE,ver)
-#define FANMADE_LFV(name,md5,lang,ver, features) FANMADE_ILFV("agi-fanmade",name,md5,lang,(GF_FANMADE|features),ver)
-#define FANMADE_V(name,md5,ver) FANMADE_LV(name,md5,Common::EN_ANY,ver)
-#define FANMADE_F(name,md5,features) FANMADE_ILFV("agi-fanmade",name,md5,Common::EN_ANY,(GF_FANMADE|features),0x2917)
-#define FANMADE_L(name,md5,lang) FANMADE_LV(name,md5,lang,0x2917)
-#define FANMADE_LF(name,md5,lang,features) FANMADE_ILFV("agi-fanmade",name,md5,lang,(GF_FANMADE|features),0x2917)
-#define FANMADE_I(id,name,md5) FANMADE_ILFV(id,name,md5,Common::EN_ANY,GF_FANMADE,0x2917)
-#define FANMADE_IF(id,name,md5,features) FANMADE_ILFV(id,name,md5,Common::EN_ANY,(GF_FANMADE|features),0x2917)
-#define FANMADE(name,md5) FANMADE_LV(name,md5,Common::EN_ANY,0x2917)
+#define FANMADE_LVF(name,md5,lang,ver,features) FANMADE_ILVF("agi-fanmade",name,md5,lang,ver,features)
+
+#define FANMADE_LF(name,md5,lang,features) FANMADE_LVF(name,md5,lang,0x2917,features)
+#define FANMADE_IF(id,name,md5,features) FANMADE_ILVF(id,name,md5,Common::EN_ANY,0x2917,features)
+
+#define FANMADE_V(name,md5,ver) FANMADE_LVF(name,md5,Common::EN_ANY,ver,0)
+#define FANMADE_F(name,md5,features) FANMADE_LF(name,md5,Common::EN_ANY,features)
+#define FANMADE_L(name,md5,lang) FANMADE_LF(name,md5,lang,0)
+#define FANMADE_I(id,name,md5) FANMADE_IF(id,name,md5,0)
+
+#define FANMADE(name,md5) FANMADE_F(name,md5,0)
 
 static const AGIGameDescription gameDescriptions[] = {
 
@@ -1678,6 +1680,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_FANMADE,
 		GType_V2,
 		GF_AGDS,
 		0x2440,
@@ -1700,8 +1703,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Jiggy Jiggy Uh! Uh!", "bc331588a71e7a1c8840f6cc9b9487e4"),
 	FANMADE("Jimmy In: The Alien Attack (v0.1)", "a4e9db0564a494728de7873684a4307c"),
 	FANMADE("Joe McMuffin In \"What's Cooking, Doc\" (v1.0)", "8a3de7e61a99cb605fa6d233dd91c8e1"),
-	FANMADE_LFV("Jolimie, le Village Maudit (v0.5)", "21818501636b3cb8ad5de5c1a66de5c2", Common::FR_FRA, GF_AGIMOUSE|GF_AGIPAL, 0x2936),
-	FANMADE_LFV("Jolimie, le Village Maudit (v1.1)", "68d7aef1161bb5972fe03efdf29ccb7f", Common::FR_FRA, GF_AGIMOUSE|GF_AGIPAL, 0x2936),
+	FANMADE_LVF("Jolimie, le Village Maudit (v0.5)", "21818501636b3cb8ad5de5c1a66de5c2", Common::FR_FRA, GF_AGIMOUSE|GF_AGIPAL, 0x2936),
+	FANMADE_LVF("Jolimie, le Village Maudit (v1.1)", "68d7aef1161bb5972fe03efdf29ccb7f", Common::FR_FRA, GF_AGIMOUSE|GF_AGIPAL, 0x2936),
 	FANMADE("Journey Of Chef", "aa0a0b5a6364801ae65fdb96d6741df5"),
 	FANMADE("Jukebox (v1.0)", "c4b9c5528cc67f6ba777033830de7751"),
 	FANMADE("Justin Quest (v1.0 in development)", "103050989da7e0ffdc1c5e1793a4e1ec"),
@@ -1815,7 +1818,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Voodoo Girl - Queen of the Darned (v1.2 2002 Mar 29)", "11d0417b7b886f963d0b36789dac4c8f"),
 	FANMADE("Wizaro (v0.1)", "abeec1eda6eaf8dbc52443ea97ff140c"),
 
-	{ AD_TABLE_END_MARKER, 0, 0, 0 }
+	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 
 }
