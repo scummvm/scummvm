@@ -35,8 +35,6 @@ struct importScriptStruct {
 	uint16 offsetToName;
 };
 
-typedef struct importScriptStruct importScriptStruct;
-
 struct exportEntryStruct {
 	uint16 var0;
 	uint16 var2;
@@ -44,8 +42,6 @@ struct exportEntryStruct {
 	uint16 idx;
 	uint16 offsetToName;
 };
-
-typedef struct exportEntryStruct exportEntryStruct;
 
 struct ovlData3Struct {
 	uint8 *dataPtr;		//0
@@ -63,15 +59,11 @@ struct ovlData3Struct {
 	short int var1A;
 };
 
-typedef struct ovlData3Struct ovlData3Struct;
-
 struct stringEntryStruct {
 	char *string;
 	short int length;
 	short int idx;
 };
-
-typedef struct stringEntryStruct stringEntryStruct;
 
 struct linkDataStruct {
 	uint16 field_0;
@@ -94,8 +86,6 @@ struct linkDataStruct {
 	int16 field_20;
 };
 
-typedef struct linkDataStruct linkDataStruct;
-
 struct importDataStruct {
 	uint16 var0;		// 0
 	uint16 var1;		// 2
@@ -103,8 +93,6 @@ struct importDataStruct {
 	uint16 linkIdx;		// 6
 	uint16 nameOffset;
 };
-
-typedef struct importDataStruct importDataStruct;
 
 #define MULTIPLE 0
 #define VARIABLE 1
@@ -121,8 +109,6 @@ struct objDataStruct {
 	int16 stateTableIdx;
 };
 
-typedef struct objDataStruct objDataStruct;
-
 struct objectParams {
 	int16 X;
 	int16 Y;
@@ -131,8 +117,6 @@ struct objectParams {
 	int16 scale;
 	int16 state;
 };
-
-typedef struct objectParams objectParams;
 
 struct ovlDataStruct {
 	ovlData3Struct *data3Table;
@@ -168,8 +152,6 @@ struct ovlDataStruct {
 	unsigned short int scriptNumber;
 };
 
-typedef struct ovlDataStruct ovlDataStruct;
-
 struct overlayStruct {
 	char overlayName[14];
 	ovlDataStruct *ovlData;
@@ -194,8 +176,6 @@ struct overlayStruct {
 	char field_25;
 	short int executeScripts;
 };
-
-typedef struct overlayStruct overlayStruct;
 
 extern overlayStruct overlayTable[90];
 extern int numOfLoadedOverlay;

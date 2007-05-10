@@ -35,8 +35,6 @@ struct menuElementSubStruct {
 	int16 var4;
 };
 
-typedef struct menuElementSubStruct menuElementSubStruct;
-
 struct menuElementStruct {
 	struct menuElementStruct *next;
 	const char *string;
@@ -48,8 +46,6 @@ struct menuElementStruct {
 	gfxEntryStruct *gfx;
 	menuElementSubStruct *ptrSub;
 };
-
-typedef struct menuElementStruct menuElementStruct;
 
 typedef int32(*opcodeTypeFunction) (void);
 typedef int16(*opcodeFunction) (void);
@@ -83,27 +79,19 @@ struct mediumVarStruct {
 	int16 field_20;
 };
 
-typedef struct mediumVarStruct mediumVarStruct;
-
 struct filesDataStruct {
 	uint8 *field_0;
 	uint8 *field_4;
 };
-
-typedef struct filesDataStruct filesDataStruct;
 
 struct filesData2Struct {
 	int16 field_0;
 	int16 field_2;
 };
 
-typedef struct filesData2Struct filesData2Struct;
-
 struct fileName {
 	uint8 name[13];
 };
-
-typedef struct fileName fileName;
 
 struct setHeaderEntry {
 	int16 field_0;		// offset ptr part 1
@@ -116,16 +104,12 @@ struct setHeaderEntry {
 	int16 field_E;
 };
 
-typedef struct setHeaderEntry setHeaderEntry;
-
 struct volumeDataStruct {
 	char ident[10];
 	fileName *ptr;
 	int16 diskNumber;
 	int32 size;
 };
-
-typedef struct volumeDataStruct volumeDataStruct;
 
 struct fileEntry {
 	uint8 name[14];
@@ -134,8 +118,6 @@ struct fileEntry {
 	int32 extSize;
 	int32 unk3;		// unused
 };
-
-typedef struct fileEntry fileEntry;
 
 struct dataFileEntrySub {
 	uint8 *ptr;
@@ -148,8 +130,6 @@ struct dataFileEntrySub {
 	int16 field_1C;
 };
 
-typedef struct dataFileEntrySub dataFileEntrySub;
-
 struct dataFileEntry {
 	int16 widthInColumn;
 	int16 width;
@@ -158,15 +138,11 @@ struct dataFileEntry {
 	dataFileEntrySub subData;
 };
 
-typedef struct dataFileEntry dataFileEntry;
-
 struct systemStringsStruct {
 	int8 param;
 	uint8 string[12];
 	uint8 bootScriptName[8];
 };
-
-typedef struct systemStringsStruct systemStringsStruct;
 
 extern filesDataStruct filesData[90];
 extern filesData2Struct filesData2[90];

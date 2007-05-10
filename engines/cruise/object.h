@@ -35,8 +35,6 @@ struct gfxEntryStruct {
 	int width;		// for font: max right border; for sprite: just width
 };
 
-typedef struct gfxEntryStruct gfxEntryStruct;
-
 #define	OBJ_SPRITE 4
 
 struct objectParamsQuery {
@@ -49,8 +47,6 @@ struct objectParamsQuery {
 	int16 var6;
 	int16 var7;
 };
-
-typedef struct objectParamsQuery objectParamsQuery;
 
 objDataStruct *getObjectDataFromOverlay(int ovlIdx, int objIdx);
 int16 getSingleObjectParam(int16 overlayIdx, int16 param2, int16 param3, int16 * returnParam);

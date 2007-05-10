@@ -27,7 +27,7 @@
 
 namespace Cruise {
 
-persoStruct *persoTable[10];
+persoStruct *persoTable[NUM_PERSONS];
 
 int16 computedVar14;
 
@@ -41,7 +41,7 @@ void freePerso(int persoIdx) {
 void freeAllPerso(void) {
 	int i;
 
-	for (i = 0; i < 10; i++) {
+	for (i = 0; i < NUM_PERSONS; i++) {
 		freePerso(i);
 	}
 

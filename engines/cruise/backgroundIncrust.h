@@ -50,8 +50,6 @@ struct backgroundIncrustStruct {
 	uint16 var34;
 };
 
-typedef struct backgroundIncrustStruct backgroundIncrustStruct;
-
 extern backgroundIncrustStruct backgroundIncrustHead;
 
 void resetBackgroundIncrustList(backgroundIncrustStruct * pHead);

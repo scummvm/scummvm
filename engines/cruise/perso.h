@@ -27,7 +27,10 @@
 
 namespace Cruise {
 
-#define NUM_NODES 20
+enum {
+	NUM_NODES = 20,
+	NUM_PERSONS = 10
+};
 
 struct persoStruct {
 	int16 inc_droite;	// 2
@@ -41,9 +44,7 @@ struct persoStruct {
 	int16 inc_jo0;		// 2
 };
 
-typedef struct persoStruct persoStruct;
-
-extern persoStruct *persoTable[10];
+extern persoStruct *persoTable[NUM_PERSONS];
 extern int16 computedVar14;
 
 void freePerso(int persoIdx);

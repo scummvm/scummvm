@@ -36,8 +36,6 @@ struct menuStruct {
 	menuElementStruct *ptrNextElement;
 };
 
-typedef struct menuStruct menuStruct;
-
 extern menuStruct *menuTable[8];
 
 menuStruct *createMenu(int X, int Y, const char *menuName);

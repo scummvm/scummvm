@@ -581,7 +581,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 }
 
 //computePathfinding(returnVar2, params.X, params.Y, var34, var35, currentActor->stepX, currentActor->stepY);
-int16 computePathfinding(int16 *pSolution, int16 _X, int16 _Y, int16 destX,
+int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX,
 	    int16 destY, int16 stepX, int16 stepY, int16 oldPathId) {
 	persoStruct *perso;
 	int num;
@@ -603,14 +603,13 @@ int16 computePathfinding(int16 *pSolution, int16 _X, int16 _Y, int16 destX,
 		int i;
 		int16 *ptr;
 
-		for (i = 0; i < 10; i++)	// 10 = num perso
-		{
+		for (i = 0; i < NUM_PERSONS; i++) {	// 10 = num perso
 			if (!persoTable[i]) {
 				break;
 			}
 		}
 
-		if (i == 10) {
+		if (i == NUM_PERSONS) {
 			pSolution[0] = -1;
 			pSolution[1] = -1;
 
@@ -625,8 +624,8 @@ int16 computePathfinding(int16 *pSolution, int16 _X, int16 _Y, int16 destX,
 		perso->inc_jo1 = stepX;
 		perso->inc_jo2 = stepY;
 
-		*(ptr++) = _X;
-		*(ptr++) = _Y;
+		*(ptr++) = x;
+		*(ptr++) = y;
 		*(ptr++) = pSolution[0] = destX;
 		*(ptr++) = pSolution[1] = destY;
 		*(ptr++) = -1;
@@ -643,7 +642,7 @@ int16 computePathfinding(int16 *pSolution, int16 _X, int16 _Y, int16 destX,
 	ctpVar19 = ctpVar11;
 	flag_aff_chemin = 0;
 
-	if (_X == destX && _Y == destY) {
+	if (x == destX && y == destY) {
 		pSolution[0] = -1;
 		pSolution[1] = -1;
 
@@ -652,12 +651,12 @@ int16 computePathfinding(int16 *pSolution, int16 _X, int16 _Y, int16 destX,
 
 /******* cherche le premier noeud ******/
 
-	getPixel(_X, _Y);
+	getPixel(x, y);
 
 	pSolution[4] = computedVar14;
 
-	x_mouse = _X;
-	y_mouse = _Y;
+	x_mouse = x;
+	y_mouse = y;
 
 	if (!flag_obstacle
 	    || (point_select = point_proche(ctp_routeCoords)) == -1) {
@@ -674,10 +673,10 @@ int16 computePathfinding(int16 *pSolution, int16 _X, int16 _Y, int16 destX,
 /******* cherche le deuxieme noeud ******/
 
 	num = 0;
-	while (num < 10 && persoTable[num] != NULL)
+	while (num < NUM_PERSONS && persoTable[num] != NULL)
 		num++;
 
-	if (num == 10) {
+	if (num == NUM_PERSONS) {
 		pSolution[0] = -1;
 		pSolution[1] = -1;
 		return (-1);

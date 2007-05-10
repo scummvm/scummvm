@@ -35,8 +35,6 @@ enum animPhase {
 	ANIM_PHASE_END = 4
 };
 
-typedef enum animPhase animPhase;
-
 struct actorStruct {
 	struct actorStruct *next;
 	struct actorStruct *prev;
@@ -61,8 +59,6 @@ struct actorStruct {
 	int16 start;
 	int16 freeze;
 };
-
-typedef struct actorStruct actorStruct;
 
 extern int raoul_move[][13];
 extern int raoul_end[][13];

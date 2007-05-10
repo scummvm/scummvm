@@ -36,8 +36,6 @@ enum stackElementTypeEnum {
 	STACK_PTR
 };
 
-typedef enum stackElementTypeEnum stackElementTypeEnum;
-
 struct stackElementStruct {
 	stackElementTypeEnum type;
 
@@ -46,8 +44,6 @@ struct stackElementStruct {
 		int16 shortVar;
 	} data;
 };
-
-typedef struct stackElementStruct stackElementStruct;
 
 int16 popVar(void);
 void pushVar(int16 var);

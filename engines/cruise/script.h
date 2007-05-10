@@ -34,8 +34,6 @@ enum scriptTypeEnum {
 	scriptType_REL = 30
 };
 
-typedef enum scriptTypeEnum scriptTypeEnum;
-
 struct scriptInstanceStruct {
 	struct scriptInstanceStruct *nextScriptPtr;
 	int16 var4;
@@ -52,8 +50,6 @@ struct scriptInstanceStruct {
 ////// EXTRA ! not in original code. Needed for cross platform.
 	int16 bitMask;
 };
-
-typedef struct scriptInstanceStruct scriptInstanceStruct;
 
 extern scriptInstanceStruct relHead;
 extern scriptInstanceStruct procHead;

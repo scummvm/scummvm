@@ -36,14 +36,10 @@ struct ctpVar19SubStruct {
 	uint16 maxY;		//A
 };
 
-typedef struct ctpVar19SubStruct ctpVar19SubStruct;
-
 struct ctpVar19Struct {
 	struct ctpVar19Struct *field_0;	//0
 	ctpVar19SubStruct subStruct;
 };
-
-typedef struct ctpVar19Struct ctpVar19Struct;
 
 extern ctpVar19Struct *ptr_something;
 extern ctpVar19Struct *polyStruct;

@@ -32,8 +32,6 @@ struct backgroundTableStruct {
 	char extention[6];
 };
 
-typedef struct backgroundTableStruct backgroundTableStruct;
-
 extern short int cvtPalette[0x20];
 extern int CVTLoaded;
 extern uint8 *backgroundPtrtable[8];

@@ -44,9 +44,6 @@ struct palEntry {
 	uint8 A;
 };
 
-typedef struct gfxModuleDataStruct gfxModuleDataStruct;
-typedef struct palEntry palEntry;
-
 extern gfxModuleDataStruct gfxModuleData;
 extern short globalAtariScreen[320 * 200 / 4];
 

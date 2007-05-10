@@ -38,8 +38,6 @@ struct autoCellStruct {
 	cellStruct *pCell;
 };
 
-typedef struct autoCellStruct autoCellStruct;
-
 autoCellStruct autoCellHead;
 
 void addAutoCell(int overlayIdx, int idx, int type, int newVal, cellStruct *pObject) {

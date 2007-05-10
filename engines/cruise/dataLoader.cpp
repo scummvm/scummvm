@@ -37,8 +37,6 @@ enum fileTypeEnum {
 	type_FNT
 };
 
-typedef enum fileTypeEnum fileTypeEnum;
-
 int loadSingleFile;
 
 // TODO: Unify decodeGfxFormat1, decodeGfxFormat4 and decodeGfxFormat5
