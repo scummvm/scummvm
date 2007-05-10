@@ -960,6 +960,7 @@ restart:
 	window->textColumn = 0;
 	window->textRow = 0;
 	window->textColumnOffset = 0;
+	window->textLength = 0;		// Difference
 
 	switch (_language) {
 	case Common::FR_FRA:
@@ -986,6 +987,7 @@ restart:
 		window->textColumn = 0;
 		window->textRow = 0;
 		window->textColumnOffset = 0;
+		window->textLength = 0;		// Difference
 		
 		switch (_language) {
 		case Common::FR_FRA:
@@ -1199,11 +1201,12 @@ void AGOSEngine::printScroll() {
 	state.srcPtr  = vpe->vgaFile2 + READ_BE_UINT32(vpe->vgaFile2 + 9 * 8);
 
 	state.palette = 0;
+	state.paletteMod = 0;
 	state.x = 10;
 	state.y = 32;
 	state.width = state.draw_width = 10;
 	state.height = state.draw_height = 72;
-	state.flags = kDFCompressed | kDFUseFrontBuf;
+	state.flags = kDFCompressed;
 	_windowNum = 3;	
 
 	state.depack_cont = -0x80;

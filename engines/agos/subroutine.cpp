@@ -321,7 +321,7 @@ bool AGOSEngine::loadTablesIntoMem(uint subr_id) {
 			_tablesHeapCurPosNew = _tablesHeapCurPos;
 
 			if (_tablesHeapCurPos > _tablesHeapSize)
-				error("loadTablesOldIntoMem: Out of table memory");
+				error("loadTablesIntoMem: Out of table memory");
 			return 1;
 		}
 
@@ -331,7 +331,7 @@ bool AGOSEngine::loadTablesIntoMem(uint subr_id) {
 		p += 6;
 	}
 
-	debug(1,"loadTablesOldIntoMem: didn't find %d", subr_id);
+	debug(1,"loadTablesIntoMem: didn't find %d", subr_id);
 	return 0;
 }
 
@@ -387,13 +387,13 @@ bool AGOSEngine_Waxworks::loadTablesIntoMem(uint subr_id) {
 				_tablesHeapCurPosNew = _tablesHeapCurPos;
 
 				if (_tablesHeapCurPos > _tablesHeapSize)
-					error("loadTablesNewIntoMem: Out of table memory");
+					error("loadTablesIntoMem: Out of table memory");
 				return 1;
 			}
 		}
 	}
 
-	debug(1,"loadTablesNewIntoMem: didn't find %d", subr_id);
+	debug(1,"loadTablesIntoMem: didn't find %d", subr_id);
 	return 0;
 }
 

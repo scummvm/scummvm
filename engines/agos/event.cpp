@@ -180,7 +180,11 @@ void AGOSEngine::restartAnimation() {
 	if (!(_lockWord & 0x10))
 		return;
 
+	_window4Flag = 2;
+	
+	setMoveRect(0, 0, 224, 127);
 	updateScreen();
+
 	_lockWord &= ~0x10;
 
 	// Check picture queue

@@ -1364,9 +1364,9 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 			src += srcWidth;
 		}
 
-		if (getGameType() == GType_ELVIRA1 && updateWindow == 3 && _bottomPalette != 0) {
-			dst = getFrontBuf() + 42560;
-			int size = 21440;
+		if (getGameType() == GType_ELVIRA1 && updateWindow == 3 && _bottomPalette) {
+			dst = getFrontBuf() + 133 * _screenWidth;
+			int size = 67 * _screenWidth;
 
 			while (size--) {
 				*dst += 0x10;
