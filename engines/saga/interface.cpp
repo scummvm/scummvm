@@ -536,6 +536,10 @@ void Interface::setStatusText(const char *text, int statusColor) {
 	assert(text != NULL);
 	assert(strlen(text) < STATUS_TEXT_LEN);
 
+	// Disable the status text in IHNM when the main panel is not shown (i.e. when the screen is full)
+	if (_vm->getGameType() == GType_IHNM && !(_panelMode == kPanelMain || _panelMode == kPanelMap))
+		return;
+
 	if (_vm->_render->getFlags() & (RF_PLACARD | RF_MAP))
 		return;
 
@@ -1525,8 +1529,9 @@ void Interface::drawStatusBar() {
 
 	backBuffer = _vm->_gfx->getBackBuffer();
 
-	// Disable this for IHNM for now, since that game uses the full screen
-	// in some cases.
+	// Disable the status bar in IHNM when the main panel is not shown (i.e. when the screen is full)
+	if (_vm->getGameType() == GType_IHNM && !(_panelMode == kPanelMain || _panelMode == kPanelMap))
+		return;
 
 	// Erase background of status bar
 	rect.left = _vm->getDisplayInfo().statusXOffset;
