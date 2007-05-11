@@ -536,8 +536,8 @@ void Interface::setStatusText(const char *text, int statusColor) {
 	assert(text != NULL);
 	assert(strlen(text) < STATUS_TEXT_LEN);
 
-	// Disable the status text in IHNM when the main panel is not shown (i.e. when the screen is full)
-	if (_vm->getGameType() == GType_IHNM && !(_panelMode == kPanelMain || _panelMode == kPanelMap))
+	// Disable the status text in IHNM when the chapter is 8
+	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8)
 		return;
 
 	if (_vm->_render->getFlags() & (RF_PLACARD | RF_MAP))
@@ -1524,14 +1524,11 @@ void Interface::drawStatusBar() {
 	int stringWidth;
 	int color;
 
-	if (_panelMode == kPanelChapterSelection)
+	// Disable the status text in IHNM when the chapter is 8
+	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8)
 		return;
 
 	backBuffer = _vm->_gfx->getBackBuffer();
-
-	// Disable the status bar in IHNM when the main panel is not shown (i.e. when the screen is full)
-	if (_vm->getGameType() == GType_IHNM && !(_panelMode == kPanelMain || _panelMode == kPanelMap))
-		return;
 
 	// Erase background of status bar
 	rect.left = _vm->getDisplayInfo().statusXOffset;
