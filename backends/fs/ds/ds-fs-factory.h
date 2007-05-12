@@ -1,7 +1,7 @@
-#ifndef DSFILESYSTEMFACTORY_H_
-#define DSFILESYSTEMFACTORY_H_
+#ifndef DS_FILESYSTEM_FACTORY_H
+#define DS_FILESYSTEM_FACTORY_H
 
-#include "backends/fs/AbstractFilesystemFactory.h"
+#include "backends/fs/abstract-fs-factory.h"
 
 /**
  * Creates DSFilesystemNode objects.
@@ -18,11 +18,6 @@ public:
 	 * @return A unique instance of DSFilesytemFactory.
 	 */
 	static DSFilesystemFactory *instance();
-	
-	/**
-	 * Destructor.
-	 */
-	virtual ~DSFilesystemFactory() {};
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -35,4 +30,4 @@ private:
 	static DSFilesystemFactory *_instance;
 };
 
-#endif /*DSFILESYSTEMFACTORY_H_*/
+#endif /*DS_FILESYSTEM_FACTORY_H*/

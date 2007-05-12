@@ -1,4 +1,4 @@
-#include "backends/fs/psp/PSPFilesystemFactory.h"
+#include "backends/fs/psp/psp-fs-factory.h"
 #include "backends/fs/psp/psp_fs.cpp"
 
 PSPFilesystemFactory *PSPFilesystemFactory::_instance = 0;

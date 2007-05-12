@@ -1,7 +1,7 @@
-#ifndef ABOXFILESYSTEMFACTORY_H_
-#define ABOXFILESYSTEMFACTORY_H_
+#ifndef ABOX_FILESYSTEM_FACTORY_H
+#define ABOX_FILESYSTEM_FACTORY_H
 
-#include "backends/fs/AbstractFilesystemFactory.h"
+#include "backends/fs/abstract-fs-factory.h"
 
 /**
  * Creates ABoxFilesystemNode objects.
@@ -18,11 +18,6 @@ public:
 	 * @return A unique instance of ABoxFilesytemFactory.
 	 */
 	static ABoxFilesystemFactory *instance();
-	
-	/**
-	 * Destructor.
-	 */
-	virtual ~ABoxFilesystemFactory() {};
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -35,4 +30,4 @@ private:
 	static ABoxFilesystemFactory *_instance;
 };
 
-#endif /*ABOXFILESYSTEMFACTORY_H_*/
+#endif /*ABOX_FILESYSTEM_FACTORY_H*/

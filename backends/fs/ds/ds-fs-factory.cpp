@@ -1,4 +1,4 @@
-#include "backends/fs/ds/DSFilesystemFactory.h"
+#include "backends/fs/ds/ds-fs-factory.h"
 #include "backends/fs/ds/ds-fs.cpp"
 #include "dsmain.h" //for the isGBAMPAvailable() function
 

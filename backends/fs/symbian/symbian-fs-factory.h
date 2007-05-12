@@ -1,7 +1,7 @@
-#ifndef SYMBIANFILESYSTEMFACTORY_H_
-#define SYMBIANFILESYSTEMFACTORY_H_
+#ifndef SYMBIAN_FILESYSTEM_FACTORY_H
+#define SYMBIAN_FILESYSTEM_FACTORY_H
 
-#include "backends/fs/AbstractFilesystemFactory.h"
+#include "backends/fs/abstract-fs-factory.h"
 
 /**
  * Creates SymbianFilesystemNode objects.
@@ -18,11 +18,6 @@ public:
 	 * @return A unique instance of SymbianFilesytemFactory.
 	 */
 	static SymbianFilesystemFactory *instance();
-	
-	/**
-	 * Destructor.
-	 */
-	virtual ~SymbianFilesystemFactory() {};
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -35,4 +30,4 @@ private:
 	static SymbianFilesystemFactory *_instance;
 };
 
-#endif /*SYMBIANFILESYSTEMFACTORY_H_*/
+#endif /*SYMBIAN_FILESYSTEM_FACTORY_H*/

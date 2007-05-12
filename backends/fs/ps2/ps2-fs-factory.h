@@ -1,7 +1,7 @@
-#ifndef PS2FILESYSTEMFACTORY_H_
-#define PS2FILESYSTEMFACTORY_H_
+#ifndef PS2_FILESYSTEM_FACTORY_H
+#define PS2_FILESYSTEM_FACTORY_H
 
-#include "backends/fs/AbstractFilesystemFactory.h"
+#include "backends/fs/abstract-fs-factory.h"
 
 /**
  * Creates PS2FilesystemNode objects.
@@ -18,11 +18,6 @@ public:
 	 * @return A unique instance of Ps2FilesytemFactory.
 	 */
 	static Ps2FilesystemFactory *instance();
-	
-	/**
-	 * Destructor.
-	 */
-	virtual ~Ps2FilesystemFactory() {};
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -35,4 +30,4 @@ private:
 	static Ps2FilesystemFactory *_instance;
 };
 
-#endif /*PS2FILESYSTEMFACTORY_H_*/
+#endif /*PS2_FILESYSTEM_FACTORY_H*/

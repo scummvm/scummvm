@@ -1,4 +1,4 @@
-#include "backends/fs/windows/WindowsFilesystemFactory.h"
+#include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/fs/windows/windows-fs.cpp"
 
 WindowsFilesystemFactory *WindowsFilesystemFactory::_instance = 0;

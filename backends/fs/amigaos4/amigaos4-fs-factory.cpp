@@ -1,4 +1,4 @@
-#include "backends/fs/amigaos4/AmigaOSFilesystemFactory.h"
+#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
 #include "backends/fs/amigaos4/amigaos4-fs.cpp"
 
 AmigaOSFilesystemFactory *AmigaOSFilesystemFactory::_instance = 0;

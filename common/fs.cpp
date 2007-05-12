@@ -23,7 +23,7 @@
 
 #include "backends/fs/abstract-fs.h"
 #include "common/util.h"
-#include "backends/fs/FilesystemFactoryMaker.cpp"
+#include "backends/fs/fs-factory-maker.cpp"
 
 FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) {
 	_realNode = realNode;

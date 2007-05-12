@@ -1,7 +1,7 @@
-#ifndef WINDOWSFILESYSTEMFACTORY_H_
-#define WINDOWSFILESYSTEMFACTORY_H_
+#ifndef WINDOWS_FILESYSTEM_FACTORY_H
+#define WINDOWS_FILESYSTEM_FACTORY_H
 
-#include "backends/fs/AbstractFilesystemFactory.h"
+#include "backends/fs/abstract-fs-factory.h"
 
 /**
  * Creates WindowsFilesystemNode objects.
@@ -19,11 +19,6 @@ public:
 	 */
 	static WindowsFilesystemFactory *instance();
 	
-	/**
-	 * Destructor.
-	 */
-	virtual ~WindowsFilesystemFactory() {};
-	
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
 	virtual AbstractFilesystemNode *makeFileNodePath(const String &path) const;
@@ -35,4 +30,4 @@ private:
 	static WindowsFilesystemFactory *_instance;
 };
 
-#endif /*WINDOWSFILESYSTEMFACTORY_H_*/
+#endif /*WINDOWS_FILESYSTEM_FACTORY_H*/

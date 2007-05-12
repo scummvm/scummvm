@@ -1,7 +1,7 @@
-#ifndef POSIXFILESYSTEMFACTORY_H_
-#define POSIXFILESYSTEMFACTORY_H_
+#ifndef POSIX_FILESYSTEM_FACTORY_H
+#define POSIX_FILESYSTEM_FACTORY_H
 
-#include "backends/fs/AbstractFilesystemFactory.h"
+#include "backends/fs/abstract-fs-factory.h"
 
 /**
  * Creates POSIXFilesystemNode objects.
@@ -18,11 +18,6 @@ public:
 	 * @return A unique instance of POSIXFilesytemFactory.
 	 */
 	static POSIXFilesystemFactory *instance();
-	
-	/**
-	 * Destructor.
-	 */
-	virtual ~POSIXFilesystemFactory() {};
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -35,4 +30,4 @@ private:
 	static POSIXFilesystemFactory *_instance;
 };
 
-#endif /*POSIXFILESYSTEMFACTORY_H_*/
+#endif /*POSIX_FILESYSTEM_FACTORY_H*/

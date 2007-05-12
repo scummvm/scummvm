@@ -1,7 +1,7 @@
-#ifndef RONINCDFILESYSTEMFACTORY_H_
-#define RONINCDFILESYSTEMFACTORY_H_
+#ifndef RONINCD_FILESYSTEM_FACTORY_H
+#define RONINCD_FILESYSTEM_FACTORY_H
 
-#include "backends/fs/AbstractFilesystemFactory.h"
+#include "backends/fs/abstract-fs-factory.h"
 
 /**
  * Creates RoninCDFilesystemNode objects.
@@ -18,11 +18,6 @@ public:
 	 * @return A unique instance of RoninCDFilesytemFactory.
 	 */
 	static RoninCDFilesystemFactory *instance();
-	
-	/**
-	 * Destructor.
-	 */
-	virtual ~RoninCDFilesystemFactory() {};
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -35,4 +30,4 @@ private:
 	static RoninCDFilesystemFactory *_instance;
 };
 
-#endif /*RONINCDFILESYSTEMFACTORY_H_*/
+#endif /*RONINCD_FILESYSTEM_FACTORY_H*/

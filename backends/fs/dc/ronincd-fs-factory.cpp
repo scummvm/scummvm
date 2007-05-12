@@ -1,4 +1,4 @@
-#include "backends/fs/dc/RoninCDFilesystemFactory.h"
+#include "backends/fs/dc/ronincd-fs-factory.h"
 #include "backends/fs/dc/dc-fs.cpp"
 
 RoninCDFilesystemFactory *RoninCDFilesystemFactory::_instance = 0;

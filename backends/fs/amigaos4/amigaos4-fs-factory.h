@@ -1,7 +1,7 @@
-#ifndef AMIGAOSFILESYSTEMFACTORY_H_
-#define AMIGAOSFILESYSTEMFACTORY_H_
+#ifndef AMIGAOS_FILESYSTEM_FACTORY_H
+#define AMIGAOS_FILESYSTEM_FACTORY_H
 
-#include "backends/fs/AbstractFilesystemFactory.h"
+#include "backends/fs/abstract-fs-factory.h"
 
 /**
  * Creates AmigaOSFilesystemNode objects.
@@ -18,11 +18,6 @@ public:
 	 * @return A unique instance of AmigaOSFilesytemFactory.
 	 */
 	static AmigaOSFilesystemFactory *instance();
-	
-	/**
-	 * Destructor.
-	 */
-	virtual ~AmigaOSFilesystemFactory() {};
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -35,4 +30,4 @@ private:
 	static AmigaOSFilesystemFactory *_instance;
 };
 
-#endif /*AMIGAOSFILESYSTEMFACTORY_H_*/
+#endif /*AMIGAOS_FILESYSTEM_FACTORY_H*/

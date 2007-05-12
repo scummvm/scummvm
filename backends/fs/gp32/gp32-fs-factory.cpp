@@ -1,4 +1,4 @@
-#include "backends/fs/gp32/GP32FilesystemFactory.h"
+#include "backends/fs/gp32/gp32-fs-factory.h"
 #include "backends/fs/gp32/gp32-fs.cpp"
 
 GP32FilesystemFactory *GP32FilesystemFactory::_instance = 0;

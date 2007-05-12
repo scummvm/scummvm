@@ -1,5 +1,5 @@
-#ifndef ABSTRACTFILESYSTEMFACTORY_H_
-#define ABSTRACTFILESYSTEMFACTORY_H_
+#ifndef ABSTRACT_FILESYSTEM_FACTORY_H
+#define ABSTRACT_FILESYSTEM_FACTORY_H
 
 #include "common/str.h"
 
@@ -45,4 +45,4 @@ public:
 	virtual AbstractFilesystemNode *makeRootFileNode() const = 0;
 };
 
-#endif /*ABSTRACTFILESYSTEMFACTORY_H_*/
+#endif /*ABSTRACT_FILESYSTEM_FACTORY_H*/

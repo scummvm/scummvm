@@ -1,4 +1,4 @@
-#include "backends/fs/ps2/Ps2FilesystemFactory.h"
+#include "backends/fs/ps2/ps2-fs-factory.h"
 #include "backends/fs/ps2/ps2-fs.cpp"
 
 Ps2FilesystemFactory *Ps2FilesystemFactory::_instance = 0;

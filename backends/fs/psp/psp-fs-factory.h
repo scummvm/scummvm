@@ -1,7 +1,7 @@
-#ifndef PSPFILESYSTEMFACTORY_H_
-#define PSPFILESYSTEMFACTORY_H_
+#ifndef PSP_FILESYSTEM_FACTORY_H
+#define PSP_FILESYSTEM_FACTORY_H
 
-#include "backends/fs/AbstractFilesystemFactory.h"
+#include "backends/fs/abstract-fs-factory.h"
 
 /**
  * Creates PSPFilesystemNode objects.
@@ -18,11 +18,6 @@ public:
 	 * @return A unique instance of PSPFilesytemFactory.
 	 */
 	static PSPFilesystemFactory *instance();
-	
-	/**
-	 * Destructor.
-	 */
-	virtual ~PSPFilesystemFactory() {};
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -35,4 +30,4 @@ private:
 	static PSPFilesystemFactory *_instance;
 };
 
-#endif /*PSPFILESYSTEMFACTORY_H_*/
+#endif /*PSP_FILESYSTEM_FACTORY_H*/

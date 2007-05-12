@@ -1,7 +1,7 @@
-#ifndef PALMOSFILESYSTEMFACTORY_H_
-#define PALMOSFILESYSTEMFACTORY_H_
+#ifndef PALMOS_FILESYSTEM_FACTORY_H
+#define PALMOS_FILESYSTEM_FACTORY_H
 
-#include "backends/fs/AbstractFilesystemFactory.h"
+#include "backends/fs/abstract-fs-factory.h"
 
 /**
  * Creates PalmOSFilesystemNode objects.
@@ -18,11 +18,6 @@ public:
 	 * @return A unique instance of PalmOSFilesytemFactory.
 	 */
 	static PalmOSFilesystemFactory *instance();
-	
-	/**
-	 * Destructor.
-	 */
-	virtual ~PalmOSFilesystemFactory() {};
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -35,4 +30,4 @@ private:
 	static PalmOSFilesystemFactory *_instance;
 };
 
-#endif /*PALMOSFILESYSTEMFACTORY_H_*/
+#endif /*PALMOS_FILESYSTEM_FACTORY_H*/

@@ -1,4 +1,4 @@
-#include "backends/fs/morphos/ABoxFilesystemFactory.h"
+#include "backends/fs/morphos/abox-fs-factory.h"
 #include "backends/fs/morphos/abox-fs.cpp"
 
 ABoxFilesystemFactory *ABoxFilesystemFactory::_instance = 0;

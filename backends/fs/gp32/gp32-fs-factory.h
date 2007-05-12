@@ -1,7 +1,7 @@
-#ifndef GP32FILESYSTEMFACTORY_H_
-#define GP32FILESYSTEMFACTORY_H_
+#ifndef GP32_FILESYSTEM_FACTORY_H
+#define GP32_FILESYSTEM_FACTORY_H
 
-#include "backends/fs/AbstractFilesystemFactory.h"
+#include "backends/fs/abstract-fs-factory.h"
 
 /**
  * Creates GP32FilesystemNode objects.
@@ -18,11 +18,6 @@ public:
 	 * @return A unique instance of GP32FilesytemFactory.
 	 */
 	static GP32FilesystemFactory *instance();
-	
-	/**
-	 * Destructor.
-	 */
-	virtual ~GP32FilesystemFactory() {};
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -35,4 +30,4 @@ private:
 	static GP32FilesystemFactory *_instance;
 };
 
-#endif /*GP32FILESYSTEMFACTORY_H_*/
+#endif /*GP32_FILESYSTEM_FACTORY_H*/

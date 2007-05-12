@@ -1,4 +1,4 @@
-#include "backends/fs/AbstractFilesystemFactory.h"
+#include "backends/fs/abstract-fs-factory.h"
 
 /*
  * All the following includes choose, at compile time, which specific backend will be used
@@ -8,47 +8,47 @@
  * all build environments. Additionally, this results in smaller binaries.
  */
 #if defined(__amigaos4__)
-	#include "backends/fs/amigaos4/AmigaOSFilesystemFactory.cpp"
+	#include "backends/fs/amigaos4/amigaos4-fs-factory.cpp"
 #endif
  
 #if defined(__DC__)
-	#include "backends/fs/dc/RoninCDFilesystemFactory.cpp"
+	#include "backends/fs/dc/ronincd-fs-factory.cpp"
 #endif
 
 #if defined(__DS__)
-	#include "backends/fs/ds/DSFilesystemFactory.cpp"
+	#include "backends/fs/ds/ds-fs-factory.cpp"
 #endif
 
 #if defined(__GP32__)
-	#include "backends/fs/gp32/GP32FilesystemFactory.cpp"
+	#include "backends/fs/gp32/gp32-fs-factory.cpp"
 #endif
 
 #if defined(__MORPHOS__)
-	#include "backends/fs/morphos/ABoxFilesystemFactory.cpp"
+	#include "backends/fs/morphos/abox-fs-factory.cpp"
 #endif
 
 #if defined(PALMOS_MODE)
-	#include "backends/fs/palmos/PalmOSFilesystemFactory.cpp"
+	#include "backends/fs/palmos/palmos-fs-factory.cpp"
 #endif
 
 #if defined(__PLAYSTATION2__)
-	#include "backends/fs/ps2/Ps2FilesystemFactory.cpp"
+	#include "backends/fs/ps2/ps2-fs-factory.cpp"
 #endif
 
 #if defined(__PSP__)
-	#include "backends/fs/psp/PSPFilesystemFactory.cpp"
+	#include "backends/fs/psp/psp-fs-factory.cpp"
 #endif
 
 #if defined(__SYMBIAN32__)
-	#include "backends/fs/symbian/SymbianFilesystemFactory.cpp"
+	#include "backends/fs/symbian/symbian-fs-factory.cpp"
 #endif
 
 #if defined(UNIX)
-	#include "backends/fs/posix/POSIXFilesystemFactory.cpp"
+	#include "backends/fs/posix/posix-fs-factory.cpp"
 #endif
 
 #if defined(WIN32)
-	#include "backends/fs/windows/WindowsFilesystemFactory.cpp"
+	#include "backends/fs/windows/windows-fs-factory.cpp"
 #endif
 
 /**

@@ -1,4 +1,4 @@
-#include "backends/fs/posix/POSIXFilesystemFactory.h"
+#include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.cpp"
 
 POSIXFilesystemFactory *POSIXFilesystemFactory::_instance = 0;

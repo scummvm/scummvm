@@ -1,4 +1,4 @@
-#include "backends/fs/symbian/SymbianFilesystemFactory.h"
+#include "backends/fs/symbian/symbian-fs-factory.h"
 #include "backends/fs/symbian/symbian-fs.cpp"
 
 SymbianFilesystemFactory *SymbianFilesystemFactory::_instance = 0;

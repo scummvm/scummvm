@@ -1,4 +1,4 @@
-#include "backends/fs/palmos/PalmOSFilesystemFactory.h"
+#include "backends/fs/palmos/palmos-fs-factory.h"
 #include "backends/fs/palmos/palmos-fs.cpp"
 
 PalmOSFilesystemFactory *PalmOSFilesystemFactory::_instance = 0;
