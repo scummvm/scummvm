@@ -120,6 +120,7 @@ Parallaction::Parallaction(OSystem *syst) :
 	Common::addSpecialDebugLevel(kDebugGraphics, "gfx", "Gfx debug level");
 	Common::addSpecialDebugLevel(kDebugJobs, "jobs", "Jobs debug level");
 	Common::addSpecialDebugLevel(kDebugInput, "input", "Input debug level");
+	Common::addSpecialDebugLevel(kDebugAudio, "audio", "Audio debug level");
 
 }
 

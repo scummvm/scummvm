@@ -231,10 +231,14 @@ DosSoundMan::DosSoundMan(Parallaction *vm, MidiDriver *midiDriver) : SoundMan(vm
 }
 
 DosSoundMan::~DosSoundMan() {
+	debugC(1, kDebugAudio, "DosSoundMan::playMusic()");
+
 	delete _midiPlayer;
 }
 
 void DosSoundMan::playMusic() {
+	debugC(1, kDebugAudio, "DosSoundMan::playMusic()");
+
 	_midiPlayer->play(_musicFile);
 }
 
@@ -313,6 +317,8 @@ void AmigaSoundMan::playSfx(const char *filename, uint channel, bool looping, in
 		return;
 	}
 
+	debugC(1, kDebugAudio, "AmigaSoundMan::playSfx(%s, %i)", filename, channel);
+
 	Channel *ch = &_channels[channel];
 	Common::ReadStream *stream = _vm->_disk->loadSound(filename);
 	Audio::A8SVXDecoder decoder(*stream, ch->header, ch->data, ch->dataSize);
@@ -349,6 +355,8 @@ void AmigaSoundMan::stopSfx(uint channel) {
 		return;
 	}
 
+	debugC(1, kDebugAudio, "AmigaSoundMan::stopSfx(%i)", channel);
+
 	_mixer->stopHandle(_channels[channel].handle);
 	free(_channels[channel].data);
 	_channels[channel].data = 0;
@@ -357,16 +365,25 @@ void AmigaSoundMan::stopSfx(uint channel) {
 void AmigaSoundMan::playMusic() {
 	stopMusic();
 
+	debugC(1, kDebugAudio, "AmigaSoundMan::playMusic()");
+
 	Common::ReadStream *stream = _vm->_disk->loadMusic(_musicFile);
 	_musicStream = Audio::makeProtrackerStream(stream);
 	delete stream;
+
+	debugC(3, kDebugAudio, "AmigaSoundMan::playMusic(): created new music stream");
 
 	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _musicStream, -1, 255, 0, false, false);
 }
 
 void AmigaSoundMan::stopMusic() {
-	_mixer->stopHandle(_musicHandle);
-	delete _musicStream;
+	debugC(1, kDebugAudio, "AmigaSoundMan::stopMusic()");
+
+	if (_mixer->isSoundHandleActive(_musicHandle)) {
+		_mixer->stopHandle(_musicHandle);
+		delete _musicStream;
+		_musicStream = 0;
+	}
 }
 
 void AmigaSoundMan::playCharacterMusic(const char *character) {

@@ -51,7 +51,8 @@ enum {
 	kDebugDialogue = 1 << 3,
 	kDebugGraphics = 1 << 4,
 	kDebugJobs = 1 << 5,
-	kDebugInput = 1 << 6
+	kDebugInput = 1 << 6,
+	kDebugAudio = 1 << 7
 };
 
 enum {
