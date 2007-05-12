@@ -301,8 +301,8 @@ const char *_instructionNamesRes[] = {
 };
 
 const char *_callableNamesRes[] = {
-	"HBOff",
 	"Projector",
+	"HBOff",
 	"StartIntro",
 	"EndIntro",
 	"MoveSheet",
