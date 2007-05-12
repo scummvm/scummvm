@@ -246,16 +246,22 @@ Script* DosDisk::loadLocation(const char *name) {
 	if (IS_MINI_CHARACTER(_vm->_characterName)) {
 		sprintf(archivefile, "%s%s", _vm->_characterName+4, _languageDir);
 	} else {
-		if (IS_DUMMY_CHARACTER(_vm->_characterName)) strcpy(archivefile, _languageDir);
-		else {
+		if (IS_DUMMY_CHARACTER(_vm->_characterName)) {
+			strcpy(archivefile, _languageDir);
+		} else {
 			sprintf(archivefile, "%s%s", _vm->_characterName, _languageDir);
 		}
 	}
+
 	strcat(archivefile, name);
 	strcat(archivefile, ".loc");
 
+	debugC(3, kDebugDisk, "DosDisk::loadLocation(%s): trying '%s'", name, archivefile);
+
 	if (!_locArchive.openArchivedFile(archivefile)) {
 		sprintf(archivefile, "%s%s.loc", _languageDir, name);
+		debugC(3, kDebugDisk, "DosDisk::loadLocation(%s): trying '%s'", name, archivefile);
+
 		if (!_locArchive.openArchivedFile(archivefile))
 			errorFileNotFound(name);
 	}

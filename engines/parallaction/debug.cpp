@@ -61,8 +61,8 @@ Debugger::Debugger(Parallaction *vm)
 	_vm = vm;
 
 	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("location",    WRAP_METHOD(Debugger, Cmd_Location));
-	DCmd_Register("give",    WRAP_METHOD(Debugger, Cmd_Give));
+	DCmd_Register("location", WRAP_METHOD(Debugger, Cmd_Location));
+	DCmd_Register("give",     WRAP_METHOD(Debugger, Cmd_Give));
 }
 
 
@@ -81,11 +81,15 @@ bool Debugger::Cmd_Location(int argc, const char **argv) {
 	switch (argc) {
 	case 3:
 		character = const_cast<char*>(argv[2]);
-		// fallthru is intentional here
+		location = const_cast<char*>(argv[1]);
+		sprintf(_vm->_location._name, "%s.%s", location, character);
+		// TODO: check if location exists
+		_engineFlags |= kEngineChangeLocation;
+		break;
 
 	case 2:
 		location = const_cast<char*>(argv[1]);
-		sprintf(_vm->_location._name, "%s.%s", location, character);
+		sprintf(_vm->_location._name, "%s", location);
 		// TODO: check if location exists
 		_engineFlags |= kEngineChangeLocation;
 		break;
