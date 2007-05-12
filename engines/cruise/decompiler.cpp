@@ -26,8 +26,6 @@
 
 namespace Cruise {
 
-#include <stdarg.h>
-
 #ifdef DUMP_SCRIPT
 
 #define numMaxLignes 100000

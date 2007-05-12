@@ -27,9 +27,6 @@
 
 namespace Cruise {
 
-#include <stdlib.h>
-#include <math.h>
-
 typedef char ColorP;
 
 #define SCREENHEIGHT 200
