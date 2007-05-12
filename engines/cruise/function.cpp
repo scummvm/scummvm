@@ -1083,8 +1083,7 @@ void checkCollisionWithWalkBoxesBoundingBoxes(int x, int y) {
 
 		ctpVar19SubStruct *subStruct;
 
-		if (-1 == (int)di->field_0)	// ok, ugly, but it's in the original
-		{
+		if ((ctpVar19Struct *)-1 == di->field_0) {	// ok, ugly, but it's in the original
 			flag_obstacle = 0;
 			return;
 		}
