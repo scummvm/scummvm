@@ -661,7 +661,7 @@ bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
 		return false;
 	}
 	else
-		warning("Sound opened OK, mixing at %d Hz", _sampleRate);
+		debug(1, "Sound opened OK, mixing at %d Hz", _sampleRate);
 	SDL_PauseAudio(0);
 	return true;
 }
@@ -2097,7 +2097,7 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 		switch(ev.type) {
 		case SDL_KEYDOWN:
 			// KMOD_RESERVED is used if the key has been injected by an external buffer
-			// warning("down %X %s", ev.key.keysym.sym, SDL_GetKeyName((SDLKey)ev.key.keysym.sym));
+			debug(1, "Key down %X %s", ev.key.keysym.sym, SDL_GetKeyName((SDLKey)ev.key.keysym.sym));
 			if (ev.key.keysym.mod != KMOD_RESERVED) {
 				keyEvent = true;
 				_lastKeyPressed = ev.key.keysym.sym;
@@ -2119,7 +2119,7 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 
 		case SDL_KEYUP:
 			// KMOD_RESERVED is used if the key has been injected by an external buffer
-			// warning("up %X %s", ev.key.keysym.sym, SDL_GetKeyName((SDLKey)ev.key.keysym.sym));
+			debug(1, "Key up %X %s", ev.key.keysym.sym, SDL_GetKeyName((SDLKey)ev.key.keysym.sym));
 			if (ev.key.keysym.mod != KMOD_RESERVED) {
 				keyEvent = true;
 				_lastKeyPressed = 0;
@@ -2236,11 +2236,11 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 		
 		case SDL_ACTIVEEVENT:
 			if (ev.active.state & SDL_APPMOUSEFOCUS)
-				warning("%s mouse focus.", ev.active.gain ? "Got" : "Lost");
+				debug(1, "%s mouse focus.", ev.active.gain ? "Got" : "Lost");
 			if (ev.active.state & SDL_APPINPUTFOCUS)
-				warning("%s input focus.", ev.active.gain ? "Got" : "Lost");
+				debug(1, "%s input focus.", ev.active.gain ? "Got" : "Lost");
 			if (ev.active.state & SDL_APPACTIVE)
-				warning("%s total focus.", ev.active.gain ? "Got" : "Lost");
+				debug(1, "%s total focus.", ev.active.gain ? "Got" : "Lost");
 			if (ev.active.state & SDL_APPINPUTFOCUS) {
 				_hasfocus = ev.active.gain;
 				SDL_PauseAudio(!_hasfocus);
