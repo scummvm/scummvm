@@ -362,8 +362,6 @@ void Parallaction::runGame() {
 	if (_location._commands.size() > 0)
 		runCommands(_location._commands);
 
-	runJobs();
-
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	if (_location._comment)
@@ -707,6 +705,7 @@ void Parallaction::changeCursor(int32 index) {
 
 
 void Parallaction::freeCharacter() {
+	debugC(3, kDebugLocation, "freeCharacter()");
 
 	if (!IS_DUMMY_CHARACTER(_vm->_characterName)) {
 		if (_objectsNames)
@@ -715,22 +714,27 @@ void Parallaction::freeCharacter() {
 
 		if (_vm->_char._ani._cnv)
 			delete _vm->_char._ani._cnv;
+		_vm->_char._ani._cnv = NULL;
 
 		if (_vm->_char._talk)
 			delete _vm->_char._talk;
+		_vm->_char._talk = NULL;
 
 		_vm->_gfx->freeStaticCnv(_vm->_char._head);
 		if (_vm->_char._head)
 			delete _vm->_char._head;
+		_vm->_char._head = NULL;
 
 		if (_vm->_char._objs)
 			delete _vm->_char._objs;
+		_vm->_char._objs = NULL;
 	}
 
 	return;
 }
 
 void Parallaction::changeCharacter(const char *name) {
+	debugC(1, kDebugLocation, "changeCharacter(%s)", name);
 
 	char baseName[20];
 	if (IS_MINI_CHARACTER(name)) {
@@ -751,6 +755,7 @@ void Parallaction::changeCharacter(const char *name) {
 		freeCharacter();
 
 		_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
+		_vm->_char._ani._cnv = _disk->loadFrames(fullName);
 
 		if (!IS_DUMMY_CHARACTER(name)) {
 			_vm->_char._head = _disk->loadHead(baseName);
@@ -759,16 +764,16 @@ void Parallaction::changeCharacter(const char *name) {
 			_objectsNames = _disk->loadTable(baseName);
 			refreshInventory(baseName);
 
-			_vm->_char._ani._cnv = _disk->loadFrames(fullName);
-
 			_soundMan->playCharacterMusic(name);
+
+			if ((getFeatures() & GF_DEMO) == 0)
+				parseLocation("common");
 		}
 	}
 
-	if (!(getFeatures() & GF_DEMO))
-		parseLocation("common");
-
 	strcpy(_characterName1, fullName);
+
+	debugC(1, kDebugLocation, "changeCharacter() done");
 
 	return;
 }

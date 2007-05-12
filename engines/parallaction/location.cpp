@@ -315,7 +315,7 @@ void Parallaction::showSlide(const char *name) {
 		  is commented out, and would definitely crash the current implementation.
 */
 void Parallaction::changeLocation(char *location) {
-	debugC(1, kDebugLocation, "changeLocation to '%s'", location);
+	debugC(1, kDebugLocation, "changeLocation(%s)", location);
 
 	_soundMan->playLocationMusic(location);
 
@@ -333,15 +333,11 @@ void Parallaction::changeLocation(char *location) {
 	_hoverZone = NULL;
 	if (_engineFlags & kEngineMouse) {
 		changeCursor( kCursorArrow );
-		debugC(2, kDebugLocation, "changeLocation: changed cursor");
 	}
 
 	_animations.remove(&_char._ani);
-	debugC(2, kDebugLocation, "changeLocation: removed character from the animation list");
 
 	freeLocation();
-	debugC(1, kDebugLocation, "changeLocation: old location free'd");
-
 	char buf[100];
 	strcpy(buf, location);
 
@@ -370,13 +366,9 @@ void Parallaction::changeLocation(char *location) {
 	}
 
 	_animations.push_front(&_char._ani);
-	debugC(2, kDebugLocation, "changeLocation: new character added to the animation list");
 
 	strcpy(_saveData1, list[0].c_str());
 	parseLocation(list[0].c_str());
-
-	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
-	debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", _saveData1);
 
 	_char._ani._oldPos.x = -1000;
 	_char._ani._oldPos.y = -1000;
@@ -388,40 +380,28 @@ void Parallaction::changeLocation(char *location) {
 		_char._ani._frame = _location._startFrame;
 		_location._startPosition.y = -1000;
 		_location._startPosition.x = -1000;
-
-		debugC(2, kDebugLocation, "changeLocation: initial position set to x: %i, y: %i, f: %i", _location._startPosition.x, _location._startPosition.y, _location._startFrame);
 	}
 
 	byte palette[PALETTE_SIZE];
 	for (uint16 _si = 0; _si < PALETTE_SIZE; _si++) palette[_si] = 0;
 	_gfx->setPalette(palette);
-	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 
 	if (_location._commands.size() > 0) {
 		runCommands(_location._commands);
-		runJobs();
-		_gfx->swapBuffers();
-		runJobs();
-		_gfx->swapBuffers();
 	}
 
-	if (_location._comment) {
-		doLocationEnterTransition();
-		debugC(2, kDebugLocation, "changeLocation: shown location comment");
-	}
-
-	runJobs();
-	_gfx->swapBuffers();
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	_gfx->setPalette(_gfx->_palette);
 	if (_location._aCommands.size() > 0) {
 		runCommands(_location._aCommands);
-		debugC(1, kDebugLocation, "changeLocation: location acommands run");
 	}
 
 //	_soundMan->playSfx(0);
 
-	debugC(1, kDebugLocation, "changeLocation completed");
+	debugC(1, kDebugLocation, "changeLocation() done");
 
 	return;
 
@@ -462,7 +442,6 @@ void Parallaction::doLocationEnterTransition() {
 	r.grow(-1);
 	_gfx->floodFill(Gfx::kBitFront, r, 1);
 	_gfx->displayWrappedString(_location._comment, 3, 5, 130, 0);
-
 	// FIXME: ???
 #if 0
 	do {
