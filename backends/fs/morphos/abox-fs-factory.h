@@ -8,16 +8,9 @@
  * 
  * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
  */
-class ABoxFilesystemFactory : public AbstractFilesystemFactory {	
+class ABoxFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<ABoxFilesystemFactory> {	
 public:
 	typedef Common::String String;
-	
-	/**
-	 * Creates an instance of ABoxFilesystemFactory using the Singleton pattern.
-	 * 
-	 * @return A unique instance of ABoxFilesytemFactory.
-	 */
-	static ABoxFilesystemFactory *instance();
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -27,7 +20,7 @@ protected:
 	ABoxFilesystemFactory() {};
 		
 private:
-	static ABoxFilesystemFactory *_instance;
+	friend class Common::Singleton<SingletonBaseType>;
 };
 
 #endif /*ABOX_FILESYSTEM_FACTORY_H*/

@@ -1,14 +1,7 @@
 #include "backends/fs/psp/psp-fs-factory.h"
 #include "backends/fs/psp/psp_fs.cpp"
 
-PSPFilesystemFactory *PSPFilesystemFactory::_instance = 0;
-
-PSPFilesystemFactory *PSPFilesystemFactory::instance(){
-	if(_instance == 0){
-		_instance = new PSPFilesystemFactory();
-	}
-	return _instance;
-}
+DECLARE_SINGLETON(PSPFilesystemFactory);
 
 AbstractFilesystemNode *PSPFilesystemFactory::makeRootFileNode() const {
 	return new PSPFilesystemNode();

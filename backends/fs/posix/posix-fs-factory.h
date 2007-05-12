@@ -1,6 +1,7 @@
 #ifndef POSIX_FILESYSTEM_FACTORY_H
 #define POSIX_FILESYSTEM_FACTORY_H
 
+#include "common/singleton.h"
 #include "backends/fs/abstract-fs-factory.h"
 
 /**
@@ -8,16 +9,9 @@
  * 
  * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
  */
-class POSIXFilesystemFactory : public AbstractFilesystemFactory {	
+class POSIXFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<POSIXFilesystemFactory> {
 public:
 	typedef Common::String String;
-	
-	/**
-	 * Creates an instance of POSIXFilesystemFactory using the Singleton pattern.
-	 * 
-	 * @return A unique instance of POSIXFilesytemFactory.
-	 */
-	static POSIXFilesystemFactory *instance();
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -27,7 +21,7 @@ protected:
 	POSIXFilesystemFactory() {};
 		
 private:
-	static POSIXFilesystemFactory *_instance;
+	friend class Common::Singleton<SingletonBaseType>;
 };
 
 #endif /*POSIX_FILESYSTEM_FACTORY_H*/

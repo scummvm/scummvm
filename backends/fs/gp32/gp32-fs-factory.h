@@ -8,16 +8,9 @@
  * 
  * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
  */
-class GP32FilesystemFactory : public AbstractFilesystemFactory {	
+class GP32FilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<GP32FilesystemFactory> {	
 public:
 	typedef Common::String String;
-	
-	/**
-	 * Creates an instance of GP32FilesystemFactory using the Singleton pattern.
-	 * 
-	 * @return A unique instance of GP32FilesytemFactory.
-	 */
-	static GP32FilesystemFactory *instance();
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -27,7 +20,7 @@ protected:
 	GP32FilesystemFactory() {};
 		
 private:
-	static GP32FilesystemFactory *_instance;
+	friend class Common::Singleton<SingletonBaseType>;
 };
 
 #endif /*GP32_FILESYSTEM_FACTORY_H*/

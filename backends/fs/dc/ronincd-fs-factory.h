@@ -8,16 +8,9 @@
  * 
  * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
  */
-class RoninCDFilesystemFactory : public AbstractFilesystemFactory {	
+class RoninCDFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<RoninCDFilesystemFactory> {	
 public:
 	typedef Common::String String;
-	
-	/**
-	 * Creates an instance of RoninCDFilesystemFactory using the Singleton pattern.
-	 * 
-	 * @return A unique instance of RoninCDFilesytemFactory.
-	 */
-	static RoninCDFilesystemFactory *instance();
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -27,7 +20,7 @@ protected:
 	RoninCDFilesystemFactory() {};
 		
 private:
-	static RoninCDFilesystemFactory *_instance;
+	friend class Common::Singleton<SingletonBaseType>;
 };
 
 #endif /*RONINCD_FILESYSTEM_FACTORY_H*/

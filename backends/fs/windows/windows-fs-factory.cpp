@@ -1,14 +1,7 @@
 #include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/fs/windows/windows-fs.cpp"
 
-WindowsFilesystemFactory *WindowsFilesystemFactory::_instance = 0;
-
-WindowsFilesystemFactory *WindowsFilesystemFactory::instance(){
-	if(_instance == 0){
-		_instance = new WindowsFilesystemFactory();
-	}
-	return _instance;
-}
+DECLARE_SINGLETON(WindowsFilesystemFactory);
 
 AbstractFilesystemNode *WindowsFilesystemFactory::makeRootFileNode() const {
 	return new WindowsFilesystemNode();

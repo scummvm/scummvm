@@ -8,16 +8,9 @@
  * 
  * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
  */
-class DSFilesystemFactory : public AbstractFilesystemFactory {	
+class DSFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<DSFilesystemFactory> {	
 public:
 	typedef Common::String String;
-	
-	/**
-	 * Creates an instance of DSFilesystemFactory using the Singleton pattern.
-	 * 
-	 * @return A unique instance of DSFilesytemFactory.
-	 */
-	static DSFilesystemFactory *instance();
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -27,7 +20,7 @@ protected:
 	DSFilesystemFactory() {};
 		
 private:
-	static DSFilesystemFactory *_instance;
+	friend class Common::Singleton<SingletonBaseType>;
 };
 
 #endif /*DS_FILESYSTEM_FACTORY_H*/

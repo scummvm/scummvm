@@ -8,16 +8,9 @@
  * 
  * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
  */
-class PSPFilesystemFactory : public AbstractFilesystemFactory {	
+class PSPFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<PSPFilesystemFactory> {	
 public:
 	typedef Common::String String;
-	
-	/**
-	 * Creates an instance of PSPFilesystemFactory using the Singleton pattern.
-	 * 
-	 * @return A unique instance of PSPFilesytemFactory.
-	 */
-	static PSPFilesystemFactory *instance();
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -27,7 +20,7 @@ protected:
 	PSPFilesystemFactory() {};
 		
 private:
-	static PSPFilesystemFactory *_instance;
+	friend class Common::Singleton<SingletonBaseType>;
 };
 
 #endif /*PSP_FILESYSTEM_FACTORY_H*/

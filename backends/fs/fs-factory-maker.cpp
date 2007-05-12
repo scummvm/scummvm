@@ -68,46 +68,46 @@ protected:
 
 AbstractFilesystemFactory *FilesystemFactoryMaker::makeFactory(){
 	#if defined(__amigaos4__)
-		return AmigaOSFilesystemFactory::instance();
+		return &AmigaOSFilesystemFactory::instance();
 	#endif
 	
 	#if defined(__DC__)
-		return RoninCDFilesystemFactory::instance();
+		return &RoninCDFilesystemFactory::instance();
 	#endif
 	
 	#if defined(__DS__)
-		return DSFilesystemFactory::instance();
+		return &DSFilesystemFactory::instance();
 	#endif
 	
 	#if defined(__GP32__)
-		return GP32FilesystemFactory::instance();
+		return &GP32FilesystemFactory::instance();
 	#endif
 	
 	#if defined(__MORPHOS__)
-		return ABoxFilesystemFactory::instance();
+		return &ABoxFilesystemFactory::instance();
 	#endif
 	
 	#if defined(PALMOS_MODE)
-		return PalmOSFilesystemFactory::instance();
+		return &PalmOSFilesystemFactory::instance();
 	#endif
 	
 	#if defined(__PLAYSTATION2__)
-		return Ps2FilesystemFactory::instance();
+		return &Ps2FilesystemFactory::instance();
 	#endif
 	
 	#if defined(__PSP__)
-		return PSPFilesystemFactory::instance();
+		return &PSPFilesystemFactory::instance();
 	#endif
 	
 	#if defined(__SYMBIAN32__)
-		return SymbianFilesystemFactory::instance();
+		return &SymbianFilesystemFactory::instance();
 	#endif
 	
 	#if defined(UNIX)
-		return POSIXFilesystemFactory::instance();
+		return &POSIXFilesystemFactory::instance();
 	#endif
 	
 	#if defined(WIN32)
-		return WindowsFilesystemFactory::instance();
+		return &WindowsFilesystemFactory::instance();
 	#endif
 }

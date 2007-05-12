@@ -1,14 +1,7 @@
 #include "backends/fs/amigaos4/amigaos4-fs-factory.h"
 #include "backends/fs/amigaos4/amigaos4-fs.cpp"
 
-AmigaOSFilesystemFactory *AmigaOSFilesystemFactory::_instance = 0;
-
-AmigaOSFilesystemFactory *AmigaOSFilesystemFactory::instance(){
-	if(_instance == 0){
-		_instance = new AmigaOSFilesystemFactory();
-	}
-	return _instance;
-}
+DECLARE_SINGLETON(AmigaOSFilesystemFactory);
 
 AbstractFilesystemNode *AmigaOSFilesystemFactory::makeRootFileNode() const {
 	return new AmigaOSFilesystemNode();

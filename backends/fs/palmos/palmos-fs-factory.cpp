@@ -1,14 +1,7 @@
 #include "backends/fs/palmos/palmos-fs-factory.h"
 #include "backends/fs/palmos/palmos-fs.cpp"
 
-PalmOSFilesystemFactory *PalmOSFilesystemFactory::_instance = 0;
-
-PalmOSFilesystemFactory *PalmOSFilesystemFactory::instance(){
-	if(_instance == 0){
-		_instance = new PalmOSFilesystemFactory();
-	}
-	return _instance;
-}
+DECLARE_SINGLETON(PalmOSFilesystemFactory);
 
 AbstractFilesystemNode *PalmOSFilesystemFactory::makeRootFileNode() const {
 	return new PalmOSFilesystemNode();

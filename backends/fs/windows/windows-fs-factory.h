@@ -8,16 +8,9 @@
  * 
  * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
  */
-class WindowsFilesystemFactory : public AbstractFilesystemFactory {	
+class WindowsFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<WindowsFilesystemFactory> {	
 public:
 	typedef Common::String String;
-	
-	/**
-	 * Creates an instance of WindowsFilesystemFactory using the Singleton pattern.
-	 * 
-	 * @return A unique instance of WindowsFilesytemFactory.
-	 */
-	static WindowsFilesystemFactory *instance();
 	
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -27,7 +20,7 @@ protected:
 	WindowsFilesystemFactory() {};
 		
 private:
-	static WindowsFilesystemFactory *_instance;
+	friend class Common::Singleton<SingletonBaseType>;
 };
 
 #endif /*WINDOWS_FILESYSTEM_FACTORY_H*/

@@ -1,14 +1,7 @@
 #include "backends/fs/gp32/gp32-fs-factory.h"
 #include "backends/fs/gp32/gp32-fs.cpp"
 
-GP32FilesystemFactory *GP32FilesystemFactory::_instance = 0;
-
-GP32FilesystemFactory *GP32FilesystemFactory::instance(){
-	if(_instance == 0){
-		_instance = new GP32FilesystemFactory();
-	}
-	return _instance;
-}
+DECLARE_SINGLETON(GP32FilesystemFactory);
 
 AbstractFilesystemNode *GP32FilesystemFactory::makeRootFileNode() const {
 	return new GP32FilesystemNode();

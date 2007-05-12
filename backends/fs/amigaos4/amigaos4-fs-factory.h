@@ -8,16 +8,9 @@
  * 
  * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
  */
-class AmigaOSFilesystemFactory : public AbstractFilesystemFactory {	
+class AmigaOSFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<AmigaOSFilesystemFactory> {	
 public:
 	typedef Common::String String;
-	
-	/**
-	 * Creates an instance of AmigaOSFilesystemFactory using the Singleton pattern.
-	 * 
-	 * @return A unique instance of AmigaOSFilesytemFactory.
-	 */
-	static AmigaOSFilesystemFactory *instance();
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -27,7 +20,7 @@ protected:
 	AmigaOSFilesystemFactory() {};
 		
 private:
-	static AmigaOSFilesystemFactory *_instance;
+	friend class Common::Singleton<SingletonBaseType>;
 };
 
 #endif /*AMIGAOS_FILESYSTEM_FACTORY_H*/

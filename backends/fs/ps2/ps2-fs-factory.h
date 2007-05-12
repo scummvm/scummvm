@@ -8,16 +8,9 @@
  * 
  * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
  */
-class Ps2FilesystemFactory : public AbstractFilesystemFactory {	
+class Ps2FilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<Ps2FilesystemFactory> {	
 public:
 	typedef Common::String String;
-	
-	/**
-	 * Creates an instance of Ps2FilesystemFactory using the Singleton pattern.
-	 * 
-	 * @return A unique instance of Ps2FilesytemFactory.
-	 */
-	static Ps2FilesystemFactory *instance();
 		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
@@ -27,7 +20,7 @@ protected:
 	Ps2FilesystemFactory() {};
 		
 private:
-	static Ps2FilesystemFactory *_instance;
+	friend class Common::Singleton<SingletonBaseType>;
 };
 
 #endif /*PS2_FILESYSTEM_FACTORY_H*/

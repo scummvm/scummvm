@@ -1,14 +1,7 @@
 #include "backends/fs/dc/ronincd-fs-factory.h"
 #include "backends/fs/dc/dc-fs.cpp"
 
-RoninCDFilesystemFactory *RoninCDFilesystemFactory::_instance = 0;
-
-RoninCDFilesystemFactory *RoninCDFilesystemFactory::instance(){
-	if(_instance == 0){
-		_instance = new RoninCDFilesystemFactory();
-	}
-	return _instance;
-}
+DECLARE_SINGLETON(RoninCDFilesystemFactory);
 
 AbstractFilesystemNode *RoninCDFilesystemFactory::makeRootFileNode() const {
 	return new RoninCDFilesystemNode();

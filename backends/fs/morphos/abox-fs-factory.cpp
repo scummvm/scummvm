@@ -1,14 +1,7 @@
 #include "backends/fs/morphos/abox-fs-factory.h"
 #include "backends/fs/morphos/abox-fs.cpp"
 
-ABoxFilesystemFactory *ABoxFilesystemFactory::_instance = 0;
-
-ABoxFilesystemFactory *ABoxFilesystemFactory::instance(){
-	if(_instance == 0){
-		_instance = new ABoxFilesystemFactory();
-	}
-	return _instance;
-}
+DECLARE_SINGLETON(ABoxFilesystemFactory);
 
 AbstractFilesystemNode *ABoxFilesystemFactory::makeRootFileNode() const {
 	return new ABoxFilesystemNode();

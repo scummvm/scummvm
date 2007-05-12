@@ -20,9 +20,8 @@
  */
 
 #include "common/stdafx.h"
-
-#include "backends/fs/abstract-fs.h"
 #include "common/util.h"
+#include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs-factory-maker.cpp"
 
 FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) {
