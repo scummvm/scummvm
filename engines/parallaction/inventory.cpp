@@ -258,13 +258,12 @@ void extractInventoryGraphics(int16 pos, byte *dst) {
 void jobShowInventory(void *parm, Job *j) {
 //	printf("job_showInventory()...");
 
-	uint16 slots = 0;
-	while (_inventory[slots]._id != 0)
-		slots++;
+	_numInvLines = 0;
+	while (_inventory[_numInvLines]._id != 0) _numInvLines++;
+	_numInvLines = (_numInvLines + 4) / INVENTORY_ITEMS_PER_LINE;
 
-	uint16 lines = (slots + 4) / INVENTORY_ITEMS_PER_LINE;
+	Common::Rect r(INVENTORY_WIDTH, _numInvLines * INVENTORYITEM_HEIGHT);
 
-	Common::Rect r(INVENTORY_WIDTH, lines * INVENTORYITEM_HEIGHT);
 	r.moveTo(_invPosition);
 
 	_vm->_gfx->copyRect(
