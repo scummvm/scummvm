@@ -382,17 +382,21 @@ void Parallaction::changeLocation(char *location) {
 		_location._startPosition.x = -1000;
 	}
 
-	byte palette[PALETTE_SIZE];
-	for (uint16 _si = 0; _si < PALETTE_SIZE; _si++) palette[_si] = 0;
-	_gfx->setPalette(palette);
 
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
+	_gfx->setBlackPalette();
 
 	if (_location._commands.size() > 0) {
 		runCommands(_location._commands);
+		runJobs();
+		_gfx->swapBuffers();
+		runJobs();
+		_gfx->swapBuffers();
 	}
 
-	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	runJobs();
+	_gfx->swapBuffers();
 
 	_gfx->setPalette(_gfx->_palette);
 	if (_location._aCommands.size() > 0) {
