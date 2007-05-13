@@ -940,7 +940,8 @@ int AGOSEngine::go() {
 	vc34_setMouseOff();
 
 	if (getGameType() != GType_PP && getGameType() != GType_FF) {
-		addVgaEvent(_frameRate, NULL, 0, 0, 2);
+		uint16 delay = (getGameType() == GType_SIMON2) ? 5 : _frameRate;
+		addVgaEvent(delay, NULL, 0, 0, 2);
 	}
 
 	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAtariST &&
