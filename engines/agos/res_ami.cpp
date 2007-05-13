@@ -36,7 +36,7 @@ enum {
 static void uncompressPlane(const byte *plane, byte *outptr, int length) {
 	while (length != 0) {
 		int wordlen;
-		char x = *plane++;
+		signed char x = *plane++;
 		if (x >= 0) {
 			wordlen = MIN<int>(x + 1, length);
 			uint16 w = READ_UINT16(plane); plane += 2;
