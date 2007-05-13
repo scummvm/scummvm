@@ -152,6 +152,7 @@ void AGOSEngine::loadModule(uint music) {
 
 		Common::MemoryReadStream stream(dstBuf, dstSize);
 		audioStream = Audio::makeProtrackerStream(&stream, _mixer->getOutputRate());
+		free(dstBuf);
 	} else {
 		audioStream = Audio::makeProtrackerStream(&f, _mixer->getOutputRate());
 	}
