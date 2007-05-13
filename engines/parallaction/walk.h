@@ -44,12 +44,9 @@ public:
 
 typedef ManagedList<WalkNode*> WalkNodeList;
 
-//WalkNode 	*buildWalkPath(uint16 x, uint16 y);
+
 void 		 jobWalk(void*, Job *j);
-uint16		 checkDoor();
-void 		 setPath(byte *path);
-void		 initWalk();
-uint16 		 queryPath(uint16 x, uint16 y);
+
 
 class PathBuilder {
 
@@ -60,6 +57,7 @@ class PathBuilder {
 
 	void correctPathPoint(Common::Point &to);
 	uint32 buildSubPath(const Common::Point& pos, const Common::Point& stop);
+	uint16 walkFunc1(int16 x, int16 y, WalkNode *Node);
 
 public:
 	PathBuilder(Animation *anim);

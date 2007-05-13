@@ -26,6 +26,7 @@
 #include "common/list.h"
 
 #include "parallaction/defs.h"
+
 #include "parallaction/commands.h"
 #include "parallaction/graphics.h"
 
@@ -310,13 +311,6 @@ struct Animation : public Zone  {
 
 typedef Animation* AnimationPointer;
 typedef ManagedList<AnimationPointer> AnimationList;
-
-void	dropItem(uint16 v);
-int16	pickupItem(Zone *z);
-
-
-void		loadProgram(Animation *, char *filename);
-
 
 
 } // namespace Parallaction

@@ -20,13 +20,9 @@
  *
  */
 
-#include "parallaction/disk.h"
+#include "common/stdafx.h"
+
 #include "parallaction/parallaction.h"
-#include "parallaction/graphics.h"
-#include "parallaction/sound.h"
-#include "parallaction/parser.h"
-#include "parallaction/walk.h"
-#include "parallaction/zone.h"
 
 
 namespace Parallaction {

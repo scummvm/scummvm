@@ -23,9 +23,8 @@
 
 #include "common/stdafx.h"
 #include "common/system.h"
-#include "parallaction/parallaction.h"
-#include "parallaction/graphics.h"
 
+#include "parallaction/parallaction.h"
 #include "parallaction/debug.h"
 
 namespace Parallaction {

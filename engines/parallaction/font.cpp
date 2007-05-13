@@ -24,8 +24,6 @@
 #include "common/endian.h"
 #include "common/stream.h"
 
-#include "parallaction/defs.h"
-#include "parallaction/graphics.h"
 #include "parallaction/parallaction.h"
 
 namespace Parallaction {

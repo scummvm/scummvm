@@ -21,11 +21,9 @@
  */
 
 
-#include "parallaction/parser.h"
+#include "common/stdafx.h"
+
 #include "parallaction/parallaction.h"
-#include "parallaction/graphics.h"
-#include "parallaction/inventory.h"
-#include "parallaction/zone.h"
 #include "parallaction/sound.h"
 
 namespace Parallaction {

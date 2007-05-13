@@ -23,10 +23,7 @@
 #include "common/stdafx.h"
 
 #include "parallaction/parallaction.h"
-#include "parallaction/disk.h"
-#include "parallaction/zone.h"
-#include "parallaction/graphics.h"
-#include "parallaction/inventory.h"
+
 
 
 namespace Parallaction {
@@ -116,6 +113,21 @@ int16 Parallaction::getHoverInventoryItem(int16 x, int16 y) {
 }
 
 
+void refreshInventory(const char *character) {
+	for (uint16 _si = 0; _si < INVENTORY_MAX_ITEMS; _si++) {
+		drawInventoryItem(_si, &_inventory[_si]);
+	}
+
+	return;
+}
+
+
+void refreshInventoryItem(const char *character, uint16 index) {
+	drawInventoryItem(index, &_inventory[index]);
+
+	return;
+}
+
 int Parallaction::addInventoryItem(uint16 item) {
 
 	uint16 _si = 0;
@@ -161,6 +173,9 @@ int16 Parallaction::isItemInInventory(int32 v) {
 
 	return 0;
 }
+
+
+
 
 
 
@@ -325,19 +340,6 @@ void closeInventory() {
 	_engineFlags &= ~kEngineInventory;
 }
 
-
-
-// refreshes inventory view
-//
-void redrawInventory() {
-
-
-	for (uint16 _si = 0; _si < INVENTORY_MAX_ITEMS; _si++) {
-		drawInventoryItem(_si, &_inventory[_si]);
-	}
-
-}
-
 void initInventory() {
 	_buffer = (byte*)malloc(INVENTORY_WIDTH * INVENTORY_HEIGHT);	  // this buffer is also used by menu so it must stay this size
 
@@ -353,20 +355,5 @@ void cleanInventory() {
 	return;
 }
 
-
-
-
-void refreshInventory(const char *character) {
-	redrawInventory();
-
-	return;
-}
-
-
-void refreshInventoryItem(const char *character, uint16 index) {
-	drawInventoryItem(index, &_inventory[index]);
-
-	return;
-}
 
 } // namespace Parallaction

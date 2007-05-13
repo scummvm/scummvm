@@ -25,8 +25,6 @@
 #include "parallaction/parallaction.h"
 #include "parallaction/menu.h"
 #include "parallaction/sound.h"
-#include "parallaction/graphics.h"
-#include "parallaction/zone.h"
 
 #include "graphics/primitives.h"
 

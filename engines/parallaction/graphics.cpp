@@ -24,11 +24,8 @@
 #include "common/system.h"
 #include "common/file.h"
 
-#include "parallaction/graphics.h"
-#include "parallaction/parser.h"
 #include "parallaction/parallaction.h"
-#include "parallaction/disk.h"
-#include "parallaction/zone.h"
+
 
 
 extern OSystem *g_system;

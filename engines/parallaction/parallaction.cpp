@@ -33,13 +33,8 @@
 #include "parallaction/parallaction.h"
 #include "parallaction/debug.h"
 #include "parallaction/menu.h"
-#include "parallaction/parser.h"
-#include "parallaction/disk.h"
 #include "parallaction/sound.h"
-#include "parallaction/inventory.h"
-#include "parallaction/graphics.h"
-#include "parallaction/walk.h"
-#include "parallaction/zone.h"
+
 
 
 namespace Parallaction {

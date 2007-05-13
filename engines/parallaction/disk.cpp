@@ -23,12 +23,8 @@
 #include "common/stdafx.h"
 
 #include "graphics/iff.h"
-
-#include "parallaction/defs.h"
-#include "parallaction/graphics.h"
 #include "parallaction/parallaction.h"
-#include "parallaction/disk.h"
-#include "parallaction/walk.h"
+
 
 namespace Audio {
 	AudioStream *make8SVXStream(Common::ReadStream &input);
@@ -418,7 +414,7 @@ void DosDisk::loadBackground(const char *filename) {
 
 	_vm->_gfx->setBackground(bg);
 	_vm->_gfx->setMask(mask);
-	setPath(path);
+	_vm->setPath(path);
 
 	free(bg);
 	free(mask);
@@ -449,7 +445,7 @@ void DosDisk::loadMaskAndPath(const char *name) {
 	_resArchive.read(maskBuf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
 
 	_vm->_gfx->setMask(maskBuf);
-	setPath(pathBuf);
+	_vm->setPath(pathBuf);
 
 	return;
 }
@@ -1066,7 +1062,7 @@ void AmigaDisk::loadPath(const char *name) {
 	Graphics::PackBitsReadStream stream(*s);
 	byte *buf = (byte*)malloc(SCREENPATH_WIDTH*SCREEN_HEIGHT);
 	stream.read(buf, SCREENPATH_WIDTH*SCREEN_HEIGHT);
-	setPath(buf);
+	_vm->setPath(buf);
 	free(buf);
 	delete s;
 

@@ -22,15 +22,10 @@
 
 #include "common/stdafx.h"
 
-#include "parallaction/commands.h"
-#include "parallaction/parallaction.h"
-#include "parallaction/graphics.h"
-#include "parallaction/disk.h"
-#include "parallaction/inventory.h"
-#include "parallaction/parser.h"
-#include "parallaction/zone.h"
-
 #include "common/events.h"
+#include "parallaction/parallaction.h"
+
+
 
 namespace Parallaction {
 
@@ -184,7 +179,7 @@ char *Parallaction::parseDialogueString(Script &script) {
 
 	} while (strlen(vD0) == 0);
 
-	vD0[strlen(vD0)-1] = '\0';	// deletes the trailing '0xA' inserted by parseNextLine
+	vD0[strlen(vD0)-1] = '\0';	// deletes the trailing '0xA'
 								// this is critical for Gfx::displayBalloonString to work properly
 
 	char *vCC = (char*)malloc(strlen(vD0)+1);

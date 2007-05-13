@@ -20,16 +20,11 @@
  *
  */
 
-#include "parallaction/defs.h"
+#include "common/stdafx.h"
+
 #include "parallaction/parallaction.h"
-#include "parallaction/commands.h"
-#include "parallaction/graphics.h"
-#include "parallaction/walk.h"
-#include "parallaction/zone.h"
 
 namespace Parallaction {
-
-uint16 walkFunc1(int16, int16, WalkNode *);
 
 static byte		*_buffer;
 
@@ -39,6 +34,17 @@ static Zone *_zoneTrap = NULL;
 static uint16	walkData1 = 0;
 static uint16	walkData2 = 0; 	// next walk frame
 
+
+uint16 queryPath(uint16 x, uint16 y) {
+
+	// NOTE: a better solution would have us mirror each byte in the mask in the loading routine
+	// AmigaDisk::loadPath() instead of doing it here.
+
+	byte _al = _buffer[y*40 + x/8];
+	byte _dl = (_vm->getPlatform() == Common::kPlatformPC) ? (x & 7) : (7 - (x & 7));
+
+	return _al & (1 << _dl);
+}
 
 // adjusts position towards nearest walkable point
 //
@@ -208,7 +214,7 @@ WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
 //	1 : Point reachable in a straight line
 //	other values: square distance to target (point not reachable in a straight line)
 //
-uint16 walkFunc1(int16 x, int16 y, WalkNode *Node) {
+uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNode *Node) {
 
 	Common::Point arg(x, y);
 
@@ -261,7 +267,7 @@ uint16 walkFunc1(int16 x, int16 y, WalkNode *Node) {
 	return 1;
 }
 
-void clipMove(Common::Point& pos, const WalkNode* from) {
+void Parallaction::clipMove(Common::Point& pos, const WalkNode* from) {
 
 	if ((pos.x < from->_x) && (pos.x < SCREEN_WIDTH) && (queryPath(_vm->_char._ani.width()/2 + pos.x + 2, _vm->_char._ani.height() + pos.y) != 0)) {
 		pos.x = (pos.x + 2 < from->_x) ? pos.x + 2 : from->_x;
@@ -282,7 +288,7 @@ void clipMove(Common::Point& pos, const WalkNode* from) {
 	return;
 }
 
-int16 selectWalkFrame(const Common::Point& pos, const WalkNode* from) {
+int16 Parallaction::selectWalkFrame(const Common::Point& pos, const WalkNode* from) {
 
 	Common::Point dist(from->_x - pos.x, from->_y - pos.y);
 
@@ -324,53 +330,7 @@ int16 selectWalkFrame(const Common::Point& pos, const WalkNode* from) {
 	return v16;
 }
 
-void finalizeWalk(WalkNodeList *list) {
-	checkDoor();
-	delete list;
-}
-
-void jobWalk(void *parm, Job *j) {
-	WalkNodeList *list = (WalkNodeList*)parm;
-
-	Common::Point pos(_vm->_char._ani._left, _vm->_char._ani._top);
-	_vm->_char._ani._oldPos = pos;
-
-	WalkNodeList::iterator it = list->begin();
-
-	if (it != list->end()) {
-		if ((*it)->_x == pos.x && (*it)->_y == pos.y) {
-			debugC(1, kDebugWalk, "jobWalk reached node (%i, %i)", (*it)->_x, (*it)->_y);
-			it = list->erase(it);
-		}
-	}
-	if (it == list->end()) {
-		debugC(1, kDebugWalk, "jobWalk reached last node");
-		j->_finished = 1;
-		finalizeWalk(list);
-		return;
-	}
-	j->_parm = list;
-
-	// selectWalkFrame must be performed before position is changed by clipMove
-	int16 v16 = selectWalkFrame(pos, *it);
-	clipMove(pos, *it);
-
-	_vm->_char._ani._left = pos.x;
-	_vm->_char._ani._top = pos.y;
-
-	if (pos == _vm->_char._ani._oldPos) {
-		debugC(1, kDebugWalk, "jobWalk was blocked by an unforeseen obstacle");
-		j->_finished = 1;
-		finalizeWalk(list);
-	} else {
-		_vm->_char._ani._frame = v16 + walkData2 + 1;
-	}
-
-	return;
-}
-
-
-uint16 checkDoor() {
+uint16 Parallaction::checkDoor() {
 //	printf("checkDoor()...");
 
 	if (_vm->_currentLocationIndex != _doorData1) {
@@ -418,22 +378,58 @@ uint16 checkDoor() {
 	return _vm->_char._ani._frame;
 }
 
-uint16 queryPath(uint16 x, uint16 y) {
 
-	// NOTE: a better solution would have us mirror each byte in the mask in the loading routine
-	// AmigaDisk::loadPath() instead of doing it here.
-
-	byte _al = _buffer[y*40 + x/8];
-	byte _dl = (_vm->getPlatform() == Common::kPlatformPC) ? (x & 7) : (7 - (x & 7));
-
-	return _al & (1 << _dl);
+void Parallaction::finalizeWalk(WalkNodeList *list) {
+	checkDoor();
+	delete list;
 }
 
-void setPath(byte *path) {
+void jobWalk(void *parm, Job *j) {
+	WalkNodeList *list = (WalkNodeList*)parm;
+
+	Common::Point pos(_vm->_char._ani._left, _vm->_char._ani._top);
+	_vm->_char._ani._oldPos = pos;
+
+	WalkNodeList::iterator it = list->begin();
+
+	if (it != list->end()) {
+		if ((*it)->_x == pos.x && (*it)->_y == pos.y) {
+			debugC(1, kDebugWalk, "jobWalk reached node (%i, %i)", (*it)->_x, (*it)->_y);
+			it = list->erase(it);
+		}
+	}
+	if (it == list->end()) {
+		debugC(1, kDebugWalk, "jobWalk reached last node");
+		j->_finished = 1;
+		_vm->finalizeWalk(list);
+		return;
+	}
+	j->_parm = list;
+
+	// selectWalkFrame must be performed before position is changed by clipMove
+	int16 v16 = _vm->selectWalkFrame(pos, *it);
+	_vm->clipMove(pos, *it);
+
+	_vm->_char._ani._left = pos.x;
+	_vm->_char._ani._top = pos.y;
+
+	if (pos == _vm->_char._ani._oldPos) {
+		debugC(1, kDebugWalk, "jobWalk was blocked by an unforeseen obstacle");
+		j->_finished = 1;
+		_vm->finalizeWalk(list);
+	} else {
+		_vm->_char._ani._frame = v16 + walkData2 + 1;
+	}
+
+	return;
+}
+
+
+void Parallaction::setPath(byte *path) {
 	memcpy(_buffer, path, SCREENPATH_WIDTH*SCREEN_HEIGHT);
 }
 
-void initWalk() {
+void Parallaction::initWalk() {
 	_buffer = (byte*)malloc(SCREENPATH_WIDTH * SCREEN_HEIGHT);
 }
 
