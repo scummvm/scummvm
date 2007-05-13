@@ -30,7 +30,7 @@
 #include "sound/mixer.h"
 
 namespace Cine {
-	
+
 class SoundDriver {
 public:
 	typedef void (*UpdateCallback)(void *);
@@ -40,9 +40,10 @@ public:
 	virtual void setupChannel(int channel, const byte *data, int instrument, int volume) = 0;
 	virtual void setChannelFrequency(int channel, int frequency) = 0;
 	virtual void stopChannel(int channel) = 0;
-	virtual void playSound(const byte *data, int channel, int volume) = 0;
+	virtual void playSound(const byte *data, int size, int channel, int volume) = 0;
 	virtual void stopSound() = 0;
-	virtual const char *getInstrumentExtension() const = 0;
+	virtual const char *getInstrumentExtension() const { return ""; }
+	virtual void update() {}
 	
 	void setUpdateCallback(UpdateCallback upCb, void *ref);
 	void resetChannel(int channel);
@@ -123,7 +124,7 @@ public:
 	virtual const char *getInstrumentExtension() const { return ".INS"; }
 	virtual void loadInstrument(const byte *data, AdlibSoundInstrument *asi);
 	virtual void setChannelFrequency(int channel, int frequency);
-	virtual void playSound(const byte *data, int channel, int volume);
+	virtual void playSound(const byte *data, int size, int channel, int volume);
 };
 
 // Operation Stealth adlib driver
@@ -133,7 +134,45 @@ public:
 	virtual const char *getInstrumentExtension() const { return ".ADL"; }
 	virtual void loadInstrument(const byte *data, AdlibSoundInstrument *asi);
 	virtual void setChannelFrequency(int channel, int frequency);
-	virtual void playSound(const byte *data, int channel, int volume);
+	virtual void playSound(const byte *data, int size, int channel, int volume);
+};
+
+class PaulaSoundDriver : public SoundDriver {
+public:
+	PaulaSoundDriver(Audio::Mixer *mixer);
+	
+	virtual void setupChannel(int channel, const byte *data, int instrument, int volume);
+	virtual void setChannelFrequency(int channel, int frequency);
+	virtual void stopChannel(int channel);
+	virtual void playSound(const byte *data, int size, int channel, int volume);
+	virtual void stopSound();
+	
+	// Future Wars specific
+	void queueSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat);
+	virtual void update();
+
+	enum {
+		PAULA_FREQ = 7093789,
+		NUM_CHANNELS = 4,
+		SPL_HDR_SIZE = 22
+	};
+	
+	struct SoundQueue {
+		int freq;
+		const uint8 *data;
+		int size;
+		int volumeStep;
+		int stepCount;
+		int step;
+		bool repeat;
+		int volume;
+	};
+
+private:
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _channelsTable[NUM_CHANNELS];
+	uint _channelsFreqTable[NUM_CHANNELS];
+	SoundQueue _soundsQueue[NUM_CHANNELS];
 };
 
 extern SoundDriver *g_soundDriver; // TEMP

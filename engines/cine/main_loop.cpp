@@ -32,6 +32,7 @@
 #include "cine/sfx_player.h"
 #include "cine/various.h"
 #include "cine/bg_list.h"
+#include "cine/sound_driver.h"
 
 namespace Cine {
 
@@ -156,6 +157,7 @@ void manageEvents(int count) {
 		if (i % 2)
 			g_system->updateScreen();
 		g_system->delayMillis(10);
+		g_soundDriver->update();
 		manageEvents(0);
 	}
 }

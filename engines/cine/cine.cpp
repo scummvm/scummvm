@@ -95,10 +95,15 @@ int CineEngine::init() {
 	_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
-	if (g_cine->getGameType() == GType_FW) {
-		g_soundDriver = new AdlibSoundDriverINS(_mixer);
+	if (g_cine->getPlatform() == Common::kPlatformPC) {
+		if (g_cine->getGameType() == GType_FW) {
+			g_soundDriver = new AdlibSoundDriverINS(_mixer);
+		} else {
+			g_soundDriver = new AdlibSoundDriverADL(_mixer);
+		}
 	} else {
-		g_soundDriver = new AdlibSoundDriverADL(_mixer);
+		// Paula chipset for Amiga and Atari versions
+		g_soundDriver = new PaulaSoundDriver(_mixer);
 	}
 	g_sfxPlayer = new SfxPlayer(g_soundDriver);
 	g_saveFileMan = _saveFileMan;

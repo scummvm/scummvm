@@ -283,7 +283,7 @@ void AdlibSoundDriverINS::setChannelFrequency(int channel, int frequency) {
 	}
 }
 
-void AdlibSoundDriverINS::playSound(const byte *data, int channel, int volume) {
+void AdlibSoundDriverINS::playSound(const byte *data, int size, int channel, int volume) {
 	assert(channel < 4);
 	_channelsVolumeTable[channel] = 127;
 	resetChannel(channel);
@@ -356,7 +356,7 @@ void AdlibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
 	}
 }
 
-void AdlibSoundDriverADL::playSound(const byte *data, int channel, int volume) {
+void AdlibSoundDriverADL::playSound(const byte *data, int size, int channel, int volume) {
 	assert(channel < 4);
 	_channelsVolumeTable[channel] = 127;
 	setupInstrument(data, channel);
@@ -428,5 +428,72 @@ const int AdlibSoundDriver::_voiceOperatorsTable[] = {
 };
 
 const int AdlibSoundDriver::_voiceOperatorsTableCount = ARRAYSIZE(_voiceOperatorsTable);
+
+
+PaulaSoundDriver::PaulaSoundDriver(Audio::Mixer *mixer)
+	: _mixer(mixer) {
+	memset(_channelsFreqTable, 0, sizeof(_channelsFreqTable));
+	memset(_soundsQueue, 0, sizeof(_soundsQueue));
+}
+
+void PaulaSoundDriver::setupChannel(int channel, const byte *data, int instrument, int volume) {
+}
+
+void PaulaSoundDriver::setChannelFrequency(int channel, int frequency) {
+	assert(frequency > 0);
+	_channelsFreqTable[channel] = PAULA_FREQ / frequency;
+}
+
+void PaulaSoundDriver::stopChannel(int channel) {
+	_mixer->stopHandle(_channelsTable[channel]);
+}
+
+void PaulaSoundDriver::playSound(const byte *data, int size, int channel, int volume) {
+	stopChannel(channel);
+	size = MIN<int>(size - SPL_HDR_SIZE, READ_BE_UINT16(data + 4));
+	data += SPL_HDR_SIZE;
+	if (size > 0) {
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_channelsTable[channel], const_cast<byte *>(data), size, _channelsFreqTable[channel], 0);	
+		_mixer->setChannelVolume(_channelsTable[channel], volume * Audio::Mixer::kMaxChannelVolume / 63);
+	}
+}
+
+void PaulaSoundDriver::stopSound() {
+	for (int i = 0; i < NUM_CHANNELS; ++i) {
+		_mixer->stopHandle(_channelsTable[i]);
+	}
+}
+
+void PaulaSoundDriver::queueSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) {
+	SoundQueue *sq = &_soundsQueue[channel];
+	sq->freq = frequency;
+	sq->data = data;
+	sq->size = size;
+	sq->volumeStep = volumeStep;
+	sq->stepCount = stepCount;
+	sq->step = stepCount;
+	sq->repeat = repeat != 0;
+	sq->volume = volume;
+}
+
+void PaulaSoundDriver::update() {
+	// process volume slides and start sound playback
+	for (int i = 0; i < NUM_CHANNELS; ++i) {
+		SoundQueue *sq = &_soundsQueue[i];
+		if (sq->data) {
+			if (sq->step) {
+				--sq->step;
+				continue;
+			}
+			sq->step = sq->stepCount;
+			sq->volume = CLIP(sq->volume + sq->volumeStep, 0, 63);
+			setChannelFrequency(i, sq->freq);
+			playSound(sq->data, sq->size, i, sq->volume);
+			if (!sq->repeat) {
+				sq->data = 0;
+			}
+		}
+	}
+}
 
 } // End of namespace Cine
