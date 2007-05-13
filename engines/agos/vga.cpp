@@ -713,9 +713,9 @@ void AGOSEngine::vc12_delay() {
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		num = vcReadNextByte();
 	} else if (getGameType() == GType_SIMON2) {
-		num = vcReadNextByte() * _frameRate;
+		num = vcReadNextByte() * _frameCount;
 	} else {
-		num = vcReadVarOrWord() * _frameRate;
+		num = vcReadVarOrWord() * _frameCount;
 	}
 
 	num += _vgaBaseDelay;
@@ -1105,7 +1105,7 @@ void AGOSEngine::vc29_stopAllSounds() {
 }
 
 void AGOSEngine::vc30_setFrameRate() {
-	_frameRate = vcReadNextWord();
+	_frameCount = vcReadNextWord();
 }
 
 void AGOSEngine::vc31_setWindow() {
@@ -1346,7 +1346,7 @@ void AGOSEngine::vc42_delayIfNotEQ() {
 	uint16 val = vcReadVar(vcReadNextWord());
 	if (val != vcReadNextWord()) {
 
-		addVgaEvent(_frameRate + 1, _vcPtr - 4, _vgaCurSpriteId, _vgaCurZoneNum);
+		addVgaEvent(_frameCount + 1, _vcPtr - 4, _vgaCurSpriteId, _vgaCurZoneNum);
 		_vcPtr = (byte *)&_vc_get_out_of_code;
 	}
 }

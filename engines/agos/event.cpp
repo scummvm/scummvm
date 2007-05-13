@@ -236,7 +236,7 @@ void AGOSEngine::processVgaEvents() {
 			uint8 type = vte->type;
 
 			if (type == 2) {
-				vte->delay = (getGameType() == GType_SIMON2) ? 5 : _frameRate;
+				vte->delay = (getGameType() == GType_SIMON2) ? 5 : _frameCount;
 
 				animateSprites();
 

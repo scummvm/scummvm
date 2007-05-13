@@ -421,7 +421,7 @@ protected:
 
 	uint16 _syncCount, _timer5, _timer4;
 
-	uint16 _frameRate;
+	uint16 _frameCount;
 
 	uint16 _zoneNumber;
 	uint16 _vgaWaitFor, _lastVgaWaitFor;

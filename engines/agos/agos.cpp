@@ -349,7 +349,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_timer5 = 0;
 	_timer4 = 0;
 
-	_frameRate = 0;
+	_frameCount = 0;
 
 	_zoneNumber = 0;
 
@@ -674,7 +674,7 @@ void AGOSEngine_PuzzlePack::setupGame() {
 #endif
 	_itemMemSize = 20000;
 	_tableMemSize = 200000;
-	_frameRate = 1;
+	_frameCount = 1;
 	_vgaBaseDelay = 5;
 	_numBitArray1 = 128;
 	_numItemStore = 10;
@@ -694,7 +694,7 @@ void AGOSEngine_Feeble::setupGame() {
 #endif
 	_itemMemSize = 20000;
 	_tableMemSize = 200000;
-	_frameRate = 1;
+	_frameCount = 1;
 	_vgaBaseDelay = 5;
 	_numBitArray1 = 16;
 	_numBitArray2 = 16;
@@ -724,7 +724,7 @@ void AGOSEngine_Simon2::setupGame() {
 	else
 		_musicIndexBase = 1128 / 4;
 	_soundIndexBase = 1660 / 4;
-	_frameRate = 1;
+	_frameCount = 1;
 	_vgaBaseDelay = 1;
 	_numBitArray1 = 16;
 	_numBitArray2 = 16;
@@ -749,7 +749,7 @@ void AGOSEngine_Simon1::setupGame() {
 	_tableMemSize = 50000;
 	_musicIndexBase = 1316 / 4;
 	_soundIndexBase = 0;
-	_frameRate = 1;
+	_frameCount = 1;
 	_vgaBaseDelay = 1;
 	_numBitArray1 = 16;
 	_numBitArray2 = 16;
@@ -770,7 +770,7 @@ void AGOSEngine_Waxworks::setupGame() {
 #endif
 	_itemMemSize = 80000;
 	_tableMemSize = 50000;
-	_frameRate = 4;
+	_frameCount = 4;
 	_vgaBaseDelay = 1;
 	_numBitArray1 = 16;
 	_numBitArray2 = 15;
@@ -791,7 +791,7 @@ void AGOSEngine_Elvira2::setupGame() {
 #endif
 	_itemMemSize = 64000;
 	_tableMemSize = 100000;
-	_frameRate = 4;
+	_frameCount = 4;
 	_vgaBaseDelay = 1;
 	_numBitArray1 = 16;
 	_numBitArray2 = 15;
@@ -811,7 +811,7 @@ void AGOSEngine_Elvira1::setupGame() {
 #endif
 	_itemMemSize = 64000;
 	_tableMemSize = 256000;
-	_frameRate = 4;
+	_frameCount = 4;
 	_vgaBaseDelay = 1;
 	_numVars = 512;
 
@@ -940,8 +940,8 @@ int AGOSEngine::go() {
 	vc34_setMouseOff();
 
 	if (getGameType() != GType_PP && getGameType() != GType_FF) {
-		uint16 delay = (getGameType() == GType_SIMON2) ? 5 : _frameRate;
-		addVgaEvent(delay, NULL, 0, 0, 2);
+		uint16 count = (getGameType() == GType_SIMON2) ? 5 : _frameCount;
+		addVgaEvent(count, NULL, 0, 0, 2);
 	}
 
 	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAtariST &&
