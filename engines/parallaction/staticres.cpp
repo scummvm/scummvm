@@ -369,8 +369,7 @@ Credit _credits[] = {
 	{"Project Manager", "LOVRANO CANEPA"},
 	{"Production", "BRUNO BOZ"},
 	{"Special Thanks to", "LUIGI BENEDICENTI - GILDA and DANILO"},
-	{"Copyright 1992 Euclidea s.r.l ITALY", "All rights reserved"},
-	{"CLICK MOUSE BUTTON TO START", 0}
+	{"Copyright 1992 Euclidea s.r.l ITALY", "All rights reserved"}
 };
 
 const char *_dinoName = "dino";

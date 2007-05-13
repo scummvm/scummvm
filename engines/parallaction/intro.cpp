@@ -142,26 +142,34 @@ void _c_endIntro(void *parm) {
 
 	_vm->_gfx->setFont(kFontMenu);
 
-	for (uint16 _si = 0; _si < 7; _si++) {
+	debugC(1, kDebugLocation, "endIntro()");
+
+	for (uint16 _si = 0; _si < 6; _si++) {
 		_vm->_gfx->displayCenteredString(80, _credits[_si]._role);
 		_vm->_gfx->displayCenteredString(100, _credits[_si]._name);
 
 		_vm->_gfx->updateScreen();
 
 		for (uint16 v2 = 0; v2 < 100; v2++) {
+			_mouseButtons = kMouseNone;
 			_vm->updateInput();
-			if (_mouseButtons != kMouseLeftUp)
-				_vm->waitTime( 1 );
+			if (_mouseButtons == kMouseLeftUp)
+				break;
+
+			_vm->waitTime( 1 );
 		}
 
 		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	}
 
+	debugC(1, kDebugLocation, "endIntro(): done showing credits");
+
+	_vm->_gfx->displayCenteredString(80, "CLICK MOUSE BUTTON TO START");
+	_vm->_gfx->updateScreen();
+
 	waitUntilLeftClick();
 
-	if (_vm->getFeatures() & GF_DEMO) {
-		_engineFlags |= kEngineQuit;
-	} else {
+	if ((_vm->getFeatures() & GF_DEMO) == 0) {
 		_engineFlags &= ~kEngineMouse;
 		_vm->_menu->selectCharacter();
 	}

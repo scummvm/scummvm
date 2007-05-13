@@ -76,9 +76,9 @@ void _c_fade(void *parm) {
 	for (uint16 _di = 0; _di < 64; _di++) {
 		_vm->_gfx->fadePalette(pal);
 		_vm->_gfx->setPalette(pal);
-	}
 
-	_vm->waitTime( 1 );
+		_vm->waitTime( 1 );
+	}
 
 	return;
 }
