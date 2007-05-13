@@ -37,6 +37,7 @@ namespace Parallaction {
 //
 
 #define INVENTORY_MAX_ITEMS 		30
+#define INVENTORY_FIRST_ITEM		4		// first four entries are used up by verbs
 
 #define INVENTORYITEM_PITCH 		32
 #define INVENTORYITEM_WIDTH 		24
@@ -93,52 +94,50 @@ void drawInventoryItem(uint16 pos, InventoryItem *item);
 //
 int16 Parallaction::getHoverInventoryItem(int16 x, int16 y) {
 
-	int16 _di = x;
-
-	int16 _si = -1;
+	int16 slot = -1;
 	do {
-		_si++;
-	} while (_inventory[_si]._id != 0);
+		slot++;
+	} while (_inventory[slot]._id != 0);
 
-	_si = (_si + 4) / INVENTORY_ITEMS_PER_LINE;
+	slot = (slot + 4) / INVENTORY_ITEMS_PER_LINE;
 
-	if (_invPosition.x >= _di) return -1;
-	if ((_invPosition.x + INVENTORY_WIDTH) <= _di) return -1;
+	if (_invPosition.x >= x) return -1;
+	if ((_invPosition.x + INVENTORY_WIDTH) <= x) return -1;
 
 	if (_invPosition.y >= y) return -1;
-	if ((_si * INVENTORYITEM_HEIGHT + _invPosition.y) <= y) return -1;
+	if ((slot * INVENTORYITEM_HEIGHT + _invPosition.y) <= y) return -1;
 
-	return ((_di - _invPosition.x) / INVENTORYITEM_WIDTH) + (INVENTORY_ITEMS_PER_LINE * ((y - _invPosition.y) / INVENTORYITEM_HEIGHT));
+	return ((x - _invPosition.x) / INVENTORYITEM_WIDTH) + (INVENTORY_ITEMS_PER_LINE * ((y - _invPosition.y) / INVENTORYITEM_HEIGHT));
 
 }
 
 
 void refreshInventory(const char *character) {
-	for (uint16 _si = 0; _si < INVENTORY_MAX_ITEMS; _si++) {
-		drawInventoryItem(_si, &_inventory[_si]);
+	for (uint16 i = 0; i < INVENTORY_MAX_ITEMS; i++) {
+		drawInventoryItem(i, &_inventory[i]);
 	}
-
 	return;
 }
 
 
 void refreshInventoryItem(const char *character, uint16 index) {
 	drawInventoryItem(index, &_inventory[index]);
-
 	return;
 }
 
 int Parallaction::addInventoryItem(uint16 item) {
 
-	uint16 _si = 0;
-	while (_inventory[_si]._id != 0) _si++;
-	if (_si == INVENTORY_MAX_ITEMS)
+	uint16 slot = 0;
+	while (_inventory[slot]._id != 0)
+		slot++;
+
+	if (slot == INVENTORY_MAX_ITEMS)
 		return -1;
 
-	_inventory[_si]._id = MAKE_INVENTORY_ID(item);
-	_inventory[_si]._index = item;
+	_inventory[slot]._id = MAKE_INVENTORY_ID(item);
+	_inventory[slot]._index = item;
 
-	refreshInventoryItem(_characterName, _si);
+	refreshInventoryItem(_characterName, slot);
 
 	return 0;
 }
@@ -146,16 +145,16 @@ int Parallaction::addInventoryItem(uint16 item) {
 
 void Parallaction::dropItem(uint16 v) {
 
-	uint16 _di = 0;
-	for (uint16 _si = 0; _si < INVENTORY_MAX_ITEMS - 1; _si++) {
+	bool found = false;
+	for (uint16 slot = 0; slot < INVENTORY_MAX_ITEMS - 1; slot++) {
 
-		if (v + 4 == _inventory[_si]._index) {
-			_di = 1;
+		if (v + INVENTORY_FIRST_ITEM == _inventory[slot]._index) {
+			found = true;
 		}
 
-		if (_di == 0) continue;
+		if (!found) continue;
 
-		memcpy(&_inventory[_si], &_inventory[_si+1], sizeof(InventoryItem));
+		memcpy(&_inventory[slot], &_inventory[slot+1], sizeof(InventoryItem));
 	}
 
 	refreshInventory(_characterName);
@@ -166,8 +165,8 @@ void Parallaction::dropItem(uint16 v) {
 
 int16 Parallaction::isItemInInventory(int32 v) {
 
-	for (uint16 _si = 0; _si < INVENTORY_MAX_ITEMS; _si++) {
-		if (_inventory[_si]._id == (uint)v)
+	for (uint16 slot = 0; slot < INVENTORY_MAX_ITEMS; slot++) {
+		if (_inventory[slot]._id == (uint)v)
 			return 1;
 	}
 
@@ -259,13 +258,13 @@ void extractInventoryGraphics(int16 pos, byte *dst) {
 void jobShowInventory(void *parm, Job *j) {
 //	printf("job_showInventory()...");
 
-	_numInvLines = 0;
+	uint16 slots = 0;
+	while (_inventory[slots]._id != 0)
+		slots++;
 
-	while (_inventory[_numInvLines]._id != 0) _numInvLines++;
+	uint16 lines = (slots + 4) / INVENTORY_ITEMS_PER_LINE;
 
-	_numInvLines = (_numInvLines + 4) / INVENTORY_ITEMS_PER_LINE;
-
-	Common::Rect r(INVENTORY_WIDTH, _numInvLines * INVENTORYITEM_HEIGHT);
+	Common::Rect r(INVENTORY_WIDTH, lines * INVENTORYITEM_HEIGHT);
 	r.moveTo(_invPosition);
 
 	_vm->_gfx->copyRect(
@@ -305,14 +304,13 @@ void jobHideInventory(void *parm, Job *j) {
 
 
 void openInventory() {
-//	printf("openInventory()\n");
-
-	uint16 _si = 0;
 	_engineFlags |= kEngineInventory;
 
-	while (_inventory[_si]._id != 0) _si++;
+	uint16 slot = 0;
+	while (_inventory[slot]._id != 0)
+		slot++;
 
-	uint16 _LOCALinventory_lines = (_si + 4) / INVENTORY_ITEMS_PER_LINE;
+	uint16 lines = (slot + 4) / INVENTORY_ITEMS_PER_LINE;
 
 	_invPosition.x = _vm->_mousePos.x - (INVENTORY_WIDTH / 2);
 	if (_invPosition.x < 0)
@@ -321,12 +319,12 @@ void openInventory() {
 	if ((_invPosition.x + INVENTORY_WIDTH) > SCREEN_WIDTH)
 		_invPosition.x = SCREEN_WIDTH - INVENTORY_WIDTH;
 
-	_invPosition.y = _vm->_mousePos.y - 2 - (_LOCALinventory_lines * INVENTORYITEM_HEIGHT);
+	_invPosition.y = _vm->_mousePos.y - 2 - (lines * INVENTORYITEM_HEIGHT);
 	if (_invPosition.y < 0)
 		_invPosition.y = 0;
 
-	if (_invPosition.y > SCREEN_HEIGHT - _LOCALinventory_lines * INVENTORYITEM_HEIGHT)
-		_invPosition.y = SCREEN_HEIGHT - _LOCALinventory_lines * INVENTORYITEM_HEIGHT;
+	if (_invPosition.y > SCREEN_HEIGHT - lines * INVENTORYITEM_HEIGHT)
+		_invPosition.y = SCREEN_HEIGHT - lines * INVENTORYITEM_HEIGHT;
 
 	return;
 
@@ -335,21 +333,18 @@ void openInventory() {
 
 
 void closeInventory() {
-//	printf("closeInventory()\n");
-
 	_engineFlags &= ~kEngineInventory;
 }
 
 void initInventory() {
-	_buffer = (byte*)malloc(INVENTORY_WIDTH * INVENTORY_HEIGHT);	  // this buffer is also used by menu so it must stay this size
-
+	_buffer = (byte*)malloc(INVENTORY_WIDTH * INVENTORY_HEIGHT);
 }
 
 void cleanInventory() {
 
-	for (uint16 _si = 4; _si < 30; _si++) {
-		_inventory[_si]._id = 0;
-		_inventory[_si]._index = 0;
+	for (uint16 slot = INVENTORY_FIRST_ITEM; slot < INVENTORY_MAX_ITEMS; slot++) {
+		_inventory[slot]._id = 0;
+		_inventory[slot]._index = 0;
 	}
 
 	return;

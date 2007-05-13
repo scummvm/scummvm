@@ -27,13 +27,8 @@
 
 namespace Parallaction {
 
-void resolveLocationForwards();
-void switchBackground(const char* background, const char* mask);
-
-
 
 void Parallaction::parseLocation(const char *filename) {
-//	printf("parseLocation(%s)", filename);
     debugC(1, kDebugLocation, "parseLocation('%s')", filename);
 
 	uint16 _si = 1;
@@ -43,7 +38,6 @@ void Parallaction::parseLocation(const char *filename) {
 
 	fillBuffers(*_locationScript, true);
 	while (scumm_stricmp(_tokens[0], "ENDLOCATION")) {
-//		printf("token[0] = %s", _tokens[0]);
 
 		if (!scumm_stricmp(_tokens[0], "LOCATION")) {
 			// The parameter for location is 'location.mask'.
@@ -163,8 +157,6 @@ void Parallaction::parseLocation(const char *filename) {
 }
 
 void Parallaction::resolveLocationForwards() {
-//	printf("resolveLocationForwards()");
-//	printf("# forwards: %i", _numForwards);
 
 	for (uint16 _si = 0; _forwardedCommands[_si]; _si++) {
 		_forwardedCommands[_si]->u._animation = findAnimation(_forwardedAnimationNames[_si]);
@@ -189,31 +181,21 @@ void Parallaction::freeLocation() {
 	_localFlagNames = new Table(120);
 	_localFlagNames->addData("visited");
 
-	debugC(7, kDebugLocation, "freeLocation: localflags names freed");
-
 	_location._walkNodes.clear();
-	debugC(7, kDebugLocation, "freeLocation: walk nodes freed");
 
 	// TODO (LIST): helperNode should be rendered useless by the use of a Common::List<>
 	// to store Zones and Animations. Right now, it holds a list of Zones to be preserved
 	// but that'll pretty meaningless with a single list approach.
 	freeZones();
-	debugC(7, kDebugLocation, "freeLocation: zones freed");
-
 	freeAnimations();
-	debugC(7, kDebugLocation, "freeLocation: animations freed");
 
 	if (_location._comment) {
 		free(_location._comment);
 	}
 	_location._comment = NULL;
-	debugC(7, kDebugLocation, "freeLocation: comments freed");
 
 	_location._commands.clear();
-	debugC(7, kDebugLocation, "freeLocation: commands freed");
-
 	_location._aCommands.clear();
-	debugC(7, kDebugLocation, "freeLocation: acommands freed");
 
 	return;
 }
@@ -417,7 +399,8 @@ void Parallaction::changeLocation(char *location) {
 void Parallaction::doLocationEnterTransition() {
 	debugC(1, kDebugLocation, "doLocationEnterTransition");
 
-	if (_localFlags[_currentLocationIndex] & kFlagsVisited) return; // visited
+	if (_localFlags[_currentLocationIndex] & kFlagsVisited)
+		return; // visited
 
 	byte pal[PALETTE_SIZE];
 	_gfx->buildBWPalette(pal);
@@ -431,21 +414,15 @@ void Parallaction::doLocationEnterTransition() {
 	_gfx->swapBuffers();
 	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
-	int16 v7C, v7A;
-	_gfx->getStringExtent(_location._comment, 130, &v7C, &v7A);
+	int16 w, h;
+	_gfx->getStringExtent(_location._comment, 130, &w, &h);
 
-	Common::Rect r(10 + v7C, 5 + v7A);
+	Common::Rect r(10 + w, 5 + h);
 	r.moveTo(5, 5);
 	_gfx->floodFill(Gfx::kBitFront, r, 0);
 	r.grow(-1);
 	_gfx->floodFill(Gfx::kBitFront, r, 1);
 	_gfx->displayWrappedString(_location._comment, 3, 5, 130, 0);
-	// FIXME: ???
-#if 0
-	do {
-		mouseFunc1();
-	} while (_mouseButtons != kMouseLeftUp);
-#endif
 
 	_gfx->updateScreen();
 	waitUntilLeftClick();
@@ -454,18 +431,14 @@ void Parallaction::doLocationEnterTransition() {
 
 	// fades maximum intensity palette towards approximation of main palette
 	for (uint16 _si = 0; _si<6; _si++) {
-		waitTime( 1 );
 		_gfx->quickFadePalette(pal);
 		_gfx->setPalette(pal);
+		waitTime( 1 );
 	}
 
 	debugC(1, kDebugLocation, "doLocationEnterTransition completed");
 
 	return;
-}
-
-void mouseFunc1() {
-	// FIXME: implement this
 }
 
 } // namespace Parallaction
