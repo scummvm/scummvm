@@ -111,13 +111,15 @@ void SfxPlayer::play() {
 }
 
 void SfxPlayer::stop() {
-	_fadeOutCounter = 0;
-	_playing = false;
-	for (int i = 0; i < NUM_CHANNELS; ++i) {
-		_driver->stopChannel(i);
+	if (_playing || _fadeOutCounter != 0) {
+		_fadeOutCounter = 0;
+		_playing = false;
+		for (int i = 0; i < NUM_CHANNELS; ++i) {
+			_driver->stopChannel(i);
+		}
+		_driver->stopSound();
+		unload();
 	}
-	_driver->stopSound();
-	unload();
 }
 
 void SfxPlayer::fadeOut() {

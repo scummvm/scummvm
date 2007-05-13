@@ -87,17 +87,15 @@ void AdlibSoundDriver::setupChannel(int channel, const byte *data, int instrumen
 void AdlibSoundDriver::stopChannel(int channel) {
 	assert(channel < 4);
 	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
-	if (ins) {
-		if (ins->mode != 0 && ins->channel == 6) {
-			channel = 6;
-		}
-		if (ins->mode == 0 || ins->channel == 6) {
-			OPLWriteReg(_opl, 0xB0 | channel, 0);
-		}
-		if (ins->mode != 0) {
-			_vibrato &= (1 << (10 - ins->channel)) ^ 0xFF;
-			OPLWriteReg(_opl, 0xBD, _vibrato);
-		}
+	if (ins->mode != 0 && ins->channel == 6) {
+		channel = 6;
+	}
+	if (ins->mode == 0 || channel == 6) {
+		OPLWriteReg(_opl, 0xB0 | channel, 0);
+	}
+	if (ins->mode != 0) {
+		_vibrato &= ~(1 << (10 - ins->channel));
+		OPLWriteReg(_opl, 0xBD, _vibrato);
 	}
 }
 
@@ -295,16 +293,17 @@ void AdlibSoundDriverINS::playSound(const byte *data, int channel, int volume) {
 		channel = 6;
 	}
 	if (ins->mode == 0 || channel == 6) {
-		int freq = _freqTable[0];
+		uint16 note = 12;
+		int freq = _freqTable[note % 12];
 		OPLWriteReg(_opl, 0xA0 | channel, freq);
-		freq = 4 | ((freq & 0x300) >> 8);
+		freq = ((note / 12) << 2) | ((freq & 0x300) >> 8);
 		if (ins->mode == 0) {
 			freq |= 0x20;
 		}
 		OPLWriteReg(_opl, 0xB0 | channel, freq);
 	}
 	if (ins->mode != 0) {
-		_vibrato = 1 << (10 - ins->channel);
+		_vibrato |= 1 << (10 - ins->channel);
 		OPLWriteReg(_opl, 0xBD, _vibrato);
 	}
 }
@@ -351,7 +350,7 @@ void AdlibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
 		}
 		OPLWriteReg(_opl, 0xB0 | channel, freq);
 		if (ins->mode != 0) {
-			_vibrato = 1 << (10 - channel);
+			_vibrato |= 1 << (10 - channel);
 			OPLWriteReg(_opl, 0xBD, _vibrato);
 		}
 	}
@@ -366,7 +365,7 @@ void AdlibSoundDriverADL::playSound(const byte *data, int channel, int volume) {
 		OPLWriteReg(_opl, 0xB0 | channel, 0);
 	}
 	if (ins->mode != 0) {
-		_vibrato = (1 << (10 - ins->channel)) ^ 0xFF;
+		_vibrato &= ~(1 << (10 - ins->channel));
 		OPLWriteReg(_opl, 0xBD, _vibrato);
 	}
 	if (ins->mode != 0) {
@@ -389,7 +388,7 @@ void AdlibSoundDriverADL::playSound(const byte *data, int channel, int volume) {
 	}
 	OPLWriteReg(_opl, 0xB0 | channel, freq);
 	if (ins->mode != 0) {
-		_vibrato = 1 << (10 - channel);
+		_vibrato |= 1 << (10 - channel);
 		OPLWriteReg(_opl, 0xBD, _vibrato);
 	}
 }
