@@ -711,9 +711,6 @@ protected:
 	void clearMenuStrip();
 	void doMenuStrip(uint menuNum);
 
-	void oracleLogo();
-	void swapCharacterLogo();
-
 	void mouseOff();
 	void mouseOn();
 
@@ -1125,7 +1122,7 @@ protected:
 	void readGameFile(void *dst, uint32 offs, uint32 size);
 
 	void timer_callback();
-	void timer_proc1();
+	virtual void timer_proc1();
 
 	virtual void animateSprites();
 
@@ -1559,6 +1556,10 @@ protected:
 
 	virtual void animateSprites();
 	void animateSpritesByY();
+
+	void oracleLogo();
+	void swapCharacterLogo();
+	virtual void timer_proc1();
 
 	virtual void addArrows(WindowBlock *window);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);

@@ -298,7 +298,7 @@ void AGOSEngine_Feeble::scrollOracleDown() {
 	}
 }
 
-void AGOSEngine::oracleLogo() {
+void AGOSEngine_Feeble::oracleLogo() {
 	Common::Rect srcRect, dstRect;
 	byte *src, *dst;
 	uint16 w, h;
@@ -326,7 +326,7 @@ void AGOSEngine::oracleLogo() {
 	}
 }
 
-void AGOSEngine::swapCharacterLogo() {
+void AGOSEngine_Feeble::swapCharacterLogo() {
 	Common::Rect srcRect, dstRect;
 	byte *src, *dst;
 	uint16 w, h;

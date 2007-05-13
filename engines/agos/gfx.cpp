@@ -1226,6 +1226,9 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 	_lockWord |= 0x20;
 
 	VgaTimerEntry *vte = _vgaTimerList;
+	while (vte->type != 2)
+		vte++;
+
 	vte->delay = 2;
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
@@ -1259,7 +1262,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 		_vgaSpriteChanged++;
 
 		if (_window3Flag == 1) {
-			clearVideoBackGround(3, 0); // (window, color)
+			clearVideoBackGround(3, 0);
 		}
 
 		uint xoffs = _videoWindows[updateWindow * 4 + 0] * 16;

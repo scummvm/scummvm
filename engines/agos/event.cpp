@@ -440,12 +440,65 @@ void AGOSEngine::delay(uint amount) {
 }
 
 void AGOSEngine::timer_callback() {
-	if (_timer5 != 0) {
+	if (_timer5) {
 		_syncFlag2 = true;
 		_timer5--;
 	} else {
 		timer_proc1();
 	}
+}
+
+void AGOSEngine_Feeble::timer_proc1() {
+	_timer4++;
+
+	if (_lockWord & 0x80E9 || _lockWord & 2)
+		return;
+
+	_syncCount++;
+
+	_lockWord |= 2;
+
+	if (!(_lockWord & 0x10)) {
+		_syncFlag2 ^= 1;
+		if (!_syncFlag2) {
+			processVgaEvents();
+		} else {
+			// Double speed on Oracle
+			if (getGameType() == GType_FF && getBitFlag(99)) {
+				processVgaEvents();
+			} else if (_scrollCount == 0) {
+				_lockWord &= ~2;
+				return;
+			}
+		}
+	} 
+
+	if (getGameType() == GType_FF) {
+		_moviePlay->nextFrame();
+	}
+
+	animateSprites();
+
+	if (_copyPartialMode == 2) {
+		fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
+		_copyPartialMode = 0;
+	}
+
+	if (_displayScreen) {
+		if (getGameType() == GType_FF) {
+			if (!getBitFlag(78)) {
+				oracleLogo();
+			}
+			if (getBitFlag(76)) {
+				swapCharacterLogo();
+			}
+		}
+		handleMouseMoved();
+		displayScreen();
+		_displayScreen = false;
+	}
+
+	_lockWord &= ~2;
 }
 
 void AGOSEngine::timer_proc1() {
@@ -461,53 +514,12 @@ void AGOSEngine::timer_proc1() {
 	handleMouseMoved();
 
 	if (!(_lockWord & 0x10)) {
-		if (getGameType() == GType_PP) {
-			_syncFlag2 ^= 1;
-			if (!_syncFlag2) {
-				processVgaEvents();
-			} else {
-				if (_scrollCount == 0) {
-					_lockWord &= ~2;
-					return;
-				}
-			}
-		} else if (getGameType() == GType_FF) {
-			_syncFlag2 ^= 1;
-			if (!_syncFlag2) {
-				processVgaEvents();
-			} else {
-				// Double speed on Oracle
-				if (getBitFlag(99)) {
-					processVgaEvents();
-				} else if (_scrollCount == 0) {
-					_lockWord &= ~2;
-					return;
-				}
-			}
-		} else {
+		processVgaEvents();
+		processVgaEvents();
+		_cepeFlag ^= 1;
+		if (!_cepeFlag)
 			processVgaEvents();
-			processVgaEvents();
-			_syncFlag2 ^= 1;
-			_cepeFlag ^= 1;
-			if (!_cepeFlag)
-				processVgaEvents();
-
-			if (_mouseHideCount != 0 && _syncFlag2) {
-				_lockWord &= ~2;
-				return;
-			}
-		}
 	} 
-
-	if (getGameType() == GType_FF) {
-		_moviePlay->nextFrame();
-		animateSprites();
-	}
-
-	if (_copyPartialMode == 2) {
-		fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
-		_copyPartialMode = 0;
-	}
 
 	if (_updateScreen) {
 		_system->copyRectToScreen(getFrontBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
@@ -517,14 +529,6 @@ void AGOSEngine::timer_proc1() {
 	}
 
 	if (_displayScreen) {
-		if (getGameType() == GType_FF) {
-			if (!getBitFlag(78)) {
-				oracleLogo();
-			}
-			if (getBitFlag(76)) {
-				swapCharacterLogo();
-			}
-		}
 		displayScreen();
 		_displayScreen = false;
 	}

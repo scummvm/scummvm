@@ -362,9 +362,7 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 		renderString(vgaSpriteId, color, width, height, convertedString);
 	}
 
-	int b = 4;
-	if (!getBitFlag(133))
-		b = 3;
+	int b = (!getBitFlag(133)) ? 3 : 4;
 
 	x /= 8;
 	if (y < 2)
