@@ -842,21 +842,12 @@ void AGOSEngine::invertBox(HitArea * ha, byte a, byte b, byte c, byte d) {
 	int w, h, i;
 
 	_lockWord |= 0x8000;
-	src = getFrontBuf() + ha->y * _dxSurfacePitch + ha->x;
+	src = getFrontBuf() + ha->y * _dxSurfacePitch + (ha->x - _scrollX * 8);
 
 	_litBoxFlag = true;
 
 	w = ha->width;
 	h = ha->height;
-
-	// Works around bug in original Simon the Sorcerer 2
-	// Animations continue in background when load/save dialog is open
-	// often causing the savegame name highlighter to be cut short
-	if (!(h > 0 && w > 0 && ha->x + w <= _screenWidth && ha->y + h <= _screenHeight)) {
-		debug(1,"Invalid coordinates in invertBox (%d,%d,%d,%d)", ha->x, ha->y, ha->width, ha->height);
-		_lockWord &= ~0x8000;
-		return;
-	}
 
 	do {
 		for (i = 0; i != w; ++i) {
