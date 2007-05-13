@@ -294,6 +294,7 @@ uint16 Menu::selectGame() {
 //	character selection and protection
 //
 void Menu::selectCharacter() {
+	debugC(1, kDebugMenu, "Menu::selectCharacter()");
 
 	uint16 _di = 0;
 	bool askPassword = true;

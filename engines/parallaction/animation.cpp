@@ -465,7 +465,7 @@ void jobRunScripts(void *parm, Job *j) {
 
 		while (((*inst)->_index != INST_SHOW) && (a->_flags & kFlagsActing)) {
 
-			debugC(1, kDebugJobs, "Animation: %s, instruction: %s", a->_label._text, (*inst)->_index == INST_END ? "end" : _instructionNamesRes[(*inst)->_index - 1]);
+			debugC(9, kDebugJobs, "Animation: %s, instruction: %s", a->_label._text, (*inst)->_index == INST_END ? "end" : _instructionNamesRes[(*inst)->_index - 1]);
 
 			switch ((*inst)->_index) {
 			case INST_ENDLOOP:	// endloop

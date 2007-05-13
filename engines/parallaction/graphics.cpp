@@ -412,7 +412,7 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 void jobDisplayLabel(void *parm, Job *j) {
 
 	Label *label = (Label*)parm;
-	debugC(1, kDebugJobs, "jobDisplayLabel (%p)", (const void*) label);
+	debugC(9, kDebugJobs, "jobDisplayLabel (%p)", (const void*) label);
 
 	if (label->_cnv._width == 0)
 		return;
@@ -424,7 +424,7 @@ void jobDisplayLabel(void *parm, Job *j) {
 void jobEraseLabel(void *parm, Job *j) {
 	Label *label = (Label*)parm;
 
-	debugC(1, kDebugJobs, "jobEraseLabel (%p)", (const void*) label);
+	debugC(9, kDebugJobs, "jobEraseLabel (%p)", (const void*) label);
 
 	int16 _si, _di;
 

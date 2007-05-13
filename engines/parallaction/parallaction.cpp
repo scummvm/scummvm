@@ -121,7 +121,7 @@ Parallaction::Parallaction(OSystem *syst) :
 	Common::addSpecialDebugLevel(kDebugJobs, "jobs", "Jobs debug level");
 	Common::addSpecialDebugLevel(kDebugInput, "input", "Input debug level");
 	Common::addSpecialDebugLevel(kDebugAudio, "audio", "Audio debug level");
-
+	Common::addSpecialDebugLevel(kDebugMenu, "menu", "Menu debug level");
 }
 
 
@@ -788,6 +788,7 @@ int compareJobPriority(const JobPointer &j1, const JobPointer &j2) {
 }
 
 Job *Parallaction::addJob(JobFn fn, void *parm, uint16 tag) {
+	debugC(3, kDebugJobs, "addJob(%i)", tag);
 
 	Job *v8 = new Job;
 
@@ -803,16 +804,22 @@ Job *Parallaction::addJob(JobFn fn, void *parm, uint16 tag) {
 }
 
 void Parallaction::removeJob(Job *j) {
+	debugC(3, kDebugJobs, "addJob(%i)", j->_tag);
+
 	j->_finished = 1;
 	return;
 }
 
 void Parallaction::pauseJobs() {
+	debugC(3, kDebugJobs, "pausing jobs execution");
+
 	_engineFlags |= kEnginePauseJobs;
 	return;
 }
 
 void Parallaction::resumeJobs() {
+	debugC(3, kDebugJobs, "resuming jobs execution");
+
 	_engineFlags &= ~kEnginePauseJobs;
 	return;
 }
@@ -831,7 +838,7 @@ void Parallaction::runJobs() {
 
 	it = _jobs.begin();
 	while (it != _jobs.end()) {
-		debugC(3, kDebugJobs, "runJobs: %i", (*it)->_tag);
+		debugC(9, kDebugJobs, "runJobs: %i", (*it)->_tag);
 		(*(*it)->_fn)((*it)->_parm, (*it));
 		it++;
 	}
