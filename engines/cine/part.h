@@ -65,7 +65,10 @@ int16 findFileInBundle(const char *fileName);
 void readFromPart(int16 idx, byte *dataPtr);
 
 byte *readBundleFile(int16 foundFileIdx);
+byte *readBundleSoundFile(const char *entryName);
 byte *readFile(const char *filename);
+
+void checkDataDisk(int16 param);
 
 void dumpBundle(const char *filename);
 

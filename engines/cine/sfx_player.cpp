@@ -67,7 +67,7 @@ bool SfxPlayer::load(const char *song) {
 		return 0;
 	}
 		
-	_sfxData = snd_loadBasesonEntry(song);
+	_sfxData = readBundleSoundFile(song);
 	if (!_sfxData) {
 		warning("Unable to load soundfx module '%s'", song);
 		return 0;
@@ -86,7 +86,7 @@ bool SfxPlayer::load(const char *song) {
 				*dot = '\0';
 			}
 			strcat(instrument, _driver->getInstrumentExtension());
-			_instrumentsData[i] = snd_loadBasesonEntry(instrument);
+			_instrumentsData[i] = readBundleSoundFile(instrument);
 			if (!_instrumentsData[i]) {
 				warning("Unable to load soundfx instrument '%s'", instrument);
 			}

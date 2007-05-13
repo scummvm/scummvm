@@ -68,7 +68,7 @@ void loadPart(const char *partName) {
 		partFileHandle.readUint32BE(); // unused
 	}
 
-	if (g_cine->getGameType() == Cine::GType_FW && g_cine->getPlatform() == Common::kPlatformPC)
+	if (g_cine->getGameType() == Cine::GType_FW && g_cine->getPlatform() == Common::kPlatformPC && strcmp(partName, "BASESON.SND") != 0)
 		loadPal(partName);
 }
 
@@ -420,6 +420,25 @@ byte *readBundleFile(int16 foundFileIdx) {
 	return dataPtr;
 }
 
+byte *readBundleSoundFile(const char *entryName) {
+	int16 index;
+	byte *data = 0;
+	char previousPartName[15] = "";
+
+	if (g_cine->getGameType() == Cine::GType_FW) {
+		strcpy(previousPartName, currentPartName);
+		loadPart("BASESON.SND");
+	}
+	index = findFileInBundle((const char *)entryName);
+	if (index != -1) {
+		data = readBundleFile(index);
+	}
+	if (g_cine->getGameType() == Cine::GType_FW) {
+		loadPart(previousPartName);
+	}
+	return data;
+}
+
 byte *readFile(const char *filename) {
 	Common::File in;
 
@@ -435,6 +454,9 @@ byte *readFile(const char *filename) {
 	in.read(dataPtr, size);
 
 	return dataPtr;
+}
+
+void checkDataDisk(int16 param) {
 }
 
 void dumpBundle(const char *fileName) {

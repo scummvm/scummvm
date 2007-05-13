@@ -113,9 +113,6 @@ int CineEngine::go() {
 
 	mainLoop(1);
 
-	if (g_cine->getGameType() == Cine::GType_FW)
-		snd_clearBasesonEntries();
-
 	delete g_sfxPlayer;
 	delete g_soundDriver;
 	return 0;
@@ -138,16 +135,9 @@ void CineEngine::initialize() {
 	
 	loadTextData("texte.dat", textDataPtr);
 
-	switch (g_cine->getGameType()) {
-	case Cine::GType_FW:
-		snd_loadBasesonEntries("BASESON.SND");
-		break;
-	case Cine::GType_OS:
-		if (!(g_cine->getFeatures() & GF_DEMO)) {
-			loadPoldatDat("poldat.dat");
-			loadErrmessDat("errmess.dat");
-		}
-		break;
+	if (g_cine->getGameType() == Cine::GType_OS && !(g_cine->getFeatures() & GF_DEMO)) {
+		loadPoldatDat("poldat.dat");
+		loadErrmessDat("errmess.dat");
 	}
 
 	for (i = 0; i < NUM_MAX_OBJECT; i++) {

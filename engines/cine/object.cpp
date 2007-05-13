@@ -30,7 +30,6 @@
 #include "cine/cine.h"
 #include "cine/object.h"
 #include "cine/part.h"
-#include "cine/resource.h"
 #include "cine/various.h"
 
 namespace Cine {
