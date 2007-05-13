@@ -133,6 +133,8 @@ void AGOSEngine::colorWindow(WindowBlock *window) {
 				_displayPalette[33 * 4 + 1] = 56 * 4;
 				_displayPalette[33 * 4 + 2] = 40 * 4;
 			}
+
+			_paletteFlag = 2;
 		}
 
 		dst = getFrontBuf() + _dxSurfacePitch * window->y + window->x * 8;
