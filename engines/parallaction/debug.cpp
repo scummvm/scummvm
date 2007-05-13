@@ -32,28 +32,28 @@ namespace Parallaction {
 
 
 const char *_jobDescriptions[] = {
-	"0 - draw label",
-	"1 - draw mouse",
-	"2 - delay remove Job (erase label) || show inventory",
-	"3 - draw animations",
-	"4 - NONE",
-	"5 - NONE",
-	"6 - NONE",
-	"7 - NONE",
-	"8 - NONE",
-	"9 - NONE",
-	"10 - NONE",
-	"11 - NONE",
-	"12 - NONE",
-	"13 - NONE",
-	"14 - NONE",
-	"15 - delay remove Job (erase label) || run scripts || erase animations",
-	"16 - NONE",
-	"17 - job_12d4 (put item on screen) || jobRemovePickedItem (remove item from screen)",
-	"18 - toggle door",
-	"19 - walk",
-	"20 - erase label || hide inventory",
-	"21 - erase mouse"
+	"draw label",
+	"draw mouse",
+	"delayed label deletion || show inventory",
+	"draw animations",
+	"NONE",
+	"NONE",
+	"NONE",
+	"NONE",
+	"NONE",
+	"NONE",
+	"NONE",
+	"NONE",
+	"NONE",
+	"NONE",
+	"NONE",
+	"delayed label deletion || run scripts || erase animations",
+	"NONE",
+	"put item || pickup item",
+	"toggle door",
+	"walk",
+	"erase label || hide inventory",
+	"erase mouse"
 };
 
 Debugger::Debugger(Parallaction *vm)
@@ -63,6 +63,11 @@ Debugger::Debugger(Parallaction *vm)
 	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("location", WRAP_METHOD(Debugger, Cmd_Location));
 	DCmd_Register("give",     WRAP_METHOD(Debugger, Cmd_Give));
+	DCmd_Register("jobs",     WRAP_METHOD(Debugger, Cmd_Jobs));
+	DCmd_Register("zones",     WRAP_METHOD(Debugger, Cmd_Zones));
+	DCmd_Register("animations",     WRAP_METHOD(Debugger, Cmd_Animations));
+
+
 }
 
 
@@ -114,6 +119,60 @@ bool Debugger::Cmd_Give(int argc, const char **argv) {
 		else
 			DebugPrintf("invalid item name '%s'\n", argv[1]);
 	}
+
+	return true;
+}
+
+
+bool Debugger::Cmd_Jobs(int argc, const char **argv) {
+
+	JobList::iterator b = _vm->_jobs.begin();
+	JobList::iterator e = _vm->_jobs.end();
+
+	DebugPrintf("+---+-------------------------------------------------------------+\n"
+				"|tag| description                                                 |\n"
+				"+---+-------------------------------------------------------------+\n");
+	for ( ; b != e; b++) {
+		DebugPrintf("|%3i| %-60s|\n", (*b)->_tag, _jobDescriptions[(*b)->_tag] );
+	}
+	DebugPrintf("+---+-------------------------------------------------------------+\n");
+
+
+	return true;
+}
+
+bool Debugger::Cmd_Zones(int argc, const char **argv) {
+
+	ZoneList::iterator b = _vm->_zones.begin();
+	ZoneList::iterator e = _vm->_zones.end();
+
+	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n"
+				"| name               | l | t | r | b |  type  |  flag  |\n"
+				"+--------------------+---+---+---+---+--------+--------+\n");
+	for ( ; b != e; b++) {
+		Zone *z = *b;
+		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", z->_label._text, z->_left, z->_top, z->_right, z->_bottom, z->_type, z->_flags );
+	}
+	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n");
+
+
+	return true;
+}
+
+bool Debugger::Cmd_Animations(int argc, const char **argv) {
+
+	AnimationList::iterator b = _vm->_animations.begin();
+	AnimationList::iterator e = _vm->_animations.end();
+
+	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n"
+				"| name               | x | y | z | f |  type  |  flag  | \n"
+				"+--------------------+---+---+---+---+--------+--------+\n");
+	for ( ; b != e; b++) {
+		Animation *a = *b;
+		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", a->_label._text, a->_left, a->_top, a->_z, a->_frame, a->_type, a->_flags );
+	}
+	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n");
+
 
 	return true;
 }
