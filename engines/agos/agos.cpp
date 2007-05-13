@@ -192,6 +192,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_beardLoaded = 0;
 	_litBoxFlag = 0;
 	_mortalFlag = 0;
+	_displayScreen = false;
 	_updateScreen = false;
 	_syncFlag2 = 0;
 	_inCallBack = 0;
@@ -200,7 +201,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_fastMode = 0;
 	_useBackGround = 0;
 	
-	_oldDrawMethod = 0;
 	_backFlag = 0;
 
 	_debugMode = 0;
@@ -208,7 +208,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_continousMainScript = false;
 	_startVgaScript = false;
 	_continousVgaScript = false;
-	_drawImagesDebug = false;
 	_dumpImages = false;
 
 	_copyProtection = false;
@@ -330,6 +329,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_showPreposition = 0;
 	_showMessageFlag = 0;
 
+	_copyScnFlag = 0;
 	_vgaSpriteChanged = 0;
 
 	_block = 0;
@@ -526,12 +526,6 @@ int AGOSEngine::init() {
 		return -1;
 	}
 
-	// TODO: Enable for Simon the Sorcerer 1/2 when complete
-	if (getGameType() == GType_WW || getGameType() == GType_ELVIRA2 ||
-		getGameType() == GType_ELVIRA1) {
-		_oldDrawMethod = true;
-	}
-
 	if (getGameId() == GID_DIMP) {
 		_screenWidth = 496;
 		_screenHeight = 400;
@@ -585,22 +579,19 @@ int AGOSEngine::init() {
 	_frontBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		_backBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
 		_scaleBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
 	}
 
-	if (!_oldDrawMethod) {
-		_backBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
-	} else {
-		if (getGameType() == GType_SIMON2) {
-			_window4BackScn = (byte *)calloc(_screenWidth * _screenHeight, 1);
-		} else if (getGameType() == GType_SIMON1) {
-			_window4BackScn = (byte *)calloc(_screenWidth * 134, 1);
-		} else if (getGameType() == GType_WW || getGameType() == GType_ELVIRA2) {
-			_window4BackScn = (byte *)calloc(224 * 127, 1);
-		} else if (getGameType() == GType_ELVIRA1) {
-			_window4BackScn = (byte *)calloc(224 * 127, 1);
-			_window6BackScn = (byte *)calloc(48 * 80, 1);
-		}
+	if (getGameType() == GType_SIMON2) {
+		_window4BackScn = (byte *)calloc(_screenWidth * _screenHeight, 1);
+	} else if (getGameType() == GType_SIMON1) {
+		_window4BackScn = (byte *)calloc(_screenWidth * 134, 1);
+	} else if (getGameType() == GType_WW || getGameType() == GType_ELVIRA2) {
+		_window4BackScn = (byte *)calloc(224 * 127, 1);
+	} else if (getGameType() == GType_ELVIRA1) {
+		_window4BackScn = (byte *)calloc(224 * 127, 1);
+		_window6BackScn = (byte *)calloc(48 * 80, 1);
 	}
 
 	setupGame();
@@ -947,6 +938,10 @@ int AGOSEngine::go() {
 	}
 
 	vc34_setMouseOff();
+
+	if (getGameType() != GType_PP && getGameType() != GType_FF) {
+		addVgaEvent(_frameRate, NULL, 0, 0, 2);
+	}
 
 	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAtariST &&
 		(getFeatures() & GF_DEMO)) {

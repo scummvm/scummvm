@@ -72,8 +72,11 @@ void AGOSEngine::vcStopAnimation(uint file, uint sprite) {
 		vc25_halt_sprite();
 
 		vte = _vgaTimerList;
-		while (vte->delay != 0) {
-			if (vte->sprite_id == _vgaCurSpriteId && ((getGameType() == GType_SIMON1) || vte->cur_vga_file == _vgaCurZoneNum)) {
+		while (vte->delay) {
+			// Skip the animateSprites event in earlier games
+			if (vte->type == 2) {
+				vte++;
+			} else if (vte->sprite_id == _vgaCurSpriteId && (getGameType() == GType_SIMON1 || vte->cur_vga_file == _vgaCurZoneNum)) {
 				deleteVgaEvent(vte);
 				break;
 			}
@@ -190,49 +193,14 @@ void AGOSEngine::vc62_fastFadeOut() {
 			delay(5);
 		}
 
-		if (getGameType() == GType_SIMON1) {
-			VgaSprite *vsp;
-			VgaPointersEntry *vpe;
-			VC10_state state;
-
-			vsp = _vgaSprites;
-			while (vsp->id != 0) {
-				if (vsp->id == 128) {
-					byte *old_file_1 = _curVgaFile1;
-					byte *old_file_2 = _curVgaFile2;
-					uint palmode = _windowNum;
-
-					vpe = &_vgaBufferPointers[vsp->zoneNum];
-					_curVgaFile1 = vpe->vgaFile1;
-					_curVgaFile2 = vpe->vgaFile2;
-					_windowNum = vsp->windowNum;
-
-					drawImage_init(vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
-
-					_windowNum = palmode;
-					_curVgaFile1 = old_file_1;
-					_curVgaFile2 = old_file_2;
-					break;
-				}
-				vsp++;
-			}
-		}
-
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
 			clearSurfaces(480);
 		} else if (getGameType() == GType_WW) {
 			memset(getFrontBuf(), 0, _screenWidth * _screenHeight);
-		} else if (!_oldDrawMethod) {
-			// Allow one section of Simon the Sorcerer 1 introduction to be displayed
-			// in lower half of screen
-			if ((getGameType() == GType_SIMON1) && (_subroutine == 2923 || _subroutine == 2926)) {
-				clearSurfaces(200);
-			} else {
-				clearSurfaces(_windowNum == 4 ? 134 : 200);
-			}
 		} else {
-			if (_windowNum != 4)
+			if (_windowNum != 4) {
 				memset(getFrontBuf(), 0, _screenWidth * _screenHeight);
+			}
 		}
 	}
 	if (getGameType() == GType_SIMON2) {

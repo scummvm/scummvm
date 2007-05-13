@@ -170,9 +170,9 @@ void AGOSEngine::haltAnimation() {
 
 	_lockWord |= 0x10;
 
-	if (_updateScreen != false) {
-		updateScreen();
-		_updateScreen = false;
+	if (_displayScreen) {
+		displayScreen();
+		_displayScreen = false;
 	}
 }
 
@@ -181,16 +181,16 @@ void AGOSEngine::restartAnimation() {
 		return;
 
 	_window4Flag = 2;
-	
+
 	setMoveRect(0, 0, 224, 127);
-	updateScreen();
+	displayScreen();
 
 	_lockWord &= ~0x10;
 
 	// Check picture queue
 }
 
-void AGOSEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum) {
+void AGOSEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum, uint8 type) {
 	VgaTimerEntry *vte;
 
 	_lockWord |= 1;
@@ -202,6 +202,7 @@ void AGOSEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite
 	vte->script_pointer = code_ptr;
 	vte->sprite_id = cur_sprite;
 	vte->cur_vga_file = curZoneNum;
+	vte->type = type;
 
 	_lockWord &= ~1;
 }
@@ -232,16 +233,29 @@ void AGOSEngine::processVgaEvents() {
 			uint16 curZoneNum = vte->cur_vga_file;
 			uint16 cur_sprite = vte->sprite_id;
 			const byte *script_ptr = vte->script_pointer;
+			uint8 type = vte->type;
 
-			_nextVgaTimerToProcess = vte + 1;
-			deleteVgaEvent(vte);
+			if (type == 2) {
+				vte->delay = (getGameType() == GType_SIMON2) ? 5 : _frameRate;
 
-			if (getGameType() == GType_SIMON2 && script_ptr == NULL) {
+				animateSprites();
+
+				vte++;
+			} else if (type == 1) {
+				_nextVgaTimerToProcess = vte + 1;
+				deleteVgaEvent(vte);
+
 				scrollEvent();
-			} else {
+
+				vte = _nextVgaTimerToProcess;
+			} else if (type == 0) {
+				_nextVgaTimerToProcess = vte + 1;
+				deleteVgaEvent(vte);
+
 				animateEvent(script_ptr, curZoneNum, cur_sprite);
+
+				vte = _nextVgaTimerToProcess;
 			}
-			vte = _nextVgaTimerToProcess;
 		} else {
 			vte++;
 		}
@@ -297,7 +311,7 @@ void AGOSEngine::scrollEvent() {
 			}
 		}
 
-		addVgaEvent(6, NULL, 0, 0); /* scroll event */
+		addVgaEvent(6, NULL, 0, 0, 1); /* scroll event */
 	}
 }
 
@@ -444,6 +458,8 @@ void AGOSEngine::timer_proc1() {
 
 	_lockWord |= 2;
 
+	handleMouseMoved();
+
 	if (!(_lockWord & 0x10)) {
 		if (getGameType() == GType_PP) {
 			_syncFlag2 ^= 1;
@@ -481,29 +497,26 @@ void AGOSEngine::timer_proc1() {
 				return;
 			}
 		}
-	}
+	} 
 
-	if (getGameType() == GType_FF)
+	if (getGameType() == GType_FF) {
 		_moviePlay->nextFrame();
-
-	animateSprites();
-	if (_drawImagesDebug)
-		animateSpritesDebug();
-
-	if (_copyPartialMode == 1) {
-		fillBackFromFront(80, 46, 208 - 80, 94 - 46);
+		animateSprites();
 	}
 
 	if (_copyPartialMode == 2) {
-		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
-		} else {
-			fillFrontFromBack(176, 61, _screenWidth - 176, 134 - 61);
-		}
+		fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
 		_copyPartialMode = 0;
 	}
 
 	if (_updateScreen) {
+		_system->copyRectToScreen(getFrontBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
+		_system->updateScreen();
+
+		_updateScreen = false;
+	}
+
+	if (_displayScreen) {
 		if (getGameType() == GType_FF) {
 			if (!getBitFlag(78)) {
 				oracleLogo();
@@ -512,9 +525,8 @@ void AGOSEngine::timer_proc1() {
 				swapCharacterLogo();
 			}
 		}
-		handleMouseMoved();
-		updateScreen();
-		_updateScreen = false;
+		displayScreen();
+		_displayScreen = false;
 	}
 
 	_lockWord &= ~2;

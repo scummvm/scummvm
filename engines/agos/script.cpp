@@ -447,6 +447,18 @@ void AGOSEngine::o_comment() {
 void AGOSEngine::o_haltAnimation() {
 	// 88: stop animation
 	_lockWord |= 0x10;
+
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		VgaTimerEntry *vte = _vgaTimerList;
+		while (vte->delay) {
+			if (vte->type == 0)
+				vte->delay += 10;
+			vte++;
+		}
+
+		_scrollCount = 0;
+		_scrollFlag = 0;
+	}
 }
 
 void AGOSEngine::o_restartAnimation() {
@@ -511,6 +523,13 @@ void AGOSEngine::o_loadZone() {
 	}
 
 	loadZone(vga_res);
+
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 ||
+		getGameType() == GType_WW) {
+		_copyScnFlag = 0;
+		_vgaSpriteChanged = 0;
+	}
+
 	_lockWord &= ~0x80;
 }
 

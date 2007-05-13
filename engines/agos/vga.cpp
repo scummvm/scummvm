@@ -708,7 +708,6 @@ void AGOSEngine::drawImage_init(int16 image, uint16 palette, uint16 x, uint16 y,
 }
 
 void AGOSEngine::vc12_delay() {
-	VgaSprite *vsp = findCurSprite();
 	uint16 num;
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
@@ -719,12 +718,7 @@ void AGOSEngine::vc12_delay() {
 		num = vcReadVarOrWord() * _frameRate;
 	}
 
-	// Work around to allow inventory arrows to be shown
-	// in non-Windows versions of Simon the Sorcerer 1
-	if ((getGameType() == GType_SIMON1) && vsp->id == 128)
-		num = 0;
-	else
-		num += _vgaBaseDelay;
+	num += _vgaBaseDelay;
 
 	addVgaEvent(num, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
 	_vcPtr = (byte *)&_vc_get_out_of_code;
@@ -1012,8 +1006,8 @@ void AGOSEngine::vc27_resetSprite() {
 
 	vsp = _vgaSprites;
 	while (vsp->id) {
-		if ((getGameType() == GType_SIMON1 && vsp->id == 128) ||
-			(getGameType() == GType_ELVIRA2 && vsp->id == 100)) {
+		// For animated heart in Elvira 2
+		if (getGameType() == GType_ELVIRA2 && vsp->id == 100) {
 			memcpy(&bak, vsp, sizeof(VgaSprite));
 		}
 		vsp->id = 0;
@@ -1037,8 +1031,11 @@ void AGOSEngine::vc27_resetSprite() {
 
 	vte = _vgaTimerList;
 	while (vte->delay) {
-		if ((getGameType() == GType_SIMON1 && vte->sprite_id == 128) ||
-			(getGameType() == GType_ELVIRA2 && vte->sprite_id == 100)) {
+		// Skip the animateSprites event in earlier games
+		if (vte->type == 2) {
+			vte++;
+		// For animated heart in Elvira 2
+		} else if (getGameType() == GType_ELVIRA2 && vte->sprite_id == 100) {
 			vte++;
 		} else {
 			vte2 = vte;
@@ -1225,6 +1222,7 @@ void AGOSEngine::vc35_clearWindow() {
 
 	// Clear video window
 	clearVideoWindow(num, color);
+	_vgaSpriteChanged++;
 
 	// Clear video background
 	if (getGameType() == GType_ELVIRA1) {
@@ -1242,18 +1240,12 @@ void AGOSEngine::vc35_clearWindow() {
 }
 
 void AGOSEngine::vc36_setWindowImage() {
-	_updateScreen = false;
+	_displayScreen = false;
 	uint16 vga_res = vcReadNextWord();
 	uint16 windowNum = vcReadNextWord();
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		_copyPartialMode = 2;
-	} else if (getGameType() == GType_SIMON1) {
-		if (windowNum == 16 && !_oldDrawMethod) {
-			_copyPartialMode = 2;
-		} else {
-			setWindowImage(windowNum, vga_res);
-		}
 	} else {
 		setWindowImage(windowNum, vga_res);
 	}
@@ -1299,7 +1291,7 @@ void AGOSEngine::vc40() {
 	uint16 var = vcReadNextWord();
 	int16 value = vcReadVar(var) + vcReadNextWord();
 
-	if ((getGameType() == GType_SIMON2) && var == 15 && !getBitFlag(80)) {
+	if (getGameType() == GType_SIMON2 && var == 15 && !getBitFlag(80)) {
 		int16 tmp;
 
 		if (_scrollCount != 0) {
@@ -1316,7 +1308,7 @@ void AGOSEngine::vc40() {
 			tmp = _scrollXMax - _scrollX;
 			if (tmp < 20)
 				_scrollCount = tmp;
-			addVgaEvent(6, NULL, 0, 0);	 /* scroll event */
+			addVgaEvent(6, NULL, 0, 0, 1);	 /* scroll event */
 		}
 	}
 no_scroll:;
@@ -1328,7 +1320,7 @@ void AGOSEngine::vc41() {
 	uint16 var = vcReadNextWord();
 	int16 value = vcReadVar(var) - vcReadNextWord();
 
-	if ((getGameType() == GType_SIMON2) && var == 15 && !getBitFlag(80)) {
+	if (getGameType() == GType_SIMON2 && var == 15 && !getBitFlag(80)) {
 		if (_scrollCount != 0) {
 			if (_scrollCount < 0)
 				goto no_scroll;
@@ -1342,7 +1334,7 @@ void AGOSEngine::vc41() {
 			_scrollCount = -20;
 			if (_scrollX < 20)
 				_scrollCount = -_scrollX;
-			addVgaEvent(6, NULL, 0, 0);	 /* scroll event */
+			addVgaEvent(6, NULL, 0, 0, 1);	 /* scroll event */
 		}
 	}
 no_scroll:;

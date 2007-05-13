@@ -105,6 +105,7 @@ struct VgaTimerEntry {
 	const byte *script_pointer;
 	uint16 sprite_id;
 	uint16 cur_vga_file;
+	uint8 type;
 	VgaTimerEntry() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -265,6 +266,7 @@ protected:
 	bool _beardLoaded;
 	bool _litBoxFlag;
 	bool _mortalFlag;
+	bool _displayScreen;
 	bool _updateScreen;
 	bool _syncFlag2;
 	bool _inCallBack;
@@ -273,7 +275,6 @@ protected:
 	bool _fastMode;
 	bool _useBackGround;
 
-	bool _oldDrawMethod;
 	bool _backFlag;
 
 	uint16 _debugMode;
@@ -284,7 +285,6 @@ protected:
 	bool _continousMainScript;
 	bool _startVgaScript;
 	bool _continousVgaScript;
-	bool _drawImagesDebug;
 	bool _dumpImages;
 	bool _speech;
 	bool _subtitles;
@@ -408,7 +408,7 @@ protected:
 	bool _showPreposition;
 	bool _showMessageFlag;
 
-	uint _vgaSpriteChanged;
+	uint _copyScnFlag, _vgaSpriteChanged;
 
 	byte *_block, *_blockEnd;
 	byte *_vgaMemPtr, *_vgaMemEnd, *_vgaMemBase;
@@ -1086,7 +1086,7 @@ protected:
 	bool isVgaQueueEmpty();
 	void haltAnimation();
 	void restartAnimation();
-	void addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum);
+	void addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum, uint8 type = 0);
 	void deleteVgaEvent(VgaTimerEntry * vte);
 	void processVgaEvents();
 	void animateEvent(const byte *code_ptr, uint16 curZoneNum, uint16 cur_sprite);
@@ -1127,9 +1127,7 @@ protected:
 	void timer_callback();
 	void timer_proc1();
 
-	void animateSprites();
-	void animateSpritesDebug();
-	void animateSpritesByY();
+	virtual void animateSprites();
 
 	void dirtyClips();
 	void dirtyBackGround();
@@ -1137,7 +1135,7 @@ protected:
 	void saveBackGround(VgaSprite *vsp);
 
 	void clearSurfaces(uint num_lines);
-	void updateScreen();
+	void displayScreen();
 
 	void dumpVideoScript(const byte *src, bool one_opcode_only);
 	void dumpVgaFile(const byte *vga);
@@ -1558,6 +1556,9 @@ protected:
 
 	void drawMousePart(int image, byte x, byte y);
 	virtual void drawMousePointer();
+
+	virtual void animateSprites();
+	void animateSpritesByY();
 
 	virtual void addArrows(WindowBlock *window);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);

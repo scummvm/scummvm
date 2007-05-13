@@ -576,10 +576,6 @@ bool AGOSEngine::processSpecialKeys() {
 		if (_debugMode)
 			_continousVgaScript ^= 1;
 		break;
-	case 'i':
-		if (_debugMode)
-			_drawImagesDebug ^= 1;
-		break;
 	case 'd':
 		if (_debugMode)
 			_dumpImages ^=1;

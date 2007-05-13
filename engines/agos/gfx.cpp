@@ -215,13 +215,11 @@ bool AGOSEngine::drawImage_clip(VC10_state *state) {
 		} while (--cur);
 	}
 
-	assert(state->draw_width != 0 && state->draw_height != 0);
-
 	if (getGameType() != GType_FF && getGameType() != GType_PP) {
 		state->draw_width *= 4;
 	}
 
-	return 1;
+	return (state->draw_width != 0 && state->draw_height != 0);
 }
 
 void AGOSEngine_Feeble::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
@@ -357,7 +355,7 @@ void AGOSEngine_Feeble::drawImage(VC10_state *state) {
 				scaleClip(_scaleHeight, _scaleWidth, _scaleY, _scaleX, _scaleY + _scrollY);
 			}
 		} else {
-			if (drawImage_clip(state) == 0)
+			if (!drawImage_clip(state))
 				return;
 
 			state->surf_addr += state->x + state->y * state->surf_pitch;
@@ -423,7 +421,7 @@ void AGOSEngine_Feeble::drawImage(VC10_state *state) {
 			}
 		}
 	} else {
-		if (drawImage_clip(state) == 0)
+		if (!drawImage_clip(state))
 			return;
 
 		state->surf_addr += state->x + state->y * state->surf_pitch;
@@ -452,6 +450,10 @@ void AGOSEngine_Feeble::drawImage(VC10_state *state) {
 }
 
 void AGOSEngine_Simon1::drawMaskedImage(VC10_state *state) {
+	if (getGameType() == GType_SIMON1 && (_windowNum == 3 || _windowNum == 4 || _windowNum >= 10)) {
+		state->surf2_addr += _videoWindows[17] * 320;
+	}
+
 	if (getFeatures() & GF_32COLOR) {
 		const byte *mask = state->srcPtr + (state->width * state->y_skip * 16) + (state->x_skip * 8);
 		byte *src = state->surf2_addr;
@@ -622,24 +624,14 @@ void AGOSEngine_Simon1::draw32ColorImage(VC10_state *state) {
 void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 	const uint16 *vlut = &_videoWindows[_windowNum * 4];
 
-	if (drawImage_clip(state) == 0)
+	if (!drawImage_clip(state))
 		return;
 
 	if (getFeatures() & GF_32COLOR)
 		state->palette = 0xC0;
 
 	uint16 xoffs = 0, yoffs = 0;
-	if (!_oldDrawMethod) {
-		if (getGameType() == GType_SIMON1 && (_subroutine == 2923 || _subroutine == 2926)) {
-			// Allow one section of Simon the Sorcerer 1 introduction to be displayed
-			// in lower half of screen
-			xoffs = state->x * 8;
-			yoffs = state->y;
-		} else {
-			xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
-			yoffs = (vlut[1] - _videoWindows[17] + state->y);
-		}
-	} else if (getGameType() == GType_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		state->surf2_addr = getBackGround();
 		state->surf2_pitch = _screenWidth;
 
@@ -724,12 +716,6 @@ void AGOSEngine::drawBackGroundImage(VC10_state *state) {
 }
 
 void AGOSEngine::drawVertImage(VC10_state *state) {
-	if (getGameType() == GType_SIMON2 && (state->flags & kDFUseFrontBuf) && getBitFlag(171) &&
-		!_oldDrawMethod) {
-		state->surf_addr = state->surf2_addr;
-		state->surf_pitch = state->surf2_pitch;
-	}
-
 	if (state->flags & kDFCompressed) {
 		uint w, h;
 		byte *src, *dst, *dstPtr;
@@ -793,7 +779,7 @@ void AGOSEngine::drawVertImage(VC10_state *state) {
 void AGOSEngine::drawImage(VC10_state *state) {
 	const uint16 *vlut = &_videoWindows[_windowNum * 4];
 
-	if (drawImage_clip(state) == 0)
+	if (!drawImage_clip(state))
 		return;
 
 	uint16 xoffs = 0, yoffs = 0;
@@ -850,7 +836,6 @@ void AGOSEngine::drawImage(VC10_state *state) {
 
 			xoffs = (vlut[0] * 2 + state->x) * 8;
 			yoffs = vlut[1] + state->y;
-
 		} else {
 			state->surf_addr = _window4BackScn;
 			state->surf_pitch = _videoWindows[18] * 16;
@@ -900,10 +885,10 @@ void AGOSEngine::horizontalScroll(VC10_state *state) {
 
 	vcWriteVar(251, _scrollX);
 
-	if (!_oldDrawMethod) {
-		dst = getBackBuf();
-	} else {
+	if (getGameType() == GType_SIMON2) {
 		dst = _window4BackScn;
+	} else {
+		dst = getBackBuf();
 	}
 
 	if (getGameType() == GType_FF)
@@ -1153,7 +1138,7 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool vgaScript) {
 		}
 		assert(READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == vga_res_id);
 
-		if (!vgaScript && _oldDrawMethod)
+		if (!vgaScript)
 			clearVideoWindow(_windowNum, READ_BE_UINT16(&((ImageHeader_Simon *) b)->color));
 	} else {
 		b = bb + READ_BE_UINT16(bb + 10);
@@ -1220,35 +1205,34 @@ void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vga_res) {
 	if (_lockWord & 0x10)
 		error("setWindowImageEx: _lockWord & 0x10");
 
-	setWindowImage(mode, vga_res);
+	if (getGameType() != GType_PP && getGameType() != GType_FF) {
+		if (getGameType() == GType_WW && (mode == 6 || mode == 8 || mode == 9)) {
+			setWindowImage(mode, vga_res);
+		} else {
+			while (_copyScnFlag)
+				delay(1);
+
+			setWindowImage(mode, vga_res);
+		}
+	} else {
+		setWindowImage(mode, vga_res);
+	}
 }
 
 void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
-	uint num_lines;
 	uint16 updateWindow;
 
 	_windowNum = updateWindow = mode;
 	_lockWord |= 0x20;
 
+	VgaTimerEntry *vte = _vgaTimerList;
+	vte->delay = 2;
+
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		vc27_resetSprite();
 	}
 
-	if (!vga_res_id) {
-		if (getGameType() == GType_SIMON1) {
-			_unkPalFlag = true;
-		} else if (getGameType() == GType_SIMON2 && !_oldDrawMethod) {
-			_useBackGround = true;
-			_restoreWindow6 = true;
-		}
-	}
-
-	if (getGameType() == GType_SIMON1) {
-		if (vga_res_id == 16300) {
-			clearBackFromTop(134);
-			_usePaletteDelay = true;
-		}
-	} else if (getGameType() == GType_SIMON2 || getGameType() == GType_FF) {
+	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF) {
 		_scrollX = 0;
 		_scrollY = 0;
 		_scrollXMax = 0;
@@ -1270,28 +1254,10 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 		fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
 		fillBackGroundFromBack(_screenHeight);
 		_syncFlag2 = 1;
-	} else if (getGameType() == GType_SIMON2 && !_oldDrawMethod) { 
-		if (!_useBackGround) {
-			num_lines = _windowNum == 4 ? 134 : 200;
-			_boxStarHeight = num_lines;
-			fillFrontFromBack(0, 0, _screenWidth, num_lines);
-			fillBackGroundFromBack(num_lines);
-			_syncFlag2 = 1;
-		}
-		_useBackGround = false;
-	} else if (getGameType() == GType_SIMON1 && !_oldDrawMethod) {
-		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
-		// in lower half of screen
-		if (_subroutine == 2923 || _subroutine == 2926)
-			num_lines = 200;
-		else
-			num_lines = _windowNum == 4 ? 134 : 200;
-
-		fillFrontFromBack(0, 0, _screenWidth, num_lines);
-		fillBackGroundFromBack(num_lines);
-		_syncFlag2 = 1;
-		_timer5 = 0;
 	} else {
+		_copyScnFlag = 2;
+		_vgaSpriteChanged++;
+
 		if (_window3Flag == 1) {
 			clearVideoBackGround(3, 0); // (window, color)
 		}
@@ -1358,6 +1324,8 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 			}
 		}
 
+		_boxStarHeight = height;
+
 		for (; height > 0; height--) {
 			memcpy(dst, src, width);
 			dst += _screenWidth;
@@ -1379,15 +1347,6 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 	}
 
 	_lockWord &= ~0x20;
-
-	if (getGameType() == GType_SIMON1) {
-		if (_unkPalFlag) {
-			_unkPalFlag = false;
-			while (_fastFadeInFlag != 0) {
-				delay(10);
-			}
-		}
-	}
 }
 
 } // End of namespace AGOS

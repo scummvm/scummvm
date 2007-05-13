@@ -224,8 +224,6 @@ void AGOSEngine::userGame(bool load) {
 
 	save_time = time(NULL);
 
-	_copyPartialMode = 1;
-
 	number_of_savegames = countSaveGames();
 	if (!load)
 		number_of_savegames++;
@@ -375,9 +373,6 @@ get_out:;
 	disableFileBoxes();
 
 	_gameStoppedClock = time(NULL) - save_time + _gameStoppedClock;
-	_copyPartialMode = 0;
-
-	restoreBlock(94, 208, 46, 80);
 
 	i = _timer4;
 	do {

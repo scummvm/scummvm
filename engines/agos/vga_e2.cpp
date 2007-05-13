@@ -230,6 +230,7 @@ void AGOSEngine::vc56_fullScreen() {
 	byte *dst = getFrontBuf();
 
 	memcpy(dst, src + 768, _screenHeight * _screenWidth);
+
 	//fullFade();
 
 	uint8 palette[1024];

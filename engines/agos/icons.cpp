@@ -787,7 +787,9 @@ void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
 		if (getFeatures() & GF_32COLOR) {
 			// TODO: Manually removes arrows
 		} else {
-			stopAnimate(128);
+			stopAnimate(129);
+			uint8 palette = (getPlatform() == Common::kPlatformAmiga) ? 15: 14;
+			animate(0, 1, 129, 0, 0, palette);
 		}
 	} else if (getGameType() == GType_WW) {
 		setBitFlag(22, false);
