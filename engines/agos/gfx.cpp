@@ -648,7 +648,7 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 		_window4Flag = 1;
 	} else if (getGameType() == GType_SIMON1) {
 		if (_windowNum == 3 || _windowNum == 4 || _windowNum >= 10) {
-			if (_windowNum == 3) {
+			if (_window3Flag == 1) {
 				state->surf2_addr = getBackGround();
 				state->surf2_pitch = _screenWidth;
 
