@@ -559,6 +559,17 @@ int ToucheEngine::displayQuitDialog() {
 						ret = 1;
 					}
 					break;
+				case Common::DE_DEU:
+					if (event.kbd.ascii == 'j' || event.kbd.ascii == 'J') {
+						ret = 1;
+					}
+					break;
+				case Common::ES_ESP:
+				case Common::IT_ITA:
+					if (event.kbd.ascii == 's' || event.kbd.ascii == 'S') {
+						ret = 1;
+					}
+					break;
 				default:
 					if (event.kbd.ascii == 'y' || event.kbd.ascii == 'Y') {
 						ret = 1;
