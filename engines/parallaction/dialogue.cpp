@@ -212,7 +212,8 @@ uint16 Parallaction::askDialoguePassword(Dialogue *q, StaticCnv *face) {
 			// FIXME: see comment for updateInput()
 			if (!g_system->getEventManager()->pollEvent(e)) continue;
 			if (e.type != Common::EVENT_KEYDOWN) continue;
-			if (e.type != Common::EVENT_QUIT) g_system->quit();
+			if (e.type == Common::EVENT_QUIT)
+				g_system->quit();
 			if (!isdigit(e.kbd.ascii)) continue;
 
 			password[passwordLen] = e.kbd.ascii;
