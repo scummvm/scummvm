@@ -403,7 +403,8 @@ void AGOSEngine::vc2_call() {
 }
 
 void AGOSEngine::vc3_loadSprite() {
-	uint16 windowNum, zoneNum, palette, x, y, vgaSpriteId;
+	uint16 windowNum, zoneNum, palette, vgaSpriteId;
+	int16 x, y;
 	byte *old_file_1;
 
 	if (getGameType() == GType_PP && getBitFlag(100)) {
@@ -608,7 +609,7 @@ void AGOSEngine::vc10_draw() {
 	drawImage_init(image, palette, x, y, flags);
 }
 
-void AGOSEngine::drawImage_init(int16 image, uint16 palette, uint16 x, uint16 y, uint16 flags) {
+void AGOSEngine::drawImage_init(int16 image, uint16 palette, int16 x, int16 y, uint16 flags) {
 	if (image == 0)
 		return;
 

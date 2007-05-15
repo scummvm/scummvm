@@ -981,7 +981,7 @@ void AGOSEngine::paletteFadeOut(byte *palPtr, uint num, uint size) {
 	} while (--num);
 }
 
-void AGOSEngine::animate(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint palette, bool vgaScript) {
+void AGOSEngine::animate(uint16 windowNum, uint16 zoneNum, uint16 vgaSpriteId, int16 x, int16 y, uint16 palette, bool vgaScript) {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *p, *pp;

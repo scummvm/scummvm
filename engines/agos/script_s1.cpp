@@ -289,11 +289,11 @@ void AGOSEngine_Simon1::executeOpcode(int opcode) {
 
 void AGOSEngine_Simon1::os1_animate() {
 	// 98: animate
-	uint vgaSpriteId = getVarOrWord();
-	uint windowNum = getVarOrByte();
-	uint x = getVarOrWord();
-	uint y = getVarOrWord();
-	uint palette = (getVarOrWord() & 15);
+	uint16 vgaSpriteId = getVarOrWord();
+	uint16 windowNum = getVarOrByte();
+	int16 x = getVarOrWord();
+	int16 y = getVarOrWord();
+	uint16 palette = (getVarOrWord() & 15);
 
 	if (getFeatures() & GF_TALKIE && vgaSpriteId >= 400) {
 		_lastVgaWaitFor = 0;

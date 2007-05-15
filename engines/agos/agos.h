@@ -788,7 +788,7 @@ protected:
 
 	void loadZone(uint zoneNum);
 
-	void animate(uint windowNum, uint zoneNum, uint vgaSpriteId, uint x, uint y, uint palette, bool vgaScript = false);
+	void animate(uint16 windowNum, uint16 zoneNum, uint16 vgaSpriteId, int16 x, int16 y, uint16 palette, bool vgaScript = false);
 	void setImage(uint16 vga_res_id, bool vgaScript = false);
 	void setWindowImage(uint16 mode, uint16 vga_res_id);
 	void setWindowImageEx(uint16 mode, uint16 vga_res);
@@ -1044,7 +1044,7 @@ public:
 protected:
 	bool drawImage_clip(VC10_state *state);
 
-	void drawImage_init(int16 image, uint16 palette, uint16 x, uint16 y, uint16 flags);
+	void drawImage_init(int16 image, uint16 palette, int16 x, int16 y, uint16 flags);
 
 	virtual void drawImage(VC10_state *state);
 	void drawBackGroundImage(VC10_state *state);

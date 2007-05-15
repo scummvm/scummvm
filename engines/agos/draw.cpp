@@ -258,19 +258,19 @@ void AGOSEngine::restoreBackGround() {
 		AnimTable *animTableTmp;
 
 		animTable = animTableTmp = _screenAnim1;
-		while (animTable->srcPtr != 0) {
+		while (animTable->srcPtr) {
 			if (!(animTable->window & 8000)) {
 				memcpy(animTableTmp, animTable, sizeof(AnimTable));
 				animTableTmp++;
 			}
 			animTable++;
 		}
-		animTableTmp->id = 0;
+		animTableTmp->srcPtr = 0;
 	}
 }
 
 void AGOSEngine::saveBackGround(VgaSprite *vsp) {
-	if ((vsp->flags & 4) || !vsp->image)
+	if ((vsp->flags & kDFSkipStoreBG) || !vsp->image)
 		return;
 
 	AnimTable *animTable = _screenAnim1;

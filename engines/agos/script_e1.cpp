@@ -750,11 +750,11 @@ void AGOSEngine_Elvira1::oe1_nextMaster() {
 
 void AGOSEngine_Elvira1::oe1_animate() {
 	// 226: animate
-	uint vgaSpriteId = getVarOrWord();
-	uint windowNum = getVarOrByte();
-	uint x = getVarOrWord();
-	uint y = getVarOrWord();
-	uint palette = getVarOrWord();
+	uint16 vgaSpriteId = getVarOrWord();
+	uint16 windowNum = getVarOrByte();
+	int16 x = getVarOrWord();
+	int16 y = getVarOrWord();
+	uint16 palette = getVarOrWord();
 
 	_lockWord |= 0x40;
 	animate(windowNum, vgaSpriteId / 100, vgaSpriteId, x, y, palette);

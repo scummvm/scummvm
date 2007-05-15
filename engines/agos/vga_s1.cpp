@@ -216,7 +216,7 @@ void AGOSEngine::vc61_setMaskImage() {
 	vsp->image = vcReadVarOrWord();
 	vsp->x += vcReadNextWord();
 	vsp->y += vcReadNextWord();
-	vsp->flags = kDFMasked | kDFUseFrontBuf;
+	vsp->flags = kDFMasked | kDFSkipStoreBG;
 
 	vsp->windowNum |= 0x8000;
 	dirtyBackGround();

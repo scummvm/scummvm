@@ -307,12 +307,12 @@ void AGOSEngine_Simon2::os2_rescan() {
 
 void AGOSEngine_Simon2::os2_animate() {
 	// 98: start vga
-	uint zoneNum = getVarOrWord();
-	uint vgaSpriteId = getVarOrWord();
-	uint windowNum = getVarOrByte();
-	uint x = getVarOrWord();
-	uint y = getVarOrWord();
-	uint palette = (getVarOrWord() & 15);
+	uint16 zoneNum = getVarOrWord();
+	uint16 vgaSpriteId = getVarOrWord();
+	uint16 windowNum = getVarOrByte();
+	int16 x = getVarOrWord();
+	int16 y = getVarOrWord();
+	uint16 palette = (getVarOrWord() & 15);
 
 	_lockWord |= 0x40;
 	animate(windowNum, zoneNum, vgaSpriteId, x, y, palette);
