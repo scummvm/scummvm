@@ -179,12 +179,17 @@ void AGOSEngine::vc62_fastFadeOut() {
 
 		memcpy(_videoBuf1, _currentPalette, _fastFadeCount * 4);
 
-		if ((getGameType() == GType_FF || getGameType() == GType_PP) && !getBitFlag(75)) {
-			fadeCount = 32;
-			fadeSize = 8;
+		if (getGameType() == GType_FF || getGameType() == GType_PP) {
+			if (getBitFlag(75)) {
+				fadeCount = 4;
+				fadeSize = 64;
+			} else {
+				fadeCount = 32;
+				fadeSize = 8;
+			}
 		} else {
-			fadeCount = 4;
-			fadeSize = 64;
+			fadeCount = 64;
+			fadeSize = 4;
 		}
 
 		for (i = fadeCount; i != 0; --i) {
