@@ -729,7 +729,7 @@ void AGOSEngine::drawBackGroundImage(VC10_state *state) {
 		state->y_skip = 0;
 	}
 
-	src = state->srcPtr + (_screenWidth * state->y_skip) + (state->x_skip * 8);
+	src = state->srcPtr + (state->width * state->y_skip) + (state->x_skip * 8);
 	dst = state->surf_addr;
 
 	state->draw_width *= 2;
