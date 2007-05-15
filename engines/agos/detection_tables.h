@@ -646,7 +646,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_SIMON1,
 		GID_SIMON1AMIGA,
-		GF_32COLOR | GF_CRUNCHED | GF_CRUNCHED_GAMEPC | GF_OLD_BUNDLE | GF_PLANAR | GF_DEMO
+		GF_32COLOR | GF_CRUNCHED | GF_CRUNCHED_GAMEPC | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
 	// Simon the Sorcerer 1 - English Amiga AGA Floppy

@@ -646,6 +646,27 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 		setMoveRect(xoffs, yoffs, xmax, ymax);
 
 		_window4Flag = 1;
+	} else if (getGameType() == GType_SIMON1 && (getFeatures() & GF_DEMO)) {
+		// The DOS Floppy demo was based off Waxworks engine
+		if (_windowNum == 4 || (_windowNum >= 10 && _windowNum <= 27)) {
+			state->surf_addr = _window4BackScn;
+			state->surf_pitch = _videoWindows[18] * 16;
+
+			xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
+			yoffs = (vlut[1] - _videoWindows[17] + state->y);
+
+			uint xmax = (xoffs + state->draw_width * 2);
+			uint ymax = (yoffs + state->draw_height);
+			setMoveRect(xoffs, yoffs, xmax, ymax);
+
+			_window4Flag = 1;
+		} else {
+			state->surf_addr = getFrontBuf();
+			state->surf_pitch = _screenWidth;
+
+			xoffs = (vlut[0] * 2 + state->x) * 8;
+			yoffs = vlut[1] + state->y;
+		}
 	} else if (getGameType() == GType_SIMON1) {
 		if (_windowNum == 3 || _windowNum == 4 || _windowNum >= 10) {
 			if (_window3Flag == 1) {
@@ -701,6 +722,13 @@ void AGOSEngine::drawBackGroundImage(VC10_state *state) {
 	byte *dst;
 	uint h, i;
 
+	state->width = _screenWidth;
+	if (_window3Flag == 1) {
+		state->width = 0;
+		state->x_skip = 0;
+		state->y_skip = 0;
+	}
+
 	src = state->srcPtr + (_screenWidth * state->y_skip) + (state->x_skip * 8);
 	dst = state->surf_addr;
 
@@ -711,7 +739,7 @@ void AGOSEngine::drawBackGroundImage(VC10_state *state) {
 		for (i = 0; i != state->draw_width; i++)
 			dst[i] = src[i] + state->paletteMod;
 		dst += state->surf_pitch;
-		src += _screenWidth;
+		src += state->width;
 	} while (--h);
 }
 
@@ -1263,6 +1291,8 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 
 		if (_window3Flag == 1) {
 			clearVideoBackGround(3, 0);
+			_lockWord &= ~0x20;
+			return;
 		}
 
 		uint xoffs = _videoWindows[updateWindow * 4 + 0] * 16;
@@ -1277,6 +1307,18 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 		if (getGameType() == GType_SIMON2) {
 			src = _window4BackScn + xoffs + yoffs * 320;
 			srcWidth = 320;
+		} else if (getGameType() == GType_SIMON1 && (getFeatures() & GF_DEMO)) {
+			// The DOS Floppy demo was based off Waxworks engine
+			if (updateWindow == 4 || updateWindow >= 10) {
+				src = _window4BackScn;
+				srcWidth = _videoWindows[18] * 16;
+			} else if (updateWindow == 3 || updateWindow == 9) {
+				src = getFrontBuf() + xoffs + yoffs * _screenWidth;
+				srcWidth = _screenWidth;
+			} else {
+				_lockWord &= ~0x20;
+				return;
+			}
 		} else if (getGameType() == GType_SIMON1) {
 			if (updateWindow == 4) {
 				src = _window4BackScn;
