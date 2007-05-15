@@ -565,12 +565,13 @@ int ToucheEngine::displayQuitDialog() {
 					}
 					break;
 				case Common::ES_ESP:
-				case Common::IT_ITA:
 					if (event.kbd.ascii == 's' || event.kbd.ascii == 'S') {
 						ret = 1;
 					}
 					break;
 				default:
+					// According to cyx, the Italian version uses the same
+					// keys as the English one.
 					if (event.kbd.ascii == 'y' || event.kbd.ascii == 'Y') {
 						ret = 1;
 					}
