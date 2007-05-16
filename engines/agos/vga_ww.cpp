@@ -73,10 +73,7 @@ void AGOSEngine::vcStopAnimation(uint file, uint sprite) {
 
 		vte = _vgaTimerList;
 		while (vte->delay) {
-			// Skip the animateSprites event in earlier games
-			if (vte->type == 2) {
-				vte++;
-			} else if (vte->sprite_id == _vgaCurSpriteId && (getGameType() == GType_SIMON1 || vte->cur_vga_file == _vgaCurZoneNum)) {
+			if (vte->sprite_id == _vgaCurSpriteId && (getGameType() == GType_SIMON1 || vte->cur_vga_file == _vgaCurZoneNum)) {
 				deleteVgaEvent(vte);
 				break;
 			}
