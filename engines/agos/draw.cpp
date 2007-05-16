@@ -164,6 +164,29 @@ void AGOSEngine::animateSprites() {
 		_vgaSpriteChanged++;
 	}
 
+	if ((getGameType() == GType_ELVIRA1 && !_variableArray[293] ||
+		getGameType() == GType_ELVIRA2 && !_variableArray[71]) &&
+		_wallOn) {
+
+		VC10_state state;
+		state.srcPtr  = getBackGround() + 504;
+		state.height = 127;
+		state.width = 14;
+		state.y = 0;
+		state.x = 0;
+		state.palette = 0;
+		state.paletteMod = 0;
+		state.flags = kDFNonTrans;
+
+		_windowNum = 4;
+
+		_backFlag = 1;
+		drawImage(&state);
+		_backFlag = 0;
+
+		_vgaSpriteChanged++;
+	}
+
 	if (!_scrollFlag && !_vgaSpriteChanged) {
 		return;
 	}
@@ -199,6 +222,74 @@ void AGOSEngine::animateSprites() {
 
 		drawImage_init(vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
 		vsp++;
+	}
+
+	if (getGameType() == GType_ELVIRA1 && _variableArray[293]) {
+		debug(0, "Using special wall");
+
+		uint8 color, h, len;
+		byte *dst = _window4BackScn;
+
+		color = (_variableArray[293] & 1) ? 13 : 15;
+		_wallOn = 2;
+
+		h = 127;
+		while (h) {
+			len = 112;
+			while (len--) {
+				*dst++ = color;
+				dst++;
+			}
+
+			h--;
+			if (h == 0)
+				break;
+
+			len = 112;
+			while (len--) {
+				dst++;
+				*dst++ = color;
+			}
+			h--;
+		}			
+
+		_window4Flag = 1;
+		setMoveRect(0, 224, 0, 127);
+	} else if (getGameType() == GType_ELVIRA2 && _variableArray[71] & 2) {
+		debug(0, "Using special wall");
+
+		uint8 color, h, len;
+		byte *dst = _window4BackScn;
+
+		color = 1;
+		_wallOn = 2;
+
+		h = 43;
+		while (h) {
+			len = 56;
+			while (len--) {
+				*dst++ = color;
+				dst += 3;
+			}
+
+			h--;
+			if (h == 0)
+				break;
+
+			dst += 448;
+
+			len = 56;
+			while (len--) {
+				dst += 2;
+				*dst++ = color;
+				dst++;
+			}
+			dst += 448;
+			h--;
+		}			
+
+		_window4Flag = 1;
+		setMoveRect(0, 224, 0, 127);
 	}
 
 	if (_window6Flag == 1)

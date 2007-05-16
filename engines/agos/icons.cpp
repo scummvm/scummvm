@@ -64,6 +64,8 @@ void AGOSEngine::loadIconData() {
 // Thanks to Stuart Caie for providing the original
 // C conversion upon which this function is based.
 static void decompressIconPlanar(byte *dst, byte *src, uint width, uint height, byte base, uint pitch, bool decompress = true) {
+	printf("decompressIconPlanar\n");
+
 	byte icon_pln[288];
 	byte *i, *o, *srcPtr, x, y;
 
@@ -72,7 +74,7 @@ static void decompressIconPlanar(byte *dst, byte *src, uint width, uint height, 
 		// Decode RLE planar icon data
 		i = src;
 		o = icon_pln;
-		while (o < &icon_pln[288]) {
+		while (o < &icon_pln[width * height / 2]) {
 			x = *i++;
 			if (x < 128) {
 				do {
@@ -93,14 +95,16 @@ static void decompressIconPlanar(byte *dst, byte *src, uint width, uint height, 
 		srcPtr = icon_pln;
 	}
 
+	printf("decompressIconPlanar: Decompressed\n");
+
 	// Translate planar data to chunky (very slow method)
-	for (y = 0; y < 24; y++) {
-		for (x = 0; x < 24; x++) {
+	for (y = 0; y < height; y++) {
+		for (x = 0; x < width; x++) {
 			byte pixel =
-				  (srcPtr[((     y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 1 : 0)
-				| (srcPtr[((24 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 2 : 0)
-				| (srcPtr[((48 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 4 : 0)
-				| (srcPtr[((72 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 8 : 0);
+				  (srcPtr[((height * 0 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 1 : 0)
+				| (srcPtr[((height * 1 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 2 : 0)
+				| (srcPtr[((height * 2 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 4 : 0)
+				| (srcPtr[((height * 3 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 8 : 0);
 			if (pixel)
 				dst[x] = pixel | base;
 		}
@@ -207,7 +211,7 @@ void AGOSEngine_Simon1::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 	} else {
 		src = _iconFilePtr;
 		src += READ_LE_UINT16(&((uint16 *)src)[icon]);
-		decompressIcon(dst, src, 24, 12, 224, _dxSurfacePitch);
+		decompressIcon(dst, src, 24, 24, 224, _dxSurfacePitch);
 	}
 
 	_lockWord &= ~0x8000;
@@ -225,8 +229,13 @@ void AGOSEngine_Waxworks::drawIcon(WindowBlock *window, uint icon, uint x, uint 
 
 	uint8 color = dst[0] & 0xF0;
 	if (getPlatform() == Common::kPlatformAmiga) {
-		// TODO
-		return;
+		src = _iconFilePtr;
+		src += READ_BE_UINT16(&((uint16 *)src)[icon]);
+
+
+		//decompressIcon(dst, src, 24, 10, color, _dxSurfacePitch);
+
+		decompressIconPlanar(dst, src, 24, 24, color, _dxSurfacePitch);
 	} else {
 		src = _iconFilePtr;
 		src += READ_LE_UINT16(&((uint16 *)src)[icon]);
@@ -254,7 +263,7 @@ void AGOSEngine_Elvira2::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 	} else {
 		src = _iconFilePtr;
 		src += READ_LE_UINT16(&((uint16 *)src)[icon]);
-		decompressIcon(dst, src, 24, 12, color, _dxSurfacePitch);
+		decompressIcon(dst, src, 24, 24, color, _dxSurfacePitch);
 	}
 
 	_lockWord &= ~0x8000;
