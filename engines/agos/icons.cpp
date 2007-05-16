@@ -271,7 +271,9 @@ void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 	dst += (y * 8 + window->y) * _dxSurfacePitch;
 
 	if (getFeatures() & GF_PLANAR) {
-		// TODO
+		src = _iconFilePtr;
+		src += READ_BE_UINT16(&((uint16 *)src)[icon]);
+		decompressIconPlanar(dst, src, 24, 24, 16, _dxSurfacePitch);
 	} else {
 		src = _iconFilePtr;
 		src += icon * 288;
