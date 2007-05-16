@@ -64,8 +64,6 @@ void AGOSEngine::loadIconData() {
 // Thanks to Stuart Caie for providing the original
 // C conversion upon which this function is based.
 static void decompressIconPlanar(byte *dst, byte *src, uint width, uint height, byte base, uint pitch, bool decompress = true) {
-	printf("decompressIconPlanar\n");
-
 	byte icon_pln[288];
 	byte *i, *o, *srcPtr, x, y;
 
@@ -94,8 +92,6 @@ static void decompressIconPlanar(byte *dst, byte *src, uint width, uint height, 
 		}
 		srcPtr = icon_pln;
 	}
-
-	printf("decompressIconPlanar: Decompressed\n");
 
 	// Translate planar data to chunky (very slow method)
 	for (y = 0; y < height; y++) {
@@ -229,13 +225,10 @@ void AGOSEngine_Waxworks::drawIcon(WindowBlock *window, uint icon, uint x, uint 
 
 	uint8 color = dst[0] & 0xF0;
 	if (getPlatform() == Common::kPlatformAmiga) {
+		// TODO
 		src = _iconFilePtr;
 		src += READ_BE_UINT16(&((uint16 *)src)[icon]);
-
-
-		//decompressIcon(dst, src, 24, 10, color, _dxSurfacePitch);
-
-		decompressIconPlanar(dst, src, 24, 24, color, _dxSurfacePitch);
+		//decompressIconPlanar(dst, src, 24, 10, color, _dxSurfacePitch);
 	} else {
 		src = _iconFilePtr;
 		src += READ_LE_UINT16(&((uint16 *)src)[icon]);
