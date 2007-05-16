@@ -1280,9 +1280,6 @@ protected:
 	};
 
 	const OpcodeEntryElvira1 *_opcodesElvira1;
-
-	virtual bool loadGame(const char *filename, bool restartMode = false);
-	virtual bool saveGame(uint slot, const char *caption);
 };
 
 class AGOSEngine_Elvira2 : public AGOSEngine_Elvira1 {
@@ -1346,6 +1343,9 @@ protected:
 	};
 
 	const OpcodeEntryElvira2 *_opcodesElvira2;
+
+	virtual bool loadGame(const char *filename, bool restartMode = false);
+	virtual bool saveGame(uint slot, const char *caption);
 
 	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
 

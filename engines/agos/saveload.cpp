@@ -557,7 +557,7 @@ void writeItemID(Common::WriteStream *f, uint16 val) {
 		f->writeUint32BE(val - 1);
 }
 
-bool AGOSEngine_Elvira1::loadGame(const char *filename, bool restartMode) {
+bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 	char ident[100];
 	Common::SeekableReadStream *f = NULL;
 	uint num, item_index, i;
@@ -654,7 +654,7 @@ bool AGOSEngine_Elvira1::loadGame(const char *filename, bool restartMode) {
 	return true;
 }
 
-bool AGOSEngine_Elvira1::saveGame(uint slot, const char *caption) {
+bool AGOSEngine::saveGame(uint slot, const char *caption) {
 	Common::OutSaveFile *f;
 	uint item_index, num_item, i;
 	TimeEvent *te;
@@ -734,7 +734,7 @@ bool AGOSEngine_Elvira1::saveGame(uint slot, const char *caption) {
 	return result;
 }
 
-bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
+bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 	char ident[100];
 	Common::SeekableReadStream *f = NULL;
 	uint num, item_index, i, j;
@@ -882,7 +882,7 @@ bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 	return true;
 }
 
-bool AGOSEngine::saveGame(uint slot, const char *caption) {
+bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	Common::OutSaveFile *f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
