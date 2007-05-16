@@ -1165,11 +1165,8 @@ protected:
 
 	Item *getNextItemPtrStrange();
 
-	bool loadGame_e1(const char *filename, bool restartMode = false);
-	bool saveGame_e1(const char *filename);
-
-	bool loadGame(const char *filename, bool restartMode = false);
-	bool saveGame(uint slot, const char *caption);
+	virtual bool loadGame(const char *filename, bool restartMode = false);
+	virtual bool saveGame(uint slot, const char *caption);
 
 	void openTextWindow();
 	void tidyIconArray(uint i);
@@ -1283,6 +1280,9 @@ protected:
 	};
 
 	const OpcodeEntryElvira1 *_opcodesElvira1;
+
+	virtual bool loadGame(const char *filename, bool restartMode = false);
+	virtual bool saveGame(uint slot, const char *caption);
 };
 
 class AGOSEngine_Elvira2 : public AGOSEngine_Elvira1 {

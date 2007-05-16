@@ -695,7 +695,9 @@ void AGOSEngine_Elvira1::oe1_saveGame() {
 	uint16 stringId = getNextStringID();
 
 	debug(0, "oe1_saveGame: stub (%s)", getStringPtrByID(stringId));
-	saveGame_e1((const char *)getStringPtrByID(stringId));
+
+	// TODO: Add support for selecting slot
+	saveGame(1, (const char *)getStringPtrByID(stringId));
 }
 
 void AGOSEngine_Elvira1::oe1_loadGame() {
@@ -704,9 +706,9 @@ void AGOSEngine_Elvira1::oe1_loadGame() {
 	debug(0, "oe1_loadGame: stub (%s)", (const char *)getStringPtrByID(stringId));
 
 	if (!scumm_stricmp(getFileName(GAME_RESTFILE), (const char *)getStringPtrByID(stringId))) {
-		loadGame_e1(getFileName(GAME_RESTFILE), true);
+		loadGame(getFileName(GAME_RESTFILE), true);
 	} else {
-		loadGame_e1((const char *)getStringPtrByID(stringId));
+		loadGame((const char *)getStringPtrByID(stringId));
 	}
 }
 

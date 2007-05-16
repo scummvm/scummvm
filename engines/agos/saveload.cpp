@@ -557,7 +557,8 @@ void writeItemID(Common::WriteStream *f, uint16 val) {
 		f->writeUint32BE(val - 1);
 }
 
-bool AGOSEngine::loadGame_e1(const char *filename, bool restartMode) {
+bool AGOSEngine_Elvira1::loadGame(const char *filename, bool restartMode) {
+	char ident[100];
 	Common::SeekableReadStream *f = NULL;
 	uint num, item_index, i;
 
@@ -575,6 +576,10 @@ bool AGOSEngine::loadGame_e1(const char *filename, bool restartMode) {
 	if (f == NULL) {
 		_lockWord &= ~0x100;
 		return false;
+	}
+
+	if (!restartMode) {
+		f->read(ident, 8);
 	}
 
 	num = f->readUint32BE();
@@ -649,7 +654,7 @@ bool AGOSEngine::loadGame_e1(const char *filename, bool restartMode) {
 	return true;
 }
 
-bool AGOSEngine::saveGame_e1(const char *filename) {
+bool AGOSEngine_Elvira1::saveGame(uint slot, const char *caption) {
 	Common::OutSaveFile *f;
 	uint item_index, num_item, i;
 	TimeEvent *te;
@@ -658,12 +663,14 @@ bool AGOSEngine::saveGame_e1(const char *filename) {
 
 	_lockWord |= 0x100;
 
-	f = _saveFileMan->openForSaving(filename);
+	f = _saveFileMan->openForSaving(genSaveName(slot));
 	if (f == NULL) {
-		warning("saveGame: Failed to save %s", filename);
+		warning("saveGame: Failed to save slot %d", slot);
 		_lockWord &= ~0x100;
 		return false;
 	}
+
+	f->write(caption, 8);
 
 	f->writeUint32BE(_itemArrayInited - 1);
 	f->writeUint32BE(0xFFFFFFFF);
@@ -753,6 +760,8 @@ bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 		f->read(ident, 100);
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		f->read(ident, 18);
+	} else if (!restartMode) {
+		f->read(ident, 8);
 	}
 
 	num = f->readUint32BE();
@@ -894,6 +903,8 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 		curTime = time(NULL);
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		f->write(caption, 18);
+	} else {
+		f->write(caption, 8);
 	}
 
 	f->writeUint32BE(_itemArrayInited - 1);
