@@ -89,8 +89,6 @@ int16 bootOverlayNumber;
 
 int16 initVar5[12];
 
-cellStruct cellHead;
-
 opcodeTypeFunction opcodeTypeTable[64];
 
 int16 positionInStack;

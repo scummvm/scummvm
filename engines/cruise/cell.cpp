@@ -27,6 +27,8 @@
 
 namespace Cruise {
 
+cellStruct cellHead;
+
 void resetPtr(cellStruct *ptr) {
 	ptr->next = NULL;
 	ptr->prev = NULL;

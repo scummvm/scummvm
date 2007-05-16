@@ -865,8 +865,7 @@ void mainDraw(int16 param) {
 	bgPtr = backgroundPtrtable[currentActiveBackgroundPlane];
 
 	if (bgPtr) {
-		gfxModuleData_gfxCopyScreen((char *)bgPtr,
-		    (char *)gfxModuleData.pPage10);
+		gfxModuleData_gfxCopyScreen((char *)bgPtr, (char *)gfxModuleData.pPage10);
 	}
 
 	autoCellHead.next = NULL;
@@ -881,24 +880,16 @@ void mainDraw(int16 param) {
 	//-------------------------------------------------- PROCESS SPRITES -----------------------------------------//
 
 	while (currentObjPtr) {
-		if ((currentActiveBackgroundPlane ==
-			currentObjPtr->backgroundPlane)
-		    && (currentObjPtr->freeze == 0)
-		    && (currentObjPtr->type == OBJ_SPRITE)) {
+		if ((currentActiveBackgroundPlane == currentObjPtr->backgroundPlane) && (currentObjPtr->freeze == 0) && (currentObjPtr->type == OBJ_SPRITE)) {
 			objectParamsQuery params;
 
 			currentObjIdx = currentObjPtr->idx;
 
-			if ((currentObjPtr->followObjectOverlayIdx !=
-				currentObjPtr->overlay)
-			    || (currentObjPtr->followObjectIdx !=
-				currentObjPtr->idx)) {
+			if ((currentObjPtr->followObjectOverlayIdx != currentObjPtr->overlay) || (currentObjPtr->followObjectIdx != currentObjPtr->idx)) {
 				// Declaring this twice ?
 				// objectParamsQuery params;
 
-				getMultipleObjectParam(currentObjPtr->
-				    followObjectOverlayIdx,
-				    currentObjPtr->followObjectIdx, &params);
+				getMultipleObjectParam(currentObjPtr->followObjectOverlayIdx, currentObjPtr->followObjectIdx, &params);
 
 				objX1 = params.X;
 				objY1 = params.Y;
@@ -940,18 +931,20 @@ void mainDraw(int16 param) {
 				}
 			}
 
-			if ((currentObjPtr->animStep != 0) && (param == 0)) {
+			// automatic animation process
+			if (currentObjPtr->animStep && !param) {
 				if (currentObjPtr->animCounter <= 0) {
-					int newVal;
+
 					bool change = true;
 
-					newVal = getValueFromObjectQuerry(&params, currentObjPtr->animChange) + currentObjPtr->animStep;
+					int newVal = getValueFromObjectQuerry(&params, currentObjPtr->animChange) + currentObjPtr->animStep;
 
 					if (currentObjPtr->animStep > 0) {
 						if (newVal > currentObjPtr->animEnd) {
 							if (currentObjPtr->animLoop) {
 								newVal = currentObjPtr->animStart;
-								currentObjPtr->animLoop--;
+								if(currentObjPtr->animLoop>0)
+									currentObjPtr->animLoop--;
 							} else {
 								int16 data2;
 								data2 = currentObjPtr->animStart;
@@ -968,7 +961,6 @@ void mainDraw(int16 param) {
 										changeScriptParamInList(currentObjPtr->parentOverlay, currentObjPtr->parent, &relHead,  0, -1);
 									}
 								}
-								newVal = data2;
 							}
 						}
 					} else {

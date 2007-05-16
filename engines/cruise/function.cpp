@@ -102,10 +102,7 @@ int16 Op_startScript(void) {
 		ovlIdx = currentScriptPtr->overlayNumber;
 	}
 
-	ptr =
-	    attacheNewScriptToTail(ovlIdx, &procHead, scriptIdx,
-	    currentScriptPtr->type, currentScriptPtr->scriptNumber,
-	    currentScriptPtr->overlayNumber, scriptType_MinusPROC);
+	ptr = attacheNewScriptToTail(ovlIdx, &procHead, scriptIdx, currentScriptPtr->type, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_MinusPROC);
 
 	if (!ptr)
 		return (0);
@@ -194,7 +191,7 @@ int16 Op_rand(void) {		// TODO: implement
 	if (var < 2) {
 		return (0);
 	}
-//      return(8);
+
 	return (rand() % var);
 }
 
@@ -797,7 +794,7 @@ int16 Op_66(void) {
 
 	getMultipleObjectParam(overlay, index, &params);
 
-	return params.var7;
+	return params.var7 - 1;
 }
 
 int16 Op_SetActiveBackgroundPlane(void) {

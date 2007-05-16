@@ -666,7 +666,7 @@ uint8 *attacheNewScriptToTail(int16 overlayNumber,
 		tempPtr->sysKey = 1;
 	}
 
-	tempPtr->var12 = 0;
+	tempPtr->freeze = 0;
 	tempPtr->type = scriptType;
 	tempPtr->var18 = arg2;
 	tempPtr->var16 = arg1;
@@ -753,8 +753,7 @@ void manageScripts(scriptInstanceStruct *scriptHandle) {
 	if (ptr) {
 		do {
 			if (!overlayTable[ptr->overlayNumber].executeScripts) {
-				if (ptr->scriptNumber != -1 && ptr->var12 == 0
-				    && ptr->sysKey != 0) {
+				if ((ptr->scriptNumber != -1) && (ptr->freeze == 0) && (ptr->sysKey != 0)) {
 					executeScripts(ptr);
 				}
 

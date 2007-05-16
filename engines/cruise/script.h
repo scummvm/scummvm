@@ -42,7 +42,7 @@ struct scriptInstanceStruct {
 	int16 scriptNumber;
 	int16 overlayNumber;
 	int16 sysKey;
-	int16 var12;
+	int16 freeze;
 	scriptTypeEnum type;
 	int16 var16;
 	int16 var18;

@@ -788,122 +788,73 @@ void processAnimation(void) {
 				currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, var34, var35, currentActor->stepX, currentActor->stepY, currentActor->pathId);
 
 				if (currentActor->pathId == -1) {
-					if ((currentActor->endDirection != -1)
-					    && (currentActor->endDirection !=
-						currentActor->
-						startDirection)) {
-						currentActor->phase =
-						    ANIM_PHASE_STATIC_END;
-						currentActor->nextDirection =
-						    currentActor->endDirection;
-						currentActor->endDirection =
-						    -1;
+					if ((currentActor->endDirection != -1) && (currentActor->endDirection != currentActor->startDirection)) {
+						currentActor->phase = ANIM_PHASE_STATIC_END;
+						currentActor->nextDirection = currentActor->endDirection;
+						currentActor->endDirection = -1;
 						currentActor->counter = 0;
 					} else {
 						currentActor->pathId = -2;
 						currentActor->flag = 0;
-						currentActor->endDirection =
-						    -1;
-						currentActor->phase =
-						    ANIM_PHASE_WAIT;
+						currentActor->endDirection = -1;
+						currentActor->phase = ANIM_PHASE_WAIT;
 					}
 				} else {
-					currentActor->phase =
-					    ANIM_PHASE_STATIC;
+					currentActor->phase = ANIM_PHASE_STATIC;
 					currentActor->counter = -1;
 				}
 			} else
-			    if ((currentActor->type == 1)
-			    && (currentActor->x_dest != -1)
-			    && (currentActor->y_dest != -1)) {
+			    if ((currentActor->type == 1) && (currentActor->x_dest != -1) && (currentActor->y_dest != -1)) {
 				// track animation
-				currentActor->pathId =
-				    computePathfinding(returnVar2, params.X,
-				    params.Y, currentActor->x_dest,
-				    currentActor->y_dest, currentActor->stepX,
-				    currentActor->stepY, currentActor->pathId);
+				currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, currentActor->x_dest, currentActor->y_dest, currentActor->stepX, currentActor->stepY, currentActor->pathId);
 
 				currentActor->x_dest = -1;
 				currentActor->y_dest = -1;
 
 				if (currentActor->pathId == -1) {
-					if ((currentActor->endDirection != -1)
-					    && (currentActor->endDirection !=
-						currentActor->
-						startDirection)) {
-						currentActor->phase =
-						    ANIM_PHASE_STATIC_END;
-						currentActor->nextDirection =
-						    currentActor->endDirection;
-						currentActor->endDirection =
-						    -1;
+					if ((currentActor->endDirection != -1) && (currentActor->endDirection != currentActor->startDirection)) {
+						currentActor->phase = ANIM_PHASE_STATIC_END;
+						currentActor->nextDirection = currentActor->endDirection;
+						currentActor->endDirection = -1;
 						currentActor->counter = 0;
 					} else {
 						currentActor->pathId = -2;
 						currentActor->flag = 0;
-						currentActor->endDirection =
-						    -1;
-						currentActor->phase =
-						    ANIM_PHASE_WAIT;
+						currentActor->endDirection = -1;
+						currentActor->phase = ANIM_PHASE_WAIT;
 					}
 				} else {
-					currentActor->phase =
-					    ANIM_PHASE_STATIC;
+					currentActor->phase = ANIM_PHASE_STATIC;
 					currentActor->counter = -1;
 				}
 			}
 
 			animationStart = false;
 
-			if (currentActor->pathId >= 0
-			    || currentActor->phase == ANIM_PHASE_STATIC_END) {
+			if ((currentActor->pathId >= 0) || (currentActor->phase == ANIM_PHASE_STATIC_END)) {
 				switch (currentActor->phase) {
 				case ANIM_PHASE_STATIC_END:
 				case ANIM_PHASE_STATIC:
 					{
-						if (currentActor->counter == -1
-						    && currentActor->phase ==
-						    ANIM_PHASE_STATIC) {
-							affiche_chemin
-							    (currentActor->
-							    pathId,
-							    returnVar2);
+						if ((currentActor->counter == -1) && (currentActor->phase == ANIM_PHASE_STATIC)) {
+							affiche_chemin(currentActor->pathId, returnVar2);
 
-							if (returnVar2[0] ==
-							    -1) {
-								currentActor->
-								    pathId =
-								    -2;
-								currentActor->
-								    flag = 0;
-								currentActor->
-								    endDirection
-								    = -1;
-								currentActor->
-								    phase =
-								    ANIM_PHASE_WAIT;
+							if (returnVar2[0] == -1) {
+								currentActor->pathId = -2;
+								currentActor->flag = 0;
+								currentActor->endDirection = -1;
+								currentActor->phase = ANIM_PHASE_WAIT;
 								break;
 							}
 
-							currentActor->x =
-							    returnVar2[0];
-							currentActor->y =
-							    returnVar2[1];
-							currentActor->
-							    nextDirection =
-							    returnVar2[2];
-							currentActor->poly =
-							    returnVar2[4];
-							currentActor->counter =
-							    0;
+							currentActor->x = returnVar2[0];
+							currentActor->y = returnVar2[1];
+							currentActor->nextDirection = returnVar2[2];
+							currentActor->poly = returnVar2[4];
+							currentActor->counter = 0;
 
-							if (currentActor->
-							    startDirection ==
-							    currentActor->
-							    nextDirection)
-								currentActor->
-								    phase =
-								    ANIM_PHASE_MOVE;
+							if (currentActor->startDirection == currentActor->nextDirection)
+								currentActor->phase = ANIM_PHASE_MOVE;
 						}
 
 						if ((currentActor->counter >=

@@ -162,15 +162,13 @@ int getProcParam(int overlayIdx, int param2, uint8 *name) {
 	return 0;
 }
 
-void changeScriptParamInList(int param1, int param2,
-	    scriptInstanceStruct *pScriptInstance, int newValue, int param3) {
+void changeScriptParamInList(int param1, int param2, scriptInstanceStruct *pScriptInstance, int newValue, int param3) {
 	pScriptInstance = pScriptInstance->nextScriptPtr;
 	while (pScriptInstance) {
-		if ((pScriptInstance->overlayNumber == param1 || param1 == -1)
-		    && (pScriptInstance->scriptNumber == param2
-			|| param2 == -1)
-		    && (pScriptInstance->var12 == param3 || param3 == -1)) {
-			pScriptInstance->var12 = newValue;
+		if ((pScriptInstance->overlayNumber == param1) || (param1 == -1))
+		    if ((pScriptInstance->scriptNumber == param2) || (param2 == -1))
+				if ((pScriptInstance->freeze == param3) || (param3 == -1)) {
+					pScriptInstance->freeze = newValue;
 		}
 
 		pScriptInstance = pScriptInstance->nextScriptPtr;
