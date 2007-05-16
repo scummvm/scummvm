@@ -42,6 +42,10 @@ void AGOSEngine::addTimeEvent(uint timeout, uint subroutine_id) {
 
 	time(&cur_time);
 
+	if (getGameId() == GID_DIMP) {
+		timeout /= 2;
+	}
+
 	te->time = cur_time + timeout - _gameStoppedClock;
 	if (getGameType() == GType_FF && _clockStopped)
 		te->time -= ((uint32)time(NULL) - _clockStopped);
@@ -440,11 +444,26 @@ void AGOSEngine::delay(uint amount) {
 }
 
 void AGOSEngine::timer_callback() {
+	// FIXME: _timer5 is never set
 	if (_timer5) {
 		_syncFlag2 = true;
 		_timer5--;
 	} else {
-		timer_proc1();
+		if (getGameId() == GID_DIMP) {
+			_thisTickCount = _system->getMillis();
+			if (_thisTickCount < _lastTickCount)
+				_lastTickCount = 0;
+
+			if ((_thisTickCount - _lastTickCount) <= 35)
+				return;
+
+			_lastTickCount = _thisTickCount;
+
+			timer_proc1();
+			dimp_idle();
+		} else {
+			timer_proc1();
+		}
 	}
 }
 
@@ -534,6 +553,88 @@ void AGOSEngine::timer_proc1() {
 	}
 
 	_lockWord &= ~2;
+}
+
+void AGOSEngine::dimp_idle() {
+	int z, n;
+
+	_iconToggleCount++;
+	if (_iconToggleCount == 30) {
+		if ((_variableArray[110] < 3) || (_variableArray[111] < 3) || (_variableArray[112] < 3)) {
+			_voiceCount++;
+			if (_voiceCount == 50) {
+				if (!getBitFlag(14) && !getBitFlag(11) && !getBitFlag(13)) {
+					loadSoundFile("Whistle.WAV");
+					z = 0;
+					while (z == 0) {
+						n = _rnd.getRandomNumber(2);
+						switch (n) {
+							case(0): 
+								if (_variableArray[110] > 2)
+									break;
+								n = _rnd.getRandomNumber(6);
+								switch(n) {
+									case(0): loadSoundFile("And01.wav");break;
+									case(1): loadSoundFile("And02.wav");break;
+									case(2): loadSoundFile("And03.wav");break;
+									case(3): loadSoundFile("And04.wav");break;
+									case(4): loadSoundFile("And05.wav");break;
+									case(5): loadSoundFile("And06.wav");break;
+									case(6): loadSoundFile("And07.wav");break;
+								}
+								z = 1;
+								break;
+							case(1):
+								if (_variableArray[111] > 2)
+									break;
+								n = _rnd.getRandomNumber(6);
+								switch(n) {
+									case(0): loadSoundFile("And08.wav");break;
+									case(1): loadSoundFile("And09.wav");break;
+									case(2): loadSoundFile("And0a.wav");break;
+									case(3): loadSoundFile("And0b.wav");break;
+									case(4): loadSoundFile("And0c.wav");break;
+									case(5): loadSoundFile("And0d.wav");break;
+									case(6): loadSoundFile("And0e.wav");break;
+								}
+								z = 1;
+								break;
+							case(2):
+								if (_variableArray[112] > 2)
+									break;
+								n = _rnd.getRandomNumber(4);
+								switch(n) {
+									case(0): loadSoundFile("And0f.wav");break;
+									case(1): loadSoundFile("And0g.wav");break;
+									case(2): loadSoundFile("And0h.wav");break;
+									case(3): loadSoundFile("And0i.wav");break;
+									case(4): loadSoundFile("And0j.wav");break;
+								}
+								z = 1;
+								break;
+						}
+					}
+				}
+				_voiceCount = 0;
+			}
+		} else {
+			_voiceCount = 48;
+		}
+		_iconToggleCount = 0;
+	}
+
+	if (_variableArray[121] == 0) {
+		_variableArray[121]++;
+		_startSecondCount = _lastTickCount;
+	}
+	if (((_lastTickCount - _startSecondCount) / 1000) != _tSecondCount) {
+		if (_startSecondCount != 0) {
+			uint32 x = (_variableArray[123] * 65536) + _variableArray[122] + ((_lastTickCount - _startSecondCount) / 1000) - _tSecondCount;
+			_variableArray[122] = (uint16)(x % 65536);
+			_variableArray[123] = (uint16)(x / 65536);
+			_tSecondCount = (_lastTickCount - _startSecondCount) / 1000;
+		}
+	}
 }
 
 } // End of namespace AGOS

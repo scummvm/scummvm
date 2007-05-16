@@ -421,6 +421,10 @@ protected:
 
 	uint16 _syncCount, _timer5, _timer4;
 
+	int16 _iconToggleCount, _voiceCount;
+	uint32 _lastTickCount, _thisTickCount;
+	uint32 _startSecondCount, _tSecondCount;
+
 	uint16 _frameCount;
 
 	uint16 _zoneNumber;
@@ -563,6 +567,8 @@ protected:
 	void loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &compressedSize, uint32 &size);
 	void loadSound(uint sound, int pan, int vol, uint type);
 	void loadVoice(uint speechId);
+
+	void loadSoundFile(const char *filename);
 
 	int getUserFlag(Item *item, int a);
 	int getUserFlag1(Item *item, int a);
@@ -1121,6 +1127,7 @@ protected:
 	void openGameFile();
 	void readGameFile(void *dst, uint32 offs, uint32 size);
 
+	void dimp_idle();
 	void timer_callback();
 	virtual void timer_proc1();
 

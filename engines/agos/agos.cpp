@@ -349,6 +349,14 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_timer5 = 0;
 	_timer4 = 0;
 
+ 	_iconToggleCount = 0;
+ 	_voiceCount = 0;
+ 
+	_lastTickCount = 0;
+	_thisTickCount = 0;
+	_startSecondCount = 0;
+	_tSecondCount = 0;
+
 	_frameCount = 0;
 
 	_zoneNumber = 0;
