@@ -301,15 +301,15 @@ void _c_frankenstein(void *parm) {
 		pal0[(i+FIRST_BASE_COLOR)] = _vm->_gfx->_palette[i];
 		pal0[(i+FIRST_BASE_COLOR)*3+1] = 0;
 		pal0[(i+FIRST_BASE_COLOR)*3+2] = 0;
-		pal0[(i+FIRST_EHB_COLOR)*3+1] = 0;
-		pal0[(i+FIRST_EHB_COLOR)*3+2] = 0;
+//		pal0[(i+FIRST_EHB_COLOR)*3+1] = 0;
+//		pal0[(i+FIRST_EHB_COLOR)*3+2] = 0;
 	}
 
 	for (uint16 _di = 0; _di < 30; _di++) {
 		g_system->delayMillis(20);
 		_vm->_gfx->setPalette(pal0, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
-		g_system->delayMillis(20);
-		_vm->_gfx->setPalette(pal0, FIRST_EHB_COLOR, EHB_PALETTE_COLORS);
+//		g_system->delayMillis(20);
+//		_vm->_gfx->setPalette(pal0, FIRST_EHB_COLOR, EHB_PALETTE_COLORS);
 	}
 
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
@@ -369,8 +369,7 @@ void _c_finito(void *parm) {
 		_vm->_gfx->displayCenteredString(130, v2C[_language]);
 		_vm->_gfx->displayCenteredString(160, v1C[_language]);
 
-		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
-		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBit2);
+		_vm->_gfx->updateScreen();
 		waitUntilLeftClick();
 
 		strcpy(_vm->_location._name, "estgrotta.drki");
@@ -383,8 +382,7 @@ void _c_finito(void *parm) {
 		_vm->_gfx->displayCenteredString(130, v6C[_language]);
 		_vm->_gfx->displayCenteredString(160, v5C[_language]);
 
-		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
-		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBit2);
+		_vm->_gfx->updateScreen();
 		waitUntilLeftClick();
 
 		_vm->_menu->selectCharacter();

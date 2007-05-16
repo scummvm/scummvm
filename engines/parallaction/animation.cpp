@@ -93,7 +93,7 @@ Animation *Parallaction::parseAnimation(Script& script, AnimationList &list, cha
 			int16 _si = _zoneTypeNames->lookup(_tokens[1]);
 			if (_si != -1) {
 				vD0->_type |= 1 << (_si-1);
-				if (((vD0->_type & 0xFFFF) != kZoneNone) && ((vD0->_type & 0xFFFF) != kZoneCommand)) {
+				if ((vD0->type() != kZoneNone) && (vD0->type() != kZoneCommand)) {
 					parseZoneTypeBlock(script, vD0);
 				}
 			}

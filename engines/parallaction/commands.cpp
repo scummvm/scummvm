@@ -283,7 +283,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 			if (u->_zone != NULL) {
 				u->_zone->_flags &= ~kFlagsRemove;
 				u->_zone->_flags |= kFlagsActive;
-				if ((u->_zone->_type & 0xFFFF) == kZoneGet) {
+				if (u->_zone->type() == kZoneGet) {
 					addJob(&jobDisplayDroppedItem, u->_zone, kPriority17 );
 				}
 			}
