@@ -762,7 +762,7 @@ protected:
 	void displayBoxStars();
 	void invertBox(HitArea * ha, byte a, byte b, byte c, byte d);
 
-	void handleMouseMoved();
+	virtual void handleMouseMoved();
 	void initMouse();
 	virtual void drawMousePointer();
 
@@ -815,10 +815,10 @@ protected:
 	void writeChar(WindowBlock *window, int x, int y, int offs, int val);
 
 	byte *allocBlock(uint32 size);
-	void checkNoOverWrite();
+	virtual void checkNoOverWrite();
 	void checkRunningAnims();
-	void checkAnims(uint a);
-	void checkZonePtrs();
+	virtual void checkAnims(uint a);
+	virtual void checkZonePtrs();
 	void setZoneBuffers();
 
 	void runVgaScript();
@@ -1609,6 +1609,10 @@ protected:
 	void listSaveGames(int n);
 	void saveUserGame(int slot);
 	void windowBackSpace(WindowBlock *window);
+
+	virtual void checkNoOverWrite();
+	virtual void checkAnims(uint a);
+	virtual void checkZonePtrs();
 };
 
 class AGOSEngine_PuzzlePack : public AGOSEngine_Feeble {
@@ -1646,6 +1650,7 @@ protected:
 
 	const OpcodeEntryPuzzlePack *_opcodesPuzzlePack;
 
+	virtual void handleMouseMoved();
 	virtual void drawMousePointer();
 
 	virtual void resetVerbs();

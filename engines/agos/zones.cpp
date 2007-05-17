@@ -103,41 +103,10 @@ byte *AGOSEngine::allocBlock(uint32 size) {
 	}
 }
 
-void AGOSEngine::checkNoOverWrite() {
-	VgaPointersEntry *vpe;
-
-	if (_noOverWrite == 0xFFFF)
-		return;
-
-	vpe = &_vgaBufferPointers[_noOverWrite];
-
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		if (vpe->vgaFile1 < _blockEnd && vpe->vgaFile1End > _block) {
-			_rejectBlock = true;
-			_vgaMemPtr = vpe->vgaFile1End;
-		} else if (vpe->vgaFile2 < _blockEnd && vpe->vgaFile2End > _block) {
-			_rejectBlock = true;
-			_vgaMemPtr = vpe->vgaFile2End;
-		} else if (vpe->sfxFile && vpe->sfxFile < _blockEnd && vpe->sfxFileEnd > _block) {
-			_rejectBlock = true;
-			_vgaMemPtr = vpe->sfxFileEnd;
-		} else {
-			_rejectBlock = false;
-		}
-	} else {
-		if (_block <= vpe->vgaFile1 && _blockEnd >= vpe->vgaFile1 ||
-			_vgaMemPtr <= vpe->vgaFile2 && _blockEnd >= vpe->vgaFile2) {
-			_rejectBlock = true;
-			_vgaMemPtr = vpe->vgaFile1 + 0x5000;
-		} else {
-			_rejectBlock = false;
-		}
-	}
-}
-
 void AGOSEngine::checkRunningAnims() {
 	VgaSprite *vsp;
-	if (getGameType() != GType_FF && getGameType() != GType_PP && (_lockWord & 0x20)) {
+	if (getGameType() != GType_FF && getGameType() != GType_PP &&
+		(_lockWord & 0x20)) {
 		return;
 	}
 
@@ -148,32 +117,92 @@ void AGOSEngine::checkRunningAnims() {
 	}
 }
 
+void AGOSEngine_Feeble::checkNoOverWrite() {
+	VgaPointersEntry *vpe;
+
+	if (_noOverWrite == 0xFFFF)
+		return;
+
+	vpe = &_vgaBufferPointers[_noOverWrite];
+
+	if (vpe->vgaFile1 < _blockEnd && vpe->vgaFile1End > _block) {
+		_rejectBlock = true;
+		_vgaMemPtr = vpe->vgaFile1End;
+	} else if (vpe->vgaFile2 < _blockEnd && vpe->vgaFile2End > _block) {
+		_rejectBlock = true;
+		_vgaMemPtr = vpe->vgaFile2End;
+	} else if (vpe->sfxFile && vpe->sfxFile < _blockEnd && vpe->sfxFileEnd > _block) {
+		_rejectBlock = true;
+		_vgaMemPtr = vpe->sfxFileEnd;
+	} else {
+		_rejectBlock = false;
+	}
+}
+
+void AGOSEngine_Feeble::checkAnims(uint a) {
+	VgaPointersEntry *vpe;
+
+	vpe = &_vgaBufferPointers[a];
+
+	if (vpe->vgaFile1 < _blockEnd && vpe->vgaFile1End > _block) {
+		_rejectBlock = true;
+		_vgaMemPtr = vpe->vgaFile1End;
+	} else if (vpe->vgaFile2 < _blockEnd && vpe->vgaFile2End > _block) {
+		_rejectBlock = true;
+		_vgaMemPtr = vpe->vgaFile2End;
+	} else if (vpe->sfxFile && vpe->sfxFile < _blockEnd && vpe->sfxFileEnd > _block) {
+		_rejectBlock = true;
+		_vgaMemPtr = vpe->sfxFileEnd;
+	} else {
+		_rejectBlock = false;
+	}
+}
+
+void AGOSEngine_Feeble::checkZonePtrs() {
+	uint count = ARRAYSIZE(_vgaBufferPointers);
+	VgaPointersEntry *vpe = _vgaBufferPointers;
+	do {
+		if (vpe->vgaFile1 < _blockEnd && vpe->vgaFile1End > _block ||
+			vpe->vgaFile2 < _blockEnd && vpe->vgaFile2End > _block ||
+			vpe->sfxFile < _blockEnd && vpe->sfxFileEnd > _block) {
+			vpe->vgaFile1 = NULL;
+			vpe->vgaFile1End = NULL;
+			vpe->vgaFile2 = NULL;
+			vpe->vgaFile2End = NULL;
+			vpe->sfxFile = NULL;
+			vpe->sfxFileEnd = NULL;
+		}
+	} while (++vpe, --count);
+}
+
+void AGOSEngine::checkNoOverWrite() {
+	VgaPointersEntry *vpe;
+
+	if (_noOverWrite == 0xFFFF)
+		return;
+
+	vpe = &_vgaBufferPointers[_noOverWrite];
+
+	if (_block <= vpe->vgaFile1 && _blockEnd >= vpe->vgaFile1 ||
+		_vgaMemPtr <= vpe->vgaFile2 && _blockEnd >= vpe->vgaFile2) {
+		_rejectBlock = true;
+		_vgaMemPtr = vpe->vgaFile1 + 0x5000;
+	} else {
+		_rejectBlock = false;
+	}
+}
+
 void AGOSEngine::checkAnims(uint a) {
 	VgaPointersEntry *vpe;
 
 	vpe = &_vgaBufferPointers[a];
 
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		if (vpe->vgaFile1 < _blockEnd && vpe->vgaFile1End > _block) {
-			_rejectBlock = true;
-			_vgaMemPtr = vpe->vgaFile1End;
-		} else if (vpe->vgaFile2 < _blockEnd && vpe->vgaFile2End > _block) {
-			_rejectBlock = true;
-			_vgaMemPtr = vpe->vgaFile2End;
-		} else if (vpe->sfxFile && vpe->sfxFile < _blockEnd && vpe->sfxFileEnd > _block) {
-			_rejectBlock = true;
-			_vgaMemPtr = vpe->sfxFileEnd;
-		} else {
-			_rejectBlock = false;
-		}
+	if (_block <= vpe->vgaFile1 && _blockEnd >= vpe->vgaFile1 ||
+			_block <= vpe->vgaFile2 && _blockEnd >= vpe->vgaFile2) {
+		_rejectBlock = true;
+		_vgaMemPtr = vpe->vgaFile1 + 0x5000;
 	} else {
-		if (_block <= vpe->vgaFile1 && _blockEnd >= vpe->vgaFile1 ||
-				_block <= vpe->vgaFile2 && _blockEnd >= vpe->vgaFile2) {
-			_rejectBlock = true;
-			_vgaMemPtr = vpe->vgaFile1 + 0x5000;
-		} else {
-			_rejectBlock = false;
-		}
+		_rejectBlock = false;
 	}
 }
 
@@ -181,23 +210,10 @@ void AGOSEngine::checkZonePtrs() {
 	uint count = ARRAYSIZE(_vgaBufferPointers);
 	VgaPointersEntry *vpe = _vgaBufferPointers;
 	do {
-		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			if (vpe->vgaFile1 < _blockEnd && vpe->vgaFile1End > _block ||
-					vpe->vgaFile2 < _blockEnd && vpe->vgaFile2End > _block ||
-					vpe->sfxFile < _blockEnd && vpe->sfxFileEnd > _block) {
-				vpe->vgaFile1 = NULL;
-				vpe->vgaFile1End = NULL;
-				vpe->vgaFile2 = NULL;
-				vpe->vgaFile2End = NULL;
-				vpe->sfxFile = NULL;
-				vpe->sfxFileEnd = NULL;
-			}
-		} else {
-			if (_block <= vpe->vgaFile1 && _blockEnd >= vpe->vgaFile1 ||
-					_block <= vpe->vgaFile2 && _blockEnd >= vpe->vgaFile2) {
-				vpe->vgaFile1 = NULL;
-				vpe->vgaFile2 = NULL;
-			}
+		if (_block <= vpe->vgaFile1 && _blockEnd >= vpe->vgaFile1 ||
+			_block <= vpe->vgaFile2 && _blockEnd >= vpe->vgaFile2) {
+			vpe->vgaFile1 = NULL;
+			vpe->vgaFile2 = NULL;
 		}
 	} while (++vpe, --count);
 }

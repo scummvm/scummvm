@@ -300,10 +300,42 @@ static const byte _mouseOffs[29 * 32] = {
 	0,0,10,7,10,6,10,5,10,4,10,3,10,4,10,5,10,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 };
 
-void AGOSEngine::handleMouseMoved() {
+void AGOSEngine_PuzzlePack::handleMouseMoved() {
 	uint x;
 
 	if (getGameId() != GID_DIMP && _mouseHideCount) {
+		CursorMan.showMouse(false);
+		return;
+	}
+
+	CursorMan.showMouse(true);
+	_mouse = _eventMan->getMousePos();
+
+	x = 0;
+	if (_lastHitArea3 == 0 && _leftButtonDown != 0) {
+		_verbHitArea = 300;
+		_leftButtonDown = 0;
+		x = 1;
+	}
+
+	if (_rightButtonDown != 0) {
+		_verbHitArea = (getGameId() == GID_DIMP) ? 301 : 300;
+		_rightButtonDown = 0;
+		x = 1;
+	}
+
+	boxController(_mouse.x, _mouse.y, x);
+	_lastHitArea3 = _lastHitArea;
+	if (x == 1 && _lastHitArea == NULL)
+		_lastHitArea3 = (HitArea *) -1;
+
+	drawMousePointer();
+}
+
+void AGOSEngine::handleMouseMoved() {
+	uint x;
+
+	if (_mouseHideCount) {
 		CursorMan.showMouse(false);
 		return;
 	}
@@ -386,8 +418,6 @@ void AGOSEngine::handleMouseMoved() {
 		}
 	}
 
-	// FIXME: The value of _mouseOld is *never* changed and hence
-	// always equal to (0,0). This seems like a bug.
 	if (_mouse != _mouseOld)
 		_needHitAreaRecalc++;
 
@@ -416,13 +446,7 @@ void AGOSEngine::handleMouseMoved() {
 
 	x = 0;
 	if (_lastHitArea3 == 0 && _leftButtonDown != 0) {
-		if (getGameType() == GType_PP)
-			_verbHitArea = 300;
 		_leftButtonDown = 0;
-		x = 1;
-	} else if (getGameType() == GType_PP && _rightButtonDown != 0) {
-		_verbHitArea = 300;
-		_rightButtonDown = 0;
 		x = 1;
 	} else {
 		if (_litBoxFlag == 0 && _needHitAreaRecalc == 0)
@@ -436,6 +460,8 @@ boxstuff:
 		_lastHitArea3 = (HitArea *) -1;
 
 get_out:
+
+	_mouseOld = _mouse;
 	drawMousePointer();
 
 	_needHitAreaRecalc = 0;

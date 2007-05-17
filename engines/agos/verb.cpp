@@ -465,8 +465,7 @@ void AGOSEngine::defineBox(int id, int x, int y, int width, int height, int flag
 	ha->verb = verb;
 	ha->item_ptr = item_ptr;
 
-	if ((getGameType() == GType_FF || getGameType() == GType_PP) &&
-		(ha->flags & kBFHyperBox)) {
+	if (getGameType() == GType_FF && (ha->flags & kBFHyperBox)) {
 		ha->data = _hyperLink;
 		ha->priority = 50;
 	}
@@ -535,9 +534,6 @@ void AGOSEngine::resetVerbs() {
 }
 
 void AGOSEngine_Feeble::setVerb(HitArea *ha) {
-	if (getGameType() == GType_PP)
-		return;
-
 	int cursor = _mouseCursor;
 	if (_noRightClick)
 		return;
@@ -736,27 +732,13 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 }
 
 void AGOSEngine::displayName(HitArea *ha) {
-	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2)
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_PP)
 		return;
 
 	bool result;
 	int x = 0, y = 0;
 
-	if (getGameType() == GType_PP) {
-		if (ha->flags & kBFHyperBox) {
-			_lastNameOn = ha;
-			return;
-		}
-		if (findBox(50))
-			return;
-
-		y = ha->y;
-		y -= 17;
-		if (y < 0)
-			y = 0;
-		y += 2;
-		x = ha->width / 2 + ha->x;
-	} else if (getGameType() == GType_FF) {
+	if (getGameType() == GType_FF) {
 		if (ha->flags & kBFHyperBox) {
 			_lastNameOn = ha;
 			return;

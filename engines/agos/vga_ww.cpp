@@ -177,7 +177,7 @@ void AGOSEngine::vc62_fastFadeOut() {
 		memcpy(_videoBuf1, _currentPalette, _fastFadeCount * 4);
 
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			if (getBitFlag(75)) {
+			if (getGameType() == GType_FF && getBitFlag(75)) {
 				fadeCount = 4;
 				fadeSize = 64;
 			} else {
@@ -196,7 +196,7 @@ void AGOSEngine::vc62_fastFadeOut() {
 		}
 
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			clearSurfaces(480);
+			clearSurfaces(_screenHeight);
 		} else if (getGameType() == GType_WW) {
 			memset(getFrontBuf(), 0, _screenWidth * _screenHeight);
 		} else {

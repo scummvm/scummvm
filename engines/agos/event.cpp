@@ -490,13 +490,13 @@ void AGOSEngine_Feeble::timer_proc1() {
 				return;
 			}
 		}
+
+		if (getGameType() == GType_FF) {
+			_moviePlay->nextFrame();
+		}
+
+		animateSprites();
 	} 
-
-	if (getGameType() == GType_FF) {
-		_moviePlay->nextFrame();
-	}
-
-	animateSprites();
 
 	if (_copyPartialMode == 2) {
 		fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
