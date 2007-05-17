@@ -181,21 +181,34 @@ void line(int x1, int y1, int x2, int y2, char c) {
 	}
 }
 
-void fillpoly(short int *datas, int lineCount, ColorP color) {
-	static int dots[SCREENHEIGHT][MAXPTS];
-	static int counters[SCREENHEIGHT];
-	short int x1, y1, x2, y2;
-	int i, j, k, dir = -2;
-	double step, curx;
+// Filled polygons. This probably isn't pixel-perfect compared to the original,
+// but it seems to work a bit better than the previous version.
+
+static void add_intersect(int *intersect, int x, byte &num) {
+	if (num < MAXPTS) {
+		int i;
+
+		for (i = num; i > 0 && intersect[i - 1] > x; i--) {
+			intersect[i] = intersect[i - 1];
+		}
+
+		intersect[i] = x;
+		num++;
+	}
+}
+
+void fillpoly(int16 *point_data, int lineCount, ColorP color) {
+	static int intersect[SCREENHEIGHT][MAXPTS];
+	static byte num_intersect[SCREENHEIGHT];
 
 	switch (lineCount) {
 	case 0:		// do nothing
 		return;
 	case 1:		// draw pixel
-		pixel(datas[0], datas[1], color);
+		pixel(point_data[0], point_data[1], color);
 		return;
 	case 2:		// draw line
-		line(datas[0], datas[1], datas[2], datas[3], color);
+		line(point_data[0], point_data[1], point_data[2], point_data[3], color);
 		return;
 	default:		// go on and draw polygon
 		break;
@@ -203,83 +216,52 @@ void fillpoly(short int *datas, int lineCount, ColorP color) {
 
 	// Reinit array counters
 
-	for (i = 0; i < SCREENHEIGHT; i++) {
-		counters[i] = 0;
-	}
-	// Drawing lines
-
-	x2 = datas[lineCount * 2 - 2];
-	y2 = datas[lineCount * 2 - 1];
-
-	for (i = 0; i < lineCount; i++) {
-		x1 = x2;
-		y1 = y2;
-		x2 = datas[i * 2];
-		y2 = datas[i * 2 + 1];
-
-		//  line(x1, y1, x2, y2, color);
-		//  continue;
-
-		if (y1 == y2) {
-			//      printf("Horizontal line. x1: %i, y1: %i, x2: %i, y2: %i\n", x1, y1, x2, y2);
-			if (dir) {
-				putdot(x1, y1);
-				dir = 0;
-			}
-		} else {
-			step = (double)(x2 - x1) / (y2 - y1);
-
-			//  printf("x1: %i, y1 = %i, x2 = %i, y2 = %i, step: %f\n", x1, y1, x2, y2, step);
-
-			curx = x1;
-
-			if (y1 < y2) {
-				for (j = y1; j < y2; j++, curx += step) {
-					//    printf("j = %i, curx = %f\n", j, curx);
-					putdot((int)(curx + 0.5), j);
-				}
-				if (dir == -1) {
-					//    printf("Adding extra (%i, %i)\n", x1, y1);
-					putdot(x1, y1);
-				}
-				dir = 1;
-			} else {
-				for (j = y1; j > y2; j--, curx -= step) {
-					//    printf("j = %i, curx = %f\n", j, curx);
-					putdot((int)(curx + 0.5), j);
-				}
-				if (dir == 1) {
-					//    printf("Adding extra (%i, %i)\n", x1, y1);
-					putdot(x1, y1);
-				}
-				dir = -1;
-			}
-		}
-	}
-
-	x1 = x2;
-	y1 = y2;
-	x2 = datas[0];
-	y2 = datas[1];
-
-	if (((y1 < y2) && (dir == -1)) || ((y1 > y2) && (dir == 1))
-	    || ((y1 == y2) && (dir == 0))) {
-		//  printf("Adding final extra (%i, %i)\n", x1, y1);
-		putdot(x1, y1);
-	}
-	// NOTE: all counters should be even now. If not, this is a bad (color) thing :-P
-
-	// Sorting datas
+	int x1, y1, x2, y2;
+	int y, i;
 
 	for (i = 0; i < SCREENHEIGHT; i++) {
-		// Very bad sorting... but arrays are very small (0, 2 or 4), so it's no quite use...
-		for (j = 0; j < (counters[i] - 1); j++) {
-			for (k = 0; k < (counters[i] - 1); k++) {
-				if (dots[i][k] > dots[i][k + 1]) {
-					int temp;
-					temp = dots[i][k];
-					dots[i][k] = dots[i][k + 1];
-					dots[i][k + 1] = temp;
+		num_intersect[i] = 0;
+	}
+
+	// Find the top/bottom of the polygon.
+
+	int top = point_data[1];
+	int bottom = point_data[1];
+
+	for (i = 1; i < lineCount; i++) {
+		if (point_data[2 * i + 1] < top)
+			top = point_data[2 * i + 1];
+		else if (point_data[2 * i + 1] > bottom)
+			bottom = point_data[2 * i + 1];
+	}
+
+	if (top < 0)
+		top = 0;
+	if (bottom >= SCREENHEIGHT)
+		bottom = SCREENHEIGHT - 1;
+
+	// Calculate intersections for each scan line
+
+	for (y = top; y <= bottom; y++) {
+		x2 = point_data[2 * lineCount - 2];
+		y2 = point_data[2 * lineCount - 1];
+
+		for (i = 0; i < lineCount; i++) {
+			x1 = x2;
+			y1 = y2;
+			x2 = point_data[2 * i];
+			y2 = point_data[2 * i + 1];
+
+			// Test if the line intersects the scan line
+
+			if ((y < y1) != (y < y2)) {
+				if (y1 == y2) {
+					add_intersect(intersect[y], x1, num_intersect[y]);
+					add_intersect(intersect[y], x2, num_intersect[y]);
+				} else if (x1 == x2) {
+					add_intersect(intersect[y], x1, num_intersect[y]);
+				} else {
+					add_intersect(intersect[y], x1 + ((y - y1) * (x2 - x1)) / (y2 - y1), num_intersect[y]);
 				}
 			}
 		}
@@ -287,19 +269,9 @@ void fillpoly(short int *datas, int lineCount, ColorP color) {
 
 	// Drawing.
 
-	for (i = 0; i < SCREENHEIGHT; i++) {
-		if (counters[i]) {
-			//      printf("%i dots on line %i\n", counters[i], i);
-			for (j = 0; j < counters[i] - 1; j += 2) {
-				//    printf("Drawing line (%i, %i)-%i\n", dots[i][j], dots[i][j + 1], i);
-				hline(dots[i][j], dots[i][j + 1], i, color);
-#ifdef DEBUGGING_POLYS
-				if ((!dots[i][j]) || !(dots[i][j + 1])) {
-					printf("fillpoly: BLARGH!\n");
-					exit(-1);
-				}
-#endif
-			}
+	for (y = top; y <= bottom; y++) {
+		for (i = 0; i < num_intersect[y]; i += 2) {
+			hline(intersect[y][i], intersect[y][i + 1], y, color);
 		}
 	}
 }

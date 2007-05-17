@@ -29,7 +29,7 @@ namespace Cruise {
 
 typedef char ColorP;
 
-void fillpoly(short int *datas, int n, ColorP c);
+void fillpoly(int16 *point_data, int n, ColorP c);
 void line(int x1, int y1, int x2, int y2, ColorP color);
 
 } // End of namespace Cruise
