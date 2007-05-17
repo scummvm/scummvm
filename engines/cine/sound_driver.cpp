@@ -258,28 +258,26 @@ void AdlibSoundDriverINS::loadInstrument(const byte *data, AdlibSoundInstrument 
 void AdlibSoundDriverINS::setChannelFrequency(int channel, int frequency) {
 	assert(channel < 4);
 	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
-	if (ins) {
-		if (ins->mode != 0 && ins->channel == 6) {
-			channel = 6;
+	if (ins->mode != 0 && ins->channel == 6) {
+		channel = 6;
+	}
+	if (ins->mode == 0 || ins->channel == 6) {
+		int freq, note, oct;
+		findNote(frequency, &note, &oct);
+		if (channel == 6) {
+			note %= 12;
 		}
-		if (ins->mode == 0 || ins->channel == 6) {
-			int freq, note, oct;
-			findNote(frequency, &note, &oct);
-			if (channel == 6) {
-				note %= 12;
-			}
-			freq = _freqTable[note % 12];
-			OPLWriteReg(_opl, 0xA0 | channel, freq);
-			freq = ((note / 12) << 2) | ((freq & 0x300) >> 8);
-			if (ins->mode == 0) {
-				freq |= 0x20;
-			}
-			OPLWriteReg(_opl, 0xB0 | channel, freq);
+		freq = _freqTable[note % 12];
+		OPLWriteReg(_opl, 0xA0 | channel, freq);
+		freq = ((note / 12) << 2) | ((freq & 0x300) >> 8);
+		if (ins->mode == 0) {
+			freq |= 0x20;
 		}
-		if (ins->mode != 0) {
-			_vibrato |= 1 << (10 - ins->channel);
-			OPLWriteReg(_opl, 0xBD, _vibrato);
-		}
+		OPLWriteReg(_opl, 0xB0 | channel, freq);
+	}
+	if (ins->mode != 0) {
+		_vibrato |= 1 << (10 - ins->channel);
+		OPLWriteReg(_opl, 0xBD, _vibrato);
 	}
 }
 
@@ -322,37 +320,35 @@ void AdlibSoundDriverADL::loadInstrument(const byte *data, AdlibSoundInstrument 
 void AdlibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
 	assert(channel < 4);
 	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
-	if (ins) {
-		if (ins->mode != 0) {
-			channel = ins->channel;
-			if (channel == 9) {
-				channel = 8;
-			} else if (channel == 10) {
-				channel = 7;
-			}
+	if (ins->mode != 0) {
+		channel = ins->channel;
+		if (channel == 9) {
+			channel = 8;
+		} else if (channel == 10) {
+			channel = 7;
 		}
-		int freq, note, oct;
-		findNote(frequency, &note, &oct);
-		
-		note += oct * 12;
-		if (ins->amDepth) {
-			note = ins->amDepth;
-		}
-		if (note < 0) {
-			note = 0;
-		}
+	}
+	int freq, note, oct;
+	findNote(frequency, &note, &oct);
+	
+	note += oct * 12;
+	if (ins->amDepth) {
+		note = ins->amDepth;
+	}
+	if (note < 0) {
+		note = 0;
+	}
 
-		freq = _freqTable[note % 12];
-		OPLWriteReg(_opl, 0xA0 | channel, freq);
-		freq = ((note / 12) << 2) | ((freq & 0x300) >> 8);
-		if (ins->mode == 0) {
-			freq |= 0x20;
-		}
-		OPLWriteReg(_opl, 0xB0 | channel, freq);
-		if (ins->mode != 0) {
-			_vibrato |= 1 << (10 - channel);
-			OPLWriteReg(_opl, 0xBD, _vibrato);
-		}
+	freq = _freqTable[note % 12];
+	OPLWriteReg(_opl, 0xA0 | channel, freq);
+	freq = ((note / 12) << 2) | ((freq & 0x300) >> 8);
+	if (ins->mode == 0) {
+		freq |= 0x20;
+	}
+	OPLWriteReg(_opl, 0xB0 | channel, freq);
+	if (ins->mode != 0) {
+		_vibrato |= 1 << (10 - channel);
+		OPLWriteReg(_opl, 0xBD, _vibrato);
 	}
 }
 
