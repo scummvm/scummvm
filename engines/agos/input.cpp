@@ -388,6 +388,9 @@ void AGOSEngine::hitarea_stuff_helper() {
 		if (kickoffTimeEvents())
 			permitInput();
 	}
+
+	if (getGameId() == GID_DIMP)
+		delay(200);
 }
 
 void AGOSEngine::hitarea_stuff_helper_2() {
@@ -453,6 +456,20 @@ void AGOSEngine::permitInput() {
 
 bool AGOSEngine::processSpecialKeys() {
 	bool verbCode = false;
+
+	if (getGameId() == GID_DIMP) {
+		static time_t lastMinute = 0;
+		time_t t;
+		time_t t1;
+		t = time(&t);
+		t1 = t / 30;
+		if (!lastMinute)
+			lastMinute = t1;
+		if (t1 - lastMinute) {
+			_variableArray[120] += (t1 - lastMinute);
+			lastMinute = t1;
+		}
+	}
 
 	switch (_keyPressed) {
 	case 17: // Up
