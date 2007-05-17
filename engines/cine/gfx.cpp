@@ -189,6 +189,84 @@ void gfxFillSprite(byte *spritePtr, uint16 width, uint16 height, byte *page, int
 	}
 }
 
+// gfxDrawMaskedSprite
+void gfxSpriteFunc1(byte *spritePtr, byte *maskPtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
+	int16 i, j;
+
+	for (i = 0; i < height; i++) {
+		byte *destPtr = page + x + y * 320;
+		destPtr += i * 320;
+
+		for (j = 0; j < width * 8; j++) {
+			if (x + j >= 0 && x + j < 320 && i + y >= 0 && i + y < 200 && *maskPtr == 0) {
+				*destPtr = *spritePtr;
+			}
+			++destPtr;
+			++spritePtr;
+			++maskPtr;
+		}
+	}
+}
+
+// gfxUpdateSpriteMask
+void gfxSpriteFunc2(byte *spritePtr, byte *spriteMskPtr, int16 width, int16 height, byte *maskPtr,
+    int16 maskWidth, int16 maskHeight, byte *bufferSprPtr, byte *bufferMskPtr, int16 xs, int16 ys, int16 xm, int16 ym, byte maskIdx) {
+    int16 i, j, d, spritePitch, maskPitch;
+        
+    width *= 8;
+    maskWidth *= 8;
+
+    spritePitch = width;
+    maskPitch = maskWidth;
+
+    if (maskIdx == 0) {
+    	memcpy(bufferSprPtr, spritePtr, spritePitch * height);
+    	memcpy(bufferMskPtr, spriteMskPtr, spritePitch * height);
+    }
+    
+    if (ys > ym) {
+    	d = ys - ym;
+    	maskPtr += d * maskPitch;
+    	maskHeight -= d;
+    }
+    if (maskHeight <= 0) {
+    	return;
+    }
+    if (xs > xm) {
+    	d = xs - xm;
+    	maskPtr += d;
+    	maskWidth -= d;
+    }
+    if (maskWidth <= 0) {
+    	return;
+    }
+    if (ys < ym) {
+    	d = ym - ys;
+    	spriteMskPtr += d * spritePitch;
+    	bufferMskPtr += d * spritePitch;
+    	height -= d;
+    }
+    if (height <= 0) {
+    	return;
+    }
+	if (xs < xm) {
+    	d = xm - xs;
+    	spriteMskPtr += d;
+    	bufferMskPtr += d;
+    	width -= d;
+    }
+    if (width <= 0) {
+    	return;
+    }
+	for (j = 0; j < height; ++j) {
+		for (i = 0; i < width; ++i) {
+			bufferMskPtr[i] |= maskPtr[i] ^ 1;
+		}
+		bufferMskPtr += spritePitch;
+		maskPtr += maskPitch;
+	}
+}
+
 void gfxDrawLine(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte *page) {
 	if (x1 == x2) {
 		if (y1 > y2) {

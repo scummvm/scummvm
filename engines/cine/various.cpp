@@ -2188,13 +2188,18 @@ uint16 executePlayerInput(void) {
 
 void drawSprite(overlayHeadElement *currentOverlay, byte *spritePtr,
 				byte *maskPtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
-#if 0
 	byte *ptr = NULL;
+	byte *msk = NULL;
 	byte i = 0;
 	uint16 si = 0;
 	overlayHeadElement *pCurrentOverlay = currentOverlay;
 
-	while (pCurrentOverlay) { // unfinished, probably for mask handling..
+	if (g_cine->getGameType() == Cine::GType_OS) {
+		drawSpriteRaw2(spritePtr, objectTable[currentOverlay->objIdx].part, width, height, page, x, y);
+		return;
+	}
+
+	while (pCurrentOverlay) {
 		if (pCurrentOverlay->type == 5) {
 			int16 maskX;
 			int16 maskY;
@@ -2203,7 +2208,8 @@ void drawSprite(overlayHeadElement *currentOverlay, byte *spritePtr,
 			uint16 maskSpriteIdx;
 	 
 			if (!si) {
-				ptr = (byte *)malloc(width * height);
+				ptr = (byte *)malloc(width * 8 * height);
+				msk = (byte *)malloc(width * 8 * height);
 				si = 1;
 			}
 	 
@@ -2214,25 +2220,19 @@ void drawSprite(overlayHeadElement *currentOverlay, byte *spritePtr,
 	 
 			maskWidth = animDataTable[maskSpriteIdx].width / 2;
 			maskHeight = animDataTable[maskSpriteIdx].height;
-	 
-			gfxSpriteFunc2(spritePtr, width, height, animDataTable[maskSpriteIdx].ptr1, maskWidth, maskHeight, ptr, maskX - x,maskY - y, i++);
+			gfxSpriteFunc2(spritePtr, maskPtr, width, height, animDataTable[maskSpriteIdx].ptr1, maskWidth, maskHeight, ptr, msk, x, y, maskX, maskY, i++);
 		}
 	 
 		pCurrentOverlay = pCurrentOverlay->next;
 	} 
 	 
 	if (si) {
-		gfxSpriteFunc1(ptr, width, height, page, x, y);
+		gfxSpriteFunc1(ptr, msk, width, height, page, x, y);
 		free(ptr);
-	} else
-#endif
-
-	if (g_cine->getGameType() == Cine::GType_OS) {
-		drawSpriteRaw2(spritePtr, objectTable[currentOverlay->objIdx].part, width, height, page, x, y);
+		free(msk);
 	} else {
-		drawSpriteRaw(spritePtr, maskPtr, width, height, page, x, y);
+		gfxSpriteFunc1(spritePtr, maskPtr, width, height, page, x, y);
 	}
-
 }
 
 int16 additionalBgVScroll = 0;

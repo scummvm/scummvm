@@ -45,11 +45,11 @@ void gfxCopyPage(byte *source, byte *dest);
 void transformPaletteRange(byte startColor, byte numColor, int8 r, int8 g, int8 b);
 void gfxFlipPage(void);
 
-void gfxSpriteFunc1(byte *ptr, uint16 width, uint16 height, byte *page, int16 x, int16 y);
+void gfxSpriteFunc1(byte *ptr, byte *msk, uint16 width, uint16 height, byte *page, int16 x, int16 y);
 void gfxFillSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy);
 
-void gfxSpriteFunc2(byte *spritePtr, int16 width, int16 height, byte *maskPtr,
-    int16 maskWidth, int16 maskHeight, byte *bufferPtr, int16 x, int16 y, byte maskIdx);
+void gfxSpriteFunc2(byte *spritePtr, byte *spriteMskPtr, int16 width, int16 height, byte *maskPtr,
+    int16 maskWidth, int16 maskHeight, byte *bufferSprPtr, byte *bufferMskPtr, int16 xs, int16 ys, int16 xm, int16 ym, byte maskIdx);
 
 void gfxDrawLine(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte *page);
 void gfxDrawPlainBox(int16 x1, int16 y1, int16 x2, int16 y2, byte color);
