@@ -93,14 +93,6 @@ void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 extern uint16 errorVar;
 extern byte menuVar;
 
-void gfxFuncGen1(byte *param1, byte *param2, byte *param3, byte *param4, int16 param5);
-
-extern byte *page0;
-extern byte *page0c;
-
-void ptrGfxFunc13(void);
-void gfxFuncGen2(void);
-
 extern uint16 allowPlayerInput;
 
 extern uint16 checkForPendingDataLoadSwitch;
@@ -137,7 +129,6 @@ void mainLoopSub3(void);
 uint16 executePlayerInput(void);
 
 void drawOverlays(void);
-void flip(void);
 
 extern uint16 mouseUpdateStatus;
 extern uint16 dummyU16;
@@ -169,8 +160,6 @@ extern uint16 defaultMenuBoxColor2;
 extern uint16 zoneData[NUM_MAX_ZONE];
 
 void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 param5);
-
-void blitScreen(byte *frontBuffer, byte *backbuffer);
 
 extern int16 additionalBgVScroll;
 

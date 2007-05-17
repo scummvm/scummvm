@@ -56,10 +56,6 @@ int16 buildObjectListCommand(void);
 void drawString(const char *string, byte param) {
 }
 
-void blitRawScreen(byte *frontBuffer) {
-	gfxFlipRawPage(frontBuffer);
-}
-
 Common::File *partFileHandleP = NULL;
 
 void waitPlayerInput(void) {
@@ -73,17 +69,6 @@ void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4) {
 
 uint16 errorVar;
 byte menuVar;
-
-void gfxFuncGen1(byte *param1, byte *param2, byte *param3, byte *param4, int16 param5) {
-}
-
-byte *page0c;
-
-void ptrGfxFunc13(void) {
-}
-
-void gfxFuncGen2(void) {
-}
 
 uint16 allowPlayerInput;
 
@@ -2648,10 +2633,6 @@ void drawOverlays(void) {
 
 		currentOverlay = currentOverlay->next;
 	}
-}
-
-void flip(void) {
-	blitRawScreen(page1Raw);
 }
 
 uint16 processKeyboard(uint16 param) {

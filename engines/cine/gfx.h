@@ -30,6 +30,7 @@ namespace Cine {
 void gfxDrawSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy);
 
 extern byte *page0;
+extern byte *page0c;
 extern byte *page1;
 extern byte *page2;
 extern byte *page3;
@@ -71,6 +72,14 @@ void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte
 void drawSpriteRaw2(byte *spritePtr, byte transColor, int16 width, int16 height, byte *page, int16 x, int16 y);
 
 void fadeToBlack(void);
+
+void gfxFuncGen1(byte *param1, byte *param2, byte *param3, byte *param4, int16 param5);
+void ptrGfxFunc13(void);
+void gfxFuncGen2(void);
+
+void blitScreen(byte *frontBuffer, byte *backbuffer);
+void blitRawScreen(byte *frontBuffer);
+void flip(void);
 
 } // End of namespace Cine
 
