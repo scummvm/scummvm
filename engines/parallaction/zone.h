@@ -48,6 +48,7 @@ enum ZoneTypes {
 	kZoneCommand	   = 0x800
 };
 
+
 enum ZoneFlags {
 	kFlagsClosed		= 1,				// Zone: door is closed / switch is off
 	kFlagsActive		= 2,				// Zone/Animation: object is visible
@@ -62,6 +63,7 @@ enum ZoneFlags {
 	kFlagsCharacter 	= 0x400,			//
 	kFlagsNoWalk		= 0x800 			// Zone: character doesn't need to walk towards object to interact
 };
+
 
 #define NUM_ANSWERS		 5
 
@@ -212,13 +214,6 @@ struct Zone {
 	void translate(int16 x, int16 y);
 	virtual uint16 width() const;
 	virtual uint16 height() const;
-
-	uint32 type() {
-		return _type & 0xFFFF;
-	}
-	uint32 boundId() {
-		return (_type & 0xFFFF0000);
-	}
 };
 
 typedef Zone* ZonePointer;

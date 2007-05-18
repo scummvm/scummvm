@@ -121,8 +121,8 @@ void Parallaction::freeZones() {
 		// but we need to check it separately here. The same workaround is applied in hitZone.
 		if (((z->_top == -1) ||
 			((z->_left == -2) && (
-				((z->type() == kZoneMerge) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj1)) != 0) || (isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj2)) != 0))) ||
-				((z->type() == kZoneGet) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.get->_icon)) != 0)))
+				(((z->_type & 0xFFFF) == kZoneMerge) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj1)) != 0) || (isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj2)) != 0))) ||
+				(((z->_type & 0xFFFF) == kZoneGet) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.get->_icon)) != 0)))
 			))) &&
 			((_engineFlags & kEngineQuit) == 0)) {
 
@@ -152,7 +152,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 
 	TypeData *u = &z->u;
 
-	switch (z->type()) {
+	switch (z->_type & 0xFFFF) {
 	case kZoneExamine:	// examine Zone alloc
 		u->examine = new ExamineData;
 		break;
@@ -185,7 +185,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 
 	do {
 
-		switch (z->type()) {
+		switch (z->_type & 0xFFFF) {
 		case kZoneExamine: // examine Zone init
 			if (!scumm_stricmp(_tokens[0], "file")) {
 				u->examine->_filename = (char*)malloc(strlen(_tokens[1])+1);
@@ -374,8 +374,10 @@ void Parallaction::displayItemComment(ExamineData *data) {
 uint16 Parallaction::runZone(Zone *z) {
 	debugC(3, kDebugLocation, "runZone (%s)", z->_label._text);
 
-	debugC(3, kDebugLocation, "type = %x, id = %x",z->type(), z->boundId() >> 16);
-	switch(z->type()) {
+	uint16 subtype = z->_type & 0xFFFF;
+
+	debugC(3, kDebugLocation, "type = %x, object = %x", subtype, (z->_type & 0xFFFF0000) >> 16);
+	switch(subtype) {
 
 	case kZoneExamine:
 		if (z->u.examine->_filename) {
@@ -542,15 +544,15 @@ Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 				// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
 				// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
 				// but we need to check it separately here. The same workaround is applied in freeZones.
-				if (((z->type() == kZoneMerge) && (((_si == z->u.merge->_obj1) && (_di == z->u.merge->_obj2)) || ((_si == z->u.merge->_obj2) && (_di == z->u.merge->_obj1)))) ||
-					((z->type() == kZoneGet) && ((_si == z->u.get->_icon) || (_di == z->u.get->_icon)))) {
+				if ((((z->_type & 0xFFFF) == kZoneMerge) && (((_si == z->u.merge->_obj1) && (_di == z->u.merge->_obj2)) || ((_si == z->u.merge->_obj2) && (_di == z->u.merge->_obj1)))) ||
+					(((z->_type & 0xFFFF) == kZoneGet) && ((_si == z->u.get->_icon) || (_di == z->u.get->_icon)))) {
 
 					// special Zone
-					if ((type == 0) && (z->boundId() == 0 == 0))
+					if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
 						return z;
 					if (z->_type == type)
 						return z;
-					if (z->boundId() == type)
+					if ((z->_type & 0xFFFF0000) == type)
 						return z;
 
 				}
@@ -570,11 +572,11 @@ Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 		}
 
 		// normal Zone
-		if ((type == 0) && (z->boundId() == 0))
+		if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
 			return z;
 		if (z->_type == type)
 			return z;
-		if (z->boundId() == type)
+		if ((z->_type & 0xFFFF0000) == type)
 			return z;
 
 	}
@@ -590,8 +592,8 @@ Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 		_f = ((_di >= a->_top + a->height()) || (_di <= a->_top)) ? 0 : 1;		// _f: vertical range
 
 		_b = ((type != 0) || (a->_type == kZoneYou)) ? 0 : 1; 										 // _b: (no type specified) AND (Animation is not the character)
-		_c = (a->boundId()) ? 0 : 1; 															// _c: Animation is not an object
-		_d = (a->boundId() != type) ? 0 : 1;													// _d: Animation is an object of the same type
+		_c = (a->_type & 0xFFFF0000) ? 0 : 1; 															// _c: Animation is not an object
+		_d = ((a->_type & 0xFFFF0000) != type) ? 0 : 1;													// _d: Animation is an object of the same type
 
 		if ((_a != 0 && _e != 0 && _f != 0) && ((_b != 0 && _c != 0) || (a->_type == type) || (_d != 0))) {
 
@@ -615,7 +617,7 @@ Zone::Zone() {
 Zone::~Zone() {
 //	printf("~Zone(%s)\n", _label._text);
 
-	switch (type()) {
+	switch (_type & 0xFFFF) {
 	case kZoneExamine:
 		free(u.examine->_filename);
 		free(u.examine->_description);

@@ -561,7 +561,7 @@ Parallaction::InputData *Parallaction::translateInput() {
 			return &_input;
 		}
 
-		if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((z == NULL) || (z->type() != kZoneCommand))) {
+		if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((z == NULL) || ((z->_type & 0xFFFF) != kZoneCommand))) {
 			_input._event = kEvWalk;
 			return &_input;
 		}
@@ -584,7 +584,7 @@ Parallaction::InputData *Parallaction::translateInput() {
 			return &_input;
 		}
 
-		if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || (z->type() == kZoneCommand))) {
+		if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || ((z->_type & 0xFFFF) == kZoneCommand))) {
 
 			_input._zone = z;
 			if (z->_flags & kFlagsNoWalk) {
