@@ -250,6 +250,7 @@ void _c_endComment(void *param) {
 
 	_vm->_gfx->setFont(kFontDialogue);
 	_vm->_gfx->displayWrappedString(_vm->_location._endComment, 3, 5, 130, 0);
+	_vm->_gfx->updateScreen();
 
 	uint32 di = 0;
 	for (di = 0; di < PALETTE_COLORS; di++) {
