@@ -259,8 +259,8 @@ void gfxSpriteFunc2(byte *spritePtr, byte *spriteMskPtr, int16 width, int16 heig
 	if (width <= 0) {
 		return;
 	}
-	for (j = 0; j < height; ++j) {
-		for (i = 0; i < width; ++i) {
+	for (j = 0; j < MIN(maskHeight, height); ++j) {
+		for (i = 0; i < MIN(maskWidth, width); ++i) {
 			bufferMskPtr[i] |= maskPtr[i] ^ 1;
 		}
 		bufferMskPtr += spritePitch;
