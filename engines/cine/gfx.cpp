@@ -166,7 +166,7 @@ void transformPaletteRange(byte startColor, byte stopColor, int8 r, int8 g, int8
 	//gfxFlipPage(page2);
 }
 
-void gfxFillSprite(byte *spritePtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
+void gfxFillSprite(byte *spritePtr, uint16 width, uint16 height, byte *page, int16 x, int16 y, uint8 fillColor) {
 	int16 i;
 	int16 j;
 
@@ -178,7 +178,7 @@ void gfxFillSprite(byte *spritePtr, uint16 width, uint16 height, byte *page, int
 			if (x + j >= 0 && x + j < 320 && i + y >= 0
 			    && i + y < 200) {
 				if (!*(spritePtr++)) {
-					*(destPtr++) = 0;
+					*(destPtr++) = fillColor;
 				} else {
 					destPtr++;
 				}
