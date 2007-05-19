@@ -778,7 +778,6 @@ void Parallaction::changeCharacter(const char *name) {
 	(higher priorities values comes first in the list)
 */
 int compareJobPriority(const JobPointer &j1, const JobPointer &j2) {
-	if (j1->_tag == j2->_tag) return 0;
 	return (j1->_tag >= j2->_tag ? -1 : 1);
 }
 
