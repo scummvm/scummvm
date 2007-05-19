@@ -2206,7 +2206,7 @@ void drawSprite(overlayHeadElement *currentOverlay, byte *spritePtr,
 			maskWidth = animDataTable[maskSpriteIdx].width / 2;
 			maskHeight = animDataTable[maskSpriteIdx].height;
 			gfxSpriteFunc2(spritePtr, maskPtr, width, height, animDataTable[maskSpriteIdx].ptr1, maskWidth, maskHeight, ptr, msk, x, y, maskX, maskY, i++);
-#if DEBUG_SPRITE_MASK
+#ifdef DEBUG_SPRITE_MASK
 			gfxFillSprite(animDataTable[maskSpriteIdx].ptr1, maskWidth, maskHeight, page, maskX, maskY, 1);
 #endif
 		}
