@@ -210,7 +210,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 
 		menuVar = 0;
 
-		gfxFuncGen1(page0c, page0, page0c, page0, -1);
+//		gfxFuncGen1(page0c, page0, page0c, page0, -1);
 
 		ptrGfxFunc13();
 

@@ -29,15 +29,13 @@ namespace Cine {
 
 void gfxDrawSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy);
 
-extern byte *page0;
-extern byte *page0c;
-extern byte *page1;
-extern byte *page2;
-extern byte *page3;
+extern byte *page1Raw;
+extern byte *page2Raw;
+extern byte *page3Raw;
 
 extern uint16 c_palette[256];
 
-void init_video();
+void gfxInit();
 void setMouseCursor(int cursor);
 void convertGfx(byte *source, byte *dest, const uint16 width, const uint16 height);
 void convertGfx2(byte *source, byte *dest, const uint16 width, const uint16 height);
@@ -58,10 +56,6 @@ void gfxDrawPlainBox(int16 x1, int16 y1, int16 x2, int16 y2, byte color);
 void gfxResetPage(byte *pagePtr);
 
 int16 gfxGetBit(int16 x, int16 y, byte *ptr, int16 width);
-
-extern byte page1Raw[320 * 200];
-extern byte page2Raw[320 * 200];
-extern byte page3Raw[320 * 200];
 
 void gfxResetRawPage(byte *pageRaw);
 void gfxConvertSpriteToRaw(byte *dest, byte *source, uint16 width, uint16 height);

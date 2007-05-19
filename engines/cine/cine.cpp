@@ -122,7 +122,7 @@ void CineEngine::initialize() {
 	setupOpcodes();
 
 	initLanguage(g_cine->getLanguage());
-	init_video();
+	gfxInit();
 
 	textDataPtr = (byte *)malloc(8000);
 

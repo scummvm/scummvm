@@ -105,7 +105,7 @@ byte loadBg(const char *bgName) {
 	return 0;
 }
 
-byte *additionalBgTable[9] = { page2Raw, NULL, NULL, NULL, NULL, NULL, NULL, NULL, page3Raw };
+byte *additionalBgTable[9];
 byte currentAdditionalBgIdx = 0;
 byte currentAdditionalBgIdx2 = 0;
 

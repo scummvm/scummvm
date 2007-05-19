@@ -23,6 +23,7 @@
  */
 
 #include "cine/cine.h"
+#include "cine/bg.h"
 #include "cine/various.h"
 
 #include "common/system.h"
@@ -31,19 +32,12 @@
 
 namespace Cine {
 
-byte *screenBuffer;
-
 uint16 c_palette[256];
 
-byte *page0;
-byte *page0c;
-byte *page1;
-byte *page2;
-byte *page3;
-
-byte page1Raw[320 * 200];
-byte page2Raw[320 * 200];
-byte page3Raw[320 * 200];
+byte *screenBuffer;
+byte *page1Raw;
+byte *page2Raw;
+byte *page3Raw;
 
 static const byte mouseCursorNormal[] = {
 	0x00, 0x00, 0x40, 0x00, 0x60, 0x00, 0x70, 0x00,
@@ -93,14 +87,21 @@ static const byte cursorPalette[] = {
 	0xff, 0xff, 0xff, 0xff
 };
 
-void init_video() {
-	screenBuffer = (byte *)malloc(320 * 200 * 3);
-	assert(screenBuffer);
-
-	page0 = (byte *)malloc(0x8000);
-	page1 = (byte *)malloc(0x8000);
-	page2 = (byte *)malloc(0x8000);
-	page3 = (byte *)malloc(0x8000);
+void gfxInit() {
+	screenBuffer = (byte *)malloc(320 * 200);
+	page1Raw = (byte *)malloc(320 * 200);
+	page2Raw = (byte *)malloc(320 * 200);
+	page3Raw = (byte *)malloc(320 * 200);
+	if (!screenBuffer || !page1Raw || !page2Raw || !page3Raw) {
+		error("Unable to allocate offscreen buffers");
+	}
+	memset(page1Raw, 0, 320 * 200);
+	memset(page2Raw, 0, 320 * 200);
+	memset(page3Raw, 0, 320 * 200);
+	
+	memset(additionalBgTable, 0, sizeof(additionalBgTable));
+	additionalBgTable[0] = page2Raw;
+	additionalBgTable[8] = page3Raw;
 }
 
 void setMouseCursor(int cursor) {
