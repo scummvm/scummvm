@@ -28,8 +28,7 @@
 #include "cine/cine.h"
 #include "cine/bg_list.h"
 #include "cine/object.h"
-#include "cine/sfx_player.h"
-#include "cine/sound_driver.h"
+#include "cine/sound.h"
 #include "cine/various.h"
 
 namespace Cine {
@@ -1509,44 +1508,22 @@ void o1_loadMusic() {
 	const char *param = getNextString();
 
 	debugC(5, kCineDebugScript, "Line: %d: loadMusic(%s)", _currentLine, param);
-
-	if (g_cine->getPlatform() == Common::kPlatformAmiga ||
-			g_cine->getPlatform() == Common::kPlatformAtariST) {
-		warning("STUB: o1_loadMusic");
-		return;
-	}
-
-	g_sfxPlayer->load(param);
+	g_sound->loadMusic(param);
 }
 
 void o1_playMusic() {
 	debugC(5, kCineDebugScript, "Line: %d: playMusic()", _currentLine);
-	if (g_cine->getPlatform() == Common::kPlatformAmiga ||
-			g_cine->getPlatform() == Common::kPlatformAtariST) {
-		warning("STUB: o1_playMusic");
-		return;
-	}
-	g_sfxPlayer->play();
+	g_sound->playMusic();
 }
 
 void o1_fadeOutMusic() {
 	debugC(5, kCineDebugScript, "Line: %d: fadeOutMusic()", _currentLine);
-	if (g_cine->getPlatform() == Common::kPlatformAmiga ||
-			g_cine->getPlatform() == Common::kPlatformAtariST) {
-		warning("STUB: o1_fadeOutMusic");
-		return;
-	}
-	g_sfxPlayer->fadeOut();
+	g_sound->fadeOutMusic();
 }
 
 void o1_stopSample() {
 	debugC(5, kCineDebugScript, "Line: %d: stopSample()", _currentLine);
-	if (g_cine->getPlatform() == Common::kPlatformAmiga ||
-			g_cine->getPlatform() == Common::kPlatformAtariST) {
-		warning("STUB: o1_stopSample");
-		return;
-	}
-	g_sfxPlayer->stop();
+	g_sound->stopMusic();
 }
 
 void o1_op71() {
@@ -1571,74 +1548,59 @@ void o1_op73() {
 	getNextWord();
 }
 
-void o1_playSampleAmiga() {
-	int num = getNextByte();
-	int channel = getNextByte();
-	int freq = getNextWord();
-	int repeat = getNextByte();
-	int volume = getNextWord();
-	int size = getNextWord();
-
-	if (size == 0xFFFF) {
-		size = animDataTable[num].width * animDataTable[num].height;
-	}
-	
-	if (channel < 10) { // || _currentOpcode == 0x78
-		int channel1, channel2;
-		if (channel == 0) {
-			channel1 = 0;
-			channel2 = 1;
-		} else {
-			channel1 = 2;
-			channel2 = 3;			
-		}
-		((PaulaSoundDriver *)g_soundDriver)->queueSound(channel1, freq, animDataTable[num].ptr1, size, -1, volume, 63, repeat);
-		((PaulaSoundDriver *)g_soundDriver)->queueSound(channel2, freq, animDataTable[num].ptr1, size,  1, volume,  0, repeat);
-	} else {
-		channel -= 10;
-		if (volume > 63) {
-			volume = 63;
-		}
-		((PaulaSoundDriver *)g_soundDriver)->queueSound(channel, freq, animDataTable[num].ptr1, size, 0, 0, volume, repeat);
-	}
-}
-
 void o1_playSample() {
 	debugC(5, kCineDebugScript, "Line: %d: playSample()", _currentLine);
-
-	if (g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) {
-		o1_playSampleAmiga();
-		return;
-	}
 
 	byte anim = getNextByte();
 	byte channel = getNextByte();
 
-	getNextWord();
-	getNextByte();
+	uint16 freq = getNextWord();
+	byte repeat = getNextByte();
 
 	int16 volume = getNextWord();
-	uint16 flag = getNextWord();
+	uint16 size = getNextWord();
 
-	if (volume > 63)
-		volume = 63;
-	if (volume < 0)
-		volume = 63;
+	if (!animDataTable[anim].ptr1) {
+		return;
+	}
 
-	if (animDataTable[anim].ptr1) {
+	if (g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) {
+		if (size == 0xFFFF) {
+			size = animDataTable[anim].width * animDataTable[anim].height;
+		}
+		if (channel < 10) { // || _currentOpcode == 0x78
+			int channel1, channel2;
+			if (channel == 0) {
+				channel1 = 0;
+				channel2 = 1;
+			} else {
+				channel1 = 2;
+				channel2 = 3;			
+			}
+			g_sound->playSound(channel1, freq, animDataTable[anim].ptr1, size, -1, volume, 63, repeat);
+			g_sound->playSound(channel2, freq, animDataTable[anim].ptr1, size,  1, volume,  0, repeat);
+		} else {
+			channel -= 10;
+			if (volume > 63) {
+				volume = 63;
+			}
+			g_sound->playSound(channel, freq, animDataTable[anim].ptr1, size, 0, 0, volume, repeat);
+		}
+	} else {
+		if (volume > 63 || volume < 0) {
+			volume = 63;
+		}
 		if (channel >= 10) {
 			channel -= 10;
 		}
 		if (volume < 50) {
 			volume = 50;
 		}
-
-		g_sfxPlayer->stop();
-					
-		if (flag == 0xFFFF) {
-			g_soundDriver->playSound(animDataTable[anim].ptr1, 0, channel, volume);
+		g_sound->stopMusic();
+		if (size == 0xFFFF) {
+			g_sound->playSound(channel, 0, animDataTable[anim].ptr1, 0, 0, 0, volume, 0);
 		} else {
-			g_soundDriver->resetChannel(channel);
+			g_sound->stopSound(channel);
 		}
 	}
 }
@@ -1689,12 +1651,12 @@ void o2_playSample() {
 }
 
 void o2_playSampleAlt() {
-	int num = getNextByte();
-	int channel = getNextByte();
-	int freq = getNextWord();
+	byte num = getNextByte();
+	byte channel = getNextByte();
+	uint16 frequency = getNextWord();
 	getNextByte();
 	getNextWord();
-	int size = getNextWord();
+	uint16 size = getNextWord();
 
 	if (size == 0xFFFF) {
 		size = animDataTable[num].width * animDataTable[num].height;
@@ -1704,8 +1666,7 @@ void o2_playSampleAlt() {
 			// if speaker output is enabled, play sound on it
 			// if it's another device, don't play anything
 		} else {
-			g_soundDriver->setChannelFrequency(channel, freq);
-			g_soundDriver->playSound(animDataTable[num].ptr1, size, channel, 63);
+			g_sound->playSound(channel, frequency, animDataTable[num].ptr1, size, 0, 0, 63, 0);
 		}
 	}
 }

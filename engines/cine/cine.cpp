@@ -39,15 +39,13 @@
 #include "cine/main_loop.h"
 #include "cine/object.h"
 #include "cine/texte.h"
-#include "cine/sfx_player.h"
-#include "cine/sound_driver.h"
+#include "cine/sound.h"
 #include "cine/various.h"
 
 
 namespace Cine {
 
-SoundDriver *g_soundDriver;
-SfxPlayer *g_sfxPlayer;
+Sound *g_sound;
 Common::SaveFileManager *g_saveFileMan;
 
 CineEngine *g_cine;
@@ -96,16 +94,11 @@ int CineEngine::init() {
 	_system->endGFXTransaction();
 
 	if (g_cine->getPlatform() == Common::kPlatformPC) {
-		if (g_cine->getGameType() == GType_FW) {
-			g_soundDriver = new AdlibSoundDriverINS(_mixer);
-		} else {
-			g_soundDriver = new AdlibSoundDriverADL(_mixer);
-		}
+		g_sound = new PCSound(_mixer, this);
 	} else {
 		// Paula chipset for Amiga and Atari versions
-		g_soundDriver = new PaulaSoundDriver(_mixer);
+		g_sound = new PaulaSound(_mixer, this);
 	}
-	g_sfxPlayer = new SfxPlayer(g_soundDriver);
 	g_saveFileMan = _saveFileMan;
 
 	initialize();
@@ -118,8 +111,7 @@ int CineEngine::go() {
 
 	mainLoop(1);
 
-	delete g_sfxPlayer;
-	delete g_soundDriver;
+	delete g_sound;
 	return 0;
 }
 

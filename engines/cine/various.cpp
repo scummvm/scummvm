@@ -29,7 +29,7 @@
 #include "cine/cine.h"
 #include "cine/main_loop.h"
 #include "cine/object.h"
-#include "cine/sfx_player.h"
+#include "cine/sound.h"
 #include "cine/bg_list.h"
 #include "cine/various.h"
 
@@ -438,7 +438,7 @@ bool CineEngine::makeLoad(char *saveName) {
 		return false;
 	}
 
-	g_sfxPlayer->stop();
+	g_sound->stopMusic();
 	freeAnimDataTable();
 	unloadAllMasks();
 	// if (g_cine->getGameType() == Cine::GType_OS) {

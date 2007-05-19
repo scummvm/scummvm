@@ -29,10 +29,9 @@
 
 #include "cine/main_loop.h"
 #include "cine/object.h"
-#include "cine/sfx_player.h"
 #include "cine/various.h"
 #include "cine/bg_list.h"
-#include "cine/sound_driver.h"
+#include "cine/sound.h"
 
 namespace Cine {
 
@@ -157,7 +156,7 @@ void manageEvents(int count) {
 		if (i % 2)
 			g_system->updateScreen();
 		g_system->delayMillis(10);
-		g_soundDriver->update();
+		g_sound->update();
 		manageEvents(0);
 	}
 }
@@ -246,7 +245,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 		strcpy(currentCtName, "");
 		strcpy(currentPartName, "");
 
-		g_sfxPlayer->stop();
+		g_sound->stopMusic();
 	}
 
 	do {
@@ -335,7 +334,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 	} while (!exitEngine && !quitFlag && var21 != 7);
 
 	hideMouse();
-	g_sfxPlayer->stop();
+	g_sound->stopMusic();
 	freeAnimDataTable();
 	unloadAllMasks();
 	freePrcLinkedList();
