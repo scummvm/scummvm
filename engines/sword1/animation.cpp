@@ -450,7 +450,7 @@ void MoviePlayerDXA::processFrame(void) {
 
 		for (y = _textY; y < _textY + _textHeight; y++) {
 			for (x = _textX; x < _textX + _textWidth; x++) {
-				if (x >= _frameX && x <= _frameX + _frameWidth && y >= _frameY && y <= _frameY + _frameWidth) {
+				if (x >= _frameX && x <= _frameX + _frameWidth && y >= _frameY && y <= _frameY + _frameHeight) {
 					_textSpriteBuf[(y - _textY) * _textWidth + x - _textX] = _drawBuffer[(y - _frameY) * _frameWidth + x - _frameX];
 				}
 			}
