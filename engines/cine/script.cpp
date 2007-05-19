@@ -448,7 +448,7 @@ uint16 getNextWord() {
 
 const char *getNextString() {
 	const char *val = (const char *)(_currentScriptPtr + _currentPosition);
-	_currentPosition += strlen(val);
+	_currentPosition += strlen(val) + 1;
 	return val;
 }
 
@@ -562,7 +562,7 @@ uint16 computeScriptStackSub(bool computeAllLabels, byte *scriptPtr, int16 *stac
 	while (position < scriptSize) {
 		uint8 opcode = scriptPtr[position];
 		position++;
-		if (opcode == 0) {
+		if (opcode == 0 || opcode > _numOpcodes) {
 			continue;
 		}
 		if (!_opcodeTable[opcode - 1].args) {
@@ -600,9 +600,7 @@ uint16 computeScriptStackSub(bool computeAllLabels, byte *scriptPtr, int16 *stac
 				}
 				break;
 			case 's': // string
-				do {
-					position++;
-				} while (scriptPtr[position] != 0);
+				while (scriptPtr[position++] != 0);
 				break;
 			case 'x': // exit script
 				return position;
