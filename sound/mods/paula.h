@@ -41,7 +41,7 @@ public:
 	~Paula();
 
 	bool playing() const { return _playing; }
-	void setInterruptFreq(int freq) { _intFreq = freq; }
+	void setInterruptFreq(int freq) { _curInt = _intFreq = freq; }
 	void setPanning(byte voice, byte panning) {
 		assert(voice < NUM_VOICES);
 		_voice[voice].panning = panning;

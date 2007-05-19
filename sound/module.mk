@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	mods/protracker.o \
 	mods/paula.o \
 	mods/rjp1.o \
+	mods/soundfx.o \
 	softsynth/adlib.o \
 	softsynth/ym2612.o \
 	softsynth/fluidsynth.o \
