@@ -305,10 +305,18 @@ void DosSoundMan::playLocationMusic(const char *location) {
 
 AmigaSoundMan::AmigaSoundMan(Parallaction *vm) : SoundMan(vm) {
 	_musicStream = 0;
+	_channels[0].data = 0;
+    _channels[1].data = 0;
+    _channels[2].data = 0;
+    _channels[3].data = 0;
 }
 
 AmigaSoundMan::~AmigaSoundMan() {
 	stopMusic();
+	stopSfx(0);
+	stopSfx(1);
+	stopSfx(2);
+	stopSfx(3);
 }
 
 void AmigaSoundMan::playSfx(const char *filename, uint channel, bool looping, int volume, int rate) {
@@ -355,11 +363,12 @@ void AmigaSoundMan::stopSfx(uint channel) {
 		return;
 	}
 
-	debugC(1, kDebugAudio, "AmigaSoundMan::stopSfx(%i)", channel);
-
-	_mixer->stopHandle(_channels[channel].handle);
-	free(_channels[channel].data);
-	_channels[channel].data = 0;
+    if (_channels[channel].data) {
+        debugC(1, kDebugAudio, "AmigaSoundMan::stopSfx(%i)", channel);
+        _mixer->stopHandle(_channels[channel].handle);
+        free(_channels[channel].data);
+        _channels[channel].data = 0;
+    }
 }
 
 void AmigaSoundMan::playMusic() {
