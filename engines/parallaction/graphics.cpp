@@ -237,6 +237,7 @@ void Gfx::quickFadePalette(Palette pal) {
 }
 
 void Gfx::setHalfbriteMode(bool enable) {
+#ifdef HALFBRITE
 	if (_vm->getPlatform() != Common::kPlatformAmiga) return;
 	if (enable == _halfbrite) return;
 
@@ -249,8 +250,8 @@ void Gfx::setHalfbriteMode(bool enable) {
 		*buf++ ^= 0x20;
 
 	_halfbrite = !_halfbrite;
+#endif
 }
-
 
 void Gfx::updateScreen() {
 //	  printf("Gfx::updateScreen()\n");

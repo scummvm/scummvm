@@ -246,7 +246,7 @@ void _c_shade(void *parm) {
 }
 
 void _c_projector(void*) {
-
+#ifdef HALFBRITE
 	static int dword_16032 = 0;
 
 //	Bitmap bm;
@@ -298,14 +298,19 @@ void _c_projector(void*) {
 
 	dword_16032 = 1;
 	return;
+#endif
 }
 
 void _c_HBOff(void*) {
+#ifdef HALFBRITE
 	_vm->_gfx->setHalfbriteMode(false);
+#endif
 }
 
 void _c_HBOn(void*) {
+#ifdef HALFBRITE
 	_vm->_gfx->setHalfbriteMode(true);
+#endif
 }
 
 } // namespace Parallaction
