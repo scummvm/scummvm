@@ -122,6 +122,7 @@ void Parallaction::parseLocation(const char *filename) {
 		}
 		if (!scumm_stricmp(_tokens[0], "COMMENT")) {
 			_location._comment = parseComment(*_locationScript);
+			debugC(3, kDebugLocation, "Location comment: '%s'", _location._comment);
 		}
 		if (!scumm_stricmp(_tokens[0], "ENDCOMMENT")) {
 			_location._endComment = parseComment(*_locationScript);
@@ -370,7 +371,11 @@ void Parallaction::changeLocation(char *location) {
 		runJobs();
 		_gfx->swapBuffers();
 	}
-
+	
+	if (_location._comment) {
+		doLocationEnterTransition();
+	}
+	
 	runJobs();
 	_gfx->swapBuffers();
 
@@ -399,9 +404,11 @@ void Parallaction::changeLocation(char *location) {
 void Parallaction::doLocationEnterTransition() {
 	debugC(1, kDebugLocation, "doLocationEnterTransition");
 
-	if (_localFlags[_currentLocationIndex] & kFlagsVisited)
-		return; // visited
-
+    if (_localFlags[_currentLocationIndex] & kFlagsVisited) {
+        debugC(3, kDebugLocation, "skipping location transition");
+        return; // visited
+    }
+ 
 	byte pal[PALETTE_SIZE];
 	_gfx->buildBWPalette(pal);
 	_gfx->setPalette(pal);
