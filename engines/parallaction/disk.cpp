@@ -285,7 +285,7 @@ StaticCnv* DosDisk::loadHead(const char* name) {
 		name += 4;
 	}
 
-	snprintf(path, 8, "%shead", name);
+	sprintf(path, "%shead", name);
 	path[8] = '\0';
 
 	return loadExternalStaticCnv(path);
