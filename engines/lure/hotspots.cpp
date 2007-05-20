@@ -2044,6 +2044,7 @@ void Hotspot::saveToStream(Common::WriteStream *stream) {
 	stream->writeSint16LE(_startY);
 	stream->writeSint16LE(_destX);
 	stream->writeSint16LE(_destY);
+	stream->writeUint16LE(_destHotspotId);
 	stream->writeUint16LE(_frameWidth);
 	stream->writeUint16LE(_height);
 	stream->writeUint16LE(_width);
@@ -2079,6 +2080,7 @@ void Hotspot::loadFromStream(Common::ReadStream *stream) {
 	_startY = stream->readSint16LE();
 	_destX = stream->readSint16LE();
 	_destY = stream->readSint16LE();
+	_destHotspotId = stream->readUint16LE();
 	_frameWidth = stream->readUint16LE();
 	_height = stream->readUint16LE();
 	_width = stream->readUint16LE();
