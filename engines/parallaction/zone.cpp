@@ -494,7 +494,7 @@ void jobDisplayDroppedItem(void *parm, Job *j) {
 	Zone *z = (Zone*)parm;
 
 	if (z->u.get->_cnv) {
-		if (z->u.get->_cnv->_data0 != NULL) {
+		if (j->_count == 0) {
 			_vm->_gfx->backupGetBackground(z->u.get, z->_left, z->_top);
 		}
 
