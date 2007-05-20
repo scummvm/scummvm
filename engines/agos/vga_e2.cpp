@@ -190,18 +190,127 @@ void AGOSEngine::vc52_playSound() {
 }
 
 void AGOSEngine::vc53_dissolveIn() {
-	// TODO
-	uint num = vcReadNextWord();
-	uint speed = vcReadNextWord();
-	debug(0, "vc53_dissolveIn: stub (%d, %d)", num, speed);
+	uint16 num = vcReadNextWord();
+	uint16 speed = vcReadNextWord() + 1;
+
+	byte *src, *dst, *srcOffs, *srcOffs2, *dstOffs, *dstOffs2;
+	uint8 color = 0;
+
+	// Only uses Video Window 4
+	num = 4;
+
+	uint16 dissolveX = _videoWindows[num * 4 + 2] * 8;
+	uint16 dissolveY = (_videoWindows[num * 4 + 3] + 1) / 2;
+	uint16 dissolveCheck = dissolveY * dissolveX * 4;
+	uint16 dissolveDelay = dissolveCheck * 2 / speed;
+	uint16 dissolveCount = dissolveCheck * 2 / speed;
+
+	int16 xoffs = _videoWindows[num * 4 + 0] * 16;
+	int16 yoffs = _videoWindows[num * 4 + 1];
+	byte *dstPtr = getFrontBuf() + xoffs + yoffs * _screenWidth;
+
+	uint16 count = dissolveCheck * 2;
+	while (count--) {
+		yoffs = _rnd.getRandomNumber(dissolveY);
+		dst = dstPtr + yoffs * _screenWidth;
+		src = _window4BackScn + yoffs * 224;
+
+		xoffs = _rnd.getRandomNumber(dissolveX);
+		dst += xoffs;
+		src += xoffs;
+
+		*dst &= color;
+		*dst |= *src & 0xF;
+
+		dstOffs = dst;
+		srcOffs = src;
+
+		xoffs = dissolveX * 2 - 1 - (xoffs * 2);
+		dst += xoffs;
+		src += xoffs;
+
+		*dst &= color;
+		*dst |= *src & 0xF;
+
+		srcOffs2 = src;
+		dstOffs2 = dst;
+
+		yoffs = (dissolveY - 1) * 2 - (yoffs * 2);
+		src = srcOffs + yoffs * 224;
+		dst = dstOffs + yoffs * _screenWidth;
+
+		color = 0xF0;
+		*dst &= color;
+		*dst |= *src & 0xF;
+
+		dst = dstOffs2 + yoffs * _screenWidth;;
+		src = srcOffs2 + yoffs * 224;
+
+		*dst &= color;
+		*dst |= *src & 0xF;
+
+		dissolveCount--;
+		if (!dissolveCount) {
+			if (count >= dissolveCheck)
+				dissolveDelay++;
+
+			dissolveCount = dissolveDelay;
+			_system->copyRectToScreen(getFrontBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
+			_system->updateScreen();
+			delay(0);
+		}
+	}
 }
 
 void AGOSEngine::vc54_dissolveOut() {
-	// TODO
-	uint num = vcReadNextWord();
-	uint color = vcReadNextWord();
-	uint speed = vcReadNextWord();
-	debug(0, "vc54_dissolveOut: stub (%d, %d, %d)", num, color, speed);
+	uint16 num = vcReadNextWord();
+	uint16 color = vcReadNextWord();
+	uint16 speed = vcReadNextWord() + 1;
+
+	byte *dst, *dstOffs;
+
+	uint16 dissolveX = _videoWindows[num * 4 + 2] * 8;
+	uint16 dissolveY = (_videoWindows[num * 4 + 3] + 1) / 2;
+	uint16 dissolveCheck = dissolveY * dissolveX * 4;
+	uint16 dissolveDelay = dissolveCheck * 2 / speed;
+	uint16 dissolveCount = dissolveCheck * 2 / speed;
+
+	int16 xoffs = _videoWindows[num * 4 + 0] * 16;
+	int16 yoffs = _videoWindows[num * 4 + 1];
+	byte *dstPtr = getFrontBuf() + xoffs + yoffs * _screenWidth;
+	color |= dstPtr[0] & 0xF0;
+
+	uint16 count = dissolveCheck * 2;
+	while (count--) {
+		yoffs = _rnd.getRandomNumber(dissolveY);
+		xoffs = _rnd.getRandomNumber(dissolveX);
+		dst = dstPtr + xoffs + yoffs * _screenWidth;
+		*dst = color;
+
+		dstOffs = dst;
+
+		xoffs = dissolveX * 2 - 1 - (xoffs * 2);
+		dst += xoffs;
+		*dst = color;
+
+		yoffs = (dissolveY - 1) * 2 - (yoffs * 2);
+		dst = dstOffs + yoffs * _screenWidth;
+		*dst = color;
+
+		dst += xoffs;
+		*dst = color;
+
+		dissolveCount--;
+		if (!dissolveCount) {
+			if (count >= dissolveCheck)
+				dissolveDelay++;
+
+			dissolveCount = dissolveDelay;
+			_system->copyRectToScreen(getFrontBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
+			_system->updateScreen();
+			delay(0);
+		}
+	}
 }
 
 void AGOSEngine::vc55_moveBox() {
