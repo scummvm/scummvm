@@ -269,6 +269,29 @@ void RoomPathsData::decompress(RoomPathsDecompressedData &dataOut, int character
 		*pOut-- = 0xffff;
 }
 
+// Room data class
+
+void RoomDataList::saveToStream(WriteStream *stream) {
+	RoomDataList::iterator i;
+
+	for (i = begin(); i != end(); ++i) {
+		RoomData *rec = *i;
+		const byte *pathData = rec->paths.data();
+		stream->write(pathData, ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH);
+	}
+}
+
+void RoomDataList::loadFromStream(ReadStream *stream) {
+	RoomDataList::iterator i;
+	byte data[ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH];
+
+	for (i = begin(); i != end(); ++i) {
+		RoomData *rec = *i;
+		stream->read(data, ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH);
+		rec->paths.load(data);
+	}
+}
+
 // Room exit joins class
 
 RoomExitJoinData::RoomExitJoinData(RoomExitJoinResource *rec) {

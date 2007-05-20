@@ -650,6 +650,7 @@ void Resources::saveToStream(Common::WriteStream *stream)
 	_randomActions.saveToStream(stream);
 	_barmanLists.saveToStream(stream);
 	_exitJoins.saveToStream(stream);
+	_roomData.saveToStream(stream);
 }
 
 void Resources::loadFromStream(Common::ReadStream *stream) {
@@ -665,6 +666,8 @@ void Resources::loadFromStream(Common::ReadStream *stream) {
 	_barmanLists.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading room exit joins");
 	_exitJoins.loadFromStream(stream);
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading walkable paths");
+	_roomData.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Finished loading");
 }
 

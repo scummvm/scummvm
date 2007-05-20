@@ -310,6 +310,7 @@ public:
 	void load(byte *srcData) {
 		memcpy(_data, srcData, ROOM_PATHS_SIZE);
 	}
+	const byte *data() { return _data; }
 	bool isOccupied(int x, int y);
 	bool isOccupied(int x, int y, int width);
 	void setOccupied(int x, int y, int width);
@@ -339,7 +340,11 @@ public:
 	RoomPathsData paths;
 };
 
-typedef ManagedList<RoomData *> RoomDataList;
+class RoomDataList: public ManagedList<RoomData *> {
+public:
+	void saveToStream(WriteStream *stream);
+	void loadFromStream(ReadStream *stream);
+};
 
 class RoomExitJoinData {
 public:
