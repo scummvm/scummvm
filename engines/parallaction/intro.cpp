@@ -159,17 +159,18 @@ void _c_endIntro(void *parm) {
 
 		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	}
-
 	debugC(1, kDebugLocation, "endIntro(): done showing credits");
 
-	_vm->_gfx->displayCenteredString(80, "CLICK MOUSE BUTTON TO START");
-	_vm->_gfx->updateScreen();
-
-	waitUntilLeftClick();
-
 	if ((_vm->getFeatures() & GF_DEMO) == 0) {
+		_vm->_gfx->displayCenteredString(80, "CLICK MOUSE BUTTON TO START");
+		_vm->_gfx->updateScreen();
+
+		waitUntilLeftClick();
+
 		_engineFlags &= ~kEngineMouse;
 		_vm->_menu->selectCharacter();
+	} else {
+		waitUntilLeftClick();
 	}
 
 	return;
