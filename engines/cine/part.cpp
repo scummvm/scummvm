@@ -331,7 +331,7 @@ int16 findFileInBundle(const char *fileName) {
 
 	if (g_cine->getGameType() == Cine::GType_OS) {
 		for (i = 0; i < numElementInPart; i++) {
-			if (!strcmp(fileName, partBuffer[i].partName)) {
+			if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
 				return i;
 			}
 		}
@@ -374,11 +374,11 @@ int16 findFileInBundle(const char *fileName) {
 				bPtr = bundleNamesAtari;
 		}
 
-		while (**bPtr) {
+		while (*bPtr) {
 			loadPart(*bPtr);
 
 			for (i = 0; i < numElementInPart; i++) {
-				if (!strcmp(fileName, partBuffer[i].partName)) {
+				if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
 					return i;
 				}
 			}
@@ -386,7 +386,7 @@ int16 findFileInBundle(const char *fileName) {
 		}
 	} else {
 		for (i = 0; i < numElementInPart; i++) {
-			if (!strcmp(fileName, partBuffer[i].partName)) {
+			if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
 				return i;
 			}
 		}
@@ -420,7 +420,7 @@ byte *readBundleFile(int16 foundFileIdx) {
 	return dataPtr;
 }
 
-byte *readBundleSoundFile(const char *entryName) {
+byte *readBundleSoundFile(const char *entryName, uint32 *size) {
 	int16 index;
 	byte *data = 0;
 	char previousPartName[15] = "";
@@ -432,6 +432,9 @@ byte *readBundleSoundFile(const char *entryName) {
 	index = findFileInBundle((const char *)entryName);
 	if (index != -1) {
 		data = readBundleFile(index);
+		if (size) {
+			*size = partBuffer[index].unpackedSize;
+		}
 	}
 	if (g_cine->getGameType() == Cine::GType_FW) {
 		loadPart(previousPartName);
