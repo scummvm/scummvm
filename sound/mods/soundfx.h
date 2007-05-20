@@ -30,7 +30,9 @@ namespace Audio {
 
 class AudioStream;
 
-AudioStream *makeSoundFxStream(Common::SeekableReadStream *data, int rate = 44100, bool stereo = true);
+typedef byte *(*LoadSoundFxInstrumentCallback)(const char *name, uint32 *size);
+
+AudioStream *makeSoundFxStream(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallback loadCb, int rate = 44100, bool stereo = true);
 
 } // End of namespace Audio
 

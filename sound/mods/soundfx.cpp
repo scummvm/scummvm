@@ -30,7 +30,7 @@
 namespace Audio {
 
 struct SoundFxInstrument {
-	uint8 name[23];
+	char name[23];
 	uint16 len;
 	uint8 finetune;
 	uint8 volume;
@@ -51,7 +51,7 @@ public:
 	SoundFx(int rate, bool stereo);
 	virtual ~SoundFx();
 
-	bool load(Common::SeekableReadStream *data);
+	bool load(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallback loadCb);
 	void play();
 
 protected:
@@ -78,7 +78,6 @@ protected:
 	uint16 _curPos;
 	uint8 _ordersTable[128];
 	uint8 *_patternData;
-	int8 *_instrumentData;
 	int _eventsFreq;
 	uint16 _effects[NUM_CHANNELS];
 };
@@ -93,69 +92,78 @@ SoundFx::SoundFx(int rate, bool stereo)
 	_curPos = 0;
 	memset(_ordersTable, 0, sizeof(_ordersTable));
 	_patternData = 0;
-	_instrumentData = 0;
 	_eventsFreq = 0;
 	memset(_effects, 0, sizeof(_effects));
 }
 
 SoundFx::~SoundFx() {
 	free(_patternData);
-	free(_instrumentData);
+	for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
+		free(_instruments[i].data);
+	}
 }
 
-bool SoundFx::load(Common::SeekableReadStream *data) {
-	bool loaded = false;
+bool SoundFx::load(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallback loadCb) {
 	int instrumentsSize[15];
-	int totalInstrumentsSize = 0;
-	for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
-		instrumentsSize[i] = data->readUint32BE();
-		totalInstrumentsSize += instrumentsSize[i];
+	if (!loadCb) {
+		for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
+			instrumentsSize[i] = data->readUint32BE();
+		}
 	}
 	uint8 tag[4];
 	data->read(tag, 4);
-	if (memcmp(tag, "SONG", 4) == 0) {
-		_delay = data->readUint16BE();
-		data->skip(7 * 2);
-		for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
-			SoundFxInstrument *ins = &_instruments[i];
-			data->read(ins->name, 22); ins->name[22] = 0;
-			ins->len = data->readUint16BE();
-			ins->finetune = data->readByte();
-			ins->volume = data->readByte();
-			ins->repeatPos = data->readUint16BE();
-			ins->repeatLen = data->readUint16BE();
+	if (memcmp(tag, "SONG", 4) != 0) {
+		return false;
+	}
+	_delay = data->readUint16BE();
+	data->skip(7 * 2);
+	for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
+		SoundFxInstrument *ins = &_instruments[i];
+		data->read(ins->name, 22); ins->name[22] = 0;
+		ins->len = data->readUint16BE();
+		ins->finetune = data->readByte();
+		ins->volume = data->readByte();
+		ins->repeatPos = data->readUint16BE();
+		ins->repeatLen = data->readUint16BE();
+	}
+	_numOrders = data->readByte();
+	data->skip(1);
+	data->read(_ordersTable, 128);
+	int maxOrder = 0;
+	for (int i = 0; i < _numOrders; ++i) {
+		if (_ordersTable[i] > maxOrder) {
+			maxOrder = _ordersTable[i];
 		}
-		_numOrders = data->readByte();
-		data->skip(1);
-		data->read(_ordersTable, 128);
-		int maxOrder = 0;
-		for (int i = 0; i < _numOrders; ++i) {
-			if (_ordersTable[i] > maxOrder) {
-				maxOrder = _ordersTable[i];
-			}
-		}
-		int patternSize = (maxOrder + 1) * 4 * 4 * 64;
-		_patternData = (uint8 *)malloc(patternSize);
-		if (_patternData) {
-			data->read(_patternData, patternSize);
-			_instrumentData = (int8 *)malloc(totalInstrumentsSize);
-			if (_instrumentData) {
-				data->read(_instrumentData, totalInstrumentsSize);
-				int8 *p = _instrumentData;
-				for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
-					SoundFxInstrument *ins = &_instruments[i];
-					assert(ins->len <= 2 || ins->len * 2 <= instrumentsSize[i]);
-					assert(ins->repeatLen <= 2 || (ins->repeatPos + ins->repeatLen) * 2 <= instrumentsSize[i]);
-					if (instrumentsSize[i] != 0) {
-						ins->data = p;
-						p += instrumentsSize[i];
-					}
+	}
+	int patternSize = (maxOrder + 1) * 4 * 4 * 64;
+	_patternData = (uint8 *)malloc(patternSize);
+	if (!_patternData) {
+		return false;
+	}
+	data->read(_patternData, patternSize);
+	for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
+		SoundFxInstrument *ins = &_instruments[i];
+		if (!loadCb) {
+			if (instrumentsSize[i] != 0) {
+				assert(ins->len <= 1 || ins->len * 2 <= instrumentsSize[i]);
+				assert(ins->repeatLen <= 1 || (ins->repeatPos + ins->repeatLen) * 2 <= instrumentsSize[i]);
+				ins->data = (int8 *)malloc(instrumentsSize[i]);
+				if (!ins->data) {
+					return false;
 				}
-				loaded = true;
+				data->read(ins->data, instrumentsSize[i]);
+			}
+		} else {
+			if (ins->name[0]) {
+				ins->name[8] = '\0';
+				ins->data = (int8 *)(*loadCb)(ins->name, 0);
+				if (!ins->data) {
+					return false;
+				}
 			}
 		}
 	}
-	return loaded;
+	return true;
 }
 
 void SoundFx::play() {
@@ -285,9 +293,9 @@ void SoundFx::interrupt() {
 	handleTick();
 }
 
-AudioStream *makeSoundFxStream(Common::SeekableReadStream *data, int rate, bool stereo) {
+AudioStream *makeSoundFxStream(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallback loadCb, int rate, bool stereo) {
 	SoundFx *stream = new SoundFx(rate, stereo);
-	if (stream->load(data)) {
+	if (stream->load(data, loadCb)) {
 		stream->play();
 		return stream;
 	}

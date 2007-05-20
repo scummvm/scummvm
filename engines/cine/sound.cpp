@@ -777,9 +777,21 @@ PaulaSound::~PaulaSound() {
 }
 
 void PaulaSound::loadMusic(const char *name) {
-	Common::File f;
-	if (f.open(name)) {
-		_moduleStream = Audio::makeSoundFxStream(&f, _mixer->getOutputRate());
+	if (_vm->getGameType() == GType_FW) {
+		// look for separate files
+		Common::File f;
+		if (f.open(name)) {
+			_moduleStream = Audio::makeSoundFxStream(&f, 0, _mixer->getOutputRate());
+		}
+	} else {
+		// look in bundle files
+		uint32 size;
+		byte *buf = readBundleSoundFile(name, &size);
+		if (buf) {
+			Common::MemoryReadStream s(buf, size);
+			_moduleStream = Audio::makeSoundFxStream(&s, readBundleSoundFile, _mixer->getOutputRate());
+			free(buf);
+		}
 	}
 }
 
