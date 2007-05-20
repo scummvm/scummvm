@@ -477,7 +477,8 @@ void Hotspot::setDirection(Direction dir) {
 		_charRectY = 0;
 		break;
 	default:
-		break;
+		// No need to change
+		return;
 	}
 
 	setFrameNumber(newFrameNumber);
@@ -547,7 +548,7 @@ void Hotspot::setRandomDest() {
 	// Try up to 20 times to find an unoccupied destination 
 	for (int tryCtr = 0; tryCtr < 20; ++tryCtr) {
 		xp = rect.left + rnd.getRandomNumber(rect.right - rect.left);
-		yp = rect.left + rnd.getRandomNumber(rect.bottom - rect.top);
+		yp = rect.top + rnd.getRandomNumber(rect.bottom - rect.top);
 		setDestPosition(xp, yp);
 		setDestHotspot(0);
 
@@ -1033,15 +1034,16 @@ bool Hotspot::doorCloseCheck(uint16 doorId) {
 		if ((hsCurrent->hotspotId() == 0xfffe) || (hsCurrent->hotspotId() == 0xffff))
 			continue;
 
-		// Check the dimensions of the animation
-		if ((hsCurrent->x() < bounds.right) &&
-			((hsCurrent->x() + hsCurrent->widthCopy()) > bounds.left) &&
-			((hsCurrent->y() + hsCurrent->heightCopy() + hsCurrent->charRectY()) >= bounds.top) &&
-			((hsCurrent->y() + hsCurrent->heightCopy() - hsCurrent->charRectY()
-			- hsCurrent->yCorrection()) > bounds.bottom)) {
-			// Return false - the door can't be closed
-			return false;
-		}
+		// Check to see if the character is intersecting the door area
+		int tempY = hsCurrent->y() + hsCurrent->heightCopy();
+		if ((hsCurrent->x() >= bounds.right) ||
+			(hsCurrent->x() + hsCurrent->widthCopy() <= bounds.left) ||
+			(tempY + hsCurrent->charRectY() < bounds.top) ||
+			(tempY - hsCurrent->yCorrection() - hsCurrent->charRectY() > bounds.bottom))
+			continue;
+
+		// At this point we know a character is blocking door, so return false
+		return false;
 	}
 
 	// No blocking characters, so return true that the door can be closed
@@ -3736,6 +3738,7 @@ PathFinderResult PathFinder::process() {
 				add(LEFT, -_xDestPos);
 
 			_inProgress = false;
+			result = PF_OK;
 			goto final_step;
 		}
 

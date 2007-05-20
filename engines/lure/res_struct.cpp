@@ -218,7 +218,7 @@ void RoomPathsData::decompress(RoomPathsDecompressedData &dataOut, int character
 	// Handle padding for last row, including left/right edge padding, as
 	// well as the right column of the second row
 	for (paddingCtr = 0; paddingCtr < (DECODED_PATHS_WIDTH + 1); ++paddingCtr)
-		*pOut-- = 0xffff;
+		*pOut-- = 0;
 
 	for (int y = 0; y < ROOM_PATHS_HEIGHT; ++y) {
 		charState = false;
@@ -258,15 +258,15 @@ void RoomPathsData::decompress(RoomPathsDecompressedData &dataOut, int character
 		}
 
 		// Store 2 words to allow off-screen row-start/prior row end
-		*pOut-- = 0xffff;
-		*pOut-- = 0xffff;
+		*pOut-- = 0;
+		*pOut-- = 0;
 		charState = false;
 	}
 
 	// Handle padding for final top row - no need for end column, as end of prior
 	// row provided padding for it
 	for (paddingCtr = 0; paddingCtr < (ROOM_PATHS_WIDTH + 1); ++paddingCtr)
-		*pOut-- = 0xffff;
+		*pOut-- = 0;
 }
 
 // Room data class
