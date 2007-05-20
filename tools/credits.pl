@@ -541,6 +541,10 @@ begin_credits("Credits");
 		  add_person("Paul Gilbert", "dreammaster", "");
 	  end_section();
 
+	  begin_section("Parallaction");
+		  add_person("", "peres", "");
+	  end_section();
+
 	  begin_section("SAGA");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
