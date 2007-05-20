@@ -385,7 +385,7 @@ Surface *Surface::getScreen(uint16 resourceId) {
 	return new Surface(decodedData, FULL_SCREEN_WIDTH, decodedData->size() / FULL_SCREEN_WIDTH);
 }
 
-bool Surface::getString(Common::String &line, uint32 maxSize, bool isNumeric, bool varLength, int16 x, int16 y) {
+bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool varLength, int16 x, int16 y) {
 	OSystem &system = *g_system;
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
@@ -404,7 +404,7 @@ bool Surface::getString(Common::String &line, uint32 maxSize, bool isNumeric, bo
 		// Display the string
 		screen.screen().writeString(x, y, newLine, true, DIALOG_TEXT_COLOUR, varLength);
 		screen.update();
-		int stringSize = screen.screen().textWidth(newLine.c_str());
+		int stringSize = textWidth(newLine.c_str());
 
 		// Loop until the input string changes
 		refreshFlag = false;
@@ -420,7 +420,7 @@ bool Surface::getString(Common::String &line, uint32 maxSize, bool isNumeric, bo
 					if ((ch == 13) || (keycode == 0x10f)) {
 						// Return character
 						screen.screen().fillRect(
-							Rect(x, y, x + stringSize + 8, y + FONT_HEIGHT), bgColour);
+							Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
 						screen.update();
 						newLine.deleteLastChar();
 						line = newLine;
@@ -430,7 +430,7 @@ bool Surface::getString(Common::String &line, uint32 maxSize, bool isNumeric, bo
 					else if (ch == 27) {
 						// Escape character
 						screen.screen().fillRect(
-							Rect(x, y, x + stringSize + 8, y + FONT_HEIGHT), bgColour);
+							Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
 						screen.update();
 						abortFlag = true;
 					} else if (ch == 8) {
@@ -438,14 +438,14 @@ bool Surface::getString(Common::String &line, uint32 maxSize, bool isNumeric, bo
 						if (newLine.size() == 1) continue;
 
 						screen.screen().fillRect(
-							Rect(x, y, x + stringSize + 8, y + FONT_HEIGHT), bgColour);
+							Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
 						newLine.deleteChar(newLine.size() - 2);
 						refreshFlag = true;
 
-					} else if ((ch >= ' ') && (newLine.size() < maxSize)) {
+					} else if ((ch >= ' ') && (stringSize + 8 < maxSize)) {
 						if (((ch >= '0') && (ch <= '9')) || !isNumeric) {
 							screen.screen().fillRect(
-								Rect(x, y, x + stringSize + 8, y + FONT_HEIGHT), bgColour);
+								Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
 							newLine.insertChar(ch, newLine.size() - 1);
 							refreshFlag = true;
 						}
@@ -741,7 +741,8 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 
 		// If in save mode, allow the entry of a new savename
 		if (saveDialog) {
-			if (!screen.screen().getString(*saveNames[selectedLine], 40, 
+			if (!screen.screen().getString(*saveNames[selectedLine], 
+				INFO_DIALOG_WIDTH - (DIALOG_EDGE_SIZE * 2), 
 				false, true, SAVE_DIALOG_X + DIALOG_EDGE_SIZE, 
 				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT)) {
 				// Aborted out of name selection, so restore old name and 

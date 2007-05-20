@@ -70,7 +70,7 @@ public:
 	static Surface *newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength = true, uint8 colour = DIALOG_TEXT_COLOUR);
 	static Surface *newDialog(uint16 width, const char *lines, uint8 colour = DIALOG_TEXT_COLOUR);
 	static Surface *getScreen(uint16 resourceId);
-	bool getString(Common::String &line, uint32 maxSize, bool isNumeric, bool varLength, int16 x, int16 y);
+	bool getString(Common::String &line, int maxSize, bool isNumeric, bool varLength, int16 x, int16 y);
 };
 
 class Dialog {
