@@ -146,14 +146,35 @@ void AGOSEngine::quickLoadOrSave() {
 		success = loadGame(genSaveName(_saveLoadSlot));
 		if (!success) {
 			sprintf(buf, "Failed to load game state to file:\n\n%s", filename);
-		} else {
-			// Redraw Inventory
-			mouseOff();
+		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 			drawIconArray(2, me(), 0, 0);
-			mouseOn();
-			// Reset engine?
 			setBitFlag(97, true);
 			sub = getSubroutineByID(100);
+			startSubroutine(sub);
+		} else if (getGameType() == GType_WW) {
+			sub = getSubroutineByID(66);
+			startSubroutine(sub);
+		} else if (getGameType() == GType_ELVIRA2) {
+			sub = getSubroutineByID(87);
+			startSubroutine(sub);
+			setBitFlag(7, false);
+			sub = getSubroutineByID(19);
+			startSubroutine(sub);
+			//oe2_printStats();
+			sub = getSubroutineByID(28);
+			startSubroutine(sub);
+			setBitFlag(17, false);
+			sub = getSubroutineByID(207);
+			startSubroutine(sub);
+			sub = getSubroutineByID(71);
+			startSubroutine(sub);
+		} else if (getGameType() == GType_ELVIRA1) {
+			drawIconArray(2, me(), 0, 0);
+			sub = getSubroutineByID(265);
+			startSubroutine(sub);
+			sub = getSubroutineByID(129);
+			startSubroutine(sub);
+			sub = getSubroutineByID(131);
 			startSubroutine(sub);
 		}
 	} else {
