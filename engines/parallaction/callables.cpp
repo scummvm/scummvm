@@ -65,11 +65,12 @@ void _c_score(void *parm) {
 }
 
 void _c_fade(void *parm) {
+	
 	_vm->_gfx->setBlackPalette();
 
-	_vm->_gfx->swapBuffers();
-
 	Gfx::Palette pal;
+	memset(pal, 0, sizeof(Gfx::Palette));
+	
 	for (uint16 _di = 0; _di < 64; _di++) {
 		_vm->_gfx->fadePalette(pal);
 		_vm->_gfx->setPalette(pal);
@@ -296,21 +297,24 @@ void _c_endComment(void *param) {
 }
 
 void _c_frankenstein(void *parm) {
+	
 	Gfx::Palette pal0;
+	Gfx::Palette pal1;
 
 	for (uint16 i = 0; i <= BASE_PALETTE_COLORS; i++) {
 		pal0[(i+FIRST_BASE_COLOR)] = _vm->_gfx->_palette[i];
 		pal0[(i+FIRST_BASE_COLOR)*3+1] = 0;
 		pal0[(i+FIRST_BASE_COLOR)*3+2] = 0;
-		pal0[(i+FIRST_EHB_COLOR)*3+1] = 0;
-		pal0[(i+FIRST_EHB_COLOR)*3+2] = 0;
+		
+		pal1[(i+FIRST_BASE_COLOR)*3+1] = 0;
+		pal1[(i+FIRST_BASE_COLOR)*3+2] = 0;
 	}
 
 	for (uint16 _di = 0; _di < 30; _di++) {
 		g_system->delayMillis(20);
 		_vm->_gfx->setPalette(pal0, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
 		g_system->delayMillis(20);
-		_vm->_gfx->setPalette(pal0, FIRST_EHB_COLOR, EHB_PALETTE_COLORS);
+		_vm->_gfx->setPalette(pal1, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
 	}
 
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
