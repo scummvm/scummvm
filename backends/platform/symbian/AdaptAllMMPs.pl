@@ -64,14 +64,16 @@ my @excludes_snd = (
 	"tables.cpp",
 	"freeverb.cpp"
 ); 
-my @excludes_gui = ( 
+
+my @excludes_graphics = ( 
+"iff.cpp"
 ); 
 
 #arseModule(mmpStr,		dirStr,		ifdefArray,		[exclusionsArray])
 ParseModule("_base",	"base",		\@section_empty); # now in ./TRG/ScummVM_TRG.mmp, these never change anyways...
 ParseModule("_base",	"common",	\@section_empty);
-ParseModule("_base",	"gui",		\@section_empty,		\@excludes_gui);
-ParseModule("_base",	"graphics",	\@section_empty);
+ParseModule("_base",	"gui",		\@section_empty);
+ParseModule("_base",	"graphics",	\@section_empty,		\@excludes_graphics);
 ParseModule("_base",	"sound",	\@section_empty,		\@excludes_snd);
 
 chdir("engines/");

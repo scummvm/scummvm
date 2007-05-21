@@ -94,6 +94,9 @@ SOURCE gui\Key.cpp
 SOURCE gui\KeysDialog.cpp
 SOURCE gui\Actions.cpp
 
+// Special for graphics
+source graphics\iff.cpp
+
 // *** Dynamic Libraries
 
 LIBRARY cone.lib  eikcore.lib 
