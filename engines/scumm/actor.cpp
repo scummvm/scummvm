@@ -2291,8 +2291,11 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 			if (ae->actorNum != -1) {
 				Actor *a = derefActor(ae->actorNum, "postProcessAuxQueue");
 				const uint8 *cost = getResourceAddress(rtCostume, a->_costume);
-				int dy = a->_offsY + a->getPos().y - a->getElevation();
+				int dy = a->_offsY + a->getPos().y;
 				int dx = a->_offsX + a->getPos().x;
+
+				if (_game.heversion >= 72)
+					dy -= a->getElevation();
 
 				const uint8 *akax = findResource(MKID_BE('AKAX'), cost);
 				assert(akax);
