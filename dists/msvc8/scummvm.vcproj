@@ -780,6 +780,14 @@
 					RelativePath="..\..\sound\mods\rjp1.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\sound\mods\soundfx.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\soundfx.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
