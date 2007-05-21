@@ -61,7 +61,7 @@ _build_lure=no
 _build_cine=yes
 _build_agi=yes
 _build_touche=yes
-_build_parallaction=no
+_build_parallaction=yes
 _build_cruise=no
 _need_memalign=no
 _build_plugins=no
@@ -322,23 +322,24 @@ Special configuration feature:
 Optional Features:
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
-  --disable-scumm          don't build the SCUMM engine
-  --disable-scumm-7-8      exclude v7 and v8 game in SCUMM engine (ft, dig, comi and demos)
-  --disable-he             exclude HE70+ games in SCUMM engine
+  --disable-agi            don't build the AGI engine
   --disable-agos           don't build the AGOS engine
-  --disable-sky            don't build the Beneath a Steel Sky engine
-  --disable-sword1         don't build the Broken Sword 1 engine
-  --disable-sword2         don't build the Broken Sword 2 engine
-  --disable-queen          don't build the Flight of the Amazon Queen engine
-  --disable-saga           don't build the SAGA engine
+  --disable-cine           don't build the Cinematique engine evo 1
+  --enable-cruise          build the Cruise for a Corpse engine
   --disable-gob            don't build the Gobli*ns engine
   --disable-kyra           don't build the Legend of Kyrandia engine
   --enable-lure            build the Lure of the Temptress engine
-  --disable-cine           don't build the Cinematique engine evo 1
-  --disable-agi            don't build the AGI engine
+  --disable-he             exclude HE70+ games in SCUMM engine
+  --disable-parallaction   don't build the Parallaction engine
+  --disable-queen          don't build the Flight of the Amazon Queen engine
+  --disable-saga           don't build the SAGA engine
+  --disable-scumm          don't build the SCUMM engine
+  --disable-scumm-7-8      exclude v7 and v8 game in SCUMM engine (ft, dig, comi and demos)
+  --disable-sky            don't build the Beneath a Steel Sky engine
+  --disable-sword1         don't build the Broken Sword 1 engine
+  --disable-sword2         don't build the Broken Sword 2 engine
   --disable-touche         don't build the Touche: The Adventures of the Fifth Musketeer engine
-  --enable-parallaction    build the Parallaction engine
-  --enable-cruise          build the Cruise for a Corpse engine
+
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
   --disable-mt32emu        don't enable the integrated MT-32 emulator
@@ -408,7 +409,7 @@ for ac_option in $@; do
       --disable-cine)           _build_cine=no ;;
       --disable-agi)            _build_agi=no ;;
       --disable-touche)         _build_touche=no ;;
-      --enable-parallaction)    _build_parallaction=yes ;;
+      --disable-parallaction)   _build_parallaction=no ;;
       --enable-cruise)          _build_cruise=yes ;;
       --disable-hq-scalers)     _build_hq_scalers=no ;;
       --disable-scalers)        _build_scalers=no ;;
