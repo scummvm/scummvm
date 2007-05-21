@@ -140,6 +140,10 @@ Parallaction::~Parallaction() {
 		delete _localFlagNames;
 
 	delete _gfx;
+
+	freeLocation();
+	freeCharacter();
+	destroyInventory();
 }
 
 
@@ -304,7 +308,7 @@ uint16 Parallaction::updateInput() {
 			break;
 
 		case Common::EVENT_QUIT:
-			_system->quit();
+			_engineFlags |= kEngineQuit;
 			break;
 
 		default:
@@ -334,7 +338,7 @@ void waitUntilLeftClick() {
 			break;
 
 		if (e.type == Common::EVENT_QUIT) {
-			g_system->quit();
+			_engineFlags |= kEngineQuit;
 			break;
 		}
 

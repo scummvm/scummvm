@@ -339,6 +339,12 @@ void initInventory() {
 	_buffer = (byte*)malloc(INVENTORY_WIDTH * INVENTORY_HEIGHT);
 }
 
+void destroyInventory() {
+	if (_buffer)
+		free(_buffer);
+	_buffer = 0;
+}
+
 void cleanInventory() {
 
 	for (uint16 slot = INVENTORY_FIRST_ITEM; slot < INVENTORY_MAX_ITEMS; slot++) {

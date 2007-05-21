@@ -179,9 +179,14 @@ void Parallaction::freeLocation() {
 
 	if (_localFlagNames)
 		delete _localFlagNames;
-	_localFlagNames = new Table(120);
-	_localFlagNames->addData("visited");
-
+	
+	// HACK: prevents leakage. A routine like this
+	// should allocate memory at all, though.
+	if ((_engineFlags & kEngineQuit) == 0) {
+		_localFlagNames = new Table(120);
+		_localFlagNames->addData("visited");
+	}
+		
 	_location._walkNodes.clear();
 
 	// TODO (LIST): helperNode should be rendered useless by the use of a Common::List<>

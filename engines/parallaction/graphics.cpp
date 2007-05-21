@@ -852,6 +852,9 @@ Gfx::~Gfx() {
 	delete _fonts[kFontLabel];
 	delete _fonts[kFontMenu];
 
+	freeStaticCnv(_mouseComposedArrow);
+	delete _mouseComposedArrow;
+	
 	return;
 }
 

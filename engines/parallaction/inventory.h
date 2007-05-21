@@ -41,6 +41,7 @@ struct InventoryItem {
 extern InventoryItem _inventory[];
 
 void initInventory();
+void destroyInventory();
 void openInventory();
 void closeInventory();
 int16 isItemInInventory(int32 v);
