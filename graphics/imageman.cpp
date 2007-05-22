@@ -29,7 +29,6 @@ ImageManager::ImageManager() : _surfaces()
 , _archives()
 #endif
 {
-	debug("foo");
 }
 
 ImageManager::~ImageManager() {
