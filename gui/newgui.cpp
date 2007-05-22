@@ -32,8 +32,6 @@
 
 #include "common/config-manager.h"
 
-DECLARE_SINGLETON(GUI::NewGui);
-
 namespace GUI {
 
 /*

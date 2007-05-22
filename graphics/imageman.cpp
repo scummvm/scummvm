@@ -23,14 +23,13 @@
 #include "graphics/imageman.h"
 #include "graphics/surface.h"
 
-DECLARE_SINGLETON(Graphics::ImageManager);
-
 namespace Graphics {
 ImageManager::ImageManager() : _surfaces()
 #ifdef USE_ZLIB
 , _archives()
 #endif
 {
+	debug("foo");
 }
 
 ImageManager::~ImageManager() {
