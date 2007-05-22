@@ -1145,10 +1145,6 @@ void AGOSEngine::vc33_setMouseOn() {
 }
 
 void AGOSEngine::vc34_setMouseOff() {
-	// FIXME
-	if (getGameType() == GType_ELVIRA1 && !(getFeatures() & GF_DEMO))
-		return;
-
 	mouseOff();
 	_mouseHideCount = 200;
 	_leftButtonDown = 0;
