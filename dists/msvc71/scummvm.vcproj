@@ -221,6 +221,9 @@
 				RelativePath="..\..\common\hashmap.h">
 			</File>
 			<File
+				RelativePath="..\..\common\iff_container.h">
+			</File>
+			<File
 				RelativePath="..\..\common\list.h">
 			</File>
 			<File
@@ -331,6 +334,12 @@
 			</File>
 			<File
 				RelativePath="..\..\sound\fmopl.h">
+			</File>
+			<File
+				RelativePath="..\..\sound\iff.cpp">
+			</File>
+			<File
+				RelativePath="..\..\sound\iff.h">
 			</File>
 			<File
 				RelativePath="..\..\sound\mididrv.cpp">
@@ -504,6 +513,12 @@
 				</File>
 				<File
 					RelativePath="..\..\sound\mods\rjp1.h">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\soundfx.cpp">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\soundfx.h">
 				</File>
 			</Filter>
 		</Filter>
@@ -809,10 +824,22 @@
 				RelativePath="..\..\graphics\fontman.h">
 			</File>
 			<File
-				RelativePath="..\..\graphics\ilbm.cpp">
+				RelativePath="..\..\graphics\iff.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\graphics\ilbm.h">
+				RelativePath="..\..\graphics\iff.h">
 			</File>
 			<File
 				RelativePath="..\..\graphics\imagedec.cpp">
