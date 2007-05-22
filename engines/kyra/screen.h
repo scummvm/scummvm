@@ -282,6 +282,7 @@ private:
 	uint8 *_sjisSourceChar;
 
 	uint8 *_saveLoadPage[8];
+	uint8 *_saveLoadPageOvl[8];
 
 	uint8 *_screenPalette;
 	uint8 *_palettes[6];

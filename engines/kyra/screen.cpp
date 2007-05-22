@@ -63,9 +63,15 @@ Screen::~Screen() {
 	}
 
 	delete [] _bitBlitRects;
+
 	for (int i = 0; i < ARRAYSIZE(_saveLoadPage); ++i) {
 		delete [] _saveLoadPage[i];
 		_saveLoadPage[i] = 0;
+	}
+	
+	for (int i = 0; i < ARRAYSIZE(_saveLoadPageOvl); ++i) {
+		delete [] _saveLoadPageOvl[i];
+		_saveLoadPageOvl[i] = 0;
 	}
 
 	delete [] _unkPtr1;
@@ -168,6 +174,7 @@ bool Screen::init() {
 	memset(_bitBlitRects, 0, sizeof(Rect)*BITBLIT_RECTS);
 	_bitBlitNum = 0;
 	memset(_saveLoadPage, 0, sizeof(_saveLoadPage));
+	memset(_saveLoadPageOvl, 0, sizeof(_saveLoadPageOvl));
 
 	_unkPtr1 = new uint8[getRectSize(1, 144)];
 	assert(_unkPtr1);
@@ -2377,20 +2384,50 @@ void Screen::savePageToDisk(const char *file, int page) {
 		assert(_saveLoadPage[page/2]);
 	}
 	memcpy(_saveLoadPage[page/2], getPagePtr(page), SCREEN_W * SCREEN_H);
+
+	if (_useOverlays) {
+		if (!_saveLoadPageOvl[page/2]) {
+			_saveLoadPageOvl[page/2] = new uint8[SCREEN_OVL_SJIS_SIZE];
+			assert(_saveLoadPageOvl[page/2]);
+		}
+
+		uint8 *srcPage = getOverlayPtr(page);
+		if (!srcPage) {
+			warning("trying to save unsupported overlay page %d", page);
+			return;
+		}
+
+		memcpy(_saveLoadPageOvl[page/2], srcPage, SCREEN_OVL_SJIS_SIZE);
+	}
 }
 
 void Screen::loadPageFromDisk(const char *file, int page) {
 	debugC(9, kDebugLevelScreen, "Screen::loadPageFromDisk('%s', %d)", file, page);
 	copyBlockToPage(page, 0, 0, SCREEN_W, SCREEN_H, _saveLoadPage[page/2]);
-	clearOverlayRect(page, 0, 0, SCREEN_W, SCREEN_H);
 	delete [] _saveLoadPage[page/2];
-	_saveLoadPage[page/2] = 0;
+
+	if (_saveLoadPageOvl[page/2]) {
+		uint8 *dstPage = getOverlayPtr(page);
+		if (!dstPage) {
+			warning("trying to restore unsupported overlay page %d", page);
+			return;
+		}
+
+		memcpy(dstPage, _saveLoadPageOvl[page/2], SCREEN_OVL_SJIS_SIZE);
+		delete [] _saveLoadPageOvl[page/2];
+		_saveLoadPageOvl[page/2] = 0;
+	}	_saveLoadPage[page/2] = 0;
 }
 
 void Screen::deletePageFromDisk(int page) {
 	debugC(9, kDebugLevelScreen, "Screen::deletePageFromDisk(%d)", page);
 	delete [] _saveLoadPage[page/2];
 	_saveLoadPage[page/2] = 0;
+
+	if (_saveLoadPageOvl[page/2]) {
+		delete [] _saveLoadPageOvl[page/2];
+		_saveLoadPageOvl[page/2] = 0;
+	}
 }
 
 void Screen::blockInRegion(int x, int y, int width, int height) {
