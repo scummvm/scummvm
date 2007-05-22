@@ -1335,12 +1335,12 @@ int KyraEngine_v1::o1_drawItemShapeIntoScene(ScriptState *script) {
 		flags = 1;
 
 	if (onlyHidPage) {
-		_screen->drawShape(2, _shapes[220+item], x, y, 0, flags);
+		_screen->drawShape(2, _shapes[216+item], x, y, 0, flags);
 	} else {
 		_screen->hideMouse();
 		_animator->restoreAllObjectBackgrounds();
-		_screen->drawShape(2, _shapes[220+item], x, y, 0, flags);
-		_screen->drawShape(0, _shapes[220+item], x, y, 0, flags);
+		_screen->drawShape(2, _shapes[216+item], x, y, 0, flags);
+		_screen->drawShape(0, _shapes[216+item], x, y, 0, flags);
 		_animator->flagAllObjectsForBkgdChange();
 		_animator->preserveAnyChangedBackgrounds();
 		_animator->flagAllObjectsForRefresh();
