@@ -315,8 +315,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_fastFadeCount = 0;
 	_fastFadeInFlag = 0;
 	_fastFadeOutFlag = 0;
-	_unkPalFlag = 0;
-	_usePaletteDelay = 0;
 	_exitCutscene = 0;
 	_paletteFlag = 0;
 	_bottomPalette = 0;

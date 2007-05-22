@@ -213,7 +213,7 @@ void AGOSEngine::setTextColor(uint color) {
 	window->text_color = color;
 }
 
-void AGOSEngine::windowPutChar(uint a) {
+void AGOSEngine::sendWindow(uint a) {
 	if (_textWindow != _windowArray[0]) {
 		if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 			if (!(_textWindow->flags & 1)) {

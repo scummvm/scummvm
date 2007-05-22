@@ -387,8 +387,6 @@ protected:
 	uint16 _scrollDownHitArea;
 
 	bool _fastFadeOutFlag;
-	bool _unkPalFlag;
-	bool _usePaletteDelay;
 	byte _paletteFlag;
 	int _bottomPalette;
 	uint _fastFadeCount;
@@ -763,8 +761,8 @@ protected:
 	void displayBoxStars();
 	void invertBox(HitArea * ha, byte a, byte b, byte c, byte d);
 
-	virtual void handleMouseMoved();
 	void initMouse();
+	virtual void handleMouseMoved();
 	virtual void drawMousePointer();
 
 	virtual void addArrows(WindowBlock *window);
@@ -776,8 +774,6 @@ protected:
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
 	virtual void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
-
-
 	void removeIconArray(uint num);
 
 	void loadIconData();	
@@ -1103,7 +1099,7 @@ protected:
 	void resetWindow(WindowBlock *window);
 	void freeBox(uint index);
 
-	void windowPutChar(uint a);
+	void sendWindow(uint a);
 
 	void restoreWindow(WindowBlock *window);
 	void colorWindow(WindowBlock *window);
@@ -1155,7 +1151,7 @@ protected:
 	void fillBackGroundFromBack(uint lines);
 	void fillBackFromFront(uint x, uint y, uint w, uint h);
 
-	virtual void print_char_helper_1(const byte *src, uint len);
+	virtual void doOutput(const byte *src, uint len);
 	void clsCheck(WindowBlock *window);
 
 	void quickLoadOrSave();
@@ -1587,7 +1583,7 @@ protected:
 
 	virtual void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
 
-	virtual void print_char_helper_1(const byte *src, uint len);
+	virtual void doOutput(const byte *src, uint len);
 
 	virtual void printScreenText(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width);
 

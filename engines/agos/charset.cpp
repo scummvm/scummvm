@@ -28,7 +28,7 @@
 
 namespace AGOS {
 
-void AGOSEngine_Feeble::print_char_helper_1(const byte *src, uint len) {
+void AGOSEngine_Feeble::doOutput(const byte *src, uint len) {
 	if (_textWindow == NULL)
 		return;
 
@@ -36,7 +36,7 @@ void AGOSEngine_Feeble::print_char_helper_1(const byte *src, uint len) {
 		if (getBitFlag(93)) {
 			if (_curWindow == 3) {
 				if ((_newLines >= _textWindow->scrollY) && (_newLines < (_textWindow->scrollY + 3)))
-					windowPutChar(*src);
+					sendWindow(*src);
 				if (*src == '\n')		// Do two top lines of text only
 					_newLines++;
 				src++;
@@ -45,7 +45,7 @@ void AGOSEngine_Feeble::print_char_helper_1(const byte *src, uint len) {
 			if (getBitFlag(94)) {
 				if (_curWindow == 3) {
 					if (_newLines == (_textWindow->scrollY + 7))
-						windowPutChar(*src);
+						sendWindow(*src);
 					if (*src == '\n')	// Do two top lines of text only
 						_newLines++;
 					src++;
@@ -53,13 +53,13 @@ void AGOSEngine_Feeble::print_char_helper_1(const byte *src, uint len) {
 			} else {
 				if (getBitFlag(92))
 					delay(50);
-				windowPutChar(*src++);
+				sendWindow(*src++);
 			}
 		}
 	}
 }
 
-void AGOSEngine::print_char_helper_1(const byte *src, uint len) {
+void AGOSEngine::doOutput(const byte *src, uint len) {
 	uint idx;
 
 	if (_textWindow == NULL)
@@ -73,7 +73,7 @@ void AGOSEngine::print_char_helper_1(const byte *src, uint len) {
 			_fcsData2[idx] = 1;
 		}
 
-		windowPutChar(*src++);
+		sendWindow(*src++);
 	}
 }
 
@@ -534,7 +534,7 @@ void AGOSEngine::justifyOutPut(byte chr) {
 		_numLettersToPrint = 0;
 		_printCharCurPos = 0;
 		_printCharPixelCount = 0;
-		print_char_helper_1(&chr, 1);
+		doOutput(&chr, 1);
 		clsCheck(_textWindow);
 	} else if (chr == 0 || chr == ' ' || chr == 10) {
 		bool fit;
@@ -551,13 +551,13 @@ void AGOSEngine::justifyOutPut(byte chr) {
 
 		if (fit) {
 			_printCharCurPos += _printCharPixelCount;
-			print_char_helper_1(_lettersToPrintBuf, _numLettersToPrint);
+			doOutput(_lettersToPrintBuf, _numLettersToPrint);
 
 			if (_printCharCurPos == _printCharMaxPos) {
 				_printCharCurPos = 0;
 			} else {
 				if (chr)
-					print_char_helper_1(&chr, 1);
+					doOutput(&chr, 1);
 				if (chr == 10)
 					_printCharCurPos = 0;
 				else if (chr != 0)
@@ -566,13 +566,13 @@ void AGOSEngine::justifyOutPut(byte chr) {
 		} else {
 			const byte newline_character = 10;
 			_printCharCurPos = _printCharPixelCount;
-			print_char_helper_1(&newline_character, 1);
-			print_char_helper_1(_lettersToPrintBuf, _numLettersToPrint);
+			doOutput(&newline_character, 1);
+			doOutput(_lettersToPrintBuf, _numLettersToPrint);
 			if (chr == ' ') {
-				print_char_helper_1(&chr, 1);
+				doOutput(&chr, 1);
 				_printCharCurPos += (getGameType() == GType_FF || getGameType() == GType_PP) ? feebleFontSize[chr - 32] : 1;
 			} else {
-				print_char_helper_1(&chr, 1);
+				doOutput(&chr, 1);
 				_printCharCurPos = 0;
 			}
 		}
