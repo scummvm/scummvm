@@ -214,8 +214,15 @@ void AGOSEngine::setTextColor(uint color) {
 }
 
 void AGOSEngine::windowPutChar(uint a) {
-	if (_textWindow != _windowArray[0])
+	if (_textWindow != _windowArray[0]) {
+		if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+			if (!(_textWindow->flags & 1)) {
+				haltAnimation();
+			}
+		}
+
 		windowPutChar(_textWindow, a);
+	}
 }
 
 void AGOSEngine::waitWindow(WindowBlock *window) {

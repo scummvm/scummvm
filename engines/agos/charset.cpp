@@ -602,12 +602,6 @@ void AGOSEngine::openTextWindow() {
 void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 	byte width = 6;
 
-	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
-		if (!(window->flags & 1)) {
-			haltAnimation();
-		}
-	}
-
 	if (c == 12) {
 		clearWindow(window);
 	} else if (c == 13 || c == 10) {
