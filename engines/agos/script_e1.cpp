@@ -368,8 +368,8 @@ void AGOSEngine_Elvira1::setupOpcodes() {
 		OPCODE(o_setAdjNoun),
 		OPCODE(oe1_zoneDisk),
 		/* 268 */
-		OPCODE(o_saveUserGame),
-		OPCODE(o_loadUserGame),
+		OPCODE(oe1_saveUserGame),
+		OPCODE(oe1_loadUserGame),
 		OPCODE(oe1_printStats),
 		OPCODE(oe1_stopTune),
 		/* 272 */
@@ -863,6 +863,14 @@ void AGOSEngine_Elvira1::oe1_zoneDisk() {
 	// 267: set disk number of each zone
 	getVarOrWord();
 	getVarOrWord();
+}
+
+void AGOSEngine_Elvira1::oe1_saveUserGame() {
+	// TODO
+}
+
+void AGOSEngine_Elvira1::oe1_loadUserGame() {
+	// TODO
 }
 
 void AGOSEngine_Elvira1::oe1_printStats() {

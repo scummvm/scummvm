@@ -145,7 +145,7 @@ void AGOSEngine_Waxworks::setupOpcodes() {
 		OPCODE(o_comment),
 		/* 88 */
 		OPCODE(o_invalid),
-		OPCODE(oe2_loadGame),
+		OPCODE(oe1_loadGame),
 		OPCODE(o_getParent),
 		OPCODE(o_getNext),
 		/* 92 */

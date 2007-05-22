@@ -471,6 +471,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_saveLoadSlot = 0;
 	memset(_saveLoadName, 0, sizeof(_saveLoadName));
 
+	_saveGameNameLen = 0;
 	_saveLoadRowCurPos = 0;
 	_numSaveGameRows = 0;
 	_saveDialogFlag = false;

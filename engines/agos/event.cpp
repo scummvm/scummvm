@@ -365,7 +365,7 @@ void AGOSEngine::delay(uint amount) {
 					if (_saveLoadSlot == 0)
 						_saveLoadSlot = 10;
 
-					sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
+					sprintf(_saveLoadName, "Quick %d", _saveLoadSlot);
 					_saveLoadType = (event.kbd.flags == Common::KBD_ALT) ? 1 : 2;
 
 					// We should only allow a load or save when it was possible in original

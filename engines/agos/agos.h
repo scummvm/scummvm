@@ -456,7 +456,7 @@ protected:
 	int16 *_variableArrayPtr;
 
 	WindowBlock *_dummyWindow;
-	WindowBlock *_windowArray[8];
+	WindowBlock *_windowArray[80];
 
 	byte _fcsData1[8];
 	bool _fcsData2[8];
@@ -523,8 +523,9 @@ protected:
 
 	Debugger *_debugger;
 
-	int _saveLoadRowCurPos;
-	int _numSaveGameRows;
+	uint _saveGameNameLen;
+	uint _saveLoadRowCurPos;
+	uint _numSaveGameRows;
 	bool _saveDialogFlag;
 	bool _saveOrLoad;
 	bool _saveLoadEdit;
@@ -1192,15 +1193,14 @@ protected:
 
 	void vcStopAnimation(uint file, uint sprite);
 
-	void userGame(bool load);
 	void disableFileBoxes();
-	int userGameGetKey(bool *b, char *buf);
+	virtual void listSaveGames(char *dst);
+	virtual void userGame(bool load);
+	virtual int userGameGetKey(bool *b, char *buf, uint maxChar);
 	void userGameBackSpace(WindowBlock *window, int x, byte b = 0);
-	void listSaveGames(char *buf);
 	void fileError(WindowBlock *window, bool save_error);
 
 	int countSaveGames();
-	int displaySaveGameList(int curpos, bool load, char *dst);
 
 	char *genSaveName(int slot);
 };
@@ -1264,6 +1264,8 @@ public:
 	void oe1_bitSet();
 	void oe1_bitTest();
 	void oe1_zoneDisk();
+	void oe1_saveUserGame();
+	void oe1_loadUserGame();
 	void oe1_printStats();
 	void oe1_stopTune();
 	void oe1_printPlayerDamage();
@@ -1296,7 +1298,6 @@ public:
 	void oe2_moveDirn();
 	void oe2_doClass();
 	void oe2_pObj();
-	void oe2_loadGame();
 	void oe2_drawItem();
 	void oe2_doTable();
 	void oe2_pauseGame();
@@ -1461,6 +1462,10 @@ protected:
 
 	virtual void addArrows(WindowBlock *window);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
+
+	virtual void listSaveGames(char *dst);
+	virtual void userGame(bool load);
+	virtual int userGameGetKey(bool *b, char *buf, uint maxChar);
 };
 
 class AGOSEngine_Simon2 : public AGOSEngine_Simon1 {
