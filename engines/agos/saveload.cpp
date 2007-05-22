@@ -215,12 +215,13 @@ void AGOSEngine::listSaveGames(char *dst) {
 	window->textColumn = 0;
 	window->textColumnOffset = 4;
 	window->textLength = 0;
+
+	_saveGameNameLen = 0;
 }
 
 void AGOSEngine::userGame(bool load) {
 	time_t saveTime;
 	int i, numSaveGames;
-	WindowBlock *window;
 	char *name;
 	bool b;
 	char buf[200];
@@ -229,7 +230,8 @@ void AGOSEngine::userGame(bool load) {
 
 	saveTime = time(NULL);
 
-	haltAnimation();
+	if (getGameType() == GType_ELVIRA2)
+		haltAnimation();
 
 	numSaveGames = countSaveGames();
 	_numSaveGameRows = numSaveGames;
@@ -240,12 +242,11 @@ void AGOSEngine::userGame(bool load) {
 
 	listSaveGames(buf);
 
-	name = buf + 192;
-	_saveGameNameLen = 0;
-
 	if (!load) {
+		WindowBlock *window = _windowArray[num];
+		name = buf + 192;
+
 		for (;;) {
-			window = _windowArray[num];
 			windowPutChar(window, 127);
 
 			_saveLoadEdit = true;
@@ -253,7 +254,17 @@ void AGOSEngine::userGame(bool load) {
 			i = userGameGetKey(&b, buf, 128);
 			if (b) {
 				if (i <= 223) {
-					// TODO; Run the overwrite check script in Waxworks
+					if (getGameType() == GType_WW) {
+						Subroutine *sub = getSubroutineByID(80);
+						if (sub != NULL)
+							startSubroutineEx(sub);
+
+						if (_variableArray[253] != 0) {
+							listSaveGames(buf);
+							continue;
+						}
+					}
+
 					if (!saveGame(_saveLoadRowCurPos + i, buf + i * 8))
 						fileError(_windowArray[num], true);
 				}
@@ -292,7 +303,8 @@ get_out:;
 
 	_gameStoppedClock = time(NULL) - saveTime + _gameStoppedClock;
 
-	restartAnimation();
+	if (getGameType() == GType_ELVIRA2)
+		restartAnimation();
 }
 
 int AGOSEngine::userGameGetKey(bool *b, char *buf, uint maxChar) {
