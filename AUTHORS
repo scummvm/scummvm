@@ -47,8 +47,12 @@ ScummVM Team
     Broken Sword 2:
        Torbjorn Andersson   
        Jonathan Gray        
+       Vincent Hamm          - original CinE engine author
 
     Cinematique evo 1:
+       Vincent Hamm         
+
+    Cinematique evo 2:
        Pawel Kolodziejski   
        Gregory Montoir      
        Eugene Sandulenko    
@@ -149,7 +153,6 @@ ScummVM Team
      Tore Anderson         - Former Debian GNU/Linux maintainer
      Ralph Brorsen         - Help with GUI implementation
      Jamieson Christian    - iMUSE, MIDI, all things musical
-     Vincent Hamm          - Co-Founder, original CinE engine author
      Ruediger Hanke        - Port: MorphOS
      Felix Jakschitsch     - Zak256 reverse engineering
      Mutwin Kraus          - Original MacOS porter
