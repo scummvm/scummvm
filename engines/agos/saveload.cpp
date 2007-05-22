@@ -166,7 +166,7 @@ void AGOSEngine::listSaveGames(char *dst) {
 		window->textColumn = 0;
 		window->textColumnOffset = 4;
 		window->textLength = 0;
-		if (in = _saveFileMan->openForLoading(genSaveName(slot++))) {
+		if ((in = _saveFileMan->openForLoading(genSaveName(slot++)))) {
 			in->read(dst, 8);
 			delete in;
 
@@ -181,7 +181,7 @@ void AGOSEngine::listSaveGames(char *dst) {
 		window->textColumn = 7;
 		window->textColumnOffset = 4;
 		window->textLength = 0;
-		if (in = _saveFileMan->openForLoading(genSaveName(slot++))) {
+		if ((in = _saveFileMan->openForLoading(genSaveName(slot++)))) {
 			in->read(dst, 8);
 			delete in;
 
@@ -196,7 +196,7 @@ void AGOSEngine::listSaveGames(char *dst) {
 		window->textColumn = 15;
 		window->textColumnOffset = 4;
 		window->textLength = 0;
-		if (in = _saveFileMan->openForLoading(genSaveName(slot++))) {
+		if ((in = _saveFileMan->openForLoading(genSaveName(slot++)))) {
 			in->read(dst, 8);
 			delete in;
 
