@@ -367,7 +367,7 @@ void Screen::fadeSpecialPalette(int palIndex, int startIndex, int size, int fade
 
 void Screen::fadePalette(const uint8 *palData, int delay) {
 	debugC(9, kDebugLevelScreen, "Screen::fadePalette(%p, %d)", (const void *)palData, delay);
-	updateDirtyRects();
+	updateScreen();
 
 	uint8 fadePal[768];
 	memcpy(fadePal, _screenPalette, 768);
