@@ -29,6 +29,8 @@ namespace Common {
 
 uint hashit(const char *str);
 uint hashit_lower(const char *str);	// Generate a hash based on the lowercase version of the string
+inline uint hashit(const String &str) { return hashit(str.c_str()); }
+inline uint hashit_lower(const String &str) { return hashit_lower(str.c_str()); }
 
 
 // FIXME: The following functors obviously are not consistently named

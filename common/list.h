@@ -111,8 +111,10 @@ public:
 	NodeBase *_anchor;
 
 public:
-	typedef Iterator<T>        iterator;
-	typedef Iterator<const T>  const_iterator;
+	typedef Iterator<T>			iterator;
+	typedef Iterator<const T>	const_iterator;
+
+	typedef T value_type;
 
 public:
 	List() {

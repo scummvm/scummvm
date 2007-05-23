@@ -23,6 +23,7 @@
 #define COMMON_ARRAY_H
 
 #include "common/scummsys.h"
+#include "common/algorithm.h"
 
 namespace Common {
 
@@ -37,14 +38,15 @@ public:
 	typedef T *iterator;
 	typedef const T *const_iterator;
 
+	typedef T value_type;
+
 public:
 	Array() : _capacity(0), _size(0), _data(0) {}
 	Array(const Array<T>& array) : _capacity(0), _size(0), _data(0) {
 		_size = array._size;
 		_capacity = _size + 32;
 		_data = new T[_capacity];
-		for (int i = 0; i < _size; i++)
-			_data[i] = array._data[i];
+		copy(array._data, array._data + _size, _data);
 	}
 
 	~Array() {
@@ -59,21 +61,14 @@ public:
 
 	void push_back(const Array<T>& array) {
 		ensureCapacity(_size + array._size);
-		for (int i = 0; i < array._size; i++)
-			_data[_size++] = array._data[i];
+		copy(array._data, array._data + array._size, _data + _size);
+		_size += array._size;
 	}
 
 	void insert_at(int idx, const T& element) {
 		assert(idx >= 0 && idx <= _size);
 		ensureCapacity(_size + 1);
-		// The following loop is not efficient if you can just memcpy things around.
-		// e.g. if you have a list of ints. But for real objects (String...), memcpy
-		// usually isn't correct (specifically, for any class which has a non-default
-		// copy behaviour. E.g. the String class uses a refCounter which has to be
-		// updated whenever a String is copied.
-		for (int i = _size; i > idx; i--) {
-			_data[i] = _data[i-1];
-		}
+		copy_backward(_data + idx, _data + _size, _data + _size + 1);
 		_data[idx] = element;
 		_size++;
 	}
@@ -81,8 +76,7 @@ public:
 	T remove_at(int idx) {
 		assert(idx >= 0 && idx < _size);
 		T tmp = _data[idx];
-		for (int i = idx; i < _size - 1; i++)
-			_data[i] = _data[i+1];
+		copy(_data + idx + 1, _data + _size, _data + idx);
 		_size--;
 		return tmp;
 	}
@@ -108,8 +102,7 @@ public:
 		_size = array._size;
 		_capacity = _size + 32;
 		_data = new T[_capacity];
-		for (int i = 0; i < _size; i++)
-			_data[i] = array._data[i];
+		copy(array._data, array._data + _size, _data);
 
 		return *this;
 	}
@@ -149,11 +142,7 @@ public:
 	}
 
 	bool contains(const T &key) const {
-		for (const_iterator i = begin(); i != end(); ++i) {
-			if (*i == key)
-				return true;
-		}
-		return false;
+		return find(begin(), end(), key) != end();
 	}
 
 
@@ -168,8 +157,7 @@ protected:
 
 		if (old_data) {
 			// Copy old data
-			for (int i = 0; i < _size; i++)
-				_data[i] = old_data[i];
+			copy(old_data, old_data + _size, _data);
 			delete [] old_data;
 		}
 	}

@@ -26,15 +26,218 @@
 
 namespace Common {
 
-template <class T>
-struct EqualTo {
-  bool operator()(const T& x, const T& y) const { return x == y; }
+template<class Arg, class Result>
+struct UnaryFunction {
+	typedef Arg ArgumenType;
+	typedef Result ResultType;
 };
 
-template <class T>
-struct Less {
-  bool operator()(const T& x, const T& y) const { return x < y; }
+template<class Arg1, class Arg2, class Result>
+struct BinaryFunction {
+	typedef Arg1 FirstArgumentType;
+	typedef Arg2 SecondArgumentType;
+	typedef Result ResultType;
 };
+
+template<class T>
+struct EqualTo : public BinaryFunction<T, T, bool> {
+	bool operator()(const T& x, const T& y) const { return x == y; }
+};
+
+template<class T>
+struct Less : public BinaryFunction<T, T, bool> {
+	bool operator()(const T& x, const T& y) const { return x < y; }
+};
+
+template<class Op>
+class Binder1st : public UnaryFunction<typename Op::SecondArgumentType, typename Op::ResultType> {
+private:
+	Op _op;
+	typename Op::FirstArgumentType _arg1;
+public:
+	Binder1st(const Op &op, const typename Op::FirstArgumentType &arg1) : _op(op), _arg1(arg1) {}
+
+	typename Op::ResultType operator()(typename Op::SecondArgumentType v) const {
+		return _op(_arg1, v);
+	}
+};
+
+template<class Op, class T>
+inline Binder1st<Op> bind1st(const Op &op, const T &t) {
+	return Binder1st<Op>(op, t);
+}
+
+template<class Op>
+class Binder2nd : public UnaryFunction<typename Op::FirstArgumentType, typename Op::ResultType> {
+private:
+	Op _op;
+	typename Op::SecondArgumentType _arg2;
+public:
+	Binder2nd(const Op &op, const typename Op::SecondArgumentType &arg2) : _op(op), _arg2(arg2) {}
+
+	typename Op::ResultType operator()(typename Op::FirstArgumentType v) const {
+		return _op(v, _arg2);
+	}
+};
+
+template<class Op, class T>
+inline Binder2nd<Op> bind2nd(const Op &op, const T &t) {
+	return Binder2nd<Op>(op, t);
+}
+
+template<class Arg, class Result>
+class PointerToUnaryFunc : public UnaryFunction<Arg, Result> {
+private:
+	Result (*_func)(Arg);
+public:
+	typedef Result (*FuncType)(Arg);
+	
+	PointerToUnaryFunc(const FuncType &func) : _func(func) {}
+	Result operator()(Arg v) const {
+		return _func(v);
+	}
+};
+
+template<class Arg1, class Arg2, class Result>
+class PointerToBinaryFunc : public BinaryFunction<Arg1, Arg2, Result> {
+private:
+	Result (*_func)(Arg1, Arg2);
+public:
+	typedef Result (*FuncType)(Arg1, Arg2);
+
+	PointerToBinaryFunc(const FuncType &func) : _func(func) {}
+	Result operator()(Arg1 v1, Arg2 v2) const {
+		return _func(v1, v2);
+	}
+};
+
+template<class Arg, class Result>
+inline PointerToUnaryFunc<Arg, Result> ptr_fun(Result (*func)(Arg)) {
+	return PointerToUnaryFunc<Arg, Result>(func);
+}
+
+template<class Arg1, class Arg2, class Result>
+inline PointerToBinaryFunc<Arg1, Arg2, Result> ptr_fun(Result (*func)(Arg1, Arg2)) {
+	return PointerToBinaryFunc<Arg1, Arg2, Result>(func);
+}
+
+template<class Result, class T>
+class MemFunc0 : public UnaryFunction<T*, Result> {
+private:
+	Result (T::*_func)();
+public:
+	typedef Result (T::*FuncType)();
+
+	MemFunc0(const FuncType &func) : _func(func) {}
+	Result operator()(T *v) const {
+		return (v->*_func)();
+	}
+};
+
+template<class Result, class T>
+class ConstMemFunc0 : public UnaryFunction<T*, Result> {
+private:
+	Result (T::*_func)() const;
+public:
+	typedef Result (T::*FuncType)() const;
+
+	ConstMemFunc0(const FuncType &func) : _func(func) {}
+	Result operator()(T *v) const {
+		return (v->*_func)();
+	}
+};
+
+template<class Result, class Arg, class T>
+class MemFunc1 : public BinaryFunction<T*, Arg, Result> {
+private:
+	Result (T::*_func)(Arg);
+public:
+	typedef Result (T::*FuncType)(Arg);
+
+	MemFunc1(const FuncType &func) : _func(func) {}
+	Result operator()(T *v1, Arg v2) const {
+		return (v1->*_func)(v2);
+	}
+};
+
+template<class Result, class Arg, class T>
+class ConstMemFunc1 : public BinaryFunction<T*, Arg, Result> {
+private:
+	Result (T::*_func)(Arg) const;
+public:
+	typedef Result (T::*FuncType)(Arg) const;
+
+	ConstMemFunc1(const FuncType &func) : _func(func) {}
+	Result operator()(T *v1, Arg v2) const {
+		return (v1->*_func)(v2);
+	}
+};
+
+template<class Result, class T>
+inline MemFunc0<Result, T> mem_fun(Result (T::*f)()) {
+	return MemFunc0<Result, T>(f);
+}
+
+template<class Result, class T>
+inline ConstMemFunc0<Result, T> mem_fun(Result (T::*f)() const) {
+	return ConstMemFunc0<Result, T>(f);
+}
+
+template<class Result, class Arg, class T>
+inline MemFunc1<Result, Arg, T> mem_fun(Result (T::*f)(Arg)) {
+	return MemFunc1<Result, Arg, T>(f);
+}
+
+template<class Result, class Arg, class T>
+inline ConstMemFunc1<Result, Arg, T> mem_fun(Result (T::*f)(Arg) const) {
+	return ConstMemFunc1<Result, Arg, T>(f);
+}
+
+template<class Cont>
+class BackInsertIterator {
+private:
+	Cont *_container;
+
+public:
+	BackInsertIterator(Cont &c) : _container(&c) {}
+
+	BackInsertIterator &operator =(const typename Cont::value_type &v) {
+		_container->push_back(v);
+		return *this;
+	}
+
+	BackInsertIterator &operator *() { return *this; }
+	BackInsertIterator &operator ++() { return *this; }
+	BackInsertIterator operator ++(int) { return *this; }
+};
+
+template<class Cont>
+BackInsertIterator<Cont> back_inserter(Cont &c) {
+	return BackInsertIterator<Cont>(c);
+}
+
+template<class Cont>
+class FrontInsertIterator {
+private:
+	Cont *_container;
+
+public:
+	FrontInsertIterator(Cont &c) : _container(&c) {}
+
+	FrontInsertIterator &operator =(const typename Cont::value_type &v) {
+		_container->push_front(v);
+		return *this;
+	}
+
+	FrontInsertIterator &operator *() { return *this; }
+	FrontInsertIterator &operator ++() { return *this; }
+	FrontInsertIterator operator ++(int) { return *this; }
+};
+
+template<class Cont>
+FrontInsertIterator<Cont> front_inserter(Cont &c) {
+	return FrontInsertIterator<Cont>(c);
+}
 
 /**
  * Base template for hash functor objects, used by HashMap.
@@ -61,30 +264,7 @@ GENERATE_TRIVIAL_HASH_FUNCTOR(unsigned long);
 
 #undef GENERATE_TRIVIAL_HASH_FUNCTOR
 
-
-// Simple sort function, modelled after std::sort.
-// Use it like this:  sort(container.begin(), container.end()).
-// Also work on plain old int arrays etc.
-template <typename T>
-void sort(T first, T last) {
-	if (first == last)
-		return;
-
-	// Simple selection sort
-	T i(first);
-	for (; i != last; ++i) {
-		T minElem(i);
-		T j(i);
-		++j;
-		for (; j != last; ++j)
-			if (*j < *minElem)
-				minElem = j;
-		if (minElem != i)
-			SWAP(*minElem, *i);
-	}
-}
-
-
 }	// End of namespace Common
 
 #endif
+
