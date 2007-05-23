@@ -509,17 +509,17 @@ begin_credits("Credits");
 	  begin_section("Broken Sword 2");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Jonathan Gray", "khalek", "");
-		  add_person("Vincent Hamm", "yazoo", "original CinE engine author");
 	  end_section();
 
 	  begin_section("Cinematique evo 1");
-		  add_person("Vincent Hamm", "yazoo", "");
-	  end_section();
-
-	  begin_section("Cinematique evo 2");
+		  add_person("Vincent Hamm", "yazoo", "original CinE engine author");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
 		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Eugene Sandulenko", "sev", "");
+	  end_section();
+
+	  begin_section("Cinematique evo 2");
+		  add_person("Vincent Hamm", "yazoo", "");
 	  end_section();
 
 	  begin_section("FOTAQ");	# Flight of the Amazon Queen
