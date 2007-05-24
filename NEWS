@@ -32,10 +32,6 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for DXA cutscenes.
    - Added "fast mode" (use Ctrl-f to toggle).
 
- Cine:
-   - Improved support for international versions.
-   - Added support for Amiga music.
-
  Queen:
    - Added support for Amiga versions.
    - Fixed some sound glitches.
