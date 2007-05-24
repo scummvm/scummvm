@@ -115,6 +115,8 @@ OSystem_PSP_GU::OSystem_PSP_GU() {
 	_graphicMode = STRETCHED_480X272;
 	_keySelected = 1;
 	_keyboardMode = 0;
+	_mouseX = PSP_SCREEN_WIDTH >> 1;
+	_mouseY = PSP_SCREEN_HEIGHT >> 1;
 }
 
 OSystem_PSP_GU::~OSystem_PSP_GU() {
