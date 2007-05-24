@@ -111,25 +111,13 @@ int loadOverlay(uint8 *scriptName) {
 	}
 
 	if (volumePtrToFileDescriptor[fileIdx].size + 2 != unpackedSize) {
-		char *tempBuffer;
-		uint16 realUnpackedSize;
 		char *pakedBuffer =
 		    (char *)mallocAndZero(volumePtrToFileDescriptor[fileIdx].
 		    size + 2);
 
 		loadPakedFileToMem(fileIdx, (uint8 *) pakedBuffer);
 
-		realUnpackedSize =
-		    *(int16 *) (pakedBuffer +
-		    volumePtrToFileDescriptor[fileIdx].size - 2);
-		flipShort(&realUnpackedSize);
-
-		tempBuffer = (char *)mallocAndZero(realUnpackedSize);
-
-		decomp((uint8 *) pakedBuffer +
-		    volumePtrToFileDescriptor[fileIdx].size - 4,
-		    (uint8 *) unpackedBuffer + realUnpackedSize,
-		    realUnpackedSize);
+		delphineUnpack((uint8 *)unpackedBuffer, (const uint8 *)pakedBuffer, volumePtrToFileDescriptor[fileIdx].size);
 
 		free(pakedBuffer);
 	} else {
@@ -559,7 +547,6 @@ int loadOverlay(uint8 *scriptName) {
 
 		if (volumePtrToFileDescriptor[fileIdx].size + 2 !=
 		    unpackedSize) {
-			short int realUnpackedSize;
 			char *pakedBuffer =
 			    (char *)
 			    mallocAndZero(volumePtrToFileDescriptor[fileIdx].
@@ -567,15 +554,7 @@ int loadOverlay(uint8 *scriptName) {
 
 			loadPakedFileToMem(fileIdx, (uint8 *) pakedBuffer);
 
-			realUnpackedSize =
-			    *(int16 *) (pakedBuffer +
-			    volumePtrToFileDescriptor[fileIdx].size - 2);
-			flipShort(&realUnpackedSize);
-
-			decomp((uint8 *) pakedBuffer +
-			    volumePtrToFileDescriptor[fileIdx].size - 4,
-			    (uint8 *) unpackedBuffer + realUnpackedSize,
-			    realUnpackedSize);
+			delphineUnpack((uint8 *) unpackedBuffer, (const uint8 *)pakedBuffer, volumePtrToFileDescriptor[fileIdx].size);
 
 			free(pakedBuffer);
 		} else {

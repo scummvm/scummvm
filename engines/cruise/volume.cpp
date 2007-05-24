@@ -426,13 +426,10 @@ int16 readVolCnf(void) {
 				    (char *)mallocAndZero(buffer[j].unk2 +
 				    500);
 
-				decomp((uint8 *) bufferLocal + buffer[j].size -
-				    4,
-				    (uint8 *) uncompBuffer + buffer[j].unk2 +
-				    500, buffer[j].unk2);
+				delphineUnpack((uint8 *) uncompBuffer, (const uint8 *) bufferLocal, buffer[j].size);
 
 				FILE *fOut = fopen(nameBuffer, "wb+");
-				fwrite(uncompBuffer + 500, buffer[j].unk2, 1,
+				fwrite(uncompBuffer, buffer[j].unk2, 1,
 				    fOut);
 				fclose(fOut);
 

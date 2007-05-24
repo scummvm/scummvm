@@ -23,6 +23,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 #include "common/events.h"
 
 #include "cruise/cruise_main.h"
@@ -384,27 +385,17 @@ int loadFileSub1(uint8 **ptr, uint8 *name, uint8 *ptr2) {
 	lastFileSize = unpackedSize;
 
 	if (volumePtrToFileDescriptor[fileIdx].size + 2 != unpackedSize) {
-		unsigned short int realUnpackedSize;
-		uint8 *tempBuffer;
 		uint8 *pakedBuffer =
 		    (uint8 *) mallocAndZero(volumePtrToFileDescriptor[fileIdx].
 		    size + 2);
 
 		loadPakedFileToMem(fileIdx, pakedBuffer);
 
-		realUnpackedSize =
-		    *(uint16 *) (pakedBuffer +
-		    volumePtrToFileDescriptor[fileIdx].size - 2);
-		flipShort((int16 *) & realUnpackedSize);
+		uint32 realUnpackedSize = READ_BE_UINT32(pakedBuffer + volumePtrToFileDescriptor[fileIdx].size - 4);
 
 		lastFileSize = realUnpackedSize;
 
-		tempBuffer = (uint8 *) mallocAndZero(realUnpackedSize);
-
-		decomp((uint8 *) pakedBuffer +
-		    volumePtrToFileDescriptor[fileIdx].size - 4,
-		    (uint8 *) unpackedBuffer + realUnpackedSize,
-		    realUnpackedSize);
+		delphineUnpack(unpackedBuffer, pakedBuffer, volumePtrToFileDescriptor[fileIdx].size);
 
 		free(pakedBuffer);
 	} else {

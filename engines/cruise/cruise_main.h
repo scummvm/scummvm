@@ -66,7 +66,7 @@ namespace Cruise {
 #define ASSERT_PTR assert
 #define ASSERT assert
 
-int32 decomp(uint8 * in, uint8 * out, int32 size);
+bool delphineUnpack(byte *dst, const byte *src, int len);
 
 ovlData3Struct *getOvlData3Entry(int32 scriptNumber, int32 param);
 ovlData3Struct *scriptFunc1Sub2(int32 scriptNumber, int32 param);

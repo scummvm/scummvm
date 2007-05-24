@@ -30,14 +30,6 @@
 
 namespace Cine {
 
-struct UnpackCtx {
-	int size, datasize;
-	uint32 crc;
-	uint32 chk;
-	byte *dst;
-	const byte *src;	
-};
-
 bool delphineUnpack(byte *dst, const byte *src, int len);
 
 } // End of namespace Cine
