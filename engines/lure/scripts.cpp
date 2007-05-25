@@ -364,7 +364,7 @@ void Script::transformPlayer(uint16 v1, uint16 v2, uint16 v3) {
 	hotspot->startY = player->startY - 10;
 	
 	Hotspot *activeHotspot = res.addHotspot(TRANSFORM_ID);
-	activeHotspot->setFrameNumber(0);
+	activeHotspot->setActionCtr(0);
 	activeHotspot->setHotspotScript(0x630);
 }
 

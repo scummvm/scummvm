@@ -420,6 +420,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 
 void HotspotData::saveToStream(WriteStream *stream) {
 	// Write out the basic fields
+	stream->writeUint16LE(nameId);
 	stream->writeUint16LE(descId);
 	stream->writeUint16LE(descId2);
 	stream->writeUint32LE(actions);
@@ -460,6 +461,7 @@ void HotspotData::saveToStream(WriteStream *stream) {
 
 void HotspotData::loadFromStream(ReadStream *stream) {
 	// Read in the basic fields
+	nameId = stream->readUint16LE();
 	descId = stream->readUint16LE();
 	descId2 = stream->readUint16LE();
 	actions = stream->readUint32LE();
