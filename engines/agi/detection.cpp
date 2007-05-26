@@ -1822,6 +1822,113 @@ static const AGIGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 
+static const AGIGameDescription fallbackDescs[] = {
+	{
+		{
+			"agi-fanmade",
+			"Unknown v2 Game",
+			AD_ENTRY1(0, 0),
+			Common::UNK_LANG,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_FANMADE,
+		GType_V2,
+		GF_FANMADE,
+		0x2917,
+	},
+	{
+		{
+			"agi-fanmade",
+			"Unknown v2 AGIPAL Game",
+			AD_ENTRY1(0, 0),
+			Common::UNK_LANG,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_FANMADE,
+		GType_V2,
+		GF_FANMADE | GF_AGIPAL,
+		0x2917,
+	},
+	{
+		{
+			"agi-fanmade",
+			"Unknown v3 Game",
+			AD_ENTRY1(0, 0),
+			Common::UNK_LANG,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_FANMADE,
+		GType_V3,
+		GF_FANMADE,
+		0x3149,
+	},
+};
+
+Common::ADGameDescList fallbackDetector(const FSList *fslist) {
+	Common::String tstr;
+	typedef Common::HashMap<Common::String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> IntMap;
+	IntMap allFiles;
+	Common::ADGameDescList matched;
+	int matchedNum = -1;
+
+	// TODO:
+	// WinAGI produces *.wag file with interpretator version, game name
+	// and other parameters. Add support for this once specs are known
+
+
+	// First grab all filenames
+	for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
+		if (file->isDirectory()) continue;
+		tstr = file->name();
+		tstr.toLowercase();
+
+		allFiles[tstr] = true;
+	}
+
+	// Now check for v2
+	if (allFiles.contains("logdir") && allFiles.contains("object") &&
+		allFiles.contains("picdir") && allFiles.contains("snddir") &&
+		allFiles.contains("viewdir") && allFiles.contains("vol.0") &&
+		allFiles.contains("words.tok")) {
+		matchedNum = 0;
+
+		// Check if it is AGIPAL
+		if (allFiles.contains("pal.101"))
+			matchedNum = 1;
+	} else { // Try v3
+		char name[8];
+
+		for (IntMap::const_iterator f = allFiles.begin(); f != allFiles.end(); ++f) {
+			debug(" --> %s", f->_key.c_str());
+			if (f->_key.hasSuffix("vol.0")) {
+				memset(name, 0, 8);
+				strncpy(name, f->_key.c_str(), f->_key.size() > 5 ? f->_key.size() - 5 : f->_key.size());
+				debug("YEAH! (%s)", name);
+
+				if (allFiles.contains("object") && allFiles.contains("words.tok") &&
+					allFiles.contains(Common::String(name) + "dir")) {
+					matchedNum = 2;
+					break;
+				}
+			}
+		}
+	}
+	
+	if (matchedNum != -1) {
+		matched.push_back(&fallbackDescs[matchedNum].desc);
+
+		printf("Your game version has been detected using fallback matching as a\n");
+		printf("variant of %s (%s).\n", fallbackDescs[matchedNum].desc.gameid, fallbackDescs[matchedNum].desc.extra);
+		printf("If this is an original and unmodified version or new made Fanmade game,\n");
+		printf("please report any, information previously printed by ScummVM to the team.\n");
+	}
+
+	return matched;
+}
+
 }
 
 static const Common::ADParams detectionParams = {
@@ -1840,7 +1947,7 @@ static const Common::ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Fallback callback
-	0,
+	Agi::fallbackDetector,
 	// Flags
 	Common::kADFlagAugmentPreferredTarget
 };
