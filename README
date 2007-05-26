@@ -1357,7 +1357,10 @@ output frequency is a multiple of the original frequency.
 ---- -------------------
 By default, the configuration file is saved in, and loaded from:
 
-        Windows:  <windir>\scummvm.ini,
+        Windows Vista:    \Users\username\AppData\Roaming\ScummVM\scummvm.ini,
+        Windows 2000/XP:  \Documents and Settings\username\Application Data\ScummVM\scummvm.ini,
+        Windows NT4:      <windir>\Profiles\username\Application Data\ScummVM\scummvm.ini,
+        Windows 95/98/ME: <windir>\scummvm.ini,
         Unix:     ~/.scummvmrc
         Mac OS X: ~/Library/Preferences/ScummVM Preferences
         Others:   scummvm.ini in the current directory
