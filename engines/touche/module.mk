@@ -1,9 +1,9 @@
 MODULE := engines/touche
 
 MODULE_OBJS := \
+	detection.o \
 	graphics.o \
 	midi.o \
-	plugin.o \
 	opcodes.o \
 	resource.o \
 	saveload.o \

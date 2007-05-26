@@ -4,6 +4,7 @@
 	Version="8,00"
 	Name="saga"
 	ProjectGUID="{676DB4C5-9A3E-4EE1-8483-EBB79DC0700E}"
+	RootNamespace="saga"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -90,6 +91,7 @@
 			IntermediateDirectory="saga_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -183,6 +185,18 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\saga\detection.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\saga\detection_tables.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\saga\displayinfo.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\saga\events.cpp"
 			>
 		</File>
@@ -200,10 +214,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\saga\font_map.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\game.cpp"
 			>
 		</File>
 		<File
@@ -299,10 +309,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\resnames.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\saga\rscfile.cpp"
 			>
 		</File>
@@ -316,6 +322,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\saga\saga.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\saga\sagaresnames.h"
 			>
 		</File>
 		<File

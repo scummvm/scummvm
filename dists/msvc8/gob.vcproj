@@ -91,6 +91,7 @@
 			IntermediateDirectory="gob_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -123,7 +124,7 @@
 				ForceConformanceInForLoopScope="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				WarnAsError="true"
+				WarnAsError="false"
 				DebugInformationFormat="0"
 			/>
 			<Tool
@@ -159,14 +160,6 @@
 	<References>
 	</References>
 	<Files>
-		<File
-			RelativePath="..\..\engines\gob\anim.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\anim.h"
-			>
-		</File>
 		<File
 			RelativePath="..\..\engines\gob\cdrom.cpp"
 			>
@@ -264,6 +257,18 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\goblin_v3.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\imd.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\imd.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\init.cpp"
 			>
 		</File>
@@ -277,6 +282,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\init_v2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\init_v3.cpp"
 			>
 		</File>
 		<File
@@ -297,6 +306,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\inter_v2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\inter_v3.cpp"
 			>
 		</File>
 		<File
@@ -340,14 +353,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\pack.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\pack.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\gob\palanim.cpp"
 			>
 		</File>
@@ -372,6 +377,22 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\saveload.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\saveload.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\saveload_v2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\saveload_v3.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\scenery.cpp"
 			>
 		</File>
@@ -393,14 +414,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\sound.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\timer.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\timer.h"
 			>
 		</File>
 		<File

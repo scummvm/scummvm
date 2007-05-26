@@ -32,15 +32,6 @@
 namespace Audio {
 
 
-class DigitalTrackInfo {
-public:
-	virtual ~DigitalTrackInfo() {}
-
-	virtual void play(Mixer *mixer, SoundHandle *handle, int numLoops, int startFrame, int duration) = 0;
-//	virtual void stop();
-};
-
-
 class AudioCDManager : public Common::Singleton<AudioCDManager> {
 public:
 	struct Status {
@@ -73,26 +64,11 @@ private:
 	friend class Common::Singleton<SingletonBaseType>;
 	AudioCDManager();
 
-	int getCachedTrack(int track);
-
-private:
 	/* used for emulated CD music */
 	struct ExtStatus : Status {
 		SoundHandle handle;
 	};
 	ExtStatus _cd;
-
-	enum {
-#if defined(__PSP__)
-		CACHE_TRACKS = 4	//the PSP can't have more than 8 files open simultaneously
-					//so don't use more than 4 filehandles for CD tracks
-#else
-		CACHE_TRACKS = 10
-#endif
-	};
-	int _cachedTracks[CACHE_TRACKS];
-	DigitalTrackInfo *_trackInfo[CACHE_TRACKS];
-	int _currentCacheIdx;
 
 	Mixer	*_mixer;
 };

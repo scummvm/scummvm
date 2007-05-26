@@ -287,14 +287,6 @@ File *AGOSEngine::openTablesFile_gme(const char *filename) {
 }
 
 bool AGOSEngine::loadTablesIntoMem(uint subr_id) {
-	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2)
-		return loadTablesOldIntoMem(subr_id);
-	else
-		return loadTablesNewIntoMem(subr_id);
-}
-
-
-bool AGOSEngine::loadTablesOldIntoMem(uint subr_id) {
 	byte *p;
 	uint16 min_num, max_num, file_num;
 	File *in;
@@ -329,7 +321,7 @@ bool AGOSEngine::loadTablesOldIntoMem(uint subr_id) {
 			_tablesHeapCurPosNew = _tablesHeapCurPos;
 
 			if (_tablesHeapCurPos > _tablesHeapSize)
-				error("loadTablesOldIntoMem: Out of table memory");
+				error("loadTablesIntoMem: Out of table memory");
 			return 1;
 		}
 
@@ -339,11 +331,11 @@ bool AGOSEngine::loadTablesOldIntoMem(uint subr_id) {
 		p += 6;
 	}
 
-	debug(1,"loadTablesOldIntoMem: didn't find %d", subr_id);
+	debug(1,"loadTablesIntoMem: didn't find %d", subr_id);
 	return 0;
 }
 
-bool AGOSEngine::loadTablesNewIntoMem(uint subr_id) {
+bool AGOSEngine_Waxworks::loadTablesIntoMem(uint subr_id) {
 	byte *p;
 	int i;
 	uint min_num, max_num;
@@ -395,13 +387,13 @@ bool AGOSEngine::loadTablesNewIntoMem(uint subr_id) {
 				_tablesHeapCurPosNew = _tablesHeapCurPos;
 
 				if (_tablesHeapCurPos > _tablesHeapSize)
-					error("loadTablesNewIntoMem: Out of table memory");
+					error("loadTablesIntoMem: Out of table memory");
 				return 1;
 			}
 		}
 	}
 
-	debug(1,"loadTablesNewIntoMem: didn't find %d", subr_id);
+	debug(1,"loadTablesIntoMem: didn't find %d", subr_id);
 	return 0;
 }
 
@@ -526,16 +518,6 @@ void AGOSEngine::runSubroutine101() {
 int AGOSEngine::startSubroutine(Subroutine *sub) {
 	int result = -1;
 	SubroutineLine *sl = (SubroutineLine *)((byte *)sub + sub->first);
-
-	// WORKAROUND: Bit Flag 171 isn't set when Simon rides the lion to the
-	// goblin camp in non-English versions. Bit Flag 171 is required to display 
-	// the red trail between locations on the map, during the ride.
-	if (getGameType() == GType_SIMON2) {
-		if (sub->id == 13020)
-			setBitFlag(171, true);
-		if (sub->id == 13021)
-			setBitFlag(171, false);
-	}
 
 	const byte *old_code_ptr = _codePtr;
 	Subroutine *old_currentTable = _currentTable;

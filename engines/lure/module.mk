@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	animseq.o \
 	debugger.o \
 	decode.o \
+	detection.o \
 	disk.o \
 	events.o \
 	game.o \

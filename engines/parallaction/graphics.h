@@ -68,6 +68,27 @@ struct PaletteFxRange {
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
+class Font {
+
+protected:
+	byte _color;
+
+
+public:
+	Font() {}
+	virtual ~Font() {}
+
+	virtual void setColor(byte color) {
+		_color = color;
+	}
+	virtual uint32 getStringWidth(const char *s) = 0;
+	virtual uint16 height() = 0;
+
+	virtual void drawString(byte* buffer, uint32 pitch, const char *s) = 0;
+
+
+};
+
 struct StaticCnv {
 	uint16	_width; 	//
 	uint16	_height;	//
@@ -117,6 +138,12 @@ class Parallaction;
 struct DoorData;
 struct GetData;
 
+enum Fonts {
+	kFontDialogue = 0,
+	kFontLabel = 1,
+	kFontMenu = 2
+};
+
 class Gfx {
 
 public:
@@ -137,6 +164,7 @@ public:
 	void drawBalloon(const Common::Rect& r, uint16 arg_8);
 	void displayBalloonString(uint16 x, uint16 y, const char *text, byte color);
 	void displayString(uint16 x, uint16 y, const char *text);
+	void displayCenteredString(uint16 y, const char *text);
 	bool displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, byte color);
 	uint16 getStringWidth(const char *text);
 	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
@@ -156,8 +184,8 @@ public:
 	void restoreBackground(const Common::Rect& r);
 
 	// intro
-	void maskClearRectangle(const Common::Rect& r);
-	void maskOpNot(uint16 x, uint16 y, uint16 unused);
+	void fillMaskRect(const Common::Rect& r, byte color);
+	void plotMaskPixel(uint16 x, uint16 y, byte color);
 
 	// low level
 	void swapBuffers();
@@ -175,13 +203,15 @@ public:
 	void blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
 
 	// palette
-	void setPalette(Palette palette, uint32 first = FIRST_BASE_COLOR, uint32 num = PALETTE_COLORS);
+	void setPalette(Palette palette, uint32 first = FIRST_BASE_COLOR, uint32 num = BASE_PALETTE_COLORS);
 	void setBlackPalette();
 	void animatePalette();
 	void fadePalette(Palette palette);
 	void buildBWPalette(Palette palette);
 	void quickFadePalette(Palette palette);
-	void extendPalette(Palette palette);
+
+	// amiga specific
+	void setHalfbriteMode(bool enable);
 
 	// init
 	Gfx(Parallaction* vm);
@@ -189,11 +219,11 @@ public:
 
 	void setMousePointer(int16 index);
 
-	void setFont(const char* name);
+	void initFonts();
+	void setFont(Fonts name);
 
 public:
 	Common::Point		_labelPosition[2];
-	static bool 		_proportionalFont;
 	uint16				_bgLayers[4];
 	PaletteFxRange		_palettefx[6];
 	Palette				_palette;
@@ -203,7 +233,9 @@ protected:
 	static byte *		_buffers[NUM_BUFFERS];
 	static byte			_mouseArrow[256];
 	StaticCnv			*_mouseComposedArrow;
-	Cnv					*_font;
+	Font				*_font;
+	Font				*_fonts[3];
+	bool				_halfbrite;
 
 protected:
 	byte mapChar(byte c);

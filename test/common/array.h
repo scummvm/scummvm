@@ -59,4 +59,83 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( array[1] == 33 );
 		TS_ASSERT( array[2] == -11 );
 	}
+
+	void test_insert_at( void )
+	{
+		Common::Array<int> array;
+
+		// First of all some data
+		array.push_back(-12);
+		array.push_back(17);
+		array.push_back(25);
+		array.push_back(-11);
+
+		// Insert some data
+		array.insert_at(2, 33);
+
+		TS_ASSERT( array[0] == -12 );
+		TS_ASSERT( array[1] == 17 );
+		TS_ASSERT( array[2] == 33 );
+		TS_ASSERT( array[3] == 25 );
+		TS_ASSERT( array[4] == -11 );
+	}
+
+	void test_remove_at( void )
+	{
+		Common::Array<int> array;
+
+		// First of all some data
+		array.push_back(-12);
+		array.push_back(17);
+		array.push_back(33);
+		array.push_back(25);
+		array.push_back(-11);
+
+		// Remove some data
+		array.remove_at(1);
+
+		TS_ASSERT( array[0] == -12 );
+		TS_ASSERT( array[1] == 33 );
+		TS_ASSERT( array[2] == 25 );
+		TS_ASSERT( array[3] == -11 );
+	}
+
+	void test_push_back( void )
+	{
+		Common::Array<int> array1, array2;
+
+		// Some data for both
+		array1.push_back(-3);
+		array1.push_back(5);
+		array1.push_back(9);
+
+		array2.push_back(3);
+		array2.push_back(-2);
+		array2.push_back(-131);
+
+		array1.push_back(array2);
+
+		TS_ASSERT( array1[0] == -3 );
+		TS_ASSERT( array1[1] == 5 );
+		TS_ASSERT( array1[2] == 9 );
+		TS_ASSERT( array1[3] == 3 );
+		TS_ASSERT( array1[4] == -2 );
+		TS_ASSERT( array1[5] == -131 );
+	}
+
+	void test_copy_constructor( void )
+	{
+		Common::Array<int> array1;
+
+		// Some data for both
+		array1.push_back(-3);
+		array1.push_back(5);
+		array1.push_back(9);
+
+		Common::Array<int> array2(array1);
+
+		TS_ASSERT( array2[0] == -3 );
+		TS_ASSERT( array2[1] == 5 );
+		TS_ASSERT( array2[2] == 9 );
+	}
 };

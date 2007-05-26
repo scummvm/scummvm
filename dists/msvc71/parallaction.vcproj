@@ -129,6 +129,9 @@
 			RelativePath="..\..\engines\parallaction\debug.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\debug.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\defs.h">
 		</File>
 		<File
@@ -142,6 +145,9 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\disk.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\font.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\graphics.cpp">
@@ -168,12 +174,6 @@
 			RelativePath="..\..\engines\parallaction\menu.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\music.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\music.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\parallaction\parallaction.cpp">
 		</File>
 		<File
@@ -189,10 +189,19 @@
 			RelativePath="..\..\engines\parallaction\saveload.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\sound.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\sound.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\staticres.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\walk.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\walk.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\zone.cpp">

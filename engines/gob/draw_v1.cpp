@@ -63,7 +63,7 @@ void Draw_v1::animateCursor(int16 cursor) {
 
 	if (cursorIndex == -1) {
 		cursorIndex = 0;
-		for (ptr = _vm->_game->_collisionAreas; ptr->left != -1; ptr++) {
+		for (ptr = _vm->_game->_collisionAreas; ptr->left != 0xFFFF; ptr++) {
 			if (ptr->flags & 0xFFF0)
 				continue;
 

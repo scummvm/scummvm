@@ -137,8 +137,6 @@ private:
 	MidiParser *xmidiParser;
 	MidiParser *smfParser;
 
-	Audio::DigitalTrackInfo *_track;
-
 	byte *_midiMusicData;
 
 	static void musicVolumeGaugeCallback(void *refCon);

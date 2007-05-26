@@ -37,130 +37,86 @@ void OSystem_PalmOS5::disableCursorPalette(bool disable) {
 	_cursorPaletteDisabled = disable;
 }
 
-void OSystem_PalmOS5::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale) {
-	if (w == 0 || h == 0)
-		return;
-
-FIXME: The restriction on MAX_MOUSE_H / MAX_MOUSE_W is obsolete;
-in particular, BS2 might use bigger cursors these days.
-See also bug #1609058. 1607180
-Hence this code now might overwrite memory unchecked; at the
-very least an assert should be inserted to cause a controlled
-crash, but of course it would be better to remove the restriction
-on "small" cursors.
-
-
-	_mouseCurState.w = w;
-	_mouseCurState.h = h;
-
-	_mouseHotspotX = hotspotX;
-	_mouseHotspotY = hotspotY;
-
-	_mouseKeyColor = keycolor;
-
-	// copy new cursor
-	byte *dst = _mouseDataP;
-	memset(dst, MAX_MOUSE_W * MAX_MOUSE_H, keycolor);
-	while (h--) {
-		memcpy(dst, buf, w);
-		dst += MAX_MOUSE_W;
-		buf += w;
-	}
-}
-
+// TODO: this code is almost the same as Zodiac version.
 void OSystem_PalmOS5::draw_mouse() {
-	if (_mouseDrawn || !_mouseVisible)
+	if (!_mouseDataP || _mouseDrawn || !_mouseVisible)
 		return;
-
-	byte *src = _mouseDataP;		// Image representing the mouse
-	byte color;
-	int width;
-
-	_mouseCurState.y = _mouseCurState.y >= _screenHeight ? _screenHeight - 1 : _mouseCurState.y;
+	
+	byte *src = _mouseDataP;
 
 	int x = _mouseCurState.x - _mouseHotspotX;
 	int y = _mouseCurState.y - _mouseHotspotY;
 	int w = _mouseCurState.w;
 	int h = _mouseCurState.h;
 
-	int draw_x = x;
-	int draw_y = y;
-
 	// clip the mouse rect
-	if (x < 0) {
-		w += x;
-		src -= x;
-		x = 0;
-	}
 	if (y < 0) {
+		src -= y * w;
 		h += y;
-		src -= y * MAX_MOUSE_W;
 		y = 0;
 	}
-	if (w > _screenWidth - x)
-		w = _screenWidth - x;
+	if (x < 0) {
+		src -= x;
+		w += x;
+		x = 0;
+	}
+
 	if (h > _screenHeight - y)
 		h = _screenHeight - y;
+	if (w > _screenWidth - x)
+		w = _screenWidth - x;
 
-	// Quick check to see if anything has to be drawn at all
 	if (w <= 0 || h <= 0)
 		return;
 
-	// Store the bounding box so that undraw mouse can restore the area the
-	// mouse currently covers to its original content.
+	// store the bounding box so that undraw mouse can restore the area the
+	// mouse currently covers to its original content
 	_mouseOldState.x = x;
 	_mouseOldState.y = y;
 	_mouseOldState.w = w;
 	_mouseOldState.h = h;
 
-	// Quick check to see if anything has to be drawn at all
-	if (w <= 0 || h <= 0)
-		return;
+	byte color;
+	int ww;
 
-	// Store the bounding box so that undraw mouse can restore the area the
-	// mouse currently covers to its original content.
-	_mouseOldState.x = x;
-	_mouseOldState.y = y;
-	_mouseOldState.w = w;
-	_mouseOldState.h = h;
-
-	// Backup the covered area draw the mouse cursor
 	if (_overlayVisible) {
-		int16 *bak = (int16 *)_mouseBackupP;			// Surface used to backup the area obscured by the mouse
-		int16 *dst = _overlayP + y * _screenWidth + x;
+		int16 *bak = (int16 *)_mouseBackupP;
 		int16 *pal = _cursorPaletteDisabled ? _nativePal : _mousePal;
+		int16 *dst = _overlayP + y * _screenWidth + x;
 
 		do {
-			width = w;
+			ww = w;
 			do {
 				*bak++ = *dst;
 				color = *src++;
-				if (color != _mouseKeyColor)	// transparent, don't draw
+
+				// transparent, don't draw
+				if (color != _mouseKeyColor)
 					*dst = pal[color];
 				dst++;
-			} while (--width);
+			} while (--ww);
 
-			src += MAX_MOUSE_W - w;
-			bak += MAX_MOUSE_W - w;
+			src += _mouseCurState.w - w;
 			dst += _screenWidth - w;
 		} while (--h);
 
 	} else {
-		byte *bak = _mouseBackupP;						// Surface used to backup the area obscured by the mouse
-		byte *dst =_offScreenP + y * _screenWidth + x;	// Surface we are drawing into
+		byte *bak = _mouseBackupP;
+		byte *dst =_offScreenP + y * _screenWidth + x;
 
 		do {
-			width = w;
+			ww = w;
 			do {
 				*bak++ = *dst;
 				color = *src++;
-				if (color != _mouseKeyColor)	// transparent, don't draw
+
+				// transparent, don't draw
+				if (color != _mouseKeyColor)
 					*dst = color;
 				dst++;
-			} while (--width);
+			} while (--ww);
 
-			src += MAX_MOUSE_W - w;
-			bak += MAX_MOUSE_W - w;
+			src += _mouseCurState.w - w;
 			dst += _screenWidth - w;
 		} while (--h);
 	}
@@ -173,25 +129,26 @@ void OSystem_PalmOS5::undraw_mouse() {
 		return;
 
 	int h = _mouseOldState.h;
-	// No need to do clipping here, since draw_mouse() did that already
+
+	// no need to do clipping here, since draw_mouse() did that already
 	if (_overlayVisible) {
-		int16 *bak = (int16 *)_mouseBackupP;
 		int16 *dst = _overlayP + _mouseOldState.y * _screenWidth + _mouseOldState.x;
+		int16 *bak = (int16 *)_mouseBackupP;
 
 		do {
-			memcpy(dst, bak, _mouseOldState.w * 2);
-			bak += MAX_MOUSE_W;
+			MemMove(dst, bak, _mouseOldState.w * 2);
 			dst += _screenWidth;
+			bak += _mouseOldState.w;
 		} while (--h);
 
 	} else {
-		byte *dst, *bak = _mouseBackupP;
-		dst = _offScreenP + _mouseOldState.y * _screenWidth + _mouseOldState.x;
+		byte *dst = _offScreenP + _mouseOldState.y * _screenWidth + _mouseOldState.x;
+		byte *bak = _mouseBackupP;
 		
 		do {
-			memcpy(dst, bak, _mouseOldState.w);
-			bak += MAX_MOUSE_W;
+			MemMove(dst, bak, _mouseOldState.w);
 			dst += _screenWidth;
+			bak +=  _mouseOldState.w;
 		} while (--h);
 	}
 

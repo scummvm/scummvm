@@ -130,9 +130,8 @@ void KyraEngine::writeSettings() {
 void KyraEngine::initMainButtonList() {
 	_haveScrollButtons = false;
 	_buttonList = &_buttonData[0];
-	for (int i = 0; _buttonDataListPtr[i]; ++i) {
+	for (int i = 0; _buttonDataListPtr[i]; ++i)
 		_buttonList = initButton(_buttonList, _buttonDataListPtr[i]);
-	}
 }
 
 Button *KyraEngine::initButton(Button *list, Button *newButton) {
@@ -141,12 +140,13 @@ Button *KyraEngine::initButton(Button *list, Button *newButton) {
 	if (!list)
 		return newButton;
 	Button *cur = list;
+
 	while (true) {
-		if (!cur->nextButton) {
+		if (!cur->nextButton)
 			break;
-		}
 		cur = cur->nextButton;
 	}
+
 	cur->nextButton = newButton;
 	return list;
 }
@@ -173,7 +173,7 @@ int KyraEngine::buttonInventoryCallback(Button *caller) {
 			snd_playSoundEffect(0x35);
 			_screen->hideMouse();
 			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, 12);
-			_screen->drawShape(0, _shapes[220+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
+			_screen->drawShape(0, _shapes[216+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
 			setMouseItem(inventoryItem);
 			updateSentenceCommand(_itemList[inventoryItem], _takenList[1], 179);
 			_screen->showMouse();
@@ -182,8 +182,8 @@ int KyraEngine::buttonInventoryCallback(Button *caller) {
 		} else {
 			snd_playSoundEffect(0x32);
 			_screen->hideMouse();
-			_screen->drawShape(0, _shapes[220+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
-			_screen->setMouseCursor(1, 1, _shapes[4]);
+			_screen->drawShape(0, _shapes[216+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
+			_screen->setMouseCursor(1, 1, _shapes[0]);
 			updateSentenceCommand(_itemList[_itemInHand], _placedList[0], 179);
 			_screen->showMouse();
 			_currentCharacter->inventoryItems[itemOffset] = _itemInHand;
@@ -231,9 +231,8 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 	_scriptClick->variables[6] = jewel;
 	_scriptInterpreter->startScript(_scriptClick, 4);
 	
-	while (_scriptInterpreter->validScript(_scriptClick)) {
+	while (_scriptInterpreter->validScript(_scriptClick))
 		_scriptInterpreter->runScript(_scriptClick);
-	}
 	
 	if (_scriptClick->variables[3])
 		return 1;
@@ -376,43 +375,37 @@ void KyraEngine::processButton(Button *button) {
 	int flags = (button->flags2 & 5);
 	if (flags == 1) {
 		processType = button->process2;
-		if (processType == 1) {
+		if (processType == 1)
 			shape = button->process2PtrShape;
-		} else if (processType == 4) {
+		else if (processType == 4)
 			callback = button->process2PtrCallback;
-		}
 	} else if (flags == 4 || flags == 5) {
 		processType = button->process1;
-		if (processType == 1) {
+		if (processType == 1)
 			shape = button->process1PtrShape;
-		} else if (processType == 4) {
+		else if (processType == 4)
 			callback = button->process1PtrCallback;
-		}
 	} else {
 		processType = button->process0;
-		if (processType == 1) {
+		if (processType == 1)
 			shape = button->process0PtrShape;
-		} else if (processType == 4) {
+		else if (processType == 4)
 			callback = button->process0PtrCallback;
-		}
 	}
 	
 	int x = button->x;
 	int y = button->y;
 	assert(button->dimTableIndex < _screen->_screenDimTableCount);
-	if (x < 0) {
+	if (x < 0)
 		x += _screen->_screenDimTable[button->dimTableIndex].w << 3;
-	}
 	
-	if (y < 0) {
+	if (y < 0)
 		y += _screen->_screenDimTable[button->dimTableIndex].h;
-	}
 	
-	if (processType == 1 && shape) {
+	if (processType == 1 && shape)
 		_screen->drawShape(_screen->_curPage, shape, x, y, button->dimTableIndex, 0x10);
-	} else if (processType == 4 && callback) {
+	else if (processType == 4 && callback)
 		(this->*callback)(button);
-	}
 }
 
 void KyraEngine::processAllMenuButtons() {
@@ -421,9 +414,8 @@ void KyraEngine::processAllMenuButtons() {
 
 	Button *cur = _menuButtonList;
 	while (true) {
-		if (!cur->nextButton) {
+		if (!cur->nextButton)
 			break;
-		}
 		processMenuButton(cur);
 		cur = cur->nextButton;
 	}
@@ -434,7 +426,7 @@ void KyraEngine::processMenuButton(Button *button) {
 	if (!_displayMenu)
 		return;
 
-	if ( !button || (button->flags & 8))
+	if (!button || (button->flags & 8))
 		return;
 
 	if (button->flags2 & 1)
@@ -466,7 +458,6 @@ int KyraEngine::drawBoxCallback(Button *button) {
 }
 
 int KyraEngine::drawShadedBoxCallback(Button *button) {
-
 	if (!_displayMenu)
 		return 0;
 	
@@ -487,13 +478,12 @@ void KyraEngine::setGUILabels() {
 	int menuLabelGarbageOffset = 0;
 	
 	if (_flags.isTalkie) {
-		if (_flags.lang == Common::EN_ANY) {
+		if (_flags.lang == Common::EN_ANY)
 			offset = 52;
-		} else if (_flags.lang == Common::DE_DEU) {
+		else if (_flags.lang == Common::DE_DEU)
 			offset = 30;
-		} else if (_flags.lang == Common::FR_FRA) {
+		else if (_flags.lang == Common::FR_FRA)
 			offset = 6;
-		}
 		offsetOn = offsetMainMenu = offsetOptions = offset;
 		walkspeedGarbageOffset = 48;
 	} else if (_flags.lang == Common::ES_ESP) {
@@ -558,10 +548,10 @@ void KyraEngine::setGUILabels() {
 	// Main Menu
 	_menu[5].item[5].itemString = &_guiStrings[19 + offsetMainMenu][menuLabelGarbageOffset];
 	
-	if (_flags.isTalkie) {
+	if (_flags.isTalkie)
 		// Text & Voice
 		_voiceTextString = _guiStrings[28 + offset];
-	}
+
 	_textSpeedString = _guiStrings[25 + offsetOptions];
 	_onString =  _guiStrings[20 + offsetOn];
 	_offString =  _guiStrings[21 + offset];
@@ -607,9 +597,9 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 	_mousePressFlag = false;
 	
 	_toplevelMenu = 0;
-	if (_menuDirectlyToLoad)
+	if (_menuDirectlyToLoad) {
 		gui_loadGameMenu(0);
-	else {
+	} else {
 		if (!caller)
 			_toplevelMenu = 4;
 
@@ -627,9 +617,9 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 		gui_restorePalette();
 		_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
 		_animator->_updateScreen = true;
-	}
-	else
+	} else {
 		_screen->deletePageFromDisk(0);
+	}
 
 	return 0;
 }
@@ -662,7 +652,6 @@ void KyraEngine::initMenu(Menu &menu) {
 	for (int i = 0; i < menu.nrOfItems; i++) {
 		if (!menu.item[i].enabled)
 			continue;
-
 
 		x1 = menu.x + menu.item[i].x;
 		y1 = menu.y + menu.item[i].y;
@@ -726,8 +715,9 @@ void KyraEngine::initMenu(Menu &menu) {
 		_scrollDownButton.nextButton = 0;
 		_menuButtonList = initButton(_menuButtonList, &_scrollDownButton);
 		processMenuButton(&_scrollDownButton);
-	} else
+	} else {
 		_haveScrollButtons = false;
+	}
 
 	_screen->showMouse();
 	_screen->updateScreen();
@@ -867,11 +857,10 @@ int KyraEngine::getNextSavegameSlot() {
 	Common::InSaveFile *in;
 
 	for (int i = 1; i < 1000; i++) {
-		if ((in = _saveFileMan->openForLoading(getSavegameFilename(i)))) {
+		if ((in = _saveFileMan->openForLoading(getSavegameFilename(i))))
 			delete in;
-		} else {
+		else
 			return i;
-		}
 	}
 	warning("Didn't save: Ran out of savegame filenames");
 	return 0;
@@ -888,8 +877,9 @@ void KyraEngine::setupSavegames(Menu &menu, int num) {
 		menu.item[0].enabled = 1;
 		menu.item[0].field_1b = 0;
 		startSlot = 1;
-	} else
+	} else {
 		startSlot = 0;
+	}
 
 	for (int i = startSlot; i < num; i++) {
 		if ((in = _saveFileMan->openForLoading(getSavegameFilename(i + _savegameOffset)))) {
@@ -949,9 +939,9 @@ int KyraEngine::gui_saveGameMenu(Button *button) {
 
 int KyraEngine::gui_loadGameMenu(Button *button) {
 	debugC(9, kDebugLevelGUI, "KyraEngine::gui_loadGameMenu()");
-	if (_menuDirectlyToLoad)
+	if (_menuDirectlyToLoad) {
 		_menu[2].item[5].enabled = false;
-	else {
+	} else {
 		processMenuButton(button);
 		_menu[2].item[5].enabled = true;
 	}
@@ -1109,9 +1099,9 @@ int KyraEngine::gui_quitPlaying(Button *button) {
 	debugC(9, kDebugLevelGUI, "KyraEngine::gui_quitPlaying()");
 	processMenuButton(button);
 
-	if (gui_quitConfirm(_guiStrings[14])) // Are you sure you want to quit playing?
+	if (gui_quitConfirm(_guiStrings[14])) { // Are you sure you want to quit playing?
 		quitGame();
-	else {
+	} else {
 		initMenu(_menu[_toplevelMenu]);
 		processAllMenuButtons();
 	}
@@ -1455,9 +1445,8 @@ void KyraEngine::gui_fadePalette() {
 
 	memcpy(_screen->getPalette(2), _screen->_currentPalette, 768);
 
-	for (int i = 0; i < 768; i++) {
-		_screen->_currentPalette[i] /= 2;
-	}
+	for (int i = 0; i < 768; i++)
+		_screen->_currentPalette[i] >>= 1;
 
 	while (menuPalIndexes[index] != -1) {
 		memcpy(&_screen->_currentPalette[menuPalIndexes[index]*3], &_screen->getPalette(2)[menuPalIndexes[index]*3], 3);
@@ -1600,9 +1589,8 @@ void KyraEngine::gui_drawMainBox(int x, int y, int w, int h, int fill) {
 		
 	--w; --h;
 
-	if (fill) {
+	if (fill)
 		_screen->fillRect(x, y, x+w, y+h, colorTable[0]);
-	}
 	
 	_screen->drawClippedLine(x, y+h, x+w, y+h, colorTable[1]);
 	_screen->drawClippedLine(x+w, y, x+w, y+h, colorTable[1]);
@@ -1624,13 +1612,11 @@ void KyraEngine::gui_printString(const char *format, int x, int y, int col1, int
 	vsprintf(string, format, vaList);
 	va_end(vaList);
 	
-	if (flags & 1) {
+	if (flags & 1)
 		x -= _screen->getTextWidth(string) >> 1;
-	}
 	
-	if (flags & 2) {
+	if (flags & 2)
 		x -= _screen->getTextWidth(string);
-	}
 	
 	if (flags & 4) {
 		_screen->printText(string, x - 1, y, 240, col2);

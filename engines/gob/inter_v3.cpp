@@ -715,7 +715,7 @@ bool Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
 	int16 totTextItem;
 	int16 part, curPart = 0;
 	int16 offX = 0, offY = 0;
-	int16 collId, collCmd;
+	int16 collId = 0, collCmd;
 	uint32 stringStartVar, stringVar;
 	bool end;
 

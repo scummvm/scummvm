@@ -20,6 +20,7 @@ chdir("../../../");
 	"mmp/scummvm_agi.mmp", 
 	"mmp/scummvm_touche.mmp", 
 	"mmp/scummvm_parallaction.mmp", 
+	"mmp/scummvm_cruise.mmp", 
 	"S60/ScummVM_S60.mmp",  
 	"S60v3/ScummVM_S60v3.mmp", 
 	"S80/ScummVM_S80.mmp", 
@@ -63,14 +64,16 @@ my @excludes_snd = (
 	"tables.cpp",
 	"freeverb.cpp"
 ); 
-my @excludes_gui = ( 
+
+my @excludes_graphics = ( 
+"iff.cpp"
 ); 
 
 #arseModule(mmpStr,		dirStr,		ifdefArray,		[exclusionsArray])
 ParseModule("_base",	"base",		\@section_empty); # now in ./TRG/ScummVM_TRG.mmp, these never change anyways...
 ParseModule("_base",	"common",	\@section_empty);
-ParseModule("_base",	"gui",		\@section_empty,		\@excludes_gui);
-ParseModule("_base",	"graphics",	\@section_empty);
+ParseModule("_base",	"gui",		\@section_empty);
+ParseModule("_base",	"graphics",	\@section_empty,		\@excludes_graphics);
 ParseModule("_base",	"sound",	\@section_empty,		\@excludes_snd);
 
 chdir("engines/");
@@ -80,7 +83,6 @@ ParseModule("_agos",	"agos",		\@section_empty);
 ParseModule("_sky",		"sky",		\@section_empty);
 ParseModule("_gob",		"gob",		\@section_empty);
 ParseModule("_saga",	"saga",		\@section_empty);
-
 ParseModule("_kyra",	"kyra",		\@section_empty);
 ParseModule("_sword1",	"sword1",	\@section_empty);
 ParseModule("_sword2",	"sword2",	\@section_empty);
@@ -89,6 +91,7 @@ ParseModule("_cine",	"cine",		\@section_empty);
 ParseModule("_agi",	"agi",		\@section_empty);
 ParseModule("_touche",	"touche",	\@section_empty);
 ParseModule("_parallaction","parallaction",\@section_empty);
+ParseModule("_cruise",	"cruise",	\@section_empty);
 print "
 =======================================================================================
 Done. Enjoy :P

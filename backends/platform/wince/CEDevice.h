@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2001-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,19 +28,22 @@
 #include "common/system.h"
 #include "common/str.h"
 
-//#include <gx.h>
-
 class CEDevice {
 	public:
 		static void init();
 		static void end();
 		static void wakeUp();
 		static bool hasPocketPCResolution();
+		static bool hasSquareQVGAResolution();
 		static bool hasDesktopResolution();
 		static bool hasWideResolution();
 		static bool hasSmartphoneResolution();
 		static bool isSmartphone();
 		static Common::String getKeyName(unsigned int keyCode);
+
+	private:
+		static DWORD reg_access(TCHAR *key, TCHAR *val, DWORD data);
+		static void backlight_xchg();
 };
 
 #endif

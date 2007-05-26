@@ -24,8 +24,8 @@
 #include "common/endian.h"
 #include "common/md5.h"
 #include "kyra/kyra.h"
-#include "kyra/kyra2.h"
-#include "kyra/kyra3.h"
+#include "kyra/kyra_v2.h"
+#include "kyra/kyra_v3.h"
 #include "kyra/screen.h"
 #include "kyra/resource.h"
 
@@ -237,22 +237,18 @@ bool StaticResource::init() {
 	delete [] temp;
 	temp = 0;
 	
-	if (version != RESFILE_VERSION) {
+	if (version != RESFILE_VERSION)
 		error("invalid KYRA.DAT file version (%d, required %d)", version, RESFILE_VERSION);
-	}
-	if (gameID != _vm->game()) {
+	if (gameID != _vm->game())
 		error("invalid game id (%d)", gameID);
-	}
 
 	uint32 gameFeatures = createFeatures(_vm->gameFlags());
-	if ((featuresValue & GAME_FLAGS) != gameFeatures) {
+	if ((featuresValue & GAME_FLAGS) != gameFeatures)
 		error("your data file has a different game flags (0x%.08X has the data and your version has 0x%.08X)", (featuresValue & GAME_FLAGS), gameFeatures);
-	}
 
 	// load all tables for now
-	if (!prefetchId(-1)) {
+	if (!prefetchId(-1))
 		error("couldn't load all needed resources from 'KYRA.DAT'");
-	}
 	return true;
 }
 
@@ -285,21 +281,18 @@ const uint8 * const*StaticResource::loadPaletteTable(int id, int &entries) {
 
 bool StaticResource::prefetchId(int id) {
 	if (id == -1) {
-		for (int i = 0; _filenameTable[i].filename; ++i) {
+		for (int i = 0; _filenameTable[i].filename; ++i)
 			prefetchId(_filenameTable[i].id);
-		}
 		return true;
 	}
 	const void *ptr = 0;
 	int type = -1, size = -1;
 
-	if (checkResList(id, type, ptr, size)) {
+	if (checkResList(id, type, ptr, size))
 		return true;
-	}
 
-	if (checkForBuiltin(id, type, size)) {
+	if (checkForBuiltin(id, type, size))
 		return true;
-	}
 
 	const FilenameTable *filename = searchFile(id);
 	if (!filename)
@@ -311,9 +304,8 @@ bool StaticResource::prefetchId(int id) {
 	ResData data;
 	data.id = id;
 	data.type = filetype->type;
-	if (!(this->*(filetype->load))(filename->filename, data.data, data.size)) {
+	if (!(this->*(filetype->load))(filename->filename, data.data, data.size))
 		return false;
-	}
 	_resList.push_back(data);
 
 	return true;
@@ -376,9 +368,8 @@ const StaticResource::FileType *StaticResource::getFiletype(int type) {
 		return 0;
 
 	for (int i = 0; _fileLoader[i].load; ++i) {
-		if (_fileLoader[i].type == type) {
+		if (_fileLoader[i].type == type)
 			return &_fileLoader[i];
-		}
 	}
 
 	return 0;
@@ -416,9 +407,8 @@ const void *StaticResource::getData(int id, int requesttype, int &size) {
 bool StaticResource::loadLanguageTable(const char *filename, void *&ptr, int &size) {
 	char file[64];
 	for (int i = 0; languages[i].ext; ++i) {
-		if (languages[i].flags != createLanguage(_vm->gameFlags())) {
+		if (languages[i].flags != createLanguage(_vm->gameFlags()))
 			continue;
-		}
 			
 		strcpy(file, filename);
 		strcat(file, languages[i].ext);
@@ -576,9 +566,8 @@ void StaticResource::freeRawData(void *&ptr, int &size) {
 
 void StaticResource::freeStringTable(void *&ptr, int &size) {
 	char **data = (char**)ptr;
-	while (size--) {
+	while (size--)
 		delete [] data[size];
-	}
 	ptr = 0;
 	size = 0;
 }
@@ -599,9 +588,8 @@ void StaticResource::freeRoomTable(void *&ptr, int &size) {
 
 void StaticResource::freePaletteTable(void *&ptr, int &size) {
 	uint8 **data = (uint8**)ptr;
-	while (size--) {
+	while (size--)
 		delete [] data[size];
-	}
 	ptr = 0;
 	size = 0;
 }
@@ -609,15 +597,14 @@ void StaticResource::freePaletteTable(void *&ptr, int &size) {
 uint8 *StaticResource::getFile(const char *name, int &size) {
 	char buffer[64];
 	const char *ext = "";
-	if (_vm->gameFlags().isTalkie) {
+	if (_vm->gameFlags().isTalkie)
 		ext = ".CD";
-	} else if (_vm->gameFlags().isDemo) {
+	else if (_vm->gameFlags().isDemo)
 		ext = ".DEM";
-	} else if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+	else if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
 		ext = ".TNS";
-	} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+	else if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		ext = ".AMG";
-	}
 	snprintf(buffer, 64, "%s%s", name, ext);
 	uint32 tempSize = 0;
 	uint8 *data = _vm->resource()->fileData(buffer, &tempSize);
@@ -721,16 +708,16 @@ void KyraEngine::initStaticResource() {
 void KyraEngine::loadMouseShapes() {
 	_screen->loadBitmap("MOUSE.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
-	_shapes[4] = _screen->encodeShape(0, 0, 8, 10, 0);
-	_shapes[5] = _screen->encodeShape(0, 0x17, 0x20, 7, 0);
-	_shapes[6] = _screen->encodeShape(0x50, 0x12, 0x10, 9, 0);
-	_shapes[7] = _screen->encodeShape(0x60, 0x12, 0x10, 11, 0);
-	_shapes[8] = _screen->encodeShape(0x70, 0x12, 0x10, 9, 0);
-	_shapes[9] = _screen->encodeShape(0x80, 0x12, 0x10, 11, 0);
-	_shapes[10] = _screen->encodeShape(0x90, 0x12, 0x10, 10, 0);
-	_shapes[364] = _screen->encodeShape(0x28, 0, 0x10, 13, 0);
+	_shapes[0] = _screen->encodeShape(0, 0, 8, 10, 0);
+	_shapes[1] = _screen->encodeShape(0, 0x17, 0x20, 7, 0);
+	_shapes[2] = _screen->encodeShape(0x50, 0x12, 0x10, 9, 0);
+	_shapes[3] = _screen->encodeShape(0x60, 0x12, 0x10, 11, 0);
+	_shapes[4] = _screen->encodeShape(0x70, 0x12, 0x10, 9, 0);
+	_shapes[5] = _screen->encodeShape(0x80, 0x12, 0x10, 11, 0);
+	_shapes[6] = _screen->encodeShape(0x90, 0x12, 0x10, 10, 0);
+	_shapes[360] = _screen->encodeShape(0x28, 0, 0x10, 13, 0);
 	_screen->setMouseCursor(1, 1, 0);
-	_screen->setMouseCursor(1, 1, _shapes[4]);
+	_screen->setMouseCursor(1, 1, _shapes[0]);
 	_screen->setShapePages(5, 3);
 }
 
@@ -742,7 +729,7 @@ void KyraEngine::loadCharacterShapes() {
 		assert(i < _defaultShapeTableSize);
 		Shape *shape = &_defaultShapeTable[i];
 		if (shape->imageIndex == 0xFF) {
-			_shapes[i+7+4] = 0;
+			_shapes[i+7] = 0;
 			continue;
 		}
 		if (shape->imageIndex != curImage) {
@@ -750,7 +737,7 @@ void KyraEngine::loadCharacterShapes() {
 			_screen->loadBitmap(_characterImageTable[shape->imageIndex], 3, 3, 0);
 			curImage = shape->imageIndex;
 		}
-		_shapes[i+7+4] = _screen->encodeShape(shape->x<<3, shape->y, shape->w<<3, shape->h, 1);
+		_shapes[i+7] = _screen->encodeShape(shape->x<<3, shape->y, shape->w<<3, shape->h, 1);
 	}
 	_screen->_curPage = videoPage;
 }
@@ -761,16 +748,16 @@ void KyraEngine::loadSpecialEffectShapes() {
  
 	int currShape; 
 	for (currShape = 173; currShape < 183; currShape++)
-		_shapes[4 + currShape] = _screen->encodeShape((currShape-173) * 24, 0, 24, 24, 1);
+		_shapes[currShape] = _screen->encodeShape((currShape-173) * 24, 0, 24, 24, 1);
  
 	for (currShape = 183; currShape < 190; currShape++)
-		_shapes[4 + currShape] = _screen->encodeShape((currShape-183) * 24, 24, 24, 24, 1);
+		_shapes[currShape] = _screen->encodeShape((currShape-183) * 24, 24, 24, 24, 1);
  
 	for (currShape = 190; currShape < 201; currShape++)
-		_shapes[4 + currShape] = _screen->encodeShape((currShape-190) * 24, 48, 24, 24, 1);
+		_shapes[currShape] = _screen->encodeShape((currShape-190) * 24, 48, 24, 24, 1);
  
 	for (currShape = 201; currShape < 206; currShape++)
-		_shapes[4 + currShape] = _screen->encodeShape((currShape-201) * 16, 106, 16, 16, 1);
+		_shapes[currShape] = _screen->encodeShape((currShape-201) * 16, 106, 16, 16, 1);
 }
 
 void KyraEngine::loadItems() {
@@ -779,28 +766,28 @@ void KyraEngine::loadItems() {
 	_screen->loadBitmap("JEWELS3.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
 
-	_shapes[327] = 0;
+	_shapes[323] = 0;
 
 	for (shape = 1; shape < 6; shape++ )
-		_shapes[327 + shape] = _screen->encodeShape((shape - 1) * 32, 0, 32, 17, 0);
+		_shapes[323 + shape] = _screen->encodeShape((shape - 1) * 32, 0, 32, 17, 0);
 
 	for (shape = 330; shape <= 334; shape++)
-		_shapes[4 + shape] = _screen->encodeShape((shape-330) * 32, 102, 32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape-330) * 32, 102, 32, 17, 0);
 
 	for (shape = 335; shape <= 339; shape++)
-		_shapes[4 + shape] = _screen->encodeShape((shape-335) * 32, 17,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape-335) * 32, 17,  32, 17, 0);
 
 	for (shape = 340; shape <= 344; shape++)
-		_shapes[4 + shape] = _screen->encodeShape((shape-340) * 32, 34,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape-340) * 32, 34,  32, 17, 0);
 
 	for (shape = 345; shape <= 349; shape++)
-		_shapes[4 + shape] = _screen->encodeShape((shape-345) * 32, 51,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape-345) * 32, 51,  32, 17, 0);
 
 	for (shape = 350; shape <= 354; shape++)
-		_shapes[4 + shape] = _screen->encodeShape((shape-350) * 32, 68,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape-350) * 32, 68,  32, 17, 0);
 
 	for (shape = 355; shape <= 359; shape++)
-		_shapes[4 + shape] = _screen->encodeShape((shape-355) * 32, 85,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape-355) * 32, 85,  32, 17, 0);
 
 
 	_screen->loadBitmap("ITEMS.CPS", 3, 3, 0);
@@ -810,9 +797,9 @@ void KyraEngine::loadItems() {
 		shape = findDuplicateItemShape(i);
 
 		if (shape != -1)
-			_shapes[220 + i] = _shapes[220 + shape];
+			_shapes[216 + i] = _shapes[216 + shape];
 		else
-			_shapes[220 + i] = _screen->encodeShape( (i % 20) * 16, i/20 * 16, 16, 16, 0);
+			_shapes[216 + i] = _screen->encodeShape( (i % 20) * 16, i/20 * 16, 16, 16, 0);
 	}
 
 	uint32 size;
@@ -887,212 +874,6 @@ const ScreenDim Screen::_screenDimTableK3[] = {
 };
 
 const int Screen::_screenDimTableCountK3 = ARRAYSIZE(_screenDimTableK3);
-
-#define Opcode(x) &KyraEngine::x
-void KyraEngine::setupOpcodeTable() {
-	static const OpcodeProc opcodeTable[] = {
-		// 0x00
-		Opcode(o1_magicInMouseItem),
-		Opcode(o1_characterSays),
-		Opcode(o1_pauseTicks),
-		Opcode(o1_drawSceneAnimShape),
-		// 0x04
-		Opcode(o1_queryGameFlag),
-		Opcode(o1_setGameFlag),
-		Opcode(o1_resetGameFlag),
-		Opcode(o1_runNPCScript),
-		// 0x08
-		Opcode(o1_setSpecialExitList),
-		Opcode(o1_blockInWalkableRegion),
-		Opcode(o1_blockOutWalkableRegion),
-		Opcode(o1_walkPlayerToPoint),
-		// 0x0c
-		Opcode(o1_dropItemInScene),
-		Opcode(o1_drawAnimShapeIntoScene),
-		Opcode(o1_createMouseItem),
-		Opcode(o1_savePageToDisk),
-		// 0x10
-		Opcode(o1_sceneAnimOn),
-		Opcode(o1_sceneAnimOff),
-		Opcode(o1_getElapsedSeconds),
-		Opcode(o1_mouseIsPointer),
-		// 0x14
-		Opcode(o1_destroyMouseItem),
-		Opcode(o1_runSceneAnimUntilDone),
-		Opcode(o1_fadeSpecialPalette),
-		Opcode(o1_playAdlibSound),
-		// 0x18
-		Opcode(o1_playAdlibScore),
-		Opcode(o1_phaseInSameScene),
-		Opcode(o1_setScenePhasingFlag),
-		Opcode(o1_resetScenePhasingFlag),
-		// 0x1c
-		Opcode(o1_queryScenePhasingFlag),
-		Opcode(o1_sceneToDirection),
-		Opcode(o1_setBirthstoneGem),
-		Opcode(o1_placeItemInGenericMapScene),
-		// 0x20
-		Opcode(o1_setBrandonStatusBit),
-		Opcode(o1_pauseSeconds),
-		Opcode(o1_getCharactersLocation),
-		Opcode(o1_runNPCSubscript),
-		// 0x24
-		Opcode(o1_magicOutMouseItem),
-		Opcode(o1_internalAnimOn),
-		Opcode(o1_forceBrandonToNormal),
-		Opcode(o1_poisonDeathNow),
-		// 0x28
-		Opcode(o1_setScaleMode),
-		Opcode(o1_openWSAFile),
-		Opcode(o1_closeWSAFile),
-		Opcode(o1_runWSAFromBeginningToEnd),
-		// 0x2c
-		Opcode(o1_displayWSAFrame),
-		Opcode(o1_enterNewScene),
-		Opcode(o1_setSpecialEnterXAndY),
-		Opcode(o1_runWSAFrames),
-		// 0x30
-		Opcode(o1_popBrandonIntoScene),
-		Opcode(o1_restoreAllObjectBackgrounds),
-		Opcode(o1_setCustomPaletteRange),
-		Opcode(o1_loadPageFromDisk),
-		// 0x34
-		Opcode(o1_customPrintTalkString),
-		Opcode(o1_restoreCustomPrintBackground),
-		Opcode(o1_hideMouse),
-		Opcode(o1_showMouse),
-		// 0x38
-		Opcode(o1_getCharacterX),
-		Opcode(o1_getCharacterY),
-		Opcode(o1_changeCharactersFacing),
-		Opcode(o1_copyWSARegion),
-		// 0x3c
-		Opcode(o1_printText),
-		Opcode(o1_random),
-		Opcode(o1_loadSoundFile),
-		Opcode(o1_displayWSAFrameOnHidPage),
-		// 0x40
-		Opcode(o1_displayWSASequentialFrames),
-		Opcode(o1_drawCharacterStanding),
-		Opcode(o1_internalAnimOff),
-		Opcode(o1_changeCharactersXAndY),
-		// 0x44
-		Opcode(o1_clearSceneAnimatorBeacon),
-		Opcode(o1_querySceneAnimatorBeacon),
-		Opcode(o1_refreshSceneAnimator),
-		Opcode(o1_placeItemInOffScene),
-		// 0x48
-		Opcode(o1_wipeDownMouseItem),
-		Opcode(o1_placeCharacterInOtherScene),
-		Opcode(o1_getKey),
-		Opcode(o1_specificItemInInventory),
-		// 0x4c
-		Opcode(o1_popMobileNPCIntoScene),
-		Opcode(o1_mobileCharacterInScene),
-		Opcode(o1_hideMobileCharacter),
-		Opcode(o1_unhideMobileCharacter),
-		// 0x50
-		Opcode(o1_setCharactersLocation),
-		Opcode(o1_walkCharacterToPoint),
-		Opcode(o1_specialEventDisplayBrynnsNote),
-		Opcode(o1_specialEventRemoveBrynnsNote),
-		// 0x54
-		Opcode(o1_setLogicPage),
-		Opcode(o1_fatPrint),
-		Opcode(o1_preserveAllObjectBackgrounds),
-		Opcode(o1_updateSceneAnimations),
-		// 0x58
-		Opcode(o1_sceneAnimationActive),
-		Opcode(o1_setCharactersMovementDelay),
-		Opcode(o1_getCharactersFacing),
-		Opcode(o1_bkgdScrollSceneAndMasksRight),
-		// 0x5c
-		Opcode(o1_dispelMagicAnimation),
-		Opcode(o1_findBrightestFireberry),
-		Opcode(o1_setFireberryGlowPalette),
-		Opcode(o1_setDeathHandlerFlag),
-		// 0x60
-		Opcode(o1_drinkPotionAnimation),
-		Opcode(o1_makeAmuletAppear),
-		Opcode(o1_drawItemShapeIntoScene),
-		Opcode(o1_setCharactersCurrentFrame),
-		// 0x64
-		Opcode(o1_waitForConfirmationMouseClick),
-		Opcode(o1_pageFlip),
-		Opcode(o1_setSceneFile),
-		Opcode(o1_getItemInMarbleVase),
-		// 0x68
-		Opcode(o1_setItemInMarbleVase),
-		Opcode(o1_addItemToInventory),
-		Opcode(o1_intPrint),
-		Opcode(o1_shakeScreen),
-		// 0x6c
-		Opcode(o1_createAmuletJewel),
-		Opcode(o1_setSceneAnimCurrXY),
-		Opcode(o1_poisonBrandonAndRemaps),
-		Opcode(o1_fillFlaskWithWater),
-		// 0x70
-		Opcode(o1_getCharactersMovementDelay),
-		Opcode(o1_getBirthstoneGem),
-		Opcode(o1_queryBrandonStatusBit),
-		Opcode(o1_playFluteAnimation),
-		// 0x74
-		Opcode(o1_playWinterScrollSequence),
-		Opcode(o1_getIdolGem),
-		Opcode(o1_setIdolGem),
-		Opcode(o1_totalItemsInScene),
-		// 0x78
-		Opcode(o1_restoreBrandonsMovementDelay),
-		Opcode(o1_setMousePos),
-		Opcode(o1_getMouseState),
-		Opcode(o1_setEntranceMouseCursorTrack),
-		// 0x7c
-		Opcode(o1_itemAppearsOnGround),
-		Opcode(o1_setNoDrawShapesFlag),
-		Opcode(o1_fadeEntirePalette),
-		Opcode(o1_itemOnGroundHere),
-		// 0x80
-		Opcode(o1_queryCauldronState),
-		Opcode(o1_setCauldronState),
-		Opcode(o1_queryCrystalState),
-		Opcode(o1_setCrystalState),
-		// 0x84
-		Opcode(o1_setPaletteRange),
-		Opcode(o1_shrinkBrandonDown),
-		Opcode(o1_growBrandonUp),
-		Opcode(o1_setBrandonScaleXAndY),
-		// 0x88
-		Opcode(o1_resetScaleMode),
-		Opcode(o1_getScaleDepthTableValue),
-		Opcode(o1_setScaleDepthTableValue),
-		Opcode(o1_message),
-		// 0x8c
-		Opcode(o1_checkClickOnNPC),
-		Opcode(o1_getFoyerItem),
-		Opcode(o1_setFoyerItem),
-		Opcode(o1_setNoItemDropRegion),
-		// 0x90
-		Opcode(o1_walkMalcolmOn),
-		Opcode(o1_passiveProtection),
-		Opcode(o1_setPlayingLoop),
-		Opcode(o1_brandonToStoneSequence),
-		// 0x94
-		Opcode(o1_brandonHealingSequence),
-		Opcode(o1_protectCommandLine),
-		Opcode(o1_pauseMusicSeconds),
-		Opcode(o1_resetMaskRegion),
-		// 0x98
-		Opcode(o1_setPaletteChangeFlag),
-		Opcode(o1_fillRect),
-		Opcode(o1_vocUnload),
-		Opcode(o1_vocLoad),
-		Opcode(o1_dummy)
-	};
-	
-	_opcodeTable = opcodeTable;
-	_opcodeTableSize = ARRAYSIZE(opcodeTable);
-}
-#undef Opcode
 
 const char *KyraEngine::_soundFiles[] = {
 	"INTRO",
@@ -1471,3 +1252,4 @@ const char *KyraEngine_v3::_languageExtension[] = {
 const int KyraEngine_v3::_languageExtensionSize = ARRAYSIZE(KyraEngine_v3::_languageExtension);
 
 } // End of namespace Kyra
+

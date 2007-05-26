@@ -155,6 +155,7 @@ loom	Loom
 	73e5ab7dbb9a8061cc6d25df02dbd1e7	-1	en	DOS	EGA	EGA	v1.0 alt	Andrea Petrucci
 	37f56ceb13e401a7ac7d9e6b37fecaf7	5748	en	DOS	EGA	EGA	v1.1 from 16 Mar 90	Kirben, Andrea Petrucci, Peter Eckerlein
 	22f4ea88a09da12df9308ba30bcb7d0f	-1	en	DOS	EGA	EGA	v1.1 from 29 Mar 90	James Grosbeck, Peter Eckerlein
+	cd46c9f122272d02bbf79332ff521898	5748	ru	DOS	EGA	EGA	v1.1 sev
 	b886b0a5d909c7158a914e1d7c1c6c65	-1	fr	DOS	EGA	EGA	-	Andrea Petrucci
 	6f8a22bfa397be1f7ed4b74aba0e397e	-1	fr	DOS	EGA	EGA	v1.2 26 Jun 90	Jorpho
 	470c45b636139bb40716daa1c7edaad0	-1	de	DOS	EGA	EGA	v1.2 Deutsch from 7 Jun 90	Peter Eckerlein
@@ -481,6 +482,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	4f580a021eee026f3b4589e17d130d78	-1	All	All	-	-	-	Kirben, sev
 	14d48c95b43ddeb983254cf6c43851f1	-1	nl	All	-	-	-	adutchguy, daniel9
 	d74122362a77ec24525fdd50297dfd82	-1	fr	Mac	-	-	-	ThierryFR
+	3b832f4a90740bf22e9b8ed42ca0128c	-1	gb	Windows	HE 99	-	-	Reckless
 	07b810e37be7489263f7bc7627d4765d	-1	ru	Windows	unenc	Unencrypted	-	sev
 	b5298a5c15ffbe8b381d51ea4e26d35c	-1	de	All	HE 99	-	-	Joachim Eberhard
 	4f138ac6f9b2ac5a41bc68b2c3296064	-1	fr	Windows	HE 99	-	-	gist974
@@ -618,6 +620,7 @@ puttrace	Putt-Putt Enters the Race
 	981e1e1891f2be7e25a01f50ae55a5af	-1	us	All	HE 98	-	-	Kirben
 	1ed22f601f8b3695804a6583cc3083f1	-1	nl	All	HE 98.5	-	-	daniel9
 	33e989f85da700e2014d00f345cab3d7	-1	fr	Windows	HE 98.5	-	-	gist974
+	b47be81e39a9710f6f595f7b527b60f8	-1	gb	Windows	HE 99	-	-	Reckless
 	055ffe4f47753e47594ac67823220c54	-1	de	All	HE 99	-	-	Joachim Eberhard
 	62050da376483d8edcbd98cd26b6cb57	-1	ru	Windows	HE 99	-	-	sev
 
@@ -645,6 +648,7 @@ puttcircus	Putt-Putt Joins the Circus
 	ecc4340c2b801f5af8da4e00c0e432d9	-1	nl	All	-	-	-	daniel9
 	ab0693e9324cfcf498fdcbb12acf8bb4	-1	en	All	-	-	-	sev
 	7bad72e332a59f9fcc1d437f4edad32a	-1	ru	All	-	-	-	sev
+	db74136c20557eca6ed3411bff39f7a1	-1	gb	Windows	-	-	-	Reckless
 	d0ad929def3e9cfe39dea55bd12098d4	-1	fr	Windows	-	-	-	gist974
 	febf4a983ea5faea1c9dd6c710ebb09c	-1	de	Windows	-	-	-	andy482
 

@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2001-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -89,42 +89,39 @@ void PocketPCLandscapeAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr
 	unsigned int p2;
 	uint16 * inbuf;
 	uint16 * outbuf;
-	inbuf=(uint16 *)srcPtr;
-	outbuf=(uint16 *)dstPtr;
+	inbuf = (uint16 *)srcPtr;
+	outbuf = (uint16 *)dstPtr;
 
 	uint16 srcPitch16 = (uint16)(srcPitch / sizeof(uint16));
 	uint16 dstPitch16 = (uint16)(dstPitch / sizeof(uint16));
 
-	for (i=0; i<((height)/6); i++) {
-        for (j=0; j<width; j++) {
-			p1=*((uint16*)inbuf+j);
-			inbuf+=srcPitch16;
-			*((uint16*)outbuf+j)=p1;
-			outbuf+=dstPitch16;
-			p2=*((uint16*)inbuf+j);
-			inbuf+=srcPitch16;
-			*((uint16*)outbuf+j)=MAKEPIXEL(P20(RB(p1))+P80(RB(p2)),P20(G(p1))+P80(G(p2)));  
-			outbuf+=dstPitch16;
-			p1=p2; 
-			p2=*((uint16*)inbuf+j);
-			inbuf+=srcPitch16;
-			*((uint16*)outbuf+j)=MAKEPIXEL(P40(RB(p1))+P60(RB(p2)),P40(G(p1))+P60(G(p2)));  
-			outbuf+=dstPitch16;
-			p1=p2;
-			p2=*((uint16*)inbuf+j);
-			inbuf+=srcPitch16;
-			*((uint16*)outbuf+j)=MAKEPIXEL(P60(RB(p1))+P40(RB(p2)),P60(G(p1))+P40(G(p2)));  
-			outbuf+=dstPitch16;
-			p1=p2;
-			p2=*((uint16*)inbuf+j);
-			*((uint16*)outbuf+j)=MAKEPIXEL(P80(RB(p1))+P20(RB(p2)),P80(G(p1))+P20(G(p2)));  
-			outbuf+=dstPitch16;
-			*((uint16*)outbuf+j)=p2;
-			inbuf=inbuf-srcPitch16*4;   
-			outbuf=outbuf-dstPitch16*5; 
+	for (i = 0; i < height/5; i++) {
+		for (j=0; j < width; j++) {
+			p1 = *((uint16*)inbuf+j); inbuf += srcPitch16;
+			*((uint16*)outbuf+j) = p1; outbuf += dstPitch16;
+
+			p2 = *((uint16*)inbuf+j); inbuf += srcPitch16;
+			*((uint16*)outbuf+j) = MAKEPIXEL(P20(RB(p1))+P80(RB(p2)),P20(G(p1))+P80(G(p2)));  outbuf += dstPitch16;
+
+			p1 = p2; 
+			p2 = *((uint16*)inbuf+j); inbuf += srcPitch16;
+			*((uint16*)outbuf+j) = MAKEPIXEL(P40(RB(p1))+P60(RB(p2)),P40(G(p1))+P60(G(p2)));  outbuf += dstPitch16;
+
+			p1 = p2;
+			p2 = *((uint16*)inbuf+j); inbuf += srcPitch16;
+			*((uint16*)outbuf+j) = MAKEPIXEL(P60(RB(p1))+P40(RB(p2)),P60(G(p1))+P40(G(p2)));  outbuf += dstPitch16;
+
+			p1 = p2;
+			p2 = *((uint16*)inbuf+j);
+			*((uint16*)outbuf+j) = MAKEPIXEL(P80(RB(p1))+P20(RB(p2)),P80(G(p1))+P20(G(p2)));  outbuf += dstPitch16;
+
+			*((uint16*)outbuf+j) = p2;
+			
+			inbuf = inbuf - srcPitch16*4;   
+			outbuf = outbuf - dstPitch16*5; 
 		}      
-        inbuf=inbuf+srcPitch16*5;
-        outbuf=outbuf+dstPitch16*6;
+		inbuf = inbuf + srcPitch16*5;
+		outbuf = outbuf + dstPitch16*6;
 	}
 }
 
@@ -190,7 +187,6 @@ void PocketPCHalfZoom(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint3
 	}
 }
 
-//#ifdef WIN32_PLATFORM_WFSP
 void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *work;
 	int i;
@@ -221,5 +217,3 @@ void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, ui
 		}
 	}
 }
-//#endif
-

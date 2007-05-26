@@ -54,7 +54,7 @@ void ScummEngine_v3old::readResTypeList(int id) {
 	for (i = 0; i < num; i++) {
 		_res->roomoffs[id][i] = _fileHandle->readUint16LE();
 		if (_res->roomoffs[id][i] == 0xFFFF)
-			_res->roomoffs[id][i] = RES_INVALID_OFFSET;
+			_res->roomoffs[id][i] = (uint32)RES_INVALID_OFFSET;
 	}
 }
 

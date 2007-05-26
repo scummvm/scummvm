@@ -56,11 +56,9 @@ void OSystem_PalmZodiac::load_gfx_mode() {
 	_ratio.adjustAspect = ConfMan.getBool("aspect_ratio") ? kRatioHeight : kRatioNone;
 
 	// precalc ratio (WIDE mode)
-	_ratio.width = ((float)_screenWidth / _screenHeight * gVars->screenFullHeight);
-	_ratio.height = ((float)_screenHeight / _screenWidth * gVars->screenFullWidth);
+	_ratio.width = (gVars->screenFullHeight * _screenWidth / _screenHeight);
+	_ratio.height = (gVars->screenFullWidth * _screenHeight / _screenWidth);
 
-	_mouseBackupP = (byte *)MemPtrNew(MAX_MOUSE_W * MAX_MOUSE_H * 2); // *2 if 16bit
-	_mouseDataP = (byte *)MemPtrNew(MAX_MOUSE_W * MAX_MOUSE_H);
 	_offScreenP = (byte *)MemPtrNew(_screenWidth * _screenHeight);
 
 	MemSet(_offScreenP, _screenWidth * _screenHeight, 0);
@@ -98,7 +96,7 @@ void OSystem_PalmZodiac::load_gfx_mode() {
 	_srcBmp.rowBytes = _screenWidth;
 	_srcBmp.pixelFormat = twGfxPixelFormat8bpp;
 	_srcBmp.data = _offScreenP;
-	_srcBmp.palette = _nativePal;
+	_srcBmp.palette = (UInt16 *)_nativePal;
 
 	_srcRect.x = 0;
 	_srcRect.y = 0;
@@ -192,8 +190,6 @@ void OSystem_PalmZodiac::unload_gfx_mode() {
 	WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
 	clearScreen();
 
-	MemPtrFree(_mouseBackupP);
-	MemPtrFree(_mouseDataP);
 	MemPtrFree(_offScreenP);
 
 	SysSetOrientation(_sysOldOrientation);
@@ -217,7 +213,8 @@ void OSystem_PalmZodiac::updateScreen() {
 	Err e;
 
 	// draw the mouse pointer
-	draw_mouse();		
+	draw_mouse();
+
 	// update the screen
 	if (_overlayVisible) {
 		if (_stretched) {
@@ -247,6 +244,7 @@ void OSystem_PalmZodiac::updateScreen() {
 				dst.y += _new_shake_pos;
 			}
 			e = TwGfxDrawBitmap(_tmpScreenP, &pos, &_srcBmp);
+			e = TwGfxWaitForVBlank(_gfxH);
 			e = TwGfxStretchBlt2(_palmScreenP, &dst, _tmpScreenP, &_srcRect, twGfxStretchFast| (gVars->filter ? twGfxStretchSmooth : 0)); 
 			
 		} else {
@@ -264,11 +262,9 @@ void OSystem_PalmZodiac::updateScreen() {
 			e = TwGfxDrawBitmap(_palmScreenP, &pos, &_srcBmp);
 		}
 	}
+	
+	// undraw the mouse
 	undraw_mouse();
-}
-
-void OSystem_PalmZodiac::extras_palette(uint8 index, uint8 r, uint8 g, uint8 b) {
-	_nativePal[index] = TwGfxMakeDisplayRGB(r, g, b);
 }
 
 void OSystem_PalmZodiac::draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color) {

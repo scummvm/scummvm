@@ -300,10 +300,42 @@ static const byte _mouseOffs[29 * 32] = {
 	0,0,10,7,10,6,10,5,10,4,10,3,10,4,10,5,10,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 };
 
-void AGOSEngine::handleMouseMoved() {
+void AGOSEngine_PuzzlePack::handleMouseMoved() {
 	uint x;
 
 	if (getGameId() != GID_DIMP && _mouseHideCount) {
+		CursorMan.showMouse(false);
+		return;
+	}
+
+	CursorMan.showMouse(true);
+	_mouse = _eventMan->getMousePos();
+
+	x = 0;
+	if (_lastHitArea3 == 0 && _leftButtonDown != 0) {
+		_verbHitArea = 300;
+		_leftButtonDown = 0;
+		x = 1;
+	}
+
+	if (_rightButtonDown != 0) {
+		_verbHitArea = (getGameId() == GID_DIMP) ? 301 : 300;
+		_rightButtonDown = 0;
+		x = 1;
+	}
+
+	boxController(_mouse.x, _mouse.y, x);
+	_lastHitArea3 = _lastHitArea;
+	if (x == 1 && _lastHitArea == NULL)
+		_lastHitArea3 = (HitArea *) -1;
+
+	drawMousePointer();
+}
+
+void AGOSEngine::handleMouseMoved() {
+	uint x;
+
+	if (_mouseHideCount) {
 		CursorMan.showMouse(false);
 		return;
 	}
@@ -386,8 +418,6 @@ void AGOSEngine::handleMouseMoved() {
 		}
 	}
 
-	// FIXME: The value of _mouseOld is *never* changed and hence
-	// always equal to (0,0). This seems like a bug.
 	if (_mouse != _mouseOld)
 		_needHitAreaRecalc++;
 
@@ -416,13 +446,7 @@ void AGOSEngine::handleMouseMoved() {
 
 	x = 0;
 	if (_lastHitArea3 == 0 && _leftButtonDown != 0) {
-		if (getGameType() == GType_PP)
-			_verbHitArea = 300;
 		_leftButtonDown = 0;
-		x = 1;
-	} else if (getGameType() == GType_PP && _rightButtonDown != 0) {
-		_verbHitArea = 300;
-		_rightButtonDown = 0;
 		x = 1;
 	} else {
 		if (_litBoxFlag == 0 && _needHitAreaRecalc == 0)
@@ -436,10 +460,9 @@ boxstuff:
 		_lastHitArea3 = (HitArea *) -1;
 
 get_out:
-	if (getGameType() == GType_FF)
-		drawMousePointer_FF();
-	else
-		drawMousePointer();
+
+	_mouseOld = _mouse;
+	drawMousePointer();
 
 	_needHitAreaRecalc = 0;
 	_litBoxFlag = 0;
@@ -497,7 +520,7 @@ void AGOSEngine::initMouse() {
 	}
 }
 
-void AGOSEngine::loadMouseImage() {
+void AGOSEngine_PuzzlePack::loadMouseImage() {
 	loadZone(_variableArray[500]);
 	VgaPointersEntry *vpe = &_vgaBufferPointers[_variableArray[500]];
 
@@ -505,47 +528,41 @@ void AGOSEngine::loadMouseImage() {
 	memcpy(_mouseData, src, _maxCursorWidth * _maxCursorHeight);
 }
 
-void AGOSEngine::drawMousePointer() {
-	if (getGameType() == GType_PP && getGameId() != GID_DIMP) {
-		CursorMan.replaceCursor(_mouseData, _maxCursorWidth, _maxCursorHeight, 37, 48, 0);
-	} else if (getGameType() == GType_SIMON2) {
-		CursorMan.replaceCursor(_simon2_cursors[_mouseCursor], 16, 16, 7, 7);
-	} else if (getGameType() == GType_SIMON1) {
-		CursorMan.replaceCursor(_mouseData, 16, 16, 0, 0, 0xFF);
+void AGOSEngine_PuzzlePack::drawMousePointer() {
+	if (getGameId() == GID_DIMP) {
+		AGOSEngine::drawMousePointer();
 	} else {
-		const uint16 *src;
-		int i, j;
-
-		const uint8 color = (getGameType() == GType_ELVIRA1) ? 15: 65;
-		memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
-
-		uint cursor = _mouseCursor;
-		if (getGameType() == GType_ELVIRA1 && cursor == 2)
-			cursor = 3;
-
-		if (_dragFlag != 0)
-			cursor = 2;
-
-		src = _common_cursors[cursor];
-
-		for (i = 0; i < 16; i++) {
-			for (j = 0; j < 16; j++) {
-				if (src[0] & (1 << (15 - (j % 16)))) {
-					if (src[1] & (1 << (15 - (j % 16)))) {
-						_mouseData[16 * i + j] = color;
-					} else {
-						_mouseData[16 * i + j] = 0;
-					}
-				}
-			}
-			src += 2;
-		}
-
-		CursorMan.replaceCursor(_mouseData, 16, 16, 0, 0, 0xFF);
+		CursorMan.replaceCursor(_mouseData, _maxCursorWidth, _maxCursorHeight, 37, 48, 0);
 	}
 }
 
-void AGOSEngine::drawMousePointer_FF() {
+void AGOSEngine_Feeble::drawMousePart(int image, byte x, byte y) {
+	VgaPointersEntry *vpe = &_vgaBufferPointers[7];
+	byte *src;
+	int width, height;
+
+	byte *dst = _mouseData + y * _maxCursorWidth + x;
+
+	src = vpe->vgaFile2 + image * 8;
+	width = READ_LE_UINT16(src + 6);
+	height = READ_LE_UINT16(src + 4);
+
+	src = vpe->vgaFile2 + READ_LE_UINT32(src);
+
+	assert(width + x <= _maxCursorWidth);
+	assert(height + y <= _maxCursorWidth);
+
+	for (int h = 0; h < height; h++) {
+		for (int w = 0; w < width; w++) {
+			if (src[w] != 0)
+				dst[w] = src[w];
+		}
+		src += width;
+		dst += _maxCursorWidth;
+	}
+}
+
+void AGOSEngine_Feeble::drawMousePointer() {
 	uint cursor;
 	int image, offs;
 
@@ -602,29 +619,41 @@ void AGOSEngine::drawMousePointer_FF() {
 	}
 }
 
-void AGOSEngine::drawMousePart(int image, byte x, byte y) {
-	VgaPointersEntry *vpe = &_vgaBufferPointers[7];
-	byte *src;
-	int width, height;
+void AGOSEngine::drawMousePointer() {
+	if (getGameType() == GType_SIMON2) {
+		CursorMan.replaceCursor(_simon2_cursors[_mouseCursor], 16, 16, 7, 7);
+	} else if (getGameType() == GType_SIMON1) {
+		CursorMan.replaceCursor(_mouseData, 16, 16, 0, 0, 0xFF);
+	} else {
+		const uint16 *src;
+		int i, j;
 
-	byte *dst = _mouseData + y * _maxCursorWidth + x;
+		const uint8 color = (getGameType() == GType_ELVIRA1) ? 15: 65;
+		memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
 
-	src = vpe->vgaFile2 + image * 8;
-	width = READ_LE_UINT16(src + 6);
-	height = READ_LE_UINT16(src + 4);
+		uint cursor = _mouseCursor;
+		if (getGameType() == GType_ELVIRA1 && cursor == 2)
+			cursor = 3;
 
-	src = vpe->vgaFile2 + READ_LE_UINT32(src);
+		if (_dragFlag != 0)
+			cursor = 2;
 
-	assert(width + x <= _maxCursorWidth);
-	assert(height + y <= _maxCursorWidth);
+		src = _common_cursors[cursor];
 
-	for (int h = 0; h < height; h++) {
-		for (int w = 0; w < width; w++) {
-			if (src[w] != 0)
-				dst[w] = src[w];
+		for (i = 0; i < 16; i++) {
+			for (j = 0; j < 16; j++) {
+				if (src[0] & (1 << (15 - (j % 16)))) {
+					if (src[1] & (1 << (15 - (j % 16)))) {
+						_mouseData[16 * i + j] = color;
+					} else {
+						_mouseData[16 * i + j] = 0;
+					}
+				}
+			}
+			src += 2;
 		}
-		src += width;
-		dst += _maxCursorWidth;
+
+		CursorMan.replaceCursor(_mouseData, 16, 16, 0, 0, 0xFF);
 	}
 }
 

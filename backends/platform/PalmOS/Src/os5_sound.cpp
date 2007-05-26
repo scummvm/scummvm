@@ -134,7 +134,7 @@ void OSystem_PalmOS5::clearSoundCallback() {
 		}
 
 		if (_soundEx.dataP)
-			free(_soundEx.dataP);
+			MemPtrFree(_soundEx.dataP);
 	}
 
 	_sound.active = false;

@@ -327,7 +327,8 @@ uint8 Control::getClicks(uint8 mode, uint8 *retVal) {
 	uint8 flag = 0;
 	if (_keyPressed == 27)
 		flag = kButtonCancel;
-	else if (_keyPressed == '\r' || _keyPressed == '\n')
+	// 3 is num keypad Enter on Macs. See FR #1273746
+	else if (_keyPressed == '\r' || _keyPressed == '\n' || _keyPressed == 3)
 		flag = kButtonOk;
 
 	if (flag) {

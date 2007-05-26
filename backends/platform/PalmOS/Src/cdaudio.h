@@ -54,8 +54,8 @@ public:
 	virtual void setVolume(int volume) { _volumeLevel = volume; }
 	virtual int getVolume() const { return _volumeLevel; }
 
-	virtual void upVolume(int value) {};
-	virtual void downVolume(int value) {};
+	virtual void upVolume(int value) {}
+	virtual void downVolume(int value) {}
 
 protected:
 	int _volumeLevel;

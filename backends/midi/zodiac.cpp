@@ -25,8 +25,7 @@
 
 #ifndef DISABLE_TAPWAVE
 
-#include "TwTraps.h"
-#include "TwMidi.h"
+#include <tapwave.h>
 
 
 class MidiDriver_Zodiac:public MidiDriver_MPU401 {
@@ -110,12 +109,13 @@ void MidiDriver_Zodiac::send(uint32 b) {
 }
 
 void MidiDriver_Zodiac::sysEx(const byte *msg, uint16 length) {
-FIXME: We may have to add the 0xF0 / 0xF7 frame here.
-Or not -- maybe TwMidiSysEx doesn't expect it either.
-But since I couldn't find any documentation on this API,
-I'll leave it to the porter to decide that. -- Fingolfin
+	unsigned char buf[256];
+	
+	buf[0] = 0xF0;
+	memcpy(buf + 1, msg, length);
+	buf[length + 1] = 0xF7;
 
-	TwMidiSysEx(_midiHandle, 0, (byte *)msg, length);
+	TwMidiSysEx(_midiHandle, 0, (byte *)buf, length + 2);
 }
 
 MidiDriver *MidiDriver_Zodiac_create() {

@@ -22,15 +22,10 @@
 
 #include "common/stdafx.h"
 
-#include "parallaction/commands.h"
-#include "parallaction/parallaction.h"
-#include "parallaction/graphics.h"
-#include "parallaction/disk.h"
-#include "parallaction/inventory.h"
-#include "parallaction/parser.h"
-#include "parallaction/zone.h"
-
 #include "common/events.h"
+#include "parallaction/parallaction.h"
+
+
 
 namespace Parallaction {
 
@@ -184,7 +179,7 @@ char *Parallaction::parseDialogueString(Script &script) {
 
 	} while (strlen(vD0) == 0);
 
-	vD0[strlen(vD0)-1] = '\0';	// deletes the trailing '0xA' inserted by parseNextLine
+	vD0[strlen(vD0)-1] = '\0';	// deletes the trailing '0xA'
 								// this is critical for Gfx::displayBalloonString to work properly
 
 	char *vCC = (char*)malloc(strlen(vD0)+1);
@@ -217,7 +212,8 @@ uint16 Parallaction::askDialoguePassword(Dialogue *q, StaticCnv *face) {
 			// FIXME: see comment for updateInput()
 			if (!g_system->getEventManager()->pollEvent(e)) continue;
 			if (e.type != Common::EVENT_KEYDOWN) continue;
-			if (e.type != Common::EVENT_QUIT) g_system->quit();
+			if (e.type == Common::EVENT_QUIT)
+				g_system->quit();
 			if (!isdigit(e.kbd.ascii)) continue;
 
 			password[passwordLen] = e.kbd.ascii;
@@ -225,6 +221,7 @@ uint16 Parallaction::askDialoguePassword(Dialogue *q, StaticCnv *face) {
 			password[passwordLen] = '\0';
 
 			_gfx->displayBalloonString(_answerBalloonX[0] + 5, _answerBalloonY[0] + _answerBalloonH[0] - 15, password, 0);
+			_gfx->updateScreen();
 
 			g_system->delayMillis(20);
 		}
@@ -286,6 +283,7 @@ bool Parallaction::displayAnswers(Dialogue *q) {
 		}
 		i++;
 	}
+	_gfx->updateScreen();
 
 	return displayed;
 }
@@ -310,6 +308,7 @@ void Parallaction::displayQuestion(Dialogue *q, Cnv *cnv) {
 
 	_gfx->drawBalloon(r, q->_mood & 0x10);
 	_gfx->displayWrappedString(q->_text, QUESTION_BALLOON_X, QUESTION_BALLOON_Y, MAX_BALLOON_WIDTH, 0);
+	_gfx->updateScreen();
 
 	waitUntilLeftClick();
 
@@ -348,7 +347,7 @@ void Parallaction::runDialogue(SpeakData *data) {
 
 	enterDialogue();
 
-	_gfx->setFont("comic");
+	_gfx->setFont(kFontDialogue);
 
 	bool isNpc = scumm_stricmp(data->_name, "yourself") && data->_name[0] != '\0';
 	Cnv *face = isNpc ? _disk->loadTalk(data->_name) : _char._talk;
@@ -412,6 +411,7 @@ int16 Parallaction::selectAnswer(Question *q, StaticCnv *cnv) {
 		cnv->_data0 = _char._talk->getFramePtr(q->_answers[_di]->_mood & 0xF);
 //		cnv->_data1 = _char._talk->field_8[q->_answers[_di]->_mood & 0xF];
 		_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X,	ANSWER_CHARACTER_Y, Gfx::kBitFront);
+		_gfx->updateScreen();
 		waitUntilLeftClick();
 		return _di;
 	}
@@ -434,6 +434,7 @@ int16 Parallaction::selectAnswer(Question *q, StaticCnv *cnv) {
 			_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
 		}
 
+		_gfx->updateScreen();
 		g_system->delayMillis(30);
 		v2 = _si;
 	}

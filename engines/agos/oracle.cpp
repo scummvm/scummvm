@@ -31,7 +31,7 @@
 
 namespace AGOS {
 
-void AGOSEngine::checkLinkBox() {	// Check for boxes spilling over to next row of text
+void AGOSEngine_Feeble::checkLinkBox() {	// Check for boxes spilling over to next row of text
 	if (_hyperLink != 0) {
 		_variableArray[52] = _textWindow->x + _textWindow->textColumn - _variableArray[50];
 		if (_variableArray[52] != 0) {
@@ -43,7 +43,7 @@ void AGOSEngine::checkLinkBox() {	// Check for boxes spilling over to next row o
 	}
 }
 
-void AGOSEngine::hyperLinkOn(uint16 x) {
+void AGOSEngine_Feeble::hyperLinkOn(uint16 x) {
 	if (!getBitFlag(51))
 		return;
 
@@ -53,7 +53,7 @@ void AGOSEngine::hyperLinkOn(uint16 x) {
 }
 
 
-void AGOSEngine::hyperLinkOff() {
+void AGOSEngine_Feeble::hyperLinkOff() {
 	if (!getBitFlag(51))
 		return;
 
@@ -63,28 +63,117 @@ void AGOSEngine::hyperLinkOff() {
 	_hyperLink = 0;
 }
 
-void AGOSEngine::linksUp() {	// Scroll Oracle Links
+void AGOSEngine_Feeble::linksUp() {	// Scroll Oracle Links
 	uint16 j;
 	for (j = 700; j < _variableArray[53]; j++) {
 		moveBox(j, 0, -15);
 	}
 }
 
-void AGOSEngine::linksDown() {
+void AGOSEngine_Feeble::linksDown() {
 	uint16 i;
 	for (i = 700; i < _variableArray[53]; i++) {
 		moveBox(i,0, 15);
 	}
 }
 
-void AGOSEngine::scrollOracle() {
+void AGOSEngine_Feeble::checkUp(WindowBlock *window) {
+	uint16 j, k;
+
+	if (((_variableArray[31] - _variableArray[30]) == 40) && (_variableArray[31] > 52)) {
+		k = (((_variableArray[31] / 52) - 2) % 3);
+		j = k * 6;
+		if (!isBoxDead(j + 201)) {
+			uint index = getWindowNum(window);
+			drawIconArray(index, window->iconPtr->itemRef, 0, window->iconPtr->classMask);
+			animate(4, 9, k + 34, 0, 0, 0);	
+		}
+	}
+	if ((_variableArray[31] - _variableArray[30]) == 76) {
+		k = ((_variableArray[31] / 52) % 3);
+		j = k * 6;
+		if (isBoxDead(j + 201)) {
+			animate(4, 9, k + 31, 0, 0, 0);
+			undefineBox(j + 201);
+			undefineBox(j + 202);
+			undefineBox(j + 203);
+			undefineBox(j + 204);
+			undefineBox(j + 205);
+			undefineBox(j + 206);
+		}
+		_variableArray[31] -= 52;
+		_iOverflow = 1;
+	}
+}
+
+void AGOSEngine_Feeble::inventoryUp(WindowBlock *window) {
+	_marks = 0;
+	checkUp(window);
+	animate(4, 9, 21, 0 ,0, 0);	
+	while (1) {
+		if (_currentBox->id != 0x7FFB || !getBitFlag(89))
+			break;
+		checkUp(window);
+		delay(1);
+	}
+	waitForMark(2);
+	checkUp(window);
+	sendSync(922);
+	waitForMark(1);
+	checkUp(window);
+}
+
+
+void AGOSEngine_Feeble::checkDown(WindowBlock *window) {
+	uint16 j, k;
+
+	if (((_variableArray[31] - _variableArray[30]) == 24) && (_iOverflow == 1)) {
+		uint index = getWindowNum(window);
+		drawIconArray(index, window->iconPtr->itemRef, 0, window->iconPtr->classMask);
+		k = ((_variableArray[31] / 52) % 3);
+		animate(4, 9, k + 25, 0, 0, 0);	
+		_variableArray[31] += 52;
+	}
+	if (((_variableArray[31] - _variableArray[30]) == 40) && (_variableArray[30] > 52)) {
+		k = (((_variableArray[31] / 52) + 1) % 3);
+		j = k * 6;
+		if (isBoxDead(j + 201)) {
+			animate(4, 9, k + 28, 0, 0, 0);
+			undefineBox(j + 201);
+			undefineBox(j + 202);
+			undefineBox(j + 203);
+			undefineBox(j + 204);
+			undefineBox(j + 205);
+			undefineBox(j + 206);
+		}
+	}
+}
+
+void AGOSEngine_Feeble::inventoryDown(WindowBlock *window) {
+	_marks = 0;
+	checkDown(window);
+	animate(4, 9, 23, 0, 0, 0);	
+	while (1) {
+		if (_currentBox->id != 0x7FFC || !getBitFlag(89))
+		break;
+		checkDown(window);
+		delay(1);
+	}
+	waitForMark(2);
+	checkDown(window);
+	sendSync(924);
+	waitForMark(1);
+	checkDown(window);
+}
+
+void AGOSEngine_Feeble::scrollOracle() {
 	int i;
 
 	for (i = 0; i < 5; i++)
 		scrollOracleUp();
 }
 
-void AGOSEngine::oracleTextUp() {
+void AGOSEngine_Feeble::oracleTextUp() {
 	Subroutine *sub;
 	int i = 0;
 	changeWindow(3);
@@ -118,7 +207,7 @@ void AGOSEngine::oracleTextUp() {
 	}
 }
 
-void AGOSEngine::oracleTextDown() {
+void AGOSEngine_Feeble::oracleTextDown() {
 	Subroutine *sub;
 	int i = 0;
 	changeWindow(3);
@@ -152,7 +241,7 @@ void AGOSEngine::oracleTextDown() {
 	}
 }
 
-void AGOSEngine::scrollOracleUp() {
+void AGOSEngine_Feeble::scrollOracleUp() {
 	byte *src, *dst;
 	uint16 w, h;
 
@@ -181,7 +270,7 @@ void AGOSEngine::scrollOracleUp() {
 	}
 }
 
-void AGOSEngine::scrollOracleDown() {
+void AGOSEngine_Feeble::scrollOracleDown() {
 	byte *src, *dst;
 	uint16 w, h;
 
@@ -209,7 +298,7 @@ void AGOSEngine::scrollOracleDown() {
 	}
 }
 
-void AGOSEngine::oracleLogo() {
+void AGOSEngine_Feeble::oracleLogo() {
 	Common::Rect srcRect, dstRect;
 	byte *src, *dst;
 	uint16 w, h;
@@ -237,7 +326,7 @@ void AGOSEngine::oracleLogo() {
 	}
 }
 
-void AGOSEngine::swapCharacterLogo() {
+void AGOSEngine_Feeble::swapCharacterLogo() {
 	Common::Rect srcRect, dstRect;
 	byte *src, *dst;
 	uint16 w, h;
@@ -277,7 +366,7 @@ void AGOSEngine::swapCharacterLogo() {
 	}
 }
 
-void AGOSEngine::listSaveGames(int n) {
+void AGOSEngine_Feeble::listSaveGames(int n) {
 	char b[108];
 	Common::InSaveFile *in;
 	uint16 j, k, z, maxFiles;
@@ -344,7 +433,7 @@ void AGOSEngine::listSaveGames(int n) {
 	}
 }
 
-void AGOSEngine::saveUserGame(int slot) {
+void AGOSEngine_Feeble::saveUserGame(int slot) {
 	WindowBlock *window;
 	Common::InSaveFile *in;
 	char name[108];
@@ -407,7 +496,7 @@ void AGOSEngine::saveUserGame(int slot) {
 	}
 }
 
-void AGOSEngine::windowBackSpace(WindowBlock *window) {
+void AGOSEngine_Feeble::windowBackSpace(WindowBlock *window) {
 	byte *dst;
 	uint x, y, h, w;
 

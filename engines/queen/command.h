@@ -185,7 +185,7 @@ private:
 	void lookForCurrentIcon(int16 cx, int16 cy);
 
 	//! returns true if the verb is an action verb
-	bool isVerbAction(Verb v) const { return (v >= VERB_PANEL_COMMAND_FIRST && v <= VERB_PANEL_COMMAND_LAST) || (v == VERB_WALK_TO); };
+	bool isVerbAction(Verb v) const { return (v >= VERB_PANEL_COMMAND_FIRST && v <= VERB_PANEL_COMMAND_LAST) || (v == VERB_WALK_TO); }
 
 	//! return true if the verb is an inventory item
 	bool isVerbInv(Verb v) const { return v >= VERB_INV_FIRST && v <= VERB_INV_LAST; }

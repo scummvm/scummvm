@@ -99,6 +99,9 @@ typedef struct {
 extern SoundExType _soundEx;
 
 class OSystem_PalmOS5 : public OSystem_PalmBase {
+protected:
+	int16 _nativePal[256], _mousePal[256];
+
 private:
 	uint16 _scaleTableX[512];
 	uint32 _scaleTableY[512];
@@ -108,7 +111,6 @@ private:
 
 	OverlayColor *_overlayP;
 	WinHandle _overlayH, _workScreenH;
-	int16 _nativePal[256], _mousePal[256];
 	int16 *_workScreenP;
 	
 	Boolean _isSwitchable, _wasRotated;
@@ -124,7 +126,7 @@ private:
 	void draw_mouse();
 	void undraw_mouse();
 	virtual bool check_event(Common::Event &event, EventPtr ev);
-	virtual void extras_palette(uint8 index, uint8 r, uint8 g, uint8 b);
+	void extras_palette(uint8 index, uint8 r, uint8 g, uint8 b);
 	void calc_scale();
 
 	void render_landscapeAny(RectangleType &r, PointType &p);
@@ -168,8 +170,7 @@ public:
 	void clearScreen();
 	bool grabRawScreen(Graphics::Surface *surf);
 
-	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale);
-	virtual void setCursorPalette(const byte *colors, uint start, uint num);
+	void setCursorPalette(const byte *colors, uint start, uint num);
 	void disableCursorPalette(bool disable);
 
 	void showOverlay();
@@ -179,7 +180,7 @@ public:
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
 	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
-
+	
 	void setWindowCaption(const char *caption);
 
 };

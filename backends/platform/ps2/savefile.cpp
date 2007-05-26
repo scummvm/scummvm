@@ -205,9 +205,9 @@ public:
 	AutoSaveFile(Ps2SaveFileManager *saveMan, const char *filename);
 	~AutoSaveFile(void);
 	virtual uint32 write(const void *ptr, uint32 size);
-	virtual void flush(void) { };
+	virtual void flush(void) {}
 	virtual bool ioFailed(void) { return false; };
-	virtual void clearIOFailed(void) {};
+	virtual void clearIOFailed(void) {}
 private:
 	Ps2SaveFileManager *_saveMan;
 	char _fileName[256];

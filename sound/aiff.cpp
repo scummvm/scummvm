@@ -46,7 +46,7 @@ uint32 readExtended(Common::SeekableReadStream &stream) {
 
 	byte buf[10];
 	uint32 mantissa;
-	uint32 last;
+	uint32 last = 0;
 	byte exp;
 
 	stream.read(buf, 10);
@@ -89,8 +89,8 @@ bool loadAIFFFromStream(Common::SeekableReadStream &stream, int &size, int &rate
 	bool foundCOMM = false;
 	bool foundSSND = false;
 
-	uint16 numChannels, bitsPerSample;
-	uint32 numSampleFrames, offset, blockSize, soundOffset;
+	uint16 numChannels = 0, bitsPerSample = 0;
+	uint32 numSampleFrames = 0, offset = 0, blockSize = 0, soundOffset = 0;
 
 	while ((!foundCOMM || !foundSSND) && !stream.ioFailed()) {
 		uint32 length, pos;

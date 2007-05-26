@@ -23,11 +23,9 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 
-#include "parallaction/menu.h"
-#include "parallaction/disk.h"
-#include "parallaction/music.h"
-#include "parallaction/graphics.h"
 #include "parallaction/parallaction.h"
+#include "parallaction/menu.h"
+#include "parallaction/sound.h"
 
 
 namespace Parallaction {
@@ -94,6 +92,7 @@ static uint16 _doughKey[] = { 1, 7 ,7, 2, 2, 6 };
 
 Menu::Menu(Parallaction *vm) {
 	_vm = vm;
+
 }
 
 Menu::~Menu() {
@@ -105,67 +104,54 @@ void Menu::start() {
 
 	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
 
-	_vm->_gfx->_proportionalFont = false;
-	_vm->_gfx->setFont("slide");
+	splash();
 
-	_vm->_disk->loadSlide("intro");
-	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	_language = chooseLanguage();
+	_vm->_disk->setLanguage(_language);
 
-	g_system->delayMillis(2000);
-
-	_vm->_disk->loadSlide("minintro");
-	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-
-	g_system->delayMillis(2000);
-
-	if (_vm->getPlatform() == Common::kPlatformPC) {
-
-		_vm->_disk->loadSlide("lingua");
-		_vm->_gfx->extendPalette(_vm->_gfx->_palette);
-		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-
-		_vm->_gfx->displayString(60, 30, "SELECT LANGUAGE");
-
-		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
-		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
-		_language = chooseLanguage();
-
-		_vm->_disk->setLanguage(_language);
-
-		if (selectGame() == 0) {
-			newGame();
-		}
-	} else {
-		_vm->_disk->setLanguage(1);
-	}
+	int game = selectGame();
+	if (game == 0)
+		newGame();
 
 	return;
 }
 
+void Menu::splash() {
+
+	_vm->_disk->loadSlide("intro");
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	g_system->delayMillis(2000);
+
+	_vm->_disk->loadSlide("minintro");
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	g_system->delayMillis(2000);
+
+}
+
 void Menu::newGame() {
+
+	if (_vm->getFeatures() & GF_DEMO) {
+		// character screen is not shown on demo
+		// so user warps to the playable intro
+		strcpy(_vm->_location._name, "fognedemo");
+		return;
+	}
 
 	const char **v14 = introMsg3;
 
 	_vm->_disk->loadScenery("test", NULL);
-	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->swapBuffers();
 
-	uint16 _ax = (SCREEN_WIDTH - _vm->_gfx->getStringWidth(v14[0])) / 2;
-	_vm->_gfx->displayString(_ax, 50, v14[0]);
+	_vm->_gfx->displayCenteredString(50, v14[0]);
+	_vm->_gfx->displayCenteredString(70, v14[1]);
+	_vm->_gfx->displayCenteredString(100, v14[2]);
+	_vm->_gfx->displayCenteredString(120, v14[3]);
 
-	_ax = (SCREEN_WIDTH - _vm->_gfx->getStringWidth(v14[1])) / 2;
-	_vm->_gfx->displayString(_ax, 70, v14[1]);
-
-	_ax = (SCREEN_WIDTH - _vm->_gfx->getStringWidth(v14[2])) / 2;
-	_vm->_gfx->displayString(_ax, 100, v14[2]);
-
-	_ax = (SCREEN_WIDTH - _vm->_gfx->getStringWidth(v14[3])) / 2;
-	_vm->_gfx->displayString(_ax, 120, v14[3]);
-
+	_vm->_gfx->updateScreen();
 	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
-
 
 	_mouseButtons = kMouseNone;
 
@@ -174,8 +160,10 @@ void Menu::newGame() {
 		if (_mouseButtons == kMouseRightUp) break;
 	}
 
-	if (_mouseButtons != kMouseRightUp)
+	if (_mouseButtons != kMouseRightUp) {
+		strcpy(_vm->_location._name, "fogne");
 		return;    // show intro
+	}
 
 	selectCharacter();
 
@@ -186,6 +174,25 @@ void Menu::newGame() {
 }
 
 uint16 Menu::chooseLanguage() {
+
+	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		// TODO: should return the language ID supported by this version
+		// this can be done with some flags in the detection structures
+		return 1;
+	}
+
+	// user can choose language in dos version
+
+	_vm->_gfx->setFont(kFontMenu);
+
+	_vm->_disk->loadSlide("lingua");
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+
+	_vm->_gfx->displayString(60, 30, "SELECT LANGUAGE");
+
+	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
+	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 
 	_vm->changeCursor(kCursorArrow);
 
@@ -220,9 +227,12 @@ uint16 Menu::chooseLanguage() {
 uint16 Menu::selectGame() {
 //	  printf("selectGame()\n");
 
+	if (_vm->getFeatures() & GF_DEMO) {
+		return 0;	// can't load a savegame in demo versions
+	}
 
 	_vm->_disk->loadSlide("restore");
-	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
@@ -255,6 +265,7 @@ uint16 Menu::selectGame() {
 			_vm->_gfx->displayString(60, 30, newGameMsg[_language]);
 		}
 
+		_vm->_gfx->updateScreen();
 		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
 	}
@@ -263,6 +274,11 @@ uint16 Menu::selectGame() {
 
 	// load game
 
+	// TODO: allow the user to change her mind in this screen, that is
+	// don't force her to start at the intro when she closes her load
+	// game window without picking a savegame.
+	// The 2 strcpy's below act as workaround to prevent crashes for
+	// time being.
 	strcpy(_vm->_location._name, "fogne");
 	strcpy(_vm->_characterName, "dough");
 
@@ -276,6 +292,7 @@ uint16 Menu::selectGame() {
 //	character selection and protection
 //
 void Menu::selectCharacter() {
+	debugC(1, kDebugMenu, "Menu::selectCharacter()");
 
 	uint16 _di = 0;
 	bool askPassword = true;
@@ -291,10 +308,9 @@ void Menu::selectCharacter() {
 	v14._height = BLOCK_HEIGHT;
 
 	_vm->changeCursor(kCursorArrow);
-	_vm->_midiPlayer->stop();
+	_vm->_soundMan->stopMusic();
 
-	_vm->_gfx->_proportionalFont = false;
-	_vm->_gfx->setFont("slide");
+	_vm->_gfx->setFont(kFontMenu);
 
 	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
 
@@ -302,7 +318,7 @@ void Menu::selectCharacter() {
 
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);	//
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);		//
-	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 
 	while (askPassword == true) {
 
@@ -359,6 +375,7 @@ void Menu::selectCharacter() {
 
 		_vm->_gfx->copyScreen(Gfx::kBit2, Gfx::kBitFront);
 		_vm->_gfx->displayString(60, 30, introMsg2[_language]);
+		_vm->_gfx->updateScreen();
 
 		g_system->delayMillis(2000);
 

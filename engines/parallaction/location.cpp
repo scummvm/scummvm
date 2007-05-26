@@ -23,34 +23,21 @@
 #include "common/stdafx.h"
 
 #include "parallaction/parallaction.h"
-#include "parallaction/graphics.h"
-#include "parallaction/disk.h"
-#include "parallaction/parser.h"
-#include "parallaction/music.h"
-#include "parallaction/commands.h"
-#include "parallaction/walk.h"
-#include "parallaction/zone.h"
+#include "parallaction/sound.h"
 
 namespace Parallaction {
 
-void resolveLocationForwards();
-void switchBackground(const char* background, const char* mask);
-
-
 
 void Parallaction::parseLocation(const char *filename) {
-//	printf("parseLocation(%s)", filename);
     debugC(1, kDebugLocation, "parseLocation('%s')", filename);
 
 	uint16 _si = 1;
-	_gfx->_proportionalFont = false;
-	_gfx->setFont("topaz");
+	_gfx->setFont(kFontLabel);
 
 	Script *_locationScript = _disk->loadLocation(filename);
 
 	fillBuffers(*_locationScript, true);
 	while (scumm_stricmp(_tokens[0], "ENDLOCATION")) {
-//		printf("token[0] = %s", _tokens[0]);
 
 		if (!scumm_stricmp(_tokens[0], "LOCATION")) {
 			// The parameter for location is 'location.mask'.
@@ -135,6 +122,7 @@ void Parallaction::parseLocation(const char *filename) {
 		}
 		if (!scumm_stricmp(_tokens[0], "COMMENT")) {
 			_location._comment = parseComment(*_locationScript);
+			debugC(3, kDebugLocation, "Location comment: '%s'", _location._comment);
 		}
 		if (!scumm_stricmp(_tokens[0], "ENDCOMMENT")) {
 			_location._endComment = parseComment(*_locationScript);
@@ -151,6 +139,14 @@ void Parallaction::parseLocation(const char *filename) {
 		if (!scumm_stricmp(_tokens[0], "SOUND")) {
 			strcpy(_soundFile, _tokens[1]);
 		}
+		if (!scumm_stricmp(_tokens[0], "MUSIC")) {
+			if (getPlatform() == Common::kPlatformAmiga)
+				_soundMan->setMusicFile(_tokens[1]);
+		}
+		if (!scumm_stricmp(_tokens[0], "SOUND")) {
+//			if (getPlatform() == Common::kPlatformAmiga)
+//				_soundMan->loadSfx(_tokens[1], atoi(_tokens[2]));
+		}
 		fillBuffers(*_locationScript, true);
 	}
 
@@ -162,8 +158,6 @@ void Parallaction::parseLocation(const char *filename) {
 }
 
 void Parallaction::resolveLocationForwards() {
-//	printf("resolveLocationForwards()");
-//	printf("# forwards: %i", _numForwards);
 
 	for (uint16 _si = 0; _forwardedCommands[_si]; _si++) {
 		_forwardedCommands[_si]->u._animation = findAnimation(_forwardedAnimationNames[_si]);
@@ -178,36 +172,36 @@ void Parallaction::resolveLocationForwards() {
 void Parallaction::freeLocation() {
 	debugC(7, kDebugLocation, "freeLocation");
 
+	_soundMan->stopSfx(0);
+	_soundMan->stopSfx(1);
+	_soundMan->stopSfx(2);
+	_soundMan->stopSfx(3);
+
 	if (_localFlagNames)
 		delete _localFlagNames;
-	_localFlagNames = new Table(120);
-	_localFlagNames->addData("visited");
-
-	debugC(7, kDebugLocation, "freeLocation: localflags names freed");
-
+	
+	// HACK: prevents leakage. A routine like this
+	// should allocate memory at all, though.
+	if ((_engineFlags & kEngineQuit) == 0) {
+		_localFlagNames = new Table(120);
+		_localFlagNames->addData("visited");
+	}
+		
 	_location._walkNodes.clear();
-	debugC(7, kDebugLocation, "freeLocation: walk nodes freed");
 
 	// TODO (LIST): helperNode should be rendered useless by the use of a Common::List<>
 	// to store Zones and Animations. Right now, it holds a list of Zones to be preserved
 	// but that'll pretty meaningless with a single list approach.
 	freeZones();
-	debugC(7, kDebugLocation, "freeLocation: zones freed");
-
 	freeAnimations();
-	debugC(7, kDebugLocation, "freeLocation: animations freed");
 
 	if (_location._comment) {
 		free(_location._comment);
 	}
 	_location._comment = NULL;
-	debugC(7, kDebugLocation, "freeLocation: comments freed");
 
 	_location._commands.clear();
-	debugC(7, kDebugLocation, "freeLocation: commands freed");
-
 	_location._aCommands.clear();
-	debugC(7, kDebugLocation, "freeLocation: acommands freed");
 
 	return;
 }
@@ -252,7 +246,7 @@ void Parallaction::switchBackground(const char* background, const char* mask) {
 			_si += 3;
 		}
 
-		_gfx->extendPalette(pal);
+		_gfx->setPalette(pal);
 	}
 
 	_disk->loadScenery(background, mask);
@@ -267,18 +261,15 @@ extern Job     *_jEraseLabel;
 void Parallaction::showSlide(const char *name) {
 
 	_disk->loadSlide(name);
-	_gfx->extendPalette(_gfx->_palette);
+	_gfx->setPalette(_gfx->_palette);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	debugC(1, kDebugLocation, "changeLocation: new background set");
 
-	_gfx->_proportionalFont = false;
-	_gfx->setFont("slide");
+	_gfx->setFont(kFontMenu);
 
-	uint16 _ax = strlen(_slideText[0]);
-	_ax <<= 3;	// text width
-	uint16 _dx = (SCREEN_WIDTH - _ax) >> 1; // center text
-	_gfx->displayString(_dx, 14, _slideText[0]); // displays text on screen
+	_gfx->displayCenteredString(14, _slideText[0]); // displays text on screen
+	_gfx->updateScreen();
 
 	waitUntilLeftClick();
 
@@ -306,9 +297,9 @@ void Parallaction::showSlide(const char *name) {
 		  is commented out, and would definitely crash the current implementation.
 */
 void Parallaction::changeLocation(char *location) {
-	debugC(1, kDebugLocation, "changeLocation to '%s'", location);
+	debugC(1, kDebugLocation, "changeLocation(%s)", location);
 
-	pickMusic(location);
+	_soundMan->playLocationMusic(location);
 
 	// WORKAROUND: this if-statement has been added to avoid crashes caused by
 	// execution of label jobs after a location switch. The other workaround in
@@ -324,15 +315,11 @@ void Parallaction::changeLocation(char *location) {
 	_hoverZone = NULL;
 	if (_engineFlags & kEngineMouse) {
 		changeCursor( kCursorArrow );
-		debugC(2, kDebugLocation, "changeLocation: changed cursor");
 	}
 
 	_animations.remove(&_char._ani);
-	debugC(2, kDebugLocation, "changeLocation: removed character from the animation list");
 
 	freeLocation();
-	debugC(1, kDebugLocation, "changeLocation: old location free'd");
-
 	char buf[100];
 	strcpy(buf, location);
 
@@ -361,13 +348,9 @@ void Parallaction::changeLocation(char *location) {
 	}
 
 	_animations.push_front(&_char._ani);
-	debugC(2, kDebugLocation, "changeLocation: new character added to the animation list");
 
 	strcpy(_saveData1, list[0].c_str());
 	parseLocation(list[0].c_str());
-
-	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
-	debugC(1, kDebugLocation, "changeLocation: new location '%s' parsed", _saveData1);
 
 	_char._ani._oldPos.x = -1000;
 	_char._ani._oldPos.y = -1000;
@@ -379,14 +362,12 @@ void Parallaction::changeLocation(char *location) {
 		_char._ani._frame = _location._startFrame;
 		_location._startPosition.y = -1000;
 		_location._startPosition.x = -1000;
-
-		debugC(2, kDebugLocation, "changeLocation: initial position set to x: %i, y: %i, f: %i", _location._startPosition.x, _location._startPosition.y, _location._startFrame);
 	}
 
-	byte palette[PALETTE_SIZE];
-	for (uint16 _si = 0; _si < PALETTE_SIZE; _si++) palette[_si] = 0;
-	_gfx->extendPalette(palette);
+
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
+	_gfx->setBlackPalette();
 
 	if (_location._commands.size() > 0) {
 		runCommands(_location._commands);
@@ -395,22 +376,22 @@ void Parallaction::changeLocation(char *location) {
 		runJobs();
 		_gfx->swapBuffers();
 	}
-
+	
 	if (_location._comment) {
 		doLocationEnterTransition();
-		debugC(2, kDebugLocation, "changeLocation: shown location comment");
 	}
-
+	
 	runJobs();
 	_gfx->swapBuffers();
 
-	_gfx->extendPalette(_gfx->_palette);
+	_gfx->setPalette(_gfx->_palette);
 	if (_location._aCommands.size() > 0) {
 		runCommands(_location._aCommands);
-		debugC(1, kDebugLocation, "changeLocation: location acommands run");
 	}
 
-	debugC(1, kDebugLocation, "changeLocation completed");
+//	_soundMan->playSfx(0);
+
+	debugC(1, kDebugLocation, "changeLocation() done");
 
 	return;
 
@@ -428,55 +409,48 @@ void Parallaction::changeLocation(char *location) {
 void Parallaction::doLocationEnterTransition() {
 	debugC(1, kDebugLocation, "doLocationEnterTransition");
 
-	if (_localFlags[_currentLocationIndex] & kFlagsVisited) return; // visited
-
+    if (_localFlags[_currentLocationIndex] & kFlagsVisited) {
+        debugC(3, kDebugLocation, "skipping location transition");
+        return; // visited
+    }
+ 
 	byte pal[PALETTE_SIZE];
 	_gfx->buildBWPalette(pal);
-	_gfx->setPalette(pal, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
+	_gfx->setPalette(pal);
 
 	jobRunScripts(NULL, NULL);
 	jobEraseAnimations(NULL, NULL);
 	jobDisplayAnimations(NULL, NULL);
 
-	_gfx->setFont("comic");
+	_gfx->setFont(kFontDialogue);
 	_gfx->swapBuffers();
 	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
-	int16 v7C, v7A;
-	_gfx->getStringExtent(_location._comment, 130, &v7C, &v7A);
+	int16 w, h;
+	_gfx->getStringExtent(_location._comment, 130, &w, &h);
 
-	Common::Rect r(10 + v7C, 5 + v7A);
+	Common::Rect r(10 + w, 5 + h);
 	r.moveTo(5, 5);
 	_gfx->floodFill(Gfx::kBitFront, r, 0);
 	r.grow(-1);
 	_gfx->floodFill(Gfx::kBitFront, r, 1);
 	_gfx->displayWrappedString(_location._comment, 3, 5, 130, 0);
 
-	// FIXME: ???
-#if 0
-	do {
-		mouseFunc1();
-	} while (_mouseButtons != kMouseLeftUp);
-#endif
-
+	_gfx->updateScreen();
 	waitUntilLeftClick();
 
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront );
 
 	// fades maximum intensity palette towards approximation of main palette
 	for (uint16 _si = 0; _si<6; _si++) {
-		waitTime( 1 );
 		_gfx->quickFadePalette(pal);
 		_gfx->setPalette(pal);
+		waitTime( 1 );
 	}
 
 	debugC(1, kDebugLocation, "doLocationEnterTransition completed");
 
 	return;
-}
-
-void mouseFunc1() {
-	// FIXME: implement this
 }
 
 } // namespace Parallaction

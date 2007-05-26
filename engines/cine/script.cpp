@@ -28,8 +28,7 @@
 #include "cine/cine.h"
 #include "cine/bg_list.h"
 #include "cine/object.h"
-#include "cine/sfx_player.h"
-#include "cine/sound_driver.h"
+#include "cine/sound.h"
 #include "cine/various.h"
 
 namespace Cine {
@@ -41,385 +40,389 @@ uint16 _currentPosition;
 uint16 _currentLine;
 uint16 _closeScript;
 
-typedef void (*OpcodeProc) ();
-const OpcodeProc *_opcodeTable;
+struct Opcode {
+	void (*proc)();
+	const char *args;
+};
+
+const Opcode *_opcodeTable;
 int _numOpcodes;
 
 void setupOpcodes() {
-	static const OpcodeProc opcodeTableFW[] = {
+	static const Opcode opcodeTableFW[] = {
 		/* 00 */
-		o1_modifyObjectParam,
-		o1_getObjectParam,
-		o1_addObjectParam,
-		o1_subObjectParam,
+		{ o1_modifyObjectParam, "bbw" },
+		{ o1_getObjectParam, "bbb" },
+		{ o1_addObjectParam, "bbw" },
+		{ o1_subObjectParam, "bbw" },
 		/* 04 */
-		o1_add2ObjectParam,
-		o1_sub2ObjectParam,
-		o1_compareObjectParam,
-		o1_setupObject,
+		{ o1_add2ObjectParam, "bbw" },
+		{ o1_sub2ObjectParam, "bbw" },
+		{ o1_compareObjectParam, "bbw" },
+		{ o1_setupObject, "bwwww" },
 		/* 08 */
-		o1_checkCollision,
-		o1_loadVar,
-		o1_addVar,
-		o1_subVar,
+		{ o1_checkCollision, "bwwww" },
+		{ o1_loadVar, "bc" },
+		{ o1_addVar, "bc" },
+		{ o1_subVar, "bc" },
 		/* 0C */
-		o1_mulVar,
-		o1_divVar,
-		o1_compareVar,
-		o1_modifyObjectParam2,
+		{ o1_mulVar, "bc" },
+		{ o1_divVar, "bc" },
+		{ o1_compareVar, "bc" },
+		{ o1_modifyObjectParam2, "bbb" },
 		/* 10 */
-		NULL,
-		NULL,
-		NULL,
-		o1_loadMask0,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ o1_loadMask0, "b" },
 		/* 14 */
-		o1_unloadMask0,
-		o1_addToBgList,
-		o1_loadMask1,
-		o1_unloadMask1,
+		{ o1_unloadMask0, "b" },
+		{ o1_addToBgList, "b" },
+		{ o1_loadMask1, "b" },
+		{ o1_unloadMask1, "b" },
 		/* 18 */
-		o1_loadMask4,
-		o1_unloadMask4,
-		o1_addSpriteFilledToBgList,
-		o1_op1B,
+		{ o1_loadMask4, "b" },
+		{ o1_unloadMask4, "b" },
+		{ o1_addSpriteFilledToBgList, "b" },
+		{ o1_op1B, "" },
 		/* 1C */
-		NULL,
-		o1_label,
-		o1_goto,
-		o1_gotoIfSup,
+		{ 0, 0 },
+		{ o1_label, "l" },
+		{ o1_goto, "b" },
+		{ o1_gotoIfSup, "b" },
 		/* 20 */
-		o1_gotoIfSupEqu,
-		o1_gotoIfInf,
-		o1_gotoIfInfEqu,
-		o1_gotoIfEqu,
+		{ o1_gotoIfSupEqu, "b" },
+		{ o1_gotoIfInf, "b" },
+		{ o1_gotoIfInfEqu, "b" },
+		{ o1_gotoIfEqu, "b" },
 		/* 24 */
-		o1_gotoIfDiff,
-		o1_removeLabel,
-		o1_loop,
-		NULL,
+		{ o1_gotoIfDiff, "b" },
+		{ o1_removeLabel, "b" },
+		{ o1_loop, "bb" },
+		{ 0, 0 },
 		/* 28 */
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
 		/* 2C */
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
 		/* 30 */
-		NULL,
-		o1_startGlobalScript,
-		o1_endGlobalScript,
-		NULL,
+		{ 0, 0 },
+		{ o1_startGlobalScript, "b" },
+		{ o1_endGlobalScript, "b" },
+		{ 0, 0 },
 		/* 34 */
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
 		/* 38 */
-		NULL,
-		NULL,
-		NULL,
-		o1_loadAnim,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ o1_loadAnim, "s" },
 		/* 3C */
-		o1_loadBg,
-		o1_loadCt,
-		NULL,
-		o1_loadPart,
+		{ o1_loadBg, "s" },
+		{ o1_loadCt, "s" },
+		{ 0, 0 },
+		{ o1_loadPart, "s" },
 		/* 40 */
-		o1_closePart,
-		o1_loadNewPrcName,
-		o1_requestCheckPendingDataLoad,
-		NULL,
+		{ o1_closePart, "" },
+		{ o1_loadNewPrcName, "bs" },
+		{ o1_requestCheckPendingDataLoad, "" },
+		{ 0, 0 },
 		/* 44 */
-		NULL,
-		o1_blitAndFade,
-		o1_fadeToBlack,
-		o1_transformPaletteRange,
+		{ 0, 0 },
+		{ o1_blitAndFade, "" },
+		{ o1_fadeToBlack, "" },
+		{ o1_transformPaletteRange, "bbwww" },
 		/* 48 */
-		NULL,
-		o1_setDefaultMenuColor2,
-		o1_palRotate,
-		NULL,
+		{ 0, 0 },
+		{ o1_setDefaultMenuColor2, "b" },
+		{ o1_palRotate, "bbb" },
+		{ 0, 0 },
 		/* 4C */
-		NULL,
-		NULL,
-		NULL,
-		o1_break,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ o1_break, "" },
 		/* 50 */
-		o1_endScript,
-		o1_message,
-		o1_loadGlobalVar,
-		o1_compareGlobalVar,
+		{ o1_endScript, "x" },
+		{ o1_message, "bwwww" },
+		{ o1_loadGlobalVar, "bc" },
+		{ o1_compareGlobalVar, "bc" },
 		/* 54 */
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
 		/* 58 */
-		NULL,
-		o1_declareFunctionName,
-		o1_freePartRange,
-		o1_unloadAllMasks,
+		{ 0, 0 },
+		{ o1_declareFunctionName, "s" },
+		{ o1_freePartRange, "bb" },
+		{ o1_unloadAllMasks, "" },
 		// 5C */
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
 		/* 60 */
-		NULL,
-		NULL,
-		NULL,
-		o1_op63,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ o1_op63, "wwww" },
 		/* 64 */
-		o1_op64,
-		o1_initializeZoneData,
-		o1_setZoneDataEntry,
-		o1_getZoneDataEntry,
+		{ o1_op64, "" },
+		{ o1_initializeZoneData, "" },
+		{ o1_setZoneDataEntry, "bw" },
+		{ o1_getZoneDataEntry, "bb" },
 		/* 68 */
-		o1_setDefaultMenuColor,
-		o1_allowPlayerInput,
-		o1_disallowPlayerInput,
-		o1_changeDataDisk,
+		{ o1_setDefaultMenuColor, "b" },
+		{ o1_allowPlayerInput, "" },
+		{ o1_disallowPlayerInput, "" },
+		{ o1_changeDataDisk, "b" },
 		/* 6C */
-		NULL,
-		o1_loadMusic,
-		o1_playMusic,
-		o1_fadeOutMusic,
+		{ 0, 0 },
+		{ o1_loadMusic, "s" },
+		{ o1_playMusic, "" },
+		{ o1_fadeOutMusic, "" },
 		/* 70 */
-		o1_stopSample,
-		o1_op71,
-		o1_op72,
-		o1_op73,
+		{ o1_stopSample, "" },
+		{ o1_op71, "bw" },
+		{ o1_op72, "wbw" },
+		{ o1_op73, "wbw" },
 		/* 74 */
-		NULL,
-		NULL,
-		NULL,
-		o1_playSample,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ o1_playSample, "bbwbww" },
 		/* 78 */
-		o1_playSample,
-		o1_disableSystemMenu,
-		o1_loadMask5,
-		o1_unloadMask5
+		{ o1_playSample, "bbwbww" },
+		{ o1_disableSystemMenu, "b" },
+		{ o1_loadMask5, "b" },
+		{ o1_unloadMask5, "b" }
 	};
 
 	// TODO: We need to verify the Operation Stealth opcodes.
 
-	static const OpcodeProc opcodeTableOS[] = {
+	static const Opcode opcodeTableOS[] = {
 		/* 00 */
-		o1_modifyObjectParam,
-		o1_getObjectParam,
-		o1_addObjectParam,
-		o1_subObjectParam,
+		{ o1_modifyObjectParam, "bbw" },
+		{ o1_getObjectParam, "bbb" },
+		{ o1_addObjectParam, "bbw" },
+		{ o1_subObjectParam, "bbw" },
 		/* 04 */
-		o1_add2ObjectParam,
-		o1_sub2ObjectParam,
-		o1_compareObjectParam,
-		o1_setupObject,
+		{ o1_add2ObjectParam, "bbw" },
+		{ o1_sub2ObjectParam, "bbw" },
+		{ o1_compareObjectParam, "bbw" },
+		{ o1_setupObject, "bwwww" },
 		/* 08 */
-		o1_checkCollision,
-		o1_loadVar,
-		o1_addVar,
-		o1_subVar,
+		{ o1_checkCollision, "bwwww" },
+		{ o1_loadVar, "bc" },
+		{ o1_addVar, "bc" },
+		{ o1_subVar, "bc" },
 		/* 0C */
-		o1_mulVar,
-		o1_divVar,
-		o1_compareVar,
-		o1_modifyObjectParam2,
+		{ o1_mulVar, "bc" },
+		{ o1_divVar, "bc" },
+		{ o1_compareVar, "bc" },
+		{ o1_modifyObjectParam2, "bbb" },
 		/* 10 */
-		NULL,
-		NULL,
-		NULL,
-		o1_loadMask0,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ o1_loadMask0, "b" },
 		/* 14 */
-		o1_unloadMask0,
-		o1_addToBgList,
-		o1_loadMask1,
-		o1_unloadMask1,
+		{ o1_unloadMask0, "b" },
+		{ o1_addToBgList, "b" },
+		{ o1_loadMask1, "b" },
+		{ o1_unloadMask1, "b" },
 		/* 18 */
-		o1_loadMask4,
-		o1_unloadMask4,
-		o1_addSpriteFilledToBgList,
-		o1_op1B,
+		{ o1_loadMask4, "b" },
+		{ o1_unloadMask4, "b" },
+		{ o1_addSpriteFilledToBgList, "b" },
+		{ o1_op1B, "" },
 		/* 1C */
-		NULL,
-		o1_label,
-		o1_goto,
-		o1_gotoIfSup,
+		{ 0, 0 },
+		{ o1_label, "l" },
+		{ o1_goto, "b" },
+		{ o1_gotoIfSup, "b" },
 		/* 20 */
-		o1_gotoIfSupEqu,
-		o1_gotoIfInf,
-		o1_gotoIfInfEqu,
-		o1_gotoIfEqu,
+		{ o1_gotoIfSupEqu, "b" },
+		{ o1_gotoIfInf, "b" },
+		{ o1_gotoIfInfEqu, "b" },
+		{ o1_gotoIfEqu, "b" },
 		/* 24 */
-		o1_gotoIfDiff,
-		o1_removeLabel,
-		o1_loop,
-		NULL,
+		{ o1_gotoIfDiff, "b" },
+		{ o1_removeLabel, "b" },
+		{ o1_loop, "bb" },
+		{ 0, 0 },
 		/* 28 */
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
 		/* 2C */
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
 		/* 30 */
-		NULL,
-		o1_startGlobalScript,
-		o1_endGlobalScript,
-		NULL,
+		{ 0, 0 },
+		{ o1_startGlobalScript, "b" },
+		{ o1_endGlobalScript, "b" },
+		{ 0, 0 },
 		/* 34 */
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
 		/* 38 */
-		NULL,
-		NULL,
-		NULL,
-		o1_loadAnim,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ o1_loadAnim, "s" },
 		/* 3C */
-		o1_loadBg,
-		o1_loadCt,
-		NULL,
-		o2_loadPart,
+		{ o1_loadBg, "s" },
+		{ o1_loadCt, "s" },
+		{ 0, 0 },
+		{ o2_loadPart, "s" },
 		/* 40 */
-		NULL,
-		o1_loadNewPrcName,
-		o1_requestCheckPendingDataLoad,
-		NULL,
+		{ 0, 0 },
+		{ o1_loadNewPrcName, "bs" },
+		{ o1_requestCheckPendingDataLoad, "" },
+		{ 0, 0 },
 		/* 44 */
-		NULL,
-		o1_blitAndFade,
-		o1_fadeToBlack,
-		o1_transformPaletteRange,
+		{ 0, 0 },
+		{ o1_blitAndFade, "" },
+		{ o1_fadeToBlack, "" },
+		{ o1_transformPaletteRange, "bbwww" },
 		/* 48 */
-		NULL,
-		o1_setDefaultMenuColor2,
-		o1_palRotate,
-		NULL,
+		{ 0, 0 },
+		{ o1_setDefaultMenuColor2, "b" },
+		{ o1_palRotate, "bbb" },
+		{ 0, 0 },
 		/* 4C */
-		NULL,
-		NULL,
-		NULL,
-		o1_break,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ o1_break, "" },
 		/* 50 */
-		o1_endScript,
-		o1_message,
-		o1_loadGlobalVar,
-		o1_compareGlobalVar,
+		{ o1_endScript, "x" },
+		{ o1_message, "bwwww" },
+		{ o1_loadGlobalVar, "bc" },
+		{ o1_compareGlobalVar, "bc" },
 		/* 54 */
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
 		/* 58 */
-		NULL,
-		o1_declareFunctionName,
-		o1_freePartRange,
-		o1_unloadAllMasks,
+		{ 0, 0 },
+		{ o1_declareFunctionName, "s" },
+		{ o1_freePartRange, "bb" },
+		{ o1_unloadAllMasks, "" },
 		// 5C */
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
 		/* 60 */
-		NULL,
-		NULL,
-		NULL,
-		o1_op63,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ o1_op63, "wwww" },
 		/* 64 */
-		o1_op64,
-		o1_initializeZoneData,
-		o1_setZoneDataEntry,
-		o1_getZoneDataEntry,
+		{ o1_op64, "" },
+		{ o1_initializeZoneData, "" },
+		{ o1_setZoneDataEntry, "bw" },
+		{ o1_getZoneDataEntry, "bb" },
 		/* 68 */
-		o1_setDefaultMenuColor,
-		o1_allowPlayerInput,
-		o1_disallowPlayerInput,
-		o1_changeDataDisk,
+		{ o1_setDefaultMenuColor, "b" },
+		{ o1_allowPlayerInput, "" },
+		{ o1_disallowPlayerInput, "" },
+		{ o1_changeDataDisk, "b" },
 		/* 6C */
-		NULL,
-		o1_loadMusic,
-		o1_playMusic,
-		o1_fadeOutMusic,
+		{ 0, 0 },
+		{ o1_loadMusic, "s" },
+		{ o1_playMusic, "" },
+		{ o1_fadeOutMusic, "" },
 		/* 70 */
-		o1_stopSample,
-		o1_op71,
-		o1_op72,
-		o1_op72,
+		{ o1_stopSample, "" },
+		{ o1_op71, "bw" },
+		{ o1_op72, "wbw" },
+		{ o1_op72, "wbw" },
 		/* 74 */
-		NULL,
-		NULL,
-		NULL,
-		o1_playSample,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ o2_playSample, "bbwbww" },
 		/* 78 */
-		o2_op78,
-		o1_disableSystemMenu,
-		o1_loadMask5,
-		o1_unloadMask5,
+		{ o2_playSampleAlt, "bbwbww" },
+		{ o1_disableSystemMenu, "b" },
+		{ o1_loadMask5, "b" },
+		{ o1_unloadMask5, "b" },
 		/* 7C */
-		NULL,
-		NULL,
-		NULL,
-		o2_addSeqListElement,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ o2_addSeqListElement, "bbbbwww" },
 		/* 80 */
-		o2_removeSeq,
-		o2_op81,
-		o2_op82,
-		o2_isSeqRunning,
+		{ o2_removeSeq, "bb" },
+		{ o2_op81, "" },
+		{ o2_op82, "bbw" },
+		{ o2_isSeqRunning, "bb" },
 		/* 84 */
-		o2_gotoIfSupNearest,
-		o2_gotoIfSupEquNearest,
-		o2_gotoIfInfNearest,
-		o2_gotoIfInfEquNearest,
+		{ o2_gotoIfSupNearest, "b" },
+		{ o2_gotoIfSupEquNearest, "b" },
+		{ o2_gotoIfInfNearest, "b" },
+		{ o2_gotoIfInfEquNearest, "b" },
 		/* 88 */
-		o2_gotoIfEquNearest,
-		o2_gotoIfDiffNearest,
-		NULL,
-		o2_startObjectScript,
+		{ o2_gotoIfEquNearest, "b" },
+		{ o2_gotoIfDiffNearest, "b" },
+		{ 0, 0 },
+		{ o2_startObjectScript, "b" },
 		/* 8C */
-		o2_stopObjectScript,
-		o2_op8D,
-		o2_addBackground,
-		o2_removeBackground,
+		{ o2_stopObjectScript, "b" },
+		{ o2_op8D, "wwwwwwww" },
+		{ o2_addBackground, "bs" },
+		{ o2_removeBackground, "b" },
 		/* 90 */
-		o2_loadAbs,
-		o2_loadBg,
-		NULL,
-		NULL,
+		{ o2_loadAbs, "bs" },
+		{ o2_loadBg, "b" },
+		{ 0, 0 },
+		{ 0, 0 },
 		/* 94 */
-		NULL,
-		o1_changeDataDisk,
-		NULL,
-		NULL,
+		{ 0, 0 },
+		{ o1_changeDataDisk, "b" },
+		{ 0, 0 },
+		{ 0, 0 },
 		/* 98 */
-		NULL,
-		NULL,
-		o2_wasZoneChecked,
-		o2_op9B,
+		{ 0, 0 },
+		{ 0, 0 },
+		{ o2_wasZoneChecked, "" },
+		{ o2_op9B, "wwwwwwww" },
 		/* 9C */
-		o2_op9C,
-		o2_useBgScroll,
-		o2_setAdditionalBgVScroll,
-		o2_op9F,
+		{ o2_op9C, "wwww" },
+		{ o2_useBgScroll, "b" },
+		{ o2_setAdditionalBgVScroll, "c" },
+		{ o2_op9F, "ww" },
 		/* A0 */
-		o2_addGfxElementA0,
-		o2_opA1,
-		o2_opA2,
-		o2_opA3,
+		{ o2_addGfxElementA0, "ww" },
+		{ o2_opA1, "ww" },
+		{ o2_opA2, "ww" },
+		{ o2_opA3, "ww" },
 		/* A4 */
-		o2_loadMask22,
-		o2_unloadMask22,
-		NULL,
-		NULL,
+		{ o2_loadMask22, "b" },
+		{ o2_unloadMask22, "b" },
+		{ 0, 0 },
+		{ 0, 0 },
 		/* A8 */
-		NULL,
-		o1_changeDataDisk
+		{ 0, 0 },
+		{ o1_changeDataDisk, "b" }
 	};
 
 	if (g_cine->getGameType() == Cine::GType_FW) {
@@ -445,7 +448,7 @@ uint16 getNextWord() {
 
 const char *getNextString() {
 	const char *val = (const char *)(_currentScriptPtr + _currentPosition);
-	_currentPosition += strlen(val);
+	_currentPosition += strlen(val) + 1;
 	return val;
 }
 
@@ -545,269 +548,74 @@ void stopGlobalScript(uint16 scriptIdx) {
 	currentHead->scriptIdx = -1;
 }
 
-uint16 computeScriptStackSub(byte mode, byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, byte param1, uint16 startOffset) {
-	byte *localScriptPtr = scriptPtr;
-	uint16 exitScript;
-	uint16 i;
+uint16 computeScriptStackSub(bool computeAllLabels, byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, byte labelIndex, uint16 startOffset) {
 	uint16 position;
-	uint16 di;
 
-	assert(scriptPtr);
-	assert(stackPtr);
-
-	if (mode == 1) {
-		for (i = 0; i < SCRIPT_STACK_SIZE; i++) {
+	if (computeAllLabels) {
+		for (int i = 0; i < SCRIPT_STACK_SIZE; i++) {
 			stackPtr[i] = -1;
 		}
-
 		position = 0;
 	} else {
 		position = startOffset;
 	}
-
-	exitScript = 0;
-
-	do {
-		uint16 opcode = *(localScriptPtr + position);
+	while (position < scriptSize) {
+		uint8 opcode = scriptPtr[position];
 		position++;
-
-		//printf("Opcode: %X\n",opcode-1);
-
-		switch (opcode - 1) {
-		case -1:
-		case 0x1B:
-			{
-				break;
-			}
-		case 0x89:
-		case 0x32:
-		case 0x7A:
-		case 0x91:
-		case 0x9D:
-		case 0x8F:
-		case 0x7B:
-		case 0x8C:
-		case 0x8B:
-		case 0x85:
-		case 0x86:
-		case 0x84:
-		case 0x88:
-			{
+		if (opcode == 0 || opcode > _numOpcodes) {
+			continue;
+		}
+		if (!_opcodeTable[opcode - 1].args) {
+			warning("Undefined opcode 0x%02X in computeScriptStackSub", opcode - 1);
+			continue;
+		}
+		for (const char *p = _opcodeTable[opcode - 1].args; *p; ++p) {
+			switch (*p) {
+			case 'b': // byte
 				position++;
 				break;
-			}
-		case 0x80:
-		case 0x83:
-		case 0x26:
-			{
+			case 'w': // word
 				position += 2;
 				break;
-			}
-		case 0xF:
-		case 0x1:
-		case 0x66:
-		case 0x4A:
-			{
-				position += 3;
-				break;
-			}
-		case 0x0:
-		case 0x2:
-		case 0x3:
-		case 0x4:
-		case 0x5:
-		case 0x6:
-		case 0xA0:
-		case 0xA1:
-		case 0xA2:
-		case 0xA3:
-			{
-				position += 4;
-				break;
-			}
-		case 0x9:
-		case 0xA:
-		case 0xB:
-		case 0xC:
-		case 0xD:
-		case 0xE:
-		case 0x52:
-		case 0x53:
-			{
-				byte param;
-				position++;
-
-				param = *(localScriptPtr + position);
-				position++;
-
-				if (param) {
+			case 'c': { // byte != 0 ? byte : word
+					uint8 test = scriptPtr[position];
 					position++;
-				} else {
-					position += 2;
-				}
-				break;
-			}
-		case 0x9E:
-			{
-				byte param;
-
-				param = *(localScriptPtr + position);
-				position++;
-
-				if (param) {
-					position++;
-				} else {
-					position += 2;
-				}
-				break;
-			}
-		case 0x82:
-			{
-				position += 7;
-				break;
-			}
-		case 0x47:
-			{
-				position += 8;
-				break;
-			}
-		case 0x51:
-		case 0x7:
-		case 0x77:
-		case 0x78:
-		case 0x8:
-			{
-				position += 9;
-				break;
-			}
-		case 0x7F:
-			{
-				position += 10;
-				break;
-			}
-		case 0x1D:
-			{
-				di = *(localScriptPtr + position);
-				position++;
-
-				if (mode == 1) {
-					stackPtr[di] = position;
-				} else {
-					if (param1 == di) {
-						return position;
+					if (test) {
+						position++;
+					} else {
+						position += 2;
 					}
 				}
-
 				break;
-			}
-		case 0x59:
-		case 0x3B:
-		case 0x3C:
-		case 0x3D:
-		case OP_loadPart:	// skipString
-		case 0x6D:
-		case 0x8E:
-			{
-				do {
+			case 'l': { // label
+					uint8 index = scriptPtr[position];
 					position++;
-				} while (*(localScriptPtr + position));
+					if (computeAllLabels) {
+						stackPtr[index] = position;
+					} else {
+						if (labelIndex == index) {
+							return position;
+						}
+					}
+				}
 				break;
-			}
-		case 0x90:
-		case OP_loadNewPrcName:	//skipVarAndString
-			{
-				di = *(localScriptPtr + position);
-				position++;
-
-				do {
-					position++;
-				} while (*(localScriptPtr + position));
-
+			case 's': // string
+				while (scriptPtr[position++] != 0);
 				break;
-			}
-		case 0x46:
-		case 0x65:
-		case 0x4F:
-		case 0x40:
-		case 0x6A:
-		case 0x69:
-		case 0x45:
-		case 0x6E:
-		case 0x6F:
-		case 0x70:
-			{
-				break;
-			}
-		case 0x1E:
-		case 0x1F:
-		case 0x20:
-		case 0x21:
-		case 0x22:
-		case 0x23:
-		case 0x24:
-		case 0x25:
-		case 0x68:
-		case 0x49:
-		case 0x31:
-		case 0x13:
-		case 0x14:
-		case 0x15:
-		case 0x16:
-		case 0x17:
-		case 0x18:
-		case 0x19:
-		case 0x1A:
-			{
-				position++;
-				break;
-			}
-		case 0x5A:
-			{
-				position += 2;
-				break;
-			}
-		case 0x5B:
-			{
-				break;
-			}
-		case OP_changeDataDisk:	// skipVar
-		case OP_79:
-			{
-				di = *(localScriptPtr + position);
-				position++;
-
-				break;
-			}
-		case OP_endScript:	// end
-			{
-				exitScript = 1;
-				break;
-			}
-		case OP_requestCheckPendingDataLoad:	// nop
-			{
-				break;
-			}
-		default:
-			{
-				error("Unsupported opcode %X in computeScriptStack", opcode - 1);
+			case 'x': // exit script
+				return position;
 			}
 		}
-
-		if (position > scriptSize) {
-			exitScript = 1;
-		}
-
-	} while (!exitScript);
-
+	}
 	return position;
 }
 
 void computeScriptStack(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize) {
-	computeScriptStackSub(1, scriptPtr, stackPtr, scriptSize, 0, 0);
+	computeScriptStackSub(true, scriptPtr, stackPtr, scriptSize, 0, 0);
 }
 
 uint16 computeScriptStackFromScript(byte *scriptPtr, uint16 currentPosition, uint16 labelIdx, uint16 scriptSize) {
-	return computeScriptStackSub(0, scriptPtr, (int16 *)&dummyU16, (uint16)scriptSize, labelIdx, currentPosition);
+	return computeScriptStackSub(false, scriptPtr, (int16 *)&dummyU16, (uint16)scriptSize, labelIdx, currentPosition);
 }
 
 void palRotate(byte a, byte b, byte c) {
@@ -1024,10 +832,16 @@ void o1_subObjectParam() {
 }
 
 void o1_add2ObjectParam() {
+	getNextByte();
+	getNextByte();
+	getNextWord();
 	warning("STUB: o1_add2ObjectParam()");
 }
 
 void o1_sub2ObjectParam() {
+	getNextByte();
+	getNextByte();
+	getNextWord();
 	warning("STUB: o1_sub2ObjectParam()");
 }
 
@@ -1379,7 +1193,6 @@ void o1_gotoIfDiff() {
 }
 
 void o1_removeLabel() {
-	// TODO: verify this
 	byte labelIdx = getNextByte();
 
 	debugC(5, kCineDebugScript, "Line: %d: removeLabel(%d)", _currentLine, labelIdx);
@@ -1659,7 +1472,10 @@ void o1_setZoneDataEntry() {
 }
 
 void o1_getZoneDataEntry() {
-	warning("STUB: o1_getZoneDataEntry()");
+	byte zoneIdx = getNextByte();
+	byte var = getNextByte();
+	
+	_currentScriptElement->localVars[var] = zoneData[zoneIdx];
 }
 
 void o1_setDefaultMenuColor() {
@@ -1690,29 +1506,22 @@ void o1_loadMusic() {
 	const char *param = getNextString();
 
 	debugC(5, kCineDebugScript, "Line: %d: loadMusic(%s)", _currentLine, param);
-
-	if (g_cine->getPlatform() == Common::kPlatformAmiga ||
-			g_cine->getPlatform() == Common::kPlatformAtariST) {
-		warning("STUB: o1_loadMusic");
-		return;
-	}
-
-	g_sfxPlayer->load(param);
+	g_sound->loadMusic(param);
 }
 
 void o1_playMusic() {
 	debugC(5, kCineDebugScript, "Line: %d: playMusic()", _currentLine);
-	g_sfxPlayer->play();
+	g_sound->playMusic();
 }
 
 void o1_fadeOutMusic() {
 	debugC(5, kCineDebugScript, "Line: %d: fadeOutMusic()", _currentLine);
-	g_sfxPlayer->fadeOut();
+	g_sound->fadeOutMusic();
 }
 
 void o1_stopSample() {
 	debugC(5, kCineDebugScript, "Line: %d: stopSample()", _currentLine);
-	g_sfxPlayer->stop();
+	g_sound->stopMusic();
 }
 
 void o1_op71() {
@@ -1743,37 +1552,53 @@ void o1_playSample() {
 	byte anim = getNextByte();
 	byte channel = getNextByte();
 
-	getNextWord();
-	getNextByte();
+	uint16 freq = getNextWord();
+	byte repeat = getNextByte();
 
 	int16 volume = getNextWord();
-	uint16 flag = getNextWord();
+	uint16 size = getNextWord();
 
-	if (g_cine->getPlatform() == Common::kPlatformAmiga ||
-			g_cine->getPlatform() == Common::kPlatformAtariST) {
-		warning("STUB: o1_playSample");
+	if (!animDataTable[anim].ptr1) {
 		return;
 	}
 
-	if (volume > 63)
-		volume = 63;
-	if (volume < 0)
-		volume = 63;
-
-	if (animDataTable[anim].ptr1) {
+	if (g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) {
+		if (size == 0xFFFF) {
+			size = animDataTable[anim].width * animDataTable[anim].height;
+		}
+		if (channel < 10) { // || _currentOpcode == 0x78
+			int channel1, channel2;
+			if (channel == 0) {
+				channel1 = 0;
+				channel2 = 1;
+			} else {
+				channel1 = 2;
+				channel2 = 3;			
+			}
+			g_sound->playSound(channel1, freq, animDataTable[anim].ptr1, size, -1, volume, 63, repeat);
+			g_sound->playSound(channel2, freq, animDataTable[anim].ptr1, size,  1, volume,  0, repeat);
+		} else {
+			channel -= 10;
+			if (volume > 63) {
+				volume = 63;
+			}
+			g_sound->playSound(channel, freq, animDataTable[anim].ptr1, size, 0, 0, volume, repeat);
+		}
+	} else {
+		if (volume > 63 || volume < 0) {
+			volume = 63;
+		}
 		if (channel >= 10) {
 			channel -= 10;
 		}
 		if (volume < 50) {
 			volume = 50;
 		}
-
-		g_sfxPlayer->stop();
-					
-		if (flag == 0xFFFF) {
-			g_soundDriver->playSound(animDataTable[anim].ptr1, channel, volume);
+		g_sound->stopMusic();
+		if (size == 0xFFFF) {
+			g_sound->playSound(channel, 0, animDataTable[anim].ptr1, 0, 0, 0, volume, 0);
 		} else {
-			g_soundDriver->resetChannel(channel);
+			g_sound->stopSound(channel);
 		}
 	}
 }
@@ -1809,10 +1634,39 @@ void o2_loadPart() {
 	debugC(5, kCineDebugScript, "Line: %d: loadPart(\"%s\")", _currentLine, param);
 }
 
-void o2_op78() {
-	warning("STUB: o2_op78()");
-	// This is probably wrong, but preserve the old behaviour for now.
+void o2_playSample() {
+	if (g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) {
+		// no-op in these versions
+		getNextByte();
+		getNextByte();
+		getNextWord();
+		getNextByte();
+		getNextWord();
+		getNextWord();
+		return;
+	}
 	o1_playSample();
+}
+
+void o2_playSampleAlt() {
+	byte num = getNextByte();
+	byte channel = getNextByte();
+	uint16 frequency = getNextWord();
+	getNextByte();
+	getNextWord();
+	uint16 size = getNextWord();
+
+	if (size == 0xFFFF) {
+		size = animDataTable[num].width * animDataTable[num].height;
+	}
+	if (animDataTable[num].ptr1) {
+		if (g_cine->getPlatform() == Common::kPlatformPC) {
+			// if speaker output is enabled, play sound on it
+			// if it's another device, don't play anything
+		} else {
+			g_sound->playSound(channel, frequency, animDataTable[num].ptr1, size, 0, 0, 63, 0);
+		}
+	}
 }
 
 void o2_addSeqListElement() {
@@ -2145,10 +1999,10 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 		byte opcode = getNextByte();
 
 		if (opcode && opcode < _numOpcodes) {
-			if (_opcodeTable[opcode - 1])
-				(_opcodeTable[opcode - 1]) ();
+			if (_opcodeTable[opcode - 1].proc)
+				(_opcodeTable[opcode - 1].proc) ();
 			else
-				warning("Undefined opcode 0x%02X", opcode - 1);
+				warning("Undefined opcode 0x%02X in executeScript", opcode - 1);
 		}
 	}
 }

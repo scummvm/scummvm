@@ -107,15 +107,13 @@ SoundMidiPC::SoundMidiPC(KyraEngine *vm, Audio::Mixer *mixer, MidiDriver *driver
 	memset(_channel, 0, sizeof(MidiChannel*) * 32);
 	memset(_channelVolume, 50, sizeof(uint8) * 16);
 	_channelVolume[10] = 100;
-	for (int i = 0; i < 16; ++i) {
+	for (int i = 0; i < 16; ++i)
 		_virChannel[i] = i;
-	}
 	_volume = 0;
 
 	int ret = open();
-	if (ret != MERR_ALREADY_OPEN && ret != 0) {
+	if (ret != MERR_ALREADY_OPEN && ret != 0)
 		error("couldn't open midi driver");
-	}
 }
 
 SoundMidiPC::~SoundMidiPC() {
@@ -371,9 +369,9 @@ void SoundMidiPC::onTimer(void *refCon) {
 				music->send(0x80 | j | i << 8);
 			}
 		}
-		for (int i = 0; i < 16; ++i) {
+
+		for (int i = 0; i < 16; ++i)
 			music->send(0x007BB0 | i);
-		}
 	}
 
 	if (music->_isPlaying) {
@@ -472,8 +470,9 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 				// the original does -2 here we handle this inside _sound->playTrack()
 				_sound->playTrack(command);
 			}
-		} else
+		} else {
 			_sound->haltTrack();
+		}
 	} else {
 		static const int8 soundTable[] = {
 			-1,   0,  -1,   1,   0,   3,   0,   2,
@@ -496,9 +495,8 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 		//}
 		assert(command*2+1 < ARRAYSIZE(soundTable));
 		if (_curMusicTheme != soundTable[command*2]+1) {
-			if (soundTable[command*2] != -1) {
+			if (soundTable[command*2] != -1)
 				snd_playTheme(soundTable[command*2]+1);
-			}
 		}
 	
 		if (command != 1) {
@@ -525,11 +523,10 @@ void KyraEngine::snd_playVoiceFile(int id) {
 void KyraEngine::snd_voiceWaitForFinish(bool ingame) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_voiceWaitForFinish(%d)", ingame);
 	while (_sound->voiceIsPlaying() && !_skipFlag) {
-		if (ingame) {
+		if (ingame)
 			delay(10, true);
-		} else {
+		else
 			_system->delayMillis(10);
-		}
 	}
 }
 
@@ -559,3 +556,4 @@ const Sound::SpeechCodecs Sound::_supportedCodes[] = {
 };
 
 } // end of namespace Kyra
+

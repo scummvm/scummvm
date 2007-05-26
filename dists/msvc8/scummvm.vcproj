@@ -68,7 +68,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib zlib.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib sword1_debug/sword1.lib sword2_debug/sword2.lib lure_debug/lure.lib cine_debug/cine.lib kyra_debug/kyra.lib gob_debug/gob.lib queen_debug/queen.lib saga_debug/saga.lib agi_debug/agi.lib scumm_debug/scumm.lib agos_debug/agos.lib sky_debug/sky.lib parallaction_debug/parallaction.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zlib.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib sword1_debug/sword1.lib sword2_debug/sword2.lib lure_debug/lure.lib cine_debug/cine.lib cruise_debug/cruise.lib kyra_debug/kyra.lib gob_debug/gob.lib queen_debug/queen.lib saga_debug/saga.lib agi_debug/agi.lib scumm_debug/scumm.lib agos_debug/agos.lib sky_debug/sky.lib parallaction_debug/parallaction.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
@@ -108,6 +108,7 @@
 			IntermediateDirectory="scummvm_Release"
 			ConfigurationType="1"
 			CharacterSet="2"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -156,15 +157,16 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib zlib.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib saga_release/saga.lib agi_release/agi.lib sword1_release/sword1.lib sword2_release/sword2.lib lure_release/lure.lib cine_release/cine.lib kyra_release/kyra.lib gob_release/gob.lib queen_release/queen.lib scumm_release/scumm.lib agos_release/agos.lib sky_release/sky.lib parallaction_release/parallaction.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zlib.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib saga_release/saga.lib agi_release/agi.lib sword1_release/sword1.lib sword2_release/sword2.lib lure_release/lure.lib cine_release/cine.lib cruise_release/cruise.lib kyra_release/kyra.lib gob_release/gob.lib queen_release/queen.lib scumm_release/scumm.lib agos_release/agos.lib sky_release/sky.lib parallaction_release/parallaction.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="false"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				EntryPointSymbol="WinMainCRTStartup"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -280,6 +282,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\events.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\file.cpp"
 				>
 			</File>
@@ -290,24 +296,6 @@
 			<File
 				RelativePath="..\..\common\fs.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\common\fs.h"
@@ -330,6 +318,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\iff_container.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\list.h"
 				>
 			</File>
@@ -347,6 +339,10 @@
 			</File>
 			<File
 				RelativePath="..\..\common\mutex.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\noncopyable.h"
 				>
 			</File>
 			<File
@@ -438,6 +434,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\sound\aiff.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\aiff.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\sound\audiocd.cpp"
 				>
 			</File>
@@ -467,6 +471,32 @@
 			</File>
 			<File
 				RelativePath="..\..\sound\fmopl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\iff.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\sound\iff.h"
 				>
 			</File>
 			<File
@@ -750,6 +780,14 @@
 					RelativePath="..\..\sound\mods\rjp1.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\sound\mods\soundfx.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\soundfx.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -867,6 +905,22 @@
 					RelativePath="..\..\backends\saves\savefile.cpp"
 					>
 				</File>
+			</Filter>
+			<Filter
+				Name="events"
+				>
+				<Filter
+					Name="default"
+					>
+					<File
+						RelativePath="..\..\backends\events\default\default-events.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\backends\events\default\default-events.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
@@ -1113,11 +1167,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\graphics\ilbm.cpp"
+				RelativePath="..\..\graphics\iff.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\graphics\ilbm.h"
+				RelativePath="..\..\graphics\iff.h"
 				>
 			</File>
 			<File

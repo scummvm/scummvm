@@ -32,7 +32,6 @@
 #include "games.h"
 #include "skin.h"
 
-#include "extend.h"
 #include "StarterRsc.h"
 
 DmOpenRef gameDB = NULL;

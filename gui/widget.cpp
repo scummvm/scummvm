@@ -58,6 +58,7 @@ void Widget::resize(int x, int y, int w, int h) {
 
 Widget::~Widget() {
 	delete _next;
+	_next = 0;
 }
 
 void Widget::draw() {

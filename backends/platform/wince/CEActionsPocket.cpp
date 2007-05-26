@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2001-2007 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,13 +24,9 @@
 #include "common/stdafx.h"
 #include "CEActionsPocket.h"
 #include "EventsBuffer.h"
-
 #include "gui/message.h"
-
 #include "scumm/scumm.h"
-
 #include "common/config-manager.h"
-
 #include "gui/KeysDialog.h"
 
 #ifdef _WIN32_WCE
@@ -42,20 +38,20 @@ const String pocketActionNames[] = {
 	"Save",
 	"Quit",
 	"Skip",
-	"Hide",
-	"Keyboard",
-	"Sound",
+	"Hide Toolbar",
+	"Show Keyboard",
+	"Sound on/off",
 	"Right click",
-	"Cursor",
+	"Show/Hide Cursor",
 	"Free look",
 	"Zoom up",
 	"Zoom down",
 	"FT Cheat",
 	"Bind Keys",
-	"Up",
-	"Down",
-	"Left",
-	"Right",
+	"Cursor Up",
+	"Cursor Down",
+	"Cursor Left",
+	"Cursor Right",
 	"Left Click",
 };
 
@@ -100,11 +96,11 @@ GUI::Actions()
 	_action_enabled[POCKET_ACTION_DOWN] = true;
 	_action_enabled[POCKET_ACTION_LEFT] = true;
 	_action_enabled[POCKET_ACTION_RIGHT] = true;
-	_action_mapping[POCKET_ACTION_LEFTCLICK] = VK_RETURN;
-	_action_mapping[POCKET_ACTION_UP] = 0x111;
-	_action_mapping[POCKET_ACTION_DOWN] = 0x112;
-	_action_mapping[POCKET_ACTION_LEFT] = 0x114;
-	_action_mapping[POCKET_ACTION_RIGHT] = 0x113;
+	_action_mapping[POCKET_ACTION_LEFTCLICK] = SDLK_RETURN;
+	_action_mapping[POCKET_ACTION_UP] = SDLK_UP;
+	_action_mapping[POCKET_ACTION_DOWN] = SDLK_DOWN;
+	_action_mapping[POCKET_ACTION_LEFT] = SDLK_LEFT;
+	_action_mapping[POCKET_ACTION_RIGHT] = SDLK_RIGHT;
 }
 
 void CEActionsPocket::initInstanceMain(OSystem *mainSystem) {
@@ -184,7 +180,7 @@ void CEActionsPocket::initInstanceGame() {
 	// Freelook
 	_action_enabled[POCKET_ACTION_FREELOOK] = true;
 	// Zoom
-	if (is_sword1 || is_sword2 || is_comi) {
+	if (is_sword1 || is_sword2 || is_comi || is_touche) {
 		_zoom_needed = true;
 		_action_enabled[POCKET_ACTION_ZOOM_UP] = true;
 		_action_enabled[POCKET_ACTION_ZOOM_DOWN] = true;
@@ -244,9 +240,9 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 		case POCKET_ACTION_CURSOR:
 			_CESystem->swap_mouse_visibility();
 			return true;
-        case POCKET_ACTION_FREELOOK:
-             _CESystem->swap_freeLook();
-             return true;
+		case POCKET_ACTION_FREELOOK:
+			_CESystem->swap_freeLook();
+			return true;
 		case POCKET_ACTION_ZOOM_UP:
 			_CESystem->swap_zoom_up();
 			return true;
@@ -270,7 +266,7 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 			return true; 
 		case POCKET_ACTION_QUIT:
 			{
-				GUI::MessageDialog alert("Do you want to quit ?", "Yes", "No");
+				GUI::MessageDialog alert("   Are you sure you want to quit ?   ", "Yes", "No");
 				if (alert.runModal() == GUI::kMessageOK)
 					_mainSystem->quit();
 				return true;
@@ -309,4 +305,3 @@ bool CEActionsPocket::needsZoomMapping() {
 	else
 		return (_action_mapping[POCKET_ACTION_ZOOM_UP] == 0 || _action_mapping[POCKET_ACTION_ZOOM_DOWN] == 0);
 }
-

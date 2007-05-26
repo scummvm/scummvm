@@ -140,6 +140,9 @@
 			RelativePath="..\..\engines\lure\decode.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\lure\detection.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\lure\disk.cpp">
 		</File>
 		<File
@@ -237,12 +240,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\lure\surface.h">
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\system.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\system.h">
 		</File>
 	</Files>
 	<Globals>

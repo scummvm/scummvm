@@ -89,25 +89,24 @@ public:
  * List of game language.
  */
 enum Language {
-	EN_ANY,     // Generic English (when only one game version exist)
-	EN_USA,
-	EN_GRB,
-
-	DE_DEU,
-	FR_FRA,
-	IT_ITA,
-	PT_BRA,
-	ES_ESP,
-	JA_JPN,
 	ZH_TWN,
-	KO_KOR,
-	SE_SWE,
-	HB_ISR,
-	RU_RUS,
 	CZ_CZE,
 	NL_NLD,
+	EN_ANY,     // Generic English (when only one game version exist)
+	EN_GRB,
+	EN_USA,
+	FR_FRA,
+	DE_DEU,
+	HB_ISR,
+	IT_ITA,
+	JA_JPN,
+	KO_KOR,
 	NB_NOR,
 	PL_POL,
+	PT_BRA,
+	RU_RUS,
+	ES_ESP,
+	SE_SWE,
 
 	UNK_LANG = -1	// Use default language (i.e. none specified)
 };

@@ -24,32 +24,14 @@
 #include "common/system.h"
 #include "common/file.h"
 
-#include "parallaction/graphics.h"
-#include "parallaction/parser.h"
 #include "parallaction/parallaction.h"
-#include "parallaction/disk.h"
-#include "parallaction/zone.h"
+
 
 
 extern OSystem *g_system;
 
 namespace Parallaction {
 
-//
-//	proportional font glyphs width
-//
-const byte _glyphWidths[126] = {
-  0x04, 0x03, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x04, 0x04, 0x06, 0x06, 0x03, 0x05, 0x03, 0x05,
-  0x06, 0x06, 0x06, 0x06, 0x07, 0x06, 0x06, 0x06, 0x06, 0x06, 0x03, 0x03, 0x05, 0x04, 0x05, 0x05,
-  0x03, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x03, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
-  0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x08, 0x07, 0x07, 0x07, 0x05, 0x06, 0x05, 0x08, 0x07,
-  0x04, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x03, 0x04, 0x05, 0x05, 0x06, 0x06, 0x05,
-  0x05, 0x06, 0x05, 0x05, 0x05, 0x05, 0x06, 0x07, 0x05, 0x05, 0x05, 0x05, 0x02, 0x05, 0x05, 0x07,
-  0x08, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x04, 0x04, 0x04,
-  0x05, 0x06, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x04, 0x06, 0x05, 0x05, 0x05, 0x05
-};
-
-bool		Gfx::_proportionalFont = false;
 byte *		Gfx::_buffers[];
 
 #define BALLOON_WIDTH	12
@@ -119,19 +101,44 @@ void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
 void Gfx::setPalette(Palette pal, uint32 first, uint32 num) {
 //	printf("setPalette(%i, %i)\n", first, num);
 
-	if (first + num > PALETTE_COLORS)
+	if (first + num > BASE_PALETTE_COLORS)
 		error("wrong parameters for setPalette()");
 
-	byte syspal[PALETTE_COLORS*4];
+	byte sysBasePal[EHB_PALETTE_COLORS*4];
+	byte sysExtraPal[BASE_PALETTE_COLORS*4];
 
+	byte r, g, b;
+	uint32 j = 0;
 	for (uint32 i = first; i < first+num; i++) {
-		syspal[i*4]   = (pal[i*3] << 2) | (pal[i*3] >> 4);
-		syspal[i*4+1] = (pal[i*3+1] << 2) | (pal[i*3+1] >> 4);
-		syspal[i*4+2] = (pal[i*3+2] << 2) | (pal[i*3+2] >> 4);
-		syspal[i*4+3] = 0;
+		r = (pal[i*3] << 2) | (pal[i*3] >> 4);
+		g = (pal[i*3+1] << 2) | (pal[i*3+1] >> 4);
+		b = (pal[i*3+2] << 2) | (pal[i*3+2] >> 4);
+
+		sysBasePal[j*4]   = r;
+		sysBasePal[j*4+1] = g;
+		sysBasePal[j*4+2] = b;
+		sysBasePal[j*4+3] = 0;
+
+		if (_vm->getPlatform() == Common::kPlatformAmiga) {
+			sysExtraPal[j*4]   = r >> 1;
+			sysExtraPal[j*4+1] = g >> 1;
+			sysExtraPal[j*4+2] = b >> 1;
+			sysExtraPal[j*4+3] = 0;
+		} else {
+			sysExtraPal[j*4]   = 0;
+			sysExtraPal[j*4+1] = 0;
+			sysExtraPal[j*4+2] = 0;
+			sysExtraPal[j*4+3] = 0;
+		}
+
+		j++;
 	}
 
-	g_system->setPalette(syspal, first, num);
+	g_system->setPalette(sysBasePal, first, num);
+
+	if (_vm->getPlatform() == Common::kPlatformAmiga)
+		g_system->setPalette(sysExtraPal, first+FIRST_EHB_COLOR, num);
+
 	g_system->updateScreen();
 
 	return;
@@ -197,7 +204,7 @@ void Gfx::animatePalette() {
 }
 
 void Gfx::fadePalette(Palette pal) {
-	for (uint16 i = 0; i < PALETTE_SIZE; i++)
+	for (uint16 i = 0; i < BASE_PALETTE_COLORS * 3; i++)
 		if (pal[i] < _palette[i]) pal[i]++;
 
 	return;
@@ -221,7 +228,7 @@ void Gfx::buildBWPalette(Palette pal) {
 
 void Gfx::quickFadePalette(Palette pal) {
 
-	for (uint16 i = 0; i < PALETTE_SIZE; i++) {
+	for (uint16 i = 0; i < BASE_PALETTE_COLORS * 3; i++) {
 		if (pal[i] == _palette[i]) continue;
 		pal[i] += (pal[i] < _palette[i] ? 4 : -4);
 	}
@@ -229,18 +236,22 @@ void Gfx::quickFadePalette(Palette pal) {
 	return;
 }
 
-void Gfx::extendPalette(Palette pal) {
+void Gfx::setHalfbriteMode(bool enable) {
+#ifdef HALFBRITE
+	if (_vm->getPlatform() != Common::kPlatformAmiga) return;
+	if (enable == _halfbrite) return;
 
-	for (uint16 i = 0; i < BASE_PALETTE_COLORS; i++) {
-		pal[(i+FIRST_EHB_COLOR)*3] = pal[i*3] / 2;
-		pal[(i+FIRST_EHB_COLOR)*3+1] = pal[i*3+1] / 2;
-		pal[(i+FIRST_EHB_COLOR)*3+2] = pal[i*3+2] / 2;
-	}
+	byte *buf = _buffers[kBitBack];
+	for (uint32 i = 0; i < SCREEN_SIZE; i++)
+		*buf++ ^= 0x20;
 
-	setPalette(pal);
+	buf = _buffers[kBitFront];
+	for (uint32 i = 0; i < SCREEN_SIZE; i++)
+		*buf++ ^= 0x20;
+
+	_halfbrite = !_halfbrite;
+#endif
 }
-
-
 
 void Gfx::updateScreen() {
 //	  printf("Gfx::updateScreen()\n");
@@ -385,7 +396,7 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 void jobDisplayLabel(void *parm, Job *j) {
 
 	Label *label = (Label*)parm;
-	debugC(1, kDebugJobs, "jobDisplayLabel (%p)", (const void*) label);
+	debugC(9, kDebugJobs, "jobDisplayLabel (%p)", (const void*) label);
 
 	if (label->_cnv._width == 0)
 		return;
@@ -397,7 +408,7 @@ void jobDisplayLabel(void *parm, Job *j) {
 void jobEraseLabel(void *parm, Job *j) {
 	Label *label = (Label*)parm;
 
-	debugC(1, kDebugJobs, "jobEraseLabel (%p)", (const void*) label);
+	debugC(9, kDebugJobs, "jobEraseLabel (%p)", (const void*) label);
 
 	int16 _si, _di;
 
@@ -537,68 +548,53 @@ void Gfx::restoreZoneBackground(const Common::Rect& r, byte *data) {
 	return;
 }
 
+void Gfx::makeCnvFromString(StaticCnv *cnv, char *text) {
+	assert(_font == _fonts[kFontLabel]);
 
+	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		cnv->_width = _font->getStringWidth(text) + 16;
+		cnv->_height = 10;
+		cnv->_data0 = (byte*)malloc(cnv->_width * cnv->_height);
+		memset(cnv->_data0, 0, cnv->_width * cnv->_height);
 
-//
-//	strings
-//
-void Gfx::displayString(uint16 x, uint16 y, const char *text) {
-	if (text == NULL)
-		return;
-
-	uint16 len = strlen(text);
-	StaticCnv tmp;
-
-	for (uint16 i = 0; i < len; i++) {
-		byte c = mapChar(text[i]);
-
-		tmp._width = _font->_width;
-		tmp._height = _font->_height;
-		tmp._data0 = _font->getFramePtr(c);
-
-		flatBlitCnv(&tmp, x, y, kBitFront);
-
-		x += (_proportionalFont ? _glyphWidths[(int)c] : 8);
-
+		_font->setColor(7);
+		_font->drawString(cnv->_data0 + 1, cnv->_width, text);
+		_font->drawString(cnv->_data0 + 1 + cnv->_width * 2, cnv->_width, text);
+		_font->drawString(cnv->_data0 + cnv->_width, cnv->_width, text);
+		_font->drawString(cnv->_data0 + 2 + cnv->_width, cnv->_width, text);
+		_font->setColor(1);
+		_font->drawString(cnv->_data0 + 1 + cnv->_width, cnv->_width, text);
+	} else {
+		cnv->_width = _font->getStringWidth(text);
+		cnv->_height = _font->height();
+		cnv->_data0 = (byte*)malloc(cnv->_width * cnv->_height);
+		memset(cnv->_data0, 0, cnv->_width * cnv->_height);
+		_font->drawString(cnv->_data0, cnv->_width, text);
 	}
 
-	return;
 }
 
+void Gfx::displayString(uint16 x, uint16 y, const char *text) {
+	assert(_font == _fonts[kFontMenu]);
+
+	byte *dst = _buffers[kBitFront] + x + y*SCREEN_WIDTH;
+	_font->setColor(1);
+	_font->drawString(dst, SCREEN_WIDTH, text);
+}
+
+void Gfx::displayCenteredString(uint16 y, const char *text) {
+	uint16 x = (SCREEN_WIDTH - getStringWidth(text)) / 2;
+	displayString(x, y, text);
+}
 
 void Gfx::displayBalloonString(uint16 x, uint16 y, const char *text, byte color) {
+	assert(_font == _fonts[kFontDialogue]);
 
-	uint16 len = strlen(text);
+	byte *dst = _buffers[kBitFront] + x + y*SCREEN_WIDTH;
 
-	for (uint16 i = 0; i < len; i++) {
-
-		byte c = mapChar(text[i]);
-		uint16 w = _proportionalFont ? _glyphWidths[(int)c] : 8;
-		byte *s = _font->getFramePtr(c);
-		byte *d = _buffers[kBitFront] + x + y*SCREEN_WIDTH;
-
-//		printf("%i\n", text[i]);
-
-		for (uint16 j = 0; j < _font->_height; j++) {
-			for (uint16 k = 0; k < w; k++) {
-				*d = (*s) ? 1 : color;
-				d++;
-				s++;
-			}
-
-			s += (8 - w);
-			d += (SCREEN_WIDTH - w);
-		}
-
-		x += w;
-	}
-
-	updateScreen();
-
-	return;
+	_font->setColor(color);
+	_font->drawString(dst, SCREEN_WIDTH, text);
 }
-
-
 
 bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, byte color) {
 //	printf("Gfx::displayWrappedString(%s, %i, %i, %i, %i)...", text, x, y, maxwidth, color);
@@ -607,7 +603,6 @@ bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, 
 	bool rv = false;
 	uint16 linewidth = 0;
 
-	_proportionalFont = true;
 	uint16 rx = x + 10;
 	uint16 ry = y + 4;
 
@@ -646,36 +641,15 @@ bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, 
 
 }
 
-
-
 uint16 Gfx::getStringWidth(const char *text) {
-	if (text == NULL) return 0;
-
-	uint16 len = strlen(text);
-
-	if (_proportionalFont == 0) {
-		// fixed font
-		return len*8;
-	}
-
-	// proportional font
-	uint16 w = 0;
-	for (uint16 i = 0; i < len; i++) {
-		byte c = mapChar(text[i]);
-		w += _glyphWidths[(int)c];
-	}
-
-	return w;
+	return _font->getStringWidth(text);
 }
-
 
 void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height) {
 
 	uint16 lines = 0;
 	uint16 w = 0;
 	*width = 0;
-
-	_proportionalFont = true;
 
 	char token[40];
 
@@ -706,10 +680,9 @@ void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* heig
 }
 
 
-void Gfx::setFont(const char* name) {
-	if (_font) delete _font;
-
-	_font = _vm->_disk->loadFont(name);
+void Gfx::setFont(Fonts name) {
+	assert(name < 3);
+	_font = _fonts[name];
 }
 
 
@@ -741,50 +714,6 @@ void Gfx::restoreBackground(const Common::Rect& r) {
 
 	return;
 }
-
-
-void Gfx::makeCnvFromString(StaticCnv *cnv, char *text) {
-//	printf("makeCnvFromString('%s')\n", text);
-
-	uint16 len = strlen(text);
-
-	cnv->_width = _font->_width * len;
-	cnv->_height = _font->_height;
-
-//	printf("%i x %i\n", cnv->_width, cnv->_height);
-
-	cnv->_data0 = (byte*)malloc(cnv->_width * cnv->_height);
-
-	for (uint16 i = 0; i < len; i++) {
-		byte c = mapChar(text[i]);
-
-		byte *s = _font->getFramePtr(c);
-		byte *d = cnv->_data0 + _font->_width * i;
-
-		for (uint16 j = 0; j < _font->_height; j++) {
-			memcpy(d, s, 8);
-
-			s += 8;
-			d += cnv->_width;
-		}
-	}
-
-	return;
-}
-
-//
-//	internal character mapping
-//
-byte Gfx::mapChar(byte c) {
-
-	if (c == 0xA5) return 0x5F;
-	if (c == 0xDF) return 0x60;
-
-	if (c > 0x7F) return c - 0x7F;
-
-	return c - 0x20;
-}
-
 
 void Gfx::freeStaticCnv(StaticCnv *cnv) {
 //	printf("free_static_cnv()\n");
@@ -842,7 +771,7 @@ void Gfx::grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uin
 }
 
 
-void Gfx::maskOpNot(uint16 x, uint16 y, uint16 unused) {
+void Gfx::plotMaskPixel(uint16 x, uint16 y, byte color) {
 
 	uint16 _ax = x + y * SCREEN_WIDTH;
 	_buffers[kMask0][_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
@@ -852,12 +781,12 @@ void Gfx::maskOpNot(uint16 x, uint16 y, uint16 unused) {
 
 
 
-void Gfx::maskClearRectangle(const Common::Rect& r) {
+void Gfx::fillMaskRect(const Common::Rect& r, byte color) {
 
 	uint16 _di = r.left/4 + r.top*80;
 
 	for (uint16 _si = r.top; _si < r.bottom; _si++) {
-		memset(&_buffers[kMask0][_di], 0, r.width()/4+1);
+		memset(&_buffers[kMask0][_di], color, r.width()/4+1);
 		_di += 80;
 	}
 
@@ -897,9 +826,15 @@ Gfx::Gfx(Parallaction* vm) :
 
 	setBlackPalette();
 
+	_bgLayers[0] = _bgLayers[1] = _bgLayers[2] = _bgLayers[3] = 0;
+
+	memset(_palette, 0, sizeof(_palette));
 	memset(_palettefx, 0, sizeof(_palettefx));
 
 	initMouse( 0 );
+	initFonts();
+
+	_halfbrite = false;
 
 	_font = NULL;
 
@@ -913,8 +848,13 @@ Gfx::~Gfx() {
 	free(_buffers[kBitBack]);
 	free(_buffers[kBit2]);
 
-	if (_font) delete _font;
+	delete _fonts[kFontDialogue];
+	delete _fonts[kFontLabel];
+	delete _fonts[kFontMenu];
 
+	freeStaticCnv(_mouseComposedArrow);
+	delete _mouseComposedArrow;
+	
 	return;
 }
 

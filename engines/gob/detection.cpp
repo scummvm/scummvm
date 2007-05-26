@@ -414,6 +414,18 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB2,
 		"intro"
 	},
+	{ // Supplied by bgk in bug report #1706861
+		{
+			"gob2",
+			"",
+			AD_ENTRY1s("intro.stk", "4b13c02d1069b86bcfec80f4e474b98b", 554680),
+			FR_FRA,
+			kPlatformAtariST,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB2,
+		"intro"
+	},
 	{
 		{
 			"gob2cd",
@@ -642,6 +654,18 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB2,
 		"intro"
 	},
+	{ // Supplied by glorfindel in bugreport #1722142
+		{
+			"ween",
+			"",
+			AD_ENTRY1s("intro.stk", "8b57cd510da8a3bbd99e3a0297a8ebd1", 7018771),
+			IT_ITA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB2,
+		"intro"
+	},
 	{
 		{
 			"ween",
@@ -714,6 +738,18 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_BARGON,
 		"intro"
 	},
+	{ // Supplied by glorfindel in bugreport #1722142
+		{
+			"bargon",
+			"Fanmade",
+			AD_ENTRY1s("intro.stk", "da3c54be18ab73fbdb32db24624a9c23", 3181825),
+			IT_ITA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_BARGON,
+		"intro"
+	},
 	{
 		{
 			"gob3",
@@ -762,6 +798,18 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB3,
 		"intro"
 	},
+	{ // Supplied by Paranoimia on #scummvm
+		{
+			"gob3",
+			"",
+			AD_ENTRY1s("intro.stk", "fe8144daece35538085adb59c2d29613", 159402),
+			IT_ITA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB3,
+		"intro"
+	},
 	{
 		{
 			"gob3",
@@ -791,7 +839,19 @@ static const GOBGameDescription gameDescriptions[] = {
 			"gob3",
 			"",
 			AD_ENTRY1("intro.stk", "bd679eafde2084d8011f247e51b5a805"),
-			UNK_LANG,
+			EN_GRB,
+			kPlatformAmiga,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB3,
+		"menu"
+	},
+	{
+		{
+			"gob3",
+			"",
+			AD_ENTRY1("intro.stk", "bd679eafde2084d8011f247e51b5a805"),
+			DE_DEU,
 			kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
@@ -807,7 +867,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		GF_GOB3 | GF_CD,
 		"intro"
 	},
 	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
@@ -819,7 +879,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		GF_GOB3 | GF_CD,
 		"intro"
 	},
 	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
@@ -831,7 +891,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		GF_GOB3 | GF_CD,
 		"intro"
 	},
 	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
@@ -843,7 +903,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		GF_GOB3 | GF_CD,
 		"intro"
 	},
 	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
@@ -855,7 +915,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		GF_GOB3 | GF_CD,
 		"intro"
 	},
 	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
@@ -867,7 +927,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		GF_GOB3 | GF_CD,
 		"intro"
 	},
 	{

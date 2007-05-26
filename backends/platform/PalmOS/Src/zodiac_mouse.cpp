@@ -24,100 +24,90 @@
 
 #include "be_zodiac.h"
 
-void OSystem_PalmZodiac::setCursorPalette(const byte *colors, uint start, uint num) {
-	for(uint i = 0; i < num; i++) {
-		_mousePal[i + start] = TwGfxMakeDisplayRGB(colors[0], colors[1], colors[2]);
-		colors += 4;
-	}
-	_cursorPaletteDisabled = false;
-}
-
 void OSystem_PalmZodiac::draw_mouse() {
-	if (_mouseDrawn || !_mouseVisible)
+	if (!_mouseDataP || _mouseDrawn || !_mouseVisible)
 		return;
-
-	byte *src = _mouseDataP;		// Image representing the mouse
-	byte color;
-	int width;
-
-	_mouseCurState.y = _mouseCurState.y >= _screenHeight ? _screenHeight - 1 : _mouseCurState.y;
+	
+	byte *src = _mouseDataP;
 
 	int x = _mouseCurState.x - _mouseHotspotX;
 	int y = _mouseCurState.y - _mouseHotspotY;
 	int w = _mouseCurState.w;
 	int h = _mouseCurState.h;
 
-	int draw_x = x;
-	int draw_y = y;
-
 	// clip the mouse rect
-	if (x < 0) {
-		w += x;
-		src -= x;
-		x = 0;
-	}
 	if (y < 0) {
+		src -= y * w;
 		h += y;
-		src -= y * MAX_MOUSE_W;
 		y = 0;
 	}
-	if (w > _screenWidth - x)
-		w = _screenWidth - x;
+	if (x < 0) {
+		src -= x;
+		w += x;
+		x = 0;
+	}
+
 	if (h > _screenHeight - y)
 		h = _screenHeight - y;
+	if (w > _screenWidth - x)
+		w = _screenWidth - x;
 
-	// Quick check to see if anything has to be drawn at all
 	if (w <= 0 || h <= 0)
 		return;
 
-	// Store the bounding box so that undraw mouse can restore the area the
-	// mouse currently covers to its original content.
+	// store the bounding box so that undraw mouse can restore the area the
+	// mouse currently covers to its original content
 	_mouseOldState.x = x;
 	_mouseOldState.y = y;
 	_mouseOldState.w = w;
 	_mouseOldState.h = h;
 
-	// Backup the covered area draw the mouse cursor
+	byte color;
+	int ww;
+
 	if (_overlayVisible) {
-		uint16 *bak = (uint16 *)_mouseBackupP;			// Surface used to backup the area obscured by the mouse
-		uint16 *dst, *pal = _cursorPaletteDisabled ? _nativePal : _mousePal;
+		int16 *bak = (int16 *)_mouseBackupP;
+		int16 *pal = _cursorPaletteDisabled ? _nativePal : _mousePal;
+		int16 *dst;
 
 		TwGfxLockSurface(_overlayP, (void **)&dst);
 		dst += y * _screenWidth + x;
 
 		do {
-			width = w;
+			ww = w;
 			do {
 				*bak++ = *dst;
 				color = *src++;
-				if (color != _mouseKeyColor)	// transparent, don't draw
+
+				// transparent, don't draw
+				if (color != _mouseKeyColor)
 					*dst = pal[color];
 				dst++;
-			} while (--width);
+			} while (--ww);
 
-			src += MAX_MOUSE_W - w;
-			bak += MAX_MOUSE_W - w;
+			src += _mouseCurState.w - w;
 			dst += _screenWidth - w;
 		} while (--h);
 
 		TwGfxUnlockSurface(_overlayP, true);
 
 	} else {
-		byte *bak = _mouseBackupP;						// Surface used to backup the area obscured by the mouse
-		byte *dst =_offScreenP + y * _screenWidth + x;	// Surface we are drawing into
+		byte *bak = _mouseBackupP;
+		byte *dst =_offScreenP + y * _screenWidth + x;
 
 		do {
-			width = w;
+			ww = w;
 			do {
 				*bak++ = *dst;
 				color = *src++;
-				if (color != _mouseKeyColor)	// transparent, don't draw
+
+				// transparent, don't draw
+				if (color != _mouseKeyColor)
 					*dst = color;
 				dst++;
-			} while (--width);
+			} while (--ww);
 
-			src += MAX_MOUSE_W - w;
-			bak += MAX_MOUSE_W - w;
+			src += _mouseCurState.w - w;
 			dst += _screenWidth - w;
 		} while (--h);
 	}
@@ -130,30 +120,31 @@ void OSystem_PalmZodiac::undraw_mouse() {
 		return;
 
 	int h = _mouseOldState.h;
-	// No need to do clipping here, since draw_mouse() did that already
+
+	// no need to do clipping here, since draw_mouse() did that already
 	if (_overlayVisible) {
-		uint16 *bak = (uint16 *)_mouseBackupP;
 		uint16 *dst;
+		uint16 *bak = (uint16 *)_mouseBackupP;
 
 		TwGfxLockSurface(_overlayP, (void **)&dst);
 		dst += _mouseOldState.y * _screenWidth + _mouseOldState.x;
 
 		do {
-			memcpy(dst, bak, _mouseOldState.w * 2);
-			bak += MAX_MOUSE_W;
+			MemMove(dst, bak, _mouseOldState.w * 2);
 			dst += _screenWidth;
+			bak += _mouseOldState.w;
 		} while (--h);
 
 		TwGfxUnlockSurface(_overlayP, true);
 
 	} else {
-		byte *dst, *bak = _mouseBackupP;
-		dst = _offScreenP + _mouseOldState.y * _screenWidth + _mouseOldState.x;
-		
+		byte *dst = _offScreenP + _mouseOldState.y * _screenWidth + _mouseOldState.x;
+		byte *bak = _mouseBackupP;
+
 		do {
-			memcpy(dst, bak, _mouseOldState.w);
-			bak += MAX_MOUSE_W;
+			MemMove(dst, bak, _mouseOldState.w);
 			dst += _screenWidth;
+			bak +=  _mouseOldState.w;
 		} while (--h);
 	}
 

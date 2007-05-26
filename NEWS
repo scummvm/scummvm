@@ -9,6 +9,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for Simon the Sorcerer's Puzzle Pack.
    - Added support for Ween: The Prophecy.
    - Added support for Bargon Attack.
+   - Added Sierra AGI engine.
+   - Added support for Goblins 3.
+   - Added Parallaction engine. Currently only Nippon Safes Inc. is supported.
 
  General:
    - Added dialog which allows the user to select the GUI theme on runtime.
@@ -29,9 +32,6 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for DXA cutscenes.
    - Added "fast mode" (use Ctrl-f to toggle).
 
- Cine:
-   - Improved support for international versions.
-
  Queen:
    - Added support for Amiga versions.
    - Fixed some sound glitches.
@@ -44,6 +44,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      in Zak McKracken and Maniac Mansion, by rewriting the walking code
      for these games.
    - Fixed several other issues.
+   - Added support for DXA movies playback in HE games.
 
  Simon:
    - Renamed Simon engine to AGOS.
@@ -62,6 +63,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  WinCE Port:
    - Switched to using a GCC toolchain for building.
+   - Major update to the SDL lib. Better, faster, more compatible :-)
+
+ PalmOS Port:
+   - Now using PalmOS Porting SDK which enables use of the C standard library
 
 0.9.1 (2006-10-29)
  New Ports:

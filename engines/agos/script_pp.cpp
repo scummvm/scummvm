@@ -29,64 +29,271 @@
 
 namespace AGOS {
 
-void AGOSEngine::setupPuzzleOpcodes(OpcodeProc *op) {
-	setupCommonOpcodes(op);
+#define OPCODE(x)	_OPCODE(AGOSEngine_PuzzlePack, x)
 
-	op[23] = &AGOSEngine::off_chance;
-	op[30] = &AGOSEngine::opp_iconifyWindow;
-	op[32] = &AGOSEngine::opp_restoreOopsPosition;
-	op[38] = &AGOSEngine::opp_loadMouseImage;
-	op[63] = &AGOSEngine::opp_message;
-	op[65] = &AGOSEngine::off_addTextBox;
-	op[66] = &AGOSEngine::opp_setShortText;
-	op[67] = &AGOSEngine::oww_setLongText;
-	op[70] = &AGOSEngine::off_printLongText;
-	op[83] = &AGOSEngine::os2_rescan;
-	op[98] = &AGOSEngine::os2_animate;
-	op[99] = &AGOSEngine::os2_stopAnimate;
-	op[105] = &AGOSEngine::opp_loadHiScores;
-	op[106] = &AGOSEngine::opp_checkHiScores;
-	op[107] = &AGOSEngine::off_addBox;
-	op[120] = &AGOSEngine::opp_sync;
-	op[122] = &AGOSEngine::off_oracleTextDown;
-	op[123] = &AGOSEngine::off_oracleTextUp;
-	op[124] = &AGOSEngine::off_ifTime;
-	op[131] = &AGOSEngine::off_setTime;
-	op[132] = &AGOSEngine::opp_saveUserGame;
-	op[133] = &AGOSEngine::opp_loadUserGame;
-	op[134] = &AGOSEngine::off_listSaveGames;
-	op[161] = &AGOSEngine::off_screenTextBox;
-	op[162] = &AGOSEngine::os1_screenTextMsg;
-	op[164] = &AGOSEngine::oe2_getDollar2;
-	op[165] = &AGOSEngine::off_isAdjNoun;
-	op[171] = &AGOSEngine::off_hyperLinkOn;
-	op[172] = &AGOSEngine::off_hyperLinkOff;
-	op[173] = &AGOSEngine::opp_saveOopsPosition;
-	op[175] = &AGOSEngine::oww_lockZones;
-	op[176] = &AGOSEngine::oww_unlockZones;
-	op[177] = &AGOSEngine::off_screenTextPObj;
-	op[178] = &AGOSEngine::os1_getPathPosn;
-	op[179] = &AGOSEngine::os1_scnTxtLongText;
-	op[180] = &AGOSEngine::os1_mouseOn;
-	op[181] = &AGOSEngine::off_mouseOff;
-	op[184] = &AGOSEngine::os1_unloadZone;
-	op[186] = &AGOSEngine::os1_unfreezeZones;
-	op[187] = &AGOSEngine::opp_resetGameTime;
-	op[188] = &AGOSEngine::os2_isShortText;
-	op[189] = &AGOSEngine::os2_clearMarks;
-	op[190] = &AGOSEngine::os2_waitMark;
-	op[191] = &AGOSEngine::opp_resetPVCount;
-	op[192] = &AGOSEngine::opp_setPathValues;
-	op[193] = &AGOSEngine::off_stopClock;
-	op[194] = &AGOSEngine::opp_restartClock;
-	op[195] = &AGOSEngine::off_setColour;
+void AGOSEngine_PuzzlePack::setupOpcodes() {
+	static const OpcodeEntryPuzzlePack opcodes[] = {
+		/* 00 */
+		OPCODE(o_invalid),
+		OPCODE(o_at),
+		OPCODE(o_notAt),
+		OPCODE(o_invalid),
+		/* 04 */
+		OPCODE(o_invalid),
+		OPCODE(o_carried),
+		OPCODE(o_notCarried),
+		OPCODE(o_isAt),
+		/* 08 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_zero),
+		/* 12 */
+		OPCODE(o_notZero),
+		OPCODE(o_eq),
+		OPCODE(o_notEq),
+		OPCODE(o_gt),
+		/* 16 */
+		OPCODE(o_lt),
+		OPCODE(o_eqf),
+		OPCODE(o_notEqf),
+		OPCODE(o_ltf),
+		/* 20 */
+		OPCODE(o_gtf),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(off_chance),
+		/* 24 */
+		OPCODE(o_invalid),
+		OPCODE(o_isRoom),
+		OPCODE(o_isObject),
+		OPCODE(o_state),
+		/* 28 */
+		OPCODE(o_oflag),
+		OPCODE(opp_iconifyWindow),
+		OPCODE(o_invalid),
+		OPCODE(o_destroy),
+		/* 32 */
+		OPCODE(opp_restoreOopsPosition),
+		OPCODE(o_place),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 36 */
+		OPCODE(o_copyff),
+		OPCODE(o_invalid),
+		OPCODE(opp_loadMouseImage),
+		OPCODE(o_invalid),
+		/* 40 */
+		OPCODE(o_invalid),
+		OPCODE(o_clear),
+		OPCODE(o_let),
+		OPCODE(o_add),
+		/* 44 */
+		OPCODE(o_sub),
+		OPCODE(o_addf),
+		OPCODE(o_subf),
+		OPCODE(o_mul),
+		/* 48 */
+		OPCODE(o_div),
+		OPCODE(o_mulf),
+		OPCODE(o_divf),
+		OPCODE(o_mod),
+		/* 52 */
+		OPCODE(o_modf),
+		OPCODE(o_random),
+		OPCODE(o_invalid),
+		OPCODE(o_goto),
+		/* 56 */
+		OPCODE(o_oset),
+		OPCODE(o_oclear),
+		OPCODE(o_putBy),
+		OPCODE(o_inc),
+		/* 60 */
+		OPCODE(o_dec),
+		OPCODE(o_setState),
+		OPCODE(o_print),
+		OPCODE(opp_message),
+		/* 64 */
+		OPCODE(o_msg),
+		OPCODE(off_addTextBox),
+		OPCODE(opp_setShortText),
+		OPCODE(oww_setLongText),
+		/* 68 */
+		OPCODE(o_end),
+		OPCODE(o_done),
+		OPCODE(off_printLongText),
+		OPCODE(o_process),
+		/* 72 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 76 */
+		OPCODE(o_when),
+		OPCODE(o_if1),
+		OPCODE(o_if2),
+		OPCODE(o_isCalled),
+		/* 80 */
+		OPCODE(o_is),
+		OPCODE(o_invalid),
+		OPCODE(o_debug),
+		OPCODE(os2_rescan),
+		/* 84 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_comment),
+		/* 88 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_getParent),
+		OPCODE(o_getNext),
+		/* 92 */
+		OPCODE(o_getChildren),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 96 */
+		OPCODE(o_picture),
+		OPCODE(o_loadZone),
+		OPCODE(os2_animate),
+		OPCODE(os2_stopAnimate),
+		/* 100 */
+		OPCODE(o_killAnimate),
+		OPCODE(o_defWindow),
+		OPCODE(o_window),
+		OPCODE(o_cls),
+		/* 104 */
+		OPCODE(o_closeWindow),
+		OPCODE(opp_loadHiScores),
+		OPCODE(opp_checkHiScores),
+		OPCODE(off_addBox),
+		/* 108 */
+		OPCODE(o_delBox),
+		OPCODE(o_enableBox),
+		OPCODE(o_disableBox),
+		OPCODE(o_moveBox),
+		/* 112 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_doIcons),
+		OPCODE(o_isClass),
+		/* 116 */
+		OPCODE(o_setClass),
+		OPCODE(o_unsetClass),
+		OPCODE(o_invalid),
+		OPCODE(o_waitSync),
+		/* 120 */
+		OPCODE(opp_sync),
+		OPCODE(o_defObj),
+		OPCODE(off_oracleTextDown),
+		OPCODE(off_oracleTextUp),
+		/* 124 */
+		OPCODE(off_ifTime),
+		OPCODE(o_here),
+		OPCODE(o_doClassIcons),
+		OPCODE(o_invalid),
+		/* 128 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_setAdjNoun),
+		OPCODE(off_setTime),
+		/* 132 */
+		OPCODE(opp_saveUserGame),
+		OPCODE(opp_loadUserGame),
+		OPCODE(off_listSaveGames),
+		OPCODE(o_invalid),
+		/* 136 */
+		OPCODE(o_copysf),
+		OPCODE(o_restoreIcons),
+		OPCODE(o_freezeZones),
+		OPCODE(o_placeNoIcons),
+		/* 140 */
+		OPCODE(o_clearTimers),
+		OPCODE(o_setDollar),
+		OPCODE(o_isBox),
+		OPCODE(oe2_doTable),
+		/* 144 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 148 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(oe2_storeItem),
+		/* 152 */
+		OPCODE(oe2_getItem),
+		OPCODE(oe2_bSet),
+		OPCODE(oe2_bClear),
+		OPCODE(oe2_bZero),
+		/* 156 */
+		OPCODE(oe2_bNotZero),
+		OPCODE(oe2_getOValue),
+		OPCODE(oe2_setOValue),
+		OPCODE(o_invalid),
+		/* 160 */
+		OPCODE(oe2_ink),
+		OPCODE(off_screenTextBox),
+		OPCODE(os1_screenTextMsg),
+		OPCODE(o_invalid),
+		/* 164 */
+		OPCODE(oe2_getDollar2),
+		OPCODE(off_isAdjNoun),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 168 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(off_hyperLinkOn),
+		/* 172 */
+		OPCODE(off_hyperLinkOff),
+		OPCODE(opp_saveOopsPosition),
+		OPCODE(o_invalid),
+		OPCODE(oww_lockZones),
+		/* 176 */
+		OPCODE(oww_unlockZones),
+		OPCODE(off_screenTextPObj),
+		OPCODE(os1_getPathPosn),
+		OPCODE(os1_scnTxtLongText),
+		/* 180 */
+		OPCODE(os1_mouseOn),
+		OPCODE(off_mouseOff),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 184 */
+		OPCODE(os1_unloadZone),
+		OPCODE(o_invalid),
+		OPCODE(os1_unfreezeZones),
+		OPCODE(opp_resetGameTime),
+		/* 188 */
+		OPCODE(os2_isShortText),
+		OPCODE(os2_clearMarks),
+		OPCODE(os2_waitMark),
+		OPCODE(opp_resetPVCount),
+		/* 192 */
+		OPCODE(opp_setPathValues),
+		OPCODE(off_stopClock),
+		OPCODE(opp_restartClock),
+		OPCODE(off_setColour),
+	};
+
+	_opcodesPuzzlePack = opcodes;
+	_numOpcodes = 196;
+}
+
+void AGOSEngine_PuzzlePack::executeOpcode(int opcode) {
+	OpcodeProcPuzzlePack op = _opcodesPuzzlePack[opcode].proc;
+	(this->*op) ();
 }
 
 // -----------------------------------------------------------------------
 // Puzzle Pack Opcodes
 // -----------------------------------------------------------------------
 
-void AGOSEngine::opp_iconifyWindow() {
+void AGOSEngine_PuzzlePack::opp_iconifyWindow() {
 	// 30
 	getNextItemPtr();
 	if (_clockStopped != 0)
@@ -95,7 +302,7 @@ void AGOSEngine::opp_iconifyWindow() {
 	_system->setFeatureState(OSystem::kFeatureIconifyWindow, true);
 }
 
-void AGOSEngine::opp_restoreOopsPosition() {
+void AGOSEngine_PuzzlePack::opp_restoreOopsPosition() {
 	// 32: restore oops position
 	uint i;
 
@@ -117,14 +324,14 @@ void AGOSEngine::opp_restoreOopsPosition() {
 	}
 }
 
-void AGOSEngine::opp_loadMouseImage() {
+void AGOSEngine_PuzzlePack::opp_loadMouseImage() {
 	// 38: load mouse image
 	getNextItemPtr();
 	getVarOrByte();
 	loadMouseImage();
 }
 
-void AGOSEngine::opp_message() {
+void AGOSEngine_PuzzlePack::opp_message() {
 	// 63: show string nl
 
 	if (getBitFlag(105)) {
@@ -136,7 +343,7 @@ void AGOSEngine::opp_message() {
 	}
 }
 
-void AGOSEngine::opp_setShortText() {
+void AGOSEngine_PuzzlePack::opp_setShortText() {
 	// 66: set item name
 	uint var = getVarOrByte();
 	uint stringId = getNextStringID();
@@ -147,18 +354,18 @@ void AGOSEngine::opp_setShortText() {
 	}
 }
 
-void AGOSEngine::opp_loadHiScores() {
+void AGOSEngine_PuzzlePack::opp_loadHiScores() {
 	// 105: load high scores
 	getVarOrByte();
 }
 
-void AGOSEngine::opp_checkHiScores() {
+void AGOSEngine_PuzzlePack::opp_checkHiScores() {
 	// 106: check high scores
 	getVarOrByte();
 	getVarOrByte();
 }
 
-void AGOSEngine::opp_sync() {
+void AGOSEngine_PuzzlePack::opp_sync() {
 	// 120: sync
 	uint a = getVarOrWord();
 	if (a == 8001 || a == 8101 || a == 8201 || a == 8301 || a == 8401) {
@@ -167,7 +374,7 @@ void AGOSEngine::opp_sync() {
 	sendSync(a);
 }
 
-void AGOSEngine::opp_saveUserGame() {
+void AGOSEngine_PuzzlePack::opp_saveUserGame() {
 	// 132: save game
 	if (_clockStopped != 0)
 		_gameTime += time(NULL) - _clockStopped;
@@ -183,7 +390,7 @@ void AGOSEngine::opp_saveUserGame() {
 	//saveHiScores()
 }
 
-void AGOSEngine::opp_loadUserGame() {
+void AGOSEngine_PuzzlePack::opp_loadUserGame() {
 	// 133: load usergame
 
 	// NoPatience or Jumble
@@ -196,7 +403,7 @@ void AGOSEngine::opp_loadUserGame() {
 	loadGame(genSaveName(1));
 }
 
-void AGOSEngine::opp_saveOopsPosition() {
+void AGOSEngine_PuzzlePack::opp_saveOopsPosition() {
 	// 173: save oops position
 	if (!isVgaQueueEmpty()) {
 		_oopsValid = true;
@@ -208,18 +415,18 @@ void AGOSEngine::opp_saveOopsPosition() {
 	}
 }
 
-void AGOSEngine::opp_resetGameTime() {
+void AGOSEngine_PuzzlePack::opp_resetGameTime() {
 	// 187: reset game time
 	_gameTime = 0;
 }
 
-void AGOSEngine::opp_resetPVCount() {
+void AGOSEngine_PuzzlePack::opp_resetPVCount() {
 	// 191
 	_PVCount = 0;
 	_GPVCount = 0;
 }
 
-void AGOSEngine::opp_setPathValues() {
+void AGOSEngine_PuzzlePack::opp_setPathValues() {
 	// 192
 	_pathValues[_PVCount++] = getVarOrByte();
 	_pathValues[_PVCount++] = getVarOrByte();
@@ -227,7 +434,7 @@ void AGOSEngine::opp_setPathValues() {
 	_pathValues[_PVCount++] = getVarOrByte();
 }
 
-void AGOSEngine::opp_restartClock() {
+void AGOSEngine_PuzzlePack::opp_restartClock() {
 	// 194: resume clock
 	if (_clockStopped != 0)
 		_gameTime += time(NULL) - _clockStopped;

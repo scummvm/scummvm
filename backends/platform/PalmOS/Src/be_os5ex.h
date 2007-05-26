@@ -45,9 +45,9 @@ typedef struct {
 
 class OSystem_PalmOS5Ex : public OSystem_PalmOS5 {
 private:
-//	void timer_handler() {};
-	void sound_handler() {};
-//	void int_quit();
+	void timer_handler() {}
+	void sound_handler() {}
+	void int_quit();
 
 	SndStreamVariableBufferCallback sound_callback();
 
@@ -55,7 +55,7 @@ public:
 	OSystem_PalmOS5Ex();
 	static OSystem *create();
 
-//	void setTimerCallback(TimerProc callback, int interval);
+	void setTimerCallback(TimerProc callback, int interval);
 
 	MutexRef createMutex();
 	void lockMutex(MutexRef mutex);

@@ -24,7 +24,7 @@
 #include "common/stdafx.h"
 
 #include "common/config-manager.h"
-#include "common/fs.h"
+//#include "common/fs.h"
 #include "common/md5.h"
 #include "common/events.h"
 #include "common/system.h"
@@ -1552,6 +1552,39 @@ void ScummEngine::setupMusic(int midi) {
 	default:
 		_musicType = MDT_MIDI;
 		break;
+	}
+
+	if ((_game.id == GID_MONKEY_EGA || (_game.id == GID_LOOM && _game.version == 3))
+	   &&  (_game.platform == Common::kPlatformPC) && _musicType == MDT_MIDI) {
+		Common::String fileName;
+		bool missingFile = false;
+		if (_game.id == GID_LOOM) {
+			Common::File f;
+			// The Roland Update does have an 85.LFL, but we don't
+			// test for it since the demo doesn't have it.
+			for (char c = '2'; c <= '4'; c++) {
+				fileName = "8";
+				fileName += c;
+				fileName += ".LFL";
+				if (!Common::File::exists(fileName)) {
+					missingFile = true;
+					break;
+				}
+			}
+		} else if (_game.id == GID_MONKEY_EGA) {
+			fileName = "DISK09.LEC";
+			if (!Common::File::exists(fileName)) {
+				missingFile = true;
+			}
+		}
+
+		if (missingFile) {
+			GUI::MessageDialog dialog(
+				"Native MIDI support requires the Roland Upgrade from LucasArts,\n"
+				"but " + fileName + " is missing. Using Adlib instead.", "Ok");
+			dialog.runModal();
+			_musicType = MDT_ADLIB;
+		}
 	}
 	
 	// DOTT + SAM use General MIDI, so they shouldn't use GS settings

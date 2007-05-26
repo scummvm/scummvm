@@ -79,7 +79,6 @@ typedef	struct {
 extern GlobalsPreferencePtr gPrefs;
 
 extern Boolean bDirectMode;
-extern Boolean bStartScumm;
 extern Boolean bLaunched;
 
 #define appPrefID				0x00
@@ -92,7 +91,7 @@ extern Boolean bLaunched;
 
 Err AppStart(void);
 void AppStop(void);
-Boolean StartScummVM();
+Boolean StartScummVM(Int16 engine = -1);
 void SavePrefs();
 Err SendDatabase (UInt16 cardNo, LocalID dbID, Char *nameP, Char *descriptionP);
 #endif

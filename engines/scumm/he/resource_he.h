@@ -118,10 +118,10 @@ public:
 
 	void setCursor(int id);
 
-	virtual int extractResource(int id, byte **buf) { return 0; };
+	virtual int extractResource(int id, byte **buf) { return 0; }
 	virtual int convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
 							 int *hotspot_x, int *hotspot_y, int *keycolor,
-							 byte **palette, int *palSize) { return 0; };
+							 byte **palette, int *palSize) { return 0; }
 
 	enum {
 		MAX_CACHED_CURSORS = 10
@@ -154,7 +154,7 @@ public:
 class Win32ResExtractor : public ResExtractor {
  public:
 	Win32ResExtractor(ScummEngine_v70he *scumm);
-	~Win32ResExtractor() {};
+	~Win32ResExtractor() {}
 	int extractResource(int id, byte **data);
 	void setCursor(int id);
 	int convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,

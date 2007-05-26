@@ -83,7 +83,7 @@ protected:
 #ifdef USE_FLAC
 class FLACSound : public PCSound {
 public:
-	FLACSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {};
+	FLACSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
 protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeFlacStream(f, size));

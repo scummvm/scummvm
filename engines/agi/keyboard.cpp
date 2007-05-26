@@ -92,6 +92,7 @@ int AgiEngine::doPollKeyboard() {
 	/* If a key is ready, rip it */
 	if (_gfx->keypress()) {
 		key = _gfx->getKey();
+
 		debugC(3, kDebugLevelInput, "key %02x pressed", key);
 	}
 
@@ -102,9 +103,13 @@ int AgiEngine::handleController(int key) {
 	VtEntry *v = &_game.viewTable[0];
 	int i;
 
-	/* The Black Cauldron needs KEY_ESCAPE to use menus */
-	if (key == 0 /*|| key == KEY_ESCAPE */ )
+	/* AGI 3.149 games and The Black Cauldron need KEY_ESCAPE to use menus */
+	if (key == 0 || (key == KEY_ESCAPE && agiGetRelease() != 0x3149 && getGameID() != GID_BC) )
 		return false;
+
+	if ((getGameID() == GID_MH1 || getGameID() == GID_MH2) && (key == KEY_ENTER) &&
+		(_game.inputMode == INPUT_NONE))
+		key = 0x20; // Set Enter key to Space in Manhunter when there's no text input
 
 	debugC(3, kDebugLevelInput, "key = %04x", key);
 

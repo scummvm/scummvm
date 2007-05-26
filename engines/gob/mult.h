@@ -293,7 +293,7 @@ protected:
 class Mult_v1 : public Mult {
 public:
 	Mult_v1(GobEngine *vm);
-	virtual ~Mult_v1() {};
+	virtual ~Mult_v1() {}
 
 	virtual void loadMult(int16 resId);
 	virtual void freeMultKeys();

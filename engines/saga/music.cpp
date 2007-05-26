@@ -30,33 +30,12 @@
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
-#include "sound/mp3.h"
-#include "sound/vorbis.h"
-#include "sound/flac.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 
 namespace Saga {
 
 #define BUFFER_SIZE 4096
-
-struct TrackFormat {
-	Audio::DigitalTrackInfo* (*openTrackFunction)(int);
-};
-
-static const TrackFormat TRACK_FORMATS[] = {
-#ifdef USE_FLAC
-	{ Audio::getFlacTrack },
-#endif
-#ifdef USE_VORBIS
-	{ Audio::getVorbisTrack },
-#endif
-#ifdef USE_MAD
-	{ Audio::getMP3Track },
-#endif
-
-	{ NULL } // Terminator
-};
 
 // I haven't decided yet if it's a good idea to make looping part of the audio
 // stream class, or if I should use a "wrapper" class, like I did for Broken
@@ -307,8 +286,6 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enable
 	_songTableLen = 0;
 	_songTable = 0;
 
-	_track = NULL;
-
 	_midiMusicData = NULL;
 }
 
@@ -411,13 +388,18 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	}
 
 	// Try to open standalone digital track
-	for (int i = 0; i < ARRAYSIZE(TRACK_FORMATS) - 1; ++i)
-		if ((_track = TRACK_FORMATS[i].openTrackFunction(realTrackNumber))) {
-			break;
+	char trackName[2][16];
+	sprintf(trackName[0], "track%d", realTrackNumber);
+	sprintf(trackName[1], "track%02d", realTrackNumber);
+	Audio::AudioStream *stream = 0;
+	for (int i = 0; i < 2; ++i) {
+		// We multiply by 40 / 3 = 1000 / 75 to convert frames to milliseconds
+		// FIXME: Do we really want a duration of 10000 frames = 133 seconds, or is that just a random value?
+		stream = Audio::AudioStream::openStreamFile(trackName[i], 0, 10000 * 40 / 3, (flags == MUSIC_LOOP) ? 0 : 1);
+		if (stream) {
+			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
+			return;
 		}
-	if (_track) {
-		_track->play(_mixer, &_musicHandle, (flags == MUSIC_LOOP) ? -1 : 1, 0, 10000);
-		return;
 	}
 
 	if (_vm->getGameType() == GType_ITE) {

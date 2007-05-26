@@ -51,7 +51,9 @@ enum {
 	kDebugDialogue = 1 << 3,
 	kDebugGraphics = 1 << 4,
 	kDebugJobs = 1 << 5,
-	kDebugInput = 1 << 6
+	kDebugInput = 1 << 6,
+	kDebugAudio = 1 << 7,
+	kDebugMenu = 1 << 8
 };
 
 enum {
@@ -196,8 +198,6 @@ extern const char 	*_minidrkiName;
 #define IS_MINI_CHARACTER(s) (((s)[0] == 'm'))
 #define IS_DUMMY_CHARACTER(s) (((s)[0] == 'D'))
 
-#define PATH_LEN	200
-
 void waitUntilLeftClick();
 
 
@@ -216,9 +216,10 @@ void jobEraseLabel(void *parm, Job *j);
 
 
 
+class Debugger;
 class Gfx;
 class Menu;
-class MidiPlayer;
+class SoundMan;
 
 
 
@@ -283,6 +284,7 @@ public:
 
 
 class Parallaction : public Engine {
+	friend class Debugger;
 
 public:
 
@@ -312,6 +314,11 @@ public:
 	void 		pauseJobs();
 	void 		resumeJobs();
 	void 		runJobs();
+
+	void 		setPath(byte *path);
+	void 		finalizeWalk(WalkNodeList *list);
+	int16 		selectWalkFrame(const Common::Point& pos, const WalkNode* from);
+	void 		clipMove(Common::Point& pos, const WalkNode* from);
 
 	Zone 		*findZone(const char *name);
 	Zone   		*hitZone(uint32 type, uint16 x, uint16 y);
@@ -347,8 +354,7 @@ private:
 	const PARALLACTIONGameDescription *_gameDescription;
 
 public:
-
-	MidiPlayer *_midiPlayer;
+	SoundMan		*_soundMan;
 
 	Gfx*			_gfx;
 	Menu*			_menu;
@@ -371,6 +377,8 @@ public:
 
 protected:		// data
 
+	Debugger	*_debugger;
+
 	struct InputData {
 		uint16			_event;
 		Common::Point	_mousePos;
@@ -391,35 +399,32 @@ protected:		// data
 	int16		_transCurrentHoverItem;
 
 	uint32		_baseTime;
-
-	uint16		_musicData1;	  		// only used in changeLocation
 	char		_characterName1[50]; 	// only used in changeCharacter
 
 	int16 _keyDown;
 
 	JobList		_jobs;
 
+	Common::String      _saveFileName;
+
+
 protected:		// members
 	bool detectGame(void);
 
 	void		initGame();
 	void		initGlobals();
-
-	Common::String      _saveFileName;
-	int         buildSaveFileList(Common::StringList& l);
-	int         selectSaveFile(uint16 arg_0, const char* caption, const char* button);
-	void		doLoadGame(uint16 slot);
-	void		doSaveGame(uint16 slot, const char* name);
-
+	void 		initResources();
 	void		runGame();
+	uint32		getElapsedTime();
+	void		resetTimer();
 
 	InputData 	*translateInput();
 	void		processInput(InputData*);
 
-	int16		getHoverInventoryItem(int16 x, int16 y);
-
-	uint32		getElapsedTime();
-	void		resetTimer();
+	int         buildSaveFileList(Common::StringList& l);
+	int         selectSaveFile(uint16 arg_0, const char* caption, const char* button);
+	void		doLoadGame(uint16 slot);
+	void		doSaveGame(uint16 slot, const char* name);
 
 	void		doLocationEnterTransition();
 	void		changeLocation(char *location);
@@ -430,9 +435,12 @@ protected:		// members
 
 	void		parseZone(Script &script, ZoneList &list, char *name);
 	void		parseZoneTypeBlock(Script &script, Zone *z);
-	void 		parseWalkNodes(Script& script, WalkNodeList &list);
 	void 		displayCharacterComment(ExamineData *data);
 	void 		displayItemComment(ExamineData *data);
+
+	void 		parseWalkNodes(Script& script, WalkNodeList &list);
+	void		initWalk();
+	uint16 		checkDoor();
 
 	Animation * parseAnimation(Script &script, AnimationList &list, char *name);
 	void		parseScriptLine(Instruction *inst, Animation *a, LocalVariable *locals);
@@ -441,12 +449,7 @@ protected:		// members
 
 	void		parseCommands(Script &script, CommandList&);
 
-	void 		pickMusic(const char *location);
-	void		selectCharacterMusic(const char *name);
-
 	void 		freeCharacter();
-
-	void 		initResources();
 
 	uint16 		askDialoguePassword(Dialogue *q, StaticCnv *face);
 	bool 		displayAnswer(Dialogue *q, uint16 i);
@@ -457,10 +460,11 @@ protected:		// members
 	void 		enterDialogue();
 	void 		exitDialogue();
 
-	void 		addInventoryItem(uint16 item);
+	int 		addInventoryItem(uint16 item);
 	void 		dropItem(uint16 item);
 	int16 		pickupItem(Zone *z);
 	int16 		isItemInInventory(int32 v);
+	int16		getHoverInventoryItem(int16 x, int16 y);
 };
 
 // FIXME: remove global

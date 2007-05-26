@@ -144,24 +144,24 @@ uint RandomSource::getRandomNumberRng(uint min, uint max) {
 
 
 const LanguageDescription g_languages[] = {
-	{"en", "English", EN_ANY}, // Generic English (when only one game version exist)
-	{"us", "English (US)", EN_USA},
-	{"gb", "English (GB)", EN_GRB},
-	{"de", "German", DE_DEU},
-	{"fr", "French", FR_FRA},
-	{"it", "Italian", IT_ITA},
-	{"br", "Portuguese", PT_BRA},
-	{"es", "Spanish", ES_ESP},
-	{"jp", "Japanese", JA_JPN},
 	{"zh", "Chinese (Taiwan)", ZH_TWN},
-	{"kr", "Korean", KO_KOR},
-	{"se", "Swedish", SE_SWE},
-	{"hb", "Hebrew", HB_ISR},
-	{"ru", "Russian", RU_RUS},
 	{"cz", "Czech", CZ_CZE},
 	{"nl", "Dutch", NL_NLD},
+	{"en", "English", EN_ANY}, // Generic English (when only one game version exist)
+	{"gb", "English (GB)", EN_GRB},
+	{"us", "English (US)", EN_USA},
+	{"fr", "French", FR_FRA},
+	{"de", "German", DE_DEU},
+	{"hb", "Hebrew", HB_ISR},
+	{"it", "Italian", IT_ITA},
+	{"jp", "Japanese", JA_JPN},
+	{"kr", "Korean", KO_KOR},
 	{"nb", "Norwegian Bokm\xE5l", NB_NOR},
 	{"pl", "Polish", PL_POL},
+	{"br", "Portuguese", PT_BRA},
+	{"ru", "Russian", RU_RUS},
+	{"es", "Spanish", ES_ESP},
+	{"se", "Swedish", SE_SWE},
 	{0, 0, UNK_LANG}
 };
 
@@ -415,12 +415,10 @@ static void debugHelper(const char *in_buf, bool caret = true) {
 		strcpy(buf, in_buf);
 	}
 
-#ifndef _WIN32_WCE
 	if (caret)
 		printf("%s\n", buf);
 	else
 		printf("%s", buf);
-#endif
 
 #if defined( USE_WINDBG )
 	if (caret)
@@ -551,6 +549,7 @@ void NORETURN CDECL error(const char *s, ...) {
 #endif
 
 #ifdef PALMOS_MODE
+	extern void PalmFatalError(const char *err);
 	PalmFatalError(buf_output);
 #endif
 

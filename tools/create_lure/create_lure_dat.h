@@ -27,7 +27,7 @@
 #include "common/endian.h"
 
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 17
+#define VERSION_MINOR 19
 #define ENGLISH_LURE 
 
 #define DATA_SEGMENT 0xac50
@@ -136,11 +136,13 @@ struct HotspotResource {
 	uint16 tickTimeout;
 	uint16 animOffset;
 	byte colourOffset;
-	uint16 sequenceOffset;
-	byte unknown4[15];
+	uint16 hotspotScriptOffset;
+	byte unused1[7];
+	uint16 talkScriptOffset;
+	byte unused2[6];
 	int8 talkX;
 	int8 talkY;
-	byte unused5[11];
+	byte unused3[11];
 	uint16 delayCtr;
 	uint8 characterMode;
 	uint16 tickSequenceOffset;
@@ -176,7 +178,8 @@ struct HotspotResourceOutput {
 	int8 talkY;
 	uint16 colourOffset;
 	uint16 animRecordId;
-	uint16 sequenceOffset;
+	uint16 hotspotScriptOffset;
+	uint16 talkScriptOffset;
 	uint16 tickProcOffset;
 	uint16 tickTimeout;
 	uint16 tickSequenceOffset;

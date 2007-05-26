@@ -22,14 +22,15 @@
  *
  */
 
+#include "PalmVersion.h"
 #include <stdlib.h>
 #include "globals.h"
 
 #include "modulesrsc.h"
 
-const Char *SCUMMVM_SAVEPATH = "/PALM/Programs/ScummVM/Saved";
+const char *SCUMMVM_SAVEPATH = "/PALM/Programs/ScummVM/Saved";
 
-void PalmFatalError(const Char *err) {
+void PalmFatalError(const char *err) {
 	WinSetDrawWindow(WinGetDisplayWindow());
 	WinPalette(winPaletteSetToDefault,0,0,0);
 	WinSetBackColor(0);

@@ -870,6 +870,11 @@ enum StringIds {
 };
 
 void ScummEngine_v5::o5_saveLoadVars() {
+	// The KIXX XL release of Monkey Island 2 (Amiga disk) used this opcode
+	// as dummy, in order to remove copy protection and keep level selection.
+	if (_game.version == 5)
+		return;
+
 	if (fetchScriptByte() == 1)
 		saveVars();
 	else

@@ -25,7 +25,7 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
-#include "common/fs.h"
+//#include "common/fs.h"
 #include "common/system.h"
 
 #include "agos/debugger.h"
@@ -72,6 +72,35 @@ static const GameSpecificSettings puzzlepack_settings = {
 };
 #endif
 
+
+AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system)
+	: AGOSEngine_Feeble(system) {
+}
+
+AGOSEngine_Feeble::AGOSEngine_Feeble(OSystem *system)
+	: AGOSEngine_Simon2(system) {
+}
+
+AGOSEngine_Simon2::AGOSEngine_Simon2(OSystem *system)
+	: AGOSEngine_Simon1(system) {
+}
+
+AGOSEngine_Simon1::AGOSEngine_Simon1(OSystem *system)
+	: AGOSEngine_Waxworks(system) {
+}
+
+AGOSEngine_Waxworks::AGOSEngine_Waxworks(OSystem *system)
+	: AGOSEngine_Elvira2(system) {
+}
+
+AGOSEngine_Elvira2::AGOSEngine_Elvira2(OSystem *system)
+	: AGOSEngine_Elvira1(system) {
+}
+
+AGOSEngine_Elvira1::AGOSEngine_Elvira1(OSystem *system)
+	: AGOSEngine(system) {
+}
+
 AGOSEngine::AGOSEngine(OSystem *syst)
 	: Engine(syst) {
 	_vcPtr = 0;
@@ -83,6 +112,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_keyPressed = 0;
 
 	_gameFile = 0;
+	_opcode = 0;
 
 	_itemMemSize = 0;
 	_tableMemSize = 0;
@@ -162,6 +192,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_beardLoaded = 0;
 	_litBoxFlag = 0;
 	_mortalFlag = 0;
+	_displayScreen = false;
 	_updateScreen = false;
 	_syncFlag2 = 0;
 	_inCallBack = 0;
@@ -169,13 +200,14 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_copyPartialMode = 0;
 	_fastMode = 0;
 	_useBackGround = 0;
+	
+	_backFlag = 0;
 
 	_debugMode = 0;
 	_startMainScript = false;
 	_continousMainScript = false;
 	_startVgaScript = false;
 	_continousVgaScript = false;
-	_drawImagesDebug = false;
 	_dumpImages = false;
 
 	_copyProtection = false;
@@ -261,6 +293,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_leftButtonDown = 0;
 	_rightButtonDown = 0;
+	_clickOnly = 0;
 	_noRightClick = false;
 
 	_leftButton = 0;
@@ -282,8 +315,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_fastFadeCount = 0;
 	_fastFadeInFlag = 0;
 	_fastFadeOutFlag = 0;
-	_unkPalFlag = 0;
-	_usePaletteDelay = 0;
 	_exitCutscene = 0;
 	_paletteFlag = 0;
 	_bottomPalette = 0;
@@ -296,6 +327,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_showPreposition = 0;
 	_showMessageFlag = 0;
 
+	_copyScnFlag = 0;
 	_vgaSpriteChanged = 0;
 
 	_block = 0;
@@ -315,7 +347,15 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_timer5 = 0;
 	_timer4 = 0;
 
-	_frameRate = 0;
+ 	_iconToggleCount = 0;
+ 	_voiceCount = 0;
+ 
+	_lastTickCount = 0;
+	_thisTickCount = 0;
+	_startSecondCount = 0;
+	_tSecondCount = 0;
+
+	_frameCount = 0;
 
 	_zoneNumber = 0;
 
@@ -341,6 +381,11 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_nextVgaTimerToProcess = 0;
 
+	_opcode177Var1 = 1;
+	_opcode177Var2 = 0;
+	_opcode178Var1 = 1;
+	_opcode178Var2 = 0;
+
 	_classLine = 0;
 	_classMask = 0;
 	_classMode1 = 0;
@@ -356,6 +401,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_boxLineCount = 0;
 	_boxCR = 0;
 	memset(_boxBuffer, 0, sizeof(_boxBuffer));
+	_boxBufferPtr = _boxBuffer;
 
 	_linePtrs[0] = 0;
 	_linePtrs[1] = 0;
@@ -428,6 +474,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_saveLoadSlot = 0;
 	memset(_saveLoadName, 0, sizeof(_saveLoadName));
 
+	_saveGameNameLen = 0;
 	_saveLoadRowCurPos = 0;
 	_numSaveGameRows = 0;
 	_saveDialogFlag = false;
@@ -445,6 +492,17 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_frontBuf = 0;
 	_backBuf = 0;
 	_scaleBuf = 0;
+
+	_window3Flag = 0;
+	_window4Flag = 0;
+	_window6Flag = 0;
+	_window4BackScn = 0;
+	_window6BackScn = 0;
+
+	_moveXMin = 0;
+	_moveYMin = 0;
+	_moveXMax = 0;
+	_moveYMax = 0;
 
 	_vc10BasePtrOld = 0;
 	memcpy (_hebrewCharWidths,
@@ -531,9 +589,22 @@ int AGOSEngine::init() {
 	// allocate buffers
 	_backGroundBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
 	_frontBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
-	_backBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
-	if (getGameType() == GType_FF || getGameType() == GType_PP)
+
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		_backBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
 		_scaleBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
+	}
+
+	if (getGameType() == GType_SIMON2) {
+		_window4BackScn = (byte *)calloc(_screenWidth * _screenHeight, 1);
+	} else if (getGameType() == GType_SIMON1) {
+		_window4BackScn = (byte *)calloc(_screenWidth * 134, 1);
+	} else if (getGameType() == GType_WW || getGameType() == GType_ELVIRA2) {
+		_window4BackScn = (byte *)calloc(224 * 127, 1);
+	} else if (getGameType() == GType_ELVIRA1) {
+		_window4BackScn = (byte *)calloc(224 * 127, 1);
+		_window6BackScn = (byte *)calloc(48 * 80, 1);
+	}
 
 	setupGame();
 
@@ -605,135 +676,161 @@ static const uint16 initialVideoWindows_Common[20] = {
 	 3, 3, 14, 127,
 };
 
-void AGOSEngine::setupGame() {
-	if (getGameType() == GType_PP) {
-		gss = PTR(puzzlepack_settings);
-		_numVideoOpcodes = 85;
+void AGOSEngine_PuzzlePack::setupGame() {
+	gss = PTR(puzzlepack_settings);
+	_numVideoOpcodes = 85;
 #ifndef PALMOS_68K
-		_vgaMemSize = 7500000;
+	_vgaMemSize = 7500000;
 #else
-		_vgaMemSize = gVars->memory[kMemSimon2Games];
+	_vgaMemSize = gVars->memory[kMemSimon2Games];
 #endif
-		_itemMemSize = 20000;
-		_tableMemSize = 200000;
-		_frameRate = 1;
-		_vgaBaseDelay = 5;
-		_numBitArray1 = 128;
-		_numItemStore = 10;
-		_numTextBoxes = 40;
-		_numVars = 2048;
-	} else if (getGameType() == GType_FF) {
-		gss = PTR(feeblefiles_settings);
-		_numVideoOpcodes = 85;
-#ifndef PALMOS_68K
-		_vgaMemSize = 7500000;
-#else
-		_vgaMemSize = gVars->memory[kMemSimon2Games];
-#endif
-		_itemMemSize = 20000;
-		_tableMemSize = 200000;
-		_frameRate = 1;
-		_vgaBaseDelay = 5;
-		_numBitArray1 = 16;
-		_numBitArray2 = 16;
-		_numBitArray3 = 16;
-		_numItemStore = 10;
-		_numTextBoxes = 40;
-		_numVars = 255;
-	} else if (getGameType() == GType_SIMON2) {
-		gss = PTR(simon2_settings);
-		_tableIndexBase = 1580 / 4;
-		_textIndexBase = 1500 / 4;
-		_numVideoOpcodes = 75;
-#ifndef PALMOS_68K
-		_vgaMemSize = 2000000;
-#else
-		_vgaMemSize = gVars->memory[kMemSimon2Games];
-#endif
-		_itemMemSize = 20000;
-		_tableMemSize = 100000;
-		// Check whether to use MT-32 MIDI tracks in Simon the Sorcerer 2
-		if ((getGameType() == GType_SIMON2) && _native_mt32)
-			_musicIndexBase = (1128 + 612) / 4;
-		else
-			_musicIndexBase = 1128 / 4;
-		_soundIndexBase = 1660 / 4;
-		_frameRate = 1;
-		_vgaBaseDelay = 1;
-		_numBitArray1 = 16;
-		_numBitArray2 = 16;
-		_numItemStore = 10;
-		_numTextBoxes = 20;
-		_numVars = 255;
-	} else if (getGameType() == GType_SIMON1) {
-		gss = PTR(simon1_settings);
-		_tableIndexBase = 1576 / 4;
-		_textIndexBase = 1460 / 4;
-		_numVideoOpcodes = 64;
-#ifndef PALMOS_68K
-		_vgaMemSize = 1000000;
-#else
-		_vgaMemSize = gVars->memory[kMemSimon1Games];
-#endif
-		_itemMemSize = 20000;
-		_tableMemSize = 50000;
-		_musicIndexBase = 1316 / 4;
-		_soundIndexBase = 0;
-		_frameRate = 1;
-		_vgaBaseDelay = 1;
-		_numBitArray1 = 16;
-		_numBitArray2 = 16;
-		_numItemStore = 10;
-		_numTextBoxes = 20;
-		_numVars = 255;
-	} else if (getGameType() == GType_WW) {
-		gss = PTR(simon1_settings);
-		_numVideoOpcodes = 64;
-#ifndef PALMOS_68K
-		_vgaMemSize = 1000000;
-#else
-		_vgaMemSize = gVars->memory[kMemSimon1Games];
-#endif
-		_itemMemSize = 80000;
-		_tableMemSize = 50000;
-		_frameRate = 4;
-		_vgaBaseDelay = 1;
-		_numBitArray1 = 16;
-		_numBitArray2 = 15;
-		_numItemStore = 50;
-		_numTextBoxes = 10;
-		_numVars = 255;
-	} else if (getGameType() == GType_ELVIRA2) {
-		gss = PTR(simon1_settings);
-		_numVideoOpcodes = 60;
-#ifndef PALMOS_68K
-		_vgaMemSize = 1000000;
-#else
-		_vgaMemSize = gVars->memory[kMemSimon1Games];
-#endif
-		_itemMemSize = 64000;
-		_tableMemSize = 100000;
-		_frameRate = 4;
-		_vgaBaseDelay = 1;
-		_numBitArray1 = 16;
-		_numBitArray2 = 15;
-		_numItemStore = 50;
-		_numVars = 255;
-	} else if (getGameType() == GType_ELVIRA1) {
-		gss = PTR(simon1_settings);
-		_numVideoOpcodes = 57;
-#ifndef PALMOS_68K
-		_vgaMemSize = 1000000;
-#else
-		_vgaMemSize = gVars->memory[kMemSimon1Games];
-#endif
-		_itemMemSize = 64000;
-		_tableMemSize = 256000;
-		_frameRate = 4;
-		_vgaBaseDelay = 1;
-		_numVars = 512;
-	}
+	_itemMemSize = 20000;
+	_tableMemSize = 200000;
+	_frameCount = 1;
+	_vgaBaseDelay = 5;
+	_numBitArray1 = 128;
+	_numItemStore = 10;
+	_numTextBoxes = 40;
+	_numVars = 2048;
 
+	AGOSEngine::setupGame();
+}
+
+void AGOSEngine_Feeble::setupGame() {
+	gss = PTR(feeblefiles_settings);
+	_numVideoOpcodes = 85;
+#ifndef PALMOS_68K
+	_vgaMemSize = 7500000;
+#else
+	_vgaMemSize = gVars->memory[kMemSimon2Games];
+#endif
+	_itemMemSize = 20000;
+	_tableMemSize = 200000;
+	_frameCount = 1;
+	_vgaBaseDelay = 5;
+	_numBitArray1 = 16;
+	_numBitArray2 = 16;
+	_numBitArray3 = 16;
+	_numItemStore = 10;
+	_numTextBoxes = 40;
+	_numVars = 255;
+
+	AGOSEngine::setupGame();
+}
+
+void AGOSEngine_Simon2::setupGame() {
+	gss = PTR(simon2_settings);
+	_tableIndexBase = 1580 / 4;
+	_textIndexBase = 1500 / 4;
+	_numVideoOpcodes = 75;
+#ifndef PALMOS_68K
+	_vgaMemSize = 2000000;
+#else
+	_vgaMemSize = gVars->memory[kMemSimon2Games];
+#endif
+	_itemMemSize = 20000;
+	_tableMemSize = 100000;
+	// Check whether to use MT-32 MIDI tracks in Simon the Sorcerer 2
+	if ((getGameType() == GType_SIMON2) && _native_mt32)
+		_musicIndexBase = (1128 + 612) / 4;
+	else
+		_musicIndexBase = 1128 / 4;
+	_soundIndexBase = 1660 / 4;
+	_frameCount = 1;
+	_vgaBaseDelay = 1;
+	_numBitArray1 = 16;
+	_numBitArray2 = 16;
+	_numItemStore = 10;
+	_numTextBoxes = 20;
+	_numVars = 255;
+
+	AGOSEngine::setupGame();
+}
+
+void AGOSEngine_Simon1::setupGame() {
+	gss = PTR(simon1_settings);
+	_tableIndexBase = 1576 / 4;
+	_textIndexBase = 1460 / 4;
+	_numVideoOpcodes = 64;
+#ifndef PALMOS_68K
+	_vgaMemSize = 1000000;
+#else
+	_vgaMemSize = gVars->memory[kMemSimon1Games];
+#endif
+	_itemMemSize = 20000;
+	_tableMemSize = 50000;
+	_musicIndexBase = 1316 / 4;
+	_soundIndexBase = 0;
+	_frameCount = 1;
+	_vgaBaseDelay = 1;
+	_numBitArray1 = 16;
+	_numBitArray2 = 16;
+	_numItemStore = 10;
+	_numTextBoxes = 20;
+	_numVars = 255;
+
+	AGOSEngine::setupGame();
+}
+
+void AGOSEngine_Waxworks::setupGame() {
+	gss = PTR(simon1_settings);
+	_numVideoOpcodes = 64;
+#ifndef PALMOS_68K
+	_vgaMemSize = 1000000;
+#else
+	_vgaMemSize = gVars->memory[kMemSimon1Games];
+#endif
+	_itemMemSize = 80000;
+	_tableMemSize = 50000;
+	_frameCount = 4;
+	_vgaBaseDelay = 1;
+	_numBitArray1 = 16;
+	_numBitArray2 = 15;
+	_numItemStore = 50;
+	_numTextBoxes = 10;
+	_numVars = 255;
+
+	AGOSEngine::setupGame();
+}
+
+void AGOSEngine_Elvira2::setupGame() {
+	gss = PTR(simon1_settings);
+	_numVideoOpcodes = 60;
+#ifndef PALMOS_68K
+	_vgaMemSize = 1000000;
+#else
+	_vgaMemSize = gVars->memory[kMemSimon1Games];
+#endif
+	_itemMemSize = 64000;
+	_tableMemSize = 100000;
+	_frameCount = 4;
+	_vgaBaseDelay = 1;
+	_numBitArray1 = 16;
+	_numBitArray2 = 15;
+	_numItemStore = 50;
+	_numVars = 255;
+
+	AGOSEngine::setupGame();
+}
+
+void AGOSEngine_Elvira1::setupGame() {
+	gss = PTR(simon1_settings);
+	_numVideoOpcodes = 57;
+#ifndef PALMOS_68K
+	_vgaMemSize = 1000000;
+#else
+	_vgaMemSize = gVars->memory[kMemSimon1Games];
+#endif
+	_itemMemSize = 64000;
+	_tableMemSize = 256000;
+	_frameCount = 4;
+	_vgaBaseDelay = 1;
+	_numVars = 512;
+
+	AGOSEngine::setupGame();
+}
+
+void AGOSEngine::setupGame() {
 	allocItemHeap();
 	allocTablesHeap();
 
@@ -794,6 +891,9 @@ AGOSEngine::~AGOSEngine() {
 	free(_backBuf);
 	free(_scaleBuf);
 
+	free(_window4BackScn);
+	free(_window6BackScn);
+
 	free(_variableArray);
 	free(_variableArray2);
 
@@ -850,6 +950,11 @@ int AGOSEngine::go() {
 	}
 
 	vc34_setMouseOff();
+
+	if (getGameType() != GType_PP && getGameType() != GType_FF) {
+		uint16 count = (getGameType() == GType_SIMON2) ? 5 : _frameCount;
+		addVgaEvent(count, ANIMATE_INT, NULL, 0, 0);
+	}
 
 	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAtariST &&
 		(getFeatures() & GF_DEMO)) {

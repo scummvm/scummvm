@@ -23,6 +23,7 @@
  */
 
 #include "cine/cine.h"
+#include "cine/bg.h"
 #include "cine/various.h"
 
 #include "common/system.h"
@@ -31,18 +32,12 @@
 
 namespace Cine {
 
-byte *screenBuffer;
-
 uint16 c_palette[256];
 
-byte *page0;
-byte *page1;
-byte *page2;
-byte *page3;
-
-byte page1Raw[320 * 200];
-byte page2Raw[320 * 200];
-byte page3Raw[320 * 200];
+byte *screenBuffer;
+byte *page1Raw;
+byte *page2Raw;
+byte *page3Raw;
 
 static const byte mouseCursorNormal[] = {
 	0x00, 0x00, 0x40, 0x00, 0x60, 0x00, 0x70, 0x00,
@@ -92,14 +87,21 @@ static const byte cursorPalette[] = {
 	0xff, 0xff, 0xff, 0xff
 };
 
-void init_video() {
-	screenBuffer = (byte *)malloc(320 * 200 * 3);
-	assert(screenBuffer);
-
-	page0 = (byte *)malloc(0x8000);
-	page1 = (byte *)malloc(0x8000);
-	page2 = (byte *)malloc(0x8000);
-	page3 = (byte *)malloc(0x8000);
+void gfxInit() {
+	screenBuffer = (byte *)malloc(320 * 200);
+	page1Raw = (byte *)malloc(320 * 200);
+	page2Raw = (byte *)malloc(320 * 200);
+	page3Raw = (byte *)malloc(320 * 200);
+	if (!screenBuffer || !page1Raw || !page2Raw || !page3Raw) {
+		error("Unable to allocate offscreen buffers");
+	}
+	memset(page1Raw, 0, 320 * 200);
+	memset(page2Raw, 0, 320 * 200);
+	memset(page3Raw, 0, 320 * 200);
+	
+	memset(additionalBgTable, 0, sizeof(additionalBgTable));
+	additionalBgTable[0] = page2Raw;
+	additionalBgTable[8] = page3Raw;
 }
 
 void setMouseCursor(int cursor) {
@@ -129,7 +131,7 @@ void setMouseCursor(int cursor) {
 	}
 }
 
-uint16 transformColor(uint16 baseColor, int8 r, int8 g, int8 b) {
+static uint16 transformColor(uint16 baseColor, int8 r, int8 g, int8 b) {
 	int8 oriR = (baseColor & 0x7);
 	int8 oriG = (baseColor & 0x70) >> 4;
 	int8 oriB = (baseColor & 0x700) >> 8;
@@ -165,7 +167,7 @@ void transformPaletteRange(byte startColor, byte stopColor, int8 r, int8 g, int8
 	//gfxFlipPage(page2);
 }
 
-void gfxFillSprite(byte *spritePtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
+void gfxFillSprite(byte *spritePtr, uint16 width, uint16 height, byte *page, int16 x, int16 y, uint8 fillColor) {
 	int16 i;
 	int16 j;
 
@@ -177,7 +179,7 @@ void gfxFillSprite(byte *spritePtr, uint16 width, uint16 height, byte *page, int
 			if (x + j >= 0 && x + j < 320 && i + y >= 0
 			    && i + y < 200) {
 				if (!*(spritePtr++)) {
-					*(destPtr++) = 0;
+					*(destPtr++) = fillColor;
 				} else {
 					destPtr++;
 				}
@@ -186,6 +188,84 @@ void gfxFillSprite(byte *spritePtr, uint16 width, uint16 height, byte *page, int
 				spritePtr++;
 			}
 		}
+	}
+}
+
+// gfxDrawMaskedSprite
+void gfxSpriteFunc1(byte *spritePtr, byte *maskPtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
+	int16 i, j;
+
+	for (i = 0; i < height; i++) {
+		byte *destPtr = page + x + y * 320;
+		destPtr += i * 320;
+
+		for (j = 0; j < width * 8; j++) {
+			if (x + j >= 0 && x + j < 320 && i + y >= 0 && i + y < 200 && *maskPtr == 0) {
+				*destPtr = *spritePtr;
+			}
+			++destPtr;
+			++spritePtr;
+			++maskPtr;
+		}
+	}
+}
+
+// gfxUpdateSpriteMask
+void gfxSpriteFunc2(byte *spritePtr, byte *spriteMskPtr, int16 width, int16 height, byte *maskPtr,
+	int16 maskWidth, int16 maskHeight, byte *bufferSprPtr, byte *bufferMskPtr, int16 xs, int16 ys, int16 xm, int16 ym, byte maskIdx) {
+	int16 i, j, d, spritePitch, maskPitch;
+        
+	width *= 8;
+	maskWidth *= 8;
+
+	spritePitch = width;
+	maskPitch = maskWidth;
+
+	if (maskIdx == 0) {
+		memcpy(bufferSprPtr, spritePtr, spritePitch * height);
+		memcpy(bufferMskPtr, spriteMskPtr, spritePitch * height);
+	}
+    
+	if (ys > ym) {
+		d = ys - ym;
+		maskPtr += d * maskPitch;
+		maskHeight -= d;
+	}
+	if (maskHeight <= 0) {
+		return;
+	}
+	if (xs > xm) {
+		d = xs - xm;
+		maskPtr += d;
+		maskWidth -= d;
+	}
+	if (maskWidth <= 0) {
+		return;
+	}
+	if (ys < ym) {
+		d = ym - ys;
+		spriteMskPtr += d * spritePitch;
+		bufferMskPtr += d * spritePitch;
+		height -= d;
+	}
+	if (height <= 0) {
+		return;
+	}
+	if (xs < xm) {
+		d = xm - xs;
+		spriteMskPtr += d;
+		bufferMskPtr += d;
+		width -= d;
+	}
+	if (width <= 0) {
+		return;
+	}
+	for (j = 0; j < MIN(maskHeight, height); ++j) {
+		for (i = 0; i < MIN(maskWidth, width); ++i) {
+			bufferMskPtr[i] |= maskPtr[i] ^ 1;
+		}
+		bufferMskPtr += spritePitch;
+		maskPtr += maskPitch;
 	}
 }
 
@@ -392,5 +472,21 @@ void fadeToBlack() {
 	}
 }
 
+void gfxFuncGen1(byte *param1, byte *param2, byte *param3, byte *param4, int16 param5) {
+}
+
+void ptrGfxFunc13(void) {
+}
+
+void gfxFuncGen2(void) {
+}
+
+void blitRawScreen(byte *frontBuffer) {
+	gfxFlipRawPage(frontBuffer);
+}
+
+void flip(void) {
+	blitRawScreen(page1Raw);
+}
 
 } // End of namespace Cine

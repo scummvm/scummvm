@@ -37,10 +37,10 @@ public:
 
 	struct Collision {
 		int16 id;
-		int16 left;
-		int16 top;
-		int16 right;
-		int16 bottom;
+		uint16 left;
+		uint16 top;
+		uint16 right;
+		uint16 bottom;
 		int16 flags;
 		int16 key;
 		uint16 funcEnter;
@@ -128,6 +128,9 @@ public:
 	int32 _startTimeKey;
 	int16 _mouseButtons;
 
+	bool _noScroll;
+	bool _scrollHandleMouse;
+
 	Game(GobEngine *vm);
 	virtual ~Game();
 
@@ -149,9 +152,9 @@ public:
 	virtual void playTot(int16 skipPlay) = 0;
 
 	virtual void clearCollisions(void) = 0;
-	virtual int16 addNewCollision(int16 id, int16 left, int16 top, int16 right,
-			int16 bottom, int16 flags, int16 key, uint16 funcEnter,
-			uint16 funcLeave) = 0;
+	virtual int16 addNewCollision(int16 id, uint16 left, uint16 top,
+			uint16 right, uint16 bottom, int16 flags, int16 key,
+			uint16 funcEnter, uint16 funcLeave) = 0;
 	virtual void collisionsBlock(void) = 0;
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
 			InputDesc *inpDesc, int16 *collResId, int16 *collIndex) = 0;
@@ -230,9 +233,9 @@ public:
 	virtual void playTot(int16 skipPlay);
 
 	virtual void clearCollisions(void);
-	virtual int16 addNewCollision(int16 id, int16 left, int16 top, int16 right,
-			int16 bottom, int16 flags, int16 key, uint16 funcEnter,
-			uint16 funcLeave);
+	virtual int16 addNewCollision(int16 id, uint16 left, uint16 top,
+			uint16 right, uint16 bottom, int16 flags, int16 key,
+			uint16 funcEnter, uint16 funcLeave);
 	virtual void collisionsBlock(void);
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
 			InputDesc *inpDesc, int16 *collResId, int16 *collIndex);
@@ -245,7 +248,7 @@ public:
 	virtual void prepareStart(void);
 
 	Game_v1(GobEngine *vm);
-	virtual ~Game_v1() {};
+	virtual ~Game_v1() {}
 
 protected:
 	virtual void pushCollisions(char all);
@@ -258,9 +261,9 @@ public:
 	virtual void playTot(int16 skipPlay);
 
 	virtual void clearCollisions(void);
-	virtual int16 addNewCollision(int16 id, int16 left, int16 top, int16 right,
-			int16 bottom, int16 flags, int16 key, uint16 funcEnter,
-			uint16 funcLeave);
+	virtual int16 addNewCollision(int16 id, uint16 left, uint16 top,
+			uint16 right, uint16 bottom, int16 flags, int16 key,
+			uint16 funcEnter, uint16 funcLeave);
 	virtual void collisionsBlock(void);
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
 			InputDesc *inpDesc, int16 *collResId, int16 *collIndex);
@@ -273,7 +276,7 @@ public:
 	virtual void prepareStart(void);
 
 	Game_v2(GobEngine *vm);
-	virtual ~Game_v2() {};
+	virtual ~Game_v2() {}
 
 protected:
 	struct CollLast {

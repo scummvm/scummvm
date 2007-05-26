@@ -21,8 +21,8 @@
  */
 
 #include "common/stdafx.h"
-#include "common/scummsys.h"
 #include "common/system.h"
+#include "base/main.h"
 
 #if defined(USE_NULL_DRIVER)
 
@@ -51,13 +51,16 @@ public:
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
 	bool setGraphicsMode(const char *name);
+	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height);
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 	virtual void setPalette(const byte *colors, uint start, uint num);
+	virtual void grabPalette(byte *colors, uint start, uint num);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	virtual void updateScreen();
+	virtual bool grabRawScreen(Graphics::Surface *surf);
 	virtual void setShakePos(int shakeOffset);
 
 	virtual void showOverlay();
@@ -74,7 +77,7 @@ public:
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255);
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1);
 
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis();
@@ -85,14 +88,10 @@ public:
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
+	typedef void (*SoundProc)(void *param, byte *buf, int len);
+	virtual bool setSoundCallback(SoundProc proc, void *param);
+	virtual void clearSoundCallback();
 	virtual int getOutputSampleRate() const;
-
-	virtual bool openCD(int drive);
-	virtual bool pollCD();
-
-	virtual void playCD(int track, int num_loops, int start_frame, int duration);
-	virtual void stopCD();
-	virtual void updateCD();
 
 	virtual void quit();
 
@@ -106,16 +105,6 @@ public:
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
-
-int main(int argc, char *argv[]) {
-	g_system = OSystem_NULL_create();
-	assert(g_system);
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-	g_system->quit();	// TODO: Consider removing / replacing this!
-	return res;
-}
 
 OSystem_NULL::OSystem_NULL() {
 	_savefile = 0;
@@ -161,6 +150,10 @@ int OSystem_NULL::getDefaultGraphicsMode() const {
 	return -1;
 }
 
+bool OSystem_NULL::setGraphicsMode(const char *mode) {
+	return true;
+}
+
 bool OSystem_NULL::setGraphicsMode(int mode) {
 	return true;
 }
@@ -183,28 +176,36 @@ int16 OSystem_NULL::getWidth() {
 void OSystem_NULL::setPalette(const byte *colors, uint start, uint num) {
 }
 
+void OSystem_NULL::grabPalette(byte *colors, uint start, uint num) {
+
+}
+
 void OSystem_NULL::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
 }
 
 void OSystem_NULL::updateScreen() {
 }
 
+bool OSystem_NULL::grabRawScreen(Graphics::Surface *surf) {
+	return false;
+}
+
 void OSystem_NULL::setShakePos(int shakeOffset) {
 }
 
-void OSystem_NULL::showOverlay () {
+void OSystem_NULL::showOverlay() {
 }
 
-void OSystem_NULL::hideOverlay () {
+void OSystem_NULL::hideOverlay() {
 }
 
-void OSystem_NULL::clearOverlay () {
+void OSystem_NULL::clearOverlay() {
 }
 
-void OSystem_NULL::grabOverlay (OverlayColor *buf, int pitch) {
+void OSystem_NULL::grabOverlay(OverlayColor *buf, int pitch) {
 }
 
-void OSystem_NULL::copyRectToOverlay (const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_NULL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 }
 
 int16 OSystem_NULL::getOverlayHeight() {
@@ -229,7 +230,7 @@ bool OSystem_NULL::showMouse(bool visible) {
 void OSystem_NULL::warpMouse(int x, int y) {
 }
 
-void OSystem_NULL::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor) {
+void OSystem_NULL::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale) {
 }
 
 bool OSystem_NULL::pollEvent(Common::Event &event) {
@@ -273,17 +274,17 @@ void OSystem_NULL::quit() {
 void OSystem_NULL::setWindowCaption(const char *caption) {
 }
 
-Common::SaveFileManager *DefaulOSystem::getSavefileManager() {
+Common::SaveFileManager *OSystem_NULL::getSavefileManager() {
 	assert(_savefile);
 	return _savefile;
 }
 
-Audio::Mixer *DefaulOSystem::getMixer() {
+Audio::Mixer *OSystem_NULL::getMixer() {
 	assert(_mixer);
 	return _mixer;
 }
 
-Common::TimerManager *DefaulOSystem::getTimerManager() {
+Common::TimerManager *OSystem_NULL::getTimerManager() {
 	assert(_timer);
 	return _timer;
 }
@@ -291,6 +292,17 @@ Common::TimerManager *DefaulOSystem::getTimerManager() {
 OSystem *OSystem_NULL_create() {
 	return new OSystem_NULL();
 }
+
+int main(int argc, char *argv[]) {
+	g_system = OSystem_NULL_create();
+	assert(g_system);
+
+	// Invoke the actual ScummVM main entry point:
+	int res = scummvm_main(argc, argv);
+	g_system->quit();       // TODO: Consider removing / replacing this!
+	return res;
+}
+
 #else /* USE_NULL_DRIVER */
 
 OSystem *OSystem_NULL_create() {

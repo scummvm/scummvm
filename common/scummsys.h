@@ -203,27 +203,31 @@
 
 #elif defined(__PALMOS_TRAPS__)	|| defined (__PALMOS_ARMLET__)
 
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp strnicmp
-
 	#ifdef PALMOS_68K
-	#define SCUMM_BIG_ENDIAN
+	#	include "globals.h"
+	#	define SCUMM_BIG_ENDIAN
+
+	#	define scumm_stricmp StrCaselessCompare
+	#	define scumm_strnicmp StrNCaselessCompare
+
 	#else
-	#define SCUMM_LITTLE_ENDIAN
+
+	#	include <extras_string.h>
+	#	define SCUMM_LITTLE_ENDIAN
+
+	#	define scumm_stricmp stricmp
+	#	define scumm_strnicmp strnicmp
 	#endif
 
 	#define SCUMM_NEED_ALIGNMENT
-
-	#include "palmversion.h"
-	#include "globals.h"
-	#include "extend.h"
-	
 	#define STRINGBUFLEN 256
+	
+	extern const char *SCUMMVM_SAVEPATH;
 
 	#if !defined(COMPILE_ZODIAC) && !defined(COMPILE_OS5)
-	#define NEWGUI_256
+	#	define NEWGUI_256
 	#else
-	#undef UNUSED
+	#	undef UNUSED
 	#endif
 
 #elif defined(__MORPHOS__)

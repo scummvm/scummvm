@@ -3,6 +3,7 @@
 # $URL$
 # $Id$
 
+wince_gcc_root = /cygdrive/e/wince-gcc-root/
 srcdir    = ../../..
 VPATH     = $(srcdir)
 
@@ -10,7 +11,7 @@ VPATH     = $(srcdir)
 #DISABLE_SKY = 1
 #DISABLE_QUEEN = 1
 #DISABLE_GOB = 1
-#DISABLE_LURE = 1
+DISABLE_LURE = 1
 #DISABLE_CINE = 1
 #DISABLE_SAGA = 1
 #DISABLE_KYRA = 1
@@ -20,8 +21,9 @@ VPATH     = $(srcdir)
 #DISABLE_SWORD2 = 1
 #DISABLE_TOUCHE = 1
 DISABLE_PARALLACTION = 1
+DISABLE_CRUISE = 1
 
-DISABLE_HQ_SCALERS = 1
+#DISABLE_HQ_SCALERS = 1
 
 CXX    = arm-wince-pe-g++
 LD     = arm-wince-pe-g++
@@ -41,20 +43,20 @@ DEFINES += -D__stdcall= -Dcdecl= -D__cdecl__= -D__cdecl= -Wno-multichar
 #DEFINES += -DDEBUG -DUSE_WINDBG -g
 DEFINES += -O2
 
-INCLUDES := -I$(srcdir) -I. -I$(srcdir)/engines -Imissing/gcc -Ilibs/include -Ilibs/include/sdl -ICEgui -ICEkeys -I/cygdrive/e/wince-gcc-root/include
+INCLUDES := -I$(srcdir) -I. -I$(srcdir)/engines -Imissing/gcc -Ilibs/include -Ilibs/include/sdl -ICEgui -ICEkeys -I$(wince_gcc_root)/include
 
 CFLAGS := 
 
 CXXFLAGS := $(CFLAGS)
 
-LDFLAGS := -Llibs/lib -L/cygdrive/e/wince-gcc-root/lib
+LDFLAGS := -Llibs/lib -L$(wince_gcc_root)/lib
 LIBS := -lSDL -lzlib -lmad -lmpeg2 -ltremorce --entry WinMainCRTStartup
 
 TARGET = scummvm.exe
 OBJS := 
 MODULE_DIRS += .
 
-OBJS += CEActionsPocket.o CEDevice.o CEKeysDialog.o CEScaler.o \
+OBJS += CEActionsPocket.o CEDevice.o CEScaler.o \
         CEActionsSmartphone.o CELauncherDialog.o wince-sdl.o 
 OBJS += CEgui/GUIElement.o CEgui/Panel.o CEgui/SDL_ImageResource.o \
         CEgui/ItemAction.o CEgui/PanelItem.o CEgui/Toolbar.o \

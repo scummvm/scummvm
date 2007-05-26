@@ -559,7 +559,19 @@ int ToucheEngine::displayQuitDialog() {
 						ret = 1;
 					}
 					break;
+				case Common::DE_DEU:
+					if (event.kbd.ascii == 'j' || event.kbd.ascii == 'J') {
+						ret = 1;
+					}
+					break;
+				case Common::ES_ESP:
+					if (event.kbd.ascii == 's' || event.kbd.ascii == 'S') {
+						ret = 1;
+					}
+					break;
 				default:
+					// According to cyx, the Italian version uses the same
+					// keys as the English one.
 					if (event.kbd.ascii == 'y' || event.kbd.ascii == 'Y') {
 						ret = 1;
 					}

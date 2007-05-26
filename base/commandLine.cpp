@@ -76,9 +76,9 @@ static const char HELP_STRING[] =
 	"  -x, --save-slot[=NUM]    Save game slot to load (default: autosave)\n"
 	"  -f, --fullscreen         Force full-screen mode\n"
 	"  -F, --no-fullscreen      Force windowed mode\n"
-	"  -g, --gfx-mode=MODE      Select graphics scaler (normal,2x,3x,2xsai,\n"
-	"                           super2xsai,supereagle,advmame2x,advmame3x,hq2x,\n"
-	"                           hq3x,tv2x,dotmatrix)\n"
+	"  -g, --gfx-mode=MODE      Select graphics scaler (1x,2x,3x,2xsai,super2xsai,\n"
+	"                           supereagle,advmame2x,advmame3x,hq2x,hq3x,tv2x,\n"
+	"                           dotmatrix)\n"
 	"  --gui-theme=THEME        Select GUI theme (default, modern, classic)\n"
 	"  --themepath=PATH         Path to where GUI themes are stored\n"
 	"  -e, --music-driver=MODE  Select music driver (see README for details)\n"
@@ -251,12 +251,12 @@ void registerDefaults() {
 // Use this for options which have a required (string) value
 #define DO_OPTION(shortCmd, longCmd) \
 	DO_OPTION_OPT(shortCmd, longCmd, 0) \
-	if (!option) usage("Option '%s' requires an argument", argv[i]);
+	if (!option) usage("Option '%s' requires an argument", argv[i-1]);
 
 // Use this for options which have a required integer value
 #define DO_OPTION_INT(shortCmd, longCmd) \
 	DO_OPTION_OPT(shortCmd, longCmd, 0) \
-	if (!option) usage("Option '%s' requires an argument", argv[i]); \
+	if (!option) usage("Option '%s' requires an argument", argv[i-1]); \
 	char *endptr = 0; \
 	int intValue; intValue = (int)strtol(option, &endptr, 0); \
 	if (endptr == NULL || *endptr != 0) usage("--%s: Invalid number '%s'", longCmd, option);

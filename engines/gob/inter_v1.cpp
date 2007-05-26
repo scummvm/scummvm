@@ -1656,58 +1656,15 @@ bool Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		break;
 
 	case 1:
+		_vm->_util->forceMouseUp(true);
 		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
 				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 0);
 		storeKey(key);
 		break;
 
 	case 2:
-		key = 0;
-
-		if (_vm->_global->_pressedKeys[0x48])
-			key |= 1;
-
-		if (_vm->_global->_pressedKeys[0x50])
-			key |= 2;
-
-		if (_vm->_global->_pressedKeys[0x4D])
-			key |= 4;
-
-		if (_vm->_global->_pressedKeys[0x4B])
-			key |= 8;
-
-		if (_vm->_global->_pressedKeys[0x1C])
-			key |= 0x10;
-
-		if (_vm->_global->_pressedKeys[0x39])
-			key |= 0x20;
-
-		if (_vm->_global->_pressedKeys[1])
-			key |= 0x40;
-
-		if (_vm->_global->_pressedKeys[0x1D])
-			key |= 0x80;
-
-		if (_vm->_global->_pressedKeys[0x2A])
-			key |= 0x100;
-
-		if (_vm->_global->_pressedKeys[0x36])
-			key |= 0x200;
-
-		if (_vm->_global->_pressedKeys[0x38])
-			key |= 0x400;
-
-		if (_vm->_global->_pressedKeys[0x3B])
-			key |= 0x800;
-
-		if (_vm->_global->_pressedKeys[0x3C])
-			key |= 0x1000;
-
-		if (_vm->_global->_pressedKeys[0x3D])
-			key |= 0x2000;
-
-		if (_vm->_global->_pressedKeys[0x3E])
-			key |= 0x4000;
+		_vm->_util->processInput(true);
+		key = _vm->_util->checkKey();
 
 		WRITE_VAR(0, key);
 		_vm->_util->clearKeyBuf();
@@ -2227,6 +2184,7 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 	dataVar = _vm->_parse->parseVarIndex();
 	size = _vm->_parse->parseValExpr();
 	offset = _vm->_parse->parseValExpr();
+	retSize = 0;
 
 	if (_vm->_game->_extHandle >= 0)
 		_vm->_dataIO->closeData(_vm->_game->_extHandle);

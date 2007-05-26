@@ -14,10 +14,8 @@ MODULE_OBJS = \
 	part.o \
 	prc.o \
 	rel.o \
-	resource.o \
 	script.o \
-	sfx_player.o \
-	sound_driver.o \
+	sound.o \
 	texte.o \
 	unpack.o \
 	various.o

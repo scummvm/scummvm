@@ -227,6 +227,13 @@ void Mult_v2::loadMult(int16 resId) {
 		case 3:
 			_vm->_global->_inter_execPtr += 4;
 			break;
+
+		case -1:
+			break;
+
+		default:
+			warning("Mult_v2::loadMult(): Unknown sound key command (%d)",
+					_multData->sndKeys[i].cmd);
 		}
 	}
 	
@@ -1185,6 +1192,8 @@ void Mult_v2::advanceObjects(int16 index) {
 }
 
 void Mult_v2::advanceAllObjects() {
+	Mult_Data *multData = _multData;
+
 	for (int i = 0; i < 8; i++) {
 		if (_multDatas[i]) {
 			_multData = _multDatas[i];
@@ -1192,6 +1201,8 @@ void Mult_v2::advanceAllObjects() {
 				advanceObjects(j);
 		}
 	}
+
+	_multData = multData;
 }
 
 } // End of namespace Gob

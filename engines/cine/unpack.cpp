@@ -29,6 +29,14 @@
 
 namespace Cine {
 
+struct UnpackCtx {
+	int size, datasize;
+	uint32 crc;
+	uint32 chk;
+	byte *dst;
+	const byte *src;	
+};
+
 static int rcr(UnpackCtx *uc, int CF) {
 	int rCF = (uc->chk & 1);
 	uc->chk >>= 1;

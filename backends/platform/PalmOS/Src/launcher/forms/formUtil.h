@@ -4,6 +4,8 @@
 #define frmRedrawUpdateMS		(frmRedrawUpdateCode + 1)
 #define frmRedrawUpdateMSImport	(frmRedrawUpdateCode + 2)
 
+#define NO_ENGINE	-1
+
 // form list draw
 #define	ITEM_TYPE_UNKNOWN	'U'
 #define ITEM_TYPE_CARD		'C'

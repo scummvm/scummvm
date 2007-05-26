@@ -1,5 +1,65 @@
 # depslib dependency file v1.0
-1164571478 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\fs\windows\windows-fs.cpp
+1174164454 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\events\default\default-events.cpp
+	"common/stdafx.h"
+	"common/system.h"
+	"backends/events/default/default-events.h"
+
+1173566330 c:\documents and settings\usoquotidiano\desktop\scummvm\common\stdafx.h
+	<portdefs.h>
+	<strings.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdarg.h>
+	<assert.h>
+	<ctype.h>
+	<time.h>
+	<math.h>
+
+1177614536 c:\documents and settings\usoquotidiano\desktop\scummvm\common\system.h
+	"common/scummsys.h"
+	"common/mutex.h"
+	"common/noncopyable.h"
+	"common/rect.h"
+
+1178025620 c:\documents and settings\usoquotidiano\desktop\scummvm\common\scummsys.h
+	"config.h"
+	<SDL_byteorder.h>
+	"globals.h"
+	<extras_string.h>
+	"nds/jtypes.h"
+
+1173402482 c:\documents and settings\usoquotidiano\desktop\scummvm\common\mutex.h
+	"common/scummsys.h"
+
+1174136164 c:\documents and settings\usoquotidiano\desktop\scummvm\common\noncopyable.h
+
+1177701567 c:\documents and settings\usoquotidiano\desktop\scummvm\common\rect.h
+	"common/scummsys.h"
+	"common/util.h"
+
+1177505823 c:\documents and settings\usoquotidiano\desktop\scummvm\common\util.h
+	"common/scummsys.h"
+	"common/str.h"
+	"common/array.h"
+
+1176747595 c:\documents and settings\usoquotidiano\desktop\scummvm\common\str.h
+	"common/scummsys.h"
+	"common/array.h"
+
+1173788771 c:\documents and settings\usoquotidiano\desktop\scummvm\common\array.h
+	"common/scummsys.h"
+
+1174164454 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\events\default\default-events.h
+	"common/stdafx.h"
+	"common/events.h"
+
+1174164453 c:\documents and settings\usoquotidiano\desktop\scummvm\common\events.h
+	"common/rect.h"
+	"common/system.h"
+	"common/noncopyable.h"
+
+1173402575 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\fs\windows\windows-fs.cpp
 	<windows.h>
 	"common/stdafx.h"
 	"backends/fs/abstract-fs.h"
@@ -8,97 +68,40 @@
 	<windows.h>
 	<tchar.h>
 
-1173387063 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\stdafx.h
-	<portdefs.h>
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	<stdarg.h>
-	<assert.h>
-	<ctype.h>
-	<time.h>
-	<math.h>
-	<devices/timer.h>
-	<sys/types.h>
-	<sys/uio.h>
-	<sys/param.h>
-	<unistd.h>
-	<strings.h>
-	<stdio.h>
-	<fcntl.h>
-	<stdlib.h>
-	<string.h>
-	<stdarg.h>
-	<assert.h>
-	<ctype.h>
-	<time.h>
-	<math.h>
-
-1170576449 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\fs\abstract-fs.h
+1173402576 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\fs\abstract-fs.h
 	"common/array.h"
 	"common/str.h"
 	"common/fs.h"
 
-1164571400 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\array.h
-	"common/scummsys.h"
-	<assert.h>
-
-1173384058 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\scummsys.h
-	<stdlib.h>
-	<stdio.h>
-	"config.h"
-	<SDL_byteorder.h>
-	"palmversion.h"
-	"globals.h"
-	"extend.h"
-	"nds/jtypes.h"
-	<stdarg.h>
-	<ctype.h>
-	<string.h>
-	<math.h>
-	<time.h>
-
-1164571450 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\platform\ps2\fileio.h
-	"common/scummsys.h"
-
-1171400932 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\str.h
-	"common/scummsys.h"
-	"common/array.h"
-	<assert.h>
-	<string.h>
-
-1173384058 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\fs.h
+1173402482 c:\documents and settings\usoquotidiano\desktop\scummvm\common\fs.h
 	"common/array.h"
 	"common/str.h"
 
-1173387305 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\midi\windows.cpp
+1173402817 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\midi\windows.cpp
 	<windows.h>
 	<mmsystem.h>
 	"common/stdafx.h"
 	"sound/mpu401.h"
 	"common/util.h"
 
-1164571405 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\mpu401.h
+1173402491 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mpu401.h
 	"common/stdafx.h"
 	"sound/mididrv.h"
 
-1171653923 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\mididrv.h
+1173402491 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mididrv.h
 	"common/scummsys.h"
 	"common/timer.h"
 
-1164571400 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\timer.h
+1174136164 c:\documents and settings\usoquotidiano\desktop\scummvm\common\timer.h
 	"common/scummsys.h"
+	"common/noncopyable.h"
 
-1172929597 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\util.h
-	"common/scummsys.h"
-	"common/str.h"
-	"common/array.h"
-
-1165164464 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\platform\sdl\events.cpp
+1175021323 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\sdl\events.cpp
 	"backends/platform/sdl/sdl-common.h"
 	"common/util.h"
+	"common/events.h"
 
-1171110864 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\platform\sdl\sdl-common.h
+1177614537 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\sdl\sdl-common.h
 	<SDL.h>
 	"common/stdafx.h"
 	"common/scummsys.h"
@@ -106,31 +109,19 @@
 	"graphics/scaler.h"
 	"backends/intern.h"
 
-1164571400 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\system.h
-	"common/scummsys.h"
-	"common/mutex.h"
-	"common/rect.h"
-
-1164571400 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\mutex.h
-	"common/scummsys.h"
-
-1164571400 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\rect.h
-	"common/scummsys.h"
-	"common/util.h"
-
-1164571411 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler.h
+1173402496 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"graphics/surface.h"
 
-1164571411 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\surface.h
+1173402496 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\surface.h
 	"common/scummsys.h"
 	"common/rect.h"
 
-1164571479 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\intern.h
+1173402576 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\intern.h
 	"common/system.h"
 
-1164571444 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\platform\sdl\graphics.cpp
+1174164455 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\sdl\graphics.cpp
 	"backends/platform/sdl/sdl-common.h"
 	"common/util.h"
 	"graphics/font.h"
@@ -138,11 +129,11 @@
 	"graphics/scaler.h"
 	"graphics/surface.h"
 
-1164571411 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\font.h
+1177614536 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\font.h
 	"common/str.h"
 	"graphics/surface.h"
 
-1164571411 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\fontman.h
+1173402495 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\fontman.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/singleton.h"
@@ -151,22 +142,24 @@
 	"common/hash-str.h"
 	"graphics/font.h"
 
-1164571400 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\singleton.h
+1174136164 c:\documents and settings\usoquotidiano\desktop\scummvm\common\singleton.h
+	"common/noncopyable.h"
 
-1173025754 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\hashmap.h
+1173788771 c:\documents and settings\usoquotidiano\desktop\scummvm\common\hashmap.h
 	"common/stdafx.h"
 	"common/func.h"
 	"common/str.h"
 	"common/util.h"
 
-1164571400 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\func.h
+1173402482 c:\documents and settings\usoquotidiano\desktop\scummvm\common\func.h
 	"common/scummsys.h"
 
-1164571400 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\hash-str.h
+1173402482 c:\documents and settings\usoquotidiano\desktop\scummvm\common\hash-str.h
 	"common/hashmap.h"
 	"common/str.h"
 
-1173387330 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\platform\sdl\sdl.cpp
+1174157119 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\sdl\sdl.cpp
+	<windows.h>
 	"backends/platform/sdl/sdl-common.h"
 	"backends/plugins/sdl/sdl-provider.h"
 	"common/config-manager.h"
@@ -177,13 +170,12 @@
 	"sound/mixer.h"
 	"icons/scummvm.xpm"
 	"SymbianOs.h"
-	<windows.h>
 
-1164571437 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\plugins\sdl\sdl-provider.h
+1173402526 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\plugins\sdl\sdl-provider.h
 	"common/stdafx.h"
 	"base/plugins.h"
 
-1169328812 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\base\plugins.h
+1173402525 c:\documents and settings\usoquotidiano\desktop\scummvm\base\plugins.h
 	"common/stdafx.h"
 	"common/array.h"
 	"common/list.h"
@@ -191,62 +183,62 @@
 	"common/util.h"
 	"base/game.h"
 
-1172690841 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\list.h
+1173537096 c:\documents and settings\usoquotidiano\desktop\scummvm\common\list.h
 	"common/scummsys.h"
-	<assert.h>
 
-1170187002 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\base\game.h
+1173402525 c:\documents and settings\usoquotidiano\desktop\scummvm\base\game.h
 	"common/stdafx.h"
 	"common/str.h"
 	"common/array.h"
 	"common/hash-str.h"
 
-1173384058 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\config-manager.h
+1173402482 c:\documents and settings\usoquotidiano\desktop\scummvm\common\config-manager.h
 	"common/array.h"
 	"common/hashmap.h"
 	"common/singleton.h"
 	"common/str.h"
 	"common/hash-str.h"
 
-1164571436 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\base\main.h
+1173402525 c:\documents and settings\usoquotidiano\desktop\scummvm\base\main.h
 	"common/scummsys.h"
 
-1164571437 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\saves\default\default-saves.h
+1174121353 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\saves\default\default-saves.h
 	"common/stdafx.h"
 	"common/savefile.h"
 
-1171788214 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\savefile.h
+1174136164 c:\documents and settings\usoquotidiano\desktop\scummvm\common\savefile.h
 	"common/stdafx.h"
+	"common/noncopyable.h"
 	"common/scummsys.h"
 	"common/stream.h"
 
-1173025754 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\stream.h
+1173402482 c:\documents and settings\usoquotidiano\desktop\scummvm\common\stream.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 
-1164571436 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\timer\default\default-timer.h
+1173402526 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\timer\default\default-timer.h
 	"common/timer.h"
 	"common/mutex.h"
 
-1172866046 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\mixer.h
+1177614536 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mixer.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/mutex.h"
 
-1164571480 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\icons\scummvm.xpm
+1173402577 c:\documents and settings\usoquotidiano\desktop\scummvm\icons\scummvm.xpm
 
-1171877633 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\saves\compressed\compressed-saves.cpp
+1173644851 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\saves\compressed\compressed-saves.cpp
 	"common/stdafx.h"
 	"common/savefile.h"
 	"common/util.h"
 	"backends/saves/compressed/compressed-saves.h"
 	<zlib.h>
 
-1171788215 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\saves\compressed\compressed-saves.h
+1173402526 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\saves\compressed\compressed-saves.h
 	"common/stdafx.h"
 	"common/savefile.h"
 
-1171788215 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\saves\default\default-saves.cpp
+1174121353 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\saves\default\default-saves.cpp
 	"common/stdafx.h"
 	"common/savefile.h"
 	"common/util.h"
@@ -257,7 +249,7 @@
 	<errno.h>
 	<sys/stat.h>
 
-1164571437 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\saves\savefile.cpp
+1173402526 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\saves\savefile.cpp
 	"common/stdafx.h"
 	"common/util.h"
 	"common/config-manager.h"
@@ -265,14 +257,14 @@
 	<stdio.h>
 	<string.h>
 
-1169844668 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\timer\default\default-timer.cpp
+1173402525 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\timer\default\default-timer.cpp
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"backends/timer/default/default-timer.h"
 	"common/util.h"
 	"common/system.h"
 
-1172929597 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\base\commandline.cpp
+1173570646 source:c:\documents and settings\usoquotidiano\desktop\scummvm\base\commandline.cpp
 	"common/stdafx.h"
 	"engines/engine.h"
 	"base/commandLine.h"
@@ -284,22 +276,22 @@
 	"sound/mixer.h"
 	"common/fs.h"
 
-1164571397 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\engines\engine.h
+1175450743 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\engine.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/str.h"
 
-1164571436 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\base\commandline.h
+1173402525 c:\documents and settings\usoquotidiano\desktop\scummvm\base\commandline.h
 	"common/str.h"
 	"common/config-manager.h"
 
-1164571436 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\base\version.h
+1173402525 c:\documents and settings\usoquotidiano\desktop\scummvm\base\version.h
 
-1170792000 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\base\game.cpp
+1173402525 source:c:\documents and settings\usoquotidiano\desktop\scummvm\base\game.cpp
 	"base/game.h"
 	"base/plugins.h"
 
-1172866046 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\base\main.cpp
+1177095928 source:c:\documents and settings\usoquotidiano\desktop\scummvm\base\main.cpp
 	"common/stdafx.h"
 	"engines/engine.h"
 	"base/commandLine.h"
@@ -316,13 +308,13 @@
 	"gui/launcher.h"
 	"args.h"
 
-1173384058 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\file.h
+1173402482 c:\documents and settings\usoquotidiano\desktop\scummvm\common\file.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/str.h"
 	"common/stream.h"
 
-1171110863 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\newgui.h
+1174157116 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\newgui.h
 	"common/scummsys.h"
 	"common/singleton.h"
 	"common/stack.h"
@@ -331,12 +323,11 @@
 	"gui/theme.h"
 	"gui/widget.h"
 
-1171826383 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\stack.h
+1173537096 c:\documents and settings\usoquotidiano\desktop\scummvm\common\stack.h
 	"common/scummsys.h"
-	<assert.h>
 	"common/array.h"
 
-1171405441 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\theme.h
+1177614532 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\theme.h
 	"common/stdafx.h"
 	"common/system.h"
 	"common/rect.h"
@@ -346,58 +337,58 @@
 	"graphics/surface.h"
 	"graphics/fontman.h"
 
-1164571400 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\config-file.h
+1173402482 c:\documents and settings\usoquotidiano\desktop\scummvm\common\config-file.h
 	"common/config-manager.h"
 	"common/list.h"
 	"common/str.h"
 	"common/stream.h"
 
-1170576438 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\widget.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\widget.h
 	"common/scummsys.h"
 	"common/str.h"
 	"graphics/font.h"
 	"graphics/surface.h"
 	"gui/object.h"
 
-1171309680 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\object.h
+1174121351 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\object.h
 
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\message.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\message.h
 	"gui/dialog.h"
 	"common/str.h"
 
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\dialog.h
+1176747594 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\dialog.h
 	"common/scummsys.h"
 	"common/str.h"
 	"gui/object.h"
 	"gui/widget.h"
 
-1170576449 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\platform\wince\celauncherdialog.h
+1173402547 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\wince\celauncherdialog.h
 	"base/plugins.h"
 	"common/fs.h"
 	"gui/launcher.h"
 
-1171826383 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\launcher.h
+1174157116 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\launcher.h
 	"gui/dialog.h"
 	"common/str.h"
 
-1164571454 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\platform\dc\dclauncherdialog.h
+1173402548 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\dc\dclauncherdialog.h
 
-1170922364 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\base\plugins.cpp
+1177701568 source:c:\documents and settings\usoquotidiano\desktop\scummvm\base\plugins.cpp
 	"base/plugins.h"
 	"common/util.h"
 
-1164571436 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\base\version.cpp
+1173402525 source:c:\documents and settings\usoquotidiano\desktop\scummvm\base\version.cpp
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"base/internal_version.h"
 	"base/version.h"
 	"backends/platform/symbian/src/main_features.inl"
 
-1164571436 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\base\internal_version.h
+1173402525 c:\documents and settings\usoquotidiano\desktop\scummvm\base\internal_version.h
 
-1167415214 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\platform\symbian\src\main_features.inl
+1173402535 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\symbian\src\main_features.inl
 
-1171826383 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\advanceddetector.cpp
+1177701567 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\advanceddetector.cpp
 	"common/stdafx.h"
 	"base/plugins.h"
 	"common/util.h"
@@ -407,17 +398,17 @@
 	"common/advancedDetector.h"
 	"common/config-manager.h"
 
-1171527697 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\md5.h
+1173402482 c:\documents and settings\usoquotidiano\desktop\scummvm\common\md5.h
 	"common/scummsys.h"
 	"common/fs.h"
 	"common/stream.h"
 
-1171527697 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\advanceddetector.h
+1173402482 c:\documents and settings\usoquotidiano\desktop\scummvm\common\advanceddetector.h
 	"common/fs.h"
 	"base/game.h"
 	"base/plugins.h"
 
-1171400932 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\config-file.cpp
+1173402482 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\config-file.cpp
 	"common/stdafx.h"
 	"common/config-file.h"
 	"common/file.h"
@@ -425,19 +416,19 @@
 	"common/system.h"
 	"common/util.h"
 
-1173387285 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\config-manager.cpp
+1174157118 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\config-manager.cpp
+	<windows.h>
 	"common/stdafx.h"
 	"common/config-manager.h"
 	"common/file.h"
 	"common/util.h"
-	<windows.h>
 	"backends/platform/ps2/systemps2.h"
 
-1164571450 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\platform\ps2\systemps2.h
+1174164456 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\ps2\systemps2.h
 	"common/stdafx.h"
 	"common/system.h"
 
-1173384058 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\file.cpp
+1175936376 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\file.cpp
 	"common/file.h"
 	"common/fs.h"
 	"common/hashmap.h"
@@ -446,17 +437,18 @@
 	"CoreFoundation/CoreFoundation.h"
 	"backends/platform/ps2/fileio.h"
 
-1170576446 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\fs.cpp
+1173402543 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\ps2\fileio.h
+	"common/scummsys.h"
+
+1173402482 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\fs.cpp
 	"common/stdafx.h"
 	"backends/fs/abstract-fs.h"
 	"common/util.h"
 
-1164571400 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\hashmap.cpp
+1173537096 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\hashmap.cpp
 	"common/hashmap.h"
-	<ctype.h>
 
-1171527697 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\md5.cpp
-	<string.h>
+1173537096 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\md5.cpp
 	"common/file.h"
 	"common/md5.h"
 	"common/util.h"
@@ -464,1398 +456,27 @@
 	<stdlib.h>
 	<stdio.h>
 
-1164571400 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\endian.h
+1177854384 c:\documents and settings\usoquotidiano\desktop\scummvm\common\endian.h
 	"common/scummsys.h"
 
-1164571400 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\mutex.cpp
+1173402482 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\mutex.cpp
 	"common/stdafx.h"
 	"common/mutex.h"
 	"common/system.h"
 
-1171400932 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\str.cpp
+1176747595 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\str.cpp
 	"common/stdafx.h"
 	"common/str.h"
 	"common/hash-str.h"
 	"common/util.h"
-	<ctype.h>
 
-1172012045 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\stream.cpp
+1173402482 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\stream.cpp
 	"common/stdafx.h"
 	"common/stream.h"
 	"common/str.h"
 	"common/util.h"
 
-1164571400 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\system.cpp
-	"common/stdafx.h"
-	"backends/intern.h"
-	"gui/message.h"
-	"common/config-manager.h"
-	"common/system.h"
-	"common/timer.h"
-	"common/util.h"
-	"sound/mixer.h"
-
-1171826383 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\unzip.cpp
-	"common/stdafx.h"
-	"common/scummsys.h"
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	<zlib.h>
-	"common/unzip.h"
-	"common/file.h"
-	<stddef.h>
-	<string.h>
-	<stdlib.h>
-	<errno.h>
-
-1164571400 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\unzip.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	<zlib.h>
-
-1173384058 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\util.cpp
-	"common/stdafx.h"
-	"engines/engine.h"
-	"common/util.h"
-	"common/system.h"
-	"gui/debugger.h"
-	"backends/platform/ps2/fileio.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\debugger.h
-
-1172012044 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\engines\engine.cpp
-	"common/stdafx.h"
-	"engines/engine.h"
-	"common/config-manager.h"
-	"common/file.h"
-	"common/timer.h"
-	"common/savefile.h"
-	"common/system.h"
-	"gui/message.h"
-	"sound/mixer.h"
-
-1171307211 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\cursorman.cpp
-	"graphics/cursorman.h"
-	"common/system.h"
-	"common/stack.h"
-
-1171307211 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\cursorman.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/stack.h"
-	"common/singleton.h"
-
-1170576447 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\dxa_player.cpp
-	"common/stdafx.h"
-	"common/endian.h"
-	"graphics/dxa_player.h"
-	"common/util.h"
-	<zlib.h>
-
-1167415212 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\dxa_player.h
-	"common/scummsys.h"
-	"common/file.h"
-
-1173384058 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\font.cpp
-	"common/stdafx.h"
-	"common/stream.h"
-	"common/file.h"
-	"common/endian.h"
-	"graphics/font.h"
-
-1164571411 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\fontman.cpp
-	"graphics/fontman.h"
-
-1164571409 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\fonts\consolefont.cpp
-	"common/stdafx.h"
-	"graphics/font.h"
-
-1164571409 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\fonts\newfont.cpp
-	"common/stdafx.h"
-	"graphics/font.h"
-
-1164571409 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\fonts\newfont_big.cpp
-	"common/stdafx.h"
-	"graphics/font.h"
-
-1164571409 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\fonts\scummfont.cpp
-	"common/stdafx.h"
-	"graphics/font.h"
-	"scumm_globals.h"
-
-1164571411 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\ilbm.cpp
-	"common/stdafx.h"
-	"common/endian.h"
-	"common/stream.h"
-	"graphics/surface.h"
-
-1164571411 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\imagedec.cpp
-	"graphics/imagedec.h"
-	"common/system.h"
-	"common/file.h"
-
-1164571411 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\imagedec.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/str.h"
-	"common/stream.h"
-	"graphics/surface.h"
-
-1164571411 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\imageman.cpp
-	"graphics/imagedec.h"
-	"graphics/imageman.h"
-	"graphics/surface.h"
-
-1164571411 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\imageman.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/singleton.h"
-	"common/str.h"
-	"common/list.h"
-	"common/unzip.h"
-
-1164571411 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\primitives.cpp
-	"common/stdafx.h"
-	"common/util.h"
-
-1164571411 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler.cpp
-	"graphics/scaler/intern.h"
-	"graphics/scaler/scalebit.h"
-	"common/util.h"
-
-1164571411 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler\intern.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"graphics/colormasks.h"
-
-1164571411 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\colormasks.h
-
-1164571411 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler\scalebit.h
-
-1164571411 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler\2xsai.cpp
-	"graphics/scaler/intern.h"
-
-1164571411 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler\aspect.cpp
-	"graphics/scaler/intern.h"
-	"graphics/scaler.h"
-
-1164571411 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler\hq2x.cpp
-	"graphics/scaler/intern.h"
-	"graphics/scaler/hq2x.h"
-	"graphics/scaler/hq2x.h"
-
-1164571411 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler\hq2x.h
-
-1164571411 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler\hq3x.cpp
-	"graphics/scaler/intern.h"
-	"graphics/scaler/hq3x.h"
-	"graphics/scaler/hq3x.h"
-
-1164571411 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler\hq3x.h
-
-1164571411 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler\scale2x.cpp
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"graphics/scaler/intern.h"
-	"graphics/scaler/scale2x.h"
-	<assert.h>
-
-1164571411 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler\scale2x.h
-
-1164571411 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler\scale3x.cpp
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"graphics/scaler/intern.h"
-	"graphics/scaler/scale3x.h"
-	<assert.h>
-
-1164571411 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler\scale3x.h
-
-1164571411 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler\scalebit.cpp
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"graphics/scaler/intern.h"
-	"graphics/scaler/scale2x.h"
-	"graphics/scaler/scale3x.h"
-	<alloca.h>
-	<assert.h>
-	<stdlib.h>
-
-1164571411 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\scaler\thumbnail.cpp
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/system.h"
-	"graphics/scaler.h"
-	"graphics/scaler/intern.h"
-
-1164571411 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\surface.cpp
-	"common/stdafx.h"
-	"common/util.h"
-	"graphics/primitives.h"
-	"graphics/surface.h"
-
-1164571411 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\graphics\primitives.h
-
-1164571274 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\actions.cpp
-	"common/stdafx.h"
-	"gui/Actions.h"
-	"gui/message.h"
-	"scumm/scumm.h"
-	"common/config-manager.h"
-	"backends/platform/wince/CEActionsPocket.h"
-	"backends/platform/wince/CEActionsSmartphone.h"
-	"backends/platform/symbian/src/SymbianActions.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\actions.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/system.h"
-	"gui/Key.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\key.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/system.h"
-
-1172345868 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\engines\scumm\scumm.h
-	"engines/engine.h"
-	"common/endian.h"
-	"common/file.h"
-	"common/rect.h"
-	"common/str.h"
-	"graphics/surface.h"
-	"scumm/gfx.h"
-	"scumm/plugin.h"
-	"scumm/script.h"
-	"sound/mididrv.h"
-
-1171911145 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\engines\scumm\gfx.h
-	"graphics/surface.h"
-
-1171527695 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\engines\scumm\plugin.h
-	"common/util.h"
-
-1171911145 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\engines\scumm\script.h
-	"engines/engine.h"
-
-1164571453 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\platform\wince\ceactionspocket.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/system.h"
-	"wince-sdl.h"
-	"gui/Key.h"
-	"gui/Actions.h"
-
-1171307212 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\platform\wince\wince-sdl.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/system.h"
-	"graphics/scaler.h"
-	"backends/intern.h"
-	"backends/platform/sdl/sdl-common.h"
-	"CEGUI.h"
-	"CEKeys.h"
-	"CEDevice.h"
-	"CEScaler.h"
-	<SDL.h>
-
-1164571453 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\platform\wince\cedevice.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/system.h"
-	"common/str.h"
-
-1164571453 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\platform\wince\cescaler.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/system.h"
-	"graphics/scaler.h"
-	"graphics/scaler/intern.h"
-
-1164571453 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\platform\wince\ceactionssmartphone.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/system.h"
-	"wince-sdl.h"
-	"gui/Key.h"
-	"gui/Actions.h"
-
-1164571445 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\backends\platform\symbian\src\symbianactions.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/system.h"
-	"gui/Key.h"
-	"gui/Actions.h"
-
-1169400236 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\edittextwidget.cpp
-	"common/stdafx.h"
-	"gui/EditTextWidget.h"
-	"gui/dialog.h"
-	"gui/eval.h"
-	"gui/newgui.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\edittextwidget.h
-	"gui/editable.h"
-	"common/str.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\editable.h
-	"common/str.h"
-	"common/rect.h"
-	"gui/widget.h"
-	"gui/newgui.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\eval.h
-	"common/stdafx.h"
-	"common/str.h"
-	"common/hashmap.h"
-	"common/hash-str.h"
-
-1164571274 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\key.cpp
-	"common/stdafx.h"
-	"gui/Key.h"
-
-1164571274 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\listwidget.cpp
-	"common/stdafx.h"
-	"common/system.h"
-	"gui/ListWidget.h"
-	"gui/ScrollBarWidget.h"
-	"gui/dialog.h"
-	"gui/eval.h"
-	"gui/newgui.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\listwidget.h
-	"gui/editable.h"
-	"common/str.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\scrollbarwidget.h
-	"gui/widget.h"
-
-1172567053 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\popupwidget.cpp
-	"common/stdafx.h"
-	"common/system.h"
-	"gui/dialog.h"
-	"gui/eval.h"
-	"gui/newgui.h"
-	"gui/PopUpWidget.h"
-	"engines/engine.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\popupwidget.h
-	"gui/widget.h"
-	"common/str.h"
-	"common/array.h"
-
-1164571274 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\scrollbarwidget.cpp
-	"common/stdafx.h"
-	"ScrollBarWidget.h"
-	"gui/dialog.h"
-	"gui/newgui.h"
-
-1164571274 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\tabwidget.cpp
-	"common/stdafx.h"
-	"common/util.h"
-	"gui/TabWidget.h"
-	"gui/dialog.h"
-	"gui/newgui.h"
-	"gui/eval.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\tabwidget.h
-	"widget.h"
-	"common/str.h"
-	"common/array.h"
-
-1171110863 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\themeclassic.cpp
-	"gui/ThemeClassic.h"
-	"gui/eval.h"
-
-1171110863 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\themeclassic.h
-	"gui/theme.h"
-
-1172605215 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\thememodern.cpp
-	"gui/ThemeModern.h"
-	"gui/eval.h"
-	"graphics/imageman.h"
-	"graphics/imagedec.h"
-	"graphics/colormasks.h"
-	"graphics/cursorman.h"
-	"common/config-manager.h"
-	"common/file.h"
-
-1171110863 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\thememodern.h
-	"gui/theme.h"
-
-1171110863 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\about.cpp
-	"common/stdafx.h"
-	"engines/engine.h"
-	"base/plugins.h"
-	"base/version.h"
-	"common/system.h"
-	"common/util.h"
-	"gui/about.h"
-	"gui/eval.h"
-	"gui/newgui.h"
-	"gui/widget.h"
-	"gui/credits.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\about.h
-	"gui/dialog.h"
-	"common/str.h"
-	"graphics/surface.h"
-
-1171653915 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\credits.h
-
-1168167088 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\browser.cpp
-	"common/stdafx.h"
-	"gui/browser.h"
-	"gui/newgui.h"
-	"gui/ListWidget.h"
-	"common/config-manager.h"
-	"common/fs.h"
-	"common/system.h"
-	"common/func.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\browser.h
-	"gui/dialog.h"
-	"common/str.h"
-	"common/fs.h"
-	<Carbon/Carbon.h>
-
-1164571274 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\chooser.cpp
-	"common/stdafx.h"
-	"common/system.h"
-	"gui/chooser.h"
-	"gui/newgui.h"
-	"gui/ListWidget.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\chooser.h
-	"common/str.h"
-	"gui/dialog.h"
-
-1164571274 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\console.cpp
-	"common/stdafx.h"
-	"gui/console.h"
-	"gui/ScrollBarWidget.h"
-	"gui/eval.h"
-	"engines/engine.h"
-	"base/version.h"
-	"common/system.h"
-	"graphics/font.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\console.h
-	"gui/dialog.h"
-	"gui/newgui.h"
-	<stdarg.h>
-
-1164571274 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\debugger.cpp
-	"common/stdafx.h"
-	"common/system.h"
-	"gui/debugger.h"
-	"gui/console.h"
-
-1167415200 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\dialog.cpp
-	"common/stdafx.h"
-	"gui/newgui.h"
-	"gui/dialog.h"
-	"gui/widget.h"
-	"gui/PopUpWidget.h"
-	"common/system.h"
-
-1164571274 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\editable.cpp
-	"common/stdafx.h"
-	"gui/editable.h"
-	"gui/newgui.h"
-
-1164571274 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\eval.cpp
-	"common/stdafx.h"
-	"common/system.h"
-	"gui/eval.h"
-	"gui/widget.h"
-	"gui/newgui.h"
-	"graphics/scaler.h"
-
-1171826383 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\launcher.cpp
-	"common/stdafx.h"
-	"engines/engine.h"
-	"base/game.h"
-	"base/plugins.h"
-	"base/version.h"
-	"common/config-manager.h"
-	"common/fs.h"
-	"common/util.h"
-	"common/system.h"
-	"gui/about.h"
-	"gui/browser.h"
-	"gui/chooser.h"
-	"gui/eval.h"
-	"gui/launcher.h"
-	"gui/massadd.h"
-	"gui/message.h"
-	"gui/newgui.h"
-	"gui/options.h"
-	"gui/EditTextWidget.h"
-	"gui/ListWidget.h"
-	"gui/TabWidget.h"
-	"gui/PopUpWidget.h"
-	"sound/mididrv.h"
-
-1171826383 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\massadd.h
-	"gui/dialog.h"
-	"common/fs.h"
-	"common/stack.h"
-
-1171400932 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\options.h
-	"gui/dialog.h"
-	"common/str.h"
-	"gui/KeysDialog.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\keysdialog.h
-	"gui/newgui.h"
-	"gui/dialog.h"
-	"gui/ListWidget.h"
-	"common/str.h"
-
-1171826383 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\massadd.cpp
-	"common/stdafx.h"
-	"engines/engine.h"
-	"base/game.h"
-	"base/plugins.h"
-	"gui/launcher.h"
-	"gui/massadd.h"
-	"gui/newgui.h"
-	"gui/widget.h"
-
-1164571274 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\message.cpp
-	"common/stdafx.h"
-	"common/str.h"
-	"common/system.h"
-	"gui/message.h"
-	"gui/newgui.h"
-	"gui/widget.h"
-
-1171307210 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\newgui.cpp
-	"common/stdafx.h"
-	"common/system.h"
-	"common/util.h"
-	"graphics/cursorman.h"
-	"gui/newgui.h"
-	"gui/dialog.h"
-	"gui/eval.h"
-	"gui/ThemeModern.h"
-	"gui/ThemeClassic.h"
-	"common/config-manager.h"
-
-1173384058 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\options.cpp
-	"common/stdafx.h"
-	"gui/browser.h"
-	"gui/themebrowser.h"
-	"gui/chooser.h"
-	"gui/eval.h"
-	"gui/newgui.h"
-	"gui/options.h"
-	"gui/PopUpWidget.h"
-	"gui/TabWidget.h"
-	"common/fs.h"
-	"common/config-manager.h"
-	"common/system.h"
-	"graphics/scaler.h"
-	"sound/mididrv.h"
-	"sound/mixer.h"
-
-1164571274 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\themebrowser.h
-	"gui/dialog.h"
-	"common/str.h"
-	"common/fs.h"
-	"common/array.h"
-
-1171400932 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\theme-config.cpp
-	"gui/theme.h"
-	"gui/eval.h"
-
-1170576438 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\theme.cpp
-	"gui/theme.h"
-	"gui/eval.h"
-	"common/unzip.h"
-
-1164571274 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\themebrowser.cpp
-	"common/stdafx.h"
-	"gui/themebrowser.h"
-	"gui/ListWidget.h"
-	"gui/widget.h"
-	"gui/theme.h"
-	"common/fs.h"
-	"CoreFoundation/CoreFoundation.h"
-
-1170576438 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\gui\widget.cpp
-	"common/stdafx.h"
-	"common/util.h"
-	"graphics/fontman.h"
-	"gui/widget.h"
-	"gui/dialog.h"
-	"gui/eval.h"
-	"gui/newgui.h"
-
-1164571405 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\adpcm.cpp
-	"common/stdafx.h"
-	"common/endian.h"
-	"sound/adpcm.h"
-	"sound/audiostream.h"
-
-1164571405 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\adpcm.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/stream.h"
-
-1172866046 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\audiostream.h
-	"common/stdafx.h"
-	"common/util.h"
-	"common/scummsys.h"
-
-1172389580 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\audiocd.cpp
-	"common/stdafx.h"
-	"sound/audiocd.h"
-	"sound/mp3.h"
-	"sound/vorbis.h"
-	"sound/flac.h"
-	"engines/engine.h"
-	"common/file.h"
-	"common/util.h"
-	"common/system.h"
-
-1172389580 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\audiocd.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/singleton.h"
-	"sound/mixer.h"
-
-1172012046 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\mp3.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-
-1172305644 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\vorbis.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-
-1172305644 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\flac.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-
-1172866046 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\audiostream.cpp
-	"common/stdafx.h"
-	"common/endian.h"
-	"common/file.h"
-	"common/list.h"
-	"common/util.h"
-	"sound/audiostream.h"
-	"sound/mixer.h"
-	"sound/mp3.h"
-	"sound/vorbis.h"
-	"sound/flac.h"
-
-1173025754 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\flac.cpp
-	"sound/flac.h"
-	"common/file.h"
-	"common/util.h"
-	"sound/audiostream.h"
-	"sound/audiocd.h"
-	<FLAC/export.h>
-	<FLAC/seekable_stream_decoder.h>
-	<FLAC/stream_decoder.h>
-
-1165164464 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\fmopl.cpp
-	"common/stdafx.h"
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	<stdarg.h>
-	<math.h>
-	"sound/fmopl.h"
-	"common/util.h"
-	"common/config-manager.h"
-
-1164571405 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\fmopl.h
-	"common/scummsys.h"
-
-1164571405 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\mididrv.cpp
-	"common/stdafx.h"
-	"engines/engine.h"
-	"common/config-manager.h"
-	"common/str.h"
-	"common/system.h"
-	"common/util.h"
-	"sound/mididrv.h"
-
-1171653923 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\midiparser.cpp
-	"common/stdafx.h"
-	"sound/midiparser.h"
-	"sound/mididrv.h"
-	"common/util.h"
-
-1164571405 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\midiparser.h
-	"common/scummsys.h"
-	"common/endian.h"
-
-1171826383 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\midiparser_smf.cpp
-	"common/stdafx.h"
-	"sound/midiparser.h"
-	"sound/mididrv.h"
-	"common/util.h"
-
-1171653923 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\midiparser_xmidi.cpp
-	"common/stdafx.h"
-	"sound/midiparser.h"
-	"sound/mididrv.h"
-	"common/util.h"
-
-1172866046 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\mixer.cpp
-	"common/stdafx.h"
-	"common/file.h"
-	"common/util.h"
-	"common/system.h"
-	"sound/mixer.h"
-	"sound/rate.h"
-	"sound/audiostream.h"
-
-1164571405 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\rate.h
-	"common/scummsys.h"
-	"engines/engine.h"
-
-1172389580 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\mp3.cpp
-	"sound/mp3.h"
-	"common/file.h"
-	"common/util.h"
-	"sound/audiocd.h"
-	"sound/audiostream.h"
-	<mad.h>
-
-1164571405 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\mpu401.cpp
-	"common/stdafx.h"
-	"sound/mpu401.h"
-	"common/system.h"
-	"common/timer.h"
-	"common/util.h"
-
-1164571405 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\null.cpp
-	"common/stdafx.h"
-	"sound/mpu401.h"
-
-1172174660 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\rate.cpp
-	"common/stdafx.h"
-	"sound/audiostream.h"
-	"sound/rate.h"
-	"sound/mixer.h"
-	"common/util.h"
-
-1172012045 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\adlib.cpp
-	"sound/softsynth/emumidi.h"
-	"common/util.h"
-	"sound/fmopl.h"
-
-1172012045 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\emumidi.h
-	"common/stdafx.h"
-	"sound/audiostream.h"
-	"sound/mididrv.h"
-	"sound/mixer.h"
-
-1164571405 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\fluidsynth.cpp
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/stdafx.h"
-	"common/config-manager.h"
-	"sound/mpu401.h"
-	"sound/softsynth/emumidi.h"
-	<fluidsynth.h>
-
-1164571405 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32.cpp
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"sound/softsynth/mt32/mt32emu.h"
-	"sound/softsynth/emumidi.h"
-	"sound/mpu401.h"
-	"common/util.h"
-	"common/file.h"
-	"common/config-manager.h"
-	"common/system.h"
-	"graphics/fontman.h"
-	"graphics/surface.h"
-
-1164571404 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\mt32emu.h
-	"freeverb.h"
-	"structures.h"
-	"i386.h"
-	"mt32_file.h"
-	"tables.h"
-	"partial.h"
-	"partialManager.h"
-	"part.h"
-	"synth.h"
-
-1164571404 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\freeverb.h
-
-1164571404 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\structures.h
-
-1164571404 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\i386.h
-
-1164571404 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\mt32_file.h
-	<stdio.h>
-
-1164571404 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\tables.h
-
-1164571404 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\partial.h
-
-1164571404 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\partialmanager.h
-
-1164571404 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\part.h
-
-1164571404 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\synth.h
-	<stdarg.h>
-
-1164571404 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\freeverb.cpp
-	"common/stdafx.h"
-	"sound/softsynth/mt32/freeverb.h"
-
-1164571404 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\i386.cpp
-	"mt32emu.h"
-
-1164571404 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\mt32_file.cpp
-	<stdio.h>
-	"mt32emu.h"
-
-1164571404 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\part.cpp
-	<string.h>
-	<math.h>
-	"mt32emu.h"
-
-1164571404 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\partial.cpp
-	<stdlib.h>
-	<math.h>
-	<string.h>
-	"mt32emu.h"
-
-1164571404 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\partialmanager.cpp
-	<string.h>
-	"mt32emu.h"
-
-1164571404 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\synth.cpp
-	<math.h>
-	<string.h>
-	<stdlib.h>
-	"mt32emu.h"
-
-1164571404 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\mt32\tables.cpp
-	<stdlib.h>
-	<string.h>
-	<math.h>
-	"mt32emu.h"
-
-1172012045 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\softsynth\ym2612.cpp
-	"sound/softsynth/emumidi.h"
-	<math.h>
-	"common/util.h"
-
-1172866046 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\voc.cpp
-	"common/stdafx.h"
-	"common/endian.h"
-	"common/util.h"
-	"common/stream.h"
-	"sound/audiostream.h"
-	"sound/mixer.h"
-	"sound/voc.h"
-
-1164571405 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\voc.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/pack-start.h"
-	"common/pack-end.h"
-
-1164571400 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\pack-start.h
-
-1164571400 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\common\pack-end.h
-
-1172389580 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\vorbis.cpp
-	"sound/vorbis.h"
-	"common/file.h"
-	"common/util.h"
-	"sound/audiostream.h"
-	"sound/audiocd.h"
-	<ivorbisfile.h>
-	<tremor/ivorbisfile.h>
-	<vorbis/vorbisfile.h>
-
-1172866046 source:c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\wave.cpp
-	"common/stdafx.h"
-	"common/util.h"
-	"common/stream.h"
-	"sound/audiostream.h"
-	"sound/mixer.h"
-	"sound/wave.h"
-	"sound/adpcm.h"
-
-1164571405 c:\documents and settings\usoquotidiano\documenti\soft\scummvm\scummvm\sound\wave.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-
-1173398975 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\fs\windows\windows-fs.cpp
-	<windows.h>
-	"common/stdafx.h"
-	"backends/fs/abstract-fs.h"
-	<stdio.h>
-	<stdlib.h>
-	<windows.h>
-	<tchar.h>
-
-1173562730 c:\documents and settings\usoquotidiano\desktop\scummvm\common\stdafx.h
-	<portdefs.h>
-	<strings.h>
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	<stdarg.h>
-	<assert.h>
-	<ctype.h>
-	<time.h>
-	<math.h>
-
-1173398976 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\fs\abstract-fs.h
-	"common/array.h"
-	"common/str.h"
-	"common/fs.h"
-
-1173785171 c:\documents and settings\usoquotidiano\desktop\scummvm\common\array.h
-	"common/scummsys.h"
-
-1173533496 c:\documents and settings\usoquotidiano\desktop\scummvm\common\scummsys.h
-	"config.h"
-	<SDL_byteorder.h>
-	"palmversion.h"
-	"globals.h"
-	"extend.h"
-	"nds/jtypes.h"
-
-1173533496 c:\documents and settings\usoquotidiano\desktop\scummvm\common\str.h
-	"common/scummsys.h"
-	"common/array.h"
-
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\fs.h
-	"common/array.h"
-	"common/str.h"
-
-1173399217 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\midi\windows.cpp
-	<windows.h>
-	<mmsystem.h>
-	"common/stdafx.h"
-	"sound/mpu401.h"
-	"common/util.h"
-
-1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mpu401.h
-	"common/stdafx.h"
-	"sound/mididrv.h"
-
-1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mididrv.h
-	"common/scummsys.h"
-	"common/timer.h"
-
-1174132564 c:\documents and settings\usoquotidiano\desktop\scummvm\common\timer.h
-	"common/scummsys.h"
-	"common/noncopyable.h"
-
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\util.h
-	"common/scummsys.h"
-	"common/str.h"
-	"common/array.h"
-
-1173398934 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\sdl\events.cpp
-	"backends/platform/sdl/sdl-common.h"
-	"common/util.h"
-
-1173398934 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\sdl\sdl-common.h
-	<SDL.h>
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/system.h"
-	"graphics/scaler.h"
-	"backends/intern.h"
-
-1174132564 c:\documents and settings\usoquotidiano\desktop\scummvm\common\system.h
-	"common/scummsys.h"
-	"common/mutex.h"
-	"common/noncopyable.h"
-	"common/rect.h"
-
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\mutex.h
-	"common/scummsys.h"
-
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\rect.h
-	"common/scummsys.h"
-	"common/util.h"
-
-1173398896 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"graphics/surface.h"
-
-1173398896 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\surface.h
-	"common/scummsys.h"
-	"common/rect.h"
-
-1173398976 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\intern.h
-	"common/system.h"
-
-1173398934 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\sdl\graphics.cpp
-	"backends/platform/sdl/sdl-common.h"
-	"common/util.h"
-	"graphics/font.h"
-	"graphics/fontman.h"
-	"graphics/scaler.h"
-	"graphics/surface.h"
-
-1173398895 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\font.h
-	"common/str.h"
-	"graphics/surface.h"
-
-1173398895 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\fontman.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/singleton.h"
-	"common/str.h"
-	"common/hashmap.h"
-	"common/hash-str.h"
-	"graphics/font.h"
-
-1174132564 c:\documents and settings\usoquotidiano\desktop\scummvm\common\singleton.h
-	"common/noncopyable.h"
-
-1173785171 c:\documents and settings\usoquotidiano\desktop\scummvm\common\hashmap.h
-	"common/stdafx.h"
-	"common/func.h"
-	"common/str.h"
-	"common/util.h"
-
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\func.h
-	"common/scummsys.h"
-
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\hash-str.h
-	"common/hashmap.h"
-	"common/str.h"
-
-1173399217 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\sdl\sdl.cpp
-	"backends/platform/sdl/sdl-common.h"
-	"backends/plugins/sdl/sdl-provider.h"
-	"common/config-manager.h"
-	"common/util.h"
-	"base/main.h"
-	"backends/saves/default/default-saves.h"
-	"backends/timer/default/default-timer.h"
-	"sound/mixer.h"
-	"icons/scummvm.xpm"
-	<windows.h>
-	"SymbianOs.h"
-
-1173398926 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\plugins\sdl\sdl-provider.h
-	"common/stdafx.h"
-	"base/plugins.h"
-
-1173398925 c:\documents and settings\usoquotidiano\desktop\scummvm\base\plugins.h
-	"common/stdafx.h"
-	"common/array.h"
-	"common/list.h"
-	"common/singleton.h"
-	"common/util.h"
-	"base/game.h"
-
-1173533496 c:\documents and settings\usoquotidiano\desktop\scummvm\common\list.h
-	"common/scummsys.h"
-
-1173398925 c:\documents and settings\usoquotidiano\desktop\scummvm\base\game.h
-	"common/stdafx.h"
-	"common/str.h"
-	"common/array.h"
-	"common/hash-str.h"
-
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\config-manager.h
-	"common/array.h"
-	"common/hashmap.h"
-	"common/singleton.h"
-	"common/str.h"
-	"common/hash-str.h"
-
-1173398925 c:\documents and settings\usoquotidiano\desktop\scummvm\base\main.h
-	"common/scummsys.h"
-
-1174117753 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\saves\default\default-saves.h
-	"common/stdafx.h"
-	"common/savefile.h"
-
-1174132564 c:\documents and settings\usoquotidiano\desktop\scummvm\common\savefile.h
-	"common/stdafx.h"
-	"common/noncopyable.h"
-	"common/scummsys.h"
-	"common/stream.h"
-
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\stream.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-
-1173398926 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\timer\default\default-timer.h
-	"common/timer.h"
-	"common/mutex.h"
-
-1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mixer.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/mutex.h"
-
-1173398977 c:\documents and settings\usoquotidiano\desktop\scummvm\icons\scummvm.xpm
-
-1173641251 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\saves\compressed\compressed-saves.cpp
-	"common/stdafx.h"
-	"common/savefile.h"
-	"common/util.h"
-	"backends/saves/compressed/compressed-saves.h"
-	<zlib.h>
-
-1173398926 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\saves\compressed\compressed-saves.h
-	"common/stdafx.h"
-	"common/savefile.h"
-
-1174117753 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\saves\default\default-saves.cpp
-	"common/stdafx.h"
-	"common/savefile.h"
-	"common/util.h"
-	"backends/saves/default/default-saves.h"
-	"backends/saves/compressed/compressed-saves.h"
-	<stdio.h>
-	<string.h>
-	<errno.h>
-	<sys/stat.h>
-
-1173398926 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\saves\savefile.cpp
-	"common/stdafx.h"
-	"common/util.h"
-	"common/config-manager.h"
-	"common/savefile.h"
-	<stdio.h>
-	<string.h>
-
-1173398925 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\timer\default\default-timer.cpp
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"backends/timer/default/default-timer.h"
-	"common/util.h"
-	"common/system.h"
-
-1173567046 source:c:\documents and settings\usoquotidiano\desktop\scummvm\base\commandline.cpp
-	"common/stdafx.h"
-	"engines/engine.h"
-	"base/commandLine.h"
-	"base/plugins.h"
-	"base/version.h"
-	"common/config-manager.h"
-	"common/system.h"
-	"sound/mididrv.h"
-	"sound/mixer.h"
-	"common/fs.h"
-
-1173398879 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\engine.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/str.h"
-
-1173398925 c:\documents and settings\usoquotidiano\desktop\scummvm\base\commandline.h
-	"common/str.h"
-	"common/config-manager.h"
-
-1173398925 c:\documents and settings\usoquotidiano\desktop\scummvm\base\version.h
-
-1173398925 source:c:\documents and settings\usoquotidiano\desktop\scummvm\base\game.cpp
-	"base/game.h"
-	"base/plugins.h"
-
-1173398925 source:c:\documents and settings\usoquotidiano\desktop\scummvm\base\main.cpp
-	"common/stdafx.h"
-	"engines/engine.h"
-	"base/commandLine.h"
-	"base/plugins.h"
-	"base/version.h"
-	"common/config-manager.h"
-	"common/file.h"
-	"common/fs.h"
-	"common/system.h"
-	"gui/newgui.h"
-	"gui/message.h"
-	"backends/platform/wince/CELauncherDialog.h"
-	"backends/platform/dc/DCLauncherDialog.h"
-	"gui/launcher.h"
-	"args.h"
-
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\file.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/str.h"
-	"common/stream.h"
-
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\newgui.h
-	"common/scummsys.h"
-	"common/singleton.h"
-	"common/stack.h"
-	"common/str.h"
-	"graphics/fontman.h"
-	"gui/theme.h"
-	"gui/widget.h"
-
-1173533496 c:\documents and settings\usoquotidiano\desktop\scummvm\common\stack.h
-	"common/scummsys.h"
-	"common/array.h"
-
-1173562730 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\theme.h
-	"common/stdafx.h"
-	"common/system.h"
-	"common/rect.h"
-	"common/str.h"
-	"common/file.h"
-	"common/config-file.h"
-	"graphics/surface.h"
-	"graphics/fontman.h"
-
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\config-file.h
-	"common/config-manager.h"
-	"common/list.h"
-	"common/str.h"
-	"common/stream.h"
-
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\widget.h
-	"common/scummsys.h"
-	"common/str.h"
-	"graphics/font.h"
-	"graphics/surface.h"
-	"gui/object.h"
-
-1174117751 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\object.h
-
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\message.h
-	"gui/dialog.h"
-	"common/str.h"
-
-1174117751 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\dialog.h
-	"common/scummsys.h"
-	"common/str.h"
-	"gui/object.h"
-	"gui/widget.h"
-
-1173398947 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\wince\celauncherdialog.h
-	"base/plugins.h"
-	"common/fs.h"
-	"gui/launcher.h"
-
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\launcher.h
-	"gui/dialog.h"
-	"common/str.h"
-
-1173398948 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\dc\dclauncherdialog.h
-
-1173906517 source:c:\documents and settings\usoquotidiano\desktop\scummvm\base\plugins.cpp
-	"base/plugins.h"
-	"common/util.h"
-
-1173398925 source:c:\documents and settings\usoquotidiano\desktop\scummvm\base\version.cpp
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"base/internal_version.h"
-	"base/version.h"
-	"backends/platform/symbian/src/main_features.inl"
-
-1173398925 c:\documents and settings\usoquotidiano\desktop\scummvm\base\internal_version.h
-
-1173398935 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\symbian\src\main_features.inl
-
-1173398882 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\advanceddetector.cpp
-	"common/stdafx.h"
-	"base/plugins.h"
-	"common/util.h"
-	"common/hash-str.h"
-	"common/file.h"
-	"common/md5.h"
-	"common/advancedDetector.h"
-	"common/config-manager.h"
-
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\md5.h
-	"common/scummsys.h"
-	"common/fs.h"
-	"common/stream.h"
-
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\advanceddetector.h
-	"common/fs.h"
-	"base/game.h"
-	"base/plugins.h"
-
-1173398882 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\config-file.cpp
-	"common/stdafx.h"
-	"common/config-file.h"
-	"common/file.h"
-	"common/savefile.h"
-	"common/system.h"
-	"common/util.h"
-
-1173399217 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\config-manager.cpp
-	"common/stdafx.h"
-	"common/config-manager.h"
-	"common/file.h"
-	"common/util.h"
-	<windows.h>
-	"backends/platform/ps2/systemps2.h"
-
-1173398943 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\ps2\systemps2.h
-	"common/stdafx.h"
-	"common/system.h"
-
-1173641249 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\file.cpp
-	"common/file.h"
-	"common/fs.h"
-	"common/hashmap.h"
-	"common/util.h"
-	"common/hash-str.h"
-	"CoreFoundation/CoreFoundation.h"
-	"backends/platform/ps2/fileio.h"
-
-1173398943 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\ps2\fileio.h
-	"common/scummsys.h"
-
-1173398882 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\fs.cpp
-	"common/stdafx.h"
-	"backends/fs/abstract-fs.h"
-	"common/util.h"
-
-1173533496 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\hashmap.cpp
-	"common/hashmap.h"
-
-1173533496 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\md5.cpp
-	"common/file.h"
-	"common/md5.h"
-	"common/util.h"
-	"common/endian.h"
-	<stdlib.h>
-	<stdio.h>
-
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\endian.h
-	"common/scummsys.h"
-
-1173398882 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\mutex.cpp
-	"common/stdafx.h"
-	"common/mutex.h"
-	"common/system.h"
-
-1173533496 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\str.cpp
-	"common/stdafx.h"
-	"common/str.h"
-	"common/hash-str.h"
-	"common/util.h"
-
-1173398882 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\stream.cpp
-	"common/stdafx.h"
-	"common/stream.h"
-	"common/str.h"
-	"common/util.h"
-
-1174117753 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\system.cpp
+1174121353 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\system.cpp
 	"common/stdafx.h"
 	"backends/intern.h"
 	"backends/events/default/default-events.h"
@@ -1866,7 +487,7 @@
 	"common/util.h"
 	"sound/mixer.h"
 
-1173398882 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\unzip.cpp
+1173402482 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\unzip.cpp
 	"common/stdafx.h"
 	"common/scummsys.h"
 	<stdio.h>
@@ -1880,12 +501,12 @@
 	<stdlib.h>
 	<errno.h>
 
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\unzip.h
+1173402482 c:\documents and settings\usoquotidiano\desktop\scummvm\common\unzip.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	<zlib.h>
 
-1173398882 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\util.cpp
+1178025620 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\util.cpp
 	"common/stdafx.h"
 	"engines/engine.h"
 	"common/util.h"
@@ -1893,9 +514,11 @@
 	"gui/debugger.h"
 	"backends/platform/ps2/fileio.h"
 
-1173900476 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\debugger.h
+1173904076 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\debugger.h
 
-1173399217 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\engine.cpp
+1175450743 source:c:\documents and settings\usoquotidiano\desktop\scummvm\engines\engine.cpp
+	<windows.h>
+	<direct.h>
 	"common/stdafx.h"
 	"engines/engine.h"
 	"common/config-manager.h"
@@ -1905,82 +528,83 @@
 	"common/system.h"
 	"gui/message.h"
 	"sound/mixer.h"
-	<windows.h>
-	<direct.h>
 
-1173398895 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\cursorman.cpp
+1173402495 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\cursorman.cpp
 	"graphics/cursorman.h"
 	"common/system.h"
 	"common/stack.h"
 
-1173398896 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\cursorman.h
+1173402496 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\cursorman.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/stack.h"
 	"common/singleton.h"
 
-1173398896 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\dxa_player.cpp
+1173402496 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\dxa_player.cpp
 	"common/stdafx.h"
 	"common/endian.h"
 	"graphics/dxa_player.h"
 	"common/util.h"
 	<zlib.h>
 
-1173398896 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\dxa_player.h
+1173402496 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\dxa_player.h
 	"common/scummsys.h"
 	"common/file.h"
 
-1173398895 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\font.cpp
+1173402495 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\font.cpp
 	"common/stdafx.h"
 	"common/stream.h"
 	"common/file.h"
 	"common/endian.h"
 	"graphics/font.h"
 
-1173398895 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\fontman.cpp
+1173402495 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\fontman.cpp
 	"graphics/fontman.h"
 
-1173398893 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\fonts\consolefont.cpp
+1173402493 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\fonts\consolefont.cpp
 	"common/stdafx.h"
 	"graphics/font.h"
 
-1173398893 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\fonts\newfont.cpp
+1173402493 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\fonts\newfont.cpp
 	"common/stdafx.h"
 	"graphics/font.h"
 
-1173398893 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\fonts\newfont_big.cpp
+1173402493 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\fonts\newfont_big.cpp
 	"common/stdafx.h"
 	"graphics/font.h"
 
-1173398893 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\fonts\scummfont.cpp
+1173402493 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\fonts\scummfont.cpp
 	"common/stdafx.h"
 	"graphics/font.h"
 	"scumm_globals.h"
 
-1173398896 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\ilbm.cpp
+1177969963 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\ilbm.cpp
 	"common/stdafx.h"
 	"common/endian.h"
 	"common/stream.h"
 	"graphics/surface.h"
+	"graphics/ilbm.h"
 
-1173398895 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\imagedec.cpp
+1177969881 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\ilbm.h
+
+1173402495 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\imagedec.cpp
 	"graphics/imagedec.h"
 	"common/system.h"
 	"common/file.h"
 
-1173398895 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\imagedec.h
+1173402495 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\imagedec.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/str.h"
 	"common/stream.h"
 	"graphics/surface.h"
 
-1173398896 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\imageman.cpp
+1173402496 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\imageman.cpp
 	"graphics/imagedec.h"
 	"graphics/imageman.h"
 	"graphics/surface.h"
 
-1173398896 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\imageman.h
+1173402496 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\imageman.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/singleton.h"
@@ -1988,64 +612,64 @@
 	"common/list.h"
 	"common/unzip.h"
 
-1173398896 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\primitives.cpp
+1173402496 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\primitives.cpp
 	"common/stdafx.h"
 	"common/util.h"
 
-1173398895 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler.cpp
+1173402495 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler.cpp
 	"graphics/scaler/intern.h"
 	"graphics/scaler/scalebit.h"
 	"common/util.h"
 
-1173398895 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\intern.h
+1173402495 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\intern.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"graphics/colormasks.h"
 
-1173398896 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\colormasks.h
+1173402496 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\colormasks.h
 
-1173398895 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\scalebit.h
+1173402495 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\scalebit.h
 
-1173398895 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\2xsai.cpp
+1173402495 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\2xsai.cpp
 	"graphics/scaler/intern.h"
 
-1173398895 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\aspect.cpp
+1173402495 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\aspect.cpp
 	"graphics/scaler/intern.h"
 	"graphics/scaler.h"
 
-1173398895 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\hq2x.cpp
+1173402495 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\hq2x.cpp
 	"graphics/scaler/intern.h"
 	"graphics/scaler/hq2x.h"
 	"graphics/scaler/hq2x.h"
 
-1173398895 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\hq2x.h
+1173402495 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\hq2x.h
 
-1173398895 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\hq3x.cpp
+1173402495 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\hq3x.cpp
 	"graphics/scaler/intern.h"
 	"graphics/scaler/hq3x.h"
 	"graphics/scaler/hq3x.h"
 
-1173398895 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\hq3x.h
+1173402495 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\hq3x.h
 
-1173398895 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\scale2x.cpp
+1173402495 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\scale2x.cpp
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"graphics/scaler/intern.h"
 	"graphics/scaler/scale2x.h"
 	<assert.h>
 
-1173398895 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\scale2x.h
+1173402495 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\scale2x.h
 
-1173398895 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\scale3x.cpp
+1173402495 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\scale3x.cpp
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"graphics/scaler/intern.h"
 	"graphics/scaler/scale3x.h"
 	<assert.h>
 
-1173398895 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\scale3x.h
+1173402495 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\scale3x.h
 
-1173398895 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\scalebit.cpp
+1173402495 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\scalebit.cpp
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"graphics/scaler/intern.h"
@@ -2055,22 +679,22 @@
 	<assert.h>
 	<stdlib.h>
 
-1173398895 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\thumbnail.cpp
+1173402495 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\scaler\thumbnail.cpp
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/system.h"
 	"graphics/scaler.h"
 	"graphics/scaler/intern.h"
 
-1173398896 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\surface.cpp
+1173402496 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\surface.cpp
 	"common/stdafx.h"
 	"common/util.h"
 	"graphics/primitives.h"
 	"graphics/surface.h"
 
-1173398895 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\primitives.h
+1173402495 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\primitives.h
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\actions.cpp
+1173402364 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\actions.cpp
 	"common/stdafx.h"
 	"gui/Actions.h"
 	"gui/message.h"
@@ -2080,18 +704,18 @@
 	"backends/platform/wince/CEActionsSmartphone.h"
 	"backends/platform/symbian/src/SymbianActions.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\actions.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\actions.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/system.h"
 	"gui/Key.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\key.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\key.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/system.h"
 
-1173641246 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\scumm\scumm.h
+1177854379 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\scumm\scumm.h
 	"engines/engine.h"
 	"common/endian.h"
 	"common/file.h"
@@ -2099,20 +723,20 @@
 	"common/str.h"
 	"graphics/surface.h"
 	"scumm/gfx.h"
-	"scumm/plugin.h"
+	"scumm/detection.h"
 	"scumm/script.h"
 	"sound/mididrv.h"
 
-1173533494 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\scumm\gfx.h
+1173537094 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\scumm\gfx.h
 	"graphics/surface.h"
 
-1173398810 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\scumm\plugin.h
+1173402410 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\scumm\plugin.h
 	"common/util.h"
 
-1173398809 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\scumm\script.h
+1173402409 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\scumm\script.h
 	"engines/engine.h"
 
-1173398947 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\wince\ceactionspocket.h
+1177854385 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\wince\ceactionspocket.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/system.h"
@@ -2120,7 +744,7 @@
 	"gui/Key.h"
 	"gui/Actions.h"
 
-1173398947 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\wince\wince-sdl.h
+1177854385 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\wince\wince-sdl.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/system.h"
@@ -2133,20 +757,20 @@
 	"CEScaler.h"
 	<SDL.h>
 
-1173398947 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\wince\cedevice.h
+1177854385 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\wince\cedevice.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/system.h"
 	"common/str.h"
 
-1173398947 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\wince\cescaler.h
+1173402547 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\wince\cescaler.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/system.h"
 	"graphics/scaler.h"
 	"graphics/scaler/intern.h"
 
-1173398947 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\wince\ceactionssmartphone.h
+1177854385 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\wince\ceactionssmartphone.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/system.h"
@@ -2154,41 +778,41 @@
 	"gui/Key.h"
 	"gui/Actions.h"
 
-1173900478 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\symbian\src\symbianactions.h
+1173904078 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\platform\symbian\src\symbianactions.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/system.h"
 	"gui/Key.h"
 	"gui/Actions.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\edittextwidget.cpp
+1173402364 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\edittextwidget.cpp
 	"common/stdafx.h"
 	"gui/EditTextWidget.h"
 	"gui/dialog.h"
 	"gui/eval.h"
 	"gui/newgui.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\edittextwidget.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\edittextwidget.h
 	"gui/editable.h"
 	"common/str.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\editable.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\editable.h
 	"common/str.h"
 	"common/rect.h"
 	"gui/widget.h"
 	"gui/newgui.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\eval.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\eval.h
 	"common/stdafx.h"
 	"common/str.h"
 	"common/hashmap.h"
 	"common/hash-str.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\key.cpp
+1173402364 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\key.cpp
 	"common/stdafx.h"
 	"gui/Key.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\listwidget.cpp
+1173402364 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\listwidget.cpp
 	"common/stdafx.h"
 	"common/system.h"
 	"gui/ListWidget.h"
@@ -2197,14 +821,14 @@
 	"gui/eval.h"
 	"gui/newgui.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\listwidget.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\listwidget.h
 	"gui/editable.h"
 	"common/str.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\scrollbarwidget.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\scrollbarwidget.h
 	"gui/widget.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\popupwidget.cpp
+1173402364 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\popupwidget.cpp
 	"common/stdafx.h"
 	"common/system.h"
 	"gui/dialog.h"
@@ -2213,18 +837,18 @@
 	"gui/PopUpWidget.h"
 	"engines/engine.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\popupwidget.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\popupwidget.h
 	"gui/widget.h"
 	"common/str.h"
 	"common/array.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\scrollbarwidget.cpp
+1173402364 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\scrollbarwidget.cpp
 	"common/stdafx.h"
 	"ScrollBarWidget.h"
 	"gui/dialog.h"
 	"gui/newgui.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\tabwidget.cpp
+1176747594 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\tabwidget.cpp
 	"common/stdafx.h"
 	"common/util.h"
 	"gui/TabWidget.h"
@@ -2232,19 +856,19 @@
 	"gui/newgui.h"
 	"gui/eval.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\tabwidget.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\tabwidget.h
 	"widget.h"
 	"common/str.h"
 	"common/array.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\themeclassic.cpp
+1173402364 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\themeclassic.cpp
 	"gui/ThemeClassic.h"
 	"gui/eval.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\themeclassic.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\themeclassic.h
 	"gui/theme.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\thememodern.cpp
+1173402364 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\thememodern.cpp
 	"gui/ThemeModern.h"
 	"gui/eval.h"
 	"graphics/imageman.h"
@@ -2254,14 +878,15 @@
 	"common/config-manager.h"
 	"common/file.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\thememodern.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\thememodern.h
 	"gui/theme.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\about.cpp
+1174164453 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\about.cpp
 	"common/stdafx.h"
 	"engines/engine.h"
 	"base/plugins.h"
 	"base/version.h"
+	"common/events.h"
 	"common/system.h"
 	"common/util.h"
 	"gui/about.h"
@@ -2270,14 +895,14 @@
 	"gui/widget.h"
 	"gui/credits.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\about.h
+1174157116 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\about.h
 	"gui/dialog.h"
 	"common/str.h"
 	"graphics/surface.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\credits.h
+1177614532 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\credits.h
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\browser.cpp
+1173402364 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\browser.cpp
 	"common/stdafx.h"
 	"gui/browser.h"
 	"gui/newgui.h"
@@ -2287,44 +912,45 @@
 	"common/system.h"
 	"common/func.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\browser.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\browser.h
 	"gui/dialog.h"
 	"common/str.h"
 	"common/fs.h"
 	<Carbon/Carbon.h>
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\chooser.cpp
+1173402364 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\chooser.cpp
 	"common/stdafx.h"
 	"common/system.h"
 	"gui/chooser.h"
 	"gui/newgui.h"
 	"gui/ListWidget.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\chooser.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\chooser.h
 	"common/str.h"
 	"gui/dialog.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\console.cpp
+1174164453 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\console.cpp
 	"common/stdafx.h"
 	"gui/console.h"
 	"gui/ScrollBarWidget.h"
 	"gui/eval.h"
 	"engines/engine.h"
 	"base/version.h"
+	"common/events.h"
 	"common/system.h"
 	"graphics/font.h"
 
-1173533495 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\console.h
+1173537095 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\console.h
 	"gui/dialog.h"
 	"gui/newgui.h"
 
-1173900476 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\debugger.cpp
+1173904076 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\debugger.cpp
 	"common/stdafx.h"
 	"common/system.h"
 	"gui/debugger.h"
 	"gui/console.h"
 
-1174117751 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\dialog.cpp
+1176747594 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\dialog.cpp
 	"common/stdafx.h"
 	"gui/newgui.h"
 	"gui/dialog.h"
@@ -2332,12 +958,12 @@
 	"gui/PopUpWidget.h"
 	"common/system.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\editable.cpp
+1173402364 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\editable.cpp
 	"common/stdafx.h"
 	"gui/editable.h"
 	"gui/newgui.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\eval.cpp
+1173402364 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\eval.cpp
 	"common/stdafx.h"
 	"common/system.h"
 	"gui/eval.h"
@@ -2345,13 +971,14 @@
 	"gui/newgui.h"
 	"graphics/scaler.h"
 
-1174117751 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\launcher.cpp
+1174164453 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\launcher.cpp
 	"common/stdafx.h"
 	"engines/engine.h"
 	"base/game.h"
 	"base/plugins.h"
 	"base/version.h"
 	"common/config-manager.h"
+	"common/events.h"
 	"common/fs.h"
 	"common/util.h"
 	"common/system.h"
@@ -2370,23 +997,23 @@
 	"gui/PopUpWidget.h"
 	"sound/mididrv.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\massadd.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\massadd.h
 	"gui/dialog.h"
 	"common/fs.h"
 	"common/stack.h"
 
-1173562730 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\options.h
+1173566330 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\options.h
 	"gui/dialog.h"
 	"common/str.h"
 	"gui/KeysDialog.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\keysdialog.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\keysdialog.h
 	"gui/newgui.h"
 	"gui/dialog.h"
 	"gui/ListWidget.h"
 	"common/str.h"
 
-1173562730 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\massadd.cpp
+1173566330 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\massadd.cpp
 	"common/stdafx.h"
 	"engines/engine.h"
 	"base/game.h"
@@ -2396,7 +1023,7 @@
 	"gui/newgui.h"
 	"gui/widget.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\message.cpp
+1173402364 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\message.cpp
 	"common/stdafx.h"
 	"common/str.h"
 	"common/system.h"
@@ -2404,7 +1031,7 @@
 	"gui/newgui.h"
 	"gui/widget.h"
 
-1174117751 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\newgui.cpp
+1177854375 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\newgui.cpp
 	"common/stdafx.h"
 	"common/events.h"
 	"common/system.h"
@@ -2417,7 +1044,13 @@
 	"gui/ThemeClassic.h"
 	"common/config-manager.h"
 
-1173562730 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\options.cpp
+1176747594 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\object.cpp
+	"common/stdafx.h"
+	"common/system.h"
+	"gui/object.h"
+	"gui/widget.h"
+
+1173566330 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\options.cpp
 	"common/stdafx.h"
 	"gui/browser.h"
 	"gui/themebrowser.h"
@@ -2434,22 +1067,22 @@
 	"sound/mididrv.h"
 	"sound/mixer.h"
 
-1173398764 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\themebrowser.h
+1173402364 c:\documents and settings\usoquotidiano\desktop\scummvm\gui\themebrowser.h
 	"gui/dialog.h"
 	"common/str.h"
 	"common/fs.h"
 	"common/array.h"
 
-1173562730 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\theme-config.cpp
+1177347977 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\theme-config.cpp
 	"gui/theme.h"
 	"gui/eval.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\theme.cpp
+1177854375 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\theme.cpp
 	"gui/theme.h"
 	"gui/eval.h"
 	"common/unzip.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\themebrowser.cpp
+1173402364 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\themebrowser.cpp
 	"common/stdafx.h"
 	"gui/themebrowser.h"
 	"gui/ListWidget.h"
@@ -2458,7 +1091,7 @@
 	"common/fs.h"
 	"CoreFoundation/CoreFoundation.h"
 
-1173398764 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\widget.cpp
+1176747594 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\widget.cpp
 	"common/stdafx.h"
 	"common/util.h"
 	"graphics/fontman.h"
@@ -2467,25 +1100,26 @@
 	"gui/eval.h"
 	"gui/newgui.h"
 
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\adpcm.cpp
+1177614536 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\adpcm.cpp
 	"common/stdafx.h"
 	"common/endian.h"
 	"sound/adpcm.h"
 	"sound/audiostream.h"
 
-1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\adpcm.h
+1173402491 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\adpcm.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/stream.h"
 
-1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\audiostream.h
+1176623932 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\audiostream.h
 	"common/stdafx.h"
 	"common/util.h"
 	"common/scummsys.h"
 
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\audiocd.cpp
+1176623932 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\audiocd.cpp
 	"common/stdafx.h"
 	"sound/audiocd.h"
+	"sound/audiostream.h"
 	"sound/mp3.h"
 	"sound/vorbis.h"
 	"sound/flac.h"
@@ -2494,25 +1128,25 @@
 	"common/util.h"
 	"common/system.h"
 
-1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\audiocd.h
+1176623932 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\audiocd.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 	"common/singleton.h"
 	"sound/mixer.h"
 
-1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mp3.h
+1176623932 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mp3.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 
-1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\vorbis.h
+1176623932 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\vorbis.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 
-1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\flac.h
+1176623932 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\flac.h
 	"common/stdafx.h"
 	"common/scummsys.h"
 
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\audiostream.cpp
+1176623932 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\audiostream.cpp
 	"common/stdafx.h"
 	"common/endian.h"
 	"common/file.h"
@@ -2524,7 +1158,7 @@
 	"sound/vorbis.h"
 	"sound/flac.h"
 
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\flac.cpp
+1176623932 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\flac.cpp
 	"sound/flac.h"
 	"common/file.h"
 	"common/util.h"
@@ -2534,7 +1168,7 @@
 	<FLAC/seekable_stream_decoder.h>
 	<FLAC/stream_decoder.h>
 
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\fmopl.cpp
+1175936376 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\fmopl.cpp
 	"common/stdafx.h"
 	<stdio.h>
 	<stdlib.h>
@@ -2544,11 +1178,12 @@
 	"sound/fmopl.h"
 	"common/util.h"
 	"common/config-manager.h"
+	"dsmain.h"
 
-1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\fmopl.h
+1173402491 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\fmopl.h
 	"common/scummsys.h"
 
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mididrv.cpp
+1173402491 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mididrv.cpp
 	"common/stdafx.h"
 	"engines/engine.h"
 	"common/config-manager.h"
@@ -2557,29 +1192,29 @@
 	"common/util.h"
 	"sound/mididrv.h"
 
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\midiparser.cpp
+1173402491 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\midiparser.cpp
 	"common/stdafx.h"
 	"sound/midiparser.h"
 	"sound/mididrv.h"
 	"common/util.h"
 
-1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\midiparser.h
+1173402491 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\midiparser.h
 	"common/scummsys.h"
 	"common/endian.h"
 
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\midiparser_smf.cpp
+1173402491 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\midiparser_smf.cpp
 	"common/stdafx.h"
 	"sound/midiparser.h"
 	"sound/mididrv.h"
 	"common/util.h"
 
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\midiparser_xmidi.cpp
+1173402491 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\midiparser_xmidi.cpp
 	"common/stdafx.h"
 	"sound/midiparser.h"
 	"sound/mididrv.h"
 	"common/util.h"
 
-1173562730 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mixer.cpp
+1173566330 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mixer.cpp
 	"common/stdafx.h"
 	"common/file.h"
 	"common/util.h"
@@ -2588,252 +1223,262 @@
 	"sound/rate.h"
 	"sound/audiostream.h"
 
-1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\rate.h
+1173402491 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\rate.h
 	"common/scummsys.h"
 	"engines/engine.h"
 
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mp3.cpp
-	"sound/mp3.h"
-	"common/file.h"
-	"common/util.h"
-	"sound/audiocd.h"
-	"sound/audiostream.h"
-	<mad.h>
-
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mpu401.cpp
-	"common/stdafx.h"
-	"sound/mpu401.h"
-	"common/system.h"
-	"common/timer.h"
-	"common/util.h"
-
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\null.cpp
-	"common/stdafx.h"
-	"sound/mpu401.h"
-
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\rate.cpp
-	"common/stdafx.h"
-	"sound/audiostream.h"
-	"sound/rate.h"
-	"sound/mixer.h"
-	"common/util.h"
-
-1173398889 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\adlib.cpp
-	"sound/softsynth/emumidi.h"
-	"common/util.h"
-	"sound/fmopl.h"
-
-1173398889 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\emumidi.h
-	"common/stdafx.h"
-	"sound/audiostream.h"
-	"sound/mididrv.h"
-	"sound/mixer.h"
-
-1173398889 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\fluidsynth.cpp
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/stdafx.h"
-	"common/config-manager.h"
-	"sound/mpu401.h"
-	"sound/softsynth/emumidi.h"
-	<fluidsynth.h>
-
-1174117753 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32.cpp
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"sound/softsynth/mt32/mt32emu.h"
-	"sound/softsynth/emumidi.h"
-	"sound/mpu401.h"
-	"common/config-manager.h"
-	"common/events.h"
-	"common/file.h"
-	"common/system.h"
-	"common/util.h"
-	"graphics/fontman.h"
-	"graphics/surface.h"
-
-1173398888 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\mt32emu.h
-	"freeverb.h"
-	"structures.h"
-	"i386.h"
-	"mt32_file.h"
-	"tables.h"
-	"partial.h"
-	"partialManager.h"
-	"part.h"
-	"synth.h"
-
-1173398888 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\freeverb.h
-
-1173398888 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\structures.h
-
-1173398888 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\i386.h
-
-1173398888 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\mt32_file.h
-	<stdio.h>
-
-1173398888 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\tables.h
-
-1173398888 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\partial.h
-
-1173398888 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\partialmanager.h
-
-1173398888 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\part.h
-
-1173398888 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\synth.h
-	<stdarg.h>
-
-1173398888 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\freeverb.cpp
-	"common/stdafx.h"
-	"sound/softsynth/mt32/freeverb.h"
-
-1173398888 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\i386.cpp
-	"mt32emu.h"
-
-1173398888 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\mt32_file.cpp
-	<stdio.h>
-	"mt32emu.h"
-
-1173398888 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\part.cpp
-	<string.h>
-	<math.h>
-	"mt32emu.h"
-
-1173398888 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\partial.cpp
-	<stdlib.h>
-	<math.h>
-	<string.h>
-	"mt32emu.h"
-
-1173398888 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\partialmanager.cpp
-	<string.h>
-	"mt32emu.h"
-
-1173398888 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\synth.cpp
-	<math.h>
-	<string.h>
-	<stdlib.h>
-	"mt32emu.h"
-
-1173398888 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\tables.cpp
-	<stdlib.h>
-	<string.h>
-	<math.h>
-	"mt32emu.h"
-
-1173398889 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\ym2612.cpp
-	"sound/softsynth/emumidi.h"
-	<math.h>
-	"common/util.h"
-
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\voc.cpp
-	"common/stdafx.h"
-	"common/endian.h"
-	"common/util.h"
-	"common/stream.h"
-	"sound/audiostream.h"
-	"sound/mixer.h"
-	"sound/voc.h"
-
-1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\voc.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/pack-start.h"
-	"common/pack-end.h"
-
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\pack-start.h
-
-1173398882 c:\documents and settings\usoquotidiano\desktop\scummvm\common\pack-end.h
-
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\vorbis.cpp
-	"sound/vorbis.h"
-	"common/file.h"
-	"common/util.h"
-	"sound/audiostream.h"
-	"sound/audiocd.h"
-	<ivorbisfile.h>
-	<tremor/ivorbisfile.h>
-	<vorbis/vorbisfile.h>
-
-1173398891 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\wave.cpp
-	"common/stdafx.h"
-	"common/util.h"
-	"common/stream.h"
-	"sound/audiostream.h"
-	"sound/mixer.h"
-	"sound/wave.h"
-	"sound/adpcm.h"
-
-1173398891 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\wave.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-
-1173398885 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\infogrames.cpp
+1173402485 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\infogrames.cpp
 	"sound/mods/infogrames.h"
 	"common/endian.h"
 
-1173398884 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\infogrames.h
+1173402484 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\infogrames.h
 	"sound/mods/paula.h"
 	"common/stream.h"
 	"common/file.h"
 
-1173398885 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\paula.h
+1177701568 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\paula.h
 	"sound/audiostream.h"
 	"common/mutex.h"
 
-1173398885 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\module.cpp
+1173402485 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\module.cpp
 	"common/stdafx.h"
 	"sound/mods/module.h"
 	"common/util.h"
 
-1173398885 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\module.h
+1173402485 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\module.h
 	"common/stream.h"
 	"common/pack-start.h"
 	"common/pack-end.h"
 
-1173398885 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\paula.cpp
+1173402482 c:\documents and settings\usoquotidiano\desktop\scummvm\common\pack-start.h
+
+1173402482 c:\documents and settings\usoquotidiano\desktop\scummvm\common\pack-end.h
+
+1173402485 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\paula.cpp
 	"sound/mods/paula.h"
 
-1173398885 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\protracker.cpp
+1173402485 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\protracker.cpp
 	"common/stdafx.h"
 	"sound/mods/protracker.h"
 	"sound/mods/paula.h"
 	"sound/mods/module.h"
 	"sound/audiostream.h"
 
-1173398885 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\protracker.h
+1177705233 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\protracker.h
 	"common/stdafx.h"
 	"common/stream.h"
 
-1173398885 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\rjp1.cpp
+1173402485 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\rjp1.cpp
 	"common/stdafx.h"
 	"common/endian.h"
 	"sound/mods/paula.h"
 	"sound/mods/rjp1.h"
 	"sound/audiostream.h"
 
-1173398885 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\rjp1.h
+1173402485 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mods\rjp1.h
 	"common/stream.h"
 
-1174117754 c:\documents and settings\usoquotidiano\desktop\scummvm\backends\events\default\default-events.h
+1176623932 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mp3.cpp
+	"sound/mp3.h"
+	"common/file.h"
+	"common/util.h"
+	"sound/audiocd.h"
+	"sound/audiostream.h"
+	<mad.h>
+
+1173402491 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\mpu401.cpp
 	"common/stdafx.h"
+	"sound/mpu401.h"
+	"common/system.h"
+	"common/timer.h"
+	"common/util.h"
+
+1173402491 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\null.cpp
+	"common/stdafx.h"
+	"sound/mpu401.h"
+
+1173402491 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\rate.cpp
+	"common/stdafx.h"
+	"sound/audiostream.h"
+	"sound/rate.h"
+	"sound/mixer.h"
+	"common/util.h"
+
+1173402489 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\adlib.cpp
+	"sound/softsynth/emumidi.h"
+	"common/util.h"
+	"sound/fmopl.h"
+
+1173402489 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\emumidi.h
+	"common/stdafx.h"
+	"sound/audiostream.h"
+	"sound/mididrv.h"
+	"sound/mixer.h"
+
+1173402489 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\fluidsynth.cpp
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"common/stdafx.h"
+	"common/config-manager.h"
+	"sound/mpu401.h"
+	"sound/softsynth/emumidi.h"
+	<fluidsynth.h>
+
+1174164454 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32.cpp
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"sound/softsynth/mt32/mt32emu.h"
+	"sound/softsynth/emumidi.h"
+	"sound/mpu401.h"
+	"common/config-manager.h"
 	"common/events.h"
-
-1174132564 c:\documents and settings\usoquotidiano\desktop\scummvm\common\events.h
-	"common/rect.h"
+	"common/file.h"
 	"common/system.h"
-	"common/noncopyable.h"
+	"common/util.h"
+	"graphics/fontman.h"
+	"graphics/surface.h"
 
-1174117754 source:c:\documents and settings\usoquotidiano\desktop\scummvm\backends\events\default\default-events.cpp
+1173402488 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\mt32emu.h
+	"freeverb.h"
+	"structures.h"
+	"i386.h"
+	"mt32_file.h"
+	"tables.h"
+	"partial.h"
+	"partialManager.h"
+	"part.h"
+	"synth.h"
+
+1173402488 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\freeverb.h
+
+1173402488 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\structures.h
+
+1173402488 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\i386.h
+
+1173402488 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\mt32_file.h
+	<stdio.h>
+
+1173402488 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\tables.h
+
+1173402488 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\partial.h
+
+1173402488 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\partialmanager.h
+
+1173402488 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\part.h
+
+1173402488 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\synth.h
+	<stdarg.h>
+
+1173402488 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\freeverb.cpp
 	"common/stdafx.h"
-	"common/system.h"
-	"backends/events/default/default-events.h"
+	"sound/softsynth/mt32/freeverb.h"
 
-1174117751 source:c:\documents and settings\usoquotidiano\desktop\scummvm\gui\object.cpp
+1173402488 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\i386.cpp
+	"mt32emu.h"
+
+1173402488 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\mt32_file.cpp
+	<stdio.h>
+	"mt32emu.h"
+
+1173402488 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\part.cpp
+	<string.h>
+	<math.h>
+	"mt32emu.h"
+
+1173402488 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\partial.cpp
+	<stdlib.h>
+	<math.h>
+	<string.h>
+	"mt32emu.h"
+
+1173402488 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\partialmanager.cpp
+	<string.h>
+	"mt32emu.h"
+
+1173402488 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\synth.cpp
+	<math.h>
+	<string.h>
+	<stdlib.h>
+	"mt32emu.h"
+
+1173402488 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\mt32\tables.cpp
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	"mt32emu.h"
+
+1177095927 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\ym2612.cpp
+	<math.h>
+	"sound/softsynth/ym2612.h"
+	"common/util.h"
+
+1174743688 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\softsynth\ym2612.h
 	"common/stdafx.h"
-	"common/system.h"
-	"gui/object.h"
-	"gui/widget.h"
+	"common/scummsys.h"
+	"sound/softsynth/emumidi.h"
 
-1174132564 c:\documents and settings\usoquotidiano\desktop\scummvm\common\noncopyable.h
+1173402491 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\voc.cpp
+	"common/stdafx.h"
+	"common/endian.h"
+	"common/util.h"
+	"common/stream.h"
+	"sound/audiostream.h"
+	"sound/mixer.h"
+	"sound/voc.h"
+
+1173402491 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\voc.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"common/pack-start.h"
+	"common/pack-end.h"
+
+1176623932 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\vorbis.cpp
+	"sound/vorbis.h"
+	"common/file.h"
+	"common/util.h"
+	"sound/audiostream.h"
+	"sound/audiocd.h"
+	<ivorbisfile.h>
+	<tremor/ivorbisfile.h>
+	<vorbis/vorbisfile.h>
+
+1173402491 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\wave.cpp
+	"common/stdafx.h"
+	"common/util.h"
+	"common/stream.h"
+	"sound/audiostream.h"
+	"sound/mixer.h"
+	"sound/wave.h"
+	"sound/adpcm.h"
+
+1173402491 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\wave.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+
+1177854379 c:\documents and settings\usoquotidiano\desktop\scummvm\engines\scumm\detection.h
+	"common/util.h"
+
+1178031885 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\iff.cpp
+	"graphics/iff.h"
+	"graphics/surface.h"
+
+1178031629 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\iff.h
+	"common/iff_container.h"
+
+1178027446 source:c:\documents and settings\usoquotidiano\desktop\scummvm\sound\iff.cpp
+	"sound/iff.h"
+	"sound/audiostream.h"
+	"sound/mixer.h"
+
+1178032147 c:\documents and settings\usoquotidiano\desktop\scummvm\sound\iff.h
+	"common/iff_container.h"
+
+1178026710 source:c:\documents and settings\usoquotidiano\desktop\scummvm\common\iff_container.cpp
+
+1178030342 c:\documents and settings\usoquotidiano\desktop\scummvm\common\iff_container.h
+	"common/stdafx.h"
+	"common/scummsys.h"
+	"common/endian.h"
+	"common/stream.h"
+	"common/util.h"
 

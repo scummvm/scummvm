@@ -435,7 +435,7 @@ void AGOSEngine::dumpBitmap(const char *filename, const byte *offs, int w, int h
 	VC10_state state;
 
 	state.depack_cont = -0x80;
-	state.depack_src = offs;
+	state.srcPtr = offs;
 	state.dh = h;
 	state.y_skip = 0;
 

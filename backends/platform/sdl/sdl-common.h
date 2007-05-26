@@ -117,7 +117,7 @@ public:
 	void disableCursorPalette(bool disable) {
 		_cursorPaletteDisabled = disable;
 		blitCursor();
-	};
+	}
 
 	// Shaking is used in SCUMM. Set current shake position.
 	void setShakePos(int shake_pos);

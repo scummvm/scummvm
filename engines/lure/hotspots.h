@@ -65,17 +65,22 @@ private:
 	static void playerAnimHandler(Hotspot &h);
 	static void followerAnimHandler(Hotspot &h);
 	static void skorlAnimHandler(Hotspot &h);
+	static void sonicRatAnimHandler(Hotspot &h);
 	static void droppingTorchAnimHandler(Hotspot &h);
 	static void playerSewerExitAnimHandler(Hotspot &h);
 	static void fireAnimHandler(Hotspot &h);
+	static void sparkleAnimHandler(Hotspot &h);
+	static void teaAnimHandler(Hotspot &h);
 	static void goewinCaptiveAnimHandler(Hotspot &h);
 	static void prisonerAnimHandler(Hotspot &h);
 	static void catrionaAnimHandler(Hotspot &h);
 	static void morkusAnimHandler(Hotspot &h);
 	static void talkAnimHandler(Hotspot &h);
-	static void headAnimHandler(Hotspot &h);
+	static void grubAnimHandler(Hotspot &h);
 	static void barmanAnimHandler(Hotspot &h);
 	static void skorlGaurdAnimHandler(Hotspot &h);
+	static void gargoyleAnimHandler(Hotspot &h);
+	static void skullAnimHandler(Hotspot &h);
 	static void rackSerfAnimHandler(Hotspot &h);
 
 public:
@@ -161,17 +166,18 @@ private:
 	Direction _direction;
 	int _numSteps;
 public:
-	WalkingActionEntry(Direction dir, int steps): _direction(dir), _numSteps(steps) {};
+	WalkingActionEntry(Direction dir, int steps): _direction(dir), _numSteps(steps) {}
 	Direction direction() { return _direction; }
 	int &rawSteps() { return _numSteps; }
 	int numSteps();
 };
 
-enum PathFinderResult {PF_OK, PF_DEST_OCCUPIED, PF_NO_PATH, PF_NO_WALK};
+enum PathFinderResult {PF_UNFINISHED, PF_OK, PF_DEST_OCCUPIED, PF_PART_PATH, PF_NO_WALK};
 
 class PathFinder {
 private:
 	Hotspot *_hotspot;
+	bool _inUse;
 	ManagedList<WalkingActionEntry *> _list;
 	RoomPathsDecompressedData _layer;
 	int _stepCtr;
@@ -184,7 +190,6 @@ private:
 	int16 _xDestCurrent, _yDestCurrent;
 	bool _destOccupied;
 	bool _cellPopulated;
-	PathFinderResult _result;
 	uint16 *_pSrc, *_pDest;
 	int _xChangeInc, _xChangeStart;
 	int _yChangeInc, _yChangeStart;
@@ -204,7 +209,7 @@ public:
 	PathFinder(Hotspot *h);
 	void clear();
 	void reset(RoomPathsData &src);
-	bool process();
+	PathFinderResult process();
 	void list(char *buffer);
 	void list() { list(NULL); }
 
@@ -212,7 +217,6 @@ public:
 	WalkingActionEntry &top() { return **_list.begin(); }
 	bool isEmpty() { return _list.empty(); }
 	int &stepCtr() { return _stepCtr; }
-	PathFinderResult result() { return _result; }
 
 	void saveToStream(Common::WriteStream *stream);
 	void loadFromStream(Common::ReadStream *stream);
@@ -244,9 +248,8 @@ private:
 	uint16 _frameNumber;
 	Direction _direction;
 	uint8 _layer;
-	uint16 _sequenceOffset;
+	uint16 _hotspotScriptOffset;
 	uint16 _tickCtr;
-	uint32 _actions;
 	uint8 _colourOffset;
 	bool _persistant;
 	HotspotOverrideData *_override;
@@ -312,7 +315,7 @@ private:
 	void npcSetSupportOffset(HotspotData *hotspot); 
 	void npcSupportOffsetConditional(HotspotData *hotspot);
 	void npcDispatchAction(HotspotData *hotspot); 
-	void npcUnknown3(HotspotData *hotspot); 
+	void npcTalkNpcToNpc(HotspotData *hotspot); 
 	void npcPause(HotspotData *hotspot); 
 	void npcStartTalking(HotspotData *hotspot);
 	void npcJumpAddress(HotspotData *hotspot);
@@ -355,7 +358,11 @@ public:
 	uint16 yCorrection() { return _yCorrection; }
 	uint16 charRectY() { return _charRectY; }
 	uint16 roomNumber() { return _roomNumber; }
-	uint16 script() { return _sequenceOffset; }
+	uint16 talkScript() { 
+		assert(_data);
+		return _data->talkScriptOffset; 
+	}
+	uint16 hotspotScript() { return _hotspotScriptOffset; }
 	uint8 layer() { return _layer; }
 	uint16 tickCtr() { return _tickCtr; }
 	bool skipFlag() { return _skipFlag; }
@@ -400,17 +407,20 @@ public:
 	void setHeight(uint16 newHeight) { 
 		_height = newHeight;
 	}
-	void setScript(uint16 offset) {
+	void setHotspotScript(uint16 offset) {
 		assert(_data != NULL);
-		_sequenceOffset = offset;
-		_data->sequenceOffset = offset; 
+		_hotspotScriptOffset = offset;
+		_data->hotspotScriptOffset = offset; 
 	}
 	void setLayer(uint8 newLayer) {
 		assert(_data != NULL);
 		_layer = newLayer;
 		_data->layer = newLayer;
 	}
-	void setActions(uint32 newActions) { _actions = newActions; }
+	void setActions(uint32 newActions) { 
+		assert(_data);
+		_data->actions = newActions;
+	}
 	void setCharRectY(uint16 value) { _charRectY = value; }
 	void setSkipFlag(bool value) { _skipFlag = value; }
 	CharacterMode characterMode() {
@@ -453,13 +463,13 @@ public:
 		assert(_data);
 		_data->useHotspotId = value;
 	}
-	uint16 v2b() {
+	uint16 talkGate() {
 		assert(_data);
-		return _data->v2b;
+		return _data->talkGate;
 	}
-	void setV2b(uint16 value) {
+	void setTalkGate(uint16 value) {
 		assert(_data);
-		_data->v2b = value;
+		_data->talkGate = value;
 	}
 	uint16 supportValue() { return _supportValue; }
 	void setSupportValue(uint16 value) { _supportValue = value; }

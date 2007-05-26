@@ -126,6 +126,9 @@ public:
 		#ifndef DISABLE_PARALLACTION
 		LINK_PLUGIN(PARALLACTION)
 		#endif
+		#ifndef DISABLE_CRUISE
+		LINK_PLUGIN(CRUISE)
+		#endif
 
 		return pl;
 	}
@@ -135,8 +138,6 @@ public:
 #endif
 
 #pragma mark -
-
-DECLARE_SINGLETON(PluginManager);
 
 PluginManager::PluginManager() {
 #ifndef DYNAMIC_MODULES

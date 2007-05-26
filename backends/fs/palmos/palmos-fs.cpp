@@ -21,11 +21,11 @@
 
 #if defined(PALMOS_MODE)
 
+#include "PalmVersion.h"
+#include "globals.h"
+
 #include "common/stdafx.h"
 #include "backends/fs/abstract-fs.h"
-
-#include <stdio.h>
-#include <stdlib.h>
 
 /**
  * Implementation of the ScummVM file system API based on PalmOS VFS API.

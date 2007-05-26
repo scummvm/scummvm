@@ -31,11 +31,15 @@ void Graphics::setupFont(Common::Language language) {
 	switch (language) {
 	case Common::FR_FRA:
 	case Common::DE_DEU:
-		_fontOffs = _locFontOffs;
-		_fontSize = _locFontSize;
-		_fontData = _locFontData;
+		_fontOffs = _freGerFontOffs;
+		_fontSize = _freGerFontSize;
+		_fontData = _freGerFontData;
 		break;
 	case Common::ES_ESP:
+		_fontOffs = _spaFontOffs;
+		_fontSize = _spaFontSize;
+		_fontData = _spaFontData;
+		break;
 	case Common::IT_ITA:
 	case Common::EN_ANY:
 	default:

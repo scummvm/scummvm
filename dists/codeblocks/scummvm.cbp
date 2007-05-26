@@ -14,7 +14,7 @@
 				<Option external_deps="scummvm\engines\parallaction\libparallaction.a;scummvm\engines\agi\libagi.a;scummvm\engines\agos\libagos.a;scummvm\engines\saga\libsaga.a;scummvm\engines\lure\liblure.a;scummvm\engines\kyra\libkyra.a;" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="-d 9 --debugflags=location,disk,jobs,dialogue" />
+				<Option parameters="-d 9 --debugflags=location,disk" />
 				<Option projectIncludeDirsRelation="2" />
 				<ResourceCompiler>
 					<Add directory="..\..\dists" />
@@ -38,6 +38,7 @@
 			<Add option="-DDISABLE_SWORD1" />
 			<Add option="-DDISABLE_SWORD2" />
 			<Add option="-DDISABLE_SAGA" />
+			<Add option="-DDISABLE_CRUISE" />
 			<Add directory="..\.." />
 			<Add directory="..\..\engines" />
 			<Add directory="..\..\common" />
@@ -383,11 +384,11 @@
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
-		<Unit filename="..\..\graphics\ilbm.cpp">
+		<Unit filename="..\..\graphics\iff.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
-		<Unit filename="..\..\graphics\ilbm.h">
+		<Unit filename="..\..\graphics\iff.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />

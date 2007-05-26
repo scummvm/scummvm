@@ -40,7 +40,7 @@ uint AGOSEngine::setVerbText(HitArea *ha) {
 	if (ha->flags & kBFTextBox) {
 		if (getGameType() == GType_PP)
 			id = ha->id;
-		else if (getGameType() == GType_FF && (_lastHitArea->flags & kBFHyperBox))
+		else if (getGameType() == GType_FF && (ha->flags & kBFHyperBox))
 			id = ha->data;
 		else
 			id = ha->flags / 256;
@@ -160,6 +160,7 @@ out_of_here:
 	_lastHitArea3 = 0;
 	_lastHitArea = 0;
 	_lastNameOn = NULL;
+
 	_mouseCursor = 0;
 	_noRightClick = 0;
 }
@@ -174,6 +175,7 @@ void AGOSEngine::waitForInput() {
 	_verbHitArea = 0;
 	_hitAreaSubjectItem = NULL;
 	_hitAreaObjectItem = NULL;
+	_clickOnly = 0;
 	_nameLocked = 0;
 
 	if (getGameType() == GType_WW) {
@@ -190,9 +192,9 @@ void AGOSEngine::waitForInput() {
 		_dragAccept = 1;
 
 		for (;;) {
-			if (getGameType() != GType_FF && getGameType() != GType_PP && _keyPressed == 35)
+			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) && _keyPressed == 35)
 				displayBoxStars();
-			if (processSpecialKeys() != 0) {
+			if (processSpecialKeys()) {
 				if ((getGameType() == GType_PP && getGameId() != GID_DIMP) ||
 					getGameType() == GType_WW)
 					goto out_of_here;
@@ -202,14 +204,14 @@ void AGOSEngine::waitForInput() {
 				_lastHitArea3 = NULL;
 				_dragAccept = 1;
 			} else {
-				if (_lastHitArea3 != 0 || _dragMode != 0)
+				if (_lastHitArea3 || _dragMode)
 					break;
 				hitarea_stuff_helper();
 				delay(100);
 			}
 		}
 
-		if (_lastHitArea3 == 0 && _dragMode != 0) {
+		if (!_lastHitArea3 && _dragMode) {
 			ha = _lastClickRem;
 
 			if (ha == 0 || ha->item_ptr == NULL || !(ha->flags & kBFDragBox)) {
@@ -253,11 +255,8 @@ void AGOSEngine::waitForInput() {
 		}
 
 		ha = _lastHitArea;
-		if (_lastHitArea == NULL) {
-			continue;
-		}
-
-		if (ha->id == 0x7FFB) {
+		if (ha == NULL) {
+		} else if (ha->id == 0x7FFB) {
 			inventoryUp(ha->window);
 		} else if (ha->id == 0x7FFC) {
 			inventoryDown(ha->window);
@@ -297,7 +296,7 @@ void AGOSEngine::waitForInput() {
 					waitForSync(34);
 				}
 			}
-			if (ha->item_ptr && (ha->verb == 0 || _verbHitArea != 0 ||
+			if (ha->item_ptr && (!ha->verb || _verbHitArea ||
 					(_hitAreaSubjectItem != ha->item_ptr && (ha->flags & kBFBoxItem)))
 				) {
 				_hitAreaSubjectItem = ha->item_ptr;
@@ -306,7 +305,7 @@ void AGOSEngine::waitForInput() {
 				displayName(ha);
 				_nameLocked = 1;
 
-				if (_verbHitArea != 0) {
+				if (_verbHitArea) {
 					break;
 				}
 
@@ -317,8 +316,8 @@ void AGOSEngine::waitForInput() {
 				else if (getGameType() == GType_ELVIRA1)
 					lightMenuStrip(getUserFlag1(ha->item_ptr, 6));
 			} else {
-				if (ha->verb != 0) {
-					if (getGameType() == GType_WW && _mouseCursor != 0 && _mouseCursor < 4) {
+				if (ha->verb) {
+					if (getGameType() == GType_WW && _mouseCursor && _mouseCursor < 4) {
 						_hitAreaSubjectItem = ha->item_ptr;
 						break;
 					}
@@ -370,7 +369,7 @@ void AGOSEngine::hitarea_stuff_helper() {
 	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW || 
 		getGameType() == GType_SIMON1) {
 		uint subr_id = (uint16)_variableArray[254];
-		if (subr_id != 0) {
+		if (subr_id) {
 			Subroutine *sub = getSubroutineByID(subr_id);
 			if (sub != NULL) {
 				startSubroutineEx(sub);
@@ -387,6 +386,9 @@ void AGOSEngine::hitarea_stuff_helper() {
 		if (kickoffTimeEvents())
 			permitInput();
 	}
+
+	if (getGameId() == GID_DIMP)
+		delay(200);
 }
 
 void AGOSEngine::hitarea_stuff_helper_2() {
@@ -394,7 +396,7 @@ void AGOSEngine::hitarea_stuff_helper_2() {
 	Subroutine *sub;
 
 	subr_id = (uint16)_variableArray[249];
-	if (subr_id != 0) {
+	if (subr_id) {
 		sub = getSubroutineByID(subr_id);
 		if (sub != NULL) {
 			_variableArray[249] = 0;
@@ -405,7 +407,7 @@ void AGOSEngine::hitarea_stuff_helper_2() {
 	}
 
 	subr_id = (uint16)_variableArray[254];
-	if (subr_id != 0) {
+	if (subr_id) {
 		sub = getSubroutineByID(subr_id);
 		if (sub != NULL) {
 			_variableArray[254] = 0;
@@ -442,7 +444,7 @@ void AGOSEngine::permitInput() {
 	}
 
 	_curWindow = 0;
-	if (_windowArray[0] != 0) {
+	if (_windowArray[0]) {
 		_textWindow = _windowArray[0];
 		justifyStart();
 	}
@@ -452,6 +454,20 @@ void AGOSEngine::permitInput() {
 
 bool AGOSEngine::processSpecialKeys() {
 	bool verbCode = false;
+
+	if (getGameId() == GID_DIMP) {
+		static time_t lastMinute = 0;
+		time_t t;
+		time_t t1;
+		t = time(&t);
+		t1 = t / 30;
+		if (!lastMinute)
+			lastMinute = t1;
+		if (t1 - lastMinute) {
+			_variableArray[120] += (t1 - lastMinute);
+			lastMinute = t1;
+		}
+	}
 
 	switch (_keyPressed) {
 	case 17: // Up
@@ -574,10 +590,6 @@ bool AGOSEngine::processSpecialKeys() {
 	case 'g':
 		if (_debugMode)
 			_continousVgaScript ^= 1;
-		break;
-	case 'i':
-		if (_debugMode)
-			_drawImagesDebug ^= 1;
 		break;
 	case 'd':
 		if (_debugMode)

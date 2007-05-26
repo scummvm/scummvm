@@ -38,9 +38,9 @@ public:
 	ResourceFile() : _open(false), _protected(false), _filename() {}
 	virtual ~ResourceFile() {}
 
-	virtual uint8 *getFile(uint file) = 0;
-	virtual bool getFileHandle(uint file, Common::File &filehandle) = 0;
-	virtual uint32 getFileSize(uint file) = 0;
+	virtual uint8 *getFile(uint file) const = 0;
+	virtual bool getFileHandle(uint file, Common::File &filehandle) const = 0;
+	virtual uint32 getFileSize(uint file) const = 0;
 
 	uint filename() const { return _filename; }
 
@@ -62,21 +62,25 @@ class PAKFile : public ResourceFile {
 		uint _name;
 		uint32 _start;
 		uint32 _size;
+		
+		operator uint() const { return _name; }
 	};
 
 public:
 	PAKFile(const char *file, const char *physfile, Common::File &pakfile, bool isAmiga = false);
 	~PAKFile();
 
-	uint8 *getFile(uint file);
-	bool getFileHandle(uint file, Common::File &filehandle);
-	uint32 getFileSize(uint file);
+	uint8 *getFile(uint file) const;
+	bool getFileHandle(uint file, Common::File &filehandle) const;
+	uint32 getFileSize(uint file) const;
 private:
-	bool openFile(Common::File &filehandle);
+	bool openFile(Common::File &filehandle) const;
 
 	Common::String _physfile;
 	uint32 _physOffset;
 
+	typedef Common::List<PakChunk>::iterator PakIterator;
+	typedef Common::List<PakChunk>::const_iterator ConstPakIterator;
 	Common::List<PakChunk> _files; // the entries
 };
 
@@ -86,15 +90,19 @@ class INSFile : public ResourceFile {
 		uint _name;
 		uint32 _start;
 		uint32 _size;
+		
+		operator uint() const { return _name; }
 	};
 public:
 	INSFile(const char *file);
 	~INSFile();
 
-	uint8 *getFile(uint file);
-	bool getFileHandle(uint file, Common::File &filehandle);
-	uint32 getFileSize(uint file);
+	uint8 *getFile(uint file) const;
+	bool getFileHandle(uint file, Common::File &filehandle) const;
+	uint32 getFileSize(uint file) const;
 protected:
+	typedef Common::List<FileEntry>::iterator FileIterator;
+	typedef Common::List<FileEntry>::const_iterator ConstFileIterator;
 	Common::List<FileEntry> _files; // the entries
 
 	Common::String _physfile;
@@ -105,12 +113,12 @@ public:
 	Resource(KyraEngine *vm);
 	~Resource();
 	
-	bool loadPakFile(const Common::String &filename, const bool forcePC = false);
+	bool loadPakFile(const Common::String &filename);
 	void unloadPakFile(const Common::String &filename);
-	bool isInPakList(const Common::String &filename);
+	bool isInPakList(const Common::String &filename) const;
 
-	uint32 getFileSize(const char *file);
-	uint8* fileData(const char *file, uint32 *size);
+	uint32 getFileSize(const char *file) const;
+	uint8* fileData(const char *file, uint32 *size) const;
 	// it gives back a file handle (used for the speech player)
 	// it could be that the needed file is embedded in the returned
 	// handle
@@ -119,6 +127,9 @@ public:
 	bool loadFileToBuf(const char *file, void *buf, uint32 maxSize); 
 
 protected:
+	typedef Common::List<ResourceFile*>::iterator ResIterator;
+	typedef Common::List<ResourceFile*>::const_iterator ConstResIterator;
+
 	KyraEngine *_vm;
 	Common::List<ResourceFile*> _pakfiles;
 };
@@ -303,3 +314,4 @@ private:
 } // end of namespace Kyra
 
 #endif
+

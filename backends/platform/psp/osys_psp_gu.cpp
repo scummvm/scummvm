@@ -115,6 +115,8 @@ OSystem_PSP_GU::OSystem_PSP_GU() {
 	_graphicMode = STRETCHED_480X272;
 	_keySelected = 1;
 	_keyboardMode = 0;
+	_mouseX = PSP_SCREEN_WIDTH >> 1;
+	_mouseY = PSP_SCREEN_HEIGHT >> 1;
 }
 
 OSystem_PSP_GU::~OSystem_PSP_GU() {
@@ -267,8 +269,6 @@ void OSystem_PSP_GU::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 }
 
 void OSystem_PSP_GU::updateScreen() {
-	float scale;
-
 	sceGuStart(0,list);
 	
 	sceGuClearColor(0xff000000);
@@ -381,9 +381,14 @@ void OSystem_PSP_GU::updateScreen() {
 			break;
 			case CENTERED_435X272:
 			{
-				scale = 435.0f / _screenWidth;
-				vertices[0].x = (PSP_SCREEN_WIDTH - 435) / 2 + mX * scale; vertices[0].y = mY * scale; vertices[0].z = 0;
-				vertices[1].x = vertices[0].x + _mouseWidth * scale; vertices[1].y = vertices[0].y + _mouseHeight * scale; vertices[0].z = 0;
+				float scalex, scaley;
+
+				scalex = 435.0f / _screenWidth;
+				scaley = 272.0f / _screenHeight;
+
+				vertices[0].x = (PSP_SCREEN_WIDTH - 435) / 2 + mX * scalex; vertices[0].y = mY * scaley; vertices[0].z = 0;
+				vertices[1].x = vertices[0].x + _mouseWidth * scalex; vertices[1].y = vertices[0].y + _mouseHeight * scaley; vertices[0].z = 0;
+
 			}
 			break;
 			case CENTERED_362X272:

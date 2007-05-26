@@ -83,8 +83,7 @@ int AgiEngine::decodeLogic(int n) {
 		_game.dirLogic[n].flags |= RES_LOADED;
 	} else {
 		/* unload data
-		 * blah DF YA WANKER!!@!@# frag. i'm so dumb. not every logic
-		 * has text
+		 * Note that not every logic has text
 		 */
 		free(_game.logics[n].data);
 		ec = errNotEnoughMemory;

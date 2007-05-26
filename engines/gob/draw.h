@@ -139,6 +139,9 @@ public:
 		_spritesArray[index] = 0;
 	}
 	void adjustCoords(char adjust, int16 *coord1, int16 *coord2);
+	void adjustCoords(char adjust, uint16 *coord1, uint16 *coord2) {
+		adjustCoords(adjust, (int16 *) coord1, (int16 *) coord2);
+	}
 	void drawString(char *str, int16 x, int16 y, int16 color1, int16 color2,
 			int16 transp, SurfaceDesc *dest, Video::FontDesc *font);
 	void printTextCentered(int16 id, int16 left, int16 top, int16 right,
@@ -154,7 +157,7 @@ public:
 	virtual void spriteOperation(int16 operation) = 0;
 
 	Draw(GobEngine *vm);
-	virtual ~Draw() {};
+	virtual ~Draw() {}
 
 protected:
 	GobEngine *_vm;
@@ -170,7 +173,7 @@ public:
 	virtual void spriteOperation(int16 operation);
 
 	Draw_v1(GobEngine *vm);
-	virtual ~Draw_v1() {};
+	virtual ~Draw_v1() {}
 };
 
 class Draw_v2 : public Draw_v1 {
@@ -183,7 +186,7 @@ public:
 	virtual void spriteOperation(int16 operation);
 
 	Draw_v2(GobEngine *vm);
-	virtual ~Draw_v2() {};
+	virtual ~Draw_v2() {}
 };
 
 class Draw_Bargon: public Draw_v2 {
@@ -191,7 +194,7 @@ public:
 	virtual void initScreen();
 
 	Draw_Bargon(GobEngine *vm);
-	virtual ~Draw_Bargon() {};
+	virtual ~Draw_Bargon() {}
 };
 
 // Draw operations

@@ -437,7 +437,7 @@ void ScummEngine::CHARSET_1() {
 	if (getTalkingActor() != 0xFF)
 		a = derefActorSafe(getTalkingActor(), "CHARSET_1");
 
-	if (a && _string[0].overhead != 0) {
+	if (a && _string[0].overhead) {
 		int s;
 
 		_string[0].xpos = a->getPos().x - virtscr[0].xstart;
@@ -490,8 +490,7 @@ void ScummEngine::CHARSET_1() {
 		return;
 
 	if ((_game.version <= 6 && _haveMsg == 1) ||
-	    (_game.version == 7 && _haveMsg != 1) ||
-	    (_game.version == 8 && VAR(VAR_HAVE_MSG))) {
+	    (_game.version == 7 && _haveMsg != 1)) {
 
 		if (_game.heversion >= 60) {
 			if (_sound->isSoundRunning(1) == 0)
@@ -643,6 +642,164 @@ void ScummEngine::CHARSET_1() {
 	}
 #endif
 }
+
+#ifndef DISABLE_SCUMM_7_8
+void ScummEngine_v8::CHARSET_1() {
+	byte subtitleBuffer[2048];
+	byte *subtitleLine = subtitleBuffer;
+	Common::Point subtitlePos;
+
+	processSubtitleQueue();
+
+	if (!_haveMsg)
+		return;
+
+	Actor *a = NULL;
+	if (getTalkingActor() != 0xFF)
+		a = derefActorSafe(getTalkingActor(), "CHARSET_1");
+
+	StringTab saveStr = _string[0];
+	if (a && _string[0].overhead) {
+		int s;
+
+		_string[0].xpos = a->getPos().x - virtscr[0].xstart;
+		s = a->_scalex * a->_talkPosX / 255;
+		_string[0].xpos += (a->_talkPosX - s) / 2 + s;
+
+		_string[0].ypos = a->getPos().y - a->getElevation() - _screenTop;
+		s = a->_scaley * a->_talkPosY / 255;
+		_string[0].ypos += (a->_talkPosY - s) / 2 + s;
+	}
+
+	_charset->setColor(_charsetColor);
+
+	if (a && a->_charset)
+		_charset->setCurID(a->_charset);
+	else
+		_charset->setCurID(_string[0].charset);
+
+	if (_talkDelay)
+		return;
+
+	if (VAR(VAR_HAVE_MSG)) {
+		if ((_sound->_sfxMode & 2) == 0) {
+			stopTalk();
+		}
+		return;
+	}
+
+	if (a && !_string[0].no_talk_anim) {
+		a->runActorTalkScript(a->_talkStartFrame);
+	}
+
+	if (!_keepText) {
+		clearSubtitleQueue();
+		_nextLeft = _string[0].xpos;
+		_nextTop = _string[0].ypos + _screenTop;
+	}
+
+	_charset->_disableOffsX = _charset->_firstChar = !_keepText;
+
+	_talkDelay = VAR(VAR_DEFAULT_TALK_DELAY);
+	for (int i = _charsetBufPos; _charsetBuffer[i]; ++i) {
+		_talkDelay += VAR(VAR_CHARINC);
+	}
+
+	if (_string[0].wrapping) {
+		_charset->addLinebreaks(0, _charsetBuffer, _charsetBufPos, _screenWidth - 20);
+
+		struct { int pos, w; } substring[10];
+		int count = 0;
+		int maxLineWidth = 0;
+		int lastPos = 0;
+		int code = 0;
+		while (handleNextCharsetCode(a, &code)) {
+			if (code == 13 || code == 0) {
+				*subtitleLine++ = '\0';
+				assert(count < 10);
+				substring[count].w = _charset->getStringWidth(0, subtitleBuffer + lastPos);
+				if (maxLineWidth < substring[count].w) {
+					maxLineWidth = substring[count].w;
+				}
+				substring[count].pos = lastPos;
+				++count;
+				lastPos = subtitleLine - subtitleBuffer;
+			} else {
+				*subtitleLine++ = code;
+				*subtitleLine = '\0';
+			}
+			if (code == 0) {
+				break;
+			}
+		}
+
+		int h = count * _charset->getFontHeight();
+		h += _charset->getFontHeight() / 2;
+		subtitlePos.y = _string[0].ypos;
+		if (subtitlePos.y + h > _screenHeight - 10) {
+			subtitlePos.y = _screenHeight - 10 - h;
+		}
+		if (subtitlePos.y < 10) {
+			subtitlePos.y = 10;
+		}
+
+		for (int i = 0; i < count; ++i) {
+			subtitlePos.x = _string[0].xpos;
+			if (_string[0].center) {
+				if (subtitlePos.x + maxLineWidth / 2 > _screenWidth - 10) {
+					subtitlePos.x = _screenWidth - 10 - maxLineWidth / 2;
+				}
+				if (subtitlePos.x - maxLineWidth / 2 < 10) {
+					subtitlePos.x = 10 + maxLineWidth / 2;
+				}
+				subtitlePos.x -= substring[i].w / 2;
+			} else {
+				if (subtitlePos.x + maxLineWidth > _screenWidth - 10) {
+					subtitlePos.x = _screenWidth - 10 - maxLineWidth;
+				}
+				if (subtitlePos.x - maxLineWidth < 10) {
+					subtitlePos.x = 10;
+				}
+			}
+			if (subtitlePos.y < _screenHeight - 10) {
+				addSubtitleToQueue(subtitleBuffer + substring[i].pos, subtitlePos, _charsetColor, _charset->getCurID());
+			}
+			subtitlePos.y += _charset->getFontHeight();
+		}
+	} else {
+		int code = 0;
+		subtitlePos.y = _string[0].ypos;
+		if (subtitlePos.y < 10) {
+			subtitlePos.y = 10;
+		}
+		while (handleNextCharsetCode(a, &code)) {
+			if (code == 13 || code == 0) {
+				subtitlePos.x = _string[0].xpos;
+				if (_string[0].center) {
+					subtitlePos.x -= _charset->getStringWidth(0, subtitleBuffer) / 2;
+				}
+				if (subtitlePos.x < 10) {
+					subtitlePos.x = 10;
+				}
+				if (subtitlePos.y < _screenHeight - 10) {
+					addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
+					subtitlePos.y += _charset->getFontHeight();
+				}
+				subtitleLine = subtitleBuffer;
+			} else {
+				*subtitleLine++ = code;
+			}
+			*subtitleLine = '\0';
+			if (code == 0) {
+				break;
+			}
+		}
+	}
+	_haveMsg = 2;
+	_keepText = false;
+	_string[0] = saveStr;
+}
+#endif
 
 void ScummEngine::drawString(int a, const byte *msg) {
 	byte buf[270];
@@ -1072,6 +1229,14 @@ static int indexCompare(const void *p1, const void *p2) {
 void ScummEngine_v7::loadLanguageBundle() {
 	ScummFile file;
 	int32 size;
+
+	// if game is manually set to English, don't try to load localized text
+	if ((_language == Common::EN_ANY) || (_language == Common::EN_USA) || (_language == Common::EN_GRB)) {
+		warning("Language file is forced to be ignored");
+
+		_existLanguageFile = false;
+		return;
+	}
 
 	if (_game.id == GID_DIG) {
 		openFile(file, "language.bnd");

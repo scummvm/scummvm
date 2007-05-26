@@ -975,7 +975,7 @@ void Inter_v2::o2_loadMultObject() {
 			_vm->_global->_inter_execPtr++;
 	}
 
-	if (_vm->_goblin->_gobsCount < 0)
+	if (_vm->_goblin->_gobsCount <= objIndex)
 		return;
 
 	Mult::Mult_Object &obj = _vm->_mult->_objects[objIndex];
@@ -1376,7 +1376,9 @@ void Inter_v2::o2_initScreen() {
 	if (height > 0)
 		_vm->_video->_surfHeight = height;
 	
-	_vm->_video->_splitHeight = _vm->_video->_surfHeight - offY;
+	_vm->_video->_splitHeight1 = MIN(200, _vm->_video->_surfHeight - offY);
+	_vm->_video->_splitHeight2 = offY;
+	_vm->_video->_splitStart = _vm->_video->_surfHeight - offY;
 
 	_vm->_draw->closeScreen();
 	_vm->_util->clearPalette();
@@ -1827,6 +1829,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	size = _vm->_parse->parseValExpr();
 	evalExpr(0);
 	offset = _vm->_global->_inter_resVal;
+	retSize = 0;
 
 	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
 			_vm->_global->_inter_resStr, dataVar, size, offset);
@@ -2003,12 +2006,12 @@ void Inter_v2::o2_stopInfogrames(OpGobParams &params) {
 }
 
 void Inter_v2::o2_handleGoblins(OpGobParams &params) {
-	_vm->_goblin->_gob1NoTurn = (bool) VAR(load16());
-	_vm->_goblin->_gob2NoTurn = (bool) VAR(load16());
+	_vm->_goblin->_gob1NoTurn = VAR(load16()) != 0;
+	_vm->_goblin->_gob2NoTurn = VAR(load16()) != 0;
 	_vm->_goblin->_gob1RelaxTimeVar = load16();
 	_vm->_goblin->_gob2RelaxTimeVar = load16();
-	_vm->_goblin->_gob1Busy = (bool) VAR(load16());
-	_vm->_goblin->_gob2Busy = (bool) VAR(load16());
+	_vm->_goblin->_gob1Busy = VAR(load16()) != 0;
+	_vm->_goblin->_gob2Busy = VAR(load16()) != 0;
 	_vm->_goblin->handleGoblins();
 }
 
@@ -2023,6 +2026,7 @@ int16 Inter_v2::loadSound(int16 search) {
 
 	type = SOUND_SND;
 	slotIdMask = 0;
+	dataSize = 0;
 
 	if (!search) {
 		slot = _vm->_parse->parseValExpr();

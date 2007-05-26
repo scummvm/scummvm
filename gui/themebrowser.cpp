@@ -24,7 +24,6 @@
 #include "gui/ListWidget.h"
 #include "gui/widget.h"
 #include "gui/theme.h"
-#include "common/fs.h"
 
 #ifdef MACOSX
 #include "CoreFoundation/CoreFoundation.h"

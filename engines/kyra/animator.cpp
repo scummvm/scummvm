@@ -39,10 +39,17 @@ ScreenAnimator::ScreenAnimator(KyraEngine *vm, OSystem *system) {
 	_system = system;
 	_screenObjects = _actors = _items = _sprites = _objectQueue = 0;
 	_noDrawShapesFlag = 0;
+
+	_actorBkgBackUp[0] = new uint8[_screen->getRectSize(8, 69)];
+	memset(_actorBkgBackUp[0], 0, _screen->getRectSize(8, 69));
+	_actorBkgBackUp[1] = new uint8[_screen->getRectSize(8, 69)];
+	memset(_actorBkgBackUp[1], 0, _screen->getRectSize(8, 69));
 }
 
 ScreenAnimator::~ScreenAnimator() {
 	close();
+	delete [] _actorBkgBackUp[0];
+	delete [] _actorBkgBackUp[1];
 }
 
 void ScreenAnimator::init(int actors_, int items_, int sprites_) {
@@ -72,7 +79,7 @@ void ScreenAnimator::initAnimStateList() {
 	animStates[0].index = 0;
 	animStates[0].active = 1;
 	animStates[0].flags = 0x800;
-	animStates[0].background = _vm->_shapes[2];
+	animStates[0].background = _actorBkgBackUp[0];
 	animStates[0].rectSize = _screen->getRectSize(4, 48);
 	animStates[0].width = 4;
 	animStates[0].height = 48;
@@ -83,7 +90,7 @@ void ScreenAnimator::initAnimStateList() {
 		animStates[i].index = i;
 		animStates[i].active = 0;
 		animStates[i].flags = 0x800;
-		animStates[i].background = _vm->_shapes[3];
+		animStates[i].background = _actorBkgBackUp[1];
 		animStates[i].rectSize = _screen->getRectSize(4, 64);
 		animStates[i].width = 4;
 		animStates[i].height = 48;
@@ -100,7 +107,7 @@ void ScreenAnimator::initAnimStateList() {
 	for (int i = 16; i < 28; ++i) {
 		animStates[i].index = i;
 		animStates[i].flags = 0;
-		animStates[i].background = _vm->_shapes[349+i];
+		animStates[i].background = _vm->_shapes[345+i];
 		animStates[i].rectSize = _screen->getRectSize(3, 24);
 		animStates[i].width = 3;
 		animStates[i].height = 16;
@@ -196,19 +203,16 @@ void ScreenAnimator::preserveOrRestoreBackground(AnimObject *obj, bool restore) 
 	int temp;
 	
 	temp = x + width;
-	if (temp >= 39) {
+	if (temp >= 39)
 		x = 39 - width;
-	}
 	temp = y + height;
-	if (temp >= 136) {
+	if (temp >= 136)
 		y = 136 - height;
-	}
 
-	if (restore) {
+	if (restore)
 		_screen->copyBlockToPage(_screen->_curPage, x << 3, y, width << 3, height, obj->background);
-	} else {
+	else
 		_screen->copyRegionToBuffer(_screen->_curPage, x << 3, y, width << 3, height, obj->background);
-	}
 }
 
 void ScreenAnimator::prepDrawAllObjects() {
@@ -229,13 +233,12 @@ void ScreenAnimator::prepDrawAllObjects() {
 			int ypos = curObject->y1;
 			
 			int drawLayer = 0;
-			if (!(curObject->flags & 0x800)) {
+			if (!(curObject->flags & 0x800))
 				drawLayer = 7;
-			} else if (curObject->disable) {
+			else if (curObject->disable)
 				drawLayer = 0;
-			} else {
+			else
 				drawLayer = _vm->_sprites->getDrawLayer(curObject->drawY);
-			}
 			
 			// talking head functionallity
 			if (_vm->_talkingCharNum != -1 && (_vm->_currentCharacter->currentAnimFrame != 88 || curObject->index != 0)) {
@@ -253,18 +256,16 @@ void ScreenAnimator::prepDrawAllObjects() {
 						shapesIndex = baseAnimFrameTable2[curObject->index];
 						int temp2 = 0;
 						if (curObject->index == 2) {
-							if (_vm->_characterList[2].sceneId == 77 || _vm->_characterList[2].sceneId == 86) {
+							if (_vm->_characterList[2].sceneId == 77 || _vm->_characterList[2].sceneId == 86)
 								temp2 = 1;
-							} else {
+							else
 								temp2 = 0;
-							}
 						} else {
 							temp2 = 1;
 						}
 						
-						if (!temp2) {
+						if (!temp2)
 							shapesIndex = -1;
-						}
 					}
 						
 					xpos = curObject->x1;
@@ -282,16 +283,14 @@ void ScreenAnimator::prepDrawAllObjects() {
 					xpos += tempX;
 					ypos += tempY;
 					
-					if (_vm->_scaleMode && _brandonScaleX != 256) {
+					if (_vm->_scaleMode && _brandonScaleX != 256)
 						++xpos;
-					}
 					
 					if (curObject->index == 0 && shapesIndex != -1) {
 						if (!(_vm->_brandonStatusBit & 2)) {
 							flagUnk3 = 0x100;
-							if ((flagUnk1 & 0x200) || (flagUnk2 & 0x4000)) {
+							if ((flagUnk1 & 0x200) || (flagUnk2 & 0x4000))
 								flagUnk3 = 0;
-							}
 							
 							int tempFlags = 0;
 							if (flagUnk3 & 0x100) {
@@ -302,23 +301,22 @@ void ScreenAnimator::prepDrawAllObjects() {
 							if (!(flagUnk3 & 0x100) && (flagUnk2 & 0x4000)) {
 								tempFlags = curObject->flags & 1;
 								tempFlags |= 0x900 | flagUnk1 | 0x4000;
-								_screen->drawShape(drawPage, _vm->_shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _vm->_brandonPoisonFlagsGFX, int(1), int(_vm->_brandonInvFlag), drawLayer, _brandonScaleX, _brandonScaleY);
+								_screen->drawShape(drawPage, _vm->_shapes[shapesIndex], xpos, ypos, 2, tempFlags | 4, _vm->_brandonPoisonFlagsGFX, int(1), int(_vm->_brandonInvFlag), drawLayer, _brandonScaleX, _brandonScaleY);
 							} else {
 								if (!(flagUnk2 & 0x4000)) {
 									tempFlags = curObject->flags & 1;
 									tempFlags |= 0x900 | flagUnk1;
 								}
 								
-								_screen->drawShape(drawPage, _vm->_shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _vm->_brandonPoisonFlagsGFX, int(1), drawLayer, _brandonScaleX, _brandonScaleY);
+								_screen->drawShape(drawPage, _vm->_shapes[shapesIndex], xpos, ypos, 2, tempFlags | 4, _vm->_brandonPoisonFlagsGFX, int(1), drawLayer, _brandonScaleX, _brandonScaleY);
 							}
 						}
 					} else {
 						if (shapesIndex != -1) {
 							int tempFlags = 0;
-							if (curObject->flags & 1) {
+							if (curObject->flags & 1)
 								tempFlags = 1;
-							}
-							_screen->drawShape(drawPage, _vm->_shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 0x800, drawLayer); 							
+							_screen->drawShape(drawPage, _vm->_shapes[shapesIndex], xpos, ypos, 2, tempFlags | 0x800, drawLayer); 							
 						}
 					}
 				}
@@ -331,37 +329,32 @@ void ScreenAnimator::prepDrawAllObjects() {
 			if (curObject->index == 0) {
 				flagUnk3 = 0x100;
 				
-				if (flagUnk1 & 0x200 || flagUnk2 & 0x4000) {
+				if (flagUnk1 & 0x200 || flagUnk2 & 0x4000)
 					flagUnk3 = 0;
-				}
 				
-				if (_vm->_brandonStatusBit & 2) {
+				if (_vm->_brandonStatusBit & 2)
 					curObject->flags &= 0xFFFFFFFE;
-				}
 				
 				if (!_vm->_scaleMode) {
-					if (flagUnk3 & 0x100) {
+					if (flagUnk3 & 0x100)
 						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x100, (uint8*)_vm->_brandonPoisonFlagsGFX, int(1), drawLayer);
-					} else if (flagUnk2 & 0x4000) {
+					else if (flagUnk2 & 0x4000)
 						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4000, int(_vm->_brandonInvFlag), drawLayer);
-					} else {
+					else
 						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1, drawLayer);
-					}
 				} else {
-					if (flagUnk3 & 0x100) {
+					if (flagUnk3 & 0x100)
 						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x104, (uint8*)_vm->_brandonPoisonFlagsGFX, int(1), drawLayer, _brandonScaleX, _brandonScaleY);
-					} else if (flagUnk2 & 0x4000) {
+					else if (flagUnk2 & 0x4000)
 						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4004, int(_vm->_brandonInvFlag), drawLayer, _brandonScaleX, _brandonScaleY);
-					} else {
+					else
 						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4, drawLayer, _brandonScaleX, _brandonScaleY);
-					}
 				}
 			} else {
-				if (curObject->index >= 16 && curObject->index <= 27) {
+				if (curObject->index >= 16 && curObject->index <= 27)
 					_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | 4, drawLayer, (int)_vm->_scaleTable[curObject->drawY], (int)_vm->_scaleTable[curObject->drawY]);
-				} else {
+				else
 					_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags, drawLayer);
-				}
 			}
 		}
 		curObject = curObject->nextAnimObject;
@@ -380,25 +373,21 @@ void ScreenAnimator::copyChangedObjectsForward(int refreshFlag) {
 				width = curObject->width + (curObject->width2>>3) + 2;
 				height = curObject->height + curObject->height2*2;
 				
-				if (xpos < 1) {
+				if (xpos < 1)
 					xpos = 1;
-				} else if (xpos > 39) {
+				else if (xpos > 39)
 					continue;
-				}
 
-				if (xpos + width > 39) {
+				if (xpos + width > 39)
 					width = 39 - xpos;
-				}
 				
-				if (ypos < 8) {
+				if (ypos < 8)
 					ypos = 8;
-				} else if (ypos > 136) {
+				else if (ypos > 136)
 					continue;
-				}
 
-				if (ypos + height > 136) {
+				if (ypos + height > 136)
 					height = 136 - ypos;
-				}
 				
 				_screen->copyRegion(xpos << 3, ypos, xpos << 3, ypos, width << 3, height, 2, 0, Screen::CR_CLIPPED);
 				curObject->refreshFlag = 0;
@@ -446,7 +435,7 @@ void ScreenAnimator::animAddGameItem(int index, uint16 sceneId) {
 	animObj->refreshFlag = 1;
 	animObj->bkgdChangeFlag = 1;
 	animObj->drawY = currentRoom->itemsYPos[index];
-	animObj->sceneAnimPtr = _vm->_shapes[220+currentRoom->itemsTable[index]];
+	animObj->sceneAnimPtr = _vm->_shapes[216+currentRoom->itemsTable[index]];
 	animObj->animFrameNumber = -1;
 	animObj->x1 = currentRoom->itemsXPos[index];
 	animObj->y1 = currentRoom->itemsYPos[index];
@@ -472,14 +461,15 @@ void ScreenAnimator::animAddNPC(int character) {
 	animObj->refreshFlag = 1;
 	animObj->bkgdChangeFlag = 1;
 	animObj->drawY = ch->y1;
-	animObj->sceneAnimPtr = _vm->_shapes[4+ch->currentAnimFrame];
+	animObj->sceneAnimPtr = _vm->_shapes[ch->currentAnimFrame];
 	animObj->x1 = animObj->x2 = ch->x1 + _vm->_defaultShapeTable[ch->currentAnimFrame-7].xOffset;
 	animObj->y1 = animObj->y2 = ch->y1 + _vm->_defaultShapeTable[ch->currentAnimFrame-7].yOffset;
-	if (ch->facing >= 1 && ch->facing <= 3) {
+
+	if (ch->facing >= 1 && ch->facing <= 3)
 		animObj->flags |= 1;
-	} else if (ch->facing >= 5 && ch->facing <= 7) {
+	else if (ch->facing >= 5 && ch->facing <= 7)
 		animObj->flags &= 0xFFFFFFFE;
-	}	
+
 	_objectQueue = objectQueue(_objectQueue, animObj);
 	preserveAnyChangedBackgrounds();
 	animObj->refreshFlag = 1;
@@ -507,16 +497,14 @@ AnimObject *ScreenAnimator::objectRemoveQueue(AnimObject *queue, AnimObject *rem
 	
 	if (!cur->nextAnimObject) {
 		if (cur == rem) {
-			if (!prev) {
+			if (!prev)
 				return 0;
-			} else {
+			else
 				prev->nextAnimObject = 0;
-			}
 		}
 	} else {
-		if (cur == rem) {
+		if (cur == rem)
 			prev->nextAnimObject = rem->nextAnimObject;
-		}
 	}
 	
 	return queue;
@@ -556,31 +544,28 @@ AnimObject *ScreenAnimator::objectQueue(AnimObject *queue, AnimObject *add) {
 
 void ScreenAnimator::addObjectToQueue(AnimObject *object) {
 	debugC(9, kDebugLevelAnimator, "ScreenAnimator::addObjectToQueue(%p)", (const void *)object);
-	if (!_objectQueue) {
+	if (!_objectQueue)
 		_objectQueue = objectAddHead(0, object);
-	} else {
+	else
 		_objectQueue = objectQueue(_objectQueue, object);
-	}
 }
 
 void ScreenAnimator::refreshObject(AnimObject *object) {
 	debugC(9, kDebugLevelAnimator, "ScreenAnimator::refreshObject(%p)", (const void *)object);
 	_objectQueue = objectRemoveQueue(_objectQueue, object);
-	if (_objectQueue) {
+	if (_objectQueue)
 		_objectQueue = objectQueue(_objectQueue, object);
-	} else {
+	else
 		_objectQueue = objectAddHead(0, object);
-	}
 }
 
 void ScreenAnimator::makeBrandonFaceMouse() {
 	debugC(9, kDebugLevelAnimator, "ScreenAnimator::makeBrandonFaceMouse()");
 	Common::Point mouse = _vm->getMousePos();
-	if (mouse.x >= _vm->_currentCharacter->x1) {
+	if (mouse.x >= _vm->_currentCharacter->x1)
 		_vm->_currentCharacter->facing = 3;
-	} else {
+	else
 		_vm->_currentCharacter->facing = 5;
-	}
 	animRefreshNPC(0);
 	updateAllObjectShapes();
 }
@@ -625,14 +610,13 @@ void ScreenAnimator::animRefreshNPC(int character) {
 	animObj->refreshFlag = 1;
 	animObj->bkgdChangeFlag = 1;
 	int facing = ch->facing;
-	if (facing >= 1 && facing <= 3) {
+	if (facing >= 1 && facing <= 3)
 		animObj->flags |= 1;
-	} else if (facing >= 5 && facing <= 7) {
+	else if (facing >= 5 && facing <= 7)
 		animObj->flags &= 0xFFFFFFFE;
-	}
 	
 	animObj->drawY = ch->y1;
-	animObj->sceneAnimPtr = _vm->shapes()[4+ch->currentAnimFrame];
+	animObj->sceneAnimPtr = _vm->shapes()[ch->currentAnimFrame];
 	animObj->animFrameNumber = ch->currentAnimFrame;
 	if (character == 0) {
 		if (_vm->brandonStatus() & 10) {
@@ -642,12 +626,14 @@ void ScreenAnimator::animRefreshNPC(int character) {
 		if (_vm->brandonStatus() & 2) {
 			animObj->animFrameNumber = _brandonDrawFrame;
 			ch->currentAnimFrame = _brandonDrawFrame;
-			animObj->sceneAnimPtr = _vm->shapes()[4+_brandonDrawFrame];
+			animObj->sceneAnimPtr = _vm->shapes()[_brandonDrawFrame];
 			if (_vm->_brandonStatusBit0x02Flag) {
 				++_brandonDrawFrame;
-				if (_brandonDrawFrame >= 122)
+				// TODO: check this
+				if (_brandonDrawFrame >= 122) {
 					_brandonDrawFrame = 113;
 					_vm->_brandonStatusBit0x02Flag = 0;
+				}
 			}
 		}
 	}
@@ -695,9 +681,9 @@ void ScreenAnimator::setCharactersHeight() {
 		44, 42, 47, 38, 35,
 		40
 	};
-	for (int i = 0; i < 11; ++i) {
+	for (int i = 0; i < 11; ++i)
 		_vm->characterList()[i].height = initHeightTable[i];
-	}
 }
 
 } // end of namespace Kyra
+

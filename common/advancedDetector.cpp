@@ -254,7 +254,9 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 	IntMap filesSize;
 	IntMap allFiles;
 
-	String tstr, tstr2;
+	File testFile;
+
+	String tstr;
 	
 	uint i;
 	char md5str[32+1];
@@ -273,49 +275,47 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			tstr = String(fileDesc->fileName);
 			tstr.toLowercase();
-			tstr2 = tstr + ".";
 			filesList[tstr] = true;
-			filesList[tstr2] = true;
 		}
 	}
-	
-	if (fslist != 0) {
-		for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
-			Common::File f;
 
+	if (fslist != 0) {
+		// Get the information of the existing files
+		for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
 			if (file->isDirectory()) continue;
 			tstr = file->name();
 			tstr.toLowercase();
-			tstr2 = tstr + ".";
 
-			allFiles[tstr] = allFiles[tstr2] = 1;
+			// Strip any trailing dot
+			if (tstr.lastChar() == '.')
+				tstr.deleteLastChar();
+
+			allFiles[tstr] = true;
 
 			debug(3, "+ %s", tstr.c_str());
 
-			if (!filesList.contains(tstr) && !filesList.contains(tstr2)) continue;
+			if (!filesList.contains(tstr)) continue;
 
 			if (!md5_file_string(*file, md5str, params.md5Bytes))
 				continue;
-			filesMD5[tstr] = filesMD5[tstr2] = md5str;
+			filesMD5[tstr] = md5str;
 
 			debug(3, "> %s: %s", tstr.c_str(), md5str);
 
-			if (f.open(file->path())) {
-				filesSize[tstr] = filesSize[tstr2] = (int32)f.size();
-				f.close();
+			if (testFile.open(file->path())) {
+				filesSize[tstr] = (int32)testFile.size();
+				testFile.close();
 			}
 		}
 	} else {
-		File testFile;
-
+		// Get the information of the requested files
 		for (StringSet::const_iterator file = filesList.begin(); file != filesList.end(); ++file) {
 			tstr = file->_key;
-			tstr.toLowercase();
 
 			debug(3, "+ %s", tstr.c_str());
 			if (!filesMD5.contains(tstr)) {
-				if (testFile.open(file->_key)) {
-					filesSize[tstr] = filesSize[tstr2] = (int32)testFile.size();
+				if (testFile.open(tstr) || testFile.open(tstr + ".")) {
+					filesSize[tstr] = (int32)testFile.size();
 					testFile.close();
 
 					if (md5_file_string(file->_key.c_str(), md5str, params.md5Bytes)) {
@@ -330,6 +330,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 	ADGameDescList matched;
 	int maxFilesMatched = 0;
 
+	// MD5 based matching
 	for (i = 0, descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize, ++i) {
 		g = (const ADGameDescription *)descPtr;
 		fileMissing = false;
@@ -341,18 +342,17 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 			continue;
 		}
 
-		// Try to open all files for this game
+		// Try to match all files for this game
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			tstr = fileDesc->fileName;
 			tstr.toLowercase();
-			tstr2 = tstr + ".";
 
-			if (!filesMD5.contains(tstr) && !filesMD5.contains(tstr2)) {
+			if (!filesMD5.contains(tstr)) {
 				fileMissing = true;
 				break;
 			}
 			if (fileDesc->md5 != NULL) {
-				if (strcmp(fileDesc->md5, filesMD5[tstr].c_str()) && strcmp(fileDesc->md5, filesMD5[tstr2].c_str())) {
+				if (fileDesc->md5 != filesMD5[tstr]) {
 					debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesMD5[tstr].c_str());
 					fileMissing = true;
 					break;
@@ -360,7 +360,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 			}
 
 			if (fileDesc->fileSize != -1) {
-				if (fileDesc->fileSize != filesSize[tstr] && fileDesc->fileSize != filesSize[tstr2]) {
+				if (fileDesc->fileSize != filesSize[tstr]) {
 					debug(3, "Size Mismatch. Skipping");
 					fileMissing = true;
 					break;
@@ -378,7 +378,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 			int curFilesMatched = 0;
 			for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++)
 				curFilesMatched++;
-			
+
 			if (curFilesMatched > maxFilesMatched) {
 				debug(2, " ... new best match, removing all previous candidates");
 				maxFilesMatched = curFilesMatched;
@@ -416,26 +416,23 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 		printf("\n");
 	}
 
+	// Filename based fallback
 	if (params.fileBasedFallback != 0) {
 		const ADFileBasedFallback *ptr = params.fileBasedFallback;
 		const char* const* filenames = 0;
 
 		// First we create list of files required for detection.
-		if (allFiles.empty()) {
-			File testFile;
+		// The filenames can be different than the MD5 based match ones.
+		for (; ptr->desc; ptr++) {
+			filenames = ptr->filenames;
+			for (; *filenames; filenames++) {
+				tstr = String(*filenames);
+				tstr.toLowercase();
 
-			for (; ptr->desc; ptr++) {
-				filenames = ptr->filenames;
-				for (; *filenames; filenames++) {
-					tstr = String(*filenames);
-					tstr.toLowercase();
-
-					if (!allFiles.contains(tstr)) {
-						if (testFile.open(tstr)) {
-							tstr2 = tstr + ".";
-							allFiles[tstr] = allFiles[tstr2] = 1;
-							testFile.close();
-						}
+				if (!allFiles.contains(tstr)) {
+					if (testFile.open(tstr) || testFile.open(tstr + ".")) {
+						allFiles[tstr] = true;
+						testFile.close();
 					}
 				}
 			}
@@ -461,12 +458,10 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 				}
 
 				tstr = String(*filenames);
-
 				tstr.toLowercase();
-				tstr2 = tstr + ".";
 
 				debug(3, "++ %s", *filenames);
-				if (!allFiles.contains(tstr) && !allFiles.contains(tstr2)) {
+				if (!allFiles.contains(tstr)) {
 					fileMissing = true;
 					continue;
 				}

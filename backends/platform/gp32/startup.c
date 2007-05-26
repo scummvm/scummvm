@@ -87,7 +87,7 @@ int main (int arg_len, char * arg_v)
 	GpKernelStart ();
 
    GpAppExit ();
-   while (1) {};
+   while (1) {}
    }
 
 void InitializeFont (void)

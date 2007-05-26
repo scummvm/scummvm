@@ -147,8 +147,7 @@ enum DragonMoveTypes {
 
 struct PathDirectionData {
 	int8 direction;
-	int16	x;
-	int16 y;
+	Point coord;	
 };
 
 struct ActorFrameRange {
@@ -622,15 +621,19 @@ private:
 			(testPoint.y < 0) || (testPoint.y >= _yCellCount));
 	}
 	void setPathCell(const Point &testPoint, int8 value) {
+#ifdef ACTOR_DEBUG
 		if (!validPathCellPoint(testPoint)) {
 			error("Actor::setPathCell wrong point");
 		}
+#endif
 		_pathCell[testPoint.x + testPoint.y * _xCellCount] = value;
 	}
 	int8 getPathCell(const Point &testPoint) {
+#ifdef ACTOR_DEBUG
 		if (!validPathCellPoint(testPoint)) {
 			error("Actor::getPathCell wrong point");
 		}
+#endif
 		return _pathCell[testPoint.x + testPoint.y * _xCellCount];
 	}
 	bool scanPathLine(const Point &point1, const Point &point2);
@@ -767,12 +770,6 @@ public:
 #endif
 };
 
-inline int16 quickDistance(const Point &point1, const Point &point2) {
-	Point delta;
-	delta.x = ABS(point1.x - point2.x) / 2;
-	delta.y = ABS(point1.y - point2.y);
-	return ((delta.x < delta.y) ? (delta.y + delta.x / 2) : (delta.x + delta.y / 2));
-}
 } // End of namespace Saga
 
 #endif

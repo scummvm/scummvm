@@ -62,6 +62,7 @@ int AgiLoader_v3::detectGame() {
 		f.toLowercase();
 
 		if (f.hasSuffix("vol.0")) {
+			memset(_vm->_game.name, 0, 8);
 			strncpy(_vm->_game.name, f.c_str(), f.size() > 5 ? f.size() - 5 : f.size());
 			debugC(3, kDebugLevelMain, "game.name = %s", _vm->_game.name);
 			_intVersion = 0x3149;	// setup for 3.002.149

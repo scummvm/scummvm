@@ -484,6 +484,7 @@ begin_credits("Credits");
 
 	  begin_section("AGI");
 		  add_person("Stuart George", "darkfiber", "");
+		  add_person("Filippos Karapetis", "[md5]", "");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
 		  add_person("Eugene Sandulenko", "sev", "");
 		  add_person("David Symonds", "dsymonds", "");
@@ -511,9 +512,14 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Cinematique evo 1");
+		  add_person("Vincent Hamm", "yazoo", "original CinE engine author");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
 		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Eugene Sandulenko", "sev", "");
+	  end_section();
+
+	  begin_section("Cinematique evo 2");
+		  add_person("Vincent Hamm", "yazoo", "");
 	  end_section();
 
 	  begin_section("FOTAQ");	# Flight of the Amazon Queen
@@ -540,8 +546,13 @@ begin_credits("Credits");
 		  add_person("Paul Gilbert", "dreammaster", "");
 	  end_section();
 
+	  begin_section("Parallaction");
+		  add_person("", "peres", "");
+	  end_section();
+
 	  begin_section("SAGA");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Filippos Karapetis", "[md5]", "");
 		  add_person("Andrew Kurushin", "ajax16384", "");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
@@ -576,7 +587,7 @@ begin_credits("Credits");
 
 	  begin_section("PocketPC / WinCE");
 		  add_person("Nicolas Bacca", "arisme", "");
-		  add_person("Kostas Nakos", "knakos", "");
+		  add_person("Kostas Nakos", "Jubanka", "");
 	  end_section();
 
 	  begin_section("PlayStation 2");
@@ -632,7 +643,6 @@ begin_credits("Credits");
 		add_person("Tore Anderson", "tore", "Former Debian GNU/Linux maintainer");
 		add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
 		add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
-		add_person("Vincent Hamm", "yazoo", "Co-Founder, original CinE engine author");
 		add_person("R&uuml;diger Hanke", "", "Port: MorphOS");
 		add_person("Felix Jakschitsch", "yot", "Zak256 reverse engineering");
 		add_person("Mutwin Kraus", "mutle", "Original MacOS porter");
@@ -733,6 +743,7 @@ begin_credits("Credits");
 		  add_person("Andreas Karlsson", "Sprawl", "Initial port for EPOC/SymbianOS");
 		  add_person("Claudio Matsuoka", "", "Daily Linux builds");
 		  add_person("Thomas Mayer", "", "PSP port contributions");
+		  add_person("", "n0p", "Windows CE port aspect ratio correction scaler and right click input method");
 		  add_person("Mikesch Nepomuk", "", "MI1 VGA floppy patches");
 		  add_person("Nicolas Noble", "pixels", "Config file and ALSA support");
 		  add_person("", "Quietust", "Sound support for Amiga SCUMM V2/V3 games, MM NES support");
@@ -741,6 +752,7 @@ begin_credits("Credits");
 		  add_person("Daniel Schepler", "", "Final MI1 CD music support, initial Ogg Vorbis support");
 		  add_person("Andr&eacute; Souza", "", "SDL-based OpenGL renderer");
 		  add_person("Tim Phillips", "realmz", "Initial MI1 CD music support");
+		  add_person("Robin Watts", "", "ARM assembly routines for the Windows CE port");
 	  end_persons();
 	end_section();
 

@@ -27,7 +27,7 @@
 #include "gui/options.h"
 #include "gui/widget.h"
 
-#include "scumm/plugin.h"
+#include "scumm/detection.h"
 #ifndef DISABLE_HELP
 #include "scumm/help.h"
 #endif

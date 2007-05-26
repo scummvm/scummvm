@@ -29,8 +29,8 @@
 
 namespace AGOS {
 
-void AGOSEngine::setupSimon1VideoOpcodes(VgaOpcodeProc *op) {
-	setupCommonVideoOpcodes(op);
+void AGOSEngine_Simon1::setupVideoOpcodes(VgaOpcodeProc *op) {
+	AGOSEngine::setupVideoOpcodes(op);
 
 	op[11] = &AGOSEngine::vc11_clearPathFinder;
 	op[17] = &AGOSEngine::vc17_setPathfinderItem;
@@ -103,18 +103,27 @@ void AGOSEngine::vc32_copyVar() {
 void AGOSEngine::vc37_addToSpriteY() {
 	VgaSprite *vsp = findCurSprite();
 	vsp->y += vcReadVar(vcReadNextWord());
+
+	vsp->windowNum |= 0x8000;
+	dirtyBackGround();
 	_vgaSpriteChanged++;
 }
 
 void AGOSEngine::vc45_setSpriteX() {
 	VgaSprite *vsp = findCurSprite();
 	vsp->x = vcReadVar(vcReadNextWord());
+
+	vsp->windowNum |= 0x8000;
+	dirtyBackGround();
 	_vgaSpriteChanged++;
 }
 
 void AGOSEngine::vc46_setSpriteY() {
 	VgaSprite *vsp = findCurSprite();
 	vsp->y = vcReadVar(vcReadNextWord());
+
+	vsp->windowNum |= 0x8000;
+	dirtyBackGround();
 	_vgaSpriteChanged++;
 }
 
@@ -207,8 +216,10 @@ void AGOSEngine::vc61_setMaskImage() {
 	vsp->image = vcReadVarOrWord();
 	vsp->x += vcReadNextWord();
 	vsp->y += vcReadNextWord();
-	vsp->flags = kDFMasked | kDFUseFrontBuf;
+	vsp->flags = kDFMasked | kDFSkipStoreBG;
 
+	vsp->windowNum |= 0x8000;
+	dirtyBackGround();
 	_vgaSpriteChanged++;
 }
 

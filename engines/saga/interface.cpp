@@ -28,6 +28,7 @@
 #include "saga/gfx.h"
 #include "saga/actor.h"
 #include "saga/console.h"
+#include "saga/displayinfo.h"
 #include "saga/events.h"
 #include "saga/font.h"
 #include "saga/objectmap.h"
@@ -68,14 +69,14 @@ static int verbTypeToTextStringsIdLUT[2][kVerbTypeIdsMax] = {
 	-1,
 	-1},
 	{-1, 
-	3, //TODO:check
-	2, 
-	1, 
-	5, 
-	6, //TODO:check
-	8, //TODO:check
-	7, 
-	4}
+	kVerbIHNMWalk,
+	kVerbIHNMLookAt,
+	kVerbIHNMTake, 
+	kVerbIHNMUse, 
+	kVerbIHNMTalkTo,
+	kVerbIHNMSwallow,
+	kVerbIHNMGive, 
+	kVerbIHNMPush}
 };
 
 Interface::Interface(SagaEngine *vm) : _vm(vm) {
@@ -535,6 +536,10 @@ void Interface::setStatusText(const char *text, int statusColor) {
 	assert(text != NULL);
 	assert(strlen(text) < STATUS_TEXT_LEN);
 
+	// Disable the status text in IHNM when the chapter is 8
+	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8)
+		return;
+
 	if (_vm->_render->getFlags() & (RF_PLACARD | RF_MAP))
 		return;
 
@@ -696,14 +701,20 @@ void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *p
 	text = _vm->getTextString(panelButton->id);
 	panel->calcPanelButtonRect(panelButton, rect);
 	if (panelButton->xOffset < 0) {
-		textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
+		if (_vm->getGameType() == GType_ITE)
+			textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
+		else
+			textWidth = _vm->_font->getStringWidth(kKnownFontVerb, text, 0, kFontNormal);
 		rect.left += 2 + (panel->imageWidth - 1 - textWidth) / 2;
 	}
 
 	textPoint.x = rect.left;
 	textPoint.y = rect.top + 1;
 
-	_vm->_font->textDraw(kKnownFontMedium, ds, text, textPoint, _vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
+	if (_vm->getGameType() == GType_ITE)
+		_vm->_font->textDraw(kKnownFontMedium, ds, text, textPoint, _vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
+	else
+		_vm->_font->textDraw(kKnownFontVerb, ds, text, textPoint, _vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
 }
 
 void Interface::drawOption() {
@@ -718,7 +729,7 @@ void Interface::drawOption() {
 	Rect rect2;
 	PanelButton *panelButton;
 	Point textPoint;
-	if (_optionSaveFileSlider == NULL) return;//TODO:REMOVE
+	Point point;
 	
 	backBuffer = _vm->_gfx->getBackBuffer();
 
@@ -727,6 +738,15 @@ void Interface::drawOption() {
 
 	for (i = 0; i < _optionPanel.buttonsCount; i++) {
 		panelButton = &_optionPanel.buttons[i];
+
+		// TODO: This probably works for the button background, but the resources are still not loeaded
+		// (_optionPanel.sprites)
+		/*
+		point.x = _optionPanel.x + panelButton->xOffset;
+		point.y = _optionPanel.y + panelButton->yOffset;
+		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _optionPanel.sprites, i, point, 256);
+		*/
+
 		if (panelButton->type == kPanelButtonOption) {
 			drawPanelButtonText(backBuffer, &_optionPanel, panelButton);
 		}
@@ -736,8 +756,16 @@ void Interface::drawOption() {
 	}
 
 	if (_optionSaveRectTop.height() > 0) {
-		backBuffer->drawRect(_optionSaveRectTop, kITEColorDarkGrey);
+		if (_vm->getGameType() == GType_ITE) {
+			backBuffer->drawRect(_optionSaveRectTop, kITEColorDarkGrey);
+		} else {
+			// TODO: Draw the button graphic properly for IHNM
+		}
 	}
+
+	// FIXME: The _optionSaveFileSlider checks exist for IHNM, where 
+	// _optionSaveFileSlider is not initialized correctly yet
+	if (_optionSaveFileSlider == NULL) return; //TODO:REMOVE
 
 	drawButtonBox(backBuffer, _optionSaveRectSlider, kSlider, _optionSaveFileSlider->state > 0);
 
@@ -1496,13 +1524,11 @@ void Interface::drawStatusBar() {
 	int stringWidth;
 	int color;
 
-	if (_panelMode == kPanelChapterSelection)
+	// Disable the status text in IHNM when the chapter is 8
+	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8)
 		return;
 
 	backBuffer = _vm->_gfx->getBackBuffer();
-
-	// Disable this for IHNM for now, since that game uses the full screen
-	// in some cases.
 
 	// Erase background of status bar
 	rect.left = _vm->getDisplayInfo().statusXOffset;
@@ -1889,8 +1915,13 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	}
 	text = _vm->getTextString(textId);
 
-	textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
-	textHeight = _vm->_font->getHeight(kKnownFontMedium);
+	if (_vm->getGameType() == GType_ITE) {
+		textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
+		textHeight = _vm->_font->getHeight(kKnownFontMedium);
+	} else {
+		textWidth = _vm->_font->getStringWidth(kKnownFontVerb, text, 0, kFontNormal);
+		textHeight = _vm->_font->getHeight(kKnownFontVerb);
+	}
 
 	point.x = panel->x + panelButton->xOffset + (panelButton->width / 2) - (textWidth / 2);
 	point.y = panel->y + panelButton->yOffset + (panelButton->height / 2) - (textHeight / 2);
@@ -1904,8 +1935,12 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	panel->calcPanelButtonRect(panelButton, rect);
 	drawButtonBox(ds, rect, kButton, panelButton->state > 0);
 
-	_vm->_font->textDraw(kKnownFontMedium, ds, text, point,
-		_vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
+	if (_vm->getGameType() == GType_ITE)
+		_vm->_font->textDraw(kKnownFontMedium, ds, text, point,
+			_vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
+	else
+		_vm->_font->textDraw(kKnownFontVerb, ds, text, point,
+			_vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
 }
 
 void Interface::drawPanelButtonArrow(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {
@@ -1938,7 +1973,8 @@ void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, KnownCo
 		textId = verbTypeToTextStringsIdLUT[0][panelButton->id];
 		text = _vm->getTextString(textId);
 	} else {
-		textId = verbTypeToTextStringsIdLUT[1][panelButton->id];
+		// This -2 has been placed because of the changes in the ids in IHNM_MainPanelButtons
+		textId = verbTypeToTextStringsIdLUT[1][panelButton->id - 2];
 		text = _vm->_script->_mainStrings.getString(textId + 1);
 		textShadowKnownColor = kKnownColorTransparent;
 	}

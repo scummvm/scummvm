@@ -243,7 +243,8 @@ bool Theme::themeConfigUseable(const Common::String &stylefile, const Common::St
 		}
 
 		Common::String temp;
-		cfg->getKey("type", "theme", temp);
+		if (!cfg->getKey("type", "theme", temp))
+			return false;
 		if (cStyle)
 			*cStyle = temp;
 		if (0 != temp.compareToIgnoreCase(style) && !style.empty())

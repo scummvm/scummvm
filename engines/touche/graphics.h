@@ -47,13 +47,20 @@ public:
 
 private:
 
+	/* font data for english version */
 	static const uint16 _engFontOffs[];
 	static const int _engFontSize;
 	static const uint8 _engFontData[];
 
-	static const uint16 _locFontOffs[];
-	static const int _locFontSize;
-	static const uint8 _locFontData[];
+	/* font data for french and german versions */
+	static const uint16 _freGerFontOffs[];
+	static const int _freGerFontSize;
+	static const uint8 _freGerFontData[];
+
+	/* font data for spanish version */
+	static const uint16 _spaFontOffs[];
+	static const int _spaFontSize;
+	static const uint8 _spaFontData[];
 
 	static const uint16 *_fontOffs;
 	static int _fontSize;

@@ -51,7 +51,7 @@ Archive::Archive() {
 }
 
 void Archive::open(const char *file) {
-	debugC(1, kDebugDisk, "open archive '%s'", file);
+	debugC(3, kDebugDisk, "Archive::open(%s)", file);
 
 	if (_archive.isOpen())
 		close();
@@ -83,8 +83,6 @@ void Archive::open(const char *file) {
 
 
 void Archive::close() {
-	debugC(1, kDebugDisk, "close current archive");
-
 	if (!_archive.isOpen()) return;
 
 	resetArchivedFile();
@@ -96,6 +94,8 @@ void Archive::close() {
 bool Archive::openArchivedFile(const char *filename) {
 	resetArchivedFile();
 
+	debugC(3, kDebugDisk, "Archive::openArchivedFile(%s)", filename);
+
 	if (!_archive.isOpen())
 		error("Archive::openArchivedFile: the archive is not open");
 
@@ -105,7 +105,7 @@ bool Archive::openArchivedFile(const char *filename) {
 	}
 	if (i == _numFiles) return false;
 
-	debugC(1, kDebugDisk, "file '%s' found in slot %i", filename, i);
+	debugC(9, kDebugDisk, "Archive::openArchivedFile: '%s' found in slot %i", filename, i);
 
 	_file = true;
 

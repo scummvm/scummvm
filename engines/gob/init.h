@@ -35,7 +35,7 @@ public:
 	virtual void initVideo() = 0;
 
 	Init(GobEngine *vm);
-	virtual ~Init() {};
+	virtual ~Init() {}
 
 protected:
 	Video::PalDesc *_palDesc;
@@ -50,7 +50,7 @@ public:
 	virtual void initVideo();
 
 	Init_v1(GobEngine *vm);
-	virtual ~Init_v1() {};
+	virtual ~Init_v1() {}
 };
 
 class Init_v2 : public Init_v1 {
@@ -58,7 +58,15 @@ public:
 	virtual void initVideo();
 
 	Init_v2(GobEngine *vm);
-	virtual ~Init_v2() {};
+	virtual ~Init_v2() {}
+};
+
+class Init_v3 : public Init_v2 {
+public:
+	virtual void initVideo();
+
+	Init_v3(GobEngine *vm);
+	virtual ~Init_v3() {}
 };
 
 } // End of namespace Gob

@@ -90,15 +90,15 @@ void Operator2612::setInstrument(byte const *instrument) {
 	_specifiedSustainRate = instrument[24] & 31;
 	_specifiedSustainLevel = (instrument[28] >> 4) & 15;
 	_specifiedReleaseRate = instrument[28] & 15;
-	_state = _s_ready; // 本物ではどうなのかな?
+	_state = _s_ready;
 	velocity(_velocity);
 }
 
 void Operator2612::keyOn() {
 	_state = _s_attacking;
 	_tickCount = 0;
-	_phase = 0;			// どうも、実際こうらしい
-	_currentLevel = ((int32)0x7f << 15); // これも、実際こうらしい
+	_phase = 0;			
+	_currentLevel = ((int32)0x7f << 15); 
 }
 
 void Operator2612::keyOff() {
@@ -116,7 +116,7 @@ void Operator2612::frequency(int freq) {
 	if (r != 0) {
 		r = r * 2 + (keyscaleTable[freq/262205] >> (3-_keyScale));
 		if (r >= 64)
-		r = 63; // するべきなんだろうとは思うんだけど (赤p.207)
+		r = 63;
 	}
 
 	r = 63 - r;
@@ -125,7 +125,7 @@ void Operator2612::frequency(int freq) {
 	else {
 		value = powtbl[(r&3) << 7];
 		value *= 1 << (r >> 2);
-		value *= 41; // r == 20 のとき、0-96[db] が 10.01[ms] == 41.00096
+		value *= 41; 
 		value /= 1 << (15 + 5);
 		value *= 127 - _specifiedTotalLevel;
 		value /= 127;
@@ -156,7 +156,7 @@ void Operator2612::frequency(int freq) {
 	if (r != 0) {
 		r = r * 2 + 1;		// (Translated) I cannot know whether the timing is a good choice or not
 		r = r * 2 + (keyscaleTable[freq/262205] >> (3-_keyScale));
-		// KS による補正はあるらしい。赤p.206 では記述されてないけど。
+		// KS
 		if (r >= 64)
 			r = 63;
 	}
@@ -229,11 +229,11 @@ void Operator2612::nextTick(const int *phasebuf, int *outbuf, int buflen) {
 			}
 
 			if (level < zero_level) {
-				int phaseShift = *phasebuf >> 2; // 正しい変調量は?  3 じゃ小さすぎで 2 じゃ大きいような。
+				int phaseShift = *phasebuf >> 2; 
 				if (_feedbackLevel)
 					phaseShift += (output << (_feedbackLevel - 1)) / 1024;
 				output = sintbl[((_phase >> 7) + phaseShift) & 0x7ff];
-				output >>= (level >> 18);	// 正しい減衰量は?
+				output >>= (level >> 18);	
 				// Here is the original code, which requires 64-bit ints
 //				output *= powtbl[511 - ((level>>25)&511)];
 //				output >>= 16;
@@ -438,13 +438,13 @@ void Voice2612::pitchBend(int value) {
 }
 
 void Voice2612::recalculateFrequency() {
-	// MIDI とも違うし....
-	// どういう仕様なんだろうか?
-	// と思ったら、なんと、これ (↓) が正解らしい。
+	// 
+	// 
+	// 
 	int32 basefreq = frequencyTable[_note];
 	int cfreq = frequencyTable[_note - (_note % 12)];
 	int oct = _note / 12;
-	int fnum = (int) (((double)basefreq * (1 << 13)) / cfreq); // OPL の fnum と同じようなもの。
+	int fnum = (int) (((double)basefreq * (1 << 13)) / cfreq);
 	fnum += _frequencyOffs - 0x2000;
 	if (fnum < 0x2000) {
 		fnum += 0x2000;
@@ -455,7 +455,7 @@ void Voice2612::recalculateFrequency() {
 		oct++;
 	}
 
-	// _frequency は最終的にバイアス 256*1024 倍
+	//
 	_frequency = (int) ((frequencyTable[oct*12] * (double)fnum) / 8);
 
 	int i;
@@ -515,7 +515,7 @@ void MidiChannel_YM2612::noteOff(byte note) {
 }
 
 void MidiChannel_YM2612::controlChange(byte control, byte value) {
-	// いいのかこれで?
+	//
 	if (control == 121) {
 		// Reset controller
 		removeAllVoices();
@@ -537,7 +537,7 @@ void MidiChannel_YM2612::sysEx_customInstrument(uint32 type, const byte *fmInst)
 }
 
 void MidiChannel_YM2612::pitchBend(int16 value) {
-  // いいのかこれで?
+  //
 	Voice2612 *voice = _voices;
 	for (; voice; voice = voice->next)
 		voice->pitchBend(value);
@@ -696,8 +696,8 @@ void MidiDriver_YM2612::createLookupTables() {
 			0x03d5, 0x0410, 0x044e, 0x048f,
 		};
 
-		// (int)(880.0 * 256.0 * pow(2.0, (note-0x51)/12.0)); // バイアス 256 倍
-		// 0x45 が 440Hz (a4)、0x51 が 880Hz (a5) らしい
+		// (int)(880.0 * 256.0 * pow(2.0, (note-0x51)/12.0))
+		// 
 		frequencyTable = new int [120];
 		for (block = -1; block < 9; block++) {
 			for (i = 0; i < 12; i++) {
@@ -707,7 +707,7 @@ void MidiDriver_YM2612::createLookupTables() {
 		}
 
 		keycodeTable = new int [120];
-		// detune 量の計算や KS による rate 変換に使うんじゃないかな
+		// detune 
 		for (block = -1; block < 9; block++) {
 			for (i = 0; i < 12; i++) {
 				// see p.204
@@ -730,7 +730,7 @@ void MidiDriver_YM2612::createLookupTables() {
 		keyscaleTable[0] = 0;
 		for (freq = 1; freq < 8192; freq++) {
 			keyscaleTable[freq] = (int)(log((double)freq) / 9.03 * 32.0) - 1;
-			// 8368[Hz] (o9c) で 32くらい。9.03 =:= ln 8368
+			// 8368[Hz] (o9c)
 		}
 	}
 

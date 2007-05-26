@@ -42,6 +42,10 @@ void AGOSEngine::addTimeEvent(uint timeout, uint subroutine_id) {
 
 	time(&cur_time);
 
+	if (getGameId() == GID_DIMP) {
+		timeout /= 2;
+	}
+
 	te->time = cur_time + timeout - _gameStoppedClock;
 	if (getGameType() == GType_FF && _clockStopped)
 		te->time -= ((uint32)time(NULL) - _clockStopped);
@@ -123,6 +127,7 @@ void AGOSEngine::killAllTimers() {
 		next = cur->next;
 		delTimeEvent(cur);
 	}
+	_clickOnly = 0;
 }
 
 bool AGOSEngine::kickoffTimeEvents() {
@@ -164,31 +169,33 @@ bool AGOSEngine::isVgaQueueEmpty() {
 }
 
 void AGOSEngine::haltAnimation() {
-	VgaTimerEntry *vte = _vgaTimerList;
+	if (_lockWord & 0x10)
+		return;
 
 	_lockWord |= 0x10;
 
-	while (vte->delay) {
-		vte->delay += 10;
+	if (_displayScreen) {
+		displayScreen();
+		_displayScreen = false;
 	}
 }
 
 void AGOSEngine::restartAnimation() {
+	if (!(_lockWord & 0x10))
+		return;
+
+	_window4Flag = 2;
+
+	setMoveRect(0, 0, 224, 127);
+	displayScreen();
+
 	_lockWord &= ~0x10;
+
+	// Check picture queue
 }
 
-void AGOSEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum) {
+void AGOSEngine::addVgaEvent(uint16 num, uint8 type, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum) {
 	VgaTimerEntry *vte;
-
-	// When Simon talks to the Golum about stew in French version of
-	// Simon the Sorcerer 1 the code_ptr is at wrong location for
-	// sprite 200. This  was a bug in the original game, which
-	// caused several glitches in this scene.
-	// We work around the problem by correcting the code_ptr for sprite
-	// 200 in this scene, if it is wrong.
-	if (getGameType() == GType_SIMON1 && _language == Common::FR_FRA &&
-		(code_ptr - _vgaBufferPointers[curZoneNum].vgaFile1 == 4) && (cur_sprite == 200) && (curZoneNum == 2))
-		code_ptr += 0x66;
 
 	_lockWord |= 1;
 
@@ -199,6 +206,7 @@ void AGOSEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite
 	vte->script_pointer = code_ptr;
 	vte->sprite_id = cur_sprite;
 	vte->cur_vga_file = curZoneNum;
+	vte->type = type;
 
 	_lockWord &= ~1;
 }
@@ -230,15 +238,35 @@ void AGOSEngine::processVgaEvents() {
 			uint16 cur_sprite = vte->sprite_id;
 			const byte *script_ptr = vte->script_pointer;
 
-			_nextVgaTimerToProcess = vte + 1;
-			deleteVgaEvent(vte);
-
-			if (getGameType() == GType_SIMON2 && script_ptr == NULL) {
-				scrollEvent();
-			} else {
+			switch (vte->type) {
+			case ANIMATE_INT:
+				vte->delay = (getGameType() == GType_SIMON2) ? 5 : _frameCount;
+				animateSprites();
+				vte++;
+				break;
+			case ANIMATE_EVENT:
+				_nextVgaTimerToProcess = vte + 1;
+				deleteVgaEvent(vte);
 				animateEvent(script_ptr, curZoneNum, cur_sprite);
+				vte = _nextVgaTimerToProcess;
+				break;
+			case SCROLL_EVENT:
+				_nextVgaTimerToProcess = vte + 1;
+				deleteVgaEvent(vte);
+				scrollEvent();
+				vte = _nextVgaTimerToProcess;
+				break;
+			case IMAGE_EVENT2:
+				imageEvent2(vte, curZoneNum);
+				vte = _nextVgaTimerToProcess;
+				break;
+			case IMAGE_EVENT3:
+				imageEvent3(vte, curZoneNum);
+				vte = _nextVgaTimerToProcess;
+				break;
+			default:
+				error("processVgaEvents: Unknown event type %d", vte->type);
 			}
-			vte = _nextVgaTimerToProcess;
 		} else {
 			vte++;
 		}
@@ -294,7 +322,96 @@ void AGOSEngine::scrollEvent() {
 			}
 		}
 
-		addVgaEvent(6, NULL, 0, 0); /* scroll event */
+		addVgaEvent(6, SCROLL_EVENT, NULL, 0, 0);
+	}
+}
+
+static const byte _image1[32] = {
+	0x3A, 0x37, 0x3B, 0x37,
+	0x3A, 0x3E, 0x3F, 0x3E,
+	0x37, 0x3F, 0x31, 0x3F,
+	0x37, 0x3F, 0x31, 0x3F,
+	0x3A, 0x3E, 0x3F, 0x3E,
+	0x3A, 0x37, 0x3B, 0x37,
+};
+
+static const byte _image2[32] = {
+	0x3A, 0x3A, 0x3B, 0x3A,
+	0x3A, 0x37, 0x3E, 0x37,
+	0x3A, 0x37, 0x3E, 0x37,
+	0x3A, 0x37, 0x3E, 0x37,
+	0x3A, 0x37, 0x3E, 0x37,
+	0x3A, 0x3A, 0x3B, 0x3A,
+};
+
+static const byte _image3[32] = {
+	0x3A, 0x32, 0x3B, 0x32,
+	0x3A, 0x39, 0x3F, 0x39,
+	0x32, 0x3F, 0x31, 0x3F,
+	0x32, 0x3F, 0x31, 0x3F,
+	0x3A, 0x39, 0x3F, 0x39,
+	0x3A, 0x32, 0x3B, 0x32,
+};
+
+static const byte _image4[32] = {
+	0x3A, 0x3A, 0x3B, 0x3A,
+	0x3A, 0x32, 0x39, 0x32,
+	0x3A, 0x32, 0x38, 0x32,
+	0x3A, 0x32, 0x38, 0x32,
+	0x3A, 0x32, 0x39, 0x32,
+	0x3A, 0x3A, 0x3B, 0x3A,
+};
+
+void AGOSEngine::drawStuff(const byte *src, uint offs) {
+	byte *dst = getFrontBuf() + offs;
+
+	for (uint y = 0; y < 6; y++) {
+		memcpy(dst, src, 4);
+		src += 4;
+		dst += _screenWidth;
+	}
+}
+
+void AGOSEngine::imageEvent2(VgaTimerEntry * vte, uint dx) {
+	// Draws damage indicator gauge
+	_nextVgaTimerToProcess = vte + 1;
+
+	if (!_opcode177Var1) {
+		drawStuff(_image1, 43204 + _opcode177Var2 * 4);
+		_opcode177Var2++;
+		if (_opcode177Var2 == dx) {
+			_opcode177Var1 = 1;
+			vte->delay = 16 - dx;
+		} else {
+			vte->delay = 1;
+		}
+	} else if (_opcode177Var2) {
+		_opcode177Var2--;
+		drawStuff(_image2, 43204 + _opcode177Var2 * 4);
+		vte->delay = 3;
+	} else {
+		deleteVgaEvent(vte);
+	}
+}
+
+void AGOSEngine::imageEvent3(VgaTimerEntry * vte, uint dx) {
+	_nextVgaTimerToProcess = vte + 1;
+
+	if (!_opcode178Var1) {
+		drawStuff(_image3, 43475 + _opcode178Var2 * 4);
+		_opcode178Var2++;
+		if (_opcode178Var2 >= 10 || _opcode178Var2 == dx) {
+			_opcode178Var1 = 1;
+			vte->delay = 16 - dx;
+		} else {
+			vte->delay = 1;
+		}
+	} else if (_opcode178Var2) {
+		_opcode178Var2--;
+		drawStuff(_image4, 43475 + _opcode178Var2 * 4);
+		vte->delay = 3;
+	} else {
+		deleteVgaEvent(vte);
 	}
 }
 
@@ -344,7 +461,7 @@ void AGOSEngine::delay(uint amount) {
 					if (_saveLoadSlot == 0)
 						_saveLoadSlot = 10;
 
-					sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
+					sprintf(_saveLoadName, "Quick %d", _saveLoadSlot);
 					_saveLoadType = (event.kbd.flags == Common::KBD_ALT) ? 1 : 2;
 
 					// We should only allow a load or save when it was possible in original
@@ -423,12 +540,80 @@ void AGOSEngine::delay(uint amount) {
 }
 
 void AGOSEngine::timer_callback() {
-	if (_timer5 != 0) {
+	// FIXME: _timer5 is never set
+	if (_timer5) {
 		_syncFlag2 = true;
 		_timer5--;
 	} else {
-		timer_proc1();
+		if (getGameId() == GID_DIMP) {
+			_thisTickCount = _system->getMillis();
+			if (_thisTickCount < _lastTickCount)
+				_lastTickCount = 0;
+
+			if ((_thisTickCount - _lastTickCount) <= 35)
+				return;
+
+			_lastTickCount = _thisTickCount;
+
+			timer_proc1();
+			dimp_idle();
+		} else {
+			timer_proc1();
+		}
 	}
+}
+
+void AGOSEngine_Feeble::timer_proc1() {
+	_timer4++;
+
+	if (_lockWord & 0x80E9 || _lockWord & 2)
+		return;
+
+	_syncCount++;
+
+	_lockWord |= 2;
+
+	if (!(_lockWord & 0x10)) {
+		_syncFlag2 ^= 1;
+		if (!_syncFlag2) {
+			processVgaEvents();
+		} else {
+			// Double speed on Oracle
+			if (getGameType() == GType_FF && getBitFlag(99)) {
+				processVgaEvents();
+			} else if (_scrollCount == 0) {
+				_lockWord &= ~2;
+				return;
+			}
+		}
+
+		if (getGameType() == GType_FF) {
+			_moviePlay->nextFrame();
+		}
+
+		animateSprites();
+	} 
+
+	if (_copyPartialMode == 2) {
+		fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
+		_copyPartialMode = 0;
+	}
+
+	if (_displayScreen) {
+		if (getGameType() == GType_FF) {
+			if (!getBitFlag(78)) {
+				oracleLogo();
+			}
+			if (getBitFlag(76)) {
+				swapCharacterLogo();
+			}
+		}
+		handleMouseMoved();
+		displayScreen();
+		_displayScreen = false;
+	}
+
+	_lockWord &= ~2;
 }
 
 void AGOSEngine::timer_proc1() {
@@ -441,80 +626,111 @@ void AGOSEngine::timer_proc1() {
 
 	_lockWord |= 2;
 
+	handleMouseMoved();
+
 	if (!(_lockWord & 0x10)) {
-		if (getGameType() == GType_PP) {
-			_syncFlag2 ^= 1;
-			if (!_syncFlag2) {
-				processVgaEvents();
-			} else {
-				if (_scrollCount == 0) {
-					_lockWord &= ~2;
-					return;
-				}
-			}
-		} else if (getGameType() == GType_FF) {
-			_syncFlag2 ^= 1;
-			if (!_syncFlag2) {
-				processVgaEvents();
-			} else {
-				// Double speed on Oracle
-				if (getBitFlag(99)) {
-					processVgaEvents();
-				} else if (_scrollCount == 0) {
-					_lockWord &= ~2;
-					return;
-				}
-			}
-		} else {
+		processVgaEvents();
+		processVgaEvents();
+		_cepeFlag ^= 1;
+		if (!_cepeFlag)
 			processVgaEvents();
-			processVgaEvents();
-			_syncFlag2 ^= 1;
-			_cepeFlag ^= 1;
-			if (!_cepeFlag)
-				processVgaEvents();
-
-			if (_mouseHideCount != 0 && _syncFlag2) {
-				_lockWord &= ~2;
-				return;
-			}
-		}
-	}
-
-	if (getGameType() == GType_FF)
-		_moviePlay->nextFrame();
-
-	animateSprites();
-	if (_drawImagesDebug)
-		animateSpritesDebug();
-
-	if (_copyPartialMode == 1) {
-		fillBackFromFront(80, 46, 208 - 80, 94 - 46);
-	}
-
-	if (_copyPartialMode == 2) {
-		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
-		} else {
-			fillFrontFromBack(176, 61, _screenWidth - 176, 134 - 61);
-		}
-		_copyPartialMode = 0;
-	}
+	} 
 
 	if (_updateScreen) {
-		if (getGameType() == GType_FF) {
-			if (!getBitFlag(78)) {
-				oracleLogo();
-			}
-			if (getBitFlag(76)) {
-				swapCharacterLogo();
-			}
-		}
-		handleMouseMoved();
-		updateScreen();
+		_system->copyRectToScreen(getFrontBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
+		_system->updateScreen();
+
 		_updateScreen = false;
 	}
 
+	if (_displayScreen) {
+		displayScreen();
+		_displayScreen = false;
+	}
+
 	_lockWord &= ~2;
+}
+
+void AGOSEngine::dimp_idle() {
+	int z, n;
+
+	_iconToggleCount++;
+	if (_iconToggleCount == 30) {
+		if ((_variableArray[110] < 3) || (_variableArray[111] < 3) || (_variableArray[112] < 3)) {
+			_voiceCount++;
+			if (_voiceCount == 50) {
+				if (!getBitFlag(14) && !getBitFlag(11) && !getBitFlag(13)) {
+					loadSoundFile("Whistle.WAV");
+					z = 0;
+					while (z == 0) {
+						n = _rnd.getRandomNumber(2);
+						switch (n) {
+							case(0): 
+								if (_variableArray[110] > 2)
+									break;
+								n = _rnd.getRandomNumber(6);
+								switch(n) {
+									case(0): loadSoundFile("And01.wav");break;
+									case(1): loadSoundFile("And02.wav");break;
+									case(2): loadSoundFile("And03.wav");break;
+									case(3): loadSoundFile("And04.wav");break;
+									case(4): loadSoundFile("And05.wav");break;
+									case(5): loadSoundFile("And06.wav");break;
+									case(6): loadSoundFile("And07.wav");break;
+								}
+								z = 1;
+								break;
+							case(1):
+								if (_variableArray[111] > 2)
+									break;
+								n = _rnd.getRandomNumber(6);
+								switch(n) {
+									case(0): loadSoundFile("And08.wav");break;
+									case(1): loadSoundFile("And09.wav");break;
+									case(2): loadSoundFile("And0a.wav");break;
+									case(3): loadSoundFile("And0b.wav");break;
+									case(4): loadSoundFile("And0c.wav");break;
+									case(5): loadSoundFile("And0d.wav");break;
+									case(6): loadSoundFile("And0e.wav");break;
+								}
+								z = 1;
+								break;
+							case(2):
+								if (_variableArray[112] > 2)
+									break;
+								n = _rnd.getRandomNumber(4);
+								switch(n) {
+									case(0): loadSoundFile("And0f.wav");break;
+									case(1): loadSoundFile("And0g.wav");break;
+									case(2): loadSoundFile("And0h.wav");break;
+									case(3): loadSoundFile("And0i.wav");break;
+									case(4): loadSoundFile("And0j.wav");break;
+								}
+								z = 1;
+								break;
+						}
+					}
+				}
+				_voiceCount = 0;
+			}
+		} else {
+			_voiceCount = 48;
+		}
+		_iconToggleCount = 0;
+	}
+
+	if (_variableArray[121] == 0) {
+		_variableArray[121]++;
+		_startSecondCount = _lastTickCount;
+	}
+	if (((_lastTickCount - _startSecondCount) / 1000) != _tSecondCount) {
+		if (_startSecondCount != 0) {
+			uint32 x = (_variableArray[123] * 65536) + _variableArray[122] + ((_lastTickCount - _startSecondCount) / 1000) - _tSecondCount;
+			_variableArray[122] = (uint16)(x % 65536);
+			_variableArray[123] = (uint16)(x / 65536);
+			_tSecondCount = (_lastTickCount - _startSecondCount) / 1000;
+		}
+	}
 }
 
 } // End of namespace AGOS

@@ -55,10 +55,17 @@ void Script::activateHotspot(uint16 hotspotId, uint16 v2, uint16 v3) {
 // Sets a hotspot's animation script offset from a master table of offsets
 
 void Script::setHotspotScript(uint16 hotspotId, uint16 scriptIndex, uint16 v3) {
-	Resources &r = Resources::getReference();
-	uint16 offset = r.getHotspotScript(scriptIndex);
-	HotspotData *rsc = r.getHotspot(hotspotId);
-	rsc->sequenceOffset = offset;
+	Resources &res = Resources::getReference();
+	uint16 offset = res.getHotspotScript(scriptIndex);
+	Hotspot *hotspot = res.getActiveHotspot(hotspotId);
+
+	if (hotspot != NULL) {
+		hotspot->setHotspotScript(offset);
+	} else {
+		HotspotData *hs = res.getHotspot(hotspotId);
+		assert(hs);
+		hs->hotspotScriptOffset = offset;
+	}
 }
 
 void Script::method2(uint16 v1, uint16 v2, uint16 v3) {
@@ -264,7 +271,7 @@ void Script::setBlockingHotspotScript(uint16 charId, uint16 scriptIndex, uint16 
 	uint16 offset = r.getHotspotScript(scriptIndex);
 
 	Hotspot *hs = r.getActiveHotspot(charId);
-	hs->setScript(offset);
+	hs->setHotspotScript(offset);
 	hs->currentActions().top().setAction(EXEC_HOTSPOT_SCRIPT);
 	hs->setOccupied(true);
 }
@@ -330,6 +337,21 @@ void Script::enableHotspot(uint16 hotspotId, uint16 v2, uint16 v3) {
 	hotspot->flags = (hotspot->flags & 0xdf) | 0x80;
 }
 
+// Display a message
+
+void Script::displayMessage2(uint16 messageId, uint16 hotspotId, uint16 v3) {
+	Hotspot *hotspot = Resources::getReference().getActiveHotspot(hotspotId);
+	assert(hotspot);
+	hotspot->showMessage(messageId);
+}
+
+void Script::startOilBurner(uint16 v1, uint16 v2, uint16 v3) {
+	Hotspot *hotspot = Resources::getReference().getActiveHotspot(OIL_BURNER_ID);
+	assert(hotspot);
+	hotspot->setPosition(152, hotspot->y());
+	hotspot->setTickProc(STANDARD_ANIM_TICK_PROC);
+}
+
 // Transforms the player
 
 void Script::transformPlayer(uint16 v1, uint16 v2, uint16 v3) {
@@ -342,8 +364,8 @@ void Script::transformPlayer(uint16 v1, uint16 v2, uint16 v3) {
 	hotspot->startY = player->startY - 10;
 	
 	Hotspot *activeHotspot = res.addHotspot(TRANSFORM_ID);
-	activeHotspot->setFrameNumber(0);
-	activeHotspot->setScript(0x630);
+	activeHotspot->setActionCtr(0);
+	activeHotspot->setHotspotScript(0x630);
 }
 
 // Marks the jail door in room 14 for closing
@@ -378,6 +400,15 @@ void Script::doorOpen(uint16 hotspotId, uint16 v2, uint16 v3) {
 	RoomExitJoinData *joinRec = Resources::getReference().getExitJoin(hotspotId);
 	if (!joinRec) error("Tried to close a non-door");
 	joinRec->blocked = 0;
+}
+
+// Makes the specified NPC wait for the player to walk to them
+
+void Script::npcWait(uint16 hotspotId, uint16 v2, uint16 v3) {
+       Hotspot *hotspot = Resources::getReference().getActiveHotspot(hotspotId);
+       assert(hotspot);
+       hotspot->setCharacterMode(CHARMODE_WAIT_FOR_INTERACT);
+       hotspot->setDelayCtr(130);
 }
 
 // Lookup the given message Id for the specified character and display in a dialog
@@ -439,6 +470,14 @@ void Script::setVillageSkorlTickProc(uint16 v1, uint16 v2, uint16 v3) {
 	hotspot->tickProcOffset = 0x7efa;
 }
 
+// Free Goewin from captivity
+
+void Script::freeGoewin(uint16 v1, uint16 v2, uint16 v3) {
+	HotspotData *goewin = Resources::getReference().getHotspot(GOEWIN_ID);
+	goewin->actions = 0x820C00;   // Enable Talk To, Give, Bribe, and Ask for
+	goewin->actionCtr = 1;
+}
+
 // Barman serving the player
 
 void Script::barmanServe(uint16 v1, uint16 v2, uint16 v3) {
@@ -459,6 +498,16 @@ void Script::barmanServe(uint16 v1, uint16 v2, uint16 v3) {
 void Script::getNumGroats(uint16 v1, uint16 v2, uint16 v3) {
 	ValueTableData fields = Resources::getReference().fieldList();
 	fields.setField(GENERAL, fields.numGroats());
+}
+
+// Enables the talk action on the two gargoyles
+
+void Script::enableGargoylesTalk(uint16 v1, uint16 v2, uint16 v3) {
+	Resources &res = Resources::getReference();
+	HotspotData *g1 = res.getHotspot(0x42C);
+	HotspotData *g2 = res.getHotspot(0x42D);
+	g1->actions = 1 << (TALK_TO - 1);
+	g2->actions = 1 << (TALK_TO - 1);
 }
 
 // Loads the specified animation, completely bypassing the standard process
@@ -538,19 +587,24 @@ SequenceMethodRecord scriptMethods[] = {
 	{33, Script::cutSack},
 	{34, Script::increaseNumGroats},
 	{35, Script::enableHotspot},
-	{37, Script::transformPlayer},
+	{36, Script::displayMessage2},
+	{37, Script::startOilBurner},
+	{38, Script::transformPlayer},
 	{39, Script::jailClose},
 	{40, Script::checkDroppedDesc},
 	{42, Script::doorClose},
 	{44, Script::doorOpen},
+	{45, Script::npcWait},
 	{47, Script::displayMessage},
 	{48, Script::setNewSupportData},
 	{49, Script::setSupportData},
 	{50, Script::givePlayerItem},
 	{51, Script::decreaseNumGroats},
 	{54, Script::setVillageSkorlTickProc},
+	{55, Script::freeGoewin},
 	{56, Script::barmanServe},
 	{57, Script::getNumGroats},
+	{59, Script::enableGargoylesTalk},
 	{62, Script::animationLoad},
 	{63, Script::addActions},
 	{64, Script::randomToGeneral},
@@ -559,16 +613,16 @@ SequenceMethodRecord scriptMethods[] = {
 	{0xff, NULL}};
 
 const char *scriptOpcodes[] = {
-	"ABORT", "ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "NOT_EQUALS", "EQUALS",
-		"GT", "LT", "LT2", "GT2", "AND", "OR", "LOGICAL_AND", "LOGICAL_OR",
+	"ABORT", "ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "EQUALS", "NOT_EQUALS",
+		"LT", "GT", "LTE", "GTE", "AND", "OR", "LOGICAL_AND", "LOGICAL_OR",
 		"GET_FIELD", "SET_FIELD", "PUSH", "SUBROUTINE", "EXEC", "END",
 		"COND_JUMP", "JUMP", "ABORT2", "ABORT3", "RANDOM"
 };
 
 const char *scriptMethodNames[67] = {
-	"ACTIVATE HOTSPOT", "SET HOTSPOT SCRIPT", NULL, NULL, "CLEAR SEQUENCE DELAY LIST",
-	"DEACTIVATE HOTSPOT SET", "DEACTIVATE HOTSPOT", "RESET PATHFINDER",
-	"ADD DELAYED SCRIPT", NULL,
+	"ACTIVATE HOTSPOT", "SET HOTSPOT SCRIPT", NULL, "SET HOTSPOT FLAG MASK", 
+	"CLEAR SEQUENCE DELAY LIST", "DEACTIVATE HOTSPOT SET", "DEACTIVATE HOTSPOT", 
+	"RESET PATHFINDER",	"ADD DELAYED SCRIPT", NULL,
 
 	"IS CHARACTER IN ROOM", "SET HOTSPOT DESC", "SET HOTSPOT NAME",
 	"PLAY SOUND", NULL, NULL, "DISPLAY DIALOG", NULL, "REMOTE ROOM VIEW SETUP",
@@ -579,14 +633,15 @@ const char *scriptMethodNames[67] = {
 	"DECREMENT # INVENTORY ITEMS", "SET TALKING",
 
 	"SET ACTION CTR", "START SPEAKING", "DISABLE HOTSPOT", "CUT SACK",
-	"INCREASE # GROATS", "ENABLE HOTSPOT", NULL, "TRANSFORM PLAYER",
-	NULL, "ROOM 14 CLOSE DOOR",
+	"INCREASE # GROATS", "ENABLE HOTSPOT", "DISPLAY MESSAGE 2", "START OIL BURNER"
+	"TRANSFORM PLAYER", "JAIL CLOSE",
 
-	"CHECK DROPPED DESC", NULL, "CLOSE DOOR", NULL, "OPEN DOOR", NULL, NULL,
+	"CHECK DROPPED DESC", NULL, "CLOSE DOOR", NULL, "OPEN DOOR", "NPC WAIT", NULL,
 	"DISPLAY MESSAGE", "SET NEW ACTION SUPPORT DATA", "SET ACTION SUPPORT DATA",
 	
 	"GIVE PLAYER ITEM", "DECREASE # GROATS", NULL, NULL,
-	"SET VILLAGE SKORL TICK PROC", NULL, NULL, "GET # GROATS", NULL, NULL,
+	"SET VILLAGE SKORL TICK PROC", "FREE GOEWIN", "BARMAN SERVE", "GET # GROATS", 
+	NULL, "ENABLE GARGOYLE TALK",
 
 	NULL, "KILL PLAYER", "ANIMATION LOAD", "ADD ACTIONS", "RANDOM TO GENERAL", 
 	"CHECK CELL DOOR", "METHOD 66"
@@ -660,12 +715,12 @@ uint16 Script::execute(uint16 startOffset) {
 			case S_OPCODE_SUBTRACT:
 			case S_OPCODE_MULTIPLY:
 			case S_OPCODE_DIVIDE:
-			case S_OPCODE_NOT_EQUALS:
 			case S_OPCODE_EQUALS:
-			case S_OPCODE_GT:
+			case S_OPCODE_NOT_EQUALS:
 			case S_OPCODE_LT:
-			case S_OPCODE_LT2:
-			case S_OPCODE_GT2:
+			case S_OPCODE_GT:
+			case S_OPCODE_LTE:
+			case S_OPCODE_GTE:
 			case S_OPCODE_AND:
 			case S_OPCODE_OR:
 			case S_OPCODE_LOGICAL_AND:
@@ -713,28 +768,36 @@ uint16 Script::execute(uint16 startOffset) {
 			param = v2 % v1;      // remainder
 			break;
 
-		case S_OPCODE_NOT_EQUALS:
-			stack.push((stack.pop() != stack.pop()) ? 0 : 1);
-			break;
-
 		case S_OPCODE_EQUALS:
-			stack.push((stack.pop() == stack.pop()) ? 0 : 1);
+			stack.push((stack.pop() == stack.pop()) ? 1 : 0);
 			break;
 
-		case S_OPCODE_GT:
-			stack.push((stack.pop() > stack.pop()) ? 1 : 0);
+		case S_OPCODE_NOT_EQUALS:
+			stack.push((stack.pop() != stack.pop()) ? 1 : 0);
 			break;
 
 		case S_OPCODE_LT:
-			stack.push((stack.pop() < stack.pop()) ? 1 : 0);
+			v1 = stack.pop();
+			v2 = stack.pop();
+			stack.push(v2 < v1 ? 1 : 0);
 			break;
 
-		case S_OPCODE_LT2:
-			stack.push((stack.pop() < stack.pop()) ? 1 : 0);
+		case S_OPCODE_GT:
+			v1 = stack.pop();
+			v2 = stack.pop();
+			stack.push(v2 > v1 ? 1 : 0);
 			break;
 
-		case S_OPCODE_GT2:
-			stack.push((stack.pop() > stack.pop()) ? 1 : 0);
+		case S_OPCODE_LTE:
+			v1 = stack.pop();
+			v2 = stack.pop();
+			stack.push(v2 <= v1 ? 1 : 0);
+			break;
+
+		case S_OPCODE_GTE:
+			v1 = stack.pop();
+			v2 = stack.pop();
+			stack.push(v2 >= v1 ? 1 : 0);
 			break;
 
 		case S_OPCODE_AND:
@@ -746,22 +809,24 @@ uint16 Script::execute(uint16 startOffset) {
 			break;
 
 		case S_OPCODE_LOGICAL_AND:
-			stack.push(((stack.pop() != 0) && (stack.pop() != 0)) ? 1 : 0);
+			v1 = stack.pop();
+			v2 = stack.pop();
+			stack.push(((v1 != 0) && (v2 != 0)) ? 1 : 0);
 			break;
 
 		case S_OPCODE_LOGICAL_OR:
-			stack.push(((stack.pop() != 0) || (stack.pop() != 0)) ? 1 : 0);
+			v1 = stack.pop();
+			v2 = stack.pop();
+			stack.push(((v1 != 0) || (v2 != 0)) ? 1 : 0);
 			break;
 
 		case S_OPCODE_GET_FIELD:
-			// Opcode not yet fully implemented
 			fieldNum = param >> 1;
 			v1 = fields.getField(fieldNum);
 			stack.push(v1);
 			break;
 
 		case S_OPCODE_SET_FIELD:
-			// Opcode not yet fully implemented
 			fieldNum = param >> 1;
 			v1 = stack.pop();
 			fields.setField(fieldNum, v1);
@@ -854,8 +919,8 @@ uint16 Script::execute(uint16 startOffset) {
 			case S_OPCODE_EQUALS:
 			case S_OPCODE_GT:
 			case S_OPCODE_LT:
-			case S_OPCODE_LT2:
-			case S_OPCODE_GT2:
+			case S_OPCODE_LTE:
+			case S_OPCODE_GTE:
 			case S_OPCODE_AND:
 			case S_OPCODE_OR:
 			case S_OPCODE_LOGICAL_AND:
@@ -898,7 +963,7 @@ bool HotspotScript::execute(Hotspot *h)
 {
 	Resources &r = Resources::getReference();
 	MemoryBlock *scriptData = r.hotspotScriptData();
-	uint16 offset = h->script();
+	uint16 offset = h->hotspotScript();
 	int16 opcode = 0;
 	int16 param1, param2;
 	uint32 actions;
@@ -911,12 +976,12 @@ bool HotspotScript::execute(Hotspot *h)
 		opcode = nextVal(scriptData, offset);
 
 		switch (opcode) {
-		case S2_OPCODE_TIMEOUT:
+		case S2_OPCODE_FRAME_CTR:
 			param1 = nextVal(scriptData, offset);
-			debugC(ERROR_DETAILED, kLureDebugScripts, "SET TIMEOUT = %d", param1);
+			debugC(ERROR_DETAILED, kLureDebugScripts, "SET FRAME_CTR = %d", param1);
 
 			h->setTickCtr(param1);
-			h->setScript(offset);
+			h->setHotspotScript(offset);
 			breakFlag = true;
 			break;
 
@@ -964,22 +1029,21 @@ bool HotspotScript::execute(Hotspot *h)
 			h->setAnimation(param1);
 			break;
 
-		case S2_OPCODE_UNKNOWN_247:
+		case S2_OPCODE_PLAY_SOUND:
 			param1 = nextVal(scriptData, offset);
 			param2 = nextVal(scriptData, offset);
-			debugC(ERROR_DETAILED, kLureDebugScripts, "SUB_247(%d,%d)", param1, param2);
-
+			debugC(ERROR_DETAILED, kLureDebugScripts, "PLAY_SOUND(%d,%d)", param1, param2);
 //			warning("UNKNOWN_247 stub called");
 			break;
 
-		case S2_OPCODE_UNKNOWN_258:
+		case S2_OPCODE_STOP_SOUND:
 			param1 = nextVal(scriptData, offset);
-			debugC(ERROR_DETAILED, kLureDebugScripts, "SUB_258()");
+			debugC(ERROR_DETAILED, kLureDebugScripts, "STOP_SOUND()");
 //			warning("UNKNOWN_258 stub called");
 			break;
 
 		case S2_OPCODE_ACTIONS:
-			param1 = nextVal(scriptData, offset) << 4;
+			param1 = nextVal(scriptData, offset);
 			param2 = nextVal(scriptData, offset);
 			actions = (uint32) param1 | ((uint32) param2 << 16);
 
@@ -992,7 +1056,7 @@ bool HotspotScript::execute(Hotspot *h)
 			debugC(ERROR_DETAILED, kLureDebugScripts, "SET FRAME NUMBER = %d", opcode);
 
 			h->setFrameNumber(opcode);
-			h->setScript(offset);
+			h->setHotspotScript(offset);
 			breakFlag = true;
 			break;
 		}

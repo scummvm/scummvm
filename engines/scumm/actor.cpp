@@ -1850,6 +1850,7 @@ void ScummEngine::resetV1ActorTalkColor() {
 #ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v7::actorTalk(const byte *msg) {
 	Actor *a;
+	bool stringWrap = false;
 
 	convertMessageToString(msg, _charsetBuffer, sizeof(_charsetBuffer));
 
@@ -1861,30 +1862,31 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	}
 	if (_actorToPrintStrFor == 0xFF) {
 		setTalkingActor(0xFF);
+		_charsetColor = (byte)_string[0].color;
 	} else {
 		a = derefActor(_actorToPrintStrFor, "actorTalk");
 		setTalkingActor(a->_number);
 		if (!_string[0].no_talk_anim) {
 			a->runActorTalkScript(a->_talkStartFrame);
-			_useTalkAnims = true;
 		}
-	}
-
-	if (getTalkingActor() > 0x7F) {
-		_charsetColor = (byte)_string[0].color;
-	} else {
-		a = derefActor(getTalkingActor(), "actorTalk(2)");
 		_charsetColor = a->_talkColor;
 	}
+
 	_charsetBufPos = 0;
 	_talkDelay = 0;
 	_haveMsg = 1;
 	if (_game.version == 7)
 		VAR(VAR_HAVE_MSG) = 0xFF;
 	_haveActorSpeechMsg = true;
+	if (_game.version == 8) {
+		stringWrap = _string[0].wrapping;
+		_string[0].wrapping = true;
+	}
 	CHARSET_1();
-	if (_game.version == 8)
+	if (_game.version == 8) {
 		VAR(VAR_HAVE_MSG) = (_string[0].no_talk_anim) ? 2 : 1;
+		_string[0].wrapping = stringWrap;
+	}
 }
 #endif
 
@@ -2289,8 +2291,11 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 			if (ae->actorNum != -1) {
 				Actor *a = derefActor(ae->actorNum, "postProcessAuxQueue");
 				const uint8 *cost = getResourceAddress(rtCostume, a->_costume);
-				int dy = a->_offsY + a->getPos().y - a->getElevation();
+				int dy = a->_offsY + a->getPos().y;
 				int dx = a->_offsX + a->getPos().x;
+
+				if (_game.heversion >= 72)
+					dy -= a->getElevation();
 
 				const uint8 *akax = findResource(MKID_BE('AKAX'), cost);
 				assert(akax);

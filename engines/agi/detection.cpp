@@ -35,10 +35,15 @@ namespace Agi {
 struct AGIGameDescription {
 	Common::ADGameDescription desc;
 
+	int gameID;
 	int gameType;
 	uint32 features;
 	uint16 version;
 };
+
+uint32 AgiEngine::getGameID() const {
+	return _gameDescription->gameID;
+}
 
 uint32 AgiEngine::getFeatures() const {
 	return _gameDescription->features;
@@ -86,7 +91,7 @@ static const PlainGameDescriptor agiGames[] = {
 
 namespace Agi {
 
-#define FANMADE_ILFV(id, name,md5,lang,features,ver) {	\
+#define FANMADE_ILVF(id,name,md5,lang,ver,features) {	\
 		{ \
 			id, \
 			name, \
@@ -95,19 +100,22 @@ namespace Agi {
 			Common::kPlatformPC, \
 			Common::ADGF_NO_FLAGS \
 		}, \
+		GID_FANMADE, \
 		GType_V2, \
-		features, \
+		(GF_FANMADE|features), \
 		ver, \
 	}
-#define FANMADE_LV(name,md5,lang,ver) FANMADE_ILFV("agi-fanmade",name,md5,lang,GF_FANMADE,ver)
-#define FANMADE_LFV(name,md5,lang,ver, features) FANMADE_ILFV("agi-fanmade",name,md5,lang,(GF_FANMADE|features),ver)
-#define FANMADE_V(name,md5,ver) FANMADE_LV(name,md5,Common::EN_ANY,ver)
-#define FANMADE_F(name,md5,features) FANMADE_ILFV("agi-fanmade",name,md5,Common::EN_ANY,(GF_FANMADE|features),0x2917)
-#define FANMADE_L(name,md5,lang) FANMADE_LV(name,md5,lang,0x2917)
-#define FANMADE_LF(name,md5,lang,features) FANMADE_ILFV("agi-fanmade",name,md5,lang,(GF_FANMADE|features),0x2917)
-#define FANMADE_I(id,name,md5) FANMADE_ILFV(id,name,md5,Common::EN_ANY,GF_FANMADE,0x2917)
-#define FANMADE_IF(id,name,md5,features) FANMADE_ILFV(id,name,md5,Common::EN_ANY,(GF_FANMADE|features),0x2917)
-#define FANMADE(name,md5) FANMADE_LV(name,md5,Common::EN_ANY,0x2917)
+#define FANMADE_LVF(name,md5,lang,ver,features) FANMADE_ILVF("agi-fanmade",name,md5,lang,ver,features)
+
+#define FANMADE_LF(name,md5,lang,features) FANMADE_LVF(name,md5,lang,0x2917,features)
+#define FANMADE_IF(id,name,md5,features) FANMADE_ILVF(id,name,md5,Common::EN_ANY,0x2917,features)
+
+#define FANMADE_V(name,md5,ver) FANMADE_LVF(name,md5,Common::EN_ANY,ver,0)
+#define FANMADE_F(name,md5,features) FANMADE_LF(name,md5,Common::EN_ANY,features)
+#define FANMADE_L(name,md5,lang) FANMADE_LF(name,md5,lang,0)
+#define FANMADE_I(id,name,md5) FANMADE_IF(id,name,md5,0)
+
+#define FANMADE(name,md5) FANMADE_F(name,md5,0)
 
 static const AGIGameDescription gameDescriptions[] = {
 
@@ -122,6 +130,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_AGIDEMO,
 		GType_V2,
 		0,
 		0x2440,
@@ -138,6 +147,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformApple2GS,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_AGIDEMO,
 		GType_V2,
 		0,
 		0x2917,
@@ -154,6 +164,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_AGIDEMO,
 		GType_V2,
 		0,
 		0x2917,
@@ -170,6 +181,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_AGIDEMO,
 		GType_V2,
 		0,
 		0x2917,
@@ -186,6 +198,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_AGIDEMO,
 		GType_V2,
 		0,
 		0x2917,
@@ -202,6 +215,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_AGIDEMO,
 		GType_V3,
 		0,
 		0x3149,
@@ -218,6 +232,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_BC,
 		GType_V2,
 		0,
 		0x2440,
@@ -234,6 +249,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformApple2GS,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_BC,
 		GType_V3,
 		0,
 		0x3149,
@@ -250,6 +266,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_BC,
 		GType_V2,
 		0,
 		0x2440,
@@ -266,6 +283,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_BC,
 		GType_V3,
 		0,
 		0x3149,
@@ -284,6 +302,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_DDP,
 		GType_V2,
 		0,
 		0x2272,
@@ -300,6 +319,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_DDP,
 		GType_V2,
 		0,
 		0x2272,
@@ -316,6 +336,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_DDP,
 		GType_V2,
 		0,
 		0x2272,
@@ -332,6 +353,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_GOLDRUSH,
 		GType_V3,
 		0,
 		0x3149,
@@ -348,6 +370,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformApple2GS,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_GOLDRUSH,
 		GType_V3,
 		0,
 		0x3149,
@@ -364,6 +387,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAtariST,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_GOLDRUSH,
 		GType_V3,
 		0,
 		0x3149,
@@ -380,6 +404,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_GOLDRUSH,
 		GType_V3,
 		0,
 		0x3149,
@@ -396,6 +421,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_GOLDRUSH,
 		GType_V3,
 		0,
 		0x3149,
@@ -416,6 +442,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_GOLDRUSH,
 		GType_V3,
 		GF_MACGOLDRUSH,
 		0x3149,
@@ -432,6 +459,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ1,
 		GType_V2,
 		0,
 		0x2440,
@@ -448,6 +476,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAtariST,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ1,
 		GType_V2,
 		0,
 		0x2272,
@@ -464,6 +493,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformApple2GS,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ1,
 		GType_V2,
 		0,
 		0x2272,
@@ -480,6 +510,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ1,
 		GType_V2,
 		0,
 		0x2440,
@@ -496,6 +527,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ1,
 		GType_V2,
 		0,
 		0x2917,
@@ -512,6 +544,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformApple2GS,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ2,
 		GType_V2,
 		0,
 		0x2917,
@@ -528,6 +561,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ2,
 		GType_V2,
 		0,
 		0x2440,
@@ -544,6 +578,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ2,
 		GType_V2,
 		0,
 		0x2440,
@@ -560,6 +595,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ2,
 		GType_V2,
 		0,
 		0x2440,		// XXX: any major differences from 2.411 to 2.440?
@@ -576,6 +612,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ2,
 		GType_V2,
 		0,
 		0x2917,
@@ -592,6 +629,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ3,
 		GType_V2,
 		0,
 		0x2440,
@@ -608,6 +646,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAtariST,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ3,
 		GType_V2,
 		0,
 		0x2272,
@@ -624,6 +663,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ3,
 		GType_V2,
 		0,
 		0x2440,
@@ -640,6 +680,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformApple2GS,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ3,
 		GType_V2,
 		0,
 		0x2917,
@@ -656,6 +697,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ3,
 		GType_V3,
 		0,
 		0x3086,
@@ -672,6 +714,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ3,
 		GType_V2,
 		0,
 		0x2272,
@@ -688,6 +731,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ3,
 		GType_V2,
 		0,
 		0x2440,
@@ -704,6 +748,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ3,
 		GType_V2,
 		0,
 		0x2440,
@@ -720,6 +765,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ3,
 		GType_V2,
 		0,
 		0x2936,
@@ -736,6 +782,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ4,
 		GType_V3,
 		0,
 		0x3086,
@@ -752,6 +799,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformApple2GS,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ4,
 		GType_V3,
 		0,
 		0x3086,
@@ -768,6 +816,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ4,
 		GType_V3,
 		0,
 		0x3086,
@@ -784,6 +833,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ4,
 		GType_V3,
 		0,
 		0x3086,
@@ -800,6 +850,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_KQ4,
 		GType_V3,
 		0,
 		0x3149,
@@ -816,6 +867,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_LSL1,
 		GType_V2,
 		0,
 		0x2440,
@@ -832,6 +884,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAtariST,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_LSL1,
 		GType_V2,
 		0,
 		0x2440,
@@ -848,6 +901,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_LSL1,
 		GType_V2,
 		0,
 		0x2440,
@@ -864,6 +918,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformApple2GS,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_LSL1,
 		GType_V2,
 		0,
 		0x2440,
@@ -880,6 +935,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_LSL1,
 		GType_V2,
 		0,
 		0x2440,
@@ -896,6 +952,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAtariST,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_MH1,
 		GType_V3,
 		0,
 		0x3149,
@@ -912,6 +969,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformApple2GS,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_MH1,
 		GType_V3,
 		0,
 		0x3149,
@@ -928,6 +986,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_MH1,
 		GType_V3,
 		0,
 		0x3149,
@@ -945,6 +1004,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_MH1,
 		GType_V3,
 		0,
 		0x3149,
@@ -961,6 +1021,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_MH1,
 		GType_V3,
 		0,
 		0x3149,
@@ -977,6 +1038,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAtariST,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_MH1,
 		GType_V3,
 		0,
 		0x3149,
@@ -993,6 +1055,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_MH2,
 		GType_V3,
 		0,
 		0x3086,
@@ -1009,6 +1072,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_MH2,
 		GType_V3,
 		0,
 		0x3149,
@@ -1025,6 +1089,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_MH2,
 		GType_V3,
 		0,
 		0x3149,
@@ -1041,6 +1106,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_MIXEDUP,
 		GType_V3,
 		0,
 		0x3086,
@@ -1057,6 +1123,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformApple2GS,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_MIXEDUP,
 		GType_V2,
 		0,
 		0x2917,
@@ -1073,6 +1140,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_MIXEDUP,
 		GType_V2,
 		0,
 		0x2917,
@@ -1090,6 +1158,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_MIXEDUP,
 		GType_V2,
 		0,
 		0x2917,
@@ -1107,6 +1176,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_PQ1,
 		GType_V2,
 		0,
 		0x2917,
@@ -1123,6 +1193,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_PQ1,
 		GType_V2,
 		0,
 		0x2440,
@@ -1139,6 +1210,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformApple2GS,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_PQ1,
 		GType_V2,
 		0,
 		0x2917,
@@ -1155,6 +1227,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_PQ1,
 		GType_V3,
 		0,
 		0x3149,
@@ -1171,6 +1244,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformApple2GS,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_PQ1,
 		GType_V2,
 		0,
 		0x2917,
@@ -1187,6 +1261,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_PQ1,
 		GType_V2,
 		0,
 		0x2917,
@@ -1203,6 +1278,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_PQ1,
 		GType_V2,
 		0,
 		0x2440,
@@ -1219,6 +1295,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_PQ1,
 		GType_V2,
 		0,
 		0x2917,
@@ -1235,6 +1312,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAtariST,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ1,
 		GType_V2,
 		0,
 		0x2440,
@@ -1251,6 +1329,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ1,
 		GType_V2,
 		0,
 		0x2272,
@@ -1267,6 +1346,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ1,
 		GType_V2,
 		0,
 		0x2440,
@@ -1283,6 +1363,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ1,
 		GType_V2,
 		0,
 		0x2440,
@@ -1299,6 +1380,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformApple2GS,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ1,
 		GType_V2,
 		0,
 		0x2917,
@@ -1315,6 +1397,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ1,
 		GType_V2,
 		0,
 		0x2089,
@@ -1331,6 +1414,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ1,
 		GType_V2,
 		0,
 		0x2272,
@@ -1347,6 +1431,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ1,
 		GType_V2,
 		0,
 		0x2440,
@@ -1364,6 +1449,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ2,
 		GType_V2,
 		0,
 		0x2936,
@@ -1380,6 +1466,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformApple2GS,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ2,
 		GType_V2,
 		0,
 		0x2936,
@@ -1400,6 +1487,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ2,
 		GType_V2,
 		0,
 		0x2936,
@@ -1416,6 +1504,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ2,
 		GType_V2,
 		0,
 		0x2936,
@@ -1433,6 +1522,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ2,
 		GType_V2,
 		0,
 		0x2917,
@@ -1449,6 +1539,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ2,
 		GType_V2,
 		0,
 		0x2917,
@@ -1465,6 +1556,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ2,
 		GType_V2,
 		0,
 		0x2917,
@@ -1481,6 +1573,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_SQ2,
 		GType_V2,
 		0,
 		0x2936,
@@ -1497,6 +1590,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_XMASCARD,
 		GType_V2,
 		0,
 		0x2272,
@@ -1586,6 +1680,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
+		GID_FANMADE,
 		GType_V2,
 		GF_AGDS,
 		0x2440,
@@ -1608,8 +1703,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Jiggy Jiggy Uh! Uh!", "bc331588a71e7a1c8840f6cc9b9487e4"),
 	FANMADE("Jimmy In: The Alien Attack (v0.1)", "a4e9db0564a494728de7873684a4307c"),
 	FANMADE("Joe McMuffin In \"What's Cooking, Doc\" (v1.0)", "8a3de7e61a99cb605fa6d233dd91c8e1"),
-	FANMADE_LFV("Jolimie, le Village Maudit (v0.5)", "21818501636b3cb8ad5de5c1a66de5c2", Common::FR_FRA, GF_AGIMOUSE|GF_AGIPAL, 0x2936),
-	FANMADE_LFV("Jolimie, le Village Maudit (v1.1)", "68d7aef1161bb5972fe03efdf29ccb7f", Common::FR_FRA, GF_AGIMOUSE|GF_AGIPAL, 0x2936),
+	FANMADE_LVF("Jolimie, le Village Maudit (v0.5)", "21818501636b3cb8ad5de5c1a66de5c2", Common::FR_FRA, GF_AGIMOUSE|GF_AGIPAL, 0x2936),
+	FANMADE_LVF("Jolimie, le Village Maudit (v1.1)", "68d7aef1161bb5972fe03efdf29ccb7f", Common::FR_FRA, GF_AGIMOUSE|GF_AGIPAL, 0x2936),
 	FANMADE("Journey Of Chef", "aa0a0b5a6364801ae65fdb96d6741df5"),
 	FANMADE("Jukebox (v1.0)", "c4b9c5528cc67f6ba777033830de7751"),
 	FANMADE("Justin Quest (v1.0 in development)", "103050989da7e0ffdc1c5e1793a4e1ec"),
@@ -1675,7 +1770,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("SQ2Eye (v0.486)", "3fd86436e93456770dbdd4593eded70a"),
 	FANMADE("Save Santa (v1.0)", "4644f6beb5802081772f14be56ae196c"),
 	FANMADE("Save Santa (v1.3)", "f8afdb6efc5af5e7c0228b44633066af"),
-	FANMADE("Schiller", "ade39dea968c959cfebe1cf935d653e9"),
+	FANMADE("Schiller (preview 1)", "ade39dea968c959cfebe1cf935d653e9"),
+	FANMADE("Schiller (preview 2)", "62cd1f8fc758bf6b4aa334e553624cef"),
 	FANMADE_IF("serguei1", "(v1.0)", "b86725f067e456e10cdbdf5f58e01dec", GF_AGIMOUSE|GF_AGIPAL),
 	FANMADE_IF("serguei1", "v1.1 2002 Sep 5", "91975c1fb4b13b0f9a8e9ff74731030d", GF_AGIMOUSE|GF_AGIPAL),
 	FANMADE_IF("serguei1", "v1.1 2003 Apr 10", "91975c1fb4b13b0f9a8e9ff74731030d", GF_AGIMOUSE|GF_AGIPAL),
@@ -1723,8 +1819,115 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Voodoo Girl - Queen of the Darned (v1.2 2002 Mar 29)", "11d0417b7b886f963d0b36789dac4c8f"),
 	FANMADE("Wizaro (v0.1)", "abeec1eda6eaf8dbc52443ea97ff140c"),
 
-	{ AD_TABLE_END_MARKER, 0, 0, 0 }
+	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
+
+static const AGIGameDescription fallbackDescs[] = {
+	{
+		{
+			"agi-fanmade",
+			"Unknown v2 Game",
+			AD_ENTRY1(0, 0),
+			Common::UNK_LANG,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_FANMADE,
+		GType_V2,
+		GF_FANMADE,
+		0x2917,
+	},
+	{
+		{
+			"agi-fanmade",
+			"Unknown v2 AGIPAL Game",
+			AD_ENTRY1(0, 0),
+			Common::UNK_LANG,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_FANMADE,
+		GType_V2,
+		GF_FANMADE | GF_AGIPAL,
+		0x2917,
+	},
+	{
+		{
+			"agi-fanmade",
+			"Unknown v3 Game",
+			AD_ENTRY1(0, 0),
+			Common::UNK_LANG,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_FANMADE,
+		GType_V3,
+		GF_FANMADE,
+		0x3149,
+	},
+};
+
+Common::ADGameDescList fallbackDetector(const FSList *fslist) {
+	Common::String tstr;
+	typedef Common::HashMap<Common::String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> IntMap;
+	IntMap allFiles;
+	Common::ADGameDescList matched;
+	int matchedNum = -1;
+
+	// TODO:
+	// WinAGI produces *.wag file with interpreter version, game name
+	// and other parameters. Add support for this once specs are known
+
+
+	// First grab all filenames
+	for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
+		if (file->isDirectory()) continue;
+		tstr = file->name();
+		tstr.toLowercase();
+
+		allFiles[tstr] = true;
+	}
+
+	// Now check for v2
+	if (allFiles.contains("logdir") && allFiles.contains("object") &&
+		allFiles.contains("picdir") && allFiles.contains("snddir") &&
+		allFiles.contains("viewdir") && allFiles.contains("vol.0") &&
+		allFiles.contains("words.tok")) {
+		matchedNum = 0;
+
+		// Check if it is AGIPAL
+		if (allFiles.contains("pal.101"))
+			matchedNum = 1;
+	} else { // Try v3
+		char name[8];
+
+		for (IntMap::const_iterator f = allFiles.begin(); f != allFiles.end(); ++f) {
+			debug(" --> %s", f->_key.c_str());
+			if (f->_key.hasSuffix("vol.0")) {
+				memset(name, 0, 8);
+				strncpy(name, f->_key.c_str(), f->_key.size() > 5 ? f->_key.size() - 5 : f->_key.size());
+				debug("YEAH! (%s)", name);
+
+				if (allFiles.contains("object") && allFiles.contains("words.tok") &&
+					allFiles.contains(Common::String(name) + "dir")) {
+					matchedNum = 2;
+					break;
+				}
+			}
+		}
+	}
+	
+	if (matchedNum != -1) {
+		matched.push_back(&fallbackDescs[matchedNum].desc);
+
+		printf("Your game version has been detected using fallback matching as a\n");
+		printf("variant of %s (%s).\n", fallbackDescs[matchedNum].desc.gameid, fallbackDescs[matchedNum].desc.extra);
+		printf("If this is an original and unmodified version or new made Fanmade game,\n");
+		printf("please report any, information previously printed by ScummVM to the team.\n");
+	}
+
+	return matched;
+}
 
 }
 
@@ -1744,7 +1947,7 @@ static const Common::ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Fallback callback
-	0,
+	Agi::fallbackDetector,
 	// Flags
 	Common::kADFlagAugmentPreferredTarget
 };

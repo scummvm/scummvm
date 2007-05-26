@@ -119,8 +119,9 @@ bool Debugger::cmd_toggleFlag(int argc, const char **argv) {
 		else
 			_vm->setGameFlag(flag);
 		DebugPrintf("Flag %i is now %i\n", flag, _vm->queryGameFlag(flag)); 
-	} else
+	} else {
 		DebugPrintf("Syntax: toggleflag <flag>\n");
+	}
 
 	return true;
 }
@@ -129,8 +130,9 @@ bool Debugger::cmd_queryFlag(int argc, const char **argv) {
 	if (argc > 1) {
 		uint flag = atoi(argv[1]);
 		DebugPrintf("Flag %i is %i\n", flag, _vm->queryGameFlag(flag)); 
-	} else
+	} else {
 		DebugPrintf("Syntax: queryflag <flag>\n");
+	}
 
 	return true;
 }
@@ -148,8 +150,9 @@ bool Debugger::cmd_setTimerCountdown(int argc, const char **argv) {
 		uint countdown = atoi(argv[2]);
 		_vm->setTimerCountdown(timer, countdown);	
 		DebugPrintf("Timer %i now has countdown %i\n", timer, _vm->_timers[timer].countdown); 
-	} else
+	} else {
 		DebugPrintf("Syntax: settimercountdown <timer> <countdown>\n");
+	}
 
 	return true;
 }
@@ -166,9 +169,11 @@ bool Debugger::cmd_giveItem(int argc, const char **argv) {
 
 		_vm->setMouseItem(item);
 		_vm->_itemInHand = item;
-	} else
+	} else {
 		DebugPrintf("Syntax: give <itemid>\n");
+	}
 		
 	return true;
 }
 } // End of namespace Kyra
+

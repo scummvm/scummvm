@@ -19,7 +19,6 @@
 
 #include "stdafx.h"
 #include "str.h"
-#include "fs.h"
 #include "common/util.h"
 //#include <NDS/ARM9/console.h> //basic print funcionality
 #include "ds-fs.h"

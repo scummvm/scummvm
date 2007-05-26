@@ -24,7 +24,7 @@
 
 #include "common/stdafx.h"
 #include "common/file.h"
-#include "common/fs.h"
+//#include "common/fs.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/system.h"
@@ -39,15 +39,13 @@
 #include "cine/main_loop.h"
 #include "cine/object.h"
 #include "cine/texte.h"
-#include "cine/sfx_player.h"
-#include "cine/sound_driver.h"
+#include "cine/sound.h"
 #include "cine/various.h"
 
 
 namespace Cine {
 
-SoundDriver *g_soundDriver;
-SfxPlayer *g_sfxPlayer;
+Sound *g_sound;
 Common::SaveFileManager *g_saveFileMan;
 
 CineEngine *g_cine;
@@ -95,12 +93,12 @@ int CineEngine::init() {
 	_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
-	if (g_cine->getGameType() == GType_FW) {
-		g_soundDriver = new AdlibSoundDriverINS(_mixer);
+	if (g_cine->getPlatform() == Common::kPlatformPC) {
+		g_sound = new PCSound(_mixer, this);
 	} else {
-		g_soundDriver = new AdlibSoundDriverADL(_mixer);
+		// Paula chipset for Amiga and Atari versions
+		g_sound = new PaulaSound(_mixer, this);
 	}
-	g_sfxPlayer = new SfxPlayer(g_soundDriver);
 	g_saveFileMan = _saveFileMan;
 
 	initialize();
@@ -113,11 +111,7 @@ int CineEngine::go() {
 
 	mainLoop(1);
 
-	if (g_cine->getGameType() == Cine::GType_FW)
-		snd_clearBasesonEntries();
-
-	delete g_sfxPlayer;
-	delete g_soundDriver;
+	delete g_sound;
 	return 0;
 }
 
@@ -128,7 +122,7 @@ void CineEngine::initialize() {
 	setupOpcodes();
 
 	initLanguage(g_cine->getLanguage());
-	init_video();
+	gfxInit();
 
 	textDataPtr = (byte *)malloc(8000);
 
@@ -138,16 +132,9 @@ void CineEngine::initialize() {
 	
 	loadTextData("texte.dat", textDataPtr);
 
-	switch (g_cine->getGameType()) {
-	case Cine::GType_FW:
-		snd_loadBasesonEntries("BASESON.SND");
-		break;
-	case Cine::GType_OS:
-		if (!(g_cine->getFeatures() & GF_DEMO)) {
-			loadPoldatDat("poldat.dat");
-			loadErrmessDat("errmess.dat");
-		}
-		break;
+	if (g_cine->getGameType() == Cine::GType_OS && !(g_cine->getFeatures() & GF_DEMO)) {
+		loadPoldatDat("poldat.dat");
+		loadErrmessDat("errmess.dat");
 	}
 
 	for (i = 0; i < NUM_MAX_OBJECT; i++) {

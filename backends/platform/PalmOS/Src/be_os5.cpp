@@ -23,11 +23,7 @@
  */
 
 #include "be_os5.h"
-
-#ifndef __TWKEYS_H__
-#include <PalmNavigator.h>
 #include <HsKeyCommon.h>
-#endif
 
 OSystem_PalmOS5::OSystem_PalmOS5() : OSystem_PalmBase() {
 	_sound.active = false;
@@ -78,18 +74,12 @@ void OSystem_PalmOS5::calc_rect(Boolean fullscreen) {
 }
 
 void OSystem_PalmOS5::int_initBackend() {
-	if (OPTIONS_TST(kOpt5WayNavigatorV1)) {
-		_keyMouse.bitUp		= keyBitPageUp;
-		_keyMouse.bitDown	= keyBitPageDown;
-		_keyMouse.bitLeft	= keyBitNavLeft;
-		_keyMouse.bitRight	= keyBitNavRight;
-
-	} else if (OPTIONS_TST(kOpt5WayNavigatorV2)) {
-		_keyMouse.bitUp		= keyBitRockerUp|keyBitPageUp;
-		_keyMouse.bitDown	= keyBitRockerDown|keyBitPageDown;
-		_keyMouse.bitLeft	= keyBitRockerLeft;
-		_keyMouse.bitRight	= keyBitRockerRight;
-	}
+	_keyExtra.bitUp		= keyBitRockerUp|keyBitPageUp;
+	_keyExtra.bitDown	= keyBitRockerDown|keyBitPageDown;
+	_keyExtra.bitLeft	= keyBitRockerLeft;
+	_keyExtra.bitRight	= keyBitRockerRight;
+	_keyExtra.bitActionA	= keyBitHard3;
+	_keyExtra.bitActionB	= keyBitHard4;
 }
 
 bool OSystem_PalmOS5::hasFeature(Feature f) {

@@ -395,6 +395,18 @@ void loadSpl(const char *resourceName) {
 	strcpy(animDataTable[entry].name, currentPartName);
 }
 
+void loadSplAbs(const char *resourceName, uint16 idx) {
+	int16 foundFileIdx;
+	byte *dataPtr;
+	int16 entry;
+
+	foundFileIdx = findFileInBundle(resourceName);
+	dataPtr = readBundleFile(foundFileIdx);
+
+	entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0, idx);
+	memcpy(animDataTable[entry].ptr1, dataPtr, partBuffer[foundFileIdx].unpackedSize);
+}
+
 void loadMsk(const char *resourceName) {
 	int16 foundFileIdx;
 	byte *dataPtr;
@@ -877,6 +889,7 @@ void loadAbs(const char *resourceName, uint16 idx) {
 		loadSeqAbs(resourceName, idx);
 		return;
 	} else if (strstr(resourceName, ".SPL")) {
+		loadSplAbs(resourceName, idx);
 		return;
 	} else if (strstr(resourceName, ".AMI")) {
 		return;

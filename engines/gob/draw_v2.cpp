@@ -82,7 +82,7 @@ void Draw_v2::animateCursor(int16 cursor) {
 	// .-- _draw_animateCursorSUB1 ---
 	if (cursorIndex == -1) {
 		cursorIndex = 0;
-		for (ptr = _vm->_game->_collisionAreas; ptr->left != -1; ptr++) {
+		for (ptr = _vm->_game->_collisionAreas; ptr->left != 0xFFFF; ptr++) {
 			if ((ptr->flags & 0xF00) || (ptr->id & 0x4000))
 				continue;
 
@@ -558,7 +558,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 	// Some handle, but always assigned to -1 in Game::loadTotFile()
 	int16 word_2F2D2 = -1;
 
-	deltaVeto = (bool) (operation & 0x10);
+	deltaVeto = (operation & 0x10) != 0;
 	operation &= 0x0F;
 
 	if (_sourceSurface >= 100)

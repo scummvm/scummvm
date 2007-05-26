@@ -20,10 +20,10 @@
  *
  */
 
-#include "parallaction/defs.h"
-#include "parallaction/parser.h"
+#include "common/stdafx.h"
+
 #include "parallaction/parallaction.h"
-#include "parallaction/disk.h"
+
 
 namespace Parallaction {
 

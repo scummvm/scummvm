@@ -28,8 +28,8 @@
 
 namespace AGOS {
 
-void AGOSEngine::setupSimon2VideoOpcodes(VgaOpcodeProc *op) {
-	setupSimon1VideoOpcodes(op);
+void AGOSEngine_Simon2::setupVideoOpcodes(VgaOpcodeProc *op) {
+	AGOSEngine_Simon1::setupVideoOpcodes(op);
 
 	op[56] = &AGOSEngine::vc56_delayLong;
 	op[58] = &AGOSEngine::vc58_changePriority;
@@ -48,9 +48,9 @@ void AGOSEngine::setupSimon2VideoOpcodes(VgaOpcodeProc *op) {
 }
 
 void AGOSEngine::vc56_delayLong() {
-	uint16 num = vcReadVarOrWord() * _frameRate;
+	uint16 num = vcReadVarOrWord() * _frameCount;
 
-	addVgaEvent(num + _vgaBaseDelay, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
+	addVgaEvent(num + _vgaBaseDelay, ANIMATE_EVENT, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
 	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 

@@ -206,7 +206,9 @@ private:
 	int _scaleFactorXd;		// scaler X /
 	int _scaleFactorYm;		// scaler Y *
 	int _scaleFactorYd;		// scaler Y /
+	SDL_Rect _dirtyRectOut[NUM_DIRTY_RECT];
 	bool _scalersChanged;
+	bool _hasfocus;			// scummvm has the top window
 
 	static int _platformScreenWidth;
 	static int _platformScreenHeight;

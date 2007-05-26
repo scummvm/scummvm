@@ -63,7 +63,7 @@ static int timer_handler(int t) {
 
 const OSystem::GraphicsMode OSystem_PSP::s_supportedGraphicsModes[] = {
 	{ "320x200 (centered)", "320x200 16-bit centered", CENTERED_320X200 },
-	{ "353x272 (best-fit, centered)", "353x272 16-bit centered", CENTERED_435X272 },
+	{ "435x272 (best-fit, centered)", "435x272 16-bit centered", CENTERED_435X272 },
 	{ "480x272 (full screen)", "480x272 16-bit stretched", STRETCHED_480X272 },
 	{ "362x272 (4:3, centered)", "362x272 16-bit centered", CENTERED_362X272 },
 	{0, 0, 0}

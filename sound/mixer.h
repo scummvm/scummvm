@@ -132,7 +132,7 @@ public:
 	 *
 	 * @return whether the mixer is ready and setup
 	 */
-	bool isReady() const { return _mixerReady; };
+	bool isReady() const { return _mixerReady; }
 
 
 

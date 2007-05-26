@@ -37,3 +37,6 @@
 #ifdef Timer
 #undef Timer
 #endif
+/* newlib ctype.h defines _X for hex digit flag.
+   This conflicts with the use of _X as a variable name. */
+#undef _X

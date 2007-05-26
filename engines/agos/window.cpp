@@ -123,6 +123,20 @@ void AGOSEngine::colorWindow(WindowBlock *window) {
 			dst += _screenWidth;
 		}
 	} else {
+		if (getGameType() == GType_ELVIRA2 && window->y == 146) {
+			if (window->fill_color == 1) {
+				_displayPalette[33 * 4 + 0] = 48 * 4;
+				_displayPalette[33 * 4 + 1] = 40 * 4;
+				_displayPalette[33 * 4 + 2] = 32 * 4;
+			} else {
+				_displayPalette[33 * 4 + 0] = 56 * 4;
+				_displayPalette[33 * 4 + 1] = 56 * 4;
+				_displayPalette[33 * 4 + 2] = 40 * 4;
+			}
+
+			_paletteFlag = 2;
+		}
+
 		dst = getFrontBuf() + _dxSurfacePitch * window->y + window->x * 8;
 		h = window->height * 8;
 		w = window->width * 8;
@@ -158,8 +172,10 @@ void AGOSEngine::restoreWindow(WindowBlock *window) {
 		}
 
 		restoreBlock(window->y + window->height * 8, (window->x + window->width) * 8, window->y, window->x * 8);
-	} else {
+	} else if (getGameType() == GType_SIMON1) {
 		restoreBlock(window->y + window->height * 8 + ((window == _windowArray[2]) ? 1 : 0), (window->x + window->width) * 8, window->y, window->x * 8);
+	} else {
+		restoreBlock(window->y + window->height * 8, (window->x + window->width) * 8, window->y, window->x * 8);
 	}
 
 	_lockWord &= ~0x8000;
@@ -170,7 +186,7 @@ void AGOSEngine::restoreBlock(uint h, uint w, uint y, uint x) {
 	uint i;
 
 	dst = getFrontBuf();
-	src = _backGroundBuf;
+	src = getBackGround();
 
 	dst += y * _dxSurfacePitch;
 	src += y * _dxSurfacePitch;
@@ -197,9 +213,16 @@ void AGOSEngine::setTextColor(uint color) {
 	window->text_color = color;
 }
 
-void AGOSEngine::windowPutChar(uint a) {
-	if (_textWindow != _windowArray[0])
+void AGOSEngine::sendWindow(uint a) {
+	if (_textWindow != _windowArray[0]) {
+		if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+			if (!(_textWindow->flags & 1)) {
+				haltAnimation();
+			}
+		}
+
 		windowPutChar(_textWindow, a);
+	}
 }
 
 void AGOSEngine::waitWindow(WindowBlock *window) {
@@ -215,8 +238,8 @@ void AGOSEngine::waitWindow(WindowBlock *window) {
 		windowPutChar(window, *message);
 
 	ha = findEmptyHitArea();
-	ha->x = 96;
-	ha->y = 62;
+	ha->x = (window->width / 2 + window->x - 3) * 8; 
+	ha->y = window->height * 8 + window->y - 8;
 	ha->width = 48;
 	ha->height = 8;
 	ha->flags = kBFBoxInUse;
@@ -241,6 +264,40 @@ void AGOSEngine::waitWindow(WindowBlock *window) {
 	}
 
 	undefineBox(0x7FFF);
+}
+
+void AGOSEngine::writeChar(WindowBlock *window, int x, int y, int offs, int val) {
+	int chr;
+
+	// Clear background of first digit
+	window->textColumnOffset = offs;
+	window->text_color = 0;
+	windowDrawChar(window, x * 8, y, 129);
+
+	if (val != -1) {
+		// Print first digit
+		chr = val / 10 + 48;
+		window->text_color = 15;
+		windowDrawChar(window, x * 8, y, chr);
+	}
+
+	offs += 6;
+	if (offs >= 7) {
+		offs -= 8;
+		x++;
+	}
+
+	// Clear background of second digit
+	window->textColumnOffset = offs;
+	window->text_color = 0;
+	windowDrawChar(window, x * 8, y, 129);
+
+	if (val != -1) {
+		// Print second digit
+		chr = val % 10 + 48;
+		window->text_color = 15;
+		windowDrawChar(window, x * 8, y, chr);
+	}
 }
 
 } // End of namespace AGOS

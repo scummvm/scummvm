@@ -152,6 +152,7 @@ void AGOSEngine::loadModule(uint music) {
 
 		Common::MemoryReadStream stream(dstBuf, dstSize);
 		audioStream = Audio::makeProtrackerStream(&stream, _mixer->getOutputRate());
+		free(dstBuf);
 	} else {
 		audioStream = Audio::makeProtrackerStream(&f, _mixer->getOutputRate());
 	}
@@ -379,6 +380,22 @@ static const char *dimpSoundList[32] = {
 	"And17",
 };
 
+
+void AGOSEngine::loadSoundFile(const char* filename) {
+	File in;
+
+	in.open(filename);
+	if (in.isOpen() == false)
+		error("loadSound: Can't load %s", filename);
+
+	uint32 dstSize = in.size();
+	byte *dst = (byte *)malloc(dstSize);
+	if (in.read(dst, dstSize) != dstSize)
+		error("loadSound: Read failed");
+	in.close();
+
+	_sound->playSfxData(dst, 0, 0, 0);
+}
 
 void AGOSEngine::loadSound(uint sound, int pan, int vol, uint type) {
 	byte *dst;

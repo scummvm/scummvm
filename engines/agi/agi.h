@@ -112,6 +112,26 @@ enum AgiGameFeatures {
 	GF_FANMADE =     (1 << 6)
 };
 
+enum AgiGameID {
+	GID_AGIDEMO,
+	GID_BC,
+	GID_DDP,
+	GID_GOLDRUSH,
+	GID_KQ1,
+	GID_KQ2,
+	GID_KQ3,
+	GID_KQ4,
+	GID_LSL1,
+	GID_MH1,
+	GID_MH2,
+	GID_MIXEDUP,
+	GID_PQ1,
+	GID_SQ1,
+	GID_SQ2,
+	GID_XMASCARD,
+	GID_FANMADE		// TODO: Should this be extended to include all fanmade games?
+};
+
 struct AGIGameDescription;
 
 enum {
@@ -507,6 +527,7 @@ public:
 	}
 
 	const AGIGameDescription *_gameDescription;
+	uint32 getGameID() const;
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
@@ -543,7 +564,7 @@ public:
 	int saveGame(const char *fileName, const char *saveName);
 	int saveGameDialog();
 	int saveGameSimple();
-	int loadGame(const char *fileName);
+	int loadGame(const char *fileName, bool checkId = true);
 	int loadGameDialog();
 	int loadGameSimple();
 

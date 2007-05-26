@@ -26,6 +26,7 @@
 #include "common/list.h"
 
 #include "parallaction/defs.h"
+
 #include "parallaction/commands.h"
 #include "parallaction/graphics.h"
 
@@ -147,8 +148,12 @@ struct DoorData {	// size = 28
 };
 struct HearData {	// size = 20
 	char		_name[20];
+	int			_channel;
+	int			_freq;
 
 	HearData() {
+		_channel = -1;
+		_freq = -1;
 		_name[0] = '\0';
 	}
 };
@@ -184,9 +189,8 @@ struct Label {
 	char*			_text;
 	StaticCnv		_cnv;
 
-	Label() {
-		_text = NULL;
-	}
+	Label();
+	~Label();
 };
 
 struct Zone {
@@ -307,13 +311,6 @@ struct Animation : public Zone  {
 
 typedef Animation* AnimationPointer;
 typedef ManagedList<AnimationPointer> AnimationList;
-
-void	dropItem(uint16 v);
-int16	pickupItem(Zone *z);
-
-
-void		loadProgram(Animation *, char *filename);
-
 
 
 } // namespace Parallaction

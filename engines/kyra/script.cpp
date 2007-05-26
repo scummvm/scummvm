@@ -68,13 +68,10 @@ ScriptHelper::ScriptHelper(KyraEngine *vm) : _vm(vm) {
 #undef COMMAND
 }
 
-ScriptHelper::~ScriptHelper() {
-}
-
-bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, byte *specialPtr) {
+bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, const Common::Array<const Opcode*> *opcodes) {
 	uint32 size = 0;
 	uint8 *data = _vm->resource()->fileData(filename, &size);	
-	byte *curData = data;
+	const byte *curData = data;
 	
 	uint32 formBlockSize = getFORMBlockSize(curData);
 	if (formBlockSize == (uint32)-1) {
@@ -85,14 +82,8 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, byte
 	
 	uint32 chunkSize = getIFFBlockSize(data, curData, size, TEXT_CHUNK);
 	if (chunkSize != (uint32)-1) {
-		if (specialPtr) {
-			scriptData->mustBeFreed = 0;
-			scriptData->text = specialPtr;
-			specialPtr += chunkSize;
-		} else {
-			scriptData->mustBeFreed = 1;
-			scriptData->text = new byte[chunkSize];
-		}
+		scriptData->text = new byte[chunkSize];
+
 		if (!loadIFFBlock(data, curData, size, TEXT_CHUNK, scriptData->text, chunkSize)) {
 			delete [] data;
 			unloadScript(scriptData);
@@ -108,24 +99,19 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, byte
 		error("No ORDR chunk found in file: '%s'", filename);
 		return false;
 	}
-	if (specialPtr) {
-		scriptData->mustBeFreed = 0;
-		scriptData->ordr = specialPtr;
-		specialPtr += chunkSize;
-	} else {
-		scriptData->mustBeFreed = 1;
-		scriptData->ordr = new byte[chunkSize];
-	}
-	if (!loadIFFBlock(data, curData, size, ORDR_CHUNK, scriptData->ordr, chunkSize)) {
+	chunkSize >>= 1;
+
+	scriptData->ordr = new uint16[chunkSize];
+
+	if (!loadIFFBlock(data, curData, size, ORDR_CHUNK, scriptData->ordr, chunkSize << 1)) {
 		delete [] data;
 		unloadScript(scriptData);
 		error("Couldn't load ORDR chunk from file: '%s'", filename);
 		return false;
 	}
-	chunkSize = chunkSize / 2;
-	while (chunkSize--) {
-		((uint16*)scriptData->ordr)[chunkSize] = READ_BE_UINT16(&((uint16*)scriptData->ordr)[chunkSize]);
-	}
+
+	while (chunkSize--)
+		scriptData->ordr[chunkSize] = READ_BE_UINT16(&scriptData->ordr[chunkSize]);
 	
 	chunkSize = getIFFBlockSize(data, curData, size, DATA_CHUNK);
 	if (chunkSize == (uint32)-1) {
@@ -134,21 +120,22 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, byte
 		error("No DATA chunk found in file: '%s'", filename);
 		return false;
 	}
-	if (specialPtr) {
-		scriptData->mustBeFreed = 0;
-		scriptData->data = specialPtr;
-		specialPtr += chunkSize;
-	} else {
-		scriptData->mustBeFreed = 1;
-		scriptData->data = new byte[chunkSize];
-	}
-	if (!loadIFFBlock(data, curData, size, DATA_CHUNK, scriptData->data, chunkSize)) {
+	chunkSize >>= 1;
+
+	scriptData->data = new uint16[chunkSize];
+
+	if (!loadIFFBlock(data, curData, size, DATA_CHUNK, scriptData->data, chunkSize << 1)) {
 		delete [] data;
 		unloadScript(scriptData);
 		error("Couldn't load DATA chunk from file: '%s'", filename);
 		return false;
 	}
-	scriptData->dataSize = chunkSize / 2;
+	scriptData->dataSize = chunkSize;
+
+	while (chunkSize--)
+		scriptData->data[chunkSize] = READ_BE_UINT16(&scriptData->data[chunkSize]);
+
+	scriptData->opcodes = opcodes;
 	
 	delete [] data;
 	return true;
@@ -158,17 +145,15 @@ void ScriptHelper::unloadScript(ScriptData *data) {
 	if (!data)
 		return;
 
-	if (data->mustBeFreed) {
-		delete [] data->text;
-		delete [] data->ordr;
-		delete [] data->data;
-	}
+	delete [] data->text;
+	delete [] data->ordr;
+	delete [] data->data;
 	
-	data->mustBeFreed = 0;
-	data->text = data->ordr = data->data = 0;
+	data->text = 0; 
+	data->ordr = data->data = 0;
 }
 
-void ScriptHelper::initScript(ScriptState *scriptStat, ScriptData *data) {
+void ScriptHelper::initScript(ScriptState *scriptStat, const ScriptData *data) {
 	scriptStat->dataPtr = data;
 	scriptStat->ip = 0;
 	scriptStat->stack[60] = 0;
@@ -177,17 +162,18 @@ void ScriptHelper::initScript(ScriptState *scriptStat, ScriptData *data) {
 }
 
 bool ScriptHelper::startScript(ScriptState *script, int function) {
-	if (!script->dataPtr) {
+	if (!script->dataPtr)
 		return false;
-	}
-	uint16 functionOffset = ((uint16*)script->dataPtr->ordr)[function];
-	if (functionOffset == (uint16)-1) {
+
+	uint16 functionOffset = script->dataPtr->ordr[function];
+	if (functionOffset == 0xFFFF)
 		return false;
-	}
+
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
-		script->ip = &script->dataPtr->data[functionOffset*2+2];
+		script->ip = &script->dataPtr->data[functionOffset+1];
 	else
-		script->ip = &script->dataPtr->data[functionOffset*2];
+		script->ip = &script->dataPtr->data[functionOffset];
+
 	return true;
 }
 
@@ -201,11 +187,10 @@ bool ScriptHelper::runScript(ScriptState *script) {
 	_parameter = 0;
 	_continue = true;
 	
-	if (!script->ip) {
+	if (!script->ip)
 		return false;
-	}
-	
-	int16 code = READ_BE_UINT16(script->ip); script->ip += 2;
+
+	int16 code = *script->ip++;
 	int16 opcode = (code >> 8) & 0x1F;
 
 	if (code & 0x8000) {
@@ -214,7 +199,7 @@ bool ScriptHelper::runScript(ScriptState *script) {
 	} else if (code & 0x4000) {
 		_parameter = (int8)(code);
 	} else if (code & 0x2000) {
-		_parameter = READ_BE_UINT16(script->ip); script->ip += 2;
+		_parameter = *script->ip++; 
 	} else {
 		_parameter = 0;
 	}
@@ -229,23 +214,24 @@ bool ScriptHelper::runScript(ScriptState *script) {
 	return _continue;
 }
 
-uint32 ScriptHelper::getFORMBlockSize(byte *&data) const {
+uint32 ScriptHelper::getFORMBlockSize(const byte *&data) const {
 	static const uint32 chunkName = FORM_CHUNK;
-	if (READ_LE_UINT32(data) != chunkName) {
+
+	if (READ_LE_UINT32(data) != chunkName)
 		return (uint32)-1;
-	}
+
 	data += 4;
 	uint32 retValue = READ_BE_UINT32(data); data += 4;
 	return retValue;
 }
 
-uint32 ScriptHelper::getIFFBlockSize(byte *start, byte *&data, uint32 maxSize, const uint32 chunkName) const {
+uint32 ScriptHelper::getIFFBlockSize(const byte *start, const byte *&data, uint32 maxSize, const uint32 chunkName) const {
 	uint32 size = (uint32)-1;
 	bool special = false;
 	
-	if (data == (start + maxSize)) {
+	if (data == (start + maxSize))
 		data = start + 0x0C;
-	}
+
 	while (data < (start + maxSize)) {
 		uint32 chunk = READ_LE_UINT32(data); data += 4;
 		uint32 size_temp = READ_BE_UINT32(data); data += 4;
@@ -263,15 +249,16 @@ uint32 ScriptHelper::getIFFBlockSize(byte *start, byte *&data, uint32 maxSize, c
 			break;
 		}
 	}
+
 	return size;
 }
 
-bool ScriptHelper::loadIFFBlock(byte *start, byte *&data, uint32 maxSize, const uint32 chunkName, byte *loadTo, uint32 ptrSize) const {
+bool ScriptHelper::loadIFFBlock(const byte *start, const byte *&data, uint32 maxSize, const uint32 chunkName, void *loadTo, uint32 ptrSize) const {
 	bool special = false;
 	
-	if (data == (start + maxSize)) {
+	if (data == (start + maxSize))
 		data = start + 0x0C;
-	}
+
 	while (data < (start + maxSize)) {
 		uint32 chunk = READ_LE_UINT32(data); data += 4;
 		uint32 chunkSize = READ_BE_UINT32(data); data += 4;
@@ -290,12 +277,12 @@ bool ScriptHelper::loadIFFBlock(byte *start, byte *&data, uint32 maxSize, const 
 				loadSize = ptrSize;
 			memcpy(loadTo, data, loadSize);
 			chunkSize = (chunkSize + 1) & 0xFFFFFFFE;
-			if (chunkSize > loadSize) {
+			if (chunkSize > loadSize)
 				data += (chunkSize - loadSize);
-			}
 			return true;
 		}
 	}
+
 	return false;
 }
 
@@ -304,7 +291,7 @@ bool ScriptHelper::loadIFFBlock(byte *start, byte *&data, uint32 maxSize, const 
 #pragma mark -
 
 void ScriptHelper::c1_jmpTo(ScriptState* script) {
-	script->ip = script->dataPtr->data + (_parameter << 1);
+	script->ip = script->dataPtr->data + _parameter;
 }
 
 void ScriptHelper::c1_setRetValue(ScriptState* script) {
@@ -318,7 +305,7 @@ void ScriptHelper::c1_pushRetOrPos(ScriptState* script) {
 		break;
 
 	case 1:
-		script->stack[--script->sp] = (script->ip - script->dataPtr->data) / 2 + 1;
+		script->stack[--script->sp] = script->ip - script->dataPtr->data + 1;
 		script->stack[--script->sp] = script->bp;
 		script->bp = script->sp + 2;
 		break;
@@ -358,7 +345,7 @@ void ScriptHelper::c1_popRetOrPos(ScriptState* script) {
 			script->ip = 0;
 		} else {
 			script->bp = script->stack[script->sp++];
-			script->ip = script->dataPtr->data + (script->stack[script->sp++] << 1);
+			script->ip = script->dataPtr->data + script->stack[script->sp++];
 		}
 		break;
 
@@ -390,13 +377,23 @@ void ScriptHelper::c1_subSP(ScriptState* script) {
 }
 
 void ScriptHelper::c1_execOpcode(ScriptState* script) {
-	script->retValue = _vm->runOpcode(script, (uint8)_parameter);
+	uint8 opcode = _parameter;
+
+	assert(script->dataPtr->opcodes);
+	assert(opcode < script->dataPtr->opcodes->size());
+
+	if ((*script->dataPtr->opcodes)[opcode]) {
+		script->retValue = (*(*script->dataPtr->opcodes)[opcode])(script);
+	} else {
+		script->retValue = 0;
+		warning("calling unimplemented opcode(0x%.02X)", opcode);
+	}
 }
 
 void ScriptHelper::c1_ifNotJmp(ScriptState* script) {
 	if (!script->stack[script->sp++]) {
 		_parameter &= 0x7FFF;
-		script->ip = script->dataPtr->data + (_parameter << 1);
+		script->ip = script->dataPtr->data + _parameter;
 	}
 }
 
@@ -404,11 +401,10 @@ void ScriptHelper::c1_negate(ScriptState* script) {
 	int16 value = script->stack[script->sp];
 	switch (_parameter) {
 	case 0:
-		if (!value) {
+		if (!value)
 			script->stack[script->sp] = 1;
-		} else {
+		else
 			script->stack[script->sp] = 0;
-		}
 		break;
 
 	case 1:
@@ -434,67 +430,59 @@ void ScriptHelper::c1_eval(ScriptState* script) {
 	
 	switch (_parameter) {
 	case 0:
-		if (!val2 || !val1) {
+		if (!val2 || !val1)
 			ret = 0;
-		} else {
+		else
 			ret = 1;
-		}
 		break;
 
 	case 1:
-		if (val2 || val1) {
+		if (val2 || val1)
 			ret = 1;
-		} else {
+		else
 			ret = 0;
-		}
 		break;
 
 	case 2:
-		if (val1 == val2) {
+		if (val1 == val2)
 			ret = 1;
-		} else {
+		else
 			ret = 0;
-		}
 		break;
 
 	case 3:
-		if (val1 != val2) {
+		if (val1 != val2)
 			ret = 1;
-		} else {
+		else
 			ret = 0;
-		}
 		break;
 
 	case 4:
-		if (val1 > val2) {
+		if (val1 > val2)
 			ret = 1;
-		} else {
+		else
 			ret = 0;
-		}
 		break;
 
 	case 5:
-		if (val1 >= val2) {
+		if (val1 >= val2)
 			ret = 1;
-		} else {
+		else
 			ret = 0;
-		}
 		break;
 
 	case 6:
-		if (val1 < val2) {
+		if (val1 < val2)
 			ret = 1;
-		} else {
+		else
 			ret = 0;
-		}
 		break;
 
 	case 7:
-		if (val1 <= val2) {
+		if (val1 <= val2)
 			ret = 1;
-		} else {
+		else
 			ret = 0;
-		}
 		break;
 
 	case 8:
@@ -559,7 +547,8 @@ void ScriptHelper::c1_setRetAndJmp(ScriptState* script) {
 		script->retValue = script->stack[script->sp++];
 		uint16 temp = script->stack[script->sp++];
 		script->stack[60] = 0;
-		script->ip = &script->dataPtr->data[temp*2];
+		script->ip = &script->dataPtr->data[temp];
 	}
 }
 } // end of namespace Kyra
+

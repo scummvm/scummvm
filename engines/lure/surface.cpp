@@ -385,7 +385,7 @@ Surface *Surface::getScreen(uint16 resourceId) {
 	return new Surface(decodedData, FULL_SCREEN_WIDTH, decodedData->size() / FULL_SCREEN_WIDTH);
 }
 
-bool Surface::getString(Common::String &line, uint32 maxSize, bool isNumeric, bool varLength, int16 x, int16 y) {
+bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool varLength, int16 x, int16 y) {
 	OSystem &system = *g_system;
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
@@ -404,7 +404,7 @@ bool Surface::getString(Common::String &line, uint32 maxSize, bool isNumeric, bo
 		// Display the string
 		screen.screen().writeString(x, y, newLine, true, DIALOG_TEXT_COLOUR, varLength);
 		screen.update();
-		int stringSize = screen.screen().textWidth(newLine.c_str());
+		int stringSize = textWidth(newLine.c_str());
 
 		// Loop until the input string changes
 		refreshFlag = false;
@@ -420,7 +420,7 @@ bool Surface::getString(Common::String &line, uint32 maxSize, bool isNumeric, bo
 					if ((ch == 13) || (keycode == 0x10f)) {
 						// Return character
 						screen.screen().fillRect(
-							Rect(x, y, x + stringSize + 8, y + FONT_HEIGHT), bgColour);
+							Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
 						screen.update();
 						newLine.deleteLastChar();
 						line = newLine;
@@ -430,7 +430,7 @@ bool Surface::getString(Common::String &line, uint32 maxSize, bool isNumeric, bo
 					else if (ch == 27) {
 						// Escape character
 						screen.screen().fillRect(
-							Rect(x, y, x + stringSize + 8, y + FONT_HEIGHT), bgColour);
+							Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
 						screen.update();
 						abortFlag = true;
 					} else if (ch == 8) {
@@ -438,14 +438,14 @@ bool Surface::getString(Common::String &line, uint32 maxSize, bool isNumeric, bo
 						if (newLine.size() == 1) continue;
 
 						screen.screen().fillRect(
-							Rect(x, y, x + stringSize + 8, y + FONT_HEIGHT), bgColour);
+							Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
 						newLine.deleteChar(newLine.size() - 2);
 						refreshFlag = true;
 
-					} else if ((ch >= ' ') && (newLine.size() < maxSize)) {
+					} else if ((ch >= ' ') && (stringSize + 8 < maxSize)) {
 						if (((ch >= '0') && (ch <= '9')) || !isNumeric) {
 							screen.screen().fillRect(
-								Rect(x, y, x + stringSize + 8, y + FONT_HEIGHT), bgColour);
+								Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
 							newLine.insertChar(ch, newLine.size() - 1);
 							refreshFlag = true;
 						}
@@ -504,6 +504,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	char srcCharName[MAX_DESC_SIZE];
 	char destCharName[MAX_DESC_SIZE];
 	char itemName[MAX_DESC_SIZE];
+	int characterArticle, hotspotArticle = 3;
 
 	HotspotData *talkingChar = res.getHotspot(characterId);
 	HotspotData *destCharacter = (destCharacterId == 0) ? NULL : 
@@ -512,16 +513,19 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 		res.getHotspot(activeItemId);
 	assert(talkingChar);
 
-	strings.getString(talkingChar->nameId, srcCharName);
+	strings.getString(talkingChar->nameId & 0x1fff, srcCharName);
+	characterArticle = talkingChar->nameId >> 14;
 
 	strcpy(destCharName, "");
 	if (destCharacter != NULL)
 		strings.getString(destCharacter->nameId, destCharName);
 	strcpy(itemName, "");
-	if (itemHotspot != NULL)
-		strings.getStringWithArticle(itemHotspot->nameId, itemName);
+	if (itemHotspot != NULL) {
+		strings.getString(itemHotspot->nameId & 0x1fff, itemName);
+		hotspotArticle = itemHotspot->nameId >> 14;
+	}
 
-	strings.getString(descId, _desc, itemName, destCharName);
+	strings.getString(descId, _desc, itemName, destCharName, hotspotArticle, characterArticle);
 
 	// Apply word wrapping to figure out the needed size of the dialog
 	Surface::wordWrap(_desc, TALK_DIALOG_WIDTH - (TALK_DIALOG_EDGE_SIZE + 3) * 2,
@@ -666,7 +670,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 
 	// Write out any existing save names
 	for (index = 0; index < numSaves; ++index)
-		s->writeString(DIALOG_EDGE_SIZE, SR_SAVEGAME_NAMES_Y, saveNames[index]->c_str(), true);
+		s->writeString(DIALOG_EDGE_SIZE, SR_SAVEGAME_NAMES_Y + (index * 8), saveNames[index]->c_str(), true);
 
 	// Display the dialog
 	s->copyTo(&screen.screen(), SAVE_DIALOG_X, SAVE_DIALOG_Y);
@@ -737,7 +741,8 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 
 		// If in save mode, allow the entry of a new savename
 		if (saveDialog) {
-			if (!screen.screen().getString(*saveNames[selectedLine], 40, 
+			if (!screen.screen().getString(*saveNames[selectedLine], 
+				INFO_DIALOG_WIDTH - (DIALOG_EDGE_SIZE * 2), 
 				false, true, SAVE_DIALOG_X + DIALOG_EDGE_SIZE, 
 				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT)) {
 				// Aborted out of name selection, so restore old name and 

@@ -4,6 +4,7 @@
 	Version="8,00"
 	Name="scumm"
 	ProjectGUID="{B6AFD548-63D2-40CD-A652-E87095AFCBAF}"
+	RootNamespace="scumm"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -90,6 +91,7 @@
 			IntermediateDirectory="scumm_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -528,6 +530,18 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\scumm\detection.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\detection.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\detection_tables.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\scumm\dialogs.cpp"
 			>
 		</File>
@@ -645,14 +659,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\player_v3a.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\plugin.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\plugin.h"
 			>
 		</File>
 		<File

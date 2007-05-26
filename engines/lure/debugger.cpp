@@ -105,13 +105,12 @@ bool Debugger::cmd_enterRoom(int argc, const char **argv) {
 
 bool Debugger::cmd_listRooms(int argc, const char **argv) {
 	RoomDataList &rooms = Resources::getReference().roomData();
-	RoomDataList::iterator i;
 	StringData &strings = StringData::getReference();
 	char buffer[MAX_DESC_SIZE];
 	int ctr = 0;
 
 	DebugPrintf("Available rooms are:\n");
-	for (i = rooms.begin(); i != rooms.end(); ++i) {
+	for (RoomDataList::iterator i = rooms.begin(); i != rooms.end(); ++i) {
 		RoomData *room = *i;
 		strings.getString(room->roomNumber, buffer);
 		// DEBUG: Explictly note the second drawbridge room as "Alt" for now
@@ -131,6 +130,18 @@ bool Debugger::cmd_listRooms(int argc, const char **argv) {
 	}
 	DebugPrintf("\n");
 	DebugPrintf("Current room: %d\n", Room::getReference().roomNumber());
+
+	Resources &res = Resources::getReference();
+	HotspotDataList &list = res.hotspotData();
+	for (HotspotDataList::iterator i = list.begin(); i != list.end(); ++i)
+	{
+		HotspotData *data = *i;
+		strings.getString(data->nameId, buffer);
+
+		DebugPrintf("%xh - %s\n", data->hotspotId, buffer);
+	}
+	DebugPrintf("\n");
+
 	return true;
 }
 
@@ -298,8 +309,8 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 		DebugPrintf("Talk bubble offset = %d,%d\n", hs->talkX, hs->talkY);
 		DebugPrintf("load offset = %xh, script load = %d\n", hs->loadOffset, hs->scriptLoadFlag);
 		DebugPrintf("Animation Id = %xh, Colour offset = %d\n", hs->animRecordId, hs->colourOffset);
-		DebugPrintf("Script offset = %xh, Tick Script offset = %xh\n", 
-			hs->sequenceOffset, hs->tickSequenceOffset);
+		DebugPrintf("Talk Script offset = %xh, Tick Script offset = %xh\n", 
+			hs->talkScriptOffset, hs->tickScriptOffset);
 		DebugPrintf("Tick Proc offset = %xh\n", hs->tickProcOffset);
 		DebugPrintf("Tick timeout = %d\n", hs->tickTimeout);
 		DebugPrintf("NPC Shcedule = %xh\n", hs->npcSchedule);

@@ -834,6 +834,8 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		MKLINE(StringTab, _default.overhead, sleByte, VER(8)),
 		MKLINE(StringTab, no_talk_anim, sleByte, VER(8)),
 		MKLINE(StringTab, _default.no_talk_anim, sleByte, VER(8)),
+		MKLINE(StringTab, wrapping, sleByte, VER(71)),
+		MKLINE(StringTab, _default.wrapping, sleByte, VER(71)),
 		MKEND()
 	};
 
@@ -1149,6 +1151,17 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	if (_imuse && (_saveSound || !_saveTemporaryState)) {
 		_imuse->save_or_load(s, this);
+	}
+
+	//
+	// Save/load the charset renderer state
+	//
+	if (s->getVersion() >= VER(72)) {
+		if (s->isSaving()) {
+			s->saveByte(_charset->getCurID());
+		} else {
+			_charset->setCurID(s->loadByte());
+		}
 	}
 }
 

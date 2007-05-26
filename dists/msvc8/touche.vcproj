@@ -161,6 +161,10 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\..\engines\touche\detection.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\touche\graphics.cpp"
 			>
 		</File>
@@ -178,10 +182,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\touche\opcodes.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\touche\plugin.cpp"
 			>
 		</File>
 		<File

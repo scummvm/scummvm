@@ -26,6 +26,10 @@
 #include "parallaction/defs.h"
 #include "common/file.h"
 
+namespace Audio {
+	class AudioStream;
+}
+
 namespace Parallaction {
 
 //------------------------------------------------------
@@ -39,6 +43,7 @@ class Table;
 class Parallaction;
 class Gfx;
 class Script;
+class Font;
 
 struct Cnv;
 struct StaticCnv;
@@ -104,13 +109,14 @@ public:
 	virtual Cnv* loadObjects(const char *name) = 0;
 	virtual StaticCnv* loadPointer() = 0;
 	virtual StaticCnv* loadHead(const char* name) = 0;
-	virtual Cnv* loadFont(const char* name) = 0;
+	virtual Font* loadFont(const char* name) = 0;
 	virtual StaticCnv* loadStatic(const char* name) = 0;
 	virtual Cnv* loadFrames(const char* name) = 0;
 	virtual void loadSlide(const char *filename) = 0;
 	virtual void loadScenery(const char* background, const char* mask) = 0;
 	virtual Table* loadTable(const char* name) = 0;
-
+	virtual Common::ReadStream* loadMusic(const char* name) = 0;
+	virtual Common::ReadStream* loadSound(const char* name) = 0;
 };
 
 class DosDisk : public Disk {
@@ -124,6 +130,7 @@ private:
 	void loadMaskAndPath(const char *name);
 	void parseDepths(Common::SeekableReadStream &stream);
 	void parseBackground(Common::SeekableReadStream &stream);
+	Font *createFont(const char *name, Cnv* cnv);
 
 protected:
 	Gfx	 *_gfx;
@@ -138,12 +145,14 @@ public:
 	Cnv* loadObjects(const char *name);
 	StaticCnv* loadPointer();
 	StaticCnv* loadHead(const char* name);
-	Cnv* loadFont(const char* name);
+	Font* loadFont(const char* name);
 	StaticCnv* loadStatic(const char* name);
 	Cnv* loadFrames(const char* name);
 	void loadSlide(const char *filename);
 	void loadScenery(const char* background, const char* mask);
 	Table* loadTable(const char* name);
+	Common::ReadStream* loadMusic(const char* name);
+	Common::ReadStream* loadSound(const char* name);
 };
 
 class AmigaDisk : public Disk {
@@ -153,6 +162,10 @@ protected:
 	StaticCnv* makeStaticCnv(Common::SeekableReadStream &stream);
 	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 planeSize);
 	Common::SeekableReadStream *openArchivedFile(const char* name, bool errorOnFileNotFound = false);
+	Font *createFont(const char *name, Common::SeekableReadStream &stream);
+	void loadMask(const char *name);
+	void loadPath(const char *name);
+	void loadBackground(const char *name);
 
 public:
 	AmigaDisk(Parallaction *vm);
@@ -164,12 +177,14 @@ public:
 	Cnv* loadObjects(const char *name);
 	StaticCnv* loadPointer();
 	StaticCnv* loadHead(const char* name);
-	Cnv* loadFont(const char* name);
+	Font* loadFont(const char* name);
 	StaticCnv* loadStatic(const char* name);
 	Cnv* loadFrames(const char* name);
 	void loadSlide(const char *filename);
 	void loadScenery(const char* background, const char* mask);
 	Table* loadTable(const char* name);
+	Common::ReadStream* loadMusic(const char* name);
+	Common::ReadStream* loadSound(const char* name);
 };
 
 } // namespace Parallaction

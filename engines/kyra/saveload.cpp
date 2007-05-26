@@ -126,19 +126,15 @@ void KyraEngine::loadGame(const char *fileName) {
 	_marbleVaseItem = in->readSint16BE();
 	_itemInHand = in->readByte();
 	
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i)
 		_birthstoneGemTable[i] = in->readByte();
-	}
-	for (int i = 0; i < 3; ++i) {
+	for (int i = 0; i < 3; ++i)
 		_idolGemsTable[i] = in->readByte();
-	}
-	for (int i = 0; i < 3; ++i) {
+	for (int i = 0; i < 3; ++i)
 		_foyerItemTable[i] = in->readByte();
-	}
 	_cauldronState = in->readByte();
-	for (int i = 0; i < 2; ++i) {
+	for (int i = 0; i < 2; ++i)
 		_crystalState[i] = in->readByte();
-	}
 	
 	_brandonStatusBit = in->readUint16BE();
 	_brandonStatusBit0x02Flag = in->readByte();
@@ -207,7 +203,6 @@ void KyraEngine::loadGame(const char *fileName) {
 	if (version >= 7) {
 		_curSfxFile = in->readByte();
 
-
 		// In the first version there this entry was introduced,
 		// it wasn't made sure that _curSfxFile was initialized
 		// so if it's out of bounds we just set it to 0.
@@ -225,9 +220,8 @@ void KyraEngine::loadGame(const char *fileName) {
 		_screen->loadBitmap("AMULET3.CPS", 10, 10, 0);
 		if (!queryGameFlag(0xF1)) {
 			for (int i = 0x55; i <= 0x5A; ++i) {
-				if (queryGameFlag(i)) {
+				if (queryGameFlag(i))
 					seq_createAmuletJewel(i-0x55, 10, 1, 1);
-				}
 			}
 		}
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 10, 8);
@@ -308,19 +302,15 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 	out->writeSint16BE(_marbleVaseItem);
 	out->writeByte(_itemInHand);
 	
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i)
 		out->writeByte(_birthstoneGemTable[i]);
-	}
-	for (int i = 0; i < 3; ++i) {
+	for (int i = 0; i < 3; ++i)
 		out->writeByte(_idolGemsTable[i]);
-	}
-	for (int i = 0; i < 3; ++i) {
+	for (int i = 0; i < 3; ++i)
 		out->writeByte(_foyerItemTable[i]);
-	}
 	out->writeByte(_cauldronState);
-	for (int i = 0; i < 2; ++i) {
+	for (int i = 0; i < 2; ++i)
 		out->writeByte(_crystalState[i]);
-	}
 	
 	out->writeUint16BE(_brandonStatusBit);
 	out->writeByte(_brandonStatusBit0x02Flag);
@@ -333,11 +323,10 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 	for (int i = 0; i < 32; i++) {
 		out->writeByte(_timers[i].active);
 		out->writeSint32BE(_timers[i].countdown);
-		if (_system->getMillis() >= _timers[i].nextRun) {
+		if (_system->getMillis() >= _timers[i].nextRun)
 			out->writeUint32BE(0);
-		} else {
+		else
 			out->writeUint32BE(_timers[i].nextRun - _system->getMillis());
-		}
 	}
 
 	out->writeUint32BE(sizeof(_flagsTable));
@@ -371,3 +360,4 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 	delete out;
 }
 } // end of namespace Kyra
+

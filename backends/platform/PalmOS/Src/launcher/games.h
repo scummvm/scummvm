@@ -170,6 +170,7 @@ enum {
 	ENGINE_SCUMM,
 	ENGINE_AGI,
 	ENGINE_TOUCHE,
+	ENGINE_CRUISE,
 	ENGINE_COUNT
 };
 
@@ -179,20 +180,20 @@ static const struct {
 } engines[] = {
 	{ "agos",			"AGOS Engine" },
 	{ "sky",			"Beneath a Steel Sky" },
-	{ "sword1",			"Broken Sword 1" },
-	{ "sword2",			"Broken Sword 2" },
+	{ "sword1",			"Broken Sword I" },
+	{ "sword2",			"Broken Sword II" },
 	{ "cine",			"Delphine Cinematique v1.0" },
 	{ "queen",			"Flight of the Amazon Queen" },
 	{ "lure",			"Lure of the Tempress" },
-	{ "gob",			"Gobliiins" },
+	{ "gob",			"Gobliiins, Bargon Attack and more ..." },
 	{ "kyra",			"Kyrandia" },
 	{ "parallaction",	"Parallaction" },
 	{ "saga",			"SAGA Engine" },
 	{ "scumm",			"Scumm Games" },
 	{ "agi",			"Sierra AGI" },
 	{ "touche",			"Touche: The Adventures of the Fifth Musketeer" },
+	{ "cruise",			"Cruise for a Corpse" },
 };
-
 
 // protos
 Err		GamOpenDatabase		();

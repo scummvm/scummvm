@@ -21,11 +21,10 @@
  */
 
 
-#include "parallaction/parser.h"
+#include "common/stdafx.h"
+
 #include "parallaction/parallaction.h"
-#include "parallaction/graphics.h"
-#include "parallaction/inventory.h"
-#include "parallaction/zone.h"
+#include "parallaction/sound.h"
 
 namespace Parallaction {
 
@@ -271,6 +270,10 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 		case kZoneHear: // hear Zone init
 			if (!scumm_stricmp(_tokens[0], "sound")) {
 				strcpy(u->hear->_name, _tokens[1]);
+				z->u.hear->_channel = atoi(_tokens[2]);
+			}
+			if (!scumm_stricmp(_tokens[0], "freq")) {
+				z->u.hear->_freq = atoi(_tokens[1]);
 			}
 			break;
 
@@ -304,7 +307,7 @@ void Parallaction::displayCharacterComment(ExamineData *data) {
 	v3C._data0 = _char._talk->getFramePtr(0);
 	v3C._data1 = NULL; //_talk->field_8[0];
 
-	_gfx->setFont("comic");
+	_gfx->setFont(kFontDialogue);
 	_gfx->flatBlitCnv(&v3C, 190, 80, Gfx::kBitFront);
 
 	int16 v26, v28;
@@ -313,6 +316,8 @@ void Parallaction::displayCharacterComment(ExamineData *data) {
 	r.moveTo(140, 10);
 	_gfx->drawBalloon(r, 0);
 	_gfx->displayWrappedString(data->_description, 140, 10, 130, 0);
+
+	_gfx->updateScreen();
 
 	waitUntilLeftClick();
 
@@ -334,6 +339,8 @@ void Parallaction::displayItemComment(ExamineData *data) {
 
 	if (data->_description == NULL) return;
 
+	_gfx->setHalfbriteMode(true);
+
 	char v68[PATH_LEN];
 	strcpy(v68, data->_filename);
 	data->_cnv = _disk->loadStatic(v68);
@@ -343,7 +350,7 @@ void Parallaction::displayItemComment(ExamineData *data) {
 
 	int16 v6A = 0, v6C = 0;
 
-	_gfx->setFont("comic");
+	_gfx->setFont(kFontDialogue);
 	_gfx->getStringExtent(data->_description, 130, &v6C, &v6A);
 	Common::Rect r(v6C, v6A);
 	r.moveTo(0, 90);
@@ -352,9 +359,11 @@ void Parallaction::displayItemComment(ExamineData *data) {
 	_gfx->displayWrappedString(data->_description, 0, 90, 130, 0);
 
 	jobEraseAnimations((void*)1, NULL);
+	_gfx->updateScreen();
 
 	waitUntilLeftClick();
 
+	_gfx->setHalfbriteMode(false);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 	return;
@@ -394,7 +403,7 @@ uint16 Parallaction::runZone(Zone *z) {
 		break;
 
 	case kZoneHear:
-		strcpy(_soundFile, z->u.hear->_name);
+		_soundMan->playSfx(z->u.hear->_name, z->u.hear->_channel, (z->_flags & kFlagsLooping) == kFlagsLooping, 60);
 		break;
 
 	case kZoneSpeak:
@@ -446,12 +455,17 @@ void jobToggleDoor(void *parm, Job *j) {
 
 
 
-
-
-
 //
 //	ZONE TYPE: GET
 //
+
+int16 Parallaction::pickupItem(Zone *z) {
+	int r = addInventoryItem(z->u.get->_icon);
+	if (r == 0)
+		addJob(&jobRemovePickedItem, z, kPriority17 );
+
+	return r;
+}
 
 void jobRemovePickedItem(void *parm, Job *j) {
 
@@ -480,7 +494,7 @@ void jobDisplayDroppedItem(void *parm, Job *j) {
 	Zone *z = (Zone*)parm;
 
 	if (z->u.get->_cnv) {
-		if (z->u.get->_cnv->_data0 != NULL) {
+		if (j->_count == 0) {
 			_vm->_gfx->backupGetBackground(z->u.get, z->_left, z->_top);
 		}
 
@@ -601,7 +615,7 @@ Zone::Zone() {
 }
 
 Zone::~Zone() {
-	printf("~Zone(%s)\n", _label._text);
+//	printf("~Zone(%s)\n", _label._text);
 
 	switch (_type & 0xFFFF) {
 	case kZoneExamine:
@@ -642,11 +656,6 @@ Zone::~Zone() {
 	default:
 		break;
 	}
-
-	free(_label._text);
-	_label._text = NULL;
-	_vm->_gfx->freeStaticCnv(&_label._cnv);
-
 }
 
 void Zone::getRect(Common::Rect& r) const {
@@ -669,6 +678,16 @@ uint16 Zone::width() const {
 
 uint16 Zone::height() const {
 	return _bottom - _top;
+}
+
+Label::Label() {
+	_text = NULL;
+}
+
+Label::~Label() {
+	_vm->_gfx->freeStaticCnv(&_cnv);
+	if (_text)
+		free(_text);
 }
 
 

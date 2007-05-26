@@ -299,8 +299,10 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 						case skinButtonGameStart:
 							if (gPrefs->card.volRefNum == vfsInvalidVolRef)
 								FrmCustomAlert(FrmWarnAlert,"Please select/insert a memory card.", 0, 0);
+							else if (GamGetSelected() != dmMaxRecordIndex)
+								StartScummVM();
 							else
-								bStartScumm = true;
+								FrmPopupForm(EngineForm);
 							handled = true;
 							break;
 

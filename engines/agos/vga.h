@@ -56,7 +56,7 @@ struct AnimationHeader_Feeble {
 // Simon 1/2
 struct ImageHeader_Simon {
 	uint16 id;
-	uint16 x_1;
+	uint16 color;
 	uint16 x_2;
 	uint16 scriptOffs;
 };
@@ -101,7 +101,7 @@ struct VgaFileHeader2_Common {
 enum DrawFlags {
 	kDFFlip           = 0x1,
 	kDFNonTrans       = 0x2,
-	kDFUseFrontBuf    = 0x4,
+	kDFSkipStoreBG    = 0x4,
 	kDFCompressed     = 0x8,
 	kDFCompressedFlip = 0x10,
 	kDFMasked         = 0x20,
@@ -113,14 +113,15 @@ enum DrawFlags {
 };
 
 struct VC10_state {
-	int image;
+	int16 image;
 	uint16 flags;
 	byte palette;
+	byte paletteMod;
 
-	int x, y;
-	int width, height;
-	uint draw_width, draw_height;
-	uint x_skip, y_skip;
+	int16 x, y;
+	uint16 width, height;
+	uint16 draw_width, draw_height;
+	uint16 x_skip, y_skip;
 
 	byte *surf2_addr;
 	uint surf2_pitch;
@@ -130,10 +131,12 @@ struct VC10_state {
 
 	uint16 dl, dh;
 
-	const byte *depack_src;
+	const byte *srcPtr;
 	int8 depack_cont;
 
 	byte depack_dest[480];
+
+	VC10_state() { memset(this, 0, sizeof(*this)); }
 };
 
 byte *vc10_depackColumn(VC10_state *vs);

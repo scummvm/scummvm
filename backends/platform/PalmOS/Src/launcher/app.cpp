@@ -1,7 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
+ * Copyright (C) 2001-2007 The ScummVM project
+ * Copyright (C) 2002-2007 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 
 #include <PalmOS.h>
 #include <SonyClie.h>
+#include <SysGlue.h>
 
 #include "StarterRsc.h"
 #include "palmdefs.h"
@@ -34,7 +35,6 @@
 #include "mathlib.h"
 #include "formCards.h"
 #include "games.h"
-#include "extend.h"
 
 #include "modules.h"
 #include "init_mathlib.h"
@@ -172,6 +172,7 @@ static void AppStartCheckScreenSize() {
 	OPTIONS_RST(kOptCollapsible);
 	OPTIONS_RST(kOptModeWide);
 	OPTIONS_RST(kOptModeLandscape);
+	OPTIONS_RST(kOptModeRotatable);
 
 	// we are on a sony device
 	if (OPTIONS_TST(kOptDeviceClie)) {
@@ -186,6 +187,8 @@ static void AppStartCheckScreenSize() {
 			OPTIONS_SET(kOptCollapsible);
 			OPTIONS_SET(kOptModeWide);
 			OPTIONS_SET((mode == PALM_LANDSCAPE) ? kOptModeLandscape : kOptNone);
+			// TODO: doesn't work with Sony
+			OPTIONS_SET(SysGlueTrapExists(pinSysSetOrientation) ? kOptModeRotatable :kOptNone);
 		}
 	}
 

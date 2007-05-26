@@ -37,8 +37,6 @@ private:
 	Singleton<T>(const Singleton<T>&);
 	Singleton<T>& operator= (const Singleton<T>&);
 
-	static T* _singleton;
-
 	/**
 	 * The default object factory used by the template class Singleton.
 	 * By specialising this template function, one can make a singleton use a
@@ -58,16 +56,13 @@ public:
 
 public:
 	static T& instance() {
-		// TODO: We aren't thread safe. For now we ignore it since the
-		// only thing using this singleton template is the config manager,
-		// and that is first instantiated long before any threads.
+		// TODO: We aren't thread safe.
 		// TODO: We don't leak, but the destruction order is nevertheless
 		// semi-random. If we use multiple singletons, the destruction
 		// order might become an issue. There are various approaches
 		// to solve that problem, but for now this is sufficient
-		if (!_singleton)
-			_singleton = T::makeInstance();
-		return *_singleton;
+		static T *instance = T::makeInstance();
+		return *instance;
 	}
 protected:
 	Singleton<T>()		{ }
@@ -79,8 +74,6 @@ protected:
 
 	typedef T	SingletonBaseType;
 };
-
-#define DECLARE_SINGLETON(T) template<> T* Common::Singleton<T>::_singleton=0
 
 }	// End of namespace Common
 

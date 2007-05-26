@@ -31,6 +31,9 @@
 namespace AGOS {
 
 byte *AGOSEngine::getFrontBuf() {
+	if (getGameType() != GType_PP && getGameType() != GType_FF)
+		_updateScreen = true;
+
 	_dxSurfacePitch = _screenWidth;
 	return _frontBuf;
 }
@@ -50,125 +53,9 @@ byte *AGOSEngine::getScaleBuf() {
 	return _scaleBuf;
 }
 
-void AGOSEngine::animateSprites() {
+void AGOSEngine_Feeble::animateSpritesByY() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
-	const byte *vc_ptr_org = _vcPtr;
-	uint16 params[5];							// parameters to vc10
-
-	if (_paletteFlag == 2)
-		_paletteFlag = 1;
-
-	if (getGameType() == GType_FF && _scrollCount) {
-		scrollEvent();
-	}
-	if (getGameType() == GType_SIMON2 && _scrollFlag) {
-		scrollScreen();
-	}
-
-	if (getGameType() == GType_FF && getBitFlag(84)) {
-		animateSpritesByY();
-		return;
-	}
-
-	vsp = _vgaSprites;
-
-	while (vsp->id != 0) {
-		vsp->windowNum &= 0x7FFF;
-
-		vpe = &_vgaBufferPointers[vsp->zoneNum];
-		_curVgaFile1 = vpe->vgaFile1;
-		_curVgaFile2 = vpe->vgaFile2;
-		_curSfxFile = vpe->sfxFile;
-		_windowNum = vsp->windowNum;
-		_vgaCurSpriteId = vsp->id;
-		_vgaCurSpritePriority = vsp->priority;
-
-		params[0] = readUint16Wrapper(&vsp->image);
-		if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
-			params[1] = readUint16Wrapper(&vsp->x);
-			params[2] = readUint16Wrapper(&vsp->y);
-			params[3] = READ_BE_UINT16(&vsp->flags);
-		} else {
-			params[1] = readUint16Wrapper(&vsp->palette);
-			params[2] = readUint16Wrapper(&vsp->x);
-			params[3] = readUint16Wrapper(&vsp->y);
-
-			if (getGameType() == GType_SIMON1) {
-				params[4] = READ_BE_UINT16(&vsp->flags);
-			} else {
-				*(byte *)(&params[4]) = (byte)vsp->flags;
-			}
-		}
-
-		_vcPtr = (const byte *)params;
-		vc10_draw();
-
-		vsp++;
-	}
-
-	if (_drawImagesDebug)
-		memset(_backBuf, 0, _screenWidth * _screenHeight);
-
-	_updateScreen = true;
-	_vcPtr = vc_ptr_org;
-}
-
-void AGOSEngine::animateSpritesDebug() {
-	VgaSprite *vsp;
-	VgaPointersEntry *vpe;
-	const byte *vc_ptr_org = _vcPtr;
-	uint16 params[5];							// parameters to vc10_draw
-
-	if (_paletteFlag == 2)
-		_paletteFlag = 1;
-
-	vsp = _vgaSprites;
-	while (vsp->id != 0) {
-		vsp->windowNum &= 0x7FFF;
-
-		vpe = &_vgaBufferPointers[vsp->zoneNum];
-		_curVgaFile1 = vpe->vgaFile1;
-		_curVgaFile2 = vpe->vgaFile2;
-		_curSfxFile = vpe->sfxFile;
-		_windowNum = vsp->windowNum;
-		_vgaCurSpriteId = vsp->id;
-
-		if (vsp->image)
-			printf("id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n",
-							vsp->id, vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
-		params[0] = readUint16Wrapper(&vsp->image);
-		if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
-			params[1] = readUint16Wrapper(&vsp->x);
-			params[2] = readUint16Wrapper(&vsp->y);
-			params[3] = READ_BE_UINT16(&vsp->flags);
-		} else {
-			params[1] = readUint16Wrapper(&vsp->palette);
-			params[2] = readUint16Wrapper(&vsp->x);
-			params[3] = readUint16Wrapper(&vsp->y);
-
-			if (getGameType() == GType_SIMON1) {
-				params[4] = READ_BE_UINT16(&vsp->flags);
-			} else {
-				*(byte *)(&params[4]) = (byte)vsp->flags;
-			}
-		}
-
-		_vcPtr = (const byte *)params;
-		vc10_draw();
-
-		vsp++;
-	}
-
-	_updateScreen = true;
-	_vcPtr = vc_ptr_org;
-}
-
-void AGOSEngine::animateSpritesByY() {
-	VgaSprite *vsp;
-	VgaPointersEntry *vpe;
-	const byte *vc_ptr_org = _vcPtr;
-	uint16 params[5];							// parameters to vc10
 	int16 spriteTable[180][2];
 	
 	byte *src;
@@ -176,7 +63,7 @@ void AGOSEngine::animateSpritesByY() {
 	uint i, numSprites = 0;
 
 	vsp = _vgaSprites;
-	while (vsp->id != 0) {
+	while (vsp->id) {
 		if (vsp->flags & kDFScaled) {
 			y = vsp->y;
 		} else if (vsp->flags & kDFMasked) {
@@ -216,6 +103,7 @@ void AGOSEngine::animateSpritesByY() {
 		}
 
 		vsp = &_vgaSprites[slot];
+
 		vsp->windowNum &= 0x7FFF;
 
 		vpe = &_vgaBufferPointers[vsp->zoneNum];
@@ -226,18 +114,284 @@ void AGOSEngine::animateSpritesByY() {
 		_vgaCurSpriteId = vsp->id;
 		_vgaCurSpritePriority = vsp->priority;
 
-		params[0] = readUint16Wrapper(&vsp->image);
-		params[1] = readUint16Wrapper(&vsp->palette);
-		params[2] = readUint16Wrapper(&vsp->x);
-		params[3] = readUint16Wrapper(&vsp->y);
-		*(byte *)(&params[4]) = (byte)vsp->flags;
-
-		_vcPtr = (const byte *)params;
-		vc10_draw();
+		drawImage_init(vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
 	}
 
-	_updateScreen = true;
-	_vcPtr = vc_ptr_org;
+	_displayScreen = true;
+}
+
+void AGOSEngine_Feeble::animateSprites() {
+	VgaSprite *vsp;
+	VgaPointersEntry *vpe;
+
+	if (_paletteFlag == 2)
+		_paletteFlag = 1;
+
+	if (_scrollCount) {
+		scrollEvent();
+	}
+
+	if (getBitFlag(84)) {
+		animateSpritesByY();
+		return;
+	}
+
+	vsp = _vgaSprites;
+	while (vsp->id) {
+		vsp->windowNum &= 0x7FFF;
+
+		vpe = &_vgaBufferPointers[vsp->zoneNum];
+		_curVgaFile1 = vpe->vgaFile1;
+		_curVgaFile2 = vpe->vgaFile2;
+		_curSfxFile = vpe->sfxFile;
+		_windowNum = vsp->windowNum;
+		_vgaCurSpriteId = vsp->id;
+		_vgaCurSpritePriority = vsp->priority;
+
+		drawImage_init(vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
+		vsp++;
+	}
+
+	_displayScreen = true;
+}
+
+void AGOSEngine::animateSprites() {
+	VgaSprite *vsp;
+	VgaPointersEntry *vpe;
+
+	if (_copyScnFlag) {
+		_copyScnFlag--;
+		_vgaSpriteChanged++;
+	}
+
+	if ((getGameType() == GType_ELVIRA1 && !_variableArray[293] ||
+		getGameType() == GType_ELVIRA2 && !_variableArray[71]) &&
+		_wallOn) {
+
+		VC10_state state;
+		state.srcPtr  = getBackGround() + 504;
+		state.height = 127;
+		state.width = 14;
+		state.y = 0;
+		state.x = 0;
+		state.palette = 0;
+		state.paletteMod = 0;
+		state.flags = kDFNonTrans;
+
+		_windowNum = 4;
+
+		_backFlag = 1;
+		drawImage(&state);
+		_backFlag = 0;
+
+		_vgaSpriteChanged++;
+	}
+
+	if (!_scrollFlag && !_vgaSpriteChanged) {
+		return;
+	}
+
+	_vgaSpriteChanged = 0;
+
+	if (_paletteFlag == 2)
+		_paletteFlag = 1;
+
+	if (getGameType() == GType_SIMON2 && _scrollFlag) {
+		scrollScreen();
+	}
+
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		dirtyClips();
+	}
+
+	restoreBackGround();
+
+	vsp = _vgaSprites;
+	while (vsp->id) {
+		vsp->windowNum &= 0x7FFF;
+
+		vpe = &_vgaBufferPointers[vsp->zoneNum];
+		_curVgaFile1 = vpe->vgaFile1;
+		_curVgaFile2 = vpe->vgaFile2;
+		_curSfxFile = vpe->sfxFile;
+		_windowNum = vsp->windowNum;
+		_vgaCurSpriteId = vsp->id;
+		_vgaCurSpritePriority = vsp->priority;
+
+		saveBackGround(vsp);
+
+		drawImage_init(vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
+		vsp++;
+	}
+
+	if (getGameType() == GType_ELVIRA1 && _variableArray[293]) {
+		debug(0, "Using special wall");
+
+		uint8 color, h, len;
+		byte *dst = _window4BackScn;
+
+		color = (_variableArray[293] & 1) ? 13 : 15;
+		_wallOn = 2;
+
+		h = 127;
+		while (h) {
+			len = 112;
+			while (len--) {
+				*dst++ = color;
+				dst++;
+			}
+
+			h--;
+			if (h == 0)
+				break;
+
+			len = 112;
+			while (len--) {
+				dst++;
+				*dst++ = color;
+			}
+			h--;
+		}			
+
+		_window4Flag = 1;
+		setMoveRect(0, 224, 0, 127);
+	} else if (getGameType() == GType_ELVIRA2 && _variableArray[71] & 2) {
+		debug(0, "Using special wall");
+
+		uint8 color, h, len;
+		byte *dst = _window4BackScn;
+
+		color = 1;
+		_wallOn = 2;
+
+		h = 43;
+		while (h) {
+			len = 56;
+			while (len--) {
+				*dst++ = color;
+				dst += 3;
+			}
+
+			h--;
+			if (h == 0)
+				break;
+
+			dst += 448;
+
+			len = 56;
+			while (len--) {
+				dst += 2;
+				*dst++ = color;
+				dst++;
+			}
+			dst += 448;
+			h--;
+		}			
+
+		_window4Flag = 1;
+		setMoveRect(0, 224, 0, 127);
+	}
+
+	if (_window6Flag == 1)
+		_window6Flag++;
+
+	if (_window4Flag == 1)
+		_window4Flag++;
+
+	_displayScreen = true;
+}
+
+void AGOSEngine::dirtyClips() {
+	// TODO
+}
+
+void AGOSEngine::restoreBackGround() {
+	AnimTable *animTable;
+	uint images = 0;
+
+	animTable = _screenAnim1;
+	while (animTable->srcPtr) {
+		animTable++;
+		images++;
+	}
+
+	while (images--) {
+		animTable--;
+
+		if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
+			!(animTable->window & 0x8000)) {
+			//continue;
+		}
+
+		animTable->window &= 0x7FFF;
+		_windowNum = animTable->window;	
+
+		VC10_state state;
+		state.srcPtr  = animTable->srcPtr;
+		state.height = state.draw_height = animTable->height;
+		state.width = state.draw_width = animTable->width;
+		state.y = animTable->y;
+		state.x = animTable->x;
+		state.palette = 0;
+		state.paletteMod = 0;
+		state.flags = kDFNonTrans;
+
+		_backFlag = 1;
+		drawImage(&state);
+
+		//if (getGameType() != GType_SIMON1 && getGameType() != GType_SIMON2) {
+			animTable->srcPtr = 0;
+		//}
+	}
+	_backFlag = 0;
+
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		AnimTable *animTableTmp;
+
+		animTable = animTableTmp = _screenAnim1;
+		while (animTable->srcPtr) {
+			if (!(animTable->window & 8000)) {
+				memcpy(animTableTmp, animTable, sizeof(AnimTable));
+				animTableTmp++;
+			}
+			animTable++;
+		}
+		animTableTmp->srcPtr = 0;
+	}
+}
+
+void AGOSEngine::saveBackGround(VgaSprite *vsp) {
+	if ((vsp->flags & kDFSkipStoreBG) || !vsp->image)
+		return;
+
+	AnimTable *animTable = _screenAnim1;
+
+	while (animTable->srcPtr)
+		animTable++;
+
+	const byte *ptr = _curVgaFile2 + vsp->image * 8;
+	int16 x = vsp->x - _scrollX;
+	int16 y = vsp->y - _scrollY;
+
+	if (_window3Flag == 1) {
+		animTable->srcPtr = (const byte *)_window4BackScn;
+	} else {
+		uint xoffs = (_videoWindows[vsp->windowNum * 4 + 0] * 2 + x) * 8;
+		uint yoffs = (_videoWindows[vsp->windowNum * 4 + 1] + y);
+		animTable->srcPtr = getBackGround() + xoffs + yoffs * _screenWidth;
+	}
+
+	animTable->x = x;
+	animTable->y = y;
+
+	animTable->width = READ_BE_UINT16(ptr + 6) / 16;
+	if (vsp->flags & 40) {
+		animTable->width++;
+	}
+
+	animTable->height = ptr[5];
+	animTable->window = vsp->windowNum;
+	animTable->id = vsp->id;
 }
 
 void AGOSEngine::displayBoxStars() {
@@ -247,20 +401,18 @@ void AGOSEngine::displayBoxStars() {
 	byte *dst;
 	uint b, color;
 
-	_lockWord |= 0x8000;
+	o_haltAnimation();
 
 	if (getGameType() == GType_SIMON2)
 		color = 236;
 	else
 		color = 225;
 
-	uint limit = (getGameType() == GType_SIMON2) ? 200 : 134;
+	uint curHeight = (getGameType() == GType_SIMON2) ? _boxStarHeight : 134;
 
 	for (int i = 0; i < 5; i++) {
 		ha = _hitAreas;
 		count = ARRAYSIZE(_hitAreas);
-
-		animateSprites();
 
 		do {
 			if (ha->id != 0 && ha->flags & kBFBoxInUse && !(ha->flags & kBFBoxDead)) {
@@ -279,7 +431,7 @@ void AGOSEngine::displayBoxStars() {
 						continue;
 				}
 
-				if (ha->y >= limit || ((getGameType() == GType_SIMON2) && ha->y >= _boxStarHeight))
+				if (ha->y >= curHeight)
 					continue;
 
 				y_ = (ha->height / 2) - 4 + ha->y;
@@ -289,7 +441,7 @@ void AGOSEngine::displayBoxStars() {
 				if (x_ >= 311)
 					continue;
 
-				dst = getBackBuf();
+				dst = getFrontBuf();
 
 				dst += (((_dxSurfacePitch / 4) * y_) * 4) + x_;
 
@@ -328,20 +480,28 @@ void AGOSEngine::displayBoxStars() {
 			}
 		} while (ha++, --count);
 
-		updateScreen();
 		delay(100);
-		animateSprites();
-		updateScreen();
+
+		setMoveRect(0, 0, 320, curHeight);
+		_window4Flag = 2;
+
+		displayScreen();
 		delay(100);
 	}
 
-	_lockWord &= ~0x8000;
+	o_restartAnimation();
 }
 
 void AGOSEngine::scrollScreen() {
-	byte *dst = getFrontBuf();
+	byte *dst;
 	const byte *src;
 	uint x, y;
+
+	if (getGameType() == GType_SIMON2) {
+		dst = getBackGround();
+	} else {
+		dst = getFrontBuf();
+	}
 
 	if (_scrollXMax == 0) {
 		uint screenSize = 8 * _screenWidth;
@@ -390,8 +550,16 @@ void AGOSEngine::scrollScreen() {
 		_scrollX += _scrollFlag;
 		vcWriteVar(251, _scrollX);
 
-		memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
-		memcpy(_backGroundBuf, _backBuf, _scrollHeight * _screenWidth);
+		if (getGameType() == GType_SIMON2) {
+			memcpy(_window4BackScn, _backGroundBuf, _scrollHeight * _screenWidth);
+		} else {
+			memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
+			memcpy(_backGroundBuf, _backBuf, _scrollHeight * _screenWidth);
+		}
+
+		setMoveRect(0, 0, 320, _scrollHeight);
+
+		_window4Flag = 1;
 	}
 
 	_scrollFlag = 0;
@@ -440,7 +608,21 @@ void AGOSEngine::fillBackGroundFromBack(uint lines) {
 	memcpy(_backGroundBuf, _backBuf, lines * _screenWidth);
 }
 
-void AGOSEngine::updateScreen() {
+void AGOSEngine::setMoveRect(uint16 x, uint16 y, uint16 width, uint16 height) {
+	if (x < _moveXMin)
+		_moveXMin = x;
+
+	if (y < _moveYMin)
+		_moveYMin = y;
+
+	if (width > _moveXMax)
+		_moveXMax = width;
+
+	if (height > _moveYMax)
+		_moveYMax = height;
+}
+
+void AGOSEngine::displayScreen() {
 	if (_fastFadeInFlag == 0 && _paletteFlag == 1) {
 		_paletteFlag = 0;
 		if (memcmp(_displayPalette, _currentPalette, 1024)) {
@@ -449,21 +631,68 @@ void AGOSEngine::updateScreen() {
 		}
 	}
 
-	_system->copyRectToScreen(_backBuf, _screenWidth, 0, 0, _screenWidth, _screenHeight);
-	_system->updateScreen();
+	if (getGameType() == GType_PP || getGameType() == GType_FF) {
+		_system->copyRectToScreen(getBackBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
+		_system->updateScreen();
 
-	if (getGameId() != GID_DIMP)
-		memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
+		if (getGameId() != GID_DIMP)
+			memcpy(getBackBuf(), getFrontBuf(), _screenWidth * _screenHeight);
+	} else {
+		if (_window4Flag == 2) {
+			_window4Flag = 0;
+
+			uint16 srcWidth, width, height;
+			byte *dst = getFrontBuf();
+
+			const byte *src = _window4BackScn;
+			if (_window3Flag == 1) {
+				src = getBackGround();
+			}
+
+			dst += (_moveYMin + _videoWindows[17]) * _screenWidth;
+			dst += (_videoWindows[16] * 16) + _moveXMin;
+
+			src += (_videoWindows[18] * 16 * _moveYMin);
+			src += _moveXMin;
+
+			srcWidth = _videoWindows[18] * 16;
+		
+			width = _moveXMax - _moveXMin;
+			height = _moveYMax - _moveYMin;
+
+			for (; height > 0; height--) {
+				memcpy(dst, src, width);
+				dst += _screenWidth;
+				src += srcWidth;
+			}
+
+			_moveXMin = 0xFFFF;
+			_moveYMin = 0xFFFF;
+			_moveXMax = 0;
+			_moveYMax = 0;
+		}
+		
+		if (_window6Flag == 2) {
+			_window6Flag = 0;
+
+			byte *src = _window6BackScn;
+			byte *dst = getFrontBuf() + 16320;
+			for (int i = 0; i < 80; i++) {
+				memcpy(dst, src, 48);
+				dst += _screenWidth;
+				src += 48;
+			}
+		}
+
+		_system->copyRectToScreen(getFrontBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
+		_system->updateScreen();
+	}
 
 	if (getGameType() == GType_FF && _scrollFlag) {
 		scrollScreen();
 	}
 
 	if (_fastFadeInFlag) {
-		if (getGameType() == GType_SIMON1 && _usePaletteDelay) {
-			delay(100);
-			_usePaletteDelay = false;
-		}
 		fastFadeIn();
 	}
 }

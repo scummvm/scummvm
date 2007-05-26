@@ -36,7 +36,6 @@
 #include "cine/script.h"
 #include "cine/part.h"
 #include "cine/prc.h"
-#include "cine/resource.h"
 #include "cine/msg.h"
 #include "cine/bg.h"
 #include "cine/pal.h"

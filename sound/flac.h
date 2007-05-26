@@ -36,9 +36,6 @@ namespace Common {
 namespace Audio {
 
 class AudioStream;
-class DigitalTrackInfo;
-
-DigitalTrackInfo *getFlacTrack(int track);
 
 /**
  * Create a new AudioStream from the FLAC data in the given

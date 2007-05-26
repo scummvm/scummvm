@@ -68,7 +68,7 @@ void loadPart(const char *partName) {
 		partFileHandle.readUint32BE(); // unused
 	}
 
-	if (g_cine->getGameType() == Cine::GType_FW && g_cine->getPlatform() == Common::kPlatformPC)
+	if (g_cine->getGameType() == Cine::GType_FW && g_cine->getPlatform() == Common::kPlatformPC && strcmp(partName, "BASESON.SND") != 0)
 		loadPal(partName);
 }
 
@@ -331,7 +331,7 @@ int16 findFileInBundle(const char *fileName) {
 
 	if (g_cine->getGameType() == Cine::GType_OS) {
 		for (i = 0; i < numElementInPart; i++) {
-			if (!strcmp(fileName, partBuffer[i].partName)) {
+			if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
 				return i;
 			}
 		}
@@ -374,11 +374,11 @@ int16 findFileInBundle(const char *fileName) {
 				bPtr = bundleNamesAtari;
 		}
 
-		while (**bPtr) {
+		while (*bPtr) {
 			loadPart(*bPtr);
 
 			for (i = 0; i < numElementInPart; i++) {
-				if (!strcmp(fileName, partBuffer[i].partName)) {
+				if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
 					return i;
 				}
 			}
@@ -386,7 +386,7 @@ int16 findFileInBundle(const char *fileName) {
 		}
 	} else {
 		for (i = 0; i < numElementInPart; i++) {
-			if (!strcmp(fileName, partBuffer[i].partName)) {
+			if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
 				return i;
 			}
 		}
@@ -420,6 +420,28 @@ byte *readBundleFile(int16 foundFileIdx) {
 	return dataPtr;
 }
 
+byte *readBundleSoundFile(const char *entryName, uint32 *size) {
+	int16 index;
+	byte *data = 0;
+	char previousPartName[15] = "";
+
+	if (g_cine->getGameType() == Cine::GType_FW) {
+		strcpy(previousPartName, currentPartName);
+		loadPart("BASESON.SND");
+	}
+	index = findFileInBundle((const char *)entryName);
+	if (index != -1) {
+		data = readBundleFile(index);
+		if (size) {
+			*size = partBuffer[index].unpackedSize;
+		}
+	}
+	if (g_cine->getGameType() == Cine::GType_FW) {
+		loadPart(previousPartName);
+	}
+	return data;
+}
+
 byte *readFile(const char *filename) {
 	Common::File in;
 
@@ -435,6 +457,9 @@ byte *readFile(const char *filename) {
 	in.read(dataPtr, size);
 
 	return dataPtr;
+}
+
+void checkDataDisk(int16 param) {
 }
 
 void dumpBundle(const char *fileName) {

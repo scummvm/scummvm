@@ -321,9 +321,8 @@ SoundDigital::SoundDigital(KyraEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixe
 }
 
 SoundDigital::~SoundDigital() {
-	for (int i = 0; i < SOUND_STREAMS; ++i) {
+	for (int i = 0; i < SOUND_STREAMS; ++i)
 		stopSound(i);
-	}
 }
 
 bool SoundDigital::init() {
@@ -383,9 +382,9 @@ void SoundDigital::stopSound(int channel) {
 }
 
 void SoundDigital::beginFadeOut(int channel) {
-	if (isPlaying(channel)) {
+	if (isPlaying(channel))
 		_sounds[channel].stream->beginFadeOut();
-	}
 }
 
 } // end of namespace Kyra
+

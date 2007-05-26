@@ -957,7 +957,7 @@ int Logic::fnPlaySequence(Object *cpt, int32 id, int32 sequenceId, int32 d, int3
 		CreditsPlayer player(_system, _mixer);
 		player.play();
 	} else {
-		MoviePlayer *player = makeMoviePlayer(sequenceId, _screen, _mixer, _system);
+		MoviePlayer *player = makeMoviePlayer(sequenceId, _screen, _textMan, _mixer, _system);
 		if (player) {
 			if (player->load(sequenceId))
 				player->play();

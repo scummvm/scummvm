@@ -185,28 +185,16 @@
 			RelativePath="..\..\engines\cine\rel.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\cine\resource.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\resource.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\cine\script.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\cine\script.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\cine\sfx_player.cpp">
+			RelativePath="..\..\engines\cine\sound.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\cine\sfx_player.h">
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\sound_driver.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\sound_driver.h">
+			RelativePath="..\..\engines\cine\sound.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\cine\texte.cpp">

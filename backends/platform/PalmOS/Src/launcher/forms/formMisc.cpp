@@ -190,11 +190,13 @@ static void MiscFormInit() {
 	TabAddContent(&frmP, tabP, "ScummVM", TabMiscScummVMForm);
 	TabAddContent(&frmP, tabP, "More ...", TabMiscExtsForm);
 
+	if (OPTIONS_TST(kOptDeviceARM)) {
+		FrmRemoveObject(&frmP, FrmGetObjectIndex(frmP, TabMiscPalmOSStdPaletteCheckbox));
+		TabMoveUpObject(frmP, TabMiscPalmOSAdvancedCheckbox, 12);
+	}
+
 	if (!OPTIONS_TST(kOptDeviceARM) || OPTIONS_TST(kOptDeviceZodiac))
 		FrmRemoveObject(&frmP, FrmGetObjectIndex(frmP, TabMiscPalmOSAdvancedCheckbox));
-
-	if (OPTIONS_TST(kOptDeviceARM))
-		FrmRemoveObject(&frmP, FrmGetObjectIndex(frmP, TabMiscPalmOSStdPaletteCheckbox));
 
 	if (!OPTIONS_TST(kOptGoLcdAPI)) {
 		FrmRemoveObject(&frmP, FrmGetObjectIndex(frmP, TabMiscExtsGolcdCheckbox));

@@ -90,7 +90,7 @@ void SpritesMgr::blitPixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, 
 
 	/* CM: priority 15 overrides control lines and is ignored when
 	 *     tracking effective priority. This tweak is needed to fix
-	 *     bug #451768, and should not affect Sierra games because
+	 *     Sarien bug #451768, and should not affect Sierra games because
 	 *     sprites shouldn't have priority 15 (like the AGI Mouse
 	 *     demo "mouse pointer")
 	 *
@@ -120,7 +120,7 @@ void SpritesMgr::blitPixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, 
 		*hidden = false;
 
 		/* Except if our priority is 15, which should never happen
-		 * (fixes bug #451768)
+		 * (fixes Sarien bug #451768)
 		 *
 		 * Update: breaks other games, can't be used
 		 *
@@ -136,7 +136,7 @@ int SpritesMgr::blitCel(int x, int y, int spr, ViewCel *c) {
 	int i, j, t, m, col;
 	int hidden = true;
 
-	/* Fixes bug #477841 (crash in PQ1 map C4 when y == -2) */
+	/* Fixes Sarien bug #477841 (crash in PQ1 map C4 when y == -2) */
 	if (y < 0)
 		y = 0;
 	if (x < 0)
@@ -247,7 +247,7 @@ void SpritesMgr::objsRestoreArea(Sprite *s) {
  * Condition to determine whether a sprite will be in the 'updating' list.
  */
 bool SpritesMgr::testUpdating(VtEntry *v, AgiEngine *agi) {
-	/* Sanity check (see bug #779302) */
+	/* Sanity check (see Sarien bug #779302) */
 	if (~agi->_game.dirView[v->currentView].flags & RES_LOADED)
 		return false;
 
@@ -258,7 +258,7 @@ bool SpritesMgr::testUpdating(VtEntry *v, AgiEngine *agi) {
  * Condition to determine whether a sprite will be in the 'non-updating' list.
  */
 bool SpritesMgr::testNotUpdating(VtEntry *v, AgiEngine *vm) {
-	/* Sanity check (see bug #779302) */
+	/* Sanity check (see Sarien bug #779302) */
 	if (~vm->_game.dirView[v->currentView].flags & RES_LOADED)
 		return false;
 
@@ -580,7 +580,7 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 
 	/*
 	 * Was hardcoded to 8, changed to pri_table[y] to fix Gold
-	 * Rush (see bug #587558)
+	 * Rush (see Sarien bug #587558)
 	 */
 	if (pri == 0)
 		pri = _vm->_game.priTable[y];
@@ -618,10 +618,12 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 		/* add rectangle around object, don't clobber control
 		 * info in priority data. The box extends to the end of
 		 * its priority band!
-		 *
-		 * SQ1 needs +1 (see bug #810331)
 		 */
-		y3 = (y2 / 12) * 12 + 1;
+		y3 = (y2 / 12) * 12;
+
+		// SQ1 needs +1 (see Sarien bug #810331)
+		if (_vm->getGameID() == GID_SQ1)
+			y3++;
 
 		// don't let box extend below y.
 		if (y3 > y2) y3 = y2;

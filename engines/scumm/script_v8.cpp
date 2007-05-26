@@ -488,7 +488,7 @@ void ScummEngine_v8::decodeParseString(int m, int n) {
 		_string[m].charset = pop();
 		break;
 	case 0xCE:		// SO_PRINT_LEFT
-		_string[m].center = false;
+		_string[m].wrapping = false;
 		_string[m].overhead = false;
 		break;
 	case 0xCF:		// SO_PRINT_OVERHEAD
@@ -503,7 +503,8 @@ void ScummEngine_v8::decodeParseString(int m, int n) {
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
 		break;
 	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
-		//debug(0, "decodeParseString: SO_PRINT_WRAP");
+		_string[m].wrapping = true;
+		_string[m].overhead = false;
 		break;
 	default:
 		error("decodeParseString: default case 0x%x", b);

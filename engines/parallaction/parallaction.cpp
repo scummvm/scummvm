@@ -31,14 +31,10 @@
 #include "sound/mixer.h"
 
 #include "parallaction/parallaction.h"
+#include "parallaction/debug.h"
 #include "parallaction/menu.h"
-#include "parallaction/parser.h"
-#include "parallaction/disk.h"
-#include "parallaction/music.h"
-#include "parallaction/inventory.h"
-#include "parallaction/graphics.h"
-#include "parallaction/walk.h"
-#include "parallaction/zone.h"
+#include "parallaction/sound.h"
+
 
 
 namespace Parallaction {
@@ -119,12 +115,15 @@ Parallaction::Parallaction(OSystem *syst) :
 	Common::addSpecialDebugLevel(kDebugGraphics, "gfx", "Gfx debug level");
 	Common::addSpecialDebugLevel(kDebugJobs, "jobs", "Jobs debug level");
 	Common::addSpecialDebugLevel(kDebugInput, "input", "Input debug level");
-
+	Common::addSpecialDebugLevel(kDebugAudio, "audio", "Audio debug level");
+	Common::addSpecialDebugLevel(kDebugMenu, "menu", "Menu debug level");
 }
 
 
 Parallaction::~Parallaction() {
-	delete _midiPlayer;
+	delete _debugger;
+
+	delete _soundMan;
 	delete _disk;
 	delete _globalTable;
 
@@ -139,6 +138,12 @@ Parallaction::~Parallaction() {
 
 	if (_localFlagNames)
 		delete _localFlagNames;
+
+	delete _gfx;
+
+	freeLocation();
+	freeCharacter();
+	destroyInventory();
 }
 
 
@@ -163,17 +168,19 @@ int Parallaction::init() {
 	_activeItem._id = 0;
 	_procCurrentHoverItem = -1;
 
-	_musicData1 = 0;
+//	_musicData1 = 0;
 	strcpy(_characterName1, "null");
 
-	_midiPlayer = 0;
+	_soundMan = 0;
 
 	_baseTime = 0;
 
 	if (getPlatform() == Common::kPlatformPC)
 		_disk = new DosDisk(this);
-	else
+	else {
 		_disk = new AmigaDisk(this);
+		_disk->selectArchive("disk0");
+	}
 
 	_engineFlags = 0;
 
@@ -186,11 +193,6 @@ int Parallaction::init() {
 	_location._startPosition.y = -1000;
 	_location._startFrame = 0;
 
-	if (getFeatures() & GF_DEMO)
-		strcpy(_location._name, "fognedemo");
-	else
-		strcpy(_location._name, "fogne");
-
 	_location._comment = NULL;
 	_location._endComment = NULL;
 
@@ -201,11 +203,16 @@ int Parallaction::init() {
 	_animations.push_front(&_vm->_char._ani);
 	_gfx = new Gfx(this);
 
-	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
-	_midiPlayer = new MidiPlayer(driver);
+	if (getPlatform() == Common::kPlatformPC) {
+		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+		_soundMan = new DosSoundMan(this, driver);
+		_soundMan->setMusicVolume(ConfMan.getInt("music_volume"));
+	} else {
+		_soundMan = new AmigaSoundMan(this);
+	}
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	_debugger = new Debugger(this);
 
 	return 0;
 }
@@ -276,6 +283,8 @@ uint16 Parallaction::updateInput() {
 		case Common::EVENT_KEYDOWN:
 			if (e.kbd.ascii == 'l') KeyDown = kEvLoadGame;
 			if (e.kbd.ascii == 's') KeyDown = kEvSaveGame;
+			if (e.kbd.flags == Common::KBD_CTRL && e.kbd.keycode == 'd')
+				_debugger->attach();
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
@@ -299,7 +308,7 @@ uint16 Parallaction::updateInput() {
 			break;
 
 		case Common::EVENT_QUIT:
-			_system->quit();
+			_engineFlags |= kEngineQuit;
 			break;
 
 		default:
@@ -308,6 +317,9 @@ uint16 Parallaction::updateInput() {
 		}
 
 	}
+
+	if (_debugger->isAttached())
+		_debugger->onFrame();
 
 	return KeyDown;
 
@@ -326,7 +338,7 @@ void waitUntilLeftClick() {
 			break;
 
 		if (e.type == Common::EVENT_QUIT) {
-			g_system->quit();
+			_engineFlags |= kEngineQuit;
 			break;
 		}
 
@@ -348,8 +360,6 @@ void Parallaction::runGame() {
 
 	if (_location._commands.size() > 0)
 		runCommands(_location._commands);
-
-	runJobs();
 
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
@@ -694,6 +704,7 @@ void Parallaction::changeCursor(int32 index) {
 
 
 void Parallaction::freeCharacter() {
+	debugC(3, kDebugLocation, "freeCharacter()");
 
 	if (!IS_DUMMY_CHARACTER(_vm->_characterName)) {
 		if (_objectsNames)
@@ -702,66 +713,27 @@ void Parallaction::freeCharacter() {
 
 		if (_vm->_char._ani._cnv)
 			delete _vm->_char._ani._cnv;
+		_vm->_char._ani._cnv = NULL;
 
 		if (_vm->_char._talk)
 			delete _vm->_char._talk;
+		_vm->_char._talk = NULL;
 
 		_vm->_gfx->freeStaticCnv(_vm->_char._head);
 		if (_vm->_char._head)
 			delete _vm->_char._head;
+		_vm->_char._head = NULL;
 
 		if (_vm->_char._objs)
 			delete _vm->_char._objs;
+		_vm->_char._objs = NULL;
 	}
 
 	return;
 }
-
-void Parallaction::selectCharacterMusic(const char *name) {
-	if (IS_MINI_CHARACTER(name))
-		name+=4;
-
-	if (!scumm_stricmp(name, _dinoName)) {
-		_midiPlayer->play("dino");
-	} else if (!scumm_stricmp(name, _donnaName)) {
-		_midiPlayer->play("donna");
-	} else {
-		_midiPlayer->play("nuts");
-	}
-
-	return;
-}
-
-void Parallaction::pickMusic(const char *location) {
-	if (_musicData1 != 0) {
-		selectCharacterMusic(_vm->_characterName);
-		_musicData1 = 0;
-		debugC(2, kDebugLocation, "changeLocation: started character specific music");
-	}
-
-	if (!scumm_stricmp(location, "night") || !scumm_stricmp(location, "intsushi")) {
-		_vm->_midiPlayer->play("soft");
-
-		debugC(2, kDebugLocation, "changeLocation: started music 'soft'");
-	}
-
-	if (!scumm_stricmp(location, "museo") ||
-		!scumm_stricmp(location, "caveau") ||
-		!scumm_strnicmp(location, "plaza1", 6) ||
-		!scumm_stricmp(location, "estgrotta") ||
-		!scumm_stricmp(location, "intgrottadopo") ||
-		!scumm_stricmp(location, "endtgz") ||
-		!scumm_stricmp(location, "common")) {
-
-		_vm->_midiPlayer->stop();
-		_musicData1 = 1;
-
-		debugC(2, kDebugLocation, "changeLocation: music stopped");
-	}
-}
-
 
 void Parallaction::changeCharacter(const char *name) {
+	debugC(1, kDebugLocation, "changeCharacter(%s)", name);
 
 	char baseName[20];
 	if (IS_MINI_CHARACTER(name)) {
@@ -782,6 +754,7 @@ void Parallaction::changeCharacter(const char *name) {
 		freeCharacter();
 
 		_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
+		_vm->_char._ani._cnv = _disk->loadFrames(fullName);
 
 		if (!IS_DUMMY_CHARACTER(name)) {
 			_vm->_char._head = _disk->loadHead(baseName);
@@ -790,17 +763,16 @@ void Parallaction::changeCharacter(const char *name) {
 			_objectsNames = _disk->loadTable(baseName);
 			refreshInventory(baseName);
 
-			_vm->_char._ani._cnv = _disk->loadFrames(fullName);
+			_soundMan->playCharacterMusic(name);
 
-			if (scumm_stricmp(name, "night") && scumm_stricmp(name, "intsushi"))
-				selectCharacterMusic(name);
+			if ((getFeatures() & GF_DEMO) == 0)
+				parseLocation("common");
 		}
 	}
 
-	if (!(getFeatures() & GF_DEMO))
-		parseLocation("common");
-
 	strcpy(_characterName1, fullName);
+
+	debugC(1, kDebugLocation, "changeCharacter() done");
 
 	return;
 }
@@ -810,11 +782,11 @@ void Parallaction::changeCharacter(const char *name) {
 	(higher priorities values comes first in the list)
 */
 int compareJobPriority(const JobPointer &j1, const JobPointer &j2) {
-	if (j1->_tag == j2->_tag) return 0;
 	return (j1->_tag >= j2->_tag ? -1 : 1);
 }
 
 Job *Parallaction::addJob(JobFn fn, void *parm, uint16 tag) {
+	debugC(3, kDebugJobs, "addJob(%i)", tag);
 
 	Job *v8 = new Job;
 
@@ -830,16 +802,22 @@ Job *Parallaction::addJob(JobFn fn, void *parm, uint16 tag) {
 }
 
 void Parallaction::removeJob(Job *j) {
+	debugC(3, kDebugJobs, "addJob(%i)", j->_tag);
+
 	j->_finished = 1;
 	return;
 }
 
 void Parallaction::pauseJobs() {
+	debugC(3, kDebugJobs, "pausing jobs execution");
+
 	_engineFlags |= kEnginePauseJobs;
 	return;
 }
 
 void Parallaction::resumeJobs() {
+	debugC(3, kDebugJobs, "resuming jobs execution");
+
 	_engineFlags &= ~kEnginePauseJobs;
 	return;
 }
@@ -858,7 +836,7 @@ void Parallaction::runJobs() {
 
 	it = _jobs.begin();
 	while (it != _jobs.end()) {
-		debugC(3, kDebugJobs, "runJobs: %i", (*it)->_tag);
+		debugC(9, kDebugJobs, "runJobs: %i", (*it)->_tag);
 		(*(*it)->_fn)((*it)->_parm, (*it));
 		it++;
 	}

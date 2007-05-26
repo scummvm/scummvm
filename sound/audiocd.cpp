@@ -23,6 +23,7 @@
 #include "common/stdafx.h"
 
 #include "sound/audiocd.h"
+#include "sound/audiostream.h"
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
 #include "sound/flac.h"
@@ -31,91 +32,76 @@
 #include "common/util.h"
 #include "common/system.h"
 
-DECLARE_SINGLETON(Audio::AudioCDManager);
-
 namespace Audio {
 
-struct TrackFormat {
-	/** Decodername */
-	const char* decoderName;
-	/**
-	 * Pointer to a function which tries to open the specified track - the only argument
-	 * is the number of the track to be played.
-	 * Returns either a DigitalTrackInfo object representing the requested track or null
-	 * in case of an error
-	 */
-	DigitalTrackInfo* (*openTrackFunction)(int);
-};
-
-static const TrackFormat s_trackFormats[] = {
-	/* decoderName,		openTrackFunction */
-#ifdef USE_FLAC
-	{ "Flac",			getFlacTrack },
-#endif
-#ifdef USE_VORBIS
-	{ "Ogg Vorbis",		getVorbisTrack },
-#endif
-#ifdef USE_MAD
-	{ "MPEG Layer 3",	getMP3Track },
-#endif
-
-	{ NULL, NULL } // Terminator
-};
-
-
 AudioCDManager::AudioCDManager() {
-	memset(_cachedTracks, 0, sizeof(_cachedTracks));
-	memset(_trackInfo, 0, sizeof(_trackInfo));
 	_cd.playing = false;
 	_cd.track = 0;
 	_cd.start = 0;
 	_cd.duration = 0;
 	_cd.numLoops = 0;
-	_currentCacheIdx = 0;
 	_mixer = g_system->getMixer();
 	assert(_mixer);
 }
 
 void AudioCDManager::play(int track, int numLoops, int startFrame, int duration) {
 	if (numLoops != 0 || startFrame != 0) {
-		// Try to load the track from a .mp3/.ogg file, and if found, use
-		// that. If not found, attempt to do regular Audio CD playback of
-		// the requested track.
-		int index = getCachedTrack(track);
-
 		_cd.track = track;
 		_cd.numLoops = numLoops;
 		_cd.start = startFrame;
 		_cd.duration = duration;
 
-		if (index >= 0) {
-			_mixer->stopHandle(_cd.handle);
-			_cd.playing = true;
+		// Try to load the track from a compressed data file, and if found, use
+		// that. If not found, attempt to start regular Audio CD playback of
+		// the requested track.
+		char trackName[2][16];
+		sprintf(trackName[0], "track%d", track);
+		sprintf(trackName[1], "track%02d", track);
+		Audio::AudioStream *stream = 0;
+
+		for (int i = 0; !stream && i < 2; ++i) {
 			/*
 			FIXME: Seems numLoops == 0 and numLoops == 1 both indicate a single repetition,
 			while all other positive numbers indicate precisely the number of desired
 			repetitions. Finally, -1 means infinitely many
 			*/
-			numLoops = (numLoops < 1) ? numLoops + 1 : numLoops;
-			_trackInfo[index]->play(_mixer, &_cd.handle, numLoops, _cd.start, _cd.duration);
+			// We multiply by 40 / 3 = 1000 / 75 to convert frames to milliseconds
+			stream = AudioStream::openStreamFile(trackName[i], startFrame * 40 / 3, duration * 40 / 3, (numLoops < 1) ? numLoops + 1 : numLoops);
+		}
+
+		// Stop any currently playing emulated track
+		_mixer->stopHandle(_cd.handle);
+
+		// HACK: We abuse _cd.playing to store whether we are playing a real or an emulated track.
+		if (stream != 0) {
+			_cd.playing = true;
+			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_cd.handle, stream);
 		} else {
-			g_system->playCD(track, numLoops, startFrame, duration);
 			_cd.playing = false;
+			g_system->playCD(track, numLoops, startFrame, duration);
 		}
 	}
 }
 
 void AudioCDManager::stop() {
 	if (_cd.playing) {
+		// Audio CD emulation
 		_mixer->stopHandle(_cd.handle);
 		_cd.playing = false;
 	} else {
+		// Real Audio CD
 		g_system->stopCD();
 	}
 }
 
 bool AudioCDManager::isPlaying() const {
-	return _cd.playing || g_system->pollCD();
+	if (_cd.playing) {
+		// Audio CD emulation
+		return _mixer->isSoundHandleActive(_cd.handle);
+	} else {
+		// Real Audio CD
+		return g_system->pollCD();
+	}
 }
 
 void AudioCDManager::updateCD() {
@@ -125,7 +111,8 @@ void AudioCDManager::updateCD() {
 			// FIXME: We do not update the numLoops parameter here (and in fact,
 			// currently can't do that). Luckily, only one engine ever checks
 			// this part of the AudioCD status, namely the SCUMM engine; and it
-			// only checks
+			// only checks whether the track is currently set to infinite looping
+			// or not.
 			_cd.playing = false;
 		}
 	} else {
@@ -139,43 +126,6 @@ AudioCDManager::Status AudioCDManager::getStatus() const {
 	Status info = _cd;
 	info.playing = isPlaying();
 	return info;
-}
-
-int AudioCDManager::getCachedTrack(int track) {
-	// See if we find the track in the cache
-	for (int i = 0; i < CACHE_TRACKS; i++)
-		if (_cachedTracks[i] == track) {
-			return _trackInfo[i] ? i : -1;
-		}
-
-	// The track is not already in the cache. Try and see if
-	// we can load it.
-	DigitalTrackInfo *newTrack = 0;
-	for (const TrackFormat *format = s_trackFormats;
-	     format->openTrackFunction != NULL && newTrack == NULL;
-	     ++format) {
-		newTrack = format->openTrackFunction(track);
-	}
-
-	int currentIndex = -1;
-
-	if (newTrack != NULL) {
-		// We successfully loaded a digital track. Store it into _trackInfo.
-
-		currentIndex = _currentCacheIdx++;
-		_currentCacheIdx %= CACHE_TRACKS;
-	
-		// First, delete the previous track info object
-		delete _trackInfo[currentIndex];
-
-		// Then, store the new track info object
-		_trackInfo[currentIndex] = newTrack;
-		_cachedTracks[currentIndex] = track;
-	} else {
-		debug(2, "Track %d not available in compressed format", track);
-	}
-
-	return currentIndex;
 }
 
 } // End of namespace Audio

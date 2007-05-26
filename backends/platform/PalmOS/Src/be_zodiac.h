@@ -36,7 +36,6 @@ private:
 	TwGfxType *_gfxH;
 	TwGfxSurfaceType *_palmScreenP, *_tmpScreenP;
 	TwGfxSurfaceType *_overlayP;
-	UInt16 _nativePal[256], _mousePal[256];
 	Boolean _fullscreen;
 	
 	TwGfxPointType _srcPos;
@@ -53,7 +52,6 @@ private:
 	void load_gfx_mode();
 	void hotswap_gfx_mode(int mode);
 
-	void extras_palette(uint8 index, uint8 r, uint8 g, uint8 b);
 	void calc_rect(Boolean fullscreen);
 	bool check_event(Common::Event &event, EventPtr ev);
 	void draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color = 0);
@@ -68,8 +66,6 @@ public:
 	int getDefaultGraphicsMode() const;
 
 	void updateScreen();
-
-	void setCursorPalette(const byte *colors, uint start, uint num);
 
 	void clearOverlay();
 	void grabOverlay(OverlayColor *buf, int pitch);

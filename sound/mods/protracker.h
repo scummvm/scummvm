@@ -31,6 +31,17 @@ namespace Audio {
 
 class AudioStream;
 
+/*
+ * Factory function for ProTracker streams. Reads all data from the
+ * given ReadStream and creates an AudioStream from this. No reference
+ * to the 'stream' object is kept, so you can safely delete it after 
+ * invoking this factory.
+ * 
+ * @param stream	the ReadStream from which to read the ProTracker data
+ * @param rate		TODO
+ * @param stereo	TODO
+ * @return	a new AudioStream, or NULL, if an error occured
+ */
 AudioStream *makeProtrackerStream(Common::ReadStream *stream, int rate = 44100, bool stereo = true);
 
 } // End of namespace Audio

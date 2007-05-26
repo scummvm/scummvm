@@ -445,6 +445,13 @@ void Resources::setTalkingCharacter(uint16 id) {
 		HotspotData *charHotspot = res.getHotspot(_talkingCharacter);
 		assert(charHotspot);
 		charHotspot->talkCountdown = 0;
+
+		if (charHotspot->talkDestCharacterId != 0) {
+			HotspotData *destHotspot = res.getHotspot(charHotspot->talkDestCharacterId);
+			if (destHotspot != NULL)
+				destHotspot->talkDestCharacterId = 0;
+		}
+		charHotspot->talkDestCharacterId = 0;
 	}
 
 	_talkingCharacter = id; 
@@ -642,6 +649,8 @@ void Resources::saveToStream(Common::WriteStream *stream)
 	_fieldList.saveToStream(stream);
 	_randomActions.saveToStream(stream);
 	_barmanLists.saveToStream(stream);
+	_exitJoins.saveToStream(stream);
+	_roomData.saveToStream(stream);
 }
 
 void Resources::loadFromStream(Common::ReadStream *stream) {
@@ -655,6 +664,10 @@ void Resources::loadFromStream(Common::ReadStream *stream) {
 	_randomActions.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading barman lists");
 	_barmanLists.loadFromStream(stream);
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading room exit joins");
+	_exitJoins.loadFromStream(stream);
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading walkable paths");
+	_roomData.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Finished loading");
 }
 

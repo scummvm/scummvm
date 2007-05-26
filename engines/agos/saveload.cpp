@@ -54,59 +54,6 @@ int AGOSEngine::countSaveGames() {
 	return i;
 }
 
-int AGOSEngine::displaySaveGameList(int curpos, bool load, char *dst) {
-	int slot, last_slot;
-	Common::InSaveFile *in;
-
-	showMessageFormat("\xC");
-
-	memset(dst, 0, 108);
-
-	slot = curpos;
-
-	while (curpos + 6 > slot) {
-		if (!(in = _saveFileMan->openForLoading(genSaveName(slot))))
-			break;
-
-		in->read(dst, 18);
-		delete in;
-
-		last_slot = slot;
-		if (slot < 10) {
-			showMessageFormat(" ");
-		} else if (_language == Common::HB_ISR) {
-			last_slot = (slot % 10) * 10;
-			last_slot += slot / 10;
-		}
-
-		if (_language == Common::HB_ISR && !(slot % 10))
-			showMessageFormat("0");
-		showMessageFormat("%d", last_slot);
-		showMessageFormat(".%s\n", dst);
-		dst += 18;
-		slot++;
-	}
-	// while_break
-	if (!load) {
-		if (curpos + 6 == slot)
-			slot++;
-		else {
-			if (slot < 10)
-				showMessageFormat(" ");
-			showMessageFormat("%d.\n", slot);
-		}
-	} else {
-		if (curpos + 6 == slot) {
-			if ((in = _saveFileMan->openForLoading(genSaveName(slot)))) {
-				slot++;
-				delete in;
-			}
-		}
-	}
-
-	return slot - curpos;
-}
-
 char *AGOSEngine::genSaveName(int slot) {
 	static char buf[15];
 
@@ -118,15 +65,21 @@ char *AGOSEngine::genSaveName(int slot) {
 		sprintf(buf, "feeble.%.3d", slot);
 	} else if (getGameType() == GType_SIMON2) {
 		sprintf(buf, "simon2.%.3d", slot);
-	} else {
+	} else if (getGameType() == GType_SIMON1) {
 		sprintf(buf, "simon1.%.3d", slot);
+	} else if (getGameType() == GType_WW) {
+		sprintf(buf, "waxworks.%.3d", slot);
+	} else if (getGameType() == GType_ELVIRA2) {
+		sprintf(buf, "elvira2.%.3d", slot);
+	} else if (getGameType() == GType_ELVIRA1) {
+		sprintf(buf, "elvira1.%.3d", slot);
 	}
 	return buf;
 }
 
 void AGOSEngine::quickLoadOrSave() {
 	// Quick load & save is only supported complete version of Simon the Sorcerer 1/2
-	if (getGameType() != GType_SIMON1 && getGameType() != GType_SIMON2 ||
+	if (getGameType() == GType_PP || getGameType() == GType_FF ||
 		(getFeatures() & GF_DEMO)) {
 		return;
 	}
@@ -140,14 +93,35 @@ void AGOSEngine::quickLoadOrSave() {
 		success = loadGame(genSaveName(_saveLoadSlot));
 		if (!success) {
 			sprintf(buf, "Failed to load game state to file:\n\n%s", filename);
-		} else {
-			// Redraw Inventory
-			mouseOff();
+		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 			drawIconArray(2, me(), 0, 0);
-			mouseOn();
-			// Reset engine?
 			setBitFlag(97, true);
 			sub = getSubroutineByID(100);
+			startSubroutine(sub);
+		} else if (getGameType() == GType_WW) {
+			sub = getSubroutineByID(66);
+			startSubroutine(sub);
+		} else if (getGameType() == GType_ELVIRA2) {
+			sub = getSubroutineByID(87);
+			startSubroutine(sub);
+			setBitFlag(7, false);
+			sub = getSubroutineByID(19);
+			startSubroutine(sub);
+			//oe2_printStats();
+			sub = getSubroutineByID(28);
+			startSubroutine(sub);
+			setBitFlag(17, false);
+			sub = getSubroutineByID(207);
+			startSubroutine(sub);
+			sub = getSubroutineByID(71);
+			startSubroutine(sub);
+		} else if (getGameType() == GType_ELVIRA1) {
+			drawIconArray(2, me(), 0, 0);
+			sub = getSubroutineByID(265);
+			startSubroutine(sub);
+			sub = getSubroutineByID(129);
+			startSubroutine(sub);
+			sub = getSubroutineByID(131);
 			startSubroutine(sub);
 		}
 	} else {
@@ -170,15 +144,255 @@ void AGOSEngine::quickLoadOrSave() {
 	_saveLoadType = 0;
 }
 
-void AGOSEngine::listSaveGames(char *buf) {
-	int i;
+void AGOSEngine::listSaveGames(char *dst) {
+	Common::InSaveFile *in;
+	uint y, slot;
+
+	const uint8 num = (getGameType() == GType_WW) ? 3 : 4;
 
 	disableFileBoxes();
 
-	i = displaySaveGameList(_saveLoadRowCurPos, _saveOrLoad, buf);
+	WindowBlock *window = _windowArray[num];
+	window->textRow = 0;
+	window->textColumn = 0;
+	window->textColumnOffset = 4;
+
+	windowPutChar(window, 12);
+
+	memset(dst, 0, 200);
+
+	slot = _saveLoadRowCurPos;
+	for (y = 0; y < 8; y++) {
+		window->textColumn = 0;
+		window->textColumnOffset = 4;
+		window->textLength = 0;
+		if ((in = _saveFileMan->openForLoading(genSaveName(slot++)))) {
+			in->read(dst, 8);
+			delete in;
+
+			const char *name = dst;
+			for (; *name; name++)
+				windowPutChar(window, *name);
+
+			enableBox(200 + y * 3 + 0);
+		}
+		dst+= 8;
+
+		window->textColumn = 7;
+		window->textColumnOffset = 4;
+		window->textLength = 0;
+		if ((in = _saveFileMan->openForLoading(genSaveName(slot++)))) {
+			in->read(dst, 8);
+			delete in;
+
+			const char *name = dst;
+			for (; *name; name++)
+				windowPutChar(window, *name);
+
+			enableBox(200 + y * 3 + 1);
+		}
+		dst+= 8;
+
+		window->textColumn = 15;
+		window->textColumnOffset = 4;
+		window->textLength = 0;
+		if ((in = _saveFileMan->openForLoading(genSaveName(slot++)))) {
+			in->read(dst, 8);
+			delete in;
+
+			const char *name = dst;
+			for (; *name; name++)
+				windowPutChar(window, *name);
+
+			enableBox(200 + y * 3 + 2);
+		}
+		dst+= 8;
+
+		windowPutChar(window, 13);
+	}
+
+	window->textRow = 9;
+	window->textColumn = 0;
+	window->textColumnOffset = 4;
+	window->textLength = 0;
+
+	_saveGameNameLen = 0;
+}
+
+void AGOSEngine::userGame(bool load) {
+	time_t saveTime;
+	int i, numSaveGames;
+	char *name;
+	bool b;
+	char buf[200];
+
+	_saveOrLoad = load;
+
+	saveTime = time(NULL);
+
+	if (getGameType() == GType_ELVIRA2)
+		haltAnimation();
+
+	numSaveGames = countSaveGames();
+	_numSaveGameRows = numSaveGames;
+	_saveLoadRowCurPos = 1;
+	_saveLoadEdit = false;
+
+	const uint8 num = (getGameType() == GType_WW) ? 3 : 4;
+
+	listSaveGames(buf);
+
+	if (!load) {
+		WindowBlock *window = _windowArray[num];
+		name = buf + 192;
+
+		for (;;) {
+			windowPutChar(window, 127);
+
+			_saveLoadEdit = true;
+
+			i = userGameGetKey(&b, buf, 128);
+			if (b) {
+				if (i <= 223) {
+					if (getGameType() == GType_WW) {
+						Subroutine *sub = getSubroutineByID(80);
+						if (sub != NULL)
+							startSubroutineEx(sub);
+
+						if (_variableArray[253] != 0) {
+							listSaveGames(buf);
+							continue;
+						}
+					}
+
+					if (!saveGame(_saveLoadRowCurPos + i, buf + i * 8))
+						fileError(_windowArray[num], true);
+				}
+
+				goto get_out;
+			}
+
+			userGameBackSpace(_windowArray[num], 8);
+			if (i == 10 || i == 13)
+				break;
+			if (i == 8) {
+				// do_backspace
+				if (_saveGameNameLen) {
+					_saveGameNameLen--;
+					name[_saveGameNameLen] = 0;
+					userGameBackSpace(_windowArray[num], 8);
+				}
+			} else if (i >= 32 && _saveGameNameLen != 8) {
+				name[_saveGameNameLen++] = i;
+				windowPutChar(_windowArray[num], i);
+			}
+		}
+
+		if (!saveGame(numSaveGames, buf + 192))
+			fileError(_windowArray[num], true);
+	} else {
+		i = userGameGetKey(&b, buf, 128);
+		if (i != 225) {
+			if (!loadGame(genSaveName(_saveLoadRowCurPos + i)))
+				fileError(_windowArray[num], false);
+		}
+	}
+
+get_out:;
+	disableFileBoxes();
+
+	_gameStoppedClock = time(NULL) - saveTime + _gameStoppedClock;
+
+	if (getGameType() == GType_ELVIRA2)
+		restartAnimation();
+}
+
+int AGOSEngine::userGameGetKey(bool *b, char *buf, uint maxChar) {
+	HitArea *ha;
+	*b = true;
+
+	_keyPressed = 0;
+
+	for (;;) {
+		_lastHitArea = NULL;
+		_lastHitArea3 = NULL;
+
+		do {
+			if (_saveLoadEdit && _keyPressed && _keyPressed < maxChar) {
+				*b = false;
+				return _keyPressed;
+			}
+			delay(10);
+		} while (_lastHitArea3 == 0);
+
+		ha = _lastHitArea;
+		if (ha == NULL || ha->id < 200) {
+		} else if (ha->id == 225) {
+			return ha->id;
+		} else if (ha->id == 224) {
+			_saveGameNameLen = 0;
+			_saveLoadRowCurPos += 24;
+			if (_saveLoadRowCurPos >= _numSaveGameRows)
+				_saveLoadRowCurPos = 1;
+
+			listSaveGames(buf);
+		} else if (ha->id < 224) {
+			return ha->id - 200;
+		}
+	}
+}
+
+void AGOSEngine_Simon1::listSaveGames(char *dst) {
+	Common::InSaveFile *in;
+	uint i, slot, lastSlot;
+
+	disableFileBoxes();
+
+	showMessageFormat("\xC");
+
+	memset(dst, 0, 108);
+
+	slot = _saveLoadRowCurPos;
+	while (_saveLoadRowCurPos + 6 > slot) {
+		if (!(in = _saveFileMan->openForLoading(genSaveName(slot))))
+			break;
+
+		in->read(dst, 8);
+		delete in;
+
+		lastSlot = slot;
+		if (slot < 10) {
+			showMessageFormat(" ");
+		}
+
+		if (_language == Common::HB_ISR && !(slot % 10))
+			showMessageFormat("0");
+		showMessageFormat("%d", lastSlot);
+		showMessageFormat(".%s\n", dst);
+		dst += 18;
+		slot++;
+	}
+
+	if (!_saveOrLoad) {
+		if (_saveLoadRowCurPos + 6 == slot)
+			slot++;
+		else {
+			if (slot < 10)
+				showMessageFormat(" ");
+			showMessageFormat("%d.\n", slot);
+		}
+	} else {
+		if (_saveLoadRowCurPos + 6 == slot) {
+			if ((in = _saveFileMan->openForLoading(genSaveName(slot)))) {
+				slot++;
+				delete in;
+			}
+		}
+	}
 
 	_saveDialogFlag = true;
 
+	i = slot - _saveLoadRowCurPos;
 	if (i != 7) {
 		i++;
 		if (!_saveOrLoad)
@@ -194,7 +408,6 @@ void AGOSEngine::listSaveGames(char *buf) {
 	} while (--i);
 }
 
-
 const byte hebrewKeyTable[96] = {
 	32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 90, 45, 85, 47, 48, 49, 50,
 	51, 52, 53, 54, 55, 56, 57, 83, 83, 90, 61, 85, 63, 35, 89, 80, 65, 66, 87,
@@ -204,10 +417,9 @@ const byte hebrewKeyTable[96] = {
 	123, 124, 125, 126, 127,
 };
 
-void AGOSEngine::userGame(bool load) {
-	time_t save_time;
-	int number_of_savegames;
-	int i, name_len, result;
+void AGOSEngine_Simon1::userGame(bool load) {
+	time_t saveTime;
+	int i, numSaveGames, result;
 	WindowBlock *window;
 	char *name;
 	bool b;
@@ -216,29 +428,25 @@ void AGOSEngine::userGame(bool load) {
 
 	_saveOrLoad = load;
 
-	save_time = time(NULL);
+	saveTime = time(NULL);
 
-	_copyPartialMode = 1;
-
-	number_of_savegames = countSaveGames();
+	numSaveGames = countSaveGames();
 	if (!load)
-		number_of_savegames++;
-	number_of_savegames -= 6;
-	if (number_of_savegames < 0)
-		number_of_savegames = 0;
-	number_of_savegames++;
-	_numSaveGameRows = number_of_savegames;
+		numSaveGames++;
+	numSaveGames -= 6;
+	if (numSaveGames < 0)
+		numSaveGames = 0;
+	numSaveGames++;
+	_numSaveGameRows = numSaveGames;
 
 	_saveLoadRowCurPos = 1;
 	if (!load)
-		_saveLoadRowCurPos = number_of_savegames;
+		_saveLoadRowCurPos = numSaveGames;
 
 	_saveLoadEdit = false;
 
 restart:;
-	do {
-		i = userGameGetKey(&b, buf);
-	} while (!b);
+	i = userGameGetKey(&b, buf, maxChar);
 
 	if (i == 205)
 		goto get_out;
@@ -258,22 +466,21 @@ restart:;
 		if (_language == Common::HB_ISR) {
 			window->textColumn = 3;
 			window->textColumnOffset = 6;
-			window->textLength = 3;
 		} else {
 			window->textColumn = 2;
 			window->textColumnOffset = 2;
-			window->textLength = 3;
 		}
+		window->textLength = 3;
 
 		name = buf + i * 18;
 
 		// now process entire savegame name to get correct x offset for cursor
-		name_len = 0;
-		while (name[name_len]) {
+		_saveGameNameLen = 0;
+		while (name[_saveGameNameLen]) {
 			if (_language == Common::HB_ISR) {
 				byte width = 6;
-				if (name[name_len] >= 64 && name[name_len] < 91)
-					width = _hebrewCharWidths [name[name_len] - 64];
+				if (name[_saveGameNameLen] >= 64 && name[_saveGameNameLen] < 91)
+					width = _hebrewCharWidths [name[_saveGameNameLen] - 64];
 				window->textLength++;
 				window->textColumnOffset -= width;
 				if (window->textColumnOffset < width) {
@@ -283,43 +490,37 @@ restart:;
 			} else {
 				window->textLength++;
 				window->textColumnOffset += 6;
-				if (name[name_len] == 'i' || name[name_len] == 'l')
+				if (name[_saveGameNameLen] == 'i' || name[_saveGameNameLen] == 'l')
 					window->textColumnOffset -= 2;
 				if (window->textColumnOffset >= 8) {
 					window->textColumnOffset -= 8;
 					window->textColumn++;
 				}
 			}
-			name_len++;
+			_saveGameNameLen++;
 		}
-		// while_1_end
 
-		// do_3_start
 		for (;;) {
-			windowPutChar(window, 0x7f);
+			windowPutChar(window, 127);
 
 			_saveLoadEdit = true;
 
-			// do_2
-			do {
-				i = userGameGetKey(&b, buf);
+			i = userGameGetKey(&b, buf, maxChar);
 
-				if (b) {
-					if (i == 205)
-						goto get_out;
-					enableBox(208 + result);
-					if (_saveLoadEdit) {
-						userGameBackSpace(_windowArray[5], 8);
-					}
-					goto if_1;
+			if (b) {
+				if (i == 205)
+					goto get_out;
+				enableBox(208 + result);
+				if (_saveLoadEdit) {
+					userGameBackSpace(_windowArray[5], 8);
 				}
+				goto if_1;
+			}
 
-				// is_not_b
-				if (!_saveLoadEdit) {
-					enableBox(208 + result);
-					goto restart;
-				}
-			} while (i >= maxChar || i == 0);
+			if (!_saveLoadEdit) {
+				enableBox(208 + result);
+				goto restart;
+			}
 
 			if (_language == Common::HB_ISR) {
 				if (i >= 128)
@@ -328,36 +529,33 @@ restart:;
 					i = hebrewKeyTable[i - 32];
 			}
 
-			// after_do_2
 			userGameBackSpace(_windowArray[5], 8);
 			if (i == 10 || i == 13)
 				break;
 			if (i == 8) {
 				// do_backspace
-				if (name_len != 0) {
-					int x;
-					byte m;
+				if (_saveGameNameLen) {
+					byte m, x;
 
-					name_len--;
-					m = name[name_len];
+					_saveGameNameLen--;
+					m = name[_saveGameNameLen];
 
 					if (_language == Common::HB_ISR)
 						x = 8;
 					else
-						x = (name[name_len] == 'i' || name[name_len] == 'l') ? 1 : 8;
+						x = (name[_saveGameNameLen] == 'i' || name[_saveGameNameLen] == 'l') ? 1 : 8;
 
-					name[name_len] = 0;
+					name[_saveGameNameLen] = 0;
 
 					userGameBackSpace(_windowArray[5], x, m);
 				}
-			} else if (i >= 32 && name_len != 17) {
-				name[name_len++] = i;
+			} else if (i >= 32 && _saveGameNameLen != 17) {
+				name[_saveGameNameLen++] = i;
 
 				windowPutChar(_windowArray[5], i);
 			}
 		}
 
-		// do_save
 		if (!saveGame(_saveLoadRowCurPos + result, buf + result * 18))
 			fileError(_windowArray[5], true);
 	} else {
@@ -368,18 +566,10 @@ restart:;
 get_out:;
 	disableFileBoxes();
 
-	_gameStoppedClock = time(NULL) - save_time + _gameStoppedClock;
-	_copyPartialMode = 0;
-
-	restoreBlock(94, 208, 46, 80);
-
-	i = _timer4;
-	do {
-		delay(10);
-	} while (i == _timer4);
+	_gameStoppedClock = time(NULL) - saveTime + _gameStoppedClock;
 }
 
-int AGOSEngine::userGameGetKey(bool *b, char *buf) {
+int AGOSEngine_Simon1::userGameGetKey(bool *b, char *buf, uint maxChar) {
 	HitArea *ha;
 	*b = true;
 
@@ -394,7 +584,7 @@ int AGOSEngine::userGameGetKey(bool *b, char *buf) {
 		_lastHitArea3 = NULL;
 
 		do {
-			if (_saveLoadEdit && _keyPressed != 0) {
+			if (_saveLoadEdit && _keyPressed && _keyPressed < maxChar) {
 				*b = false;
 				return _keyPressed;
 			}
@@ -431,8 +621,15 @@ int AGOSEngine::userGameGetKey(bool *b, char *buf) {
 }
 
 void AGOSEngine::disableFileBoxes() {
-	for (int i = 208; i != 214; i++)
-		disableBox(i);
+	int i;
+
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		for (i = 208; i != 214; i++)
+			disableBox(i);
+	} else {
+		for (i = 200; i != 224; i++)
+			disableBox(i);
+	}
 }
 
 void AGOSEngine::userGameBackSpace(WindowBlock *window, int x, byte b) {
@@ -556,7 +753,8 @@ void writeItemID(Common::WriteStream *f, uint16 val) {
 		f->writeUint32BE(val - 1);
 }
 
-bool AGOSEngine::loadGame_e1(const char *filename, bool restartMode) {
+bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
+	char ident[100];
 	Common::SeekableReadStream *f = NULL;
 	uint num, item_index, i;
 
@@ -574,6 +772,10 @@ bool AGOSEngine::loadGame_e1(const char *filename, bool restartMode) {
 	if (f == NULL) {
 		_lockWord &= ~0x100;
 		return false;
+	}
+
+	if (!restartMode) {
+		f->read(ident, 8);
 	}
 
 	num = f->readUint32BE();
@@ -648,7 +850,7 @@ bool AGOSEngine::loadGame_e1(const char *filename, bool restartMode) {
 	return true;
 }
 
-bool AGOSEngine::saveGame_e1(const char *filename) {
+bool AGOSEngine::saveGame(uint slot, const char *caption) {
 	Common::OutSaveFile *f;
 	uint item_index, num_item, i;
 	TimeEvent *te;
@@ -657,12 +859,14 @@ bool AGOSEngine::saveGame_e1(const char *filename) {
 
 	_lockWord |= 0x100;
 
-	f = _saveFileMan->openForSaving(filename);
+	f = _saveFileMan->openForSaving(genSaveName(slot));
 	if (f == NULL) {
-		warning("saveGame: Failed to save %s", filename);
+		warning("saveGame: Failed to save slot %d", slot);
 		_lockWord &= ~0x100;
 		return false;
 	}
+
+	f->write(caption, 8);
 
 	f->writeUint32BE(_itemArrayInited - 1);
 	f->writeUint32BE(0xFFFFFFFF);
@@ -726,7 +930,7 @@ bool AGOSEngine::saveGame_e1(const char *filename) {
 	return result;
 }
 
-bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
+bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 	char ident[100];
 	Common::SeekableReadStream *f = NULL;
 	uint num, item_index, i, j;
@@ -752,6 +956,8 @@ bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 		f->read(ident, 100);
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		f->read(ident, 18);
+	} else if (!restartMode) {
+		f->read(ident, 8);
 	}
 
 	num = f->readUint32BE();
@@ -872,7 +1078,7 @@ bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 	return true;
 }
 
-bool AGOSEngine::saveGame(uint slot, const char *caption) {
+bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	Common::OutSaveFile *f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
@@ -893,6 +1099,8 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 		curTime = time(NULL);
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		f->write(caption, 18);
+	} else {
+		f->write(caption, 8);
 	}
 
 	f->writeUint32BE(_itemArrayInited - 1);

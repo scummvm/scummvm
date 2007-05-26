@@ -196,17 +196,17 @@ void Parse::printExpr_internal(char stopToken) {
 				debugN(5, "var8_%d", _vm->_inter->load16());
 				break;
 
-			case 19: // uint32 immediate
+			case 19: // int32/uint32 immediate
 				debugN(5, "%d", READ_LE_UINT32(_vm->_global->_inter_execPtr));
 				_vm->_global->_inter_execPtr += 4;
 				break;
 
-			case 20: // uint16 immediate
+			case 20: // int16 immediate
 				debugN(5, "%d", _vm->_inter->load16());
 				break;
 
-			case 21: // uint8 immediate
-				debugN(5, "%d",  *_vm->_global->_inter_execPtr++);
+			case 21: // int8 immediate
+				debugN(5, "%d", (int8) *_vm->_global->_inter_execPtr++);
 				break;
 
 			case 22: // string immediate

@@ -24,9 +24,9 @@
 
 #include "parallaction/parallaction.h"
 #include "parallaction/menu.h"
-#include "parallaction/music.h"
-#include "parallaction/graphics.h"
-#include "parallaction/zone.h"
+#include "parallaction/sound.h"
+
+#include "graphics/primitives.h"
 
 namespace Parallaction {
 
@@ -123,10 +123,14 @@ static uint16 _rightHandPositions[684] = {
 
 extern Credit _credits[];
 
-
 void _c_startIntro(void *parm) {
 	_rightHandAnim = _vm->findAnimation("righthand");
-	_vm->_midiPlayer->play("intro");
+
+	if (_vm->getPlatform() == Common::kPlatformPC) {
+		_vm->_soundMan->setMusicFile("intro");
+		_vm->_soundMan->playMusic();
+	}
+
 	_engineFlags |= kEngineMouse;
 
 	return;
@@ -134,30 +138,40 @@ void _c_startIntro(void *parm) {
 
 void _c_endIntro(void *parm) {
 
-	_vm->_gfx->setFont("slide");
-	_vm->_gfx->_proportionalFont = false;
+	_vm->_gfx->setFont(kFontMenu);
 
-	uint16 _di;
-	for (uint16 _si = 0; _si < 7; _si++) {
-		_di = _vm->_gfx->getStringWidth(_credits[_si]._role);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _di)/2, 80, _credits[_si]._role);
+	debugC(1, kDebugLocation, "endIntro()");
 
-		_di = _vm->_gfx->getStringWidth(_credits[_si]._name);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _di)/2, 100, _credits[_si]._name);
+	for (uint16 _si = 0; _si < 6; _si++) {
+		_vm->_gfx->displayCenteredString(80, _credits[_si]._role);
+		_vm->_gfx->displayCenteredString(100, _credits[_si]._name);
+
+		_vm->_gfx->updateScreen();
 
 		for (uint16 v2 = 0; v2 < 100; v2++) {
+			_mouseButtons = kMouseNone;
 			_vm->updateInput();
-			if (_mouseButtons != kMouseLeftUp)
-				_vm->waitTime( 1 );
+			if (_mouseButtons == kMouseLeftUp)
+				break;
+
+			_vm->waitTime( 1 );
 		}
 
 		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	}
+	debugC(1, kDebugLocation, "endIntro(): done showing credits");
 
-	waitUntilLeftClick();
+	if ((_vm->getFeatures() & GF_DEMO) == 0) {
+		_vm->_gfx->displayCenteredString(80, "CLICK MOUSE BUTTON TO START");
+		_vm->_gfx->updateScreen();
 
-	_engineFlags &= ~kEngineMouse;
-	_vm->_menu->selectCharacter();
+		waitUntilLeftClick();
+
+		_engineFlags &= ~kEngineMouse;
+		_vm->_menu->selectCharacter();
+	} else {
+		waitUntilLeftClick();
+	}
 
 	return;
 }
@@ -190,133 +204,24 @@ void _c_moveSheet(void *parm) {
 	return;
 }
 
-
-void introFunc1(uint16 oldX, uint16 oldY, uint16 newX, uint16 newY) {
-
-	uint16 unused = 0;
-	int16 dx = newX - oldX;
-	int16 dy = newY - oldY;
-
-	_vm->_gfx->maskOpNot(oldX, oldY, unused);
-	_vm->_gfx->maskOpNot(newX, newY, unused);
-
-	if (abs(dx) >= abs(dy)) {
-
-		int16 v4 = abs(dy);
-		if (dx >= 0 && dy >= 0) {
-			for (uint16 i = 1; i < dx; i++) {
-				v4 += dy;
-				if (abs(dx) < v4) {
-					oldY++;
-					v4 -= dx;
-				}
-				_vm->_gfx->maskOpNot(i + oldX, oldY, unused);
-			}
-		}
-
-		if (dx < 0 && dy >= 0) {
-			for (uint16 i = 1; i > abs(dx); i++) {
-				v4 += dy;
-				if (abs(dx) < v4) {
-					oldY++;
-					v4 -= abs(dx);
-				}
-				_vm->_gfx->maskOpNot(oldX - i, oldY, unused);
-			}
-		}
-
-		if (dx < 0 && dy < 0) {
-			for (uint16 i = 1; i > abs(dx); i++) {
-				v4 += dy;
-				if (abs(v4) > abs(dx)) {
-					oldY--;
-					v4 -= abs(dx);
-				}
-				_vm->_gfx->maskOpNot(oldX - i, oldY, unused);
-			}
-		}
-
-		if (dx >= 0 && dy < 0) {
-			for (uint16 i = 1; i < dx; i++) {
-				v4 -= dy;
-				if (v4 > dx) {
-					oldY--;
-					v4 -= dx;
-				}
-				_vm->_gfx->maskOpNot(i + oldX, oldY, unused);
-			}
-		}
-
-	}
-
-	if (abs(dy) < abs(dx)) {
-
-		int16 v4 = abs(dx);
-
-		if (dx >= 0 && dy >= 0) {
-			for (uint16 i = 1; i < dy; i++) {
-				v4 += dx;
-				if (v4 > dy) {
-					oldX++;
-					v4 -= dy;
-				}
-				_vm->_gfx->maskOpNot(oldX, i + oldY, unused);
-			}
-		}
-
-		if (dx < 0 && dy >= 0) {
-			for (uint16 i = 1; i < dy; i++) {
-				v4 -= dx;
-				if (v4 > dy) {
-					oldX--;
-					v4 -= dy;
-				}
-				_vm->_gfx->maskOpNot(oldX, i + oldY, unused);
-			}
-		}
-
-		if (dx < 0 && dy < 0) {
-			for (uint16 i = 1; i < abs(dy); i++) {
-				v4 -= abs(dx);
-				if (v4 > abs(dy)) {
-					oldX--;
-					v4 -= abs(dy);
-				}
-				_vm->_gfx->maskOpNot(oldX, oldY - i, unused);
-			}
-		}
-
-		if (dx >= 0 && dy < 0) {
-			for (uint16 i = 1; i < abs(dy); i++) {
-				v4 += abs(dx);
-				if (v4 > abs(dy)) {
-					oldX++;
-					v4 -= abs(dy);
-				}
-				_vm->_gfx->maskOpNot(oldX, oldY - i, unused);
-			}
-		}
-
-	}
-
-
-	return;
+void plotPixel(int x, int y, int color, void *data) {
+	_vm->_gfx->plotMaskPixel(x, y, color);
 }
-
 
 void _c_sketch(void *parm) {
 
 	static uint16 index = 1;
 
-	uint16 _4 = _rightHandPositions[2*index+1];
-	uint16 _3 = _rightHandPositions[2*index];
-	uint16 _2 = _rightHandPositions[2*(index-1)+1];
-	uint16 _1 = _rightHandPositions[2*(index-1)];
+	uint16 newy = _rightHandPositions[2*index+1];
+	uint16 newx = _rightHandPositions[2*index];
 
-	introFunc1(_1, _2, _3, _4);
+	uint16 oldy = _rightHandPositions[2*(index-1)+1];
+	uint16 oldx = _rightHandPositions[2*(index-1)];
 
-	_rightHandAnim->_left = _rightHandPositions[index*2];
-	_rightHandAnim->_top = _rightHandPositions[index*2+1] - 20;
+	Graphics::drawLine(oldx, oldy, newx, newy, 0, plotPixel, NULL);
+
+	_rightHandAnim->_left = newx;
+	_rightHandAnim->_top = newy - 20;
 
 	index++;
 
@@ -335,10 +240,78 @@ void _c_shade(void *parm) {
 		_rightHandAnim->_top
 	);
 
-	_vm->_gfx->maskClearRectangle(r);
+	_vm->_gfx->fillMaskRect(r, 0);
 
 	return;
 
+}
+
+void _c_projector(void*) {
+#ifdef HALFBRITE
+	static int dword_16032 = 0;
+
+//	Bitmap bm;
+//	InitBitMap(&bm);
+
+	if (dword_16032 != 0) {
+/*		// keep drawing spotlight in its final place
+		_vm->_gfx->flatBlitCnv(&scnv, 110, 25, Gfx::kBitFront);
+		BltBitMap(&bm, 0, 0, &_screen._bitMap, 110, 25, a3->??, a3->??, 0x20, 0x20);
+*/		return;
+	}
+
+	_vm->_gfx->setHalfbriteMode(true);
+/*
+	// move spot light around the stage
+	int d7, d6;
+	for (d7 = 0; d7 < 150; d7++) {
+
+		if (d7 < 100) {
+			int d1 = d7;
+			if (d1 < 0)
+				d1++;
+
+			d1 >>= 1;
+			d6 = 50 - d1;
+		} else {
+			int d1 = d7 / 100;
+			if (d1 < 0)
+				d1++;
+
+			d1 >>= 1;
+			d6 = d1;
+		}
+
+		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+20, d6, a3->??, a3->??, 0x20, 0x20);
+		sub_1590C(d6 + a3->??);
+		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+20, d6, a3->??, a3->??, 0xFA, 0x20);
+	}
+
+	for (d7 = 50; d7 > -10; d7--) {
+		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+120, d6, a3->??, a3->??, 0x20, 0x20);
+		sub_1590C(d6 + a3->??);
+		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+120, d6, a3->??, a3->??, 0xFA, 0x20);
+	}
+
+	BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+120, d6, a3->??, a3->??, 0x20, 0x20);
+	_vm->_gfx->flatBlitCnv(&scnv, d7+120, d6, Gfx::kBitFront);
+*/
+
+	dword_16032 = 1;
+	return;
+#endif
+}
+
+void _c_HBOff(void*) {
+#ifdef HALFBRITE
+	_vm->_gfx->setHalfbriteMode(false);
+#endif
+}
+
+void _c_HBOn(void*) {
+#ifdef HALFBRITE
+	_vm->_gfx->setHalfbriteMode(true);
+#endif
 }
 
 } // namespace Parallaction

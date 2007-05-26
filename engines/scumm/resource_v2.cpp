@@ -93,7 +93,7 @@ void ScummEngine_v2::readClassicIndexFile() {
 	for (i = 0; i < _numRooms; i++) {
 		_res->roomoffs[rtRoom][i] = _fileHandle->readUint16LE();
 		if (_res->roomoffs[rtRoom][i] == 0xFFFF)
-			_res->roomoffs[rtRoom][i] = RES_INVALID_OFFSET;
+			_res->roomoffs[rtRoom][i] = (uint32)RES_INVALID_OFFSET;
 	}
 
 	for (i = 0; i < _numCostumes; i++) {
@@ -102,7 +102,7 @@ void ScummEngine_v2::readClassicIndexFile() {
 	for (i = 0; i < _numCostumes; i++) {
 		_res->roomoffs[rtCostume][i] = _fileHandle->readUint16LE();
 		if (_res->roomoffs[rtCostume][i] == 0xFFFF)
-			_res->roomoffs[rtCostume][i] = RES_INVALID_OFFSET;
+			_res->roomoffs[rtCostume][i] = (uint32)RES_INVALID_OFFSET;
 	}
 
 	for (i = 0; i < _numScripts; i++) {
@@ -111,7 +111,7 @@ void ScummEngine_v2::readClassicIndexFile() {
 	for (i = 0; i < _numScripts; i++) {
 		_res->roomoffs[rtScript][i] = _fileHandle->readUint16LE();
 		if (_res->roomoffs[rtScript][i] == 0xFFFF)
-			_res->roomoffs[rtScript][i] = RES_INVALID_OFFSET;
+			_res->roomoffs[rtScript][i] = (uint32)RES_INVALID_OFFSET;
 	}
 
 	for (i = 0; i < _numSounds; i++) {
@@ -120,7 +120,7 @@ void ScummEngine_v2::readClassicIndexFile() {
 	for (i = 0; i < _numSounds; i++) {
 		_res->roomoffs[rtSound][i] = _fileHandle->readUint16LE();
 		if (_res->roomoffs[rtSound][i] == 0xFFFF)
-			_res->roomoffs[rtSound][i] = RES_INVALID_OFFSET;
+			_res->roomoffs[rtSound][i] = (uint32)RES_INVALID_OFFSET;
 	}
 }
 

@@ -1,7 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
+ * Copyright (C) 2001-2007 The ScummVM project
+ * Copyright (C) 2002-2007 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,16 +64,18 @@ OSystem_PalmBase::OSystem_PalmBase() {
 	_mixerMgr = 0;
 	
 	_mouseDataP = NULL;
+	_mouseBackupP = NULL;
 	_mouseVisible = false;
 	_mouseDrawn = false;
-	MemSet(&_keyMouse, sizeof(_keyMouse), 0);
+	MemSet(&_keyExtra, sizeof(_keyExtra), 0);
 	MemSet(&_mouseCurState, sizeof(_mouseCurState), 0);
 	MemSet(&_mouseOldState, sizeof(_mouseOldState), 0);
 	MemSet(&_timer, sizeof(TimerType), 0);
 	MemSet(&_sound, sizeof(SoundType), 0);
 	
-	_keyMouseRepeat = 0;
-	_keyMouseDelay = (gVars->arrowKeys) ? computeMsecs(125) : computeMsecs(25);
+	_keyExtraRepeat = 0;
+	_keyExtraPressed = 0;
+	_keyExtraDelay = (gVars->arrowKeys) ? computeMsecs(125) : computeMsecs(25);
 }
 
 static int timer_handler(int t) {
@@ -86,13 +88,13 @@ void OSystem_PalmBase::initBackend() {
 	if (gVars->autoSave != -1)
 		ConfMan.setInt("autosave_period", gVars->autoSave);
 
-	_keyMouse.bitUp		= keyBitPageUp;
-	_keyMouse.bitDown	= keyBitPageDown;
-	_keyMouse.bitLeft	= keyBitHard2;
-	_keyMouse.bitRight	= keyBitHard3;
+	_keyExtra.bitUp		= keyBitPageUp;
+	_keyExtra.bitDown	= keyBitPageDown;
+	_keyExtra.bitLeft	= keyBitHard2;
+	_keyExtra.bitRight	= keyBitHard3;
 
 	int_initBackend();
-	_keyMouseMask = (_keyMouse.bitUp | _keyMouse.bitDown | _keyMouse.bitLeft | _keyMouse.bitRight);
+	_keyExtraMask = (_keyExtra.bitUp | _keyExtra.bitDown | _keyExtra.bitLeft | _keyExtra.bitRight | _keyExtra.bitActionA | _keyExtra.bitActionB);
 
 	// Create the savefile manager, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
@@ -143,7 +145,12 @@ void OSystem_PalmBase::quit() {
 	int_quit();
 	clearSoundCallback();
 	unload_gfx_mode();
-	
+
+	if (_mouseDataP) {
+		MemPtrFree(_mouseBackupP);
+		MemPtrFree(_mouseDataP);
+	}
+
 	delete _saveMgr;
 	delete _timerMgr;
 	delete _mixerMgr;

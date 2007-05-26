@@ -34,7 +34,7 @@ void OSystem_PalmZodiac::clearOverlay() {
 	TwGfxBitmapType bmp = {
 		sizeof(TwGfxBitmapType),
 		_screenWidth, _screenHeight, _screenWidth, twGfxPixelFormat8bpp,
-		(void *)_offScreenP, _nativePal
+		(void *)_offScreenP, (UInt16 *)_nativePal
 	};
 	e = TwGfxDrawBitmap(_overlayP, &pos, &bmp);
 }

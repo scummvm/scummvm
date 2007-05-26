@@ -28,169 +28,393 @@
 
 namespace AGOS {
 
-void AGOSEngine::setupElvira1Opcodes(OpcodeProc *op) {
-	op[0] = &AGOSEngine::o_at;
-	op[1] = &AGOSEngine::o_notAt;
-	op[2] = &AGOSEngine::oe1_present;
-	op[3] = &AGOSEngine::oe1_notPresent;
-	op[4] = &AGOSEngine::oe1_worn;
-	op[5] = &AGOSEngine::oe1_notWorn;
-	op[6] = &AGOSEngine::o_carried;
-	op[7] = &AGOSEngine::o_notCarried;
-	op[8] = &AGOSEngine::o_isAt;
-	op[9] = &AGOSEngine::oe1_isNotAt;
-	op[10] = &AGOSEngine::oe1_sibling;
-	op[11] = &AGOSEngine::oe1_notSibling;
-	op[12] = &AGOSEngine::o_zero;
-	op[13] = &AGOSEngine::o_notZero;
-	op[14] = &AGOSEngine::o_eq;
-	op[15] = &AGOSEngine::o_notEq;
-	op[16] = &AGOSEngine::o_gt;
-	op[17] = &AGOSEngine::o_lt;
-	op[18] = &AGOSEngine::o_eqf;
-	op[19] = &AGOSEngine::o_notEqf;
-	op[20] = &AGOSEngine::o_ltf;
-	op[21] = &AGOSEngine::o_gtf;
-	op[22] = &AGOSEngine::oe1_isIn;
-	op[23] = &AGOSEngine::oe1_isNotIn;
-	op[29] = &AGOSEngine::o_chance;
-	op[30] = &AGOSEngine::oe1_isPlayer;
-	op[32] = &AGOSEngine::o_isRoom;
-	op[33] = &AGOSEngine::o_isObject;
-	op[34] = &AGOSEngine::o_state;
-	op[36] = &AGOSEngine::o_oflag;
-	op[37] = &AGOSEngine::oe1_canPut;
-	op[47] = &AGOSEngine::oe1_create;
-	op[48] = &AGOSEngine::o_destroy;
-	op[51] = &AGOSEngine::o_place;
-	op[54] = &AGOSEngine::oe1_copyof;
-	op[55] = &AGOSEngine::oe1_copyfo;
-	op[56] = &AGOSEngine::o_copyff;
-	op[57] = &AGOSEngine::oe1_whatO;
-	op[59] = &AGOSEngine::oe1_weigh;
-	op[60] = &AGOSEngine::oe1_setFF;
-	op[61] = &AGOSEngine::o_clear;
-	op[64] = &AGOSEngine::o_let;
-	op[65] = &AGOSEngine::o_add;
-	op[66] = &AGOSEngine::o_sub;
-	op[67] = &AGOSEngine::o_addf;
-	op[68] = &AGOSEngine::o_subf;
-	op[69] = &AGOSEngine::o_mul;
-	op[70] = &AGOSEngine::o_div;
-	op[71] = &AGOSEngine::o_mulf;
-	op[72] = &AGOSEngine::o_divf;
-	op[73] = &AGOSEngine::o_mod;
-	op[74] = &AGOSEngine::o_modf;
-	op[75] = &AGOSEngine::o_random;
-	op[76] = &AGOSEngine::oe1_moveDirn;
-	op[77] = &AGOSEngine::o_goto;
-	op[80] = &AGOSEngine::o_oset;
-	op[81] = &AGOSEngine::o_oclear;
-	op[84] = &AGOSEngine::o_putBy;
-	op[85] = &AGOSEngine::o_inc;
-	op[86] = &AGOSEngine::o_dec;
-	op[87] = &AGOSEngine::o_setState;
-	op[89] = &AGOSEngine::o_print;
-	op[90] = &AGOSEngine::oe1_score;
-	op[91] = &AGOSEngine::o_message;
-	op[92] = &AGOSEngine::o_msg;
-	op[96] = &AGOSEngine::oe1_look;
-	op[97] = &AGOSEngine::o_end;
-	op[98] = &AGOSEngine::o_done;
-	op[105] = &AGOSEngine::o_process;
-	op[106] = &AGOSEngine::oe1_doClass;
-	op[112] = &AGOSEngine::oe1_pObj;
-	op[114] = &AGOSEngine::oe1_pName;
-	op[115] = &AGOSEngine::oe1_pcName;
-	op[119] = &AGOSEngine::o_when;
-	op[128] = &AGOSEngine::o_if1;
-	op[129] = &AGOSEngine::o_if2;
-	op[135] = &AGOSEngine::oe1_isCalled;
-	op[136] = &AGOSEngine::o_is;
-	op[152] = &AGOSEngine::o_debug;
-	op[162] = &AGOSEngine::oe1_cFlag;
-	op[164] = &AGOSEngine::oe1_rescan;
-	op[176] = &AGOSEngine::oe1_setUserItem;
-	op[177] = &AGOSEngine::oe1_getUserItem;
-	op[178] = &AGOSEngine::oe1_clearUserItem;
-	op[180] = &AGOSEngine::oe1_whereTo;
-	op[181] = &AGOSEngine::oe1_doorExit;
-	op[198] = &AGOSEngine::o_comment;
-	op[201] = &AGOSEngine::oe1_saveGame;
-	op[202] = &AGOSEngine::oe1_loadGame;
-	op[206] = &AGOSEngine::o_getParent;
-	op[207] = &AGOSEngine::o_getNext;
-	op[208] = &AGOSEngine::o_getChildren;
-	op[219] = &AGOSEngine::oe1_findMaster;
-	op[220] = &AGOSEngine::oe1_nextMaster;
-	op[224] = &AGOSEngine::o_picture;
-	op[225] = &AGOSEngine::o_loadZone;
-	op[226] = &AGOSEngine::oe1_animate;
-	op[227] = &AGOSEngine::oe1_stopAnimate;
-	op[228] = &AGOSEngine::o_killAnimate;
-	op[229] = &AGOSEngine::o_defWindow;
-	op[230] = &AGOSEngine::o_window;
-	op[231] = &AGOSEngine::o_cls;
-	op[232] = &AGOSEngine::o_closeWindow;
-	op[233] = &AGOSEngine::oe1_menu;
-	op[235] = &AGOSEngine::o_addBox;
-	op[236] = &AGOSEngine::o_delBox;
-	op[237] = &AGOSEngine::o_enableBox;
-	op[238] = &AGOSEngine::o_disableBox;
-	op[239] = &AGOSEngine::o_moveBox;
-	op[242] = &AGOSEngine::o_doIcons;
-	op[243] = &AGOSEngine::o_isClass;
-	op[249] = &AGOSEngine::o_setClass;
-	op[250] = &AGOSEngine::o_unsetClass;
-	op[251] = &AGOSEngine::oe1_bitClear;
-	op[252] = &AGOSEngine::oe1_bitSet;
-	op[253] = &AGOSEngine::oe1_bitTest;
-	op[255] = &AGOSEngine::o_waitSync;
-	op[256] = &AGOSEngine::o_sync;
-	op[257] = &AGOSEngine::o_defObj;
-	op[258] = &AGOSEngine::oe1_enableInput;
-	op[259] = &AGOSEngine::oe1_setTime;
-	op[260] = &AGOSEngine::oe1_ifTime;
-	op[261] = &AGOSEngine::o_here;
-	op[262] = &AGOSEngine::o_doClassIcons;
-	op[263] = &AGOSEngine::oe1_playTune;
-	op[266] = &AGOSEngine::o_setAdjNoun;
-	op[267] = &AGOSEngine::oe1_zoneDisk;
-	op[268] = &AGOSEngine::o_saveUserGame;
-	op[269] = &AGOSEngine::o_loadUserGame;
-	op[270] = &AGOSEngine::oe1_printStats;
-	op[271] = &AGOSEngine::oe1_stopTune;
-	op[272] = &AGOSEngine::oe1_printPlayerDamage;
-	op[273] = &AGOSEngine::oe1_printMonsterDamage;
-	op[274] = &AGOSEngine::oe1_pauseGame;
-	op[275] = &AGOSEngine::o_copysf;
-	op[276] = &AGOSEngine::o_restoreIcons;
-	op[277] = &AGOSEngine::oe1_printPlayerHit;
-	op[278] = &AGOSEngine::oe1_printMonsterHit;
-	op[279] = &AGOSEngine::o_freezeZones;
-	op[280] = &AGOSEngine::o_placeNoIcons;
-	op[281] = &AGOSEngine::o_clearTimers;
-	op[282] = &AGOSEngine::o_setDollar;
-	op[283] = &AGOSEngine::o_isBox;
+#define OPCODE(x)	_OPCODE(AGOSEngine_Elvira1, x)
+
+void AGOSEngine_Elvira1::setupOpcodes() {
+	static const OpcodeEntryElvira1 opcodes[] = {
+		/* 00 */
+		OPCODE(o_at),
+		OPCODE(o_notAt),
+		OPCODE(oe1_present),
+		OPCODE(oe1_notPresent),
+		/* 04 */
+		OPCODE(oe1_worn),
+		OPCODE(oe1_notWorn),
+		OPCODE(o_carried),
+		OPCODE(o_notCarried),
+		/* 08 */
+		OPCODE(o_isAt),
+		OPCODE(oe1_isNotAt),
+		OPCODE(oe1_sibling),
+		OPCODE(oe1_notSibling),
+		/* 12 */
+		OPCODE(o_zero),
+		OPCODE(o_notZero),
+		OPCODE(o_eq),
+		OPCODE(o_notEq),
+		/* 16 */
+		OPCODE(o_gt),
+		OPCODE(o_lt),
+		OPCODE(o_eqf),
+		OPCODE(o_notEqf),
+		/* 20 */
+		OPCODE(o_ltf),
+		OPCODE(o_gtf),
+		OPCODE(oe1_isIn),
+		OPCODE(oe1_isNotIn),
+		/* 24 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 28 */
+		OPCODE(o_invalid),
+		OPCODE(o_chance),
+		OPCODE(oe1_isPlayer),
+		OPCODE(o_invalid),
+		/* 32 */
+		OPCODE(o_isRoom),
+		OPCODE(o_isObject),
+		OPCODE(o_state),
+		OPCODE(o_invalid),
+		/* 36 */
+		OPCODE(o_oflag),
+		OPCODE(oe1_canPut),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 40 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 44 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(oe1_create),
+		/* 48 */
+		OPCODE(o_destroy),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_place),
+		/* 52 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(oe1_copyof),
+		OPCODE(oe1_copyfo),
+		/* 56 */
+		OPCODE(o_copyff),
+		OPCODE(oe1_whatO),
+		OPCODE(o_invalid),
+		OPCODE(oe1_weigh),
+		/* 60 */
+		OPCODE(oe1_setFF),
+		OPCODE(o_clear),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 64 */
+		OPCODE(o_let),
+		OPCODE(o_add),
+		OPCODE(o_sub),
+		OPCODE(o_addf),
+		/* 68 */
+		OPCODE(o_subf),
+		OPCODE(o_mul),
+		OPCODE(o_div),
+		OPCODE(o_mulf),
+		/* 72 */
+		OPCODE(o_divf),
+		OPCODE(o_mod),
+		OPCODE(o_modf),
+		OPCODE(o_random),
+		/* 76 */
+		OPCODE(oe1_moveDirn),
+		OPCODE(o_goto),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 80 */
+		OPCODE(o_oset),
+		OPCODE(o_oclear),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 84 */
+		OPCODE(o_putBy),
+		OPCODE(o_inc),
+		OPCODE(o_dec),
+		OPCODE(o_setState),
+		/* 88 */
+		OPCODE(o_invalid),
+		OPCODE(o_print),
+		OPCODE(oe1_score),
+		OPCODE(o_message),
+		/* 92 */
+		OPCODE(o_msg),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 96 */
+		OPCODE(oe1_look),
+		OPCODE(o_end),
+		OPCODE(o_done),
+		OPCODE(o_invalid),
+		/* 100 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 104 */
+		OPCODE(o_invalid),
+		OPCODE(o_process),
+		OPCODE(oe1_doClass),
+		OPCODE(o_invalid),
+		/* 108 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 112*/
+		OPCODE(oe1_pObj),
+		OPCODE(o_invalid),
+		OPCODE(oe1_pName),
+		OPCODE(oe1_pcName),
+		/* 116 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_when),
+		/* 120 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 124 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 128 */
+		OPCODE(o_if1),
+		OPCODE(o_if2),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 132 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(oe1_isCalled),
+		/* 136 */
+		OPCODE(o_is),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 140 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 144 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 148 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 152 */
+		OPCODE(o_debug),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 156 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 160 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(oe1_cFlag),
+		OPCODE(o_invalid),
+		/* 164 */
+		OPCODE(oe1_rescan),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 168 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 172 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 176 */
+		OPCODE(oe1_setUserItem),
+		OPCODE(oe1_getUserItem),
+		OPCODE(oe1_clearUserItem),
+		OPCODE(o_invalid),
+		/* 180 */
+		OPCODE(oe1_whereTo),
+		OPCODE(oe1_doorExit),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 184 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 188 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 192 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 196 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_comment),
+		OPCODE(o_invalid),
+		/* 200 */
+		OPCODE(o_invalid),
+		OPCODE(oe1_saveGame),
+		OPCODE(oe1_loadGame),
+		OPCODE(o_invalid),
+		/* 204 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_getParent),
+		OPCODE(o_getNext),
+		/* 208 */
+		OPCODE(o_getChildren),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 212 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 216 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(oe1_findMaster),
+		/* 220 */
+		OPCODE(oe1_nextMaster),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 224 */
+		OPCODE(o_picture),
+		OPCODE(o_loadZone),
+		OPCODE(oe1_animate),
+		OPCODE(oe1_stopAnimate),
+		/* 228 */
+		OPCODE(o_killAnimate),
+		OPCODE(o_defWindow),
+		OPCODE(o_window),
+		OPCODE(o_cls),
+		/* 232 */
+		OPCODE(o_closeWindow),
+		OPCODE(oe1_menu),
+		OPCODE(o_invalid),
+		OPCODE(o_addBox),
+		/* 236 */
+		OPCODE(o_delBox),
+		OPCODE(o_enableBox),
+		OPCODE(o_disableBox),
+		OPCODE(o_moveBox),
+		/* 240 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_doIcons),
+		OPCODE(o_isClass),
+		/* 244 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		/* 248 */
+		OPCODE(o_invalid),
+		OPCODE(o_setClass),
+		OPCODE(o_unsetClass),
+		OPCODE(oe1_bitClear),
+		/* 252 */
+		OPCODE(oe1_bitSet),
+		OPCODE(oe1_bitTest),
+		OPCODE(o_invalid),
+		OPCODE(o_waitSync),
+		/* 256 */
+		OPCODE(o_sync),
+		OPCODE(o_defObj),
+		OPCODE(oe1_enableInput),
+		OPCODE(oe1_setTime),
+		/* 260 */
+		OPCODE(oe1_ifTime),
+		OPCODE(o_here),
+		OPCODE(o_doClassIcons),
+		OPCODE(oe1_playTune),
+		/* 264 */
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
+		OPCODE(o_setAdjNoun),
+		OPCODE(oe1_zoneDisk),
+		/* 268 */
+		OPCODE(oe1_saveUserGame),
+		OPCODE(oe1_loadUserGame),
+		OPCODE(oe1_printStats),
+		OPCODE(oe1_stopTune),
+		/* 272 */
+		OPCODE(oe1_printPlayerDamage),
+		OPCODE(oe1_printMonsterDamage),
+		OPCODE(oe1_pauseGame),
+		OPCODE(o_copysf),
+		/* 276 */
+		OPCODE(o_restoreIcons),
+		OPCODE(oe1_printPlayerHit),
+		OPCODE(oe1_printMonsterHit),
+		OPCODE(o_freezeZones),
+		/* 280 */
+		OPCODE(o_placeNoIcons),
+		OPCODE(o_clearTimers),
+		OPCODE(o_setDollar),
+		OPCODE(o_isBox)
+	};
+
+	_opcodesElvira1 = opcodes;
+	_numOpcodes = 284;
+}
+
+void AGOSEngine_Elvira1::executeOpcode(int opcode) {
+	OpcodeProcElvira1 op = _opcodesElvira1[opcode].proc;
+	(this->*op) ();
 }
 
 // -----------------------------------------------------------------------
 // Elvira 1 Opcodes
 // -----------------------------------------------------------------------
 
-void AGOSEngine::oe1_present() {
+void AGOSEngine_Elvira1::oe1_present() {
 	// 2: present (here or carried)
 	Item *item = getNextItemPtr();
 	setScriptCondition(item->parent == getItem1ID() || item->parent == me()->parent);
 }
 
-void AGOSEngine::oe1_notPresent() {
+void AGOSEngine_Elvira1::oe1_notPresent() {
 	// 3: not present (neither here nor carried)
 	Item *item = getNextItemPtr();
 	setScriptCondition(item->parent != getItem1ID() && item->parent != me()->parent);
 }
 
-void AGOSEngine::oe1_worn() {
+void AGOSEngine_Elvira1::oe1_worn() {
 	// 4: worn
 	Item *item = getNextItemPtr();
 	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
@@ -201,7 +425,7 @@ void AGOSEngine::oe1_worn() {
 		setScriptCondition((subObject->objectFlags & kOFWorn) != 0);
 }
 
-void AGOSEngine::oe1_notWorn() {
+void AGOSEngine_Elvira1::oe1_notWorn() {
 	// 5: not worn
 	Item *item = getNextItemPtr();
 	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
@@ -212,72 +436,72 @@ void AGOSEngine::oe1_notWorn() {
 		setScriptCondition((subObject->objectFlags & kOFWorn) == 0);
 }
 
-void AGOSEngine::oe1_isNotAt() {
+void AGOSEngine_Elvira1::oe1_isNotAt() {
 	// 9: parent is not
 	Item *item = getNextItemPtr();
 	setScriptCondition(item->parent != getNextItemID());
 }
 
-void AGOSEngine::oe1_sibling() {
+void AGOSEngine_Elvira1::oe1_sibling() {
 	// 10: sibling
 	Item *item1 = getNextItemPtr();
 	Item *item2 = getNextItemPtr();
 	setScriptCondition(item1->parent == item2->parent);
 }
 
-void AGOSEngine::oe1_notSibling() {
+void AGOSEngine_Elvira1::oe1_notSibling() {
 	// 11: not sibling
 	Item *item1 = getNextItemPtr();
 	Item *item2 = getNextItemPtr();
 	setScriptCondition(item1->parent != item2->parent);
 }
 
-void AGOSEngine::oe1_isIn() {
+void AGOSEngine_Elvira1::oe1_isIn() {
 	// 22: is in
 	Item *item1 = getNextItemPtr();
 	Item *item2 = getNextItemPtr();
 	setScriptCondition(contains(item1, item2) != 0);
 }
 
-void AGOSEngine::oe1_isNotIn() {
+void AGOSEngine_Elvira1::oe1_isNotIn() {
 	// 23: is not in
 	Item *item1 = getNextItemPtr();
 	Item *item2 = getNextItemPtr();
 	setScriptCondition(contains(item1, item2) == 0);
 }
 
-void AGOSEngine::oe1_isPlayer() {
+void AGOSEngine_Elvira1::oe1_isPlayer() {
 	// 30: is player
 	setScriptCondition(isPlayer(getNextItemPtr()));
 }
 
-void AGOSEngine::oe1_canPut() {
+void AGOSEngine_Elvira1::oe1_canPut() {
 	// 37: can put
 	Item *item1 = getNextItemPtr();
 	Item *item2 = getNextItemPtr();
 	setScriptCondition(canPlace(item1, item2) == 0);
 }
 
-void AGOSEngine::oe1_create() {
+void AGOSEngine_Elvira1::oe1_create() {
 	// 47: create
 	setItemParent(getNextItemPtr(), derefItem(me()->parent));
 }
 
-void AGOSEngine::oe1_copyof() {
+void AGOSEngine_Elvira1::oe1_copyof() {
 	// 54: copy of
 	Item *item = getNextItemPtr();
 	uint tmp = getVarOrByte();
 	writeNextVarContents(getUserFlag(item, tmp));
 }
 
-void AGOSEngine::oe1_copyfo() {
+void AGOSEngine_Elvira1::oe1_copyfo() {
 	// 55: copy fo
 	uint tmp = getNextVarContents();
 	Item *item = getNextItemPtr();
 	setUserFlag(item, getVarOrByte(), tmp);
 }
 
-void AGOSEngine::oe1_whatO() {
+void AGOSEngine_Elvira1::oe1_whatO() {
 	// 57: what o
 	int a = getVarOrWord();	
 
@@ -287,30 +511,30 @@ void AGOSEngine::oe1_whatO() {
 		_objectItem = findMaster(_scriptAdj2, _scriptNoun2);
 }
 
-void AGOSEngine::oe1_weigh() {
+void AGOSEngine_Elvira1::oe1_weigh() {
 	// 59: weight
 	Item *item = getNextItemPtr();
 	writeNextVarContents(weighUp(item));
 }
 
-void AGOSEngine::oe1_setFF() {
+void AGOSEngine_Elvira1::oe1_setFF() {
 	// 60: set FF
 	writeNextVarContents(255);
 }
 
-void AGOSEngine::oe1_moveDirn() {
+void AGOSEngine_Elvira1::oe1_moveDirn() {
 	// 54: move direction
 	int16 d = readVariable(getVarOrWord());
-	moveDirn_e1(me(), d);
+	moveDirn(me(), d);
 }
 
-void AGOSEngine::oe1_score() {
+void AGOSEngine_Elvira1::oe1_score() {
 	// 90: score
 	SubPlayer *p = (SubPlayer *) findChildOfType(me(), 3);
 	showMessageFormat("Your score is %ld.\n", p->score);
 }
 
-void AGOSEngine::oe1_look() {
+void AGOSEngine_Elvira1::oe1_look() {
 	// 96: look
 	Item *i = derefItem(me()->parent);
 	if (i == NULL)
@@ -343,7 +567,7 @@ void AGOSEngine::oe1_look() {
 	}
 }
 
-void AGOSEngine::oe1_doClass() {
+void AGOSEngine_Elvira1::oe1_doClass() {
 	// 106: do class
 	Item *i = getNextItemPtr();
 	int16 cm = getVarOrWord();
@@ -366,7 +590,7 @@ void AGOSEngine::oe1_doClass() {
 	}
 }
 
-void AGOSEngine::oe1_pObj() {
+void AGOSEngine_Elvira1::oe1_pObj() {
 	// 112: print object
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
 	getVarOrWord();
@@ -375,28 +599,28 @@ void AGOSEngine::oe1_pObj() {
 		showMessageFormat("%s", (const char *)getStringPtrByID(subObject->objectName));
 }
 
-void AGOSEngine::oe1_pName() {
+void AGOSEngine_Elvira1::oe1_pName() {
 	// 114:
 	Item *i = getNextItemPtr();
 	showMessageFormat("%s", (const char *)getStringPtrByID(i->itemName));
 }
 
-void AGOSEngine::oe1_pcName() {
+void AGOSEngine_Elvira1::oe1_pcName() {
 	// 115:
 	Item *i = getNextItemPtr();
-	Common::String name = (const char *)getStringPtrByID(i->itemName);
-	name.toUppercase();
-	showMessageFormat("%s", name.c_str());
+
+	// TODO: Change first letter to upper case.
+	showMessageFormat("%s\n", (const byte *)getStringPtrByID(i->itemName)); // Difference
 }
 
-void AGOSEngine::oe1_isCalled() {
+void AGOSEngine_Elvira1::oe1_isCalled() {
 	// 135: childstruct fr2 is
 	Item *item = getNextItemPtr();
 	uint stringId = getNextStringID();
 	setScriptCondition(!scumm_stricmp((const char *)getStringPtrByID(item->itemName), (const char *)getStringPtrByID(stringId)));
 }
 
-void AGOSEngine::oe1_cFlag() {
+void AGOSEngine_Elvira1::oe1_cFlag() {
 	// 162: check container flag
 	SubContainer *c = (SubContainer *)findChildOfType(getNextItemPtr(), 7);
 	uint bit = getVarOrWord();
@@ -407,19 +631,19 @@ void AGOSEngine::oe1_cFlag() {
 		setScriptCondition((c->flags & (1 << bit)) != 0);
 }
 
-void AGOSEngine::oe1_rescan() {
+void AGOSEngine_Elvira1::oe1_rescan() {
 	// 164: restart subroutine
 	setScriptReturn(-10);
 }
 
-void AGOSEngine::oe1_setUserItem() {
+void AGOSEngine_Elvira1::oe1_setUserItem() {
 	// 176: set user item
 	Item *i = getNextItemPtr();
 	uint tmp = getVarOrWord();
 	setUserItem(i, tmp, getNextItemID());
 }
 
-void AGOSEngine::oe1_getUserItem() {
+void AGOSEngine_Elvira1::oe1_getUserItem() {
 	// 177: get user item
 	Item *i = getNextItemPtr();
 	int n = getVarOrWord();
@@ -430,7 +654,7 @@ void AGOSEngine::oe1_getUserItem() {
 		_objectItem = derefItem(getUserItem(i, n));
 }
 
-void AGOSEngine::oe1_whereTo() {
+void AGOSEngine_Elvira1::oe1_whereTo() {
 	// 180: where to
 	Item *i = getNextItemPtr();
 	int16 d = getVarOrWord();
@@ -442,7 +666,7 @@ void AGOSEngine::oe1_whereTo() {
 		_objectItem = getExitOf_e1(i, d);
 }
 
-void AGOSEngine::oe1_doorExit() {
+void AGOSEngine_Elvira1::oe1_doorExit() {
 	// 181: door exit
 	Item *x;
 	Item *a = (Item *)-1;
@@ -466,34 +690,36 @@ void AGOSEngine::oe1_doorExit() {
 	writeVariable(f, 255);
 }
 
-void AGOSEngine::oe1_saveGame() {
+void AGOSEngine_Elvira1::oe1_saveGame() {
 	// 201: save game
 	uint16 stringId = getNextStringID();
 
 	debug(0, "oe1_saveGame: stub (%s)", getStringPtrByID(stringId));
-	saveGame_e1((const char *)getStringPtrByID(stringId));
+
+	// TODO: Add support for selecting slot
+	saveGame(1, (const char *)getStringPtrByID(stringId));
 }
 
-void AGOSEngine::oe1_loadGame() {
+void AGOSEngine_Elvira1::oe1_loadGame() {
 	// 202: load game
 	uint16 stringId = getNextStringID();
 	debug(0, "oe1_loadGame: stub (%s)", (const char *)getStringPtrByID(stringId));
 
 	if (!scumm_stricmp(getFileName(GAME_RESTFILE), (const char *)getStringPtrByID(stringId))) {
-		loadGame_e1(getFileName(GAME_RESTFILE), true);
+		loadGame(getFileName(GAME_RESTFILE), true);
 	} else {
-		loadGame_e1((const char *)getStringPtrByID(stringId));
+		loadGame((const char *)getStringPtrByID(stringId));
 	}
 }
 
-void AGOSEngine::oe1_clearUserItem() {
+void AGOSEngine_Elvira1::oe1_clearUserItem() {
 	// 178: clear user item
 	Item *i = getNextItemPtr();
 	uint tmp = getVarOrWord();
 	setUserItem(i, tmp, 0);
 }
 
-void AGOSEngine::oe1_findMaster() {
+void AGOSEngine_Elvira1::oe1_findMaster() {
 	// 219: find master
 	int16 ad, no;
 	int16 d = getVarOrByte();
@@ -508,7 +734,7 @@ void AGOSEngine::oe1_findMaster() {
 		_objectItem = findMaster(ad, no);
 }
 
-void AGOSEngine::oe1_nextMaster() {
+void AGOSEngine_Elvira1::oe1_nextMaster() {
 	// 220: next master
 	int16 ad, no;
 	Item *item = getNextItemPtr();
@@ -524,32 +750,32 @@ void AGOSEngine::oe1_nextMaster() {
 		_objectItem = nextMaster(item, ad, no);
 }
 
-void AGOSEngine::oe1_animate() {
+void AGOSEngine_Elvira1::oe1_animate() {
 	// 226: animate
-	uint vgaSpriteId = getVarOrWord();
-	uint windowNum = getVarOrByte();
-	uint x = getVarOrWord();
-	uint y = getVarOrWord();
-	uint palette = getVarOrWord();
+	uint16 vgaSpriteId = getVarOrWord();
+	uint16 windowNum = getVarOrByte();
+	int16 x = getVarOrWord();
+	int16 y = getVarOrWord();
+	uint16 palette = getVarOrWord();
 
 	_lockWord |= 0x40;
 	animate(windowNum, vgaSpriteId / 100, vgaSpriteId, x, y, palette);
 	_lockWord &= ~0x40;
 }
 
-void AGOSEngine::oe1_stopAnimate() {
+void AGOSEngine_Elvira1::oe1_stopAnimate() {
 	// 227: stop animate
 	stopAnimate(getVarOrWord());
 }
 
-void AGOSEngine::oe1_menu() {
+void AGOSEngine_Elvira1::oe1_menu() {
 	// 233: agos menu
 	uint b = getVarOrWord();
 	uint a = getVarOrWord();
 	drawMenuStrip(a, b);
 }
 
-void AGOSEngine::oe1_bitClear() {
+void AGOSEngine_Elvira1::oe1_bitClear() {
 	// 251: set bit off
 	int var = getVarOrWord();
 	int bit = getVarOrWord();
@@ -557,7 +783,7 @@ void AGOSEngine::oe1_bitClear() {
 	writeVariable(var, _variableArray[var] & ~(1 << bit));
 }
 
-void AGOSEngine::oe1_bitSet() {
+void AGOSEngine_Elvira1::oe1_bitSet() {
 	// 252: set bit on
 	int var = getVarOrWord();
 	int bit = getVarOrWord();
@@ -565,7 +791,7 @@ void AGOSEngine::oe1_bitSet() {
 	writeVariable(var, _variableArray[var] | (1 << bit));
 }
 
-void AGOSEngine::oe1_bitTest() {
+void AGOSEngine_Elvira1::oe1_bitTest() {
 	// 253: bit test
 	int var = getVarOrWord();
 	int bit = getVarOrWord();
@@ -573,7 +799,7 @@ void AGOSEngine::oe1_bitTest() {
 	setScriptCondition((_variableArray[var] & (1 << bit)) != 0);
 }
 
-void AGOSEngine::oe1_enableInput() {
+void AGOSEngine_Elvira1::oe1_enableInput() {
 	// 258: enable input
 	_variableArray[500] = 0;
 
@@ -591,14 +817,16 @@ void AGOSEngine::oe1_enableInput() {
 
 	_lastHitArea3 = 0;
 	_lastHitArea = 0;
+
+	_clickOnly = 1;
 }
 
-void AGOSEngine::oe1_setTime() {
+void AGOSEngine_Elvira1::oe1_setTime() {
 	// 259: set time
 	time(&_timeStore);
 }
 
-void AGOSEngine::oe1_ifTime() {
+void AGOSEngine_Elvira1::oe1_ifTime() {
 	// 260: if time
 	time_t t;
 
@@ -611,7 +839,7 @@ void AGOSEngine::oe1_ifTime() {
 		setScriptCondition(false);
 }
 
-void AGOSEngine::oe1_playTune() {
+void AGOSEngine_Elvira1::oe1_playTune() {
 	// 264: play tune
 	int music = getVarOrWord();
 	int track = getVarOrWord();
@@ -631,13 +859,21 @@ void AGOSEngine::oe1_playTune() {
 	}
 }
 
-void AGOSEngine::oe1_zoneDisk() {
+void AGOSEngine_Elvira1::oe1_zoneDisk() {
 	// 267: set disk number of each zone
 	getVarOrWord();
 	getVarOrWord();
 }
 
-void AGOSEngine::oe1_printStats() {
+void AGOSEngine_Elvira1::oe1_saveUserGame() {
+	// TODO
+}
+
+void AGOSEngine_Elvira1::oe1_loadUserGame() {
+	// TODO
+}
+
+void AGOSEngine_Elvira1::oe1_printStats() {
 	// 270: print stats
 	WindowBlock *window = _dummyWindow;
 	int val;
@@ -697,11 +933,11 @@ void AGOSEngine::oe1_printStats() {
 	mouseOn();
 }
 
-void AGOSEngine::oe1_stopTune() {
+void AGOSEngine_Elvira1::oe1_stopTune() {
 	// 271: stop tune
 }
 
-void AGOSEngine::oe1_printPlayerDamage() {
+void AGOSEngine_Elvira1::oe1_printPlayerDamage() {
 	// 272: print player damage
 	WindowBlock *window = _dummyWindow;
 	window->flags = 1;
@@ -711,7 +947,7 @@ void AGOSEngine::oe1_printPlayerDamage() {
 	mouseOn();
 }
 
-void AGOSEngine::oe1_printMonsterDamage() {
+void AGOSEngine_Elvira1::oe1_printMonsterDamage() {
 	// 273: print monster damage
 	WindowBlock *window = _dummyWindow;
 	window->flags = 1;
@@ -721,7 +957,7 @@ void AGOSEngine::oe1_printMonsterDamage() {
 	mouseOn();
 }
 
-void AGOSEngine::oe1_pauseGame() {
+void AGOSEngine_Elvira1::oe1_pauseGame() {
 	// 274: pause game
 	WindowBlock *window = _windowArray[4];
 	const char *message1, *message2;
@@ -734,6 +970,7 @@ restart:
 	window->textColumn = 0;
 	window->textRow = 0;
 	window->textColumnOffset = 0;
+	window->textLength = 0;		// Difference
 
 	switch (_language) {
 	case Common::FR_FRA:
@@ -760,6 +997,7 @@ restart:
 		window->textColumn = 0;
 		window->textRow = 0;
 		window->textColumnOffset = 0;
+		window->textLength = 0;		// Difference
 		
 		switch (_language) {
 		case Common::FR_FRA:
@@ -792,7 +1030,7 @@ restart:
 	_gameStoppedClock = time(NULL) - pauseTime + _gameStoppedClock;
 }
 
-void AGOSEngine::oe1_printPlayerHit() {
+void AGOSEngine_Elvira1::oe1_printPlayerHit() {
 	// 277: print player hit
 	WindowBlock *window = _dummyWindow;
 	window->flags = 1;
@@ -802,7 +1040,7 @@ void AGOSEngine::oe1_printPlayerHit() {
 	mouseOn();
 }
 
-void AGOSEngine::oe1_printMonsterHit() {
+void AGOSEngine_Elvira1::oe1_printMonsterHit() {
 	// 278: print monster hit
 	WindowBlock *window = _dummyWindow;
 	window->flags = 1;
@@ -970,27 +1208,22 @@ void AGOSEngine::printScroll() {
 	VC10_state state;
 	VgaPointersEntry *vpe = &_vgaBufferPointers[1];
 
-	state.depack_src  = vpe->vgaFile2 + READ_BE_UINT32(vpe->vgaFile2 + 9 * 8);
+	state.srcPtr  = vpe->vgaFile2 + READ_BE_UINT32(vpe->vgaFile2 + 9 * 8);
 
 	state.palette = 0;
+	state.paletteMod = 0;
 	state.x = 10;
 	state.y = 32;
 	state.width = state.draw_width = 10;
 	state.height = state.draw_height = 72;
-	state.flags = kDFCompressed | kDFUseFrontBuf;
+	state.flags = kDFCompressed;
 	_windowNum = 3;	
 
 	state.depack_cont = -0x80;
 	state.x_skip = 0;
 	state.y_skip = 0;
 
-	state.surf2_addr = getFrontBuf();
-	state.surf2_pitch = _dxSurfacePitch;
-
-	state.surf_addr = getBackBuf();
-	state.surf_pitch = _dxSurfacePitch;
-
-	drawImages(&state);
+	drawImage(&state);
 }
 
 } // End of namespace AGOS

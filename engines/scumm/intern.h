@@ -972,6 +972,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void printString(int m, const byte *msg);
+	virtual void CHARSET_1();
 
 	virtual void scummLoop_handleSaveLoad();
 

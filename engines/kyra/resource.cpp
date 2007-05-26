@@ -26,6 +26,8 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
+#include "common/func.h"
+#include "common/algorithm.h"
 
 #include "gui/message.h"
 
@@ -35,12 +37,24 @@
 #include "kyra/screen.h"
 
 namespace Kyra {
+
+namespace {
+struct ResFilenameEqual : public Common::BinaryFunction<ResourceFile*, uint, bool> {
+	uint _filename;
+	ResFilenameEqual(uint file) : _filename(file) {}
+
+	bool operator()(ResourceFile *f) {
+		return f->filename() == _filename;
+	}
+};
+} // end of anonymous namespace
+
 Resource::Resource(KyraEngine *vm) {
 	_vm = vm;
 
 	if (_vm->game() == GI_KYRA1) {
 		// we're loading KYRA.DAT here too (but just for Kyrandia 1)
-		if (!loadPakFile("KYRA.DAT", true) || !StaticResource::checkKyraDat()) {
+		if (!loadPakFile("KYRA.DAT") || !StaticResource::checkKyraDat()) {
 			GUI::MessageDialog errorMsg("You're missing the 'KYRA.DAT' file or it got corrupted, (re)get it from the ScummVM website");
 			errorMsg.runModal();
 			error("You're missing the 'KYRA.DAT' file or it got corrupted, (re)get it from the ScummVM website");
@@ -58,7 +72,7 @@ Resource::Resource(KyraEngine *vm) {
 		INSFile *insFile = new INSFile("WESTWOOD.001");
 		assert(insFile);
 		if (!insFile->isValid())
-			return;
+			error("'WESTWOOD.001' file not found or corrupt");
 		_pakfiles.push_back(insFile);
 	}
 
@@ -72,18 +86,11 @@ Resource::Resource(KyraEngine *vm) {
 		static const char *list[] = {
 			"ADL.PAK", "CHAPTER1.VRM", "COL.PAK", "FINALE.PAK", "INTRO1.PAK", "INTRO2.PAK",
 			"INTRO3.PAK", "INTRO4.PAK", "MISC.PAK",	"SND.PAK", "STARTUP.PAK", "XMI.PAK",
-			"CAVE.APK", "DRAGON1.APK", "DRAGON2.APK", "LAGOON.APK", 0
+			"CAVE.APK", "DRAGON1.APK", "DRAGON2.APK", "LAGOON.APK"
 		};
 
-		for (int i = 0; list[i]; ++i) {
-			if (!loadPakFile(list[i]))
-				error("couldn't open pakfile '%s'", list[i]);
-		}
-
-		Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
-		for (;start != _pakfiles.end(); ++start) {
-			(*start)->protect();
-		}
+		Common::for_each(list, list + ARRAYSIZE(list), Common::bind1st(Common::mem_fun(&Resource::loadPakFile), this));
+		Common::for_each(_pakfiles.begin(), _pakfiles.end(), Common::bind2nd(Common::mem_fun(&ResourceFile::protect), true));
 	} else {
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			Common::String filename = file->name();
@@ -94,64 +101,54 @@ Resource::Resource(KyraEngine *vm) {
 				continue;
 
 			if (filename.hasSuffix("PAK") || filename.hasSuffix("APK")) {
-				if (!loadPakFile(file->name())) {
+				if (!loadPakFile(file->name()))
 					error("couldn't open pakfile '%s'", file->name().c_str());
-				}
 			}
 		}
 
 		if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
-			Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
 			uint unloadHash = (_vm->gameFlags().lang == Common::EN_ANY) ? Common::hashit_lower("JMC.PAK") : Common::hashit_lower("EMC.PAK");
 
-			for (;start != _pakfiles.end(); ++start) {
-				if ((*start)->filename() == unloadHash) {
-					delete *start;
-					*start = 0;
-					_pakfiles.erase(start);
-					break;
-				}
+			ResIterator file = Common::find_if(_pakfiles.begin(), _pakfiles.end(), ResFilenameEqual(unloadHash));
+			if (file != _pakfiles.end()) {
+				delete *file;
+				_pakfiles.erase(file);
 			}
 		}
 	}
 }
 
 Resource::~Resource() {
-	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
-
-	for (;start != _pakfiles.end(); ++start) {
+	for (ResIterator start = _pakfiles.begin() ;start != _pakfiles.end(); ++start) {
 		delete *start;
 		*start = 0;
 	}
 }
 
-bool Resource::loadPakFile(const Common::String &filename, const bool forcePC) {
-	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
-	uint hash = Common::hashit_lower(filename.c_str());
-
-	for (;start != _pakfiles.end(); ++start) {
-		if ((*start)->filename() == hash) {
-			(*start)->open();
-			return true;
-		}
+bool Resource::loadPakFile(const Common::String &filename) {
+	ResIterator listFile = Common::find_if(_pakfiles.begin(), _pakfiles.end(), ResFilenameEqual(Common::hashit_lower(filename)));
+	if (listFile != _pakfiles.end()) {
+		(*listFile)->open();
+		return true;
 	}
 
+	const bool isKyraDat = filename.equalsIgnoreCase("KYRA.DAT");
 	uint32 size = 0;
 	
 	Common::File handle;
 	if (!getFileHandle(filename.c_str(), &size, handle)) {
-		warning("couldn't load file: '%s'", filename.c_str());
+		(!isKyraDat ? error : warning)("couldn't load file: '%s'", filename.c_str());
 		return false;
 	}
 
-	PAKFile *file = new PAKFile(filename.c_str(), handle.name(), handle, (_vm->gameFlags().platform == Common::kPlatformAmiga) && !forcePC);
+	PAKFile *file = new PAKFile(filename.c_str(), handle.name(), handle, (_vm->gameFlags().platform == Common::kPlatformAmiga) && !isKyraDat);
 	handle.close();
 
 	if (!file)
 		return false;
 
 	if (!file->isValid()) {
-		warning("'%s' is no valid pak file", filename.c_str());
+		error("'%s' is no valid pak file", filename.c_str());
 		delete file;
 		return false;
 	}
@@ -161,28 +158,16 @@ bool Resource::loadPakFile(const Common::String &filename, const bool forcePC) {
 }
 
 void Resource::unloadPakFile(const Common::String &filename) {
-	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
-	uint hash = Common::hashit_lower(filename.c_str());
-	for (;start != _pakfiles.end(); ++start) {
-		if ((*start)->filename() == hash) {
-			(*start)->close();
-			break;
-		}
-	}
-	return;
+	ResIterator pak = Common::find_if(_pakfiles.begin(), _pakfiles.end(), ResFilenameEqual(Common::hashit_lower(filename)));
+	if (pak != _pakfiles.end())
+		(*pak)->close();
 }
 
-bool Resource::isInPakList(const Common::String &filename) {
-	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
-	uint hash = Common::hashit_lower(filename.c_str());
-	for (;start != _pakfiles.end(); ++start) {
-		if ((*start)->filename() == hash)
-			return true;
-	}
-	return false;
+bool Resource::isInPakList(const Common::String &filename) const {
+	return (Common::find_if(_pakfiles.begin(), _pakfiles.end(), ResFilenameEqual(Common::hashit_lower(filename))) != _pakfiles.end());
 }
 
-uint8 *Resource::fileData(const char *file, uint32 *size) {
+uint8 *Resource::fileData(const char *file, uint32 *size) const {
 	Common::File fileHandle;
 
 	if (size)
@@ -201,15 +186,13 @@ uint8 *Resource::fileData(const char *file, uint32 *size) {
 
 		return buffer;
 	} else {
-		// opens the file in a PAK File
-		Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
-
+		// opens the file inside a PAK File
 		uint fileHash = Common::hashit_lower(file);
-		for (;start != _pakfiles.end(); ++start) {
-			if (!(*start)->isOpen())
+		for (ConstResIterator cur = _pakfiles.begin(); cur != _pakfiles.end(); ++cur) {
+			if (!(*cur)->isOpen())
 				continue;
 
-			uint32 fileSize = (*start)->getFileSize(fileHash);
+			uint32 fileSize = (*cur)->getFileSize(fileHash);
 
 			if (!fileSize)
 				continue;
@@ -217,7 +200,7 @@ uint8 *Resource::fileData(const char *file, uint32 *size) {
 			if (size)
 				*size = fileSize;
 
-			return (*start)->getFile(fileHash);
+			return (*cur)->getFile(fileHash);
 		}
 	}
 
@@ -230,10 +213,8 @@ bool Resource::getFileHandle(const char *file, uint32 *size, Common::File &fileh
 	if (filehandle.open(file))
 		return true;
 
-	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
-
 	uint fileHash = Common::hashit_lower(file);
-	for (;start != _pakfiles.end(); ++start) {
+	for (ResIterator start = _pakfiles.begin() ;start != _pakfiles.end(); ++start) {
 		if (!(*start)->isOpen())
 			continue;
 
@@ -249,15 +230,13 @@ bool Resource::getFileHandle(const char *file, uint32 *size, Common::File &fileh
 	return false;
 }
 
-uint32 Resource::getFileSize(const char *file) {
-	Common::List<ResourceFile*>::iterator start = _pakfiles.begin();
-
+uint32 Resource::getFileSize(const char *file) const {
 	Common::File temp;
 	if (temp.open(file))
 		return temp.size();
 
 	uint fileHash = Common::hashit_lower(file);
-	for (;start != _pakfiles.end(); ++start) {
+	for (ConstResIterator start = _pakfiles.begin() ;start != _pakfiles.end(); ++start) {
 		if (!(*start)->isOpen())
 			continue;
 
@@ -288,7 +267,6 @@ bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 
 ///////////////////////////////////////////
 // Pak file manager
-#define PAKFile_Iterate Common::List<PakChunk>::iterator start=_files.begin();start != _files.end(); ++start
 PAKFile::PAKFile(const char *file, const char *physfile, Common::File &pakfile, bool isAmiga) : ResourceFile() {
 	_open = false;
 
@@ -302,10 +280,10 @@ PAKFile::PAKFile(const char *file, const char *physfile, Common::File &pakfile, 
 
 	uint32 pos = 0, startoffset = 0, endoffset = 0;
 
-	if (!isAmiga)
-		startoffset = pakfile.readUint32LE();
-	else
+	if (isAmiga)
 		startoffset = pakfile.readUint32BE();
+	else
+		startoffset = pakfile.readUint32LE();
 
 	if (startoffset > filesize) {
 		warning("PAK file '%s' is corrupted", file);
@@ -340,10 +318,10 @@ PAKFile::PAKFile(const char *file, const char *physfile, Common::File &pakfile, 
 			return;
 		}
 
-		if (!isAmiga)
-			endoffset = READ_LE_UINT32(buffer + nameLength);
-		else
+		if (isAmiga)
 			endoffset = READ_BE_UINT32(buffer + nameLength);
+		else
+			endoffset = READ_LE_UINT32(buffer + nameLength);
 
 		if (!endoffset) {
 			endoffset = filesize;
@@ -380,47 +358,42 @@ PAKFile::~PAKFile() {
 	_files.clear();
 }
 
-uint8 *PAKFile::getFile(uint hash) {
-	for (PAKFile_Iterate) {
-		if (start->_name == hash) {
-			Common::File pakfile;
-			if (!openFile(pakfile))
-				return false;
+uint8 *PAKFile::getFile(uint hash) const {
+	ConstPakIterator file = Common::find_if(_files.begin(), _files.end(), Common::bind2nd(Common::EqualTo<uint>(), hash));
+	if (file == _files.end())
+		return 0;
 
-			pakfile.seek(start->_start, SEEK_CUR);
-			uint8 *buffer = new uint8[start->_size];
-			assert(buffer);
-			pakfile.read(buffer, start->_size);
-			return buffer;
-		}
-	}
-	return 0;
+	Common::File pakfile;
+	if (!openFile(pakfile))
+		return false;
+
+	pakfile.seek(file->_start, SEEK_CUR);
+	uint8 *buffer = new uint8[file->_size];
+	assert(buffer);
+	pakfile.read(buffer, file->_size);
+	return buffer;
 }
 
-bool PAKFile::getFileHandle(uint hash, Common::File &filehandle) {
+bool PAKFile::getFileHandle(uint hash, Common::File &filehandle) const {
 	filehandle.close();
 
-	for (PAKFile_Iterate) {
-		if (start->_name == hash) {
-			if (!openFile(filehandle))
-				return false;
+	ConstPakIterator file = Common::find_if(_files.begin(), _files.end(), Common::bind2nd(Common::EqualTo<uint>(), hash));
+	if (file == _files.end())
+		return false;
 
-			filehandle.seek(start->_start, SEEK_CUR);
-			return true;
-		}
-	}
-	return false;
+	if (!openFile(filehandle))
+		return false;
+
+	filehandle.seek(file->_start, SEEK_CUR);
+	return true;
 }
 
-uint32 PAKFile::getFileSize(uint hash) {
-	for (PAKFile_Iterate) {
-		if (start->_name == hash)
-			return start->_size;
-	}
-	return 0;
+uint32 PAKFile::getFileSize(uint hash) const {
+	ConstPakIterator file = Common::find_if(_files.begin(), _files.end(), Common::bind2nd(Common::EqualTo<uint>(), hash));
+	return (file != _files.end()) ? file->_size : 0;
 }
 
-bool PAKFile::openFile(Common::File &filehandle) {
+bool PAKFile::openFile(Common::File &filehandle) const {
 	filehandle.close();
 
 	if (!filehandle.open(_physfile))
@@ -432,7 +405,6 @@ bool PAKFile::openFile(Common::File &filehandle) {
 
 ///////////////////////////////////////////
 // Ins file manager
-#define INSFile_Iterate Common::List<FileEntry>::iterator start=_files.begin();start != _files.end(); ++start
 INSFile::INSFile(const char *file) : ResourceFile(), _files() {
 	Common::File pakfile;
 	_open = false;
@@ -477,7 +449,7 @@ INSFile::INSFile(const char *file) : ResourceFile(), _files() {
 
 	pakfile.seek(3);
 
-	for (INSFile_Iterate) {
+	for (FileIterator start = _files.begin(); start != _files.end(); ++start) {
 		filesize = pakfile.readUint32LE();
 		start->_size = filesize;
 		start->_start = pakfile.pos();
@@ -495,42 +467,39 @@ INSFile::~INSFile() {
 	_files.clear();
 }
 
-uint8 *INSFile::getFile(uint hash) {
-	for (INSFile_Iterate) {
-		if (start->_name == hash) {
-			Common::File pakfile;
-			if (!pakfile.open(_physfile))
-				return false;
+uint8 *INSFile::getFile(uint hash) const {
+	ConstFileIterator file = Common::find_if(_files.begin(), _files.end(), Common::bind2nd(Common::EqualTo<uint>(), hash));
+	if (file == _files.end())
+		return 0;
 
-			pakfile.seek(start->_start);
-			uint8 *buffer = new uint8[start->_size];
-			assert(buffer);
-			pakfile.read(buffer, start->_size);
-			return buffer;
-		}
-	}
-	return 0;
+	Common::File pakfile;
+	if (!pakfile.open(_physfile))
+		return false;
+
+	pakfile.seek(file->_start);
+	uint8 *buffer = new uint8[file->_size];
+	assert(buffer);
+	pakfile.read(buffer, file->_size);
+	return buffer;
 }
 
-bool INSFile::getFileHandle(uint hash, Common::File &filehandle) {
-	for (INSFile_Iterate) {
-		if (start->_name == hash) {
-			if (!filehandle.open(_physfile)) 
-				return false;
+bool INSFile::getFileHandle(uint hash, Common::File &filehandle) const {
+	ConstFileIterator file = Common::find_if(_files.begin(), _files.end(), Common::bind2nd(Common::EqualTo<uint>(), hash));
 
-			filehandle.seek(start->_start, SEEK_CUR);
-			return true;
-		}
-	}
-	return false;
+	if (file == _files.end())
+		return false;
+
+	if (!filehandle.open(_physfile)) 
+		return false;
+
+	filehandle.seek(file->_start, SEEK_CUR);
+	return true;
 }
 
-uint32 INSFile::getFileSize(uint hash) {
-	for (INSFile_Iterate) {
-		if (start->_name == hash)
-			return start->_size;
-	}
-	return 0;
+uint32 INSFile::getFileSize(uint hash) const {
+	ConstFileIterator file = Common::find_if(_files.begin(), _files.end(), Common::bind2nd(Common::EqualTo<uint>(), hash));
+	return (file != _files.end()) ? file->_size : 0;
 }
 
 } // end of namespace Kyra
+

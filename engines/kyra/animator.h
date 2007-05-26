@@ -109,6 +109,8 @@ protected:
 	AnimObject *_items;
 	AnimObject *_sprites;
 
+	uint8 *_actorBkgBackUp[2];
+
 	AnimObject *objectRemoveQueue(AnimObject *queue, AnimObject *rem);
 	AnimObject *objectAddHead(AnimObject *queue, AnimObject *head);
 	AnimObject *objectQueue(AnimObject *queue, AnimObject *add);
@@ -124,3 +126,4 @@ protected:
 } // end of namespace Kyra
 
 #endif
+

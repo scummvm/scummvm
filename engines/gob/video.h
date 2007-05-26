@@ -99,7 +99,9 @@ public:
 	int16 _surfHeight;
 	int16 _scrollOffsetX;
 	int16 _scrollOffsetY;
-	int16 _splitHeight;
+	int16 _splitHeight1;
+	int16 _splitHeight2;
+	int16 _splitStart;
 
 	void freeDriver();
 	void initPrimary(int16 mode);
@@ -147,7 +149,7 @@ public:
 			SurfaceDesc *destDesc) = 0;
 
 	Video(class GobEngine *vm);
-	virtual ~Video() {};
+	virtual ~Video() {}
 
 protected:
 	class VideoDriver *_videoDriver;
@@ -166,7 +168,7 @@ public:
 			int16 x, int16 y, int16 transp, SurfaceDesc *destDesc);
 
 	Video_v1(GobEngine *vm);
-	virtual ~Video_v1() {};
+	virtual ~Video_v1() {}
 };
 
 class Video_v2 : public Video_v1 {
@@ -175,7 +177,7 @@ public:
 			int16 x, int16 y, int16 transp, SurfaceDesc *destDesc);
 
 	Video_v2(GobEngine *vm);
-	virtual ~Video_v2() {};
+	virtual ~Video_v2() {}
 };
 
 class VideoDriver {

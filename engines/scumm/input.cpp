@@ -145,8 +145,18 @@ void ScummEngine::parseEvents() {
 			// possible to a bug in sdl-common.cpp
 			if (event.kbd.ascii >= 512)
 				debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
-			else
+			else {
 				_keyDownMap[event.kbd.ascii] = false;
+
+				// Due to some weird bug with capslock key pressed
+				// generated keydown event is for lower letter but
+				// keyup is for upper letter
+				// On most (all?) keyboards it is safe to assume that
+				// both upper and lower letters are unpressed on keyup event
+				//
+				// Fixes bug #1709430: "FT: CAPSLOCK + V enables cheating for all fights"
+				_keyDownMap[toupper(event.kbd.ascii)] = false;
+			}
 			break;
 
 

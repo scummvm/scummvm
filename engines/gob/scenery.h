@@ -156,7 +156,7 @@ public:
 	virtual int16 loadAnim(char search);
 
 	Scenery_v1(GobEngine *vm);
-	virtual ~Scenery_v1() {};
+	virtual ~Scenery_v1() {}
 };
 
 class Scenery_v2 : public Scenery_v1 {
@@ -164,7 +164,7 @@ public:
 	virtual int16 loadAnim(char search);
 
 	Scenery_v2(GobEngine *vm);
-	virtual ~Scenery_v2() {};
+	virtual ~Scenery_v2() {}
 };
 
 } // End of namespace Gob

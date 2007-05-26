@@ -54,7 +54,7 @@ public:
 	void fnCacheChip(uint16 *fList);
 	void fnCacheFiles(void);
 	void fnFlushBuffers(void);
-	uint32 *giveLoadedFilesList(void) { return _loadedFilesList; };
+	uint32 *giveLoadedFilesList(void) { return _loadedFilesList; }
 	void refreshFilesList(uint32 *list);
 
 protected:

@@ -41,15 +41,14 @@ struct InventoryItem {
 extern InventoryItem _inventory[];
 
 void initInventory();
+void destroyInventory();
 void openInventory();
 void closeInventory();
 int16 isItemInInventory(int32 v);
 void cleanInventory();
 void addInventoryItem(uint16 item);
 
-void redrawInventory();
 void highlightInventoryItem(int16 pos, byte color);
-void refreshInventoryItem(const char *character, uint16 index);
 void refreshInventory(const char *character);
 
 void extractInventoryGraphics(int16 pos, byte *dst);

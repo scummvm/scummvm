@@ -4,6 +4,7 @@
 	Version="8,00"
 	Name="lure"
 	ProjectGUID="{1A1CA028-61B5-4A6C-A918-F5D8721AB1AC}"
+	RootNamespace="lure"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -90,6 +91,7 @@
 			IntermediateDirectory="lure_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -196,6 +198,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\lure\decode.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\detection.cpp"
 			>
 		</File>
 		<File
@@ -328,14 +334,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\lure\surface.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\system.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\system.h"
 			>
 		</File>
 	</Files>

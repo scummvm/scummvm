@@ -26,13 +26,10 @@
 
 #include "common/file.h"
 
-#include "parallaction/disk.h"
 #include "parallaction/parallaction.h"
-#include "parallaction/graphics.h"
-#include "parallaction/inventory.h"
 #include "parallaction/menu.h"
-#include "parallaction/music.h"
-#include "parallaction/zone.h"
+#include "parallaction/sound.h"
+
 
 namespace Parallaction {
 
@@ -55,7 +52,8 @@ void _c_play_boogie(void *parm) {
 		return;
 	flag = 0;
 
-	_vm->_midiPlayer->play("boogie2");
+	_vm->_soundMan->setMusicFile("boogie2");
+	_vm->_soundMan->playMusic();
 
 	return;
 }
@@ -67,17 +65,18 @@ void _c_score(void *parm) {
 }
 
 void _c_fade(void *parm) {
+	
 	_vm->_gfx->setBlackPalette();
 
-	_vm->_gfx->swapBuffers();
-
 	Gfx::Palette pal;
+	memset(pal, 0, sizeof(Gfx::Palette));
+	
 	for (uint16 _di = 0; _di < 64; _di++) {
 		_vm->_gfx->fadePalette(pal);
 		_vm->_gfx->setPalette(pal);
-	}
 
-	_vm->waitTime( 1 );
+		_vm->waitTime( 1 );
+	}
 
 	return;
 }
@@ -246,12 +245,13 @@ void _c_endComment(void *param) {
 	_vm->_gfx->floodFill(Gfx::kBitFront, r, 0);
 
 	r.setWidth(w+3);
-	r.setHeight(w+4);
+	r.setHeight(h+3);
 	r.moveTo(7, 7);
 	_vm->_gfx->floodFill(Gfx::kBitFront, r, 1);
 
-	_vm->_gfx->setFont("comic");
+	_vm->_gfx->setFont(kFontDialogue);
 	_vm->_gfx->displayWrappedString(_vm->_location._endComment, 3, 5, 130, 0);
+	_vm->_gfx->updateScreen();
 
 	uint32 di = 0;
 	for (di = 0; di < PALETTE_COLORS; di++) {
@@ -297,21 +297,24 @@ void _c_endComment(void *param) {
 }
 
 void _c_frankenstein(void *parm) {
+	
 	Gfx::Palette pal0;
+	Gfx::Palette pal1;
 
 	for (uint16 i = 0; i <= BASE_PALETTE_COLORS; i++) {
 		pal0[(i+FIRST_BASE_COLOR)] = _vm->_gfx->_palette[i];
 		pal0[(i+FIRST_BASE_COLOR)*3+1] = 0;
 		pal0[(i+FIRST_BASE_COLOR)*3+2] = 0;
-		pal0[(i+FIRST_EHB_COLOR)*3+1] = 0;
-		pal0[(i+FIRST_EHB_COLOR)*3+2] = 0;
+		
+		pal1[(i+FIRST_BASE_COLOR)*3+1] = 0;
+		pal1[(i+FIRST_BASE_COLOR)*3+2] = 0;
 	}
 
 	for (uint16 _di = 0; _di < 30; _di++) {
 		g_system->delayMillis(20);
 		_vm->_gfx->setPalette(pal0, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
 		g_system->delayMillis(20);
-		_vm->_gfx->setPalette(pal0, FIRST_EHB_COLOR, EHB_PALETTE_COLORS);
+		_vm->_gfx->setPalette(pal1, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
 	}
 
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
@@ -360,43 +363,30 @@ void _c_finito(void *parm) {
 	streamDonna.close();
 
 	cleanInventory();
-	refreshInventory(_vm->_characterName);
 
-	_vm->_gfx->extendPalette(_vm->_gfx->_palette);
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 
 	if (gameCompleted) {
-		_vm->_gfx->setFont("slide");
-		_vm->_gfx->_proportionalFont = false;
-		uint16 _ax = _vm->_gfx->getStringWidth(v4C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 70, v4C[_language]);
-		_ax = _vm->_gfx->getStringWidth(v3C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 100, v3C[_language]);
-		_ax = _vm->_gfx->getStringWidth(v2C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 130, v2C[_language]);
-		_ax = _vm->_gfx->getStringWidth(v1C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 160, v1C[_language]);
+		_vm->_gfx->setFont(kFontMenu);
+		_vm->_gfx->displayCenteredString(70, v4C[_language]);
+		_vm->_gfx->displayCenteredString(100, v3C[_language]);
+		_vm->_gfx->displayCenteredString(130, v2C[_language]);
+		_vm->_gfx->displayCenteredString(160, v1C[_language]);
 
-		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
-		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBit2);
+		_vm->_gfx->updateScreen();
 		waitUntilLeftClick();
 
 		strcpy(_vm->_location._name, "estgrotta.drki");
 
 		_engineFlags |= kEngineChangeLocation;
 	} else {
-		_vm->_gfx->setFont("slide");
-		_vm->_gfx->_proportionalFont = false;
-		uint16 _ax = _vm->_gfx->getStringWidth(v8C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 70, v8C[_language]);
-		_ax = _vm->_gfx->getStringWidth(v7C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 100, v7C[_language]);
-		_ax = _vm->_gfx->getStringWidth(v6C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 130, v6C[_language]);
-		_ax = _vm->_gfx->getStringWidth(v5C[_language]);
-		_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 160, v5C[_language]);
+		_vm->_gfx->setFont(kFontMenu);
+		_vm->_gfx->displayCenteredString(70, v8C[_language]);
+		_vm->_gfx->displayCenteredString(100, v7C[_language]);
+		_vm->_gfx->displayCenteredString(130, v6C[_language]);
+		_vm->_gfx->displayCenteredString(160, v5C[_language]);
 
-		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
-		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBit2);
+		_vm->_gfx->updateScreen();
 		waitUntilLeftClick();
 
 		_vm->_menu->selectCharacter();
@@ -436,18 +426,30 @@ void _c_testResult(void *parm) {
 	_vm->_gfx->swapBuffers();
 	_vm->parseLocation("common");
 
-	_vm->_gfx->setFont("slide");
-	_vm->_gfx->_proportionalFont = false;
+	_vm->_gfx->setFont(kFontMenu);
 
-	uint16 _ax = _vm->_gfx->getStringWidth(_slideText[0]);
-	_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 38, _slideText[0]);
-	_ax = _vm->_gfx->getStringWidth(_slideText[1]);
-	_vm->_gfx->displayString((SCREEN_WIDTH - _ax)/2, 58, _slideText[1]);
+	_vm->_gfx->displayCenteredString(38, _slideText[0]);
+	_vm->_gfx->displayCenteredString(58, _slideText[1]);
 
 	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBit2);
 
 	return;
+}
+
+void _c_offSound(void*) {
+	_vm->_soundMan->stopSfx(0);
+	_vm->_soundMan->stopSfx(1);
+	_vm->_soundMan->stopSfx(2);
+	_vm->_soundMan->stopSfx(3);
+}
+
+void _c_startMusic(void*) {
+	_vm->_soundMan->playMusic();
+}
+
+void _c_closeMusic(void*) {
+	_vm->_soundMan->stopMusic();
 }
 
 } // namespace Parallaction

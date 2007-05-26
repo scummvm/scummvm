@@ -78,10 +78,11 @@ struct HotspotResource {
 	int8 talkY;
 	uint16 colourOffset;
 	uint16 animRecordId;
-	uint16 sequenceOffset;
+	uint16 hotspotScriptOffset;
+	uint16 talkScriptOffset;
 	uint16 tickProcOffset;
 	uint16 tickTimeout;
-	uint16 tickSequenceOffset;
+	uint16 tickScriptOffset;
 	uint16 npcSchedule;
 	uint16 characterMode;
 	uint16 delayCtr;
@@ -303,13 +304,15 @@ class RoomPathsData {
 private:
 	byte _data[ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH];
 public:
-	RoomPathsData() {};
+	RoomPathsData() {}
 	RoomPathsData(byte *srcData) { load(srcData); }
 
 	void load(byte *srcData) {
 		memcpy(_data, srcData, ROOM_PATHS_SIZE);
 	}
+	const byte *data() { return _data; }
 	bool isOccupied(int x, int y);
+	bool isOccupied(int x, int y, int width);
 	void setOccupied(int x, int y, int width);
 	void clearOccupied(int x, int y, int width);
 	void decompress(RoomPathsDecompressedData &dataOut, int characterWidth);
@@ -337,7 +340,11 @@ public:
 	RoomPathsData paths;
 };
 
-typedef ManagedList<RoomData *> RoomDataList;
+class RoomDataList: public ManagedList<RoomData *> {
+public:
+	void saveToStream(WriteStream *stream);
+	void loadFromStream(ReadStream *stream);
+};
 
 class RoomExitJoinData {
 public:
@@ -357,7 +364,11 @@ public:
 	uint32 unknown;
 };
 
-typedef ManagedList<RoomExitJoinData *> RoomExitJoinList;
+class RoomExitJoinList: public ManagedList<RoomExitJoinData *> {
+public:
+	void saveToStream(WriteStream *stream);
+	void loadFromStream(ReadStream *stream);
+};
 
 class HotspotActionData {
 public:
@@ -416,10 +427,11 @@ public:
 	int8 talkY;
 	uint16 colourOffset;
 	uint16 animRecordId;
-	uint16 sequenceOffset;
+	uint16 hotspotScriptOffset;
+	uint16 talkScriptOffset;
 	uint16 tickProcOffset;
 	uint16 tickTimeout;
-	uint16 tickSequenceOffset;
+	uint16 tickScriptOffset;
 	uint16 npcSchedule;
 	CharacterMode characterMode;
 	uint16 delayCtr;
@@ -435,11 +447,12 @@ public:
 	uint16 talkDestCharacterId;
 	uint16 talkCountdown;
 	uint16 pauseCtr;
-	uint16 useHotspotId;
-	uint16 use2HotspotId;
-	uint16 v2b;
+	uint16 useHotspotId;	
+	uint16 talkGate;
 	uint16 actionHotspotId;
 	uint16 talkOverride;
+
+	uint16 use2HotspotId;
 
 	void enable() { flags |= 0x80; }
 	void disable() { flags &= 0x7F; }
@@ -796,7 +809,6 @@ private:
 	PlayerPendingPosition _playerPendingPos;
 	uint8 _flags;
 	uint8 _hdrFlagMask;
-	bool _wanderingCharsLoaded;
 
 	uint16 _fieldList[NUM_VALUE_FIELDS];
 	bool isKnownField(uint16 fieldIndex);
@@ -814,7 +826,6 @@ public:
 	uint8 &hdrFlagMask() { return _hdrFlagMask; }
 	PlayerNewPosition &playerNewPos() { return _playerNewPos; }
 	PlayerPendingPosition &playerPendingPos() { return _playerPendingPos; }
-	bool &wanderingCharsLoaded() { return _wanderingCharsLoaded; }
 
 	void saveToStream(Common::WriteStream *stream);
 	void loadFromStream(Common::ReadStream *stream);

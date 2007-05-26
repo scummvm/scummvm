@@ -36,7 +36,7 @@ enum {
 static void uncompressPlane(const byte *plane, byte *outptr, int length) {
 	while (length != 0) {
 		int wordlen;
-		char x = *plane++;
+		signed char x = *plane++;
 		if (x >= 0) {
 			wordlen = MIN<int>(x + 1, length);
 			uint16 w = READ_UINT16(plane); plane += 2;
@@ -141,7 +141,7 @@ byte *AGOSEngine::convertImage(VC10_state *state, bool compressed) {
 		}
 	}
 
-	const byte *src = state->depack_src;
+	const byte *src = state->srcPtr;
 	int width = state->width * 16;
 	int height = state->height;
 

@@ -31,8 +31,8 @@
 
 namespace AGOS {
 
-void AGOSEngine::setupWaxworksVideoOpcodes(VgaOpcodeProc *op) {
-	setupElvira2VideoOpcodes(op);
+void AGOSEngine_Waxworks::setupVideoOpcodes(VgaOpcodeProc *op) {
+	AGOSEngine_Elvira2::setupVideoOpcodes(op);
 
 	op[58] = &AGOSEngine::vc58_checkCodeWheel;
 	op[60] = &AGOSEngine::vc60_stopAnimation;
@@ -72,8 +72,8 @@ void AGOSEngine::vcStopAnimation(uint file, uint sprite) {
 		vc25_halt_sprite();
 
 		vte = _vgaTimerList;
-		while (vte->delay != 0) {
-			if (vte->sprite_id == _vgaCurSpriteId && ((getGameType() == GType_SIMON1) || vte->cur_vga_file == _vgaCurZoneNum)) {
+		while (vte->delay) {
+			if (vte->sprite_id == _vgaCurSpriteId && (getGameType() == GType_SIMON1 || vte->cur_vga_file == _vgaCurZoneNum)) {
 				deleteVgaEvent(vte);
 				break;
 			}
@@ -110,7 +110,7 @@ void AGOSEngine::vc61() {
 
 	if (a == 6) {
 		src = _curVgaFile2 + 800;
-		dstPtr = getBackBuf();
+		dstPtr = getFrontBuf();
 		memcpy(dstPtr, src, 64000);
 		tmp = 4 - 1;
 	} else {
@@ -176,12 +176,17 @@ void AGOSEngine::vc62_fastFadeOut() {
 
 		memcpy(_videoBuf1, _currentPalette, _fastFadeCount * 4);
 
-		if ((getGameType() == GType_FF || getGameType() == GType_PP) && !getBitFlag(75)) {
-			fadeCount = 32;
-			fadeSize = 8;
+		if (getGameType() == GType_FF || getGameType() == GType_PP) {
+			if (getGameType() == GType_FF && getBitFlag(75)) {
+				fadeCount = 4;
+				fadeSize = 64;
+			} else {
+				fadeCount = 32;
+				fadeSize = 8;
+			}
 		} else {
-			fadeCount = 4;
-			fadeSize = 64;
+			fadeCount = 64;
+			fadeSize = 4;
 		}
 
 		for (i = fadeCount; i != 0; --i) {
@@ -190,50 +195,14 @@ void AGOSEngine::vc62_fastFadeOut() {
 			delay(5);
 		}
 
-		if (getGameType() == GType_SIMON1) {
-			uint16 params[5];						/* parameters to vc10_draw */
-			VgaSprite *vsp;
-			VgaPointersEntry *vpe;
-			const byte *vcPtrOrg = _vcPtr;
-
-			vsp = _vgaSprites;
-			while (vsp->id != 0) {
-				if (vsp->id == 128) {
-					byte *old_file_1 = _curVgaFile1;
-					byte *old_file_2 = _curVgaFile2;
-					uint palmode = _windowNum;
-
-					vpe = &_vgaBufferPointers[vsp->zoneNum];
-					_curVgaFile1 = vpe->vgaFile1;
-					_curVgaFile2 = vpe->vgaFile2;
-					_windowNum = vsp->windowNum;
-
-					params[0] = READ_BE_UINT16(&vsp->image);
-					params[1] = READ_BE_UINT16(&vsp->palette);
-					params[2] = READ_BE_UINT16(&vsp->x);
-					params[3] = READ_BE_UINT16(&vsp->y);
-					params[4] = READ_BE_UINT16(&vsp->flags);
-					_vcPtr = (byte *)params;
-					vc10_draw();
-
-					_windowNum = palmode;
-					_curVgaFile1 = old_file_1;
-					_curVgaFile2 = old_file_2;
-					break;
-				}
-				vsp++;
-			}
-			_vcPtr = vcPtrOrg;
-		}
-
-		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
-		// in lower half of screen
-		if ((getGameType() == GType_SIMON1) && (_subroutine == 2923 || _subroutine == 2926)) {
-			clearSurfaces(200);
-		} else if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			clearSurfaces(480);
+		if (getGameType() == GType_FF || getGameType() == GType_PP) {
+			clearSurfaces(_screenHeight);
+		} else if (getGameType() == GType_WW) {
+			memset(getFrontBuf(), 0, _screenWidth * _screenHeight);
 		} else {
-			clearSurfaces(_windowNum == 4 ? 134 : 200);
+			if (_windowNum != 4) {
+				memset(getFrontBuf(), 0, _screenWidth * _screenHeight);
+			}
 		}
 	}
 	if (getGameType() == GType_SIMON2) {

@@ -238,6 +238,24 @@ cmd(get_priority) {
 cmd(set_priority) {
 	vt.flags |= FIXED_PRIORITY;
 	vt.priority = p1;
+
+	// WORKAROUND: this fixes bug #1712585 in KQ4 (dwarf sprite priority)
+	// For this scene, ego (Rosella) hasn't got a fixed priority till script 54
+	// explicitly sets priority 8 for her, so that she can walk back to the table
+	// without being drawn over the other dwarfs
+	// It seems that in this scene, ego's priority is set to 8, but the priority of
+	// the last dwarf with the soup bowls (view 152) is also set to 8, which causes
+	// the dwarf to be drawn behind ego
+	// With this workaround, when the game scripts set the priority of view 152
+	// (seventh dwarf with soup bowls), ego's priority is set to 7
+	// The game script itself sets priotity 8 for ego before she starts walking, 
+	// and then releases the fixed priority set on ego after ego is seated
+	// Therefore, this workaround only affects that specific part of this scene
+	// Ego is set to object 19 by script 54
+	if (g_agi->getGameID() == GID_KQ4 && vt.currentView == 152) {
+		game.viewTable[19].flags |= FIXED_PRIORITY;
+		game.viewTable[19].priority = 7;
+	}
 }
 
 cmd(set_priority_f) {
@@ -571,6 +589,21 @@ cmd(draw_pic) {
 	g_sprites->blitBoth();
 	game.pictureShown = 0;
 	debugC(6, kDebugLevelScripts, "--- end of draw pic %d ---", _v[p0]);
+
+	// WORKAROUND for a script bug which exists in SQ1, logic scripts
+	// 20 and 110. Flag 103 is not reset correctly, which leads to erroneous
+	// behavior from view 46 (the spider droid). View 46 is supposed to
+	// follow ego and explode when it comes in contact with him. However, as
+	// flag 103 is not reset correctly, when the player goes down the path
+	// and back up, the spider is always at the base of the path (since it 
+	// can't go up) and kills the player when he goes down at ground level 
+	// (although the spider droid sprite itself seems to be correctly positioned). 
+	// With this workaround, when the player goes back to picture 20 (1 screen 
+	// above the ground), flag 103 is reset, thereby fixing this issue. Note 
+	// that this is a script bug and occurs in the original interpreter as well.
+	// Fixes bug #1658514: AGI: SQ1 (2.2 DOS ENG) bizzare exploding roger
+	if (g_agi->getGameID() == GID_SQ1 && _v[p0] == 20)
+		g_agi->setflag(103, false);
 }
 
 cmd(show_pic) {
@@ -652,7 +685,18 @@ cmd(draw) {
 	g_sprites->eraseUpdSprites();
 	vt.flags |= DRAWN;
 
-	if (g_agi->agiGetRelease() <= 0x2440)	/* See bug #546562 */
+	// WORKAROUND: This fixes a bug with AGI Fanmade game Space Trek.
+	// The original workaround checked if AGI version was <= 2.440, which could
+	// cause regressions with some AGI games. The original workaround no longer
+	// works for Space Trek in ScummVM, as all fanmade games are set to use
+	// AGI version 2.917, but it applies to all other games where AGI version is
+	// <= 2.440, which was not the original purpose of this workaround. It is 
+	// assumed that this bug is caused by AGI Studio, so this applies to all 
+	// fanmade games only.
+	// TODO: Investigate this further and check if any other fanmade AGI
+	// games are affected. If yes, then it'd be best to set this for Space
+	// Trek only
+	if (g_agi->getFeatures() & GF_FANMADE)	/* See Sarien bug #546562 */
 		vt.flags |= ANIMATED;
 
 	g_sprites->blitUpdSprites();
@@ -1014,7 +1058,7 @@ cmd(distance) {
 		y1 = v0->yPos;
 		x2 = v1->xPos + v1->xSize / 2;
 		y2 = v1->yPos;
-		d = abs(x1 - x2) + abs(y1 - y2);
+		d = ABS(x1 - x2) + ABS(y1 - y2);
 		if (d > 0xfe)
 			d = 0xfe;
 	} else {
@@ -1045,7 +1089,7 @@ cmd(get_string) {
 	col = p3;
 
 	/* Workaround for SQLC bug.
-	 * See bug #792125 for details
+	 * See Sarien bug #792125 for details
 	 */
 	if (row > 24)
 		row = 24;
@@ -1166,7 +1210,7 @@ cmd(echo_line) {
 cmd(clear_lines) {
 	uint8 l;
 
-	/* Residence 44 calls clear.lines(24,0,0), see bug #558423 */
+	/* Residence 44 calls clear.lines(24,0,0), see Sarien bug #558423 */
 	l = p1 ? p1 : p0;
 
 	g_agi->clearLines(p0, l, p2);
@@ -1227,14 +1271,23 @@ cmd(mouse_posn) {
 cmd(shake_screen) {
 	int i;
 
-	/* AGIPAL uses shake.screen values between 101 and 109 to
-	 * set the palette.
-	 */
-	if ((g_agi->getFeatures() & GF_AGIPAL) && p0 >= 101 && p0 < 110) {
-		g_gfx->setAGIPal(p0);
-		return;
-	} else
-		g_gfx->shakeStart();
+	// AGIPAL uses shake.screen values between 101 and 109 to
+	// set the palette.
+	if (p0 >= 101 && p0 < 110) {
+		if (g_agi->getFeatures() & GF_AGIPAL) {
+			g_gfx->setAGIPal(p0);
+			return;
+		} else {
+			warning("It looks like GF_AGIPAL flag is missing");
+		}
+	} 
+
+	// Disables input while shaking to prevent bug
+	// #1678230: AGI: Entering text while screen is shaking
+	int originalValue = game.inputEnabled;
+	game.inputEnabled = 0;
+
+	g_gfx->shakeStart();
 
 	g_sprites->commitBoth();		/* Fixes SQ1 demo */
 	for (i = 4 * p0; i; i--) {
@@ -1243,6 +1296,9 @@ cmd(shake_screen) {
 		g_agi->mainCycle();
 	}
 	g_gfx->shakeEnd();
+
+	//Sets input back to what it was
+	game.inputEnabled = originalValue;
 }
 
 static void (*agiCommand[183])(uint8 *) = {

@@ -4,6 +4,7 @@
 	Version="8,00"
 	Name="cine"
 	ProjectGUID="{1CA4AC50-5426-433A-8B5E-FFE39568098E}"
+	RootNamespace="cine"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -90,6 +91,7 @@
 			IntermediateDirectory="cine_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -259,14 +261,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\cine\resource.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\resource.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\cine\script.cpp"
 			>
 		</File>
@@ -275,19 +269,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\cine\sfx_player.cpp"
+			RelativePath="..\..\engines\cine\sound.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\cine\sfx_player.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\sound_driver.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\sound_driver.h"
+			RelativePath="..\..\engines\cine\sound.h"
 			>
 		</File>
 		<File

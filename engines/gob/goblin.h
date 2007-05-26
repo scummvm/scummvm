@@ -271,7 +271,7 @@ public:
 			int16 nextAct, int16 framesCount);
 
 	Goblin_v1(GobEngine *vm);
-	virtual ~Goblin_v1() {};
+	virtual ~Goblin_v1() {}
 
 protected:
 	virtual bool isMovement(int8 state) { return false; }
@@ -291,7 +291,7 @@ public:
 			int16 nextAct, int16 framesCount);
 
 	Goblin_v2(GobEngine *vm);
-	virtual ~Goblin_v2() {};
+	virtual ~Goblin_v2() {}
 
 protected:
 	virtual bool isMovement(int8 state);
@@ -306,7 +306,7 @@ public:
 			int16 index, int16 x, int16 y, int16 state);
 
 	Goblin_v3(GobEngine *vm);
-	virtual ~Goblin_v3() {};
+	virtual ~Goblin_v3() {}
 
 protected:
 	virtual bool isMovement(int8 state);

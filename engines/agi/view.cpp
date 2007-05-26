@@ -41,8 +41,16 @@ void AgiEngine::lSetCel(VtEntry *v, int n) {
 	if (currentVl->numCels == 0)
 		return;
 
-	if (!(v->flags & UPDATE)
-			&& (agiGetRelease() >= 0x3000))
+	// WORKAROUND: This is a very nasty hack to fix a bug in the KQ4 introduction
+	// In its original form, it caused a lot of regressions, including KQ4 bugs and crashes
+	// Refer to Sarien bug #588899 for the original issue
+	// Modifying this workaround to only work for a specific view in the KQ4 intro fixes several 
+	// ScummVM bugs. Refer to bugs #1660486, #1660169, #1660192, #1660162 and #1660354
+	// FIXME: Remove this workaround and investigate the reason for the erroneous actor behavior
+	// in the KQ4 introduction
+	// It seems there's either a bug with KQ4's logic script 120 (the intro script)
+	// or flag 64 is not set correctly, which causes the erroneous behavior from the actors
+	if (getGameID() == GID_KQ4 && !(v->flags & UPDATE) && (v->currentView == 172))
 		return;
 
 	currentVc = &currentVl->cel[n];
@@ -67,9 +75,6 @@ void AgiEngine::lSetLoop(VtEntry *v, int n) {
 	v->numCels = currentVl->numCels;
 	if (v->currentCel >= v->numCels)
 		v->currentCel = 0;
-
-	if (!(v->flags & UPDATE) && (agiGetRelease() >= 0x3000))
-		return;
 
 	v->loopData = &_game.views[v->currentView].loop[n];
 }
@@ -211,7 +216,7 @@ void AgiEngine::unloadView(int n) {
 	if (~_game.dirView[n].flags & RES_LOADED)
 		return;
 
-	/* Rebuild sprite list, see bug #779302 */
+	/* Rebuild sprite list, see Sarien bug #779302 */
 	_sprites->eraseBoth();
 	_sprites->blitBoth();
 	_sprites->commitBoth();
@@ -270,6 +275,33 @@ void AgiEngine::setLoop(VtEntry *v, int n) {
  * @param n number of AGI view resource
  */
 void AgiEngine::setView(VtEntry *v, int n) {
+
+	uint16 viewFlags = 0;
+
+	// When setting a view to the view table, if there's already another view set in that
+	// view table entry and it's still drawn, erase the existing view before setting the new one
+	// Fixes bug #1658643: AGI: SQ1 (2.2 DOS ENG) Graphic error, ego leaves behind copy
+	// Update: Apparently, this makes ego dissapear at times, e.g. when textboxes are shown
+	// Therefore, it's limited to view 118 in SQ1 (Roger climbing the ladder)
+	// Fixes bug #1715284: Roger sometimes disappears
+	if (v->viewData != NULL) {
+		if (v->currentView == 118 && v->flags & DRAWN && getGameID() == GID_SQ1) {
+			viewFlags = v->flags;			// Store the flags for the view
+			_sprites->eraseUpdSprites();
+			if (v->flags & UPDATE) {
+				v->flags &= ~DRAWN;
+			} else {
+				_sprites->eraseNonupdSprites();
+				v->flags &= ~DRAWN;
+				_sprites->blitNonupdSprites();
+			}
+			_sprites->blitUpdSprites();
+
+			_sprites->commitBlock(v->xPos, v->yPos - v->ySize + 1, v->xPos + v->xSize - 1, v->yPos);
+			v->flags = viewFlags;			// Restore the view's flags
+		}
+	}
+
 	v->viewData = &_game.views[n];
 	v->currentView = n;
 	v->numLoops = v->viewData->numLoops;

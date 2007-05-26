@@ -29,14 +29,13 @@ namespace Cine {
 
 void gfxDrawSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy);
 
-extern byte *page0;
-extern byte *page1;
-extern byte *page2;
-extern byte *page3;
+extern byte *page1Raw;
+extern byte *page2Raw;
+extern byte *page3Raw;
 
 extern uint16 c_palette[256];
 
-void init_video();
+void gfxInit();
 void setMouseCursor(int cursor);
 void convertGfx(byte *source, byte *dest, const uint16 width, const uint16 height);
 void convertGfx2(byte *source, byte *dest, const uint16 width, const uint16 height);
@@ -45,11 +44,11 @@ void gfxCopyPage(byte *source, byte *dest);
 void transformPaletteRange(byte startColor, byte numColor, int8 r, int8 g, int8 b);
 void gfxFlipPage(void);
 
-void gfxSpriteFunc1(byte *ptr, uint16 width, uint16 height, byte *page, int16 x, int16 y);
-void gfxFillSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy);
+void gfxSpriteFunc1(byte *ptr, byte *msk, uint16 width, uint16 height, byte *page, int16 x, int16 y);
+void gfxFillSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy, uint8 fillColor = 0);
 
-void gfxSpriteFunc2(byte *spritePtr, int16 width, int16 height, byte *maskPtr,
-    int16 maskWidth, int16 maskHeight, byte *bufferPtr, int16 x, int16 y, byte maskIdx);
+void gfxSpriteFunc2(byte *spritePtr, byte *spriteMskPtr, int16 width, int16 height, byte *maskPtr,
+    int16 maskWidth, int16 maskHeight, byte *bufferSprPtr, byte *bufferMskPtr, int16 xs, int16 ys, int16 xm, int16 ym, byte maskIdx);
 
 void gfxDrawLine(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte *page);
 void gfxDrawPlainBox(int16 x1, int16 y1, int16 x2, int16 y2, byte color);
@@ -57,10 +56,6 @@ void gfxDrawPlainBox(int16 x1, int16 y1, int16 x2, int16 y2, byte color);
 void gfxResetPage(byte *pagePtr);
 
 int16 gfxGetBit(int16 x, int16 y, byte *ptr, int16 width);
-
-extern byte page1Raw[320 * 200];
-extern byte page2Raw[320 * 200];
-extern byte page3Raw[320 * 200];
 
 void gfxResetRawPage(byte *pageRaw);
 void gfxConvertSpriteToRaw(byte *dest, byte *source, uint16 width, uint16 height);
@@ -71,6 +66,14 @@ void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte
 void drawSpriteRaw2(byte *spritePtr, byte transColor, int16 width, int16 height, byte *page, int16 x, int16 y);
 
 void fadeToBlack(void);
+
+void gfxFuncGen1(byte *param1, byte *param2, byte *param3, byte *param4, int16 param5);
+void ptrGfxFunc13(void);
+void gfxFuncGen2(void);
+
+void blitScreen(byte *frontBuffer, byte *backbuffer);
+void blitRawScreen(byte *frontBuffer);
+void flip(void);
 
 } // End of namespace Cine
 

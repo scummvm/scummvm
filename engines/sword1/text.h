@@ -28,7 +28,11 @@
 
 namespace Sword1 {
 
-#define MAX_TEXT_OBS 2
+#define MAX_TEXT_OBS 3
+
+#define BORDER_COL	200
+#define LETTER_COL	193
+#define NO_COL		0	// sprite background - 0 for transparency
 
 class ObjectMan;
 class ResMan;
@@ -44,10 +48,10 @@ public:
 	~Text(void);
 	FrameHeader *giveSpriteData(uint32 textTarget);
 	uint32 lowTextManager(uint8 *text, int32 width, uint8 pen);
+	void makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 pen);
 	void releaseText(uint32 id);
 
 private:
-	void makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 pen);
 	uint16 analyzeSentence(uint8 *text, uint16 maxWidth, LineInfo *info);
 	uint16 charWidth(uint8 ch);
 	uint16 copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen);

@@ -125,10 +125,10 @@ public:
 	int compareTo(const char *x) const;	// strcmp clone
 	int compareToIgnoreCase(const char *x) const;	// stricmp clone
 
-
-
 	bool hasSuffix(const char *x) const;
 	bool hasPrefix(const char *x) const;
+	
+	bool contains(const char *x) const;
 
 	inline const char *c_str() const		{ return _str; }
 	inline uint size() const				{ return _len; }
