@@ -1875,7 +1875,7 @@ Common::ADGameDescList fallbackDetector(const FSList *fslist) {
 	int matchedNum = -1;
 
 	// TODO:
-	// WinAGI produces *.wag file with interpretator version, game name
+	// WinAGI produces *.wag file with interpreter version, game name
 	// and other parameters. Add support for this once specs are known
 
 
