@@ -364,7 +364,7 @@ void Screen::draw(void) {
 
 		for (uint16 cnty = 0; cnty < _scrnSizeY; cnty++)
 			for (uint16 cntx = 0; cntx < _scrnSizeX; cntx++) {
-				if (*src = 0)
+				if (*src)
 					if (!SwordEngine::_systemVars.isMac || *src != 255) // see bug #1701058
 						*dest = *src;
 				dest++;
