@@ -136,6 +136,12 @@ void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp) {
 	uint8 *palData = (uint8*)_resMan->openFetchRes(id);
 	if (start == 0) // force color 0 to black
 		palData[0] = palData[1] = palData[2] = 0;
+	
+	if (SwordEngine::_systemVars.isMac) {  // see bug #1701058
+		if (start != 0 && start + length == 256) // and force color 255 to black as well
+			palData[(length-1)*3+0] = palData[(length-1)*3+1] = palData[(length-1)*3+2] = 0;
+	}
+
 	for (uint32 cnt = 0; cnt < length; cnt++) {
 		_targetPalette[(start + cnt) * 4 + 0] = palData[cnt * 3 + 0] << 2;
 		_targetPalette[(start + cnt) * 4 + 1] = palData[cnt * 3 + 1] << 2;
@@ -358,8 +364,9 @@ void Screen::draw(void) {
 
 		for (uint16 cnty = 0; cnty < _scrnSizeY; cnty++)
 			for (uint16 cntx = 0; cntx < _scrnSizeX; cntx++) {
-				if (*src)
-					*dest = *src;
+				if (*src = 0)
+					if (!SwordEngine::_systemVars.isMac || *src != 255) // see bug #1701058
+						*dest = *src;
 				dest++;
 				src++;
 			}
