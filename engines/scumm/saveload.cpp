@@ -1152,6 +1152,17 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	if (_imuse && (_saveSound || !_saveTemporaryState)) {
 		_imuse->save_or_load(s, this);
 	}
+
+	//
+	// Save/load the charset renderer state
+	//
+	if (s->getVersion() >= VER(72)) {
+		if (s->isSaving()) {
+			s->saveByte(_charset->getCurID());
+		} else {
+			_charset->setCurID(s->loadByte());
+		}
+	}
 }
 
 void ScummEngine_v0::saveOrLoad(Serializer *s) {
