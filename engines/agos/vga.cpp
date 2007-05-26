@@ -721,7 +721,7 @@ void AGOSEngine::vc12_delay() {
 
 	num += _vgaBaseDelay;
 
-	addVgaEvent(num, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
+	addVgaEvent(num, ANIMATE_EVENT, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
 	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 
@@ -748,7 +748,7 @@ void AGOSEngine::vc15_sync() {
 	uint16 id = vcReadNextWord();
 	while (vfs->ident != 0) {
 		if (vfs->ident == id) {
-			addVgaEvent(_vgaBaseDelay, vfs->code_ptr, vfs->sprite_id, vfs->cur_vga_file);
+			addVgaEvent(_vgaBaseDelay, ANIMATE_EVENT, vfs->code_ptr, vfs->sprite_id, vfs->cur_vga_file);
 			vfs_tmp = vfs;
 			do {
 				memcpy(vfs_tmp, vfs_tmp + 1, sizeof(VgaSleepStruct));
@@ -782,7 +782,7 @@ void AGOSEngine::checkWaitEndTable() {
 	VgaSleepStruct *vfs = _waitEndTable, *vfs_tmp;
 	while (vfs->ident != 0) {
 		if (vfs->ident == _vgaCurSpriteId) {
-			addVgaEvent(_vgaBaseDelay, vfs->code_ptr, vfs->sprite_id, vfs->cur_vga_file);
+			addVgaEvent(_vgaBaseDelay, ANIMATE_EVENT, vfs->code_ptr, vfs->sprite_id, vfs->cur_vga_file);
 			vfs_tmp = vfs;
 			do {
 				memcpy(vfs_tmp, vfs_tmp + 1, sizeof(VgaSleepStruct));
@@ -1305,7 +1305,7 @@ void AGOSEngine::vc40() {
 			tmp = _scrollXMax - _scrollX;
 			if (tmp < 20)
 				_scrollCount = tmp;
-			addVgaEvent(6, NULL, 0, 0, 1);	 /* scroll event */
+			addVgaEvent(6, SCROLL_EVENT, NULL, 0, 0);
 		}
 	}
 no_scroll:;
@@ -1331,7 +1331,7 @@ void AGOSEngine::vc41() {
 			_scrollCount = -20;
 			if (_scrollX < 20)
 				_scrollCount = -_scrollX;
-			addVgaEvent(6, NULL, 0, 0, 1);	 /* scroll event */
+			addVgaEvent(6, SCROLL_EVENT, NULL, 0, 0);
 		}
 	}
 no_scroll:;
@@ -1343,7 +1343,7 @@ void AGOSEngine::vc42_delayIfNotEQ() {
 	uint16 val = vcReadVar(vcReadNextWord());
 	if (val != vcReadNextWord()) {
 
-		addVgaEvent(_frameCount + 1, _vcPtr - 4, _vgaCurSpriteId, _vgaCurZoneNum);
+		addVgaEvent(_frameCount + 1, ANIMATE_EVENT, _vcPtr - 4, _vgaCurSpriteId, _vgaCurZoneNum);
 		_vcPtr = (byte *)&_vc_get_out_of_code;
 	}
 }

@@ -194,7 +194,7 @@ void AGOSEngine::restartAnimation() {
 	// Check picture queue
 }
 
-void AGOSEngine::addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum, uint8 type) {
+void AGOSEngine::addVgaEvent(uint16 num, uint8 type, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum) {
 	VgaTimerEntry *vte;
 
 	_lockWord |= 1;
@@ -237,28 +237,35 @@ void AGOSEngine::processVgaEvents() {
 			uint16 curZoneNum = vte->cur_vga_file;
 			uint16 cur_sprite = vte->sprite_id;
 			const byte *script_ptr = vte->script_pointer;
-			uint8 type = vte->type;
 
-			if (type == 2) {
+			switch (vte->type) {
+			case ANIMATE_INT:
 				vte->delay = (getGameType() == GType_SIMON2) ? 5 : _frameCount;
-
 				animateSprites();
-
 				vte++;
-			} else if (type == 1) {
+				break;
+			case ANIMATE_EVENT:
 				_nextVgaTimerToProcess = vte + 1;
 				deleteVgaEvent(vte);
-
-				scrollEvent();
-
-				vte = _nextVgaTimerToProcess;
-			} else if (type == 0) {
-				_nextVgaTimerToProcess = vte + 1;
-				deleteVgaEvent(vte);
-
 				animateEvent(script_ptr, curZoneNum, cur_sprite);
-
 				vte = _nextVgaTimerToProcess;
+				break;
+			case SCROLL_EVENT:
+				_nextVgaTimerToProcess = vte + 1;
+				deleteVgaEvent(vte);
+				scrollEvent();
+				vte = _nextVgaTimerToProcess;
+				break;
+			case IMAGE_EVENT2:
+				imageEvent2(vte, curZoneNum);
+				vte = _nextVgaTimerToProcess;
+				break;
+			case IMAGE_EVENT3:
+				imageEvent3(vte, curZoneNum);
+				vte = _nextVgaTimerToProcess;
+				break;
+			default:
+				error("processVgaEvents: Unknown event type %d", vte->type);
 			}
 		} else {
 			vte++;
@@ -315,7 +322,96 @@ void AGOSEngine::scrollEvent() {
 			}
 		}
 
-		addVgaEvent(6, NULL, 0, 0, 1); /* scroll event */
+		addVgaEvent(6, SCROLL_EVENT, NULL, 0, 0);
+	}
+}
+
+static const byte _image1[32] = {
+	0x3A, 0x37, 0x3B, 0x37,
+	0x3A, 0x3E, 0x3F, 0x3E,
+	0x37, 0x3F, 0x31, 0x3F,
+	0x37, 0x3F, 0x31, 0x3F,
+	0x3A, 0x3E, 0x3F, 0x3E,
+	0x3A, 0x37, 0x3B, 0x37,
+};
+
+static const byte _image2[32] = {
+	0x3A, 0x3A, 0x3B, 0x3A,
+	0x3A, 0x37, 0x3E, 0x37,
+	0x3A, 0x37, 0x3E, 0x37,
+	0x3A, 0x37, 0x3E, 0x37,
+	0x3A, 0x37, 0x3E, 0x37,
+	0x3A, 0x3A, 0x3B, 0x3A,
+};
+
+static const byte _image3[32] = {
+	0x3A, 0x32, 0x3B, 0x32,
+	0x3A, 0x39, 0x3F, 0x39,
+	0x32, 0x3F, 0x31, 0x3F,
+	0x32, 0x3F, 0x31, 0x3F,
+	0x3A, 0x39, 0x3F, 0x39,
+	0x3A, 0x32, 0x3B, 0x32,
+};
+
+static const byte _image4[32] = {
+	0x3A, 0x3A, 0x3B, 0x3A,
+	0x3A, 0x32, 0x39, 0x32,
+	0x3A, 0x32, 0x38, 0x32,
+	0x3A, 0x32, 0x38, 0x32,
+	0x3A, 0x32, 0x39, 0x32,
+	0x3A, 0x3A, 0x3B, 0x3A,
+};
+
+void AGOSEngine::drawStuff(const byte *src, uint offs) {
+	byte *dst = getFrontBuf() + offs;
+
+	for (uint y = 0; y < 6; y++) {
+		memcpy(dst, src, 4);
+		src += 4;
+		dst += _screenWidth;
+	}
+}
+
+void AGOSEngine::imageEvent2(VgaTimerEntry * vte, uint dx) {
+	// Draws damage indicator gauge
+	_nextVgaTimerToProcess = vte + 1;
+
+	if (!_opcode177Var1) {
+		drawStuff(_image1, 43204 + _opcode177Var2 * 4);
+		_opcode177Var2++;
+		if (_opcode177Var2 == dx) {
+			_opcode177Var1 = 1;
+			vte->delay = 16 - dx;
+		} else {
+			vte->delay = 1;
+		}
+	} else if (_opcode177Var2) {
+		_opcode177Var2--;
+		drawStuff(_image2, 43204 + _opcode177Var2 * 4);
+		vte->delay = 3;
+	} else {
+		deleteVgaEvent(vte);
+	}
+}
+
+void AGOSEngine::imageEvent3(VgaTimerEntry * vte, uint dx) {
+	_nextVgaTimerToProcess = vte + 1;
+
+	if (!_opcode178Var1) {
+		drawStuff(_image3, 43475 + _opcode178Var2 * 4);
+		_opcode178Var2++;
+		if (_opcode178Var2 >= 10 || _opcode178Var2 == dx) {
+			_opcode178Var1 = 1;
+			vte->delay = 16 - dx;
+		} else {
+			vte->delay = 1;
+		}
+	} else if (_opcode178Var2) {
+		_opcode178Var2--;
+		drawStuff(_image4, 43475 + _opcode178Var2 * 4);
+		vte->delay = 3;
+	} else {
+		deleteVgaEvent(vte);
 	}
 }
 

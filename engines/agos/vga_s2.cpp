@@ -50,7 +50,7 @@ void AGOSEngine_Simon2::setupVideoOpcodes(VgaOpcodeProc *op) {
 void AGOSEngine::vc56_delayLong() {
 	uint16 num = vcReadVarOrWord() * _frameCount;
 
-	addVgaEvent(num + _vgaBaseDelay, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
+	addVgaEvent(num + _vgaBaseDelay, ANIMATE_EVENT, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
 	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 

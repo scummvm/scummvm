@@ -638,14 +638,26 @@ void AGOSEngine_Elvira2::oe2_setSRExit() {
 }
 
 void AGOSEngine_Elvira2::oe2_unk177() {
-	// 177: set unknown vga event
+	// 177: Set damage indicator event
 	uint a = getVarOrByte();
+	if (_opcode177Var1 && !_opcode177Var2 && a != 0 && a <= 10) {
+		addVgaEvent(_vgaBaseDelay, IMAGE_EVENT2, NULL, 0, a);
+		_opcode177Var2 = 0;
+		_opcode177Var1 = 0;
+	}
+
 	debug(0, "oe2_unk177: stub (%d)", a);
 }
 
 void AGOSEngine_Elvira2::oe2_unk178() {
 	// 178: set unknown vga event
 	uint a = getVarOrByte();
+	if (_opcode178Var1 && !_opcode178Var2 && a != 0 && a <= 10) {
+		addVgaEvent(_vgaBaseDelay, IMAGE_EVENT3, NULL, 0, a);
+		_opcode178Var2 = 0;
+		_opcode178Var1 = 0;
+	}
+
 	debug(0, "oe2_unk178: stub (%d)", a);
 }
 

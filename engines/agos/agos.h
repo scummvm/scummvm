@@ -130,6 +130,14 @@ enum SIMONGameType {
 	GType_PP = 7
 };
 
+enum EventType {
+	ANIMATE_INT   = 1 << 1,
+	ANIMATE_EVENT = 1 << 2,
+	SCROLL_EVENT  = 1 << 3,
+	IMAGE_EVENT2  = 1 << 4,
+	IMAGE_EVENT3  = 1 << 5
+};
+
 struct AGOSGameDescription;
 
 struct GameSpecificSettings;
@@ -201,13 +209,6 @@ protected:
 	const GameSpecificSettings *gss;
 
 	byte _keyPressed;
-
-	typedef enum {
-		FORMAT_NONE,
-		FORMAT_MP3,
-		FORMAT_WAV,
-		FORMAT_VOC
-	} SoundFormat;
 
 	Common::File *_gameFile;
 
@@ -436,6 +437,9 @@ protected:
 	int _scaleX, _scaleY, _scaleWidth, _scaleHeight;
 
 	VgaTimerEntry *_nextVgaTimerToProcess;
+
+	uint8 _opcode177Var1, _opcode177Var2;
+	uint8 _opcode178Var1, _opcode178Var2;
 
 	Item *_objectArray[50];
 	Item *_itemStore[50];
@@ -1086,11 +1090,14 @@ protected:
 	bool isVgaQueueEmpty();
 	void haltAnimation();
 	void restartAnimation();
-	void addVgaEvent(uint16 num, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum, uint8 type = 0);
+	void addVgaEvent(uint16 num, uint8 type, const byte *code_ptr, uint16 cur_sprite, uint16 curZoneNum);
 	void deleteVgaEvent(VgaTimerEntry * vte);
 	void processVgaEvents();
 	void animateEvent(const byte *code_ptr, uint16 curZoneNum, uint16 cur_sprite);
 	void scrollEvent();
+	void drawStuff(const byte *src, uint offs);
+	void imageEvent2(VgaTimerEntry * vte, uint dx);
+	void imageEvent3(VgaTimerEntry * vte, uint dx);
 
 	VgaSprite *findCurSprite();
 

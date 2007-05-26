@@ -381,6 +381,11 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_nextVgaTimerToProcess = 0;
 
+	_opcode177Var1 = 1;
+	_opcode177Var2 = 0;
+	_opcode178Var1 = 1;
+	_opcode178Var2 = 0;
+
 	_classLine = 0;
 	_classMask = 0;
 	_classMode1 = 0;
@@ -948,7 +953,7 @@ int AGOSEngine::go() {
 
 	if (getGameType() != GType_PP && getGameType() != GType_FF) {
 		uint16 count = (getGameType() == GType_SIMON2) ? 5 : _frameCount;
-		addVgaEvent(count, NULL, 0, 0, 2);
+		addVgaEvent(count, ANIMATE_INT, NULL, 0, 0);
 	}
 
 	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAtariST &&
