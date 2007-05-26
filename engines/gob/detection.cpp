@@ -654,6 +654,18 @@ static const GOBGameDescription gameDescriptions[] = {
 		GF_GOB2,
 		"intro"
 	},
+	{ // Supplied by glorfindel in bugreport #1722142
+		{
+			"ween",
+			"",
+			AD_ENTRY1s("intro.stk", "8b57cd510da8a3bbd99e3a0297a8ebd1", 7018771),
+			IT_ITA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB2,
+		"intro"
+	},
 	{
 		{
 			"ween",
@@ -720,6 +732,18 @@ static const GOBGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1s("intro.stk", "da3c54be18ab73fbdb32db24624a9c23", 3181825),
 			DE_DEU,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_BARGON,
+		"intro"
+	},
+	{ // Supplied by glorfindel in bugreport #1722142
+		{
+			"bargon",
+			"Fanmade",
+			AD_ENTRY1s("intro.stk", "da3c54be18ab73fbdb32db24624a9c23", 3181825),
+			IT_ITA,
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
