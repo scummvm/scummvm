@@ -139,6 +139,8 @@ public:
 
 #pragma mark -
 
+DECLARE_SINGLETON(PluginManager);
+
 PluginManager::PluginManager() {
 #ifndef DYNAMIC_MODULES
 	// Add the static plugin provider if we do not build with dynamic

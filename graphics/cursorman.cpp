@@ -24,6 +24,8 @@
 #include "common/system.h"
 #include "common/stack.h"
 
+DECLARE_SINGLETON(Graphics::CursorManager);
+
 namespace Graphics {
 
 static bool g_initialized = false;

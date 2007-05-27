@@ -22,6 +22,8 @@
 #include "graphics/fontman.h"
 //#include "gui/consolefont.h"
 
+DECLARE_SINGLETON(Graphics::FontManager);
+
 namespace Graphics {
 
 #if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))

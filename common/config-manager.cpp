@@ -33,6 +33,8 @@
 #include "common/file.h"
 #include "common/util.h"
 
+DECLARE_SINGLETON(Common::ConfigManager);
+
 #ifdef __PLAYSTATION2__
 #include "backends/platform/ps2/systemps2.h"
 #endif

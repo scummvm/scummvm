@@ -32,6 +32,8 @@
 #include "common/util.h"
 #include "common/system.h"
 
+DECLARE_SINGLETON(Audio::AudioCDManager);
+
 namespace Audio {
 
 AudioCDManager::AudioCDManager() {
