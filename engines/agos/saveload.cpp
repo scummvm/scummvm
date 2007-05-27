@@ -980,6 +980,14 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 		addTimeEvent(timeout, subroutine_id);
 	}
 
+	if (getGameType() == GType_WW) {
+		// TODO Load room state data
+		for (uint s = 0; s <= _numRoomStates; s++) {
+			f->readUint16BE();
+		}
+		f->readUint16BE();
+	}
+
 	item_index = 1;
 	for (num = _itemArrayInited - 1; num; num--) {
 		Item *item = _itemArrayPtr[item_index++], *parent_item;
@@ -1118,6 +1126,14 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	for (te = _firstTimeStruct; te; te = te->next) {
 		f->writeUint32BE(te->time - curTime + gsc);
 		f->writeUint16BE(te->subroutine_id);
+	}
+
+	if (getGameType() == GType_WW) {
+		// TODO Save room state data
+		for (uint s = 0; s <= _numRoomStates; s++) {
+			f->writeUint16BE(0);
+		}
+		f->writeUint16BE(_currentRoom);
 	}
 
 	item_index = 1;

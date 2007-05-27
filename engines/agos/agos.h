@@ -233,6 +233,9 @@ protected:
 	byte **_localStringtable;
 	uint _stringIdLocalMin, _stringIdLocalMax;
 
+	byte *_stateList;
+	uint _numRoomStates;
+
 	byte *_menuBase;
 	byte *_roomsList;
 
@@ -313,7 +316,7 @@ protected:
 
 	int _agosMenu;
 	byte _textMenu[10];
-	uint _superRoomNumber;
+	uint _currentRoom, _superRoomNumber;
 	uint _wallOn;
 
 	uint16 _hyperLink, _newLines;
@@ -722,6 +725,8 @@ protected:
 
 	void mouseOff();
 	void mouseOn();
+
+	bool loadRoomItems(uint item);
 
 	virtual bool loadTablesIntoMem(uint subr_id);
 	bool loadXTablesIntoMem(uint subr_id);
@@ -1413,8 +1418,6 @@ protected:
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
 	virtual bool loadTablesIntoMem(uint subr_id);
-
-	bool loadRoomItems(uint item);
 
 	virtual void moveDirn(Item *i, uint x);
 };

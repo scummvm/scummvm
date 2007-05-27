@@ -213,6 +213,26 @@ void AGOSEngine::loadGamePcFile() {
 		in.close();
 	}
 
+	if (getFileName(GAME_STATFILE) != NULL) {
+		/* Read list of ROOM STATE resources */
+		in.open(getFileName(GAME_STATFILE));
+		if (in.isOpen() == false) {
+			error("loadGamePcFile: Can't load state resources file '%s'", getFileName(GAME_STATFILE));
+		}
+
+		_numRoomStates = in.size() / 8;
+
+		_stateList = (byte *)malloc(_numRoomStates * 6);
+		if (_stateList == NULL)
+			error("loadGamePcFile: Out of memory for room state list");
+
+		_numRoomStates *= 3;
+
+		// TODO Load room state resources
+
+		in.close();
+	}
+
 	if (getFileName(GAME_RMSLFILE) != NULL) {
 		/* Read list of ROOM ITEMS resources */
 		in.open(getFileName(GAME_RMSLFILE));

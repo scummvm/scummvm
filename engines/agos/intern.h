@@ -225,11 +225,12 @@ enum GameFileTypes {
 	GAME_MENUFILE = 1 << 3,
 	GAME_STRFILE  = 1 << 4,
 	GAME_RMSLFILE = 1 << 5,
-	GAME_TBLFILE  = 1 << 6,
-	GAME_XTBLFILE = 1 << 7,
-	GAME_RESTFILE = 1 << 8,
+	GAME_STATFILE = 1 << 6,
+	GAME_TBLFILE  = 1 << 7,
+	GAME_XTBLFILE = 1 << 8,
+	GAME_RESTFILE = 1 << 9,
 
-	GAME_GFXIDXFILE = 1 << 9
+	GAME_GFXIDXFILE = 1 << 10
 };
 
 enum GameIds {
