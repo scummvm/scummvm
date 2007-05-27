@@ -358,6 +358,8 @@ int Script::getVerbType(VerbTypes verbType) {
 		}
 	}
 	else {
+		// TODO: This is ugly and needs rewriting, but
+		// it works for now
 		switch (verbType) {
 		case kVerbNone:
 			return kVerbIHNMNone;
@@ -372,13 +374,11 @@ int Script::getVerbType(VerbTypes verbType) {
 		case kVerbTalkTo:
 			return kVerbIHNMTalkTo;
 		case kVerbOpen:
-			return -2;
-		//	return kVerbIHNMSwallow;
+			return kVerbIHNMSwallow;
 		case kVerbGive:
 			return kVerbIHNMGive;
 		case kVerbClose:
-			return -2;
-		//	return kVerbIHNMPush;
+			return kVerbIHNMPush;
 		case kVerbEnter:
 			return kVerbIHNMEnter;
 		case kVerbWalkOnly:
