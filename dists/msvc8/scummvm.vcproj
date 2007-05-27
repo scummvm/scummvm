@@ -258,6 +258,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\algorithm.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\array.h"
 				>
 			</File>
