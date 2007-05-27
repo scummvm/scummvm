@@ -2348,6 +2348,7 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 					a->_auxBlock.r.top    = (int16)READ_LE_UINT16(axer + 2) + dy;
 					a->_auxBlock.r.right  = (int16)READ_LE_UINT16(axer + 4) + dx;
 					a->_auxBlock.r.bottom = (int16)READ_LE_UINT16(axer + 6) + dy;
+					adjustRect(a->_auxBlock.r);
 				}
 			}
 		}
