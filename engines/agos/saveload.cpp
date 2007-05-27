@@ -247,7 +247,7 @@ void AGOSEngine::userGame(bool load) {
 		name = buf + 192;
 
 		for (;;) {
-			windowPutChar(window, 127);
+			windowPutChar(window, 128);
 
 			_saveLoadEdit = true;
 
