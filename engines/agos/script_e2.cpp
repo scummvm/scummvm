@@ -534,7 +534,7 @@ void AGOSEngine_Elvira2::oe2_printStats() {
 	if (val > 9999)
 		val = 9999;	
 	writeChar(window, 30, 134, 6, val / 100);
-	writeChar(window, 32, 134, 2, val);
+	writeChar(window, 32, 134, 2, val / 10);
 
 	mouseOn();
 }
