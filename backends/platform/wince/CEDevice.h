@@ -39,7 +39,6 @@ class CEDevice {
 		static bool hasWideResolution();
 		static bool hasSmartphoneResolution();
 		static bool isSmartphone();
-		static Common::String getKeyName(unsigned int keyCode);
 
 	private:
 		static DWORD reg_access(TCHAR *key, TCHAR *val, DWORD data);

@@ -32,16 +32,13 @@
 namespace GUI {
 
 enum {
-	kMapCmd					= 'map ',
-	kOKCmd					= 'ok  '
+	kMapCmd	= 'map ',
+	kOKCmd	= 'ok  '
 };
 
 KeysDialog::KeysDialog(const Common::String &title)
 	: GUI::Dialog("keysdialog") {
 
-//tmp
-//	addButton(this, _w - (buttonWidth + 10), _h - buttonHeight - 8, "Choose", kChooseCmd, 0, ws);
-//tmp
 	new ButtonWidget(this, "keysdialog_map", "Map", kMapCmd, 0);
 	new ButtonWidget(this, "keysdialog_ok", "OK", kOKCmd, 0);
 	new ButtonWidget(this, "keysdialog_cancel", "Cancel", kCloseCmd, 0);
@@ -73,23 +70,18 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	case kListSelectionChangedCmd:
 		if (_actionsList->getSelected() >= 0) {
 			char selection[100];
-#ifdef __SYMBIAN32__
+
 			uint16 key = Actions::Instance()->getMapping(_actionsList->getSelected());
-
-			if (key != 0) {
-				// ScummVM mappings for F1-F9 are different from SDL so remap back to sdl
-				if (key >= 315 && key <= 323) {
-					key = key - 315 + SDLK_F1;
-				}
-			}
-
+#ifdef __SYMBIAN32__
+			// ScummVM mappings for F1-F9 are different from SDL so remap back to sdl
+			if (key >= 315 && key <= 323)
+				key = key - 315 + SDLK_F1;
+#endif
 			if (key != 0)
 				sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey)key));
 			else
 				sprintf(selection, "Associated key : none");
-#else
-			sprintf(selection, "Associated key : %s", CEDevice::getKeyName(Actions::Instance()->getMapping((ActionType)(_actionsList->getSelected()))).c_str());
-#endif
+
 			_keyMapping->setLabel(selection);
 			_keyMapping->draw();
 		}
@@ -102,21 +94,17 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 			char selection[100];
 
 			_actionSelected = _actionsList->getSelected();
-#ifdef __SYMBIAN32__
 			uint16 key = Actions::Instance()->getMapping(_actionSelected);
-			if (key != 0) {
-				// ScummVM mappings for F1-F9 are different from SDL so remap back to sdl
-				if (key >= 315 && key <= 323) {
-					key = key - 315 + SDLK_F1;
-				}
-
+#ifdef __SYMBIAN32__
+			// ScummVM mappings for F1-F9 are different from SDL so remap back to sdl
+			if (key >= 315 && key <= 323)
+				key = key - 315 + SDLK_F1;
+#endif
+			if (key != 0) 
 				sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey)key));
-			}
 			else
 				sprintf(selection, "Associated key : none");
-#else
-			sprintf(selection, "Associated key : %s", CEDevice::getKeyName(Actions::Instance()->getMapping((ActionType)_actionSelected)).c_str());
-#endif
+
 			_actionTitle->setLabel("Press the key to associate");
 			_keyMapping->setLabel(selection);
 			_keyMapping->draw();
@@ -137,29 +125,25 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 }
 
 void KeysDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers){
-	if (!Actions::Instance()->mappingActive()) {
+	if (!Actions::Instance()->mappingActive())
 		Dialog::handleKeyDown(ascii,keycode,modifiers);
-	}
 }
 
 void KeysDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 #ifdef __SYMBIAN32__
 	if (Actions::Instance()->mappingActive()) {
 #else
-		// GAPI key was selected
-		if (modifiers == 0xff  && Actions::Instance()->mappingActive()) {
+	if (modifiers == 0xff  && Actions::Instance()->mappingActive()) {	// GAPI key was selected
 #endif
 		char selection[100];
 
 		Actions::Instance()->setMapping((ActionType)_actionSelected, ascii);
-#ifdef __SYMBIAN32__
+
 		if (ascii != 0)
 			sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey) keycode));
 		else
 			sprintf(selection, "Associated key : none");
-#else
-		sprintf(selection, "Associated key : %s", CEDevice::getKeyName(Actions::Instance()->getMapping((ActionType)_actionSelected)).c_str());
-#endif
+
 		_actionTitle->setLabel("Choose an action to map");
 		_keyMapping->setLabel(selection);
 		_keyMapping->draw();
@@ -167,10 +151,8 @@ void KeysDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 		_actionSelected = -1;
 		_actionsList->setEnabled(true);
 		Actions::Instance()->beginMapping(false);
-	}
-	else {
+	} else 
 		Dialog::handleKeyUp(ascii,keycode,modifiers);
-	}
 }
 
 } // namespace GUI
