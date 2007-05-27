@@ -287,7 +287,10 @@ void Script::showVerb(int statusColor) {
 		return;
 	}
 
-	verbName = _mainStrings.getString(_leftButtonVerb - 1);
+	if (_vm->getGameType() == GType_ITE)
+		verbName = _mainStrings.getString(_leftButtonVerb - 1);
+	else
+		verbName = _mainStrings.getString(_leftButtonVerb + 1);
 
 	if (objectTypeId(_currentObject[0]) == kGameObjectNone) {
 		_vm->_interface->setStatusText(verbName, statusColor);
@@ -360,22 +363,24 @@ int Script::getVerbType(VerbTypes verbType) {
 			return kVerbIHNMNone;
 		case kVerbWalkTo:
 			return kVerbIHNMWalk;
-		case kVerbGive:
-			return kVerbIHNMGive;
-		case kVerbUse:
-			return kVerbIHNMUse;
-		case kVerbEnter:
-			return kVerbIHNMEnter;
 		case kVerbLookAt:
 			return kVerbIHNMLookAt;
 		case kVerbPickUp:
 			return kVerbIHNMTake;
-		case kVerbOpen:
-			return -2;
-		case kVerbClose:
-			return -2;
+		case kVerbUse:
+			return kVerbIHNMUse;
 		case kVerbTalkTo:
 			return kVerbIHNMTalkTo;
+		case kVerbOpen:
+			return -2;
+		//	return kVerbIHNMSwallow;
+		case kVerbGive:
+			return kVerbIHNMGive;
+		case kVerbClose:
+			return -2;
+		//	return kVerbIHNMPush;
+		case kVerbEnter:
+			return kVerbIHNMEnter;
 		case kVerbWalkOnly:
 			return kVerbIHNMWalkOnly;
 		case kVerbLookOnly:

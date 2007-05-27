@@ -283,16 +283,14 @@ static const GameDisplayInfo ITE_DisplayInfo = {
 #define IHNM_CONVERSE_TEXT_LINES        10
 
 static PanelButton IHNM_MainPanelButtons[] = {
-	// TODO: The +2's are needed here to fix the verbs, investigate why
-	// The computation of textid in Interface::drawVerbPanelText has also been changed accordingly
-	{kPanelButtonVerb,		106,12,		114,30,	kVerbIHNMWalk + 2,'w',0,	0,1,0},
-	{kPanelButtonVerb,		106,44,		114,30,	kVerbIHNMLookAt + 2,'l',0,	2,3,0},
-	{kPanelButtonVerb,		106,76,		114,30, kVerbIHNMTake + 2,'k',0,	4,5,0},
-	{kPanelButtonVerb,		106,108,	114,30, kVerbIHNMUse + 2,'u',0,		6,7,0},
-	{kPanelButtonVerb,		223,12,		114,30, kVerbIHNMTalkTo + 2,'t',0,	8,9,0},
-	{kPanelButtonVerb,		223,44,		114,30, kVerbIHNMSwallow + 2,'s',0,	10,11,0},
-	{kPanelButtonVerb,		223,76,		114,30, kVerbIHNMGive + 2,'g',0,	12,13,0},
-	{kPanelButtonVerb,		223,108,	114,30, kVerbIHNMPush + 2,'p',0,	14,15,0},
+	{kPanelButtonVerb,		106,12,		114,30,	kVerbIHNMWalk,'w',0,	0,1,0},
+	{kPanelButtonVerb,		106,44,		114,30,	kVerbIHNMLookAt,'l',0,	2,3,0},
+	{kPanelButtonVerb,		106,76,		114,30, kVerbIHNMTake,'k',0,	4,5,0},
+	{kPanelButtonVerb,		106,108,	114,30, kVerbIHNMUse,'u',0,		6,7,0},
+	{kPanelButtonVerb,		223,12,		114,30, kVerbIHNMTalkTo,'t',0,	8,9,0},
+	{kPanelButtonVerb,		223,44,		114,30, kVerbIHNMSwallow,'s',0,	10,11,0},
+	{kPanelButtonVerb,		223,76,		114,30, kVerbIHNMGive,'g',0,	12,13,0},
+	{kPanelButtonVerb,		223,108,	114,30, kVerbIHNMPush,'p',0,	14,15,0},
 	{kPanelButtonArrow,		606,22,		20,25,	-1,'[',0,			0,0,0}, //TODO: arrow Sprite Numbers
 	{kPanelButtonArrow,		606,108,	20,25,	1,']',0,			0,0,0},
 
