@@ -160,7 +160,7 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 	} else if (!scumm_stricmp("kyra3", gameid)) {
 		*engine = new Kyra::KyraEngine_v3(syst, flags);
 	} else
-		error("Kyra engine created with invalid gameid");
+		error("Kyra engine created with invalid gameid ('%s')", gameid);
 
 	return kNoError;
 }
