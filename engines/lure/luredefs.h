@@ -259,6 +259,7 @@ enum Action {
 #define TALK_RESPONSE_MAGIC_ID 0x1092
 
 // Misc constants
+#define GENERAL_MAGIC_ID 42
 #define VOICE_ANIM_ID 0x5810
 #define PUZZLED_ANIM_ID 0x8001
 #define EXCLAMATION_ANIM_ID 0x8002

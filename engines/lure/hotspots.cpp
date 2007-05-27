@@ -867,7 +867,7 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 				setDelayCtr(4);
 			}
 
-			hotspot->talkGate = 0x2A;
+			hotspot->talkGate = GENERAL_MAGIC_ID;
 			hotspot->talkDestCharacterId = _hotspotId;
 			return PC_WAIT;
 		} 
@@ -2024,6 +2024,7 @@ void Hotspot::startTalk(HotspotData *charHotspot, uint16 id) {
 	
 	// Signal the character that they're being talked to
 	charHotspot->talkDestCharacterId = _hotspotId;
+	charHotspot->talkGate = 0;
 	_data->talkDestCharacterId = charHotspot->hotspotId;
 	_data->talkGate = 0;
 	
@@ -2067,6 +2068,7 @@ void Hotspot::saveToStream(Common::WriteStream *stream) {
 	stream->writeUint16LE(_blockedOffset);
 	stream->writeUint16LE(_exitCtr);
 	stream->writeByte(_walkFlag);
+	stream->writeByte(_persistant);
 	stream->writeUint16LE(_startRoomNumber);
 	stream->writeUint16LE(_supportValue);
 }
@@ -2103,6 +2105,7 @@ void Hotspot::loadFromStream(Common::ReadStream *stream) {
 	_blockedOffset = stream->readUint16LE();
 	_exitCtr = stream->readUint16LE();
 	_walkFlag = stream->readByte() != 0;
+	_persistant = stream->readByte() != 0;
 	_startRoomNumber = stream->readUint16LE();
 	_supportValue = stream->readUint16LE();
 }
@@ -2214,7 +2217,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 	if (h.resource()->talkDestCharacterId != 0) {
 		debugC(ERROR_DETAILED, kLureDebugAnimations, "Use Hotspot Id = %xh, talk_gate = %d",
 			h.resource()->talkDestCharacterId, h.talkGate());
-		if (h.talkGate() == 0x2A) {
+		if (h.talkGate() == GENERAL_MAGIC_ID) {
 			fields.setField(ACTIVE_HOTSPOT_ID, h.talkGate());
 			fields.setField(USE_HOTSPOT_ID, h.resource()->talkDestCharacterId);
 			Script::execute(h.talkScript());
@@ -3142,9 +3145,13 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 			if ((entry->preSequenceId & 0x8000) != 0) break;
 		}
 
-		if (showSelections && (numLines > 1))
+		if (showSelections && (numLines > 1)) {
 			res.setTalkState(TALK_SELECT);
-		else {
+
+			// Make sure the dest character holds still while an option is selected
+			HotspotData *destHotspot = res.getHotspot(talkDestCharacter);
+			destHotspot->talkDestCharacterId = h.hotspotId();
+		} else {
 			res.setTalkState(TALK_RESPOND);
 			res.setTalkSelection(1);
 		}
@@ -4457,17 +4464,21 @@ void HotspotList::loadFromStream(ReadStream *stream) {
 			Hotspot *destHotspot = res.getActiveHotspot(destHotspotId);
 			assert(destHotspot);
 			hotspot = new Hotspot(destHotspot, hotspotId);
-			res.addHotspot(hotspot);
 		}
 		else
 		{
-			hotspot = res.activateHotspot(hotspotId);
+			HotspotData *hotspotData = res.getHotspot(hotspotId);
+			assert(hotspotData);
+			hotspot = new Hotspot(hotspotData);
 		}
-		assert(hotspot);
 
+		res.addHotspot(hotspot);
+		assert(hotspot);
 		hotspot->loadFromStream(stream);
+
 		debugC(ERROR_DETAILED, kLureDebugAnimations, "Loaded hotspot %xh", hotspotId);
 
+		// Get the next hotspot
 		hotspotId = stream->readUint16LE();
 	}
 }

@@ -141,8 +141,8 @@ bool LureEngine::saveGame(uint8 slotNumber, Common::String &caption) {
 	f->writeString(caption);
 	f->writeByte(0); // End of string terminator
 
-	Room::getReference().saveToStream(f);
 	Resources::getReference().saveToStream(f);
+	Room::getReference().saveToStream(f);
 
 	delete f;
 	return true;
@@ -182,8 +182,8 @@ bool LureEngine::loadGame(uint8 slotNumber) {
 	while (f->readByte() != 0) ;
 
 	// Load in the data
-	Room::getReference().loadFromStream(f);
 	Resources::getReference().loadFromStream(f);
+	Room::getReference().loadFromStream(f);
 
 	delete f;
 	return true;
