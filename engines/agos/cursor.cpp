@@ -664,7 +664,7 @@ void AGOSEngine::drawMousePointer() {
 	} else if (getGameType() == GType_SIMON1) {
 		CursorMan.replaceCursor(_mouseData, 16, 16, 0, 0, 0xFF);
 	} else {
-		const uint16 *src = NULL;
+		const uint16 *src;
 		int i, j;
 
 		const uint8 color = (getGameType() == GType_ELVIRA1) ? 15: 65;
@@ -708,7 +708,7 @@ void AGOSEngine::drawMousePointer() {
 			} else {
 				src = _common_crossbowInfo2;
 			}
-		} else if (getGameType() == GType_ELVIRA1) {
+		} else {
 			if (_mouseCursor == 0) {
 				src = _common_mouseInfo;
 			} else if (_mouseCursor == 1) {
@@ -720,8 +720,6 @@ void AGOSEngine::drawMousePointer() {
 
 		if (_dragFlag != 0)
 			src = _common_handInfo;
-
-		assert(src);
 
 		for (i = 0; i < 16; i++) {
 			for (j = 0; j < 16; j++) {
