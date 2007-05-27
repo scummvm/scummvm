@@ -245,18 +245,17 @@ void registerDefaults() {
 		} \
 		const char *option = s; \
 		if (*s == '\0' && !isLongCmd) { option = s2; i++; } \
-		if (!option) option = defaultVal; \
+		if (!option || *option == '\0') option = defaultVal; \
 		if (option) settings[longCmd] = option;
 
 // Use this for options which have a required (string) value
 #define DO_OPTION(shortCmd, longCmd) \
 	DO_OPTION_OPT(shortCmd, longCmd, 0) \
-	if (!option) usage("Option '%s' requires an argument", argv[i-1]);
+	if (!option) usage("Option '%s' requires an argument", argv[isLongCmd ? i : i-1]);
 
 // Use this for options which have a required integer value
 #define DO_OPTION_INT(shortCmd, longCmd) \
-	DO_OPTION_OPT(shortCmd, longCmd, 0) \
-	if (!option) usage("Option '%s' requires an argument", argv[i-1]); \
+	DO_OPTION(shortCmd, longCmd) \
 	char *endptr = 0; \
 	int intValue; intValue = (int)strtol(option, &endptr, 0); \
 	if (endptr == NULL || *endptr != 0) usage("--%s: Invalid number '%s'", longCmd, option);
