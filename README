@@ -748,10 +748,11 @@ ScummVM includes a language option for Maniac Mansion, Zak McKracken, The Dig,
 The Curse of Monkey Island, Beneath a Steel Sky, Broken Sword 1 and
 Simon the Sorcerer 1 and 2.
 
-Note that with the exception of Beneath a Steel Sky, Broken Sword 1, TODO,
-using this option does *not* change the language of the game (which usually
-is hardcoded), but rather is only used to select the appropriate font (e.g.
-for a German version of a game, one containing umlauts).
+Note that with the exception of Beneath a Steel Sky, Broken Sword 1,
+multilanguage versions of Goblins games and Nippon Safes Inc., using this
+option does *not* change the language of the game (which usually is hardcoded),
+but rather is only used to select the appropriate font (e.g. for a German
+version of a game, one containing umlauts).
 
 Maniac Mansion and Zak McKracken
         en  - English (default)
