@@ -319,6 +319,7 @@ static void computeGameSettingsFromMD5(const FSList &fslist, const GameFilenameP
 static void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, const char *gameid) {
 	DescMap fileMD5Map;
 	DetectorResult dr;
+	char md5str[32+1];
 	
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
@@ -369,7 +370,6 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 		//
 		DetectorDesc &d = fileMD5Map[file];
 		if (d.md5.empty()) {
-			char md5str[32+1];
 			if (Common::md5_file_string(d.node, md5str, kMD5FileSizeLimit)) {
 
 				d.md5 = md5str;
