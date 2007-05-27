@@ -660,9 +660,10 @@ void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 
 			window->textLength++;
 			window->textColumnOffset += 6;
-			if (c == 'i' || c == 'l')
-				window->textColumnOffset -= 2;
-
+			if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+				if (c == 'i' || c == 'l')
+					window->textColumnOffset -= 2;
+			}
 			if (window->textColumnOffset >= 8) {
 				window->textColumnOffset -= 8;
 				window->textColumn++;
