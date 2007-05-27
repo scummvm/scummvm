@@ -123,6 +123,10 @@ void AGOSEngine::colorWindow(WindowBlock *window) {
 			dst += _screenWidth;
 		}
 	} else {
+		dst = getFrontBuf() + _dxSurfacePitch * (window->y) + window->x * 8;
+		h = window->height * 8;
+		w = window->width * 8;
+
 		if (getGameType() == GType_ELVIRA2 && window->y == 146) {
 			if (window->fill_color == 1) {
 				_displayPalette[33 * 4 + 0] = 48 * 4;
@@ -134,12 +138,11 @@ void AGOSEngine::colorWindow(WindowBlock *window) {
 				_displayPalette[33 * 4 + 2] = 40 * 4;
 			}
 
-			_paletteFlag = 2;
-		}
+			dst -= _dxSurfacePitch;
+			h += 2;
 
-		dst = getFrontBuf() + _dxSurfacePitch * window->y + window->x * 8;
-		h = window->height * 8;
-		w = window->width * 8;
+			_paletteFlag = 1;
+		}
 
 		uint8 color = window->fill_color;
 		if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
