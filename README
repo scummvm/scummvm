@@ -4,8 +4,6 @@ Last updated:    $Date$
 
 TODO: Resolve all the TODOs scattered through this file before release.
 
-TODO: Document the mass-add feature of the launcher (shift+"Add Game...")
-
 For more information, compatibility lists, details on donating, the latest
 release, progress reports and more, please visit the ScummVM home page
 at: http://www.scummvm.org/
@@ -650,7 +648,11 @@ directory to avoid this issue, are in section 6.0.
 
 ScummVM can be launched directly by running the executable. In this case,
 the built-in launcher will activate. From this, you can add games (click
-'Add Game'), or launch games which have already been configured.
+'Add Game'), or launch games which have already been configured. Games can
+also be added in mass quantities. By pressing shift + 'Add Game' (Note that
+the image turns to 'Mass Add'), you can then specify a directory to start in,
+and ScummVM will attempt to detect games in all subdirectories of that
+directory.
 
 ScummVM can also be launched into a game directly using Command Line
 arguments -- see the next section.
@@ -892,11 +894,12 @@ other games.
         - and +                - Text speed, slower/faster
         F5                     - Displays a save/load box
         Alt-F5                 - Displays the original save/load box, if the
-                                 game has one. This is not intended for saving
-                                 or loading a game, and may even crash ScummVM
-                                 in some games, but it is currently the only
-                                 way to see your IQ points in Indiana Jones and
-                                 the Last Crusade without dying.
+                                 game has one. You can save and load games using
+                                 using this, however it is not intended for this
+                                 purpose, and may even crash ScummVM in some
+                                 games, but it is currently the only way to see
+                                 your IQ points in Indiana Jones and the Last
+                                 Crusade without dying.
         Space                  - Pauses
         Period (.)             - Skips current line of text in some games
         Enter                  - Simulate left mouse button press
