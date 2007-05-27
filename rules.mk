@@ -17,7 +17,7 @@ ifdef PLUGIN
 PLUGIN-$(MODULE) := plugins/$(PLUGIN_PREFIX)$(notdir $(MODULE))$(PLUGIN_SUFFIX)
 $(PLUGIN-$(MODULE)): $(MODULE_OBJS-$(MODULE)) $(PLUGIN_EXTRA_DEPS)
 	$(MKDIR) plugins
-	$(CXX) $(PLUGIN_LDFLAGS) $(filter-out $(PLUGIN_EXTRA_DEPS),$+) -o $@
+	$(CXX) $(filter-out $(PLUGIN_EXTRA_DEPS),$+) $(PLUGIN_LDFLAGS) -o $@
 PLUGIN:=
 plugins: $(PLUGIN-$(MODULE))
 

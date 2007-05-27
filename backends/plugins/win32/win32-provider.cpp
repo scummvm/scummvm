@@ -27,6 +27,8 @@
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/fs.h"
 
+#include <windows.h>
+
 #define PLUGIN_DIRECTORY	""
 #define PLUGIN_PREFIX		""
 #define PLUGIN_SUFFIX		".dll"
