@@ -306,6 +306,11 @@ void AGOSEngine::dirtyClips() {
 }
 
 void AGOSEngine::restoreBackGround() {
+	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAtariST &&
+		(getFeatures() & GF_DEMO)) {
+		return;
+	}
+
 	AnimTable *animTable;
 	uint images = 0;
 
@@ -361,6 +366,11 @@ void AGOSEngine::restoreBackGround() {
 }
 
 void AGOSEngine::saveBackGround(VgaSprite *vsp) {
+	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAtariST &&
+		(getFeatures() & GF_DEMO)) {
+		return;
+	}
+
 	if ((vsp->flags & kDFSkipStoreBG) || !vsp->image)
 		return;
 
