@@ -1156,11 +1156,16 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	// Save/load the charset renderer state
 	//
-	if (s->getVersion() >= VER(72)) {
-		if (s->isSaving()) {
-			s->saveByte(_charset->getCurID());
-		} else {
+	if (s->getVersion() >= VER(73)) {
+		_charset->saveLoadWithSerializer(s);
+	} else if (s->isLoading()) {
+		if (s->getVersion() == VER(72)) {
 			_charset->setCurID(s->loadByte());
+		} else {
+			// Before V72, the charset id wasn't saved. This used to cause issues such
+			// as the one described in the bug report #1722153. For these savegames,
+			// we reinitialize the id using a, hopefully, sane value.
+			_charset->setCurID(_string[0]._default.charset);
 		}
 	}
 }

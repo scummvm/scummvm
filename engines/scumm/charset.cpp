@@ -1311,6 +1311,20 @@ void CharsetRenderer::translateColor() {
 	}
 }
 
+void CharsetRenderer::saveLoadWithSerializer(Serializer *ser) {
+	static const SaveLoadEntry charsetRendererEntries[] = {
+		MKLINE(CharsetRenderer, _curId, sleByte, VER(73)),
+		MKLINE(CharsetRenderer, _color, sleByte, VER(73)),
+		MKEND()
+	};
+
+	ser->saveLoadEntries(this, charsetRendererEntries);
+
+	if (ser->isLoading()) {
+		setCurID(_curId);
+		setColor(_color);
+	}
+}
 
 void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	int width, height, origWidth, origHeight;

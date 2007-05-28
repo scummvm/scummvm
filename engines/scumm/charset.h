@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "scumm/gfx.h"
+#include "scumm/saveload.h"
 
 namespace Scumm {
 
@@ -84,6 +85,8 @@ public:
 	virtual int getCharWidth(byte chr) = 0;
 
 	virtual void setColor(byte color) { _color = color; translateColor(); }
+
+	void saveLoadWithSerializer(Serializer *ser);
 };
 
 class CharsetRendererCommon : public CharsetRenderer {
