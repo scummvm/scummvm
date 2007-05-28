@@ -1406,7 +1406,11 @@ void Actor::handleActions(int msec, bool setup) {
 					}
 				}
 
-				speed = (ACTOR_LMULT * 2 * actor->_screenScale + 63) / 256;
+				if(_vm->getGameType() == GType_ITE)
+					speed = (ACTOR_LMULT * 2 * actor->_screenScale + 63) / 256;
+				else
+					speed = (72 * actor->_screenScale + 128) / 256;
+
 				if (speed < 1) {
 					speed = 1;
 				}
