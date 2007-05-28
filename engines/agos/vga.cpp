@@ -608,7 +608,7 @@ void AGOSEngine::vc10_draw() {
 
 	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST) {
 		if (((image >= 11 && image <= 16) || (image >= 195 && image <= 198)) &&
-			_vgaCurSpriteId == 100) {
+			_zoneNumber == 1) {
 			y += 75;
 		}
 	}
