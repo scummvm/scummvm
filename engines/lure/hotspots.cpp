@@ -2787,17 +2787,6 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot player anim handler end");
 }
 
-struct RoomTranslationRecord {
-	uint8 srcRoom;
-	uint8 destRoom;
-};
-
-RoomTranslationRecord roomTranslations[] = {
-	{0x1E, 0x13}, {0x07, 0x08}, {0x1C, 0x12}, {0x26, 0x0F}, 
-	{0x27, 0x0F}, {0x28, 0x0F}, {0x29, 0x0F}, {0x22, 0x0A}, 
-	{0x23, 0x13}, {0x24, 0x14}, {0x31, 0x2C}, {0x2F, 0x2C},
-	{0, 0}};
-
 void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 	static int countdownCtr = 0;
 	Resources &res = Resources::getReference();
