@@ -315,7 +315,7 @@ void Resources::reloadData() {
 	delete mb;
 
 	// Initialise delay list
-	_delayList.clear();
+	_delayList.clear(true);
 
 	// Load miscellaneous data
 	_cursors = d.getEntry(CURSOR_RESOURCE_ID);
@@ -651,6 +651,7 @@ void Resources::saveToStream(Common::WriteStream *stream)
 	_barmanLists.saveToStream(stream);
 	_exitJoins.saveToStream(stream);
 	_roomData.saveToStream(stream);
+	_delayList.saveToStream(stream);
 }
 
 void Resources::loadFromStream(Common::ReadStream *stream) {
@@ -668,6 +669,8 @@ void Resources::loadFromStream(Common::ReadStream *stream) {
 	_exitJoins.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading walkable paths");
 	_roomData.loadFromStream(stream);
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading delay list");
+	_delayList.loadFromStream(stream); 
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Finished loading");
 }
 
