@@ -599,9 +599,11 @@ void AGOSEngine_Elvira2::oe2_ifExitLocked() {
 }
 
 void AGOSEngine_Elvira2::oe2_playEffect() {
-	// 174:
-	uint a = getVarOrWord();
-	debug(0, "oe2_playEffect: stub (%d)", a);
+	// 174: play sound
+	uint soundId = getVarOrWord();
+	loadSound(soundId);
+
+	debug(0, "oe2_playEffect: stub (%d)", soundId);
 }
 
 void AGOSEngine_Elvira2::oe2_getDollar2() {

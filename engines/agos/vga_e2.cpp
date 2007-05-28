@@ -186,6 +186,8 @@ void AGOSEngine::vc52_playSound() {
 		_sound->playEffects(sound);
 	} else if (getGameId() == GID_SIMON1DOS) {
 		playSting(sound);
+	} else {
+		loadSound(sound);
 	}
 }
 
