@@ -1258,7 +1258,7 @@ void AGOSEngine::vc37_pokePalette() {
 	palptr[2] = ((color & 0x00f) >> 0) * 32;
 	palptr[3] = 0;
 
-	if (_lockWord & 0x20) {
+	if (!(_lockWord & 0x20)) {
 		_paletteFlag = 1;
 		_displayScreen++;
 	}
