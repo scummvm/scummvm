@@ -498,6 +498,7 @@ void AGOSEngine_Elvira2::oe2_printStats() {
 	// 161: print stats
 	WindowBlock *window = _dummyWindow;
 	int val;
+	const uint8 y = (getPlatform() == Common::kPlatformAtariST) ? 131 : 134;
 
 	window->flags = 1;
 
@@ -509,7 +510,7 @@ void AGOSEngine_Elvira2::oe2_printStats() {
 		val = -99;
 	if (val > 99)
 		val = 99;	
-	writeChar(window, 10, 134, 0, val);
+	writeChar(window, 10, y, 0, val);
 
 	// PP
 	val = _variableArray[22];
@@ -517,7 +518,7 @@ void AGOSEngine_Elvira2::oe2_printStats() {
 		val = -99;
 	if (val > 99)
 		val = 99;	
-	writeChar(window, 16, 134, 6, val);
+	writeChar(window, 16, y, 6, val);
 
 	// HP
 	val = _variableArray[23];
@@ -525,7 +526,7 @@ void AGOSEngine_Elvira2::oe2_printStats() {
 		val = -99;
 	if (val > 99)
 		val = 99;	
-	writeChar(window, 23, 134, 4, val);
+	writeChar(window, 23, y, 4, val);
 
 	// Experience
 	val = _variableArray[21];
@@ -533,8 +534,8 @@ void AGOSEngine_Elvira2::oe2_printStats() {
 		val = -99;
 	if (val > 9999)
 		val = 9999;	
-	writeChar(window, 30, 134, 6, val / 100);
-	writeChar(window, 32, 134, 2, val / 10);
+	writeChar(window, 30, y, 6, val / 100);
+	writeChar(window, 32, y, 2, val / 10);
 
 	mouseOn();
 }

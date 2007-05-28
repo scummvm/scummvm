@@ -362,10 +362,11 @@ static const byte _image4[32] = {
 	0x3A, 0x3A, 0x3B, 0x3A,
 };
 
-void AGOSEngine::drawStuff(const byte *src, uint offs) {
-	byte *dst = getFrontBuf() + offs;
+void AGOSEngine::drawStuff(const byte *src, uint xoffs) {
+	const uint8 y = (getPlatform() == Common::kPlatformAtariST) ? 132 : 135;
+	byte *dst = getFrontBuf() + y * _screenWidth + xoffs;
 
-	for (uint y = 0; y < 6; y++) {
+	for (uint h = 0; h < 6; h++) {
 		memcpy(dst, src, 4);
 		src += 4;
 		dst += _screenWidth;
@@ -373,11 +374,11 @@ void AGOSEngine::drawStuff(const byte *src, uint offs) {
 }
 
 void AGOSEngine::imageEvent2(VgaTimerEntry * vte, uint dx) {
-	// Draws damage indicator gauge
+	// Draws damage indicator gauge when player hit
 	_nextVgaTimerToProcess = vte + 1;
 
 	if (!_opcode177Var1) {
-		drawStuff(_image1, 43204 + _opcode177Var2 * 4);
+		drawStuff(_image1, 4 + _opcode177Var2 * 4);
 		_opcode177Var2++;
 		if (_opcode177Var2 == dx) {
 			_opcode177Var1 = 1;
@@ -387,7 +388,7 @@ void AGOSEngine::imageEvent2(VgaTimerEntry * vte, uint dx) {
 		}
 	} else if (_opcode177Var2) {
 		_opcode177Var2--;
-		drawStuff(_image2, 43204 + _opcode177Var2 * 4);
+		drawStuff(_image2, 4 + _opcode177Var2 * 4);
 		vte->delay = 3;
 	} else {
 		deleteVgaEvent(vte);
@@ -395,10 +396,11 @@ void AGOSEngine::imageEvent2(VgaTimerEntry * vte, uint dx) {
 }
 
 void AGOSEngine::imageEvent3(VgaTimerEntry * vte, uint dx) {
+	// Draws damage indicator gauge when monster hit
 	_nextVgaTimerToProcess = vte + 1;
 
 	if (!_opcode178Var1) {
-		drawStuff(_image3, 43475 + _opcode178Var2 * 4);
+		drawStuff(_image3, 275 + _opcode178Var2 * 4);
 		_opcode178Var2++;
 		if (_opcode178Var2 >= 10 || _opcode178Var2 == dx) {
 			_opcode178Var1 = 1;
@@ -408,7 +410,7 @@ void AGOSEngine::imageEvent3(VgaTimerEntry * vte, uint dx) {
 		}
 	} else if (_opcode178Var2) {
 		_opcode178Var2--;
-		drawStuff(_image4, 43475 + _opcode178Var2 * 4);
+		drawStuff(_image4, 275 + _opcode178Var2 * 4);
 		vte->delay = 3;
 	} else {
 		deleteVgaEvent(vte);
