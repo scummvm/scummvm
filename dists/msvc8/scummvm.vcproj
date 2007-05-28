@@ -74,7 +74,7 @@
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/scummvm.pdb"
-				SubSystem="2"
+				SubSystem="1"
 				TargetMachine="1"
 			/>
 			<Tool
