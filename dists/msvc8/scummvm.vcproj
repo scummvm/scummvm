@@ -74,8 +74,9 @@
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/scummvm.pdb"
-				SubSystem="2"
+				SubSystem="1"
 				TargetMachine="1"
+				EntryPointSymbol="WinMainCRTStartup"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -132,7 +133,7 @@
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../..;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_MT32EMU"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_MT32EMU"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
