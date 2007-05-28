@@ -965,6 +965,10 @@ being run faster than their normal speed, as scripts will lose synchronisation.
 
 Ctrl-f is not supported by the Broken Sword games.
 
+Note for WinCE users: Due to the limited keyboard input in most devices, a
+small subset of these hot keys are supported via key remapping and/or panel
+actions. Please consult the README-WinCE.txt file.
+
 
 6.0) Savegames:
 ---- ----------
