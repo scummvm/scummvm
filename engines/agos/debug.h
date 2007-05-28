@@ -603,7 +603,7 @@ static const char *const elvira2_opcodeNameTable[256] = {
 	/* 172 */
 	"IWBJ|IF_EXIT_CLOSED",
 	"IWBJ|IF_EXIT_LOCKED",
-	"W|UNK_174",
+	"W|PLAY_EFFECT",
 	"|getDollar2",
 	/* 176 */
 	"IWBB|SET_SUPER_ROOM_EXIT",

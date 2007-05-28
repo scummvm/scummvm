@@ -1333,7 +1333,7 @@ public:
 	void oe2_ifExitOpen();
 	void oe2_ifExitClosed();
 	void oe2_ifExitLocked();
-	void oe2_unk174();
+	void oe2_playEffect();
 	void oe2_getDollar2();
 	void oe2_setSRExit();
 	void oe2_unk177();

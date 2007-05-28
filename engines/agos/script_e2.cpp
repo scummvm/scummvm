@@ -249,7 +249,7 @@ void AGOSEngine_Elvira2::setupOpcodes() {
 		/* 172 */
 		OPCODE(oe2_ifExitClosed),
 		OPCODE(oe2_ifExitLocked),
-		OPCODE(oe2_unk174),
+		OPCODE(oe2_playEffect),
 		OPCODE(oe2_getDollar2),
 		/* 176 */
 		OPCODE(oe2_setSRExit),
@@ -597,10 +597,10 @@ void AGOSEngine_Elvira2::oe2_ifExitLocked() {
 	setScriptCondition(getExitState(i, n, d) == 3);
 }
 
-void AGOSEngine_Elvira2::oe2_unk174() {
+void AGOSEngine_Elvira2::oe2_playEffect() {
 	// 174:
 	uint a = getVarOrWord();
-	debug(0, "oe2_unk174: stub (%d)", a);
+	debug(0, "oe2_playEffect: stub (%d)", a);
 }
 
 void AGOSEngine_Elvira2::oe2_getDollar2() {
