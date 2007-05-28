@@ -1115,7 +1115,7 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 		frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
 
 		if (frameRange->frameCount <= frameOffset) {
-			error("Wrong frameOffset 0x%X", frameOffset);
+			warning("Wrong frameOffset 0x%X", frameOffset);
 		}
 
 		actor->_frameNumber = frameRange->frameIndex + frameOffset;
