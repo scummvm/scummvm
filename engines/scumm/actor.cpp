@@ -796,6 +796,11 @@ void Actor::setDirection(int direction) {
 	int i;
 	uint16 vald;
 
+	// HACK to fix bug #774783
+	// If Hitler's direction is being set to anything other than 90, set it to 90
+	if ((_vm->_game.id == GID_INDY3) && _vm->_roomResource == 46 && _number == 9 && direction != 90)
+		direction = 90;
+
 	// Do nothing if actor is already facing in the given direction
 	if (_facing == direction)
 		return;
