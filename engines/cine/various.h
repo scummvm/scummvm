@@ -86,7 +86,6 @@ extern Common::File *partFileHandleP;
 #define partFileHandle (*partFileHandleP)
 
 
-void freeAnimDataTable(void);
 void mainLoopSub1(void);
 void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 

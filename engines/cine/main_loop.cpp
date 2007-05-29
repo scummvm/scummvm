@@ -146,7 +146,6 @@ void manageEvents(int count) {
 	}
 
 	int i;
-
 	for (i = 0; i < count; i++) {
 		//FIXME(?): Maybe there's a better way to "fix" this?
 		//

@@ -133,12 +133,11 @@ int8 removeOverlayElement(uint16 objIdx, uint16 param) {
 
 int16 freeOverlay(uint16 objIdx, uint16 param) {
 	overlayHeadElement *currentHeadPtr = overlayHead.next;
-	overlayHeadElement *tempHead = &overlayHead;
-	overlayHeadElement *tempPtr2;
+	overlayHeadElement *previousPtr = &overlayHead;
 
 	while (currentHeadPtr && ((currentHeadPtr->objIdx != objIdx) || (currentHeadPtr->type != param))) {
-		tempHead = currentHeadPtr;
-		currentHeadPtr = tempHead->next;
+		previousPtr = currentHeadPtr;
+		currentHeadPtr = previousPtr->next;
 	}
 
 	if (!currentHeadPtr) {
@@ -149,8 +148,8 @@ int16 freeOverlay(uint16 objIdx, uint16 param) {
 		return -1;
 	}
 
-	tempHead->next = currentHeadPtr->next;
-	tempPtr2 = currentHeadPtr->next;
+	previousPtr->next = currentHeadPtr->next;
+	overlayHeadElement *tempPtr2 = currentHeadPtr->next;
 
 	if (!tempPtr2) {
 		tempPtr2 = &overlayHead;
@@ -158,9 +157,7 @@ int16 freeOverlay(uint16 objIdx, uint16 param) {
 
 	tempPtr2->previous = currentHeadPtr->previous;
 
-	//TODO: fix !
-	//free(currentHeadPtr);
-
+	free(currentHeadPtr);
 	return 0;
 }
 

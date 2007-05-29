@@ -72,29 +72,8 @@ void loadPart(const char *partName) {
 		loadPal(partName);
 }
 
-void freePartEntry(byte idx) {
-	if (animDataTable[idx].ptr1) {
-		//free(animDataTable[idx].ptr1);
-
-		animDataTable[idx].ptr1 = NULL;
-		animDataTable[idx].ptr2 = NULL;
-
-		// TODO: finish
-
-		if (frameVar0 > 0)
-			frameVar0--;
-	}
-}
-
-void freePartRange(byte startIdx, byte numIdx) {
-	byte i;
-
-	for (i = 0; i < numIdx; i++) {
-		freePartEntry(i + startIdx);
-	}
-}
-
 void closePart(void) {
+	// TODO
 }
 
 static const char *bundleNamesDOSEN[] = {

@@ -45,7 +45,7 @@ struct animHeader2Struct {
 	uint16 field_E;
 };
 
-uint16 frameVar0 = 0;
+static uint16 animDataCount = 0;
 
 animHeaderStruct animHeader;
 
@@ -183,7 +183,30 @@ animDataEntry animData[] = {
 	{"FIN", 0x9},
 };
 
-byte getAnimTransparentColor(const char *animName) {
+static void freeAnimData(byte idx) {
+	assert(idx < NUM_MAX_ANIMDATA);
+	if (animDataTable[idx].ptr1) {
+		free(animDataTable[idx].ptr1);
+		free(animDataTable[idx].ptr2);
+		memset(&animDataTable[idx], 0, sizeof(AnimData));
+		animDataTable[idx].fileIdx = -1;
+		animDataTable[idx].frameIdx = -1;
+		if (animDataCount > 0)
+			animDataCount--;
+	}
+}
+
+void freeAnimDataRange(byte startIdx, byte numIdx) {
+	for (byte i = 0; i < numIdx; i++) {
+		freeAnimData(i + startIdx);
+	}
+}
+
+void freeAnimDataTable() {
+	freeAnimDataRange(0, NUM_MAX_ANIMDATA);
+}
+
+static byte getAnimTransparentColor(const char *animName) {
 	char name[15];
 
 	removeExtention(name, animName);
@@ -237,7 +260,7 @@ int16 allocFrame(uint16 width, uint16 height, int8 isMask) {
 		animDataTable[i].frameIdx = -1;
 	}
 
-	frameVar0++;
+	animDataCount++;
 
 	return i;
 }
@@ -287,7 +310,7 @@ int16 allocFrame2(uint16 width, uint16 height, uint16 type) {
 	animDataTable[i].fileIdx = -1;
 	animDataTable[i].frameIdx = -1;
 
-	frameVar0++;
+	animDataCount++;
 
 	return i;
 }
@@ -331,7 +354,7 @@ int16 reserveFrame(uint16 width, uint16 height, uint16 type, uint16 idx) {
 	animDataTable[i].fileIdx = -1;
 	animDataTable[i].frameIdx = -1;
 
-	frameVar0++;
+	animDataCount++;
 
 	return i;
 }

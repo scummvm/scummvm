@@ -1434,7 +1434,7 @@ void o1_freePartRange() {
 	assert(startIdx + numIdx <= NUM_MAX_ANIMDATA);
 
 	debugC(5, kCineDebugScript, "Line: %d: freePartRange(%d,%d)", _currentLine, startIdx, numIdx);
-	freePartRange(startIdx, numIdx);
+	freeAnimDataRange(startIdx, numIdx);
 }
 
 void o1_unloadAllMasks() {

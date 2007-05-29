@@ -27,8 +27,6 @@
 
 namespace Cine {
 
-extern uint16 frameVar0;
-
 struct animHeaderStruct {
 	byte field_0;
 	byte field_1;
@@ -57,6 +55,8 @@ struct animDataEntry {
 
 extern animDataEntry animData[];
 
+void freeAnimDataTable(void);
+void freeAnimDataRange(byte startIdx, byte numIdx);
 void loadResource(const char *animName);
 void loadAbs(const char *resourceName, uint16 idx);
 void loadResourcesFromSave();

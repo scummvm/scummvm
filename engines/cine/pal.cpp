@@ -36,7 +36,7 @@ uint16 palEntriesCount;
 
 Common::File *palFileHandleP = NULL;
 
-PalEntry *palPtr;
+PalEntry *palPtr = NULL;
 
 byte paletteBuffer1[16];
 byte paletteBuffer2[16];

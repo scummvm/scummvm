@@ -57,7 +57,6 @@ extern AnimData *animDataTable;
 extern PartBuffer *partBuffer;
 
 void loadPart(const char *partName);
-void freePartRange(byte startIdx, byte numIdx);
 void closePart(void);
 
 int16 findFileInBundle(const char *fileName);
