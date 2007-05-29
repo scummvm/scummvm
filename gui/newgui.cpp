@@ -309,6 +309,8 @@ void NewGui::runLoop() {
 			case Common::EVENT_SCREEN_CHANGED:
 				screenChange();
 				break;
+			default:
+				break;
 			}
 		}
 
