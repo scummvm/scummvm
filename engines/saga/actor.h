@@ -50,6 +50,8 @@ class HitZone;
 
 #define ACTOR_LMULT 4
 
+#define ACTOR_SPEED 72
+
 #define ACTOR_CLIMB_SPEED 8
 
 #define ACTOR_COLLISION_WIDTH       32

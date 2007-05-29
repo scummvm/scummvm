@@ -1409,11 +1409,13 @@ void Actor::handleActions(int msec, bool setup) {
 				if(_vm->getGameType() == GType_ITE)
 					speed = (ACTOR_LMULT * 2 * actor->_screenScale + 63) / 256;
 				else
-					speed = (72 * actor->_screenScale + 128) / 256;
+					speed = (ACTOR_SPEED * actor->_screenScale + 128) >> 8;
 
-				if (speed < 1) {
+				if (speed < 1)
 					speed = 1;
-				}
+
+				if(_vm->getGameType() == GType_IHNM)
+					speed = speed / 2;
 
 				if ((actor->_actionDirection == kDirUp) || (actor->_actionDirection == kDirDown)) {
 					addDelta.y = clamp(-speed, delta.y, speed);
