@@ -416,6 +416,8 @@ void loadSpl(const char *resourceName) {
 	animDataTable[entry].fileIdx = foundFileIdx;
 	animDataTable[entry].frameIdx = 0;
 	strcpy(animDataTable[entry].name, currentPartName);
+
+	free(dataPtr);
 }
 
 void loadSplAbs(const char *resourceName, uint16 idx) {
@@ -428,6 +430,8 @@ void loadSplAbs(const char *resourceName, uint16 idx) {
 
 	entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0, idx);
 	memcpy(animDataTable[entry].ptr1, dataPtr, partBuffer[foundFileIdx].unpackedSize);
+
+	free(dataPtr);
 }
 
 void loadMsk(const char *resourceName) {
@@ -475,6 +479,8 @@ void loadMsk(const char *resourceName) {
 		animDataTable[entry].frameIdx = i;
 		strcpy(animDataTable[entry].name, currentPartName);
 	}
+
+	free(dataPtr);
 }
 
 void loadAni(const char *resourceName) {
@@ -555,6 +561,8 @@ void loadAni(const char *resourceName) {
 		animDataTable[entry].frameIdx = i;
 		strcpy(animDataTable[entry].name, currentPartName);
 	}
+
+	free(dataPtr);
 }
 
 void convert8BBP(byte * dest, byte * source, int16 width, int16 height) {
@@ -754,6 +762,8 @@ void loadSet(const char *resourceName) {
 		animDataTable[entry].frameIdx = i;
 		strcpy(animDataTable[entry].name, currentPartName);
 	}
+
+	free(dataPtr);
 }
 
 void loadSetAbs(const char *resourceName, uint16 idx) {
@@ -841,6 +851,8 @@ void loadSetAbs(const char *resourceName, uint16 idx) {
 		animDataTable[entry].frameIdx = i;
 		strcpy(animDataTable[entry].name, currentPartName);
 	}
+
+	free(dataPtr);
 }
 
 void loadSeq(const char *resourceName) {
@@ -854,6 +866,8 @@ void loadSeq(const char *resourceName) {
 	entry = allocFrame2((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0);
 
 	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16, (uint16) partBuffer[foundFileIdx].unpackedSize - 0x16);
+
+	free(dataPtr);
 }
 
 void loadSeqAbs(const char *resourceName, uint16 idx) {
@@ -867,6 +881,8 @@ void loadSeqAbs(const char *resourceName, uint16 idx) {
 	entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0, idx);
 
 	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16, (uint16) partBuffer[foundFileIdx].unpackedSize - 0x16);
+
+	free(dataPtr);
 }
 
 void loadResource(const char *resourceName) {
@@ -1060,6 +1076,7 @@ void loadResourcesFromSave() {
 				}
 			}
 
+			free(dataPtr);
 		}
 	}
 

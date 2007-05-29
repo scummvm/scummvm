@@ -39,10 +39,11 @@ void loadCtHigh(byte * currentPtr) {
 
 byte loadCt(const char *ctName) {
 	uint16 header[32];
+	byte *ptr, *dataPtr;
 
 	strcpy(currentCtName, ctName);
 
-	byte *ptr = readBundleFile(findFileInBundle(ctName));
+	ptr = dataPtr = readBundleFile(findFileInBundle(ctName));
 
 	if (g_cine->getGameType() == Cine::GType_OS) {
 		uint16 bpp = READ_BE_UINT16(ptr); ptr += 2;
@@ -68,6 +69,7 @@ byte loadCt(const char *ctName) {
 		gfxConvertSpriteToRaw(page3Raw, ptr + 0x80, 160, 200);
 	}
 
+	free(dataPtr);
 	return 0;
 }
 
@@ -81,10 +83,12 @@ void loadBgHigh(const char *currentPtr) {
 }
 
 byte loadBg(const char *bgName) {
+	byte *ptr, *dataPtr;
+
 	strcpy(currentBgName[0], bgName);
 
 	byte fileIdx = findFileInBundle(bgName);
-	byte *ptr = readBundleFile(fileIdx);
+	ptr = dataPtr = readBundleFile(fileIdx);
 
 	uint16 bpp = READ_BE_UINT16(ptr); ptr += 2;
 	if (bpp == 8) {
@@ -102,6 +106,7 @@ byte loadBg(const char *bgName) {
 		gfxResetRawPage(page2Raw);
 		gfxConvertSpriteToRaw(page2Raw, ptr, 160, 200);
 	}
+	free(dataPtr);
 	return 0;
 }
 
@@ -110,10 +115,12 @@ byte currentAdditionalBgIdx = 0;
 byte currentAdditionalBgIdx2 = 0;
 
 void addBackground(const char *bgName, uint16 bgIdx) {
+	byte *ptr, *dataPtr;
+
 	strcpy(currentBgName[bgIdx], bgName);
 
 	byte fileIdx = findFileInBundle(bgName);
-	byte *ptr = readBundleFile(fileIdx);
+	ptr = dataPtr = readBundleFile(fileIdx);
 
 	additionalBgTable[bgIdx] = (byte *) malloc(320 * 200);
 
@@ -125,6 +132,7 @@ void addBackground(const char *bgName, uint16 bgIdx) {
 		ptr += 32;
 		gfxConvertSpriteToRaw(additionalBgTable[bgIdx], ptr, 160, 200);
 	}
+	free(dataPtr);
 }
 
 } // End of namespace Cine

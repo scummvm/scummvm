@@ -61,11 +61,11 @@ void loadObject(char *pObjectName) {
 	uint16 numEntry;
 	uint16 entrySize;
 	uint16 i;
-	byte *ptr;
+	byte *ptr, *dataPtr;
 
 	checkDataDisk(-1);
 
-	ptr = readBundleFile(findFileInBundle(pObjectName));
+	ptr = dataPtr = readBundleFile(findFileInBundle(pObjectName));
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
@@ -95,6 +95,8 @@ void loadObject(char *pObjectName) {
 			objectTable[i].costume = 0;
 		}
 	}
+
+	free(dataPtr);
 }
 
 int8 removeOverlayElement(uint16 objIdx, uint16 param) {

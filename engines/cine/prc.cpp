@@ -63,7 +63,7 @@ void freePrcLinkedList(void) {
 void loadPrc(const char *pPrcName) {
 	byte i;
 	uint16 numScripts;
-	const byte *scriptPtr;
+	byte *scriptPtr, *dataPtr;
 
 	assert(pPrcName);
 
@@ -85,9 +85,9 @@ void loadPrc(const char *pPrcName) {
 	checkDataDisk(-1);
 	if ((g_cine->getGameType() == Cine::GType_FW) &&
 		(!scumm_stricmp(pPrcName, BOOT_PRC_NAME) || !scumm_stricmp(pPrcName, "demo.prc"))) {
-		scriptPtr = readFile(pPrcName);
+		scriptPtr = dataPtr = readFile(pPrcName);
 	} else {
-		scriptPtr = readBundleFile(findFileInBundle(pPrcName));
+		scriptPtr = dataPtr = readBundleFile(findFileInBundle(pPrcName));
 	}
 
 	assert(scriptPtr);
@@ -112,6 +112,8 @@ void loadPrc(const char *pPrcName) {
 			computeScriptStack(scriptTable[i].ptr, scriptTable[i].stack, size);
 		}
 	}
+
+	free(dataPtr);
 
 #ifdef DUMP_SCRIPTS
 

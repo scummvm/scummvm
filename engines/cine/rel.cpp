@@ -58,7 +58,7 @@ void releaseObjectScripts(void) {
 void loadRel(char *pRelName) {
 	uint16 numEntry;
 	uint16 i;
-	byte *ptr;
+	byte *ptr, *dataPtr;
 
 	checkDataDisk(-1);
 
@@ -70,7 +70,7 @@ void loadRel(char *pRelName) {
 		}
 	}
 
-	ptr = readBundleFile(findFileInBundle(pRelName));
+	ptr = dataPtr = readBundleFile(findFileInBundle(pRelName));
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
@@ -95,6 +95,8 @@ void loadRel(char *pRelName) {
 			ptr += relTable[i].size;
 		}
 	}
+	
+	free(dataPtr);
 
 #ifdef DUMP_SCRIPTS
 

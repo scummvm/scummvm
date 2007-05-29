@@ -34,7 +34,7 @@ uint16 messageCount;
 
 void loadMsg(char *pMsgName) {
 	uint16 i;
-	byte *ptr;
+	byte *ptr, *dataPtr;
 
 	checkDataDisk(-1);
 
@@ -45,14 +45,13 @@ void loadMsg(char *pMsgName) {
 
 		if (messageTable[i].ptr) {
 			assert(messageTable[i].ptr);
-
 			free(messageTable[i].ptr);
 		}
 
 		messageTable[i].ptr = NULL;
 	}
 
-	ptr = readBundleFile(findFileInBundle(pMsgName));
+	ptr = dataPtr = readBundleFile(findFileInBundle(pMsgName));
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
@@ -74,6 +73,8 @@ void loadMsg(char *pMsgName) {
 			ptr += messageTable[i].len;
 		}
 	}
+
+	free(dataPtr);
 }
 
 } // End of namespace Cine
