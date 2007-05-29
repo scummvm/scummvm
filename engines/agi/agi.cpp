@@ -68,6 +68,12 @@ void AgiEngine::processEvents() {
 			_gfx->deinitMachine();
 			_system->quit();
 			break;
+		case Common::EVENT_PREDICTIVE_DIALOG:
+			if (predictiveDialog()) {
+				strcpy((char *)_game.inputBuffer, _predictiveResult);
+				handleKeys(KEY_ENTER);
+			}
+			break;
 		case Common::EVENT_LBUTTONDOWN:
 			key = BUTTON_LEFT;
 			g_mouse.button = 1;

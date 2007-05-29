@@ -34,7 +34,7 @@ namespace Common {
  * @see Event
  *
  * @todo Merge EVENT_LBUTTONDOWN, EVENT_RBUTTONDOWN and EVENT_WHEELDOWN;
- *       likewiese EVENT_LBUTTONUP, EVENT_RBUTTONUP, EVENT_WHEELUP.
+ *       likewise EVENT_LBUTTONUP, EVENT_RBUTTONUP, EVENT_WHEELUP.
  *       To do that, we just have to add a field to the Event which
  *       indicates which button was pressed.
  */
@@ -53,7 +53,8 @@ enum EventType {
 	EVENT_WHEELDOWN = 9,
 
 	EVENT_QUIT = 10,
-	EVENT_SCREEN_CHANGED = 11
+	EVENT_SCREEN_CHANGED = 11,
+	EVENT_PREDICTIVE_DIALOG = 12
 };
 
 /**
