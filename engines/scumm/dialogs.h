@@ -232,6 +232,14 @@ protected:
 	uint32 _timer;
 };
 
+
+//The Indy IQ dialog
+class Indy3IQPointsDialog : public InfoDialog {
+public:
+	Indy3IQPointsDialog(ScummEngine *scumm, char* text);
+	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+};
+
 } // End of namespace Scumm
 
 #endif

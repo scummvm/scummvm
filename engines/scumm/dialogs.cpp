@@ -910,7 +910,16 @@ void ValueDisplayDialog::open() {
 	_timer = getMillis() + kDisplayDelay;
 }
 
+Indy3IQPointsDialog::Indy3IQPointsDialog(ScummEngine *scumm, char* text)
+	: InfoDialog(scumm, text) {
+}
 
+void Indy3IQPointsDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+	if (ascii == 'i') 
+		close();
+	else
+		ScummDialog::handleKeyDown(ascii, keycode, modifiers);
+}
 
 } // End of namespace Scumm
 
