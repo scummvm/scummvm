@@ -69,7 +69,7 @@ GameList gameIDList(const Common::ADParams &params) {
 	return GameList(params.list);
 }
 
-void upgradeTargetIfNecessary(const Common::ADParams &params) {
+static void upgradeTargetIfNecessary(const Common::ADParams &params) {
 	if (params.obsoleteList == 0)
 		return;
 
@@ -97,25 +97,21 @@ GameDescriptor findGameID(
 	const PlainGameDescriptor *g = params.list;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
-			return *g;
+			return GameDescriptor(*g);
 		g++;
 	}
-
-	GameDescriptor gs;
 
 	if (params.obsoleteList != 0) {
 		const Common::ADObsoleteGameID *o = params.obsoleteList;
 		while (o->from) {
 			if (0 == scumm_stricmp(gameid, o->from)) {
-				gs["gameid"] = gameid;
-				gs["description"] = "Obsolete game ID";
-				return gs;
+				return GameDescriptor(gameid, "Obsolete game ID");
 			}
 			o++;
 		}
-	} else
-		return GameDescriptor(g->gameid, g->description);
-	return gs;
+	}
+
+	return GameDescriptor();
 }
 
 static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGameDescriptor *sg) {
@@ -221,6 +217,9 @@ const ADGameDescription *detectBestMatchingGame(
 PluginError detectGameForEngineCreation(
 	const Common::ADParams &params
 	) {
+
+	upgradeTargetIfNecessary(params);
+
 	Common::String gameid = ConfMan.get("gameid");
 
 	FSList fslist;

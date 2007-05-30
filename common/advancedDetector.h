@@ -207,9 +207,7 @@ GameList detectAllGames(const FSList &fslist, const Common::ADParams &params);
 const ADGameDescription *detectBestMatchingGame(const Common::ADParams &params);
 
 // FIXME/TODO: Rename this function to something more sensible.
-void upgradeTargetIfNecessary(const Common::ADParams &params);
-
-// FIXME/TODO: Rename this function to something more sensible.
+// Only used by ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_FUNC
 PluginError detectGameForEngineCreation(const Common::ADParams &params);
 
 
@@ -237,7 +235,6 @@ PluginError detectGameForEngineCreation(const Common::ADParams &params);
 	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \
 		assert(syst); \
 		assert(engine); \
-		Common::AdvancedDetector::upgradeTargetIfNecessary(params); \
 		PluginError err = Common::AdvancedDetector::detectGameForEngineCreation(params); \
 		if (err == kNoError) \
 			*engine = factoryFunc(syst); \
