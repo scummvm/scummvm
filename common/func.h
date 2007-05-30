@@ -247,7 +247,7 @@ template <typename T> struct Hash;
 
 
 #define GENERATE_TRIVIAL_HASH_FUNCTOR(T) \
-    template <> struct Hash<T> { \
+    template <> struct Hash<T> : public UnaryFunction<T, uint> { \
       uint operator()(T val) const { return (uint)val; } \
     }
 
