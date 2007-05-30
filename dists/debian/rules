@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-build: doc/README.pdf scummvm
+build: scummvm
 
 doc/README.pdf:
 	(cd doc; latex readme.tex)
@@ -11,15 +11,15 @@ doc/README.pdf:
 
 scummvm:
 	dh_testdir
-	./configure
+	./configure --prefix=/usr --bindir=/usr/games --datadir=/usr/share/games --mandir=/usr/share/man
 	$(MAKE)
 
 clean:
 	dh_testdir
 	dh_testroot
 	-$(MAKE) distclean
-	-rm doc/readme.aux doc/readme.dvi doc/readme.log doc/readme.out \
-	    doc/readme.toc doc/README.pdf
+	#-rm doc/readme.aux doc/readme.dvi doc/readme.log doc/readme.out \
+	#    doc/readme.toc doc/README.pdf
 	dh_clean
 
 install: build
@@ -27,8 +27,9 @@ install: build
 	dh_testroot
 	dh_clean
 	dh_installdirs
-	install -m0755 scummvm debian/scummvm/usr/games/scummvm
-	install -m0644 icons/scummvm.xpm debian/scummvm/usr/share/icons
+	$(MAKE) install DESTDIR=debian/scummvm
+	install -m 644 dists/scummvm.desktop debian/scummvm/usr/share/applications
+	install -m 644 icons/scummvm.svg debian/scummvm/usr/share/pixmaps
 
 binary: binary-arch
 

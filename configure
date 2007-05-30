@@ -1496,6 +1496,7 @@ NASMFLAGS := $NASMFLAGS
 PREFIX := $_prefix
 BINDIR := $_bindir
 MANDIR := $_mandir
+DATADIR := $_datadir
 
 $_mak_plugins
 
