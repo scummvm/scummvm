@@ -24,7 +24,6 @@
 #include "common/stdafx.h"
 
 #include "common/config-manager.h"
-#include "common/fs.h"
 #include "common/md5.h"
 #include "common/events.h"
 #include "common/system.h"
