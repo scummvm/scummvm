@@ -79,13 +79,6 @@ extern uint16 var3;
 extern uint16 var4;
 extern uint16 var5;
 
-extern Common::File *palFileHandleP;
-extern Common::File *partFileHandleP;
-
-#define palFileHandle (*palFileHandleP)
-#define partFileHandle (*partFileHandleP)
-
-
 void mainLoopSub1(void);
 void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 

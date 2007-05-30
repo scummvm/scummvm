@@ -68,12 +68,6 @@ CineEngine::~CineEngine() {
 		freePoldatDat();
 		freeErrmessDat();
 	}
-	
-	if (palFileHandleP);
-		delete palFileHandleP;
-
-	if (partFileHandleP);
-		delete partFileHandleP;
 }
 
 int CineEngine::init() {
@@ -82,9 +76,6 @@ int CineEngine::init() {
 		GUIErrorMessage("No valid games were found in the specified directory.");
 		return -1;
 	}
-	
-	palFileHandleP = new Common::File();
-	partFileHandleP = new Common::File();
 
 	// Initialize backend
 	_system->beginGFXTransaction();

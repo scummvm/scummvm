@@ -56,8 +56,6 @@ int16 buildObjectListCommand(void);
 void drawString(const char *string, byte param) {
 }
 
-Common::File *partFileHandleP = NULL;
-
 void waitPlayerInput(void) {
 }
 
@@ -999,15 +997,14 @@ void CineEngine::makeSystemMenu(void) {
 					if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
 						char saveString[256], tmp[80];
 
-						Common::OutSaveFile *fHandle;
-
 						snprintf(tmp, 80, "%s.dir", _targetName.c_str());
 
-						fHandle = g_saveFileMan->openForSaving(tmp);
-						// FIXME: Properly handle openForSaving failures instead of
-						// just crashing silently!
-						assert(fHandle);
-
+						Common::OutSaveFile *fHandle = g_saveFileMan->openForSaving(tmp);
+						if (!fHandle) {
+							warning("Unable to open file %s for saving", tmp);
+							break;
+						}
+						
 						fHandle->write(currentSaveName, 200);
 						delete fHandle;
 
@@ -1031,7 +1028,7 @@ void CineEngine::makeSystemMenu(void) {
 	}
 }
 
-const int16 choiceResultTable[] = {
+static const int16 choiceResultTable[] = {
 	1,
 	1,
 	1,
@@ -1041,7 +1038,7 @@ const int16 choiceResultTable[] = {
 	1
 };
 
-const int16 subObjectUseTable[] = {
+static const int16 subObjectUseTable[] = {
 	3,
 	3,
 	3,
@@ -1051,7 +1048,7 @@ const int16 subObjectUseTable[] = {
 	0
 };
 
-const int16 canUseOnItemTable[] = {
+static const int16 canUseOnItemTable[] = {
 	1,
 	0,
 	0,

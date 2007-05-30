@@ -42,13 +42,10 @@ void loadMsg(char *pMsgName) {
 
 	for (i = 0; i < NUM_MAX_MESSAGE; i++) {
 		messageTable[i].len = 0;
-
 		if (messageTable[i].ptr) {
-			assert(messageTable[i].ptr);
 			free(messageTable[i].ptr);
+			messageTable[i].ptr = NULL;
 		}
-
-		messageTable[i].ptr = NULL;
 	}
 
 	ptr = dataPtr = readBundleFile(findFileInBundle(pMsgName));

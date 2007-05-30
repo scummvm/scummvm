@@ -52,9 +52,8 @@ void loadTextData(const char *pFileName, byte *pDestinationBuffer) {
 	assert(pFileName);
 	assert(pDestinationBuffer);
 
-	pFileHandle.open(pFileName);
-
-	assert(pFileHandle.isOpen());
+	if (!pFileHandle.open(pFileName))
+		error("loadTextData(): Cannot open file %s", pFileName);
 
 	entrySize = pFileHandle.readUint16BE();
 	numEntry = pFileHandle.readUint16BE();

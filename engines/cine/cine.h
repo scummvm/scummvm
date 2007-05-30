@@ -27,6 +27,7 @@
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
+#include "common/file.h"
 #include "common/util.h"
 
 #include "engines/engine.h"
@@ -81,6 +82,7 @@ public:
 	void makeSystemMenu(void);
 
 	const CINEGameDescription *_gameDescription;
+	Common::File _partFileHandle;
 
 private:
 	void initialize(void);
