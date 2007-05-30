@@ -329,6 +329,10 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(const Track *track, int f
 	// Clone the soundhandle
 	// FIXME: Shouldn't we check here whether track->soundHandle is NULL, resp. whether stream2
 	// is being used (as in, we are using compressed data)...
+	//
+	// -- aquadran -- nope :) this is called only for bundle files and sound data in *.la1
+	// from switchToNextRegion and fadeOutMusic func.
+	// stream2 is used only for sou VOICE type sound data (FT) --
 	fadeTrack->soundHandle = _sound->cloneSound(track->soundHandle);
 	assert(fadeTrack->soundHandle);
 
