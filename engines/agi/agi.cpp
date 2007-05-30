@@ -68,9 +68,16 @@ void AgiEngine::processEvents() {
 			_system->quit();
 			break;
 		case Common::EVENT_PREDICTIVE_DIALOG:
-			if (predictiveDialog()) {
-				strcpy((char *)_game.inputBuffer, _predictiveResult);
-				handleKeys(KEY_ENTER);
+			if (_game.playerControl && predictiveDialog()) {
+				if (_game.inputMode == INPUT_NORMAL) {
+					strcpy((char *)_game.inputBuffer, _predictiveResult);
+					handleKeys(KEY_ENTER);
+				} else if (_game.inputMode == INPUT_GETSTRING) {
+					strcpy(_game.strings[_stringdata.str], _predictiveResult);
+					newInputMode(INPUT_NORMAL);
+					_gfx->printCharacter(_stringdata.x + strlen(_game.strings[_stringdata.str]) + 1,
+							_stringdata.y, ' ', _game.colorFg, _game.colorBg);
+				}
 			}
 			break;
 		case Common::EVENT_LBUTTONDOWN:
