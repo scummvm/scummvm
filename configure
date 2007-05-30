@@ -1292,7 +1292,7 @@ fi
 # figure out installation directories
 #
 test -z "$_bindir" && _bindir="$_prefix/bin"
-test -z "$_mandir" && _mandir="$_prefix/man"
+test -z "$_mandir" && _mandir="$_prefix/share/man"
 test -z "$_datadir" && _datadir="$_prefix/share"
 
 DEFINES="$DEFINES -DDATA_PATH=\\\"$_datadir/scummvm\\\""
