@@ -1016,6 +1016,8 @@ void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 	int16 baseFrame, palFrame, lastFrame;
 	uint16 flags;
 
+	_vm->_game->_preventScroll = true;
+
 	if (_vm->_draw->_renderFlags & 0x100) {
 		x = VAR(55);
 		y = VAR(56);
@@ -1024,6 +1026,7 @@ void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 
 	if (key.imdFile == -1) {
 		_vm->_imdPlayer->closeImd();
+		_vm->_game->_preventScroll = false;
 		return;
 	}
 

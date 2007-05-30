@@ -1492,6 +1492,7 @@ void Inter_v2::o2_playImd() {
 		close = false;
 	}
 
+	_vm->_game->_preventScroll = true;
 	for (int i = startFrame; i <= lastFrame; i++) {
 		_vm->_imdPlayer->play(i, palCmd, palStart, palEnd, 0, lastFrame);
 		WRITE_VAR(11, i);
@@ -1507,10 +1508,12 @@ void Inter_v2::o2_playImd() {
 			if (VAR(0) == (unsigned) breakKey) {
 				if (_vm->_imdPlayer->_soundStage == 2)
 					_vm->_snd->stopSound(0);
+				_vm->_game->_preventScroll = false;
 				return;
 			}
 		}
 	}
+	_vm->_game->_preventScroll = false;
 
 	if (close)
 		_vm->_imdPlayer->closeImd();

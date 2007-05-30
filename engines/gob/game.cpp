@@ -78,6 +78,7 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_forceHandleMouse = 0;
 	_menuLevel = 0;
 	_noScroll = true;
+	_preventScroll = false;
 	_scrollHandleMouse = false;
 
 	_tempStr[0] = 0;
@@ -291,7 +292,7 @@ void Game::freeSoundSlot(int16 slot) {
 }
 
 void Game::evaluateScroll(int16 x, int16 y) {
-	if (!_scrollHandleMouse || (_menuLevel > 0))
+	if (_preventScroll || !_scrollHandleMouse || (_menuLevel > 0))
 		return;
 
 	if (_noScroll || (_vm->_global->_videoMode != 0x14))
@@ -536,6 +537,13 @@ void Game::switchTotSub(int16 index, int16 skipPlay) {
 	int16 curBackupPos;
 
 	if ((_backupedCount - index) < 1)
+		return;
+
+	int16 newPos = _curBackupPos - index - ((index >= 0) ? 1 : 0);
+	// WORKAROUND: Some versions don't make the MOVEMENT menu item unselectable
+	// in the dreamland screen, resulting in a crash when it's clicked.
+	if ((_vm->_features & GF_GOB2) && (index == -1) && (skipPlay == 7) &&
+	    !scumm_stricmp(_curTotFileArray[newPos], "gob06.tot"))
 		return;
 
 	curBackupPos = _curBackupPos;
