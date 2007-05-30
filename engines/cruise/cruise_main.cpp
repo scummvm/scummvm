@@ -477,7 +477,7 @@ int initAllData(void) {
 	resetActorPtr(&actorHead);
 	resetBackgroundIncrustList(&backgroundIncrustHead);
 
-	bootOverlayNumber = loadOverlay((uint8 *) "AUTO00");
+	bootOverlayNumber = loadOverlay((const uint8 *) "AUTO00");
 
 #ifdef DUMP_SCRIPT
 	loadOverlay("TITRE");

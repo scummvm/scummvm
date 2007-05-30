@@ -181,8 +181,8 @@ extern overlayStruct overlayTable[90];
 extern int numOfLoadedOverlay;
 
 void initOverlayTable(void);
-int loadOverlay(uint8 * scriptName);
-int32 findOverlayByName2(uint8 * name);
+int loadOverlay(const uint8 * scriptName);
+int32 findOverlayByName2(const uint8 * name);
 int findOverlayByName(const char *overlayName);
 int releaseOverlay(const char *name);
 

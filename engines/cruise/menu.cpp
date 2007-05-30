@@ -39,7 +39,7 @@ menuStruct *createMenu(int X, int Y, const char *menuName) {
 	entry->stringPtr = menuName;
 	entry->numElements = 0;
 	entry->ptrNextElement = NULL;
-	entry->gfx = renderText(160, (uint8 *) menuName);
+	entry->gfx = renderText(160, (const uint8 *)menuName);
 
 	return entry;
 }
@@ -117,7 +117,7 @@ void addSelectableMenuEntry(int param0, int param1, menuStruct *pMenu,
 		pNewElement->next = NULL;
 		pNewElement->varC = 0;
 		pNewElement->color = color;
-		pNewElement->gfx = renderText(160, (uint8 *) menuText);
+		pNewElement->gfx = renderText(160, (const uint8 *)menuText);
 
 		if (var_6 == NULL) {
 			pMenu->ptrNextElement = pNewElement;

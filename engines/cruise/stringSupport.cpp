@@ -35,7 +35,7 @@ void strcatuint8(void *dest, const void *source) {
 }
 
 uint8 strcmpuint8(const void *string1, const void *string2) {
-	return strcmp((char *)string1, (char *)string2);
+	return strcmp((const char *)string1, (const char *)string2);
 }
 
 } // End of namespace Cruise

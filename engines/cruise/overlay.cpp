@@ -42,7 +42,7 @@ void initOverlayTable(void) {
 	numOfLoadedOverlay = 1;
 }
 
-int loadOverlay(uint8 *scriptName) {
+int loadOverlay(const uint8 *scriptName) {
 	int newNumberOfScript;
 	bool scriptNotLoadedBefore;
 	int scriptIdx;
@@ -59,7 +59,7 @@ int loadOverlay(uint8 *scriptName) {
 
 	scriptNotLoadedBefore = false;
 
-	scriptIdx = findOverlayByName((char *)scriptName);
+	scriptIdx = findOverlayByName((const char *)scriptName);
 
 	if (scriptIdx == -4) {
 		scriptIdx = numOfLoadedOverlay;
@@ -723,7 +723,7 @@ int releaseOverlay(const char *name) {
 	return 0;
 }
 
-int32 findOverlayByName2(uint8 *name) {
+int32 findOverlayByName2(const uint8 *name) {
 	int i;
 
 	for (i = 1; i < numOfLoadedOverlay; i++) {

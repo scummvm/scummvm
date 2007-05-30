@@ -50,15 +50,15 @@ int32 getLineHeight(int16 charCount, uint8 * fontPtr, uint8 * fontPrt_Desc) {
 
 // this function determins how many lines the text will have (old: fontProc2(int32 param1, int32 param2, uint8* ptr, uint8* string))
 int32 getTextLineCount(int32 rightBorder_X, int32 wordSpacingWidth,
-	    uint8 *ptr, uint8 *textString) {
-	uint8 *localString = textString;
-	uint8 *currentStringPtr;
+	    uint8 *ptr, const uint8 *textString) {
+	const uint8 *localString = textString;
+	const uint8 *currentStringPtr;
 	uint8 character;
 
 	int32 var_6 = 0;
 	int32 lineLength = 0;
 
-	uint8 *tempPtr = 0;
+	const uint8 *tempPtr = 0;
 
 	if (!*localString) {
 		return (0);
@@ -111,16 +111,16 @@ void loadFNT(const void *fileNameChar) {
 	int32 fontSize;
 	int32 data2;
 	uint8 data3[6];
-	uint8 *fileName = (uint8 *) fileNameChar;
+	const uint8 *fileName = (const uint8 *)fileNameChar;
 	_systemFNT = NULL;
 
 	Common::File fontFileHandle;
 
-	if (!fontFileHandle.exists((char *)fileName)) {
+	if (!fontFileHandle.exists((const char *)fileName)) {
 		return;
 	}
 
-	fontFileHandle.open((char *)fileName);
+	fontFileHandle.open((const char *)fileName);
 
 	fontFileHandle.read(header, 4);
 
@@ -134,7 +134,7 @@ void loadFNT(const void *fileNameChar) {
 		fontFileHandle.read(data3, 6);	// may need an endian flip ?
 		flipGen(&data3, 6);
 
-		_systemFNT = (uint8 *) mallocAndZero(fontSize);
+		_systemFNT = (uint8 *)mallocAndZero(fontSize);
 
 		if (_systemFNT != NULL) {
 			int32 i;
@@ -151,8 +151,8 @@ void loadFNT(const void *fileNameChar) {
 
 			currentPtr = _systemFNT + 14;
 
-			for (i = 0; i < *(int16 *) (_systemFNT + 8); i++) {
-				flipLong((int32 *) currentPtr);
+			for (i = 0; i < *(int16 *)(_systemFNT + 8); i++) {
+				flipLong((int32 *)currentPtr);
 				currentPtr += 4;
 
 				flipGen(currentPtr, 8);
@@ -277,8 +277,8 @@ void renderWord(uint8 * fontPtr_Data, uint8 * outBufferPtr,
 
 // returns character count and pixel size (via pointer) per line of the string (old: prepareWordRender(int32 param, int32 var1, int16* out2, uint8* ptr3, uint8* string))
 int32 prepareWordRender(int32 inRightBorder_X, int32 wordSpacingWidth,
-	    int16 * strPixelLength, uint8 * ptr3, uint8 * textString) {
-	uint8 *localString = textString;
+	    int16 * strPixelLength, uint8 * ptr3, const uint8 * textString) {
+	const uint8 *localString = textString;
 
 	int32 counter = 0;
 	int32 finish = 0;
@@ -518,7 +518,7 @@ void drawString(int32 x, int32 y, uint8 *string, uint8 *buffer, uint8 color,
 }
 
 // calculates all necessary datas and renders text
-gfxEntryStruct *renderText(int inRightBorder_X, uint8 *string) {
+gfxEntryStruct *renderText(int inRightBorder_X, const uint8 *string) {
 	uint8 *fontPtr;
 	uint8 *fontPtr_Data;	// pt2
 	uint8 *fontPtr_Desc;	// ptr3
@@ -600,7 +600,7 @@ gfxEntryStruct *renderText(int inRightBorder_X, uint8 *string) {
 		int spacesCount = 0;	// si
 		unsigned char character = *string;
 		short int strPixelLength;	// var_16
-		uint8 *ptrStringEnd;	// var_4     //ok
+		const uint8 *ptrStringEnd;	// var_4     //ok
 		int drawPosPixel_X;	// di
 
 		// find first letter in string, skip all spaces
