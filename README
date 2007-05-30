@@ -897,9 +897,10 @@ other games.
                                  game has one. You can save and load games using
                                  using this, however it is not intended for this
                                  purpose, and may even crash ScummVM in some
-                                 games, but it is currently the only way to see
-                                 your IQ points in Indiana Jones and the Last
-                                 Crusade without dying.
+                                 games.
+        i                      - Displays IQ points (Indiana Jones and the Last
+                                 Crusade, and Indiana Jones and the Fate of
+                                 Atlantis)
         Space                  - Pauses
         Period (.)             - Skips current line of text in some games
         Enter                  - Simulate left mouse button press
