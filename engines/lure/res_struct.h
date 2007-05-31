@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -589,8 +592,11 @@ public:
 // The following classes hold any sequence offsets that are being delayed
 
 class SequenceDelayData {
+private:
+	SequenceDelayData() {};
 public:
 	SequenceDelayData(uint16 delay, uint16 seqOffset, bool canClearFlag);
+	static SequenceDelayData *load(uint32 delay, uint16 seqOffset, bool canClearFlag);
 
 	uint32 timeoutCtr;
 	uint16 sequenceOffset;
@@ -601,7 +607,10 @@ class SequenceDelayList: public ManagedList<SequenceDelayData *> {
 public:
 	void add(uint16 delay, uint16 seqOffset, bool canClear);
 	void tick();
-	void clear();
+	void clear(bool forceClear = false);
+
+	void saveToStream(WriteStream *stream);
+	void loadFromStream(ReadStream *stream);
 };
 
 // The following classes holds the data for NPC schedules
@@ -731,6 +740,13 @@ public:
 };
 
 enum BarmanAction {WALK_AROUND = 1, POLISH_BAR = 2, WAIT = 3, WAIT_DIALOG = 4, SERVE_BEER = 5};
+
+struct RoomTranslationRecord {
+	uint8 srcRoom;
+	uint8 destRoom;
+};
+
+extern RoomTranslationRecord roomTranslations[];
 
 enum StringEnum {S_CREDITS = 25, S_RESTART_GAME = 26, S_SAVE_GAME = 27, S_RESTORE_GAME = 28, 
 	S_QUIT = 29, S_FAST_TEXT = 30, S_SLOW_TEXT = 31, S_SOUND_ON = 32, S_SOUND_OFF = 33, 

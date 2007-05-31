@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -176,7 +179,6 @@ int SDL_main(int argc, char **argv) {
 #endif
 	
 	CEDevice::init();
-	OSystem_WINCE3::initScreenInfos();
 	
 	/* Redirect standard input and standard output */
 	strcpy(stdout_fname, getcwd(NULL, MAX_PATH));
@@ -265,16 +267,6 @@ static Uint32 timer_handler_wrapper(Uint32 interval) {
 
 void OSystem_WINCE3::initBackend()
 {
-	// Initialize global key mapping
-	GUI::Actions::init();
-	GUI_Actions::Instance()->initInstanceMain(this);
-	if (!GUI_Actions::Instance()->loadMapping()) {	// error during loading means not present/wrong version
-		warning("Setting default action mappings.");
-		GUI_Actions::Instance()->saveMapping();	// write defaults
-	}
-
-	loadDeviceConfiguration();
-
 	// Instantiate our own sound mixer
 	// mixer init is postponed until a game engine is selected.
 	if (_mixer == 0) {
@@ -290,6 +282,23 @@ void OSystem_WINCE3::initBackend()
 
 	// Chain init
 	OSystem_SDL::initBackend();
+
+	// Query SDL for screen size and init screen dependent stuff
+	OSystem_WINCE3::initScreenInfos();
+	_isSmartphone = CEDevice::isSmartphone();
+	create_toolbar();
+	_hasSmartphoneResolution = CEDevice::hasSmartphoneResolution() || CEDevice::isSmartphone();
+	if (_hasSmartphoneResolution) _panelVisible = false;	// init correctly in smartphones
+
+	// Initialize global key mapping
+	GUI::Actions::init();
+	GUI_Actions::Instance()->initInstanceMain(this);
+	if (!GUI_Actions::Instance()->loadMapping()) {	// error during loading means not present/wrong version
+		warning("Setting default action mappings.");
+		GUI_Actions::Instance()->saveMapping();	// write defaults
+	}
+
+	loadDeviceConfiguration();
 }
 
 int OSystem_WINCE3::getScreenWidth() {
@@ -303,8 +312,13 @@ int OSystem_WINCE3::getScreenHeight() {
 void OSystem_WINCE3::initScreenInfos() {
 	// sdl port ensures that we use correctly full screen
 	_isOzone = 0;
-	_platformScreenWidth = GetSystemMetrics(SM_CXSCREEN);
-	_platformScreenHeight = GetSystemMetrics(SM_CYSCREEN);
+	SDL_Rect **r;
+	r = SDL_ListModes(NULL, 0);
+	printf("listmodes: %dx%d\n", r[0]->w, r[0]->h);
+	//_platformScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+	//_platformScreenHeight = GetSystemMetrics(SM_CYSCREEN);
+	_platformScreenWidth = r[0]->w;
+	_platformScreenHeight = r[0]->h;
 }
 
 bool OSystem_WINCE3::isOzone() {
@@ -322,15 +336,11 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	_saveToolbarState(false), _saveActiveToolbar(NAME_MAIN_PANEL), _rbutton(false), _hasfocus(true),
 	_usesEmulatedMouse(false), _mouseBackupOld(NULL), _mouseBackupToolbar(NULL), _mouseBackupDim(0)
 {
-	_isSmartphone = CEDevice::isSmartphone();
-	_hasSmartphoneResolution = CEDevice::hasSmartphoneResolution() || CEDevice::isSmartphone();
 	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
 	if (_isSmartphone) {
 		_mouseCurState.x = 20;
 		_mouseCurState.y = 20;
 	}
-	if (_hasSmartphoneResolution) _panelVisible = false;	// init correctly in smartphones
-	create_toolbar();
 
 	_mixer = 0;
 	_screen = NULL;
@@ -912,7 +922,6 @@ void OSystem_WINCE3::update_game_settings() {
 }
 
 void OSystem_WINCE3::initSize(uint w, uint h) {
-
 	if (_hasSmartphoneResolution && h == 240)
 		h = 200;  // mainly for the launcher
 
@@ -975,7 +984,6 @@ int OSystem_WINCE3::getDefaultGraphicsMode() const {
 }
 
 bool OSystem_WINCE3::update_scalers() {
-
 	if (_mode != GFX_NORMAL)
 		return false;
 
@@ -984,12 +992,21 @@ bool OSystem_WINCE3::update_scalers() {
 	if (CEDevice::hasPocketPCResolution()) {
 		if ( 	(!_orientationLandscape && (_screenWidth == 320 || !_screenWidth)) 
 			|| CEDevice::hasSquareQVGAResolution() ) {
-			_scaleFactorXm = 3;
-			_scaleFactorXd = 4;
-			_scaleFactorYm = 1;
-			_scaleFactorYd = 1;
-			_scalerProc = PocketPCPortrait;
-			_modeFlags = 0;
+			if (getScreenWidth() != 320) {
+				_scaleFactorXm = 3;
+				_scaleFactorXd = 4;
+				_scaleFactorYm = 1;
+				_scaleFactorYd = 1;
+				_scalerProc = PocketPCPortrait;
+				_modeFlags = 0;
+			} else {
+				_scaleFactorXm = 1;
+				_scaleFactorXd = 1;
+				_scaleFactorYm = 1;
+				_scaleFactorYd = 1;
+				_scalerProc = Normal1x;
+				_modeFlags = 0;
+			}
 		} else if ( _orientationLandscape && (_screenWidth == 320 || !_screenWidth)) {
 			Common::String gameid(ConfMan.get("gameid"));	// consider removing this check and start honoring the _adjustAspectRatio flag
 			if (!_panelVisible && !_hasSmartphoneResolution  && !_overlayVisible && !(strncmp(gameid.c_str(), "zak", 3) == 0)) {

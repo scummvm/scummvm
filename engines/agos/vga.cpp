@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -606,6 +608,13 @@ void AGOSEngine::vc10_draw() {
 		flags = vcReadNextWord();
 	}
 
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST) {
+		if (((image >= 11 && image <= 16) || (image >= 195 && image <= 198)) &&
+			_zoneNumber == 1) {
+			y += 75;
+		}
+	}
+
 	drawImage_init(image, palette, x, y, flags);
 }
 
@@ -1065,37 +1074,14 @@ void AGOSEngine::vc27_resetSprite() {
 }
 
 void AGOSEngine::vc28_playSFX() {
-	byte *dst;
-	uint sound, channels, frequency, flags;
-	uint offs, size;
+	uint16 sound = vcReadNextWord();
+	uint16 channels = vcReadNextWord();
+	uint16 frequency = vcReadNextWord();
+	uint16 flags = vcReadNextWord();
 
-	sound = vcReadNextWord();
-	channels = vcReadNextWord();
-	frequency = vcReadNextWord();
-	flags = vcReadNextWord();
+	loadSound(sound);
 
 	debug(0, "vc28_playSFX: (%d, %d, %d, %d)", sound, channels, frequency, flags);
-
-	if (_curSfxFile == NULL)
-		return;
-
-	dst = _curSfxFile;
-	if (getGameType() == GType_WW) {
-		uint tmp = sound;
-		while (tmp--)
-			dst += READ_LE_UINT16(dst) + 4;
-
-		size = READ_LE_UINT16(dst);
-		offs = 4;
-	} else {
-		while (READ_BE_UINT16(dst + 6) != sound)
-			dst += 12;
-
-		size = READ_BE_UINT16(dst + 2);
-		offs = READ_BE_UINT32(dst + 8);
-	}
-
-	_sound->playRawData(dst + offs, sound, size);
 }
 
 void AGOSEngine::vc29_stopAllSounds() {
@@ -1258,8 +1244,10 @@ void AGOSEngine::vc37_pokePalette() {
 	palptr[2] = ((color & 0x00f) >> 0) * 32;
 	palptr[3] = 0;
 
-	_paletteFlag = 2;
-	_vgaSpriteChanged++;
+	if (!(_lockWord & 0x20)) {
+		_paletteFlag = 1;
+		_displayScreen++;
+	}
 }
 
 void AGOSEngine::vc38_ifVarNotZero() {

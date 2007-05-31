@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -395,6 +397,38 @@ void AGOSEngine::loadSoundFile(const char* filename) {
 	in.close();
 
 	_sound->playSfxData(dst, 0, 0, 0);
+}
+
+void AGOSEngine::loadSound(uint sound) {
+	byte *dst;
+	uint32 offs, size;
+
+	if (_curSfxFile == NULL)
+		return;
+
+	dst = _curSfxFile;
+	if (getGameType() == GType_WW) {
+		uint tmp = sound;
+		while (tmp--)
+			dst += READ_LE_UINT16(dst) + 4;
+
+		size = READ_LE_UINT16(dst);
+		offs = 4;
+	} else if (getGameType() == GType_ELVIRA2) {
+		while (READ_BE_UINT32(dst + 4) != sound)
+			dst += 12;
+
+		size = READ_BE_UINT32(dst);
+		offs = READ_BE_UINT32(dst + 8);
+	} else {
+		while (READ_BE_UINT16(dst + 6) != sound)
+			dst += 12;
+
+		size = READ_BE_UINT16(dst + 2);
+		offs = READ_BE_UINT32(dst + 8);
+	}
+
+	_sound->playRawData(dst + offs, sound, size);
 }
 
 void AGOSEngine::loadSound(uint sound, int pan, int vol, uint type) {

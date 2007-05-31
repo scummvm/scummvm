@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,65 +37,37 @@ PartBuffer *partBuffer;
 void loadPart(const char *partName) {
 	uint16 i;
 
-	for (i = 0; i < NUM_MAX_PARTDATA; i++) {
-		partBuffer[i].partName[0] = 0;
-		partBuffer[i].offset = 0;
-		partBuffer[i].packedSize = 0;
-		partBuffer[i].unpackedSize = 0;
-	}
-
+	memset(partBuffer, 0, sizeof(PartBuffer) * NUM_MAX_PARTDATA);
 	numElementInPart = 0;
 
-	partFileHandle.close();
+	g_cine->_partFileHandle.close();
 
 	checkDataDisk(-1);
 
-	partFileHandle.open(partName);
-
-	assert(partFileHandle.isOpen());
+	if (!g_cine->_partFileHandle.open(partName))
+		error("loadPart(): Cannot open file %s", partName);
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
-	numElementInPart = partFileHandle.readUint16BE();
-	partFileHandle.readUint16BE(); // entry size
+	numElementInPart = g_cine->_partFileHandle.readUint16BE();
+	g_cine->_partFileHandle.readUint16BE(); // entry size
 
 	strcpy(currentPartName, partName);
 
 	for (i = 0; i < numElementInPart; i++) {
-		partFileHandle.read(partBuffer[i].partName, 14);
-		partBuffer[i].offset = partFileHandle.readUint32BE();
-		partBuffer[i].packedSize = partFileHandle.readUint32BE();
-		partBuffer[i].unpackedSize = partFileHandle.readUint32BE();
-		partFileHandle.readUint32BE(); // unused
+		g_cine->_partFileHandle.read(partBuffer[i].partName, 14);
+		partBuffer[i].offset = g_cine->_partFileHandle.readUint32BE();
+		partBuffer[i].packedSize = g_cine->_partFileHandle.readUint32BE();
+		partBuffer[i].unpackedSize = g_cine->_partFileHandle.readUint32BE();
+		g_cine->_partFileHandle.readUint32BE(); // unused
 	}
 
 	if (g_cine->getGameType() == Cine::GType_FW && g_cine->getPlatform() == Common::kPlatformPC && strcmp(partName, "BASESON.SND") != 0)
 		loadPal(partName);
 }
 
-void freePartEntry(byte idx) {
-	if (animDataTable[idx].ptr1) {
-		//free(animDataTable[idx].ptr1);
-
-		animDataTable[idx].ptr1 = NULL;
-		animDataTable[idx].ptr2 = NULL;
-
-		// TODO: finish
-
-		if (frameVar0 > 0)
-			frameVar0--;
-	}
-}
-
-void freePartRange(byte startIdx, byte numIdx) {
-	byte i;
-
-	for (i = 0; i < numIdx; i++) {
-		freePartEntry(i + startIdx);
-	}
-}
-
 void closePart(void) {
+	// TODO
 }
 
 static const char *bundleNamesDOSEN[] = {
@@ -397,8 +370,8 @@ int16 findFileInBundle(const char *fileName) {
 void readFromPart(int16 idx, byte *dataPtr) {
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
-	partFileHandle.seek(partBuffer[idx].offset, SEEK_SET);
-	partFileHandle.read(dataPtr, partBuffer[idx].packedSize);
+	g_cine->_partFileHandle.seek(partBuffer[idx].offset, SEEK_SET);
+	g_cine->_partFileHandle.read(dataPtr, partBuffer[idx].packedSize);
 }
 
 byte *readBundleFile(int16 foundFileIdx) {
@@ -450,10 +423,9 @@ byte *readFile(const char *filename) {
 	if (!in.isOpen())
 		error("readFile(): Cannot open file %s", filename);
 
-	byte *dataPtr;
 	uint32 size = in.size();
 
-	dataPtr = (byte *)malloc(size);
+	byte *dataPtr = (byte *)malloc(size);
 	in.read(dataPtr, size);
 
 	return dataPtr;
@@ -471,12 +443,15 @@ void dumpBundle(const char *fileName) {
 	for (int i = 0; i < numElementInPart; i++) {
 		byte *data = readBundleFile(i);
 
-		Common::File out;
-
 		debug(0, "%s", partBuffer[i].partName);
-		out.open(Common::String("dumps/") + partBuffer[i].partName, Common::File::kFileWriteMode);
-		out.write(data, partBuffer[i].unpackedSize);
-		out.close();
+
+		Common::File out;
+		if (out.open(Common::String("dumps/") + partBuffer[i].partName, Common::File::kFileWriteMode)) {
+			out.write(data, partBuffer[i].unpackedSize);
+			out.close();
+		}
+
+		free(data);
 	}
 
 	loadPart(tmpPart);

@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
+ * $URL:https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/branches/gsoc2007-fsnode/engines/scumm/detection_tables.h $
+ * $Id:detection_tables.h 26949 2007-05-26 20:23:24Z david_corrales $
  *
  */
 
@@ -512,6 +514,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "bluesabctime", "abc-slideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
+	{ "bluesabctime", "BluesABCTimeSlideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "BluesBirthday", "Blue'sBirthday-Red", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "BluesBirthday", "Blue'sBirthday-Red", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -520,6 +523,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "BluesBirthday", "BluesBirthdayDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "BluesBirthday", "BluesBirthdayDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "BluesBirthday", "bda-slideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
+	{ "BluesBirthday", "BluesBirthdaySlideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "catalog", "catalog", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "catalog", "catalog2", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -703,6 +707,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttrace", "ToffRennen", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "puttrace", "ToffRennen", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "puttrace", "UKPuttRace", kGenHEPC, Common::RU_RUS, UNK, 0 }, // Russian
+	{ "puttrace", "PUTTDEMO.CUP", kGenUnchanged, UNK_LANG, UNK, 0 },
 	{ "puttrace", "racedemo.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "PuttsFunShop", "PuttsFunShop", kGenHEPC, UNK_LANG, UNK, 0 },

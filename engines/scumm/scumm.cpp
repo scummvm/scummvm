@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +26,6 @@
 #include "common/stdafx.h"
 
 #include "common/config-manager.h"
-//#include "common/fs.h"
 #include "common/md5.h"
 #include "common/events.h"
 #include "common/system.h"

@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -247,7 +249,7 @@ void AGOSEngine::userGame(bool load) {
 		name = buf + 192;
 
 		for (;;) {
-			windowPutChar(window, 127);
+			windowPutChar(window, 128);
 
 			_saveLoadEdit = true;
 
@@ -980,6 +982,14 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 		addTimeEvent(timeout, subroutine_id);
 	}
 
+	if (getGameType() == GType_WW) {
+		// TODO Load room state data
+		for (uint s = 0; s <= _numRoomStates; s++) {
+			f->readUint16BE();
+		}
+		f->readUint16BE();
+	}
+
 	item_index = 1;
 	for (num = _itemArrayInited - 1; num; num--) {
 		Item *item = _itemArrayPtr[item_index++], *parent_item;
@@ -1042,7 +1052,7 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 
 	// read the items in item store
 	for (i = 0; i != _numItemStore; i++) {
-		if (getGameType() == GType_ELVIRA2) {
+		if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformPC) {
 			_itemStore[i] = derefItem(readItemID(f));
 		} else {
 			_itemStore[i] = derefItem(f->readUint16BE());
@@ -1120,6 +1130,14 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 		f->writeUint16BE(te->subroutine_id);
 	}
 
+	if (getGameType() == GType_WW) {
+		// TODO Save room state data
+		for (uint s = 0; s <= _numRoomStates; s++) {
+			f->writeUint16BE(0);
+		}
+		f->writeUint16BE(_currentRoom);
+	}
+
 	item_index = 1;
 	for (num_item = _itemArrayInited - 1; num_item; num_item--) {
 		Item *item = _itemArrayPtr[item_index++];
@@ -1173,7 +1191,7 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 
 	// write the items in item store
 	for (i = 0; i != _numItemStore; i++) {
-		if (getGameType() == GType_ELVIRA2) {
+		if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformPC) {
 			writeItemID(f, itemPtrToID(_itemStore[i]));
 		} else {
 			f->writeUint16BE(itemPtrToID(_itemStore[i]));

@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -225,11 +227,12 @@ enum GameFileTypes {
 	GAME_MENUFILE = 1 << 3,
 	GAME_STRFILE  = 1 << 4,
 	GAME_RMSLFILE = 1 << 5,
-	GAME_TBLFILE  = 1 << 6,
-	GAME_XTBLFILE = 1 << 7,
-	GAME_RESTFILE = 1 << 8,
+	GAME_STATFILE = 1 << 6,
+	GAME_TBLFILE  = 1 << 7,
+	GAME_XTBLFILE = 1 << 8,
+	GAME_RESTFILE = 1 << 9,
 
-	GAME_GFXIDXFILE = 1 << 9
+	GAME_GFXIDXFILE = 1 << 10
 };
 
 enum GameIds {

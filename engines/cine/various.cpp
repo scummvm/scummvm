@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,12 +57,7 @@ int16 buildObjectListCommand(void);
 void drawString(const char *string, byte param) {
 }
 
-Common::File *partFileHandleP = NULL;
-
 void waitPlayerInput(void) {
-}
-
-void freeAnimDataTable(void) {
 }
 
 void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4) {
@@ -1002,15 +998,14 @@ void CineEngine::makeSystemMenu(void) {
 					if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
 						char saveString[256], tmp[80];
 
-						Common::OutSaveFile *fHandle;
-
 						snprintf(tmp, 80, "%s.dir", _targetName.c_str());
 
-						fHandle = g_saveFileMan->openForSaving(tmp);
-						// FIXME: Properly handle openForSaving failures instead of
-						// just crashing silently!
-						assert(fHandle);
-
+						Common::OutSaveFile *fHandle = g_saveFileMan->openForSaving(tmp);
+						if (!fHandle) {
+							warning("Unable to open file %s for saving", tmp);
+							break;
+						}
+						
 						fHandle->write(currentSaveName, 200);
 						delete fHandle;
 
@@ -1034,7 +1029,7 @@ void CineEngine::makeSystemMenu(void) {
 	}
 }
 
-const int16 choiceResultTable[] = {
+static const int16 choiceResultTable[] = {
 	1,
 	1,
 	1,
@@ -1044,7 +1039,7 @@ const int16 choiceResultTable[] = {
 	1
 };
 
-const int16 subObjectUseTable[] = {
+static const int16 subObjectUseTable[] = {
 	3,
 	3,
 	3,
@@ -1054,7 +1049,7 @@ const int16 subObjectUseTable[] = {
 	0
 };
 
-const int16 canUseOnItemTable[] = {
+static const int16 canUseOnItemTable[] = {
 	1,
 	0,
 	0,

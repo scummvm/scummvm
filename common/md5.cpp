@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -301,37 +304,37 @@ bool md5_file(ReadStream &stream, uint8 digest[16], uint32 length) {
 	return true;
 }
 
-bool md5_file_string(const FilesystemNode &file, char md5str[32+1], uint32 length) {
+bool md5_file_string(const FilesystemNode &file, char *md5str, uint32 length) {
 	uint8 digest[16];
 	if (!md5_file(file, digest, length))
 		return false;
 
 	for (int i = 0; i < 16; i++) {
-		sprintf(md5str + i*2, "%02x", (int)digest[i]);
+		snprintf(md5str + i*2, 3, "%02x", (int)digest[i]);
 	}
 
 	return true;
 }
 
-bool md5_file_string(const char *name, char md5str[32+1], uint32 length) {
+bool md5_file_string(const char *name, char *md5str, uint32 length) {
 	uint8 digest[16];
 	if (!md5_file(name, digest, length))
 		return false;
 
 	for (int i = 0; i < 16; i++) {
-		sprintf(md5str + i*2, "%02x", (int)digest[i]);
+		snprintf(md5str + i*2, 3, "%02x", (int)digest[i]);
 	}
 
 	return true;
 }
 
-bool md5_file_string(ReadStream &stream, char md5str[32+1], uint32 length) {
+bool md5_file_string(ReadStream &stream, char *md5str, uint32 length) {
 	uint8 digest[16];
 	if (!md5_file(stream, digest, length))
 		return false;
 
 	for (int i = 0; i < 16; i++) {
-		sprintf(md5str + i*2, "%02x", (int)digest[i]);
+		snprintf(md5str + i*2, 3, "%02x", (int)digest[i]);
 	}
 
 	return true;

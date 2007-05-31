@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,7 +37,7 @@ namespace Common {
  * @see Event
  *
  * @todo Merge EVENT_LBUTTONDOWN, EVENT_RBUTTONDOWN and EVENT_WHEELDOWN;
- *       likewiese EVENT_LBUTTONUP, EVENT_RBUTTONUP, EVENT_WHEELUP.
+ *       likewise EVENT_LBUTTONUP, EVENT_RBUTTONUP, EVENT_WHEELUP.
  *       To do that, we just have to add a field to the Event which
  *       indicates which button was pressed.
  */
@@ -53,7 +56,8 @@ enum EventType {
 	EVENT_WHEELDOWN = 9,
 
 	EVENT_QUIT = 10,
-	EVENT_SCREEN_CHANGED = 11
+	EVENT_SCREEN_CHANGED = 11,
+	EVENT_PREDICTIVE_DIALOG = 12
 };
 
 /**

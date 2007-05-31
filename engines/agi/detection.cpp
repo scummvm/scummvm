@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1902,11 +1905,9 @@ Common::ADGameDescList fallbackDetector(const FSList *fslist) {
 		char name[8];
 
 		for (IntMap::const_iterator f = allFiles.begin(); f != allFiles.end(); ++f) {
-			debug(" --> %s", f->_key.c_str());
 			if (f->_key.hasSuffix("vol.0")) {
 				memset(name, 0, 8);
 				strncpy(name, f->_key.c_str(), f->_key.size() > 5 ? f->_key.size() - 5 : f->_key.size());
-				debug("YEAH! (%s)", name);
 
 				if (allFiles.contains("object") && allFiles.contains("words.tok") &&
 					allFiles.contains(Common::String(name) + "dir")) {

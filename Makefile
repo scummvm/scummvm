@@ -57,12 +57,15 @@ install: all
 	$(INSTALL) -c -m 644 "$(srcdir)/icons/scummvm.xpm" "$(DESTDIR)$(PREFIX)/share/pixmaps/scummvm.xpm"
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
 	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING" "$(srcdir)/NEWS" "$(srcdir)/README" "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
+	$(INSTALL) -d "$(DESTDIR)$(DATADIR)/scummvm/"
+	$(INSTALL) -c -m 644 "$(srcdir)/gui/themes/modern.ini" "$(srcdir)/gui/themes/modern.zip" "$(srcdir)/gui/themes/classic080.ini" "$(DESTDIR)$(DATADIR)/scummvm/"
 
 uninstall:
 	rm -f "$(DESTDIR)$(BINDIR)/scummvm$(EXEEXT)"
 	rm -f "$(DESTDIR)$(MANDIR)/man6/scummvm.6"
 	rm -f "$(DESTDIR)$(PREFIX)/share/pixmaps/scummvm.xpm"
 	rm -rf "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
+	rm -rf "$(DESTDIR)$(DATADIR)/scummvm/"
 
 scummvmico.o: icons/scummvm.ico
 	$(WINDRES) dists/scummvm.rc scummvmico.o

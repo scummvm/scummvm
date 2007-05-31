@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -233,6 +235,9 @@ protected:
 	byte **_localStringtable;
 	uint _stringIdLocalMin, _stringIdLocalMax;
 
+	byte *_stateList;
+	uint _numRoomStates;
+
 	byte *_menuBase;
 	byte *_roomsList;
 
@@ -313,7 +318,7 @@ protected:
 
 	int _agosMenu;
 	byte _textMenu[10];
-	uint _superRoomNumber;
+	uint _currentRoom, _superRoomNumber;
 	uint _wallOn;
 
 	uint16 _hyperLink, _newLines;
@@ -568,6 +573,7 @@ protected:
 	void readGamePcFile(Common::SeekableReadStream *in);
 	void decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize);
 	void loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &compressedSize, uint32 &size);
+	void loadSound(uint sound);
 	void loadSound(uint sound, int pan, int vol, uint type);
 	void loadVoice(uint speechId);
 
@@ -722,6 +728,8 @@ protected:
 
 	void mouseOff();
 	void mouseOn();
+
+	bool loadRoomItems(uint item);
 
 	virtual bool loadTablesIntoMem(uint subr_id);
 	bool loadXTablesIntoMem(uint subr_id);
@@ -1328,7 +1336,7 @@ public:
 	void oe2_ifExitOpen();
 	void oe2_ifExitClosed();
 	void oe2_ifExitLocked();
-	void oe2_unk174();
+	void oe2_playEffect();
 	void oe2_getDollar2();
 	void oe2_setSRExit();
 	void oe2_unk177();
@@ -1413,8 +1421,6 @@ protected:
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
 	virtual bool loadTablesIntoMem(uint subr_id);
-
-	bool loadRoomItems(uint item);
 
 	virtual void moveDirn(Item *i, uint x);
 };

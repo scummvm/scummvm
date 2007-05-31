@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -66,6 +69,12 @@ BarEntry barList[3] = {
 	{35, EWAN_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&ewansFetch[0], &ewansFetch[0], 
 		&ewanExtraGraphic1[0], &ewanExtraGraphic2[0]}, 16, NULL}
 };
+
+RoomTranslationRecord roomTranslations[] = {
+	{0x1E, 0x13}, {0x07, 0x08}, {0x1C, 0x12}, {0x26, 0x0F}, 
+	{0x27, 0x0F}, {0x28, 0x0F}, {0x29, 0x0F}, {0x22, 0x0A}, 
+	{0x23, 0x13}, {0x24, 0x14}, {0x31, 0x2C}, {0x2F, 0x2C},
+	{0, 0}};
 
 // Room data holding class
 
@@ -701,10 +710,18 @@ RoomExitCoordinateData &RoomExitCoordinates::getData(uint16 destRoomNumber) {
 SequenceDelayData::SequenceDelayData(uint16 delay, uint16 seqOffset, bool canClearFlag) {
 	OSystem &system = *g_system;
 
-	// The delay is in number of ticks (1/18th of a second) - convert to milliseconds
-	timeoutCtr = system.getMillis() + (delay * 1000 / 18);
+	// The delay is in number of seconds
+	timeoutCtr = system.getMillis() + delay * 1000;
 	sequenceOffset = seqOffset;
 	canClear = canClearFlag;
+}
+
+SequenceDelayData *SequenceDelayData::load(uint32 delay, uint16 seqOffset, bool canClearFlag) {
+	SequenceDelayData *result = new SequenceDelayData();
+	result->sequenceOffset = seqOffset;
+	result->timeoutCtr = delay;
+	result->canClear = canClearFlag;
+	return result;
 }
 
 void SequenceDelayList::add(uint16 delay, uint16 seqOffset, bool canClear) {
@@ -728,15 +745,42 @@ void SequenceDelayList::tick() {
 	}
 }
 
-void SequenceDelayList::clear() {
+void SequenceDelayList::clear(bool forceClear) {
 	SequenceDelayList::iterator i = begin();
 
 	while (i != end()) {
 		SequenceDelayData *entry = *i;
-		if (entry->canClear)
+		if (entry->canClear || forceClear)
 			i = erase(i);
 		else
 			++i;
+	}
+}
+
+void SequenceDelayList::saveToStream(WriteStream *stream) {
+	uint32 currTime = g_system->getMillis();
+	SequenceDelayList::iterator i;
+
+	for (i = begin(); i != end(); ++i) {
+		SequenceDelayData *entry = *i;
+		stream->writeUint16LE(entry->sequenceOffset);
+		stream->writeUint32LE((currTime > entry->timeoutCtr ) ? 0 : 
+			entry->timeoutCtr - currTime);
+		stream->writeByte(entry->canClear);
+	}
+
+	stream->writeUint16LE(0);
+}
+
+void SequenceDelayList::loadFromStream(ReadStream *stream) {
+	clear(true);
+	uint16 seqOffset;
+	uint32 currTime = g_system->getMillis();
+
+	while ((seqOffset = stream->readUint16LE()) != 0) {
+		uint32 delay = currTime + stream->readUint32LE();
+		bool canClear = stream->readByte() != 0;
+		push_back(SequenceDelayData::load(delay, seqOffset, canClear));
 	}
 }
 

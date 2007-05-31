@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -118,11 +121,13 @@ public:
 	static void setSupportData(uint16 hotspotId, uint16 index, uint16 v3);
 	static void givePlayerItem(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void decreaseNumGroats(uint16 characterId, uint16 numGroats, uint16 v3);
+	static void moveCharacterToPlayer(uint16 characterId, uint16 v2, uint16 v3);
 	static void setVillageSkorlTickProc(uint16 v1, uint16 v2, uint16 v3);
 	static void freeGoewin(uint16 v1, uint16 v2, uint16 v3);
 	static void barmanServe(uint16 v1, uint16 v2, uint16 v3);
 	static void getNumGroats(uint16 v1, uint16 v2, uint16 v3);
 	static void enableGargoylesTalk(uint16 v1, uint16 v2, uint16 v3);
+	static void killPlayer(uint16 v1, uint16 v2, uint16 v3);
 	static void animationLoad(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void addActions(uint16 hotspotId, uint16 actions, uint16 v3);
 	static void randomToGeneral(uint16 maxVal, uint16 minVal, uint16 v3);

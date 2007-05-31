@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -287,7 +288,10 @@ void Script::showVerb(int statusColor) {
 		return;
 	}
 
-	verbName = _mainStrings.getString(_leftButtonVerb - 1);
+	if (_vm->getGameType() == GType_ITE)
+		verbName = _mainStrings.getString(_leftButtonVerb - 1);
+	else
+		verbName = _mainStrings.getString(_leftButtonVerb + 1);
 
 	if (objectTypeId(_currentObject[0]) == kGameObjectNone) {
 		_vm->_interface->setStatusText(verbName, statusColor);
@@ -355,27 +359,29 @@ int Script::getVerbType(VerbTypes verbType) {
 		}
 	}
 	else {
+		// TODO: This is ugly and needs rewriting, but
+		// it works for now
 		switch (verbType) {
 		case kVerbNone:
 			return kVerbIHNMNone;
 		case kVerbWalkTo:
 			return kVerbIHNMWalk;
-		case kVerbGive:
-			return kVerbIHNMGive;
-		case kVerbUse:
-			return kVerbIHNMUse;
-		case kVerbEnter:
-			return kVerbIHNMEnter;
 		case kVerbLookAt:
 			return kVerbIHNMLookAt;
 		case kVerbPickUp:
 			return kVerbIHNMTake;
-		case kVerbOpen:
-			return -2;
-		case kVerbClose:
-			return -2;
+		case kVerbUse:
+			return kVerbIHNMUse;
 		case kVerbTalkTo:
 			return kVerbIHNMTalkTo;
+		case kVerbOpen:
+			return kVerbIHNMSwallow;
+		case kVerbGive:
+			return kVerbIHNMGive;
+		case kVerbClose:
+			return kVerbIHNMPush;
+		case kVerbEnter:
+			return kVerbIHNMEnter;
 		case kVerbWalkOnly:
 			return kVerbIHNMWalkOnly;
 		case kVerbLookOnly:

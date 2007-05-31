@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -463,6 +466,34 @@ void Script::decreaseNumGroats(uint16 characterId, uint16 numGroats, uint16 v3) 
 	fields.numGroats() -= numGroats;
 }
 
+// Sets a character moving to the player's room (if they're not already there)
+
+void Script::moveCharacterToPlayer(uint16 characterId, uint16 v2, uint16 v3) {
+	Resources &res = Resources::getReference();
+	Hotspot *playerHotspot = res.getActiveHotspot(PLAYER_ID);
+	Hotspot *charHotspot = res.getActiveHotspot(characterId);
+	assert(charHotspot); 
+
+	// If character in same room as player, then no need to do anything
+	if (!charHotspot->currentActions().isEmpty() &&
+		(charHotspot->currentActions().top().roomNumber() == playerHotspot->roomNumber()))
+		return;
+
+	uint16 destRoom = playerHotspot->roomNumber();
+	RoomTranslationRecord *rec; 
+	for (rec = &roomTranslations[0]; rec->srcRoom != 0; ++rec) {
+		if (rec->srcRoom == destRoom) {
+			destRoom = rec->destRoom;
+			break;
+		}
+	}
+
+	if (charHotspot->currentActions().isEmpty())
+		charHotspot->currentActions().addFront(DISPATCH_ACTION,  destRoom);
+	else
+		charHotspot->currentActions().top().setRoomNumber(destRoom);
+}
+
 // Sets the tick handler for the village Skorl to an alternate handler
 
 void Script::setVillageSkorlTickProc(uint16 v1, uint16 v2, uint16 v3) {
@@ -508,6 +539,13 @@ void Script::enableGargoylesTalk(uint16 v1, uint16 v2, uint16 v3) {
 	HotspotData *g2 = res.getHotspot(0x42D);
 	g1->actions = 1 << (TALK_TO - 1);
 	g2->actions = 1 << (TALK_TO - 1);
+}
+
+// Flags the player as dead
+
+void Script::killPlayer(uint16 v1, uint16 v2, uint16 v3) {
+	Game &game = Game::getReference();
+	game.setState(GS_RESTORE_RESTART);
 }
 
 // Loads the specified animation, completely bypassing the standard process
@@ -600,11 +638,13 @@ SequenceMethodRecord scriptMethods[] = {
 	{49, Script::setSupportData},
 	{50, Script::givePlayerItem},
 	{51, Script::decreaseNumGroats},
+	{53, Script::moveCharacterToPlayer},
 	{54, Script::setVillageSkorlTickProc},
 	{55, Script::freeGoewin},
 	{56, Script::barmanServe},
 	{57, Script::getNumGroats},
 	{59, Script::enableGargoylesTalk},
+	{61, Script::killPlayer},
 	{62, Script::animationLoad},
 	{63, Script::addActions},
 	{64, Script::randomToGeneral},

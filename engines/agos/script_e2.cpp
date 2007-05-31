@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -249,7 +251,7 @@ void AGOSEngine_Elvira2::setupOpcodes() {
 		/* 172 */
 		OPCODE(oe2_ifExitClosed),
 		OPCODE(oe2_ifExitLocked),
-		OPCODE(oe2_unk174),
+		OPCODE(oe2_playEffect),
 		OPCODE(oe2_getDollar2),
 		/* 176 */
 		OPCODE(oe2_setSRExit),
@@ -498,6 +500,7 @@ void AGOSEngine_Elvira2::oe2_printStats() {
 	// 161: print stats
 	WindowBlock *window = _dummyWindow;
 	int val;
+	const uint8 y = (getPlatform() == Common::kPlatformAtariST) ? 131 : 134;
 
 	window->flags = 1;
 
@@ -509,7 +512,7 @@ void AGOSEngine_Elvira2::oe2_printStats() {
 		val = -99;
 	if (val > 99)
 		val = 99;	
-	writeChar(window, 10, 134, 0, val);
+	writeChar(window, 10, y, 0, val);
 
 	// PP
 	val = _variableArray[22];
@@ -517,7 +520,7 @@ void AGOSEngine_Elvira2::oe2_printStats() {
 		val = -99;
 	if (val > 99)
 		val = 99;	
-	writeChar(window, 16, 134, 6, val);
+	writeChar(window, 16, y, 6, val);
 
 	// HP
 	val = _variableArray[23];
@@ -525,7 +528,7 @@ void AGOSEngine_Elvira2::oe2_printStats() {
 		val = -99;
 	if (val > 99)
 		val = 99;	
-	writeChar(window, 23, 134, 4, val);
+	writeChar(window, 23, y, 4, val);
 
 	// Experience
 	val = _variableArray[21];
@@ -533,8 +536,8 @@ void AGOSEngine_Elvira2::oe2_printStats() {
 		val = -99;
 	if (val > 9999)
 		val = 9999;	
-	writeChar(window, 30, 134, 6, val / 100);
-	writeChar(window, 32, 134, 2, val);
+	writeChar(window, 30, y, 6, val / 100);
+	writeChar(window, 32, y, 2, val / 10);
 
 	mouseOn();
 }
@@ -597,10 +600,12 @@ void AGOSEngine_Elvira2::oe2_ifExitLocked() {
 	setScriptCondition(getExitState(i, n, d) == 3);
 }
 
-void AGOSEngine_Elvira2::oe2_unk174() {
-	// 174:
-	uint a = getVarOrWord();
-	debug(0, "oe2_unk174: stub (%d)", a);
+void AGOSEngine_Elvira2::oe2_playEffect() {
+	// 174: play sound
+	uint soundId = getVarOrWord();
+	loadSound(soundId);
+
+	debug(0, "oe2_playEffect: stub (%d)", soundId);
 }
 
 void AGOSEngine_Elvira2::oe2_getDollar2() {

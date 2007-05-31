@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,7 +35,7 @@ uint16 messageCount;
 
 void loadMsg(char *pMsgName) {
 	uint16 i;
-	byte *ptr;
+	byte *ptr, *dataPtr;
 
 	checkDataDisk(-1);
 
@@ -42,17 +43,13 @@ void loadMsg(char *pMsgName) {
 
 	for (i = 0; i < NUM_MAX_MESSAGE; i++) {
 		messageTable[i].len = 0;
-
 		if (messageTable[i].ptr) {
-			assert(messageTable[i].ptr);
-
 			free(messageTable[i].ptr);
+			messageTable[i].ptr = NULL;
 		}
-
-		messageTable[i].ptr = NULL;
 	}
 
-	ptr = readBundleFile(findFileInBundle(pMsgName));
+	ptr = dataPtr = readBundleFile(findFileInBundle(pMsgName));
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
@@ -74,6 +71,8 @@ void loadMsg(char *pMsgName) {
 			ptr += messageTable[i].len;
 		}
 	}
+
+	free(dataPtr);
 }
 
 } // End of namespace Cine

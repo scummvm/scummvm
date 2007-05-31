@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -207,9 +210,7 @@ GameList detectAllGames(const FSList &fslist, const Common::ADParams &params);
 const ADGameDescription *detectBestMatchingGame(const Common::ADParams &params);
 
 // FIXME/TODO: Rename this function to something more sensible.
-void upgradeTargetIfNecessary(const Common::ADParams &params);
-
-// FIXME/TODO: Rename this function to something more sensible.
+// Only used by ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_FUNC
 PluginError detectGameForEngineCreation(const Common::ADParams &params);
 
 
@@ -237,7 +238,6 @@ PluginError detectGameForEngineCreation(const Common::ADParams &params);
 	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \
 		assert(syst); \
 		assert(engine); \
-		Common::AdvancedDetector::upgradeTargetIfNecessary(params); \
 		PluginError err = Common::AdvancedDetector::detectGameForEngineCreation(params); \
 		if (err == kNoError) \
 			*engine = factoryFunc(syst); \

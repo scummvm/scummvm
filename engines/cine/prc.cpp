@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -63,7 +64,7 @@ void freePrcLinkedList(void) {
 void loadPrc(const char *pPrcName) {
 	byte i;
 	uint16 numScripts;
-	const byte *scriptPtr;
+	byte *scriptPtr, *dataPtr;
 
 	assert(pPrcName);
 
@@ -85,9 +86,9 @@ void loadPrc(const char *pPrcName) {
 	checkDataDisk(-1);
 	if ((g_cine->getGameType() == Cine::GType_FW) &&
 		(!scumm_stricmp(pPrcName, BOOT_PRC_NAME) || !scumm_stricmp(pPrcName, "demo.prc"))) {
-		scriptPtr = readFile(pPrcName);
+		scriptPtr = dataPtr = readFile(pPrcName);
 	} else {
-		scriptPtr = readBundleFile(findFileInBundle(pPrcName));
+		scriptPtr = dataPtr = readBundleFile(findFileInBundle(pPrcName));
 	}
 
 	assert(scriptPtr);
@@ -112,6 +113,8 @@ void loadPrc(const char *pPrcName) {
 			computeScriptStack(scriptTable[i].ptr, scriptTable[i].stack, size);
 		}
 	}
+
+	free(dataPtr);
 
 #ifdef DUMP_SCRIPTS
 

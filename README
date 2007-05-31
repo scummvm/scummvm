@@ -4,8 +4,6 @@ Last updated:    $Date$
 
 TODO: Resolve all the TODOs scattered through this file before release.
 
-TODO: Document the mass-add feature of the launcher (shift+"Add Game...")
-
 For more information, compatibility lists, details on donating, the latest
 release, progress reports and more, please visit the ScummVM home page
 at: http://www.scummvm.org/
@@ -650,7 +648,11 @@ directory to avoid this issue, are in section 6.0.
 
 ScummVM can be launched directly by running the executable. In this case,
 the built-in launcher will activate. From this, you can add games (click
-'Add Game'), or launch games which have already been configured.
+'Add Game'), or launch games which have already been configured. Games can
+also be added in mass quantities. By pressing shift + 'Add Game' (Note that
+the image turns to 'Mass Add'), you can then specify a directory to start in,
+and ScummVM will attempt to detect games in all subdirectories of that
+directory.
 
 ScummVM can also be launched into a game directly using Command Line
 arguments -- see the next section.
@@ -748,10 +750,11 @@ ScummVM includes a language option for Maniac Mansion, Zak McKracken, The Dig,
 The Curse of Monkey Island, Beneath a Steel Sky, Broken Sword 1 and
 Simon the Sorcerer 1 and 2.
 
-Note that with the exception of Beneath a Steel Sky, Broken Sword 1, TODO,
-using this option does *not* change the language of the game (which usually
-is hardcoded), but rather is only used to select the appropriate font (e.g.
-for a German version of a game, one containing umlauts).
+Note that with the exception of Beneath a Steel Sky, Broken Sword 1,
+multilanguage versions of Goblins games and Nippon Safes Inc., using this
+option does *not* change the language of the game (which usually is hardcoded),
+but rather is only used to select the appropriate font (e.g. for a German
+version of a game, one containing umlauts).
 
 Maniac Mansion and Zak McKracken
         en  - English (default)
@@ -891,11 +894,13 @@ other games.
         - and +                - Text speed, slower/faster
         F5                     - Displays a save/load box
         Alt-F5                 - Displays the original save/load box, if the
-                                 game has one. This is not intended for saving
-                                 or loading a game, and may even crash ScummVM
-                                 in some games, but it is currently the only
-                                 way to see your IQ points in Indiana Jones and
-                                 the Last Crusade without dying.
+                                 game has one. You can save and load games using
+                                 using this, however it is not intended for this
+                                 purpose, and may even crash ScummVM in some
+                                 games.
+        i                      - Displays IQ points (Indiana Jones and the Last
+                                 Crusade, and Indiana Jones and the Fate of
+                                 Atlantis)
         Space                  - Pauses
         Period (.)             - Skips current line of text in some games
         Enter                  - Simulate left mouse button press
@@ -960,6 +965,10 @@ Note that using ctrl-f or ctrl-g is not recommended: games can crash when
 being run faster than their normal speed, as scripts will lose synchronisation.
 
 Ctrl-f is not supported by the Broken Sword games.
+
+Note for WinCE users: Due to the limited keyboard input in most devices, a
+small subset of these hot keys are supported via key remapping and/or panel
+actions. Please consult the README-WinCE.txt file.
 
 
 6.0) Savegames:
@@ -1357,10 +1366,29 @@ output frequency is a multiple of the original frequency.
 ---- -------------------
 By default, the configuration file is saved in, and loaded from:
 
-        Windows:  <windir>\scummvm.ini,
-        Unix:     ~/.scummvmrc
-        Mac OS X: ~/Library/Preferences/ScummVM Preferences
-        Others:   scummvm.ini in the current directory
+        Windows Vista:
+        \Users\username\AppData\Roaming\ScummVM\scummvm.ini,
+
+        Windows 2000/XP:
+        \Documents and Settings\username\Application Data\ScummVM\scummvm.ini,
+
+        Windows NT4:
+        <windir>\Profiles\username\Application Data\ScummVM\scummvm.ini,
+
+        Windows 95/98/ME:
+       <windir>\scummvm.ini,
+
+        If an earlier version of ScummVM was installed under Windows, the
+        previous default location of '<windir>\scummvm.ini' will be kept.
+
+        Unix:
+        ~/.scummvmrc
+
+        Mac OS X:
+        ~/Library/Preferences/ScummVM Preferences
+
+        Others:
+        scummvm.ini in the current directory
 
 An example config file looks as follows:
 

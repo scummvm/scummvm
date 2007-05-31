@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +27,6 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
-//#include "common/fs.h"
 #include "common/system.h"
 
 #include "agos/debugger.h"
@@ -155,6 +156,9 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_localStringtable = 0;
 	_stringIdLocalMin = 0;
 	_stringIdLocalMax = 0;
+
+	_stateList = 0;
+	_numRoomStates = 0;
 
 	_menuBase = 0;
 	_roomsList = 0;
@@ -395,6 +399,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_findNextPtr = 0;
 
 	_agosMenu = 0;
+	_currentRoom = 0;
 	_superRoomNumber = 0;
 	_wallOn = 0;
 
@@ -964,14 +969,14 @@ int AGOSEngine::go() {
 			for (i = 0; i < 4; i++) {
 				setWindowImage(3, 9902 + i);
 				debug(0, "Displaying image %d", 9902 + i);
-				delay(1000);
+				delay(3000);
 
 			}
 
 			for (i = 4; i < 16; i++) {
 				setWindowImage(4, 9902 + i);
 				debug(0, "Displaying image %d", 9902 + i);
-				delay(1000);
+				delay(3000);
 			}
 		}
 	}

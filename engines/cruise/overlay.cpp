@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
+ * $URL:https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/branches/gsoc2007-fsnode/engines/cruise/overlay.cpp $
+ * $Id:overlay.cpp 26949 2007-05-26 20:23:24Z david_corrales $
  *
  */
 
@@ -42,7 +43,7 @@ void initOverlayTable(void) {
 	numOfLoadedOverlay = 1;
 }
 
-int loadOverlay(uint8 *scriptName) {
+int loadOverlay(const uint8 *scriptName) {
 	int newNumberOfScript;
 	bool scriptNotLoadedBefore;
 	int scriptIdx;
@@ -59,7 +60,7 @@ int loadOverlay(uint8 *scriptName) {
 
 	scriptNotLoadedBefore = false;
 
-	scriptIdx = findOverlayByName((char *)scriptName);
+	scriptIdx = findOverlayByName((const char *)scriptName);
 
 	if (scriptIdx == -4) {
 		scriptIdx = numOfLoadedOverlay;
@@ -723,7 +724,7 @@ int releaseOverlay(const char *name) {
 	return 0;
 }
 
-int32 findOverlayByName2(uint8 *name) {
+int32 findOverlayByName2(const uint8 *name) {
 	int i;
 
 	for (i = 1; i < numOfLoadedOverlay; i++) {

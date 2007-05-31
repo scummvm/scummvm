@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +34,8 @@
 #include "gui/ThemeClassic.h"
 
 #include "common/config-manager.h"
+
+DECLARE_SINGLETON(GUI::NewGui);
 
 namespace GUI {
 
@@ -306,6 +311,8 @@ void NewGui::runLoop() {
 				return;
 			case Common::EVENT_SCREEN_CHANGED:
 				screenChange();
+				break;
+			default:
 				break;
 			}
 		}

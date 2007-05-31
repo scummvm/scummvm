@@ -1,6 +1,8 @@
 #include "backends/fs/symbian/symbian-fs-factory.h"
 #include "backends/fs/symbian/symbian-fs.cpp"
 
+DECLARE_SINGLETON(SymbianFilesystemFactory);
+
 AbstractFilesystemNode *SymbianFilesystemFactory::makeRootFileNode() const {
 	return new SymbianFilesystemNode(true);
 }

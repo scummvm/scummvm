@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -349,7 +351,7 @@ void AGOSEngine_Elvira2::setSRExit(Item *i, int n, int d, uint16 s) {
 }
 
 // Waxworks specific
-bool AGOSEngine_Waxworks::loadRoomItems(uint item) {
+bool AGOSEngine::loadRoomItems(uint item) {
 	byte *p;
 	uint i, min_num, max_num;
 	char filename[30];
@@ -359,6 +361,7 @@ bool AGOSEngine_Waxworks::loadRoomItems(uint item) {
 	if (p == NULL)
 		return 0;
 
+	_currentRoom = item;
 	item -= 2;
 
 	while (*p) {
@@ -375,7 +378,6 @@ bool AGOSEngine_Waxworks::loadRoomItems(uint item) {
 			max_num = READ_BE_UINT16(p); p += 2;
 
 			if (item >= min_num && item <= max_num) {
-
 				in.open(filename);
 				if (in.isOpen() == false) {
 					error("loadRoomItems: Can't load rooms file '%s'", filename);

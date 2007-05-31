@@ -3,7 +3,7 @@
 # $URL$
 # $Id$
 
-wince_gcc_root = /cygdrive/e/wince-gcc-root/
+wince_gcc_root = /cygdrive/e/wince-gcc-root
 srcdir    = ../../..
 VPATH     = $(srcdir)
 
@@ -41,11 +41,10 @@ AS     = arm-wince-pe-as
 DEFINES := -D_WIN32_WCE=300 -DARM -D__ARM__ -D_ARM_ -DUNICODE -DSCUMM_NEED_ALIGNMENT -DFPM_DEFAULT -DUSE_MAD -DNONSTANDARD_PORT -DUSE_TREMOR -DUSE_VORBIS -DUSE_MPEG2 -DWIN32 -DUSE_ZLIB
 DEFINES += -D__stdcall= -Dcdecl= -D__cdecl__= -D__cdecl= -Wno-multichar
 #DEFINES += -DDEBUG -DUSE_WINDBG -g
-DEFINES += -O2
 
 INCLUDES := -I$(srcdir) -I. -I$(srcdir)/engines -Imissing/gcc -Ilibs/include -Ilibs/include/sdl -ICEgui -ICEkeys -I$(wince_gcc_root)/include
 
-CFLAGS := 
+CFLAGS := -O3 -march=armv4 -mtune=xscale
 
 CXXFLAGS := $(CFLAGS)
 

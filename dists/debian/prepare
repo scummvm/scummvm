@@ -19,7 +19,7 @@ cat debian/changelog > $TMP
 cat << __eof > debian/changelog
 scummvm ($VERSION) experimental; urgency=low
 
-  * CVS snapshot.
+  * SVN snapshot.
 
     Builder:    $GECOS <$USERNAME@$DOMAIN>
     Build-date: $DATE

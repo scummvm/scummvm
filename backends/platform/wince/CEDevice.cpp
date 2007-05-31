@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -153,67 +156,4 @@ bool CEDevice::isSmartphone() {
 	if (!result && GetLastError() == ERROR_ACCESS_DENIED)
 		return true;
 	return (_wcsnicmp(platformType, TEXT("SmartPhone"), 10) == 0);
-}
-
-Common::String CEDevice::getKeyName(unsigned int keyCode) {
-	switch (keyCode) {
-		case SDLK_F1:
-			return "Softkey A";
-		case SDLK_F2:
-			return "Softkey B";
-		case SDLK_F3:
-			return "Talk";
-		case SDLK_F4:
-			return "End";
-		case SDLK_APP1:
-			return "Application 1";
-		case SDLK_APP2:
-			return "Application 2";
-		case SDLK_APP3:
-			return "Application 3";
-		case SDLK_APP4:
-			return "Application 4";
-		case SDLK_APP5:
-			return "Application 5";
-		case SDLK_APP6:
-			return "Application 6";
-		case SDLK_LSUPER:
-			return "Home";
-		case SDLK_ESCAPE:
-			return "Back";
-		case SDLK_UP:
-			return "Up";
-		case SDLK_DOWN:
-			return "Down";
-		case SDLK_LEFT:
-			return "Left";
-		case SDLK_RIGHT:
-			return "Right";
-		case SDLK_RETURN:
-			return "Action";
-		case SDLK_F10:
-			return "Record";
-		case SDLK_F6:
-			return "Volume Up";
-		case SDLK_F7:
-			return "Volume Down";
-		case SDLK_F17:
-			return "Flip";
-		case SDLK_F18:
-			return "Power";
-		case SDLK_F16:
-			return "Speaker";
-		case SDLK_F8:
-			return "Star";
-		case SDLK_F9:
-			return "Pound";
-		case SDLK_F11:
-			return "Symbol";
-		case SDLK_F19:
-			return "Red Key";
-		case 0:
-			return "None";
-		default:
-			return SDL_GetKeyName((SDLKey)keyCode);
-	}
 }

@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1972,9 +1973,8 @@ void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, KnownCo
 	if (_vm->getGameType() == GType_ITE) {
 		textId = verbTypeToTextStringsIdLUT[0][panelButton->id];
 		text = _vm->getTextString(textId);
-	} else {
-		// This -2 has been placed because of the changes in the ids in IHNM_MainPanelButtons
-		textId = verbTypeToTextStringsIdLUT[1][panelButton->id - 2];
+	} else {	
+		textId = verbTypeToTextStringsIdLUT[1][panelButton->id];
 		text = _vm->_script->_mainStrings.getString(textId + 1);
 		textShadowKnownColor = kKnownColorTransparent;
 	}

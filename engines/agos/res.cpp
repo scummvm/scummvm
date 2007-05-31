@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -210,6 +212,26 @@ void AGOSEngine::loadGamePcFile() {
 		if (_strippedTxtMem == NULL)
 			error("loadGamePcFile: Out of memory for strip text list");
 		in.read(_strippedTxtMem, fileSize);
+		in.close();
+	}
+
+	if (getFileName(GAME_STATFILE) != NULL) {
+		/* Read list of ROOM STATE resources */
+		in.open(getFileName(GAME_STATFILE));
+		if (in.isOpen() == false) {
+			error("loadGamePcFile: Can't load state resources file '%s'", getFileName(GAME_STATFILE));
+		}
+
+		_numRoomStates = in.size() / 8;
+
+		_stateList = (byte *)malloc(_numRoomStates * 6);
+		if (_stateList == NULL)
+			error("loadGamePcFile: Out of memory for room state list");
+
+		_numRoomStates *= 3;
+
+		// TODO Load room state resources
+
 		in.close();
 	}
 

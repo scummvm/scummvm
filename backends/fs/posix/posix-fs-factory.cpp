@@ -1,6 +1,8 @@
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.cpp"
 
+DECLARE_SINGLETON(POSIXFilesystemFactory);
+
 AbstractFilesystemNode *POSIXFilesystemFactory::makeRootFileNode() const {
 	return new POSIXFilesystemNode();
 }

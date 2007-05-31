@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -215,6 +216,10 @@ void Gfx::setPalette(const PalEntry *pal, bool full) {
 		ppal[3] = 0;
 	}
 
+	// Color 0 should always be black in IHNM
+	if (_vm->getGameType() == GType_IHNM)
+		memset(&_currentPal[0 * 4], 0, 4);
+
 	// Make 256th color black. See bug #1256368
 	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && !_vm->_scene->isInIntro())
 		memset(&_currentPal[255 * 4], 0, 4);
@@ -320,6 +325,10 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 		ppal[3] = 0;
 	}
 
+	// Color 0 should always be black in IHNM
+	if (_vm->getGameType() == GType_IHNM)
+		memset(&_currentPal[0 * 4], 0, 4);
+
 	// Make 256th color black. See bug #1256368
 	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && !_vm->_scene->isInIntro())
 		memset(&_currentPal[255 * 4], 0, 4);
@@ -384,6 +393,10 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 		}
 		ppal[3] = 0;
 	}
+
+	// Color 0 should always be black in IHNM
+	if (_vm->getGameType() == GType_IHNM)
+		memset(&_currentPal[0 * 4], 0, 4);
 
 	// Make 256th color black. See bug #1256368
 	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && !_vm->_scene->isInIntro())

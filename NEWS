@@ -65,6 +65,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Switched to using a GCC toolchain for building.
    - Major update to the SDL lib. Better, faster, more compatible :-)
 
+ Windows Port:
+   - The default location of the config file changed, to support multi-user
+     systems.
+
  PalmOS Port:
    - Now using PalmOS Porting SDK which enables use of the C standard library
 
@@ -465,7 +469,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Default Makefile now uses configure script
    - Greatly improved the launcher and options dialogs (work-in-progress)
    - Many other "under the hood" improvements, like a new config managment
-	 and plugin capabilities
+     and plugin capabilities
 
  Simon:
    - Added data files decoder for Amiga disk versions

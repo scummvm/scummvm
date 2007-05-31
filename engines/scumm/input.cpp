@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -495,6 +497,26 @@ void ScummEngine_v3::processKeyboard(int lastKeyHit) {
 	} else {
 		// Fall back to default behavior
 		ScummEngine::processKeyboard(lastKeyHit);
+	}
+
+	// i brings up an IQ dialog in Indy3
+
+	if (lastKeyHit == 'i' && _game.id == GID_INDY3) {
+		// SCUMM var 244 is the episode score
+		// and var 245 is the series score
+		char text[50];
+
+		// FIXME: Currently, the series score does not work properly
+		// This workaround just sets it equal to the episode score
+		// However, at the end of the game, it does show the episode
+		// score by itself
+		int a = _scummVars[245];
+		if (!a)
+			a = _scummVars[244];
+
+		sprintf(text, "IQ Points: Episode = %d, Series = %d", _scummVars[244], a);
+		Indy3IQPointsDialog indy3IQPointsDialog(this, text);
+		runDialog(indy3IQPointsDialog);
 	}
 }
 

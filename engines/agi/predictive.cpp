@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -114,7 +117,7 @@ bool AgiEngine::predictiveDialog(void) {
 	int bx[17], by[17];
 	String prefix = "";
 	char temp[MAXWORDLEN + 1];
-	
+	AgiBlock tmpwindow;
 	
 	// FIXME: Move this to a more appropriate place.
 	initAsciiToNumTable();
@@ -146,6 +149,11 @@ bool AgiEngine::predictiveDialog(void) {
 			return false;
 	}
 
+	// show the predictive dialog.
+	// if another window is already in display, save its state into tmpwindow
+	tmpwindow.active = false;
+	if (_game.window.active)
+		memcpy(&tmpwindow, &(_game.window), sizeof(AgiBlock));
 	drawWindow(50, 40, 269, 159);
 	_gfx->drawRectangle(62, 54, 249, 66, MSG_BOX_TEXT);
 	_gfx->flushBlock(62, 54, 249, 66);
@@ -310,7 +318,17 @@ bool AgiEngine::predictiveDialog(void) {
 	_predictiveResult[prefix.size() + _currentCode.size() + 1] = 0;
 
  getout:
-	closeWindow();
+	// if another window was shown, bring it up again
+	if (!tmpwindow.active)
+		closeWindow();
+	else {
+		_gfx->restoreBlock(_game.window.x1, _game.window.y1,
+				_game.window.x2, _game.window.y2, _game.window.buffer);
+
+		free(_game.window.buffer);
+		memcpy(&(_game.window), &tmpwindow, sizeof(AgiBlock));
+		_gfx->doUpdate();
+	}
 
 	return rc;
 }

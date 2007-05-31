@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -58,7 +59,7 @@ void releaseObjectScripts(void) {
 void loadRel(char *pRelName) {
 	uint16 numEntry;
 	uint16 i;
-	byte *ptr;
+	byte *ptr, *dataPtr;
 
 	checkDataDisk(-1);
 
@@ -70,7 +71,7 @@ void loadRel(char *pRelName) {
 		}
 	}
 
-	ptr = readBundleFile(findFileInBundle(pRelName));
+	ptr = dataPtr = readBundleFile(findFileInBundle(pRelName));
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
@@ -95,6 +96,8 @@ void loadRel(char *pRelName) {
 			ptr += relTable[i].size;
 		}
 	}
+	
+	free(dataPtr);
 
 #ifdef DUMP_SCRIPTS
 

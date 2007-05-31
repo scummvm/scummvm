@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * Copyright (C) 1999-2003 Sarien Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +27,6 @@
 
 #include "common/events.h"
 #include "common/file.h"
-//#include "common/fs.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
 
@@ -67,6 +67,19 @@ void AgiEngine::processEvents() {
 			_gfx->deinitVideo();
 			_gfx->deinitMachine();
 			_system->quit();
+			break;
+		case Common::EVENT_PREDICTIVE_DIALOG:
+			if (_game.playerControl && predictiveDialog()) {
+				if (_game.inputMode == INPUT_NORMAL) {
+					strcpy((char *)_game.inputBuffer, _predictiveResult);
+					handleKeys(KEY_ENTER);
+				} else if (_game.inputMode == INPUT_GETSTRING) {
+					strcpy(_game.strings[_stringdata.str], _predictiveResult);
+					newInputMode(INPUT_NORMAL);
+					_gfx->printCharacter(_stringdata.x + strlen(_game.strings[_stringdata.str]) + 1,
+							_stringdata.y, ' ', _game.colorFg, _game.colorBg);
+				}
+			}
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			key = BUTTON_LEFT;
