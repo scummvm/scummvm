@@ -514,6 +514,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "bluesabctime", "abc-slideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
+	{ "bluesabctime", "BluesABCTimeSlideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "BluesBirthday", "Blue'sBirthday-Red", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "BluesBirthday", "Blue'sBirthday-Red", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -522,6 +523,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "BluesBirthday", "BluesBirthdayDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "BluesBirthday", "BluesBirthdayDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "BluesBirthday", "bda-slideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
+	{ "BluesBirthday", "BluesBirthdaySlideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "catalog", "catalog", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "catalog", "catalog2", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -705,6 +707,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttrace", "ToffRennen", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "puttrace", "ToffRennen", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "puttrace", "UKPuttRace", kGenHEPC, Common::RU_RUS, UNK, 0 }, // Russian
+	{ "puttrace", "PUTTDEMO.CUP", kGenUnchanged, UNK_LANG, UNK, 0 },
 	{ "puttrace", "racedemo.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "PuttsFunShop", "PuttsFunShop", kGenHEPC, UNK_LANG, UNK, 0 },
