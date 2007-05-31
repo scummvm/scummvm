@@ -12,6 +12,7 @@
 		MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
 		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
 		MACRO			DISABLE_PARALLACTION	// LIB:scummvm_parallaction.lib		
+		MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
 	";
 
 	##
@@ -141,8 +142,8 @@ if (1) # all regular combo's
 		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
-		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib
-		MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
+		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib	
+		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'agos'} = "$DefaultTopMacros
@@ -150,41 +151,41 @@ if (1) # all regular combo's
 		//MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
 		MACRO			DISABLE_SKY		// LIB:scummvm_sky.lib
 		MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
-		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
+		MACRO			DISABLE_GOB		// LIB:scummvm_gob.lib
 		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
 		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
-		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib
-		MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
+		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib
+		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'sky'} = "$DefaultTopMacros
 		MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
 		MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
-		//MACRO			DISABLE_SKY			// LIB:scummvm_sky.lib
+		//MACRO			DISABLE_SKY		// LIB:scummvm_sky.lib
 		MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
-		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
+		MACRO			DISABLE_GOB		// LIB:scummvm_gob.lib
 		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
 		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
-		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib
-		MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
+		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib	
+		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'queen'} = "$DefaultTopMacros
 		MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
 		MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
-		MACRO			DISABLE_SKY			// LIB:scummvm_sky.lib
+		MACRO			DISABLE_SKY		// LIB:scummvm_sky.lib
 		//MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
-		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
+		MACRO			DISABLE_GOB		// LIB:scummvm_gob.lib
 		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
 		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
-		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib
-		MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
+		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
+		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'gob'} = "$DefaultTopMacros
@@ -196,9 +197,9 @@ if (1) # all regular combo's
 		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
 		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
 		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib
-		MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
+		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'saga'} = "$DefaultTopMacros
@@ -212,7 +213,7 @@ if (1) # all regular combo's
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib
-		MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
+		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'kyra'} = "$DefaultTopMacros
@@ -223,10 +224,10 @@ if (1) # all regular combo's
 		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
 		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
 		//MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
-		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib
-		MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
+		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib		
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
-		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
+		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib	
+		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 	$DefaultBottomMacros";
 
 	# below here you could specify weird & experimental combinations, non-ready engines
@@ -234,8 +235,7 @@ if (1) # all regular combo's
 	$SDK_Variations{'ALL'}{'saga_mini'} = "
 		//MACRO			USE_ZLIB			// LIB:zlib.lib
 		//MACRO			USE_MAD				// LIB:libmad.lib
-		//MACRO			USE_TREMOR			// LIB:libtremor.lib
-		
+		//MACRO			USE_TREMOR			// LIB:libtremor.lib		
 		MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
 		MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
 		MACRO			DISABLE_SKY			// LIB:scummvm_sky.lib
@@ -243,31 +243,30 @@ if (1) # all regular combo's
 		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
 		//MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
 		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
-		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib
-		MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
+		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib		
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
-		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
+		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib		
+		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 	$DefaultBottomMacros";
 
-	$SDK_Variations{'ALL'}{'scumm_no78he'} = "
-		MACRO			USE_ZLIB			// LIB:zlib.lib
-		MACRO			USE_MAD				// LIB:libmad.lib
-		//MACRO			USE_TREMOR			// LIB:libtremor.lib
-		MACRO			DISABLE_SCUMM_7_8
-		MACRO			DISABLE_SCUMM_HE
-		
-		//MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
-		MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
-		MACRO			DISABLE_SKY			// LIB:scummvm_sky.lib
-		MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
-		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
-		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
-		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
-		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib
-		MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
-		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
-		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
-	$DefaultBottomMacros";
+#	$SDK_Variations{'ALL'}{'scumm_no78he'} = "
+#		MACRO			USE_ZLIB			// LIB:zlib.lib
+#		MACRO			USE_MAD				// LIB:libmad.lib
+#		//MACRO			USE_TREMOR			// LIB:libtremor.lib
+#		MACRO			DISABLE_SCUMM_7_8
+#		MACRO			DISABLE_SCUMM_HE		
+#		//MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
+#		MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
+#		MACRO			DISABLE_SKY			// LIB:scummvm_sky.lib
+#		MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
+#		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
+#		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
+#		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
+#		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib		
+#		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
+#		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib		
+#		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+#	$DefaultBottomMacros";
 	
 #	$SDK_Variations{'ALL'}{'all_vorbis'} = "
 #		MACRO			USE_ZLIB			// LIB:zlib.lib
@@ -290,15 +289,12 @@ if (1) # all regular combo's
 		MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
 		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
 		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
-		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
-		
-		MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
-		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
+		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib				
 		//MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_agi.lib
-		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib
-		MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
-	";
+		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib			
+		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+	$DefaultBottomMacros";
 
 	# empty $SDK_Variations{''} string instead of 'ALL' = package disabled
 	$SDK_Variations{'ALL'}{'test_cine'} = "$DefaultTopMacros
@@ -308,52 +304,44 @@ if (1) # all regular combo's
 		MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
 		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
 		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
-		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
-		
-		MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
-		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
+		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib				
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		//MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
-		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib
-		MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
-
-	";
+		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib		
+		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'test_agi'} = "$DefaultTopMacros
 		MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
 		MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
-		MACRO			DISABLE_SKY			// LIB:scummvm_sky.lib
+		MACRO			DISABLE_SKY		// LIB:scummvm_sky.lib
 		MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
-		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
+		MACRO			DISABLE_GOB		// LIB:scummvm_gob.lib
 		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
-		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
-		
-		MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
-		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
+		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib				
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		//MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib
-		MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
-
-	";
+		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+	$DefaultBottomMacros";
 
 
 	$SDK_Variations{'ALL'}{'test_touche'} = "$DefaultTopMacros
 		MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
 		MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
-		MACRO			DISABLE_SKY			// LIB:scummvm_sky.lib
+		MACRO			DISABLE_SKY		// LIB:scummvm_sky.lib
 		MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
-		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
+		MACRO			DISABLE_GOB		// LIB:scummvm_gob.lib
 		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
-		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
-		
-		MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
-		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
+		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib		
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
-		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib
+		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib	
+		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 		//MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
-
+		MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
+		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
+		MACRO			DISABLE_PARALLACTION	// LIB:scummvm_parallaction.lib			
 	";
 }
 
@@ -368,6 +356,9 @@ if (1) # all regular combo's
 #		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
 #		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
 #		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
+#		MACRO			DISABLE_PARALLACTION	// LIB:scummvm_parallaction.lib
+#		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
+#		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 #		//MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
 #		//MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
 #	";
