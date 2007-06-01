@@ -1138,13 +1138,13 @@ void ScummEngine_v60he::o60_soundOps() {
 	int arg = pop();
 
 	switch (subOp) {
-	case 0xde:
+	case 222:
 		_imuse->setMusicVolume(arg);
 		break;
-	case 0xdf:
-		// Used in fbear introduction
+	case 223:
+		// WORKAROUND: For error in room script 228 (room 2) of fbear.
 		break;
-	case 0xe0:
+	case 224:
 		// Fatty Bear's Birthday surprise uses this when playing the
 		// piano, but only when using one of the digitized instruments.
 		// See also o6_startSound().
