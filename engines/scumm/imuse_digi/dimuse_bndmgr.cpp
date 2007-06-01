@@ -60,7 +60,7 @@ BundleDirCache::IndexNode *BundleDirCache::getIndexTable(int slot) {
 	return _budleDirCache[slot].indexTable;
 }
 
-bool BundleDirCache::isCompressed(int slot) {
+bool BundleDirCache::isSndDataExtComp(int slot) {
 	return _budleDirCache[slot].compressedBun;
 }
 
@@ -187,7 +187,7 @@ bool BundleMgr::open(const char *filename, bool &compressed, bool errorFlag) {
 
 	int slot = _cache->matchFile(filename);
 	assert(slot != -1);
-	compressed = _cache->isCompressed(slot);
+	compressed = _cache->isSndDataExtComp(slot);
 	_numFiles = _cache->getNumFiles(slot);
 	assert(_numFiles);
 	_bundleTable = _cache->getTable(slot);

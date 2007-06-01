@@ -465,7 +465,7 @@ bool ImuseDigiSndMgr::checkForProperHandle(soundStruct *soundHandle) {
 	return false;
 }
 
-bool ImuseDigiSndMgr::isCompressed(soundStruct *soundHandle) {
+bool ImuseDigiSndMgr::isSndDataExtComp(soundStruct *soundHandle) {
 	assert(checkForProperHandle(soundHandle));
 	return soundHandle->compressed;
 }

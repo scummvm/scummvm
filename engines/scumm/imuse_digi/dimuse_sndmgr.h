@@ -120,7 +120,7 @@ public:
 	void closeSound(soundStruct *soundHandle);
 	soundStruct *cloneSound(soundStruct *soundHandle);
 
-	bool isCompressed(soundStruct *soundHandle);
+	bool isSndDataExtComp(soundStruct *soundHandle);
 	int getFreq(soundStruct *soundHandle);
 	int getBits(soundStruct *soundHandle);
 	int getChannels(soundStruct *soundHandle);

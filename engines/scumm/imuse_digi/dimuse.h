@@ -84,24 +84,24 @@ private:
 		bool used;			// flag mean that track is used
 		bool toBeRemoved;   // flag mean that track need to be free
 		bool readyToRemove; // flag mean that track is ready to stop
-		bool started;		// flag mean sound mixer's channel is started
-		bool souStream;		// flag mean that track use stream from sou file
-		bool compressed;	// flag mean that sound data is compressed by scummvm tools
-		int32 priority;		// priority level of played sound (0-127)
+		bool mixerStreamRunning;	// flag mean sound mixer's stream is running
+		bool souStreamUsed;	// flag mean that track use stream from sou file
+		bool sndDataExtComp;// flag mean that sound data is compressed by scummvm tools
+		int32 soundPriority;// priority level of played sound (0-127)
 		int32 regionOffset; // offset to sound data relative to begining of current region
 		int32 dataOffset;	// offset to sound data relative to begining of 'DATA' chunk
 		int32 curRegion;	// id of current used region
 		int32 curHookId;	// id of current used hook id
 		int32 volGroupId;	// id of volume group (IMUSE_VOLGRP_VOICE, IMUSE_VOLGRP_SFX, IMUSE_VOLGRP_MUSIC)
 		int32 soundType;	// type of sound data (kSpeechSoundType, kSFXSoundType, kMusicSoundType)
-		int32 iteration;	// size of sound data needed to be filled at each callback iteration
-		int32 mod;			// value used between all callback to align 12 bit source of data
-		int32 flags;		// flags for sound mixer's channel (kFlagStereo, kFlag16Bits, kFlagReverseStereo, kFlagUnsigned, kFlagLittleEndian)
+		int32 feedSize;		// size of sound data needed to be filled at each callback iteration
+		int32 dataMod12Bit;	// value used between all callback to align 12 bit source of data
+		int32 mixerFlags;	// flags for sound mixer's channel (kFlagStereo, kFlag16Bits, kFlagReverseStereo, kFlagUnsigned, kFlagLittleEndian)
 
 		ImuseDigiSndMgr::soundStruct *soundHandle;	// sound handle used by iMuse sound manager
-		Audio::SoundHandle handle;					// sound mixer's channel handle
+		Audio::SoundHandle mixChanHandle;					// sound mixer's channel handle
 		Audio::AppendableAudioStream *stream;		// sound mixer's audio stream handle for *.la1 and *.bun
-		Audio::AudioStream *stream2;				// sound mixer's audio stream handle for *.sou
+		Audio::AudioStream *streamSou;				// sound mixer's audio stream handle for *.sou
 
 		Track();
 	};

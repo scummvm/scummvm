@@ -52,8 +52,8 @@ int IMuseDigital::allocSlot(int priority) {
 		for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			Track *track = _track[l];
 			if (track->used && !track->toBeRemoved &&
-					(lowest_priority > track->priority) && !track->stream2) {
-				lowest_priority = track->priority;
+					(lowest_priority > track->soundPriority) && !track->streamSou) {
+				lowest_priority = track->soundPriority;
 				trackId = l;
 			}
 		}
@@ -98,15 +98,15 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	track->volFadeDelay = 0;
 	track->volFadeUsed = false;
 	track->soundId = soundId;
-	track->started = false;
+	track->mixerStreamRunning = false;
 	track->volGroupId = volGroupId;
 	track->curHookId = hookId;
-	track->priority = priority;
+	track->soundPriority = priority;
 	track->curRegion = -1;
 	track->dataOffset = 0;
 	track->regionOffset = 0;
-	track->mod = 0;
-	track->flags = 0;
+	track->dataMod12Bit = 0;
+	track->mixerFlags = 0;
 	track->toBeRemoved = false;
 	track->readyToRemove = false;
 	track->soundType = soundType;
@@ -114,19 +114,19 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	int bits = 0, freq = 0, channels = 0;
 
 	if (input) {
-		track->iteration = 0;
-		track->souStream = true;
+		track->feedSize = 0;
+		track->souStreamUsed = true;
 		track->soundName[0] = 0;
 		track->soundHandle = NULL;
 	} else {
-		track->souStream = false;
+		track->souStreamUsed = false;
 		strcpy(track->soundName, soundName);
 		track->soundHandle = _sound->openSound(soundId, soundName, soundType, volGroupId, -1);
 
 		if (track->soundHandle == NULL)
 			return;
 
-		track->compressed = _sound->isCompressed(track->soundHandle);
+		track->sndDataExtComp = _sound->isSndDataExtComp(track->soundHandle);
 
 		bits = _sound->getBits(track->soundHandle);
 		channels = _sound->getChannels(track->soundHandle);
@@ -145,28 +145,28 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		assert(channels == 1 || channels == 2);
 		assert(0 < freq && freq <= 65535);
 
-		track->iteration = freq * channels;
+		track->feedSize = freq * channels;
 		if (channels == 2)
-			track->flags = kFlagStereo | kFlagReverseStereo;
+			track->mixerFlags = kFlagStereo | kFlagReverseStereo;
 
 		if ((bits == 12) || (bits == 16)) {
-			track->flags |= kFlag16Bits;
-			track->iteration *= 2;
+			track->mixerFlags |= kFlag16Bits;
+			track->feedSize *= 2;
 		} else if (bits == 8) {
-			track->flags |= kFlagUnsigned;
+			track->mixerFlags |= kFlagUnsigned;
 		} else
 			error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
 
 #ifdef SCUMM_LITTLE_ENDIAN
-		if (track->compressed)
-			track->flags |= kFlagLittleEndian;
+		if (track->sndDataExtComp)
+			track->mixerFlags |= kFlagLittleEndian;
 #endif
 	}
 
 	if (input) {
-		track->stream2 = input;
+		track->streamSou = input;
 		track->stream = NULL;
-		track->started = false;
+		track->mixerStreamRunning = false;
 	} else {
 		const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
 		const int vol = track->vol / 1000;
@@ -179,11 +179,10 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		if (track->volGroupId == 3)
 			type = Audio::Mixer::kMusicSoundType;
 
-		// setup 1 second stream wrapped buffer
-		track->stream2 = NULL;
-		track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->flags));
-		_mixer->playInputStream(type, &track->handle, track->stream, -1, vol, pan, false);
-		track->started = true;
+		track->streamSou = NULL;
+		track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->mixerFlags));
+		_mixer->playInputStream(type, &track->mixChanHandle, track->stream, -1, vol, pan, false);
+		track->mixerStreamRunning = true;
 	}
 
 	track->used = true;
@@ -197,7 +196,7 @@ void IMuseDigital::setPriority(int soundId, int priority) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
-			track->priority = priority;
+			track->soundPriority = priority;
 		}
 	}
 }
@@ -358,11 +357,10 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(const Track *track, int f
 		type = Audio::Mixer::kPlainSoundType;
 		break;
 	}
-	fadeTrack->stream = Audio::makeAppendableAudioStream(_sound->getFreq(fadeTrack->soundHandle), makeMixerFlags(fadeTrack->flags));
-	_mixer->playInputStream(type, &fadeTrack->handle, fadeTrack->stream, -1, fadeTrack->vol / 1000, fadeTrack->pan, false);
+	fadeTrack->stream = Audio::makeAppendableAudioStream(_sound->getFreq(fadeTrack->soundHandle), makeMixerFlags(fadeTrack->mixerFlags));
+	_mixer->playInputStream(type, &fadeTrack->mixChanHandle, fadeTrack->stream, -1, fadeTrack->vol / 1000, fadeTrack->pan, false);
 
-	// Mark the track as, uhh, used & started (surprise, surprise :)
-	fadeTrack->started = true;
+	fadeTrack->mixerStreamRunning = true;
 	fadeTrack->used = true;
 
 	return fadeTrack;

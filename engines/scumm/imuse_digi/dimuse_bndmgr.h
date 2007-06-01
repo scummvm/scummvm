@@ -63,7 +63,7 @@ public:
 	AudioTable *getTable(int slot);
 	IndexNode *getIndexTable(int slot);
 	int32 getNumFiles(int slot);
-	bool isCompressed(int slot);
+	bool isSndDataExtComp(int slot);
 };
 
 class BundleMgr {

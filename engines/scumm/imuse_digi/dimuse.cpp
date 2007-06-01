@@ -39,7 +39,7 @@
 namespace Scumm {
 
 IMuseDigital::Track::Track()
-	: soundId(-1), used(false), stream(NULL), stream2(NULL) {
+	: soundId(-1), used(false), stream(NULL), streamSou(NULL) {
 }
 
 void IMuseDigital::timer_handler(void *refCon) {
@@ -128,9 +128,9 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 		MKARRAY(Track, soundName[0], sleByte, 15, VER(31)),
 		MKLINE(Track, used, sleByte, VER(31)),
 		MKLINE(Track, toBeRemoved, sleByte, VER(31)),
-		MKLINE(Track, souStream, sleByte, VER(31)),
-		MKLINE(Track, started, sleByte, VER(31)),
-		MKLINE(Track, priority, sleInt32, VER(31)),
+		MKLINE(Track, souStreamUsed, sleByte, VER(31)),
+		MKLINE(Track, mixerStreamRunning, sleByte, VER(31)),
+		MKLINE(Track, soundPriority, sleInt32, VER(31)),
 		MKLINE(Track, regionOffset, sleInt32, VER(31)),
 		MK_OBSOLETE(Track, trackOffset, sleInt32, VER(31), VER(31)),
 		MKLINE(Track, dataOffset, sleInt32, VER(31)),
@@ -138,12 +138,12 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 		MKLINE(Track, curHookId, sleInt32, VER(31)),
 		MKLINE(Track, volGroupId, sleInt32, VER(31)),
 		MKLINE(Track, soundType, sleInt32, VER(31)),
-		MKLINE(Track, iteration, sleInt32, VER(31)),
-		MKLINE(Track, mod, sleInt32, VER(31)),
-		MKLINE(Track, flags, sleInt32, VER(31)),
+		MKLINE(Track, feedSize, sleInt32, VER(31)),
+		MKLINE(Track, dataMod12Bit, sleInt32, VER(31)),
+		MKLINE(Track, mixerFlags, sleInt32, VER(31)),
 		MK_OBSOLETE(Track, mixerVol, sleInt32, VER(31), VER(42)),
 		MK_OBSOLETE(Track, mixerPan, sleInt32, VER(31), VER(42)),
-		MKLINE(Track, compressed, sleByte, VER(45)),
+		MKLINE(Track, sndDataExtComp, sleByte, VER(45)),
 		MKEND()
 	};
 
@@ -152,15 +152,15 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
 		if (!ser->isSaving()) {
-			track->compressed = false;
+			track->sndDataExtComp = false;
 		}
 		ser->saveLoadEntries(track, trackEntries);
 		if (!ser->isSaving()) {
 			if (!track->used)
 				continue;
 			track->readyToRemove = false;
-			if ((track->toBeRemoved) || (track->souStream) || (track->curRegion == -1)) {
-				track->stream2 = NULL;
+			if ((track->toBeRemoved) || (track->souStreamUsed) || (track->curRegion == -1)) {
+				track->streamSou= NULL;
 				track->stream = NULL;
 				track->used = false;
 				continue;
@@ -171,43 +171,43 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 									track->volGroupId, -1);
 			if (!track->soundHandle) {
 				warning("IMuseDigital::saveOrLoad: Can't open sound so will not be resumed, propably on diffrent CD");
-				track->stream2 = NULL;
+				track->streamSou = NULL;
 				track->stream = NULL;
 				track->used = false;
 				continue;
 			}
 
-			if (track->compressed) {
+			if (track->sndDataExtComp) {
 				track->regionOffset = 0;
 			}
-			track->compressed = _sound->isCompressed(track->soundHandle);
-			if (track->compressed) {
+			track->sndDataExtComp = _sound->isSndDataExtComp(track->soundHandle);
+			if (track->sndDataExtComp) {
 				track->regionOffset = 0;
 			}
 			track->dataOffset = _sound->getRegionOffset(track->soundHandle, track->curRegion);
 			int bits = _sound->getBits(track->soundHandle);
 			int channels = _sound->getChannels(track->soundHandle);
 			int freq = _sound->getFreq(track->soundHandle);
-			track->iteration = freq * channels;
-			track->flags = 0;
+			track->feedSize = freq * channels;
+			track->mixerFlags = 0;
 			if (channels == 2)
-				track->flags = kFlagStereo | kFlagReverseStereo;
+				track->mixerFlags = kFlagStereo | kFlagReverseStereo;
 
 			if ((bits == 12) || (bits == 16)) {
-				track->flags |= kFlag16Bits;
-				track->iteration *= 2;
+				track->mixerFlags |= kFlag16Bits;
+				track->feedSize *= 2;
 			} else if (bits == 8) {
-				track->flags |= kFlagUnsigned;
+				track->mixerFlags |= kFlagUnsigned;
 			} else
 				error("IMuseDigital::saveOrLoad(): Can't handle %d bit samples", bits);
 
 #ifdef SCUMM_LITTLE_ENDIAN
-			if (track->compressed)
-				track->flags |= kFlagLittleEndian;
+			if (track->sndDataExtComp)
+				track->mixerFlags |= kFlagLittleEndian;
 #endif
 
-			track->stream2 = NULL;
-			track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->flags));
+			track->streamSou = NULL;
+			track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->mixerFlags));
 
 			const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
 			const int vol = track->vol / 1000;
@@ -220,7 +220,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 			if (track->volGroupId == 3)
 				type = Audio::Mixer::kMusicSoundType;
 
-			_mixer->playInputStream(type, &track->handle, track->stream, -1, vol, pan, false);
+			_mixer->playInputStream(type, &track->mixChanHandle, track->stream, -1, vol, pan, false);
 		}
 	}
 }
@@ -287,7 +287,7 @@ void IMuseDigital::callback() {
 				int bits = _sound->getBits(track->soundHandle);
 				int channels = _sound->getChannels(track->soundHandle);
 
-				int32 mixer_size = track->iteration / _callbackFps;
+				int32 mixer_size = track->feedSize / _callbackFps;
 
 				if (track->stream->endOfData()) {
 					mixer_size *= 2;
@@ -310,10 +310,10 @@ void IMuseDigital::callback() {
 					if (bits == 12) {
 						byte *ptr = NULL;
 
-						mixer_size += track->mod;
+						mixer_size += track->dataMod12Bit;
 						int mixer_size_12 = (mixer_size * 3) / 4;
 						int length = (mixer_size_12 / 3) * 4;
-						track->mod = mixer_size - length;
+						track->dataMod12Bit = mixer_size - length;
 
 						int32 offset = (track->regionOffset * 3) / 4;
 						int result2 = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &ptr, offset, mixer_size_12);
@@ -339,8 +339,8 @@ void IMuseDigital::callback() {
 						result = mixer_size;
 
 					if (_mixer->isReady()) {
-						_mixer->setChannelVolume(track->handle, vol);
-						_mixer->setChannelBalance(track->handle, pan);
+						_mixer->setChannelVolume(track->mixChanHandle, vol);
+						_mixer->setChannelBalance(track->mixChanHandle, pan);
 						track->stream->queueBuffer(data, result);
 						track->regionOffset += result;
 					} else
@@ -354,14 +354,14 @@ void IMuseDigital::callback() {
 					mixer_size -= result;
 					assert(mixer_size >= 0);
 				} while (mixer_size != 0);
-			} else if (track->stream2) {
+			} else if (track->streamSou) {
 				if (_mixer->isReady()) {
-					if (!track->started) {
-						track->started = true;
-						_mixer->playInputStream(type, &track->handle, track->stream2, -1, vol, pan, false);
+					if (!track->mixerStreamRunning) {
+						track->mixerStreamRunning = true;
+						_mixer->playInputStream(type, &track->mixChanHandle, track->streamSou, -1, vol, pan, false);
 					} else {
-						_mixer->setChannelVolume(track->handle, vol);
-						_mixer->setChannelBalance(track->handle, pan);
+						_mixer->setChannelVolume(track->mixChanHandle, vol);
+						_mixer->setChannelBalance(track->mixChanHandle, pan);
 					}
 				}
 			}
