@@ -247,13 +247,13 @@ bool BundleMgr::loadCompTable(int32 index) {
 	return true;
 }
 
-int32 BundleMgr::decompressSampleByCurIndex(int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside) {
-	return decompressSampleByIndex(_curSampleId, offset, size, comp_final, header_size, header_outside);
+int32 BundleMgr::decompressSampleByCurIndex(int32 offset, int32 size, byte **compFinal, int headerSize, bool headerOutside) {
+	return decompressSampleByIndex(_curSampleId, offset, size, compFinal, headerSize, headerOutside);
 }
 
-int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside) {
-	int32 i, final_size, output_size;
-	int skip, first_block, last_block;
+int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **compFinal, int headerSize, bool headerOutside) {
+	int32 i, finalSize, outputSize;
+	int skip, firstBlock, lastBlock;
 
 	assert(0 <= index && index < _numFiles);
 
@@ -273,21 +273,21 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 			return 0;
 	}
 
-	first_block = (offset + header_size) / 0x2000;
-	last_block = (offset + header_size + size - 1) / 0x2000;
+	firstBlock = (offset + headerSize) / 0x2000;
+	lastBlock = (offset + headerSize + size - 1) / 0x2000;
 
 	// Clip last_block by the total number of blocks (= "comp items")
-	if ((last_block >= _numCompItems) && (_numCompItems > 0))
-		last_block = _numCompItems - 1;
+	if ((lastBlock >= _numCompItems) && (_numCompItems > 0))
+		lastBlock = _numCompItems - 1;
 
-	int32 blocks_final_size = 0x2000 * (1 + last_block - first_block);
-	*comp_final = (byte *)malloc(blocks_final_size);
-	assert(*comp_final);
-	final_size = 0;
+	int32 blocksFinalSize = 0x2000 * (1 + lastBlock - firstBlock);
+	*compFinal = (byte *)malloc(blocksFinalSize);
+	assert(*compFinal);
+	finalSize = 0;
 
-	skip = (offset + header_size) % 0x2000;
+	skip = (offset + headerSize) % 0x2000;
 
-	for (i = first_block; i <= last_block; i++) {
+	for (i = firstBlock; i <= lastBlock; i++) {
 		if (_lastBlock != i) {
 			// CMI hack: one more zero byte at the end of input buffer
 			_compInputBuff[_compTable[i].size] = 0;
@@ -300,27 +300,27 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 			_lastBlock = i;
 		}
 
-		output_size = _outputSize;
+		outputSize = _outputSize;
 
-		if (header_outside) {
-			output_size -= skip;
+		if (headerOutside) {
+			outputSize -= skip;
 		} else {
-			if ((header_size != 0) && (skip >= header_size))
-				output_size -= skip;
+			if ((headerSize != 0) && (skip >= headerSize))
+				outputSize -= skip;
 		}
 
-		if ((output_size + skip) > 0x2000) // workaround
-			output_size -= (output_size + skip) - 0x2000;
+		if ((outputSize + skip) > 0x2000) // workaround
+			outputSize -= (outputSize + skip) - 0x2000;
 
-		if (output_size > size)
-			output_size = size;
+		if (outputSize > size)
+			outputSize = size;
 
-		assert(final_size + output_size <= blocks_final_size);
+		assert(finalSize + outputSize <= blocksFinalSize);
 
-		memcpy(*comp_final + final_size, _compOutputBuff + skip, output_size);
-		final_size += output_size;
+		memcpy(*compFinal + finalSize, _compOutputBuff + skip, outputSize);
+		finalSize += outputSize;
 
-		size -= output_size;
+		size -= outputSize;
 		assert(size >= 0);
 		if (size == 0)
 			break;
@@ -328,7 +328,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		skip = 0;
 	}
 
-	return final_size;
+	return finalSize;
 }
 
 int32 BundleMgr::decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final, bool header_outside) {

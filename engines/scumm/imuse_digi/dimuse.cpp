@@ -275,8 +275,8 @@ void IMuseDigital::callback() {
 				type = Audio::Mixer::kMusicSoundType;
 
 			if (track->stream) {
-				byte *data = NULL;
-				int32 result = 0;
+				byte *tmpSndBufferPtr = NULL;
+				int32 curFeedSize = 0;
 
 				if (track->curRegion == -1) {
 					switchToNextRegion(track);
@@ -287,73 +287,73 @@ void IMuseDigital::callback() {
 				int bits = _sound->getBits(track->soundHandle);
 				int channels = _sound->getChannels(track->soundHandle);
 
-				int32 mixer_size = track->feedSize / _callbackFps;
+				int32 feedSize = track->feedSize / _callbackFps;
 
 				if (track->stream->endOfData()) {
-					mixer_size *= 2;
+					feedSize *= 2;
 				}
 
 				if ((bits == 12) || (bits == 16)) {
 					if (channels == 1)
-						mixer_size &= ~1;
+						feedSize &= ~1;
 					if (channels == 2)
-						mixer_size &= ~3;
+						feedSize &= ~3;
 				} else {
 					if (channels == 2)
-						mixer_size &= ~1;
+						feedSize &= ~1;
 				}
 
-				if (mixer_size == 0)
+				if (feedSize == 0)
 					continue;
 
 				do {
 					if (bits == 12) {
-						byte *ptr = NULL;
+						byte *tmpPtr = NULL;
 
-						mixer_size += track->dataMod12Bit;
-						int mixer_size_12 = (mixer_size * 3) / 4;
-						int length = (mixer_size_12 / 3) * 4;
-						track->dataMod12Bit = mixer_size - length;
+						feedSize += track->dataMod12Bit;
+						int tmpFeedSize12Bits = (feedSize * 3) / 4;
+						int tmpLength12Bits = (tmpFeedSize12Bits / 3) * 4;
+						track->dataMod12Bit = feedSize - tmpLength12Bits;
 
-						int32 offset = (track->regionOffset * 3) / 4;
-						int result2 = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &ptr, offset, mixer_size_12);
-						result = BundleCodecs::decode12BitsSample(ptr, &data, result2);
+						int32 tmpOffset = (track->regionOffset * 3) / 4;
+						int tmpFeedSize = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &tmpPtr, tmpOffset, tmpFeedSize12Bits);
+						curFeedSize = BundleCodecs::decode12BitsSample(tmpPtr, &tmpSndBufferPtr, tmpFeedSize);
 
-						free(ptr);
+						free(tmpPtr);
 					} else if (bits == 16) {
-						result = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &data, track->regionOffset, mixer_size);
+						curFeedSize = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &tmpSndBufferPtr, track->regionOffset, feedSize);
 						if (channels == 1) {
-							result &= ~1;
+							curFeedSize &= ~1;
 						}
 						if (channels == 2) {
-							result &= ~3;
+							curFeedSize &= ~3;
 						}
 					} else if (bits == 8) {
-						result = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &data, track->regionOffset, mixer_size);
+						curFeedSize = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &tmpSndBufferPtr, track->regionOffset, feedSize);
 						if (channels == 2) {
-							result &= ~1;
+							curFeedSize &= ~1;
 						}
 					}
 
-					if (result > mixer_size)
-						result = mixer_size;
+					if (curFeedSize > feedSize)
+						curFeedSize = feedSize;
 
 					if (_mixer->isReady()) {
 						_mixer->setChannelVolume(track->mixChanHandle, vol);
 						_mixer->setChannelBalance(track->mixChanHandle, pan);
-						track->stream->queueBuffer(data, result);
-						track->regionOffset += result;
+						track->stream->queueBuffer(tmpSndBufferPtr, curFeedSize);
+						track->regionOffset += curFeedSize;
 					} else
-						delete[] data;
+						delete[] tmpSndBufferPtr;
 
 					if (_sound->isEndOfRegion(track->soundHandle, track->curRegion)) {
 						switchToNextRegion(track);
 						if (track->toBeRemoved)
 							break;
 					}
-					mixer_size -= result;
-					assert(mixer_size >= 0);
-				} while (mixer_size != 0);
+					feedSize -= curFeedSize;
+					assert(feedSize >= 0);
+				} while (feedSize != 0);
 			} else if (track->streamSou) {
 				if (_mixer->isReady()) {
 					if (!track->mixerStreamRunning) {

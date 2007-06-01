@@ -99,19 +99,19 @@ public:
 	BundleMgr(BundleDirCache *_cache);
 	~BundleMgr();
 
-	bool open(const char *filename, bool &compressed, bool errorFlag=false);
+	bool open(const char *filename, bool &compressed, bool errorFlag = false);
 	void close();
 	Common::File *getFile(const char *filename, int32 &offset, int32 &size);
-	int32 decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final, bool header_outside);
-	int32 decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside);
-	int32 decompressSampleByCurIndex(int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside);
+	int32 decompressSampleByName(const char *name, int32 offset, int32 size, byte **compFinal, bool headerOutside);
+	int32 decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **compFinal, int header_size, bool headerOutside);
+	int32 decompressSampleByCurIndex(int32 offset, int32 size, byte **compFinal, int headerSize, bool headerOutside);
 };
 
 namespace BundleCodecs {
 
 uint32 decode12BitsSample(const byte *src, byte **dst, uint32 size);
 void initializeImcTables();
-int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 input_size);
+int32 decompressCodec(int32 codec, byte *compInput, byte *compOutput, int32 inputSize);
 
 } // End of namespace BundleCodecs
 
