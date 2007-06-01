@@ -67,41 +67,41 @@ enum {
 class IMuseDigital : public MusicEngine {
 private:
 
-	int _callbackFps;
+	int _callbackFps;		// value how many times callback needs to be called per second
 
 	struct Track {
-		int trackId;
+		int trackId;		// used to identify track by value (0-15)
 
-		int8 pan;			// pan
-		int32 vol;			// volume
-		int32 volFadeDest;	//
-		int32 volFadeStep;	//
-		int32 volFadeDelay;	//
-		bool volFadeUsed;	//
+		int8 pan;			// panning value of sound
+		int32 vol;			// volume level (values 0-127 * 1000)
+		int32 volFadeDest;	// volume level which fading target (values 0-127 * 1000)
+		int32 volFadeStep;	// delta of step while changing volume at each imuse callback
+		int32 volFadeDelay;	// time in ms how long fading volume must be
+		bool volFadeUsed;	// flag if fading is in progress
 
-		int32 soundId;
-		char soundName[15];
-		bool used;
-		bool toBeRemoved;
-		bool readyToRemove;
-		bool started;
-		bool souStream;
-		bool compressed;
-		int32 priority;
-		int32 regionOffset;
-		int32 dataOffset;
-		int32 curRegion;
-		int32 curHookId;
-		int32 volGroupId;
-		int32 soundType;
-		int32 iteration;
-		int32 mod;
-		int32 flags;
+		int32 soundId;		// sound id used by scumm script
+		char soundName[15]; // sound name but also filename of sound in bundle data
+		bool used;			// flag track is used
+		bool toBeRemoved;   // flag mean that track need to be free
+		bool readyToRemove; // flag mean that track is ready to stop
+		bool started;		// flag mean mixer stream is started/initialized
+		bool souStream;		// flag mean that track use stream from sou file
+		bool compressed;	// flag mean that sound data is compressed by scummvm tools
+		int32 priority;		// priority level of played sound (0-127)
+		int32 regionOffset; // offset to sound data relative to begining of current region
+		int32 dataOffset;	// offset to sound data relative to begining of 'DATA' chunk
+		int32 curRegion;	// id of current used region
+		int32 curHookId;	// id of current used hook id
+		int32 volGroupId;	// id of volume group (IMUSE_VOLGRP_VOICE, IMUSE_VOLGRP_SFX, IMUSE_VOLGRP_MUSIC)
+		int32 soundType;	// type of sound data (kSpeechSoundType, kSFXSoundType, kMusicSoundType)
+		int32 iteration;	// size of sound data needed to be filled at each callback iteration
+		int32 mod;			// value used between all callback to align 12 bit source of data
+		int32 flags;		// flags for sound mixer's channel (kFlagStereo, kFlag16Bits, kFlagReverseStereo, kFlagUnsigned, kFlagLittleEndian)
 
-		ImuseDigiSndMgr::soundStruct *soundHandle;
-		Audio::SoundHandle handle;
-		Audio::AppendableAudioStream *stream;
-		Audio::AudioStream *stream2;
+		ImuseDigiSndMgr::soundStruct *soundHandle;	// sound handle used by iMuse sound manager
+		Audio::SoundHandle handle;					// sound mixer's channel handle
+		Audio::AppendableAudioStream *stream;		// sound mixer's audio stream handle for *.la1 and *.bun
+		Audio::AudioStream *stream2;				// sound mixer's audio stream handle for *.sou
 
 		Track();
 	};
@@ -113,16 +113,16 @@ private:
 	Audio::Mixer *_mixer;
 	ImuseDigiSndMgr *_sound;
 
-	char *_audioNames;
-	int32 _numAudioNames;
+	char *_audioNames;		// filenames of sound SFX used in FT
+	int32 _numAudioNames;	// number of above filenames
 
-	bool _pause;
+	bool _pause;			// flag mean that iMuse callback should be idle
 
-	int32 _attributes[188];
-	int32 _nextSeqToPlay;
-	int32 _curMusicState;
-	int32 _curMusicSeq;
-	int32 _curMusicCue;
+	int32 _attributes[188];	// internal atributes for each music file to store and check later
+	int32 _nextSeqToPlay;	// id of sequence type of music needed played
+	int32 _curMusicState;	// current or previous id of music
+	int32 _curMusicSeq;		// current or previous id of sequence music
+	int32 _curMusicCue;		// current cue for current music. used in FT
 
 	int32 makeMixerFlags(int32 flags);
 	static void timer_handler(void *refConf);
