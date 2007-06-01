@@ -1042,7 +1042,7 @@ void AGOSEngine::vc27_resetSprite() {
 	vte = _vgaTimerList;
 	while (vte->delay) {
 		// Skip the animateSprites event in earlier games
-		if (vte->type == 2) {
+		if (vte->type == ANIMATE_INT) {
 			vte++;
 		// For animated heart in Elvira 2
 		} else if (getGameType() == GType_ELVIRA2 && vte->sprite_id == 100) {

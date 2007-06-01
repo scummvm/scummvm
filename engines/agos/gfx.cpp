@@ -1255,14 +1255,14 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 	_windowNum = updateWindow = mode;
 	_lockWord |= 0x20;
 
-	VgaTimerEntry *vte = _vgaTimerList;
-	while (vte->type != 2)
-		vte++;
-
-	vte->delay = 2;
-
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		vc27_resetSprite();
+	} else {
+		VgaTimerEntry *vte = _vgaTimerList;
+		while (vte->type != ANIMATE_INT)
+			vte++;
+
+		vte->delay = 2;
 	}
 
 	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF) {

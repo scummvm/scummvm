@@ -453,7 +453,7 @@ void AGOSEngine::o_haltAnimation() {
 	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		VgaTimerEntry *vte = _vgaTimerList;
 		while (vte->delay) {
-			if (vte->type == 0)
+			if (vte->type == ANIMATE_EVENT)
 				vte->delay += 10;
 			vte++;
 		}
