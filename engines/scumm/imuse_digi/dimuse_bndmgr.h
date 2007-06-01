@@ -51,7 +51,7 @@ private:
 		char fileName[20];
 		AudioTable *bundleTable;
 		int32 numFiles;
-		bool compressedBun;
+		bool isCompressed;
 		IndexNode *indexTable;
 	} _budleDirCache[4];
 
@@ -80,14 +80,15 @@ private:
 	BundleDirCache::AudioTable *_bundleTable;
 	BundleDirCache::IndexNode *_indexTable;
 	CompTable *_compTable;
+
 	int _numFiles;
 	int _numCompItems;
-	int _curSample;
+	int _curSampleId;
 	BaseScummFile *_file;
 	bool _compTableLoaded;
 	int _fileBundleId;
-	byte _compOutput[0x2000];
-	byte *_compInput;
+	byte _compOutputBuff[0x2000];
+	byte *_compInputBuff;
 	int _outputSize;
 	int _lastBlock;
 
