@@ -201,7 +201,7 @@ struct imuseRoomMap {
 };
 
 struct imuseDigTable {
-	byte opcode;
+	byte transitionType;
 	int16 soundId;
 	char name[20];
 	byte atribPos;
@@ -210,7 +210,7 @@ struct imuseDigTable {
 };
 
 struct imuseComiTable {
-	byte opcode;
+	byte transitionType;
 	int16 soundId;
 	char name[20];
 	byte atribPos;
@@ -226,14 +226,14 @@ struct imuseFtNames {
 
 struct imuseFtStateTable {
 	char audioName[9];
-	byte opcode;
+	byte transitionType;
 	byte volume;
 	char name[21];
 };
 
 struct imuseFtSeqTable {
 	char audioName[9];
-	byte opcode;
+	byte transitionType;
 	byte volume;
 };
 
