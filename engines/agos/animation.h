@@ -64,7 +64,7 @@ private:
 	void playOmniTV();
 
 	void handleNextFrame();
-	void processFrame();
+	bool processFrame();
 	void startSound();
 };
 

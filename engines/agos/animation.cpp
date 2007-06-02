@@ -230,9 +230,8 @@ void MoviePlayer::nextFrame() {
 
 void MoviePlayer::handleNextFrame() {
 	decodeNextFrame();
-	processFrame();
-
-	_vm->_system->updateScreen();
+	if (processFrame())
+		_vm->_system->updateScreen();
 	_frameNum++;
 
 	Common::Event event;
@@ -285,7 +284,7 @@ void MoviePlayer::setPalette(byte *pal) {
 	_vm->_system->setPalette(palette, 0, 256);
 }
 
-void MoviePlayer::processFrame() {
+bool MoviePlayer::processFrame() {
 	copyFrameToBuffer(_vm->getFrontBuf(), (_vm->_screenWidth - _width) / 2, (_vm->_screenHeight - _height) / 2, _vm->_screenWidth);
 	_vm->_system->copyRectToScreen(_vm->getFrontBuf(), _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
 
@@ -309,10 +308,13 @@ void MoviePlayer::processFrame() {
 			while (_vm->_system->getMillis() < _ticks)
 				_vm->_system->delayMillis(10);
 		}
-	} else {
-		warning("dropped frame %i", _frameNum);
-		_frameSkipped++;
+
+		return true;
 	}
+
+	warning("dropped frame %i", _frameNum);
+	_frameSkipped++;
+	return false;
 }
 
 const char * MoviePlayer::_sequenceList[90] = {
