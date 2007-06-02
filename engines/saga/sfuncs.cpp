@@ -1887,8 +1887,13 @@ void Script::sfResetMouseClicks(SCRIPTFUNC_PARAMS) {
 	SF_stub("sfResetMouseClicks", thread, nArgs);
 }
 
+// Param1: frames
 void Script::sfWaitFrames(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfWaitFrames", thread, nArgs);
+	int16 frames;
+	frames = thread->pop();
+
+	if (!_skipSpeeches)
+		thread->waitFrames(_vm->_frameCount + frames);
 }
 
 void Script::sfScriptFade(SCRIPTFUNC_PARAMS) {

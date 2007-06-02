@@ -326,6 +326,11 @@ public:
 		_sleepTime = sleepTime;
 	}
 
+	void waitFrames(int frames) {
+		wait(kWaitTypeWaitFrames);
+		_frameWait = frames;
+	}
+
 	ScriptThread() {
 		memset(this, 0xFE, sizeof(*this));
 		_stackBuf = NULL;
