@@ -110,7 +110,7 @@ void AgiEngine::insertSearchNode(const char *word) {
 }
 
 bool AgiEngine::predictiveDialog(void) {
-	int key, active = 0;
+	int key = 0, active = -1, lastactive = -1;
 	bool rc = false;
 	int x;
 	int y;
@@ -157,8 +157,6 @@ bool AgiEngine::predictiveDialog(void) {
 	drawWindow(50, 40, 269, 159);
 	_gfx->drawRectangle(62, 54, 249, 66, MSG_BOX_TEXT);
 	_gfx->flushBlock(62, 54, 249, 66);
-
-	_gfx->printCharacter(3, 11, _game.cursorChar, MSG_BOX_COLOUR, MSG_BOX_TEXT);
 
 	bx[15] = 73; // Zero/space
 	by[15] = 120;
@@ -234,6 +232,14 @@ bool AgiEngine::predictiveDialog(void) {
 				printText(temp, 0, 8, 7, MAXWORDLEN, 15, 0);
 				_gfx->flushBlock(62, 54, 249, 66);
 			}
+
+			if (active >= 0 && key != 9) {
+				active = -1;
+				needRefresh = true;
+			} else
+				needRefresh = false;
+
+			_gfx->doUpdate();
 		}
 
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
@@ -249,7 +255,7 @@ bool AgiEngine::predictiveDialog(void) {
 			for (int i = 0; buttons[i]; i++) {
 				if (_gfx->testButton(bx[i], by[i], buttons[i])) {
 					needRefresh = true;
-					active = i;
+					lastactive = active = i;
 
 					if (active == 15 && mode != kModeNum) { // Space
 						strncpy(temp, _currentWord.c_str(), _currentCode.size());
@@ -304,12 +310,11 @@ bool AgiEngine::predictiveDialog(void) {
 			break;
 		case 0x09:	/* Tab */
 			debugC(3, kDebugLevelText, "Focus change");
-			active++;
+			lastactive = active = lastactive + 1;
 			active %= ARRAYSIZE(buttons) - 1;
 			needRefresh = true;
 			break;
 		}
-		_gfx->doUpdate();
 	}
 
  press:
