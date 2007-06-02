@@ -118,6 +118,8 @@ bool AgiEngine::predictiveDialog(void) {
 	String prefix = "";
 	char temp[MAXWORDLEN + 1];
 	AgiBlock tmpwindow;
+
+	_predictiveDialogRunning = true;
 	
 	// FIXME: Move this to a more appropriate place.
 	initAsciiToNumTable();
@@ -127,7 +129,7 @@ bool AgiEngine::predictiveDialog(void) {
 		"(1)'-.&",  "(2)abc", "(3)def",
 		"(4)ghi",  "(5)jkl", "(6)mno",
 		"(7)pqrs", "(8)tuv", "(9)wxyz",
-		"next",    "add",
+		"(#)next",    "add",
 		"<",
 		"Cancel",  "OK", 
 		"Pre", "(0) ", NULL
@@ -141,7 +143,7 @@ bool AgiEngine::predictiveDialog(void) {
 		15, 0, 15, 0,
 		14, 0, 15, 0, 0, 0
 	};
-	const char *modes[] = { "Pre", "123", "Abc" };
+	const char *modes[] = { "(*)Pre", "(*)123", "(*)Abc" };
 
 	if (!_searchTreeRoot) {
 		loadDict();
@@ -160,9 +162,9 @@ bool AgiEngine::predictiveDialog(void) {
 
 	bx[15] = 73; // Zero/space
 	by[15] = 120;
-	bx[9] = 120; // next
+	bx[9] = 110; // next
 	by[9] = 120;
-	bx[10] = 160; // add
+	bx[10] = 172; // add
 	by[10] = 120;
 	bx[14] = 200; // Mode
 	by[14] = 120;
@@ -244,6 +246,7 @@ bool AgiEngine::predictiveDialog(void) {
 
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = doPollKeyboard();
+		debug("key %d", key);
 		switch (key) {
 		case KEY_ENTER:
 			rc = true;
@@ -254,66 +257,87 @@ bool AgiEngine::predictiveDialog(void) {
 		case BUTTON_LEFT:
 			for (int i = 0; buttons[i]; i++) {
 				if (_gfx->testButton(bx[i], by[i], buttons[i])) {
-					needRefresh = true;
-					lastactive = active = i;
+					active = i;
+				}
+			}
+processkey:
+			if (active >= 0) {
+				needRefresh = true;
+				lastactive = active;
+				if (active == 15 && mode != kModeNum) { // Space
+					strncpy(temp, _currentWord.c_str(), _currentCode.size());
 
-					if (active == 15 && mode != kModeNum) { // Space
-						strncpy(temp, _currentWord.c_str(), _currentCode.size());
+					temp[_currentCode.size()] = 0;
 
-						temp[_currentCode.size()] = 0;
-
-						prefix += temp;
-						prefix += " ";
-						_currentCode = "";
-					} if (active < 9 || active == 11 || active == 15) { // number or backspace
-						if (active == 11) { // backspace
-							if (_currentCode.size()) {
-								_currentCode.deleteLastChar();
-							} else {
-								if (prefix.size())
-									prefix.deleteLastChar();
-							}
-						} else if (active == 15) { // zero
-							_currentCode += buttonStr[9];
+					prefix += temp;
+					prefix += " ";
+					_currentCode = "";
+				} if (active < 9 || active == 11 || active == 15) { // number or backspace
+					if (active == 11) { // backspace
+						if (_currentCode.size()) {
+							_currentCode.deleteLastChar();
 						} else {
-							_currentCode += buttonStr[active];
+							if (prefix.size())
+								prefix.deleteLastChar();
 						}
-
-						if (mode == kModeNum) {
-							_currentWord = _currentCode;
-						} else if (mode == kModePre) {
-							if (!matchWord() && _currentCode.size()) {
-								_currentCode.deleteLastChar();
-								matchWord();
-							}
-						}
-					} else if (active == 9) { // next
-						int totalWordsNumber = _activeTreeNode ? _activeTreeNode->words.size() : 0;
-						if (totalWordsNumber > 0) {
-							_wordNumber = (_wordNumber + 1) % totalWordsNumber;
-							_currentWord = String(_activeTreeNode->words[_wordNumber].c_str(), _currentCode.size());
-						}
-					} else if (active == 10) { // add
-						debug(0, "add");
-					} else if (active == 13) { // Ok
-						rc = true;
-						goto press;
-					} else if (active == 14) { // Mode
-						mode++;
-						if (mode > kModeAbc)
-							mode = kModePre;
+					} else if (active == 15) { // zero
+						_currentCode += buttonStr[9];
 					} else {
-						goto press;
+						_currentCode += buttonStr[active];
 					}
+
+					if (mode == kModeNum) {
+						_currentWord = _currentCode;
+					} else if (mode == kModePre) {
+						if (!matchWord() && _currentCode.size()) {
+							_currentCode.deleteLastChar();
+							matchWord();
+						}
+					}
+				} else if (active == 9) { // next
+					int totalWordsNumber = _activeTreeNode ? _activeTreeNode->words.size() : 0;
+					if (totalWordsNumber > 0) {
+						_wordNumber = (_wordNumber + 1) % totalWordsNumber;
+						_currentWord = String(_activeTreeNode->words[_wordNumber].c_str(), _currentCode.size());
+					}
+				} else if (active == 10) { // add
+					debug(0, "add");
+				} else if (active == 13) { // Ok
+					rc = true;
+					goto press;
+				} else if (active == 14) { // Mode
+					mode++;
+					if (mode > kModeAbc)
+						mode = kModePre;
+				} else {
+					goto press;
 				}
 			}
 			break;
+		case KEY_BACKSPACE:
+			active = 11;
+			goto processkey;
+		case '#':
+			active = 9;
+			goto processkey;
+		case '*':
+			active = 14;
+			goto processkey;
 		case 0x09:	/* Tab */
 			debugC(3, kDebugLevelText, "Focus change");
 			lastactive = active = lastactive + 1;
 			active %= ARRAYSIZE(buttons) - 1;
 			needRefresh = true;
 			break;
+		default:
+			// handle numeric buttons
+			if (key >= '1' && key <= '9') {
+				active = key - '1';
+				goto processkey;
+			} else if (key == '0') {
+				active = 15;
+				goto processkey;
+			}
 		}
 	}
 
@@ -334,6 +358,8 @@ bool AgiEngine::predictiveDialog(void) {
 		memcpy(&(_game.window), &tmpwindow, sizeof(AgiBlock));
 		_gfx->doUpdate();
 	}
+
+	_predictiveDialogRunning = false;
 
 	return rc;
 }

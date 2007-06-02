@@ -69,6 +69,8 @@ void AgiEngine::processEvents() {
 			_system->quit();
 			break;
 		case Common::EVENT_PREDICTIVE_DIALOG:
+			if (_predictiveDialogRunning)
+				break;
 			if (_game.playerControl && predictiveDialog()) {
 				if (_game.inputMode == INPUT_NORMAL) {
 					strcpy((char *)_game.inputBuffer, _predictiveResult);
@@ -591,6 +593,7 @@ AgiEngine::AgiEngine(OSystem *syst) : Engine(syst) {
 
 	_oldMode = -1;
 	
+	_predictiveDialogRunning = false;
 	_searchTreeRoot = 0;
 	_firstSlot = 0;
 }

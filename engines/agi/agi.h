@@ -775,6 +775,7 @@ private:
 	String _currentCode;
 	String _currentWord;
 	int _wordNumber;
+	bool _predictiveDialogRunning;
 public:
 	char _predictiveResult[40];
 };
