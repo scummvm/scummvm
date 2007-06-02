@@ -273,6 +273,7 @@ processkey:
 					prefix += temp;
 					prefix += " ";
 					_currentCode.clear();
+					_currentWord.clear();
 					memset(repeatcount, 0, MAXWORDLEN);
 					break;
 				} if (active < 9 || active == 11 || active == 15) { // number or backspace
@@ -284,10 +285,12 @@ processkey:
 							if (prefix.size())
 								prefix.deleteLastChar();
 						}
-					} else if (active == 15) { // zero
-						_currentCode += buttonStr[9];
-					} else {
-						_currentCode += buttonStr[active];
+					} else if (prefix.size() + _currentCode.size() < MAXWORDLEN - 1) { // don't overflow the dialog line
+					       	if (active == 15) { // zero
+							_currentCode += buttonStr[9];
+						} else {
+							_currentCode += buttonStr[active];
+						}
 					}
 
 					switch (mode) {
@@ -334,6 +337,14 @@ processkey:
 					mode++;
 					if (mode > kModeAbc)
 						mode = kModePre;
+
+					// truncate current input at mode change
+					strncpy(temp, _currentWord.c_str(), _currentCode.size());
+					temp[_currentCode.size()] = 0;
+					prefix += temp;
+					_currentCode.clear();
+					_currentWord.clear();
+					memset(repeatcount, 0, MAXWORDLEN);
 				} else {
 					goto press;
 				}
