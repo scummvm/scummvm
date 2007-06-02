@@ -246,7 +246,6 @@ bool AgiEngine::predictiveDialog(void) {
 
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = doPollKeyboard();
-		debug("key %d", key);
 		switch (key) {
 		case KEY_ENTER:
 			rc = true;
