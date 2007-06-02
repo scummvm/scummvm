@@ -115,8 +115,8 @@ bool AgiEngine::predictiveDialog(void) {
 	int x;
 	int y;
 	int bx[17], by[17];
-	String prefix = "";
-	char temp[MAXWORDLEN + 1];
+	String prefix;
+	char temp[MAXWORDLEN + 1], repeatcount[MAXWORDLEN];
 	AgiBlock tmpwindow;
 
 	_predictiveDialogRunning = true;
@@ -150,6 +150,8 @@ bool AgiEngine::predictiveDialog(void) {
 		if (!_searchTreeRoot)
 			return false;
 	}
+
+	memset(repeatcount, 0, MAXWORDLEN);
 
 	// show the predictive dialog.
 	// if another window is already in display, save its state into tmpwindow
@@ -192,8 +194,9 @@ bool AgiEngine::predictiveDialog(void) {
 		_gfx->getKey();
 	}
 
-	_currentCode = "";
-	_currentWord = "";
+	prefix.clear();
+	_currentCode.clear();
+	_currentWord.clear();
 	_wordNumber = 0;
 	_activeTreeNode = 0;
 
@@ -207,7 +210,8 @@ bool AgiEngine::predictiveDialog(void) {
 				int color1 = colors[i * 2];
 				int color2 = colors[i * 2 + 1];
 
-				if (i == 9 && !(_activeTreeNode && _activeTreeNode->words.size() > 1)) { // Next
+				if (i == 9 && !((mode != kModeAbc && _activeTreeNode && _activeTreeNode->words.size() > 1) || 
+							(mode == kModeAbc && _currentWord.size() && _currentWord.lastChar() != ' '))) { // Next
 					color2 = 7;
 				}
 				
@@ -222,18 +226,16 @@ bool AgiEngine::predictiveDialog(void) {
 				}
 			}
 
-			if (_currentWord != "") {
 				temp[MAXWORDLEN] = 0;
 
-				strncpy(temp, prefix.c_str(), MAXWORDLEN);
-				strncat(temp, _currentWord.c_str(), MAXWORDLEN);
+			strncpy(temp, prefix.c_str(), MAXWORDLEN);
+			strncat(temp, _currentWord.c_str(), MAXWORDLEN);
 
-				for (int i = prefix.size() + _currentCode.size(); i < MAXWORDLEN; i++)
-					temp[i] = ' ';
+			for (int i = prefix.size() + _currentCode.size(); i < MAXWORDLEN; i++)
+				temp[i] = ' ';
 
-				printText(temp, 0, 8, 7, MAXWORDLEN, 15, 0);
-				_gfx->flushBlock(62, 54, 249, 66);
-			}
+			printText(temp, 0, 8, 7, MAXWORDLEN, 15, 0);
+			_gfx->flushBlock(62, 54, 249, 66);
 
 			if (active >= 0 && key != 9) {
 				active = -1;
@@ -270,10 +272,13 @@ processkey:
 
 					prefix += temp;
 					prefix += " ";
-					_currentCode = "";
+					_currentCode.clear();
+					memset(repeatcount, 0, MAXWORDLEN);
+					break;
 				} if (active < 9 || active == 11 || active == 15) { // number or backspace
 					if (active == 11) { // backspace
 						if (_currentCode.size()) {
+							repeatcount[_currentCode.size() - 1] = 0;
 							_currentCode.deleteLastChar();
 						} else {
 							if (prefix.size())
@@ -285,19 +290,40 @@ processkey:
 						_currentCode += buttonStr[active];
 					}
 
-					if (mode == kModeNum) {
+					switch (mode) {
+					case kModeNum:
 						_currentWord = _currentCode;
-					} else if (mode == kModePre) {
+						break;
+					case kModePre:
 						if (!matchWord() && _currentCode.size()) {
 							_currentCode.deleteLastChar();
 							matchWord();
 						}
+						break;
+					case kModeAbc:
+						for (x = 0; x < _currentCode.size(); x++)
+							if (_currentCode[x] >= '1')
+								temp[x] = buttons[_currentCode[x] - '1'][3 + repeatcount[x]];
+						temp[_currentCode.size()] = 0;
+						_currentWord = temp;
 					}
 				} else if (active == 9) { // next
-					int totalWordsNumber = _activeTreeNode ? _activeTreeNode->words.size() : 0;
-					if (totalWordsNumber > 0) {
-						_wordNumber = (_wordNumber + 1) % totalWordsNumber;
-						_currentWord = String(_activeTreeNode->words[_wordNumber].c_str(), _currentCode.size());
+					if (mode != kModeAbc) {
+						int totalWordsNumber = _activeTreeNode ? _activeTreeNode->words.size() : 0;
+						if (totalWordsNumber > 0) {
+							_wordNumber = (_wordNumber + 1) % totalWordsNumber;
+							_currentWord = String(_activeTreeNode->words[_wordNumber].c_str(), _currentCode.size());
+						}
+					} else {
+						x = _currentCode.size();
+						if (x) {
+							if (_currentCode.lastChar() == '1' || _currentCode.lastChar() == '7' || _currentCode.lastChar() == '9')
+								repeatcount[x - 1] = (repeatcount[x - 1] + 1) % 4;
+							else
+								repeatcount[x - 1] = (repeatcount[x - 1] + 1) % 3;
+							if (_currentCode.lastChar() >= '1')
+								_currentWord[x - 1] = buttons[_currentCode[x - 1] - '1'][3 + repeatcount[x - 1]];
+						}
 					}
 				} else if (active == 10) { // add
 					debug(0, "add");
