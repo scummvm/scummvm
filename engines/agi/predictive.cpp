@@ -112,7 +112,7 @@ void AgiEngine::insertSearchNode(const char *word) {
 bool AgiEngine::predictiveDialog(void) {
 	int key = 0, active = -1, lastactive = -1;
 	bool rc = false;
-	int x;
+	uint8 x;
 	int y;
 	int bx[17], by[17];
 	String prefix;
