@@ -749,19 +749,26 @@ void HelpDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 InfoDialog::InfoDialog(ScummEngine *scumm, int res)
 : ScummDialog("scummDummyDialog"), _vm(scumm) { // dummy x and w
-	setInfoText(queryResString(res));
+
+	_message = queryResString(res);
+
+	// Width and height are dummy
+	_text = new StaticTextWidget(this, 4, 4, 10, 10, _message, kTextAlignCenter);
 }
 
 InfoDialog::InfoDialog(ScummEngine *scumm, const String& message)
 : ScummDialog("scummDummyDialog"), _vm(scumm) { // dummy x and w
-	setInfoText(message);
-}
 
-void InfoDialog::setInfoText(const String& message) {
 	_message = message;
 
 	// Width and height are dummy
 	_text = new StaticTextWidget(this, 4, 4, 10, 10, _message, kTextAlignCenter);
+}
+
+void InfoDialog::setInfoText(const String& message) {
+	_message = message;
+	_text->setLabel(_message);
+	//reflowLayout(); // FIXME: Should we call this here? Depends on the usage patterns, I guess...
 }
 
 void InfoDialog::reflowLayout() {

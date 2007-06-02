@@ -165,6 +165,8 @@ public:
 	// from resources
 	InfoDialog(ScummEngine *scumm, int res);
 
+	void setInfoText(const String& message);
+
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
 		setResult(0);
 		close();
@@ -177,7 +179,6 @@ public:
 	virtual void reflowLayout();
 
 protected:
-	void setInfoText (const String& message);
 
 	// Query a string from the resources
 	const String queryResString(int stringno);
