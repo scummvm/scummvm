@@ -534,12 +534,13 @@ bool Interface::processAscii(uint16 ascii) {
 }
 
 void Interface::setStatusText(const char *text, int statusColor) {
-	assert(text != NULL);
-	assert(strlen(text) < STATUS_TEXT_LEN);
 
 	// Disable the status text in IHNM when the chapter is 8
 	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8)
 		return;
+
+	assert(text != NULL);
+	assert(strlen(text) < STATUS_TEXT_LEN);
 
 	if (_vm->_render->getFlags() & (RF_PLACARD | RF_MAP))
 		return;
