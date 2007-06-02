@@ -43,7 +43,36 @@ void AGOSEngine_Waxworks::setupVideoOpcodes(VgaOpcodeProc *op) {
 	op[63] = &AGOSEngine::vc63_fastFadeIn;
 }
 
-void AGOSEngine::vcStopAnimation(uint file, uint sprite) {
+void AGOSEngine::vcStopAnimation(uint zone, uint sprite) {
+	uint16 old_sprite_id;
+	VgaSprite *vsp;
+	VgaTimerEntry *vte;
+	const byte *vcPtrOrg;
+
+	old_sprite_id = _vgaCurSpriteId;
+	vcPtrOrg = _vcPtr;
+
+	_vgaCurSpriteId = sprite;
+
+	vsp = findCurSprite();
+	if (vsp->id) {
+		vc25_halt_sprite();
+
+		vte = _vgaTimerList;
+		while (vte->delay) {
+			if (vte->sprite_id == _vgaCurSpriteId) {
+				deleteVgaEvent(vte);
+				break;
+			}
+			vte++;
+		}
+	}
+
+	_vgaCurSpriteId = old_sprite_id;
+	_vcPtr = vcPtrOrg;
+}
+
+void AGOSEngine_Simon1::vcStopAnimation(uint zone, uint sprite) {
 	uint16 old_sprite_id, old_cur_file_id;
 	VgaSleepStruct *vfs;
 	VgaSprite *vsp;
@@ -54,7 +83,7 @@ void AGOSEngine::vcStopAnimation(uint file, uint sprite) {
 	old_cur_file_id = _vgaCurZoneNum;
 	vcPtrOrg = _vcPtr;
 
-	_vgaCurZoneNum = file;
+	_vgaCurZoneNum = zone;
 	_vgaCurSpriteId = sprite;
 
 	vfs = _waitSyncTable;

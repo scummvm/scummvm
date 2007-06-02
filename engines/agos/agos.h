@@ -1202,7 +1202,7 @@ protected:
 	void fastFadeIn();
 	void slowFadeIn();
 
-	void vcStopAnimation(uint file, uint sprite);
+	virtual void vcStopAnimation(uint zone, uint sprite);
 
 	void disableFileBoxes();
 	virtual void listSaveGames(char *dst);
@@ -1475,6 +1475,8 @@ protected:
 	virtual void listSaveGames(char *dst);
 	virtual void userGame(bool load);
 	virtual int userGameGetKey(bool *b, char *buf, uint maxChar);
+
+	virtual void vcStopAnimation(uint zone, uint sprite);
 };
 
 class AGOSEngine_Simon2 : public AGOSEngine_Simon1 {
