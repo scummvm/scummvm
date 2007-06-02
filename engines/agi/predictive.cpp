@@ -250,8 +250,8 @@ bool AgiEngine::predictiveDialog(void) {
 		key = doPollKeyboard();
 		switch (key) {
 		case KEY_ENTER:
-			rc = true;
-			goto press;
+			active = 13;
+			goto processkey;
 		case KEY_ESCAPE:
 			rc = false;
 			goto getout;
@@ -266,10 +266,14 @@ processkey:
 				needRefresh = true;
 				lastactive = active;
 				if (active == 15 && mode != kModeNum) { // Space
+					// bring MRU word at the top of the list when changing words
+					if (mode == kModePre && _activeTreeNode && _activeTreeNode->words.size() > 1 && _wordNumber != 0) {
+						String tmpstr = _activeTreeNode->words.remove_at(_wordNumber);
+						_activeTreeNode->words.insert_at(0, tmpstr);
+					}
+
 					strncpy(temp, _currentWord.c_str(), _currentCode.size());
-
 					temp[_currentCode.size()] = 0;
-
 					prefix += temp;
 					prefix += " ";
 					_currentCode.clear();
@@ -331,6 +335,12 @@ processkey:
 				} else if (active == 10) { // add
 					debug(0, "add");
 				} else if (active == 13) { // Ok
+					// bring MRU word at the top of the list when ok'ed out of the dialog
+					if (mode == kModePre && _activeTreeNode && _activeTreeNode->words.size() > 1 && _wordNumber != 0) {
+						String tmpstr = _activeTreeNode->words.remove_at(_wordNumber);
+						_activeTreeNode->words.insert_at(0, tmpstr);
+					}
+
 					rc = true;
 					goto press;
 				} else if (active == 14) { // Mode
