@@ -72,6 +72,7 @@ private:
 	uint _loopSound;
 public:
 	LoopingAudioStream(BaseSound *parent, uint sound, uint loopSound, bool loop);
+	~LoopingAudioStream();
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const { return _stream ? _stream->isStereo() : 0; }
 	bool endOfData() const;
@@ -85,6 +86,10 @@ LoopingAudioStream::LoopingAudioStream(BaseSound *parent, uint sound, uint loopS
 	_loopSound = loopSound;
 
 	_stream = _parent->makeAudioStream(sound);
+}
+
+LoopingAudioStream::~LoopingAudioStream() {
+	delete _stream;
 }
 
 int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
