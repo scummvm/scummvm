@@ -110,7 +110,12 @@ public:
 	int hitTest(const Point& testPoint);
 	HitZone *getHitZone(int16 index) {
 		if ((index < 0) || (index >= _hitZoneListCount)) {
-			error("ObjectMap::getHitZone wrong index 0x%X", index);
+			// HACK: If we get a wrong hitzone, return the last hitzone in the list
+			// Normally, we don't get wrong hitzones in ITE, however IHNM still seems
+			// to have problems with some, therefore just throw a warning for now and
+			// continue with a valid hitzone
+			warning("ObjectMap::getHitZone wrong index 0x%X, adjusting it to 0x%X", index, _hitZoneListCount - 1);
+			index = _hitZoneListCount - 1;
 		}
 		return _hitZoneList[index];
 	}
