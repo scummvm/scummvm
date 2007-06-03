@@ -125,7 +125,7 @@ public:
 		kFeatureAutoComputeDirtyRects,
 
 		/**
-		 * This flags determines either cursor can have its own palette or not
+		 * This flag determines either cursor can have its own palette or not
 		 * It is currently used only by some Macintosh versions of Humongous
 		 * Entertainment games. If backend doesn't implement this feature then
 		 * engine switches to b/w version of cursors.
@@ -142,7 +142,22 @@ public:
 		/**
 		 * Set to true to iconify the window.
 		 */
-		kFeatureIconifyWindow
+		kFeatureIconifyWindow,
+
+		/**
+		 * This feature, set to true, is a hint toward the backend to disable all
+		 * key filtering/mapping, in cases where it would be beneficial to do so.
+		 * As an example case, this is used in the agi engine's predictive dialog.
+		 * When the dialog is displayed this feature is set so that backends with
+		 * phone-like keypad temporarily unmap all user actions which leads to
+		 * comfortable word entry. Conversely, when the dialog exits the feature
+		 * is set to false.
+		 * TODO: Fingolfin suggests that the way the feature is used can be 
+		 * generalized in this sense: Have a keyboard mapping feature, which the
+		 * engine queries for to assign keys to actions ("Here's my default key
+		 * map for these actions, what do you want them set to?").
+		 */
+		kFeatureDisableKeyFiltering
 	};
 
 	/**

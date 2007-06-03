@@ -120,6 +120,7 @@ bool AgiEngine::predictiveDialog(void) {
 	AgiBlock tmpwindow;
 
 	_predictiveDialogRunning = true;
+	_system->setFeatureState(OSystem::kFeatureDisableKeyFiltering, true);
 	
 	// FIXME: Move this to a more appropriate place.
 	initAsciiToNumTable();
@@ -405,6 +406,7 @@ processkey:
 		_gfx->doUpdate();
 	}
 
+	_system->setFeatureState(OSystem::kFeatureDisableKeyFiltering, false);
 	_predictiveDialogRunning = false;
 
 	return rc;
