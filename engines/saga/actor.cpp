@@ -1811,10 +1811,6 @@ void Actor::drawActors() {
 
 	createDrawOrderList();
 
-	// Update frameCount for sfWaitFrames in IHNM
-	// TODO: is this the correct place to do this?
-	_vm->_frameCount++;
-
 	for (drawOrderIterator = _drawOrderList.begin(); drawOrderIterator != _drawOrderList.end(); ++drawOrderIterator) {
 		drawObject = drawOrderIterator.operator*();
 

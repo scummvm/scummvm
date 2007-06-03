@@ -295,6 +295,8 @@ int SagaEngine::go() {
 		// Per frame processing
 		_render->drawScene();
 		_system->delayMillis(10);
+		// Update frameCount for sfWaitFrames in IHNM
+		_frameCount++;
 	}
 
 	return 0;
