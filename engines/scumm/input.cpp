@@ -414,27 +414,23 @@ void ScummEngine_v7::processKeyboard(int lastKeyHit) {
 
 void ScummEngine_v6::processKeyboard(int lastKeyHit) {
 	if (lastKeyHit == 20) {
-		// FIXME: What key is '20' supposed to indicate? I can't trigger
-		// it with my keyboard, it seems...
-		char buf[256];
+		// FIXME: The 20 seems to indicate Ctrl-T. Of course this is a
+		// rather ugly way to detect it -- modifier + ascii code would
+		// be a *lot* cleaner...
 
-		_voiceMode++;
-		if (_voiceMode == 3)
-			_voiceMode = 0;
+		SubtitleSettingsDialog dialog(this, _voiceMode);
+		_voiceMode = runDialog(dialog);
 
 		switch (_voiceMode) {
 		case 0:
-			sprintf(buf, "Speech Only");
 			ConfMan.setBool("speech_mute", false);
 			ConfMan.setBool("subtitles", false);
 			break;
 		case 1:
-			sprintf(buf, "Speech and Subtitles");
 			ConfMan.setBool("speech_mute", false);
 			ConfMan.setBool("subtitles", true);
 			break;
 		case 2:
-			sprintf(buf, "Subtitles Only");
 			ConfMan.setBool("speech_mute", true);
 			ConfMan.setBool("subtitles", true);
 			break;
@@ -443,8 +439,6 @@ void ScummEngine_v6::processKeyboard(int lastKeyHit) {
 		if (VAR_VOICE_MODE != 0xFF)
 			VAR(VAR_VOICE_MODE) = _voiceMode;
 
-		GUI::TimedMessageDialog dialog(buf, 1500);
-		runDialog(dialog);
 		return;
 	}
 

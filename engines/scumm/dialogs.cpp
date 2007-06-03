@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/events.h"
 
 #include "graphics/scaler.h"
 
@@ -918,6 +919,48 @@ void ValueDisplayDialog::open() {
 	GUI_Dialog::open();
 	setResult(_value);
 	_timer = getMillis() + kDisplayDelay;
+}
+
+SubtitleSettingsDialog::SubtitleSettingsDialog(ScummEngine *scumm, int value) 
+	: InfoDialog(scumm, ""), _value(value) {
+
+}
+
+void SubtitleSettingsDialog::handleTickle() {
+	InfoDialog::handleTickle();
+	if (getMillis() > _timer)
+		close();
+}
+
+void SubtitleSettingsDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+	if (keycode == 't' && modifiers == Common::KBD_CTRL) {
+		cycleValue();
+
+		reflowLayout();
+		draw();
+	} else {
+		close();
+	}
+}
+
+void SubtitleSettingsDialog::open() {
+	cycleValue();
+	InfoDialog::open();
+}
+
+void SubtitleSettingsDialog::cycleValue() {
+	static const char* subtitleDesc[] = {
+		"Speech Only",
+		"Speech and Subtitles",
+		"Subtitles Only"
+	};
+	
+	_value = (_value + 1) % 3;
+
+	setInfoText(subtitleDesc[_value]);
+
+	setResult(_value);
+	_timer = getMillis() + 1500;
 }
 
 Indy3IQPointsDialog::Indy3IQPointsDialog(ScummEngine *scumm, char* text)

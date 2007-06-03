@@ -236,6 +236,26 @@ protected:
 	uint32 _timer;
 };
 
+/**
+ * A dialog used to display and cycle subtitle settings.
+ * Automatically closes after a brief time has passed.
+ */
+class SubtitleSettingsDialog : public InfoDialog {
+public:
+	SubtitleSettingsDialog(ScummEngine *scumm, int value);
+
+	virtual void open();
+	virtual void handleTickle();
+	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
+		close();
+	}
+	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+protected:
+	int _value;
+	uint32 _timer;
+	
+	void cycleValue();
+};
 
 //The Indy IQ dialog
 class Indy3IQPointsDialog : public InfoDialog {
