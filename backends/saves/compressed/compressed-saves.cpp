@@ -219,6 +219,7 @@ public:
 		_stream.next_out = _buf;
 		_stream.avail_out = BUFSIZE;
 		_stream.avail_in = 0;
+		_stream.next_in = 0;
 	}
 
 	~CompressedOutSaveFile() {
