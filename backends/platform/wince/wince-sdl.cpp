@@ -330,7 +330,7 @@ bool OSystem_WINCE3::isOzone() {
 
 OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	_orientationLandscape(0), _newOrientation(0), _panelInitialized(false),
-	_panelVisible(true), _panelStateForced(false), _forceHideMouse(false),
+	_panelVisible(true), _panelStateForced(false), _forceHideMouse(false), _unfilteredkeys(false),
 	_freeLook(false), _forcePanelInvisible(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
 	_scalersChanged(false), _monkeyKeyboard(false), _lastKeyPressed(0), _tapTime(0),
 	_saveToolbarState(false), _saveActiveToolbar(NAME_MAIN_PANEL), _rbutton(false), _hasfocus(true),
@@ -771,6 +771,7 @@ void OSystem_WINCE3::setFeatureState(Feature f, bool enable) {
 	switch(f) {
 		case kFeatureFullscreenMode:
 			return;
+
 		case kFeatureVirtualKeyboard:
 			if (_hasSmartphoneResolution)
 				return;
@@ -790,6 +791,12 @@ void OSystem_WINCE3::setFeatureState(Feature f, bool enable) {
 					//_toolbarHandler.setVisible(_saveToolbarState);
 				}
 			return;
+
+		case kFeatureDisableKeyFiltering:
+			if (_hasSmartphoneResolution)
+				_unfilteredkeys = enable;
+			return;
+
 		default:
 			OSystem_SDL::setFeatureState(f, enable);
 	}
@@ -2067,10 +2074,22 @@ void OSystem_WINCE3::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 	OSystem_SDL::addDirtyRect(x, y, w, h, false);
 }
 
-static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode)
+static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode, bool unfilter)
 {
 	if (GUI::Actions::Instance()->mappingActive())
 		return key;
+
+	if (unfilter) {
+		switch (key) {
+			case SDLK_ESCAPE:
+				return SDLK_BACKSPACE;
+			case SDLK_F8:
+				return SDLK_ASTERISK;
+			case SDLK_F9:
+				return SDLK_HASH;
+		}
+		return key;
+	}
 
 	if (key >= SDLK_KP0 && key <= SDLK_KP9) {
 		return key - SDLK_KP0 + '0';
@@ -2113,9 +2132,9 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 	while(SDL_PollEvent(&ev)) {
 		switch(ev.type) {
 		case SDL_KEYDOWN:
-			// KMOD_RESERVED is used if the key has been injected by an external buffer
 			debug(1, "Key down %X %s", ev.key.keysym.sym, SDL_GetKeyName((SDLKey)ev.key.keysym.sym));
-			if (ev.key.keysym.mod != KMOD_RESERVED) {
+			// KMOD_RESERVED is used if the key has been injected by an external buffer
+			if (ev.key.keysym.mod != KMOD_RESERVED && !_unfilteredkeys) {
 				keyEvent = true;
 				_lastKeyPressed = ev.key.keysym.sym;
 				_keyRepeatTime = currentTime;
@@ -2125,19 +2144,27 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 					return true;
 			}
 
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = ev.key.keysym.sym;
-			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-
 			if (GUI_Actions::Instance()->mappingActive())
 				event.kbd.flags = 0xFF;
+			else if (ev.key.keysym.sym == SDLK_PAUSE) {
+				_lastKeyPressed = 0;
+				event.type = Common::EVENT_PREDICTIVE_DIALOG;
+				return true;
+			}
+
+			event.type = Common::EVENT_KEYDOWN;
+			if (!_unfilteredkeys)
+				event.kbd.keycode = ev.key.keysym.sym;
+			else
+				event.kbd.keycode = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
+			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
 
 			return true;
 
 		case SDL_KEYUP:
-			// KMOD_RESERVED is used if the key has been injected by an external buffer
 			debug(1, "Key up %X %s", ev.key.keysym.sym, SDL_GetKeyName((SDLKey)ev.key.keysym.sym));
-			if (ev.key.keysym.mod != KMOD_RESERVED) {
+			// KMOD_RESERVED is used if the key has been injected by an external buffer
+			if (ev.key.keysym.mod != KMOD_RESERVED && !_unfilteredkeys) {
 				keyEvent = true;
 				_lastKeyPressed = 0;
 
@@ -2145,12 +2172,19 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 					return true;
 			}
 
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = ev.key.keysym.sym;
-			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-
 			if (GUI_Actions::Instance()->mappingActive())
 				event.kbd.flags = 0xFF;
+			else if (ev.key.keysym.sym == SDLK_PAUSE) {
+				_lastKeyPressed = 0;
+				return false;	// chew up the show agi dialog key up event
+			}
+
+			event.type = Common::EVENT_KEYUP;
+			if (!_unfilteredkeys)
+				event.kbd.keycode = ev.key.keysym.sym;
+			else
+				event.kbd.keycode = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
+			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
 
 			return true;
 

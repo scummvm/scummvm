@@ -189,6 +189,7 @@ private:
 	bool _panelInitialized;		// only initialize the toolbar once
 
 	bool _monkeyKeyboard;		// forced keyboard for Monkey Island copy protection
+	bool _unfilteredkeys;		// discard key mapping temporarily (agi pred. dialog)
 	static bool _soundMaster;	// turn off sound after all calculations
 								// static since needed by the SDL callback
 	int _orientationLandscape;	// current orientation

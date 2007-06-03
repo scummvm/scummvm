@@ -43,7 +43,7 @@ const String smartphoneActionNames[] = {
 	"Save",
 	"Skip",
 	"Zone",
-	"FT Cheat",
+	"Multi Function",
 	"Bind Keys",
 	"Keyboard",
 	"Rotate",
@@ -152,9 +152,12 @@ void CEActionsSmartphone::initInstanceGame() {
 		_key_action[SMARTPHONE_ACTION_SKIP].setAscii(KEY_ALL_SKIP);
 	// Zone
 	_action_enabled[SMARTPHONE_ACTION_ZONE] = true;
-	// FT Cheat
+	// Multi function key
 	_action_enabled[SMARTPHONE_ACTION_FT_CHEAT] = true;
-	_key_action[SMARTPHONE_ACTION_FT_CHEAT].setAscii(86); // shift-V
+	if (is_agi)
+		_key_action[SMARTPHONE_ACTION_FT_CHEAT].setAscii(SDLK_PAUSE);
+	else
+		_key_action[SMARTPHONE_ACTION_FT_CHEAT].setAscii(86); // shift-V
 	// Bind keys
 	_action_enabled[SMARTPHONE_ACTION_BINDKEYS] = true;
 }
