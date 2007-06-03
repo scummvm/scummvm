@@ -1626,6 +1626,8 @@ void Actor::handleActions(int msec, bool setup) {
 			}
 		}
 	}
+	// Update frameCount for sfWaitFrames in IHNM
+	_vm->_frameCount++;
 }
 
 void Actor::direct(int msec) {

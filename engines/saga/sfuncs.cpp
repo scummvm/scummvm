@@ -1887,6 +1887,7 @@ void Script::sfResetMouseClicks(SCRIPTFUNC_PARAMS) {
 	SF_stub("sfResetMouseClicks", thread, nArgs);
 }
 
+// Used in IHNM only
 // Param1: frames
 void Script::sfWaitFrames(SCRIPTFUNC_PARAMS) {
 	int16 frames;
