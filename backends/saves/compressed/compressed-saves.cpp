@@ -183,7 +183,7 @@ protected:
 	int _zlibErr;
 
 	void processData(int flushType) {
-		// This function is called by both write() and finalize.
+		// This function is called by both write() and finalize().
 		while (_zlibErr == Z_OK && (_stream.avail_in || flushType == Z_FINISH)) {
 			if (_stream.avail_out == 0) {
 				if (_wrapped->write(_buf, BUFSIZE) != BUFSIZE) {
@@ -218,6 +218,7 @@ public:
 
 		_stream.next_out = _buf;
 		_stream.avail_out = BUFSIZE;
+		_stream.avail_in = 0;
 	}
 
 	~CompressedOutSaveFile() {
