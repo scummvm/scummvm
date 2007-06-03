@@ -148,7 +148,7 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfSetActorFacing),
 		OPCODE(sfStartBgdAnim),
 		OPCODE(sfStopBgdAnim),
-		OPCODE(sfNull),
+		OPCODE(sfLockUser),
 		OPCODE(sfPreDialog),
 		OPCODE(sfKillActorThreads),
 		OPCODE(sfFaceTowards),
