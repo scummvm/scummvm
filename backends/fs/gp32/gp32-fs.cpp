@@ -59,7 +59,9 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	// FIXME: isValid should return false if this Node can't be used!
 	// so client code can rely on the return value.
+	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
 	virtual bool isValid() const { return true; }
+	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode) const;

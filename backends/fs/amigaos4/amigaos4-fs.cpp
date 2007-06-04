@@ -89,11 +89,14 @@ public:
 	 */
 	virtual ~AmigaOSFilesystemNode();
 
+	virtual bool exists() const { return true; }		//FIXME: this is just a stub
 	virtual String getDisplayName() const { return _sDisplayName; };
 	virtual String getName() const { return _sDisplayName; };
 	virtual String getPath() const { return _sPath; };
-	virtual bool isValid() const { return _bIsValid; };
 	virtual bool isDirectory() const { return _bIsDirectory; };
+	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
+	virtual bool isValid() const { return _bIsValid; };
+	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 	
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode) const;

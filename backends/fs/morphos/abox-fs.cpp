@@ -76,11 +76,14 @@ public:
 	 */
 	~ABoxFilesystemNode();
 
+	virtual bool exists() const { return true; }		//FIXME: this is just a stub
 	virtual String getDisplayName() const { return _displayName; }
 	virtual String getName() const { return _displayName; };
 	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
+	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
 	virtual bool isValid() const { return _isValid; }
+	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 	
 	virtual AbstractFilesystemNode *getChild(const String &name) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode) const;
