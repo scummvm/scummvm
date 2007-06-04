@@ -607,7 +607,7 @@ int AGOSEngine::init() {
 	} else if (getGameType() == GType_WW || getGameType() == GType_ELVIRA2) {
 		_window4BackScn = (byte *)calloc(224 * 127, 1);
 	} else if (getGameType() == GType_ELVIRA1) {
-		_window4BackScn = (byte *)calloc(224 * 127, 1);
+		_window4BackScn = (byte *)calloc(224 * 144, 1);
 		_window6BackScn = (byte *)calloc(48 * 80, 1);
 	}
 
