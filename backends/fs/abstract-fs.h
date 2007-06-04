@@ -78,12 +78,18 @@ public:
 	 */
 	virtual ~AbstractFilesystemNode() {}
 
+	/*
+	 * Indicates whether this path exists in the filesystem or not.
+	 */
+	virtual bool exists() const = 0;
+
 	/**
 	 * Return a list of child nodes of this directory node. If called on a node
 	 * that does not represent a directory, false is returned.
 	 * 
 	 * @param list List to put the contents of the directory in.
 	 * @param mode Mode to use while listing the directory.
+	 * 
 	 * @return true if succesful, false otherwise (e.g. when the directory does not exist).
 	 */
 	virtual bool getChildren(AbstractFSList &list, ListMode mode) const = 0;
@@ -111,18 +117,22 @@ public:
 	virtual bool isDirectory() const = 0;
 	
 	/**
+	 * Indicates whether this path can be read from or not.
+	 */
+	virtual bool isReadable() const = 0;
+	
+	/**
+	 * Indicates whether this path can be written to or not.
+	 */
+	virtual bool isWritable() const = 0;
+	
+	/**
 	 * Indicates whether this path is valid or not for usage.
 	 */
 	virtual bool isValid() const = 0;
 
 	/* TODO:
-	bool exists();
-
-	bool isDirectory();
 	bool isFile();
-
-	bool isReadable();
-	bool isWritable();
 	*/
 };
 

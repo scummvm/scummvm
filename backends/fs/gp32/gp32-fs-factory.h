@@ -1,6 +1,7 @@
 #ifndef GP32_FILESYSTEM_FACTORY_H
 #define GP32_FILESYSTEM_FACTORY_H
 
+#include "common/singleton.h"
 #include "backends/fs/abstract-fs-factory.h"
 
 /**

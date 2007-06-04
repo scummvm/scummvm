@@ -29,6 +29,7 @@
 #endif
 #include "common/stdafx.h"
 #include "backends/fs/abstract-fs.h"
+#include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
 #ifndef _WIN32_WCE
@@ -70,11 +71,14 @@ public:
 	 * @param currentDir if true, the path parameter will be ignored and the resulting node will point to the current directory.
 	 */
 	WindowsFilesystemNode(const String &path, const bool currentDir);
-
+	
+	virtual bool exists() const { return _access(_path.c_str(), F_OK) == 0; }
 	virtual String getDisplayName() const { return _displayName; }
 	virtual String getName() const { return _displayName; }
 	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
+	virtual bool isReadable() const { return _access(_path.c_str(), R_OK) == 0; }
+	virtual bool isWritable() const { return _access(_path.c_str(), W_OK) == 0; }
 	virtual bool isValid() const { return _isValid; }
 
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
@@ -217,11 +221,11 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p, const bool current
 	DWORD fileAttribs = GetFileAttributes(toUnicode(_path.c_str()));
 
 	if (fileAttribs == INVALID_FILE_ATTRIBUTES) {
-		_isValid = false;
 		_isDirectory = false;
+		_isValid = false;
 	} else {
-		_isValid = true;
 		_isDirectory = ((fileAttribs & FILE_ATTRIBUTE_DIRECTORY) != 0);
+		_isValid = true;
 	}
 	_isPseudoRoot = false;
 }
@@ -276,9 +280,12 @@ bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode) c
 		sprintf(searchPath, "%s*", _path.c_str());
 
 		handle = FindFirstFile(toUnicode(searchPath), &desc);
+		
 		if (handle == INVALID_HANDLE_VALUE)
 			return false;
+			
 		addFile(myList, mode, _path.c_str(), &desc);
+		
 		while (FindNextFile(handle, &desc))
 			addFile(myList, mode, _path.c_str(), &desc);
 

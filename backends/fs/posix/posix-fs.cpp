@@ -62,10 +62,13 @@ public:
 	 */
 	POSIXFilesystemNode(const String &path, bool verify);
 	
+	virtual bool exists() const { return access(_path.c_str(), F_OK) == 0; }
 	virtual String getDisplayName() const { return _displayName; }
 	virtual String getName() const { return _displayName; }
 	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
+	virtual bool isReadable() const { return access(_path.c_str(), R_OK) == 0; }
+	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }
 	virtual bool isValid() const { return _isValid; }
 	
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
@@ -102,8 +105,9 @@ static const char *lastPathComponent(const Common::String &str) {
 
 void POSIXFilesystemNode::setFlags() {
 	struct stat st;
+	
 	_isValid = (0 == stat(_path.c_str(), &st));
-	_isDirectory = _isValid ? S_ISDIR(st.st_mode) : false;	
+	_isDirectory = _isValid ? S_ISDIR(st.st_mode) : false;
 }
 
 POSIXFilesystemNode::POSIXFilesystemNode() {
@@ -140,8 +144,6 @@ POSIXFilesystemNode::POSIXFilesystemNode(const String &p, bool verify) {
 
 	_path = p;
 	_displayName = lastPathComponent(_path);
-	_isValid = true;
-	_isDirectory = true;
 
 	if (verify) {
 		setFlags();
