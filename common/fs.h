@@ -127,6 +127,11 @@ public:
 	 */
 	virtual Common::String displayName() const;
 
+	/*
+	 * Indicates whether the object refered by this path exists in the filesystem or not.
+	 */
+	virtual bool exists() const;
+
 	/**
 	 * Return a string representation of the name of the file. This is can be
 	 * used e.g. by detection code that relies on matching the name of a given
@@ -184,9 +189,19 @@ public:
 	virtual bool isDirectory() const;
 	
 	/**
+	 * Indicates whether this path can be read from or not.
+	 */
+	virtual bool isReadable() const;
+	
+	/**
 	 * Indicates whether this path is valid or not for usage.
 	 */
 	bool isValid() const;
+	
+	/**
+	 * Indicates whether this path can be written to or not.
+	 */
+	virtual bool isWritable() const;
 
 protected:
 	/**
