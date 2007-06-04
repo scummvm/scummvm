@@ -1188,7 +1188,7 @@ protected:
 
 	void loadMusic(uint track);
 	void playModule(uint music);
-	virtual void playMusic(uint16 track, uint16 track);
+	virtual void playMusic(uint16 music, uint16 track);
 	void stopMusic();
 
 	void checkTimerCallback();
