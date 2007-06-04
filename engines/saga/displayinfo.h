@@ -377,11 +377,10 @@ static const GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	ARRAYSIZE(IHNM_MainPanelButtons),
 	IHNM_MainPanelButtons,
 
-	-1, -1,		// converse Up & Down button indexies
-
 	IHNM_CONVERSE_MAX_TEXT_WIDTH,
 	IHNM_CONVERSE_TEXT_HEIGHT,
 	IHNM_CONVERSE_TEXT_LINES,
+	-1, -1,		// converse Up & Down button indexies
 	0, 328,		// converse panel offsets
 	ARRAYSIZE(IHNM_ConversePanelButtons),
 	IHNM_ConversePanelButtons,
