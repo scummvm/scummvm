@@ -279,7 +279,7 @@ static const GameDisplayInfo ITE_DisplayInfo = {
 
 
 //TODO: ihnm
-#define IHNM_CONVERSE_MAX_TEXT_WIDTH (256 - 60)
+#define IHNM_CONVERSE_MAX_TEXT_WIDTH (485 - 8)
 #define IHNM_CONVERSE_TEXT_HEIGHT       10
 #define IHNM_CONVERSE_TEXT_LINES        10
 
