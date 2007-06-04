@@ -539,19 +539,7 @@ void AGOSEngine::justifyOutPut(byte chr) {
 		doOutput(&chr, 1);
 		clsCheck(_textWindow);
 	} else if (chr == 0 || chr == ' ' || chr == 10) {
-		bool fit;
-
-		// Note that in FF, _printCharCurPos may be greater than
-		// _printCharMaxPos. In Simon, that is probably prevented by
-		// testing if _printCharCurPos == _printCharMaxPos below.
-
-		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			fit = _printCharMaxPos > _printCharCurPos + _printCharPixelCount;
-		} else {
-			fit = _printCharMaxPos - _printCharCurPos >= _printCharPixelCount;
-		}
-
-		if (fit) {
+		if (_printCharMaxPos - _printCharCurPos >= _printCharPixelCount) {
 			_printCharCurPos += _printCharPixelCount;
 			doOutput(_lettersToPrintBuf, _numLettersToPrint);
 
