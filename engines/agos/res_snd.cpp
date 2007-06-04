@@ -120,9 +120,26 @@ void AGOSEngine::skipSpeech() {
 	}
 }
 
-void AGOSEngine::loadModule(uint music) {
-	_mixer->stopHandle(_modHandle);
+void AGOSEngine::loadMusic(uint music) {
+	char buf[4];
 
+	stopMusic();
+
+	_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
+	_gameFile->read(buf, 4);
+	if (!memcmp(buf, "FORM", 4)) {
+		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
+		_midi.loadXMIDI(_gameFile);
+	} else {
+		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
+		_midi.loadMultipleSMF(_gameFile);
+	}
+
+	_lastMusicPlayed = music;
+	_nextMusicToPlay = -1;
+}
+
+void AGOSEngine::playModule(uint music) {
 	char filename[15];
 	File f;
 
@@ -135,7 +152,7 @@ void AGOSEngine::loadModule(uint music) {
 
 	f.open(filename);
 	if (f.isOpen() == false) {
-		error("loadModule: Can't load module from '%s'", filename);
+		error("playModule: Can't load module from '%s'", filename);
 	}
 
 	Audio::AudioStream *audioStream;
@@ -145,7 +162,7 @@ void AGOSEngine::loadModule(uint music) {
 		uint srcSize = f.size();
 		byte *srcBuf = (byte *)malloc(srcSize);
 		if (f.read(srcBuf, srcSize) != srcSize)
-			error("loadModule: Read failed");
+			error("playModule: Read failed");
 
 		uint dstSize = READ_BE_UINT32(srcBuf + srcSize - 4);
 		byte *dstBuf = (byte *)malloc(dstSize);
@@ -162,29 +179,8 @@ void AGOSEngine::loadModule(uint music) {
 	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_modHandle, audioStream);
 }
 
-void AGOSEngine_Simon2::loadMusic(uint music) {
-	char buf[4];
-
-	_midi.stop();
-	_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-	_gameFile->read(buf, 4);
-	if (!memcmp(buf, "FORM", 4)) {
-		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-		_midi.loadXMIDI(_gameFile);
-	} else {
-		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-		_midi.loadMultipleSMF(_gameFile);
-	}
-
-	_lastMusicPlayed = music;
-	_nextMusicToPlay = -1;
-}
-
-void AGOSEngine_Simon1::loadMusic(uint music) {
-	char buf[4];
-
-	_midi.stop();
-	_midi.setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
+void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
+	stopMusic();
 
 	// Support for compressed music from the ScummVM Music Enhancement Project
 	AudioCD.stop();
@@ -195,13 +191,17 @@ void AGOSEngine_Simon1::loadMusic(uint music) {
 	if (getGameId() == GID_SIMON1ACORN) {
 		// TODO: Add support for Desktop Tracker format
 	} else if (getPlatform() == Common::kPlatformAmiga) {
-		loadModule(music);
+		playModule(music);
 	} else if (getFeatures() & GF_TALKIE) {
+		char buf[4];
+
 		// WORKAROUND: For a script bug in the CD versions
 		// We skip this music resource, as it was replaced by
 		// a sound effect, and the script was never updated.
 		if (music == 35)
 			return;
+
+		_midi.setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
 		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
 		_gameFile->read(buf, 4);
@@ -214,13 +214,16 @@ void AGOSEngine_Simon1::loadMusic(uint music) {
 		}
 
 		_midi.startTrack(0);
+		_midi.startTrack(track);
 	} else {
 		char filename[15];
 		File f;
 		sprintf(filename, "MOD%d.MUS", music);
 		f.open(filename);
 		if (f.isOpen() == false)
-			error("loadMusic: Can't load music from '%s'", filename);
+			error("playMusic: Can't load music from '%s'", filename);
+
+		_midi.setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
 		if (getFeatures() & GF_DEMO)
 			_midi.loadS1D(&f);
@@ -228,16 +231,18 @@ void AGOSEngine_Simon1::loadMusic(uint music) {
 			_midi.loadSMF(&f, music);
 
 		_midi.startTrack(0);
+		_midi.startTrack(track);
 	}
 }
 
-void AGOSEngine::loadMusic(uint music) {
+void AGOSEngine::playMusic(uint16 music, uint16 track) {
+	stopMusic();
+
 	if (getPlatform() == Common::kPlatformAmiga) {
-		loadModule(music);
+		playModule(music);
 	} else if (getPlatform() == Common::kPlatformAtariST) {
 		// TODO: Add support for music formats used
 	} else {
-		_midi.stop();
 		_midi.setLoop(true); // Must do this BEFORE loading music.
 
 		char filename[15];
@@ -245,10 +250,20 @@ void AGOSEngine::loadMusic(uint music) {
 		sprintf(filename, "MOD%d.MUS", music);
 		f.open(filename);
 		if (f.isOpen() == false)
-			error("loadMusic: Can't load music from '%s'", filename);
+			error("playMusic: Can't load music from '%s'", filename);
 
 		_midi.loadS1D(&f);
 		_midi.startTrack(0);
+		_midi.startTrack(track);
+	}
+}
+
+void AGOSEngine::stopMusic() {
+	if ((getPlatform() == Common::kPlatformAcorn && (getFeatures() & GF_TALKIE)) ||
+		getPlatform() == Common::kPlatformPC || getPlatform() == Common::kPlatformWindows) {
+		_midi.stop();
+	} else {
+		_mixer->stopHandle(_modHandle);
 	}
 }
 

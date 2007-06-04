@@ -558,21 +558,33 @@ bool AGOSEngine::processSpecialKeys() {
 				_speech ^= 1;
 		}
 	case '+':
-		_midi.setVolume(_midi.getVolume() + 16);
+		if ((getPlatform() == Common::kPlatformAcorn && (getFeatures() & GF_TALKIE)) ||
+			getPlatform() == Common::kPlatformPC || getPlatform() == Common::kPlatformWindows) {
+			_midi.setVolume(_midi.getVolume() + 16);
+		}
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 16);
 		break;
 	case '-':
-		_midi.setVolume(_midi.getVolume() - 16);
+		if ((getPlatform() == Common::kPlatformAcorn && (getFeatures() & GF_TALKIE)) ||
+			getPlatform() == Common::kPlatformPC || getPlatform() == Common::kPlatformWindows) {
+			_midi.setVolume(_midi.getVolume() - 16);
+		}
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) - 16);
 		break;
 	case 'm':
-		_midi.pause(_musicPaused ^= 1);
+		if ((getPlatform() == Common::kPlatformAcorn && (getFeatures() & GF_TALKIE)) ||
+			getPlatform() == Common::kPlatformPC || getPlatform() == Common::kPlatformWindows) {
+			_midi.pause(_musicPaused ^= 1);
+		} else {
+			// TODO
+		}
 		break;
 	case 's':
-		if (getGameId() == GID_SIMON1DOS)
+		if (getGameId() == GID_SIMON1DOS) {
 			_midi._enable_sfx ^= 1;
-		else
+		} else {
 			_sound->effectsPause(_effectsPaused ^= 1);
+		}
 		break;
 	case 'b':
 		_sound->ambientPause(_ambientPaused ^= 1);

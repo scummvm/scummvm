@@ -1186,8 +1186,10 @@ protected:
 	virtual void windowNewLine(WindowBlock *window);
 	void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr);
 
-	virtual void loadMusic(uint music);
-	void loadModule(uint music);
+	void loadMusic(uint track);
+	void playModule(uint music);
+	virtual void playMusic(uint16 track, uint16 track);
+	void stopMusic();
 
 	void checkTimerCallback();
 	void delay(uint delay);
@@ -1478,7 +1480,7 @@ protected:
 	virtual void userGame(bool load);
 	virtual int userGameGetKey(bool *b, char *buf, uint maxChar);
 
-	virtual void loadMusic(uint music);
+	virtual void playMusic(uint16 music, uint16 track);
 
 	virtual void vcStopAnimation(uint zone, uint sprite);
 };
@@ -1521,8 +1523,6 @@ protected:
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
 	virtual void playSpeech(uint speech_id, uint vga_sprite_id);
-
-	virtual void loadMusic(uint music);
 };
 
 class AGOSEngine_Feeble : public AGOSEngine_Simon2 {

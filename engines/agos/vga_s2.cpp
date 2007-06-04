@@ -194,7 +194,7 @@ void AGOSEngine::vc72_segue() {
 	int16 loop = vcReadNextWord();
 
 	if (track == -1 || track == 999) {
-		_midi.stop();
+		stopMusic();
 	} else {
 		_midi.setLoop(loop != 0);
 		_midi.startTrack(track);

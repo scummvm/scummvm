@@ -722,13 +722,12 @@ void AGOSEngine::o_doClassIcons() {
 
 void AGOSEngine::o_playTune() {
 	// 127:  play tune
-	int music = getVarOrWord();
-	int track = getVarOrWord();
+	uint16 music = getVarOrWord();
+	uint16 track = getVarOrWord();
 
 	if (music != _lastMusicPlayed) {
 		_lastMusicPlayed = music;
-		loadMusic(music);
-		_midi.startTrack(track);
+		playMusic(music, track);
 	}
 }
 

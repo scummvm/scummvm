@@ -843,20 +843,16 @@ void AGOSEngine_Elvira1::oe1_ifTime() {
 
 void AGOSEngine_Elvira1::oe1_playTune() {
 	// 264: play tune
-	int music = getVarOrWord();
-	int track = getVarOrWord();
+	uint16 music = getVarOrWord();
+	uint16 track = getVarOrWord();
 
 	if (music != _lastMusicPlayed) {
 		_lastMusicPlayed = music;
 		// No tune under water
 		if (music == 4) {
-			if (getPlatform() == Common::kPlatformAmiga)
-				_mixer->stopHandle(_modHandle);
-			else
-				_midi.stop();
+			stopMusic();
 		} else {
-			loadMusic(music);
-			_midi.startTrack(track);
+			playMusic(music, track);
 		}
 	}
 }
