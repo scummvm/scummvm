@@ -809,7 +809,6 @@ protected:
 	void setWindowImage(uint16 mode, uint16 vga_res_id);
 	void setWindowImageEx(uint16 mode, uint16 vga_res);
 
-	void playSpeech(uint speech_id, uint vga_sprite_id);
 	void skipSpeech();
 
 	bool printNameOf(Item *item, uint x, uint y);
@@ -1187,7 +1186,7 @@ protected:
 	virtual void windowNewLine(WindowBlock *window);
 	void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr);
 
-	void loadMusic(uint music);
+	virtual void loadMusic(uint music);
 	void loadModule(uint music);
 
 	void checkTimerCallback();
@@ -1473,9 +1472,13 @@ protected:
 	virtual void addArrows(WindowBlock *window);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
+	virtual void playSpeech(uint speech_id, uint vga_sprite_id);
+
 	virtual void listSaveGames(char *dst);
 	virtual void userGame(bool load);
 	virtual int userGameGetKey(bool *b, char *buf, uint maxChar);
+
+	virtual void loadMusic(uint music);
 
 	virtual void vcStopAnimation(uint zone, uint sprite);
 };
@@ -1516,6 +1519,10 @@ protected:
 
 	virtual void addArrows(WindowBlock *window);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
+
+	virtual void playSpeech(uint speech_id, uint vga_sprite_id);
+
+	virtual void loadMusic(uint music);
 };
 
 class AGOSEngine_Feeble : public AGOSEngine_Simon2 {
