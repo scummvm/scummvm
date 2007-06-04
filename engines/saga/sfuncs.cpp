@@ -731,6 +731,15 @@ void Script::sfEnableZone(SCRIPTFUNC_PARAMS) {
 
 	if (objectTypeId(objectId) == kGameObjectHitZone) {
 		hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
+	} else if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 1 &&
+			   _vm->_scene->currentSceneNumber() == 14) {
+		// HACK: Don't disable the requested hitzone in room 14 in chapter 1 (Gorrister) of IHNM
+		// Apparently, this is used in that room to disable the tear at the very end of the
+		// corridor. This fixes the staircase in scenes 4 and 14
+		// FIXME: Remove this hack
+		warning("HACK: Prevent crash at staircase with Gorrister");
+		// Do nothing
+		return;
 	} else {
 		hitZone = _vm->_scene->_actionMap->getHitZone(objectIdToIndex(objectId));
 	}
