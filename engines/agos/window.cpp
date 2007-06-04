@@ -110,7 +110,7 @@ void AGOSEngine::clearWindow(WindowBlock *window) {
 
 void AGOSEngine::colorWindow(WindowBlock *window) {
 	byte *dst;
-	uint h, w;
+	int16 h, w;
 
 	_lockWord |= 0x8000;
 

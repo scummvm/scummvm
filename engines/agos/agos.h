@@ -297,9 +297,10 @@ protected:
 	bool _vgaVar9;
 	int16 _chanceModifier;
 	bool _restoreWindow6;
-	int _scrollX, _scrollXMax, _scrollWidth;
-	int _scrollY, _scrollYMax, _scrollHeight;
-	int _scrollCount, _scrollFlag;
+	int16 _scrollX, _scrollXMax;
+	int16 _scrollY, _scrollYMax;
+	int16 _scrollCount, _scrollFlag;
+	uint16 _scrollWidth, _scrollHeight;
 	const byte *_scrollImage;
 	byte _boxStarHeight;
 
@@ -355,8 +356,8 @@ protected:
 
 	uint16 _windowNum;
 
-	uint _printCharCurPos, _printCharMaxPos, _printCharPixelCount;
-	uint _numLettersToPrint;
+	int16 _printCharCurPos, _printCharMaxPos, _printCharPixelCount;
+	uint16 _numLettersToPrint;
 
 	uint _numTextBoxes;
 
