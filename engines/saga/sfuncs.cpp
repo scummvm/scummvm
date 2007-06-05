@@ -386,7 +386,7 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 			break;
 		case kGameObjectHitZone:
 		case kGameObjectStepZone:
-			if (objectTypeId(objectId) == NULL)
+			if (objectTypeId(objectId) == 0)
 				return;
 			else if (objectTypeId(objectId) == kGameObjectHitZone)
 				hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
@@ -739,7 +739,7 @@ void Script::sfEnableZone(SCRIPTFUNC_PARAMS) {
 		return;		// Do nothing
 	}
 
-	if (objectTypeId(objectId) == NULL)
+	if (objectTypeId(objectId) == 0)
 		return;
 	else if (objectTypeId(objectId) == kGameObjectHitZone)
 		hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
