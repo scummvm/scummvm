@@ -464,7 +464,7 @@ void Script::doVerb() {
 			}
 		}
 
-		if (objectType == NULL)
+		if (objectType == 0)
 			return;
 		else if (objectType == kGameObjectHitZone) {
 			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
@@ -619,7 +619,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 
 	hitZone = NULL;
 
-	if (objectTypeId(_pendingObject[0]) == NULL)
+	if (objectTypeId(_pendingObject[0]) == 0)
 		return;
 	else if (objectTypeId(_pendingObject[0]) == kGameObjectHitZone) {
 		 hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[0]));
