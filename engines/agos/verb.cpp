@@ -674,21 +674,21 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 
 	if (mode != 0) {
 		if (mode == 3) {
-			if (getGameType() == GType_ELVIRA1) {
+			if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
 				if (best_ha->verb & 0x4000) {
-					if (_variableArray[500] == 0) {
+					if (getGameType() == GType_ELVIRA1 && _variableArray[500] == 0) {
 						_variableArray[500] = best_ha->verb & 0xBFFF;
 					}
-				}
 
-				if (_clickOnly != 0 && best_ha->id < 8) {
-					uint id = best_ha->id;
-					if (id >= 4)
-						id -= 4;
+					if (_clickOnly != 0 && best_ha->id < 8) {
+						uint id = best_ha->id;
+						if (id >= 4)
+							id -= 4;
 
-					invertBox(findBox(id), 0, 0, 0, 0);
-					_clickOnly = 0;
-					return;
+						invertBox(findBox(id), 0, 0, 0, 0);
+						_clickOnly = 0;
+						return;
+					}
 				}
 			}
 

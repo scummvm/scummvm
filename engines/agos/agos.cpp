@@ -302,6 +302,8 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_leftButtonDown = 0;
 	_rightButtonDown = 0;
 	_clickOnly = 0;
+	_leftClick = 0;
+	_oneClick = 0;
 	_noRightClick = false;
 
 	_leftButton = 0;

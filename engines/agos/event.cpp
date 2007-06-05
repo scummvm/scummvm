@@ -510,6 +510,7 @@ void AGOSEngine::delay(uint amount) {
 
 				_leftButton = 0;
 				_leftButtonCount = 0;
+				_leftClick = true;
 				break;
 			case Common::EVENT_RBUTTONDOWN:
 				if (getGameType() == GType_FF)

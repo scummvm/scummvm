@@ -380,7 +380,7 @@ void AGOSEngine_PuzzlePack::handleMouseMoved() {
 	drawMousePointer();
 }
 
-void AGOSEngine::handleMouseMoved() {
+void AGOSEngine_Simon1::handleMouseMoved() {
 	uint x;
 
 	if (_mouseHideCount) {
@@ -397,13 +397,6 @@ void AGOSEngine::handleMouseMoved() {
 			id = 102;
 		if (_defaultVerb != id)
 			resetVerbs();
-	}
-
-	if (_leftButton == 0) {
-		if (_dragMode != 0) {
-			_dragEnd = 1;
-		}
-		_dragCount = 0;
 	}
 
 	if (getGameType() == GType_FF) {
@@ -449,7 +442,50 @@ void AGOSEngine::handleMouseMoved() {
 		get_out2:;
 			_vgaVar9 = 0;
 		}
-	} else if (getGameType() == GType_WW) {
+	}
+
+	if (_mouse != _mouseOld)
+		_needHitAreaRecalc++;
+
+	if (_leftButtonOld == 0 && _leftButtonCount != 0) {
+		boxController(_mouse.x, _mouse.y, 3);
+	}
+	_leftButtonOld = _leftButton;
+
+	x = 0;
+	if (_lastHitArea3 == 0 && _leftButtonDown != 0) {
+		_leftButtonDown = 0;
+		x = 1;
+	} else {
+		if (_litBoxFlag == 0 && _needHitAreaRecalc == 0)
+			goto get_out;
+	}
+
+	boxController(_mouse.x, _mouse.y, x);
+	_lastHitArea3 = _lastHitArea;
+	if (x == 1 && _lastHitArea == NULL)
+		_lastHitArea3 = (HitArea *) -1;
+
+get_out:
+	_mouseOld = _mouse;
+	drawMousePointer();
+
+	_needHitAreaRecalc = 0;
+	_litBoxFlag = 0;
+}
+
+void AGOSEngine::handleMouseMoved() {
+	uint x;
+
+	if (_mouseHideCount) {
+		CursorMan.showMouse(false);
+		return;
+	}
+
+	CursorMan.showMouse(true);
+	_mouse = _eventMan->getMousePos();
+
+	if (getGameType() == GType_WW) {
 		if (_variableArray[51] != 0 && _mouseCursor != _variableArray[51]) {
 			_mouseCursor = _variableArray[51];
 			_needHitAreaRecalc++;
@@ -466,10 +502,20 @@ void AGOSEngine::handleMouseMoved() {
 		}
 	}
 
+	if (_leftClick == true) {
+		_leftClick = false;
+		if (_dragMode != 0) {
+			_dragEnd = 1;
+		} else {
+			_oneClick = true;
+		}
+		_dragCount = 0;
+	}
+
 	if (_mouse != _mouseOld)
 		_needHitAreaRecalc++;
 
-	if (_leftButtonOld == 0 && _leftButtonCount != 0) {
+	if (_leftButtonOld == 0 && _leftButton != 0) {
 		_lastClickRem = 0;
 		boxController(_mouse.x, _mouse.y, 3);
 	}
@@ -493,8 +539,8 @@ void AGOSEngine::handleMouseMoved() {
 	}
 
 	x = 0;
-	if (_lastHitArea3 == 0 && _leftButtonDown != 0) {
-		_leftButtonDown = 0;
+	if (_oneClick == true) {
+		_oneClick = false;
 		x = 1;
 	} else {
 		if (_litBoxFlag == 0 && _needHitAreaRecalc == 0)
@@ -504,11 +550,7 @@ void AGOSEngine::handleMouseMoved() {
 boxstuff:
 	boxController(_mouse.x, _mouse.y, x);
 	_lastHitArea3 = _lastHitArea;
-	if (x == 1 && _lastHitArea == NULL)
-		_lastHitArea3 = (HitArea *) -1;
-
 get_out:
-
 	_mouseOld = _mouse;
 	drawMousePointer();
 

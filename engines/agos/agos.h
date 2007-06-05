@@ -383,7 +383,7 @@ protected:
 	byte _leftButtonDown;
 	byte _leftButton, _leftButtonCount, _leftButtonOld;
 	byte _rightButtonDown;
-	bool _clickOnly;
+	bool _clickOnly, _leftClick, _oneClick;
 	bool _noRightClick;
 
 	Item *_dummyItem1;
@@ -1471,6 +1471,8 @@ protected:
 	void draw32ColorImage(VC10_state *state);
 
 	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
+
+	virtual void handleMouseMoved();
 
 	virtual void addArrows(WindowBlock *window);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
