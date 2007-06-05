@@ -1000,7 +1000,7 @@ int AGOSEngine::go() {
 	}
 
 	if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
-		loadMusic(0);
+		playMusic(0, 0);
 	}
 
 	if ((getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformMacintosh) &&
