@@ -292,8 +292,8 @@ static PanelButton IHNM_MainPanelButtons[] = {
 	{kPanelButtonVerb,		223,44,		114,30, kVerbIHNMSwallow,'s',0,	10,11,0},
 	{kPanelButtonVerb,		223,76,		114,30, kVerbIHNMGive,'g',0,	12,13,0},
 	{kPanelButtonVerb,		223,108,	114,30, kVerbIHNMPush,'p',0,	14,15,0},
-	{kPanelButtonArrow,		606,22,		20,25,	-1,'[',0,			0,0,0}, //TODO: arrow Sprite Numbers
-	{kPanelButtonArrow,		606,108,	20,25,	1,']',0,			0,0,0},
+	{kPanelButtonArrow,		606,22,		20,25,	-1,'[',0,			2,3,4},	// TODO: IHNM needs more states hre
+	{kPanelButtonArrow,		606,108,	20,25,	1,']',0,			6,7,8},
 
 	{kPanelButtonInventory,	357 + 64*0,18,	54,54,	0,'-',0,	0,0,0},
 	{kPanelButtonInventory,	357 + 64*1,18,	54,54,	1,'-',0,	0,0,0},
@@ -308,12 +308,13 @@ static PanelButton IHNM_MainPanelButtons[] = {
 
 static PanelButton IHNM_ConversePanelButtons[] = {
 	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 0, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	0,'1',0,	0,0,0},
-	{kPanelButtonConverseText,	52,18 + IHNM_CONVERSE_TEXT_HEIGHT * 1, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	1,'2',0,	0,0,0},
-	{kPanelButtonConverseText,	52,18 + IHNM_CONVERSE_TEXT_HEIGHT * 2, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	2,'3',0,	0,0,0},
-	{kPanelButtonConverseText,	52,18 + IHNM_CONVERSE_TEXT_HEIGHT * 3, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	3,'4',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 1, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	1,'2',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 2, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	2,'3',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 3, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	3,'4',0,	0,0,0},
 	//.....
-	{kPanelButtonArrow,			606,22,		20,25,	-1,'[',0,	0,0,0}, //TODO: arrow Sprite Numbers
-	{kPanelButtonArrow,			606,108,	20,25,	1,']',0,	0,0,0}
+	// Note: If more buttons are added here, don't forget to update the converse arrow indexes too
+	{kPanelButtonArrow,			606,22,		20,25,	-1,'[',0,			2,3,4},	// TODO: IHNM needs more states hre
+	{kPanelButtonArrow,			606,108,	20,25,	1,']',0,			6,7,8},
 };
 
 static PanelButton IHNM_OptionPanelButtons[] = {
@@ -370,7 +371,7 @@ static const GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	11, 12,		// left portrait x, y offset
 	-1, -1,		// right portrait x, y offset
 
-	-1, -1,		// inventory Up & Down button indexies
+	8, 9,		// inventory Up & Down button indexies
 	2, 4,		// inventory rows, columns
 
 	0, 328,		// main panel offsets
@@ -380,7 +381,7 @@ static const GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	IHNM_CONVERSE_MAX_TEXT_WIDTH,
 	IHNM_CONVERSE_TEXT_HEIGHT,
 	IHNM_CONVERSE_TEXT_LINES,
-	-1, -1,		// converse Up & Down button indexies
+	4, 5,		// converse Up & Down button indexies
 	0, 328,		// converse panel offsets
 	ARRAYSIZE(IHNM_ConversePanelButtons),
 	IHNM_ConversePanelButtons,

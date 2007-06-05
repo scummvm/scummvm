@@ -1962,7 +1962,10 @@ void Interface::drawPanelButtonArrow(Surface *ds, InterfacePanel *panel, PanelBu
 	point.x = panel->x + panelButton->xOffset;
 	point.y = panel->y + panelButton->yOffset;
 
-	_vm->_sprite->draw(ds, _vm->getDisplayClip(), _vm->_sprite->_mainSprites, spriteNumber, point, 256);
+	if (_vm->getGameType() == GType_ITE)
+		_vm->_sprite->draw(ds, _vm->getDisplayClip(), _vm->_sprite->_mainSprites, spriteNumber, point, 256);
+	else
+		_vm->_sprite->draw(ds, _vm->getDisplayClip(), _vm->_sprite->_arrowSprites, spriteNumber, point, 256);
 }
 
 void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, KnownColor textKnownColor, KnownColor textShadowKnownColor) {
