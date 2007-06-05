@@ -153,11 +153,11 @@ void CEActionsSmartphone::initInstanceGame() {
 	// Zone
 	_action_enabled[SMARTPHONE_ACTION_ZONE] = true;
 	// Multi function key
-	_action_enabled[SMARTPHONE_ACTION_FT_CHEAT] = true;
+	_action_enabled[SMARTPHONE_ACTION_MULTI] = true;
 	if (is_agi)
-		_key_action[SMARTPHONE_ACTION_FT_CHEAT].setAscii(SDLK_PAUSE);
+		_key_action[SMARTPHONE_ACTION_MULTI].setAscii(SDLK_PAUSE);
 	else
-		_key_action[SMARTPHONE_ACTION_FT_CHEAT].setAscii(86); // shift-V
+		_key_action[SMARTPHONE_ACTION_MULTI].setAscii(86); // shift-V
 	// Bind keys
 	_action_enabled[SMARTPHONE_ACTION_BINDKEYS] = true;
 }
@@ -179,7 +179,7 @@ bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
 				return true;
 			case SMARTPHONE_ACTION_SAVE:
 			case SMARTPHONE_ACTION_SKIP:
-			case SMARTPHONE_ACTION_FT_CHEAT:
+			case SMARTPHONE_ACTION_MULTI:
 				EventsBuffer::simulateKey(&_key_action[action], false);
 				return true;
 		}
@@ -189,7 +189,7 @@ bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
 	switch (action) {
 		case SMARTPHONE_ACTION_SAVE:
 		case SMARTPHONE_ACTION_SKIP:
-		case SMARTPHONE_ACTION_FT_CHEAT:
+		case SMARTPHONE_ACTION_MULTI:
 			EventsBuffer::simulateKey(&_key_action[action], true);
 			return true;
 		case SMARTPHONE_ACTION_RIGHTCLICK:
