@@ -1203,25 +1203,14 @@ uint AGOSEngine::continueOrQuit() {
 }
 
 void AGOSEngine::printScroll() {
-	VC10_state state;
 	VgaPointersEntry *vpe = &_vgaBufferPointers[1];
+	byte *curVgaFile2Orig = _curVgaFile2;
 
-	state.srcPtr  = vpe->vgaFile2 + READ_BE_UINT32(vpe->vgaFile2 + 9 * 8);
+	_windowNum = 3;
+	_curVgaFile2 = vpe->vgaFile2;
+	drawImage_init(9, 0, 10, 32, 0);
 
-	state.palette = 0;
-	state.paletteMod = 0;
-	state.x = 10;
-	state.y = 32;
-	state.width = state.draw_width = 10;
-	state.height = state.draw_height = 72;
-	state.flags = kDFCompressed;
-	_windowNum = 3;	
-
-	state.depack_cont = -0x80;
-	state.x_skip = 0;
-	state.y_skip = 0;
-
-	drawImage(&state);
+	_curVgaFile2 = curVgaFile2Orig;
 }
 
 } // End of namespace AGOS
