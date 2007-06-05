@@ -195,6 +195,7 @@ protected:
 
 	uint32 *_gameOffsetsPtr;
 
+	uint _numMusic, _numSFX, _numSpeech;
 	uint _numBitArray1, _numBitArray2, _numBitArray3;
 	uint _numItemStore, _numVars;
 	uint _vgaBaseDelay;

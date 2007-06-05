@@ -124,6 +124,10 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_tableIndexBase = 0;
 	_textIndexBase = 0;
 
+	_numMusic = 0;
+	_numSFX = 0;
+	_numSpeech = 0;
+
 	_numBitArray1 = 0;
 	_numBitArray2 = 0;
 	_numBitArray3 = 0;
@@ -749,6 +753,10 @@ void AGOSEngine_Simon2::setupGame() {
 	_numTextBoxes = 20;
 	_numVars = 255;
 
+	_numMusic = 93;
+	_numSFX = 222;
+	_numSpeech = 3632;
+
 	AGOSEngine::setupGame();
 }
 
@@ -774,6 +782,10 @@ void AGOSEngine_Simon1::setupGame() {
 	_numTextBoxes = 20;
 	_numVars = 255;
 
+	_numMusic = 34;
+	_numSFX = 127;
+	_numSpeech = 1996;
+
 	AGOSEngine::setupGame();
 }
 
@@ -795,6 +807,8 @@ void AGOSEngine_Waxworks::setupGame() {
 	_numTextBoxes = 10;
 	_numVars = 255;
 
+	_numMusic = 9;
+
 	AGOSEngine::setupGame();
 }
 
@@ -815,6 +829,8 @@ void AGOSEngine_Elvira2::setupGame() {
 	_numItemStore = 50;
 	_numVars = 255;
 
+	_numMusic = 9;
+
 	AGOSEngine::setupGame();
 }
 
@@ -831,6 +847,8 @@ void AGOSEngine_Elvira1::setupGame() {
 	_frameCount = 4;
 	_vgaBaseDelay = 1;
 	_numVars = 512;
+
+	_numMusic = 14;
 
 	AGOSEngine::setupGame();
 }
