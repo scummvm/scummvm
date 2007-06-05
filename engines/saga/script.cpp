@@ -719,8 +719,10 @@ void Script::whichObject(const Point& mousePoint) {
 						(_currentVerb == getVerbType(kVerbClose)) ||
 						((_currentVerb == getVerbType(kVerbGive)) && !_firstObjectSet) ||
 						((_currentVerb == getVerbType(kVerbUse)) && !(actor->_flags & kFollower))) {
-							objectId = ID_NOTHING;
-							newObjectId = ID_NOTHING;
+							if (_vm->getGameType() == GType_ITE) {
+								objectId = ID_NOTHING;
+								newObjectId = ID_NOTHING;
+							}
 						}
 				}
 			}
