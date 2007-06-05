@@ -464,7 +464,9 @@ void Script::doVerb() {
 			}
 		}
 
-		if (objectType == kGameObjectHitZone) {
+		if (objectType == NULL)
+			return;
+		else if (objectType == kGameObjectHitZone) {
 			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 			hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[0]));
 			if ((hitZone->getFlags() & kHitZoneExit) == 0) {
@@ -485,21 +487,18 @@ void Script::doVerb() {
 
 	if (scriptEntrypointNumber > 0) {
 
-		// WORKAROUND: Fixes bug #1690045 "ITE: Item description missing / ScummVM crash"
-		if (!(_vm->_scene->currentSceneNumber() == 278 && (_pendingObject[0] == 16419 || _pendingObject[1] == 16419) && _vm->getGameType() == GType_ITE)) {
-			event.type = kEvTOneshot;
-			event.code = kScriptEvent;
-			event.op = kEventExecNonBlocking;
-			event.time = 0;
-			event.param = scriptModuleNumber;
-			event.param2 = scriptEntrypointNumber;
-			event.param3 = _pendingVerb;		// Action
-			event.param4 = _pendingObject[0];	// Object
-			event.param5 = _pendingObject[1];	// With Object
-			event.param6 = (objectType == kGameObjectActor) ? _pendingObject[0] : ID_PROTAG;		// Actor
+		event.type = kEvTOneshot;
+		event.code = kScriptEvent;
+		event.op = kEventExecNonBlocking;
+		event.time = 0;
+		event.param = scriptModuleNumber;
+		event.param2 = scriptEntrypointNumber;
+		event.param3 = _pendingVerb;		// Action
+		event.param4 = _pendingObject[0];	// Object
+		event.param5 = _pendingObject[1];	// With Object
+		event.param6 = (objectType == kGameObjectActor) ? _pendingObject[0] : ID_PROTAG;		// Actor
 
-			_vm->_events->queue(&event);
-		}
+		_vm->_events->queue(&event);
 
 	} else {
 		_vm->getExcuseInfo(_pendingVerb, excuseText, excuseSampleResourceId);
@@ -620,7 +619,9 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 
 	hitZone = NULL;
 
-	if (objectTypeId(_pendingObject[0]) == kGameObjectHitZone) {
+	if (objectTypeId(_pendingObject[0]) == NULL)
+		return;
+	else if (objectTypeId(_pendingObject[0]) == kGameObjectHitZone) {
 		 hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[0]));
 	} else {
 		if ((_pendingVerb == getVerbType(kVerbUse)) && (objectTypeId(_pendingObject[1]) == kGameObjectHitZone)) {
