@@ -703,27 +703,21 @@ void AGOSEngine_Simon1::addArrows(WindowBlock *window) {
 	ha->window = window;
 	ha->verb = 1;
 
-	if (getFeatures() & GF_32COLOR) {
-		_lockWord |= 0x8;
+	_lockWord |= 0x8;
 
-		VgaPointersEntry *vpe = &_vgaBufferPointers[1];
-		byte *curVgaFile2Orig = _curVgaFile2;
-		uint16 windowNumOrig = _windowNum;
+	VgaPointersEntry *vpe = &_vgaBufferPointers[1];
+	byte *curVgaFile2Orig = _curVgaFile2;
+	uint16 windowNumOrig = _windowNum;
+	uint8 palette = (getPlatform() == Common::kPlatformAmiga) ? 15 : 14;
 
+	_windowNum = 0;
+	_curVgaFile2 = vpe->vgaFile2;
+	drawImage_init(1, palette, 38, 150, 4);
 
-		_windowNum = 0;
-		_curVgaFile2 = vpe->vgaFile2;
-		drawImage_init(1, 15, 38, 150, 4);
+	_curVgaFile2 = curVgaFile2Orig;
+	_windowNum = windowNumOrig;
 
-		_curVgaFile2 = curVgaFile2Orig;
-		_windowNum = windowNumOrig;
-
-		_lockWord &= ~0x8;
-	} else {
-		stopAnimate(128);
-		uint8 palette = (getPlatform() == Common::kPlatformAmiga) ? 15 : 14;
-		animate(0, 1, 128, 0, 0, palette);
-	}
+	_lockWord &= ~0x8;
 }
 
 void AGOSEngine_Waxworks::addArrows(WindowBlock *window) {
@@ -822,13 +816,7 @@ void AGOSEngine::addArrows(WindowBlock *window) {
 
 void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
 	if (getGameType() == GType_SIMON1) {
-		if (getFeatures() & GF_32COLOR) {
-			restoreBlock(200, 320, 146, 304);
-		} else {
-			stopAnimate(129);
-			uint8 palette = (getPlatform() == Common::kPlatformAmiga) ? 15: 14;
-			animate(0, 1, 129, 0, 0, palette);
-		}
+		restoreBlock(200, 320, 146, 304);
 	} else if (getGameType() == GType_WW) {
 		setBitFlag(22, false);
 		setWindowImageEx(6, 103);
