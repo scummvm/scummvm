@@ -359,7 +359,7 @@ void AGOSEngine_Simon1::listSaveGames(char *dst) {
 		if (!(in = _saveFileMan->openForLoading(genSaveName(slot))))
 			break;
 
-		in->read(dst, 8);
+		in->read(dst, 18);
 		delete in;
 
 		lastSlot = slot;
