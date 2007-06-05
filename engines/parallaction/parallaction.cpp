@@ -126,12 +126,7 @@ Parallaction::Parallaction(OSystem *syst) :
 Parallaction::~Parallaction() {
 	delete _debugger;
 
-	delete _soundMan;
-	delete _disk;
 	delete _globalTable;
-
-	if (_objectsNames)
-		delete _objectsNames;
 
 	delete _callableNames;
 	delete _commandsNames;
@@ -139,14 +134,16 @@ Parallaction::~Parallaction() {
 	delete _zoneTypeNames;
 	delete _zoneFlagNames;
 
-	if (_localFlagNames)
-		delete _localFlagNames;
-
-	delete _gfx;
-
+	_animations.remove(&_char._ani);
+	
 	freeLocation();
+	
 	freeCharacter();
 	destroyInventory();
+
+	delete _gfx;
+	delete _soundMan;
+	delete _disk;	
 }
 
 
