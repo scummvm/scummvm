@@ -477,10 +477,13 @@ void AGOSEngine::delay(uint amount) {
 						GUI::Dialog *_aboutDialog;
 						_aboutDialog = new GUI::AboutDialog();
 						_aboutDialog->runModal();
-					} else if (event.kbd.keycode == 'f')
+					} else if (event.kbd.keycode == 'f') {
 						_fastMode ^= 1;
-					else if (event.kbd.keycode == 'd')
+					} else if (event.kbd.keycode == 'd') {
 						_debugger->attach();
+					} else if (event.kbd.keycode == 'u') {
+						dumpAllSubroutines();
+					}
 				} 
 
 				if (getGameType() == GType_PP) {
