@@ -73,7 +73,7 @@ GameList Engine_QUEEN_detectGames(const FSList &fslist) {
 		if (file->isDirectory()) {
 			continue;
 		}
-		if (file->name().equalsIgnoreCase("queen.1") || file->name().equalsIgnoreCase("queen.1c")) {
+		if (file->getName().equalsIgnoreCase("queen.1") || file->getName().equalsIgnoreCase("queen.1c")) {
 			Common::File dataFile;
 			if (!dataFile.open(*file)) {
 				continue;

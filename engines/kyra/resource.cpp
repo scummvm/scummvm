@@ -82,8 +82,8 @@ Resource::Resource(KyraEngine *vm) {
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
 
-	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly))
-		error("invalid game path '%s'", dir.path().c_str());
+	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly))
+		error("invalid game path '%s'", dir.getPath().c_str());
 
 	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().isTalkie) {
 		static const char *list[] = {
@@ -96,7 +96,7 @@ Resource::Resource(KyraEngine *vm) {
 		Common::for_each(_pakfiles.begin(), _pakfiles.end(), Common::bind2nd(Common::mem_fun(&ResourceFile::protect), true));
 	} else {
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-			Common::String filename = file->name();
+			Common::String filename = file->getName();
 			filename.toUppercase();
 
 			// No real PAK file!
@@ -104,8 +104,8 @@ Resource::Resource(KyraEngine *vm) {
 				continue;
 
 			if (filename.hasSuffix("PAK") || filename.hasSuffix("APK")) {
-				if (!loadPakFile(file->name()))
-					error("couldn't open pakfile '%s'", file->name().c_str());
+				if (!loadPakFile(file->getName()))
+					error("couldn't open pakfile '%s'", file->getName().c_str());
 			}
 		}
 

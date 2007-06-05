@@ -405,9 +405,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		if (browser.runModal() > 0) {
 			// User made this choice...
 			FilesystemNode file(browser.getResult());
-			_soundFont->setLabel(file.path());
+			_soundFont->setLabel(file.getPath());
 
-			if (!file.path().empty() && (file.path() != "None"))
+			if (!file.getPath().empty() && (file.getPath() != "None"))
 				_soundFontClearButton->setEnabled(true);
 			else
 				_soundFontClearButton->setEnabled(false);
@@ -428,7 +428,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// done with optional specific gameid to pluginmgr detectgames?
 			// FSList files = dir.listDir(FilesystemNode::kListFilesOnly);
 
-			_gamePathWidget->setLabel(dir.path());
+			_gamePathWidget->setLabel(dir.getPath());
 			draw();
 		}
 		draw();
@@ -441,7 +441,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			FilesystemNode dir(browser.getResult());
-			_extraPathWidget->setLabel(dir.path());
+			_extraPathWidget->setLabel(dir.getPath());
 			draw();
 		}
 		draw();
@@ -453,7 +453,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			FilesystemNode dir(browser.getResult());
-			_savePathWidget->setLabel(dir.path());
+			_savePathWidget->setLabel(dir.getPath());
 			draw();
 		}
 		draw();
@@ -654,9 +654,9 @@ void LauncherDialog::addGame() {
 		// User made his choice...
 		FilesystemNode dir(_browser->getResult());
 		FSList files;
-		if (!dir.listDir(files, FilesystemNode::kListAll)) {
+		if (!dir.getChildren(files, FilesystemNode::kListAll)) {
 			error("browser returned a node that is not a directory: '%s'",
-					dir.path().c_str());
+					dir.getPath().c_str());
 		}
 
 		// ...so let's determine a list of candidates, games that
@@ -686,7 +686,7 @@ void LauncherDialog::addGame() {
 			GameDescriptor result = candidates[idx];
 
 			// TODO: Change the detectors to set "path" !
-			result["path"] = dir.path();
+			result["path"] = dir.getPath();
 
 			Common::String domain = addGameToConf(result);
 

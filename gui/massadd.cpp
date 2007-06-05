@@ -127,9 +127,9 @@ void MassAddDialog::handleTickle() {
 		FilesystemNode dir = _scanStack.pop();
 	
 		FSList files;
-		if (!dir.listDir(files, FilesystemNode::kListAll)) {
+		if (!dir.getChildren(files, FilesystemNode::kListAll)) {
 			error("browser returned a node that is not a directory: '%s'",
-					dir.path().c_str());
+					dir.getPath().c_str());
 		}
 	
 		// Run the detector on the dir
@@ -141,7 +141,7 @@ void MassAddDialog::handleTickle() {
 			// e.g. ask the user which one to pick (make sure to display the 
 			// path, too).
 			GameDescriptor result = candidates[0];
-			result["path"] = dir.path();
+			result["path"] = dir.getPath();
 			
 			_games.push_back(result);
 		}

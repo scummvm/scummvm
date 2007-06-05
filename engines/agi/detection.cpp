@@ -1885,7 +1885,7 @@ Common::ADGameDescList fallbackDetector(const FSList *fslist) {
 	// First grab all filenames
 	for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
 		if (file->isDirectory()) continue;
-		tstr = file->name();
+		tstr = file->getName();
 		tstr.toLowercase();
 
 		allFiles[tstr] = true;

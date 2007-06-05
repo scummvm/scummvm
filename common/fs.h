@@ -119,41 +119,10 @@ public:
 	 */
 	bool operator< (const FilesystemNode& node) const;
 
-	/**
-	 * Return a human readable string for this node, usable for display (e.g.
-	 * in the GUI code). Do *not* rely on it being usable for anything else,
-	 * like constructing paths!
-	 * @return the display name
-	 */
-	virtual Common::String displayName() const;
-
 	/*
 	 * Indicates whether the object refered by this path exists in the filesystem or not.
 	 */
 	virtual bool exists() const;
-
-	/**
-	 * Return a string representation of the name of the file. This is can be
-	 * used e.g. by detection code that relies on matching the name of a given
-	 * file. But it is *not* suitable for use with fopen / File::open, nor
-	 * should it be archived.
-	 *
-	 * @return the file name
-	 */
-	virtual Common::String name() const;
-
-	/**
-	 * Return a string representation of the file which can be passed to fopen(),
-	 * and is suitable for archiving (i.e. writing to the config file).
-	 * This will usually be a 'path' (hence the name of the method), but can
-	 * be anything that fulfills the above criterions.
-	 *
-	 * @note Do not assume that this string contains (back)slashes or any
-	 *       other kind of 'path separators'.
-	 *
-	 * @return the 'path' represented by this filesystem node
-	 */
-	virtual Common::String path() const;
 
 	/**
 	 * Fetch a child node of this node, with the given name. Only valid for
@@ -169,7 +138,38 @@ public:
 	 * @return true if succesful, false otherwise (e.g. when the directory does not exist).
 	 * @todo Rename this to listChildren or getChildren.
 	 */
-	virtual bool listDir(FSList &fslist, ListMode mode = kListDirectoriesOnly) const;	
+	virtual bool getChildren(FSList &fslist, ListMode mode = kListDirectoriesOnly) const;	
+
+	/**
+	 * Return a human readable string for this node, usable for display (e.g.
+	 * in the GUI code). Do *not* rely on it being usable for anything else,
+	 * like constructing paths!
+	 * @return the display name
+	 */
+	virtual Common::String getDisplayName() const;
+
+	/**
+	 * Return a string representation of the name of the file. This is can be
+	 * used e.g. by detection code that relies on matching the name of a given
+	 * file. But it is *not* suitable for use with fopen / File::open, nor
+	 * should it be archived.
+	 *
+	 * @return the file name
+	 */
+	virtual Common::String getName() const;
+
+	/**
+	 * Return a string representation of the file which can be passed to fopen(),
+	 * and is suitable for archiving (i.e. writing to the config file).
+	 * This will usually be a 'path' (hence the name of the method), but can
+	 * be anything that fulfills the above criterions.
+	 *
+	 * @note Do not assume that this string contains (back)slashes or any
+	 *       other kind of 'path separators'.
+	 *
+	 * @return the 'path' represented by this filesystem node
+	 */
+	virtual Common::String getPath() const;
 	
 	/**
 	 * Get the parent node of this node. If this node has no parent node,

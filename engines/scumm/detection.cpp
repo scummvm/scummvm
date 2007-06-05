@@ -205,7 +205,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 // the first match is used.
 static bool searchFSNode(const FSList &fslist, const Common::String &name, FilesystemNode &result) {
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (!scumm_stricmp(file->name().c_str(), name.c_str())) {
+		if (!scumm_stricmp(file->getName().c_str(), name.c_str())) {
 			result = *file;
 			return true;
 		}
@@ -231,7 +231,7 @@ static Common::Language detectLanguage(const FSList &fslist, byte id) {
 		FSList tmpList;
 		if (searchFSNode(fslist, "RESOURCE", resDir)
 			&& resDir.isDirectory()
-			&& resDir.listDir(tmpList, FilesystemNode::kListFilesOnly)
+			&& resDir.getChildren(tmpList, FilesystemNode::kListFilesOnly)
 			&& searchFSNode(tmpList, filename, langFile)) {
 			tmp.open(langFile);
 		}
@@ -328,7 +328,7 @@ static void detectGames(const FSList &fslist, Common::List<DetectorResult> &resu
 			DetectorDesc d;
 			d.node = *file;
 			d.md5Entry = 0;
-			fileMD5Map[file->name()] = d;
+			fileMD5Map[file->getName()] = d;
 		}
 	}
 
@@ -455,7 +455,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 
 	Common::File tmp;
 	if (!tmp.open(d.node)) {
-		warning("SCUMM detectGames: failed to open '%s' for read access", d.node.path().c_str());
+		warning("SCUMM detectGames: failed to open '%s' for read access", d.node.getPath().c_str());
 		return false;
 	}
 	
@@ -784,7 +784,7 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 	// Fetch the list of files in the current directory
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
+	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly)) {
 		return kInvalidPathError;
 	}
 

@@ -821,7 +821,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			FilesystemNode dir(browser.getResult());
-			_savePath->setLabel(dir.path());
+			_savePath->setLabel(dir.getPath());
 			draw();
 			// TODO - we should check if the directory is writeable before accepting it
 		}
@@ -832,7 +832,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			FilesystemNode dir(browser.getResult());
-			_themePath->setLabel(dir.path());
+			_themePath->setLabel(dir.getPath());
 			draw();
 		}
 		break;
@@ -842,7 +842,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			FilesystemNode dir(browser.getResult());
-			_extraPath->setLabel(dir.path());
+			_extraPath->setLabel(dir.getPath());
 			draw();
 		}
 		break;
@@ -852,9 +852,9 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			FilesystemNode file(browser.getResult());
-			_soundFont->setLabel(file.path());
+			_soundFont->setLabel(file.getPath());
 
-			if (!file.path().empty() && (file.path() != "None"))
+			if (!file.getPath().empty() && (file.getPath() != "None"))
 				_soundFontClearButton->setEnabled(true);
 			else
 				_soundFontClearButton->setEnabled(false);

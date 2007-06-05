@@ -227,7 +227,7 @@ PluginError detectGameForEngineCreation(
 
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
+	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly)) {
 		return kInvalidPathError;
 	}
 
@@ -285,7 +285,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 		// Get the information of the existing files
 		for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
 			if (file->isDirectory()) continue;
-			tstr = file->name();
+			tstr = file->getName();
 			tstr.toLowercase();
 
 			// Strip any trailing dot
@@ -304,7 +304,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 
 			debug(3, "> %s: %s", tstr.c_str(), md5str);
 
-			if (testFile.open(file->path())) {
+			if (testFile.open(file->getPath())) {
 				filesSize[tstr] = (int32)testFile.size();
 				testFile.close();
 			}

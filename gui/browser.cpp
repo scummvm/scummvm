@@ -222,15 +222,15 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 
 void BrowserDialog::updateListing() {
 	// Update the path display
-	_currentPath->setLabel(_node.path());
+	_currentPath->setLabel(_node.getPath());
 
 	// We memorize the last visited path.
-	ConfMan.set("browser_lastpath", _node.path());
+	ConfMan.set("browser_lastpath", _node.getPath());
 
 	// Read in the data from the file system
 	FilesystemNode::ListMode listMode = _isDirBrowser ? FilesystemNode::kListDirectoriesOnly
 	                                                  : FilesystemNode::kListAll;
-	if (!_node.listDir(_nodeContent, listMode)) {
+	if (!_node.getChildren(_nodeContent, listMode)) {
 		_nodeContent.clear();
 	} else {
 		Common::sort(_nodeContent.begin(), _nodeContent.end());
@@ -240,9 +240,9 @@ void BrowserDialog::updateListing() {
 	Common::StringList list;
 	for (FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
 		if (!_isDirBrowser && i->isDirectory())
-			list.push_back(i->displayName() + "/");
+			list.push_back(i->getDisplayName() + "/");
 		else
-			list.push_back(i->displayName());
+			list.push_back(i->getDisplayName());
 	}
 	_fileList->setList(list);
 	_fileList->scrollTo(0);

@@ -562,7 +562,7 @@ static void runDetectorTest() {
 		
 		FilesystemNode dir(path);
 		FSList files;
-		if (!dir.listDir(files, FilesystemNode::kListAll)) {
+		if (!dir.getChildren(files, FilesystemNode::kListAll)) {
 			printf(" ... invalid path, skipping\n");
 			continue;
 		}

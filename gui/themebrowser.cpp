@@ -148,12 +148,12 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 		return;
 
 	FSList fslist;
-	if (!node.listDir(fslist, FilesystemNode::kListAll))
+	if (!node.getChildren(fslist, FilesystemNode::kListAll))
 		return;
 
 	for (FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
 		if (i->isDirectory()) {
-			addDir(list, i->path(), level-1);
+			addDir(list, i->getPath(), level-1);
 		} else {
 			Entry th;
 			if (isTheme(*i, th)) {
@@ -176,7 +176,7 @@ bool ThemeBrowser::isTheme(const FilesystemNode &node, Entry &out) {
 	Common::ConfigFile cfg;
 	Common::String type;
 
-	out.file = node.name();
+	out.file = node.getName();
 	for (int i = out.file.size()-1; out.file[i] != '.' && i > 0; --i) {
 		out.file.deleteLastChar();
 	}

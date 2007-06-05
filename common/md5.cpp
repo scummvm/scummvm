@@ -254,7 +254,7 @@ bool md5_file(const FilesystemNode &file, uint8 digest[16], uint32 length) {
 		return false;
 	}
 
-	return md5_file(file.path().c_str(), digest, length);
+	return md5_file(file.getPath().c_str(), digest, length);
 }
 
 bool md5_file(const char *name, uint8 digest[16], uint32 length) {

@@ -27,14 +27,14 @@
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs-factory-maker.cpp"
 
-FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) {
-	_realNode = realNode;
-	_refCount = new int(1);
-}
-
 FilesystemNode::FilesystemNode() {
 	_realNode = 0;
 	_refCount = 0;
+}
+
+FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) {
+	_realNode = realNode;
+	_refCount = new int(1);
 }
 
 FilesystemNode::FilesystemNode(const FilesystemNode &node) {
@@ -58,17 +58,6 @@ FilesystemNode::~FilesystemNode() {
 	decRefCount();
 }
 
-void FilesystemNode::decRefCount() {
-	if (_refCount) {
-		assert(*_refCount > 0);
-		--(*_refCount);
-		if (*_refCount == 0) {
-			delete _refCount;
-			delete _realNode;
-		}
-	}
-}
-
 FilesystemNode &FilesystemNode::operator= (const FilesystemNode &node) {
 	if (node._refCount)
 		++(*node._refCount);
@@ -81,22 +70,30 @@ FilesystemNode &FilesystemNode::operator= (const FilesystemNode &node) {
 	return *this;
 }
 
-bool FilesystemNode::isValid() const {
-	if (_realNode == 0)
+bool FilesystemNode::operator< (const FilesystemNode& node) const
+{
+	if (isDirectory() && !node.isDirectory())
+		return true;
+	if (!isDirectory() && node.isDirectory())
 		return false;
-	return _realNode->isValid();
+	return scumm_stricmp(getDisplayName().c_str(), node.getDisplayName().c_str()) < 0;
 }
 
-FilesystemNode FilesystemNode::getParent() const {
-	if (_realNode == 0)
-		return *this;
-
-	AbstractFilesystemNode *node = _realNode->getParent();
-	if (node == 0) {
-		return *this;
-	} else {
-		return FilesystemNode(node);
+void FilesystemNode::decRefCount() {
+	if (_refCount) {
+		assert(*_refCount > 0);
+		--(*_refCount);
+		if (*_refCount == 0) {
+			delete _refCount;
+			delete _realNode;
+		}
 	}
+}
+
+bool FilesystemNode::exists() const {
+	if (_realNode == 0)
+		return false;
+	return _realNode->exists();
 }
 
 FilesystemNode FilesystemNode::getChild(const Common::String &n) const {
@@ -108,7 +105,7 @@ FilesystemNode FilesystemNode::getChild(const Common::String &n) const {
 	return FilesystemNode(node);
 }
 
-bool FilesystemNode::listDir(FSList &fslist, ListMode mode) const {
+bool FilesystemNode::getChildren(FSList &fslist, ListMode mode) const {
 	if (!_realNode || !_realNode->isDirectory())
 		return false;
 
@@ -125,32 +122,53 @@ bool FilesystemNode::listDir(FSList &fslist, ListMode mode) const {
 	return true;
 }
 
+Common::String FilesystemNode::getDisplayName() const {
+	assert(_realNode);
+	return _realNode->getDisplayName();
+}
+
+Common::String FilesystemNode::getName() const {
+	assert(_realNode);
+	return _realNode->getName();
+}
+
+FilesystemNode FilesystemNode::getParent() const {
+	if (_realNode == 0)
+		return *this;
+
+	AbstractFilesystemNode *node = _realNode->getParent();
+	if (node == 0) {
+		return *this;
+	} else {
+		return FilesystemNode(node);
+	}
+}
+
+Common::String FilesystemNode::getPath() const {
+	assert(_realNode);
+	return _realNode->getPath();
+}
+
 bool FilesystemNode::isDirectory() const {
 	if (_realNode == 0)
 		return false;
 	return _realNode->isDirectory();
 }
 
-Common::String FilesystemNode::displayName() const {
-	assert(_realNode);
-	return _realNode->getDisplayName();
-}
-
-Common::String FilesystemNode::name() const {
-	assert(_realNode);
-	return _realNode->getName();
-}
-
-Common::String FilesystemNode::path() const {
-	assert(_realNode);
-	return _realNode->getPath();
-}
-
-bool FilesystemNode::operator< (const FilesystemNode& node) const
-{
-	if (isDirectory() && !node.isDirectory())
-		return true;
-	if (!isDirectory() && node.isDirectory())
+bool FilesystemNode::isReadable() const {
+	if (_realNode == 0)
 		return false;
-	return scumm_stricmp(displayName().c_str(), node.displayName().c_str()) < 0;
+	return _realNode->isReadable();
+}
+
+bool FilesystemNode::isValid() const {
+	if (_realNode == 0)
+		return false;
+	return _realNode->isValid();
+}
+
+bool FilesystemNode::isWritable() const {
+	if (_realNode == 0)
+		return false;
+	return _realNode->isWritable();
 }

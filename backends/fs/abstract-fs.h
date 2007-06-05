@@ -79,7 +79,7 @@ public:
 	virtual ~AbstractFilesystemNode() {}
 
 	/*
-	 * Indicates whether this path exists in the filesystem or not.
+	 * Indicates whether the object refered by this path exists in the filesystem or not.
 	 */
 	virtual bool exists() const = 0;
 

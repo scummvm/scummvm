@@ -226,7 +226,7 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, co
 		return;
 
 	FSList fslist;
-	if (!dir.listDir(fslist, FilesystemNode::kListAll)) {
+	if (!dir.getChildren(fslist, FilesystemNode::kListAll)) {
 		// Failed listing the contents of this node, so it is either not a 
 		// directory, or just doesn't exist at all.
 		return;
@@ -237,7 +237,7 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, co
 
 	// Do not add directories multiple times, unless this time they are added
 	// with a bigger depth.
-	const String &directory(dir.path());
+	const String &directory(dir.getPath());
 	if (_defaultDirectories->contains(directory) && (*_defaultDirectories)[directory] >= level)
 		return;
 	(*_defaultDirectories)[directory] = level;
@@ -247,13 +247,13 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, co
 
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory()) {
-			addDefaultDirectoryRecursive(file->path(), level - 1, prefix + file->name() + "/");
+			addDefaultDirectoryRecursive(file->getPath(), level - 1, prefix + file->getName() + "/");
 		} else {
 			String lfn(prefix);
-			lfn += file->name();
+			lfn += file->getName();
 			lfn.toLowercase();
 			if (!_filesMap->contains(lfn)) {
-				(*_filesMap)[lfn] = file->path();
+				(*_filesMap)[lfn] = file->getPath();
 			}
 		}
 	}
@@ -372,7 +372,7 @@ bool File::open(const FilesystemNode &node, AccessMode mode) {
 		return false;
 	}
 
-	String filename(node.name());
+	String filename(node.getName());
 
 	if (_handle) {
 		error("File::open: This file object already is opened (%s), won't open '%s'", _name.c_str(), filename.c_str());
@@ -383,7 +383,7 @@ bool File::open(const FilesystemNode &node, AccessMode mode) {
 
 	const char *modeStr = (mode == kFileReadMode) ? "rb" : "wb";
 
-	_handle = fopen(node.path().c_str(), modeStr);
+	_handle = fopen(node.getPath().c_str(), modeStr);
 
 	if (_handle == NULL) {
 		if (mode == kFileReadMode)
