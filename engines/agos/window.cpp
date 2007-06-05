@@ -196,9 +196,11 @@ void AGOSEngine::restoreBlock(uint h, uint w, uint y, uint x) {
 	dst += y * _dxSurfacePitch;
 	src += y * _dxSurfacePitch;
 
+	const uint8 paletteMod = (getGameType() == GType_ELVIRA1 && y >= 133) ? 16 : 0;
+
 	while (y < h) {
 		for (i = x; i < w; i++)
-			dst[i] = src[i];
+			dst[i] = src[i] + paletteMod;
 		y++;
 		dst += _dxSurfacePitch;
 		src += _dxSurfacePitch;
