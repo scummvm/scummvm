@@ -731,6 +731,14 @@ void Script::sfEnableZone(SCRIPTFUNC_PARAMS) {
 	int16 flag = thread->pop();
 	HitZone *hitZone;
 
+	// HACK: Don't disable the tear in scene 14, to keep the staircase functioning
+	// FIXME: Investigate why this hack is needed and remove it
+	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 1 &&
+		_vm->_scene->currentSceneNumber() == 14) {
+		warning("sfEnableZone: HACK: Prevent unusable staircase");
+		return;		// Do nothing
+	}
+
 	if (objectTypeId(objectId) == NULL)
 		return;
 	else if (objectTypeId(objectId) == kGameObjectHitZone)
