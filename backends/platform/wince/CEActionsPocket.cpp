@@ -49,7 +49,7 @@ const String pocketActionNames[] = {
 	"Free look",
 	"Zoom up",
 	"Zoom down",
-	"FT Cheat",
+	"Multi Function",
 	"Bind Keys",
 	"Cursor Up",
 	"Cursor Down",
@@ -99,7 +99,7 @@ GUI::Actions()
 	_action_enabled[POCKET_ACTION_DOWN] = true;
 	_action_enabled[POCKET_ACTION_LEFT] = true;
 	_action_enabled[POCKET_ACTION_RIGHT] = true;
-	_action_mapping[POCKET_ACTION_LEFTCLICK] = SDLK_RETURN;
+	_action_mapping[POCKET_ACTION_LEFTCLICK] = SDLK_F1;
 	_action_mapping[POCKET_ACTION_UP] = SDLK_UP;
 	_action_mapping[POCKET_ACTION_DOWN] = SDLK_DOWN;
 	_action_mapping[POCKET_ACTION_LEFT] = SDLK_LEFT;
@@ -189,8 +189,11 @@ void CEActionsPocket::initInstanceGame() {
 		_action_enabled[POCKET_ACTION_ZOOM_DOWN] = true;
 	}
 	// FT Cheat
-	_action_enabled[POCKET_ACTION_FT_CHEAT] = true;
-	_key_action[POCKET_ACTION_FT_CHEAT].setAscii(86); // shift-V
+	_action_enabled[POCKET_ACTION_MULTI] = true;
+	if (is_agi)
+		_key_action[POCKET_ACTION_MULTI].setAscii(SDLK_PAUSE);
+	else
+		_key_action[POCKET_ACTION_MULTI].setAscii(86); // shift-V
 	// Key bind method
 	_action_enabled[POCKET_ACTION_BINDKEYS] = true;
 }
@@ -213,7 +216,7 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 		case POCKET_ACTION_PAUSE:
 		case POCKET_ACTION_SAVE:
 		case POCKET_ACTION_SKIP:
-		case POCKET_ACTION_FT_CHEAT:
+		case POCKET_ACTION_MULTI:
 			EventsBuffer::simulateKey(&_key_action[action], false);
 			return true;
 
@@ -225,7 +228,7 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 		case POCKET_ACTION_PAUSE:
 		case POCKET_ACTION_SAVE:
 		case POCKET_ACTION_SKIP:
-		case POCKET_ACTION_FT_CHEAT:
+		case POCKET_ACTION_MULTI:
 			EventsBuffer::simulateKey(&_key_action[action], true);
 			return true;
 		case POCKET_ACTION_KEYBOARD:
