@@ -1125,6 +1125,7 @@ void AGOSEngine::vc33_setMouseOn() {
 			_displayPalette[65 * 4 + 1] = 48 * 4;
 			_displayPalette[65 * 4 + 2] = 40 * 4;
 			_displayPalette[65 * 4 + 3] = 0;
+			_paletteFlag = 1;
 		}
 		mouseOn();
 	}
