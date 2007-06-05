@@ -745,16 +745,32 @@ void AGOSEngine::o_setAdjNoun() {
 
 void AGOSEngine::o_saveUserGame() {
 	// 132: save user game
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-	userGame(false);
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	if (getGameId() == GID_SIMON1CD32) {
+		// The Amiga CD32 version of Simon the Sorcerer 1uses a single slot
+		if (!saveGame(0, "Default Saved Game")) {
+			vc33_setMouseOn();
+			fileError(_windowArray[5], true);
+		}
+	} else {
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		userGame(false);
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	}
 }
 
 void AGOSEngine::o_loadUserGame() {
 	// 133: load user game
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-	userGame(true);
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	if (getGameId() == GID_SIMON1CD32) {
+		// The Amiga CD32 version of Simon the Sorcerer 1 uses a single slot
+		if (!loadGame(genSaveName(0))) {
+			vc33_setMouseOn();
+			fileError(_windowArray[5], false);
+		}
+	} else {
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		userGame(true);
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	}
 }
 
 void AGOSEngine::o_copysf() {
