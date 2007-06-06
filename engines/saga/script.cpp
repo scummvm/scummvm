@@ -619,9 +619,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 
 	hitZone = NULL;
 
-	if (objectTypeId(_pendingObject[0]) == 0)
-		return;
-	else if (objectTypeId(_pendingObject[0]) == kGameObjectHitZone) {
+	if (objectTypeId(_pendingObject[0]) == kGameObjectHitZone) {
 		 hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[0]));
 	} else {
 		if ((_pendingVerb == getVerbType(kVerbUse)) && (objectTypeId(_pendingObject[1]) == kGameObjectHitZone)) {
