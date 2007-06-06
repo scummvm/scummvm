@@ -72,27 +72,6 @@ GameList gameIDList(const Common::ADParams &params) {
 	return GameList(params.list);
 }
 
-static void upgradeTargetIfNecessary(const Common::ADParams &params) {
-	if (params.obsoleteList == 0)
-		return;
-
-	const char *gameid = ConfMan.get("gameid").c_str();
-
-	for (const Common::ADObsoleteGameID *o = params.obsoleteList; o->from; ++o) {
-		if (!scumm_stricmp(gameid, o->from)) {
-			gameid = o->to;
-			ConfMan.set("gameid", o->to);
-
-			if (o->platform != Common::kPlatformUnknown)
-				ConfMan.set("platform", Common::getPlatformCode(o->platform));
-
-			warning("Target upgraded from %s to %s", o->from, o->to);
-			ConfMan.flushToDisk();
-			break;
-		}
-	}
-}
-
 GameDescriptor findGameID(
 	const char *gameid,
 	const Common::ADParams &params
@@ -221,9 +200,23 @@ PluginError detectGameForEngineCreation(
 	const Common::ADParams &params
 	) {
 
-	upgradeTargetIfNecessary(params);
-
 	Common::String gameid = ConfMan.get("gameid");
+
+	if (params.obsoleteList != 0) {
+		for (const Common::ADObsoleteGameID *o = params.obsoleteList; o->from; ++o) {
+			if (!scumm_stricmp(gameid.c_str(), o->from)) {
+				gameid = o->to;
+				ConfMan.set("gameid", o->to);
+	
+				if (o->platform != Common::kPlatformUnknown)
+					ConfMan.set("platform", Common::getPlatformCode(o->platform));
+	
+				warning("Target upgraded from %s to %s", o->from, o->to);
+				ConfMan.flushToDisk();
+				break;
+			}
+		}
+	}
 
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
