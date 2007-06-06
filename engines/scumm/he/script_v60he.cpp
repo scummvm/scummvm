@@ -1090,7 +1090,7 @@ void ScummEngine_v60he::o60_readFile() {
 	int val;
 
 	// Fatty Bear uses positive values
-	if ((_game.platform == Common::kPlatformPC) && (_game.id == GID_FBEAR))
+	if (_game.platform == Common::kPlatformPC && _game.id == GID_FBEAR)
 		size = -size;
 
 	assert(_hInFileTable[slot]);
@@ -1120,7 +1120,7 @@ void ScummEngine_v60he::o60_writeFile() {
 	int slot = pop();
 
 	// Fatty Bear uses positive values
-	if ((_game.platform == Common::kPlatformPC) && (_game.id == GID_FBEAR))
+	if (_game.platform == Common::kPlatformPC && _game.id == GID_FBEAR)
 		size = -size;
 
 	assert(_hOutFileTable[slot]);
@@ -1139,7 +1139,9 @@ void ScummEngine_v60he::o60_soundOps() {
 
 	switch (subOp) {
 	case 222:
-		_imuse->setMusicVolume(arg);
+		if (_imuse) {
+			_imuse->setMusicVolume(arg);
+		}
 		break;
 	case 223:
 		// WORKAROUND: For error in room script 228 (room 2) of fbear.
