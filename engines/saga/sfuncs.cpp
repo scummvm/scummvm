@@ -1905,10 +1905,10 @@ void Script::sfWaitFrames(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfScriptFade(SCRIPTFUNC_PARAMS) {
-	int16 startingBrightness = thread->pop();
-	int16 endingBrightness = thread->pop();
 	thread->pop(); // first pal entry, ignored (already handled by Gfx::palToBlack)
 	thread->pop(); //  last pal entry, ignored (already handled by Gfx::palToBlack)
+	int16 startingBrightness = thread->pop();
+	int16 endingBrightness = thread->pop();
 	// delay between pal changes is always 10 (not used)
 
 	Event event;
