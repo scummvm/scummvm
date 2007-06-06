@@ -227,6 +227,7 @@ void AGOSEngine::animateSprites() {
 	}
 
 	if (getGameType() == GType_ELVIRA1 && _variableArray[293]) {
+		// Used by the Fire Wall and Ice Wall spells
 		debug(0, "Using special wall");
 
 		uint8 color, h, len;
@@ -256,10 +257,9 @@ void AGOSEngine::animateSprites() {
 		}			
 
 		_window4Flag = 1;
-		setMoveRect(0, 224, 0, 127);
+		setMoveRect(0, 0, 224, 127);
 	} else if (getGameType() == GType_ELVIRA2 && _variableArray[71] & 2) {
-		debug(0, "Using special wall");
-
+		// Used by the Unholy Barrier spell
 		uint8 color, h, len;
 		byte *dst = _window4BackScn;
 
@@ -284,14 +284,14 @@ void AGOSEngine::animateSprites() {
 			while (len--) {
 				dst += 2;
 				*dst++ = color;
-				dst++;
+				dst += 1;
 			}
 			dst += 448;
 			h--;
 		}			
 
 		_window4Flag = 1;
-		setMoveRect(0, 224, 0, 127);
+		setMoveRect(0, 0, 224, 127);
 	}
 
 	if (_window6Flag == 1)
