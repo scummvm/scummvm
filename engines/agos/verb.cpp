@@ -391,13 +391,15 @@ HitArea *AGOSEngine::findBox(uint hitarea_id) {
 
 HitArea *AGOSEngine::findEmptyHitArea() {
 	HitArea *ha = _hitAreas;
-	uint count = ARRAYSIZE(_hitAreas);
+	uint count = ARRAYSIZE(_hitAreas) - 1;
 
 	do {
 		if (ha->flags == 0)
 			return ha;
 	} while (ha++, --count);
-	return NULL;
+
+	// The last box is overwritten, if too many boxes are allocated.
+	return ha;
 }
 
 void AGOSEngine::freeBox(uint index) {
