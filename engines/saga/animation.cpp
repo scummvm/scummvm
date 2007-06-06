@@ -183,11 +183,16 @@ void Anim::returnFromCutaway(void) {
 		// Note that clearCutaway() sets _cutawayActive to false.
 		clearCutaway();
 
-		// TODO: Handle fade up, if we previously faded down
+		warning("TODO: Implement the rest of returnFromCutaway()");
 
-		// TODO: Restore the scene
+		// Handle fade up, if we previously faded down
+		// TODO
 
-		// TODO: Restore the animations
+		// Restore the scene
+		_vm->_scene->restoreScene();
+
+		// Restore the animations
+		// TODO
 
 		for (int i = 0; i < MAX_ANIMATIONS; i++) {
 			if (_animations[i] && _animations[i]->state == ANIM_PLAYING) {
@@ -211,6 +216,37 @@ void Anim::clearCutaway(void) {
 		_vm->_interface->restoreMode();
 		_vm->_gfx->showCursor(true);
 	}
+}
+
+void Anim::startVideo(int vid, bool fade) {
+	debug(0, "startVideo(%d, %d)", vid, fade);
+
+	// TODO
+	warning(0, "TODO: Anim::startVideo(%d, %d)", vid, fade);
+
+	_videoActive = true;
+}
+
+void Anim::endVideo(void) {
+	debug(0, "endVideo()");
+
+	// TODO
+	warning("TODO: Anim::endVideo()");
+
+	_videoActive = false;
+}
+
+void Anim::returnFromVideo(void) {
+	debug(0, "returnFromVideo()");
+
+	// TODO
+	warning("TODO: Anim::returnFromVideo");
+
+	_videoActive = false;
+}
+
+void Anim::nextVideoFrame(void) {
+	// TODO
 }
 
 void Anim::load(uint16 animId, const byte *animResourceData, size_t animResourceLength) {

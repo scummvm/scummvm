@@ -1209,6 +1209,11 @@ void Scene::endScene() {
 
 }
 
+void Scene::restoreScene() {
+	// TODO
+	warning("TODO: restoreScene()");
+}
+
 void Scene::cmdSceneChange(int argc, const char **argv) {
 	int scene_num = 0;
 

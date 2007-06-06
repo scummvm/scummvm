@@ -559,6 +559,18 @@ public:
 	int processInput(void);
 	Point mousePos() const;
 
+	int getMouseClickCount() {
+		return _mouseClickCount;
+	}
+
+	void incrementMouseClickCount() {
+		_mouseClickCount++;
+	}
+
+	void resetMouseClickCount() {
+		_mouseClickCount = 0;
+	}
+
 	const bool leftMouseButtonPressed() const {
 		return _leftMouseButtonPressed;
 	}
@@ -580,6 +592,7 @@ public:
 
 	bool _leftMouseButtonPressed;
 	bool _rightMouseButtonPressed;
+	int _mouseClickCount;
 
 	bool _quit;
 

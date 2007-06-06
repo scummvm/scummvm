@@ -1887,11 +1887,11 @@ void Script::sfEndCutAway(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfGetMouseClicks(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfGetMouseClicks", thread, nArgs);
+	thread->_returnValue = _vm->getMouseClickCount();
 }
 
 void Script::sfResetMouseClicks(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfResetMouseClicks", thread, nArgs);
+	_vm->resetMouseClickCount();
 }
 
 // Used in IHNM only
@@ -1927,15 +1927,25 @@ void Script::sfScriptFade(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfScriptStartVideo(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfScriptStartVideo", thread, nArgs);
+	int16 vid;
+	int16 fade;
+	vid = thread->pop();
+	fade = thread->pop();
+
+	_vm->_interface->setStatusText("");
+	_vm->_anim->startVideo(vid, fade != 0);
+	_vm->_interface->rememberMode();
+	_vm->_interface->setMode(kPanelVideo);
 }
 
 void Script::sfScriptReturnFromVideo(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfScriptReturnFromVideo", thread, nArgs);
+	_vm->_anim->returnFromVideo();
+	_vm->_interface->restoreMode();
 }
 
 void Script::sfScriptEndVideo(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfScriptEndVideo", thread, nArgs);
+	_vm->_anim->endVideo();
+	_vm->_interface->restoreMode();
 }
 
 void Script::sf87(SCRIPTFUNC_PARAMS) {

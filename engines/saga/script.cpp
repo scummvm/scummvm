@@ -592,6 +592,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 	const HitZone *hitZone;
 	Point specialPoint;
 
+	_vm->incrementMouseClickCount();
 	_vm->_actor->abortSpeech();
 
 	if ((_vm->_actor->_protagonist->_currentAction != kActionWait) &&

@@ -224,6 +224,7 @@ class Scene {
 	void nextScene();
 	void skipScene();
 	void endScene();
+	void restoreScene();
 	void queueScene(LoadSceneParams *sceneQueue) {
 		_sceneQueue.push_back(*sceneQueue);
 	}
