@@ -695,7 +695,7 @@ void AGOSEngine_Feeble::windowNewLine(WindowBlock *window) {
 
 void AGOSEngine::windowNewLine(WindowBlock *window) {
 	window->textColumn = 0;
-	window->textColumnOffset = 0;
+	window->textColumnOffset = (getGameType() == GType_ELVIRA2) ? 4 : 0;
 	window->textLength = 0;
 
 	if (window->textRow == window->height) {
