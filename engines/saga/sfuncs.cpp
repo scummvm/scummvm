@@ -1905,7 +1905,25 @@ void Script::sfWaitFrames(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfScriptFade(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfScriptFade", thread, nArgs);
+	int16 startingBrightness = thread->pop();
+	int16 endingBrightness = thread->pop();
+	thread->pop(); // first pal entry, ignored (already handled by Gfx::palToBlack)
+	thread->pop(); //  last pal entry, ignored (already handled by Gfx::palToBlack)
+	// delay between pal changes is always 10 (not used)
+
+	Event event;
+	static PalEntry cur_pal[PAL_ENTRIES];
+
+	_vm->_gfx->getCurrentPal(cur_pal);
+
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventPalToBlack;
+	event.time = 0;
+	event.duration = endingBrightness - startingBrightness;
+	event.data = cur_pal;
+
+	_vm->_events->queue(&event);	
 }
 
 void Script::sfScriptStartVideo(SCRIPTFUNC_PARAMS) {
