@@ -81,7 +81,19 @@ void Anim::playCutaway(int cut, bool fade) {
 	debug(0, "playCutaway(%d, %d)", cut, fade);
 
 	if (fade) {
-		// TODO: Fade down. Is this blocking or non-blocking?
+		Event event;
+		static PalEntry cur_pal[PAL_ENTRIES];
+
+		_vm->_gfx->getCurrentPal(cur_pal);
+
+		event.type = kEvTImmediate;
+		event.code = kPalEvent;
+		event.op = kEventPalToBlack;
+		event.time = 0;
+		event.duration = kNormalFadeDuration;
+		event.data = cur_pal;
+
+		_vm->_events->queue(&event);
 	}
 
 	if (!_cutawayActive) {
