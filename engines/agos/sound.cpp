@@ -674,6 +674,9 @@ void Sound::ambientPause(bool b) {
 
 // Elvira 1/2 and Waxworks specific
 void Sound::playRawData(byte *soundData, uint sound, uint size) {
+	if (_effectsPaused)
+		return;
+
 	byte *buffer = (byte *)malloc(size);
 	memcpy(buffer, soundData, size);
 
