@@ -166,7 +166,7 @@ void AGOSEngine::listSaveGames(char *dst) {
 	slot = _saveLoadRowCurPos;
 	for (y = 0; y < 8; y++) {
 		window->textColumn = 0;
-		window->textColumnOffset = 4;
+		window->textColumnOffset = (getGameType() == GType_ELVIRA2) ? 4 : 0;
 		window->textLength = 0;
 		if ((in = _saveFileMan->openForLoading(genSaveName(slot++)))) {
 			in->read(dst, 8);
@@ -180,8 +180,13 @@ void AGOSEngine::listSaveGames(char *dst) {
 		}
 		dst+= 8;
 
-		window->textColumn = 7;
-		window->textColumnOffset = 4;
+		if (getGameType() == GType_WW) {
+			window->textColumn = 7;
+			window->textColumnOffset = 4;
+		} else if (getGameType() == GType_ELVIRA2) {
+			window->textColumn = 8;
+			window->textColumnOffset = 0;
+		}
 		window->textLength = 0;
 		if ((in = _saveFileMan->openForLoading(genSaveName(slot++)))) {
 			in->read(dst, 8);
@@ -196,7 +201,7 @@ void AGOSEngine::listSaveGames(char *dst) {
 		dst+= 8;
 
 		window->textColumn = 15;
-		window->textColumnOffset = 4;
+		window->textColumnOffset = (getGameType() == GType_ELVIRA2) ? 4 : 0;
 		window->textLength = 0;
 		if ((in = _saveFileMan->openForLoading(genSaveName(slot++)))) {
 			in->read(dst, 8);
