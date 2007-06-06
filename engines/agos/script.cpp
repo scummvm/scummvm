@@ -105,7 +105,17 @@ void AGOSEngine::o_notZero() {
 void AGOSEngine::o_eq() {
 	// 13: equal
 	uint tmp = getNextVarContents();
-	setScriptCondition(tmp == getVarOrWord());
+	uint tmp2 = getVarOrWord();
+
+#ifdef __DS__
+	// HACK: Skip attempt to read Calypso's letter manually,
+	// due to speech segment been too large to fit into memory
+	if (getGameType() == GType_SIMON1 && _currentTable->id == 71 && tmp == 1 && tmp2 == 1) {
+		setScriptCondition(false);
+		return;
+	}
+#endif
+	setScriptCondition(tmp == tmp2);
 }
 
 void AGOSEngine::o_notEq() {
@@ -404,8 +414,29 @@ void AGOSEngine::o_done() {
 void AGOSEngine::o_process() {
 	// 71: start subroutine
 	Subroutine *sub = getSubroutineByID(getVarOrWord());
-	if (sub != NULL)
+	if (sub != NULL) {
+#ifdef __DS__
+		// HACK: Skip scene of Simon reading letter from Calypso
+		// due to speech segment been too large to fit into memory
+		if (getGameType() == GType_SIMON1 && sub->id == 2922) {
+			// set parent special
+			_noParentNotify = true;
+			setItemParent(derefItem(16), me());
+			_noParentNotify = false;
+
+			// set parent special
+			_noParentNotify = true;
+			setItemParent(derefItem(14), me());
+			_noParentNotify = false;
+
+			// set item parent
+			setItemParent(derefItem(12), me());
+
+			return;
+		}
+#endif
 		startSubroutine(sub);
+	}
 }
 
 void AGOSEngine::o_when() {
