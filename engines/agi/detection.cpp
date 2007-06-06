@@ -1907,7 +1907,7 @@ Common::ADGameDescList fallbackDetector(const FSList *fslist) {
 		for (IntMap::const_iterator f = allFiles.begin(); f != allFiles.end(); ++f) {
 			if (f->_key.hasSuffix("vol.0")) {
 				memset(name, 0, 8);
-				strncpy(name, f->_key.c_str(), f->_key.size() > 5 ? f->_key.size() - 5 : f->_key.size());
+				strncpy(name, f->_key.c_str(), MAX((uint)8, f->_key.size() > 5 ? f->_key.size() - 5 : f->_key.size()));
 
 				if (allFiles.contains("object") && allFiles.contains("words.tok") &&
 					allFiles.contains(Common::String(name) + "dir")) {
