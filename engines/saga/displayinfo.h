@@ -281,7 +281,7 @@ static const GameDisplayInfo ITE_DisplayInfo = {
 //TODO: ihnm
 #define IHNM_CONVERSE_MAX_TEXT_WIDTH (485 - 8)
 #define IHNM_CONVERSE_TEXT_HEIGHT       10
-#define IHNM_CONVERSE_TEXT_LINES        10
+#define IHNM_CONVERSE_TEXT_LINES        11
 
 static PanelButton IHNM_MainPanelButtons[] = {
 	{kPanelButtonVerb,		106,12,		114,30,	kVerbIHNMWalk,'w',0,	0,1,0},
@@ -307,12 +307,17 @@ static PanelButton IHNM_MainPanelButtons[] = {
 };
 
 static PanelButton IHNM_ConversePanelButtons[] = {
-	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 0, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	0,'1',0,	0,0,0},
-	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 1, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	1,'2',0,	0,0,0},
-	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 2, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	2,'3',0,	0,0,0},
-	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 3, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	3,'4',0,	0,0,0},
-	//.....
-	// Note: If more buttons are added here, don't forget to update the converse arrow indexes too
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 0, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		0,'1',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 1, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		1,'2',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 2, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		2,'3',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 3, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		3,'4',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 4, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		4,'5',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 5, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		5,'6',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 6, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		6,'7',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 7, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		7,'8',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 8, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		8,'9',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 9, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		9,'10',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 10, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	10,'11',0,	0,0,0},
 	{kPanelButtonArrow,			606,22,		20,25,	-1,'[',0,			2,3,4},	// TODO: IHNM needs more states hre
 	{kPanelButtonArrow,			606,108,	20,25,	1,']',0,			6,7,8},
 };
@@ -381,7 +386,7 @@ static const GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	IHNM_CONVERSE_MAX_TEXT_WIDTH,
 	IHNM_CONVERSE_TEXT_HEIGHT,
 	IHNM_CONVERSE_TEXT_LINES,
-	4, 5,		// converse Up & Down button indexies
+	11, 12,		// converse Up & Down button indexies
 	0, 328,		// converse panel offsets
 	ARRAYSIZE(IHNM_ConversePanelButtons),
 	IHNM_ConversePanelButtons,
