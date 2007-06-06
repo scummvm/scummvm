@@ -469,6 +469,10 @@ void Script::doVerb() {
 		else if (objectType == kGameObjectHitZone) {
 			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 			hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[0]));
+
+			if (hitZone == NULL)
+				return;
+
 			if ((hitZone->getFlags() & kHitZoneExit) == 0) {
 				scriptEntrypointNumber = hitZone->getScriptNumber();
 			}

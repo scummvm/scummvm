@@ -352,6 +352,10 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 		return _actor->_actorsStrings.getString(actor->_nameIndex);
 	case kGameObjectHitZone:
 		hitZone = _scene->_objectMap->getHitZone(objectIdToIndex(objectId));
+
+		if (hitZone == NULL)
+			return "";
+
 		return _scene->_sceneStrings.getString(hitZone->getNameIndex());
 	}
 	warning("SagaEngine::getObjectName name not found for 0x%X", objectId);

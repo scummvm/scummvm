@@ -1289,6 +1289,10 @@ void Interface::handleChapterSelectionClick(const Point& mousePoint) {
 		switch (objectTypeId(obj)) {
 		case kGameObjectHitZone:
 			hitZone = _vm->_scene->_actionMap->getHitZone(objectIdToIndex(obj));
+
+			if (hitZone == NULL)
+				return;
+
 			if (hitZone->getFlags() & kHitZoneExit)
 				script = hitZone->getScriptNumber();
 			break;

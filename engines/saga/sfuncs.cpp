@@ -386,12 +386,13 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 			break;
 		case kGameObjectHitZone:
 		case kGameObjectStepZone:
-			if (objectTypeId(objectId) == 0)
-				return;
-			else if (objectTypeId(objectId) == kGameObjectHitZone)
+			if (objectTypeId(objectId) == kGameObjectHitZone)
 				hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
 			else
 				hitZone = _vm->_scene->_actionMap->getHitZone(objectIdToIndex(objectId));
+
+			if (hitZone == NULL)
+				return;
 
 			scriptEntryPointNumber = hitZone->getScriptNumber();
 			moduleNumber = _vm->_scene->getScriptModuleNumber();
@@ -731,20 +732,15 @@ void Script::sfEnableZone(SCRIPTFUNC_PARAMS) {
 	int16 flag = thread->pop();
 	HitZone *hitZone;
 
-	// HACK: Don't disable the tear in scene 14, to keep the staircase functioning
-	// FIXME: Investigate why this hack is needed and remove it
-	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 1 &&
-		_vm->_scene->currentSceneNumber() == 14) {
-		warning("sfEnableZone: HACK: Prevent unusable staircase");
-		return;		// Do nothing
-	}
-
 	if (objectTypeId(objectId) == 0)
 		return;
 	else if (objectTypeId(objectId) == kGameObjectHitZone)
 		hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
 	else
 		hitZone = _vm->_scene->_actionMap->getHitZone(objectIdToIndex(objectId));
+
+	if (hitZone == NULL)
+		return;
 
 	if (flag) {
 		hitZone->setFlag(kHitZoneEnabled);
