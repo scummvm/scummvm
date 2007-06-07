@@ -945,13 +945,17 @@ void AGOSEngine::pause() {
 	bool music_status = _musicPaused;
 
 	_midi.pause(true);
+	_mixer->pauseAll(true);
 	_sound->ambientPause(true);
+
 	while (_pause) {
 		delay(1);
 		if (_keyPressed == 'p')
 			_pause = 0;
 	}
+
 	_midi.pause(music_status);
+	_mixer->pauseAll(false);
 	_sound->ambientPause(ambient_status);
 }
 
