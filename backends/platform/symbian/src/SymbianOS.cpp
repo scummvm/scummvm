@@ -348,7 +348,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 
 			case GUI::ACTION_SAVE:
 			case GUI::ACTION_SKIP:
-			case GUI::ACTION_FT_CHEAT:
+			case GUI::ACTION_MULTI:
 			case GUI::ACTION_SKIP_TEXT:
 			case GUI::ACTION_PAUSE:
 			case GUI::ACTION_SWAPCHAR:

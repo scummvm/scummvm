@@ -34,7 +34,7 @@
 
 namespace GUI {
 
-#define ACTION_VERSION 6
+#define ACTION_VERSION 7
 
 enum actionType {
         ACTION_UP = 0,
@@ -46,7 +46,7 @@ enum actionType {
         ACTION_SAVE,
         ACTION_SKIP,
         ACTION_ZONE,
-		ACTION_FT_CHEAT,
+		ACTION_MULTI,
 		ACTION_SWAPCHAR,
 		ACTION_SKIP_TEXT,
 		ACTION_PAUSE,
