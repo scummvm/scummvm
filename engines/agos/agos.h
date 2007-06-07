@@ -517,7 +517,8 @@ protected:
 	byte _lettersToPrintBuf[80];
 
 	MidiPlayer _midi;
-	bool _native_mt32;
+	bool _midiEnabled;
+	bool _nativeMT32;
 
 	int _vgaTickCounter;
 

@@ -318,7 +318,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_scrollUpHitArea = 0;
 	_scrollDownHitArea = 0;
 
-
 	_noOverWrite = 0;
 	_rejectBlock = false;
 
@@ -472,6 +471,9 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_planarBuf = 0;
 
+	_midiEnabled = false;
+	_nativeMT32 = false;
+
 	_vgaTickCounter = 0;
 
 	_moviePlay = 0;
@@ -572,30 +574,33 @@ int AGOSEngine::init() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	// Setup midi driver
-	MidiDriver *driver = 0;
-	if (getGameType() == GType_FF || getGameType() == GType_PP || getGameId() == GID_SIMON1CD32) {
-		driver = MidiDriver::createMidi(MD_NULL);
-		_native_mt32 = false;
-	} else {
+	if ((getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformWindows) ||
+		(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) ||
+		((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
+		(getPlatform() == Common::kPlatformPC)) {
+
+		// Setup midi driver
 		int midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_MIDI);
-		_native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-		driver = MidiDriver::createMidi(midiDriver);
-		if (_native_mt32) {
+		_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
+		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+		if (_nativeMT32) {
 			driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		}
+
+		_midi.mapMT32toGM (getGameType() != GType_SIMON2 && !_nativeMT32);
+
+		_midi.setDriver(driver);
+		int ret = _midi.open();
+		if (ret)
+			warning("MIDI Player init failed: \"%s\"", _midi.getErrorName (ret));
+
+		_midi.setVolume(ConfMan.getInt("music_volume"));
+
+		if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1)
+			_midi.pause(_musicPaused ^= 1);
+
+		_midiEnabled = true;
 	}
-
-	_midi.mapMT32toGM (getGameType() != GType_SIMON2 && !_native_mt32);
-
-	_midi.setDriver(driver);
-	int ret = _midi.open();
-	if (ret)
-		warning("MIDI Player init failed: \"%s\"", _midi.getErrorName (ret));
-	_midi.setVolume(ConfMan.getInt("music_volume"));
-
-	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1)
-		_midi.pause(_musicPaused ^= 1);
 
 	// allocate buffers
 	_backGroundBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
@@ -742,7 +747,7 @@ void AGOSEngine_Simon2::setupGame() {
 	_itemMemSize = 20000;
 	_tableMemSize = 100000;
 	// Check whether to use MT-32 MIDI tracks in Simon the Sorcerer 2
-	if ((getGameType() == GType_SIMON2) && _native_mt32)
+	if ((getGameType() == GType_SIMON2) && _nativeMT32)
 		_musicIndexBase = (1128 + 612) / 4;
 	else
 		_musicIndexBase = 1128 / 4;
