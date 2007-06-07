@@ -1671,6 +1671,8 @@ bool Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 			commonObjectData->_screenScale = 256;
 		} else if (_vm->getGameType() == GType_IHNM && (objectTypeId(commonObjectData->_id) & kGameObjectObject)) {
 			commonObjectData->_screenScale = 256;
+		} else if (_vm->getGameType() == GType_IHNM && (commonObjectData->_flags & kNoScale)) {
+			commonObjectData->_screenScale = 256;
 		} else if (middle >= endSlope) {
 			commonObjectData->_screenScale = 1;
 		} else {
