@@ -166,7 +166,18 @@ void Anim::playCutaway(int cut, bool fade) {
 
 	setCycles(MAX_ANIMATIONS + cutawaySlot, _cutawayList[cut].cycles);
 	setFrameTime(MAX_ANIMATIONS + cutawaySlot, 1000 / _cutawayList[cut].frameRate);
-	play(MAX_ANIMATIONS + cutawaySlot, 0);
+	if (_cutAwayMode != kPanelVideo)
+		play(MAX_ANIMATIONS + cutawaySlot, 0);
+	else {
+		Event event;
+		event.type = kEvTOneshot;
+		event.code = kAnimEvent;
+		event.op = kEventPlay;
+		event.param = MAX_ANIMATIONS + cutawaySlot;
+		event.time = (40 / 3) * 1000 / _cutawayList[cut].frameRate;
+
+		_vm->_events->queue(&event);
+	}
 }
 
 void Anim::endCutaway(void) {
@@ -236,6 +247,7 @@ void Anim::startVideo(int vid, bool fade) {
 	_vm->_gfx->getCurrentPal(saved_pal);
 
 	_vm->_interface->setStatusText("");
+	_vm->_frameCount = 0;
 
 	playCutaway(vid, fade);
 }
@@ -363,17 +375,10 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		return;
 	}
 
-	// HACK: When a video is played in IHNM, the animation starts playing before sfwaitframes 
-	// is called, which causes the game to wait forever. Raise the framecount by 10 to avoid lockup
-	// TODO: remove this hack
-	if (_vm->_interface->getMode() == kPanelVideo)
-		_vm->_frameCount += 10;
-
 	if (anim->completed < anim->cycles) {
 		frame = anim->currentFrame;
 		// FIXME: if start > 0, then this works incorrectly
 		decodeFrame(anim, anim->frameOffsets[frame], displayBuffer, _vm->getDisplayWidth() * _vm->getDisplayHeight());
-
 		_vm->_frameCount++;	
 		anim->currentFrame++;
 		if (anim->completed != 65535) {
@@ -388,6 +393,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 			}
 		}
 	} else {
+		_vm->_frameCount++;	
 		// Animation done playing
 		anim->state = ANIM_PAUSE;
 		if (anim->linkId == -1) {
