@@ -707,8 +707,8 @@ void AGOSEngine_Elvira1::oe1_loadGame() {
 	uint16 stringId = getNextStringID();
 	debug(0, "oe1_loadGame: stub (%s)", (const char *)getStringPtrByID(stringId));
 
-	if (!scumm_stricmp(getFileName(GAME_RESTFILE), (const char *)getStringPtrByID(stringId))) {
-		loadGame(getFileName(GAME_RESTFILE), true);
+	if (!scumm_stricmp("START", (const char *)getStringPtrByID(stringId))) {
+		loadGame("START", true);
 	} else {
 		loadGame((const char *)getStringPtrByID(stringId));
 	}
