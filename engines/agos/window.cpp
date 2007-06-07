@@ -103,7 +103,7 @@ void AGOSEngine::clearWindow(WindowBlock *window) {
 
 	window->textColumn = 0;
 	window->textRow = 0;
-	window->textColumnOffset = 0;
+	window->textColumnOffset = (getGameType() == GType_ELVIRA2) ? 4 : 0;
 	window->textLength = 0;
 	window->scrollY = 0;
 }
