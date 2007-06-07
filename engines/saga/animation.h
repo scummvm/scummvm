@@ -123,7 +123,6 @@ public:
 	void startVideo(int vid, bool fade);
 	void endVideo(void);
 	void returnFromVideo(void);
-	void nextVideoFrame(void);
 
 	void load(uint16 animId, const byte *animResourceData, size_t animResourceLength);
 	void freeId(uint16 animId);
@@ -142,8 +141,8 @@ public:
 	bool hasCutaway(void) {
 		return _cutawayActive;
 	}
-	bool hasVideo(void) {
-		return _videoActive;
+	void setCutAwayMode(int mode) {
+		_cutAwayMode = mode;
 	}
 	bool hasAnimation(uint16 animId) {
 		if (animId >= MAX_ANIMATIONS) {
@@ -198,9 +197,11 @@ private:
 	AnimationData *_animations[MAX_ANIMATIONS];
 	AnimationData *_cutawayAnimations[2];
 	Cutaway *_cutawayList;
+	PalEntry saved_pal[PAL_ENTRIES];
 	int _cutawayListLength;
 	bool _cutawayActive;
-	bool _videoActive;
+	int _cutAwayMode;
+	bool _cutAwayFade;
 };
 
 } // End of namespace Saga

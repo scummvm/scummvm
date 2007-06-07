@@ -80,6 +80,8 @@ void Anim::freeCutawayList(void) {
 void Anim::playCutaway(int cut, bool fade) {
 	debug(0, "playCutaway(%d, %d)", cut, fade);
 
+	_cutAwayFade = fade;
+
 	if (fade) {
 		Event event;
 		static PalEntry cur_pal[PAL_ENTRIES];
@@ -101,7 +103,10 @@ void Anim::playCutaway(int cut, bool fade) {
 		_vm->_interface->setStatusText("");
 		_vm->_interface->setSaveReminderState(0);
 		_vm->_interface->rememberMode();
-		_vm->_interface->setMode(kPanelCutaway);
+		if (_cutAwayMode == kPanelVideo)
+			_vm->_interface->setMode(kPanelVideo);
+		else
+			_vm->_interface->setMode(kPanelCutaway);
 		_cutawayActive = true;
 	}
 
@@ -183,17 +188,23 @@ void Anim::returnFromCutaway(void) {
 		// Note that clearCutaway() sets _cutawayActive to false.
 		clearCutaway();
 
-		warning("TODO: Implement the rest of returnFromCutaway()");
-
 		// Handle fade up, if we previously faded down
-		// TODO
+		if (_cutAwayFade) {
+			Event event;
+			event.type = kEvTImmediate;
+			event.code = kPalEvent;
+			event.op = kEventBlackToPal;
+			event.time = 0;
+			event.duration = kNormalFadeDuration;
+			event.data = saved_pal;
+
+			_vm->_events->queue(&event);
+		}
 
 		// Restore the scene
 		_vm->_scene->restoreScene();
 
 		// Restore the animations
-		// TODO
-
 		for (int i = 0; i < MAX_ANIMATIONS; i++) {
 			if (_animations[i] && _animations[i]->state == ANIM_PLAYING) {
 				resume(i, 0);
@@ -221,32 +232,24 @@ void Anim::clearCutaway(void) {
 void Anim::startVideo(int vid, bool fade) {
 	debug(0, "startVideo(%d, %d)", vid, fade);
 
-	// TODO
-	warning(0, "TODO: Anim::startVideo(%d, %d)", vid, fade);
+	Event event;
+	_vm->_gfx->getCurrentPal(saved_pal);
 
-	_videoActive = true;
+	_vm->_interface->setStatusText("");
+
+	playCutaway(vid, fade);
 }
 
 void Anim::endVideo(void) {
 	debug(0, "endVideo()");
 
-	// TODO
-	warning("TODO: Anim::endVideo()");
-
-	_videoActive = false;
+	clearCutaway();
 }
 
 void Anim::returnFromVideo(void) {
 	debug(0, "returnFromVideo()");
 
-	// TODO
-	warning("TODO: Anim::returnFromVideo");
-
-	_videoActive = false;
-}
-
-void Anim::nextVideoFrame(void) {
-	// TODO
+	returnFromCutaway();
 }
 
 void Anim::load(uint16 animId, const byte *animResourceData, size_t animResourceLength) {
@@ -360,11 +363,17 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		return;
 	}
 
+	// HACK: the animation starts playing before sfwaitframes is called in IHNM, which
+	// causes the game to wait forever. Raise the framecount by 10 to avoid lockup
+	// TODO: remove this hack
+	_vm->_frameCount += 10;
+
 	if (anim->completed < anim->cycles) {
 		frame = anim->currentFrame;
 		// FIXME: if start > 0, then this works incorrectly
 		decodeFrame(anim, anim->frameOffsets[frame], displayBuffer, _vm->getDisplayWidth() * _vm->getDisplayHeight());
 
+		_vm->_frameCount++;	
 		anim->currentFrame++;
 		if (anim->completed != 65535) {
 			anim->completed++;
@@ -535,7 +544,7 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 
 
 	// Begin RLE decompression to output buffer
-	do {
+	do {		
 		markByte = readS.readByte();
 		switch (markByte) {
 		case SAGA_FRAME_START:

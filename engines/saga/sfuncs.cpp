@@ -1875,6 +1875,7 @@ void Script::sfScriptStartCutAway(SCRIPTFUNC_PARAMS) {
 	thread->pop();		// Not used
 	fade = thread->pop();
 
+	_vm->_anim->setCutAwayMode(kPanelCutaway);	
 	_vm->_anim->playCutaway(cut, fade != 0);
 }
 
@@ -1932,20 +1933,16 @@ void Script::sfScriptStartVideo(SCRIPTFUNC_PARAMS) {
 	vid = thread->pop();
 	fade = thread->pop();
 
-	_vm->_interface->setStatusText("");
+	_vm->_anim->setCutAwayMode(kPanelVideo);
 	_vm->_anim->startVideo(vid, fade != 0);
-	_vm->_interface->rememberMode();
-	_vm->_interface->setMode(kPanelVideo);
 }
 
 void Script::sfScriptReturnFromVideo(SCRIPTFUNC_PARAMS) {
 	_vm->_anim->returnFromVideo();
-	_vm->_interface->restoreMode();
 }
 
 void Script::sfScriptEndVideo(SCRIPTFUNC_PARAMS) {
 	_vm->_anim->endVideo();
-	_vm->_interface->restoreMode();
 }
 
 void Script::sf87(SCRIPTFUNC_PARAMS) {
