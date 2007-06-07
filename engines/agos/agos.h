@@ -780,7 +780,8 @@ protected:
 	virtual void handleMouseMoved();
 	virtual void drawMousePointer();
 
-	virtual void addArrows(WindowBlock *window);
+	void drawArrow(uint16 x, uint16 y, int8 dir);
+	virtual void addArrows(WindowBlock *window, uint8 num);
 	void removeArrows(WindowBlock *window, uint num);
 
 	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
@@ -1118,9 +1119,10 @@ protected:
 
 	void sendWindow(uint a);
 
-	void restoreWindow(WindowBlock *window);
-	void colorWindow(WindowBlock *window);
+	virtual void colorWindow(WindowBlock *window);
+	void colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, uint16 h);
 
+	void restoreWindow(WindowBlock *window);
 	void restoreBlock(uint h, uint w, uint y, uint x);
 
 	byte *getFrontBuf();
@@ -1366,7 +1368,7 @@ protected:
 
 	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
 
-	virtual void addArrows(WindowBlock *window);
+	virtual void addArrows(WindowBlock *window, uint8 num);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
 	virtual void moveDirn(Item *i, uint x);
@@ -1422,7 +1424,7 @@ protected:
 
 	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
 
-	virtual void addArrows(WindowBlock *window);
+	virtual void addArrows(WindowBlock *window, uint8 num);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
 	virtual bool loadTablesIntoMem(uint subr_id);
@@ -1476,7 +1478,7 @@ protected:
 
 	virtual void handleMouseMoved();
 
-	virtual void addArrows(WindowBlock *window);
+	virtual void addArrows(WindowBlock *window, uint8 num);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
 	virtual void playSpeech(uint speech_id, uint vga_sprite_id);
@@ -1524,7 +1526,7 @@ protected:
 
 	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
 
-	virtual void addArrows(WindowBlock *window);
+	virtual void addArrows(WindowBlock *window, uint8 num);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
 	virtual void playSpeech(uint speech_id, uint vga_sprite_id);
@@ -1597,7 +1599,7 @@ protected:
 	void swapCharacterLogo();
 	virtual void timer_proc1();
 
-	virtual void addArrows(WindowBlock *window);
+	virtual void addArrows(WindowBlock *window, uint8 num);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
 	virtual void resetVerbs();
@@ -1610,6 +1612,8 @@ protected:
 	virtual void clearName();
 
 	virtual void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
+
+	virtual void colorWindow(WindowBlock *window);
 
 	virtual void doOutput(const byte *src, uint len);
 

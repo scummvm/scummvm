@@ -108,53 +108,66 @@ void AGOSEngine::clearWindow(WindowBlock *window) {
 	window->scrollY = 0;
 }
 
-void AGOSEngine::colorWindow(WindowBlock *window) {
+void AGOSEngine_Feeble::colorWindow(WindowBlock *window) {
 	byte *dst;
-	int16 h, w;
+	uint16 h, w;
 
 	_lockWord |= 0x8000;
 
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		dst = getFrontBuf() + _dxSurfacePitch * window->y + window->x;
+	dst = getFrontBuf() + _dxSurfacePitch * window->y + window->x;
 
-		for (h = 0; h < window->height; h++) {
-			for (w = 0; w < window->width; w++) {
-				if (dst[w] == 113  || dst[w] == 116 || dst[w] == 252)
-					dst[w] = window->fill_color;
-			}
-			dst += _screenWidth;
+	for (h = 0; h < window->height; h++) {
+		for (w = 0; w < window->width; w++) {
+			if (dst[w] == 113  || dst[w] == 116 || dst[w] == 252)
+				dst[w] = window->fill_color;
 		}
-	} else {
-		dst = getFrontBuf() + _dxSurfacePitch * (window->y) + window->x * 8;
-		h = window->height * 8;
-		w = window->width * 8;
-
-		if (getGameType() == GType_ELVIRA2 && window->y == 146) {
-			if (window->fill_color == 1) {
-				_displayPalette[33 * 4 + 0] = 48 * 4;
-				_displayPalette[33 * 4 + 1] = 40 * 4;
-				_displayPalette[33 * 4 + 2] = 32 * 4;
-			} else {
-				_displayPalette[33 * 4 + 0] = 56 * 4;
-				_displayPalette[33 * 4 + 1] = 56 * 4;
-				_displayPalette[33 * 4 + 2] = 40 * 4;
-			}
-
-			dst -= _dxSurfacePitch;
-			h += 2;
-
-			_paletteFlag = 1;
-		}
-
-		uint8 color = window->fill_color;
-		if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
-			color += dst[0] & 0xF0;
-
-		do {
-			memset(dst, color, w);
-			dst += _dxSurfacePitch;
-		} while (--h);
+		dst += _screenWidth;
 	}
+
+	_lockWord &= ~0x8000;
+}
+
+void AGOSEngine::colorWindow(WindowBlock *window) {
+	uint16 x, y, h, w;
+
+	x = window->x * 8;
+	y = window->y;
+	h = window->height * 8;
+	w = window->width * 8;
+
+	if (getGameType() == GType_ELVIRA2 && window->y == 146) {
+		if (window->fill_color == 1) {
+			_displayPalette[33 * 4 + 0] = 48 * 4;
+			_displayPalette[33 * 4 + 1] = 40 * 4;
+			_displayPalette[33 * 4 + 2] = 32 * 4;
+		} else {
+			_displayPalette[33 * 4 + 0] = 56 * 4;
+			_displayPalette[33 * 4 + 1] = 56 * 4;
+			_displayPalette[33 * 4 + 2] = 40 * 4;
+		}
+
+		y--;
+		h += 2;
+
+		_paletteFlag = 1;
+	}
+
+	colorBlock(window, x, y, w, h);
+}
+
+void AGOSEngine::colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, uint16 h) {
+	_lockWord |= 0x8000;
+
+	byte *dst = getFrontBuf() + y * _screenWidth + x;
+
+	uint8 color = window->fill_color;
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
+		color += dst[0] & 0xF0;
+
+	do {
+		memset(dst, color, w);
+		dst += _screenWidth;
+	} while (--h);
 
 	_lockWord &= ~0x8000;
 }

@@ -114,7 +114,7 @@ static void decompressIconPlanar(byte *dst, byte *src, uint width, uint height, 
 
 	// Translate planar data to chunky (very slow method)
 	for (y = 0; y < height * 2; y++) {
-		for (x = 0; x < 24; x++) {
+		for (x = 0; x < width; x++) {
 			byte pixel =
 				  (srcPtr[((height * 0 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 1 : 0)
 				| (srcPtr[((height * 2 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 2 : 0)
@@ -404,7 +404,7 @@ l1:;		itemRef = derefItem(itemRef->next);
 	}
 
 	/* Plot arrows and add their boxes */
-	addArrows(window);		
+	addArrows(window, num);		
 	window->iconPtr->upArrow = _scrollUpHitArea;
 	window->iconPtr->downArrow = _scrollDownHitArea;
 }
@@ -506,7 +506,7 @@ void AGOSEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask)
 
 	if (showArrows != 0 || window->iconPtr->line != 0) {
 		/* Plot arrows and add their boxes */
-		addArrows(window);		
+		addArrows(window, num);		
 		window->iconPtr->upArrow = _scrollUpHitArea;
 		window->iconPtr->downArrow = _scrollDownHitArea;
 	}
@@ -614,7 +614,7 @@ uint AGOSEngine::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y,
 	return ha - _hitAreas;
 }
 
-void AGOSEngine_Feeble::addArrows(WindowBlock *window) {
+void AGOSEngine_Feeble::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -644,7 +644,7 @@ void AGOSEngine_Feeble::addArrows(WindowBlock *window) {
 	ha->verb = 1;
 }
 
-void AGOSEngine_Simon2::addArrows(WindowBlock *window) {
+void AGOSEngine_Simon2::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -674,7 +674,7 @@ void AGOSEngine_Simon2::addArrows(WindowBlock *window) {
 	ha->verb = 1;
 }
 
-void AGOSEngine_Simon1::addArrows(WindowBlock *window) {
+void AGOSEngine_Simon1::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -720,7 +720,7 @@ void AGOSEngine_Simon1::addArrows(WindowBlock *window) {
 	_lockWord &= ~0x8;
 }
 
-void AGOSEngine_Waxworks::addArrows(WindowBlock *window) {
+void AGOSEngine_Waxworks::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -752,7 +752,7 @@ void AGOSEngine_Waxworks::addArrows(WindowBlock *window) {
 	setWindowImageEx(6, 103);
 }
 
-void AGOSEngine_Elvira2::addArrows(WindowBlock *window) {
+void AGOSEngine_Elvira2::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -784,8 +784,17 @@ void AGOSEngine_Elvira2::addArrows(WindowBlock *window) {
 	setWindowImageEx(6, 106);
 }
 
-void AGOSEngine::addArrows(WindowBlock *window) {
+void AGOSEngine::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;
+	uint16 x, y;
+
+	x = 30;
+	y = 151;
+	if (num != 2) {
+		y = window->height * 4 + window->y - 19;
+		x = window->width + window->x;
+	}
+	drawArrow(x, y, 16);
 
 	ha = findEmptyHitArea();
 	_scrollUpHitArea = ha - _hitAreas;
@@ -799,6 +808,14 @@ void AGOSEngine::addArrows(WindowBlock *window) {
 	ha->priority = 100;
 	ha->window = window;
 	ha->verb = 1;
+
+	x = 30;
+	y = 170;
+	if (num != 2) {
+		y = window->height * 4;
+		x = window->width + window->x;
+	}
+	drawArrow(x, y, -16);
 
 	ha = findEmptyHitArea();
 	_scrollDownHitArea = ha - _hitAreas;
@@ -814,6 +831,69 @@ void AGOSEngine::addArrows(WindowBlock *window) {
 	ha->verb = 1;
 }
 
+static const byte _arrowImage[] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0a, 
+	0x0b, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x0b, 
+	0x0a, 0x0b, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x0b, 0x0a, 
+	0x0d, 0x0a, 0x0b, 0x0a, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x0a, 0x0b, 0x0a, 0x0d, 
+	0x03, 0x0d, 0x0a, 0x0b, 0x0a, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x0a, 0x0b, 0x0a, 0x0d, 0x03, 
+	0x04, 0x03, 0x0d, 0x0a, 0x0b, 0x0a, 0x00, 0x00, 
+	0x00, 0x00, 0x0a, 0x0b, 0x0a, 0x0d, 0x03, 0x04, 
+	0x0f, 0x04, 0x03, 0x0d, 0x0a, 0x0b, 0x0a, 0x00, 
+	0x00, 0x0a, 0x0b, 0x0a, 0x0d, 0x0d, 0x0d, 0x03, 
+	0x04, 0x03, 0x0d, 0x0d, 0x0d, 0x0a, 0x0b, 0x0a, 
+	0x00, 0x0b, 0x0a, 0x0a, 0x0a, 0x0a, 0x09, 0x0d, 
+	0x03, 0x0d, 0x09, 0x0a, 0x0a, 0x0a, 0x0a, 0x0b, 
+	0x00, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0a, 0x0d, 
+	0x0d, 0x0d, 0x0a, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 
+	0x00, 0x0a, 0x0a, 0x0a, 0x0e, 0x0b, 0x0b, 0x0c, 
+	0x0e, 0x0c, 0x0b, 0x0b, 0x0e, 0x0a, 0x0a, 0x0a, 
+	0x00, 0x00, 0x02, 0x02, 0x0a, 0x0b, 0x0a, 0x0d, 
+	0x0d, 0x0d, 0x0a, 0x0b, 0x0a, 0x02, 0x02, 0x00, 
+	0x00, 0x00, 0x00, 0x02, 0x0a, 0x0b, 0x0b, 0x0c, 
+	0x0e, 0x0c, 0x0b, 0x0b, 0x0a, 0x02, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x0a, 0x0b, 0x0a, 0x0d, 
+	0x0d, 0x0d, 0x0a, 0x0b, 0x0a, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x0a, 0x0b, 0x0b, 0x0c, 
+	0x0e, 0x0c, 0x0b, 0x0b, 0x0a, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x0a, 0x0b, 0x0b, 0x0b, 
+	0x0b, 0x0b, 0x0b, 0x0b, 0x0a, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x02, 0x0e, 0x0a, 0x0a, 
+	0x0e, 0x0a, 0x0a, 0x0e, 0x02, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x00, 0x00, 
+	0x0a, 0x00, 0x00, 0x0a, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 
+	0x02, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 
+};
+
+void AGOSEngine::drawArrow(uint16 x, uint16 y, int8 dir) {
+	const byte *src;
+	uint8 w, h;
+
+	if (dir < 0) {
+		src = _arrowImage + 288;
+	} else {
+		src = _arrowImage;
+	}
+
+	byte *dst = getFrontBuf() + y * _screenWidth + x * 8;
+
+	for (h = 0; h < 19; h++) {
+		for (w = 0; w < 16; w++) {
+			dst[w] = src[w] + 16;
+		}
+
+		src += dir;
+		dst+= _screenWidth;
+	}
+}
+
 void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
 	if (getGameType() == GType_SIMON1) {
 		restoreBlock(200, 320, 146, 304);
@@ -823,6 +903,14 @@ void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
 	} else if (getGameType() == GType_ELVIRA2) {
 		setBitFlag(21, false);
 		setWindowImageEx(6, 106);
+	} else if (getGameType() == GType_ELVIRA1) {
+		if (num != 2) {
+			uint y = window->height * 4 + window->y - 19;
+			uint x = window->width + window->x;
+			restoreBlock(y + 38, x + 16, y, x);
+		} else {
+			colorBlock(window, 240, 151, 16, 38);
+		}
 	}
 }
 
