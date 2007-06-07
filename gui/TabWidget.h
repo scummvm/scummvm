@@ -72,6 +72,10 @@ public:
 	 * Remove the tab with the given tab ID. Disposes all child widgets of that tab.
 	 * TODO: This code is *unfinished*. In particular, it changes the
 	 * tabIDs, so that they are not unique anymore! This is bad.
+	 * If we need to, we could fix this by changing the tab IDs from being an index
+	 * into the _tabs array to a real "unique" ID, which gets stored in the Tab struct.
+	 * It won't be difficult to implement this, but since currently no code seems to make
+	 * use of the feature...
 	 */
 	void removeTab(int tabID);
 
