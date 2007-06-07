@@ -129,6 +129,11 @@ public:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
+	void setupWidgets();
+	void resetWidgets();
+	
+	String	_desc;
+
 	EditTextWidget *_descriptionWidget;
 	DomainEditTextWidget *_domainWidget;
 
@@ -148,18 +153,24 @@ protected:
 EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	: OptionsDialog(domain, "gameoptions") {
 
-	int labelWidth = g_gui.evaluator()->getVar("gameOptionsLabelWidth");
+	// GAME: Determine the description string
+	_desc = ConfMan.get("description", domain);
+	if (_desc.empty() && !desc.empty()) {
+		_desc = desc;
+	}
+	
+	// FIXME: Disable the setupWidgets() call here for now. See reflowLayout()
+	// for details.
+	//setupWidgets();
+}
 
+void EditGameDialog::setupWidgets() {
+	int labelWidth = g_gui.evaluator()->getVar("gameOptionsLabelWidth");
+	
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
 	String gamePath(ConfMan.get("path", _domain));
 	String extraPath(ConfMan.get("extrapath", _domain));
 	String savePath(ConfMan.get("savepath", _domain));
-
-	// GAME: Determine the description string
-	String description(ConfMan.get("description", domain));
-	if (description.empty() && !desc.empty()) {
-		description = desc;
-	}
 
 	// GUI:  Add tab widget
 	TabWidget *tab = new TabWidget(this, "gameoptions_tabwidget");
@@ -176,7 +187,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 
 	// GUI:  Label & edit widget for the description
 	new StaticTextWidget(tab, "gameoptions_name", "Name: ");
-	_descriptionWidget = new EditTextWidget(tab, "gameoptions_desc", description);
+	_descriptionWidget = new EditTextWidget(tab, "gameoptions_desc", _desc);
 
 	// Language popup
 	_langPopUp = new PopUpWidget(tab, "gameoptions_lang", "Language: ", labelWidth);
@@ -277,6 +288,19 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 }
 
 void EditGameDialog::reflowLayout() {
+	// FIXME/HACK to workaround bug #1677997: Tear down the whole dialog and
+	// recreate it on the fly when a resolution/theme change occurs. Not nice
+	// at all, but works well enough.
+	{
+		delete _firstWidget;
+		_firstWidget = 0;
+		_mouseWidget = 0;
+		_focusedWidget = 0;
+		_dragWidget = 0;
+		setupWidgets();
+		resetWidgets();
+	}
+
 	OptionsDialog::reflowLayout();
 
 	int labelWidth = g_gui.evaluator()->getVar("gameOptionsLabelWidth");
@@ -289,7 +313,11 @@ void EditGameDialog::reflowLayout() {
 
 void EditGameDialog::open() {
 	OptionsDialog::open();
+	
+	resetWidgets();
+}
 
+void EditGameDialog::resetWidgets() {
 	int sel, i;
 	bool e, f;
 
