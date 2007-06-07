@@ -2086,9 +2086,12 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 		h = 8;
 		w = 6;
 
-		// TODO: Add font tables for German and Spanish
+		// TODO: Add font tables for German, Italian and Spanish
 		switch (_language) {
 		case Common::ES_ESP:
+			src = english_commonFont + (chr - 0x20) * 8;
+			break;
+		case Common::IT_ITA:
 			src = english_commonFont + (chr - 0x20) * 8;
 			break;
 		case Common::FR_FRA:
