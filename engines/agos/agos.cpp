@@ -901,6 +901,7 @@ void AGOSEngine::setupGame() {
 }
 
 AGOSEngine::~AGOSEngine() {
+	// Sync with AGOSEngine::shutdown()
 	delete _gameFile;
 
 	_midi.close();
@@ -1033,18 +1034,43 @@ int AGOSEngine::go() {
 }
 
 void AGOSEngine::shutdown() {
+	// Sync with AGOSEngine::~AGOSEngine()
 	delete _gameFile;
 
 	_midi.close();
 
-	free(_stringTabPtr);
-	free(_itemArrayPtr);
 	free(_itemHeapPtr - _itemHeapCurPos);
 	free(_tablesHeapPtr - _tablesHeapCurPos);
-	free(_tblList);
-	free(_zoneBuffers);
-	free(_iconFilePtr);
+
 	free(_gameOffsetsPtr);
+	free(_iconFilePtr);
+	free(_itemArrayPtr);
+	free(_stringTabPtr);
+	free(_strippedTxtMem);
+	free(_tblList);
+	free(_textMem);
+
+	free(_backGroundBuf);
+	free(_frontBuf);
+	free(_backBuf);
+	free(_scaleBuf);
+
+	free(_window4BackScn);
+	free(_window6BackScn);
+
+	free(_variableArray);
+	free(_variableArray2);
+
+	delete _dummyItem1;
+	delete _dummyItem2;
+	delete _dummyItem3;
+
+	delete [] _dummyWindow;
+	delete [] _windowList;
+
+	delete _debugger;
+	delete _moviePlay;
+	delete _sound;
 
 	_system->quit();
 }
