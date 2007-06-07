@@ -56,10 +56,49 @@ static const AGOSGameDescription gameDescriptions[] = {
 			{
 	{ "gameamiga",		GAME_BASEFILE,	"7bdaff4a118d8035047cf9b1393b3fa0", -1},
 	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1", -1},
-	{ "start",		GAME_RESTFILE,	"c111be88c7f6d40e3f9b128939c1236d", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_ELVIRA1,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
+	},
+
+	// Elvira 1 - French Amiga Floppy
+	{
+		{
+			"elvira1",
+			"Floppy",
+			{
+	{ "gameamiga",		GAME_BASEFILE,	"ab1a0798f74e71cc58a06e7e0db6f8a7", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::FR_FRA,
+			Common::kPlatformAmiga,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_ELVIRA1,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
+	},
+
+	// Elvira 1 - German Amiga Floppy
+	{
+		{
+			"elvira1",
+			"Floppy",
+			{
+	{ "gameamiga",		GAME_BASEFILE,	"bde0334344c7b3a278ccc9a300f3085c", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
 			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
@@ -100,7 +139,6 @@ static const AGOSGameDescription gameDescriptions[] = {
 			{
 	{ "gamest",		GAME_BASEFILE,	"8942859018fcfb2dbed13e83d974d1ab", -1},
 	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1", -1},
-	{ "start",		GAME_RESTFILE,	"cd711028e209c47b81d04141fff2587b", -1},
 	{ "tbllist",		GAME_TBLFILE,	"5b6ff494bf7e24213758598ef4ac0a8b", -1},
 	{ NULL, 0, NULL, 0}
 			},
@@ -123,7 +161,6 @@ static const AGOSGameDescription gameDescriptions[] = {
 			{
 	{ "gamest",		GAME_BASEFILE,	"ce2100ba71284f55ac302847d7f94747", -1},
 	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1", -1},
-	{ "start",		GAME_RESTFILE,	"cd711028e209c47b81d04141fff2587b", -1},
 	{ "tbllist",		GAME_TBLFILE,	"5b6ff494bf7e24213758598ef4ac0a8b", -1},
 	{ NULL, 0, NULL, 0}
 			},
@@ -146,34 +183,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			{
 	{ "gamepc",		GAME_BASEFILE,	"a49e132a1f18306dd5d1ec2fe435e178", -1},
 	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45", -1},
-	{ "start",		GAME_RESTFILE,	"69fb4f12108b39ae659f108cad4d3efe", -1},
 	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-
-		GType_ELVIRA1,
-		GID_ELVIRA1,
-		GF_OLD_BUNDLE
-	},
-
-	// Elvira 1 - German DOS Floppy
-	{
-		{
-			"elvira1",
-			"Floppy",
-
-			{
-	{ "gamepc",		GAME_BASEFILE,	"d0b593143e21fc150c044819df2c0b98", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45", -1},
-	{ "start",		GAME_RESTFILE,	"69fb4f12108b39ae659f108cad4d3efe", -1},
-	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149", -1},
-	{ NULL, 0, NULL, 0}
-			},
-			Common::DE_DEU,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
@@ -192,11 +205,32 @@ static const AGOSGameDescription gameDescriptions[] = {
 			{
 	{ "gamepc",		GAME_BASEFILE,	"9076d507d60cc454df662316438ec843", -1},
 	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45", -1},
-	{ "start",		GAME_RESTFILE,	"69fb4f12108b39ae659f108cad4d3efe", -1},
 	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_ELVIRA1,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE
+	},
+
+	// Elvira 1 - German DOS Floppy
+	{
+		{
+			"elvira1",
+			"Floppy",
+
+			{
+	{ "gamepc",		GAME_BASEFILE,	"d0b593143e21fc150c044819df2c0b98", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45", -1},
+	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
@@ -382,31 +416,6 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE
 	},
 
-	// Elvira 2 - German DOS Floppy
-	{
-		{
-			"elvira2",
-			"Floppy",
-
-			{
-	{ "gamepc",		GAME_BASEFILE,	"d1979d2fbc5fb5276563578ca55cbcec", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9", -1},
-	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", -1},
-	{ "start",		GAME_RESTFILE,	"016107aced82d0cc5d758a9fba716270", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7", -1},
-	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", -1},
-	{ NULL, 0, NULL, 0}
-			},
-			Common::DE_DEU,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-
-		GType_ELVIRA2,
-		GID_ELVIRA2,
-		GF_OLD_BUNDLE
-	},
-
 	// Elvira 2 - French DOS Floppy
 	{
 		{
@@ -423,6 +432,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_ELVIRA2,
+		GID_ELVIRA2,
+		GF_OLD_BUNDLE
+	},
+
+	// Elvira 2 - German DOS Floppy
+	{
+		{
+			"elvira2",
+			"Floppy",
+
+			{
+	{ "gamepc",		GAME_BASEFILE,	"d1979d2fbc5fb5276563578ca55cbcec", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9", -1},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", -1},
+	{ "start",		GAME_RESTFILE,	"016107aced82d0cc5d758a9fba716270", -1},
+	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7", -1},
+	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
