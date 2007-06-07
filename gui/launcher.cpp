@@ -225,6 +225,9 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 
 		_globalVolumeOverride = new CheckboxWidget(tab, "gameoptions_volumeCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
 	} else {
+		// FIXME/TODO: It's unfortunate that you get a more fine grained control over which settings
+		// are overriden and which are not when using the *smaller* resolution than with the bigger!
+		// I guess we should simply offer the "volume override" checkbox in the big resolution, too.
 		_globalVolumeOverride = NULL;
 	}
 
