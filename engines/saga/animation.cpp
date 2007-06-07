@@ -363,10 +363,11 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		return;
 	}
 
-	// HACK: the animation starts playing before sfwaitframes is called in IHNM, which
-	// causes the game to wait forever. Raise the framecount by 10 to avoid lockup
+	// HACK: When a video is played in IHNM, the animation starts playing before sfwaitframes 
+	// is called, which causes the game to wait forever. Raise the framecount by 10 to avoid lockup
 	// TODO: remove this hack
-	_vm->_frameCount += 10;
+	if (_vm->_interface->getMode() == kPanelVideo)
+		_vm->_frameCount += 10;
 
 	if (anim->completed < anim->cycles) {
 		frame = anim->currentFrame;
