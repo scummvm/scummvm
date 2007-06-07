@@ -558,26 +558,22 @@ bool AGOSEngine::processSpecialKeys() {
 				_speech ^= 1;
 		}
 	case '+':
-		if ((getPlatform() == Common::kPlatformAcorn && (getFeatures() & GF_TALKIE)) ||
-			getPlatform() == Common::kPlatformPC || getPlatform() == Common::kPlatformWindows) {
+		if (_midiEnabled) {
 			_midi.setVolume(_midi.getVolume() + 16);
 		}
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 16);
 		break;
 	case '-':
-		if ((getPlatform() == Common::kPlatformAcorn && (getFeatures() & GF_TALKIE)) ||
-			getPlatform() == Common::kPlatformPC || getPlatform() == Common::kPlatformWindows) {
+		if (_midiEnabled) {
 			_midi.setVolume(_midi.getVolume() - 16);
 		}
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) - 16);
 		break;
 	case 'm':
-		if ((getPlatform() == Common::kPlatformAcorn && (getFeatures() & GF_TALKIE)) ||
-			getPlatform() == Common::kPlatformPC || getPlatform() == Common::kPlatformWindows) {
+		if (_midiEnabled) {
 			_midi.pause(_musicPaused ^= 1);
-		} else {
-			// TODO
 		}
+		// TODO
 		break;
 	case 's':
 		if (getGameId() == GID_SIMON1DOS) {

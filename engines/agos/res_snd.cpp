@@ -259,12 +259,10 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 }
 
 void AGOSEngine::stopMusic() {
-	if ((getPlatform() == Common::kPlatformAcorn && (getFeatures() & GF_TALKIE)) ||
-		getPlatform() == Common::kPlatformPC || getPlatform() == Common::kPlatformWindows) {
+	if (_midiEnabled) {
 		_midi.stop();
-	} else {
-		_mixer->stopHandle(_modHandle);
-	}
+	} 
+	_mixer->stopHandle(_modHandle);
 }
 
 void AGOSEngine::playSting(uint a) {
