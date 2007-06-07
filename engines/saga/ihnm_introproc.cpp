@@ -98,6 +98,7 @@ int Scene::IHNMStartProc() {
 	// the intro. We just use that panel mode.
 
 	_vm->_anim->setCutAwayMode(kPanelVideo);
+	_vm->_interface->setMode(kPanelVideo);
 
 	n_introscenes = ARRAYSIZE(IHNM_IntroList);
 
