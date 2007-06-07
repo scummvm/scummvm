@@ -47,7 +47,7 @@ const Common::String actionNames[] = {
 	"Save",
 	"Skip",
 	"Zone",
-	"FT Cheat",
+	"Multi Function",
 	"Swap character",
 	"Skip text",	
 	"Pause", 
@@ -174,8 +174,11 @@ void SymbianActions::initInstanceGame() {
 	_action_enabled[ACTION_ZONE] = true;
 
 	// FT Cheat
-	_action_enabled[ACTION_FT_CHEAT] = true;
-	_key_action[ACTION_FT_CHEAT].setAscii(86); // shift-V
+	_action_enabled[ACTION_MULTI] = true;
+	if (is_agi)
+		_key_action[ACTION_MULTI].setAscii(SDLK_PAUSE);
+	else
+		_key_action[ACTION_MULTI].setAscii(86); // shift-V
 
 	// Enable debugger
 	_action_enabled[ACTION_DEBUGGER] = true;
