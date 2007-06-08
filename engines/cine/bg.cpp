@@ -42,7 +42,8 @@ byte loadCt(const char *ctName) {
 	uint16 header[32];
 	byte *ptr, *dataPtr;
 
-	strcpy(currentCtName, ctName);
+	if (currentCtName != ctName)
+		strcpy(currentCtName, ctName);
 
 	ptr = dataPtr = readBundleFile(findFileInBundle(ctName));
 
@@ -86,7 +87,8 @@ void loadBgHigh(const char *currentPtr) {
 byte loadBg(const char *bgName) {
 	byte *ptr, *dataPtr;
 
-	strcpy(currentBgName[0], bgName);
+	if (currentBgName[0] != bgName)
+		strcpy(currentBgName[0], bgName);
 
 	byte fileIdx = findFileInBundle(bgName);
 	ptr = dataPtr = readBundleFile(fileIdx);
