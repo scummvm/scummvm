@@ -2714,7 +2714,7 @@ void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 par
 		currentHead = tempHead->next;
 	}
 
-	newElement = (overlayHeadElement *) malloc(sizeof(overlayHeadElement));
+	newElement = (overlayHeadElement *)malloc(sizeof(overlayHeadElement));
 
 	newElement->next = tempHead->next;
 	tempHead->next = newElement;
