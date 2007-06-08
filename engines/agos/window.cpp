@@ -193,7 +193,21 @@ void AGOSEngine::restoreWindow(WindowBlock *window) {
 	} else if (getGameType() == GType_SIMON1) {
 		restoreBlock(window->y + window->height * 8 + ((window == _windowArray[2]) ? 1 : 0), (window->x + window->width) * 8, window->y, window->x * 8);
 	} else {
-		restoreBlock(window->y + window->height * 8, (window->x + window->width) * 8, window->y, window->x * 8);
+		uint x = window->x;
+		uint w = window->width;
+
+		if (getGameType() == GType_ELVIRA1) {
+			// Adjustments to remove inventory arrows
+			if (x & 1) {
+				x--;
+				w++;
+			}
+			if (w & 1) {
+				w++;
+			}
+		}
+			
+		restoreBlock(window->y + window->height * 8, (x + w) * 8, window->y, x * 8);
 	}
 
 	_lockWord &= ~0x8000;
