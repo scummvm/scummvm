@@ -654,7 +654,6 @@ puttcircus	Putt-Putt Joins the Circus
 	d0ad929def3e9cfe39dea55bd12098d4	-1	fr	Windows	-	-	-	gist974
 	febf4a983ea5faea1c9dd6c710ebb09c	-1	de	Windows	-	-	-	andy482
 
-	3af61c5edf8e15b43dbafd285b2e9777	-1	hb	Windows	-	Demo	-	Ori Avtalion	
 	a7cacad9c40c4dc9e1812abf6c8af9d5	-1	en	All	-	Demo	-	Kirben, sev
 	1387d16aa620dc1c2d1fd87f8a9e7a09	-1	fr	Windows	-	Demo	-	Mevi
 	3af61c5edf8e15b43dbafd285b2e9777	-1	hb	Windows	-	Demo	-	Ori Avtalion
