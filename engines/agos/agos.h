@@ -1054,9 +1054,10 @@ public:
 	int16 levelOf(Item *item); 
 	int16 moreText(Item *i);
 	void lobjFunc(Item *i, const char *f);
-	uint confirmQuit();
+	uint confirmYesOrNo(uint16 x, uint16 y);
 	uint continueOrQuit();
 	void printScroll();
+	virtual void printStats();
 	void synchChain(Item *i);
 
 protected:
@@ -1211,10 +1212,10 @@ protected:
 
 	virtual void vcStopAnimation(uint zone, uint sprite);
 
+	bool confirmOverWrite(WindowBlock *window);
+	int16 matchSaveGame(const char *name, uint16 max);
 	void disableFileBoxes();
-	virtual void listSaveGames(char *dst);
 	virtual void userGame(bool load);
-	virtual int userGameGetKey(bool *b, char *buf, uint maxChar);
 	void userGameBackSpace(WindowBlock *window, int x, byte b = 0);
 	void fileError(WindowBlock *window, bool save_error);
 
@@ -1282,8 +1283,6 @@ public:
 	void oe1_bitSet();
 	void oe1_bitTest();
 	void oe1_zoneDisk();
-	void oe1_saveUserGame();
-	void oe1_loadUserGame();
 	void oe1_printStats();
 	void oe1_stopTune();
 	void oe1_printPlayerDamage();
@@ -1355,6 +1354,7 @@ public:
 	void oe2_b2Zero();
 	void oe2_b2NotZero();
 
+	virtual void printStats();
 protected:
 	typedef void (AGOSEngine_Elvira2::*OpcodeProcElvira2) ();
 	struct OpcodeEntryElvira2 {
@@ -1378,6 +1378,10 @@ protected:
 	uint16 getExitState(Item *item, uint16 x, uint16 d);
 	void setExitState(Item *i, uint16 n, uint16 d, uint16 s);
 	void setSRExit(Item *i, int n, int d, uint16 s);
+
+	virtual void listSaveGames(char *dst);
+	virtual void userGame(bool load);
+	virtual int userGameGetKey(bool *b, char *buf, uint maxChar);
 };
 
 class AGOSEngine_Waxworks : public AGOSEngine_Elvira2 {

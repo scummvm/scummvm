@@ -465,6 +465,7 @@ void AGOSEngine::delay(uint amount) {
 					if (_saveLoadSlot == 0)
 						_saveLoadSlot = 10;
 
+					memset(_saveLoadName, 0, sizeof(_saveLoadName));
 					sprintf(_saveLoadName, "Quick %d", _saveLoadSlot);
 					_saveLoadType = (event.kbd.flags == Common::KBD_ALT) ? 1 : 2;
 
