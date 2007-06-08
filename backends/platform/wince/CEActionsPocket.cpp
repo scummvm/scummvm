@@ -188,12 +188,16 @@ void CEActionsPocket::initInstanceGame() {
 		_action_enabled[POCKET_ACTION_ZOOM_UP] = true;
 		_action_enabled[POCKET_ACTION_ZOOM_DOWN] = true;
 	}
-	// FT Cheat
+	// Multi function key
 	_action_enabled[POCKET_ACTION_MULTI] = true;
 	if (is_agi)
-		_key_action[POCKET_ACTION_MULTI].setAscii(SDLK_PAUSE);
+		_key_action[POCKET_ACTION_MULTI].setAscii(SDLK_PAUSE); // agi: show predictive dialog
+	else if (is_gob)
+		_key_action[POCKET_ACTION_MULTI].setAscii(315); // bargon : F1 to start
+	else if (gameid == "atlantis")
+		_key_action[POCKET_ACTION_MULTI].setAscii(SDLK_KP0); // fate of atlantis : Ins to sucker-punch
 	else
-		_key_action[POCKET_ACTION_MULTI].setAscii(86); // shift-V
+		_key_action[POCKET_ACTION_MULTI].setAscii(86); // FT cheat : shift-V
 	// Key bind method
 	_action_enabled[POCKET_ACTION_BINDKEYS] = true;
 }
