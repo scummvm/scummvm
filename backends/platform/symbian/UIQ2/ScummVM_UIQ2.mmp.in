@@ -39,7 +39,6 @@ AIF				ScummVm.Aif ..\res\ ScummVmAif.rss c16 ScummL.bmp ScummLM.bmp ScummS.bmp 
 UID             0x100039ce 0x101f9b57
 
 MACRO			UIQ
-MACRO			EPOC_AS_APP
 
 //START_AUTO_MACROS_SLAVE//
 
