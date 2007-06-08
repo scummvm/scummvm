@@ -565,7 +565,7 @@ arm-riscos)
 	EXEEXT=",ff8"
 	;;
 gp2x-linux)
-	EXEEXT=".gpe"
+	EXEEXT=".gp2x"
 	;;	
 *)
 	EXEEXT=""
