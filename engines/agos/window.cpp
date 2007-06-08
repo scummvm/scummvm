@@ -128,12 +128,10 @@ void AGOSEngine_Feeble::colorWindow(WindowBlock *window) {
 }
 
 void AGOSEngine::colorWindow(WindowBlock *window) {
-	uint16 x, y, h, w;
+	uint16 y, h;
 
-	x = window->x * 8;
 	y = window->y;
 	h = window->height * 8;
-	w = window->width * 8;
 
 	if (getGameType() == GType_ELVIRA2 && window->y == 146) {
 		if (window->fill_color == 1) {
@@ -152,7 +150,7 @@ void AGOSEngine::colorWindow(WindowBlock *window) {
 		_paletteFlag = 1;
 	}
 
-	colorBlock(window, x, y, w, h);
+	colorBlock(window, window->x * 8, y, window->width * 8, h);
 }
 
 void AGOSEngine::colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, uint16 h) {
