@@ -454,7 +454,7 @@ FILE* 	symbian_fopen(const char* name, const char* mode) {
 			fileMode = fileMode| EFileWrite;	
 		}
 
-		fileMode = fileMode| EFileShareReadersOnly;
+		fileMode = fileMode| EFileShareAny;
 
 		switch(mode[0]) {
 		case 'a':
