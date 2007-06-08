@@ -456,6 +456,9 @@ void Script::doVerb() {
 		} else {
 			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 		}
+		// IHNM never sets scriptModuleNumber to 0
+		if (_vm->getGameType() == GType_IHNM)
+			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 	} else {
 		if (_pendingVerb == getVerbType(kVerbUse)) {
 			if ((objectTypeId(_pendingObject[1]) > kGameObjectNone) && (objectType < objectTypeId(_pendingObject[1]))) {
@@ -485,6 +488,9 @@ void Script::doVerb() {
 				} else {
 					scriptModuleNumber = 0;
 				}
+				// IHNM never sets scriptModuleNumber to 0
+				if (_vm->getGameType() == GType_IHNM)
+					scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 			}
 		}
 	}
