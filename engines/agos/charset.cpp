@@ -699,11 +699,38 @@ void AGOSEngine::windowNewLine(WindowBlock *window) {
 	window->textLength = 0;
 
 	if (window->textRow == window->height) {
-		// TODO
-		debug(0, "Window Scroll");
+		if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 ||
+			getGameType() == GType_WW) {
+			windowScroll(window);
+		}
 	} else {
 		window->textRow++;
 	}
+}
+
+void AGOSEngine::windowScroll(WindowBlock *window) {
+	_lockWord |= 0x8000;
+
+	if (window->height != 1) {
+		byte *src, *dst;
+		uint16 w, h;
+
+		w = window->width * 8;
+		h = (window->height -1) * 8;
+
+		dst = getFrontBuf() + window->y * _screenWidth + window->x * 8;
+		src = dst + 8 * _screenWidth;
+
+		do {
+			memcpy(dst, src, w);
+			src += _screenWidth;
+			dst += _screenWidth;
+		} while (--h);
+	} 
+
+	colorBlock(window, window->x * 8, (window->height - 1) * 8 + window->y, window->width * 8, 8);
+
+	_lockWord &= ~0x8000;
 }
 
 #ifdef PALMOS_68K

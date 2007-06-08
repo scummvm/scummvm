@@ -1188,6 +1188,7 @@ protected:
 	void tidyIconArray(uint i);
 
 	virtual void windowNewLine(WindowBlock *window);
+	void windowScroll(WindowBlock *window);
 	void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr);
 
 	void loadMusic(uint track);
