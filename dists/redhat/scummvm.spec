@@ -51,7 +51,7 @@ mkdir tmp
 %build
 (cd libmad-0.15.1b; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
 (cd mpeg2dec-0.4.1; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
-./configure --with-mad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-mpeg2-prefix=%{_builddir}/scummvm-%{version}/tmp --prefix=%{_prefix}
+./configure --with-mad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-mpeg2-prefix=%{_builddir}/scummvm-%{version}/tmp --prefix=%{_prefix} --enable-release
 make
 
 %install
