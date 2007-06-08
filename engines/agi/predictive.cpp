@@ -121,9 +121,6 @@ bool AgiEngine::predictiveDialog(void) {
 	bool navigationwithkeys = false;
 	bool processkey;
 
-	_predictiveDialogRunning = true;
-	_system->setFeatureState(OSystem::kFeatureDisableKeyFiltering, true);
-	
 	// FIXME: Move this to a more appropriate place.
 	initAsciiToNumTable();
 
@@ -153,6 +150,9 @@ bool AgiEngine::predictiveDialog(void) {
 		if (!_searchTreeRoot)
 			return false;
 	}
+	
+	_predictiveDialogRunning = true;
+	_system->setFeatureState(OSystem::kFeatureDisableKeyFiltering, true);
 
 	memset(repeatcount, 0, MAXWORDLEN);
 
