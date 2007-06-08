@@ -110,7 +110,7 @@ void AgiEngine::insertSearchNode(const char *word) {
 }
 
 bool AgiEngine::predictiveDialog(void) {
-	int key = 0, active = -1, lastactive = -1;
+	int key = 0, active = -1, lastactive = 0;
 	bool rc = false;
 	uint8 x;
 	int y;
@@ -118,6 +118,8 @@ bool AgiEngine::predictiveDialog(void) {
 	String prefix;
 	char temp[MAXWORDLEN + 1], repeatcount[MAXWORDLEN];
 	AgiBlock tmpwindow;
+	bool navigationwithkeys = false;
+	bool processkey;
 
 	_predictiveDialogRunning = true;
 	_system->setFeatureState(OSystem::kFeatureDisableKeyFiltering, true);
@@ -238,7 +240,9 @@ bool AgiEngine::predictiveDialog(void) {
 			printText(temp, 0, 8, 7, MAXWORDLEN, 15, 0);
 			_gfx->flushBlock(62, 54, 249, 66);
 
-			if (active >= 0 && key != 9) {
+			if (active >= 0 && !navigationwithkeys) {
+				// provide visual feedback only when not navigating with the arrows
+				// so that the user can see the active button.
 				active = -1;
 				needRefresh = true;
 			} else
@@ -249,20 +253,132 @@ bool AgiEngine::predictiveDialog(void) {
 
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = doPollKeyboard();
+		processkey = false;
 		switch (key) {
 		case KEY_ENTER:
-			active = 13;
-			goto processkey;
+			if (navigationwithkeys) {
+				// when the user has utilized arrow key navigation,
+				// interpret enter as 'click' on the active button
+				active = lastactive;
+			} else {
+				// else it is a shortcut for 'Ok'
+				active = 13;
+			}
+			processkey = true;
+			break;
 		case KEY_ESCAPE:
 			rc = false;
 			goto getout;
 		case BUTTON_LEFT:
+			navigationwithkeys = false;
 			for (int i = 0; buttons[i]; i++) {
 				if (_gfx->testButton(bx[i], by[i], buttons[i])) {
 					active = i;
+					processkey = true;
+					break;
 				}
 			}
-processkey:
+			break;
+		case KEY_BACKSPACE:
+			active = 11;
+			processkey = true;
+			break;
+		case '#':
+			active = 9;
+			processkey = true;
+			break;
+		case '*':
+			active = 14;
+			processkey = true;
+			break;
+		case 0x09:	/* Tab */
+			navigationwithkeys = true;
+			debugC(3, kDebugLevelText, "Focus change");
+			lastactive = active = lastactive + 1;
+			active %= ARRAYSIZE(buttons) - 1;
+			needRefresh = true;
+			break;
+		case KEY_LEFT:
+			navigationwithkeys = true;
+			if (lastactive == 0 || lastactive == 3 || lastactive == 6)
+				active = lastactive + 2;
+			else if (lastactive == 9)
+				active = 15;
+			else if (lastactive == 11)
+				active = 11;
+			else if (lastactive == 12)
+				active = 13;
+			else if (lastactive == 14)
+				active = 10;
+			else
+				active = lastactive - 1;
+			lastactive = active;
+			needRefresh = true;
+			break;
+		case KEY_RIGHT:
+			navigationwithkeys = true;
+			if (lastactive == 2 || lastactive == 5 || lastactive == 8)
+				active = lastactive - 2;
+			else if (lastactive == 10)
+				active = 14;
+			else if (lastactive == 11)
+				active = 11;
+			else if (lastactive == 13)
+				active = 12;
+			else if (lastactive == 15)
+				active = 9;
+			else
+				active = lastactive + 1;
+			lastactive = active;
+			needRefresh = true;
+			break;
+		case KEY_UP:
+			navigationwithkeys = true;
+			if (lastactive <= 2)
+				active = 11;
+			else if (lastactive == 9 || lastactive == 10)
+				active = lastactive - 2;
+			else if (lastactive == 11)
+				active = 13;
+			else if (lastactive == 14)
+				active = 8;
+			else if (lastactive == 15)
+				active = 6;
+			else
+				active = lastactive - 3;
+			lastactive = active;
+			needRefresh = true;
+			break;
+		case KEY_DOWN:
+			navigationwithkeys = true;
+			if (lastactive == 6)
+				active = 15;
+			else if (lastactive == 7 || lastactive == 8)
+				active = lastactive + 2;
+			else if (lastactive == 11)
+				active = 0;
+			else if (lastactive == 12 || lastactive == 13)
+				active = 11;
+			else if (lastactive == 14 || lastactive == 15)
+				active = lastactive - 2;
+			else
+				active = lastactive + 3;
+			lastactive = active;
+			needRefresh = true;
+			break;
+		default:
+			// handle numeric buttons
+			if (key >= '1' && key <= '9') {
+				active = key - '1';
+				processkey = true;
+			} else if (key == '0') {
+				active = 15;
+				processkey = true;
+			}
+			break;
+		}
+
+		if (processkey) {
 			if (active >= 0) {
 				needRefresh = true;
 				lastactive = active;
@@ -291,7 +407,7 @@ processkey:
 								prefix.deleteLastChar();
 						}
 					} else if (prefix.size() + _currentCode.size() < MAXWORDLEN - 1) { // don't overflow the dialog line
-					       	if (active == 15) { // zero
+						if (active == 15) { // zero
 							_currentCode += buttonStr[9];
 						} else {
 							_currentCode += buttonStr[active];
@@ -299,21 +415,21 @@ processkey:
 					}
 
 					switch (mode) {
-					case kModeNum:
-						_currentWord = _currentCode;
-						break;
-					case kModePre:
-						if (!matchWord() && _currentCode.size()) {
-							_currentCode.deleteLastChar();
-							matchWord();
-						}
-						break;
-					case kModeAbc:
-						for (x = 0; x < _currentCode.size(); x++)
-							if (_currentCode[x] >= '1')
-								temp[x] = buttons[_currentCode[x] - '1'][3 + repeatcount[x]];
-						temp[_currentCode.size()] = 0;
-						_currentWord = temp;
+						case kModeNum:
+							_currentWord = _currentCode;
+							break;
+						case kModePre:
+							if (!matchWord() && _currentCode.size()) {
+								_currentCode.deleteLastChar();
+								matchWord();
+							}
+							break;
+						case kModeAbc:
+							for (x = 0; x < _currentCode.size(); x++)
+								if (_currentCode[x] >= '1')
+									temp[x] = buttons[_currentCode[x] - '1'][3 + repeatcount[x]];
+							temp[_currentCode.size()] = 0;
+							_currentWord = temp;
 					}
 				} else if (active == 9) { // next
 					if (mode != kModeAbc) {
@@ -359,31 +475,6 @@ processkey:
 				} else {
 					goto press;
 				}
-			}
-			break;
-		case KEY_BACKSPACE:
-			active = 11;
-			goto processkey;
-		case '#':
-			active = 9;
-			goto processkey;
-		case '*':
-			active = 14;
-			goto processkey;
-		case 0x09:	/* Tab */
-			debugC(3, kDebugLevelText, "Focus change");
-			lastactive = active = lastactive + 1;
-			active %= ARRAYSIZE(buttons) - 1;
-			needRefresh = true;
-			break;
-		default:
-			// handle numeric buttons
-			if (key >= '1' && key <= '9') {
-				active = key - '1';
-				goto processkey;
-			} else if (key == '0') {
-				active = 15;
-				goto processkey;
 			}
 		}
 	}
