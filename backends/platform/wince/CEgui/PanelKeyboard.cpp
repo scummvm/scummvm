@@ -62,7 +62,7 @@ namespace CEGUI {
 					keyAscii = VK_BACK; keyCode = keyAscii;
 				} else {
 					// Enter
-					keyAscii = 13; keyCode = 10;
+					keyAscii = 13; keyCode = 13;
 				}
 			}
 
