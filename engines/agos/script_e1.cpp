@@ -370,8 +370,8 @@ void AGOSEngine_Elvira1::setupOpcodes() {
 		OPCODE(o_setAdjNoun),
 		OPCODE(oe1_zoneDisk),
 		/* 268 */
-		OPCODE(oe1_saveUserGame),
-		OPCODE(oe1_loadUserGame),
+		OPCODE(o_saveUserGame),
+		OPCODE(o_loadUserGame),
 		OPCODE(oe1_printStats),
 		OPCODE(oe1_stopTune),
 		/* 272 */
@@ -863,72 +863,9 @@ void AGOSEngine_Elvira1::oe1_zoneDisk() {
 	getVarOrWord();
 }
 
-void AGOSEngine_Elvira1::oe1_saveUserGame() {
-	// TODO
-}
-
-void AGOSEngine_Elvira1::oe1_loadUserGame() {
-	// TODO
-}
-
 void AGOSEngine_Elvira1::oe1_printStats() {
 	// 270: print stats
-	WindowBlock *window = _dummyWindow;
-	int val;
-
-	window->flags = 1;
-
-	mouseOff();
-
-	// Strength
-	val = _variableArray[0];
-	if (val < -99)
-		val = -99;
-	if (val > 99)
-		val = 99;	
-	writeChar(window, 5, 133, 6, val);
-
-	// Resolution
-	val = _variableArray[1];
-	if (val < -99)
-		val = -99;
-	if (val > 99)
-		val = 99;	
-	writeChar(window, 11, 133, 6, val);
-
-	// Dexterity
-	val = _variableArray[2];
-	if (val < -99)
-		val = -99;
-	if (val > 99)
-		val = 99;	
-	writeChar(window, 18, 133, 0, val);
-
-	// Skill
-	val = _variableArray[3];
-	if (val < -99)
-		val = -99;
-	if (val > 99)
-		val = 99;	
-	writeChar(window, 24, 133, 0, val);
-
-	// Life
-	val = _variableArray[5];
-	if (val < -99)
-		val = -99;
-	if (val > 99)
-		val = 99;	
-	writeChar(window, 30, 133, 2, val);
-
-	// Experience
-	val = _variableArray[6];
-	if (val < -99)
-		val = -99;
-	if (val > 99)
-		val = 99;	
-	writeChar(window, 36, 133, 4, val);
-
-	mouseOn();
+	printStats();
 }
 
 void AGOSEngine_Elvira1::oe1_stopTune() {
@@ -1017,7 +954,7 @@ restart:
 		for (; *message2; message2++)
 			windowPutChar(window, *message2);
 
-		if (confirmQuit() == 0x7FFF) {
+		if (confirmYesOrNo(120, 62) == 0x7FFF) {
 			shutdown();
 		} else {
 			goto restart;
@@ -1104,12 +1041,12 @@ l1:		i = derefItem(i->next);
 	}
 }
 
-uint AGOSEngine::confirmQuit() {
+uint AGOSEngine::confirmYesOrNo(uint16 x, uint16 y) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
-	ha->x = 120;
-	ha->y = 62;
+	ha->x = x;
+	ha->y = y;
 	ha->width = 30;
 	ha->height = 12;
 	ha->flags = kBFBoxInUse;
@@ -1118,8 +1055,8 @@ uint AGOSEngine::confirmQuit() {
 	ha->window = 0;
 
 	ha = findEmptyHitArea();
-	ha->x = 180;
-	ha->y = 62;
+	ha->x = x + 60;
+	ha->y = y;
 	ha->width = 24;
 	ha->height = 12;
 	ha->flags = kBFBoxInUse;
@@ -1211,6 +1148,65 @@ void AGOSEngine::printScroll() {
 	drawImage_init(9, 0, 10, 32, 0);
 
 	_curVgaFile2 = curVgaFile2Orig;
+}
+
+void AGOSEngine::printStats() {
+	WindowBlock *window = _dummyWindow;
+	int val;
+
+	window->flags = 1;
+
+	mouseOff();
+
+	// Strength
+	val = _variableArray[0];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 5, 133, 6, val);
+
+	// Resolution
+	val = _variableArray[1];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 11, 133, 6, val);
+
+	// Dexterity
+	val = _variableArray[2];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 18, 133, 0, val);
+
+	// Skill
+	val = _variableArray[3];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 24, 133, 0, val);
+
+	// Life
+	val = _variableArray[5];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 30, 133, 2, val);
+
+	// Experience
+	val = _variableArray[6];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 36, 133, 4, val);
+
+	mouseOn();
 }
 
 } // End of namespace AGOS
