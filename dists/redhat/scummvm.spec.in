@@ -17,7 +17,7 @@ Url             : http://www.scummvm.org
 
 Source		: %{name}-%{version}.tar.bz2
 Source1		: libmad-0.15.1b.tar.bz2
-Source2		: mpeg2dec-0.4.0b.tar.bz2
+Source2		: mpeg2dec-0.4.1.tar.bz2
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root
 
 BuildRequires: desktop-file-utils
@@ -34,11 +34,12 @@ BuildRequires: SDL-devel >= 1.2.2
 %description
 ScummVM is an interpreter that will play graphic adventure games written for
 LucasArts' SCUMM virtual machine (such as Day of the Tentacle and 
-Monkey Island), Adventure Soft's Simon the Sorcerer 1, 2 and Feeble Files, 
+Monkey Island), Sierra's AGI adventures (such as early King's Quest and 
+Space Quest games), Adventure Soft's Simon the Sorcerer 1, 2 and Feeble Files, 
 Revolution Software's Beneath a Steel Sky and Broken Sword 1 and 2,
 Interactive Binary Illusions' Flight of the Amazon Queen,
-Coktel Vision's Gobliiins, Wyrmkeep's Inherit the Earth and Westwood's
-Legend of Kyrandia.
+Coktel Vision's Gobliiins, Wyrmkeep's Inherit the Earth, Westwood's
+Legend of Kyrandia, and various others.
 
 #------------------------------------------------------------------------------
 #   install scripts
@@ -49,8 +50,8 @@ mkdir tmp
 
 %build
 (cd libmad-0.15.1b; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
-(cd mpeg2dec-0.4.0; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
-./configure --with-mad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-mpeg2-prefix=%{_builddir}/scummvm-%{version}/tmp --prefix=%{_prefix}
+(cd mpeg2dec-0.4.1; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
+./configure --with-mad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-mpeg2-prefix=%{_builddir}/scummvm-%{version}/tmp --prefix=%{_prefix} --enable-release
 make
 
 %install
