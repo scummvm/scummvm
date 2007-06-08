@@ -283,26 +283,29 @@ restart:
 		}
 	}
 
-	int16 slot = matchSaveGame(name, numSaveGames);
-	if (!load) {
-		if (slot >= 0 && !confirmOverWrite(window))
-			goto restart;
+	if (_saveGameNameLen != 0) {
+		int16 slot = matchSaveGame(name, numSaveGames);
+		if (!load) {
+			if (slot >= 0 && !confirmOverWrite(window))
+				goto restart;
 
-		if (slot < 0)
-			slot =  numSaveGames;
+			if (slot < 0)
+				slot =  numSaveGames;
 
-		if (!saveGame(slot, name))
-			fileError(_windowArray[4], true);
-	} else {
-		if (slot < 0) {
-			fileError(_windowArray[4], false);
+			if (!saveGame(slot, name))
+				fileError(_windowArray[4], true);
 		} else {
-			if (!loadGame(genSaveName(slot)))
+			if (slot < 0) {
 				fileError(_windowArray[4], false);
+			} else {
+				if (!loadGame(genSaveName(slot)))
+					fileError(_windowArray[4], false);
+			}
 		}
+
+		printStats();
 	}
 
-	printStats();
 	restartAnimation();
 	_gameStoppedClock = time(NULL) - saveTime + _gameStoppedClock;
 }
@@ -459,11 +462,13 @@ void AGOSEngine_Elvira2::userGame(bool load) {
 			}
 		}
 
-		if (slot < 0)
-			slot = numSaveGames;
+		if (_saveGameNameLen != 0) {
+			if (slot < 0)
+				slot = numSaveGames;
 
-		if (!saveGame(slot, buf + 192))
-			fileError(_windowArray[num], true);
+			if (!saveGame(slot, buf + 192))
+				fileError(_windowArray[num], true);
+		}
 	} else {
 		i = userGameGetKey(&b, buf, 128);
 		if (i != 225) {
