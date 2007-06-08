@@ -93,9 +93,9 @@ inline int16 int16Compare(int16 i1, int16 i2) {
 	return ((i1) > (i2) ? 1 : ((i1) < (i2) ? -1 : 0));
 }
 
-inline int16 quickDistance(const Point &point1, const Point &point2) {
+inline int16 quickDistance(const Point &point1, const Point &point2, int16 compressX) {
 	Point delta;
-	delta.x = ABS(point1.x - point2.x) / 2;
+	delta.x = ABS(point1.x - point2.x) / compressX;
 	delta.y = ABS(point1.y - point2.y);
 	return ((delta.x < delta.y) ? (delta.y + delta.x / 2) : (delta.x + delta.y / 2));
 }
@@ -2009,9 +2009,12 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 	actor = getActor(actorId);
 	actor->_actorFlags &= ~kActorBackwards;
 
-	if (actor->_location.distance(actor->_finalTarget) > 8 && (actor->_flags & kProtagonist) && recurse && !(actor->_actorFlags & kActorNoCollide)) {
-		actor->_actorFlags |= kActorNoCollide;
-		return actorWalkTo(actorId, actor->_finalTarget);
+	if (_vm->getGameType() == GType_ITE) {
+
+		if (actor->_location.distance(actor->_finalTarget) > 8 && (actor->_flags & kProtagonist) && recurse && !(actor->_actorFlags & kActorNoCollide)) {
+			actor->_actorFlags |= kActorNoCollide;
+			return actorWalkTo(actorId, actor->_finalTarget);
+		}
 	}
 
 	actor->_currentAction = kActionWait;
@@ -2725,10 +2728,11 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 	const PathDirectionData *samplePathDirection;
 	Point nextPoint;
 	int directionCount;
+	int16 compressX = (_vm->getGameType() == GType_ITE) ? 2 : 1;
 
 	_pathDirectionListCount = 0;
 	pointCounter = 0;
-	bestRating = quickDistance(fromPoint, toPoint);
+	bestRating = quickDistance(fromPoint, toPoint, compressX);
 	bestPath = fromPoint;
 
 	for (startDirection = 0; startDirection < 4; startDirection++) {
@@ -2776,7 +2780,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 				bestPoint = toPoint;
 				return pointCounter;
 			}
-			currentRating = quickDistance(nextPoint, toPoint);
+			currentRating = quickDistance(nextPoint, toPoint, compressX);
 			if (currentRating < bestRating) {
 				bestRating = currentRating;
 				bestPath = nextPoint;

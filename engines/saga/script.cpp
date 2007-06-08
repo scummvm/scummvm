@@ -639,10 +639,19 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 	}
 
 	if (hitZone != NULL) {
-		if (hitZone->getFlags() & kHitZoneNoWalk) {
-			_vm->_actor->actorFaceTowardsPoint(ID_PROTAG, pickLocation);
-			doVerb();
-			return;
+		if (_vm->getGameType() == GType_ITE) {
+			if (hitZone->getFlags() & kHitZoneNoWalk) {
+				_vm->_actor->actorFaceTowardsPoint(ID_PROTAG, pickLocation);
+				doVerb();
+				return;
+			}
+		} else { 
+			if (_vm->getGameType() == GType_IHNM) {
+				if ((hitZone->getFlags() & kHitZoneNoWalk) && (_pendingVerb == getVerbType(kVerbWalkTo))) {
+					doVerb();
+					return;
+				}
+			}
 		}
 
 		if (hitZone->getFlags() & kHitZoneProject) {
@@ -663,26 +672,54 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 		}
 	}
 
-	if ((_pendingVerb == getVerbType(kVerbWalkTo)) ||
-		(_pendingVerb == getVerbType(kVerbPickUp)) ||
-		(_pendingVerb == getVerbType(kVerbOpen)) ||
-		(_pendingVerb == getVerbType(kVerbClose)) ||
-		(_pendingVerb == getVerbType(kVerbUse))) {
-			_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
-	} else {
-		if (_pendingVerb == getVerbType(kVerbLookAt)) {
-			if (objectTypeId(_pendingObject[0]) != kGameObjectActor ) {
+	if (_vm->getGameType() == GType_ITE) {
+		if ((_pendingVerb == getVerbType(kVerbWalkTo)) ||
+			(_pendingVerb == getVerbType(kVerbPickUp)) ||
+			(_pendingVerb == getVerbType(kVerbOpen)) ||
+			(_pendingVerb == getVerbType(kVerbClose)) ||
+			(_pendingVerb == getVerbType(kVerbUse))) {
 				_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
-			} else {
-				doVerb();
-			}
 		} else {
-			if ((_pendingVerb == getVerbType(kVerbTalkTo)) ||
-				(_pendingVerb == getVerbType(kVerbGive))) {
+			if (_pendingVerb == getVerbType(kVerbLookAt)) {
+				if (objectTypeId(_pendingObject[0]) != kGameObjectActor ) {
+					_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
+				} else {
 					doVerb();
+				}
+			} else {
+				if ((_pendingVerb == getVerbType(kVerbTalkTo)) ||
+					(_pendingVerb == getVerbType(kVerbGive))) {
+						doVerb();
+				}
 			}
 		}
 	}
+
+	if (_vm->getGameType() == GType_IHNM) {
+
+		if ((_pendingVerb == getVerbType(kVerbWalkTo)) ||
+			(_pendingVerb == getVerbType(kVerbPickUp)) ||
+			(_pendingVerb == getVerbType(kVerbOpen)) ||
+			(_pendingVerb == getVerbType(kVerbClose)) ||
+			(_pendingVerb == getVerbType(kVerbUse))) {
+				_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
+		} else {
+			if (_pendingVerb == getVerbType(kVerbLookAt)) {
+				if (objectTypeId(_pendingObject[0]) != kGameObjectActor ) {
+					_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
+				} else {
+					_vm->_actor->actorFaceTowardsObject(ID_PROTAG, _pendingObject[0]);
+					doVerb();
+				}
+			} else {
+				if ((_pendingVerb == getVerbType(kVerbTalkTo)) ||
+					(_pendingVerb == getVerbType(kVerbGive))) {
+						doVerb();
+				}
+			}
+		}
+	}
+
 }
 
 void Script::whichObject(const Point& mousePoint) {
