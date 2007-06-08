@@ -110,6 +110,8 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 
 	_curSfxFile = _curMusicTheme = 0;
 
+	memset(&_itemBkgBackUp, 0, sizeof(_itemBkgBackUp));
+
 	// sets up all engine specific debug levels
 	Common::addSpecialDebugLevel(kDebugLevelScriptFuncs, "ScriptFuncs", "Script function debug level");
 	Common::addSpecialDebugLevel(kDebugLevelScript, "Script", "Script interpreter debug level");
