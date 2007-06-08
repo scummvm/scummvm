@@ -453,7 +453,9 @@ FILE* 	symbian_fopen(const char* name, const char* mode) {
 		if ((modeLen > 1 && mode[1] == '+') || (modeLen > 2 && mode[2] == '+')) {
 			fileMode = fileMode| EFileWrite;	
 		}
-		
+
+		fileMode = fileMode| EFileShareReadersOnly;
+
 		switch(mode[0]) {
 		case 'a':
 			if (fileEntry->iFileHandle.Open(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
