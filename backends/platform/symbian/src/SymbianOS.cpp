@@ -88,8 +88,10 @@ void OSystem_SDL_Symbian::setFeatureState(Feature f, bool enable) {
 			else {
 			
 			}
-
-			return;
+			break;
+		case kFeatureDisableKeyFiltering:
+			GUI::Actions::Instance()->beginMapping(enable);
+			break;;
 		default:
 			OSystem_SDL::setFeatureState(f, enable);
 	}
@@ -345,16 +347,21 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 				}
 
 				return true;
-
+			case GUI::ACTION_MULTI: {
+				GUI::Key &key = GUI::Actions::Instance()->getKeyAction(loop);
+				// if key code is pause, then change event to interactive or just fall through
+				if(key.keycode() == SDLK_PAUSE) {
+					event.type = Common::EVENT_PREDICTIVE_DIALOG;
+					return true;
+					}
+				}
 			case GUI::ACTION_SAVE:
 			case GUI::ACTION_SKIP:
-			case GUI::ACTION_MULTI:
 			case GUI::ACTION_SKIP_TEXT:
 			case GUI::ACTION_PAUSE:
 			case GUI::ACTION_SWAPCHAR:
 			case GUI::ACTION_FASTMODE:
-			case GUI::ACTION_DEBUGGER:
-				{
+			case GUI::ACTION_DEBUGGER: {
 					GUI::Key &key = GUI::Actions::Instance()->getKeyAction(loop);
 					ev.key.keysym.sym = (SDLKey) key.ascii();
 					ev.key.keysym.scancode= key.keycode();
