@@ -97,6 +97,7 @@ public:
 	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	void showOverlay();
 	void hideOverlay();
+	bool grabRawScreen(Graphics::Surface *surf);
 
 	// GUI and action stuff
 	void swap_panel_visibility();

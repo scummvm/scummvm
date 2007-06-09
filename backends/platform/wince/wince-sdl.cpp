@@ -1590,6 +1590,11 @@ void OSystem_WINCE3::internUpdateScreen() {
 	_forceFull = false;
 }
 
+bool OSystem_WINCE3::grabRawScreen(Graphics::Surface *surf) {
+	undrawMouse();
+	return OSystem_SDL::grabRawScreen(surf);
+}
+
 bool OSystem_WINCE3::saveScreenshot(const char *filename) {
 	assert(_hwscreen != NULL);
 
