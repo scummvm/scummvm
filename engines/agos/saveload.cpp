@@ -542,20 +542,23 @@ void AGOSEngine_Simon1::listSaveGames(char *dst) {
 		lastSlot = slot;
 		if (slot < 10) {
 			showMessageFormat(" ");
+		} else if (_language == Common::HB_ISR) {
+			lastSlot = (slot % 10) * 10;
+			lastSlot += slot / 10;
 		}
 
+		showMessageFormat("%d", lastSlot);
 		if (_language == Common::HB_ISR && !(slot % 10))
 			showMessageFormat("0");
-		showMessageFormat("%d", lastSlot);
 		showMessageFormat(".%s\n", dst);
 		dst += 18;
 		slot++;
 	}
 
 	if (!_saveOrLoad) {
-		if (_saveLoadRowCurPos + 6 == slot)
+		if (_saveLoadRowCurPos + 6 == slot) {
 			slot++;
-		else {
+		} else {
 			if (slot < 10)
 				showMessageFormat(" ");
 			showMessageFormat("%d.\n", slot);
