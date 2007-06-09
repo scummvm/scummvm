@@ -6,6 +6,9 @@
 DISABLE_SCALERS = true
 DISABLE_HQ_SCALERS = true
 
+DISABLE_LURE = 1
+DISABLE_CRUISE = 1
+
 srcdir = ../../..
 VPATH = $(srcdir)
 HAVE_GCC3 = false
