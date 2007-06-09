@@ -48,7 +48,7 @@
 #include <sys/stat.h>
 
 // Disable for normal serial logging.
-#define DUMP_STDOUT
+//#define DUMP_STDOUT
 
 #if defined(HAVE_CONFIG_H)
 #include "config.h"
