@@ -35,6 +35,9 @@ namespace CEGUI {
 
 	PanelKeyboard::PanelKeyboard(WORD reference) : Toolbar() {
 		setBackground(reference);
+		_state = false;
+		_lastKey.setAscii(0);
+		_lastKey.setKeycode(0);
 	}
 
 
@@ -42,6 +45,7 @@ namespace CEGUI {
 	}
 
 	bool PanelKeyboard::action(int x, int y, bool pushed) {
+		Key key;
 
 		if (checkInside(x, y)) {
 			int keyAscii = 0;
@@ -67,14 +71,34 @@ namespace CEGUI {
 			}
 
 			if (keyAscii != 0) {
-				_key.setAscii(keyAscii);
-				_key.setKeycode(tolower(keyCode));
-				return EventsBuffer::simulateKey(&_key, pushed);
+				if (_state && pushed && keyCode != _lastKey.keycode()) // if cursor is still down and off the current key
+					return false;
+				else if (_state && !pushed && keyCode != _lastKey.keycode()) { // cursor is up but off the current key
+					keyAscii = _lastKey.ascii();
+					keyCode = _lastKey.keycode();
+				}
+				_state = pushed;
+				_lastKey.setAscii(keyAscii);
+				_lastKey.setKeycode(tolower(keyCode));
+
+				key.setAscii(keyAscii);
+				key.setKeycode(tolower(keyCode));
+				return EventsBuffer::simulateKey(&key, pushed);
 			}
-			else
+			else if (_state && !pushed) { // cursor is in some forbidden region and is up
+				_state = false;
+				key.setAscii(_lastKey.ascii());
+				key.setKeycode(_lastKey.keycode());
+				return EventsBuffer::simulateKey(&key, false);
+			} else
 				return false;
 		}
-		else
+		else if (_state && !pushed) { // cursor left the keyboard area and is up
+			_state = false;
+			key.setAscii(_lastKey.ascii());
+			key.setKeycode(_lastKey.keycode());
+			return EventsBuffer::simulateKey(&key, false);
+		} else
 			return false;
 	}
 }
