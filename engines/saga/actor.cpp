@@ -405,7 +405,8 @@ bool Actor::loadActorResources(ActorData *actor) {
 
 		gotSomething = true;
 	} else {
-		warning("Frame List ID = 0 for actor index %d", actor->_index);
+		// It's normal for some actors to have no frames
+		//warning("Frame List ID = 0 for actor index %d", actor->_index);
 
 		//if (_vm->getGameType() == GType_ITE)
 		return true;
@@ -1023,94 +1024,19 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 	if ((actor->_facingDirection < kDirUp) || (actor->_facingDirection > kDirUpLeft))
 		error("Actor::getActorFrameRange Wrong direction 0x%X actorId 0x%X", actor->_facingDirection, actorId);
 
-	//if (_vm->getGameType() == GType_ITE) {
-		if (frameType >= actor->_framesCount) {
-			warning("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->_framesCount, actorId);
-			return &def;
-		}
+	if (frameType >= actor->_framesCount) {
+		// It is normal for some actors to have no frames for a given frameType
+		// These are mainly actors with no frames at all (e.g. narrators or immovable actors)
+		// Examples are AM and the boy when he is talking to Benny via the computer screen.
+		// Both of them are invisible and immovable
+		// There is no point to keep throwing warnings about this, the original checks for
+		// a valid framecount too
+		//warning("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->_framesCount, actorId);
+		return &def;
+	}
 
-
-		fourDirection = actorDirectectionsLUT[actor->_facingDirection];
-		return &actor->_frames[frameType].directions[fourDirection];
-/*
-	} else {
-		if (0 == actor->_framesCount) {
-			return &def;
-		}
-		
-		//TEST
-		if (actor->_id == 0x2000) {
-			if (actor->_framesCount <= _currentFrameIndex) {				
-				_currentFrameIndex = 0;
-			}
-			fr = actor->_frames[_currentFrameIndex].directions;			
-			return fr;
-		}
-		//TEST
-		if (frameType >= actor->_framesCount) {
-			frameType = actor->_framesCount - 1;
-		}
-		if (frameType < 0) {
-			frameType = 0;
-		}
-
-		if (frameType == kFrameIHNMWalk  ) {
-			switch (actor->_facingDirection) {
-			case kDirUpRight:
-				if (frameType > 0)
-					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_RIGHT];
-				else
-					fr = &def;
-				if (!fr->frameCount) 
-					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_RIGHT];
-				break;
-			case kDirDownRight:
-				if (frameType > 0)
-					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_FORWARD];
-				else
-					fr = &def;
-				if (!fr->frameCount) 
-					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_RIGHT];
-				break;
-			case kDirUpLeft:
-				if (frameType > 0)
-					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_LEFT];
-				else
-					fr = &def;
-				if (!fr->frameCount) 
-					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_LEFT];
-				break;
-			case kDirDownLeft:
-				if (frameType > 0)
-					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_BACK];
-				else
-					fr = &def;
-				if (!fr->frameCount) 
-					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_LEFT];
-				break;
-			case kDirRight:
-				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_RIGHT];
-				break;
-			case kDirLeft:
-				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_LEFT];
-				break;
-			case kDirUp:
-				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_BACK];
-				break;
-			case kDirDown:
-				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_FORWARD];
-				break;			
-			}
-			return fr;
-		}
-		else {
-			if (frameType >= actor->_framesCount) {
-				error("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->_framesCount, actorId);
-			}
-			fourDirection = actorDirectectionsLUT[actor->_facingDirection];
-			return &actor->_frames[frameType].directions[fourDirection];
-		}
-	}*/
+	fourDirection = actorDirectectionsLUT[actor->_facingDirection];
+	return &actor->_frames[frameType].directions[fourDirection];
 }
 
 void Actor::handleSpeech(int msec) {
