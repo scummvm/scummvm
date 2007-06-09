@@ -843,10 +843,7 @@ void AGOSEngine::vc19_loop() {
 }
 
 void AGOSEngine::vc20_setRepeat() {
-	/* FIXME: This opcode is somewhat strange: it first reads a BE word from
-	 * the script (advancing the script pointer in doing so); then it writes
-	 * back the same word, this time as LE, into the script.
-	 */
+	// Sets counter used by the endRepeat opcode below.
 	uint16 a = vcReadNextWord();
 	WRITE_LE_UINT16(const_cast<byte *>(_vcPtr), a);
 	_vcPtr += 2;
