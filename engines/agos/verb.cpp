@@ -296,6 +296,10 @@ void AGOSEngine::showActionString(const byte *string) {
 
 	window->textColumn = x / 8;
 	window->textColumnOffset = x & 7;
+	if (_language == Common::HB_ISR && window->textColumnOffset != 0) {
+		window->textColumnOffset = 8 - window->textColumnOffset;
+		window->textColumn++;
+	}
 
 	for (; *string; string++)
 		windowPutChar(window, *string);
