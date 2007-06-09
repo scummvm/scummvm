@@ -138,7 +138,8 @@ void SymbianActions::initInstanceGame() {
 	bool is_cine = (gameid == "cine");
 	bool is_touche = (gameid == "touche");
 	bool is_agi = (gameid == "agi");
-	
+	bool is_parallaction = (gameid == "parallaction");
+
 	Actions::initInstanceGame();
 
 	// Initialize keys for different actions
@@ -156,6 +157,8 @@ void SymbianActions::initInstanceGame() {
 			_key_action[ACTION_SAVE].setAscii(SDLK_F10); // F10
 		} else if (is_agi) {		
 			_key_action[ACTION_SAVE].setAscii(SDLK_ESCAPE);
+		} else if (is_parallaction) {
+			_key_action[ACTION_SAVE].setAscii(SDLK_s);
 		} else {		
 			_key_action[ACTION_SAVE].setAscii(SDLK_F5); // F5 key
 		}
@@ -173,7 +176,7 @@ void SymbianActions::initInstanceGame() {
 	// Zone
 	_action_enabled[ACTION_ZONE] = true;
 
-	// FT Cheat
+	// Multi function key
 	_action_enabled[ACTION_MULTI] = true;
 	if (is_agi)
 		_key_action[ACTION_MULTI].setAscii(SDLK_PAUSE); // agi: show predictive dialog
