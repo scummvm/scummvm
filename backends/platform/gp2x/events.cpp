@@ -246,7 +246,7 @@ void OSystem_GP2X::moveStick() {
 	//int GP2X_BUTTON_STATE_B               =	FALSE;
 	//int GP2X_BUTTON_STATE_Y               =	FALSE;
 	//int GP2X_BUTTON_STATE_X               =	FALSE;
-	int GP2X_BUTTON_STATE_L               =	FALSE;
+	int GP2X_BUTTON_STATE_L					=	FALSE;
 	//int GP2X_BUTTON_STATE_R               =	FALSE;
 	//int GP2X_BUTTON_STATE_START           =	FALSE;
 	//int GP2X_BUTTON_STATE_SELECT          =	FALSE;
@@ -306,6 +306,7 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 	GP2X_BUTTON_VOLUP &	GP2X_BUTTON_VOLDOWN		0 (For Monkey 2 CP)
 	GP2X_BUTTON_L &	GP2X_BUTTON_SELECT 			Common::EVENT_QUIT (Calls Sync() to make sure SD is flushed)
 	GP2X_BUTTON_L &	GP2X_BUTTON_Y				Toggles setZoomOnMouse() for larger then 320*240 games to scale to the point + raduis.
+	GP2X_BUTTON_L &	GP2X_BUTTON_A				Common::EVENT_PREDICTIVE_DIALOG for predictive text entry box (AGI games)
 	*/
 
 	while(SDL_PollEvent(&ev)) {
@@ -341,38 +342,6 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 				break;
 			}
 
-			// Ctrl-m toggles mouse capture
-			//if (b == Common::KBD_CTRL && ev.key.keysym.sym == 'm') {
-			//	toggleMouseGrab();
-			//	break;
-			//}
-
-//#ifdef MACOSX
-//			// On Macintosh', Cmd-Q quits
-//			if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym == 'q') {
-//				event.type = Common::EVENT_QUIT;
-//				return true;
-//			}
-//#elif defined(UNIX)
-//			// On other unices, Control-Q quits
-//			if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'q') {
-//				event.type = Common::EVENT_QUIT;
-//				return true;
-//			}
-//#else
-//			// Ctrl-z and Alt-X quit
-//			if ((b == Common::KBD_CTRL && ev.key.keysym.sym == 'z') || (b == Common::KBD_ALT && ev.key.keysym.sym == 'x')) {
-//				event.type = Common::EVENT_QUIT;
-//				return true;
-//			}
-//#endif
-//
-//			// Ctrl-Alt-<key> will change the GFX mode
-//			if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-//
-//				handleScalerHotkeys(ev.key);
-//				break;
-//			}
 			const bool event_complete = remapKey(ev,event);
 
 			if (event_complete)
@@ -484,8 +453,12 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 						}
 						break;
 					case GP2X_BUTTON_A:
-						event.kbd.keycode = SDLK_PERIOD;
-						event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+						if (GP2X_BUTTON_STATE_L == TRUE) {
+							event.type = Common::EVENT_PREDICTIVE_DIALOG;
+						} else {
+							event.kbd.keycode = SDLK_PERIOD;
+							event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+						}
 						break;
 					case GP2X_BUTTON_Y:
 						if (GP2X_BUTTON_STATE_L == TRUE) {
@@ -568,8 +541,8 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 						event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
 						break;
 					case GP2X_BUTTON_A:
-						event.kbd.keycode = SDLK_PERIOD;
-						event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+//						event.kbd.keycode = SDLK_PERIOD;
+//						event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
 						break;
 					case GP2X_BUTTON_Y:
 //						event.kbd.keycode = SDLK_SPACE;
