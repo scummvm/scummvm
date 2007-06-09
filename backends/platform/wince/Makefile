@@ -20,7 +20,7 @@ DISABLE_LURE = 1
 #DISABLE_SWORD1 = 1
 #DISABLE_SWORD2 = 1
 #DISABLE_TOUCHE = 1
-DISABLE_PARALLACTION = 1
+#DISABLE_PARALLACTION = 1
 DISABLE_CRUISE = 1
 
 #DISABLE_HQ_SCALERS = 1
@@ -71,7 +71,6 @@ include $(srcdir)/Makefile.common
 all: dist
 
 dist: $(TARGET)
-#	bzip2 -fvk $(TARGET)
 	$(STRIP) $(TARGET)
 
 PocketSCUMM.o:
