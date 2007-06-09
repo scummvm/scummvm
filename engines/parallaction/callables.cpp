@@ -260,7 +260,7 @@ void _c_endComment(void *param) {
 	for (di = 0; di < PALETTE_COLORS; di++) {
 		for (si = 0; si <= 93; si +=3) {
 
-			char al;
+			int8 al;
 
 			if (_enginePal[si] != pal[si]) {
 				al = _enginePal[si];
