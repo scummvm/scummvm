@@ -303,6 +303,7 @@ public:
 	//constant
 	SpriteList _spriteList;		// sprite list data
 
+	bool _shareFrames;
 	ActorFrameSequence *_frames;	// Actor's frames
 	int _framesCount;			// Actor's frames count
 	int _frameListResourceId;	// Actor's frame list resource id
@@ -474,13 +475,18 @@ public:
 		memset(this, 0, sizeof(*this));
 	}
 	~ActorData() {
-		free(_frames);
+		if (!_shareFrames)
+			free(_frames);
 		free(_tileDirections);
 		free(_walkStepsPoints);
 		freeSpriteList();
 	}
 };
 
+struct ProtagStateData {
+	ActorFrameSequence *_frames;	// Actor's frames
+	int	_framesCount;			// Actor's frames count
+};
 
 
 struct SpeechData {
@@ -592,6 +598,8 @@ public:
 	void setProtagState(int state);
 	int getProtagState() { return _protagState; }
 
+	void freeProtagStates();
+
 	void freeActorList();
 	void loadActorList(int protagonistIdx, int actorCount, int actorsResourceID,
 				  int protagStatesCount, int protagStatesResourceID);
@@ -606,7 +614,7 @@ public:
 protected:
 	friend class Script;
 	bool loadActorResources(ActorData *actor);
-
+	void loadFrameList(int frameListResourceId, ActorFrameSequence *&framesPointer, int &framesCount);
 private:
 	void stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, bool stopped);
 	void loadActorSpriteList(ActorData *actor);
@@ -682,7 +690,7 @@ protected:
 	bool _dragonHunt;
 
 private:
-	ActorFrameSequence *_protagStates;
+	ProtagStateData *_protagStates;
 	int _protagStatesCount;
 
 //path stuff

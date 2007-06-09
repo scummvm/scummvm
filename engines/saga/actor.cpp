@@ -243,7 +243,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_debugPointsAlloced = _debugPointsCount = 0;
 #endif
 
-	_protagStates = 0;
+	_protagStates = NULL;
 	_protagStatesCount = 0;
 
 	_pathNodeList = _newPathNodeList = NULL;
@@ -356,52 +356,65 @@ Actor::~Actor() {
 	free(_pathCell);
 	_actorsStrings.freeMem();
 	//release resources
+	freeProtagStates();
 	freeActorList();
 	freeObjList();
 }
 
-bool Actor::loadActorResources(ActorData *actor) {
+void Actor::freeProtagStates() {
+	int i;
+	for (i = 0; i < _protagStatesCount; i++) {
+		free(_protagStates[i]._frames);
+	}
+	free(_protagStates);
+	_protagStates = NULL;
+	_protagStatesCount = 0;
+}
+
+void Actor::loadFrameList(int frameListResourceId, ActorFrameSequence *&framesPointer, int &framesCount) {
 	byte *resourcePointer;
 	size_t resourceLength;
-	int framesCount;
-	ActorFrameSequence *framesPointer;
+
+	debug(9, "Loading frame resource id %d", frameListResourceId);
+	_vm->_resource->loadResource(_actorContext, frameListResourceId, resourcePointer, resourceLength);
+
+	framesCount = resourceLength / 16;
+	debug(9, "Frame resource contains %d frames (res length is %d)", framesCount, (int)resourceLength);
+
+	framesPointer = (ActorFrameSequence *)malloc(sizeof(ActorFrameSequence) * framesCount);
+	if (framesPointer == NULL && framesCount != 0) {
+		memoryError("Actor::loadFrameList");
+	}
+
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _actorContext->isBigEndian);
+
+	for (int i = 0; i < framesCount; i++) {
+		debug(9, "frameType %d", i);
+		for (int orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
+			// Load all four orientations
+			framesPointer[i].directions[orient].frameIndex = readS.readUint16();
+			if (_vm->getGameType() == GType_ITE) {
+				framesPointer[i].directions[orient].frameCount = readS.readSint16();
+			} else {
+				framesPointer[i].directions[orient].frameCount = readS.readByte();
+				readS.readByte();
+			}
+			if (framesPointer[i].directions[orient].frameCount < 0)
+				warning("frameCount < 0 (%d)", framesPointer[i].directions[orient].frameCount);
+			debug(9, "frameIndex %d frameCount %d", framesPointer[i].directions[orient].frameIndex, framesPointer[i].directions[orient].frameCount);
+		}
+	}
+
+	free(resourcePointer);
+}
+
+bool Actor::loadActorResources(ActorData *actor) {
 	bool gotSomething = false;
 
 	if (actor->_frameListResourceId) {
-		debug(9, "Loading frame resource id %d", actor->_frameListResourceId);
-		_vm->_resource->loadResource(_actorContext, actor->_frameListResourceId, resourcePointer, resourceLength);
+		loadFrameList(actor->_frameListResourceId, actor->_frames, actor->_framesCount);
 
-		framesCount = resourceLength / 16;
-		debug(9, "Frame resource contains %d frames (res length is %d)", framesCount, (int)resourceLength);
-
-		framesPointer = (ActorFrameSequence *)malloc(sizeof(ActorFrameSequence) * framesCount);
-		if (framesPointer == NULL && framesCount != 0) {
-			memoryError("Actor::loadActorResources");
-		}
-
-		MemoryReadStreamEndian readS(resourcePointer, resourceLength, _actorContext->isBigEndian);
-
-		for (int i = 0; i < framesCount; i++) {
-			debug(9, "frameType %d", i);
-			for (int orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
-				// Load all four orientations
-				framesPointer[i].directions[orient].frameIndex = readS.readUint16();
-				if (_vm->getGameType() == GType_ITE) {
-					framesPointer[i].directions[orient].frameCount = readS.readSint16();
-				} else {
-					framesPointer[i].directions[orient].frameCount = readS.readByte();
-					readS.readByte();
-				}
-				if (framesPointer[i].directions[orient].frameCount < 0)
-					warning("frameCount < 0 (%d)", framesPointer[i].directions[orient].frameCount);
-				debug(9, "frameIndex %d frameCount %d", framesPointer[i].directions[orient].frameIndex, framesPointer[i].directions[orient].frameCount);
-			}
-		}
-
-		free(resourcePointer);
-
-		actor->_frames = framesPointer;
-		actor->_framesCount = framesCount;
+		actor->_shareFrames = false;
 
 		gotSomething = true;
 	} else {
@@ -470,6 +483,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 	int movementSpeed;
 	int walkStepIndex;
 	int walkStepCount;
+	int stateResourceId;
 
 	freeActorList();
 	
@@ -567,28 +581,34 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 	_protagState = 0;
 
 	if (protagStatesResourceID) {
-		free(_protagStates);
+		if (!_protagonist->_shareFrames)
+			free(_protagonist->_frames);
+		freeProtagStates();
 
-		_protagStates = (ActorFrameSequence *)malloc(sizeof(ActorFrameSequence) * protagStatesCount);
+		_protagStates = (ProtagStateData *)malloc(sizeof(ProtagStateData) * protagStatesCount);
 
-		byte *resourcePointer;
-		size_t resourceLength;
+		byte *idsResourcePointer;
+		size_t idsResourceLength;
 
 		_vm->_resource->loadResource(_actorContext, protagStatesResourceID,
-									 resourcePointer, resourceLength);
+									 idsResourcePointer, idsResourceLength);
 
+		if (idsResourceLength < (size_t)protagStatesCount * 4) {
+			error("Wrong protagonist states resource");
+		}
 
-		MemoryReadStream statesS(resourcePointer, resourceLength);
+		MemoryReadStream statesIds(idsResourcePointer, idsResourceLength);
 		
 		for (i = 0; i < protagStatesCount; i++) {
-			for (j = 0; j < ACTOR_DIRECTIONS_COUNT; j++) {
-				_protagStates[i].directions[j].frameIndex = statesS.readUint16LE();
-				_protagStates[i].directions[j].frameCount = statesS.readUint16LE();
-			}
+			stateResourceId = statesIds.readUint32LE();
+						
+			loadFrameList(stateResourceId, _protagStates[i]._frames, _protagStates[i]._framesCount);
 		}
-		free(resourcePointer);
+		free(idsResourcePointer);
 
-		_protagonist->_frames = &_protagStates[_protagState];
+		_protagonist->_frames = _protagStates[_protagState]._frames;
+		_protagonist->_framesCount = _protagStates[_protagState]._framesCount;
+		_protagonist->_shareFrames = true;
 	}
 
 	_protagStatesCount = protagStatesCount;
@@ -823,8 +843,14 @@ bool Actor::validFollowerLocation(const Location &location) {
 void Actor::setProtagState(int state) {
 	_protagState = state;
 
-	if (_vm->getGameType() == GType_IHNM)
-		_protagonist->_frames = &_protagStates[state];
+	if (_vm->getGameType() == GType_IHNM) {
+		if (!_protagonist->_shareFrames)
+			free(_protagonist->_frames);
+
+		_protagonist->_frames = _protagStates[state]._frames;
+		_protagonist->_framesCount = _protagStates[state]._framesCount;
+		_protagonist->_shareFrames = true;
+	}
 }
 
 void Actor::updateActorsScene(int actorsEntrance) {
@@ -1024,19 +1050,117 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 	if ((actor->_facingDirection < kDirUp) || (actor->_facingDirection > kDirUpLeft))
 		error("Actor::getActorFrameRange Wrong direction 0x%X actorId 0x%X", actor->_facingDirection, actorId);
 
-	if (frameType >= actor->_framesCount) {
+	if (_vm->getGameType() == GType_ITE) {
+		if (frameType >= actor->_framesCount) {
+			warning("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->_framesCount, actorId);
+			return &def;
+		}
+
+
+		fourDirection = actorDirectectionsLUT[actor->_facingDirection];
+		return &actor->_frames[frameType].directions[fourDirection];
+	}
+
+	if (_vm->getGameType() == GType_IHNM) {
 		// It is normal for some actors to have no frames for a given frameType
 		// These are mainly actors with no frames at all (e.g. narrators or immovable actors)
 		// Examples are AM and the boy when he is talking to Benny via the computer screen.
 		// Both of them are invisible and immovable
 		// There is no point to keep throwing warnings about this, the original checks for
 		// a valid framecount too
-		//warning("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->_framesCount, actorId);
-		return &def;
-	}
+		if (0 == actor->_framesCount) {
+			return &def;
+		}
+		if (frameType >= actor->_framesCount) {
+			frameType = actor->_framesCount - 1;
+		}
+		if (frameType < 0) {
+			frameType = 0;
+		}
 
-	fourDirection = actorDirectectionsLUT[actor->_facingDirection];
-	return &actor->_frames[frameType].directions[fourDirection];
+		fourDirection = actorDirectectionsLUT[actor->_facingDirection];
+		return &actor->_frames[frameType].directions[fourDirection];
+	}
+	return NULL;
+	/*
+	} else {
+		if (0 == actor->_framesCount) {
+			return &def;
+		}
+		
+		//TEST
+		if (actor->_id == 0x2000) {
+			if (actor->_framesCount <= _currentFrameIndex) {				
+				_currentFrameIndex = 0;
+			}
+			fr = actor->_frames[_currentFrameIndex].directions;			
+			return fr;
+		}
+		//TEST
+		if (frameType >= actor->_framesCount) {
+			frameType = actor->_framesCount - 1;
+		}
+		if (frameType < 0) {
+			frameType = 0;
+		}
+
+		if (frameType == kFrameIHNMWalk  ) {
+			switch (actor->_facingDirection) {
+			case kDirUpRight:
+				if (frameType > 0)
+					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_RIGHT];
+				else
+					fr = &def;
+				if (!fr->frameCount) 
+					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_RIGHT];
+				break;
+			case kDirDownRight:
+				if (frameType > 0)
+					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_FORWARD];
+				else
+					fr = &def;
+				if (!fr->frameCount) 
+					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_RIGHT];
+				break;
+			case kDirUpLeft:
+				if (frameType > 0)
+					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_LEFT];
+				else
+					fr = &def;
+				if (!fr->frameCount) 
+					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_LEFT];
+				break;
+			case kDirDownLeft:
+				if (frameType > 0)
+					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_BACK];
+				else
+					fr = &def;
+				if (!fr->frameCount) 
+					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_LEFT];
+				break;
+			case kDirRight:
+				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_RIGHT];
+				break;
+			case kDirLeft:
+				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_LEFT];
+				break;
+			case kDirUp:
+				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_BACK];
+				break;
+			case kDirDown:
+				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_FORWARD];
+				break;			
+			}
+			return fr;
+		}
+		else {
+			if (frameType >= actor->_framesCount) {
+				error("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->_framesCount, actorId);
+			}
+			fourDirection = actorDirectectionsLUT[actor->_facingDirection];
+			return &actor->_frames[frameType].directions[fourDirection];
+		}
+	}*/
 }
 
 void Actor::handleSpeech(int msec) {
@@ -1707,6 +1831,10 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 	} else if (validObjId(commonObjectData->_id)) {
 		spriteList = &_vm->_sprite->_mainSprites;
 		frameNumber = commonObjectData->_spriteListResourceId;
+	}
+
+	if (spriteList->spriteCount == 0) {
+		return false;
 	}
 
 	if ((frameNumber < 0) || (spriteList->spriteCount <= frameNumber)) {
