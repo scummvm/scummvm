@@ -396,8 +396,7 @@ bool AgiEngine::predictiveDialog(void) {
 					_currentCode.clear();
 					_currentWord.clear();
 					memset(repeatcount, 0, MAXWORDLEN);
-					break;
-				} if (active < 9 || active == 11 || active == 15) { // number or backspace
+				} else if (active < 9 || active == 11 || active == 15) { // number or backspace
 					if (active == 11) { // backspace
 						if (_currentCode.size()) {
 							repeatcount[_currentCode.size() - 1] = 0;
