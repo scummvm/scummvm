@@ -90,7 +90,8 @@ struct VgaSprite {
 	int16 x, y;
 	uint16 flags;
 	uint16 priority;
-	uint16 windowNum, zoneNum;
+	uint16 windowNum;
+	uint16 zoneNum;
 	VgaSprite() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -117,8 +118,9 @@ struct AnimTable {
 	int16 y;
 	uint16 width;
 	uint16 height;
-	uint16 window;
+	uint16 windowNum;
 	uint16 id;
+	uint16 zoneNum;
 	AnimTable() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -414,6 +416,7 @@ protected:
 	bool _showPreposition;
 	bool _showMessageFlag;
 
+	bool _newDirtyClip;
 	uint _copyScnFlag, _vgaSpriteChanged;
 
 	byte *_block, *_blockEnd;
@@ -478,7 +481,7 @@ protected:
 
 	HitArea _hitAreas[250];
 
-	AnimTable _screenAnim1[60];
+	AnimTable _screenAnim1[90];
 	VgaPointersEntry _vgaBufferPointers[450];
 	VgaSprite _vgaSprites[200];
 	VgaSleepStruct _waitEndTable[60];
@@ -1151,6 +1154,7 @@ protected:
 	virtual void animateSprites();
 
 	void dirtyClips();
+	void dirtyClipCheck(int16 x, int16 y, int16 w, int16 h);
 	void dirtyBackGround();
 	void restoreBackGround();
 	void saveBackGround(VgaSprite *vsp);

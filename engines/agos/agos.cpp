@@ -336,6 +336,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_showPreposition = 0;
 	_showMessageFlag = 0;
 
+	_newDirtyClip = false;
 	_copyScnFlag = 0;
 	_vgaSpriteChanged = 0;
 

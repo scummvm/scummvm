@@ -215,8 +215,8 @@ bool AGOSEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 void AGOSEngine::dirtyBackGround() {
 	AnimTable *animTable = _screenAnim1;
 	while (animTable->srcPtr) {
-		if (animTable->id == _vgaCurSpriteId) {
-			animTable->window |= 0x8000;
+		if (animTable->id == _vgaCurSpriteId && ((getGameType() == GType_SIMON1) || animTable->zoneNum == _vgaCurZoneNum)) {
+			animTable->windowNum |= 0x8000;
 			break;
 		}
 		animTable++;
