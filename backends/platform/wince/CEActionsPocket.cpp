@@ -127,11 +127,12 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_cine = (gameid == "cine");
 	bool is_touche = (gameid == "touche");
 	bool is_agi = (gameid == "agi");
+	bool is_parallaction = (gameid == "parallaction");
 
 	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_samnmax || is_cine || is_touche)
+	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_samnmax || is_cine || is_touche || is_parallaction)
 		_right_click_needed = true;
 
 	// See if a "hide toolbar" mapping could be needed
@@ -157,6 +158,9 @@ void CEActionsPocket::initInstanceGame() {
 	} else if (is_agi) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
 		_key_action[POCKET_ACTION_SAVE].setAscii(SDLK_ESCAPE);
+	} else if (is_parallaction) {
+		_action_enabled[POCKET_ACTION_SAVE] = true;
+		_key_action[POCKET_ACTION_SAVE].setAscii(SDLK_s);
 	} else {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
 		_key_action[POCKET_ACTION_SAVE].setAscii(319); // F5 key
@@ -164,7 +168,7 @@ void CEActionsPocket::initInstanceGame() {
 	// Quit
 	_action_enabled[POCKET_ACTION_QUIT] = true;
 	// Skip
-	if (!is_cine)
+	if (!is_cine && !is_parallaction)
 		_action_enabled[POCKET_ACTION_SKIP] = true;
 	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_saga || is_kyra || is_touche)
 		_key_action[POCKET_ACTION_SKIP].setAscii(VK_ESCAPE);
@@ -233,6 +237,15 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 		case POCKET_ACTION_SAVE:
 		case POCKET_ACTION_SKIP:
 		case POCKET_ACTION_MULTI:
+			if (action == POCKET_ACTION_SAVE && ConfMan.get("gameid") == "parallaction") {
+				// FIXME: This is a temporary solution. The engine should handle its own menus.
+				// Note that the user can accomplish this via the virtual keyboard as well, this is just for convenience
+				GUI::MessageDialog alert("Do you want to load or save the game?", "Load", "Save");
+				if (alert.runModal() == GUI::kMessageOK)
+					_key_action[action].setAscii(SDLK_l);
+				else
+					_key_action[action].setAscii(SDLK_s);
+			}
 			EventsBuffer::simulateKey(&_key_action[action], true);
 			return true;
 		case POCKET_ACTION_KEYBOARD:
