@@ -64,6 +64,11 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  WinCE Port:
    - Switched to using a GCC toolchain for building.
    - Major update to the SDL lib. Better, faster, more compatible :-)
+     The included fixes are too numerous to mention here.
+     Most of the updates in this version have concentrated on infrastructure.
+     This leads to faster execution, greatly increased compatibility and
+     OS friendliness - especially for keyboard/mouse input and display
+     handling (f.ex. no more popups during gameplay) -.
 
  Windows Port:
    - The default location of the config file changed, to support multi-user
