@@ -1677,6 +1677,7 @@ public:
 	void opp_sync();
 	void opp_saveUserGame();
 	void opp_loadUserGame();
+	void opp_playTune();
 	void opp_saveOopsPosition();
 	void opp_resetGameTime();
 	void opp_resetPVCount();
