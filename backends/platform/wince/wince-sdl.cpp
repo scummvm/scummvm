@@ -314,9 +314,6 @@ void OSystem_WINCE3::initScreenInfos() {
 	_isOzone = 0;
 	SDL_Rect **r;
 	r = SDL_ListModes(NULL, 0);
-	printf("listmodes: %dx%d\n", r[0]->w, r[0]->h);
-	//_platformScreenWidth = GetSystemMetrics(SM_CXSCREEN);
-	//_platformScreenHeight = GetSystemMetrics(SM_CYSCREEN);
 	_platformScreenWidth = r[0]->w;
 	_platformScreenHeight = r[0]->h;
 }
