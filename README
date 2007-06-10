@@ -368,13 +368,15 @@ re-encoded Broken Sword cutscenes for download on our website:
 
   http://www.scummvm.org/downloads.php
 
-These cutscenes are provided in MPEG2 format with OGG Vorbis audio.
-Viewing these cutscenes thus requires a version of ScummVM compiled
-with both libmpeg2 (preferably 0.4.0 or greater) and libVorbis support.
+These cutscenes are provided in DXA format, with FLAC audio. With quality
+equal to the original games, due to using lossless compression.
+Viewing these cutscenes requires a version of ScummVM compiled with both
+FLAC and zLib support.
 
-TODO
-TODO: What about DXA??? Mention it here, too???
-TODO
+The audio for these cutscenes is provided separately, as OGG Vorbis audio
+too, For systems that are too slow, to handle the decoding of FLAC audio.
+Viewing these cutscenes (with OGG Vorbis audio) requires a version of ScummVM
+compiled with both libVorbis and zLib support. 
 
 The cutscenes should be placed in the main game data directory. Note that
 currently this requires either copying the game to hard disk or burning
@@ -492,11 +494,6 @@ The game uses Smacker cutscenes extensively, which we can't support directly,
 due to reasons described above. The cutscenes have to be re-encoded to DXA,
 which is the format used by the cutscenes in the Amiga and Macintosh versions.
 See the tools README for a brief guide on converting the cutscenes.
-
-TODO
-TODO: Maybe we should add a section dedicated to Smacker and DXA, and refer
-TODO  to it from here, and also from section 3.7 (Broken Sword) ?
-TODO
 
 To use the speech files with ScummVM, they need to be renamed as follows:
 Rename voices.wav on CD1 to voices1.wav
