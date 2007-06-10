@@ -2027,7 +2027,7 @@ void Interface::converseClear(void) {
 	_conversePos = -1;
 }
 
-bool Interface::converseAddText(const char *text, int replyId, byte replyFlags, int replyBit) {
+bool Interface::converseAddText(const char *text, int strId, int replyId, byte replyFlags, int replyBit) {
 	int count = 0;	// count how many pieces of text per string
 	int i;
 	int len;
@@ -2058,6 +2058,7 @@ bool Interface::converseAddText(const char *text, int replyId, byte replyFlags, 
 		_converseText[_converseTextCount].text = (char *)malloc(i + 1);
 		strncpy(_converseText[_converseTextCount].text, _converseWorkString, i);
 
+		_converseText[_converseTextCount].strId = strId;
 		_converseText[_converseTextCount].text[i] = 0;
 		_converseText[_converseTextCount].textNum = count;
 		_converseText[_converseTextCount].stringNum = _converseStrCount;
@@ -2187,7 +2188,7 @@ void Interface::converseSetPos(int key) {
 
 	ct = &_converseText[_conversePos];
 
-	_vm->_script->finishDialog(ct->replyId, ct->replyFlags, ct->replyBit);
+	_vm->_script->finishDialog(ct->strId, ct->replyId, ct->replyFlags, ct->replyBit);
 
 	if (_vm->_puzzle->isActive())
 		_vm->_puzzle->handleReply(ct->replyId);

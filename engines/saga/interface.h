@@ -157,6 +157,7 @@ struct InterfacePanel {
 
 struct Converse {
 	char *text;
+	int strId;
 	int stringNum;
 	int textNum;
 	int replyId;
@@ -346,7 +347,7 @@ private:
 public:
 	void converseInit(void);
 	void converseClear(void);
-	bool converseAddText(const char *text, int replyId, byte replyFlags, int replyBit);
+	bool converseAddText(const char *text, int strId, int replyId, byte replyFlags, int replyBit);
 	void converseDisplayText();
 	void converseSetTextLines(int row);
 	void converseChangePos(int chg);

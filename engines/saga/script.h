@@ -474,7 +474,7 @@ private:
 	void setThreadEntrypoint(ScriptThread *thread, int entrypointNumber);
 
 public:
-	void finishDialog(int replyID, int flags, int bitOffset);
+	void finishDialog(int strID, int replyID, int flags, int bitOffset);
 
 private:
 

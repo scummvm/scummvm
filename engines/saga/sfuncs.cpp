@@ -1830,11 +1830,24 @@ void Script::sfPlayVoice(SCRIPTFUNC_PARAMS) {
 	}
 }
 
-void Script::finishDialog(int replyID, int flags, int bitOffset) {
+void Script::finishDialog(int strID, int replyID, int flags, int bitOffset) {
 	byte *addr;
+	const char *str;
 
 	if (_conversingThread) {
 		_vm->_interface->setMode(kPanelNull);
+
+		if (_vm->getGameType() == GType_IHNM) {
+			str = _conversingThread->_strings->getString(strID);
+			if (strcmp(str, "[") != 0) {
+				int sampleResourceId = -1;
+				sampleResourceId = _conversingThread->_voiceLUT->voices[strID];
+				if (sampleResourceId < 0 || sampleResourceId > 4000)
+					sampleResourceId = -1;
+
+				_vm->_actor->actorSpeech(_vm->_actor->_protagonist->_id, &str, 1, sampleResourceId, 0);
+			}
+		}
 
 		_conversingThread->_flags &= ~kTFlagWaiting;
 
@@ -1911,17 +1924,30 @@ void Script::sfScriptFade(SCRIPTFUNC_PARAMS) {
 	int16 startingBrightness = thread->pop();
 	int16 endingBrightness = thread->pop();
 	// delay between pal changes is always 10 (not used)
-
-	Event event;
 	static PalEntry cur_pal[PAL_ENTRIES];
+	Event event;
+	short delta = (startingBrightness < endingBrightness) ? +1 : -1;
 
 	_vm->_gfx->getCurrentPal(cur_pal);
+
+	// TODO: This is still wrong, probably a new event type needs to be added (kEventPalFade)
+	warning("TODO: sfScriptFade");
+	return;
+
+	if (startingBrightness > 255) 
+		startingBrightness = 255;
+	if (startingBrightness < 0 ) 
+		startingBrightness = 0;
+	if (endingBrightness > 255) 
+		endingBrightness = 255;
+	if (endingBrightness < 0) 
+		endingBrightness = 0;
 
 	event.type = kEvTImmediate;
 	event.code = kPalEvent;
 	event.op = kEventPalToBlack;
 	event.time = 0;
-	event.duration = endingBrightness - startingBrightness;
+	event.duration = kNormalFadeDuration - ((endingBrightness - startingBrightness) * delta);
 	event.data = cur_pal;
 
 	_vm->_events->queue(&event);	
