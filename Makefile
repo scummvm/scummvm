@@ -56,7 +56,7 @@ install: all
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/pixmaps/"
 	$(INSTALL) -c -m 644 "$(srcdir)/icons/scummvm.xpm" "$(DESTDIR)$(PREFIX)/share/pixmaps/scummvm.xpm"
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
-	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING" "$(srcdir)/NEWS" "$(srcdir)/README" "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
+	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING" "$(srcdir)/COPYRIGHT" "$(srcdir)/NEWS" "$(srcdir)/README" "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
 	$(INSTALL) -d "$(DESTDIR)$(DATADIR)/scummvm/"
 	$(INSTALL) -c -m 644 "$(srcdir)/gui/themes/modern.ini" "$(srcdir)/gui/themes/modern.zip" "$(srcdir)/gui/themes/classic080.ini" "$(DESTDIR)$(DATADIR)/scummvm/"
 
@@ -136,6 +136,7 @@ osxsnap: bundle credits
 	mkdir ScummVM-snapshot
 	cp AUTHORS ./ScummVM-snapshot/Authors
 	cp COPYING ./ScummVM-snapshot/License
+	cp COPYRIGHT ./ScummVM-snapshot/Copyright\ Holders
 	cp NEWS ./ScummVM-snapshot/News
 	cp README ./ScummVM-snapshot/ScummVM\ ReadMe
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
@@ -158,6 +159,7 @@ win32dist: scummvm$(EXEEXT)
 	cp gui/themes/modern.zip $(WIN32PATH)
 	cp AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp COPYING $(WIN32PATH)/COPYING.txt
+	cp COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp NEWS $(WIN32PATH)/NEWS.txt
 	cp README $(WIN32PATH)/README.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
@@ -173,6 +175,7 @@ aos4dist: scummvm
 	cp gui/themes/modern.zip $(AOS4PATH)
 	cp AUTHORS $(AOS4PATH)/AUTHORS.txt
 	cp COPYING $(AOS4PATH)/COPYING.txt
+	cp COPYRIGHT $(AOS4PATH)/COPYRIGHT.txt
 	cp NEWS $(AOS4PATH)/NEWS.txt
 	cp README $(AOS4PATH)/README.txt
 	cp /sdk/local/documentation/SDL-1.2.9/README-SDL.txt $(AOS4PATH)
