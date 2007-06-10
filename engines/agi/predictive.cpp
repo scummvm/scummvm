@@ -28,6 +28,7 @@
 #include "agi/keyboard.h"
 
 #include "common/func.h"
+#include "common/config-manager.h"
 
 namespace Agi {
 
@@ -509,7 +510,9 @@ void AgiEngine::loadDict(void) {
 	char buf[MAXLINELEN];
 	int words = 0, lines = 0;
 
-	if (!in.open("pred.txt"))
+	ConfMan.registerDefault("predictive_dictionary", "pred.dic");
+
+	if (!in.open(ConfMan.get("predictive_dictionary")))
 		return;
 
 	_searchTreeRoot = new SearchTree();
