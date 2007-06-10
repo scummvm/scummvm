@@ -589,9 +589,6 @@ void Sound::playVoice(uint sound) {
 	if (!_voice)
 		return;
 
-	if (_mixer->getSoundID(_voiceHandle) == (int)sound)
-		return;
-
 	_mixer->stopHandle(_voiceHandle);
 	if (_vm->getGameType() == GType_PP) {
 		if (sound < 11)
