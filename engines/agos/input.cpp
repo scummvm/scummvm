@@ -542,6 +542,14 @@ bool AGOSEngine::processSpecialKeys() {
 		if (getGameType() == GType_FF)
 			setBitFlag(73, !getBitFlag(73));
 		break;
+	case 37: // F12
+		if (getGameType() == GType_PP && getGameId() != GID_DIMP) {
+			if (!getBitFlag(110)) {
+				setBitFlag(107, !getBitFlag(107));
+				_vgaPeriod = (getBitFlag(107) != 0) ? 15 : 30;
+			}
+		}
+		break;
 	case 'p':
 		pause();
 		break;

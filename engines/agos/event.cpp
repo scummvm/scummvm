@@ -424,28 +424,27 @@ void AGOSEngine::delay(uint amount) {
 
 	uint32 start = _system->getMillis();
 	uint32 cur = start;
-	uint this_delay, vga_period;
+	uint this_delay, vgaPeriod;
 
 	AudioCD.updateCD();
 
 	if (_debugger->isAttached())
 		_debugger->onFrame();
 
-	if (_fastMode)
-	 	vga_period = 10;
-	else if (getGameType() == GType_SIMON2)
-		vga_period = 45;
-	else
-		vga_period = 50;
+	vgaPeriod = (_fastMode) ? 10 : _vgaPeriod;
+	if (getGameType() == GType_PP && getGameId() != GID_DIMP) {
+		if (vgaPeriod == 15 && _variableArray[999] == 0)
+			vgaPeriod = 30;
+	}
 
 	_rnd.getRandomNumber(2);
 
 	do {
-		while (!_inCallBack && cur >= _lastVgaTick + vga_period && !_pause) {
-			_lastVgaTick += vga_period;
+		while (!_inCallBack && cur >= _lastVgaTick + vgaPeriod && !_pause) {
+			_lastVgaTick += vgaPeriod;
 
 			// don't get too many frames behind
-			if (cur >= _lastVgaTick + vga_period * 2)
+			if (cur >= _lastVgaTick + vgaPeriod * 2)
 				_lastVgaTick = cur;
 
 			_inCallBack = true;
@@ -549,32 +548,10 @@ void AGOSEngine::delay(uint amount) {
 }
 
 void AGOSEngine::timer_callback() {
-	// FIXME: _timer5 is never set
-	if (_timer5) {
-		_syncFlag2 = true;
-		_timer5--;
-	} else {
-		if (getGameId() == GID_DIMP) {
-			_thisTickCount = _system->getMillis();
-			if (_thisTickCount < _lastTickCount)
-				_lastTickCount = 0;
-
-			if ((_thisTickCount - _lastTickCount) <= 35)
-				return;
-
-			_lastTickCount = _thisTickCount;
-
-			timer_proc1();
-			dimp_idle();
-		} else {
-			timer_proc1();
-		}
-	}
+	timer_proc1();
 }
 
 void AGOSEngine_Feeble::timer_proc1() {
-	_timer4++;
-
 	if (_lockWord & 0x80E9 || _lockWord & 2)
 		return;
 
@@ -626,8 +603,6 @@ void AGOSEngine_Feeble::timer_proc1() {
 }
 
 void AGOSEngine::timer_proc1() {
-	_timer4++;
-
 	if (_lockWord & 0x80E9 || _lockWord & 2)
 		return;
 

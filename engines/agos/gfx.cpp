@@ -1388,9 +1388,6 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 				dst++;
 			}
 		}
-
-		_syncFlag2 = 1;
-		_timer5 = 0;
 	}
 
 	_lockWord &= ~0x20;

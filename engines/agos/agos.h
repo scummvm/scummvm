@@ -201,6 +201,7 @@ protected:
 	uint _numBitArray1, _numBitArray2, _numBitArray3;
 	uint _numItemStore, _numVars;
 	uint _vgaBaseDelay;
+	uint _vgaPeriod;
 
 	uint _musicIndexBase;
 	uint _soundIndexBase;
@@ -428,7 +429,7 @@ protected:
 	byte *_curVgaFile2;
 	byte *_curSfxFile;
 
-	uint16 _syncCount, _timer5, _timer4;
+	uint16 _syncCount;
 
 	int16 _iconToggleCount, _voiceCount;
 	uint32 _lastTickCount, _thisTickCount;
