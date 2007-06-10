@@ -29,7 +29,8 @@ Table of Contents:
  * 3.12 Simon the Sorcerer notes
  * 3.13 The Feeble Files notes
  * 3.14 The Legend of Kyrandia notes
- * 3.15 Known Problems
+ * 3.15 Sierra AGI games predictive dialog notes
+ * 3.16 Known Problems
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -536,7 +537,43 @@ To run The Legend of Kyrandia under ScummVM you need the 'kyra.dat' file,
 which can be found on the 'Downloads' page of the ScummVM website.
 
 
-3.15) Known Problems:
+3.15) Sierra AGI games predictive dialog notes:
+----- -----------------------------------------
+The Predictive Input Dialog is a ScummVM aid for running AGI engines games (which 
+notoriously have command line input) on devices with limited keyboard input. The 
+dialog is fully usable with the mouse, but a few provisions have been made to make
+its use more comfortable by naturally mapping the functionality to the keypad. 
+
+In order to enable predictive input in AGI games, you need to copy the pred.dic
+file in the ScummVM extras folder or the folder of the game you wish to play.
+
+The predictive input dialog works in three modes, switchable by the Pre/123/Abc 
+button: 
+The primary input method implemented by the predictive input dialog - predictive 
+mode - resembles the way "fast typing" is done in phones: The alphabet is divided 
+into 9 sets which naturally map to the 9 number keys of the numeric keypad (0 is 
+space). The dialog utilizes a dictionary of words which has been created by parsing
+through all known agi games and creating the maximum set of common words. At 
+runtime, the dictionary is searched each time the user presses a numeric key for 
+words matching the numeric prefix up to that point. The user can press the next 
+button when there are multiple matches for the same prefix. The matching operation 
+and the way of putting together the dictionary have been designed so as to not hint
+the user for words (e.g. pressing random keys and seeing what word the prediction
+converges to). Also, when a user OKs the dialog, or presses space and if there are
+multiple matches for the same prefix, the word finally chosen is brought to the
+front of the list, essentially implementing a Most Recently Used approach. 
+
+The second input method is numeric: Each key the user presses is shown as a number. 
+
+The third input method is the Multi-tap Alpha input mode: The user presses a numeric
+key and uses the next button to cycle through the corresponding key's assigned 
+letters. 
+
+The user must have a dictionary and can either click on the command line or hit a
+'Predictive dialog' hotkey to make the Predictive Input Dialog appear.
+
+
+3.16) Known Problems:
 ----- ---------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
@@ -603,7 +640,6 @@ the section on reporting bugs.
 
      The Legend of Kyrandia:
           - Amiga versions aren't supported
-          - FM-Towns version isn't supported
 
      Humongous Entertainment games:
           - No support for printing images
