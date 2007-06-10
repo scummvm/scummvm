@@ -666,6 +666,15 @@ void OptionsDialog::reflowLayout() {
 
 GlobalOptionsDialog::GlobalOptionsDialog()
 	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "globaloptions") {
+
+#ifdef SMALL_SCREEN_DEVICE
+	_keysDialog = 0;
+#endif
+	_savePath = 0;
+	_themePath = 0;
+	_extraPath = 0;
+	_curTheme = 0;
+	_autosavePeriodPopUp = 0;
 	
 	// FIXME: Disable the setupWidgets() call here for now. See reflowLayout()
 	// for details.
@@ -779,10 +788,14 @@ void GlobalOptionsDialog::reflowLayout() {
 		_focusedWidget = 0;
 		_dragWidget = 0;
 		setupWidgets();
-		loadConfigToWidgets();
 	}
 
 	OptionsDialog::reflowLayout();
+
+	// FIXME/HACK to workaround bug #1677997, part #2
+	{
+		loadConfigToWidgets();
+	}
 }
 
 void GlobalOptionsDialog::loadConfigToWidgets() {

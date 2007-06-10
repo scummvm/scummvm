@@ -302,6 +302,11 @@ void EditGameDialog::reflowLayout() {
 
 	OptionsDialog::reflowLayout();
 
+	// FIXME/HACK to workaround bug #1677997, part #2
+	{
+		loadConfigToWidgets();
+	}
+
 	int labelWidth = g_gui.evaluator()->getVar("gameOptionsLabelWidth");
 
 	if (_langPopUp)
