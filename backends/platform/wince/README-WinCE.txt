@@ -1,12 +1,34 @@
 ScummVM Windows CE FAQ
-Last updated:    2006-06-20
-Release version: 0.9.0
+Last updated: $Date$
+Release version: 0.10.0
+------------------------------------------------------------------------
+
+New in this version
+-------------------
+
+0.10.0:
+Major improvements have taken place in this version, mostly for behind-
+the-scenes stuff. First, we have migrated to GCC for building the Windows
+CE port. This helped take care of some obscure compiler bugs which where
+in there for quite a long time. It has also lead to efficient code 
+generation due to GCC's advanced capabilities and consequently increased
+runtime speed. The second important change was the overhaul of the SDL
+library port. The benefits from this are twofold: The real-time code paths
+have been optimized, including contributed ARM assembly code for critical
+functions. Further, the screen display and mouse/keyboard input code has
+been partially rewritten to allow for increased compatibility across all
+devices.
+Due to the update of keyboard handling code, the keycodes have changed
+slightly. Running this version of ScummVM will overwrite your key bindings 
+with the new defaults. See the section on how to play on Smartphones below
+for the new default keybindings.
+
 ------------------------------------------------------------------------
 
 This document is intended to give common answers to specific ScummVM
 issues on Windows CE, in 3 sections
   * "General questions"       : browse this section to get started and see
-    general issues
+                                general issues
   * "Game specific questions" : lists some common game specific issues
   * "Support and links"       : how to get support if you're still puzzled
 
@@ -26,43 +48,40 @@ Pocket PC 2000, Pocket PC 2002, Pocket PC 2003, Pocket PC 2003 SE, Smartphone
 
 Support for old ARM architectures (Handheld PCs, Palm Size PCs) and other CPUs 
 (MIPS, SH3) is discontinued. Feel free to generate builds for these 
-architectures and contact me to include them on ScummVM website.
+architectures and contact us to include them on ScummVM website.
 
-Full support
-------------
+Games supported
+---------------
 
-* ARM based Windows Mobile handhelds with QVGA resolution (240x320) slower
-  than 200 MHz (PocketPC platform)
+The Windows CE port of ScummVM supports all available game engines.
 
-All AdLib first generation games should work properly on these devices.
-Sam'n'Max will be a bit too slow to be played with music.
-More recent games (The Dig, Curse of Monkey Island, Broken Sword series)
-and all VGA games will probably be too slow to be enjoyable.
+ScummVM distinguishes devices based on two characteristics: Type and resolution.
+Supported types of devices are Smartphones (usually no stylus) and Pocket PCs
+(stylus). The supported resolutions are 176x220 (Smartphone), 240x240 (QVGA 
+square), 240x320 (QVGA), 320x240 (QVGA landscape), 480x640 (VGA). Devices with
+resolutions larger than VGA should also be supported with automatic screen
+centering.
 
-* ARM based Windows Mobile handhelds with QVGA resolution (240x320) faster
-  than 200 MHz
+* Low resolution Smartphones (176x220)
 
-All games should work properly on these devices.
-VGA games will be resized and the font gets hard to read in this case (be sure
-to install the talkie version the game :p)
+Support is only provided for all 320x200 or 320x240 games. The font can get 
+hard to read (you should prefer talkie games, or wear glasses :-P)
+Games with 640x480 resolution such as COMI or BSWORD cannot be scaled down
+to this resolution and still be playable.
 
-* ARM based Windows Mobile handhelds with VGA resolution (640x480) 
+* QVGA square devices (240x240)
+
+Only 320x200 or 320x240 games are supported due to lack of downsampling scaler.
+
+* QVGA Pocket PCs or Smartphones (240x320 or 320x240)
+
+All games are playable in these devices. Landscape devices may not be able to
+rotate the screen around.
+
+* VGA (640x480) or higher Pocket PCs 
 
 All non VGA games should work properly on these devices. They can be resized
-with different scalers (not all desktop scalers are supported due to Embedded
-Visual C++ very personal interpretation of the C++ standard).
-VGA games will be displayed in true VGA mode, which can takes a lot of memory
-and slow down the game (especially during scrollings). It will get better in
-the next releases or with faster devices.
-
-* Windows Mobile Smartphones (176x220 or 240x320)
-
-Early support is provided for all 320x200 games.
-The font can get hard to read (you should prefer talkie games, or wear glasses)
-
-* Support for Windows Mobile 5 is experimental but should work. "Flipping" devices
-such as the HTC Wizard or HTC Universal work only in portait (closed) mode for the
-moment.
+with different scalers. VGA games will be displayed in true VGA mode.
 
 Partial / Discontinued support
 ------------------------------
@@ -106,13 +125,12 @@ transform anyway :)
 How do I install ScummVM for Windows CE ?
 -----------------------------------------
 
-If the current release includes a .EXE installer, ScummVM for Windows CE
-will be installed without hassle.
-Otherwise, you'll unzip the release on your desktop computer, and copy 
-all files on your device.
+Simple! Unpack the release package on your desktop pc, then copy all its contents 
+to a folder on your device. Typically, you should at least have scummvm.exe, 
+modern.ini and modern.zip in the same directory. Finally, upload your beloved games
+and fire it up :-)
 
-If you're using a Pocket PC 2000 operating system, be sure to have GAPI
-installed - it's available on Microsoft website http://www.microsoft.com
+Some devices (like Pocket PC 2000) require GAPI to be present.
 
 How do I install a game ?
 -------------------------
@@ -141,13 +159,13 @@ How do I run a game ?
 
 If it's the first time you're running ScummVM for Windows CE, have installed or
 removed games, you need to rescan your game directory. 
- * Select Scan, tap the root directory of your games, and tap "Yes" to begin
+ * Select Add Game, tap the root directory of your games, and tap "Yes" to begin
    an automatic scan of the installed games. 
 
 Usually all games are detected and you can start playing right away. If your 
 game is not detected check its directory name and your data files.
 
-To play a game, tap on its name then tap the "Play" button or double tap its 
+To play a game, tap on its name then tap the "Start" button or double tap its 
 name.
 
 How do I play a game on a Pocket PC or Handheld PC device ?
@@ -158,183 +176,246 @@ The stylus is your mouse cursor, and a tap is a left mouse button click.
 As the Pocket PC lacks some keys, a toolbar is displayed at the bottom of the
 screen to make the most common functions just a tap away
   * The disk icon opens ScummVM options menu to save your game, or change your
-    current game settings.
+    current game settings (depends on the game)
   * The movie icon skips a non interactive sequence, the current dialog or 
-    behaves like the ESC key on a regular keyboard
+    behaves like the ESC key on a regular keyboard (depends on the game)
   * The sound icon turns all sound effects and music off and on
-  * The key icon allow you to map a key action to a device button.
+  * The key icon allow you to map a key action to a device button
   * The monkey icon switches between portrait, landscape and inverse landscape
-    mode.
+    mode (depends on the display drivers)
 
 You can map additional actions on your device hardware buttons using the 
 "Options" / "Key" menu in the ScummVM options menu. To associate an action to
 a key, tap the action, then the "Map" button and press the hardware key.
-The following actions are available 
-  * Pause       : pause the game
-  * Save        : open ScummVM option menu
-  * Quit        : quit ScummVM (without saving, be careful when using it)
-  * Skip        : skip a non interactive sequence, the current dialog or 
-    behaves like the ESC key on a regular keyboard
-  * Hide        : hide or display the toolbar
-    - YOU MUST HIDE THE TOOLBAR TO SCROLL THROUGH THE INVENTORY IN ZAK -
-  * Keyboard    : hide or display the virtual keyboard
-    - YOU MUST DISPLAY THE KEYBOARD TO FIGHT IN INDIANA JONES 3 -
-  * Sound       : turns all sound effects and music off and on
-  * Right click : acts as a right mouse button click
-    - YOU MUST MAP THIS ACTION TO PLAY THE FOLLOWING GAMES -
-    - SAM & MAX, BENEATH A STEEL SKY, CURSE OF MONKEY ISLAND -
-  * Cursor      : hide or display the mouse cursor
-  * Free look   : go in or out of free-look mode. In this mode, you can tap 
-    the screen to look for interesting locations without walking.
-  * Zoom up     : magnify the upper part of the screen for 640x480 games 
-    rendered on a 320x240 device.
-  * Zoom down   : magnify the lower part of the screen for 640x480 games
-    rendered on a 320x240 device.
-  * FT Cheat    : win a Full Throttle action sequence
-  * Bind keys   : map a key action to a device button
-  * Up,Down,Left:
-    Right,      : emulate mouse/stylus behavior
-    Left Click  :
+The following actions are available :
+
+  * Pause          : pause the game
+  * Save           : open ScummVM option menu
+  * Quit           : quit ScummVM (without saving, be careful when using it)
+  * Skip           : skip a non interactive sequence, the current dialog or 
+                     behaves like the ESC key on a regular keyboard
+  * Hide           : hide or display the toolbar
+  * Keyboard       : hide or display the virtual keyboard
+  * Sound          : turns all sound effects and music off and on
+  * Right click    : acts as a right mouse button click
+  * Cursor         : hide or display the mouse cursor
+  * Free look      : go in or out of free-look mode. In this mode, you can tap 
+                     the screen to look for interesting locations without walking.
+  * Zoom up        : magnify the upper part of the screen for 640x480 games 
+                     rendered on a QVGA device.
+  * Zoom down      : magnify the lower part of the screen for 640x480 games
+                     rendered on a QVGA device.
+  * Multi Function : this key performs a different function depending on the game
+                   : Full Throttle    -> win an action sequence (cheat)
+                   : Fate of Atlantis -> sucker punch (cheat)
+                   : Bargon           -> F1 (start the game)
+                   : All AGI games    -> bring up the predictive input dialog
+  * Bind keys      : map a key action to a device button
+  * Up,Down,Left   :
+    Right,         : emulate mouse/stylus behavior
+    Left Click     :
+
+The default key bindings for Pocket PCs are (note that not all keys are mapped):
+  * Up, Down, Left, Right  : (dpad) arrow keys
+  * Left Click             : softkey A
 
 If you start a game when a Right click mapping is necessary, ScummVM will ask
 you to map one of your hardware key to this action before playing. Just press
 the key you want to map if you see this message.
 
+Notes:
+- THE TOOLBAR CAN BE CYCLED BY DOUBLE TAPPING (SEE BELOW)
+- YOU MUST HIDE THE TOOLBAR TO SCROLL THROUGH THE INVENTORY IN ZAK
+- YOU MUST DISPLAY THE KEYBOARD TO FIGHT IN INDIANA JONES 3
+- YOU MUST MAP THE RIGHT CLICK ACTION TO PLAY SEVERAL GAMES
+
 How do I hide the toolbar ?
-----------------------------
+---------------------------
 
-A shortcut is available to hide the toolbar directly from the game screen from
-release 0.8.0. Double tapping the stylus at the top of the screen will switch
-between a visible toolbar panel, a virtual keyboard, and an invisible panel.
-If any part of the screen is obscured by the toolbar (like the load/save game
-dialogs) you can use the invisible panel mode to get to it. For 320x200 games 
-on QVGA Pocket PCs, when the panel is hidden the game screen is resized to 
-320x240 for better gaming experience.
+Note: THIS IS A VERY USEFUL AND SOMETIMES NECESSARY SHORTCUT
 
-How do I play a game on a Microsoft Smartphone device ?
--------------------------------------------------------
+Double tapping the stylus at the top of the screen will switch between a
+visible toolbar panel, a virtual keyboard, and hiding panel.  If any part of
+the screen is obscured by the toolbar (like the load/save game dialogs) you can
+use the invisible panel mode to get to it. For 320x200 games on QVGA Pocket
+PCs, when the panel is hidden the game screen is resized to 320x240 (aspect
+ratio correction) for better gaming experience.
 
-When playing on a Smartphone, the cursor and mouse buttons are emulated by
-a set of default keys :
-      4              Move up
-      6              Move down
-      8		     Move left
-      2 	     Move right
-      Hotkey 1       Left mouse button click
-      Hotkey 2       Right mouse button click
-      Return/Action  Open the key mapping menu
+How do I play a game on a Smartphone device ?
+---------------------------------------------
 
-Note that this means that the input will be "inversed" on a 240x320 (Windows
-Mobile 2005) Smartphone. You'll have to remap the keys.
-
-A few options are also emulated by a set of default keys :
-
-      0		   Options menu
-      Back	   Skip
-      #		   Zone option
-
+On non-stylus devices, the mouse cursor is emulated via a set of keys. 
 The cursor will move faster if you keep the key down. You can tweak this
 behaviour in the configuration file described below.
+
+Here is
+the list of available actions for Smartphones:
+
+  * Up,Down,Left   :
+    Right,         : emulate mouse/stylus behavior
+    Left Click     :
+    Right Click    :
+  * Save           : open ScummVM option menu
+  * Skip           : skip a non interactive sequence, the current dialog or 
+                     behaves like the ESC key on a regular keyboard
+  * Zone           : switch between the 3 different mouse zones
+  * Multi Function : this key performs a different function depending on the game
+                   : Full Throttle    -> win an action sequence (cheat)
+                   : Fate of Atlantis -> sucker punch (cheat)
+                   : Bargon           -> F1 (start the game)
+                   : All AGI games    -> bring up the predictive input dialog
+  * Bind keys      : map a key action to a device button
+  * Keyboard       : hide or display the virtual keyboard
+  * Rotate         : rotate the screen (also rotates dpad keys)
+  * Quit           : quit ScummVM (without saving, be careful when using it)
 
 The "Zone" key is a *very* valuable addition allowing you to jump quickly 
 between three screen zones : the game zone, the verbs zone and the inventory 
 zone. When you switch to a zone the cursor will be reset to its former location
 in this zone. 
 
-There are two more actions available for mapping:
-   - Keyboard: Shows hides a virtual keyboard which can be use whenever text
-               input is required in a game, or a dialog.
-   - Rotate  : Flips the screen orientation between normal and inverse landscape.
+The default key map for these actions is:
 
-You can change the keys mapping during the game in the key mapping menu.
+  * Up, Down, Left, Right  : (dpad) arrow keys
+  * Left Click             : softkey A
+  * Right Click            : softkey B
+  * Save                   : call/talk
+  * Skip                   : back
+  * Zone                   : 9
+  * Multi Function         : 8
+  * Bind keys              : end call
+  * Keyboard               : (dpad) enter
+  * Rotate                 : 5
+  * Quit                   : 0
 
-Note that you'll need to push the Action button (center of the pad) to quit
-a Simon game.
+You can change the key mapping at any time by bringing up the key mapping menu
+(Bind keys action).
 
-How can I apply a ScummVM command line option (f.e. to change the language) 
----------------------------------------------------------------------------
+How do I tweak the configuration of ScummVM ?
+---------------------------------------------
 
 See the section regarding the configuration file (scummvm.ini) in ScummVM
 README file - the same keywords apply.
 
 Some parameters are specific to this port :
 
-game specific section (f.e. [monkey2]) - performance options
+Game specific sections (f.e. [monkey2]) - performance options
 
-high_sample_rate       bool      Desktop quality (22 kHz) sound output if set. 
-				11 kHz otherwise.
-                                The default is 11 kHz. 
-				If you have a fast device, you can set this to
-                                true to enjoy better sound effects and music.
-FM_high_quality        bool     Desktop quality FM synthesis if set. Lower 
-				quality otherwise. The default is low quality.
-			        You can change this if you have a fast device.
-sound_thread_priority  int      Set the priority of the sound thread 
-                                (given to SetThreadPriority API)
-Smush_force_redraw     int      Force a Smush frame redraw every X missed
-                                frames. Mainly used for Full Throttle action
-                                sequences. Setting it lower gives more 
-                                priority to screen redraws. Setting it higher
-                                gives more priority to stylus/keyboard input.
-                                The default is 30.
+ *  high_sample_rate       bool     Desktop quality (22 kHz) sound output if set. 
+                                    11 kHz otherwise.  The default is 11 kHz. 
+                                    If you have a fast device, you can set this to
+                                    true to enjoy better sound effects and music.
+ *  FM_high_quality        bool     Desktop quality FM synthesis if set. Lower 
+                                    quality otherwise. The default is low quality.
+                                    You can change this if you have a fast device.
+ *  sound_thread_priority  int      Set the priority of the sound thread (0, 1, 2).
+                                    Depending on the release, this is set to 1
+                                    internally (above normal). If you get sound
+                                    stuttering try setting this to a higher value.
+                                    Set to 0 if your device is fast enough or if
+                                    you prefer better audio/video synchronization.
+ *  Smush_force_redraw     int      Force a Smush frame redraw every X missed
+                                    frames. Mainly used for Full Throttle action
+                                    sequences. Setting it lower gives more 
+                                    priority to screen redraws. Setting it higher
+                                    gives more priority to stylus/keyboard input.
+                                    The default is 30.
 
-game specific section (f.e. [monkey2]) - game options
+Game specific sections (f.e. [monkey2]) - game options
 
-landscape	       int      0: Portrait, 1: Landscape, 2: Inverse Landscape
+ *  landscape              int      0: Portrait, 1: Landscape, 2: Inverse Landscape
+                                    You can also use this in the [scummvm] section
+                                    in QVGA Pocket PCs to display the launcher in
+                                    landscape, for example, at startup.
 
 [scummvm] section - keys definition
 
 You usually do not wish to modify these values directly, as they are set 
 by the option dialog, and are only given here for reference.
 
-action_mapping_version int       Mapping version linked to ScummVM version.
-action_mapping         string    Hex codes describing the key associated to
-                                 each different action.
+ *  action_mapping_version int       Mapping version linked to ScummVM version.
+ *  action_mapping         string    Hex codes describing the key associated to
+                                     each different action.
+ *  debuglevel             int       Debug Level 1 is used by the WinCE port
+                                     for reporting diagnostic output in the
+                                     scummvm_stdout.txt and scummvm.stderr.txt
+                                     files in the current working directory.
 
 [scummvm] section - mouse emulation tuning
 
 You can tweak these parameters to customize how the cursor is handled.
 
-repeatTrigger         int       Number of milliseconds a key must be held to
-                                consider being repeated.
-
-repeatX               int       Number of key repeat events before changing
-                                horizontal cursor behaviour.
-stepX1                int       Horizontal cursor offset value when the key is
-                                not repeated.
-stepX2                int       Horizontal cursor offset value when the key is
-                                repeated less than repeatX.
-stepX3                int       Horizontal cursor offset value when the key is
-                                repeated more than repeatX.
-
-
-repeatY               int       Number of key repeat events before changing
-                                vertical cursor behaviour.
-stepY1                int       Vertical cursor offset value when the key is
-                                not repeated.
-stepY2                int       Horizontal cursor offset value when the key is
-                                repeated less than repeatY.
-stepY3                int       Vertical cursor offset value when the key is
-                                repeated more than repeatY.
-
-Game xxx is too slow on my device
----------------------------------
-
-Even if it shouldn't happen (this port is running almost correctly on a 
-80 / 120 MHz first generation SPV phone), you can try some things :
-
-  * Disable sound in the engine (see the global README)
-  * Play with the priority of the sound thread (change the 
-    sound_thread_priority value - the higher the lower priority)
-
-And don't forget to report your progress in the ScummVM forum !
+ *  repeatTrigger         int       Number of milliseconds a key must be held to
+                                    consider being repeated.
+ *  repeatX               int       Number of key repeat events before changing
+                                    horizontal cursor behaviour.
+ *  stepX1                int       Horizontal cursor offset value when the key is
+                                    not repeated.
+ *  stepX2                int       Horizontal cursor offset value when the key is
+                                    repeated less than repeatX.
+ *  stepX3                int       Horizontal cursor offset value when the key is
+                                    repeated more than repeatX.
+ *  repeatY               int       Number of key repeat events before changing
+                                    vertical cursor behaviour.
+ *  stepY1                int       Vertical cursor offset value when the key is
+                                    not repeated.
+ *  stepY2                int       Horizontal cursor offset value when the key is
+                                    repeated less than repeatY.
+ *  stepY3                int       Vertical cursor offset value when the key is
+                                    repeated more than repeatY.
 
 ------------------------------------------------------------------------
 Game specific questions 
 ------------------------------------------------------------------------
 
+---------------
+-- All Games --
+---------------
+
+I need to press a special key
+-----------------------------
+
+Bring up the virtual keyboard. On Smartphones take a look at the Keyboard action above.
+On Pocket PCs it's easier to double-tap at the top of the screen.
+
+The panel is obscuring the playfield area
+-----------------------------------------
+
+Double tap at the top of the screen to hide it. As an aside, the aspect ratio
+correction scaler will kick in if the game/device combo is appropriate.
+
+How do I name my save games ?
+-----------------------------
+
+Use the virtual keyboard (Keyboard action).
+
+ScummVM is stuck for some reason
+--------------------------------
+
+Bind and use the quit action to quit.
+
+I cannot rotate the screen to landscape/inverse landscape
+---------------------------------------------------------
+
+Depending on the video driver, ScummVM may opt to not provide such functionality.
+In general, when ScummVM starts in normal "portrait" orientation, the device driver
+reports better display characteristics and you should consider launching from portrait.
+
+I'm having problems. Is there diagnostic output available ?
+-----------------------------------------------------------
+
+Insert a line in the [scummvm] section of scummvm.ini with the following:
+debuglevel=1
+Run ScummVM. When it closes scummvm_stdout.txt and scummvm_stderr.txt files will be
+available at the program directory (see section above).
+
+ScummVM crashes and returns to desktop
+--------------------------------------
+
+File a bug report including diagnostic output (see previous question).
+
 --------------------------
--- Beneath a Steel Sky --
+-- Beneath a Steel Sky  --
 --------------------------
 
 Introduction movie is too slow or never ends ...
@@ -374,11 +455,10 @@ to lower these requirements.
 Sound synchronization is lost in Curse of Monkey Island videos
 --------------------------------------------------------------
 
-This is a port bug which is very noticeable in VGA mode. It can probably be
-fixed with a faster blitting routine or a faster device.
+Use a faster device :-(
 
 --------------------
--- Full Throttle --
+-- Full Throttle  --
 --------------------
 
 I'm experiencing random crashes ...
@@ -415,7 +495,7 @@ Use the skip toolbar icon (see the General Questions section).
 
 -------------------
 -- Simon 1 and 2 --
---------------------
+-------------------
 
 How can I save or quit in Simon ?
 --------------------------------
@@ -444,33 +524,56 @@ to lower these requirements.
 --------------------
 
 How can I scroll through my inventory items in Zak Mc Kracken ?
--------------------------------------------------------------
+---------------------------------------------------------------
 
 You need to map the hide toolbar button (see the General Questions section) or
 double tap at the top of the screen (from 0.8.0+)
 
---------------------
--- Broken Sword 2 --
---------------------
+------------------------
+-- Broken Sword 1 & 2 --
+------------------------
 
-I've installed the movies pack but they are not playing
--------------------------------------------------------
+I've installed the movies pack but they are not playing/they are slow
+---------------------------------------------------------------------
 
 MPEG 2 playback takes too much memory in the current release, and may prevent
-movies from playing in VGA mode. This may get better in the next releases.
+movies from playing in VGA mode. Consider changing to the DXA cutscene pack
+which is many times faster.
 
-----------------
+---------------
 -- Gobliiins --
-----------------
+---------------
 
-Cursor is grabled after loading a game 
---------------------------------------
+How do I enter a code ?
+-----------------------
 
-Due to a bug in 0.8.0, you'll have to tap the stylus somewhere on the game
-screen between 2 letters when entering a code. Otherwise the cursor will get
-garbled.
+Use the virtual keyboard.
 
-This has not been retested for 0.8.1 but should be fixed.
+-------------------
+-- Bargon Attack --
+-------------------
+
+How do I start the game (F1 : Game, F2 : Demo)
+----------------------------------------------
+
+Use the Multi Function action.
+
+----------------------
+-- AGI engine games --
+----------------------
+
+Do you expect me to play these games on keyboard less devices ?
+---------------------------------------------------------------
+
+Sure we do :-)
+If you want to get some mileage on your stylus you can use the virtual keyboard.
+There is a very useful alternative though, the AGI engine's predictive input dialog.
+It requires a dictionary to be present. Just tap on the command line or use the
+Multi Function action to bring it up. On Smartphones, when the dialog is shown
+all key mapping is disabled temporarily (including mouse emulation). Input is
+performed either by pressing the phone's numeric keypad keys and dpad enter to
+close the dialog, or by navigating the buttons using the dpad arrows and pressing
+with dpad enter. Check the main Readme file for more information on this.
 
 ------------------------------------------------------------------------
 Support
@@ -479,14 +582,14 @@ Support
 Help, I've read everything and ...
 -----------------------------------
 
-Luckily, as there is a huge variety of Windows Mobile devices, a specific forum 
+Luckily, as there is a huge variety of Windows CE devices, a specific forum 
 is dedicated to this ScummVM port. You can ask your question on the WinCE
 ScummVM forum available at http://forums.scummvm.org/viewforum.php?f=6 
 
 Some older questions and very nice tutorials are still available on the historic
 PocketMatrix forum at http://www.pocketmatrix.com/forums/viewforum.php?f=20
-where  the community is always glad to help and have dealt with all my bugs for more 
-than three years now :)
+where the community is always glad to help and have dealt with all the bugs for
+many years now :)
 
 I think I found a bug, ScummVM crashes in ...
 ---------------------------------------------
