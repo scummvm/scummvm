@@ -391,10 +391,8 @@ int AGOSEngine::wordMatch(Item *item, int16 a, int16 n) {
 }
 
 Item *AGOSEngine::derefItem(uint item) {
-	if (item >= _itemArraySize) {
-		debug(1, "derefItem: invalid item %d", item);
-		return 0;
-	}
+	if (item >= _itemArraySize)
+		error("derefItem: invalid item %d", item);
 	return _itemArrayPtr[item];
 }
 

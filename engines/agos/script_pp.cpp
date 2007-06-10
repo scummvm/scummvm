@@ -297,7 +297,7 @@ void AGOSEngine_PuzzlePack::executeOpcode(int opcode) {
 
 void AGOSEngine_PuzzlePack::opp_iconifyWindow() {
 	// 30
-	getNextItemPtr();
+	getNextWord();
 	if (_clockStopped != 0)
 		_gameTime += time(NULL) - _clockStopped;
 	_clockStopped  = 0;
@@ -308,7 +308,7 @@ void AGOSEngine_PuzzlePack::opp_restoreOopsPosition() {
 	// 32: restore oops position
 	uint i;
 
-	getNextItemPtr();
+	getNextWord();
 
 	if (_oopsValid) {
 		for (i = 0; i < _numVars; i++) {
@@ -328,7 +328,7 @@ void AGOSEngine_PuzzlePack::opp_restoreOopsPosition() {
 
 void AGOSEngine_PuzzlePack::opp_loadMouseImage() {
 	// 38: load mouse image
-	getNextItemPtr();
+	getNextWord();
 	getVarOrByte();
 	loadMouseImage();
 }
