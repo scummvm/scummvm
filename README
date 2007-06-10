@@ -137,15 +137,27 @@ SCUMM Games by LucasArts:
      The Dig                                     [dig]
      The Curse of Monkey Island                  [comi]
 
-Other Games:
-     Beneath a Steel Sky                         [sky]
-     Broken Sword 1: The Shadow of the Templars  [sword1]
-     Broken Sword 2: The Smoking Mirror          [sword2]
-     Flight of the Amazon Queen                  [queen]
-     Future Wars                                 [fw]
-     Gobliiins                                   [gob1]
-     Gobliins 2                                  [gob2]
-     Inherit the Earth: Quest for the Orb        [ite]
+AGI Games by Sierra:
+     The Black Cauldron                          [bc]
+     Gold Rush!                                  [goldrush]
+     King's Quest I                              [kq1]
+     King's Quest II                             [kq2]
+     King's Quest III                            [kq3]
+     King's Quest IV                             [kq4]
+     Leisure Suit Larry in the Land of the 
+     Lounge Lizards                              [lsl1]
+     Mixed-Up Mother Goose                       [mixedup]
+     Manhunter 1: New York                       [mh1]
+     Manhunter 2: San Francisco                  [mh2]
+     Police Quest I: In Pursuit of the Death 
+     Angel                                       [pq1]
+     Space Quest I: The Sarien Encounter         [sq1]
+     Space Quest II: Vohaul's Revenge            [sq2]
+     Fanmade Games                               [agi-fanmade]
+
+AGOS Games by Adventuresoft / Horrorsoft:
+     Elvira - Mistress of the Dark               [elvira1]
+     Elvira II - The Jaws of Cerberus            [elvira2]
      Simon the Sorcerer 1                        [simon1]
      Simon the Sorcerer 2                        [simon2]
      Simon the Sorcerer's Puzzle Pack
@@ -157,6 +169,22 @@ Other Games:
      Simon the Sorcerer's Puzzle Pack
          - Swampy Adventures                     [swampy]
      The Feeble Files                            [feeble]
+
+GOB Games by Cocktel Vision:
+     Bargon Attack                               [bargon]
+     Gobliiins                                   [gob1]
+     Gobliins 2                                  [gob2]
+     Goblins 3                                   [gob3]
+     Ween: The Prophecy                          [ween]
+
+Other Games:
+     Beneath a Steel Sky                         [sky]
+     Broken Sword 1: The Shadow of the Templars  [sword1]
+     Broken Sword 2: The Smoking Mirror          [sword2]
+     Flight of the Amazon Queen                  [queen]
+     Future Wars                                 [fw]
+     Inherit the Earth: Quest for the Orb        [ite]
+     Nippon Safes Inc.                           [nippon]
      The Legend of Kyrandia                      [kyra1]
      Touche: The Adventures of the Fifth
          Musketeer                               [touche]
