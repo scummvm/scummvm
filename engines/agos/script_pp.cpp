@@ -72,8 +72,8 @@ void AGOSEngine_PuzzlePack::setupOpcodes() {
 		OPCODE(o_state),
 		/* 28 */
 		OPCODE(o_oflag),
-		OPCODE(opp_iconifyWindow),
 		OPCODE(o_invalid),
+		OPCODE(opp_iconifyWindow),
 		OPCODE(o_destroy),
 		/* 32 */
 		OPCODE(opp_restoreOopsPosition),
