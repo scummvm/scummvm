@@ -595,8 +595,6 @@ int AGOSEngine::init() {
 
 		_midi.setVolume(ConfMan.getInt("music_volume"));
 
-		if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1)
-			_midi.pause(_musicPaused ^= 1);
 
 		_midiEnabled = true;
 	}
@@ -631,6 +629,14 @@ int AGOSEngine::init() {
 	_sound = new Sound(this, gss, _mixer);
 
 	_moviePlay = new MoviePlayer(this, _mixer);
+
+	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1) {
+		_musicPaused = true;
+		if (_midiEnabled) {
+			_midi.pause(_musicPaused);
+		}
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, 0);
+	}
 
 	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {
 		if (getGameId() == GID_SIMON1DOS)
