@@ -115,8 +115,7 @@ void MoviePlayer::playOmniTV() {
 }
 
 void MoviePlayer::play() {
-	// The OmniTV videos were not included with Amiga and Macintosh versions.
-	if (_vm->getPlatform() == Common::kPlatformWindows && _vm->getBitFlag(40)) {
+	if (_vm->getBitFlag(40)) {
 		playOmniTV();
 		return;
 	}
