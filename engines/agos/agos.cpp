@@ -136,6 +136,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_numVars = 0;
 	_numVideoOpcodes = 0;
 	_vgaBaseDelay = 0;
+	_vgaPeriod = 0;
 
 	_strippedTxtMem = 0;
 	_textMem = 0;
@@ -353,8 +354,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_curSfxFile = 0;
 
 	_syncCount = 0;
-	_timer5 = 0;
-	_timer4 = 0;
 
  	_iconToggleCount = 0;
  	_voiceCount = 0;
@@ -708,6 +707,7 @@ void AGOSEngine_PuzzlePack::setupGame() {
 	_tableMemSize = 200000;
 	_frameCount = 1;
 	_vgaBaseDelay = 5;
+	_vgaPeriod = (getGameId() == GID_DIMP) ? 35 : 30;
 	_numBitArray1 = 128;
 	_numItemStore = 10;
 	_numTextBoxes = 40;
@@ -728,6 +728,7 @@ void AGOSEngine_Feeble::setupGame() {
 	_tableMemSize = 200000;
 	_frameCount = 1;
 	_vgaBaseDelay = 5;
+	_vgaPeriod = 50;
 	_numBitArray1 = 16;
 	_numBitArray2 = 16;
 	_numBitArray3 = 16;
@@ -758,6 +759,7 @@ void AGOSEngine_Simon2::setupGame() {
 	_soundIndexBase = 1660 / 4;
 	_frameCount = 1;
 	_vgaBaseDelay = 1;
+	_vgaPeriod = 45;
 	_numBitArray1 = 16;
 	_numBitArray2 = 16;
 	_numItemStore = 10;
@@ -787,6 +789,7 @@ void AGOSEngine_Simon1::setupGame() {
 	_soundIndexBase = 0;
 	_frameCount = 1;
 	_vgaBaseDelay = 1;
+	_vgaPeriod = 50;
 	_numBitArray1 = 16;
 	_numBitArray2 = 16;
 	_numItemStore = 10;
@@ -812,6 +815,7 @@ void AGOSEngine_Waxworks::setupGame() {
 	_tableMemSize = 50000;
 	_frameCount = 4;
 	_vgaBaseDelay = 1;
+	_vgaPeriod = 50;
 	_numBitArray1 = 16;
 	_numBitArray2 = 15;
 	_numItemStore = 50;
@@ -835,6 +839,7 @@ void AGOSEngine_Elvira2::setupGame() {
 	_tableMemSize = 100000;
 	_frameCount = 4;
 	_vgaBaseDelay = 1;
+	_vgaPeriod = 50;
 	_numBitArray1 = 16;
 	_numBitArray2 = 15;
 	_numItemStore = 50;
@@ -857,6 +862,7 @@ void AGOSEngine_Elvira1::setupGame() {
 	_tableMemSize = 256000;
 	_frameCount = 4;
 	_vgaBaseDelay = 1;
+	_vgaPeriod = 50;
 	_numVars = 512;
 
 	_numMusic = 14;

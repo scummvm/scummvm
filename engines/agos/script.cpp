@@ -539,7 +539,14 @@ void AGOSEngine::o_picture() {
 		return;
 	}
 
-	_picture8600 = (vga_res == 8600);
+	if (getGameType() == GType_PP && getGameId() != GID_DIMP) {
+		if (vga_res == 8700 && getBitFlag(107)) {
+			_vgaPeriod = 30;
+		}
+
+		_picture8600 = (vga_res == 8600);
+	}
+
 	setWindowImageEx(mode, vga_res);
 }
 
