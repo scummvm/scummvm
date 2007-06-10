@@ -867,7 +867,6 @@ other games.
         Cmd-q                  - Quit (Mac OS X)
         Ctrl-q                 - Quit (other unices including Linux)
         Ctrl-z OR Alt-x        - Quit (other platforms)
-        Ctrl-f                 - Toggle fast mode
         Ctrl-m                 - Toggle mouse capture
         Ctrl-Alt 1-8           - Switch between graphics filters
         Ctrl-Alt + and -       - Increase/Decrease the scale factor
@@ -883,6 +882,7 @@ other games.
     SCUMM:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-d                 - Starts the debugger
+        Ctrl-f                 - Toggle fast mode
         Ctrl-g                 - Runs in really REALLY fast mode
         Ctrl-t                 - Switch between 'Speech only',
                                  'Speech and Subtitles' and 'Subtitles only'
@@ -905,6 +905,7 @@ other games.
 
     Beneath a Steel Sky:
         Ctrl-d                 - Starts the debugger
+        Ctrl-f                 - Toggle fast mode
         Ctrl-g                 - Runs in really REALLY fast mode
         F5                     - Displays a save/load box
         Escape                 - Skips the game intro
@@ -921,6 +922,7 @@ other games.
 
     Flight of the Amazon Queen:
         Ctrl-d                 - Starts the debugger
+        Ctrl-f                 - Toggle fast mode
         F1                     - Use Journal (saving/loading)
         F11                    - Quicksave
         F12                    - Quickload
@@ -930,6 +932,7 @@ other games.
     Simon the Sorcerer 1 and 2:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-d                 - Starts the debugger
+        Ctrl-f                 - Toggle fast mode
         F1 - F3                - Text speed, faster - slower
         F10                    - Shows all characters and objects you can
                                  interact with
@@ -945,6 +948,7 @@ other games.
 
     Simon the Sorcerer's Puzzle Pack
         Ctrl-d                 - Starts the debugger
+        Ctrl-f                 - Toggle fast mode
         F12                    - High speed mode on/off in Swampy Adventures
         - and +                - Music volume, down/up
         m                      - Music on/off
@@ -953,6 +957,7 @@ other games.
 
     The Feeble Files
         Ctrl-d                 - Starts the debugger
+        Ctrl-f                 - Toggle fast mode
         F7                     - Switch characters
         F9                     - Hitbox names on/off
         s                      - Sound effects on/off
@@ -968,8 +973,6 @@ other games.
 
 Note that using ctrl-f or ctrl-g is not recommended: games can crash when
 being run faster than their normal speed, as scripts will lose synchronisation.
-
-Ctrl-f is not supported by the Broken Sword games.
 
 Note for WinCE users: Due to the limited keyboard input in most devices, a
 small subset of these hot keys are supported via key remapping and/or panel
