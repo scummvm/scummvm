@@ -1839,7 +1839,7 @@ void Script::finishDialog(int strID, int replyID, int flags, int bitOffset) {
 
 		if (_vm->getGameType() == GType_IHNM) {
 			str = _conversingThread->_strings->getString(strID);
-			if (strcmp(str, "[") != 0) {
+			if (*str != '[') {
 				int sampleResourceId = -1;
 				sampleResourceId = _conversingThread->_voiceLUT->voices[strID];
 				if (sampleResourceId < 0 || sampleResourceId > 4000)
