@@ -1536,38 +1536,36 @@ MMX optimized versions, and they will not compile on other processors.
 On Win9x/NT/XP you can define USE_WINDBG and attach WinDbg to browse debug
 messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
-TODO
-TODO: The following lists is partially outdated, and incomplete.
-TODO  We could either try to update it, and/or refer to the relevant
-TODO  Wiki pages...
-TODO
 
-    GCC:
-        * Type ./configure
-        * Type make (or gmake, or gnumake, depending on what GNU make is
+    GCC and MinGW32:
+        * Type "./configure"
+        * Type "make" (or "gmake", or "gnumake", depending on what GNU make is
           called on your system) and hopefully ScummVM will compile for you.
+        * For more information refer to:
+          http://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC
+          respectively
+          http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW
 
     Microsoft Visual C++ 6.0:
-        * Open the workspace, scummwm.dsw
+        * Open the workspace file "scummwm.dsw" in the "dists\msvc6" folder.
         * Enter the path to the needed libraries and includes in
-          Tools|Options|Directories
+          "Tools|Options|Directories".
         * Now it should compile successfully.
+        * For more information refer to:
+          http://wiki.scummvm.org/index.php/Compiling_ScummVM/VS2005
 
-    Microsoft Visual C++ 7.0:
-        * Open the solution file scummwm.sln
+    Microsoft Visual C++ 7.0/8.0:
+        * Open the solution file "scummwm.sln"  in the "dists\msvc7"
+          respectively "dists\msvc8" folder.
         * Enter the path to the needed libraries and includes in
-          Tools|Options|Projects|VC++ Directories
+          T"ools|Options|Projects|VC++ Directories".
         * Now it should compile successfully.
+        * For more information refer to:
+          http://wiki.scummvm.org/index.php/Compiling_ScummVM/VS2005
 
-    Windows Mobile with Microsoft eMbedded Visual C++ 3 or 4 :
-        * Download SDL with additional Windows Mobile tweaks:
-          http://arisme.free.fr/ports/SDL.php
-        * Download additional third party libraries:
-          http://arisme.free.fr/ports
-        * Modify your include and library paths accordingly in EVC3/EVC4.
-        * Open the ScummVM project dists\msevc4\PocketSCUMM.vcw
-        * Modify the libraries and config parameters if necessary.
-        * Now it should compile successfully.
+    Windows Mobile:
+        * Please refer to:
+          http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
 
     Debian GNU/Linux:
         * Install the packages 'build-essential', 'fakeroot', 'debhelper',
@@ -1586,12 +1584,14 @@ TODO
           way to get that is to install SDL via Fink (http://fink.sf.net).
           Alternatively you could compile SDL manually from source using its
           unix build system (configure && make).
-        * Type ./configure in the ScummVM directory
+        * Type "./configure" in the ScummVM directory.
         * You can now type 'make' to create a command line binary.
         * To get a version you can run from Finder, type 'make bundle' which
           will create ScummVM.app (this only works out of the box if you
           installed SDL into /sw (as happens if you are using Fink). If you
           have installed SDL in another way, you will have to edit the Makefile).
+        * For more information refer to:
+          http://wiki.scummvm.org/index.php/Compiling_ScummVM/MacOS_X_Crosscompiling
 
     AmigaOS 4 (Cross-compiling with Cygwin):
         * Make sure that you have SDL installed, you may also need
