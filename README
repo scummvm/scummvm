@@ -946,6 +946,14 @@ other games.
                                  combined speech and subtitles
                                  [Simon the Sorcerer 2 only]
 
+    Simon the Sorcerer's Puzzle Pack
+        Ctrl-d                 - Starts the debugger
+        F12                    - High speed mode on/off in Swampy Adventures
+        - and +                - Music volume, down/up
+        m                      - Music on/off
+        s                      - Sound effects on/off
+        p                      - Pauses
+
     The Feeble Files
         Ctrl-d                 - Starts the debugger
         F7                     - Switch characters
