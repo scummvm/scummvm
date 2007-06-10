@@ -53,15 +53,13 @@ DWORD CEDevice::reg_access(TCHAR *key, TCHAR *val, DWORD data) {
 		return data;
 
 	cbdata = sizeof(DWORD);
-	if (RegQueryValueEx(regkey, val, NULL, NULL, (LPBYTE) &tmpval, &cbdata) != ERROR_SUCCESS)
-	{
+	if (RegQueryValueEx(regkey, val, NULL, NULL, (LPBYTE) &tmpval, &cbdata) != ERROR_SUCCESS) {
 		RegCloseKey(regkey);
 		return data;
 	}
 
 	cbdata = sizeof(DWORD);
-	if (RegSetValueEx(regkey, val, 0, REG_DWORD, (LPBYTE) &data, cbdata) != ERROR_SUCCESS)
-	{
+	if (RegSetValueEx(regkey, val, 0, REG_DWORD, (LPBYTE) &data, cbdata) != ERROR_SUCCESS) {
 		RegCloseKey(regkey);
 		return data;
 	}
@@ -78,8 +76,7 @@ void CEDevice::backlight_xchg() {
 	REG_disp = reg_access(TEXT("ControlPanel\\Power"), TEXT("Display"), REG_disp);
 
 	h = CreateEvent(NULL, FALSE, FALSE, TEXT("BackLightChangeEvent"));
-	if (h)
-	{
+	if (h) {
 		SetEvent(h);
 		CloseHandle(h);
 	}
