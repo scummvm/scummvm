@@ -1143,7 +1143,9 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 		return false;
 	}
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_PP) {
+		// No caption
+	} else if (getGameType() == GType_FF) {
 		f->read(ident, 100);
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		f->read(ident, 18);
@@ -1293,7 +1295,9 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 		return false;
 	}
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_PP) {
+		// No caption
+	} else if (getGameType() == GType_FF) {
 		f->write(caption, 100);
 		curTime = time(NULL);
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
