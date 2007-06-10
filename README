@@ -29,7 +29,7 @@ Table of Contents:
  * 3.12 Simon the Sorcerer notes
  * 3.13 The Feeble Files notes
  * 3.14 The Legend of Kyrandia notes
- * 3.15 Sierra AGI games predictive dialog notes
+ * 3.15 Sierra AGI games Predictive Input Dialog notes
  * 3.16 Known Problems
 4.0) Supported Platforms
 5.0) Running ScummVM
@@ -537,41 +537,55 @@ To run The Legend of Kyrandia under ScummVM you need the 'kyra.dat' file,
 which can be found on the 'Downloads' page of the ScummVM website.
 
 
-3.15) Sierra AGI games predictive dialog notes:
------ -----------------------------------------
-The Predictive Input Dialog is a ScummVM aid for running AGI engines games (which 
-notoriously have command line input) on devices with limited keyboard input. The 
-dialog is fully usable with the mouse, but a few provisions have been made to make
-its use more comfortable by naturally mapping the functionality to the keypad. 
+3.15) Sierra AGI games Predictive Input Dialog notes:
+----- -----------------------------------------------
+The Predictive Input Dialog is a ScummVM aid for running AGI engines games
+(which notoriously require command line input) on devices with limited keyboard
+support. In these situations since typing with emulated keyboards is quite
+tedious, commands can be entered quickly and easily via the Predictive Input
+Dialog.
 
 In order to enable predictive input in AGI games, you need to copy the pred.dic
 file in the ScummVM extras folder or the folder of the game you wish to play.
+This dictionary has been created by parsing through all known AGI games and
+contains the maximum set of common words.
 
-The predictive input dialog works in three modes, switchable by the Pre/123/Abc 
-button: 
-The primary input method implemented by the predictive input dialog - predictive 
-mode - resembles the way "fast typing" is done in phones: The alphabet is divided 
-into 9 sets which naturally map to the 9 number keys of the numeric keypad (0 is 
-space). The dialog utilizes a dictionary of words which has been created by parsing
-through all known agi games and creating the maximum set of common words. At 
-runtime, the dictionary is searched each time the user presses a numeric key for 
-words matching the numeric prefix up to that point. The user can press the next 
-button when there are multiple matches for the same prefix. The matching operation 
-and the way of putting together the dictionary have been designed so as to not hint
-the user for words (e.g. pressing random keys and seeing what word the prediction
-converges to). Also, when a user OKs the dialog, or presses space and if there are
-multiple matches for the same prefix, the word finally chosen is brought to the
-front of the list, essentially implementing a Most Recently Used approach. 
+If the dictionary is detected, the Predictive Input Dialog is displayed either
+when you click on the command line area (wherever keyboard input is required,
+even in dialog boxes), or in some ports by pressing a designated hot key.
 
-The second input method is numeric: Each key the user presses is shown as a number. 
+The predictive input dialog operates in three modes, switchable by the
+(*)Pre/123/Abc button. The primary input method is the predictive mode (Pre)
+which resembles the way "fast typing" is performed at phones. The alphabet is
+divided into 9 sets which naturally map to the 9 number keys of the numeric
+keypad (0 is space). To type in a word, you press once the number of the set
+which contains the letter of the word you intend to type, then move on to the
+next. For example, to type the command 'look', you should press 5665. As you
+gradually type the intended word's numeric code, the dictionary is accessed for
+known words matching your input up to that point. As you press more keys, the
+prediction converges to the correct word. This is why the printed word may
+change dramatically between key presses.  There exist situations though where
+more than one words share the same numeric representation. For example the
+words 'quit' and 'suit' map to the same number, namely 7848. In these cases the
+(#)next button lights up. By pressing it, you can cycle through the list of
+words sharing the same code and finally accept the correct one by pressing
+(0)space or the Ok button. 
 
-The third input method is the Multi-tap Alpha input mode: The user presses a numeric
-key and uses the next button to cycle through the corresponding key's assigned 
-letters. 
+The second input method (123) is the numeric input: Each key you press is
+entered verbatim as a number.
 
-The user must have a dictionary and can either click on the command line or hit a
-'Predictive dialog' hotkey to make the Predictive Input Dialog appear.
+The third input method (Abc) is the Multi-tap Alpha input mode. This mode is
+intended for entering free text, without assistance from the dictionary scheme
+of predictive (Pre) mode. The text is entered one letter at the time.  For each
+letter first press the number of the set which contains the letter you want,
+then use the (#)next button to cycle through the letters and repeat with
+another number. For example, to enter the word 'look' you must press the
+following: 5##6##6##5#
 
+The dialog is fully usable with the mouse, but a few provisions have been made
+in some ScummVM ports to make its use more comfortable by naturally mapping the
+functionality to the numeric keypad. Also, the dialog's buttons can be
+navigated with the arrow and the enter keys.
 
 3.16) Known Problems:
 ----- ---------------
