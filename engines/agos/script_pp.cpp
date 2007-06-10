@@ -238,7 +238,7 @@ void AGOSEngine_PuzzlePack::setupOpcodes() {
 		/* 160 */
 		OPCODE(oe2_ink),
 		OPCODE(off_screenTextBox),
-		OPCODE(os1_screenTextMsg),
+		OPCODE(opp_playTune),
 		OPCODE(o_invalid),
 		/* 164 */
 		OPCODE(oe2_getDollar2),
@@ -403,6 +403,19 @@ void AGOSEngine_PuzzlePack::opp_loadUserGame() {
 
 	// XXX
 	loadGame(genSaveName(1));
+}
+
+void AGOSEngine_PuzzlePack::opp_playTune() {
+	// 162: play tune
+	getVarOrByte();
+	getVarOrByte();
+	getNextWord();
+
+	uint16 music = (uint16)getVarOrWord();
+	if (music != _lastMusicPlayed) {
+		_lastMusicPlayed = music;
+		playSpeech(music, 1);
+	}
 }
 
 void AGOSEngine_PuzzlePack::opp_saveOopsPosition() {
