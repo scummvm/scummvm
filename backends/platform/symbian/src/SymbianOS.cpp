@@ -106,6 +106,10 @@ OSystem_SDL_Symbian::OSystem_SDL_Symbian() :_channels(0),_stereo_mix_buffer(0) {
 }
 
 void OSystem_SDL_Symbian::initBackend() {
+	char predfile[256];
+	strcpy(predfile, Symbian::GetExecutablePath());
+	strcat(predfile, "pred.dic");
+	ConfMan.set("predictive_dictionary", predfile);
 	ConfMan.setBool("FM_high_quality", false);
 #if !defined(S60) || defined(S60V3) // S60 has low quality as default
 	ConfMan.setBool("FM_medium_quality", true);
@@ -145,7 +149,7 @@ bool OSystem_SDL_Symbian::setGraphicsMode(const char * /*name*/) {
 	return OSystem_SDL::setGraphicsMode(getDefaultGraphicsMode());
 }
 
-void OSystem_SDL_Symbian::quitWithErrorMsg(const char *msg) {
+void OSystem_SDL_Symbian::quitWithErrorMsg(const char * /*aMsg*/) {
 
 	CEikonEnv::Static()->AlertWin(_L("quitWithErrorMsg()")) ;
 	
@@ -433,7 +437,7 @@ struct TSymbianFileEntry {
 
 FILE* 	symbian_fopen(const char* name, const char* mode) {
 	TSymbianFileEntry* fileEntry = new TSymbianFileEntry;
-	
+
 	if (fileEntry != NULL) {
 		TInt modeLen = strlen(mode);
 
@@ -480,7 +484,6 @@ FILE* 	symbian_fopen(const char* name, const char* mode) {
 			break;
 		}
 	}
-	
 	return (FILE*) fileEntry;
 }
 

@@ -6,7 +6,7 @@
 ;&EN
 
 ; UID is the app's UID
-#{"ScummVM S60v2"},(0x101f9b57),0,80,3
+#{"ScummVM S60v2"},(0x101f9b57),0,100,0
 
 ; Platform type
 (0x101F6F88), 0, 0, 0, {"Series60ProductID"}
@@ -16,6 +16,15 @@
 "\epoc32\release\armi\urel\ScummVM.exe"-"!:\system\apps\ScummVM\ScummVM.exe"
 "\epoc32\data\z\system\apps\ScummVM\ScummVM.aif"-"!:\system\apps\ScummVM\ScummVM.aif"
 "\epoc32\data\z\system\apps\ScummVM\ScummVM.rsc"-"!:\system\apps\ScummVM\ScummVM.rsc"
+"..\..\..\..\dists\pred.dic"-"c:\system\apps\scummvm\pred.dic"
+
+; Scummvm Documentation
+"..\..\..\..\COPYRIGHT"-"!:\system\apps\scummvm\COPYRIGHT", FT, TC
+"..\..\..\..\COPYING"-"!:\system\apps\scummvm\COPYING", FT, TC
+"..\README"-"!:\system\apps\scummvm\SYMBIAN_README", FT, TC
+"..\..\..\..\AUTHORS"-"!:\system\apps\scummvm\AUTHORS"
+"..\..\..\..\README"-"!:\system\apps\scummvm\README"
+"..\..\..\..\NEWS"-"!:\system\apps\scummvm\NEWS"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"!:\system\apps\ScummVM\scummvm.ini",FILENULL
