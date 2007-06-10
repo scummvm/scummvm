@@ -122,7 +122,11 @@ void OptionsDialog::open() {
 
 	// Reset result value
 	setResult(0);
+	
+	loadConfigToWidgets();
+}
 
+void OptionsDialog::loadConfigToWidgets() {
 	// Graphic options
 	if (_fullscreenCheckbox) {
 		_gfxPopUp->setSelected(0);
@@ -251,7 +255,16 @@ void OptionsDialog::open() {
 
 void OptionsDialog::close() {
 	if (getResult()) {
+		saveConfigFromWidgets();
 
+		// Save config file
+		ConfMan.flushToDisk();
+	}
+
+	Dialog::close();
+}
+
+void OptionsDialog::saveConfigFromWidgets() {
 		// Graphic options
 		if (_fullscreenCheckbox) {
 			if (_enableGraphicSettings) {
@@ -381,12 +394,6 @@ void OptionsDialog::close() {
 				ConfMan.removeKey("speech_mute", _domain);
 			}
 		}
-
-		// Save config file
-		ConfMan.flushToDisk();
-	}
-
-	Dialog::close();
 }
 
 void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -659,6 +666,13 @@ void OptionsDialog::reflowLayout() {
 
 GlobalOptionsDialog::GlobalOptionsDialog()
 	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "globaloptions") {
+	
+	// FIXME: Disable the setupWidgets() call here for now. See reflowLayout()
+	// for details.
+	//setupWidgets();
+}
+
+void GlobalOptionsDialog::setupWidgets() {
 
 	// The tab widget
 	TabWidget *tab = new TabWidget(this, "globaloptions_tabwidget");
@@ -754,8 +768,26 @@ GlobalOptionsDialog::~GlobalOptionsDialog() {
 #endif
 }
 
-void GlobalOptionsDialog::open() {
-	OptionsDialog::open();
+void GlobalOptionsDialog::reflowLayout() {
+	// FIXME/HACK to workaround bug #1677997: Tear down the whole dialog and
+	// recreate it on the fly when a resolution/theme change occurs. Not nice
+	// at all, but works well enough.
+	{
+		delete _firstWidget;
+		_firstWidget = 0;
+		_mouseWidget = 0;
+		_focusedWidget = 0;
+		_dragWidget = 0;
+		setupWidgets();
+		loadConfigToWidgets();
+	}
+
+	OptionsDialog::reflowLayout();
+}
+
+void GlobalOptionsDialog::loadConfigToWidgets() {
+
+	OptionsDialog::loadConfigToWidgets();
 
 #if !( defined(__DC__) || defined(__GP32__) || defined(__PLAYSTATION2__) )
 	// Set _savePath to the current save path
@@ -791,8 +823,9 @@ void GlobalOptionsDialog::open() {
 	}
 }
 
-void GlobalOptionsDialog::close() {
-	if (getResult()) {
+void GlobalOptionsDialog::saveConfigFromWidgets() {
+	OptionsDialog::saveConfigFromWidgets();
+
 		String savePath(_savePath->getLabel());
 		if (!savePath.empty() && (savePath != "None"))
 			ConfMan.set("savepath", savePath, _domain);
@@ -810,8 +843,6 @@ void GlobalOptionsDialog::close() {
 			ConfMan.removeKey("extrapath", _domain);
 
 		ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
-	}
-	OptionsDialog::close();
 }
 
 void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

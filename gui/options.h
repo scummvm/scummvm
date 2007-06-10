@@ -81,6 +81,10 @@ protected:
 	void setVolumeSettingsState(bool enabled);
 	void setSubtitleSettingsState(bool enabled);
 
+	//virtual void setupWidgets();
+	virtual void loadConfigToWidgets();
+	virtual void saveConfigFromWidgets();
+
 private:
 	//
 	// Graphics controls
@@ -147,9 +151,9 @@ public:
 	GlobalOptionsDialog();
 	~GlobalOptionsDialog();
 
-	void open();
-	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
+	virtual void reflowLayout();
 
 protected:
 #ifdef SMALL_SCREEN_DEVICE
@@ -165,6 +169,10 @@ protected:
 	StaticTextWidget *_curTheme;
 
 	PopUpWidget *_autosavePeriodPopUp;
+
+	void setupWidgets();
+	virtual void loadConfigToWidgets();
+	virtual void saveConfigFromWidgets();
 };
 
 } // End of namespace GUI

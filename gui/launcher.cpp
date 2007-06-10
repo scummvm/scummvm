@@ -124,13 +124,12 @@ public:
 
 	virtual void reflowLayout();	
 
-	void open();
-	void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
 	void setupWidgets();
-	void resetWidgets();
+	virtual void loadConfigToWidgets();
+	virtual void saveConfigFromWidgets();
 	
 	String	_desc;
 
@@ -298,7 +297,7 @@ void EditGameDialog::reflowLayout() {
 		_focusedWidget = 0;
 		_dragWidget = 0;
 		setupWidgets();
-		resetWidgets();
+		loadConfigToWidgets();
 	}
 
 	OptionsDialog::reflowLayout();
@@ -311,15 +310,11 @@ void EditGameDialog::reflowLayout() {
 		_platformPopUp->changeLabelWidth(labelWidth);
 }
 
-void EditGameDialog::open() {
-	OptionsDialog::open();
-	
-	resetWidgets();
-}
-
-void EditGameDialog::resetWidgets() {
+void EditGameDialog::loadConfigToWidgets() {
 	int sel, i;
 	bool e, f;
+
+	OptionsDialog::loadConfigToWidgets();
 
 	// En-/disable dialog items depending on whether overrides are active or not.
 
@@ -377,9 +372,9 @@ void EditGameDialog::resetWidgets() {
 	_platformPopUp->setSelected(sel);
 }
 
+void EditGameDialog::saveConfigFromWidgets() {
+	OptionsDialog::saveConfigFromWidgets();
 
-void EditGameDialog::close() {
-	if (getResult()) {
 		ConfMan.set("description", _descriptionWidget->getEditString(), _domain);
 
 		Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
@@ -405,8 +400,6 @@ void EditGameDialog::close() {
 			ConfMan.removeKey("platform", _domain);
 		else
 			ConfMan.set("platform", Common::getPlatformCode(platform), _domain);
-	}
-	OptionsDialog::close();
 }
 
 void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
