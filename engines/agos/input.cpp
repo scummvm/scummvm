@@ -25,6 +25,7 @@
 
 #include "common/stdafx.h"
 
+#include "common/config-manager.h"
 #include "common/file.h"
 
 #include "agos/intern.h"
@@ -578,10 +579,11 @@ bool AGOSEngine::processSpecialKeys() {
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) - 16);
 		break;
 	case 'm':
+		_musicPaused ^= 1;
 		if (_midiEnabled) {
-			_midi.pause(_musicPaused ^= 1);
+			_midi.pause(_musicPaused);
 		}
-		// TODO
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (_musicPaused) ? 0 : ConfMan.getInt("music_volume"));
 		break;
 	case 's':
 		if (getGameId() == GID_SIMON1DOS) {
