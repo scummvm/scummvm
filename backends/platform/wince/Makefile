@@ -38,7 +38,7 @@ ECHO   = echo -n
 CAT    = cat
 AS     = arm-wince-pe-as
 
-DEFINES := -D_WIN32_WCE=300 -DARM -D__ARM__ -D_ARM_ -DUNICODE -DSCUMM_NEED_ALIGNMENT -DFPM_DEFAULT -DUSE_MAD -DNONSTANDARD_PORT -DUSE_TREMOR -DUSE_VORBIS -DUSE_MPEG2 -DWIN32 -DUSE_ZLIB
+DEFINES := -D_WIN32_WCE=300 -DARM -D__ARM__ -D_ARM_ -DUNICODE -DSCUMM_NEED_ALIGNMENT -DFPM_DEFAULT -DUSE_MAD -DNONSTANDARD_PORT -DUSE_TREMOR -DUSE_VORBIS -DUSE_MPEG2 -DWIN32 -DUSE_ZLIB -DUSE_FLAC
 DEFINES += -D__stdcall= -Dcdecl= -D__cdecl__= -D__cdecl= -Wno-multichar
 #DEFINES += -DDEBUG -DUSE_WINDBG -g
 
@@ -49,7 +49,7 @@ CFLAGS := -O3 -march=armv4 -mtune=xscale
 CXXFLAGS := $(CFLAGS)
 
 LDFLAGS := -Llibs/lib -L$(wince_gcc_root)/lib
-LIBS := -lSDL -lzlib -lmad -lmpeg2 -ltremorce --entry WinMainCRTStartup
+LIBS := -lSDL -lzlib -lmad -lmpeg2 -ltremorce -lFLAC --entry WinMainCRTStartup
 
 TARGET = scummvm.exe
 OBJS := 
