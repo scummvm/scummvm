@@ -70,7 +70,7 @@ rm -Rf ${RPM_BUILD_ROOT}
 #------------------------------------------------------------------------------
 %files
 %defattr(0644,root,root,0755)
-%doc AUTHORS README NEWS COPYING
+%doc AUTHORS README NEWS COPYING COPYRIGHT
 %attr(0755,root,root)%{_bindir}/scummvm
 %{_datadir}/applications/*
 %{_datadir}/pixmaps/scummvm.xpm

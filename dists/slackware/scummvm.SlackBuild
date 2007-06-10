@@ -38,7 +38,7 @@ gzip -9 dists/scummvm.6
 mkdir -p $PKG/usr/man/man6
 cp dists/scummvm.6.gz $PKG/usr/man/man6
 mkdir -p $PKG/usr/doc/scummvm-$VERSION
-cp -a AUTHORS COPYING ChangeLog NEWS README TODO \
+cp -a AUTHORS COPYING COPYRIGHT ChangeLog NEWS README TODO \
   $PKG/usr/doc/scummvm-$VERSION
 chmod 644 $PKG/usr/doc/scummvm-$VERSION
 mkdir -p $PKG/install

@@ -15,7 +15,7 @@ all: $(EXECUTABLE) plugins
 # Files that are to be included in the archive built by "make dist"
 DISTFILES := \
 	Makefile Makefile.common \
-	AUTHORS NEWS README COPYING
+	AUTHORS NEWS README COPYING COPYRIGHT
 
 # The dist file name
 ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
