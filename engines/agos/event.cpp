@@ -548,7 +548,14 @@ void AGOSEngine::delay(uint amount) {
 }
 
 void AGOSEngine::timer_callback() {
-	timer_proc1();
+	if (getGameId() == GID_DIMP) {
+		_lastTickCount = _system->getMillis();
+
+		timer_proc1();
+		dimp_idle();
+	} else {
+		timer_proc1();
+	}
 }
 
 void AGOSEngine_Feeble::timer_proc1() {
