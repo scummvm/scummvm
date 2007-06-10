@@ -59,7 +59,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      LINC space and terminals, particularly in non-English languages.
 
  Nintendo DS Port:
-   - TOOO: Mention DLDI support
+   - New engines supported: AGI, CINE, and SAGA
+   - Option to show the mouse cursor
+   - Word completion on keyboard for AGI games
+   - Plenty of optimisations
 
  WinCE Port:
    - Switched to using a GCC toolchain for building.
