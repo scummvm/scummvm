@@ -361,22 +361,22 @@ the files appear on both CDs, but again they're identical.
 3.7) Broken Sword notes:
 ---- -------------------
 Broken Sword 1 and 2 both come with in-game cutscenes compressed using
-RAD Game Tools legacy Smacker(tm) format. As RAD is unwilling to open
+RAD Game Tools' legacy Smacker(tm) format. As RAD is unwilling to open
 the older legacy versions of this format to us, and have requested we not
 reverse engineer it, Revolution Software has kindly allowed us to provide
 re-encoded Broken Sword cutscenes for download on our website:
 
   http://www.scummvm.org/downloads.php
 
-These cutscenes are provided in DXA format, with FLAC audio. With quality
-equal to the original games, due to using lossless compression.
+These cutscenes are provided in DXA format with FLAC audio. Their quality
+is equal to the original games due to the use of lossless compression.
 Viewing these cutscenes requires a version of ScummVM compiled with both
 FLAC and zLib support.
 
-The audio for these cutscenes is provided separately, as OGG Vorbis audio
-too, For systems that are too slow, to handle the decoding of FLAC audio.
-Viewing these cutscenes (with OGG Vorbis audio) requires a version of ScummVM
-compiled with both libVorbis and zLib support. 
+For systems that are too slow to handle the decoding of FLAC audio,
+the audio for these cutscenes is provided separately as OGG Vorbis audio
+too. Viewing these cutscenes with OGG Vorbis audio requires a version of
+ScummVM compiled with both libVorbis and zLib support. 
 
 The cutscenes should be placed in the main game data directory. Note that
 currently this requires either copying the game to hard disk or burning
