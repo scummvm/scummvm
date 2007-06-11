@@ -64,6 +64,13 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Word completion on keyboard for AGI games
    - Plenty of optimisations
 
+ Symbian Port:
+   - Added support for MP3 to S60v3 and UIQ3 versions.
+   - Switched to SDL 1.2.11 for bug fixes and improvements
+   - Improved performance for S60v3 and UIQ3 using ARM target.
+   - Limited support for pre Symbian OS9 devices due to compiler issues.
+   - Updated key mapping handling.
+	
  WinCE Port:
    - Switched to using a GCC toolchain for building.
    - Major update to the SDL lib. Better, faster, more compatible :-)
