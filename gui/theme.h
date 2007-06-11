@@ -35,7 +35,7 @@
 #include "graphics/surface.h"
 #include "graphics/fontman.h"
 
-#define THEME_VERSION 21
+#define THEME_VERSION 22
 
 namespace GUI {
 
