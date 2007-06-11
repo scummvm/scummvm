@@ -83,7 +83,7 @@
 2252623 balance
 2252669 balcony
 2252852867 calculator
-2253 bake cake calf
+2253 bake cake calf able
 22536327 calendar
 22536337 calender
 22537 baker cakes
@@ -142,6 +142,7 @@
 226767 acorns
 22678 abort
 226787 campus
+226827 canvas
 22683 above
 2268336 canteen
 226837 banter
@@ -300,7 +301,7 @@
 2296638 bayonet
 2297 bays
 22977 abyss
-23 cd
+23 cd be
 23224 beach
 232266 beacon
 2322873 because
@@ -337,6 +338,7 @@
 23337263 bedframe
 2334243 affiche
 23347628483 affirmative
+23348466 addition
 23349 affix
 2336 been
 23366 addon
@@ -356,6 +358,7 @@
 233846836 beethoven
 233853 beetle
 234 beg
+234284687 behaviour
 234323 behead
 23436684 behemoth
 234366847 behemoths
@@ -377,6 +380,7 @@
 23522368 adjacent
 235327283 celebrate
 235378425 celestial
+235433 belief
 235436 aelien
 2355 bell cell
 235527 cellar
@@ -390,6 +394,7 @@
 2358 belt
 23587 belts
 235878 adjust
+2358786368 adjustment
 236 bem ben
 23624 bench
 2362437 benches
@@ -436,6 +441,7 @@
 237743 berrie
 2377437 berries
 23779 berry
+2378246 certain
 2378328 cerveau
 23783553 cervelle
 23784 berth
@@ -478,6 +484,7 @@
 24255 chalk
 2425525683 chalkcloud
 2425526273 chalkboard
+242623 chance
 2426237 chamber
 2426273 chambre
 2426335437 chandelier
@@ -631,15 +638,16 @@
 24677377 choppers
 2469 chow
 247 air
-24723238 aircfaft
 24724 birch
 247253 circle
 2472667737767 aircompressor
+24727238 aircraft
 2472848 circuit
 247288426273 circutiboard
 2473 bird
 24732243 birdcage
 24733333 birdfeed
+247336368 agreement
 247345837 airfilter
 24736378 birdnest
 24737 birds
@@ -681,6 +689,7 @@
 24876 churn
 248787 citrus
 24883 chute
+248837 bitter
 2489 city
 2492773 bizarre
 2493 agwe
@@ -934,6 +943,7 @@
 2643537 angeles
 26443 angie
 2645 boil coil
+26453 angle
 264537 boiler
 2645464 boiling
 26457 coils
@@ -946,6 +956,7 @@
 26467 coins
 26467388767568 coinreturnslot
 26467568 coinslot
+26479 angry
 26483 boite
 264837 boites
 2649 coiw
@@ -1000,6 +1011,7 @@
 266344873 configure
 2663463 confine
 2663473 bonfire
+266348466 condition
 266366 condom
 2663667 condoms
 266367 condor
@@ -1055,8 +1067,11 @@
 2666328466 connection
 2666372425 commercial
 266638 bonnet
+26664 among
 266648 commit
+266648833 committee
 2666633 commode
+266666 common
 266686236368 announcement
 2666862363687 announcements
 26668642283 communicate
@@ -1067,8 +1082,10 @@
 2667228 compact
 266722867 compactor
 266724 bonsai
+266724687 conscious
 2667248733 bonsaitree
 2667269 company
+2667274766 comparison
 2667277 compass
 26672786368 compartment
 266727863687 compartments
@@ -1077,9 +1094,11 @@
 26673457 conseils
 26673462837 coordinates
 266737 coords
+26673848466 competition
 26674 boorh
 26674337 consider
 266752468 complaint
+26675383 complete
 2667539 complex
 266765 consol
 2667653 console
@@ -1233,10 +1252,12 @@
 26868377278 counterpart
 268683772787 counterparts
 2686837867 countertop
+2686879 country
 268689 bounty
 2687 ants anus cots
 2687266 bourbon
 26872687 couscous
+268736368 amusement
 268753 couple
 2687538 couplet
 268754647 couplings
@@ -1421,6 +1442,7 @@
 27478257 cristals
 274786853 aristotle
 27483 argue
+27486368 argument
 2748729 ashtray
 2748837 critter
 27488377 critters
@@ -1495,6 +1517,7 @@
 2773632437 appendages
 27737668 arseroot
 277378 arrest
+2773849464 appetizing
 2774258 asphalt
 27742858 asphault
 2774466368 assignment
@@ -1516,6 +1539,7 @@
 277697 arrows
 277734363 apprehend
 27776224 approach
+27776825 approval
 2778937 appuyer
 278 art cpu cru
 27823 bruce
@@ -1670,11 +1694,13 @@
 28773687 currents
 2877464 burping
 287769 burrow
+28778 burst
 2878 bust
 2878246 curtain
 28782467 curtains
 2878246763 curtainrod
 2878273 bustard custard
+28783 curve
 287847 curtis
 2878477 curtiss
 287863426 custodian
@@ -1689,9 +1715,11 @@
 288278 ctucru
 2883 cute
 288363268 attendant
+2883678 attempt
 288368466 attention
 28842 attic
 288467 author
+288467489 authority
 288473 attire
 28848833 attitude
 2885379 cutlery
@@ -1705,6 +1733,7 @@
 28867 autos
 288674568 autopilot
 2887 cuts
+2887228466 attraction
 2888 butt
 288837 butter cutter
 28883724876 butterchurn
@@ -1725,7 +1754,7 @@
 28992737 buzzards
 289937 buzzer
 29 ax by
-29253 cycle
+29253 cycle awake
 292536 awaken
 2925464 cycling
 29256737 cyclopes
@@ -1755,6 +1784,7 @@
 322742 fabric
 322742283 fabricate
 3227427 fabrics
+3228 fact
 3228679 factory
 323 dad
 32337 fader
@@ -1793,6 +1823,7 @@
 326435 daniel
 3264357 daniels
 326437 danger
+326437687 dangerous
 326453 dangle
 32645437 families
 326459 family
@@ -1806,7 +1837,7 @@
 326735 damsel
 326736 dampen
 32682 fanta
-327 ear
+327 ear far
 32726 ecran
 327267 ecrans
 3273 fare fase
@@ -1818,6 +1849,7 @@
 3275 dark
 32756377 darkness
 32757666 darkroom
+32759 early
 3276 darn farm
 327637 farmer
 327646873 farmhouse
@@ -1832,6 +1864,7 @@
 327837 faster
 3278378 fastest
 32784 darth earth
+3278459 earthly
 3278482337 darthvader
 327849676 earthworm
 3278626 dartman
@@ -1886,6 +1919,7 @@
 3323537283 decelerate
 33237 feces
 33247437 decipher
+33247466 decision
 3325 deal deck
 3325273 declare
 332537 dealer
@@ -1897,9 +1931,11 @@
 332668264628466 decontamination
 33267283 decorate
 3326728466 decoration
+3327 dear fear
 33273273 decrease
 332747 debris
 33278 feast
+3328 debt
 33284 death debug
 3328437 feather
 33284377 feathers
@@ -1907,8 +1943,10 @@
 33284847328 deaththreat
 3328873 feature
 333223 deface efface
+333253 feeble
 3333 feed
 33332283 defecate
+333328 effect
 3333464 feeding
 3333673 defense
 333463 fefine
@@ -1927,6 +1965,7 @@
 3348466 edition
 33484667 editions
 3349372833 dehydrated
+33542283 delicate
 335424687 delicious
 335463 feline
 3354837 deliver
@@ -1967,9 +2006,11 @@
 337278 depart
 33727833 departed
 3372786368 department
+337363368 dependent
 337378 desert
 337446 design
 33744628466 designation
+337473 desire
 337478 desist
 3375 desk
 33757 desks
@@ -1989,20 +2030,25 @@
 33779626 ferryman
 3378 dept
 33784 depth
+3378453 fertile
 337845493 fertilize
 3378454937 fertilizer
 337847 depths
 33786238 dervocet
 3378769 destroy
 33787828 destruct
+33787828466 destruction
 337887 festus
 337889 deputy
 338224 detach
 33822437 detacher
+338228466 education
+338245 detail
 338278283 devastate
 33832867 detector
 338328677 detectors
 33835673 develope
+33835676368 development
 33837 deter
 338374368 detergent
 338423 device
@@ -2037,6 +2083,7 @@
 34274726 diaphram
 34277432 diarrhea
 34279 diary
+3428466 fiction
 343 did die
 343337368 different
 3433428589 difficulty
@@ -2049,6 +2096,7 @@
 344 dig egg
 34436 eigen
 344378 digest
+344378466 digestion
 344437 digger
 34448 eight fight
 3444825 digital
@@ -2104,8 +2152,10 @@
 347262255 discoball
 3472637 discoer
 3472666328 disconnect
+347268379 discovery
 347268773 discourse
 347276 disarm
+347277327 disappear
 3472776468464 disappointing
 3472777683 disapprove
 3472877 discuss
@@ -2116,6 +2166,7 @@
 34732737 diseases
 3473276 firearm
 34732767 firearms
+347328466 direction
 34732867 director
 347328679 directory
 3473398464847437 fireextinguisher
@@ -2146,6 +2197,7 @@
 347468347283 disintegrate
 34747663 fishpond
 34748473 disguise
+3474878 disgust
 34749 fishy
 347492 fishx2
 3474927437 dishwasher
@@ -2184,6 +2236,7 @@
 34782623 distance
 34784648474 distinguish
 3478678466 distortion
+347874288466 distribution
 3478872 disturb
 34789 dirty
 34824 ditch
@@ -2220,6 +2273,7 @@
 3527454448 flashlight
 35275 flask
 352757 flasks
+3527842 elastic
 3528 flat
 35287 flats
 3528836 flatten
@@ -2240,6 +2294,7 @@
 3533759 elderly
 35362 elena
 3536368279 elementary
+35363687 elements
 35374 flesh
 35374268 elephant
 35382867 elevator
@@ -2388,6 +2443,7 @@
 3665 fool
 366539 donkey dooley
 3665397 donkeys
+3665474 foolish
 366637 donner
 36669 donny
 3667 door
@@ -2405,6 +2461,7 @@
 36679297 doorways
 3668 dont font foot
 36682255 football
+366844 enough
 36684455 foothill
 366844557 foothills
 36684667 emotions
@@ -2455,6 +2512,7 @@
 36792737 forwards
 368 dot
 368253 double
+36828 doubt
 36835673 envelope
 36837 enter
 3683782466368 entertainment
@@ -2557,6 +2615,7 @@
 3737733 dressed
 3737737 dresser
 37377377 dressers
+37378368 frequent
 3742 eric
 37422 frica
 37433 dried
@@ -2619,9 +2678,11 @@
 376936 frozen
 37696464 drowning
 3773623 essence
+37767 error
 3779 espy
 378 fst
 378225474 establish
+37825 equal
 3784 drug
 37847 drugs equip
 378476368 equipment
@@ -2661,8 +2722,10 @@
 3833883 dudette
 3835 fuel
 383539 fudley
+3836 even
 3836464 evening
-3837 duds eves
+38368 event
+3837 duds ever eves
 3837625 eternal
 38376489 eternity
 38379 every
@@ -2727,6 +2790,7 @@
 3925 eyal
 3926463 examine
 39264637 examiner
+3926753 example
 39273 dwarf
 392737 dwarfs
 3927383 excrete
@@ -2753,17 +2817,20 @@
 39464 dying
 39465437 dwinkies
 39478 exist
+394783623 existence
 3948 exit
 394863 exhume
 39529 exlax
 3953 dyke
 39626483 dynamite
+397267466 expansion
 39732867283 expectorate
 39735 expel
 3973743623 experience
 3973746368 experiment
 397374636825 experimental
 397374636828466 experimentation
+397378 expert
 397473 expire
 3974733 expired
 3975246 explain
@@ -2786,8 +2853,8 @@
 3987283773787425 extraterrestrial
 39872837737874257 extraterrestrials
 4131 i.d.
-416 i'm
 4155 i'll
+416 i'm
 42 gb
 422 gab hac
 4224828 habitat
@@ -2897,6 +2964,7 @@
 427653 harold
 42765377 harmless
 42765463 gasoline
+4276669 harmony
 4277 gaps gars gasp
 427736 happen
 42773633 happened
@@ -2915,7 +2983,7 @@
 42824 hatch
 4282438 hatchet
 42824929 hatchway
-4283 gate have
+4283 gate hate have
 4283533737 gatekeeper
 42837 gates
 4283929 gateway
@@ -2951,6 +3019,7 @@
 432537 healer
 432553 heckle
 432584 health
+4325849 healthy
 4327 gear heap hear
 4327464 hearing
 432774438 gearshift
@@ -2962,6 +3031,7 @@
 4328367 heavens
 432837 heater
 43289 heavy
+4332 idea
 43343 hedge
 433437 hedges
 43343769 hedgerow
@@ -3037,7 +3107,7 @@
 439 gey hey
 4392 heya
 439737 geyser
-44 hh hi ii
+44 ii hh hi
 44268 giant
 44268377 giantess
 4433 hide
@@ -3051,6 +3121,8 @@
 4438 gift
 443886 ghetto
 4438862527837 ghettoblaster
+444 iii
+4444 high
 444424247 highchair
 44447533737 highsleeper
 4444929 highway
@@ -3094,6 +3166,7 @@
 4482444537 hitchhiker
 44824464 hitching
 4483 give hive
+448437 hither
 448464 giving
 448537 hitler
 4485377 hitlers
@@ -3180,6 +3253,7 @@
 4637 gods
 4637228466 infraction
 4638237 inducer
+46387879 industry
 464 hog
 4642248268 inhabitant
 46422482687 inhabitants
@@ -3292,6 +3366,7 @@
 467639 horney
 46767 horns
 467678268 important
+46769 horny
 4677 horq
 46773 horse
 4677328 inspect
@@ -3305,6 +3380,7 @@
 4678268 instant
 4678473 inquire
 46784888466 institution
+4678573 impulse
 46787 horus
 467872623 insurance
 467878284667 instructions
@@ -3324,6 +3400,7 @@
 46837268773 intercourse
 4683727238 hovercraft
 468373373 interfere
+46837378 interest
 4683742522842 intergalactic
 46837467 interior
 468376257 internals
@@ -3350,6 +3427,7 @@
 46863687 hounfour
 4686426 houngan
 46869422833 intoxicated
+4687 hour
 46873 house
 46873359 housefly
 468734653 household
@@ -3416,6 +3494,7 @@
 4728489 gravity
 4729 gray
 473273 grease
+47328 great
 47336 green
 4733653222 greenkebab
 4733653227 greenkebap
@@ -3511,6 +3590,7 @@
 4866464 humming
 48664647 hummings
 48667478 humorist
+486687 humour
 4867 gums guns hump hums
 48674448 gunsight
 4867467 gunshop
@@ -3646,6 +3726,7 @@
 528262 katana
 5282867437 lavatories
 52828679 lavatory
+5283 late
 52837 later
 52837387466 laterfusion
 52844 laugh
@@ -3660,7 +3741,7 @@
 5287463 latrine
 5288423 lattice
 52884239675 latticework
-529 jaw jay lay
+529 jaw jay law lay
 5292663 jawbone
 52933 layed
 5293629 lazenby
@@ -3688,6 +3769,7 @@
 532686 leanto
 5327 leap
 53274 leash
+53276464 learning
 53283 leave
 532837 leaves
 5328376 lectern
@@ -3845,6 +3927,7 @@
 54627 limbs
 5463 kind line
 54633 kinfe
+54636 linen
 54637 lines
 54637539 lindsley
 5463925537 linewalker
@@ -3852,6 +3935,7 @@
 54643743 lingerie
 5464487 kinghts
 54647 kings
+54648 limit
 5465 link
 5466 lion
 54667 lions
@@ -3931,6 +4015,7 @@
 5627837 lobster
 563 joe
 56323 knead
+5633 knee
 56335 kneel
 56343 lodge
 5635 joel
@@ -4003,6 +4088,7 @@
 567463 josine
 5674867 loritos
 56752 korja
+5677 loss
 5677464 lopping
 5678 korv lost
 56782546 lostalim
@@ -4021,7 +4107,7 @@
 56876257 journals
 5687639 journey
 5688379 lottery
-569 kow
+569 kow low
 56937 lower
 56978425 joystick
 57 jr kq
@@ -4237,7 +4323,7 @@
 62757 marks
 62758 markt
 6276679 masonry
-6277 maps
+6277 maps mass
 62772273 massacre
 6277243 massage
 62774 marsh
@@ -4245,6 +4331,7 @@
 6277433 married
 6277464 napping
 6277483 massive
+627769 narrow
 62779 marry nappy
 6278 mart mast
 62782228 mastabat
@@ -4292,6 +4379,7 @@
 62844283 navigate
 6284428466 navigation
 628442846625 navigational
+628466 nation
 628483 native
 6284837 natives
 6285 maul
@@ -4302,6 +4390,7 @@
 628766 matron
 6288 matt
 628837 matter
+6288725 natural
 628873 mature nature
 62887377 mattress
 629 maw max may nay
@@ -4320,6 +4409,7 @@
 63222 mecca
 632369 meadow
 6323695263 meadowland
+632377279 necessary
 632377447 mebership
 6324 mech
 63242 mecha
@@ -4329,6 +4419,8 @@
 63255223 necklace
 63257 meals neals
 6325843 necktie
+6327 near
+6327873 measure
 632787464 measuring
 6328 meat
 632827 nectar
@@ -4410,6 +4502,7 @@
 637769 merrow
 63779 merry
 6378 merv nest
+63783 nerve
 6378863 neptune
 638 net
 63825 metal
@@ -4465,7 +4558,7 @@
 64387 niets
 64437 niger
 644453 niggle
-64448 night
+64448 night might
 64448464253 nightingale
 6444854448 nightlight
 64448544487 nightlights
@@ -4516,6 +4609,7 @@
 6468 mint
 64683636 nintendo
 64686368 ointment
+646883 minute
 64688359 minutely
 64689 minty
 647 mir
@@ -4594,12 +4688,14 @@
 66527 molar
 665277 molars
 6653 moke mold
+665333 molded
 6653624677 mokenchops
 665378 molest
 665543 mollie
 6656 mojo nolo
 6656868 molotov
 665836 molten
+6659 only
 666 mom non
 666278379 monastery
 66639 money
@@ -4638,6 +4734,7 @@
 6667873 monstre
 66678737 monstres
 666837 monter
+66684 month
 66686368 monument
 666863687 monuments
 667 mop
@@ -4655,7 +4752,7 @@
 66774 morph
 667747 morris
 66778486 mosquito
-6678 mort
+6678 most mort
 667825 mortal
 667827 mortar
 66784 north
@@ -4735,13 +4832,16 @@
 67426 organ
 67426476 organism
 674264767 organisms
+674264928466 organization
 674267 organs
 674276 orgasm
 6743423 orifice
+6746466 opinion
 67486 orium
 67626368 ornament
 676263687 ornaments
 677 mrs
+67767483 opposite
 6824 much
 6825 muck
 6825327 nuclear
@@ -4872,7 +4972,7 @@
 72274342425 sacrificial
 72278 pabst
 72279 scary
-723 pad raf
+723 pad raf sad
 7231 r2d1
 7232 r2d2
 72327 radar
@@ -4920,7 +5020,7 @@
 72457 rails
 72457626 sailsman
 7245796626 sailswoman
-7246 rain
+7246 pain rain
 72462628 raincoat
 724626287 raincoats
 7246269 rainbow
@@ -5026,6 +5126,7 @@
 727235 parcel
 72724 sarah
 727246368 parchment
+72725535 parallel
 7272622 saranac
 72726253 scramble
 72726742487 sarcophagus
@@ -5085,7 +5186,7 @@
 7277687 parrots
 72777678 passport
 72779673 password
-7278 part
+7278 part past
 72782 scrub
 7278253 partake
 72783 paste
@@ -5105,7 +5206,7 @@
 728237 saucer
 72824 patch
 72826 satan
-7283 save
+7283 save rate
 7283548833474 satelittedish
 728355483 satellite
 7283554837 satellites
@@ -5158,6 +5259,7 @@
 729486 raygun
 7294867 rayguns
 7296 pawn
+7296368 payment
 7296455 sawmill
 729674663 saxophone
 72967466478 saxophonist
@@ -5166,6 +5268,7 @@
 729843 scythe
 73 rd se sf
 732 pda pea sea
+73223 peace
 73224 peach reach
 732253 pebble
 7322537 pebbles
@@ -5179,6 +5282,7 @@
 7323222 rebecca
 7323446 rebegin
 7323464 reading
+7323478 receipt
 7323483 receive
 73234837 receiver
 73235 rebel
@@ -5229,6 +5333,7 @@
 73274355 seashell
 73274673 seashore
 73275 pearl
+732766 reason
 7328 peat seat
 73282358 seatbelt
 732833 seated
@@ -5256,7 +5361,7 @@
 7335328466 reflection
 7335328483 reflective
 733532867 reflector
-7336 redo
+7336 redo seem
 733626 redman
 7337 peep peer
 73373746368 refreshment
@@ -5277,17 +5382,20 @@
 734478728466 registration
 73467 reins
 7347 pegs
+734738 regret
 7348527 regular
 734852867 regulator
 734874482867 regurgitator
 73493 seize
 735283 relate
 73528464 relating
+73528466 relation
 735284667 relations
 73529 relax
 7353 self
 7353273 release
 735328 reject select
+735328466 selection
 7354226 pelican
 735433 relief
 7354383 relieve
@@ -5380,9 +5488,11 @@
 7376748466 reposition
 737678 report
 7377 pepp
+7377328 respect
 7377368 serpent
 737737 pepper
 73773736828466 representation
+73773736828483 representative
 7377376468 peppermint
 7377377 peppers
 73774 pepsi
@@ -5393,11 +5503,13 @@
 73776625 personal
 7377667 persons
 73776674245489 responsibility
+73776674253 responsible
 737774728466 perspiration
 73777473 perspire
 73779 peppy
 737797 peppys
 7378 pest rest sert
+7378268 servant
 7378278 restart
 7378287268 restaurant
 737828737 restaurer
@@ -5459,6 +5571,7 @@
 738876464 returning
 7388767568 returnslot
 739 pew sex
+739273 reward
 73937 sewer
 739464 sewing
 7397 pews
@@ -5476,6 +5589,7 @@
 74225537 shackles
 742257 shacks
 742266 ribbon
+7423 rice
 74233 shade
 742337 shades
 742369 shadow
@@ -5495,6 +5609,7 @@
 742538377 picketers
 742553 pickle
 742587 pickup
+74263 shame
 74266 piano
 7426766 shampoo
 742689 shanty
@@ -5608,6 +5723,7 @@
 7453 pike pile
 745337 pilfer
 7453623 silence
+74536859 silently
 745464 piling
 7454746 pilgrim
 7455 pill silk
@@ -5657,6 +5773,7 @@
 74668377 shooters
 7467 pimp shop
 74673 rinse shore
+746753 simple
 7467533737 shopkeeper
 74677 shops
 746773 shoppe
@@ -5744,10 +5861,12 @@
 7493 size
 74943 pixie
 74963 rhyme
+74974225 physical
 749742426 physician
 7497427 physics
 7498336 sixteen
 74984 sixth
+749846 rhythm
 749893433 sixtyfife
 749893483 sixtyfive
 749896463 sixtynine
@@ -5805,6 +5924,7 @@
 752962537 playmaker
 75323 plead
 753273 please
+75327873 pleasure
 753299 sleazy
 7533 sled
 753343 sledge
@@ -5839,7 +5959,7 @@
 75673 slope
 756737 slopes
 7568 plot slot
-756844 slough
+756844 plough slough
 75687 pjotr plots slots
 7569 plow slow
 756937 slower
@@ -5882,6 +6002,7 @@
 762425 social
 76243 poche roche
 762437 rocher roches
+7624389 society
 76245 snail
 76246 robin
 7625 rock soak sock
@@ -5921,6 +6042,7 @@
 763368 rodent
 76336862 rodentmc
 763368626844387 rodentmcnuggets
+763393 sneeze
 76344464 smegging
 76347 rmdir
 763486 podium
@@ -5974,7 +6096,9 @@
 765423626 policeman
 765423636 policemen
 7654248 solicit
+76543 solid
 765474 polish
+765484225 political
 76548427 politics
 7655 roll
 765533 rolled
@@ -6059,21 +6183,23 @@
 7673882 rosetta
 76748466 position
 7675 pork
+767674342 soporific
 76773 posse
 7677377 possess
 76773774667 possessions
+76774253 possible
 76774343 porridge
 7677437 poppies
 76776473 porpoise
 76779 poppy sorry
-7678 port post
+7678 port post sort
 76782253 portable
 767825 portal
 7678257 portals
 7678269 postbox
 7678285547 portcullis
 76783 porte
-767837 portes poster
+767837 porter portes poster
 7678377 posters
 7678426 portico
 7678437 portier
@@ -6184,6 +6310,7 @@
 77324626 speciman
 77324636 specimen
 773246367 specimens
+77324687 precious
 773247423 precipice
 77325 speak
 7732537 speaker
@@ -6262,14 +6389,17 @@
 77476637 prisoner
 7747667 prisons
 7748 spit
+7748283 private
 7748853 spittle
 77493 prize
 77496 prizm
 775274 splash
 775433 spliff
 77548 split
+77622253 probable
 77623 probe
 7762333 proceed
+7762377 process
 776237737 processes
 7762377464 processing
 776237767 processor
@@ -6291,6 +6421,7 @@
 77663 spoof
 776636233 promenade
 7766384387 prometheus
+776643 sponge
 77665 spook spool
 776657 spooks
 776659 spooky
@@ -6319,6 +6450,7 @@
 7768 spot
 7768328466 protection
 7768328483 protective
+7768378 protest
 776837837 protester
 7768378377 protesters
 7768433 provide
@@ -6374,6 +6506,7 @@
 78237 pubes
 7823726453 quadrangle
 7823745283725 quadrilateral
+7824 such
 78242 pubic
 78243 stage
 7824326224 stagecoach
@@ -6400,6 +6533,7 @@
 782542493 publicize
 782547437 publisher
 7825474464 publishing
+7825489 quality
 78255 stalk stall
 782553 suckle
 782557 stalls
@@ -6454,6 +6588,7 @@
 78327464 stearing
 7833 puff rude
 783326 stefan
+783336 sudden
 783337 rudder
 78335 steel
 783353 puddle ruffle
@@ -6510,8 +6645,9 @@
 784337 stiffs
 784339 stiffy
 78438 quiet
+7844378466 suggestion
 78454 quiki
-78455 quill
+78455 still quill
 78458 quilt
 784587 quilts
 7846 ruin
@@ -6526,7 +6662,8 @@
 78477377 stirrers
 7848 puit quit suit
 78482273 suitcase
-78483 suite
+784824 stitch
+78483 quite suite
 78487 puits suits
 7848837 quitter
 7853 puke rule
@@ -6552,6 +6689,7 @@
 7862537 rumbles
 78625463 sunblind
 7862546337 sunblinder
+78625464 stocking
 786254647 stockings
 78625625 sunblock
 786257453 stockpile
@@ -6561,6 +6699,7 @@
 7864 rung sung
 7864527737 sunglasses
 78647 rungs
+7864746368 punishment
 7865 punk
 786536 stolen
 786537 punker
@@ -6569,7 +6708,7 @@
 78663 stone
 786631 stone'
 786635 pummel
-786637 stones
+786637 stones summer
 786639675 stonework
 78665 stool
 786657 stools
@@ -6602,6 +6741,7 @@
 787 7up pup sup
 78724273 purchase
 787242737 purchaser
+78724448 straight
 7872444836 straighten
 787246 strain
 787248 strait
@@ -6628,6 +6768,7 @@
 7873747277 supergrass
 787377527 superplas
 7873784767 supervisor
+7873824 stretch
 7874 push
 787428679 purgatory
 78743437 purifier
@@ -6649,6 +6790,7 @@
 78749 strix
 787653 stroke
 787655 stroll
+787664 strong
 787664269 strongbox
 7877 russ
 78773 purse
@@ -6663,10 +6805,12 @@
 78775437 supplies
 7877587 surplus
 787759 supply
+7877673 purpose
 7877678 support
 787767837 supporter
 78776787 supports
 787768634647 surroundings
+78777473 surprise
 78779 puppy pussy
 78779228 pussycat
 7878 rust
@@ -6779,12 +6923,12 @@
 825464 taking
 825473 valise
 82547626 talisman
-8255 talk
+8255 talk tall
 825539 valley
 825543 talkie
 825586463 valjumine
 8257 takr
-82583 valve
+82583 value valve
 825837 valves
 826 tan van
 8263 tame vane
@@ -6820,11 +6964,13 @@
 828377 taters
 82858 vault
 828866 tattoo
+829 tax
 8294 taxi
 8294222 taxicab
 83 ve
 832 tea
 8322437 teacher
+83224464 teaching
 832287 teacup
 8324642426 technician
 83246424267 technicians
@@ -6878,6 +7024,7 @@
 8355437 tellies
 83559 telly
 836 ten ufo
+83633629 tendency
 836337 tender vender
 8363387 vendeur
 8363464 vending
@@ -6934,6 +7081,7 @@
 837842853 vestibule
 8378452 tequila
 83784552 tequilla
+8379 very
 838 vdu
 8383 veve
 8387 vdus
@@ -6950,6 +7098,7 @@
 8425387 tickets
 842553 tickle
 84257 vials
+8426 than
 84265 thank
 842657 thanks
 84272 tiara
@@ -6972,6 +7121,7 @@
 84347 their
 8436 them then
 8436735837 themselves
+843679 theory
 84373 there these
 8437368337844 vierenveertig
 8439 tidy view
@@ -6981,6 +7131,7 @@
 84397678 viewport
 843976787 viewports
 844 vii
+84425 thick
 8442538 thicket
 84433 thief
 84437 tiger
@@ -6988,7 +7139,9 @@
 8444 viii
 84444 thigh
 844447 thighs
+84448 tight
 8444859 tightly
+8446 thin
 8446253 thimble
 8446253385 thimbleful
 84462537 thimbles
@@ -7004,6 +7157,7 @@
 84478336 thirteen
 844789 thirty
 84484 uhhuh
+8448437 thither
 84529 vijay
 8453 tile vile
 84537 tiles
@@ -7029,6 +7183,7 @@
 846464 timing
 846472 viogra
 8465283 violate
+8465368 violent
 846538 violet
 846543 tinkie
 846543946543 tinkiewinkie
@@ -7045,6 +7200,8 @@
 84676 thorn
 846767 thorns
 8468 thou
+846844 though
+8468448 thought
 84684487 thoughts
 84687263 thousand
 8469 tiny
@@ -7055,7 +7212,7 @@
 847323 thread
 8473237 threads
 847328 threat
-84733 three
+84733 three tired
 847337 tireds
 84737 tires viper
 8474 virh
@@ -7218,6 +7375,7 @@
 8665269 toolbox
 86657 tools
 86657433 toolshed
+86667769 tomorrow
 8667837 vonster
 86678377 vonsters
 8668 toot
@@ -7395,6 +7553,7 @@
 877658738 ussoltsev
 87782477 upstairs
 87825 truck usual
+8783 true
 87832 truda
 878524272 tsukahara
 87859 truly
@@ -7486,6 +7645,7 @@
 924782263 waistband
 9248 wait
 924837 waiter
+9248464 waiting
 92487377 waitress
 924934 yahweh
 925 yak
@@ -7575,7 +7735,7 @@
 932 web yea
 9324 yeah
 932568 zealot
-9327 wear webs
+9327 wear webs year
 93272 zebra
 9327357 weasels
 932766 weapon
@@ -7589,6 +7749,7 @@
 9333464 wedding
 93337 weeds
 93339422537 weedwhacker
+9335 week
 9337 weep
 9337464 weeping
 93378 weest
@@ -7614,6 +7775,7 @@
 937 yep yes
 9373 werd
 9378 west
+937837329 yesterday
 938 wet
 9384 yeti
 9387 zeus
@@ -7629,7 +7791,7 @@
 942827392 whatareya
 94287 whats
 94328 wheat
-9433 wife
+9433 wide wife
 94335 wheel
 94335227769 wheelbarrow
 943357 wheels
@@ -7643,8 +7805,10 @@
 943737 wheres
 944 wig xii zig
 94433 whiff
+9444 xiii
 94449 ziggy
 944497 ziggys
+94453 while
 9447 whip whir zigs
 9447539 whiskey
 944757665 whirlpool
@@ -7686,6 +7850,7 @@
 9463744353 windshield
 946387 windup
 9464 wing
+946433 winged
 94647 wings
 9465 wink
 94653 whole
@@ -7702,8 +7867,10 @@
 94673 whore
 946737 whores
 9467866 winston
-9473 wipe wire
+946837 winter
+9473 wipe wire wise
 94735377 wireless
+947366 wisdom
 94737 wires
 9474 wish
 947437 wishes
@@ -7718,6 +7885,7 @@
 94843729464 withdrawing
 948437295 withdrawl
 948446 within
+9484688 without
 9486377 witness
 949 why wiz
 949273 wizard
@@ -7752,6 +7920,7 @@
 966378683 woodstove
 96639 woody
 96639273 woodward
+9665 wool
 9666 zoom
 9666464 zooming
 96666 zooom
@@ -7801,7 +7970,9 @@
 97484647 writings
 974846482253 writingtable
 9748464822537 writingtables
+97664 wrong
 97683 wrote
+98 xv
 98222 yucca
 982227256 yuccapalm
 9846 yugo
