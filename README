@@ -1007,6 +1007,22 @@ other games.
         Escape                 - Skips cutscenes
         Space                  - Skips current line of text
 
+    Future Wars
+        ESC                    - Bring on command menu
+        F1                     - Examine
+        F2                     - Take
+        F3                     - Inventory
+        F4                     - Use
+        F5                     - Activate
+        F6                     - Speak
+        F9                     - "Activate" menu
+        F10                    - "Use" menu
+
+    Nippon Safes
+        Ctrl-d                 - Starts the debugger
+        l                      - Load game
+        s                      - Save game
+
     Simon the Sorcerer 1 and 2:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-d                 - Starts the debugger
@@ -1049,22 +1065,6 @@ other games.
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-d                 - Starts the debugger
 
-    Future Wars
-        Right click            - Bring on command menu
-        ESC                    - Bring on command menu
-        Right+left click       - Bring on system menu
-        F1                     - Examine
-        F2                     - Take
-        F3                     - Inventory
-        F4                     - Use
-        F5                     - Activate
-        F6                     - Speak
-        F9                     - "Activate" menu
-        F10                    - "Use" menu
-
-    Nippon Safes
-        l                      - Load game
-        s                      - Save game
 
 Note that using ctrl-f or ctrl-g is not recommended: games can crash when
 being run faster than their normal speed, as scripts will lose synchronisation.
