@@ -166,14 +166,15 @@ void AGOSEngine::animateSprites() {
 		_vgaSpriteChanged++;
 	}
 
-	if ((getGameType() == GType_ELVIRA1 && !_variableArray[293] ||
-		getGameType() == GType_ELVIRA2 && !_variableArray[71]) &&
+	if ((getGameType() == GType_ELVIRA1 && !_variableArray[293]) ||
+		(getGameType() == GType_ELVIRA2 && !_variableArray[71]) &&
 		_wallOn) {
+		_wallOn--;
 
 		VC10_state state;
-		state.srcPtr  = getBackGround() + 504;
-		state.height = 127;
-		state.width = 14;
+		state.srcPtr  = getBackGround() + 3 * _screenWidth + 3 * 16;
+		state.height = state.draw_height = 127;
+		state.width = state.draw_width = 14;
 		state.y = 0;
 		state.x = 0;
 		state.palette = 0;
