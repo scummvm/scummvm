@@ -675,18 +675,10 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	tab->addTab("Audio");
 	addAudioControls(tab, "globaloptions_");
-
-	int volControlPos = g_gui.evaluator()->getVar("volumeControlsInAudio", true);
-
-	if (volControlPos)
-		addVolumeControls(tab, "globaloptions_");
-
 	addSubtitleControls(tab, "globaloptions_");
 
-	if (!volControlPos) {
-		tab->addTab("Volume");
-		addVolumeControls(tab, "globaloptions_");
-	}
+	tab->addTab("Volume");
+	addVolumeControls(tab, "globaloptions_");
 
 	// TODO: cd drive setting
 
