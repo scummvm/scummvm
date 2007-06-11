@@ -16,7 +16,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  General:
    - Added dialog which allows the user to select the GUI theme on runtime.
    - Added 'Mass Add' feature to the Launcher, which allows you to scan for
-     all games in all subfolders of a given directory (to use it, press
+     all games in all subdirectories of a given directory (to use it, press
      shift then click on "Add Game").
    - Improved the way the auto detector generates target names, it now takes
      a game's variant, language and platform into account.
