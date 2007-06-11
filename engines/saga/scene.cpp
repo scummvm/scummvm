@@ -1210,8 +1210,23 @@ void Scene::endScene() {
 }
 
 void Scene::restoreScene() {
-	// TODO
-	warning("TODO: restoreScene()");
+	// There is no implementation for tiled scenes, since this function is only used
+	// in IHNM, which has no tiled scenes
+
+	Event event;
+
+	_vm->_gfx->showCursor(false);
+	_vm->_gfx->restorePalette();
+
+	event.type = kEvTImmediate;
+	event.code = kBgEvent;
+	event.op = kEventDisplay;
+	event.param = kEvPNoSetPalette;
+	event.time = 0;
+	event.duration = 0;
+	_vm->_events->queue(&event);
+
+	_vm->_gfx->showCursor(true);
 }
 
 void Scene::cmdSceneChange(int argc, const char **argv) {

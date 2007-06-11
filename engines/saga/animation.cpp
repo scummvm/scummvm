@@ -82,7 +82,10 @@ void Anim::playCutaway(int cut, bool fade) {
 
 	_cutAwayFade = fade;
 
-	if (fade) {
+	_vm->_gfx->savePalette();
+
+	// TODO
+	/*if (fade) {
 		Event event;
 		static PalEntry cur_pal[PAL_ENTRIES];
 
@@ -96,7 +99,7 @@ void Anim::playCutaway(int cut, bool fade) {
 		event.data = cur_pal;
 
 		_vm->_events->queue(&event);
-	}
+	}*/
 
 	if (!_cutawayActive) {
 		_vm->_gfx->showCursor(false);
@@ -200,7 +203,8 @@ void Anim::returnFromCutaway(void) {
 		clearCutaway();
 
 		// Handle fade up, if we previously faded down
-		if (_cutAwayFade) {
+		// TODO
+		/*if (_cutAwayFade) {
 			Event event;
 			event.type = kEvTImmediate;
 			event.code = kPalEvent;
@@ -210,7 +214,7 @@ void Anim::returnFromCutaway(void) {
 			event.data = saved_pal;
 
 			_vm->_events->queue(&event);
-		}
+		}*/
 
 		// Restore the scene
 		_vm->_scene->restoreScene();
@@ -242,9 +246,6 @@ void Anim::clearCutaway(void) {
 
 void Anim::startVideo(int vid, bool fade) {
 	debug(0, "startVideo(%d, %d)", vid, fade);
-
-	Event event;
-	_vm->_gfx->getCurrentPal(saved_pal);
 
 	_vm->_interface->setStatusText("");
 	_vm->_frameCount = 0;
