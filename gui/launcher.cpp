@@ -218,15 +218,9 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	// 5) The volume tab
 	//
-	int volControlPos = g_gui.evaluator()->getVar("volumeControlsInAudio", true);
+	tab->addTab("Volume");
 
-	if (!volControlPos) {
-		tab->addTab("Volume");
-
-		_globalVolumeOverride = new CheckboxWidget(tab, "gameoptions_volumeCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
-	} else {
-		_globalVolumeOverride = NULL;
-	}
+	_globalVolumeOverride = new CheckboxWidget(tab, "gameoptions_volumeCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
 
 	addVolumeControls(tab, "gameoptions_");
 
@@ -288,7 +282,7 @@ void EditGameDialog::open() {
 	OptionsDialog::open();
 
 	int sel, i;
-	bool e, f;
+	bool e;
 
 	// En-/disable dialog items depending on whether overrides are active or not.
 
@@ -302,17 +296,12 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("output_rate", _domain) ||
 		ConfMan.hasKey("subtitles", _domain) ||
 		ConfMan.hasKey("talkspeed", _domain);
+	_globalAudioOverride->setState(e);
 
-	f = ConfMan.hasKey("music_volume", _domain) ||
+	e = ConfMan.hasKey("music_volume", _domain) ||
 		ConfMan.hasKey("sfx_volume", _domain) ||
 		ConfMan.hasKey("speech_volume", _domain);
-
-	if (_globalVolumeOverride) {
-		_globalAudioOverride->setState(e);
-		_globalVolumeOverride->setState(f);
-	} else {
-		_globalAudioOverride->setState(e || f);
-	}
+	_globalVolumeOverride->setState(e);
 
 	e = ConfMan.hasKey("soundfont", _domain) ||
 		ConfMan.hasKey("multi_midi", _domain) ||
