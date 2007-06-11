@@ -22,6 +22,10 @@
 ""-"!:\system\apps\ScummVM\scummvm.stderr.txt",FILENULL
 ""-"!:\system\apps\ScummVM\sdl.ini",FILENULL
 
+; Common datafiles needed for some games
+"..\kyra.dat"-"!:\system\apps\scummvm\kyra.dat"
+"..\sky.cpt"-"!:\system\apps\scummvm\sky.cpt"
+
 ; This install layout will let you upgrade to newer versions wihout loss of scummvm.ini.
 ; It will remove the config file, std***.txt files & dirs on uninstall.
 
