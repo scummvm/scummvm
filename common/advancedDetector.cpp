@@ -212,7 +212,12 @@ PluginError detectGameForEngineCreation(
 					ConfMan.set("platform", Common::getPlatformCode(o->platform));
 	
 				warning("Target upgraded from %s to %s", o->from, o->to);
-				ConfMan.flushToDisk();
+
+				if (ConfMan.hasKey("id_came_from_command_line")) {
+					warning("Target came from command line. Skipping save");
+				} else {
+					ConfMan.flushToDisk();
+				}
 				break;
 			}
 		}
