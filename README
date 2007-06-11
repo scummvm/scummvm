@@ -991,7 +991,7 @@ other games.
         Period (.)             - Skips current line of text
 
     Broken Sword 1:
-        F5 or ESC              - Displays save/load box
+        F5 or Escape           - Displays save/load box
 
     Broken Sword 2:
         Ctrl-d                 - Starts the debugger
@@ -1009,7 +1009,6 @@ other games.
         Space                  - Skips current line of text
 
     Future Wars
-        ESC                    - Bring on command menu
         F1                     - Examine
         F2                     - Take
         F3                     - Inventory
@@ -1018,6 +1017,7 @@ other games.
         F6                     - Speak
         F9                     - "Activate" menu
         F10                    - "Use" menu
+        Escape                 - Bring on command menu
 
     Nippon Safes
         Ctrl-d                 - Starts the debugger
@@ -1031,6 +1031,7 @@ other games.
         F1 - F3                - Text speed, faster - slower
         F10                    - Shows all characters and objects you can
                                  interact with
+        Escape                 - Skip cutscenes
         - and +                - Music volume, down/up
         m                      - Music on/off
         s                      - Sound effects on/off
@@ -1066,6 +1067,16 @@ other games.
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-d                 - Starts the debugger
 
+    Touche: The Adventures of the Fifth Musketeer:
+        Ctrl-d                 - Starts the debugger
+        Ctrl-f                 - Toggle fast mode
+        F5                     - Displays options
+        F9                     - Turn fast walk mode on
+        F10                    - Turn fast walk mode off
+        Escape                 - Quit
+        Space                  - Skips current line of text
+        t                      - Switch between 'Voice only',
+                                 'Voice and Text' and 'Text only'
 
 Note that using ctrl-f or ctrl-g is not recommended: games can crash when
 being run faster than their normal speed, as scripts will lose synchronisation.
