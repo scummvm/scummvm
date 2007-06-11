@@ -387,7 +387,13 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		}
 
 		if (anim->currentFrame > anim->maxFrame) {
-			anim->currentFrame = anim->loopFrame;
+
+			if (_vm->_interface->getMode() == kPanelVideo) {
+				// Videos never loop
+				_vm->_frameCount++;	
+				anim->currentFrame++;
+			} else		
+				anim->currentFrame = anim->loopFrame;
 
 			if (anim->state == ANIM_STOPPING || anim->currentFrame == -1) {
 				anim->state = ANIM_PAUSE;
