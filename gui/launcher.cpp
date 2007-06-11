@@ -124,15 +124,11 @@ public:
 
 	virtual void reflowLayout();	
 
+	void open();
+	void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-	void setupWidgets();
-	virtual void loadConfigToWidgets();
-	virtual void saveConfigFromWidgets();
-	
-	String	_desc;
-
 	EditTextWidget *_descriptionWidget;
 	DomainEditTextWidget *_domainWidget;
 
@@ -152,24 +148,18 @@ protected:
 EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	: OptionsDialog(domain, "gameoptions") {
 
-	// GAME: Determine the description string
-	_desc = ConfMan.get("description", domain);
-	if (_desc.empty() && !desc.empty()) {
-		_desc = desc;
-	}
-	
-	// FIXME: Disable the setupWidgets() call here for now. See reflowLayout()
-	// for details.
-	//setupWidgets();
-}
-
-void EditGameDialog::setupWidgets() {
 	int labelWidth = g_gui.evaluator()->getVar("gameOptionsLabelWidth");
-	
+
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
 	String gamePath(ConfMan.get("path", _domain));
 	String extraPath(ConfMan.get("extrapath", _domain));
 	String savePath(ConfMan.get("savepath", _domain));
+
+	// GAME: Determine the description string
+	String description(ConfMan.get("description", domain));
+	if (description.empty() && !desc.empty()) {
+		description = desc;
+	}
 
 	// GUI:  Add tab widget
 	TabWidget *tab = new TabWidget(this, "gameoptions_tabwidget");
@@ -186,7 +176,7 @@ void EditGameDialog::setupWidgets() {
 
 	// GUI:  Label & edit widget for the description
 	new StaticTextWidget(tab, "gameoptions_name", "Name: ");
-	_descriptionWidget = new EditTextWidget(tab, "gameoptions_desc", _desc);
+	_descriptionWidget = new EditTextWidget(tab, "gameoptions_desc", description);
 
 	// Language popup
 	_langPopUp = new PopUpWidget(tab, "gameoptions_lang", "Language: ", labelWidth);
@@ -235,9 +225,6 @@ void EditGameDialog::setupWidgets() {
 
 		_globalVolumeOverride = new CheckboxWidget(tab, "gameoptions_volumeCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
 	} else {
-		// FIXME/TODO: It's unfortunate that you get a more fine grained control over which settings
-		// are overriden and which are not when using the *smaller* resolution than with the bigger!
-		// I guess we should simply offer the "volume override" checkbox in the big resolution, too.
 		_globalVolumeOverride = NULL;
 	}
 
@@ -287,25 +274,7 @@ void EditGameDialog::setupWidgets() {
 }
 
 void EditGameDialog::reflowLayout() {
-	// FIXME/HACK to workaround bug #1677997: Tear down the whole dialog and
-	// recreate it on the fly when a resolution/theme change occurs. Not nice
-	// at all, but works well enough.
-	{
-		delete _firstWidget;
-		_firstWidget = 0;
-		_mouseWidget = 0;
-		_focusedWidget = 0;
-		_dragWidget = 0;
-		setupWidgets();
-		loadConfigToWidgets();
-	}
-
 	OptionsDialog::reflowLayout();
-
-	// FIXME/HACK to workaround bug #1677997, part #2
-	{
-		loadConfigToWidgets();
-	}
 
 	int labelWidth = g_gui.evaluator()->getVar("gameOptionsLabelWidth");
 
@@ -315,11 +284,11 @@ void EditGameDialog::reflowLayout() {
 		_platformPopUp->changeLabelWidth(labelWidth);
 }
 
-void EditGameDialog::loadConfigToWidgets() {
+void EditGameDialog::open() {
+	OptionsDialog::open();
+
 	int sel, i;
 	bool e, f;
-
-	OptionsDialog::loadConfigToWidgets();
 
 	// En-/disable dialog items depending on whether overrides are active or not.
 
@@ -377,9 +346,9 @@ void EditGameDialog::loadConfigToWidgets() {
 	_platformPopUp->setSelected(sel);
 }
 
-void EditGameDialog::saveConfigFromWidgets() {
-	OptionsDialog::saveConfigFromWidgets();
 
+void EditGameDialog::close() {
+	if (getResult()) {
 		ConfMan.set("description", _descriptionWidget->getEditString(), _domain);
 
 		Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
@@ -405,6 +374,8 @@ void EditGameDialog::saveConfigFromWidgets() {
 			ConfMan.removeKey("platform", _domain);
 		else
 			ConfMan.set("platform", Common::getPlatformCode(platform), _domain);
+	}
+	OptionsDialog::close();
 }
 
 void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
