@@ -1671,6 +1671,20 @@ uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 	// fine to interact with. For example, the door entrance at the glass
 	// makers's house in ITE's ferret village.
 
+	// Note that in IHNM, there are some items that overlap on other items
+	// Since we're checking the draw list from the FIRST item drawn to the
+	// LAST one, sometimes the object drawn first is incorrectly returned.
+	// An example is the chalk on the magic circle in Ted's chapter, which
+	// is drawn AFTER the circle, but HitTest incorrectly returns the circle
+	// id in this case, even though the chalk was drawn after the circle.
+	// Therefore, for IHNM, we iterate through the whole draw list and
+	// return the last match found, not the first one.
+	// Unfortunately, it is only possible to search items in the sorted draw 
+	// list from start to end, not reverse, so it's necessary to search
+	// through the whole list to get the item drawn last
+	
+	uint16 result = ID_NOTHING;
+
 	if (!_vm->_scene->getSceneClip().contains(testPoint))
 		return ID_NOTHING;
 
@@ -1690,10 +1704,12 @@ uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 			continue;
 		}
 		if (_vm->_sprite->hitTest(*spriteList, frameNumber, drawObject->_screenPosition, drawObject->_screenScale, testPoint)) {
-			return drawObject->_id;
+			result = drawObject->_id;
+			if (_vm->getGameType() == GType_ITE)
+				return result;		// in ITE, return the first result found (read above)
 		}
 	}
-	return ID_NOTHING;
+	return result;					// in IHNM, return the last result found (read above)
 }
 
 void Actor::createDrawOrderList() {
