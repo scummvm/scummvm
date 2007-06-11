@@ -400,7 +400,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 			}
 		}
 	} else {
-		_vm->_frameCount++;	
+		_vm->_frameCount += 100;	// make sure the waiting thread stops waiting
 		// Animation done playing
 		anim->state = ANIM_PAUSE;
 		if (anim->linkId == -1) {
