@@ -587,6 +587,7 @@ in some ScummVM ports to make its use more comfortable by naturally mapping the
 functionality to the numeric keypad. Also, the dialog's buttons can be
 navigated with the arrow and the enter keys.
 
+
 3.16) Known Problems:
 ----- ---------------
 This release has the following known problems. There is no need to report them,
@@ -670,7 +671,7 @@ Supported platforms include (but are not limited to):
 
         UNIX            (Linux, Solaris, IRIX, *BSD)
         Windows
-        Windows Mobile  (iPAQ and other handheld devices)
+        Windows CE and Windows Mobile  (including Smartphones and PocketPCs)
         Mac OS X
         AmigaOS
         BeOS
@@ -1656,7 +1657,7 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * Open the solution file "scummwm.sln"  in the "dists\msvc7"
           respectively "dists\msvc8" folder.
         * Enter the path to the needed libraries and includes in
-          T"ools|Options|Projects|VC++ Directories".
+          Tools|Options|Projects|VC++ Directories".
         * Now it should compile successfully.
         * For more information refer to:
           http://wiki.scummvm.org/index.php/Compiling_ScummVM/VS2005
