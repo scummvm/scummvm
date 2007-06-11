@@ -757,7 +757,8 @@ void Script::whichObject(const Point& mousePoint) {
 				} else {
 					actor = _vm->_actor->getActor(newObjectId);
 					objectId = newObjectId;
-					objectFlags = kObjUseWith;
+					if (_vm->getGameType() == GType_ITE)
+						objectFlags = kObjUseWith;
 					newRightButtonVerb = getVerbType(kVerbTalkTo);
 
 					if ((_currentVerb == getVerbType(kVerbPickUp)) ||
