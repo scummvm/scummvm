@@ -49,6 +49,10 @@
 "..\..\..\..\README"-"!:\system\apps\scummvm\README"
 "..\..\..\..\NEWS"-"!:\system\apps\scummvm\NEWS"
 
+; Common datafiles needed for some games
+"..\kyra.dat"-"!:\system\apps\scummvm\kyra.dat"
+"..\sky.cpt"-"!:\system\apps\scummvm\sky.cpt"
+
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"!:\system\apps\ScummVM\scummvm.ini",FILENULL
 ""-"!:\system\apps\ScummVM\scummvm.stdout.txt",FILENULL
