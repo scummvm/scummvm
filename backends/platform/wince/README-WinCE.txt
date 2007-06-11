@@ -9,7 +9,7 @@ New in this version
 0.10.0:
 Major improvements have taken place in this version, mostly for behind-
 the-scenes stuff. First, we have migrated to GCC for building the Windows
-CE port. This helped take care of some obscure compiler bugs which where
+CE port. This helped take care of some obscure compiler bugs which were
 in there for quite a long time. It has also lead to efficient code 
 generation due to GCC's advanced capabilities and consequently increased
 runtime speed. The second important change was the overhaul of the SDL
@@ -20,8 +20,8 @@ been partially rewritten to allow for increased compatibility across all
 devices.
 Due to the update of keyboard handling code, the keycodes have changed
 slightly. Running this version of ScummVM will overwrite your key bindings 
-with the new defaults. See the section on how to play on Smartphones below
-for the new default keybindings.
+with the new defaults. See the section on how to play on Smartphones and 
+Pocket PCs below for the new default keybindings.
 
 ------------------------------------------------------------------------
 
@@ -81,7 +81,7 @@ rotate the screen around.
 * VGA (640x480) or higher Pocket PCs 
 
 All non VGA games should work properly on these devices. They can be resized
-with different scalers. VGA games will be displayed in true VGA mode.
+with different scalers. Moreover, VGA games will be displayed in true VGA mode.
 
 Partial / Discontinued support
 ------------------------------
@@ -139,7 +139,7 @@ You'll at least need to copy all the data files from your game, in a
 sub-directory of your game directory. 
 
 You'll need to put the data files in a directory named after ScummVM game
-name (see "Supported Game" section in ScummVM readme) for the games having
+name (see "Supported Games" section in ScummVM readme) for the games having
 "generic" data files (.LFL files). Recent games can be put in any directory.
 
 You can compress the multimedia files (sound/video) as described in the
@@ -601,6 +601,13 @@ on the second dialog displayed on the "About" menu) in your bug report.
 
 If you cannot reproduce this bug on another ScummVM version, you can cross
 post your bug report on ScummVM forums.
+
+I want to compile my own ScummVM for Windows CE
+-----------------------------------------------
+
+Take a look at:
+http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
+
 
 ------------------------------------------------------------------------
 Good Luck and Happy Adventuring!
