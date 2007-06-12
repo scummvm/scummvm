@@ -750,7 +750,7 @@ void displayMode16BitFlipBuffer() {
 	}
 	else if (isCpuScalerEnabled())
 	{
-        #define SCALER_PROFILE
+        //#define SCALER_PROFILE
 
         #ifdef SCALER_PROFILE
 	    TIMER1_CR = TIMER_ENABLE | TIMER_DIV_1024;
@@ -2505,4 +2505,3 @@ int main(void)
 int main() {
 	DS::main();
 }
-
