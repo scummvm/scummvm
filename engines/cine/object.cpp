@@ -160,7 +160,11 @@ int16 freeOverlay(uint16 objIdx, uint16 param) {
 
 	tempPtr2->previous = currentHeadPtr->previous;
 
-	free(currentHeadPtr);
+	// FIXME: is this needed? It causes crashes in Windows in the drawOverlays function
+	// (the currentOverlay pointer is incorrect)
+	// Removing this fixes bug #1733238 - FW: crash in copier room
+	// Also, it stops the game from crashing right after the introduction
+	//free(currentHeadPtr);
 	return 0;
 }
 
