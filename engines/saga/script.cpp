@@ -647,7 +647,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 			}
 		} else { 
 			if (_vm->getGameType() == GType_IHNM) {
-				if ((hitZone->getFlags() & kHitZoneNoWalk) && (_pendingVerb == getVerbType(kVerbWalkTo))) {
+				if ((hitZone->getFlags() & kHitZoneNoWalk) && (_pendingVerb != getVerbType(kVerbWalkTo))) {
 					doVerb();
 					return;
 				}
@@ -703,9 +703,19 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 			(_pendingVerb == getVerbType(kVerbClose)) ||
 			(_pendingVerb == getVerbType(kVerbUse))) {
 				_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
+
+				// Auto-use no-walk hitzones in IHNM, needed for Benny's chapter
+				if (_pendingVerb == getVerbType(kVerbWalkTo) &&
+					hitZone != NULL && (hitZone->getFlags() & kHitZoneNoWalk)) {
+					_pendingVerb = getVerbType(kVerbUse);
+					if (objectTypeId(_pendingObject[0]) == kGameObjectActor) {
+						_vm->_actor->actorFaceTowardsObject(ID_PROTAG, _pendingObject[0]);
+						doVerb();
+					}
+				}
 		} else {
 			if (_pendingVerb == getVerbType(kVerbLookAt)) {
-				if (objectTypeId(_pendingObject[0]) != kGameObjectActor ) {
+				if (objectTypeId(_pendingObject[0]) != kGameObjectActor) {
 					_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
 				} else {
 					_vm->_actor->actorFaceTowardsObject(ID_PROTAG, _pendingObject[0]);
