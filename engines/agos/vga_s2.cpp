@@ -52,10 +52,12 @@ void AGOSEngine_Simon2::setupVideoOpcodes(VgaOpcodeProc *op) {
 void AGOSEngine::vc56_delayLong() {
 	uint16 num = vcReadVarOrWord() * _frameCount;
 
-	if (getGameType() == GType_FF && _currentTable->id == 20438 && _vgaCurSpriteId == 13 && _vgaCurZoneNum == 2) {
+	if (getGameType() == GType_FF && _currentTable) {
 		// WORKAROUND: When the repair man comes to fix the car, the game doesn't
 		// wait long enough for the screen to completely scroll to the left side.
-		num *= 2;
+		if (_currentTable->id == 20438 && _vgaCurSpriteId == 13 && _vgaCurZoneNum == 2) {
+			num *= 2;
+		}
 	}
 
 	addVgaEvent(num + _vgaBaseDelay, ANIMATE_EVENT, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
