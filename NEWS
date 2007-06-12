@@ -16,7 +16,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  General:
    - Added dialog which allows the user to select the GUI theme on runtime.
    - Added 'Mass Add' feature to the Launcher, which allows you to scan for
-     all games in all subfolders of a given directory (to use it, press
+     all games in all subdirectories of a given directory (to use it, press
      shift then click on "Add Game").
    - Improved the way the auto detector generates target names, it now takes
      a game's variant, language and platform into account.
@@ -59,10 +59,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      LINC space and terminals, particularly in non-English languages.
 
  Nintendo DS Port:
-   - New engines supported: AGI, CINE, and SAGA
-   - Option to show the mouse cursor
-   - Word completion on keyboard for AGI games
-   - Plenty of optimisations
+   - TOOO: Mention DLDI support
 
  Symbian Port:
    - Added support for MP3 to S60v3 and UIQ3 versions.
