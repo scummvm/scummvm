@@ -1150,7 +1150,9 @@ REGISTER_PLUGIN(GOB, "Gob Engine", "Goblins Games (C) Coktel Vision");
 namespace Gob {
 
 bool GobEngine::detectGame() {
-	const GOBGameDescription *gd = (const GOBGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	const GOBGameDescription *gd = (const GOBGameDescription *)(encapsulatedDesc.realDesc);
+
 	if (gd == 0)
 		return false;
 

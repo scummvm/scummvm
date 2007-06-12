@@ -133,7 +133,9 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
 	
-	const KYRAGameDescription *gd = (const KYRAGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	const KYRAGameDescription *gd = (const KYRAGameDescription *)(encapsulatedDesc.realDesc);
+
 	if (gd == 0) {
 		// maybe add non md5 based detection again?
 		return kNoGameDataFoundError;

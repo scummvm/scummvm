@@ -72,6 +72,32 @@ GameList gameIDList(const Common::ADParams &params) {
 	return GameList(params.list);
 }
 
+static void upgradeTargetIfNecessary(const Common::ADParams &params) {
+	if (params.obsoleteList == 0)
+		return;
+
+	const char *gameid = ConfMan.get("gameid").c_str();
+
+	for (const Common::ADObsoleteGameID *o = params.obsoleteList; o->from; ++o) {
+		if (!scumm_stricmp(gameid, o->from)) {
+			gameid = o->to;
+			ConfMan.set("gameid", o->to);
+
+			if (o->platform != Common::kPlatformUnknown)
+				ConfMan.set("platform", Common::getPlatformCode(o->platform));
+
+			warning("Target upgraded from %s to %s", o->from, o->to);
+
+			if (ConfMan.hasKey("id_came_from_command_line")) {
+				warning("Target came from command line. Skipping save");
+			} else {
+				ConfMan.flushToDisk();
+			}
+			break;
+		}
+	}
+}
+
 GameDescriptor findGameID(
 	const char *gameid,
 	const Common::ADParams &params
@@ -110,6 +136,24 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 	return gd;
 }
 
+// Almost identical to the toGameDescriptor function that takes a ADGameDescription and PlainGameDescriptor.
+// Just a little fine tuning about accessing variables.
+// Used because of fallback detection and the dynamic string content it needs.
+static GameDescriptor toGameDescriptor(const EncapsulatedADGameDesc &g, const PlainGameDescriptor *sg) {
+	const char *title = 0;
+
+	while (sg->gameid) {
+		if (!scumm_stricmp(g.getGameID(), sg->gameid))
+			title = sg->description;
+		sg++;
+	}
+
+	assert(g.realDesc);
+	GameDescriptor gd(g.getGameID(), title, g.realDesc->language, g.realDesc->platform);
+	gd.updateDesc(g.getExtra());
+	return gd;
+}
+
 /**
  * Generate a preferred target value as
  *   GAMEID-PLAFORM-LANG
@@ -134,38 +178,49 @@ static String generatePreferredTarget(const String &id, const ADGameDescription 
 	return res;
 }
 
+static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc, const Common::ADParams &params) {
+	if (params.singleid != NULL) {
+		desc["preferredtarget"] = desc["gameid"];
+		desc["gameid"] = params.singleid;
+	}
+
+	if (params.flags & kADFlagAugmentPreferredTarget) {
+		if (!desc.contains("preferredtarget"))
+			desc["preferredtarget"] = desc["gameid"];
+
+		desc["preferredtarget"] = generatePreferredTarget(desc["preferredtarget"], realDesc);
+	}
+}
+
 GameList detectAllGames(
 	const FSList &fslist,
 	const Common::ADParams &params
 	) {
 	ADGameDescList matches = detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown);
-
 	GameList detectedGames;
-	for (uint i = 0; i < matches.size(); i++) {
+
+	// Use fallback detector if there were no matches by other means
+	if (matches.empty() && params.fallbackDetectFunc != NULL) {
+		EncapsulatedADGameDesc fallbackDesc = (*params.fallbackDetectFunc)(&fslist);
+		if (fallbackDesc.realDesc != 0) {
+			GameDescriptor desc(toGameDescriptor(fallbackDesc, params.list));
+			updateGameDescriptor(desc, fallbackDesc.realDesc, params);
+			detectedGames.push_back(desc);
+		}
+	} else for (uint i = 0; i < matches.size(); i++) { // Otherwise use the found matches
 		GameDescriptor desc(toGameDescriptor(*matches[i], params.list));
-
-		if (params.singleid != NULL) {
-			desc["preferredtarget"] = desc["gameid"];
-			desc["gameid"] = params.singleid;
-		}
-
-		if (params.flags & kADFlagAugmentPreferredTarget) {
-			if (!desc.contains("preferredtarget"))
-				desc["preferredtarget"] = desc["gameid"];
-
-			desc["preferredtarget"] = generatePreferredTarget(desc["preferredtarget"], matches[i]);
-		}
-
+		updateGameDescriptor(desc, matches[i], params);
 		detectedGames.push_back(desc);
 	}
 
 	return detectedGames;
 }
 
-const ADGameDescription *detectBestMatchingGame(
+EncapsulatedADGameDesc detectBestMatchingGame(
 	const Common::ADParams &params
 	) {
 	const ADGameDescription *agdDesc = 0;
+	EncapsulatedADGameDesc result;
 	Common::Language language = Common::UNK_LANG;
 	Common::Platform platform = Common::kPlatformUnknown;
 
@@ -189,39 +244,29 @@ const ADGameDescription *detectBestMatchingGame(
 		agdDesc = matches[0];
 	}
 
-	if (agdDesc != 0) {
-		debug(2, "Running %s", toGameDescriptor(*agdDesc, params.list).description().c_str());
+	if (agdDesc != 0) { // Check if we found a match without fallback detection
+		result = EncapsulatedADGameDesc(agdDesc);
+	} else if (params.fallbackDetectFunc != NULL) { // Use fallback detector if there were no matches by other means
+		EncapsulatedADGameDesc fallbackDesc = (*params.fallbackDetectFunc)(NULL);
+		if (fallbackDesc.realDesc != 0 && (params.singleid != NULL || fallbackDesc.getGameID() == gameid)) {
+			result = fallbackDesc; // Found a fallback match
+		}
 	}
 
-	return agdDesc;
+	if (result.realDesc != 0) {
+		debug(2, "Running %s", toGameDescriptor(result, params.list).description().c_str());
+	}
+
+	return result;
 }
 
 PluginError detectGameForEngineCreation(
 	const Common::ADParams &params
 	) {
 
+	upgradeTargetIfNecessary(params);
+
 	Common::String gameid = ConfMan.get("gameid");
-
-	if (params.obsoleteList != 0) {
-		for (const Common::ADObsoleteGameID *o = params.obsoleteList; o->from; ++o) {
-			if (!scumm_stricmp(gameid.c_str(), o->from)) {
-				gameid = o->to;
-				ConfMan.set("gameid", o->to);
-	
-				if (o->platform != Common::kPlatformUnknown)
-					ConfMan.set("platform", Common::getPlatformCode(o->platform));
-	
-				warning("Target upgraded from %s to %s", o->from, o->to);
-
-				if (ConfMan.hasKey("id_came_from_command_line")) {
-					warning("Target came from command line. Skipping save");
-				} else {
-					ConfMan.flushToDisk();
-				}
-				break;
-			}
-		}
-	}
 
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
@@ -237,6 +282,14 @@ PluginError detectGameForEngineCreation(
 
 	for (uint i = 0; i < matches.size(); i++) {
 		if (matches[i]->gameid == gameid) {
+			return kNoError;
+		}
+	}
+
+	// Use fallback detector if there were no matches by other means
+	if (params.fallbackDetectFunc != NULL) {
+		EncapsulatedADGameDesc fallbackDesc = (*params.fallbackDetectFunc)(&fslist);
+		if (fallbackDesc.realDesc != 0 && (params.singleid != NULL || fallbackDesc.getGameID() == gameid)) {
 			return kNoError;
 		}
 	}
@@ -489,11 +542,6 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 				printf("information previously printed by ScummVM to the team.\n");
 			}
 		}
-	}
-
-	// If we still haven't got a match, try to use the fallback callback :-)
-	if (matched.empty() && params.fallbackDetectFunc != 0) {
-		matched = (*params.fallbackDetectFunc)(fslist);
 	}
 
 	return matched;

@@ -118,7 +118,8 @@ REGISTER_PLUGIN(CRUISE, "Cinematique evo 2 engine", "Cruise for a Corpse (C) Del
 namespace Cruise {
 
 bool CruiseEngine::initGame() {
-	_gameDescription = (const CRUISEGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	_gameDescription = (const CRUISEGameDescription *)(encapsulatedDesc.realDesc);
 
 	return (_gameDescription != 0);
 }

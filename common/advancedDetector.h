@@ -64,6 +64,29 @@ struct ADGameDescription {
 };
 
 /**
+ * Encapsulates ADGameDescription and makes gameid and extra strings dynamic.
+ * Used in fallback detection when dynamically creating string content.
+ */
+struct EncapsulatedADGameDesc {
+	Common::String gameid;
+	Common::String extra;
+	const ADGameDescription *realDesc;
+
+	// Constructor for the EncapsulatedADGameDesc
+	EncapsulatedADGameDesc() : realDesc(0) {}
+	EncapsulatedADGameDesc(const ADGameDescription *paramRealDesc,
+		Common::String paramGameID = Common::String(""),
+		Common::String paramExtra = Common::String(""))
+		: realDesc(paramRealDesc), gameid(paramGameID), extra(paramExtra) {
+		assert(paramRealDesc != NULL);
+	}
+
+	// Functions for getting the correct gameid and extra values from the struct
+	const char *getGameID() const { return (gameid.empty() && realDesc != 0) ? realDesc->gameid : gameid.c_str(); }
+	const char *getExtra() const { return (extra.empty() && realDesc != 0) ? realDesc->extra : extra.c_str(); }
+};
+
+/**
  * A list of pointers to ADGameDescription structs (or subclasses thereof).
  */
 typedef Array<const ADGameDescription*> ADGameDescList;
@@ -177,7 +200,7 @@ struct ADParams {
 	 *
 	 * @todo
 	 */
-	ADGameDescList (*fallbackDetectFunc)(const FSList *fslist);
+	EncapsulatedADGameDesc (*fallbackDetectFunc)(const FSList *fslist);
 
 	/**
 	 * A bitmask of flags which can be used to configure the behavior
@@ -207,7 +230,7 @@ GameDescriptor findGameID(const char *gameid, const Common::ADParams &params);
 GameList detectAllGames(const FSList &fslist, const Common::ADParams &params);
 
 // FIXME/TODO: Rename this function to something more sensible.
-const ADGameDescription *detectBestMatchingGame(const Common::ADParams &params);
+EncapsulatedADGameDesc detectBestMatchingGame(const Common::ADParams &params);
 
 // FIXME/TODO: Rename this function to something more sensible.
 // Only used by ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_FUNC

@@ -131,7 +131,9 @@ REGISTER_PLUGIN(PARALLACTION, "Parallaction engine", "Nippon Safes Inc. (C) Dyna
 namespace Parallaction {
 
 bool Parallaction::detectGame() {
-	_gameDescription = (const PARALLACTIONGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	_gameDescription = (const PARALLACTIONGameDescription *)(encapsulatedDesc.realDesc);
+
 	return (_gameDescription != 0);
 }
 

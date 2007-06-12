@@ -494,7 +494,9 @@ REGISTER_PLUGIN(CINE, "Cinematique evo 1 engine", "Future Wars & Operation Steal
 namespace Cine {
 
 bool CineEngine::initGame() {
-	_gameDescription = (const CINEGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	_gameDescription = (const CINEGameDescription *)(encapsulatedDesc.realDesc);
+
 	return (_gameDescription != 0);
 }
 

@@ -1825,82 +1825,72 @@ static const AGIGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 
-static const AGIGameDescription fallbackDescs[] = {
+/**
+ * The fallback game descriptor used by the AGI engine's fallbackDetector.
+ * Contents of this struct are to be overwritten by the fallbackDetector. 
+ */
+static AGIGameDescription g_fallbackDesc = {
 	{
-		{
-			"agi-fanmade",
-			"Unknown v2 Game",
-			AD_ENTRY1(0, 0),
-			Common::UNK_LANG,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		GID_FANMADE,
-		GType_V2,
-		GF_FANMADE,
-		0x2917,
+		"", // Not used by the fallback descriptor, it uses the EncapsulatedADGameDesc's gameid
+		"", // Not used by the fallback descriptor, it uses the EncapsulatedADGameDesc's extra
+		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+		Common::UNK_LANG,
+		Common::kPlatformPC,
+		Common::ADGF_NO_FLAGS
 	},
-	{
-		{
-			"agi-fanmade",
-			"Unknown v2 AGIPAL Game",
-			AD_ENTRY1(0, 0),
-			Common::UNK_LANG,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		GID_FANMADE,
-		GType_V2,
-		GF_FANMADE | GF_AGIPAL,
-		0x2917,
-	},
-	{
-		{
-			"agi-fanmade",
-			"Unknown v3 Game",
-			AD_ENTRY1(0, 0),
-			Common::UNK_LANG,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		GID_FANMADE,
-		GType_V3,
-		GF_FANMADE,
-		0x3149,
-	},
+	GID_FANMADE,
+	GType_V2,
+	GF_FANMADE,
+	0x2917,
 };
 
-Common::ADGameDescList fallbackDetector(const FSList *fslist) {
-	Common::String tstr;
+Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 	typedef Common::HashMap<Common::String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> IntMap;
 	IntMap allFiles;
-	Common::ADGameDescList matched;
-	int matchedNum = -1;
+	bool matchedUsingFilenames = false;
+	Common::String gameid("agi-fanmade"), description, extra; // Set the defaults for gameid, description and extra	
+	FSList fslistCurrentDir; // Only used if fslist == NULL
 
-	// TODO:
-	// WinAGI produces *.wag file with interpreter version, game name
-	// and other parameters. Add support for this once specs are known
+	// Use the current directory for searching if fslist == NULL
+	if (fslist == NULL) {
+		FilesystemNode fsCurrentDir(".");
+		fslistCurrentDir.push_back(fsCurrentDir);
+		fslist = &fslistCurrentDir;
+	}
 
+	// Set the default values for the fallback descriptor's ADGameDescription part.
+	g_fallbackDesc.desc.language = Common::UNK_LANG;
+	g_fallbackDesc.desc.platform = Common::kPlatformPC;
+	g_fallbackDesc.desc.flags = Common::ADGF_NO_FLAGS;
+
+	// Set default values for the fallback descriptor's AGIGameDescription part.
+	g_fallbackDesc.gameID = GID_FANMADE;
+	g_fallbackDesc.features = GF_FANMADE;
+	g_fallbackDesc.version = 0x2917;
 
 	// First grab all filenames
 	for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
 		if (file->isDirectory()) continue;
-		tstr = file->name();
-		tstr.toLowercase();
-
-		allFiles[tstr] = true;
+		Common::String filename = file->name();
+		filename.toLowercase();
+		allFiles[filename] = true; // Save the filename in a hash table
 	}
 
-	// Now check for v2
 	if (allFiles.contains("logdir") && allFiles.contains("object") &&
 		allFiles.contains("picdir") && allFiles.contains("snddir") &&
 		allFiles.contains("viewdir") && allFiles.contains("vol.0") &&
-		allFiles.contains("words.tok")) {
-		matchedNum = 0;
+		allFiles.contains("words.tok")) { // Check for v2
 
-		// Check if it is AGIPAL
-		if (allFiles.contains("pal.101"))
-			matchedNum = 1;
+		// The default AGI interpreter version 0x2917 is okay for v2 games
+		// so we don't have to change it here.
+		matchedUsingFilenames = true;
+
+		if (allFiles.contains("pal.101")) { // Check if it is AGIPAL
+			description = "Unknown v2 AGIPAL Game";
+			g_fallbackDesc.features |= GF_AGIPAL; // Add AGIPAL feature flag
+		} else { // Not AGIPAL so just plain v2
+			description = "Unknown v2 Game";
+		}		
 	} else { // Try v3
 		char name[8];
 
@@ -1911,26 +1901,44 @@ Common::ADGameDescList fallbackDetector(const FSList *fslist) {
 
 				if (allFiles.contains("object") && allFiles.contains("words.tok") &&
 					allFiles.contains(Common::String(name) + "dir")) {
-					matchedNum = 2;
+					matchedUsingFilenames = true;
+					description = "Unknown v3 Game";
+					g_fallbackDesc.version = 0x3149; // Set the default AGI version for an AGI v3 game
 					break;
 				}
 			}
 		}
 	}
 	
-	if (matchedNum != -1) {
-		matched.push_back(&fallbackDescs[matchedNum].desc);
-
-		printf("Your game version has been detected using fallback matching as a\n");
-		printf("variant of %s (%s).\n", fallbackDescs[matchedNum].desc.gameid, fallbackDescs[matchedNum].desc.extra);
-		printf("If this is an original and unmodified version or new made Fanmade game,\n");
-		printf("please report any, information previously printed by ScummVM to the team.\n");
+	// Check that the AGI interpreter version is a supported one
+	if (!(g_fallbackDesc.version >= 0x2000 && g_fallbackDesc.version < 0x4000)) {
+		warning("Unsupported AGI interpreter version 0x%x in AGI's fallback detection. Using default 0x2917", g_fallbackDesc.version);
+		g_fallbackDesc.version = 0x2917;
 	}
 
-	return matched;
+	// Set game type (v2 or v3) according to the AGI interpreter version number
+	if (g_fallbackDesc.version >= 0x2000 && g_fallbackDesc.version < 0x3000)
+		g_fallbackDesc.gameType = GType_V2;
+	else if (g_fallbackDesc.version >= 0x3000 && g_fallbackDesc.version < 0x4000)
+		g_fallbackDesc.gameType = GType_V3;
+
+	// Check if we found a match with any of the fallback methods
+	Common::EncapsulatedADGameDesc result;
+	if (matchedUsingFilenames) {
+		extra = description + " " + extra; // Let's combine the description and extra
+		result = Common::EncapsulatedADGameDesc((const Common::ADGameDescription *)&g_fallbackDesc, gameid, extra);
+
+		printf("Your game version has been detected using fallback matching as a\n");
+		printf("variant of %s (%s).\n", result.getGameID(), result.getExtra());
+		printf("If this is an original and unmodified version or new made Fanmade game,\n");
+		printf("please report any, information previously printed by ScummVM to the team.\n");
+
+	}
+
+	return result;
 }
 
-}
+} // End of namespace Agi
 
 static const Common::ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
@@ -1960,7 +1968,9 @@ REGISTER_PLUGIN(AGI, "AGI v2 + v3 Engine", "Sierra AGI Engine (C) Sierra On-Line
 namespace Agi {
 
 bool AgiEngine::initGame() {
-	_gameDescription = (const AGIGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	_gameDescription = (const AGIGameDescription *)(encapsulatedDesc.realDesc);
+
 	return (_gameDescription != 0);
 }
 
