@@ -495,6 +495,14 @@ bool Interface::processAscii(uint16 ascii) {
 		case '4':
 			converseSetPos(ascii);
 			break;
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+			if (_vm->getGameType() == GType_IHNM)
+				converseSetPos(ascii);
+			break;
 		}
 		break;
 	case kPanelMap:
