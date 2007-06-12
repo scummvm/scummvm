@@ -1561,7 +1561,10 @@ void Interface::drawStatusBar() {
 
 	textPoint.x = _vm->getDisplayInfo().statusXOffset + (_vm->getDisplayInfo().statusWidth - stringWidth) / 2;
 	textPoint.y = _vm->getDisplayInfo().statusYOffset + _vm->getDisplayInfo().statusTextY;
-	_vm->_font->textDraw(kKnownFontSmall, backBuffer, _statusText, textPoint, color, 0, kFontNormal);
+	if (_vm->getGameType() == GType_ITE)
+		_vm->_font->textDraw(kKnownFontSmall, backBuffer, _statusText, textPoint, color, 0, kFontNormal);
+	else
+		_vm->_font->textDraw(kKnownFontVerb, backBuffer, _statusText, textPoint, color, 0, kFontNormal);
 
 	if (_saveReminderState > 0) {
 		rect.left = _vm->getDisplayInfo().saveReminderXOffset;
@@ -1775,8 +1778,10 @@ void Interface::drawInventory(Surface *backBuffer) {
 		}
 		_mainPanel.calcPanelButtonRect(&_mainPanel.buttons[i], rect);
 
-		// TODO: Different colour for IHNM, probably.
-		backBuffer->drawRect(rect, kITEColorDarkGrey);
+		if (_vm->getGameType() == GType_ITE)
+			backBuffer->drawRect(rect, kITEColorDarkGrey);
+		else
+			backBuffer->drawRect(rect, kIHNMColorBlack);
 
 		if (ci < _inventoryCount) {
 			obj = _vm->_actor->getObj(_inventory[ci]);
@@ -1807,7 +1812,7 @@ void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bo
 	switch (kind ) {
 		case kSlider:
 			cornerColor = 0x8b;
-			frameColor = kITEColorBlack;
+			frameColor = (_vm->getGameType() == GType_ITE) ? kITEColorBlack : kIHNMColorBlack;
 			fillColor = kITEColorLightBlue96;
 			odl = kITEColorDarkBlue8a;
 			our = kITEColorLightBlue92;
@@ -1831,7 +1836,7 @@ void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bo
 			break;
 		default:
 			cornerColor = 0x8b;
-			frameColor = kITEColorBlack;
+			frameColor = (_vm->getGameType() == GType_ITE) ? kITEColorBlack : kIHNMColorBlack;
 			solidColor = fillColor = kITEColorLightBlue96;
 			odl = kITEColorDarkBlue8a;
 			our = kITEColorLightBlue94;
@@ -2050,9 +2055,13 @@ bool Interface::converseAddText(const char *text, int strId, int replyId, byte r
 
 		for (i = len; i >= 0; i--) {
 			c = _converseWorkString[i];
-
-			if ((c == ' ' || c == '\0') && (_vm->_font->getStringWidth(kKnownFontSmall, _converseWorkString, i, kFontNormal) <= _vm->getDisplayInfo().converseMaxTextWidth)) {
-				break;
+			
+			if (_vm->getGameType() == GType_ITE) {
+				if ((c == ' ' || c == '\0') && (_vm->_font->getStringWidth(kKnownFontSmall, _converseWorkString, i, kFontNormal) <= _vm->getDisplayInfo().converseMaxTextWidth))
+					break;
+			} else {
+				if ((c == ' ' || c == '\0') && (_vm->_font->getStringWidth(kKnownFontVerb, _converseWorkString, i, kFontNormal) <= _vm->getDisplayInfo().converseMaxTextWidth))
+					break;
 			}
 		}
 		if (i < 0) {
@@ -2128,13 +2137,22 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 
 	assert(_conversePanel.buttonsCount >= 6);
 
-	bulletForegnd = kITEColorGreen;
-	bulletBackgnd = kITEColorBlack;
+	if (_vm->getGameType() == GType_ITE) {
+		bulletForegnd = kITEColorGreen;
+		bulletBackgnd = kITEColorBlack;
+	} else {
+		bulletForegnd = kITEColorBrightWhite;
+		bulletBackgnd = kIHNMColorBlack;
+		bullet[0] = '>';				// different bullet in IHNM
+	}
 
 	rect.moveTo(_conversePanel.x + _conversePanel.buttons[0].xOffset,
 		_conversePanel.y + _conversePanel.buttons[0].yOffset);
 
-	ds->drawRect(rect, kITEColorDarkGrey); //fill bullet place
+	if (_vm->getGameType() == GType_ITE)
+		ds->drawRect(rect, kITEColorDarkGrey);	//fill bullet place
+	else
+		ds->drawRect(rect, kIHNMColorBlack);	//fill bullet place
 
 	for (int i = 0; i < _vm->getDisplayInfo().converseTextLines; i++) {
 		relPos = _converseStartPos + i;
@@ -2144,11 +2162,21 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 		}
 
 		if (_conversePos >= 0 && _converseText[_conversePos].stringNum == _converseText[relPos].stringNum) {
-			foregnd = kITEColorBrightWhite;
-			backgnd = (!_vm->leftMouseButtonPressed()) ? kITEColorDarkGrey : kITEColorGrey;
+			if (_vm->getGameType() == GType_ITE) {
+				foregnd = kITEColorBrightWhite;
+				backgnd = (!_vm->leftMouseButtonPressed()) ? kITEColorDarkGrey : kITEColorGrey;
+			} else {
+				foregnd = kIHNMColorRed;
+				backgnd = (!_vm->leftMouseButtonPressed()) ? kIHNMColorRed : kIHNMColorRed;
+			}
 		} else {
-			foregnd = kITEColorBlue;
-			backgnd = kITEColorDarkGrey;
+			if (_vm->getGameType() == GType_ITE) {
+				foregnd = kITEColorBlue;
+				backgnd = kITEColorDarkGrey;
+			} else {
+				foregnd = kITEColorBrightWhite;
+				backgnd = kIHNMColorBlack;
+			}
 		}
 
 		_conversePanel.calcPanelButtonRect(&_conversePanel.buttons[i], rect);
@@ -2161,11 +2189,17 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 			textPoint.x = rect.left - 6;
 			textPoint.y = rect.top;
 
-			_vm->_font->textDraw(kKnownFontSmall, ds, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
+			if (_vm->getGameType() == GType_ITE)
+				_vm->_font->textDraw(kKnownFontSmall, ds, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
+			else
+				_vm->_font->textDraw(kKnownFontVerb, ds, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
 		}
 		textPoint.x = rect.left + 1;
 		textPoint.y = rect.top;
-		_vm->_font->textDraw(kKnownFontSmall, ds, str, textPoint, foregnd, kITEColorBlack, kFontShadow);
+		if (_vm->getGameType() == GType_ITE)
+			_vm->_font->textDraw(kKnownFontSmall, ds, str, textPoint, foregnd, kITEColorBlack, kFontShadow);
+		else
+			_vm->_font->textDraw(kKnownFontVerb, ds, str, textPoint, foregnd, kIHNMColorBlack, kFontShadow);
 	}
 
 	if (_converseStartPos != 0) {

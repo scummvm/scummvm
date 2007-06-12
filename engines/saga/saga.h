@@ -422,7 +422,9 @@ enum ColorId {
 	kITEColorGreen = 0xba,
 
 	kIHNMColorBlack = 0xfa,
-	kIHNMColorPortrait = 0xfe
+	kIHNMColorPortrait = 0xfe,
+	kIHNMColorWhite = 0x20,
+	kIHNMColorRed = 0x11
 };
 
 enum KnownColor {
