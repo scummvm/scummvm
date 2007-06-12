@@ -1443,8 +1443,14 @@ void Actor::handleActions(int msec, bool setup) {
 				actor->cycleWrap(frameRange->frameCount);
 				actor->_frameNumber = frameRange->frameIndex + actor->_actionCycle;
 			} else {
-				actor->_location.x += directionLUT[actor->_actionDirection][0] * 2;
-				actor->_location.y += directionLUT[actor->_actionDirection][1] * 2;
+				if (_vm->getGameType() == GType_ITE) {
+					actor->_location.x += directionLUT[actor->_actionDirection][0] * 2;
+					actor->_location.y += directionLUT[actor->_actionDirection][1] * 2;
+				} else {
+					// FIXME: The original does not multiply by 8 here, but we do
+					actor->_location.x += (directionLUT[actor->_actionDirection][0] * 8 * actor->_screenScale + 128) >> 8;
+					actor->_location.y += (directionLUT[actor->_actionDirection][1] * 8 * actor->_screenScale + 128) >> 8;
+				}
 
 				frameRange = getActorFrameRange(actor->_id, actor->_walkFrameSequence);
 				actor->_actionCycle++;
