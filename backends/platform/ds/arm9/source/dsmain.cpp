@@ -333,27 +333,49 @@ void initSprites() {
 void saveGameBackBuffer() {
 #ifdef DISABLE_SCUMM
 	if (savedBuffer == NULL) savedBuffer = new u8[gameWidth * gameHeight];
-	for (int r = 0; r < 200; r++) {
-		memcpy(savedBuffer + (r * gameWidth), ((u8 *) (get8BitBackBuffer())) + (r * 512), gameWidth);
+	if(isCpuScalerEnabled())
+	{
+		memcpy(savedBuffer, get8BitBackBuffer(), gameWidth * gameHeight);
 	}
+	else
+	{
+		for (int r = 0; r < gameHeight; r++) {
+			memcpy(savedBuffer + (r * gameWidth), ((u8 *) (get8BitBackBuffer())) + (r * 512), gameWidth);
+		}
+	}	
 #endif
 }
 
 void restoreGameBackBuffer() {
 #ifdef DISABLE_SCUMM
 	if (savedBuffer) {
-		for (int r = 0; r < 200; r++) {
-			memcpy(((u8 *) (BG_GFX_SUB)) + (r * 512), savedBuffer + (r * gameWidth), gameWidth);
-			memcpy(((u8 *) (get8BitBackBuffer())) + (r * 512), savedBuffer + (r * gameWidth), gameWidth);
-		}
+		if(isCpuScalerEnabled())
+		{
+			memcpy(get8BitBackBuffer(), savedBuffer, gameWidth * gameHeight);
+			// TODO Synchronize with framebuffer if necessary
+		}		
+		else
+		{
+			for (int r = 0; r < gameHeight; r++) {
+				memcpy(((u8 *) (BG_GFX_SUB)) + (r * 512), savedBuffer + (r * gameWidth), gameWidth);
+				memcpy(((u8 *) (get8BitBackBuffer())) + (r * 512), savedBuffer + (r * gameWidth), gameWidth);
+			}
+		}		
+		
 		delete savedBuffer;
 		savedBuffer = NULL;
 	}
-#endif
-
-#ifndef DISABLE_SCUMM	
-	memset(get8BitBackBuffer(), 0, 512 * 256);
-	memset(BG_GFX_SUB, 0, 512 * 256);
+#else
+	if(isCpuScalerEnabled())
+	{
+		memset(get8BitBackBuffer(), 0, 320 * 200);
+		// TODO Synchronize with framebuffer if necessary
+	}
+	else
+	{
+		memset(get8BitBackBuffer(), 0, 512 * 256);
+		memset(BG_GFX_SUB, 0, 512 * 256);
+	}
 	if (Scumm::g_scumm) {
 		Scumm::g_scumm->markRectAsDirty(Scumm::kMainVirtScreen, 0, gameWidth - 1, 0, gameHeight - 1, 1);
 		Scumm::g_scumm->markRectAsDirty(Scumm::kTextVirtScreen, 0, gameWidth - 1, 0, gameHeight - 1, 1);
@@ -2483,4 +2505,3 @@ int main(void)
 int main() {
 	DS::main();
 }
-
