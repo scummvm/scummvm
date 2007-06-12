@@ -40,7 +40,7 @@ MoviePlayer::MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer)
 }
 
 int MoviePlayer::getImageNum() {
-	if (!_fd.isOpen())
+	if (!_fd)
 		return 0;
 	return _wizResNum;
 }
@@ -48,7 +48,7 @@ int MoviePlayer::getImageNum() {
 int MoviePlayer::load(const char *filename, int flags, int image) {
 	char videoName[100];
 
-	if (_fd.isOpen()) {
+	if (_fd) {
 		closeFile();
 	}
 
@@ -66,7 +66,7 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 	debug(1, "Playing video %s", videoName);
 
 	// Skip sound tag
-	_fd.readUint32BE();
+	_fd->readUint32BE();
 
 	if (flags & 2) {
 		_vm->_wiz->createWizEmptyImage(image, 0, 0, _width, _height);
@@ -85,7 +85,7 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 }
 
 void MoviePlayer::handleNextFrame() {
-	if (_fd.isOpen() == false) {
+	if (_fd == false) {
 		return;
 	}
 

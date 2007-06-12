@@ -44,6 +44,8 @@ MoviePlayer::MoviePlayer(AGOSEngine *vm, Audio::Mixer *mixer)
 	: DXAPlayer(), _vm(vm), _mixer(mixer) {
 	_omniTV = false;
 
+	_omniTVFile = 0;
+
 	_leftButtonDown = false;
 	_rightButtonDown = false;
 
@@ -103,14 +105,21 @@ bool MoviePlayer::load(const char *filename) {
 
 void MoviePlayer::playOmniTV() {
 	// Load OmniTV video
-	if (!_fd.isOpen()) {
-		_vm->_variableArray[254] = 6747;
-		return;
-	} else {
+	if (_fd) {
 		_vm->setBitFlag(42, false);
 		_omniTV = true;
 		startSound();
-		return;
+	} else {
+		if (_omniTVFile) {
+			// Restore state
+			_fd = _omniTVFile;
+			_mixer->pauseHandle(_omniTVSound, false);
+
+			_vm->setBitFlag(42, false);
+			_omniTV = true;
+		} else {
+			_vm->_variableArray[254] = 6747;
+		}
 	}
 }
 
@@ -120,7 +129,7 @@ void MoviePlayer::play() {
 		return;
 	}
 
-	if (!_fd.isOpen()) {
+	if (!_fd) {
 		return;
 	}
 
@@ -161,14 +170,14 @@ void MoviePlayer::startSound() {
 	byte *buffer;
 	uint32 offset, size, tag;
 
-	tag = _fd.readUint32BE();
+	tag = _fd->readUint32BE();
 	if (tag == MKID_BE('WAVE')) {
-		size = _fd.readUint32BE();
+		size = _fd->readUint32BE();
 
 		if (_sequenceNum) {
 			Common::File in;
 
-			_fd.seek(size, SEEK_CUR);
+			_fd->seek(size, SEEK_CUR);
 
 			in.open((const char *)"audio.wav");
 			if (!in.isOpen()) {
@@ -185,7 +194,7 @@ void MoviePlayer::startSound() {
 			in.close();
 		} else {
 			buffer = (byte *)malloc(size);
-			_fd.read(buffer, size);
+			_fd->read(buffer, size);
 		}
 
 		Common::MemoryReadStream stream(buffer, size);
@@ -196,8 +205,13 @@ void MoviePlayer::startSound() {
 	}
 
 	if (_bgSoundStream != NULL) {
-		_mixer->stopHandle(_bgSound);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
+		if (_omniTV) {
+			_mixer->stopHandle(_omniTVSound);
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_omniTVSound, _bgSoundStream);
+		} else {
+			_mixer->stopHandle(_bgSound);
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
+		}
 	}
 }
 
@@ -206,8 +220,12 @@ void MoviePlayer::nextFrame() {
 		return;
 
 	if (_vm->getBitFlag(42)) {
+		// Save state
+		 _omniTVFile = _fd;
+		_mixer->pauseHandle(_omniTVSound, true);
+
+		_fd = 0;
 		_omniTV = false;
-		closeFile();
 		return;
 	}
 
@@ -222,6 +240,7 @@ void MoviePlayer::nextFrame() {
 		_frameNum++;
 	} else {
 		_omniTV = false;
+		_omniTVFile = 0;
 		closeFile();
 		_vm->_variableArray[254] = 6747;
 	}
