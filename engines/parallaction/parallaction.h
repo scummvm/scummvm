@@ -60,7 +60,11 @@ enum {
 };
 
 enum {
-	GF_DEMO = 1 << 0
+	GF_DEMO = 1 << 0,
+	GF_LANG_EN = 1 << 1,
+	GF_LANG_FR = 1 << 2, 
+	GF_LANG_DE = 1 << 3,
+	GF_LANG_IT = 1 << 4
 };
 
 
