@@ -767,11 +767,11 @@ private:
 	void loadDict(void);
 	bool matchWord(void);
 
-	SearchTree *_searchTreeRoot;
-	SearchTree *_activeTreeNode;
-	
-	void insertSearchNode(const char *word);
-
+	// Predictive dialog
+	char *_predictiveDictText;
+	char **_predictiveDictLine;
+	int32 _predictiveDictLines;
+	char *_predictiveDictActLine;
 	String _currentCode;
 	String _currentWord;
 	int _wordNumber;

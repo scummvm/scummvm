@@ -594,7 +594,9 @@ AgiEngine::AgiEngine(OSystem *syst) : Engine(syst) {
 	_oldMode = -1;
 	
 	_predictiveDialogRunning = false;
-	_searchTreeRoot = 0;
+	_predictiveDictText = NULL;
+	_predictiveDictLine = NULL;
+	_predictiveDictLines = 0;
 	_firstSlot = 0;
 }
 
@@ -675,6 +677,9 @@ AgiEngine::~AgiEngine() {
 	_gfx->deinitMachine();
 	delete _rnd;
 	delete _console;
+
+	free(_predictiveDictLine);
+	free(_predictiveDictText);
 }
 
 int AgiEngine::init() {

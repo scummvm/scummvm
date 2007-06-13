@@ -36,78 +36,52 @@ namespace Agi {
 #define kModeNum 1
 #define kModeAbc 2
 
-static byte s_asciiToNumTable[256];
+#define MAXLINELEN 80
 
-void setAsciiToNumTableBatch(const char *chars, byte value) {
-	while (*chars) {
-		s_asciiToNumTable[tolower(*chars)] = value;
-		s_asciiToNumTable[toupper(*chars)] = value;
-		chars++;
+uint8 findNumWords(char *str) {
+	char *ptr;
+
+	if (!str)
+		return 0;
+
+	ptr = strchr(str, ' ');	
+	if (!ptr) {
+		debug("Invalid dictionary line");
+		return 0;
 	}
+
+	uint8 num = 1;
+	ptr++;
+	while ((ptr = strchr(ptr, ' '))) {
+		ptr++;
+		num++;
+	}
+	return num;
 }
 
-void initAsciiToNumTable() {
-	memset(s_asciiToNumTable, 0, sizeof(s_asciiToNumTable));
-
-	setAsciiToNumTableBatch("1'-.&", 1);
-	setAsciiToNumTableBatch("2abc", 2);
-	setAsciiToNumTableBatch("3def", 3);
-	setAsciiToNumTableBatch("4ghi", 4);
-	setAsciiToNumTableBatch("5jkl", 5);
-	setAsciiToNumTableBatch("6mno", 6);
-	setAsciiToNumTableBatch("7pqrs", 7);
-	setAsciiToNumTableBatch("8tuv", 8);
-	setAsciiToNumTableBatch("9wxyz", 9);
-}
-
-class SearchTree {
-public:
-	//byte val;
-	//SearchTree *parent;	// TODO: Could be used to speed up re-searches
-	SearchTree *children[10];
+void bringWordtoTop(char *str, int wordnum) {
 	Common::StringList words;
-	
-	SearchTree() {
-		memset(children, 0, sizeof(children));
-	}
-	
-	SearchTree *getChild(byte val) {
-		assert(val < 10);
-		if (children[val] == 0) {
-			children[val] = new SearchTree();
-		}
-		return children[val];
+	char buf[MAXLINELEN];
+
+	if (!str)
+		return;
+	strncpy(buf, str, MAXLINELEN);
+	char *word = strtok(buf, " ");
+	if (!word) {
+		debug("Invalid dictionary line");
+		return;
 	}
 
-	SearchTree *findChildWithWords() {
-		if (!words.empty())
-			return this;
-		
-		SearchTree *child = 0;
-		for (int i = 0; i < 10 && !child; ++i) {
-			if (children[i])
-				child = children[i]->findChildWithWords();
-		}
-	
-		return child;
-	}
-	
-};
+	words.push_back(word);
+	while ((word = strtok(NULL, " ")) != NULL)
+		words.push_back(word);
+	words.insert_at(1, words.remove_at(wordnum + 1));
 
-
-void AgiEngine::insertSearchNode(const char *word) {
-	// Insert the word into the tree
-	SearchTree *tree = _searchTreeRoot;
-	assert(tree);
-	for (int i = 0; word[i] != 0; ++i) {
-		byte key = s_asciiToNumTable[(int)word[i]];
-		if (key == 0)
-			return;	// abort!
-		tree = tree->getChild(key);
-	}
-
-	// TODO: Sort words, remove duplicates... ?
-	tree->words.push_back(word);
+	Common::String tmp;
+	for (uint8 i = 0; i < words.size(); i++)
+			tmp += words[i] + " ";
+	tmp.deleteLastChar();
+	memcpy(str, tmp.c_str(), strlen(str));
 }
 
 bool AgiEngine::predictiveDialog(void) {
@@ -121,9 +95,6 @@ bool AgiEngine::predictiveDialog(void) {
 	AgiBlock tmpwindow;
 	bool navigationwithkeys = false;
 	bool processkey;
-
-	// FIXME: Move this to a more appropriate place.
-	initAsciiToNumTable();
 
 	const char *buttonStr[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
 	const char *buttons[] = {
@@ -146,12 +117,15 @@ bool AgiEngine::predictiveDialog(void) {
 	};
 	const char *modes[] = { "(*)Pre", "(*)123", "(*)Abc" };
 
-	if (!_searchTreeRoot) {
+	// FIXME: Move this to a more appropriate place.
+	if (!_predictiveDictText) {
 		loadDict();
-		if (!_searchTreeRoot)
+		if (!_predictiveDictText)
 			return false;
 	}
-	
+	_predictiveDictActLine = NULL;
+	uint8 numMatchingWords = 0;
+
 	_predictiveDialogRunning = true;
 	_system->setFeatureState(OSystem::kFeatureDisableKeyFiltering, true);
 
@@ -194,15 +168,13 @@ bool AgiEngine::predictiveDialog(void) {
 	}
 
 	/* clear key queue */
-	while (_gfx->keypress()) {
+	while (_gfx->keypress())
 		_gfx->getKey();
-	}
 
 	prefix.clear();
 	_currentCode.clear();
 	_currentWord.clear();
 	_wordNumber = 0;
-	_activeTreeNode = 0;
 
 	int mode = kModePre;
 
@@ -214,8 +186,8 @@ bool AgiEngine::predictiveDialog(void) {
 				int color1 = colors[i * 2];
 				int color2 = colors[i * 2 + 1];
 
-				if (i == 9 && !((mode != kModeAbc && _activeTreeNode && _activeTreeNode->words.size() > 1) || 
-							(mode == kModeAbc && _currentWord.size() && _currentWord.lastChar() != ' '))) { // Next
+				if (i == 9 && !((mode != kModeAbc && _predictiveDictActLine && numMatchingWords > 1)
+							|| (mode == kModeAbc && _currentWord.size() && _currentWord.lastChar() != ' '))) { // Next
 					color2 = 7;
 				}
 				
@@ -230,7 +202,7 @@ bool AgiEngine::predictiveDialog(void) {
 				}
 			}
 
-				temp[MAXWORDLEN] = 0;
+			temp[MAXWORDLEN] = 0;
 
 			strncpy(temp, prefix.c_str(), MAXWORDLEN);
 			strncat(temp, _currentWord.c_str(), MAXWORDLEN);
@@ -385,17 +357,15 @@ bool AgiEngine::predictiveDialog(void) {
 				lastactive = active;
 				if (active == 15 && mode != kModeNum) { // Space
 					// bring MRU word at the top of the list when changing words
-					if (mode == kModePre && _activeTreeNode && _activeTreeNode->words.size() > 1 && _wordNumber != 0) {
-						String tmpstr = _activeTreeNode->words.remove_at(_wordNumber);
-						_activeTreeNode->words.insert_at(0, tmpstr);
-					}
-
+					if (mode == kModePre && _predictiveDictActLine && numMatchingWords > 1 && _wordNumber != 0)
+						bringWordtoTop(_predictiveDictActLine, _wordNumber);
 					strncpy(temp, _currentWord.c_str(), _currentCode.size());
 					temp[_currentCode.size()] = 0;
 					prefix += temp;
 					prefix += " ";
 					_currentCode.clear();
 					_currentWord.clear();
+					numMatchingWords = 0;
 					memset(repeatcount, 0, MAXWORDLEN);
 				} else if (active < 9 || active == 11 || active == 15) { // number or backspace
 					if (active == 11) { // backspace
@@ -423,6 +393,7 @@ bool AgiEngine::predictiveDialog(void) {
 								_currentCode.deleteLastChar();
 								matchWord();
 							}
+							numMatchingWords = findNumWords(_predictiveDictActLine);
 							break;
 						case kModeAbc:
 							for (x = 0; x < _currentCode.size(); x++)
@@ -432,13 +403,17 @@ bool AgiEngine::predictiveDialog(void) {
 							_currentWord = temp;
 					}
 				} else if (active == 9) { // next
-					if (mode != kModeAbc) {
-						int totalWordsNumber = _activeTreeNode ? _activeTreeNode->words.size() : 0;
-						if (totalWordsNumber > 0) {
-							_wordNumber = (_wordNumber + 1) % totalWordsNumber;
-							_currentWord = String(_activeTreeNode->words[_wordNumber].c_str(), _currentCode.size());
+					if (mode == kModePre) {
+						if (_predictiveDictActLine && numMatchingWords > 1) {
+							_wordNumber = (_wordNumber + 1) % numMatchingWords;
+							char tmp[MAXLINELEN];
+							strncpy(tmp, _predictiveDictActLine, MAXLINELEN);
+							char *tok = strtok(tmp, " ");
+							for (uint8 i = 0; i <= _wordNumber; i++)
+								tok = strtok(NULL, " ");
+							_currentWord = String(tok, _currentCode.size());
 						}
-					} else {
+					} else if (mode == kModeAbc){
 						x = _currentCode.size();
 						if (x) {
 							if (_currentCode.lastChar() == '1' || _currentCode.lastChar() == '7' || _currentCode.lastChar() == '9')
@@ -453,11 +428,8 @@ bool AgiEngine::predictiveDialog(void) {
 					debug(0, "add");
 				} else if (active == 13) { // Ok
 					// bring MRU word at the top of the list when ok'ed out of the dialog
-					if (mode == kModePre && _activeTreeNode && _activeTreeNode->words.size() > 1 && _wordNumber != 0) {
-						String tmpstr = _activeTreeNode->words.remove_at(_wordNumber);
-						_activeTreeNode->words.insert_at(0, tmpstr);
-					}
-
+					if (mode == kModePre && _predictiveDictActLine && numMatchingWords > 1 && _wordNumber != 0)
+						bringWordtoTop(_predictiveDictActLine, _wordNumber);
 					rc = true;
 					goto press;
 				} else if (active == 14) { // Mode
@@ -503,79 +475,113 @@ bool AgiEngine::predictiveDialog(void) {
 	return rc;
 }
 
-#define MAXLINELEN 80
-
 void AgiEngine::loadDict(void) {
-	Common::File in;
-	char buf[MAXLINELEN];
-	int words = 0, lines = 0;
+	Common::File inFile;
+	int lines = 0;
 
 	ConfMan.registerDefault("predictive_dictionary", "pred.dic");
 
-	if (!in.open(ConfMan.get("predictive_dictionary")))
+	uint32 time1 = _system->getMillis();
+	if (!inFile.open(ConfMan.get("predictive_dictionary")))
 		return;
 
-	_searchTreeRoot = new SearchTree();
-	words = 0;
+	char *ptr;
+	int size = inFile.size();
 
-	while (!in.eos() && in.readLine(buf, MAXLINELEN)) {
-		// Skip leading & trailing whitespaces
-		char *word = Common::trim(buf);
+	_predictiveDictText = (char *) malloc(size + 1);
+	if (!_predictiveDictText) {
+		warning("Not enough memory to load the predictive dictionary");
+		return;
+	}
+	inFile.read(_predictiveDictText, size);
+	_predictiveDictText[size] = 0;
+	uint32 time2 = _system->getMillis();
+	debug("Time to read %s: %d bytes, %d ms", inFile.name(), size, time2-time1);
+	inFile.close();
 
-		// Skip empty lines
-		if (*word == 0)
-			continue;
-		
+	ptr = _predictiveDictText;
+	lines = 1;
+	while ( (ptr = (char *) strchr(ptr, '\n')) != (char *) NULL ) {
 		lines++;
-
-		// The lines are of the form:  "1234 word word"
-		// I.e. first comes a T9 number, then a space separated list of
-		// words with that T9 code. We simply ignore the T9 code, and then
-		// insert the words in order of occurance.
-		char *tok = strtok(word, " \t");
-		if (tok) {
-			while ((tok = strtok(NULL, " ")) != NULL) {
-				insertSearchNode(tok);
-				words++;
-			}
-		}
+		ptr++;
 	}
 
-	debug(0, "Loaded %d lines with %d words", lines, words);
+	_predictiveDictLine = (char **) calloc(1, sizeof(char *) * lines);
+	if (_predictiveDictLine == NULL) {
+		warning("Cannot allocate memory for line index buffer.");
+		return;
+	}
+	_predictiveDictLine[0] = _predictiveDictText;
+	ptr = _predictiveDictText;
+	int i = 1;
+	while ( (ptr = (char *) strchr(ptr, '\n')) != (char *) NULL ) {
+		*ptr = 0;
+		ptr++;
+		_predictiveDictLine[i++] = ptr;
+	}
+	if (_predictiveDictLine[lines - 1][0] == 0)
+		lines--;
+
+	_predictiveDictLines = lines;
+	debug("Loaded %d lines", _predictiveDictLines);
+
+	uint32 time3 = _system->getMillis();
+	printf("Time to parse pred.dic: %d, total: %d\n", time3-time2, time3-time1);
 }
 
 bool AgiEngine::matchWord(void) {
 	if (_currentCode.empty()) {
 		return false;
 	}
-	
-	// Lookup word in the search tree
-	SearchTree *tree = _searchTreeRoot;
-	assert(tree);
-	for (uint i = 0; i < _currentCode.size(); ++i) {
-		int key = _currentCode[i] - '0';
-		if (key < 1 || key > 9) {
-			tree = 0;
-			break;	// Invalid key/code value, abort!
-		}
-		tree = tree->children[key];
-		if (!tree)
-			break;	// No matching entry in the search tree, abort!
-	}
-	
-	if (tree)
-		tree = tree->findChildWithWords();
+	// Lookup word in the dictionary
+	int line, span, res, len, i;
+	char target[MAXWORDLEN];
 
-	_wordNumber = 0;
-	_activeTreeNode = tree;
+	strncpy(target, _currentCode.c_str(), MAXWORDLEN);
+	strcat(target, " ");
+
+	// do the search at most two times:
+	// first try to match the exact code, by mtaching also the space after the code
+	// if there is not an exact match, do it once more for the best matching prefix (drop the space)
+	i = 0;
+	len = _currentCode.size() + 1;
+	do {
+			line = (_predictiveDictLines + 1) / 2 - 1;
+			// find out the 2^upper_int(log2(_predictiveDictLines))
+			for (span = 1; span < _predictiveDictLines; span <<= 1);
+			span >>= 1;
+			do {
+					res = strncmp(_predictiveDictLine[line], target, len);
+					if (res > 0) {
+							span /= 2;
+							line -= span;
+							if (line < 0)
+									line = 0;
+					} else if (res < 0) {
+							span /= 2;
+							line += span;
+							if (line >= _predictiveDictLines)
+									line = _predictiveDictLines - 1;
+					}
+			} while (res && span);
+			len--;
+			i++;
+	} while (i < 2 && (i == 1 && res));
+
 	_currentWord.clear();
-
-
-	if (tree) {
-		_currentWord = String(_activeTreeNode->words[_wordNumber].c_str(), _currentCode.size());
+	_wordNumber = 0;
+	if (!strncmp(_predictiveDictLine[line], target, len)) {
+		_predictiveDictActLine = _predictiveDictLine[line];
+		char tmp[MAXLINELEN];
+		strncpy(tmp, _predictiveDictActLine, MAXLINELEN);
+		char *tok = strtok(tmp, " ");
+		tok = strtok(NULL, " ");
+		_currentWord = String(tok, _currentCode.size());
+		return true;
+	} else {
+		_predictiveDictActLine = NULL;
+		return false;
 	}
-
-	return tree != 0;
 }
 
 } // End of namespace Agi
