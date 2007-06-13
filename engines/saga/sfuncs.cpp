@@ -544,12 +544,18 @@ void Script::sfSetFollower(SCRIPTFUNC_PARAMS) {
 void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	int16 sceneNumber;
 	int16 entrance;
+	int16 transition = 0;	// IHNM
 
 	sceneNumber = thread->pop();
 	entrance = thread->pop();
+	if (_vm->getGameType() == GType_IHNM)
+		transition = thread->pop();
+
 	if (sceneNumber < 0) {
-		_vm->shutDown();
-		return;
+		if (_vm->getGameType() == GType_ITE) {
+			_vm->shutDown();
+			return;
+		}
 	}
 
 	if (_vm->getGameType() == GType_IHNM) {
@@ -2053,8 +2059,8 @@ void Script::sfSetSpeechBox(SCRIPTFUNC_PARAMS) {
 
 	_vm->_actor->_speechBoxScript.left = param1;
 	_vm->_actor->_speechBoxScript.top = param2;
-	_vm->_actor->_speechBoxScript.setWidth(param3);
-	_vm->_actor->_speechBoxScript.setHeight(param4);
+	_vm->_actor->_speechBoxScript.setWidth(param3 - param1);
+	_vm->_actor->_speechBoxScript.setHeight(param4 - param2);
 }
 
 void Script::sfDebugShowData(SCRIPTFUNC_PARAMS) {
