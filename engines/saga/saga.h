@@ -281,11 +281,10 @@ enum TextStringIds {
 	kTextShowDialog,
 	kTextEnterProtectAnswer,
 	kTextVoices,
-	kTextBoth,
 	kTextText,
-	kTextAudio
+	kTextAudio,
+	kTextBoth
 };
-
 
 struct GameResourceDescription {
 	uint32 sceneLUTResourceId;

@@ -80,6 +80,69 @@ static int verbTypeToTextStringsIdLUT[2][kVerbTypeIdsMax] = {
 	kVerbIHNMPush}
 };
 
+// This maps the internally used string ITE IDs to the LUT strings loaded in IHNM
+// i.e. id 12 (quit game button) maps to string 14 (Quit game)
+// The comments are what the actual IHNM string is
+// For the text string IDs, refer to saga.h, enum TextStringIds
+static int IHNMTextStringIdsLUT[56] = {
+	-1,	// (Empty)
+	-1,	// (Empty)
+	4,	// Take
+	6,	// Talk to
+	-1,
+	-1,
+	5,	// Use
+	8,	// Give
+	10,	// Options
+	11,	// Test
+	12,	// 
+	13,	// Help
+	14,	// Quit Game
+	16,	// Fast
+	18,	// Slow
+	20,	// On
+	21,	// Off
+	15,	// Continue Playing
+	22,	// Load
+	23,	// Save
+	24,	// Game Options
+	25,	// Reading Speed
+	26,	// Music
+	27,	// Sound
+	32,	// Cancel
+	33,	// Quit
+	34,	// OK
+	17,	// Mid
+	19,	// Click
+	36,	// 10%
+	37,	// 20%
+	38,	// 30%
+	39,	// 40%
+	40,	// 50%
+	41,	// 60%
+	42,	// 70%
+	43,	// 80%
+	44,	// 90%
+	45,	// Max
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	28,	// Voices
+	29,	// Text
+	30,	// Audio
+	31	// Both
+};
+
 Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	byte *resource;
 	size_t resourceLength;
@@ -718,6 +781,8 @@ void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *p
 	int textWidth;
 	Rect rect;
 	Point textPoint;
+	KnownColor textShadowKnownColor = kKnownColorVerbTextShadow;
+	KnownFont textFont = kKnownFontMedium;
 
 	// Button differs for CD version
 	if (panelButton->id == kTextReadingSpeed && _vm->getFeatures() & GF_CD_FX)
@@ -725,7 +790,23 @@ void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *p
 	if (panelButton->id == kTextShowDialog && !(_vm->getFeatures() & GF_CD_FX))
 		return;
 
-	text = _vm->getTextString(panelButton->id);
+	if (_vm->getGameType() == GType_ITE) {
+		text = _vm->getTextString(panelButton->id);
+		textFont = kKnownFontMedium;
+		textShadowKnownColor = kKnownColorVerbTextShadow;
+	} else {
+		if (panelButton->id < 39 || panelButton->id > 50) {
+			// Read non-hardcoded strings from the LUT string table, loaded from the game
+			// data files
+			text = _vm->_script->_mainStrings.getString(IHNMTextStringIdsLUT[panelButton->id]);
+		} else {
+			// Hardcoded strings in IHNM are read from the ITE hardcoded strings
+			text = _vm->getTextString(panelButton->id);
+		}
+		textFont = kKnownFontVerb;
+		textShadowKnownColor = kKnownColorTransparent;
+	}
+
 	panel->calcPanelButtonRect(panelButton, rect);
 	if (panelButton->xOffset < 0) {
 		if (_vm->getGameType() == GType_ITE)
@@ -738,10 +819,7 @@ void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *p
 	textPoint.x = rect.left;
 	textPoint.y = rect.top + 1;
 
-	if (_vm->getGameType() == GType_ITE)
-		_vm->_font->textDraw(kKnownFontMedium, ds, text, textPoint, _vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
-	else
-		_vm->_font->textDraw(kKnownFontVerb, ds, text, textPoint, _vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
+	_vm->_font->textDraw(textFont, ds, text, textPoint, _vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(textShadowKnownColor), kFontShadow);
 }
 
 void Interface::drawOption() {
@@ -1843,7 +1921,7 @@ void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bo
 	switch (kind ) {
 		case kSlider:
 			cornerColor = 0x8b;
-			frameColor = (_vm->getGameType() == GType_ITE) ? kITEColorBlack : kIHNMColorBlack;
+			frameColor = _vm->KnownColor2ColorId(kKnownColorBlack);
 			fillColor = kITEColorLightBlue96;
 			odl = kITEColorDarkBlue8a;
 			our = kITEColorLightBlue92;
@@ -1939,6 +2017,8 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	KnownColor textColor;
 	Rect rect;
 	int litButton = 0;
+	KnownColor textShadowKnownColor = kKnownColorVerbTextShadow;
+	KnownFont textFont = kKnownFontMedium;
 
 	textId = panelButton->id;
 	switch (panelButton->id) {
@@ -1973,12 +2053,24 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 			textId = kTextAudio;
 		break;
 	}
-	text = _vm->getTextString(textId);
-
 	if (_vm->getGameType() == GType_ITE) {
+		text = _vm->getTextString(textId);
+		textFont = kKnownFontMedium;
+		textShadowKnownColor = kKnownColorVerbTextShadow;
 		textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
 		textHeight = _vm->_font->getHeight(kKnownFontMedium);
 	} else {
+		if (textId < 39 || textId > 50) {
+			// Read non-hardcoded strings from the LUT string table, loaded from the game
+			// data files
+			text = _vm->_script->_mainStrings.getString(IHNMTextStringIdsLUT[textId]);
+		} else {
+			// Hardcoded strings in IHNM are read from the ITE hardcoded strings
+			text = _vm->getTextString(textId);
+		}
+
+		textFont = kKnownFontVerb;
+		textShadowKnownColor = kKnownColorTransparent;
 		textWidth = _vm->_font->getStringWidth(kKnownFontVerb, text, 0, kFontNormal);
 		textHeight = _vm->_font->getHeight(kKnownFontVerb);
 	}
@@ -2012,12 +2104,8 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 		}
 	}
 
-	if (_vm->getGameType() == GType_ITE)
-		_vm->_font->textDraw(kKnownFontMedium, ds, text, point,
-			_vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
-	else
-		_vm->_font->textDraw(kKnownFontVerb, ds, text, point,
-			_vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
+	_vm->_font->textDraw(textFont, ds, text, point,
+		_vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(textShadowKnownColor), kFontShadow);
 }
 
 void Interface::drawPanelButtonArrow(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {

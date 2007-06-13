@@ -336,7 +336,7 @@ FxTable ITE_SfxTable[ITE_SFXCOUNT] = {
 	{ FX_CROWD_17,      64 }
 };
 
-const char *ITEinterfaceTextStrings[][56] = {
+const char *ITEinterfaceTextStrings[][52] = {
 	{
 		"Walk to", "Look At", "Pick Up", "Talk to", "Open",
 		"Close", "Use", "Give", "Options", "Test",
@@ -354,9 +354,7 @@ const char *ITEinterfaceTextStrings[][56] = {
 		"There's no opening to close.",
 		"I don't know how to do that.",
 		"Show Dialog",
-		"What is Rif's reply?",
-		"Voices",				// IHNM
-		"Both", "Text", "Audio"	// IHNM
+		"What is Rif's reply?"
 	},
 	// German
 	{
@@ -376,9 +374,7 @@ const char *ITEinterfaceTextStrings[][56] = {
 		"Hier ist keine \231ffnung zum Schlie$en.",
 		"Ich wei$ nicht, wie ich das machen soll.",
 		"Text zeigen",
-		"Wie lautet die Antwort?",
-		"Sprache",					// IHNM
-		"Beides", "Text", "Stimmen"	// IHNM
+		"Wie lautet die Antwort?"
 	}
 };
 
