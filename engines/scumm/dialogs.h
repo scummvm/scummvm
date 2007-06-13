@@ -142,8 +142,6 @@ public:
 	ConfigDialog();
 	~ConfigDialog();
 
-	virtual void open();
-	virtual void close();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 };
 

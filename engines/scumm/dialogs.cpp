@@ -619,14 +619,6 @@ ConfigDialog::~ConfigDialog() {
 #endif
 }
 
-void ConfigDialog::open() {
-	GUI_OptionsDialog::open();
-}
-
-void ConfigDialog::close() {
-	GUI_OptionsDialog::close();
-}
-
 void ConfigDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kKeysCmd:
