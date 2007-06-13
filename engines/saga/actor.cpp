@@ -1833,7 +1833,8 @@ void Actor::drawActors() {
 
 void Actor::drawSpeech(void) {
 	if (!isSpeaking() || !_activeSpeech.playing || _vm->_script->_skipSpeeches
-		|| (!_vm->_subtitlesEnabled && (_vm->getFeatures() & GF_CD_FX)))
+		|| (!_vm->_subtitlesEnabled && (_vm->getFeatures() & GF_CD_FX))
+		|| (!_vm->_subtitlesEnabled && (_vm->getGameType() == GType_IHNM)))
 		return;
 
 	int i;

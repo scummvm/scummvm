@@ -330,7 +330,7 @@ private:
 
 	void drawTextInput(Surface *ds, InterfacePanel *panel, PanelButton *panelButton);
 	void drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton);
-	void drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton);
+	void drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton, int spritenum = 0);
 	enum ButtonKind {
 		kButton,
 		kSlider,

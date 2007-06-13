@@ -279,7 +279,11 @@ enum TextStringIds {
 	kTextNoOpening,
 	kTextDontKnow,
 	kTextShowDialog,
-	kTextEnterProtectAnswer
+	kTextEnterProtectAnswer,
+	kTextVoices,
+	kTextBoth,
+	kTextText,
+	kTextAudio
 };
 
 
@@ -292,6 +296,7 @@ struct GameResourceDescription {
 	uint32 warningPanelResourceId;
 	uint32 mainSpritesResourceId;
 	uint32 mainPanelSpritesResourceId;
+	uint32 optionPanelSpritesResourceId;
 	uint32 defaultPortraitsResourceId;
 	uint32 mainStringsResourceId;
 	uint32 actorsStringsResourceId;
@@ -518,6 +523,7 @@ public:
 	int _soundVolume;
 	int _musicVolume;
 	bool _subtitlesEnabled;
+	bool _voicesEnabled;
 	int _readingSpeed;
 
 	bool _copyProtection;

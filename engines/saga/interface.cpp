@@ -142,6 +142,8 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 
 	// Main panel sprites
 	_vm->_sprite->loadList(_vm->getResourceDescription()->mainPanelSpritesResourceId, _mainPanel.sprites);
+	// Option panel sprites
+	_vm->_sprite->loadList(_vm->getResourceDescription()->optionPanelSpritesResourceId, _optionPanel.sprites);
 
 	if (_vm->getGameType() == GType_ITE) {
 		_vm->_sprite->loadList(_vm->getResourceDescription()->defaultPortraitsResourceId, _defPortraits);
@@ -755,7 +757,8 @@ void Interface::drawOption() {
 	PanelButton *panelButton;
 	Point textPoint;
 	Point point;
-	
+	int spritenum = 0;
+
 	backBuffer = _vm->_gfx->getBackBuffer();
 
 	_optionPanel.getRect(rect);
@@ -764,16 +767,13 @@ void Interface::drawOption() {
 	for (i = 0; i < _optionPanel.buttonsCount; i++) {
 		panelButton = &_optionPanel.buttons[i];
 
-		// TODO: This probably works for the button background, but the resources are still not loeaded
-		// (_optionPanel.sprites)
-		/*
-		point.x = _optionPanel.x + panelButton->xOffset;
-		point.y = _optionPanel.y + panelButton->yOffset;
-		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _optionPanel.sprites, i, point, 256);
-		*/
-
 		if (panelButton->type == kPanelButtonOption) {
-			drawPanelButtonText(backBuffer, &_optionPanel, panelButton);
+			if (_vm->getGameType() == GType_ITE) {
+				drawPanelButtonText(backBuffer, &_optionPanel, panelButton);
+			} else {
+				drawPanelButtonText(backBuffer, &_optionPanel, panelButton, spritenum);
+				spritenum += 2; // 2 sprites per button (lit and unlit)
+			}
 		}
 		if (panelButton->type == kPanelButtonOptionText) {
 			drawPanelText(backBuffer, &_optionPanel, panelButton);
@@ -781,11 +781,8 @@ void Interface::drawOption() {
 	}
 
 	if (_optionSaveRectTop.height() > 0) {
-		if (_vm->getGameType() == GType_ITE) {
+		if (_vm->getGameType() == GType_ITE)
 			backBuffer->drawRect(_optionSaveRectTop, kITEColorDarkGrey);
-		} else {
-			// TODO: Draw the button graphic properly for IHNM
-		}
 	}
 
 	// FIXME: The _optionSaveFileSlider checks exist for IHNM, where 
@@ -1399,6 +1396,21 @@ void Interface::setOption(PanelButton *panelButton) {
 		_vm->_sound->setVolume(_vm->_soundVolume == 10 ? 255 : _vm->_soundVolume * 25);
 		ConfMan.setInt("sfx_volume", _vm->_soundVolume * 25);
 		break;
+	case kTextVoices:
+		if (_vm->_subtitlesEnabled && _vm->_voicesEnabled) {		// Both
+			_vm->_subtitlesEnabled = false;							// Set it to "Audio"
+			_vm->_voicesEnabled = true;								// Not necessary, just for completeness
+		} else if (!_vm->_subtitlesEnabled && _vm->_voicesEnabled) {
+			_vm->_subtitlesEnabled = true;							// Set it to "Text"
+			_vm->_voicesEnabled = false;
+		} else if (_vm->_subtitlesEnabled && !_vm->_voicesEnabled) {
+			_vm->_subtitlesEnabled = true;							// Set it to "Both"
+			_vm->_voicesEnabled = true;
+		}
+
+		ConfMan.setBool("subtitles", _vm->_subtitlesEnabled);
+		ConfMan.setBool("voices", _vm->_voicesEnabled);
+		break;
 	}
 }
 
@@ -1917,14 +1929,16 @@ void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bo
 
 static const int readingSpeeds[] = { kTextClick, kTextSlow, kTextMid, kTextFast };
 
-void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {
+void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton, int spritenum) {
 	const char *text;
 	int textId;
 	int textWidth;
 	int textHeight;
 	Point point;
+	Point texturePoint;
 	KnownColor textColor;
 	Rect rect;
+	int litButton = 0;
 
 	textId = panelButton->id;
 	switch (panelButton->id) {
@@ -1950,6 +1964,14 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 		else
 			textId = kTextOff;
 		break;
+	case kTextVoices:
+		if (_vm->_subtitlesEnabled && _vm->_voicesEnabled)
+			textId = kTextBoth;
+		else if (_vm->_subtitlesEnabled && !_vm->_voicesEnabled)
+			textId = kTextText;
+		else if (!_vm->_subtitlesEnabled && _vm->_voicesEnabled)
+			textId = kTextAudio;
+		break;
 	}
 	text = _vm->getTextString(textId);
 
@@ -1971,7 +1993,24 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	}
 
 	panel->calcPanelButtonRect(panelButton, rect);
-	drawButtonBox(ds, rect, kButton, panelButton->state > 0);
+	if (_vm->getGameType() == GType_ITE) {
+		drawButtonBox(ds, rect, kButton, panelButton->state > 0);
+	} else {
+		litButton = panelButton->state > 0;
+
+		if (panel == &_optionPanel) {
+			texturePoint.x = _optionPanel.x + panelButton->xOffset;
+			texturePoint.y = _optionPanel.y + panelButton->yOffset;
+			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _optionPanel.sprites, spritenum + 2 + litButton, texturePoint, 256);
+		} else if (panel == &_quitPanel) {
+			texturePoint.x = _quitPanel.x + panelButton->xOffset;
+			texturePoint.y = _quitPanel.y + panelButton->yOffset;
+			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _optionPanel.sprites, 14 + litButton, texturePoint, 256);
+		} else {
+			// revert to default behavior
+			drawButtonBox(ds, rect, kButton, panelButton->state > 0);
+		}
+	}
 
 	if (_vm->getGameType() == GType_ITE)
 		_vm->_font->textDraw(kKnownFontMedium, ds, text, point,

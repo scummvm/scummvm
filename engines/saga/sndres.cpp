@@ -126,6 +126,9 @@ void SndRes::playSound(uint32 resourceId, int volume, bool loop) {
 void SndRes::playVoice(uint32 resourceId) {
 	SoundBuffer buffer;
 
+	if (_vm->getGameType() == GType_IHNM && !(_vm->_voicesEnabled))
+		return;
+
 	debug(4, "SndRes::playVoice %i", resourceId);
 
 	if (!load(_voiceContext, resourceId, buffer, false)) {
