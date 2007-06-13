@@ -91,6 +91,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		error("Interface::Interface() resource context not found");
 	}
 
+	// Main panel
 	_mainPanel.buttons = _vm->getDisplayInfo().mainPanelButtons;
 	_mainPanel.buttonsCount = _vm->getDisplayInfo().mainPanelButtonsCount;
 
@@ -110,6 +111,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 
 	free(resource);
 
+	// Converse panel
 	_conversePanel.buttons = _vm->getDisplayInfo().conversePanelButtons;
 	_conversePanel.buttonsCount = _vm->getDisplayInfo().conversePanelButtonsCount;
 
@@ -118,6 +120,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		&_conversePanel.imageLength, &_conversePanel.imageWidth, &_conversePanel.imageHeight);
 	free(resource);
 
+	// Option panel
 	_optionPanel.buttons = _vm->getDisplayInfo().optionPanelButtons;
 	_optionPanel.buttonsCount = _vm->getDisplayInfo().optionPanelButtonsCount;
 
@@ -126,6 +129,18 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		&_optionPanel.imageLength, &_optionPanel.imageWidth, &_optionPanel.imageHeight);
 	free(resource);
 
+	// Quit panel
+	if (_vm->getGameType() == GType_IHNM) {
+		_quitPanel.buttons = _vm->getDisplayInfo().quitPanelButtons;
+		_quitPanel.buttonsCount = _vm->getDisplayInfo().quitPanelButtonsCount;
+
+		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->warningPanelResourceId, resource, resourceLength);
+		_vm->decodeBGImage(resource, resourceLength, &_quitPanel.image,
+			&_quitPanel.imageLength, &_quitPanel.imageWidth, &_quitPanel.imageHeight);
+		free(resource);
+	}
+
+	// Main panel sprites
 	_vm->_sprite->loadList(_vm->getResourceDescription()->mainPanelSpritesResourceId, _mainPanel.sprites);
 
 	if (_vm->getGameType() == GType_ITE) {
@@ -817,7 +832,11 @@ void Interface::drawQuit() {
 	backBuffer = _vm->_gfx->getBackBuffer();
 
 	_quitPanel.getRect(rect);
-	drawButtonBox(backBuffer, rect, kButton, false);
+	if (_vm->getGameType() == GType_ITE)
+		drawButtonBox(backBuffer, rect, kButton, false);
+	else
+		backBuffer->blit(rect, _quitPanel.image);
+
 	for (i = 0; i < _quitPanel.buttonsCount; i++) {
 		panelButton = &_quitPanel.buttons[i];
 		if (panelButton->type == kPanelButtonQuit) {

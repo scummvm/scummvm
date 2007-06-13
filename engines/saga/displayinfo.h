@@ -340,11 +340,9 @@ static PanelButton IHNM_OptionPanelButtons[] = {
 };
 
 static PanelButton IHNM_QuitPanelButtons[] = {
-	//FIXME: Show the correct quit dialog background 
-	//TODO: Those coordinates might not be pixel perfect, check with the original interpreter
-	{kPanelButtonQuit,		25,80,	80,25,	kTextQuit,'q',0, 0,0,0},
-	{kPanelButtonQuit,		155,80,	80,25,	kTextCancel,'c',0, 0,0,0},
-	{kPanelButtonQuitText, -1,5,	0,0,	kTextQuitTheGameQuestion,'-',0, 0,0,0},
+	{kPanelButtonQuit,		25,79,	80,25,	kTextQuit,'q',0, 0,0,0},
+	{kPanelButtonQuit,		155,79,	80,25,	kTextCancel,'c',0, 0,0,0},
+	{kPanelButtonQuitText,	75,30,	0,0,	kTextQuitTheGameQuestion,'-',0, 0,0,0},
 };
 
 static PanelButton IHNM_LoadPanelButtons[] = {
@@ -397,7 +395,7 @@ static const GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	ARRAYSIZE(IHNM_OptionPanelButtons),
 	IHNM_OptionPanelButtons,
 
-	190,180,		// quit panel offsets
+	190,94,			// quit panel offsets
 	260,115,		// quit panel width & height
 	ARRAYSIZE(IHNM_QuitPanelButtons),
 	IHNM_QuitPanelButtons,
