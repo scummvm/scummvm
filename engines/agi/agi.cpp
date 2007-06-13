@@ -596,7 +596,7 @@ AgiEngine::AgiEngine(OSystem *syst) : Engine(syst) {
 	_predictiveDialogRunning = false;
 	_predictiveDictText = NULL;
 	_predictiveDictLine = NULL;
-	_predictiveDictLines = 0;
+	_predictiveDictLineCount = 0;
 	_firstSlot = 0;
 }
 

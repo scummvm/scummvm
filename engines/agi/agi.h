@@ -768,9 +768,10 @@ private:
 	bool matchWord(void);
 
 	// Predictive dialog
+	// TODO: Move this to a separate class
 	char *_predictiveDictText;
 	char **_predictiveDictLine;
-	int32 _predictiveDictLines;
+	int32 _predictiveDictLineCount;
 	char *_predictiveDictActLine;
 	String _currentCode;
 	String _currentWord;

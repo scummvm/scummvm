@@ -38,7 +38,8 @@ namespace Agi {
 
 #define MAXLINELEN 80
 
-uint8 findNumWords(char *str) {
+uint8 countWordsInString(char *str) {
+  // Count the number of (space separated) words in the given string.
 	char *ptr;
 
 	if (!str)
@@ -60,6 +61,9 @@ uint8 findNumWords(char *str) {
 }
 
 void bringWordtoTop(char *str, int wordnum) {
+	// This function reorders the words on the given pred.dic line
+	// by moving the word at position 'wordnum' to the front (that is, right behind
+	// right behind the numerical code word at the start of the line).
 	Common::StringList words;
 	char buf[MAXLINELEN];
 
@@ -393,7 +397,7 @@ bool AgiEngine::predictiveDialog(void) {
 								_currentCode.deleteLastChar();
 								matchWord();
 							}
-							numMatchingWords = findNumWords(_predictiveDictActLine);
+							numMatchingWords = countWordsInString(_predictiveDictActLine);
 							break;
 						case kModeAbc:
 							for (x = 0; x < _currentCode.size(); x++)
@@ -488,7 +492,7 @@ void AgiEngine::loadDict(void) {
 	char *ptr;
 	int size = inFile.size();
 
-	_predictiveDictText = (char *) malloc(size + 1);
+	_predictiveDictText = (char *)malloc(size + 1);
 	if (!_predictiveDictText) {
 		warning("Not enough memory to load the predictive dictionary");
 		return;
@@ -501,12 +505,12 @@ void AgiEngine::loadDict(void) {
 
 	ptr = _predictiveDictText;
 	lines = 1;
-	while ( (ptr = (char *) strchr(ptr, '\n')) != (char *) NULL ) {
+	while ((ptr = strchr(ptr, '\n'))) {
 		lines++;
 		ptr++;
 	}
 
-	_predictiveDictLine = (char **) calloc(1, sizeof(char *) * lines);
+	_predictiveDictLine = (char **)calloc(1, sizeof(char *) * lines);
 	if (_predictiveDictLine == NULL) {
 		warning("Cannot allocate memory for line index buffer.");
 		return;
@@ -514,7 +518,7 @@ void AgiEngine::loadDict(void) {
 	_predictiveDictLine[0] = _predictiveDictText;
 	ptr = _predictiveDictText;
 	int i = 1;
-	while ( (ptr = (char *) strchr(ptr, '\n')) != (char *) NULL ) {
+	while ((ptr = strchr(ptr, '\n'))) {
 		*ptr = 0;
 		ptr++;
 		_predictiveDictLine[i++] = ptr;
@@ -522,8 +526,8 @@ void AgiEngine::loadDict(void) {
 	if (_predictiveDictLine[lines - 1][0] == 0)
 		lines--;
 
-	_predictiveDictLines = lines;
-	debug("Loaded %d lines", _predictiveDictLines);
+	_predictiveDictLineCount = lines;
+	debug("Loaded %d lines", _predictiveDictLineCount);
 
 	uint32 time3 = _system->getMillis();
 	printf("Time to parse pred.dic: %d, total: %d\n", time3-time2, time3-time1);
@@ -534,39 +538,40 @@ bool AgiEngine::matchWord(void) {
 		return false;
 	}
 	// Lookup word in the dictionary
-	int line, span, res, len, i;
+	int line, span, cmpRes, len;
 	char target[MAXWORDLEN];
 
 	strncpy(target, _currentCode.c_str(), MAXWORDLEN);
 	strcat(target, " ");
 
 	// do the search at most two times:
-	// first try to match the exact code, by mtaching also the space after the code
+	// first try to match the exact code, by matching also the space after the code
 	// if there is not an exact match, do it once more for the best matching prefix (drop the space)
-	i = 0;
 	len = _currentCode.size() + 1;
-	do {
-			line = (_predictiveDictLines + 1) / 2 - 1;
-			// find out the 2^upper_int(log2(_predictiveDictLines))
-			for (span = 1; span < _predictiveDictLines; span <<= 1);
-			span >>= 1;
-			do {
-					res = strncmp(_predictiveDictLine[line], target, len);
-					if (res > 0) {
-							span /= 2;
-							line -= span;
-							if (line < 0)
-									line = 0;
-					} else if (res < 0) {
-							span /= 2;
-							line += span;
-							if (line >= _predictiveDictLines)
-									line = _predictiveDictLines - 1;
-					}
-			} while (res && span);
-			len--;
-			i++;
-	} while (i < 2 && (i == 1 && res));
+	for (int i = 0; i < 2; ++i) {
+		line = (_predictiveDictLineCount + 1) / 2 - 1;
+		// find out the 2^upper_int(log2(_predictiveDictLineCount))
+		for (span = 1; span < _predictiveDictLineCount; span <<= 1)
+			;
+		span >>= 1;
+		do {
+			cmpRes = strncmp(_predictiveDictLine[line], target, len);
+			if (cmpRes > 0) {
+				span /= 2;
+				line -= span;
+				if (line < 0)
+					line = 0;
+			} else if (cmpRes < 0) {
+				span /= 2;
+				line += span;
+				if (line >= _predictiveDictLineCount)
+					line = _predictiveDictLineCount - 1;
+			}
+		} while (cmpRes && span);
+		if (cmpRes == 0)  // Exact match found? -> stop now
+			break;
+		len--;  // Remove the trailing space
+	}
 
 	_currentWord.clear();
 	_wordNumber = 0;
