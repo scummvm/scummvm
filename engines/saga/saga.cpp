@@ -148,16 +148,6 @@ int SagaEngine::init() {
 	_soundVolume = ConfMan.getInt("sfx_volume") / 25;
 	_musicVolume = ConfMan.getInt("music_volume") / 25;
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
-	if (getGameType() == GType_IHNM) {
-		if (!ConfMan.hasKey("voices")) {
-			_voicesEnabled = true;
-			ConfMan.setBool("voices", true);
-		} else {
-			_voicesEnabled = ConfMan.getBool("voices");
-		}
-	} else {
-		_voicesEnabled = true;
-	}
 	_readingSpeed = getTalkspeed();
 	_copyProtection = ConfMan.getBool("copy_protection");
 
@@ -230,6 +220,17 @@ int SagaEngine::init() {
 	_music->setVolume(-1, 1);
 
 	_gfx->initPalette();
+
+	if (getGameType() == GType_IHNM) {
+		if (!ConfMan.hasKey("voices")) {
+			_voicesEnabled = true;
+			ConfMan.setBool("voices", true);
+		} else {
+			_voicesEnabled = ConfMan.getBool("voices");
+		}
+	} else {
+		_voicesEnabled = true;
+	}
 
 	// FIXME: This is the ugly way of reducing redraw overhead. It works
 	//        well for 320x200 but it's unclear how well it will work for
