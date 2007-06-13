@@ -55,13 +55,24 @@ enum {
 //
 // TODO: Add different font sizes (for bigger headlines)
 // TODO: Allow color change in the middle of a line...
+
+static const char *copyright_text[] = {
+"\\C""",
+"\\C""Copyright (C) 2002-2007 The ScummVM project",
+"\\C""http://www.scummvm.org",
+"\\C""",
+"\\C""ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
+"\\C""",
+};
+
 static const char *gpl_text[] = {
+"\\C""",
 "\\C""This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.",
 "\\C""",
 "\\C""This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.",
 "\\C""",
 "\\C""You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.",
-"\\C"""
+"\\C""",
 };
 
 #include "gui/credits.h"
@@ -107,11 +118,8 @@ AboutDialog::AboutDialog()
 	date += ')';
 	_lines.push_back(date);
 
-
-	addLine("");
-	addLine("\\C""Copyright (C) 2002-2006 The ScummVM project");
-	addLine("\\C""http://www.scummvm.org");
-	addLine("");
+	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
+		addLine(copyright_text[i]);
 
 	addLine("\\C\\c1""Features compiled in:");
 	Common::String features("\\C");
@@ -136,15 +144,13 @@ AboutDialog::AboutDialog()
 	  //addLine("");
 	}
 
+	for (i = 0; i < ARRAYSIZE(gpl_text); i++)
+		addLine(gpl_text[i]);
+
 	_lines.push_back("");
 
 	for (i = 0; i < ARRAYSIZE(credits); i++)
 		addLine(credits[i]);
-
-	_lines.push_back("");
-
-	for (i = 0; i < ARRAYSIZE(gpl_text); i++)
-		addLine(gpl_text[i]);
 
 	// Center the dialog
 	_x = (screenW - _w) / 2;
