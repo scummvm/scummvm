@@ -1019,8 +1019,19 @@ void setKeyboardEnable(bool en) {
 			// the same.
 			u16* buffer = get8BitBackBuffer();
 
-			for (int r = 0; r < (512 * 256) >> 1; r++) {
-				BG_GFX_SUB[r] = buffer[r];
+            if(isCpuScalerEnabled())
+            {
+                for(int j=0; j<200; ++j)
+                {
+                    u16* scanline = BG_GFX_SUB + 256*j;
+                    for(int i=0; i<160; ++i)
+                        scanline[i] = buffer[160*j + i];
+                }
+            }
+            else
+            {
+  			    for (int r = 0; r < (512 * 256) >> 1; r++)
+  				    BG_GFX_SUB[r] = buffer[r];
 			}
 			
 			SUB_DISPLAY_CR &= ~DISPLAY_BG1_ACTIVE;	// Turn off keyboard layer
