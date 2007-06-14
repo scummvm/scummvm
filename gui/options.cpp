@@ -27,6 +27,7 @@
 #include "gui/themebrowser.h"
 #include "gui/chooser.h"
 #include "gui/eval.h"
+#include "gui/message.h"
 #include "gui/newgui.h"
 #include "gui/options.h"
 #include "gui/PopUpWidget.h"
@@ -821,9 +822,15 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			FilesystemNode dir(browser.getResult());
-			_savePath->setLabel(dir.getPath());
+			if(dir.isWritable())
+			{
+				_savePath->setLabel(dir.getPath());
+			} else {
+				MessageDialog error("The chosen directory cannot be written to. Please select another one.");
+				error.runModal();
+				return;
+			}	
 			draw();
-			// TODO - we should check if the directory is writeable before accepting it
 		}
 		break;
 	}
