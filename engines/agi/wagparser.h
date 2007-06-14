@@ -201,7 +201,7 @@ protected:
 class WagFileParser {
 // Constants, type definitions, enumerations etc.
 public:	
-	static const int WINAGI_VERSION_LENGTH = 16; ///< WinAGI's version string's length (Always 16)	
+	static const uint WINAGI_VERSION_LENGTH = 16; ///< WinAGI's version string's length (Always 16)	
 	typedef Common::Array<WagProperty> PropertyList; ///< A type definition for an array of *.wag file properties
 	
 public:
