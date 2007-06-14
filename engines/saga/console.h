@@ -40,8 +40,9 @@ public:
 private:
 	bool cmdActorWalkTo(int argc, const char **argv);
 
-	bool Cmd_AnimInfo(int argc, const char **argv);
-	bool Cmd_CutawayInfo(int argc, const char **argv);
+	bool cmdAnimInfo(int argc, const char **argv);
+	bool cmdCutawayInfo(int argc, const char **argv);
+	bool cmdPlayCutaway(int argc, const char **argv);
 
 	bool cmdCurrentScene(int argc, const char **argv);
 	bool cmdCurrentChapter(int argc, const char **argv);

@@ -38,17 +38,18 @@ namespace Saga {
 Console::Console(SagaEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
-	DCmd_Register("continue",         WRAP_METHOD(Console, Cmd_Exit));
+	DCmd_Register("continue",			WRAP_METHOD(Console, Cmd_Exit));
 
 	// CVAR_Register_I(&_soundEnabled, "sound", NULL, CVAR_CFG, 0, 1);
 	// CVAR_Register_I(&_musicEnabled, "music", NULL, CVAR_CFG, 0, 1);
 
 	// Actor commands
-	DCmd_Register("actor_walk_to",    WRAP_METHOD(Console, cmdActorWalkTo));
+	DCmd_Register("actor_walk_to",		WRAP_METHOD(Console, cmdActorWalkTo));
 
 	// Animation commands
-	DCmd_Register("anim_info",        WRAP_METHOD(Console, Cmd_AnimInfo));
-	DCmd_Register("cutaway_info",     WRAP_METHOD(Console, Cmd_CutawayInfo));
+	DCmd_Register("anim_info",			WRAP_METHOD(Console, cmdAnimInfo));
+	DCmd_Register("cutaway_info",		WRAP_METHOD(Console, cmdCutawayInfo));
+	DCmd_Register("play_cutaway",		WRAP_METHOD(Console, cmdPlayCutaway));
 
 	// Game stuff
 
@@ -87,14 +88,21 @@ bool Console::cmdActorWalkTo(int argc, const char **argv) {
 	return true;
 }
 
-
-bool Console::Cmd_AnimInfo(int argc, const char **argv) {
+bool Console::cmdAnimInfo(int argc, const char **argv) {
 	_vm->_anim->animInfo();
 	return true;
 }
 
-bool Console::Cmd_CutawayInfo(int argc, const char **argv) {
+bool Console::cmdCutawayInfo(int argc, const char **argv) {
 	_vm->_anim->cutawayInfo();
+	return true;
+}
+
+bool Console::cmdPlayCutaway(int argc, const char **argv) {
+	if (argc != 2)
+		DebugPrintf("Usage: %s <Cutaway number>\n", argv[0]);
+	else
+		_vm->_anim->playCutaway(atoi(argv[1]), false);
 	return true;
 }
 
