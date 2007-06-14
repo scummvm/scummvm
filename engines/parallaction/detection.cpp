@@ -94,7 +94,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 				{ NULL, 0, NULL, 0}
 			},
 			Common::UNK_LANG,
-			Common::kPlatformPC,
+			Common::kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
 		GType_Nippon,
