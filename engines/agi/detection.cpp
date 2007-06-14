@@ -31,6 +31,7 @@
 #include "common/file.h"
 
 #include "agi/agi.h"
+#include "agi/wagparser.h"
 
 
 namespace Agi {
@@ -1848,6 +1849,10 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 	typedef Common::HashMap<Common::String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> IntMap;
 	IntMap allFiles;
 	bool matchedUsingFilenames = false;
+	bool matchedUsingWag = false;
+	int wagFileCount = 0;
+	WagFileParser wagFileParser;
+	Common::String wagFilePath;
 	Common::String gameid("agi-fanmade"), description, extra; // Set the defaults for gameid, description and extra	
 	FSList fslistCurrentDir; // Only used if fslist == NULL
 
@@ -1868,12 +1873,18 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 	g_fallbackDesc.features = GF_FANMADE;
 	g_fallbackDesc.version = 0x2917;
 
-	// First grab all filenames
+	// First grab all filenames and at the same time count the number of *.wag files
 	for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
 		if (file->isDirectory()) continue;
 		Common::String filename = file->name();
 		filename.toLowercase();
 		allFiles[filename] = true; // Save the filename in a hash table
+		
+		if (filename.hasSuffix(".wag")) {
+			// Save latest found *.wag file's path (Can be used to open the file, the name can't)
+			wagFilePath = file->path();
+			wagFileCount++; // Count found *.wag files
+		}
 	}
 
 	if (allFiles.contains("logdir") && allFiles.contains("object") &&
@@ -1909,7 +1920,55 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 			}
 		}
 	}
-	
+
+	// WinAGI produces *.wag file with interpreter version, game name and other parameters.
+	// If there's exactly one *.wag file and it parses successfully then we'll use its information.
+	if (wagFileCount == 1 && wagFileParser.parse(wagFilePath.c_str())) {
+		matchedUsingWag = true;
+
+		const WagProperty *wagAgiVer = wagFileParser.getProperty(WagProperty::PC_INTVERSION);
+		const WagProperty *wagGameID = wagFileParser.getProperty(WagProperty::PC_GAMEID);
+		const WagProperty *wagGameDesc = wagFileParser.getProperty(WagProperty::PC_GAMEDESC);
+		const WagProperty *wagGameVer = wagFileParser.getProperty(WagProperty::PC_GAMEVERSION);
+		const WagProperty *wagGameLastEdit = wagFileParser.getProperty(WagProperty::PC_GAMELAST);
+
+		// If there is an AGI version number in the *.wag file then let's use it
+		if (wagAgiVer != NULL && wagFileParser.checkAgiVersionProperty(*wagAgiVer)) {
+			// TODO/FIXME: Check that version number is something we support before trying to use it.
+			//     If the version number is unsupported then it'll get switched to 0x2917 later.
+			//     But there's the possibility that file based detection has detected something else
+			//     than a v2 AGI game. So there's a possibility for conflicting information.
+			g_fallbackDesc.version = wagFileParser.convertToAgiVersionNumber(*wagAgiVer);
+		}
+
+		// Set gameid according to *.wag file information if it's present and it doesn't contain whitespace.
+		if (wagGameID != NULL && !Common::String(wagGameID->getData()).contains(" ")) {
+			gameid = wagGameID->getData();
+			debug(3, "Agi::fallbackDetector: Using game id (%s) from WAG file", gameid.c_str());
+		}
+
+		// Set game description and extra according to *.wag file information if they're present
+		if (wagGameDesc != NULL) {
+			description = wagGameDesc->getData();
+			debug(3, "Agi::fallbackDetector: Game description (%s) from WAG file", wagGameDesc->getData());
+
+			// If there's game version in the *.wag file, set extra to it
+			if (wagGameVer != NULL) {
+				extra = wagGameVer->getData();
+				debug(3, "Agi::fallbackDetector: Game version (%s) from WAG file", wagGameVer->getData());
+			}
+
+			// If there's game last edit date in the *.wag file, add it to extra
+			if (wagGameLastEdit != NULL) {
+				if (!extra.empty() ) extra += " ";
+				extra += wagGameLastEdit->getData();
+				debug(3, "Agi::fallbackDetector: Game's last edit date (%s) from WAG file", wagGameLastEdit->getData());
+			}
+		}
+	} else if (wagFileCount > 1) { // More than one *.wag file, confusing! So let's not use them.
+		warning("More than one (%d) *.wag files found. WAG files ignored", wagFileCount);
+	}
+
 	// Check that the AGI interpreter version is a supported one
 	if (!(g_fallbackDesc.version >= 0x2000 && g_fallbackDesc.version < 0x4000)) {
 		warning("Unsupported AGI interpreter version 0x%x in AGI's fallback detection. Using default 0x2917", g_fallbackDesc.version);
@@ -1924,7 +1983,7 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 
 	// Check if we found a match with any of the fallback methods
 	Common::EncapsulatedADGameDesc result;
-	if (matchedUsingFilenames) {
+	if (matchedUsingWag || matchedUsingFilenames) {
 		extra = description + " " + extra; // Let's combine the description and extra
 		result = Common::EncapsulatedADGameDesc((const Common::ADGameDescription *)&g_fallbackDesc, gameid, extra);
 

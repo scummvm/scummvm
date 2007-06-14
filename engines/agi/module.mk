@@ -28,6 +28,7 @@ MODULE_OBJS = \
 	sprite.o \
 	text.o \
 	view.o \
+	wagparser.o \
 	words.o
 
 
