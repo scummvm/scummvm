@@ -66,6 +66,8 @@ void Anim::loadCutawayList(const byte *resourcePointer, size_t resourceLength) {
 	for (int i = 0; i < _cutawayListLength; i++) {
 		_cutawayList[i].backgroundResourceId = cutawayS.readUint16LE();
 		_cutawayList[i].animResourceId = cutawayS.readUint16LE();
+		if (_cutawayList[i].animResourceId == 0)
+			warning("Anim::loadCutawayList: Animation %i has an animResourceId equal to 0", i);
 		_cutawayList[i].cycles = cutawayS.readSint16LE();
 		_cutawayList[i].frameRate = cutawayS.readSint16LE();
 	}
@@ -158,6 +160,13 @@ void Anim::playCutaway(int cut, bool fade) {
 
 	if (cutawaySlot == -1) {
 		warning("Could not allocate cutaway animation slot");
+		return;
+	}
+	
+	// FIXME: Some animations in IHNM have animResourceId equal to 0, for no obvious reason
+	// We skip them, to avoid ScummVM crashing
+	if (_cutawayList[cut].animResourceId == 0) {
+		warning("Anim::playCutaway: Animation %i has animResourceId equal to 0, skipping", cut);
 		return;
 	}
 
@@ -388,12 +397,8 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 
 		if (anim->currentFrame > anim->maxFrame) {
 
-			if (_vm->_interface->getMode() == kPanelVideo) {
-				// Videos never loop
-				_vm->_frameCount++;	
-				anim->currentFrame++;
-			} else		
-				anim->currentFrame = anim->loopFrame;
+			anim->currentFrame = anim->loopFrame;
+			_vm->_frameCount++;	
 
 			if (anim->state == ANIM_STOPPING || anim->currentFrame == -1) {
 				anim->state = ANIM_PAUSE;
@@ -786,6 +791,18 @@ void Anim::animInfo() {
 		}
 
 		_vm->_console->DebugPrintf("%02d: Frames: %u Flags: %u\n", i, _animations[i]->maxFrame, _animations[i]->flags);
+	}
+}
+
+void Anim::cutawayInfo() {
+	uint16 i;
+
+	_vm->_console->DebugPrintf("There are %d cutaways loaded:\n", _cutawayListLength);
+
+	for (i = 0; i < _cutawayListLength; i++) {
+		_vm->_console->DebugPrintf("%02d: Bg res: %u Anim res: %u Cycles: %u Framerate: %u\n", i,
+			_cutawayList[i].backgroundResourceId, _cutawayList[i].animResourceId,
+			_cutawayList[i].cycles, _cutawayList[i].frameRate);
 	}
 }
 

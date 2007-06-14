@@ -41,11 +41,18 @@ private:
 	bool cmdActorWalkTo(int argc, const char **argv);
 
 	bool Cmd_AnimInfo(int argc, const char **argv);
+	bool Cmd_CutawayInfo(int argc, const char **argv);
 
+	bool cmdCurrentScene(int argc, const char **argv);
+	bool cmdCurrentChapter(int argc, const char **argv);
 	bool cmdSceneChange(int argc, const char **argv);
+	bool cmdChapterChange(int argc, const char **argv);
+
 	bool cmdActionMapInfo(int argc, const char **argv);
 	bool cmdObjectMapInfo(int argc, const char **argv);
 
+	bool cmdCurrentPanelMode(int argc, const char **argv);
+	bool cmdSetPanelMode(int argc, const char **argv);
 
 private:
 	SagaEngine *_vm;

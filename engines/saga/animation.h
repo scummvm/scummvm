@@ -133,6 +133,7 @@ public:
 	void setFrameTime(uint16 animId, int time);
 	void reset(void);
 	void animInfo(void);
+	void cutawayInfo(void);
 	void setCycles(uint16 animId, int cycles);
 	void stop(uint16 animId);
 	void finish(uint16 animId);
