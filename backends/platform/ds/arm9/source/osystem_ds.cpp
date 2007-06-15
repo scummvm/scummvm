@@ -477,14 +477,17 @@ bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
 	surf->create(DS::getGameWidth(), DS::getGameHeight(), 1);
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
-	// TODO: Change this to work with the software scalar (hint: video ram format is different)
+	
+    size_t imageStrideInBytes = isCpuScalerEnabled() DS::getGameWidth() ? 512;
+    size_t imageStrideInWords = imageStrideInBytes / 2;
+
 	u16* image = (u16 *) DS::get8BitBackBuffer();
 	for (int y = 0; y <  DS::getGameHeight(); y++)
 	{
-		DC_FlushRange((image + (y * 512)), DS::getGameWidth());
+		DC_FlushRange(image + (y * imageStrideInWords), DS::getGameWidth());
 		for (int x = 0; x < DS::getGameWidth() >> 1; x++)
 		{
-			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = *(image + y * 256 + x);
+			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y * imageStrideInWords + x];
 		}
 	}
 
