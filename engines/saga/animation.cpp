@@ -135,6 +135,8 @@ void Anim::playCutaway(int cut, bool fade) {
 	const Rect rect(width, height);
 
 	bgSurface->blit(rect, buf);
+	_vm->_frameCount++;
+
 	_vm->_gfx->setPalette(palette);
 
 	free(buf);
