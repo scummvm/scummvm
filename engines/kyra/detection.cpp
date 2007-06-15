@@ -122,7 +122,7 @@ GameList Engine_KYRA_gameIDList() {
 }
 
 GameDescriptor Engine_KYRA_findGameID(const char *gameid) {
-	return Common::AdvancedDetector::findGameID(gameid, detectionParams);
+	return Common::AdvancedDetector::findGameID(gameid, gameList);
 }
 
 GameList Engine_KYRA_detectGames(const FSList &fslist) {

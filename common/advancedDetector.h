@@ -224,7 +224,11 @@ GameList gameIDList(const Common::ADParams &params);
  * 'gameid' in there. If a match is found, returns a  GameDescriptor
  * with gameid and description set.
  */
-GameDescriptor findGameID(const char *gameid, const Common::ADParams &params);
+GameDescriptor findGameID(
+	const char *gameid,
+	const PlainGameDescriptor *list,
+	const Common::ADObsoleteGameID *obsoleteList = 0
+	);
 
 // FIXME/TODO: Rename this function to something more sensible.
 GameList detectAllGames(const FSList &fslist, const Common::ADParams &params);
@@ -253,7 +257,7 @@ PluginError detectGameForEngineCreation(const Common::ADParams &params);
 		return Common::AdvancedDetector::gameIDList(params); \
 	} \
 	GameDescriptor Engine_##engine##_findGameID(const char *gameid) { \
-		return Common::AdvancedDetector::findGameID(gameid, params); \
+		return Common::AdvancedDetector::findGameID(gameid, params.list, params.obsoleteList); \
 	} \
 	GameList Engine_##engine##_detectGames(const FSList &fslist) { \
 		return Common::AdvancedDetector::detectAllGames(fslist, params); \

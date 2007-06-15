@@ -106,7 +106,7 @@ GameList Engine_AGOS_gameIDList() {
 }
  
 GameDescriptor Engine_AGOS_findGameID(const char *gameid) {
-	return Common::AdvancedDetector::findGameID(gameid, detectionParams);
+	return Common::AdvancedDetector::findGameID(gameid, simonGames, obsoleteGameIDsTable);
 }
 
 GameList Engine_AGOS_detectGames(const FSList &fslist) {

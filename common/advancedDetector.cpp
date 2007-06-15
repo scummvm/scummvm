@@ -100,25 +100,31 @@ static void upgradeTargetIfNecessary(const Common::ADParams &params) {
 
 GameDescriptor findGameID(
 	const char *gameid,
-	const Common::ADParams &params
+	const PlainGameDescriptor *list,
+	const Common::ADObsoleteGameID *obsoleteList
 	) {
-	const PlainGameDescriptor *g = params.list;
-	while (g->gameid) {
-		if (0 == scumm_stricmp(gameid, g->gameid))
-			return GameDescriptor(*g);
-		g++;
-	}
+	// First search the list of supported game IDs for a match.
+	const PlainGameDescriptor *g = findPlainGameDescriptor(gameid, list);
+	if (g)
+		return GameDescriptor(*g);
 
-	if (params.obsoleteList != 0) {
-		const Common::ADObsoleteGameID *o = params.obsoleteList;
+	// If we didn't find the gameid in the main list, check if it
+	// is an obsolete game id.
+	if (obsoleteList != 0) {
+		const Common::ADObsoleteGameID *o = obsoleteList;
 		while (o->from) {
 			if (0 == scumm_stricmp(gameid, o->from)) {
-				return GameDescriptor(gameid, "Obsolete game ID");
+				g = findPlainGameDescriptor(o->to, list);
+				if (g && g->description)
+					return GameDescriptor(gameid, "Obsolete game ID (" + Common::String(g->description) + ")");
+				else
+					return GameDescriptor(gameid, "Obsolete game ID");
 			}
 			o++;
 		}
 	}
 
+	// No match found
 	return GameDescriptor();
 }
 
