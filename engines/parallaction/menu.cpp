@@ -178,6 +178,10 @@ void Menu::newGame() {
 
 uint16 Menu::chooseLanguage() {
 
+	if (_vm->getFeatures() & GF_DEMO) {
+		return 1;
+	}
+
 	// TODO: should return the language ID supported by Amiga versions
 	// this can be done with some flags in the detection structures
 
@@ -312,7 +316,7 @@ void Menu::selectCharacter() {
 
 	_vm->_gfx->setFont(kFontMenu);
 
-	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
+	_vm->_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 
 	_vm->_disk->loadSlide("password");	// loads background into kBitBack buffer
 
