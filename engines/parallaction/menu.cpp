@@ -178,11 +178,8 @@ void Menu::newGame() {
 
 uint16 Menu::chooseLanguage() {
 
-	if (_vm->getPlatform() == Common::kPlatformAmiga) {
-		// TODO: should return the language ID supported by this version
-		// this can be done with some flags in the detection structures
-		return 1;
-	}
+	// TODO: should return the language ID supported by Amiga versions
+	// this can be done with some flags in the detection structures
 
 	// user can choose language in dos version
 
