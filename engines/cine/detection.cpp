@@ -235,7 +235,7 @@ static const CINEGameDescription gameDescriptions[] = {
 		GType_FW,
 		0,
 	},
-
+#if 0
 	{
 		{
 			"os",
@@ -460,7 +460,7 @@ static const CINEGameDescription gameDescriptions[] = {
 		GType_OS,
 		0,
 	},
-
+#endif
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 

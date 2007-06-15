@@ -965,7 +965,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		0,
 		NULL,
 	},
-
+#if 0
 	// I Have No Mouth And I Must Scream - Demo version
 	{
 		{
@@ -1190,6 +1190,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		0,
 		NULL,
 	},
+#endif
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0, NULL, 0, NULL, NULL, NULL, NULL, 0, NULL }
 };
 
