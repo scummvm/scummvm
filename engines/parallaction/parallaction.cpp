@@ -175,11 +175,11 @@ int Parallaction::init() {
 
 	_baseTime = 0;
 
-	if (getPlatform() == Common::kPlatformPC)
+	if (getPlatform() == Common::kPlatformPC) {
 		_disk = new DosDisk(this);
-	else {
+	} else {
 		_disk = new AmigaDisk(this);
-		_disk->selectArchive("disk0");
+		_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 	}
 
 	_engineFlags = 0;
@@ -753,10 +753,13 @@ void Parallaction::changeCharacter(const char *name) {
 		// character for sanity before memory is freed
 		freeCharacter();
 
-		_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
+		_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 		_vm->_char._ani._cnv = _disk->loadFrames(fullName);
 
 		if (!IS_DUMMY_CHARACTER(name)) {
+			if (_vm->getPlatform() == Common::kPlatformAmiga)
+				_disk->selectArchive("disk0");
+
 			_vm->_char._head = _disk->loadHead(baseName);
 			_vm->_char._talk = _disk->loadTalk(baseName);
 			_vm->_char._objs = _disk->loadObjects(baseName);
@@ -765,7 +768,7 @@ void Parallaction::changeCharacter(const char *name) {
 
 			_soundMan->playCharacterMusic(name);
 
-			if ((getFeatures() & GF_DEMO) == 0)
+			if (!(getFeatures() & GF_DEMO))
 				parseLocation("common");
 		}
 	}

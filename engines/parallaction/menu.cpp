@@ -105,7 +105,7 @@ Menu::~Menu() {
 
 void Menu::start() {
 
-	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
+	_vm->_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 
 	splash();
 

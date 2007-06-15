@@ -22,7 +22,9 @@
  * $Id$
  *
  */
+#include "common/stdafx.h"
 
+#include "common/endian.h"
 #include "common/file.h"
 
 #include "parallaction/disk.h"
@@ -54,6 +56,7 @@ Archive::Archive() {
 }
 
 void Archive::open(const char *file) {
+	bool isSmallArchive;
 	debugC(3, kDebugDisk, "Archive::open(%s)", file);
 
 	if (_archive.isOpen())
@@ -65,7 +68,11 @@ void Archive::open(const char *file) {
 	if (!_archive.open(path))
 		error("archive '%s' not found", path);
 
-	bool isSmallArchive = _archive.size() == SIZEOF_SMALL_ARCHIVE;
+	if (_vm->getFeatures() & GF_DEMO) {
+		isSmallArchive = _archive.size() == SIZEOF_SMALL_ARCHIVE;
+	} else {
+		isSmallArchive = (_archive.readUint32BE() != MKID_BE('NDOS'));
+	}
 
 	_numFiles = (isSmallArchive) ? SMALL_ARCHIVE_FILES_NUM : NORMAL_ARCHIVE_FILES_NUM;
 

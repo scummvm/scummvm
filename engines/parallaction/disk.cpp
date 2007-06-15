@@ -808,7 +808,11 @@ Cnv* AmigaDisk::loadTalk(const char *name) {
 	Common::SeekableReadStream *s;
 
 	char path[PATH_LEN];
-	sprintf(path, "%s.talk", name);
+	if (_vm->getFeatures() & GF_DEMO)
+		sprintf(path, "%s.talk", name);
+	else
+		sprintf(path, "talk/%s.talk", name);
+
 	s = openArchivedFile(path, false);
 	if (s == NULL) {
 		s = openArchivedFile(name, true);
@@ -824,7 +828,11 @@ Cnv* AmigaDisk::loadObjects(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadObjects");
 
 	char path[PATH_LEN];
-	sprintf(path, "%s.objs", name);
+	if (_vm->getFeatures() & GF_DEMO)
+		sprintf(path, "%s.objs", name);
+	else
+		sprintf(path, "objs/%s.objs", name);
+
 	Common::SeekableReadStream *s = openArchivedFile(path, true);
 
 	Cnv *cnv = makeCnv(*s);
@@ -1103,6 +1111,9 @@ Table* AmigaDisk::loadTable(const char* name) {
 		dispose = true;
 		stream = s;
 	} else {
+		if (!(_vm->getFeatures() & GF_DEMO))
+			sprintf(path, "objs/%s.table", name);
+
 		if (!_resArchive.openArchivedFile(path))
 			errorFileNotFound(path);
 
