@@ -588,6 +588,8 @@ void LauncherDialog::updateListing() {
 			if (g.contains("description"))
 				description = g.description();
 		}
+		if (description.empty())
+			description = "Unknown (target " + iter->_key + ", gameid " + gameid + ")";
 
 		if (!gameid.empty() && !description.empty()) {
 			// Insert the game into the launcher list
