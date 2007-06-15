@@ -3,7 +3,7 @@
 # a list of common object files etc.
 
 ######################################################################
-# The defaul build target: just build the scummvm executable
+# The default build target: just build the scummvm executable
 ######################################################################
 all: $(EXECUTABLE) plugins
 
