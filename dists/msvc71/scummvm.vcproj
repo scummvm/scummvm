@@ -179,6 +179,9 @@
 				RelativePath="..\..\common\advancedDetector.h">
 			</File>
 			<File
+				RelativePath="..\..\common\algorithm.h">
+			</File>
+			<File
 				RelativePath="..\..\common\array.h">
 			</File>
 			<File
@@ -195,6 +198,9 @@
 			</File>
 			<File
 				RelativePath="..\..\common\endian.h">
+			</File>
+			<File
+				RelativePath="..\..\common\events.h">
 			</File>
 			<File
 				RelativePath="..\..\common\file.cpp">
@@ -237,6 +243,9 @@
 			</File>
 			<File
 				RelativePath="..\..\common\mutex.h">
+			</File>
+			<File
+				RelativePath="..\..\common\noncopyable.h">
 			</File>
 			<File
 				RelativePath="..\..\common\pack-end.h">
@@ -421,6 +430,9 @@
 				</File>
 				<File
 					RelativePath="..\..\sound\softsynth\ym2612.cpp">
+				</File>
+				<File
+					RelativePath="..\..\sound\softsynth\ym2612.h">
 				</File>
 				<Filter
 					Name="mt32"
