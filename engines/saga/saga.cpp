@@ -353,6 +353,11 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 	ActorData *actor;
 	ObjectData *obj;
 	const HitZone *hitZone;
+
+	// Disable the object names in IHNM when the chapter is 8
+	if (getGameType() == GType_IHNM && _scene->currentChapterNumber() == 8)
+		return "";
+
 	switch (objectTypeId(objectId)) {
 	case kGameObjectObject:
 		obj = _actor->getObj(objectId);
