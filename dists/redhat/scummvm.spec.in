@@ -7,7 +7,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm
-Version		: @VERSION@ 
+Version		: @VERSION@
 Release		: 1
 Summary		: Graphic adventure game interpreter
 Group		: Interpreters
@@ -18,6 +18,9 @@ Url             : http://www.scummvm.org
 Source		: %{name}-%{version}.tar.bz2
 Source1		: libmad-0.15.1b.tar.bz2
 Source2		: mpeg2dec-0.4.1.tar.bz2
+Source3		: kyra.dat
+Source4		: queen.tbl
+Source5		: sky.cpt
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root
 
 BuildRequires: desktop-file-utils
@@ -60,6 +63,10 @@ install -m644 -D dists/scummvm.6 %{buildroot}%{_mandir}/man6/scummvm.6
 install -m644 -D icons/scummvm.xpm %{buildroot}%{_datadir}/pixmaps/scummvm.xpm
 install -m644 -D gui/themes/modern.ini %{buildroot}%{_datadir}/scummvm/modern.ini
 install -m644 -D gui/themes/modern.zip %{buildroot}%{_datadir}/scummvm/modern.zip
+install -m644 -D dists/pred.dic %{buildroot}%{_datadir}/scummvm/pred.dic
+install -m644 -D %{_sourcedir}/kyra.dat %{buildroot}%{_datadir}/scummvm/kyra.dat
+install -m644 -D %{_sourcedir}/queen.tbl %{buildroot}%{_datadir}/scummvm/queen.tbl
+install -m644 -D %{_sourcedir}/sky.cpt %{buildroot}%{_datadir}/scummvm/sky.cpt
 desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications dists/scummvm.desktop
 
 %clean
@@ -75,6 +82,10 @@ rm -Rf ${RPM_BUILD_ROOT}
 %{_datadir}/applications/*
 %{_datadir}/pixmaps/scummvm.xpm
 %{_datadir}/scummvm/modern.*
+%{_datadir}/scummvm/pred.dic
+%{_datadir}/scummvm/kyra.dat
+%{_datadir}/scummvm/queen.tbl
+%{_datadir}/scummvm/sky.cpt
 %{_mandir}/man6/scummvm.6*
 
 #------------------------------------------------------------------------------
