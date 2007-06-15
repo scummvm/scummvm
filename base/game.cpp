@@ -26,6 +26,16 @@
 #include "base/game.h"
 #include "base/plugins.h"
 
+const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list) {
+	const PlainGameDescriptor *g = list;
+	while (g->gameid) {
+		if (0 == scumm_stricmp(gameid, g->gameid))
+			break;
+		g++;
+	}
+	return g;
+}
+
 void GameDescriptor::updateDesc(const char *extra) {
 	// TODO: The format used here (LANG/PLATFORM/EXTRA) is not set in stone.
 	// We may want to change the order (PLATFORM/EXTRA/LANG, anybody?), or
@@ -58,7 +68,7 @@ void GameDescriptor::updateDesc(const char *extra) {
 
 namespace Base {
 
-// TODO: Find a better place for this function.
+// TODO: Find a better name & place for this function.
 GameDescriptor findGame(const Common::String &gameName, const Plugin **plugin) {
 	// Find the GameDescriptor for this target
 	const PluginList &plugins = PluginManager::instance().getPlugins();
