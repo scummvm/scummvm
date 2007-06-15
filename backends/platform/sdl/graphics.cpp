@@ -1597,6 +1597,8 @@ void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	assert (_transactionMode == kTransactionNone);
 	assert(msg);
 
+	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
+
 	uint i;
 
 	// Lock the OSD surface for drawing
