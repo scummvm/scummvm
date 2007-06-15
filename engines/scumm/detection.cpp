@@ -662,13 +662,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 using namespace Scumm;
 
 GameList Engine_SCUMM_gameIDList() {
-	const PlainGameDescriptor *g = gameDescriptions;
-	GameList games;
-	while (g->gameid) {
-		games.push_back(GameDescriptor(g->gameid, g->description));
-		g++;
-	}
-	return games;
+	return GameList(gameDescriptions);
 }
 
 GameDescriptor Engine_SCUMM_findGameID(const char *gameid) {
