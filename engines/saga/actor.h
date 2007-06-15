@@ -41,7 +41,7 @@ namespace Saga {
 class HitZone;
 
 
-//#define ACTOR_DEBUG //only for actor pathfinding debug!
+// #define ACTOR_DEBUG 1 //only for actor pathfinding debug!
 
 #define ACTOR_BARRIERS_MAX 16
 
@@ -97,7 +97,8 @@ enum ActorActions {
 enum SpeechFlags {
 	kSpeakNoAnimate = 1,
 	kSpeakAsync = 2,
-	kSpeakSlow = 4
+	kSpeakSlow = 4,
+	kSpeakForceText = 8
 };
 
 enum ActorFrameTypes {
@@ -590,6 +591,10 @@ public:
 	void abortSpeech();
 	bool isSpeaking() {
 		return _activeSpeech.stringsCount > 0;
+	}
+
+	int isForcedTextShown() {
+		return _activeSpeech.speechFlags & kSpeakForceText;
 	}
 
 	void saveState(Common::OutSaveFile *out);

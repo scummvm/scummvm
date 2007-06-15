@@ -289,8 +289,8 @@ int SagaEngine::go() {
 				msec = MAX_TIME_DELTA;
 			}
 
-			// Since Puzzle is actorless, we do it here
-			if (_puzzle->isActive()) {
+			// Since Puzzle and forced text are actorless, we do them here
+			if (_puzzle->isActive() || _actor->isForcedTextShown()) {
 				_actor->handleSpeech(msec);
 			} else if (!_scene->isInIntro()) {
 				if (_interface->getMode() == kPanelMain ||
