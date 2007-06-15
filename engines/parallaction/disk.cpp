@@ -775,15 +775,29 @@ Cnv* AmigaDisk::makeCnv(Common::SeekableReadStream &stream) {
 #undef NUM_PLANES
 
 Script* AmigaDisk::loadLocation(const char *name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadLocation '%s'", name);
+	char archivefile[PATH_LEN];
 
-	char path[PATH_LEN];
-	sprintf(path, "%s%s%s.loc.pp", _vm->_characterName, _languageDir, name);
-	if (!_locArchive.openArchivedFile(path)) {
-		sprintf(path, "%s%s.loc.pp", _languageDir, name);
-		if (!_locArchive.openArchivedFile(path)) {
-			errorFileNotFound(name);
+	if (IS_MINI_CHARACTER(_vm->_characterName)) {
+		sprintf(archivefile, "%s%s", _vm->_characterName+4, _languageDir);
+	} else {
+		if (IS_DUMMY_CHARACTER(_vm->_characterName)) {
+			strcpy(archivefile, _languageDir);
+		} else {
+			sprintf(archivefile, "%s%s", _vm->_characterName, _languageDir);
 		}
+	}
+
+	strcat(archivefile, name);
+	strcat(archivefile, ".loc.pp");
+
+	debugC(1, kDebugDisk, "AmigaDisk::loadLocation(%s): trying '%s'", name, archivefile);
+
+	if (!_locArchive.openArchivedFile(archivefile)) {
+		sprintf(archivefile, "%s%s.loc.pp", _languageDir, name);
+		debugC(3, kDebugDisk, "AmigaDisk::loadLocation(%s): trying '%s'", name, archivefile);
+
+		if (!_locArchive.openArchivedFile(archivefile))
+			errorFileNotFound(name);
 	}
 
 	return new Script(new PowerPackerStream(_locArchive), true);
@@ -1030,7 +1044,10 @@ void AmigaDisk::loadMask(const char *name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.mask", name);
 
-	Common::SeekableReadStream *s = openArchivedFile(path, true);
+	Common::SeekableReadStream *s = openArchivedFile(path, false);
+	if (s == NULL)
+		return;	// no errors if missing mask files: not every location has one
+
 	s->seek(0x30, SEEK_SET);
 
 	byte r, g, b;
