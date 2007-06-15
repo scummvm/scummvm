@@ -75,8 +75,8 @@
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/scummvm.pdb"
 				SubSystem="1"
-				TargetMachine="1"
 				EntryPointSymbol="WinMainCRTStartup"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -664,6 +664,10 @@
 							XMLDocumentationFileName="$(IntDir)/$(InputName)1.xdc"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\sound\softsynth\ym2612.h"
+					>
 				</File>
 				<Filter
 					Name="mt32"
