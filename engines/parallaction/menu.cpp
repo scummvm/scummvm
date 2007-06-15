@@ -105,9 +105,11 @@ Menu::~Menu() {
 
 void Menu::start() {
 
-	_vm->_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
+	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformAmiga) ? "disk0" : "disk1");
 
 	splash();
+
+	_vm->_gfx->setFont(kFontMenu);
 
 	_language = chooseLanguage();
 	_vm->_disk->setLanguage(_language);
@@ -143,6 +145,8 @@ void Menu::newGame() {
 	}
 
 	const char **v14 = introMsg3;
+
+	_vm->_disk->selectArchive("disk1");
 
 	_vm->_disk->loadScenery("test", NULL);
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
@@ -182,9 +186,11 @@ uint16 Menu::chooseLanguage() {
 		return 1;
 	}
 
-	// user can choose language in dos version
+	if (_vm->getFeatures() == GF_LANG_IT) {
+		return 0;
+	}
 
-	_vm->_gfx->setFont(kFontMenu);
+	// user can choose language in dos version
 
 	_vm->_disk->loadSlide("lingua");
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
@@ -329,7 +335,7 @@ void Menu::selectCharacter() {
 
 	_vm->_gfx->setFont(kFontMenu);
 
-	_vm->_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
+	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformAmiga) ? "disk0" : "disk1");
 
 	_vm->_disk->loadSlide("password");	// loads background into kBitBack buffer
 

@@ -176,19 +176,41 @@ public:
 
 	Script* loadLocation(const char *name);
 	Script* loadScript(const char* name);
-	Cnv* loadTalk(const char *name);
-	Cnv* loadObjects(const char *name);
 	StaticCnv* loadPointer();
-	StaticCnv* loadHead(const char* name);
-	Font* loadFont(const char* name);
 	StaticCnv* loadStatic(const char* name);
-	Cnv* loadFrames(const char* name);
-	void loadSlide(const char *filename);
 	void loadScenery(const char* background, const char* mask);
-	Table* loadTable(const char* name);
 	Common::ReadStream* loadMusic(const char* name);
 	Common::ReadStream* loadSound(const char* name);
 };
+
+class AmigaDemoDisk : public AmigaDisk {
+
+public:
+	AmigaDemoDisk(Parallaction *vm);
+
+	Cnv* loadTalk(const char *name);
+	Cnv* loadObjects(const char *name);
+	StaticCnv* loadHead(const char* name);
+	Cnv* loadFrames(const char* name);
+	void loadSlide(const char *filename);
+	Table* loadTable(const char* name);
+	Font* loadFont(const char* name);
+};
+
+class AmigaFullDisk : public AmigaDisk {
+
+public:
+	AmigaFullDisk(Parallaction *vm);
+
+	Cnv* loadTalk(const char *name);
+	Cnv* loadObjects(const char *name);
+	StaticCnv* loadHead(const char* name);
+	Cnv* loadFrames(const char* name);
+	void loadSlide(const char *filename);
+	Table* loadTable(const char* name);
+	Font* loadFont(const char* name);
+};
+
 
 } // namespace Parallaction
 

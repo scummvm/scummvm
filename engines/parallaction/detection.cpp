@@ -77,7 +77,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 		GType_Nippon,
 		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT,
 	},
-	
+
 	{
 		{
 			"nippon",
@@ -100,7 +100,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 		GType_Nippon,
 		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE,
 	},
-	
+
 	{
 		{
 			"nippon",
@@ -118,6 +118,27 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 		GF_LANG_EN | GF_DEMO,
 	},
 
+
+	{
+		{
+			"nippon",
+			"",
+			{
+				{"disk0", 	0, "bfee75d8015f1fb97e75dbe08df4bef7", 354304},
+				{"disk1", 	0, "f339dd108c1a1f5cd4853d9966e5d01f", 901120},
+				{"disk2", 	0, "2db40bf8198a57d18e4471a6deaab970", 901120},
+				{"disk3", 	0, "0486972962b2bfc230e789b9f88f9ec8", 901120},
+				{"disk4", 	0, "6f625e7f05da4a2f57d6b62d57013614", 901120},
+				{"it", 		0, "746088eb8de2b2713685d243a4e4678f", 185344},
+				{ NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
+			Common::kPlatformAmiga,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_Nippon,
+		GF_LANG_IT,
+	},
 
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };

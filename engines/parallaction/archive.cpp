@@ -56,8 +56,7 @@ Archive::Archive() {
 }
 
 void Archive::open(const char *file) {
-	bool isSmallArchive;
-	debugC(3, kDebugDisk, "Archive::open(%s)", file);
+	debugC(1, kDebugDisk, "Archive::open(%s)", file);
 
 	if (_archive.isOpen())
 		close();
@@ -68,11 +67,9 @@ void Archive::open(const char *file) {
 	if (!_archive.open(path))
 		error("archive '%s' not found", path);
 
-	if (_vm->getFeatures() & GF_DEMO) {
+	bool isSmallArchive = false;
+	if (_vm->getFeatures() & GF_DEMO)
 		isSmallArchive = _archive.size() == SIZEOF_SMALL_ARCHIVE;
-	} else {
-		isSmallArchive = (_archive.readUint32BE() != MKID_BE('NDOS'));
-	}
 
 	_numFiles = (isSmallArchive) ? SMALL_ARCHIVE_FILES_NUM : NORMAL_ARCHIVE_FILES_NUM;
 
@@ -102,6 +99,8 @@ void Archive::close() {
 
 
 bool Archive::openArchivedFile(const char *filename) {
+	debugC(3, kDebugDisk, "Archive::openArchivedFile(%s)", filename);
+
 	resetArchivedFile();
 
 	debugC(3, kDebugDisk, "Archive::openArchivedFile(%s)", filename);

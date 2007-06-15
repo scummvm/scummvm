@@ -135,15 +135,15 @@ Parallaction::~Parallaction() {
 	delete _zoneFlagNames;
 
 	_animations.remove(&_char._ani);
-	
+
 	freeLocation();
-	
+
 	freeCharacter();
 	destroyInventory();
 
 	delete _gfx;
 	delete _soundMan;
-	delete _disk;	
+	delete _disk;
 }
 
 
@@ -178,7 +178,12 @@ int Parallaction::init() {
 	if (getPlatform() == Common::kPlatformPC) {
 		_disk = new DosDisk(this);
 	} else {
-		_disk = new AmigaDisk(this);
+		if (getFeatures() & GF_DEMO) {
+			strcpy(_location._name, "fognedemo");
+			_disk = new AmigaDemoDisk(this);
+		} else {
+			_disk = new AmigaFullDisk(this);
+		}
 		_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 	}
 
@@ -281,10 +286,11 @@ uint16 Parallaction::updateInput() {
 
 		switch (e.type) {
 		case Common::EVENT_KEYDOWN:
-			if (e.kbd.ascii == 'l') KeyDown = kEvLoadGame;
-			if (e.kbd.ascii == 's') KeyDown = kEvSaveGame;
 			if (e.kbd.flags == Common::KBD_CTRL && e.kbd.keycode == 'd')
 				_debugger->attach();
+			if (getFeatures() & GF_DEMO) break;
+			if (e.kbd.ascii == 'l') KeyDown = kEvLoadGame;
+			if (e.kbd.ascii == 's') KeyDown = kEvSaveGame;
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
@@ -753,13 +759,10 @@ void Parallaction::changeCharacter(const char *name) {
 		// character for sanity before memory is freed
 		freeCharacter();
 
-		_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
+		_disk->selectArchive((_vm->getPlatform() == Common::kPlatformAmiga) ? "disk0" : "disk1");
 		_vm->_char._ani._cnv = _disk->loadFrames(fullName);
 
 		if (!IS_DUMMY_CHARACTER(name)) {
-			if (_vm->getPlatform() == Common::kPlatformAmiga)
-				_disk->selectArchive("disk0");
-
 			_vm->_char._head = _disk->loadHead(baseName);
 			_vm->_char._talk = _disk->loadTalk(baseName);
 			_vm->_char._objs = _disk->loadObjects(baseName);
