@@ -338,6 +338,9 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 		}
 	}
 
+	// TODO/FIXME: Fingolfin says: It's not good that we have two different code paths here,
+	// one using a FSList, one using File::open, as that will lead to discrepancies and subtle
+	// problems caused by those.
 	if (fslist != 0) {
 		// Get the information of the existing files
 		for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
