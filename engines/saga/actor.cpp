@@ -1106,6 +1106,8 @@ void Actor::handleSpeech(int msec) {
 				removeFirst = true;
 			}
 			_activeSpeech.playing = false;
+			if (_activeSpeech.speechFlags & kSpeakForceText)
+				_activeSpeech.speechFlags = 0;
 			if (_activeSpeech.actorIds[0] != 0) {
 				actor = getActor(_activeSpeech.actorIds[0]);
 				if (!(_activeSpeech.speechFlags & kSpeakNoAnimate)) {
