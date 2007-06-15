@@ -66,8 +66,6 @@ void Anim::loadCutawayList(const byte *resourcePointer, size_t resourceLength) {
 	for (int i = 0; i < _cutawayListLength; i++) {
 		_cutawayList[i].backgroundResourceId = cutawayS.readUint16LE();
 		_cutawayList[i].animResourceId = cutawayS.readUint16LE();
-		if (_cutawayList[i].animResourceId == 0)
-			warning("Anim::loadCutawayList: Animation %i has an animResourceId equal to 0", i);
 		_cutawayList[i].cycles = cutawayS.readSint16LE();
 		_cutawayList[i].frameRate = cutawayS.readSint16LE();
 	}
@@ -163,12 +161,13 @@ void Anim::playCutaway(int cut, bool fade) {
 		return;
 	}
 	
-	// FIXME: Some animations in IHNM have animResourceId equal to 0, for no obvious reason
-	// We skip them, to avoid ScummVM crashing
-	if (_cutawayList[cut].animResourceId == 0) {
-		warning("Anim::playCutaway: Animation %i has animResourceId equal to 0, skipping", cut);
+	// Some cutaways in IHNM have animResourceId equal to 0, which means that they only have
+	// a background frame and no animation. Those animations are actually game scripts.
+	// An example is the "nightfall" animation in Ben's chapter (fadein-fadeout), the animation
+	// for the second from the left monitor in Ellen's chapter etc
+	// Therefore, skip the animation bit if animResourceId is 0 and only show the background
+	if (_cutawayList[cut].animResourceId == 0)
 		return;
-	}
 
 	_vm->_resource->loadResource(context, _cutawayList[cut].animResourceId, resourceData, resourceDataLength);
 
