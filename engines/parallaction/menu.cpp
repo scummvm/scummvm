@@ -182,9 +182,6 @@ uint16 Menu::chooseLanguage() {
 		return 1;
 	}
 
-	// TODO: should return the language ID supported by Amiga versions
-	// this can be done with some flags in the detection structures
-
 	// user can choose language in dos version
 
 	_vm->_gfx->setFont(kFontMenu);
@@ -207,13 +204,29 @@ uint16 Menu::chooseLanguage() {
 		if (_mouseButtons == kMouseLeftUp) {
 			for (uint16 _si = 0; _si < 4; _si++) {
 
-				if (80 + _si*49 >= _vm->_mousePos.x) continue;
-				if (110 - _si*25 >= _vm->_mousePos.y) continue;
+				if (80 + _si * 49 >= _vm->_mousePos.x) continue;
+				if (110 - _si * 25 >= _vm->_mousePos.y) continue;
 
-				if (128 + _si*49 <= _vm->_mousePos.x) continue;
-				if (180 - _si*25 <=_vm->_mousePos.y) continue;
+				if (128 + _si * 49 <= _vm->_mousePos.x) continue;
+				if (180 - _si * 25 <= _vm->_mousePos.y) continue;
 
 //				beep();
+
+				switch (_si) {
+				case 0:
+					if (!(_vm->getFeatures() & GF_LANG_IT))
+						continue;
+				case 1:
+					if (!(_vm->getFeatures() & GF_LANG_FR))
+						continue;
+				case 2:
+					if (!(_vm->getFeatures() & GF_LANG_EN))
+						continue;
+				case 3:
+					if (!(_vm->getFeatures() & GF_LANG_DE))
+						continue;
+				}
+
 				return _si;
 			}
 		}
