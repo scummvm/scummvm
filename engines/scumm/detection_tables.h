@@ -28,6 +28,7 @@
 
 #include "common/stdafx.h"
 
+#include "common/advancedDetector.h"
 #include "common/rect.h"
 #include "common/util.h"
 
@@ -48,12 +49,6 @@ namespace Scumm {
 #pragma mark -
 #pragma mark --- Data types & constants ---
 #pragma mark -
-
-struct ObsoleteGameID {
-	const char *from;
-	const char *to;
-	Common::Platform platform;
-};
 
 #define UNK Common::kPlatformUnknown
 
@@ -146,7 +141,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
  * Conversion table mapping old obsolete game IDs to the
  * corresponding new game ID and platform combination.
  */
-static const ObsoleteGameID obsoleteGameIDsTable[] = {
+static const Common::ADObsoleteGameID obsoleteGameIDsTable[] = {
 	{"bluesabctimedemo", "bluesabctime", UNK},
 	{"BluesBirthdayDemo", "BluesBirthday", UNK},
 	{"comidemo", "comi", UNK},
