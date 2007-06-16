@@ -78,7 +78,7 @@ public:
 	SimpleRateConverter(st_rate_t inrate, st_rate_t outrate);
 	int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r);
 	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
-		return (ST_SUCCESS);
+		return ST_SUCCESS;
 	}
 };
 
@@ -128,7 +128,7 @@ int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 				inPtr = inBuf;
 				inLen = input.readBuffer(inBuf, ARRAYSIZE(inBuf));
 				if (inLen <= 0)
-					goto the_end;
+					return ST_EOF;
 			}
 			inLen -= (stereo ? 2 : 1);
 			opos--;
@@ -152,8 +152,7 @@ int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 		
 		obuf += 2;
 	}
-the_end:
-	return (ST_SUCCESS);
+	return ST_SUCCESS;
 }
 
 /**
@@ -189,7 +188,7 @@ public:
 	LinearRateConverter(st_rate_t inrate, st_rate_t outrate);
 	int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r);
 	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
-		return (ST_SUCCESS);
+		return ST_SUCCESS;
 	}
 };
 
@@ -244,7 +243,7 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 				inPtr = inBuf;
 				inLen = input.readBuffer(inBuf, ARRAYSIZE(inBuf));
 				if (inLen <= 0)
-					goto the_end;
+					return ST_EOF;
 			}
 			inLen -= (stereo ? 2 : 1);
 			ilast0 = icur0;
@@ -258,10 +257,10 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 
 		// Loop as long as the outpos trails behind, and as long as there is
 		// still space in the output buffer.
-		while (0 > opos) {
+		while (0 > opos && obuf < oend) {
 			// interpolate
 			st_sample_t out0, out1;
-			out0 =  (st_sample_t)(ilast0 + (((icur0 - ilast0) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
+			out0 = (st_sample_t)(ilast0 + (((icur0 - ilast0) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
 			out1 = (stereo ?
 						  (st_sample_t)(ilast1 + (((icur1 - ilast1) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS)) :
 						  out0);
@@ -278,14 +277,9 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 			long tmp = opos_frac + opos_inc_frac;
 			opos += opos_inc + (tmp >> FRAC_BITS);
 			opos_frac = tmp & ((1UL << FRAC_BITS) - 1);
-
-			// Abort if we reached the end of the output buffer
-			if (obuf >= oend)
-				goto the_end;
 		}
 	}
-the_end:
-	return (ST_SUCCESS);
+	return ST_SUCCESS;
 }
 
 
@@ -339,11 +333,11 @@ public:
 			
 			obuf += 2;
 		}
-		return (ST_SUCCESS);
+		return ST_SUCCESS;
 	}
 
 	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
-		return (ST_SUCCESS);
+		return ST_SUCCESS;
 	}
 };
 
