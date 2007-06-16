@@ -186,14 +186,14 @@ static const struct {
 	{ "cine",			"Delphine Cinematique v1.0" },
 	{ "queen",			"Flight of the Amazon Queen" },
 	{ "lure",			"Lure of the Tempress" },
-	{ "gob",			"Gobliiins, Bargon Attack and more ..." },
+	{ "gob",			"Gobliiins, Bargon Attack and more" },
 	{ "kyra",			"Kyrandia" },
 	{ "parallaction",	"Parallaction" },
 	{ "saga",			"SAGA Engine" },
 	{ "scumm",			"Scumm Games" },
 	{ "agi",			"Sierra AGI" },
 	{ "touche",			"Touche: The Adventures of the Fifth Musketeer" },
-	{ "cruise",			"Cruise for a Corpse" },
+	{ "cruise",			"Beta -> Cruise for a Corpse" },
 };
 
 // protos
