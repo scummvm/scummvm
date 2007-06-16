@@ -700,6 +700,9 @@ void Control::readSavegameDescriptions(void) {
 	inf = _saveFileMan->openForLoading("SAVEGAME.INF");
 	_saveScrollPos = _saveFiles = 0;
 	_selectedSavegame = 255;
+	for (uint8 cnt = 0; cnt < 64; cnt++) {
+		memset(_saveNames[cnt], 0, sizeof(_saveNames[cnt]));
+	}
 	if (inf) {
 		uint8 curFileNum = 0;
 		uint8 ch;
@@ -707,20 +710,18 @@ void Control::readSavegameDescriptions(void) {
 			uint8 pos = 0;
 			do {
 				ch = inf->readByte();
-				if ((ch == 10) || (ch == 255))
-					_saveNames[curFileNum][pos] = '\0';
-				else
-					_saveNames[curFileNum][pos] = ch;
-				pos++;
-			} while ((ch != 10) && (ch != 255));
-			curFileNum++;
-		} while (ch != 255);
+				if (pos < sizeof(_saveNames[curFileNum]) - 1) {
+					if ((ch == 10) || (ch == 255) || (inf->eos()))
+						_saveNames[curFileNum][pos++] = '\0';
+					else if (ch >= 32)
+						_saveNames[curFileNum][pos++] = ch;
+				}
+			} while ((ch != 10) && (ch != 255) && (!inf->eos()));
+			if (_saveNames[curFileNum][0] != 0)
+				curFileNum++;
+		} while ((ch != 255) && (!inf->eos()));
 		_saveFiles = curFileNum;
-		for (uint8 cnt = _saveFiles; cnt < 64; cnt++)
-			_saveNames[cnt][0] = '\0';
-	} else
-		for (uint8 cnt = 0; cnt < 64; cnt++)
-			_saveNames[cnt][0] = '\0';
+	}
 	delete inf;
 }
 
