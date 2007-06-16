@@ -137,18 +137,20 @@ int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 			}
 		} while (opos >= 0);
 
-		st_sample_t out[2];
-		out[reverseStereo    ] = *inPtr++;
-		out[reverseStereo ^ 1] = (stereo ? *inPtr++ : out[reverseStereo]);
+		st_sample_t out0, out1;
+		out0 = *inPtr++;
+		out1 = (stereo ? *inPtr++ : out0);
 
 		// Increment output position
 		opos += opos_inc;
 
 		// output left channel
-		clampedAdd(*obuf++, (out[0] * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
+		clampedAdd(obuf[reverseStereo    ], (out0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
 
 		// output right channel
-		clampedAdd(*obuf++, (out[1] * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
+		clampedAdd(obuf[reverseStereo ^ 1], (out1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
+		
+		obuf += 2;
 	}
 the_end:
 	return (ST_SUCCESS);
@@ -258,17 +260,19 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 		// still space in the output buffer.
 		while (0 > opos) {
 			// interpolate
-			st_sample_t out[2];
-			out[reverseStereo    ] =  (st_sample_t)(ilast0 + (((icur0 - ilast0) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
-			out[reverseStereo ^ 1] = (stereo ?
+			st_sample_t out0, out1;
+			out0 =  (st_sample_t)(ilast0 + (((icur0 - ilast0) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
+			out1 = (stereo ?
 						  (st_sample_t)(ilast1 + (((icur1 - ilast1) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS)) :
-						  out[reverseStereo]);
+						  out0);
 
 			// output left channel
-			clampedAdd(*obuf++, (out[0] * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
+			clampedAdd(obuf[reverseStereo    ], (out0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
 
 			// output right channel
-			clampedAdd(*obuf++, (out[1] * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
+			clampedAdd(obuf[reverseStereo ^ 1], (out1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
+			
+			obuf += 2;
 
 			// Increment output position
 			long tmp = opos_frac + opos_inc_frac;
@@ -323,15 +327,17 @@ public:
 		// Mix the data into the output buffer
 		ptr = _buffer;
 		for (; len > 0; len -= (stereo ? 2 : 1)) {
-			st_sample_t tmp[2];
-			tmp[reverseStereo    ] = *ptr++;
-			tmp[reverseStereo ^ 1] = (stereo ? *ptr++ : tmp[reverseStereo]);
+			st_sample_t out0, out1;
+			out0 = *ptr++;
+			out1 = (stereo ? *ptr++ : out0);
 
 			// output left channel
-			clampedAdd(*obuf++, (tmp[0] * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
+			clampedAdd(obuf[reverseStereo    ], (out0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
 
 			// output right channel
-			clampedAdd(*obuf++, (tmp[1] * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
+			clampedAdd(obuf[reverseStereo ^ 1], (out1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
+			
+			obuf += 2;
 		}
 		return (ST_SUCCESS);
 	}
