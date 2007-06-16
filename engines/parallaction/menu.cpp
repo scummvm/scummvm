@@ -325,9 +325,9 @@ void Menu::selectCharacter() {
 	uint16 _di = 0;
 	bool askPassword = true;
 
-	uint16 _donna_points;
-	uint16 _dino_points;
-	uint16 _dough_points;
+	uint16 _donna_points = 0;
+	uint16 _dino_points = 0;
+	uint16 _dough_points = 0;
 
 	StaticCnv v14;
 
