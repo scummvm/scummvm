@@ -138,6 +138,7 @@ public:
 	void stop(uint16 animId);
 	void finish(uint16 animId);
 	void resume(uint16 animId, int cycles);
+	void resumeAll();
 	int16 getCurrentFrame(uint16 animId);
 	bool hasCutaway(void) {
 		return _cutawayActive;

@@ -73,11 +73,13 @@ enum EventOps {
 	kEventFrame = 3,
 	kEventSetFlag = 4,
 	kEventClearFlag = 5,
+	kEventResumeAll = 6,
 	// MUISC & SOUND events
 	kEventPlay = 1,
 	kEventStop = 2,
 	// SCENE events
 	kEventEnd = 2,
+	kEventRestore = 3,
 	// TEXT events
 	kEventHide = 2,
 	kEventRemove = 3,

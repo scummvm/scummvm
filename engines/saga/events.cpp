@@ -247,10 +247,14 @@ int Events::handleImmediate(Event *event) {
 	case kScriptEvent:
 	case kBgEvent:
 	case kInterfaceEvent:
+	case kSceneEvent:
+	case kAnimEvent:
+	case kCutawayEvent:
 		handleOneShot(event);
 		event_done = true;
 		break;
 	default:
+		warning("Unhandled Immediate event type (%d)", event->code & EVENT_MASK);
 		break;
 
 	}
@@ -356,6 +360,9 @@ int Events::handleOneShot(Event *event) {
 		case kEventClearFlag:
 			_vm->_anim->clearFlag(event->param, event->param2);
 			break;
+		case kEventResumeAll:
+			_vm->_anim->resumeAll();
+			break;
 		default:
 			break;
 		}
@@ -364,6 +371,9 @@ int Events::handleOneShot(Event *event) {
 		switch (event->op) {
 		case kEventEnd:
 			_vm->_scene->nextScene();
+			return kEvStBreak;
+		case kEventRestore:
+			_vm->_scene->restoreScene();
 			return kEvStBreak;
 		default:
 			break;

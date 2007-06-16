@@ -243,9 +243,9 @@ void Anim::returnFromCutaway(void) {
 		}
 
 		// Note that clearCutaway() sets _cutawayActive to false.
-		clearCutaway();
+		// clearCutaway();
 		// TODO: Clearing the cutaway via an event is better, but it breaks things up
-		/*
+
 		event.type = kEvTImmediate;
 		event.code = kCutawayEvent;
 		event.op = kEventClearCutaway;
@@ -256,10 +256,24 @@ void Anim::returnFromCutaway(void) {
 			q_event = _vm->_events->chain(q_event, &event);		// chain with the other events
 		else
 			q_event = _vm->_events->queue(&event);
-		*/
 
 		// Restore the scene
-		_vm->_scene->restoreScene();
+		event.type = kEvTImmediate;
+		event.code = kSceneEvent;
+		event.op = kEventRestore;
+		event.time = 0;
+		event.duration = 0;
+
+		q_event = _vm->_events->chain(q_event, &event);		// chain with the other events
+
+		// Restore the animations
+		event.type = kEvTImmediate;
+		event.code = kAnimEvent;
+		event.op = kEventResumeAll;
+		event.time = 0;
+		event.duration = 0;
+
+		q_event = _vm->_events->chain(q_event, &event);		// chain with the other events
 
 		// Handle fade up, if we previously faded down
 		if (_cutAwayFade) {
@@ -267,24 +281,15 @@ void Anim::returnFromCutaway(void) {
 			event.code = kPalEvent;
 			event.op = kEventBlackToPal;
 			event.time = 0;
-			event.duration = kNormalFadeDuration;
+			event.duration = 3000; //kNormalFadeDuration;
 			event.data = saved_pal;
 
 			q_event = _vm->_events->chain(q_event, &event);
-		}
-
-		// Restore the animations
-		for (int i = 0; i < MAX_ANIMATIONS; i++) {
-			if (_animations[i] && _animations[i]->state == ANIM_PLAYING) {
-				resume(i, 0);
-			}
 		}
 	}
 }
 
 void Anim::clearCutaway(void) {
-	debug(0, "clearCutaway()");
-
 	if (_cutawayActive) {
 		_cutawayActive = false;
 
@@ -848,6 +853,15 @@ void Anim::cutawayInfo() {
 		_vm->_console->DebugPrintf("%02d: Bg res: %u Anim res: %u Cycles: %u Framerate: %u\n", i,
 			_cutawayList[i].backgroundResourceId, _cutawayList[i].animResourceId,
 			_cutawayList[i].cycles, _cutawayList[i].frameRate);
+	}
+}
+
+void Anim::resumeAll() {
+	// Restore the animations
+	for (int i = 0; i < MAX_ANIMATIONS; i++) {
+		if (_animations[i] && _animations[i]->state == ANIM_PLAYING) {
+			resume(i, 0);
+		}
 	}
 }
 
