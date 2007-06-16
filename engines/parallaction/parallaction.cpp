@@ -315,6 +315,7 @@ uint16 Parallaction::updateInput() {
 
 		case Common::EVENT_QUIT:
 			_engineFlags |= kEngineQuit;
+			g_system->quit();
 			break;
 
 		default:
