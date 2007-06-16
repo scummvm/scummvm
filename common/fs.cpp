@@ -161,12 +161,6 @@ bool FilesystemNode::isReadable() const {
 	return _realNode->isReadable();
 }
 
-bool FilesystemNode::isValid() const {
-	if (_realNode == 0)
-		return false;
-	return _realNode->isValid();
-}
-
 bool FilesystemNode::isWritable() const {
 	if (_realNode == 0)
 		return false;

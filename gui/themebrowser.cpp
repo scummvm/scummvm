@@ -144,7 +144,7 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 
 	FilesystemNode node(dir);
 
-	if (!node.isValid())
+	if (!node.exists() || !node.isReadable())
 		return;
 
 	FSList fslist;

@@ -194,11 +194,6 @@ public:
 	virtual bool isReadable() const;
 	
 	/**
-	 * Indicates whether this path is valid or not for usage.
-	 */
-	bool isValid() const;
-	
-	/**
 	 * Indicates whether this path can be written to or not.
 	 */
 	virtual bool isWritable() const;

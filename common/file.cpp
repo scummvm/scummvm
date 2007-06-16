@@ -364,13 +364,19 @@ bool File::open(const String &filename, AccessMode mode) {
 bool File::open(const FilesystemNode &node, AccessMode mode) {
 	assert(mode == kFileReadMode || mode == kFileWriteMode);
 
-	if (!node.isValid()) {
-		warning("File::open: Trying to open an invalid FilesystemNode object");
+	if (!node.exists()) {
+		warning("File::open: Trying to open a FilesystemNode which does not exist");
 		return false;
 	} else if (node.isDirectory()) {
 		warning("File::open: Trying to open a FilesystemNode which is a directory");
 		return false;
-	}
+	} /*else if (!node.isReadable() && mode == kFileReadMode) {
+		warning("File::open: Trying to open an unreadable FilesystemNode object for reading");
+		return false;
+	} else if (!node.isWritable() && mode == kFileWriteMode) {
+		warning("File::open: Trying to open an unwritable FilesystemNode object for writing");
+		return false;
+	}*/
 
 	String filename(node.getName());
 
@@ -409,7 +415,7 @@ bool File::exists(const String &filename) {
 	// FIXME: can't use isValid() here since at the time of writing
 	// FilesystemNode is to be unable to find for example files
 	// added in extrapath
-	if (file.isDirectory())
+	if (file.isDirectory() && !file.exists())
 		return false;
 
 	// Next, try to locate the file by *opening* it in read mode. This has
