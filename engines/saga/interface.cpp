@@ -1627,12 +1627,21 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		break;
 
 	case kPanelChapterSelection:
-		// TODO: panel has silent button
 		if (updateFlag & UPDATE_MOUSEMOVE) {
 			handleChapterSelectionUpdate(mousePoint);
 		} else {
-			if (updateFlag & UPDATE_MOUSECLICK)
-				handleChapterSelectionClick(mousePoint);
+			if (updateFlag & UPDATE_MOUSECLICK) {
+				Rect rect;
+				rect.left = _vm->getDisplayInfo().saveReminderXOffset;
+				rect.top = _vm->getDisplayInfo().saveReminderYOffset;
+
+				rect.right = rect.left + _vm->getDisplayInfo().saveReminderWidth;
+				rect.bottom = rect.top + _vm->getDisplayInfo().saveReminderHeight;
+				if (rect.contains(mousePoint))
+					setMode(kPanelOption);
+				else
+					handleChapterSelectionClick(mousePoint);
+			}
 		}
 		break;
 
