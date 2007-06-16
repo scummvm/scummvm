@@ -1217,9 +1217,6 @@ Cnv* AmigaDemoDisk::loadObjects(const char *name) {
 Cnv* AmigaDemoDisk::loadFrames(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadFrames '%s'", name);
 
-	if (IS_MINI_CHARACTER(name))
-		return NULL;
-
 	Common::SeekableReadStream *s = openArchivedFile(name, true);
 	Cnv *cnv = makeCnv(*s);
 	delete s;
