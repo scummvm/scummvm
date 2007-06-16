@@ -325,9 +325,9 @@ void Menu::selectCharacter() {
 	uint16 _di = 0;
 	bool askPassword = true;
 
-	uint16 _donna_points = 0;
-	uint16 _dino_points = 0;
-	uint16 _dough_points = 0;
+	uint16 _donna_points;
+	uint16 _dino_points;
+	uint16 _dough_points;
 
 	StaticCnv v14;
 
@@ -355,6 +355,10 @@ void Menu::selectCharacter() {
 
 		_vm->_gfx->displayString(60, 30, introMsg1[_language]);			// displays message
 		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
+
+		_donna_points = 0;
+		_dino_points = 0;
+		_dough_points = 0;
 
 		while (_di < 6) {
 
