@@ -32,6 +32,7 @@
 
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "common/fs.h"
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
@@ -47,10 +48,6 @@
 #endif
 
 #define DETECTOR_TESTING_HACK
-
-#ifdef DETECTOR_TESTING_HACK
-#include "common/fs.h"
-#endif
 
 namespace Base {
 
@@ -313,7 +310,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 	for (int i = 1; i < argc; ++i) {
 		s = argv[i];
 		s2 = (i < argc-1) ? argv[i+1] : 0;
-
+		
 		if (s[0] != '-') {
 			// The argument doesn't start with a dash, so it's not an option.
 			// Hence it must be the target name. We currently enforce that
@@ -390,7 +387,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_OPTION('p', "path")
-				// TODO: Verify whether the path is valid
+				FilesystemNode path(option);
+				if(!path.exists()) {
+					usage("Non-existent game path '%s'", option);
+				} else if(!path.isReadable()) {
+					usage("Non-readable game path '%s'", option);
+				}
 			END_OPTION
 
 			DO_OPTION('q', "language")
@@ -428,7 +430,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("soundfont")
-				// TODO: Verify whether the path is valid
+				FilesystemNode path(option);
+				if(!path.exists()) {
+					usage("Non-existent soundfont path '%s'", option);
+				} else if(!path.isReadable()) {
+					usage("Non-readable soundfont path '%s'", option);
+				}
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("disable-sdl-parachute")
@@ -453,7 +460,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("savepath")
-				// TODO: Verify whether the path is valid
+				FilesystemNode path(option);
+				if(!path.exists()) {
+					usage("Non-existent savegames path '%s'", option);
+				} else if(!path.isWritable()) {
+					usage("Non-writable savegames path '%s'", option);
+				}
 			END_OPTION
 
 			DO_LONG_OPTION_INT("talkspeed")
@@ -466,7 +478,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("themepath")
-				// TODO: Verify whether the path is valid
+				FilesystemNode path(option);
+				if(!path.exists()) {
+					usage("Non-existent theme path '%s'", option);
+				} else if(!path.isReadable()) {
+					usage("Non-readable theme path '%s'", option);
+				}
 			END_OPTION
 
 			DO_LONG_OPTION("target-md5")
@@ -657,12 +674,17 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	if (!settings.contains("savepath")) {
 		const char *dir = getenv("SCUMMVM_SAVEPATH");
 		if (dir && *dir && strlen(dir) < MAXPATHLEN) {
-			// TODO: Verify whether the path is valid
-			settings["savepath"] = dir;
+			FilesystemNode saveDir(dir);
+			if(!saveDir.exists()) {
+				warning("Non-existent SCUMMVM_SAVEPATH save path. It will be ignored.");
+			} else if(!saveDir.isWritable()) {
+				warning("Non-writable SCUMMVM_SAVEPATH save path. It will be ignored.");
+			} else {
+				settings["savepath"] = dir;
+			}
 		}
 	}
 #endif
-
 
 	// Finally, store the command line settings into the config manager.
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {
