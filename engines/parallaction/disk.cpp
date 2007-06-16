@@ -1071,9 +1071,9 @@ Cnv* AmigaDisk::loadObjects(const char *name) {
 
 	char path[PATH_LEN];
 	if (_vm->getFeatures() & GF_DEMO)
-		sprintf(path, "objs/%s.objs", name);
-	else
 		sprintf(path, "%s.objs", name);
+	else
+		sprintf(path, "objs/%s.objs", name);
 
 	Common::SeekableReadStream *s = openArchivedFile(path, true);
 
