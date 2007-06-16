@@ -721,7 +721,7 @@ if test -n "$_host"; then
 			;;
 		arm-linux|arm-linux-gnueabi|arm-*-linux-gnueabi)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX"
+			DEFINES="$DEFINES -DUNIX -DUSE_ARM_SOUND_ASM"
 			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
 			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
 			_def_align='#define SCUMM_NEED_ALIGNMENT'
