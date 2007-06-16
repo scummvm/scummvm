@@ -390,7 +390,7 @@ void Menu::selectCharacter() {
 
 //				beep();
 
-				if (_vm->getPlatform() == Common::kPlatformAmiga) {
+				if (_vm->getPlatform() == Common::kPlatformAmiga && (_vm->getFeatures() & GF_LANG_MULT)) {
 					if (_amigaDinoKey[_di] == _si)
 						_dino_points++;  // dino
 					if (_amigaDonnaKey[_di] == _si)
