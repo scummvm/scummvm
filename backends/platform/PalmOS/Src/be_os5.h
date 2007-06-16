@@ -131,8 +131,7 @@ private:
 	void calc_scale();
 
 	void render_landscapeAny(RectangleType &r, PointType &p);
-	void render_landscape(RectangleType &r, PointType &p);
-	void render_portrait(RectangleType &r, PointType &p);
+	void render_landscape15x(RectangleType &r, PointType &p);
 	void render_1x(RectangleType &r, PointType &p);
 	WinHandle alloc_screen(Coord w, Coord h);
 	virtual void draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color = 0);
