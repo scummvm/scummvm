@@ -93,72 +93,136 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 	sound_handler();
 
 	for(;;) {
+		// check for hardkey repeat for mouse emulation
+		keyCurrentState = KeyCurrentState();
+
 		// if it was a key pressed, let the keyup event raise
-		if (_wasKey) {
-			// check for hardkey repeat for mouse emulation
-			keyCurrentState = KeyCurrentState();
+		if (_keyExtraPressed) {
+			if (gVars->arrowKeys) {
+				if (_keyExtraPressed & _keyExtra.bitLeft) {
+					if (!(keyCurrentState & _keyExtra.bitLeft)) {
+						_keyExtraPressed &= ~_keyExtra.bitLeft;
 
-			if (!(keyCurrentState & _keyExtraMask)) {
-				_lastKeyRepeat = 0;
-
-			} else if (getMillis() >= (_keyExtraRepeat + _keyExtraDelay)) {
-				_keyExtraRepeat = getMillis();
-
-				if (gVars->arrowKeys) {
-/*					if		HARD_KEY(Up,	chrUpArrow)
-					else if	HARD_KEY(Down,	chrDownArrow)
-					else if	HARD_KEY(Left,	chrLeftArrow)
-					else if	HARD_KEY(Right,	chrRightArrow)
-*/
-				} else {
-					// button released ?
-					if (_keyExtraPressed) {
-						if (_keyExtraPressed & _keyExtra.bitActionA) {
-							if (!(keyCurrentState & _keyExtra.bitActionA)) {
-								_keyExtraPressed &= ~_keyExtra.bitActionA;
-
-								event.type = Common::EVENT_LBUTTONUP;
-								event.mouse.x = _mouseCurState.x;
-								event.mouse.y = _mouseCurState.y;
-								return true;
-							}
-						}
-
-						if (_keyExtraPressed & _keyExtra.bitActionB) {
-							if (!(keyCurrentState & _keyExtra.bitActionB)) {
-								_keyExtraPressed &= ~_keyExtra.bitActionB;
-
-								event.type = Common::EVENT_RBUTTONUP;
-								event.mouse.x = _mouseCurState.x;
-								event.mouse.y = _mouseCurState.y;
-								return true;
-							}
-						}
-					}
-
-					Int8 sx = 0;
-					Int8 sy = 0;
-
-					if (keyCurrentState & _keyExtra.bitUp)
-						sy = -1;
-					else if (keyCurrentState & _keyExtra.bitDown)
-						sy = +1;
-						
-					if (keyCurrentState & _keyExtra.bitLeft)
-						sx = -1;
-					else if (keyCurrentState & _keyExtra.bitRight)
-						sx = +1;
-
-					if (sx || sy) {
-						simulate_mouse(event, sx, sy, &x, &y);
-						event.type = Common::EVENT_MOUSEMOVE;
-						event.mouse.x = x;
-						event.mouse.y = y;
-						warpMouse(x, y);
-
+						event.type = Common::EVENT_KEYUP;
+						event.kbd.keycode = 276;
+						event.kbd.ascii = event.kbd.keycode;
+						event.kbd.flags = 0;
 						return true;
-					}			
+					}
 				}
+				if (_keyExtraPressed & _keyExtra.bitRight) {
+					if (!(keyCurrentState & _keyExtra.bitRight)) {
+						_keyExtraPressed &= ~_keyExtra.bitRight;
+
+						event.type = Common::EVENT_KEYUP;
+						event.kbd.keycode = 275;
+						event.kbd.ascii = event.kbd.keycode;
+						event.kbd.flags = 0;
+						return true;
+					}
+				}
+				if (_keyExtraPressed & _keyExtra.bitUp) {
+					if (!(keyCurrentState & _keyExtra.bitUp)) {
+						_keyExtraPressed &= ~_keyExtra.bitUp;
+
+						event.type = Common::EVENT_KEYUP;
+						event.kbd.keycode = 273;
+						event.kbd.ascii = event.kbd.keycode;
+						event.kbd.flags = 0;
+						return true;
+					}
+				}
+				if (_keyExtraPressed & _keyExtra.bitDown) {
+					if (!(keyCurrentState & _keyExtra.bitDown)) {
+						_keyExtraPressed &= ~_keyExtra.bitDown;
+
+						event.type = Common::EVENT_KEYUP;
+						event.kbd.keycode = 274;
+						event.kbd.ascii = event.kbd.keycode;
+						event.kbd.flags = 0;
+						return true;
+					}
+				}
+			}
+
+			if (_keyExtraPressed & _keyExtra.bitActionA) {
+				if (!(keyCurrentState & _keyExtra.bitActionA)) {
+					_keyExtraPressed &= ~_keyExtra.bitActionA;
+
+					event.type = Common::EVENT_LBUTTONUP;
+					event.mouse.x = _mouseCurState.x;
+					event.mouse.y = _mouseCurState.y;
+					return true;
+				}
+			}
+
+			if (_keyExtraPressed & _keyExtra.bitActionB) {
+				if (!(keyCurrentState & _keyExtra.bitActionB)) {
+					_keyExtraPressed &= ~_keyExtra.bitActionB;
+
+					event.type = Common::EVENT_RBUTTONUP;
+					event.mouse.x = _mouseCurState.x;
+					event.mouse.y = _mouseCurState.y;
+					return true;
+				}
+			}
+
+			// no more event till up is raised
+			return false;
+		}
+
+		if (!(keyCurrentState & _keyExtraMask)) {
+			_lastKeyRepeat = 0;
+
+		} else if (getMillis() >= (_keyExtraRepeat + _keyExtraDelay)) {
+			_keyExtraRepeat = getMillis();
+
+			if (gVars->arrowKeys) {
+				if (keyCurrentState & _keyExtra.bitLeft) {
+					_keyExtraPressed |= _keyExtra.bitLeft;
+					event.kbd.keycode = 276;
+
+				} else if (keyCurrentState & _keyExtra.bitRight) {
+					_keyExtraPressed |= _keyExtra.bitRight;
+					event.kbd.keycode = 275;
+
+				} else if (keyCurrentState & _keyExtra.bitUp) {
+					_keyExtraPressed |= _keyExtra.bitUp;
+					event.kbd.keycode = 273;
+
+				} else if (keyCurrentState & _keyExtra.bitDown) {
+					_keyExtraPressed |= _keyExtra.bitDown;
+					event.kbd.keycode = 274;
+				}
+
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.ascii = event.kbd.keycode;
+				event.kbd.flags = 0;
+				return true;
+
+			} else {
+				Int8 sx = 0;
+				Int8 sy = 0;
+
+				if (keyCurrentState & _keyExtra.bitUp)
+					sy = -1;
+				else if (keyCurrentState & _keyExtra.bitDown)
+					sy = +1;
+					
+				if (keyCurrentState & _keyExtra.bitLeft)
+					sx = -1;
+				else if (keyCurrentState & _keyExtra.bitRight)
+					sx = +1;
+
+				if (sx || sy) {
+					simulate_mouse(event, sx, sy, &x, &y);
+					event.type = Common::EVENT_MOUSEMOVE;
+					event.mouse.x = x;
+					event.mouse.y = y;
+					warpMouse(x, y);
+
+					return true;
+				}			
 			}
 		}
 
@@ -177,9 +241,9 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 				k = 273; break;
 			case chrDownArrow:
 				k = 274; break;
-			case chrLeftArrow:
-				k = 275; break;
 			case chrRightArrow:
+				k = 275; break;
+			case chrLeftArrow:
 				k = 276; break;
 			}
 
@@ -225,9 +289,9 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 				k = 273; break;
 			case chrDownArrow:
 				k = 274; break;
-			case chrLeftArrow:
-				k = 275; break;
 			case chrRightArrow:
+				k = 275; break;
+			case chrLeftArrow:
 				k = 276; break;
 			}
 
@@ -249,12 +313,10 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 						((ev.data.keyDown.chr == vchrAttnStateChanged) || 
 						(ev.data.keyDown.chr == vchrAttnUnsnooze))); 
 
-
 		// graffiti strokes, auto-off, etc...
 		if (!handled)
 			if (SysHandleEvent(&ev))
 				continue;
-
 
 		switch(ev.eType) {
 		case penMoveEvent:
