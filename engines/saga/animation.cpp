@@ -84,6 +84,16 @@ void Anim::playCutaway(int cut, bool fade) {
 
 	_cutAwayFade = fade;
 
+	// Chained cutaway, clean up the previous cutaway
+	if (_cutawayActive) {
+		returnFromCutaway();
+
+		// This is used because when AM is zapping the child's mother in Benny's chapter, 
+		// there is a cutaway followed by a video. The video needs to start immediately after
+		// the cutaway so that it looks like the original
+		startImmediately = true;
+	}
+
 	_vm->_gfx->savePalette();
 
 	// TODO
@@ -103,33 +113,18 @@ void Anim::playCutaway(int cut, bool fade) {
 		_vm->_events->queue(&event);
 	}*/
 
-	if (!_cutawayActive) {
-		_vm->_gfx->showCursor(false);
-		_vm->_interface->setStatusText("");
-		_vm->_interface->setSaveReminderState(0);
-		_vm->_interface->rememberMode();
-		if (_cutAwayMode == kPanelVideo)
-			_vm->_interface->setMode(kPanelVideo);
-		else
-			_vm->_interface->setMode(kPanelCutaway);
-		_cutawayActive = true;
-	} else {
-		// HACK: Chained cutaways don't behave properly with our event system, leading to 
-		// crashes. We need to clear all the current cutaways (like clearcutaway does) and make
-		// sure that the next cutaway or video is started immediately. This avoids crashes
-		// with chained cutaways and videos, without causing any side effects, but this is not
-		// in the original interpreter.
-		// The only chained cutaways I've seen up to now are in Ben's chapter. 
-		// FIXME: Is there a more elegant solution for this?
-		for (int i = 0; i < ARRAYSIZE(_cutawayAnimations); i++) {
-			delete _cutawayAnimations[i];
-			_cutawayAnimations[i] = NULL;
-		}
-		startImmediately = true;
-	}
+	// Prepare cutaway
+	_vm->_gfx->showCursor(false);
+	_vm->_interface->setStatusText("");
+	_vm->_interface->setSaveReminderState(0);
+	_vm->_interface->rememberMode();
+	if (_cutAwayMode == kPanelVideo)
+		_vm->_interface->setMode(kPanelVideo);
+	else
+		_vm->_interface->setMode(kPanelCutaway);
+	_cutawayActive = true;
 
 	// Set the initial background and palette for the cutaway
-
 	ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
 
 	byte *resourceData;
