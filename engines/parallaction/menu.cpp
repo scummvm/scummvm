@@ -182,12 +182,13 @@ void Menu::newGame() {
 
 uint16 Menu::chooseLanguage() {
 
-	if (_vm->getFeatures() & GF_DEMO) {
-		return 1;
-	}
-
-	if (_vm->getFeatures() == GF_LANG_IT) {
-		return 0;
+	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		if (!(_vm->getFeatures() & GF_LANG_MULT)) {
+			if (_vm->getFeatures() & GF_DEMO)
+				return 1;		// Amiga Demo supports English
+			else
+				return 0;		// The only other non multi-lingual version just supports Italian
+		}
 	}
 
 	// user can choose language in dos version
