@@ -80,6 +80,8 @@ void Anim::freeCutawayList(void) {
 void Anim::playCutaway(int cut, bool fade) {
 	debug(0, "playCutaway(%d, %d)", cut, fade);
 
+	bool startImmediately = false;
+
 	_cutAwayFade = fade;
 
 	_vm->_gfx->savePalette();
@@ -111,6 +113,19 @@ void Anim::playCutaway(int cut, bool fade) {
 		else
 			_vm->_interface->setMode(kPanelCutaway);
 		_cutawayActive = true;
+	} else {
+		// HACK: Chained cutaways don't behave properly with our event system, leading to 
+		// crashes. We need to clear all the current cutaways (like clearcutaway does) and make
+		// sure that the next cutaway or video is started immediately. This avoids crashes
+		// with chained cutaways and videos, without causing any side effects, but this is not
+		// in the original interpreter.
+		// The only chained cutaways I've seen up to now are in Ben's chapter. 
+		// FIXME: Is there a more elegant solution for this?
+		for (int i = 0; i < ARRAYSIZE(_cutawayAnimations); i++) {
+			delete _cutawayAnimations[i];
+			_cutawayAnimations[i] = NULL;
+		}
+		startImmediately = true;
 	}
 
 	// Set the initial background and palette for the cutaway
@@ -179,7 +194,8 @@ void Anim::playCutaway(int cut, bool fade) {
 
 	setCycles(MAX_ANIMATIONS + cutawaySlot, _cutawayList[cut].cycles);
 	setFrameTime(MAX_ANIMATIONS + cutawaySlot, 1000 / _cutawayList[cut].frameRate);
-	if (_cutAwayMode != kPanelVideo)
+
+	if (_cutAwayMode != kPanelVideo || startImmediately)
 		play(MAX_ANIMATIONS + cutawaySlot, 0);
 	else {
 		Event event;
