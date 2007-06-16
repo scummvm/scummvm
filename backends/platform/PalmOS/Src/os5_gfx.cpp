@@ -137,9 +137,13 @@ void OSystem_PalmOS5::hotswap_gfx_mode(int mode) {
 	}
 
 	if (_stretched) {
-		calc_scale();
 		OPTIONS_SET(kOptDisableOnScrDisp);
-		_render = &OSystem_PalmOS5::render_landscapeAny;
+		if (_screenHeight == 200 && _screenDest.h == 300) {
+			_render = &OSystem_PalmOS5::render_landscape15x;
+		} else {
+			_render = &OSystem_PalmOS5::render_landscapeAny;
+			calc_scale();
+		}
 	} else {
 		OPTIONS_RST(kOptDisableOnScrDisp);
 		_render = &OSystem_PalmOS5::render_1x;
