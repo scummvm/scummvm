@@ -731,7 +731,7 @@ if test -n "$_host"; then
 			;;
  		gp2x)
  			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
- 			DEFINES="$DEFINES -DUNIX -DGP2X"
+ 			DEFINES="$DEFINES -DUNIX -DGP2X -DUSE_ARM_SOUND_ASM"
  			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
  			_def_align='#define SCUMM_NEED_ALIGNMENT'
  			type_1_byte='char'
@@ -1324,7 +1324,7 @@ if test "$_build_sword1" = yes ; then
 	if test "$_mpeg2" = yes ; then
 		echo " (w/ mpeg2 cutscenes)"
 	else
-		echo "  (without mpeg2 cutscenes)"
+		echo " (without mpeg2 cutscenes)"
 	fi
 fi
 if test "$_build_sword2" = yes ; then
