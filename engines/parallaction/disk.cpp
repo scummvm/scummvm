@@ -1019,12 +1019,7 @@ void AmigaDisk::loadScenery(const char* background, const char* mask) {
 	return;
 }
 
-
-AmigaFullDisk::AmigaFullDisk(Parallaction *vm) : AmigaDisk(vm) {
-}
-
-
-void AmigaFullDisk::loadSlide(const char *name) {
+void AmigaDisk::loadSlide(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadSlide '%s'", name);
 
 	char path[PATH_LEN];
@@ -1038,7 +1033,7 @@ void AmigaFullDisk::loadSlide(const char *name) {
 	return;
 }
 
-Cnv* AmigaFullDisk::loadFrames(const char* name) {
+Cnv* AmigaDisk::loadFrames(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadFrames '%s'", name);
 
 	Common::SeekableReadStream *s;
@@ -1056,9 +1051,7 @@ Cnv* AmigaFullDisk::loadFrames(const char* name) {
 	return cnv;
 }
 
-
-
-StaticCnv* AmigaFullDisk::loadHead(const char* name) {
+StaticCnv* AmigaDisk::loadHead(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadHead '%s'", name);
 
 	char path[PATH_LEN];
@@ -1073,11 +1066,15 @@ StaticCnv* AmigaFullDisk::loadHead(const char* name) {
 }
 
 
-Cnv* AmigaFullDisk::loadObjects(const char *name) {
+Cnv* AmigaDisk::loadObjects(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadObjects");
 
 	char path[PATH_LEN];
-	sprintf(path, "objs/%s.objs", name);
+	if (_vm->getFeatures() & GF_DEMO)
+		sprintf(path, "objs/%s.objs", name);
+	else
+		sprintf(path, "%s.objs", name);
+
 	Common::SeekableReadStream *s = openArchivedFile(path, true);
 
 	Cnv *cnv = makeCnv(*s);
@@ -1087,13 +1084,17 @@ Cnv* AmigaFullDisk::loadObjects(const char *name) {
 }
 
 
-Cnv* AmigaFullDisk::loadTalk(const char *name) {
+Cnv* AmigaDisk::loadTalk(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadTalk '%s'", name);
 
 	Common::SeekableReadStream *s;
 
 	char path[PATH_LEN];
-	sprintf(path, "talk/%s.talk", name);
+	if (_vm->getFeatures() & GF_DEMO)
+		sprintf(path, "%s.talk", name);
+	else
+		sprintf(path, "talk/%s.talk", name);
+
 	s = openArchivedFile(path, false);
 	if (s == NULL) {
 		s = openArchivedFile(name, true);
@@ -1105,7 +1106,7 @@ Cnv* AmigaFullDisk::loadTalk(const char *name) {
 	return cnv;
 }
 
-Table* AmigaFullDisk::loadTable(const char* name) {
+Table* AmigaDisk::loadTable(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadTable '%s'", name);
 
 	char path[PATH_LEN];
@@ -1123,7 +1124,8 @@ Table* AmigaFullDisk::loadTable(const char* name) {
 		dispose = true;
 		stream = s;
 	} else {
-		sprintf(path, "objs/%s.table", name);
+		if (!(_vm->getFeatures() & GF_DEMO))
+			sprintf(path, "objs/%s.table", name);
 		if (!_resArchive.openArchivedFile(path))
 			errorFileNotFound(path);
 
@@ -1144,24 +1146,24 @@ Table* AmigaFullDisk::loadTable(const char* name) {
 	return t;
 }
 
-Font* AmigaFullDisk::loadFont(const char* name) {
+Font* AmigaDisk::loadFont(const char* name) {
 	debugC(1, kDebugDisk, "AmigaFullDisk::loadFont '%s'", name);
 
 	char path[PATH_LEN];
 	sprintf(path, "%sfont", name);
 
-	if (_vm->getFeatures() & GF_LANG_MULT) {
-		if (!_resArchive.openArchivedFile(path))
-			errorFileNotFound(path);
-
-		return createFont(name, _resArchive);
-	} else {
-		// Italian version has separate font files?
+	if (_vm->getFeatures() & GF_LANG_IT) {
+		// Italian version has separate font files
 		Common::File stream;
 		if (!stream.open(path))
 			errorFileNotFound(path);
 
 		return createFont(name, stream);
+	} else {
+		if (!_resArchive.openArchivedFile(path))
+			errorFileNotFound(path);
+
+		return createFont(name, _resArchive);
 	}
 }
 
@@ -1177,121 +1179,6 @@ Common::ReadStream* AmigaDisk::loadSound(const char* name) {
 	openArchivedFile(path);
 
 	return new DummyArchiveStream(_resArchive);
-}
-
-AmigaDemoDisk::AmigaDemoDisk(Parallaction *vm) : AmigaDisk(vm) {
-}
-
-Cnv* AmigaDemoDisk::loadTalk(const char *name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadTalk '%s'", name);
-
-	Common::SeekableReadStream *s;
-
-	char path[PATH_LEN];
-	sprintf(path, "%s.talk", name);
-	s = openArchivedFile(path, false);
-	if (s == NULL) {
-		s = openArchivedFile(name, true);
-	}
-
-	Cnv *cnv = makeCnv(*s);
-	delete s;
-
-	return cnv;
-}
-
-Cnv* AmigaDemoDisk::loadObjects(const char *name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadObjects");
-
-	char path[PATH_LEN];
-	sprintf(path, "%s.objs", name);
-	Common::SeekableReadStream *s = openArchivedFile(path, true);
-
-	Cnv *cnv = makeCnv(*s);
-	delete s;
-
-	return cnv;
-}
-
-
-Cnv* AmigaDemoDisk::loadFrames(const char* name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadFrames '%s'", name);
-
-	Common::SeekableReadStream *s = openArchivedFile(name, true);
-	Cnv *cnv = makeCnv(*s);
-	delete s;
-
-	return cnv;
-}
-
-void AmigaDemoDisk::loadSlide(const char *name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadSlide '%s'", name);
-	loadBackground(name);
-	return;
-}
-
-StaticCnv* AmigaDemoDisk::loadHead(const char* name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadHead '%s'", name);
-
-	char path[PATH_LEN];
-	sprintf(path, "%s.head", name);
-
-	Common::SeekableReadStream *s = openArchivedFile(path, true);
-	StaticCnv *cnv = makeStaticCnv(*s);
-
-	delete s;
-
-	return cnv;
-}
-
-Table* AmigaDemoDisk::loadTable(const char* name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadTable '%s'", name);
-
-	char path[PATH_LEN];
-	sprintf(path, "%s.table", name);
-
-	bool dispose = false;
-
-	Common::SeekableReadStream *stream;
-
-	if (!scumm_stricmp(name, "global")) {
-		Common::File *s = new Common::File;
-		if (!s->open(path))
-			errorFileNotFound(path);
-
-		dispose = true;
-		stream = s;
-	} else {
-		if (!_resArchive.openArchivedFile(path))
-			errorFileNotFound(path);
-
-		stream = &_resArchive;
-	}
-
-	Table *t = new Table(100);
-
-	fillBuffers(*stream);
-	while (scumm_stricmp(_tokens[0], "ENDTABLE")) {
-		t->addData(_tokens[0]);
-		fillBuffers(*stream);
-	}
-
-	if (dispose)
-		delete stream;
-
-	return t;
-}
-
-Font* AmigaDemoDisk::loadFont(const char* name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadFont '%s'", name);
-
-	char path[PATH_LEN];
-	sprintf(path, "%sfont", name);
-
-	if (!_resArchive.openArchivedFile(path))
-		errorFileNotFound(path);
-
-	return createFont(name, _resArchive);
 }
 
 } // namespace Parallaction

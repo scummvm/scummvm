@@ -180,10 +180,8 @@ int Parallaction::init() {
 	} else {
 		if (getFeatures() & GF_DEMO) {
 			strcpy(_location._name, "fognedemo");
-			_disk = new AmigaDemoDisk(this);
-		} else {
-			_disk = new AmigaFullDisk(this);
 		}
+		_disk = new AmigaDisk(this);
 		_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 	}
 
