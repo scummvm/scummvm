@@ -105,7 +105,7 @@ Menu::~Menu() {
 
 void Menu::start() {
 
-	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformAmiga) ? "disk0" : "disk1");
+	_vm->_disk->selectArchive((_vm->getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
 
 	splash();
 
@@ -335,7 +335,7 @@ void Menu::selectCharacter() {
 
 	_vm->_gfx->setFont(kFontMenu);
 
-	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformAmiga) ? "disk0" : "disk1");
+	_vm->_disk->selectArchive((_vm->getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
 
 	_vm->_disk->loadSlide("password");	// loads background into kBitBack buffer
 

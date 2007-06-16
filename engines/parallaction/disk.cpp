@@ -1150,11 +1150,19 @@ Font* AmigaFullDisk::loadFont(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%sfont", name);
 
-	Common::File stream;
-	if (!stream.open(path))
-		errorFileNotFound(path);
+	if (_vm->getFeatures() & GF_LANG_MULT) {
+		if (!_resArchive.openArchivedFile(path))
+			errorFileNotFound(path);
 
-	return createFont(name, stream);
+		return createFont(name, _resArchive);
+	} else {
+		// Italian version has separate font files?
+		Common::File stream;
+		if (!stream.open(path))
+			errorFileNotFound(path);
+
+		return createFont(name, stream);
+	}
 }
 
 

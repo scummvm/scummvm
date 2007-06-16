@@ -68,8 +68,13 @@ void Archive::open(const char *file) {
 		error("archive '%s' not found", path);
 
 	bool isSmallArchive = false;
-	if (_vm->getFeatures() & GF_DEMO)
-		isSmallArchive = _archive.size() == SIZEOF_SMALL_ARCHIVE;
+	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		if (_vm->getFeatures() & GF_DEMO) {
+			isSmallArchive = _archive.size() == SIZEOF_SMALL_ARCHIVE;
+		} else if (_vm->getFeatures() & GF_LANG_MULT) {
+			isSmallArchive = (_archive.readUint32BE() != MKID_BE('NDOS'));
+		}
+	}
 
 	_numFiles = (isSmallArchive) ? SMALL_ARCHIVE_FILES_NUM : NORMAL_ARCHIVE_FILES_NUM;
 
