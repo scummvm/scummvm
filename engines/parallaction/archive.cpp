@@ -33,10 +33,15 @@
 
 namespace Parallaction {
 
-//	HACK: one archive ('fr') in Nippon Safes Demo for Amiga uses different
-//  internal offsets than all the other archives. When an archive is opened
-//  its size if checked against SIZEOF_SMALL_ARCHIVE ('fr' size) so Archive
-//  can behave properly.
+//  HACK: Several archives ('de', 'en', 'fr' and 'disk0') in the multi-lingual
+//  Amiga version of Nippon Safes, and one archive ('fr') in the Amiga Demo of
+//  Nippon Safes used different internal offsets than all the other archives.
+//
+//  When an archive is opened in the Amiga demo, its size is checked against 
+//  SIZEOF_SMALL_ARCHIVE to detect when the smaller archive is used.
+//
+//  When an archive is opened in Amiga multi-lingual version, the header is
+//  checked again NDOS to detect when a smaller archive is used.
 //
 #define SIZEOF_SMALL_ARCHIVE      	12778
 
