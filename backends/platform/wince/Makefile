@@ -25,6 +25,8 @@ DISABLE_CRUISE = 1
 
 #DISABLE_HQ_SCALERS = 1
 
+USE_ARM_SOUND_ASM = 1
+
 CXX    = arm-wince-pe-g++
 LD     = arm-wince-pe-g++
 AR     = arm-wince-pe-ar cru
