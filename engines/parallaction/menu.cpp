@@ -88,9 +88,13 @@ const char *loadGameMsg[] = {
 #define SLOT_WIDTH		(BLOCK_WIDTH+2)
 
 
-static uint16 _dinoKey[] = { 5, 3, 6, 1, 4, 7 }; //
-static uint16 _donnaKey[] = { 0, 2, 8, 5, 5, 1 };
-static uint16 _doughKey[] = { 1, 7 ,7, 2, 2, 6 };
+static uint16 _amigaDinoKey[] = { 5, 3, 6, 2, 2, 7 };
+static uint16 _amigaDonnaKey[] = { 0, 3, 6, 2, 2, 6 };
+static uint16 _amigaDoughKey[] = { 1, 3 ,7, 2, 4, 6 };
+
+static uint16 _pcDinoKey[] = { 5, 3, 6, 1, 4, 7 };
+static uint16 _pcDonnaKey[] = { 0, 2, 8, 5, 5, 1 };
+static uint16 _pcDoughKey[] = { 1, 7 ,7, 2, 2, 6 };
 
 
 Menu::Menu(Parallaction *vm) {
@@ -382,12 +386,21 @@ void Menu::selectCharacter() {
 
 //				beep();
 
-				if (_dinoKey[_di] == _si)
-					_dino_points++;  // dino
-				if (_donnaKey[_di] == _si)
-					_donna_points++;  // donna
-				if (_doughKey[_di] == _si)
-					_dough_points++;  // dough
+				if (_vm->getPlatform() == Common::kPlatformAmiga) {
+					if (_amigaDinoKey[_di] == _si)
+						_dino_points++;  // dino
+					if (_amigaDonnaKey[_di] == _si)
+						_donna_points++;  // donna
+					if (_amigaDoughKey[_di] == _si)
+						_dough_points++;  // dough
+				} else {
+					if (_pcDinoKey[_di] == _si)
+						_dino_points++;  // dino
+					if (_pcDonnaKey[_di] == _si)
+						_donna_points++;  // donna
+					if (_pcDoughKey[_di] == _si)
+						_dough_points++;  // dough
+				}
 
 				_di++;
 			}
