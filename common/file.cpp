@@ -415,7 +415,7 @@ bool File::exists(const String &filename) {
 	// FIXME: can't use isValid() here since at the time of writing
 	// FilesystemNode is to be unable to find for example files
 	// added in extrapath
-	if (file.isDirectory() && !file.exists())
+	if (file.isDirectory() || !file.exists())
 		return false;
 
 	// Next, try to locate the file by *opening* it in read mode. This has
