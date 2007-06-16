@@ -115,7 +115,6 @@ SimpleRateConverter<stereo, reverseStereo>::SimpleRateConverter(st_rate_t inrate
 template<bool stereo, bool reverseStereo>
 int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
 	st_sample_t *ostart, *oend;
-	st_sample_t out[2];
 
 	ostart = obuf;
 	oend = obuf + osamp * 2;
@@ -137,6 +136,8 @@ int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 				inPtr += (stereo ? 2 : 1);
 			}
 		} while (opos >= 0);
+
+		st_sample_t out[2];
 		out[reverseStereo    ] = *inPtr++;
 		out[reverseStereo ^ 1] = (stereo ? *inPtr++ : out[reverseStereo]);
 
@@ -178,9 +179,9 @@ protected:
 	long opos_inc, opos_inc_frac;
 
 	/** last sample(s) in the input stream (left/right channel) */
-	st_sample_t ilast[2];
+	st_sample_t ilast0, ilast1;
 	/** current sample(s) in the input stream (left/right channel) */
-	st_sample_t icur[2];
+	st_sample_t icur0, icur1;
 
 public:
 	LinearRateConverter(st_rate_t inrate, st_rate_t outrate);
@@ -215,8 +216,8 @@ LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate
 	opos_inc_frac = incr & ((1UL << FRAC_BITS) - 1);
 	opos_inc = incr >> FRAC_BITS;
 
-	ilast[0] = ilast[1] = 0;
-	icur[0] = icur[1] = 0;
+	ilast0 = ilast1 = 0;
+	icur0 = icur1 = 0;
 
 	inLen = 0;
 }
@@ -228,7 +229,6 @@ LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate
 template<bool stereo, bool reverseStereo>
 int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
 	st_sample_t *ostart, *oend;
-	st_sample_t out[2];
 
 	ostart = obuf;
 	oend = obuf + osamp * 2;
@@ -245,11 +245,11 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 					goto the_end;
 			}
 			inLen -= (stereo ? 2 : 1);
-			ilast[0] = icur[0];
-			icur[0] = *inPtr++;
+			ilast0 = icur0;
+			icur0 = *inPtr++;
 			if (stereo) {
-				ilast[1] = icur[1];
-				icur[1] = *inPtr++;
+				ilast1 = icur1;
+				icur1 = *inPtr++;
 			}
 			opos--;
 		}
@@ -257,11 +257,11 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 		// Loop as long as the outpos trails behind, and as long as there is
 		// still space in the output buffer.
 		while (0 > opos) {
-
 			// interpolate
-			out[reverseStereo    ] =  (st_sample_t)(ilast[0] + (((icur[0] - ilast[0]) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
+			st_sample_t out[2];
+			out[reverseStereo    ] =  (st_sample_t)(ilast0 + (((icur0 - ilast0) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
 			out[reverseStereo ^ 1] = (stereo ?
-						  (st_sample_t)(ilast[1] + (((icur[1] - ilast[1]) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS)) :
+						  (st_sample_t)(ilast1 + (((icur1 - ilast1) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS)) :
 						  out[reverseStereo]);
 
 			// output left channel
