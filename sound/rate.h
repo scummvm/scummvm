@@ -70,12 +70,6 @@ static inline void clampedAdd(int16& a, int b) {
 #endif
 }
 
-// Q&D hack to get this SOX stuff to work
-#define st_report warning
-#define st_warn warning
-#define st_fail error
-
-
 class RateConverter {
 public:
 	RateConverter() {}
