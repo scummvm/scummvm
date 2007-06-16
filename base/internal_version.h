@@ -1,1 +1,1 @@
-#define SCUMMVM_VERSION "0.10.0pre"
+#define SCUMMVM_VERSION "0.10.0"
