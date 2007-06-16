@@ -96,8 +96,10 @@ void Anim::playCutaway(int cut, bool fade) {
 
 	_vm->_gfx->savePalette();
 
-	// TODO
-	/*if (fade) {
+	if (fade) {
+		_vm->_gfx->getCurrentPal(saved_pal);
+		// TODO
+		/*
 		Event event;
 		static PalEntry cur_pal[PAL_ENTRIES];
 
@@ -111,7 +113,8 @@ void Anim::playCutaway(int cut, bool fade) {
 		event.data = cur_pal;
 
 		_vm->_events->queue(&event);
-	}*/
+		*/
+	}
 
 	// Prepare cutaway
 	_vm->_gfx->showCursor(false);
@@ -219,14 +222,47 @@ void Anim::returnFromCutaway(void) {
 
 	debug(0, "returnFromCutaway()");
 
+
 	if (_cutawayActive) {
+		Event event;
+		Event *q_event = NULL;
+
+		if (_cutAwayFade) {
+			static PalEntry cur_pal[PAL_ENTRIES];
+
+			_vm->_gfx->getCurrentPal(cur_pal);
+
+			event.type = kEvTImmediate;
+			event.code = kPalEvent;
+			event.op = kEventPalToBlack;
+			event.time = 0;
+			event.duration = kNormalFadeDuration;
+			event.data = cur_pal;
+
+			q_event = _vm->_events->queue(&event);
+		}
+
 		// Note that clearCutaway() sets _cutawayActive to false.
 		clearCutaway();
+		// TODO: Clearing the cutaway via an event is better, but it breaks things up
+		/*
+		event.type = kEvTImmediate;
+		event.code = kCutawayEvent;
+		event.op = kEventClearCutaway;
+		event.time = 0;
+		event.duration = 0;
+
+		if (_cutAwayFade)
+			q_event = _vm->_events->chain(q_event, &event);		// chain with the other events
+		else
+			q_event = _vm->_events->queue(&event);
+		*/
+
+		// Restore the scene
+		_vm->_scene->restoreScene();
 
 		// Handle fade up, if we previously faded down
-		// TODO
-		/*if (_cutAwayFade) {
-			Event event;
+		if (_cutAwayFade) {
 			event.type = kEvTImmediate;
 			event.code = kPalEvent;
 			event.op = kEventBlackToPal;
@@ -234,11 +270,8 @@ void Anim::returnFromCutaway(void) {
 			event.duration = kNormalFadeDuration;
 			event.data = saved_pal;
 
-			_vm->_events->queue(&event);
-		}*/
-
-		// Restore the scene
-		_vm->_scene->restoreScene();
+			q_event = _vm->_events->chain(q_event, &event);
+		}
 
 		// Restore the animations
 		for (int i = 0; i < MAX_ANIMATIONS; i++) {
