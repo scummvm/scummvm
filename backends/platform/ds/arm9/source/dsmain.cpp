@@ -1018,11 +1018,19 @@ void setKeyboardEnable(bool en) {
 			// Copy the sub screen VRAM from the top screen - they should always be
 			// the same.
 			u16* buffer = get8BitBackBuffer();
-
-			for (int r = 0; r < (512 * 256) >> 1; r++) {
-				BG_GFX_SUB[r] = buffer[r];
-			}
-			
+            
+            if(isCpuScalerEnabled())
+            {
+                for (int y = 0; y < gameHeight; ++y)
+                    for (int x = 0; x < gameWidth / 2; ++x)
+                        BG_GFX_SUB[y*256 + x] = buffer[y*gameWidth/2 + x];
+            }
+            else
+            {
+                for (int r = 0; r < (512 * 256) >> 1; r++) {
+                    BG_GFX_SUB[r] = buffer[r];
+                }
+            }			
 			SUB_DISPLAY_CR &= ~DISPLAY_BG1_ACTIVE;	// Turn off keyboard layer
 			SUB_DISPLAY_CR |= DISPLAY_BG3_ACTIVE;	// Turn on game layer
 		} else {
