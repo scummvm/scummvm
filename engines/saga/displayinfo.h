@@ -323,6 +323,7 @@ static PanelButton IHNM_ConversePanelButtons[] = {
 };
 
 static PanelButton IHNM_OptionPanelButtons[] = {
+	{kPanelButtonOptionSlider,	421,16, 16,138,	0,'-',0,	0,0,0},				//slider-scroller
 	{kPanelButtonOptionText,28,36,	0,0,	kTextReadingSpeed,'-',0, 0,0,0},	// text: read speed
 	{kPanelButtonOptionText,60,61,	0,0,	kTextMusic,'-',0, 0,0,0},			// text: music
 	{kPanelButtonOptionText,60,86,	0,0,	kTextSound,'-',0, 0,0,0},			// text: noise
@@ -333,7 +334,7 @@ static PanelButton IHNM_OptionPanelButtons[] = {
 	{kPanelButtonOption,	153,104,79,23,	kTextVoices,'v',0,	0,0,0},			//voices
 	{kPanelButtonOption,	19,149,	200,25,	kTextQuitGame,'q',0,	0,0,0},		//quit
 	{kPanelButtonOption,	19,177,	200,25,	kTextContinuePlaying,'c',0,	0,0,0}, //continue
-	// TODO: Implement load/save
+	{kPanelButtonOptionSaveFiles,	244,18, 170,138,	0,'-',0,	0,0,0},		//savefiles
 	{kPanelButtonOption,	242,162, 79,23,	kTextLoad,'l',0,	0,0,0},			//load
 	{kPanelButtonOption,	333,162, 79,23,	kTextSave,'s',0,	0,0,0},			//save
 };
@@ -345,15 +346,21 @@ static PanelButton IHNM_QuitPanelButtons[] = {
 };
 
 static PanelButton IHNM_LoadPanelButtons[] = {
-	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+	// TODO
+	{kPanelButtonLoad, 101,19, 60,16, kTextOK,'o',0, 0,0,0},
+	{kPanelButtonLoadText, -1,5, 0,0, kTextLoadSuccessful,'-',0, 0,0,0},
 };
 
 static PanelButton IHNM_SavePanelButtons[] = {
-	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+	// TODO
+	{kPanelButtonSave, 25,79, 80,25, kTextSave,'s',0, 0,0,0},
+	{kPanelButtonSave, 155,79, 80,25, kTextCancel,'c',0, 0,0,0},
+	{kPanelButtonSaveEdit, 26,57, 209,17, 0,'-',0, 0,0,0},
+	{kPanelButtonSaveText, 75,30, 0,0, kTextEnterSaveGameName,'-',0, 0,0,0},
 };
 
 
-static const GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
+static const GameDisplayInfo IHNM_DisplayInfo = {
 	640, 480,	// logical width&height
 
 	0,			// scene path y offset
@@ -388,8 +395,8 @@ static const GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	ARRAYSIZE(IHNM_ConversePanelButtons),
 	IHNM_ConversePanelButtons,
 
-	-1, -1,		// save file index
-	0,			// optionSaveFileVisible
+	11, 0,		// save file index
+	15,			// optionSaveFileVisible
 	92, 46,		// option panel offsets
 	ARRAYSIZE(IHNM_OptionPanelButtons),
 	IHNM_OptionPanelButtons,
@@ -399,14 +406,14 @@ static const GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	ARRAYSIZE(IHNM_QuitPanelButtons),
 	IHNM_QuitPanelButtons,
 
-	0, 0,			// load panel offsets
-	0, 0,			// load panel width & height
+	190, 94,		// load panel offsets
+	260, 115,		// load panel width & height
 	ARRAYSIZE(IHNM_LoadPanelButtons),
 	IHNM_LoadPanelButtons,
 
-	-1,				// save edit index
-	0, 0,			// save panel offsets
-	0, 0,			// save panel width & height
+	2,				// save edit index
+	190, 94,		// save panel offsets
+	260, 115,		// save panel width & height
 	ARRAYSIZE(IHNM_SavePanelButtons),
 	IHNM_SavePanelButtons,
 

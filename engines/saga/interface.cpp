@@ -203,6 +203,28 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		free(resource);
 	}
 
+	// Save panel
+	if (_vm->getGameType() == GType_IHNM) {
+		_savePanel.buttons = _vm->getDisplayInfo().savePanelButtons;
+		_savePanel.buttonsCount = _vm->getDisplayInfo().savePanelButtonsCount;
+
+		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->warningPanelResourceId, resource, resourceLength);
+		_vm->decodeBGImage(resource, resourceLength, &_savePanel.image,
+			&_savePanel.imageLength, &_savePanel.imageWidth, &_savePanel.imageHeight);
+		free(resource);
+	}
+
+	// Load panel
+	if (_vm->getGameType() == GType_IHNM) {
+		_loadPanel.buttons = _vm->getDisplayInfo().loadPanelButtons;
+		_loadPanel.buttonsCount = _vm->getDisplayInfo().loadPanelButtonsCount;
+
+		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->warningPanelResourceId, resource, resourceLength);
+		_vm->decodeBGImage(resource, resourceLength, &_loadPanel.image,
+			&_loadPanel.imageLength, &_loadPanel.imageWidth, &_loadPanel.imageHeight);
+		free(resource);
+	}
+
 	// Main panel sprites
 	_vm->_sprite->loadList(_vm->getResourceDescription()->mainPanelSpritesResourceId, _mainPanel.sprites);
 	// Option panel sprites
@@ -750,7 +772,6 @@ void Interface::draw() {
 void Interface::calcOptionSaveSlider() {
 	int totalFiles = _vm->getSaveFilesCount();
 	int visibleFiles = _vm->getDisplayInfo().optionSaveFileVisible;
-	if (_optionSaveFileSlider == NULL) return; //TODO:REMOVE
 	int height = _optionSaveFileSlider->height;
 	int sliderHeight;
 	int pos;
@@ -870,10 +891,6 @@ void Interface::drawOption() {
 			backBuffer->drawRect(_optionSaveRectTop, kITEColorDarkGrey);
 	}
 
-	// FIXME: The _optionSaveFileSlider checks exist for IHNM, where 
-	// _optionSaveFileSlider is not initialized correctly yet
-	if (_optionSaveFileSlider == NULL) return; //TODO:REMOVE
-
 	drawButtonBox(backBuffer, _optionSaveRectSlider, kSlider, _optionSaveFileSlider->state > 0);
 
 	if (_optionSaveRectBottom.height() > 0) {
@@ -899,7 +916,10 @@ void Interface::drawOption() {
 			text = _vm->getSaveFile(idx)->name;
 			textPoint.x = rect.left + 1;
 			textPoint.y = rect2.top;
-			_vm->_font->textDraw(kKnownFontSmall, backBuffer, text, textPoint, fgColor, 0, kFontNormal);
+			if (_vm->getGameType() == GType_ITE)
+				_vm->_font->textDraw(kKnownFontSmall, backBuffer, text, textPoint, fgColor, 0, kFontNormal);
+			else
+				_vm->_font->textDraw(kKnownFontVerb, backBuffer, text, textPoint, fgColor, 0, kFontNormal);
 		}
 	}
 
@@ -978,7 +998,11 @@ void Interface::drawLoad() {
 	backBuffer = _vm->_gfx->getBackBuffer();
 
 	_loadPanel.getRect(rect);
-	drawButtonBox(backBuffer, rect, kButton, false);
+	if (_vm->getGameType() == GType_ITE)
+		drawButtonBox(backBuffer, rect, kButton, false);
+	else
+		backBuffer->blit(rect, _loadPanel.image);
+
 	for (i = 0; i < _loadPanel.buttonsCount; i++) {
 		panelButton = &_loadPanel.buttons[i];
 		if (panelButton->type == kPanelButtonLoad) {
@@ -1178,7 +1202,11 @@ void Interface::drawSave() {
 	backBuffer = _vm->_gfx->getBackBuffer();
 
 	_savePanel.getRect(rect);
-	drawButtonBox(backBuffer, rect, kButton, false);
+	if (_vm->getGameType() == GType_ITE)
+		drawButtonBox(backBuffer, rect, kButton, false);
+	else
+		backBuffer->blit(rect, _savePanel.image);
+
 	for (i = 0; i < _savePanel.buttonsCount; i++) {
 		panelButton = &_savePanel.buttons[i];
 		if (panelButton->type == kPanelButtonSave) {
@@ -1291,7 +1319,6 @@ void Interface::handleOptionUpdate(const Point& mousePoint) {
 	bool releasedButton;
 
 	if (_vm->mouseButtonPressed()) {
-		if (_optionSaveFileSlider != NULL) //TODO:REMOVE
 		if (_optionSaveFileSlider->state > 0) {
 			_optionPanel.calcPanelButtonRect(_optionSaveFileSlider, rect);
 
@@ -2116,6 +2143,14 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 		} else if (panel == &_quitPanel) {
 			texturePoint.x = _quitPanel.x + panelButton->xOffset;
 			texturePoint.y = _quitPanel.y + panelButton->yOffset;
+			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _optionPanel.sprites, 14 + litButton, texturePoint, 256);
+		} else if (panel == &_savePanel) {
+			texturePoint.x = _savePanel.x + panelButton->xOffset;
+			texturePoint.y = _savePanel.y + panelButton->yOffset;
+			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _optionPanel.sprites, 14 + litButton, texturePoint, 256);
+		} else if (panel == &_loadPanel) {
+			texturePoint.x = _loadPanel.x + panelButton->xOffset;
+			texturePoint.y = _loadPanel.y + panelButton->yOffset;
 			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _optionPanel.sprites, 14 + litButton, texturePoint, 256);
 		} else {
 			// revert to default behavior
