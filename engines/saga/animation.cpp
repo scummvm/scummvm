@@ -236,7 +236,7 @@ void Anim::returnFromCutaway(void) {
 			event.code = kPalEvent;
 			event.op = kEventPalToBlack;
 			event.time = 0;
-			event.duration = kNormalFadeDuration;
+			event.duration = 5000; //kNormalFadeDuration;
 			event.data = cur_pal;
 
 			q_event = _vm->_events->queue(&event);
@@ -257,14 +257,7 @@ void Anim::returnFromCutaway(void) {
 		else
 			q_event = _vm->_events->queue(&event);
 
-		// Restore the scene
-		event.type = kEvTImmediate;
-		event.code = kSceneEvent;
-		event.op = kEventRestore;
-		event.time = 0;
-		event.duration = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);		// chain with the other events
+		_vm->_scene->restoreScene();
 
 		// Restore the animations
 		event.type = kEvTImmediate;
@@ -281,15 +274,24 @@ void Anim::returnFromCutaway(void) {
 			event.code = kPalEvent;
 			event.op = kEventBlackToPal;
 			event.time = 0;
-			event.duration = 3000; //kNormalFadeDuration;
+			event.duration = 5000; //kNormalFadeDuration;
 			event.data = saved_pal;
 
 			q_event = _vm->_events->chain(q_event, &event);
+
 		}
+
+		event.type = kEvTOneshot;
+		event.code = kScriptEvent;
+		event.op = kEventThreadWake;
+		event.param = kWaitTypeWakeUp;
+
+		q_event = _vm->_events->chain(q_event, &event);
 	}
 }
 
 void Anim::clearCutaway(void) {
+	debug(1, "clearCutaway()");
 	if (_cutawayActive) {
 		_cutawayActive = false;
 

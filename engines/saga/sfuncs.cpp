@@ -1900,6 +1900,7 @@ void Script::sfScriptStartCutAway(SCRIPTFUNC_PARAMS) {
 
 void Script::sfReturnFromCutAway(SCRIPTFUNC_PARAMS) {
 	_vm->_anim->returnFromCutaway();
+	thread->wait(kWaitTypeWakeUp);
 }
 
 void Script::sfEndCutAway(SCRIPTFUNC_PARAMS) {

@@ -105,7 +105,8 @@ enum ThreadWaitTypes {
 	kWaitTypePause = 7,
 	kWaitTypePlacard = 8,
 	kWaitTypeStatusTextInput = 9,
-	kWaitTypeWaitFrames = 10    // IHNM. waiting for a frame count
+	kWaitTypeWaitFrames = 10,   // IHNM. waiting for a frame count
+	kWaitTypeWakeUp = 11		// IHNM. wait until get waken up
 };
 
 enum OpCodes {

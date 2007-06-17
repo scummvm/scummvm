@@ -79,7 +79,6 @@ enum EventOps {
 	kEventStop = 2,
 	// SCENE events
 	kEventEnd = 2,
-	kEventRestore = 3,
 	// TEXT events
 	kEventHide = 2,
 	kEventRemove = 3,

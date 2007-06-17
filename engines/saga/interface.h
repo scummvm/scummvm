@@ -197,7 +197,7 @@ public:
 		return _fadeMode;
 	}
 	void rememberMode();
-	void restoreMode();
+	void restoreMode(bool draw_ = true);
 	bool isInMainMode() { return _inMainMode; }
 	void setStatusText(const char *text, int statusColor = -1);
 	void loadScenePortraits(int resourceId);

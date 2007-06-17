@@ -372,9 +372,6 @@ int Events::handleOneShot(Event *event) {
 		case kEventEnd:
 			_vm->_scene->nextScene();
 			return kEvStBreak;
-		case kEventRestore:
-			_vm->_scene->restoreScene();
-			return kEvStBreak;
 		default:
 			break;
 		}

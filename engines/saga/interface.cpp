@@ -340,15 +340,20 @@ void Interface::rememberMode() {
 	assert (_savedMode == -1);
 
 	_savedMode = _panelMode;
+
+	debug(1, "rememberMode(%d)", _savedMode);
 }
 
-void Interface::restoreMode() {
+void Interface::restoreMode(bool draw_) {
 	assert (_savedMode != -1);
+
+	debug(1, "restoreMode(%d)", _savedMode);
 
 	_panelMode = _savedMode;
 	_savedMode = -1;
 
-	draw();
+	if (draw_)
+		draw();
 }
 
 void Interface::setMode(int mode) {
