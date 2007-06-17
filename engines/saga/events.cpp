@@ -369,7 +369,7 @@ int Events::handleOneShot(Event *event) {
 		break;
 	case kSceneEvent:
 		switch (event->op) {
-		case kEventDrawScene:
+		case kEventDraw:
 			{
 				Surface *backGroundSurface;
 				BGInfo bgInfo;
@@ -491,7 +491,7 @@ int Events::handleOneShot(Event *event) {
 		}
 	case kCutawayEvent:
 		switch (event->op) {
-		case kEventClearCutaway:
+		case kEventClear:
 			_vm->_anim->clearCutaway();
 			break;
 		default:

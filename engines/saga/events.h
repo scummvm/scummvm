@@ -78,7 +78,7 @@ enum EventOps {
 	kEventPlay = 1,
 	kEventStop = 2,
 	// SCENE events
-	kEventDrawScene = 1,
+	kEventDraw = 1,
 	kEventEnd = 2,
 	// TEXT events
 	kEventHide = 2,
@@ -116,7 +116,7 @@ enum EventOps {
 	kEventDissolve = 1,
 	kEventDissolveBGMask = 2,
 	// CUTAWAY events
-	kEventClearCutaway = 1
+	kEventClear = 1
 };
 
 enum EventParams {

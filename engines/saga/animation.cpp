@@ -245,7 +245,7 @@ void Anim::returnFromCutaway(void) {
 		// Clear the cutaway. Note that this sets _cutawayActive to false
 		event.type = kEvTImmediate;
 		event.code = kCutawayEvent;
-		event.op = kEventClearCutaway;
+		event.op = kEventClear;
 		event.time = 0;
 		event.duration = 0;
 
@@ -268,7 +268,7 @@ void Anim::returnFromCutaway(void) {
 		// Draw the scene
 		event.type = kEvTImmediate;
 		event.code = kSceneEvent;
-		event.op = kEventDrawScene;
+		event.op = kEventDraw;
 		event.time = 0;
 		event.duration = 0;
 
