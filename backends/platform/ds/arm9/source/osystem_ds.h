@@ -159,4 +159,9 @@ void OSystem_DS::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b)
 	//consolePrintf("coltorgb\n");
 }
 
+namespace DS
+{
+bool isCpuScalerEnabled();
+}
+
 #endif

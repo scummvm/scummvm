@@ -478,7 +478,7 @@ bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
 	
-    size_t imageStrideInBytes = isCpuScalerEnabled() DS::getGameWidth() ? 512;
+    size_t imageStrideInBytes = DS::isCpuScalerEnabled() ? DS::getGameWidth() : 512;
     size_t imageStrideInWords = imageStrideInBytes / 2;
 
 	u16* image = (u16 *) DS::get8BitBackBuffer();
