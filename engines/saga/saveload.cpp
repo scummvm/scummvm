@@ -191,6 +191,11 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 
 	// Surrounding scene
 	out->writeSint32LE(_scene->getOutsetSceneNumber());
+	if (getGameType() != GType_ITE) {
+		out->writeSint16LE(_scene->currentTrack());
+		// Protagonist
+		out->writeSint16LE(_scene->currentProtag());
+	}
 
 	// Inset scene
 	out->writeSint32LE(_scene->currentSceneNumber());
@@ -259,6 +264,11 @@ void SagaEngine::load(const char *fileName) {
 
 	// Surrounding scene
 	sceneNumber = in->readSint32LE();
+	// Protagonist
+	if (getGameType() != GType_ITE) {
+		_scene->setTrack(in->readSint16LE());
+		_scene->setProtag(in->readSint16LE());
+	}
 
 	// Inset scene
 	insetSceneNumber = in->readSint32LE();
@@ -286,6 +296,11 @@ void SagaEngine::load(const char *fileName) {
 	_music->setVolume(0);
 
 	_isoMap->setMapPosition(mapx, mapy);
+
+	// Protagonist swapping
+	if (getGameType() != GType_ITE) {
+		// TODO 
+	}
 
 	_scene->clearSceneQueue();
 	_scene->changeScene(sceneNumber, ACTOR_NO_ENTRANCE, kTransitionNoFade);

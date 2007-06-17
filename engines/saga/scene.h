@@ -310,6 +310,11 @@ class Scene {
 	#endif
 		return _sceneLUT[sceneNumber];
 	}
+	int currentProtag() const { return _currentProtag; }
+	int currentTrack() const { return _currentTrack; }
+	void setProtag(int pr) { _currentProtag = pr; }
+	void setTrack(int tr) { _currentTrack = tr; }
+
 	int currentSceneNumber() const { return _sceneNumber; }
 	int currentChapterNumber() const { return _chapterNumber; }
 	void setChapterNumber(int ch) { _chapterNumber = ch; }
@@ -347,6 +352,8 @@ class Scene {
 	int _sceneCount;
 	SceneQueueList _sceneQueue;
 	bool _sceneLoaded;
+	int _currentProtag;
+	int _currentTrack;
 	int _sceneNumber;
 	int _chapterNumber;
 	int _outsetSceneNumber;

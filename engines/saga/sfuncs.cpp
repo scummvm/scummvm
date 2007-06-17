@@ -875,15 +875,17 @@ void Script::sfSwapActors(SCRIPTFUNC_PARAMS) {
 		actor1->_flags &= ~kProtagonist;
 		actor2->_flags |= kProtagonist;
 		_vm->_actor->_protagonist = _vm->_actor->_centerActor = actor2;
+		if (_vm->getGameType() == GType_IHNM)
+			_vm->_scene->setProtag(actorId2);
 	} else if (actor2->_flags & kProtagonist) {
 		actor2->_flags &= ~kProtagonist;
 		actor1->_flags |= kProtagonist;
 		_vm->_actor->_protagonist = _vm->_actor->_centerActor = actor1;
+		if (_vm->getGameType() == GType_IHNM)
+			_vm->_scene->setProtag(actorId1);
 	}
 
-	// Here non-protagonist ID gets saved in variable
-	if (_vm->getGameType() == GType_IHNM)
-		warning("sfSwapActors: incomplete implementation");
+	// TODO: where is the protagonist ID used?
 }
 
 // Script function #35 (0x23)

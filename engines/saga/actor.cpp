@@ -3119,7 +3119,9 @@ void Actor::saveState(Common::OutSaveFile *out) {
 void Actor::loadState(Common::InSaveFile *in) {
 	int32 i;
 
-	setProtagState(in->readSint16LE());
+	int16 protagState = in->readSint16LE();
+	if (protagState != 0)
+		setProtagState(protagState);
 
 	for (i = 0; i < _actorsCount; i++) {
 		ActorData *a = _actors[i];
