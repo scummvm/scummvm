@@ -1,7 +1,11 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.10.0 (????-??-??)
+0.11.0 (????-??-??)
+ Broken Sword 1:
+   - Added support for FLAC encoded music.
+
+0.10.0 (2007-06-20)
  New Games:
    - Added Cinematique evo 1 engine. Currently only Future Wars is supported.
    - Added Touche: The Adventures of the Fifth Musketeer engine.
