@@ -236,16 +236,13 @@ void Anim::returnFromCutaway(void) {
 			event.code = kPalEvent;
 			event.op = kEventPalToBlack;
 			event.time = 0;
-			event.duration = 5000; //kNormalFadeDuration;
+			event.duration = kNormalFadeDuration;
 			event.data = cur_pal;
 
 			q_event = _vm->_events->queue(&event);
 		}
 
-		// Note that clearCutaway() sets _cutawayActive to false.
-		// clearCutaway();
-		// TODO: Clearing the cutaway via an event is better, but it breaks things up
-
+		// Clear the cutaway. Note that this sets _cutawayActive to false
 		event.type = kEvTImmediate;
 		event.code = kCutawayEvent;
 		event.op = kEventClearCutaway;
@@ -268,13 +265,22 @@ void Anim::returnFromCutaway(void) {
 
 		q_event = _vm->_events->chain(q_event, &event);		// chain with the other events
 
+		// Draw the scene
+		event.type = kEvTImmediate;
+		event.code = kSceneEvent;
+		event.op = kEventDrawScene;
+		event.time = 0;
+		event.duration = 0;
+
+		q_event = _vm->_events->chain(q_event, &event);		// chain with the other events
+
 		// Handle fade up, if we previously faded down
 		if (_cutAwayFade) {
 			event.type = kEvTImmediate;
 			event.code = kPalEvent;
 			event.op = kEventBlackToPal;
 			event.time = 0;
-			event.duration = 5000; //kNormalFadeDuration;
+			event.duration = kNormalFadeDuration;
 			event.data = saved_pal;
 
 			q_event = _vm->_events->chain(q_event, &event);

@@ -369,6 +369,19 @@ int Events::handleOneShot(Event *event) {
 		break;
 	case kSceneEvent:
 		switch (event->op) {
+		case kEventDrawScene:
+			{
+				Surface *backGroundSurface;
+				BGInfo bgInfo;
+
+				backBuffer = _vm->_gfx->getBackBuffer();
+				backGroundSurface = _vm->_render->getBackGroundSurface();
+				_vm->_scene->getBGInfo(bgInfo);
+				backGroundSurface->blit(bgInfo.bounds, bgInfo.buffer);
+
+				_vm->_scene->draw();
+			}
+			break;
 		case kEventEnd:
 			_vm->_scene->nextScene();
 			return kEvStBreak;
