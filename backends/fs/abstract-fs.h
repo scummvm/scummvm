@@ -89,10 +89,11 @@ public:
 	 * 
 	 * @param list List to put the contents of the directory in.
 	 * @param mode Mode to use while listing the directory.
+	 * @param hidden Whether to include hidden files or not in the results.
 	 * 
 	 * @return true if succesful, false otherwise (e.g. when the directory does not exist).
 	 */
-	virtual bool getChildren(AbstractFSList &list, ListMode mode) const = 0;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const = 0;
 
 	/**
 	 * Returns a human readable path string.

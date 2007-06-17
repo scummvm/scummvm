@@ -67,7 +67,6 @@ class FilesystemNode {
 private:
 	int *_refCount;
 	AbstractFilesystemNode *_realNode;
-
 	FilesystemNode(AbstractFilesystemNode *realNode);
 
 public:
@@ -136,14 +135,14 @@ public:
 	 * that does not represent a directory, false is returned.
 	 * 
 	 * @return true if succesful, false otherwise (e.g. when the directory does not exist).
-	 * @todo Rename this to listChildren or getChildren.
 	 */
-	virtual bool getChildren(FSList &fslist, ListMode mode = kListDirectoriesOnly) const;	
+	virtual bool getChildren(FSList &fslist, ListMode mode = kListDirectoriesOnly, bool hidden = false) const;	
 
 	/**
 	 * Return a human readable string for this node, usable for display (e.g.
 	 * in the GUI code). Do *not* rely on it being usable for anything else,
 	 * like constructing paths!
+	 * 
 	 * @return the display name
 	 */
 	virtual Common::String getDisplayName() const;

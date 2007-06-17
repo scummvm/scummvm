@@ -105,13 +105,13 @@ FilesystemNode FilesystemNode::getChild(const Common::String &n) const {
 	return FilesystemNode(node);
 }
 
-bool FilesystemNode::getChildren(FSList &fslist, ListMode mode) const {
+bool FilesystemNode::getChildren(FSList &fslist, ListMode mode, bool hidden) const {
 	if (!_realNode || !_realNode->isDirectory())
 		return false;
 
 	AbstractFSList tmp;
 	
-	if (!_realNode->getChildren(tmp, mode))
+	if (!_realNode->getChildren(tmp, mode, hidden))
 		return false;
 	
 	fslist.clear();

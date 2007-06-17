@@ -71,7 +71,7 @@ public:
 	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }
 	
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 	
 private:
@@ -162,7 +162,7 @@ AbstractFilesystemNode *POSIXFilesystemNode::getChild(const String &n) const {
 	return new POSIXFilesystemNode(newPath, true);
 }
 
-bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode) const {
+bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
 	
 	DIR *dirp = opendir(_path.c_str());
@@ -173,8 +173,8 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode) con
 
 	// loop over dir entries using readdir
 	while ((dp = readdir(dirp)) != NULL) {
-		// Skip 'invisible' files
-		if (dp->d_name[0] == '.')
+		// Skip 'invisible' files if necessary
+		if (dp->d_name[0] == '.' && !hidden)
 			continue;
 
 		String newPath(_path);
