@@ -60,10 +60,15 @@ WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, 
 	window->fill_color = fillColor;
 	window->text_color = textColor;
 	window->textColumn = 0;
-	window->textRow = 0;
 	window->textColumnOffset = 0;
-	window->textMaxLength = window->width * 8 / 6; // characters are 6 pixels
+	window->textRow = 0;
 	window->scrollY = 0;
+
+	// Characters are 6 pixels
+	if (getGameType() == GType_ELVIRA2)
+		window->textMaxLength = (window->width * 8 - 4) / 6;
+	else
+		window->textMaxLength = window->width * 8 / 6;
 
 	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		clearWindow(window);
