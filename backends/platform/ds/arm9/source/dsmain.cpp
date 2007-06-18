@@ -2312,6 +2312,8 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
+ FIXME: Change this code to make use of base/internal_version.h
+ resp. uses gScummVMVersion from base/version.h
 	consolePrintf("Version 0.10.0SVN ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
