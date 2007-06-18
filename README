@@ -929,14 +929,6 @@ will be scaled to 1280x960 and 1920x1440.
 
 5.4) Hot Keys:
 ---- ---------
-TODO
-TODO: Rework this section to clearly state which hotkeys are implemented in *all*
-TODO  game (and for which backends).
-TODO: It would also be nice to add information about control on devices w/o a keyboard;
-TODO  I.e. document how input on DC, DS, PSP, PS2, PalmOS, WinCE, ... works for each game
-TODO  Or at the very least give points as to were one can read up on these.
-TODO
-
 ScummVM supports various in-game hotkeys. They differ between SCUMM games and
 other games.
 
