@@ -155,6 +155,7 @@ osxsnap: bundle credits
 win32dist: scummvm$(EXEEXT)
 	mkdir -p $(WIN32PATH)
 	strip scummvm.exe -o $(WIN32PATH)/scummvm$(EXEEXT)
+	cp dists/pred.dic $(WIN32PATH)
 	cp gui/themes/modern.ini $(WIN32PATH)
 	cp gui/themes/modern.zip $(WIN32PATH)
 	cp AUTHORS $(WIN32PATH)/AUTHORS.txt
