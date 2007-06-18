@@ -173,8 +173,8 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 	u16* src = (u16 *) buf;
 	
 	if (DS::getKeyboardEnable()) {
-	
-		for (int dy = y; dy < y + h; dy++) {
+		for (int dy = y; dy < y + h; dy++)
+        {
 			u16* dest = bg + (dy << 8) + (x >> 1);
 		
 			DC_FlushRange(src, w << 1);
@@ -185,7 +185,8 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 		}
 	
 	} else {
-		for (int dy = y; dy < y + h; dy++) {
+		for (int dy = y; dy < y + h; dy++)
+        {
 			u16* dest1 = bg + (dy << 8) + (x >> 1);
 			u16* dest2 = bgSub + (dy << 8) + (x >> 1);
 			
@@ -478,16 +479,14 @@ bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
 	
-    size_t imageStrideInBytes = DS::isCpuScalerEnabled() ? DS::getGameWidth() : 512;
-    size_t imageStrideInWords = imageStrideInBytes / 2;
 
 	u16* image = (u16 *) DS::get8BitBackBuffer();
 	for (int y = 0; y <  DS::getGameHeight(); y++)
 	{
-		DC_FlushRange(image + (y * imageStrideInWords), DS::getGameWidth());
+		DC_FlushRange(image + (y << 8), DS::getGameWidth());
 		for (int x = 0; x < DS::getGameWidth() >> 1; x++)
 		{
-			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y * imageStrideInWords + x];
+			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y << 8 + x];
 		}
 	}
 
