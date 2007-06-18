@@ -41,7 +41,7 @@
 #include <sys/resource.h>
 
 #define OSSO_APP_NAME    "scummvm"
-#define OSSO_APP_VERSION "0.9.0CVS"
+#define OSSO_APP_VERSION "0.10.0"
 
 void set_doubling(unsigned char enable) {
   return;

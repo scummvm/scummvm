@@ -28,7 +28,7 @@
 #include <libosso.h>
 
 #define OSSO_APP_NAME    "scummvm"
-#define OSSO_APP_VERSION "0.9.0CVS"
+#define OSSO_APP_VERSION "0.10.0"
 #define OSSO_APP_SERVICE "org.scummvm."OSSO_APP_NAME
 #define OSSO_APP_OBJECT  "/org/scummvm/"OSSO_APP_NAME
 #define OSSO_APP_IFACE   "org.scummvm."OSSO_APP_NAME
