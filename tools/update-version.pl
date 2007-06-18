@@ -35,6 +35,7 @@ my @subs_files = qw(
 	dists/macosx/Info.plist
 	dists/redhat/scummvm.spec
 	dists/scummvm.rc
+	backends/platform/ds/arm9/makefile
 	);
 
 # The following files also contain version data and should possible be modified
