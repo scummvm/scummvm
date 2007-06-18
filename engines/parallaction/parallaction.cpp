@@ -86,8 +86,6 @@ char		_forwardedAnimationNames[20][20];
 uint16		_numForwards = 0;
 char		_soundFile[20];
 
-byte		_mouseHidden = 0;
-
 uint32		_commandFlags = 0;
 uint16		_introSarcData3 = 200;
 uint16		_introSarcData2 = 1;
@@ -106,8 +104,8 @@ Parallaction::Parallaction(OSystem *syst) :
 
 	// FIXME
 	_vm = this;
-
-
+	
+	_mouseHidden = false;
 
 	Common::File::addDefaultDirectory( _gameDataPath );
 
@@ -380,8 +378,8 @@ void Parallaction::runGame() {
 		_keyDown = updateInput();
 
 		debugC(3, kDebugInput, "runGame: input flags (%i, %i, %i, %i)",
-			_mouseHidden == 0,
-			(_engineFlags & kEngineMouse) == 0,
+			!_mouseHidden,
+			(_engineFlags & kEngineBlockInput) == 0,
 			(_engineFlags & kEngineWalking) == 0,
 			(_engineFlags & kEngineChangeLocation) == 0
 		);
@@ -392,7 +390,7 @@ void Parallaction::runGame() {
 		// Skipping input processing when kEngineChangeLocation is set solves the issue. It's
 		// noteworthy that the programmers added this very check in Big Red Adventure's engine,
 		// so it should be ok here in Nippon Safes too.
-		if ((_mouseHidden == 0) && ((_engineFlags & kEngineMouse) == 0) && ((_engineFlags & kEngineWalking) == 0) && ((_engineFlags & kEngineChangeLocation) == 0)) {
+		if ((!_mouseHidden) && ((_engineFlags & kEngineBlockInput) == 0) && ((_engineFlags & kEngineWalking) == 0) && ((_engineFlags & kEngineChangeLocation) == 0)) {
 			InputData *v8 = translateInput();
 			if (v8) processInput(v8);
 		}
@@ -510,14 +508,14 @@ void Parallaction::processInput(InputData *data) {
 
 	case kEvSaveGame:
 		_hoverZone = NULL;
-		changeCursor(kCursorArrow);
 		saveGame();
+		changeCursor(kCursorArrow);
 		break;
 
 	case kEvLoadGame:
 		_hoverZone = NULL;
-		changeCursor(kCursorArrow);
 		loadGame();
+		changeCursor(kCursorArrow);
 		break;
 
 	}
@@ -677,7 +675,10 @@ void Parallaction::waitTime(uint32 t) {
 }
 
 
-
+void Parallaction::showCursor(bool visible) {
+	_mouseHidden = !visible;
+	g_system->showMouse(visible);
+}
 
 //	changes the mouse pointer
 //	index 0 means standard pointer (from pointer.cnv)
@@ -860,13 +861,13 @@ void jobWaitRemoveJob(void *parm, Job *j) {
 
 	debugC(3, kDebugJobs, "jobWaitRemoveJob: count = %i", count);
 
-	_engineFlags |= kEngineMouse;
+	_engineFlags |= kEngineBlockInput;
 
 	count++;
 	if (count == 2) {
 		count = 0;
 		_vm->removeJob(arg);
-		_engineFlags &= ~kEngineMouse;
+		_engineFlags &= ~kEngineBlockInput;
 		j->_finished = 1;
 	}
 

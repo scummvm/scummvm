@@ -110,7 +110,7 @@ enum EngineFlags {
 	kEngineInventory		= (1 << 2),
 	kEngineWalking			= (1 << 3),
 	kEngineChangeLocation	= (1 << 4),
-	kEngineMouse			= (1 << 5),
+	kEngineBlockInput		= (1 << 5),
 	kEngineDragging 		= (1 << 6),
 	kEngineTransformedDonna		= (1 << 7)
 };
@@ -182,7 +182,6 @@ extern char 		_slideText[][40];
 extern uint16 		_introSarcData3;		 // sarcophagus stuff to be saved
 extern uint16 		_introSarcData2;		 // sarcophagus stuff to be saved
 extern char 		_saveData1[];
-extern byte 		_mouseHidden;
 extern uint32 		_commandFlags;
 extern const char 	*_instructionNamesRes[];
 extern const char 	*_commandsNamesRes[];
@@ -311,6 +310,7 @@ public:
 
 	void 		parseLocation(const char *filename);
 	void 		changeCursor(int32 index);
+	void		showCursor(bool visible);
 	void 		changeCharacter(const char *name);
 
 	char   		*parseComment(Script &script);
@@ -397,6 +397,8 @@ protected:		// data
 
 	bool		_skipMenu;
 
+	bool 		_mouseHidden;
+	
 	// input-only
 	InputData	 _input;
 	bool		_actionAfterWalk;  // actived when the character needs to move before taking an action

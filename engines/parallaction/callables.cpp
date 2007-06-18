@@ -187,14 +187,14 @@ void _c_trasformata(void *parm) {
 }
 
 void _c_offMouse(void *parm) {
-	_mouseHidden = 1;
-	_engineFlags |= kEngineMouse;
+	_vm->showCursor(false);
+	_engineFlags |= kEngineBlockInput;
 	return;
 }
 
 void _c_onMouse(void *parm) {
-	_engineFlags &= ~kEngineMouse;
-	_mouseHidden = 0;
+	_engineFlags &= ~kEngineBlockInput;
+	_vm->showCursor(true);
 	return;
 }
 

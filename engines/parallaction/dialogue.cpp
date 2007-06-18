@@ -478,6 +478,8 @@ int16 getHoverAnswer(int16 x, int16 y, Question *q) {
 
 void Parallaction::enterDialogue() {
 
+	showCursor(false);
+	
 	return;
 }
 
@@ -487,6 +489,8 @@ void Parallaction::exitDialogue() {
 
 	refreshInventory(_characterName);
 
+	showCursor(true);
+	
 	return;
 }
 
