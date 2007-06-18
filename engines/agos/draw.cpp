@@ -166,28 +166,29 @@ void AGOSEngine::animateSprites() {
 		_vgaSpriteChanged++;
 	}
 
-	if ((getGameType() == GType_ELVIRA1 && !_variableArray[293]) ||
-		(getGameType() == GType_ELVIRA2 && !_variableArray[71]) &&
-		_wallOn) {
-		_wallOn--;
+	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
+		const uint8 var = (getGameType() == GType_ELVIRA1) ? 293 : 71;
+		if (_wallOn && !_variableArray[var]) {
+			_wallOn--;
 
-		VC10_state state;
-		state.srcPtr  = getBackGround() + 3 * _screenWidth + 3 * 16;
-		state.height = state.draw_height = 127;
-		state.width = state.draw_width = 14;
-		state.y = 0;
-		state.x = 0;
-		state.palette = 0;
-		state.paletteMod = 0;
-		state.flags = kDFNonTrans;
+			VC10_state state;
+			state.srcPtr  = getBackGround() + 3 * _screenWidth + 3 * 16;
+			state.height = state.draw_height = 127;
+			state.width = state.draw_width = 14;
+			state.y = 0;
+			state.x = 0;
+			state.palette = 0;
+			state.paletteMod = 0;
+			state.flags = kDFNonTrans;
 
-		_windowNum = 4;
+			_windowNum = 4;
 
-		_backFlag = 1;
-		drawImage(&state);
-		_backFlag = 0;
+			_backFlag = 1;
+			drawImage(&state);
+			_backFlag = 0;
 
-		_vgaSpriteChanged++;
+			_vgaSpriteChanged++;
+		}
 	}
 
 	if (!_scrollFlag && !_vgaSpriteChanged) {
