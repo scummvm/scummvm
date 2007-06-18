@@ -158,7 +158,6 @@ AGI Games by Sierra:
 
 AGOS Games by Adventuresoft / Horrorsoft:
      Elvira - Mistress of the Dark               [elvira1]
-     Elvira II - The Jaws of Cerberus            [elvira2]
      Simon the Sorcerer 1                        [simon1]
      Simon the Sorcerer 2                        [simon2]
      Simon the Sorcerer's Puzzle Pack
@@ -241,6 +240,7 @@ site and view the compatibility chart.
      Backyard Soccer                             [soccer]
      Blue's ABC Time                             [BluesABCTime]
      Blue's Birthday Adventure                   [BluesBirthday]
+     Elvira II - The Jaws of Cerberus            [elvira2]
      SPY Fox 3: Operation Ozone                  [spyozon]
 
 The following games are based on the SCUMM engine, but NOT supported
@@ -1374,7 +1374,7 @@ filesize -- 1152 seems to be a good value for those kind of soundfiles. Be sure
 to read the encoder documentation before you use other values.
 
 
-7.7.6) Compressing sfx/speech in Simon the Sorcerer and The Feeble Files
+7.7.6) Compressing music/sfx/speech in AGOS games
 ------ -----------------------------------------------------------------
 Use our compress_agos utility from the scummvm-tools package to perform this
 task. You can choose between multiple target formats, but note that you can
@@ -1394,6 +1394,8 @@ enabled.
   compress_agos voices2.wav (For Windows 2CD/4CD version of Feeble)
   compress_agos voices3.wav (For Windows 4CD version of Feeble)
   compress_agos voices4.wav (For Windows 4CD version of Feeble)
+
+  compress_agos Music       (For Windows version of Puzzle Pack)
 
 For Ogg Vorbis add --vorbis to the options, i.e.
 
