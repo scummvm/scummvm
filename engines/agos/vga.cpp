@@ -804,16 +804,19 @@ void AGOSEngine::checkWaitEndTable() {
 }
 
 void AGOSEngine::vc17_waitEnd() {
+	uint16 id = vcReadNextWord();
+
 	VgaSleepStruct *vfs = _waitEndTable;
 	while (vfs->ident)
 		vfs++;
 
-	vfs->ident = vcReadNextWord();
-	vfs->code_ptr = _vcPtr;
-	vfs->sprite_id = _vgaCurSpriteId;
-	vfs->cur_vga_file = _vgaCurZoneNum;
-
-	_vcPtr = (byte *)&_vc_get_out_of_code;
+	if (isSpriteLoaded(id, id / 100)) {
+		vfs->ident = id;
+		vfs->code_ptr = _vcPtr;
+		vfs->sprite_id = _vgaCurSpriteId;
+		vfs->cur_vga_file = _vgaCurZoneNum;
+		_vcPtr = (byte *)&_vc_get_out_of_code;
+	}
 }
 
 void AGOSEngine::vc18_jump() {
