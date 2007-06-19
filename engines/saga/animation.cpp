@@ -86,7 +86,7 @@ void Anim::playCutaway(int cut, bool fade) {
 
 	// Chained cutaway, clean up the previous cutaway
 	if (_cutawayActive) {
-		returnFromCutaway();
+		clearCutaway();
 
 		// This is used because when AM is zapping the child's mother in Benny's chapter, 
 		// there is a cutaway followed by a video. The video needs to start immediately after
