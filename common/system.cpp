@@ -101,3 +101,8 @@ Common::EventManager *OSystem::getEventManager() {
 	return s_eventManager;
 }
 
+void OSystem::clearScreen() {
+	Graphics::Surface *screen = lockScreen();
+	memset(screen->pixels, 0, screen->h * screen->pitch);
+	unlockScreen();
+}

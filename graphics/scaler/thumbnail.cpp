@@ -97,32 +97,32 @@ void createThumbnail(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 ds
  * Copies the current screen contents to a new surface, using RGB565 format.
  * WARNING: surf->free() must be called by the user to avoid leaking.
  *
- * @param surf		the surfce to store the data in it
+ * @param surf		the surface to store the data in it
  */
 static bool grabScreen565(Graphics::Surface *surf) {
-	Graphics::Surface screen;
-	if (!g_system->grabRawScreen(&screen))
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen)
 		return false;
 
-	assert(screen.bytesPerPixel == 1 && screen.pixels != 0);
+	assert(screen->bytesPerPixel == 1 && screen->pixels != 0);
 
 	byte palette[256 * 4];
 	g_system->grabPalette(&palette[0], 0, 256);
 
-	surf->create(screen.w, screen.h, 2);
+	surf->create(screen->w, screen->h, 2);
 
-	for (uint y = 0; y < screen.h; ++y) {
-		for (uint x = 0; x < screen.w; ++x) {
+	for (uint y = 0; y < screen->h; ++y) {
+		for (uint x = 0; x < screen->w; ++x) {
 			byte r, g, b;
-			r = palette[((uint8*)screen.pixels)[y * screen.pitch + x] * 4];
-			g = palette[((uint8*)screen.pixels)[y * screen.pitch + x] * 4 + 1];
-			b = palette[((uint8*)screen.pixels)[y * screen.pitch + x] * 4 + 2];
+			r = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4];
+			g = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4 + 1];
+			b = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4 + 2];
 
 			((uint16*)surf->pixels)[y * surf->w + x] = (((r >> 3) & 0x1F) << 11) | (((g >> 2) & 0x3F) << 5) | ((b >> 3) & 0x1F);
 		}
 	}
 
-	screen.free();
+	g_system->unlockScreen();
 	return true;
 }
 

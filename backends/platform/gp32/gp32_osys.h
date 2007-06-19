@@ -49,6 +49,8 @@ protected:
 	uint16 *_tmpScreen, *_hwScreen;
 	OverlayColor *_overlayBuffer;
 
+	Graphics::Surface _framebuffer;
+
 	int _overlayWidth, _overlayHeight;
 	bool _overlayVisible;
 	uint32 _shakePos;
@@ -111,7 +113,8 @@ public:
 	void grabOverlay(OverlayColor *buf, int pitch);
 	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 
-	bool grabRawScreen(Graphics::Surface *surf);
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 
 	int16 getOverlayHeight();
 	int16 getOverlayWidth();

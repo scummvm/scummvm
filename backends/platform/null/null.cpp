@@ -63,7 +63,8 @@ public:
 	virtual void grabPalette(byte *colors, uint start, uint num);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	virtual void updateScreen();
-	virtual bool grabRawScreen(Graphics::Surface *surf);
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 	virtual void setShakePos(int shakeOffset);
 
 	virtual void showOverlay();
@@ -189,8 +190,11 @@ void OSystem_NULL::copyRectToScreen(const byte *buf, int pitch, int x, int y, in
 void OSystem_NULL::updateScreen() {
 }
 
-bool OSystem_NULL::grabRawScreen(Graphics::Surface *surf) {
-	return false;
+Graphics::Surface *OSystem_NULL::lockScreen() {
+	return 0;
+}
+
+void OSystem_NULL::unlockScreen() {
 }
 
 void OSystem_NULL::setShakePos(int shakeOffset) {

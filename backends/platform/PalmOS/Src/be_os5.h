@@ -110,6 +110,8 @@ private:
 	typedef void (OSystem_PalmOS5::*RendererProc)(RectangleType &r, PointType &p);
 	RendererProc _render;
 
+	Graphics::Surface _framebuffer;
+
 	OverlayColor *_overlayP;
 	WinHandle _overlayH, _workScreenH;
 	int16 *_workScreenP;
@@ -168,7 +170,8 @@ public:
 
 	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	void clearScreen();
-	bool grabRawScreen(Graphics::Surface *surf);
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 
 	void setCursorPalette(const byte *colors, uint start, uint num);
 	void disableCursorPalette(bool disable);

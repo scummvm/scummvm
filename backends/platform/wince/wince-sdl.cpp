@@ -1587,9 +1587,15 @@ void OSystem_WINCE3::internUpdateScreen() {
 	_forceFull = false;
 }
 
-bool OSystem_WINCE3::grabRawScreen(Graphics::Surface *surf) {
+Graphics::Surface *OSystem_WINCE3::lockScreen() {
+	// FIXME: Fingolfing asks: Why is undrawMouse() needed here?
+	// Please document this.
 	undrawMouse();
-	return OSystem_SDL::grabRawScreen(surf);
+	return OSystem_SDL::lockScreen();
+}
+
+void OSystem_WINCE3::unlockScreen() {
+	OSystem_SDL::unlockScreen();
 }
 
 bool OSystem_WINCE3::saveScreenshot(const char *filename) {

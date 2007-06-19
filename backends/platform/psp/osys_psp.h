@@ -62,6 +62,7 @@ protected:
 	bool	_overlayVisible;
 	uint32	_shakePos;
 	
+	Graphics::Surface _framebuffer;
 	
 	bool	_mouseVisible;
 	int	_mouseX, _mouseY;
@@ -101,7 +102,8 @@ public:
 	virtual int16 getHeight();
 	virtual void setPalette(const byte *colors, uint start, uint num);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
-	virtual bool grabRawScreen(Graphics::Surface *surf);
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 	virtual void updateScreen();
 	virtual void setShakePos(int shakeOffset);
 

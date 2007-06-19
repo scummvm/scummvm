@@ -474,8 +474,13 @@ Common::SaveFileManager* OSystem_DS::getSavefileManager()
 	}
 }
 
-bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
-	surf->create(DS::getGameWidth(), DS::getGameHeight(), 1);
+Graphics::Surface *OSystem_DS::lockScreen() {
+	// For now, we create a full temporary screen surface, to which we copy the
+	// the screen content. Later unlockScreen will copy everything back.
+	// Not very nice nor efficient, but at least works, and is not worse
+	// than in the bad old times where we used grabRawScreen + copyRectToScreen.
+	
+	_framebuffer.create(DS::getGameWidth(), DS::getGameHeight(), 1);
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
 	
@@ -486,11 +491,19 @@ bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
 		DC_FlushRange(image + (y << 8), DS::getGameWidth());
 		for (int x = 0; x < DS::getGameWidth() >> 1; x++)
 		{
-			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y << 8 + x];
+			*(((u16 *) (_framebuffer.pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y << 8 + x];
 		}
 	}
 
-	return true;
+	return &_framebuffer;
+}
+
+void OSystem_DS::unlockScreen() {
+	// Copy temp framebuffer back to screen
+	copyRectToScreen((byte *)_framebuffer.pixels, _framebuffer.pitch, 0, 0, _framebuffer.w, _framebuffer.h);
+
+	// Free memory
+	_framebuffer.free(); 
 }
 
 void OSystem_DS::setFocusRectangle(const Common::Rect& rect) {

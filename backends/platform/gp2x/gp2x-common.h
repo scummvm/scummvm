@@ -90,11 +90,8 @@ public:
 	// The screen will not be updated to reflect the new bitmap
 	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h);
 
-	// Copies the screen to a buffer
-	bool grabRawScreen(Graphics::Surface *surf);
-
-	// Clear the screen
-	void clearScreen();
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 
 	// Update the dirty areas of the screen
 	void updateScreen();

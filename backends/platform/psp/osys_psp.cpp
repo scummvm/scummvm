@@ -209,13 +209,18 @@ void OSystem_PSP::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 	}
 }
 
-bool OSystem_PSP::grabRawScreen(Graphics::Surface *surf) {
-	assert(surf);
+Graphics::Surface *OSystem_PSP::lockScreen() {
+	_framebuffer.pixels = _offscreen;
+	_framebuffer.w = _screenWidth;
+	_framebuffer.h = _screenHeight;
+	_framebuffer.pitch = _screenWidth;
+	_framebuffer.bytesPerPixel = 1;
 
-	surf->create(_screenWidth, _screenHeight, 1);
-	memcpy(surf->pixels, _offscreen, _screenWidth * _screenHeight);
-	
-	return true;
+	return &_framebuffer;
+}
+
+void OSystem_PSP::unlockScreen() {
+	// The screen is always completely update anyway, so we don't have to force a full update here.
 }
 
 void OSystem_PSP::updateScreen() {

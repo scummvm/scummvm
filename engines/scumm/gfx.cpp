@@ -1146,12 +1146,11 @@ void ScummEngine::moveScreen(int dx, int dy, int height) {
 	if ((dx == 0 && dy == 0) || height <= 0)
 		return;
 
-	Graphics::Surface screen;
-	assert(_system->grabRawScreen(&screen));
-
-	screen.move(dx, dy, height);
-	_system->copyRectToScreen((byte *)screen.pixels, screen.pitch, 0, 0, screen.w, screen.h);
-	screen.free();
+	Graphics::Surface *screen = _system->lockScreen();
+	if (!screen)
+		return;
+	screen->move(dx, dy, height);
+	_system->unlockScreen();
 }
 
 void ScummEngine_v5::clearFlashlight() {

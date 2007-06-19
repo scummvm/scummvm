@@ -326,7 +326,7 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	}
 
 	_screen->wantAnim(false);
-	_screen->clearScreen();
+	clearScreen();
 }
 
 OSystem_PS2::~OSystem_PS2(void) {
@@ -510,9 +510,12 @@ void OSystem_PS2::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 	_screen->copyScreenRect((const uint8*)buf, pitch, x, y, w, h);
 }
 
-bool OSystem_PS2::grabRawScreen(Graphics::Surface *surf) {
-	_screen->grabScreen(surf);
-	return true;
+Graphics::Surface *OSystem_PS2::lockScreen() {
+	return _screen->lockScreen();
+}
+
+void OSystem_PS2::unlockScreen() {
+	_screen->unlockScreen();
 }
 
 void OSystem_PS2::updateScreen(void) {

@@ -209,14 +209,18 @@ void OSystem_GP32::copyRectToScreen(const byte *src, int pitch, int x, int y, in
 	}
 }
 
-bool OSystem_GP32::grabRawScreen(Graphics::Surface *surf) {
-	assert(surf);
+Graphics::Surface *OSystem_GP32::lockScreen() {
+	_framebuffer.pixels = _gameScreen;
+	_framebuffer.w = _screenWidth;
+	_framebuffer.h = _screenHeight;
+	_framebuffer.pitch = _screenWidth;
+	_framebuffer.bytesPerPixel = 1;
 
-	surf->create(_screenWidth, _screenHeight, 1);
+	return &_framebuffer;
+}
 
-	memcpy(surf->pixels, _gameScreen, _screenWidth * _screenHeight);
-
-	return true;
+void OSystem_GP32::unlockScreen() {
+	// The screen is always completely update anyway, so we don't have to force a full update here.
 }
 
 //TODO: Implement Dirty rect?
