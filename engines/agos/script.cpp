@@ -1000,7 +1000,7 @@ void AGOSEngine::sendSync(uint a) {
 	_lockWord &= ~0x8000;
 }
 
-void AGOSEngine::stopAnimate(uint a) {
+void AGOSEngine::stopAnimate(uint16 a) {
 	uint16 b = to16Wrapper(a);
 	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&b;

@@ -1008,11 +1008,7 @@ void AGOSEngine::animate(uint16 windowNum, uint16 zoneNum, uint16 vgaSpriteId, i
 	else
 		vsp->palette = palette;
 	vsp->id = vgaSpriteId;
-
-	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP)
-		vsp->zoneNum = zoneNum;
-	else
-		vsp->zoneNum = zoneNum = vgaSpriteId / 100;
+	vsp->zoneNum = zoneNum;
 
 	for (;;) {
 		vpe = &_vgaBufferPointers[zoneNum];

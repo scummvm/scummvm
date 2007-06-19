@@ -88,7 +88,7 @@ void AGOSEngine_Simon1::vcStopAnimation(uint zone, uint sprite) {
 
 	vfs = _waitSyncTable;
 	while (vfs->ident != 0) {
-		if (vfs->sprite_id == _vgaCurSpriteId && ((getGameType() == GType_SIMON1) || vfs->cur_vga_file == _vgaCurZoneNum)) {
+		if (vfs->sprite_id == _vgaCurSpriteId && vfs->cur_vga_file == _vgaCurZoneNum) {
 			while (vfs->ident != 0) {
 				memcpy(vfs, vfs + 1, sizeof(VgaSleepStruct));
 				vfs++;
@@ -104,7 +104,7 @@ void AGOSEngine_Simon1::vcStopAnimation(uint zone, uint sprite) {
 
 		vte = _vgaTimerList;
 		while (vte->delay) {
-			if (vte->sprite_id == _vgaCurSpriteId && (getGameType() == GType_SIMON1 || vte->cur_vga_file == _vgaCurZoneNum)) {
+			if (vte->sprite_id == _vgaCurSpriteId && vte->cur_vga_file == _vgaCurZoneNum) {
 				deleteVgaEvent(vte);
 				break;
 			}
@@ -127,8 +127,8 @@ void AGOSEngine::vc60_stopAnimation() {
 		zoneNum = vcReadNextWord();
 		sprite = vcReadNextWord();
 	} else {
-		zoneNum = _vgaCurZoneNum;
 		sprite = vcReadNextWord();
+		zoneNum = sprite / 100;
 	}
 
 	vcStopAnimation(zoneNum, sprite);

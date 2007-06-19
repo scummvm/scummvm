@@ -41,7 +41,7 @@ using Common::File;
 
 namespace AGOS {
 
-void AGOSEngine_Simon1::playSpeech(uint speech_id, uint vgaSpriteId) {
+void AGOSEngine_Simon1::playSpeech(uint16 speech_id, uint16 vgaSpriteId) {
 	if (speech_id == 9999) {
 		if (_subtitles)
 			return;
@@ -59,12 +59,12 @@ void AGOSEngine_Simon1::playSpeech(uint speech_id, uint vgaSpriteId) {
 			stopAnimate(204);
 		}
 		if (vgaSpriteId < 100)
-			stopAnimate(vgaSpriteId + 201);
+			stopAnimate(201 + vgaSpriteId);
 
 		loadVoice(speech_id);
 
 		if (vgaSpriteId < 100)
-			animate(4, 2, vgaSpriteId + 201, 0, 0, 0);
+			animate(4, 2, 201 + vgaSpriteId, 0, 0, 0);
 	}
 }
 

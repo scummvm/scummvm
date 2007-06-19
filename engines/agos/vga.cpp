@@ -215,7 +215,7 @@ bool AGOSEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 void AGOSEngine::dirtyBackGround() {
 	AnimTable *animTable = _screenAnim1;
 	while (animTable->srcPtr) {
-		if (animTable->id == _vgaCurSpriteId && ((getGameType() == GType_SIMON1) || animTable->zoneNum == _vgaCurZoneNum)) {
+		if (animTable->id == _vgaCurSpriteId && animTable->zoneNum == _vgaCurZoneNum) {
 			animTable->windowNum |= 0x8000;
 			break;
 		}
@@ -226,13 +226,8 @@ void AGOSEngine::dirtyBackGround() {
 VgaSprite *AGOSEngine::findCurSprite() {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
-		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
-			if (vsp->id == _vgaCurSpriteId && vsp->zoneNum == _vgaCurZoneNum)
-				break;
-		} else {
-			if (vsp->id == _vgaCurSpriteId)
-				break;
-		}
+		if (vsp->id == _vgaCurSpriteId && vsp->zoneNum == _vgaCurZoneNum)
+			break;
 		vsp++;
 	}
 	return vsp;
@@ -241,13 +236,8 @@ VgaSprite *AGOSEngine::findCurSprite() {
 bool AGOSEngine::isSpriteLoaded(uint16 id, uint16 zoneNum) {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
-		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
-			if (vsp->id == id && vsp->zoneNum == zoneNum)
-				return true;
-		} else {
-			if (vsp->id == id)
-				return true;
-		}
+		if (vsp->id == id && vsp->zoneNum == zoneNum)
+			return true;
 		vsp++;
 	}
 	return false;

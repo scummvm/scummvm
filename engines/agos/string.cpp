@@ -364,16 +364,16 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 		renderString(vgaSpriteId, color, width, height, convertedString);
 	}
 
-	int b = (!getBitFlag(133)) ? 3 : 4;
+	uint16 windowNum = (!getBitFlag(133)) ? 3 : 4;
 
 	x /= 8;
 	if (y < 2)
 		y = 2;
 
 	if (getGameType() == GType_SIMON1)
-		animate(b, 2, vgaSpriteId + 199, x, y, 12);
+		animate(windowNum, 2, 199 + vgaSpriteId, x, y, 12);
 	else
-		animate(b, 2, vgaSpriteId, x, y, 12);
+		animate(windowNum, 2, vgaSpriteId, x, y, 12);
 }
 
 // The Feeble Files specific

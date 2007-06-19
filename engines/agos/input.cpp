@@ -274,28 +274,28 @@ void AGOSEngine::waitForInput() {
 					_verbHitArea = 236;
 
 				if (ha->id == 98) {
-					animate(2, 0, 110, 0, 0, 0);
+					animate(2, 1, 110, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 108) {
-					animate(2, 0, 106, 0, 0, 0);
+					animate(2, 1, 106, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 109) {
-					animate(2, 0, 107, 0, 0, 0);
+					animate(2, 1, 107, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 115) {
-					animate(2, 0, 109, 0, 0, 0);
+					animate(2, 1, 109, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 116) {
-					animate(2, 0, 113, 0, 0, 0);
+					animate(2, 1, 113, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 117) {
-					animate(2, 0, 112, 0, 0, 0);
+					animate(2, 1, 112, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 118) {
-					animate(2, 0, 108, 0, 0, 0);
+					animate(2, 1, 108, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 119) {
-					animate(2, 0, 111, 0, 0, 0);
+					animate(2, 1, 111, 0, 0, 0);
 					waitForSync(34);
 				}
 			}

@@ -672,8 +672,8 @@ protected:
 	void setItemParent(Item *item, Item *parent);
 	void setItemState(Item *item, int value);
 
-	void stopAnimate(uint a);
-	void stopAnimateSimon2(uint a, uint b);
+	void stopAnimate(uint16 a);
+	void stopAnimateSimon2(uint16 a, uint16 b);
 
 	void enableBox(uint hitarea);
 	void disableBox(uint hitarea);
@@ -1491,7 +1491,7 @@ protected:
 	virtual void addArrows(WindowBlock *window, uint8 num);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
-	virtual void playSpeech(uint speech_id, uint vga_sprite_id);
+	virtual void playSpeech(uint16 speech_id, uint16 vga_sprite_id);
 
 	virtual void listSaveGames(char *dst);
 	virtual void userGame(bool load);

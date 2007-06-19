@@ -323,8 +323,8 @@ void AGOSEngine_Simon2::os2_animate() {
 
 void AGOSEngine_Simon2::os2_stopAnimate() {
 	// 99: kill sprite
-	uint a = getVarOrWord();
-	uint b = getVarOrWord();
+	uint16 a = getVarOrWord();
+	uint16 b = getVarOrWord();
 	stopAnimateSimon2(a, b);
 }
 
@@ -469,7 +469,7 @@ void AGOSEngine_Simon2::os2_waitMark() {
 		waitForMark(i);
 }
 
-void AGOSEngine::stopAnimateSimon2(uint a, uint b) {
+void AGOSEngine::stopAnimateSimon2(uint16 a, uint16 b) {
 	uint16 items[2];
 
 	items[0] = to16Wrapper(a);
