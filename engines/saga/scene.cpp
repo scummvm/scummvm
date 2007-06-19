@@ -568,6 +568,8 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	event.time = 0;
 	_vm->_events->queue(&event);
 
+	_chapterPointsChanged = false;
+
 	if ((_vm->getGameType() == GType_IHNM) && (loadSceneParams->chapter != NO_CHAPTER_CHANGE)) {
 		if (loadSceneParams->loadFlag != kLoadBySceneNumber) {
 			error("loadScene wrong usage");

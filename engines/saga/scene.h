@@ -321,6 +321,8 @@ class Scene {
 	void setCurrentMusicTrack(int tr) { _currentMusicTrack = tr; }
 	int getCurrentMusicRepeat() const { return _currentMusicRepeat; }
 	void setCurrentMusicRepeat(int rp) { _currentMusicRepeat = rp; }
+	bool haveChapterPointsChanged() const { return _chapterPointsChanged; }
+	void setChapterPointsChanged(bool cp) { _chapterPointsChanged = cp; }
 
 	void cutawaySkip() {
 		if (_vm->_scene->isInIntro())
@@ -361,6 +363,7 @@ class Scene {
 	int _sceneResourceId;
 	int _currentMusicTrack;
 	int _currentMusicRepeat;
+	bool _chapterPointsChanged;
 	bool _inGame;
 	bool _loadDescription;
 	SceneDescription _sceneDescription;

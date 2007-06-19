@@ -1683,8 +1683,13 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 		} else {
 			_vm->_music->setVolume(-1, 1);
 			_vm->_music->play(_vm->_music->_songTable[param1], param2 ? MUSIC_LOOP : MUSIC_NORMAL);
-			_vm->_scene->setCurrentMusicTrack(param1);
-			_vm->_scene->setCurrentMusicRepeat(param2);
+			if (!_vm->_scene->haveChapterPointsChanged()) {
+				_vm->_scene->setCurrentMusicTrack(param1);
+				_vm->_scene->setCurrentMusicRepeat(param2);
+			} else {
+				// Don't save this music track when saving in IHNM
+				_vm->_scene->setChapterPointsChanged(false);
+			}
 		}
 	}
 }
@@ -1885,6 +1890,7 @@ void Script::sfSetChapterPoints(SCRIPTFUNC_PARAMS) {
 
 	_vm->_ethicsPoints[chapter] = ethics;
 	_vm->_spiritualBarometer = ethics * 256 / barometer;
+	_vm->_scene->setChapterPointsChanged(true);		// don't save this music when saving in IHNM
 }
 
 void Script::sfSetPortraitBgColor(SCRIPTFUNC_PARAMS) {
