@@ -317,6 +317,11 @@ class Scene {
 	void setChapterNumber(int ch) { _chapterNumber = ch; }
 	int getOutsetSceneNumber() const { return _outsetSceneNumber; }
 	int currentSceneResourceId() const { return _sceneResourceId; }
+	int getCurrentMusicTrack() const { return _currentMusicTrack; }
+	void setCurrentMusicTrack(int tr) { _currentMusicTrack = tr; }
+	int getCurrentMusicRepeat() const { return _currentMusicRepeat; }
+	void setCurrentMusicRepeat(int rp) { _currentMusicRepeat = rp; }
+
 	void cutawaySkip() {
 		if (_vm->_scene->isInIntro())
 			_vm->_framesEsc = 2;
@@ -354,6 +359,8 @@ class Scene {
 	int _chapterNumber;
 	int _outsetSceneNumber;
 	int _sceneResourceId;
+	int _currentMusicTrack;
+	int _currentMusicRepeat;
 	bool _inGame;
 	bool _loadDescription;
 	SceneDescription _sceneDescription;

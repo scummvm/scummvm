@@ -478,11 +478,6 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 		endScene();
 	}
 
-	if (sceneParams.sceneDescriptor == -1 && _vm->getGameType() == GType_IHNM) {
-		sceneParams.chapter = 8;
-		sceneParams.sceneDescriptor = 152;
-	}
-
 	loadScene(&sceneParams);
 }
 

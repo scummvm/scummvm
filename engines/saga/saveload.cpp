@@ -195,6 +195,8 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 		out->writeSint32LE(_scene->currentChapterNumber());
 		// Protagonist
 		out->writeSint32LE(_scene->currentProtag());
+		out->writeSint32LE(_scene->getCurrentMusicTrack());
+		out->writeSint32LE(_scene->getCurrentMusicRepeat());
 	}
 
 	// Inset scene
@@ -270,6 +272,10 @@ void SagaEngine::load(const char *fileName) {
 		_scene->setProtag(in->readSint32LE());
 		if (_scene->currentChapterNumber())
 			_scene->changeScene(-2, 0, kTransitionFade, _scene->currentChapterNumber());
+		_scene->setCurrentMusicTrack(in->readSint32LE());
+		_scene->setCurrentMusicRepeat(in->readSint32LE());
+		_music->stop();
+		_music->play(_music->_songTable[_scene->getCurrentMusicTrack()], _scene->getCurrentMusicRepeat() ? MUSIC_LOOP : MUSIC_NORMAL);			
 	}
 
 	// Inset scene

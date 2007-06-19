@@ -574,7 +574,14 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 		_vm->_interface->setMode(kPanelMain);
 	}
 
-	_vm->_scene->changeScene(sceneNumber, entrance, (sceneNumber == ITE_SCENE_ENDCREDIT1) ? kTransitionFade : kTransitionNoFade);
+	if (sceneNumber == -1 && _vm->getGameType() == GType_IHNM) {
+		// TODO: This is used to return back to the character selection screen in IHNM.
+		// However, it seems more than this is needed, AM's speech is wrong and no actors
+		// are shown
+		_vm->_scene->changeScene(154, entrance, kTransitionFade, 8);
+	} else {
+		_vm->_scene->changeScene(sceneNumber, entrance, (sceneNumber == ITE_SCENE_ENDCREDIT1) ? kTransitionFade : kTransitionNoFade);
+	}
 
 	//TODO: placard stuff
 	_pendingVerb = _vm->_script->getVerbType(kVerbNone);
@@ -1676,6 +1683,8 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 		} else {
 			_vm->_music->setVolume(-1, 1);
 			_vm->_music->play(_vm->_music->_songTable[param1], param2 ? MUSIC_LOOP : MUSIC_NORMAL);
+			_vm->_scene->setCurrentMusicTrack(param1);
+			_vm->_scene->setCurrentMusicRepeat(param2);
 		}
 	}
 }
