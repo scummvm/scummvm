@@ -192,9 +192,9 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 	// Surrounding scene
 	out->writeSint32LE(_scene->getOutsetSceneNumber());
 	if (getGameType() != GType_ITE) {
-		out->writeSint16LE(_scene->currentTrack());
+		out->writeSint32LE(_scene->currentChapterNumber());
 		// Protagonist
-		out->writeSint16LE(_scene->currentProtag());
+		out->writeSint32LE(_scene->currentProtag());
 	}
 
 	// Inset scene
@@ -266,8 +266,10 @@ void SagaEngine::load(const char *fileName) {
 	sceneNumber = in->readSint32LE();
 	// Protagonist
 	if (getGameType() != GType_ITE) {
-		_scene->setTrack(in->readSint16LE());
-		_scene->setProtag(in->readSint16LE());
+		_scene->setChapterNumber(in->readSint32LE());
+		_scene->setProtag(in->readSint32LE());
+		if (_scene->currentChapterNumber())
+			_scene->changeScene(-2, 0, kTransitionFade, _scene->currentChapterNumber());
 	}
 
 	// Inset scene
@@ -299,7 +301,16 @@ void SagaEngine::load(const char *fileName) {
 
 	// Protagonist swapping
 	if (getGameType() != GType_ITE) {
-		// TODO 
+		if (_scene->currentProtag() != 0 && _scene->currentChapterNumber() != 6) {
+			ActorData *actor1 = _actor->getFirstActor();
+			ActorData *actor2 = _actor->getActor(_scene->currentProtag());
+			SWAP(actor1->_location, actor2->_location);
+
+			actor2->_flags &= ~kProtagonist;
+			actor1->_flags |= kProtagonist;
+			_actor->_protagonist = _actor->_centerActor = actor1;
+			_scene->setProtag(actor1->_id);
+		}
 	}
 
 	_scene->clearSceneQueue();
