@@ -323,7 +323,8 @@ restart:
 			h = 1;
 
 			if (vsp->image != 0) {
-				const byte *ptr = _curVgaFile2 + vsp->image * 8;
+				VgaPointersEntry *vpe = &_vgaBufferPointers[vsp->zoneNum];
+				const byte *ptr = vpe->vgaFile2 + vsp->image * 8;
 				w = READ_BE_UINT16(ptr + 6) / 8;
 				h = ptr[5];
 			}
@@ -362,7 +363,8 @@ void AGOSEngine::dirtyClipCheck(int16 x, int16 y, int16 w, int16 h) {
 		if (vsp->image == 0)
 			continue;
 
-		const byte *ptr = _curVgaFile2 + vsp->image * 8;
+		VgaPointersEntry *vpe = &_vgaBufferPointers[vsp->zoneNum];
+		const byte *ptr = vpe->vgaFile2 + vsp->image * 8;
 		width = READ_BE_UINT16(ptr + 6) / 8;
 		height = ptr[5];
 
