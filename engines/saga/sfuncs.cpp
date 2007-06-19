@@ -884,8 +884,6 @@ void Script::sfSwapActors(SCRIPTFUNC_PARAMS) {
 		if (_vm->getGameType() == GType_IHNM)
 			_vm->_scene->setProtag(actorId1);
 	}
-
-	// TODO: where is the protagonist ID used?
 }
 
 // Script function #35 (0x23)
