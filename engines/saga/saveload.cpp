@@ -268,9 +268,10 @@ void SagaEngine::load(const char *fileName) {
 	sceneNumber = in->readSint32LE();
 	// Protagonist
 	if (getGameType() != GType_ITE) {
+		int currentChapter = _scene->currentChapterNumber();
 		_scene->setChapterNumber(in->readSint32LE());
 		_scene->setProtag(in->readSint32LE());
-		if (_scene->currentChapterNumber())
+		if (_scene->currentChapterNumber() != currentChapter)
 			_scene->changeScene(-2, 0, kTransitionFade, _scene->currentChapterNumber());
 		_scene->setCurrentMusicTrack(in->readSint32LE());
 		_scene->setCurrentMusicRepeat(in->readSint32LE());
