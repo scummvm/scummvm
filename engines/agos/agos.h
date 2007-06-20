@@ -1541,7 +1541,7 @@ protected:
 	virtual void addArrows(WindowBlock *window, uint8 num);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
-	virtual void playSpeech(uint speech_id, uint vga_sprite_id);
+	virtual void playSpeech(uint16 speech_id, uint16 vga_sprite_id);
 };
 
 class AGOSEngine_Feeble : public AGOSEngine_Simon2 {

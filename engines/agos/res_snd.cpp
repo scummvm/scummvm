@@ -68,7 +68,7 @@ void AGOSEngine_Simon1::playSpeech(uint16 speech_id, uint16 vgaSpriteId) {
 	}
 }
 
-void AGOSEngine_Simon2::playSpeech(uint speech_id, uint vgaSpriteId) {
+void AGOSEngine_Simon2::playSpeech(uint16 speech_id, uint16 vgaSpriteId) {
 	if (speech_id == 0xFFFF) {
 		if (_subtitles)
 			return;
