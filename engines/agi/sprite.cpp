@@ -136,7 +136,7 @@ void SpritesMgr::blitPixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, 
 }
 
 
-int SpritesMgr::blitCel(int x, int y, int spr, ViewCel *c) {
+int SpritesMgr::blitCel(int x, int y, int spr, ViewCel *c, bool agi256_2) {
 	uint8 *p0, *p, *q = NULL, *end;
 	int i, j, t, m, col;
 	int hidden = true;
@@ -162,8 +162,8 @@ int SpritesMgr::blitCel(int x, int y, int spr, ViewCel *c) {
 	for (i = 0; i < c->height; i++) {
 		p = p0;
 		while (*q) {
-			col = (*q & 0xf0) >> 4;
-			for (j = *q & 0x0f; j; j--, p += 1 - 2 * m) {
+			col = agi256_2 ? *q : (*q & 0xf0) >> 4; // Uses whole byte for color info with AGI256-2
+			for (j = agi256_2 ? 1 : *q & 0x0f; j; j--, p += 1 - 2 * m) { // No RLE with AGI256-2
 				if (col != t) {
 					blitPixel(p, end, col, spr, _WIDTH, &hidden);
 				}
@@ -455,7 +455,7 @@ void SpritesMgr::blitSprites(SpriteList& l) {
 		Sprite *s = *iter;
 		objsSaveArea(s);
 		debugC(8, kDebugLevelSprites, "s->v->entry = %d (prio %d)", s->v->entry, s->v->priority);
-		hidden = blitCel(s->xPos, s->yPos, s->v->priority, s->v->celData);
+		hidden = blitCel(s->xPos, s->yPos, s->v->priority, s->v->celData, s->v->viewData->agi256_2);
 		if (s->v->entry == 0) {	/* if ego, update f1 */
 			_vm->setflag(fEgoInvisible, hidden);
 		}
@@ -613,7 +613,7 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 	eraseBoth();
 
 	debugC(4, kDebugLevelSprites, "blit_cel (%d, %d, %d, c)", x, y, pri);
-	blitCel(x1, y1, pri, c);
+	blitCel(x1, y1, pri, c, _vm->_game.views[view].agi256_2);
 
 	/* If margin is 0, 1, 2, or 3, the base of the cel is
 	 * surrounded with a rectangle of the corresponding priority.
@@ -691,7 +691,7 @@ void SpritesMgr::showObj(int n) {
 	s.buffer = (uint8 *)malloc(s.xSize * s.ySize);
 
 	objsSaveArea(&s);
-	blitCel(x1, y1, s.xSize, c);
+	blitCel(x1, y1, s.xSize, c, _vm->_game.views[n].agi256_2);
 	commitBlock(x1, y1, x2, y2);
 	_vm->messageBox(_vm->_game.views[n].descr);
 	objsRestoreArea(&s);
