@@ -2287,6 +2287,22 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 		_activeSpeech.speechBox.left -= _activeSpeech.speechBox.right - _vm->getDisplayWidth() - 10;
 		_activeSpeech.speechBox.right = _vm->getDisplayWidth() - 10;
 	}
+
+	// WORKAROUND for the compact disk in Ellen's chapter
+	// Once Ellen starts saying that "Something is different", bring the compact disk in the
+	// scene. After speaking with AM, the compact disk is visible. She always says this line 
+	// when entering room 59, after speaking with AM, if the compact disk is not picked up yet
+	// Check Script::sfDropObject for the other part of this workaround
+	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 3 &&
+		_vm->_scene->currentSceneNumber() == 59 && _activeSpeech.sampleResourceId == 286) {
+		for (i = 0; i < _objsCount; i++) {
+			if (_objs[i]->_id == 16385) {	// the compact disk
+				_objs[i]->_sceneNumber = 59;
+				break;
+			}
+		}
+	}
+
 }
 
 void Actor::nonActorSpeech(const Common::Rect &box, const char **strings, int stringsCount, int sampleResourceId, int speechFlags) {
