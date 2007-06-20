@@ -412,6 +412,10 @@ int AgiEngine::agiInit() {
 	if (getFeatures() & GF_AGDS)
 		_game.gameFlags |= ID_AGDS;
 
+	// Make the 256 color AGI screen the default AGI screen when AGI256 or AGI256-2 is used
+	if (getFeatures() & (GF_AGI256 | GF_AGI256_2))
+		_game.sbuf = _game.sbuf256c;
+
 	if (_game.gameFlags & ID_AMIGA)
 		report("Amiga padded game detected.\n");
 
@@ -645,7 +649,10 @@ void AgiEngine::initialize() {
 
 	_game.name[0] = '\0';
 
-	_game.sbuf = (uint8 *)calloc(_WIDTH, _HEIGHT);
+	_game.sbufOrig = (uint8 *)calloc(_WIDTH, _HEIGHT * 2); // Allocate space for two AGI screens vertically
+	_game.sbuf16c  = _game.sbufOrig + SBUF16_OFFSET; // Make sbuf16c point to the 16 color (+control line & priority info) AGI screen
+	_game.sbuf256c = _game.sbufOrig + SBUF256_OFFSET; // Make sbuf256c point to the 256 color AGI screen
+	_game.sbuf     = _game.sbuf16c; // Make sbuf point to the 16 color (+control line & priority info) AGI screen by default
 
 	_gfx->initVideo();
 	_sound->initSound();
@@ -673,7 +680,7 @@ AgiEngine::~AgiEngine() {
 	delete _sound;
 	_gfx->deinitVideo();
 	delete _sprites;
-	free(_game.sbuf);
+	free(_game.sbufOrig);
 	_gfx->deinitMachine();
 	delete _rnd;
 	delete _console;

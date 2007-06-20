@@ -398,7 +398,10 @@ GfxMgr::GfxMgr(AgiEngine *vm) : _vm(vm) {
  *                              |
  *  Layer 2:  320x200   ==================  AGI engine screen (console), put_pixel()
  *                              |
- *  Layer 1:  160x168   ==================  AGI screen
+ *  Layer 1:  160x336   ==================  AGI screen
+ *
+ *  Upper half (160x168) of Layer 1 is for the normal 16 color & control line/priority info.
+ *  Lower half (160x168) of Layer 1 is for the 256 color information (Used with AGI256 & AGI256-2).
  */
 
 #define SHAKE_MAG 3

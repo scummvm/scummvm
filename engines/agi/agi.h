@@ -371,7 +371,14 @@ struct AgiGame {
 	char cursorChar;
 	unsigned int colorFg;
 	unsigned int colorBg;
-	uint8 *sbuf;			/**< 160x168 AGI screen buffer */
+#define SBUF16_OFFSET 0
+#define SBUF256_OFFSET ((_WIDTH) * (_HEIGHT))
+#define FROM_SBUF16_TO_SBUF256_OFFSET ((SBUF256_OFFSET) - (SBUF16_OFFSET))
+#define FROM_SBUF256_TO_SBUF16_OFFSET ((SBUF16_OFFSET) - (SBUF256_OFFSET))
+	uint8 *sbufOrig;		/**< Pointer to the 160x336 AGI screen buffer that contains vertically two 160x168 screens (16 color and 256 color). */	
+	uint8 *sbuf16c;			/**< 160x168 16 color (+control line & priority information) AGI screen buffer. Points at sbufOrig + SBUF16_OFFSET. */
+	uint8 *sbuf256c;		/**< 160x168 256 color AGI screen buffer (For AGI256 and AGI256-2 support). Points at sbufOrig + SBUF256_OFFSET. */
+	uint8 *sbuf;			/**< Currently chosen AGI screen buffer (sbuf256c if AGI256 or AGI256-2 is used, otherwise sbuf16c). */	
 
 	/* player command line */
 	AgiWord egoWords[MAX_WORDS];
