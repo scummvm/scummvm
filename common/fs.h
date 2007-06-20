@@ -196,6 +196,32 @@ public:
 	 * Indicates whether this path can be written to or not.
 	 */
 	virtual bool isWritable() const;
+	
+	/**
+	 * Searches recursively for a filename inside the given directories.
+	 * 
+	 * @param results List to put the matches in.
+	 * @param fslist List of directories to search within.
+	 * @param filename Name of the file to look for.
+	 * @param hidden Whether to search hidden files or not. Default: false
+	 * @param exhaustive Whether to continue searching after one match has been found. Default: false
+	 * 
+	 * @return true if matches could be found, false otherwise.
+	 */
+	virtual bool lookupFile(FSList &results, FSList &fslist, Common::String &filename, bool hidden, bool exhaustive) const;
+	
+	/**
+	 * Searches recursively for a filename inside the given directory.
+	 * 
+	 * @param results List to put the matches in.
+	 * @param FilesystemNode Directory to search within.
+	 * @param filename Name of the file to look for.
+	 * @param hidden Whether to search hidden files or not. Default: false
+	 * @param exhaustive Whether to continue searching after one match has been found. Default: false
+	 * 
+	 * @return true if matches could be found, false otherwise.
+	 */
+	virtual bool lookupFile(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const;
 
 protected:
 	/**
@@ -203,6 +229,17 @@ protected:
 	 * deletes the corresponding underlying references.
 	 */
 	void decRefCount();
+	
+	/**
+	 * Searches recursively for a filename inside the given directory.
+	 * 
+	 * @param results List to put the matches in.
+	 * @param FilesystemNode Directory to search within.
+	 * @param filename Name of the file to look for.
+	 * @param hidden Whether to search hidden files or not.
+	 * @param exhaustive Whether to continue searching after one match has been found.
+	 */
+	void lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const;
 };
 
 //} // End of namespace Common

@@ -27,6 +27,43 @@
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs-factory-maker.cpp"
 
+/*
+ * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
+ * Taken from exult/files/listfiles.cc
+ */
+static bool matchString(const char *str, const char *pat) {
+	const char *p = 0;
+	const char *q = 0;
+	
+	for (;;) {
+		switch (*pat) {
+		case '*':
+			p = ++pat;
+			q = str;
+			break;
+
+		default:
+			if (*pat != *str) {
+				if (p) {
+					pat = p;
+					str = ++q;
+					if(!*str)
+						return !*pat;
+					break;
+				}
+				else
+					return false;
+			}
+			// fallthrough
+		case '?':
+			if(!*str)
+				return !*pat;
+			pat++;
+			str++;
+		}
+	}
+}
+
 FilesystemNode::FilesystemNode() {
 	_realNode = 0;
 	_refCount = 0;
@@ -165,4 +202,49 @@ bool FilesystemNode::isWritable() const {
 	if (_realNode == 0)
 		return false;
 	return _realNode->isWritable();
+}
+
+bool FilesystemNode::lookupFile(FSList &results, FSList &fslist, Common::String &filename, bool hidden, bool exhaustive) const
+{
+	for(FSList::iterator entry = fslist.begin(); entry != fslist.end(); ++entry)
+	{
+		if(entry->isDirectory()) {
+			lookupFileRec(results, *entry, filename, hidden, exhaustive);
+		}
+	}
+	
+	//TODO: we would return true even if no matches were found, if the initial results list isn't empty
+	return ((results.size() > 0) ? true : false);
+}
+
+bool FilesystemNode::lookupFile(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const
+{
+	lookupFileRec(results, dir, filename, hidden, exhaustive);
+	
+	//TODO: we would return true even if no matches were found, if the initial results list isn't empty
+	return ((results.size() > 0) ? true : false);
+}
+
+void FilesystemNode::lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const
+{
+	FSList entries;
+	dir.getChildren(entries, FilesystemNode::kListAll, hidden);
+	
+	for(FSList::iterator entry = entries.begin(); entry != entries.end(); ++entry)
+	{
+		if(entry->isDirectory()) {
+			lookupFileRec(results, *entry, filename, hidden, exhaustive);
+		} else {
+			//TODO: here we assume all backends implement the lastPathComponent method. It is currently static,
+			//		so it might be a good idea to include it inside the backend class. This would enforce its
+			//		implementation by all ports.
+			if(matchString(lastPathComponent(entry->getPath()), filename.c_str())) {
+				results.push_back(*entry);
+				
+				if(!exhaustive) {
+					break;
+				}
+			}
+		}
+	}
 }

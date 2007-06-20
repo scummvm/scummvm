@@ -174,8 +174,13 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 	// loop over dir entries using readdir
 	while ((dp = readdir(dirp)) != NULL) {
 		// Skip 'invisible' files if necessary
-		if (dp->d_name[0] == '.' && !hidden)
+		if (dp->d_name[0] == '.' && !hidden) {
 			continue;
+		}
+		// Skip '.' and '..' to avoid cycles
+		if((dp->d_name[0] == '.' && dp->d_name[1] == 0) || (dp->d_name[0] == '.' && dp->d_name[1] == '.')) {
+			continue;
+		}
 
 		String newPath(_path);
 		if (newPath.lastChar() != '/')
