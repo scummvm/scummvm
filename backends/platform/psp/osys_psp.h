@@ -27,6 +27,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "backends/intern.h"
+#include "graphics/surface.h"
 
 #include <SDL.h>
 
