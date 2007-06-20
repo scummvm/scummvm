@@ -815,11 +815,12 @@ void GfxMgr::putPixelsA(int x, int y, int n, uint8 *p) {
 			*(uint16 *)&_agiScreen[x + y * GFX_WIDTH] = q & 0x0f0f;
 		}
 	} else {
+		const uint16 mask = _vm->getFeatures() & (GF_AGI256 | GF_AGI256_2) ? 0xffff : 0x0f0f;
 		for (x *= 2; n--; p++, x += 2) {
 			register uint16 q = ((uint16) * p << 8) | *p;
 			if (_vm->_debug.priority)
 				q >>= 4;
-			*(uint16 *)&_agiScreen[x + y * GFX_WIDTH] = q & 0x0f0f;
+			*(uint16 *)&_agiScreen[x + y * GFX_WIDTH] = q & mask;
 		}
 	}
 }
