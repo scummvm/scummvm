@@ -68,7 +68,7 @@ public:
 		_gfx = gfx;
 	}
 
-	int decodePicture(int, int);
+	int decodePicture(int n, int clear, bool agi256 = false);
 	int unloadPicture(int);
 	void showPic();
 	uint8 *convertV3Pic(uint8 *src, uint32 len);
