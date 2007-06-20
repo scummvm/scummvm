@@ -238,7 +238,7 @@ void OptionsDialog::open() {
 		int speed;
 		int sliderMaxValue = _subSpeedSlider->getMaxValue();
 
-		_subMode = getSubtitleMode(ConfMan.getBool("subtitles", _domain), ConfMan.getBool("speech_mute"));
+		_subMode = getSubtitleMode(ConfMan.getBool("subtitles", _domain), ConfMan.getBool("speech_mute", _domain));
 		_subToggleButton->setLabel(_subModeDesc[_subMode]);
 
 		// Engines that reuse the subtitle speed widget set their own max value.
