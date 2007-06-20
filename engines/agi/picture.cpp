@@ -86,7 +86,7 @@ void PictureMgr::putVirtPixel(int x, int y) {
 	if (x < 0 || y < 0 || x >= _WIDTH || y >= _HEIGHT)
 		return;
 
-	p = &_vm->_game.sbuf[y * _WIDTH + x];
+	p = &_vm->_game.sbuf16c[y * _WIDTH + x];
 
 	if (priOn)
 		*p = (priColour << 4) | (*p & 0x0f);
@@ -281,7 +281,7 @@ INLINE int PictureMgr::isOkFillHere(int x, int y) {
 	if (!scrOn && !priOn)
 		return false;
 
-	p = _vm->_game.sbuf[y * _WIDTH + x];
+	p = _vm->_game.sbuf16c[y * _WIDTH + x];
 
 	if (!priOn && scrOn && scrColour != 15)
 		return (p & 0x0f) == 15;

@@ -117,7 +117,11 @@ void SpritesMgr::blitPixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, 
 		/* Keep control line information visible, but put our
 		 * priority over water (0x30) surface
 		 */
-		*p = (pr < 0x30 ? pr : spr) | col;
+		if (_vm->getFeatures() & (GF_AGI256 | GF_AGI256_2))
+			*(p + FROM_SBUF16_TO_SBUF256_OFFSET) = col; // Write to 256 color buffer
+		else
+			*p = (pr < 0x30 ? pr : spr) | col; // Write to 16 color (+control line/priority info) buffer
+
 		*hidden = false;
 
 		/* Except if our priority is 15, which should never happen
@@ -151,9 +155,9 @@ int SpritesMgr::blitCel(int x, int y, int spr, ViewCel *c) {
 	t = c->transparency;
 	m = c->mirror;
 	spr <<= 4;
-	p0 = &_vm->_game.sbuf[x + y * _WIDTH + m * (c->width - 1)];
+	p0 = &_vm->_game.sbuf16c[x + y * _WIDTH + m * (c->width - 1)];
 
-	end = _vm->_game.sbuf + _WIDTH * _HEIGHT;
+	end = _vm->_game.sbuf16c + _WIDTH * _HEIGHT;
 
 	for (i = 0; i < c->height; i++) {
 		p = p0;
@@ -629,8 +633,8 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 		// don't let box extend below y.
 		if (y3 > y2) y3 = y2;
 
-		p1 = &_vm->_game.sbuf[x1 + y3 * _WIDTH];
-		p2 = &_vm->_game.sbuf[x2 + y3 * _WIDTH];
+		p1 = &_vm->_game.sbuf16c[x1 + y3 * _WIDTH];
+		p2 = &_vm->_game.sbuf16c[x2 + y3 * _WIDTH];
 
 		for (y = y3; y <= y2; y++) {
 			if ((*p1 >> 4) >= 4)
@@ -642,8 +646,8 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 		}
 
 		debugC(4, kDebugLevelSprites, "pri box: %d %d %d %d (%d)", x1, y3, x2, y2, mar);
-		p1 = &_vm->_game.sbuf[x1 + y3 * _WIDTH];
-		p2 = &_vm->_game.sbuf[x1 + y2 * _WIDTH];
+		p1 = &_vm->_game.sbuf16c[x1 + y3 * _WIDTH];
+		p2 = &_vm->_game.sbuf16c[x1 + y2 * _WIDTH];
 		for (x = x1; x <= x2; x++) {
 			if ((*p1 >> 4) >= 4)
 				*p1 = (mar << 4) | (*p1 & 0x0f);
