@@ -304,7 +304,7 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 	lettersPerRowJustified = stringLength / (stringLength / lettersPerRow + 1) + 1;
 
 	talkDelay = (stringLength + 3) / 3;
-	if ((getGameType() == GType_SIMON1) && (getFeatures() & GF_TALKIE)) {
+	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE)) {
 		if (_variableArray[141] == 0)
 			_variableArray[141] = 9;
 		_variableArray[85] = _variableArray[141] * talkDelay;

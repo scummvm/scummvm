@@ -574,7 +574,7 @@ protected:
 	void setupStringTable(byte *mem, int num);
 	void setupLocalStringTable(byte *mem, int num);
 	void readGamePcText(Common::SeekableReadStream *in);
-	void readItemChildren(Common::SeekableReadStream *in, Item *item, uint tmp);
+	virtual void readItemChildren(Common::SeekableReadStream *in, Item *item, uint tmp);
 	void readItemFromGamePc(Common::SeekableReadStream *in, Item *item);
 	void loadGamePcFile();
 	void readGamePcFile(Common::SeekableReadStream *in);
@@ -1368,6 +1368,8 @@ protected:
 	};
 
 	const OpcodeEntryElvira2 *_opcodesElvira2;
+
+	virtual void readItemChildren(Common::SeekableReadStream *in, Item *item, uint tmp);
 
 	virtual bool loadGame(const char *filename, bool restartMode = false);
 	virtual bool saveGame(uint slot, const char *caption);
