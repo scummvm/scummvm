@@ -791,7 +791,7 @@ public:
 	//@{
 
 	/**
-	 * Returh the audio mixer. For more information, refer to the
+	 * Return the audio mixer. For more information, refer to the
 	 * Audio::Mixer documentation.
 	 */
 	virtual Audio::Mixer *getMixer() = 0;
