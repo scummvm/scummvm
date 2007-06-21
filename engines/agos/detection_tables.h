@@ -466,6 +466,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE
 	},
 
+	// Elvira 2 - Italian DOS Floppy
+	{
+		{
+			"elvira2",
+			"Floppy",
+
+			{
+	{ "gamepc",		GAME_BASEFILE,	"09a3f1087f2977ff462ad2417bde0a5c", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9", -1},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", -1},
+	{ "start",		GAME_RESTFILE,	"016107aced82d0cc5d758a9fba716270", -1},
+	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7", -1},
+	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_ELVIRA2,
+		GID_ELVIRA2,
+		GF_OLD_BUNDLE
+	},
+
 	// Elvira 2 - Spanish DOS Floppy
 	{
 		{
