@@ -45,15 +45,17 @@ void AGOSEngine_Waxworks::setupVideoOpcodes(VgaOpcodeProc *op) {
 	op[63] = &AGOSEngine::vc63_fastFadeIn;
 }
 
-void AGOSEngine::vcStopAnimation(uint zone, uint sprite) {
-	uint16 old_sprite_id;
+void AGOSEngine::vcStopAnimation(uint16 zone, uint16 sprite) {
+	uint16 oldCurSpriteId, oldCurZoneNum;
 	VgaSprite *vsp;
 	VgaTimerEntry *vte;
 	const byte *vcPtrOrg;
 
-	old_sprite_id = _vgaCurSpriteId;
+	oldCurSpriteId = _vgaCurSpriteId;
+	oldCurZoneNum = _vgaCurZoneNum;
 	vcPtrOrg = _vcPtr;
 
+	_vgaCurZoneNum = zone;
 	_vgaCurSpriteId = sprite;
 
 	vsp = findCurSprite();
@@ -62,7 +64,7 @@ void AGOSEngine::vcStopAnimation(uint zone, uint sprite) {
 
 		vte = _vgaTimerList;
 		while (vte->delay) {
-			if (vte->sprite_id == _vgaCurSpriteId) {
+			if (vte->sprite_id == _vgaCurSpriteId && vte->cur_vga_file == _vgaCurZoneNum) {
 				deleteVgaEvent(vte);
 				break;
 			}
@@ -70,19 +72,20 @@ void AGOSEngine::vcStopAnimation(uint zone, uint sprite) {
 		}
 	}
 
-	_vgaCurSpriteId = old_sprite_id;
+	_vgaCurZoneNum = oldCurZoneNum;
+	_vgaCurSpriteId = oldCurSpriteId;
 	_vcPtr = vcPtrOrg;
 }
 
-void AGOSEngine_Simon1::vcStopAnimation(uint zone, uint sprite) {
-	uint16 old_sprite_id, old_cur_file_id;
+void AGOSEngine_Simon1::vcStopAnimation(uint16 zone, uint16 sprite) {
+	uint16 oldCurSpriteId, oldCurZoneNum;
 	VgaSleepStruct *vfs;
 	VgaSprite *vsp;
 	VgaTimerEntry *vte;
 	const byte *vcPtrOrg;
 
-	old_sprite_id = _vgaCurSpriteId;
-	old_cur_file_id = _vgaCurZoneNum;
+	oldCurSpriteId = _vgaCurSpriteId;
+	oldCurZoneNum = _vgaCurZoneNum;
 	vcPtrOrg = _vcPtr;
 
 	_vgaCurZoneNum = zone;
@@ -114,8 +117,8 @@ void AGOSEngine_Simon1::vcStopAnimation(uint zone, uint sprite) {
 		}
 	}
 
-	_vgaCurZoneNum = old_cur_file_id;
-	_vgaCurSpriteId = old_sprite_id;
+	_vgaCurZoneNum = oldCurZoneNum;
+	_vgaCurSpriteId = oldCurSpriteId;
 	_vcPtr = vcPtrOrg;
 }
 

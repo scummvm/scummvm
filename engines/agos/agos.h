@@ -1213,7 +1213,7 @@ protected:
 	void fastFadeIn();
 	void slowFadeIn();
 
-	virtual void vcStopAnimation(uint zone, uint sprite);
+	virtual void vcStopAnimation(uint16 zone, uint16 sprite);
 
 	bool confirmOverWrite(WindowBlock *window);
 	int16 matchSaveGame(const char *name, uint16 max);
@@ -1499,7 +1499,7 @@ protected:
 
 	virtual void playMusic(uint16 music, uint16 track);
 
-	virtual void vcStopAnimation(uint zone, uint sprite);
+	virtual void vcStopAnimation(uint16 zone, uint16 sprite);
 };
 
 class AGOSEngine_Simon2 : public AGOSEngine_Simon1 {
