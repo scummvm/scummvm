@@ -45,7 +45,7 @@ int SagaEngine::processInput() {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.flags == Common::KBD_CTRL) {
-				if (event.kbd.keycode == 'd')
+				if (event.kbd.keycode == Common::KEYCODE_d)
 					_console->attach();
 			}
 			if (_interface->_textInput || _interface->_statusTextInput) {
@@ -54,64 +54,64 @@ int SagaEngine::processInput() {
 			}
 
 			switch (event.kbd.keycode) {
-			case '#':
-			case '`':
-			case '~':
+			case Common::KEYCODE_HASH:
+			case Common::KEYCODE_BACKQUOTE:
+			case '~': // Has no KEYCODE constant
 				_console->attach();
 				break;
-			case 'r':
+			case Common::KEYCODE_r:
 				_interface->draw();
 				break;
 
 #if 0
-			case 269:
-			case 270:
-			case 273:
-			case 274:
-			case 275:
-			case 276:
+			case Common::KEYCODE_KP_MINUS:
+			case Common::KEYCODE_KP_PLUS:
+			case Common::KEYCODE_UP:
+			case Common::KEYCODE_DOWN:
+			case Common::KEYCODE_RIGHT:
+			case Common::KEYCODE_LEFT:
 				if (_vm->_scene->getFlags() & kSceneFlagISO) {
-					_vm->_isoMap->_viewDiff += (event.kbd.keycode == 270) - (event.kbd.keycode == 269);
-					_vm->_isoMap->_viewScroll.y += (_vm->_isoMap->_viewDiff * (event.kbd.keycode == 274) - _vm->_isoMap->_viewDiff * (event.kbd.keycode == 273));
-					_vm->_isoMap->_viewScroll.x += (_vm->_isoMap->_viewDiff * (event.kbd.keycode == 275) - _vm->_isoMap->_viewDiff * (event.kbd.keycode == 276));
+					_vm->_isoMap->_viewDiff += (event.kbd.keycode == Common::KEYCODE_KP_PLUS) - (event.kbd.keycode == Common::KEYCODE_KP_MINUS);
+					_vm->_isoMap->_viewScroll.y += (_vm->_isoMap->_viewDiff * (event.kbd.keycode == Common::KEYCODE_DOWN) - _vm->_isoMap->_viewDiff * (event.kbd.keycode == Common::KEYCODE_UP));
+					_vm->_isoMap->_viewScroll.x += (_vm->_isoMap->_viewDiff * (event.kbd.keycode == Common::KEYCODE_RIGHT) - _vm->_isoMap->_viewDiff * (event.kbd.keycode == Common::KEYCODE_LEFT));
 				}
 				break;
 #endif
-			case 282: // F1
+			case Common::KEYCODE_F1:
 				_render->toggleFlag(RF_SHOW_FPS);
 				_actor->_handleActionDiv = (_actor->_handleActionDiv == 15) ? 50 : 15;
 				break;
-			case 283: // F2
+			case Common::KEYCODE_F2:
 				_render->toggleFlag(RF_PALETTE_TEST);
 				break;
-			case 284: // F3
+			case Common::KEYCODE_F3:
 				_render->toggleFlag(RF_TEXT_TEST);
 				break;
-			case 285: // F4
+			case Common::KEYCODE_F4:
 				_render->toggleFlag(RF_OBJECTMAP_TEST);
 				break;
-			case 286: // F5
+			case Common::KEYCODE_F5:
 				if (_interface->getSaveReminderState() > 0)
 					_interface->setMode(kPanelOption);
 				break;
-			case 287: // F6
+			case Common::KEYCODE_F6:
 				_render->toggleFlag(RF_ACTOR_PATH_TEST);
 				break;
-			case 288: // F7
+			case Common::KEYCODE_F7:
 				//_actor->frameTest();
 				break;
-			case 289: // F8
+			case Common::KEYCODE_F8:
 				break;
-			case 290: // F9
+			case Common::KEYCODE_F9:
 				_interface->keyBoss();
 				break;
 
 			// Actual game keys
-			case 32: // space
+			case Common::KEYCODE_SPACE:
 				_actor->abortSpeech();
 				break;
-			case 19:  // pause
-			case 'z':
+			case Common::KEYCODE_PAUSE:
+			case Common::KEYCODE_z:
 				_render->toggleFlag(RF_RENDERPAUSE);
 				break;
 			default:
