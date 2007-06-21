@@ -406,7 +406,7 @@ void AGOSEngine_Simon1::os1_screenTextMsg() {
 
 void AGOSEngine_Simon1::os1_playEffect() {
 	// 163: play sound
-	uint soundId = getVarOrWord();
+	uint16 soundId = getVarOrWord();
 
 	if (getGameId() == GID_SIMON1DOS)
 		playSting(soundId);

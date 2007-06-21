@@ -202,11 +202,9 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_litBoxFlag = 0;
 	_mortalFlag = 0;
 	_displayScreen = false;
-	_updateScreen = false;
 	_syncFlag2 = 0;
 	_inCallBack = 0;
 	_cepeFlag = 0;
-	_copyPartialMode = 0;
 	_fastMode = 0;
 	
 	_backFlag = 0;

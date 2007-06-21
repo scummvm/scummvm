@@ -351,7 +351,7 @@ void AGOSEngine_Elvira2::setSRExit(Item *i, int n, int d, uint16 s) {
 }
 
 // Waxworks specific
-bool AGOSEngine::loadRoomItems(uint item) {
+bool AGOSEngine::loadRoomItems(uint16 item) {
 	byte *p;
 	uint i, min_num, max_num;
 	char filename[30];

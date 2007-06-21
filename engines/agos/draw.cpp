@@ -36,7 +36,7 @@ namespace AGOS {
 
 byte *AGOSEngine::getBackBuf() {
 	_dxSurfacePitch = _screenWidth;
-	return _useBackGround ? _backGroundBuf : _backBuf;
+	return _backBuf;
 }
 
 byte *AGOSEngine::getBackGround() {

@@ -111,7 +111,7 @@ void AGOSEngine::vc45_setWindowPalette() {
 	}
 }
 
-void AGOSEngine::setPaletteSlot(uint srcOffs, uint dstOffs) {
+void AGOSEngine::setPaletteSlot(uint16 srcOffs, uint8 dstOffs) {
 	byte *offs, *palptr, *src;
 	uint16 num;
 
@@ -135,17 +135,17 @@ void AGOSEngine::setPaletteSlot(uint srcOffs, uint dstOffs) {
 }
 
 void AGOSEngine::vc46_setPaletteSlot1() {
-	uint srcOffs = vcReadNextWord();
+	uint16 srcOffs = vcReadNextWord();
 	setPaletteSlot(srcOffs, 1);
 }
 
 void AGOSEngine::vc47_setPaletteSlot2() {
-	uint srcOffs = vcReadNextWord();
+	uint16 srcOffs = vcReadNextWord();
 	setPaletteSlot(srcOffs, 2);
 }
 
 void AGOSEngine::vc48_setPaletteSlot3() {
-	uint srcOffs = vcReadNextWord();
+	uint16 srcOffs = vcReadNextWord();
 	setPaletteSlot(srcOffs, 3);
 }
 

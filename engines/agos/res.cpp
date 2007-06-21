@@ -644,7 +644,7 @@ bool AGOSEngine::decrunchFile(byte *src, byte *dst, uint32 size) {
 #undef SD_TYPE_LITERAL
 #undef SD_TYPE_MATCH
 
-void AGOSEngine::loadVGABeardFile(uint id) {
+void AGOSEngine::loadVGABeardFile(uint16 id) {
 	uint32 offs, size;
 
 	if (getFeatures() & GF_OLD_BUNDLE) {
@@ -688,7 +688,7 @@ void AGOSEngine::loadVGABeardFile(uint id) {
 	}
 }
 
-void AGOSEngine::loadVGAVideoFile(uint id, uint type) {
+void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type) {
 	File in;
 	char filename[15];
 	byte *dst;

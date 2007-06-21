@@ -303,7 +303,7 @@ void AGOSEngine_Feeble::executeOpcode(int opcode) {
 
 void AGOSEngine_Feeble::off_chance() {
 	// 23
-	uint a = getVarOrWord();
+	uint16 a = getVarOrWord();
 
 	if (a == 0) {
 		setScriptCondition(false);
@@ -315,7 +315,7 @@ void AGOSEngine_Feeble::off_chance() {
 		return;
 	}
 
-	if ((uint)_rnd.getRandomNumber(99) < a)
+	if (_rnd.getRandomNumber(99) < a)
 		setScriptCondition(true);
 	else
 		setScriptCondition(false);
@@ -439,7 +439,7 @@ void AGOSEngine_Feeble::off_listSaveGames() {
 
 void AGOSEngine_Feeble::off_checkCD() {
 	// 135: switch CD
-	uint disc = readVariable(97);
+	uint16 disc = readVariable(97);
 
 	if (!strcmp(getExtra(), "4CD")) {
 		_sound->switchVoiceFile(gss, disc);
@@ -624,10 +624,10 @@ void AGOSEngine_Feeble::off_restartClock() {
 
 void AGOSEngine_Feeble::off_setColour() {
 	// 195: set palette colour
-	uint c = getVarOrByte() * 4;
-	uint r = getVarOrByte();
-	uint g = getVarOrByte();
-	uint b = getVarOrByte();
+	uint16 c = getVarOrByte() * 4;
+	uint8 r = getVarOrByte();
+	uint8 g = getVarOrByte();
+	uint8 b = getVarOrByte();
 
 	_displayPalette[c + 0] = r;
 	_displayPalette[c + 1] = g;
@@ -638,25 +638,25 @@ void AGOSEngine_Feeble::off_setColour() {
 
 void AGOSEngine_Feeble::off_b3Set() {
 	// 196: set bit3
-	uint bit = getVarOrByte();
+	uint8 bit = getVarOrByte();
 	_bitArrayThree[bit / 16] |= (1 << (bit & 15));
 }
 
 void AGOSEngine_Feeble::off_b3Clear() {
 	// 197: clear bit3
-	uint bit = getVarOrByte();
+	uint8 bit = getVarOrByte();
 	_bitArrayThree[bit / 16] &= ~(1 << (bit & 15));
 }
 
 void AGOSEngine_Feeble::off_b3Zero() {
 	// 198: is bit3 clear
-	uint bit = getVarOrByte();
+	uint8 bit = getVarOrByte();
 	setScriptCondition((_bitArrayThree[bit / 16] & (1 << (bit & 15))) == 0);
 }
 
 void AGOSEngine_Feeble::off_b3NotZero() {
 	// 199: is bit3 set
-	uint bit = getVarOrByte();
+	uint8 bit = getVarOrByte();
 	setScriptCondition((_bitArrayThree[bit / 16] & (1 << (bit & 15))) != 0);
 }
 

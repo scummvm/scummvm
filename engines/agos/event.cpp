@@ -40,7 +40,7 @@
 
 namespace AGOS {
 
-void AGOSEngine::addTimeEvent(uint timeout, uint subroutine_id) {
+void AGOSEngine::addTimeEvent(uint16 timeout, uint16 subroutine_id) {
 	TimeEvent *te = (TimeEvent *)malloc(sizeof(TimeEvent)), *first, *last = NULL;
 	time_t cur_time;
 

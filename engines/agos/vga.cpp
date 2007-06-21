@@ -1123,9 +1123,7 @@ void AGOSEngine::vc34_setMouseOff() {
 	_leftButtonDown = 0;
 }
 
-void AGOSEngine::clearVideoBackGround(uint num, uint color) {
-	debug(0, "clearVideoBackGround: num %d color %d", num, color);
-
+void AGOSEngine::clearVideoBackGround(uint16 num, uint16 color) {
 	const uint16 *vlut = &_videoWindows[num * 4];
 	byte *dst = getBackGround() + vlut[0] * 16 + (vlut[1] * (vlut[2] * 16));
 
@@ -1135,7 +1133,7 @@ void AGOSEngine::clearVideoBackGround(uint num, uint color) {
 	}
 }
 
-void AGOSEngine::clearVideoWindow(uint num, uint color) {
+void AGOSEngine::clearVideoWindow(uint16 num, uint16 color) {
 	if (getGameType() == GType_ELVIRA1) {
 		if (num == 2 || num == 6)
 			return;
@@ -1147,13 +1145,11 @@ void AGOSEngine::clearVideoWindow(uint num, uint color) {
 			return;
 	}
 
-	debug(0, "clearVideoWindow: num %d color %d", num, color);
-
 	if (getGameType() == GType_SIMON2) {
 		const uint16 *vlut = &_videoWindows[num * 4];
-		uint xoffs = vlut[0] * 16;
-		uint yoffs = vlut[1];
-		uint dstWidth = _videoWindows[18] * 16;
+		uint16 xoffs = vlut[0] * 16;
+		uint16 yoffs = vlut[1];
+		uint16 dstWidth = _videoWindows[18] * 16;
 		byte *dst =  _window4BackScn + xoffs + yoffs * dstWidth;
 
 		setMoveRect(0, 0, vlut[2] * 16, vlut[3]);
@@ -1171,9 +1167,9 @@ void AGOSEngine::clearVideoWindow(uint num, uint color) {
 			 _system->unlockScreen();
 		} else if (num == 4) {
 			const uint16 *vlut = &_videoWindows[num * 4];
-			uint xoffs = (vlut[0] - _videoWindows[16]) * 16;
-			uint yoffs = (vlut[1] - _videoWindows[17]);
-			uint dstWidth = _videoWindows[18] * 16;
+			uint16 xoffs = (vlut[0] - _videoWindows[16]) * 16;
+			uint16 yoffs = (vlut[1] - _videoWindows[17]);
+			uint16 dstWidth = _videoWindows[18] * 16;
 			byte *dst =  _window4BackScn + xoffs + yoffs * dstWidth;
 
 			setMoveRect(0, 0, vlut[2] * 16, vlut[3]);

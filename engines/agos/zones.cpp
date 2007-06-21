@@ -44,7 +44,7 @@ void AGOSEngine::unfreezeBottom() {
 	_vgaFrozenBase = _vgaRealBase;
 }
 
-void AGOSEngine::loadZone(uint zoneNum) {
+void AGOSEngine::loadZone(uint16 zoneNum) {
 	VgaPointersEntry *vpe;
 
 	CHECK_BOUNDS(zoneNum, _vgaBufferPointers);

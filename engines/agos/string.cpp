@@ -32,7 +32,7 @@ using Common::File;
 
 namespace AGOS {
 
-const byte *AGOSEngine::getStringPtrByID(uint stringId) {
+const byte *AGOSEngine::getStringPtrByID(uint16 stringId) {
 	const byte *string_ptr;
 	byte *dst;
 
@@ -49,7 +49,7 @@ const byte *AGOSEngine::getStringPtrByID(uint stringId) {
 	return dst;
 }
 
-const byte *AGOSEngine::getLocalStringByID(uint stringId) {
+const byte *AGOSEngine::getLocalStringByID(uint16 stringId) {
 	if (stringId < _stringIdLocalMin || stringId >= _stringIdLocalMax) {
 		loadTextIntoMem(stringId);
 	}
@@ -140,7 +140,7 @@ uint AGOSEngine::loadTextFile_gme(const char *filename, byte *dst) {
 	return size;
 }
 
-void AGOSEngine::loadTextIntoMem(uint stringId) {
+void AGOSEngine::loadTextIntoMem(uint16 stringId) {
 	byte *p;
 	char filename[30];
 	int i;

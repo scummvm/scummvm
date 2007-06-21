@@ -156,7 +156,7 @@ void AGOSEngine::o_gtf() {
 
 void AGOSEngine::o_chance() {
 	// 23: chance
-	uint a = getVarOrWord();
+	int16 a = getVarOrWord();
 
 	if (a == 0) {
 		setScriptCondition(false);
@@ -173,7 +173,7 @@ void AGOSEngine::o_chance() {
 	if (a <= 0) {
 		_chanceModifier = 0;
 		setScriptCondition(false);
-	} else if ((uint)_rnd.getRandomNumber(99) < a) {
+	} else if ((int16)_rnd.getRandomNumber(99) < a) {
 		if (_chanceModifier <= 0)
 			_chanceModifier -= 5;
 		else
@@ -410,7 +410,7 @@ void AGOSEngine::o_process() {
 
 void AGOSEngine::o_when() {
 	// 76: add timeout
-	uint timeout = getVarOrWord();
+	uint16 timeout = getVarOrWord();
 	addTimeEvent(timeout, getVarOrWord());
 }
 
@@ -894,7 +894,7 @@ uint AGOSEngine::getNextVarContents() {
 	return (uint16)readVariable(getVarWrapper());
 }
 
-uint AGOSEngine::readVariable(uint variable) {
+uint AGOSEngine::readVariable(uint16 variable) {
 	if (variable >= _numVars)
 		error("readVariable: Variable %d out of range", variable);
 
@@ -914,7 +914,7 @@ void AGOSEngine::writeNextVarContents(uint16 contents) {
 	writeVariable(getVarWrapper(), contents);
 }
 
-void AGOSEngine::writeVariable(uint variable, uint16 contents) {
+void AGOSEngine::writeVariable(uint16 variable, uint16 contents) {
 	if (variable >= _numVars)
 		error("writeVariable: Variable %d out of range", variable);
 
@@ -1009,7 +1009,7 @@ void AGOSEngine::stopAnimate(uint16 a) {
 }
 
 void AGOSEngine::waitForSync(uint a) {
-	const uint maxCount = (getGameType() == GType_SIMON1) ? 500 : 1000;
+	const uint maxCount = (getGameType() == GType_SIMON1) ? 1000 : 2500;
 
 	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE)) {
 		if (a != 200) {

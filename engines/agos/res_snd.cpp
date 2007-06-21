@@ -120,7 +120,7 @@ void AGOSEngine::skipSpeech() {
 	}
 }
 
-void AGOSEngine::loadMusic(uint music) {
+void AGOSEngine::loadMusic(uint16 music) {
 	char buf[4];
 
 	stopMusic();
@@ -139,7 +139,7 @@ void AGOSEngine::loadMusic(uint music) {
 	_nextMusicToPlay = -1;
 }
 
-void AGOSEngine::playModule(uint music) {
+void AGOSEngine::playModule(uint16 music) {
 	char filename[15];
 	File f;
 
@@ -265,7 +265,7 @@ void AGOSEngine::stopMusic() {
 	_mixer->stopHandle(_modHandle);
 }
 
-void AGOSEngine::playSting(uint a) {
+void AGOSEngine::playSting(uint16 soundId) {
 	if (!_midi._enable_sfx)
 		return;
 
@@ -279,13 +279,13 @@ void AGOSEngine::playSting(uint a) {
 	if (!mus_file.isOpen())
 		error("playSting: Can't load sound effect from '%s'", filename);
 
-	mus_file.seek(a * 2, SEEK_SET);
+	mus_file.seek(soundId * 2, SEEK_SET);
 	mus_offset = mus_file.readUint16LE();
 	if (mus_file.ioFailed())
-		error("playSting: Can't read sting %d offset", a);
+		error("playSting: Can't read sting %d offset", soundId);
 
 	mus_file.seek(mus_offset, SEEK_SET);
-	_midi.loadSMF(&mus_file, a, true);
+	_midi.loadSMF(&mus_file, soundId, true);
 	_midi.startTrack(0);
 }
 
@@ -301,7 +301,7 @@ static const byte elvira1_soundTable[100] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-bool AGOSEngine::loadVGASoundFile(uint id, uint type) {
+bool AGOSEngine::loadVGASoundFile(uint16 id, uint8 type) {
 	File in;
 	char filename[15];
 	byte *dst;
