@@ -265,7 +265,7 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 				return true;
 
 			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = ev.key.keysym.sym;
+			event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
 			return true;
@@ -278,7 +278,7 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 				return true;
 
 			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = ev.key.keysym.sym;
+			event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 
@@ -337,19 +337,19 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 				event.type = Common::EVENT_KEYDOWN;
 				switch (ev.jbutton.button) {
 				case JOY_BUT_ESCAPE:
-					event.kbd.keycode = SDLK_ESCAPE;
+					event.kbd.keycode = Common::KEYCODE_ESCAPE;
 					event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
 					break;
 				case JOY_BUT_PERIOD:
-					event.kbd.keycode = SDLK_PERIOD;
+					event.kbd.keycode = Common::KEYCODE_PERIOD;
 					event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
 					break;
 				case JOY_BUT_SPACE:
-					event.kbd.keycode = SDLK_SPACE;
+					event.kbd.keycode = Common::KEYCODE_SPACE;
 					event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
 					break;
 				case JOY_BUT_F5:
-					event.kbd.keycode = SDLK_F5;
+					event.kbd.keycode = Common::KEYCODE_F5;
 					event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 					break;
 				}
@@ -367,19 +367,19 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 				event.type = Common::EVENT_KEYUP;
 				switch (ev.jbutton.button) {
 				case JOY_BUT_ESCAPE:
-					event.kbd.keycode = SDLK_ESCAPE;
+					event.kbd.keycode = Common::KEYCODE_ESCAPE;
 					event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
 					break;
 				case JOY_BUT_PERIOD:
-					event.kbd.keycode = SDLK_PERIOD;
+					event.kbd.keycode = Common::KEYCODE_PERIOD;
 					event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
 					break;
 				case JOY_BUT_SPACE:
-					event.kbd.keycode = SDLK_SPACE;
+					event.kbd.keycode = Common::KEYCODE_SPACE;
 					event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
 					break;
 				case JOY_BUT_F5:
-					event.kbd.keycode = SDLK_F5;
+					event.kbd.keycode = Common::KEYCODE_F5;
 					event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 					break;
 				}

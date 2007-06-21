@@ -106,7 +106,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			event.type = Common::EVENT_KEYDOWN;
 			event.synthetic = true;
 			event.kbd.ascii = _currentKeyDown.ascii;
-			event.kbd.keycode = _currentKeyDown.keycode;
+			event.kbd.keycode = (Common::KeyCode)_currentKeyDown.keycode;
 			event.kbd.flags = _currentKeyDown.flags;
 			_keyRepeatTime = time + kKeyRepeatSustainDelay;
 			result = true;
