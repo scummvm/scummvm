@@ -208,7 +208,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_cepeFlag = 0;
 	_copyPartialMode = 0;
 	_fastMode = 0;
-	_useBackGround = 0;
 	
 	_backFlag = 0;
 
@@ -502,7 +501,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_noOracleScroll = 0;
 
 	_backGroundBuf = 0;
-	_frontBuf = 0;
 	_backBuf = 0;
 	_scaleBuf = 0;
 
@@ -602,7 +600,6 @@ int AGOSEngine::init() {
 
 	// allocate buffers
 	_backGroundBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
-	_frontBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		_backBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
@@ -935,7 +932,6 @@ AGOSEngine::~AGOSEngine() {
 	free(_textMem);
 
 	free(_backGroundBuf);
-	free(_frontBuf);
 	free(_backBuf);
 	free(_scaleBuf);
 
@@ -1068,7 +1064,6 @@ void AGOSEngine::shutdown() {
 	free(_textMem);
 
 	free(_backGroundBuf);
-	free(_frontBuf);
 	free(_backBuf);
 	free(_scaleBuf);
 

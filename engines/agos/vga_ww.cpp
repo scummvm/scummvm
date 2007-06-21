@@ -31,6 +31,8 @@
 
 #include "common/system.h"
 
+#include "graphics/surface.h"
+
 namespace AGOS {
 
 void AGOSEngine_Waxworks::setupVideoOpcodes(VgaOpcodeProc *op) {
@@ -139,13 +141,15 @@ void AGOSEngine::vc61() {
 	byte *src, *dst, *dstPtr;
 	uint h, tmp;
 
+	Graphics::Surface *screen = _system->lockScreen();
+
 	if (a == 6) {
 		src = _curVgaFile2 + 800;
-		dstPtr = getFrontBuf();
+		dstPtr = (byte *)screen->pixels;
 		memcpy(dstPtr, src, 64000);
 		tmp = 4 - 1;
 	} else {
-		dstPtr = getFrontBuf();
+		dstPtr = (byte *)screen->pixels;
 		tmp = a - 1;
 	}
 
@@ -164,8 +168,10 @@ void AGOSEngine::vc61() {
 			dst += _screenWidth;
 		}
 
-		if (a != 6)
+		if (a != 6) {
+			_system->unlockScreen();
 			return;
+		}
 
 		src = _curVgaFile2 + 9984 * 16 + 15344;
 	}
@@ -176,6 +182,8 @@ void AGOSEngine::vc61() {
 		src += 208;
 		dst += _screenWidth;
 	}
+
+	_system->unlockScreen();
 
 	if (a == 6) {
 		//fullFade();
@@ -229,10 +237,10 @@ void AGOSEngine::vc62_fastFadeOut() {
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
 			clearSurfaces(_screenHeight);
 		} else if (getGameType() == GType_WW) {
-			memset(getFrontBuf(), 0, _screenWidth * _screenHeight);
+			_system->clearScreen();
 		} else {
 			if (_windowNum != 4) {
-				memset(getFrontBuf(), 0, _screenWidth * _screenHeight);
+				_system->clearScreen();
 			}
 		}
 	}

@@ -550,7 +550,6 @@ protected:
 	bool _oopsValid;
 
 	byte *_backGroundBuf;
-	byte *_frontBuf;
 	byte *_backBuf;
 	byte *_scaleBuf;
 
@@ -1130,7 +1129,6 @@ protected:
 	void restoreWindow(WindowBlock *window);
 	void restoreBlock(uint h, uint w, uint y, uint x);
 
-	byte *getFrontBuf();
 	byte *getBackBuf();
 	byte *getBackGround();
 	byte *getScaleBuf();
@@ -1171,10 +1169,7 @@ protected:
 	void dumpSingleBitmap(int file, int image, const byte *offs, int w, int h, byte base);
 	void dumpBitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette, byte base);
 
-	void clearBackFromTop(uint lines);
-	void fillFrontFromBack(uint x, uint y, uint w, uint h);
 	void fillBackGroundFromBack(uint lines);
-	void fillBackFromFront(uint x, uint y, uint w, uint h);
 
 	virtual void doOutput(const byte *src, uint len);
 	void clsCheck(WindowBlock *window);

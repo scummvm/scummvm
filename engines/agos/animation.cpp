@@ -30,6 +30,7 @@
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/surface.h"
 
 #include "agos/animation.h"
 #include "agos/intern.h"
@@ -140,7 +141,7 @@ void MoviePlayer::play() {
 
 	// Resolution is smaller in Amiga verison so always clear screen
 	if (_width == 384 && _height == 280) {
-		memset(_vm->_frontBuf, 0, _vm->_screenHeight * _vm->_screenWidth);
+		_vm->_system->clearScreen();
 	}
 
 	_ticks = _vm->_system->getMillis();
@@ -155,7 +156,9 @@ void MoviePlayer::play() {
 	_vm->o_killAnimate();
 
 	if (_vm->getBitFlag(41)) {
-		memcpy(_vm->_backBuf, _vm->_frontBuf, _frameSize);
+		Graphics::Surface *screen = _vm->_system->lockScreen();
+		memcpy(_vm->_backBuf, (byte *)screen->pixels, _frameSize);
+		_vm->_system->unlockScreen();
 	} else {
 		uint8 palette[1024];
 		memset(palette, 0, sizeof(palette));
@@ -303,8 +306,9 @@ void MoviePlayer::setPalette(byte *pal) {
 }
 
 bool MoviePlayer::processFrame() {
-	copyFrameToBuffer(_vm->getFrontBuf(), (_vm->_screenWidth - _width) / 2, (_vm->_screenHeight - _height) / 2, _vm->_screenWidth);
-	_vm->_system->copyRectToScreen(_vm->getFrontBuf(), _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+	copyFrameToBuffer((byte *)screen->pixels, (_vm->_screenWidth - _width) / 2, (_vm->_screenHeight - _height) / 2, _vm->_screenWidth);
+	_vm->_system->unlockScreen();
 
 	if ((_bgSoundStream == NULL) || ((int)(_mixer->getSoundElapsedTime(_bgSound) * _framesPerSec) / 1000 < _frameNum + 1) ||
 		_frameSkipped > _framesPerSec) {

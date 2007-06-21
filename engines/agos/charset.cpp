@@ -25,8 +25,12 @@
 
 #include "common/stdafx.h"
 
+#include "common/system.h"
+
 #include "agos/agos.h"
 #include "agos/intern.h"
+
+#include "graphics/surface.h"
 
 namespace AGOS {
 
@@ -712,13 +716,15 @@ void AGOSEngine::windowScroll(WindowBlock *window) {
 	_lockWord |= 0x8000;
 
 	if (window->height != 1) {
+		Graphics::Surface *screen = _system->lockScreen();
+
 		byte *src, *dst;
 		uint16 w, h;
 
 		w = window->width * 8;
 		h = (window->height -1) * 8;
 
-		dst = getFrontBuf() + window->y * _screenWidth + window->x * 8;
+		dst = (byte *)screen->pixels + window->y * _screenWidth + window->x * 8;
 		src = dst + 8 * _screenWidth;
 
 		do {
@@ -726,6 +732,8 @@ void AGOSEngine::windowScroll(WindowBlock *window) {
 			src += _screenWidth;
 			dst += _screenWidth;
 		} while (--h);
+
+		_system->unlockScreen();
 	} 
 
 	colorBlock(window, window->x * 8, (window->height - 1) * 8 + window->y, window->width * 8, 8);
@@ -2169,14 +2177,16 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 
 	_lockWord |= 0x8000;
 
-	dst = getFrontBuf() + y * _dxSurfacePitch + x + window->textColumnOffset;
+	Graphics::Surface *screen = _system->lockScreen();
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		dst = getBackGround() + y * _dxSurfacePitch + x + window->textColumnOffset;
 		h = 13;
 		w =  feebleFontSize[chr - 0x20];
 
 		src = feeble_windowFont + (chr - 0x20) * 13;
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		dst = (byte *)screen->pixels + y * _dxSurfacePitch + x + window->textColumnOffset;
 		h = 8;
 		w = 6;
 
@@ -2212,6 +2222,7 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 			error("windowDrawChar: Unknown language %d\n", _language);
 		}
 	} else {
+		dst = (byte *)screen->pixels + y * _dxSurfacePitch + x + window->textColumnOffset;
 		h = 8;
 		w = 6;
 
@@ -2258,6 +2269,8 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 		} while (++i != w);
 		dst += _dxSurfacePitch;
 	} while (--h);
+
+	_system->unlockScreen();
 
 	_lockWord &= ~0x8000;
 }

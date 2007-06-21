@@ -27,18 +27,12 @@
 
 #include "common/system.h"
 
+#include "graphics/surface.h"
+
 #include "agos/agos.h"
 #include "agos/intern.h"
 
 namespace AGOS {
-
-byte *AGOSEngine::getFrontBuf() {
-	if (getGameType() != GType_PP && getGameType() != GType_FF)
-		_updateScreen = true;
-
-	_dxSurfacePitch = _screenWidth;
-	return _frontBuf;
-}
 
 byte *AGOSEngine::getBackBuf() {
 	_dxSurfacePitch = _screenWidth;
@@ -547,9 +541,12 @@ void AGOSEngine::displayBoxStars() {
 
 	uint curHeight = (getGameType() == GType_SIMON2) ? _boxStarHeight : 134;
 
+
 	for (int i = 0; i < 5; i++) {
 		ha = _hitAreas;
 		count = ARRAYSIZE(_hitAreas);
+
+		Graphics::Surface *screen = _system->lockScreen();
 
 		do {
 			if (ha->id != 0 && ha->flags & kBFBoxInUse && !(ha->flags & kBFBoxDead)) {
@@ -578,7 +575,7 @@ void AGOSEngine::displayBoxStars() {
 				if (x_ >= 311)
 					continue;
 
-				dst = getFrontBuf();
+				dst = (byte *)screen->pixels;
 
 				dst += (((_dxSurfacePitch / 4) * y_) * 4) + x_;
 
@@ -617,6 +614,8 @@ void AGOSEngine::displayBoxStars() {
 			}
 		} while (ha++, --count);
 
+		_system->unlockScreen();
+
 		delay(100);
 
 		setMoveRect(0, 0, 320, curHeight);
@@ -634,11 +633,7 @@ void AGOSEngine::scrollScreen() {
 	const byte *src;
 	uint x, y;
 
-	if (getGameType() == GType_SIMON2) {
-		dst = getBackGround();
-	} else {
-		dst = getFrontBuf();
-	}
+	dst = getBackGround();
 
 	if (_scrollXMax == 0) {
 		uint screenSize = 8 * _screenWidth;
@@ -661,8 +656,7 @@ void AGOSEngine::scrollScreen() {
 		_scrollY += _scrollFlag;
 		vcWriteVar(250, _scrollY);
 
-		memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
-		memcpy(_backGroundBuf, _backBuf, _screenHeight * _scrollWidth);
+		memcpy(_backBuf, _backGroundBuf, _screenHeight * _scrollWidth);
 	} else {
 		if (_scrollFlag < 0) {
 			memmove(dst + 8, dst, _screenWidth * _scrollHeight - 8);
@@ -690,8 +684,7 @@ void AGOSEngine::scrollScreen() {
 		if (getGameType() == GType_SIMON2) {
 			memcpy(_window4BackScn, _backGroundBuf, _scrollHeight * _screenWidth);
 		} else {
-			memcpy(_backBuf, _frontBuf, _screenWidth * _screenHeight);
-			memcpy(_backGroundBuf, _backBuf, _scrollHeight * _screenWidth);
+			memcpy(_backBuf, _backGroundBuf, _scrollHeight * _screenWidth);
 		}
 
 		setMoveRect(0, 0, 320, _scrollHeight);
@@ -716,43 +709,13 @@ void AGOSEngine::scrollScreen() {
 	}
 }
 
-void AGOSEngine::clearBackFromTop(uint lines) {
-	memset(_backBuf, 0, lines * _screenWidth);
-}
-
 void AGOSEngine::clearSurfaces(uint num_lines) {
+	Graphics::Surface *screen = _system->lockScreen();
+
+	memset((byte *)screen->pixels, 0, num_lines * _screenWidth);
 	memset(_backBuf, 0, num_lines * _screenWidth);
 
-	_system->copyRectToScreen(_backBuf, _screenWidth, 0, 0, _screenWidth, num_lines);
-
-	if (_useBackGround) {
-		memset(_frontBuf, 0, num_lines * _screenWidth);
-		memset(_backGroundBuf, 0, num_lines * _screenWidth);
-	}
-}
-
-void AGOSEngine::fillFrontFromBack(uint x, uint y, uint w, uint h) {
-	uint offs = x + y * _screenWidth;
-	byte *s = _backBuf + offs;
-	byte *d = _frontBuf + offs;
-
-	do {
-		memcpy(d, s, w);
-		d += _screenWidth;
-		s += _screenWidth;
-	} while (--h);
-}
-
-void AGOSEngine::fillBackFromFront(uint x, uint y, uint w, uint h) {
-	uint offs = x + y * _screenWidth;
-	byte *s = _frontBuf + offs;
-	byte *d = _backBuf + offs;
-
-	do {
-		memcpy(d, s, w);
-		d += _screenWidth;
-		s += _screenWidth;
-	} while (--h);
+	_system->unlockScreen();
 }
 
 void AGOSEngine::fillBackGroundFromBack(uint lines) {
@@ -782,18 +745,18 @@ void AGOSEngine::displayScreen() {
 		}
 	}
 
+	Graphics::Surface *screen = _system->lockScreen();
 	if (getGameType() == GType_PP || getGameType() == GType_FF) {
-		_system->copyRectToScreen(getBackBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
-		_system->updateScreen();
+		memcpy((byte *)screen->pixels, getBackBuf(), _screenWidth * _screenHeight);
 
 		if (getGameId() != GID_DIMP)
-			memcpy(getBackBuf(), getFrontBuf(), _screenWidth * _screenHeight);
+			memcpy(getBackBuf(), getBackGround(), _screenWidth * _screenHeight);
 	} else {
 		if (_window4Flag == 2) {
 			_window4Flag = 0;
 
 			uint16 srcWidth, width, height;
-			byte *dst = getFrontBuf();
+			byte *dst = (byte *)screen->pixels;
 
 			const byte *src = _window4BackScn;
 			if (_window3Flag == 1) {
@@ -827,17 +790,16 @@ void AGOSEngine::displayScreen() {
 			_window6Flag = 0;
 
 			byte *src = _window6BackScn;
-			byte *dst = getFrontBuf() + 16320;
+			byte *dst = (byte *)screen->pixels + 16320;
 			for (int i = 0; i < 80; i++) {
 				memcpy(dst, src, 48);
 				dst += _screenWidth;
 				src += 48;
 			}
 		}
-
-		_system->copyRectToScreen(getFrontBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
-		_system->updateScreen();
 	}
+
+	_system->unlockScreen();
 
 	if (getGameType() == GType_FF && _scrollFlag) {
 		scrollScreen();

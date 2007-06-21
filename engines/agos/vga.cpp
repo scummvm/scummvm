@@ -32,6 +32,8 @@
 
 #include "common/system.h"
 
+#include "graphics/surface.h"
+
 namespace AGOS {
 
 // Opcode tables
@@ -698,12 +700,6 @@ void AGOSEngine::drawImage_init(int16 image, uint16 palette, int16 x, int16 y, u
 		}
 	}
 
-	state.surf2_addr = getFrontBuf();
-	state.surf2_pitch = _dxSurfacePitch;
-
-	state.surf_addr = getBackBuf();
-	state.surf_pitch = _dxSurfacePitch;
-
 	drawImage(&state);
 }
 
@@ -1170,7 +1166,9 @@ void AGOSEngine::clearVideoWindow(uint num, uint color) {
 		_window4Flag = 1;
 	} else {
 		if (getGameType() == GType_ELVIRA1 && num == 3) {
-			memset(getFrontBuf(), color, _screenWidth * _screenHeight);
+			Graphics::Surface *screen = _system->lockScreen();
+			memset((byte *)screen->pixels, color, _screenWidth * _screenHeight);
+			 _system->unlockScreen();
 		} else if (num == 4) {
 			const uint16 *vlut = &_videoWindows[num * 4];
 			uint xoffs = (vlut[0] - _videoWindows[16]) * 16;
@@ -1219,7 +1217,7 @@ void AGOSEngine::vc36_setWindowImage() {
 	uint16 windowNum = vcReadNextWord();
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		_copyPartialMode = 2;
+		memcpy(_backGroundBuf, _backBuf, _screenHeight * _screenWidth);
 	} else {
 		setWindowImage(windowNum, vga_res);
 	}

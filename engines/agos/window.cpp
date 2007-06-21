@@ -25,6 +25,10 @@
 
 #include "common/stdafx.h"
 
+#include "common/system.h"
+
+#include "graphics/surface.h"
+
 #include "agos/agos.h"
 #include "agos/intern.h"
 
@@ -119,7 +123,7 @@ void AGOSEngine_Feeble::colorWindow(WindowBlock *window) {
 
 	_lockWord |= 0x8000;
 
-	dst = getFrontBuf() + _dxSurfacePitch * window->y + window->x;
+	dst = getBackGround() + _dxSurfacePitch * window->y + window->x;
 
 	for (h = 0; h < window->height; h++) {
 		for (w = 0; w < window->width; w++) {
@@ -161,7 +165,8 @@ void AGOSEngine::colorWindow(WindowBlock *window) {
 void AGOSEngine::colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, uint16 h) {
 	_lockWord |= 0x8000;
 
-	byte *dst = getFrontBuf() + y * _screenWidth + x;
+	Graphics::Surface *screen = _system->lockScreen();
+	byte *dst = (byte *)screen->pixels + y * _screenWidth + x;
 
 	uint8 color = window->fill_color;
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
@@ -171,6 +176,8 @@ void AGOSEngine::colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, u
 		memset(dst, color, w);
 		dst += _screenWidth;
 	} while (--h);
+
+	_system->unlockScreen();
 
 	_lockWord &= ~0x8000;
 }
@@ -220,7 +227,8 @@ void AGOSEngine::restoreBlock(uint h, uint w, uint y, uint x) {
 	byte *dst, *src;
 	uint i;
 
-	dst = getFrontBuf();
+	Graphics::Surface *screen = _system->lockScreen();
+	dst = (byte *)screen->pixels;
 	src = getBackGround();
 
 	dst += y * _dxSurfacePitch;
@@ -237,6 +245,8 @@ void AGOSEngine::restoreBlock(uint h, uint w, uint y, uint x) {
 		dst += _dxSurfacePitch;
 		src += _dxSurfacePitch;
 	}
+
+	_system->unlockScreen();
 }
 
 void AGOSEngine::setTextColor(uint color) {

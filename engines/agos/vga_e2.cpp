@@ -31,6 +31,8 @@
 
 #include "common/system.h"
 
+#include "graphics/surface.h"
+
 namespace AGOS {
 
 void AGOSEngine_Elvira2::setupVideoOpcodes(VgaOpcodeProc *op) {
@@ -85,7 +87,10 @@ void AGOSEngine::vc45_setWindowPalette() {
 		}
 	} else {
 		const uint16 *vlut = &_videoWindows[num * 4];
-		uint16 *dst = (uint16 *)getFrontBuf() + vlut[0] * 8 + vlut[1] * _dxSurfacePitch / 2;
+
+		Graphics::Surface *screen = _system->lockScreen();
+		uint16 *dst = (uint16 *)screen->pixels + vlut[0] * 8 + vlut[1] * _dxSurfacePitch / 2;
+
 		uint width = vlut[2] * 16 / 2;
 		uint height = vlut[3];
 
@@ -101,6 +106,8 @@ void AGOSEngine::vc45_setWindowPalette() {
 			}
 			dst += _dxSurfacePitch / 2;
 		}
+
+		_system->unlockScreen();
 	}
 }
 
@@ -211,10 +218,13 @@ void AGOSEngine::vc53_dissolveIn() {
 
 	int16 xoffs = _videoWindows[num * 4 + 0] * 16;
 	int16 yoffs = _videoWindows[num * 4 + 1];
-	byte *dstPtr = getFrontBuf() + xoffs + yoffs * _screenWidth;
+	int16 offs = xoffs + yoffs * _screenWidth;
 
 	uint16 count = dissolveCheck * 2;
 	while (count--) {
+		Graphics::Surface *screen = _system->lockScreen();
+		byte *dstPtr = (byte *)screen->pixels + offs;
+
 		yoffs = _rnd.getRandomNumber(dissolveY);
 		dst = dstPtr + yoffs * _screenWidth;
 		src = _window4BackScn + yoffs * 224;
@@ -253,15 +263,15 @@ void AGOSEngine::vc53_dissolveIn() {
 		*dst &= color;
 		*dst |= *src & 0xF;
 
+		 _system->unlockScreen();
+
 		dissolveCount--;
 		if (!dissolveCount) {
 			if (count >= dissolveCheck)
 				dissolveDelay++;
 
 			dissolveCount = dissolveDelay;
-			_system->copyRectToScreen(getFrontBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
-			_system->updateScreen();
-			delay(0);
+			delay(1);
 		}
 	}
 }
@@ -281,11 +291,14 @@ void AGOSEngine::vc54_dissolveOut() {
 
 	int16 xoffs = _videoWindows[num * 4 + 0] * 16;
 	int16 yoffs = _videoWindows[num * 4 + 1];
-	byte *dstPtr = getFrontBuf() + xoffs + yoffs * _screenWidth;
-	color |= dstPtr[0] & 0xF0;
+	int16 offs = xoffs + yoffs * _screenWidth;
 
 	uint16 count = dissolveCheck * 2;
 	while (count--) {
+		Graphics::Surface *screen = _system->lockScreen();
+		byte *dstPtr = (byte *)screen->pixels + offs;
+		color |= dstPtr[0] & 0xF0;
+
 		yoffs = _rnd.getRandomNumber(dissolveY);
 		xoffs = _rnd.getRandomNumber(dissolveX);
 		dst = dstPtr + xoffs + yoffs * _screenWidth;
@@ -304,15 +317,15 @@ void AGOSEngine::vc54_dissolveOut() {
 		dst += xoffs;
 		*dst = color;
 
+		 _system->unlockScreen();
+
 		dissolveCount--;
 		if (!dissolveCount) {
 			if (count >= dissolveCheck)
 				dissolveDelay++;
 
 			dissolveCount = dissolveDelay;
-			_system->copyRectToScreen(getFrontBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
-			_system->updateScreen();
-			delay(0);
+			delay(1);
 		}
 	}
 }
@@ -339,10 +352,14 @@ void AGOSEngine::vc55_moveBox() {
 }
 
 void AGOSEngine::vc56_fullScreen() {
+	Graphics::Surface *screen = _system->lockScreen();
+
+	byte *dst = (byte *)screen->pixels;
 	byte *src = _curVgaFile2 + 32;
-	byte *dst = getFrontBuf();
 
 	memcpy(dst, src + 768, _screenHeight * _screenWidth);
+
+	 _system->unlockScreen();
 
 	//fullFade();
 

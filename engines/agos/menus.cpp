@@ -26,6 +26,9 @@
 #include "common/stdafx.h"
 
 #include "common/file.h"
+#include "common/system.h"
+
+#include "graphics/surface.h"
 
 #include "agos/agos.h"
 #include "agos/intern.h"
@@ -145,7 +148,8 @@ void AGOSEngine::unlightMenuStrip() {
 
 	mouseOff();
 
-	src = getFrontBuf() + 2832;
+	Graphics::Surface *screen = _system->lockScreen();
+	src = (byte *)screen->pixels + 2832;
 	w = 48;
 	h = 82;
 
@@ -160,6 +164,8 @@ void AGOSEngine::unlightMenuStrip() {
 	for (i = 120; i != 130; i++)
 		disableBox(i);
 
+	_system->unlockScreen();
+
 	mouseOn();
 }
 
@@ -170,7 +176,8 @@ void AGOSEngine::lightMenuBox(uint hitarea) {
 
 	mouseOff();
 
-	src = getFrontBuf() + ha->y * _dxSurfacePitch + ha->x;
+	Graphics::Surface *screen = _system->lockScreen();
+	src = (byte *)screen->pixels + ha->y * _dxSurfacePitch + ha->x;
 	w = ha->width;
 	h = ha->height;
 
@@ -181,6 +188,8 @@ void AGOSEngine::lightMenuBox(uint hitarea) {
 		}
 		src += _dxSurfacePitch;
 	} while (--h);
+
+	_system->unlockScreen();
 
 	mouseOn();
 }

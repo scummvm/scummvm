@@ -34,6 +34,8 @@
 
 #include "gui/about.h"
 
+#include "graphics/surface.h"
+
 #include "sound/audiocd.h"
 
 namespace AGOS {
@@ -366,13 +368,17 @@ static const byte _image4[32] = {
 
 void AGOSEngine::drawStuff(const byte *src, uint xoffs) {
 	const uint8 y = (getPlatform() == Common::kPlatformAtariST) ? 132 : 135;
-	byte *dst = getFrontBuf() + y * _screenWidth + xoffs;
+
+	Graphics::Surface *screen = _system->lockScreen();
+	byte *dst = (byte *)screen->pixels + y * _screenWidth + xoffs;
 
 	for (uint h = 0; h < 6; h++) {
 		memcpy(dst, src, 4);
 		src += 4;
 		dst += _screenWidth;
 	}
+
+	_system->unlockScreen();
 }
 
 void AGOSEngine::imageEvent2(VgaTimerEntry * vte, uint dx) {
@@ -587,11 +593,6 @@ void AGOSEngine_Feeble::timer_proc1() {
 		animateSprites();
 	} 
 
-	if (_copyPartialMode == 2) {
-		fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
-		_copyPartialMode = 0;
-	}
-
 	if (_displayScreen) {
 		if (getGameType() == GType_FF) {
 			if (!getBitFlag(78)) {
@@ -626,13 +627,6 @@ void AGOSEngine::timer_proc1() {
 		if (!_cepeFlag)
 			processVgaEvents();
 	} 
-
-	if (_updateScreen) {
-		_system->copyRectToScreen(getFrontBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
-		_system->updateScreen();
-
-		_updateScreen = false;
-	}
 
 	if (_displayScreen) {
 		displayScreen();

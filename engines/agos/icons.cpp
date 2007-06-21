@@ -25,7 +25,11 @@
 
 #include "common/stdafx.h"
 
+#include "common/system.h"
+
 #include "common/file.h"
+
+#include "graphics/surface.h"
 
 #include "agos/agos.h"
 
@@ -193,7 +197,9 @@ void AGOSEngine_Simon2::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 	byte *src;
 
 	_lockWord |= 0x8000;
-	dst = getFrontBuf();
+
+	Graphics::Surface *screen = _system->lockScreen();
+	dst = (byte *)screen->pixels;
 
 	dst += 110;
 	dst += x;
@@ -207,6 +213,8 @@ void AGOSEngine_Simon2::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 	src += READ_LE_UINT16(&((uint16 *)src)[icon * 2 + 1]);
 	decompressIcon(dst, src, 20, 10, 208, _dxSurfacePitch);
 
+	_system->unlockScreen();
+
 	_lockWord &= ~0x8000;
 }
 
@@ -215,7 +223,9 @@ void AGOSEngine_Simon1::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 	byte *src;
 
 	_lockWord |= 0x8000;
-	dst = getFrontBuf();
+
+	Graphics::Surface *screen = _system->lockScreen();
+	dst = (byte *)screen->pixels;
 
 	dst += (x + window->x) * 8;
 	dst += (y * 25 + window->y) * _dxSurfacePitch;
@@ -231,6 +241,8 @@ void AGOSEngine_Simon1::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 		decompressIcon(dst, src, 24, 12, 224, _dxSurfacePitch);
 	}
 
+	_system->unlockScreen();
+
 	_lockWord &= ~0x8000;
 }
 
@@ -239,7 +251,9 @@ void AGOSEngine_Waxworks::drawIcon(WindowBlock *window, uint icon, uint x, uint 
 	byte *src;
 
 	_lockWord |= 0x8000;
-	dst = getFrontBuf();
+
+	Graphics::Surface *screen = _system->lockScreen();
+	dst = (byte *)screen->pixels;
 
 	dst += (x + window->x) * 8;
 	dst += (y * 20 + window->y) * _dxSurfacePitch;
@@ -255,6 +269,8 @@ void AGOSEngine_Waxworks::drawIcon(WindowBlock *window, uint icon, uint x, uint 
 		decompressIcon(dst, src, 24, 10, color, _dxSurfacePitch);
 	}
 
+	_system->unlockScreen();
+
 	_lockWord &= ~0x8000;
 }
 
@@ -263,7 +279,9 @@ void AGOSEngine_Elvira2::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 	byte *src;
 
 	_lockWord |= 0x8000;
-	dst = getFrontBuf();
+
+	Graphics::Surface *screen = _system->lockScreen();
+	dst = (byte *)screen->pixels;
 
 	dst += (x + window->x) * 8;
 	dst += (y * 8 + window->y) * _dxSurfacePitch;
@@ -279,6 +297,8 @@ void AGOSEngine_Elvira2::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 		decompressIcon(dst, src, 24, 12, color, _dxSurfacePitch);
 	}
 
+	_system->unlockScreen();
+
 	_lockWord &= ~0x8000;
 }
 
@@ -287,7 +307,9 @@ void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 	byte *src;
 
 	_lockWord |= 0x8000;
-	dst = getFrontBuf();
+
+	Graphics::Surface *screen = _system->lockScreen();
+	dst = (byte *)screen->pixels;
 
 	dst += (x + window->x) * 8;
 	dst += (y * 8 + window->y) * _dxSurfacePitch;
@@ -301,6 +323,8 @@ void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 		src += icon * 288;
 		decompressIconPlanar(dst, src, 24, 12, 16, _dxSurfacePitch, false);
 	}
+
+	_system->unlockScreen();
 
 	_lockWord &= ~0x8000;
 }
@@ -882,7 +906,8 @@ void AGOSEngine::drawArrow(uint16 x, uint16 y, int8 dir) {
 		src = _arrowImage;
 	}
 
-	byte *dst = getFrontBuf() + y * _screenWidth + x * 8;
+	Graphics::Surface *screen = _system->lockScreen();
+	byte *dst = (byte *)screen->pixels + y * _screenWidth + x * 8;
 
 	for (h = 0; h < 19; h++) {
 		for (w = 0; w < 16; w++) {
@@ -892,6 +917,8 @@ void AGOSEngine::drawArrow(uint16 x, uint16 y, int8 dir) {
 		src += dir;
 		dst+= _screenWidth;
 	}
+
+	_system->unlockScreen();
 }
 
 void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
