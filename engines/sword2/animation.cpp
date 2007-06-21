@@ -429,7 +429,7 @@ void MoviePlayer::play(SequenceTextInfo *textList, uint32 numLines, int32 leadIn
 				terminate = true;
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == 27)
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					terminate = true;
 				break;
 			default:

@@ -381,17 +381,17 @@ int Sword2Engine::go() {
 		KeyboardEvent *ke = keyboardEvent();
 
 		if (ke) {
-			if ((ke->modifiers == Common::KBD_CTRL && ke->keycode == 'd') || ke->ascii == '#' || ke->ascii == '~') {
+			if ((ke->modifiers == Common::KBD_CTRL && ke->keycode == Common::KEYCODE_d) || ke->ascii == '#' || ke->ascii == '~') {
 				_debugger->attach();
 			} else if (ke->modifiers == 0 || ke->modifiers == Common::KBD_SHIFT) {
 				switch (ke->keycode) {
-				case 'p':
+				case Common::KEYCODE_p:
 					if (_gamePaused)
 						unpauseGame();
 					else
 						pauseGame();
 					break;
-				case 'c':
+				case Common::KEYCODE_c:
 					if (!_logic->readVar(DEMO) && !_mouse->isChoosing()) {
 						ScreenInfo *screenInfo = _screen->getScreenInfo();
 						_logic->fnPlayCredits(NULL);
@@ -399,13 +399,13 @@ int Sword2Engine::go() {
 					}
 					break;
 #ifdef SWORD2_DEBUG
-				case ' ':
+				case Common::KEYCODE_SPACE:
 					if (_gamePaused) {
 						_stepOneCycle = true;
 						unpauseGame();
 					}
 					break;
-				case 's':
+				case Common::KEYCODE_s:
 					_renderSkip = !_renderSkip;
 					break;
 #endif
