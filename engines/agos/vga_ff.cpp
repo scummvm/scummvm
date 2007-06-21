@@ -256,17 +256,11 @@ void AGOSEngine::checkScrollX(int16 x, int16 xpos) {
 }
 
 void AGOSEngine::checkScrollY(int16 y, int16 ypos) {
-	printf("checkScrollY: y %d ypos %d\n", y, ypos);
-
-	if (_scrollYMax == 0) {
-		printf("No y Max\n");
+	if (_scrollYMax == 0)
 		return;
-	}
 
-	if (getGameType() == GType_FF && getBitFlag(80)) {
-		printf("BitFlag 80 set\n");
+	if (getGameType() == GType_FF && getBitFlag(80))
 		return;
-	}
 
 	int16 tmp;
 	if (y >= 0) {
