@@ -1301,7 +1301,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 	setImage(vga_res_id);
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		fillBackGroundFromBack(_screenHeight);
+		fillBackGroundFromBack();
 		_syncFlag2 = 1;
 	} else {
 		_copyScnFlag = 2;

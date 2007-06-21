@@ -1158,7 +1158,7 @@ protected:
 	void restoreBackGround();
 	void saveBackGround(VgaSprite *vsp);
 
-	void clearSurfaces(uint num_lines);
+	void clearSurfaces();
 	void displayScreen();
 
 	void dumpVideoScript(const byte *src, bool one_opcode_only);
@@ -1169,7 +1169,10 @@ protected:
 	void dumpSingleBitmap(int file, int image, const byte *offs, int w, int h, byte base);
 	void dumpBitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette, byte base);
 
-	void fillBackGroundFromBack(uint lines);
+	void fillBackFromBackGround(uint16 height, uint16 width);
+	void fillBackFromFront();
+	void fillBackGroundFromBack();
+	void fillBackGroundFromFront();
 
 	virtual void doOutput(const byte *src, uint len);
 	void clsCheck(WindowBlock *window);

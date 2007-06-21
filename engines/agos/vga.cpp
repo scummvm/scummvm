@@ -1217,7 +1217,7 @@ void AGOSEngine::vc36_setWindowImage() {
 	uint16 windowNum = vcReadNextWord();
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		memcpy(_backGroundBuf, _backBuf, _screenHeight * _screenWidth);
+		fillBackGroundFromFront();
 	} else {
 		setWindowImage(windowNum, vga_res);
 	}

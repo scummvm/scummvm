@@ -141,7 +141,7 @@ void MoviePlayer::play() {
 
 	// Resolution is smaller in Amiga verison so always clear screen
 	if (_width == 384 && _height == 280) {
-		_vm->_system->clearScreen();
+		_vm->clearSurfaces();
 	}
 
 	_ticks = _vm->_system->getMillis();
@@ -156,16 +156,15 @@ void MoviePlayer::play() {
 	_vm->o_killAnimate();
 
 	if (_vm->getBitFlag(41)) {
-		Graphics::Surface *screen = _vm->_system->lockScreen();
-		memcpy(_vm->_backBuf, (byte *)screen->pixels, _frameSize);
-		_vm->_system->unlockScreen();
+		_vm->fillBackFromFront();
 	} else {
 		uint8 palette[1024];
 		memset(palette, 0, sizeof(palette));
-		_vm->clearSurfaces(480);
+		_vm->clearSurfaces();
 		_vm->_system->setPalette(palette, 0, 256);
 	}
 
+	 _vm->fillBackGroundFromBack();
 	_vm->_fastFadeOutFlag = true;
 }
 

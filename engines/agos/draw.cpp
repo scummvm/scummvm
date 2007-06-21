@@ -656,7 +656,7 @@ void AGOSEngine::scrollScreen() {
 		_scrollY += _scrollFlag;
 		vcWriteVar(250, _scrollY);
 
-		memcpy(_backBuf, _backGroundBuf, _screenHeight * _scrollWidth);
+		fillBackFromBackGround(_screenHeight, _scrollWidth);
 	} else {
 		if (_scrollFlag < 0) {
 			memmove(dst + 8, dst, _screenWidth * _scrollHeight - 8);
@@ -684,7 +684,7 @@ void AGOSEngine::scrollScreen() {
 		if (getGameType() == GType_SIMON2) {
 			memcpy(_window4BackScn, _backGroundBuf, _scrollHeight * _screenWidth);
 		} else {
-			memcpy(_backBuf, _backGroundBuf, _scrollHeight * _screenWidth);
+			fillBackFromBackGround(_scrollHeight, _screenWidth);
 		}
 
 		setMoveRect(0, 0, 320, _scrollHeight);
@@ -709,17 +709,32 @@ void AGOSEngine::scrollScreen() {
 	}
 }
 
-void AGOSEngine::clearSurfaces(uint num_lines) {
+void AGOSEngine::clearSurfaces() {
+	_system->clearScreen();
+
+	if (_backBuf) {
+		memset(_backBuf, 0, _screenHeight * _screenWidth);
+	}
+}
+
+void AGOSEngine::fillBackFromBackGround(uint16 height, uint16 width) {
+	memcpy(_backBuf, _backGroundBuf, height * width);
+}
+
+void AGOSEngine::fillBackFromFront() {
 	Graphics::Surface *screen = _system->lockScreen();
-
-	memset((byte *)screen->pixels, 0, num_lines * _screenWidth);
-	memset(_backBuf, 0, num_lines * _screenWidth);
-
+	memcpy(_backBuf, (byte *)screen->pixels, _screenHeight * _screenWidth);
 	_system->unlockScreen();
 }
 
-void AGOSEngine::fillBackGroundFromBack(uint lines) {
-	memcpy(_backGroundBuf, _backBuf, lines * _screenWidth);
+void AGOSEngine::fillBackGroundFromBack() {
+	memcpy(_backGroundBuf, _backBuf, _screenHeight * _screenWidth);
+}
+
+void AGOSEngine::fillBackGroundFromFront() {
+	Graphics::Surface *screen = _system->lockScreen();
+	memcpy(_backGroundBuf, (byte *)screen->pixels, _screenHeight * _screenWidth);
+	_system->unlockScreen();
 }
 
 void AGOSEngine::setMoveRect(uint16 x, uint16 y, uint16 width, uint16 height) {
@@ -750,7 +765,7 @@ void AGOSEngine::displayScreen() {
 		memcpy((byte *)screen->pixels, getBackBuf(), _screenWidth * _screenHeight);
 
 		if (getGameId() != GID_DIMP)
-			memcpy(getBackBuf(), getBackGround(), _screenWidth * _screenHeight);
+			fillBackFromBackGround(_screenHeight, _screenWidth);
 	} else {
 		if (_window4Flag == 2) {
 			_window4Flag = 0;

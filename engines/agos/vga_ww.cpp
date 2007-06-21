@@ -234,13 +234,11 @@ void AGOSEngine::vc62_fastFadeOut() {
 			delay(5);
 		}
 
-		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			clearSurfaces(_screenHeight);
-		} else if (getGameType() == GType_WW) {
-			_system->clearScreen();
+		if (getGameType() == GType_WW || getGameType() == GType_FF || getGameType() == GType_PP) {
+			clearSurfaces();
 		} else {
 			if (_windowNum != 4) {
-				_system->clearScreen();
+				clearSurfaces();
 			}
 		}
 	}
