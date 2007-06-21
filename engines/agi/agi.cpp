@@ -117,7 +117,7 @@ void AgiEngine::processEvents() {
 			_keyControl = 0;
 			_keyAlt = 0;
 
-			if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'd') {
+			if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == Common::KEYCODE_d) {
 				_console->attach();
 				break;
 			}
@@ -129,99 +129,99 @@ void AgiEngine::processEvents() {
 				_keyAlt = 1;
 
 			switch (key = event.kbd.keycode) {
-			case 256 + 20:	// left arrow
-			case 260:	// key pad 4
+			case Common::KEYCODE_LEFT:
+			case Common::KEYCODE_KP4:
 				if (_allowSynthetic || !event.synthetic)
 					key = KEY_LEFT;
 				break;
-			case 256 + 19:	// right arrow
-			case 262:	// key pad 6
+			case Common::KEYCODE_RIGHT:
+			case Common::KEYCODE_KP6:
 				if (_allowSynthetic || !event.synthetic)
 					key = KEY_RIGHT;
 				break;
-			case 256 + 17:	// up arrow
-			case 264:	// key pad 8
+			case Common::KEYCODE_UP:
+			case Common::KEYCODE_KP8:
 				if (_allowSynthetic || !event.synthetic)
 					key = KEY_UP;
 				break;
-			case 256 + 18:	// down arrow
-			case 258:	// key pad 2
+			case Common::KEYCODE_DOWN:
+			case Common::KEYCODE_KP2:
 				if (_allowSynthetic || !event.synthetic)
 					key = KEY_DOWN;
 				break;
-			case 256 + 24:	// page up
-			case 265:	// key pad 9
+			case Common::KEYCODE_PAGEUP:
+			case Common::KEYCODE_KP9:
 				if (_allowSynthetic || !event.synthetic)
 					key = KEY_UP_RIGHT;
 				break;
-			case 256 + 25:	// page down
-			case 259:	// key pad 3
+			case Common::KEYCODE_PAGEDOWN:
+			case Common::KEYCODE_KP3:
 				if (_allowSynthetic || !event.synthetic)
 					key = KEY_DOWN_RIGHT;
 				break;
-			case 256 + 22:	// home
-			case 263:	// key pad 7
+			case Common::KEYCODE_HOME:
+			case Common::KEYCODE_KP7:
 				if (_allowSynthetic || !event.synthetic)
 					key = KEY_UP_LEFT;
 				break;
-			case 256 + 23:	// end
-			case 257:	// key pad 1
+			case Common::KEYCODE_END:
+			case Common::KEYCODE_KP1:
 				if (_allowSynthetic || !event.synthetic)
 					key = KEY_DOWN_LEFT;
 				break;
-			case 261:	// key pad 5
+			case Common::KEYCODE_KP5:
 				key = KEY_STATIONARY;
 				break;
-			case '+':
+			case Common::KEYCODE_PLUS:
 				key = '+';
 				break;
-			case '-':
+			case Common::KEYCODE_MINUS:
 				key = '-';
 				break;
-			case 9:
+			case Common::KEYCODE_9:
 				key = 0x0009;
 				break;
-			case 282:
+			case Common::KEYCODE_F1:
 				key = 0x3b00;
 				break;
-			case 283:
+			case Common::KEYCODE_F2:
 				key = 0x3c00;
 				break;
-			case 284:
+			case Common::KEYCODE_F3:
 				key = 0x3d00;
 				break;
-			case 285:
+			case Common::KEYCODE_F4:
 				key = 0x3e00;
 				break;
-			case 286:
+			case Common::KEYCODE_F5:
 				key = 0x3f00;
 				break;
-			case 287:
+			case Common::KEYCODE_F6:
 				key = 0x4000;
 				break;
-			case 288:
+			case Common::KEYCODE_F7:
 				key = 0x4100;
 				break;
-			case 289:
+			case Common::KEYCODE_F8:
 				key = 0x4200;
 				break;
-			case 290:
+			case Common::KEYCODE_F9:
 				key = 0x4300;
 				break;
-			case 291:
+			case Common::KEYCODE_F10:
 				key = 0x4400;
 				break;
-			case 292:
+			case Common::KEYCODE_F11:
 				key = KEY_STATUSLN;
 				break;
-			case 293:
+			case Common::KEYCODE_F12:
 				key = KEY_PRIORITY;
 				break;
-			case 27:
+			case Common::KEYCODE_ESCAPE:
 				key = 0x1b;
 				break;
-			case '\n':
-			case '\r':
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
 				key = KEY_ENTER;
 				break;
 			default:
