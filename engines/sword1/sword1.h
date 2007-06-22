@@ -27,6 +27,7 @@
 #define SWORD1_H
 
 #include "engines/engine.h"
+#include "common/events.h"
 #include "common/util.h"
 #include "sword1/sworddefs.h"
 
@@ -92,7 +93,7 @@ private:
 	uint8 mainLoop(void);
 
 	uint16 _mouseX, _mouseY, _mouseState;
-	uint8 _keyPressed;
+	Common::KeyState _keyPressed;
 
 	ResMan		*_resMan;
 	ObjectMan	*_objectMan;
