@@ -56,7 +56,7 @@ int SagaEngine::processInput() {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_HASH:
 			case Common::KEYCODE_BACKQUOTE:
-			case '~': // Has no KEYCODE constant
+			case Common::KEYCODE_QUOTE: // tilde ("~")
 				_console->attach();
 				break;
 			case Common::KEYCODE_r:
