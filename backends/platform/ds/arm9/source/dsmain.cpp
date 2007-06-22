@@ -1226,7 +1226,7 @@ void addEventsToQueue() {
 			
 			if (leftHandedSwap(getKeysChanged()) & KEY_UP) {
 				event.type = getKeyEvent(leftHandedSwap(KEY_UP));
-				event.kbd.keycode = SDLK_UP;
+				event.kbd.keycode = Common::KEYCODE_UP;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
 				system->addEvent(event);
@@ -1234,7 +1234,7 @@ void addEventsToQueue() {
 
 			if (leftHandedSwap(getKeysChanged()) & KEY_DOWN) {
 				event.type = getKeyEvent(leftHandedSwap(KEY_DOWN));
-				event.kbd.keycode = SDLK_DOWN;
+				event.kbd.keycode = Common::KEYCODE_DOWN;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
 				system->addEvent(event);
@@ -1242,7 +1242,7 @@ void addEventsToQueue() {
 
 			if (leftHandedSwap(getKeysDown()) & KEY_A) {
 				event.type = getKeyEvent(leftHandedSwap(KEY_A));
-				event.kbd.keycode = SDLK_RETURN;
+				event.kbd.keycode = Common::KEYCODE_RETURN;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
 				system->addEvent(event);
@@ -1253,8 +1253,8 @@ void addEventsToQueue() {
 		
 		if ((getKeysChanged() & KEY_START)) {
 			event.type = getKeyEvent(KEY_START);
-			event.kbd.keycode = 319;		// F5
-			event.kbd.ascii = 319;
+			event.kbd.keycode = Common::ASCII_F5;		// FIXME: Should be KEYCODE_F5
+			event.kbd.ascii = Common::ASCII_F5;
 			event.kbd.flags = 0;
 			system->addEvent(event);
 		}

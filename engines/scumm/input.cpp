@@ -91,10 +91,11 @@ void ScummEngine::parseEvents() {
 				// because that's what MI2 looks for in
 				// its "instant win" cheat.
 				_keyPressed = event.kbd.keycode + 154;
-			} else if (event.kbd.ascii == 315 && (_game.id == GID_CMI && !(_game.features & GF_DEMO))) {
+			} else if (event.kbd.ascii == Common::ASCII_F1 && (_game.id == GID_CMI && !(_game.features & GF_DEMO))) {
 				// FIXME: support in-game menu screen. For now, this remaps F1 to F5 in COMI
-				_keyPressed = 319;
-			} else if (event.kbd.ascii < 273 || event.kbd.ascii > 276 || _game.version >= 7) {
+				_keyPressed = Common::ASCII_F5;
+			} else if (event.kbd.ascii < Common::KEYCODE_UP || event.kbd.ascii > Common::KEYCODE_LEFT || _game.version >= 7) {
+// FIXME: Don't use ASCII value to detect arrow keys, rather, use keycode!
 				// don't let game have arrow keys as we currently steal them
 				// for keyboard cursor control
 				// this fixes bug with up arrow (273) corresponding to
@@ -106,8 +107,8 @@ void ScummEngine::parseEvents() {
 			}
 
 			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
-				if (event.kbd.ascii >= 273 && event.kbd.ascii <= 276) {
-					_keyPressed = event.kbd.ascii - 273 + 54;
+				if (event.kbd.ascii >= Common::KEYCODE_UP && event.kbd.ascii <= Common::KEYCODE_LEFT) {
+					_keyPressed = event.kbd.ascii - Common::KEYCODE_UP + 54;
 				}
 			}
 
@@ -115,16 +116,16 @@ void ScummEngine::parseEvents() {
 				// Keyboard is controlled via variable
 				int _keyState = 0;
 
-				if (event.kbd.ascii == 276) // Left
+				if (event.kbd.ascii == Common::KEYCODE_LEFT) // Left
 					_keyState = 1;
 
-				if (event.kbd.ascii == 275) // Right
+				if (event.kbd.ascii == Common::KEYCODE_RIGHT) // Right
 					_keyState |= 2;
 
-				if (event.kbd.ascii == 273) // Up
+				if (event.kbd.ascii == Common::KEYCODE_UP) // Up
 					_keyState |= 4;
 
-				if (event.kbd.ascii == 274) // Down
+				if (event.kbd.ascii == Common::KEYCODE_DOWN) // Down
 					_keyState |= 8;
 
 				if (event.kbd.flags == Common::KBD_SHIFT)
@@ -240,8 +241,8 @@ void ScummEngine::clearClickedStatus() {
 
 void ScummEngine_v0::processInput() {
 	// F1 - F3
-	if (_keyPressed >= 315 && _keyPressed <= 317) {
-		switchActor(_keyPressed - 315);
+	if (_keyPressed >= Common::ASCII_F1 && _keyPressed <= Common::ASCII_F3) {
+		switchActor(_keyPressed - Common::ASCII_F1);
 	}
 
 	ScummEngine::processInput();
@@ -343,7 +344,7 @@ void ScummEngine_v8::processKeyboard(int lastKeyHit) {
 	// Alt-F5 brings up the original save/load dialog
 
 	if (lastKeyHit == 440 && !(_game.features & GF_DEMO)) {
-		lastKeyHit = 315;
+		lastKeyHit = Common::ASCII_F1;
 	}
 
 	// If a key script was specified (a V8 feature), and it's trigger
@@ -449,14 +450,14 @@ void ScummEngine_v6::processKeyboard(int lastKeyHit) {
 void ScummEngine_v2::processKeyboard(int lastKeyHit) {
 	if (lastKeyHit == ' ') {		// space
 		pauseGame();
-	} else if (lastKeyHit == 314+5) {		// F5
+	} else if (lastKeyHit == Common::ASCII_F5) {
 		mainMenuDialog();
-	} else if (lastKeyHit == 314+8) {		// F8
+	} else if (lastKeyHit == Common::ASCII_F8) {
 		confirmRestartDialog();
 	} else {
 
 		if ((_game.version == 0 && lastKeyHit == 27) || 
-			(VAR_CUTSCENEEXIT_KEY != 0xFF && lastKeyHit == 314+VAR(VAR_CUTSCENEEXIT_KEY))) {
+			(VAR_CUTSCENEEXIT_KEY != 0xFF && lastKeyHit == Common::ASCII_F1-1+VAR(VAR_CUTSCENEEXIT_KEY))) {
 			abortCutscene();
 		} else {
 			// Fall back to default behavior
@@ -466,7 +467,7 @@ void ScummEngine_v2::processKeyboard(int lastKeyHit) {
 		// Alt-F5 brings up the original save/load dialog
 
 		if (lastKeyHit == 440) {
-			lastKeyHit = 314+5;
+			lastKeyHit = Common::ASCII_F5;
 		}
 	
 		// Store the input type. So far we can't distinguish
@@ -475,9 +476,9 @@ void ScummEngine_v2::processKeyboard(int lastKeyHit) {
 		// 5) Sentence Bar
 	
 		if (VAR_KEYPRESS != 0xFF && lastKeyHit) {		// Key Input
-			if (315 <= lastKeyHit && lastKeyHit < 315+12) {
-				// Convert F-Keys for V1/V2 games (they start at 1 instead of at 315)
-				VAR(VAR_KEYPRESS) = lastKeyHit - 314;
+			if (Common::ASCII_F1 <= lastKeyHit && lastKeyHit <= Common::ASCII_F9) {
+				// Convert F-Keys for V1/V2 games (they start at 1 instead of at ASCII_F1)
+				VAR(VAR_KEYPRESS) = lastKeyHit - Common::ASCII_F1 + 1;
 			} else {
 				VAR(VAR_KEYPRESS) = lastKeyHit;
 			}
@@ -486,7 +487,7 @@ void ScummEngine_v2::processKeyboard(int lastKeyHit) {
 }
 
 void ScummEngine_v3::processKeyboard(int lastKeyHit) {
-	if (_game.platform == Common::kPlatformFMTowns && lastKeyHit == 314+8) {	// F8
+	if (_game.platform == Common::kPlatformFMTowns && lastKeyHit == Common::ASCII_F8) {
 		confirmRestartDialog();
 	} else {
 		// Fall back to default behavior
@@ -518,7 +519,7 @@ void ScummEngine::processKeyboard(int lastKeyHit) {
 	int saveloadkey;
 
 	if ((_game.version <= 3) || (_game.id == GID_SAMNMAX) || (_game.id == GID_CMI) || (_game.heversion >= 72))
-		saveloadkey = 319;	// F5
+		saveloadkey = Common::ASCII_F5;
 	else
 		saveloadkey = VAR(VAR_MAINMENU_KEY);
 

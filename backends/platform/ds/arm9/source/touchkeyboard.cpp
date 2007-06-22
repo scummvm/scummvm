@@ -56,9 +56,9 @@ key_data keys[DS_NUM_KEYS] = {
 	{35,				17,		0,		'8'},
 	{36,				19,		0,		'9'},
 	{27,				21,		0,		'0'},
-	{45,				23,		0,		SDLK_MINUS},
-	{50,				25,		0,		SDLK_EQUALS},
-	{52,				27,		0,		SDLK_BACKSPACE},
+	{45,				23,		0,		Common::KEYCODE_MINUS},
+	{50,				25,		0,		Common::KEYCODE_EQUALS},
+	{52,				27,		0,		Common::KEYCODE_BACKSPACE},
 
 	// Top row
 	{'Q'-'A' + 1,		4,		2,		'Q'},
@@ -71,8 +71,8 @@ key_data keys[DS_NUM_KEYS] = {
 	{'I'-'A' + 1,		18,		2,		'I'},
 	{'O'-'A' + 1,		20,		2,		'O'},
 	{'P'-'A' + 1,		22,		2,		'P'},
-	{43,				24,		2,		SDLK_LEFTBRACKET},
-	{44,				26,		2,		SDLK_RIGHTBRACKET},
+	{43,				24,		2,		Common::KEYCODE_LEFTBRACKET},
+	{44,				26,		2,		Common::KEYCODE_RIGHTBRACKET},
 
 	// Middle row
 	{55,				3,		4,		DS_CAPSLOCK},
@@ -85,9 +85,9 @@ key_data keys[DS_NUM_KEYS] = {
 	{'J'-'A' + 1,		17,		4,		'J'},
 	{'K'-'A' + 1,		19,		4,		'K'},
 	{'L'-'A' + 1,		21,		4,		'L'},
-	{42,				23,		4,		SDLK_SEMICOLON},
-	{41,				25,		4,		SDLK_QUOTE},
-	{46,				27,		4,		SDLK_RETURN},
+	{42,				23,		4,		Common::KEYCODE_SEMICOLON},
+	{41,				25,		4,		Common::KEYCODE_QUOTE},
+	{46,				27,		4,		Common::KEYCODE_RETURN},
 
 	// Bottom row
 	{51,				4,		6,		DS_SHIFT},
@@ -98,26 +98,26 @@ key_data keys[DS_NUM_KEYS] = {
 	{'B'-'A' + 1,		14,		6,		'B'},
 	{'N'-'A' + 1,		16,		6,		'N'},
 	{'M'-'A' + 1,		18,		6,		'M'},
-	{38,				20,		6,		SDLK_COMMA},
-	{39,				22,		6,		SDLK_PERIOD},
-	{40,				24,		6,		SDLK_SLASH},
+	{38,				20,		6,		Common::KEYCODE_COMMA},
+	{39,				22,		6,		Common::KEYCODE_PERIOD},
+	{40,				24,		6,		Common::KEYCODE_SLASH},
 
 	// Space bar
-	{47,				9,		8,		SDLK_SPACE},
-	{48,				11,		8,		SDLK_SPACE},
-	{48,				13,		8,		SDLK_SPACE},
-	{48,				15,		8,		SDLK_SPACE},
-	{48,				17,		8,		SDLK_SPACE},
-	{49,				19,		8,		SDLK_SPACE},
+	{47,				9,		8,		Common::KEYCODE_SPACE},
+	{48,				11,		8,		Common::KEYCODE_SPACE},
+	{48,				13,		8,		Common::KEYCODE_SPACE},
+	{48,				15,		8,		Common::KEYCODE_SPACE},
+	{48,				17,		8,		Common::KEYCODE_SPACE},
+	{49,				19,		8,		Common::KEYCODE_SPACE},
 
 	// Cursor arrows
-	{52,				27,		8,		SDLK_LEFT},
-	{54,				29,		8,		SDLK_DOWN},
-	{53,				31,		8,		SDLK_RIGHT},
-	{51,				29,		6,		SDLK_UP},
+	{52,				27,		8,		Common::KEYCODE_LEFT},
+	{54,				29,		8,		Common::KEYCODE_DOWN},
+	{53,				31,		8,		Common::KEYCODE_RIGHT},
+	{51,				29,		6,		Common::KEYCODE_UP},
 	
 	// Close button
-	{56,				30,		0,		SDLK_UNKNOWN},
+	{56,				30,		0,		0},
 	
 };
 
@@ -237,7 +237,7 @@ void addKeyboardEvents() {
 				Common::Event event;
 				
 //				consolePrintf("Key: %d\n", r);
-				if ((keys[r].character == SDLK_UNKNOWN)) {
+				if ((keys[r].character == 0)) {
 					// Close button
 					DS::closed = true;
 				} else	if ((keys[r].character >= '0') && (keys[r].character <= '9')) {

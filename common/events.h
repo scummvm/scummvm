@@ -232,7 +232,10 @@ enum {
 	ASCII_F6 = 320,
 	ASCII_F7 = 321,
 	ASCII_F8 = 322,
-	ASCII_F9 = 323
+	ASCII_F9 = 323,
+	ASCII_F10 = 324,
+	ASCII_F11 = 325,
+	ASCII_F12 = 326
 };
 
 /**
@@ -300,7 +303,6 @@ struct Event {
 		 * This depends on modifiers, i.e. pressing the 'A' key results in
 		 * different values here depending on the status of shift, alt and
 		 * caps lock.
-		 * For the function keys F1-F9, values of 315-323 are used.
 		 */
 		uint16 ascii;
 		/**

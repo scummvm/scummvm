@@ -131,13 +131,13 @@ void CEActionsSmartphone::initInstanceGame() {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = false;
 	else if (is_queen) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
-		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(286); // F1 key for FOTAQ
+		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(SDLK_F5); // F1 key for FOTAQ
 	} else if (is_sky) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
-		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(63);
+		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(SDLK_QUESTION);
 	} else if (is_cine) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
-		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(291); //F10
+		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(SDLK_F10); //F10
 	} else if (is_agi) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
 		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(SDLK_ESCAPE);
@@ -146,7 +146,7 @@ void CEActionsSmartphone::initInstanceGame() {
 		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(SDLK_s);
 	} else {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
-		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(319); // F5 key
+		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(Common::ASCII_F5); // F5 key
 	}
 	// Skip
 	_action_enabled[SMARTPHONE_ACTION_SKIP] = true;
@@ -161,7 +161,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	if (is_agi)
 		_key_action[SMARTPHONE_ACTION_MULTI].setAscii(SDLK_PAUSE); // agi: show predictive dialog
 	else if (is_gob)
-		_key_action[SMARTPHONE_ACTION_MULTI].setAscii(315); // bargon : F1 to start
+		_key_action[SMARTPHONE_ACTION_MULTI].setAscii(Common::ASCII_F1); // bargon : F1 to start
 	else if (gameid == "atlantis")
 		_key_action[SMARTPHONE_ACTION_MULTI].setAscii(SDLK_KP0); // fate of atlantis : Ins to sucker-punch
 	else

@@ -52,7 +52,7 @@ static const char key_names[] =
 
 static const short key_codes[] =
   {
-    27, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324,
+    Common::KEYCODE_ESCAPE, Common::ASCII_F1, Common::ASCII_F2, Common::ASCII_F3, Common::ASCII_F4, Common::ASCII_F5, Common::ASCII_F6, Common::ASCII_F7, Common::ASCII_F8, Common::ASCII_F9, Common::ASCII_F10,
     K('1','!'), K('2','"'), K('3','#'), K('4','$'), K('5','%'),
     K('6','&'), K('7','\''), K('8','('), K('9',')'), K('0','~'), K('-','='),
     K('q','Q'), K('w','W'), K('e','E'), K('r','R'), K('t','T'),
@@ -61,7 +61,7 @@ static const short key_codes[] =
     K('h','H'), K('j','J'), K('k','K'), K('l','L'), K(';','+'), K(':','*'),
     K('z','Z'), K('x','X'), K('c','C'), K('v','V'), K('b','B'),
     K('n','N'), K('m','M'), K(',','<'), K('.','>'), K('/','?'), K('\\','_'),
-    ~Common::KBD_SHIFT, ~Common::KBD_CTRL, ~Common::KBD_ALT, ' ', 8, 13
+    ~Common::KBD_SHIFT, ~Common::KBD_CTRL, ~Common::KBD_ALT, ' ', Common::KEYCODE_BACKSPACE, Common::KEYCODE_RETURN
   };
 
 SoftKeyboard::SoftKeyboard(const OSystem_Dreamcast *_os)

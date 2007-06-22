@@ -59,11 +59,11 @@ unsigned char *keyboard_letters;
 unsigned char *keyboard_letters_shift;
 
 unsigned char kbd_ascii[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '[', ']', '\\', ';', '\'', ',', '.', '/', '`'};
-unsigned int  kbd_code[] = {SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8, SDLK_9, SDLK_0, SDLK_MINUS, SDLK_EQUALS, SDLK_LEFTBRACKET, SDLK_RIGHTBRACKET,
-							SDLK_BACKSLASH, SDLK_SEMICOLON, SDLK_QUOTE, SDLK_COMMA, SDLK_PERIOD, SDLK_SLASH, SDLK_BACKQUOTE};
+unsigned int  kbd_code[] = {Common::KEYCODE_1, Common::KEYCODE_2, Common::KEYCODE_3, Common::KEYCODE_4, Common::KEYCODE_5, Common::KEYCODE_6, Common::KEYCODE_7, Common::KEYCODE_8, Common::KEYCODE_9, Common::KEYCODE_0, Common::KEYCODE_MINUS, Common::KEYCODE_EQUALS, Common::KEYCODE_LEFTBRACKET, Common::KEYCODE_RIGHTBRACKET,
+							Common::KEYCODE_BACKSLASH, Common::KEYCODE_SEMICOLON, Common::KEYCODE_QUOTE, Common::KEYCODE_COMMA, Common::KEYCODE_PERIOD, Common::KEYCODE_SLASH, Common::KEYCODE_BACKQUOTE};
 unsigned char kbd_ascii_cl[] = {'!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '{', '}', '|', ':', '"', '<', '>', '?', '~'};
-unsigned int  kbd_code_cl[]  = {SDLK_EXCLAIM, SDLK_AT, SDLK_HASH, SDLK_DOLLAR, 37, SDLK_CARET, SDLK_AMPERSAND, SDLK_ASTERISK, SDLK_LEFTPAREN, SDLK_RIGHTPAREN, SDLK_UNDERSCORE,
-								SDLK_PLUS, 123, 125, 124, SDLK_COLON, SDLK_QUOTEDBL, SDLK_LESS, SDLK_GREATER, SDLK_QUESTION, 126};
+unsigned int  kbd_code_cl[]  = {Common::KEYCODE_EXCLAIM, Common::KEYCODE_AT, Common::KEYCODE_HASH, Common::KEYCODE_DOLLAR, 37, Common::KEYCODE_CARET, Common::KEYCODE_AMPERSAND, Common::KEYCODE_ASTERISK, Common::KEYCODE_LEFTPAREN, Common::KEYCODE_RIGHTPAREN, Common::KEYCODE_UNDERSCORE,
+								Common::KEYCODE_PLUS, 123, 125, 124, Common::KEYCODE_COLON, Common::KEYCODE_QUOTEDBL, Common::KEYCODE_LESS, Common::KEYCODE_GREATER, Common::KEYCODE_QUESTION, 126};
 #define CAPS_LOCK	(1 << 0)
 #define SYMBOLS 	(1 << 1)
 
@@ -487,7 +487,7 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 	if ( (buttonsChanged & PSP_CTRL_LEFT) && !(pad.Buttons & PSP_CTRL_LEFT)) {
 		event.kbd.flags = 0;
 		event.kbd.ascii = 0;
-		event.kbd.keycode = SDLK_LEFT;
+		event.kbd.keycode = Common::KEYCODE_LEFT;
 		_prevButtons = pad.Buttons;
 		return true;
 	}
@@ -495,7 +495,7 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 	if ( (buttonsChanged & PSP_CTRL_RIGHT) && !(pad.Buttons & PSP_CTRL_RIGHT)) {
 		event.kbd.flags = 0;
 		event.kbd.ascii = 0;
-		event.kbd.keycode = SDLK_RIGHT;
+		event.kbd.keycode = Common::KEYCODE_RIGHT;
 		_prevButtons = pad.Buttons;
 		return true;
 	}
@@ -503,7 +503,7 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 	if ( (buttonsChanged & PSP_CTRL_UP) && !(pad.Buttons & PSP_CTRL_UP)) {
 		event.kbd.flags = 0;
 		event.kbd.ascii = 0;
-		event.kbd.keycode = SDLK_UP;
+		event.kbd.keycode = Common::KEYCODE_UP;
 		_prevButtons = pad.Buttons;
 		return true;
 	}
@@ -511,7 +511,7 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 	if ( (buttonsChanged & PSP_CTRL_DOWN) && !(pad.Buttons & PSP_CTRL_DOWN)) {
 		event.kbd.flags = 0;
 		event.kbd.ascii = 0;
-		event.kbd.keycode = SDLK_DOWN;
+		event.kbd.keycode = Common::KEYCODE_DOWN;
 		_prevButtons = pad.Buttons;
 		return true;
 	}
@@ -535,19 +535,19 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 				switch(_keySelected) {
 					case 27:
 						event.kbd.ascii = ' ';
-						event.kbd.keycode = SDLK_SPACE;
+						event.kbd.keycode = Common::KEYCODE_SPACE;
 					break;
 					case 28:
 						event.kbd.ascii = 127;
-						event.kbd.keycode = SDLK_DELETE;
+						event.kbd.keycode = Common::KEYCODE_DELETE;
 					break;
 					case 29:
 						event.kbd.ascii = 8;
-						event.kbd.keycode = SDLK_BACKSPACE;
+						event.kbd.keycode = Common::KEYCODE_BACKSPACE;
 					break;
 					case 30:
 						event.kbd.ascii = 13;
-						event.kbd.keycode = SDLK_RETURN;
+						event.kbd.keycode = Common::KEYCODE_RETURN;
 					break;
 				}
 			} else {			
@@ -555,11 +555,11 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 					case 0:
 						event.kbd.flags = 0;
 						event.kbd.ascii = 'a'+_keySelected-1;
-						event.kbd.keycode = SDLK_a + _keySelected-1;
+						event.kbd.keycode = Common::KEYCODE_a + _keySelected-1;
 						break;
 					case CAPS_LOCK:
 						event.kbd.ascii = 'A'+_keySelected-1;
-						event.kbd.keycode = SDLK_a + _keySelected-1;
+						event.kbd.keycode = Common::KEYCODE_a + _keySelected-1;
 						event.kbd.flags = Common::KBD_SHIFT;
 						break;
 					case SYMBOLS:

@@ -31,7 +31,6 @@
 #include "backends/platform/ps2/ps2input.h"
 #include "backends/platform/ps2/ps2pad.h"
 #include "backends/platform/ps2/systemps2.h"
-#include "backends/platform/ps2/sdlkeys.h"
 #include "common/events.h"
 #include "common/system.h"
 
@@ -96,15 +95,15 @@ void Ps2Input::warpTo(uint16 x, uint16 y) {
 #define PAD_CHECK_TIME 20
 
 int Ps2Input::mapKey(int key, int mod) { // copied from sdl backend
-	if (key >= SDLK_F1 && key <= SDLK_F9) {
-		return key - SDLK_F1 + 315;
-	} else if (key >= SDLK_KP0 && key <= SDLK_KP9) {
-		return key - SDLK_KP0 + '0';
-	} else if (key >= SDLK_UP && key <= SDLK_PAGEDOWN) {
+	if (key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F9) {
+		return key - Common::KEYCODE_F1 + Common::ASCII_F1;
+	} else if (key >= Common::KEYCODE_KP0 && key <= Common::KEYCODE_KP9) {
+		return key - Common::KEYCODE_KP0 + '0';
+	} else if (key >= Common::KEYCODE_UP && key <= Common::KEYCODE_PAGEDOWN) {
 		return key;
 	} else if (key >= 'a' && key <= 'z' && mod & Common::KBD_SHIFT) {
 		return key & ~0x20;
-	} else if (key >= SDLK_NUMLOCK && key <= SDLK_EURO) {
+	} else if (key >= Common::KEYCODE_NUMLOCK && key <= Common::KEYCODE_EURO) {
 		return 0;
 	}
 	return key;
@@ -142,17 +141,17 @@ bool Ps2Input::pollEvent(Common::Event *event) {
 		PS2KbdRawKey key;
 		if (PS2KbdReadRaw(&key) == 1) {
 			if (_usbToSdlk[key.key]) {
-				if ((_usbToSdlk[key.key] == SDLK_LSHIFT) || (_usbToSdlk[key.key] == SDLK_RSHIFT)) {
+				if ((_usbToSdlk[key.key] == Common::KEYCODE_LSHIFT) || (_usbToSdlk[key.key] == Common::KEYCODE_RSHIFT)) {
 					if (key.state & 1)
 						_keyFlags |= Common::KBD_SHIFT;
 					else
 						_keyFlags &= ~Common::KBD_SHIFT;
-				} else if ((_usbToSdlk[key.key] == SDLK_LCTRL) || (_usbToSdlk[key.key] == SDLK_RCTRL)) {
+				} else if ((_usbToSdlk[key.key] == Common::KEYCODE_LCTRL) || (_usbToSdlk[key.key] == Common::KEYCODE_RCTRL)) {
 					if (key.state & 1)
 						_keyFlags |= Common::KBD_CTRL;
 					else
 						_keyFlags &= ~Common::KBD_CTRL;
-				} else if ((_usbToSdlk[key.key] == SDLK_LALT) || (_usbToSdlk[key.key] == SDLK_RALT)) {
+				} else if ((_usbToSdlk[key.key] == Common::KEYCODE_LALT) || (_usbToSdlk[key.key] == Common::KEYCODE_RALT)) {
 					if (key.state & 1)
 						_keyFlags |= Common::KBD_ALT;
 					else
@@ -256,106 +255,106 @@ const int Ps2Input::_usbToSdlk[0x100] = {
 	/* 01 */	0,
 	/* 02 */	0,
 	/* 03 */	0,
-	/* 04 */	SDLK_a,
-	/* 05 */	SDLK_b,
-	/* 06 */	SDLK_c,
-	/* 07 */	SDLK_d,
-	/* 08 */	SDLK_e,
-	/* 09 */	SDLK_f,
-	/* 0A */	SDLK_g,
-	/* 0B */	SDLK_h,
-	/* 0C */	SDLK_i,
-	/* 0D */	SDLK_j,
-	/* 0E */	SDLK_k,
-	/* 0F */	SDLK_l,
-	/* 10 */	SDLK_m,
-	/* 11 */	SDLK_n,
-	/* 12 */	SDLK_o,
-	/* 13 */	SDLK_p,
-	/* 14 */	SDLK_q,
-	/* 15 */	SDLK_r,
-	/* 16 */	SDLK_s,
-	/* 17 */	SDLK_t,
-	/* 18 */	SDLK_u,
-	/* 19 */	SDLK_v,
-	/* 1A */	SDLK_w,
-	/* 1B */	SDLK_x,
-	/* 1C */	SDLK_y,
-	/* 1D */	SDLK_z,
-	/* 1E */	SDLK_1,
-	/* 1F */	SDLK_2,
-	/* 20 */	SDLK_3,
-	/* 21 */	SDLK_4,
-	/* 22 */	SDLK_5,
-	/* 23 */	SDLK_6,
-	/* 24 */	SDLK_7,
-	/* 25 */	SDLK_8,
-	/* 26 */	SDLK_9,
-	/* 27 */	SDLK_0,
-	/* 28 */	SDLK_RETURN,
-	/* 29 */	SDLK_ESCAPE,
-	/* 2A */	SDLK_BACKSPACE,
-	/* 2B */	SDLK_TAB,
-	/* 2C */	SDLK_SPACE,
-	/* 2D */	SDLK_MINUS,
-	/* 2E */	SDLK_EQUALS,
-	/* 2F */	SDLK_LEFTBRACKET,
-	/* 30 */	SDLK_RIGHTBRACKET,
-	/* 31 */	SDLK_BACKSLASH,
-	/* 32 */	SDLK_HASH,
-	/* 33 */	SDLK_SEMICOLON,
-	/* 34 */	SDLK_QUOTE,
-	/* 35 */	SDLK_BACKQUOTE,
-	/* 36 */	SDLK_COMMA,
-	/* 37 */	SDLK_PERIOD,
-	/* 38 */	SDLK_SLASH,
-	/* 39 */	SDLK_CAPSLOCK,
-	/* 3A */	SDLK_F1,
-	/* 3B */	SDLK_F2,
-	/* 3C */	SDLK_F3,
-	/* 3D */	SDLK_F4,
-	/* 3E */	SDLK_F5,
-	/* 3F */	SDLK_F6,
-	/* 40 */	SDLK_F7,
-	/* 41 */	SDLK_F8,
-	/* 42 */	SDLK_F9,
-	/* 43 */	SDLK_F10,
-	/* 44 */	SDLK_F11,
-	/* 45 */	SDLK_F12,
-	/* 46 */	SDLK_PRINT,
-	/* 47 */	SDLK_SCROLLOCK,
-	/* 48 */	SDLK_PAUSE,
-	/* 49 */	SDLK_INSERT,
-	/* 4A */	SDLK_HOME,
-	/* 4B */	SDLK_PAGEUP,
-	/* 4C */	SDLK_DELETE,
-	/* 4D */	SDLK_END,
-	/* 4E */	SDLK_PAGEDOWN,
-	/* 4F */	SDLK_RIGHT,
-	/* 50 */	SDLK_LEFT,
-	/* 51 */	SDLK_DOWN,
-	/* 52 */	SDLK_UP,
-	/* 53 */	SDLK_NUMLOCK,
-	/* 54 */	SDLK_KP_DIVIDE,
-	/* 55 */	SDLK_KP_MULTIPLY,
-	/* 56 */	SDLK_KP_MINUS,
-	/* 57 */	SDLK_KP_PLUS,
-	/* 58 */	SDLK_KP_ENTER,
-	/* 59 */	SDLK_KP1,
-	/* 5A */	SDLK_KP2,
-	/* 5B */	SDLK_KP3,
-	/* 5C */	SDLK_KP4,
-	/* 5D */	SDLK_KP5,
-	/* 5E */	SDLK_KP6,
-	/* 5F */	SDLK_KP7,
-	/* 60 */	SDLK_KP8,
-	/* 61 */	SDLK_KP9,
-	/* 62 */	SDLK_KP0,
-	/* 63 */	SDLK_KP_PERIOD,
+	/* 04 */	Common::KEYCODE_a,
+	/* 05 */	Common::KEYCODE_b,
+	/* 06 */	Common::KEYCODE_c,
+	/* 07 */	Common::KEYCODE_d,
+	/* 08 */	Common::KEYCODE_e,
+	/* 09 */	Common::KEYCODE_f,
+	/* 0A */	Common::KEYCODE_g,
+	/* 0B */	Common::KEYCODE_h,
+	/* 0C */	Common::KEYCODE_i,
+	/* 0D */	Common::KEYCODE_j,
+	/* 0E */	Common::KEYCODE_k,
+	/* 0F */	Common::KEYCODE_l,
+	/* 10 */	Common::KEYCODE_m,
+	/* 11 */	Common::KEYCODE_n,
+	/* 12 */	Common::KEYCODE_o,
+	/* 13 */	Common::KEYCODE_p,
+	/* 14 */	Common::KEYCODE_q,
+	/* 15 */	Common::KEYCODE_r,
+	/* 16 */	Common::KEYCODE_s,
+	/* 17 */	Common::KEYCODE_t,
+	/* 18 */	Common::KEYCODE_u,
+	/* 19 */	Common::KEYCODE_v,
+	/* 1A */	Common::KEYCODE_w,
+	/* 1B */	Common::KEYCODE_x,
+	/* 1C */	Common::KEYCODE_y,
+	/* 1D */	Common::KEYCODE_z,
+	/* 1E */	Common::KEYCODE_1,
+	/* 1F */	Common::KEYCODE_2,
+	/* 20 */	Common::KEYCODE_3,
+	/* 21 */	Common::KEYCODE_4,
+	/* 22 */	Common::KEYCODE_5,
+	/* 23 */	Common::KEYCODE_6,
+	/* 24 */	Common::KEYCODE_7,
+	/* 25 */	Common::KEYCODE_8,
+	/* 26 */	Common::KEYCODE_9,
+	/* 27 */	Common::KEYCODE_0,
+	/* 28 */	Common::KEYCODE_RETURN,
+	/* 29 */	Common::KEYCODE_ESCAPE,
+	/* 2A */	Common::KEYCODE_BACKSPACE,
+	/* 2B */	Common::KEYCODE_TAB,
+	/* 2C */	Common::KEYCODE_SPACE,
+	/* 2D */	Common::KEYCODE_MINUS,
+	/* 2E */	Common::KEYCODE_EQUALS,
+	/* 2F */	Common::KEYCODE_LEFTBRACKET,
+	/* 30 */	Common::KEYCODE_RIGHTBRACKET,
+	/* 31 */	Common::KEYCODE_BACKSLASH,
+	/* 32 */	Common::KEYCODE_HASH,
+	/* 33 */	Common::KEYCODE_SEMICOLON,
+	/* 34 */	Common::KEYCODE_QUOTE,
+	/* 35 */	Common::KEYCODE_BACKQUOTE,
+	/* 36 */	Common::KEYCODE_COMMA,
+	/* 37 */	Common::KEYCODE_PERIOD,
+	/* 38 */	Common::KEYCODE_SLASH,
+	/* 39 */	Common::KEYCODE_CAPSLOCK,
+	/* 3A */	Common::KEYCODE_F1,
+	/* 3B */	Common::KEYCODE_F2,
+	/* 3C */	Common::KEYCODE_F3,
+	/* 3D */	Common::KEYCODE_F4,
+	/* 3E */	Common::KEYCODE_F5,
+	/* 3F */	Common::KEYCODE_F6,
+	/* 40 */	Common::KEYCODE_F7,
+	/* 41 */	Common::KEYCODE_F8,
+	/* 42 */	Common::KEYCODE_F9,
+	/* 43 */	Common::KEYCODE_F10,
+	/* 44 */	Common::KEYCODE_F11,
+	/* 45 */	Common::KEYCODE_F12,
+	/* 46 */	Common::KEYCODE_PRINT,
+	/* 47 */	Common::KEYCODE_SCROLLOCK,
+	/* 48 */	Common::KEYCODE_PAUSE,
+	/* 49 */	Common::KEYCODE_INSERT,
+	/* 4A */	Common::KEYCODE_HOME,
+	/* 4B */	Common::KEYCODE_PAGEUP,
+	/* 4C */	Common::KEYCODE_DELETE,
+	/* 4D */	Common::KEYCODE_END,
+	/* 4E */	Common::KEYCODE_PAGEDOWN,
+	/* 4F */	Common::KEYCODE_RIGHT,
+	/* 50 */	Common::KEYCODE_LEFT,
+	/* 51 */	Common::KEYCODE_DOWN,
+	/* 52 */	Common::KEYCODE_UP,
+	/* 53 */	Common::KEYCODE_NUMLOCK,
+	/* 54 */	Common::KEYCODE_KP_DIVIDE,
+	/* 55 */	Common::KEYCODE_KP_MULTIPLY,
+	/* 56 */	Common::KEYCODE_KP_MINUS,
+	/* 57 */	Common::KEYCODE_KP_PLUS,
+	/* 58 */	Common::KEYCODE_KP_ENTER,
+	/* 59 */	Common::KEYCODE_KP1,
+	/* 5A */	Common::KEYCODE_KP2,
+	/* 5B */	Common::KEYCODE_KP3,
+	/* 5C */	Common::KEYCODE_KP4,
+	/* 5D */	Common::KEYCODE_KP5,
+	/* 5E */	Common::KEYCODE_KP6,
+	/* 5F */	Common::KEYCODE_KP7,
+	/* 60 */	Common::KEYCODE_KP8,
+	/* 61 */	Common::KEYCODE_KP9,
+	/* 62 */	Common::KEYCODE_KP0,
+	/* 63 */	Common::KEYCODE_KP_PERIOD,
 	/* 64 */	0,
 	/* 65 */	0,
 	/* 66 */	0,
-	/* 67 */	SDLK_KP_EQUALS,
+	/* 67 */	Common::KEYCODE_KP_EQUALS,
 	/* 68 */	0,
 	/* 69 */	0,
 	/* 6A */	0,
@@ -476,13 +475,13 @@ const int Ps2Input::_usbToSdlk[0x100] = {
 	/* DD */	0,
 	/* DE */	0,
 	/* DF */	0,
-	/* E0 */    SDLK_LCTRL,
-	/* E1 */	SDLK_LSHIFT,
-	/* E2 */	SDLK_LALT,
+	/* E0 */    Common::KEYCODE_LCTRL,
+	/* E1 */	Common::KEYCODE_LSHIFT,
+	/* E2 */	Common::KEYCODE_LALT,
 	/* E3 */	0,
-	/* E4 */    SDLK_RCTRL,
-	/* E5 */	SDLK_RSHIFT,
-	/* E6 */	SDLK_RALT,
+	/* E4 */    Common::KEYCODE_RCTRL,
+	/* E5 */	Common::KEYCODE_RSHIFT,
+	/* E6 */	Common::KEYCODE_RALT,
 	/* E7 */	0,
 	/* E8 */	0,
 	/* E9 */	0,
@@ -511,22 +510,22 @@ const int Ps2Input::_usbToSdlk[0x100] = {
 };
 
 const int Ps2Input::_padCodes[16] = {
-	SDLK_1,		 // Select
+	Common::KEYCODE_1,		 // Select
 	0,			 // L3
 	0,			 // R3
-	SDLK_F5,	 // Start
+	Common::KEYCODE_F5,	 // Start
 	0,			 //	Up
 	0,			 //	Right
 	0,			 //	Down
 	0,			 //	Left
-	SDLK_KP0,	 //	L2
+	Common::KEYCODE_KP0,	 //	L2
 	0,			 //	R2
-	SDLK_n,		 //	L1
-	SDLK_y,		 //	R1
-	SDLK_ESCAPE, // Triangle
+	Common::KEYCODE_n,		 //	L1
+	Common::KEYCODE_y,		 //	R1
+	Common::KEYCODE_ESCAPE, // Triangle
 	0,			 //	Circle  => Right mouse button
 	0,			 //	Cross	=> Left mouse button
-	SDLK_RETURN	 //	Square
+	Common::KEYCODE_RETURN	 //	Square
 };
 
 const int Ps2Input::_padFlags[16] = {

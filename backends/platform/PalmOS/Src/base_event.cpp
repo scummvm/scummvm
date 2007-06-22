@@ -104,7 +104,7 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 						_keyExtraPressed &= ~_keyExtra.bitLeft;
 
 						event.type = Common::EVENT_KEYUP;
-						event.kbd.keycode = 276;
+						event.kbd.keycode = Common::KEYCODE_LEFT;
 						event.kbd.ascii = event.kbd.keycode;
 						event.kbd.flags = 0;
 						return true;
@@ -115,7 +115,7 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 						_keyExtraPressed &= ~_keyExtra.bitRight;
 
 						event.type = Common::EVENT_KEYUP;
-						event.kbd.keycode = 275;
+						event.kbd.keycode = Common::KEYCODE_RIGHT;
 						event.kbd.ascii = event.kbd.keycode;
 						event.kbd.flags = 0;
 						return true;
@@ -126,7 +126,7 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 						_keyExtraPressed &= ~_keyExtra.bitUp;
 
 						event.type = Common::EVENT_KEYUP;
-						event.kbd.keycode = 273;
+						event.kbd.keycode = Common::KEYCODE_UP;
 						event.kbd.ascii = event.kbd.keycode;
 						event.kbd.flags = 0;
 						return true;
@@ -137,7 +137,7 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 						_keyExtraPressed &= ~_keyExtra.bitDown;
 
 						event.type = Common::EVENT_KEYUP;
-						event.kbd.keycode = 274;
+						event.kbd.keycode = Common::KEYCODE_DOWN;
 						event.kbd.ascii = event.kbd.keycode;
 						event.kbd.flags = 0;
 						return true;
@@ -180,19 +180,19 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 			if (gVars->arrowKeys) {
 				if (keyCurrentState & _keyExtra.bitLeft) {
 					_keyExtraPressed |= _keyExtra.bitLeft;
-					event.kbd.keycode = 276;
+					event.kbd.keycode = Common::KEYCODE_LEFT;
 
 				} else if (keyCurrentState & _keyExtra.bitRight) {
 					_keyExtraPressed |= _keyExtra.bitRight;
-					event.kbd.keycode = 275;
+					event.kbd.keycode = Common::KEYCODE_RIGHT;
 
 				} else if (keyCurrentState & _keyExtra.bitUp) {
 					_keyExtraPressed |= _keyExtra.bitUp;
-					event.kbd.keycode = 273;
+					event.kbd.keycode = Common::EVENT_KEYUP;
 
 				} else if (keyCurrentState & _keyExtra.bitDown) {
 					_keyExtraPressed |= _keyExtra.bitDown;
-					event.kbd.keycode = 274;
+					event.kbd.keycode = Common::KEYCODE_DOWN;
 				}
 
 				event.type = Common::EVENT_KEYDOWN;
@@ -238,13 +238,13 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 
 			// arrow keys
 			case chrUpArrow:
-				k = 273; break;
+				k = Common::KEYCODE_UP; break;
 			case chrDownArrow:
-				k = 274; break;
+				k = Common::KEYCODE_DOWN; break;
 			case chrRightArrow:
-				k = 275; break;
+				k = Common::KEYCODE_RIGHT; break;
 			case chrLeftArrow:
-				k = 276; break;
+				k = Common::KEYCODE_LEFT; break;
 			}
 
 			if (k) {
@@ -261,16 +261,16 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 			// ESC key
 			case vchrLaunch:
 				event.type = Common::EVENT_KEYDOWN;
-				event.kbd.keycode = 27;
-				event.kbd.ascii = 27;
+				event.kbd.keycode = Common::KEYCODE_ESCAPE;
+				event.kbd.ascii = Common::KEYCODE_ESCAPE;
 				event.kbd.flags = 0;
 				return true;
 
 			// F5 = menu
 			case vchrMenu:
 				event.type = Common::EVENT_KEYDOWN;
-				event.kbd.keycode = 319;
-				event.kbd.ascii = 319;
+				event.kbd.keycode = Common::ASCII_F5;	// FIXME: Should be changed to KEYCODE_F5
+				event.kbd.ascii = Common::ASCII_F5;
 				event.kbd.flags = 0;
 				return true;
 
@@ -286,13 +286,13 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 
 			// arrow keys
 			case chrUpArrow:
-				k = 273; break;
+				k = Common::KEYCODE_UP; break;
 			case chrDownArrow:
-				k = 274; break;
+				k = Common::KEYCODE_DOWN; break;
 			case chrRightArrow:
-				k = 275; break;
+				k = Common::KEYCODE_RIGHT; break;
 			case chrLeftArrow:
-				k = 276; break;
+				k = Common::KEYCODE_LEFT; break;
 			}
 
 			if (k) {
@@ -411,7 +411,7 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 
 			// F1 -> F10 key
 			if  (key >= '0' && key <= '9' && mask == (Common::KBD_CTRL|Common::KBD_ALT)) {
-				key = (key == '0') ? 324 : (315 + key - '1');
+				key = (key == '0') ? 324 : (Common::ASCII_F1 + key - '1');
 				mask = 0;
 
 #ifdef STDLIB_TRACE_MEMORY

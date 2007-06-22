@@ -174,20 +174,20 @@ int16 Util::translateKey(int16 key) {
 		{13,  0x1C0D}, // Enter
 		{27,  0x011B}, // ESC
 		{127, 0x5300}, // Del
-		{273, 0x4800}, // Up arrow
-		{274, 0x5000}, // Down arrow
-		{275, 0x4D00}, // Right arrow
-		{276, 0x4B00}, // Left arrow
-		{315, 0x3B00}, // F1
-		{316, 0x3C00}, // F2
-		{317, 0x3D00}, // F3
-		{318, 0x3E00}, // F4
-		{319, 0x011B}, // F5
-		{320, 0x4000}, // F6
-		{321, 0x4100}, // F7
-		{322, 0x4200}, // F8
-		{323, 0x4300}, // F9
-		{324, 0x4400}  // F10
+		{Common::KEYCODE_UP, 0x4800}, // Up arrow
+		{Common::KEYCODE_DOWN, 0x5000}, // Down arrow
+		{Common::KEYCODE_RIGHT, 0x4D00}, // Right arrow
+		{Common::KEYCODE_LEFT, 0x4B00}, // Left arrow
+		{Common::ASCII_F1, 0x3B00}, // F1
+		{Common::ASCII_F2, 0x3C00}, // F2
+		{Common::ASCII_F3, 0x3D00}, // F3
+		{Common::ASCII_F4, 0x3E00}, // F4
+		{Common::ASCII_F5, 0x011B}, // F5
+		{Common::ASCII_F6, 0x4000}, // F6
+		{Common::ASCII_F7, 0x4100}, // F7
+		{Common::ASCII_F8, 0x4200}, // F8
+		{Common::ASCII_F9, 0x4300}, // F9
+		{Common::ASCII_F10, 0x4400}  // F10
 	};
 
 	for (int i = 0; i < ARRAYSIZE(keys); i++)

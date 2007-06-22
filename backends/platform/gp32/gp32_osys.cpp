@@ -528,8 +528,10 @@ bool OSystem_GP32::pollEvent(Common::Event &event) {
 			event.type = Common::EVENT_KEYDOWN;
 			if (_overlayVisible)
 				event.kbd.keycode = event.kbd.ascii = 13;
-			else
-				event.kbd.keycode = event.kbd.ascii = 319;
+			else {
+				event.kbd.keycode = Common::ASCII_F5;	// FIXME: Should be KEYCODE_F5
+				event.kbd.ascii = Common::ASCII_F5;
+			}
 			return true;
 		}
 		if (ev.button == GPC_VK_SELECT) {	// SELECT = pause
@@ -600,8 +602,10 @@ bool OSystem_GP32::pollEvent(Common::Event &event) {
 			event.type = Common::EVENT_KEYUP;
 			if (_overlayVisible)
 				event.kbd.keycode = event.kbd.ascii = 13;
-			else
-				event.kbd.keycode = event.kbd.ascii = 319;
+			else {
+				event.kbd.keycode = Common::ASCII_F5;	// FIXME: Should be KEYCODE_F5
+				event.kbd.ascii = Common::ASCII_F5;
+			}
 			return true;
 		}
 		if (ev.button == GPC_VK_SELECT) {

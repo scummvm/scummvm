@@ -447,19 +447,19 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 			event.kbd.flags = 0;
 			
 			if (buttonsChanged & PSP_CTRL_LTRIGGER) {
-				event.kbd.keycode = SDLK_ESCAPE;
+				event.kbd.keycode = Common::KEYCODE_ESCAPE;
 				event.kbd.ascii = 27;
 			} else if (buttonsChanged & PSP_CTRL_RTRIGGER) {
-				event.kbd.keycode = SDLK_RETURN;
+				event.kbd.keycode = Common::KEYCODE_RETURN;
 				event.kbd.ascii = 13;
 			} else if (buttonsChanged & PSP_CTRL_START) {
-				event.kbd.keycode = SDLK_F5;
-				event.kbd.ascii = 319;
+				event.kbd.keycode = Common::KEYCODE_F5;
+				event.kbd.ascii = Common::ASCII_F5;
 /*			} else if (buttonsChanged & PSP_CTRL_SELECT) {
-				event.kbd.keycode = SDLK_0;
+				event.kbd.keycode = Common::KEYCODE_0;
 				event.kbd.ascii = '0';
 */			} else if (buttonsChanged & PSP_CTRL_SQUARE) {
-				event.kbd.keycode = SDLK_PERIOD;
+				event.kbd.keycode = Common::KEYCODE_PERIOD;
 				event.kbd.ascii = '.';
 			}
 			

@@ -455,21 +455,21 @@ bool OSystem_SDL::remapKey(SDL_Event &ev,Common::Event &event) {
 	// Map menu key to f5 (scumm menu)
 	if (ev.key.keysym.sym == 306) {
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = SDLK_F5;
+		event.kbd.keycode = Common::KEYCODE_F5;
 		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 		return true;
 	}
 	// Map action key to action
 	if (ev.key.keysym.sym == 291) {
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = SDLK_TAB;
+		event.kbd.keycode = Common::KEYCODE_TAB;
 		event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
 		return true;
 	}
 	// Map OK key to skip cinematic
 	if (ev.key.keysym.sym == 292) {
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = SDLK_ESCAPE;
+		event.kbd.keycode = Common::KEYCODE_ESCAPE;
 		event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
 		return true;
 	}
@@ -485,7 +485,7 @@ bool OSystem_SDL::remapKey(SDL_Event &ev,Common::Event &event) {
 	// Map menu key (f11) to f5 (scumm menu)
 	if (ev.key.keysym.sym == SDLK_F11) {
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = SDLK_F5;
+		event.kbd.keycode = Common::KEYCODE_F5;
 		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 	}
 	// Nap center (space) to tab (default action )
@@ -493,13 +493,13 @@ bool OSystem_SDL::remapKey(SDL_Event &ev,Common::Event &event) {
 	//
 	else if (ev.key.keysym.sym == SDLK_SPACE) {
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = SDLK_TAB;
+		event.kbd.keycode = Common::KEYCODE_TAB;
 		event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
 	}
 	// Since we stole space (pause) above we'll rebind it to the tab key on the keyboard
 	else if (ev.key.keysym.sym == SDLK_TAB) {
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = SDLK_SPACE;
+		event.kbd.keycode = Common::KEYCODE_SPACE;
 		event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
 	} else {
 	// Let the events fall through if we didn't change them, this may not be the best way to
