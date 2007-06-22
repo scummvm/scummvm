@@ -55,7 +55,7 @@ Input::Input(Common::Language language, OSystem *system) :
 	_system(system), _eventMan(system->getEventManager()), _fastMode(false),
 	_keyVerb(VERB_NONE), _cutawayRunning(false), _canQuit(false),
 	_cutawayQuit(false), _dialogueRunning(false), _talkQuit(false),
-	_quickSave(false), _quickLoad(false), _debugger(false), _inKey(Common::KEYCODE_INALID),
+	_quickSave(false), _quickLoad(false), _debugger(false), _inKey(Common::KEYCODE_INVALID),
 	_mouseButton(0), _idleTime(0) {
 
 	switch (language) {
@@ -201,7 +201,7 @@ void Input::checkKeys() {
 		break;
 	}
 
-	_inKey = Common::KEYCODE_INALID;	// reset
+	_inKey = Common::KEYCODE_INVALID;	// reset
 }
 
 Common::Point Input::getMousePos() const {

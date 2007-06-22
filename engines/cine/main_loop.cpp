@@ -77,7 +77,7 @@ void manageEvents(int count) {
 					mouseLeft = 1;
 				}
 				break;
-			case Common::KEYCODE_ESC:
+			case Common::KEYCODE_ESCAPE:
 				if (allowPlayerInput) {
 					mouseRight = 1;
 				}

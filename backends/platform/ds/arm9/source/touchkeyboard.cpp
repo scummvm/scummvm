@@ -117,7 +117,7 @@ key_data keys[DS_NUM_KEYS] = {
 	{51,				29,		6,		Common::KEYCODE_UP},
 	
 	// Close button
-	{56,				30,		0,		Common::KEYCODE_INALID},
+	{56,				30,		0,		Common::KEYCODE_INVALID},
 	
 };
 
@@ -237,7 +237,7 @@ void addKeyboardEvents() {
 				Common::Event event;
 				
 //				consolePrintf("Key: %d\n", r);
-				if ((keys[r].character == Common::KEYCODE_INALID)) {
+				if ((keys[r].character == Common::KEYCODE_INVALID)) {
 					// Close button
 					DS::closed = true;
 				} else	if ((keys[r].character >= '0') && (keys[r].character <= '9')) {

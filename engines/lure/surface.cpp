@@ -430,7 +430,7 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 						mouse.cursorOn();
 						return true;
 					}
-					else if (keycode == Common::KEYCODE_ESC) {
+					else if (keycode == Common::KEYCODE_ESCAPE) {
 						// Escape character
 						screen.screen().fillRect(
 							Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);

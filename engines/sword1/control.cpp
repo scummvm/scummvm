@@ -1047,9 +1047,10 @@ void Control::delay(uint32 msecs) {
 			case Common::EVENT_KEYDOWN:
 
 				// Make sure backspace works right (this fixes a small issue on OS X)
-				if (event.kbd.keycode == Common::KEYCODE_BACKSPACE)
+				if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+printf("Mac backspace workaround, was %d\n", event.kbd.ascii);
 					_keyPressed = 8;
-				else
+				} else
 					_keyPressed = (byte)event.kbd.ascii;
 				// we skip the rest of the delay and return immediately
 				// to handle keyboard input

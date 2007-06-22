@@ -68,7 +68,7 @@ enum EventType {
 };
 
 enum KeyCode {
-	KEYCODE_INALID      = 0,
+	KEYCODE_INVALID     = 0,
 
 	KEYCODE_BACKSPACE   = 8,
 	KEYCODE_TAB         = 9,
