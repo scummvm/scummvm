@@ -191,7 +191,7 @@ void Mouse::waitMouseNotPressed(int minDelay) {
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.ascii == 27) {
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					minDelay = 0;
 					mousePressed = false;
 				}

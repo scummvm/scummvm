@@ -27,6 +27,7 @@
 #define SKY_H
 
 #include "common/stdafx.h"
+#include "common/events.h"
 #include "engines/engine.h"
 
 namespace Sky {
@@ -60,7 +61,7 @@ class SkyCompact;
 class SkyEngine : public Engine {
 	GUI::Debugger *getDebugger();
 protected:
-	byte _keyPressed, _keyFlags;
+	Common::KeyState _keyPressed;
 	bool _floppyIntro;
 
 	Sound *_skySound;

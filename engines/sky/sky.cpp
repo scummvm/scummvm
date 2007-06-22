@@ -217,33 +217,29 @@ void SkyEngine::initVirgin() {
 
 void SkyEngine::handleKey(void) {
 
-	if (_keyPressed && _systemVars.paused) {
+	if (_keyPressed.keycode && _systemVars.paused) {
 		_skySound->fnUnPauseFx();
 		_systemVars.paused = false;
 		_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
-		_keyFlags = _keyPressed = 0;
-		return;
-	}
-
-	if (_keyFlags == Common::KBD_CTRL) {
-		if (_keyPressed == 'f')
+	} else if (_keyPressed.flags == Common::KBD_CTRL) {
+		if (_keyPressed.keycode == 'f')
 			_fastMode ^= 1;
-		else if (_keyPressed == 'g')
+		else if (_keyPressed.keycode == 'g')
 			_fastMode ^= 2;
-		else if (_keyPressed == 'd')
+		else if (_keyPressed.keycode == 'd')
 			_debugger->attach();
 	} else {
-		switch (_keyPressed) {
+		switch (_keyPressed.ascii) {
 		case '`':
 		case '~':
 		case '#':
 			_debugger->attach();
 			break;
-		case 63:
+		case Common::ASCII_F5:
 			_skyControl->doControlPanel();
 			break;
 
-		case 27:
+		case Common::ASCII_ESCAPE:
 			if (!_systemVars.pastIntro)
 				_skyControl->restartGame();
 			break;
@@ -260,14 +256,14 @@ void SkyEngine::handleKey(void) {
 
 		}
 	}
-	_keyFlags = _keyPressed = 0;
+	_keyPressed.reset();
 }
 
 int SkyEngine::go() {
 
 	_systemVars.quitGame = false;
 
-	_keyFlags = _keyPressed = 0;
+	_keyPressed.reset();
 
 	uint16 result = 0;
 	if (ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") >= 0)
@@ -517,7 +513,7 @@ void SkyEngine::delay(int32 amount) {
 	Common::Event event;
 
 	uint32 start = _system->getMillis();
-	_keyFlags = _keyPressed = 0;	//reset
+	_keyPressed.reset();
 
 	if (amount < 0)
 		amount = 0;
@@ -526,11 +522,7 @@ void SkyEngine::delay(int32 amount) {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				_keyFlags = event.kbd.flags;
-				if (_keyFlags == Common::KBD_CTRL)
-					_keyPressed = event.kbd.keycode;
-				else
-					_keyPressed = (byte)event.kbd.ascii;
+				_keyPressed = event.kbd;
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
