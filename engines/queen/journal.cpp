@@ -522,8 +522,8 @@ void Journal::updateTextField(uint16 ascii, int keycode) {
 			dirty = true;
 		}
 		break;
-	case '\n':
-	case '\r':
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
 		if (_textField.text[0]) {
 			closeTextField();
 			int currentSlot = _currentSavePage * 10 + _currentSaveSlot;

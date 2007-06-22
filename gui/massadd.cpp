@@ -85,10 +85,10 @@ MassAddDialog::MassAddDialog(const FilesystemNode &startDir)
 	_gameProgressText = new StaticTextWidget(this, "massadddialog_gameprogress",
 											 "... progress ...");
 
-	_okButton = new ButtonWidget(this, "massadddialog_ok", "OK", kOkCmd, '\r');
+	_okButton = new ButtonWidget(this, "massadddialog_ok", "OK", kOkCmd, Common::ASCII_RETURN);
 	_okButton->setEnabled(false);
 
-	new ButtonWidget(this, "massadddialog_cancel", "Cancel", kCancelCmd, '\27');
+	new ButtonWidget(this, "massadddialog_cancel", "Cancel", kCancelCmd, Common::ASCII_ESCAPE);
 
 }
 
