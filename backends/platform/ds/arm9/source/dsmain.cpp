@@ -1253,7 +1253,7 @@ void addEventsToQueue() {
 		
 		if ((getKeysChanged() & KEY_START)) {
 			event.type = getKeyEvent(KEY_START);
-			event.kbd.keycode = Common::ASCII_F5;		// FIXME: Should be KEYCODE_F5
+			event.kbd.keycode = Common::KEYCODE_F5;
 			event.kbd.ascii = Common::ASCII_F5;
 			event.kbd.flags = 0;
 			system->addEvent(event);

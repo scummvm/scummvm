@@ -262,14 +262,14 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 			case vchrLaunch:
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_ESCAPE;
-				event.kbd.ascii = Common::KEYCODE_ESCAPE;
+				event.kbd.ascii = Common::ASCII_ESCAPE;
 				event.kbd.flags = 0;
 				return true;
 
 			// F5 = menu
 			case vchrMenu:
 				event.type = Common::EVENT_KEYDOWN;
-				event.kbd.keycode = Common::ASCII_F5;	// FIXME: Should be changed to KEYCODE_F5
+				event.kbd.keycode = Common::KEYCODE_F5;
 				event.kbd.ascii = Common::ASCII_F5;
 				event.kbd.flags = 0;
 				return true;
@@ -411,8 +411,13 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 
 			// F1 -> F10 key
 			if  (key >= '0' && key <= '9' && mask == (Common::KBD_CTRL|Common::KBD_ALT)) {
-				key = (key == '0') ? 324 : (Common::ASCII_F1 + key - '1');
-				mask = 0;
+				key = (key - '0' + 10 - 1) % 10;	// '0' -> 9, '1' -> 0, '2' -> 1, ...
+				_wasKey = true;
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_F1 + key;
+				event.kbd.ascii = Common::ASCII_F1 + key;
+				event.kbd.flags = 0;
+				return true;
 
 #ifdef STDLIB_TRACE_MEMORY
 			// print memory

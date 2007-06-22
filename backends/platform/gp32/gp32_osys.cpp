@@ -529,7 +529,7 @@ bool OSystem_GP32::pollEvent(Common::Event &event) {
 			if (_overlayVisible)
 				event.kbd.keycode = event.kbd.ascii = 13;
 			else {
-				event.kbd.keycode = Common::ASCII_F5;	// FIXME: Should be KEYCODE_F5
+				event.kbd.keycode = Common::KEYCODE_F5;
 				event.kbd.ascii = Common::ASCII_F5;
 			}
 			return true;
@@ -603,7 +603,7 @@ bool OSystem_GP32::pollEvent(Common::Event &event) {
 			if (_overlayVisible)
 				event.kbd.keycode = event.kbd.ascii = 13;
 			else {
-				event.kbd.keycode = Common::ASCII_F5;	// FIXME: Should be KEYCODE_F5
+				event.kbd.keycode = Common::KEYCODE_F5;
 				event.kbd.ascii = Common::ASCII_F5;
 			}
 			return true;
