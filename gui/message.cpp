@@ -96,7 +96,7 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	}
 
 	if (defaultButton)
-		addButton(this, okButtonPos, _h - buttonHeight - 8, defaultButton, kOkCmd, '\n');	// Confirm dialog
+		addButton(this, okButtonPos, _h - buttonHeight - 8, defaultButton, kOkCmd, '\r');	// Confirm dialog
 
 	if (altButton)
 		addButton(this, cancelButtonPos, _h - buttonHeight - 8, altButton, kCancelCmd, '\27');	// Cancel dialog
