@@ -26,7 +26,6 @@
 #include "lure/res.h"
 #include "lure/room.h"
 #include "lure/sound.h"
-#include <sdl_keysym.h>
 
 namespace Lure {
 

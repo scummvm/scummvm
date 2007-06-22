@@ -32,7 +32,6 @@
 #include "lure/fights.h"
 
 #include "common/config-manager.h"
-#include <sdl_keysym.h>
 
 namespace Lure {
 
@@ -150,11 +149,11 @@ void Game::execute() {
 					// Handle special keys
 					bool handled = true;
 					switch (events.event().kbd.keycode) {
-						case SDLK_F5:
+						case Common::KEYCODE_F5:
 							SaveRestoreDialog::show(true);
 							break;
 
-						case SDLK_F7:
+						case Common::KEYCODE_F7:
 							SaveRestoreDialog::show(false);
 							break;
 
