@@ -23,6 +23,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/events.h"
 #include "gui/editable.h"
 #include "gui/newgui.h"
 
@@ -94,17 +95,17 @@ bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		drawCaret(true);
 
 	switch (keycode) {
-	case '\n':	// enter/return
-	case '\r':
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
 		// confirm edit and exit editmode
 		endEditMode();
 		dirty = true;
 		break;
-	case 27:	// escape
+	case Common::KEYCODE_ESCAPE:
 		abortEditMode();
 		dirty = true;
 		break;
-	case 8:		// backspace
+	case Common::KEYCODE_BACKSPACE:
 		if (_caretPos > 0) {
 			_caretPos--;
 			_editString.deleteChar(_caretPos);
@@ -112,32 +113,32 @@ bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		}
 		forcecaret = true;
 		break;
-	case 127:	// delete
+	case Common::KEYCODE_DELETE:
 		if (_caretPos < (int)_editString.size()) {
 			_editString.deleteChar(_caretPos);
 			dirty = true;
 		}
 		forcecaret = true;
 		break;
-	case 256 + 20:	// left arrow
+	case Common::KEYCODE_LEFT:
 		if (_caretPos > 0) {
 			dirty = setCaretPos(_caretPos - 1);
 		}
 		forcecaret = true;
 		dirty = true;
 		break;
-	case 256 + 19:	// right arrow
+	case Common::KEYCODE_RIGHT:
 		if (_caretPos < (int)_editString.size()) {
 			dirty = setCaretPos(_caretPos + 1);
 		}
 		forcecaret = true;
 		dirty = true;
 		break;
-	case 256 + 22:	// home
+	case Common::KEYCODE_HOME:
 		dirty = setCaretPos(0);
 		forcecaret = true;
 		break;
-	case 256 + 23:	// end
+	case Common::KEYCODE_END:
 		dirty = setCaretPos(_editString.size());
 		forcecaret = true;
 		break;

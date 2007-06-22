@@ -265,8 +265,8 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		return;
 
 	switch (keycode) {
-	case '\n':	// enter/return
-	case '\r': {
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER: {
 		if (_caretVisible)
 			drawCaret(true);
 
@@ -307,10 +307,10 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			slideUpAndClose();
 		break;
 		}
-	case 27:	// escape
+	case Common::KEYCODE_ESCAPE:
 		slideUpAndClose();
 		break;
-	case 8:		// backspace
+	case Common::KEYCODE_BACKSPACE:
 		if (_caretVisible)
 			drawCaret(true);
 
@@ -321,7 +321,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		scrollToCurrent();
 		drawLine(pos2line(_currentPos));
 		break;
-	case 9: // tab
+	case Common::KEYCODE_TAB:
 	{
 		if (_completionCallbackProc) {
 			int len = _currentPos - _promptStartPos;
@@ -346,11 +346,11 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		}
 		break;
 	}
-	case 127:
+	case Common::KEYCODE_DELETE:
 		killChar();
 		drawLine(pos2line(_currentPos));
 		break;
-	case 256 + 24:	// pageup
+	case Common::KEYCODE_PAGEUP:
 		if (modifiers == Common::KBD_SHIFT) {
 			_scrollLine -= _linesPerPage - 1;
 			if (_scrollLine < _firstLineInBuffer + _linesPerPage - 1)
@@ -359,7 +359,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			draw();
 		}
 		break;
-	case 256 + 25:	// pagedown
+	case Common::KEYCODE_PAGEDOWN:
 		if (modifiers == Common::KBD_SHIFT) {
 			_scrollLine += _linesPerPage - 1;
 			if (_scrollLine > _promptEndPos / kCharsPerLine) {
@@ -371,7 +371,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			draw();
 		}
 		break;
-	case 256 + 22:	// home
+	case Common::KEYCODE_HOME:
 		if (modifiers == Common::KBD_SHIFT) {
 			_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
 			updateScrollBuffer();
@@ -380,7 +380,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		}
 		draw();
 		break;
-	case 256 + 23:	// end
+	case Common::KEYCODE_END:
 		if (modifiers == Common::KBD_SHIFT) {
 			_scrollLine = _promptEndPos / kCharsPerLine;
 			if (_scrollLine < _linesPerPage - 1)
@@ -391,18 +391,18 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		}
 		draw();
 		break;
-	case 273:	// cursor up
+	case Common::KEYCODE_UP:
 		historyScroll(+1);
 		break;
-	case 274:	// cursor down
+	case Common::KEYCODE_DOWN:
 		historyScroll(-1);
 		break;
-	case 275:	// cursor right
+	case Common::KEYCODE_RIGHT:
 		if (_currentPos < _promptEndPos)
 			_currentPos++;
 		drawLine(pos2line(_currentPos));
 		break;
-	case 276:	// cursor left
+	case Common::KEYCODE_LEFT:
 		if (_currentPos > _promptStartPos)
 			_currentPos--;
 		drawLine(pos2line(_currentPos));
@@ -446,25 +446,25 @@ void ConsoleDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 
 void ConsoleDialog::specialKeys(int keycode) {
 	switch (keycode) {
-	case 'a':
+	case Common::KEYCODE_a:
 		_currentPos = _promptStartPos;
 		draw();
 		break;
-	case 'd':
+	case Common::KEYCODE_d:
 		if (_currentPos < _promptEndPos) {
 			killChar();
 			draw();
 		}
 		break;
-	case 'e':
+	case Common::KEYCODE_e:
 		_currentPos = _promptEndPos;
 		draw();
 		break;
-	case 'k':
+	case Common::KEYCODE_k:
 		killLine();
 		draw();
 		break;
-	case 'w':
+	case Common::KEYCODE_w:
 		killLastWord();
 		draw();
 		break;
