@@ -224,11 +224,12 @@ void AgiEngine::processEvents() {
 			case Common::KEYCODE_KP_ENTER:
 				key = KEY_ENTER;
 				break;
+			case Common::KEYCODE_BACKSPACE:
+				key = KEY_BACKSPACE;
+				break;
 			default:
 				if (key < 256 && !isalpha(key)) {
-					// Make sure backspace works right (this fixes a small issue on OS X)
-					if (key != 8)
-						key = event.kbd.ascii;
+					key = event.kbd.ascii;
 					break;
 				}
 				if (_keyControl)
