@@ -1,0 +1,584 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2005-2006 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
+#include "lure/fights.h"
+#include "lure/luredefs.h"
+#include "lure/game.h"
+#include "lure/res.h"
+#include "lure/room.h"
+#include "lure/sound.h"
+#include <sdl_keysym.h>
+
+namespace Lure {
+
+// Three records containing initial states for player, pig, and Skorl
+FighterRecord fighterList[3] = {
+	{0x23C, 0x440, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
+	{0, 0x441, 0x1092, 0, 3, 0, 0, 0, 0xB94, 8, 0xA34, 0x8D4, 0xD06, 0,
+	0, 0, 0, 0, 0xDDC, PLAYER_ID},
+	{0, 0x446, 0x1092, 0, 3, 0, 0, 0, 0xB94, 8, 0xA34, 0x8D4, 0xD06, 0,
+	0, 0, 0, 0, 0xDDC, PLAYER_ID}
+};
+
+FightsManager *int_fights = NULL;
+
+FightsManager::FightsManager() {
+	int_fights = this;
+	_fightData = NULL;
+	_mouseFlags = 0;
+}
+
+FightsManager::~FightsManager() {	
+	if (_fightData != NULL)
+		// Release the fight data
+		delete _fightData;
+}
+
+FightsManager &FightsManager::getReference() {
+	return *int_fights;
+}
+
+FighterRecord &FightsManager::getDetails(uint16 hotspotId) {
+	if (hotspotId == PLAYER_ID) return fighterList[0];
+	else if (hotspotId == PIG_ID) return fighterList[1];
+	else if (hotspotId == SKORL_FIGHTER_ID) return fighterList[2];
+	error("Unknown NPC %d attempted to fight", hotspotId);
+}
+
+// Sets up the data for the pig fight in the cave
+
+void FightsManager::setupPigFight() {
+	Resources &res = Resources::getReference();
+	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
+	player->setSkipFlag(false);
+	player->resource()->colourOffset = 16;
+	player->setTickProc(PLAYER_FIGHT_TICK_PROC_ID);
+	player->setSize(48, 53);
+	player->setAnimation(PLAYER_FIGHT_ANIM_ID);
+	player->resource()->width = 48;
+	player->resource()->height = 53;
+
+	player->setOccupied(false);
+	player->setPosition(262, 94);
+	FighterRecord &rec = getDetails(PLAYER_ID);
+	rec.fwhits = 0;
+	rec.fwtrue_x = 262;
+	rec.fwtrue_y = 53;
+	rec.fwseq_ad = FIGHT_PLAYER_INIT;
+	rec.fwenemy_ad = PIG_ID;
+}
+
+void FightsManager::setupSkorlFight() {
+	Resources &res = Resources::getReference();
+	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
+	FighterRecord &rec = getDetails(PLAYER_ID);
+
+	setupPigFight();
+
+	rec.fwenemy_ad = SKORL_FIGHTER_ID;
+	rec.fwweapon = 0x445;
+	rec.fwtrue_x = 282;
+	rec.fwtrue_y = 136;
+	player->setPosition(282, 136);
+	player->resource()->colourOffset = 96;
+}
+
+bool FightsManager::isFighting() {
+	FighterRecord &rec = getDetails(PLAYER_ID);
+	return rec.fwhits == 0;
+}
+
+void FightsManager::fightLoop() {
+	Resources &res = Resources::getReference();
+	Events &events = Events::getReference();
+	FighterRecord &playerFight = getDetails(PLAYER_ID);
+
+	// Loop for the duration of the battle
+	while (!events.quitFlag && (playerFight.fwhits != GENERAL_MAGIC_ID)) {
+		checkEvents();
+		
+		Game::getReference().tick();
+		Room::getReference().update();
+		res.delayList().tick();
+		Screen::getReference().update();
+
+		g_system->delayMillis(20);		
+	}
+}
+
+void FightsManager::saveToStream(Common::WriteStream *stream) {
+	for (int fighterCtr = 0; fighterCtr < 3; ++fighterCtr) {
+		FighterRecord &rec = fighterList[fighterCtr];
+
+		stream->writeUint16LE(rec.fwseq_no);
+		stream->writeUint16LE(rec.fwseq_ad);
+		stream->writeUint16LE(rec.fwdist);
+		stream->writeUint16LE(rec.fwwalk_roll);
+		stream->writeUint16LE(rec.fwmove_number);
+		stream->writeUint16LE(rec.fwhits);
+	}
+}
+
+void FightsManager::loadFromStream(Common::ReadStream *stream) {
+	for (int fighterCtr = 0; fighterCtr < 3; ++fighterCtr) {
+		FighterRecord &rec = fighterList[fighterCtr];
+
+		rec.fwseq_no = stream->readUint16LE();
+		rec.fwseq_ad = stream->readUint16LE();
+		rec.fwdist = stream->readUint16LE();
+		rec.fwwalk_roll = stream->readUint16LE();
+		rec.fwmove_number = stream->readUint16LE();
+		rec.fwhits = stream->readUint16LE();
+	}
+}
+
+const CursorType moveList[] = {CURSOR_LEFT_ARROW, CURSOR_FIGHT_UPPER, 
+	CURSOR_FIGHT_MIDDLE, CURSOR_FIGHT_LOWER, CURSOR_RIGHT_ARROW};
+
+struct KeyMapping {
+	uint16 keycode;
+	uint8 moveNumber;
+};
+
+const KeyMapping keyList[] = {
+	{/*LEFT*/276, 10}, {/*RIGHT*/275, 14}, {/*NUM7*/55, 11}, {/*NUM4*/52, 12}, 
+	{/*NUM1*/49, 13}, {/*NUM9*/57, 6}, {/*NUM6*/54, 7}, {/*NUM3*/51, 8}, {0, 0}};
+
+void FightsManager::checkEvents() {
+	Events &events = Events::getReference();
+	if (!events.pollEvent()) return;
+	FighterRecord &rec = getDetails(PLAYER_ID);
+	Hotspot *player = Resources::getReference().getActiveHotspot(PLAYER_ID);
+	Mouse &mouse = Mouse::getReference();
+
+	int moveNumber = 0;
+
+	if (events.type() == Common::EVENT_KEYDOWN) {
+		switch (events.event().kbd.ascii) {
+		case 27:
+			events.quitFlag = true;
+			break;
+
+		default:
+			// Scan through the mapping list for a move for the keypress
+			const KeyMapping *keyPtr = &keyList[0];
+			while ((keyPtr->keycode != 0) &&
+				(keyPtr->keycode != events.event().kbd.ascii))
+				++keyPtr;
+			if (keyPtr->keycode != 0)
+				moveNumber = keyPtr->moveNumber;
+		}
+	}
+
+	if (events.type() == Common::EVENT_MOUSEMOVE) {
+		Point mPos = events.event().mouse;
+		if (mPos.x < rec.fwtrue_x - 12) 
+			mouse.setCursorNum(CURSOR_LEFT_ARROW);
+		else if (mPos.x > rec.fwtrue_x + player->width())
+			mouse.setCursorNum(CURSOR_RIGHT_ARROW);
+		else if (mPos.y < player->y() + 4)
+			mouse.setCursorNum(CURSOR_FIGHT_UPPER);
+		else if (mPos.y < player->y() + 38)
+			mouse.setCursorNum(CURSOR_FIGHT_MIDDLE);
+		else 
+			mouse.setCursorNum(CURSOR_FIGHT_LOWER);
+	}
+
+	if ((events.type() == Common::EVENT_LBUTTONDOWN) ||
+		(events.type() == Common::EVENT_RBUTTONDOWN) ||
+		(events.type() == Common::EVENT_LBUTTONUP) ||
+		(events.type() == Common::EVENT_RBUTTONUP)) {
+		_mouseFlags = 0;
+		if (events.type() == Common::EVENT_LBUTTONDOWN) ++_mouseFlags;
+		if (events.type() == Common::EVENT_RBUTTONDOWN) _mouseFlags += 2;
+	}
+
+	// Get the correct base index for the move
+	while ((moveNumber < 5) && (moveList[moveNumber] != mouse.getCursorNum()))
+		++moveNumber;
+	if (moveNumber < 5) {
+		if (_mouseFlags == 1)
+			// Left mouse
+			moveNumber += 10;
+		else if (_mouseFlags == 2)
+			// Right mouse
+			moveNumber += 5;
+	}
+
+	rec.fwmove_number = moveNumber;
+
+	if (rec.fwmove_number >= 5)
+		debugC(ERROR_INTERMEDIATE, kLureDebugFights, 
+			"Player fight move number=%d", rec.fwmove_number);
+}
+
+void FightsManager::fighterAnimHandler(Hotspot &h) {
+	FighterRecord &fighter = getDetails(h.hotspotId());
+	FighterRecord &opponent = getDetails(fighter.fwenemy_ad);
+	FighterRecord &player = getDetails(PLAYER_ID);
+
+	fetchFighterDistance(fighter, opponent);
+
+	if (fighter.fwseq_ad) {
+		fightHandler(h, fighter.fwseq_ad);
+		return;
+	}
+
+	uint16 seqNum = 0;
+	if (fighter.fwdist != FIGHT_DISTANCE) {
+		seqNum = getFighterMove(fighter, fighter.fwnot_near);
+	} else {
+		uint16 offset = (fighter.fwhits * fighter.fwdef_len) + fighter.fwdefend_adds + 4;
+
+		// Scan for the given sequence
+		uint16 v = getWord(offset);
+		while ((v != 0) && (v != player.fwseq_no)) {
+			offset += 4;
+			v = getWord(offset);
+		}
+		
+		if (v == 0) {
+			// No sequence match found
+			seqNum = getFighterMove(fighter, fighter.fwattack_table);
+		} else {
+			v = getWord(offset + 2);
+			seqNum  = getFighterMove(fighter, fighter.fwdefend_table);
+			
+			if (seqNum == 0)
+				seqNum = getFighterMove(fighter, fighter.fwattack_table);
+			else if (seqNum == 0xff)
+				seqNum = v;
+		}
+	}
+
+	// Set the sequence and pass onto the fight handler
+	fighter.fwseq_no = seqNum;
+	fighter.fwseq_ad = getWord(FIGHT_TBL_1 + (seqNum << 1));
+}
+
+void FightsManager::playerAnimHandler(Hotspot &h) {
+	FighterRecord &fighter = getDetails(h.hotspotId());
+	fightHandler(h, fighter.fwseq_ad);
+}
+
+void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
+	Resources &res = Resources::getReference();
+	FighterRecord &fighter = getDetails(h.hotspotId());
+	FighterRecord &opponent = getDetails(fighter.fwenemy_ad);
+
+	uint16 v1, v2;
+	bool breakFlag = false;
+
+	while (!breakFlag) {
+		if (moveOffset == 0) {
+			// Player is doing nothing, so check the move number
+			moveOffset = getWord(FIGHT_PLAYER_MOVE_TABLE + (fighter.fwmove_number << 1));
+
+			debugC(ERROR_DETAILED, kLureDebugFights, 
+				"Hotspot %xh fight move=%d, new offset=%xh", 
+				h.hotspotId(), fighter.fwmove_number, moveOffset);
+
+			if (moveOffset == 0) 
+				return;
+
+			fighter.fwseq_no = fighter.fwmove_number;
+			fighter.fwseq_ad = moveOffset;
+		}
+
+		uint16 moveValue = getWord(moveOffset);
+		debugC(ERROR_DETAILED, kLureDebugFights, 
+			"Hotspot %xh script offset=%xh value=%xh", 
+			h.hotspotId(), moveOffset, moveValue);
+		moveOffset += sizeof(uint16);
+
+		if ((moveValue & 0x8000) == 0) {
+			// Set frame to specified number
+			h.setFrameNumber(moveValue);
+			
+			// Set the new fighter position
+			int16 newX, newY;
+			newX = h.x() + (int16)getWord(moveOffset);
+			if (newX < 32) newX = 32;
+			if (newX > 240) newX = 240;
+			newY = h.y() + (int16)getWord(moveOffset + 2);
+			h.setPosition(newX, newY);
+
+			if (fighter.fwweapon != 0) {
+				Hotspot *weaponHotspot = res.getActiveHotspot(fighter.fwweapon);
+				assert(weaponHotspot);
+				weaponHotspot->setFrameNumber(getWord(moveOffset + 4));
+				weaponHotspot->setPosition(weaponHotspot->x() +
+					(int16)getWord(moveOffset + 6),
+					weaponHotspot->y() + getWord(moveOffset + 8));
+			}
+
+			moveOffset += 5 * sizeof(uint16);
+			fighter.fwseq_ad = moveOffset;
+			return;
+		}
+
+		switch (moveValue)
+		{
+		case 0xFFFA:
+			// Walk left
+			if ((fighter.fwmove_number == 5) || (fighter.fwmove_number == 10)) {
+				if (h.x() < 32) {
+					breakFlag = true;
+				} else {
+					h.setPosition(h.x() - 4, h.y());
+					fighter.fwtrue_x = h.x();
+					if (fetchFighterDistance(fighter, opponent) < FIGHT_DISTANCE) {
+						h.setPosition(h.x() + 4, h.y());
+						fighter.fwtrue_x += 4;
+						breakFlag = true;
+					} else {
+						removeWeapon(fighter.fwweapon);
+						fighter.fwtrue_x = h.x();
+						fighter.fwtrue_y = h.y();
+
+						uint16 frameNum = (fighter.fwwalk_roll == 7) ? 0 :
+							fighter.fwwalk_roll + 1;
+						fighter.fwwalk_roll = frameNum;
+						fighter.fwseq_ad = moveOffset;
+						h.setFrameNumber(frameNum);
+						return;
+					}
+				}
+			} else {
+				// Signal to start a new action
+				moveOffset = 0;
+			}
+			break;
+				
+		case 0xFFF9:
+			// Walk right
+			if ((fighter.fwmove_number == 9) || (fighter.fwmove_number == 14)) {
+				if (h.x() >= 240) {
+					breakFlag = true;
+				} else {
+					removeWeapon(fighter.fwweapon);
+					h.setPosition(h.x() + 4, h.y());
+					fighter.fwtrue_x = h.x();
+					fighter.fwtrue_y = h.y();
+					
+					fighter.fwwalk_roll = (fighter.fwwalk_roll == 0) ? 7 : 
+						fighter.fwwalk_roll - 1;
+					fighter.fwseq_ad = moveOffset;
+					h.setFrameNumber(fighter.fwwalk_roll);
+					return;
+				}
+
+			} else {
+				// Signal to start a new action
+				moveOffset = 0;
+			}
+			break;
+
+		case 0xFFEB:
+			// Enemy right
+			removeWeapon(fighter.fwweapon);
+			h.setPosition(h.x() + 4, h.y());
+			fighter.fwtrue_x = h.x();
+
+			if (fetchFighterDistance(fighter, opponent) < FIGHT_DISTANCE) {
+				h.setPosition(h.x() - 4, h.y());
+				fighter.fwtrue_x -= 4;
+				fighter.fwseq_ad = 0;
+				h.setFrameNumber(8);
+			} else {
+				h.setFrameNumber(getWord(moveOffset));
+				moveOffset += sizeof(uint16);
+				fighter.fwseq_ad = moveOffset;
+			}
+			return;
+		
+		case 0xFFFB:
+			// End of sequence
+			breakFlag = true;
+			break;
+
+		case 0xFFF8:
+			// Set fight address
+			moveOffset = getWord(moveOffset);
+			break;
+
+		case 0xFFFF:
+		case 0xFFFE:
+			if (moveValue == 0xffff) 
+				// Set the animation record
+				h.setAnimation(getWord(moveOffset));
+			else 
+				// New set animation record
+				h.setAnimation(getWord(fighter.fwheader_list + (getWord(moveOffset) << 1)));
+			h.setFrameNumber(0);
+			moveOffset += sizeof(uint16);
+			break;
+
+		case 0xFFF7:
+			// On hold
+			if (getWord(moveOffset) == fighter.fwmove_number)
+				moveOffset = getWord(moveOffset + 2);
+			else
+				moveOffset += 2 * sizeof(uint16);
+			break;
+				
+		case 0xFFF6:
+			// Not hold
+			if (getWord(moveOffset) == fighter.fwmove_number)
+				moveOffset += 2 * sizeof(uint16);
+			else
+				moveOffset = getWord(moveOffset + 2);
+			break;
+			
+		case 0xFFF4:
+			// End sequence
+			fighter.fwseq_no = 0;
+			break;
+
+		case 0xFFF2:
+			// Set defend
+			fighter.fwblocking = getWord(moveOffset);
+			moveOffset += sizeof(uint16);
+			break;
+
+		case 0xFFF1:
+			// If blocking
+			v1 = getWord(moveOffset);
+			v2 = getWord(moveOffset + 2);
+			moveOffset += 2 * sizeof(uint16);
+
+			if (v1 == opponent.fwblocking) {
+				Sound.playSound(42);
+				moveOffset = v2;
+			}
+			break;
+
+		case 0xFFF0:
+			// Check hit
+			v1 = getWord(moveOffset);
+			moveOffset += sizeof(uint16);
+			if (fighter.fwdist <= FIGHT_DISTANCE) {
+				if (h.hotspotId() == PLAYER_ID) {
+					// Player hits opponent
+					Sound.playSound(52);
+
+					if (opponent.fwhits != 5) {
+						opponent.fwseq_ad = v1;
+						if (++opponent.fwhit_value != opponent.fwhit_rate) {
+							opponent.fwhit_value = 0;
+							if (++opponent.fwhits == 5) 
+								opponent.fwseq_ad = opponent.fwdie_seq;
+						}
+					}
+				} else {
+					// Opponent hit player
+					Sound.playSound(37);
+					opponent.fwseq_ad = v1;
+					if (++opponent.fwhits == 10) {
+						// Player has been killed
+						fighter.fwhits = 10;
+						opponent.fwseq_ad = FIGHT_PLAYER_DIES;
+						Sound.playSound(36);
+					}
+				}
+			}
+			break;
+
+		case 0xFFEF:
+			// Save co-ordinates
+			fighter.fwtrue_x = h.x();
+			fighter.fwtrue_y = h.y();
+			break;
+
+		case 0xFFEE:
+			// Restore co-ordinates
+			h.setPosition(fighter.fwtrue_x, fighter.fwtrue_y);
+			break;
+
+		case 0xFFED:
+			// End of game
+			getDetails(PLAYER_ID).fwhits = GENERAL_MAGIC_ID;
+			Game::getReference().setState(GS_RESTORE_RESTART);
+			return;
+
+		case 0xFFEC:
+			// Enemy has been killed
+			enemyKilled();
+			break;
+
+		case 0xFFEA:
+			// Fight sound
+			Sound.playSound(getWord(moveOffset));
+			moveOffset += sizeof(uint16);
+			break;
+
+		default:
+			error("Unknown fight command %xh", moveValue);
+		}
+	}
+
+	fighter.fwseq_no = 0;
+	fighter.fwseq_ad = 0;
+	if (h.hotspotId() == PLAYER_ID)
+		_mouseFlags = 0;
+}
+
+uint16 FightsManager::fetchFighterDistance(FighterRecord &f1, FighterRecord &f2) {
+	f1.fwdist = ABS(f1.fwtrue_x - f2.fwtrue_x) & 0xFFF8;
+	return f1.fwdist;
+}
+
+void FightsManager::enemyKilled() {
+	Resources &res = Resources::getReference();
+	Hotspot *playerHotspot = res.getActiveHotspot(PLAYER_ID); 
+	FighterRecord &playerRec = getDetails(PLAYER_ID);
+
+	playerHotspot->setTickProc(PLAYER_TICK_PROC_ID);
+	playerRec.fwhits = GENERAL_MAGIC_ID;
+	playerHotspot->resource()->colourOffset = 128;
+	playerHotspot->setSize(32, 48);
+	playerHotspot->resource()->width = 32;
+	playerHotspot->resource()->height = 48;
+	playerHotspot->setAnimation(PLAYER_ANIM_ID);
+	playerHotspot->setPosition(playerHotspot->x(), playerHotspot->y() + 5);
+	playerHotspot->setDirection(LEFT);
+	
+	if (playerHotspot->roomNumber() == 6) {
+		Dialog::show(0xc9f);
+		HotspotData *axeHotspot = res.getHotspot(0x2738);
+		axeHotspot->roomNumber = PLAYER_ID;
+		axeHotspot->flags |= HOTSPOTFLAG_FOUND;
+	}
+}
+
+// Makes sure the given weapon is off-screen
+void FightsManager::removeWeapon(uint16 weaponId) {
+	Hotspot *weaponHotspot = Resources::getReference().getActiveHotspot(weaponId);
+	weaponHotspot->setPosition(-32, -32);
+}
+
+uint16 FightsManager::getFighterMove(FighterRecord &rec, uint16 baseOffset) {
+	int actionIndex = _rnd.getRandomNumber(31);
+	return getByte(baseOffset + (rec.fwhits << 5) + actionIndex);
+}
+
+} // end of namespace Lure
