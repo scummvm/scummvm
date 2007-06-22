@@ -617,7 +617,7 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 						_quitFlag = true;
 				} else if (event.kbd.keycode == '.')
 						_skipFlag = true;
-				else if (event.kbd.keycode == 13 || event.kbd.keycode == 32 || event.kbd.keycode == 27) {
+				else if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_ESC) {
 					_abortIntroFlag = true;
 					_skipFlag = true;
 				}

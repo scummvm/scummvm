@@ -478,14 +478,14 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 				byte ch = e.event().kbd.ascii;
 				uint16 keycode = e.event().kbd.keycode;
 
-				if (((keycode == 0x108) || (keycode == 0x111)) && (selectedIndex > 0)) {
+				if (((keycode == Common::KEYCODE_KP8) || (keycode == Common::KEYCODE_UP)) && (selectedIndex > 0)) {
 					--selectedIndex;
 					refreshFlag = true;
-				} else if (((keycode == 0x102) || (keycode == 0x112)) && 
+				} else if (((keycode == Common::KEYCODE_KP2) || (keycode == Common::KEYCODE_DOWN)) && 
 						(selectedIndex < numEntries-1)) {
 					++selectedIndex;
 					refreshFlag = true;
-				} else if ((ch == '\xd') || (keycode == 0x10f)) {
+				} else if ((ch == '\xd') || (keycode == Common::KEYCODE_KP_ENTER)) {
 					goto bail_out;
 				} else if (ch == '\x1b') {
 					selectedIndex = 0xffff;
