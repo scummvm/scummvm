@@ -224,7 +224,7 @@ void Control::askForCd(void) {
 uint8 Control::runPanel(void) {
 	_mouseDown = false;
 	_restoreBuf = NULL;
-	_keyPressed.keycode = Common::KEYCODE_INVALID;
+	_keyPressed.reset();
 	_numButtons = 0;
 	_screenBuf = (uint8*)malloc(640 * 480);
 	memset(_screenBuf, 0, 640 * 480);
@@ -1037,7 +1037,7 @@ void Control::delay(uint32 msecs) {
 
 	uint32 now = _system->getMillis();
 	uint32 endTime = now + msecs;
-	_keyPressed.keycode = Common::KEYCODE_INVALID;	//reset
+	_keyPressed.reset();
 	_mouseState = 0;
 
 	do {

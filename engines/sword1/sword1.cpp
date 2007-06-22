@@ -635,7 +635,7 @@ void SwordEngine::checkCd(void) {
 
 uint8 SwordEngine::mainLoop(void) {
 	uint8 retCode = 0;
-	_keyPressed.keycode = Common::KEYCODE_INVALID;
+	_keyPressed.reset();
 
 	while ((retCode == 0) && (!_systemVars.engineQuit)) {
 		// do we need the section45-hack from sword.c here?
@@ -685,7 +685,7 @@ uint8 SwordEngine::mainLoop(void) {
 					_screen->fullRefresh();
 			}
 			_mouseState = 0;
-			_keyPressed.keycode = Common::KEYCODE_INVALID;
+			_keyPressed.reset();
 		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) && (retCode == 0) && (!_systemVars.engineQuit));
 
 		if ((retCode == 0) && (Logic::_scriptVars[SCREEN] != 53) && _systemVars.wantFade && (!_systemVars.engineQuit)) {
