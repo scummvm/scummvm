@@ -256,6 +256,36 @@ enum {
 };
 
 /**
+ * Keyboard status, as used in the Event struct.
+ */
+struct KeyState {
+	/**
+	 * Abstract key code (will be the same for any given key regardless
+	 * of modifiers being held at the same time.
+	 * For example, this is the same for both 'A' and Shift-'A'.
+	 * @todo Document which values are to be used for non-ASCII keys
+	 * like F1-F10. For now, let's just say that our primary backend
+	 * is the SDL one, and it uses the values SDL uses... so until
+	 * we fix this, your best bet is to get a copy of SDL_keysym.h
+	 * and look at that, if you want to find out a key code.
+	 */
+	KeyCode keycode;
+	/**
+	 * ASCII-value of the pressed key (if any).
+	 * This depends on modifiers, i.e. pressing the 'A' key results in
+	 * different values here depending on the status of shift, alt and
+	 * caps lock.
+	 */
+	uint16 ascii;
+	/**
+	 * Status of the modifier keys. Bits are set in this for each
+	 * pressed modifier
+	 * @see KBD_CTRL, KBD_ALT, KBD_SHIFT
+	 */
+	byte flags;
+};
+
+/**
  * Data structure for an event. A pointer to an instance of Event
  * can be passed to pollEvent.
  * @todo Rework/document this structure. It should be made 100% clear which
@@ -294,32 +324,7 @@ struct Event {
 	  * Keyboard data; only valid for keyboard events (EVENT_KEYDOWN and
 	  * EVENT_KEYUP). For all other event types, content is undefined.
 	  */
-	struct {
-		/**
-		 * Abstract key code (will be the same for any given key regardless
-		 * of modifiers being held at the same time.
-		 * For example, this is the same for both 'A' and Shift-'A'.
-		 * @todo Document which values are to be used for non-ASCII keys
-		 * like F1-F10. For now, let's just say that our primary backend
-		 * is the SDL one, and it uses the values SDL uses... so until
-		 * we fix this, your best bet is to get a copy of SDL_keysym.h
-		 * and look at that, if you want to find out a key code.
-		 */
-		KeyCode keycode;
-		/**
-		 * ASCII-value of the pressed key (if any).
-		 * This depends on modifiers, i.e. pressing the 'A' key results in
-		 * different values here depending on the status of shift, alt and
-		 * caps lock.
-		 */
-		uint16 ascii;
-		/**
-		 * Status of the modifier keys. Bits are set in this for each
-		 * pressed modifier
-		 * @see KBD_CTRL, KBD_ALT, KBD_SHIFT
-		 */
-		byte flags;
-	} kbd;
+	KeyState kbd;
 	/**
 	 * The mouse coordinates, in virtual screen coordinates. Only valid
 	 * for mouse events.
