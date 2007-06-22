@@ -268,7 +268,7 @@ void Resources::reloadData() {
 	// Load in the list of room exit coordinates
 	mb = d.getEntry(EXIT_COORDINATES_RESOURCE_ID);
 	RoomExitCoordinateEntryResource *coordRec = (RoomExitCoordinateEntryResource *) mb->data();	
-	while (*((uint16 *) coordRec) != 0xffff) {
+	while (READ_LE_UINT16(coordRec) != 0xffff) {
 		RoomExitCoordinates *newEntry = new RoomExitCoordinates(coordRec);
 		_coordinateList.push_back(newEntry);
 		++coordRec;

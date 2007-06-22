@@ -129,6 +129,8 @@ struct RoomResource {
 	uint16 sequenceOffset;
 	int16 clippingXStart;
 	int16 clippingXEnd;
+	uint32 exitTime;
+	uint8 areaFlag;
 	RoomRect walkBounds;
 	uint16 numExits;
 };
@@ -206,8 +208,8 @@ struct RoomExitCoordinateResource {
 #define ROOM_EXIT_COORDINATES_NUM_ROOMS 52
 
 struct RoomExitCoordinateEntryResource {
-	RoomExitCoordinateResource entries[ROOM_EXIT_COORDINATES_NUM_ENTRIES];
 	uint8 roomIndex[ROOM_EXIT_COORDINATES_NUM_ROOMS];
+	RoomExitCoordinateResource entries[ROOM_EXIT_COORDINATES_NUM_ENTRIES];
 };
 
 #define MAX_SCHEDULE_ENTRY_PARAMS 5
@@ -337,6 +339,8 @@ public:
 	uint16 sequenceOffset;
 	int16 clippingXStart;
 	int16 clippingXEnd;
+	uint8 areaFlag;
+	uint32 exitTime;
 	Common::Rect walkBounds;
 	RoomExitHotspotList exitHotspots;
 	RoomExitList exits;

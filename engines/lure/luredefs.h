@@ -34,7 +34,7 @@ namespace Lure {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 19
+#define LURE_DAT_MINOR 20
 
 #define LURE_DEBUG 1
 
@@ -44,7 +44,8 @@ namespace Lure {
 enum {
 	kLureDebugScripts = 1 << 0,
 	kLureDebugAnimations = 1 << 1,
-	kLureDebugHotspots = 1 << 2
+	kLureDebugHotspots = 1 << 2,
+	kLureDebugFights = 1 << 3
 };
 
 #define ERROR_BASIC 1
@@ -126,6 +127,9 @@ enum Action {
 // Palette and animation for hiding in barrel
 #define BARREL_PALETTE_ID 0xE9F0
 #define BARREL_ANIM_ID 0xE9F1
+// Endgame animation constants
+#define ENDGAME_PALETTE_ID 0xFF00
+#define ENDGAME_ANIM_ID 0xFF01
 
 // Specifies the maximum buffer sized allocated for decoding animation data
 #define MAX_ANIM_DECODER_BUFFER_SIZE 300000
@@ -142,14 +146,12 @@ enum Action {
 #define CURSOR_HEIGHT 16
 #define CURSOR_SIZE 256
 #define CURSOR_RESOURCE_ID 1
-#define CURSOR_ARROW 0
-#define CURSOR_DISK 1
-#define CURSOR_TIME_START 2
-#define CURSOR_TIME_END 9
-#define CURSOR_CROSS 10
-#define CURSOR_CAMERA 15
-#define CURSOR_TALK 16
-#define CURSOR_MENUBAR 17
+
+enum CursorType {CURSOR_ARROW = 0, CURSOR_DISK = 1, CURSOR_TIME_START = 2,
+	CURSOR_TIME_END = 9, CURSOR_CROSS = 10, CURSOR_UP_ARROW = 11, CURSOR_DOWN_ARROW = 12,
+	CURSOR_LEFT_ARROW = 13, CURSOR_RIGHT_ARROW = 14, CURSOR_CAMERA = 15, CURSOR_TALK = 16,
+	CURSOR_MENUBAR = 17, CURSOR_FIGHT_UPPER = 23, CURSOR_FIGHT_MIDDLE = 24, 
+	CURSOR_FIGHT_LOWER = 25};
 
 // Font details
 #define FONT_RESOURCE_ID 4
@@ -216,7 +218,8 @@ enum Action {
 #define ROOM_PATHS_RESOURCE_ID 0x3f13
 #define EXIT_COORDINATES_RESOURCE_ID 0x3f14
 #define EXIT_HOTSPOT_ID_LIST 0x3f15
-#define STRING_LIST_RESOURCE_ID 0x3f16
+#define FIGHT_DATA_RESOURCE_ID 0x3f16
+#define STRING_LIST_RESOURCE_ID 0x3f17
 
 // Script constants
 #define STARTUP_SCRIPT 0x23FC
@@ -230,6 +233,8 @@ enum Action {
 #define SKORL_ID 0x3EA
 #define BLACKSMITH_ID 0x3EB
 #define GOEWIN_ID 0x3EF
+#define WAYNE_ID 0x3f1
+#define CASTLE_SKORL_ID 0x3F3
 #define FIRST_NONCHARACTER_ID 0x408
 #define SACK_ID 0x40D
 #define PRISONER_ID 0x412
@@ -238,10 +243,12 @@ enum Action {
 #define TRANSFORM_ID 0x425
 #define NELLIE_ID 0x429
 #define EWAN_ID 0x436
-#define WAYNE_ID 0x3f1
+#define PIG_ID 0x43F
+#define SKORL_FIGHTER_ID 0x444
 #define START_EXIT_ID 0x2710
 #define BOTTLE_HOTSPOT_ID 0x2710
 #define BRICKS_ID 0x2714
+#define BOOK_ID 0x2723
 #define START_NONVISUAL_HOTSPOT_ID 0x7530
 
 // Milliseconds delay between game frames
@@ -252,9 +259,13 @@ enum Action {
 #define PLAYER_TICK_PROC_ID 0x5E44
 #define VOICE_TICK_PROC_ID 0x625E
 #define PUZZLED_TICK_PROC_ID 0x6571
+#define FOLLOWER_TICK_PROC_2 0x7C24
+#define JAILOR_TICK_PROC_ID 0x7efa
 #define STANDARD_ANIM_2_TICK_PROC 0x7F37
 #define STANDARD_ANIM_TICK_PROC 0x7f3a
+#define GOEWIN_SHOP_TICK_PROC 0x865A
 #define TALK_TICK_PROC_ID 0x8ABD
+#define PLAYER_FIGHT_TICK_PROC_ID 0x98B6
 
 // String constants
 #define STRANGER_ID 0x17A
@@ -263,6 +274,7 @@ enum Action {
 
 // Misc constants
 #define GENERAL_MAGIC_ID 42
+#define PLAYER_FIGHT_ANIM_ID 0x55F6
 #define VOICE_ANIM_ID 0x5810
 #define PUZZLED_ANIM_ID 0x8001
 #define EXCLAMATION_ANIM_ID 0x8002
@@ -279,6 +291,10 @@ enum Action {
 #define MAX_TELL_COMMANDS 8
 #define MAX_SAVEGAME_SLOTS 10
 
+#define ROOMNUM_CAVE 38
+#define ROOMNUM_CELLAR 42
+#define ROOMNUM_DINING_HALL 45
+
 // Countdown for # operations in path finder before breaking until next
 // tick - set it to 0 if you'd like all pathfinding to be done at once
 //#define PATHFIND_COUNTDOWN 4000
@@ -290,12 +306,15 @@ enum Action {
 // Hotspot flags
 #define HOTSPOTFLAG_FOUND 0x80
 #define HOTSPOTFLAG_SKIP 0x40
-#define HOTSPOTFLAG_20 0x20
+#define HOTSPOTFLAG_MENU_EXCLUSION 0x20
+#define HOTSPOTFLAG_ROOM_SPECIFIC 0x10
 
 // Constants used to reference entries in the reworked support data entry lists
 #define RETURN_SUPPORT_ID 0x400
 #define EXIT_BLOCKED_SUPPORT_ID 0x800
 #define JUMP_ADDR_2_SUPPORT_ID 0x1403
+#define GOEWIN_CAVE_SUPPORT_ID 0x1800
+#define GOEWIN_STANDARD_SUPPORT_ID 0x1C00
 
 // Constants used in animation Serf on the rack
 #define RACK_SERF_SCRIPT_ID_1 0x35C

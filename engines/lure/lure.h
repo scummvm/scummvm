@@ -38,6 +38,7 @@
 #include "lure/menu.h"
 #include "lure/strings.h"
 #include "lure/room.h"
+#include "lure/fights.h"
 
 namespace Lure {
 
@@ -54,6 +55,7 @@ private:
 	Menu *_menu;
 	StringData *_strings;
 	Room *_room;
+	FightsManager *_fights;
 
 	void detectGame();
 	const char *generateSaveName(int slotNumber);

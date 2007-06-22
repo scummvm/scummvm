@@ -29,8 +29,10 @@
 #include "lure/scripts.h"
 #include "lure/res_struct.h"
 #include "lure/animseq.h"
+#include "lure/fights.h"
 
 #include "common/config-manager.h"
+#include <sdl_keysym.h>
 
 namespace Lure {
 
@@ -51,20 +53,14 @@ Game::~Game() {
 	delete _debugger;
 }
 
-void Game::nextFrame() {
-	Resources &res = Resources::getReference();
-	ValueTableData &fields = res.fieldList();
-	Room &room = Room::getReference();
-	HotspotList::iterator i;
-
-	res.pausedList().countdown();
-	room.checkCursor();
-	room.update();
-
+void Game::tick() {
 	// Call the tick method for each hotspot - this is somewaht complicated
 	// by the fact that a tick proc can unload both itself and/or others,
 	// so we first get a list of the Ids, and call the tick proc for each 
 	// id in sequence if it's still active
+	Resources &res = Resources::getReference();
+	ValueTableData &fields = res.fieldList();
+	HotspotList::iterator i;
 
 	uint16 *idList = new uint16[res.activeHotspots().size()];
 	int idSize = 0;
@@ -84,6 +80,20 @@ void Game::nextFrame() {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot ticks end");
 
 	delete[] idList;
+}
+
+void Game::nextFrame() {
+	Resources &res = Resources::getReference();
+	Room &room = Room::getReference();
+
+	if (Fights.isFighting()) 
+		Fights.fightLoop();
+
+	res.pausedList().countdown();
+	room.update();
+	room.checkCursor();
+	tick();
+
 	Screen::getReference().update();
 }
 
@@ -137,6 +147,24 @@ void Game::execute() {
 						break;
 					}
 
+					// Handle special keys
+					bool handled = true;
+					switch (events.event().kbd.keycode) {
+						case SDLK_F5:
+							SaveRestoreDialog::show(true);
+							break;
+
+						case SDLK_F7:
+							SaveRestoreDialog::show(false);
+							break;
+
+						default:
+							handled = false;
+					}
+					if (handled)
+						continue;
+
+					// Handle any remaining standard keys
 					switch (events.event().kbd.ascii) {
 					case 27:
 						events.quitFlag = true;
@@ -443,7 +471,7 @@ void Game::handleRightClickMenu() {
 			strcat(statusLine, stringList.getString(S_FOR));
 			statusLine += strlen(statusLine);
 
-			itemId = PopupMenu::ShowItems(GET);
+			itemId = PopupMenu::ShowItems(GET, player->roomNumber());
 			breakFlag = ((itemId != 0xffff) && (itemId != 0xfffe));
 			break;
 
@@ -570,6 +598,10 @@ bool Game::GetTellActions() {
 	_tellCommands[0] = room.hotspotId();
 	_numTellCommands = 0;
 
+	// Set up a room transfer list
+	Common::List<uint16> roomList;
+	roomList.push_front(room.roomNumber());
+
 	// Loop for getting tell commands
 
 	while ((_numTellCommands >= 0) && (_numTellCommands < MAX_TELL_COMMANDS)) {
@@ -618,9 +650,9 @@ bool Game::GetTellActions() {
 				if (action != RETURN) {
 					// Prompt for selection
 					if ((action != USE) && (action != DRINK) && (action != GIVE)) 
-						selectionId = PopupMenu::ShowItems(action);
+						selectionId = PopupMenu::ShowItems(action, *roomList.begin());
 					else
-						selectionId = PopupMenu::ShowItems(GET);
+						selectionId = PopupMenu::ShowItems(GET, *roomList.begin());
 
 					if ((selectionId == 0xffff) || (selectionId == 0xfffe)) {
 						// Move back to prompting for action
@@ -633,6 +665,7 @@ bool Game::GetTellActions() {
 					if (selectionId < NOONE_ID) {
 						// Must be a room selection
 						strings.getString(selectionId, selectionName);
+						roomList.push_front(selectionId);
 					} else {
 						hotspot = res.getHotspot(selectionId);
 						assert(hotspot);
@@ -663,7 +696,7 @@ bool Game::GetTellActions() {
 				}
 
 				// Get the second parameter
-				selectionId = PopupMenu::ShowItems(GET);
+				selectionId = PopupMenu::ShowItems(GET, *roomList.begin());
 				if ((selectionId == 0xfffe) || (selectionId == 0xffff)) {
 					--paramIndex;
 					statusLine = statusLinePos[_numTellCommands][paramIndex];
@@ -712,9 +745,13 @@ bool Game::GetTellActions() {
 							paramIndex = 0;
 						else if ((action == ASK) || (action == GIVE) || (action == USE))
 							paramIndex = 2;
-						else
+						else {
 							paramIndex = 1;
-					
+							if (action == GO_TO)
+								// Remove top of the cached room change list
+								roomList.erase(roomList.begin());
+						}
+
 						statusLine = statusLinePos[_numTellCommands][paramIndex];
 						*statusLine = '\0';
 					}
@@ -863,10 +900,6 @@ void Game::handleBootParam(int value) {
 		res.getHotspot(0x2713)->roomNumber = PLAYER_ID;  // Knife
 
 		room.setRoomNumber(2);
-		break;
-
-	default:
-		room.setRoomNumber(value);
 		break;
 	}
 }

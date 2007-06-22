@@ -36,7 +36,7 @@ namespace Lure {
 
 class Mouse {
 private:
-	uint8 _cursorNum;
+	CursorType _cursorNum;
 	int16 _x, _y;
 	bool _lButton, _rButton;
 public:
@@ -47,17 +47,17 @@ public:
 
 	void cursorOn();
 	void cursorOff();
-	void setCursorNum(uint8 cursorNum);
-	void setCursorNum(uint8 cursorNum, int hotspotX, int hotspotY);
-	uint8 getCursorNum() { return _cursorNum; }
+	void setCursorNum(CursorType cursorNum);
+	void setCursorNum(CursorType cursorNum, int hotspotX, int hotspotY);
+	CursorType getCursorNum() { return _cursorNum; }
 	void setPosition(int x, int y);
 	int16 x() { return _x; }
 	int16 y() { return _y; }
 	bool lButton() { return _lButton; }
 	bool rButton() { return _rButton; }
 	void waitForRelease();
-	void pushCursorNum(uint8 cursorNum);
-	void pushCursorNum(uint8 cursorNum, int hotspotX, int hotspotY);	
+	void pushCursorNum(CursorType cursorNum);
+	void pushCursorNum(CursorType cursorNum, int hotspotX, int hotspotY);	
 	void popCursor();
 };
 
@@ -72,6 +72,8 @@ public:
 
 	bool pollEvent();
 	void waitForPress();
+	bool interruptableDelay(uint32 milliseconds);
+
 	Common::Event event() { return _event; }
 	Common::EventType type() { return _event.type; }
 };

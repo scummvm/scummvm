@@ -78,7 +78,7 @@ private:
 	CursorState _cursorState;
 
 	void checkRoomHotspots();
-	uint8 checkRoomExits();
+	CursorType checkRoomExits();
 	void loadRoomHotspots();
 	bool sub_112() { return false; } // not yet implemented
 	void flagCoveredCells(Hotspot &h);

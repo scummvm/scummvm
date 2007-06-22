@@ -44,6 +44,8 @@ LureEngine::LureEngine(OSystem *system): Engine(system) {
 	Common::addSpecialDebugLevel(kLureDebugScripts, "scripts", "Scripts debugging");
 	Common::addSpecialDebugLevel(kLureDebugAnimations, "animations", "Animations debugging");
 	Common::addSpecialDebugLevel(kLureDebugHotspots, "hotspots", "Hotspots debugging");
+	Common::addSpecialDebugLevel(kLureDebugFights, "fights", "Fights debugging");
+
 	// Setup mixer
 /*
 	if (!_mixer->isReady()) {
@@ -75,6 +77,7 @@ int LureEngine::init() {
 	_menu = new Menu();
 	Surface::initialise();
 	_room = new Room();
+	_fights = new FightsManager();
 	int_engine = this;
 	return 0;
 }
@@ -85,6 +88,7 @@ LureEngine::~LureEngine() {
 
 	// Delete and deinitialise subsystems
 	Surface::deinitialise();
+	delete _fights;
 	delete _room;
 	delete _menu;
 	delete _events;
@@ -146,6 +150,7 @@ bool LureEngine::saveGame(uint8 slotNumber, Common::String &caption) {
 
 	Resources::getReference().saveToStream(f);
 	Room::getReference().saveToStream(f);
+	Fights.saveToStream(f);
 
 	delete f;
 	return true;
@@ -187,6 +192,7 @@ bool LureEngine::loadGame(uint8 slotNumber) {
 	// Load in the data
 	Resources::getReference().loadFromStream(f);
 	Room::getReference().loadFromStream(f);
+	Fights.loadFromStream(f);
 
 	delete f;
 	return true;
