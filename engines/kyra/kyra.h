@@ -29,6 +29,7 @@
 #include "engines/engine.h"
 #include "common/rect.h"
 #include "common/array.h"
+#include "common/events.h"
 
 namespace Kyra {
 
@@ -744,7 +745,7 @@ protected:
 	int _gameToLoad;
 	char _savegameName[31];
 	const char *_specialSavegameString;
-	uint8 _keyPressed;
+	Common::KeyState _keyPressed;
 
 	struct KyragemState {
 		uint16 nextOperation;

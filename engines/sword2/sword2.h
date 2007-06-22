@@ -39,6 +39,7 @@
 
 #include "engines/engine.h"
 
+#include "common/events.h"
 #include "common/util.h"
 
 #define	MAX_starts	100
@@ -79,9 +80,7 @@ struct MouseEvent {
 
 struct KeyboardEvent {
 	bool pending;
-	uint16 ascii;
-	int keycode;
-	int modifiers;
+	Common::KeyState kbd;
 };
 
 struct StartUp {

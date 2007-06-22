@@ -318,9 +318,9 @@ int Dialog::runModal() {
 		KeyboardEvent *ke = _vm->keyboardEvent();
 
 		if (ke) {
-			if (ke->keycode == Common::KEYCODE_ESCAPE)
+			if (ke->kbd.keycode == Common::KEYCODE_ESCAPE)
 				setResult(0);
-			else if (ke->keycode == Common::KEYCODE_RETURN || ke->keycode == Common::KEYCODE_KP_ENTER)
+			else if (ke->kbd.keycode == Common::KEYCODE_RETURN || ke->kbd.keycode == Common::KEYCODE_KP_ENTER)
 				setResult(1);
 		}
 
@@ -1131,13 +1131,13 @@ public:
 
 	virtual void onKey(KeyboardEvent *ke) {
 		if (_editable) {
-			if (ke->keycode == Common::KEYCODE_BACKSPACE)
+			if (ke->kbd.keycode == Common::KEYCODE_BACKSPACE)
 				_parent->onAction(this, Common::KEYCODE_BACKSPACE);
-			else if (ke->ascii >= ' ' && ke->ascii <= 255) {
+			else if (ke->kbd.ascii >= ' ' && ke->kbd.ascii <= 255) {
 				// Accept the character if the font renderer
 				// has what looks like a valid glyph for it.
-				if (_fr->getCharWidth(ke->ascii))
-					_parent->onAction(this, ke->ascii);
+				if (_fr->getCharWidth(ke->kbd.ascii))
+					_parent->onAction(this, ke->kbd.ascii);
 			}
 		}
 	}
