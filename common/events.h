@@ -217,6 +217,25 @@ enum KeyCode {
 };
 
 /**
+ * List of fake 'ascii' values used in keyboard events.
+ * The values here are based on what certain SCUMM games require
+ * in their scripts.
+ * @todo Get rid of this, and instead enforce that engines use the
+ * keycode instead to handle these.
+ */
+enum {
+	ASCII_F1 = 315,
+	ASCII_F2 = 316,
+	ASCII_F3 = 317,
+	ASCII_F4 = 318,
+	ASCII_F5 = 319,
+	ASCII_F6 = 320,
+	ASCII_F7 = 321,
+	ASCII_F8 = 322,
+	ASCII_F9 = 323
+};
+
+/**
  * Keyboard modifier flags, used for Event::kbd::flags.
  */
 enum {
