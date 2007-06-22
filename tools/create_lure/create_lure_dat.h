@@ -30,7 +30,7 @@
 #include "common/endian.h"
 
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 19
+#define VERSION_MINOR 20
 #define ENGLISH_LURE 
 
 #define DATA_SEGMENT 0xac50
@@ -53,6 +53,8 @@
 #define SCRIPT_SEGMENT_SIZE 0x2c57
 #define SCRIPT2_SEGMENT 0x19c70
 #define SCRIPT2_SEGMENT_SIZE 0x2800
+#define FIGHT_SEGMENT 0x1C400
+#define FIGHT_SEGMENT_SIZE 0x1850
 
 #define HOTSPOT_SCRIPT_LIST 0x57e0
 #define HOTSPOT_SCRIPT_SIZE 0x30
@@ -200,7 +202,8 @@ struct RoomResource {
 	byte numLayers;
 	uint16 layers[4];
 	uint16 sequenceOffset;
-	byte unknown2[5];
+	uint32 exitTime;
+	uint8 areaFlag;
 	uint8 walkBoundsIndex;
 	int16 clippingXStart;
 	int16 clippingXEnd;
@@ -227,6 +230,8 @@ struct RoomResourceOutput {
 	uint16 sequenceOffset;
 	int16 clippingXStart;
 	int16 clippingXEnd;
+	uint32 exitTime;
+	uint8 areaFlag;
 	RoomRectOut walkBounds;
 	uint16 numExits;
 };
@@ -343,10 +348,16 @@ struct RoomExitIndexedHotspotResource {
 #define ROOM_EXIT_COORDINATES_NUM_ENTRIES 6
 #define ROOM_EXIT_COORDINATES_ENTRY_NUM_ROOMS 52
 
-struct RoomExitCoordinateEntryResource {
+struct RoomExitCoordinateEntryInputResource {
 	RoomExitCoordinateResource entries[ROOM_EXIT_COORDINATES_NUM_ENTRIES];
 	uint8 roomIndex[ROOM_EXIT_COORDINATES_ENTRY_NUM_ROOMS];
 };
+
+struct RoomExitCoordinateEntryOutputResource {
+	uint8 roomIndex[ROOM_EXIT_COORDINATES_ENTRY_NUM_ROOMS];
+	RoomExitCoordinateResource entries[ROOM_EXIT_COORDINATES_NUM_ENTRIES];
+};
+
 
 enum CurrentAction {NO_ACTION, START_WALKING, DISPATCH_ACTION, EXEC_HOTSPOT_SCRIPT, 
 	PROCESSING_PATH, WALKING};
