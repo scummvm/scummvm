@@ -1047,7 +1047,7 @@ void Control::delay(uint32 msecs) {
 			case Common::EVENT_KEYDOWN:
 
 				// Make sure backspace works right (this fixes a small issue on OS X)
-				if (event.kbd.keycode == 8)
+				if (event.kbd.keycode == Common::KEYCODE_BACKSPACE)
 					_keyPressed = 8;
 				else
 					_keyPressed = (byte)event.kbd.ascii;

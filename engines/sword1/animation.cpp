@@ -295,7 +295,7 @@ void MoviePlayer::play(void) {
 				handleScreenChanged();
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == 27) {
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_snd->stopHandle(_bgSoundHandle);
 					terminated = true;
 				}
