@@ -283,6 +283,12 @@ struct KeyState {
 	 * @see KBD_CTRL, KBD_ALT, KBD_SHIFT
 	 */
 	byte flags;
+	
+	KeyState() { reset(); }
+	void reset() {
+		keycode = KEYCODE_INVALID;
+		ascii = flags = 0;
+	}
 };
 
 /**
