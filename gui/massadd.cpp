@@ -27,6 +27,7 @@
 #include "engines/engine.h"
 #include "base/game.h"
 #include "base/plugins.h"
+#include "common/events.h"
 
 #include "gui/launcher.h"	// For addGameToConf()
 #include "gui/massadd.h"
