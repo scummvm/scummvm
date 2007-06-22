@@ -25,7 +25,10 @@
 
 #include "common/stdafx.h"
 #include "common/config-manager.h"
+#include "common/endian.h"
+#include "lure/luredefs.h"
 #include "lure/debugger.h"
+#include "lure/decode.h"
 #include "lure/res.h"
 #include "lure/res_struct.h"
 #include "lure/room.h"
@@ -44,6 +47,7 @@ Debugger::Debugger(): GUI::Debugger() {
 	DCmd_Register("hotspots",			WRAP_METHOD(Debugger, cmd_hotspots));
 	DCmd_Register("hotspot",			WRAP_METHOD(Debugger, cmd_hotspot));
 	DCmd_Register("room",				WRAP_METHOD(Debugger, cmd_room));
+	DCmd_Register("showanim",			WRAP_METHOD(Debugger, cmd_showAnim));
 }
 
 static int strToInt(const char *s) {
@@ -115,9 +119,13 @@ bool Debugger::cmd_listRooms(int argc, const char **argv) {
 	DebugPrintf("Available rooms are:\n");
 	for (RoomDataList::iterator i = rooms.begin(); i != rooms.end(); ++i) {
 		RoomData *room = *i;
-		strings.getString(room->roomNumber, buffer);
-		// DEBUG: Explictly note the second drawbridge room as "Alt" for now
-		if (ctr == 42) { strcat(buffer, " (alt)"); }
+		// Explictly note the second drawbridge room as "Alt" 
+		if (room->roomNumber == 49) { 
+			strings.getString(47, buffer);
+			strcat(buffer, " (alt)"); 
+		} else {
+			strings.getString(room->roomNumber, buffer);
+		}
 
 		DebugPrintf("#%d - %s", room->roomNumber, buffer);
 
@@ -133,17 +141,6 @@ bool Debugger::cmd_listRooms(int argc, const char **argv) {
 	}
 	DebugPrintf("\n");
 	DebugPrintf("Current room: %d\n", Room::getReference().roomNumber());
-
-	Resources &res = Resources::getReference();
-	HotspotDataList &list = res.hotspotData();
-	for (HotspotDataList::iterator i = list.begin(); i != list.end(); ++i)
-	{
-		HotspotData *data = *i;
-		strings.getString(data->nameId, buffer);
-
-		DebugPrintf("%xh - %s\n", data->hotspotId, buffer);
-	}
-	DebugPrintf("\n");
 
 	return true;
 }
@@ -340,13 +337,13 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 	} else if (strcmp(argv[2], "activate") == 0) {
 		// Activate the hotspot
 		res.activateHotspot(hs->hotspotId);
-		hs->flags &= !HOTSPOTFLAG_20;
+		hs->flags &= !HOTSPOTFLAG_MENU_EXCLUSION;
 		DebugPrintf("Activated\n");
 
 	} else if (strcmp(argv[2], "deactivate") == 0) {
 		// Activate the hotspot
 		res.deactivateHotspot(hs->hotspotId);
-		hs->flags |= HOTSPOTFLAG_20;
+		hs->flags |= HOTSPOTFLAG_MENU_EXCLUSION;
 		DebugPrintf("Deactivated\n");
 
 	} else {
@@ -376,6 +373,8 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 	DebugPrintf("\n");
 	return true;
 }
+
+const char *directionList[5] = {"UP", "DOWN", "LEFT", "RIGHT", "NONE"};
 
 bool Debugger::cmd_room(int argc, const char **argv) {
 	Resources &res = Resources::getReference();
@@ -407,8 +406,7 @@ bool Debugger::cmd_room(int argc, const char **argv) {
 	RoomExitHotspotList &exits = room->exitHotspots;
 	if (exits.empty())
 		DebugPrintf(" none\n");
-	else
-	{
+	else {
 		RoomExitHotspotList::iterator i;
 		for (i = exits.begin(); i != exits.end(); ++i) {
 			RoomExitHotspotData *rec = *i;
@@ -420,7 +418,127 @@ bool Debugger::cmd_room(int argc, const char **argv) {
 		DebugPrintf("\n");
 	}
 
-	DebugPrintf("\n");
+	DebugPrintf("Room exits:");
+	if (room->exits.empty()) 
+		DebugPrintf(" none\n");
+	else {
+		RoomExitList::iterator i2;
+		for (i2 = room->exits.begin(); i2 != room->exits.end(); ++i2) {
+			RoomExitData *rec2 = *i2;
+
+			DebugPrintf("\nExit - (%d,%d)-(%d,%d) Dest=%d,(%d,%d) Dir=%s Sequence=%xh",
+				rec2->xs, rec2->ys, rec2->xe, rec2->ye, rec2->roomNumber, 
+				rec2->x, rec2->y, directionList[rec2->direction], rec2->sequenceOffset);
+		}
+
+		DebugPrintf("\n");
+	}
+
+	return true;
+}
+
+bool Debugger::cmd_showAnim(int argc, const char **argv) {
+	Resources &res = Resources::getReference();
+	if (argc < 2) {
+		DebugPrintf("showAnim animId [[frame_width frame_height] | list]\n");
+		return true;
+	}
+
+	// Get the animation Id
+	int animId = strToInt(argv[1]);
+	HotspotAnimData *data = res.getAnimation(animId);
+	if (data == NULL) {
+		DebugPrintf("No such animation Id exists\n");
+		return true;
+	}
+
+	// Figure out the total size of the animation - this will be used for guestimating
+	// frame sizes, or validating that a specified frame size is correct
+	MemoryBlock *src = Disk::getReference().getEntry(data->animId);
+	
+	int numFrames = READ_LE_UINT16(src->data());
+	uint16 *headerEntry = (uint16 *) (src->data() + 2);
+	assert((numFrames >= 1) && (numFrames < 100));
+
+	// Calculate total needed size for output and create memory block to hold it
+	uint32 totalSize = 0;
+	for (uint16 ctr = 0; ctr < numFrames; ++ctr, ++headerEntry) {
+		totalSize += (READ_LE_UINT16(headerEntry) + 31) / 32;
+	}
+	totalSize = (totalSize + 0x81) << 4;
+	MemoryBlock *dest = Memory::allocate(totalSize);
+
+	uint32 srcStart = (numFrames + 1) * sizeof(uint16) + 6;
+	uint32 destSize = AnimationDecoder::decode_data(src, dest, srcStart) - 0x40;
+
+	// Figure out the frame size
+	int frameSize;
+
+	if ((data->flags & PIXELFLAG_HAS_TABLE) != 0) {
+		// Table based animation, so get frame size from frame 1 offset
+		frameSize = READ_LE_UINT16(src->data());
+	} else {
+		// Get frame size from dividing uncompressed size by number of frames
+		frameSize = destSize / numFrames;
+	}
+
+	// Free up the data
+	delete src;
+	delete dest;
+
+	int width, height;
+
+	if (argc == 4) {
+		// Width and height specified
+		width = strToInt(argv[2]);
+		height = strToInt(argv[3]);
+
+		if ((width * height) != (frameSize * 2)) {
+			DebugPrintf("Warning: Total size = %d, Frame size (%d,%d) * %d frames = %d bytes\n",
+				destSize, width, height, numFrames, width * height * numFrames / 2);
+		}
+	} else {
+		// Guestimate a frame size 
+		frameSize = destSize / numFrames;
+		
+		// Figure out the approximate starting point of a width 3/4 the frame size
+		width = frameSize * 3 / 4;
+
+		bool descFlag = (argc == 3);
+		if (descFlag) DebugPrintf("Target size = %d\n", frameSize * 2);
+
+		while ((width > 0) && (descFlag || (((frameSize * 2) % width) != 0))) {
+			if (((frameSize * 2) % width) == 0)
+				DebugPrintf("Frame size (%d,%d) found\n", width, frameSize * 2 / width); 
+			--width;
+		}
+
+		if (argc == 3) {
+			DebugPrintf("Done\n");
+			return true;
+		} else if (width == 0) {
+			DebugPrintf("Total size = %d, # frames = %d, frame Size = %d - No valid frame dimensions\n",
+				destSize, numFrames, frameSize);
+			return true;
+		} 
+
+		height = (frameSize * 2) / width;
+		DebugPrintf("# frames = %d, guestimated frame size = (%d,%d)\n",
+			numFrames, width, height);
+	}
+
+	// Bottle object is used as a handy hotspot holder that doesn't have any 
+	// tick proc behaviour that we need to worry about
+	Hotspot *hotspot = res.activateHotspot(BOTTLE_HOTSPOT_ID);
+	hotspot->setLayer(0xfe);
+	hotspot->setSize(width, height);
+
+	Hotspot *player = res.activateHotspot(PLAYER_ID);
+	hotspot->setColourOffset(player->resource()->colourOffset);
+
+	hotspot->setAnimation(animId);
+
+	DebugPrintf("Done\n");
 	return true;
 }
 
