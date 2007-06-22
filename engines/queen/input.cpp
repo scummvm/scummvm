@@ -55,7 +55,7 @@ Input::Input(Common::Language language, OSystem *system) :
 	_system(system), _eventMan(system->getEventManager()), _fastMode(false),
 	_keyVerb(VERB_NONE), _cutawayRunning(false), _canQuit(false),
 	_cutawayQuit(false), _dialogueRunning(false), _talkQuit(false),
-	_quickSave(false), _quickLoad(false), _debugger(false), _inKey(0),
+	_quickSave(false), _quickLoad(false), _debugger(false), _inKey(Common::KEYCODE_INALID),
 	_mouseButton(0), _idleTime(0) {
 
 	switch (language) {
@@ -135,34 +135,34 @@ void Input::delay(uint amount) {
 	} while (_system->getMillis() < end);
 }
 
-int Input::checkKeys() {
+void Input::checkKeys() {
 
 	if (_inKey)
 		debug(6, "[Input::checkKeys] _inKey = %i", _inKey);
 
 	switch (_inKey) {
-	case KEY_SPACE:
+	case Common::KEYCODE_SPACE:
 		_keyVerb = VERB_SKIP_TEXT;
 		break;
-	case KEY_COMMA:
+	case Common::KEYCODE_COMMA:
 		_keyVerb = VERB_SCROLL_UP;
 		break;
-	case KEY_DOT:
+	case Common::KEYCODE_PERIOD:
 		_keyVerb = VERB_SCROLL_DOWN;
 		break;
-	case KEY_DIGIT_1:
+	case Common::KEYCODE_1:
 		_keyVerb = VERB_DIGIT_1;
 		break;
-	case KEY_DIGIT_2:
+	case Common::KEYCODE_2:
 		_keyVerb = VERB_DIGIT_2;
 		break;
-	case KEY_DIGIT_3:
+	case Common::KEYCODE_3:
 		_keyVerb = VERB_DIGIT_3;
 		break;
-	case KEY_DIGIT_4:
+	case Common::KEYCODE_4:
 		_keyVerb = VERB_DIGIT_4;
 		break;
-	case KEY_ESCAPE: // skip cutaway / dialogue
+	case Common::KEYCODE_ESCAPE: // skip cutaway / dialogue
 		if (_canQuit) {
 			if (_cutawayRunning) {
 				debug(6, "[Input::checkKeys] Setting _cutawayQuit to true");
@@ -172,8 +172,8 @@ int Input::checkKeys() {
 				_talkQuit = true;
 		}
 		break;
-	case KEY_F1: // use Journal
-	case KEY_F5:
+	case Common::KEYCODE_F1: // use Journal
+	case Common::KEYCODE_F5:
 		if (_cutawayRunning) {
 			if (_canQuit) {
 				_keyVerb = VERB_USE_JOURNAL;
@@ -185,10 +185,10 @@ int Input::checkKeys() {
 				_talkQuit = true;
 		}
 		break;
-	case KEY_F11: // quicksave
+	case Common::KEYCODE_F11: // quicksave
 		_quickSave = true;
 		break;
-	case KEY_F12: // quickload
+	case Common::KEYCODE_F12: // quickload
 		_quickLoad = true;
 		break;
 	default:
@@ -201,9 +201,7 @@ int Input::checkKeys() {
 		break;
 	}
 
-	int inKey = _inKey;
-	_inKey = 0;	// reset
-	return inKey;
+	_inKey = Common::KEYCODE_INALID;	// reset
 }
 
 Common::Point Input::getMousePos() const {
