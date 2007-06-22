@@ -461,10 +461,10 @@ void AGOSEngine::delay(uint amount) {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode >= '0' && event.kbd.keycode <='9'
+				if (event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9
 					&& (event.kbd.flags == Common::KBD_ALT ||
 						event.kbd.flags == Common::KBD_CTRL)) {
-					_saveLoadSlot = event.kbd.keycode - '0';
+					_saveLoadSlot = event.kbd.keycode - Common::KEYCODE_0;
 
 					// There is no save slot 0
 					if (_saveLoadSlot == 0)
@@ -479,15 +479,15 @@ void AGOSEngine::delay(uint amount) {
 					if (!_mouseHideCount && !_showPreposition)
 						quickLoadOrSave();
 				} else if (event.kbd.flags == Common::KBD_CTRL) {
-					if (event.kbd.keycode == 'a') {
+					if (event.kbd.keycode == Common::KEYCODE_a) {
 						GUI::Dialog *_aboutDialog;
 						_aboutDialog = new GUI::AboutDialog();
 						_aboutDialog->runModal();
-					} else if (event.kbd.keycode == 'f') {
+					} else if (event.kbd.keycode == Common::KEYCODE_f) {
 						_fastMode ^= 1;
-					} else if (event.kbd.keycode == 'd') {
+					} else if (event.kbd.keycode == Common::KEYCODE_d) {
 						_debugger->attach();
-					} else if (event.kbd.keycode == 'u') {
+					} else if (event.kbd.keycode == Common::KEYCODE_u) {
 						dumpAllSubroutines();
 					}
 				} 
@@ -500,7 +500,7 @@ void AGOSEngine::delay(uint amount) {
 				}
 
 				// Make sure backspace works right (this fixes a small issue on OS X)
-				if (event.kbd.keycode == 8)
+				if (event.kbd.keycode == Common::KEYCODE_BACKSPACE)
 					_keyPressed = 8;
 				else
 					_keyPressed = (byte)event.kbd.ascii;
