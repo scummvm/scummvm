@@ -141,29 +141,29 @@ void CEActionsPocket::initInstanceGame() {
 
 	// Initialize keys for different actions
 	// Pause
-	_key_action[POCKET_ACTION_PAUSE].setAscii(VK_SPACE);
+	_key_action[POCKET_ACTION_PAUSE].setKey(VK_SPACE);
 	_action_enabled[POCKET_ACTION_PAUSE] = true;
 	// Save
 	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche)
 		_action_enabled[POCKET_ACTION_SAVE] = false;
 	else if (is_queen) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
-		_key_action[POCKET_ACTION_SAVE].setAscii(286); // F1 key for FOTAQ
+		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5); // F1 key for FOTAQ
 	} else if (is_sky) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
-		_key_action[POCKET_ACTION_SAVE].setAscii(63);
+		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5);
 	} else if (is_cine) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
-		_key_action[POCKET_ACTION_SAVE].setAscii(291); // F10
+		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_F10, SDLK_F10); // F10
 	} else if (is_agi) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
-		_key_action[POCKET_ACTION_SAVE].setAscii(SDLK_ESCAPE);
+		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_ESCAPE, SDLK_ESCAPE);
 	} else if (is_parallaction) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
-		_key_action[POCKET_ACTION_SAVE].setAscii(SDLK_s);
+		_key_action[POCKET_ACTION_SAVE].setKey('s', SDLK_s);
 	} else {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
-		_key_action[POCKET_ACTION_SAVE].setAscii(319); // F5 key
+		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5); // F5 key
 	}
 	// Quit
 	_action_enabled[POCKET_ACTION_QUIT] = true;
@@ -171,9 +171,9 @@ void CEActionsPocket::initInstanceGame() {
 	if (!is_cine && !is_parallaction)
 		_action_enabled[POCKET_ACTION_SKIP] = true;
 	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_saga || is_kyra || is_touche)
-		_key_action[POCKET_ACTION_SKIP].setAscii(VK_ESCAPE);
+		_key_action[POCKET_ACTION_SKIP].setKey(VK_ESCAPE);
 	else
-		_key_action[POCKET_ACTION_SKIP].setAscii(KEY_ALL_SKIP);
+		_key_action[POCKET_ACTION_SKIP].setKey(KEY_ALL_SKIP);
 	// Hide
 	_action_enabled[POCKET_ACTION_HIDE] = true;
 	// Keyboard
@@ -195,13 +195,13 @@ void CEActionsPocket::initInstanceGame() {
 	// Multi function key
 	_action_enabled[POCKET_ACTION_MULTI] = true;
 	if (is_agi)
-		_key_action[POCKET_ACTION_MULTI].setAscii(SDLK_PAUSE); // agi: show predictive dialog
+		_key_action[POCKET_ACTION_MULTI].setKey(SDLK_PAUSE); // agi: show predictive dialog
 	else if (is_gob)
-		_key_action[POCKET_ACTION_MULTI].setAscii(315); // bargon : F1 to start
+		_key_action[POCKET_ACTION_MULTI].setKey(Common::ASCII_F1, SDLK_F1); // bargon : F1 to start
 	else if (gameid == "atlantis")
-		_key_action[POCKET_ACTION_MULTI].setAscii(SDLK_KP0); // fate of atlantis : Ins to sucker-punch
+		_key_action[POCKET_ACTION_MULTI].setKey(0, SDLK_KP0); // fate of atlantis : Ins to sucker-punch
 	else
-		_key_action[POCKET_ACTION_MULTI].setAscii(86); // FT cheat : shift-V
+		_key_action[POCKET_ACTION_MULTI].setKey('V', SDLK_v, KMOD_SHIFT); // FT cheat : shift-V
 	// Key bind method
 	_action_enabled[POCKET_ACTION_BINDKEYS] = true;
 }
@@ -242,9 +242,9 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 				// Note that the user can accomplish this via the virtual keyboard as well, this is just for convenience
 				GUI::MessageDialog alert("Do you want to load or save the game?", "Load", "Save");
 				if (alert.runModal() == GUI::kMessageOK)
-					_key_action[action].setAscii(SDLK_l);
+					_key_action[action].setKey(SDLK_l);
 				else
-					_key_action[action].setAscii(SDLK_s);
+					_key_action[action].setKey(SDLK_s);
 			}
 			EventsBuffer::simulateKey(&_key_action[action], true);
 			return true;

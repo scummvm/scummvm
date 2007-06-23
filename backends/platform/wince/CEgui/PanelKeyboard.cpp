@@ -36,8 +36,7 @@ namespace CEGUI {
 	PanelKeyboard::PanelKeyboard(WORD reference) : Toolbar() {
 		setBackground(reference);
 		_state = false;
-		_lastKey.setAscii(0);
-		_lastKey.setKeycode(0);
+		_lastKey.setKey(0);
 	}
 
 
@@ -78,25 +77,21 @@ namespace CEGUI {
 					keyCode = _lastKey.keycode();
 				}
 				_state = pushed;
-				_lastKey.setAscii(keyAscii);
-				_lastKey.setKeycode(tolower(keyCode));
+				_lastKey.setKey(keyAscii, tolower(keyCode));
 
-				key.setAscii(keyAscii);
-				key.setKeycode(tolower(keyCode));
+				key.setKey(keyAscii, tolower(keyCode));
 				return EventsBuffer::simulateKey(&key, pushed);
 			}
 			else if (_state && !pushed) { // cursor is in some forbidden region and is up
 				_state = false;
-				key.setAscii(_lastKey.ascii());
-				key.setKeycode(_lastKey.keycode());
+				key = _lastKey;
 				return EventsBuffer::simulateKey(&key, false);
 			} else
 				return false;
 		}
 		else if (_state && !pushed) { // cursor left the keyboard area and is up
 			_state = false;
-			key.setAscii(_lastKey.ascii());
-			key.setKeycode(_lastKey.keycode());
+			key = _lastKey;
 			return EventsBuffer::simulateKey(&key, false);
 		} else
 			return false;

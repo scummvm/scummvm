@@ -32,13 +32,18 @@
 
 namespace GUI {
 
+// TODO/FIXME: Make use of Common::KeyState from common/keyboard.h
+
 class Key {
 public:
-	Key(int ascii, int keycode = 0, int flags = 0);
+	Key(int ascii);
+	Key(int ascii, int keycode, int flags = 0);
 	Key();
-	void setAscii(int ascii);
-	void setKeycode(int keycode);
-	void setFlags(int flags);
+
+	void setKey(int ascii);
+	void setKey(int ascii, int keycode);
+	void setKey(int ascii, int keycode, int flags);
+
 	int ascii();
 	int keycode();
 	int flags();

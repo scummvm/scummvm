@@ -59,7 +59,7 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode)
 		return key;
 	} else if (unicode) {
 		return unicode;
-	} else if (key >= 'a' && key <= 'z' && mod & KMOD_SHIFT) {
+	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
 		return key & ~0x20;
 	} else if (key >= SDLK_NUMLOCK && key <= SDLK_EURO) {
 		return 0;

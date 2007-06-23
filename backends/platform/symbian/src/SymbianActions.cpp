@@ -122,7 +122,7 @@ void SymbianActions::initInstanceMain(OSystem *mainSystem) {
 
 	// Skip
 	_action_enabled[ACTION_SKIP] = true;
-	_key_action[ACTION_SKIP].setAscii(SDLK_ESCAPE);
+	_key_action[ACTION_SKIP].setKey(SDLK_ESCAPE);
 }
 
 void SymbianActions::initInstanceGame() {
@@ -150,28 +150,27 @@ void SymbianActions::initInstanceGame() {
 		_action_enabled[ACTION_SAVE] = true;
 		
 		if (is_queen) {			
-			_key_action[ACTION_SAVE].setAscii(SDLK_F1); // F1 key for FOTAQ
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5); // F1 key for FOTAQ
 		} else if (is_sky) {		
-			_key_action[ACTION_SAVE].setAscii(63); 
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5); 
 		} else if (is_cine) {			
-			_key_action[ACTION_SAVE].setAscii(SDLK_F10); // F10
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_F10, SDLK_F10); // F10
 		} else if (is_agi) {		
-			_key_action[ACTION_SAVE].setAscii(SDLK_ESCAPE);
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_ESCAPE, SDLK_ESCAPE);
 		} else if (is_parallaction) {
-			_key_action[ACTION_SAVE].setAscii(SDLK_s);
+			_key_action[ACTION_SAVE].setKey('s', SDLK_s);
 		} else {		
-			_key_action[ACTION_SAVE].setAscii(SDLK_F5); // F5 key
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5); // F5 key
 		}
 	}
 
 	// Enable fast mode
 	_action_enabled[ACTION_FASTMODE] = true;
-	_key_action[ACTION_FASTMODE].setAscii('f');
-	_key_action[ACTION_FASTMODE].setFlags(KMOD_CTRL);
+	_key_action[ACTION_FASTMODE].setKey('f', SDLK_f, KMOD_CTRL);
 	
 	// Swap character
 	_action_enabled[ACTION_SWAPCHAR] = true;
-	_key_action[ACTION_SWAPCHAR].setAscii('b'); // b
+	_key_action[ACTION_SWAPCHAR].setKey('b'); // b
 
 	// Zone
 	_action_enabled[ACTION_ZONE] = true;
@@ -179,31 +178,30 @@ void SymbianActions::initInstanceGame() {
 	// Multi function key
 	_action_enabled[ACTION_MULTI] = true;
 	if (is_agi)
-		_key_action[ACTION_MULTI].setAscii(SDLK_PAUSE); // agi: show predictive dialog
+		_key_action[ACTION_MULTI].setKey(SDLK_PAUSE); // agi: show predictive dialog
 	else if (is_gob)
-		_key_action[ACTION_MULTI].setAscii(315); // bargon : F1 to start
+		_key_action[ACTION_MULTI].setKey(Common::ASCII_F1, SDLK_F1); // bargon : F1 to start
 	else if (gameid == "atlantis")
-		_key_action[ACTION_MULTI].setAscii(SDLK_KP0); // fate of atlantis : Ins to sucker-punch
+		_key_action[ACTION_MULTI].setKey(0, SDLK_KP0); // fate of atlantis : Ins to sucker-punch
 	else
-		_key_action[ACTION_MULTI].setAscii(86); // FT cheat : shift-V
+		_key_action[ACTION_MULTI].setKey('V', SDLK_v, KMOD_SHIFT); // FT cheat : shift-V
 
 	// Enable debugger
 	_action_enabled[ACTION_DEBUGGER] = true;
-	_key_action[ACTION_DEBUGGER].setAscii('d');
-	_key_action[ACTION_DEBUGGER].setFlags(KMOD_CTRL);
+	_key_action[ACTION_DEBUGGER].setKey('d', SDLK_d, KMOD_CTRL);
 
 	// Skip text
 	if (!is_cine)
 		_action_enabled[ACTION_SKIP_TEXT] = true;
 
 	if (is_queen) {
-		_key_action[ACTION_SKIP_TEXT].setAscii(SDLK_SPACE);
+		_key_action[ACTION_SKIP_TEXT].setKey(SDLK_SPACE);
 	} else {
-		_key_action[ACTION_SKIP_TEXT].setAscii(SDLK_PERIOD);
+		_key_action[ACTION_SKIP_TEXT].setKey(SDLK_PERIOD);
 	}
 
 	// Pause
-	_key_action[ACTION_PAUSE].setAscii(' ');
+	_key_action[ACTION_PAUSE].setKey(' ');
 	_action_enabled[ACTION_PAUSE] = true;
 
 	// Quit
