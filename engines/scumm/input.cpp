@@ -360,12 +360,12 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 	if (!(_game.features & GF_DEMO)) {
 		// F1 (the trigger for the original save/load dialog) is mapped to F5
 		if (lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.flags == 0) {
-			lastKeyHit = Common::KeyState(Common::KEYCODE_F5, Common::ASCII_F5);
+			lastKeyHit = Common::KeyState(Common::KEYCODE_F5);
 		}
 	
 		// Alt-F5 brings up the original save/load dialog
 		if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT) {
-			lastKeyHit = Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1);
+			lastKeyHit = Common::KeyState(Common::KEYCODE_F1);
 		}
 	}
 
@@ -392,7 +392,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 		return;
 	}
 
-	const bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY != 0xFF && VAR(VAR_CUTSCENEEXIT_KEY) != 0);
+	const bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY == 0xFF || VAR(VAR_CUTSCENEEXIT_KEY) != 0);
 
 	if (cutsceneExitKeyEnabled && lastKeyHit.keycode == Common::KEYCODE_ESCAPE) {
 		// Skip cutscene (or active SMUSH video).
@@ -445,58 +445,29 @@ void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 }
 
 void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
-	if (lastKeyHit.ascii == ' ') {		// space
-		pauseGame();
-	} else if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == 0) {
-		mainMenuDialog();
-	} else if (lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.flags == 0) {
-		confirmRestartDialog();
-	} else {
+	// Fall back to default behavior
+	ScummEngine::processKeyboard(lastKeyHit);
 
-		const bool cutsceneExitKeyEnabled = (_game.version == 0) ||
-						((VAR_CUTSCENEEXIT_KEY != 0xFF) ? (VAR(VAR_CUTSCENEEXIT_KEY) != 0) : false);
+	// Store the input type. So far we can't distinguish
+	// between 1, 3 and 5.
+	// 1) Verb	2) Scene	3) Inv.		4) Key
+	// 5) Sentence Bar
 
-		if (cutsceneExitKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_ESCAPE || lastKeyHit.keycode == Common::KEYCODE_F4)) {
-			abortCutscene();
+	if (VAR_KEYPRESS != 0xFF && _mouseAndKeyboardStat) {		// Key Input
+		if (315 <= _mouseAndKeyboardStat && _mouseAndKeyboardStat <= 323) {
+			// Convert F-Keys for V1/V2 games (they start at 1)
+			VAR(VAR_KEYPRESS) = _mouseAndKeyboardStat - 314;
 		} else {
-			// Fall back to default behavior
-			ScummEngine::processKeyboard(lastKeyHit);
-		}
-
-		// Alt-F5 brings up the original save/load dialog
-		if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT) {
-			lastKeyHit = Common::KeyState(Common::KEYCODE_F5, Common::ASCII_F5);
-		}
-	
-		// Store the input type. So far we can't distinguish
-		// between 1, 3 and 5.
-		// 1) Verb	2) Scene	3) Inv.		4) Key
-		// 5) Sentence Bar
-	
-		if (VAR_KEYPRESS != 0xFF && lastKeyHit.keycode) {		// Key Input
-			if (Common::KEYCODE_F1 <= lastKeyHit.keycode && lastKeyHit.keycode <= Common::KEYCODE_F12) {
-				// Convert F-Keys for V1/V2 games (they start at 1)
-				VAR(VAR_KEYPRESS) = lastKeyHit.keycode - Common::KEYCODE_F1 + 1;
-			} else {
-				VAR(VAR_KEYPRESS) = lastKeyHit.ascii;
-			}
+			VAR(VAR_KEYPRESS) = _mouseAndKeyboardStat;
 		}
 	}
 }
 
 void ScummEngine_v3::processKeyboard(Common::KeyState lastKeyHit) {
-	const bool restartKeyEnabled = (_game.platform == Common::kPlatformFMTowns);
+	// Fall back to default behavior
+	ScummEngine::processKeyboard(lastKeyHit);
 
-	// F8 in FM-TOWNS games always triggers restart
-	if (restartKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.flags == 0)) {
-		confirmRestartDialog();
-	} else {
-		// Fall back to default behavior
-		ScummEngine::processKeyboard(lastKeyHit);
-	}
-
-	// i brings up an IQ dialog in Indy3
-
+	// 'i' brings up an IQ dialog in Indy3
 	if (lastKeyHit.ascii == 'i' && _game.id == GID_INDY3) {
 		// SCUMM var 244 is the episode score
 		// and var 245 is the series score
@@ -517,18 +488,22 @@ void ScummEngine_v3::processKeyboard(Common::KeyState lastKeyHit) {
 }
 
 void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
-	const bool restartKeyEnabled = (VAR_RESTART_KEY != 0xFF && VAR(VAR_RESTART_KEY) != 0);
-	const bool pauseKeyEnabled = (VAR_PAUSE_KEY != 0xFF && VAR(VAR_PAUSE_KEY) != 0);
-	const bool talkstopKeyEnabled = (VAR_TALKSTOP_KEY != 0xFF && VAR(VAR_TALKSTOP_KEY) != 0);
-	const bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY != 0xFF && VAR(VAR_CUTSCENEEXIT_KEY) != 0);
+	// Enable the following five special keys conditionally:
+	bool restartKeyEnabled = (VAR_RESTART_KEY == 0xFF || VAR(VAR_RESTART_KEY) != 0);
+	bool pauseKeyEnabled = (VAR_PAUSE_KEY == 0xFF || VAR(VAR_PAUSE_KEY) != 0);
+	bool talkstopKeyEnabled = (VAR_TALKSTOP_KEY == 0xFF || VAR(VAR_TALKSTOP_KEY) != 0);
+	bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY == 0xFF || VAR(VAR_CUTSCENEEXIT_KEY) != 0);
+	bool mainmenuKeyEnabled = (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
 
-	bool mainmenuKeyEnabled = true;
-	
+	// In FM-TOWNS games F8 / restart is always enabled
+	if (_game.platform == Common::kPlatformFMTowns)
+		restartKeyEnabled = true;
+
 	// For games which use VAR_MAINMENU_KEY, disable the mainmenu key if
 	// requested by the scripts. We make an exception for COMI (i.e.
 	// forcefully always enable it there), as that always disables it.
-	if (VAR_MAINMENU_KEY != 0xFF && (_game.id != GID_CMI))
-		mainmenuKeyEnabled = (VAR(VAR_MAINMENU_KEY) != 0);
+	if (_game.id == GID_CMI)
+		mainmenuKeyEnabled = true;
 
 /*
 	FIXME: We also used to force-enable F5 in Sam&Max and HE >= 72 games -- why?
@@ -563,47 +538,53 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 	} else if (cutsceneExitKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_ESCAPE && lastKeyHit.flags == 0)) {
 		abortCutscene();
+		
+		// FIXME: Is the following line really necessary?
 		_mouseAndKeyboardStat = VAR(VAR_CUTSCENEEXIT_KEY);
 
+	} else if (lastKeyHit.ascii == '[' || lastKeyHit.ascii == ']') { // Change music volume
+		int vol = ConfMan.getInt("music_volume") / 16;
+		if (lastKeyHit.ascii == ']' && vol < 16)
+			vol++;
+		else if (lastKeyHit.ascii == '[' && vol > 0)
+			vol--;
+
+		// Display the music volume
+		ValueDisplayDialog dlg("Music volume: ", 0, 16, vol, ']', '[');
+		vol = runDialog(dlg);
+
+		vol *= 16;
+		if (vol > Audio::Mixer::kMaxMixerVolume)
+			vol = Audio::Mixer::kMaxMixerVolume;
+
+		ConfMan.setInt("music_volume", vol);
+		updateSoundSettings();
+
+	} else if (lastKeyHit.ascii == '-' || lastKeyHit.ascii == '+') { // Change text speed
+		if (lastKeyHit.ascii == '+' && _defaultTalkDelay > 0)
+			_defaultTalkDelay--;
+		else if (lastKeyHit.ascii == '-' && _defaultTalkDelay < 9)
+			_defaultTalkDelay++;
+
+		// Display the talk speed
+		ValueDisplayDialog dlg("Subtitle speed: ", 0, 9, 9 - _defaultTalkDelay, '+', '-');
+		_defaultTalkDelay = 9 - runDialog(dlg);
+		
+		// Save the new talkspeed value to ConfMan
+		setTalkspeed(_defaultTalkDelay);
+
+		if (VAR_CHARINC != 0xFF)
+			VAR(VAR_CHARINC) = _defaultTalkDelay;
+
+	} else if (lastKeyHit.ascii == '~' || lastKeyHit.ascii == '#') { // Debug console
+		_debugger->attach();
+
 	} else {
-
-		if (lastKeyHit.ascii == '[' || lastKeyHit.ascii == ']') { // Change music volume
-			int vol = ConfMan.getInt("music_volume") / 16;
-			if (lastKeyHit.ascii == ']' && vol < 16)
-				vol++;
-			else if (lastKeyHit.ascii == '[' && vol > 0)
-				vol--;
-	
-			// Display the music volume
-			ValueDisplayDialog dlg("Music volume: ", 0, 16, vol, ']', '[');
-			vol = runDialog(dlg);
-	
-			vol *= 16;
-			if (vol > Audio::Mixer::kMaxMixerVolume)
-				vol = Audio::Mixer::kMaxMixerVolume;
-	
-			ConfMan.setInt("music_volume", vol);
-			updateSoundSettings();
-		} else if (lastKeyHit.ascii == '-' || lastKeyHit.ascii == '+') { // Change text speed
-			if (lastKeyHit.ascii == '+' && _defaultTalkDelay > 0)
-				_defaultTalkDelay--;
-			else if (lastKeyHit.ascii == '-' && _defaultTalkDelay < 9)
-				_defaultTalkDelay++;
-	
-			// Display the talk speed
-			ValueDisplayDialog dlg("Subtitle speed: ", 0, 9, 9 - _defaultTalkDelay, '+', '-');
-			_defaultTalkDelay = 9 - runDialog(dlg);
-			
-			// Save the new talkspeed value to ConfMan
-			setTalkspeed(_defaultTalkDelay);
-	
-			if (VAR_CHARINC != 0xFF)
-				VAR(VAR_CHARINC) = _defaultTalkDelay;
-		} else if (lastKeyHit.ascii == '~' || lastKeyHit.ascii == '#') { // Debug console
-			_debugger->attach();
-		}
-
-		_mouseAndKeyboardStat = lastKeyHit.ascii;
+		// FIXME: Possibly convert even more keycode/ascii pairs to their SCUMM counterparts?
+		if (lastKeyHit.keycode >= Common::KEYCODE_F1 && lastKeyHit.keycode <= Common::KEYCODE_F9)
+			_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_F1 + 315;
+		else
+			_mouseAndKeyboardStat = lastKeyHit.ascii;
 	}
 }
 
