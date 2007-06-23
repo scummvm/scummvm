@@ -32,7 +32,11 @@
 
 namespace GUI {
 
-// TODO/FIXME: Make use of Common::KeyState from common/keyboard.h
+// TODO/FIXME: Make use of Common::KeyState from common/keyboard.h,
+// or even better, just completely replace this by it.
+// To be able to do that, though, the code using GUI::Key would need to
+// be adopted -- right now it uses SDL keycodes, and uses SDL_PushEvent
+// to generated fake events.
 
 class Key {
 public:

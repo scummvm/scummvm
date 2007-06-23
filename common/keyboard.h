@@ -233,6 +233,7 @@ struct KeyState {
 	 * and look at that, if you want to find out a key code.
 	 */
 	KeyCode keycode;
+
 	/**
 	 * ASCII-value of the pressed key (if any).
 	 * This depends on modifiers, i.e. pressing the 'A' key results in
@@ -240,6 +241,7 @@ struct KeyState {
 	 * caps lock.
 	 */
 	uint16 ascii;
+
 	/**
 	 * Status of the modifier keys. Bits are set in this for each
 	 * pressed modifier
@@ -247,7 +249,12 @@ struct KeyState {
 	 */
 	byte flags;
 	
-	KeyState() { reset(); }
+	KeyState(KeyCode kc = KEYCODE_INVALID, uint16 asc = 0, byte f = 0) {
+		keycode = kc;
+		ascii = asc ? asc : (uint16)kc;
+		flags = f;
+	}
+	
 	void reset() {
 		keycode = KEYCODE_INVALID;
 		ascii = flags = 0;
