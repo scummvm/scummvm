@@ -230,7 +230,7 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 		_actor[actor1].cursorX = -160;
 
 	// Shift+V cheat to win the battle
-	if (_vm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState('V') && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[1].damage = _actor[1].maxdamage + 10;
@@ -375,7 +375,7 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 		_actor[actor1].cursorX = -160;
 
 	// Shift+V cheat to win the battle
-	if (_vm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState('V') && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[1].damage = _actor[1].maxdamage + 10;
@@ -524,7 +524,7 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 		_actor[actor1].cursorX = -160;
 
 	// Shift+V cheat to win the battle
-	if (_vm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState('V') && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[1].damage = _actor[1].maxdamage + 10;
@@ -681,7 +681,7 @@ int32 Insane::enemy3handler(int32 actor1, int32 actor2, int32 probability) {
 		_actor[actor1].cursorX = -160;
 
 	// Shift+V cheat to win the battle
-	if (_vm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState('V') && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[1].damage = _actor[1].maxdamage + 10;
@@ -851,7 +851,7 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 		_actor[actor1].cursorX = -160;
 
 	// Shift+V cheat to win the battle
-	if (_vm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState('V') && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[1].damage = _actor[1].maxdamage + 10;
@@ -995,7 +995,7 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 	_enHdlVar[EN_VULTF2][0]++;
 
 	// Shift+V cheat to win the battle
-	if (_vm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState('V') && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[1].damage = _actor[1].maxdamage + 10;
@@ -1123,7 +1123,7 @@ int32 Insane::enemy6handler(int32 actor1, int32 actor2, int32 probability) {
 		retval = 2;
 
 	// Shift+V cheat to win the battle
-	if (_vm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState('V') && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[0].act[2].state = 97;
@@ -1213,7 +1213,7 @@ int32 Insane::enemy7handler(int32 actor1, int32 actor2, int32 probability) {
 	_enHdlVar[EN_CAVEFISH][0] = act1damage;
 
 	// Shift+V cheat to win the battle
-	if (_vm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState('V') && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[1].damage = _actor[1].maxdamage + 10;
