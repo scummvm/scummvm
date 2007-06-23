@@ -26,6 +26,8 @@
 #ifndef GOB_UTIL_H
 #define GOB_UTIL_H
 
+#include "common/keyboard.h"
+
 #include "gob/video.h"
 
 namespace Gob {
@@ -90,7 +92,7 @@ public:
 
 protected:
 	int16 _mouseButtons;
-	int16 _keyBuffer[KEYBUFSIZE];
+	Common::KeyState _keyBuffer[KEYBUFSIZE];
 	int16 _keyBufferHead;
 	int16 _keyBufferTail;
 
@@ -99,9 +101,9 @@ protected:
 	GobEngine *_vm;
 
 	bool keyBufferEmpty();
-	void addKeyToBuffer(int16 key);
-	bool getKeyFromBuffer(int16& key);
-	int16 translateKey(int16 key);
+	void addKeyToBuffer(const Common::KeyState &key);
+	bool getKeyFromBuffer(Common::KeyState &key);
+	int16 translateKey(const Common::KeyState &key);
 	void checkJoystick();
 };
 
