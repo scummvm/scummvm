@@ -87,29 +87,30 @@ void ScummEngine::parseEvents() {
 				else
 					_keyPressed = event.kbd;	// Normal key press, pass on to the game.
 			} else if (event.kbd.flags & Common::KBD_ALT) {
-				// The result must be 273 for Alt-W
-				// because that's what MI2 looks for in
-				// its "instant win" cheat.
-				// FIXME: Handle this specific property inside processKeyboard ?
+				// Handle KBD_ALT combos. We know that the result must be 273 for Alt-W
+				// because that's what MI2 looks for in its "instant win" cheat.
+
+				// FIXME: Handle this specific property of MI2 inside processKeyboard ?
 				_keyPressed = event.kbd;
 				_keyPressed.ascii = event.kbd.keycode + 154;
-			} else if (event.kbd.keycode < Common::KEYCODE_UP || event.kbd.keycode > Common::KEYCODE_LEFT || _game.version >= 7) {
-				// FIXME: Handle this specific property inside processKeyboard ?
-
-				// don't let game have arrow keys as we currently steal them
-				// for keyboard cursor control
-				// this fixes bug with up arrow (273) corresponding to
-				// "instant win" cheat in MI2 mentioned above
-				//
-				// This is not applicable to Full Throttle as it processes keyboard
-				// cursor control by itself. Also it fixes derby scene
-				_keyPressed = event.kbd;	// Normal key press, pass on to the game.
+			} else {
+				// Normal key press, pass on to the game.
+				_keyPressed = event.kbd;
 			}
 
-			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
-				if (event.kbd.keycode >= Common::KEYCODE_UP && event.kbd.keycode <= Common::KEYCODE_LEFT) {
+			if (event.kbd.keycode >= Common::KEYCODE_UP && event.kbd.keycode <= Common::KEYCODE_LEFT) {
+				if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
 					_keyPressed = event.kbd;
 					_keyPressed.ascii = event.kbd.ascii - Common::KEYCODE_UP + 54;
+				} else if (_game.version < 7) {
+					// FIXME: Handle this specific property inside processKeyboard ?
+	
+					// Don't let game see arrow keys. This fixes bug with up arrow (273)
+					// corresponding to the "instant win" cheat in MI2 mentioned above.
+					//
+					// This is not applicable to V7+ games, which need to see the arrow keys,
+					// too, else certain things (derby scene, asterorid lander) won't work.
+					_keyPressed.reset();
 				}
 			}
 
@@ -363,7 +364,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 			lastKeyHit = Common::KeyState(Common::KEYCODE_F5, 319);
 		}
 	
-		// Alt-F5 brings up the original save/load dialog
+		// Alt-F5 should bring up the original save/load dialog, so map it to F1.
 		if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT) {
 			lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
 		}
