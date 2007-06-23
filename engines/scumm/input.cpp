@@ -93,10 +93,6 @@ void ScummEngine::parseEvents() {
 				// FIXME: Handle this specific property inside processKeyboard ?
 				_keyPressed = event.kbd;
 				_keyPressed.ascii = event.kbd.keycode + 154;
-			} else if (event.kbd.keycode == Common::KEYCODE_F1 && (_game.id == GID_CMI && !(_game.features & GF_DEMO))) {
-				// FIXME: support in-game menu screen. For now, this remaps F1 to F5 in COMI
-				// FIXME: Handle this specific property inside processKeyboard ?
-				_keyPressed = Common::KeyState(Common::KEYCODE_F5, Common::ASCII_F5);
 			} else if (event.kbd.keycode < Common::KEYCODE_UP || event.kbd.keycode > Common::KEYCODE_LEFT || _game.version >= 7) {
 				// FIXME: Handle this specific property inside processKeyboard ?
 
@@ -369,10 +365,17 @@ void ScummEngine::processInput() {
 
 #ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
-	// Alt-F5 brings up the original save/load dialog
 
-	if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT && !(_game.features & GF_DEMO)) {
-		lastKeyHit = Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1);
+	if (!(_game.features & GF_DEMO)) {
+		// F1 (the trigger for the original save/load dialog) is mapped to F5
+		if (lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.flags == 0) {
+			lastKeyHit = Common::KeyState(Common::KEYCODE_F5, Common::ASCII_F5);
+		}
+	
+		// Alt-F5 brings up the original save/load dialog
+		if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT) {
+			lastKeyHit = Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1);
+		}
 	}
 
 	// If a key script was specified (a V8 feature), and it's trigger
