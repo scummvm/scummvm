@@ -161,7 +161,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	if (is_agi)
 		_key_action[SMARTPHONE_ACTION_MULTI].setKey(SDLK_PAUSE); // agi: show predictive dialog
 	else if (is_gob)
-		_key_action[SMARTPHONE_ACTION_MULTI].setKey(Common::ASCII_F1, SDLK_F1) // bargon : F1 to start
+		_key_action[SMARTPHONE_ACTION_MULTI].setKey(Common::ASCII_F1, SDLK_F1); // bargon : F1 to start
 	else if (gameid == "atlantis")
 		_key_action[SMARTPHONE_ACTION_MULTI].setKey(0, SDLK_KP0); // fate of atlantis : Ins to sucker-punch
 	else
