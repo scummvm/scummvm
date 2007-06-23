@@ -228,32 +228,33 @@ void SkyEngine::handleKey(void) {
 			_fastMode ^= 2;
 		else if (_keyPressed.keycode == 'd')
 			_debugger->attach();
-	} else {
-		switch (_keyPressed.ascii) {
-		case '`':
-		case '~':
-		case '#':
+	} else if (_keyPressed.keycode) {
+		switch (_keyPressed.keycode) {
+		case Common::KEYCODE_BACKQUOTE:
+		case Common::KEYCODE_HASH:
 			_debugger->attach();
 			break;
-		case Common::ASCII_F5:
+		case Common::KEYCODE_F5:
 			_skyControl->doControlPanel();
 			break;
 
-		case Common::ASCII_ESCAPE:
+		case Common::KEYCODE_ESCAPE:
 			if (!_systemVars.pastIntro)
 				_skyControl->restartGame();
 			break;
 
-		case '.':
+		case Common::KEYCODE_PERIOD:
 			_skyMouse->logicClick();
 			break;
 
-		case 'p':
+		case Common::KEYCODE_p:
 			_skyScreen->halvePalette();
 			_skySound->fnPauseFx();
 			_systemVars.paused = true;
 			break;
 
+		default:
+			break;
 		}
 	}
 	_keyPressed.reset();
