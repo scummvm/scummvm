@@ -2162,9 +2162,9 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 
 			event.type = Common::EVENT_KEYDOWN;
 			if (!_unfilteredkeys)
-				event.kbd.keycode = ev.key.keysym.sym;
+				event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 			else
-				event.kbd.keycode = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
+				event.kbd.keycode = (Common::KeyCode)mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
 			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
 
 			return true;
@@ -2189,9 +2189,9 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 
 			event.type = Common::EVENT_KEYUP;
 			if (!_unfilteredkeys)
-				event.kbd.keycode = ev.key.keysym.sym;
+				event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 			else
-				event.kbd.keycode = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
+				event.kbd.keycode = (Common::KeyCode)mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
 			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
 
 			return true;
