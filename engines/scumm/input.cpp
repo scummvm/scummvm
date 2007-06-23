@@ -391,10 +391,12 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 
 void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 
-	// COMI version string is hard coded in the engine, hence we don't
-	// invoke versionDialog here (it would only show nonsense).
-	// Dig/FT version strings are partly hard coded, too.
-	if (_game.version == 7 && lastKeyHit.ascii == VAR(VAR_VERSION_KEY)) {
+	// VAR_VERSION_KEY (usually ctrl-v) is used in COMI, Dig and FT to trigger
+	// a version dialog, unless VAR_VERSION_KEY is set to 0. However, the COMI
+	// version string is hard coded in the engine, hence we don't invoke
+	// versionDialog for it. Dig/FT version strings are partly hard coded, too.
+	if (_game.id != GID_CMI && 0 != VAR(VAR_VERSION_KEY) &&
+	    lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.flags == Common::KBD_CTRL) {
 		versionDialog();
 		return;
 	}
