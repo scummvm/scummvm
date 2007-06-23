@@ -359,8 +359,7 @@ void Screen::k2IntroFadeToGrey(int delay) {
 	debugC(9, kDebugLevelScreen, "Screen::k2IntroFadeToGrey()");
 
 	for (int i = 0; i <= 50; ++i) {
-		if (i <= 8 || i >= 30)
-		{
+		if (i <= 8 || i >= 30) {
 			_currentPalette[3 * i + 0] = (_currentPalette[3 * i + 0] + 
 						      _currentPalette[3 * i + 1] + 
 						      _currentPalette[3 * i + 2]) / 3;
