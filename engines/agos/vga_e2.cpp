@@ -93,7 +93,7 @@ void AGOSEngine::vc45_setWindowPalette() {
 		byte *dst = (byte *)screen->pixels + vlut[0] * 16 + vlut[1] * _dxSurfacePitch;
 
 		if (getGameType() == GType_ELVIRA2 && num == 7) {
-			dst -= 4;
+			dst -= 8;
 			width += 4;
 		}
 
