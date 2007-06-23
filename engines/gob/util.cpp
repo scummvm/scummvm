@@ -165,15 +165,19 @@ bool Util::getKeyFromBuffer(int16& key) {
 }
 
 int16 Util::translateKey(int16 key) {
+	// FIXME: This currently maps KeyState::ascii values, when
+	// it really should map keycodes! To fix this, addKeyToBuffer()
+	// will have to be called with kbd.keycode instead of kbd.ascii,
+	// and of course this will in turn require subsequent changes...
 	static struct keyS {
 		int16 from;
 		int16 to;
 	} keys[] = {
-		{8,   0x0E08}, // Backspace
-		{32,  0x3920}, // Space
-		{13,  0x1C0D}, // Enter
-		{27,  0x011B}, // ESC
-		{127, 0x5300}, // Del
+		{Common::KEYCODE_BACKSPACE,   0x0E08}, // Backspace
+		{Common::KEYCODE_SPACE,  0x3920}, // Space
+		{Common::KEYCODE_RETURN,  0x1C0D}, // Enter
+		{Common::KEYCODE_ESCAPE,  0x011B}, // ESC
+		{Common::KEYCODE_DELETE, 0x5300}, // Del
 		{Common::KEYCODE_UP, 0x4800}, // Up arrow
 		{Common::KEYCODE_DOWN, 0x5000}, // Down arrow
 		{Common::KEYCODE_RIGHT, 0x4D00}, // Right arrow
