@@ -74,14 +74,16 @@ void AGOSEngine::vc45_setWindowPalette() {
 
 	if (num == 4) {
 		const uint16 *vlut = &_videoWindows[num * 4];
-		uint16 *dst = (uint16 *)_window4BackScn;
-		uint width = vlut[2] * 16 / 2;
+		byte *dst = _window4BackScn;
+		uint width = vlut[2] * 16;
 		uint height = vlut[3];
 
 		for (uint h = 0; h < height; h++) {
 			for (uint w = 0; w < width; w++) {
-				dst[w] &= 0xF0F;
-				dst[w] |= color * 16;
+				uint16 val = READ_LE_UINT16(dst + w * 2);
+				val &= 0xF0F;
+				val |= color * 16;
+				WRITE_LE_UINT16(dst + w * 2, val);
 			}
 			dst += width;
 		}
@@ -89,7 +91,7 @@ void AGOSEngine::vc45_setWindowPalette() {
 		const uint16 *vlut = &_videoWindows[num * 4];
 
 		Graphics::Surface *screen = _system->lockScreen();
-		uint16 *dst = (uint16 *)screen->pixels + vlut[0] * 8 + vlut[1] * _dxSurfacePitch / 2;
+		byte *dst = (byte *)screen->pixels + vlut[0] * 16 + vlut[1] * _dxSurfacePitch;
 
 		uint width = vlut[2] * 16 / 2;
 		uint height = vlut[3];
@@ -101,10 +103,12 @@ void AGOSEngine::vc45_setWindowPalette() {
 
 		for (uint h = 0; h < height; h++) {
 			for (uint w = 0; w < width; w++) {
-				dst[w] &= 0xF0F;
-				dst[w] |= color * 16;
+				uint16 val = READ_LE_UINT16(dst + w * 2);
+				val &= 0xF0F;
+				val |= color * 16;
+				WRITE_LE_UINT16(dst + w * 2, val);
 			}
-			dst += _dxSurfacePitch / 2;
+			dst += _dxSurfacePitch;
 		}
 
 		_system->unlockScreen();
