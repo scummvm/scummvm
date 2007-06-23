@@ -413,7 +413,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 	// On WinCE we've also got one special for skipping cutscenes or dialog, whatever is appropriate
 	// Since _smushActive is not a member of the base case class ScummEngine::, we detect here if we're
 	// playing a cutscene and skip it; else we forward the keystroke through to ScummEngine::processInput.
-	if (cutsceneExitKeyEnabled && (lastKeyHit.ascii == KEY_ALL_SKIP || lastKeyHit.keycode == Common::KEYCODE_ESCAPE)) {
+	if (cutsceneExitKeyEnabled && lastKeyHit.keycode == Common::KEYCODE_ESCAPE) {
 // FIXME: I do not quite understand why this code behaves differently on WinCE ?!?
 		int bail = 1;
 		if (_smushActive) {
