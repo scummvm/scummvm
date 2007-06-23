@@ -394,7 +394,6 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 
 	const bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY != 0xFF && VAR(VAR_CUTSCENEEXIT_KEY) != 0);
 
-#ifndef _WIN32_WCE
 	if (cutsceneExitKeyEnabled && lastKeyHit.keycode == Common::KEYCODE_ESCAPE) {
 		// Skip cutscene (or active SMUSH video).
 		if (_smushActive) {
@@ -409,31 +408,6 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 		_mouseAndKeyboardStat = Common::ASCII_ESCAPE;
 		return;
 	}
-#else
-	// On WinCE we've also got one special for skipping cutscenes or dialog, whatever is appropriate
-	// Since _smushActive is not a member of the base case class ScummEngine::, we detect here if we're
-	// playing a cutscene and skip it; else we forward the keystroke through to ScummEngine::processInput.
-	if (cutsceneExitKeyEnabled && lastKeyHit.keycode == Common::KEYCODE_ESCAPE) {
-// FIXME: I do not quite understand why this code behaves differently on WinCE ?!?
-		int bail = 1;
-		if (_smushActive) {
-			if (_game.id == GID_FT) {
-				_insane->escapeKeyHandler();
-				bail = 0;
-			} else
-				_smushVideoShouldFinish = true;
-		}
-		if ((!_smushActive && vm.cutScenePtr[vm.cutSceneStackPointer]) || _smushVideoShouldFinish) {
-			abortCutscene();
-			bail = 0;
-		}
-		if (!bail) {
-			_mouseAndKeyboardStat = Common::ASCII_ESCAPE;
-			return;
-		}
-		
-	}
-#endif
 
 	// Fall back to V6 behavior
 	ScummEngine_v6::processKeyboard(lastKeyHit);
