@@ -206,11 +206,11 @@ void AGOSEngine_Simon2::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 	dst += (y + window->y) * _dxSurfacePitch;
 
 	src = _iconFilePtr;
-	src += READ_LE_UINT16(&((uint16 *)src)[icon * 2 + 0]);
+	src += READ_LE_UINT16(src + icon * 4 + 0);
 	decompressIcon(dst, src, 20, 10, 224, _dxSurfacePitch);
 
 	src = _iconFilePtr;
-	src += READ_LE_UINT16(&((uint16 *)src)[icon * 2 + 1]);
+	src += READ_LE_UINT16(src + icon * 4 + 2);
 	decompressIcon(dst, src, 20, 10, 208, _dxSurfacePitch);
 
 	_system->unlockScreen();
@@ -232,12 +232,12 @@ void AGOSEngine_Simon1::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 
 	if (getPlatform() == Common::kPlatformAmiga) {
 		src = _iconFilePtr;
-		src += READ_BE_UINT32(&((uint32 *)src)[icon]);
+		src += READ_BE_UINT32(src + icon * 4);
 		uint8 color = (getFeatures() & GF_32COLOR) ? 16 : 240;
 		decompressIconPlanar(dst, src, 24, 12, color, _dxSurfacePitch);
 	} else {
 		src = _iconFilePtr;
-		src += READ_LE_UINT16(&((uint16 *)src)[icon]);
+		src += READ_LE_UINT16(src + icon * 2);
 		decompressIcon(dst, src, 24, 12, 224, _dxSurfacePitch);
 	}
 
@@ -261,11 +261,11 @@ void AGOSEngine_Waxworks::drawIcon(WindowBlock *window, uint icon, uint x, uint 
 	uint8 color = dst[0] & 0xF0;
 	if (getPlatform() == Common::kPlatformAmiga) {
 		src = _iconFilePtr;
-		src += READ_BE_UINT32(&((uint32 *)src)[icon]);
+		src += READ_BE_UINT32(src + icon * 4);
 		decompressIconPlanar(dst, src, 24, 10, color, _dxSurfacePitch);
 	} else {
 		src = _iconFilePtr;
-		src += READ_LE_UINT16(&((uint16 *)src)[icon]);
+		src += READ_LE_UINT16(src + icon * 2);
 		decompressIcon(dst, src, 24, 10, color, _dxSurfacePitch);
 	}
 
@@ -289,11 +289,11 @@ void AGOSEngine_Elvira2::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 	uint color = dst[0] & 0xF0;
 	if (getFeatures() & GF_PLANAR) {
 		src = _iconFilePtr;
-		src += READ_BE_UINT32(&((uint32 *)src)[icon]);
+		src += READ_BE_UINT32(src + icon * 4);
 		decompressIconPlanar(dst, src, 24, 12, color, _dxSurfacePitch);
 	} else {
 		src = _iconFilePtr;
-		src += READ_LE_UINT16(&((uint16 *)src)[icon]);
+		src += READ_LE_UINT16(src + icon * 2);
 		decompressIcon(dst, src, 24, 12, color, _dxSurfacePitch);
 	}
 
@@ -316,7 +316,7 @@ void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 
 	if (getFeatures() & GF_PLANAR) {
 		src = _iconFilePtr;
-		src += READ_BE_UINT16(&((uint16 *)src)[icon]);
+		src += READ_BE_UINT16(src + icon * 2);
 		decompressIconPlanar(dst, src, 24, 12, 16, _dxSurfacePitch);
 	} else {
 		src = _iconFilePtr;
