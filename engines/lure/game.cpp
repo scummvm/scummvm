@@ -140,7 +140,7 @@ void Game::execute() {
 					uint16 roomNum = room.roomNumber();
 
 					if ((events.event().kbd.flags == Common::KBD_CTRL) &&
-						(events.event().kbd.keycode == 'd')) {
+						(events.event().kbd.keycode == Common::KEYCODE_d)) {
 						// Activate the debugger
 						_debugger->attach();
 						break;
@@ -164,8 +164,8 @@ void Game::execute() {
 						continue;
 
 					// Handle any remaining standard keys
-					switch (events.event().kbd.ascii) {
-					case 27:
+					switch (events.event().kbd.keycode) {
+					case Common::KEYCODE_ESCAPE:
 						events.quitFlag = true;
 						break;
 
@@ -191,8 +191,8 @@ void Game::execute() {
 							room.roomNumber());
 						break;
 
-					case 267:  // keypad '/'
-					case '/':
+					case Common::KEYCODE_KP_DIVIDE:
+					case Common::KEYCODE_SLASH:
 						room.setShowInfo(!room.showInfo());
 						break;
 
@@ -825,17 +825,18 @@ void Game::doQuit() {
 	s->centerOnScreen();
 	delete s;
 
-	char key = '\0';
+	Common::KeyCode key = Common::KEYCODE_INVALID;
 	do {
 		if (events.pollEvent()) {
 			if (events.event().type == Common::EVENT_KEYDOWN) {
-				key = events.event().kbd.ascii;
-				if ((key >= 'A') && (key <= 'Z')) key += 'a' - 'A';
+				key = events.event().kbd.keycode;
 			}
 		}
-	} while (((uint8) key != 27) && (key != 'y') && (key != 'n'));
+	} while ((key != Common::KEYCODE_ESCAPE) &&
+	         (key != Common::KEYCODE_y) &&
+	         (key != Common::KEYCODE_n));
 
-	events.quitFlag = key == 'y';
+	events.quitFlag = (key == Common::KEYCODE_n);
 	if (!events.quitFlag) {
 		screen.update();
 		mouse.cursorOn();

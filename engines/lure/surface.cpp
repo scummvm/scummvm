@@ -690,7 +690,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 
 			if (events.pollEvent()) {
 				if ((events.type() == Common::EVENT_KEYDOWN) &&
-					(events.event().kbd.ascii == 27)) {
+					(events.event().kbd.keycode == Common::KEYCODE_ESCAPE)) {
 					abortFlag = true;
 					break;
 				}

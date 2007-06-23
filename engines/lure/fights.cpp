@@ -154,13 +154,13 @@ const CursorType moveList[] = {CURSOR_LEFT_ARROW, CURSOR_FIGHT_UPPER,
 	CURSOR_FIGHT_MIDDLE, CURSOR_FIGHT_LOWER, CURSOR_RIGHT_ARROW};
 
 struct KeyMapping {
-	uint16 keycode;
+	Common::KeyCode keycode;
 	uint8 moveNumber;
 };
 
 const KeyMapping keyList[] = {
-	{/*LEFT*/276, 10}, {/*RIGHT*/275, 14}, {/*NUM7*/55, 11}, {/*NUM4*/52, 12}, 
-	{/*NUM1*/49, 13}, {/*NUM9*/57, 6}, {/*NUM6*/54, 7}, {/*NUM3*/51, 8}, {0, 0}};
+	{Common::KEYCODE_LEFT, 10}, {Common::KEYCODE_RIGHT, 14}, {Common::KEYCODE_7, 11}, {Common::KEYCODE_4, 12}, 
+	{Common::KEYCODE_1, 13}, {Common::KEYCODE_9, 6}, {Common::KEYCODE_6, 7}, {Common::KEYCODE_3, 8}, {Common::KEYCODE_INVALID, 0}};
 
 void FightsManager::checkEvents() {
 	Events &events = Events::getReference();
@@ -172,18 +172,18 @@ void FightsManager::checkEvents() {
 	int moveNumber = 0;
 
 	if (events.type() == Common::EVENT_KEYDOWN) {
-		switch (events.event().kbd.ascii) {
-		case 27:
+		switch (events.event().kbd.keycode) {
+		case Common::KEYCODE_ESCAPE:
 			events.quitFlag = true;
 			break;
 
 		default:
 			// Scan through the mapping list for a move for the keypress
 			const KeyMapping *keyPtr = &keyList[0];
-			while ((keyPtr->keycode != 0) &&
-				(keyPtr->keycode != events.event().kbd.ascii))
+			while ((keyPtr->keycode != Common::KEYCODE_INVALID) &&
+				(keyPtr->keycode != events.event().kbd.keycode))
 				++keyPtr;
-			if (keyPtr->keycode != 0)
+			if (keyPtr->keycode != Common::KEYCODE_INVALID)
 				moveNumber = keyPtr->moveNumber;
 		}
 	}

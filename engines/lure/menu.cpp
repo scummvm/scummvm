@@ -475,7 +475,6 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 			}
 
 			else if (e.type() == Common::EVENT_KEYDOWN) {
-				byte ch = e.event().kbd.ascii;
 				uint16 keycode = e.event().kbd.keycode;
 
 				if (((keycode == Common::KEYCODE_KP8) || (keycode == Common::KEYCODE_UP)) && (selectedIndex > 0)) {
@@ -485,9 +484,9 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 						(selectedIndex < numEntries-1)) {
 					++selectedIndex;
 					refreshFlag = true;
-				} else if ((ch == '\xd') || (keycode == Common::KEYCODE_KP_ENTER)) {
+				} else if ((keycode == Common::KEYCODE_RETURN) || (keycode == Common::KEYCODE_KP_ENTER)) {
 					goto bail_out;
-				} else if (ch == '\x1b') {
+				} else if (keycode == Common::KEYCODE_ESCAPE) {
 					selectedIndex = 0xffff;
 					goto bail_out;
 				}
