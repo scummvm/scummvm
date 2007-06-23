@@ -759,7 +759,7 @@ void Parallaction::changeCharacter(const char *name) {
 		// character for sanity before memory is freed
 		freeCharacter();
 
-		_disk->selectArchive((_vm->getPlatform() == Common::kPlatformAmiga) ? "disk0" : "disk1");
+		Common::String oldArchive = _disk->selectArchive((_vm->getPlatform() == Common::kPlatformAmiga) ? "disk0" : "disk1");
 		_vm->_char._ani._cnv = _disk->loadFrames(fullName);
 
 		if (!IS_DUMMY_CHARACTER(name)) {
@@ -774,6 +774,9 @@ void Parallaction::changeCharacter(const char *name) {
 			if (!(getFeatures() & GF_DEMO))
 				parseLocation("common");
 		}
+
+		if (!oldArchive.empty())
+			_disk->selectArchive(oldArchive);
 	}
 
 	strcpy(_characterName1, fullName);

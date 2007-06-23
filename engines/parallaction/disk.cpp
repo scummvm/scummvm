@@ -90,8 +90,10 @@ void Disk::errorFileNotFound(const char *s) {
 }
 
 
-void Disk::selectArchive(const char *name) {
-	_resArchive.open(name);
+Common::String Disk::selectArchive(const Common::String& name) {
+	Common::String oldName = _resArchive.name();
+	_resArchive.open(name.c_str());
+	return oldName;
 }
 
 void Disk::setLanguage(uint16 language) {

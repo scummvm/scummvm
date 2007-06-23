@@ -60,6 +60,7 @@ protected:
 	uint32			_fileCursor;
 	uint32			_fileEndOffset;
 
+	Common::String	_archiveName;
 	char 			_archiveDir[MAX_ARCHIVE_ENTRIES][32];
 	uint32			_archiveLenghts[MAX_ARCHIVE_ENTRIES];
 	uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
@@ -74,8 +75,10 @@ protected:
 public:
 	Archive();
 
-	void open(const char *file);
+	void open(const char* file);
 	void close();
+
+	Common::String name() const;
 
 	bool openArchivedFile(const char *name);
 	void closeArchivedFile();
@@ -103,7 +106,7 @@ public:
 	Disk(Parallaction *vm);
 	virtual ~Disk();
 
-	void selectArchive(const char *name);
+	Common::String selectArchive(const Common::String &name);
 	void setLanguage(uint16 language);
 
 	virtual Script* loadLocation(const char *name) = 0;
