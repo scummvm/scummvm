@@ -142,6 +142,19 @@ void ScummEngine::parseEvents() {
 				VAR(VAR_KEY_STATE) = _keyState;
 			}
 
+			// FIXME: There is a discrepancy between EVENT_KEYDOWN and EVENT_KEYUP here:
+			// For EVENT_KEYDOWN, we use _keyPressed.keycode, which has potentially been
+			// modified, while for EVENT_KEYUP we use the unfiltered event.kbd.keycode.
+			// This could lead problems (like a key becoming 'stuck').
+			
+			// FIXME #2: We are mixing ascii and keycode values here. We probably should
+			// be using keycodes, but at least INSANE checks for "Shift-V" by looking for
+			// the 'V' key being pressed. It would be easy to solve that by also storing the
+			// the modifier flags. However, since getKeyState() is also called by scripts,
+			// we have to be very careful with semantic changes.
+			// Nevertheless, it's bad to rely on "ascii" holdoing keycode values for special
+			// keys (like the function keys), so this should be fixed.
+
 			if (_keyPressed.ascii >= 512)
 				debugC(DEBUG_GENERAL, "_keyPressed > 512 (%d)", _keyPressed.ascii);
 			else
