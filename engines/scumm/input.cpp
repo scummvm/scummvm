@@ -341,7 +341,7 @@ void ScummEngine::processInput() {
 	if (lastKeyHit.ascii == KEY_ALL_SKIP) {
 		// Skip talk
 		if (VAR_TALKSTOP_KEY != 0xFF && _talkDelay > 0) {
-			lastKeyHit = Common::KeyState(Common::KEYCODE_PERIOD, '.');
+			lastKeyHit = Common::KeyState(Common::KEYCODE_PERIOD);
 		} else {
 			lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
 		}
@@ -360,17 +360,17 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 	if (!(_game.features & GF_DEMO)) {
 		// F1 (the trigger for the original save/load dialog) is mapped to F5
 		if (lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.flags == 0) {
-			lastKeyHit = Common::KeyState(Common::KEYCODE_F5);
+			lastKeyHit = Common::KeyState(Common::KEYCODE_F5, 319);
 		}
 	
 		// Alt-F5 brings up the original save/load dialog
 		if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT) {
-			lastKeyHit = Common::KeyState(Common::KEYCODE_F1);
+			lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
 		}
 	}
 
 	// If a key script was specified (a V8 feature), and it's trigger
-	// key was pressed, run it.
+	// key was pressed, run it. Usually used to display the built-in menu.
 	if (_keyScriptNo && (_keyScriptKey == lastKeyHit.ascii)) {
 		runScript(_keyScriptNo, 0, 0, 0);
 		return;
@@ -381,6 +381,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 }
 
 void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
+	const bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY == 0xFF || VAR(VAR_CUTSCENEEXIT_KEY) != 0);
 
 	// VAR_VERSION_KEY (usually ctrl-v) is used in COMI, Dig and FT to trigger
 	// a version dialog, unless VAR_VERSION_KEY is set to 0. However, the COMI
@@ -389,12 +390,8 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 	if (_game.id != GID_CMI && 0 != VAR(VAR_VERSION_KEY) &&
 	    lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.flags == Common::KBD_CTRL) {
 		versionDialog();
-		return;
-	}
 
-	const bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY == 0xFF || VAR(VAR_CUTSCENEEXIT_KEY) != 0);
-
-	if (cutsceneExitKeyEnabled && lastKeyHit.keycode == Common::KEYCODE_ESCAPE) {
+	} else if (cutsceneExitKeyEnabled && lastKeyHit.keycode == Common::KEYCODE_ESCAPE) {
 		// Skip cutscene (or active SMUSH video).
 		if (_smushActive) {
 			if (_game.id == GID_FT)
@@ -406,11 +403,11 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 			abortCutscene();
 
 		_mouseAndKeyboardStat = Common::ASCII_ESCAPE;
-		return;
-	}
 
-	// Fall back to V6 behavior
-	ScummEngine_v6::processKeyboard(lastKeyHit);
+	} else {
+		// Fall back to V6 behavior
+		ScummEngine_v6::processKeyboard(lastKeyHit);
+	}
 }
 #endif
 
@@ -511,12 +508,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		mainmenuKeyEnabled = true;
 */
 
-	// Alt-F5 should bring up the original save/load dialog, if any.
-	// Hence remap it to F5
-	if ((_game.version > 2 && _game.version < 8) && (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT)) {
-		_mouseAndKeyboardStat = 319;	// SCUMM encoding for F5
-
-	} else if (mainmenuKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == 0)) {
+	if (mainmenuKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == 0)) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
 
