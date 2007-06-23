@@ -637,6 +637,7 @@ void AGOSEngine::timer_proc1() {
 	if (_displayScreen) {
 		displayScreen();
 		_displayScreen = false;
+		_updateScreen = false;
 	}
 
 	_lockWord &= ~2;
