@@ -67,39 +67,41 @@ void AGOSEngine::vc44_ifBitClear() {
 }
 
 void AGOSEngine::vc45_setWindowPalette() {
-	uint num = vcReadNextWord();
-	uint color = vcReadNextWord();
+	uint16 num = vcReadNextWord();
+	uint16 color = vcReadNextWord();
+
+	const uint16 *vlut = &_videoWindows[num * 4];
+	uint8 width = vlut[2] * 8;
+	uint8 height = vlut[3];
 
 	if (num == 4) {
-		const uint16 *vlut = &_videoWindows[num * 4];
-		uint16 *dst = (uint16 *)_window4BackScn;
-		uint width = vlut[2] * 16 / 2;
-		uint height = vlut[3];
+		byte *dst = _window4BackScn;
 
-		for (uint h = 0; h < height; h++) {
-			for (uint w = 0; w < width; w++) {
-				dst[w] &= 0xF0F;
-				dst[w] |= color * 16;
+		for (uint8 h = 0; h < height; h++) {
+			for (uint8 w = 0; w < width; w++) {
+				uint16 val = READ_LE_UINT16(dst + w * 2);
+				val &= 0xF0F;
+				val |= color * 16;
+				WRITE_LE_UINT16(dst + w * 2, val);
 			}
-			dst += width;
+			dst += width * 2;
 		}
 	} else {
-		const uint16 *vlut = &_videoWindows[num * 4];
-		uint16 *dst = (uint16 *)getFrontBuf() + vlut[0] * 8 + vlut[1] * _dxSurfacePitch / 2;
-		uint width = vlut[2] * 16 / 2;
-		uint height = vlut[3];
+		byte *dst = getFrontBuf() + vlut[0] * 16 + vlut[1] * _dxSurfacePitch;
 
 		if (getGameType() == GType_ELVIRA2 && num == 7) {
-			dst -= 4;
+			dst -= 8;
 			width += 4;
 		}
 
-		for (uint h = 0; h < height; h++) {
-			for (uint w = 0; w < width; w++) {
-				dst[w] &= 0xF0F;
-				dst[w] |= color * 16;
+		for (uint8 h = 0; h < height; h++) {
+			for (uint8 w = 0; w < width; w++) {
+				uint16 val = READ_LE_UINT16(dst + w * 2);
+				val &= 0xF0F;
+				val |= color * 16;
+				WRITE_LE_UINT16(dst + w * 2, val);
 			}
-			dst += _dxSurfacePitch / 2;
+			dst += _dxSurfacePitch;
 		}
 	}
 }
