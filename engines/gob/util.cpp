@@ -108,9 +108,9 @@ void Util::processInput(bool scroll) {
 			break;
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.flags == Common::KBD_CTRL) {
-				if (event.kbd.keycode == 'f')
+				if (event.kbd.keycode == Common::KEYCODE_f)
 					_fastMode ^= 1;
-				else if (event.kbd.keycode == 'g')
+				else if (event.kbd.keycode == Common::KEYCODE_g)
 					_fastMode ^= 2;
 				break;
 			}
