@@ -279,9 +279,12 @@ enum TextStringIds {
 	kTextNoOpening,
 	kTextDontKnow,
 	kTextShowDialog,
-	kTextEnterProtectAnswer
+	kTextEnterProtectAnswer,
+	kTextVoices,
+	kTextText,
+	kTextAudio,
+	kTextBoth
 };
-
 
 struct GameResourceDescription {
 	uint32 sceneLUTResourceId;
@@ -289,8 +292,10 @@ struct GameResourceDescription {
 	uint32 mainPanelResourceId;
 	uint32 conversePanelResourceId;
 	uint32 optionPanelResourceId;
+	uint32 warningPanelResourceId;
 	uint32 mainSpritesResourceId;
 	uint32 mainPanelSpritesResourceId;
+	uint32 optionPanelSpritesResourceId;
 	uint32 defaultPortraitsResourceId;
 	uint32 mainStringsResourceId;
 	uint32 actorsStringsResourceId;
@@ -422,7 +427,9 @@ enum ColorId {
 	kITEColorGreen = 0xba,
 
 	kIHNMColorBlack = 0xfa,
-	kIHNMColorPortrait = 0xfe
+	kIHNMColorPortrait = 0xfe,
+	kIHNMColorWhite = 0x20,
+	kIHNMColorRed = 0x11
 };
 
 enum KnownColor {
@@ -515,6 +522,7 @@ public:
 	int _soundVolume;
 	int _musicVolume;
 	bool _subtitlesEnabled;
+	bool _voicesEnabled;
 	int _readingSpeed;
 
 	bool _copyProtection;
@@ -559,6 +567,18 @@ public:
 	int processInput(void);
 	Point mousePos() const;
 
+	int getMouseClickCount() {
+		return _mouseClickCount;
+	}
+
+	void incrementMouseClickCount() {
+		_mouseClickCount++;
+	}
+
+	void resetMouseClickCount() {
+		_mouseClickCount = 0;
+	}
+
 	const bool leftMouseButtonPressed() const {
 		return _leftMouseButtonPressed;
 	}
@@ -580,6 +600,7 @@ public:
 
 	bool _leftMouseButtonPressed;
 	bool _rightMouseButtonPressed;
+	int _mouseClickCount;
 
 	bool _quit;
 

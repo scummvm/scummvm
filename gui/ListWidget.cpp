@@ -24,6 +24,7 @@
 
 #include "common/stdafx.h"
 #include "common/system.h"
+#include "common/events.h"
 #include "gui/ListWidget.h"
 #include "gui/ScrollBarWidget.h"
 #include "gui/dialog.h"
@@ -231,39 +232,39 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		// not editmode
 
 		switch (keycode) {
-		case '\n':	// enter/return
-		case '\r':
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER:
 			if (_selectedItem >= 0) {
 				// override continuous enter keydown
-				if (_editable && (_currentKeyDown != '\n' && _currentKeyDown != '\r')) {
+				if (_editable && (_currentKeyDown != Common::KEYCODE_RETURN && _currentKeyDown != Common::KEYCODE_KP_ENTER)) {
 					dirty = true;
 					startEditMode();
 				} else
 					sendCommand(kListItemActivatedCmd, _selectedItem);
 			}
 			break;
-		case 256+17:	// up arrow
+		case Common::KEYCODE_UP:
 			if (_selectedItem > 0)
 				_selectedItem--;
 			break;
-		case 256+18:	// down arrow
+		case Common::KEYCODE_DOWN:
 			if (_selectedItem < (int)_list.size() - 1)
 				_selectedItem++;
 			break;
-		case 256+24:	// pageup
+		case Common::KEYCODE_PAGEUP:
 			_selectedItem -= _entriesPerPage - 1;
 			if (_selectedItem < 0)
 				_selectedItem = 0;
 			break;
-		case 256+25:	// pagedown
+		case Common::KEYCODE_PAGEDOWN:
 			_selectedItem += _entriesPerPage - 1;
 			if (_selectedItem >= (int)_list.size() )
 				_selectedItem = _list.size() - 1;
 			break;
-		case 256+22:	// home
+		case Common::KEYCODE_HOME:
 			_selectedItem = 0;
 			break;
-		case 256+23:	// end
+		case Common::KEYCODE_END:
 			_selectedItem = _list.size() - 1;
 			break;
 		default:

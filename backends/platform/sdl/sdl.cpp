@@ -243,6 +243,7 @@ OSystem_SDL::OSystem_SDL()
 	_savefile(0),
 	_mixer(0),
 	_timer(0),
+	_screenIsLocked(false),
 	_graphicsMutex(0), _transactionMode(kTransactionNone) {
 
 	// allocate palette storage

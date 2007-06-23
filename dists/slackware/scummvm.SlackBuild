@@ -8,8 +8,7 @@ if [ "$TMP" = "" ]; then
 fi
 PKG=$TMP/package-scummvm
 
-VERSION=0.7.1
-#VERSION=20031221
+VERSION=0.11.0svn
 ARCH=i486
 BUILD=1
 
@@ -38,7 +37,7 @@ gzip -9 dists/scummvm.6
 mkdir -p $PKG/usr/man/man6
 cp dists/scummvm.6.gz $PKG/usr/man/man6
 mkdir -p $PKG/usr/doc/scummvm-$VERSION
-cp -a AUTHORS COPYING ChangeLog NEWS README TODO \
+cp -a AUTHORS COPYING COPYRIGHT ChangeLog NEWS README TODO \
   $PKG/usr/doc/scummvm-$VERSION
 chmod 644 $PKG/usr/doc/scummvm-$VERSION
 mkdir -p $PKG/install

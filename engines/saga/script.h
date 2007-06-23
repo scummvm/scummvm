@@ -105,7 +105,8 @@ enum ThreadWaitTypes {
 	kWaitTypePause = 7,
 	kWaitTypePlacard = 8,
 	kWaitTypeStatusTextInput = 9,
-	kWaitTypeWaitFrames = 10    // IHNM. waiting for a frame count
+	kWaitTypeWaitFrames = 10,   // IHNM. waiting for a frame count
+	kWaitTypeWakeUp = 11		// IHNM. wait until get waken up
 };
 
 enum OpCodes {
@@ -326,6 +327,11 @@ public:
 		_sleepTime = sleepTime;
 	}
 
+	void waitFrames(int frames) {
+		wait(kWaitTypeWaitFrames);
+		_frameWait = frames;
+	}
+
 	ScriptThread() {
 		memset(this, 0xFE, sizeof(*this));
 		_stackBuf = NULL;
@@ -469,7 +475,7 @@ private:
 	void setThreadEntrypoint(ScriptThread *thread, int entrypointNumber);
 
 public:
-	void finishDialog(int replyID, int flags, int bitOffset);
+	void finishDialog(int strID, int replyID, int flags, int bitOffset);
 
 private:
 

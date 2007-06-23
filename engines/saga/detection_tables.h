@@ -31,8 +31,10 @@ static const GameResourceDescription ITE_Resources = {
 	RID_ITE_MAIN_PANEL,
 	RID_ITE_CONVERSE_PANEL,
 	RID_ITE_OPTION_PANEL,
+	0,					// Warning panel (IHNM only)
 	RID_ITE_MAIN_SPRITES,
 	RID_ITE_MAIN_PANEL_SPRITES,
+	0,					// Option panel sprites (IHNM only)
 	RID_ITE_DEFAULT_PORTRAITS,
 	RID_ITE_MAIN_STRINGS,
 	RID_ITE_ACTOR_NAMES
@@ -44,8 +46,10 @@ static const GameResourceDescription ITEDemo_Resources = {
 	RID_ITEDEMO_MAIN_PANEL,
 	RID_ITEDEMO_CONVERSE_PANEL,
 	RID_ITEDEMO_OPTION_PANEL,
+	0,						// Warning panel (IHNM only)
 	RID_ITEDEMO_MAIN_SPRITES,
 	RID_ITEDEMO_MAIN_PANEL_SPRITES,
+	0,						// Option panel sprites (IHNM only)
 	RID_ITEDEMO_DEFAULT_PORTRAITS,
 	RID_ITEDEMO_MAIN_STRINGS,
 	RID_ITEDEMO_ACTOR_NAMES
@@ -287,11 +291,13 @@ static const GameResourceDescription IHNM_Resources = {
 	RID_IHNM_MAIN_PANEL,
 	RID_IHNM_CONVERSE_PANEL,
 	RID_IHNM_OPTION_PANEL,
+	RID_IHNM_WARNING_PANEL,
 	RID_IHNM_MAIN_SPRITES,
 	RID_IHNM_MAIN_PANEL_SPRITES,
-	0,
+	RID_IHNM_OPTION_PANEL_SPRITES,
+	0,					// Default portraits (ITE only)
 	RID_IHNM_MAIN_STRINGS,
-	0
+	0					// Actors strings (ITE only)
 };
 
 static const GameFontDescription IHNMDEMO_GameFonts[] = {

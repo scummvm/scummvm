@@ -26,8 +26,8 @@
 #ifndef KYRA_KYRA_V1_H
 #define KYRA_KYRA_V1_H
 
-#include "kyra.h"
-#include "script.h"
+#include "kyra/kyra.h"
+#include "kyra/script.h"
 
 namespace Kyra {
 

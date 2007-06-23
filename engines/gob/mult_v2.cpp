@@ -1044,12 +1044,15 @@ void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 	if ((palFrame != -1) && (lastFrame != -1))
 		if ((lastFrame - palFrame) < startFrame)
 			if (!(key.flags & 0x4000)) {
+				_vm->_game->_preventScroll = false;
 				_vm->_imdPlayer->closeImd();
 				return;
 			}
 
-	if (!_vm->_imdPlayer->openImd(imdFile, x, y, 0, flags))
+	if (!_vm->_imdPlayer->openImd(imdFile, x, y, 0, flags)) {
+		_vm->_game->_preventScroll = false;
 		return;
+	}
 
 	if (palFrame == -1)
 		palFrame = 0;
@@ -1064,6 +1067,7 @@ void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 void Mult_v2::advanceObjects(int16 index) {
 	int16 frame;
 	bool stop = false;
+	bool hasImds = false;
 	
 	frame = _multData->animKeysFrames[index];
 	if (frame == -1)
@@ -1165,10 +1169,14 @@ void Mult_v2::advanceObjects(int16 index) {
 			if ((dir != 1) && (--startFrame > 0))
 				startFrame = 0;
 
+			hasImds = true;
 			playImd(imdFile, key, dir, startFrame);
 		}
 	}
 	
+	if (!hasImds && (_vm->_draw->_showCursor == 3))
+		_vm->_game->_preventScroll = false;
+
 	doSoundAnim(stop, frame);
 	WRITE_VAR(22, frame);
 

@@ -681,7 +681,7 @@ void convert8BBP2(byte * dest, byte * source, int16 width, int16 height) {
 void loadSet(const char *resourceName) {
 	animHeader2Struct header2;
 	int16 foundFileIdx;
-	byte *dataPtr;
+	byte *dataPtr, *origDataPtr;
 	int16 entry;
 	byte *ptr;
 	int16 i;
@@ -690,7 +690,7 @@ void loadSet(const char *resourceName) {
 	byte *startOfDataPtr;
 
 	foundFileIdx = findFileInBundle(resourceName);
-	dataPtr = readBundleFile(foundFileIdx);
+	origDataPtr = dataPtr = readBundleFile(foundFileIdx);
 
 	assert(!memcmp(dataPtr, "SET", 3));
 
@@ -764,13 +764,13 @@ void loadSet(const char *resourceName) {
 		strcpy(animDataTable[entry].name, currentPartName);
 	}
 
-	free(dataPtr);
+	free(origDataPtr);
 }
 
 void loadSetAbs(const char *resourceName, uint16 idx) {
 	animHeader2Struct header2;
 	int16 foundFileIdx;
-	byte *dataPtr;
+	byte *dataPtr, *origDataPtr;
 	int16 entry;
 	byte *ptr;
 	int16 i;
@@ -779,7 +779,7 @@ void loadSetAbs(const char *resourceName, uint16 idx) {
 	byte *startOfDataPtr;
 
 	foundFileIdx = findFileInBundle(resourceName);
-	dataPtr = readBundleFile(foundFileIdx);
+	origDataPtr = dataPtr = readBundleFile(foundFileIdx);
 
 	assert(!memcmp(dataPtr, "SET", 3));
 
@@ -853,7 +853,7 @@ void loadSetAbs(const char *resourceName, uint16 idx) {
 		strcpy(animDataTable[entry].name, currentPartName);
 	}
 
-	free(dataPtr);
+	free(origDataPtr);
 }
 
 void loadSeq(const char *resourceName) {

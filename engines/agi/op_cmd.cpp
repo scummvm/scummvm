@@ -515,7 +515,24 @@ cmd(obj_status_f) {
  * unk_181: Deactivate keypressed control (default control of ego)
  */
 cmd(set_simple) {
-	game.simpleSave = true;
+	if (!(g_agi->getFeatures() & (GF_AGI256 | GF_AGI256_2))) {
+		game.simpleSave = true;
+	} else { // AGI256 and AGI256-2 use this unknown170 command to load 256 color pictures.
+		// Load the picture. Similar to cmd(load_pic).
+		g_sprites->eraseBoth();
+		g_agi->agiLoadResource(rPICTURE, _v[p0]);
+
+		// Draw the picture. Similar to cmd(draw_pic).
+		g_picture->decodePicture(_v[p0], false, true);
+		g_sprites->blitBoth();
+		game.pictureShown = 0;
+
+		// Show the picture. Similar to cmd(show_pic).
+		g_agi->setflag(fOutputMode, false);
+		cmd_close_window(NULL);
+		g_picture->showPic();
+		game.pictureShown = 1;
+	}
 }
 
 cmd(pop_script) {

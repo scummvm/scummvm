@@ -31,12 +31,14 @@
 namespace Saga {
 
 enum ActorFlags {
-	kProtagonist	= 0x01,	// Actor is protagonist
-	kFollower		= 0x02,	// Actor is follower
-	kCycle			= 0x04, // Actor stand has a cycle
-	kFaster			= 0x08, // Actor is fast
-	kFastest		= 0x10, // Actor is faster
-	kExtended		= 0x20  // Actor uses extended sprites
+	kProtagonist	= 0x01,	// (1<<0) Actor is protagonist
+	kFollower		= 0x02,	// (1<<1) Actor is follower
+	kCycle			= 0x04, // (1<<2) Actor stand has a cycle
+	kFaster			= 0x08, // (1<<3) Actor is fast
+	kFastest		= 0x10, // (1<<4) Actor is faster
+	kExtended		= 0x20, // (1<<5) Actor uses extended sprites
+	kUsable			= 0x40, // (1<<6) Actor can be used
+	kNoScale		= 0x80  // (1<<7) Actor is not scaled
 };
 
 // TODO: This doesn't quite correspond to the original Actor struct, so I'm not

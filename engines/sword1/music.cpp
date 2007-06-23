@@ -31,6 +31,7 @@
 
 #include "sword1/music.h"
 #include "sound/aiff.h"
+#include "sound/flac.h"
 #include "sound/mixer.h"
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
@@ -201,7 +202,19 @@ int AiffAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 bool MusicHandle::play(const char *fileBase, bool loop) {
 	char fileName[30];
 	stop();
-	
+
+#ifdef USE_FLAC
+	if (!_audioSource) {
+		sprintf(fileName, "%s.flac", fileBase);
+		if (_file.open(fileName))
+			_audioSource = Audio::makeFlacStream(&_file, false, 0, 0, loop ? 0 : 1);
+	}
+	if (!_audioSource) {
+		sprintf(fileName, "%s.fla", fileBase);
+		if (_file.open(fileName))
+			_audioSource = Audio::makeFlacStream(&_file, false, 0, 0, loop ? 0 : 1);
+	}
+#endif
 #ifdef USE_VORBIS
 	if (!_audioSource) {
 		sprintf(fileName, "%s.ogg", fileBase);

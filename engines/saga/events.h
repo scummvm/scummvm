@@ -59,7 +59,8 @@ enum EventCodes {
 	kActorEvent,
 	kScriptEvent,
 	kCursorEvent,
-	kGraphicsEvent
+	kGraphicsEvent,
+	kCutawayEvent
 };
 
 enum EventOps {
@@ -72,10 +73,12 @@ enum EventOps {
 	kEventFrame = 3,
 	kEventSetFlag = 4,
 	kEventClearFlag = 5,
+	kEventResumeAll = 6,
 	// MUISC & SOUND events
 	kEventPlay = 1,
 	kEventStop = 2,
 	// SCENE events
+	kEventDraw = 1,
 	kEventEnd = 2,
 	// TEXT events
 	kEventHide = 2,
@@ -111,7 +114,9 @@ enum EventOps {
 	kEventBlackToPal = 2,
 	// TRANSITION events
 	kEventDissolve = 1,
-	kEventDissolveBGMask = 2
+	kEventDissolveBGMask = 2,
+	// CUTAWAY events
+	kEventClear = 1
 };
 
 enum EventParams {

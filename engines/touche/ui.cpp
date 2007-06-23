@@ -399,7 +399,7 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 					break;
 				case Common::EVENT_KEYDOWN:
 					if (menuData.mode == kMenuSaveStateMode) {
-						if (event.kbd.keycode == 8) {
+						if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
 							menuData.removeLastCharFromDescription(_saveLoadCurrentSlot);
 						} else {
 							menuData.addCharToDescription(_saveLoadCurrentSlot, (char)event.kbd.ascii);

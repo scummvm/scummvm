@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/events.h"
 
 #include "graphics/scaler.h"
 
@@ -618,14 +619,6 @@ ConfigDialog::~ConfigDialog() {
 #endif
 }
 
-void ConfigDialog::open() {
-	GUI_OptionsDialog::open();
-}
-
-void ConfigDialog::close() {
-	GUI_OptionsDialog::close();
-}
-
 void ConfigDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kKeysCmd:
@@ -749,19 +742,26 @@ void HelpDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 InfoDialog::InfoDialog(ScummEngine *scumm, int res)
 : ScummDialog("scummDummyDialog"), _vm(scumm) { // dummy x and w
-	setInfoText(queryResString(res));
+
+	_message = queryResString(res);
+
+	// Width and height are dummy
+	_text = new StaticTextWidget(this, 4, 4, 10, 10, _message, kTextAlignCenter);
 }
 
 InfoDialog::InfoDialog(ScummEngine *scumm, const String& message)
 : ScummDialog("scummDummyDialog"), _vm(scumm) { // dummy x and w
-	setInfoText(message);
-}
 
-void InfoDialog::setInfoText(const String& message) {
 	_message = message;
 
 	// Width and height are dummy
 	_text = new StaticTextWidget(this, 4, 4, 10, 10, _message, kTextAlignCenter);
+}
+
+void InfoDialog::setInfoText(const String& message) {
+	_message = message;
+	_text->setLabel(_message);
+	//reflowLayout(); // FIXME: Should we call this here? Depends on the usage patterns, I guess...
 }
 
 void InfoDialog::reflowLayout() {
@@ -911,6 +911,48 @@ void ValueDisplayDialog::open() {
 	GUI_Dialog::open();
 	setResult(_value);
 	_timer = getMillis() + kDisplayDelay;
+}
+
+SubtitleSettingsDialog::SubtitleSettingsDialog(ScummEngine *scumm, int value) 
+	: InfoDialog(scumm, ""), _value(value) {
+
+}
+
+void SubtitleSettingsDialog::handleTickle() {
+	InfoDialog::handleTickle();
+	if (getMillis() > _timer)
+		close();
+}
+
+void SubtitleSettingsDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+	if (keycode == 't' && modifiers == Common::KBD_CTRL) {
+		cycleValue();
+
+		reflowLayout();
+		draw();
+	} else {
+		close();
+	}
+}
+
+void SubtitleSettingsDialog::open() {
+	cycleValue();
+	InfoDialog::open();
+}
+
+void SubtitleSettingsDialog::cycleValue() {
+	static const char* subtitleDesc[] = {
+		"Speech Only",
+		"Speech and Subtitles",
+		"Subtitles Only"
+	};
+	
+	_value = (_value + 1) % 3;
+
+	setInfoText(subtitleDesc[_value]);
+
+	setResult(_value);
+	_timer = getMillis() + 1500;
 }
 
 Indy3IQPointsDialog::Indy3IQPointsDialog(ScummEngine *scumm, char* text)

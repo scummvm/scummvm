@@ -25,6 +25,7 @@
 
 #include "common/stdafx.h"
 
+#include "common/config-manager.h"
 #include "common/file.h"
 
 #include "agos/intern.h"
@@ -273,28 +274,28 @@ void AGOSEngine::waitForInput() {
 					_verbHitArea = 236;
 
 				if (ha->id == 98) {
-					animate(2, 0, 110, 0, 0, 0);
+					animate(2, 1, 110, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 108) {
-					animate(2, 0, 106, 0, 0, 0);
+					animate(2, 1, 106, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 109) {
-					animate(2, 0, 107, 0, 0, 0);
+					animate(2, 1, 107, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 115) {
-					animate(2, 0, 109, 0, 0, 0);
+					animate(2, 1, 109, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 116) {
-					animate(2, 0, 113, 0, 0, 0);
+					animate(2, 1, 113, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 117) {
-					animate(2, 0, 112, 0, 0, 0);
+					animate(2, 1, 112, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 118) {
-					animate(2, 0, 108, 0, 0, 0);
+					animate(2, 1, 108, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 119) {
-					animate(2, 0, 111, 0, 0, 0);
+					animate(2, 1, 111, 0, 0, 0);
 					waitForSync(34);
 				}
 			}
@@ -542,6 +543,14 @@ bool AGOSEngine::processSpecialKeys() {
 		if (getGameType() == GType_FF)
 			setBitFlag(73, !getBitFlag(73));
 		break;
+	case 37: // F12
+		if (getGameType() == GType_PP && getGameId() != GID_DIMP) {
+			if (!getBitFlag(110)) {
+				setBitFlag(107, !getBitFlag(107));
+				_vgaPeriod = (getBitFlag(107) != 0) ? 15 : 30;
+			}
+		}
+		break;
 	case 'p':
 		pause();
 		break;
@@ -558,21 +567,30 @@ bool AGOSEngine::processSpecialKeys() {
 				_speech ^= 1;
 		}
 	case '+':
-		_midi.setVolume(_midi.getVolume() + 16);
+		if (_midiEnabled) {
+			_midi.setVolume(_midi.getVolume() + 16);
+		}
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 16);
 		break;
 	case '-':
-		_midi.setVolume(_midi.getVolume() - 16);
+		if (_midiEnabled) {
+			_midi.setVolume(_midi.getVolume() - 16);
+		}
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) - 16);
 		break;
 	case 'm':
-		_midi.pause(_musicPaused ^= 1);
+		_musicPaused ^= 1;
+		if (_midiEnabled) {
+			_midi.pause(_musicPaused);
+		}
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (_musicPaused) ? 0 : ConfMan.getInt("music_volume"));
 		break;
 	case 's':
-		if (getGameId() == GID_SIMON1DOS)
+		if (getGameId() == GID_SIMON1DOS) {
 			_midi._enable_sfx ^= 1;
-		else
+		} else {
 			_sound->effectsPause(_effectsPaused ^= 1);
+		}
 		break;
 	case 'b':
 		_sound->ambientPause(_ambientPaused ^= 1);

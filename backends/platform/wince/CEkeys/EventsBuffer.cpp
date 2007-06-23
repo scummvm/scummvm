@@ -32,10 +32,9 @@ namespace CEKEYS {
 		SDL_Event ev = {0};
 
 		if (!key->keycode())
-			key->setKeycode(key->ascii());
-
-		if (!key->ascii())
-			key->setAscii(key->keycode());
+			key->setKey(key->ascii(), key->ascii());
+		else if (!key->ascii())
+			key->setKey(key->keycode());
 
 		ev.type = (pushed ? SDL_KEYDOWN : SDL_KEYUP);
 		ev.key.keysym.mod = (SDLMod)key->flags();

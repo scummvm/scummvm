@@ -122,7 +122,7 @@ GameList Engine_KYRA_gameIDList() {
 }
 
 GameDescriptor Engine_KYRA_findGameID(const char *gameid) {
-	return Common::AdvancedDetector::findGameID(gameid, detectionParams);
+	return Common::AdvancedDetector::findGameID(gameid, gameList);
 }
 
 GameList Engine_KYRA_detectGames(const FSList &fslist) {
@@ -133,7 +133,9 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
 	
-	const KYRAGameDescription *gd = (const KYRAGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	const KYRAGameDescription *gd = (const KYRAGameDescription *)(encapsulatedDesc.realDesc);
+
 	if (gd == 0) {
 		// maybe add non md5 based detection again?
 		return kNoGameDataFoundError;

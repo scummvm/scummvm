@@ -169,22 +169,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\lure\debug-input.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\debug-input.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\debug-methods.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\debug-methods.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\lure\debugger.cpp"
 			>
 		</File>
@@ -218,6 +202,14 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\lure\events.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\fights.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\fights.h"
 			>
 		</File>
 		<File
@@ -318,6 +310,14 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\lure\scripts.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\sound.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\sound.h"
 			>
 		</File>
 		<File

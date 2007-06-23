@@ -333,27 +333,25 @@ void initSprites() {
 void saveGameBackBuffer() {
 #ifdef DISABLE_SCUMM
 	if (savedBuffer == NULL) savedBuffer = new u8[gameWidth * gameHeight];
-	for (int r = 0; r < 200; r++) {
+    for (int r = 0; r < gameHeight; r++) {
 		memcpy(savedBuffer + (r * gameWidth), ((u8 *) (get8BitBackBuffer())) + (r * 512), gameWidth);
-	}
 #endif
 }
 
 void restoreGameBackBuffer() {
 #ifdef DISABLE_SCUMM
 	if (savedBuffer) {
-		for (int r = 0; r < 200; r++) {
-			memcpy(((u8 *) (BG_GFX_SUB)) + (r * 512), savedBuffer + (r * gameWidth), gameWidth);
-			memcpy(((u8 *) (get8BitBackBuffer())) + (r * 512), savedBuffer + (r * gameWidth), gameWidth);
-		}
+        for (int r = 0; r < gameHeight; r++) {
+            memcpy(((u8 *) (BG_GFX_SUB)) + (r * 512), savedBuffer + (r * gameWidth), gameWidth);
+            memcpy(((u8 *) (get8BitBackBuffer())) + (r * 512), savedBuffer + (r * gameWidth), gameWidth);
+        }
+		
 		delete savedBuffer;
 		savedBuffer = NULL;
 	}
-#endif
-
-#ifndef DISABLE_SCUMM	
-	memset(get8BitBackBuffer(), 0, 512 * 256);
-	memset(BG_GFX_SUB, 0, 512 * 256);
+#else
+    memset(get8BitBackBuffer(), 0, 512 * 256);
+    memset(BG_GFX_SUB, 0, 512 * 256);
 	if (Scumm::g_scumm) {
 		Scumm::g_scumm->markRectAsDirty(Scumm::kMainVirtScreen, 0, gameWidth - 1, 0, gameHeight - 1, 1);
 		Scumm::g_scumm->markRectAsDirty(Scumm::kTextVirtScreen, 0, gameWidth - 1, 0, gameHeight - 1, 1);
@@ -996,11 +994,10 @@ void setKeyboardEnable(bool en) {
 			// Copy the sub screen VRAM from the top screen - they should always be
 			// the same.
 			u16* buffer = get8BitBackBuffer();
-
-			for (int r = 0; r < (512 * 256) >> 1; r++) {
-				BG_GFX_SUB[r] = buffer[r];
-			}
-			
+            
+            for (int r = 0; r < (512 * 256) >> 1; r++)
+                BG_GFX_SUB[r] = buffer[r];
+                
 			SUB_DISPLAY_CR &= ~DISPLAY_BG1_ACTIVE;	// Turn off keyboard layer
 			SUB_DISPLAY_CR |= DISPLAY_BG3_ACTIVE;	// Turn on game layer
 		} else {
@@ -1229,7 +1226,7 @@ void addEventsToQueue() {
 			
 			if (leftHandedSwap(getKeysChanged()) & KEY_UP) {
 				event.type = getKeyEvent(leftHandedSwap(KEY_UP));
-				event.kbd.keycode = SDLK_UP;
+				event.kbd.keycode = Common::KEYCODE_UP;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
 				system->addEvent(event);
@@ -1237,7 +1234,7 @@ void addEventsToQueue() {
 
 			if (leftHandedSwap(getKeysChanged()) & KEY_DOWN) {
 				event.type = getKeyEvent(leftHandedSwap(KEY_DOWN));
-				event.kbd.keycode = SDLK_DOWN;
+				event.kbd.keycode = Common::KEYCODE_DOWN;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
 				system->addEvent(event);
@@ -1245,7 +1242,7 @@ void addEventsToQueue() {
 
 			if (leftHandedSwap(getKeysDown()) & KEY_A) {
 				event.type = getKeyEvent(leftHandedSwap(KEY_A));
-				event.kbd.keycode = SDLK_RETURN;
+				event.kbd.keycode = Common::KEYCODE_RETURN;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
 				system->addEvent(event);
@@ -1256,8 +1253,8 @@ void addEventsToQueue() {
 		
 		if ((getKeysChanged() & KEY_START)) {
 			event.type = getKeyEvent(KEY_START);
-			event.kbd.keycode = 319;		// F5
-			event.kbd.ascii = 319;
+			event.kbd.keycode = Common::KEYCODE_F5;
+			event.kbd.ascii = Common::ASCII_F5;
 			event.kbd.flags = 0;
 			system->addEvent(event);
 		}
@@ -2315,6 +2312,8 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
+ FIXME: Change this code to make use of base/internal_version.h
+ resp. uses gScummVMVersion from base/version.h
 	consolePrintf("Version 0.10.0SVN ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
@@ -2483,4 +2482,3 @@ int main(void)
 int main() {
 	DS::main();
 }
-

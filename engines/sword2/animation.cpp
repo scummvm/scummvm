@@ -429,7 +429,7 @@ void MoviePlayer::play(SequenceTextInfo *textList, uint32 numLines, int32 leadIn
 				terminate = true;
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == 27)
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					terminate = true;
 				break;
 			default:
@@ -518,7 +518,7 @@ bool MoviePlayerDXA::load() {
 
 	if (loadFile(filename)) {
 		// The Broken Sword games always use external audio tracks.
-		if (_fd.readUint32BE() != MKID_BE('NULL'))
+		if (_fd->readUint32BE() != MKID_BE('NULL'))
 			return false;
 
 		_frameBuffer = _vm->_screen->getScreen();

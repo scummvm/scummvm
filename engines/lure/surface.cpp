@@ -420,7 +420,7 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 					char ch = events.event().kbd.ascii;
 					uint16 keycode = events.event().kbd.keycode;
 
-					if ((ch == 13) || (keycode == 0x10f)) {
+					if ((keycode == Common::KEYCODE_RETURN) || (keycode == Common::KEYCODE_KP_ENTER)) {
 						// Return character
 						screen.screen().fillRect(
 							Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
@@ -430,13 +430,13 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 						mouse.cursorOn();
 						return true;
 					}
-					else if (ch == 27) {
+					else if (keycode == Common::KEYCODE_ESCAPE) {
 						// Escape character
 						screen.screen().fillRect(
 							Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
 						screen.update();
 						abortFlag = true;
-					} else if (ch == 8) {
+					} else if (keycode == Common::KEYCODE_BACKSPACE) {
 						// Delete the last character
 						if (newLine.size() == 1) continue;
 
@@ -690,7 +690,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 
 			if (events.pollEvent()) {
 				if ((events.type() == Common::EVENT_KEYDOWN) &&
-					(events.event().kbd.ascii == 27)) {
+					(events.event().kbd.keycode == Common::KEYCODE_ESCAPE)) {
 					abortFlag = true;
 					break;
 				}

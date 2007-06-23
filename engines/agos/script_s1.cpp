@@ -374,12 +374,12 @@ void AGOSEngine_Simon1::os1_screenTextMsg() {
 	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
 	uint stringId = getNextStringID();
-	const byte *string_ptr = NULL;
+	const byte *stringPtr = NULL;
 	uint speechId = 0;
 	TextLocation *tl;
 
 	if (stringId != 0xFFFF)
-		string_ptr = getStringPtrByID(stringId);
+		stringPtr = getStringPtrByID(stringId);
 
 	if (getFeatures() & GF_TALKIE) {
 		if (getGameType() == GType_FF || getGameType() == GType_PP)
@@ -399,14 +399,14 @@ void AGOSEngine_Simon1::os1_screenTextMsg() {
 		stopAnimateSimon2(2, vgaSpriteId + 2);
 	}
 
-	if (string_ptr != NULL && (speechId == 0 || _subtitles))
-		printScreenText(vgaSpriteId, color, (const char *)string_ptr, tl->x, tl->y, tl->width);
+	if (stringPtr != NULL && stringPtr[0] != 0 && (speechId == 0 || _subtitles))
+		printScreenText(vgaSpriteId, color, (const char *)stringPtr, tl->x, tl->y, tl->width);
 
 }
 
 void AGOSEngine_Simon1::os1_playEffect() {
 	// 163: play sound
-	uint soundId = getVarOrWord();
+	uint16 soundId = getVarOrWord();
 
 	if (getGameId() == GID_SIMON1DOS)
 		playSting(soundId);
@@ -450,7 +450,7 @@ void AGOSEngine_Simon1::os1_screenTextPObj() {
 			}
 			stringPtr = buf;
 		}
-		if (stringPtr != NULL)
+		if (stringPtr != NULL && stringPtr[0] != 0)
 			printScreenText(vgaSpriteId, color, stringPtr, tl->x, tl->y, tl->width);
 	}
 }
@@ -512,7 +512,7 @@ void AGOSEngine_Simon1::os1_scnTxtLongText() {
 	uint speechId = 0;
 	TextLocation *tl;
 
-	const char *string_ptr = (const char *)getStringPtrByID(_longText[stringId]);
+	const char *stringPtr = (const char *)getStringPtrByID(_longText[stringId]);
 	if (getFeatures() & GF_TALKIE)
 		speechId = _longSound[stringId];
 
@@ -522,8 +522,8 @@ void AGOSEngine_Simon1::os1_scnTxtLongText() {
 
 	if (_speech && speechId != 0)
 		playSpeech(speechId, vgaSpriteId);
-	if (string_ptr != NULL && _subtitles)
-		printScreenText(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
+	if (stringPtr != NULL && stringPtr[0] != 0 && _subtitles)
+		printScreenText(vgaSpriteId, color, stringPtr, tl->x, tl->y, tl->width);
 }
 
 void AGOSEngine_Simon1::os1_mouseOn() {

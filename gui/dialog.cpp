@@ -23,6 +23,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/events.h"
 
 #include "gui/newgui.h"
 #include "gui/dialog.h"
@@ -233,7 +234,7 @@ void Dialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	}
 
 	// ESC closes all dialogs by default
-	if (keycode == 27) {
+	if (keycode == Common::KEYCODE_ESCAPE) {
 		setResult(-1);
 		close();
 	}

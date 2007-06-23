@@ -241,7 +241,7 @@ protected:
 	virtual void readRoomsOffsets();
 	virtual void loadCharset(int no);
 
-	virtual void processKeyboard(int lastKeyHit);
+	virtual void processKeyboard(Common::KeyState lastKeyHit);
 };
 
 /**
@@ -305,7 +305,7 @@ protected:
 	virtual void resetScummVars();
 	virtual void decodeParseString();
 
-	virtual void processKeyboard(int lastKeyHit);
+	virtual void processKeyboard(Common::KeyState lastKeyHit);
 
 	virtual void readIndexFile();
 	void readClassicIndexFile();	// V1
@@ -611,7 +611,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void scummLoop_handleActors();
-	virtual void processKeyboard(int lastKeyHit);
+	virtual void processKeyboard(Common::KeyState lastKeyHit);
 
 	virtual void setupScummVars();
 	virtual void decodeParseString(int a, int b);
@@ -912,7 +912,7 @@ protected:
 
 	virtual void scummLoop_handleSound();
 	virtual void scummLoop_handleDrawing();
-	virtual void processKeyboard(int lastKeyHit);
+	virtual void processKeyboard(Common::KeyState lastKeyHit);
 
 	virtual void setupScumm();
 
@@ -994,7 +994,7 @@ protected:
 
 	virtual int getObjectIdFromOBIM(const byte *obim);
 
-	virtual void processKeyboard(int lastKeyHit);
+	virtual void processKeyboard(Common::KeyState lastKeyHit);
 
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 

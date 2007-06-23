@@ -137,9 +137,13 @@ void OSystem_PalmOS5::hotswap_gfx_mode(int mode) {
 	}
 
 	if (_stretched) {
-		calc_scale();
 		OPTIONS_SET(kOptDisableOnScrDisp);
-		_render = &OSystem_PalmOS5::render_landscapeAny;
+		if (_screenHeight == 200 && _screenDest.h == 300) {
+			_render = &OSystem_PalmOS5::render_landscape15x;
+		} else {
+			_render = &OSystem_PalmOS5::render_landscapeAny;
+			calc_scale();
+		}
 	} else {
 		OPTIONS_RST(kOptDisableOnScrDisp);
 		_render = &OSystem_PalmOS5::render_1x;
@@ -215,13 +219,18 @@ void OSystem_PalmOS5::copyRectToScreen(const byte *buf, int pitch, int x, int y,
 	}
 }
 
-bool OSystem_PalmOS5::grabRawScreen(Graphics::Surface *surf) {
-	assert(surf);
+Graphics::Surface *OSystem_PalmOS5::lockScreen() {
+	_framebuffer.pixels = _offScreenP;
+	_framebuffer.w = _screenWidth;
+	_framebuffer.h = _screenHeight;
+	_framebuffer.pitch = _screenWidth;
+	_framebuffer.bytesPerPixel = 1;
 
-	surf->create(_screenWidth, _screenHeight, 1);
-	MemMove(surf->pixels, _offScreenP, _screenWidth * _screenHeight);
-	
-	return true;
+	return &_framebuffer;
+}
+
+void OSystem_PalmOS5::unlockScreen() {
+	// The screen is always completely update anyway, so we don't have to force a full update here.
 }
 
 void OSystem_PalmOS5::int_updateScreen() {

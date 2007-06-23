@@ -49,17 +49,6 @@ enum {
 #pragma mark --- Miscellaneous ---
 #pragma mark -
 
-static const char *findDescriptionFromGameID(const char *gameid) {
-	const PlainGameDescriptor *g = gameDescriptions;
-	while (g->gameid) {
-		if (!scumm_stricmp(g->gameid, gameid)) {
-			return g->description;
-		}
-		g++;
-	}
-	error("Unknown gameid '%s' encountered in findDescriptionFromGameID", gameid);
-}
-
 static int compareMD5Table(const void *a, const void *b) {
 	const char *key = (const char *)a;
 	const MD5Table *elem = (const MD5Table *)b;
@@ -673,37 +662,11 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 using namespace Scumm;
 
 GameList Engine_SCUMM_gameIDList() {
-	const PlainGameDescriptor *g = gameDescriptions;
-	GameList games;
-	while (g->gameid) {
-		games.push_back(GameDescriptor(g->gameid, g->description));
-		g++;
-	}
-	return games;
+	return GameList(gameDescriptions);
 }
 
 GameDescriptor Engine_SCUMM_findGameID(const char *gameid) {
-	// First search the list of supported game IDs.
-	const PlainGameDescriptor *g = gameDescriptions;
-	while (g->gameid) {
-		if (0 == scumm_stricmp(gameid, g->gameid))
-			return GameDescriptor(g->gameid, g->description);
-		g++;
-	}
-
-	// If we didn't find the gameid in the main list, check if it
-	// is an obsolete game id.
-	GameDescriptor gs;
-	const ObsoleteGameID *o = obsoleteGameIDsTable;
-	while (o->from) {
-		if (0 == scumm_stricmp(gameid, o->from)) {
-			gs["gameid"] = gameid;
-			gs["description"] = "Obsolete game ID";
-			return gs;
-		}
-		o++;
-	}
-	return gs;
+	return Common::AdvancedDetector::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
 }
 
 
@@ -717,8 +680,9 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	// In particular, they are detected as ZakTowns, which is bad.
 	
 	for (Common::List<DetectorResult>::iterator x = results.begin(); x != results.end(); ++x) {
-		GameDescriptor dg(x->game.gameid, findDescriptionFromGameID(x->game.gameid),
-				x->language, x->game.platform);
+		const PlainGameDescriptor *g = findPlainGameDescriptor(x->game.gameid, gameDescriptions);
+		assert(g);
+		GameDescriptor dg(x->game.gameid, g->description, x->language, x->game.platform);
 		dg.updateDesc(x->extra);	// Append additional information, if set, to the description.
 
 		// Compute and set the preferred target name for this game.
@@ -766,7 +730,7 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 	// We start by checking whether the specified game ID is obsolete.
 	// If that is the case, we automatically upgrade the target to use
 	// the correct new game ID (and platform, if specified).
-	for (const ObsoleteGameID *o = obsoleteGameIDsTable; o->from; ++o) {
+	for (const Common::ADObsoleteGameID *o = obsoleteGameIDsTable; o->from; ++o) {
 		if (!scumm_stricmp(gameid, o->from)) {
 			// Match found, perform upgrade
 			gameid = o->to;

@@ -146,6 +146,8 @@ public:
 	void setPalette(const PalEntry *pal, bool full = false);
 	void setPaletteColor(int n, int r, int g, int b);
 	void getCurrentPal(PalEntry *src_pal);
+	void savePalette() { getCurrentPal(_savedPalette); }
+	void restorePalette() { setPalette(_savedPalette, true); }
 	void palToBlack(PalEntry *src_pal, double percent);
 	void blackToPal(PalEntry *src_pal, double percent);
 	void showCursor(bool state);
@@ -159,6 +161,7 @@ private:
 	SagaEngine *_vm;
 
 	PalEntry _globalPalette[PAL_ENTRIES];
+	PalEntry _savedPalette[PAL_ENTRIES];
 };
 
 } // End of namespace Saga

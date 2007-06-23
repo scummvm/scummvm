@@ -461,6 +461,9 @@ void ScummEngine_v70he::o70_startSound() {
 	case 164:
 		_heSndFlags |= 2;
 		break;
+	case 222:
+		// WORKAROUND: For errors in room script 240 (room 4) of maze
+		break;
 	case 224:
 		_heSndSoundFreq = pop();
 		break;

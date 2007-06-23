@@ -32,6 +32,8 @@
 
 #include "common/system.h"
 
+#include "graphics/surface.h"
+
 namespace AGOS {
 
 // Opcode tables
@@ -215,8 +217,8 @@ bool AGOSEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 void AGOSEngine::dirtyBackGround() {
 	AnimTable *animTable = _screenAnim1;
 	while (animTable->srcPtr) {
-		if (animTable->id == _vgaCurSpriteId) {
-			animTable->window |= 0x8000;
+		if (animTable->id == _vgaCurSpriteId && animTable->zoneNum == _vgaCurZoneNum) {
+			animTable->windowNum |= 0x8000;
 			break;
 		}
 		animTable++;
@@ -226,13 +228,8 @@ void AGOSEngine::dirtyBackGround() {
 VgaSprite *AGOSEngine::findCurSprite() {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
-		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
-			if (vsp->id == _vgaCurSpriteId && vsp->zoneNum == _vgaCurZoneNum)
-				break;
-		} else {
-			if (vsp->id == _vgaCurSpriteId)
-				break;
-		}
+		if (vsp->id == _vgaCurSpriteId && vsp->zoneNum == _vgaCurZoneNum)
+			break;
 		vsp++;
 	}
 	return vsp;
@@ -241,13 +238,8 @@ VgaSprite *AGOSEngine::findCurSprite() {
 bool AGOSEngine::isSpriteLoaded(uint16 id, uint16 zoneNum) {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
-		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP) {
-			if (vsp->id == id && vsp->zoneNum == zoneNum)
-				return true;
-		} else {
-			if (vsp->id == id)
-				return true;
-		}
+		if (vsp->id == id && vsp->zoneNum == zoneNum)
+			return true;
 		vsp++;
 	}
 	return false;
@@ -708,12 +700,6 @@ void AGOSEngine::drawImage_init(int16 image, uint16 palette, int16 x, int16 y, u
 		}
 	}
 
-	state.surf2_addr = getFrontBuf();
-	state.surf2_pitch = _dxSurfacePitch;
-
-	state.surf_addr = getBackBuf();
-	state.surf_pitch = _dxSurfacePitch;
-
 	drawImage(&state);
 }
 
@@ -804,16 +790,19 @@ void AGOSEngine::checkWaitEndTable() {
 }
 
 void AGOSEngine::vc17_waitEnd() {
+	uint16 id = vcReadNextWord();
+
 	VgaSleepStruct *vfs = _waitEndTable;
 	while (vfs->ident)
 		vfs++;
 
-	vfs->ident = vcReadNextWord();
-	vfs->code_ptr = _vcPtr;
-	vfs->sprite_id = _vgaCurSpriteId;
-	vfs->cur_vga_file = _vgaCurZoneNum;
-
-	_vcPtr = (byte *)&_vc_get_out_of_code;
+	if (isSpriteLoaded(id, id / 100)) {
+		vfs->ident = id;
+		vfs->code_ptr = _vcPtr;
+		vfs->sprite_id = _vgaCurSpriteId;
+		vfs->cur_vga_file = _vgaCurZoneNum;
+		_vcPtr = (byte *)&_vc_get_out_of_code;
+	}
 }
 
 void AGOSEngine::vc18_jump() {
@@ -843,10 +832,7 @@ void AGOSEngine::vc19_loop() {
 }
 
 void AGOSEngine::vc20_setRepeat() {
-	/* FIXME: This opcode is somewhat strange: it first reads a BE word from
-	 * the script (advancing the script pointer in doing so); then it writes
-	 * back the same word, this time as LE, into the script.
-	 */
+	// Sets counter used by the endRepeat opcode below.
 	uint16 a = vcReadNextWord();
 	WRITE_LE_UINT16(const_cast<byte *>(_vcPtr), a);
 	_vcPtr += 2;
@@ -1042,7 +1028,7 @@ void AGOSEngine::vc27_resetSprite() {
 	vte = _vgaTimerList;
 	while (vte->delay) {
 		// Skip the animateSprites event in earlier games
-		if (vte->type == 2) {
+		if (vte->type == ANIMATE_INT) {
 			vte++;
 		// For animated heart in Elvira 2
 		} else if (getGameType() == GType_ELVIRA2 && vte->sprite_id == 100) {
@@ -1125,6 +1111,7 @@ void AGOSEngine::vc33_setMouseOn() {
 			_displayPalette[65 * 4 + 1] = 48 * 4;
 			_displayPalette[65 * 4 + 2] = 40 * 4;
 			_displayPalette[65 * 4 + 3] = 0;
+			_paletteFlag = 1;
 		}
 		mouseOn();
 	}
@@ -1136,9 +1123,7 @@ void AGOSEngine::vc34_setMouseOff() {
 	_leftButtonDown = 0;
 }
 
-void AGOSEngine::clearVideoBackGround(uint num, uint color) {
-	debug(0, "clearVideoBackGround: num %d color %d", num, color);
-
+void AGOSEngine::clearVideoBackGround(uint16 num, uint16 color) {
 	const uint16 *vlut = &_videoWindows[num * 4];
 	byte *dst = getBackGround() + vlut[0] * 16 + (vlut[1] * (vlut[2] * 16));
 
@@ -1148,7 +1133,7 @@ void AGOSEngine::clearVideoBackGround(uint num, uint color) {
 	}
 }
 
-void AGOSEngine::clearVideoWindow(uint num, uint color) {
+void AGOSEngine::clearVideoWindow(uint16 num, uint16 color) {
 	if (getGameType() == GType_ELVIRA1) {
 		if (num == 2 || num == 6)
 			return;
@@ -1160,13 +1145,11 @@ void AGOSEngine::clearVideoWindow(uint num, uint color) {
 			return;
 	}
 
-	debug(0, "clearVideoWindow: num %d color %d", num, color);
-
 	if (getGameType() == GType_SIMON2) {
 		const uint16 *vlut = &_videoWindows[num * 4];
-		uint xoffs = vlut[0] * 16;
-		uint yoffs = vlut[1];
-		uint dstWidth = _videoWindows[18] * 16;
+		uint16 xoffs = vlut[0] * 16;
+		uint16 yoffs = vlut[1];
+		uint16 dstWidth = _videoWindows[18] * 16;
 		byte *dst =  _window4BackScn + xoffs + yoffs * dstWidth;
 
 		setMoveRect(0, 0, vlut[2] * 16, vlut[3]);
@@ -1179,12 +1162,14 @@ void AGOSEngine::clearVideoWindow(uint num, uint color) {
 		_window4Flag = 1;
 	} else {
 		if (getGameType() == GType_ELVIRA1 && num == 3) {
-			memset(getFrontBuf(), color, _screenWidth * _screenHeight);
+			Graphics::Surface *screen = _system->lockScreen();
+			memset((byte *)screen->pixels, color, _screenWidth * _screenHeight);
+			 _system->unlockScreen();
 		} else if (num == 4) {
 			const uint16 *vlut = &_videoWindows[num * 4];
-			uint xoffs = (vlut[0] - _videoWindows[16]) * 16;
-			uint yoffs = (vlut[1] - _videoWindows[17]);
-			uint dstWidth = _videoWindows[18] * 16;
+			uint16 xoffs = (vlut[0] - _videoWindows[16]) * 16;
+			uint16 yoffs = (vlut[1] - _videoWindows[17]);
+			uint16 dstWidth = _videoWindows[18] * 16;
 			byte *dst =  _window4BackScn + xoffs + yoffs * dstWidth;
 
 			setMoveRect(0, 0, vlut[2] * 16, vlut[3]);
@@ -1228,7 +1213,7 @@ void AGOSEngine::vc36_setWindowImage() {
 	uint16 windowNum = vcReadNextWord();
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		_copyPartialMode = 2;
+		fillBackGroundFromFront();
 	} else {
 		setWindowImage(windowNum, vga_res);
 	}

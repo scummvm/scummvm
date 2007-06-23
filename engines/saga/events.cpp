@@ -247,10 +247,14 @@ int Events::handleImmediate(Event *event) {
 	case kScriptEvent:
 	case kBgEvent:
 	case kInterfaceEvent:
+	case kSceneEvent:
+	case kAnimEvent:
+	case kCutawayEvent:
 		handleOneShot(event);
 		event_done = true;
 		break;
 	default:
+		warning("Unhandled Immediate event type (%d)", event->code & EVENT_MASK);
 		break;
 
 	}
@@ -356,12 +360,28 @@ int Events::handleOneShot(Event *event) {
 		case kEventClearFlag:
 			_vm->_anim->clearFlag(event->param, event->param2);
 			break;
+		case kEventResumeAll:
+			_vm->_anim->resumeAll();
+			break;
 		default:
 			break;
 		}
 		break;
 	case kSceneEvent:
 		switch (event->op) {
+		case kEventDraw:
+			{
+				Surface *backGroundSurface;
+				BGInfo bgInfo;
+
+				backBuffer = _vm->_gfx->getBackBuffer();
+				backGroundSurface = _vm->_render->getBackGroundSurface();
+				_vm->_scene->getBGInfo(bgInfo);
+				backGroundSurface->blit(bgInfo.bounds, bgInfo.buffer);
+
+				_vm->_scene->draw();
+			}
+			break;
 		case kEventEnd:
 			_vm->_scene->nextScene();
 			return kEvStBreak;
@@ -465,6 +485,14 @@ int Events::handleOneShot(Event *event) {
 			break;
 		case kEventClearFlag:
 			_vm->_render->clearFlag(event->param);
+			break;
+		default:
+			break;
+		}
+	case kCutawayEvent:
+		switch (event->op) {
+		case kEventClear:
+			_vm->_anim->clearCutaway();
 			break;
 		default:
 			break;

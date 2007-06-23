@@ -439,9 +439,9 @@ void Puzzle::solicitHint(void) {
 		_vm->_timer->installTimerProc(&hintTimerCallback, 50000, this);
 
 		_vm->_interface->converseClear();
-		_vm->_interface->converseAddText(optionsStr[_lang][kROAccept], 1, 0, 0 );
-		_vm->_interface->converseAddText(optionsStr[_lang][kRODecline], 2, 0, 0 );
-		_vm->_interface->converseAddText(optionsStr[_lang][kROLater], 0, 0, 0 );
+		_vm->_interface->converseAddText(optionsStr[_lang][kROAccept], 0, 1, 0, 0 );
+		_vm->_interface->converseAddText(optionsStr[_lang][kRODecline], 0, 2, 0, 0 );
+		_vm->_interface->converseAddText(optionsStr[_lang][kROLater], 0, 0, 0, 0 );
 		_vm->_interface->converseDisplayText();
 		break;
 
@@ -458,9 +458,9 @@ void Puzzle::solicitHint(void) {
 
 	case kRQSakkaDenies:
 		_vm->_interface->converseClear();
-		_vm->_interface->converseAddText(optionsStr[_lang][kROAccept], 1, 0, 0);
-		_vm->_interface->converseAddText(optionsStr[_lang][kRODecline], 2, 0, 0);
-		_vm->_interface->converseAddText(optionsStr[_lang][kROLater], 0, 0, 0);
+		_vm->_interface->converseAddText(optionsStr[_lang][kROAccept], 0, 1, 0, 0);
+		_vm->_interface->converseAddText(optionsStr[_lang][kRODecline], 0, 2, 0, 0);
+		_vm->_interface->converseAddText(optionsStr[_lang][kROLater], 0, 0, 0, 0);
 		_vm->_interface->converseDisplayText();
 
 		_vm->_timer->installTimerProc(&hintTimerCallback, kPuzzleHintTime, this);
@@ -546,7 +546,7 @@ void Puzzle::giveHint(void) {
 
 	_hintRqState = kRQNoHint;
 
-	_vm->_interface->converseAddText(optionsStr[_lang][kROLater], 0, 0, 0);
+	_vm->_interface->converseAddText(optionsStr[_lang][kROLater], 0, 0, 0, 0);
 	_vm->_interface->converseDisplayText();
 
 	_vm->_timer->removeTimerProc(&hintTimerCallback);
@@ -555,7 +555,7 @@ void Puzzle::giveHint(void) {
 
 void Puzzle::clearHint(void) {
 	_vm->_interface->converseClear();
-	_vm->_interface->converseAddText(optionsStr[_lang][kROLater], 0, 0, 0);
+	_vm->_interface->converseAddText(optionsStr[_lang][kROLater], 0, 0, 0, 0);
 	_vm->_interface->converseDisplayText();
 	_vm->_interface->setStatusText(" ");
 }

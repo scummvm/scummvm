@@ -224,6 +224,7 @@ class Scene {
 	void nextScene();
 	void skipScene();
 	void endScene();
+	void restoreScene();
 	void queueScene(LoadSceneParams *sceneQueue) {
 		_sceneQueue.push_back(*sceneQueue);
 	}
@@ -309,11 +310,20 @@ class Scene {
 	#endif
 		return _sceneLUT[sceneNumber];
 	}
+	int currentProtag() const { return _currentProtag; }
+	void setProtag(int pr) { _currentProtag = pr; }
 	int currentSceneNumber() const { return _sceneNumber; }
 	int currentChapterNumber() const { return _chapterNumber; }
 	void setChapterNumber(int ch) { _chapterNumber = ch; }
 	int getOutsetSceneNumber() const { return _outsetSceneNumber; }
 	int currentSceneResourceId() const { return _sceneResourceId; }
+	int getCurrentMusicTrack() const { return _currentMusicTrack; }
+	void setCurrentMusicTrack(int tr) { _currentMusicTrack = tr; }
+	int getCurrentMusicRepeat() const { return _currentMusicRepeat; }
+	void setCurrentMusicRepeat(int rp) { _currentMusicRepeat = rp; }
+	bool haveChapterPointsChanged() const { return _chapterPointsChanged; }
+	void setChapterPointsChanged(bool cp) { _chapterPointsChanged = cp; }
+
 	void cutawaySkip() {
 		if (_vm->_scene->isInIntro())
 			_vm->_framesEsc = 2;
@@ -324,7 +334,7 @@ class Scene {
 	void drawTextList(Surface *ds);
 
 	int getHeight() const {
-		if (_vm->_interface->getMode() == kPanelChapterSelection)
+		if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8)
 			return _vm->getDisplayInfo().logicalHeight;
 		else
 			return _vm->getDisplayInfo().sceneHeight;
@@ -346,10 +356,14 @@ class Scene {
 	int _sceneCount;
 	SceneQueueList _sceneQueue;
 	bool _sceneLoaded;
+	int _currentProtag;
 	int _sceneNumber;
 	int _chapterNumber;
 	int _outsetSceneNumber;
 	int _sceneResourceId;
+	int _currentMusicTrack;
+	int _currentMusicRepeat;
+	bool _chapterPointsChanged;
 	bool _inGame;
 	bool _loadDescription;
 	SceneDescription _sceneDescription;

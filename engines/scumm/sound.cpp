@@ -643,7 +643,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			_vm->_imuseDigital->startVoice(kTalkSoundID, input);
 #endif
 		} else {
-			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, input, id);
+			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, handle, input, id);
 		}
 	}
 }

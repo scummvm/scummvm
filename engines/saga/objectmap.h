@@ -110,7 +110,7 @@ public:
 	int hitTest(const Point& testPoint);
 	HitZone *getHitZone(int16 index) {
 		if ((index < 0) || (index >= _hitZoneListCount)) {
-			error("ObjectMap::getHitZone wrong index 0x%X", index);
+			return NULL;
 		}
 		return _hitZoneList[index];
 	}

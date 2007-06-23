@@ -41,7 +41,7 @@ namespace Saga {
 class HitZone;
 
 
-//#define ACTOR_DEBUG //only for actor pathfinding debug!
+// #define ACTOR_DEBUG 1 //only for actor pathfinding debug!
 
 #define ACTOR_BARRIERS_MAX 16
 
@@ -97,7 +97,8 @@ enum ActorActions {
 enum SpeechFlags {
 	kSpeakNoAnimate = 1,
 	kSpeakAsync = 2,
-	kSpeakSlow = 4
+	kSpeakSlow = 4,
+	kSpeakForceText = 8
 };
 
 enum ActorFrameTypes {
@@ -303,6 +304,7 @@ public:
 	//constant
 	SpriteList _spriteList;		// sprite list data
 
+	bool _shareFrames;
 	ActorFrameSequence *_frames;	// Actor's frames
 	int _framesCount;			// Actor's frames count
 	int _frameListResourceId;	// Actor's frame list resource id
@@ -474,13 +476,18 @@ public:
 		memset(this, 0, sizeof(*this));
 	}
 	~ActorData() {
-		free(_frames);
+		if (!_shareFrames)
+			free(_frames);
 		free(_tileDirections);
 		free(_walkStepsPoints);
 		freeSpriteList();
 	}
 };
 
+struct ProtagStateData {
+	ActorFrameSequence *_frames;	// Actor's frames
+	int	_framesCount;			// Actor's frames count
+};
 
 
 struct SpeechData {
@@ -528,6 +535,7 @@ public:
 	int actorIdToIndex(uint16 id) { return (id == ID_PROTAG ) ? 0 : objectIdToIndex(id); }
 	uint16 actorIndexToId(int index) { return (index == 0 ) ? ID_PROTAG : objectIndexToId(kGameObjectActor, index); }
 	ActorData *getActor(uint16 actorId);
+	ActorData *getFirstActor() { return _actors[0]; }
 
 // clarification: Obj - means game object, such Hat, Spoon etc,  Object - means Actor,Obj,HitZone,StepZone
 
@@ -586,11 +594,17 @@ public:
 		return _activeSpeech.stringsCount > 0;
 	}
 
+	int isForcedTextShown() {
+		return _activeSpeech.speechFlags & kSpeakForceText;
+	}
+
 	void saveState(Common::OutSaveFile *out);
 	void loadState(Common::InSaveFile *in);
 
 	void setProtagState(int state);
 	int getProtagState() { return _protagState; }
+
+	void freeProtagStates();
 
 	void freeActorList();
 	void loadActorList(int protagonistIdx, int actorCount, int actorsResourceID,
@@ -606,7 +620,7 @@ public:
 protected:
 	friend class Script;
 	bool loadActorResources(ActorData *actor);
-
+	void loadFrameList(int frameListResourceId, ActorFrameSequence *&framesPointer, int &framesCount);
 private:
 	void stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, bool stopped);
 	void loadActorSpriteList(ActorData *actor);
@@ -682,7 +696,7 @@ protected:
 	bool _dragonHunt;
 
 private:
-	ActorFrameSequence *_protagStates;
+	ProtagStateData *_protagStates;
 	int _protagStatesCount;
 
 //path stuff

@@ -609,19 +609,24 @@ int OSystem_Dreamcast::getGraphicsMode() const
   return 0;
 }
 
-bool OSystem_Dreamcast::grabRawScreen(Graphics::Surface *surf)
+Graphics::Surface *OSystem_Dreamcast::lockScreen()
 {
-  if(!screen || !surf)
-    return false;
+  if (!screen)
+    return 0;
 
-  surf->create(_screen_w, _screen_h, 1);
-  unsigned char *src = screen, *dst = (unsigned char *)surf->pixels;
-  for(int h = _screen_h; h>0; --h) {
-    memcpy(dst, src, _screen_w);
-    src += SCREEN_W;
-    dst += _screen_w;
-  }
-  return true;
+  _framebuffer.pixels = screen;
+  _framebuffer.w = _screen_w;
+  _framebuffer.h = _screen_h;
+  _framebuffer.pitch = SCREEN_W;
+  _framebuffer.bytesPerPixel = 1;
+
+  return &_framebuffer;
+}
+
+void OSystem_Dreamcast::unlockScreen()
+{
+  // Force screen update
+  _screen_dirty = true;
 }
 
 void OSystem_Dreamcast::clearScreen()

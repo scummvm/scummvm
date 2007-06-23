@@ -142,11 +142,6 @@
 
 	#define SCUMM_LITTLE_ENDIAN
 
-	// FIXME: Do you really need to use 'long' on this port? Please replace
-	// this comment with a new comment that states so, and ideally also
-	// explains the reasons briefly.
-	#define SCUMMVM_USE_LONG_INT
-
 	#define FORCEINLINE __forceinline
 	#define NORETURN _declspec(noreturn)
 	#define PLUGIN_EXPORT __declspec(dllexport)
@@ -239,11 +234,6 @@
 
 	#define SCUMM_BIG_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
-
-	// FIXME: Do you really need to use 'long' on this port? Please replace
-	// this comment with a new comment that states so, and ideally also
-	// explains the reasons briefly.
-	#define SCUMMVM_USE_LONG_INT
 
 #elif defined(__DC__)
 

@@ -156,7 +156,7 @@ void AGOSEngine::o_gtf() {
 
 void AGOSEngine::o_chance() {
 	// 23: chance
-	uint a = getVarOrWord();
+	int16 a = getVarOrWord();
 
 	if (a == 0) {
 		setScriptCondition(false);
@@ -173,7 +173,7 @@ void AGOSEngine::o_chance() {
 	if (a <= 0) {
 		_chanceModifier = 0;
 		setScriptCondition(false);
-	} else if ((uint)_rnd.getRandomNumber(99) < a) {
+	} else if ((int16)_rnd.getRandomNumber(99) < a) {
 		if (_chanceModifier <= 0)
 			_chanceModifier -= 5;
 		else
@@ -410,7 +410,7 @@ void AGOSEngine::o_process() {
 
 void AGOSEngine::o_when() {
 	// 76: add timeout
-	uint timeout = getVarOrWord();
+	uint16 timeout = getVarOrWord();
 	addTimeEvent(timeout, getVarOrWord());
 }
 
@@ -453,7 +453,7 @@ void AGOSEngine::o_haltAnimation() {
 	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		VgaTimerEntry *vte = _vgaTimerList;
 		while (vte->delay) {
-			if (vte->type == 0)
+			if (vte->type == ANIMATE_EVENT)
 				vte->delay += 10;
 			vte++;
 		}
@@ -508,7 +508,14 @@ void AGOSEngine::o_picture() {
 		return;
 	}
 
-	_picture8600 = (vga_res == 8600);
+	if (getGameType() == GType_PP && getGameId() != GID_DIMP) {
+		if (vga_res == 8700 && getBitFlag(107)) {
+			_vgaPeriod = 30;
+		}
+
+		_picture8600 = (vga_res == 8600);
+	}
+
 	setWindowImageEx(mode, vga_res);
 }
 
@@ -722,13 +729,12 @@ void AGOSEngine::o_doClassIcons() {
 
 void AGOSEngine::o_playTune() {
 	// 127:  play tune
-	int music = getVarOrWord();
-	int track = getVarOrWord();
+	uint16 music = getVarOrWord();
+	uint16 track = getVarOrWord();
 
 	if (music != _lastMusicPlayed) {
 		_lastMusicPlayed = music;
-		loadMusic(music);
-		_midi.startTrack(track);
+		playMusic(music, track);
 	}
 }
 
@@ -746,16 +752,32 @@ void AGOSEngine::o_setAdjNoun() {
 
 void AGOSEngine::o_saveUserGame() {
 	// 132: save user game
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-	userGame(false);
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	if (getGameId() == GID_SIMON1CD32) {
+		// The Amiga CD32 version of Simon the Sorcerer 1uses a single slot
+		if (!saveGame(0, "Default Saved Game")) {
+			vc33_setMouseOn();
+			fileError(_windowArray[5], true);
+		}
+	} else {
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		userGame(false);
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	}
 }
 
 void AGOSEngine::o_loadUserGame() {
 	// 133: load user game
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-	userGame(true);
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	if (getGameId() == GID_SIMON1CD32) {
+		// The Amiga CD32 version of Simon the Sorcerer 1 uses a single slot
+		if (!loadGame(genSaveName(0))) {
+			vc33_setMouseOn();
+			fileError(_windowArray[5], false);
+		}
+	} else {
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		userGame(true);
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	}
 }
 
 void AGOSEngine::o_copysf() {
@@ -872,7 +894,7 @@ uint AGOSEngine::getNextVarContents() {
 	return (uint16)readVariable(getVarWrapper());
 }
 
-uint AGOSEngine::readVariable(uint variable) {
+uint AGOSEngine::readVariable(uint16 variable) {
 	if (variable >= _numVars)
 		error("readVariable: Variable %d out of range", variable);
 
@@ -892,7 +914,7 @@ void AGOSEngine::writeNextVarContents(uint16 contents) {
 	writeVariable(getVarWrapper(), contents);
 }
 
-void AGOSEngine::writeVariable(uint variable, uint16 contents) {
+void AGOSEngine::writeVariable(uint16 variable, uint16 contents) {
 	if (variable >= _numVars)
 		error("writeVariable: Variable %d out of range", variable);
 
@@ -978,7 +1000,7 @@ void AGOSEngine::sendSync(uint a) {
 	_lockWord &= ~0x8000;
 }
 
-void AGOSEngine::stopAnimate(uint a) {
+void AGOSEngine::stopAnimate(uint16 a) {
 	uint16 b = to16Wrapper(a);
 	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&b;
@@ -987,7 +1009,7 @@ void AGOSEngine::stopAnimate(uint a) {
 }
 
 void AGOSEngine::waitForSync(uint a) {
-	const uint maxCount = (getGameType() == GType_SIMON1) ? 500 : 1000;
+	const uint maxCount = (getGameType() == GType_SIMON1) ? 1000 : 2500;
 
 	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE)) {
 		if (a != 200) {

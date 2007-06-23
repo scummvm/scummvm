@@ -146,6 +146,8 @@ void HitZone::draw(SagaEngine *vm, Surface *ds, int color) {
 	Location location;
 	HitZone::ClickArea *clickArea;
 	Point *points;
+	Point specialPoint1;
+	Point specialPoint2;
 	for (i = 0; i < _clickAreasCount; i++) {
 		clickArea = &_clickAreas[i];
 		pointsCount = clickArea->pointsCount;
@@ -174,6 +176,14 @@ void HitZone::draw(SagaEngine *vm, Surface *ds, int color) {
 			free(points);
 		}
 
+	}
+	if (getSpecialPoint(specialPoint1)) {
+		specialPoint2 = specialPoint1;
+		specialPoint1.x--;
+		specialPoint1.y--;
+		specialPoint2.x++;
+		specialPoint2.y++;
+		ds->drawFrame(specialPoint1, specialPoint2, color);
 	}
 }
 

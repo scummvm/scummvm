@@ -27,6 +27,7 @@
 #include "engines/engine.h"
 #include "base/game.h"
 #include "base/plugins.h"
+#include "common/events.h"
 
 #include "gui/launcher.h"	// For addGameToConf()
 #include "gui/massadd.h"
@@ -85,10 +86,10 @@ MassAddDialog::MassAddDialog(const FilesystemNode &startDir)
 	_gameProgressText = new StaticTextWidget(this, "massadddialog_gameprogress",
 											 "... progress ...");
 
-	_okButton = new ButtonWidget(this, "massadddialog_ok", "OK", kOkCmd, '\n');
+	_okButton = new ButtonWidget(this, "massadddialog_ok", "OK", kOkCmd, Common::ASCII_RETURN);
 	_okButton->setEnabled(false);
 
-	new ButtonWidget(this, "massadddialog_cancel", "Cancel", kCancelCmd, '\27');
+	new ButtonWidget(this, "massadddialog_cancel", "Cancel", kCancelCmd, Common::ASCII_ESCAPE);
 
 }
 

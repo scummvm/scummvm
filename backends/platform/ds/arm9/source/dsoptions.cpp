@@ -158,8 +158,8 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 		
 		Common::Event event;
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.ascii = SDLK_DOWN;
-		event.kbd.keycode = SDLK_DOWN;
+		event.kbd.ascii = 0;
+		event.kbd.keycode = Common::KEYCODE_DOWN;
 		OSystem_DS::instance()->addEvent(event);
 
 		event.type = Common::EVENT_KEYUP;

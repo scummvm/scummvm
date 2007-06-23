@@ -46,8 +46,8 @@ bool OSystem_PalmZodiac::check_event(Common::Event &event, EventPtr ev) {
 		// F5 = menu
 		case vchrThumbWheelBack:
 			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = 319;
-			event.kbd.ascii = 319;
+			event.kbd.keycode = Common::KEYCODE_F5;
+			event.kbd.ascii = Common::ASCII_F5;
 			event.kbd.flags = 0;
 			return true;
 

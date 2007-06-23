@@ -44,7 +44,8 @@ namespace CEGUI {
 		virtual ~PanelKeyboard();
 		virtual bool action(int x, int y, bool pushed);
 	private:
-		Key _key;
+		bool _state;
+		Key _lastKey;
 	};
 }
 

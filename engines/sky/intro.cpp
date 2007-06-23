@@ -917,7 +917,7 @@ bool Intro::escDelay(uint32 msecs) {
 	do {
 		while (eventMan->pollEvent(event)) {
 			if (event.type == Common::EVENT_KEYDOWN) {
-				if (event.kbd.keycode == 27)
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					return false;
 			} else if (event.type == Common::EVENT_QUIT) {
 				_quitProg = true;

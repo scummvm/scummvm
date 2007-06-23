@@ -114,6 +114,38 @@ int TabWidget::addTab(const String &title) {
 	return _activeTab;
 }
 
+void TabWidget::removeTab(int tabID) {
+	assert(0 <= tabID && tabID < (int)_tabs.size());
+
+	// Deactive the tab if it's currently the active one
+	if (tabID == _activeTab) {
+		_tabs[tabID].firstWidget = _firstWidget;
+		releaseFocus();
+		_firstWidget = 0;
+	}
+	
+	// Dispose the widgets in that tab and then the tab itself
+	delete _tabs[tabID].firstWidget;
+	_tabs.remove_at(tabID);
+	
+	// Adjust _firstVisibleTab if necessary
+	if (_firstVisibleTab >= (int)_tabs.size()) {
+		_firstVisibleTab = MAX(0, (int)_tabs.size() - 1);
+	}
+	
+	// The active tab was removed, so select a new active one (if any remains)
+	if (tabID == _activeTab) {
+		_activeTab = -1;
+		if (tabID >= (int)_tabs.size())
+			tabID = _tabs.size() - 1;
+		if (tabID >= 0)
+			setActiveTab(tabID);
+	}
+
+	// Finally trigger a redraw
+	_boss->draw();
+}
+
 void TabWidget::setActiveTab(int tabID) {
 	assert(0 <= tabID && tabID < (int)_tabs.size());
 	if (_activeTab != tabID) {

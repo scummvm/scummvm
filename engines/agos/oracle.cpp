@@ -26,6 +26,9 @@
 #include "common/stdafx.h"
 
 #include "common/savefile.h"
+#include "common/system.h"
+
+#include "graphics/surface.h"
 
 #include "agos/agos.h"
 #include "agos/intern.h"
@@ -247,8 +250,8 @@ void AGOSEngine_Feeble::scrollOracleUp() {
 	byte *src, *dst;
 	uint16 w, h;
 
-	dst = getFrontBuf() + 103 * _screenWidth + 136;
-	src = getFrontBuf() + 106 * _screenWidth + 136;
+	dst = getBackGround() + 103 * _screenWidth + 136;
+	src = getBackGround() + 106 * _screenWidth + 136;
 
 	for (h = 0; h < 21; h++) {
 		for (w = 0; w < 360; w++) {
@@ -276,8 +279,8 @@ void AGOSEngine_Feeble::scrollOracleDown() {
 	byte *src, *dst;
 	uint16 w, h;
 
-	src = getFrontBuf() + 203 * _screenWidth + 136;
-	dst = getFrontBuf() + 206 * _screenWidth + 136;
+	src = getBackGround() + 203 * _screenWidth + 136;
+	dst = getBackGround() + 206 * _screenWidth + 136;
 
 	for (h = 0; h < 77; h++) {
 		memcpy(dst, src, 360);
@@ -507,7 +510,7 @@ void AGOSEngine_Feeble::windowBackSpace(WindowBlock *window) {
 	x = window->x + window->textColumn;
 	y = window->y + window->textRow;
 
-	dst = getFrontBuf() + _dxSurfacePitch * y + x;
+	dst = getBackGround() + _dxSurfacePitch * y + x;
 
 	for (h = 0; h < 13; h++) {
 		for (w = 0; w < 8; w++) {

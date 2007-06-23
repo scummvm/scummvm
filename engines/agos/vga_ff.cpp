@@ -217,7 +217,7 @@ void AGOSEngine::checkScrollX(int16 x, int16 xpos) {
 	if (_scrollXMax == 0 || x == 0)
 		return;
 
-	if ((getGameType() == GType_FF) && (getBitFlag(80) || getBitFlag(82)))
+	if (getGameType() == GType_FF && (getBitFlag(80) || getBitFlag(82)))
 		return;
 
 	int16 tmp;

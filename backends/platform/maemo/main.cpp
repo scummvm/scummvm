@@ -33,6 +33,7 @@
 
 #include "backends/platform/maemo/maemo-sdl.h"
 #include "base/main.h"
+#include "base/internal_version.h"
 #include <hildon-widgets/hildon-app.h>
 #include <gtk/gtk.h>
 #include <libosso.h>
@@ -41,7 +42,7 @@
 #include <sys/resource.h>
 
 #define OSSO_APP_NAME    "scummvm"
-#define OSSO_APP_VERSION "0.9.0CVS"
+#define OSSO_APP_VERSION SCUMMVM_VERSION
 
 void set_doubling(unsigned char enable) {
   return;

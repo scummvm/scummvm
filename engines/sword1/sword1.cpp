@@ -635,7 +635,7 @@ void SwordEngine::checkCd(void) {
 
 uint8 SwordEngine::mainLoop(void) {
 	uint8 retCode = 0;
-	_keyPressed = 0;
+	_keyPressed.reset();
 
 	while ((retCode == 0) && (!_systemVars.engineQuit)) {
 		// do we need the section45-hack from sword.c here?
@@ -678,12 +678,14 @@ uint8 SwordEngine::mainLoop(void) {
 
 			// The control panel is triggered by F5 or ESC.
 			// FIXME: This is a very strange way of detecting F5...
-			else if (((_keyPressed == 63 || _keyPressed == 27) && (Logic::_scriptVars[MOUSE_STATUS] & 1)) || (_systemVars.controlPanelMode)) {
+			else if (((_keyPressed.keycode == Common::KEYCODE_F5 || _keyPressed.keycode == Common::KEYCODE_ESCAPE)
+			         && (Logic::_scriptVars[MOUSE_STATUS] & 1)) || (_systemVars.controlPanelMode)) {
 				retCode = _control->runPanel();
 				if (!retCode)
 					_screen->fullRefresh();
 			}
-			_mouseState = _keyPressed = 0;
+			_mouseState = 0;
+			_keyPressed.reset();
 		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) && (retCode == 0) && (!_systemVars.engineQuit));
 
 		if ((retCode == 0) && (Logic::_scriptVars[SCREEN] != 53) && _systemVars.wantFade && (!_systemVars.engineQuit)) {
@@ -712,11 +714,7 @@ void SwordEngine::delay(int32 amount) { //copied and mutilated from sky.cpp
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				// Make sure backspace works right (this fixes a small issue on OS X)
-				if (event.kbd.keycode == 8)
-					_keyPressed = 8;
-				else
-					_keyPressed = (uint8)event.kbd.ascii;
+				_keyPressed = event.kbd;
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;

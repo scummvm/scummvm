@@ -94,6 +94,8 @@ RoomData::RoomData(RoomResource *rec, MemoryBlock *pathData) {
 
 	clippingXStart = FROM_LE_16(rec->clippingXStart);
 	clippingXEnd = FROM_LE_16(rec->clippingXEnd);
+	exitTime = FROM_LE_32(rec->exitTime);
+	areaFlag = rec->areaFlag;
 	walkBounds.left = FROM_LE_16(rec->walkBounds.xs);
 	walkBounds.right = FROM_LE_16(rec->walkBounds.xe);
 	walkBounds.top = FROM_LE_16(rec->walkBounds.ys);
@@ -285,6 +287,7 @@ void RoomDataList::saveToStream(WriteStream *stream) {
 
 	for (i = begin(); i != end(); ++i) {
 		RoomData *rec = *i;
+		stream->writeByte(rec->flags);
 		const byte *pathData = rec->paths.data();
 		stream->write(pathData, ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH);
 	}
@@ -296,6 +299,7 @@ void RoomDataList::loadFromStream(ReadStream *stream) {
 
 	for (i = begin(); i != end(); ++i) {
 		RoomData *rec = *i;
+		rec->flags = stream->readByte();
 		stream->read(data, ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH);
 		rec->paths.load(data);
 	}
@@ -730,6 +734,7 @@ void SequenceDelayList::add(uint16 delay, uint16 seqOffset, bool canClear) {
 }
 
 void SequenceDelayList::tick() {
+	Resources &res = Resources::getReference();
 	uint32 currTime = g_system->getMillis();
 	SequenceDelayList::iterator i;
 
@@ -738,6 +743,15 @@ void SequenceDelayList::tick() {
 		if (currTime >= entry->timeoutCtr) {
 			// Timeout reached - delete entry from list and execute the sequence
 			uint16 seqOffset = entry->sequenceOffset;
+
+			// FIXME: At current speed the player can enter the cave a bit too quickly ahead of Goewin. 
+			// Use a hard-coded check to make sure Goewin is in the room
+			if (seqOffset == 0xebd) {
+				Hotspot *goewinHotspot = res.getActiveHotspot(GOEWIN_ID);
+				if (goewinHotspot->roomNumber() != 38) 
+					return;
+			}
+
 			erase(i);
 			Script::execute(seqOffset);
 			return;

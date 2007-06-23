@@ -124,7 +124,9 @@ REGISTER_PLUGIN(TOUCHE, "Touche Engine", "Touche: The Adventures of the 5th Musk
 namespace Touche {
 
 bool ToucheEngine::detectGame() {
-	const Common::ADGameDescription *gd = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	const Common::ADGameDescription *gd = encapsulatedDesc.realDesc;
+
 	if (gd == 0)
 		return false;
 

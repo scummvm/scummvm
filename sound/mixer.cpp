@@ -65,8 +65,6 @@ protected:
 	AudioStream *_input;
 
 public:
-
-	Channel(Mixer *mixer, Mixer::SoundType type, int id = -1);
 	Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input, bool autofreeStream, bool reverseStereo = false, int id = -1, bool permanent = false);
 	virtual ~Channel();
 
@@ -373,13 +371,6 @@ int Mixer::getVolumeForSoundType(SoundType type) const {
 #pragma mark --- Channel implementations ---
 #pragma mark -
 
-
-Channel::Channel(Mixer *mixer, Mixer::SoundType type, int id)
-	: _type(type), _mixer(mixer), _autofreeStream(true),
-	  _volume(Mixer::kMaxChannelVolume), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
-	  _samplesDecoded(0), _mixerTimeStamp(0), _converter(0), _input(0) {
-	assert(mixer);
-}
 
 Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input,
 				bool autofreeStream, bool reverseStereo, int id, bool permanent)

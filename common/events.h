@@ -26,6 +26,7 @@
 #ifndef COMMON_EVENTS_H
 #define COMMON_EVENTS_H
 
+#include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/system.h"
 #include "common/noncopyable.h"
@@ -57,16 +58,14 @@ enum EventType {
 
 	EVENT_QUIT = 10,
 	EVENT_SCREEN_CHANGED = 11,
+	/**
+	 * The backend requests the agi engine's predictive dialog to be shown.
+	 * TODO: Fingolfin suggests that it would be of better value to expand
+	 * on this notion by generalizing its use. For example the backend could
+	 * use events to ask for the save game dialog or to pause the engine.
+	 * An associated enumerated type can accomplish this.
+	 **/
 	EVENT_PREDICTIVE_DIALOG = 12
-};
-
-/**
- * Keyboard modifier flags, used for Event::kbd::flags.
- */
-enum {
-	KBD_CTRL  = 1 << 0,
-	KBD_ALT   = 1 << 1,
-	KBD_SHIFT = 1 << 2
 };
 
 /**
@@ -108,33 +107,7 @@ struct Event {
 	  * Keyboard data; only valid for keyboard events (EVENT_KEYDOWN and
 	  * EVENT_KEYUP). For all other event types, content is undefined.
 	  */
-	struct {
-		/**
-		 * Abstract key code (will be the same for any given key regardless
-		 * of modifiers being held at the same time.
-		 * For example, this is the same for both 'A' and Shift-'A'.
-		 * @todo Document which values are to be used for non-ASCII keys
-		 * like F1-F10. For now, let's just say that our primary backend
-		 * is the SDL one, and it uses the values SDL uses... so until
-		 * we fix this, your best bet is to get a copy of SDL_keysym.h
-		 * and look at that, if you want to find out a key code.
-		 */
-		int keycode;
-		/**
-		 * ASCII-value of the pressed key (if any).
-		 * This depends on modifiers, i.e. pressing the 'A' key results in
-		 * different values here depending on the status of shift, alt and
-		 * caps lock.
-		 * For the function keys F1-F9, values of 315-323 are used.
-		 */
-		uint16 ascii;
-		/**
-		 * Status of the modifier keys. Bits are set in this for each
-		 * pressed modifier
-		 * @see KBD_CTRL, KBD_ALT, KBD_SHIFT
-		 */
-		byte flags;
-	} kbd;
+	KeyState kbd;
 	/**
 	 * The mouse coordinates, in virtual screen coordinates. Only valid
 	 * for mouse events.

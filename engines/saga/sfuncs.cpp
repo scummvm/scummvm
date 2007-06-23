@@ -148,7 +148,7 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfSetActorFacing),
 		OPCODE(sfStartBgdAnim),
 		OPCODE(sfStopBgdAnim),
-		OPCODE(sfNull),
+		OPCODE(sfLockUser),
 		OPCODE(sfPreDialog),
 		OPCODE(sfKillActorThreads),
 		OPCODE(sfFaceTowards),
@@ -386,11 +386,14 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 			break;
 		case kGameObjectHitZone:
 		case kGameObjectStepZone:
-			if (objectTypeId(objectId) == kGameObjectHitZone) {
+			if (objectTypeId(objectId) == kGameObjectHitZone)
 				hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
-			} else {
+			else
 				hitZone = _vm->_scene->_actionMap->getHitZone(objectIdToIndex(objectId));
-			}
+
+			if (hitZone == NULL)
+				return;
+
 			scriptEntryPointNumber = hitZone->getScriptNumber();
 			moduleNumber = _vm->_scene->getScriptModuleNumber();
 			break;
@@ -541,12 +544,18 @@ void Script::sfSetFollower(SCRIPTFUNC_PARAMS) {
 void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	int16 sceneNumber;
 	int16 entrance;
+	int16 transition = 0;	// IHNM
 
 	sceneNumber = thread->pop();
 	entrance = thread->pop();
+	if (_vm->getGameType() == GType_IHNM)
+		transition = thread->pop();
+
 	if (sceneNumber < 0) {
-		_vm->shutDown();
-		return;
+		if (_vm->getGameType() == GType_ITE) {
+			_vm->shutDown();
+			return;
+		}
 	}
 
 	if (_vm->getGameType() == GType_IHNM) {
@@ -565,7 +574,14 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 		_vm->_interface->setMode(kPanelMain);
 	}
 
-	_vm->_scene->changeScene(sceneNumber, entrance, (sceneNumber == ITE_SCENE_ENDCREDIT1) ? kTransitionFade : kTransitionNoFade);
+	if (sceneNumber == -1 && _vm->getGameType() == GType_IHNM) {
+		// TODO: This is used to return back to the character selection screen in IHNM.
+		// However, it seems more than this is needed, AM's speech is wrong and no actors
+		// are shown
+		_vm->_scene->changeScene(154, entrance, kTransitionFade, 8);
+	} else {
+		_vm->_scene->changeScene(sceneNumber, entrance, (sceneNumber == ITE_SCENE_ENDCREDIT1) ? kTransitionFade : kTransitionNoFade);
+	}
 
 	//TODO: placard stuff
 	_pendingVerb = _vm->_script->getVerbType(kVerbNone);
@@ -729,11 +745,15 @@ void Script::sfEnableZone(SCRIPTFUNC_PARAMS) {
 	int16 flag = thread->pop();
 	HitZone *hitZone;
 
-	if (objectTypeId(objectId) == kGameObjectHitZone) {
+	if (objectTypeId(objectId) == 0)
+		return;
+	else if (objectTypeId(objectId) == kGameObjectHitZone)
 		hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
-	} else {
+	else
 		hitZone = _vm->_scene->_actionMap->getHitZone(objectIdToIndex(objectId));
-	}
+
+	if (hitZone == NULL)
+		return;
 
 	if (flag) {
 		hitZone->setFlag(kHitZoneEnabled);
@@ -823,6 +843,14 @@ void Script::sfDropObject(SCRIPTFUNC_PARAMS) {
 
 	obj->_sceneNumber = _vm->_scene->currentSceneNumber();
 
+	// WORKAROUND for the compact disk in Ellen's chapter
+	// Change the scene number of the compact disk so that it's not shown. It will be shown 
+	// once Ellen says that there's something different (i.e. after speaking with AM)
+	// See Actor::actorSpeech for the other part of this workaround
+	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 3 &&
+		_vm->_scene->currentSceneNumber() == 59 && obj->_id == 16385)
+			obj->_sceneNumber = -1;
+
 	if (_vm->getGameType() == GType_IHNM)
 		obj->_spriteListResourceId = spriteId;
 	else
@@ -862,15 +890,15 @@ void Script::sfSwapActors(SCRIPTFUNC_PARAMS) {
 		actor1->_flags &= ~kProtagonist;
 		actor2->_flags |= kProtagonist;
 		_vm->_actor->_protagonist = _vm->_actor->_centerActor = actor2;
+		if (_vm->getGameType() == GType_IHNM)
+			_vm->_scene->setProtag(actorId2);
 	} else if (actor2->_flags & kProtagonist) {
 		actor2->_flags &= ~kProtagonist;
 		actor1->_flags |= kProtagonist;
 		_vm->_actor->_protagonist = _vm->_actor->_centerActor = actor1;
+		if (_vm->getGameType() == GType_IHNM)
+			_vm->_scene->setProtag(actorId1);
 	}
-
-	// Here non-protagonist ID gets saved in variable
-	if (_vm->getGameType() == GType_IHNM)
-		warning("sfSwapActors: incomplete implementation");
 }
 
 // Script function #35 (0x23)
@@ -1663,6 +1691,13 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 		} else {
 			_vm->_music->setVolume(-1, 1);
 			_vm->_music->play(_vm->_music->_songTable[param1], param2 ? MUSIC_LOOP : MUSIC_NORMAL);
+			if (!_vm->_scene->haveChapterPointsChanged()) {
+				_vm->_scene->setCurrentMusicTrack(param1);
+				_vm->_scene->setCurrentMusicRepeat(param2);
+			} else {
+				// Don't save this music track when saving in IHNM
+				_vm->_scene->setChapterPointsChanged(false);
+			}
 		}
 	}
 }
@@ -1823,11 +1858,24 @@ void Script::sfPlayVoice(SCRIPTFUNC_PARAMS) {
 	}
 }
 
-void Script::finishDialog(int replyID, int flags, int bitOffset) {
+void Script::finishDialog(int strID, int replyID, int flags, int bitOffset) {
 	byte *addr;
+	const char *str;
 
 	if (_conversingThread) {
 		_vm->_interface->setMode(kPanelNull);
+
+		if (_vm->getGameType() == GType_IHNM) {
+			str = _conversingThread->_strings->getString(strID);
+			if (*str != '[') {
+				int sampleResourceId = -1;
+				sampleResourceId = _conversingThread->_voiceLUT->voices[strID];
+				if (sampleResourceId < 0 || sampleResourceId > 4000)
+					sampleResourceId = -1;
+
+				_vm->_actor->actorSpeech(_vm->_actor->_protagonist->_id, &str, 1, sampleResourceId, 0);
+			}
+		}
 
 		_conversingThread->_flags &= ~kTFlagWaiting;
 
@@ -1850,6 +1898,7 @@ void Script::sfSetChapterPoints(SCRIPTFUNC_PARAMS) {
 
 	_vm->_ethicsPoints[chapter] = ethics;
 	_vm->_spiritualBarometer = ethics * 256 / barometer;
+	_vm->_scene->setChapterPointsChanged(true);		// don't save this music when saving in IHNM
 }
 
 void Script::sfSetPortraitBgColor(SCRIPTFUNC_PARAMS) {
@@ -1868,11 +1917,13 @@ void Script::sfScriptStartCutAway(SCRIPTFUNC_PARAMS) {
 	thread->pop();		// Not used
 	fade = thread->pop();
 
+	_vm->_anim->setCutAwayMode(kPanelCutaway);	
 	_vm->_anim->playCutaway(cut, fade != 0);
 }
 
 void Script::sfReturnFromCutAway(SCRIPTFUNC_PARAMS) {
 	_vm->_anim->returnFromCutaway();
+	thread->wait(kWaitTypeWakeUp);
 }
 
 void Script::sfEndCutAway(SCRIPTFUNC_PARAMS) {
@@ -1880,31 +1931,82 @@ void Script::sfEndCutAway(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfGetMouseClicks(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfGetMouseClicks", thread, nArgs);
+	thread->_returnValue = _vm->getMouseClickCount();
 }
 
 void Script::sfResetMouseClicks(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfResetMouseClicks", thread, nArgs);
+	_vm->resetMouseClickCount();
 }
 
+// Used in IHNM only
+// Param1: frames
 void Script::sfWaitFrames(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfWaitFrames", thread, nArgs);
+	int16 frames;
+	frames = thread->pop();
+
+	// HACK for the nightfall scene in Benny's chapter
+	// sfWaitFrames is supposed to wait for fadein and fadeout during that cutaway, but we
+	// don't support it yet (function sfScriptFade). This is a temporary hack to avoid
+	// having ScummVM wait for ever in that cutaway
+	// FIXME: Remove this hack once the palette fading is properly handled
+	if (_vm->_scene->currentChapterNumber() == 2 && _vm->_scene->currentSceneNumber() == 41 && _vm->_anim->hasCutaway())
+		return;
+
+	if (!_skipSpeeches)
+		thread->waitFrames(_vm->_frameCount + frames);
 }
 
 void Script::sfScriptFade(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfScriptFade", thread, nArgs);
+	thread->pop(); // first pal entry, ignored (already handled by Gfx::palToBlack)
+	thread->pop(); //  last pal entry, ignored (already handled by Gfx::palToBlack)
+	int16 startingBrightness = thread->pop();
+	int16 endingBrightness = thread->pop();
+	// delay between pal changes is always 10 (not used)
+	static PalEntry cur_pal[PAL_ENTRIES];
+	Event event;
+	short delta = (startingBrightness < endingBrightness) ? +1 : -1;
+
+	_vm->_gfx->getCurrentPal(cur_pal);
+
+	// TODO: This is still wrong, probably a new event type needs to be added (kEventPalFade)
+	warning("TODO: sfScriptFade");
+	return;
+
+	if (startingBrightness > 255) 
+		startingBrightness = 255;
+	if (startingBrightness < 0 ) 
+		startingBrightness = 0;
+	if (endingBrightness > 255) 
+		endingBrightness = 255;
+	if (endingBrightness < 0) 
+		endingBrightness = 0;
+
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventPalToBlack;
+	event.time = 0;
+	event.duration = kNormalFadeDuration - ((endingBrightness - startingBrightness) * delta);
+	event.data = cur_pal;
+
+	_vm->_events->queue(&event);	
 }
 
 void Script::sfScriptStartVideo(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfScriptStartVideo", thread, nArgs);
+	int16 vid;
+	int16 fade;
+	vid = thread->pop();
+	fade = thread->pop();
+
+	_vm->_anim->setCutAwayMode(kPanelVideo);
+	_vm->_anim->startVideo(vid, fade != 0);
 }
 
 void Script::sfScriptReturnFromVideo(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfScriptReturnFromVideo", thread, nArgs);
+	_vm->_anim->returnFromVideo();
 }
 
 void Script::sfScriptEndVideo(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfScriptEndVideo", thread, nArgs);
+	_vm->_anim->endVideo();
 }
 
 void Script::sf87(SCRIPTFUNC_PARAMS) {
@@ -1989,8 +2091,8 @@ void Script::sfSetSpeechBox(SCRIPTFUNC_PARAMS) {
 
 	_vm->_actor->_speechBoxScript.left = param1;
 	_vm->_actor->_speechBoxScript.top = param2;
-	_vm->_actor->_speechBoxScript.setWidth(param3);
-	_vm->_actor->_speechBoxScript.setHeight(param4);
+	_vm->_actor->_speechBoxScript.setWidth(param3 - param1);
+	_vm->_actor->_speechBoxScript.setHeight(param4 - param2);
 }
 
 void Script::sfDebugShowData(SCRIPTFUNC_PARAMS) {

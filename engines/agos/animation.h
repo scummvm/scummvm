@@ -44,6 +44,9 @@ class MoviePlayer : public Graphics::DXAPlayer {
 	Audio::SoundHandle _bgSound;
 	Audio::AudioStream *_bgSoundStream;
 
+	Audio::SoundHandle _omniTVSound;
+	Common::SeekableReadStream *_omniTVFile;
+
 	bool _omniTV;
 	bool _leftButtonDown;
 	bool _rightButtonDown;
@@ -64,7 +67,7 @@ private:
 	void playOmniTV();
 
 	void handleNextFrame();
-	void processFrame();
+	bool processFrame();
 	void startSound();
 };
 

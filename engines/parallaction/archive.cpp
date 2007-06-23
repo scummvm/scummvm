@@ -22,7 +22,9 @@
  * $Id$
  *
  */
+#include "common/stdafx.h"
 
+#include "common/endian.h"
 #include "common/file.h"
 
 #include "parallaction/disk.h"
@@ -31,10 +33,15 @@
 
 namespace Parallaction {
 
-//	HACK: one archive ('fr') in Nippon Safes Demo for Amiga uses different
-//  internal offsets than all the other archives. When an archive is opened
-//  its size if checked against SIZEOF_SMALL_ARCHIVE ('fr' size) so Archive
-//  can behave properly.
+//  HACK: Several archives ('de', 'en', 'fr' and 'disk0') in the multi-lingual
+//  Amiga version of Nippon Safes, and one archive ('fr') in the Amiga Demo of
+//  Nippon Safes used different internal offsets than all the other archives.
+//
+//  When an archive is opened in the Amiga demo, its size is checked against 
+//  SIZEOF_SMALL_ARCHIVE to detect when the smaller archive is used.
+//
+//  When an archive is opened in Amiga multi-lingual version, the header is
+//  checked again NDOS to detect when a smaller archive is used.
 //
 #define SIZEOF_SMALL_ARCHIVE      	12778
 
@@ -54,7 +61,7 @@ Archive::Archive() {
 }
 
 void Archive::open(const char *file) {
-	debugC(3, kDebugDisk, "Archive::open(%s)", file);
+	debugC(1, kDebugDisk, "Archive::open(%s)", file);
 
 	if (_archive.isOpen())
 		close();
@@ -65,7 +72,14 @@ void Archive::open(const char *file) {
 	if (!_archive.open(path))
 		error("archive '%s' not found", path);
 
-	bool isSmallArchive = _archive.size() == SIZEOF_SMALL_ARCHIVE;
+	bool isSmallArchive = false;
+	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		if (_vm->getFeatures() & GF_DEMO) {
+			isSmallArchive = _archive.size() == SIZEOF_SMALL_ARCHIVE;
+		} else if (_vm->getFeatures() & GF_LANG_MULT) {
+			isSmallArchive = (_archive.readUint32BE() != MKID_BE('NDOS'));
+		}
+	}
 
 	_numFiles = (isSmallArchive) ? SMALL_ARCHIVE_FILES_NUM : NORMAL_ARCHIVE_FILES_NUM;
 
@@ -95,6 +109,8 @@ void Archive::close() {
 
 
 bool Archive::openArchivedFile(const char *filename) {
+	debugC(3, kDebugDisk, "Archive::openArchivedFile(%s)", filename);
+
 	resetArchivedFile();
 
 	debugC(3, kDebugDisk, "Archive::openArchivedFile(%s)", filename);

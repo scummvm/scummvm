@@ -288,7 +288,7 @@ File *AGOSEngine::openTablesFile_gme(const char *filename) {
 	return _gameFile;
 }
 
-bool AGOSEngine::loadTablesIntoMem(uint subr_id) {
+bool AGOSEngine::loadTablesIntoMem(uint16 subr_id) {
 	byte *p;
 	uint16 min_num, max_num, file_num;
 	File *in;
@@ -337,7 +337,7 @@ bool AGOSEngine::loadTablesIntoMem(uint subr_id) {
 	return 0;
 }
 
-bool AGOSEngine_Waxworks::loadTablesIntoMem(uint subr_id) {
+bool AGOSEngine_Waxworks::loadTablesIntoMem(uint16 subr_id) {
 	byte *p;
 	int i;
 	uint min_num, max_num;
@@ -399,7 +399,7 @@ bool AGOSEngine_Waxworks::loadTablesIntoMem(uint subr_id) {
 	return 0;
 }
 
-bool AGOSEngine::loadXTablesIntoMem(uint subr_id) {
+bool AGOSEngine::loadXTablesIntoMem(uint16 subr_id) {
 	byte *p;
 	int i;
 	uint min_num, max_num;
@@ -461,7 +461,7 @@ void AGOSEngine::closeTablesFile(File *in) {
 	}
 }
 
-Subroutine *AGOSEngine::createSubroutine(uint id) {
+Subroutine *AGOSEngine::createSubroutine(uint16 id) {
 	Subroutine *sub;
 
 	alignTableMem();
@@ -681,7 +681,7 @@ void AGOSEngine::readSubroutineLine(Common::SeekableReadStream *in, SubroutineLi
 byte *AGOSEngine::readSingleOpcode(Common::SeekableReadStream *in, byte *ptr) {
 	int i, l;
 	const char *string_ptr;
-	uint opcode, val;
+	uint16 opcode, val;
 
 	const char *const *table;
 

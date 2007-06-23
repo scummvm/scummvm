@@ -26,9 +26,10 @@
 #include <hildon-widgets/hildon-app.h>
 #include <gtk/gtk.h>
 #include <libosso.h>
+#include "base/internal_version.h"
 
 #define OSSO_APP_NAME    "scummvm"
-#define OSSO_APP_VERSION "0.9.0CVS"
+#define OSSO_APP_VERSION SCUMMVM_VERSION
 #define OSSO_APP_SERVICE "org.scummvm."OSSO_APP_NAME
 #define OSSO_APP_OBJECT  "/org/scummvm/"OSSO_APP_NAME
 #define OSSO_APP_IFACE   "org.scummvm."OSSO_APP_NAME

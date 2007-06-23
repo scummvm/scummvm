@@ -238,6 +238,7 @@ Other contributions
                              and right click input method
      Mikesch Nepomuk       - MI1 VGA floppy patches
      Nicolas Noble         - Config file and ALSA support
+     Tim Phillips          - Initial MI1 CD music support
      Quietust              - Sound support for Amiga SCUMM V2/V3 games, MM
                              NES support
      Andreas Roever        - Broken Sword 1/2 MPEG2 cutscene support
@@ -245,7 +246,6 @@ Other contributions
      Daniel Schepler       - Final MI1 CD music support, initial Ogg Vorbis
                              support
      Andre Souza           - SDL-based OpenGL renderer
-     Tim Phillips          - Initial MI1 CD music support
      Robin Watts           - ARM assembly routines for the Windows CE port
 
    And to all the contributors, users, and beta testers we've missed. Thanks!

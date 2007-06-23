@@ -700,6 +700,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				replyNum = scriptS.readByte();
 				flags = scriptS.readByte();
 				iparam1 = 0;
+				int strID = thread->pop();
 
 				if (flags & kReplyOnce) {
 					iparam1 = scriptS.readSint16LE();
@@ -709,8 +710,8 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 					}
 				}
 
-				str = thread->_strings->getString(thread->pop());
-				if (_vm->_interface->converseAddText(str, replyNum, flags, iparam1))
+				str = thread->_strings->getString(strID);
+				if (_vm->_interface->converseAddText(str, strID, replyNum, flags, iparam1))
 					warning("Error adding ConverseText (%s, %d, %d, %d)", str, replyNum, flags, iparam1);
 			}
 			break;

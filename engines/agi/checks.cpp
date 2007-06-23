@@ -117,7 +117,7 @@ int AgiEngine::checkPriority(VtEntry *v) {
 
 	water = 1;
 
-	p0 = &_game.sbuf[v->xPos + v->yPos * _WIDTH];
+	p0 = &_game.sbuf16c[v->xPos + v->yPos * _WIDTH];
 
 	for (i = 0; i < v->xSize; i++, p0++) {
 		pri = *p0 >> 4;

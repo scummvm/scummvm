@@ -687,22 +687,6 @@ void OSystem_GP2X::setZoomOnMouse() {
 		}
 }
 
-void OSystem_GP2X::clearScreen() {
-	assert (_transactionMode == kTransactionNone);
-
-	// Try to lock the screen surface
-	if (SDL_LockSurface(_screen) == -1)
-		error("SDL_LockSurface failed: %s", SDL_GetError());
-
-	byte *dst = (byte *)_screen->pixels;
-
-	// Clear the screen
-	memset(dst, 0, _screenWidth * _screenHeight);
-
-	// Unlock the screen surface
-	SDL_UnlockSurface(_screen);
-}
-
 void OSystem_GP2X::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
 	assert (_transactionMode == kTransactionNone);
 	assert(src);
@@ -772,15 +756,19 @@ void OSystem_GP2X::copyRectToScreen(const byte *src, int pitch, int x, int y, in
 	SDL_UnlockSurface(_screen);
 }
 
-// TIDY: DIRTY HACK: Try a REALLY simple version of grabRawScreen to
-//       debug why it will not work on the GP2X.
-bool OSystem_GP2X::grabRawScreen(Graphics::Surface *surf) {
-	assert(surf);
+Graphics::Surface *OSystem_GP2X::lockScreen() {
+	_framebuffer.pixels = _screen->pixels;
+	_framebuffer.w = _screen->w;
+	_framebuffer.h = _screen->h;
+	_framebuffer.pitch = _screen->pitch;
+	_framebuffer.bytesPerPixel = 1;
 
-	surf->create(_screenWidth, _screenHeight, 1);
-	memcpy(surf->pixels, _screen->pixels, _screenWidth * _screenHeight);
+	return &_framebuffer;
+}
 
-	return true;
+void OSystem_GP2X::unlockScreen() {
+	// Force screen update
+	_forceFull = true;
 }
 
 void OSystem_GP2X::addDirtyRect(int x, int y, int w, int h, bool realCoordinates) {

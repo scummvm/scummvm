@@ -53,6 +53,8 @@ public:
 	DSAudioMixer* _mixer;
 	DSTimerManager* _timer;
 
+	Graphics::Surface _framebuffer;
+
 	static OSystem_DS* _instance;
 	
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
@@ -127,7 +129,8 @@ public:
 	void addEvent(Common::Event& e);
 	bool isEventQueueEmpty() { return queuePos == 0; }
 	
-	virtual bool grabRawScreen(Graphics::Surface* surf);
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 	
 	virtual void setFocusRectangle(const Common::Rect& rect);
 	
@@ -157,6 +160,11 @@ void OSystem_DS::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b)
 	g = ((color & 0x03E0) >> 5) << 3;
 	b = ((color & 0x7C00) >> 10) << 3;
 	//consolePrintf("coltorgb\n");
+}
+
+namespace DS
+{
+bool isCpuScalerEnabled();
 }
 
 #endif

@@ -40,8 +40,6 @@ namespace Gob {
 
 Util::Util(GobEngine *vm) : _vm(vm) {
 	_mouseButtons = 0;
-	for (int i = 0; i < KEYBUFSIZE; i++)
-		_keyBuffer[i] = 0;
 	_keyBufferHead = 0;
 	_keyBufferTail = 0;
 	_fastMode = 0;
@@ -108,13 +106,13 @@ void Util::processInput(bool scroll) {
 			break;
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.flags == Common::KBD_CTRL) {
-				if (event.kbd.keycode == 'f')
+				if (event.kbd.keycode == Common::KEYCODE_f)
 					_fastMode ^= 1;
-				else if (event.kbd.keycode == 'g')
+				else if (event.kbd.keycode == Common::KEYCODE_g)
 					_fastMode ^= 2;
 				break;
 			}
-			addKeyToBuffer(event.kbd.ascii);
+			addKeyToBuffer(event.kbd);
 			break;
 		case Common::EVENT_KEYUP:
 			break;
@@ -145,7 +143,7 @@ bool Util::keyBufferEmpty() {
 	return (_keyBufferHead == _keyBufferTail);
 }
 
-void Util::addKeyToBuffer(int16 key) {
+void Util::addKeyToBuffer(const Common::KeyState &key) {
 	if ((_keyBufferHead + 1) % KEYBUFSIZE == _keyBufferTail) {
 		warning("key buffer overflow");
 		return;
@@ -155,7 +153,7 @@ void Util::addKeyToBuffer(int16 key) {
 	_keyBufferHead = (_keyBufferHead + 1) % KEYBUFSIZE;
 }
 
-bool Util::getKeyFromBuffer(int16& key) {
+bool Util::getKeyFromBuffer(Common::KeyState &key) {
 	if (_keyBufferHead == _keyBufferTail) return false;
 
 	key = _keyBuffer[_keyBufferTail];
@@ -164,44 +162,49 @@ bool Util::getKeyFromBuffer(int16& key) {
 	return true;
 }
 
-int16 Util::translateKey(int16 key) {
+int16 Util::translateKey(const Common::KeyState &key) {
 	static struct keyS {
 		int16 from;
 		int16 to;
 	} keys[] = {
-		{8,   0x0E08}, // Backspace
-		{32,  0x3920}, // Space
-		{13,  0x1C0D}, // Enter
-		{27,  0x011B}, // ESC
-		{127, 0x5300}, // Del
-		{273, 0x4800}, // Up arrow
-		{274, 0x5000}, // Down arrow
-		{275, 0x4D00}, // Right arrow
-		{276, 0x4B00}, // Left arrow
-		{315, 0x3B00}, // F1
-		{316, 0x3C00}, // F2
-		{317, 0x3D00}, // F3
-		{318, 0x3E00}, // F4
-		{319, 0x011B}, // F5
-		{320, 0x4000}, // F6
-		{321, 0x4100}, // F7
-		{322, 0x4200}, // F8
-		{323, 0x4300}, // F9
-		{324, 0x4400}  // F10
+		{Common::KEYCODE_INVALID,   0x0000},
+		{Common::KEYCODE_BACKSPACE, 0x0E08},
+		{Common::KEYCODE_SPACE,     0x3920},
+		{Common::KEYCODE_RETURN,    0x1C0D},
+		{Common::KEYCODE_ESCAPE,    0x011B},
+		{Common::KEYCODE_DELETE,    0x5300},
+		{Common::KEYCODE_UP,        0x4800},
+		{Common::KEYCODE_DOWN,      0x5000},
+		{Common::KEYCODE_RIGHT,     0x4D00},
+		{Common::KEYCODE_LEFT,      0x4B00},
+		{Common::KEYCODE_F1,        0x3B00},
+		{Common::KEYCODE_F2,        0x3C00},
+		{Common::KEYCODE_F3,        0x3D00},
+		{Common::KEYCODE_F4,        0x3E00},
+		{Common::KEYCODE_F5,        0x011B},
+		{Common::KEYCODE_F6,        0x4000},
+		{Common::KEYCODE_F7,        0x4100},
+		{Common::KEYCODE_F8,        0x4200},
+		{Common::KEYCODE_F9,        0x4300},
+		{Common::KEYCODE_F10,       0x4400}
 	};
 
 	for (int i = 0; i < ARRAYSIZE(keys); i++)
-		if (key == keys[i].from)
+		if (key.keycode == keys[i].from)
 			return keys[i].to;
 
-	if ((key < 32) || (key >= 128))
-		return 0;
+	if ((key.keycode >= Common::KEYCODE_SPACE) &&
+	    (key.keycode <= Common::KEYCODE_DELETE)) {
 
-	return key;
+		// Used as a user input in Gobliins 2 notepad, in the save dialog, ...
+		return key.ascii;
+	}
+
+	return 0;
 }
 
 int16 Util::getKey(void) {
-	int16 key;
+	Common::KeyState key;
 
 	while (!getKeyFromBuffer(key)) {
 		processInput();
@@ -213,10 +216,9 @@ int16 Util::getKey(void) {
 }
 
 int16 Util::checkKey(void) {
-	int16 key;
+	Common::KeyState key;
 
-	if (!getKeyFromBuffer(key))
-		key = 0;
+	getKeyFromBuffer(key);
 
 	return translateKey(key);
 }

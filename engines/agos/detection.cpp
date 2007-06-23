@@ -106,7 +106,7 @@ GameList Engine_AGOS_gameIDList() {
 }
  
 GameDescriptor Engine_AGOS_findGameID(const char *gameid) {
-	return Common::AdvancedDetector::findGameID(gameid, detectionParams);
+	return Common::AdvancedDetector::findGameID(gameid, simonGames, obsoleteGameIDsTable);
 }
 
 GameList Engine_AGOS_detectGames(const FSList &fslist) {
@@ -117,7 +117,8 @@ PluginError Engine_AGOS_create(OSystem *syst, Engine **engine) {
 	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
 	
-	//const AGOSGameDescription gd = (const AGOSGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	//Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	//const AGOSGameDescription *gd = (const AGOSGameDescription *)(encapsulatedDesc.realDesc);
 	//if (gd == 0) {
 	//	return kNoGameDataFoundError;
 	//}
@@ -154,7 +155,9 @@ REGISTER_PLUGIN(AGOS, "AGOS", "AGOS (C) Adventure Soft");
 namespace AGOS {
 
 bool AGOSEngine::initGame() {
-	_gameDescription = (const AGOSGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	_gameDescription = (const AGOSGameDescription *)(encapsulatedDesc.realDesc);
+
 	return (_gameDescription != 0);
 }
 

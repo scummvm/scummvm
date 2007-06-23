@@ -23,6 +23,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/events.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "gui/message.h"
@@ -96,10 +97,10 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	}
 
 	if (defaultButton)
-		addButton(this, okButtonPos, _h - buttonHeight - 8, defaultButton, kOkCmd, '\n');	// Confirm dialog
+		addButton(this, okButtonPos, _h - buttonHeight - 8, defaultButton, kOkCmd, Common::ASCII_RETURN);	// Confirm dialog
 
 	if (altButton)
-		addButton(this, cancelButtonPos, _h - buttonHeight - 8, altButton, kCancelCmd, '\27');	// Cancel dialog
+		addButton(this, cancelButtonPos, _h - buttonHeight - 8, altButton, kCancelCmd, Common::ASCII_ESCAPE);	// Cancel dialog
 }
 
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

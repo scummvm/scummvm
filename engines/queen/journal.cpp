@@ -515,15 +515,15 @@ void Journal::initTextField(const char *desc) {
 void Journal::updateTextField(uint16 ascii, int keycode) {
 	bool dirty = false;
 	switch (keycode) {
-	case 8: // backspace
+	case Common::KEYCODE_BACKSPACE:
 		if (_textField.textCharsCount > 0) {
 			--_textField.textCharsCount;
 			_textField.text[_textField.textCharsCount] = '\0';
 			dirty = true;
 		}
 		break;
-	case '\n':
-	case '\r':
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
 		if (_textField.text[0]) {
 			closeTextField();
 			int currentSlot = _currentSavePage * 10 + _currentSaveSlot;

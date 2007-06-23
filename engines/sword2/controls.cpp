@@ -26,6 +26,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/events.h"
 #include "common/rect.h"
 #include "common/config-manager.h"
 #include "common/system.h"
@@ -317,9 +318,9 @@ int Dialog::runModal() {
 		KeyboardEvent *ke = _vm->keyboardEvent();
 
 		if (ke) {
-			if (ke->keycode == 27)
+			if (ke->kbd.keycode == Common::KEYCODE_ESCAPE)
 				setResult(0);
-			else if (ke->keycode == '\n' || ke->keycode == '\r')
+			else if (ke->kbd.keycode == Common::KEYCODE_RETURN || ke->kbd.keycode == Common::KEYCODE_KP_ENTER)
 				setResult(1);
 		}
 
@@ -1130,13 +1131,13 @@ public:
 
 	virtual void onKey(KeyboardEvent *ke) {
 		if (_editable) {
-			if (ke->keycode == 8)
-				_parent->onAction(this, 8);
-			else if (ke->ascii >= ' ' && ke->ascii <= 255) {
+			if (ke->kbd.keycode == Common::KEYCODE_BACKSPACE)
+				_parent->onAction(this, Common::KEYCODE_BACKSPACE);
+			else if (ke->kbd.ascii >= ' ' && ke->kbd.ascii <= 255) {
 				// Accept the character if the font renderer
 				// has what looks like a valid glyph for it.
-				if (_fr->getCharWidth(ke->ascii))
-					_parent->onAction(this, ke->ascii);
+				if (_fr->getCharWidth(ke->kbd.ascii))
+					_parent->onAction(this, ke->kbd.ascii);
 			}
 		}
 	}
@@ -1354,7 +1355,7 @@ void SaveRestoreDialog::onAction(Widget *widget, int result) {
 				drawEditBuffer(slot);
 			}
 			break;
-		case 8:
+		case Common::KEYCODE_BACKSPACE:
 			if (_editPos > _firstPos) {
 				_editBuffer[_editPos - 1] = _editBuffer[_editPos];
 				_editBuffer[_editPos--] = 0;

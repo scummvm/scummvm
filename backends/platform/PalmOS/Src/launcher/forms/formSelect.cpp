@@ -28,7 +28,8 @@
 #include "formUtil.h"
 #include "games.h"
 #include "start.h"
-#include "common/util.h"
+
+#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 static Char **items = NULL;
 Int16 selectedEngine = -1;

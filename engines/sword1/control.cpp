@@ -204,7 +204,7 @@ void Control::askForCd(void) {
 			_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
 		}
 		delay(300);
-		if (_keyPressed) {
+		if (_keyPressed.keycode) {
 			if (!Common::File::exists(fName)) {
 				memset(_screenBuf, 0, 640 * 480);
 				renderText(_lStrings[STR_INCORRECT_CD], 320, 230, TEXT_CENTER);
@@ -224,7 +224,8 @@ void Control::askForCd(void) {
 uint8 Control::runPanel(void) {
 	_mouseDown = false;
 	_restoreBuf = NULL;
-	_keyPressed = _numButtons = 0;
+	_keyPressed.reset();
+	_numButtons = 0;
 	_screenBuf = (uint8*)malloc(640 * 480);
 	memset(_screenBuf, 0, 640 * 480);
 	_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
@@ -283,7 +284,7 @@ uint8 Control::runPanel(void) {
 					_cursorVisible = false;
 					_cursorTick = 0;
 				}
-				if (_keyPressed)
+				if (_keyPressed.keycode)
 					handleSaveKey(_keyPressed);
 				else if (_cursorVisible != visible)
 					showSavegameNames();
@@ -328,10 +329,9 @@ uint8 Control::getClicks(uint8 mode, uint8 *retVal) {
 	}
 
 	uint8 flag = 0;
-	if (_keyPressed == 27)
+	if (_keyPressed.keycode == Common::KEYCODE_ESCAPE)
 		flag = kButtonCancel;
-	// 3 is num keypad Enter on Macs. See FR #1273746
-	else if (_keyPressed == '\r' || _keyPressed == '\n' || _keyPressed == 3)
+	else if (_keyPressed.keycode == Common::KEYCODE_RETURN || _keyPressed.keycode == Common::KEYCODE_KP_ENTER)
 		flag = kButtonOk;
 
 	if (flag) {
@@ -622,9 +622,9 @@ bool Control::getConfirm(const uint8 *title) {
 		buttons[0]->draw();
 		buttons[1]->draw();
 		delay(1000 / 12);
-		if (_keyPressed == 27)
+		if (_keyPressed.keycode == Common::KEYCODE_ESCAPE)
 			retVal = 2;
-		else if (_keyPressed == '\r' || _keyPressed == '\n')
+		else if (_keyPressed.keycode == Common::KEYCODE_RETURN || _keyPressed.keycode == Common::KEYCODE_KP_ENTER)
 			retVal = 1;
 		if (_mouseState & BS1L_BUTTON_DOWN) {
 			if (buttons[0]->wasClicked(_mouseX, _mouseY))
@@ -649,7 +649,7 @@ bool Control::getConfirm(const uint8 *title) {
 	return retVal == 1;
 }
 
-bool Control::keyAccepted(uint8 key) {
+bool Control::keyAccepted(uint16 ascii) {
 	// this routine needs changes for Czech keys... No idea how to do that, though.
 	// FIXME: It is not a good idea to put non-ASCII chars into a C source file,
 	// since there is no way to specify which encoding you are using. 
@@ -658,22 +658,22 @@ bool Control::keyAccepted(uint8 key) {
 	// do not at all specify which encoding keyboard events use, so this
 	// check here is probably not portable anyway...
 	static const char allowedSpecials[] = "יטבאתשהצüִײÜß,.:-()?! \"\'";
-	if (((key >= 'A') && (key <= 'Z')) ||
-		((key >= 'a') && (key <= 'z')) ||
-		((key >= '0') && (key <= '9')) ||
-		strchr(allowedSpecials, key))
+	if (((ascii >= 'A') && (ascii <= 'Z')) ||
+		((ascii >= 'a') && (ascii <= 'z')) ||
+		((ascii >= '0') && (ascii <= '9')) ||
+		strchr(allowedSpecials, ascii))
 		return true;
 	else
 		return false;
 }
 
-void Control::handleSaveKey(uint8 key) {
+void Control::handleSaveKey(Common::KeyState kbd) {
 	if (_selectedSavegame < 255) {
 		uint8 len = strlen((char*)_saveNames[_selectedSavegame]);
-		if ((key == 8) && len)  // backspace
+		if ((kbd.keycode == Common::KEYCODE_BACKSPACE) && len)  // backspace
 			_saveNames[_selectedSavegame][len - 1] = '\0';
-		else if (keyAccepted(key) && (len < 31)) {
-			_saveNames[_selectedSavegame][len] = key;
+		else if (keyAccepted(kbd.ascii) && (len < 31)) {
+			_saveNames[_selectedSavegame][len] = kbd.ascii;
 			_saveNames[_selectedSavegame][len + 1] = '\0';
 		}
 		showSavegameNames();
@@ -700,6 +700,9 @@ void Control::readSavegameDescriptions(void) {
 	inf = _saveFileMan->openForLoading("SAVEGAME.INF");
 	_saveScrollPos = _saveFiles = 0;
 	_selectedSavegame = 255;
+	for (uint8 cnt = 0; cnt < 64; cnt++) {
+		memset(_saveNames[cnt], 0, sizeof(_saveNames[cnt]));
+	}
 	if (inf) {
 		uint8 curFileNum = 0;
 		uint8 ch;
@@ -707,20 +710,18 @@ void Control::readSavegameDescriptions(void) {
 			uint8 pos = 0;
 			do {
 				ch = inf->readByte();
-				if ((ch == 10) || (ch == 255))
-					_saveNames[curFileNum][pos] = '\0';
-				else
-					_saveNames[curFileNum][pos] = ch;
-				pos++;
-			} while ((ch != 10) && (ch != 255));
-			curFileNum++;
-		} while (ch != 255);
+				if (pos < sizeof(_saveNames[curFileNum]) - 1) {
+					if ((ch == 10) || (ch == 255) || (inf->eos()))
+						_saveNames[curFileNum][pos++] = '\0';
+					else if (ch >= 32)
+						_saveNames[curFileNum][pos++] = ch;
+				}
+			} while ((ch != 10) && (ch != 255) && (!inf->eos()));
+			if (_saveNames[curFileNum][0] != 0)
+				curFileNum++;
+		} while ((ch != 255) && (!inf->eos()));
 		_saveFiles = curFileNum;
-		for (uint8 cnt = _saveFiles; cnt < 64; cnt++)
-			_saveNames[cnt][0] = '\0';
-	} else
-		for (uint8 cnt = 0; cnt < 64; cnt++)
-			_saveNames[cnt][0] = '\0';
+	}
 	delete inf;
 }
 
@@ -1036,7 +1037,7 @@ void Control::delay(uint32 msecs) {
 
 	uint32 now = _system->getMillis();
 	uint32 endTime = now + msecs;
-	_keyPressed = 0;	//reset
+	_keyPressed.reset();
 	_mouseState = 0;
 
 	do {
@@ -1044,12 +1045,7 @@ void Control::delay(uint32 msecs) {
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-
-				// Make sure backspace works right (this fixes a small issue on OS X)
-				if (event.kbd.keycode == 8)
-					_keyPressed = 8;
-				else
-					_keyPressed = (byte)event.kbd.ascii;
+				_keyPressed = event.kbd;
 				// we skip the rest of the delay and return immediately
 				// to handle keyboard input
 				return;

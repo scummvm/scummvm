@@ -62,18 +62,25 @@ public:
 
 	void init();
 
-	virtual int16	getChildY() const;
-
-	// Problem: how to add items to a tab?
-	// First off, widget should allow non-dialog bosses, (i.e. also other widgets)
-	// Could add a common base class for Widgets and Dialogs.
-	// Then you add tabs using the following method, which returns a unique ID
+	/**
+	 * Add a new tab with the given title. Returns a unique ID which can be used
+	 * to identify the tab (to remove it / activate it etc.).
+	 */
 	int addTab(const String &title);
 
-	// Maybe we need to remove tabs again? Hm
-	//void removeTab(int tabID);
+	/**
+	 * Remove the tab with the given tab ID. Disposes all child widgets of that tab.
+	 * TODO: This code is *unfinished*. In particular, it changes the
+	 * tabIDs, so that they are not unique anymore! This is bad.
+	 * If we need to, we could fix this by changing the tab IDs from being an index
+	 * into the _tabs array to a real "unique" ID, which gets stored in the Tab struct.
+	 * It won't be difficult to implement this, but since currently no code seems to make
+	 * use of the feature...
+	 */
+	void removeTab(int tabID);
 
-	/** Set the active tab by specifying a valid tab ID.
+	/**
+	 * Set the active tab by specifying a valid tab ID.
 	 * setActiveTab changes the value of _firstWidget. This means new
 	 * Widgets are always added to the active tab.
 	 */
@@ -88,6 +95,10 @@ public:
 	virtual void draw();
 
 protected:
+	// We overload getChildY to make sure child widgets are positioned correctly.
+	// Essentially this compensates for the space taken up by the tab title header.
+	virtual int16	getChildY() const;
+
 	virtual void drawWidget(bool hilite);
 
 	virtual Widget *findWidget(int x, int y);

@@ -857,7 +857,7 @@ Gfx::~Gfx() {
 
 	freeStaticCnv(_mouseComposedArrow);
 	delete _mouseComposedArrow;
-	
+
 	return;
 }
 

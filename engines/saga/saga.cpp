@@ -87,6 +87,7 @@ SagaEngine::SagaEngine(OSystem *syst)
 
 	_frameCount = 0;
 	_globalFlags = 0;
+	_mouseClickCount = 0;
 	memset(_ethicsPoints, 0, sizeof(_ethicsPoints));
 
 	// The Linux version of Inherit the Earth puts all data files in an
@@ -220,6 +221,17 @@ int SagaEngine::init() {
 
 	_gfx->initPalette();
 
+	if (getGameType() == GType_IHNM) {
+		if (!ConfMan.hasKey("voices")) {
+			_voicesEnabled = true;
+			ConfMan.setBool("voices", true);
+		} else {
+			_voicesEnabled = ConfMan.getBool("voices");
+		}
+	} else {
+		_voicesEnabled = true;
+	}
+
 	// FIXME: This is the ugly way of reducing redraw overhead. It works
 	//        well for 320x200 but it's unclear how well it will work for
 	//        640x480.
@@ -277,8 +289,8 @@ int SagaEngine::go() {
 				msec = MAX_TIME_DELTA;
 			}
 
-			// Since Puzzle is actorless, we do it here
-			if (_puzzle->isActive()) {
+			// Since Puzzle and forced text are actorless, we do them here
+			if (_puzzle->isActive() || _actor->isForcedTextShown()) {
 				_actor->handleSpeech(msec);
 			} else if (!_scene->isInIntro()) {
 				if (_interface->getMode() == kPanelMain ||
@@ -341,6 +353,11 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 	ActorData *actor;
 	ObjectData *obj;
 	const HitZone *hitZone;
+
+	// Disable the object names in IHNM when the chapter is 8
+	if (getGameType() == GType_IHNM && _scene->currentChapterNumber() == 8)
+		return "";
+
 	switch (objectTypeId(objectId)) {
 	case kGameObjectObject:
 		obj = _actor->getObj(objectId);
@@ -352,6 +369,10 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 		return _actor->_actorsStrings.getString(actor->_nameIndex);
 	case kGameObjectHitZone:
 		hitZone = _scene->_objectMap->getHitZone(objectIdToIndex(objectId));
+
+		if (hitZone == NULL)
+			return "";
+
 		return _scene->_sceneStrings.getString(hitZone->getNameIndex());
 	}
 	warning("SagaEngine::getObjectName name not found for 0x%X", objectId);

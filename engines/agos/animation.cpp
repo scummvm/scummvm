@@ -30,6 +30,7 @@
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/surface.h"
 
 #include "agos/animation.h"
 #include "agos/intern.h"
@@ -43,6 +44,8 @@ namespace AGOS {
 MoviePlayer::MoviePlayer(AGOSEngine *vm, Audio::Mixer *mixer)
 	: DXAPlayer(), _vm(vm), _mixer(mixer) {
 	_omniTV = false;
+
+	_omniTVFile = 0;
 
 	_leftButtonDown = false;
 	_rightButtonDown = false;
@@ -103,25 +106,31 @@ bool MoviePlayer::load(const char *filename) {
 
 void MoviePlayer::playOmniTV() {
 	// Load OmniTV video
-	if (!_fd.isOpen()) {
-		_vm->_variableArray[254] = 6747;
-		return;
-	} else {
+	if (_fd) {
 		_vm->setBitFlag(42, false);
 		_omniTV = true;
 		startSound();
-		return;
+	} else {
+		if (_omniTVFile) {
+			// Restore state
+			_fd = _omniTVFile;
+			_mixer->pauseHandle(_omniTVSound, false);
+
+			_vm->setBitFlag(42, false);
+			_omniTV = true;
+		} else {
+			_vm->_variableArray[254] = 6747;
+		}
 	}
 }
 
 void MoviePlayer::play() {
-	// The OmniTV videos were not included with Amiga and Macintosh versions.
-	if (_vm->getPlatform() == Common::kPlatformWindows && _vm->getBitFlag(40)) {
+	if (_vm->getBitFlag(40)) {
 		playOmniTV();
 		return;
 	}
 
-	if (!_fd.isOpen()) {
+	if (!_fd) {
 		return;
 	}
 
@@ -132,7 +141,7 @@ void MoviePlayer::play() {
 
 	// Resolution is smaller in Amiga verison so always clear screen
 	if (_width == 384 && _height == 280) {
-		memset(_vm->_frontBuf, 0, _vm->_screenHeight * _vm->_screenWidth);
+		_vm->clearSurfaces();
 	}
 
 	_ticks = _vm->_system->getMillis();
@@ -147,14 +156,15 @@ void MoviePlayer::play() {
 	_vm->o_killAnimate();
 
 	if (_vm->getBitFlag(41)) {
-		memcpy(_vm->_backBuf, _vm->_frontBuf, _frameSize);
+		_vm->fillBackFromFront();
 	} else {
 		uint8 palette[1024];
 		memset(palette, 0, sizeof(palette));
-		_vm->clearSurfaces(480);
+		_vm->clearSurfaces();
 		_vm->_system->setPalette(palette, 0, 256);
 	}
 
+	 _vm->fillBackGroundFromBack();
 	_vm->_fastFadeOutFlag = true;
 }
 
@@ -162,14 +172,14 @@ void MoviePlayer::startSound() {
 	byte *buffer;
 	uint32 offset, size, tag;
 
-	tag = _fd.readUint32BE();
+	tag = _fd->readUint32BE();
 	if (tag == MKID_BE('WAVE')) {
-		size = _fd.readUint32BE();
+		size = _fd->readUint32BE();
 
 		if (_sequenceNum) {
 			Common::File in;
 
-			_fd.seek(size, SEEK_CUR);
+			_fd->seek(size, SEEK_CUR);
 
 			in.open((const char *)"audio.wav");
 			if (!in.isOpen()) {
@@ -186,7 +196,7 @@ void MoviePlayer::startSound() {
 			in.close();
 		} else {
 			buffer = (byte *)malloc(size);
-			_fd.read(buffer, size);
+			_fd->read(buffer, size);
 		}
 
 		Common::MemoryReadStream stream(buffer, size);
@@ -197,8 +207,13 @@ void MoviePlayer::startSound() {
 	}
 
 	if (_bgSoundStream != NULL) {
-		_mixer->stopHandle(_bgSound);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
+		if (_omniTV) {
+			_mixer->stopHandle(_omniTVSound);
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_omniTVSound, _bgSoundStream);
+		} else {
+			_mixer->stopHandle(_bgSound);
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
+		}
 	}
 }
 
@@ -207,8 +222,12 @@ void MoviePlayer::nextFrame() {
 		return;
 
 	if (_vm->getBitFlag(42)) {
+		// Save state
+		 _omniTVFile = _fd;
+		_mixer->pauseHandle(_omniTVSound, true);
+
+		_fd = 0;
 		_omniTV = false;
-		closeFile();
 		return;
 	}
 
@@ -223,6 +242,7 @@ void MoviePlayer::nextFrame() {
 		_frameNum++;
 	} else {
 		_omniTV = false;
+		_omniTVFile = 0;
 		closeFile();
 		_vm->_variableArray[254] = 6747;
 	}
@@ -230,9 +250,8 @@ void MoviePlayer::nextFrame() {
 
 void MoviePlayer::handleNextFrame() {
 	decodeNextFrame();
-	processFrame();
-
-	_vm->_system->updateScreen();
+	if (processFrame())
+		_vm->_system->updateScreen();
 	_frameNum++;
 
 	Common::Event event;
@@ -285,9 +304,10 @@ void MoviePlayer::setPalette(byte *pal) {
 	_vm->_system->setPalette(palette, 0, 256);
 }
 
-void MoviePlayer::processFrame() {
-	copyFrameToBuffer(_vm->getFrontBuf(), (_vm->_screenWidth - _width) / 2, (_vm->_screenHeight - _height) / 2, _vm->_screenWidth);
-	_vm->_system->copyRectToScreen(_vm->getFrontBuf(), _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
+bool MoviePlayer::processFrame() {
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+	copyFrameToBuffer((byte *)screen->pixels, (_vm->_screenWidth - _width) / 2, (_vm->_screenHeight - _height) / 2, _vm->_screenWidth);
+	_vm->_system->unlockScreen();
 
 	if ((_bgSoundStream == NULL) || ((int)(_mixer->getSoundElapsedTime(_bgSound) * _framesPerSec) / 1000 < _frameNum + 1) ||
 		_frameSkipped > _framesPerSec) {
@@ -309,10 +329,13 @@ void MoviePlayer::processFrame() {
 			while (_vm->_system->getMillis() < _ticks)
 				_vm->_system->delayMillis(10);
 		}
-	} else {
-		warning("dropped frame %i", _frameNum);
-		_frameSkipped++;
+
+		return true;
 	}
+
+	warning("dropped frame %i", _frameNum);
+	_frameSkipped++;
+	return false;
 }
 
 const char * MoviePlayer::_sequenceList[90] = {

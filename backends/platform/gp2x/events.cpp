@@ -65,7 +65,7 @@
 static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode)
 {
 	if (key >= SDLK_F1 && key <= SDLK_F9) {
-		return key - SDLK_F1 + 315;
+		return key - SDLK_F1 + Common::ASCII_F1;
 	} else if (key >= SDLK_KP0 && key <= SDLK_KP9) {
 		return key - SDLK_KP0 + '0';
 	} else if (key >= SDLK_UP && key <= SDLK_PAGEDOWN) {
@@ -468,10 +468,10 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 						break;
 					case GP2X_BUTTON_R:
 						if (GP2X_BUTTON_STATE_L == TRUE) {
-							event.kbd.keycode = SDLK_0;
+							event.kbd.keycode = Common::KEYCODE_0;
 							event.kbd.ascii = mapKey(SDLK_0, ev.key.keysym.mod, 0);
 						} else {
-							event.kbd.keycode = SDLK_F5;
+							event.kbd.keycode = Common::KEYCODE_F5;
 							event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 						}
 						break;
@@ -479,28 +479,28 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 						if (GP2X_BUTTON_STATE_L == TRUE) {
 							event.type = Common::EVENT_QUIT;
 						} else {
-							event.kbd.keycode = SDLK_ESCAPE;
+							event.kbd.keycode = Common::KEYCODE_ESCAPE;
 							event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
 						}
 						break;
 					case GP2X_BUTTON_A:
-						event.kbd.keycode = SDLK_PERIOD;
+						event.kbd.keycode = Common::KEYCODE_PERIOD;
 						event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
 						break;
 					case GP2X_BUTTON_Y:
 						if (GP2X_BUTTON_STATE_L == TRUE) {
 							setZoomOnMouse();
 						} else {
-							event.kbd.keycode = SDLK_SPACE;
+							event.kbd.keycode = Common::KEYCODE_SPACE;
 							event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
 						}
 						break;
 					case JOY_BUT_RETURN:
-						event.kbd.keycode = SDLK_RETURN;
+						event.kbd.keycode = Common::KEYCODE_RETURN;
 						event.kbd.ascii = mapKey(SDLK_RETURN, ev.key.keysym.mod, 0);
 						break;
 					case JOY_BUT_ZERO:
-						event.kbd.keycode = SDLK_0;
+						event.kbd.keycode = Common::KEYCODE_0;
 						event.kbd.ascii = mapKey(SDLK_0, ev.key.keysym.mod, 0);
 						break;
 
@@ -514,7 +514,7 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 					//		displayMessageOnOSD("Left Trigger Pressed");
 					//		break;
 					//	} else if ((ev.jbutton.button == GP2X_BUTTON_R) && (ev.jbutton.button != GP2X_BUTTON_L)) {
-					//		event.kbd.keycode = SDLK_F5;
+					//		event.kbd.keycode = Common::KEYCODE_F5;
 					//		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 					//		break;
 					//	} else {
@@ -525,7 +525,7 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 						if (GP2X_BUTTON_STATE_L == TRUE) {
 							displayMessageOnOSD("Setting CPU Speed at 230MHz");
 							GP2X_setCpuspeed(200);
-							//event.kbd.keycode = SDLK_PLUS;
+							//event.kbd.keycode = Common::KEYCODE_PLUS;
 							//event.kbd.ascii = mapKey(SDLK_PLUS, ev.key.keysym.mod, 0);
 						} else {
 							GP2X_mixer_move_volume(1);
@@ -536,7 +536,7 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 						if (GP2X_BUTTON_STATE_L == TRUE) {
 							displayMessageOnOSD("Setting CPU Speed at 60MHz");
 							GP2X_setCpuspeed(60);
-							//event.kbd.keycode = SDLK_MINUS;
+							//event.kbd.keycode = Common::KEYCODE_MINUS;
 							//event.kbd.ascii = mapKey(SDLK_MINUS, ev.key.keysym.mod, 0);
 						} else {
 							GP2X_mixer_move_volume(0);
@@ -564,26 +564,26 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 				event.kbd.flags = 0;
 				switch (ev.jbutton.button) {
 					case GP2X_BUTTON_SELECT:
-						event.kbd.keycode = SDLK_ESCAPE;
+						event.kbd.keycode = Common::KEYCODE_ESCAPE;
 						event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
 						break;
 					case GP2X_BUTTON_A:
-						event.kbd.keycode = SDLK_PERIOD;
+						event.kbd.keycode = Common::KEYCODE_PERIOD;
 						event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
 						break;
 					case GP2X_BUTTON_Y:
-//						event.kbd.keycode = SDLK_SPACE;
+//						event.kbd.keycode = Common::KEYCODE_SPACE;
 //						event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
 						break;
 					case GP2X_BUTTON_START:
-						event.kbd.keycode = SDLK_RETURN;
+						event.kbd.keycode = Common::KEYCODE_RETURN;
 						event.kbd.ascii = mapKey(SDLK_RETURN, ev.key.keysym.mod, 0);
 						break;
 					case GP2X_BUTTON_L:
 						GP2X_BUTTON_STATE_L = FALSE;
 						break;
 					case GP2X_BUTTON_R:
-						event.kbd.keycode = SDLK_F5;
+						event.kbd.keycode = Common::KEYCODE_F5;
 						event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 						break;
 					case GP2X_BUTTON_VOLUP:

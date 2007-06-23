@@ -25,7 +25,11 @@
 
 #include "common/stdafx.h"
 
+#include "common/system.h"
+
 #include "common/file.h"
+
+#include "graphics/surface.h"
 
 #include "agos/agos.h"
 
@@ -33,19 +37,32 @@ namespace AGOS {
 
 void AGOSEngine::loadIconFile() {
 	Common::File in;
-	uint size;
+	uint32 srcSize;
 
 	in.open(getFileName(GAME_ICONFILE));
 	if (in.isOpen() == false)
 		error("Can't open icons file '%s'", getFileName(GAME_ICONFILE));
 
-	size = in.size();
+	srcSize = in.size();
 
-	_iconFilePtr = (byte *)malloc(size);
-	if (_iconFilePtr == NULL)
-		error("Out of icon memory");
+	if (getGameType() == GType_WW && getPlatform() == Common::kPlatformAmiga) {
+		byte *srcBuf = (byte *)malloc(srcSize);
+		in.read(srcBuf, srcSize);
 
-	in.read(_iconFilePtr, size);
+		uint32 dstSize = READ_BE_UINT32(srcBuf + srcSize - 4);
+		_iconFilePtr = (byte *)malloc(dstSize);
+		if (_iconFilePtr == NULL)
+			error("Out of icon memory");
+
+		decrunchFile(srcBuf, _iconFilePtr, srcSize);
+		free(srcBuf);
+	} else {
+		_iconFilePtr = (byte *)malloc(srcSize);
+		if (_iconFilePtr == NULL)
+			error("Out of icon memory");
+
+		in.read(_iconFilePtr, srcSize);
+	}
 	in.close();
 }
 
@@ -66,15 +83,19 @@ void AGOSEngine::loadIconData() {
 // Thanks to Stuart Caie for providing the original
 // C conversion upon which this function is based.
 static void decompressIconPlanar(byte *dst, byte *src, uint width, uint height, byte base, uint pitch, bool decompress = true) {
-	byte icon_pln[288];
-	byte *i, *o, *srcPtr, x, y;
+	byte *i, *icon_pln, *o, *srcPtr;
+	byte x, y;
 
+	icon_pln = 0;
 	srcPtr = src;
+
 	if (decompress) {
+		icon_pln = (byte *)calloc(width * height, 1);
+
 		// Decode RLE planar icon data
 		i = src;
 		o = icon_pln;
-		while (o < &icon_pln[288]) {
+		while (o < &icon_pln[width * height]) {
 			x = *i++;
 			if (x < 128) {
 				do {
@@ -96,18 +117,20 @@ static void decompressIconPlanar(byte *dst, byte *src, uint width, uint height, 
 	}
 
 	// Translate planar data to chunky (very slow method)
-	for (y = 0; y < 24; y++) {
-		for (x = 0; x < 24; x++) {
+	for (y = 0; y < height * 2; y++) {
+		for (x = 0; x < width; x++) {
 			byte pixel =
-				  (srcPtr[((     y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 1 : 0)
-				| (srcPtr[((24 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 2 : 0)
-				| (srcPtr[((48 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 4 : 0)
-				| (srcPtr[((72 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 8 : 0);
+				  (srcPtr[((height * 0 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 1 : 0)
+				| (srcPtr[((height * 2 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 2 : 0)
+				| (srcPtr[((height * 4 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 4 : 0)
+				| (srcPtr[((height * 6 + y) * 3) + (x >> 3)] & (1 << (7 - (x & 7))) ? 8 : 0);
 			if (pixel)
 				dst[x] = pixel | base;
 		}
 		dst += pitch;
 	}
+
+	free(icon_pln);
 }
 
 static void decompressIcon(byte *dst, byte *src, uint width, uint height, byte base, uint pitch) {
@@ -174,19 +197,23 @@ void AGOSEngine_Simon2::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 	byte *src;
 
 	_lockWord |= 0x8000;
-	dst = getFrontBuf();
+
+	Graphics::Surface *screen = _system->lockScreen();
+	dst = (byte *)screen->pixels;
 
 	dst += 110;
 	dst += x;
 	dst += (y + window->y) * _dxSurfacePitch;
 
 	src = _iconFilePtr;
-	src += READ_LE_UINT16(&((uint16 *)src)[icon * 2 + 0]);
+	src += READ_LE_UINT16(src + icon * 4 + 0);
 	decompressIcon(dst, src, 20, 10, 224, _dxSurfacePitch);
 
 	src = _iconFilePtr;
-	src += READ_LE_UINT16(&((uint16 *)src)[icon * 2 + 1]);
+	src += READ_LE_UINT16(src + icon * 4 + 2);
 	decompressIcon(dst, src, 20, 10, 208, _dxSurfacePitch);
+
+	_system->unlockScreen();
 
 	_lockWord &= ~0x8000;
 }
@@ -196,21 +223,25 @@ void AGOSEngine_Simon1::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 	byte *src;
 
 	_lockWord |= 0x8000;
-	dst = getFrontBuf();
+
+	Graphics::Surface *screen = _system->lockScreen();
+	dst = (byte *)screen->pixels;
 
 	dst += (x + window->x) * 8;
 	dst += (y * 25 + window->y) * _dxSurfacePitch;
 
 	if (getPlatform() == Common::kPlatformAmiga) {
 		src = _iconFilePtr;
-		src += READ_BE_UINT32(&((uint32 *)src)[icon]);
+		src += READ_BE_UINT32(src + icon * 4);
 		uint8 color = (getFeatures() & GF_32COLOR) ? 16 : 240;
-		decompressIconPlanar(dst, src, 24, 24, color, _dxSurfacePitch);
+		decompressIconPlanar(dst, src, 24, 12, color, _dxSurfacePitch);
 	} else {
 		src = _iconFilePtr;
-		src += READ_LE_UINT16(&((uint16 *)src)[icon]);
+		src += READ_LE_UINT16(src + icon * 2);
 		decompressIcon(dst, src, 24, 12, 224, _dxSurfacePitch);
 	}
+
+	_system->unlockScreen();
 
 	_lockWord &= ~0x8000;
 }
@@ -220,20 +251,25 @@ void AGOSEngine_Waxworks::drawIcon(WindowBlock *window, uint icon, uint x, uint 
 	byte *src;
 
 	_lockWord |= 0x8000;
-	dst = getFrontBuf();
+
+	Graphics::Surface *screen = _system->lockScreen();
+	dst = (byte *)screen->pixels;
 
 	dst += (x + window->x) * 8;
 	dst += (y * 20 + window->y) * _dxSurfacePitch;
 
 	uint8 color = dst[0] & 0xF0;
 	if (getPlatform() == Common::kPlatformAmiga) {
-		// TODO
-		return;
+		src = _iconFilePtr;
+		src += READ_BE_UINT32(src + icon * 4);
+		decompressIconPlanar(dst, src, 24, 10, color, _dxSurfacePitch);
 	} else {
 		src = _iconFilePtr;
-		src += READ_LE_UINT16(&((uint16 *)src)[icon]);
+		src += READ_LE_UINT16(src + icon * 2);
 		decompressIcon(dst, src, 24, 10, color, _dxSurfacePitch);
 	}
+
+	_system->unlockScreen();
 
 	_lockWord &= ~0x8000;
 }
@@ -243,7 +279,9 @@ void AGOSEngine_Elvira2::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 	byte *src;
 
 	_lockWord |= 0x8000;
-	dst = getFrontBuf();
+
+	Graphics::Surface *screen = _system->lockScreen();
+	dst = (byte *)screen->pixels;
 
 	dst += (x + window->x) * 8;
 	dst += (y * 8 + window->y) * _dxSurfacePitch;
@@ -251,13 +289,15 @@ void AGOSEngine_Elvira2::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 	uint color = dst[0] & 0xF0;
 	if (getFeatures() & GF_PLANAR) {
 		src = _iconFilePtr;
-		src += READ_BE_UINT32(&((uint32 *)src)[icon]);
-		decompressIconPlanar(dst, src, 24, 24, color, _dxSurfacePitch);
+		src += READ_BE_UINT32(src + icon * 4);
+		decompressIconPlanar(dst, src, 24, 12, color, _dxSurfacePitch);
 	} else {
 		src = _iconFilePtr;
-		src += READ_LE_UINT16(&((uint16 *)src)[icon]);
+		src += READ_LE_UINT16(src + icon * 2);
 		decompressIcon(dst, src, 24, 12, color, _dxSurfacePitch);
 	}
+
+	_system->unlockScreen();
 
 	_lockWord &= ~0x8000;
 }
@@ -267,20 +307,24 @@ void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 	byte *src;
 
 	_lockWord |= 0x8000;
-	dst = getFrontBuf();
+
+	Graphics::Surface *screen = _system->lockScreen();
+	dst = (byte *)screen->pixels;
 
 	dst += (x + window->x) * 8;
 	dst += (y * 8 + window->y) * _dxSurfacePitch;
 
 	if (getFeatures() & GF_PLANAR) {
 		src = _iconFilePtr;
-		src += READ_BE_UINT16(&((uint16 *)src)[icon]);
-		decompressIconPlanar(dst, src, 24, 24, 16, _dxSurfacePitch);
+		src += READ_BE_UINT16(src + icon * 2);
+		decompressIconPlanar(dst, src, 24, 12, 16, _dxSurfacePitch);
 	} else {
 		src = _iconFilePtr;
 		src += icon * 288;
-		decompressIconPlanar(dst, src, 24, 24, 16, _dxSurfacePitch, false);
+		decompressIconPlanar(dst, src, 24, 12, 16, _dxSurfacePitch, false);
 	}
+
+	_system->unlockScreen();
 
 	_lockWord &= ~0x8000;
 }
@@ -384,7 +428,7 @@ l1:;		itemRef = derefItem(itemRef->next);
 	}
 
 	/* Plot arrows and add their boxes */
-	addArrows(window);		
+	addArrows(window, num);		
 	window->iconPtr->upArrow = _scrollUpHitArea;
 	window->iconPtr->downArrow = _scrollDownHitArea;
 }
@@ -486,7 +530,7 @@ void AGOSEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask)
 
 	if (showArrows != 0 || window->iconPtr->line != 0) {
 		/* Plot arrows and add their boxes */
-		addArrows(window);		
+		addArrows(window, num);		
 		window->iconPtr->upArrow = _scrollUpHitArea;
 		window->iconPtr->downArrow = _scrollDownHitArea;
 	}
@@ -594,7 +638,7 @@ uint AGOSEngine::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y,
 	return ha - _hitAreas;
 }
 
-void AGOSEngine_Feeble::addArrows(WindowBlock *window) {
+void AGOSEngine_Feeble::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -624,7 +668,7 @@ void AGOSEngine_Feeble::addArrows(WindowBlock *window) {
 	ha->verb = 1;
 }
 
-void AGOSEngine_Simon2::addArrows(WindowBlock *window) {
+void AGOSEngine_Simon2::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -654,7 +698,7 @@ void AGOSEngine_Simon2::addArrows(WindowBlock *window) {
 	ha->verb = 1;
 }
 
-void AGOSEngine_Simon1::addArrows(WindowBlock *window) {
+void AGOSEngine_Simon1::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -683,16 +727,24 @@ void AGOSEngine_Simon1::addArrows(WindowBlock *window) {
 	ha->window = window;
 	ha->verb = 1;
 
-	if (getFeatures() & GF_32COLOR) {
-		// TODO: Manually draws arrows
-	} else {
-		stopAnimate(128);
-		uint8 palette = (getPlatform() == Common::kPlatformAmiga) ? 15: 14;
-		animate(0, 1, 128, 0, 0, palette);
-	}
+	_lockWord |= 0x8;
+
+	VgaPointersEntry *vpe = &_vgaBufferPointers[1];
+	byte *curVgaFile2Orig = _curVgaFile2;
+	uint16 windowNumOrig = _windowNum;
+	uint8 palette = (getPlatform() == Common::kPlatformAmiga) ? 15 : 14;
+
+	_windowNum = 0;
+	_curVgaFile2 = vpe->vgaFile2;
+	drawImage_init(1, palette, 38, 150, 4);
+
+	_curVgaFile2 = curVgaFile2Orig;
+	_windowNum = windowNumOrig;
+
+	_lockWord &= ~0x8;
 }
 
-void AGOSEngine_Waxworks::addArrows(WindowBlock *window) {
+void AGOSEngine_Waxworks::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -724,7 +776,7 @@ void AGOSEngine_Waxworks::addArrows(WindowBlock *window) {
 	setWindowImageEx(6, 103);
 }
 
-void AGOSEngine_Elvira2::addArrows(WindowBlock *window) {
+void AGOSEngine_Elvira2::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -756,8 +808,17 @@ void AGOSEngine_Elvira2::addArrows(WindowBlock *window) {
 	setWindowImageEx(6, 106);
 }
 
-void AGOSEngine::addArrows(WindowBlock *window) {
+void AGOSEngine::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;
+	uint16 x, y;
+
+	x = 30;
+	y = 151;
+	if (num != 2) {
+		y = window->height * 4 + window->y - 19;
+		x = window->width + window->x;
+	}
+	drawArrow(x, y, 16);
 
 	ha = findEmptyHitArea();
 	_scrollUpHitArea = ha - _hitAreas;
@@ -771,6 +832,14 @@ void AGOSEngine::addArrows(WindowBlock *window) {
 	ha->priority = 100;
 	ha->window = window;
 	ha->verb = 1;
+
+	x = 30;
+	y = 170;
+	if (num != 2) {
+		y = window->height * 4;
+		x = window->width + window->x;
+	}
+	drawArrow(x, y, -16);
 
 	ha = findEmptyHitArea();
 	_scrollDownHitArea = ha - _hitAreas;
@@ -786,21 +855,89 @@ void AGOSEngine::addArrows(WindowBlock *window) {
 	ha->verb = 1;
 }
 
+static const byte _arrowImage[] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0a, 
+	0x0b, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x0b, 
+	0x0a, 0x0b, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x0b, 0x0a, 
+	0x0d, 0x0a, 0x0b, 0x0a, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x0a, 0x0b, 0x0a, 0x0d, 
+	0x03, 0x0d, 0x0a, 0x0b, 0x0a, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x0a, 0x0b, 0x0a, 0x0d, 0x03, 
+	0x04, 0x03, 0x0d, 0x0a, 0x0b, 0x0a, 0x00, 0x00, 
+	0x00, 0x00, 0x0a, 0x0b, 0x0a, 0x0d, 0x03, 0x04, 
+	0x0f, 0x04, 0x03, 0x0d, 0x0a, 0x0b, 0x0a, 0x00, 
+	0x00, 0x0a, 0x0b, 0x0a, 0x0d, 0x0d, 0x0d, 0x03, 
+	0x04, 0x03, 0x0d, 0x0d, 0x0d, 0x0a, 0x0b, 0x0a, 
+	0x00, 0x0b, 0x0a, 0x0a, 0x0a, 0x0a, 0x09, 0x0d, 
+	0x03, 0x0d, 0x09, 0x0a, 0x0a, 0x0a, 0x0a, 0x0b, 
+	0x00, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0a, 0x0d, 
+	0x0d, 0x0d, 0x0a, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 
+	0x00, 0x0a, 0x0a, 0x0a, 0x0e, 0x0b, 0x0b, 0x0c, 
+	0x0e, 0x0c, 0x0b, 0x0b, 0x0e, 0x0a, 0x0a, 0x0a, 
+	0x00, 0x00, 0x02, 0x02, 0x0a, 0x0b, 0x0a, 0x0d, 
+	0x0d, 0x0d, 0x0a, 0x0b, 0x0a, 0x02, 0x02, 0x00, 
+	0x00, 0x00, 0x00, 0x02, 0x0a, 0x0b, 0x0b, 0x0c, 
+	0x0e, 0x0c, 0x0b, 0x0b, 0x0a, 0x02, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x0a, 0x0b, 0x0a, 0x0d, 
+	0x0d, 0x0d, 0x0a, 0x0b, 0x0a, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x0a, 0x0b, 0x0b, 0x0c, 
+	0x0e, 0x0c, 0x0b, 0x0b, 0x0a, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x0a, 0x0b, 0x0b, 0x0b, 
+	0x0b, 0x0b, 0x0b, 0x0b, 0x0a, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x02, 0x0e, 0x0a, 0x0a, 
+	0x0e, 0x0a, 0x0a, 0x0e, 0x02, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x00, 0x00, 
+	0x0a, 0x00, 0x00, 0x0a, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 
+	0x02, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 
+};
+
+void AGOSEngine::drawArrow(uint16 x, uint16 y, int8 dir) {
+	const byte *src;
+	uint8 w, h;
+
+	if (dir < 0) {
+		src = _arrowImage + 288;
+	} else {
+		src = _arrowImage;
+	}
+
+	Graphics::Surface *screen = _system->lockScreen();
+	byte *dst = (byte *)screen->pixels + y * _screenWidth + x * 8;
+
+	for (h = 0; h < 19; h++) {
+		for (w = 0; w < 16; w++) {
+			dst[w] = src[w] + 16;
+		}
+
+		src += dir;
+		dst+= _screenWidth;
+	}
+
+	_system->unlockScreen();
+}
+
 void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
 	if (getGameType() == GType_SIMON1) {
-		if (getFeatures() & GF_32COLOR) {
-			// TODO: Manually removes arrows
-		} else {
-			stopAnimate(129);
-			uint8 palette = (getPlatform() == Common::kPlatformAmiga) ? 15: 14;
-			animate(0, 1, 129, 0, 0, palette);
-		}
+		restoreBlock(200, 320, 146, 304);
 	} else if (getGameType() == GType_WW) {
 		setBitFlag(22, false);
 		setWindowImageEx(6, 103);
 	} else if (getGameType() == GType_ELVIRA2) {
 		setBitFlag(21, false);
 		setWindowImageEx(6, 106);
+	} else if (getGameType() == GType_ELVIRA1) {
+		if (num != 2) {
+			uint y = window->height * 4 + window->y - 19;
+			uint x = window->width + window->x;
+			restoreBlock(y + 38, x + 16, y, x);
+		} else {
+			colorBlock(window, 240, 151, 16, 38);
+		}
 	}
 }
 

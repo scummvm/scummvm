@@ -456,6 +456,9 @@ void Script::doVerb() {
 		} else {
 			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 		}
+		// IHNM never sets scriptModuleNumber to 0
+		if (_vm->getGameType() == GType_IHNM)
+			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 	} else {
 		if (_pendingVerb == getVerbType(kVerbUse)) {
 			if ((objectTypeId(_pendingObject[1]) > kGameObjectNone) && (objectType < objectTypeId(_pendingObject[1]))) {
@@ -464,9 +467,15 @@ void Script::doVerb() {
 			}
 		}
 
-		if (objectType == kGameObjectHitZone) {
+		if (objectType == 0)
+			return;
+		else if (objectType == kGameObjectHitZone) {
 			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 			hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[0]));
+
+			if (hitZone == NULL)
+				return;
+
 			if ((hitZone->getFlags() & kHitZoneExit) == 0) {
 				scriptEntrypointNumber = hitZone->getScriptNumber();
 			}
@@ -479,27 +488,27 @@ void Script::doVerb() {
 				} else {
 					scriptModuleNumber = 0;
 				}
+				// IHNM never sets scriptModuleNumber to 0
+				if (_vm->getGameType() == GType_IHNM)
+					scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 			}
 		}
 	}
 
 	if (scriptEntrypointNumber > 0) {
 
-		// WORKAROUND: Fixes bug #1690045 "ITE: Item description missing / ScummVM crash"
-		if (!(_vm->_scene->currentSceneNumber() == 278 && (_pendingObject[0] == 16419 || _pendingObject[1] == 16419) && _vm->getGameType() == GType_ITE)) {
-			event.type = kEvTOneshot;
-			event.code = kScriptEvent;
-			event.op = kEventExecNonBlocking;
-			event.time = 0;
-			event.param = scriptModuleNumber;
-			event.param2 = scriptEntrypointNumber;
-			event.param3 = _pendingVerb;		// Action
-			event.param4 = _pendingObject[0];	// Object
-			event.param5 = _pendingObject[1];	// With Object
-			event.param6 = (objectType == kGameObjectActor) ? _pendingObject[0] : ID_PROTAG;		// Actor
+		event.type = kEvTOneshot;
+		event.code = kScriptEvent;
+		event.op = kEventExecNonBlocking;
+		event.time = 0;
+		event.param = scriptModuleNumber;
+		event.param2 = scriptEntrypointNumber;
+		event.param3 = _pendingVerb;		// Action
+		event.param4 = _pendingObject[0];	// Object
+		event.param5 = _pendingObject[1];	// With Object
+		event.param6 = (objectType == kGameObjectActor) ? _pendingObject[0] : ID_PROTAG;		// Actor
 
-			_vm->_events->queue(&event);
-		}
+		_vm->_events->queue(&event);
 
 	} else {
 		_vm->getExcuseInfo(_pendingVerb, excuseText, excuseSampleResourceId);
@@ -589,6 +598,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 	const HitZone *hitZone;
 	Point specialPoint;
 
+	_vm->incrementMouseClickCount();
 	_vm->_actor->abortSpeech();
 
 	if ((_vm->_actor->_protagonist->_currentAction != kActionWait) &&
@@ -629,10 +639,19 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 	}
 
 	if (hitZone != NULL) {
-		if (hitZone->getFlags() & kHitZoneNoWalk) {
-			_vm->_actor->actorFaceTowardsPoint(ID_PROTAG, pickLocation);
-			doVerb();
-			return;
+		if (_vm->getGameType() == GType_ITE) {
+			if (hitZone->getFlags() & kHitZoneNoWalk) {
+				_vm->_actor->actorFaceTowardsPoint(ID_PROTAG, pickLocation);
+				doVerb();
+				return;
+			}
+		} else { 
+			if (_vm->getGameType() == GType_IHNM) {
+				if ((hitZone->getFlags() & kHitZoneNoWalk) && (_pendingVerb != getVerbType(kVerbWalkTo))) {
+					doVerb();
+					return;
+				}
+			}
 		}
 
 		if (hitZone->getFlags() & kHitZoneProject) {
@@ -653,26 +672,64 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 		}
 	}
 
-	if ((_pendingVerb == getVerbType(kVerbWalkTo)) ||
-		(_pendingVerb == getVerbType(kVerbPickUp)) ||
-		(_pendingVerb == getVerbType(kVerbOpen)) ||
-		(_pendingVerb == getVerbType(kVerbClose)) ||
-		(_pendingVerb == getVerbType(kVerbUse))) {
-			_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
-	} else {
-		if (_pendingVerb == getVerbType(kVerbLookAt)) {
-			if (objectTypeId(_pendingObject[0]) != kGameObjectActor ) {
+	if (_vm->getGameType() == GType_ITE) {
+		if ((_pendingVerb == getVerbType(kVerbWalkTo)) ||
+			(_pendingVerb == getVerbType(kVerbPickUp)) ||
+			(_pendingVerb == getVerbType(kVerbOpen)) ||
+			(_pendingVerb == getVerbType(kVerbClose)) ||
+			(_pendingVerb == getVerbType(kVerbUse))) {
 				_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
-			} else {
-				doVerb();
-			}
 		} else {
-			if ((_pendingVerb == getVerbType(kVerbTalkTo)) ||
-				(_pendingVerb == getVerbType(kVerbGive))) {
+			if (_pendingVerb == getVerbType(kVerbLookAt)) {
+				if (objectTypeId(_pendingObject[0]) != kGameObjectActor ) {
+					_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
+				} else {
 					doVerb();
+				}
+			} else {
+				if ((_pendingVerb == getVerbType(kVerbTalkTo)) ||
+					(_pendingVerb == getVerbType(kVerbGive))) {
+						doVerb();
+				}
 			}
 		}
 	}
+
+	if (_vm->getGameType() == GType_IHNM) {
+
+		if ((_pendingVerb == getVerbType(kVerbWalkTo)) ||
+			(_pendingVerb == getVerbType(kVerbPickUp)) ||
+			(_pendingVerb == getVerbType(kVerbOpen)) ||
+			(_pendingVerb == getVerbType(kVerbClose)) ||
+			(_pendingVerb == getVerbType(kVerbUse))) {
+				_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
+
+				// Auto-use no-walk hitzones in IHNM, needed for Benny's chapter
+				if (_pendingVerb == getVerbType(kVerbWalkTo) &&
+					hitZone != NULL && (hitZone->getFlags() & kHitZoneNoWalk)) {
+					_pendingVerb = getVerbType(kVerbUse);
+					if (objectTypeId(_pendingObject[0]) == kGameObjectActor) {
+						_vm->_actor->actorFaceTowardsObject(ID_PROTAG, _pendingObject[0]);
+						doVerb();
+					}
+				}
+		} else {
+			if (_pendingVerb == getVerbType(kVerbLookAt)) {
+				if (objectTypeId(_pendingObject[0]) != kGameObjectActor) {
+					_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
+				} else {
+					_vm->_actor->actorFaceTowardsObject(ID_PROTAG, _pendingObject[0]);
+					doVerb();
+				}
+			} else {
+				if ((_pendingVerb == getVerbType(kVerbTalkTo)) ||
+					(_pendingVerb == getVerbType(kVerbGive))) {
+						doVerb();
+				}
+			}
+		}
+	}
+
 }
 
 void Script::whichObject(const Point& mousePoint) {
@@ -710,7 +767,8 @@ void Script::whichObject(const Point& mousePoint) {
 				} else {
 					actor = _vm->_actor->getActor(newObjectId);
 					objectId = newObjectId;
-					objectFlags = kObjUseWith;
+					if (_vm->getGameType() == GType_ITE)
+						objectFlags = kObjUseWith;
 					newRightButtonVerb = getVerbType(kVerbTalkTo);
 
 					if ((_currentVerb == getVerbType(kVerbPickUp)) ||
@@ -718,8 +776,10 @@ void Script::whichObject(const Point& mousePoint) {
 						(_currentVerb == getVerbType(kVerbClose)) ||
 						((_currentVerb == getVerbType(kVerbGive)) && !_firstObjectSet) ||
 						((_currentVerb == getVerbType(kVerbUse)) && !(actor->_flags & kFollower))) {
-							objectId = ID_NOTHING;
-							newObjectId = ID_NOTHING;
+							if (_vm->getGameType() == GType_ITE) {
+								objectId = ID_NOTHING;
+								newObjectId = ID_NOTHING;
+							}
 						}
 				}
 			}

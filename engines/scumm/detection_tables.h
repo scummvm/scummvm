@@ -28,6 +28,7 @@
 
 #include "common/stdafx.h"
 
+#include "common/advancedDetector.h"
 #include "common/rect.h"
 #include "common/util.h"
 
@@ -48,12 +49,6 @@ namespace Scumm {
 #pragma mark -
 #pragma mark --- Data types & constants ---
 #pragma mark -
-
-struct ObsoleteGameID {
-	const char *from;
-	const char *to;
-	Common::Platform platform;
-};
 
 #define UNK Common::kPlatformUnknown
 
@@ -146,7 +141,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
  * Conversion table mapping old obsolete game IDs to the
  * corresponding new game ID and platform combination.
  */
-static const ObsoleteGameID obsoleteGameIDsTable[] = {
+static const Common::ADObsoleteGameID obsoleteGameIDsTable[] = {
 	{"bluesabctimedemo", "bluesabctime", UNK},
 	{"BluesBirthdayDemo", "BluesBirthday", UNK},
 	{"comidemo", "comi", UNK},
@@ -571,6 +566,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi3", "F3-Mdemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddi3", "f3-mdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi3", "FF3-DEMO", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi3", "FF3DEMO", kGenHEPC, Common::HB_ISR, UNK, 0 },
 	{ "freddi3", "Freddi 3", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "freddi3", "Freddi Fish 3", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddi3", "FreddiFGT", kGenHEPC, Common::DE_DEU, UNK, 0 },
@@ -660,6 +656,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "pajama2", "pj2demo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama2", "Pjs2demo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama2", "PJ2 Demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
+	{ "pajama2", "PS2DEMO", kGenHEPC, Common::HB_ISR, UNK, 0 },
 
 	{ "pajama3", "pajama3", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama3", "FPJ3Demo", kGenHEPC, Common::FR_FRA, UNK, 0 },

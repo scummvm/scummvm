@@ -33,9 +33,9 @@ enum Action {
 	LOOK = 15, LOOK_AT = 16, LOOK_THROUGH = 17,	ASK = 18, DRINK = 20,
 	STATUS = 21, GO_TO = 22, RETURN = 23, BRIBE = 24, EXAMINE = 25,
 	NPC_SET_ROOM_AND_BLOCKED_OFFSET = 28, NPC_HEY_SIR = 29, NPC_EXEC_SCRIPT = 30, 
-	NPC_UNKNOWN2 = 31, NPC_SET_RAND_DEST = 32, NPC_WALKING_CHECK = 33, 
+	NPC_RESET_PAUSED_LIST = 31, NPC_SET_RAND_DEST = 32, NPC_WALKING_CHECK = 33, 
 	NPC_SET_SUPPORT_OFFSET = 34, NPC_SUPPORT_OFFSET_COND = 35, 
-	NPC_DISPATCH_ACTION = 36, NPC_UNKNOWN3 = 37, NPC_UNKNOWN4 = 38, 
+	NPC_DISPATCH_ACTION = 36, NPC_TALK_NPC_TO_NPC = 37, NPC_PAUSE = 38, 
 	NPC_START_TALKING = 39, NPC_JUMP_ADDRESS = 40,
 	NONE = 0
 };
@@ -365,11 +365,13 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 	// Handle required initial entries - the Lure engine refers to them directly by
 	// index, so they need to be first, and in that order
 #ifdef ENGLISH_LURE
-	process_entry(0x13c2, data, totalSize);
-	process_entry(0xbb95, data, totalSize);
-	process_entry(0x7060, data, totalSize);
-	process_entry(0x728a, data, totalSize);
-	process_entry(0x76ec, data, totalSize);
+	process_entry(0x13c2, data, totalSize);	  // RETURN sequence
+	process_entry(0xbb95, data, totalSize);	  // Exit blocked sequence
+	process_entry(0x7060, data, totalSize);   // Jump proc #2 - go to castle basement
+	process_entry(0x728a, data, totalSize);		
+	process_entry(0x76ec, data, totalSize);   
+	process_entry(0x4ebb, data, totalSize);	  // Goewin as a follower in cave
+	process_entry(0x7D9D, data, totalSize);	  // Goewin standard handler
 #endif
 
 	// Process the script engine list 

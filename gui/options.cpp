@@ -239,7 +239,7 @@ void OptionsDialog::open() {
 		int speed;
 		int sliderMaxValue = _subSpeedSlider->getMaxValue();
 
-		_subMode = getSubtitleMode(ConfMan.getBool("subtitles", _domain), ConfMan.getBool("speech_mute"));
+		_subMode = getSubtitleMode(ConfMan.getBool("subtitles", _domain), ConfMan.getBool("speech_mute", _domain));
 		_subToggleButton->setLabel(_subModeDesc[_subMode]);
 
 		// Engines that reuse the subtitle speed widget set their own max value.
@@ -676,18 +676,10 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	tab->addTab("Audio");
 	addAudioControls(tab, "globaloptions_");
-
-	int volControlPos = g_gui.evaluator()->getVar("volumeControlsInAudio", true);
-
-	if (volControlPos)
-		addVolumeControls(tab, "globaloptions_");
-
 	addSubtitleControls(tab, "globaloptions_");
 
-	if (!volControlPos) {
-		tab->addTab("Volume");
-		addVolumeControls(tab, "globaloptions_");
-	}
+	tab->addTab("Volume");
+	addVolumeControls(tab, "globaloptions_");
 
 	// TODO: cd drive setting
 

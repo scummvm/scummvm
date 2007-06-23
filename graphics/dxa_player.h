@@ -43,8 +43,6 @@ enum ScaleMode {
 
 class DXAPlayer {
 protected:
-	Common::File _fd;
-
 	byte *_frameBuffer1;
 	byte *_frameBuffer2;
 	byte *_scaledBuffer;
@@ -62,6 +60,8 @@ protected:
 public:
 	DXAPlayer();
 	virtual ~DXAPlayer();
+
+	Common::SeekableReadStream *_fd;
 
 	/**
 	 * Returns the width of the video

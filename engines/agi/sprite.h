@@ -56,7 +56,7 @@ private:
 	void *poolAlloc(int size);
 	void poolRelease(void *s);
 	void blitPixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, int *hidden);
-	int blitCel(int x, int y, int spr, ViewCel *c);
+	int blitCel(int x, int y, int spr, ViewCel *c, bool agi256_2);
 	void objsSaveArea(Sprite *s);
 	void objsRestoreArea(Sprite *s);
 	

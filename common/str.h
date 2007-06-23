@@ -99,6 +99,7 @@ public:
 	String() : _len(0), _str(_storage) { _storage[0] = 0; }
 	String(const char *str, uint32 len = 0);
 	String(const String &str);
+	String(char c);
 	virtual ~String();
 
 	String &operator  =(const char *str);
@@ -187,8 +188,12 @@ protected:
 
 // Append two strings to form a new (temp) string
 String operator +(const String &x, const String &y);
+
 String operator +(const char *x, const String &y);
 String operator +(const String &x, const char *y);
+
+String operator +(const String &x, char y);
+String operator +(char x, const String &y);
 
 // Some useful additional comparision operators for Strings
 bool operator == (const char *x, const String &y);

@@ -52,14 +52,14 @@
 static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode)
 {
 	if (key >= SDLK_F1 && key <= SDLK_F9) {
-		return key - SDLK_F1 + 315;
+		return key - SDLK_F1 + Common::ASCII_F1;
 	} else if (key >= SDLK_KP0 && key <= SDLK_KP9) {
 		return key - SDLK_KP0 + '0';
 	} else if (key >= SDLK_UP && key <= SDLK_PAGEDOWN) {
 		return key;
 	} else if (unicode) {
 		return unicode;
-	} else if (key >= 'a' && key <= 'z' && mod & KMOD_SHIFT) {
+	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
 		return key & ~0x20;
 	} else if (key >= SDLK_NUMLOCK && key <= SDLK_EURO) {
 		return 0;
@@ -265,7 +265,7 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 				return true;
 
 			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = ev.key.keysym.sym;
+			event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
 			return true;
@@ -278,7 +278,7 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 				return true;
 
 			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = ev.key.keysym.sym;
+			event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 
@@ -337,19 +337,19 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 				event.type = Common::EVENT_KEYDOWN;
 				switch (ev.jbutton.button) {
 				case JOY_BUT_ESCAPE:
-					event.kbd.keycode = SDLK_ESCAPE;
+					event.kbd.keycode = Common::KEYCODE_ESCAPE;
 					event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
 					break;
 				case JOY_BUT_PERIOD:
-					event.kbd.keycode = SDLK_PERIOD;
+					event.kbd.keycode = Common::KEYCODE_PERIOD;
 					event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
 					break;
 				case JOY_BUT_SPACE:
-					event.kbd.keycode = SDLK_SPACE;
+					event.kbd.keycode = Common::KEYCODE_SPACE;
 					event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
 					break;
 				case JOY_BUT_F5:
-					event.kbd.keycode = SDLK_F5;
+					event.kbd.keycode = Common::KEYCODE_F5;
 					event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 					break;
 				}
@@ -367,19 +367,19 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 				event.type = Common::EVENT_KEYUP;
 				switch (ev.jbutton.button) {
 				case JOY_BUT_ESCAPE:
-					event.kbd.keycode = SDLK_ESCAPE;
+					event.kbd.keycode = Common::KEYCODE_ESCAPE;
 					event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
 					break;
 				case JOY_BUT_PERIOD:
-					event.kbd.keycode = SDLK_PERIOD;
+					event.kbd.keycode = Common::KEYCODE_PERIOD;
 					event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
 					break;
 				case JOY_BUT_SPACE:
-					event.kbd.keycode = SDLK_SPACE;
+					event.kbd.keycode = Common::KEYCODE_SPACE;
 					event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
 					break;
 				case JOY_BUT_F5:
-					event.kbd.keycode = SDLK_F5;
+					event.kbd.keycode = Common::KEYCODE_F5;
 					event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 					break;
 				}
@@ -455,21 +455,21 @@ bool OSystem_SDL::remapKey(SDL_Event &ev,Common::Event &event) {
 	// Map menu key to f5 (scumm menu)
 	if (ev.key.keysym.sym == 306) {
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = SDLK_F5;
+		event.kbd.keycode = Common::KEYCODE_F5;
 		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 		return true;
 	}
 	// Map action key to action
 	if (ev.key.keysym.sym == 291) {
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = SDLK_TAB;
+		event.kbd.keycode = Common::KEYCODE_TAB;
 		event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
 		return true;
 	}
 	// Map OK key to skip cinematic
 	if (ev.key.keysym.sym == 292) {
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = SDLK_ESCAPE;
+		event.kbd.keycode = Common::KEYCODE_ESCAPE;
 		event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
 		return true;
 	}
@@ -485,7 +485,7 @@ bool OSystem_SDL::remapKey(SDL_Event &ev,Common::Event &event) {
 	// Map menu key (f11) to f5 (scumm menu)
 	if (ev.key.keysym.sym == SDLK_F11) {
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = SDLK_F5;
+		event.kbd.keycode = Common::KEYCODE_F5;
 		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 	}
 	// Nap center (space) to tab (default action )
@@ -493,13 +493,13 @@ bool OSystem_SDL::remapKey(SDL_Event &ev,Common::Event &event) {
 	//
 	else if (ev.key.keysym.sym == SDLK_SPACE) {
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = SDLK_TAB;
+		event.kbd.keycode = Common::KEYCODE_TAB;
 		event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
 	}
 	// Since we stole space (pause) above we'll rebind it to the tab key on the keyboard
 	else if (ev.key.keysym.sym == SDLK_TAB) {
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = SDLK_SPACE;
+		event.kbd.keycode = Common::KEYCODE_SPACE;
 		event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
 	} else {
 	// Let the events fall through if we didn't change them, this may not be the best way to

@@ -295,7 +295,7 @@ void MoviePlayer::play(void) {
 				handleScreenChanged();
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == 27) {
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_snd->stopHandle(_bgSoundHandle);
 					terminated = true;
 				}
@@ -410,7 +410,7 @@ bool MoviePlayerDXA::load(uint32 id) {
 	snprintf(filename, sizeof(filename), "%s.dxa", sequenceList[id]);
 	if (loadFile(filename)) {
 		// The Broken Sword games always use external audio tracks.
-		if (_fd.readUint32BE() != MKID_BE('NULL'))
+		if (_fd->readUint32BE() != MKID_BE('NULL'))
 			return false;
 		_frameWidth = getWidth();
 		_frameHeight = getHeight();

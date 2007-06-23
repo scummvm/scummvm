@@ -39,7 +39,7 @@
 
 namespace Lure {
 
-enum GameState {GS_RESTORE_RESTART = 1, GS_CAUGHT = 2};
+enum GameState {GS_RESTORE_RESTART = 1, GS_CAUGHT = 2, GS_EXIT = 3};
 
 class Game {
 private:
@@ -66,6 +66,7 @@ public:
 
 	static Game &getReference();
 
+	void tick();
 	void nextFrame();
 	void execute();
 	void setState(uint8 flags) { _state = flags; }

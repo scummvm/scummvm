@@ -34,11 +34,13 @@
 
 #include "gui/about.h"
 
+#include "graphics/surface.h"
+
 #include "sound/audiocd.h"
 
 namespace AGOS {
 
-void AGOSEngine::addTimeEvent(uint timeout, uint subroutine_id) {
+void AGOSEngine::addTimeEvent(uint16 timeout, uint16 subroutine_id) {
 	TimeEvent *te = (TimeEvent *)malloc(sizeof(TimeEvent)), *first, *last = NULL;
 	time_t cur_time;
 
@@ -366,13 +368,17 @@ static const byte _image4[32] = {
 
 void AGOSEngine::drawStuff(const byte *src, uint xoffs) {
 	const uint8 y = (getPlatform() == Common::kPlatformAtariST) ? 132 : 135;
-	byte *dst = getFrontBuf() + y * _screenWidth + xoffs;
+
+	Graphics::Surface *screen = _system->lockScreen();
+	byte *dst = (byte *)screen->pixels + y * _screenWidth + xoffs;
 
 	for (uint h = 0; h < 6; h++) {
 		memcpy(dst, src, 4);
 		src += 4;
 		dst += _screenWidth;
 	}
+
+	_system->unlockScreen();
 }
 
 void AGOSEngine::imageEvent2(VgaTimerEntry * vte, uint dx) {
@@ -424,28 +430,27 @@ void AGOSEngine::delay(uint amount) {
 
 	uint32 start = _system->getMillis();
 	uint32 cur = start;
-	uint this_delay, vga_period;
+	uint this_delay, vgaPeriod;
 
 	AudioCD.updateCD();
 
 	if (_debugger->isAttached())
 		_debugger->onFrame();
 
-	if (_fastMode)
-	 	vga_period = 10;
-	else if (getGameType() == GType_SIMON2)
-		vga_period = 45;
-	else
-		vga_period = 50;
+	vgaPeriod = (_fastMode) ? 10 : _vgaPeriod;
+	if (getGameType() == GType_PP && getGameId() != GID_DIMP) {
+		if (vgaPeriod == 15 && _variableArray[999] == 0)
+			vgaPeriod = 30;
+	}
 
 	_rnd.getRandomNumber(2);
 
 	do {
-		while (!_inCallBack && cur >= _lastVgaTick + vga_period && !_pause) {
-			_lastVgaTick += vga_period;
+		while (!_inCallBack && cur >= _lastVgaTick + vgaPeriod && !_pause) {
+			_lastVgaTick += vgaPeriod;
 
 			// don't get too many frames behind
-			if (cur >= _lastVgaTick + vga_period * 2)
+			if (cur >= _lastVgaTick + vgaPeriod * 2)
 				_lastVgaTick = cur;
 
 			_inCallBack = true;
@@ -456,15 +461,16 @@ void AGOSEngine::delay(uint amount) {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode >= '0' && event.kbd.keycode <='9'
+				if (event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9
 					&& (event.kbd.flags == Common::KBD_ALT ||
 						event.kbd.flags == Common::KBD_CTRL)) {
-					_saveLoadSlot = event.kbd.keycode - '0';
+					_saveLoadSlot = event.kbd.keycode - Common::KEYCODE_0;
 
 					// There is no save slot 0
 					if (_saveLoadSlot == 0)
 						_saveLoadSlot = 10;
 
+					memset(_saveLoadName, 0, sizeof(_saveLoadName));
 					sprintf(_saveLoadName, "Quick %d", _saveLoadSlot);
 					_saveLoadType = (event.kbd.flags == Common::KBD_ALT) ? 1 : 2;
 
@@ -473,14 +479,17 @@ void AGOSEngine::delay(uint amount) {
 					if (!_mouseHideCount && !_showPreposition)
 						quickLoadOrSave();
 				} else if (event.kbd.flags == Common::KBD_CTRL) {
-					if (event.kbd.keycode == 'a') {
+					if (event.kbd.keycode == Common::KEYCODE_a) {
 						GUI::Dialog *_aboutDialog;
 						_aboutDialog = new GUI::AboutDialog();
 						_aboutDialog->runModal();
-					} else if (event.kbd.keycode == 'f')
+					} else if (event.kbd.keycode == Common::KEYCODE_f) {
 						_fastMode ^= 1;
-					else if (event.kbd.keycode == 'd')
+					} else if (event.kbd.keycode == Common::KEYCODE_d) {
 						_debugger->attach();
+					} else if (event.kbd.keycode == Common::KEYCODE_u) {
+						dumpAllSubroutines();
+					}
 				} 
 
 				if (getGameType() == GType_PP) {
@@ -491,7 +500,7 @@ void AGOSEngine::delay(uint amount) {
 				}
 
 				// Make sure backspace works right (this fixes a small issue on OS X)
-				if (event.kbd.keycode == 8)
+				if (event.kbd.keycode == Common::KEYCODE_BACKSPACE)
 					_keyPressed = 8;
 				else
 					_keyPressed = (byte)event.kbd.ascii;
@@ -510,6 +519,7 @@ void AGOSEngine::delay(uint amount) {
 
 				_leftButton = 0;
 				_leftButtonCount = 0;
+				_leftClick = true;
 				break;
 			case Common::EVENT_RBUTTONDOWN:
 				if (getGameType() == GType_FF)
@@ -544,32 +554,17 @@ void AGOSEngine::delay(uint amount) {
 }
 
 void AGOSEngine::timer_callback() {
-	// FIXME: _timer5 is never set
-	if (_timer5) {
-		_syncFlag2 = true;
-		_timer5--;
+	if (getGameId() == GID_DIMP) {
+		_lastTickCount = _system->getMillis();
+
+		timer_proc1();
+		dimp_idle();
 	} else {
-		if (getGameId() == GID_DIMP) {
-			_thisTickCount = _system->getMillis();
-			if (_thisTickCount < _lastTickCount)
-				_lastTickCount = 0;
-
-			if ((_thisTickCount - _lastTickCount) <= 35)
-				return;
-
-			_lastTickCount = _thisTickCount;
-
-			timer_proc1();
-			dimp_idle();
-		} else {
-			timer_proc1();
-		}
+		timer_proc1();
 	}
 }
 
 void AGOSEngine_Feeble::timer_proc1() {
-	_timer4++;
-
 	if (_lockWord & 0x80E9 || _lockWord & 2)
 		return;
 
@@ -598,11 +593,6 @@ void AGOSEngine_Feeble::timer_proc1() {
 		animateSprites();
 	} 
 
-	if (_copyPartialMode == 2) {
-		fillFrontFromBack(0, 0, _screenWidth, _screenHeight);
-		_copyPartialMode = 0;
-	}
-
 	if (_displayScreen) {
 		if (getGameType() == GType_FF) {
 			if (!getBitFlag(78)) {
@@ -621,8 +611,6 @@ void AGOSEngine_Feeble::timer_proc1() {
 }
 
 void AGOSEngine::timer_proc1() {
-	_timer4++;
-
 	if (_lockWord & 0x80E9 || _lockWord & 2)
 		return;
 
@@ -639,13 +627,6 @@ void AGOSEngine::timer_proc1() {
 		if (!_cepeFlag)
 			processVgaEvents();
 	} 
-
-	if (_updateScreen) {
-		_system->copyRectToScreen(getFrontBuf(), _screenWidth, 0, 0, _screenWidth, _screenHeight);
-		_system->updateScreen();
-
-		_updateScreen = false;
-	}
 
 	if (_displayScreen) {
 		displayScreen();

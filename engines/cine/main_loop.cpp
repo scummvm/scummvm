@@ -70,61 +70,61 @@ void manageEvents(int count) {
 			break;
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
-			case '\n':
-			case '\r':
-			case 261: // Keypad 5
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+			case Common::KEYCODE_KP5:
 				if (allowPlayerInput) {
 					mouseLeft = 1;
 				}
 				break;
-			case 27:  // ESC
+			case Common::KEYCODE_ESCAPE:
 				if (allowPlayerInput) {
 					mouseRight = 1;
 				}
 				break;
-			case 282: // F1
+			case Common::KEYCODE_F1:
 				if (allowPlayerInput) {
 					playerCommand = 0; // EXAMINE
 					makeCommandLine();
 				}
 				break;
-			case 283: // F2
+			case Common::KEYCODE_F2:
 				if (allowPlayerInput) {
 					playerCommand = 1; // TAKE
 					makeCommandLine();
 				}
 				break;
-			case 284: // F3
+			case Common::KEYCODE_F3:
 				if (allowPlayerInput) {
 					playerCommand = 2; // INVENTORY
 					makeCommandLine();
 				}
 				break;
-			case 285: // F4
+			case Common::KEYCODE_F4:
 				if (allowPlayerInput) {
 					playerCommand = 3; // USE
 					makeCommandLine();
 				}
 				break;
-			case 286: // F5
+			case Common::KEYCODE_F5:
 				if (allowPlayerInput) {
 					playerCommand = 4; // ACTIVATE
 					makeCommandLine();
 				}
 				break;
-			case 287: // F6
+			case Common::KEYCODE_F6:
 				if (allowPlayerInput) {
 					playerCommand = 5; // SPEAK
 					makeCommandLine();
 				}
 				break;
-			case 290: // F9
+			case Common::KEYCODE_F9:
 				if (allowPlayerInput && !inMenu) {
 					makeActionMenu();
 					makeCommandLine();
 				}
 				break;
-			case 291: // F10
+			case Common::KEYCODE_F10:
 				if (!disableSystemMenu && !inMenu) {
 					g_cine->makeSystemMenu();
 				}

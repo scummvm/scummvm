@@ -93,9 +93,9 @@ inline int16 int16Compare(int16 i1, int16 i2) {
 	return ((i1) > (i2) ? 1 : ((i1) < (i2) ? -1 : 0));
 }
 
-inline int16 quickDistance(const Point &point1, const Point &point2) {
+inline int16 quickDistance(const Point &point1, const Point &point2, int16 compressX) {
 	Point delta;
-	delta.x = ABS(point1.x - point2.x) / 2;
+	delta.x = ABS(point1.x - point2.x) / compressX;
 	delta.y = ABS(point1.y - point2.y);
 	return ((delta.x < delta.y) ? (delta.y + delta.x / 2) : (delta.x + delta.y / 2));
 }
@@ -243,7 +243,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_debugPointsAlloced = _debugPointsCount = 0;
 #endif
 
-	_protagStates = 0;
+	_protagStates = NULL;
 	_protagStatesCount = 0;
 
 	_pathNodeList = _newPathNodeList = NULL;
@@ -356,56 +356,70 @@ Actor::~Actor() {
 	free(_pathCell);
 	_actorsStrings.freeMem();
 	//release resources
+	freeProtagStates();
 	freeActorList();
 	freeObjList();
 }
 
-bool Actor::loadActorResources(ActorData *actor) {
+void Actor::freeProtagStates() {
+	int i;
+	for (i = 0; i < _protagStatesCount; i++) {
+		free(_protagStates[i]._frames);
+	}
+	free(_protagStates);
+	_protagStates = NULL;
+	_protagStatesCount = 0;
+}
+
+void Actor::loadFrameList(int frameListResourceId, ActorFrameSequence *&framesPointer, int &framesCount) {
 	byte *resourcePointer;
 	size_t resourceLength;
-	int framesCount;
-	ActorFrameSequence *framesPointer;
+
+	debug(9, "Loading frame resource id %d", frameListResourceId);
+	_vm->_resource->loadResource(_actorContext, frameListResourceId, resourcePointer, resourceLength);
+
+	framesCount = resourceLength / 16;
+	debug(9, "Frame resource contains %d frames (res length is %d)", framesCount, (int)resourceLength);
+
+	framesPointer = (ActorFrameSequence *)malloc(sizeof(ActorFrameSequence) * framesCount);
+	if (framesPointer == NULL && framesCount != 0) {
+		memoryError("Actor::loadFrameList");
+	}
+
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _actorContext->isBigEndian);
+
+	for (int i = 0; i < framesCount; i++) {
+		debug(9, "frameType %d", i);
+		for (int orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
+			// Load all four orientations
+			framesPointer[i].directions[orient].frameIndex = readS.readUint16();
+			if (_vm->getGameType() == GType_ITE) {
+				framesPointer[i].directions[orient].frameCount = readS.readSint16();
+			} else {
+				framesPointer[i].directions[orient].frameCount = readS.readByte();
+				readS.readByte();
+			}
+			if (framesPointer[i].directions[orient].frameCount < 0)
+				warning("frameCount < 0 (%d)", framesPointer[i].directions[orient].frameCount);
+			debug(9, "frameIndex %d frameCount %d", framesPointer[i].directions[orient].frameIndex, framesPointer[i].directions[orient].frameCount);
+		}
+	}
+
+	free(resourcePointer);
+}
+
+bool Actor::loadActorResources(ActorData *actor) {
 	bool gotSomething = false;
 
 	if (actor->_frameListResourceId) {
-		debug(9, "Loading frame resource id %d", actor->_frameListResourceId);
-		_vm->_resource->loadResource(_actorContext, actor->_frameListResourceId, resourcePointer, resourceLength);
+		loadFrameList(actor->_frameListResourceId, actor->_frames, actor->_framesCount);
 
-		framesCount = resourceLength / 16;
-		debug(9, "Frame resource contains %d frames (res length is %d)", framesCount, (int)resourceLength);
-
-		framesPointer = (ActorFrameSequence *)malloc(sizeof(ActorFrameSequence) * framesCount);
-		if (framesPointer == NULL && framesCount != 0) {
-			memoryError("Actor::loadActorResources");
-		}
-
-		MemoryReadStreamEndian readS(resourcePointer, resourceLength, _actorContext->isBigEndian);
-
-		for (int i = 0; i < framesCount; i++) {
-			debug(9, "frameType %d", i);
-			for (int orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
-				// Load all four orientations
-				framesPointer[i].directions[orient].frameIndex = readS.readUint16();
-				if (_vm->getGameType() == GType_ITE) {
-					framesPointer[i].directions[orient].frameCount = readS.readSint16();
-				} else {
-					framesPointer[i].directions[orient].frameCount = readS.readByte();
-					readS.readByte();
-				}
-				if (framesPointer[i].directions[orient].frameCount < 0)
-					warning("frameCount < 0 (%d)", framesPointer[i].directions[orient].frameCount);
-				debug(9, "frameIndex %d frameCount %d", framesPointer[i].directions[orient].frameIndex, framesPointer[i].directions[orient].frameCount);
-			}
-		}
-
-		free(resourcePointer);
-
-		actor->_frames = framesPointer;
-		actor->_framesCount = framesCount;
+		actor->_shareFrames = false;
 
 		gotSomething = true;
 	} else {
-		warning("Frame List ID = 0 for actor index %d", actor->_index);
+		// It's normal for some actors to have no frames
+		//warning("Frame List ID = 0 for actor index %d", actor->_index);
 
 		//if (_vm->getGameType() == GType_ITE)
 		return true;
@@ -469,6 +483,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 	int movementSpeed;
 	int walkStepIndex;
 	int walkStepCount;
+	int stateResourceId;
 
 	freeActorList();
 	
@@ -566,28 +581,34 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 	_protagState = 0;
 
 	if (protagStatesResourceID) {
-		free(_protagStates);
+		if (!_protagonist->_shareFrames)
+			free(_protagonist->_frames);
+		freeProtagStates();
 
-		_protagStates = (ActorFrameSequence *)malloc(sizeof(ActorFrameSequence) * protagStatesCount);
+		_protagStates = (ProtagStateData *)malloc(sizeof(ProtagStateData) * protagStatesCount);
 
-		byte *resourcePointer;
-		size_t resourceLength;
+		byte *idsResourcePointer;
+		size_t idsResourceLength;
 
 		_vm->_resource->loadResource(_actorContext, protagStatesResourceID,
-									 resourcePointer, resourceLength);
+									 idsResourcePointer, idsResourceLength);
 
+		if (idsResourceLength < (size_t)protagStatesCount * 4) {
+			error("Wrong protagonist states resource");
+		}
 
-		MemoryReadStream statesS(resourcePointer, resourceLength);
+		MemoryReadStream statesIds(idsResourcePointer, idsResourceLength);
 		
 		for (i = 0; i < protagStatesCount; i++) {
-			for (j = 0; j < ACTOR_DIRECTIONS_COUNT; j++) {
-				_protagStates[i].directions[j].frameIndex = statesS.readUint16LE();
-				_protagStates[i].directions[j].frameCount = statesS.readUint16LE();
-			}
+			stateResourceId = statesIds.readUint32LE();
+						
+			loadFrameList(stateResourceId, _protagStates[i]._frames, _protagStates[i]._framesCount);
 		}
-		free(resourcePointer);
+		free(idsResourcePointer);
 
-		_protagonist->_frames = &_protagStates[_protagState];
+		_protagonist->_frames = _protagStates[_protagState]._frames;
+		_protagonist->_framesCount = _protagStates[_protagState]._framesCount;
+		_protagonist->_shareFrames = true;
 	}
 
 	_protagStatesCount = protagStatesCount;
@@ -822,8 +843,14 @@ bool Actor::validFollowerLocation(const Location &location) {
 void Actor::setProtagState(int state) {
 	_protagState = state;
 
-	if (_vm->getGameType() == GType_IHNM)
-		_protagonist->_frames = &_protagStates[state];
+	if (_vm->getGameType() == GType_IHNM) {
+		if (!_protagonist->_shareFrames)
+			free(_protagonist->_frames);
+
+		_protagonist->_frames = _protagStates[state]._frames;
+		_protagonist->_framesCount = _protagStates[state]._framesCount;
+		_protagonist->_shareFrames = true;
+	}
 }
 
 void Actor::updateActorsScene(int actorsEntrance) {
@@ -1023,7 +1050,7 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 	if ((actor->_facingDirection < kDirUp) || (actor->_facingDirection > kDirUpLeft))
 		error("Actor::getActorFrameRange Wrong direction 0x%X actorId 0x%X", actor->_facingDirection, actorId);
 
-	//if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameType() == GType_ITE) {
 		if (frameType >= actor->_framesCount) {
 			warning("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->_framesCount, actorId);
 			return &def;
@@ -1032,21 +1059,18 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 
 		fourDirection = actorDirectectionsLUT[actor->_facingDirection];
 		return &actor->_frames[frameType].directions[fourDirection];
-/*
-	} else {
+	}
+
+	if (_vm->getGameType() == GType_IHNM) {
+		// It is normal for some actors to have no frames for a given frameType
+		// These are mainly actors with no frames at all (e.g. narrators or immovable actors)
+		// Examples are AM and the boy when he is talking to Benny via the computer screen.
+		// Both of them are invisible and immovable
+		// There is no point to keep throwing warnings about this, the original checks for
+		// a valid framecount too
 		if (0 == actor->_framesCount) {
 			return &def;
 		}
-		
-		//TEST
-		if (actor->_id == 0x2000) {
-			if (actor->_framesCount <= _currentFrameIndex) {				
-				_currentFrameIndex = 0;
-			}
-			fr = actor->_frames[_currentFrameIndex].directions;			
-			return fr;
-		}
-		//TEST
 		if (frameType >= actor->_framesCount) {
 			frameType = actor->_framesCount - 1;
 		}
@@ -1054,63 +1078,10 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 			frameType = 0;
 		}
 
-		if (frameType == kFrameIHNMWalk  ) {
-			switch (actor->_facingDirection) {
-			case kDirUpRight:
-				if (frameType > 0)
-					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_RIGHT];
-				else
-					fr = &def;
-				if (!fr->frameCount) 
-					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_RIGHT];
-				break;
-			case kDirDownRight:
-				if (frameType > 0)
-					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_FORWARD];
-				else
-					fr = &def;
-				if (!fr->frameCount) 
-					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_RIGHT];
-				break;
-			case kDirUpLeft:
-				if (frameType > 0)
-					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_LEFT];
-				else
-					fr = &def;
-				if (!fr->frameCount) 
-					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_LEFT];
-				break;
-			case kDirDownLeft:
-				if (frameType > 0)
-					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_BACK];
-				else
-					fr = &def;
-				if (!fr->frameCount) 
-					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_LEFT];
-				break;
-			case kDirRight:
-				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_RIGHT];
-				break;
-			case kDirLeft:
-				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_LEFT];
-				break;
-			case kDirUp:
-				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_BACK];
-				break;
-			case kDirDown:
-				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_FORWARD];
-				break;			
-			}
-			return fr;
-		}
-		else {
-			if (frameType >= actor->_framesCount) {
-				error("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->_framesCount, actorId);
-			}
-			fourDirection = actorDirectectionsLUT[actor->_facingDirection];
-			return &actor->_frames[frameType].directions[fourDirection];
-		}
-	}*/
+		fourDirection = actorDirectectionsLUT[actor->_facingDirection];
+		return &actor->_frames[frameType].directions[fourDirection];
+	}
+	return NULL;
 }
 
 void Actor::handleSpeech(int msec) {
@@ -1135,6 +1106,8 @@ void Actor::handleSpeech(int msec) {
 				removeFirst = true;
 			}
 			_activeSpeech.playing = false;
+			if (_activeSpeech.speechFlags & kSpeakForceText)
+				_activeSpeech.speechFlags = 0;
 			if (_activeSpeech.actorIds[0] != 0) {
 				actor = getActor(_activeSpeech.actorIds[0]);
 				if (!(_activeSpeech.speechFlags & kSpeakNoAnimate)) {
@@ -1242,7 +1215,10 @@ void Actor::handleSpeech(int msec) {
 				}
 
 				height2 = actor->_screenPosition.y - 50;
-				_activeSpeech.speechBox.top = _activeSpeech.drawRect.top = MAX(10, (height2 - height) / 2);
+				if (height2 > _vm->_scene->getHeight())
+					_activeSpeech.speechBox.top = _activeSpeech.drawRect.top = _vm->_scene->getHeight() - 1 - height - 10;
+				else
+					_activeSpeech.speechBox.top = _activeSpeech.drawRect.top = MAX(10, (height2 - height) / 2);
 			} else {
 				_activeSpeech.drawRect.left = _activeSpeech.speechBox.left;
 				_activeSpeech.drawRect.top = _activeSpeech.speechBox.top + (_activeSpeech.speechBox.height() - height) / 2;
@@ -1472,8 +1448,14 @@ void Actor::handleActions(int msec, bool setup) {
 				actor->cycleWrap(frameRange->frameCount);
 				actor->_frameNumber = frameRange->frameIndex + actor->_actionCycle;
 			} else {
-				actor->_location.x += directionLUT[actor->_actionDirection][0] * 2;
-				actor->_location.y += directionLUT[actor->_actionDirection][1] * 2;
+				if (_vm->getGameType() == GType_ITE) {
+					actor->_location.x += directionLUT[actor->_actionDirection][0] * 2;
+					actor->_location.y += directionLUT[actor->_actionDirection][1] * 2;
+				} else {
+					// FIXME: The original does not multiply by 8 here, but we do
+					actor->_location.x += (directionLUT[actor->_actionDirection][0] * 8 * actor->_screenScale + 128) >> 8;
+					actor->_location.y += (directionLUT[actor->_actionDirection][1] * 8 * actor->_screenScale + 128) >> 8;
+				}
 
 				frameRange = getActorFrameRange(actor->_id, actor->_walkFrameSequence);
 				actor->_actionCycle++;
@@ -1626,6 +1608,8 @@ void Actor::handleActions(int msec, bool setup) {
 			}
 		}
 	}
+	// Update frameCount for sfWaitFrames in IHNM
+	_vm->_frameCount++;
 }
 
 void Actor::direct(int msec) {
@@ -1667,6 +1651,10 @@ bool Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 
 		if (middle <= beginSlope) {
 			commonObjectData->_screenScale = 256;
+		} else if (_vm->getGameType() == GType_IHNM && (objectTypeId(commonObjectData->_id) & kGameObjectObject)) {
+			commonObjectData->_screenScale = 256;
+		} else if (_vm->getGameType() == GType_IHNM && (commonObjectData->_flags & kNoScale)) {
+			commonObjectData->_screenScale = 256;
 		} else if (middle >= endSlope) {
 			commonObjectData->_screenScale = 1;
 		} else {
@@ -1694,6 +1682,20 @@ uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 	// fine to interact with. For example, the door entrance at the glass
 	// makers's house in ITE's ferret village.
 
+	// Note that in IHNM, there are some items that overlap on other items
+	// Since we're checking the draw list from the FIRST item drawn to the
+	// LAST one, sometimes the object drawn first is incorrectly returned.
+	// An example is the chalk on the magic circle in Ted's chapter, which
+	// is drawn AFTER the circle, but HitTest incorrectly returns the circle
+	// id in this case, even though the chalk was drawn after the circle.
+	// Therefore, for IHNM, we iterate through the whole draw list and
+	// return the last match found, not the first one.
+	// Unfortunately, it is only possible to search items in the sorted draw 
+	// list from start to end, not reverse, so it's necessary to search
+	// through the whole list to get the item drawn last
+	
+	uint16 result = ID_NOTHING;
+
 	if (!_vm->_scene->getSceneClip().contains(testPoint))
 		return ID_NOTHING;
 
@@ -1713,10 +1715,12 @@ uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 			continue;
 		}
 		if (_vm->_sprite->hitTest(*spriteList, frameNumber, drawObject->_screenPosition, drawObject->_screenScale, testPoint)) {
-			return drawObject->_id;
+			result = drawObject->_id;
+			if (_vm->getGameType() == GType_ITE)
+				return result;		// in ITE, return the first result found (read above)
 		}
 	}
-	return ID_NOTHING;
+	return result;					// in IHNM, return the last result found (read above)
 }
 
 void Actor::createDrawOrderList() {
@@ -1777,6 +1781,10 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 		frameNumber = commonObjectData->_spriteListResourceId;
 	}
 
+	if (spriteList->spriteCount == 0) {
+		return false;
+	}
+
 	if ((frameNumber < 0) || (spriteList->spriteCount <= frameNumber)) {
 		debug(1, "Actor::getSpriteParams frameNumber invalid for %s id 0x%X (%d)",
 				validObjId(commonObjectData->_id) ? "object" : "actor",
@@ -1830,7 +1838,8 @@ void Actor::drawActors() {
 
 void Actor::drawSpeech(void) {
 	if (!isSpeaking() || !_activeSpeech.playing || _vm->_script->_skipSpeeches
-		|| (!_vm->_subtitlesEnabled && (_vm->getFeatures() & GF_CD_FX)))
+		|| (!_vm->_subtitlesEnabled && (_vm->getFeatures() & GF_CD_FX))
+		|| (!_vm->_subtitlesEnabled && (_vm->getGameType() == GType_IHNM)))
 		return;
 
 	int i;
@@ -2003,9 +2012,12 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 	actor = getActor(actorId);
 	actor->_actorFlags &= ~kActorBackwards;
 
-	if (actor->_location.distance(actor->_finalTarget) > 8 && (actor->_flags & kProtagonist) && recurse && !(actor->_actorFlags & kActorNoCollide)) {
-		actor->_actorFlags |= kActorNoCollide;
-		return actorWalkTo(actorId, actor->_finalTarget);
+	if (_vm->getGameType() == GType_ITE) {
+
+		if (actor->_location.distance(actor->_finalTarget) > 8 && (actor->_flags & kProtagonist) && recurse && !(actor->_actorFlags & kActorNoCollide)) {
+			actor->_actorFlags |= kActorNoCollide;
+			return actorWalkTo(actorId, actor->_finalTarget);
+		}
 	}
 
 	actor->_currentAction = kActionWait;
@@ -2256,7 +2268,7 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	_activeSpeech.actorsCount = 1;
 	_activeSpeech.actorIds[0] = actorId;
 	_activeSpeech.speechColor[0] = actor->_speechColor;
-	_activeSpeech.outlineColor[0] = (_vm->getGameType() == GType_ITE ? kITEColorBlack : kIHNMColorBlack);
+	_activeSpeech.outlineColor[0] = _vm->KnownColor2ColorId(kKnownColorBlack);
 	_activeSpeech.sampleResourceId = sampleResourceId;
 	_activeSpeech.playing = false;
 	_activeSpeech.slowModeCharIndex = 0;
@@ -2275,6 +2287,22 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 		_activeSpeech.speechBox.left -= _activeSpeech.speechBox.right - _vm->getDisplayWidth() - 10;
 		_activeSpeech.speechBox.right = _vm->getDisplayWidth() - 10;
 	}
+
+	// WORKAROUND for the compact disk in Ellen's chapter
+	// Once Ellen starts saying that "Something is different", bring the compact disk in the
+	// scene. After speaking with AM, the compact disk is visible. She always says this line 
+	// when entering room 59, after speaking with AM, if the compact disk is not picked up yet
+	// Check Script::sfDropObject for the other part of this workaround
+	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 3 &&
+		_vm->_scene->currentSceneNumber() == 59 && _activeSpeech.sampleResourceId == 286) {
+		for (i = 0; i < _objsCount; i++) {
+			if (_objs[i]->_id == 16385) {	// the compact disk
+				_objs[i]->_sceneNumber = 59;
+				break;
+			}
+		}
+	}
+
 }
 
 void Actor::nonActorSpeech(const Common::Rect &box, const char **strings, int stringsCount, int sampleResourceId, int speechFlags) {
@@ -2719,10 +2747,11 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 	const PathDirectionData *samplePathDirection;
 	Point nextPoint;
 	int directionCount;
+	int16 compressX = (_vm->getGameType() == GType_ITE) ? 2 : 1;
 
 	_pathDirectionListCount = 0;
 	pointCounter = 0;
-	bestRating = quickDistance(fromPoint, toPoint);
+	bestRating = quickDistance(fromPoint, toPoint, compressX);
 	bestPath = fromPoint;
 
 	for (startDirection = 0; startDirection < 4; startDirection++) {
@@ -2770,7 +2799,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 				bestPoint = toPoint;
 				return pointCounter;
 			}
-			currentRating = quickDistance(nextPoint, toPoint);
+			currentRating = quickDistance(nextPoint, toPoint, compressX);
 			if (currentRating < bestRating) {
 				bestRating = currentRating;
 				bestPath = nextPoint;
@@ -3106,7 +3135,9 @@ void Actor::saveState(Common::OutSaveFile *out) {
 void Actor::loadState(Common::InSaveFile *in) {
 	int32 i;
 
-	setProtagState(in->readSint16LE());
+	int16 protagState = in->readSint16LE();
+	if (protagState != 0)
+		setProtagState(protagState);
 
 	for (i = 0; i < _actorsCount; i++) {
 		ActorData *a = _actors[i];

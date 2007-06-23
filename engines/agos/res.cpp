@@ -351,104 +351,33 @@ void AGOSEngine::readItemFromGamePc(Common::SeekableReadStream *in, Item *item) 
 
 void AGOSEngine::readItemChildren(Common::SeekableReadStream *in, Item *item, uint type) {
 	if (type == 1) {
-		if (getGameType() == GType_ELVIRA1) {
-			SubRoom *subRoom = (SubRoom *)allocateChildBlock(item, 1, sizeof(SubRoom));
-			subRoom->roomShort = in->readUint32BE();
-			subRoom->roomLong = in->readUint32BE();
-			subRoom->flags = in->readUint16BE();
-		} else {
-			uint fr1 = in->readUint16BE();
-			uint fr2 = in->readUint16BE();
-			uint i, size;
-			uint j, k;
-			SubRoom *subRoom;
-
-			size = SubRoom_SIZE;
-			for (i = 0, j = fr2; i != 6; i++, j >>= 2)
-				if (j & 3)
-					size += sizeof(subRoom->roomExit[0]);
-
-			subRoom = (SubRoom *)allocateChildBlock(item, 1, size);
-			subRoom->subroutine_id = fr1;
-			subRoom->roomExitStates = fr2;
-
-			for (i = k = 0, j = fr2; i != 6; i++, j >>= 2)
-				if (j & 3)
-					subRoom->roomExit[k++] = (uint16)fileReadItemID(in);
-		}
+		SubRoom *subRoom = (SubRoom *)allocateChildBlock(item, 1, sizeof(SubRoom));
+		subRoom->roomShort = in->readUint32BE();
+		subRoom->roomLong = in->readUint32BE();
+		subRoom->flags = in->readUint16BE();
 	} else if (type == 2) {
-		if (getGameType() == GType_ELVIRA1) {
-			SubObject *subObject = (SubObject *)allocateChildBlock(item, 2, sizeof(SubObject));
-			in->readUint32BE();
-			in->readUint32BE();
-			in->readUint32BE();
-			subObject->objectName = in->readUint32BE();
-			subObject->objectSize = in->readUint16BE();
-			subObject->objectWeight = in->readUint16BE();
-			subObject->objectFlags = in->readUint16BE();
-		} else {
-			uint32 fr = in->readUint32BE();
-			uint i, k, size;
-			SubObject *subObject;
-
-			size = SubObject_SIZE;
-			for (i = 0; i != 16; i++)
-				if (fr & (1 << i))
-					size += sizeof(subObject->objectFlagValue[0]);
-
-			subObject = (SubObject *)allocateChildBlock(item, 2, size);
-			subObject->objectFlags = fr;
-
-			k = 0;
-			if (fr & 1) {
-				subObject->objectFlagValue[k++] = (uint16)in->readUint32BE();
-			}
-			for (i = 1; i != 16; i++)
-				if (fr & (1 << i))
-					subObject->objectFlagValue[k++] = in->readUint16BE();
-
-			if (getGameType() != GType_ELVIRA2)
-				subObject->objectName = (uint16)in->readUint32BE();
-		}
+		SubObject *subObject = (SubObject *)allocateChildBlock(item, 2, sizeof(SubObject));
+		in->readUint32BE();
+		in->readUint32BE();
+		in->readUint32BE();
+		subObject->objectName = in->readUint32BE();
+		subObject->objectSize = in->readUint16BE();
+		subObject->objectWeight = in->readUint16BE();
+		subObject->objectFlags = in->readUint16BE();
 	} else if (type == 4) {
-		if (getGameType() == GType_ELVIRA2) {
-			uint i, j, k, size;
-			uint id, x, y, z;
-			SubSuperRoom *subSuperRoom;
-
-			id = in->readUint16BE();
-			x = in->readUint16BE();
-			y = in->readUint16BE();
-			z = in->readUint16BE();
-
-			j = x * y * z;
-			size = SubSuperRoom_SIZE;
-			for (i = 0; i != j; i++)
-				size += sizeof(subSuperRoom->roomExitStates[0]);
-
-			subSuperRoom = (SubSuperRoom *)allocateChildBlock(item, 4, size);
-			subSuperRoom->subroutine_id = id;
-			subSuperRoom->roomX = x;
-			subSuperRoom->roomY = y;
-			subSuperRoom->roomZ = z;
-
-			for (i = k = 0; i != j; i++)
-				subSuperRoom->roomExitStates[k++] = in->readUint16BE();
-		} else if (getGameType() == GType_ELVIRA1) {
-			SubGenExit *genExit = (SubGenExit *)allocateChildBlock(item, 4, sizeof(SubGenExit));
-			genExit->dest[0] = (uint16)fileReadItemID(in);
-			genExit->dest[1] = (uint16)fileReadItemID(in);
-			genExit->dest[2] = (uint16)fileReadItemID(in);
-			genExit->dest[3] = (uint16)fileReadItemID(in);
-			genExit->dest[4] = (uint16)fileReadItemID(in);
-			genExit->dest[5] = (uint16)fileReadItemID(in);
-			fileReadItemID(in);
-			fileReadItemID(in);
-			fileReadItemID(in);
-			fileReadItemID(in);
-			fileReadItemID(in);
-			fileReadItemID(in);
-		}
+		SubGenExit *genExit = (SubGenExit *)allocateChildBlock(item, 4, sizeof(SubGenExit));
+		genExit->dest[0] = (uint16)fileReadItemID(in);
+		genExit->dest[1] = (uint16)fileReadItemID(in);
+		genExit->dest[2] = (uint16)fileReadItemID(in);
+		genExit->dest[3] = (uint16)fileReadItemID(in);
+		genExit->dest[4] = (uint16)fileReadItemID(in);
+		genExit->dest[5] = (uint16)fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
 	} else if (type == 7) {
 		SubContainer *container = (SubContainer *)allocateChildBlock(item, 7, sizeof(SubContainer));
 		container->volume = in->readUint16BE();
@@ -461,17 +390,103 @@ void AGOSEngine::readItemChildren(Common::SeekableReadStream *in, Item *item, ui
 		setUserFlag(item, 1, in->readUint16BE());
 		setUserFlag(item, 2, in->readUint16BE());
 		setUserFlag(item, 3, in->readUint16BE());
-		if (getGameType() == GType_ELVIRA1) {
-			setUserFlag(item, 4, in->readUint16BE());
-			setUserFlag(item, 5, in->readUint16BE());
-			setUserFlag(item, 6, in->readUint16BE());
-			setUserFlag(item, 7, in->readUint16BE());
-			SubUserFlag *subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
-			subUserFlag->userItems[0] = (uint16)fileReadItemID(in); 
-			fileReadItemID(in);
-			fileReadItemID(in);
-			fileReadItemID(in);
+		setUserFlag(item, 4, in->readUint16BE());
+		setUserFlag(item, 5, in->readUint16BE());
+		setUserFlag(item, 6, in->readUint16BE());
+		setUserFlag(item, 7, in->readUint16BE());
+		SubUserFlag *subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
+		subUserFlag->userItems[0] = (uint16)fileReadItemID(in); 
+		fileReadItemID(in);
+		fileReadItemID(in);
+		fileReadItemID(in);
+	} else if (type == 255) {
+		SubInherit *inherit = (SubInherit *)allocateChildBlock(item, 255, sizeof(SubInherit));
+		inherit->inMaster = (uint16)fileReadItemID(in);
+	} else {
+		error("readItemChildren: invalid type %d", type);
+	}
+}
+
+void AGOSEngine_Elvira2::readItemChildren(Common::SeekableReadStream *in, Item *item, uint type) {
+	if (type == 1) {
+		uint fr1 = in->readUint16BE();
+		uint fr2 = in->readUint16BE();
+		uint i, size;
+		uint j, k;
+		SubRoom *subRoom;
+
+		size = SubRoom_SIZE;
+		for (i = 0, j = fr2; i != 6; i++, j >>= 2)
+			if (j & 3)
+				size += sizeof(subRoom->roomExit[0]);
+
+		subRoom = (SubRoom *)allocateChildBlock(item, 1, size);
+		subRoom->subroutine_id = fr1;
+		subRoom->roomExitStates = fr2;
+
+		for (i = k = 0, j = fr2; i != 6; i++, j >>= 2)
+			if (j & 3)
+				subRoom->roomExit[k++] = (uint16)fileReadItemID(in);
+	} else if (type == 2) {
+		uint32 fr = in->readUint32BE();
+		uint i, k, size;
+		SubObject *subObject;
+
+		size = SubObject_SIZE;
+		for (i = 0; i != 16; i++)
+			if (fr & (1 << i))
+				size += sizeof(subObject->objectFlagValue[0]);
+
+		subObject = (SubObject *)allocateChildBlock(item, 2, size);
+		subObject->objectFlags = fr;
+
+		k = 0;
+		if (fr & 1) {
+			subObject->objectFlagValue[k++] = (uint16)in->readUint32BE();
 		}
+		for (i = 1; i != 16; i++)
+			if (fr & (1 << i))
+				subObject->objectFlagValue[k++] = in->readUint16BE();
+
+		if (getGameType() != GType_ELVIRA2)
+			subObject->objectName = (uint16)in->readUint32BE();
+	} else if (type == 4) {
+		assert(getGameType() == GType_ELVIRA2);
+
+		uint i, j, k, size;
+		uint id, x, y, z;
+		SubSuperRoom *subSuperRoom;
+
+		id = in->readUint16BE();
+		x = in->readUint16BE();
+		y = in->readUint16BE();
+		z = in->readUint16BE();
+
+		j = x * y * z;
+		size = SubSuperRoom_SIZE;
+		for (i = 0; i != j; i++)
+			size += sizeof(subSuperRoom->roomExitStates[0]);
+
+		subSuperRoom = (SubSuperRoom *)allocateChildBlock(item, 4, size);
+		subSuperRoom->subroutine_id = id;
+		subSuperRoom->roomX = x;
+		subSuperRoom->roomY = y;
+		subSuperRoom->roomZ = z;
+
+		for (i = k = 0; i != j; i++)
+			subSuperRoom->roomExitStates[k++] = in->readUint16BE();
+	} else if (type == 7) {
+		SubContainer *container = (SubContainer *)allocateChildBlock(item, 7, sizeof(SubContainer));
+		container->volume = in->readUint16BE();
+		container->flags = in->readUint16BE();
+	} else if (type == 8) {
+		SubChain *chain = (SubChain *)allocateChildBlock(item, 8, sizeof(SubChain));
+		chain->chChained = (uint16)fileReadItemID(in);
+	} else if (type == 9) {
+		setUserFlag(item, 0, in->readUint16BE());
+		setUserFlag(item, 1, in->readUint16BE());
+		setUserFlag(item, 2, in->readUint16BE());
+		setUserFlag(item, 3, in->readUint16BE());
 	} else if (type == 255) {
 		SubInherit *inherit = (SubInherit *)allocateChildBlock(item, 255, sizeof(SubInherit));
 		inherit->inMaster = (uint16)fileReadItemID(in);
@@ -629,7 +644,7 @@ bool AGOSEngine::decrunchFile(byte *src, byte *dst, uint32 size) {
 #undef SD_TYPE_LITERAL
 #undef SD_TYPE_MATCH
 
-void AGOSEngine::loadVGABeardFile(uint id) {
+void AGOSEngine::loadVGABeardFile(uint16 id) {
 	uint32 offs, size;
 
 	if (getFeatures() & GF_OLD_BUNDLE) {
@@ -673,7 +688,7 @@ void AGOSEngine::loadVGABeardFile(uint id) {
 	}
 }
 
-void AGOSEngine::loadVGAVideoFile(uint id, uint type) {
+void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type) {
 	File in;
 	char filename[15];
 	byte *dst;

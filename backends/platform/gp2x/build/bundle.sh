@@ -23,6 +23,7 @@ cp ../../../../scummvm.gp2x ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../AUTHORS ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../README ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../COPYING ./scummvm-gp2x-`date '+%Y-%m-%d'`/
+cp ../../../../COPYRIGHT ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../NEWS ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../gui/themes/modern.ini ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../gui/themes/modern.zip ./scummvm-gp2x-`date '+%Y-%m-%d'`/

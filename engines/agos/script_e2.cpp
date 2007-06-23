@@ -145,7 +145,7 @@ void AGOSEngine_Elvira2::setupOpcodes() {
 		OPCODE(o_comment),
 		/* 88 */
 		OPCODE(o_invalid),
-		OPCODE(oe1_loadGame),
+		OPCODE(oe2_loadGame),
 		OPCODE(o_getParent),
 		OPCODE(o_getNext),
 		/* 92 */
@@ -313,6 +313,17 @@ void AGOSEngine_Elvira2::oe2_pObj() {
 
 	if (subObject != NULL && subObject->objectFlags & kOFText)
 		showMessageFormat("%s\n", (const char *)getStringPtrByID(subObject->objectFlagValue[0])); // Difference
+}
+
+void AGOSEngine_Elvira2::oe2_loadGame() {
+	// 89: load game
+	uint16 stringId = getNextStringID();
+
+	if (!scumm_stricmp(getFileName(GAME_RESTFILE), (const char *)getStringPtrByID(stringId))) {
+		loadGame(getFileName(GAME_RESTFILE), true);
+	} else {
+		loadGame((const char *)getStringPtrByID(stringId));
+	}
 }
 
 void AGOSEngine_Elvira2::oe2_drawItem() {
@@ -498,48 +509,7 @@ void AGOSEngine_Elvira2::oe2_ink() {
 
 void AGOSEngine_Elvira2::oe2_printStats() {
 	// 161: print stats
-	WindowBlock *window = _dummyWindow;
-	int val;
-	const uint8 y = (getPlatform() == Common::kPlatformAtariST) ? 131 : 134;
-
-	window->flags = 1;
-
-	mouseOff();
-
-	// Level
-	val = _variableArray[20];
-	if (val < -99)
-		val = -99;
-	if (val > 99)
-		val = 99;	
-	writeChar(window, 10, y, 0, val);
-
-	// PP
-	val = _variableArray[22];
-	if (val < -99)
-		val = -99;
-	if (val > 99)
-		val = 99;	
-	writeChar(window, 16, y, 6, val);
-
-	// HP
-	val = _variableArray[23];
-	if (val < -99)
-		val = -99;
-	if (val > 99)
-		val = 99;	
-	writeChar(window, 23, y, 4, val);
-
-	// Experience
-	val = _variableArray[21];
-	if (val < -99)
-		val = -99;
-	if (val > 9999)
-		val = 9999;	
-	writeChar(window, 30, y, 6, val / 100);
-	writeChar(window, 32, y, 2, val / 10);
-
-	mouseOn();
+	printStats();
 }
 
 void AGOSEngine_Elvira2::oe2_setSuperRoom() {
@@ -695,6 +665,51 @@ void AGOSEngine_Elvira2::oe2_b2NotZero() {
 	// 183: is bit2 set
 	uint bit = getVarOrByte();
 	setScriptCondition((_bitArrayTwo[bit / 16] & (1 << (bit & 15))) != 0);
+}
+
+void AGOSEngine_Elvira2::printStats() {
+	WindowBlock *window = _dummyWindow;
+	int val;
+	const uint8 y = (getPlatform() == Common::kPlatformAtariST) ? 131 : 134;
+
+	window->flags = 1;
+
+	mouseOff();
+
+	// Level
+	val = _variableArray[20];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 10, y, 0, val);
+
+	// PP
+	val = _variableArray[22];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 16, y, 6, val);
+
+	// HP
+	val = _variableArray[23];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 23, y, 4, val);
+
+	// Experience
+	val = _variableArray[21];
+	if (val < -99)
+		val = -99;
+	if (val > 9999)
+		val = 9999;	
+	writeChar(window, 30, y, 6, val / 100);
+	writeChar(window, 32, y, 2, val / 10);
+
+	mouseOn();
 }
 
 } // End of namespace AGOS

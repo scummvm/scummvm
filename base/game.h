@@ -31,11 +31,31 @@
 #include "common/array.h"
 #include "common/hash-str.h"
 
+/**
+ * A simple structure used to map gameids (like "monkey", "sword1", ...) to
+ * nice human readable and descriptive game titles (like "The Secret of Monkey Island").
+ * This is a plain struct to make it possible to declare NULL-terminated C arrays
+ * consisting of PlainGameDescriptors.
+ */
 struct PlainGameDescriptor {
 	const char *gameid;
-	const char *description;	// TODO: Rename this to "title" or so
+	const char *description;
 };
 
+/**
+ * Given a list of PlainGameDescriptors, returns the first PlainGameDescriptor
+ * matching the given gameid. If not match is found return 0.
+ * The end of the list marked by a PlainGameDescriptor with gameid equal to 0.
+ */
+const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list);
+
+/**
+ * A hashmap describing details about a given game. In a sense this is a refined
+ * version of PlainGameDescriptor, as it also contains a gameid and a description string.
+ * But in addition, platform and language settings, as well as arbitrary other settings,
+ * can be contained in a GameDescriptor.
+ * This is an essential part of the glue between the game engines and the launcher code.
+ */
 class GameDescriptor : public Common::StringMap {
 public:
 	GameDescriptor() {
@@ -90,7 +110,7 @@ class Plugin;
 
 namespace Base {
 
-// TODO: Find a better place for this function.
+// TODO: Find a better name & place for this function.
 GameDescriptor findGame(const Common::String &gameName, const Plugin **plugin = NULL);
 
 } // End of namespace Base

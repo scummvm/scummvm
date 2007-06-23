@@ -62,12 +62,12 @@ SOURCE  c24             ScummxLarge.bmp
 SOURCE  8               ScummxLargeMask.bmp
 END
 
-EPOCSTACKSIZE	0x0000F000
+EPOCSTACKSIZE	80000
 EPOCHEAPSIZE	2048000	32000000
 ALWAYS_BUILD_AS_ARM
 MACRO			S60
 MACRO			S60V3
-MACRO			EPOC_AS_APP
+
 //START_AUTO_MACROS_SLAVE//
 
 	// empty base file, will be updated by Perl build scripts

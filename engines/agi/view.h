@@ -51,6 +51,7 @@ struct ViewLoop {
 struct AgiView {
 	int numLoops;
 	struct ViewLoop *loop;
+	bool agi256_2;
 	char *descr;
 	uint8 *rdata;
 };

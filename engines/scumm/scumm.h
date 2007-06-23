@@ -29,6 +29,7 @@
 #include "engines/engine.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/str.h"
 #include "graphics/surface.h"
@@ -482,7 +483,7 @@ public:
 protected:
 	void waitForTimer(int msec_delay);
 	virtual void processInput();
-	virtual void processKeyboard(int lastKeyHit);
+	virtual void processKeyboard(Common::KeyState lastKeyHit);
 	virtual void clearClickedStatus();
 
 	// Cursor/palette
@@ -584,7 +585,7 @@ public:
 	Common::String generateFilename(const int room) const;
 
 protected:
-	int _keyPressed;
+	Common::KeyState _keyPressed;
 	bool _keyDownMap[512]; // FIXME - 512 is a guess. it's max(kbd.ascii)
 
 	Common::Point _mouse;

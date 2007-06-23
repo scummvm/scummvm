@@ -286,13 +286,13 @@ void jobHideInventory(void *parm, Job *j) {
 
 	static uint16 count = 0;
 
-	_engineFlags |= kEngineMouse;
+	_engineFlags |= kEngineBlockInput;
 
 	count++;
 	if (count == 2) {
 		count = 0;
 		j->_finished = 1;
-		_engineFlags &= ~kEngineMouse;
+		_engineFlags &= ~kEngineBlockInput;
 	}
 
 	Common::Rect r(INVENTORY_WIDTH, _numInvLines * INVENTORYITEM_HEIGHT);

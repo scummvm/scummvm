@@ -32,7 +32,7 @@ using Common::File;
 
 namespace AGOS {
 
-const byte *AGOSEngine::getStringPtrByID(uint stringId) {
+const byte *AGOSEngine::getStringPtrByID(uint16 stringId) {
 	const byte *string_ptr;
 	byte *dst;
 
@@ -49,7 +49,7 @@ const byte *AGOSEngine::getStringPtrByID(uint stringId) {
 	return dst;
 }
 
-const byte *AGOSEngine::getLocalStringByID(uint stringId) {
+const byte *AGOSEngine::getLocalStringByID(uint16 stringId) {
 	if (stringId < _stringIdLocalMin || stringId >= _stringIdLocalMax) {
 		loadTextIntoMem(stringId);
 	}
@@ -140,7 +140,7 @@ uint AGOSEngine::loadTextFile_gme(const char *filename, byte *dst) {
 	return size;
 }
 
-void AGOSEngine::loadTextIntoMem(uint stringId) {
+void AGOSEngine::loadTextIntoMem(uint16 stringId) {
 	byte *p;
 	char filename[30];
 	int i;
@@ -304,7 +304,7 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 	lettersPerRowJustified = stringLength / (stringLength / lettersPerRow + 1) + 1;
 
 	talkDelay = (stringLength + 3) / 3;
-	if ((getGameType() == GType_SIMON1) && (getFeatures() & GF_TALKIE)) {
+	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE)) {
 		if (_variableArray[141] == 0)
 			_variableArray[141] = 9;
 		_variableArray[85] = _variableArray[141] * talkDelay;
@@ -364,16 +364,16 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 		renderString(vgaSpriteId, color, width, height, convertedString);
 	}
 
-	int b = (!getBitFlag(133)) ? 3 : 4;
+	uint16 windowNum = (!getBitFlag(133)) ? 3 : 4;
 
 	x /= 8;
 	if (y < 2)
 		y = 2;
 
 	if (getGameType() == GType_SIMON1)
-		animate(b, 2, vgaSpriteId + 199, x, y, 12);
+		animate(windowNum, 2, 199 + vgaSpriteId, x, y, 12);
 	else
-		animate(b, 2, vgaSpriteId, x, y, 12);
+		animate(windowNum, 2, vgaSpriteId, x, y, 12);
 }
 
 // The Feeble Files specific

@@ -580,10 +580,10 @@ int32 Insane::processKeyboard(void) {
 		_enemyState[EN_BEN][1] += tmpy;
 	}
 
-	if (_vm->getKeyState(0x0d))
+	if (_vm->getKeyState(Common::KEYCODE_RETURN))
 		retval |= 1;
 
-	if (_vm->getKeyState(0x09))
+	if (_vm->getKeyState(Common::KEYCODE_TAB))
 		retval |= 2;
 
 	return retval;

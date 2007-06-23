@@ -110,7 +110,7 @@ void IMuseDigital::setDigMusicSequence(int seqId) {
 			_nextSeqToPlay = 0;
 			_attributes[DIG_SEQ_OFFSET + num] = 1;
 		} else {
-			if ((_digSeqMusicTable[_curMusicSeq].opcode == 4) || (_digSeqMusicTable[_curMusicSeq].opcode == 6)) {
+			if ((_digSeqMusicTable[_curMusicSeq].transitionType == 4) || (_digSeqMusicTable[_curMusicSeq].transitionType == 6)) {
 				_nextSeqToPlay = num;
 				return;
 			} else {
@@ -174,7 +174,7 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 
 	fadeOutMusic(120);
 
-	switch (table->opcode) {
+	switch (table->transitionType) {
 		case 0:
 		case 5:
 		case 6:
@@ -252,7 +252,7 @@ void IMuseDigital::setComiMusicSequence(int seqId) {
 			playComiMusic(_comiSeqMusicTable[num].name, &_comiSeqMusicTable[num], 0, true);
 			_nextSeqToPlay = 0;
 		} else {
-			if ((_comiSeqMusicTable[_curMusicSeq].opcode == 4) || (_comiSeqMusicTable[_curMusicSeq].opcode == 6)) {
+			if ((_comiSeqMusicTable[_curMusicSeq].transitionType == 4) || (_comiSeqMusicTable[_curMusicSeq].transitionType == 6)) {
 				_nextSeqToPlay = num;
 				return;
 			} else {
@@ -295,7 +295,7 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		}
 	}
 
-	switch (table->opcode) {
+	switch (table->transitionType) {
 		case 0:
 			fadeOutMusic(120);
 			break;
@@ -333,7 +333,7 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 				startMusic(table->filename, table->soundId, 0, 127);
 				return;
 			}
-			if (table->opcode == 12) {
+			if (table->transitionType == 12) {
 				startMusic(table->filename, table->soundId, table->hookId, 127);
 			} else {
 				startMusic(table->filename, table->soundId, hookId, 127);
@@ -355,7 +355,7 @@ void IMuseDigital::setFtMusicState(int stateId) {
 		if (stateId == 0)
 			playFtMusic(NULL, 0, 0);
 		else
-			playFtMusic(_ftStateMusicTable[stateId].audioName, _ftStateMusicTable[stateId].opcode, _ftStateMusicTable[stateId].volume);
+			playFtMusic(_ftStateMusicTable[stateId].audioName, _ftStateMusicTable[stateId].transitionType, _ftStateMusicTable[stateId].volume);
 	}
 
 	_curMusicState = stateId;
@@ -374,11 +374,11 @@ void IMuseDigital::setFtMusicSequence(int seqId) {
 		if (_curMusicState == 0)
 			playFtMusic(NULL, 0, 0);
 		else {
-			playFtMusic(_ftStateMusicTable[_curMusicState].audioName, _ftStateMusicTable[_curMusicState].opcode, _ftStateMusicTable[_curMusicState].volume);
+			playFtMusic(_ftStateMusicTable[_curMusicState].audioName, _ftStateMusicTable[_curMusicState].transitionType, _ftStateMusicTable[_curMusicState].volume);
 		}
 	} else {
 		int seq = (seqId - 1) * 4;
-		playFtMusic(_ftSeqMusicTable[seq].audioName, _ftSeqMusicTable[seq].opcode, _ftSeqMusicTable[seq].volume);
+		playFtMusic(_ftSeqMusicTable[seq].audioName, _ftSeqMusicTable[seq].transitionType, _ftSeqMusicTable[seq].volume);
 	}
 
 	_curMusicSeq = seqId;
@@ -401,7 +401,7 @@ void IMuseDigital::setFtMusicCuePoint(int cueId) {
 		playFtMusic(NULL, 0, 0);
 	else {
 		int seq = ((_curMusicSeq - 1) * 4) + cueId;
-		playFtMusic(_ftSeqMusicTable[seq].audioName, _ftSeqMusicTable[seq].opcode, _ftSeqMusicTable[seq].volume);
+		playFtMusic(_ftSeqMusicTable[seq].audioName, _ftSeqMusicTable[seq].transitionType, _ftSeqMusicTable[seq].volume);
 	}
 
 	_curMusicCue = cueId;

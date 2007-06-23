@@ -316,7 +316,7 @@ void Parallaction::changeLocation(char *location) {
 
 
 	_hoverZone = NULL;
-	if (_engineFlags & kEngineMouse) {
+	if (_engineFlags & kEngineBlockInput) {
 		changeCursor( kCursorArrow );
 	}
 

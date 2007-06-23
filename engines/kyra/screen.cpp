@@ -355,6 +355,33 @@ void Screen::fadeToBlack(int delay) {
 	fadePalette(blackPal, delay);
 }
 
+void Screen::k2IntroFadeToGrey(int delay) {
+	debugC(9, kDebugLevelScreen, "Screen::k2IntroFadeToGrey()");
+
+	for (int i = 0; i <= 50; ++i) {
+		if (i <= 8 || i >= 30) {
+			_currentPalette[3 * i + 0] = (_currentPalette[3 * i + 0] + 
+						      _currentPalette[3 * i + 1] + 
+						      _currentPalette[3 * i + 2]) / 3;
+			_currentPalette[3 * i + 1] =  _currentPalette[3 * i + 0];
+			_currentPalette[3 * i + 2] =  _currentPalette[3 * i + 0];
+		}
+	}
+
+	// color 71 is the same in both the overview and closeup scenes
+	// Converting it to greyscale makes the trees in the closeup look dull
+	for (int i = 71; i < 200; ++i) {
+		_currentPalette[3 * i + 0] = (_currentPalette[3 * i + 0] + 
+					      _currentPalette[3 * i + 1] + 
+					      _currentPalette[3 * i + 2]) / 3;
+		_currentPalette[3 * i + 1] =  _currentPalette[3 * i + 0];
+		_currentPalette[3 * i + 2] =  _currentPalette[3 * i + 0];
+	}
+	fadePalette(_currentPalette, delay);
+	// Make the font color white again
+	setPaletteIndex(254, 254, 254, 254);
+}
+
 void Screen::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {
 	debugC(9, kDebugLevelScreen, "fadeSpecialPalette(%d, %d, %d, %d)", palIndex, startIndex, size, fadeTime);
 	assert(_vm->palTable1()[palIndex]);

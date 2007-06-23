@@ -39,6 +39,20 @@
 "\epoc32\release\armi\urel\ScummVM.aif"-"!:\system\apps\ScummVM\ScummVM.aif"
 "\epoc32\release\armi\urel\ScummVM.rsc"-"!:\system\apps\ScummVM\ScummVM.rsc"
 
+"..\..\..\..\dists\pred.dic"-"c:\system\apps\scummvm\pred.dic"
+
+; Scummvm Documentation
+"..\..\..\..\COPYRIGHT"-"!:\system\apps\scummvm\COPYRIGHT", FT, TC
+"..\..\..\..\COPYING"-"!:\system\apps\scummvm\COPYING", FT, TC
+"..\README"-"!:\system\apps\scummvm\SYMBIAN_README", FT, TC
+"..\..\..\..\AUTHORS"-"!:\system\apps\scummvm\AUTHORS"
+"..\..\..\..\README"-"!:\system\apps\scummvm\README"
+"..\..\..\..\NEWS"-"!:\system\apps\scummvm\NEWS"
+
+; Common datafiles needed for some games
+"..\kyra.dat"-"!:\system\apps\scummvm\kyra.dat"
+"..\sky.cpt"-"!:\system\apps\scummvm\sky.cpt"
+
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"!:\system\apps\ScummVM\scummvm.ini",FILENULL
 ""-"!:\system\apps\ScummVM\scummvm.stdout.txt",FILENULL

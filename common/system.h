@@ -125,7 +125,7 @@ public:
 		kFeatureAutoComputeDirtyRects,
 
 		/**
-		 * This flags determines either cursor can have its own palette or not
+		 * This flag determines either cursor can have its own palette or not
 		 * It is currently used only by some Macintosh versions of Humongous
 		 * Entertainment games. If backend doesn't implement this feature then
 		 * engine switches to b/w version of cursors.
@@ -142,7 +142,22 @@ public:
 		/**
 		 * Set to true to iconify the window.
 		 */
-		kFeatureIconifyWindow
+		kFeatureIconifyWindow,
+
+		/**
+		 * This feature, set to true, is a hint toward the backend to disable all
+		 * key filtering/mapping, in cases where it would be beneficial to do so.
+		 * As an example case, this is used in the agi engine's predictive dialog.
+		 * When the dialog is displayed this feature is set so that backends with
+		 * phone-like keypad temporarily unmap all user actions which leads to
+		 * comfortable word entry. Conversely, when the dialog exits the feature
+		 * is set to false.
+		 * TODO: Fingolfin suggests that the way the feature is used can be 
+		 * generalized in this sense: Have a keyboard mapping feature, which the
+		 * engine queries for to assign keys to actions ("Here's my default key
+		 * map for these actions, what do you want them set to?").
+		 */
+		kFeatureDisableKeyFiltering
 	};
 
 	/**
@@ -437,21 +452,34 @@ public:
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
 
 	/**
-	 * Copies the current screen contents to a new surface, with the original
-	 * bit depth. This will allocate memory for the pixel data.
-	 * WARNING: surf->free() must be called by the user to avoid leaking.
+	 * Lock the active screen framebuffer and return a Graphics::Surface
+	 * representing it. The caller can then perform arbitrary graphics
+	 * transformations on the framebuffer (blitting, scrolling, etc.).
+	 * Must be followed by matching call to unlockScreen(). Calling code
+	 * should make sure to only lock the framebuffer for the briefest
+	 * periods of time possible, as the whole system is potentially stalled
+	 * while the lock is active.
+	 * Returns 0 if an error occurred. Otherwise an 8bit surface is returned.
 	 *
-	 * @param surf	the surfce to store the data in it
-	 * @return true if all went well, false if an error occured
+	 * The returned surface must *not* be deleted by the client code.
 	 */
-	virtual bool grabRawScreen(Graphics::Surface *surf) = 0;
+	virtual Graphics::Surface *lockScreen() = 0;
+
+	/**
+	 * Unlock the screen framebuffer, and mark it as dirty (i.e. during the
+	 * next updateScreen() call, the whole screen will be updated.
+	 */
+	virtual void unlockScreen() = 0;
 
 	/**
 	 * Clear the screen to black.
 	 */
-	virtual void clearScreen() {}
+	virtual void clearScreen();
 
-	/** Update the dirty areas of the screen. */
+	/**
+	 * Flush the whole screen, that is render the current content of the screen
+	 * framebuffer (resp. the dirty/changed parts of it) to the display.
+	 */
 	virtual void updateScreen() = 0;
 
 	/**
@@ -763,7 +791,7 @@ public:
 	//@{
 
 	/**
-	 * Returh the audio mixer. For more information, refer to the
+	 * Return the audio mixer. For more information, refer to the
 	 * Audio::Mixer documentation.
 	 */
 	virtual Audio::Mixer *getMixer() = 0;

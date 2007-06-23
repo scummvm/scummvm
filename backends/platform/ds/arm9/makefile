@@ -333,8 +333,8 @@ endif
 
 #---------------------------------------------------------------------------------
 %.nds: %.bin
-	@echo ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM 0.9.0;DS Port"
-	ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM 0.9.1;DS Port"
+	@echo ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM 0.11.0svn;DS Port"
+	ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM 0.11.0svn;DS Port"
 	dsbuild $@ -l ../ndsloader.bin
 
 	padbin 16 $(basename $@).ds.gba

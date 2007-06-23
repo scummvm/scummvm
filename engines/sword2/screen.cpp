@@ -31,6 +31,7 @@
 
 #include "common/stdafx.h"
 #include "common/system.h"
+#include "common/events.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
@@ -1091,7 +1092,7 @@ void Screen::rollCredits() {
 
 		KeyboardEvent *ke = _vm->keyboardEvent();
 
-		if (ke && ke->keycode == 27) {
+		if (ke && ke->kbd.keycode == Common::KEYCODE_ESCAPE) {
 			if (!abortCredits) {
 				abortCredits = true;
 				fadeDown();

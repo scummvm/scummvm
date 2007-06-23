@@ -124,6 +124,10 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_tableIndexBase = 0;
 	_textIndexBase = 0;
 
+	_numMusic = 0;
+	_numSFX = 0;
+	_numSpeech = 0;
+
 	_numBitArray1 = 0;
 	_numBitArray2 = 0;
 	_numBitArray3 = 0;
@@ -132,6 +136,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_numVars = 0;
 	_numVideoOpcodes = 0;
 	_vgaBaseDelay = 0;
+	_vgaPeriod = 0;
 
 	_strippedTxtMem = 0;
 	_textMem = 0;
@@ -197,13 +202,10 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_litBoxFlag = 0;
 	_mortalFlag = 0;
 	_displayScreen = false;
-	_updateScreen = false;
 	_syncFlag2 = 0;
 	_inCallBack = 0;
 	_cepeFlag = 0;
-	_copyPartialMode = 0;
 	_fastMode = 0;
-	_useBackGround = 0;
 	
 	_backFlag = 0;
 
@@ -298,6 +300,8 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_leftButtonDown = 0;
 	_rightButtonDown = 0;
 	_clickOnly = 0;
+	_leftClick = 0;
+	_oneClick = 0;
 	_noRightClick = false;
 
 	_leftButton = 0;
@@ -311,7 +315,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_lockWord = 0;
 	_scrollUpHitArea = 0;
 	_scrollDownHitArea = 0;
-
 
 	_noOverWrite = 0;
 	_rejectBlock = false;
@@ -331,6 +334,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_showPreposition = 0;
 	_showMessageFlag = 0;
 
+	_newDirtyClip = false;
 	_copyScnFlag = 0;
 	_vgaSpriteChanged = 0;
 
@@ -348,8 +352,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_curSfxFile = 0;
 
 	_syncCount = 0;
-	_timer5 = 0;
-	_timer4 = 0;
 
  	_iconToggleCount = 0;
  	_voiceCount = 0;
@@ -466,6 +468,9 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_planarBuf = 0;
 
+	_midiEnabled = false;
+	_nativeMT32 = false;
+
 	_vgaTickCounter = 0;
 
 	_moviePlay = 0;
@@ -494,7 +499,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_noOracleScroll = 0;
 
 	_backGroundBuf = 0;
-	_frontBuf = 0;
 	_backBuf = 0;
 	_scaleBuf = 0;
 
@@ -566,34 +570,34 @@ int AGOSEngine::init() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	// Setup midi driver
-	MidiDriver *driver = 0;
-	if (getGameType() == GType_FF || getGameType() == GType_PP || getGameId() == GID_SIMON1CD32) {
-		driver = MidiDriver::createMidi(MD_NULL);
-		_native_mt32 = false;
-	} else {
+	if ((getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformWindows) ||
+		(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) ||
+		((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
+		(getPlatform() == Common::kPlatformPC)) {
+
+		// Setup midi driver
 		int midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_MIDI);
-		_native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-		driver = MidiDriver::createMidi(midiDriver);
-		if (_native_mt32) {
+		_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
+		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+		if (_nativeMT32) {
 			driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		}
+
+		_midi.mapMT32toGM (getGameType() != GType_SIMON2 && !_nativeMT32);
+
+		_midi.setDriver(driver);
+		int ret = _midi.open();
+		if (ret)
+			warning("MIDI Player init failed: \"%s\"", _midi.getErrorName (ret));
+
+		_midi.setVolume(ConfMan.getInt("music_volume"));
+
+
+		_midiEnabled = true;
 	}
-
-	_midi.mapMT32toGM (getGameType() != GType_SIMON2 && !_native_mt32);
-
-	_midi.setDriver(driver);
-	int ret = _midi.open();
-	if (ret)
-		warning("MIDI Player init failed: \"%s\"", _midi.getErrorName (ret));
-	_midi.setVolume(ConfMan.getInt("music_volume"));
-
-	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1)
-		_midi.pause(_musicPaused ^= 1);
 
 	// allocate buffers
 	_backGroundBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
-	_frontBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		_backBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
@@ -607,7 +611,11 @@ int AGOSEngine::init() {
 	} else if (getGameType() == GType_WW || getGameType() == GType_ELVIRA2) {
 		_window4BackScn = (byte *)calloc(224 * 127, 1);
 	} else if (getGameType() == GType_ELVIRA1) {
-		_window4BackScn = (byte *)calloc(224 * 127, 1);
+		if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_DEMO)) {
+			_window4BackScn = (byte *)calloc(224 * 196, 1);
+		} else {
+			_window4BackScn = (byte *)calloc(224 * 144, 1);
+		}
 		_window6BackScn = (byte *)calloc(48 * 80, 1);
 	}
 
@@ -617,6 +625,14 @@ int AGOSEngine::init() {
 	_sound = new Sound(this, gss, _mixer);
 
 	_moviePlay = new MoviePlayer(this, _mixer);
+
+	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1) {
+		_musicPaused = true;
+		if (_midiEnabled) {
+			_midi.pause(_musicPaused);
+		}
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, 0);
+	}
 
 	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {
 		if (getGameId() == GID_SIMON1DOS)
@@ -693,6 +709,7 @@ void AGOSEngine_PuzzlePack::setupGame() {
 	_tableMemSize = 200000;
 	_frameCount = 1;
 	_vgaBaseDelay = 5;
+	_vgaPeriod = (getGameId() == GID_DIMP) ? 35 : 30;
 	_numBitArray1 = 128;
 	_numItemStore = 10;
 	_numTextBoxes = 40;
@@ -713,6 +730,7 @@ void AGOSEngine_Feeble::setupGame() {
 	_tableMemSize = 200000;
 	_frameCount = 1;
 	_vgaBaseDelay = 5;
+	_vgaPeriod = 50;
 	_numBitArray1 = 16;
 	_numBitArray2 = 16;
 	_numBitArray3 = 16;
@@ -736,18 +754,23 @@ void AGOSEngine_Simon2::setupGame() {
 	_itemMemSize = 20000;
 	_tableMemSize = 100000;
 	// Check whether to use MT-32 MIDI tracks in Simon the Sorcerer 2
-	if ((getGameType() == GType_SIMON2) && _native_mt32)
+	if (getGameType() == GType_SIMON2 && _nativeMT32)
 		_musicIndexBase = (1128 + 612) / 4;
 	else
 		_musicIndexBase = 1128 / 4;
 	_soundIndexBase = 1660 / 4;
 	_frameCount = 1;
 	_vgaBaseDelay = 1;
+	_vgaPeriod = 45;
 	_numBitArray1 = 16;
 	_numBitArray2 = 16;
 	_numItemStore = 10;
 	_numTextBoxes = 20;
 	_numVars = 255;
+
+	_numMusic = 93;
+	_numSFX = 222;
+	_numSpeech = 3632;
 
 	AGOSEngine::setupGame();
 }
@@ -768,11 +791,16 @@ void AGOSEngine_Simon1::setupGame() {
 	_soundIndexBase = 0;
 	_frameCount = 1;
 	_vgaBaseDelay = 1;
+	_vgaPeriod = 50;
 	_numBitArray1 = 16;
 	_numBitArray2 = 16;
 	_numItemStore = 10;
 	_numTextBoxes = 20;
 	_numVars = 255;
+
+	_numMusic = 34;
+	_numSFX = 127;
+	_numSpeech = 1996;
 
 	AGOSEngine::setupGame();
 }
@@ -789,11 +817,14 @@ void AGOSEngine_Waxworks::setupGame() {
 	_tableMemSize = 50000;
 	_frameCount = 4;
 	_vgaBaseDelay = 1;
+	_vgaPeriod = 50;
 	_numBitArray1 = 16;
 	_numBitArray2 = 15;
 	_numItemStore = 50;
 	_numTextBoxes = 10;
 	_numVars = 255;
+
+	_numMusic = 9;
 
 	AGOSEngine::setupGame();
 }
@@ -810,10 +841,13 @@ void AGOSEngine_Elvira2::setupGame() {
 	_tableMemSize = 100000;
 	_frameCount = 4;
 	_vgaBaseDelay = 1;
+	_vgaPeriod = 50;
 	_numBitArray1 = 16;
 	_numBitArray2 = 15;
 	_numItemStore = 50;
 	_numVars = 255;
+
+	_numMusic = 9;
 
 	AGOSEngine::setupGame();
 }
@@ -830,7 +864,10 @@ void AGOSEngine_Elvira1::setupGame() {
 	_tableMemSize = 256000;
 	_frameCount = 4;
 	_vgaBaseDelay = 1;
+	_vgaPeriod = 50;
 	_numVars = 512;
+
+	_numMusic = 14;
 
 	AGOSEngine::setupGame();
 }
@@ -876,7 +913,10 @@ void AGOSEngine::setupGame() {
 }
 
 AGOSEngine::~AGOSEngine() {
-	delete _gameFile;
+	// Sync with AGOSEngine::shutdown()
+	// In Simon 2, this gets deleted along with _sound further down
+	if (getGameType() != GType_SIMON2)
+		delete _gameFile;
 
 	_midi.close();
 
@@ -892,7 +932,6 @@ AGOSEngine::~AGOSEngine() {
 	free(_textMem);
 
 	free(_backGroundBuf);
-	free(_frontBuf);
 	free(_backBuf);
 	free(_scaleBuf);
 
@@ -906,7 +945,7 @@ AGOSEngine::~AGOSEngine() {
 	delete _dummyItem2;
 	delete _dummyItem3;
 
-	delete [] _dummyWindow;
+	delete _dummyWindow;
 	delete [] _windowList;
 
 	delete _debugger;
@@ -925,13 +964,17 @@ void AGOSEngine::pause() {
 	bool music_status = _musicPaused;
 
 	_midi.pause(true);
+	_mixer->pauseAll(true);
 	_sound->ambientPause(true);
+
 	while (_pause) {
 		delay(1);
 		if (_keyPressed == 'p')
 			_pause = 0;
 	}
+
 	_midi.pause(music_status);
+	_mixer->pauseAll(false);
 	_sound->ambientPause(ambient_status);
 }
 
@@ -982,7 +1025,7 @@ int AGOSEngine::go() {
 	}
 
 	if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
-		loadMusic(0);
+		playMusic(0, 0);
 	}
 
 	if ((getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformMacintosh) &&
@@ -1004,18 +1047,44 @@ int AGOSEngine::go() {
 }
 
 void AGOSEngine::shutdown() {
-	delete _gameFile;
+	// Sync with AGOSEngine::~AGOSEngine()
+	// In Simon 2, this gets deleted along with _sound further down
+	if (getGameType() != GType_SIMON2)
+		delete _gameFile;
 
 	_midi.close();
 
-	free(_stringTabPtr);
-	free(_itemArrayPtr);
 	free(_itemHeapPtr - _itemHeapCurPos);
 	free(_tablesHeapPtr - _tablesHeapCurPos);
-	free(_tblList);
-	free(_zoneBuffers);
-	free(_iconFilePtr);
+
 	free(_gameOffsetsPtr);
+	free(_iconFilePtr);
+	free(_itemArrayPtr);
+	free(_stringTabPtr);
+	free(_strippedTxtMem);
+	free(_tblList);
+	free(_textMem);
+
+	free(_backGroundBuf);
+	free(_backBuf);
+	free(_scaleBuf);
+
+	free(_window4BackScn);
+	free(_window6BackScn);
+
+	free(_variableArray);
+	free(_variableArray2);
+
+	delete _dummyItem1;
+	delete _dummyItem2;
+	delete _dummyItem3;
+
+	delete _dummyWindow;
+	delete [] _windowList;
+
+	delete _debugger;
+	delete _moviePlay;
+	delete _sound;
 
 	_system->quit();
 }

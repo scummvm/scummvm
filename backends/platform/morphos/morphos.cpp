@@ -838,7 +838,7 @@ bool OSystem_MorphOS::pollEvent(Common::Event &event)
 					/*
 					 * Function key
 					 */
-					event.kbd.ascii = (ScummMsg->Code-RAWKEY_F1)+315;
+					event.kbd.ascii = (ScummMsg->Code-RAWKEY_F1)+Common::ASCII_F1;
 					event.kbd.keycode = 0;
 				}
 				else if (ScummMsg->Code == RAWKEY_F11 || ScummMsg->Code == RAWKEY_F12)
