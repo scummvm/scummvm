@@ -134,6 +134,8 @@ public:
 	void fadeFromBlack(int delay=0x54);
 	void fadeToBlack(int delay=0x54);
 
+	void k2IntroFadeToGrey(int delay=0x54);
+
 	void fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime);
 	void fadePalette(const uint8 *palData, int delay);
 

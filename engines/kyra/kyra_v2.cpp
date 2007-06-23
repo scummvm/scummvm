@@ -112,7 +112,7 @@ void KyraEngine_v2::mainMenu() {
 			case 0:
 				break;
 			case 1:
-				seq_playSequences(kSequenceOverview, kSequenceLibrary); 
+				seq_playSequences(kSequenceOverview, kSequenceZanFaun); 
 				break;
 			case 2:
 				break;
