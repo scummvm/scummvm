@@ -356,7 +356,7 @@ void ScummEngine::processInput() {
 			lastKeyHit.flags = 0;
 			//FIXME: lastKeyHit.keycode = ???; proper value???
 		} else {
-			lastKeyHit = Common::KeySate(Common::KEYCODE_ESCAPE);
+			lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
 		}
 	}
 #endif
