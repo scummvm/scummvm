@@ -93,7 +93,7 @@ void ScummEngine::parseEvents() {
 				// FIXME: Handle this specific property inside processKeyboard ?
 				_keyPressed = event.kbd;
 				_keyPressed.ascii = event.kbd.keycode + 154;
-			} else if (event.kbd.ascii == Common::KEYCODE_F1 && (_game.id == GID_CMI && !(_game.features & GF_DEMO))) {
+			} else if (event.kbd.keycode == Common::KEYCODE_F1 && (_game.id == GID_CMI && !(_game.features & GF_DEMO))) {
 				// FIXME: support in-game menu screen. For now, this remaps F1 to F5 in COMI
 				// FIXME: Handle this specific property inside processKeyboard ?
 				_keyPressed = Common::KeyState(Common::KEYCODE_F5, Common::ASCII_F5);
@@ -246,8 +246,8 @@ void ScummEngine::clearClickedStatus() {
 
 void ScummEngine_v0::processInput() {
 	// F1 - F3
-	if (_keyPressed.ascii >= Common::ASCII_F1 && _keyPressed.ascii <= Common::ASCII_F3) {
-		switchActor(_keyPressed.ascii - Common::ASCII_F1);
+	if (_keyPressed.keycode >= Common::KEYCODE_F1 && _keyPressed.keycode <= Common::KEYCODE_F3) {
+		switchActor(_keyPressed.keycode - Common::KEYCODE_F1);
 	}
 
 	ScummEngine::processInput();
@@ -358,7 +358,7 @@ void ScummEngine::processInput() {
 void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 	// Alt-F5 brings up the original save/load dialog
 
-	if (lastKeyHit.ascii == 440 && !(_game.features & GF_DEMO)) {
+	if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT && !(_game.features & GF_DEMO)) {
 		lastKeyHit = Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1);
 	}
 
@@ -429,12 +429,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 #endif
 
 void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
-printf("lastKeyHit ascii %d, keycode %d, flags %d\n", lastKeyHit.ascii, lastKeyHit.keycode, lastKeyHit.flags);
-	if (lastKeyHit.ascii == 20) {
-		// FIXME: The 20 seems to indicate Ctrl-T. Of course this is a
-		// rather ugly way to detect it -- modifier + ascii code would
-		// be a *lot* cleaner...
-
+	if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.flags == Common::KBD_CTRL) {
 		SubtitleSettingsDialog dialog(this, _voiceMode);
 		_voiceMode = runDialog(dialog);
 
@@ -466,13 +461,13 @@ printf("lastKeyHit ascii %d, keycode %d, flags %d\n", lastKeyHit.ascii, lastKeyH
 void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 	if (lastKeyHit.ascii == ' ') {		// space
 		pauseGame();
-	} else if (lastKeyHit.ascii == Common::ASCII_F5) {
+	} else if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == 0) {
 		mainMenuDialog();
-	} else if (lastKeyHit.ascii == Common::ASCII_F8) {
+	} else if (lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.flags == 0) {
 		confirmRestartDialog();
 	} else {
 
-		if ((_game.version == 0 && lastKeyHit.ascii == 27) || 
+		if ((_game.version == 0 && lastKeyHit.keycode == Common::KEYCODE_ESCAPE) || 
 			(VAR_CUTSCENEEXIT_KEY != 0xFF && lastKeyHit.ascii == Common::ASCII_F1-1+VAR(VAR_CUTSCENEEXIT_KEY))) {
 			abortCutscene();
 		} else {
@@ -482,8 +477,7 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 
 		// Alt-F5 brings up the original save/load dialog
 
-		// FIXME -- use keycode + flags instead
-		if (lastKeyHit.ascii == 440) {
+		if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT) {
 			lastKeyHit = Common::KeyState(Common::KEYCODE_F5, Common::ASCII_F5);
 		}
 	
@@ -492,10 +486,10 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 		// 1) Verb	2) Scene	3) Inv.		4) Key
 		// 5) Sentence Bar
 	
-		if (VAR_KEYPRESS != 0xFF && lastKeyHit.ascii) {		// Key Input
-			if (Common::ASCII_F1 <= lastKeyHit.ascii && lastKeyHit.ascii <= Common::ASCII_F9) {
+		if (VAR_KEYPRESS != 0xFF && lastKeyHit.keycode) {		// Key Input
+			if (Common::KEYCODE_F1 <= lastKeyHit.keycode && lastKeyHit.keycode <= Common::KEYCODE_F12) {
 				// Convert F-Keys for V1/V2 games (they start at 1 instead of at ASCII_F1)
-				VAR(VAR_KEYPRESS) = lastKeyHit.ascii - Common::ASCII_F1 + 1;
+				VAR(VAR_KEYPRESS) = lastKeyHit.ascii - Common::KEYCODE_F1 + 1;
 			} else {
 				VAR(VAR_KEYPRESS) = lastKeyHit.ascii;
 			}
@@ -504,7 +498,7 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 }
 
 void ScummEngine_v3::processKeyboard(Common::KeyState lastKeyHit) {
-	if (_game.platform == Common::kPlatformFMTowns && lastKeyHit.ascii == Common::ASCII_F8) {
+	if (_game.platform == Common::kPlatformFMTowns && lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.flags == 0) {
 		confirmRestartDialog();
 	} else {
 		// Fall back to default behavior
@@ -542,7 +536,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 	// Alt-F5 brings up the original save/load dialog.
 
-	if (lastKeyHit.ascii == 440 && _game.version > 2 && _game.version < 8) {
+	if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT && _game.version > 2 && _game.version < 8) {
 		// FIXME
 		lastKeyHit = Common::KeyState((Common::KeyCode)saveloadkey);
 		
