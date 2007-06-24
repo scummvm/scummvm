@@ -63,11 +63,15 @@ _build_agi=yes
 _build_touche=yes
 _build_parallaction=yes
 _build_cruise=no
-_need_memalign=no
-_build_plugins=no
-_nasm=auto
 _build_hq_scalers=yes
 _build_scalers=yes
+
+_endian=unknown
+_need_memalign=no
+_have_x86=no
+_build_plugins=no
+_nasm=auto
+
 # more defaults
 _backend=sdl
 _ranlib=ranlib
@@ -89,7 +93,6 @@ _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
 _prefix=/usr/local
-_have_x86=""
 
 _srcdir=`dirname $0`
 
@@ -104,9 +107,6 @@ _host=""
 _host_cpu=""
 _host_vendor=""
 _host_os=""
-
-# config.h defaults
-_def_linupy="#undef LINUPY"
 
 cc_check() {
 	echo >> "$TMPLOG"
@@ -124,17 +124,47 @@ echocheck () {
 	echo_n "Checking for $@... "
 }
 
-# Add a line of data to config.mk. Takes two parameters:
-# The first one can be set to 'yes' to "comment out" the line,
-# i.e. make it ineffective, use 'no' otherwise.
+# Add a line of data to config.mk.
+add_line_to_config_mk() {
+	_config_mk_data="$_config_mk_data"'
+'"$1"
+}
+
+# Add a line of data to h.mk.
+add_line_to_config_h() {
+	_config_h_data="$_config_h_data"'
+'"$1"
+}
+
+add_to_config_h_if_yes() {
+	if test "$1" = yes ; then
+		add_line_to_config_h "$2"
+	else
+		add_line_to_config_h "/* $2 */"
+	fi
+}
+
+# Conditionally add a line of data to config.mk. Takes two parameters:
+# The first one can be set to 'no' to "comment out" the line, i.e.
+# make it ineffective, use 'yes' otherwise.
+# The second param is the line to insert.
+add_to_config_mk_if_yes() {
+	if test "$1" = yes ; then
+		add_line_to_config_mk "$2"
+	else
+		add_line_to_config_mk "# $2"
+	fi
+}
+
+# Conditionally add a line of data to config.mk. Takes two parameters:
+# The first one can be set to 'yes' to "comment out" the line, i.e.
+# make it ineffective, use 'no' otherwise.
 # The second param is the line to insert.
 add_to_config_mk_if_no() {
 	if test "$1" = no ; then
-		_config_mk_data="$_config_mk_data"'
-'"$2"
+		add_line_to_config_mk "$2"
 	else
-		_config_mk_data="$_config_mk_data"'
-'"# $2"
+		add_line_to_config_mk "# $2"
 	fi
 }
 
@@ -677,7 +707,7 @@ if test "$_cxx_major" -ge "3" ; then
 		CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
 		;;
 	esac
-	add_to_config_mk_if_no no 'HAVE_GCC3 = 1'
+	add_line_to_config_mk 'HAVE_GCC3 = 1'
 fi;
 
 #
@@ -709,9 +739,9 @@ if test -n "$_host"; then
 		linupy|arm-riscos)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX"
-			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
-			_def_align='#define SCUMM_NEED_ALIGNMENT'
-			_def_linupy="#define DLINUPY"
+			_endian=little
+			_need_memalign=yes
+			add_line_to_config_h "#define LINUPY"
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
@@ -720,19 +750,19 @@ if test -n "$_host"; then
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DUSE_ARM_SOUND_ASM -DUSE_ARM_SMUSH_ASM"
 			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
-			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
-			_def_align='#define SCUMM_NEED_ALIGNMENT'
+			_endian=little
+			_need_memalign=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			add_to_config_mk_if_no no 'USE_ARM_SOUND_ASM = 1'
-			add_to_config_mk_if_no no 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			;;
  		gp2x)
  			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
  			DEFINES="$DEFINES -DUNIX -DGP2X -DUSE_ARM_SOUND_ASM"
- 			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
- 			_def_align='#define SCUMM_NEED_ALIGNMENT'
+			_endian=little
+			_need_memalign=yes
  			type_1_byte='char'
  			type_2_byte='short'
  			type_4_byte='int'
@@ -742,8 +772,8 @@ if test -n "$_host"; then
  			;;			
 		ppc-amigaos)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			_def_endianness='#define SCUMM_BIG_ENDIAN'
-			_def_align='#define	SCUMM_NEED_ALIGNMENT'
+			_endian=big
+			_need_memalign=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='long'
@@ -753,8 +783,8 @@ if test -n "$_host"; then
 		m68k-atari-mint)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-			_def_endianness='#define SCUMM_BIG_ENDIAN'
-			_def_align='#define     SCUMM_NEED_ALIGNMENT'
+			_endian=big
+			_need_memalign=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='long'
@@ -764,9 +794,7 @@ if test -n "$_host"; then
 		i586-mingw32msvc)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DWIN32"
-			_def_x86='#define HAVE_X86'
-			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
-			_def_align='#undef SCUMM_NEED_ALIGNMENT'
+			_endian=little
 			_have_x86=yes
 			type_1_byte='char'
 			type_2_byte='short'
@@ -850,19 +878,8 @@ int main(int argc, char **argv)
 }
 EOF
 	$CXX $CXXFLAGS -o tmp_endianness_check$EXEEXT tmp_endianness_check.cpp
-	endianness=`./tmp_endianness_check`
-	echo $endianness;
-	case $endianness in
-		big)
-			_def_endianness='#define SCUMM_BIG_ENDIAN'
-			;;
-		little)
-			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
-			;;
-		*)
-			exit 1
-			;;
-	esac
+	_endian=`./tmp_endianness_check`
+	echo $_endian;
 	rm -f tmp_endianness_check$EXEEXT tmp_endianness_check.cpp
 
 	#
@@ -877,12 +894,6 @@ EOF
 			_have_x86=no
 			;;
 	esac
-
-	if test "$_have_x86" = yes ; then
-		_def_x86='#define HAVE_X86'
-	else
-		_def_x86='#undef HAVE_X86'
-	fi
 	echo "$_have_x86"
 
 	#
@@ -930,12 +941,6 @@ EOF
 			cc_check && $TMPO && _need_memalign=no
 			;;
 	esac
-
-	if test "$_need_memalign" = yes ; then
-		_def_align='#define SCUMM_NEED_ALIGNMENT'
-	else
-		_def_align='#undef SCUMM_NEED_ALIGNMENT'
-	fi
 	echo "$_need_memalign"
 
 	#
@@ -962,12 +967,34 @@ EOF
 fi
 
 #
+# Add the results of the above checks to config.h
+#
+case $_endian in
+	big)
+		add_line_to_config_h '/* #define SCUMM_LITTLE_ENDIAN */'
+		add_line_to_config_h '#define SCUMM_BIG_ENDIAN'
+		;;
+	little)
+		add_line_to_config_h '#define SCUMM_LITTLE_ENDIAN'
+		add_line_to_config_h '/* #define SCUMM_BIG_ENDIAN */'
+		;;
+	*)
+		exit 1
+		;;
+esac
+
+add_to_config_h_if_yes $_have_x86 '#define HAVE_X86'
+
+add_to_config_h_if_yes $_need_memalign '#define SCUMM_NEED_ALIGNMENT'
+
+
+#
 # Check whether plugin support is requested and possible
 #
 echo_n "Checking whether building plugins was requested... "
 echo "$_build_plugins"
 _mak_plugins=
-_def_plugin=
+_def_plugin="/* -> plugins disabled */"
 
 if test "$_build_plugins" = yes ; then
     echo_n "Checking whether building plugins is supported... "
@@ -1279,13 +1306,8 @@ if test "$_have_x86" = yes ; then
     CheckNASM
 fi
 
-if test "$_nasm" = yes ; then
-	_def_nasm='#define USE_NASM'
-	add_to_config_mk_if_no no 'HAVE_NASM = 1'
-else
-	_def_nasm='#undef USE_NASM'
-	add_to_config_mk_if_no yes 'HAVE_NASM = 1'
-fi
+add_to_config_h_if_yes $_nasm '#define USE_NASM'
+add_to_config_mk_if_yes $_nasm 'HAVE_NASM = 1'
 
 #
 # figure out installation directories
@@ -1428,11 +1450,7 @@ cat > config.h << EOF
 #ifndef CONFIG_H
 #define CONFIG_H
 
-$_def_endianness
-$_def_align
-$_def_x86
-
-$_def_linupy
+$_config_h_data
 
 /* Data types */
 typedef unsigned $type_1_byte byte;
@@ -1454,9 +1472,6 @@ $_def_zlib
 $_def_mpeg2
 $_def_fluidsynth
 $_def_mt32emu
-
-/* Whether we should use i386 assembly routines */
-$_def_nasm
 
 /* Plugin settings */
 $_def_plugin
