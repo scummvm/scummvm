@@ -729,7 +729,7 @@ if test -n "$_host"; then
 			type_2_byte='short'
 			type_4_byte='int'
 			_mak_asm_arm_rate='USE_ARM_SOUND_ASM = 1'
-			_mak_asm_arm_codec47='USE_ARM_SMUSH_ASM = 1'
+			_mak_asm_arm_smush='USE_ARM_SMUSH_ASM = 1'
 			;;
  		gp2x)
  			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -1505,7 +1505,7 @@ $_mak_plugins
 $_config_mk_data
 
 $_mak_asm_arm_rate
-$_mak_asm_arm_codec47
+$_mak_asm_arm_smush
 
 INCLUDES += $INCLUDES
 OBJS += $OBJS
