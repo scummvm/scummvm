@@ -48,7 +48,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
       if(!(buttons & 4)) lmb++;
       if(!(buttons & 2)) rmb++;
 
-      if(!(buttons & 8)) newkey = Common::ASCII_F5;
+      if(!(buttons & 8)) newkey = Common::KEYCODE_F5;
       else if(!(buttons & 512)) newkey = ' ';
       else if(!(buttons & 1024)) newkey = numpadmap[(buttons>>4)&15];
 
@@ -69,7 +69,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
       if(!(buttons & 4)) lmb++;
       if(!(buttons & 2)) rmb++;
 
-      if(!(buttons & 8)) newkey = Common::ASCII_F5;
+      if(!(buttons & 8)) newkey = Common::KEYCODE_F5;
 
       mouse_x += pad->cond.mouse.axis1;
       mouse_y += pad->cond.mouse.axis2;
@@ -101,7 +101,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
 		    "=¯`{ }+*½<>?" :
 		    "-^@[ ];:§,./")[key - 0x2d];
 	else if(key >= 0x3a && key <= 0x43)
-	  newkey = key+(Common::ASCII_F1-0x3a);
+	  newkey = key+(Common::KEYCODE_F1-0x3a);
 	else if(key >= 0x54 && key <= 0x57)
 	  newkey = "/*-+"[key-0x54];
 	else switch(key) {

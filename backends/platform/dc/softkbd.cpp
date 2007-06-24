@@ -52,7 +52,7 @@ static const char key_names[] =
 
 static const short key_codes[] =
   {
-    Common::KEYCODE_ESCAPE, Common::ASCII_F1, Common::ASCII_F2, Common::ASCII_F3, Common::ASCII_F4, Common::ASCII_F5, Common::ASCII_F6, Common::ASCII_F7, Common::ASCII_F8, Common::ASCII_F9, Common::ASCII_F10,
+    Common::KEYCODE_ESCAPE, Common::KEYCODE_F1, Common::KEYCODE_F2, Common::KEYCODE_F3, Common::KEYCODE_F4, Common::KEYCODE_F5, Common::KEYCODE_F6, Common::KEYCODE_F7, Common::KEYCODE_F8, Common::KEYCODE_F9, Common::KEYCODE_F10,
     K('1','!'), K('2','"'), K('3','#'), K('4','$'), K('5','%'),
     K('6','&'), K('7','\''), K('8','('), K('9',')'), K('0','~'), K('-','='),
     K('q','Q'), K('w','W'), K('e','E'), K('r','R'), K('t','T'),
