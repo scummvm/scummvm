@@ -51,9 +51,9 @@ public:
 	}
 	void clearVoice(byte voice);
 	void clearVoices() { for (int i = 0; i < NUM_VOICES; ++i) clearVoice(i); }
-	virtual void startPlay(void) {}
-	virtual void stopPlay(void) {}
-	virtual void pausePlay(bool pause) {}
+	void startPlay(void) { _playing = true; }
+	void stopPlay(void) { _playing = false; }
+	void pausePlay(bool pause) { _playing = !pause; }
 
 // AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples);
