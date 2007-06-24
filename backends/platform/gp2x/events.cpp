@@ -168,17 +168,10 @@ void OSystem_GP2X::handleKbdMouse() {
 
 static byte SDLModToOSystemKeyFlags(SDLMod mod) {
 	byte b = 0;
-#ifdef LINUPY
-	// Yopy has no ALT key, steal the SHIFT key
-	// (which isn't used much anyway)
-	if (mod & KMOD_SHIFT)
-		b |= Common::KBD_ALT;
-#else
 	if (mod & KMOD_SHIFT)
 		b |= Common::KBD_SHIFT;
 	if (mod & KMOD_ALT)
 		b |= Common::KBD_ALT;
-#endif
 	if (mod & KMOD_CTRL)
 		b |= Common::KBD_CTRL;
 
