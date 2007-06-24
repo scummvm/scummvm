@@ -624,6 +624,7 @@ begin_credits("Credits");
 	  begin_section("Miscellaneous");
 		add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator");
 		add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, Adlib work");
+		add_person("Robin Watts", "robinwatts", "ARM assembly routines for nice speedups on several ports; improvements to the sound mixer");
 	  end_section();
     end_section();
 
@@ -752,7 +753,6 @@ begin_credits("Credits");
 		  add_person("Edward Rudd", "urkle", "Fixes for playing MP3 versions of MI1/Loom audio");
 		  add_person("Daniel Schepler", "dschepler", "Final MI1 CD music support, initial Ogg Vorbis support");
 		  add_person("Andr&eacute; Souza", "luke_br", "SDL-based OpenGL renderer");
-		  add_person("Robin Watts", "robinwatts", "ARM assembly routines for the Windows CE port");
 	  end_persons();
 	end_section();
 
