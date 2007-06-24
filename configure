@@ -721,13 +721,15 @@ if test -n "$_host"; then
 			;;
 		arm-linux|arm-linux-gnueabi|arm-*-linux-gnueabi)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DUSE_ARM_SOUND_ASM"
+			DEFINES="$DEFINES -DUNIX -DUSE_ARM_SOUND_ASM -DUSE_ARM_SMUSH_ASM"
 			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
 			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
 			_def_align='#define SCUMM_NEED_ALIGNMENT'
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
+			_mak_asm_arm_rate='USE_ARM_SOUND_ASM = 1'
+			_mak_asm_arm_codec47='USE_ARM_SMUSH_ASM = 1'
 			;;
  		gp2x)
  			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -1501,6 +1503,9 @@ DATADIR := $_datadir
 $_mak_plugins
 
 $_config_mk_data
+
+$_mak_asm_arm_rate
+$_mak_asm_arm_codec47
 
 INCLUDES += $INCLUDES
 OBJS += $OBJS
