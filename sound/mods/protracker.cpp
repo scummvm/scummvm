@@ -95,7 +95,6 @@ public:
 	ProtrackerStream(Common::ReadStream *stream, int rate, bool stereo);
 
 private:
-	void startPlay() { _playing = true; _end = false; }
 	void interrupt();
 
 	void doPorta(int track) {
@@ -173,7 +172,8 @@ ProtrackerStream::ProtrackerStream(Common::ReadStream *stream, int rate, bool st
 
 	memset(_track, 0, sizeof(_track));
 
-	startPlay();
+	_playing = true;
+	_end = false;
 }
 
 void ProtrackerStream::updateRow() {
