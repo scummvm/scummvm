@@ -124,20 +124,17 @@ echocheck () {
 	echo_n "Checking for $@... "
 }
 
-# Add a boolean flag to config.mk. Takes two parameters:
-# The first one can be set to 'yes' to "comment out" the flag,
+# Add a line of data to config.mk. Takes two parameters:
+# The first one can be set to 'yes' to "comment out" the line,
 # i.e. make it ineffective, use 'no' otherwise.
-# The second param is the name of the flag to set.
-#
-# For now the variable is always set to 1, but we could add
-# another parameter for that...
-add_flag_to_config_mk_if_no() {
+# The second param is the line to insert.
+add_to_config_mk_if_no() {
 	if test "$1" = no ; then
 		_config_mk_data="$_config_mk_data"'
-'"$2 = 1"
+'"$2"
 	else
 		_config_mk_data="$_config_mk_data"'
-'"# $2 = 1"
+'"# $2"
 	fi
 }
 
@@ -680,31 +677,31 @@ if test "$_cxx_major" -ge "3" ; then
 		CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
 		;;
 	esac
-	add_flag_to_config_mk_if_no no 'HAVE_GCC3'
+	add_to_config_mk_if_no no 'HAVE_GCC3 = 1'
 fi;
 
 #
 # Engine selection
 #
-add_flag_to_config_mk_if_no $_build_scumm        'DISABLE_SCUMM'
-add_flag_to_config_mk_if_no $_build_scumm_7_8    'DISABLE_SCUMM_7_8'
-add_flag_to_config_mk_if_no $_build_he           'DISABLE_HE'
-add_flag_to_config_mk_if_no $_build_agos         'DISABLE_AGOS'
-add_flag_to_config_mk_if_no $_build_sky          'DISABLE_SKY'
-add_flag_to_config_mk_if_no $_build_sword1       'DISABLE_SWORD1'
-add_flag_to_config_mk_if_no $_build_sword2       'DISABLE_SWORD2'
-add_flag_to_config_mk_if_no $_build_queen        'DISABLE_QUEEN'
-add_flag_to_config_mk_if_no $_build_kyra         'DISABLE_KYRA'
-add_flag_to_config_mk_if_no $_build_saga         'DISABLE_SAGA'
-add_flag_to_config_mk_if_no $_build_gob          'DISABLE_GOB'
-add_flag_to_config_mk_if_no $_build_lure         'DISABLE_LURE'
-add_flag_to_config_mk_if_no $_build_cine         'DISABLE_CINE'
-add_flag_to_config_mk_if_no $_build_agi          'DISABLE_AGI'
-add_flag_to_config_mk_if_no $_build_touche       'DISABLE_TOUCHE'
-add_flag_to_config_mk_if_no $_build_parallaction 'DISABLE_PARALLACTION'
-add_flag_to_config_mk_if_no $_build_cruise       'DISABLE_CRUISE'
-add_flag_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS'
-add_flag_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS'
+add_to_config_mk_if_no $_build_scumm        'DISABLE_SCUMM = 1'
+add_to_config_mk_if_no $_build_scumm_7_8    'DISABLE_SCUMM_7_8 = 1'
+add_to_config_mk_if_no $_build_he           'DISABLE_HE = 1'
+add_to_config_mk_if_no $_build_agos         'DISABLE_AGOS = 1'
+add_to_config_mk_if_no $_build_sky          'DISABLE_SKY = 1'
+add_to_config_mk_if_no $_build_sword1       'DISABLE_SWORD1 = 1'
+add_to_config_mk_if_no $_build_sword2       'DISABLE_SWORD2 = 1'
+add_to_config_mk_if_no $_build_queen        'DISABLE_QUEEN = 1'
+add_to_config_mk_if_no $_build_kyra         'DISABLE_KYRA = 1'
+add_to_config_mk_if_no $_build_saga         'DISABLE_SAGA = 1'
+add_to_config_mk_if_no $_build_gob          'DISABLE_GOB = 1'
+add_to_config_mk_if_no $_build_lure         'DISABLE_LURE = 1'
+add_to_config_mk_if_no $_build_cine         'DISABLE_CINE = 1'
+add_to_config_mk_if_no $_build_agi          'DISABLE_AGI = 1'
+add_to_config_mk_if_no $_build_touche       'DISABLE_TOUCHE = 1'
+add_to_config_mk_if_no $_build_parallaction 'DISABLE_PARALLACTION = 1'
+add_to_config_mk_if_no $_build_cruise       'DISABLE_CRUISE = 1'
+add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
+add_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS = 1'
 
 if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
@@ -728,8 +725,8 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_mak_asm_arm_rate='USE_ARM_SOUND_ASM = 1'
-			_mak_asm_arm_smush='USE_ARM_SMUSH_ASM = 1'
+			add_to_config_mk_if_no no 'USE_ARM_SOUND_ASM = 1'
+			add_to_config_mk_if_no no 'USE_ARM_SMUSH_ASM = 1'
 			;;
  		gp2x)
  			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -1058,10 +1055,10 @@ fi
 #
 if test "$_mt32emu" = no ; then
 	_def_mt32emu='#undef USE_MT32EMU'
-	add_flag_to_config_mk_if_no yes 'USE_MT32EMU'
+	add_to_config_mk_if_no yes 'USE_MT32EMU = 1'
 else
 	_def_mt32emu='#define USE_MT32EMU'
-	add_flag_to_config_mk_if_no no 'USE_MT32EMU'
+	add_to_config_mk_if_no no 'USE_MT32EMU = 1'
 fi
 
 #
@@ -1081,10 +1078,10 @@ if test "$_vorbis" = yes ; then
 	_def_vorbis='#define USE_VORBIS'
 	LIBS="$LIBS $OGG_LIBS $VORBIS_LIBS -lvorbisfile -lvorbis -logg"
 	INCLUDES="$INCLUDES $OGG_CFLAGS $VORBIS_CFLAGS"
-	add_flag_to_config_mk_if_no no 'USE_VORBIS'
+	add_to_config_mk_if_no no 'USE_VORBIS = 1'
 else
 	_def_vorbis='#undef USE_VORBIS'
-	add_flag_to_config_mk_if_no yes 'USE_VORBIS'
+	add_to_config_mk_if_no yes 'USE_VORBIS = 1'
 fi
 echo "$_vorbis"
 
@@ -1106,13 +1103,13 @@ if test "$_tremor" = yes && test "$_vorbis" = no; then
 	_def_vorbis='#define USE_VORBIS'
 	LIBS="$LIBS $TREMOR_LIBS -lvorbisidec"
 	INCLUDES="$INCLUDES $TREMOR_CFLAGS"
-	add_flag_to_config_mk_if_no no 'USE_TREMOR'
+	add_to_config_mk_if_no no 'USE_TREMOR = 1'
 else
 	if test "$_vorbis" = yes; then
 		_tremor="no (Ogg Vorbis/Tremor support is mutually exclusive)"
 	fi
 	_def_tremor='#undef USE_TREMOR'
-	add_flag_to_config_mk_if_no yes 'USE_TREMOR'
+	add_to_config_mk_if_no yes 'USE_TREMOR = 1'
 fi
 echo "$_tremor"
 
@@ -1133,10 +1130,10 @@ if test "$_flac" = yes ; then
 	_def_flac='#define USE_FLAC'
 	LIBS="$LIBS $FLAC_LIBS $OGG_LIBS -lFLAC -logg"
 	INCLUDES="$INCLUDES $FLAC_CFLAGS"
-	add_flag_to_config_mk_if_no no 'USE_FLAC'
+	add_to_config_mk_if_no no 'USE_FLAC = 1'
 else
 	_def_flac='#undef USE_FLAC'
-	add_flag_to_config_mk_if_no yes 'USE_FLAC'
+	add_to_config_mk_if_no yes 'USE_FLAC = 1'
 fi
 echo "$_flac"
 
@@ -1156,10 +1153,10 @@ if test "$_mad" = yes ; then
 	_def_mad='#define USE_MAD'
 	LIBS="$LIBS $MAD_LIBS -lmad"
 	INCLUDES="$INCLUDES $MAD_CFLAGS"
-	add_flag_to_config_mk_if_no no 'USE_MAD'
+	add_to_config_mk_if_no no 'USE_MAD = 1'
 else
 	_def_mad='#undef USE_MAD'
-	add_flag_to_config_mk_if_no yes 'USE_MAD'
+	add_to_config_mk_if_no yes 'USE_MAD = 1'
 fi
 echo "$_mad"
 
@@ -1245,10 +1242,10 @@ if test "$_mpeg2" = yes ; then
 	_def_mpeg2='#define USE_MPEG2'
 	INCLUDES="$INCLUDES $MPEG2_CFLAGS"
 	LIBS="$LIBS $MPEG2_LIBS -lmpeg2"
-	add_flag_to_config_mk_if_no no 'USE_MPEG2'
+	add_to_config_mk_if_no no 'USE_MPEG2 = 1'
 else
 	_def_mpeg2='#undef USE_MPEG2'
-	add_flag_to_config_mk_if_no yes 'USE_MPEG2'
+	add_to_config_mk_if_no yes 'USE_MPEG2 = 1'
 fi
 echo "$_mpeg2"
 rm -f $TMPC $TMPO$EXEEXT
@@ -1284,10 +1281,10 @@ fi
 
 if test "$_nasm" = yes ; then
 	_def_nasm='#define USE_NASM'
-	add_flag_to_config_mk_if_no no 'HAVE_NASM'
+	add_to_config_mk_if_no no 'HAVE_NASM = 1'
 else
 	_def_nasm='#undef USE_NASM'
-	add_flag_to_config_mk_if_no yes 'HAVE_NASM'
+	add_to_config_mk_if_no yes 'HAVE_NASM = 1'
 fi
 
 #
@@ -1503,9 +1500,6 @@ DATADIR := $_datadir
 $_mak_plugins
 
 $_config_mk_data
-
-$_mak_asm_arm_rate
-$_mak_asm_arm_smush
 
 INCLUDES += $INCLUDES
 OBJS += $OBJS
