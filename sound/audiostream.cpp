@@ -156,21 +156,21 @@ public:
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
-	int samples = 0;
-	while (samples < numSamples && _ptr < _end) {
-		const int len = MIN(numSamples, samples + (int)(_end - _ptr) / (is16Bit ? 2 : 1));
-		while (samples < len) {
+	int samples = numSamples;
+	while (samples > 0 && _ptr < _end) {
+		int len = MIN(numSamples, (int)(_end - _ptr) / (is16Bit ? 2 : 1));
+		samples -= len;
+		do {
 			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _ptr, isLE);
 			_ptr += (is16Bit ? 2 : 1);
-			samples++;
-		}
+		} while (--len);
 		// Loop, if looping was specified
 		if (_loopPtr && _ptr >= _end) {
 			_ptr = _loopPtr;
 			_end = _loopEnd;
 		}
 	}
-	return samples;
+	return numSamples-samples;
 }
 
 
@@ -209,7 +209,7 @@ AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte f
 			loopEnd = len;
 		assert(loopStart <= loopEnd);
 		assert(loopEnd <= len);
-			
+
 		loopOffset = loopStart;
 		loopLen = loopEnd - loopStart;
 	}
@@ -250,7 +250,7 @@ protected:
 	// the linked list) in thread aware environments.
 	Common::Mutex _mutex;
 
-	// List of all queueud buffers	
+	// List of all queued buffers
 	Common::List<Buffer> _bufferQueue;
 
 	// Position in the front buffer, if any
@@ -292,8 +292,8 @@ template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 int AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock lock(_mutex);
 
-	int samples = 0;
-	while (samples < numSamples && !eosIntern()) {
+	int samples = numSamples;
+	while (samples > 0 && !eosIntern()) {
 		Buffer buf = *_bufferQueue.begin();
 		if (_pos == 0)
 			_pos = buf.start;
@@ -307,15 +307,15 @@ int AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 
 			continue;
 		}
 
-		const int len = MIN(numSamples, samples + samplesLeftInCurBuffer / (is16Bit ? 2 : 1));
-		while (samples < len) {
+		int len = MIN(samples, samplesLeftInCurBuffer / (is16Bit ? 2 : 1));
+		samples -= len;
+		do {
 			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _pos, isLE);
 			_pos += (is16Bit ? 2 : 1);
-			samples++;
-		}
+		} while (--len);
 	}
 
-	return samples;
+	return numSamples-samples;
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
