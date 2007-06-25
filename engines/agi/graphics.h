@@ -41,7 +41,7 @@ class GfxMgr {
 private:
 	AgiEngine *_vm;
 
-	uint8 _palette[32 * 3];
+	uint8 _palette[16 * 3];
 	uint8 *_agiScreen;
 	unsigned char *_screen;
 

@@ -624,8 +624,7 @@ int GfxMgr::keypress() {
 /**
  * Initialize the color palette
  * This function initializes the color palette using the specified 16-color
- * RGB palette and creates 16 extra palette entries with translucent colors
- * for the interpreter console.
+ * RGB palette.
  * @param p  A pointer to the 16-color RGB palette.
  */
 void GfxMgr::initPalette(uint8 *p) {
@@ -633,7 +632,6 @@ void GfxMgr::initPalette(uint8 *p) {
 
 	for (i = 0; i < 48; i++) {
 		_palette[i] = p[i];
-		_palette[i + 48] = (p[i] + 0x30) >> 2;
 	}
 }
 
@@ -642,13 +640,13 @@ void GfxMgr::gfxSetPalette() {
 	byte pal[256 * 4];
 
 	if (!(_vm->getFeatures() & (GF_AGI256 | GF_AGI256_2))) {
-		for (i = 0; i < 32; i++) {
+		for (i = 0; i < 16; i++) {
 			pal[i * 4 + 0] = _palette[i * 3 + 0] << 2;
 			pal[i * 4 + 1] = _palette[i * 3 + 1] << 2;
 			pal[i * 4 + 2] = _palette[i * 3 + 2] << 2;
 			pal[i * 4 + 3] = 0;
 		}
-		g_system->setPalette(pal, 0, 32);
+		g_system->setPalette(pal, 0, 16);
 	} else {
 		for (i = 0; i < 256; i++) {
 			pal[i * 4 + 0] = vgaPalette[i * 3 + 0];
