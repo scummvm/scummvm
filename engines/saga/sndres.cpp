@@ -177,11 +177,11 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		} else if (!memcmp(soundResource, "RIFF", 4) != 0) {
 			resourceType = kSoundWAV;
 		} else if (soundResource[0] == char(0)) {
-			readS.seek(1);
+			readS.seek(1);		// Skip compression identifier byte
 			uint16 test = readS.readUint16LE();	// the frequency
 			// the sound's frequency is not supposed to be 0, if it is then it's an empty sound,
 			// so don't treat it as MP3
-			if (test > 0)	// Skip compression identifier byte						
+			if (test > 0)				
 				resourceType = kSoundMP3;
 		} else if (soundResource[0] == char(1)) {
 			resourceType = kSoundOGG;
