@@ -686,7 +686,7 @@ void PictureMgr::showPic() {
 	i = 0;
 	offset = _vm->_game.lineMinPrint * CHAR_LINES;
 	for (y = 0; y < _HEIGHT; y++) {
-		_gfx->putPixelsA(0, y + offset, _WIDTH, &_vm->_game.sbuf[i]);
+		_gfx->putPixelsA(0, y + offset, _WIDTH, &_vm->_game.sbuf16c[i]);
 		i += _WIDTH;
 	}
 

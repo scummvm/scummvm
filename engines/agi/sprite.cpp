@@ -215,7 +215,8 @@ void SpritesMgr::objsRestoreArea(Sprite *s) {
 	int y, offset;
 	int16 xPos = s->xPos, yPos = s->yPos;
 	int16 xSize = s->xSize, ySize = s->ySize;
-	uint8 *p0, *q;
+	uint8 *q;
+	uint32 pos0;
 
 	if (xPos + xSize > _WIDTH)
 		xSize = _WIDTH - xPos;
@@ -236,14 +237,14 @@ void SpritesMgr::objsRestoreArea(Sprite *s) {
 	if (xSize <= 0 || ySize <= 0)
 		return;
 
-	p0 = &_vm->_game.sbuf[xPos + yPos * _WIDTH];
+	pos0 = xPos + yPos * _WIDTH;
 	q = s->buffer;
 	offset = _vm->_game.lineMinPrint * CHAR_LINES;
 	for (y = 0; y < ySize; y++) {
-		memcpy(p0, q, xSize);
-		_gfx->putPixelsA(xPos, yPos + y + offset, xSize, p0);
+		memcpy(&_vm->_game.sbuf[pos0], q, xSize);
+		_gfx->putPixelsA(xPos, yPos + y + offset, xSize, &_vm->_game.sbuf16c[pos0]);
 		q += xSize;
-		p0 += _WIDTH;
+		pos0 += _WIDTH;
 	}
 }
 
@@ -728,7 +729,7 @@ void SpritesMgr::commitBlock(int x1, int y1, int x2, int y2) {
 	debugC(7, kDebugLevelSprites, "%d, %d, %d, %d", x1, y1, x2, y2);
 
 	w = x2 - x1 + 1;
-	q = &_vm->_game.sbuf[x1 + _WIDTH * y1];
+	q = &_vm->_game.sbuf16c[x1 + _WIDTH * y1];
 	offset = _vm->_game.lineMinPrint * CHAR_LINES;
 	for (i = y1; i <= y2; i++) {
 		_gfx->putPixelsA(x1, i + offset, w, q);
