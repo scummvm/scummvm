@@ -550,7 +550,7 @@ void Theme::processSingleLine(const String &section, const String &prefix, const
 
 	const char **postfixes = (ntmppostfix == 2) ? postfixesRGB : postfixesXYWH;
 
-	// Now do it for real, only this time we already know the parantheses
+	// Now do it for real, only this time we already know the parentheses
 	// are balanced.
 
 	for (i = 0; i < str.size(); i++) {
@@ -571,10 +571,15 @@ void Theme::processSingleLine(const String &section, const String &prefix, const
 		_evaluator->setStringVar(prefixedname, _evaluator->lastToken());
 
 	// process VAR=VALUE construct
-	if (npostfix == 0)
+	if (npostfix == 0) {
 		_evaluator->setVar(name, value);
-	else
+
+		// Fix bug #1742561: "GUI: Missaligned text"
+		// "blah.align=foo" should be prefixed too
+		_evaluator->setVar(prefixedname, value);
+	} else {
 		_evaluator->setVar(prefixedname + postfixes[npostfix], value);
+	}
 
 	// If we have all 4 parameters, set .x2 and .y2
 	if (npostfix == 3) {
