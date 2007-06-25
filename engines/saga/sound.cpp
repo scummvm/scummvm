@@ -80,7 +80,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 	if (!buffer.isSigned)
 		flags |= Audio::Mixer::FLAG_UNSIGNED;
 
-	if (!buffer.isCompressed) {
+	if (!(_vm->getFeatures() & GF_COMPRESSED_SOUNDS)) {
 		_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer, buffer.size, buffer.frequency, flags, -1, volume);
 	} else {
 		buffer.soundFile->seek((long)buffer.fileOffset, SEEK_SET);

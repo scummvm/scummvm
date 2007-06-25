@@ -152,7 +152,8 @@ enum GameFeatures {
 	GF_BIG_ENDIAN_DATA   = 1 << 0,
 	GF_WYRMKEEP          = 1 << 1,
 	GF_CD_FX             = 1 << 2,
-	GF_SCENE_SUBSTITUTES = 1 << 3
+	GF_SCENE_SUBSTITUTES = 1 << 3,
+	GF_COMPRESSED_SOUNDS = 1 << 4
 };
 
 enum VerbTypeIds {
