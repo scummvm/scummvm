@@ -445,6 +445,7 @@ const char *Theme::_defaultConfigINI =
 "sbtextw=(100 + vcAudioTabIndent)\n"
 "opYoffset=(opYoffset + sbYoff)\n"
 "subToggleDesc=sbx (opYoffset + sbYoff) sbtextw buttonHeight\n"
+"subToggleDesc.align=kTextAlignRight\n"
 "subToggleButton=prev.x2 (opYoffset - sbYoff) (buttonWidth + 54) buttonHeight\n"
 "opYoffset=(opYoffset + buttonHeight + 6)\n"
 "subSubtitleSpeedDesc=sbx (opYoffset + sbOff) sbtextw kLineHeight\n"
