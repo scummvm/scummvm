@@ -158,7 +158,7 @@ template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = numSamples;
 	while (samples > 0 && _ptr < _end) {
-		int len = MIN(numSamples, (int)(_end - _ptr) / (is16Bit ? 2 : 1));
+		int len = MIN(samples, (int)(_end - _ptr) / (is16Bit ? 2 : 1));
 		samples -= len;
 		do {
 			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _ptr, isLE);
