@@ -156,7 +156,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		return false;
 	}
 
-
 	_vm->_resource->loadResource(context, resourceId, soundResource, soundResourceLength);
 
 	if ((context->fileType & GAME_VOICEFILE) != 0) {
@@ -175,8 +174,19 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	if (soundResourceLength >= 8) {
 		if (!memcmp(soundResource, "Creative", 8)) {
 			resourceType = kSoundVOC;
-		} else 	if (!memcmp(soundResource, "RIFF", 4) != 0) {
+		} else if (!memcmp(soundResource, "RIFF", 4) != 0) {
 			resourceType = kSoundWAV;
+		} else if (soundResource[0] == char(0)) {
+			readS.seek(1);
+			uint16 test = readS.readUint16LE();	// the frequency
+			// the sound's frequency is not supposed to be 0, if it is then it's an empty sound,
+			// so don't treat it as MP3
+			if (test > 0)	// Skip compression identifier byte						
+				resourceType = kSoundMP3;
+		} else if (soundResource[0] == char(1)) {
+			resourceType = kSoundOGG;
+		} else if (soundResource[0] == char(2)) {
+			resourceType = kSoundFLAC;
 		}
 	}
 
@@ -188,6 +198,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		buffer.sampleBits = soundInfo->sampleBits;
 		buffer.size = soundResourceLength;
 		buffer.stereo = soundInfo->stereo;
+		buffer.isCompressed = false;
 		if (onlyHeader) {
 			buffer.buffer = NULL;
 			free(soundResource);
@@ -202,6 +213,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		buffer.sampleBits = soundInfo->sampleBits;
 		buffer.size = soundResourceLength - 36;
 		buffer.stereo = soundInfo->stereo;
+		buffer.isCompressed = false;
 		if (onlyHeader) {
 			buffer.buffer = NULL;
 		} else {
@@ -217,6 +229,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		buffer.sampleBits = soundInfo->sampleBits;
 		buffer.stereo = soundInfo->stereo;
 		buffer.size = soundResourceLength * 4;
+		buffer.isCompressed = false;
 		if (onlyHeader) {
 			buffer.buffer = NULL;
 			free(soundResource);
@@ -239,6 +252,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			buffer.stereo = false;
 			buffer.isSigned = false;
 			buffer.size = size;
+			buffer.isCompressed = false;
 			if (onlyHeader) {
 				buffer.buffer = NULL;
 				free(data);
@@ -256,6 +270,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			buffer.stereo = ((flags & Audio::Mixer::FLAG_STEREO) != 0);
 			buffer.isSigned = true;
 			buffer.size = size;
+			buffer.isCompressed = false;
 			if (onlyHeader) {
 				buffer.buffer = NULL;
 			} else {
@@ -264,6 +279,29 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			}
 			result = true;
 		}
+		free(soundResource);
+		break;
+	case kSoundMP3:
+	case kSoundOGG:
+	case kSoundFLAC:
+		ResourceData *resourceData;
+		resourceData = _vm->_resource->getResourceData(context, resourceId);
+
+		readS.seek(1);	// Skip compression identifier byte
+
+		buffer.frequency = readS.readUint16LE();
+		buffer.size = soundResourceLength;
+		buffer.originalSize = readS.readUint32LE();
+		buffer.sampleBits = readS.readByte();
+		buffer.stereo = (readS.readByte() == char(0)) ? false : true;
+		buffer.isCompressed = true;
+		buffer.soundType = resourceType;
+		buffer.soundFile = context->getFile(resourceData);
+		buffer.fileOffset = resourceData->offset;
+
+		buffer.buffer = NULL;
+
+		result = true;
 		free(soundResource);
 		break;
 	default:
@@ -286,7 +324,10 @@ int SndRes::getVoiceLength(uint32 resourceId) {
 		return -1;
 	}
 
-	msDouble = (double)buffer.size;
+	if (!buffer.isCompressed)
+		msDouble = (double)buffer.size;
+	else
+		msDouble = (double)buffer.originalSize;
 	if (buffer.sampleBits == 16) {
 		msDouble /= 2.0;
 	}
