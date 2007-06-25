@@ -1647,6 +1647,12 @@ bool Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	lastCalled = now;
 	_noBusyWait = false;
 
+	// WORKAROUND: Ween busy-waits in the intro for a counter to become 5000.
+	// We deliberately slow down busy-waiting, so we shorten the counting, too.
+	if (((_vm->_global->_inter_execPtr - _vm->_game->_totFileData) == 729) &&
+	    (VAR(59) < 4000) && !scumm_stricmp(_vm->_game->_curTotFile, "intro5.tot"))
+		WRITE_VAR(59, 4000);
+
 	switch (cmd) {
 	case 0:
 		_vm->_draw->_showCursor &= ~2;
