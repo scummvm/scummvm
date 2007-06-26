@@ -354,7 +354,7 @@ bool Music::isPlaying() {
 void Music::play(uint32 resourceId, MusicFlags flags) {
 	Audio::AudioStream *audioStream = NULL;
 	MidiParser *parser;
-	ResourceContext *context;
+	ResourceContext *context = NULL;
 	byte *resourceData;
 	size_t resourceSize;	
 	uint32 loopStart;
@@ -413,7 +413,61 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 					loopStart = 4 * 18727;
 				}
 
-				audioStream = new RAWInputStream(_vm, _musicContext, resourceId - 9, flags == MUSIC_LOOP, loopStart);
+				if (!(_vm->getFeatures() & GF_COMPRESSED_SOUNDS)) {
+					// uncompressed digital music
+					audioStream = new RAWInputStream(_vm, _musicContext, resourceId - 9, flags == MUSIC_LOOP, loopStart);
+				} else {
+					// compressed digital music
+					ResourceData * resourceData;
+					Common::File *_file;
+					byte compressedHeader[10];
+					GameSoundTypes soundType;
+
+					resourceData = _vm->_resource->getResourceData(_musicContext, resourceId - 9);
+					_file = _musicContext->getFile(resourceData);
+
+					if (_vm->getMusicInfo() == NULL) {
+						error("RAWInputStream() wrong musicInfo");
+					}
+
+					_file->seek((long)resourceData->offset, SEEK_SET);
+
+					_file->read(compressedHeader, 9);
+
+					if (compressedHeader[0] == char(0)) {
+						soundType = kSoundMP3;
+					} else if (compressedHeader[0] == char(1)) {
+						soundType = kSoundOGG;
+					} else if (compressedHeader[0] == char(2)) {
+						soundType = kSoundFLAC;
+					}
+
+					switch (soundType) {
+#ifdef USE_MAD
+						case kSoundMP3:
+							debug(1, "Playing MP3 compressed digital music");
+							audioStream = Audio::makeMP3Stream(_file, resourceData->size);
+							break;
+#endif
+#ifdef USE_VORBIS
+						case kSoundOGG:
+							debug(1, "Playing OGG compressed digital music");
+							audioStream = Audio::makeVorbisStream(_file, resourceData->size);
+							break;
+#endif
+#ifdef USE_FLAC
+						case kSoundFLAC:
+							debug(1, "Playing FLAC compressed digital music");
+							audioStream = Audio::makeFlacStream(_file, resourceData->size);
+							break;
+#endif
+						default:
+							// Unknown compression
+							error("Trying to play a compressed digital music, but the compression is not known");
+							break;
+					}
+
+				}
 			}
 		}
 	}

@@ -31,6 +31,9 @@
 #include "sound/audiocd.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
+#include "sound/mp3.h"
+#include "sound/vorbis.h"
+#include "sound/flac.h"
 
 namespace Saga {
 
