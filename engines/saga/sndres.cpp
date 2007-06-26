@@ -282,16 +282,17 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		ResourceData *resourceData;
 		resourceData = _vm->_resource->getResourceData(context, resourceId);
 
+		// Read compressed sfx header
 		readS.seek(1);	// Skip compression identifier byte
-
 		buffer.frequency = readS.readUint16LE();
-		buffer.size = soundResourceLength;
 		buffer.originalSize = readS.readUint32LE();
 		buffer.sampleBits = readS.readByte();
 		buffer.stereo = (readS.readByte() == char(0)) ? false : true;
+
+		buffer.size = soundResourceLength;
 		buffer.soundType = resourceType;
 		buffer.soundFile = context->getFile(resourceData);
-		buffer.fileOffset = resourceData->offset;
+		buffer.fileOffset = resourceData->offset + 9; // skip compressed sfx header: byte + uint16 + uint32 + byte + byte
 
 		buffer.buffer = NULL;
 
