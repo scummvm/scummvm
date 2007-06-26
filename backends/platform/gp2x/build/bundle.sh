@@ -19,6 +19,7 @@ cp ./scummvm.gpe ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ./scummvm.png ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ./README-GP2X.html ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ./README-GP2X ./scummvm-gp2x-`date '+%Y-%m-%d'`/
+cp ./mmuhack.o ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../scummvm.gp2x ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../AUTHORS ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../README ./scummvm-gp2x-`date '+%Y-%m-%d'`/
@@ -27,10 +28,21 @@ cp ../../../../COPYRIGHT ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../NEWS ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../gui/themes/modern.ini ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../gui/themes/modern.zip ./scummvm-gp2x-`date '+%Y-%m-%d'`/
-
+cp ../../../../dists/pred.dic ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 
 echo Making Stripped GPE.
 arm-open2x-linux-strip ./scummvm-gp2x-`date '+%Y-%m-%d'`/scummvm.gp2x
 
 echo Building ZIP bundle.
-echo You should have a "scummvm-gp2x-`date '+%Y-%m-%d'`.zip" for the GP2X port ready to go.
+if [ -f /usr/bin/zip ]
+	then
+		cd "scummvm-gp2x-`date '+%Y-%m-%d'`"
+		zip "../scummvm-gp2x-`date '+%Y-%m-%d'`.zip" * -r -9
+		echo You should have a "scummvm-gp2x-`date '+%Y-%m-%d'`.zip" for the GP2X port ready to go.
+		echo All included files can also be found in ./"scummvm-gp2x-`date '+%Y-%m-%d'`"
+	else  
+		echo - /usr/bin/zip not found, ZIP bundle not created.
+		echo All included files can also be found in ./"scummvm-gp2x-`date '+%Y-%m-%d'`"
+		echo - Please use you preferred archive tool to bundle these files.
+fi
+

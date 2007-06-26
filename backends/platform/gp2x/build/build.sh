@@ -10,6 +10,7 @@ export CXX=arm-open2x-linux-g++
 export CC=arm-open2x-linux-gcc
 export CXXFLAGS=-march=armv4t
 export LDFLAGS=-static
+export ASFLAGS=-mfloat-abi=soft
 
 cd ../../../..
 

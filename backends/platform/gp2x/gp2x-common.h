@@ -181,7 +181,6 @@ public:
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
 
-	//virtual void setWindowCaption(const char *caption);
 	virtual bool openCD(int drive);
 	virtual int getOutputSampleRate() const;
 
@@ -267,6 +266,9 @@ protected:
 	int _mode;
 	int _transactionMode;
 	bool _fullscreen;
+	
+	bool _screenIsLocked;
+	Graphics::Surface _framebuffer;
 
 	/** Current video mode flags (see DF_* constants) */
 	uint32 _modeFlags;
@@ -382,14 +384,13 @@ protected:
 
 	/** Set the position of the virtual mouse cursor. */
 	void setMousePos(int x, int y);
-	virtual void fillMouseEvent(Common::Event &event, int x, int y);
-	//void toggleMouseGrab();
+	void fillMouseEvent(Common::Event &event, int x, int y);
 
-	virtual void internUpdateScreen();
+	void internUpdateScreen();
 
-	virtual void loadGFXMode();
-	virtual void unloadGFXMode();
-	virtual void hotswapGFXMode();
+	void loadGFXMode();
+	void unloadGFXMode();
+	void hotswapGFXMode();
 
 	void setFullscreenMode(bool enable);
 	void setAspectRatioCorrection(bool enable);

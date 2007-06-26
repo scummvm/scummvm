@@ -65,7 +65,6 @@ extern void	GP2X_mixer_move_volume(int);
 extern void GP2X_setCpuspeed(unsigned int cpuspeed);
 extern int GP2X_getBattLevel();
 
-
 extern void save_system_regs(void); /* save some registers */
 extern void set_display_clock_div(unsigned div);
 extern void set_FCLK(unsigned MHZ); /* adjust the clock frequency (in Mhz units) */

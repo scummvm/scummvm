@@ -33,17 +33,20 @@
 #include "gp2x-common.h"
 
 #include "gp2x-hw.h"
+#include "gp2x-mem.h"
 
-// Linux includes to let us goof about with the system.
+// Linux includes to let us goof about with the system in a 'standard' way.
+#include <fcntl.h>
+#include <pthread.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 #include <sys/soundcard.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
-static          unsigned long   gp2x_dev[8]={0,0,0,0,0,0,0,0};//, gp2x_ticks_per_second;
-static volatile unsigned short *gp2x_memregs;
+#include <sys/time.h>
+#include <unistd.h>
 
 /* system registers */
 static struct
@@ -67,19 +70,27 @@ void GP2X_device_init() {
 
 void GP2X_device_deinit() {
 	// Close devices
-	if (gp2x_dev[0]) close(gp2x_dev[0]);
-	if (gp2x_dev[1]) close(gp2x_dev[1]);
-	if (gp2x_dev[2]) close(gp2x_dev[2]);
+	{
+		int i;
+		for(i=0;i<8;i++)
+		{
+			if(gp2x_dev[i])
+			{
+				close(gp2x_dev[i]);
+			}
+		}
+	}
 
-	MEM_REG[0x91c>>1]=system_reg.SYSCSETREG;
-	MEM_REG[0x910>>1]=system_reg.FPLLVSETREG;
-	MEM_REG[0x3B40>>1]=system_reg.DUALINT920;
-	MEM_REG[0x3B42>>1]=system_reg.DUALINT940;
-	MEM_REG[0x3B48>>1]=system_reg.DUALCTRL940;
-	MEM_REG[0x904>>1]=system_reg.SYSCLKENREG;
-	MEM_REG[0x924>>1]=dispclockdiv;
+	MEM_REG[0x91c>>1] = system_reg.SYSCSETREG;
+	MEM_REG[0x910>>1] = system_reg.FPLLVSETREG;
+	MEM_REG[0x3B40>>1] = system_reg.DUALINT920;
+	MEM_REG[0x3B42>>1] = system_reg.DUALINT940;
+	MEM_REG[0x3B48>>1] = system_reg.DUALCTRL940;
+	MEM_REG[0x904>>1] = system_reg.SYSCLKENREG;
+	MEM_REG[0x924>>1] = dispclockdiv;
+
+	unpatchMMU();
 }
-
 
 // Vairous mixer level fudges.
 // TODO: Clean up and merge quick hacks.
