@@ -760,12 +760,14 @@ if test -n "$_host"; then
 			;;
  		gp2x)
  			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
- 			DEFINES="$DEFINES -DUNIX -DGP2X -DUSE_ARM_SOUND_ASM"
+ 			DEFINES="$DEFINES -DUNIX -DGP2X -DUSE_ARM_SOUND_ASM -DUSE_ARM_SMUSH_ASM"
 			_endian=little
 			_need_memalign=yes
  			type_1_byte='char'
  			type_2_byte='short'
  			type_4_byte='int'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
  			_backend="gp2x"
  			_mak_hq_scalers='DISABLE_HQ_SCALERS = 1'
  			_build_hq_scalers="no"
