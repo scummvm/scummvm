@@ -652,7 +652,7 @@ int PictureMgr::decodePicture(int n, int clear, bool agi256) {
 
 	if (clear)
 		_vm->clearImageStack();
-	_vm->recordImageStackCall(ADD_PIC, n, clear, 0, 0, 0, 0, 0);
+	_vm->recordImageStackCall(ADD_PIC, n, clear, agi256, 0, 0, 0, 0);
 
 	return errOK;
 }
