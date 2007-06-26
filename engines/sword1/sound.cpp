@@ -197,8 +197,8 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			if (data)
 				_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_speechHandle, data, size, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID, speechVol, speechPan);
 		}
-#ifdef USE_MAD
-		else if (_cowMode == CowMp3) {
+#ifdef USE_FLAC
+		else if (_cowMode == CowFlac) {
 			_cowFile.seek(index);
 			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, Audio::makeMP3Stream(&_cowFile, sampleSize), SOUND_SPEECH_ID, speechVol, speechPan);
 			// with compressed audio, we can't calculate the wave volume.
@@ -212,6 +212,19 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 		else if (_cowMode == CowVorbis) {
 			_cowFile.seek(index);
 			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, Audio::makeVorbisStream(&_cowFile, sampleSize), SOUND_SPEECH_ID, speechVol, speechPan);
+			// with compressed audio, we can't calculate the wave volume.
+			// so default to talking.
+			for (int cnt = 0; cnt < 480; cnt++)
+				_waveVolume[cnt] = true;
+			_waveVolPos = 0;
+		}
+#endif
+#ifdef USE_MAD
+		else if (_cowMode == CowMp3) {
+			_cowFile.seek(index);
+			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, Audio::makeMP3Stream(&_cowFile, sampleSize), SOUND_SPEECH_ID, speechVol, speechPan);
+			// with compressed audio, we can't calculate the wave volume.
+			// so default to talking.
 			for (int cnt = 0; cnt < 480; cnt++)
 				_waveVolume[cnt] = true;
 			_waveVolPos = 0;
@@ -332,6 +345,16 @@ void Sound::initCowSystem(void) {
 	/* look for speech1/2.clu in the data dir
 	   and speech/speech.clu (running from cd or using cd layout)
 	*/
+#ifdef USE_FLAC
+	if (!_cowFile.isOpen()) {
+		sprintf(cowName, "SPEECH%d.CLF", SwordEngine::_systemVars.currentCD);
+		_cowFile.open(cowName);
+		if (_cowFile.isOpen()) {
+			debug(1, "Using Vorbis compressed Speech Cluster");
+			_cowMode = CowFlac;
+		}
+	}
+#endif
 #ifdef USE_VORBIS
 	if (!_cowFile.isOpen()) {
 		sprintf(cowName, "SPEECH%d.CLV", SwordEngine::_systemVars.currentCD);

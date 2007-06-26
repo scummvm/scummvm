@@ -66,8 +66,9 @@ class ResMan;
 
 enum CowMode {
 	CowWave = 0,
-	CowMp3,
+	CowFlac,
 	CowVorbis,
+	CowMp3,
 	CowDemo
 };
 

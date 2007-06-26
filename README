@@ -1422,6 +1422,9 @@ files.
 Running "compress_sword1 --vorbis" will compress the files using Ogg Vorbis
 instead of MP3.
 
+Running "compress_sword1 --flac" will compress the files using Flac
+instead of MP3.
+
 Use "compress_sword1 --help" to get a full list of the options.
 
 
