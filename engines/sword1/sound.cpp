@@ -33,6 +33,7 @@
 #include "sword1/logic.h"
 #include "sword1/sword1.h"
 
+#include "sound/flac.h"
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
 #include "sound/wave.h"
@@ -200,7 +201,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 #ifdef USE_FLAC
 		else if (_cowMode == CowFlac) {
 			_cowFile.seek(index);
-			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, Audio::makeMP3Stream(&_cowFile, sampleSize), SOUND_SPEECH_ID, speechVol, speechPan);
+			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, Audio::makeFlacStream(&_cowFile, sampleSize), SOUND_SPEECH_ID, speechVol, speechPan);
 			// with compressed audio, we can't calculate the wave volume.
 			// so default to talking.
 			for (int cnt = 0; cnt < 480; cnt++)
@@ -350,7 +351,7 @@ void Sound::initCowSystem(void) {
 		sprintf(cowName, "SPEECH%d.CLF", SwordEngine::_systemVars.currentCD);
 		_cowFile.open(cowName);
 		if (_cowFile.isOpen()) {
-			debug(1, "Using Vorbis compressed Speech Cluster");
+			debug(1, "Using Flac compressed Speech Cluster");
 			_cowMode = CowFlac;
 		}
 	}
