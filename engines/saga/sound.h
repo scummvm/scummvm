@@ -33,8 +33,6 @@
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
 #include "sound/flac.h"
-#include "sound/rate.h"
-#include "sound/wave.h"
 
 namespace Saga {
 
