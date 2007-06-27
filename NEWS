@@ -8,6 +8,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Improved the way keyboard input is handled internally, resolving
      some odd quirks in some game / port combinations.
 
+ AGOS:
+   - Fixed crashes related to OmniTV playback in The Feeble Files.
+
  Broken Sword 1:
    - Added support for FLAC encoded music.
 
