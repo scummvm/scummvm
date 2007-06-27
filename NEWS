@@ -15,6 +15,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added subtitle skipping (via '.' key) in older games which didn't have
      this feature so far (e.g. Zak, MM, Indy3, Loom).
 
+ SAGA:
+   - Added support for compressed voices and music
+
+
 0.10.0 (2007-06-20)
  New Games:
    - Added Cinematique evo 1 engine. Currently only Future Wars is supported.
