@@ -418,19 +418,19 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 					audioStream = new RAWInputStream(_vm, _musicContext, resourceId - 9, flags == MUSIC_LOOP, loopStart);
 				} else {
 					// compressed digital music
-					ResourceData * resourceData;
+					ResourceData * musicResourceData;
 					Common::File *_file;
 					byte compressedHeader[10];
 					GameSoundTypes soundType;
 
-					resourceData = _vm->_resource->getResourceData(_musicContext, resourceId - 9);
-					_file = _musicContext->getFile(resourceData);
+					musicResourceData = _vm->_resource->getResourceData(_musicContext, resourceId - 9);
+					_file = _musicContext->getFile(musicResourceData);
 
 					if (_vm->getMusicInfo() == NULL) {
 						error("RAWInputStream() wrong musicInfo");
 					}
 
-					_file->seek((long)resourceData->offset, SEEK_SET);
+					_file->seek((long)musicResourceData->offset, SEEK_SET);
 
 					_file->read(compressedHeader, 9);
 
@@ -446,19 +446,19 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 #ifdef USE_MAD
 						case kSoundMP3:
 							debug(1, "Playing MP3 compressed digital music");
-							audioStream = Audio::makeMP3Stream(_file, resourceData->size);
+							audioStream = Audio::makeMP3Stream(_file, musicResourceData->size);
 							break;
 #endif
 #ifdef USE_VORBIS
 						case kSoundOGG:
 							debug(1, "Playing OGG compressed digital music");
-							audioStream = Audio::makeVorbisStream(_file, resourceData->size);
+							audioStream = Audio::makeVorbisStream(_file, musicResourceData->size);
 							break;
 #endif
 #ifdef USE_FLAC
 						case kSoundFLAC:
 							debug(1, "Playing FLAC compressed digital music");
-							audioStream = Audio::makeFlacStream(_file, resourceData->size);
+							audioStream = Audio::makeFlacStream(_file, musicResourceData->size);
 							break;
 #endif
 						default:
