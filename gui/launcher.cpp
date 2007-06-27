@@ -171,15 +171,15 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	tab->addTab("Game");
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, "gameoptions_id", "ID: ");
+	new StaticTextWidget(tab, "gameoptions_id", "ID:");
 	_domainWidget = new DomainEditTextWidget(tab, "gameoptions_domain", _domain);
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, "gameoptions_name", "Name: ");
+	new StaticTextWidget(tab, "gameoptions_name", "Name:");
 	_descriptionWidget = new EditTextWidget(tab, "gameoptions_desc", description);
 
 	// Language popup
-	_langPopUp = new PopUpWidget(tab, "gameoptions_lang", "Language: ", labelWidth);
+	_langPopUp = new PopUpWidget(tab, "gameoptions_lang", "Language:", labelWidth);
 	_langPopUp->appendEntry("<default>");
 	_langPopUp->appendEntry("");
 	const Common::LanguageDescription *l = Common::g_languages;
@@ -188,7 +188,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// Platform popup
-	_platformPopUp = new PopUpWidget(tab, "gameoptions_platform", "Platform: ", labelWidth);
+	_platformPopUp = new PopUpWidget(tab, "gameoptions_platform", "Platform:", labelWidth);
 	_platformPopUp->appendEntry("<default>");
 	_platformPopUp->appendEntry("");
 	const Common::PlatformDescription *p = Common::g_platforms;
@@ -242,7 +242,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// in the small version of the GUI.
 
 	// GUI:  Button + Label for the game path
-	new ButtonWidget(tab, "gameoptions_gamepath", "Game Path: ", kCmdGameBrowser, 0);
+	new ButtonWidget(tab, "gameoptions_gamepath", "Game Path:", kCmdGameBrowser, 0);
 	_gamePathWidget = new StaticTextWidget(tab, "gameoptions_gamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
@@ -253,7 +253,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// GUI:  Button + Label for the save path
-	new ButtonWidget(tab, "gameoptions_savepath", "Save Path: ", kCmdSaveBrowser, 0);
+	new ButtonWidget(tab, "gameoptions_savepath", "Save Path:", kCmdSaveBrowser, 0);
 	_savePathWidget = new StaticTextWidget(tab, "gameoptions_savepathText", savePath);
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel("Default");
