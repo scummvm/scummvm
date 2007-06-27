@@ -617,16 +617,16 @@ void Theme::processResSection(Common::ConfigFile &config, const String &name, bo
 		if (iterk->key == "use") {
 			if (iterk->value == name)
 				error("Theme section [%s]: cannot use itself", name.c_str());
-			if (!config.hasSection(name))
-				error("Undefined use of section [%s]", name.c_str());
+			if (!config.hasSection(iterk->value))
+				error("Undefined use of section [%s]", iterk->value.c_str());
 			processResSection(config, iterk->value, true);
 			continue;
 		}
 		if (iterk->key == "useAsIs") {
 			if (iterk->value == name)
 				error("Theme section [%s]: cannot use itself", name.c_str());
-			if (!config.hasSection(name))
-				error("Undefined use of section [%s]", name.c_str());
+			if (!config.hasSection(iterk->value))
+				error("Undefined use of section [%s]", iterk->value.c_str());
 			processResSection(config, iterk->value);
 			continue;
 		}
