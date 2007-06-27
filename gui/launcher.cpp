@@ -148,7 +148,7 @@ protected:
 EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	: OptionsDialog(domain, "gameoptions") {
 
-	int labelWidth = g_gui.evaluator()->getVar("gameOptionsLabelWidth");
+	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
 	String gamePath(ConfMan.get("path", _domain));
@@ -270,7 +270,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 void EditGameDialog::reflowLayout() {
 	OptionsDialog::reflowLayout();
 
-	int labelWidth = g_gui.evaluator()->getVar("gameOptionsLabelWidth");
+	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
 
 	if (_langPopUp)
 		_langPopUp->changeLabelWidth(labelWidth);
