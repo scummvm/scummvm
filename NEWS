@@ -1,6 +1,17 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
+0.10.1 (2007-XX-XX)
+ General:
+   - Fix speech mute in game options
+   - Fix segmentation fault in GUI themes
+ 
+ AGOS:
+   - Fixed crashes related to OmniTV playback in The Feeble Files.
+
+ BASS:
+   - Better MT-32 compatibility
+
 0.10.0 (2007-06-20)
  New Games:
    - Added Cinematique evo 1 engine. Currently only Future Wars is supported.
