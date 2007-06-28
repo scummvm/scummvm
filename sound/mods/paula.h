@@ -45,10 +45,6 @@ public:
 
 	bool playing() const { return _playing; }
 	void setInterruptFreq(int freq) { _curInt = _intFreq = freq; }
-	void setPanning(byte voice, byte panning) {
-		assert(voice < NUM_VOICES);
-		_voice[voice].panning = panning;
-	}
 	void clearVoice(byte voice);
 	void clearVoices() { for (int i = 0; i < NUM_VOICES; ++i) clearVoice(i); }
 	void startPlay(void) { _playing = true; }
@@ -69,27 +65,68 @@ protected:
 		uint32 lengthRepeat;
 		int16 period;
 		byte volume;
-		double offset;
+		double offset;	// FIXME: Avoid floating point at all cost!!!
 		byte panning; // For stereo mixing: 0 = far left, 255 = far right
-	} _voice[NUM_VOICES];
+	};
 
-	int _rate;
-	int _intFreq;
-	int _curInt;
-	bool _stereo;
 	bool _end;
-	bool _playing;
 	Common::Mutex _mutex;
 
-	void mix(int16 *&buf, int8 data, int voice) {
-		const int32 tmp = ((int32) data) * _voice[voice].volume;
-		if (_stereo) {
-			*buf++ += (tmp * (255 - _voice[voice].panning)) >> 7;
-			*buf++ += (tmp * (_voice[voice].panning)) >> 7;
-		} else
-			*buf++ += tmp;
+	virtual void interrupt(void) = 0;
+
+	void startPaula() {
+		_playing = true;
+		_end = false;
 	}
-	virtual void interrupt(void) {}
+	
+	void stopPaula() {
+		_playing = false;
+		_end = true;
+	}
+	
+	void setChannelPanning(byte channel, byte panning) {
+		assert(channel < NUM_VOICES);
+		_voice[channel].panning = panning;
+	}
+
+	void setChannelPeriod(byte channel, int16 period) {
+		assert(channel < NUM_VOICES);
+		_voice[channel].period = period;
+	}
+
+	void setChannelVolume(byte channel, byte volume) {
+		assert(channel < NUM_VOICES);
+		_voice[channel].volume = volume;
+	}
+
+	void setChannelData(uint8 channel, const int8 *data, const int8 *dataRepeat, uint32 length, uint32 lengthRepeat, double offset = 0.0) {
+		assert(channel < NUM_VOICES);
+		Channel &ch = _voice[channel];
+		ch.data = data;
+		ch.dataRepeat = dataRepeat;
+		ch.length = length;
+		ch.lengthRepeat = lengthRepeat;
+		ch.offset = offset;
+	}
+
+	void setChannelOffset(byte channel, double offset) {
+		assert(channel < NUM_VOICES);
+		_voice[channel].offset = offset;
+	}
+
+	double getChannelOffset(byte channel) {
+		assert(channel < NUM_VOICES);
+		return _voice[channel].offset;
+	}
+
+private:
+	Channel _voice[NUM_VOICES];
+
+	const bool _stereo;
+	const int _rate;
+	int _intFreq;
+	int _curInt;
+	bool _playing;
 };
 
 } // End of namespace Audio

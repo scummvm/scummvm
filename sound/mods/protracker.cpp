@@ -37,8 +37,6 @@ class ProtrackerStream : public ::Audio::Paula {
 private:
 	Module _module;
 
-	int _rate;
-
 	int _tick;
 	int _row;
 	int _pos;
@@ -152,7 +150,6 @@ ProtrackerStream::ProtrackerStream(Common::ReadStream *stream, int rate, bool st
 	bool result = _module.load(*stream);
 	assert(result);
 
-	_rate = rate;
 	_tick = _row = _pos = 0;
 
 	_speed = 6;
@@ -172,8 +169,7 @@ ProtrackerStream::ProtrackerStream(Common::ReadStream *stream, int rate, bool st
 
 	memset(_track, 0, sizeof(_track));
 
-	_playing = true;
-	_end = false;
+	startPaula();
 }
 
 void ProtrackerStream::updateRow() {
@@ -249,7 +245,7 @@ void ProtrackerStream::updateRow() {
 		case 0x9: // Set sample offset
 			if (exy) {
 				_track[track].offset = exy * 256;
-				_voice[track].offset = _track[track].offset;
+				setChannelOffset(track, _track[track].offset);
 			}
 			break;
 		case 0xA:
@@ -409,7 +405,7 @@ void ProtrackerStream::interrupt(void) {
 	int track;
 
 	for (track = 0; track < 4; track++)
-		_track[track].offset = _voice[track].offset;
+		_track[track].offset = getChannelOffset(track);
 
 	if (_tick == 0) {
 		if (_track[track].arpeggio) {
@@ -446,15 +442,16 @@ void ProtrackerStream::interrupt(void) {
 	}
 
 	for (track = 0; track < 4; track++) {
-		_voice[track].period = _track[track].period + _track[track].vibrato;
-		_voice[track].volume = _track[track].vol;
+		setChannelVolume(track, _track[track].vol);
+		setChannelPeriod(track, _track[track].period + _track[track].vibrato);
 		if (_track[track].sample) {
 			sample_t &sample = _module.sample[_track[track].sample - 1];
-			_voice[track].data = sample.data;
-			_voice[track].dataRepeat = sample.replen > 2 ? sample.data + sample.repeat : 0;
-			_voice[track].length = sample.len;
-			_voice[track].lengthRepeat = sample.replen;
-			_voice[track].offset = _track[track].offset;
+			setChannelData(track,
+			               sample.data,
+			               sample.replen > 2 ? sample.data + sample.repeat : 0,
+			               sample.len,
+			               sample.replen,
+			               _track[track].offset);
 			_track[track].sample = 0;
 		}
 	}

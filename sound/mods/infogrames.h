@@ -96,7 +96,7 @@ public:
 			// while data is being read by the mixer thread.
 			_mutex.lock();
 			init();
-			_playing = true;
+			startPlay();
 			_mutex.unlock();
 		}
 	}

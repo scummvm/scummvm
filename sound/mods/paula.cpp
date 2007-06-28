@@ -29,7 +29,6 @@ namespace Audio {
 
 Paula::Paula(bool stereo, int rate, int interruptFreq) :
 		_stereo(stereo), _rate(rate), _intFreq(interruptFreq) {
-	_playing = false;
 
 	clearVoices();
 	_voice[0].panning = 63;
@@ -41,6 +40,7 @@ Paula::Paula(bool stereo, int rate, int interruptFreq) :
 		_intFreq = _rate;
 
 	_curInt = _intFreq;
+	_playing = false;
 	_end = true;
 }
 
@@ -57,6 +57,15 @@ void Paula::clearVoice(byte voice) {
 	_voice[voice].period = 0;
 	_voice[voice].volume = 0;
 	_voice[voice].offset = 0;
+}
+
+static inline void mix(int16 *&buf, int8 data, byte volume, byte panning, bool stereo) {
+	const int32 tmp = ((int32) data) * volume;
+	if (stereo) {
+		*buf++ += (tmp * (255 - panning)) >> 7;
+		*buf++ += (tmp * panning) >> 7;
+	} else
+		*buf++ += tmp;
 }
 
 int Paula::readBuffer(int16 *buffer, const int numSamples) {
@@ -103,7 +112,7 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 				int end = (int)((sLen - offset) / rate);
 
 				for (int i = 0; i < end; i++)
-					mix(p, data[(int)(offset + rate * i)], voice);
+					mix(p, data[(int)(offset + rate * i)], _voice[voice].volume, _voice[voice].panning, _stereo);
 
 				_voice[voice].length = sLen = _voice[voice].lengthRepeat;
 				_voice[voice].data = data = _voice[voice].dataRepeat;
@@ -118,7 +127,7 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 						end = (int)((sLen - offset) / rate);
 
 						for (int i = 0; i < end; i++)
-							mix(p, data[(int)(offset + rate * i)], voice);
+							mix(p, data[(int)(offset + rate * i)], _voice[voice].volume, _voice[voice].panning, _stereo);
 
 						_voice[voice].data = data = _voice[voice].dataRepeat;
 						_voice[voice].length = sLen =
@@ -128,7 +137,7 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 						neededSamples -= end;
 					} else {
 						for (int i = 0; i < neededSamples; i++)
-							mix(p, data[(int)(offset + rate * i)], voice);
+							mix(p, data[(int)(offset + rate * i)], _voice[voice].volume, _voice[voice].panning, _stereo);
 						_voice[voice].offset += rate * neededSamples;
 						if (ceil(_voice[voice].offset) >= sLen) {
 							_voice[voice].data = data = _voice[voice].dataRepeat;
@@ -146,14 +155,14 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 
 						int end = (int)((sLen - offset) / rate);
 						for (int i = 0; i < end; i++)
-							mix(p, data[(int)(offset + rate * i)], voice);
+							mix(p, data[(int)(offset + rate * i)], _voice[voice].volume, _voice[voice].panning, _stereo);
 						_voice[voice].offset = sLen;
 					} else {
 						// The requested number of samples is the limiting
 						// factor, not the sample
 
 						for (int i = 0; i < nSamples; i++)
-							mix(p, data[(int)(offset + rate * i)], voice);
+							mix(p, data[(int)(offset + rate * i)], _voice[voice].volume, _voice[voice].panning, _stereo);
 						_voice[voice].offset += rate * nSamples;
 					}
 				}
