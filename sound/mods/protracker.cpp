@@ -65,7 +65,7 @@ private:
 	struct {
 		byte sample;
 		uint16 period;
-		double offset;
+		frac_t offset;
 
 		byte vol;
 		byte finetune;
@@ -197,13 +197,13 @@ void ProtrackerStream::updateRow() {
 					_track[track].period = _module.noteToPeriod(note.note, _track[track].finetune);
 				else
 					_track[track].period = note.period;
-				_track[track].offset = 0.0;
+				_track[track].offset = 0;
 			}
 		}
 
-		const int exy = note.effect & 0xff;
-		const int ex = (note.effect >> 4) & 0xf;
-		const int ey = note.effect & 0xf;
+		const byte exy = note.effect & 0xff;
+		const byte ex = (note.effect >> 4) & 0xf;
+		const byte ey = note.effect & 0xf;
 
 		int vol;
 		switch (effect) {
@@ -243,7 +243,7 @@ void ProtrackerStream::updateRow() {
 			break;
 		case 0x9: // Set sample offset
 			if (exy) {
-				_track[track].offset = exy * 256;
+				_track[track].offset = intToFrac(exy * 256);
 				setChannelOffset(track, _track[track].offset);
 			}
 			break;
@@ -384,12 +384,12 @@ void ProtrackerStream::updateEffects() {
 				break;	// Pattern loop
 			case 0x9:	// Retrigger note
 				if (ey && (_tick % ey) == 0)
-					_track[track].offset = 0.0;
+					_track[track].offset = 0;
 				break;
 			case 0xD: // Delay sample
 				if (_tick == _track[track].delaySampleTick) {
 					_track[track].sample = _track[track].delaySample;
-					_track[track].offset = 0.0;
+					_track[track].offset = 0;
 					if (_track[track].sample)
 						_track[track].vol = _module.sample[_track[track].sample - 1].vol;
 				}

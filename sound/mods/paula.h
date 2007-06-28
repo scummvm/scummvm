@@ -27,6 +27,7 @@
 #define SOUND_MODS_PAULA_H
 
 #include "sound/audiostream.h"
+#include "common/frac.h"
 #include "common/mutex.h"
 
 namespace Audio {
@@ -65,7 +66,7 @@ protected:
 		uint32 lengthRepeat;
 		int16 period;
 		byte volume;
-		double offset;	// FIXME: Avoid floating point at all cost!!!
+		frac_t offset;
 		byte panning; // For stereo mixing: 0 = far left, 255 = far right
 	};
 
@@ -99,22 +100,30 @@ protected:
 		_voice[channel].volume = volume;
 	}
 
-	void setChannelData(uint8 channel, const int8 *data, const int8 *dataRepeat, uint32 length, uint32 lengthRepeat, double offset = 0.0) {
+	void setChannelData(uint8 channel, const int8 *data, const int8 *dataRepeat, uint32 length, uint32 lengthRepeat, int32 offset = 0) {
 		assert(channel < NUM_VOICES);
+
+		// For now, we only support 32k samples, as we use 16bit fixed point arithmetics.
+		// If this ever turns out to be a problem, we can still enhance this code.
+		assert(0 <= offset && offset < 32768);
+		assert(length < 32768);
+		assert(lengthRepeat < 32768);
+
 		Channel &ch = _voice[channel];
 		ch.data = data;
 		ch.dataRepeat = dataRepeat;
 		ch.length = length;
 		ch.lengthRepeat = lengthRepeat;
-		ch.offset = offset;
+		ch.offset = intToFrac(offset);
 	}
 
-	void setChannelOffset(byte channel, double offset) {
+	void setChannelOffset(byte channel, frac_t offset) {
 		assert(channel < NUM_VOICES);
+		assert(0 <= offset);
 		_voice[channel].offset = offset;
 	}
 
-	double getChannelOffset(byte channel) {
+	frac_t getChannelOffset(byte channel) {
 		assert(channel < NUM_VOICES);
 		return _voice[channel].offset;
 	}

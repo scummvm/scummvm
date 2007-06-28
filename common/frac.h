@@ -46,6 +46,9 @@ enum {
  */
 typedef int32 frac_t;
 
+inline frac_t doubleToFrac(double value) { return (frac_t)(value * FRAC_ONE); }
+inline double fracToDouble(frac_t value) { return ((double)value) / FRAC_ONE; }
+
 inline frac_t intToFrac(int16 value) { return value << FRAC_BITS; }
 inline int16 fracToInt(frac_t value) { return value >> FRAC_BITS; }
 
