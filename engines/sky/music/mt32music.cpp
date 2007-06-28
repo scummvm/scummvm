@@ -170,7 +170,7 @@ void MT32Music::startDriver(void) {
 		sendBuf[len] = crc & 0x7F;
 		len++;
 		_midiDrv->sysEx(sendBuf, len);
-		g_system->delayMillis (40);
+		g_system->delayMillis(40);
 	}
 
 	while (processPatchSysEx(sysExData))
