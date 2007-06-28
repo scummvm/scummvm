@@ -35,15 +35,11 @@
 #include "sound/audiostream.h"
 #include "sound/rate.h"
 #include "sound/mixer.h"
+#include "common/frac.h"
 #include "common/util.h"
 
 namespace Audio {
 
-/**
- * The precision of the fractional computations used by the rate converter.
- * Normally you should never have to modify this value.
- */
-#define FRAC_BITS 16
 
 /**
  * The size of the intermediate input cache. Bigger values may increase
@@ -88,12 +84,8 @@ public:
  */
 template<bool stereo, bool reverseStereo>
 SimpleRateConverter<stereo, reverseStereo>::SimpleRateConverter(st_rate_t inrate, st_rate_t outrate) {
-	if (inrate == outrate) {
-		error("Input and Output rates must be different to use rate effect");
-	}
-
 	if ((inrate % outrate) != 0) {
-		error("Input rate must be a multiple of Output rate to use rate effect");
+		error("Input rate must be a multiple of output rate to use rate effect");
 	}
 
 	if (inrate >= 65536 || outrate >= 65536) {
@@ -174,10 +166,10 @@ protected:
 	int inLen;
 
 	/** fractional position of the output stream in input stream unit */
-	long opos, opos_frac;
+	frac_t opos;
 
 	/** fractional position increment in the output stream */
-	long opos_inc, opos_inc_frac;
+	frac_t opos_inc;
 
 	/** last sample(s) in the input stream (left/right channel) */
 	st_sample_t ilast0, ilast1;
@@ -198,24 +190,14 @@ public:
  */
 template<bool stereo, bool reverseStereo>
 LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate, st_rate_t outrate) {
-	unsigned long incr;
-
-	if (inrate == outrate) {
-		error("Input and Output rates must be different to use rate effect");
-	}
-
 	if (inrate >= 65536 || outrate >= 65536) {
 		error("rate effect can only handle rates < 65536");
 	}
 
-	opos_frac = 0;
-	opos = 1;
+	opos = FRAC_ONE;
 
 	/* increment */
-	incr = (inrate << FRAC_BITS) / outrate;
-
-	opos_inc_frac = incr & ((1UL << FRAC_BITS) - 1);
-	opos_inc = incr >> FRAC_BITS;
+	opos_inc = (inrate << FRAC_BITS) / outrate;
 
 	ilast0 = ilast1 = 0;
 	icur0 = icur1 = 0;
@@ -236,7 +218,7 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 
 	while (obuf < oend) {
 
-		// read enough input samples so that opos <= 0
+		// read enough input samples so that opos < 0
 		while (0 <= opos) {
 			// Check if we have to refill the buffer
 			if (inLen == 0) {
@@ -252,7 +234,7 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 				ilast1 = icur1;
 				icur1 = *inPtr++;
 			}
-			opos--;
+			opos -= FRAC_ONE;
 		}
 
 		// Loop as long as the outpos trails behind, and as long as there is
@@ -260,9 +242,10 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 		while (0 > opos && obuf < oend) {
 			// interpolate
 			st_sample_t out0, out1;
-			out0 = (st_sample_t)(ilast0 + (((icur0 - ilast0) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
+			const frac_t scale = (opos & FRAC_LO_MASK);
+			out0 = (st_sample_t)(ilast0 + (((icur0 - ilast0) * scale + FRAC_HALF) >> FRAC_BITS));
 			out1 = (stereo ?
-						  (st_sample_t)(ilast1 + (((icur1 - ilast1) * opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS)) :
+						  (st_sample_t)(ilast1 + (((icur1 - ilast1) * scale + FRAC_HALF) >> FRAC_BITS)) :
 						  out0);
 
 			// output left channel
@@ -274,9 +257,7 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 			obuf += 2;
 
 			// Increment output position
-			long tmp = opos_frac + opos_inc_frac;
-			opos += opos_inc + (tmp >> FRAC_BITS);
-			opos_frac = tmp & ((1UL << FRAC_BITS) - 1);
+			opos += opos_inc;
 		}
 	}
 	return ST_SUCCESS;
@@ -344,38 +325,30 @@ public:
 
 #pragma mark -
 
+template<bool stereo, bool reverseStereo>
+RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate) {
+	if (inrate != outrate) {
+		if ((inrate % outrate) == 0) {
+			return new SimpleRateConverter<stereo, reverseStereo>(inrate, outrate);
+		} else {
+			return new LinearRateConverter<stereo, reverseStereo>(inrate, outrate);
+		}
+	} else {
+		return new CopyRateConverter<stereo, reverseStereo>();
+	}
+}
 
 /**
  * Create and return a RateConverter object for the specified input and output rates.
  */
 RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stereo, bool reverseStereo) {
-	if (inrate != outrate) {
-		if ((inrate % outrate) == 0) {
-			if (stereo) {
-				if (reverseStereo)
-					return new SimpleRateConverter<true, true>(inrate, outrate);
-				else
-					return new SimpleRateConverter<true, false>(inrate, outrate);
-			} else
-				return new SimpleRateConverter<false, false>(inrate, outrate);
-		} else {
-			if (stereo) {
-				if (reverseStereo)
-					return new LinearRateConverter<true, true>(inrate, outrate);
-				else
-					return new LinearRateConverter<true, false>(inrate, outrate);
-			} else
-				return new LinearRateConverter<false, false>(inrate, outrate);
-		 }
-	} else {
-		if (stereo) {
-			if (reverseStereo)
-				return new CopyRateConverter<true, true>();
-			else
-				return new CopyRateConverter<true, false>();
-		} else
-			return new CopyRateConverter<false, false>();
-	}
+	if (stereo) {
+		if (reverseStereo)
+			return makeRateConverter<true, true>(inrate, outrate);
+		else
+			return makeRateConverter<true, false>(inrate, outrate);
+	} else
+		return makeRateConverter<false, false>(inrate, outrate);
 }
 
 } // End of namespace Audio
