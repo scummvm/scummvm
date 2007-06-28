@@ -127,6 +127,9 @@ private:
 	int _intFreq;
 	int _curInt;
 	bool _playing;
+
+	template<bool stereo>
+	int readBufferIntern(int16 *buffer, const int numSamples);
 };
 
 } // End of namespace Audio

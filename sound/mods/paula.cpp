@@ -59,32 +59,45 @@ void Paula::clearVoice(byte voice) {
 	_voice[voice].offset = 0;
 }
 
-static inline void mix(int16 *&buf, int8 data, byte volume, byte panning, bool stereo) {
-	const int32 tmp = ((int32) data) * volume;
-	if (stereo) {
-		*buf++ += (tmp * (255 - panning)) >> 7;
-		*buf++ += (tmp * panning) >> 7;
-	} else
-		*buf++ += tmp;
-}
-
 int Paula::readBuffer(int16 *buffer, const int numSamples) {
-	int voice;
-	int samples;
-	int nSamples;
-	int sLen;
-	double frequency;
-	double rate;
-	double offset;
-	int16 *p;
-	const int8 *data;
-
 	Common::StackLock lock(_mutex);
 
 	memset(buffer, 0, numSamples * 2);
 	if (!_playing) {
 		return numSamples;
 	}
+
+	if (_stereo)
+		return readBufferIntern<true>(buffer, numSamples);
+	else
+		return readBufferIntern<false>(buffer, numSamples);
+}
+
+
+template<bool stereo>
+inline void mixBuffer(int16 *&buf, const int8 *data, double &offset, double rate, int end, byte volume, byte panning) {
+	for (int i = 0; i < end; i++) {
+		// FIXME: We should avoid using floating point arithmetic here, since
+		// FP calculations and int<->FP conversions are very expensive on many
+		// architectures.
+		// So consider replacing offset and rate with fixed point values...
+
+		const int32 tmp = ((int32) data[(int)offset]) * volume;
+		if (stereo) {
+			*buf++ += (tmp * (255 - panning)) >> 7;
+			*buf++ += (tmp * (panning)) >> 7;
+		} else
+			*buf++ += tmp;
+
+		offset += rate;
+	}
+}
+
+template<bool stereo>
+int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
+	int voice;
+	int samples;
+	int nSamples;
 
 	samples = _stereo ? numSamples / 2 : numSamples;
 	while (samples > 0) {
@@ -97,74 +110,52 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 			if (!_voice[voice].data || (_voice[voice].period <= 0))
 				continue;
 
-			frequency = (7093789.2 / 2.0) / _voice[voice].period;
-			rate = frequency / _rate;
-			offset = _voice[voice].offset;
-			sLen = _voice[voice].length;
-			data = _voice[voice].data;
-			p = buffer;
+			double frequency = (7093789.2 / 2.0) / _voice[voice].period;
+			double rate = frequency / _rate;
+			double offset = _voice[voice].offset;
+
+			int sLen = _voice[voice].length;
+			const int8 *data = _voice[voice].data;
+			int16 *p = buffer;
+			int end = 0;
+
 
 			_voice[voice].volume = MIN((byte) 0x40, _voice[voice].volume);
+			// If looping has been enabled and we see that we will have to loop
+			// to generate enough samples, then use the "loop" branch.
 			if ((_voice[voice].lengthRepeat > 2) &&
 					((int)(offset + nSamples * rate) >= sLen)) {
 				int neededSamples = nSamples;
 
-				int end = (int)((sLen - offset) / rate);
-
-				for (int i = 0; i < end; i++)
-					mix(p, data[(int)(offset + rate * i)], _voice[voice].volume, _voice[voice].panning, _stereo);
-
-				_voice[voice].length = sLen = _voice[voice].lengthRepeat;
-				_voice[voice].data = data = _voice[voice].dataRepeat;
-				_voice[voice].offset = offset = 0;
-				neededSamples -= end;
-
 				while (neededSamples > 0) {
-					if (neededSamples >= (int) ((sLen - offset) / rate)) {
+					end = MIN(neededSamples, (int)((sLen - offset) / rate));
+					
+					if (end == 0) {
+						// This means that "rate" is too high, bigger than the sample size.
+						// So we scale it down according to the euclidean algorithm.
 						while (rate > (sLen - offset))
 							rate -= (sLen - offset);
 
-						end = (int)((sLen - offset) / rate);
+						end = MIN(neededSamples, (int)((sLen - offset) / rate));
+					}
 
-						for (int i = 0; i < end; i++)
-							mix(p, data[(int)(offset + rate * i)], _voice[voice].volume, _voice[voice].panning, _stereo);
+					mixBuffer<stereo>(p, data, offset, rate, end, _voice[voice].volume, _voice[voice].panning);
+					_voice[voice].offset = offset;
+					neededSamples -= end;
 
+					// If we read beyond the sample end, loop back to the start.
+					if (ceil(_voice[voice].offset) >= sLen) {
 						_voice[voice].data = data = _voice[voice].dataRepeat;
-						_voice[voice].length = sLen =
-							_voice[voice].lengthRepeat;
+						_voice[voice].length = sLen = _voice[voice].lengthRepeat;
 						_voice[voice].offset = offset = 0;
-
-						neededSamples -= end;
-					} else {
-						for (int i = 0; i < neededSamples; i++)
-							mix(p, data[(int)(offset + rate * i)], _voice[voice].volume, _voice[voice].panning, _stereo);
-						_voice[voice].offset += rate * neededSamples;
-						if (ceil(_voice[voice].offset) >= sLen) {
-							_voice[voice].data = data = _voice[voice].dataRepeat;
-							_voice[voice].length = sLen =
-								_voice[voice].lengthRepeat;
-							_voice[voice].offset = offset = 0;
-						}
-						neededSamples = 0;
 					}
 				}
 			} else {
-				if (offset < sLen) {
-					if ((int)(offset + nSamples * rate) >= sLen) {
-						// The end of the sample is the limiting factor
+				if (offset < sLen) {	// Sample data left?
+					end = MIN(nSamples, (int)((sLen - offset) / rate));
 
-						int end = (int)((sLen - offset) / rate);
-						for (int i = 0; i < end; i++)
-							mix(p, data[(int)(offset + rate * i)], _voice[voice].volume, _voice[voice].panning, _stereo);
-						_voice[voice].offset = sLen;
-					} else {
-						// The requested number of samples is the limiting
-						// factor, not the sample
-
-						for (int i = 0; i < nSamples; i++)
-							mix(p, data[(int)(offset + rate * i)], _voice[voice].volume, _voice[voice].panning, _stereo);
-						_voice[voice].offset += rate * nSamples;
-					}
+					mixBuffer<stereo>(p, data, offset, rate, end, _voice[voice].volume, _voice[voice].panning);
+					_voice[voice].offset = offset;
 				}
 			}
 		}
