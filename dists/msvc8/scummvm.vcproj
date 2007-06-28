@@ -299,6 +299,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\frac.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\fs.cpp"
 				>
 			</File>
