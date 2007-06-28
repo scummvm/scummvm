@@ -177,10 +177,10 @@ void ProtrackerStream::updateRow() {
 		_track[track].arpeggio = false;
 		_track[track].vibrato = 0;
 		_track[track].delaySampleTick = 0;
-		note_t note =
+		const note_t note =
 		    _module.pattern[_module.songpos[_pos]][_row][track];
 
-		int effect = note.effect >> 8;
+		const int effect = note.effect >> 8;
 
 		if (note.sample) {
 			if (_track[track].sample != note.sample) {
@@ -201,15 +201,14 @@ void ProtrackerStream::updateRow() {
 			}
 		}
 
-		int exy = note.effect & 0xff;
-		if (exy);
-		int ex = (note.effect >> 4) & 0xf;
-		int ey = note.effect & 0xf;
+		const int exy = note.effect & 0xff;
+		const int ex = (note.effect >> 4) & 0xf;
+		const int ey = note.effect & 0xf;
 
 		int vol;
 		switch (effect) {
 		case 0x0:
-			if (ex || ey) {
+			if (exy) {
 				_track[track].arpeggio = true;
 				if (note.period) {
 					_track[track].arpeggioNotes[0] = note.note;
@@ -229,7 +228,7 @@ void ProtrackerStream::updateRow() {
 				_track[track].portaToNoteSpeed = exy;
 			break;
 		case 0x4:
-			if (ex || ey) {
+			if (exy) {
 				_track[track].vibratoSpeed = ex;
 				_track[track].vibratoDepth = ey;
 			}
