@@ -27,6 +27,7 @@
 #define GOB_SOUND_H
 
 #include "common/mutex.h"
+#include "common/frac.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
@@ -174,10 +175,8 @@ protected:
 	int32 _freq;
 	int32 _repCount;
 
-	uint32 _offset;
-	uint32 _offsetFrac;
-	uint32 _offsetInc;
-	uint32 _offsetIncFrac;
+	frac_t _offset;
+	frac_t _offsetInc;
 
 	int16 _cur;
 	int16 _last;

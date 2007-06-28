@@ -35,8 +35,6 @@
 
 namespace Gob {
 
-#define FRAC_BITS 16
-
 void SoundDesc::set(SoundType type, SoundSource src,
 		byte *data, uint32 dSize) {
 
@@ -174,9 +172,7 @@ Snd::Snd(GobEngine *vm) : _vm(vm) {
 	_repCount = 0;
 
 	_offset = 0;
-	_offsetFrac = 0;
 	_offsetInc = 0;
-	_offsetIncFrac = 0;
 
 	_cur = 0;
 	_last = 0;
@@ -324,11 +320,7 @@ void Snd::setSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
 	_playingSound = 1;
 
 	_offset = 0;
-	_offsetFrac = 0;
-
-	uint32 incr = (_freq << FRAC_BITS) / _rate;
-	_offsetInc = incr >> FRAC_BITS;
-	_offsetIncFrac = incr & ((1UL << FRAC_BITS) - 1);
+	_offsetInc = (_freq << FRAC_BITS) / _rate;
 
 	_last = _cur;
 	_cur = _data[0];
@@ -381,7 +373,6 @@ void Snd::checkEndSample() {
 		nextCompositionPos();
 	else if ((_repCount == -1) || (--_repCount > 0)) {
 		_offset = 0;
-		_offsetFrac = 0;
 		_end = false;
 		_playingSound = 1;
 	} else {
@@ -393,30 +384,26 @@ void Snd::checkEndSample() {
 int Snd::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock slock(_mutex);
 
-	int16 val;
-	uint32 tmp, oldOffset;
-
 	for (int i = 0; i < numSamples; i++) {
 		if (!_data)
 			return i;
-		if (_end || (_offset >= _length))
+		if (_end || (fracToInt(_offset) >= (int)_length))
 			checkEndSample();
 		if (_end)
 			return i;
 
 		// Linear interpolation. See sound/rate.cpp
 
-		val = (_last + (((_cur - _last) * _offsetFrac +
-					(1UL << (FRAC_BITS - 1))) >> FRAC_BITS)) << 8;
-		*buffer++ = (((int32) val) * _fadeVol) >> 16;
+		int32 val = (_last + (((_cur - _last) * (_offset & FRAC_LO_MASK) +
+					FRAC_HALF) >> FRAC_BITS)) << 8;
+		*buffer++ = (val * _fadeVol) >> 16;
 		
-		oldOffset = _offset;
+		int16 oldOffset = fracToInt(_offset);
 
-		tmp = _offsetFrac + _offsetIncFrac;
-		_offset += _offsetInc + (tmp >> FRAC_BITS);
-		_offsetFrac = tmp & ((1UL << FRAC_BITS) - 1);
+		_offset += _offsetInc;
 
-		if (oldOffset < _offset) {
+		// Was there an integral change?
+		if (oldOffset < fracToInt(_offset)) {
 			_last = _cur;
 			_cur = _data[oldOffset];
 		}
