@@ -404,14 +404,15 @@ void ProtrackerStream::updateEffects() {
 void ProtrackerStream::interrupt(void) {
 	int track;
 
-	for (track = 0; track < 4; track++)
+	for (track = 0; track < 4; track++) {
 		_track[track].offset = getChannelOffset(track);
-
-	if (_tick == 0) {
-		if (_track[track].arpeggio) {
+		if (_tick == 0 && _track[track].arpeggio) {
 			_track[track].period = _module.noteToPeriod(_track[track].arpeggioNotes[0],
 					_track[track].finetune);
 		}
+	}
+
+	if (_tick == 0) {
 		if (_hasJumpToPattern) {
 			_hasJumpToPattern = false;
 			_pos = _jumpToPattern;
