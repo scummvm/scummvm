@@ -342,26 +342,22 @@ void ProtrackerStream::updateEffects() {
 	for (int track = 0; track < 4; track++) {
 		_track[track].vibrato = 0;
 
-		note_t note =
+		const note_t note =
 		    _module.pattern[_module.songpos[_pos]][_row][track];
 
-		int effect = note.effect >> 8;
+		const int effect = note.effect >> 8;
 
-		int exy = note.effect & 0xff;
-		int ex = (note.effect >> 4) & 0xf;
-		int ey = (note.effect) & 0xf;
+		const int exy = note.effect & 0xff;
+		const int ex = (note.effect >> 4) & 0xf;
+		const int ey = (note.effect) & 0xf;
 
 		switch (effect) {
 		case 0x0:
-			if (ex || ey) {
-				if (_tick == 1)
-					_track[track].period =
-						_module.noteToPeriod(_track[track].arpeggioNotes[0],
-								_track[track].finetune);
-				else
-					_track[track].period =
-						_module.noteToPeriod(_track[track].arpeggioNotes[_tick % 3],
-								_track[track].finetune);
+			if (exy) {
+				const int idx = (_tick == 1) ? 0 : (_tick % 3);
+				_track[track].period =
+					_module.noteToPeriod(_track[track].arpeggioNotes[idx],
+							_track[track].finetune);
 			}
 			break;
 		case 0x1:
@@ -392,7 +388,7 @@ void ProtrackerStream::updateEffects() {
 			case 0x6:
 				break;	// Pattern loop
 			case 0x9:	// Retrigger note
-				if (ey && _tick % ey == 0)
+				if (ey && (_tick % ey) == 0)
 					_track[track].offset = 0.0;
 				break;
 			case 0xD: // Delay sample
