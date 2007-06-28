@@ -2349,6 +2349,11 @@ void Actor::simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount,
 }
 
 void Actor::abortAllSpeeches() {
+	// WORKAROUND: Don't abort speeches in scene 31 (tree with beehive). This prevents the
+	// making fire animation from breaking
+	if (_vm->getGameType() == GType_ITE && _vm->_scene->currentSceneNumber() == 31)
+		return;
+
 	abortSpeech();
 
 	if (_vm->_script->_abortEnabled)
