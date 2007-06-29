@@ -132,7 +132,7 @@ void AGOSEngine_Elvira2::setupOpcodes() {
 		OPCODE(o_when),
 		OPCODE(o_if1),
 		OPCODE(o_if2),
-		OPCODE(oe1_isCalled),
+		OPCODE(oe2_isCalled),
 		/* 80 */
 		OPCODE(o_is),
 		OPCODE(o_invalid),
@@ -313,6 +313,13 @@ void AGOSEngine_Elvira2::oe2_pObj() {
 
 	if (subObject != NULL && subObject->objectFlags & kOFText)
 		showMessageFormat("%s\n", (const char *)getStringPtrByID(subObject->objectFlagValue[0])); // Difference
+}
+
+void AGOSEngine_Elvira2::oe2_isCalled() {
+	// 79: childstruct fr2 is
+	Item *i = getNextItemPtr();
+	uint stringId = getNextStringID();
+	setScriptCondition(i->itemName == stringId);
 }
 
 void AGOSEngine_Elvira2::oe2_loadGame() {
