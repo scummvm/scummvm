@@ -75,24 +75,14 @@ void ScummEngine::parseEvents() {
 				sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
 				_saveLoadFlag = (event.kbd.flags == Common::KBD_ALT) ? 1 : 2;
 				_saveTemporaryState = false;
-			} else if (event.kbd.flags == Common::KBD_CTRL) {
-				if (event.kbd.keycode == 'f')
-					_fastMode ^= 1;
-				else if (event.kbd.keycode == 'g')
-					_fastMode ^= 2;
-				else if (event.kbd.keycode == 'd')
-					_debugger->attach();
-				else if (event.kbd.keycode == 's')
-					_res->resourceStats();
-				else
-					_keyPressed = event.kbd;	// Normal key press, pass on to the game.
-			} else if (event.kbd.flags & Common::KBD_ALT) {
-				// Handle KBD_ALT combos. We know that the result must be 273 for Alt-W
-				// because that's what MI2 looks for in its "instant win" cheat.
-
-				// FIXME: Handle this specific property of MI2 inside processKeyboard ?
-				_keyPressed = event.kbd;
-				_keyPressed.ascii = event.kbd.keycode + 154;
+			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'f') {
+				_fastMode ^= 1;
+			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'g') {
+				_fastMode ^= 2;
+			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'd') {
+				_debugger->attach();
+			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 's') {
+				_res->resourceStats();
 			} else {
 				// Normal key press, pass on to the game.
 				_keyPressed = event.kbd;
@@ -116,27 +106,27 @@ void ScummEngine::parseEvents() {
 
 			if (_game.heversion >= 80) {
 				// Keyboard is controlled via variable
-				int _keyState = 0;
+				int keyState = 0;
 
 				if (event.kbd.keycode == Common::KEYCODE_LEFT) // Left
-					_keyState = 1;
+					keyState = 1;
 
 				if (event.kbd.keycode == Common::KEYCODE_RIGHT) // Right
-					_keyState |= 2;
+					keyState |= 2;
 
 				if (event.kbd.keycode == Common::KEYCODE_UP) // Up
-					_keyState |= 4;
+					keyState |= 4;
 
 				if (event.kbd.keycode == Common::KEYCODE_DOWN) // Down
-					_keyState |= 8;
+					keyState |= 8;
 
 				if (event.kbd.flags == Common::KBD_SHIFT)
-					_keyState |= 16;
+					keyState |= 16;
 
 				if (event.kbd.flags == Common::KBD_CTRL)
-					_keyState |= 32;
+					keyState |= 32;
 
-				VAR(VAR_KEY_STATE) = _keyState;
+				VAR(VAR_KEY_STATE) = keyState;
 			}
 
 			// FIXME: There is a discrepancy between EVENT_KEYDOWN and EVENT_KEYUP here:
@@ -574,10 +564,15 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 	} else {
 		// FIXME: Possibly convert even more keycode/ascii pairs to their SCUMM counterparts?
-		if (lastKeyHit.keycode >= Common::KEYCODE_F1 && lastKeyHit.keycode <= Common::KEYCODE_F9)
+		if (lastKeyHit.keycode >= Common::KEYCODE_F1 && lastKeyHit.keycode <= Common::KEYCODE_F9) {
 			_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_F1 + 315;
-		else
+		} else if (_game.id == GID_MONKEY2 && (lastKeyHit.flags & Common::KBD_ALT)) {
+			// Handle KBD_ALT combos in MI2. We know that the result must be 273 for Alt-W
+			// because that's what MI2 looks for in its "instant win" cheat.
+			_mouseAndKeyboardStat = lastKeyHit.keycode + 154;
+		} else {
 			_mouseAndKeyboardStat = lastKeyHit.ascii;
+		}
 	}
 }
 
