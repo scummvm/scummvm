@@ -714,7 +714,7 @@ void AGOSEngine_Elvira2::printStats() {
 	if (val > 9999)
 		val = 9999;	
 	writeChar(window, 30, y, 6, val / 100);
-	writeChar(window, 32, y, 2, val / 10);
+	writeChar(window, 32, y, 2, val % 100);
 
 	mouseOn();
 }
