@@ -254,7 +254,7 @@ enum AgiMonitorType {
 	kAgiMonitorCga = 0,
 	// kAgiMonitorTandy = 1, // Not sure about this
 	kAgiMonitorHercules = 2,
-	kAgiMonitorEga = 3,
+	kAgiMonitorEga = 3
 	// kAgiMonitorVga = 4 // Not sure about this
 };
 
