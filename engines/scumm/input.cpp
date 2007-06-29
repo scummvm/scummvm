@@ -437,11 +437,6 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 	// Fall back to default behavior
 	ScummEngine::processKeyboard(lastKeyHit);
 
-	// Store the input type. So far we can't distinguish
-	// between 1, 3 and 5.
-	// 1) Verb	2) Scene	3) Inv.		4) Key
-	// 5) Sentence Bar
-
 	if (VAR_KEYPRESS != 0xFF && _mouseAndKeyboardStat) {		// Key Input
 		if (315 <= _mouseAndKeyboardStat && _mouseAndKeyboardStat <= 323) {
 			// Convert F-Keys for V1/V2 games (they start at 1)

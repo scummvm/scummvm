@@ -313,7 +313,7 @@ protected:
 	virtual void readGlobalObjects();
 	virtual void loadCharset(int no);
 
-	virtual void runInputScript(int a, int cmd, int mode);
+	virtual void runInputScript(int clickArea, int val, int mode);
 	virtual void runInventoryScript(int i);
 
 	virtual int getVar();

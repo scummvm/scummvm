@@ -1156,39 +1156,39 @@ void ScummEngine::checkAndRunSentenceScript() {
 		runScript(sentenceScript, 0, 0, localParamList);
 }
 
-void ScummEngine_v2::runInputScript(int a, int cmd, int mode) {
+void ScummEngine_v2::runInputScript(int clickArea, int val, int mode) {
 	int args[24];
 	int verbScript;
 
 	verbScript = 4;
-	VAR(VAR_CLICK_AREA) = a;
-	switch (a) {
-	case 1:		// Verb clicked
-		VAR(VAR_CLICK_VERB) = cmd;
+	VAR(VAR_CLICK_AREA) = clickArea;
+	switch (clickArea) {
+	case kVerbClickArea:		// Verb clicked
+		VAR(VAR_CLICK_VERB) = val;
 		break;
-	case 3:		// Inventory clicked
-		VAR(VAR_CLICK_OBJECT) = cmd;
+	case kInventoryClickArea:		// Inventory clicked
+		VAR(VAR_CLICK_OBJECT) = val;
 		break;
 	}
 
 	memset(args, 0, sizeof(args));
-	args[0] = a;
-	args[1] = cmd;
+	args[0] = clickArea;
+	args[1] = val;
 	args[2] = mode;
 
 	if (verbScript)
 		runScript(verbScript, 0, 0, args);
 }
 
-void ScummEngine::runInputScript(int a, int cmd, int mode) {
+void ScummEngine::runInputScript(int clickArea, int val, int mode) {
 	int args[24];
 	int verbScript;
 
 	verbScript = VAR(VAR_VERB_SCRIPT);
 
 	memset(args, 0, sizeof(args));
-	args[0] = a;
-	args[1] = cmd;
+	args[0] = clickArea;
+	args[1] = val;
 	args[2] = mode;
 	// All HE 72+ games but only some HE 71 games.
 	if (_game.heversion >= 71) {
@@ -1198,18 +1198,18 @@ void ScummEngine::runInputScript(int a, int cmd, int mode) {
 
 	// Macintosh verison of indy3ega used different interface, so adjust values.
 	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh) {
-		if (a == 1 && (cmd >= 101 && cmd <= 108)) {
-			if (cmd == 107) {
+		if (clickArea == kVerbClickArea && (val >= 101 && val <= 108)) {
+			if (val == 107) {
 				VAR(67) -= 2;
 				inventoryScript();
 				return;
-			} else if (cmd == 108) {
+			} else if (val == 108) {
 				VAR(67) += 2;
 				inventoryScript();
 				return;
 			} else {
 				args[0] = 3;
-				args[1] = VAR(83 + (cmd - 101));
+				args[1] = VAR(83 + (val - 101));
 			}
 		}
 	}
