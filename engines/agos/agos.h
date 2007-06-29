@@ -1316,6 +1316,7 @@ public:
 	void oe2_moveDirn();
 	void oe2_doClass();
 	void oe2_pObj();
+	void oe2_isCalled();
 	void oe2_loadGame();
 	void oe2_drawItem();
 	void oe2_doTable();
