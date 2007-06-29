@@ -79,7 +79,8 @@ void ScummEngine::parseEvents() {
 				_fastMode ^= 1;
 			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'g') {
 				_fastMode ^= 2;
-			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'd') {
+			} else if ((event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'd') ||
+					event.kbd.ascii == '~' || event.kbd.ascii == '#') {
 				_debugger->attach();
 			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 's') {
 				_res->resourceStats();
@@ -558,9 +559,6 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 		if (VAR_CHARINC != 0xFF)
 			VAR(VAR_CHARINC) = _defaultTalkDelay;
-
-	} else if (lastKeyHit.ascii == '~' || lastKeyHit.ascii == '#') { // Debug console
-		_debugger->attach();
 
 	} else {
 		// FIXME: Possibly convert even more keycode/ascii pairs to their SCUMM counterparts?
