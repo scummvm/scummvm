@@ -89,22 +89,6 @@ void ScummEngine::parseEvents() {
 				_keyPressed = event.kbd;
 			}
 
-			if (event.kbd.keycode >= Common::KEYCODE_UP && event.kbd.keycode <= Common::KEYCODE_LEFT) {
-				if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
-					_keyPressed = event.kbd;
-					_keyPressed.ascii = event.kbd.ascii - Common::KEYCODE_UP + 54;
-				} else if (_game.version < 7) {
-					// FIXME: Handle this specific property inside processKeyboard ?
-	
-					// Don't let game see arrow keys. This fixes bug with up arrow (273)
-					// corresponding to the "instant win" cheat in MI2 mentioned above.
-					//
-					// This is not applicable to V7+ games, which need to see the arrow keys,
-					// too, else certain things (derby scene, asterorid lander) won't work.
-					_keyPressed.reset();
-				}
-			}
-
 			if (_game.heversion >= 80) {
 				// Keyboard is controlled via variable
 				int keyState = 0;
@@ -556,13 +540,26 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			VAR(VAR_CHARINC) = _defaultTalkDelay;
 
 	} else {
-		// FIXME: Possibly convert even more keycode/ascii pairs to their SCUMM counterparts?
+
 		if (lastKeyHit.keycode >= Common::KEYCODE_F1 && lastKeyHit.keycode <= Common::KEYCODE_F9) {
 			_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_F1 + 315;
 		} else if (_game.id == GID_MONKEY2 && (lastKeyHit.flags & Common::KBD_ALT)) {
 			// Handle KBD_ALT combos in MI2. We know that the result must be 273 for Alt-W
 			// because that's what MI2 looks for in its "instant win" cheat.
 			_mouseAndKeyboardStat = lastKeyHit.keycode + 154;
+		} else if (lastKeyHit.keycode >= Common::KEYCODE_UP && lastKeyHit.keycode <= Common::KEYCODE_LEFT) {
+			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
+				// Map arrow keys to number keys in the SEGA version of MI to support
+				// scrolling to conversation choices.
+				_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_UP + 54;
+			} else if (_game.version >= 7) {
+				// Don't let pre-V7 game see arrow keys. This fixes bug with up arrow (273)
+				// corresponding to the "instant win" cheat in MI2 mentioned above.
+				//
+				// This is not applicable to V7+ games, which need to see the arrow keys,
+				// too, else certain things (derby scene, asterorid lander) won't work.
+				_mouseAndKeyboardStat = lastKeyHit.ascii;
+			} 
 		} else {
 			_mouseAndKeyboardStat = lastKeyHit.ascii;
 		}
