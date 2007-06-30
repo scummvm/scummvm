@@ -396,6 +396,7 @@ ARM_LinearRate_M:
         LDMIA   r2,{r0,r1,r8}           @ r0 = inPtr
                                         @ r1 = inLen
                                         @ r8 = opos
+        MOV     r10,#0
         CMP     r11,#0                  @ if (osamp <= 0)
         BLE     LinearRate_M_end        @   bale
         ORR     r12,r12,r12,LSL #8      @ r12= vol_l as 16 bits
@@ -408,28 +409,22 @@ LinearRate_M_loop:
         SUBS    r1, r1, #1              @ r1 = inLen -= 1
         BLT     LinearRate_M_read
 LinearRate_M_read_return:
-        LDR     r10,[r2, #16]           @ r10= icur[0,1]
+        LDRH    r4, [r2, #16]           @ r4 = icur[0]
         LDRSH   r5, [r0],#2             @ r5 = tmp1 = *inPtr++
-        SUBS    r8, r8, #1              @ r8 = opos--
-        STR     r10,[r2,#20]            @      ilast[0,1] = icur[0,1]
+        SUBS    r8, r8, #65536          @ r8 = opos--
+        STRH    r4, [r2,#22]            @      ilast[0] = icur[0]
         STRH    r5, [r2,#16]            @      icur[0] = tmp1
         BGE     LinearRate_M_loop
 
         @ part2 - form output samples
 LinearRate_M_part2:
         @ We are guaranteed that opos < 0 here
-        LDRSH   r6, [r2,#20]            @ r6 = ilast[0]
+        LDR     r6, [r2,#20]            @ r6 = ilast[0]<<16 + 32768
         LDRSH   r5, [r2,#16]            @ r5 = icur[0]
-        LDRH    r4, [r2,#24]            @ r4 = opos_frac
-        LDR     r10,[r2,#28]            @ r10= opos_frac_inc
-        MOV     r6, r6, LSL #16         @ r6 = ilast[0]<<16
+	MOV	r4, r8, LSL #16
+	MOV	r4, r4, LSR #16
         SUB     r5, r5, r6, ASR #16     @ r5 = icur[0] - ilast[0]
-        ADD     r6, r6, #1<<15          @ r6 = ilast[0]+1<<(FRAC_BITS-1)
         MLA     r6, r4, r5, r6  @ r6 = (icur[0]-ilast[0])*opos_frac+ilast[0]
-
-        ADD     r4, r4, r10             @ r4 = tmp = opos_frac+opos_inc_frac
-        STRH    r4,[r2,#24]             @ opos_frac &= 65535
-        ADD     r8, r8, r4, LSR #16     @ opos += (tmp>>FRAC_BITS)
 
         LDRSH   r4, [r3]                @ r4 = obuf[0]
         LDRSH   r5, [r3,#2]             @ r5 = obuf[1]
@@ -438,10 +433,9 @@ LinearRate_M_part2:
         MUL     r6, r14,r6              @ r6 = tmp1*vol_r
 
         ADDS    r7, r7, r4, LSL #16     @ r7 = obuf[0]<<16 + tmp0*vol_l
-        MOV     r4, #0
-        RSCVS   r7, r4, #1<<31          @ Clamp r7
+        RSCVS   r7, r10, #1<<31         @ Clamp r7
         ADDS    r6, r6, r5, LSL #16     @ r6 = obuf[1]<<16 + tmp1*vol_r
-        RSCVS   r6, r4, #1<<31          @ Clamp r6
+        RSCVS   r6, r10, #1<<31         @ Clamp r6
 
         MOV     r7, r7, LSR #16         @ Shift back to halfword
         MOV     r6, r6, LSR #16         @ Shift back to halfword
@@ -449,7 +443,7 @@ LinearRate_M_part2:
         LDR     r5, [r2,#12]            @ r5 = opos_inc
         STRH    r7, [r3],#2             @ Store output value
         STRH    r6, [r3],#2             @ Store output value
-        SUBS    r11, r11,#1             @ opos--
+        SUBS    r11, r11,#1             @ osamp--
         BLE     LinearRate_M_end        @ end if needed
 
         ADDS    r8, r8, r5              @ r8 = opos += opos_inc
@@ -460,7 +454,7 @@ LinearRate_M_end:
         STMIA   r2,{r0,r1,r8}
         LDMFD   r13!,{r4-r11,PC}
 LinearRate_M_read:
-        ADD     r0, r2, #32             @ r0 = inPtr = inBuf
+        ADD     r0, r2, #28             @ r0 = inPtr = inBuf
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf
@@ -508,43 +502,37 @@ LinearRate_S_read_return:
         LDR     r10,[r2, #16]           @ r10= icur[0,1]
         LDRSH   r5, [r0],#2             @ r5 = tmp0 = *inPtr++
         LDRSH   r6, [r0],#2             @ r5 = tmp1 = *inPtr++
-        SUBS    r8, r8, #1              @ r8 = opos--
-        STR     r10,[r2,#20]            @      ilast[0,1] = icur[0,1]
+        SUBS    r8, r8, #65536          @ r8 = opos--
+        STRH    r10,[r2,#22]            @      ilast[0] = icur[0]
+	MOV	r10,r10,LSR #16
+        STRH    r10,[r2,#26]            @      ilast[1] = icur[1]
         STRH    r5, [r2,#16]            @      icur[0] = tmp0
-        STRH    r6, [r2,#16]            @      icur[1] = tmp1
+        STRH    r6, [r2,#18]            @      icur[1] = tmp1
         BGE     LinearRate_S_loop
 
         @ part2 - form output samples
 LinearRate_S_part2:
         @ We are guaranteed that opos < 0 here
-        LDRSH   r6, [r2,#20]            @ r6 = ilast[0]
+        LDR     r6, [r2,#20]            @ r6 = ilast[0]<<16 + 32768
         LDRSH   r5, [r2,#16]            @ r5 = icur[0]
-        LDRH    r4, [r2,#24]            @ r4 = opos_frac
-        MOV     r6, r6, LSL #16         @ r6 = ilast[0]<<16
+        MOV	r4, r8, LSL #16
+        MOV	r4, r4, LSR #16
         SUB     r5, r5, r6, ASR #16     @ r5 = icur[0] - ilast[0]
-        ADD     r6, r6, #1<<15          @ r6 = ilast[0]+1<<(FRAC_BITS-1)
         MLA     r6, r4, r5, r6  @ r6 = (icur[0]-ilast[0])*opos_frac+ilast[0]
 
-        LDRSH   r7, [r2,#22]            @ r6 = ilast[1]
+        LDR     r7, [r2,#24]            @ r7 = ilast[1]<<16 + 32768
         LDRSH   r5, [r2,#18]            @ r5 = icur[1]
-        LDR     r10,[r2,#28]            @ r10= opos_frac_inc
-        MOV     r7, r7, LSL #16         @ r7 = ilast[1]<<16
+        LDRSH   r10,[r3]                @ r10= obuf[0]
+        MOV     r6, r6, ASR #16         @ r6 = tmp1 >>= 16
         SUB     r5, r5, r7, ASR #16     @ r5 = icur[1] - ilast[1]
-        ADD     r7, r7, #1<<15          @ r6 = ilast[1]+1<<(FRAC_BITS-1)
-        MLA     r7, r4, r5, r7  @ r6 = (icur[1]-ilast[1])*opos_frac+ilast[1]
+        MLA     r7, r4, r5, r7  @ r7 = (icur[1]-ilast[1])*opos_frac+ilast[1]
 
-        ADD     r4, r4, r10             @ r4 = tmp = opos_frac+opos_inc_frac
-        STRH    r4,[r2,#24]             @ opos_frac &= 65535
-        ADD     r8, r8, r4, LSR #16     @ opos += (tmp>>FRAC_BITS)
-
-        LDRSH   r4, [r3]                @ r4 = obuf[0]
         LDRSH   r5, [r3,#2]             @ r5 = obuf[1]
         MOV     r7, r7, ASR #16         @ r7 = tmp0 >>= 16
-        MOV     r6, r6, ASR #16         @ r6 = tmp1 >>= 16
         MUL     r7, r12,r7              @ r7 = tmp0*vol_l
         MUL     r6, r14,r6              @ r6 = tmp1*vol_r
 
-        ADDS    r7, r7, r4, LSL #16     @ r7 = obuf[0]<<16 + tmp0*vol_l
+        ADDS    r7, r7, r10, LSL #16    @ r7 = obuf[0]<<16 + tmp0*vol_l
         MOV     r4, #0
         RSCVS   r7, r4, #1<<31          @ Clamp r7
         ADDS    r6, r6, r5, LSL #16     @ r6 = obuf[1]<<16 + tmp1*vol_r
@@ -556,7 +544,7 @@ LinearRate_S_part2:
         LDR     r5, [r2,#12]            @ r5 = opos_inc
         STRH    r7, [r3],#2             @ Store output value
         STRH    r6, [r3],#2             @ Store output value
-        SUBS    r11, r11,#1             @ opos--
+        SUBS    r11, r11,#1             @ osamp--
         BLE     LinearRate_S_end        @ and loop
 
         ADDS    r8, r8, r5              @ r8 = opos += opos_inc
@@ -567,7 +555,7 @@ LinearRate_S_end:
         STMIA   r2,{r0,r1,r8}
         LDMFD   r13!,{r4-r11,PC}
 LinearRate_S_read:
-        ADD     r0, r2, #32             @ r0 = inPtr = inBuf
+        ADD     r0, r2, #28             @ r0 = inPtr = inBuf
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf
@@ -615,43 +603,37 @@ LinearRate_R_read_return:
         LDR     r10,[r2, #16]           @ r10= icur[0,1]
         LDRSH   r5, [r0],#2             @ r5 = tmp0 = *inPtr++
         LDRSH   r6, [r0],#2             @ r5 = tmp1 = *inPtr++
-        SUBS    r8, r8, #1              @ r8 = opos--
-        STR     r10,[r2,#20]            @ ilast[0,1] = icur[0,1]
+        SUBS    r8, r8, #65536          @ r8 = opos--
+        STRH    r10,[r2,#22]            @ ilast[0] = icur[0]
+	MOV	r10,r10,LSR #16
+        STRH    r10,[r2,#22]            @ ilast[1] = icur[1]
         STRH    r5, [r2,#16]            @ icur[0] = tmp0
-        STRH    r6, [r2,#16]            @ icur[1] = tmp1
+        STRH    r6, [r2,#18]            @ icur[1] = tmp1
         BGE     LinearRate_R_loop
 
         @ part2 - form output samples
 LinearRate_R_part2:
         @ We are guaranteed that opos < 0 here
-        LDRSH   r6, [r2,#20]            @ r6 = ilast[0]
+        LDR     r6, [r2,#20]            @ r6 = ilast[0]
         LDRSH   r5, [r2,#16]            @ r5 = icur[0]
-        LDRH    r4, [r2,#24]            @ r4 = opos_frac
-        MOV     r6, r6, LSL #16         @ r6 = ilast[0]<<16
+        MOV	r4, r8, LSL #16
+        MOV	r4, r4, LSR #16
         SUB     r5, r5, r6, ASR #16     @ r5 = icur[0] - ilast[0]
-        ADD     r6, r6, #1<<15          @ r6 = ilast[0]+1<<(FRAC_BITS-1)
         MLA     r6, r4, r5, r6  @ r6 = (icur[0]-ilast[0])*opos_frac+ilast[0]
 
-        LDRSH   r7, [r2,#22]            @ r6 = ilast[1]
+        LDR     r7, [r2,#24]            @ r7 = ilast[1]
         LDRSH   r5, [r2,#18]            @ r5 = icur[1]
-        LDR     r10,[r2,#28]            @ r10= opos_frac_inc
-        MOV     r7, r7, LSL #16         @ r7 = ilast[1]<<16
+        LDR     r10,[r3]                @ r10= obuf[0]
+        MOV     r6, r6, ASR #16         @ r6 = tmp1 >>= 16
         SUB     r5, r5, r7, ASR #16     @ r5 = icur[1] - ilast[1]
-        ADD     r7, r7, #1<<15          @ r6 = ilast[1]+1<<(FRAC_BITS-1)
-        MLA     r7, r4, r5, r7  @ r6 = (icur[1]-ilast[1])*opos_frac+ilast[1]
+        MLA     r7, r4, r5, r7  @ r7 = (icur[1]-ilast[1])*opos_frac+ilast[1]
 
-        ADD     r4, r4, r10             @ r4 = tmp = opos_frac+opos_inc_frac
-        STRH    r4,[r2,#24]             @ opos_frac &= 65535
-        ADD     r8, r8, r4, LSR #16     @ opos += (tmp>>FRAC_BITS)
-
-        LDRSH   r4, [r3]                @ r4 = obuf[0]
         LDRSH   r5, [r3,#2]             @ r5 = obuf[1]
         MOV     r7, r7, ASR #16         @ r7 = tmp0 >>= 16
-        MOV     r6, r6, ASR #16         @ r6 = tmp1 >>= 16
         MUL     r7, r12,r7              @ r7 = tmp0*vol_l
         MUL     r6, r14,r6              @ r6 = tmp1*vol_r
 
-        ADDS    r7, r7, r4, LSL #16     @ r7 = obuf[0]<<16 + tmp0*vol_l
+        ADDS    r7, r7, r10, LSL #16    @ r7 = obuf[0]<<16 + tmp0*vol_l
         MOV     r4, #0
         RSCVS   r7, r4, #1<<31          @ Clamp r7
         ADDS    r6, r6, r5, LSL #16     @ r6 = obuf[1]<<16 + tmp1*vol_r
@@ -663,7 +645,7 @@ LinearRate_R_part2:
         LDR     r5, [r2,#12]            @ r5 = opos_inc
         STRH    r6, [r3],#2             @ Store output value
         STRH    r7, [r3],#2             @ Store output value
-        SUBS    r11, r11,#1             @ opos--
+        SUBS    r11, r11,#1             @ osamp--
         BLE     LinearRate_R_end        @ and loop
 
         ADDS    r8, r8, r5              @ r8 = opos += opos_inc
@@ -674,7 +656,7 @@ LinearRate_R_end:
         STMIA   r2,{r0,r1,r8}
         LDMFD   r13!,{r4-r11,PC}
 LinearRate_R_read:
-        ADD     r0, r2, #32             @ r0 = inPtr = inBuf
+        ADD     r0, r2, #28             @ r0 = inPtr = inBuf
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf

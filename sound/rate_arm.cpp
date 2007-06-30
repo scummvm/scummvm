@@ -50,13 +50,18 @@
 #include "sound/mixer.h"
 #include "common/util.h"
 
+//#define DEBUG_RATECONV
+
 namespace Audio {
 
 /**
  * The precision of the fractional computations used by the rate converter.
  * Normally you should never have to modify this value.
+ * This stuff is defined in common/frac.h, but we redefine it here as the
+ * ARM routine we call doesn't respect those definitions.
  */
 #define FRAC_BITS 16
+#define FRAC_ONE  (1<<FRAC_BITS)
 
 /**
  * The size of the intermediate input cache. Bigger values may increase
@@ -152,6 +157,10 @@ extern "C" void ARM_SimpleRate_R(AudioStream       &input,
 extern "C" int SimpleRate_readFudge(Audio::AudioStream &input,
                                     int16 *a, int b)
 {
+#ifdef DEBUG_RATECONV
+  fprintf(stderr, "Reading ptr=%x n%d\n", a, b);
+  fflush(stderr);
+#endif
   return input.readBuffer(a, b);
 }
 
@@ -197,7 +206,7 @@ typedef struct {
 	int inLen;
 
 	/** position of how far output is ahead of input */
-	/** Holds what would have been opos-ipos */
+	/** Holds what would have been opos-ipos<<16 + opos_frac */
 	long opos;
 
 	/** integer position increment in the output stream */
@@ -206,13 +215,8 @@ typedef struct {
 	/** current sample(s) in the input stream (left/right channel) */
 	st_sample_t icur[2];
 	/** last sample(s) in the input stream (left/right channel) */
-	st_sample_t ilast[2];
-
-	/** fractional position in the output stream */
-	long opos_frac;
-
-	/** fractional position increment in the output stream */
-	long opos_inc_frac;
+	/** Note, these are deliberately ints, not st_sample_t's */
+	int32 ilast[2];
 
 	st_sample_t inBuf[INTERMEDIATE_BUFFER_SIZE];
 } LinearRateDetails;
@@ -270,16 +274,14 @@ LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate
 		error("rate effect can only handle rates < 65536");
 	}
 
-	lr.opos_frac = 0;
-	lr.opos = 1;
+	lr.opos = FRAC_ONE;
 
 	/* increment */
 	incr = (inrate << FRAC_BITS) / outrate;
 
-	lr.opos_inc_frac = incr & ((1UL << FRAC_BITS) - 1);
-	lr.opos_inc = incr >> FRAC_BITS;
+	lr.opos_inc = incr;
 
-	lr.ilast[0] = lr.ilast[1] = 0;
+	lr.ilast[0] = lr.ilast[1] = 32768;
 	lr.icur[0] = lr.icur[1] = 0;
 
 	lr.inLen = 0;
