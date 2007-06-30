@@ -381,6 +381,11 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 					}
 				}
 			}
+			if (doRedraw) {
+				redrawMenu(&menuData);
+				updateScreenArea(90, 102, 460, 196);
+				doRedraw = false;
+			}
 			Common::Event event;
 			while (_eventMan->pollEvent(event)) {
 				const Button *button = 0;
@@ -418,11 +423,6 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 				default:
 					break;
 				}
-			}
-			if (doRedraw) {
-				redrawMenu(&menuData);
-				updateScreenArea(90, 102, 460, 196);
-				doRedraw = false;
 			}
 			_system->updateScreen();
 			_system->delayMillis(10);
