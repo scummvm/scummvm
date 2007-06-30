@@ -1179,7 +1179,7 @@ void addEventsToQueue() {
 			
 			
 				if (currentGame->control == CONT_SKY) {
-					// Extra controls for Benieth a Steel Sky
+					// Extra controls for Beneath a Steel Sky
 					if ((getKeysDown() & KEY_DOWN)) {
 						penY = 0;
 						penX = 160;		// Show inventory by moving mouse onto top line
