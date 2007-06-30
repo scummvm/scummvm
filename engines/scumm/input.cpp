@@ -114,19 +114,14 @@ void ScummEngine::parseEvents() {
 				VAR(VAR_KEY_STATE) = keyState;
 			}
 
-			// FIXME: There is a discrepancy between EVENT_KEYDOWN and EVENT_KEYUP here:
-			// For EVENT_KEYDOWN, we use _keyPressed.keycode, which has potentially been
-			// modified, while for EVENT_KEYUP we use the unfiltered event.kbd.keycode.
-			// This could lead problems (like a key becoming 'stuck').
-			
-			// FIXME #2: We are mixing ascii and keycode values here. We probably should
-			// be using keycodes, but at least INSANE checks for "Shift-V" by looking for
-			// the 'V' key being pressed. It would be easy to solve that by also storing the
-			// the modifier flags. However, since getKeyState() is also called by scripts,
-			// we have to be very careful with semantic changes.
-			// Nevertheless, it's bad to rely on "ascii" holdoing keycode values for special
-			// keys (like the function keys), so this should be fixed.
-
+			// FIXME: We are using ASCII values to index the _keyDownMap here,
+			// yet later one code which checks _keyDownMap will use KEYCODEs
+			// to do so. That is, we are mixing ascii and keycode values here,
+			// which is bad. We probably should be only using keycodes, but at
+			// least INSANE checks for "Shift-V" by looking for the 'V' key
+			// being pressed. It would be easy to solve that by also storing
+			// the modifier flags. However, since getKeyState() is also called
+			// by scripts, we have to be careful with semantic changes.
 			if (_keyPressed.ascii >= 512)
 				debugC(DEBUG_GENERAL, "_keyPressed > 512 (%d)", _keyPressed.ascii);
 			else
@@ -134,11 +129,9 @@ void ScummEngine::parseEvents() {
 			break;
 
 		case Common::EVENT_KEYUP:
-			// FIXME: for some reason Common::KBD_ALT is set sometimes
-			// possible to a bug in sdl-common.cpp
-			if (event.kbd.ascii >= 512)
+			if (event.kbd.ascii >= 512) {
 				debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
-			else {
+			} else {
 				_keyDownMap[event.kbd.ascii] = false;
 
 				// Due to some weird bug with capslock key pressed
@@ -148,6 +141,8 @@ void ScummEngine::parseEvents() {
 				// both upper and lower letters are unpressed on keyup event
 				//
 				// Fixes bug #1709430: "FT: CAPSLOCK + V enables cheating for all fights"
+				//
+				// Fingolfin remarks: This wouldn't be a problem if we used keycodes.
 				_keyDownMap[toupper(event.kbd.ascii)] = false;
 			}
 			break;
@@ -472,12 +467,6 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	// forcefully always enable it there), as that always disables it.
 	if (_game.id == GID_CMI)
 		mainmenuKeyEnabled = true;
-
-/*
-	FIXME: We also used to force-enable F5 in Sam&Max and HE >= 72 games -- why?
-	if ((_game.version <= 3) || (_game.id == GID_SAMNMAX) || (_game.id == GID_CMI) || (_game.heversion >= 72))
-		mainmenuKeyEnabled = true;
-*/
 
 	if (mainmenuKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == 0)) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
