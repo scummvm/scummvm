@@ -257,12 +257,12 @@ restart:
 
 	for (;;) {
 		windowPutChar(window, 128);
-		_keyPressed = 0;
+		_keyPressed.reset();
 
 		for (;;) {
 			delay(10);
-			if (_keyPressed && _keyPressed < 128) {
-				i = _keyPressed;
+			if (_keyPressed.ascii && _keyPressed.ascii < 128) {
+				i = _keyPressed.ascii;
 				break;
 			}
 		}
@@ -490,16 +490,16 @@ int AGOSEngine_Elvira2::userGameGetKey(bool *b, char *buf, uint maxChar) {
 	HitArea *ha;
 	*b = true;
 
-	_keyPressed = 0;
+	_keyPressed.reset();
 
 	for (;;) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
 		do {
-			if (_saveLoadEdit && _keyPressed && _keyPressed < maxChar) {
+			if (_saveLoadEdit && _keyPressed.ascii && _keyPressed.ascii < maxChar) {
 				*b = false;
-				return _keyPressed;
+				return _keyPressed.ascii;
 			}
 			delay(10);
 		} while (_lastHitArea3 == 0);
@@ -759,16 +759,16 @@ int AGOSEngine_Simon1::userGameGetKey(bool *b, char *buf, uint maxChar) {
 		listSaveGames(buf);
 	}
 
-	_keyPressed = 0;
+	_keyPressed.reset();
 
 	for (;;) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
 		do {
-			if (_saveLoadEdit && _keyPressed && _keyPressed < maxChar) {
+			if (_saveLoadEdit && _keyPressed.ascii && _keyPressed.ascii < maxChar) {
 				*b = false;
-				return _keyPressed;
+				return _keyPressed.ascii;
 			}
 			delay(10);
 		} while (_lastHitArea3 == 0);

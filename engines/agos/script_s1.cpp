@@ -311,29 +311,29 @@ void AGOSEngine_Simon1::os1_pauseGame() {
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
 	// If all else fails, use English as fallback.
-	byte keyYes = 'y';
-	byte keyNo = 'n';
+	Common::KeyCode keyYes = Common::KEYCODE_y;
+	Common::KeyCode keyNo = Common::KEYCODE_n;
 
 	switch (_language) {
 	case Common::RU_RUS:
 		break;
 	case Common::PL_POL:
-		keyYes = 't';
+		keyYes = Common::KEYCODE_t;
 		break;
 	case Common::HB_ISR:
-		keyYes = 'f';
+		keyYes = Common::KEYCODE_f;
 		break;
 	case Common::ES_ESP:
-		keyYes = 's';
+		keyYes = Common::KEYCODE_s;
 		break;
 	case Common::IT_ITA:
-		keyYes = 's';
+		keyYes = Common::KEYCODE_s;
 		break;
 	case Common::FR_FRA:
-		keyYes = 'o';
+		keyYes = Common::KEYCODE_o;
 		break;
 	case Common::DE_DEU:
-		keyYes = 'j';
+		keyYes = Common::KEYCODE_j;
 		break;
 	default:
 		break;
@@ -343,17 +343,17 @@ void AGOSEngine_Simon1::os1_pauseGame() {
 		delay(1);
 #ifdef _WIN32_WCE
 		if (isSmartphone()) {
-			if (_keyPressed) {
-				if (_keyPressed == 13)
+			if (_keyPressed.keycode) {
+				if (_keyPressed.keycode == Common::KEYCODE_RETURN)
 					shutdown();
 				else
 					break;
 			}
 		}
 #endif
-		if (_keyPressed == keyYes || _keyPressed == (keyYes - 32))
+		if (_keyPressed.keycode == keyYes)
 			shutdown();
-		else if (_keyPressed == keyNo || _keyPressed == (keyNo - 32))
+		else if (_keyPressed.keycode == keyNo)
 			break;
 	}
 

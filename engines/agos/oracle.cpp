@@ -464,37 +464,37 @@ void AGOSEngine_Feeble::saveUserGame(int slot) {
 
 	windowPutChar(window, 0x7f);
 	for (;;) {
-		_keyPressed = 0;
+		_keyPressed.reset();
 		delay(1);
 
-		if (_keyPressed == 0 || _keyPressed >= 127)
+		if (_keyPressed.ascii == 0 || _keyPressed.ascii >= 127)
 			continue;
 
 		window->textColumn -= getFeebleFontSize(127);
 		name[len] = 0;
 		windowBackSpace(_windowArray[3]);
 
-		if (_keyPressed == 27) {
-			_variableArray[55] = _keyPressed;
+		if (_keyPressed.keycode == Common::KEYCODE_ESCAPE) {
+			_variableArray[55] = 27;
 			break;
 		}
-		if (_keyPressed == 10 || _keyPressed == 13) {
+		if (_keyPressed.keycode == Common::KEYCODE_KP_ENTER || _keyPressed.keycode == Common::KEYCODE_RETURN) {
 			if (!saveGame(readVariable(55), name))
 				_variableArray[55] = (int16)0xFFFF;
 			else
 				_variableArray[55] = 0;
 			break;
 		}
-		if (_keyPressed == 8 && len != 0) {
+		if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE && len != 0) {
 			len--;
 			byte chr = name[len];
 			window->textColumn -= getFeebleFontSize(chr);
 			name[len] = 0;
 			windowBackSpace(_windowArray[3]);
 		}
-		if (_keyPressed >= 32 && window->textColumn + 26 <= window->width) {
-			name[len++] = _keyPressed;
-			windowPutChar(_windowArray[3], _keyPressed);
+		if (_keyPressed.ascii >= 32 && window->textColumn + 26 <= window->width) {
+			name[len++] = _keyPressed.ascii;
+			windowPutChar(_windowArray[3], _keyPressed.ascii);
 		}
 
 		windowPutChar(window, 0x7f);

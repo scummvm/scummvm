@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 
+#include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/util.h"
 
@@ -216,7 +217,7 @@ protected:
 
 	const GameSpecificSettings *gss;
 
-	byte _keyPressed;
+	Common::KeyState _keyPressed;
 
 	Common::File *_gameFile;
 

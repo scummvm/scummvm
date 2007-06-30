@@ -110,8 +110,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_debugger = 0;
 
-	_keyPressed = 0;
-
 	_gameFile = 0;
 	_opcode = 0;
 
@@ -958,8 +956,8 @@ GUI::Debugger *AGOSEngine::getDebugger() {
 }
 
 void AGOSEngine::pause() {
-	_keyPressed = 1;
-	_pause = 1;
+	_keyPressed.reset();
+	_pause = true;
 	bool ambient_status = _ambientPaused;
 	bool music_status = _musicPaused;
 
@@ -969,8 +967,8 @@ void AGOSEngine::pause() {
 
 	while (_pause) {
 		delay(1);
-		if (_keyPressed == 'p')
-			_pause = 0;
+		if (_keyPressed.keycode == Common::KEYCODE_p)
+			_pause = false;
 	}
 
 	_midi.pause(music_status);
