@@ -29,6 +29,8 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "backends/events/default/default-events.h"
+
+#include "engines/engine.h"
 #include "gui/message.h"
 
 DefaultEventManager::DefaultEventManager(OSystem *boss) :
@@ -96,12 +98,10 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 		case Common::EVENT_QUIT:
 			if (ConfMan.getBool("confirm_exit")) {
+				g_engine->pauseEngine(true);
 				GUI::MessageDialog alert("Do you really want to quit?", "Yes", "No");
-				if (alert.runModal() == GUI::kMessageOK)
-					_shouldQuit = true;
-				else
-					result = false;
-
+				result = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
+				g_engine->pauseEngine(false);
 			} else
 				_shouldQuit = true;
 			break;

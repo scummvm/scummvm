@@ -406,9 +406,6 @@ class ScummEngine : public Engine {
 	friend class CharsetRenderer;
 	friend class ResourceManager;
 
-	GUI::Debugger *getDebugger();
-	void errorString(const char *buf_input, char *buf_output);
-
 public:
 	/* Put often used variables at the top.
 	 * That results in a shorter form of the opcode
@@ -437,17 +434,28 @@ public:
 
 protected:
 	VirtualMachineState vm;
+	
+	/**
+	 * The pause level, 0 means 'running', a positive value indicates
+	 * how often the engine has been paused (and hence how often it has
+	 * to be un-paused before it resumes running). This makes it possible
+	 * to nest code which pauses the engine.
+	 */
+	int _pauseLevel;
+	
+	bool _oldSoundsPaused;
 
 public:
 	// Constructor / Destructor
 	ScummEngine(OSystem *syst, const DetectorResult &dr);
 	virtual ~ScummEngine();
 
-	/** Startup function, main loop. */
-	int go();
-
-	// Init functions
-	int init();
+	// Engine APIs
+	virtual int init();
+	virtual int go();
+	virtual void errorString(const char *buf_input, char *buf_output);
+	virtual GUI::Debugger *getDebugger();
+	virtual void pauseEngine(bool pause);
 
 protected:
 	virtual void setupScumm();
@@ -638,7 +646,7 @@ protected:
 	void saveInfos(Common::OutSaveFile* file);
 
 	int32 _engineStartTime;
-	int32 _dialogStartTime;
+	int32 _pauseStartTime;
 
 protected:
 	/* Script VM - should be in Script class */

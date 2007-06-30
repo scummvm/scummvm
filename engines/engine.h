@@ -79,22 +79,35 @@ public:
 	/** Specific for each engine: prepare error string. */
 	virtual void errorString(const char *buf_input, char *buf_output);
 
-	void initCommonGFX(bool defaultTo1XScaler);
-
-	/** On some systems, check if the game appears to be run from CD. */
-	void checkCD();
-
-	/* Indicate if an autosave should be performed. */
-	bool shouldPerformAutoSave(int lastSaveTime);
-
-	/** Initialized graphics and shows error message. */
-	void GUIErrorMessage(const Common::String msg);
-
 	/**
 	 * Return the engine's debugger instance, if any. Used by error() to
 	 * invoke the debugger when a severe error is reported.
 	 */
 	virtual GUI::Debugger *getDebugger() { return 0; }
+	
+	/**
+	 * Pause or resume the engine. This should stop/resume any audio playback
+	 * and other stuff. Called right before the system runs a global dialog
+	 * (like a global pause, main menu, options or 'confirm exit' dialog).
+	 *
+	 * @param pause		true to pause the engine, false to resume it
+	 */
+	virtual void pauseEngine(bool pause) {}
+
+
+public:
+
+	/** Setup the backend's graphics mode. */
+	void initCommonGFX(bool defaultTo1XScaler);
+
+	/** On some systems, check if the game appears to be run from CD. */
+	void checkCD();
+
+	/** Indicate if an autosave should be performed. */
+	bool shouldPerformAutoSave(int lastSaveTime);
+
+	/** Initialized graphics and shows error message. */
+	void GUIErrorMessage(const Common::String msg);
 };
 
 extern Engine *g_engine;
