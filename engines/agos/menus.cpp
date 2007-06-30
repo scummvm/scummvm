@@ -199,7 +199,7 @@ uint AGOSEngine::menuFor_e2(Item *item) {
 	if (item == NULL || item == _dummyItem2 || item == _dummyItem3)
 		return 0xFFFF;
  
-	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
 	if (subObject != NULL && subObject->objectFlags & kOFMenu) {
 		uint offs = getOffsetOfChild2Param(subObject, kOFMenu);
 		return subObject->objectFlagValue[offs];
@@ -216,7 +216,7 @@ uint AGOSEngine::menuFor_ww(Item *item, uint id) {
 	if (item == NULL || item == _dummyItem2 || item == _dummyItem3)
 		return _agosMenu;
 
-	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
 	if (subObject != NULL && subObject->objectFlags & kOFMenu) {
 		uint offs = getOffsetOfChild2Param(subObject, kOFMenu);
 		return subObject->objectFlagValue[offs];
