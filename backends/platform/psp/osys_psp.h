@@ -38,15 +38,6 @@ enum GraphicModeID {
 	CENTERED_362X272
 };
 
-namespace Graphics {
-	struct Surface;
-}
-
-namespace Common {
-	class SaveFileManager;
-	class TimerManager;
-} 
-
 class OSystem_PSP : public OSystem {
 public:
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[];

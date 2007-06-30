@@ -48,6 +48,9 @@ class OSystem_PS2 : public OSystem {
 public:
 	OSystem_PS2(const char *elfPath);
 	virtual ~OSystem_PS2(void);
+
+	virtual void initBackend();
+
 	virtual void initSize(uint width, uint height);
 
 	virtual int16 getHeight(void);
@@ -103,6 +106,8 @@ public:
 	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
 
 	virtual Common::SaveFileManager *getSavefileManager();
+	virtual Audio::Mixer *getMixer() { return _mixer; }
+	virtual Common::TimerManager *getTimerManager() { return _timer; }
 
 	void timerThread(void);
 	void soundThread(void);
@@ -129,6 +134,8 @@ private:
 	bool _useMouse, _useKbd, _useHdd, _usbMassLoaded, _usbMassConnected;
 
 	Ps2SaveFileManager *_saveManager;
+	Audio::Mixer *_mixer;
+	Common::TimerManager *_timer;
 
 	Gs2dScreen	*_screen;
 	Ps2Input	*_input;
