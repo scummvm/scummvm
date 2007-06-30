@@ -56,7 +56,18 @@ protected:
 	const Common::String _gameDataPath;
 
 private:
+	/**
+	 * The autosave interval, given in second. Used by shouldPerformAutoSave.
+	 */
 	int _autosavePeriod;
+	
+	/**
+	 * The pause level, 0 means 'running', a positive value indicates
+	 * how often the engine has been paused (and hence how often it has
+	 * to be un-paused before it resumes running). This makes it possible
+	 * to nest code which pauses the engine.
+	 */
+	int _pauseLevel;
 
 public:
 	Engine(OSystem *syst);
@@ -90,10 +101,18 @@ public:
 	 * and other stuff. Called right before the system runs a global dialog
 	 * (like a global pause, main menu, options or 'confirm exit' dialog).
 	 *
+	 * This is a convenience tracker which automatically keeps track on how
+	 * often the engine has been paused, ensuring that after pausing an engine
+	 * e.g. twice, it has to be unpaused twice before actuallying resuming.
+	 *
 	 * @param pause		true to pause the engine, false to resume it
 	 */
-	virtual void pauseEngine(bool pause) {}
-
+	void pauseEngine(bool pause);
+	
+	/**
+	 * Return whether the engine is currently paused or not.
+	 */
+	bool isPaused() const { return _pauseLevel != 0; }
 
 public:
 
@@ -103,11 +122,17 @@ public:
 	/** On some systems, check if the game appears to be run from CD. */
 	void checkCD();
 
-	/** Indicate if an autosave should be performed. */
+	/** Indicate whether an autosave should be performed. */
 	bool shouldPerformAutoSave(int lastSaveTime);
 
 	/** Initialized graphics and shows error message. */
 	void GUIErrorMessage(const Common::String msg);
+	
+	/**
+	 * Actual implementation of pauseEngine by subclasses. See there
+	 * for details.
+	 */
+	virtual void pauseEngineIntern(bool pause);
 };
 
 extern Engine *g_engine;

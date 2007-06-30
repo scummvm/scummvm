@@ -435,14 +435,6 @@ public:
 protected:
 	VirtualMachineState vm;
 	
-	/**
-	 * The pause level, 0 means 'running', a positive value indicates
-	 * how often the engine has been paused (and hence how often it has
-	 * to be un-paused before it resumes running). This makes it possible
-	 * to nest code which pauses the engine.
-	 */
-	int _pauseLevel;
-	
 	bool _oldSoundsPaused;
 
 public:
@@ -455,7 +447,7 @@ public:
 	virtual int go();
 	virtual void errorString(const char *buf_input, char *buf_output);
 	virtual GUI::Debugger *getDebugger();
-	virtual void pauseEngine(bool pause);
+	virtual void pauseEngineIntern(bool pause);
 
 protected:
 	virtual void setupScumm();

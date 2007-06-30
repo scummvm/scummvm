@@ -121,8 +121,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	}
 	_res = new ResourceManager(this);
 	
-	_pauseLevel = 0;
-
 	// Convert MD5 checksum back into a digest
 	for (int i = 0; i < 16; ++i) {
 		char tmpStr[3] = "00";
@@ -2238,28 +2236,17 @@ void ScummEngine::startManiac() {
 #pragma mark --- GUI ---
 #pragma mark -
 
-void ScummEngine::pauseEngine(bool pause) {
-	assert((pause && _pauseLevel >= 0) || (!pause && _pauseLevel));
-
-	if (pause)
-		_pauseLevel++;
-	else
-		_pauseLevel--;
-
-	if (_pauseLevel == 1) {
+void ScummEngine::pauseEngineIntern(bool pause) {
+	if (pause) {
+		// Record start of the pause, so that we can later
+		// adjust _engineStartTime accordingly.
 		_pauseStartTime = _system->getMillis();
 
 		// Pause sound & video
 		_oldSoundsPaused = _sound->_soundsPaused;
 		_sound->pauseSounds(true);
 	
-		//bool visible = CursorMan.isVisible();
-	
-	} else if (_pauseLevel == 0) {
-		// Restore old cursor -- FIXME: Should be obsolete thanks to CursorMan
-		//updateCursor();
-		//CursorMan.showMouse(visible);
-
+	} else {
 		// Update the screen to make it less likely that the player will see a
 		// brief cursor palette glitch when the GUI is disabled.
 		_system->updateScreen();
