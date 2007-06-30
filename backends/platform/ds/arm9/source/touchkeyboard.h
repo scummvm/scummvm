@@ -25,10 +25,17 @@
 
 namespace DS {
 
+static const int NUM_WORDS = 12;
+
+
 void drawKeyboard(int tileBase, int mapBase, u16* saveSpace);
 void restoreVRAM(int tileBase, int mapBase, u16* saveSpace);
 void addKeyboardEvents();
 bool getKeyboardClosed();
+
+void addAutoComplete(char* word);
+void clearAutoComplete();
+void setCharactersEntered(int count);
 
 }
 

@@ -55,7 +55,8 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 200 - 20) {
 	_twoHundredPercentCheckbox = new GUI::CheckboxWidget(this, 20, 70, 230, 20, "Zoomed screen at fixed 200% zoom", 0, 'T');
 	_highQualityAudioCheckbox = new GUI::CheckboxWidget(this, 20, 85, 250, 20, "High quality audio (slower) (reboot)", 0, 'T');
 	_disablePowerOff = new GUI::CheckboxWidget(this, 20, 100, 250, 20, "Disable power off on quit", 0, 'T');
-	_cpuScaler = new GUI::CheckboxWidget(this, 20, 115, 250, 20, "CPU scaler", 0, 'T');
+//	_cpuScaler = new GUI::CheckboxWidget(this, 20, 115, 250, 20, "CPU scaler", 0, 'T');
+	_showCursorCheckbox = new GUI::CheckboxWidget(this, 20, 115, 250, 20, "Show mouse cursor", 0, 'T');
 
 	new GUI::StaticTextWidget(this, 20, 130, 110, 15, "Touch X Offset", GUI::kTextAlignLeft);
 	_touchX = new GUI::SliderWidget(this, 130, 130, 130, 12, 1);
@@ -78,6 +79,12 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 200 - 20) {
 #ifdef DS_SCUMM_BUILD
 	_delDialog = new Scumm::SaveLoadChooser("Delete game:", "Delete", false, Scumm::g_scumm);
 #endif
+
+	if (ConfMan.hasKey("showcursor", "ds")) {
+		_showCursorCheckbox->setState(ConfMan.getBool("showcursor", "ds"));
+	} else {
+		_showCursorCheckbox->setState(false);
+	}
 
 	if (ConfMan.hasKey("lefthanded", "ds")) {
 		_leftHandedCheckbox->setState(ConfMan.getBool("lefthanded", "ds"));
@@ -108,13 +115,13 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 200 - 20) {
 	} else {
 		_disablePowerOff->setState(false);
 	}
-
+/*
 	if (ConfMan.hasKey("cpu_scaler", "ds")) {
 		_cpuScaler->setState(ConfMan.getBool("cpu_scaler", "ds"));
 	} else {
 		_cpuScaler->setState(false);
 	}
-
+*/
 	_indyFightCheckbox->setState(DS::getIndyFightState());
 
 	if (ConfMan.hasKey("xoffset", "ds")) {
@@ -137,9 +144,10 @@ DSOptionsDialog::~DSOptionsDialog() {
 	ConfMan.setBool("twohundredpercent", _twoHundredPercentCheckbox->getState(), "ds");
 	ConfMan.setBool("22khzaudio", _highQualityAudioCheckbox->getState(), "ds");
 	ConfMan.setBool("disablepoweroff", _disablePowerOff->getState(), "ds");
-	ConfMan.setBool("cpu_scaler", _cpuScaler->getState(), "ds");	
+//	ConfMan.setBool("cpu_scaler", _cpuScaler->getState(), "ds");	
 	ConfMan.setInt("xoffset", _touchX->getValue(), "ds");
 	ConfMan.setInt("yoffset", _touchY->getValue(), "ds");
+	ConfMan.setBool("showcursor", _showCursorCheckbox->getState(), "ds");
 	DS::setOptions();
 	DS::setIndyFightState(_indyFightCheckbox->getState());
 	ConfMan.flushToDisk();
@@ -181,15 +189,27 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 
 }
 
-void showOptionsDialog() {
-	OSystem_DS* system = OSystem_DS::instance();
+void togglePause() {
+	// Toggle pause mode by simulating pressing 'p'.  Not a good way of doing things!
 
-	Common::Event event;
-	event.type = Common::EVENT_KEYDOWN;
-	event.kbd.keycode = 'P';		// F5
-	event.kbd.ascii = 'P';
-	event.kbd.flags = 0;
-	system->addEvent(event);
+	if (getCurrentGame()->control == CONT_SCUMM_ORIGINAL) {
+		Common::Event event;
+		OSystem_DS* system = OSystem_DS::instance();
+
+		event.type = Common::EVENT_KEYDOWN;
+		event.kbd.keycode = 'p';		
+		event.kbd.ascii = 'p';
+		event.kbd.flags = 0;
+		system->addEvent(event);
+	
+		event.type = Common::EVENT_KEYUP;
+		system->addEvent(event);
+	}
+}
+
+void showOptionsDialog() {
+
+	togglePause();
 
 	DS::displayMode16Bit();
 	
@@ -201,11 +221,7 @@ void showOptionsDialog() {
 	
 	DS::displayMode8Bit();
 
-	event.type = Common::EVENT_KEYDOWN;
-	event.kbd.keycode = 'P';		// F5
-	event.kbd.ascii = 'P';
-	event.kbd.flags = 0;
-	system->addEvent(event);
+	togglePause();
 }
 
 void setOptions() {
@@ -215,6 +231,12 @@ void setOptions() {
 		DS::setLeftHanded(ConfMan.getBool("lefthanded", "ds"));
 	} else {
 		DS::setLeftHanded(false);
+	}
+
+	if (ConfMan.hasKey("showcursor", "ds")) {
+		DS::setMouseCursorVisible(ConfMan.getBool("showcursor", "ds"));
+	} else {
+		DS::setMouseCursorVisible(true);
 	}
 
 	if (ConfMan.hasKey("unscaled", "ds")) {
