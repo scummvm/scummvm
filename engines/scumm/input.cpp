@@ -174,17 +174,17 @@ void ScummEngine::parseEvents() {
 			_rightBtnPressed &= ~msDown;
 			break;
 
-		// The following two cases enable dialog choices to be
-		// scrolled through in the SegaCD version of MI
-		// as nothing else uses the wheel don't bother
-		// checking the gameid. Values are taken from script-14.
-
+		// The following two cases enable dialog choices to be scrolled
+		// through in the SegaCD version of MI. Values are taken from script-14.
+		// See bug report #1193185 for details.
 		case Common::EVENT_WHEELDOWN:
-			_keyPressed = Common::KeyState(Common::KEYCODE_7, 55);	// '7'
+			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
+				_keyPressed = Common::KeyState(Common::KEYCODE_7, 55);	// '7'
 			break;
 
 		case Common::EVENT_WHEELUP:
-			_keyPressed = Common::KeyState(Common::KEYCODE_6, 54);	// '6'
+			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
+				_keyPressed = Common::KeyState(Common::KEYCODE_6, 54);	// '6'
 			break;
 
 		case Common::EVENT_QUIT:
@@ -530,16 +530,20 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 	} else {
 
-		if (lastKeyHit.keycode >= Common::KEYCODE_F1 && lastKeyHit.keycode <= Common::KEYCODE_F9) {
+		if (lastKeyHit.keycode >= Common::KEYCODE_F1 &&
+		    lastKeyHit.keycode <= Common::KEYCODE_F9) {
 			_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_F1 + 315;
+
 		} else if (_game.id == GID_MONKEY2 && (lastKeyHit.flags & Common::KBD_ALT)) {
 			// Handle KBD_ALT combos in MI2. We know that the result must be 273 for Alt-W
 			// because that's what MI2 looks for in its "instant win" cheat.
 			_mouseAndKeyboardStat = lastKeyHit.keycode + 154;
-		} else if (lastKeyHit.keycode >= Common::KEYCODE_UP && lastKeyHit.keycode <= Common::KEYCODE_LEFT) {
+
+		} else if (lastKeyHit.keycode >= Common::KEYCODE_UP &&
+		          lastKeyHit.keycode <= Common::KEYCODE_LEFT) {
 			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
 				// Map arrow keys to number keys in the SEGA version of MI to support
-				// scrolling to conversation choices.
+				// scrolling to conversation choices. See bug report #1193185 for details.
 				_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_UP + 54;
 			} else if (_game.version >= 7) {
 				// Don't let pre-V7 game see arrow keys. This fixes bug with up arrow (273)
@@ -548,7 +552,8 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				// This is not applicable to V7+ games, which need to see the arrow keys,
 				// too, else certain things (derby scene, asterorid lander) won't work.
 				_mouseAndKeyboardStat = lastKeyHit.ascii;
-			} 
+			}
+
 		} else {
 			_mouseAndKeyboardStat = lastKeyHit.ascii;
 		}
