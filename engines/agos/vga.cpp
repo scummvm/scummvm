@@ -70,8 +70,8 @@ void AGOSEngine::setupVideoOpcodes(VgaOpcodeProc *op) {
 	op[36] = &AGOSEngine::vc36_setWindowImage;
 	op[38] = &AGOSEngine::vc38_ifVarNotZero;
 	op[39] = &AGOSEngine::vc39_setVar;
-	op[40] = &AGOSEngine::vc40;
-	op[41] = &AGOSEngine::vc41;
+	op[40] = &AGOSEngine::vc40_scrollRight;
+	op[41] = &AGOSEngine::vc41_scrollLeft;
 	op[42] = &AGOSEngine::vc42_delayIfNotEQ;
 	op[43] = &AGOSEngine::vc43_ifBitSet;
 	op[44] = &AGOSEngine::vc44_ifBitClear;
@@ -124,8 +124,8 @@ void AGOSEngine_Elvira1::setupVideoOpcodes(VgaOpcodeProc *op) {
 	op[41] = &AGOSEngine::vc37_pokePalette;
 	op[51] = &AGOSEngine::vc38_ifVarNotZero;
 	op[52] = &AGOSEngine::vc39_setVar;
-	op[53] = &AGOSEngine::vc40;
-	op[54] = &AGOSEngine::vc41;
+	op[53] = &AGOSEngine::vc40_scrollRight;
+	op[54] = &AGOSEngine::vc41_scrollLeft;
 	op[56] = &AGOSEngine::vc42_delayIfNotEQ;
 }
 
@@ -1257,57 +1257,38 @@ void AGOSEngine::vc39_setVar() {
 	vcWriteVar(var, value);
 }
 
-void AGOSEngine::vc40() {
+void AGOSEngine::vc40_scrollRight() {
 	uint16 var = vcReadNextWord();
 	int16 value = vcReadVar(var) + vcReadNextWord();
 
 	if (getGameType() == GType_SIMON2 && var == 15 && !getBitFlag(80)) {
-		int16 tmp;
 
-		if (_scrollCount != 0) {
-			if (_scrollCount >= 0)
-				goto no_scroll;
+		if ((_scrollCount < 0) || (_scrollCount == 0 && _scrollFlag == 0)) {
 			_scrollCount = 0;
-		} else {
-			if (_scrollFlag != 0)
-				goto no_scroll;
-		}
-
-		if (value - _scrollX >= 30) {
-			_scrollCount = 20;
-			tmp = _scrollXMax - _scrollX;
-			if (tmp < 20)
-				_scrollCount = tmp;
-			addVgaEvent(6, SCROLL_EVENT, NULL, 0, 0);
+			if (value - _scrollX >= 30) {
+				_scrollCount = MIN(20, _scrollXMax - _scrollX);
+				addVgaEvent(6, SCROLL_EVENT, NULL, 0, 0);
+			}
 		}
 	}
-no_scroll:;
 
 	vcWriteVar(var, value);
 }
 
-void AGOSEngine::vc41() {
+void AGOSEngine::vc41_scrollLeft() {
 	uint16 var = vcReadNextWord();
 	int16 value = vcReadVar(var) - vcReadNextWord();
 
 	if (getGameType() == GType_SIMON2 && var == 15 && !getBitFlag(80)) {
-		if (_scrollCount != 0) {
-			if (_scrollCount < 0)
-				goto no_scroll;
-			_scrollCount = 0;
-		} else {
-			if (_scrollFlag != 0)
-				goto no_scroll;
-		}
 
-		if ((uint16)(value - _scrollX) < 11) {
-			_scrollCount = -20;
-			if (_scrollX < 20)
-				_scrollCount = -_scrollX;
-			addVgaEvent(6, SCROLL_EVENT, NULL, 0, 0);
+		if ((_scrollCount > 0) || (_scrollCount == 0 && _scrollFlag == 0)) {
+			_scrollCount = 0;
+			if ((uint16)(value - _scrollX) < 11) {
+				_scrollCount = -MIN(20, (int)_scrollX);
+				addVgaEvent(6, SCROLL_EVENT, NULL, 0, 0);
+			}
 		}
 	}
-no_scroll:;
 
 	vcWriteVar(var, value);
 }

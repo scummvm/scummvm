@@ -875,8 +875,8 @@ public:
 	void vc36_setWindowImage();
 	void vc38_ifVarNotZero();
 	void vc39_setVar();
-	void vc40();
-	void vc41();
+	void vc40_scrollRight();
+	void vc41_scrollLeft();
 	void vc42_delayIfNotEQ();
 
 	// Video Script Opcodes, Elvira 1

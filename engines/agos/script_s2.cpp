@@ -355,7 +355,7 @@ void AGOSEngine_Simon2::os2_screenTextPObj() {
 	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
 
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	if (getFeatures() & GF_TALKIE) {
 		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
 			uint speechId = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFVoice)];

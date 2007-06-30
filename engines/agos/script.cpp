@@ -753,7 +753,7 @@ void AGOSEngine::o_setAdjNoun() {
 void AGOSEngine::o_saveUserGame() {
 	// 132: save user game
 	if (getGameId() == GID_SIMON1CD32) {
-		// The Amiga CD32 version of Simon the Sorcerer 1uses a single slot
+		// The Amiga CD32 version of Simon the Sorcerer 1 uses a single slot
 		if (!saveGame(0, "Default Saved Game")) {
 			vc33_setMouseOn();
 			fileError(_windowArray[5], true);
@@ -799,7 +799,7 @@ void AGOSEngine::o_freezeZones() {
 	freezeBottom();
 
 	if (!_copyProtection && !(getFeatures() & GF_TALKIE)) {
-		if ((getGameType() == GType_SIMON1 &&  _subroutine == 2924) ||
+		if ((getGameType() == GType_SIMON1 && _subroutine == 2924) ||
 			(getGameType() == GType_SIMON2 && _subroutine == 1322)) {
 			_variableArray[134] = 3;
 			_variableArray[135] = 3;
