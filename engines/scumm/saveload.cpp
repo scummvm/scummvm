@@ -200,8 +200,6 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		_engineStartTime = _system->getMillis() / 1000;
 	}
 
-	_dialogStartTime = _system->getMillis() / 1000;
-
 	// Due to a bug in scummvm up to and including 0.3.0, save games could be saved
 	// in the V8/V9 format but were tagged with a V7 mark. Ouch. So we just pretend V7 == V8 here
 	if (hdr.ver == VER(7))
@@ -213,7 +211,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// state for temporary state saves - such as certain cutscenes in DOTT,
 	// FOA, Sam and Max, etc.
 	//
-	// Thusly, we should probably not stop music when restoring from one of
+	// Thus, we should probably not stop music when restoring from one of
 	// these saves. This change stops the Mole Man theme from going quiet in
 	// Sam & Max when Doug tells you about the Ball of Twine, as mentioned in
 	// patch #886058.
@@ -377,9 +375,6 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	debug(1, "State loaded from '%s'", filename);
 
 	_sound->pauseSounds(false);
-
-	_engineStartTime += _system->getMillis() / 1000 - _dialogStartTime;
-	_dialogStartTime = 0;
 
 	return true;
 }
