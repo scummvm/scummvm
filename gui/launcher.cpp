@@ -789,13 +789,13 @@ void LauncherDialog::editGame(int item) {
 	}
 }
 
-void LauncherDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	Dialog::handleKeyDown(ascii, keycode, modifiers);
+void LauncherDialog::handleKeyDown(Common::KeyState state) {
+	Dialog::handleKeyDown(state);
 	updateButtons();
 }
 
-void LauncherDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
-	Dialog::handleKeyUp(ascii, keycode, modifiers);
+void LauncherDialog::handleKeyUp(Common::KeyState state) {
+	Dialog::handleKeyUp(state);
 	updateButtons();
 }
 

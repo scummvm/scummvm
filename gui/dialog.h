@@ -77,8 +77,8 @@ protected:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual void handleMouseWheel(int x, int y, int direction);
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
-	virtual void handleKeyUp(uint16 ascii, int keycode, int modifiers);
+	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyUp(Common::KeyState state);
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 

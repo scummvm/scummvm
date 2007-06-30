@@ -85,7 +85,7 @@ void EditableWidget::handleTickle() {
 	}
 }
 
-bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	bool handled = true;
 	bool dirty = false;
 	bool forcecaret = false;
@@ -94,7 +94,7 @@ bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	if (_caretVisible)
 		drawCaret(true);
 
-	switch (keycode) {
+	switch (state.keycode) {
 	case Common::KEYCODE_RETURN:
 	case Common::KEYCODE_KP_ENTER:
 		// confirm edit and exit editmode
@@ -143,7 +143,7 @@ bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		forcecaret = true;
 		break;
 	default:
-		if (tryInsertChar((byte)ascii, _caretPos)) {
+		if (tryInsertChar((byte)state.ascii, _caretPos)) {
 			_caretPos++;
 			dirty = true;
 			forcecaret = true;

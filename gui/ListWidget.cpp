@@ -186,12 +186,12 @@ static int matchingCharsIgnoringCase(const char *x, const char *y, bool &stop) {
 	return match;
 }
 
-bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+bool ListWidget::handleKeyDown(Common::KeyState state) {
 	bool handled = true;
 	bool dirty = false;
 	int oldSelectedItem = _selectedItem;
 
-	if (!_editMode && isprint((char)ascii)) {
+	if (!_editMode && isprint((char)state.ascii)) {
 		// Quick selection mode: Go to first list item starting with this key
 		// (or a substring accumulated from the last couple key presses).
 		// Only works in a useful fashion if the list entries are sorted.
@@ -199,9 +199,9 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		// method "enableQuickSelect()" or so ?
 		uint32 time = getMillis();
 		if (_quickSelectTime < time) {
-			_quickSelectStr = (char)ascii;
+			_quickSelectStr = (char)state.ascii;
 		} else {
-			_quickSelectStr += (char)ascii;
+			_quickSelectStr += (char)state.ascii;
 		}
 		_quickSelectTime = time + 300;	// TODO: Turn this into a proper constant (kQuickSelectDelay ?)
 
@@ -227,11 +227,11 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		scrollToCurrent();
 	} else if (_editMode) {
 		// Class EditableWidget handles all text editing related key presses for us
-		handled = EditableWidget::handleKeyDown(ascii, keycode, modifiers);
+		handled = EditableWidget::handleKeyDown(state);
 	} else {
 		// not editmode
 
-		switch (keycode) {
+		switch (state.keycode) {
 		case Common::KEYCODE_RETURN:
 		case Common::KEYCODE_KP_ENTER:
 			if (_selectedItem >= 0) {
@@ -285,14 +285,14 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 
 #if !defined(PALMOS_MODE)
 	// not done on PalmOS because keyboard is emulated and keyup is not generated
-	_currentKeyDown = keycode;
+	_currentKeyDown = state.keycode;
 #endif
 
 	return handled;
 }
 
-bool ListWidget::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
-	if (keycode == _currentKeyDown)
+bool ListWidget::handleKeyUp(Common::KeyState state) {
+	if (state.keycode == _currentKeyDown)
 		_currentKeyDown = 0;
 	return true;
 }

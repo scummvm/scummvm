@@ -58,7 +58,7 @@ public:
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseWheel(int x, int y, int direction);	// Scroll through entries with scroll wheel
 	void handleMouseMoved(int x, int y, int button);	// Redraw selections depending on mouse position
-	void handleKeyDown(uint16 ascii, int keycode, int modifiers);	// Scroll through entries with arrow keys etc.
+	void handleKeyDown(Common::KeyState state);	// Scroll through entries with arrow keys etc.
 
 protected:
 	void drawMenuEntry(int entry, bool hilite);
@@ -210,8 +210,8 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button) {
 	setSelection(item);
 }
 
-void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (keycode == Common::KEYCODE_ESCAPE) {
+void PopUpDialog::handleKeyDown(Common::KeyState state) {
+	if (state.keycode == Common::KEYCODE_ESCAPE) {
 		// Don't change the previous selection
 		setResult(-1);
 		close();
@@ -221,7 +221,7 @@ void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	if (isMouseDown())
 		return;
 
-	switch (keycode) {
+	switch (state.keycode) {
 	case Common::KEYCODE_RETURN:
 	case Common::KEYCODE_KP_ENTER:
 		setResult(_selection);
@@ -238,6 +238,8 @@ void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		break;
 	case Common::KEYCODE_END:
 		setSelection(_popUpBoss->_entries.size()-1);
+		break;
+	default:
 		break;
 	}
 }

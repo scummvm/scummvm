@@ -140,7 +140,7 @@ public:
 	void handleTickle();
 	void reflowLayout();
 	void handleMouseWheel(int x, int y, int direction);
-	void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	void handleKeyDown(Common::KeyState state);
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	int printf(const char *format, ...);

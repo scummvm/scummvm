@@ -38,8 +38,8 @@ public:
 	KeysDialog(const Common::String &title = "Choose an action to map");
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleKeyUp(uint16 ascii, int keycode, int modifiers);
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	virtual void handleKeyUp(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyState state);
 
 protected:
 

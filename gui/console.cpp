@@ -258,13 +258,13 @@ void ConsoleDialog::handleMouseWheel(int x, int y, int direction) {
 	_scrollBar->handleMouseWheel(x, y, direction);
 }
 
-void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 	int i;
 
 	if (_slideMode != kNoSlideMode)
 		return;
 
-	switch (keycode) {
+	switch (state.keycode) {
 	case Common::KEYCODE_RETURN:
 	case Common::KEYCODE_KP_ENTER: {
 		if (_caretVisible)
@@ -351,7 +351,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		drawLine(pos2line(_currentPos));
 		break;
 	case Common::KEYCODE_PAGEUP:
-		if (modifiers == Common::KBD_SHIFT) {
+		if (state.flags == Common::KBD_SHIFT) {
 			_scrollLine -= _linesPerPage - 1;
 			if (_scrollLine < _firstLineInBuffer + _linesPerPage - 1)
 				_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
@@ -360,7 +360,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		}
 		break;
 	case Common::KEYCODE_PAGEDOWN:
-		if (modifiers == Common::KBD_SHIFT) {
+		if (state.flags == Common::KBD_SHIFT) {
 			_scrollLine += _linesPerPage - 1;
 			if (_scrollLine > _promptEndPos / kCharsPerLine) {
 				_scrollLine = _promptEndPos / kCharsPerLine;
@@ -372,7 +372,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		}
 		break;
 	case Common::KEYCODE_HOME:
-		if (modifiers == Common::KBD_SHIFT) {
+		if (state.flags == Common::KBD_SHIFT) {
 			_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
 			updateScrollBuffer();
 		} else {
@@ -381,7 +381,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		draw();
 		break;
 	case Common::KEYCODE_END:
-		if (modifiers == Common::KBD_SHIFT) {
+		if (state.flags == Common::KBD_SHIFT) {
 			_scrollLine = _promptEndPos / kCharsPerLine;
 			if (_scrollLine < _linesPerPage - 1)
 				_scrollLine = _linesPerPage - 1;
@@ -408,15 +408,15 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		drawLine(pos2line(_currentPos));
 		break;
 	default:
-		if (ascii == '~' || ascii == '#') {
+		if (state.ascii == '~' || state.ascii == '#') {
 			slideUpAndClose();
-		} else if (modifiers == Common::KBD_CTRL) {
-			specialKeys(keycode);
-		} else if ((ascii >= 32 && ascii <= 127) || (ascii >= 160 && ascii <= 255)) {
+		} else if (state.flags == Common::KBD_CTRL) {
+			specialKeys(state.keycode);
+		} else if ((state.ascii >= 32 && state.ascii <= 127) || (state.ascii >= 160 && state.ascii <= 255)) {
 			for (i = _promptEndPos - 1; i >= _currentPos; i--)
 				buffer(i + 1) = buffer(i);
 			_promptEndPos++;
-			putchar((byte)ascii);
+			putchar((byte)state.ascii);
 			scrollToCurrent();
 		}
 	}

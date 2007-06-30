@@ -169,8 +169,8 @@ public:
 		setResult(0);
 		close();
 	}
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-		setResult(ascii);
+	virtual void handleKeyDown(Common::KeyState state) {
+		setResult(state.ascii);
 		close();
 	}
 
@@ -189,7 +189,7 @@ protected:
 class PauseDialog : public InfoDialog {
 public:
 	PauseDialog(ScummEngine *scumm, int res);
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	virtual void handleKeyDown(Common::KeyState state);
 };
 
 /**
@@ -199,7 +199,7 @@ public:
 class ConfirmDialog : public InfoDialog {
 public:
 	ConfirmDialog(ScummEngine *scumm, int res);
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	virtual void handleKeyDown(Common::KeyState state);
 };
 
 /**
@@ -216,7 +216,7 @@ public:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
 		close();
 	}
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	virtual void handleKeyDown(Common::KeyState state);
 
 	virtual void reflowLayout();
 
@@ -247,7 +247,7 @@ public:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
 		close();
 	}
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	virtual void handleKeyDown(Common::KeyState state);
 protected:
 	int _value;
 	uint32 _timer;
@@ -259,7 +259,7 @@ protected:
 class Indy3IQPointsDialog : public InfoDialog {
 public:
 	Indy3IQPointsDialog(ScummEngine *scumm, char* text);
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	virtual void handleKeyDown(Common::KeyState state);
 };
 
 } // End of namespace Scumm

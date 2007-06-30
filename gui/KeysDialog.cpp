@@ -126,23 +126,23 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	}
 }
 
-void KeysDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers){
+void KeysDialog::handleKeyDown(Common::KeyState state){
 	if (!Actions::Instance()->mappingActive())
-		Dialog::handleKeyDown(ascii,keycode,modifiers);
+		Dialog::handleKeyDown(state);
 }
 
-void KeysDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
+void KeysDialog::handleKeyUp(Common::KeyState state) {
 #ifdef __SYMBIAN32__
 	if (Actions::Instance()->mappingActive()) {
 #else
-	if (modifiers == 0xff  && Actions::Instance()->mappingActive()) {	// GAPI key was selected
+	if (state.flags == 0xff  && Actions::Instance()->mappingActive()) {	// GAPI key was selected
 #endif
 		char selection[100];
 
-		Actions::Instance()->setMapping((ActionType)_actionSelected, ascii);
+		Actions::Instance()->setMapping((ActionType)_actionSelected, state.ascii);
 
 		if (ascii != 0)
-			sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey) keycode));
+			sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey) state.keycode));
 		else
 			sprintf(selection, "Associated key : none");
 
@@ -154,7 +154,7 @@ void KeysDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 		_actionsList->setEnabled(true);
 		Actions::Instance()->beginMapping(false);
 	} else 
-		Dialog::handleKeyUp(ascii,keycode,modifiers);
+		Dialog::handleKeyUp(state);
 }
 
 } // namespace GUI
