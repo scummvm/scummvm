@@ -54,7 +54,7 @@ private:
 	bool _permanent;
 	byte _volume;
 	int8 _balance;
-	bool _paused;
+	int _pauseLevel;
 	int _id;
 	uint32 _samplesConsumed;
 	uint32 _samplesDecoded;
@@ -77,10 +77,15 @@ public:
 		return _input->endOfStream();
 	}
 	void pause(bool paused) {
-		_paused = paused;
+		assert((paused && _pauseLevel >= 0) || (!paused && _pauseLevel));
+	
+		if (paused)
+			_pauseLevel++;
+		else
+			_pauseLevel--;
 	}
 	bool isPaused() {
-		return _paused;
+		return _pauseLevel != 0;
 	}
 	void setVolume(const byte volume) {
 		_volume = volume;
@@ -375,7 +380,7 @@ int Mixer::getVolumeForSoundType(SoundType type) const {
 Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input,
 				bool autofreeStream, bool reverseStereo, int id, bool permanent)
 	: _type(type), _mixer(mixer), _autofreeStream(autofreeStream),
-	  _volume(Mixer::kMaxChannelVolume), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
+	  _volume(Mixer::kMaxChannelVolume), _balance(0), _pauseLevel(0), _id(id), _samplesConsumed(0),
 	  _samplesDecoded(0), _mixerTimeStamp(0), _converter(0), _input(input), _permanent(permanent) {
 	assert(mixer);
 	assert(input);
