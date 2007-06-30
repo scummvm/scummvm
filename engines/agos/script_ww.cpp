@@ -419,7 +419,7 @@ void AGOSEngine_Waxworks::oww_printBox() {
 
 void AGOSEngine_Waxworks::oww_boxPObj() {
 	// 188: print object name to box
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 
 	if (subObject != NULL && subObject->objectFlags & kOFText)
 		boxTextMsg((const char *)getStringPtrByID(subObject->objectFlagValue[0]));

@@ -174,7 +174,7 @@ bool Debugger::Cmd_SetObjectFlag(int argc, const char **argv) {
 		prop = atoi(argv[2]);
 
 		if (obj >= 1 && obj < _vm->_itemArraySize) {
-			SubObject *o = (SubObject *)_vm->findChildOfType(_vm->derefItem(obj), 2);
+			SubObject *o = (SubObject *)_vm->findChildOfType(_vm->derefItem(obj), kObjectType);
 			if (o != NULL) {
 				if (o->objectFlags & (1 << prop) && prop < 16) {
 					uint offs = _vm->getOffsetOfChild2Param(o, 1 << prop);

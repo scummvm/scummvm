@@ -999,13 +999,13 @@ bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 		item->state = f->readUint16BE();
 		item->classFlags = f->readUint16BE();
 
-		SubObject *o = (SubObject *)findChildOfType(item, 2);
+		SubObject *o = (SubObject *)findChildOfType(item, kObjectType);
 		if (o) {
 			o->objectSize = f->readUint16BE();
 			o->objectWeight = f->readUint16BE();
 		}
 
-		SubPlayer *p = (SubPlayer *)findChildOfType(item, 3);
+		SubPlayer *p = (SubPlayer *)findChildOfType(item, kPlayerType);
 		if (p) {
 			p->score = f->readUint32BE();
 			p->level = f->readUint16BE();
@@ -1014,7 +1014,7 @@ bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 			p->strength = f->readUint16BE();
 		}
 
-		SubUserFlag *u = (SubUserFlag *) findChildOfType(item, 9);
+		SubUserFlag *u = (SubUserFlag *)findChildOfType(item, kUserFlagType);
 		if (u) {
 			for (i = 0; i != 8; i++) {
 				u->userFlags[i] = f->readUint16BE();
@@ -1083,13 +1083,13 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 		f->writeUint16BE(item->state);
 		f->writeUint16BE(item->classFlags);
 
-		SubObject *o = (SubObject *)findChildOfType(item, 2);
+		SubObject *o = (SubObject *)findChildOfType(item, kObjectType);
 		if (o) {
 			f->writeUint16BE(o->objectSize);
 			f->writeUint16BE(o->objectWeight);
 		}
 
-		SubPlayer *p = (SubPlayer *)findChildOfType(item, 3);
+		SubPlayer *p = (SubPlayer *)findChildOfType(item, kPlayerType);
 		if (p) {
 			f->writeUint32BE(p->score);
 			f->writeUint16BE(p->level);
@@ -1098,7 +1098,7 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 			f->writeUint16BE(p->strength);
 		}
 
-		SubUserFlag *u = (SubUserFlag *) findChildOfType(item, 9);
+		SubUserFlag *u = (SubUserFlag *)findChildOfType(item, kUserFlagType);
 		if (u) {
 			for (i = 0; i != 8; i++) {
 				f->writeUint16BE(u->userFlags[i]);
@@ -1204,19 +1204,19 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 		item->state = f->readUint16BE();
 		item->classFlags = f->readUint16BE();
 
-		SubRoom *r = (SubRoom *)findChildOfType(item, 1);
+		SubRoom *r = (SubRoom *)findChildOfType(item, kRoomType);
 		if (r) {
 			r->roomExitStates = f->readUint16BE();
 		}
 
-		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(item, 4);
+		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(item, kSuperRoomType);
 		if (sr) {
 			uint16 n = sr->roomX * sr->roomY * sr->roomZ;
  			for (i = j = 0; i != n; i++)
 				sr->roomExitStates[j++] = f->readUint16BE();
 		}
 
-		SubObject *o = (SubObject *)findChildOfType(item, 2);
+		SubObject *o = (SubObject *)findChildOfType(item, kObjectType);
 		if (o) {
 			o->objectFlags = f->readUint32BE();
 			i = o->objectFlags & 1;
@@ -1228,7 +1228,7 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 			}
 		}
 
-		SubUserFlag *u = (SubUserFlag *) findChildOfType(item, 9);
+		SubUserFlag *u = (SubUserFlag *)findChildOfType(item, kUserFlagType);
 		if (u) {
 			for (i = 0; i != 4; i++) {
 				u->userFlags[i] = f->readUint16BE();
@@ -1345,19 +1345,19 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 		f->writeUint16BE(item->state);
 		f->writeUint16BE(item->classFlags);
 
-		SubRoom *r = (SubRoom *)findChildOfType(item, 1);
+		SubRoom *r = (SubRoom *)findChildOfType(item, kRoomType);
 		if (r) {
 			f->writeUint16BE(r->roomExitStates);
 		}
 
-		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(item, 4);
+		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(item, kSuperRoomType);
 		if (sr) {
 			uint16 n = sr->roomX * sr->roomY * sr->roomZ;
  			for (i = j = 0; i != n; i++)
 				f->writeUint16BE(sr->roomExitStates[j++]);
 		}
 
-		SubObject *o = (SubObject *)findChildOfType(item, 2);
+		SubObject *o = (SubObject *)findChildOfType(item, kObjectType);
 		if (o) {
 			f->writeUint32BE(o->objectFlags);
 			i = o->objectFlags & 1;
@@ -1369,7 +1369,7 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 			}
 		}
 
-		SubUserFlag *u = (SubUserFlag *)findChildOfType(item, 9);
+		SubUserFlag *u = (SubUserFlag *)findChildOfType(item, kUserFlagType);
 		if (u) {
 			for (i = 0; i != 4; i++) {
 				f->writeUint16BE(u->userFlags[i]);

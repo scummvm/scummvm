@@ -28,6 +28,21 @@
 
 namespace AGOS {
 
+enum ChildType {
+	kRoomType = 1,
+	kObjectType = 2,
+	kPlayerType = 3,
+	kSuperRoomType = 4,
+
+	kGenExitType = 4,	// FIXME: Clash with kSuperRoomType ?!?
+	
+	kContainerType = 7,
+	kChainType = 8,
+	kUserFlagType = 9,
+	
+	kInheritType = 255
+};
+
 struct Child {
 	Child *next;
 	uint16 type;

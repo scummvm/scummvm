@@ -309,7 +309,7 @@ void AGOSEngine_Elvira2::oe2_doClass() {
 
 void AGOSEngine_Elvira2::oe2_pObj() {
 	// 73: print object
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 
 	if (subObject != NULL && subObject->objectFlags & kOFText)
 		showMessageFormat("%s\n", (const char *)getStringPtrByID(subObject->objectFlagValue[0])); // Difference
@@ -348,7 +348,7 @@ void AGOSEngine_Elvira2::oe2_doTable() {
 	// 143: start item sub
 	Item *i = getNextItemPtr();
 
-	SubRoom *r = (SubRoom *)findChildOfType(i, 1);
+	SubRoom *r = (SubRoom *)findChildOfType(i, kRoomType);
 	if (r != NULL) {
 		Subroutine *sub = getSubroutineByID(r->subroutine_id);
 		if (sub) {
@@ -358,7 +358,7 @@ void AGOSEngine_Elvira2::oe2_doTable() {
 	}
 
 	if (getGameType() == GType_ELVIRA2) {
-		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, 4);
+		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, kSuperRoomType);
 		if (sr != NULL) {
 			Subroutine *sub = getSubroutineByID(sr->subroutine_id);
 			if (sub) {
@@ -485,7 +485,7 @@ void AGOSEngine_Elvira2::oe2_bNotZero() {
 void AGOSEngine_Elvira2::oe2_getOValue() {
 	// 157: get item int prop
 	Item *item = getNextItemPtr();
-	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
 	uint prop = getVarOrByte();
 
 	if (subObject != NULL && subObject->objectFlags & (1 << prop) && prop < 16) {
@@ -499,7 +499,7 @@ void AGOSEngine_Elvira2::oe2_getOValue() {
 void AGOSEngine_Elvira2::oe2_setOValue() {
 	// 158: set item prop
 	Item *item = getNextItemPtr();
-	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
 	uint prop = getVarOrByte();
 	int value = getVarOrWord();
 

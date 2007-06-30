@@ -274,7 +274,7 @@ bool AGOSEngine::printNameOf(Item *item, uint x, uint y) {
 	if (item == 0 || item == _dummyItem2 || item == _dummyItem3)
 		return false;
 
-	subObject = (SubObject *)findChildOfType(item, 2);
+	subObject = (SubObject *)findChildOfType(item, kObjectType);
 	if (subObject == NULL)
 		return false;
 

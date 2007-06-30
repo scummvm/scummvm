@@ -49,7 +49,7 @@ uint16 AGOSEngine::getDoorState(Item *item, uint16 d) {
 	uint16 mask = 3;
 	uint16 n;
 
-	SubRoom *subRoom = (SubRoom *)findChildOfType(item, 1);
+	SubRoom *subRoom = (SubRoom *)findChildOfType(item, kRoomType);
 	if (subRoom == NULL)
 	    return 0;
 
@@ -66,7 +66,7 @@ uint16 AGOSEngine::getExitOf(Item *item, uint16 d) {
 	uint16 x;
 	uint16 y = 0;
 
-	subRoom = (SubRoom *)findChildOfType(item, 1);
+	subRoom = (SubRoom *)findChildOfType(item, kRoomType);
 	if (subRoom == NULL)
 		return 0;
 	x = d;
@@ -93,7 +93,7 @@ void AGOSEngine::setDoorState(Item *i, uint16 d, uint16 n) {
 	uint16 d1;
 	uint16 y = 0;
 
-	r = (SubRoom *)findChildOfType(i, 1);
+	r = (SubRoom *)findChildOfType(i, kRoomType);
 	if (r == NULL)
 	    return;
 	d1 = d;
@@ -107,7 +107,7 @@ void AGOSEngine::setDoorState(Item *i, uint16 d, uint16 n) {
 	j = derefItem(r->roomExit[d1]);
 	if (j == NULL)
 		return;
-	r1 = (SubRoom *)findChildOfType(j, 1);
+	r1 = (SubRoom *)findChildOfType(j, kRoomType);
 	if (r1 == NULL)
 	    return;
 	d = getBackExit(d);
@@ -130,7 +130,7 @@ Item *AGOSEngine::getDoorOf(Item *i, uint16 d) {
 	SubGenExit *g;
 	Item *x;
 
-	g = (SubGenExit *)findChildOfType(i, 4);
+	g = (SubGenExit *)findChildOfType(i, kGenExitType);
 	if (g == NULL)
 		return 0;
 
@@ -146,7 +146,7 @@ Item *AGOSEngine::getExitOf_e1(Item *item, uint16 d) {
 	SubGenExit *g;
 	Item *x;
 
-	g = (SubGenExit *)findChildOfType(item, 4);
+	g = (SubGenExit *)findChildOfType(item, kGenExitType);
 	if (g == NULL)
 		return 0;
 
@@ -192,10 +192,10 @@ void AGOSEngine_Elvira2::moveDirn(Item *i, uint x) {
 		return;
 
 	p = derefItem(i->parent);
-	if (findChildOfType(p, 4)) {
+	if (findChildOfType(p, kSuperRoomType)) {
 		n = getExitState(p, _superRoomNumber,x);
 		if (n == 1) {
-			sr = (SubSuperRoom *)findChildOfType(p, 4);
+			sr = (SubSuperRoom *)findChildOfType(p, kSuperRoomType);
 			switch (x) {
 				case 0: a = -(sr->roomX); break;
 				case 1: a = 1; break;
@@ -319,7 +319,7 @@ uint16 AGOSEngine_Elvira2::getExitState(Item *i, uint16 x, uint16 d) {
 	uint16 mask = 3;
 	uint16 n;
 
-	sr = (SubSuperRoom *)findChildOfType(i, 4);
+	sr = (SubSuperRoom *)findChildOfType(i, kSuperRoomType);
 	if (sr == NULL)
 	    return 0;
 
@@ -331,7 +331,7 @@ uint16 AGOSEngine_Elvira2::getExitState(Item *i, uint16 x, uint16 d) {
 }
 
 void AGOSEngine_Elvira2::setExitState(Item *i, uint16 n, uint16 d, uint16 s) {
-	SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, 4);
+	SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, kSuperRoomType);
 	if (sr)
 		changeExitStates(sr, n, d, s);
 }
@@ -339,7 +339,7 @@ void AGOSEngine_Elvira2::setExitState(Item *i, uint16 n, uint16 d, uint16 s) {
 void AGOSEngine_Elvira2::setSRExit(Item *i, int n, int d, uint16 s) {
 	uint16 mask = 3;
 
-	SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, 4);
+	SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, kSuperRoomType);
 	if (sr) {
 		n--;
 		d <<= 1;
