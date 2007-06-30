@@ -7,6 +7,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      video playback, resulting in some nice speedups on several ports.
    - Improved the way keyboard input is handled internally, resolving
      some odd quirks in some game / port combinations.
+   - Added optional 'confirm exit' dialog to the SDL backend.
 
  AGOS:
    - Fixed crashes related to OmniTV playback in The Feeble Files.
