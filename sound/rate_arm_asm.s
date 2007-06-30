@@ -421,8 +421,8 @@ LinearRate_M_part2:
         @ We are guaranteed that opos < 0 here
         LDR     r6, [r2,#20]            @ r6 = ilast[0]<<16 + 32768
         LDRSH   r5, [r2,#16]            @ r5 = icur[0]
-	MOV	r4, r8, LSL #16
-	MOV	r4, r4, LSR #16
+        MOV     r4, r8, LSL #16
+        MOV     r4, r4, LSR #16
         SUB     r5, r5, r6, ASR #16     @ r5 = icur[0] - ilast[0]
         MLA     r6, r4, r5, r6  @ r6 = (icur[0]-ilast[0])*opos_frac+ilast[0]
 
@@ -504,7 +504,7 @@ LinearRate_S_read_return:
         LDRSH   r6, [r0],#2             @ r5 = tmp1 = *inPtr++
         SUBS    r8, r8, #65536          @ r8 = opos--
         STRH    r10,[r2,#22]            @      ilast[0] = icur[0]
-	MOV	r10,r10,LSR #16
+        MOV     r10,r10,LSR #16
         STRH    r10,[r2,#26]            @      ilast[1] = icur[1]
         STRH    r5, [r2,#16]            @      icur[0] = tmp0
         STRH    r6, [r2,#18]            @      icur[1] = tmp1
@@ -515,8 +515,8 @@ LinearRate_S_part2:
         @ We are guaranteed that opos < 0 here
         LDR     r6, [r2,#20]            @ r6 = ilast[0]<<16 + 32768
         LDRSH   r5, [r2,#16]            @ r5 = icur[0]
-        MOV	r4, r8, LSL #16
-        MOV	r4, r4, LSR #16
+        MOV     r4, r8, LSL #16
+        MOV     r4, r4, LSR #16
         SUB     r5, r5, r6, ASR #16     @ r5 = icur[0] - ilast[0]
         MLA     r6, r4, r5, r6  @ r6 = (icur[0]-ilast[0])*opos_frac+ilast[0]
 
@@ -605,7 +605,7 @@ LinearRate_R_read_return:
         LDRSH   r6, [r0],#2             @ r5 = tmp1 = *inPtr++
         SUBS    r8, r8, #65536          @ r8 = opos--
         STRH    r10,[r2,#22]            @ ilast[0] = icur[0]
-	MOV	r10,r10,LSR #16
+        MOV     r10,r10,LSR #16
         STRH    r10,[r2,#22]            @ ilast[1] = icur[1]
         STRH    r5, [r2,#16]            @ icur[0] = tmp0
         STRH    r6, [r2,#18]            @ icur[1] = tmp1
@@ -616,8 +616,8 @@ LinearRate_R_part2:
         @ We are guaranteed that opos < 0 here
         LDR     r6, [r2,#20]            @ r6 = ilast[0]
         LDRSH   r5, [r2,#16]            @ r5 = icur[0]
-        MOV	r4, r8, LSL #16
-        MOV	r4, r4, LSR #16
+        MOV     r4, r8, LSL #16
+        MOV     r4, r4, LSR #16
         SUB     r5, r5, r6, ASR #16     @ r5 = icur[0] - ilast[0]
         MLA     r6, r4, r5, r6  @ r6 = (icur[0]-ilast[0])*opos_frac+ilast[0]
 
