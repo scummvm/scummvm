@@ -474,6 +474,18 @@ void Gfx::setMousePointer(int16 index) {
 //
 //	Cnv management
 //
+void Gfx::flatBlitCnv(Cnv *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer) {
+
+	StaticCnv scnv;
+
+	scnv._width = cnv->_width;
+	scnv._height = cnv->_height;
+	scnv._data0 = cnv->getFramePtr(frame);
+	scnv._data1 = NULL; // _questioner->field_8[v60->_mood & 0xF];
+
+	flatBlitCnv(&scnv, x, y, buffer);
+}
+
 void Gfx::flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer) {
 	Common::Rect r(cnv->_width, cnv->_height);
 	r.moveTo(x, y);

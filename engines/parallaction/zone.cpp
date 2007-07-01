@@ -216,22 +216,13 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 
 				strcpy(vC8, _tokens[1]);
 
-				StaticCnv vE0;
 				u->door->_cnv = _disk->loadFrames(vC8);
-
-				vE0._width = u->door->_cnv->_width;
-				vE0._height = u->door->_cnv->_height;
-
 				uint16 _ax = (z->_flags & kFlagsClosed ? 0 : 1);
-				vE0._data0 = u->door->_cnv->getFramePtr(_ax);
 
-//				_ax = (z->_flags & kFlagsClosed ? 0 : 1);
-//				vE0._data1 = doorcnv->field_8[_ax];
-
-				u->door->_background = (byte*)malloc(vE0._width*vE0._height);
+				u->door->_background = (byte*)malloc(u->door->_cnv->_width * u->door->_cnv->_height);
 				_gfx->backupDoorBackground(u->door, z->_left, z->_top);
 
-				_gfx->flatBlitCnv(&vE0, z->_left, z->_top, Gfx::kBitBack);
+				_gfx->flatBlitCnv(u->door->_cnv, _ax, z->_left, z->_top, Gfx::kBitBack);
 			}
 
 			if (!scumm_stricmp(_tokens[0],	"startpos")) {
@@ -304,14 +295,8 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 void Parallaction::displayCharacterComment(ExamineData *data) {
 	if (data->_description == NULL) return;
 
-	StaticCnv v3C;
-	v3C._width = _char._talk->_width;
-	v3C._height = _char._talk->_height;
-	v3C._data0 = _char._talk->getFramePtr(0);
-	v3C._data1 = NULL; //_talk->field_8[0];
-
 	_gfx->setFont(kFontDialogue);
-	_gfx->flatBlitCnv(&v3C, 190, 80, Gfx::kBitFront);
+	_gfx->flatBlitCnv(_char._talk, 0, 190, 80, Gfx::kBitFront);
 
 	int16 v26, v28;
 	_gfx->getStringExtent(data->_description, 130, &v28, &v26);
@@ -441,10 +426,8 @@ void jobToggleDoor(void *parm, Job *j) {
 
 		uint16 _ax = (z->_flags & kFlagsClosed ? 0 : 1);
 
-		v14._data0 = z->u.door->_cnv->getFramePtr(_ax);
-
-		_vm->_gfx->flatBlitCnv(&v14, z->_left, z->_top, Gfx::kBitBack);
-		_vm->_gfx->flatBlitCnv(&v14, z->_left, z->_top, Gfx::kBit2);
+		_vm->_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBitBack);
+		_vm->_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBit2);
 	}
 
 	count++;

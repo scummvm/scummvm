@@ -204,6 +204,8 @@ public:
 	// DOS version didn't make use of it, but it is probably needed for Amiga stuff.
 	void flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer);
 	void blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
+	void flatBlitCnv(Cnv *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer);
+
 
 	// palette
 	void setPalette(Palette palette, uint32 first = FIRST_BASE_COLOR, uint32 num = BASE_PALETTE_COLORS);
