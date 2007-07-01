@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -283,13 +286,13 @@ void jobHideInventory(void *parm, Job *j) {
 
 	static uint16 count = 0;
 
-	_engineFlags |= kEngineMouse;
+	_engineFlags |= kEngineBlockInput;
 
 	count++;
 	if (count == 2) {
 		count = 0;
 		j->_finished = 1;
-		_engineFlags &= ~kEngineMouse;
+		_engineFlags &= ~kEngineBlockInput;
 	}
 
 	Common::Rect r(INVENTORY_WIDTH, _numInvLines * INVENTORYITEM_HEIGHT);

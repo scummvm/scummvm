@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -323,10 +326,20 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	}
 
 	_screen->wantAnim(false);
-	_screen->clearScreen();
+	clearScreen();
 }
 
 OSystem_PS2::~OSystem_PS2(void) {
+}
+
+void OSystem_PS2::initBackend() {
+	// FIXME: Should probably move lots of stuff from the constructor to here
+	_mixer = new Audio::Mixer();
+	_timer = new DefaultTimerManager();
+	setSoundCallback(Audio::Mixer::mixCallback, _mixer);
+	setTimerCallback(&timer_handler, 10);
+
+	OSystem::initBackend();
 }
 
 void OSystem_PS2::initTimer(void) {
@@ -507,9 +520,12 @@ void OSystem_PS2::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 	_screen->copyScreenRect((const uint8*)buf, pitch, x, y, w, h);
 }
 
-bool OSystem_PS2::grabRawScreen(Graphics::Surface *surf) {
-	_screen->grabScreen(surf);
-	return true;
+Graphics::Surface *OSystem_PS2::lockScreen() {
+	return _screen->lockScreen();
+}
+
+void OSystem_PS2::unlockScreen() {
+	_screen->unlockScreen();
 }
 
 void OSystem_PS2::updateScreen(void) {

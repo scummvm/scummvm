@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -477,7 +478,7 @@ int initAllData(void) {
 	resetActorPtr(&actorHead);
 	resetBackgroundIncrustList(&backgroundIncrustHead);
 
-	bootOverlayNumber = loadOverlay((uint8 *) "AUTO00");
+	bootOverlayNumber = loadOverlay((const uint8 *) "AUTO00");
 
 #ifdef DUMP_SCRIPT
 	loadOverlay("TITRE");

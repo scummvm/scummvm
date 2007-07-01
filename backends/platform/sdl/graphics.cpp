@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -759,22 +761,6 @@ void OSystem_SDL::setAspectRatioCorrection(bool enable) {
 	}
 }
 
-void OSystem_SDL::clearScreen() {
-	assert (_transactionMode == kTransactionNone);
-
-	// Try to lock the screen surface
-	if (SDL_LockSurface(_screen) == -1)
-		error("SDL_LockSurface failed: %s", SDL_GetError());
-
-	byte *dst = (byte *)_screen->pixels;
-
-	// Clear the screen
-	memset(dst, 0, _screenWidth * _screenHeight);
-
-	// Unlock the screen surface
-	SDL_UnlockSurface(_screen);
-}
-
 void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
 	assert (_transactionMode == kTransactionNone);
 	assert(src);
@@ -846,24 +832,44 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 	SDL_UnlockSurface(_screen);
 }
 
-bool OSystem_SDL::grabRawScreen(Graphics::Surface *surf) {
-	assert(_screen);
-	assert(surf);
+Graphics::Surface *OSystem_SDL::lockScreen() {
+	assert (_transactionMode == kTransactionNone);
 
-	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
+	// Lock the graphics mutex
+	lockMutex(_graphicsMutex);
 
-	surf->create(_screenWidth, _screenHeight, _screen->format->BytesPerPixel);
+	// paranoia check
+	assert(!_screenIsLocked);
+	_screenIsLocked = true;
 
 	// Try to lock the screen surface
 	if (SDL_LockSurface(_screen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
-	memcpy(surf->pixels, _screen->pixels, _screenWidth * _screenHeight * _screen->format->BytesPerPixel);
+	_framebuffer.pixels = _screen->pixels;
+	_framebuffer.w = _screen->w;
+	_framebuffer.h = _screen->h;
+	_framebuffer.pitch = _screen->pitch;
+	_framebuffer.bytesPerPixel = 1;
+
+	return &_framebuffer;
+}
+
+void OSystem_SDL::unlockScreen() {
+	assert (_transactionMode == kTransactionNone);
+
+	// paranoia check
+	assert(_screenIsLocked);
+	_screenIsLocked = false;
 
 	// Unlock the screen surface
 	SDL_UnlockSurface(_screen);
 
-	return true;
+	// Trigger a full screen update
+	_forceFull = true;
+
+	// Finally unlock the graphics mutex
+	unlockMutex(_graphicsMutex);
 }
 
 void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool realCoordinates) {
@@ -1594,6 +1600,8 @@ void OSystem_SDL::drawMouse() {
 void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	assert (_transactionMode == kTransactionNone);
 	assert(msg);
+
+	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
 	uint i;
 

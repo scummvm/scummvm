@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2005-2006 John Willis (Portions of the GP2X Backend)
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -89,11 +90,8 @@ public:
 	// The screen will not be updated to reflect the new bitmap
 	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h);
 
-	// Copies the screen to a buffer
-	bool grabRawScreen(Graphics::Surface *surf);
-
-	// Clear the screen
-	void clearScreen();
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 
 	// Update the dirty areas of the screen
 	void updateScreen();
@@ -183,7 +181,6 @@ public:
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
 
-	//virtual void setWindowCaption(const char *caption);
 	virtual bool openCD(int drive);
 	virtual int getOutputSampleRate() const;
 
@@ -269,6 +266,9 @@ protected:
 	int _mode;
 	int _transactionMode;
 	bool _fullscreen;
+	
+	bool _screenIsLocked;
+	Graphics::Surface _framebuffer;
 
 	/** Current video mode flags (see DF_* constants) */
 	uint32 _modeFlags;
@@ -384,14 +384,13 @@ protected:
 
 	/** Set the position of the virtual mouse cursor. */
 	void setMousePos(int x, int y);
-	virtual void fillMouseEvent(Common::Event &event, int x, int y);
-	//void toggleMouseGrab();
+	void fillMouseEvent(Common::Event &event, int x, int y);
 
-	virtual void internUpdateScreen();
+	void internUpdateScreen();
 
-	virtual void loadGFXMode();
-	virtual void unloadGFXMode();
-	virtual void hotswapGFXMode();
+	void loadGFXMode();
+	void unloadGFXMode();
+	void hotswapGFXMode();
 
 	void setFullscreenMode(bool enable);
 	void setAspectRatioCorrection(bool enable);

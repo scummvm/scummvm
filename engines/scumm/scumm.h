@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +29,7 @@
 #include "engines/engine.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/str.h"
 #include "graphics/surface.h"
@@ -403,9 +406,6 @@ class ScummEngine : public Engine {
 	friend class CharsetRenderer;
 	friend class ResourceManager;
 
-	GUI::Debugger *getDebugger();
-	void errorString(const char *buf_input, char *buf_output);
-
 public:
 	/* Put often used variables at the top.
 	 * That results in a shorter form of the opcode
@@ -434,17 +434,20 @@ public:
 
 protected:
 	VirtualMachineState vm;
+	
+	bool _oldSoundsPaused;
 
 public:
 	// Constructor / Destructor
 	ScummEngine(OSystem *syst, const DetectorResult &dr);
 	virtual ~ScummEngine();
 
-	/** Startup function, main loop. */
-	int go();
-
-	// Init functions
-	int init();
+	// Engine APIs
+	virtual int init();
+	virtual int go();
+	virtual void errorString(const char *buf_input, char *buf_output);
+	virtual GUI::Debugger *getDebugger();
+	virtual void pauseEngineIntern(bool pause);
 
 protected:
 	virtual void setupScumm();
@@ -480,7 +483,7 @@ public:
 protected:
 	void waitForTimer(int msec_delay);
 	virtual void processInput();
-	virtual void processKeyboard(int lastKeyHit);
+	virtual void processKeyboard(Common::KeyState lastKeyHit);
 	virtual void clearClickedStatus();
 
 	// Cursor/palette
@@ -582,7 +585,7 @@ public:
 	Common::String generateFilename(const int room) const;
 
 protected:
-	int _keyPressed;
+	Common::KeyState _keyPressed;
 	bool _keyDownMap[512]; // FIXME - 512 is a guess. it's max(kbd.ascii)
 
 	Common::Point _mouse;
@@ -635,7 +638,7 @@ protected:
 	void saveInfos(Common::OutSaveFile* file);
 
 	int32 _engineStartTime;
-	int32 _dialogStartTime;
+	int32 _pauseStartTime;
 
 protected:
 	/* Script VM - should be in Script class */
@@ -860,7 +863,7 @@ protected:
 	void verbMouseOver(int verb);
 	int findVerbAtPos(int x, int y) const;
 	virtual void drawVerb(int verb, int mode);
-	virtual void runInputScript(int a, int cmd, int mode);
+	virtual void runInputScript(int clickArea, int val, int mode);
 	void restoreVerbBG(int verb);
 	void drawVerbBitmap(int verb, int x, int y);
 	int getVerbSlot(int id, int mode) const;

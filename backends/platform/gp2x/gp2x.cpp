@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2005-2006 John Willis (Portions of the GP2X Backend)
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -59,11 +60,6 @@ static Uint32 timer_handler(Uint32 interval, void *param) {
 }
 
 int main(int argc, char *argv[]) {
-
-	// Setup GP2X upper 32MB caching
-	//InitRam();
-	//MMUpatch();
-
 	extern OSystem *OSystem_GP2X_create();
 	g_system = OSystem_GP2X_create();
 	assert(g_system);
@@ -81,7 +77,7 @@ OSystem *OSystem_GP2X_create() {
 void OSystem_GP2X::initBackend() {
 	assert(!_inited);
 
-	ConfMan.set("joystick_num", 0);
+	ConfMan.setInt("joystick_num", 0);
 	int joystick_num = ConfMan.getInt("joystick_num");
 	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
 
@@ -95,6 +91,7 @@ void OSystem_GP2X::initBackend() {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
 
+	SDL_ShowCursor(SDL_DISABLE);
 
 	// Setup default save path to be workingdir/saves
 	#ifndef PATH_MAX
@@ -186,18 +183,9 @@ void OSystem_GP2X::initBackend() {
 
 	// enable joystick
 	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
-		printf("Using joystick: %s\n", SDL_JoystickName(0));
+		//printf("Using joystick: %s\n", SDL_JoystickName(0));
 		_joystick = SDL_JoystickOpen(joystick_num);
 	}
-
-	// Initialise any GP2X specific stuff we may want (Volume, Batt Status etc.)
-	GP2X_device_init();
-
-	// Set Default hardware mixer volume to a plesent level.
-	// This is done to 'reset' volume level if set by other apps.
-	GP2X_mixer_set_volume(70, 70);
-
-	SDL_ShowCursor(SDL_DISABLE);
 
 	// Create the savefile manager, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
@@ -224,6 +212,14 @@ void OSystem_GP2X::initBackend() {
 		// switch. But it's a long term goal to do just that!
 		_timer = new DefaultTimerManager();
 		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
+
+	// Initialise any GP2X specific stuff we may want (Volume, Batt Status etc.)
+	GP2X_device_init();
+
+	// Set Default hardware mixer volume to a plesent level.
+	// This is done to 'reset' volume level if set by other apps.
+	GP2X_mixer_set_volume(70, 70);
+
 	}
 
 	OSystem::initBackend();
@@ -320,6 +316,9 @@ void OSystem_GP2X::setFeatureState(Feature f, bool enable) {
 		else
 			_modeFlags &= ~DF_WANT_RECT_OPTIM;
 		break;
+	case kFeatureDisableKeyFiltering:
+		// TODO: Extend as more support for this is added to engines.
+		return;
 	default:
 		break;
 	}

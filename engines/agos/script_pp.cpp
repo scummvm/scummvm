@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -70,8 +72,8 @@ void AGOSEngine_PuzzlePack::setupOpcodes() {
 		OPCODE(o_state),
 		/* 28 */
 		OPCODE(o_oflag),
-		OPCODE(opp_iconifyWindow),
 		OPCODE(o_invalid),
+		OPCODE(opp_iconifyWindow),
 		OPCODE(o_destroy),
 		/* 32 */
 		OPCODE(opp_restoreOopsPosition),
@@ -236,7 +238,7 @@ void AGOSEngine_PuzzlePack::setupOpcodes() {
 		/* 160 */
 		OPCODE(oe2_ink),
 		OPCODE(off_screenTextBox),
-		OPCODE(os1_screenTextMsg),
+		OPCODE(opp_playTune),
 		OPCODE(o_invalid),
 		/* 164 */
 		OPCODE(oe2_getDollar2),
@@ -295,7 +297,7 @@ void AGOSEngine_PuzzlePack::executeOpcode(int opcode) {
 
 void AGOSEngine_PuzzlePack::opp_iconifyWindow() {
 	// 30
-	getNextItemPtr();
+	getNextWord();
 	if (_clockStopped != 0)
 		_gameTime += time(NULL) - _clockStopped;
 	_clockStopped  = 0;
@@ -306,7 +308,7 @@ void AGOSEngine_PuzzlePack::opp_restoreOopsPosition() {
 	// 32: restore oops position
 	uint i;
 
-	getNextItemPtr();
+	getNextWord();
 
 	if (_oopsValid) {
 		for (i = 0; i < _numVars; i++) {
@@ -326,7 +328,7 @@ void AGOSEngine_PuzzlePack::opp_restoreOopsPosition() {
 
 void AGOSEngine_PuzzlePack::opp_loadMouseImage() {
 	// 38: load mouse image
-	getNextItemPtr();
+	getNextWord();
 	getVarOrByte();
 	loadMouseImage();
 }
@@ -401,6 +403,19 @@ void AGOSEngine_PuzzlePack::opp_loadUserGame() {
 
 	// XXX
 	loadGame(genSaveName(1));
+}
+
+void AGOSEngine_PuzzlePack::opp_playTune() {
+	// 162: play tune
+	getVarOrByte();
+	getVarOrByte();
+	getNextWord();
+
+	uint16 music = (uint16)getVarOrWord();
+	if (music != _lastMusicPlayed) {
+		_lastMusicPlayed = music;
+		playSpeech(music, 1);
+	}
 }
 
 void AGOSEngine_PuzzlePack::opp_saveOopsPosition() {

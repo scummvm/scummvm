@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +26,9 @@
 #include "common/stdafx.h"
 
 #include "common/savefile.h"
+#include "common/system.h"
+
+#include "graphics/surface.h"
 
 #include "agos/agos.h"
 #include "agos/intern.h"
@@ -245,8 +250,8 @@ void AGOSEngine_Feeble::scrollOracleUp() {
 	byte *src, *dst;
 	uint16 w, h;
 
-	dst = getFrontBuf() + 103 * _screenWidth + 136;
-	src = getFrontBuf() + 106 * _screenWidth + 136;
+	dst = getBackGround() + 103 * _screenWidth + 136;
+	src = getBackGround() + 106 * _screenWidth + 136;
 
 	for (h = 0; h < 21; h++) {
 		for (w = 0; w < 360; w++) {
@@ -274,8 +279,8 @@ void AGOSEngine_Feeble::scrollOracleDown() {
 	byte *src, *dst;
 	uint16 w, h;
 
-	src = getFrontBuf() + 203 * _screenWidth + 136;
-	dst = getFrontBuf() + 206 * _screenWidth + 136;
+	src = getBackGround() + 203 * _screenWidth + 136;
+	dst = getBackGround() + 206 * _screenWidth + 136;
 
 	for (h = 0; h < 77; h++) {
 		memcpy(dst, src, 360);
@@ -459,37 +464,37 @@ void AGOSEngine_Feeble::saveUserGame(int slot) {
 
 	windowPutChar(window, 0x7f);
 	for (;;) {
-		_keyPressed = 0;
+		_keyPressed.reset();
 		delay(1);
 
-		if (_keyPressed == 0 || _keyPressed >= 127)
+		if (_keyPressed.ascii == 0 || _keyPressed.ascii >= 127)
 			continue;
 
 		window->textColumn -= getFeebleFontSize(127);
 		name[len] = 0;
 		windowBackSpace(_windowArray[3]);
 
-		if (_keyPressed == 27) {
-			_variableArray[55] = _keyPressed;
+		if (_keyPressed.keycode == Common::KEYCODE_ESCAPE) {
+			_variableArray[55] = 27;
 			break;
 		}
-		if (_keyPressed == 10 || _keyPressed == 13) {
+		if (_keyPressed.keycode == Common::KEYCODE_KP_ENTER || _keyPressed.keycode == Common::KEYCODE_RETURN) {
 			if (!saveGame(readVariable(55), name))
 				_variableArray[55] = (int16)0xFFFF;
 			else
 				_variableArray[55] = 0;
 			break;
 		}
-		if (_keyPressed == 8 && len != 0) {
+		if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE && len != 0) {
 			len--;
 			byte chr = name[len];
 			window->textColumn -= getFeebleFontSize(chr);
 			name[len] = 0;
 			windowBackSpace(_windowArray[3]);
 		}
-		if (_keyPressed >= 32 && window->textColumn + 26 <= window->width) {
-			name[len++] = _keyPressed;
-			windowPutChar(_windowArray[3], _keyPressed);
+		if (_keyPressed.ascii >= 32 && window->textColumn + 26 <= window->width) {
+			name[len++] = _keyPressed.ascii;
+			windowPutChar(_windowArray[3], _keyPressed.ascii);
 		}
 
 		windowPutChar(window, 0x7f);
@@ -505,7 +510,7 @@ void AGOSEngine_Feeble::windowBackSpace(WindowBlock *window) {
 	x = window->x + window->textColumn;
 	y = window->y + window->textRow;
 
-	dst = getFrontBuf() + _dxSurfacePitch * y + x;
+	dst = getBackGround() + _dxSurfacePitch * y + x;
 
 	for (h = 0; h < 13; h++) {
 		for (w = 0; w < 8; w++) {

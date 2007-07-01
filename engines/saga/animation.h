@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -119,6 +120,10 @@ public:
 	void returnFromCutaway(void);
 	void clearCutaway(void);
 
+	void startVideo(int vid, bool fade);
+	void endVideo(void);
+	void returnFromVideo(void);
+
 	void load(uint16 animId, const byte *animResourceData, size_t animResourceLength);
 	void freeId(uint16 animId);
 	void play(uint16 animId, int vectorTime, bool playing = true);
@@ -128,13 +133,18 @@ public:
 	void setFrameTime(uint16 animId, int time);
 	void reset(void);
 	void animInfo(void);
+	void cutawayInfo(void);
 	void setCycles(uint16 animId, int cycles);
 	void stop(uint16 animId);
 	void finish(uint16 animId);
 	void resume(uint16 animId, int cycles);
+	void resumeAll();
 	int16 getCurrentFrame(uint16 animId);
 	bool hasCutaway(void) {
 		return _cutawayActive;
+	}
+	void setCutAwayMode(int mode) {
+		_cutAwayMode = mode;
 	}
 	bool hasAnimation(uint16 animId) {
 		if (animId >= MAX_ANIMATIONS) {
@@ -189,8 +199,11 @@ private:
 	AnimationData *_animations[MAX_ANIMATIONS];
 	AnimationData *_cutawayAnimations[2];
 	Cutaway *_cutawayList;
+	PalEntry saved_pal[PAL_ENTRIES];
 	int _cutawayListLength;
 	bool _cutawayActive;
+	int _cutAwayMode;
+	bool _cutAwayFade;
 };
 
 } // End of namespace Saga

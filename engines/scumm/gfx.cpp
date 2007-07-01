@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1144,12 +1146,11 @@ void ScummEngine::moveScreen(int dx, int dy, int height) {
 	if ((dx == 0 && dy == 0) || height <= 0)
 		return;
 
-	Graphics::Surface screen;
-	assert(_system->grabRawScreen(&screen));
-
-	screen.move(dx, dy, height);
-	_system->copyRectToScreen((byte *)screen.pixels, screen.pitch, 0, 0, screen.w, screen.h);
-	screen.free();
+	Graphics::Surface *screen = _system->lockScreen();
+	if (!screen)
+		return;
+	screen->move(dx, dy, height);
+	_system->unlockScreen();
 }
 
 void ScummEngine_v5::clearFlashlight() {

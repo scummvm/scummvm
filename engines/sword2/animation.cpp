@@ -1,5 +1,11 @@
-/* Copyright (C) 1994-1998 Revolution Software Ltd.
- * Copyright (C) 2003-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Additional copyright for this file:
+ * Copyright (C) 1994-1998 Revolution Software Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -423,7 +429,7 @@ void MoviePlayer::play(SequenceTextInfo *textList, uint32 numLines, int32 leadIn
 				terminate = true;
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == 27)
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					terminate = true;
 				break;
 			default:
@@ -512,7 +518,7 @@ bool MoviePlayerDXA::load() {
 
 	if (loadFile(filename)) {
 		// The Broken Sword games always use external audio tracks.
-		if (_fd.readUint32BE() != MKID_BE('NULL'))
+		if (_fd->readUint32BE() != MKID_BE('NULL'))
 			return false;
 
 		_frameBuffer = _vm->_screen->getScreen();

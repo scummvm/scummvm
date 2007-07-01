@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004 Ivan Dubrov
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -233,7 +235,7 @@ void Video::drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1,
 
 /*
  * The original's version of the Bresenham Algorithm was a bit "unclean"
- * and produced strange edges at 45°, 135°, 225° and 315°, so using the
+ * and produced strange edges at 45, 135, 225 and 315 degrees, so using the
  * version found in the Wikipedia article about the
  * "Bresenham's line algorithm" instead
  */

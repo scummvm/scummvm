@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * Copyright (C) 1999-2003 Sarien Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -116,7 +117,11 @@ void SpritesMgr::blitPixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, 
 		/* Keep control line information visible, but put our
 		 * priority over water (0x30) surface
 		 */
-		*p = (pr < 0x30 ? pr : spr) | col;
+		if (_vm->getFeatures() & (GF_AGI256 | GF_AGI256_2))
+			*(p + FROM_SBUF16_TO_SBUF256_OFFSET) = col; // Write to 256 color buffer
+		else
+			*p = (pr < 0x30 ? pr : spr) | col; // Write to 16 color (+control line/priority info) buffer
+
 		*hidden = false;
 
 		/* Except if our priority is 15, which should never happen
@@ -131,7 +136,7 @@ void SpritesMgr::blitPixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, 
 }
 
 
-int SpritesMgr::blitCel(int x, int y, int spr, ViewCel *c) {
+int SpritesMgr::blitCel(int x, int y, int spr, ViewCel *c, bool agi256_2) {
 	uint8 *p0, *p, *q = NULL, *end;
 	int i, j, t, m, col;
 	int hidden = true;
@@ -150,15 +155,15 @@ int SpritesMgr::blitCel(int x, int y, int spr, ViewCel *c) {
 	t = c->transparency;
 	m = c->mirror;
 	spr <<= 4;
-	p0 = &_vm->_game.sbuf[x + y * _WIDTH + m * (c->width - 1)];
+	p0 = &_vm->_game.sbuf16c[x + y * _WIDTH + m * (c->width - 1)];
 
-	end = _vm->_game.sbuf + _WIDTH * _HEIGHT;
+	end = _vm->_game.sbuf16c + _WIDTH * _HEIGHT;
 
 	for (i = 0; i < c->height; i++) {
 		p = p0;
 		while (*q) {
-			col = (*q & 0xf0) >> 4;
-			for (j = *q & 0x0f; j; j--, p += 1 - 2 * m) {
+			col = agi256_2 ? *q : (*q & 0xf0) >> 4; // Uses whole byte for color info with AGI256-2
+			for (j = agi256_2 ? 1 : *q & 0x0f; j; j--, p += 1 - 2 * m) { // No RLE with AGI256-2
 				if (col != t) {
 					blitPixel(p, end, col, spr, _WIDTH, &hidden);
 				}
@@ -210,7 +215,8 @@ void SpritesMgr::objsRestoreArea(Sprite *s) {
 	int y, offset;
 	int16 xPos = s->xPos, yPos = s->yPos;
 	int16 xSize = s->xSize, ySize = s->ySize;
-	uint8 *p0, *q;
+	uint8 *q;
+	uint32 pos0;
 
 	if (xPos + xSize > _WIDTH)
 		xSize = _WIDTH - xPos;
@@ -231,14 +237,14 @@ void SpritesMgr::objsRestoreArea(Sprite *s) {
 	if (xSize <= 0 || ySize <= 0)
 		return;
 
-	p0 = &_vm->_game.sbuf[xPos + yPos * _WIDTH];
+	pos0 = xPos + yPos * _WIDTH;
 	q = s->buffer;
 	offset = _vm->_game.lineMinPrint * CHAR_LINES;
 	for (y = 0; y < ySize; y++) {
-		memcpy(p0, q, xSize);
-		_gfx->putPixelsA(xPos, yPos + y + offset, xSize, p0);
+		memcpy(&_vm->_game.sbuf[pos0], q, xSize);
+		_gfx->putPixelsA(xPos, yPos + y + offset, xSize, &_vm->_game.sbuf16c[pos0]);
 		q += xSize;
-		p0 += _WIDTH;
+		pos0 += _WIDTH;
 	}
 }
 
@@ -450,7 +456,7 @@ void SpritesMgr::blitSprites(SpriteList& l) {
 		Sprite *s = *iter;
 		objsSaveArea(s);
 		debugC(8, kDebugLevelSprites, "s->v->entry = %d (prio %d)", s->v->entry, s->v->priority);
-		hidden = blitCel(s->xPos, s->yPos, s->v->priority, s->v->celData);
+		hidden = blitCel(s->xPos, s->yPos, s->v->priority, s->v->celData, s->v->viewData->agi256_2);
 		if (s->v->entry == 0) {	/* if ego, update f1 */
 			_vm->setflag(fEgoInvisible, hidden);
 		}
@@ -608,7 +614,7 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 	eraseBoth();
 
 	debugC(4, kDebugLevelSprites, "blit_cel (%d, %d, %d, c)", x, y, pri);
-	blitCel(x1, y1, pri, c);
+	blitCel(x1, y1, pri, c, _vm->_game.views[view].agi256_2);
 
 	/* If margin is 0, 1, 2, or 3, the base of the cel is
 	 * surrounded with a rectangle of the corresponding priority.
@@ -628,8 +634,8 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 		// don't let box extend below y.
 		if (y3 > y2) y3 = y2;
 
-		p1 = &_vm->_game.sbuf[x1 + y3 * _WIDTH];
-		p2 = &_vm->_game.sbuf[x2 + y3 * _WIDTH];
+		p1 = &_vm->_game.sbuf16c[x1 + y3 * _WIDTH];
+		p2 = &_vm->_game.sbuf16c[x2 + y3 * _WIDTH];
 
 		for (y = y3; y <= y2; y++) {
 			if ((*p1 >> 4) >= 4)
@@ -641,8 +647,8 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 		}
 
 		debugC(4, kDebugLevelSprites, "pri box: %d %d %d %d (%d)", x1, y3, x2, y2, mar);
-		p1 = &_vm->_game.sbuf[x1 + y3 * _WIDTH];
-		p2 = &_vm->_game.sbuf[x1 + y2 * _WIDTH];
+		p1 = &_vm->_game.sbuf16c[x1 + y3 * _WIDTH];
+		p2 = &_vm->_game.sbuf16c[x1 + y2 * _WIDTH];
 		for (x = x1; x <= x2; x++) {
 			if ((*p1 >> 4) >= 4)
 				*p1 = (mar << 4) | (*p1 & 0x0f);
@@ -686,7 +692,7 @@ void SpritesMgr::showObj(int n) {
 	s.buffer = (uint8 *)malloc(s.xSize * s.ySize);
 
 	objsSaveArea(&s);
-	blitCel(x1, y1, s.xSize, c);
+	blitCel(x1, y1, s.xSize, c, _vm->_game.views[n].agi256_2);
 	commitBlock(x1, y1, x2, y2);
 	_vm->messageBox(_vm->_game.views[n].descr);
 	objsRestoreArea(&s);
@@ -723,7 +729,7 @@ void SpritesMgr::commitBlock(int x1, int y1, int x2, int y2) {
 	debugC(7, kDebugLevelSprites, "%d, %d, %d, %d", x1, y1, x2, y2);
 
 	w = x2 - x1 + 1;
-	q = &_vm->_game.sbuf[x1 + _WIDTH * y1];
+	q = &_vm->_game.sbuf16c[x1 + _WIDTH * y1];
 	offset = _vm->_game.lineMinPrint * CHAR_LINES;
 	for (i = y1; i <= y2; i++) {
 		_gfx->putPixelsA(x1, i + offset, w, q);

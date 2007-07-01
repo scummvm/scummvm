@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -185,51 +188,51 @@ static int32 compDecode(byte *src, byte *dst) {
 }
 #undef NextBit
 
-int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 input_size) {
-	int32 output_size, channels;
+int32 decompressCodec(int32 codec, byte *compInput, byte *compOutput, int32 inputSize) {
+	int32 outputSize, channels;
 	int32 offset1, offset2, offset3, length, k, c, s, j, r, t, z;
 	byte *src, *t_table, *p, *ptr;
 	byte t_tmp1, t_tmp2;
 
 	switch (codec) {
 	case 0:
-		memcpy(comp_output, comp_input, input_size);
-		output_size = input_size;
+		memcpy(compOutput, compInput, inputSize);
+		outputSize = inputSize;
 		break;
 
 	case 1:
-		output_size = compDecode(comp_input, comp_output);
+		outputSize = compDecode(compInput, compOutput);
 		break;
 
 	case 2:
-		output_size = compDecode(comp_input, comp_output);
-		p = comp_output;
-		for (z = 1; z < output_size; z++)
+		outputSize = compDecode(compInput, compOutput);
+		p = compOutput;
+		for (z = 1; z < outputSize; z++)
 			p[z] += p[z - 1];
 		break;
 
 	case 3:
-		output_size = compDecode(comp_input, comp_output);
-		p = comp_output;
-		for (z = 2; z < output_size; z++)
+		outputSize = compDecode(compInput, compOutput);
+		p = compOutput;
+		for (z = 2; z < outputSize; z++)
 			p[z] += p[z - 1];
-		for (z = 1; z < output_size; z++)
+		for (z = 1; z < outputSize; z++)
 			p[z] += p[z - 1];
 		break;
 
 	case 4:
-		output_size = compDecode(comp_input, comp_output);
-		p = comp_output;
-		for (z = 2; z < output_size; z++)
+		outputSize = compDecode(compInput, compOutput);
+		p = compOutput;
+		for (z = 2; z < outputSize; z++)
 			p[z] += p[z - 1];
-		for (z = 1; z < output_size; z++)
+		for (z = 1; z < outputSize; z++)
 			p[z] += p[z - 1];
 
-		t_table = (byte *)malloc(output_size);
+		t_table = (byte *)malloc(outputSize);
 		assert(t_table);
 
-		src = comp_output;
-		length = (output_size << 3) / 12;
+		src = compOutput;
+		length = (outputSize << 3) / 12;
 		k = 0;
 		if (length > 0) {
 			c = -12;
@@ -255,23 +258,23 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 		}
 		offset1 = ((length - 1) * 3) >> 1;
 		t_table[offset1 + 1] = (t_table[offset1 + 1]) | (src[length - 1] & 0xf0);
-		memcpy(src, t_table, output_size);
+		memcpy(src, t_table, outputSize);
 		free(t_table);
 		break;
 
 	case 5:
-		output_size = compDecode(comp_input, comp_output);
-		p = comp_output;
-		for (z = 2; z < output_size; z++)
+		outputSize = compDecode(compInput, compOutput);
+		p = compOutput;
+		for (z = 2; z < outputSize; z++)
 			p[z] += p[z - 1];
-		for (z = 1; z < output_size; z++)
+		for (z = 1; z < outputSize; z++)
 			p[z] += p[z - 1];
 
-		t_table = (byte *)malloc(output_size);
+		t_table = (byte *)malloc(outputSize);
 		assert(t_table);
 
-		src = comp_output;
-		length = (output_size << 3) / 12;
+		src = compOutput;
+		length = (outputSize << 3) / 12;
 		k = 1;
 		c = 0;
 		s = 12;
@@ -297,29 +300,29 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 				j++;
 			} while (k < t);
 		}
-		memcpy(src, t_table, output_size);
+		memcpy(src, t_table, outputSize);
 		free(t_table);
 		break;
 
 	case 6:
-		output_size = compDecode(comp_input, comp_output);
-		p = comp_output;
-		for (z = 2; z < output_size; z++)
+		outputSize = compDecode(compInput, compOutput);
+		p = compOutput;
+		for (z = 2; z < outputSize; z++)
 			p[z] += p[z - 1];
-		for (z = 1; z < output_size; z++)
+		for (z = 1; z < outputSize; z++)
 			p[z] += p[z - 1];
 
-		t_table = (byte *)malloc(output_size);
+		t_table = (byte *)malloc(outputSize);
 		assert(t_table);
 
-		src = comp_output;
-		length = (output_size << 3) / 12;
+		src = compOutput;
+		length = (outputSize << 3) / 12;
 		k = 0;
 		c = 0;
 		j = 0;
 		s = -12;
-		t_table[0] = src[output_size - 1];
-		t_table[output_size - 1] = src[length - 1];
+		t_table[0] = src[outputSize - 1];
+		t_table[outputSize - 1] = src[length - 1];
 		t = length - 1;
 		if (t > 0) {
 			do {
@@ -340,26 +343,26 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 				j++;
 			} while (k < t);
 		}
-		memcpy(src, t_table, output_size);
+		memcpy(src, t_table, outputSize);
 		free(t_table);
 		break;
 
 	case 10:
-		output_size = compDecode(comp_input, comp_output);
-		p = comp_output;
-		for (z = 2; z < output_size; z++)
+		outputSize = compDecode(compInput, compOutput);
+		p = compOutput;
+		for (z = 2; z < outputSize; z++)
 			p[z] += p[z - 1];
-		for (z = 1; z < output_size; z++)
+		for (z = 1; z < outputSize; z++)
 			p[z] += p[z - 1];
 
-		t_table = (byte *)malloc(output_size);
+		t_table = (byte *)malloc(outputSize);
 		assert(t_table);
-		memcpy(t_table, p, output_size);
+		memcpy(t_table, p, outputSize);
 
-		offset1 = output_size / 3;
+		offset1 = outputSize / 3;
 		offset2 = offset1 << 1;
 		offset3 = offset2;
-		src = comp_output;
+		src = compOutput;
 
 		while (offset1--) {
 			offset2 -= 2;
@@ -368,8 +371,8 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 			t_table[offset2 + 1] = src[offset3];
 		}
 
-		src = comp_output;
-		length = (output_size << 3) / 12;
+		src = compOutput;
+		length = (outputSize << 3) / 12;
 		k = 0;
 		if (length > 0) {
 			c = -12;
@@ -399,21 +402,21 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 		break;
 
 	case 11:
-		output_size = compDecode(comp_input, comp_output);
-		p = comp_output;
-		for (z = 2; z < output_size; z++)
+		outputSize = compDecode(compInput, compOutput);
+		p = compOutput;
+		for (z = 2; z < outputSize; z++)
 			p[z] += p[z - 1];
-		for (z = 1; z < output_size; z++)
+		for (z = 1; z < outputSize; z++)
 			p[z] += p[z - 1];
 
-		t_table = (byte *)malloc(output_size);
+		t_table = (byte *)malloc(outputSize);
 		assert(t_table);
-		memcpy(t_table, p, output_size);
+		memcpy(t_table, p, outputSize);
 
-		offset1 = output_size / 3;
+		offset1 = outputSize / 3;
 		offset2 = offset1 << 1;
 		offset3 = offset2;
-		src = comp_output;
+		src = compOutput;
 
 		while (offset1--) {
 			offset2 -= 2;
@@ -422,8 +425,8 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 			t_table[offset2 + 1] = src[offset3];
 		}
 
-		src = comp_output;
-		length = (output_size << 3) / 12;
+		src = compOutput;
+		length = (outputSize << 3) / 12;
 		k = 1;
 		c = 0;
 		s = 12;
@@ -453,21 +456,21 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 		break;
 
 	case 12:
-		output_size = compDecode(comp_input, comp_output);
-		p = comp_output;
-		for (z = 2; z < output_size; z++)
+		outputSize = compDecode(compInput, compOutput);
+		p = compOutput;
+		for (z = 2; z < outputSize; z++)
 			p[z] += p[z - 1];
-		for (z = 1; z < output_size; z++)
+		for (z = 1; z < outputSize; z++)
 			p[z] += p[z - 1];
 
-		t_table = (byte *)malloc(output_size);
+		t_table = (byte *)malloc(outputSize);
 		assert(t_table);
-		memcpy(t_table, p, output_size);
+		memcpy(t_table, p, outputSize);
 
-		offset1 = output_size / 3;
+		offset1 = outputSize / 3;
 		offset2 = offset1 << 1;
 		offset3 = offset2;
-		src = comp_output;
+		src = compOutput;
 
 		while (offset1--) {
 			offset2 -= 2;
@@ -476,13 +479,13 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 			t_table[offset2 + 1] = src[offset3];
 		}
 
-		src = comp_output;
-		length = (output_size << 3) / 12;
+		src = compOutput;
+		length = (outputSize << 3) / 12;
 		k = 0;
 		c = 0;
 		s = -12;
-		src[0] = t_table[output_size - 1];
-		src[output_size - 1] = t_table[length - 1];
+		src[0] = t_table[outputSize - 1];
+		src[outputSize - 1] = t_table[length - 1];
 		t = length - 1;
 		if (t > 0) {
 			do {
@@ -533,9 +536,9 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 			// We only support mono and stereo
 			assert(channels == 1 || channels == 2);
 
-			src = comp_input;
-			dst = comp_output;
-			output_size = 0x2000;
+			src = compInput;
+			dst = compOutput;
+			outputSize = 0x2000;
 			outputSamplesLeft = 0x1000;
 
 			// Every data packet contains 0x2000 bytes of audio data
@@ -638,11 +641,11 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 
 	default:
 		error("BundleCodecs::decompressCodec() Unknown codec %d!", (int)codec);
-		output_size = 0;
+		outputSize = 0;
 		break;
 	}
 
-	return output_size;
+	return outputSize;
 }
 
 } // End of namespace BundleCodecs

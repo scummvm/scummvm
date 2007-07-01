@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,11 +40,15 @@ typedef uint32 st_size_t;
 typedef uint32 st_rate_t;
 
 /* Minimum and maximum values a sample can hold. */
-#define ST_SAMPLE_MAX 0x7fffL
-#define ST_SAMPLE_MIN (-ST_SAMPLE_MAX - 1L)
+enum {
+	ST_SAMPLE_MAX = 0x7fffL,
+	ST_SAMPLE_MIN = (-ST_SAMPLE_MAX - 1L)
+};
 
-#define ST_EOF (-1)
-#define ST_SUCCESS (0)
+enum {
+	ST_EOF = -1,
+	ST_SUCCESS = 0
+};
 
 static inline void clampedAdd(int16& a, int b) {
 	register int val;
@@ -62,12 +69,6 @@ static inline void clampedAdd(int16& a, int b) {
 	a = val;
 #endif
 }
-
-// Q&D hack to get this SOX stuff to work
-#define st_report warning
-#define st_warn warning
-#define st_fail error
-
 
 class RateConverter {
 public:

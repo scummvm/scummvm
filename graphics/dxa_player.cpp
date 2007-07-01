@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +35,8 @@
 namespace Graphics {
 
 DXAPlayer::DXAPlayer() {
+	_fd = 0;
+
 	_frameBuffer1 = 0;
 	_frameBuffer2 = 0;
 	_scaledBuffer = 0;
@@ -54,25 +59,25 @@ DXAPlayer::~DXAPlayer() {
 }
 
 int DXAPlayer::getWidth() {
-	if (!_fd.isOpen())
+	if (!_fd)
 		return 0;
 	return _width;
 }
 
 int DXAPlayer::getHeight() {
-	if (!_fd.isOpen())
+	if (!_fd)
 		return 0;
 	return _height;
 }
 
 int DXAPlayer::getCurFrame() {
-	if (!_fd.isOpen())
+	if (!_fd)
 		return -1;
 	return _frameNum;
 }
 
 int DXAPlayer::getFrameCount() {
-	if (!_fd.isOpen())
+	if (!_fd)
 		return 0;
 	return _framesCount;
 }
@@ -81,16 +86,19 @@ bool DXAPlayer::loadFile(const char *filename) {
 	uint32 tag;
 	int32 frameRate;
 
-	if (!_fd.open(filename)) {
+	Common::File *file = new Common::File();
+	if (!file->open(filename)) {
 		return 0;
 	}
 
-	tag = _fd.readUint32BE();
+	_fd = file;
+
+	tag = _fd->readUint32BE();
 	assert(tag == MKID_BE('DEXA'));
 
-	uint8 flags = _fd.readByte();
-	_framesCount = _fd.readUint16BE();
-	frameRate = _fd.readUint32BE();
+	uint8 flags = _fd->readByte();
+	_framesCount = _fd->readUint16BE();
+	frameRate = _fd->readUint32BE();
 
 	if (frameRate > 0)
 		_framesPerSec = 1000 / frameRate;
@@ -104,8 +112,8 @@ bool DXAPlayer::loadFile(const char *filename) {
 	else
 		_frameTicks = frameRate;
 
-	_width = _fd.readUint16BE();
-	_height = _fd.readUint16BE();
+	_width = _fd->readUint16BE();
+	_height = _fd->readUint16BE();
 
 	if (flags & 0x80) {
 		_scaleMode = S_INTERLACED;
@@ -140,10 +148,12 @@ bool DXAPlayer::loadFile(const char *filename) {
 }
 
 void DXAPlayer::closeFile() {
-	if (!_fd.isOpen())
+	if (!_fd)
 		return;
 
-	_fd.close();
+	delete _fd;
+	_fd = 0;
+
 	free(_frameBuffer1);
 	free(_frameBuffer2);
 	free(_scaledBuffer);
@@ -475,20 +485,20 @@ void DXAPlayer::decode13(byte *data, int size, int totalSize) {
 void DXAPlayer::decodeNextFrame() {
 	uint32 tag;
 
-	tag = _fd.readUint32BE();
+	tag = _fd->readUint32BE();
 	if (tag == MKID_BE('CMAP')) {
 		byte rgb[768];
 
-		_fd.read(rgb, ARRAYSIZE(rgb));
+		_fd->read(rgb, ARRAYSIZE(rgb));
 		setPalette(rgb);
 	}
 
-	tag = _fd.readUint32BE();
+	tag = _fd->readUint32BE();
 	if (tag == MKID_BE('FRAM')) {
-		byte type = _fd.readByte();
-		uint32 size = _fd.readUint32BE();
+		byte type = _fd->readByte();
+		uint32 size = _fd->readUint32BE();
 
-		_fd.read(_frameBuffer2, size);
+		_fd->read(_frameBuffer2, size);
 
 		switch (type) {
 		case 2:

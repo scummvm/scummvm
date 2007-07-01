@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,7 +47,7 @@ const Common::String actionNames[] = {
 	"Save",
 	"Skip",
 	"Zone",
-	"FT Cheat",
+	"Multi Function",
 	"Swap character",
 	"Skip text",	
 	"Pause", 
@@ -119,7 +122,7 @@ void SymbianActions::initInstanceMain(OSystem *mainSystem) {
 
 	// Skip
 	_action_enabled[ACTION_SKIP] = true;
-	_key_action[ACTION_SKIP].setAscii(SDLK_ESCAPE);
+	_key_action[ACTION_SKIP].setKey(SDLK_ESCAPE);
 }
 
 void SymbianActions::initInstanceGame() {
@@ -135,7 +138,8 @@ void SymbianActions::initInstanceGame() {
 	bool is_cine = (gameid == "cine");
 	bool is_touche = (gameid == "touche");
 	bool is_agi = (gameid == "agi");
-	
+	bool is_parallaction = (gameid == "parallaction");
+
 	Actions::initInstanceGame();
 
 	// Initialize keys for different actions
@@ -146,51 +150,58 @@ void SymbianActions::initInstanceGame() {
 		_action_enabled[ACTION_SAVE] = true;
 		
 		if (is_queen) {			
-			_key_action[ACTION_SAVE].setAscii(SDLK_F1); // F1 key for FOTAQ
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5); // F1 key for FOTAQ
 		} else if (is_sky) {		
-			_key_action[ACTION_SAVE].setAscii(63); 
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5); 
 		} else if (is_cine) {			
-			_key_action[ACTION_SAVE].setAscii(SDLK_F10); // F10
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_F10, SDLK_F10); // F10
 		} else if (is_agi) {		
-			_key_action[ACTION_SAVE].setAscii(SDLK_ESCAPE);
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_ESCAPE, SDLK_ESCAPE);
+		} else if (is_parallaction) {
+			_key_action[ACTION_SAVE].setKey('s', SDLK_s);
 		} else {		
-			_key_action[ACTION_SAVE].setAscii(SDLK_F5); // F5 key
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5); // F5 key
 		}
 	}
 
 	// Enable fast mode
 	_action_enabled[ACTION_FASTMODE] = true;
-	_key_action[ACTION_FASTMODE].setAscii('f');
-	_key_action[ACTION_FASTMODE].setFlags(KMOD_CTRL);
+	_key_action[ACTION_FASTMODE].setKey('f', SDLK_f, KMOD_CTRL);
 	
 	// Swap character
 	_action_enabled[ACTION_SWAPCHAR] = true;
-	_key_action[ACTION_SWAPCHAR].setAscii('b'); // b
+	_key_action[ACTION_SWAPCHAR].setKey('b'); // b
 
 	// Zone
 	_action_enabled[ACTION_ZONE] = true;
 
-	// FT Cheat
-	_action_enabled[ACTION_FT_CHEAT] = true;
-	_key_action[ACTION_FT_CHEAT].setAscii(86); // shift-V
+	// Multi function key
+	_action_enabled[ACTION_MULTI] = true;
+	if (is_agi)
+		_key_action[ACTION_MULTI].setKey(SDLK_PAUSE); // agi: show predictive dialog
+	else if (is_gob)
+		_key_action[ACTION_MULTI].setKey(Common::ASCII_F1, SDLK_F1); // bargon : F1 to start
+	else if (gameid == "atlantis")
+		_key_action[ACTION_MULTI].setKey(0, SDLK_KP0); // fate of atlantis : Ins to sucker-punch
+	else
+		_key_action[ACTION_MULTI].setKey('V', SDLK_v, KMOD_SHIFT); // FT cheat : shift-V
 
 	// Enable debugger
 	_action_enabled[ACTION_DEBUGGER] = true;
-	_key_action[ACTION_DEBUGGER].setAscii('d');
-	_key_action[ACTION_DEBUGGER].setFlags(KMOD_CTRL);
+	_key_action[ACTION_DEBUGGER].setKey('d', SDLK_d, KMOD_CTRL);
 
 	// Skip text
 	if (!is_cine)
 		_action_enabled[ACTION_SKIP_TEXT] = true;
 
 	if (is_queen) {
-		_key_action[ACTION_SKIP_TEXT].setAscii(SDLK_SPACE);
+		_key_action[ACTION_SKIP_TEXT].setKey(SDLK_SPACE);
 	} else {
-		_key_action[ACTION_SKIP_TEXT].setAscii(SDLK_PERIOD);
+		_key_action[ACTION_SKIP_TEXT].setKey(SDLK_PERIOD);
 	}
 
 	// Pause
-	_key_action[ACTION_PAUSE].setAscii(' ');
+	_key_action[ACTION_PAUSE].setKey(' ');
 	_action_enabled[ACTION_PAUSE] = true;
 
 	// Quit

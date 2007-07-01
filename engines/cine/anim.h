@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,8 +27,6 @@
 #define CINE_ANIM_H
 
 namespace Cine {
-
-extern uint16 frameVar0;
 
 struct animHeaderStruct {
 	byte field_0;
@@ -57,6 +56,8 @@ struct animDataEntry {
 
 extern animDataEntry animData[];
 
+void freeAnimDataTable(void);
+void freeAnimDataRange(byte startIdx, byte numIdx);
 void loadResource(const char *animName);
 void loadAbs(const char *resourceName, uint16 idx);
 void loadResourcesFromSave();

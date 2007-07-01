@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +28,11 @@
 #ifndef SAGA_SOUND_H
 #define SAGA_SOUND_H
 
+#include "common/file.h"
 #include "sound/mixer.h"
+#include "sound/mp3.h"
+#include "sound/vorbis.h"
+#include "sound/flac.h"
 
 namespace Saga {
 
@@ -45,7 +50,11 @@ struct SoundBuffer {
 
 	byte *buffer;
 	size_t size;
+	size_t originalSize;
 	bool isBigEndian;
+	GameSoundTypes soundType;
+	Common::File *soundFile;
+	size_t fileOffset;
 };
 
 enum sndHandleType {

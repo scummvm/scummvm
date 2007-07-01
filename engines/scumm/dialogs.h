@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -139,8 +142,6 @@ public:
 	ConfigDialog();
 	~ConfigDialog();
 
-	virtual void open();
-	virtual void close();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 };
 
@@ -162,19 +163,20 @@ public:
 	// from resources
 	InfoDialog(ScummEngine *scumm, int res);
 
+	void setInfoText(const String& message);
+
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
 		setResult(0);
 		close();
 	}
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-		setResult(ascii);
+	virtual void handleKeyDown(Common::KeyState state) {
+		setResult(state.ascii);
 		close();
 	}
 
 	virtual void reflowLayout();
 
 protected:
-	void setInfoText (const String& message);
 
 	// Query a string from the resources
 	const String queryResString(int stringno);
@@ -187,7 +189,7 @@ protected:
 class PauseDialog : public InfoDialog {
 public:
 	PauseDialog(ScummEngine *scumm, int res);
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	virtual void handleKeyDown(Common::KeyState state);
 };
 
 /**
@@ -197,7 +199,7 @@ public:
 class ConfirmDialog : public InfoDialog {
 public:
 	ConfirmDialog(ScummEngine *scumm, int res);
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	virtual void handleKeyDown(Common::KeyState state);
 };
 
 /**
@@ -214,7 +216,7 @@ public:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
 		close();
 	}
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	virtual void handleKeyDown(Common::KeyState state);
 
 	virtual void reflowLayout();
 
@@ -230,6 +232,34 @@ protected:
 	int _percentBarWidth;
 	int _value;
 	uint32 _timer;
+};
+
+/**
+ * A dialog used to display and cycle subtitle settings.
+ * Automatically closes after a brief time has passed.
+ */
+class SubtitleSettingsDialog : public InfoDialog {
+public:
+	SubtitleSettingsDialog(ScummEngine *scumm, int value);
+
+	virtual void open();
+	virtual void handleTickle();
+	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
+		close();
+	}
+	virtual void handleKeyDown(Common::KeyState state);
+protected:
+	int _value;
+	uint32 _timer;
+	
+	void cycleValue();
+};
+
+//The Indy IQ dialog
+class Indy3IQPointsDialog : public InfoDialog {
+public:
+	Indy3IQPointsDialog(ScummEngine *scumm, char* text);
+	virtual void handleKeyDown(Common::KeyState state);
 };
 
 } // End of namespace Scumm

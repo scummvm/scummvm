@@ -63,11 +63,15 @@ _build_agi=yes
 _build_touche=yes
 _build_parallaction=yes
 _build_cruise=no
-_need_memalign=no
-_build_plugins=no
-_nasm=auto
 _build_hq_scalers=yes
 _build_scalers=yes
+
+_endian=unknown
+_need_memalign=no
+_have_x86=no
+_build_plugins=no
+_nasm=auto
+
 # more defaults
 _backend=sdl
 _ranlib=ranlib
@@ -89,7 +93,6 @@ _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
 _prefix=/usr/local
-_have_x86=""
 
 _srcdir=`dirname $0`
 
@@ -104,9 +107,6 @@ _host=""
 _host_cpu=""
 _host_vendor=""
 _host_os=""
-
-# config.h defaults
-_def_linupy="#undef LINUPY"
 
 cc_check() {
 	echo >> "$TMPLOG"
@@ -124,20 +124,47 @@ echocheck () {
 	echo_n "Checking for $@... "
 }
 
-# Add a boolean flag to config.mk. Takes two parameters:
-# The first one can be set to 'yes' to "comment out" the flag,
-# i.e. make it ineffective, use 'no' otherwise.
-# The second param is the name of the flag to set.
-#
-# For now the variable is always set to 1, but we could add
-# another parameter for that...
-add_flag_to_config_mk_if_no() {
-	if test "$1" = no ; then
-		_config_mk_data="$_config_mk_data"'
-'"$2 = 1"
+# Add a line of data to config.mk.
+add_line_to_config_mk() {
+	_config_mk_data="$_config_mk_data"'
+'"$1"
+}
+
+# Add a line of data to h.mk.
+add_line_to_config_h() {
+	_config_h_data="$_config_h_data"'
+'"$1"
+}
+
+add_to_config_h_if_yes() {
+	if test "$1" = yes ; then
+		add_line_to_config_h "$2"
 	else
-		_config_mk_data="$_config_mk_data"'
-'"# $2 = 1"
+		add_line_to_config_h "/* $2 */"
+	fi
+}
+
+# Conditionally add a line of data to config.mk. Takes two parameters:
+# The first one can be set to 'no' to "comment out" the line, i.e.
+# make it ineffective, use 'yes' otherwise.
+# The second param is the line to insert.
+add_to_config_mk_if_yes() {
+	if test "$1" = yes ; then
+		add_line_to_config_mk "$2"
+	else
+		add_line_to_config_mk "# $2"
+	fi
+}
+
+# Conditionally add a line of data to config.mk. Takes two parameters:
+# The first one can be set to 'yes' to "comment out" the line, i.e.
+# make it ineffective, use 'no' otherwise.
+# The second param is the line to insert.
+add_to_config_mk_if_no() {
+	if test "$1" = no ; then
+		add_line_to_config_mk "$2"
+	else
+		add_line_to_config_mk "# $2"
 	fi
 }
 
@@ -565,7 +592,7 @@ arm-riscos)
 	EXEEXT=",ff8"
 	;;
 gp2x-linux)
-	EXEEXT=".gpe"
+	EXEEXT=".gp2x"
 	;;	
 *)
 	EXEEXT=""
@@ -680,31 +707,31 @@ if test "$_cxx_major" -ge "3" ; then
 		CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
 		;;
 	esac
-	add_flag_to_config_mk_if_no no 'HAVE_GCC3'
+	add_line_to_config_mk 'HAVE_GCC3 = 1'
 fi;
 
 #
 # Engine selection
 #
-add_flag_to_config_mk_if_no $_build_scumm        'DISABLE_SCUMM'
-add_flag_to_config_mk_if_no $_build_scumm_7_8    'DISABLE_SCUMM_7_8'
-add_flag_to_config_mk_if_no $_build_he           'DISABLE_HE'
-add_flag_to_config_mk_if_no $_build_agos         'DISABLE_AGOS'
-add_flag_to_config_mk_if_no $_build_sky          'DISABLE_SKY'
-add_flag_to_config_mk_if_no $_build_sword1       'DISABLE_SWORD1'
-add_flag_to_config_mk_if_no $_build_sword2       'DISABLE_SWORD2'
-add_flag_to_config_mk_if_no $_build_queen        'DISABLE_QUEEN'
-add_flag_to_config_mk_if_no $_build_kyra         'DISABLE_KYRA'
-add_flag_to_config_mk_if_no $_build_saga         'DISABLE_SAGA'
-add_flag_to_config_mk_if_no $_build_gob          'DISABLE_GOB'
-add_flag_to_config_mk_if_no $_build_lure         'DISABLE_LURE'
-add_flag_to_config_mk_if_no $_build_cine         'DISABLE_CINE'
-add_flag_to_config_mk_if_no $_build_agi          'DISABLE_AGI'
-add_flag_to_config_mk_if_no $_build_touche       'DISABLE_TOUCHE'
-add_flag_to_config_mk_if_no $_build_parallaction 'DISABLE_PARALLACTION'
-add_flag_to_config_mk_if_no $_build_cruise       'DISABLE_CRUISE'
-add_flag_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS'
-add_flag_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS'
+add_to_config_mk_if_no $_build_scumm        'DISABLE_SCUMM = 1'
+add_to_config_mk_if_no $_build_scumm_7_8    'DISABLE_SCUMM_7_8 = 1'
+add_to_config_mk_if_no $_build_he           'DISABLE_HE = 1'
+add_to_config_mk_if_no $_build_agos         'DISABLE_AGOS = 1'
+add_to_config_mk_if_no $_build_sky          'DISABLE_SKY = 1'
+add_to_config_mk_if_no $_build_sword1       'DISABLE_SWORD1 = 1'
+add_to_config_mk_if_no $_build_sword2       'DISABLE_SWORD2 = 1'
+add_to_config_mk_if_no $_build_queen        'DISABLE_QUEEN = 1'
+add_to_config_mk_if_no $_build_kyra         'DISABLE_KYRA = 1'
+add_to_config_mk_if_no $_build_saga         'DISABLE_SAGA = 1'
+add_to_config_mk_if_no $_build_gob          'DISABLE_GOB = 1'
+add_to_config_mk_if_no $_build_lure         'DISABLE_LURE = 1'
+add_to_config_mk_if_no $_build_cine         'DISABLE_CINE = 1'
+add_to_config_mk_if_no $_build_agi          'DISABLE_AGI = 1'
+add_to_config_mk_if_no $_build_touche       'DISABLE_TOUCHE = 1'
+add_to_config_mk_if_no $_build_parallaction 'DISABLE_PARALLACTION = 1'
+add_to_config_mk_if_no $_build_cruise       'DISABLE_CRUISE = 1'
+add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
+add_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS = 1'
 
 if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
@@ -712,39 +739,43 @@ if test -n "$_host"; then
 		linupy|arm-riscos)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX"
-			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
-			_def_align='#define SCUMM_NEED_ALIGNMENT'
-			_def_linupy="#define DLINUPY"
+			_endian=little
+			_need_memalign=yes
+			add_line_to_config_h "#define LINUPY"
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
 			;;
 		arm-linux|arm-linux-gnueabi|arm-*-linux-gnueabi)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX"
+			DEFINES="$DEFINES -DUNIX -DUSE_ARM_SOUND_ASM -DUSE_ARM_SMUSH_ASM"
 			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
-			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
-			_def_align='#define SCUMM_NEED_ALIGNMENT'
+			_endian=little
+			_need_memalign=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			;;
  		gp2x)
  			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
- 			DEFINES="$DEFINES -DUNIX -DGP2X"
- 			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
- 			_def_align='#define SCUMM_NEED_ALIGNMENT'
+ 			DEFINES="$DEFINES -DUNIX -DGP2X -DUSE_ARM_SOUND_ASM -DUSE_ARM_SMUSH_ASM"
+			_endian=little
+			_need_memalign=yes
  			type_1_byte='char'
  			type_2_byte='short'
  			type_4_byte='int'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
  			_backend="gp2x"
  			_mak_hq_scalers='DISABLE_HQ_SCALERS = 1'
  			_build_hq_scalers="no"
  			;;			
 		ppc-amigaos)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			_def_endianness='#define SCUMM_BIG_ENDIAN'
-			_def_align='#define	SCUMM_NEED_ALIGNMENT'
+			_endian=big
+			_need_memalign=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='long'
@@ -754,8 +785,8 @@ if test -n "$_host"; then
 		m68k-atari-mint)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-			_def_endianness='#define SCUMM_BIG_ENDIAN'
-			_def_align='#define     SCUMM_NEED_ALIGNMENT'
+			_endian=big
+			_need_memalign=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='long'
@@ -765,9 +796,7 @@ if test -n "$_host"; then
 		i586-mingw32msvc)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DWIN32"
-			_def_x86='#define HAVE_X86'
-			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
-			_def_align='#undef SCUMM_NEED_ALIGNMENT'
+			_endian=little
 			_have_x86=yes
 			type_1_byte='char'
 			type_2_byte='short'
@@ -851,19 +880,8 @@ int main(int argc, char **argv)
 }
 EOF
 	$CXX $CXXFLAGS -o tmp_endianness_check$EXEEXT tmp_endianness_check.cpp
-	endianness=`./tmp_endianness_check`
-	echo $endianness;
-	case $endianness in
-		big)
-			_def_endianness='#define SCUMM_BIG_ENDIAN'
-			;;
-		little)
-			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
-			;;
-		*)
-			exit 1
-			;;
-	esac
+	_endian=`./tmp_endianness_check`
+	echo $_endian;
 	rm -f tmp_endianness_check$EXEEXT tmp_endianness_check.cpp
 
 	#
@@ -878,12 +896,6 @@ EOF
 			_have_x86=no
 			;;
 	esac
-
-	if test "$_have_x86" = yes ; then
-		_def_x86='#define HAVE_X86'
-	else
-		_def_x86='#undef HAVE_X86'
-	fi
 	echo "$_have_x86"
 
 	#
@@ -931,12 +943,6 @@ EOF
 			cc_check && $TMPO && _need_memalign=no
 			;;
 	esac
-
-	if test "$_need_memalign" = yes ; then
-		_def_align='#define SCUMM_NEED_ALIGNMENT'
-	else
-		_def_align='#undef SCUMM_NEED_ALIGNMENT'
-	fi
 	echo "$_need_memalign"
 
 	#
@@ -963,12 +969,34 @@ EOF
 fi
 
 #
+# Add the results of the above checks to config.h
+#
+case $_endian in
+	big)
+		add_line_to_config_h '/* #define SCUMM_LITTLE_ENDIAN */'
+		add_line_to_config_h '#define SCUMM_BIG_ENDIAN'
+		;;
+	little)
+		add_line_to_config_h '#define SCUMM_LITTLE_ENDIAN'
+		add_line_to_config_h '/* #define SCUMM_BIG_ENDIAN */'
+		;;
+	*)
+		exit 1
+		;;
+esac
+
+add_to_config_h_if_yes $_have_x86 '#define HAVE_X86'
+
+add_to_config_h_if_yes $_need_memalign '#define SCUMM_NEED_ALIGNMENT'
+
+
+#
 # Check whether plugin support is requested and possible
 #
 echo_n "Checking whether building plugins was requested... "
 echo "$_build_plugins"
 _mak_plugins=
-_def_plugin=
+_def_plugin="/* -> plugins disabled */"
 
 if test "$_build_plugins" = yes ; then
     echo_n "Checking whether building plugins is supported... "
@@ -1056,10 +1084,10 @@ fi
 #
 if test "$_mt32emu" = no ; then
 	_def_mt32emu='#undef USE_MT32EMU'
-	add_flag_to_config_mk_if_no yes 'USE_MT32EMU'
+	add_to_config_mk_if_no yes 'USE_MT32EMU = 1'
 else
 	_def_mt32emu='#define USE_MT32EMU'
-	add_flag_to_config_mk_if_no no 'USE_MT32EMU'
+	add_to_config_mk_if_no no 'USE_MT32EMU = 1'
 fi
 
 #
@@ -1079,10 +1107,10 @@ if test "$_vorbis" = yes ; then
 	_def_vorbis='#define USE_VORBIS'
 	LIBS="$LIBS $OGG_LIBS $VORBIS_LIBS -lvorbisfile -lvorbis -logg"
 	INCLUDES="$INCLUDES $OGG_CFLAGS $VORBIS_CFLAGS"
-	add_flag_to_config_mk_if_no no 'USE_VORBIS'
+	add_to_config_mk_if_no no 'USE_VORBIS = 1'
 else
 	_def_vorbis='#undef USE_VORBIS'
-	add_flag_to_config_mk_if_no yes 'USE_VORBIS'
+	add_to_config_mk_if_no yes 'USE_VORBIS = 1'
 fi
 echo "$_vorbis"
 
@@ -1104,13 +1132,13 @@ if test "$_tremor" = yes && test "$_vorbis" = no; then
 	_def_vorbis='#define USE_VORBIS'
 	LIBS="$LIBS $TREMOR_LIBS -lvorbisidec"
 	INCLUDES="$INCLUDES $TREMOR_CFLAGS"
-	add_flag_to_config_mk_if_no no 'USE_TREMOR'
+	add_to_config_mk_if_no no 'USE_TREMOR = 1'
 else
 	if test "$_vorbis" = yes; then
 		_tremor="no (Ogg Vorbis/Tremor support is mutually exclusive)"
 	fi
 	_def_tremor='#undef USE_TREMOR'
-	add_flag_to_config_mk_if_no yes 'USE_TREMOR'
+	add_to_config_mk_if_no yes 'USE_TREMOR = 1'
 fi
 echo "$_tremor"
 
@@ -1131,10 +1159,10 @@ if test "$_flac" = yes ; then
 	_def_flac='#define USE_FLAC'
 	LIBS="$LIBS $FLAC_LIBS $OGG_LIBS -lFLAC -logg"
 	INCLUDES="$INCLUDES $FLAC_CFLAGS"
-	add_flag_to_config_mk_if_no no 'USE_FLAC'
+	add_to_config_mk_if_no no 'USE_FLAC = 1'
 else
 	_def_flac='#undef USE_FLAC'
-	add_flag_to_config_mk_if_no yes 'USE_FLAC'
+	add_to_config_mk_if_no yes 'USE_FLAC = 1'
 fi
 echo "$_flac"
 
@@ -1154,10 +1182,10 @@ if test "$_mad" = yes ; then
 	_def_mad='#define USE_MAD'
 	LIBS="$LIBS $MAD_LIBS -lmad"
 	INCLUDES="$INCLUDES $MAD_CFLAGS"
-	add_flag_to_config_mk_if_no no 'USE_MAD'
+	add_to_config_mk_if_no no 'USE_MAD = 1'
 else
 	_def_mad='#undef USE_MAD'
-	add_flag_to_config_mk_if_no yes 'USE_MAD'
+	add_to_config_mk_if_no yes 'USE_MAD = 1'
 fi
 echo "$_mad"
 
@@ -1243,10 +1271,10 @@ if test "$_mpeg2" = yes ; then
 	_def_mpeg2='#define USE_MPEG2'
 	INCLUDES="$INCLUDES $MPEG2_CFLAGS"
 	LIBS="$LIBS $MPEG2_LIBS -lmpeg2"
-	add_flag_to_config_mk_if_no no 'USE_MPEG2'
+	add_to_config_mk_if_no no 'USE_MPEG2 = 1'
 else
 	_def_mpeg2='#undef USE_MPEG2'
-	add_flag_to_config_mk_if_no yes 'USE_MPEG2'
+	add_to_config_mk_if_no yes 'USE_MPEG2 = 1'
 fi
 echo "$_mpeg2"
 rm -f $TMPC $TMPO$EXEEXT
@@ -1280,19 +1308,14 @@ if test "$_have_x86" = yes ; then
     CheckNASM
 fi
 
-if test "$_nasm" = yes ; then
-	_def_nasm='#define USE_NASM'
-	add_flag_to_config_mk_if_no no 'HAVE_NASM'
-else
-	_def_nasm='#undef USE_NASM'
-	add_flag_to_config_mk_if_no yes 'HAVE_NASM'
-fi
+add_to_config_h_if_yes $_nasm '#define USE_NASM'
+add_to_config_mk_if_yes $_nasm 'HAVE_NASM = 1'
 
 #
 # figure out installation directories
 #
 test -z "$_bindir" && _bindir="$_prefix/bin"
-test -z "$_mandir" && _mandir="$_prefix/man"
+test -z "$_mandir" && _mandir="$_prefix/share/man"
 test -z "$_datadir" && _datadir="$_prefix/share"
 
 DEFINES="$DEFINES -DDATA_PATH=\\\"$_datadir/scummvm\\\""
@@ -1324,7 +1347,7 @@ if test "$_build_sword1" = yes ; then
 	if test "$_mpeg2" = yes ; then
 		echo " (w/ mpeg2 cutscenes)"
 	else
-		echo "  (without mpeg2 cutscenes)"
+		echo " (without mpeg2 cutscenes)"
 	fi
 fi
 if test "$_build_sword2" = yes ; then
@@ -1429,11 +1452,7 @@ cat > config.h << EOF
 #ifndef CONFIG_H
 #define CONFIG_H
 
-$_def_endianness
-$_def_align
-$_def_x86
-
-$_def_linupy
+$_config_h_data
 
 /* Data types */
 typedef unsigned $type_1_byte byte;
@@ -1455,9 +1474,6 @@ $_def_zlib
 $_def_mpeg2
 $_def_fluidsynth
 $_def_mt32emu
-
-/* Whether we should use i386 assembly routines */
-$_def_nasm
 
 /* Plugin settings */
 $_def_plugin
@@ -1496,6 +1512,7 @@ NASMFLAGS := $NASMFLAGS
 PREFIX := $_prefix
 BINDIR := $_bindir
 MANDIR := $_mandir
+DATADIR := $_datadir
 
 $_mak_plugins
 

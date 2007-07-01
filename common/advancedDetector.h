@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -58,6 +61,29 @@ struct ADGameDescription {
 	 * code.
 	 */
 	uint32 flags;
+};
+
+/**
+ * Encapsulates ADGameDescription and makes gameid and extra strings dynamic.
+ * Used in fallback detection when dynamically creating string content.
+ */
+struct EncapsulatedADGameDesc {
+	Common::String gameid;
+	Common::String extra;
+	const ADGameDescription *realDesc;
+
+	// Constructor for the EncapsulatedADGameDesc
+	EncapsulatedADGameDesc() : realDesc(0) {}
+	EncapsulatedADGameDesc(const ADGameDescription *paramRealDesc,
+		Common::String paramGameID = Common::String(""),
+		Common::String paramExtra = Common::String(""))
+		: realDesc(paramRealDesc), gameid(paramGameID), extra(paramExtra) {
+		assert(paramRealDesc != NULL);
+	}
+
+	// Functions for getting the correct gameid and extra values from the struct
+	const char *getGameID() const { return (gameid.empty() && realDesc != 0) ? realDesc->gameid : gameid.c_str(); }
+	const char *getExtra() const { return (extra.empty() && realDesc != 0) ? realDesc->extra : extra.c_str(); }
 };
 
 /**
@@ -174,7 +200,7 @@ struct ADParams {
 	 *
 	 * @todo
 	 */
-	ADGameDescList (*fallbackDetectFunc)(const FSList *fslist);
+	EncapsulatedADGameDesc (*fallbackDetectFunc)(const FSList *fslist);
 
 	/**
 	 * A bitmask of flags which can be used to configure the behavior
@@ -198,18 +224,20 @@ GameList gameIDList(const Common::ADParams &params);
  * 'gameid' in there. If a match is found, returns a  GameDescriptor
  * with gameid and description set.
  */
-GameDescriptor findGameID(const char *gameid, const Common::ADParams &params);
+GameDescriptor findGameID(
+	const char *gameid,
+	const PlainGameDescriptor *list,
+	const Common::ADObsoleteGameID *obsoleteList = 0
+	);
 
 // FIXME/TODO: Rename this function to something more sensible.
 GameList detectAllGames(const FSList &fslist, const Common::ADParams &params);
 
 // FIXME/TODO: Rename this function to something more sensible.
-const ADGameDescription *detectBestMatchingGame(const Common::ADParams &params);
+EncapsulatedADGameDesc detectBestMatchingGame(const Common::ADParams &params);
 
 // FIXME/TODO: Rename this function to something more sensible.
-void upgradeTargetIfNecessary(const Common::ADParams &params);
-
-// FIXME/TODO: Rename this function to something more sensible.
+// Only used by ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_FUNC
 PluginError detectGameForEngineCreation(const Common::ADParams &params);
 
 
@@ -229,7 +257,7 @@ PluginError detectGameForEngineCreation(const Common::ADParams &params);
 		return Common::AdvancedDetector::gameIDList(params); \
 	} \
 	GameDescriptor Engine_##engine##_findGameID(const char *gameid) { \
-		return Common::AdvancedDetector::findGameID(gameid, params); \
+		return Common::AdvancedDetector::findGameID(gameid, params.list, params.obsoleteList); \
 	} \
 	GameList Engine_##engine##_detectGames(const FSList &fslist) { \
 		return Common::AdvancedDetector::detectAllGames(fslist, params); \
@@ -237,7 +265,6 @@ PluginError detectGameForEngineCreation(const Common::ADParams &params);
 	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \
 		assert(syst); \
 		assert(engine); \
-		Common::AdvancedDetector::upgradeTargetIfNecessary(params); \
 		PluginError err = Common::AdvancedDetector::detectGameForEngineCreation(params); \
 		if (err == kNoError) \
 			*engine = factoryFunc(syst); \

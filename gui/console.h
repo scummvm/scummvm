@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -137,7 +140,7 @@ public:
 	void handleTickle();
 	void reflowLayout();
 	void handleMouseWheel(int x, int y, int direction);
-	void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	void handleKeyDown(Common::KeyState state);
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	int printf(const char *format, ...);

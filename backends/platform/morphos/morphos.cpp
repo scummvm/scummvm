@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002 Rüdiger Hanke
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -835,7 +838,7 @@ bool OSystem_MorphOS::pollEvent(Common::Event &event)
 					/*
 					 * Function key
 					 */
-					event.kbd.ascii = (ScummMsg->Code-RAWKEY_F1)+315;
+					event.kbd.ascii = (ScummMsg->Code-RAWKEY_F1)+Common::ASCII_F1;
 					event.kbd.keycode = 0;
 				}
 				else if (ScummMsg->Code == RAWKEY_F11 || ScummMsg->Code == RAWKEY_F12)

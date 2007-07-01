@@ -1,5 +1,11 @@
-/* Copyright (C) 1994-1998 Revolution Software Ltd.
- * Copyright (C) 2003-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Additional copyright for this file:
+ * Copyright (C) 1994-1998 Revolution Software Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +39,7 @@
 
 #include "engines/engine.h"
 
+#include "common/events.h"
 #include "common/util.h"
 
 #define	MAX_starts	100
@@ -73,9 +80,7 @@ struct MouseEvent {
 
 struct KeyboardEvent {
 	bool pending;
-	uint16 ascii;
-	int keycode;
-	int modifiers;
+	Common::KeyState kbd;
 };
 
 struct StartUp {

@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 Neil Millstone
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +29,7 @@
 
 GBAMPSaveFile::GBAMPSaveFile(char* name, bool saveOrLoad) {
 	handle = DS::std_fopen(name, saveOrLoad? "w": "r");
-//	consolePrintf("%s handle is %d\n", name, handle);
+	consolePrintf("%s handle is %d\n", name, handle);
 //	consolePrintf("Created %s\n", name);
 	bufferPos = 0;
 	saveSize = 0;
@@ -37,6 +39,7 @@ GBAMPSaveFile::GBAMPSaveFile(char* name, bool saveOrLoad) {
 GBAMPSaveFile::~GBAMPSaveFile() {
 	flushSaveBuffer();
 	if (handle) DS::std_fclose(handle);
+	consolePrintf("Closed file\n");
 }
 
 uint32 GBAMPSaveFile::read(void *buf, uint32 size) {
@@ -55,7 +58,7 @@ void GBAMPSaveFile::skip(uint32 bytes) {
 
 void GBAMPSaveFile::flushSaveBuffer() {
 	if (bufferPos != 0) {
-		consolePrintf("Flushing %d bytes from %x\n", bufferPos, buffer);
+//		consolePrintf("Flushing %d bytes from %x\n", bufferPos, buffer);
 		flushed += bufferPos;
 		DS::std_fwrite(buffer, 1, bufferPos, handle);
 		bufferPos = 0;
@@ -172,8 +175,10 @@ void GBAMPSaveFileManager::listSavefiles(char const* prefix, bool* marks, int nu
 	char path[128];
 	
 	DS::std_cwd((char *) getSavePath());
+
+	consolePrintf("Save path: %s\n", getSavePath());
 	
-	int fileType = FAT_FindFirstFile(name);
+	int fileType = FAT_FindFirstFileLFN(name);
 	
 	for (int r = 0; r < num; r++) {
 		marks[r] = false;
@@ -190,17 +195,17 @@ void GBAMPSaveFileManager::listSavefiles(char const* prefix, bool* marks, int nu
 				
 				
 				sprintf(str, "%s%02d", prefix, r);
-//				consolePrintf("%s != %s", str, name);
+				consolePrintf("%s != %s", str, name);
 				if (!stricmp(str, name)) {
 					marks[r] = true;
-//					consolePrintf("Matched %d", r);
+					consolePrintf("Matched %d", r);
 				}
 				
 			}
 			
 		}
 	
-	} while ((fileType = FAT_FindNextFile(name)));
+	} while ((fileType = FAT_FindNextFileLFN(name)));
 	
 	FAT_chdir("/");
 }

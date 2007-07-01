@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,18 +41,25 @@ static const uint16 _common_mouseInfo[32] = {
 	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
 
-static const uint16 _common_shieldInfo[32] = {
+static const uint16 _common_handInfo[32] = {
+	0x01C0, 0x01C0, 0x07F0, 0x0770, 0x07F0, 0x0550, 0x07FC, 0x055C,
+	0x07FC, 0x0554, 0x3FFC, 0x3D54, 0x3FFC, 0x2554, 0x3FFE, 0x2402,
+	0x1FFC, 0x1204, 0x1FFC, 0x1004, 0x0FF8, 0x0808, 0x07F8, 0x0408,
+	0x03F8, 0x03F8, 0x03F8, 0x0208, 0x03F8, 0x03F8, 0x0000, 0x0000
+};
+
+static const uint16 _common_shieldInfo1[32] = {
 	0x0000, 0x0000, 0x2184, 0x2004, 0x33CC, 0x300C, 0x3FFC, 0x3E7C,
 	0x3FFC, 0x3E7C, 0x3FFC, 0x3E7C, 0x3FFC, 0x0000, 0x3FFC, 0x3E7C,
 	0x3FFC, 0x3E7C, 0x1FF8, 0x1E78, 0x1FF8, 0x1E78, 0x0FF0, 0x0E70,
 	0x07E0, 0x0660, 0x03C0, 0x0240, 0x0180, 0x0000, 0x0000, 0x0000
 };
 
-static const uint16 _common_handInfo[32] = {
-	0x01C0, 0x01C0, 0x07F0, 0x0770, 0x07F0, 0x0550, 0x07FC, 0x055C,
-	0x07FC, 0x0554, 0x3FFC, 0x3D54, 0x3FFC, 0x2554, 0x3FFE, 0x2402,
-	0x1FFC, 0x1204, 0x1FFC, 0x1004, 0x0FF8, 0x0808, 0x07F8, 0x0408,
-	0x03F8, 0x03F8, 0x03F8, 0x0208, 0x03F8, 0x03F8, 0x0000, 0x0000
+static const uint16 _common_shieldInfo2[32] = {
+	0x0000, 0x0000, 0x2184, 0x2004, 0x33CC, 0x300C, 0x3FFC, 0x3E7C,
+	0x3FFC, 0x2004, 0x3FFC, 0x2004, 0x3FFC, 0x0000, 0x3FFC, 0x2000,
+	0x3FFC, 0x2004, 0x1FF8, 0x1008, 0x1FF8, 0x1008, 0x0FF0, 0x0810,
+	0x07E0, 0x0420, 0x03C0, 0x0240, 0x0180, 0x0000, 0x0000, 0x0000,
 };
 
 static const uint16 _common_swordInfo1[32] = {
@@ -371,7 +380,7 @@ void AGOSEngine_PuzzlePack::handleMouseMoved() {
 	drawMousePointer();
 }
 
-void AGOSEngine::handleMouseMoved() {
+void AGOSEngine_Simon1::handleMouseMoved() {
 	uint x;
 
 	if (_mouseHideCount) {
@@ -388,13 +397,6 @@ void AGOSEngine::handleMouseMoved() {
 			id = 102;
 		if (_defaultVerb != id)
 			resetVerbs();
-	}
-
-	if (_leftButton == 0) {
-		if (_dragMode != 0) {
-			_dragEnd = 1;
-		}
-		_dragCount = 0;
 	}
 
 	if (getGameType() == GType_FF) {
@@ -440,7 +442,50 @@ void AGOSEngine::handleMouseMoved() {
 		get_out2:;
 			_vgaVar9 = 0;
 		}
-	} else if (getGameType() == GType_WW) {
+	}
+
+	if (_mouse != _mouseOld)
+		_needHitAreaRecalc++;
+
+	if (_leftButtonOld == 0 && _leftButtonCount != 0) {
+		boxController(_mouse.x, _mouse.y, 3);
+	}
+	_leftButtonOld = _leftButton;
+
+	x = 0;
+	if (_lastHitArea3 == 0 && _leftButtonDown != 0) {
+		_leftButtonDown = 0;
+		x = 1;
+	} else {
+		if (_litBoxFlag == 0 && _needHitAreaRecalc == 0)
+			goto get_out;
+	}
+
+	boxController(_mouse.x, _mouse.y, x);
+	_lastHitArea3 = _lastHitArea;
+	if (x == 1 && _lastHitArea == NULL)
+		_lastHitArea3 = (HitArea *) -1;
+
+get_out:
+	_mouseOld = _mouse;
+	drawMousePointer();
+
+	_needHitAreaRecalc = 0;
+	_litBoxFlag = 0;
+}
+
+void AGOSEngine::handleMouseMoved() {
+	uint x;
+
+	if (_mouseHideCount) {
+		CursorMan.showMouse(false);
+		return;
+	}
+
+	CursorMan.showMouse(true);
+	_mouse = _eventMan->getMousePos();
+
+	if (getGameType() == GType_WW) {
 		if (_variableArray[51] != 0 && _mouseCursor != _variableArray[51]) {
 			_mouseCursor = _variableArray[51];
 			_needHitAreaRecalc++;
@@ -457,10 +502,20 @@ void AGOSEngine::handleMouseMoved() {
 		}
 	}
 
+	if (_leftClick == true) {
+		_leftClick = false;
+		if (_dragMode != 0) {
+			_dragEnd = 1;
+		} else {
+			_oneClick = true;
+		}
+		_dragCount = 0;
+	}
+
 	if (_mouse != _mouseOld)
 		_needHitAreaRecalc++;
 
-	if (_leftButtonOld == 0 && _leftButtonCount != 0) {
+	if (_leftButtonOld == 0 && _leftButton != 0) {
 		_lastClickRem = 0;
 		boxController(_mouse.x, _mouse.y, 3);
 	}
@@ -484,8 +539,8 @@ void AGOSEngine::handleMouseMoved() {
 	}
 
 	x = 0;
-	if (_lastHitArea3 == 0 && _leftButtonDown != 0) {
-		_leftButtonDown = 0;
+	if (_oneClick == true) {
+		_oneClick = false;
 		x = 1;
 	} else {
 		if (_litBoxFlag == 0 && _needHitAreaRecalc == 0)
@@ -495,11 +550,7 @@ void AGOSEngine::handleMouseMoved() {
 boxstuff:
 	boxController(_mouse.x, _mouse.y, x);
 	_lastHitArea3 = _lastHitArea;
-	if (x == 1 && _lastHitArea == NULL)
-		_lastHitArea3 = (HitArea *) -1;
-
 get_out:
-
 	_mouseOld = _mouse;
 	drawMousePointer();
 
@@ -692,9 +743,9 @@ void AGOSEngine::drawMousePointer() {
 			if (_mouseCursor == 0) {
 				src = _common_mouseInfo;
 			} else if (_mouseCursor == 1) {
-				src = _common_shieldInfo;
+				src = _common_shieldInfo1;
 			} else if (_mouseCursor == 2) {
-				src = _common_handInfo;
+				src = _common_shieldInfo2;
 			} else if (_mouseCursor == 3) {
 				src = _common_swordInfo1;
 			} else if (_mouseCursor == 4) {
@@ -712,7 +763,7 @@ void AGOSEngine::drawMousePointer() {
 			if (_mouseCursor == 0) {
 				src = _common_mouseInfo;
 			} else if (_mouseCursor == 1) {
-				src = _common_shieldInfo;
+				src = _common_shieldInfo1;
 			} else {
 				src = _common_swordInfo1;
 			}

@@ -1,8 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
- * Copyright (C) 2005 Joost Peters PSP Backend
- * Copyright (C) 2005 Thomas Mayer PSP Backend
- * Copyright (C) 2005 Paolo Costabel PSP Backend
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -209,13 +209,18 @@ void OSystem_PSP::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 	}
 }
 
-bool OSystem_PSP::grabRawScreen(Graphics::Surface *surf) {
-	assert(surf);
+Graphics::Surface *OSystem_PSP::lockScreen() {
+	_framebuffer.pixels = _offscreen;
+	_framebuffer.w = _screenWidth;
+	_framebuffer.h = _screenHeight;
+	_framebuffer.pitch = _screenWidth;
+	_framebuffer.bytesPerPixel = 1;
 
-	surf->create(_screenWidth, _screenHeight, 1);
-	memcpy(surf->pixels, _offscreen, _screenWidth * _screenHeight);
-	
-	return true;
+	return &_framebuffer;
+}
+
+void OSystem_PSP::unlockScreen() {
+	// The screen is always completely update anyway, so we don't have to force a full update here.
 }
 
 void OSystem_PSP::updateScreen() {
@@ -442,19 +447,19 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 			event.kbd.flags = 0;
 			
 			if (buttonsChanged & PSP_CTRL_LTRIGGER) {
-				event.kbd.keycode = SDLK_ESCAPE;
+				event.kbd.keycode = Common::KEYCODE_ESCAPE;
 				event.kbd.ascii = 27;
 			} else if (buttonsChanged & PSP_CTRL_RTRIGGER) {
-				event.kbd.keycode = SDLK_RETURN;
+				event.kbd.keycode = Common::KEYCODE_RETURN;
 				event.kbd.ascii = 13;
 			} else if (buttonsChanged & PSP_CTRL_START) {
-				event.kbd.keycode = SDLK_F5;
-				event.kbd.ascii = 319;
+				event.kbd.keycode = Common::KEYCODE_F5;
+				event.kbd.ascii = Common::ASCII_F5;
 /*			} else if (buttonsChanged & PSP_CTRL_SELECT) {
-				event.kbd.keycode = SDLK_0;
+				event.kbd.keycode = Common::KEYCODE_0;
 				event.kbd.ascii = '0';
 */			} else if (buttonsChanged & PSP_CTRL_SQUARE) {
-				event.kbd.keycode = SDLK_PERIOD;
+				event.kbd.keycode = Common::KEYCODE_PERIOD;
 				event.kbd.ascii = '.';
 			}
 			

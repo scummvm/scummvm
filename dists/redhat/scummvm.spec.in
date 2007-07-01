@@ -17,7 +17,10 @@ Url             : http://www.scummvm.org
 
 Source		: %{name}-%{version}.tar.bz2
 Source1		: libmad-0.15.1b.tar.bz2
-Source2		: mpeg2dec-0.4.0b.tar.bz2
+Source2		: mpeg2dec-0.4.1.tar.bz2
+Source3		: kyra.dat
+Source4		: queen.tbl
+Source5		: sky.cpt
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root
 
 BuildRequires: desktop-file-utils
@@ -34,11 +37,12 @@ BuildRequires: SDL-devel >= 1.2.2
 %description
 ScummVM is an interpreter that will play graphic adventure games written for
 LucasArts' SCUMM virtual machine (such as Day of the Tentacle and 
-Monkey Island), Adventure Soft's Simon the Sorcerer 1, 2 and Feeble Files, 
+Monkey Island), Sierra's AGI adventures (such as early King's Quest and 
+Space Quest games), Adventure Soft's Simon the Sorcerer 1, 2 and Feeble Files, 
 Revolution Software's Beneath a Steel Sky and Broken Sword 1 and 2,
 Interactive Binary Illusions' Flight of the Amazon Queen,
-Coktel Vision's Gobliiins, Wyrmkeep's Inherit the Earth and Westwood's
-Legend of Kyrandia.
+Coktel Vision's Gobliiins, Wyrmkeep's Inherit the Earth, Westwood's
+Legend of Kyrandia, and various others.
 
 #------------------------------------------------------------------------------
 #   install scripts
@@ -49,8 +53,8 @@ mkdir tmp
 
 %build
 (cd libmad-0.15.1b; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
-(cd mpeg2dec-0.4.0; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
-./configure --with-mad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-mpeg2-prefix=%{_builddir}/scummvm-%{version}/tmp --prefix=%{_prefix}
+(cd mpeg2dec-0.4.1; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
+./configure --with-mad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-mpeg2-prefix=%{_builddir}/scummvm-%{version}/tmp --prefix=%{_prefix} --enable-release
 make
 
 %install
@@ -59,6 +63,10 @@ install -m644 -D dists/scummvm.6 %{buildroot}%{_mandir}/man6/scummvm.6
 install -m644 -D icons/scummvm.xpm %{buildroot}%{_datadir}/pixmaps/scummvm.xpm
 install -m644 -D gui/themes/modern.ini %{buildroot}%{_datadir}/scummvm/modern.ini
 install -m644 -D gui/themes/modern.zip %{buildroot}%{_datadir}/scummvm/modern.zip
+install -m644 -D dists/pred.dic %{buildroot}%{_datadir}/scummvm/pred.dic
+install -m644 -D %{_sourcedir}/kyra.dat %{buildroot}%{_datadir}/scummvm/kyra.dat
+install -m644 -D %{_sourcedir}/queen.tbl %{buildroot}%{_datadir}/scummvm/queen.tbl
+install -m644 -D %{_sourcedir}/sky.cpt %{buildroot}%{_datadir}/scummvm/sky.cpt
 desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications dists/scummvm.desktop
 
 %clean
@@ -69,11 +77,15 @@ rm -Rf ${RPM_BUILD_ROOT}
 #------------------------------------------------------------------------------
 %files
 %defattr(0644,root,root,0755)
-%doc AUTHORS README NEWS COPYING
+%doc AUTHORS README NEWS COPYING COPYRIGHT
 %attr(0755,root,root)%{_bindir}/scummvm
 %{_datadir}/applications/*
 %{_datadir}/pixmaps/scummvm.xpm
 %{_datadir}/scummvm/modern.*
+%{_datadir}/scummvm/pred.dic
+%{_datadir}/scummvm/kyra.dat
+%{_datadir}/scummvm/queen.tbl
+%{_datadir}/scummvm/sky.cpt
 %{_mandir}/man6/scummvm.6*
 
 #------------------------------------------------------------------------------

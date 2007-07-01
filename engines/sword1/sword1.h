@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +27,7 @@
 #define SWORD1_H
 
 #include "engines/engine.h"
+#include "common/events.h"
 #include "common/util.h"
 #include "sword1/sworddefs.h"
 
@@ -89,7 +93,7 @@ private:
 	uint8 mainLoop(void);
 
 	uint16 _mouseX, _mouseY, _mouseState;
-	uint8 _keyPressed;
+	Common::KeyState _keyPressed;
 
 	ResMan		*_resMan;
 	ObjectMan	*_objectMan;

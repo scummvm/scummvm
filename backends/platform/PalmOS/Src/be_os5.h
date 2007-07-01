@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -109,6 +110,8 @@ private:
 	typedef void (OSystem_PalmOS5::*RendererProc)(RectangleType &r, PointType &p);
 	RendererProc _render;
 
+	Graphics::Surface _framebuffer;
+
 	OverlayColor *_overlayP;
 	WinHandle _overlayH, _workScreenH;
 	int16 *_workScreenP;
@@ -130,8 +133,7 @@ private:
 	void calc_scale();
 
 	void render_landscapeAny(RectangleType &r, PointType &p);
-	void render_landscape(RectangleType &r, PointType &p);
-	void render_portrait(RectangleType &r, PointType &p);
+	void render_landscape15x(RectangleType &r, PointType &p);
 	void render_1x(RectangleType &r, PointType &p);
 	WinHandle alloc_screen(Coord w, Coord h);
 	virtual void draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color = 0);
@@ -168,7 +170,8 @@ public:
 
 	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	void clearScreen();
-	bool grabRawScreen(Graphics::Surface *surf);
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 
 	void setCursorPalette(const byte *colors, uint start, uint num);
 	void disableCursorPalette(bool disable);

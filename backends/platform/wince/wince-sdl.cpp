@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -176,7 +179,6 @@ int SDL_main(int argc, char **argv) {
 #endif
 	
 	CEDevice::init();
-	OSystem_WINCE3::initScreenInfos();
 	
 	/* Redirect standard input and standard output */
 	strcpy(stdout_fname, getcwd(NULL, MAX_PATH));
@@ -265,16 +267,6 @@ static Uint32 timer_handler_wrapper(Uint32 interval) {
 
 void OSystem_WINCE3::initBackend()
 {
-	// Initialize global key mapping
-	GUI::Actions::init();
-	GUI_Actions::Instance()->initInstanceMain(this);
-	if (!GUI_Actions::Instance()->loadMapping()) {	// error during loading means not present/wrong version
-		warning("Setting default action mappings.");
-		GUI_Actions::Instance()->saveMapping();	// write defaults
-	}
-
-	loadDeviceConfiguration();
-
 	// Instantiate our own sound mixer
 	// mixer init is postponed until a game engine is selected.
 	if (_mixer == 0) {
@@ -290,6 +282,23 @@ void OSystem_WINCE3::initBackend()
 
 	// Chain init
 	OSystem_SDL::initBackend();
+
+	// Query SDL for screen size and init screen dependent stuff
+	OSystem_WINCE3::initScreenInfos();
+	_isSmartphone = CEDevice::isSmartphone();
+	create_toolbar();
+	_hasSmartphoneResolution = CEDevice::hasSmartphoneResolution() || CEDevice::isSmartphone();
+	if (_hasSmartphoneResolution) _panelVisible = false;	// init correctly in smartphones
+
+	// Initialize global key mapping
+	GUI::Actions::init();
+	GUI_Actions::Instance()->initInstanceMain(this);
+	if (!GUI_Actions::Instance()->loadMapping()) {	// error during loading means not present/wrong version
+		warning("Setting default action mappings.");
+		GUI_Actions::Instance()->saveMapping();	// write defaults
+	}
+
+	loadDeviceConfiguration();
 }
 
 int OSystem_WINCE3::getScreenWidth() {
@@ -303,8 +312,10 @@ int OSystem_WINCE3::getScreenHeight() {
 void OSystem_WINCE3::initScreenInfos() {
 	// sdl port ensures that we use correctly full screen
 	_isOzone = 0;
-	_platformScreenWidth = GetSystemMetrics(SM_CXSCREEN);
-	_platformScreenHeight = GetSystemMetrics(SM_CYSCREEN);
+	SDL_Rect **r;
+	r = SDL_ListModes(NULL, 0);
+	_platformScreenWidth = r[0]->w;
+	_platformScreenHeight = r[0]->h;
 }
 
 bool OSystem_WINCE3::isOzone() {
@@ -316,21 +327,17 @@ bool OSystem_WINCE3::isOzone() {
 
 OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	_orientationLandscape(0), _newOrientation(0), _panelInitialized(false),
-	_panelVisible(true), _panelStateForced(false), _forceHideMouse(false),
+	_panelVisible(true), _panelStateForced(false), _forceHideMouse(false), _unfilteredkeys(false),
 	_freeLook(false), _forcePanelInvisible(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
 	_scalersChanged(false), _monkeyKeyboard(false), _lastKeyPressed(0), _tapTime(0),
 	_saveToolbarState(false), _saveActiveToolbar(NAME_MAIN_PANEL), _rbutton(false), _hasfocus(true),
 	_usesEmulatedMouse(false), _mouseBackupOld(NULL), _mouseBackupToolbar(NULL), _mouseBackupDim(0)
 {
-	_isSmartphone = CEDevice::isSmartphone();
-	_hasSmartphoneResolution = CEDevice::hasSmartphoneResolution() || CEDevice::isSmartphone();
 	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
 	if (_isSmartphone) {
 		_mouseCurState.x = 20;
 		_mouseCurState.y = 20;
 	}
-	if (_hasSmartphoneResolution) _panelVisible = false;	// init correctly in smartphones
-	create_toolbar();
 
 	_mixer = 0;
 	_screen = NULL;
@@ -761,6 +768,7 @@ void OSystem_WINCE3::setFeatureState(Feature f, bool enable) {
 	switch(f) {
 		case kFeatureFullscreenMode:
 			return;
+
 		case kFeatureVirtualKeyboard:
 			if (_hasSmartphoneResolution)
 				return;
@@ -780,6 +788,12 @@ void OSystem_WINCE3::setFeatureState(Feature f, bool enable) {
 					//_toolbarHandler.setVisible(_saveToolbarState);
 				}
 			return;
+
+		case kFeatureDisableKeyFiltering:
+			if (_hasSmartphoneResolution)
+				_unfilteredkeys = enable;
+			return;
+
 		default:
 			OSystem_SDL::setFeatureState(f, enable);
 	}
@@ -912,7 +926,6 @@ void OSystem_WINCE3::update_game_settings() {
 }
 
 void OSystem_WINCE3::initSize(uint w, uint h) {
-
 	if (_hasSmartphoneResolution && h == 240)
 		h = 200;  // mainly for the launcher
 
@@ -975,7 +988,6 @@ int OSystem_WINCE3::getDefaultGraphicsMode() const {
 }
 
 bool OSystem_WINCE3::update_scalers() {
-
 	if (_mode != GFX_NORMAL)
 		return false;
 
@@ -984,12 +996,21 @@ bool OSystem_WINCE3::update_scalers() {
 	if (CEDevice::hasPocketPCResolution()) {
 		if ( 	(!_orientationLandscape && (_screenWidth == 320 || !_screenWidth)) 
 			|| CEDevice::hasSquareQVGAResolution() ) {
-			_scaleFactorXm = 3;
-			_scaleFactorXd = 4;
-			_scaleFactorYm = 1;
-			_scaleFactorYd = 1;
-			_scalerProc = PocketPCPortrait;
-			_modeFlags = 0;
+			if (getScreenWidth() != 320) {
+				_scaleFactorXm = 3;
+				_scaleFactorXd = 4;
+				_scaleFactorYm = 1;
+				_scaleFactorYd = 1;
+				_scalerProc = PocketPCPortrait;
+				_modeFlags = 0;
+			} else {
+				_scaleFactorXm = 1;
+				_scaleFactorXd = 1;
+				_scaleFactorYm = 1;
+				_scaleFactorYd = 1;
+				_scalerProc = Normal1x;
+				_modeFlags = 0;
+			}
 		} else if ( _orientationLandscape && (_screenWidth == 320 || !_screenWidth)) {
 			Common::String gameid(ConfMan.get("gameid"));	// consider removing this check and start honoring the _adjustAspectRatio flag
 			if (!_panelVisible && !_hasSmartphoneResolution  && !_overlayVisible && !(strncmp(gameid.c_str(), "zak", 3) == 0)) {
@@ -1566,6 +1587,17 @@ void OSystem_WINCE3::internUpdateScreen() {
 	_forceFull = false;
 }
 
+Graphics::Surface *OSystem_WINCE3::lockScreen() {
+	// FIXME: Fingolfing asks: Why is undrawMouse() needed here?
+	// Please document this.
+	undrawMouse();
+	return OSystem_SDL::lockScreen();
+}
+
+void OSystem_WINCE3::unlockScreen() {
+	OSystem_SDL::unlockScreen();
+}
+
 bool OSystem_WINCE3::saveScreenshot(const char *filename) {
 	assert(_hwscreen != NULL);
 
@@ -2050,10 +2082,22 @@ void OSystem_WINCE3::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 	OSystem_SDL::addDirtyRect(x, y, w, h, false);
 }
 
-static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode)
+static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode, bool unfilter)
 {
 	if (GUI::Actions::Instance()->mappingActive())
 		return key;
+
+	if (unfilter) {
+		switch (key) {
+			case SDLK_ESCAPE:
+				return SDLK_BACKSPACE;
+			case SDLK_F8:
+				return SDLK_ASTERISK;
+			case SDLK_F9:
+				return SDLK_HASH;
+		}
+		return key;
+	}
 
 	if (key >= SDLK_KP0 && key <= SDLK_KP9) {
 		return key - SDLK_KP0 + '0';
@@ -2061,7 +2105,7 @@ static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode)
 		return key;
 	} else if (unicode) {
 		return unicode;
-	} else if (key >= 'a' && key <= 'z' && mod & KMOD_SHIFT) {
+	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
 		return key & ~0x20;
 	} else if (key >= SDLK_NUMLOCK && key <= SDLK_EURO) {
 		return 0;
@@ -2096,9 +2140,9 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 	while(SDL_PollEvent(&ev)) {
 		switch(ev.type) {
 		case SDL_KEYDOWN:
-			// KMOD_RESERVED is used if the key has been injected by an external buffer
 			debug(1, "Key down %X %s", ev.key.keysym.sym, SDL_GetKeyName((SDLKey)ev.key.keysym.sym));
-			if (ev.key.keysym.mod != KMOD_RESERVED) {
+			// KMOD_RESERVED is used if the key has been injected by an external buffer
+			if (ev.key.keysym.mod != KMOD_RESERVED && !_unfilteredkeys) {
 				keyEvent = true;
 				_lastKeyPressed = ev.key.keysym.sym;
 				_keyRepeatTime = currentTime;
@@ -2108,19 +2152,27 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 					return true;
 			}
 
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = ev.key.keysym.sym;
-			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-
 			if (GUI_Actions::Instance()->mappingActive())
 				event.kbd.flags = 0xFF;
+			else if (ev.key.keysym.sym == SDLK_PAUSE) {
+				_lastKeyPressed = 0;
+				event.type = Common::EVENT_PREDICTIVE_DIALOG;
+				return true;
+			}
+
+			event.type = Common::EVENT_KEYDOWN;
+			if (!_unfilteredkeys)
+				event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
+			else
+				event.kbd.keycode = (Common::KeyCode)mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
+			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
 
 			return true;
 
 		case SDL_KEYUP:
-			// KMOD_RESERVED is used if the key has been injected by an external buffer
 			debug(1, "Key up %X %s", ev.key.keysym.sym, SDL_GetKeyName((SDLKey)ev.key.keysym.sym));
-			if (ev.key.keysym.mod != KMOD_RESERVED) {
+			// KMOD_RESERVED is used if the key has been injected by an external buffer
+			if (ev.key.keysym.mod != KMOD_RESERVED && !_unfilteredkeys) {
 				keyEvent = true;
 				_lastKeyPressed = 0;
 
@@ -2128,12 +2180,19 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 					return true;
 			}
 
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = ev.key.keysym.sym;
-			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-
 			if (GUI_Actions::Instance()->mappingActive())
 				event.kbd.flags = 0xFF;
+			else if (ev.key.keysym.sym == SDLK_PAUSE) {
+				_lastKeyPressed = 0;
+				return false;	// chew up the show agi dialog key up event
+			}
+
+			event.type = Common::EVENT_KEYUP;
+			if (!_unfilteredkeys)
+				event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
+			else
+				event.kbd.keycode = (Common::KeyCode)mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
+			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
 
 			return true;
 

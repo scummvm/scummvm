@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -278,9 +279,9 @@ static const GameDisplayInfo ITE_DisplayInfo = {
 
 
 //TODO: ihnm
-#define IHNM_CONVERSE_MAX_TEXT_WIDTH (256 - 60)
+#define IHNM_CONVERSE_MAX_TEXT_WIDTH (485 - 8)
 #define IHNM_CONVERSE_TEXT_HEIGHT       10
-#define IHNM_CONVERSE_TEXT_LINES        10
+#define IHNM_CONVERSE_TEXT_LINES        11
 
 static PanelButton IHNM_MainPanelButtons[] = {
 	{kPanelButtonVerb,		106,12,		114,30,	kVerbIHNMWalk,'w',0,	0,1,0},
@@ -291,8 +292,8 @@ static PanelButton IHNM_MainPanelButtons[] = {
 	{kPanelButtonVerb,		223,44,		114,30, kVerbIHNMSwallow,'s',0,	10,11,0},
 	{kPanelButtonVerb,		223,76,		114,30, kVerbIHNMGive,'g',0,	12,13,0},
 	{kPanelButtonVerb,		223,108,	114,30, kVerbIHNMPush,'p',0,	14,15,0},
-	{kPanelButtonArrow,		606,22,		20,25,	-1,'[',0,			0,0,0}, //TODO: arrow Sprite Numbers
-	{kPanelButtonArrow,		606,108,	20,25,	1,']',0,			0,0,0},
+	{kPanelButtonArrow,		606,22,		20,25,	-1,'[',0,			2,3,4},	// TODO: IHNM needs more states hre
+	{kPanelButtonArrow,		606,108,	20,25,	1,']',0,			6,7,8},
 
 	{kPanelButtonInventory,	357 + 64*0,18,	54,54,	0,'-',0,	0,0,0},
 	{kPanelButtonInventory,	357 + 64*1,18,	54,54,	1,'-',0,	0,0,0},
@@ -306,50 +307,60 @@ static PanelButton IHNM_MainPanelButtons[] = {
 };
 
 static PanelButton IHNM_ConversePanelButtons[] = {
-	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 0, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	0,'1',0,	0,0,0},
-	{kPanelButtonConverseText,	52,18 + IHNM_CONVERSE_TEXT_HEIGHT * 1, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	1,'2',0,	0,0,0},
-	{kPanelButtonConverseText,	52,18 + IHNM_CONVERSE_TEXT_HEIGHT * 2, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	2,'3',0,	0,0,0},
-	{kPanelButtonConverseText,	52,18 + IHNM_CONVERSE_TEXT_HEIGHT * 3, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	3,'4',0,	0,0,0},
-	//.....
-	{kPanelButtonArrow,			606,22,		20,25,	-1,'[',0,	0,0,0}, //TODO: arrow Sprite Numbers
-	{kPanelButtonArrow,			606,108,	20,25,	1,']',0,	0,0,0}
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 0, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		0,'1',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 1, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		1,'2',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 2, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		2,'3',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 3, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		3,'4',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 4, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		4,'5',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 5, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		5,'6',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 6, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		6,'7',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 7, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		7,'8',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 8, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		8,'9',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 9, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,		9,'10',0,	0,0,0},
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 10, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	10,'11',0,	0,0,0},
+	{kPanelButtonArrow,			606,22,		20,25,	-1,'[',0,			2,3,4},	// TODO: IHNM needs more states hre
+	{kPanelButtonArrow,			606,108,	20,25,	1,']',0,			6,7,8},
 };
 
 static PanelButton IHNM_OptionPanelButtons[] = {
-	//TODO: Add the rest of the buttons
+	{kPanelButtonOptionSlider,	421,16, 16,138,	0,'-',0,	0,0,0},				//slider-scroller
 	{kPanelButtonOptionText,28,36,	0,0,	kTextReadingSpeed,'-',0, 0,0,0},	// text: read speed
 	{kPanelButtonOptionText,60,61,	0,0,	kTextMusic,'-',0, 0,0,0},			// text: music
 	{kPanelButtonOptionText,60,86,	0,0,	kTextSound,'-',0, 0,0,0},			// text: noise
-	// TODO: Add Voices text here
-	{kPanelButtonOption,	154,30, 79,23,	kTextReadingSpeed,'r',0,	0,0,0},	//read speed
-	{kPanelButtonOption,	154,55, 79,23,	kTextMusic,'m',0,	0,0,0},			//music
-	{kPanelButtonOption,	154,80, 79,23,	kTextSound,'n',0,	0,0,0},			//sound-noise
-	// TODO: Add Voices widget here
+	{kPanelButtonOptionText,56,111,	0,0,	kTextVoices,'-',0, 0,0,0},			// text: voices
+	{kPanelButtonOption,	153,29, 79,23,	kTextReadingSpeed,'r',0,	0,0,0},	//read speed
+	{kPanelButtonOption,	153,54, 79,23,	kTextMusic,'m',0,	0,0,0},			//music
+	{kPanelButtonOption,	153,79, 79,23,	kTextSound,'n',0,	0,0,0},			//sound-noise
+	{kPanelButtonOption,	153,104,79,23,	kTextVoices,'v',0,	0,0,0},			//voices
 	{kPanelButtonOption,	19,149,	200,25,	kTextQuitGame,'q',0,	0,0,0},		//quit
 	{kPanelButtonOption,	19,177,	200,25,	kTextContinuePlaying,'c',0,	0,0,0}, //continue
-	// TODO: Implement load/save
-	{kPanelButtonOption,	244,164, 79,23,	kTextLoad,'l',0,	0,0,0},			//load
-	{kPanelButtonOption,	335,164, 79,23,	kTextSave,'s',0,	0,0,0},			//save
+	{kPanelButtonOptionSaveFiles,	244,18, 170,138,	0,'-',0,	0,0,0},		//savefiles
+	{kPanelButtonOption,	242,162, 79,23,	kTextLoad,'l',0,	0,0,0},			//load
+	{kPanelButtonOption,	333,162, 79,23,	kTextSave,'s',0,	0,0,0},			//save
 };
 
 static PanelButton IHNM_QuitPanelButtons[] = {
-	//FIXME: Show the correct quit dialog background 
-	//TODO: Those coordinates might not be pixel perfect, check with the original interpreter
-	{kPanelButtonQuit,		25,80,	80,25,	kTextQuit,'q',0, 0,0,0},
-	{kPanelButtonQuit,		155,80,	80,25,	kTextCancel,'c',0, 0,0,0},
-	{kPanelButtonQuitText, -1,5,	0,0,	kTextQuitTheGameQuestion,'-',0, 0,0,0},
+	{kPanelButtonQuit,		25,79,	80,25,	kTextQuit,'q',0, 0,0,0},
+	{kPanelButtonQuit,		155,79,	80,25,	kTextCancel,'c',0, 0,0,0},
+	{kPanelButtonQuitText,	75,30,	0,0,	kTextQuitTheGameQuestion,'-',0, 0,0,0},
 };
 
 static PanelButton IHNM_LoadPanelButtons[] = {
-	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+	// TODO
+	{kPanelButtonLoad, 101,19, 60,16, kTextOK,'o',0, 0,0,0},
+	{kPanelButtonLoadText, -1,5, 0,0, kTextLoadSuccessful,'-',0, 0,0,0},
 };
 
 static PanelButton IHNM_SavePanelButtons[] = {
-	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+	// TODO
+	{kPanelButtonSave, 25,79, 80,25, kTextSave,'s',0, 0,0,0},
+	{kPanelButtonSave, 155,79, 80,25, kTextCancel,'c',0, 0,0,0},
+	{kPanelButtonSaveEdit, 26,57, 209,17, 0,'-',0, 0,0,0},
+	{kPanelButtonSaveText, 75,30, 0,0, kTextEnterSaveGameName,'-',0, 0,0,0},
 };
 
 
-static const GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
+static const GameDisplayInfo IHNM_DisplayInfo = {
 	640, 480,	// logical width&height
 
 	0,			// scene path y offset
@@ -369,41 +380,40 @@ static const GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	11, 12,		// left portrait x, y offset
 	-1, -1,		// right portrait x, y offset
 
-	-1, -1,		// inventory Up & Down button indexies
+	8, 9,		// inventory Up & Down button indexies
 	2, 4,		// inventory rows, columns
 
 	0, 328,		// main panel offsets
 	ARRAYSIZE(IHNM_MainPanelButtons),
 	IHNM_MainPanelButtons,
 
-	-1, -1,		// converse Up & Down button indexies
-
 	IHNM_CONVERSE_MAX_TEXT_WIDTH,
 	IHNM_CONVERSE_TEXT_HEIGHT,
 	IHNM_CONVERSE_TEXT_LINES,
+	11, 12,		// converse Up & Down button indexies
 	0, 328,		// converse panel offsets
 	ARRAYSIZE(IHNM_ConversePanelButtons),
 	IHNM_ConversePanelButtons,
 
-	-1, -1,		// save file index
-	0,			// optionSaveFileVisible
+	11, 0,		// save file index
+	15,			// optionSaveFileVisible
 	92, 46,		// option panel offsets
 	ARRAYSIZE(IHNM_OptionPanelButtons),
 	IHNM_OptionPanelButtons,
 
-	190,180,		// quit panel offsets
+	190,94,			// quit panel offsets
 	260,115,		// quit panel width & height
 	ARRAYSIZE(IHNM_QuitPanelButtons),
 	IHNM_QuitPanelButtons,
 
-	0, 0,			// load panel offsets
-	0, 0,			// load panel width & height
+	190, 94,		// load panel offsets
+	260, 115,		// load panel width & height
 	ARRAYSIZE(IHNM_LoadPanelButtons),
 	IHNM_LoadPanelButtons,
 
-	-1,				// save edit index
-	0, 0,			// save panel offsets
-	0, 0,			// save panel width & height
+	2,				// save edit index
+	190, 94,		// save panel offsets
+	260, 115,		// save panel width & height
 	ARRAYSIZE(IHNM_SavePanelButtons),
 	IHNM_SavePanelButtons,
 

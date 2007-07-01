@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * Copyright (C) 1999-2003 Sarien Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -150,6 +151,7 @@ int AgiEngine::decodeView(int n) {
 
 	assert(v != NULL);
 
+	_game.views[n].agi256_2 = (READ_LE_UINT16(v) == 0xf00f); // Detect AGI256-2 views by their header bytes
 	_game.views[n].descr = READ_LE_UINT16(v + 3) ? (char *)(v + READ_LE_UINT16(v + 3)) : (char *)(v + 3);
 
 	/* if no loops exist, return! */
@@ -186,9 +188,18 @@ int AgiEngine::decodeView(int n) {
 
 			vc->width = *(v + cofs);
 			vc->height = *(v + cofs + 1);
-			vc->transparency = *(v + cofs + 2) & 0xf;
-			vc->mirrorLoop = (*(v + cofs + 2) >> 4) & 0x7;
-			vc->mirror = (*(v + cofs + 2) >> 7) & 0x1;
+
+			if (!_game.views[n].agi256_2) {
+				vc->transparency = *(v + cofs + 2) & 0xf;
+				vc->mirrorLoop = (*(v + cofs + 2) >> 4) & 0x7;
+				vc->mirror = (*(v + cofs + 2) >> 7) & 0x1;
+			} else {
+				// Mirroring is disabled for AGI256-2 views because
+				// AGI256-2 uses whole 8 bits for the transparency variable.
+				vc->transparency = *(v + cofs + 2);
+				vc->mirrorLoop = 0;
+				vc->mirror = 0;
+			}
 
 			/* skip over width/height/trans|mirror data */
 			cofs += 3;

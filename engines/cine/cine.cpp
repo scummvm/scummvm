@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +25,6 @@
 
 #include "common/stdafx.h"
 #include "common/file.h"
-#include "common/fs.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/system.h"
@@ -69,12 +69,6 @@ CineEngine::~CineEngine() {
 		freePoldatDat();
 		freeErrmessDat();
 	}
-	
-	if (palFileHandleP);
-		delete palFileHandleP;
-
-	if (partFileHandleP);
-		delete partFileHandleP;
 }
 
 int CineEngine::init() {
@@ -83,9 +77,6 @@ int CineEngine::init() {
 		GUIErrorMessage("No valid games were found in the specified directory.");
 		return -1;
 	}
-	
-	palFileHandleP = new Common::File();
-	partFileHandleP = new Common::File();
 
 	// Initialize backend
 	_system->beginGFXTransaction();

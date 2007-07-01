@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +27,7 @@
 
 #include "base/plugins.h"
 
+#include "common/advancedDetector.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/fs.h"
@@ -74,24 +78,11 @@ static const PlainGameDescriptor lure_list[] = {
 using namespace Lure;
 
 GameList Engine_LURE_gameIDList() {
-	GameList games;
-	const PlainGameDescriptor *g = lure_list;
-
-	while (g->gameid) {
-		games.push_back(*g);
-		g++;
-	}
-	return games;
+	return GameList(lure_list);
 }
 
 GameDescriptor Engine_LURE_findGameID(const char *gameid) {
-	const PlainGameDescriptor *g = lure_list;
-	while (g->gameid) {
-		if (0 == scumm_stricmp(gameid, g->gameid))
-			break;
-		g++;
-	}
-	return GameDescriptor(g->gameid, g->description);
+	return Common::AdvancedDetector::findGameID(gameid, lure_list);
 }
 
 GameList Engine_LURE_detectGames(const FSList &fslist) {

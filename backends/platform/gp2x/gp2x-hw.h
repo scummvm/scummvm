@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2005-2006 John Willis (Portions of the GP2X Backend)
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -63,7 +64,6 @@ extern int	GP2X_mixer_get_volume();
 extern void	GP2X_mixer_move_volume(int);
 extern void GP2X_setCpuspeed(unsigned int cpuspeed);
 extern int GP2X_getBattLevel();
-
 
 extern void save_system_regs(void); /* save some registers */
 extern void set_display_clock_div(unsigned div);

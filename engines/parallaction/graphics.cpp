@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -303,8 +306,6 @@ void Gfx::floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color) {
 		d += SCREEN_WIDTH;
 	}
 
-	if (buffer == kBitFront) updateScreen();
-
 	return;
 }
 
@@ -347,8 +348,6 @@ void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer) {
 		d += (SCREEN_WIDTH - q.width());
 	}
 
-	if (buffer == kBitFront) updateScreen();
-
 	return;
 
 }
@@ -385,8 +384,6 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 		s += (r.width() - q.right + q.left);
 		d += (SCREEN_WIDTH - q.right + q.left);
 	}
-
-	if (buffer == kBitFront) updateScreen();
 
 	return;
 
@@ -854,7 +851,7 @@ Gfx::~Gfx() {
 
 	freeStaticCnv(_mouseComposedArrow);
 	delete _mouseComposedArrow;
-	
+
 	return;
 }
 

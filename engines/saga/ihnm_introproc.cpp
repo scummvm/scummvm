@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -96,6 +97,7 @@ int Scene::IHNMStartProc() {
 	// The original used the "play video" mechanism for the first part of
 	// the intro. We just use that panel mode.
 
+	_vm->_anim->setCutAwayMode(kPanelVideo);
 	_vm->_interface->setMode(kPanelVideo);
 
 	n_introscenes = ARRAYSIZE(IHNM_IntroList);
@@ -311,9 +313,7 @@ int Scene::IHNMIntroMovieProc3(int param) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue end of scene after a while
-		// TODO: I've increased the delay so the speech won't start
-		// until the music has ended. Could someone verify if that's
-		// the correct behaviour?
+		// The delay has been increased so the speech won't start until the music has ended
 		event.type = kEvTOneshot;
 		event.code = kSceneEvent;
 		event.op = kEventEnd;

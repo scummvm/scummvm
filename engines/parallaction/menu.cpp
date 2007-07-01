@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -85,9 +88,13 @@ const char *loadGameMsg[] = {
 #define SLOT_WIDTH		(BLOCK_WIDTH+2)
 
 
-static uint16 _dinoKey[] = { 5, 3, 6, 1, 4, 7 }; //
-static uint16 _donnaKey[] = { 0, 2, 8, 5, 5, 1 };
-static uint16 _doughKey[] = { 1, 7 ,7, 2, 2, 6 };
+static uint16 _amigaDinoKey[] = { 5, 3, 6, 2, 2, 7 };
+static uint16 _amigaDonnaKey[] = { 0, 3, 6, 2, 2, 6 };
+static uint16 _amigaDoughKey[] = { 1, 3 ,7, 2, 4, 6 };
+
+static uint16 _pcDinoKey[] = { 5, 3, 6, 1, 4, 7 };
+static uint16 _pcDonnaKey[] = { 0, 2, 8, 5, 5, 1 };
+static uint16 _pcDoughKey[] = { 1, 7 ,7, 2, 2, 6 };
 
 
 Menu::Menu(Parallaction *vm) {
@@ -102,9 +109,11 @@ Menu::~Menu() {
 
 void Menu::start() {
 
-	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
+	_vm->_disk->selectArchive((_vm->getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
 
 	splash();
+
+	_vm->_gfx->setFont(kFontMenu);
 
 	_language = chooseLanguage();
 	_vm->_disk->setLanguage(_language);
@@ -141,6 +150,8 @@ void Menu::newGame() {
 
 	const char **v14 = introMsg3;
 
+	_vm->_disk->selectArchive("disk1");
+
 	_vm->_disk->loadScenery("test", NULL);
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->swapBuffers();
@@ -176,14 +187,15 @@ void Menu::newGame() {
 uint16 Menu::chooseLanguage() {
 
 	if (_vm->getPlatform() == Common::kPlatformAmiga) {
-		// TODO: should return the language ID supported by this version
-		// this can be done with some flags in the detection structures
-		return 1;
+		if (!(_vm->getFeatures() & GF_LANG_MULT)) {
+			if (_vm->getFeatures() & GF_DEMO)
+				return 1;		// Amiga Demo supports English
+			else
+				return 0;		// The only other non multi-lingual version just supports Italian
+		}
 	}
 
 	// user can choose language in dos version
-
-	_vm->_gfx->setFont(kFontMenu);
 
 	_vm->_disk->loadSlide("lingua");
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
@@ -203,13 +215,29 @@ uint16 Menu::chooseLanguage() {
 		if (_mouseButtons == kMouseLeftUp) {
 			for (uint16 _si = 0; _si < 4; _si++) {
 
-				if (80 + _si*49 >= _vm->_mousePos.x) continue;
-				if (110 - _si*25 >= _vm->_mousePos.y) continue;
+				if (80 + _si * 49 >= _vm->_mousePos.x) continue;
+				if (110 - _si * 25 >= _vm->_mousePos.y) continue;
 
-				if (128 + _si*49 <= _vm->_mousePos.x) continue;
-				if (180 - _si*25 <=_vm->_mousePos.y) continue;
+				if (128 + _si * 49 <= _vm->_mousePos.x) continue;
+				if (180 - _si * 25 <= _vm->_mousePos.y) continue;
 
 //				beep();
+
+				switch (_si) {
+				case 0:
+					if (!(_vm->getFeatures() & GF_LANG_IT))
+						continue;
+				case 1:
+					if (!(_vm->getFeatures() & GF_LANG_FR))
+						continue;
+				case 2:
+					if (!(_vm->getFeatures() & GF_LANG_EN))
+						continue;
+				case 3:
+					if (!(_vm->getFeatures() & GF_LANG_DE))
+						continue;
+				}
+
 				return _si;
 			}
 		}
@@ -312,7 +340,7 @@ void Menu::selectCharacter() {
 
 	_vm->_gfx->setFont(kFontMenu);
 
-	_vm->_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
+	_vm->_disk->selectArchive((_vm->getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
 
 	_vm->_disk->loadSlide("password");	// loads background into kBitBack buffer
 
@@ -327,6 +355,10 @@ void Menu::selectCharacter() {
 
 		_vm->_gfx->displayString(60, 30, introMsg1[_language]);			// displays message
 		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
+
+		_donna_points = 0;
+		_dino_points = 0;
+		_dough_points = 0;
 
 		while (_di < 6) {
 
@@ -358,12 +390,21 @@ void Menu::selectCharacter() {
 
 //				beep();
 
-				if (_dinoKey[_di] == _si)
-					_dino_points++;  // dino
-				if (_donnaKey[_di] == _si)
-					_donna_points++;  // donna
-				if (_doughKey[_di] == _si)
-					_dough_points++;  // dough
+				if (_vm->getPlatform() == Common::kPlatformAmiga && (_vm->getFeatures() & GF_LANG_MULT)) {
+					if (_amigaDinoKey[_di] == _si)
+						_dino_points++;  // dino
+					if (_amigaDonnaKey[_di] == _si)
+						_donna_points++;  // donna
+					if (_amigaDoughKey[_di] == _si)
+						_dough_points++;  // dough
+				} else {
+					if (_pcDinoKey[_di] == _si)
+						_dino_points++;  // dino
+					if (_pcDonnaKey[_di] == _si)
+						_donna_points++;  // donna
+					if (_pcDoughKey[_di] == _si)
+						_dough_points++;  // dough
+				}
 
 				_di++;
 			}

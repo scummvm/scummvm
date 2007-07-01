@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -207,7 +210,7 @@ uint16 Parallaction::askDialoguePassword(Dialogue *q, StaticCnv *face) {
 		_gfx->displayBalloonString(_answerBalloonX[0] + 5,	_answerBalloonY[0] + _answerBalloonH[0] - 15, "> ", 0);
 
 		Common::Event e;
-		while (e.kbd.ascii != 0xD && passwordLen < MAX_PASSWORD_LENGTH) {
+		while (e.kbd.ascii != Common::KEYCODE_RETURN && passwordLen < MAX_PASSWORD_LENGTH) {
 
 			// FIXME: see comment for updateInput()
 			if (!g_system->getEventManager()->pollEvent(e)) continue;
@@ -475,6 +478,8 @@ int16 getHoverAnswer(int16 x, int16 y, Question *q) {
 
 void Parallaction::enterDialogue() {
 
+	showCursor(false);
+	
 	return;
 }
 
@@ -484,6 +489,8 @@ void Parallaction::exitDialogue() {
 
 	refreshInventory(_characterName);
 
+	showCursor(true);
+	
 	return;
 }
 

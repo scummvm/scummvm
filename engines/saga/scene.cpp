@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -476,6 +477,7 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 	if (sceneNumber != -2) {
 		endScene();
 	}
+
 	loadScene(&sceneParams);
 }
 
@@ -565,6 +567,8 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	event.op = kEventSetBusyCursor;
 	event.time = 0;
 	_vm->_events->queue(&event);
+
+	_chapterPointsChanged = false;
 
 	if ((_vm->getGameType() == GType_IHNM) && (loadSceneParams->chapter != NO_CHAPTER_CHANGE)) {
 		if (loadSceneParams->loadFlag != kLoadBySceneNumber) {
@@ -1206,6 +1210,26 @@ void Scene::endScene() {
 
 	_sceneLoaded = false;
 
+}
+
+void Scene::restoreScene() {
+	// There is no implementation for tiled scenes, since this function is only used
+	// in IHNM, which has no tiled scenes
+
+	Event event;
+
+	_vm->_gfx->showCursor(false);
+	_vm->_gfx->restorePalette();
+
+	event.type = kEvTImmediate;
+	event.code = kBgEvent;
+	event.op = kEventDisplay;
+	event.param = kEvPNoSetPalette;
+	event.time = 0;
+	event.duration = 0;
+	_vm->_events->queue(&event);
+
+	_vm->_gfx->showCursor(true);
 }
 
 void Scene::cmdSceneChange(int argc, const char **argv) {

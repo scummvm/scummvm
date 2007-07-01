@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,16 +38,18 @@ namespace Saga {
 Console::Console(SagaEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
-	DCmd_Register("continue",         WRAP_METHOD(Console, Cmd_Exit));
+	DCmd_Register("continue",			WRAP_METHOD(Console, Cmd_Exit));
 
 	// CVAR_Register_I(&_soundEnabled, "sound", NULL, CVAR_CFG, 0, 1);
 	// CVAR_Register_I(&_musicEnabled, "music", NULL, CVAR_CFG, 0, 1);
 
 	// Actor commands
-	DCmd_Register("actor_walk_to",    WRAP_METHOD(Console, cmdActorWalkTo));
+	DCmd_Register("actor_walk_to",		WRAP_METHOD(Console, cmdActorWalkTo));
 
 	// Animation commands
-	DCmd_Register("anim_info",        WRAP_METHOD(Console, Cmd_AnimInfo));
+	DCmd_Register("anim_info",			WRAP_METHOD(Console, cmdAnimInfo));
+	DCmd_Register("cutaway_info",		WRAP_METHOD(Console, cmdCutawayInfo));
+	DCmd_Register("play_cutaway",		WRAP_METHOD(Console, cmdPlayCutaway));
 
 	// Game stuff
 
@@ -61,9 +64,17 @@ Console::Console(SagaEngine *vm) : GUI::Debugger() {
 #endif
 
 	// Scene commands
-	DCmd_Register("scene_change",     WRAP_METHOD(Console, cmdSceneChange));
-	DCmd_Register("action_map_info",  WRAP_METHOD(Console, cmdActionMapInfo));
-	DCmd_Register("object_map_info",  WRAP_METHOD(Console, cmdObjectMapInfo));
+	DCmd_Register("current_scene",		WRAP_METHOD(Console, cmdCurrentScene));
+	DCmd_Register("current_chapter",	WRAP_METHOD(Console, cmdCurrentChapter));
+	DCmd_Register("scene_change",		WRAP_METHOD(Console, cmdSceneChange));
+	DCmd_Register("chapter_change",		WRAP_METHOD(Console, cmdChapterChange));
+
+	DCmd_Register("action_map_info",	WRAP_METHOD(Console, cmdActionMapInfo));
+	DCmd_Register("object_map_info",	WRAP_METHOD(Console, cmdObjectMapInfo));
+
+	// Panel commands
+	DCmd_Register("current_panel_mode",	WRAP_METHOD(Console, cmdCurrentPanelMode));
+	DCmd_Register("set_panel_mode",		WRAP_METHOD(Console, cmdSetPanelMode));
 }
 
 Console::~Console() {
@@ -77,9 +88,32 @@ bool Console::cmdActorWalkTo(int argc, const char **argv) {
 	return true;
 }
 
-
-bool Console::Cmd_AnimInfo(int argc, const char **argv) {
+bool Console::cmdAnimInfo(int argc, const char **argv) {
 	_vm->_anim->animInfo();
+	return true;
+}
+
+bool Console::cmdCutawayInfo(int argc, const char **argv) {
+	_vm->_anim->cutawayInfo();
+	return true;
+}
+
+bool Console::cmdPlayCutaway(int argc, const char **argv) {
+	if (argc != 2)
+		DebugPrintf("Usage: %s <Cutaway number>\n", argv[0]);
+	else
+		_vm->_anim->playCutaway(atoi(argv[1]), false);
+	return true;
+}
+
+bool Console::cmdCurrentScene(int argc, const char **argv) {
+	DebugPrintf("Current Scene is: %i, scene resource id: %i\n", 
+		_vm->_scene->currentSceneNumber(), _vm->_scene->currentSceneResourceId());
+	return true;
+}
+
+bool Console::cmdCurrentChapter(int argc, const char **argv) {
+	DebugPrintf("Current Chapter is: %i\n", _vm->_scene->currentChapterNumber());
 	return true;
 }
 
@@ -91,6 +125,16 @@ bool Console::cmdSceneChange(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdChapterChange(int argc, const char **argv) {
+	if (argc != 3)
+		DebugPrintf("Usage: %s <Chapter number> <Scene number>\n", argv[0]);
+	else {
+		_vm->_scene->setChapterNumber(atoi(argv[2]));
+		_vm->_scene->cmdSceneChange(argc, argv);
+	}
+	return true;
+}
+
 bool Console::cmdActionMapInfo(int argc, const char **argv) {
 	_vm->_scene->cmdActionMapInfo();
 	return true;
@@ -98,6 +142,19 @@ bool Console::cmdActionMapInfo(int argc, const char **argv) {
 
 bool Console::cmdObjectMapInfo(int argc, const char **argv) {
 	_vm->_scene->cmdObjectMapInfo();
+	return true;
+}
+
+bool Console::cmdCurrentPanelMode(int argc, const char **argv) {
+	DebugPrintf("Current Panel Mode is: %i\n", _vm->_interface->getMode());
+	return true;
+}
+
+bool Console::cmdSetPanelMode(int argc, const char **argv) {
+	if (argc != 2)
+		DebugPrintf("Usage: %s <Panel mode number>\n", argv[0]);
+	else
+		_vm->_interface->setMode(atoi(argv[1]));
 	return true;
 }
 

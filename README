@@ -4,8 +4,6 @@ Last updated:    $Date$
 
 TODO: Resolve all the TODOs scattered through this file before release.
 
-TODO: Document the mass-add feature of the launcher (shift+"Add Game...")
-
 For more information, compatibility lists, details on donating, the latest
 release, progress reports and more, please visit the ScummVM home page
 at: http://www.scummvm.org/
@@ -31,7 +29,8 @@ Table of Contents:
  * 3.12 Simon the Sorcerer notes
  * 3.13 The Feeble Files notes
  * 3.14 The Legend of Kyrandia notes
- * 3.15 Known Problems
+ * 3.15 Sierra AGI games Predictive Input Dialog notes
+ * 3.16 Known Problems
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -139,15 +138,26 @@ SCUMM Games by LucasArts:
      The Dig                                     [dig]
      The Curse of Monkey Island                  [comi]
 
-Other Games:
-     Beneath a Steel Sky                         [sky]
-     Broken Sword 1: The Shadow of the Templars  [sword1]
-     Broken Sword 2: The Smoking Mirror          [sword2]
-     Flight of the Amazon Queen                  [queen]
-     Future Wars                                 [fw]
-     Gobliiins                                   [gob1]
-     Gobliins 2                                  [gob2]
-     Inherit the Earth: Quest for the Orb        [ite]
+AGI Games by Sierra:
+     The Black Cauldron                          [bc]
+     Gold Rush!                                  [goldrush]
+     King's Quest I                              [kq1]
+     King's Quest II                             [kq2]
+     King's Quest III                            [kq3]
+     King's Quest IV                             [kq4]
+     Leisure Suit Larry in the Land of the 
+     Lounge Lizards                              [lsl1]
+     Mixed-Up Mother Goose                       [mixedup]
+     Manhunter 1: New York                       [mh1]
+     Manhunter 2: San Francisco                  [mh2]
+     Police Quest I: In Pursuit of the Death 
+     Angel                                       [pq1]
+     Space Quest I: The Sarien Encounter         [sq1]
+     Space Quest II: Vohaul's Revenge            [sq2]
+     Fanmade Games                               [agi-fanmade]
+
+AGOS Games by Adventuresoft / Horrorsoft:
+     Elvira - Mistress of the Dark               [elvira1]
      Simon the Sorcerer 1                        [simon1]
      Simon the Sorcerer 2                        [simon2]
      Simon the Sorcerer's Puzzle Pack
@@ -159,6 +169,22 @@ Other Games:
      Simon the Sorcerer's Puzzle Pack
          - Swampy Adventures                     [swampy]
      The Feeble Files                            [feeble]
+
+GOB Games by Cocktel Vision:
+     Bargon Attack                               [bargon]
+     Gobliiins                                   [gob1]
+     Gobliins 2                                  [gob2]
+     Goblins 3                                   [gob3]
+     Ween: The Prophecy                          [ween]
+
+Other Games:
+     Beneath a Steel Sky                         [sky]
+     Broken Sword 1: The Shadow of the Templars  [sword1]
+     Broken Sword 2: The Smoking Mirror          [sword2]
+     Flight of the Amazon Queen                  [queen]
+     Future Wars                                 [fw]
+     Inherit the Earth: Quest for the Orb        [ite]
+     Nippon Safes Inc.                           [nippon]
      The Legend of Kyrandia                      [kyra1]
      Touche: The Adventures of the Fifth
          Musketeer                               [touche]
@@ -214,6 +240,7 @@ site and view the compatibility chart.
      Backyard Soccer                             [soccer]
      Blue's ABC Time                             [BluesABCTime]
      Blue's Birthday Adventure                   [BluesBirthday]
+     Elvira II - The Jaws of Cerberus            [elvira2]
      SPY Fox 3: Operation Ozone                  [spyozon]
 
 The following games are based on the SCUMM engine, but NOT supported
@@ -363,20 +390,22 @@ the files appear on both CDs, but again they're identical.
 3.7) Broken Sword notes:
 ---- -------------------
 Broken Sword 1 and 2 both come with in-game cutscenes compressed using
-RAD Game Tools legacy Smacker(tm) format. As RAD is unwilling to open
+RAD Game Tools' legacy Smacker(tm) format. As RAD is unwilling to open
 the older legacy versions of this format to us, and have requested we not
 reverse engineer it, Revolution Software has kindly allowed us to provide
 re-encoded Broken Sword cutscenes for download on our website:
 
   http://www.scummvm.org/downloads.php
 
-These cutscenes are provided in MPEG2 format with OGG Vorbis audio.
-Viewing these cutscenes thus requires a version of ScummVM compiled
-with both libmpeg2 (preferably 0.4.0 or greater) and libVorbis support.
+These cutscenes are provided in DXA format with FLAC audio. Their quality
+is equal to the original games due to the use of lossless compression.
+Viewing these cutscenes requires a version of ScummVM compiled with both
+FLAC and zLib support.
 
-TODO
-TODO: What about DXA??? Mention it here, too???
-TODO
+For systems that are too slow to handle the decoding of FLAC audio,
+the audio for these cutscenes is provided separately as OGG Vorbis audio
+too. Viewing these cutscenes with OGG Vorbis audio requires a version of
+ScummVM compiled with both libVorbis and zLib support. 
 
 The cutscenes should be placed in the main game data directory. Note that
 currently this requires either copying the game to hard disk or burning
@@ -495,11 +524,6 @@ due to reasons described above. The cutscenes have to be re-encoded to DXA,
 which is the format used by the cutscenes in the Amiga and Macintosh versions.
 See the tools README for a brief guide on converting the cutscenes.
 
-TODO
-TODO: Maybe we should add a section dedicated to Smacker and DXA, and refer
-TODO  to it from here, and also from section 3.7 (Broken Sword) ?
-TODO
-
 To use the speech files with ScummVM, they need to be renamed as follows:
 Rename voices.wav on CD1 to voices1.wav
 Rename voices.wav on CD2 to voices2.wav
@@ -513,7 +537,58 @@ To run The Legend of Kyrandia under ScummVM you need the 'kyra.dat' file,
 which can be found on the 'Downloads' page of the ScummVM website.
 
 
-3.15) Known Problems:
+3.15) Sierra AGI games Predictive Input Dialog notes:
+----- -----------------------------------------------
+The Predictive Input Dialog is a ScummVM aid for running AGI engines games
+(which notoriously require command line input) on devices with limited keyboard
+support. In these situations since typing with emulated keyboards is quite
+tedious, commands can be entered quickly and easily via the Predictive Input
+Dialog.
+
+In order to enable predictive input in AGI games, you need to copy the pred.dic
+file in the ScummVM extras folder or the folder of the game you wish to play.
+This dictionary has been created by parsing through all known AGI games and
+contains the maximum set of common words.
+
+If the dictionary is detected, the Predictive Input Dialog is displayed either
+when you click on the command line area (wherever keyboard input is required,
+even in dialog boxes), or in some ports by pressing a designated hot key.
+
+The predictive input dialog operates in three modes, switchable by the
+(*)Pre/123/Abc button. The primary input method is the predictive mode (Pre)
+which resembles the way "fast typing" is performed at phones. The alphabet is
+divided into 9 sets which naturally map to the 9 number keys of the numeric
+keypad (0 is space). To type in a word, you press once the number of the set
+which contains the letter of the word you intend to type, then move on to the
+next. For example, to type the command 'look', you should press 5665. As you
+gradually type the intended word's numeric code, the dictionary is accessed for
+known words matching your input up to that point. As you press more keys, the
+prediction converges to the correct word. This is why the printed word may
+change dramatically between key presses.  There exist situations though where
+more than one words share the same numeric representation. For example the
+words 'quit' and 'suit' map to the same number, namely 7848. In these cases the
+(#)next button lights up. By pressing it, you can cycle through the list of
+words sharing the same code and finally accept the correct one by pressing
+(0)space or the Ok button. 
+
+The second input method (123) is the numeric input: Each key you press is
+entered verbatim as a number.
+
+The third input method (Abc) is the Multi-tap Alpha input mode. This mode is
+intended for entering free text, without assistance from the dictionary scheme
+of predictive (Pre) mode. The text is entered one letter at the time.  For each
+letter first press the number of the set which contains the letter you want,
+then use the (#)next button to cycle through the letters and repeat with
+another number. For example, to enter the word 'look' you must press the
+following: 5##6##6##5#
+
+The dialog is fully usable with the mouse, but a few provisions have been made
+in some ScummVM ports to make its use more comfortable by naturally mapping the
+functionality to the numeric keypad. Also, the dialog's buttons can be
+navigated with the arrow and the enter keys.
+
+
+3.16) Known Problems:
 ----- ---------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
@@ -580,7 +655,6 @@ the section on reporting bugs.
 
      The Legend of Kyrandia:
           - Amiga versions aren't supported
-          - FM-Towns version isn't supported
 
      Humongous Entertainment games:
           - No support for printing images
@@ -597,7 +671,7 @@ Supported platforms include (but are not limited to):
 
         UNIX            (Linux, Solaris, IRIX, *BSD)
         Windows
-        Windows Mobile  (iPAQ and other handheld devices)
+        Windows CE and Windows Mobile  (including Smartphones and PocketPCs)
         Mac OS X
         AmigaOS
         BeOS
@@ -650,7 +724,11 @@ directory to avoid this issue, are in section 6.0.
 
 ScummVM can be launched directly by running the executable. In this case,
 the built-in launcher will activate. From this, you can add games (click
-'Add Game'), or launch games which have already been configured.
+'Add Game'), or launch games which have already been configured. Games can
+also be added in mass quantities. By pressing shift + 'Add Game' (Note that
+the image turns to 'Mass Add'), you can then specify a directory to start in,
+and ScummVM will attempt to detect games in all subdirectories of that
+directory.
 
 ScummVM can also be launched into a game directly using Command Line
 arguments -- see the next section.
@@ -868,7 +946,6 @@ other games.
         Cmd-q                  - Quit (Mac OS X)
         Ctrl-q                 - Quit (other unices including Linux)
         Ctrl-z OR Alt-x        - Quit (other platforms)
-        Ctrl-f                 - Toggle fast mode
         Ctrl-m                 - Toggle mouse capture
         Ctrl-Alt 1-8           - Switch between graphics filters
         Ctrl-Alt + and -       - Increase/Decrease the scale factor
@@ -884,6 +961,7 @@ other games.
     SCUMM:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-d                 - Starts the debugger
+        Ctrl-f                 - Toggle fast mode
         Ctrl-g                 - Runs in really REALLY fast mode
         Ctrl-t                 - Switch between 'Speech only',
                                  'Speech and Subtitles' and 'Subtitles only'
@@ -892,11 +970,13 @@ other games.
         - and +                - Text speed, slower/faster
         F5                     - Displays a save/load box
         Alt-F5                 - Displays the original save/load box, if the
-                                 game has one. This is not intended for saving
-                                 or loading a game, and may even crash ScummVM
-                                 in some games, but it is currently the only
-                                 way to see your IQ points in Indiana Jones and
-                                 the Last Crusade without dying.
+                                 game has one. You can save and load games using
+                                 using this, however it is not intended for this
+                                 purpose, and may even crash ScummVM in some
+                                 games.
+        i                      - Displays IQ points (Indiana Jones and the Last
+                                 Crusade, and Indiana Jones and the Fate of
+                                 Atlantis)
         Space                  - Pauses
         Period (.)             - Skips current line of text in some games
         Enter                  - Simulate left mouse button press
@@ -904,13 +984,14 @@ other games.
 
     Beneath a Steel Sky:
         Ctrl-d                 - Starts the debugger
+        Ctrl-f                 - Toggle fast mode
         Ctrl-g                 - Runs in really REALLY fast mode
         F5                     - Displays a save/load box
         Escape                 - Skips the game intro
         Period (.)             - Skips current line of text
 
     Broken Sword 1:
-        F5 or ESC              - Displays save/load box
+        F5 or Escape           - Displays save/load box
 
     Broken Sword 2:
         Ctrl-d                 - Starts the debugger
@@ -920,18 +1001,37 @@ other games.
 
     Flight of the Amazon Queen:
         Ctrl-d                 - Starts the debugger
+        Ctrl-f                 - Toggle fast mode
         F1                     - Use Journal (saving/loading)
         F11                    - Quicksave
         F12                    - Quickload
         Escape                 - Skips cutscenes
         Space                  - Skips current line of text
 
+    Future Wars
+        F1                     - Examine
+        F2                     - Take
+        F3                     - Inventory
+        F4                     - Use
+        F5                     - Activate
+        F6                     - Speak
+        F9                     - "Activate" menu
+        F10                    - "Use" menu
+        Escape                 - Bring on command menu
+
+    Nippon Safes
+        Ctrl-d                 - Starts the debugger
+        l                      - Load game
+        s                      - Save game
+
     Simon the Sorcerer 1 and 2:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-d                 - Starts the debugger
+        Ctrl-f                 - Toggle fast mode
         F1 - F3                - Text speed, faster - slower
         F10                    - Shows all characters and objects you can
                                  interact with
+        Escape                 - Skip cutscenes
         - and +                - Music volume, down/up
         m                      - Music on/off
         s                      - Sound effects on/off
@@ -942,8 +1042,18 @@ other games.
                                  combined speech and subtitles
                                  [Simon the Sorcerer 2 only]
 
+    Simon the Sorcerer's Puzzle Pack
+        Ctrl-d                 - Starts the debugger
+        Ctrl-f                 - Toggle fast mode
+        F12                    - High speed mode on/off in Swampy Adventures
+        - and +                - Music volume, down/up
+        m                      - Music on/off
+        s                      - Sound effects on/off
+        p                      - Pauses
+
     The Feeble Files
         Ctrl-d                 - Starts the debugger
+        Ctrl-f                 - Toggle fast mode
         F7                     - Switch characters
         F9                     - Hitbox names on/off
         s                      - Sound effects on/off
@@ -957,10 +1067,23 @@ other games.
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-d                 - Starts the debugger
 
+    Touche: The Adventures of the Fifth Musketeer:
+        Ctrl-d                 - Starts the debugger
+        Ctrl-f                 - Toggle fast mode
+        F5                     - Displays options
+        F9                     - Turn fast walk mode on
+        F10                    - Turn fast walk mode off
+        Escape                 - Quit
+        Space                  - Skips current line of text
+        t                      - Switch between 'Voice only',
+                                 'Voice and Text' and 'Text only'
+
 Note that using ctrl-f or ctrl-g is not recommended: games can crash when
 being run faster than their normal speed, as scripts will lose synchronisation.
 
-Ctrl-f is not supported by the Broken Sword games.
+Note for WinCE users: Due to the limited keyboard input in most devices, a
+small subset of these hot keys are supported via key remapping and/or panel
+actions. Please consult the README-WinCE.txt file.
 
 
 6.0) Savegames:
@@ -1251,7 +1374,7 @@ filesize -- 1152 seems to be a good value for those kind of soundfiles. Be sure
 to read the encoder documentation before you use other values.
 
 
-7.7.6) Compressing sfx/speech in Simon the Sorcerer and The Feeble Files
+7.7.6) Compressing music/sfx/speech in AGOS games
 ------ -----------------------------------------------------------------
 Use our compress_agos utility from the scummvm-tools package to perform this
 task. You can choose between multiple target formats, but note that you can
@@ -1271,6 +1394,8 @@ enabled.
   compress_agos voices2.wav (For Windows 2CD/4CD version of Feeble)
   compress_agos voices3.wav (For Windows 4CD version of Feeble)
   compress_agos voices4.wav (For Windows 4CD version of Feeble)
+
+  compress_agos Music       (For Windows version of Puzzle Pack)
 
 For Ogg Vorbis add --vorbis to the options, i.e.
 
@@ -1295,6 +1420,9 @@ Afterwards, you can manually remove the SPEECH?.CLU files and the wave music
 files.
 
 Running "compress_sword1 --vorbis" will compress the files using Ogg Vorbis
+instead of MP3.
+
+Running "compress_sword1 --flac" will compress the files using Flac
 instead of MP3.
 
 Use "compress_sword1 --help" to get a full list of the options.
@@ -1447,6 +1575,8 @@ The following keywords are recognized:
                                  super2xsai, supereagle, advmame2x, advmame3x,
                                  hq2x, hq3x, tv2x, dotmatrix)
 
+        confirm_exit    bool     Ask for confirmation by the user before quitting
+                                 (SDL backend only).
         cdrom           number   Number of CD-ROM unit to use for audio. If
                                  negative, don't even try to access the CD-ROM.
         joystick_num    number   Number of joystick device to use for input
@@ -1472,8 +1602,8 @@ The following keywords are recognized:
         midi_gain       number   The MIDI gain (0-1000) (default: 100) (Only
                                  supported by some MIDI drivers.)
 
-        copy_protection bool     Enable copy protection in SCUMM games, when
-                                 ScummVM disables it by default.
+        copy_protection bool     Enable copy protection in certain games, in those
+                                 cases where ScummVM disables it by default.
         demo_mode       bool     Start demo in Maniac Mansion
         alt_intro       bool     Use alternative intro for CD versions of
                                  Beneath a Steel Sky and Flight of the Amazon
@@ -1523,38 +1653,36 @@ MMX optimized versions, and they will not compile on other processors.
 On Win9x/NT/XP you can define USE_WINDBG and attach WinDbg to browse debug
 messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
-TODO
-TODO: The following lists is partially outdated, and incomplete.
-TODO  We could either try to update it, and/or refer to the relevant
-TODO  Wiki pages...
-TODO
 
-    GCC:
-        * Type ./configure
-        * Type make (or gmake, or gnumake, depending on what GNU make is
+    GCC and MinGW32:
+        * Type "./configure"
+        * Type "make" (or "gmake", or "gnumake", depending on what GNU make is
           called on your system) and hopefully ScummVM will compile for you.
+        * For more information refer to:
+          http://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC
+          respectively
+          http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW
 
     Microsoft Visual C++ 6.0:
-        * Open the workspace, scummwm.dsw
+        * Open the workspace file "scummwm.dsw" in the "dists\msvc6" folder.
         * Enter the path to the needed libraries and includes in
-          Tools|Options|Directories
+          "Tools|Options|Directories".
         * Now it should compile successfully.
+        * For more information refer to:
+          http://wiki.scummvm.org/index.php/Compiling_ScummVM/VS2005
 
-    Microsoft Visual C++ 7.0:
-        * Open the solution file scummwm.sln
+    Microsoft Visual C++ 7.0/8.0:
+        * Open the solution file "scummwm.sln"  in the "dists\msvc7"
+          respectively "dists\msvc8" folder.
         * Enter the path to the needed libraries and includes in
-          Tools|Options|Projects|VC++ Directories
+          Tools|Options|Projects|VC++ Directories".
         * Now it should compile successfully.
+        * For more information refer to:
+          http://wiki.scummvm.org/index.php/Compiling_ScummVM/VS2005
 
-    Windows Mobile with Microsoft eMbedded Visual C++ 3 or 4 :
-        * Download SDL with additional Windows Mobile tweaks:
-          http://arisme.free.fr/ports/SDL.php
-        * Download additional third party libraries:
-          http://arisme.free.fr/ports
-        * Modify your include and library paths accordingly in EVC3/EVC4.
-        * Open the ScummVM project dists\msevc4\PocketSCUMM.vcw
-        * Modify the libraries and config parameters if necessary.
-        * Now it should compile successfully.
+    Windows Mobile:
+        * Please refer to:
+          http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
 
     Debian GNU/Linux:
         * Install the packages 'build-essential', 'fakeroot', 'debhelper',
@@ -1573,12 +1701,14 @@ TODO
           way to get that is to install SDL via Fink (http://fink.sf.net).
           Alternatively you could compile SDL manually from source using its
           unix build system (configure && make).
-        * Type ./configure in the ScummVM directory
+        * Type "./configure" in the ScummVM directory.
         * You can now type 'make' to create a command line binary.
         * To get a version you can run from Finder, type 'make bundle' which
           will create ScummVM.app (this only works out of the box if you
           installed SDL into /sw (as happens if you are using Fink). If you
           have installed SDL in another way, you will have to edit the Makefile).
+        * For more information refer to:
+          http://wiki.scummvm.org/index.php/Compiling_ScummVM/MacOS_X_Crosscompiling
 
     AmigaOS 4 (Cross-compiling with Cygwin):
         * Make sure that you have SDL installed, you may also need

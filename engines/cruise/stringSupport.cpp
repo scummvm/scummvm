@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +36,7 @@ void strcatuint8(void *dest, const void *source) {
 }
 
 uint8 strcmpuint8(const void *string1, const void *string2) {
-	return strcmp((char *)string1, (char *)string2);
+	return strcmp((const char *)string1, (const char *)string2);
 }
 
 } // End of namespace Cruise

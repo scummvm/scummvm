@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -304,7 +307,7 @@ void KyraEngine::characterSays(int vocFile, const char *chatStr, int8 charNum, i
 	if (textEnabled()) {
 		_animator->restoreAllObjectBackgrounds();
 
-		_screen->copyRegion(12, _text->_talkMessageY, 12, 136, 296, _text->_talkMessageH, 2, 2);
+		_screen->copyRegion(12, _text->_talkMessageY, 12, 136, 308, _text->_talkMessageH, 2, 2);
 		_screen->hideMouse();
 
 		_text->printCharacterText(processedString, charNum, _characterList[charNum].x1);
@@ -323,12 +326,12 @@ void KyraEngine::characterSays(int vocFile, const char *chatStr, int8 charNum, i
 	if (textEnabled()) {
 		_animator->restoreAllObjectBackgrounds();
 
-		_screen->copyRegion(12, 136, 12, _text->_talkMessageY, 296, _text->_talkMessageH, 2, 2);
+		_screen->copyRegion(12, 136, 12, _text->_talkMessageY, 308, _text->_talkMessageH, 2, 2);
 		_animator->preserveAllBackgrounds();
 		_animator->prepDrawAllObjects();
 		_screen->hideMouse();
 
-		_screen->copyRegion(12, _text->_talkMessageY, 12, _text->_talkMessageY, 296, _text->_talkMessageH, 2, 0);
+		_screen->copyRegion(12, _text->_talkMessageY, 12, _text->_talkMessageY, 308, _text->_talkMessageH, 2, 0);
 		_screen->showMouse();
 		_animator->flagAllObjectsForRefresh();
 		_animator->copyChangedObjectsForward(0);

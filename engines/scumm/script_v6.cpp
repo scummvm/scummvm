@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2801,25 +2803,34 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 int ScummEngine::getKeyState(int key) {
 	switch (key) {
 	case 0x147: // Home
-		return (_keyDownMap[0x107] || _keyDownMap[0x115]) ? 1 : 0;
+		// FIXME: There seems to be a mistake in the code here ("insert" vs. "home")
+		return (_keyDownMap[Common::KEYCODE_KP7] ||
+		        _keyDownMap[Common::KEYCODE_INSERT]) ? 1 : 0;
 	case 0x148: // Up
-		return (_keyDownMap[0x108] || _keyDownMap[0x111] ||
-				_keyDownMap[0x38]) ? 1 : 0;
+		return (_keyDownMap[Common::KEYCODE_KP8] ||
+		        _keyDownMap[Common::KEYCODE_UP] ||
+				_keyDownMap[Common::KEYCODE_8]) ? 1 : 0;
 	case 0x149: // PgUp
-		return (_keyDownMap[0x109] || _keyDownMap[0x118]) ? 1 : 0;
+		return (_keyDownMap[Common::KEYCODE_KP9] ||
+		        _keyDownMap[Common::KEYCODE_PAGEUP]) ? 1 : 0;
 	case 0x14B: // Left
-		return (_keyDownMap[0x104] || _keyDownMap[0x114] ||
-				_keyDownMap[0x34]) ? 1 : 0;
+		return (_keyDownMap[Common::KEYCODE_KP4] ||
+		        _keyDownMap[Common::KEYCODE_LEFT] ||
+				_keyDownMap[Common::KEYCODE_4]) ? 1 : 0;
 	case 0x14D: // Right
-		return (_keyDownMap[0x106] || _keyDownMap[0x113] ||
-				_keyDownMap[0x36]) ? 1 : 0;
+		return (_keyDownMap[Common::KEYCODE_KP6] ||
+		        _keyDownMap[Common::KEYCODE_RIGHT] ||
+				_keyDownMap[Common::KEYCODE_6]) ? 1 : 0;
 	case 0x14F: // End
-		return (_keyDownMap[0x101] || _keyDownMap[0x117]) ? 1 : 0;
+		return (_keyDownMap[Common::KEYCODE_KP1] ||
+		        _keyDownMap[Common::KEYCODE_END]) ? 1 : 0;
 	case 0x150: // Down
-		return (_keyDownMap[0x102] || _keyDownMap[0x112] ||
-				_keyDownMap[0x32]) ? 1 : 0;
+		return (_keyDownMap[Common::KEYCODE_KP2] ||
+		        _keyDownMap[Common::KEYCODE_DOWN] ||
+				_keyDownMap[Common::KEYCODE_2]) ? 1 : 0;
 	case 0x151: // PgDn
-		return (_keyDownMap[0x103] || _keyDownMap[0x119]) ? 1 : 0;
+		return (_keyDownMap[Common::KEYCODE_KP3] ||
+		        _keyDownMap[Common::KEYCODE_PAGEDOWN]) ? 1 : 0;
 	default:
 		return (_keyDownMap[key]) ? 1 : 0;
 	}

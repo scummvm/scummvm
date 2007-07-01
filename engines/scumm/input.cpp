@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -73,79 +75,63 @@ void ScummEngine::parseEvents() {
 				sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
 				_saveLoadFlag = (event.kbd.flags == Common::KBD_ALT) ? 1 : 2;
 				_saveTemporaryState = false;
-			} else if (event.kbd.flags == Common::KBD_CTRL) {
-				if (event.kbd.keycode == 'f')
-					_fastMode ^= 1;
-				else if (event.kbd.keycode == 'g')
-					_fastMode ^= 2;
-				else if (event.kbd.keycode == 'd')
-					_debugger->attach();
-				else if (event.kbd.keycode == 's')
-					_res->resourceStats();
-				else
-					_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
-			} else if (event.kbd.flags & Common::KBD_ALT) {
-				// The result must be 273 for Alt-W
-				// because that's what MI2 looks for in
-				// its "instant win" cheat.
-				_keyPressed = event.kbd.keycode + 154;
-			} else if (event.kbd.ascii == 315 && (_game.id == GID_CMI && !(_game.features & GF_DEMO))) {
-				// FIXME: support in-game menu screen. For now, this remaps F1 to F5 in COMI
-				_keyPressed = 319;
-			} else if (event.kbd.ascii < 273 || event.kbd.ascii > 276 || _game.version >= 7) {
-				// don't let game have arrow keys as we currently steal them
-				// for keyboard cursor control
-				// this fixes bug with up arrow (273) corresponding to
-				// "instant win" cheat in MI2 mentioned above
-				//
-				// This is not applicable to Full Throttle as it processes keyboard
-				// cursor control by itself. Also it fixes derby scene
-				_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
-			}
-
-			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
-				if (event.kbd.ascii >= 273 && event.kbd.ascii <= 276) {
-					_keyPressed = event.kbd.ascii - 273 + 54;
-				}
+			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'f') {
+				_fastMode ^= 1;
+			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'g') {
+				_fastMode ^= 2;
+			} else if ((event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'd') ||
+					event.kbd.ascii == '~' || event.kbd.ascii == '#') {
+				_debugger->attach();
+			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 's') {
+				_res->resourceStats();
+			} else {
+				// Normal key press, pass on to the game.
+				_keyPressed = event.kbd;
 			}
 
 			if (_game.heversion >= 80) {
 				// Keyboard is controlled via variable
-				int _keyState = 0;
+				int keyState = 0;
 
-				if (event.kbd.ascii == 276) // Left
-					_keyState = 1;
+				if (event.kbd.keycode == Common::KEYCODE_LEFT) // Left
+					keyState = 1;
 
-				if (event.kbd.ascii == 275) // Right
-					_keyState |= 2;
+				if (event.kbd.keycode == Common::KEYCODE_RIGHT) // Right
+					keyState |= 2;
 
-				if (event.kbd.ascii == 273) // Up
-					_keyState |= 4;
+				if (event.kbd.keycode == Common::KEYCODE_UP) // Up
+					keyState |= 4;
 
-				if (event.kbd.ascii == 274) // Down
-					_keyState |= 8;
+				if (event.kbd.keycode == Common::KEYCODE_DOWN) // Down
+					keyState |= 8;
 
 				if (event.kbd.flags == Common::KBD_SHIFT)
-					_keyState |= 16;
+					keyState |= 16;
 
 				if (event.kbd.flags == Common::KBD_CTRL)
-					_keyState |= 32;
+					keyState |= 32;
 
-				VAR(VAR_KEY_STATE) = _keyState;
+				VAR(VAR_KEY_STATE) = keyState;
 			}
 
-			if (_keyPressed >= 512)
-				debugC(DEBUG_GENERAL, "_keyPressed > 512 (%d)", _keyPressed);
+			// FIXME: We are using ASCII values to index the _keyDownMap here,
+			// yet later one code which checks _keyDownMap will use KEYCODEs
+			// to do so. That is, we are mixing ascii and keycode values here,
+			// which is bad. We probably should be only using keycodes, but at
+			// least INSANE checks for "Shift-V" by looking for the 'V' key
+			// being pressed. It would be easy to solve that by also storing
+			// the modifier flags. However, since getKeyState() is also called
+			// by scripts, we have to be careful with semantic changes.
+			if (_keyPressed.ascii >= 512)
+				debugC(DEBUG_GENERAL, "_keyPressed > 512 (%d)", _keyPressed.ascii);
 			else
-				_keyDownMap[_keyPressed] = true;
+				_keyDownMap[_keyPressed.ascii] = true;
 			break;
 
 		case Common::EVENT_KEYUP:
-			// FIXME: for some reason Common::KBD_ALT is set sometimes
-			// possible to a bug in sdl-common.cpp
-			if (event.kbd.ascii >= 512)
+			if (event.kbd.ascii >= 512) {
 				debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
-			else {
+			} else {
 				_keyDownMap[event.kbd.ascii] = false;
 
 				// Due to some weird bug with capslock key pressed
@@ -155,6 +141,8 @@ void ScummEngine::parseEvents() {
 				// both upper and lower letters are unpressed on keyup event
 				//
 				// Fixes bug #1709430: "FT: CAPSLOCK + V enables cheating for all fights"
+				//
+				// Fingolfin remarks: This wouldn't be a problem if we used keycodes.
 				_keyDownMap[toupper(event.kbd.ascii)] = false;
 			}
 			break;
@@ -186,24 +174,21 @@ void ScummEngine::parseEvents() {
 			_rightBtnPressed &= ~msDown;
 			break;
 
-		// The following two cases enable dialog choices to be
-		// scrolled through in the SegaCD version of MI
-		// as nothing else uses the wheel don't bother
-		// checking the gameid. Values are taken from script-14.
-
+		// The following two cases enable dialog choices to be scrolled
+		// through in the SegaCD version of MI. Values are taken from script-14.
+		// See bug report #1193185 for details.
 		case Common::EVENT_WHEELDOWN:
-			_keyPressed = 55;
+			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
+				_keyPressed = Common::KeyState(Common::KEYCODE_7, 55);	// '7'
 			break;
 
 		case Common::EVENT_WHEELUP:
-			_keyPressed = 54;
+			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
+				_keyPressed = Common::KeyState(Common::KEYCODE_6, 54);	// '6'
 			break;
 
 		case Common::EVENT_QUIT:
-			if (ConfMan.getBool("confirm_exit"))
-				confirmExitDialog();
-			else
-				_quit = true;
+			_quit = true;
 			break;
 
 		default:
@@ -216,20 +201,20 @@ void ScummEngine::parseEvents() {
 void ScummEngine_v90he::clearClickedStatus() {
 	ScummEngine::clearClickedStatus();
 	if (_game.heversion >= 98) {
-		_logicHE->processKeyStroke(_keyPressed);
+		_logicHE->processKeyStroke(_keyPressed.ascii);
 	}
 }
 
 void ScummEngine_v90he::processInput() {
 	if (_game.heversion >= 98) {
-		_logicHE->processKeyStroke(_keyPressed);
+		_logicHE->processKeyStroke(_keyPressed.ascii);
 	}
 	ScummEngine::processInput();
 }
 #endif
 
 void ScummEngine::clearClickedStatus() {
-	_keyPressed = 0;
+	_keyPressed.reset();
 
 	_mouseAndKeyboardStat = 0;
 	_leftBtnPressed &= ~msClicked;
@@ -238,15 +223,16 @@ void ScummEngine::clearClickedStatus() {
 
 void ScummEngine_v0::processInput() {
 	// F1 - F3
-	if (_keyPressed >= 315 && _keyPressed <= 317) {
-		switchActor(_keyPressed - 315);
+	if (_keyPressed.keycode >= Common::KEYCODE_F1 && _keyPressed.keycode <= Common::KEYCODE_F3) {
+		switchActor(_keyPressed.keycode - Common::KEYCODE_F1);
 	}
 
 	ScummEngine::processInput();
 }
+
 void ScummEngine::processInput() {
-	int lastKeyHit = _keyPressed;
-	_keyPressed = 0;
+	Common::KeyState lastKeyHit = _keyPressed;
+	_keyPressed.reset();
 
 	//
 	// Clip the mouse coordinates, and compute _virtualMouse.x (and clip it, too)
@@ -276,30 +262,30 @@ void ScummEngine::processInput() {
 	_mouseAndKeyboardStat = 0;
 
 	// Interpret 'return' as left click and 'tab' as right click
-	if (lastKeyHit && _cursor.state > 0) {
-		if (lastKeyHit == 9) {
+	if (lastKeyHit.keycode && _cursor.state > 0) {
+		if (lastKeyHit.keycode == Common::KEYCODE_TAB) {
 			_mouseAndKeyboardStat = MBS_RIGHT_CLICK;
-			lastKeyHit = 0;
-		} else if (lastKeyHit == 13) {
+			lastKeyHit.reset();
+		} else if (lastKeyHit.keycode == Common::KEYCODE_RETURN) {
 			_mouseAndKeyboardStat = MBS_LEFT_CLICK;
-			lastKeyHit = 0;
+			lastKeyHit.reset();
 		}
 	}
 
-	if (_leftBtnPressed & msClicked && _rightBtnPressed & msClicked && _game.version >= 4) {
+	if ((_leftBtnPressed & msClicked) && (_rightBtnPressed & msClicked) && _game.version >= 4) {
 		// Pressing both mouse buttons is treated as if you pressed
-		// the cutscene exit key (i.e. ESC in most games). That mimicks
+		// the cutscene exit key (ESC) in V4+ games. That mimicks
 		// the behaviour of the original engine where pressing both
 		// mouse buttons also skips the current cutscene.
 		_mouseAndKeyboardStat = 0;
-		lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
-	} else if (_rightBtnPressed & msClicked && (_game.version <= 3 && _game.id != GID_LOOM)) {
+		lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
+	} else if ((_rightBtnPressed & msClicked) && (_game.version <= 3 && _game.id != GID_LOOM)) {
 		// Pressing right mouse button is treated as if you pressed
-		// the cutscene exit key (i.e. ESC in most games). That mimicks
+		// the cutscene exit key (ESC) in V0-V3 games. That mimicks
 		// the behaviour of the original engine where pressing right
 		// mouse button also skips the current cutscene.
 		_mouseAndKeyboardStat = 0;
-		lastKeyHit = (VAR_CUTSCENEEXIT_KEY != 0xFF) ? (uint)VAR(VAR_CUTSCENEEXIT_KEY) : 27;
+		lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
 	} else if (_leftBtnPressed & msClicked) {
 		_mouseAndKeyboardStat = MBS_LEFT_CLICK;
 	} else if (_rightBtnPressed & msClicked) {
@@ -320,33 +306,40 @@ void ScummEngine::processInput() {
 	_rightBtnPressed &= ~msClicked;
 
 #ifdef _WIN32_WCE
-	if (lastKeyHit == KEY_ALL_SKIP) {
+	if (lastKeyHit.ascii == KEY_ALL_SKIP) {
 		// Skip talk
-		if (VAR_TALKSTOP_KEY != 0xFF && _talkDelay > 0)
-			lastKeyHit = (uint)VAR(VAR_TALKSTOP_KEY);
-		else
-		// Escape
-			lastKeyHit = 27;
+		if (VAR_TALKSTOP_KEY != 0xFF && _talkDelay > 0) {
+			lastKeyHit = Common::KeyState(Common::KEYCODE_PERIOD);
+		} else {
+			lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
+		}
 	}
 #endif
 
-	if (!lastKeyHit)
+	if (!lastKeyHit.ascii)
 		return;
 	
 	processKeyboard(lastKeyHit);
 }
 
 #ifndef DISABLE_SCUMM_7_8
-void ScummEngine_v8::processKeyboard(int lastKeyHit) {
-	// Alt-F5 brings up the original save/load dialog
+void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 
-	if (lastKeyHit == 440 && !(_game.features & GF_DEMO)) {
-		lastKeyHit = 315;
+	if (!(_game.features & GF_DEMO)) {
+		// F1 (the trigger for the original save/load dialog) is mapped to F5
+		if (lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.flags == 0) {
+			lastKeyHit = Common::KeyState(Common::KEYCODE_F5, 319);
+		}
+	
+		// Alt-F5 should bring up the original save/load dialog, so map it to F1.
+		if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT) {
+			lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
+		}
 	}
 
 	// If a key script was specified (a V8 feature), and it's trigger
-	// key was pressed, run it.
-	if (_keyScriptNo && (_keyScriptKey == lastKeyHit)) {
+	// key was pressed, run it. Usually used to display the built-in menu.
+	if (_keyScriptNo && (_keyScriptKey == lastKeyHit.ascii)) {
 		runScript(_keyScriptNo, 0, 0, 0);
 		return;
 	}
@@ -355,18 +348,18 @@ void ScummEngine_v8::processKeyboard(int lastKeyHit) {
 	ScummEngine_v7::processKeyboard(lastKeyHit);
 }
 
-void ScummEngine_v7::processKeyboard(int lastKeyHit) {
+void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
+	const bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY == 0xFF || VAR(VAR_CUTSCENEEXIT_KEY) != 0);
 
-	// COMI version string is hard coded in the engine, hence we don't
-	// invoke versionDialog here (it would only show nonsense).
-	// Dig/FT version strings are partly hard coded, too.
-	if (_game.version == 7 && lastKeyHit == VAR(VAR_VERSION_KEY)) {
+	// VAR_VERSION_KEY (usually ctrl-v) is used in COMI, Dig and FT to trigger
+	// a version dialog, unless VAR_VERSION_KEY is set to 0. However, the COMI
+	// version string is hard coded in the engine, hence we don't invoke
+	// versionDialog for it. Dig/FT version strings are partly hard coded, too.
+	if (_game.id != GID_CMI && 0 != VAR(VAR_VERSION_KEY) &&
+	    lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.flags == Common::KBD_CTRL) {
 		versionDialog();
-		return;
-	}
 
-#ifndef _WIN32_WCE
-	if (VAR_CUTSCENEEXIT_KEY != 0xFF && lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY)) {
+	} else if (cutsceneExitKeyEnabled && lastKeyHit.keycode == Common::KEYCODE_ESCAPE) {
 		// Skip cutscene (or active SMUSH video).
 		if (_smushActive) {
 			if (_game.id == GID_FT)
@@ -377,62 +370,30 @@ void ScummEngine_v7::processKeyboard(int lastKeyHit) {
 		if (!_smushActive || _smushVideoShouldFinish)
 			abortCutscene();
 
-		_mouseAndKeyboardStat = lastKeyHit;
-		return;
-	}
-#else
-	// On WinCE we've also got one special for skipping cutscenes or dialog, whatever is appropriate
-	// Since _smushActive is not a member of the base case class ScummEngine::, we detect here if we're
-	// playing a cutscene and skip it; else we forward the keystroke through to ScummEngine::processInput.
-	if (lastKeyHit == KEY_ALL_SKIP || (VAR_CUTSCENEEXIT_KEY != 0xFF && lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY))) {
-		int bail = 1;
-		if (_smushActive) {
-			if (_game.id == GID_FT) {
-				_insane->escapeKeyHandler();
-				bail = 0;
-			} else
-				_smushVideoShouldFinish = true;
-		}
-		if ((!_smushActive && vm.cutScenePtr[vm.cutSceneStackPointer]) || _smushVideoShouldFinish) {
-			abortCutscene();
-			bail = 0;
-		}
-		if (!bail) {
-			_mouseAndKeyboardStat = (VAR_CUTSCENEEXIT_KEY != 0xFF) ? (uint)VAR(VAR_CUTSCENEEXIT_KEY) : 27;
-			return;
-		}
-		
-	}
-#endif
+		_mouseAndKeyboardStat = Common::ASCII_ESCAPE;
 
-	// Fall back to V6 behavior
-	ScummEngine_v6::processKeyboard(lastKeyHit);
+	} else {
+		// Fall back to V6 behavior
+		ScummEngine_v6::processKeyboard(lastKeyHit);
+	}
 }
 #endif
 
-void ScummEngine_v6::processKeyboard(int lastKeyHit) {
-	if (lastKeyHit == 20) {
-		// FIXME: What key is '20' supposed to indicate? I can't trigger
-		// it with my keyboard, it seems...
-		char buf[256];
-
-		_voiceMode++;
-		if (_voiceMode == 3)
-			_voiceMode = 0;
+void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
+	if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.flags == Common::KBD_CTRL) {
+		SubtitleSettingsDialog dialog(this, _voiceMode);
+		_voiceMode = runDialog(dialog);
 
 		switch (_voiceMode) {
 		case 0:
-			sprintf(buf, "Speech Only");
 			ConfMan.setBool("speech_mute", false);
 			ConfMan.setBool("subtitles", false);
 			break;
 		case 1:
-			sprintf(buf, "Speech and Subtitles");
 			ConfMan.setBool("speech_mute", false);
 			ConfMan.setBool("subtitles", true);
 			break;
 		case 2:
-			sprintf(buf, "Subtitles Only");
 			ConfMan.setBool("speech_mute", true);
 			ConfMan.setBool("subtitles", true);
 			break;
@@ -441,8 +402,6 @@ void ScummEngine_v6::processKeyboard(int lastKeyHit) {
 		if (VAR_VOICE_MODE != 0xFF)
 			VAR(VAR_VOICE_MODE) = _voiceMode;
 
-		GUI::TimedMessageDialog dialog(buf, 1500);
-		runDialog(dialog);
 		return;
 	}
 
@@ -450,70 +409,63 @@ void ScummEngine_v6::processKeyboard(int lastKeyHit) {
 	ScummEngine::processKeyboard(lastKeyHit);
 }
 
-void ScummEngine_v2::processKeyboard(int lastKeyHit) {
-	if (lastKeyHit == ' ') {		// space
-		pauseGame();
-	} else if (lastKeyHit == 314+5) {		// F5
-		mainMenuDialog();
-	} else if (lastKeyHit == 314+8) {		// F8
-		confirmRestartDialog();
-	} else {
+void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
+	// Fall back to default behavior
+	ScummEngine::processKeyboard(lastKeyHit);
 
-		if ((_game.version == 0 && lastKeyHit == 27) || 
-			(VAR_CUTSCENEEXIT_KEY != 0xFF && lastKeyHit == 314+VAR(VAR_CUTSCENEEXIT_KEY))) {
-			abortCutscene();
+	if (VAR_KEYPRESS != 0xFF && _mouseAndKeyboardStat) {		// Key Input
+		if (315 <= _mouseAndKeyboardStat && _mouseAndKeyboardStat <= 323) {
+			// Convert F-Keys for V1/V2 games (they start at 1)
+			VAR(VAR_KEYPRESS) = _mouseAndKeyboardStat - 314;
 		} else {
-			// Fall back to default behavior
-			ScummEngine::processKeyboard(lastKeyHit);
-		}
-
-		// Alt-F5 brings up the original save/load dialog
-
-		if (lastKeyHit == 440) {
-			lastKeyHit = 314+5;
-		}
-	
-		// Store the input type. So far we can't distinguish
-		// between 1, 3 and 5.
-		// 1) Verb	2) Scene	3) Inv.		4) Key
-		// 5) Sentence Bar
-	
-		if (VAR_KEYPRESS != 0xFF && lastKeyHit) {		// Key Input
-			if (315 <= lastKeyHit && lastKeyHit < 315+12) {
-				// Convert F-Keys for V1/V2 games (they start at 1 instead of at 315)
-				VAR(VAR_KEYPRESS) = lastKeyHit - 314;
-			} else {
-				VAR(VAR_KEYPRESS) = lastKeyHit;
-			}
+			VAR(VAR_KEYPRESS) = _mouseAndKeyboardStat;
 		}
 	}
 }
 
-void ScummEngine_v3::processKeyboard(int lastKeyHit) {
-	if (_game.platform == Common::kPlatformFMTowns && lastKeyHit == 314+8) {	// F8
-		confirmRestartDialog();
-	} else {
-		// Fall back to default behavior
-		ScummEngine::processKeyboard(lastKeyHit);
+void ScummEngine_v3::processKeyboard(Common::KeyState lastKeyHit) {
+	// Fall back to default behavior
+	ScummEngine::processKeyboard(lastKeyHit);
+
+	// 'i' brings up an IQ dialog in Indy3
+	if (lastKeyHit.ascii == 'i' && _game.id == GID_INDY3) {
+		// SCUMM var 244 is the episode score
+		// and var 245 is the series score
+		char text[50];
+
+		// FIXME: Currently, the series score does not work properly
+		// This workaround just sets it equal to the episode score
+		// However, at the end of the game, it does show the episode
+		// score by itself
+		int a = _scummVars[245];
+		if (!a)
+			a = _scummVars[244];
+
+		sprintf(text, "IQ Points: Episode = %d, Series = %d", _scummVars[244], a);
+		Indy3IQPointsDialog indy3IQPointsDialog(this, text);
+		runDialog(indy3IQPointsDialog);
 	}
 }
 
-void ScummEngine::processKeyboard(int lastKeyHit) {
-	int saveloadkey;
+void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
+	// Enable the following five special keys conditionally:
+	bool restartKeyEnabled = (VAR_RESTART_KEY == 0xFF || VAR(VAR_RESTART_KEY) != 0);
+	bool pauseKeyEnabled = (VAR_PAUSE_KEY == 0xFF || VAR(VAR_PAUSE_KEY) != 0);
+	bool talkstopKeyEnabled = (VAR_TALKSTOP_KEY == 0xFF || VAR(VAR_TALKSTOP_KEY) != 0);
+	bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY == 0xFF || VAR(VAR_CUTSCENEEXIT_KEY) != 0);
+	bool mainmenuKeyEnabled = (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
 
-	if ((_game.version <= 3) || (_game.id == GID_SAMNMAX) || (_game.id == GID_CMI) || (_game.heversion >= 72))
-		saveloadkey = 319;	// F5
-	else
-		saveloadkey = VAR(VAR_MAINMENU_KEY);
+	// In FM-TOWNS games F8 / restart is always enabled
+	if (_game.platform == Common::kPlatformFMTowns)
+		restartKeyEnabled = true;
 
-	// Alt-F5 brings up the original save/load dialog.
+	// For games which use VAR_MAINMENU_KEY, disable the mainmenu key if
+	// requested by the scripts. We make an exception for COMI (i.e.
+	// forcefully always enable it there), as that always disables it.
+	if (_game.id == GID_CMI)
+		mainmenuKeyEnabled = true;
 
-	if (lastKeyHit == 440 && _game.version > 2 && _game.version < 8) {
-		lastKeyHit = saveloadkey;
-		saveloadkey = -1;
-	}
-
-	if (lastKeyHit == saveloadkey) {
+	if (mainmenuKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == 0)) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
 
@@ -522,57 +474,86 @@ void ScummEngine::processKeyboard(int lastKeyHit) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
 
-	} else if (VAR_RESTART_KEY != 0xFF && lastKeyHit == VAR(VAR_RESTART_KEY)) {
+	} else if (restartKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.flags == 0)) {
 		confirmRestartDialog();
 
-	} else if (VAR_PAUSE_KEY != 0xFF && lastKeyHit == VAR(VAR_PAUSE_KEY)) {
+	} else if (pauseKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_SPACE && lastKeyHit.flags == 0)) {
 		pauseGame();
 
-	} else if (VAR_TALKSTOP_KEY != 0xFF && lastKeyHit == VAR(VAR_TALKSTOP_KEY)) {
+	} else if (talkstopKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_PERIOD && lastKeyHit.flags == 0)) {
 		_talkDelay = 0;
 		if (_sound->_sfxMode & 2)
 			stopTalk();
 
+	} else if (cutsceneExitKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_ESCAPE && lastKeyHit.flags == 0)) {
+		abortCutscene();
+		
+		// FIXME: Is the following line really necessary?
+		_mouseAndKeyboardStat = VAR(VAR_CUTSCENEEXIT_KEY);
+
+	} else if (lastKeyHit.ascii == '[' || lastKeyHit.ascii == ']') { // Change music volume
+		int vol = ConfMan.getInt("music_volume") / 16;
+		if (lastKeyHit.ascii == ']' && vol < 16)
+			vol++;
+		else if (lastKeyHit.ascii == '[' && vol > 0)
+			vol--;
+
+		// Display the music volume
+		ValueDisplayDialog dlg("Music volume: ", 0, 16, vol, ']', '[');
+		vol = runDialog(dlg);
+
+		vol *= 16;
+		if (vol > Audio::Mixer::kMaxMixerVolume)
+			vol = Audio::Mixer::kMaxMixerVolume;
+
+		ConfMan.setInt("music_volume", vol);
+		updateSoundSettings();
+
+	} else if (lastKeyHit.ascii == '-' || lastKeyHit.ascii == '+') { // Change text speed
+		if (lastKeyHit.ascii == '+' && _defaultTalkDelay > 0)
+			_defaultTalkDelay--;
+		else if (lastKeyHit.ascii == '-' && _defaultTalkDelay < 9)
+			_defaultTalkDelay++;
+
+		// Display the talk speed
+		ValueDisplayDialog dlg("Subtitle speed: ", 0, 9, 9 - _defaultTalkDelay, '+', '-');
+		_defaultTalkDelay = 9 - runDialog(dlg);
+		
+		// Save the new talkspeed value to ConfMan
+		setTalkspeed(_defaultTalkDelay);
+
+		if (VAR_CHARINC != 0xFF)
+			VAR(VAR_CHARINC) = _defaultTalkDelay;
+
 	} else {
-		if (VAR_CUTSCENEEXIT_KEY != 0xFF && lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY)) {
-			abortCutscene();
-		} else if (lastKeyHit == '[' || lastKeyHit == ']') { // Change music volume
-			int vol = ConfMan.getInt("music_volume") / 16;
-			if (lastKeyHit == ']' && vol < 16)
-				vol++;
-			else if (lastKeyHit == '[' && vol > 0)
-				vol--;
-	
-			// Display the music volume
-			ValueDisplayDialog dlg("Music volume: ", 0, 16, vol, ']', '[');
-			vol = runDialog(dlg);
-	
-			vol *= 16;
-			if (vol > Audio::Mixer::kMaxMixerVolume)
-				vol = Audio::Mixer::kMaxMixerVolume;
-	
-			ConfMan.setInt("music_volume", vol);
-			updateSoundSettings();
-		} else if (lastKeyHit == '-' || lastKeyHit == '+') { // Change text speed
-			if (lastKeyHit == '+' && _defaultTalkDelay > 0)
-				_defaultTalkDelay--;
-			else if (lastKeyHit == '-' && _defaultTalkDelay < 9)
-				_defaultTalkDelay++;
-	
-			// Display the talk speed
-			ValueDisplayDialog dlg("Subtitle speed: ", 0, 9, 9 - _defaultTalkDelay, '+', '-');
-			_defaultTalkDelay = 9 - runDialog(dlg);
-			
-			// Save the new talkspeed value to ConfMan
-			setTalkspeed(_defaultTalkDelay);
-	
-			if (VAR_CHARINC != 0xFF)
-				VAR(VAR_CHARINC) = _defaultTalkDelay;
-		} else if (lastKeyHit == '~' || lastKeyHit == '#') { // Debug console
-			_debugger->attach();
+
+		if (lastKeyHit.keycode >= Common::KEYCODE_F1 &&
+		    lastKeyHit.keycode <= Common::KEYCODE_F9) {
+			_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_F1 + 315;
+
+		} else if (_game.id == GID_MONKEY2 && (lastKeyHit.flags & Common::KBD_ALT)) {
+			// Handle KBD_ALT combos in MI2. We know that the result must be 273 for Alt-W
+			// because that's what MI2 looks for in its "instant win" cheat.
+			_mouseAndKeyboardStat = lastKeyHit.keycode + 154;
+
+		} else if (lastKeyHit.keycode >= Common::KEYCODE_UP &&
+		          lastKeyHit.keycode <= Common::KEYCODE_LEFT) {
+			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
+				// Map arrow keys to number keys in the SEGA version of MI to support
+				// scrolling to conversation choices. See bug report #1193185 for details.
+				_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_UP + 54;
+			} else if (_game.version >= 7) {
+				// Don't let pre-V7 game see arrow keys. This fixes bug with up arrow (273)
+				// corresponding to the "instant win" cheat in MI2 mentioned above.
+				//
+				// This is not applicable to V7+ games, which need to see the arrow keys,
+				// too, else certain things (derby scene, asterorid lander) won't work.
+				_mouseAndKeyboardStat = lastKeyHit.ascii;
+			}
+
+		} else {
+			_mouseAndKeyboardStat = lastKeyHit.ascii;
 		}
-	
-		_mouseAndKeyboardStat = lastKeyHit;
 	}
 }
 

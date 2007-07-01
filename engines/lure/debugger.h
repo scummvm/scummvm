@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,6 +47,7 @@ protected:
 	bool cmd_hotspots(int argc, const char **argv);
 	bool cmd_hotspot(int argc, const char **argv);
 	bool cmd_room(int argc, const char **argv);
+	bool cmd_showAnim(int argc, const char **argv);
 };
 
 } // End of namespace Lure

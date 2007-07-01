@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -49,6 +51,14 @@ void AGOSEngine_Simon2::setupVideoOpcodes(VgaOpcodeProc *op) {
 
 void AGOSEngine::vc56_delayLong() {
 	uint16 num = vcReadVarOrWord() * _frameCount;
+
+	if (getGameType() == GType_FF && _currentTable) {
+		// WORKAROUND: When the repair man comes to fix the car, the game doesn't
+		// wait long enough for the screen to completely scroll to the left side.
+		if (_currentTable->id == 20438 && _vgaCurSpriteId == 13 && _vgaCurZoneNum == 2) {
+			num *= 2;
+		}
+	}
 
 	addVgaEvent(num + _vgaBaseDelay, ANIMATE_EVENT, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
 	_vcPtr = (byte *)&_vc_get_out_of_code;
@@ -192,7 +202,7 @@ void AGOSEngine::vc72_segue() {
 	int16 loop = vcReadNextWord();
 
 	if (track == -1 || track == 999) {
-		_midi.stop();
+		stopMusic();
 	} else {
 		_midi.setLoop(loop != 0);
 		_midi.startTrack(track);

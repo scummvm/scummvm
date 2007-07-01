@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,8 +26,12 @@
 #if !defined(DISABLE_DEFAULT_EVENTMANAGER)
 
 #include "common/stdafx.h"
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "backends/events/default/default-events.h"
+
+#include "engines/engine.h"
+#include "gui/message.h"
 
 DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	_boss(boss),
@@ -90,7 +97,13 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			break;
 
 		case Common::EVENT_QUIT:
-			_shouldQuit = true;
+			if (ConfMan.getBool("confirm_exit")) {
+				g_engine->pauseEngine(true);
+				GUI::MessageDialog alert("Do you really want to quit?", "Yes", "No");
+				result = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
+				g_engine->pauseEngine(false);
+			} else
+				_shouldQuit = true;
 			break;
 
 		default:
@@ -103,7 +116,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			event.type = Common::EVENT_KEYDOWN;
 			event.synthetic = true;
 			event.kbd.ascii = _currentKeyDown.ascii;
-			event.kbd.keycode = _currentKeyDown.keycode;
+			event.kbd.keycode = (Common::KeyCode)_currentKeyDown.keycode;
 			event.kbd.flags = _currentKeyDown.flags;
 			_keyRepeatTime = time + kKeyRepeatSustainDelay;
 			result = true;

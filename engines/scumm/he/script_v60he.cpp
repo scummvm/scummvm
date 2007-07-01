@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1088,7 +1090,7 @@ void ScummEngine_v60he::o60_readFile() {
 	int val;
 
 	// Fatty Bear uses positive values
-	if ((_game.platform == Common::kPlatformPC) && (_game.id == GID_FBEAR))
+	if (_game.platform == Common::kPlatformPC && _game.id == GID_FBEAR)
 		size = -size;
 
 	assert(_hInFileTable[slot]);
@@ -1118,7 +1120,7 @@ void ScummEngine_v60he::o60_writeFile() {
 	int slot = pop();
 
 	// Fatty Bear uses positive values
-	if ((_game.platform == Common::kPlatformPC) && (_game.id == GID_FBEAR))
+	if (_game.platform == Common::kPlatformPC && _game.id == GID_FBEAR)
 		size = -size;
 
 	assert(_hOutFileTable[slot]);
@@ -1136,13 +1138,15 @@ void ScummEngine_v60he::o60_soundOps() {
 	int arg = pop();
 
 	switch (subOp) {
-	case 0xde:
-		_imuse->setMusicVolume(arg);
+	case 222:
+		if (_imuse) {
+			_imuse->setMusicVolume(arg);
+		}
 		break;
-	case 0xdf:
-		// Used in fbear introduction
+	case 223:
+		// WORKAROUND: For error in room script 228 (room 2) of fbear.
 		break;
-	case 0xe0:
+	case 224:
 		// Fatty Bear's Birthday surprise uses this when playing the
 		// piano, but only when using one of the digitized instruments.
 		// See also o6_startSound().

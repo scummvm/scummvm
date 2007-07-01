@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,8 +31,10 @@ static const GameResourceDescription ITE_Resources = {
 	RID_ITE_MAIN_PANEL,
 	RID_ITE_CONVERSE_PANEL,
 	RID_ITE_OPTION_PANEL,
+	0,					// Warning panel (IHNM only)
 	RID_ITE_MAIN_SPRITES,
 	RID_ITE_MAIN_PANEL_SPRITES,
+	0,					// Option panel sprites (IHNM only)
 	RID_ITE_DEFAULT_PORTRAITS,
 	RID_ITE_MAIN_STRINGS,
 	RID_ITE_ACTOR_NAMES
@@ -43,8 +46,10 @@ static const GameResourceDescription ITEDemo_Resources = {
 	RID_ITEDEMO_MAIN_PANEL,
 	RID_ITEDEMO_CONVERSE_PANEL,
 	RID_ITEDEMO_OPTION_PANEL,
+	0,						// Warning panel (IHNM only)
 	RID_ITEDEMO_MAIN_SPRITES,
 	RID_ITEDEMO_MAIN_PANEL_SPRITES,
+	0,						// Option panel sprites (IHNM only)
 	RID_ITEDEMO_DEFAULT_PORTRAITS,
 	RID_ITEDEMO_MAIN_STRINGS,
 	RID_ITEDEMO_ACTOR_NAMES
@@ -286,11 +291,13 @@ static const GameResourceDescription IHNM_Resources = {
 	RID_IHNM_MAIN_PANEL,
 	RID_IHNM_CONVERSE_PANEL,
 	RID_IHNM_OPTION_PANEL,
+	RID_IHNM_WARNING_PANEL,
 	RID_IHNM_MAIN_SPRITES,
 	RID_IHNM_MAIN_PANEL_SPRITES,
-	0,
+	RID_IHNM_OPTION_PANEL_SPRITES,
+	0,					// Default portraits (ITE only)
 	RID_IHNM_MAIN_STRINGS,
-	0
+	0					// Actors strings (ITE only)
 };
 
 static const GameFontDescription IHNMDEMO_GameFonts[] = {
@@ -474,6 +481,37 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEMacPatch_Files,
 	},
 
+	// Inherit the earth - MAC CD Wyrmkeep version (compressed sound)
+	{
+		{
+			"ite",
+			"Wyrmkeep CD",
+			{
+	{"ite.rsc",						GAME_RESOURCEFILE,	"4f7fa11c5175980ed593392838523060", -1},
+	{"scripts.rsc",					GAME_SCRIPTFILE,	"adf1f46c1d0589083996a7060c798ad0", -1},
+	{"sounds.cmp",					GAME_SOUNDFILE,		NULL, -1},
+	{"inherit the earth voices.cmp",GAME_VOICEFILE,		NULL, -1},
+	{"music.cmp",					GAME_MUSICFILE,		NULL, -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_MACCD,
+		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX | GF_COMPRESSED_SOUNDS,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEWINDEMO_GameFonts),
+		ITEWINDEMO_GameFonts,
+		&ITEMACCD_GameSound,
+		&ITEMACCD_GameSound,
+		&ITEMACCD_GameMusic,
+		ARRAYSIZE(ITEMacPatch_Files),
+		ITEMacPatch_Files,
+	},
+
 	// Inherit the earth - Linux Demo version
 	// Note: it should be before GID_ITE_WINDEMO2 version
 	{
@@ -633,6 +671,42 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
+	// Inherit the earth - Wyrmkeep combined Windows/Mac/Linux CD (compressed sound)
+
+	// version is different from the other Wyrmkeep re-releases in that it does
+	// not have any substitute files. Presumably the ite.rsc file has been
+	// modified to include the Wyrmkeep changes. The resource files are little-
+	// endian, except for the voice file which is big-endian.
+	{
+		{
+			"ite",
+			"Multi-OS CD Version",
+			{
+	{"ite.rsc",						GAME_RESOURCEFILE,					"a6433e34b97b15e64fe8214651012db9", -1},
+	{"scripts.rsc",					GAME_SCRIPTFILE,					"a891405405edefc69c9d6c420c868b84", -1},
+	{"sounds.cmp",					GAME_SOUNDFILE,						NULL, -1},
+	{"inherit the earth voices.cmp",GAME_VOICEFILE | GAME_SWAPENDIAN,	NULL, -1},
+	{"music.cmp",					GAME_MUSICFILE,						NULL, -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_MULTICD,
+		GF_WYRMKEEP | GF_CD_FX | GF_COMPRESSED_SOUNDS,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITEMACCD_GameSound,
+		&ITECD_GameSound,
+		&ITEMACCD_GameMusic,
+		0,
+		NULL,
+	},
+
 	// Inherit the earth - Wyrmkeep Linux CD version
 	{
 		{
@@ -653,6 +727,37 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_LINCD,
 		GF_WYRMKEEP | GF_CD_FX,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		&ITECD_GameSound,
+		&ITEMACCD_GameMusic,
+		ARRAYSIZE(ITELinPatch_Files),
+		ITELinPatch_Files,
+	},
+
+	// Inherit the earth - Wyrmkeep Linux CD version (compressed sound)
+	{
+		{
+			"ite",
+			"CD Version",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
+	{"sounds.cmp",	GAME_SOUNDFILE,		NULL, -1},
+	{"voices.cmp",	GAME_VOICEFILE,		NULL, -1},
+	{"music.cmp",	GAME_MUSICFILE,		NULL, -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformLinux,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_LINCD,
+		GF_WYRMKEEP | GF_CD_FX | GF_COMPRESSED_SOUNDS,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITECD_GameFonts),
@@ -694,6 +799,36 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWinPatch1_Files,
 	},
 
+	// Inherit the earth - Wyrmkeep Windows CD version (compressed sound)
+	{
+		{
+			"ite",
+			"CD Version",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
+	{"sounds.cmp",	GAME_SOUNDFILE,		NULL, -1},
+	{"voices.cmp",	GAME_VOICEFILE,		NULL, -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_WINCD,
+		GF_WYRMKEEP | GF_CD_FX | GF_COMPRESSED_SOUNDS,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		&ITECD_GameSound,
+		NULL,
+		ARRAYSIZE(ITEWinPatch1_Files),
+		ITEWinPatch1_Files,
+	},
+
 	// Inherit the earth - DOS CD version
 	{
 		{
@@ -713,6 +848,36 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_CD_G,
 		GF_CD_FX,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		&ITECD_GameSound,
+		NULL,
+		0,
+		NULL,
+	},
+
+	// Inherit the earth - DOS CD version (compressed sound)
+	{
+		{
+			"ite",
+			"CD Version",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,	"50a0d2d7003c926a3832d503c8534e90", -1},
+	{"sounds.cmp",	GAME_SOUNDFILE,		NULL, -1},
+	{"voices.cmp",	GAME_VOICEFILE,		NULL, -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_CD_G,
+		GF_CD_FX | GF_COMPRESSED_SOUNDS,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITECD_GameFonts),
@@ -755,6 +920,37 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
+	// Inherit the earth - DOS CD version with digital music (compressed sound)
+	{
+		{
+			"ite",
+			"CD Version",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,	"50a0d2d7003c926a3832d503c8534e90", -1},
+	{"sounds.cmp",	GAME_SOUNDFILE,		NULL, -1},
+	{"voices.cmp",	GAME_VOICEFILE,		NULL, -1},
+	{"music.cmp",	GAME_MUSICFILE,		NULL, -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_CD_G2,
+		GF_CD_FX | GF_COMPRESSED_SOUNDS,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		&ITECD_GameSound,
+		&ITEMACCD_GameMusic,
+		0,
+		NULL,
+	},
+
 	// Inherit the earth - DOS CD German version
 	// reported by mld. Bestsellergamers cover disk
 	{
@@ -775,6 +971,37 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_CD_DE,
 		GF_CD_FX,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		&ITECD_GameSound,
+		NULL,
+		0,
+		NULL,
+	},
+
+	// Inherit the earth - DOS CD German version (compressed sound)
+	// reported by mld. Bestsellergamers cover disk
+	{
+		{
+			"ite",
+			"CD Version",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,	"869fc23c8f38f575979ec67152914fee", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
+	{"sounds.cmp",	GAME_SOUNDFILE,		NULL, -1},
+	{"voices.cmp",	GAME_VOICEFILE,		NULL, -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_CD_DE,
+		GF_CD_FX | GF_COMPRESSED_SOUNDS,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITECD_GameFonts),
@@ -817,6 +1044,37 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
+	// Inherit the earth - DOS CD German version with digital music (compressed sound)
+	{
+		{
+			"ite",
+			"CD Version",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,	"869fc23c8f38f575979ec67152914fee", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
+	{"sounds.cmp",	GAME_SOUNDFILE,		NULL, -1},
+	{"voices.cmp",	GAME_VOICEFILE,		NULL, -1},
+	{"music.cmp",	GAME_MUSICFILE,		NULL, -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_CD_DE2,
+		GF_CD_FX | GF_COMPRESSED_SOUNDS,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		&ITECD_GameSound,
+		&ITEMACCD_GameMusic,
+		0,
+		NULL,
+	},
+
 	// Inherit the earth - CD version
 	{
 		{
@@ -847,6 +1105,36 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
+	// Inherit the earth - CD version (compressed sound)
+	{
+		{
+			"ite",
+			"CD Version",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
+	{"sounds.cmp",	GAME_SOUNDFILE,		NULL, -1},
+	{"voices.cmp",	GAME_VOICEFILE,		NULL, -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_CD,
+		GF_CD_FX | GF_COMPRESSED_SOUNDS,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		&ITECD_GameSound,
+		NULL,
+		0,
+		NULL,
+	},
+
 	// Inherit the earth - German Floppy version
 	{
 		{
@@ -865,6 +1153,35 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_DISK_DE,
 		0,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEDISK_GameFonts),
+		ITEDISK_GameFonts,
+		&ITEDISK_GameSound,
+		&ITEDISK_GameSound,
+		NULL,
+		0,
+		NULL,
+	},
+
+	// Inherit the earth - German Floppy version (compressed sound)
+	{
+		{
+			"ite",
+			"Floppy",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,					"869fc23c8f38f575979ec67152914fee", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
+	{"voices.cmp",	GAME_SOUNDFILE | GAME_VOICEFILE,	NULL, -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_DISK_DE,
+		GF_COMPRESSED_SOUNDS,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEDISK_GameFonts),
@@ -906,6 +1223,36 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
+	// Inherit the earth - German Floppy version with digital music (compressed sound)
+	{
+		{
+			"ite",
+			"Floppy",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,					"869fc23c8f38f575979ec67152914fee", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
+	{"voices.cmp",	GAME_SOUNDFILE | GAME_VOICEFILE,	NULL, -1},
+	{"music.cmp",	GAME_MUSICFILE,						NULL, -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_DISK_DE2,
+		GF_COMPRESSED_SOUNDS,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEDISK_GameFonts),
+		ITEDISK_GameFonts,
+		&ITEDISK_GameSound,
+		&ITEDISK_GameSound,
+		&ITEMACCD_GameMusic,
+		0,
+		NULL,
+	},
+
 	// Inherit the earth - Disk version
 	{
 		{
@@ -924,6 +1271,35 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_DISK_G,
 		0,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEDISK_GameFonts),
+		ITEDISK_GameFonts,
+		&ITEDISK_GameSound,
+		&ITEDISK_GameSound,
+		NULL,
+		0,
+		NULL,
+	},
+
+	// Inherit the earth - Disk version (compressed sound)
+	{
+		{
+			"ite",
+			"Floppy",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
+	{"voices.cmp",	GAME_SOUNDFILE | GAME_VOICEFILE,	NULL, -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_DISK_G,
+		GF_COMPRESSED_SOUNDS,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEDISK_GameFonts),
@@ -954,6 +1330,36 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GType_ITE,
 		GID_ITE_DISK_G2,
 		0,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEDISK_GameFonts),
+		ITEDISK_GameFonts,
+		&ITEDISK_GameSound,
+		&ITEDISK_GameSound,
+		&ITEMACCD_GameMusic,
+		0,
+		NULL,
+	},
+
+	// Inherit the earth - Disk version with digital music (compressed sound)
+	{
+		{
+			"ite",
+			"Floppy",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
+	{"voices.cmp",	GAME_SOUNDFILE | GAME_VOICEFILE,	NULL, -1},
+	{"music.cmp",	GAME_MUSICFILE,						NULL, -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_DISK_G2,
+		GF_COMPRESSED_SOUNDS,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEDISK_GameFonts),

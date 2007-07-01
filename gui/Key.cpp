@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,8 +32,28 @@ Key::Key() :
 _ascii(0), _keycode(0), _flags(0) {
 }
 
+Key::Key(int ascii) :
+_ascii(ascii), _keycode(ascii), _flags(0) {
+}
+
 Key::Key(int ascii, int keycode, int flags) :
 _ascii(ascii), _keycode(keycode), _flags(flags) {
+}
+
+void Key::setKey(int ascii) {
+	_ascii = ascii;
+	_keycode = ascii;
+}
+
+void Key::setKey(int ascii, int keycode) {
+	_ascii = ascii;
+	_keycode = keycode;
+}
+
+void Key::setKey(int ascii, int keycode, int flags) {
+	_ascii = ascii;
+	_keycode = keycode;
+	_flags = flags;
 }
 
 int Key::ascii() {
@@ -43,20 +66,6 @@ int Key::keycode() {
 
 int Key::flags() {
 	return _flags;
-}
-
-
-void Key::setAscii(int ascii) {
-	_ascii = ascii;
-	_keycode = ascii; // default
-}
-
-void Key::setKeycode(int keycode) {
-	_keycode = keycode;
-}
-
-void Key::setFlags(int flags) {
-	_flags = flags;
 }
 
 } // namespace GUI

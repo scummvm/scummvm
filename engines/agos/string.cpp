@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +32,7 @@ using Common::File;
 
 namespace AGOS {
 
-const byte *AGOSEngine::getStringPtrByID(uint stringId) {
+const byte *AGOSEngine::getStringPtrByID(uint16 stringId) {
 	const byte *string_ptr;
 	byte *dst;
 
@@ -47,7 +49,7 @@ const byte *AGOSEngine::getStringPtrByID(uint stringId) {
 	return dst;
 }
 
-const byte *AGOSEngine::getLocalStringByID(uint stringId) {
+const byte *AGOSEngine::getLocalStringByID(uint16 stringId) {
 	if (stringId < _stringIdLocalMin || stringId >= _stringIdLocalMax) {
 		loadTextIntoMem(stringId);
 	}
@@ -138,7 +140,7 @@ uint AGOSEngine::loadTextFile_gme(const char *filename, byte *dst) {
 	return size;
 }
 
-void AGOSEngine::loadTextIntoMem(uint stringId) {
+void AGOSEngine::loadTextIntoMem(uint16 stringId) {
 	byte *p;
 	char filename[30];
 	int i;
@@ -272,7 +274,7 @@ bool AGOSEngine::printNameOf(Item *item, uint x, uint y) {
 	if (item == 0 || item == _dummyItem2 || item == _dummyItem3)
 		return false;
 
-	subObject = (SubObject *)findChildOfType(item, 2);
+	subObject = (SubObject *)findChildOfType(item, kObjectType);
 	if (subObject == NULL)
 		return false;
 
@@ -302,7 +304,7 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 	lettersPerRowJustified = stringLength / (stringLength / lettersPerRow + 1) + 1;
 
 	talkDelay = (stringLength + 3) / 3;
-	if ((getGameType() == GType_SIMON1) && (getFeatures() & GF_TALKIE)) {
+	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE)) {
 		if (_variableArray[141] == 0)
 			_variableArray[141] = 9;
 		_variableArray[85] = _variableArray[141] * talkDelay;
@@ -362,16 +364,16 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 		renderString(vgaSpriteId, color, width, height, convertedString);
 	}
 
-	int b = (!getBitFlag(133)) ? 3 : 4;
+	uint16 windowNum = (!getBitFlag(133)) ? 3 : 4;
 
 	x /= 8;
 	if (y < 2)
 		y = 2;
 
 	if (getGameType() == GType_SIMON1)
-		animate(b, 2, vgaSpriteId + 199, x, y, 12);
+		animate(windowNum, 2, 199 + vgaSpriteId, x, y, 12);
 	else
-		animate(b, 2, vgaSpriteId, x, y, 12);
+		animate(windowNum, 2, vgaSpriteId, x, y, 12);
 }
 
 // The Feeble Files specific

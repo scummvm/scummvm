@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +25,10 @@
 
 // Verb and hitarea handling
 #include "common/stdafx.h"
+
+#include "common/system.h"
+
+#include "graphics/surface.h"
 
 #include "agos/agos.h"
 #include "agos/intern.h"
@@ -294,6 +300,10 @@ void AGOSEngine::showActionString(const byte *string) {
 
 	window->textColumn = x / 8;
 	window->textColumnOffset = x & 7;
+	if (_language == Common::HB_ISR && window->textColumnOffset != 0) {
+		window->textColumnOffset = 8 - window->textColumnOffset;
+		window->textColumn++;
+	}
 
 	for (; *string; string++)
 		windowPutChar(window, *string);
@@ -389,13 +399,15 @@ HitArea *AGOSEngine::findBox(uint hitarea_id) {
 
 HitArea *AGOSEngine::findEmptyHitArea() {
 	HitArea *ha = _hitAreas;
-	uint count = ARRAYSIZE(_hitAreas);
+	uint count = ARRAYSIZE(_hitAreas) - 1;
 
 	do {
 		if (ha->flags == 0)
 			return ha;
 	} while (ha++, --count);
-	return NULL;
+
+	// The last box is overwritten, if too many boxes are allocated.
+	return ha;
 }
 
 void AGOSEngine::freeBox(uint index) {
@@ -672,21 +684,21 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 
 	if (mode != 0) {
 		if (mode == 3) {
-			if (getGameType() == GType_ELVIRA1) {
+			if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
 				if (best_ha->verb & 0x4000) {
-					if (_variableArray[500] == 0) {
+					if (getGameType() == GType_ELVIRA1 && _variableArray[500] == 0) {
 						_variableArray[500] = best_ha->verb & 0xBFFF;
 					}
-				}
 
-				if (_clickOnly != 0 && best_ha->id < 8) {
-					uint id = best_ha->id;
-					if (id >= 4)
-						id -= 4;
+					if (_clickOnly != 0 && best_ha->id < 8) {
+						uint id = best_ha->id;
+						if (id >= 4)
+							id -= 4;
 
-					invertBox(findBox(id), 0, 0, 0, 0);
-					_clickOnly = 0;
-					return;
+						invertBox(findBox(id), 0, 0, 0, 0);
+						_clickOnly = 0;
+						return;
+					}
 				}
 			}
 
@@ -824,7 +836,14 @@ void AGOSEngine::invertBox(HitArea * ha, byte a, byte b, byte c, byte d) {
 	int w, h, i;
 
 	_lockWord |= 0x8000;
-	src = getFrontBuf() + ha->y * _dxSurfacePitch + (ha->x - _scrollX * 8);
+
+	Graphics::Surface *screen = _system->lockScreen();
+	src = (byte *)screen->pixels + ha->y * _dxSurfacePitch + ha->x;
+
+	// WORKAROUND: Hitareas for saved game names aren't adjusted for scrolling locations
+	if (getGameType() == GType_SIMON2 && ha->id >= 208 && ha->id <= 213) {
+		src -= _scrollX * 8;
+	}
 
 	_litBoxFlag = true;
 
@@ -861,6 +880,8 @@ void AGOSEngine::invertBox(HitArea * ha, byte a, byte b, byte c, byte d) {
 		}
 		src += _dxSurfacePitch;
 	} while (--h);
+
+	_system->unlockScreen();
 
 	_lockWord &= ~0x8000;
 }

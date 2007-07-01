@@ -20,20 +20,18 @@
  *
  */
 
-#ifdef LURE_DEBUG
-#ifndef LURE_DEBUG_METHODS_H
-#define LURE_DEBUG_METHODS_H
+#include "lure/sound.h"
 
-#include "common/stdafx.h"
-#include "lure/surface.h"
+DECLARE_SINGLETON(Lure::SoundManager);
 
 namespace Lure {
 
-void showActiveHotspots();
+void SoundManager::killSounds() {
+	
+}
 
-void showRoomHotspots();
+void SoundManager::playSound(uint16 soundId) {
 
-} // End of namespace Lure
+}
 
-#endif
-#endif
+} // end of namespace Lure

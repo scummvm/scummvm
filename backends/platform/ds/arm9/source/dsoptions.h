@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 Neil Millstone
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,7 +43,7 @@ public:
 	
 protected:
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-
+	void togglePause();
 
 	GUI::SliderWidget* _touchX;
 	GUI::SliderWidget* _touchY;
@@ -52,6 +54,7 @@ protected:
 	GUI::CheckboxWidget* _highQualityAudioCheckbox;
 	GUI::CheckboxWidget* _disablePowerOff;
 	GUI::CheckboxWidget* _cpuScaler;
+	GUI::CheckboxWidget* _showCursorCheckbox;
 	
 #ifdef DS_SCUMM_BUILD
 	Scumm::SaveLoadChooser* _delDialog;

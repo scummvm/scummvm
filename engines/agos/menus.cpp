@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +26,9 @@
 #include "common/stdafx.h"
 
 #include "common/file.h"
+#include "common/system.h"
+
+#include "graphics/surface.h"
 
 #include "agos/agos.h"
 #include "agos/intern.h"
@@ -143,7 +148,8 @@ void AGOSEngine::unlightMenuStrip() {
 
 	mouseOff();
 
-	src = getFrontBuf() + 2832;
+	Graphics::Surface *screen = _system->lockScreen();
+	src = (byte *)screen->pixels + 2832;
 	w = 48;
 	h = 82;
 
@@ -158,6 +164,8 @@ void AGOSEngine::unlightMenuStrip() {
 	for (i = 120; i != 130; i++)
 		disableBox(i);
 
+	_system->unlockScreen();
+
 	mouseOn();
 }
 
@@ -168,7 +176,8 @@ void AGOSEngine::lightMenuBox(uint hitarea) {
 
 	mouseOff();
 
-	src = getFrontBuf() + ha->y * _dxSurfacePitch + ha->x;
+	Graphics::Surface *screen = _system->lockScreen();
+	src = (byte *)screen->pixels + ha->y * _dxSurfacePitch + ha->x;
 	w = ha->width;
 	h = ha->height;
 
@@ -180,6 +189,8 @@ void AGOSEngine::lightMenuBox(uint hitarea) {
 		src += _dxSurfacePitch;
 	} while (--h);
 
+	_system->unlockScreen();
+
 	mouseOn();
 }
 
@@ -188,7 +199,7 @@ uint AGOSEngine::menuFor_e2(Item *item) {
 	if (item == NULL || item == _dummyItem2 || item == _dummyItem3)
 		return 0xFFFF;
  
-	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
 	if (subObject != NULL && subObject->objectFlags & kOFMenu) {
 		uint offs = getOffsetOfChild2Param(subObject, kOFMenu);
 		return subObject->objectFlagValue[offs];
@@ -205,7 +216,7 @@ uint AGOSEngine::menuFor_ww(Item *item, uint id) {
 	if (item == NULL || item == _dummyItem2 || item == _dummyItem3)
 		return _agosMenu;
 
-	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
 	if (subObject != NULL && subObject->objectFlags & kOFMenu) {
 		uint offs = getOffsetOfChild2Param(subObject, kOFMenu);
 		return subObject->objectFlagValue[offs];

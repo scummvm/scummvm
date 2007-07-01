@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,4 +75,44 @@ void OSystem_PalmOS5::render_landscapeAny(RectangleType &r, PointType &p) {
 	p.x = _screenOffset.x;
 	p.y = _screenOffset.y + o;
 	RctSetRectangle(&r, 0, 0,  _screenDest.w,  _screenDest.h - o);
+}
+
+void OSystem_PalmOS5::render_landscape15x(RectangleType &r, PointType &p) {
+	Coord x, y, o = 0;
+   	int16 *dst =  _workScreenP;
+
+	if (_overlayVisible) {
+   		int16 *src = _overlayP;
+
+		for (y = 0; y < 100; y++) {
+			// draw 2 lines
+			for (x = 0; x < 320; x++) {
+				*dst++ = *src++;
+				*dst++ = *src;
+				*dst++ = *src++;
+			}
+			// copy the second to the next line
+			MemMove(dst, dst - 480, 480 * 2);
+			dst += 480;
+		}
+	} else {
+		byte *src = _offScreenP;
+		o = _current_shake_pos;
+
+		for (y = 0; y < 100; y++) {
+			// draw 2 lines
+			for (x = 0; x < 320; x++) {
+				*dst++ = _nativePal[*src++];
+				*dst++ = _nativePal[*src];
+				*dst++ = _nativePal[*src++];
+			}
+			// copy the second to the next line
+			MemMove(dst, dst - 480, 480 * 2);
+			dst += 480;
+		}
+	}
+
+	p.x = _screenOffset.x;
+	p.y = _screenOffset.y + o;
+	RctSetRectangle(&r, 0, 0, 480, 300 - o);
 }

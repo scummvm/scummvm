@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,9 +35,7 @@ byte palette256[256 * 3];
 
 uint16 palEntriesCount;
 
-Common::File *palFileHandleP = NULL;
-
-PalEntry *palPtr;
+PalEntry *palPtr = NULL;
 
 byte paletteBuffer1[16];
 byte paletteBuffer2[16];
@@ -48,8 +47,6 @@ void loadPal(const char *fileName) {
 
 	strcat(buffer, ".PAL");
 
-	palFileHandle.close();
-
 	if (palPtr) {
 		free(palPtr);
 		palPtr = NULL;
@@ -57,9 +54,9 @@ void loadPal(const char *fileName) {
 
 	palEntriesCount = 0;
 
-	palFileHandle.open(buffer);
-
-	assert(palFileHandle.isOpen());
+	Common::File palFileHandle;
+	if (!palFileHandle.open(buffer))
+		error("loadPal(): Cannot open file %s", fileName);
 
 	palEntriesCount = palFileHandle.readUint16LE();
 	palFileHandle.readUint16LE(); // entry size
@@ -71,6 +68,7 @@ void loadPal(const char *fileName) {
 		palFileHandle.read(palPtr[i].pal1, 16);
 		palFileHandle.read(palPtr[i].pal2, 16);
 	}
+	palFileHandle.close();
 }
 
 int16 findPaletteFromName(const char *fileName) {

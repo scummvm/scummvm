@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +24,7 @@
 
 #include "common/stdafx.h"
 #include "common/system.h"
+#include "common/events.h"
 #include "gui/dialog.h"
 #include "gui/eval.h"
 #include "gui/newgui.h"
@@ -54,7 +58,7 @@ public:
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseWheel(int x, int y, int direction);	// Scroll through entries with scroll wheel
 	void handleMouseMoved(int x, int y, int button);	// Redraw selections depending on mouse position
-	void handleKeyDown(uint16 ascii, int keycode, int modifiers);	// Scroll through entries with arrow keys etc.
+	void handleKeyDown(Common::KeyState state);	// Scroll through entries with arrow keys etc.
 
 protected:
 	void drawMenuEntry(int entry, bool hilite);
@@ -206,8 +210,8 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button) {
 	setSelection(item);
 }
 
-void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (keycode == 27) {	// escape
+void PopUpDialog::handleKeyDown(Common::KeyState state) {
+	if (state.keycode == Common::KEYCODE_ESCAPE) {
 		// Don't change the previous selection
 		setResult(-1);
 		close();
@@ -217,23 +221,25 @@ void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	if (isMouseDown())
 		return;
 
-	switch (keycode) {
-	case '\n':		// enter/return
-	case '\r':
+	switch (state.keycode) {
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
 		setResult(_selection);
 		close();
 		break;
-	case 256+17:	// up arrow
+	case Common::KEYCODE_UP:
 		moveUp();
 		break;
-	case 256+18:	// down arrow
+	case Common::KEYCODE_DOWN:
 		moveDown();
 		break;
-	case 256+22:	// home
+	case Common::KEYCODE_HOME:
 		setSelection(0);
 		break;
-	case 256+23:	// end
+	case Common::KEYCODE_END:
 		setSelection(_popUpBoss->_entries.size()-1);
+		break;
+	default:
 		break;
 	}
 }

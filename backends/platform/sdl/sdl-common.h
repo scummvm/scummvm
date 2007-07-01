@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -90,11 +92,8 @@ public:
 	// The screen will not be updated to reflect the new bitmap
 	virtual void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h); // overloaded by CE backend (FIXME)
 
-	// Copies the screen to a buffer
-	bool grabRawScreen(Graphics::Surface *surf);
-
-	// Clear the screen
-	void clearScreen();
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 
 	// Update the dirty areas of the screen
 	void updateScreen();
@@ -216,6 +215,8 @@ protected:
 
 	// unseen game screen
 	SDL_Surface *_screen;
+	
+	// TODO: We could get rid of the following two vars and just use _screen instead
 	int _screenWidth, _screenHeight;
 
 	// temporary screen (for scalers)
@@ -272,6 +273,9 @@ protected:
 	int _mode;
 	int _transactionMode;
 	bool _fullscreen;
+	
+	bool _screenIsLocked;
+	Graphics::Surface _framebuffer;
 
 	/** Current video mode flags (see DF_* constants) */
 	uint32 _modeFlags;

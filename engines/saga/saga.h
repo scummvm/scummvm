@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -151,7 +152,8 @@ enum GameFeatures {
 	GF_BIG_ENDIAN_DATA   = 1 << 0,
 	GF_WYRMKEEP          = 1 << 1,
 	GF_CD_FX             = 1 << 2,
-	GF_SCENE_SUBSTITUTES = 1 << 3
+	GF_SCENE_SUBSTITUTES = 1 << 3,
+	GF_COMPRESSED_SOUNDS = 1 << 4
 };
 
 enum VerbTypeIds {
@@ -223,7 +225,10 @@ enum GameSoundTypes {
 	kSoundVOX = 1,
 	kSoundVOC = 2,
 	kSoundWAV = 3,
-	kSoundMacPCM = 4
+	kSoundMacPCM = 4,
+	kSoundMP3 = 5,
+	kSoundOGG = 6,
+	kSoundFLAC = 7
 };
 
 enum TextStringIds {
@@ -278,9 +283,12 @@ enum TextStringIds {
 	kTextNoOpening,
 	kTextDontKnow,
 	kTextShowDialog,
-	kTextEnterProtectAnswer
+	kTextEnterProtectAnswer,
+	kTextVoices,
+	kTextText,
+	kTextAudio,
+	kTextBoth
 };
-
 
 struct GameResourceDescription {
 	uint32 sceneLUTResourceId;
@@ -288,8 +296,10 @@ struct GameResourceDescription {
 	uint32 mainPanelResourceId;
 	uint32 conversePanelResourceId;
 	uint32 optionPanelResourceId;
+	uint32 warningPanelResourceId;
 	uint32 mainSpritesResourceId;
 	uint32 mainPanelSpritesResourceId;
+	uint32 optionPanelSpritesResourceId;
 	uint32 defaultPortraitsResourceId;
 	uint32 mainStringsResourceId;
 	uint32 actorsStringsResourceId;
@@ -421,7 +431,9 @@ enum ColorId {
 	kITEColorGreen = 0xba,
 
 	kIHNMColorBlack = 0xfa,
-	kIHNMColorPortrait = 0xfe
+	kIHNMColorPortrait = 0xfe,
+	kIHNMColorWhite = 0x20,
+	kIHNMColorRed = 0x11
 };
 
 enum KnownColor {
@@ -514,6 +526,7 @@ public:
 	int _soundVolume;
 	int _musicVolume;
 	bool _subtitlesEnabled;
+	bool _voicesEnabled;
 	int _readingSpeed;
 
 	bool _copyProtection;
@@ -558,6 +571,18 @@ public:
 	int processInput(void);
 	Point mousePos() const;
 
+	int getMouseClickCount() {
+		return _mouseClickCount;
+	}
+
+	void incrementMouseClickCount() {
+		_mouseClickCount++;
+	}
+
+	void resetMouseClickCount() {
+		_mouseClickCount = 0;
+	}
+
 	const bool leftMouseButtonPressed() const {
 		return _leftMouseButtonPressed;
 	}
@@ -579,6 +604,7 @@ public:
 
 	bool _leftMouseButtonPressed;
 	bool _rightMouseButtonPressed;
+	int _mouseClickCount;
 
 	bool _quit;
 

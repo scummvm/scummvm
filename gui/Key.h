@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,13 +32,22 @@
 
 namespace GUI {
 
+// TODO/FIXME: Make use of Common::KeyState from common/keyboard.h,
+// or even better, just completely replace this by it.
+// To be able to do that, though, the code using GUI::Key would need to
+// be adopted -- right now it uses SDL keycodes, and uses SDL_PushEvent
+// to generated fake events.
+
 class Key {
 public:
-	Key(int ascii, int keycode = 0, int flags = 0);
+	Key(int ascii);
+	Key(int ascii, int keycode, int flags = 0);
 	Key();
-	void setAscii(int ascii);
-	void setKeycode(int keycode);
-	void setFlags(int flags);
+
+	void setKey(int ascii);
+	void setKey(int ascii, int keycode);
+	void setKey(int ascii, int keycode, int flags);
+
 	int ascii();
 	int keycode();
 	int flags();

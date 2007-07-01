@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -350,6 +353,33 @@ void Screen::fadeToBlack(int delay) {
 	uint8 blackPal[768];
 	memset(blackPal, 0, 768);
 	fadePalette(blackPal, delay);
+}
+
+void Screen::k2IntroFadeToGrey(int delay) {
+	debugC(9, kDebugLevelScreen, "Screen::k2IntroFadeToGrey()");
+
+	for (int i = 0; i <= 50; ++i) {
+		if (i <= 8 || i >= 30) {
+			_currentPalette[3 * i + 0] = (_currentPalette[3 * i + 0] + 
+						      _currentPalette[3 * i + 1] + 
+						      _currentPalette[3 * i + 2]) / 3;
+			_currentPalette[3 * i + 1] =  _currentPalette[3 * i + 0];
+			_currentPalette[3 * i + 2] =  _currentPalette[3 * i + 0];
+		}
+	}
+
+	// color 71 is the same in both the overview and closeup scenes
+	// Converting it to greyscale makes the trees in the closeup look dull
+	for (int i = 71; i < 200; ++i) {
+		_currentPalette[3 * i + 0] = (_currentPalette[3 * i + 0] + 
+					      _currentPalette[3 * i + 1] + 
+					      _currentPalette[3 * i + 2]) / 3;
+		_currentPalette[3 * i + 1] =  _currentPalette[3 * i + 0];
+		_currentPalette[3 * i + 2] =  _currentPalette[3 * i + 0];
+	}
+	fadePalette(_currentPalette, delay);
+	// Make the font color white again
+	setPaletteIndex(254, 254, 254, 254);
 }
 
 void Screen::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {

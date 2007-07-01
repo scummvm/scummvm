@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -111,6 +114,38 @@ int TabWidget::addTab(const String &title) {
 	return _activeTab;
 }
 
+void TabWidget::removeTab(int tabID) {
+	assert(0 <= tabID && tabID < (int)_tabs.size());
+
+	// Deactive the tab if it's currently the active one
+	if (tabID == _activeTab) {
+		_tabs[tabID].firstWidget = _firstWidget;
+		releaseFocus();
+		_firstWidget = 0;
+	}
+	
+	// Dispose the widgets in that tab and then the tab itself
+	delete _tabs[tabID].firstWidget;
+	_tabs.remove_at(tabID);
+	
+	// Adjust _firstVisibleTab if necessary
+	if (_firstVisibleTab >= (int)_tabs.size()) {
+		_firstVisibleTab = MAX(0, (int)_tabs.size() - 1);
+	}
+	
+	// The active tab was removed, so select a new active one (if any remains)
+	if (tabID == _activeTab) {
+		_activeTab = -1;
+		if (tabID >= (int)_tabs.size())
+			tabID = _tabs.size() - 1;
+		if (tabID >= 0)
+			setActiveTab(tabID);
+	}
+
+	// Finally trigger a redraw
+	_boss->draw();
+}
+
 void TabWidget::setActiveTab(int tabID) {
 	assert(0 <= tabID && tabID < (int)_tabs.size());
 	if (_activeTab != tabID) {
@@ -163,11 +198,11 @@ void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	}
 }
 
-bool TabWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+bool TabWidget::handleKeyDown(Common::KeyState state) {
 	// TODO: maybe there should be a way to switch between tabs
 	// using the keyboard? E.g. Alt-Shift-Left/Right-Arrow or something
 	// like that.
-	return Widget::handleKeyDown(ascii, keycode, modifiers);
+	return Widget::handleKeyDown(state);
 }
 
 void TabWidget::reflowLayout() {

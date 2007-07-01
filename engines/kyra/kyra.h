@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +29,7 @@
 #include "engines/engine.h"
 #include "common/rect.h"
 #include "common/array.h"
+#include "common/events.h"
 
 namespace Kyra {
 
@@ -741,7 +745,7 @@ protected:
 	int _gameToLoad;
 	char _savegameName[31];
 	const char *_specialSavegameString;
-	uint8 _keyPressed;
+	Common::KeyState _keyPressed;
 
 	struct KyragemState {
 		uint16 nextOperation;

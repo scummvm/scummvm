@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -79,7 +80,40 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 	if (!buffer.isSigned)
 		flags |= Audio::Mixer::FLAG_UNSIGNED;
 
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer, buffer.size, buffer.frequency, flags, -1, volume);
+	if (!(_vm->getFeatures() & GF_COMPRESSED_SOUNDS)) {
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer, buffer.size, buffer.frequency, flags, -1, volume);
+	} else {
+		buffer.soundFile->seek((long)buffer.fileOffset, SEEK_SET);
+		Audio::AudioStream *stream = NULL;
+
+		switch (buffer.soundType) {
+#ifdef USE_MAD
+			case kSoundMP3:
+				debug(1, "Playing MP3 compressed sound");
+				stream = Audio::makeMP3Stream(buffer.soundFile, buffer.size);
+				break;
+#endif
+#ifdef USE_VORBIS
+			case kSoundOGG:
+				debug(1, "Playing OGG compressed sound");
+				stream = Audio::makeVorbisStream(buffer.soundFile, buffer.size);
+				break;
+#endif
+#ifdef USE_FLAC
+			case kSoundFLAC:
+				debug(1, "Playing FLAC compressed sound");
+				stream = Audio::makeFlacStream(buffer.soundFile, buffer.size);
+				break;
+#endif
+			default:
+				// Unknown compression
+				error("Trying to play a compressed sound, but the compression is not known");
+				break;
+		}
+
+		if (stream != NULL)
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, stream, -1, volume, 0, true, false);
+	}
 }
 
 void Sound::playSound(SoundBuffer &buffer, int volume, bool loop) {

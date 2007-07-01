@@ -1,5 +1,11 @@
-/* Copyright (C) 1994-1998 Revolution Software Ltd.
- * Copyright (C) 2003-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Additional copyright for this file:
+ * Copyright (C) 1994-1998 Revolution Software Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +31,7 @@
 
 #include "common/stdafx.h"
 #include "common/system.h"
+#include "common/events.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
@@ -1085,7 +1092,7 @@ void Screen::rollCredits() {
 
 		KeyboardEvent *ke = _vm->keyboardEvent();
 
-		if (ke && ke->keycode == 27) {
+		if (ke && ke->kbd.keycode == Common::KEYCODE_ESCAPE) {
 			if (!abortCredits) {
 				abortCredits = true;
 				fadeDown();

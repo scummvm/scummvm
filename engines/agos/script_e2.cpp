@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -130,7 +132,7 @@ void AGOSEngine_Elvira2::setupOpcodes() {
 		OPCODE(o_when),
 		OPCODE(o_if1),
 		OPCODE(o_if2),
-		OPCODE(oe1_isCalled),
+		OPCODE(oe2_isCalled),
 		/* 80 */
 		OPCODE(o_is),
 		OPCODE(o_invalid),
@@ -143,7 +145,7 @@ void AGOSEngine_Elvira2::setupOpcodes() {
 		OPCODE(o_comment),
 		/* 88 */
 		OPCODE(o_invalid),
-		OPCODE(oe1_loadGame),
+		OPCODE(oe2_loadGame),
 		OPCODE(o_getParent),
 		OPCODE(o_getNext),
 		/* 92 */
@@ -249,7 +251,7 @@ void AGOSEngine_Elvira2::setupOpcodes() {
 		/* 172 */
 		OPCODE(oe2_ifExitClosed),
 		OPCODE(oe2_ifExitLocked),
-		OPCODE(oe2_unk174),
+		OPCODE(oe2_playEffect),
 		OPCODE(oe2_getDollar2),
 		/* 176 */
 		OPCODE(oe2_setSRExit),
@@ -307,10 +309,28 @@ void AGOSEngine_Elvira2::oe2_doClass() {
 
 void AGOSEngine_Elvira2::oe2_pObj() {
 	// 73: print object
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 
 	if (subObject != NULL && subObject->objectFlags & kOFText)
 		showMessageFormat("%s\n", (const char *)getStringPtrByID(subObject->objectFlagValue[0])); // Difference
+}
+
+void AGOSEngine_Elvira2::oe2_isCalled() {
+	// 79: childstruct fr2 is
+	Item *i = getNextItemPtr();
+	uint stringId = getNextStringID();
+	setScriptCondition(i->itemName == stringId);
+}
+
+void AGOSEngine_Elvira2::oe2_loadGame() {
+	// 89: load game
+	uint16 stringId = getNextStringID();
+
+	if (!scumm_stricmp(getFileName(GAME_RESTFILE), (const char *)getStringPtrByID(stringId))) {
+		loadGame(getFileName(GAME_RESTFILE), true);
+	} else {
+		loadGame((const char *)getStringPtrByID(stringId));
+	}
 }
 
 void AGOSEngine_Elvira2::oe2_drawItem() {
@@ -328,7 +348,7 @@ void AGOSEngine_Elvira2::oe2_doTable() {
 	// 143: start item sub
 	Item *i = getNextItemPtr();
 
-	SubRoom *r = (SubRoom *)findChildOfType(i, 1);
+	SubRoom *r = (SubRoom *)findChildOfType(i, kRoomType);
 	if (r != NULL) {
 		Subroutine *sub = getSubroutineByID(r->subroutine_id);
 		if (sub) {
@@ -338,7 +358,7 @@ void AGOSEngine_Elvira2::oe2_doTable() {
 	}
 
 	if (getGameType() == GType_ELVIRA2) {
-		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, 4);
+		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, kSuperRoomType);
 		if (sr != NULL) {
 			Subroutine *sub = getSubroutineByID(sr->subroutine_id);
 			if (sub) {
@@ -465,7 +485,7 @@ void AGOSEngine_Elvira2::oe2_bNotZero() {
 void AGOSEngine_Elvira2::oe2_getOValue() {
 	// 157: get item int prop
 	Item *item = getNextItemPtr();
-	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
 	uint prop = getVarOrByte();
 
 	if (subObject != NULL && subObject->objectFlags & (1 << prop) && prop < 16) {
@@ -479,7 +499,7 @@ void AGOSEngine_Elvira2::oe2_getOValue() {
 void AGOSEngine_Elvira2::oe2_setOValue() {
 	// 158: set item prop
 	Item *item = getNextItemPtr();
-	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
 	uint prop = getVarOrByte();
 	int value = getVarOrWord();
 
@@ -496,47 +516,7 @@ void AGOSEngine_Elvira2::oe2_ink() {
 
 void AGOSEngine_Elvira2::oe2_printStats() {
 	// 161: print stats
-	WindowBlock *window = _dummyWindow;
-	int val;
-
-	window->flags = 1;
-
-	mouseOff();
-
-	// Level
-	val = _variableArray[20];
-	if (val < -99)
-		val = -99;
-	if (val > 99)
-		val = 99;	
-	writeChar(window, 10, 134, 0, val);
-
-	// PP
-	val = _variableArray[22];
-	if (val < -99)
-		val = -99;
-	if (val > 99)
-		val = 99;	
-	writeChar(window, 16, 134, 6, val);
-
-	// HP
-	val = _variableArray[23];
-	if (val < -99)
-		val = -99;
-	if (val > 99)
-		val = 99;	
-	writeChar(window, 23, 134, 4, val);
-
-	// Experience
-	val = _variableArray[21];
-	if (val < -99)
-		val = -99;
-	if (val > 9999)
-		val = 9999;	
-	writeChar(window, 30, 134, 6, val / 100);
-	writeChar(window, 32, 134, 2, val / 10);
-
-	mouseOn();
+	printStats();
 }
 
 void AGOSEngine_Elvira2::oe2_setSuperRoom() {
@@ -597,10 +577,12 @@ void AGOSEngine_Elvira2::oe2_ifExitLocked() {
 	setScriptCondition(getExitState(i, n, d) == 3);
 }
 
-void AGOSEngine_Elvira2::oe2_unk174() {
-	// 174:
-	uint a = getVarOrWord();
-	debug(0, "oe2_unk174: stub (%d)", a);
+void AGOSEngine_Elvira2::oe2_playEffect() {
+	// 174: play sound
+	uint soundId = getVarOrWord();
+	loadSound(soundId);
+
+	debug(0, "oe2_playEffect: stub (%d)", soundId);
 }
 
 void AGOSEngine_Elvira2::oe2_getDollar2() {
@@ -690,6 +672,51 @@ void AGOSEngine_Elvira2::oe2_b2NotZero() {
 	// 183: is bit2 set
 	uint bit = getVarOrByte();
 	setScriptCondition((_bitArrayTwo[bit / 16] & (1 << (bit & 15))) != 0);
+}
+
+void AGOSEngine_Elvira2::printStats() {
+	WindowBlock *window = _dummyWindow;
+	int val;
+	const uint8 y = (getPlatform() == Common::kPlatformAtariST) ? 131 : 134;
+
+	window->flags = 1;
+
+	mouseOff();
+
+	// Level
+	val = _variableArray[20];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 10, y, 0, val);
+
+	// PP
+	val = _variableArray[22];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 16, y, 6, val);
+
+	// HP
+	val = _variableArray[23];
+	if (val < -99)
+		val = -99;
+	if (val > 99)
+		val = 99;	
+	writeChar(window, 23, y, 4, val);
+
+	// Experience
+	val = _variableArray[21];
+	if (val < -99)
+		val = -99;
+	if (val > 9999)
+		val = 9999;	
+	writeChar(window, 30, y, 6, val / 100);
+	writeChar(window, 32, y, 2, val % 100);
+
+	mouseOn();
 }
 
 } // End of namespace AGOS

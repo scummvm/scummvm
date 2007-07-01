@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +27,7 @@
 #define SWORD1_CONTROL_H
 
 #include "common/scummsys.h"
+#include "common/events.h"
 #include "sword1/sworddefs.h"
 
 class OSystem;
@@ -115,8 +119,8 @@ private:
 	void saveNameSelect(uint8 id, bool saving);
 	bool saveToFile(void);
 	bool restoreFromFile(void);
-	bool keyAccepted(uint8 key);
-	void handleSaveKey(uint8 key);
+	bool keyAccepted(uint16 ascii);
+	void handleSaveKey(Common::KeyState kbd);
 
 	void renderVolumeBar(uint8 id, uint8 volL, uint8 volR);
 	uint16 getTextWidth(const uint8 *str);
@@ -138,7 +142,7 @@ private:
 	Sound *_sound;
 	uint8 *_font, *_redFont;
 	uint8 *_screenBuf;
-	uint8 _keyPressed;
+	Common::KeyState _keyPressed;
 	void delay(uint32 msecs);
 	uint16 _mouseX, _mouseY, _mouseState;
 	bool _mouseDown;

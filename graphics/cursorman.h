@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +34,10 @@ namespace Graphics {
 
 class CursorManager : public Common::Singleton<CursorManager> {
 public:
+	/** Query whether the mouse cursor is visible. */
 	bool isVisible();
+
+	/** Show or hide the mouse cursor. */
 	bool showMouse(bool visible);
 
 	/**

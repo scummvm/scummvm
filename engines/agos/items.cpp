@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,7 +66,7 @@ bool AGOSEngine::hasIcon(Item *item) {
 	if (getGameType() == GType_ELVIRA1) {
 		return (getUserFlag(item, 7) != 0);
 	} else {
-		SubObject *child = (SubObject *)findChildOfType(item, 2);
+		SubObject *child = (SubObject *)findChildOfType(item, kObjectType);
 		return (child && (child->objectFlags & kOFIcon) != 0);
 	}
 }
@@ -73,7 +75,7 @@ uint AGOSEngine::itemGetIconNumber(Item *item) {
 	if (getGameType() == GType_ELVIRA1) {
 		return getUserFlag(item, 7);
 	} else {
-		SubObject *child = (SubObject *)findChildOfType(item, 2);
+		SubObject *child = (SubObject *)findChildOfType(item, kObjectType);
 		uint offs;
 
 		if (child == NULL || !(child->objectFlags & kOFIcon))
@@ -95,7 +97,7 @@ void AGOSEngine::createPlayer() {
 	_currentPlayer->adjective = -1;
 	_currentPlayer->noun = 10000;
 
-	p = (SubPlayer *)allocateChildBlock(_currentPlayer, 3, sizeof(SubPlayer));
+	p = (SubPlayer *)allocateChildBlock(_currentPlayer, kPlayerType, sizeof(SubPlayer));
 	if (p == NULL)
 		error("createPlayer: player create failure");
 
@@ -133,14 +135,14 @@ Child *AGOSEngine::findChildOfType(Item *i, uint type) {
 int AGOSEngine::getUserFlag(Item *item, int a) {
 	SubUserFlag *subUserFlag;
 
-	subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
+	subUserFlag = (SubUserFlag *)findChildOfType(item, kUserFlagType);
 	if (subUserFlag == NULL)
 		return 0;
 
 	if (a < 0 || a > 7)
 		return 0;
 
-	return	subUserFlag->userFlags[a];
+	return subUserFlag->userFlags[a];
 }
 
 int AGOSEngine::getUserFlag1(Item *item, int a) {
@@ -149,7 +151,7 @@ int AGOSEngine::getUserFlag1(Item *item, int a) {
 	if (item == NULL || item == _dummyItem2 || item == _dummyItem3)
 		return -1;
 
-	subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
+	subUserFlag = (SubUserFlag *)findChildOfType(item, kUserFlagType);
 	if (subUserFlag == NULL)
 		return 0;
 
@@ -162,9 +164,9 @@ int AGOSEngine::getUserFlag1(Item *item, int a) {
 void AGOSEngine::setUserFlag(Item *item, int a, int b) {
 	SubUserFlag *subUserFlag;
 
-	subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
+	subUserFlag = (SubUserFlag *)findChildOfType(item, kUserFlagType);
 	if (subUserFlag == NULL) {
-		subUserFlag = (SubUserFlag *) allocateChildBlock(item, 9, sizeof(SubUserFlag));
+		subUserFlag = (SubUserFlag *)allocateChildBlock(item, kUserFlagType, sizeof(SubUserFlag));
 	}
 
 	if (a < 0 || a > 7)
@@ -176,7 +178,7 @@ void AGOSEngine::setUserFlag(Item *item, int a, int b) {
 int AGOSEngine::getUserItem(Item *item, int n) {
 	SubUserFlag *subUserFlag;
 
-	subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
+	subUserFlag = (SubUserFlag *)findChildOfType(item, kUserFlagType);
 	if (subUserFlag == NULL)
 		return 0;
 
@@ -189,9 +191,9 @@ int AGOSEngine::getUserItem(Item *item, int n) {
 void AGOSEngine::setUserItem(Item *item, int n, int m) {
 	SubUserFlag *subUserFlag;
 
-	subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
+	subUserFlag = (SubUserFlag *)findChildOfType(item, kUserFlagType);
 	if (subUserFlag == NULL) {
-		subUserFlag = (SubUserFlag *) allocateChildBlock(item, 9, sizeof(SubUserFlag));
+		subUserFlag = (SubUserFlag *)allocateChildBlock(item, kUserFlagType, sizeof(SubUserFlag));
 	}
 
 	if (n == 0)
@@ -199,15 +201,15 @@ void AGOSEngine::setUserItem(Item *item, int n, int m) {
 }
 
 bool AGOSEngine::isRoom(Item *item) {
-	return findChildOfType(item, 1) != NULL;
+	return findChildOfType(item, kRoomType) != NULL;
 }
 
 bool AGOSEngine::isObject(Item *item) {
-	return findChildOfType(item, 2) != NULL;
+	return findChildOfType(item, kObjectType) != NULL;
 }
 
 bool AGOSEngine::isPlayer(Item *item) {
-	return findChildOfType(item, 3) != NULL;
+	return findChildOfType(item, kPlayerType) != NULL;
 }
 
 uint AGOSEngine::getOffsetOfChild2Param(SubObject *child, uint prop) {
@@ -389,10 +391,8 @@ int AGOSEngine::wordMatch(Item *item, int16 a, int16 n) {
 }
 
 Item *AGOSEngine::derefItem(uint item) {
-	if (item >= _itemArraySize) {
-		debug(1, "derefItem: invalid item %d", item);
-		return 0;
-	}
+	if (item >= _itemArraySize)
+		error("derefItem: invalid item %d", item);
 	return _itemArrayPtr[item];
 }
 

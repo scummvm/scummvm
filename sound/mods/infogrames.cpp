@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -168,7 +171,7 @@ void Infogrames::init() {
 		_chn[i].periodMod = 0;
 	}
 
-	_end = _data == 0;
+	_end = (_data == 0);
 }
 
 void Infogrames::reset() {
@@ -228,8 +231,7 @@ bool Infogrames::load(Common::SeekableReadStream &dum) {
 			(_cmdBlocks > (_data + size)))
 		return false;
 
-	_end = false;
-	_playing = true;
+	startPaula();
 	return true;
 }
 
@@ -241,8 +243,6 @@ void Infogrames::unload(void) {
 
 	clearVoices();
 	reset();
-
-	_end = true;
 }
 
 void Infogrames::getNextSample(Channel &chn) {
@@ -424,15 +424,14 @@ void Infogrames::interrupt() {
 		_volume = 0;
 		_period = 0;
 		getNextSample(_chn[chn]);
-		_voice[chn].volume = _volume;
-		_voice[chn].period = _period;
+		setChannelVolume(chn, _volume);
+		setChannelPeriod(chn, _period);
 		if ((_sample != 0xFF) && (_sample < _instruments->_count)) {
-			_voice[chn].data = _instruments->_samples[_sample].data;
-			_voice[chn].length = _instruments->_samples[_sample].length;
-			_voice[chn].dataRepeat = _instruments->_samples[_sample].dataRepeat;
-			_voice[chn].lengthRepeat =
-				_instruments->_samples[_sample].lengthRepeat;
-			_voice[chn].offset = 0;
+			setChannelData(chn,
+			               _instruments->_samples[_sample].data,
+			               _instruments->_samples[_sample].dataRepeat,
+			               _instruments->_samples[_sample].length,
+			               _instruments->_samples[_sample].lengthRepeat);
 			_sample = 0xFF;
 		}
 	}
@@ -446,8 +445,7 @@ void Infogrames::interrupt() {
 			_repCount--;
 			init();
 		} else if (_repCount != -1) {
-			_end = true;
-			_playing = false;
+			stopPaula();
 		} else {
 			init();
 		}

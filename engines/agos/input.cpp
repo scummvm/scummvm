@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +25,7 @@
 
 #include "common/stdafx.h"
 
+#include "common/config-manager.h"
 #include "common/file.h"
 
 #include "agos/intern.h"
@@ -192,7 +195,8 @@ void AGOSEngine::waitForInput() {
 		_dragAccept = 1;
 
 		for (;;) {
-			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) && _keyPressed == 35)
+			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
+					_keyPressed.keycode == Common::KEYCODE_HASH)
 				displayBoxStars();
 			if (processSpecialKeys()) {
 				if ((getGameType() == GType_PP && getGameId() != GID_DIMP) ||
@@ -235,7 +239,6 @@ void AGOSEngine::waitForInput() {
 					_dragMode = 0;
 					_dragCount = 0;
 					_dragEnd = 0;
-					continue;
 				}
 			} while (!_dragEnd);
 		
@@ -271,28 +274,28 @@ void AGOSEngine::waitForInput() {
 					_verbHitArea = 236;
 
 				if (ha->id == 98) {
-					animate(2, 0, 110, 0, 0, 0);
+					animate(2, 1, 110, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 108) {
-					animate(2, 0, 106, 0, 0, 0);
+					animate(2, 1, 106, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 109) {
-					animate(2, 0, 107, 0, 0, 0);
+					animate(2, 1, 107, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 115) {
-					animate(2, 0, 109, 0, 0, 0);
+					animate(2, 1, 109, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 116) {
-					animate(2, 0, 113, 0, 0, 0);
+					animate(2, 1, 113, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 117) {
-					animate(2, 0, 112, 0, 0, 0);
+					animate(2, 1, 112, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 118) {
-					animate(2, 0, 108, 0, 0, 0);
+					animate(2, 1, 108, 0, 0, 0);
 					waitForSync(34);
 				} else if (ha->id == 119) {
-					animate(2, 0, 111, 0, 0, 0);
+					animate(2, 1, 111, 0, 0, 0);
 					waitForSync(34);
 				}
 			}
@@ -469,39 +472,39 @@ bool AGOSEngine::processSpecialKeys() {
 		}
 	}
 
-	switch (_keyPressed) {
-	case 17: // Up
+	switch (_keyPressed.keycode) {
+	case Common::KEYCODE_UP:
 		if (getGameType() == GType_PP)
 			_verbHitArea = 302;
 		else if (getGameType() == GType_WW)
 			_verbHitArea = 239;
 		verbCode = true;
 		break;
-	case 18: // Down
+	case Common::KEYCODE_DOWN:
 		if (getGameType() == GType_PP)
 			_verbHitArea = 304;
 		else if (getGameType() == GType_WW)
 			_verbHitArea = 241;
 		verbCode = true;
 		break;
-	case 19: // Right
+	case Common::KEYCODE_RIGHT:
 		if (getGameType() == GType_PP)
 			_verbHitArea = 303;
 		else if (getGameType() == GType_WW)
 			_verbHitArea = 240;
 		verbCode = true;
 		break;
-	case 20: // Left
+	case Common::KEYCODE_LEFT:
 		if (getGameType() == GType_PP)
 			_verbHitArea = 301;
 		else if (getGameType() == GType_WW)
 			_verbHitArea = 242;
 		verbCode = true;
 		break;
-	case 27: // escape
+	case Common::KEYCODE_ESCAPE:
 		_exitCutscene = true;
 		break;
-	case 59: // F1
+	case Common::KEYCODE_F1:
 		if (getGameType() == GType_SIMON2) {
 			vcWriteVar(5, 50);
 			vcWriteVar(86, 0);
@@ -510,7 +513,7 @@ bool AGOSEngine::processSpecialKeys() {
 			vcWriteVar(86, 0);
 		}
 		break;
-	case 60: // F2
+	case Common::KEYCODE_F2:
 		if (getGameType() == GType_SIMON2) {
 			vcWriteVar(5, 75);
 			vcWriteVar(86, 1);
@@ -519,7 +522,7 @@ bool AGOSEngine::processSpecialKeys() {
 			vcWriteVar(86, 1);
 		}
 		break;
-	case 61: // F3
+	case Common::KEYCODE_F3:
 		if (getGameType() == GType_SIMON2) {
 			vcWriteVar(5, 125);
 			vcWriteVar(86, 2);
@@ -528,76 +531,95 @@ bool AGOSEngine::processSpecialKeys() {
 			vcWriteVar(86, 2);
 		}
 		break;
-	case 63: // F5
+	case Common::KEYCODE_F5:
 		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
 			_exitCutscene = true;
 		break;
-	case 65: // F7
+	case Common::KEYCODE_F7:
 		if (getGameType() == GType_FF && getBitFlag(76))
 			_variableArray[254] = 70;
 		break;
-	case 67: // F9
+	case Common::KEYCODE_F9:
 		if (getGameType() == GType_FF)
 			setBitFlag(73, !getBitFlag(73));
 		break;
-	case 'p':
+	case Common::KEYCODE_F12:
+		if (getGameType() == GType_PP && getGameId() != GID_DIMP) {
+			if (!getBitFlag(110)) {
+				setBitFlag(107, !getBitFlag(107));
+				_vgaPeriod = (getBitFlag(107) != 0) ? 15 : 30;
+			}
+		}
+		break;
+	case Common::KEYCODE_p:
 		pause();
 		break;
-	case 't':
+	case Common::KEYCODE_t:
 		if (getGameType() == GType_FF || (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE)) ||
 			((getFeatures() & GF_TALKIE) && _language != Common::EN_ANY && _language != Common::DE_DEU)) {
 			if (_speech)
 				_subtitles ^= 1;
 		}
 		break;
-	case 'v':
+	case Common::KEYCODE_v:
 		if (getGameType() == GType_FF || (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE))) {
 			if (_subtitles)
 				_speech ^= 1;
 		}
-	case '+':
-		_midi.setVolume(_midi.getVolume() + 16);
+	case Common::KEYCODE_PLUS:
+		if (_midiEnabled) {
+			_midi.setVolume(_midi.getVolume() + 16);
+		}
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 16);
 		break;
-	case '-':
-		_midi.setVolume(_midi.getVolume() - 16);
+	case Common::KEYCODE_MINUS:
+		if (_midiEnabled) {
+			_midi.setVolume(_midi.getVolume() - 16);
+		}
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) - 16);
 		break;
-	case 'm':
-		_midi.pause(_musicPaused ^= 1);
+	case Common::KEYCODE_m:
+		_musicPaused ^= 1;
+		if (_midiEnabled) {
+			_midi.pause(_musicPaused);
+		}
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (_musicPaused) ? 0 : ConfMan.getInt("music_volume"));
 		break;
-	case 's':
-		if (getGameId() == GID_SIMON1DOS)
+	case Common::KEYCODE_s:
+		if (getGameId() == GID_SIMON1DOS) {
 			_midi._enable_sfx ^= 1;
-		else
+		} else {
 			_sound->effectsPause(_effectsPaused ^= 1);
+		}
 		break;
-	case 'b':
+	case Common::KEYCODE_b:
 		_sound->ambientPause(_ambientPaused ^= 1);
 		break;
-	case 'r':
+	case Common::KEYCODE_r:
 		if (_debugMode)
 			_startMainScript ^= 1;
 		break;
-	case 'o':
+	case Common::KEYCODE_o:
 		if (_debugMode)
 			_continousMainScript ^= 1;
 		break;
-	case 'a':
+	case Common::KEYCODE_a:
 		if (_debugMode)
 			_startVgaScript ^= 1;
 		break;
-	case 'g':
+	case Common::KEYCODE_g:
 		if (_debugMode)
 			_continousVgaScript ^= 1;
 		break;
-	case 'd':
+	case Common::KEYCODE_d:
 		if (_debugMode)
 			_dumpImages ^=1;
 		break;
+	default:
+		break;
 	}
 
-	_keyPressed = 0;
+	_keyPressed.reset();
 	return verbCode;
 }
 

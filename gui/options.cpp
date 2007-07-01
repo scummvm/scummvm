@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -63,7 +66,7 @@ enum {
 
 static const char *savePeriodLabels[] = { "Never", "every 5 mins", "every 10 mins", "every 15 mins", "every 30 mins", 0 };
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
-static const char *outputRateLabels[] = { "Default", "22 kHz", "8 kHz", "11kHz", "44 kHz", "48 kHz", 0 };
+static const char *outputRateLabels[] = { "<default>", "22 kHz", "8 kHz", "11kHz", "44 kHz", "48 kHz", 0 };
 static const int outputRateValues[] = { 0, 22050, 8000, 11025, 44100, 48000, -1 };
 
 
@@ -235,7 +238,7 @@ void OptionsDialog::open() {
 		int speed;
 		int sliderMaxValue = _subSpeedSlider->getMaxValue();
 
-		_subMode = getSubtitleMode(ConfMan.getBool("subtitles", _domain), ConfMan.getBool("speech_mute"));
+		_subMode = getSubtitleMode(ConfMan.getBool("subtitles", _domain), ConfMan.getBool("speech_mute", _domain));
 		_subToggleButton->setLabel(_subModeDesc[_subMode]);
 
 		// Engines that reuse the subtitle speed widget set their own max value.
@@ -499,7 +502,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
 
 	// The GFX mode popup
-	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup", "Graphics mode: ", labelWidth);
+	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup", "Graphics mode:", labelWidth);
 
 	_gfxPopUp->appendEntry("<default>");
 	_gfxPopUp->appendEntry("");
@@ -509,7 +512,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 	}
 
 	// RenderMode popup
-	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup", "Render mode: ", labelWidth);
+	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup", "Render mode:", labelWidth);
 	_renderModePopUp->appendEntry("<default>", Common::kRenderDefault);
 	_renderModePopUp->appendEntry("");
 	const Common::RenderModeDescription *rm = Common::g_renderModes;
@@ -536,7 +539,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
 
 	// The MIDI mode popup & a label
-	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", "Music driver: ", labelWidth);
+	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", "Music driver:", labelWidth);
 
 	// Populate it
 	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
@@ -546,7 +549,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 	}
 
 	// Sample rate settings
-	_outputRatePopUp = new PopUpWidget(boss, prefix + "auSampleRatePopup", "Output rate: ", labelWidth);
+	_outputRatePopUp = new PopUpWidget(boss, prefix + "auSampleRatePopup", "Output rate:", labelWidth);
 
 	for (int i = 0; outputRateLabels[i]; i++) {
 		_outputRatePopUp->appendEntry(outputRateLabels[i], outputRateValues[i]);
@@ -672,18 +675,10 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	tab->addTab("Audio");
 	addAudioControls(tab, "globaloptions_");
-
-	int volControlPos = g_gui.evaluator()->getVar("volumeControlsInAudio", true);
-
-	if (volControlPos)
-		addVolumeControls(tab, "globaloptions_");
-
 	addSubtitleControls(tab, "globaloptions_");
 
-	if (!volControlPos) {
-		tab->addTab("Volume");
-		addVolumeControls(tab, "globaloptions_");
-	}
+	tab->addTab("Volume");
+	addVolumeControls(tab, "globaloptions_");
 
 	// TODO: cd drive setting
 
@@ -724,7 +719,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
 
-	_autosavePeriodPopUp = new PopUpWidget(tab, "globaloptions_autosaveperiod", "Autosave: ", labelWidth);
+	_autosavePeriodPopUp = new PopUpWidget(tab, "globaloptions_autosaveperiod", "Autosave:", labelWidth);
 
 	for (int i = 0; savePeriodLabels[i]; i++) {
 		_autosavePeriodPopUp->appendEntry(savePeriodLabels[i], savePeriodValues[i]);

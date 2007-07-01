@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,7 +67,7 @@ private:
 	static void roomExitAnimHandler(Hotspot &h);
 	static void playerAnimHandler(Hotspot &h);
 	static void followerAnimHandler(Hotspot &h);
-	static void skorlAnimHandler(Hotspot &h);
+	static void jailorAnimHandler(Hotspot &h);
 	static void sonicRatAnimHandler(Hotspot &h);
 	static void droppingTorchAnimHandler(Hotspot &h);
 	static void playerSewerExitAnimHandler(Hotspot &h);
@@ -78,11 +81,15 @@ private:
 	static void talkAnimHandler(Hotspot &h);
 	static void grubAnimHandler(Hotspot &h);
 	static void barmanAnimHandler(Hotspot &h);
-	static void skorlGaurdAnimHandler(Hotspot &h);
+	static void skorlAnimHandler(Hotspot &h);
 	static void gargoyleAnimHandler(Hotspot &h);
+	static void goewinShopAnimHandler(Hotspot &h);
 	static void skullAnimHandler(Hotspot &h);
+	static void dragonFireAnimHandler(Hotspot &h);
+	static void castleSkorlAnimHandler(Hotspot &h);
 	static void rackSerfAnimHandler(Hotspot &h);
-
+	static void fighterAnimHandler(Hotspot &h);
+	static void playerFightAnimHandler(Hotspot &h);
 public:
 	static HandlerMethodPtr getHandler(uint16 procOffset);
 };
@@ -126,6 +133,10 @@ public:
 class CurrentActionStack {
 private:
 	ManagedList<CurrentActionEntry *> _actions;
+	void validateStack() { 
+		if (_actions.size() > 20) 
+			error("NPC character got an excessive number of pending actions");
+	}
 public:
 	CurrentActionStack() { _actions.clear(); }
 
@@ -140,21 +151,27 @@ public:
 
 	void addBack(CurrentAction newAction, uint16 roomNum) {
 		_actions.push_back(new CurrentActionEntry(newAction, roomNum));
+		validateStack();
 	}
 	void addBack(CurrentAction newAction, CharacterScheduleEntry *rec, uint16 roomNum) {
 		_actions.push_back(new CurrentActionEntry(newAction, rec, roomNum));
+		validateStack();
 	}
 	void addBack(Action newAction, uint16 roomNum, uint16 param1, uint16 param2) {
 		_actions.push_back(new CurrentActionEntry(newAction, roomNum, param1, param2));
+		validateStack();
 	}
 	void addFront(CurrentAction newAction, uint16 roomNum) {
 		_actions.push_front(new CurrentActionEntry(newAction, roomNum));
+		validateStack();
 	}
 	void addFront(CurrentAction newAction, CharacterScheduleEntry *rec, uint16 roomNum) {
 		_actions.push_front(new CurrentActionEntry(newAction, rec, roomNum));
+		validateStack();
 	}
 	void addFront(Action newAction, uint16 roomNum, uint16 param1, uint16 param2) {
 		_actions.push_front(new CurrentActionEntry(newAction, roomNum, param1, param2));
+		validateStack();
 	}
 
 	void saveToStream(WriteStream *stream);
@@ -370,6 +387,8 @@ public:
 	void setTickProc(uint16 newVal);
 	bool persistant() { return _persistant; }
 	void setPersistant(bool value) { _persistant = value; }
+	uint8 colourOffset() { return _colourOffset; }
+	void setColourOffset(uint8 value) { _colourOffset = value; }
 	void setRoomNumber(uint16 roomNum) { 
 		_roomNumber = roomNum; 
 		if (_data) _data->roomNumber = roomNum;

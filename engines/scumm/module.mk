@@ -82,6 +82,12 @@ MODULE_OBJS += \
 	smush/saud_channel.o \
 	smush/smush_mixer.o \
 	smush/smush_font.o
+	
+ifdef USE_ARM_SMUSH_ASM
+MODULE_OBJS += \
+	smush/codec47ARM.o
+endif
+
 endif
 
 ifndef DISABLE_HE

@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,7 +40,7 @@ MoviePlayer::MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer)
 }
 
 int MoviePlayer::getImageNum() {
-	if (!_fd.isOpen())
+	if (!_fd)
 		return 0;
 	return _wizResNum;
 }
@@ -46,7 +48,7 @@ int MoviePlayer::getImageNum() {
 int MoviePlayer::load(const char *filename, int flags, int image) {
 	char videoName[100];
 
-	if (_fd.isOpen()) {
+	if (_fd) {
 		closeFile();
 	}
 
@@ -64,7 +66,7 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 	debug(1, "Playing video %s", videoName);
 
 	// Skip sound tag
-	_fd.readUint32BE();
+	_fd->readUint32BE();
 
 	if (flags & 2) {
 		_vm->_wiz->createWizEmptyImage(image, 0, 0, _width, _height);
@@ -83,7 +85,7 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 }
 
 void MoviePlayer::handleNextFrame() {
-	if (_fd.isOpen() == false) {
+	if (_fd == false) {
 		return;
 	}
 

@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -198,8 +200,6 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		_engineStartTime = _system->getMillis() / 1000;
 	}
 
-	_dialogStartTime = _system->getMillis() / 1000;
-
 	// Due to a bug in scummvm up to and including 0.3.0, save games could be saved
 	// in the V8/V9 format but were tagged with a V7 mark. Ouch. So we just pretend V7 == V8 here
 	if (hdr.ver == VER(7))
@@ -211,7 +211,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// state for temporary state saves - such as certain cutscenes in DOTT,
 	// FOA, Sam and Max, etc.
 	//
-	// Thusly, we should probably not stop music when restoring from one of
+	// Thus, we should probably not stop music when restoring from one of
 	// these saves. This change stops the Mole Man theme from going quiet in
 	// Sam & Max when Doug tells you about the Ball of Twine, as mentioned in
 	// patch #886058.
@@ -375,9 +375,6 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	debug(1, "State loaded from '%s'", filename);
 
 	_sound->pauseSounds(false);
-
-	_engineStartTime += _system->getMillis() / 1000 - _dialogStartTime;
-	_dialogStartTime = 0;
 
 	return true;
 }
@@ -1156,11 +1153,16 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	// Save/load the charset renderer state
 	//
-	if (s->getVersion() >= VER(72)) {
-		if (s->isSaving()) {
-			s->saveByte(_charset->getCurID());
-		} else {
+	if (s->getVersion() >= VER(73)) {
+		_charset->saveLoadWithSerializer(s);
+	} else if (s->isLoading()) {
+		if (s->getVersion() == VER(72)) {
 			_charset->setCurID(s->loadByte());
+		} else {
+			// Before V72, the charset id wasn't saved. This used to cause issues such
+			// as the one described in the bug report #1722153. For these savegames,
+			// we reinitialize the id using a, hopefully, sane value.
+			_charset->setCurID(_string[0]._default.charset);
 		}
 	}
 }

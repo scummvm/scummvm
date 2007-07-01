@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -110,8 +113,6 @@ protected:
 
 	void stopPaulaChannel(uint8 channel);
 	void setupPaulaChannel(uint8 channel, const int8 *waveData, uint16 offset, uint16 len, uint16 repeatPos, uint16 repeatLen);
-	void setupPaulaChannelPeriod(uint8 channel, int16 period);
-	void setPaulaChannelVolume(uint8 channel, uint8 volume);
 
 	virtual void interrupt();
 
@@ -199,8 +200,7 @@ void Rjp1::startSong(int song) {
 		}
 	}
 	// "start" Paula audiostream
-	_playing = true;
-	_end = false;
+	startPaula();
 }
 
 void Rjp1::startSequence(uint8 channelNum, uint8 seqNum) {
@@ -348,7 +348,7 @@ void Rjp1::modulatePeriod(Rjp1Channel *channel) {
 		channel->freqInit += channel->freqInc;
 		--channel->freqStep;
 	}
-	setupPaulaChannelPeriod(channel - _channelsTable, channel->freqInit + channel->modulatePeriodNext);
+	setChannelPeriod(channel - _channelsTable, channel->freqInit + channel->modulatePeriodNext);
 }
 
 void Rjp1::setupNote(Rjp1Channel *channel, int16 period) {
@@ -479,7 +479,7 @@ void Rjp1::modulateVolumeWaveform(Rjp1Channel *channel) {
 void Rjp1::setVolume(Rjp1Channel *channel) {
 	channel->volume = (channel->volume * channel->volumeScale) / 64;
 	channel->volume = CLIP<int16>(channel->volume, 0, 64);
-	setPaulaChannelVolume(channel - _channelsTable, channel->volume);
+	setChannelVolume(channel - _channelsTable, channel->volume);
 }
 
 void Rjp1::stopPaulaChannel(uint8 channel) {
@@ -488,21 +488,8 @@ void Rjp1::stopPaulaChannel(uint8 channel) {
 
 void Rjp1::setupPaulaChannel(uint8 channel, const int8 *waveData, uint16 offset, uint16 len, uint16 repeatPos, uint16 repeatLen) {
 	if (waveData) {
-		Channel *ch = &_voice[channel];
-		ch->data = waveData;
-		ch->dataRepeat = waveData + repeatPos * 2;
-		ch->length = len * 2;
-		ch->lengthRepeat = repeatLen * 2;
-		ch->offset = offset * 2;
+		setChannelData(channel, waveData, waveData + repeatPos * 2, len * 2, repeatLen * 2, offset * 2);
 	}
-}
-
-void Rjp1::setupPaulaChannelPeriod(uint8 channel, int16 period) {
-	_voice[channel].period = period;
-}
-
-void Rjp1::setPaulaChannelVolume(uint8 channel, uint8 volume) {
-	_voice[channel].volume = volume;
 }
 
 void Rjp1::interrupt() {

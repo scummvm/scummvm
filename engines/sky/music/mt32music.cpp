@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -117,7 +120,7 @@ bool MT32Music::processPatchSysEx(uint8 *sysExData) {
 		crc -= sysExBuf[cnt];
 	sysExBuf[14] = crc & 0x7F;					// crc
 	_midiDrv->sysEx(sysExBuf, 15);
-	g_system->delayMillis(5);
+	g_system->delayMillis(40);
 	return true;
 }
 
@@ -167,7 +170,7 @@ void MT32Music::startDriver(void) {
 		sendBuf[len] = crc & 0x7F;
 		len++;
 		_midiDrv->sysEx(sendBuf, len);
-		g_system->delayMillis (5);
+		g_system->delayMillis(40);
 	}
 
 	while (processPatchSysEx(sysExData))

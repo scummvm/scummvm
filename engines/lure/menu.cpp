@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -254,7 +257,7 @@ uint16 PopupMenu::ShowInventory() {
 
 #define MAX_NUM_DISPLAY_ITEMS 20
 
-uint16 PopupMenu::ShowItems(Action contextAction) {
+uint16 PopupMenu::ShowItems(Action contextAction, uint16 roomNumber) {
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
 	RoomDataList &rooms = res.roomData();
@@ -270,7 +273,6 @@ uint16 PopupMenu::ShowItems(Action contextAction) {
 	char *entryNames[MAX_NUM_DISPLAY_ITEMS];
 	int numItems = 0;
 	int itemCtr;
-	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
 	uint32 contextBitflag = 1 << (contextAction - 1);
 
 	// Loop for rooms
@@ -279,7 +281,7 @@ uint16 PopupMenu::ShowItems(Action contextAction) {
 		// Pre-condition checks for whether to skip room
 		if ((roomData->hdrFlags != 15) && ((roomData->hdrFlags & fields.hdrFlagMask()) == 0))
 			continue;
-		if (((roomData->flags & HOTSPOTFLAG_20) != 0) || ((roomData->flags & HOTSPOTFLAG_FOUND) == 0))
+		if (((roomData->flags & HOTSPOTFLAG_MENU_EXCLUSION) != 0) || ((roomData->flags & HOTSPOTFLAG_FOUND) == 0))
 			continue;
 		if ((roomData->actions & contextBitflag) == 0)
 			continue;
@@ -301,20 +303,21 @@ uint16 PopupMenu::ShowItems(Action contextAction) {
 			((hotspot->headerFlags & fields.hdrFlagMask()) == 0))
 			continue;
 
-		if (((hotspot->flags & HOTSPOTFLAG_20) != 0) || ((hotspot->flags & HOTSPOTFLAG_FOUND) == 0))
+		if (((hotspot->flags & HOTSPOTFLAG_MENU_EXCLUSION) != 0) || ((hotspot->flags & HOTSPOTFLAG_FOUND) == 0))
 			// Skip the current hotspot		
 			continue;
 
-		// Following checks are done for room list - still need to include check against [3350h]
-		if (((hotspot->flags & 0x10) != 0) && (hotspot->roomNumber != player->roomNumber()))
+		// If the hotspot is room specific, skip if the character will not be in the specified room
+		if (((hotspot->flags & HOTSPOTFLAG_ROOM_SPECIFIC) != 0) && 
+			(hotspot->roomNumber != roomNumber))
 			continue;
 
+		// If hotspot does not allow action, then skip it
 		if ((hotspot->actions & contextBitflag) == 0)
-			// If hotspot does not allow action, then skip it
 			continue;
 
+		// If a special hotspot Id, then skip displaying
 		if ((hotspot->nameId == 0x17A) || (hotspot->nameId == 0x147))
-			// Special hotspot names to skip 
 			continue;
 
 		// Check if the hotspot's name is already used in an already set item
@@ -472,19 +475,18 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 			}
 
 			else if (e.type() == Common::EVENT_KEYDOWN) {
-				byte ch = e.event().kbd.ascii;
 				uint16 keycode = e.event().kbd.keycode;
 
-				if (((keycode == 0x108) || (keycode == 0x111)) && (selectedIndex > 0)) {
+				if (((keycode == Common::KEYCODE_KP8) || (keycode == Common::KEYCODE_UP)) && (selectedIndex > 0)) {
 					--selectedIndex;
 					refreshFlag = true;
-				} else if (((keycode == 0x102) || (keycode == 0x112)) && 
+				} else if (((keycode == Common::KEYCODE_KP2) || (keycode == Common::KEYCODE_DOWN)) && 
 						(selectedIndex < numEntries-1)) {
 					++selectedIndex;
 					refreshFlag = true;
-				} else if ((ch == '\xd') || (keycode == 0x10f)) {
+				} else if ((keycode == Common::KEYCODE_RETURN) || (keycode == Common::KEYCODE_KP_ENTER)) {
 					goto bail_out;
-				} else if (ch == '\x1b') {
+				} else if (keycode == Common::KEYCODE_ESCAPE) {
 					selectedIndex = 0xffff;
 					goto bail_out;
 				}

@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +28,7 @@
 
 #include "common/stdafx.h"
 
+#include "common/advancedDetector.h"
 #include "common/rect.h"
 #include "common/util.h"
 
@@ -46,12 +49,6 @@ namespace Scumm {
 #pragma mark -
 #pragma mark --- Data types & constants ---
 #pragma mark -
-
-struct ObsoleteGameID {
-	const char *from;
-	const char *to;
-	Common::Platform platform;
-};
 
 #define UNK Common::kPlatformUnknown
 
@@ -144,7 +141,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
  * Conversion table mapping old obsolete game IDs to the
  * corresponding new game ID and platform combination.
  */
-static const ObsoleteGameID obsoleteGameIDsTable[] = {
+static const Common::ADObsoleteGameID obsoleteGameIDsTable[] = {
 	{"bluesabctimedemo", "bluesabctime", UNK},
 	{"BluesBirthdayDemo", "BluesBirthday", UNK},
 	{"comidemo", "comi", UNK},
@@ -512,6 +509,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "bluesabctime", "BluesABCTimeDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "bluesabctime", "abc-slideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
+	{ "bluesabctime", "BluesABCTimeSlideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "BluesBirthday", "Blue'sBirthday-Red", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "BluesBirthday", "Blue'sBirthday-Red", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -520,6 +518,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "BluesBirthday", "BluesBirthdayDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "BluesBirthday", "BluesBirthdayDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "BluesBirthday", "bda-slideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
+	{ "BluesBirthday", "BluesBirthdaySlideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "catalog", "catalog", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "catalog", "catalog2", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -567,6 +566,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi3", "F3-Mdemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddi3", "f3-mdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi3", "FF3-DEMO", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi3", "FF3DEMO", kGenHEPC, Common::HB_ISR, UNK, 0 },
 	{ "freddi3", "Freddi 3", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "freddi3", "Freddi Fish 3", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddi3", "FreddiFGT", kGenHEPC, Common::DE_DEU, UNK, 0 },
@@ -656,6 +656,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "pajama2", "pj2demo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama2", "Pjs2demo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama2", "PJ2 Demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
+	{ "pajama2", "PS2DEMO", kGenHEPC, Common::HB_ISR, UNK, 0 },
 
 	{ "pajama3", "pajama3", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama3", "FPJ3Demo", kGenHEPC, Common::FR_FRA, UNK, 0 },
@@ -703,6 +704,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttrace", "ToffRennen", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "puttrace", "ToffRennen", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "puttrace", "UKPuttRace", kGenHEPC, Common::RU_RUS, UNK, 0 }, // Russian
+	{ "puttrace", "PUTTDEMO.CUP", kGenUnchanged, UNK_LANG, UNK, 0 },
 	{ "puttrace", "racedemo.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "PuttsFunShop", "PuttsFunShop", kGenHEPC, UNK_LANG, UNK, 0 },

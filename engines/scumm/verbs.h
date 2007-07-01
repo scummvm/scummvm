@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +29,18 @@
 #include "common/rect.h"
 
 namespace Scumm {
+
+/**
+ * The area in which some click (or key press) occured and which is passed
+ * to the input script.
+ */
+enum ClickArea {
+	kVerbClickArea = 1,
+	kSceneClickArea = 2,
+	kInventoryClickArea = 3,
+	kKeyClickArea = 4,
+	kSentenceClickArea = 5
+};
 
 enum {
 	kTextVerbType = 0,

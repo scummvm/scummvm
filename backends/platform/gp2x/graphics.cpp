@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2005-2006 John Willis (Portions of the GP2X Backend)
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,10 +29,10 @@
  */
 
 #include "backends/platform/gp2x/gp2x-common.h"
-#include "graphics/scaler.h"
 #include "common/util.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
+#include "graphics/scaler.h"
 #include "graphics/surface.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
@@ -235,17 +236,12 @@ void OSystem_GP2X::initSize(uint w, uint h){
 }
 
 void OSystem_GP2X::loadGFXMode() {
-
-	//enable 320x240 image to fit the 320x240 display area (aka, disable scaling)
-	//gp2x_video_RGB_setscaling(320,240);
-
 	assert(_inited);
 	_forceFull = true;
 	_modeFlags |= DF_UPDATE_EXPAND_1_PIXEL;
 
 	int hwW, hwH;
 
-#ifndef __MAEMO__
 	_overlayWidth = _screenWidth * _scaleFactor;
 	_overlayHeight = _screenHeight * _scaleFactor;
 
@@ -257,10 +253,6 @@ void OSystem_GP2X::loadGFXMode() {
 
 	hwW = _screenWidth * _scaleFactor;
 	hwH = effectiveScreenHeight();
-#else
-	hwW = _overlayWidth;
-	hwH = _overlayHeight;
-#endif
 
 	//
 	// Create the surface that contains the 8 bit game data
@@ -348,7 +340,6 @@ void OSystem_GP2X::loadGFXMode() {
 	_km.y_max = effectiveScreenHeight() - 1;
 	_km.delay_time = 25;
 	_km.last_time = 0;
-
 }
 
 void OSystem_GP2X::unloadGFXMode() {
@@ -686,28 +677,14 @@ void OSystem_GP2X::setZoomOnMouse() {
 		}
 }
 
-void OSystem_GP2X::clearScreen() {
-	assert (_transactionMode == kTransactionNone);
-
-	// Try to lock the screen surface
-	if (SDL_LockSurface(_screen) == -1)
-		error("SDL_LockSurface failed: %s", SDL_GetError());
-
-	byte *dst = (byte *)_screen->pixels;
-
-	// Clear the screen
-	memset(dst, 0, _screenWidth * _screenHeight);
-
-	// Unlock the screen surface
-	SDL_UnlockSurface(_screen);
-}
-
 void OSystem_GP2X::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
 	assert (_transactionMode == kTransactionNone);
 	assert(src);
 
-	if (_screen == NULL)
+	if (_screen == NULL) {
+		warning("OSystem_GP2X::copyRectToScreen: _screen == NULL");
 		return;
+	}
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
@@ -771,15 +748,44 @@ void OSystem_GP2X::copyRectToScreen(const byte *src, int pitch, int x, int y, in
 	SDL_UnlockSurface(_screen);
 }
 
-// TIDY: DIRTY HACK: Try a REALLY simple version of grabRawScreen to
-//       debug why it will not work on the GP2X.
-bool OSystem_GP2X::grabRawScreen(Graphics::Surface *surf) {
-	assert(surf);
+Graphics::Surface *OSystem_GP2X::lockScreen() {
+	assert (_transactionMode == kTransactionNone);
 
-	surf->create(_screenWidth, _screenHeight, 1);
-	memcpy(surf->pixels, _screen->pixels, _screenWidth * _screenHeight);
+	// Lock the graphics mutex
+	lockMutex(_graphicsMutex);
 
-	return true;
+	// paranoia check
+	assert(!_screenIsLocked);
+	_screenIsLocked = true;
+
+	// Try to lock the screen surface
+	if (SDL_LockSurface(_screen) == -1)
+		error("SDL_LockSurface failed: %s", SDL_GetError());
+
+	_framebuffer.pixels = _screen->pixels;
+	_framebuffer.w = _screen->w;
+	_framebuffer.h = _screen->h;
+	_framebuffer.pitch = _screen->pitch;
+	_framebuffer.bytesPerPixel = 1;
+
+	return &_framebuffer;
+}
+
+void OSystem_GP2X::unlockScreen() {
+	assert (_transactionMode == kTransactionNone);
+
+	// paranoia check
+	assert(_screenIsLocked);
+	_screenIsLocked = false;
+
+	// Unlock the screen surface
+	SDL_UnlockSurface(_screen);
+
+	// Trigger a full screen update
+	_forceFull = true;
+
+	// Finally unlock the graphics mutex
+	unlockMutex(_graphicsMutex);
 }
 
 void OSystem_GP2X::addDirtyRect(int x, int y, int w, int h, bool realCoordinates) {
@@ -829,11 +835,9 @@ void OSystem_GP2X::addDirtyRect(int x, int y, int w, int h, bool realCoordinates
 		h = height - y;
 	}
 
-#ifndef DISABLE_SCALERS
 	if (_adjustAspectRatio && !_overlayVisible && !realCoordinates) {
 		makeRectStretchable(x, y, w, h);
 	}
-#endif
 
 	if (w == width && h == height) {
 		_forceFull = true;
@@ -862,7 +866,7 @@ void OSystem_GP2X::makeChecksums(const byte *buf) {
 	/* the 8x8 blocks in buf are enumerated starting in the top left corner and
 	 * reading each line at a time from left to right */
 	for (y = 0; y != last_y; y++, buf += _screenWidth * (8 - 1))
-		for (x = 0; x != last_x; x++, buf += 8) {			// Adler32 checksum algorithm (from RFC1950, used by gzip and zlib).
+		for (x = 0; x != last_x; x++, buf += 8) {
 			// Adler32 checksum algorithm (from RFC1950, used by gzip and zlib).
 			// This computes the Adler32 checksum of a 8x8 pixel block. Note
 			// that we can do the modulo operation (which is the slowest part)
@@ -1176,8 +1180,6 @@ bool OSystem_GP2X::showMouse(bool visible) {
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
 
-	//updateScreen();
-
 	return last;
 }
 
@@ -1185,7 +1187,6 @@ void OSystem_GP2X::setMousePos(int x, int y) {
 	if (x != _mouseCurState.x || y != _mouseCurState.y) {
 		_mouseCurState.x = x;
 		_mouseCurState.y = y;
-		//updateScreen();
 	}
 }
 
@@ -1532,7 +1533,6 @@ void OSystem_GP2X::drawMouse() {
 		zoomdst.h = (tmpScreenHeight);
 
 		SDL_GP2X_Display(&zoomdst);
-
 	};
 
 
@@ -1555,6 +1555,8 @@ void OSystem_GP2X::drawMouse() {
 void OSystem_GP2X::displayMessageOnOSD(const char *msg) {
 	assert (_transactionMode == kTransactionNone);
 	assert(msg);
+
+	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
 	uint i;
 
@@ -1707,7 +1709,5 @@ void OSystem_GP2X::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 				displayMessageOnOSD(buffer);
 			}
 		}
-
 	}
-
 }

@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004 Ivan Dubrov
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1492,6 +1494,7 @@ void Inter_v2::o2_playImd() {
 		close = false;
 	}
 
+	_vm->_game->_preventScroll = true;
 	for (int i = startFrame; i <= lastFrame; i++) {
 		_vm->_imdPlayer->play(i, palCmd, palStart, palEnd, 0, lastFrame);
 		WRITE_VAR(11, i);
@@ -1507,10 +1510,12 @@ void Inter_v2::o2_playImd() {
 			if (VAR(0) == (unsigned) breakKey) {
 				if (_vm->_imdPlayer->_soundStage == 2)
 					_vm->_snd->stopSound(0);
+				_vm->_game->_preventScroll = false;
 				return;
 			}
 		}
 	}
+	_vm->_game->_preventScroll = false;
 
 	if (close)
 		_vm->_imdPlayer->closeImd();

@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,59 +41,59 @@ using Common::File;
 
 namespace AGOS {
 
-void AGOSEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
-	if (getGameType() == GType_SIMON1) {
-		if (speech_id == 9999) {
-			if (_subtitles)
-				return;
-			if (!getBitFlag(14) && !getBitFlag(28)) {
-				setBitFlag(14, true);
-				_variableArray[100] = 15;
-				animate(4, 1, 130, 0, 0, 0);
-				waitForSync(130);
-			}
-			_skipVgaWait = true;
-		} else {
-			if (_subtitles && _scriptVar2) {
-				animate(4, 2, 204, 0, 0, 0);
-				waitForSync(204);
-				stopAnimate(204);
-			}
-			if (vgaSpriteId < 100)
-				stopAnimate(vgaSpriteId + 201);
-
-			loadVoice(speech_id);
-
-			if (vgaSpriteId < 100)
-				animate(4, 2, vgaSpriteId + 201, 0, 0, 0);
+void AGOSEngine_Simon1::playSpeech(uint16 speech_id, uint16 vgaSpriteId) {
+	if (speech_id == 9999) {
+		if (_subtitles)
+			return;
+		if (!getBitFlag(14) && !getBitFlag(28)) {
+			setBitFlag(14, true);
+			_variableArray[100] = 15;
+			animate(4, 1, 130, 0, 0, 0);
+			waitForSync(130);
 		}
+		_skipVgaWait = true;
 	} else {
-		if (speech_id == 0xFFFF) {
-			if (_subtitles)
-				return;
-			if (!getBitFlag(14) && !getBitFlag(28)) {
-				setBitFlag(14, true);
-				_variableArray[100] = 5;
-				animate(4, 1, 30, 0, 0, 0);
-				waitForSync(130);
-			}
-			_skipVgaWait = true;
-		} else {
-			if (getGameType() == GType_SIMON2 && _subtitles && _language != Common::HB_ISR) {
-				loadVoice(speech_id);
-				return;
-			}
-
-			if (_subtitles && _scriptVar2) {
-				animate(4, 2, 5, 0, 0, 0);
-				waitForSync(205);
-				stopAnimateSimon2(2,5);
-			}
-
-			stopAnimateSimon2(2, vgaSpriteId + 2);
-			loadVoice(speech_id);
-			animate(4, 2, vgaSpriteId + 2, 0, 0, 0);
+		if (_subtitles && _scriptVar2) {
+			animate(4, 2, 204, 0, 0, 0);
+			waitForSync(204);
+			stopAnimate(204);
 		}
+		if (vgaSpriteId < 100)
+			stopAnimate(201 + vgaSpriteId);
+
+		loadVoice(speech_id);
+
+		if (vgaSpriteId < 100)
+			animate(4, 2, 201 + vgaSpriteId, 0, 0, 0);
+	}
+}
+
+void AGOSEngine_Simon2::playSpeech(uint16 speech_id, uint16 vgaSpriteId) {
+	if (speech_id == 0xFFFF) {
+		if (_subtitles)
+			return;
+		if (!getBitFlag(14) && !getBitFlag(28)) {
+			setBitFlag(14, true);
+			_variableArray[100] = 5;
+			animate(4, 1, 30, 0, 0, 0);
+			waitForSync(130);
+		}
+		_skipVgaWait = true;
+	} else {
+		if (getGameType() == GType_SIMON2 && _subtitles && _language != Common::HB_ISR) {
+			loadVoice(speech_id);
+			return;
+		}
+
+		if (_subtitles && _scriptVar2) {
+			animate(4, 2, 5, 0, 0, 0);
+			waitForSync(205);
+			stopAnimateSimon2(2,5);
+		}
+
+		stopAnimateSimon2(2, vgaSpriteId + 2);
+		loadVoice(speech_id);
+		animate(4, 2, vgaSpriteId + 2, 0, 0, 0);
 	}
 }
 
@@ -118,9 +120,26 @@ void AGOSEngine::skipSpeech() {
 	}
 }
 
-void AGOSEngine::loadModule(uint music) {
-	_mixer->stopHandle(_modHandle);
+void AGOSEngine::loadMusic(uint16 music) {
+	char buf[4];
 
+	stopMusic();
+
+	_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
+	_gameFile->read(buf, 4);
+	if (!memcmp(buf, "FORM", 4)) {
+		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
+		_midi.loadXMIDI(_gameFile);
+	} else {
+		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
+		_midi.loadMultipleSMF(_gameFile);
+	}
+
+	_lastMusicPlayed = music;
+	_nextMusicToPlay = -1;
+}
+
+void AGOSEngine::playModule(uint16 music) {
 	char filename[15];
 	File f;
 
@@ -133,7 +152,7 @@ void AGOSEngine::loadModule(uint music) {
 
 	f.open(filename);
 	if (f.isOpen() == false) {
-		error("loadModule: Can't load module from '%s'", filename);
+		error("playModule: Can't load module from '%s'", filename);
 	}
 
 	Audio::AudioStream *audioStream;
@@ -143,7 +162,7 @@ void AGOSEngine::loadModule(uint music) {
 		uint srcSize = f.size();
 		byte *srcBuf = (byte *)malloc(srcSize);
 		if (f.read(srcBuf, srcSize) != srcSize)
-			error("loadModule: Read failed");
+			error("playModule: Read failed");
 
 		uint dstSize = READ_BE_UINT32(srcBuf + srcSize - 4);
 		byte *dstBuf = (byte *)malloc(dstSize);
@@ -160,93 +179,93 @@ void AGOSEngine::loadModule(uint music) {
 	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_modHandle, audioStream);
 }
 
-void AGOSEngine::loadMusic(uint music) {
-	char buf[4];
+void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
+	stopMusic();
 
-	if (getGameType() == GType_SIMON2) {
-		_midi.stop();
-		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
+	// Support for compressed music from the ScummVM Music Enhancement Project
+	AudioCD.stop();
+	AudioCD.play(music + 1, -1, 0, 0);
+	if (AudioCD.isPlaying())
+		return;
+
+	if (getGameId() == GID_SIMON1ACORN) {
+		// TODO: Add support for Desktop Tracker format
+	} else if (getPlatform() == Common::kPlatformAmiga) {
+		playModule(music);
+	} else if (getFeatures() & GF_TALKIE) {
+		char buf[4];
+
+		// WORKAROUND: For a script bug in the CD versions
+		// We skip this music resource, as it was replaced by
+		// a sound effect, and the script was never updated.
+		if (music == 35)
+			return;
+
+		_midi.setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
+
+		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
 		_gameFile->read(buf, 4);
-		if (!memcmp(buf, "FORM", 4)) {
-			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-			_midi.loadXMIDI(_gameFile);
+		if (!memcmp(buf, "GMF\x1", 4)) {
+			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
+			_midi.loadSMF(_gameFile, music);
 		} else {
-			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
+			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
 			_midi.loadMultipleSMF(_gameFile);
 		}
 
-		_lastMusicPlayed = music;
-		_nextMusicToPlay = -1;
-	} else if (getGameType() == GType_SIMON1) {
-		_midi.stop();
+		_midi.startTrack(0);
+		_midi.startTrack(track);
+	} else {
+		char filename[15];
+		File f;
+		sprintf(filename, "MOD%d.MUS", music);
+		f.open(filename);
+		if (f.isOpen() == false)
+			error("playMusic: Can't load music from '%s'", filename);
+
 		_midi.setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
-		// Support for compressed music from the ScummVM Music Enhancement Project
-		AudioCD.stop();
-		AudioCD.play(music + 1, -1, 0, 0);
-		if (AudioCD.isPlaying())
-			return;
-
-		if (getGameId() == GID_SIMON1ACORN) {
-			// TODO: Add support for Desktop Tracker format
-		} else if (getPlatform() == Common::kPlatformAmiga) {
-			loadModule(music);
-		} else if (getFeatures() & GF_TALKIE) {
-			// WORKAROUND: For a script bug in the CD versions
-			// We skip this music resource, as it was replaced by
-			// a sound effect, and the script was never updated.
-			if (music == 35)
-				return;
-
-			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-			_gameFile->read(buf, 4);
-			if (!memcmp(buf, "GMF\x1", 4)) {
-				_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-				_midi.loadSMF(_gameFile, music);
-			} else {
-				_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-				_midi.loadMultipleSMF(_gameFile);
-			}
-
-			_midi.startTrack(0);
-		} else {
-			char filename[15];
-			File f;
-			sprintf(filename, "MOD%d.MUS", music);
-			f.open(filename);
-			if (f.isOpen() == false)
-				error("loadMusic: Can't load music from '%s'", filename);
-
-			if (getFeatures() & GF_DEMO)
-				_midi.loadS1D(&f);
-			else
-				_midi.loadSMF(&f, music);
-
-			_midi.startTrack(0);
-		}
-	} else {
-		if (getPlatform() == Common::kPlatformAmiga) {
-			loadModule(music);
-		} else if (getPlatform() == Common::kPlatformAtariST) {
-			// TODO: Add support for music formats used
-		} else {
-			_midi.stop();
-			_midi.setLoop(true); // Must do this BEFORE loading music.
-
-			char filename[15];
-			File f;
-			sprintf(filename, "MOD%d.MUS", music);
-			f.open(filename);
-			if (f.isOpen() == false)
-				error("loadMusic: Can't load music from '%s'", filename);
-
+		if (getFeatures() & GF_DEMO)
 			_midi.loadS1D(&f);
-			_midi.startTrack(0);
-		}
+		else
+			_midi.loadSMF(&f, music);
+
+		_midi.startTrack(0);
+		_midi.startTrack(track);
 	}
 }
 
-void AGOSEngine::playSting(uint a) {
+void AGOSEngine::playMusic(uint16 music, uint16 track) {
+	stopMusic();
+
+	if (getPlatform() == Common::kPlatformAmiga) {
+		playModule(music);
+	} else if (getPlatform() == Common::kPlatformAtariST) {
+		// TODO: Add support for music formats used
+	} else {
+		_midi.setLoop(true); // Must do this BEFORE loading music.
+
+		char filename[15];
+		File f;
+		sprintf(filename, "MOD%d.MUS", music);
+		f.open(filename);
+		if (f.isOpen() == false)
+			error("playMusic: Can't load music from '%s'", filename);
+
+		_midi.loadS1D(&f);
+		_midi.startTrack(0);
+		_midi.startTrack(track);
+	}
+}
+
+void AGOSEngine::stopMusic() {
+	if (_midiEnabled) {
+		_midi.stop();
+	} 
+	_mixer->stopHandle(_modHandle);
+}
+
+void AGOSEngine::playSting(uint16 soundId) {
 	if (!_midi._enable_sfx)
 		return;
 
@@ -260,13 +279,13 @@ void AGOSEngine::playSting(uint a) {
 	if (!mus_file.isOpen())
 		error("playSting: Can't load sound effect from '%s'", filename);
 
-	mus_file.seek(a * 2, SEEK_SET);
+	mus_file.seek(soundId * 2, SEEK_SET);
 	mus_offset = mus_file.readUint16LE();
 	if (mus_file.ioFailed())
-		error("playSting: Can't read sting %d offset", a);
+		error("playSting: Can't read sting %d offset", soundId);
 
 	mus_file.seek(mus_offset, SEEK_SET);
-	_midi.loadSMF(&mus_file, a, true);
+	_midi.loadSMF(&mus_file, soundId, true);
 	_midi.startTrack(0);
 }
 
@@ -282,7 +301,7 @@ static const byte elvira1_soundTable[100] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-bool AGOSEngine::loadVGASoundFile(uint id, uint type) {
+bool AGOSEngine::loadVGASoundFile(uint16 id, uint8 type) {
 	File in;
 	char filename[15];
 	byte *dst;
@@ -395,6 +414,38 @@ void AGOSEngine::loadSoundFile(const char* filename) {
 	in.close();
 
 	_sound->playSfxData(dst, 0, 0, 0);
+}
+
+void AGOSEngine::loadSound(uint sound) {
+	byte *dst;
+	uint32 offs, size;
+
+	if (_curSfxFile == NULL)
+		return;
+
+	dst = _curSfxFile;
+	if (getGameType() == GType_WW) {
+		uint tmp = sound;
+		while (tmp--)
+			dst += READ_LE_UINT16(dst) + 4;
+
+		size = READ_LE_UINT16(dst);
+		offs = 4;
+	} else if (getGameType() == GType_ELVIRA2) {
+		while (READ_BE_UINT32(dst + 4) != sound)
+			dst += 12;
+
+		size = READ_BE_UINT32(dst);
+		offs = READ_BE_UINT32(dst + 8);
+	} else {
+		while (READ_BE_UINT16(dst + 6) != sound)
+			dst += 12;
+
+		size = READ_BE_UINT16(dst + 2);
+		offs = READ_BE_UINT32(dst + 8);
+	}
+
+	_sound->playRawData(dst + offs, sound, size);
 }
 
 void AGOSEngine::loadSound(uint sound, int pan, int vol, uint type) {

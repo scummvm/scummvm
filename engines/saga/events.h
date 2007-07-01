@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -58,7 +59,8 @@ enum EventCodes {
 	kActorEvent,
 	kScriptEvent,
 	kCursorEvent,
-	kGraphicsEvent
+	kGraphicsEvent,
+	kCutawayEvent
 };
 
 enum EventOps {
@@ -71,10 +73,12 @@ enum EventOps {
 	kEventFrame = 3,
 	kEventSetFlag = 4,
 	kEventClearFlag = 5,
+	kEventResumeAll = 6,
 	// MUISC & SOUND events
 	kEventPlay = 1,
 	kEventStop = 2,
 	// SCENE events
+	kEventDraw = 1,
 	kEventEnd = 2,
 	// TEXT events
 	kEventHide = 2,
@@ -110,7 +114,9 @@ enum EventOps {
 	kEventBlackToPal = 2,
 	// TRANSITION events
 	kEventDissolve = 1,
-	kEventDissolveBGMask = 2
+	kEventDissolveBGMask = 2,
+	// CUTAWAY events
+	kEventClear = 1
 };
 
 enum EventParams {

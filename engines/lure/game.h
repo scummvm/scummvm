@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,7 +39,7 @@
 
 namespace Lure {
 
-enum GameState {GS_RESTORE_RESTART = 1, GS_CAUGHT = 2};
+enum GameState {GS_RESTORE_RESTART = 1, GS_CAUGHT = 2, GS_EXIT = 3};
 
 class Game {
 private:
@@ -63,6 +66,7 @@ public:
 
 	static Game &getReference();
 
+	void tick();
 	void nextFrame();
 	void execute();
 	void setState(uint8 flags) { _state = flags; }

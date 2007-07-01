@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -190,6 +191,13 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 
 	// Surrounding scene
 	out->writeSint32LE(_scene->getOutsetSceneNumber());
+	if (getGameType() != GType_ITE) {
+		out->writeSint32LE(_scene->currentChapterNumber());
+		// Protagonist
+		out->writeSint32LE(_scene->currentProtag());
+		out->writeSint32LE(_scene->getCurrentMusicTrack());
+		out->writeSint32LE(_scene->getCurrentMusicRepeat());
+	}
 
 	// Inset scene
 	out->writeSint32LE(_scene->currentSceneNumber());
@@ -258,6 +266,18 @@ void SagaEngine::load(const char *fileName) {
 
 	// Surrounding scene
 	sceneNumber = in->readSint32LE();
+	// Protagonist
+	if (getGameType() != GType_ITE) {
+		int currentChapter = _scene->currentChapterNumber();
+		_scene->setChapterNumber(in->readSint32LE());
+		_scene->setProtag(in->readSint32LE());
+		if (_scene->currentChapterNumber() != currentChapter)
+			_scene->changeScene(-2, 0, kTransitionFade, _scene->currentChapterNumber());
+		_scene->setCurrentMusicTrack(in->readSint32LE());
+		_scene->setCurrentMusicRepeat(in->readSint32LE());
+		_music->stop();
+		_music->play(_music->_songTable[_scene->getCurrentMusicTrack()], _scene->getCurrentMusicRepeat() ? MUSIC_LOOP : MUSIC_NORMAL);			
+	}
 
 	// Inset scene
 	insetSceneNumber = in->readSint32LE();
@@ -285,6 +305,25 @@ void SagaEngine::load(const char *fileName) {
 	_music->setVolume(0);
 
 	_isoMap->setMapPosition(mapx, mapy);
+
+	// Protagonist swapping
+	if (getGameType() != GType_ITE) {
+		if (_scene->currentProtag() != 0 && _scene->currentChapterNumber() != 6) {
+			ActorData *actor1 = _actor->getFirstActor();
+			// Original stores the current protagonist ID from sfSwapActors:
+			//ActorData *actor2 = _actor->getActor(_scene->currentProtag());
+			// However, we already store the protagonist, so merely getting the saved
+			// protagonist is easier and safer, and works without glitches
+			ActorData *actor2 = _actor->_protagonist;
+
+			SWAP(actor1->_location, actor2->_location);
+
+			actor2->_flags &= ~kProtagonist;
+			actor1->_flags |= kProtagonist;
+			_actor->_protagonist = _actor->_centerActor = actor1;
+			_scene->setProtag(actor1->_id);
+		}
+	}
 
 	_scene->clearSceneQueue();
 	_scene->changeScene(sceneNumber, ACTOR_NO_ENTRANCE, kTransitionNoFade);

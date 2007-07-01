@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -118,7 +121,6 @@ void read_room_data(byte *&data, uint16 &totalSize)
 
 		if ((FROM_LE_16(headerEntry.offset) != 0) && 
 			(FROM_LE_16(headerEntry.offset) != 0xffff) &&
-			(FROM_LE_16(headerEntry.roomNumber) != 0xc09) && 
 			(FROM_LE_16(headerEntry.roomNumber) != 0)) {
 			// Store offset of room entry
 			*offsetPtr++ = TO_LE_16(offset);
@@ -126,11 +128,10 @@ void read_room_data(byte *&data, uint16 &totalSize)
 			// Copy over basic room details
 			lure_exe.seek(DATA_SEGMENT + headerEntry.offset);
 			lure_exe.read(&buffer, sizeof(RoomResource));
-
 			RoomResourceOutput *rec = (RoomResourceOutput *) (data + offset);
 			rec->hdrFlags = headerEntry.hdrFlags;
 			rec->actions = FROM_LE_32(buffer.actions);
-			rec->roomNumber = headerEntry.roomNumber;
+			rec->roomNumber = index; 
 			rec->descId = headerEntry.descId;
 			rec->numLayers = buffer.numLayers;
 			memcpy(rec->layers, buffer.layers, 8);
@@ -138,6 +139,8 @@ void read_room_data(byte *&data, uint16 &totalSize)
 			rec->clippingXStart = TO_LE_16(FROM_LE_16(buffer.clippingXStart) - 0x80);
 			rec->clippingXEnd = (FROM_LE_16(buffer.clippingXEnd) == 0) ? 0 : 
 			  TO_LE_16(FROM_LE_16(buffer.clippingXEnd) - 0x80);
+			rec->exitTime = FROM_LE_32(buffer.exitTime);
+			rec->areaFlag = buffer.areaFlag;
 			rec->numExits = 0;
 
 			offset += sizeof(RoomResourceOutput);
@@ -280,10 +283,15 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)
 				r->roomNumber = TO_LE_16(28);
 
 			// Find the walk-to coordinates for the hotspot
+			uint16 findId = FROM_LE_16(r->hotspotId);
 			walkCtr = 0;
-			while ((walkCtr < walkNumEntries) &&
-				   (FROM_LE_16(walkList[walkCtr].hotspotId) != FROM_LE_16(r->hotspotId)))
+			while (walkCtr < walkNumEntries) {
+				uint16 id = FROM_LE_16(walkList[walkCtr].hotspotId);
+				if ((id == findId) || ((findId == 1007) && (id == 0xffff)))
+					break;
 				++walkCtr;
+			}
+					
 			if (walkCtr == walkNumEntries) {
 				r->walkX = 0;
 				r->walkY = 0;
@@ -470,11 +478,33 @@ void read_room_exit_joins(byte *&data, uint16 &totalSize) {
 
 void read_anim_data(byte *&data, uint16 &totalSize) {
 	// Add special pixel records
-	add_anim_record(0x5c95);
-	add_anim_record(0x5ce9);		// Blacksmith in bar?
+	add_anim_record(0x55C0);		// Player midswing animation
+	add_anim_record(0x55C9);		// Player mid-level defend
+	add_anim_record(0x55D2);		// Player high-level strike
+	add_anim_record(0x55DB);		// Player high-level defend
+	add_anim_record(0x55E4);		// Player low-level strike
+	add_anim_record(0x55ED);		// Player low-level defend
+	add_anim_record(0x55F6);		// Player fight animation
+	add_anim_record(0x55FF);		// Pig fight animation
+	add_anim_record(0x5611);		// Player mid-level strike
+	add_anim_record(0x5623);		// Pig fight animation
+	add_anim_record(0x562C);		// Misc fight animation
+	add_anim_record(0x5635);		// Pig fight animation
+	add_anim_record(0x563E);		// Player recoiling from hit
+	add_anim_record(0x5647);		// Pig recoiling from hit
+	add_anim_record(0x5650);		// Pig dies
 	add_anim_record(0x5915);		// Blacksmith hammering
 	add_anim_record(0x59ED);		// Ewan's alternate animation
+	add_anim_record(0x59FF);		// Dragon breathing fire
+	add_anim_record(0x5A08);		// Dragon breathing fire 2
+	add_anim_record(0x5A11);		// Dragon breathing fire 3
+	add_anim_record(0x5A1A);		// Player turning winch in room #48
+	add_anim_record(0x5A59);		// Player pulling lever in room #48
+	add_anim_record(0x5A62);		// Minnow pulling lever in room #48
+	add_anim_record(0x5AAA);		// Goewin mixing potion
+	add_anim_record(0x5C95);
 	add_anim_record(0x5CAA);		// Selena animation
+	add_anim_record(0x5CE9);		// Blacksmith in bar?
 	add_anim_record(0x5D28);		// Goewin animation
 
 	// Get the animation data records
@@ -878,32 +908,40 @@ void read_room_exit_coordinate_data(byte *&data, uint16 &totalSize)
 {
 	// Read in the exit coordinates list	
 	int roomNum, entryNum;
+	uint16 x, y;
+	RoomExitCoordinateEntryInputResource dataIn;
 
-	totalSize = EXIT_COORDINATES_NUM_ROOMS * sizeof(RoomExitCoordinateEntryResource) + 2; 
+	totalSize = EXIT_COORDINATES_NUM_ROOMS * sizeof(RoomExitCoordinateEntryOutputResource) + 2; 
 	data = (byte *) malloc(totalSize);
 	lure_exe.seek(DATA_SEGMENT + EXIT_COORDINATES_OFFSET);
-	lure_exe.read(data, totalSize - 2);
 	WRITE_LE_UINT16(data + totalSize - 2, 0xffff);
 
 	// Post process the list to adjust data
-	RoomExitCoordinateEntryResource *rec = (RoomExitCoordinateEntryResource *) data;
+	RoomExitCoordinateEntryOutputResource *rec = (RoomExitCoordinateEntryOutputResource *) data;
 	for (roomNum = 1; roomNum <= EXIT_COORDINATES_NUM_ROOMS; ++roomNum, ++rec) {
+		lure_exe.read(&dataIn, sizeof(RoomExitCoordinateEntryInputResource));
+
 		for (entryNum = 0; entryNum < ROOM_EXIT_COORDINATES_NUM_ENTRIES; ++entryNum) {
-			if ((rec->entries[entryNum].x != 0) || (rec->entries[entryNum].y != 0)) {
-				rec->entries[entryNum].x = TO_LE_16(FROM_LE_16(rec->entries[entryNum].x) - 0x80);
-				uint16 tempY = FROM_LE_16(rec->entries[entryNum].y);
-				rec->entries[entryNum].y = TO_LE_16(
-					((tempY & 0xfff) - 0x80) | (tempY & 0xf000));
+			x = FROM_LE_16(dataIn.entries[entryNum].x);
+			y = FROM_LE_16(dataIn.entries[entryNum].y);
+			if ((x != 0) || (y != 0)) {
+				x -= 0x80;
+				y = ((y & 0xfff) - 0x80) | (y & 0xf000);
 			}
+
+			RoomExitCoordinateResource *p = &rec->entries[entryNum];
+			p->x = TO_LE_16(x);
+			p->y = TO_LE_16(y);
+			p->roomNumber = dataIn.entries[entryNum].roomNumber;
 		}
 
 		for (entryNum = 0; entryNum < ROOM_EXIT_COORDINATES_ENTRY_NUM_ROOMS; ++entryNum) {
-			rec->roomIndex[entryNum] = TO_LE_16(FROM_LE_16(rec->roomIndex[entryNum]) / 6);
+			rec->roomIndex[entryNum] = TO_LE_16(FROM_LE_16(dataIn.roomIndex[entryNum]) / 6);
 		}
 
-		// Bugfix for the original game data to get to room #27 via rooms #10 or #11 
+		// WORKAROUND: Bugfix for the original game data to get to room #27 via rooms #10 or #11 
 		if ((roomNum == 10) || (roomNum == 11))
-			rec->roomIndex[26] = 1;
+			rec->roomIndex[26] = TO_LE_16(1);
 	}
 }
 
@@ -923,6 +961,14 @@ void read_room_exit_hotspots_data(byte *&data, uint16 &totalSize) {
 
 	WRITE_LE_UINT16(rec, 0xffff);
 	totalSize += sizeof(uint16);
+}
+
+void save_fight_segment(byte *&data, uint16 &totalSize) {
+	lure_exe.seek(FIGHT_SEGMENT);
+	
+	totalSize = FIGHT_SEGMENT_SIZE;
+	data = (byte *) malloc(totalSize);
+	lure_exe.read(data, totalSize);
 }
 
 #define NUM_TEXT_ENTRIES 40
@@ -1072,6 +1118,11 @@ void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size)
 		break;
 
 	case 21:
+		// Save the fight segment data
+		save_fight_segment(data, size);
+		break;
+
+	case 22:
 		// Set up the list of text strings used by the game
 		save_text_strings(data, size);
 		break;

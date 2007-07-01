@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	detection.o \
 	disk.o \
 	events.o \
+	fights.o \
 	game.o \
 	hotspots.o \
 	intro.o \
@@ -19,6 +20,7 @@ MODULE_OBJS := \
 	room.o \
 	screen.o \
 	scripts.o \
+	sound.o \
 	strings.o \
 	surface.o
 

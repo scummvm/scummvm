@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -699,6 +700,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				replyNum = scriptS.readByte();
 				flags = scriptS.readByte();
 				iparam1 = 0;
+				int strID = thread->pop();
 
 				if (flags & kReplyOnce) {
 					iparam1 = scriptS.readSint16LE();
@@ -708,8 +710,8 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 					}
 				}
 
-				str = thread->_strings->getString(thread->pop());
-				if (_vm->_interface->converseAddText(str, replyNum, flags, iparam1))
+				str = thread->_strings->getString(strID);
+				if (_vm->_interface->converseAddText(str, strID, replyNum, flags, iparam1))
 					warning("Error adding ConverseText (%s, %d, %d, %d)", str, replyNum, flags, iparam1);
 			}
 			break;

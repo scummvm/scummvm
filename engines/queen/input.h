@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,13 +28,10 @@
 
 #include "common/util.h"
 #include "common/rect.h"
+#include "common/events.h"
 #include "queen/defs.h"
 
 class OSystem;
-
-namespace Common {
-	class EventManager;
-}
 
 namespace Queen {
 
@@ -54,7 +54,7 @@ public:
 	void delay(uint amount);
 
 	//! convert input to verb
-	int checkKeys();
+	void checkKeys();
 
 	//! use instead of KEYVERB=0
 	void clearKeyVerb()  { _keyVerb = VERB_NONE; }
@@ -94,26 +94,6 @@ public:
 
 private:
 
-	enum KeyCode {
-		KEY_SPACE = ' ',
-		KEY_COMMA = ',',
-		KEY_DOT   = '.',
-
-		KEY_DIGIT_1 = '1',
-		KEY_DIGIT_2 = '2',
-		KEY_DIGIT_3 = '3',
-		KEY_DIGIT_4 = '4',
-
-		KEY_ESCAPE    = 27,
-		KEY_RETURN    = 13,
-		KEY_BACKSPACE = 8,
-
-		KEY_F1 = 282,
-		KEY_F11 = KEY_F1 + 10,
-		KEY_F5 = KEY_F1 + 4,
-		KEY_F12
-	};
-
 	//! used to get keyboard and mouse events
 	OSystem *_system;
 
@@ -150,7 +130,7 @@ private:
 	bool _debugger;
 
 	//! set by delay();
-	int _inKey;
+	Common::KeyCode _inKey;
 
 	//! set by delay();
 	int _mouseButton;

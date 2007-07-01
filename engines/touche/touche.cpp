@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -295,24 +298,24 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 				break;
 			}
 			_flagsTable[600] = event.kbd.keycode;
-			if (event.kbd.keycode == 27) { // ESC
+			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				if (_displayQuitDialog) {
 					_flagsTable[611] = displayQuitDialog();
 				}
-			} else if (event.kbd.keycode == 286) { // F5
+			} else if (event.kbd.keycode == Common::KEYCODE_F5) {
 				if (_flagsTable[618] == 0 && !_hideInventoryTexts) {
 					handleOptions(0);
 				}
-			} else if (event.kbd.keycode == 290) { // F9
+			} else if (event.kbd.keycode == Common::KEYCODE_F9) {
 				_fastWalkMode = true;
-			} else if (event.kbd.keycode == 291) { // F10
+			} else if (event.kbd.keycode == Common::KEYCODE_F10) {
 				_fastWalkMode = false;
 			}
 			if (event.kbd.flags == Common::KBD_CTRL) {
-				if (event.kbd.keycode == 'd') {
+				if (event.kbd.keycode == Common::KEYCODE_d) {
 					// enable debugging stuff ?
 					_flagsTable[777] = 1;
-				} else if (event.kbd.keycode == 'f') {
+				} else if (event.kbd.keycode == Common::KEYCODE_f) {
 					_fastMode = !_fastMode;
 				}
 			} else {

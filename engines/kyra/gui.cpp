@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -593,7 +596,7 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 		calcCoords(_menu[i]);
 
 	_menuRestoreScreen = true;
-	_keyPressed = 0;
+	_keyPressed.reset();
 	_mousePressFlag = false;
 	
 	_toplevelMenu = 0;
@@ -823,7 +826,7 @@ void KyraEngine::gui_getInput() {
 			_mouseWheel = 1;
 			break;
 		case Common::EVENT_KEYDOWN:
-			_keyPressed = event.kbd.ascii;
+			_keyPressed = event.kbd;
 			break;
 		default:
 			break;
@@ -999,26 +1002,28 @@ void KyraEngine::gui_redrawTextfield() {
 void KyraEngine::gui_updateSavegameString() {
 	int length;
 
-	if (_keyPressed) {
+	if (_keyPressed.keycode) {
 		length = strlen(_savegameName);
 
-		if (_keyPressed > 31 && _keyPressed < 127) {
+		if (_keyPressed.ascii > 31 && _keyPressed.ascii < 127) {
 			if (length < 31) {
-				_savegameName[length] = _keyPressed;
+				_savegameName[length] = _keyPressed.ascii;
 				_savegameName[length+1] = 0;
 				gui_redrawTextfield();
 			}
-		} else if (_keyPressed == 8 ||_keyPressed == 127) {
+		} else if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE ||
+		           _keyPressed.keycode == Common::KEYCODE_DELETE) {
 			if (length > 0) {
 				_savegameName[length-1] = 0;
 				gui_redrawTextfield();
 			}
-		} else if (_keyPressed == 13) {
+		} else if (_keyPressed.keycode == Common::KEYCODE_RETURN ||
+		           _keyPressed.keycode == Common::KEYCODE_KP_ENTER) {
 			_displaySubMenu = false;
 		}
 	}
 
-	_keyPressed = 0;
+	_keyPressed.reset();
 }
 
 int KyraEngine::gui_saveGame(Button *button) {

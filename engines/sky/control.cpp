@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -494,7 +497,7 @@ void Control::doControlPanel(void) {
 		_system->updateScreen();
 		_mouseClicked = false;
 		delay(50);
-		if (_keyPressed == 27) { // escape pressed
+		if (_keyPressed.keycode == Common::KEYCODE_ESCAPE) { // escape pressed
 			_mouseClicked = false;
 			quitPanel = true;
 		}
@@ -838,7 +841,7 @@ bool Control::autoSaveExists(void) {
 
 uint16 Control::saveRestorePanel(bool allowSave) {
 
-	_keyPressed = 0;
+	_keyPressed.reset();
 	_mouseWheel = 0;
 	buttonControl(NULL);
 	_text->drawToScreen(WITH_MASK); // flush text restore buffer
@@ -895,21 +898,21 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 		_system->updateScreen();
 		_mouseClicked = false;
 		delay(50);
-		if (_keyPressed == 27) { // escape pressed
+		if (_keyPressed.keycode == Common::KEYCODE_ESCAPE) { // escape pressed
 			_mouseClicked = false;
 			clickRes = CANCEL_PRESSED;
 			quitPanel = true;
-		} else if ((_keyPressed == 13) || (_keyPressed == 15)) {
+		} else if ((_keyPressed.keycode == Common::KEYCODE_RETURN) || (_keyPressed.keycode == Common::KEYCODE_KP_ENTER)) {
 			clickRes = handleClick(lookList[0]);
 			if (clickRes == GAME_SAVED)
 				saveDescriptions(saveGameTexts);
 			quitPanel = true;
 			_mouseClicked = false;
-			_keyPressed = 0;
-		} if (allowSave && _keyPressed) {
+			_keyPressed.reset();
+		} if (allowSave && _keyPressed.keycode) {
 			handleKeyPress(_keyPressed, _selectedGame * MAX_TEXT_LEN + saveGameTexts);
 			refreshNames = true;
-			_keyPressed = 0;
+			_keyPressed.reset();
 		}
 
 		if (_mouseWheel) {
@@ -988,9 +991,9 @@ bool Control::checkKeyList(uint8 key) {
 	return false;
 }
 
-void Control::handleKeyPress(uint8 key, uint8 *textBuf) {
+void Control::handleKeyPress(Common::KeyState kbd, uint8 *textBuf) {
 
-	if (key == 8) { // backspace
+	if (kbd.keycode == Common::KEYCODE_BACKSPACE) { // backspace
 		for (uint8 cnt = 0; cnt < 6; cnt++)
 			if (!textBuf[cnt])
 				return;
@@ -1001,15 +1004,15 @@ void Control::handleKeyPress(uint8 key, uint8 *textBuf) {
 	} else {
 		if (_enteredTextWidth >= PAN_LINE_WIDTH - 10)
 			return;
-		if (((key >= 'A') && (key <= 'Z')) || ((key >= 'a') && (key <= 'z')) ||
-			((key >= '0') && (key <= '9')) || checkKeyList(key)) {
+		if (((kbd.ascii >= 'A') && (kbd.ascii <= 'Z')) || ((kbd.ascii >= 'a') && (kbd.ascii <= 'z')) ||
+			((kbd.ascii >= '0') && (kbd.ascii <= '9')) || checkKeyList(kbd.ascii)) {
 				uint8 strLen = 0;
 				while (textBuf[0]) {
 					textBuf++;
 					strLen++;
 				}
 				if (strLen < MAX_TEXT_LEN) {
-					textBuf[0] = key;
+					textBuf[0] = kbd.ascii;
 					textBuf[1] = 0;
 				}
 		}
@@ -1553,18 +1556,14 @@ void Control::delay(unsigned int amount) {
 
 	uint32 start = _system->getMillis();
 	uint32 cur = start;
-	_keyPressed = 0;	//reset
+	_keyPressed.reset();
 
 	do {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				// Make sure backspace works right (this fixes a small issue on OS X)
-				if (event.kbd.keycode == 8)
-					_keyPressed = 8;
-				else
-					_keyPressed = (byte)event.kbd.ascii;
+				_keyPressed = event.kbd;
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				if (!(SkyEngine::_systemVars.systemFlags & SF_MOUSE_LOCKED))

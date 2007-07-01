@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -458,6 +460,9 @@ void ScummEngine_v70he::o70_startSound() {
 		break;
 	case 164:
 		_heSndFlags |= 2;
+		break;
+	case 222:
+		// WORKAROUND: For errors in room script 240 (room 4) of maze
 		break;
 	case 224:
 		_heSndSoundFreq = pop();

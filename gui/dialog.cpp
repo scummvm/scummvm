@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,6 +23,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/events.h"
 
 #include "gui/newgui.h"
 #include "gui/dialog.h"
@@ -207,18 +211,18 @@ void Dialog::handleMouseWheel(int x, int y, int direction) {
 		w->handleMouseWheel(x, y, direction);
 }
 
-void Dialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+void Dialog::handleKeyDown(Common::KeyState state) {
 	if (_focusedWidget) {
-		if (_focusedWidget->handleKeyDown(ascii, keycode, modifiers))
+		if (_focusedWidget->handleKeyDown(state))
 			return;
 	}
 
 	// Hotkey handling
-	if (ascii != 0) {
+	if (state.ascii != 0) {
 		Widget *w = _firstWidget;
-		ascii = toupper(ascii);
+		state.ascii = toupper(state.ascii);
 		while (w) {
-			if (w->_type == kButtonWidget && ascii == toupper(((ButtonWidget *)w)->_hotkey)) {
+			if (w->_type == kButtonWidget && state.ascii == toupper(((ButtonWidget *)w)->_hotkey)) {
 				// The hotkey for widget w was pressed. We fake a mouse click into the
 				// button by invoking the appropriate methods.
 				w->handleMouseDown(0, 0, 1, 1);
@@ -230,7 +234,7 @@ void Dialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	}
 
 	// ESC closes all dialogs by default
-	if (keycode == 27) {
+	if (state.keycode == Common::KEYCODE_ESCAPE) {
 		setResult(-1);
 		close();
 	}
@@ -238,10 +242,10 @@ void Dialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	// TODO: tab/shift-tab should focus the next/previous focusable widget
 }
 
-void Dialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
+void Dialog::handleKeyUp(Common::KeyState state) {
 	// Focused widget receives keyup events
 	if (_focusedWidget)
-		_focusedWidget->handleKeyUp(ascii, keycode, modifiers);
+		_focusedWidget->handleKeyUp(state);
 }
 
 void Dialog::handleMouseMoved(int x, int y, int button) {

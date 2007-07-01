@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +34,7 @@
 
 namespace GUI {
 
-#define ACTION_VERSION 6
+#define ACTION_VERSION 7
 
 enum actionType {
         ACTION_UP = 0,
@@ -43,7 +46,7 @@ enum actionType {
         ACTION_SAVE,
         ACTION_SKIP,
         ACTION_ZONE,
-		ACTION_FT_CHEAT,
+		ACTION_MULTI,
 		ACTION_SWAPCHAR,
 		ACTION_SKIP_TEXT,
 		ACTION_PAUSE,

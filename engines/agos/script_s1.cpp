@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -309,29 +311,29 @@ void AGOSEngine_Simon1::os1_pauseGame() {
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
 	// If all else fails, use English as fallback.
-	byte keyYes = 'y';
-	byte keyNo = 'n';
+	Common::KeyCode keyYes = Common::KEYCODE_y;
+	Common::KeyCode keyNo = Common::KEYCODE_n;
 
 	switch (_language) {
 	case Common::RU_RUS:
 		break;
 	case Common::PL_POL:
-		keyYes = 't';
+		keyYes = Common::KEYCODE_t;
 		break;
 	case Common::HB_ISR:
-		keyYes = 'f';
+		keyYes = Common::KEYCODE_f;
 		break;
 	case Common::ES_ESP:
-		keyYes = 's';
+		keyYes = Common::KEYCODE_s;
 		break;
 	case Common::IT_ITA:
-		keyYes = 's';
+		keyYes = Common::KEYCODE_s;
 		break;
 	case Common::FR_FRA:
-		keyYes = 'o';
+		keyYes = Common::KEYCODE_o;
 		break;
 	case Common::DE_DEU:
-		keyYes = 'j';
+		keyYes = Common::KEYCODE_j;
 		break;
 	default:
 		break;
@@ -341,17 +343,17 @@ void AGOSEngine_Simon1::os1_pauseGame() {
 		delay(1);
 #ifdef _WIN32_WCE
 		if (isSmartphone()) {
-			if (_keyPressed) {
-				if (_keyPressed == 13)
+			if (_keyPressed.keycode) {
+				if (_keyPressed.keycode == Common::KEYCODE_RETURN)
 					shutdown();
 				else
 					break;
 			}
 		}
 #endif
-		if (_keyPressed == keyYes || _keyPressed == (keyYes - 32))
+		if (_keyPressed.keycode == keyYes)
 			shutdown();
-		else if (_keyPressed == keyNo || _keyPressed == (keyNo - 32))
+		else if (_keyPressed.keycode == keyNo)
 			break;
 	}
 
@@ -372,12 +374,12 @@ void AGOSEngine_Simon1::os1_screenTextMsg() {
 	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
 	uint stringId = getNextStringID();
-	const byte *string_ptr = NULL;
+	const byte *stringPtr = NULL;
 	uint speechId = 0;
 	TextLocation *tl;
 
 	if (stringId != 0xFFFF)
-		string_ptr = getStringPtrByID(stringId);
+		stringPtr = getStringPtrByID(stringId);
 
 	if (getFeatures() & GF_TALKIE) {
 		if (getGameType() == GType_FF || getGameType() == GType_PP)
@@ -397,14 +399,14 @@ void AGOSEngine_Simon1::os1_screenTextMsg() {
 		stopAnimateSimon2(2, vgaSpriteId + 2);
 	}
 
-	if (string_ptr != NULL && (speechId == 0 || _subtitles))
-		printScreenText(vgaSpriteId, color, (const char *)string_ptr, tl->x, tl->y, tl->width);
+	if (stringPtr != NULL && stringPtr[0] != 0 && (speechId == 0 || _subtitles))
+		printScreenText(vgaSpriteId, color, (const char *)stringPtr, tl->x, tl->y, tl->width);
 
 }
 
 void AGOSEngine_Simon1::os1_playEffect() {
 	// 163: play sound
-	uint soundId = getVarOrWord();
+	uint16 soundId = getVarOrWord();
 
 	if (getGameId() == GID_SIMON1DOS)
 		playSting(soundId);
@@ -417,7 +419,7 @@ void AGOSEngine_Simon1::os1_screenTextPObj() {
 	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
 
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	if (getFeatures() & GF_TALKIE) {
 		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
 			uint offs = getOffsetOfChild2Param(subObject, kOFVoice);
@@ -448,7 +450,7 @@ void AGOSEngine_Simon1::os1_screenTextPObj() {
 			}
 			stringPtr = buf;
 		}
-		if (stringPtr != NULL)
+		if (stringPtr != NULL && stringPtr[0] != 0)
 			printScreenText(vgaSpriteId, color, stringPtr, tl->x, tl->y, tl->width);
 	}
 }
@@ -510,7 +512,7 @@ void AGOSEngine_Simon1::os1_scnTxtLongText() {
 	uint speechId = 0;
 	TextLocation *tl;
 
-	const char *string_ptr = (const char *)getStringPtrByID(_longText[stringId]);
+	const char *stringPtr = (const char *)getStringPtrByID(_longText[stringId]);
 	if (getFeatures() & GF_TALKIE)
 		speechId = _longSound[stringId];
 
@@ -520,8 +522,8 @@ void AGOSEngine_Simon1::os1_scnTxtLongText() {
 
 	if (_speech && speechId != 0)
 		playSpeech(speechId, vgaSpriteId);
-	if (string_ptr != NULL && _subtitles)
-		printScreenText(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
+	if (stringPtr != NULL && stringPtr[0] != 0 && _subtitles)
+		printScreenText(vgaSpriteId, color, stringPtr, tl->x, tl->y, tl->width);
 }
 
 void AGOSEngine_Simon1::os1_mouseOn() {

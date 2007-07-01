@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -119,7 +122,7 @@ GameList Engine_KYRA_gameIDList() {
 }
 
 GameDescriptor Engine_KYRA_findGameID(const char *gameid) {
-	return Common::AdvancedDetector::findGameID(gameid, detectionParams);
+	return Common::AdvancedDetector::findGameID(gameid, gameList);
 }
 
 GameList Engine_KYRA_detectGames(const FSList &fslist) {
@@ -130,7 +133,9 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
 	
-	const KYRAGameDescription *gd = (const KYRAGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	const KYRAGameDescription *gd = (const KYRAGameDescription *)(encapsulatedDesc.realDesc);
+
 	if (gd == 0) {
 		// maybe add non md5 based detection again?
 		return kNoGameDataFoundError;

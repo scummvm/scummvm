@@ -1,8 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
- * Copyright (C) 2005 Joost Peters PSP Backend
- * Copyright (C) 2005 Thomas Mayer PSP Backend
- * Copyright (C) 2005 Paolo Costabel PSP Backend
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "backends/intern.h"
+#include "graphics/surface.h"
 
 #include <SDL.h>
 
@@ -36,15 +37,6 @@ enum GraphicModeID {
 	STRETCHED_480X272,
 	CENTERED_362X272
 };
-
-namespace Graphics {
-	struct Surface;
-}
-
-namespace Common {
-	class SaveFileManager;
-	class TimerManager;
-} 
 
 class OSystem_PSP : public OSystem {
 public:
@@ -62,6 +54,7 @@ protected:
 	bool	_overlayVisible;
 	uint32	_shakePos;
 	
+	Graphics::Surface _framebuffer;
 	
 	bool	_mouseVisible;
 	int	_mouseX, _mouseY;
@@ -101,7 +94,8 @@ public:
 	virtual int16 getHeight();
 	virtual void setPalette(const byte *colors, uint start, uint num);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
-	virtual bool grabRawScreen(Graphics::Surface *surf);
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 	virtual void updateScreen();
 	virtual void setShakePos(int shakeOffset);
 

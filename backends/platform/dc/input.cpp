@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Dreamcast port
- * Copyright (C) 2002-2004  Marcus Comstedt
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,7 +48,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
       if(!(buttons & 4)) lmb++;
       if(!(buttons & 2)) rmb++;
 
-      if(!(buttons & 8)) newkey = 319;
+      if(!(buttons & 8)) newkey = Common::KEYCODE_F5;
       else if(!(buttons & 512)) newkey = ' ';
       else if(!(buttons & 1024)) newkey = numpadmap[(buttons>>4)&15];
 
@@ -67,7 +69,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
       if(!(buttons & 4)) lmb++;
       if(!(buttons & 2)) rmb++;
 
-      if(!(buttons & 8)) newkey = 319;
+      if(!(buttons & 8)) newkey = Common::KEYCODE_F5;
 
       mouse_x += pad->cond.mouse.axis1;
       mouse_y += pad->cond.mouse.axis2;
@@ -96,25 +98,25 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
 	  newkey = key+('1'-0x59);
 	else if(key >= 0x2d && key <= 0x38 && key != 0x31)
 	  newkey = ((shift & 0x22)?
-		    "=¯`{ }+*½<>?" :
-		    "-^@[ ];:§,./")[key - 0x2d];
+		    "=?`{ }+*?<>?" :
+		    "-^@[ ];:?,./")[key - 0x2d];
 	else if(key >= 0x3a && key <= 0x43)
-	  newkey = key+(315-0x3a);
+	  newkey = key+(Common::KEYCODE_F1-0x3a);
 	else if(key >= 0x54 && key <= 0x57)
 	  newkey = "/*-+"[key-0x54];
 	else switch(key) {
 	case 0x27: case 0x62:
 	  newkey = ((shift & 0x22)? '~' : '0'); break;
 	case 0x28: case 0x58:
-	  newkey = 13; break;
+	  newkey = Common::KEYCODE_RETURN; break;
 	case 0x29:
-	  newkey = 27; break;
+	  newkey = Common::KEYCODE_ESCAPE; break;
 	case 0x2a:
-	  newkey = 8; break;
+	  newkey = Common::KEYCODE_BACKSPACE; break;
 	case 0x2b:
-	  newkey = 9; break;
+	  newkey = Common::KEYCODE_TAB; break;
 	case 0x2c:
-	  newkey = ' '; break;
+	  newkey = Common::KEYCODE_SPACE; break;
 	case 0x4c:
 	  if((shift & 0x11) && (shift & 0x44))
 	    exit(0);
@@ -132,7 +134,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
 	case 0x64: case 0x87:
 	  newkey = ((shift & 0x22)? '_' : '\\'); break;
 	case 0x89:
-	  newkey = ((shift & 0x22)? '|' : '¥'); break;
+	  newkey = ((shift & 0x22)? '|' : '?'); break;
 	}
       }
     }

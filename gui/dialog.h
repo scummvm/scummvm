@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,8 +77,8 @@ protected:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual void handleMouseWheel(int x, int y, int direction);
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
-	virtual void handleKeyUp(uint16 ascii, int keycode, int modifiers);
+	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyUp(Common::KeyState state);
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 

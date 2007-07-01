@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,10 +23,14 @@
  *
  */
 
-#include "lure/scripts.h"
-#include "lure/res.h"
+#include "lure/animseq.h"
+#include "lure/fights.h"
 #include "lure/game.h"
+#include "lure/res.h"
 #include "lure/room.h"
+#include "lure/screen.h"
+#include "lure/scripts.h"
+#include "lure/sound.h"
 #include "common/stack.h"
 #include "common/endian.h"
 
@@ -68,8 +75,8 @@ void Script::setHotspotScript(uint16 hotspotId, uint16 scriptIndex, uint16 v3) {
 	}
 }
 
-void Script::method2(uint16 v1, uint16 v2, uint16 v3) {
-	// Not yet implemented
+void Script::addSound2(uint16 soundId, uint16 v2, uint16 v3) {
+	// TODO: Not yet implemented
 }
 
 // Sets the bitmask indicating what group of rooms/hotspots to display when the
@@ -89,7 +96,7 @@ void Script::clearSequenceDelayList(uint16 v1, uint16 scriptIndex, uint16 v3) {
 // Deactivates a set of predefined of hotspots in a given list index
 
 void Script::deactivateHotspotSet(uint16 listIndex, uint16 v2, uint16 v3) {
-	if (listIndex >= 3) 
+	if (listIndex > 3) 
 		error("Script::deactiveHotspotSet - Invalid list index");
 	Resources &res = Resources::getReference();
 	uint16 *hotspotId = hotspot_dealloc_set[listIndex];
@@ -142,6 +149,12 @@ void Script::addDelayedSequence(uint16 seqOffset, uint16 delay, uint16 canClear)
 	list.add(delay, seqOffset, canClear != 0);
 }
 
+// Stops the specified sound
+
+void Script::killSound(uint16 soundId, uint16 v2, uint16 v3) {
+	// TODO
+}
+
 // Checks whether the given character is in the specified room, and stores
 // the result in the general value field
 
@@ -166,14 +179,56 @@ void Script::setHotspotName(uint16 hotspotId, uint16 nameId, uint16 v3) {
 
 // Unsure about this method, but at the moment I think it plays a sound
 
-void Script::playSound(uint16 v1, uint16 v2, uint16 v3) {
-	// No implementation currently	
+void Script::addSound(uint16 v1, uint16 v2, uint16 v3) {
+	// TODO: No implementation currently	
+}
+
+void Script::endgameSequence(uint16 v1, uint16 v2, uint16 v3) {
+	Screen &screen = Screen::getReference();
+	Mouse &mouse = Mouse::getReference();
+	Events &events = Events::getReference();
+	AnimationSequence *anim;
+
+//	screen.paletteFadeOut();
+	Sound.killSounds();
+	mouse.cursorOff();
+
+	Palette p(ENDGAME_PALETTE_ID);
+	anim = new AnimationSequence(screen, *g_system, ENDGAME_ANIM_ID, p, false);
+	anim->show();
+	delete anim;
+
+	anim = new AnimationSequence(screen, *g_system, ENDGAME_ANIM_ID + 2, p, false);
+	anim->show();
+	events.interruptableDelay(8000);
+	delete anim;
+
+	anim = new AnimationSequence(screen, *g_system, ENDGAME_ANIM_ID + 4, p, false);
+	anim->show();
+	events.interruptableDelay(30000);
+	delete anim;	
+	
+	events.quitFlag = true;
+}
+
+// Setup the pig fight in the cave
+
+void Script::setupPigFight(uint16 v1, uint16 v2, uint16 v3) {
+	debugC(ERROR_BASIC, kLureDebugFights, "Beginning fight with cave pig");
+	Fights.setupPigFight();
 }
 
 // Displays the given string resource Id in a dialog
 
 void Script::displayDialog(uint16 stringId, uint16 v2, uint16 v3) {
 	Dialog::show(stringId);
+}
+
+// Setup the Skorl fight
+
+void Script::setupSkorlFight(uint16 v1, uint16 v2, uint16 v3) {
+	debugC(ERROR_BASIC, kLureDebugFights, "Beginning fight with Skorl");
+	Fights.setupSkorlFight();
 }
 
 // Flags for remotely viewing a room
@@ -379,11 +434,28 @@ void Script::jailClose(uint16 v1, uint16 v2, uint16 v3) {
 // hotspot is empty (for inventory items, this gives the description before
 // the item is initially picked up)
 
-void Script::checkDroppedDesc(uint16 hotspotId, uint16 v2, uint16 v3) {
+void Script::checkRoomNumber(uint16 hotspotId, uint16 roomNumber, uint16 v3) {
 	Resources &res = Resources::getReference();
 	HotspotData *hotspot = res.getHotspot(hotspotId);
-	uint16 seqResult = (hotspot->descId2 == 0) ? 1 : 0;
+	assert(hotspot);
+	uint16 seqResult = (hotspot->roomNumber == roomNumber) ? 1 : 0;
 	res.fieldList().setField(SEQUENCE_RESULT, seqResult);
+}
+
+// Makes Goewin a follower
+
+void Script::makeGoewinFollow(uint16 v1, uint16 v2, uint16 v3) {
+	Resources &res = Resources::getReference();
+	Hotspot *hotspot = res.getActiveHotspot(GOEWIN_ID);
+	hotspot->setTickProc(FOLLOWER_TICK_PROC_2);
+	hotspot->currentActions().clear();
+	CharacterScheduleEntry *entry = res.charSchedules().getEntry(GOEWIN_CAVE_SUPPORT_ID);
+	hotspot->currentActions().addFront(DISPATCH_ACTION, entry, ROOMNUM_CAVE);
+	
+	hotspot->setActions(hotspot->resource()->actions | (1 << (TELL - 1)));
+	hotspot->setActionCtr(0);
+	hotspot->setDelayCtr(0);
+	hotspot->setCharacterMode(CHARMODE_NONE);
 }
 
 // Marks the given door hotspot for closing
@@ -392,6 +464,25 @@ void Script::doorClose(uint16 hotspotId, uint16 v2, uint16 v3) {
 	RoomExitJoinData *joinRec = Resources::getReference().getExitJoin(hotspotId);
 	if (!joinRec) error("Tried to close a non-door");
 	joinRec->blocked = 1;
+}
+
+// Fixes Goewin back to standard operation
+
+void Script::fixGoewin(uint16 v1, uint16 v2, uint16 v3) {
+	Resources &res = Resources::getReference();
+	Hotspot *hotspot = res.getActiveHotspot(GOEWIN_ID);
+	assert(hotspot);
+	hotspot->setTickProc(STANDARD_CHARACTER_TICK_PROC);
+	
+	CharacterScheduleEntry *entry = res.charSchedules().getEntry(GOEWIN_STANDARD_SUPPORT_ID);
+	assert(entry);
+	hotspot->currentActions().clear();
+	hotspot->currentActions().addFront(DISPATCH_ACTION, entry, hotspot->roomNumber());
+
+	hotspot->setActions(hotspot->resource()->actions & !(1 << (TELL - 1)));
+	hotspot->setActionCtr(0);
+	hotspot->setDelayCtr(0);
+	hotspot->setCharacterMode(CHARMODE_NONE);
 }
 
 // Marks the given door hotspot for opening
@@ -409,6 +500,20 @@ void Script::npcWait(uint16 hotspotId, uint16 v2, uint16 v3) {
        assert(hotspot);
        hotspot->setCharacterMode(CHARMODE_WAIT_FOR_INTERACT);
        hotspot->setDelayCtr(130);
+}
+
+// Called during talking to Minnow to see whether the Skorl "Brenda" should be alerted
+
+void Script::checkWakeBrenda(uint16 v1, uint16 v2, uint16 v3) {
+	Resources &res = Resources::getReference();
+	ValueTableData &fields = res.fieldList();
+	Room &room = Room::getReference();
+
+	if ((fields.getField(TALK_INDEX) < 3) && 
+		(room.roomNumber() == ROOMNUM_DINING_HALL) &&
+		(fields.getField(67) == 0)) 
+		// Wake up Brenda
+		Script::execute(0x1E15);
 }
 
 // Lookup the given message Id for the specified character and display in a dialog
@@ -436,14 +541,18 @@ void Script::setNewSupportData(uint16 hotspotId, uint16 index, uint16 v3) {
 
 void Script::setSupportData(uint16 hotspotId, uint16 index, uint16 v3) {
 	Resources &res = Resources::getReference();
-	uint16 dataId = res.getCharOffset(index);
+	
+	// WORKAROUND: In room #45, the script for the Skorl noticing you gets
+	// the parameters back to front. If this the case, just ignore it
+	if (index == CASTLE_SKORL_ID) return;
 
+	uint16 dataId = res.getCharOffset(index);
 	CharacterScheduleEntry *entry = res.charSchedules().getEntry(dataId);
 	assert(entry != NULL);
-	Hotspot *h = res.getActiveHotspot(hotspotId);
-	assert(h != NULL);
-	assert(!h->currentActions().isEmpty());
 
+	Hotspot *h = res.getActiveHotspot(hotspotId);
+	assert(h);
+	assert(!h->currentActions().isEmpty());
 	h->currentActions().pop();
 	h->currentActions().addFront(DISPATCH_ACTION, entry, h->roomNumber());
 }
@@ -463,11 +572,54 @@ void Script::decreaseNumGroats(uint16 characterId, uint16 numGroats, uint16 v3) 
 	fields.numGroats() -= numGroats;
 }
 
+// Makes Goewin work 
+
+void Script::makeGoewinWork(uint16 v1, uint16 v2, uint16 v3) {
+	Resources &res = Resources::getReference();
+	Hotspot *goewin = res.getActiveHotspot(GOEWIN_ID);
+	assert(goewin);
+	goewin->updateMovement();
+	goewin->currentActions().addBack(EXEC_HOTSPOT_SCRIPT, 34);
+	goewin->setHotspotScript(0x616);
+	goewin->setDelayCtr(1500);
+	goewin->setTickProc(GOEWIN_SHOP_TICK_PROC);
+}
+
+// Sets a character moving to the player's room (if they're not already there)
+
+void Script::moveCharacterToPlayer(uint16 characterId, uint16 v2, uint16 v3) {
+	Resources &res = Resources::getReference();
+	Hotspot *playerHotspot = res.getActiveHotspot(PLAYER_ID);
+	Hotspot *charHotspot = res.getActiveHotspot(characterId);
+	assert(charHotspot); 
+
+	// If character in same room as player, then no need to do anything
+	if (!charHotspot->currentActions().isEmpty() &&
+		(charHotspot->currentActions().top().roomNumber() == playerHotspot->roomNumber()))
+		return;
+
+	uint16 destRoom = playerHotspot->roomNumber();
+	RoomTranslationRecord *rec; 
+	for (rec = &roomTranslations[0]; rec->srcRoom != 0; ++rec) {
+		if (rec->srcRoom == destRoom) {
+			destRoom = rec->destRoom;
+			break;
+		}
+	}
+
+	if (charHotspot->currentActions().isEmpty())
+		charHotspot->currentActions().addFront(DISPATCH_ACTION,  destRoom);
+	else
+		charHotspot->currentActions().top().setRoomNumber(destRoom);
+}
+
 // Sets the tick handler for the village Skorl to an alternate handler
 
 void Script::setVillageSkorlTickProc(uint16 v1, uint16 v2, uint16 v3) {
-	HotspotData *hotspot = Resources::getReference().getHotspot(0x3F1);
-	hotspot->tickProcOffset = 0x7efa;
+	Resources &res = Resources::getReference();
+	Hotspot *skorlHotspot = res.getActiveHotspot(WAYNE_ID);
+	assert(skorlHotspot);
+	skorlHotspot->setTickProc(JAILOR_TICK_PROC_ID);
 }
 
 // Free Goewin from captivity
@@ -500,6 +652,12 @@ void Script::getNumGroats(uint16 v1, uint16 v2, uint16 v3) {
 	fields.setField(GENERAL, fields.numGroats());
 }
 
+void Script::checkHasBook(uint16 v1, uint16 v2, uint16 v3) {
+	Resources &res = Resources::getReference();
+	HotspotData *bookHotspot = res.getHotspot(BOOK_ID);
+	res.fieldList().setField(SEQUENCE_RESULT, (bookHotspot->roomNumber == PLAYER_ID) ? 1 : 0);
+}
+	
 // Enables the talk action on the two gargoyles
 
 void Script::enableGargoylesTalk(uint16 v1, uint16 v2, uint16 v3) {
@@ -508,6 +666,27 @@ void Script::enableGargoylesTalk(uint16 v1, uint16 v2, uint16 v3) {
 	HotspotData *g2 = res.getHotspot(0x42D);
 	g1->actions = 1 << (TALK_TO - 1);
 	g2->actions = 1 << (TALK_TO - 1);
+}
+
+// Normal handling for Goewin
+
+void Script::normalGoewin(uint16 v1, uint16 v2, uint16 v3) {
+	Resources &res = Resources::getReference();
+	Hotspot *hotspot = res.getActiveHotspot(GOEWIN_ID);
+	assert(hotspot);
+
+	if (!hotspot->currentActions().isEmpty())
+		hotspot->currentActions().top().setAction(DISPATCH_ACTION);
+	hotspot->setCharacterMode(CHARMODE_NONE);
+	hotspot->setDirection(UP);
+	hotspot->setTickProc(STANDARD_CHARACTER_TICK_PROC);
+}
+
+// Flags the player as dead
+
+void Script::killPlayer(uint16 v1, uint16 v2, uint16 v3) {
+	Game &game = Game::getReference();
+	game.setState(GS_RESTORE_RESTART);
 }
 
 // Loads the specified animation, completely bypassing the standard process
@@ -540,9 +719,9 @@ void Script::checkCellDoor(uint16 v1, uint16 v2, uint16 v3) {
 	// TODO: Implement starting music if cell door is open
 }
 
-// Has something to do with music handling 
+// Checks if a sound is running
 
-void Script::method66(uint16 hotspotId, uint16 actions, uint16 v3) {
+void Script::checkSound(uint16 hotspotId, uint16 actions, uint16 v3) {
 	// For now, simply set the general value field so that the Skorl schedule
 	// will work properly
 	Resources::getReference().fieldList().setField(GENERAL, 0);
@@ -558,17 +737,22 @@ struct SequenceMethodRecord {
 SequenceMethodRecord scriptMethods[] = {
 	{0, Script::activateHotspot}, 
 	{1, Script::setHotspotScript},
+	{2, Script::addSound2},
 	{3, Script::setHotspotFlagMask},
 	{4, Script::clearSequenceDelayList},
 	{5, Script::deactivateHotspotSet},
 	{6, Script::deactivateHotspot},
 	{7, Script::resetPathfinder},
 	{8, Script::addDelayedSequence},
+	{9, Script::killSound},
 	{10, Script::characterInRoom},
 	{11, Script::setDesc},
 	{12, Script::setHotspotName},
-	{13, Script::playSound},
+	{13, Script::addSound},
+	{14, Script::endgameSequence},
+	{15, Script::setupPigFight},
 	{16, Script::displayDialog},
+	{17, Script::setupSkorlFight},
 	{18, Script::remoteRoomViewSetup},
 	{19, Script::startSpeakingToNoone},
 	{20, Script::checkCellDoor},
@@ -591,25 +775,33 @@ SequenceMethodRecord scriptMethods[] = {
 	{37, Script::startOilBurner},
 	{38, Script::transformPlayer},
 	{39, Script::jailClose},
-	{40, Script::checkDroppedDesc},
+	{40, Script::checkRoomNumber},
+	{41, Script::makeGoewinFollow},
 	{42, Script::doorClose},
+	{43, Script::fixGoewin},
 	{44, Script::doorOpen},
 	{45, Script::npcWait},
+	{46, Script::checkWakeBrenda},
 	{47, Script::displayMessage},
 	{48, Script::setNewSupportData},
 	{49, Script::setSupportData},
 	{50, Script::givePlayerItem},
 	{51, Script::decreaseNumGroats},
+	{52, Script::makeGoewinWork},
+	{53, Script::moveCharacterToPlayer},
 	{54, Script::setVillageSkorlTickProc},
 	{55, Script::freeGoewin},
 	{56, Script::barmanServe},
 	{57, Script::getNumGroats},
+	{58, Script::checkHasBook},
 	{59, Script::enableGargoylesTalk},
+	{60, Script::normalGoewin},
+	{61, Script::killPlayer},
 	{62, Script::animationLoad},
 	{63, Script::addActions},
 	{64, Script::randomToGeneral},
 	{65, Script::checkCellDoor},
-	{66, Script::method66},
+	{66, Script::checkSound},
 	{0xff, NULL}};
 
 const char *scriptOpcodes[] = {
@@ -620,30 +812,31 @@ const char *scriptOpcodes[] = {
 };
 
 const char *scriptMethodNames[67] = {
-	"ACTIVATE HOTSPOT", "SET HOTSPOT SCRIPT", NULL, "SET HOTSPOT FLAG MASK", 
+	"ACTIVATE HOTSPOT", "SET HOTSPOT SCRIPT", "ADD SOUND 2", "SET HOTSPOT FLAG MASK", 
 	"CLEAR SEQUENCE DELAY LIST", "DEACTIVATE HOTSPOT SET", "DEACTIVATE HOTSPOT", 
-	"RESET PATHFINDER",	"ADD DELAYED SCRIPT", NULL,
+	"RESET PATHFINDER",	"ADD DELAYED SCRIPT", "KILL SOUND",
 
 	"IS CHARACTER IN ROOM", "SET HOTSPOT DESC", "SET HOTSPOT NAME",
-	"PLAY SOUND", NULL, NULL, "DISPLAY DIALOG", NULL, "REMOTE ROOM VIEW SETUP",
-	"SET CHAR SPEAKING TO ITSELF",
+	"ADD SOUND", "ENDGAME SEQUENCE", "SETUP PIG FIGHT", "DISPLAY DIALOG", "SETUP SKORL FIGHT", 
+	"REMOTE ROOM VIEW SETUP", "SET CHAR SPEAKING TO ITSELF",
 
 	"CHECK CELL DOOR", "PLAY MUSIC", "IS DOOR BLOCKED", "IS SKORL IN CELL",
 	"PUSH BRICKS", "CHARACTER CHANGE ROOM", "PAUSE RATPOUCH", "SET BLOCKING HOTSPOT SCRIPT", 
 	"DECREMENT # INVENTORY ITEMS", "SET TALKING",
 
 	"SET ACTION CTR", "START SPEAKING", "DISABLE HOTSPOT", "CUT SACK",
-	"INCREASE # GROATS", "ENABLE HOTSPOT", "DISPLAY MESSAGE 2", "START OIL BURNER"
+	"INCREASE # GROATS", "ENABLE HOTSPOT", "DISPLAY MESSAGE 2", "START OIL BURNER",
 	"TRANSFORM PLAYER", "JAIL CLOSE",
 
-	"CHECK DROPPED DESC", NULL, "CLOSE DOOR", NULL, "OPEN DOOR", "NPC WAIT", NULL,
-	"DISPLAY MESSAGE", "SET NEW ACTION SUPPORT DATA", "SET ACTION SUPPORT DATA",
+	"CHECK DROPPED DESC", "MAKE GOEWIN FOLLOW", "CLOSE DOOR", "FIX GOEWIN", "OPEN DOOR", 
+	"NPC WAIT", "BRENDA BODGE",	"DISPLAY MESSAGE", "SET NEW ACTION SUPPORT DATA", 
+	"SET ACTION SUPPORT DATA",
 	
-	"GIVE PLAYER ITEM", "DECREASE # GROATS", NULL, NULL,
+	"GIVE PLAYER ITEM", "DECREASE # GROATS", "MAKE GOEWIN WORK", "MOVE CHAR TO PLAYER",
 	"SET VILLAGE SKORL TICK PROC", "FREE GOEWIN", "BARMAN SERVE", "GET # GROATS", 
-	NULL, "ENABLE GARGOYLE TALK",
+	"CHECK HAS BOOK", "ENABLE GARGOYLE TALK",
 
-	NULL, "KILL PLAYER", "ANIMATION LOAD", "ADD ACTIONS", "RANDOM TO GENERAL", 
+	"NORMAL GOEWIN", "KILL PLAYER", "ANIMATION LOAD", "ADD ACTIONS", "RANDOM TO GENERAL", 
 	"CHECK CELL DOOR", "METHOD 66"
 };
 

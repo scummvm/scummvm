@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -754,9 +757,25 @@ static const GOBGameDescription gameDescriptions[] = {
 		{
 			"gob3",
 			"",
-			AD_ENTRY1("intro.stk", "32b0f57f5ae79a9ae97e8011df38af42"),
-			UNK_LANG,
+			AD_ENTRY1s("intro.stk", "32b0f57f5ae79a9ae97e8011df38af42", 157084),
+			EN_GRB,
 			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_GOB3,
+		"intro"
+	},
+	{ // Supplied by fac76 in bug report #1742716
+		{
+			"gob3",
+			"",
+			{
+				{"intro.stk", 0, "32b0f57f5ae79a9ae97e8011df38af42", 157084},
+				{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
+				{NULL, 0, NULL, 0}
+			},
+			EN_GRB,
+			kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
 		GF_GOB3,
@@ -1147,7 +1166,9 @@ REGISTER_PLUGIN(GOB, "Gob Engine", "Goblins Games (C) Coktel Vision");
 namespace Gob {
 
 bool GobEngine::detectGame() {
-	const GOBGameDescription *gd = (const GOBGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	const GOBGameDescription *gd = (const GOBGameDescription *)(encapsulatedDesc.realDesc);
+
 	if (gd == 0)
 		return false;
 

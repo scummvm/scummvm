@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -140,11 +142,6 @@
 
 	#define SCUMM_LITTLE_ENDIAN
 
-	// FIXME: Do you really need to use 'long' on this port? Please replace
-	// this comment with a new comment that states so, and ideally also
-	// explains the reasons briefly.
-	#define SCUMMVM_USE_LONG_INT
-
 	#define FORCEINLINE __forceinline
 	#define NORETURN _declspec(noreturn)
 	#define PLUGIN_EXPORT __declspec(dllexport)
@@ -237,11 +234,6 @@
 
 	#define SCUMM_BIG_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
-
-	// FIXME: Do you really need to use 'long' on this port? Please replace
-	// this comment with a new comment that states so, and ideally also
-	// explains the reasons briefly.
-	#define SCUMMVM_USE_LONG_INT
 
 #elif defined(__DC__)
 

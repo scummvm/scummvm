@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -136,7 +139,8 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 	delete _theme;
 	_theme = 0;
 
-	if (style.compareToIgnoreCase("classic (builtin)") == 0) {
+	if (style.compareToIgnoreCase("classic (builtin)") == 0 ||
+		style.compareToIgnoreCase("classic") == 0) {
 		_theme = new ThemeClassic(_system, style);
 	} else {	
 		if (Theme::themeConfigUseable(style, "", &styleType, &cfg)) {
@@ -268,10 +272,10 @@ void NewGui::runLoop() {
 			
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				activeDialog->handleKeyDown(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
+				activeDialog->handleKeyDown(event.kbd);
 				break;
 			case Common::EVENT_KEYUP:
-				activeDialog->handleKeyUp(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
+				activeDialog->handleKeyUp(event.kbd);
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
@@ -308,6 +312,8 @@ void NewGui::runLoop() {
 				return;
 			case Common::EVENT_SCREEN_CHANGED:
 				screenChange();
+				break;
+			default:
 				break;
 			}
 		}

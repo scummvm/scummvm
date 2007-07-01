@@ -477,6 +477,7 @@ freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 	bbadf7309c4a2c2763e4bbba3c3be634	-1	fr	All	-	Demo	-	Kirben
 	754feb59d3bf86b8a00840df74fd7b26	-1	nl	Windows	-	Demo	-	adutchguy
 	ed2b074bc3166087a747acb2a3c6abb0	-1	de	All	HE 98.5	Demo	-	Joachim Eberhard
+	d73c851b942af44deb9b6d5f416a0972	-1	hb	Windows	HE 99	Demo	-	Ori Avtalion
 
 freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	4f580a021eee026f3b4589e17d130d78	-1	All	All	-	-	-	Kirben, sev
@@ -577,6 +578,7 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	36a6750e03fb505fc19fc2bf3e4dbe91	58749	en	All	-	Demo	-	sev
 	30ba1e825d4ad2b448143ae8df18482a	-1	nl	All	HE 98.5	Demo	-	Kirben
 	4521138d15d1fd7649c31fb981746231	-1	de	All	HE 98.5	Demo	-	Joachim Eberhard
+	2a8658dbd13d84d1bce64a71a35995eb	-1	hb	Windows	HE 99	Demo	-	Ori Avtalion
 
 pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	f7711f9264d4d43c2a1518ec7c10a607	79382	us	All	-	-	-	Kirben
@@ -654,6 +656,7 @@ puttcircus	Putt-Putt Joins the Circus
 
 	a7cacad9c40c4dc9e1812abf6c8af9d5	-1	en	All	-	Demo	-	Kirben, sev
 	1387d16aa620dc1c2d1fd87f8a9e7a09	-1	fr	Windows	-	Demo	-	Mevi
+	3af61c5edf8e15b43dbafd285b2e9777	-1	hb	Windows	-	Demo	-	Ori Avtalion
 
 puttputt	Putt-Putt Joins the Parade
 	0b3222aaa7efcf283eb621e0cefd26cc	-1	ru	DOS	HE 60	-	-	sev

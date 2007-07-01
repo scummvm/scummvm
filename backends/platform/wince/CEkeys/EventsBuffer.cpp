@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,10 +32,9 @@ namespace CEKEYS {
 		SDL_Event ev = {0};
 
 		if (!key->keycode())
-			key->setKeycode(key->ascii());
-
-		if (!key->ascii())
-			key->setAscii(key->keycode());
+			key->setKey(key->ascii(), key->ascii());
+		else if (!key->ascii())
+			key->setKey(key->keycode());
 
 		ev.type = (pushed ? SDL_KEYDOWN : SDL_KEYUP);
 		ev.key.keysym.mod = (SDLMod)key->flags();

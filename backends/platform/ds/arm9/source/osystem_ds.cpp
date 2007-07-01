@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 Neil Millstone
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,6 +37,7 @@
 #include "common/str.h"
 #include "cdaudio.h"
 #include "graphics/surface.h"
+#include "touchkeyboard.h"
 
 OSystem_DS* OSystem_DS::_instance = NULL;
 
@@ -136,9 +139,12 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		green >>= 3;
 		blue >>= 3;
 		
-		BG_PALETTE[r] = red | (green << 5) | (blue << 10);
-		if (!DS::getKeyboardEnable()) {
-			BG_PALETTE_SUB[r] = red | (green << 5) | (blue << 10);
+//		if (r != 255)
+		{		
+			BG_PALETTE[r] = red | (green << 5) | (blue << 10);
+			if (!DS::getKeyboardEnable()) {
+				BG_PALETTE_SUB[r] = red | (green << 5) | (blue << 10);
+			}
 		}
 //		if (num == 16) consolePrintf("pal:%d r:%d g:%d b:%d\n", r, red, green, blue);
 		
@@ -291,6 +297,7 @@ int16 OSystem_DS::getOverlayWidth()
 	
 bool OSystem_DS::showMouse(bool visible)
 {
+	DS::setShowCursor(visible);
 	return true;
 }
 
@@ -299,7 +306,7 @@ void OSystem_DS::warpMouse(int x, int y)
 }
 
 void OSystem_DS::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetCursorScale) {
-	DS::setCursorIcon(buf, w, h, keycolor);
+	DS::setCursorIcon(buf, w, h, keycolor, hotspotX, hotspotY);
 }
 
 void OSystem_DS::addEvent(Common::Event& e) {
@@ -320,11 +327,11 @@ bool OSystem_DS::pollEvent(Common::Event &event)
 			event.kbd.ascii = 0;
 			event.kbd.keycode = 0;
 			event.kbd.flags = 0;
-			consolePrintf("type: %d\n", event.type);
+//			consolePrintf("type: %d\n", event.type);
 			return false;
 		} else {
 			event = eventQueue[eventNum++];
-			consolePrintf("type: %d\n", event.type);
+//			consolePrintf("type: %d\n", event.type);
 			return true;
 		}
 	}
@@ -475,14 +482,17 @@ bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
 	surf->create(DS::getGameWidth(), DS::getGameHeight(), 1);
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
-	// TODO: Change this to work with the software scalar (hint: video ram format is different)
+	
+    size_t imageStrideInBytes = DS::isCpuScalerEnabled()? DS::getGameWidth() : 512;
+    size_t imageStrideInWords = imageStrideInBytes / 2;
+
 	u16* image = (u16 *) DS::get8BitBackBuffer();
 	for (int y = 0; y <  DS::getGameHeight(); y++)
 	{
-		DC_FlushRange((image + (y * 512)), DS::getGameWidth());
+		DC_FlushRange(image + (y * imageStrideInWords), DS::getGameWidth());
 		for (int x = 0; x < DS::getGameWidth() >> 1; x++)
 		{
-			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = *(image + y * 256 + x);
+			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y * imageStrideInWords + x];
 		}
 	}
 
@@ -497,6 +507,18 @@ void OSystem_DS::clearFocusRectangle() {
 
 }
 
+
+void OSystem_DS::addAutoComplete(const char *word) {
+	DS::addAutoComplete((char *) word);
+}
+
+void OSystem_DS::clearAutoComplete() {
+	DS::clearAutoComplete();
+}
+
+void OSystem_DS::setCharactersEntered(int count) {
+	DS::setCharactersEntered(count);
+}
 
 OSystem *OSystem_DS_create() {
 	return new OSystem_DS();

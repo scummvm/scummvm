@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +25,7 @@
 
 #include "common/stdafx.h"
 #include "common/endian.h"
+#include "common/events.h"
 #include "common/savefile.h"
 
 #include "cine/cine.h"
@@ -56,12 +58,7 @@ int16 buildObjectListCommand(void);
 void drawString(const char *string, byte param) {
 }
 
-Common::File *partFileHandleP = NULL;
-
 void waitPlayerInput(void) {
-}
-
-void freeAnimDataTable(void) {
 }
 
 void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4) {
@@ -1002,15 +999,14 @@ void CineEngine::makeSystemMenu(void) {
 					if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
 						char saveString[256], tmp[80];
 
-						Common::OutSaveFile *fHandle;
-
 						snprintf(tmp, 80, "%s.dir", _targetName.c_str());
 
-						fHandle = g_saveFileMan->openForSaving(tmp);
-						// FIXME: Properly handle openForSaving failures instead of
-						// just crashing silently!
-						assert(fHandle);
-
+						Common::OutSaveFile *fHandle = g_saveFileMan->openForSaving(tmp);
+						if (!fHandle) {
+							warning("Unable to open file %s for saving", tmp);
+							break;
+						}
+						
 						fHandle->write(currentSaveName, 200);
 						delete fHandle;
 
@@ -1034,7 +1030,7 @@ void CineEngine::makeSystemMenu(void) {
 	}
 }
 
-const int16 choiceResultTable[] = {
+static const int16 choiceResultTable[] = {
 	1,
 	1,
 	1,
@@ -1044,7 +1040,7 @@ const int16 choiceResultTable[] = {
 	1
 };
 
-const int16 subObjectUseTable[] = {
+static const int16 subObjectUseTable[] = {
 	3,
 	3,
 	3,
@@ -1054,7 +1050,7 @@ const int16 subObjectUseTable[] = {
 	0
 };
 
-const int16 canUseOnItemTable[] = {
+static const int16 canUseOnItemTable[] = {
 	1,
 	0,
 	0,
@@ -2719,7 +2715,7 @@ void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 par
 		currentHead = tempHead->next;
 	}
 
-	newElement = (overlayHeadElement *) malloc(sizeof(overlayHeadElement));
+	newElement = (overlayHeadElement *)malloc(sizeof(overlayHeadElement));
 
 	newElement->next = tempHead->next;
 	tempHead->next = newElement;
@@ -3209,7 +3205,7 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 		ch[1] = 0;
 
 		manageEvents();
-		int ascii = getKeyData();
+		int keycode = getKeyData();
 		uint16 mouseButton, mouseX, mouseY;
 
 		getMouseData(0, &mouseButton, &mouseX, &mouseY);
@@ -3219,14 +3215,14 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 		else if (mouseButton & 1)
 			quit = 1;
 
-		switch (ascii) {
-		case 8: // backspace
+		switch (keycode) {
+		case Common::KEYCODE_BACKSPACE:
 			if (inputPos <= 1) {
 				break;
 			}
 			inputPos--;
 			redraw = true;
-		case 127: // del
+		case Common::KEYCODE_DELETE:
 			if (inputPos <= inputLength) {
 				if (inputPos != 1) {
 					strncpy(tempString, inputString, inputPos - 1);
@@ -3239,25 +3235,25 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 				redraw = true;
 			}
 			break;
-		case 276: // left
+		case Common::KEYCODE_LEFT:
 			if (inputPos > 1) {
 				inputPos--;
 				redraw = true;
 			}
 			break;
-		case 275: // right
+		case Common::KEYCODE_RIGHT:
 			if (inputPos <= inputLength) {
 				inputPos++;
 				redraw = true;
 			}
 			break;
 		default:
-			if (((ascii >= 'a') && (ascii <='z')) ||
-				((ascii >= '0') && (ascii <='9')) ||
-				((ascii >= 'A') && (ascii <='Z')) ||
-				(ascii == ' ')) {
+			if (((keycode >= 'a') && (keycode <='z')) ||
+				((keycode >= '0') && (keycode <='9')) ||
+				((keycode >= 'A') && (keycode <='Z')) ||
+				(keycode == ' ')) {
 				if (inputLength < stringMaxLength - 1) {
-					ch[0] = ascii;
+					ch[0] = keycode;
 					if (inputPos != 1) {
 						strncpy(tempString, inputString, inputPos - 1);
 						strcat(tempString, ch);

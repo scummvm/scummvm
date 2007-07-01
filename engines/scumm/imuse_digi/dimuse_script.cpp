@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -173,17 +176,17 @@ void IMuseDigital::flushTracks() {
  				// appendable stream. We play it nice and wait till all of it
  				// played.
 				if (track->stream->endOfStream()) {
-					_mixer->stopHandle(track->handle);
+					_mixer->stopHandle(track->mixChanHandle);
 					delete track->stream;
 					track->stream = NULL;
 					_sound->closeSound(track->soundHandle);
 					track->soundHandle = NULL;
 					track->used = false;
 				}
-			} else if (track->stream2) {
-				_mixer->stopHandle(track->handle);
-				delete track->stream2;
-				track->stream2 = NULL;
+			} else if (track->streamSou) {
+				_mixer->stopHandle(track->mixChanHandle);
+				delete track->streamSou;
+				track->streamSou = NULL;
 				track->used = false;
 			}
 		}
@@ -270,7 +273,7 @@ int32 IMuseDigital::getPosInMs(int soundId) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
-			int32 pos = (5 * (track->dataOffset + track->regionOffset)) / (track->iteration / 200);
+			int32 pos = (5 * (track->dataOffset + track->regionOffset)) / (track->feedSize / 200);
 			return pos;
 		}
 	}
@@ -284,7 +287,7 @@ int IMuseDigital::getSoundStatus(int sound) const {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->soundId == sound) {
-			if ((track->stream2 && _mixer->isSoundHandleActive(track->handle)) ||
+			if ((track->streamSou && _mixer->isSoundHandleActive(track->mixChanHandle)) ||
 				(track->stream && track->used && !track->readyToRemove)) {
 					return 1;
 			}
@@ -390,15 +393,15 @@ void IMuseDigital::stopAllSounds() {
 			// as we are protected by a mutex, and this method is never called
 			// from IMuseDigital::callback either.
 			if (track->stream) {
-				_mixer->stopHandle(track->handle);
+				_mixer->stopHandle(track->mixChanHandle);
 				delete track->stream;
 				track->stream = NULL;
 				_sound->closeSound(track->soundHandle);
 				track->soundHandle = NULL;
-			} else if (track->stream2) {
-				_mixer->stopHandle(track->handle);
-				delete track->stream2;
-				track->stream2 = NULL;
+			} else if (track->streamSou) {
+				_mixer->stopHandle(track->mixChanHandle);
+				delete track->streamSou;
+				track->streamSou = NULL;
 			}
 			
 			// Mark the track as unused

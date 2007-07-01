@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -383,7 +385,7 @@ void ScummEngine_v2::checkV2Inventory(int x, int y) {
 					runObject(_activeInventory, _activeVerb);
 			}
 		} else {
-			runInputScript(3, object, 0);
+			runInputScript(kInventoryClickArea, object, 0);
 		}
 	}
 }
@@ -535,7 +537,7 @@ void ScummEngine::checkExecVerbs() {
 				if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
 					if (_mouseAndKeyboardStat == vs->key) {
 						// Trigger verb as if the user clicked it
-						runInputScript(1, vs->verbid, 1);
+						runInputScript(kVerbClickArea, vs->verbid, 1);
 						return;
 					}
 				}
@@ -578,14 +580,14 @@ void ScummEngine::checkExecVerbs() {
 				// Check if person is available (see script 23 from ZAK_FM-TOWNS and script 4 from ZAK_PC).
 				// Zak: Var[144 Bit 15], Annie: Var[145 Bit 0], Melissa: Var[145 Bit 1], Leslie: Var[145 Bit 2]
 				if (!readVar(0x890E + fKey)) {
-					runInputScript(1, 36 + fKey, 0);
+					runInputScript(kVerbClickArea, 36 + fKey, 0);
 				}
 			}
 			return;
 		}
 
 		// Generic keyboard input
-		runInputScript(4, _mouseAndKeyboardStat, 1);
+		runInputScript(kKeyClickArea, _mouseAndKeyboardStat, 1);
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
 		VirtScreen *zone = findVirtScreen(_mouse.y);
 		byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
@@ -598,7 +600,7 @@ void ScummEngine::checkExecVerbs() {
 
 		if (_game.version <= 2 && zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
 			// Click into V2 sentence line
-			runInputScript(5, 0, 0);
+			runInputScript(kSentenceClickArea, 0, 0);
 		} else if (_game.version <= 2 && zone->number == kVerbVirtScreen && _mouse.y > zone->topline + inventoryArea) {
 			// Click into V2 inventory
 			((ScummEngine_v2 *)this)->checkV2Inventory(_mouse.x, _mouse.y);
@@ -606,10 +608,10 @@ void ScummEngine::checkExecVerbs() {
 			over = findVerbAtPos(_mouse.x, _mouse.y);
 			if (over != 0) {
 				// Verb was clicked
-				runInputScript(1, _verbs[over].verbid, code);
+				runInputScript(kVerbClickArea, _verbs[over].verbid, code);
 			} else {
 				// Scene was clicked
-				runInputScript((zone->number == kMainVirtScreen) ? 2 : 1, 0, code);
+				runInputScript((zone->number == kMainVirtScreen) ? kSceneClickArea : kVerbClickArea, 0, code);
 			}
 		}
 	}

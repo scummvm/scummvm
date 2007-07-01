@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -795,6 +797,11 @@ void Actor::setDirection(int direction) {
 	uint aMask;
 	int i;
 	uint16 vald;
+
+	// HACK to fix bug #774783
+	// If Hitler's direction is being set to anything other than 90, set it to 90
+	if ((_vm->_game.id == GID_INDY3) && _vm->_roomResource == 46 && _number == 9 && direction != 90)
+		direction = 90;
 
 	// Do nothing if actor is already facing in the given direction
 	if (_facing == direction)
@@ -2348,6 +2355,7 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 					a->_auxBlock.r.top    = (int16)READ_LE_UINT16(axer + 2) + dy;
 					a->_auxBlock.r.right  = (int16)READ_LE_UINT16(axer + 4) + dx;
 					a->_auxBlock.r.bottom = (int16)READ_LE_UINT16(axer + 6) + dy;
+					adjustRect(a->_auxBlock.r);
 				}
 			}
 		}

@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,7 +87,7 @@ void changeScriptParamInList(int param1, int param2,
     scriptInstanceStruct * pScriptInstance, int newValue, int param3);
 uint8 *getDataFromData3(ovlData3Struct * ptr, int param);
 int32 prepareWordRender(int32 param, int32 var1, int16 * out2, uint8 * ptr3,
-    uint8 * string);
+    const uint8 * string);
 void removeExtention(const char *name, char *buffer);
 void resetRaster(uint8 * rasterPtr, int32 rasterSize);
 void changeCursor(uint16 cursorType);

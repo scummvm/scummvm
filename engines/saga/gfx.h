@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -145,6 +146,8 @@ public:
 	void setPalette(const PalEntry *pal, bool full = false);
 	void setPaletteColor(int n, int r, int g, int b);
 	void getCurrentPal(PalEntry *src_pal);
+	void savePalette() { getCurrentPal(_savedPalette); }
+	void restorePalette() { setPalette(_savedPalette, true); }
 	void palToBlack(PalEntry *src_pal, double percent);
 	void blackToPal(PalEntry *src_pal, double percent);
 	void showCursor(bool state);
@@ -158,6 +161,7 @@ private:
 	SagaEngine *_vm;
 
 	PalEntry _globalPalette[PAL_ENTRIES];
+	PalEntry _savedPalette[PAL_ENTRIES];
 };
 
 } // End of namespace Saga

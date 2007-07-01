@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,7 +54,7 @@ private:
 	bool _permanent;
 	byte _volume;
 	int8 _balance;
-	bool _paused;
+	int _pauseLevel;
 	int _id;
 	uint32 _samplesConsumed;
 	uint32 _samplesDecoded;
@@ -63,8 +65,6 @@ protected:
 	AudioStream *_input;
 
 public:
-
-	Channel(Mixer *mixer, Mixer::SoundType type, int id = -1);
 	Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input, bool autofreeStream, bool reverseStereo = false, int id = -1, bool permanent = false);
 	virtual ~Channel();
 
@@ -77,10 +77,15 @@ public:
 		return _input->endOfStream();
 	}
 	void pause(bool paused) {
-		_paused = paused;
+		assert((paused && _pauseLevel >= 0) || (!paused && _pauseLevel));
+	
+		if (paused)
+			_pauseLevel++;
+		else
+			_pauseLevel--;
 	}
 	bool isPaused() {
-		return _paused;
+		return _pauseLevel != 0;
 	}
 	void setVolume(const byte volume) {
 		_volume = volume;
@@ -372,17 +377,10 @@ int Mixer::getVolumeForSoundType(SoundType type) const {
 #pragma mark -
 
 
-Channel::Channel(Mixer *mixer, Mixer::SoundType type, int id)
-	: _type(type), _mixer(mixer), _autofreeStream(true),
-	  _volume(Mixer::kMaxChannelVolume), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
-	  _samplesDecoded(0), _mixerTimeStamp(0), _converter(0), _input(0) {
-	assert(mixer);
-}
-
 Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input,
 				bool autofreeStream, bool reverseStereo, int id, bool permanent)
 	: _type(type), _mixer(mixer), _autofreeStream(autofreeStream),
-	  _volume(Mixer::kMaxChannelVolume), _balance(0), _paused(false), _id(id), _samplesConsumed(0),
+	  _volume(Mixer::kMaxChannelVolume), _balance(0), _pauseLevel(0), _id(id), _samplesConsumed(0),
 	  _samplesDecoded(0), _mixerTimeStamp(0), _converter(0), _input(input), _permanent(permanent) {
 	assert(mixer);
 	assert(input);

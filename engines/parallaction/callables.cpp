@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -65,12 +68,12 @@ void _c_score(void *parm) {
 }
 
 void _c_fade(void *parm) {
-	
+
 	_vm->_gfx->setBlackPalette();
 
 	Gfx::Palette pal;
 	memset(pal, 0, sizeof(Gfx::Palette));
-	
+
 	for (uint16 _di = 0; _di < 64; _di++) {
 		_vm->_gfx->fadePalette(pal);
 		_vm->_gfx->setPalette(pal);
@@ -184,14 +187,14 @@ void _c_trasformata(void *parm) {
 }
 
 void _c_offMouse(void *parm) {
-	_mouseHidden = 1;
-	_engineFlags |= kEngineMouse;
+	_vm->showCursor(false);
+	_engineFlags |= kEngineBlockInput;
 	return;
 }
 
 void _c_onMouse(void *parm) {
-	_engineFlags &= ~kEngineMouse;
-	_mouseHidden = 0;
+	_engineFlags &= ~kEngineBlockInput;
+	_vm->showCursor(true);
 	return;
 }
 
@@ -257,7 +260,7 @@ void _c_endComment(void *param) {
 	for (di = 0; di < PALETTE_COLORS; di++) {
 		for (si = 0; si <= 93; si +=3) {
 
-			char al;
+			int8 al;
 
 			if (_enginePal[si] != pal[si]) {
 				al = _enginePal[si];
@@ -297,7 +300,7 @@ void _c_endComment(void *param) {
 }
 
 void _c_frankenstein(void *parm) {
-	
+
 	Gfx::Palette pal0;
 	Gfx::Palette pal1;
 
@@ -305,7 +308,7 @@ void _c_frankenstein(void *parm) {
 		pal0[(i+FIRST_BASE_COLOR)] = _vm->_gfx->_palette[i];
 		pal0[(i+FIRST_BASE_COLOR)*3+1] = 0;
 		pal0[(i+FIRST_BASE_COLOR)*3+2] = 0;
-		
+
 		pal1[(i+FIRST_BASE_COLOR)*3+1] = 0;
 		pal1[(i+FIRST_BASE_COLOR)*3+2] = 0;
 	}
@@ -424,6 +427,8 @@ void _c_ridux(void *parm) {
 
 void _c_testResult(void *parm) {
 	_vm->_gfx->swapBuffers();
+
+	_vm->_disk->selectArchive("disk1");
 	_vm->parseLocation("common");
 
 	_vm->_gfx->setFont(kFontMenu);

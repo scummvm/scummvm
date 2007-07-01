@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -75,7 +78,7 @@ private:
 	CursorState _cursorState;
 
 	void checkRoomHotspots();
-	uint8 checkRoomExits();
+	CursorType checkRoomExits();
 	void loadRoomHotspots();
 	bool sub_112() { return false; } // not yet implemented
 	void flagCoveredCells(Hotspot &h);

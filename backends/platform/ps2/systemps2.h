@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,6 +48,9 @@ class OSystem_PS2 : public OSystem {
 public:
 	OSystem_PS2(const char *elfPath);
 	virtual ~OSystem_PS2(void);
+
+	virtual void initBackend();
+
 	virtual void initSize(uint width, uint height);
 
 	virtual int16 getHeight(void);
@@ -53,7 +59,8 @@ public:
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	virtual void setShakePos(int shakeOffset);
 	virtual void grabPalette(byte *colors, uint start, uint num);
-	virtual bool grabRawScreen(Graphics::Surface *surf);
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 	virtual void updateScreen();
 
 	virtual void showOverlay();
@@ -99,6 +106,8 @@ public:
 	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
 
 	virtual Common::SaveFileManager *getSavefileManager();
+	virtual Audio::Mixer *getMixer() { return _mixer; }
+	virtual Common::TimerManager *getTimerManager() { return _timer; }
 
 	void timerThread(void);
 	void soundThread(void);
@@ -125,6 +134,8 @@ private:
 	bool _useMouse, _useKbd, _useHdd, _usbMassLoaded, _usbMassConnected;
 
 	Ps2SaveFileManager *_saveManager;
+	Audio::Mixer *_mixer;
+	Common::TimerManager *_timer;
 
 	Gs2dScreen	*_screen;
 	Ps2Input	*_input;

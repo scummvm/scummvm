@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2005-2006 John Willis (Portions of the GP2X Backend)
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,17 +39,20 @@ extern "C" {
 // Use Squidge's MMU patch rather then myown (his is neater).
 // The effect if not that great but cacheing the upper RAM is no bad thing (tm) ;).
 
-void InitRam (void);
-void CloseRam (void);
+//extern void InitRam (void);
+//extern void CloseRam (void);
 // Set ARM920t clock frequency
-void SetClock (unsigned c);
-void MMUpatch (void);
+extern void SetClock (unsigned c);
+extern void patchMMU (void);
+extern void unpatchMMU (void);
 
 #define SYS_CLK_FREQ 7372800
 
-char name[256];
-unsigned long gp2x_dev;
-volatile unsigned short *gp2x_ram, *gp2x_memregs;
+//unsigned long gp2x_dev;
+//volatile unsigned short *gp2x_ram, *gp2x_memregs;
+
+static          unsigned long   gp2x_dev[8]={0,0,0,0,0,0,0,0};//, gp2x_ticks_per_second;
+static volatile unsigned short *gp2x_ram, *gp2x_memregs;
 
 #ifdef __cplusplus
     }

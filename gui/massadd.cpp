@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +27,7 @@
 #include "engines/engine.h"
 #include "base/game.h"
 #include "base/plugins.h"
+#include "common/events.h"
 
 #include "gui/launcher.h"	// For addGameToConf()
 #include "gui/massadd.h"
@@ -82,10 +86,10 @@ MassAddDialog::MassAddDialog(const FilesystemNode &startDir)
 	_gameProgressText = new StaticTextWidget(this, "massadddialog_gameprogress",
 											 "... progress ...");
 
-	_okButton = new ButtonWidget(this, "massadddialog_ok", "OK", kOkCmd, '\n');
+	_okButton = new ButtonWidget(this, "massadddialog_ok", "OK", kOkCmd, Common::ASCII_RETURN);
 	_okButton->setEnabled(false);
 
-	new ButtonWidget(this, "massadddialog_cancel", "Cancel", kCancelCmd, '\27');
+	new ButtonWidget(this, "massadddialog_cancel", "Cancel", kCancelCmd, Common::ASCII_ESCAPE);
 
 }
 

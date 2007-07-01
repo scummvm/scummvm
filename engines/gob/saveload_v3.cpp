@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004 Ivan Dubrov
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -256,7 +258,10 @@ bool SaveLoad_v3::loadScreenshot(int16 dataVar, int32 size, int32 offset) {
 		}
 
 		in->seek(1040 + varSize * 2);
-		return loadSprite(*in, size);
+
+		bool success = loadSprite(*in, size);
+		delete in;
+		return success;
 
 	} else
 		warning("Invalid attempt at loading a screenshot (%d, %d, %d, %d)",

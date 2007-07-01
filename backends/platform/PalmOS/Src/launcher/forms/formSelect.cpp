@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2007 The ScummVM project
- * Copyright (C) 2002-2007 Chris Apers - PalmOS Backend
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +28,8 @@
 #include "formUtil.h"
 #include "games.h"
 #include "start.h"
-#include "common/util.h"
+
+#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 static Char **items = NULL;
 Int16 selectedEngine = -1;

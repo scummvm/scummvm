@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,47 +47,24 @@ static const AnimRecord anim_screens[] = {{0x40, 0, true, true}, {0x42, 1, false
 // should be aborted
 
 bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySize) {
+	Events &events = Events::getReference();
 	_screen.screen().loadScreen(screenId);
 	_screen.update();
 	Palette p(paletteId);
 	_screen.paletteFadeIn(&p);
 	
-	bool result = delay(delaySize);
-	if (Events::getReference().quitFlag) return true;
+	bool result = events.interruptableDelay(delaySize);
+	if (events.quitFlag) return true;
 
 	_screen.paletteFadeOut();
 	return result;
-}
-
-// delay
-// Delays for a given number of milliseconds. If it returns true, it indicates that
-// Escape has been pressed, and the introduction should be aborted.
-
-bool Introduction::delay(uint32 milliseconds) {
-	Events &events = Events::getReference();
-	uint32 delayCtr = _system.getMillis() + milliseconds;
-
-	while (_system.getMillis() < delayCtr) {
-		if (events.quitFlag) return true;
-
-		if (events.pollEvent()) {
-			if (events.type() == Common::EVENT_KEYDOWN) 
-				return events.event().kbd.keycode == 27;
-			else if (events.type() == Common::EVENT_LBUTTONDOWN)
-				return false;
-		}
-
-		uint32 delayAmount = delayCtr - _system.getMillis();
-		if (delayAmount > 10) delayAmount = 10;
-		_system.delayMillis(delayAmount);
-	}
-	return false;
 }
 
 // show
 // Main method for the introduction sequence
 
 bool Introduction::show() {
+	Events &events = Events::getReference();
 	_screen.setPaletteEmpty();
 
 	// Initial game company and then game screen
@@ -106,13 +86,13 @@ bool Introduction::show() {
 		anim = new AnimationSequence(_screen, _system, curr_anim->resourceId, 
 			coll.getPalette(curr_anim->paletteIndex), fadeIn);
 		if (curr_anim->initialPause) 
-			if (delay(12000)) return true;
+			if (events.interruptableDelay(12000)) return true;
 
 		result = false;
 		switch (anim->show()) {
 			case ABORT_NONE:
 				if (curr_anim->endingPause) {
-					result = delay(12000);
+					result = events.interruptableDelay(12000);
 				}
 				break;
 
@@ -133,9 +113,9 @@ bool Introduction::show() {
 	result = false;
 	anim = new AnimationSequence(_screen, _system, 0x48, coll.getPalette(4), false);
 	do {
-		result = delay(2000);
+		result = events.interruptableDelay(2000);
 		_screen.paletteFadeOut();
-		if (!result) result = delay(500);
+		if (!result) result = events.interruptableDelay(500);
 		if (result) break;
 	} while (anim->step());
 	delete anim;

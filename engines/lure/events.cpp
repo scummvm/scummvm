@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,10 +44,10 @@ Mouse::Mouse() {
 
 	_lButton = false; 
 	_rButton = false;
-	_cursorNum = 0;
+	_cursorNum = CURSOR_ARROW;
 	_x = 0;
 	_y = 0;
-	setCursorNum(0);
+	setCursorNum(CURSOR_ARROW);
 }
 
 Mouse::~Mouse() {
@@ -81,7 +84,7 @@ void Mouse::cursorOff() {
 	CursorMan.showMouse(false);
 }
 
-void Mouse::setCursorNum(uint8 cursorNum) {
+void Mouse::setCursorNum(CursorType cursorNum) {
 	int hotspotX = 7, hotspotY = 7;
 	if ((cursorNum == CURSOR_ARROW) || (cursorNum == CURSOR_MENUBAR)) {
 		hotspotX = 0; 
@@ -91,7 +94,7 @@ void Mouse::setCursorNum(uint8 cursorNum) {
 	setCursorNum(cursorNum, hotspotX, hotspotY);
 }
 
-void Mouse::setCursorNum(uint8 cursorNum, int hotspotX, int hotspotY) {
+void Mouse::setCursorNum(CursorType cursorNum, int hotspotX, int hotspotY) {
 	Resources &res = Resources::getReference();
 
 	_cursorNum = cursorNum;
@@ -99,7 +102,7 @@ void Mouse::setCursorNum(uint8 cursorNum, int hotspotX, int hotspotY) {
 	CursorMan.replaceCursor(cursorAddr, CURSOR_WIDTH, CURSOR_HEIGHT, hotspotX, hotspotY, 0);
 }
 
-void Mouse::pushCursorNum(uint8 cursorNum) {
+void Mouse::pushCursorNum(CursorType cursorNum) {
 	int hotspotX = 7, hotspotY = 7;
 	if ((cursorNum == CURSOR_ARROW) || (cursorNum == CURSOR_MENUBAR)) {
 		hotspotX = 0; 
@@ -109,7 +112,7 @@ void Mouse::pushCursorNum(uint8 cursorNum) {
 	pushCursorNum(cursorNum, hotspotX, hotspotY);
 }
 
-void Mouse::pushCursorNum(uint8 cursorNum, int hotspotX, int hotspotY) {
+void Mouse::pushCursorNum(CursorType cursorNum, int hotspotX, int hotspotY) {
 	Resources &res = Resources::getReference();
 
 	_cursorNum = cursorNum;
@@ -188,6 +191,31 @@ void Events::waitForPress() {
 		}
 		g_system->delayMillis(20);
 	}
+}
+
+// interruptableDelay
+// Delays for a given number of milliseconds. If it returns true, it indicates that
+// the Escape has been pressed to abort whatever sequence is being displayed
+
+bool Events::interruptableDelay(uint32 milliseconds) {
+	Events &events = Events::getReference();
+	uint32 delayCtr = g_system->getMillis() + milliseconds;
+
+	while (g_system->getMillis() < delayCtr) {
+		if (events.quitFlag) return true;
+
+		if (events.pollEvent()) {
+			if (events.type() == Common::EVENT_KEYDOWN) 
+				return events.event().kbd.keycode == 27;
+			else if (events.type() == Common::EVENT_LBUTTONDOWN)
+				return false;
+		}
+
+		uint32 delayAmount = delayCtr - g_system->getMillis();
+		if (delayAmount > 10) delayAmount = 10;
+		g_system->delayMillis(delayAmount);
+	}
+	return false;
 }
 
 } // end of namespace Lure

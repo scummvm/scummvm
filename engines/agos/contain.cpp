@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,8 +34,8 @@ int AGOSEngine::canPlace(Item *x, Item *y) {
 	Item *z = derefItem(x->parent);
 
 	if (getGameType() == GType_ELVIRA1) {
-		SubPlayer *p = (SubPlayer *)findChildOfType(y, 3);
-		SubContainer *c = (SubContainer *)findChildOfType(y, 7);
+		SubPlayer *p = (SubPlayer *)findChildOfType(y, kPlayerType);
+		SubContainer *c = (SubContainer *)findChildOfType(y, kContainerType);
 		int cap = 0;
 		int wt;
 
@@ -57,7 +59,7 @@ int AGOSEngine::canPlace(Item *x, Item *y) {
 				return -2;	/* Too heavy */
 		}
 	} else {
-		SubObject *o = (SubObject *)findChildOfType(y, 2);
+		SubObject *o = (SubObject *)findChildOfType(y, kObjectType);
 		int ct;
 		int cap = 0;
 
@@ -118,11 +120,11 @@ int AGOSEngine::sizeRec(Item *x, int d) {
 }
 
 int AGOSEngine::sizeOfRec(Item *i, int d) {
-	SubObject *o = (SubObject *)findChildOfType(i, 2);
+	SubObject *o = (SubObject *)findChildOfType(i, kObjectType);
 
 	if (getGameType() == GType_ELVIRA1) {
-		SubPlayer *p = (SubPlayer *)findChildOfType(i, 3);
-		SubContainer *c = (SubContainer *)findChildOfType(i, 7);
+		SubPlayer *p = (SubPlayer *)findChildOfType(i, kPlayerType);
+		SubContainer *c = (SubContainer *)findChildOfType(i, kContainerType);
 
 		if ((c) && (c->flags & 1)) {
 			if (o)
@@ -172,10 +174,10 @@ int AGOSEngine::weightRec(Item *x, int d) {
 }
 
 int AGOSEngine::weightOf(Item *x) {
-	SubObject *o = (SubObject *)findChildOfType(x, 2);
+	SubObject *o = (SubObject *)findChildOfType(x, kObjectType);
 
 	if (getGameType() == GType_ELVIRA1) {
-		SubPlayer *p = (SubPlayer *)findChildOfType(x, 3);
+		SubPlayer *p = (SubPlayer *)findChildOfType(x, kPlayerType);
 		if (o)
 			return o->objectWeight;
 		if (p)

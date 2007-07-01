@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,7 +49,9 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 		{1, "title.wsa",    &KyraEngine_v2::seq_introTitle,    6,   10,  26, false, false},
 		{2, "over.cps",     &KyraEngine_v2::seq_introOverview, 16,  30,  1,  false, true},
 		{2, "library.cps",  &KyraEngine_v2::seq_introLibrary,  16,  30,  1,  false, true},
-		{2, "hand.cps",     &KyraEngine_v2::seq_introHand,     16,  90,  1,  false, true}
+		{2, "hand.cps",     &KyraEngine_v2::seq_introHand,     16,  90,  1,  false, true},
+		{1, "point.wsa",    &KyraEngine_v2::seq_introPoint,    16,  30,  1,  false, true},
+		{1, "zanfaun.wsa",  &KyraEngine_v2::seq_introZanFaun,  16,  90,  1,  false, true}
 	};
 
 	assert(startSeq >= 0 && endSeq < ARRAYSIZE(sequences) && startSeq <= endSeq);
@@ -94,7 +99,9 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 		seqDelay += _system->getMillis();
 		bool mayEndLoop = sequences[i].timeOut;
 		
-		while (!_quitFlag && !_skipFlag) {
+		// Skip the movie if esc is pressed or the mouse is clicked
+		// However, don't skip the menu movie, to match the behavior of the original interpreter
+		while ((!_quitFlag && !_skipFlag) || i == kSequenceTitle) {
 			uint32 startTime = _system->getMillis();
 			
 			if (sequences[i].callback) {
@@ -137,63 +144,161 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 	delete[] _activeChat;
 }
 
+// FIXME: This part needs game dialogs, as it's not part of the intro, but
+// rather a game video. It has speech only in the CD version
+int KyraEngine_v2::seq_introZanFaun(int seqNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introZanFaun(%i)", seqNum);
+
+	static const SequenceControl zanFaunWSAControl[] = {
+		{0, 6}, {1, 6}, {2, 6}, {3, 6},
+		{4, 6}, {5, 6}, {6, 6}, {7, 6}, 
+		{8, 6}, {9, 6}, {10, 6}, {11, 6}, 
+		{12, 6}, {13, 6}, {14, 6}, {15, 6}, 
+		{16, 6}, {17, 6}, {18, 6}, {19, 6}, 
+		{20, 6}, {21, 6}, {22, 6}, {23, 6}, 
+		{23, 6}, {22, 6}, {21, 6}, {20, 6}, 
+		{19, 6}, {18, 6}, {17, 6}, {16, 6}, 
+		{15, 6}, {14, 6}, {13, 6}, {12, 6}, 
+		{11, 6}, {10, 6}, {9, 6}, {8, 6}, 
+		{7, 6}, {6, 6}, {5, 6}, {4, 6},
+		{3, 6}, {2, 6}, {1, 6}, {0, 6},
+		{8, 6}, {9, 6}, {10, 6}, {-1, -1} };
+
+	switch (seqNum) {
+		case 0:
+			_sound->playTrack(8);
+			//XXX: palette stuff
+			//XXX: load dialogs
+			break;
+		case 1:
+			seq_loadWSA(1, "zanfaun.wsa", 9, 0, zanFaunWSAControl);
+			break;
+		case 0x294:
+			seq_waitForChatsToFinish();
+			seq_unloadWSA(1);
+			return 0;
+		default:
+			break;
+	}
+
+	return -1;
+}
+
+int KyraEngine_v2::seq_introPoint(int seqNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introPoint(%i)", seqNum);
+
+	switch (seqNum) {
+		case 0:
+			_sound->playTrack(7);
+			break;
+		case 1:
+			seq_loadWSA(1, "point.wsa", 9);
+			seq_playIntroChat(11); // "Zanthia, youngest of the royal mystics has been selected"
+			break;
+		case 0x96:
+			seq_waitForChatsToFinish();
+			seq_unloadWSA(1);
+			return 0;
+		default:
+			break;
+	}
+
+	return -1;
+}
+
 int KyraEngine_v2::seq_introHand(int seqNum) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introHand(%i)", seqNum);
-	static const SequenceControl hand1bWSAControl[] = {
+	// XXX: commented out to prevent compiler warnings
+	/*static const SequenceControl hand1bWSAControl[] = {
 		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}, {5, 6}, {6, 6}, {7, 6},
 		{8, 6}, {9, 6}, {10, 6}, {11, 6}, {11, 12}, {12, 12}, {13, 12}, 
 		{12, 12}, {11, 12}, {-1, -1} };
 	
 	static const SequenceControl hand1cWSAControl[] = {
 		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}, {3, 6},
-		{4, 6}, {5, 64}, {5, 6}, {-1, -1} };
+		{4, 6}, {5, 64}, {5, 6}, {-1, -1} };*/
 	
 	static const SequenceControl hand2WSAControl[] = {
 		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
 		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
-		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {-1, -1} };
+		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
+		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
+		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
+		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
+		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
+		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
+		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
+		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
+		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
+		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6}, {-1, -1} };
 
 	static const SequenceControl hand3WSAControl[] = {
+		{0, 6}, {1, 6}, {2, 6}, {1, 6},
+		{0, 6}, {1, 6}, {2, 6}, {1, 6}, 
+		{0, 6}, {1, 6}, {2, 6}, {1, 6},
+		{0, 6}, {1, 6}, {2, 6}, {1, 6},
+		{0, 6}, {1, 6}, {2, 6}, {1, 6},
+		{0, 6}, {1, 6}, {2, 6}, {1, 6},
+		{0, 6}, {1, 6}, {2, 6}, {1, 6},
+		{0, 6}, {1, 6}, {2, 6}, {1, 6},
+		{0, 6}, {1, 6}, {2, 6}, {1, 6},
+		{0, 6}, {1, 6}, {2, 6}, {1, 6},
+		{0, 6}, {1, 6}, {2, 6}, {1, 6},
 		{0, 6}, {1, 6}, {2, 6}, {1, 6},
 		{0, 6}, {-1, -1} };
 
 	static const SequenceControl hand4WSAControl[] = {
 		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
-		{3, 6}, {2, 6}, {1, 6}, {-1, -1} };
+		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
+		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
+		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
+		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
+		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
+		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
+		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
+		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
+		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
+		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
+		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
+		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
+		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
+		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
+		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
+		{-1, -1} };
 	
 	switch (seqNum) {
 		case 0:
 			_sound->playTrack(6);
-			seq_playIntroChat(7);
 			//palette stuff
 			break;
 		case 1:
 			// XXX: these show as garbage. New frame encode?
-			seq_loadWSA(1, "hand1a.wsa", 9);
+			/*seq_loadWSA(1, "hand1a.wsa", 9);
 			seq_loadWSA(2, "hand1b.wsa", 9, 0, hand1bWSAControl);
-			seq_loadWSA(3, "hand1c.wsa", 9, 0, hand1cWSAControl);
+			seq_loadWSA(3, "hand1c.wsa", 9, 0, hand1cWSAControl);*/
+			seq_playIntroChat(7); // "Luckily, the Hand was experienced in these matters"
 			break;
 		case 0xc9:
 			// palette stuff
 			seq_loadWSA(4, "hand2.wsa", 9, 0, hand2WSAControl);
-			seq_playIntroChat(8);
+			seq_waitForChatsToFinish();
+			seq_playIntroChat(8); // "and finally, a plan was approved"
 			break;
 		case 0x18b:
-			seq_waitForChatsToFinish();
 			seq_loadWSA(5, "hand3.wsa", 9, 0, hand3WSAControl);
+			seq_waitForChatsToFinish();
+			seq_playIntroChat(9); // "which required a magic anchorstone"
 			break;
 		case 0x1f4:
-			seq_waitForChatsToFinish();
 			seq_loadWSA(6, "hand4.wsa", 9, 0, hand4WSAControl);
-			break;
-		case 0x21c:
-			seq_playIntroChat(10);
-			break;
-		case 0x276:
 			seq_waitForChatsToFinish();
-			seq_unloadWSA(1);
+			seq_playIntroChat(10); // "to be retrieved from the center of the world"
+			break;
+		case 0x320:
+			seq_waitForChatsToFinish();
+			/*seq_unloadWSA(1);
 			seq_unloadWSA(2);	
-			seq_unloadWSA(3);
+			seq_unloadWSA(3);*/
 			seq_unloadWSA(4);
 			seq_unloadWSA(5);
 			seq_unloadWSA(6);						
@@ -214,7 +319,7 @@ int KyraEngine_v2::seq_introLibrary(int seqNum) {
 	switch (seqNum) {
 		case 0:
 			_sound->playTrack(5);
-			seq_playIntroChat(4);
+			seq_playIntroChat(4); // "The royal mystics are baffled"
 			//XXX: palette stuff
 			break;
 		case 1:
@@ -227,16 +332,18 @@ int KyraEngine_v2::seq_introLibrary(int seqNum) {
 			seq_loadWSA(2, "darm.wsa", 9);
 			break;
 		case 0x68:
-			seq_playIntroChat(5);
+			seq_waitForChatsToFinish();
+			seq_playIntroChat(5);  // "Every reference has been consulted"
 			break;
 		case 0xF0:
 			seq_waitForChatsToFinish();
 			seq_loadWSA(3, "library.wsa", 9);
 			break;
 		case 0x154:
+			seq_waitForChatsToFinish();
 			// palette stuff
 			seq_loadWSA(4, "marco.wsa", 9);
-			seq_playIntroChat(6);
+			seq_playIntroChat(6); // "Even Marko and his new valet have been allowed"
 			break;
 		case 0x294:
 			seq_waitForChatsToFinish();
@@ -266,20 +373,23 @@ int KyraEngine_v2::seq_introOverview(int seqNum) {
 			seq_loadWSA(2, "over2.wsa", 9);
 			break;
 		case 120:
-			seq_playIntroChat(0);
+			seq_playIntroChat(0); // "Kyrandia is disappearing!"
 			break;
 		case 200:
 			seq_waitForChatsToFinish();
 			// XXX: fade to grey
+			_screen->k2IntroFadeToGrey(40);
 			break;
 		case 201:
 			// XXX
 			break;
 		case 282:
+			seq_waitForChatsToFinish();
 			seq_loadWSA(3, "forest.wsa", 6,  &KyraEngine_v2::seq_introOverviewForest);
-			seq_playIntroChat(1);
+			seq_playIntroChat(1); // "Rock by rock..."
 			break;
 		case 434:
+			seq_waitForChatsToFinish();
 			seq_loadWSA(4, "dragon.wsa", 6,  &KyraEngine_v2::seq_introOverviewDragon);
 			break;
 		case 540:
@@ -311,7 +421,7 @@ void KyraEngine_v2::seq_introOverviewForest(int currentFrame) {
 		seq_waitForChatsToFinish();
 	} else if(currentFrame == 12) {
 		delay(25);
-		seq_playIntroChat(2);
+		seq_playIntroChat(2); // "...and tree by tree..."
 	}
 }
 
@@ -319,7 +429,7 @@ void KyraEngine_v2::seq_introOverviewDragon(int currentFrame) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introOverviewDragon(%i)", currentFrame);
 	
 	if (currentFrame == 3)
-		seq_playIntroChat(3);
+		seq_playIntroChat(3); // "Kyrandia ceases to exist!"
 	else if(currentFrame == 11)
 		seq_waitForChatsToFinish();
 }

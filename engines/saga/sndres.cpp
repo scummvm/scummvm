@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -125,6 +126,9 @@ void SndRes::playSound(uint32 resourceId, int volume, bool loop) {
 void SndRes::playVoice(uint32 resourceId) {
 	SoundBuffer buffer;
 
+	if (_vm->getGameType() == GType_IHNM && !(_vm->_voicesEnabled))
+		return;
+
 	debug(4, "SndRes::playVoice %i", resourceId);
 
 	if (!load(_voiceContext, resourceId, buffer, false)) {
@@ -152,7 +156,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		return false;
 	}
 
-
 	_vm->_resource->loadResource(context, resourceId, soundResource, soundResourceLength);
 
 	if ((context->fileType & GAME_VOICEFILE) != 0) {
@@ -171,9 +174,20 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	if (soundResourceLength >= 8) {
 		if (!memcmp(soundResource, "Creative", 8)) {
 			resourceType = kSoundVOC;
-		} else 	if (!memcmp(soundResource, "RIFF", 4) != 0) {
+		} else if (!memcmp(soundResource, "RIFF", 4) != 0) {
 			resourceType = kSoundWAV;
+		} 
+		
+		if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS) {
+			if (soundResource[0] == char(0)) {
+				resourceType = kSoundMP3;
+			} else if (soundResource[0] == char(1)) {
+				resourceType = kSoundOGG;
+			} else if (soundResource[0] == char(2)) {
+				resourceType = kSoundFLAC;
+			}
 		}
+
 	}
 
 
@@ -262,6 +276,29 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		}
 		free(soundResource);
 		break;
+	case kSoundMP3:
+	case kSoundOGG:
+	case kSoundFLAC:
+		ResourceData *resourceData;
+		resourceData = _vm->_resource->getResourceData(context, resourceId);
+
+		// Read compressed sfx header
+		readS.seek(1);	// Skip compression identifier byte
+		buffer.frequency = readS.readUint16LE();
+		buffer.originalSize = readS.readUint32LE();
+		buffer.sampleBits = readS.readByte();
+		buffer.stereo = (readS.readByte() == char(0)) ? false : true;
+
+		buffer.size = soundResourceLength;
+		buffer.soundType = resourceType;
+		buffer.soundFile = context->getFile(resourceData);
+		buffer.fileOffset = resourceData->offset + 9; // skip compressed sfx header: byte + uint16 + uint32 + byte + byte
+
+		buffer.buffer = NULL;
+
+		result = true;
+		free(soundResource);
+		break;
 	default:
 		error("SndRes::load Unknown sound type");
 	}
@@ -282,7 +319,10 @@ int SndRes::getVoiceLength(uint32 resourceId) {
 		return -1;
 	}
 
-	msDouble = (double)buffer.size;
+	if (!(_vm->getFeatures() & GF_COMPRESSED_SOUNDS))
+		msDouble = (double)buffer.size;
+	else
+		msDouble = (double)buffer.originalSize;
 	if (buffer.sampleBits == 16) {
 		msDouble /= 2.0;
 	}

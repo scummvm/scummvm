@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Dreamcast port
- * Copyright (C) 2002-2004  Marcus Comstedt
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,7 +52,7 @@ static const char key_names[] =
 
 static const short key_codes[] =
   {
-    27, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324,
+    Common::KEYCODE_ESCAPE, Common::KEYCODE_F1, Common::KEYCODE_F2, Common::KEYCODE_F3, Common::KEYCODE_F4, Common::KEYCODE_F5, Common::KEYCODE_F6, Common::KEYCODE_F7, Common::KEYCODE_F8, Common::KEYCODE_F9, Common::KEYCODE_F10,
     K('1','!'), K('2','"'), K('3','#'), K('4','$'), K('5','%'),
     K('6','&'), K('7','\''), K('8','('), K('9',')'), K('0','~'), K('-','='),
     K('q','Q'), K('w','W'), K('e','E'), K('r','R'), K('t','T'),
@@ -59,7 +61,7 @@ static const short key_codes[] =
     K('h','H'), K('j','J'), K('k','K'), K('l','L'), K(';','+'), K(':','*'),
     K('z','Z'), K('x','X'), K('c','C'), K('v','V'), K('b','B'),
     K('n','N'), K('m','M'), K(',','<'), K('.','>'), K('/','?'), K('\\','_'),
-    ~Common::KBD_SHIFT, ~Common::KBD_CTRL, ~Common::KBD_ALT, ' ', 8, 13
+    ~Common::KBD_SHIFT, ~Common::KBD_CTRL, ~Common::KBD_ALT, ' ', Common::KEYCODE_BACKSPACE, Common::KEYCODE_RETURN
   };
 
 SoftKeyboard::SoftKeyboard(const OSystem_Dreamcast *_os)

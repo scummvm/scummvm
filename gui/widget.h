@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +27,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/keyboard.h"
 #include "graphics/font.h"
 #include "graphics/surface.h"
 #include "gui/object.h"
@@ -124,8 +128,8 @@ public:
 	virtual void handleMouseLeft(int button) {}
 	virtual void handleMouseMoved(int x, int y, int button) {}
 	virtual void handleMouseWheel(int x, int y, int direction) {}
-	virtual bool handleKeyDown(uint16 ascii, int keycode, int modifiers) { return false; }	// Return true if the event was handled
-	virtual bool handleKeyUp(uint16 ascii, int keycode, int modifiers) { return false; }	// Return true if the event was handled
+	virtual bool handleKeyDown(Common::KeyState state) { return false; }	// Return true if the event was handled
+	virtual bool handleKeyUp(Common::KeyState state) { return false; }	// Return true if the event was handled
 	virtual void handleTickle() {}
 
 	virtual void reflowLayout() { GuiObject::reflowLayout(); }

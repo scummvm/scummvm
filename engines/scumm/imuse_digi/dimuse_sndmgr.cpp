@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -462,7 +465,7 @@ bool ImuseDigiSndMgr::checkForProperHandle(soundStruct *soundHandle) {
 	return false;
 }
 
-bool ImuseDigiSndMgr::isCompressed(soundStruct *soundHandle) {
+bool ImuseDigiSndMgr::isSndDataExtComp(soundStruct *soundHandle) {
 	assert(checkForProperHandle(soundHandle));
 	return soundHandle->compressed;
 }

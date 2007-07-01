@@ -1,8 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002 Ph0x - GP32 Backend
- * Copyright (C) 2003/2004 DJWillis - GP32 Backend
- * Copyright (C) 2005 Won Star - GP32 Backend
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -209,14 +209,18 @@ void OSystem_GP32::copyRectToScreen(const byte *src, int pitch, int x, int y, in
 	}
 }
 
-bool OSystem_GP32::grabRawScreen(Graphics::Surface *surf) {
-	assert(surf);
+Graphics::Surface *OSystem_GP32::lockScreen() {
+	_framebuffer.pixels = _gameScreen;
+	_framebuffer.w = _screenWidth;
+	_framebuffer.h = _screenHeight;
+	_framebuffer.pitch = _screenWidth;
+	_framebuffer.bytesPerPixel = 1;
 
-	surf->create(_screenWidth, _screenHeight, 1);
+	return &_framebuffer;
+}
 
-	memcpy(surf->pixels, _gameScreen, _screenWidth * _screenHeight);
-
-	return true;
+void OSystem_GP32::unlockScreen() {
+	// The screen is always completely update anyway, so we don't have to force a full update here.
 }
 
 //TODO: Implement Dirty rect?
@@ -524,8 +528,10 @@ bool OSystem_GP32::pollEvent(Common::Event &event) {
 			event.type = Common::EVENT_KEYDOWN;
 			if (_overlayVisible)
 				event.kbd.keycode = event.kbd.ascii = 13;
-			else
-				event.kbd.keycode = event.kbd.ascii = 319;
+			else {
+				event.kbd.keycode = Common::KEYCODE_F5;
+				event.kbd.ascii = Common::ASCII_F5;
+			}
 			return true;
 		}
 		if (ev.button == GPC_VK_SELECT) {	// SELECT = pause
@@ -596,8 +602,10 @@ bool OSystem_GP32::pollEvent(Common::Event &event) {
 			event.type = Common::EVENT_KEYUP;
 			if (_overlayVisible)
 				event.kbd.keycode = event.kbd.ascii = 13;
-			else
-				event.kbd.keycode = event.kbd.ascii = 319;
+			else {
+				event.kbd.keycode = Common::KEYCODE_F5;
+				event.kbd.ascii = Common::ASCII_F5;
+			}
 			return true;
 		}
 		if (ev.button == GPC_VK_SELECT) {

@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,7 +45,7 @@ enum smartphoneActionType {
 	SMARTPHONE_ACTION_SAVE,
 	SMARTPHONE_ACTION_SKIP,
 	SMARTPHONE_ACTION_ZONE,
-	SMARTPHONE_ACTION_FT_CHEAT,
+	SMARTPHONE_ACTION_MULTI,
 	SMARTPHONE_ACTION_BINDKEYS,
 	SMARTPHONE_ACTION_KEYBOARD,
 	SMARTPHONE_ACTION_ROTATE,

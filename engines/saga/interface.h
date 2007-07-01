@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -156,6 +157,7 @@ struct InterfacePanel {
 
 struct Converse {
 	char *text;
+	int strId;
 	int stringNum;
 	int textNum;
 	int replyId;
@@ -195,7 +197,7 @@ public:
 		return _fadeMode;
 	}
 	void rememberMode();
-	void restoreMode();
+	void restoreMode(bool draw_ = true);
 	bool isInMainMode() { return _inMainMode; }
 	void setStatusText(const char *text, int statusColor = -1);
 	void loadScenePortraits(int resourceId);
@@ -328,7 +330,7 @@ private:
 
 	void drawTextInput(Surface *ds, InterfacePanel *panel, PanelButton *panelButton);
 	void drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton);
-	void drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton);
+	void drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton, int spritenum = 0);
 	enum ButtonKind {
 		kButton,
 		kSlider,
@@ -345,7 +347,7 @@ private:
 public:
 	void converseInit(void);
 	void converseClear(void);
-	bool converseAddText(const char *text, int replyId, byte replyFlags, int replyBit);
+	bool converseAddText(const char *text, int strId, int replyId, byte replyFlags, int replyBit);
 	void converseDisplayText();
 	void converseSetTextLines(int row);
 	void converseChangePos(int chg);

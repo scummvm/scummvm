@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -180,7 +183,7 @@ protected:
 	int _zlibErr;
 
 	void processData(int flushType) {
-		// This function is called by both write() and finalize.
+		// This function is called by both write() and finalize().
 		while (_zlibErr == Z_OK && (_stream.avail_in || flushType == Z_FINISH)) {
 			if (_stream.avail_out == 0) {
 				if (_wrapped->write(_buf, BUFSIZE) != BUFSIZE) {
@@ -215,6 +218,8 @@ public:
 
 		_stream.next_out = _buf;
 		_stream.avail_out = BUFSIZE;
+		_stream.avail_in = 0;
+		_stream.next_in = 0;
 	}
 
 	~CompressedOutSaveFile() {

@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -83,7 +86,16 @@ String::String(const String &str)
 	}
 	assert(_str != 0);
 }
+
+String::String(char c)
+: _len(0), _str(_storage) {
 	
+	_storage[0] = c;
+	_storage[1] = 0;
+	
+	_len = (c == 0) ? 0 : 1;
+}
+
 String::~String() {
 	decRefCount(_extern._refCount);
 }
@@ -429,6 +441,18 @@ String operator +(const char *x, const String &y) {
 }
 
 String operator +(const String &x, const char *y) {
+	String temp(x);
+	temp += y;
+	return temp;
+}
+
+String operator +(char x, const String &y) {
+	String temp(x);
+	temp += y;
+	return temp;
+}
+
+String operator +(const String &x, char y) {
 	String temp(x);
 	temp += y;
 	return temp;

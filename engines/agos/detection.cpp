@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -104,7 +106,7 @@ GameList Engine_AGOS_gameIDList() {
 }
  
 GameDescriptor Engine_AGOS_findGameID(const char *gameid) {
-	return Common::AdvancedDetector::findGameID(gameid, detectionParams);
+	return Common::AdvancedDetector::findGameID(gameid, simonGames, obsoleteGameIDsTable);
 }
 
 GameList Engine_AGOS_detectGames(const FSList &fslist) {
@@ -115,7 +117,8 @@ PluginError Engine_AGOS_create(OSystem *syst, Engine **engine) {
 	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
 	
-	//const AGOSGameDescription gd = (const AGOSGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	//Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	//const AGOSGameDescription *gd = (const AGOSGameDescription *)(encapsulatedDesc.realDesc);
 	//if (gd == 0) {
 	//	return kNoGameDataFoundError;
 	//}
@@ -152,7 +155,9 @@ REGISTER_PLUGIN(AGOS, "AGOS", "AGOS (C) Adventure Soft");
 namespace AGOS {
 
 bool AGOSEngine::initGame() {
-	_gameDescription = (const AGOSGameDescription *)Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	_gameDescription = (const AGOSGameDescription *)(encapsulatedDesc.realDesc);
+
 	return (_gameDescription != 0);
 }
 

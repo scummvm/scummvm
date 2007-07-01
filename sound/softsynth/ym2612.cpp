@@ -1,9 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * YM2612 tone generation code written by Tomoaki Hayasaka.
- * Used under the terms of the GNU General Public License.
- * Adpated to ScummVM by Jamieson Christian.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -130,7 +129,7 @@ void Operator2612::frequency(int freq) {
 		value *= 127 - _specifiedTotalLevel;
 		value /= 127;
 	}
-	_attackTime = (int32) value; // 1 秒 == (1 << 12)
+	_attackTime = (int32) value; // 1 ?? == (1 << 12)
 	if (_attackTime > 0)
 		_attackTime = (1 << (12+10)) / (_owner->_rate * _attackTime);
 
@@ -296,7 +295,7 @@ Voice2612::~Voice2612() {
 void Voice2612::velocity(int velo) {
 	_velocity = velo;
 #if 0
-	int v = (velo * _control7) >> 7; // これだと精度良くないですね
+	int v = (velo * _control7) >> 7;
 #else
 	int v = velo + (_control7 - 127) * 4;
 #endif

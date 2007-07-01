@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 Neil Millstone
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,9 +44,32 @@
 // - Delete saves?
 // - Software scaler?
 // - 100% scale
-// - Find out what's going wrong when you turn the console off
 
-#define USE_LIBCARTRESET
+// - Arrow keys cause key events when keyboard enabled - Done
+// - Mouse cursor display - Done
+// - Disable scaler on options menu - Done
+// - Fix scale icons on top screen - Done
+// - Fseek optimisation? - No need
+// - Fix agi hack to be cleaner - done
+// - Fix not typing looong words - Done
+// - Show keyboard by default in AGI games
+// - Fix mouse moving when cursor on keyboard screen - Done
+// - Fix 'fit' thingy always appearing - Done
+// - check cine backbuffer code - Done
+// - Add long filename support - Done
+// - New icons
+// - Add key config for gob engine: Start:F1, Shift-numbers: F keys - Done
+// - Fix [ds] appearing in game menu
+
+// - Find out what's going wrong when you turn the console off
+// - enable console when asserting
+
+// - AGI: Adding keyboard hack
+// - CINE: Framebuffer modification should check if it works without, fix for overwrite crash
+// - KYRA: GetFileSize modification
+
+
+//#define USE_LIBCARTRESET
 //#define USE_BUILT_IN_DRIVER_SELECTION
 
 #include <nds.h>
@@ -76,6 +101,8 @@
 #include "blitters.h"
 #include "cartreset_nolibfat.h"
 #include "keys.h"
+#include "profiler/cyg-profile.h"
+//test
 
 namespace DS {
 
@@ -149,12 +176,15 @@ bool displayModeIs8Bit = false;
 // Game id
 u8 gameID;
 
-bool consoleEnable = true;
+bool consoleEnable = false;
 bool gameScreenSwap = false;
 bool isCpuScalerEnabled();
 //#define HEAVY_LOGGING
 
 MouseMode mouseMode;
+
+int storedMouseX = 0;
+int storedMouseY = 0;
 
 // Sprites
 SpriteEntry sprites[128];
@@ -171,6 +201,9 @@ bool keyboardIcon = false;
 
 // Touch
 int touchScX, touchScY, touchX, touchY;
+int mouseHotspotX, mouseHotspotY;
+bool cursorEnable = false;
+bool mouseCursorVisible = true;
 
 // Dragging
 int dragStartX, dragStartY;
@@ -186,20 +219,12 @@ int gameHeight = 200;
 
 // Scale
 bool twoHundredPercentFixedScale = false;
+#define NUM_SUPPORTED_GAMES 17
 
-enum controlType {
-	CONT_SCUMM_ORIGINAL,
-	CONT_SCUMM_SAMNMAX,
-	CONT_SKY,
-	CONT_SIMON,
-};
+#ifdef USE_PROFILER
+int hBlankCount = 0;
+#endif
 
-struct gameListType {
-	char 			gameId[16];
-	controlType 	control;
-};
-
-#define NUM_SUPPORTED_GAMES 15
 
 gameListType gameList[NUM_SUPPORTED_GAMES] = {
 	// Unknown game - use normal SCUMM controls
@@ -220,8 +245,10 @@ gameListType gameList[NUM_SUPPORTED_GAMES] = {
 	{"sky",			CONT_SKY},
 	{"simon1",		CONT_SIMON},
 	{"simon2",		CONT_SIMON},
-	{"gob1",		CONT_SCUMM_ORIGINAL},
-	{"queen",		CONT_SCUMM_ORIGINAL}
+	{"gob",		CONT_GOBLINS},
+	{"queen",		CONT_SCUMM_ORIGINAL},
+	{"cine",		CONT_FUTURE_WARS},
+	{"agi",			CONT_AGI}
 };
 
 gameListType* currentGame = NULL;
@@ -257,8 +284,10 @@ int getKeysChanged();
 void updateStatus();
 void triggerIcon(int imageNum);
 void setIcon(int num, int x, int y, int imageNum, int flags, bool enable);
+void setIconMain(int num, int x, int y, int imageNum, int flags, bool enable);
 
 TransferSound soundControl;
+
 
 bool isCpuScalerEnabled()
 {
@@ -330,28 +359,27 @@ void initSprites() {
 
 void saveGameBackBuffer() {
 #ifdef DISABLE_SCUMM
-	if (savedBuffer == NULL) savedBuffer = new u8[gameWidth * gameHeight];
-	for (int r = 0; r < 200; r++) {
+    if (savedBuffer == NULL) savedBuffer = new u8[gameWidth * gameHeight];
+    for (int r = 0; r < gameHeight; r++) {
 		memcpy(savedBuffer + (r * gameWidth), ((u8 *) (get8BitBackBuffer())) + (r * 512), gameWidth);
-	}
+    }
 #endif
 }
 
 void restoreGameBackBuffer() {
 #ifdef DISABLE_SCUMM
 	if (savedBuffer) {
-		for (int r = 0; r < 200; r++) {
+		for (int r = 0; r < gameHeight; r++) {
 			memcpy(((u8 *) (BG_GFX_SUB)) + (r * 512), savedBuffer + (r * gameWidth), gameWidth);
 			memcpy(((u8 *) (get8BitBackBuffer())) + (r * 512), savedBuffer + (r * gameWidth), gameWidth);
 		}
+			
 		delete savedBuffer;
 		savedBuffer = NULL;
 	}
-#endif
-
-#ifndef DISABLE_SCUMM	
-	memset(get8BitBackBuffer(), 0, 512 * 256);
-	memset(BG_GFX_SUB, 0, 512 * 256);
+#else
+    memset(get8BitBackBuffer(), 0, 512 * 256);
+    memset(BG_GFX_SUB, 0, 512 * 256);
 	if (Scumm::g_scumm) {
 		Scumm::g_scumm->markRectAsDirty(Scumm::kMainVirtScreen, 0, gameWidth - 1, 0, gameHeight - 1, 1);
 		Scumm::g_scumm->markRectAsDirty(Scumm::kTextVirtScreen, 0, gameWidth - 1, 0, gameHeight - 1, 1);
@@ -413,7 +441,7 @@ void initGame() {
 
 	//strcpy(gameName, ConfMan.getActiveDomain().c_str());
 	strcpy(gameName, ConfMan.get("gameid").c_str());
-//	consolePrintf("\n\n\n\nCurrent game: '%s' %d\n", gameName, gameName[0]);
+	//consolePrintf("\n\n\n\nCurrent game: '%s' %d\n", gameName, gameName[0]);
 
 	currentGame = &gameList[0];		// Default game
 	
@@ -590,7 +618,51 @@ void checkSleepMode() {
 	}
 }
 
-void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor) {
+void setShowCursor(bool enable)
+{
+	if (currentGame->control == CONT_SCUMM_SAMNMAX)
+	{
+		if (cursorEnable) {
+			sprites[1].attribute[0] = ATTR0_BMP | 150;
+		} else {
+			sprites[1].attribute[0] = ATTR0_DISABLED;
+		}
+
+	}
+
+	cursorEnable = enable;
+}
+
+void setMouseCursorVisible(bool enable)
+{
+	mouseCursorVisible = enable;
+}
+
+void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, int hotspotY) {
+
+	mouseHotspotX = hotspotX;
+	mouseHotspotY = hotspotY;
+
+	{
+		int off = 128*64;
+	
+	
+		memset(SPRITE_GFX + off, 0, 32 * 32 * 2);
+	
+		for (uint y=0; y<h; y++) {
+			for (uint x=0; x<w; x++) {
+				int color = icon[y*w+x];
+	
+				if (color == keycolor) {
+					SPRITE_GFX[off+(y)*32+x] = 0x0000; // black background
+				} else {
+					SPRITE_GFX[off+(y)*32+x] = BG_PALETTE[color] | 0x8000;
+				}
+			}
+		}
+	
+	}
+
 	if (currentGame->control != CONT_SCUMM_SAMNMAX)
 		return;
 
@@ -619,6 +691,7 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor) {
 	for (uint y=0; y<h; y++) {
 		for (uint x=0; x<w; x++) {
 			int color = icon[y*w+x];
+
 			if (color == keycolor) {
 				SPRITE_GFX_SUB[off+(y+1+offset)*64+(x+1)] = 0x8000; // black background
 			} else {
@@ -626,10 +699,18 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor) {
 			}
 		}
 	}
-
-	sprites[1].attribute[0] = ATTR0_BMP | 150;
-	sprites[1].attribute[1] = ATTR1_SIZE_64 | pos;
-	sprites[1].attribute[2] = ATTR2_ALPHA(1) | 48;
+	
+	
+	if ((cursorEnable))
+	{
+		sprites[1].attribute[0] = ATTR0_BMP | 150;
+		sprites[1].attribute[1] = ATTR1_SIZE_64 | pos;
+		sprites[1].attribute[2] = ATTR2_ALPHA(1) | 48;
+	} else {
+		sprites[1].attribute[0] = ATTR0_DISABLED | 150;
+		sprites[1].attribute[1] = ATTR1_SIZE_64 | pos;
+		sprites[1].attribute[2] = ATTR2_ALPHA(1) | 48;
+	}
 }
 
 
@@ -734,7 +815,7 @@ void displayMode16BitFlipBuffer() {
         #endif
 		const u8* back = (const u8*)get8BitBackBuffer();
 		u16* base = BG_GFX + 0x10000;
-		DS::Rescale_320x256xPAL8_To_256x256x1555( base,
+		Rescale_320x256xPAL8_To_256x256x1555( base,
 											      back,
 											      BG_PALETTE,
 											      256,
@@ -867,7 +948,7 @@ void addIndyFightingKeys() {
 	event.type = Common::EVENT_KEYDOWN;
 	event.kbd.flags = 0;
 	
-	consolePrintf("Fight keys\n");
+//	consolePrintf("Fight keys\n");
 
 	if ((getKeysDown() & KEY_L)) {
 		indyFightRight = false;
@@ -877,7 +958,7 @@ void addIndyFightingKeys() {
 		indyFightRight = true;
 	}
 
-	consolePrintf("ifr:%d\n", indyFightRight);
+//	consolePrintf("ifr:%d\n", indyFightRight);
 
 	if ((getKeysChanged() & KEY_UP)) {
 		event.type = getKeyEvent(KEY_UP);
@@ -966,10 +1047,10 @@ void setKeyboardEnable(bool en) {
 	if (keyboardEnable) {
 
 
-		DS::drawKeyboard(1, 12, backupBank);
+		DS::drawKeyboard(1, 14, backupBank);
 		
 		
-		SUB_BG1_CR = BG_TILE_BASE(1) | BG_MAP_BASE(12);
+		SUB_BG1_CR = BG_TILE_BASE(1) | BG_MAP_BASE(14);
 
 		if (displayModeIs8Bit) {
 			SUB_DISPLAY_CR |= DISPLAY_BG1_ACTIVE;	// Turn on keyboard layer
@@ -994,11 +1075,10 @@ void setKeyboardEnable(bool en) {
 			// Copy the sub screen VRAM from the top screen - they should always be
 			// the same.
 			u16* buffer = get8BitBackBuffer();
-
-			for (int r = 0; r < (512 * 256) >> 1; r++) {
-				BG_GFX_SUB[r] = buffer[r];
-			}
-			
+            
+            for (int r = 0; r < (512 * 256) >> 1; r++)
+                BG_GFX_SUB[r] = buffer[r];
+                
 			SUB_DISPLAY_CR &= ~DISPLAY_BG1_ACTIVE;	// Turn off keyboard layer
 			SUB_DISPLAY_CR |= DISPLAY_BG3_ACTIVE;	// Turn on game layer
 		} else {
@@ -1026,6 +1106,16 @@ void addEventsToQueue() {
 	Common::Event event;
 
 	
+#ifdef USE_PROFILER
+	if (keysDown() & KEY_R) {
+		cygprofile_begin();
+		cygprofile_enable();
+	}
+	if (keysDown() & KEY_L) {
+		cygprofile_disable();
+		cygprofile_end();
+	}
+#endif
 
 	
 	if (system->isEventQueueEmpty()) {
@@ -1052,7 +1142,7 @@ void addEventsToQueue() {
 
 			if (!indyFightState) {
 
-				if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {	
+				if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) && (getKeysChanged() & KEY_B)) {	
 					event.kbd.keycode = 27;		
 					event.kbd.ascii = 27;		
 					event.kbd.flags = 0;
@@ -1074,8 +1164,37 @@ void addEventsToQueue() {
 				}
 			}
 	
+			if (!((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) && (getKeyboardEnable())) {
+				event.kbd.flags = 0;
+
+				if (getKeysChanged() & KEY_LEFT) {
+					event.kbd.keycode = SDLK_LEFT;
+					event.kbd.ascii = SDLK_LEFT;
+					event.type = getKeyEvent(KEY_LEFT);
+				}
+
+				if (getKeysChanged() & KEY_RIGHT) {
+					event.kbd.keycode = SDLK_RIGHT;
+					event.kbd.ascii = SDLK_RIGHT;
+					event.type = getKeyEvent(KEY_RIGHT);
+				}
+
+				if (getKeysChanged() & KEY_UP) {
+					event.kbd.keycode = SDLK_UP;
+					event.kbd.ascii = SDLK_UP;
+					event.type = getKeyEvent(KEY_UP);
+				}
+
+				if (getKeysChanged() & KEY_DOWN) {
+					event.kbd.keycode = SDLK_DOWN;
+					event.kbd.ascii = SDLK_DOWN;
+					event.type = getKeyEvent(KEY_DOWN);
+				}
+					
+				system->addEvent(event);
+			}
 	
-			if (!((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) && (!getIndyFightState())) {
+			if (!((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) && (!getIndyFightState()) && (!getKeyboardEnable())) {
 
 				if ((getKeysDown() & KEY_A) && (!indyFightState)) {
 					gameScreenSwap = !gameScreenSwap;
@@ -1085,16 +1204,25 @@ void addEventsToQueue() {
 					if (getKeysDown() & KEY_LEFT) {
 						mouseMode = MOUSE_LEFT;
 					}
+
 					if (getKeysDown() & KEY_RIGHT) {
-						if (currentGame->control != CONT_SCUMM_SAMNMAX) {
+						if ((currentGame->control != CONT_SCUMM_SAMNMAX) && (currentGame->control != CONT_FUTURE_WARS)) {
 							mouseMode = MOUSE_RIGHT;
 						} else {
 							// If we're playing sam and max, click and release the right mouse
 							// button to change verb
 							Common::Event event;
+
+							if (currentGame->control == CONT_FUTURE_WARS) {
+								event.mouse = Common::Point(320 - 128, 200 - 128);
+								event.type = Common::EVENT_MOUSEMOVE;
+								system->addEvent(event);
+							} else {
+								event.mouse = Common::Point(getPenX(), getPenY());
+							}
+
 		
 							event.type = Common::EVENT_RBUTTONDOWN;
-							event.mouse = Common::Point(getPenX(), getPenY());
 							system->addEvent(event);
 		
 							event.type = Common::EVENT_RBUTTONUP;
@@ -1127,14 +1255,16 @@ void addEventsToQueue() {
 		
 		Common::Event event;
 
-		if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {
-			event.type = Common::EVENT_MOUSEMOVE;
-			event.mouse = Common::Point(getPenX(), getPenY());
-			system->addEvent(event);
-			//consolePrintf("x=%d   y=%d  \n", getPenX(), getPenY());
-		}
 	
 		if (!keyboardEnable) {
+
+			if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {
+				event.type = Common::EVENT_MOUSEMOVE;
+				event.mouse = Common::Point(getPenX(), getPenY());
+				system->addEvent(event);
+				//consolePrintf("x=%d   y=%d  \n", getPenX(), getPenY());
+			}
+
 			if ((mouseMode != MOUSE_HOVER) || (!displayModeIs8Bit)) {
 					if (getPenDown() && (!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {	
 						event.type = ((mouseMode == MOUSE_LEFT) || (!displayModeIs8Bit))? Common::EVENT_LBUTTONDOWN: Common::EVENT_RBUTTONDOWN;
@@ -1180,7 +1310,7 @@ void addEventsToQueue() {
 			
 			
 				if (currentGame->control == CONT_SKY) {
-					// Extra controls for Benieth a Steel Sky
+					// Extra controls for Beneath a Steel Sky
 					if ((getKeysDown() & KEY_DOWN)) {
 						penY = 0;
 						penX = 160;		// Show inventory by moving mouse onto top line
@@ -1227,7 +1357,7 @@ void addEventsToQueue() {
 			
 			if (leftHandedSwap(getKeysChanged()) & KEY_UP) {
 				event.type = getKeyEvent(leftHandedSwap(KEY_UP));
-				event.kbd.keycode = SDLK_UP;
+				event.kbd.keycode = Common::KEYCODE_UP;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
 				system->addEvent(event);
@@ -1235,7 +1365,7 @@ void addEventsToQueue() {
 
 			if (leftHandedSwap(getKeysChanged()) & KEY_DOWN) {
 				event.type = getKeyEvent(leftHandedSwap(KEY_DOWN));
-				event.kbd.keycode = SDLK_DOWN;
+				event.kbd.keycode = Common::KEYCODE_DOWN;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
 				system->addEvent(event);
@@ -1243,7 +1373,7 @@ void addEventsToQueue() {
 
 			if (leftHandedSwap(getKeysDown()) & KEY_A) {
 				event.type = getKeyEvent(leftHandedSwap(KEY_A));
-				event.kbd.keycode = SDLK_RETURN;
+				event.kbd.keycode = Common::KEYCODE_RETURN;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
 				system->addEvent(event);
@@ -1254,8 +1384,18 @@ void addEventsToQueue() {
 		
 		if ((getKeysChanged() & KEY_START)) {
 			event.type = getKeyEvent(KEY_START);
-			event.kbd.keycode = 319;		// F5
-			event.kbd.ascii = 319;
+			if (currentGame->control == CONT_FUTURE_WARS) {
+				event.kbd.keycode = Common::KEYCODE_F10;
+				event.kbd.ascii = Common::ASCII_F10;
+			} else if (currentGame->control == CONT_GOBLINS) {
+				event.kbd.keycode = Common::KEYCODE_F1;
+				event.kbd.ascii = Common::ASCII_F1;
+//				consolePrintf("!!!!!F1!!!!!");
+			} else {
+				event.kbd.keycode = Common::KEYCODE_F5;
+				event.kbd.ascii = Common::ASCII_F5;
+//				consolePrintf("!!!!!F5!!!!!");
+			}
 			event.kbd.flags = 0;
 			system->addEvent(event);
 		}
@@ -1281,9 +1421,15 @@ void triggerIcon(int imageNum) {
 	
 
 void setIcon(int num, int x, int y, int imageNum, int flags, bool enable) {
-	sprites[num].attribute[0] = ATTR0_BMP | y | (!enable? ATTR0_DISABLED: 0); 
+	sprites[num].attribute[0] = ATTR0_BMP | (enable? y: 192) | (!enable? ATTR0_DISABLED: 0); 
 	sprites[num].attribute[1] = ATTR1_SIZE_32 | x | flags;
 	sprites[num].attribute[2] = ATTR2_ALPHA(1)| (imageNum * 16);
+}
+
+void setIconMain(int num, int x, int y, int imageNum, int flags, bool enable) {
+	spritesMain[num].attribute[0] = ATTR0_BMP | (y & 0x1FF) | (!enable? ATTR0_DISABLED: 0); 
+	spritesMain[num].attribute[1] = ATTR1_SIZE_32 | (x & 0x1FF) | flags;
+	spritesMain[num].attribute[2] = ATTR2_ALPHA(1)| (imageNum * 16);
 }
 
 void updateStatus() {
@@ -1314,7 +1460,7 @@ void updateStatus() {
 	
 		if (indyFightState) {
 			setIcon(1, (190 - 32), 150, 3, (indyFightRight? 0: ATTR1_FLIP_X), true);
-			consolePrintf("%d\n", indyFightRight);
+//			consolePrintf("%d\n", indyFightRight);
 		} else {
 //			setIcon(1, 0, 0, 0, 0, false);
 		}
@@ -1325,7 +1471,7 @@ void updateStatus() {
 		} else {
 			setIcon(4, 0, 0, 0, 0, false);
 		}
-		
+
 	} else {
 		setIcon(0, 0, 0, 0, 0, false);
 		setIcon(1, 0, 0, 0, 0, false);
@@ -1335,14 +1481,16 @@ void updateStatus() {
 	}
 
 	if ((keyboardIcon) && (!keyboardEnable) && (!displayModeIs8Bit)) {
-		spritesMain[0].attribute[0] = ATTR0_BMP | 160;
-		spritesMain[0].attribute[1] = ATTR1_SIZE_32 | 0;
-		spritesMain[0].attribute[2] = ATTR2_ALPHA(1) | 64;
+//		spritesMain[0].attribute[0] = ATTR0_BMP | 160;
+//		spritesMain[0].attribute[1] = ATTR1_SIZE_32 | 0;
+//		spritesMain[0].attribute[2] = ATTR2_ALPHA(1) | 64;
+		setIconMain(0, 0, 160, 4, 0, true);
 	} else {
-		spritesMain[0].attribute[0] = ATTR0_DISABLED;
-		spritesMain[0].attribute[1] = 0;
-		spritesMain[0].attribute[2] = 0;
-		spritesMain[0].attribute[3] = 0;
+//		spritesMain[0].attribute[0] = ATTR0_DISABLED;
+//		spritesMain[0].attribute[1] = 0;
+//		spritesMain[0].attribute[2] = 0;
+//		spritesMain[0].attribute[3] = 0;
+		setIconMain(0, 0, 0, 0, 0, false);
 	}
 
 }
@@ -1429,6 +1577,10 @@ void setZoomedScreenScale(int x, int y) {
 	}
 }
 
+#ifdef USE_PROFILER
+void VBlankHandler(void) __attribute__ ((no_instrument_function));
+#endif
+
 void VBlankHandler(void) {
 //	BG_PALETTE[0] = RGB15(31, 31, 31);
 //	if (*((int *) (0x023FFF00)) != 0xBEEFCAFE) {
@@ -1474,6 +1626,19 @@ void VBlankHandler(void) {
 
 	frameCount++;
 	
+	if ((cursorEnable) && (mouseCursorVisible))
+	{
+		if (!keyboardEnable) {
+			storedMouseX = penX;
+			storedMouseY = penY;
+		}
+
+		setIconMain(3, storedMouseX - mouseHotspotX, storedMouseY - mouseHotspotY, 8, 0, true);
+	}
+	else
+	{
+		setIconMain(3, 0, 0, 0, 0, false);
+	}
 
 
 	if (callback) {
@@ -1564,7 +1729,7 @@ void VBlankHandler(void) {
 			if (zooming) {
 				subScX = subScTargetX;
 				subScY = subScTargetY;
-			 	triggerIcon(0);
+			 	triggerIcon(5);
 			}
 		} else if ( ((subScreenWidth) > 128 - 8) && ((subScreenWidth) < 128 + 8) ) {
 			subScreenWidth = 128;
@@ -1572,7 +1737,7 @@ void VBlankHandler(void) {
 			if (zooming) {
 				subScX = subScTargetX;
 				subScY = subScTargetY;
-				triggerIcon(1);
+				triggerIcon(6);
 			}
 		} else if (subScreenWidth > 256) {
 			subScreenWidth = 320;
@@ -1580,10 +1745,10 @@ void VBlankHandler(void) {
 			if (zooming) {
 				subScX = subScTargetX;
 				subScY = subScTargetY;
-				triggerIcon(2);
+				triggerIcon(7);
 			}
 		} else {
-			triggerIcon(-1);
+			//triggerIcon(-1);
 		}
 	}
 	
@@ -1746,6 +1911,14 @@ void setTopScreenTarget(int x, int y) {
 	subScTargetY <<=8;
 }
 
+#ifdef USE_PROFILER
+void hBlankHanlder() __attribute__ ((no_instrument_function));
+
+void hBlankHandler() {
+	hBlankCount++;
+}
+#endif
+
 void initHardware() {
 	// Guard band
 //((int *) (0x023FFF00)) = 0xBEEFCAFE;
@@ -1758,7 +1931,7 @@ void initHardware() {
 	vramSetBankB(VRAM_B_MAIN_BG); 
 	vramSetBankC(VRAM_C_SUB_BG); */
 	vramSetBankI(VRAM_I_SUB_SPRITE); 
-	vramSetBankG(VRAM_G_MAIN_SPRITE); 
+	vramSetBankE(VRAM_E_MAIN_SPRITE); 
 	
 	currentTimeMillis = 0;
 
@@ -1826,6 +1999,11 @@ void initHardware() {
 	irqEnable(IRQ_VBLANK);
 	irqEnable(IRQ_TIMER0);
 	irqEnable(IRQ_TIMER2);
+
+#ifdef USE_PROFILER
+	irqSet(IRQ_HBLANK, hBlankHandler);
+	irqEnable(IRQ_HBLANK);
+#endif
 	
 	
 	// Set up a millisecond timer
@@ -1848,13 +2026,21 @@ void initHardware() {
 	
 	// Convert texture from 24bit 888 to 16bit 1555, remembering to set top bit!
 	u8* srcTex = (u8 *) icons_raw;
-	for (int r = 32 * 160 ; r >= 0; r--) {
+	for (int r = 32 * 256 ; r >= 0; r--) {
 		SPRITE_GFX_SUB[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
 		SPRITE_GFX[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
 	}
 
+		
+
+
+
 	WAIT_CR &= ~(0x0080);
 //	REG_WRAM_CNT = 0;
+
+	// This is a bodge to get around the fact that the cursor is turned on before it's image is set
+	// during startup in Sam & Max.  This bodge moves the cursor offscreen so it is not seen.
+	sprites[1].attribute[1] = ATTR1_SIZE_64 | 192;
 
 }
 
@@ -2068,23 +2254,28 @@ bool getIndyFightState() {
 	return indyFightState;
 }
 
+gameListType* getCurrentGame() {
+	return currentGame;
+}
+
 ///////////////////
 // Fast Ram
 ///////////////////
 
-#define FAST_RAM_SIZE (30000)
+#define FAST_RAM_SIZE (24000)
 
 u8* fastRamPointer;
 u8 fastRamData[FAST_RAM_SIZE] ITCM_DATA;
 
 void* fastRamAlloc(int size) {
+//	return malloc(size);
 	void* result = (void *) fastRamPointer;
 	fastRamPointer += size;
 	return (void *) (result);
 }
 
 void fastRamReset() {
-	fastRamPointer = fastRamData;
+	fastRamPointer = &fastRamData[0];
 }
 
 
@@ -2309,22 +2500,34 @@ int main(void)
 //	}
 	
 
-	
+	//2372
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.10.0SVN ");
+	consolePrintf("Version 0.10.0 beta1 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
-	consolePrintf("Supports: Lucasarts SCUMM\n");
+	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");
 	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_B)
 	consolePrintf("build B\n");
-	consolePrintf("Supports: BASS, QUEEN\n");
+	consolePrintf("BASS, QUEEN\n");
 	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_C)
 	consolePrintf("build C\n");
-	consolePrintf("Supports: SIMON, KYRA, GOB\n");
+	consolePrintf("Simon the Sorcerer 1/2 (SIMON)\n");
+	consolePrintf("-------------------------------\n");
+#elif defined(DS_BUILD_D)
+	consolePrintf("build D\n");
+	consolePrintf("AGI, CINE, GOB\n");
+	consolePrintf("-------------------------------\n");
+#elif defined(DS_BUILD_E)
+	consolePrintf("build E\n");
+	consolePrintf("Inherit the earth (SAGA)\n");
+	consolePrintf("-------------------------------\n");
+#elif defined(DS_BUILD_F)
+	consolePrintf("build F\n");
+	consolePrintf("The Legend of Kyrandia (KYRA)\n");
 	consolePrintf("-------------------------------\n");
 #endif
 	consolePrintf("L/R + D-pad/pen:    Scroll view\n");
@@ -2332,7 +2535,7 @@ int main(void)
 	consolePrintf("D-pad right: Right mouse button\n");
 	consolePrintf("D-pad up:           Hover mouse\n");
 	consolePrintf("B button:        Skip cutscenes\n");
-	consolePrintf("Select:		   DS Options menu\n");
+	consolePrintf("Select:         DS Options menu\n");
 	consolePrintf("Start:   Game menu (some games)\n");
 	consolePrintf("Y (in game):     Toggle console\n");
 	consolePrintf("X:              Toggle keyboard\n");
@@ -2456,9 +2659,12 @@ int main(void)
 #elif defined(DS_BUILD_C)
 	char* argv[2] = {"/scummvmds", "--config=scummvmc.ini"};
 #elif defined(DS_BUILD_D)
-	char* argv[2] = {"/scummvmds", "--config=scummvmd.ini"};
+	char* argv[3] = {"/scummvmds", "--config=scummvmd.ini"};
+#elif defined(DS_BUILD_E)
+	char* argv[3] = {"/scummvmds", "--config=scummvme.ini"};
+#elif defined(DS_BUILD_F)
+	char* argv[3] = {"/scummvmds", "--config=scummvmf.ini"};
 #endif
-
 
 #ifdef DS_NON_SCUMM_BUILD	
 
@@ -2482,3 +2688,12 @@ int main() {
 	DS::main();
 }
 
+
+#ifdef USE_PROFILER
+int cygprofile_getHBlanks() __attribute__ ((no_instrument_function));
+
+
+int cygprofile_getHBlanks() {
+	return DS::hBlankCount;
+}
+#endif

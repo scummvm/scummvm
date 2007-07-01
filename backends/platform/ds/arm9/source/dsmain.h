@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 Neil Millstone
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +30,22 @@
 #include "NDS/scummvm_ipc.h"
 
 namespace DS {
+
+
+enum controlType {
+	CONT_SCUMM_ORIGINAL,
+	CONT_SCUMM_SAMNMAX,
+	CONT_SKY,
+	CONT_SIMON,
+	CONT_FUTURE_WARS,
+	CONT_AGI,
+	CONT_GOBLINS
+};
+
+struct gameListType {
+	char 			gameId[16];
+	controlType 	control;
+};
 
 // Pen reading functions
 void 	penInit();
@@ -81,7 +99,9 @@ void 	VBlankHandler();
 
 // Sam and Max Stuff
 void 	setGameID(int id);
-void 	setCursorIcon(const u8* icon, uint w, uint h, byte keycolor);
+void 	setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, int hotspotY);
+void	setShowCursor(bool enable);
+void	setMouseCursorVisible(bool visible);
 
 // Shake
 void 	setShakePos(int shakePos);
@@ -121,7 +141,12 @@ void	fastRamReset();
 void*	fastRamAlloc(int size);
 
 
+gameListType* getCurrentGame();
+
+
 }
 
+
+int cygprofile_getHBlanks();
 
 #endif

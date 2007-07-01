@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -640,7 +642,23 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	if (!command.empty()) {
 		GameDescriptor gd = Base::findGame(command);
 		if (ConfMan.hasGameDomain(command) || !gd.gameid().empty()) {
+			bool idCameFromCommandLine = false;
+
+			// WORKAROUND: Fix for bug #1719463: "DETECTOR: Launching
+			// undefined target adds launcher entry"
+			//
+			// We designate gameids which come strictly from command line
+			// so AdvancedDetector will not save config file with invalid
+			// gameid in case target autoupgrade was performed
+			if (!ConfMan.hasGameDomain(command)) {
+				idCameFromCommandLine = true;
+			}
+
 			ConfMan.setActiveDomain(command);
+
+			if (idCameFromCommandLine)
+				ConfMan.set("id_came_from_command_line", "1");
+
 		} else {
 			usage("Unrecognized game target '%s'", command.c_str());
 		}

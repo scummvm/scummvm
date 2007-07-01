@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,7 +49,7 @@ const String pocketActionNames[] = {
 	"Free look",
 	"Zoom up",
 	"Zoom down",
-	"FT Cheat",
+	"Multi Function",
 	"Bind Keys",
 	"Cursor Up",
 	"Cursor Down",
@@ -96,7 +99,7 @@ GUI::Actions()
 	_action_enabled[POCKET_ACTION_DOWN] = true;
 	_action_enabled[POCKET_ACTION_LEFT] = true;
 	_action_enabled[POCKET_ACTION_RIGHT] = true;
-	_action_mapping[POCKET_ACTION_LEFTCLICK] = SDLK_RETURN;
+	_action_mapping[POCKET_ACTION_LEFTCLICK] = SDLK_F1;
 	_action_mapping[POCKET_ACTION_UP] = SDLK_UP;
 	_action_mapping[POCKET_ACTION_DOWN] = SDLK_DOWN;
 	_action_mapping[POCKET_ACTION_LEFT] = SDLK_LEFT;
@@ -124,11 +127,12 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_cine = (gameid == "cine");
 	bool is_touche = (gameid == "touche");
 	bool is_agi = (gameid == "agi");
+	bool is_parallaction = (gameid == "parallaction");
 
 	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_samnmax || is_cine || is_touche)
+	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_samnmax || is_cine || is_touche || is_parallaction)
 		_right_click_needed = true;
 
 	// See if a "hide toolbar" mapping could be needed
@@ -137,36 +141,39 @@ void CEActionsPocket::initInstanceGame() {
 
 	// Initialize keys for different actions
 	// Pause
-	_key_action[POCKET_ACTION_PAUSE].setAscii(VK_SPACE);
+	_key_action[POCKET_ACTION_PAUSE].setKey(VK_SPACE);
 	_action_enabled[POCKET_ACTION_PAUSE] = true;
 	// Save
 	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche)
 		_action_enabled[POCKET_ACTION_SAVE] = false;
 	else if (is_queen) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
-		_key_action[POCKET_ACTION_SAVE].setAscii(286); // F1 key for FOTAQ
+		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5); // F1 key for FOTAQ
 	} else if (is_sky) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
-		_key_action[POCKET_ACTION_SAVE].setAscii(63);
+		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5);
 	} else if (is_cine) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
-		_key_action[POCKET_ACTION_SAVE].setAscii(291); // F10
+		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_F10, SDLK_F10); // F10
 	} else if (is_agi) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
-		_key_action[POCKET_ACTION_SAVE].setAscii(SDLK_ESCAPE);
+		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_ESCAPE, SDLK_ESCAPE);
+	} else if (is_parallaction) {
+		_action_enabled[POCKET_ACTION_SAVE] = true;
+		_key_action[POCKET_ACTION_SAVE].setKey('s', SDLK_s);
 	} else {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
-		_key_action[POCKET_ACTION_SAVE].setAscii(319); // F5 key
+		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5); // F5 key
 	}
 	// Quit
 	_action_enabled[POCKET_ACTION_QUIT] = true;
 	// Skip
-	if (!is_cine)
+	if (!is_cine && !is_parallaction)
 		_action_enabled[POCKET_ACTION_SKIP] = true;
 	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_saga || is_kyra || is_touche)
-		_key_action[POCKET_ACTION_SKIP].setAscii(VK_ESCAPE);
+		_key_action[POCKET_ACTION_SKIP].setKey(VK_ESCAPE);
 	else
-		_key_action[POCKET_ACTION_SKIP].setAscii(KEY_ALL_SKIP);
+		_key_action[POCKET_ACTION_SKIP].setKey(KEY_ALL_SKIP);
 	// Hide
 	_action_enabled[POCKET_ACTION_HIDE] = true;
 	// Keyboard
@@ -185,9 +192,16 @@ void CEActionsPocket::initInstanceGame() {
 		_action_enabled[POCKET_ACTION_ZOOM_UP] = true;
 		_action_enabled[POCKET_ACTION_ZOOM_DOWN] = true;
 	}
-	// FT Cheat
-	_action_enabled[POCKET_ACTION_FT_CHEAT] = true;
-	_key_action[POCKET_ACTION_FT_CHEAT].setAscii(86); // shift-V
+	// Multi function key
+	_action_enabled[POCKET_ACTION_MULTI] = true;
+	if (is_agi)
+		_key_action[POCKET_ACTION_MULTI].setKey(SDLK_PAUSE); // agi: show predictive dialog
+	else if (is_gob)
+		_key_action[POCKET_ACTION_MULTI].setKey(Common::ASCII_F1, SDLK_F1); // bargon : F1 to start
+	else if (gameid == "atlantis")
+		_key_action[POCKET_ACTION_MULTI].setKey(0, SDLK_KP0); // fate of atlantis : Ins to sucker-punch
+	else
+		_key_action[POCKET_ACTION_MULTI].setKey('V', SDLK_v, KMOD_SHIFT); // FT cheat : shift-V
 	// Key bind method
 	_action_enabled[POCKET_ACTION_BINDKEYS] = true;
 }
@@ -210,7 +224,7 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 		case POCKET_ACTION_PAUSE:
 		case POCKET_ACTION_SAVE:
 		case POCKET_ACTION_SKIP:
-		case POCKET_ACTION_FT_CHEAT:
+		case POCKET_ACTION_MULTI:
 			EventsBuffer::simulateKey(&_key_action[action], false);
 			return true;
 
@@ -222,7 +236,16 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 		case POCKET_ACTION_PAUSE:
 		case POCKET_ACTION_SAVE:
 		case POCKET_ACTION_SKIP:
-		case POCKET_ACTION_FT_CHEAT:
+		case POCKET_ACTION_MULTI:
+			if (action == POCKET_ACTION_SAVE && ConfMan.get("gameid") == "parallaction") {
+				// FIXME: This is a temporary solution. The engine should handle its own menus.
+				// Note that the user can accomplish this via the virtual keyboard as well, this is just for convenience
+				GUI::MessageDialog alert("Do you want to load or save the game?", "Load", "Save");
+				if (alert.runModal() == GUI::kMessageOK)
+					_key_action[action].setKey(SDLK_l);
+				else
+					_key_action[action].setKey(SDLK_s);
+			}
 			EventsBuffer::simulateKey(&_key_action[action], true);
 			return true;
 		case POCKET_ACTION_KEYBOARD:

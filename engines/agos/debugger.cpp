@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -81,13 +83,17 @@ bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
 bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
 	if (argc > 1) {
 		uint music = atoi(argv[1]);
-		uint range = (_vm->getGameType() == GType_SIMON2) ? 93 : 34;
-		if (music <= range) {
-			_vm->loadMusic(music);
-			if (_vm->getGameType() == GType_SIMON2)
+		if (music <= _vm->_numMusic) {
+			if (_vm->getGameType() == GType_PP) {
+				// TODO
+			} else if (_vm->getGameType() == GType_SIMON2) {
+				_vm->loadMusic(music);
 				_vm->_midi.startTrack(0);
+			} else {
+				_vm->playMusic(music, 0);
+			}
 		} else
-			DebugPrintf("Music out of range (0 - %d)\n", range);
+			DebugPrintf("Music out of range (0 - %d)\n", _vm->_numMusic);
 	} else
 		DebugPrintf("Syntax: music <musicnum>\n");
 
@@ -97,11 +103,10 @@ bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
 bool Debugger::Cmd_PlaySound(int argc, const char **argv) {
 	if (argc > 1) {
 		uint sound = atoi(argv[1]);
-		uint range = (_vm->getGameType() == GType_SIMON2) ? 222 : 127;
-		if (sound <= range)
+		if (sound <= _vm->_numSFX)
 			_vm->_sound->playEffects(sound);
 		else
-			DebugPrintf("Sound out of range (0 - %d)\n", range);
+			DebugPrintf("Sound out of range (0 - %d)\n", _vm->_numSFX);
 	} else
 		DebugPrintf("Syntax: sound <soundnum>\n");
 
@@ -111,11 +116,10 @@ bool Debugger::Cmd_PlaySound(int argc, const char **argv) {
 bool Debugger::Cmd_PlayVoice(int argc, const char **argv) {
 	if (argc > 1) {
 		uint voice = atoi(argv[1]);
-		uint range = (_vm->getGameType() == GType_SIMON2) ? 3632 : 1996;
-		if (voice <= range)
+		if (voice <= _vm->_numSpeech)
 			_vm->_sound->playVoice(voice);
 		else
-			DebugPrintf("Voice out of range (0 - %d)\n", range);
+			DebugPrintf("Voice out of range (0 - %d)\n", _vm->_numSpeech);
 	} else
 		DebugPrintf("Syntax: voice <voicenum>\n");
 
@@ -170,7 +174,7 @@ bool Debugger::Cmd_SetObjectFlag(int argc, const char **argv) {
 		prop = atoi(argv[2]);
 
 		if (obj >= 1 && obj < _vm->_itemArraySize) {
-			SubObject *o = (SubObject *)_vm->findChildOfType(_vm->derefItem(obj), 2);
+			SubObject *o = (SubObject *)_vm->findChildOfType(_vm->derefItem(obj), kObjectType);
 			if (o != NULL) {
 				if (o->objectFlags & (1 << prop) && prop < 16) {
 					uint offs = _vm->getOffsetOfChild2Param(o, 1 << prop);

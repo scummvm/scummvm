@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +27,7 @@
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/events.h"
 
 #include "graphics/scaler.h"
 
@@ -615,14 +619,6 @@ ConfigDialog::~ConfigDialog() {
 #endif
 }
 
-void ConfigDialog::open() {
-	GUI_OptionsDialog::open();
-}
-
-void ConfigDialog::close() {
-	GUI_OptionsDialog::close();
-}
-
 void ConfigDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kKeysCmd:
@@ -746,19 +742,26 @@ void HelpDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 InfoDialog::InfoDialog(ScummEngine *scumm, int res)
 : ScummDialog("scummDummyDialog"), _vm(scumm) { // dummy x and w
-	setInfoText(queryResString(res));
+
+	_message = queryResString(res);
+
+	// Width and height are dummy
+	_text = new StaticTextWidget(this, 4, 4, 10, 10, _message, kTextAlignCenter);
 }
 
 InfoDialog::InfoDialog(ScummEngine *scumm, const String& message)
 : ScummDialog("scummDummyDialog"), _vm(scumm) { // dummy x and w
-	setInfoText(message);
-}
 
-void InfoDialog::setInfoText(const String& message) {
 	_message = message;
 
 	// Width and height are dummy
 	_text = new StaticTextWidget(this, 4, 4, 10, 10, _message, kTextAlignCenter);
+}
+
+void InfoDialog::setInfoText(const String& message) {
+	_message = message;
+	_text->setLabel(_message);
+	//reflowLayout(); // FIXME: Should we call this here? Depends on the usage patterns, I guess...
 }
 
 void InfoDialog::reflowLayout() {
@@ -822,26 +825,26 @@ PauseDialog::PauseDialog(ScummEngine *scumm, int res)
 	: InfoDialog(scumm, res) {
 }
 
-void PauseDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (ascii == ' ')  // Close pause dialog if space key is pressed
+void PauseDialog::handleKeyDown(Common::KeyState state) {
+	if (state.ascii == ' ')  // Close pause dialog if space key is pressed
 		close();
 	else
-		ScummDialog::handleKeyDown(ascii, keycode, modifiers);
+		ScummDialog::handleKeyDown(state);
 }
 
 ConfirmDialog::ConfirmDialog(ScummEngine *scumm, int res)
 	: InfoDialog(scumm, res) {
 }
 
-void ConfirmDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (tolower(ascii) == 'n') {
+void ConfirmDialog::handleKeyDown(Common::KeyState state) {
+	if (state.keycode == Common::KEYCODE_n) {
 		setResult(0);
 		close();
-	} else if (tolower(ascii) == 'y') {
+	} else if (state.keycode == Common::KEYCODE_y) {
 		setResult(1);
 		close();
 	} else
-		ScummDialog::handleKeyDown(ascii, keycode, modifiers);
+		ScummDialog::handleKeyDown(state);
 }
 
 #pragma mark -
@@ -889,11 +892,11 @@ void ValueDisplayDialog::reflowLayout() {
 	_h = height;
 }
 
-void ValueDisplayDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (ascii == _incKey || ascii == _decKey) {
-		if (ascii == _incKey && _value < _max)
+void ValueDisplayDialog::handleKeyDown(Common::KeyState state) {
+	if (state.ascii == _incKey || state.ascii == _decKey) {
+		if (state.ascii == _incKey && _value < _max)
 			_value++;
-		else if (ascii == _decKey && _value > _min)
+		else if (state.ascii == _decKey && _value > _min)
 			_value--;
 
 		setResult(_value);
@@ -910,7 +913,58 @@ void ValueDisplayDialog::open() {
 	_timer = getMillis() + kDisplayDelay;
 }
 
+SubtitleSettingsDialog::SubtitleSettingsDialog(ScummEngine *scumm, int value) 
+	: InfoDialog(scumm, ""), _value(value) {
 
+}
+
+void SubtitleSettingsDialog::handleTickle() {
+	InfoDialog::handleTickle();
+	if (getMillis() > _timer)
+		close();
+}
+
+void SubtitleSettingsDialog::handleKeyDown(Common::KeyState state) {
+	if (state.keycode == 't' && state.flags == Common::KBD_CTRL) {
+		cycleValue();
+
+		reflowLayout();
+		draw();
+	} else {
+		close();
+	}
+}
+
+void SubtitleSettingsDialog::open() {
+	cycleValue();
+	InfoDialog::open();
+}
+
+void SubtitleSettingsDialog::cycleValue() {
+	static const char* subtitleDesc[] = {
+		"Speech Only",
+		"Speech and Subtitles",
+		"Subtitles Only"
+	};
+	
+	_value = (_value + 1) % 3;
+
+	setInfoText(subtitleDesc[_value]);
+
+	setResult(_value);
+	_timer = getMillis() + 1500;
+}
+
+Indy3IQPointsDialog::Indy3IQPointsDialog(ScummEngine *scumm, char* text)
+	: InfoDialog(scumm, text) {
+}
+
+void Indy3IQPointsDialog::handleKeyDown(Common::KeyState state) {
+	if (state.ascii == 'i') 
+		close();
+	else
+		ScummDialog::handleKeyDown(state);
+}
 
 } // End of namespace Scumm
 

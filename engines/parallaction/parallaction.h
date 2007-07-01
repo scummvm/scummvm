@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -57,7 +60,12 @@ enum {
 };
 
 enum {
-	GF_DEMO = 1 << 0
+	GF_DEMO = 1 << 0,
+	GF_LANG_EN = 1 << 1,
+	GF_LANG_FR = 1 << 2, 
+	GF_LANG_DE = 1 << 3,
+	GF_LANG_IT = 1 << 4,
+	GF_LANG_MULT = 1 << 5
 };
 
 
@@ -102,7 +110,7 @@ enum EngineFlags {
 	kEngineInventory		= (1 << 2),
 	kEngineWalking			= (1 << 3),
 	kEngineChangeLocation	= (1 << 4),
-	kEngineMouse			= (1 << 5),
+	kEngineBlockInput		= (1 << 5),
 	kEngineDragging 		= (1 << 6),
 	kEngineTransformedDonna		= (1 << 7)
 };
@@ -174,7 +182,6 @@ extern char 		_slideText[][40];
 extern uint16 		_introSarcData3;		 // sarcophagus stuff to be saved
 extern uint16 		_introSarcData2;		 // sarcophagus stuff to be saved
 extern char 		_saveData1[];
-extern byte 		_mouseHidden;
 extern uint32 		_commandFlags;
 extern const char 	*_instructionNamesRes[];
 extern const char 	*_commandsNamesRes[];
@@ -303,6 +310,7 @@ public:
 
 	void 		parseLocation(const char *filename);
 	void 		changeCursor(int32 index);
+	void		showCursor(bool visible);
 	void 		changeCharacter(const char *name);
 
 	char   		*parseComment(Script &script);
@@ -389,6 +397,8 @@ protected:		// data
 
 	bool		_skipMenu;
 
+	bool 		_mouseHidden;
+	
 	// input-only
 	InputData	 _input;
 	bool		_actionAfterWalk;  // actived when the character needs to move before taking an action

@@ -6,7 +6,7 @@
 ;&EN
 
 ; UID is the app's UID
-#{"ScummVM SE"},(0x101f9b57),0,80,3
+#{"ScummVM SE"},(0x101f9b57),0,100,0
 
 ; Platform type
 (0x101F617B), 2, 0, 0, {"UIQ20ProductID"}
@@ -21,6 +21,10 @@
 ""-"!:\system\apps\ScummVM\scummvm.stdout.txt",FILENULL
 ""-"!:\system\apps\ScummVM\scummvm.stderr.txt",FILENULL
 ""-"!:\system\apps\ScummVM\sdl.ini",FILENULL
+
+; Common datafiles needed for some games
+"..\kyra.dat"-"!:\system\apps\scummvm\kyra.dat"
+"..\sky.cpt"-"!:\system\apps\scummvm\sky.cpt"
 
 ; This install layout will let you upgrade to newer versions wihout loss of scummvm.ini.
 ; It will remove the config file, std***.txt files & dirs on uninstall.

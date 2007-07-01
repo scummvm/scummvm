@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -239,7 +241,7 @@ protected:
 	virtual void readRoomsOffsets();
 	virtual void loadCharset(int no);
 
-	virtual void processKeyboard(int lastKeyHit);
+	virtual void processKeyboard(Common::KeyState lastKeyHit);
 };
 
 /**
@@ -303,7 +305,7 @@ protected:
 	virtual void resetScummVars();
 	virtual void decodeParseString();
 
-	virtual void processKeyboard(int lastKeyHit);
+	virtual void processKeyboard(Common::KeyState lastKeyHit);
 
 	virtual void readIndexFile();
 	void readClassicIndexFile();	// V1
@@ -311,7 +313,7 @@ protected:
 	virtual void readGlobalObjects();
 	virtual void loadCharset(int no);
 
-	virtual void runInputScript(int a, int cmd, int mode);
+	virtual void runInputScript(int clickArea, int val, int mode);
 	virtual void runInventoryScript(int i);
 
 	virtual int getVar();
@@ -609,7 +611,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void scummLoop_handleActors();
-	virtual void processKeyboard(int lastKeyHit);
+	virtual void processKeyboard(Common::KeyState lastKeyHit);
 
 	virtual void setupScummVars();
 	virtual void decodeParseString(int a, int b);
@@ -910,7 +912,7 @@ protected:
 
 	virtual void scummLoop_handleSound();
 	virtual void scummLoop_handleDrawing();
-	virtual void processKeyboard(int lastKeyHit);
+	virtual void processKeyboard(Common::KeyState lastKeyHit);
 
 	virtual void setupScumm();
 
@@ -992,7 +994,7 @@ protected:
 
 	virtual int getObjectIdFromOBIM(const byte *obim);
 
-	virtual void processKeyboard(int lastKeyHit);
+	virtual void processKeyboard(Common::KeyState lastKeyHit);
 
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 

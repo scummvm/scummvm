@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004 Ivan Dubrov
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -664,10 +666,10 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 
 		pictIndex = (pictIndex & 15) - 1;
 
-		left = FROM_LE_16(pictPtr[pictIndex][pieceIndex].left);
-		right = FROM_LE_16(pictPtr[pictIndex][pieceIndex].right);
-		top = FROM_LE_16(pictPtr[pictIndex][pieceIndex].top);
-		bottom = FROM_LE_16(pictPtr[pictIndex][pieceIndex].bottom);
+		left = READ_LE_UINT16(&pictPtr[pictIndex][pieceIndex].left);
+		right = READ_LE_UINT16(&pictPtr[pictIndex][pieceIndex].right);
+		top = READ_LE_UINT16(&pictPtr[pictIndex][pieceIndex].top);
+		bottom = READ_LE_UINT16(&pictPtr[pictIndex][pieceIndex].bottom);
 
 		if (flags & 2) {
 			if (destX < _vm->_mult->_animLeft) {

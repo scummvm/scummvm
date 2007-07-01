@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +31,8 @@
 
 #include "common/system.h"
 
+#include "graphics/surface.h"
+
 namespace AGOS {
 
 void AGOSEngine_Waxworks::setupVideoOpcodes(VgaOpcodeProc *op) {
@@ -41,23 +45,55 @@ void AGOSEngine_Waxworks::setupVideoOpcodes(VgaOpcodeProc *op) {
 	op[63] = &AGOSEngine::vc63_fastFadeIn;
 }
 
-void AGOSEngine::vcStopAnimation(uint file, uint sprite) {
-	uint16 old_sprite_id, old_cur_file_id;
+void AGOSEngine::vcStopAnimation(uint16 zone, uint16 sprite) {
+	uint16 oldCurSpriteId, oldCurZoneNum;
+	VgaSprite *vsp;
+	VgaTimerEntry *vte;
+	const byte *vcPtrOrg;
+
+	oldCurSpriteId = _vgaCurSpriteId;
+	oldCurZoneNum = _vgaCurZoneNum;
+	vcPtrOrg = _vcPtr;
+
+	_vgaCurZoneNum = zone;
+	_vgaCurSpriteId = sprite;
+
+	vsp = findCurSprite();
+	if (vsp->id) {
+		vc25_halt_sprite();
+
+		vte = _vgaTimerList;
+		while (vte->delay) {
+			if (vte->sprite_id == _vgaCurSpriteId && vte->cur_vga_file == _vgaCurZoneNum) {
+				deleteVgaEvent(vte);
+				break;
+			}
+			vte++;
+		}
+	}
+
+	_vgaCurZoneNum = oldCurZoneNum;
+	_vgaCurSpriteId = oldCurSpriteId;
+	_vcPtr = vcPtrOrg;
+}
+
+void AGOSEngine_Simon1::vcStopAnimation(uint16 zone, uint16 sprite) {
+	uint16 oldCurSpriteId, oldCurZoneNum;
 	VgaSleepStruct *vfs;
 	VgaSprite *vsp;
 	VgaTimerEntry *vte;
 	const byte *vcPtrOrg;
 
-	old_sprite_id = _vgaCurSpriteId;
-	old_cur_file_id = _vgaCurZoneNum;
+	oldCurSpriteId = _vgaCurSpriteId;
+	oldCurZoneNum = _vgaCurZoneNum;
 	vcPtrOrg = _vcPtr;
 
-	_vgaCurZoneNum = file;
+	_vgaCurZoneNum = zone;
 	_vgaCurSpriteId = sprite;
 
 	vfs = _waitSyncTable;
 	while (vfs->ident != 0) {
-		if (vfs->sprite_id == _vgaCurSpriteId && ((getGameType() == GType_SIMON1) || vfs->cur_vga_file == _vgaCurZoneNum)) {
+		if (vfs->sprite_id == _vgaCurSpriteId && vfs->cur_vga_file == _vgaCurZoneNum) {
 			while (vfs->ident != 0) {
 				memcpy(vfs, vfs + 1, sizeof(VgaSleepStruct));
 				vfs++;
@@ -73,7 +109,7 @@ void AGOSEngine::vcStopAnimation(uint file, uint sprite) {
 
 		vte = _vgaTimerList;
 		while (vte->delay) {
-			if (vte->sprite_id == _vgaCurSpriteId && (getGameType() == GType_SIMON1 || vte->cur_vga_file == _vgaCurZoneNum)) {
+			if (vte->sprite_id == _vgaCurSpriteId && vte->cur_vga_file == _vgaCurZoneNum) {
 				deleteVgaEvent(vte);
 				break;
 			}
@@ -81,8 +117,8 @@ void AGOSEngine::vcStopAnimation(uint file, uint sprite) {
 		}
 	}
 
-	_vgaCurZoneNum = old_cur_file_id;
-	_vgaCurSpriteId = old_sprite_id;
+	_vgaCurZoneNum = oldCurZoneNum;
+	_vgaCurSpriteId = oldCurSpriteId;
 	_vcPtr = vcPtrOrg;
 }
 
@@ -96,8 +132,8 @@ void AGOSEngine::vc60_stopAnimation() {
 		zoneNum = vcReadNextWord();
 		sprite = vcReadNextWord();
 	} else {
-		zoneNum = _vgaCurZoneNum;
 		sprite = vcReadNextWord();
+		zoneNum = sprite / 100;
 	}
 
 	vcStopAnimation(zoneNum, sprite);
@@ -108,13 +144,15 @@ void AGOSEngine::vc61() {
 	byte *src, *dst, *dstPtr;
 	uint h, tmp;
 
+	Graphics::Surface *screen = _system->lockScreen();
+
 	if (a == 6) {
 		src = _curVgaFile2 + 800;
-		dstPtr = getFrontBuf();
+		dstPtr = (byte *)screen->pixels;
 		memcpy(dstPtr, src, 64000);
 		tmp = 4 - 1;
 	} else {
-		dstPtr = getFrontBuf();
+		dstPtr = (byte *)screen->pixels;
 		tmp = a - 1;
 	}
 
@@ -133,8 +171,10 @@ void AGOSEngine::vc61() {
 			dst += _screenWidth;
 		}
 
-		if (a != 6)
+		if (a != 6) {
+			_system->unlockScreen();
 			return;
+		}
 
 		src = _curVgaFile2 + 9984 * 16 + 15344;
 	}
@@ -145,6 +185,8 @@ void AGOSEngine::vc61() {
 		src += 208;
 		dst += _screenWidth;
 	}
+
+	_system->unlockScreen();
 
 	if (a == 6) {
 		//fullFade();
@@ -195,13 +237,11 @@ void AGOSEngine::vc62_fastFadeOut() {
 			delay(5);
 		}
 
-		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			clearSurfaces(_screenHeight);
-		} else if (getGameType() == GType_WW) {
-			memset(getFrontBuf(), 0, _screenWidth * _screenHeight);
+		if (getGameType() == GType_WW || getGameType() == GType_FF || getGameType() == GType_PP) {
+			clearSurfaces();
 		} else {
 			if (_windowNum != 4) {
-				memset(getFrontBuf(), 0, _screenWidth * _screenHeight);
+				clearSurfaces();
 			}
 		}
 	}

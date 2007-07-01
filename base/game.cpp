@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +25,16 @@
 
 #include "base/game.h"
 #include "base/plugins.h"
+
+const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list) {
+	const PlainGameDescriptor *g = list;
+	while (g->gameid) {
+		if (0 == scumm_stricmp(gameid, g->gameid))
+			break;
+		g++;
+	}
+	return g;
+}
 
 void GameDescriptor::updateDesc(const char *extra) {
 	// TODO: The format used here (LANG/PLATFORM/EXTRA) is not set in stone.
@@ -56,7 +68,7 @@ void GameDescriptor::updateDesc(const char *extra) {
 
 namespace Base {
 
-// TODO: Find a better place for this function.
+// TODO: Find a better name & place for this function.
 GameDescriptor findGame(const Common::String &gameName, const Plugin **plugin) {
 	// Find the GameDescriptor for this target
 	const PluginList &plugins = PluginManager::instance().getPlugins();

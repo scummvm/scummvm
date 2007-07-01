@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,12 +40,20 @@ public:
 private:
 	bool cmdActorWalkTo(int argc, const char **argv);
 
-	bool Cmd_AnimInfo(int argc, const char **argv);
+	bool cmdAnimInfo(int argc, const char **argv);
+	bool cmdCutawayInfo(int argc, const char **argv);
+	bool cmdPlayCutaway(int argc, const char **argv);
 
+	bool cmdCurrentScene(int argc, const char **argv);
+	bool cmdCurrentChapter(int argc, const char **argv);
 	bool cmdSceneChange(int argc, const char **argv);
+	bool cmdChapterChange(int argc, const char **argv);
+
 	bool cmdActionMapInfo(int argc, const char **argv);
 	bool cmdObjectMapInfo(int argc, const char **argv);
 
+	bool cmdCurrentPanelMode(int argc, const char **argv);
+	bool cmdSetPanelMode(int argc, const char **argv);
 
 private:
 	SagaEngine *_vm;

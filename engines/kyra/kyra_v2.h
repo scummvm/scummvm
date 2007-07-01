@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +34,9 @@ enum kSequences {
 	kSequenceTitle = 2,
 	kSequenceOverview = 3,
 	kSequenceLibrary = 4,
-	kSequenceHand = 5
+	kSequenceHand = 5,
+	kSequencePoint = 6,
+	kSequenceZanFaun = 7
 };
 
 class WSAMovieV2;
@@ -89,6 +94,8 @@ private:
 	int seq_introOverview(int seqNum);
 	int seq_introLibrary(int seqNum);	
 	int seq_introHand(int seqNum);
+	int seq_introPoint(int seqNum);
+	int seq_introZanFaun(int seqNum);
 
 	void seq_introOverviewOver1(int currentFrame);
 	void seq_introOverviewForest(int currentFrame);	

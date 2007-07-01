@@ -1,3 +1,16 @@
+scummvm (0.10.0-0svn20070530) experimental; urgency=low
+
+  * SVN snapshot.
+
+    Builder:    Timo Röhling <timo@glueckspilz.farm.lokal>
+    Build-date: Wed, 30 May 2007 11:54:05 +0200
+
+    Please don't file bugs you find in this package in the Debian Bug Tracking
+    system, use the ScummVM team's own bug tracker instead.  You can find this
+    tracker at <http://sourceforge.net/tracker/?group_id=37116>.
+
+ -- Tore Anderson <tore@debian.org>  Wed, 30 May 2007 11:54:05 +0200 
+
 scummvm (0.7.1-1) unstable; urgency=low
 
   * New upstream release.

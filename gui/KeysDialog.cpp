@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,16 +35,13 @@
 namespace GUI {
 
 enum {
-	kMapCmd					= 'map ',
-	kOKCmd					= 'ok  '
+	kMapCmd	= 'map ',
+	kOKCmd	= 'ok  '
 };
 
 KeysDialog::KeysDialog(const Common::String &title)
 	: GUI::Dialog("keysdialog") {
 
-//tmp
-//	addButton(this, _w - (buttonWidth + 10), _h - buttonHeight - 8, "Choose", kChooseCmd, 0, ws);
-//tmp
 	new ButtonWidget(this, "keysdialog_map", "Map", kMapCmd, 0);
 	new ButtonWidget(this, "keysdialog_ok", "OK", kOKCmd, 0);
 	new ButtonWidget(this, "keysdialog_cancel", "Cancel", kCloseCmd, 0);
@@ -73,23 +73,18 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	case kListSelectionChangedCmd:
 		if (_actionsList->getSelected() >= 0) {
 			char selection[100];
-#ifdef __SYMBIAN32__
+
 			uint16 key = Actions::Instance()->getMapping(_actionsList->getSelected());
-
-			if (key != 0) {
-				// ScummVM mappings for F1-F9 are different from SDL so remap back to sdl
-				if (key >= 315 && key <= 323) {
-					key = key - 315 + SDLK_F1;
-				}
-			}
-
+#ifdef __SYMBIAN32__
+			// ScummVM mappings for F1-F9 are different from SDL so remap back to sdl
+			if (key >= Common::ASCII_F1 && key <= Common::ASCII_F9)
+				key = key - Common::ASCII_F1 + SDLK_F1;
+#endif
 			if (key != 0)
 				sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey)key));
 			else
 				sprintf(selection, "Associated key : none");
-#else
-			sprintf(selection, "Associated key : %s", CEDevice::getKeyName(Actions::Instance()->getMapping((ActionType)(_actionsList->getSelected()))).c_str());
-#endif
+
 			_keyMapping->setLabel(selection);
 			_keyMapping->draw();
 		}
@@ -97,26 +92,21 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	case kMapCmd:
 		if (_actionsList->getSelected() < 0) {
 				_actionTitle->setLabel("Please select an action");
-		}
-		else {
+		} else {
 			char selection[100];
 
 			_actionSelected = _actionsList->getSelected();
-#ifdef __SYMBIAN32__
 			uint16 key = Actions::Instance()->getMapping(_actionSelected);
-			if (key != 0) {
-				// ScummVM mappings for F1-F9 are different from SDL so remap back to sdl
-				if (key >= 315 && key <= 323) {
-					key = key - 315 + SDLK_F1;
-				}
-
+#ifdef __SYMBIAN32__
+			// ScummVM mappings for F1-F9 are different from SDL so remap back to sdl
+			if (key >= Common::ASCII_F1 && key <= Common::ASCII_F9)
+				key = key - Common::ASCII_F1 + SDLK_F1;
+#endif
+			if (key != 0) 
 				sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey)key));
-			}
 			else
 				sprintf(selection, "Associated key : none");
-#else
-			sprintf(selection, "Associated key : %s", CEDevice::getKeyName(Actions::Instance()->getMapping((ActionType)_actionSelected)).c_str());
-#endif
+
 			_actionTitle->setLabel("Press the key to associate");
 			_keyMapping->setLabel(selection);
 			_keyMapping->draw();
@@ -136,30 +126,26 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	}
 }
 
-void KeysDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers){
-	if (!Actions::Instance()->mappingActive()) {
-		Dialog::handleKeyDown(ascii,keycode,modifiers);
-	}
+void KeysDialog::handleKeyDown(Common::KeyState state){
+	if (!Actions::Instance()->mappingActive())
+		Dialog::handleKeyDown(state);
 }
 
-void KeysDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
+void KeysDialog::handleKeyUp(Common::KeyState state) {
 #ifdef __SYMBIAN32__
 	if (Actions::Instance()->mappingActive()) {
 #else
-		// GAPI key was selected
-		if (modifiers == 0xff  && Actions::Instance()->mappingActive()) {
+	if (state.flags == 0xff  && Actions::Instance()->mappingActive()) {	// GAPI key was selected
 #endif
 		char selection[100];
 
-		Actions::Instance()->setMapping((ActionType)_actionSelected, ascii);
-#ifdef __SYMBIAN32__
+		Actions::Instance()->setMapping((ActionType)_actionSelected, state.ascii);
+
 		if (ascii != 0)
-			sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey) keycode));
+			sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey) state.keycode));
 		else
 			sprintf(selection, "Associated key : none");
-#else
-		sprintf(selection, "Associated key : %s", CEDevice::getKeyName(Actions::Instance()->getMapping((ActionType)_actionSelected)).c_str());
-#endif
+
 		_actionTitle->setLabel("Choose an action to map");
 		_keyMapping->setLabel(selection);
 		_keyMapping->draw();
@@ -167,10 +153,8 @@ void KeysDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 		_actionSelected = -1;
 		_actionsList->setEnabled(true);
 		Actions::Instance()->beginMapping(false);
-	}
-	else {
-		Dialog::handleKeyUp(ascii,keycode,modifiers);
-	}
+	} else 
+		Dialog::handleKeyUp(state);
 }
 
 } // namespace GUI

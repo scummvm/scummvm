@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1434,7 +1435,7 @@ void o1_freePartRange() {
 	assert(startIdx + numIdx <= NUM_MAX_ANIMDATA);
 
 	debugC(5, kCineDebugScript, "Line: %d: freePartRange(%d,%d)", _currentLine, startIdx, numIdx);
-	freePartRange(startIdx, numIdx);
+	freeAnimDataRange(startIdx, numIdx);
 }
 
 void o1_unloadAllMasks() {

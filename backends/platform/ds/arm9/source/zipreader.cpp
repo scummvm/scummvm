@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 Neil Millstone
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,7 +31,7 @@
 ZipFile::ZipFile() {
 	// Locate a zip file in cartridge memory space
 	
-	consolePrintf("ZIP file check...");
+//	consolePrintf("ZIP file check...");
 	
 	char* p = (char *) ZF_SEARCH_START;
 	bool found = false;
@@ -50,9 +52,9 @@ ZipFile::ZipFile() {
 	}
 
 	if (_zipFile) {
-		consolePrintf("Ok!\n");
+		consolePrintf("ZIP File found Ok!\n");
 	} else {
-		consolePrintf("Not in use!\n");
+//		consolePrintf("Not in use!\n");
 		return;
 	}
 	

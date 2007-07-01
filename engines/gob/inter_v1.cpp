@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004 Ivan Dubrov
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1644,6 +1646,13 @@ bool Inter_v1::o1_keyFunc(OpFuncParams &params) {
 			_vm->_util->longDelay(1);
 	lastCalled = now;
 	_noBusyWait = false;
+
+	// WORKAROUND for bug #1726130: Ween busy-waits in the intro for a counter
+	// to become 5000. We deliberately slow down busy-waiting, so we shorten
+	// the counting, too.
+	if (((_vm->_global->_inter_execPtr - _vm->_game->_totFileData) == 729) &&
+	    (VAR(59) < 4000) && !scumm_stricmp(_vm->_game->_curTotFile, "intro5.tot"))
+		WRITE_VAR(59, 4000);
 
 	switch (cmd) {
 	case 0:

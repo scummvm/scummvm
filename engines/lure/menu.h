@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -80,7 +83,7 @@ public:
 	static Action Show(int numEntries, Action *actions);
 	static uint16 Show(int numEntries, const char *actions[]);
 	static uint16 ShowInventory();
-	static uint16 ShowItems(Action contextAction);
+	static uint16 ShowItems(Action contextAction, uint16 roomNumber);
 };
 
 } // End of namespace Lure

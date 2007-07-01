@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006-2007 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -70,14 +73,14 @@ const char *Theme::_defaultConfigINI =
 "\n"
 "# audio tab\n"
 "opYoffset=vBorder\n"
-"gameoptions_audioCheckbox=gox opYoffset (kFontHeight + 10 + 180) buttonHeight\n"
+"gameoptions_audioCheckbox=gox opYoffset (parent.w - gox - 5) buttonHeight\n"
 "opYoffset=(opYoffset + buttonHeight + 6)\n"
 "useWithPrefix=audioControls gameoptions_\n"
 "useWithPrefix=subtitleControls gameoptions_\n"
 "\n"
 "# volume tab\n"
 "opYoffset=vBorder\n"
-"gameoptions_volumeCheckbox=gox opYoffset (kFontHeight + 10 + 190) buttonHeight\n"
+"gameoptions_volumeCheckbox=gox opYoffset (parent.w - gox - 5) buttonHeight\n"
 "opYoffset=(opYoffset + buttonHeight + 6)\n"
 "useWithPrefix=volumeControls gameoptions_\n"
 "\n"
@@ -190,8 +193,11 @@ const char *Theme::_defaultConfigINI =
 "# audio tab\n"
 "opYoffset=vBorder\n"
 "useWithPrefix=audioControls globaloptions_\n"
-"useWithPrefix=volumeControls globaloptions_\n"
 "useWithPrefix=subtitleControls globaloptions_\n"
+"\n"
+"# volume tab\n"
+"opYoffset=vBorder\n"
+"useWithPrefix=volumeControls globaloptions_\n"
 "\n"
 "# MIDI tab\n"
 "opYoffset=vBorder\n"
@@ -262,21 +268,26 @@ const char *Theme::_defaultConfigINI =
 "# graphics tab\n"
 "opYoffset=vBorder\n"
 "opXoffset=gox\n"
-"gameoptions_graphicsCheckbox=gox opYoffset (kFontHeight + 10 + 192) buttonHeight\n"
+"gameoptions_graphicsCheckbox=gox opYoffset (parent.w - gox - 5) buttonHeight\n"
 "opYoffset=(opYoffset + buttonHeight)\n"
 "useWithPrefix=graphicsControls gameoptions_\n"
 "\n"
 "# audio tab\n"
 "opYoffset=vBorder\n"
-"gameoptions_audioCheckbox=gox opYoffset (kFontHeight + 10 + 180) buttonHeight\n"
+"gameoptions_audioCheckbox=gox opYoffset (parent.w - gox - 5) buttonHeight\n"
 "opYoffset=(opYoffset + buttonHeight)\n"
 "useWithPrefix=audioControls gameoptions_\n"
-"useWithPrefix=volumeControls gameoptions_\n"
 "useWithPrefix=subtitleControls gameoptions_\n"
+"\n"
+"# volume tab\n"
+"opYoffset=vBorder\n"
+"gameoptions_volumeCheckbox=gox opYoffset (parent.w - gox - 5) buttonHeight\n"
+"opYoffset=(opYoffset + buttonHeight)\n"
+"useWithPrefix=volumeControls gameoptions_\n"
 "\n"
 "# midi tab\n"
 "opYoffset=vBorder\n"
-"gameoptions_midiCheckbox=gox opYoffset (kFontHeight + 10 + 174) buttonHeight\n"
+"gameoptions_midiCheckbox=gox opYoffset (parent.w - gox - 5) buttonHeight\n"
 "opYoffset=(opYoffset + buttonHeight)\n"
 "useWithPrefix=midiControls gameoptions_\n"
 "\n"
@@ -376,9 +387,9 @@ const char *Theme::_defaultConfigINI =
 "opYoffset=(opYoffset + kLineHeight + 4)\n"
 "grRenderPopup=prev.x (opYoffset - 1) prev.w prev.h\n"
 "opYoffset=(opYoffset + kLineHeight + 4)\n"
-"grFullscreenCheckbox=gcx opYoffset (kFontHeight + 10 + 96) buttonHeight\n"
+"grFullscreenCheckbox=gcx opYoffset (parent.w - gcx - 5) buttonHeight\n"
 "opYoffset=(opYoffset + buttonHeight)\n"
-"grAspectCheckbox=prev.x opYoffset (kFontHeight + 10 + 180) prev.h\n"
+"grAspectCheckbox=prev.x opYoffset prev.w prev.h\n"
 "opYoffset=(opYoffset + buttonHeight)\n"
 "\n"
 "[audioControls]\n"
@@ -415,11 +426,11 @@ const char *Theme::_defaultConfigINI =
 "mcFontPath=(prev.x2 + 20) (opYoffset + 3) (parent.w - (buttonWidth + 20) - 15 - kLineHeight - 10) kLineHeight\n"
 "mcFontClearButton=(prev.x2 + 10) (opYoffset + 2) kLineHeight kLineHeight\n"
 "opYoffset=(opYoffset + buttonHeight + 2 * midiControlsSpacing)\n"
-"mcMixedCheckbox=mcx opYoffset (kFontHeight + 10 + 135) buttonHeight\n"
+"mcMixedCheckbox=mcx opYoffset (parent.w - mcx - 5) buttonHeight\n"
 "opYoffset=(opYoffset + buttonHeight + midiControlsSpacing)\n"
-"mcMt32Checkbox=mcx opYoffset (kFontHeight + 10 + 256) buttonHeight\n"
+"mcMt32Checkbox=mcx opYoffset prev.w buttonHeight\n"
 "opYoffset=(opYoffset + buttonHeight + midiControlsSpacing)\n"
-"mcGSCheckbox=mcx opYoffset (kFontHeight + 10 + 142) buttonHeight\n"
+"mcGSCheckbox=mcx opYoffset prev.w buttonHeight\n"
 "opYoffset=(opYoffset + buttonHeight + midiControlsSpacing)\n"
 "mcMidiGainText=mcx (opYoffset + 2) 95 kLineHeight\n"
 "mcMidiGainText.align=kTextAlignRight\n"
@@ -434,6 +445,7 @@ const char *Theme::_defaultConfigINI =
 "sbtextw=(100 + vcAudioTabIndent)\n"
 "opYoffset=(opYoffset + sbYoff)\n"
 "subToggleDesc=sbx (opYoffset + sbYoff) sbtextw buttonHeight\n"
+"subToggleDesc.align=kTextAlignRight\n"
 "subToggleButton=prev.x2 (opYoffset - sbYoff) (buttonWidth + 54) buttonHeight\n"
 "opYoffset=(opYoffset + buttonHeight + 6)\n"
 "subSubtitleSpeedDesc=sbx (opYoffset + sbOff) sbtextw kLineHeight\n"
@@ -477,7 +489,6 @@ const char *Theme::_defaultConfigINI =
 "def_insetH=(h - 13 - insetY)\n"
 "def_launcherVersionX=50\n"
 "def_launcherVersionY=5\n"
-"def_volumeControlsInAudio=false\n"
 "def_midiControlsSpacing=2\n"
 "def_gameOptionsOverrideVPad=10\n"
 "def_aboutXOff=3\n"
@@ -485,32 +496,6 @@ const char *Theme::_defaultConfigINI =
 "def_aboutOuterBorder=10\n"
 "\n"
 "use=XxY\n"
-"\n"
-"# Override audio tab\n"
-"set_parent=gameoptions\n"
-"vBorder=5\n"
-"\n"
-"# audio tab\n"
-"opYoffset=vBorder\n"
-"useWithPrefix=audioControls globaloptions_\n"
-"useWithPrefix=subtitleControls globaloptions_\n"
-"\n"
-"# volume tab\n"
-"opYoffset=vBorder\n"
-"useWithPrefix=volumeControls globaloptions_\n"
-"\n"
-"# audio tab\n"
-"opYoffset=vBorder\n"
-"gameoptions_audioCheckbox=gox opYoffset (kFontHeight + 10 + 180) buttonHeight\n"
-"opYoffset=(opYoffset + buttonHeight + 6)\n"
-"useWithPrefix=audioControls gameoptions_\n"
-"useWithPrefix=subtitleControls gameoptions_\n"
-"\n"
-"# volume tab\n"
-"opYoffset=vBorder\n"
-"gameoptions_volumeCheckbox=gox opYoffset (kFontHeight + 10 + 190) buttonHeight\n"
-"opYoffset=(opYoffset + buttonHeight + 6)\n"
-"useWithPrefix=volumeControls gameoptions_\n"
 "";
 
 using Common::String;
@@ -565,7 +550,7 @@ void Theme::processSingleLine(const String &section, const String &prefix, const
 
 	const char **postfixes = (ntmppostfix == 2) ? postfixesRGB : postfixesXYWH;
 
-	// Now do it for real, only this time we already know the parantheses
+	// Now do it for real, only this time we already know the parentheses
 	// are balanced.
 
 	for (i = 0; i < str.size(); i++) {
@@ -586,10 +571,15 @@ void Theme::processSingleLine(const String &section, const String &prefix, const
 		_evaluator->setStringVar(prefixedname, _evaluator->lastToken());
 
 	// process VAR=VALUE construct
-	if (npostfix == 0)
+	if (npostfix == 0) {
 		_evaluator->setVar(name, value);
-	else
+
+		// Fix bug #1742561: "GUI: Missaligned text"
+		// "blah.align=foo" should be prefixed too
+		_evaluator->setVar(prefixedname, value);
+	} else {
 		_evaluator->setVar(prefixedname + postfixes[npostfix], value);
+	}
 
 	// If we have all 4 parameters, set .x2 and .y2
 	if (npostfix == 3) {
@@ -627,16 +617,16 @@ void Theme::processResSection(Common::ConfigFile &config, const String &name, bo
 		if (iterk->key == "use") {
 			if (iterk->value == name)
 				error("Theme section [%s]: cannot use itself", name.c_str());
-			if (!config.hasSection(name))
-				error("Undefined use of section [%s]", name.c_str());
+			if (!config.hasSection(iterk->value))
+				error("Undefined use of section [%s]", iterk->value.c_str());
 			processResSection(config, iterk->value, true);
 			continue;
 		}
 		if (iterk->key == "useAsIs") {
 			if (iterk->value == name)
 				error("Theme section [%s]: cannot use itself", name.c_str());
-			if (!config.hasSection(name))
-				error("Undefined use of section [%s]", name.c_str());
+			if (!config.hasSection(iterk->value))
+				error("Undefined use of section [%s]", iterk->value.c_str());
 			processResSection(config, iterk->value);
 			continue;
 		}

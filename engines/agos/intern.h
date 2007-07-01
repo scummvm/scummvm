@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +27,20 @@
 #define AGOS_INTERN_H
 
 namespace AGOS {
+
+enum ChildType {
+	kRoomType = 1,
+	kObjectType = 2,
+	kPlayerType = 3,
+	kGenExitType = 4,   // Elvira 1 specifc
+	kSuperRoomType = 4, // Elvira 2 specic
+
+	kContainerType = 7,
+	kChainType = 8,
+	kUserFlagType = 9,
+	
+	kInheritType = 255
+};
 
 struct Child {
 	Child *next;
@@ -129,11 +145,11 @@ struct IconBlock {
 struct WindowBlock {
 	byte mode;
 	byte flags;
-	uint16 x, y;
-	uint16 width, height;
-	uint16 textColumn, textRow;
+	int16 x, y;
+	int16 width, height;
+	int16 textColumn, textRow;
+	int16 scrollY;
 	uint16 textColumnOffset, textLength, textMaxLength;
-	uint16 scrollY;
 	uint8 fill_color, text_color;
 	IconBlock *iconPtr;
 	WindowBlock() { memset(this, 0, sizeof(*this)); }

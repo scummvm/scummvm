@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -104,7 +105,8 @@ enum ThreadWaitTypes {
 	kWaitTypePause = 7,
 	kWaitTypePlacard = 8,
 	kWaitTypeStatusTextInput = 9,
-	kWaitTypeWaitFrames = 10    // IHNM. waiting for a frame count
+	kWaitTypeWaitFrames = 10,   // IHNM. waiting for a frame count
+	kWaitTypeWakeUp = 11		// IHNM. wait until get waken up
 };
 
 enum OpCodes {
@@ -325,6 +327,11 @@ public:
 		_sleepTime = sleepTime;
 	}
 
+	void waitFrames(int frames) {
+		wait(kWaitTypeWaitFrames);
+		_frameWait = frames;
+	}
+
 	ScriptThread() {
 		memset(this, 0xFE, sizeof(*this));
 		_stackBuf = NULL;
@@ -468,7 +475,7 @@ private:
 	void setThreadEntrypoint(ScriptThread *thread, int entrypointNumber);
 
 public:
-	void finishDialog(int replyID, int flags, int bitOffset);
+	void finishDialog(int strID, int replyID, int flags, int bitOffset);
 
 private:
 

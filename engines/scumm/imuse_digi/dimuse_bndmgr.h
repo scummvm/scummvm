@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -48,7 +51,7 @@ private:
 		char fileName[20];
 		AudioTable *bundleTable;
 		int32 numFiles;
-		bool compressedBun;
+		bool isCompressed;
 		IndexNode *indexTable;
 	} _budleDirCache[4];
 
@@ -60,7 +63,7 @@ public:
 	AudioTable *getTable(int slot);
 	IndexNode *getIndexTable(int slot);
 	int32 getNumFiles(int slot);
-	bool isCompressed(int slot);
+	bool isSndDataExtComp(int slot);
 };
 
 class BundleMgr {
@@ -77,14 +80,15 @@ private:
 	BundleDirCache::AudioTable *_bundleTable;
 	BundleDirCache::IndexNode *_indexTable;
 	CompTable *_compTable;
+
 	int _numFiles;
 	int _numCompItems;
-	int _curSample;
+	int _curSampleId;
 	BaseScummFile *_file;
 	bool _compTableLoaded;
 	int _fileBundleId;
-	byte _compOutput[0x2000];
-	byte *_compInput;
+	byte _compOutputBuff[0x2000];
+	byte *_compInputBuff;
 	int _outputSize;
 	int _lastBlock;
 
@@ -95,19 +99,19 @@ public:
 	BundleMgr(BundleDirCache *_cache);
 	~BundleMgr();
 
-	bool open(const char *filename, bool &compressed, bool errorFlag=false);
+	bool open(const char *filename, bool &compressed, bool errorFlag = false);
 	void close();
 	Common::File *getFile(const char *filename, int32 &offset, int32 &size);
-	int32 decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final, bool header_outside);
-	int32 decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside);
-	int32 decompressSampleByCurIndex(int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside);
+	int32 decompressSampleByName(const char *name, int32 offset, int32 size, byte **compFinal, bool headerOutside);
+	int32 decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **compFinal, int header_size, bool headerOutside);
+	int32 decompressSampleByCurIndex(int32 offset, int32 size, byte **compFinal, int headerSize, bool headerOutside);
 };
 
 namespace BundleCodecs {
 
 uint32 decode12BitsSample(const byte *src, byte **dst, uint32 size);
 void initializeImcTables();
-int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 input_size);
+int32 decompressCodec(int32 codec, byte *compInput, byte *compOutput, int32 inputSize);
 
 } // End of namespace BundleCodecs
 

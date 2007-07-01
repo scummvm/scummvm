@@ -1,8 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002 Ph0x - GP32 Backend
- * Copyright (C) 2003/2004 DJWillis - GP32 Backend
- * Copyright (C) 2005 Won Star - GP32 Backend
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -48,6 +48,8 @@ protected:
 	uint8 *_gameScreen;
 	uint16 *_tmpScreen, *_hwScreen;
 	OverlayColor *_overlayBuffer;
+
+	Graphics::Surface _framebuffer;
 
 	int _overlayWidth, _overlayHeight;
 	bool _overlayVisible;
@@ -111,7 +113,8 @@ public:
 	void grabOverlay(OverlayColor *buf, int pitch);
 	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 
-	bool grabRawScreen(Graphics::Surface *surf);
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 
 	int16 getOverlayHeight();
 	int16 getOverlayWidth();

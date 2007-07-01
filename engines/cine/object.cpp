@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -61,11 +62,11 @@ void loadObject(char *pObjectName) {
 	uint16 numEntry;
 	uint16 entrySize;
 	uint16 i;
-	byte *ptr;
+	byte *ptr, *dataPtr;
 
 	checkDataDisk(-1);
 
-	ptr = readBundleFile(findFileInBundle(pObjectName));
+	ptr = dataPtr = readBundleFile(findFileInBundle(pObjectName));
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
@@ -95,6 +96,8 @@ void loadObject(char *pObjectName) {
 			objectTable[i].costume = 0;
 		}
 	}
+
+	free(dataPtr);
 }
 
 int8 removeOverlayElement(uint16 objIdx, uint16 param) {
@@ -133,12 +136,11 @@ int8 removeOverlayElement(uint16 objIdx, uint16 param) {
 
 int16 freeOverlay(uint16 objIdx, uint16 param) {
 	overlayHeadElement *currentHeadPtr = overlayHead.next;
-	overlayHeadElement *tempHead = &overlayHead;
-	overlayHeadElement *tempPtr2;
+	overlayHeadElement *previousPtr = &overlayHead;
 
 	while (currentHeadPtr && ((currentHeadPtr->objIdx != objIdx) || (currentHeadPtr->type != param))) {
-		tempHead = currentHeadPtr;
-		currentHeadPtr = tempHead->next;
+		previousPtr = currentHeadPtr;
+		currentHeadPtr = previousPtr->next;
 	}
 
 	if (!currentHeadPtr) {
@@ -149,8 +151,8 @@ int16 freeOverlay(uint16 objIdx, uint16 param) {
 		return -1;
 	}
 
-	tempHead->next = currentHeadPtr->next;
-	tempPtr2 = currentHeadPtr->next;
+	previousPtr->next = currentHeadPtr->next;
+	overlayHeadElement *tempPtr2 = currentHeadPtr->next;
 
 	if (!tempPtr2) {
 		tempPtr2 = &overlayHead;
@@ -158,9 +160,11 @@ int16 freeOverlay(uint16 objIdx, uint16 param) {
 
 	tempPtr2->previous = currentHeadPtr->previous;
 
-	//TODO: fix !
+	// FIXME: is this needed? It causes crashes in Windows in the drawOverlays function
+	// (the currentOverlay pointer is incorrect)
+	// Removing this fixes bug #1733238 - FW: crash in copier room
+	// Also, it stops the game from crashing right after the introduction
 	//free(currentHeadPtr);
-
 	return 0;
 }
 

@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -106,6 +109,8 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	_currHeadShape = 0;
 
 	_curSfxFile = _curMusicTheme = 0;
+
+	memset(&_itemBkgBackUp, 0, sizeof(_itemBkgBackUp));
 
 	// sets up all engine specific debug levels
 	Common::addSpecialDebugLevel(kDebugLevelScriptFuncs, "ScriptFuncs", "Script function debug level");
@@ -612,7 +617,7 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 						_quitFlag = true;
 				} else if (event.kbd.keycode == '.')
 						_skipFlag = true;
-				else if (event.kbd.keycode == 13 || event.kbd.keycode == 32 || event.kbd.keycode == 27) {
+				else if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_abortIntroFlag = true;
 					_skipFlag = true;
 				}

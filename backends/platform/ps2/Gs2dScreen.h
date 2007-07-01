@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,13 +56,13 @@ public:
 
 	void copyPrintfOverlay(const uint8* buf);
 	void clearPrintfOverlay(void);
-	void clearScreen(void);
 
 	void copyScreenRect(const uint8 *buf, int pitch, int x, int y, int w, int h);
 	void setPalette(const uint32 *pal, uint8 start, uint16 num);
 	void updateScreen(void);
 	void grabPalette(uint32 *pal, uint8 start, uint16 num);
-	void grabScreen(Graphics::Surface *surf);
+	Graphics::Surface *lockScreen();
+	void unlockScreen();
 	//- overlay routines
 	void copyOverlayRect(const uint16 *buf, uint16 pitch, uint16 x, uint16 y, uint16 w, uint16 h);
 	void grabOverlay(uint16 *buf, uint16 pitch);
@@ -95,6 +98,8 @@ private:
 	int16  _mouseX, _mouseY, _hotSpotX, _hotSpotY;
 	uint32 _mouseScaleX, _mouseScaleY;
 	uint8  _mTraCol;
+
+	Graphics::Surface _framebuffer;
 
 	int _shakePos;
 

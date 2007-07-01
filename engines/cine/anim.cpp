@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * cinE Engine is (C) 2004-2005 by CinE Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,7 +46,7 @@ struct animHeader2Struct {
 	uint16 field_E;
 };
 
-uint16 frameVar0 = 0;
+static uint16 animDataCount = 0;
 
 animHeaderStruct animHeader;
 
@@ -183,7 +184,30 @@ animDataEntry animData[] = {
 	{"FIN", 0x9},
 };
 
-byte getAnimTransparentColor(const char *animName) {
+static void freeAnimData(byte idx) {
+	assert(idx < NUM_MAX_ANIMDATA);
+	if (animDataTable[idx].ptr1) {
+		free(animDataTable[idx].ptr1);
+		free(animDataTable[idx].ptr2);
+		memset(&animDataTable[idx], 0, sizeof(AnimData));
+		animDataTable[idx].fileIdx = -1;
+		animDataTable[idx].frameIdx = -1;
+		if (animDataCount > 0)
+			animDataCount--;
+	}
+}
+
+void freeAnimDataRange(byte startIdx, byte numIdx) {
+	for (byte i = 0; i < numIdx; i++) {
+		freeAnimData(i + startIdx);
+	}
+}
+
+void freeAnimDataTable() {
+	freeAnimDataRange(0, NUM_MAX_ANIMDATA);
+}
+
+static byte getAnimTransparentColor(const char *animName) {
 	char name[15];
 
 	removeExtention(name, animName);
@@ -237,7 +261,7 @@ int16 allocFrame(uint16 width, uint16 height, int8 isMask) {
 		animDataTable[i].frameIdx = -1;
 	}
 
-	frameVar0++;
+	animDataCount++;
 
 	return i;
 }
@@ -287,7 +311,7 @@ int16 allocFrame2(uint16 width, uint16 height, uint16 type) {
 	animDataTable[i].fileIdx = -1;
 	animDataTable[i].frameIdx = -1;
 
-	frameVar0++;
+	animDataCount++;
 
 	return i;
 }
@@ -331,7 +355,7 @@ int16 reserveFrame(uint16 width, uint16 height, uint16 type, uint16 idx) {
 	animDataTable[i].fileIdx = -1;
 	animDataTable[i].frameIdx = -1;
 
-	frameVar0++;
+	animDataCount++;
 
 	return i;
 }
@@ -393,6 +417,8 @@ void loadSpl(const char *resourceName) {
 	animDataTable[entry].fileIdx = foundFileIdx;
 	animDataTable[entry].frameIdx = 0;
 	strcpy(animDataTable[entry].name, currentPartName);
+
+	free(dataPtr);
 }
 
 void loadSplAbs(const char *resourceName, uint16 idx) {
@@ -405,6 +431,8 @@ void loadSplAbs(const char *resourceName, uint16 idx) {
 
 	entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0, idx);
 	memcpy(animDataTable[entry].ptr1, dataPtr, partBuffer[foundFileIdx].unpackedSize);
+
+	free(dataPtr);
 }
 
 void loadMsk(const char *resourceName) {
@@ -452,6 +480,8 @@ void loadMsk(const char *resourceName) {
 		animDataTable[entry].frameIdx = i;
 		strcpy(animDataTable[entry].name, currentPartName);
 	}
+
+	free(dataPtr);
 }
 
 void loadAni(const char *resourceName) {
@@ -532,6 +562,8 @@ void loadAni(const char *resourceName) {
 		animDataTable[entry].frameIdx = i;
 		strcpy(animDataTable[entry].name, currentPartName);
 	}
+
+	free(dataPtr);
 }
 
 void convert8BBP(byte * dest, byte * source, int16 width, int16 height) {
@@ -649,7 +681,7 @@ void convert8BBP2(byte * dest, byte * source, int16 width, int16 height) {
 void loadSet(const char *resourceName) {
 	animHeader2Struct header2;
 	int16 foundFileIdx;
-	byte *dataPtr;
+	byte *dataPtr, *origDataPtr;
 	int16 entry;
 	byte *ptr;
 	int16 i;
@@ -658,7 +690,7 @@ void loadSet(const char *resourceName) {
 	byte *startOfDataPtr;
 
 	foundFileIdx = findFileInBundle(resourceName);
-	dataPtr = readBundleFile(foundFileIdx);
+	origDataPtr = dataPtr = readBundleFile(foundFileIdx);
 
 	assert(!memcmp(dataPtr, "SET", 3));
 
@@ -731,12 +763,14 @@ void loadSet(const char *resourceName) {
 		animDataTable[entry].frameIdx = i;
 		strcpy(animDataTable[entry].name, currentPartName);
 	}
+
+	free(origDataPtr);
 }
 
 void loadSetAbs(const char *resourceName, uint16 idx) {
 	animHeader2Struct header2;
 	int16 foundFileIdx;
-	byte *dataPtr;
+	byte *dataPtr, *origDataPtr;
 	int16 entry;
 	byte *ptr;
 	int16 i;
@@ -745,7 +779,7 @@ void loadSetAbs(const char *resourceName, uint16 idx) {
 	byte *startOfDataPtr;
 
 	foundFileIdx = findFileInBundle(resourceName);
-	dataPtr = readBundleFile(foundFileIdx);
+	origDataPtr = dataPtr = readBundleFile(foundFileIdx);
 
 	assert(!memcmp(dataPtr, "SET", 3));
 
@@ -818,6 +852,8 @@ void loadSetAbs(const char *resourceName, uint16 idx) {
 		animDataTable[entry].frameIdx = i;
 		strcpy(animDataTable[entry].name, currentPartName);
 	}
+
+	free(origDataPtr);
 }
 
 void loadSeq(const char *resourceName) {
@@ -831,6 +867,8 @@ void loadSeq(const char *resourceName) {
 	entry = allocFrame2((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0);
 
 	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16, (uint16) partBuffer[foundFileIdx].unpackedSize - 0x16);
+
+	free(dataPtr);
 }
 
 void loadSeqAbs(const char *resourceName, uint16 idx) {
@@ -844,6 +882,8 @@ void loadSeqAbs(const char *resourceName, uint16 idx) {
 	entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0, idx);
 
 	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16, (uint16) partBuffer[foundFileIdx].unpackedSize - 0x16);
+
+	free(dataPtr);
 }
 
 void loadResource(const char *resourceName) {
@@ -1037,6 +1077,7 @@ void loadResourcesFromSave() {
 				}
 			}
 
+			free(dataPtr);
 		}
 	}
 

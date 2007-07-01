@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -103,6 +104,7 @@ namespace Saga {
 #define RID_IHNM_ARROW_SPRITES 13
 #define RID_IHNM_SAVEREMINDER_SPRITES 14
 #define RID_IHNM_OPTION_PANEL 15
+#define RID_IHNM_OPTION_PANEL_SPRITES 16
 #define RID_IHNM_WARNING_PANEL 17
 #define RID_IHNM_BOSS_SCREEN 19
 #define RID_IHNM_PROFILE_BG 20

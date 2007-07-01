@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -145,7 +148,7 @@ protected:
 EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	: OptionsDialog(domain, "gameoptions") {
 
-	int labelWidth = g_gui.evaluator()->getVar("gameOptionsLabelWidth");
+	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
 	String gamePath(ConfMan.get("path", _domain));
@@ -168,15 +171,15 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	tab->addTab("Game");
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, "gameoptions_id", "ID: ");
+	new StaticTextWidget(tab, "gameoptions_id", "ID:");
 	_domainWidget = new DomainEditTextWidget(tab, "gameoptions_domain", _domain);
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, "gameoptions_name", "Name: ");
+	new StaticTextWidget(tab, "gameoptions_name", "Name:");
 	_descriptionWidget = new EditTextWidget(tab, "gameoptions_desc", description);
 
 	// Language popup
-	_langPopUp = new PopUpWidget(tab, "gameoptions_lang", "Language: ", labelWidth);
+	_langPopUp = new PopUpWidget(tab, "gameoptions_lang", "Language:", labelWidth);
 	_langPopUp->appendEntry("<default>");
 	_langPopUp->appendEntry("");
 	const Common::LanguageDescription *l = Common::g_languages;
@@ -185,7 +188,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// Platform popup
-	_platformPopUp = new PopUpWidget(tab, "gameoptions_platform", "Platform: ", labelWidth);
+	_platformPopUp = new PopUpWidget(tab, "gameoptions_platform", "Platform:", labelWidth);
 	_platformPopUp->appendEntry("<default>");
 	_platformPopUp->appendEntry("");
 	const Common::PlatformDescription *p = Common::g_platforms;
@@ -215,15 +218,9 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	// 5) The volume tab
 	//
-	int volControlPos = g_gui.evaluator()->getVar("volumeControlsInAudio", true);
+	tab->addTab("Volume");
 
-	if (!volControlPos) {
-		tab->addTab("Volume");
-
-		_globalVolumeOverride = new CheckboxWidget(tab, "gameoptions_volumeCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
-	} else {
-		_globalVolumeOverride = NULL;
-	}
+	_globalVolumeOverride = new CheckboxWidget(tab, "gameoptions_volumeCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
 
 	addVolumeControls(tab, "gameoptions_");
 
@@ -245,7 +242,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// in the small version of the GUI.
 
 	// GUI:  Button + Label for the game path
-	new ButtonWidget(tab, "gameoptions_gamepath", "Game Path: ", kCmdGameBrowser, 0);
+	new ButtonWidget(tab, "gameoptions_gamepath", "Game Path:", kCmdGameBrowser, 0);
 	_gamePathWidget = new StaticTextWidget(tab, "gameoptions_gamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
@@ -256,7 +253,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// GUI:  Button + Label for the save path
-	new ButtonWidget(tab, "gameoptions_savepath", "Save Path: ", kCmdSaveBrowser, 0);
+	new ButtonWidget(tab, "gameoptions_savepath", "Save Path:", kCmdSaveBrowser, 0);
 	_savePathWidget = new StaticTextWidget(tab, "gameoptions_savepathText", savePath);
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel("Default");
@@ -273,7 +270,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 void EditGameDialog::reflowLayout() {
 	OptionsDialog::reflowLayout();
 
-	int labelWidth = g_gui.evaluator()->getVar("gameOptionsLabelWidth");
+	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
 
 	if (_langPopUp)
 		_langPopUp->changeLabelWidth(labelWidth);
@@ -285,7 +282,7 @@ void EditGameDialog::open() {
 	OptionsDialog::open();
 
 	int sel, i;
-	bool e, f;
+	bool e;
 
 	// En-/disable dialog items depending on whether overrides are active or not.
 
@@ -299,17 +296,12 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("output_rate", _domain) ||
 		ConfMan.hasKey("subtitles", _domain) ||
 		ConfMan.hasKey("talkspeed", _domain);
+	_globalAudioOverride->setState(e);
 
-	f = ConfMan.hasKey("music_volume", _domain) ||
+	e = ConfMan.hasKey("music_volume", _domain) ||
 		ConfMan.hasKey("sfx_volume", _domain) ||
 		ConfMan.hasKey("speech_volume", _domain);
-
-	if (_globalVolumeOverride) {
-		_globalAudioOverride->setState(e);
-		_globalVolumeOverride->setState(f);
-	} else {
-		_globalAudioOverride->setState(e || f);
-	}
+	_globalVolumeOverride->setState(e);
 
 	e = ConfMan.hasKey("soundfont", _domain) ||
 		ConfMan.hasKey("multi_midi", _domain) ||
@@ -596,6 +588,8 @@ void LauncherDialog::updateListing() {
 			if (g.contains("description"))
 				description = g.description();
 		}
+		if (description.empty())
+			description = "Unknown (target " + iter->_key + ", gameid " + gameid + ")";
 
 		if (!gameid.empty() && !description.empty()) {
 			// Insert the game into the launcher list
@@ -795,13 +789,13 @@ void LauncherDialog::editGame(int item) {
 	}
 }
 
-void LauncherDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	Dialog::handleKeyDown(ascii, keycode, modifiers);
+void LauncherDialog::handleKeyDown(Common::KeyState state) {
+	Dialog::handleKeyDown(state);
 	updateButtons();
 }
 
-void LauncherDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
-	Dialog::handleKeyUp(ascii, keycode, modifiers);
+void LauncherDialog::handleKeyUp(Common::KeyState state) {
+	Dialog::handleKeyUp(state);
 	updateButtons();
 }
 

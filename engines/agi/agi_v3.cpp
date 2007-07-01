@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * Copyright (C) 1999-2003 Sarien Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -63,7 +64,7 @@ int AgiLoader_v3::detectGame() {
 
 		if (f.hasSuffix("vol.0")) {
 			memset(_vm->_game.name, 0, 8);
-			strncpy(_vm->_game.name, f.c_str(), f.size() > 5 ? f.size() - 5 : f.size());
+			strncpy(_vm->_game.name, f.c_str(), MIN((uint)8, f.size() > 5 ? f.size() - 5 : f.size()));
 			debugC(3, kDebugLevelMain, "game.name = %s", _vm->_game.name);
 			_intVersion = 0x3149;	// setup for 3.002.149
 			ec = _vm->v3IdGame();

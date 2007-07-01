@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +27,7 @@
 #define SKY_CONTROL_H
 
 #include "common/stdafx.h"
+#include "common/events.h"
 #include "common/scummsys.h"
 
 class OSystem;
@@ -217,7 +221,7 @@ private:
 	void setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame);
 	void showSprites(dataFileHeader **nameSprites, bool allowSave);
 	bool checkKeyList(uint8 key);
-	void handleKeyPress(uint8 key, uint8 *textBuf);
+	void handleKeyPress(Common::KeyState kbd, uint8 *textBuf);
 
 	uint16 _selectedGame;
 	uint16 saveGameToFile(void);
@@ -240,7 +244,7 @@ private:
 	Sound *_skySound;
 	OSystem *_system;
 	bool _mouseClicked;
-	byte _keyPressed;
+	Common::KeyState _keyPressed;
 	int _mouseWheel;
 
 	struct {

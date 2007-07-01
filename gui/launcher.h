@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,8 +47,8 @@ public:
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
-	virtual void handleKeyUp(uint16 ascii, int keycode, int modifiers);
+	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyUp(Common::KeyState state);
 
 protected:
 	ListWidget		*_list;

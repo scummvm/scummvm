@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * Copyright (C) 1999-2003 Sarien Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -366,7 +367,26 @@ int AgiEngine::runGame() {
 
 		setvar(vComputer, 0);	/* IBM PC (4 = Atari ST) */
 		setvar(vSoundgen, 1);	/* IBM PC SOUND */
-		setvar(vMonitor, 0x3);	/* EGA monitor */
+
+		// Set monitor type (v26 i.e. vMonitor)
+		switch (_renderMode) {
+		case Common::kRenderCGA:
+			setvar(vMonitor, kAgiMonitorCga);
+			break;
+		case Common::kRenderHercG:
+		case Common::kRenderHercA:
+			setvar(vMonitor, kAgiMonitorHercules);
+			break;
+		// Don't know if Amiga AGI games use a different value than kAgiMonitorEga
+		// for vMonitor so I just use kAgiMonitorEga for them (As was done before too).
+		case Common::kRenderAmiga:
+		case Common::kRenderDefault:
+		case Common::kRenderEGA:
+		default:
+			setvar(vMonitor, kAgiMonitorEga);
+			break;
+		}
+
 		setvar(vMaxInputChars, 38);
 		_game.inputMode = INPUT_NONE;
 		_game.inputEnabled = 0;

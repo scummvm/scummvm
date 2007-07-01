@@ -2,9 +2,9 @@
  ScummVM - ScummVM ported to EPOC/SymbianOS
  
  Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson
- Copyright (C) 2003-2005 Lars 'AnotherGuest' Persson
- Copyright (C) 2005 Jurgen 'SumthinWicked' Braam
- Copyright (C) 2005 ScummVM Team
+ Copyright (C) 2007 Lars 'AnotherGuest' Persson
+ Copyright (C) 2007 Jurgen 'SumthinWicked' Braam
+ Copyright (C) 2007 ScummVM Team
  
  $Id$ 
  
@@ -13,19 +13,35 @@ About ScummVM
 --------------
 	The original ports (uptil 0.7.1) were made by Andreas Karlsson and Lars Persson.
 	The main transition to 0.8.0CVS and all relevant changes were done by Jurgen Braam.
-	Jurgen and Lars are currently working together to finalize the transfer to CVS.
-   
+	Jurgen and Lars have successfully transfered all needed changes into CVS, with additional helpful tools for Symbian OS
+	
+	Release version: 0.10.0
+	* This version is only supported on Symbian OS 9 devices due to compiler constraints for older devices. (That means UIQ3 and S60V3 devices)
+	* Updated to SDL version 1.2.11 (previous version used was 1.2.8)
+	* Information about S60 devices can be found here http://wiki.scummvm.org/index.php/SymbianOS_S60
+	* Information about UIQ devices can be found here http://wiki.scummvm.org/index.php/SymbianOS_UIQ
+	* Best source of general information is the ScummVM forum, http://forums.scummvm.org
+	* SVN builds (not frequently updated) can be found at http://anotherguest.k0.se
 
-Nescessary components
----------------------
+
+Games supported
+---------------
+	The Symbian port of ScumVM supports all but Sword1 & 2 games. Some games might not run properly due to screenresolution or memory constraints.
+
+
+Building ScummVM
+---------------------   
+
+	Nescessary components
+	---------------------
 	Building ScummVM yourself using the UIQ 2.1/Nokia S60 SDK/Nokia S80 SDK/Nokia S90 SDK framework is not an easy task!
 	Lets just say the framework needs quite some time to set up and takes a while 
 	to get used to. If you choose to continue you will need the following items: 
 
-	- UIQ 2.1 SDK (To build for UIQ devices);
+	- UIQ 2.1 SDK (To build for UIQ2 devices);
 	  http://www.symbian.com/developer/sdks_uiq.asp
 
-	- Nokia S60 1st, 2nd edition (3rd edition has not been tested) SDK (To build for S60 devices)
+	- Nokia S60 1st, 2nd edition,3rd edition SDK (To build for S60 devices)
 
 	- Nokia S80 SDK (To build for S80 devices)
 
@@ -58,8 +74,8 @@ Nescessary components
 	  http://libmpeg2.sourceforge.net/
 
 
-Building ScummVM
------------------
+	Compiling ScummVM
+	-----------------
 	ECompXL: this is a tool that will compress your executable with GZIP and glue
 	it to a predefined loader app. The app will uncompress your application at
 	runtime and run it without you even knowing it. A really interesting byproduct

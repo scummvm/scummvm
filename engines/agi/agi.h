@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * Copyright (C) 1999-2001 Sarien Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -246,6 +247,18 @@ enum {
 };
 
 /**
+ * Different monitor types.
+ * Used with AGI variable 26 i.e. vMonitor.
+ */
+enum AgiMonitorType {
+	kAgiMonitorCga = 0,
+	// kAgiMonitorTandy = 1, // Not sure about this
+	kAgiMonitorHercules = 2,
+	kAgiMonitorEga = 3
+	// kAgiMonitorVga = 4 // Not sure about this
+};
+
+/**
  * AGI flags
  */
 enum {
@@ -370,7 +383,14 @@ struct AgiGame {
 	char cursorChar;
 	unsigned int colorFg;
 	unsigned int colorBg;
-	uint8 *sbuf;			/**< 160x168 AGI screen buffer */
+#define SBUF16_OFFSET 0
+#define SBUF256_OFFSET ((_WIDTH) * (_HEIGHT))
+#define FROM_SBUF16_TO_SBUF256_OFFSET ((SBUF256_OFFSET) - (SBUF16_OFFSET))
+#define FROM_SBUF256_TO_SBUF16_OFFSET ((SBUF16_OFFSET) - (SBUF256_OFFSET))
+	uint8 *sbufOrig;		/**< Pointer to the 160x336 AGI screen buffer that contains vertically two 160x168 screens (16 color and 256 color). */	
+	uint8 *sbuf16c;			/**< 160x168 16 color (+control line & priority information) AGI screen buffer. Points at sbufOrig + SBUF16_OFFSET. */
+	uint8 *sbuf256c;		/**< 160x168 256 color AGI screen buffer (For AGI256 and AGI256-2 support). Points at sbufOrig + SBUF256_OFFSET. */
+	uint8 *sbuf;			/**< Currently chosen AGI screen buffer (sbuf256c if AGI256 or AGI256-2 is used, otherwise sbuf16c). */	
 
 	/* player command line */
 	AgiWord egoWords[MAX_WORDS];
@@ -766,14 +786,16 @@ private:
 	void loadDict(void);
 	bool matchWord(void);
 
-	SearchTree *_searchTreeRoot;
-	SearchTree *_activeTreeNode;
-	
-	void insertSearchNode(const char *word);
-
+	// Predictive dialog
+	// TODO: Move this to a separate class
+	char *_predictiveDictText;
+	char **_predictiveDictLine;
+	int32 _predictiveDictLineCount;
+	char *_predictiveDictActLine;
 	String _currentCode;
 	String _currentWord;
 	int _wordNumber;
+	bool _predictiveDialogRunning;
 public:
 	char _predictiveResult[40];
 };

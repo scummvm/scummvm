@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,6 +23,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/events.h"
 #include "gui/editable.h"
 #include "gui/newgui.h"
 
@@ -81,7 +85,7 @@ void EditableWidget::handleTickle() {
 	}
 }
 
-bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	bool handled = true;
 	bool dirty = false;
 	bool forcecaret = false;
@@ -90,18 +94,18 @@ bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	if (_caretVisible)
 		drawCaret(true);
 
-	switch (keycode) {
-	case '\n':	// enter/return
-	case '\r':
+	switch (state.keycode) {
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
 		// confirm edit and exit editmode
 		endEditMode();
 		dirty = true;
 		break;
-	case 27:	// escape
+	case Common::KEYCODE_ESCAPE:
 		abortEditMode();
 		dirty = true;
 		break;
-	case 8:		// backspace
+	case Common::KEYCODE_BACKSPACE:
 		if (_caretPos > 0) {
 			_caretPos--;
 			_editString.deleteChar(_caretPos);
@@ -109,37 +113,37 @@ bool EditableWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		}
 		forcecaret = true;
 		break;
-	case 127:	// delete
+	case Common::KEYCODE_DELETE:
 		if (_caretPos < (int)_editString.size()) {
 			_editString.deleteChar(_caretPos);
 			dirty = true;
 		}
 		forcecaret = true;
 		break;
-	case 256 + 20:	// left arrow
+	case Common::KEYCODE_LEFT:
 		if (_caretPos > 0) {
 			dirty = setCaretPos(_caretPos - 1);
 		}
 		forcecaret = true;
 		dirty = true;
 		break;
-	case 256 + 19:	// right arrow
+	case Common::KEYCODE_RIGHT:
 		if (_caretPos < (int)_editString.size()) {
 			dirty = setCaretPos(_caretPos + 1);
 		}
 		forcecaret = true;
 		dirty = true;
 		break;
-	case 256 + 22:	// home
+	case Common::KEYCODE_HOME:
 		dirty = setCaretPos(0);
 		forcecaret = true;
 		break;
-	case 256 + 23:	// end
+	case Common::KEYCODE_END:
 		dirty = setCaretPos(_editString.size());
 		forcecaret = true;
 		break;
 	default:
-		if (tryInsertChar((byte)ascii, _caretPos)) {
+		if (tryInsertChar((byte)state.ascii, _caretPos)) {
 			_caretPos++;
 			dirty = true;
 			forcecaret = true;

@@ -1,7 +1,29 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.10.0 (????-??-??)
+0.11.0 (????-??-??)
+ General:
+   - Added ARM assembly routines for code in the sound mixer and SCUMM
+     video playback, resulting in some nice speedups on several ports.
+   - Improved the way keyboard input is handled internally, resolving
+     some odd quirks in some game / port combinations.
+   - Added optional 'confirm exit' dialog to the SDL backend.
+
+ AGOS:
+   - Fixed crashes related to OmniTV playback in The Feeble Files.
+
+ Broken Sword 1:
+   - Added support for FLAC encoded music.
+
+ SCUMM:
+   - Added subtitle skipping (via '.' key) in older games which didn't have
+     this feature so far (e.g. Zak, MM, Indy3, Loom).
+
+ SAGA:
+   - Added support for compressed sound effects, voices and music
+
+
+0.10.0 (2007-06-20)
  New Games:
    - Added Cinematique evo 1 engine. Currently only Future Wars is supported.
    - Added Touche: The Adventures of the Fifth Musketeer engine.
@@ -16,7 +38,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  General:
    - Added dialog which allows the user to select the GUI theme on runtime.
    - Added 'Mass Add' feature to the Launcher, which allows you to scan for
-     all games in all subfolders of a given directory (to use it, press
+     all games in all subdirectories of a given directory (to use it, press
      shift then click on "Add Game").
    - Improved the way the auto detector generates target names, it now takes
      a game's variant, language and platform into account.
@@ -59,11 +81,26 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      LINC space and terminals, particularly in non-English languages.
 
  Nintendo DS Port:
-   - TOOO: Mention DLDI support
+   - New engines supported: AGI, CINE, and SAGA
+   - Option to show the mouse cursor
+   - Word completion on keyboard for AGI games
+   - Plenty of optimisations
 
+ Symbian Port:
+   - Added support for MP3 to S60v3 and UIQ3 versions.
+   - Switched to SDL 1.2.11 for bug fixes and improvements
+   - Improved performance for S60v3 and UIQ3 using ARM target.
+   - Limited support for pre Symbian OS9 devices due to compiler issues.
+   - Updated key mapping handling.
+	
  WinCE Port:
    - Switched to using a GCC toolchain for building.
    - Major update to the SDL lib. Better, faster, more compatible :-)
+     The included fixes are too numerous to mention here.
+     Most of the updates in this version have concentrated on infrastructure.
+     This leads to faster execution, greatly increased compatibility and
+     OS friendliness - especially for keyboard/mouse input and display
+     handling (f.ex. no more popups during gameplay) -.
 
  Windows Port:
    - The default location of the config file changed, to support multi-user

@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004 Ivan Dubrov
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +27,7 @@
 #define GOB_SOUND_H
 
 #include "common/mutex.h"
+#include "common/frac.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
@@ -172,10 +175,8 @@ protected:
 	int32 _freq;
 	int32 _repCount;
 
-	uint32 _offset;
-	uint32 _offsetFrac;
-	uint32 _offsetInc;
-	uint32 _offsetIncFrac;
+	frac_t _offset;
+	frac_t _offsetInc;
 
 	int16 _cur;
 	int16 _last;

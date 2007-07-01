@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -145,7 +147,7 @@ void AGOSEngine_Waxworks::setupOpcodes() {
 		OPCODE(o_comment),
 		/* 88 */
 		OPCODE(o_invalid),
-		OPCODE(oe1_loadGame),
+		OPCODE(oe2_loadGame),
 		OPCODE(o_getParent),
 		OPCODE(o_getNext),
 		/* 92 */
@@ -417,7 +419,7 @@ void AGOSEngine_Waxworks::oww_printBox() {
 
 void AGOSEngine_Waxworks::oww_boxPObj() {
 	// 188: print object name to box
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 
 	if (subObject != NULL && subObject->objectFlags & kOFText)
 		boxTextMsg((const char *)getStringPtrByID(subObject->objectFlagValue[0]));

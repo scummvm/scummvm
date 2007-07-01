@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -87,11 +90,14 @@ void Disk::errorFileNotFound(const char *s) {
 }
 
 
-void Disk::selectArchive(const char *name) {
-	_resArchive.open(name);
+Common::String Disk::selectArchive(const Common::String& name) {
+	Common::String oldName = _resArchive.name();
+	_resArchive.open(name.c_str());
+	return oldName;
 }
 
 void Disk::setLanguage(uint16 language) {
+	debugC(1, kDebugDisk, "setLanguage(%i)", language);
 
 	switch (language) {
 	case 0:
@@ -772,16 +778,22 @@ Cnv* AmigaDisk::makeCnv(Common::SeekableReadStream &stream) {
 #undef NUM_PLANES
 
 Script* AmigaDisk::loadLocation(const char *name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadLocation '%s'", name);
+	debugC(1, kDebugDisk, "AmigaDisk()::loadLocation '%s'", name);
 
 	char path[PATH_LEN];
-	sprintf(path, "%s%s%s.loc.pp", _vm->_characterName, _languageDir, name);
+	if (IS_MINI_CHARACTER(_vm->_characterName)) {
+		sprintf(path, "%s%s%s.loc.pp", _vm->_characterName+4, _languageDir, name);
+	} else
+		sprintf(path, "%s%s%s.loc.pp", _vm->_characterName, _languageDir, name);
+
 	if (!_locArchive.openArchivedFile(path)) {
 		sprintf(path, "%s%s.loc.pp", _languageDir, name);
 		if (!_locArchive.openArchivedFile(path)) {
 			errorFileNotFound(name);
 		}
 	}
+
+	debugC(3, kDebugDisk, "location file found: %s", path);
 
 	return new Script(new PowerPackerStream(_locArchive), true);
 }
@@ -799,38 +811,6 @@ Script* AmigaDisk::loadScript(const char* name) {
 	return new Script(new DummyArchiveStream(_resArchive), true);
 }
 
-Cnv* AmigaDisk::loadTalk(const char *name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadTalk '%s'", name);
-
-	Common::SeekableReadStream *s;
-
-	char path[PATH_LEN];
-	sprintf(path, "%s.talk", name);
-	s = openArchivedFile(path, false);
-	if (s == NULL) {
-		s = openArchivedFile(name, true);
-	}
-
-	Cnv *cnv = makeCnv(*s);
-	delete s;
-
-	return cnv;
-}
-
-Cnv* AmigaDisk::loadObjects(const char *name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadObjects");
-
-	char path[PATH_LEN];
-	sprintf(path, "%s.objs", name);
-	Common::SeekableReadStream *s = openArchivedFile(path, true);
-
-	Cnv *cnv = makeCnv(*s);
-	delete s;
-
-	return cnv;
-}
-
-
 StaticCnv* AmigaDisk::loadPointer() {
 	debugC(1, kDebugDisk, "AmigaDisk::loadPointer");
 
@@ -839,32 +819,6 @@ StaticCnv* AmigaDisk::loadPointer() {
 		errorFileNotFound("pointer");
 
 	return makeStaticCnv(stream);
-}
-
-StaticCnv* AmigaDisk::loadHead(const char* name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadHead '%s'", name);
-
-	char path[PATH_LEN];
-	sprintf(path, "%s.head", name);
-
-	Common::SeekableReadStream *s = openArchivedFile(path, true);
-	StaticCnv *cnv = makeStaticCnv(*s);
-
-	delete s;
-
-	return cnv;
-}
-
-Font* AmigaDisk::loadFont(const char* name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadFont '%s'", name);
-
-	char path[PATH_LEN];
-	sprintf(path, "%sfont", name);
-
-	if (!_resArchive.openArchivedFile(path))
-		errorFileNotFound(path);
-
-	return createFont(name, _resArchive);
 }
 
 StaticCnv* AmigaDisk::loadStatic(const char* name) {
@@ -879,6 +833,7 @@ StaticCnv* AmigaDisk::loadStatic(const char* name) {
 }
 
 Common::SeekableReadStream *AmigaDisk::openArchivedFile(const char* name, bool errorOnFileNotFound) {
+	debugC(3, kDebugDisk, "AmigaDisk::openArchivedFile(%s)", name);
 
 	if (_resArchive.openArchivedFile(name)) {
 		return new DummyArchiveStream(_resArchive);
@@ -900,25 +855,6 @@ Common::SeekableReadStream *AmigaDisk::openArchivedFile(const char* name, bool e
 		errorFileNotFound(name);
 
 	return NULL;
-}
-
-Cnv* AmigaDisk::loadFrames(const char* name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadFrames '%s'", name);
-
-	if (IS_MINI_CHARACTER(name))
-		return NULL;
-
-	Common::SeekableReadStream *s = openArchivedFile(name, true);
-	Cnv *cnv = makeCnv(*s);
-	delete s;
-
-	return cnv;
-}
-
-void AmigaDisk::loadSlide(const char *name) {
-	debugC(1, kDebugDisk, "AmigaDisk::loadSlide '%s'", name);
-	loadBackground(name);
-	return;
 }
 
 // FIXME: mask values are not computed correctly for level 1 and 2
@@ -1019,7 +955,10 @@ void AmigaDisk::loadMask(const char *name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.mask", name);
 
-	Common::SeekableReadStream *s = openArchivedFile(path, true);
+	Common::SeekableReadStream *s = openArchivedFile(path, false);
+	if (s == NULL)
+		return;	// no errors if missing mask files: not every location has one
+
 	s->seek(0x30, SEEK_SET);
 
 	byte r, g, b;
@@ -1082,6 +1021,93 @@ void AmigaDisk::loadScenery(const char* background, const char* mask) {
 	return;
 }
 
+void AmigaDisk::loadSlide(const char *name) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadSlide '%s'", name);
+
+	char path[PATH_LEN];
+	sprintf(path, "slides/%s", name);
+	Common::SeekableReadStream *s = openArchivedFile(path, false);
+	if (s)
+		loadBackground(path);
+	else
+		loadBackground(name);
+
+	return;
+}
+
+Cnv* AmigaDisk::loadFrames(const char* name) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadFrames '%s'", name);
+
+	Common::SeekableReadStream *s;
+
+	char path[PATH_LEN];
+	sprintf(path, "anims/%s", name);
+
+	s = openArchivedFile(path, false);
+	if (!s)
+		s = openArchivedFile(name, true);
+
+	Cnv *cnv = makeCnv(*s);
+	delete s;
+
+	return cnv;
+}
+
+StaticCnv* AmigaDisk::loadHead(const char* name) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadHead '%s'", name);
+
+	char path[PATH_LEN];
+	sprintf(path, "%s.head", name);
+
+	Common::SeekableReadStream *s = openArchivedFile(path, true);
+	StaticCnv *cnv = makeStaticCnv(*s);
+
+	delete s;
+
+	return cnv;
+}
+
+
+Cnv* AmigaDisk::loadObjects(const char *name) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadObjects");
+
+	char path[PATH_LEN];
+	if (_vm->getFeatures() & GF_DEMO)
+		sprintf(path, "%s.objs", name);
+	else
+		sprintf(path, "objs/%s.objs", name);
+
+	Common::SeekableReadStream *s = openArchivedFile(path, true);
+
+	Cnv *cnv = makeCnv(*s);
+	delete s;
+
+	return cnv;
+}
+
+
+Cnv* AmigaDisk::loadTalk(const char *name) {
+	debugC(1, kDebugDisk, "AmigaDisk::loadTalk '%s'", name);
+
+	Common::SeekableReadStream *s;
+
+	char path[PATH_LEN];
+	if (_vm->getFeatures() & GF_DEMO)
+		sprintf(path, "%s.talk", name);
+	else
+		sprintf(path, "talk/%s.talk", name);
+
+	s = openArchivedFile(path, false);
+	if (s == NULL) {
+		s = openArchivedFile(name, true);
+	}
+
+	Cnv *cnv = makeCnv(*s);
+	delete s;
+
+	return cnv;
+}
+
 Table* AmigaDisk::loadTable(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk::loadTable '%s'", name);
 
@@ -1100,6 +1126,8 @@ Table* AmigaDisk::loadTable(const char* name) {
 		dispose = true;
 		stream = s;
 	} else {
+		if (!(_vm->getFeatures() & GF_DEMO))
+			sprintf(path, "objs/%s.table", name);
 		if (!_resArchive.openArchivedFile(path))
 			errorFileNotFound(path);
 
@@ -1120,6 +1148,28 @@ Table* AmigaDisk::loadTable(const char* name) {
 	return t;
 }
 
+Font* AmigaDisk::loadFont(const char* name) {
+	debugC(1, kDebugDisk, "AmigaFullDisk::loadFont '%s'", name);
+
+	char path[PATH_LEN];
+	sprintf(path, "%sfont", name);
+
+	if (_vm->getFeatures() & GF_LANG_IT) {
+		// Italian version has separate font files
+		Common::File stream;
+		if (!stream.open(path))
+			errorFileNotFound(path);
+
+		return createFont(name, stream);
+	} else {
+		if (!_resArchive.openArchivedFile(path))
+			errorFileNotFound(path);
+
+		return createFont(name, _resArchive);
+	}
+}
+
+
 Common::ReadStream* AmigaDisk::loadMusic(const char* name) {
 	return openArchivedFile(name);
 }
@@ -1132,6 +1182,5 @@ Common::ReadStream* AmigaDisk::loadSound(const char* name) {
 
 	return new DummyArchiveStream(_resArchive);
 }
-
 
 } // namespace Parallaction

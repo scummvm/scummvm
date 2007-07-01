@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Dreamcast port
- * Copyright (C) 2002-2004  Marcus Comstedt
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -79,8 +81,8 @@ class OSystem_Dreamcast : public OSystem {
   // The screen will not be updated to reflect the new bitmap
   void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 
-  // Copies the current screen contents to a new surface.
-  bool grabRawScreen(Graphics::Surface *surf);
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 
   // Clear the screen to black.
   void clearScreen();
@@ -210,6 +212,8 @@ class OSystem_Dreamcast : public OSystem {
   void *mouse_tx[NUM_BUFFERS];
   void *ovl_tx[NUM_BUFFERS];
   unsigned short palette[256], cursor_palette[256];
+
+  Graphics::Surface _framebuffer;
 
   int temp_sound_buffer[RING_BUFFER_SAMPLES>>SOUND_BUFFER_SHIFT];
 

@@ -1,10 +1,8 @@
-/* ScummVM - Scumm Interpreter
+/* ScummVM - Graphic Adventure Engine
  *
- * This file is licensed under both GPL and LGPL
- * Copyright (C) 2004-2006 The ScummVM project
- * Copyright (C) 2006 Torbjorn Andersson and Johannes Schickel
- *
- * GPL License
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

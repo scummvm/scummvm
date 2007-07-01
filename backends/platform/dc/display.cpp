@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Dreamcast port
- * Copyright (C) 2002-2005  Marcus Comstedt
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -583,7 +585,7 @@ void OSystem_Dreamcast::copyRectToOverlay(const int16 *buf, int pitch,
 
 
 static const OSystem::GraphicsMode gfxmodes[] = {
-  { "default", "640×480 16bpp", 0 },
+  { "default", "640x480 16bpp", 0 },
   { NULL, NULL, 0 }
 };
 
@@ -607,19 +609,24 @@ int OSystem_Dreamcast::getGraphicsMode() const
   return 0;
 }
 
-bool OSystem_Dreamcast::grabRawScreen(Graphics::Surface *surf)
+Graphics::Surface *OSystem_Dreamcast::lockScreen()
 {
-  if(!screen || !surf)
-    return false;
+  if (!screen)
+    return 0;
 
-  surf->create(_screen_w, _screen_h, 1);
-  unsigned char *src = screen, *dst = (unsigned char *)surf->pixels;
-  for(int h = _screen_h; h>0; --h) {
-    memcpy(dst, src, _screen_w);
-    src += SCREEN_W;
-    dst += _screen_w;
-  }
-  return true;
+  _framebuffer.pixels = screen;
+  _framebuffer.w = _screen_w;
+  _framebuffer.h = _screen_h;
+  _framebuffer.pitch = SCREEN_W;
+  _framebuffer.bytesPerPixel = 1;
+
+  return &_framebuffer;
+}
+
+void OSystem_Dreamcast::unlockScreen()
+{
+  // Force screen update
+  _screen_dirty = true;
 }
 
 void OSystem_Dreamcast::clearScreen()

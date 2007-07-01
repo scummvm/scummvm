@@ -20,23 +20,22 @@
  *
  */
 
-#ifdef LURE_DEBUG
-#ifndef LURE_DEBUG_INPUT_H
-#define LURE_DEBUG_INPUT_H
+#ifndef LURE_SOUND_H
+#define LURE_SOUND_H
 
-#include "common/stdafx.h"
-#include "common/str.h"
-#include "lure/surface.h"
+#include "lure/luredefs.h"
+#include "common/singleton.h"
 
 namespace Lure {
 
-bool get_string(char *buffer, uint32 maxSize, bool isNumeric, uint16 x, uint16 y);
-
-bool input_integer(Common::String desc, uint32 &value);
-
-bool input_string(Common::String desc, char *buffer, uint32 maxSize);
+class SoundManager: public Common::Singleton<SoundManager> {
+public:
+	static void killSounds();
+	static void playSound(uint16 soundId);
+};
 
 } // End of namespace Lure
 
-#endif
+#define Sound (::Lure::SoundManager::instance())
+
 #endif

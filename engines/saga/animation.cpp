@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -79,21 +80,54 @@ void Anim::freeCutawayList(void) {
 void Anim::playCutaway(int cut, bool fade) {
 	debug(0, "playCutaway(%d, %d)", cut, fade);
 
-	if (fade) {
-		// TODO: Fade down. Is this blocking or non-blocking?
+	bool startImmediately = false;
+
+	_cutAwayFade = fade;
+
+	// Chained cutaway, clean up the previous cutaway
+	if (_cutawayActive) {
+		clearCutaway();
+
+		// This is used because when AM is zapping the child's mother in Benny's chapter, 
+		// there is a cutaway followed by a video. The video needs to start immediately after
+		// the cutaway so that it looks like the original
+		startImmediately = true;
 	}
 
-	if (!_cutawayActive) {
-		_vm->_gfx->showCursor(false);
-		_vm->_interface->setStatusText("");
-		_vm->_interface->setSaveReminderState(0);
-		_vm->_interface->rememberMode();
-		_vm->_interface->setMode(kPanelCutaway);
-		_cutawayActive = true;
+	_vm->_gfx->savePalette();
+
+	if (fade) {
+		_vm->_gfx->getCurrentPal(saved_pal);
+		// TODO
+		/*
+		Event event;
+		static PalEntry cur_pal[PAL_ENTRIES];
+
+		_vm->_gfx->getCurrentPal(cur_pal);
+
+		event.type = kEvTImmediate;
+		event.code = kPalEvent;
+		event.op = kEventPalToBlack;
+		event.time = 0;
+		event.duration = kNormalFadeDuration;
+		event.data = cur_pal;
+
+		_vm->_events->queue(&event);
+		*/
 	}
+
+	// Prepare cutaway
+	_vm->_gfx->showCursor(false);
+	_vm->_interface->setStatusText("");
+	_vm->_interface->setSaveReminderState(0);
+	_vm->_interface->rememberMode();
+	if (_cutAwayMode == kPanelVideo)
+		_vm->_interface->setMode(kPanelVideo);
+	else
+		_vm->_interface->setMode(kPanelCutaway);
+	_cutawayActive = true;
 
 	// Set the initial background and palette for the cutaway
-
 	ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
 
 	byte *resourceData;
@@ -114,6 +148,8 @@ void Anim::playCutaway(int cut, bool fade) {
 	const Rect rect(width, height);
 
 	bgSurface->blit(rect, buf);
+	_vm->_frameCount++;
+
 	_vm->_gfx->setPalette(palette);
 
 	free(buf);
@@ -139,6 +175,14 @@ void Anim::playCutaway(int cut, bool fade) {
 		warning("Could not allocate cutaway animation slot");
 		return;
 	}
+	
+	// Some cutaways in IHNM have animResourceId equal to 0, which means that they only have
+	// a background frame and no animation. Those animations are actually game scripts.
+	// An example is the "nightfall" animation in Ben's chapter (fadein-fadeout), the animation
+	// for the second from the left monitor in Ellen's chapter etc
+	// Therefore, skip the animation bit if animResourceId is 0 and only show the background
+	if (_cutawayList[cut].animResourceId == 0)
+		return;
 
 	_vm->_resource->loadResource(context, _cutawayList[cut].animResourceId, resourceData, resourceDataLength);
 
@@ -148,7 +192,19 @@ void Anim::playCutaway(int cut, bool fade) {
 
 	setCycles(MAX_ANIMATIONS + cutawaySlot, _cutawayList[cut].cycles);
 	setFrameTime(MAX_ANIMATIONS + cutawaySlot, 1000 / _cutawayList[cut].frameRate);
-	play(MAX_ANIMATIONS + cutawaySlot, 0);
+
+	if (_cutAwayMode != kPanelVideo || startImmediately)
+		play(MAX_ANIMATIONS + cutawaySlot, 0);
+	else {
+		Event event;
+		event.type = kEvTOneshot;
+		event.code = kAnimEvent;
+		event.op = kEventPlay;
+		event.param = MAX_ANIMATIONS + cutawaySlot;
+		event.time = (40 / 3) * 1000 / _cutawayList[cut].frameRate;
+
+		_vm->_events->queue(&event);
+	}
 }
 
 void Anim::endCutaway(void) {
@@ -166,27 +222,82 @@ void Anim::returnFromCutaway(void) {
 
 	debug(0, "returnFromCutaway()");
 
+
 	if (_cutawayActive) {
-		// Note that clearCutaway() sets _cutawayActive to false.
-		clearCutaway();
+		Event event;
+		Event *q_event = NULL;
 
-		// TODO: Handle fade up, if we previously faded down
+		if (_cutAwayFade) {
+			static PalEntry cur_pal[PAL_ENTRIES];
 
-		// TODO: Restore the scene
+			_vm->_gfx->getCurrentPal(cur_pal);
 
-		// TODO: Restore the animations
+			event.type = kEvTImmediate;
+			event.code = kPalEvent;
+			event.op = kEventPalToBlack;
+			event.time = 0;
+			event.duration = kNormalFadeDuration;
+			event.data = cur_pal;
 
-		for (int i = 0; i < MAX_ANIMATIONS; i++) {
-			if (_animations[i] && _animations[i]->state == ANIM_PLAYING) {
-				resume(i, 0);
-			}
+			q_event = _vm->_events->queue(&event);
 		}
+
+		// Clear the cutaway. Note that this sets _cutawayActive to false
+		event.type = kEvTImmediate;
+		event.code = kCutawayEvent;
+		event.op = kEventClear;
+		event.time = 0;
+		event.duration = 0;
+
+		if (_cutAwayFade)
+			q_event = _vm->_events->chain(q_event, &event);		// chain with the other events
+		else
+			q_event = _vm->_events->queue(&event);
+
+		_vm->_scene->restoreScene();
+
+		// Restore the animations
+		event.type = kEvTImmediate;
+		event.code = kAnimEvent;
+		event.op = kEventResumeAll;
+		event.time = 0;
+		event.duration = 0;
+
+		q_event = _vm->_events->chain(q_event, &event);		// chain with the other events
+
+		// Draw the scene
+		event.type = kEvTImmediate;
+		event.code = kSceneEvent;
+		event.op = kEventDraw;
+		event.time = 0;
+		event.duration = 0;
+
+		q_event = _vm->_events->chain(q_event, &event);		// chain with the other events
+
+		// Handle fade up, if we previously faded down
+		if (_cutAwayFade) {
+			event.type = kEvTImmediate;
+			event.code = kPalEvent;
+			event.op = kEventBlackToPal;
+			event.time = 0;
+			event.duration = kNormalFadeDuration;
+			event.data = saved_pal;
+
+			q_event = _vm->_events->chain(q_event, &event);
+
+		}
+
+		event.type = kEvTOneshot;
+		event.code = kScriptEvent;
+		event.op = kEventThreadWake;
+		event.param = kWaitTypeWakeUp;
+
+		q_event = _vm->_events->chain(q_event, &event);
 	}
 }
 
 void Anim::clearCutaway(void) {
-	debug(0, "clearCutaway()");
-
+	debug(1, "clearCutaway()");
 	if (_cutawayActive) {
 		_cutawayActive = false;
 
@@ -198,6 +309,27 @@ void Anim::clearCutaway(void) {
 		_vm->_interface->restoreMode();
 		_vm->_gfx->showCursor(true);
 	}
+}
+
+void Anim::startVideo(int vid, bool fade) {
+	debug(0, "startVideo(%d, %d)", vid, fade);
+
+	_vm->_interface->setStatusText("");
+	_vm->_frameCount = 0;
+
+	playCutaway(vid, fade);
+}
+
+void Anim::endVideo(void) {
+	debug(0, "endVideo()");
+
+	clearCutaway();
+}
+
+void Anim::returnFromVideo(void) {
+	debug(0, "returnFromVideo()");
+
+	returnFromCutaway();
 }
 
 void Anim::load(uint16 animId, const byte *animResourceData, size_t animResourceLength) {
@@ -315,20 +447,23 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		frame = anim->currentFrame;
 		// FIXME: if start > 0, then this works incorrectly
 		decodeFrame(anim, anim->frameOffsets[frame], displayBuffer, _vm->getDisplayWidth() * _vm->getDisplayHeight());
-
+		_vm->_frameCount++;	
 		anim->currentFrame++;
 		if (anim->completed != 65535) {
 			anim->completed++;
 		}
 
 		if (anim->currentFrame > anim->maxFrame) {
+
 			anim->currentFrame = anim->loopFrame;
+			_vm->_frameCount++;	
 
 			if (anim->state == ANIM_STOPPING || anim->currentFrame == -1) {
 				anim->state = ANIM_PAUSE;
 			}
 		}
 	} else {
+		_vm->_frameCount += 100;	// make sure the waiting thread stops waiting
 		// Animation done playing
 		anim->state = ANIM_PAUSE;
 		if (anim->linkId == -1) {
@@ -486,7 +621,7 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 
 
 	// Begin RLE decompression to output buffer
-	do {
+	do {		
 		markByte = readS.readByte();
 		switch (markByte) {
 		case SAGA_FRAME_START:
@@ -714,6 +849,27 @@ void Anim::animInfo() {
 		}
 
 		_vm->_console->DebugPrintf("%02d: Frames: %u Flags: %u\n", i, _animations[i]->maxFrame, _animations[i]->flags);
+	}
+}
+
+void Anim::cutawayInfo() {
+	uint16 i;
+
+	_vm->_console->DebugPrintf("There are %d cutaways loaded:\n", _cutawayListLength);
+
+	for (i = 0; i < _cutawayListLength; i++) {
+		_vm->_console->DebugPrintf("%02d: Bg res: %u Anim res: %u Cycles: %u Framerate: %u\n", i,
+			_cutawayList[i].backgroundResourceId, _cutawayList[i].animResourceId,
+			_cutawayList[i].cycles, _cutawayList[i].frameRate);
+	}
+}
+
+void Anim::resumeAll() {
+	// Restore the animations
+	for (int i = 0; i < MAX_ANIMATIONS; i++) {
+		if (_animations[i] && _animations[i]->state == ANIM_PLAYING) {
+			resume(i, 0);
+		}
 	}
 }
 

@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -423,7 +424,7 @@ Boolean StartScummVM(Int16 engine) {
 	toLauncher= (gPrefs->exitLauncher);
 
 	// gVars values 
-	// (gVars->HRrefNum defined in checkHRmode on Clié)
+	// (gVars->HRrefNum defined in checkHRmode on Clie)
 #ifndef _DEBUG_ENGINE
 	gVars->VFS.volRefNum	= (gPrefs->card.autoDetect ? vfsInvalidVolRef : gPrefs->card.volRefNum);
 #else

@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -378,6 +381,11 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 					}
 				}
 			}
+			if (doRedraw) {
+				redrawMenu(&menuData);
+				updateScreenArea(90, 102, 460, 196);
+				doRedraw = false;
+			}
 			Common::Event event;
 			while (_eventMan->pollEvent(event)) {
 				const Button *button = 0;
@@ -396,7 +404,7 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 					break;
 				case Common::EVENT_KEYDOWN:
 					if (menuData.mode == kMenuSaveStateMode) {
-						if (event.kbd.keycode == 8) {
+						if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
 							menuData.removeLastCharFromDescription(_saveLoadCurrentSlot);
 						} else {
 							menuData.addCharToDescription(_saveLoadCurrentSlot, (char)event.kbd.ascii);
@@ -415,11 +423,6 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 				default:
 					break;
 				}
-			}
-			if (doRedraw) {
-				redrawMenu(&menuData);
-				updateScreenArea(90, 102, 460, 196);
-				doRedraw = false;
 			}
 			_system->updateScreen();
 			_system->delayMillis(10);

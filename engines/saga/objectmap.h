@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -109,7 +110,7 @@ public:
 	int hitTest(const Point& testPoint);
 	HitZone *getHitZone(int16 index) {
 		if ((index < 0) || (index >= _hitZoneListCount)) {
-			error("ObjectMap::getHitZone wrong index 0x%X", index);
+			return NULL;
 		}
 		return _hitZoneList[index];
 	}

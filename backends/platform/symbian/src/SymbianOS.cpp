@@ -1,8 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson - Original EPOC port, ESDL
- * Copyright (C) 2003-2005 Lars 'AnotherGuest' Persson - Original EPOC port, Audio System
- * Copyright (C) 2005 Jurgen 'SumthinWicked' Braam - EPOC/CVS maintainer
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -88,8 +88,10 @@ void OSystem_SDL_Symbian::setFeatureState(Feature f, bool enable) {
 			else {
 			
 			}
-
-			return;
+			break;
+		case kFeatureDisableKeyFiltering:
+			GUI::Actions::Instance()->beginMapping(enable);
+			break;;
 		default:
 			OSystem_SDL::setFeatureState(f, enable);
 	}
@@ -104,6 +106,7 @@ OSystem_SDL_Symbian::OSystem_SDL_Symbian() :_channels(0),_stereo_mix_buffer(0) {
 }
 
 void OSystem_SDL_Symbian::initBackend() {
+	ConfMan.set("extrapath", Symbian::GetExecutablePath());
 	ConfMan.setBool("FM_high_quality", false);
 #if !defined(S60) || defined(S60V3) // S60 has low quality as default
 	ConfMan.setBool("FM_medium_quality", true);
@@ -143,7 +146,7 @@ bool OSystem_SDL_Symbian::setGraphicsMode(const char * /*name*/) {
 	return OSystem_SDL::setGraphicsMode(getDefaultGraphicsMode());
 }
 
-void OSystem_SDL_Symbian::quitWithErrorMsg(const char *msg) {
+void OSystem_SDL_Symbian::quitWithErrorMsg(const char * /*aMsg*/) {
 
 	CEikonEnv::Static()->AlertWin(_L("quitWithErrorMsg()")) ;
 	
@@ -345,16 +348,21 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 				}
 
 				return true;
-
+			case GUI::ACTION_MULTI: {
+				GUI::Key &key = GUI::Actions::Instance()->getKeyAction(loop);
+				// if key code is pause, then change event to interactive or just fall through
+				if(key.keycode() == SDLK_PAUSE) {
+					event.type = Common::EVENT_PREDICTIVE_DIALOG;
+					return true;
+					}
+				}
 			case GUI::ACTION_SAVE:
 			case GUI::ACTION_SKIP:
-			case GUI::ACTION_FT_CHEAT:
 			case GUI::ACTION_SKIP_TEXT:
 			case GUI::ACTION_PAUSE:
 			case GUI::ACTION_SWAPCHAR:
 			case GUI::ACTION_FASTMODE:
-			case GUI::ACTION_DEBUGGER:
-				{
+			case GUI::ACTION_DEBUGGER: {
 					GUI::Key &key = GUI::Actions::Instance()->getKeyAction(loop);
 					ev.key.keysym.sym = (SDLKey) key.ascii();
 					ev.key.keysym.scancode= key.keycode();
@@ -426,7 +434,7 @@ struct TSymbianFileEntry {
 
 FILE* 	symbian_fopen(const char* name, const char* mode) {
 	TSymbianFileEntry* fileEntry = new TSymbianFileEntry;
-	
+
 	if (fileEntry != NULL) {
 		TInt modeLen = strlen(mode);
 
@@ -446,7 +454,9 @@ FILE* 	symbian_fopen(const char* name, const char* mode) {
 		if ((modeLen > 1 && mode[1] == '+') || (modeLen > 2 && mode[2] == '+')) {
 			fileMode = fileMode| EFileWrite;	
 		}
-		
+
+		fileMode = fileMode| EFileShareAny;
+
 		switch(mode[0]) {
 		case 'a':
 			if (fileEntry->iFileHandle.Open(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
@@ -471,7 +481,6 @@ FILE* 	symbian_fopen(const char* name, const char* mode) {
 			break;
 		}
 	}
-	
 	return (FILE*) fileEntry;
 }
 

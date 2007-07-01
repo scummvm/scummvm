@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +36,6 @@ private:
 	OSystem &_system;
 
 	bool showScreen(uint16 screenId, uint16 paletteId, uint16 delaySize);
-	bool delay(uint32 milliseconds);
 public:
 	Introduction(Screen &screen, OSystem &system): _screen(screen), _system(system) {}
 

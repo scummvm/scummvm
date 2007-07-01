@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +24,7 @@
 
 #include "common/stdafx.h"
 #include "common/system.h"
+#include "common/events.h"
 #include "gui/ListWidget.h"
 #include "gui/ScrollBarWidget.h"
 #include "gui/dialog.h"
@@ -182,12 +186,12 @@ static int matchingCharsIgnoringCase(const char *x, const char *y, bool &stop) {
 	return match;
 }
 
-bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+bool ListWidget::handleKeyDown(Common::KeyState state) {
 	bool handled = true;
 	bool dirty = false;
 	int oldSelectedItem = _selectedItem;
 
-	if (!_editMode && isprint((char)ascii)) {
+	if (!_editMode && isprint((char)state.ascii)) {
 		// Quick selection mode: Go to first list item starting with this key
 		// (or a substring accumulated from the last couple key presses).
 		// Only works in a useful fashion if the list entries are sorted.
@@ -195,9 +199,9 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		// method "enableQuickSelect()" or so ?
 		uint32 time = getMillis();
 		if (_quickSelectTime < time) {
-			_quickSelectStr = (char)ascii;
+			_quickSelectStr = (char)state.ascii;
 		} else {
-			_quickSelectStr += (char)ascii;
+			_quickSelectStr += (char)state.ascii;
 		}
 		_quickSelectTime = time + 300;	// TODO: Turn this into a proper constant (kQuickSelectDelay ?)
 
@@ -223,44 +227,44 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		scrollToCurrent();
 	} else if (_editMode) {
 		// Class EditableWidget handles all text editing related key presses for us
-		handled = EditableWidget::handleKeyDown(ascii, keycode, modifiers);
+		handled = EditableWidget::handleKeyDown(state);
 	} else {
 		// not editmode
 
-		switch (keycode) {
-		case '\n':	// enter/return
-		case '\r':
+		switch (state.keycode) {
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER:
 			if (_selectedItem >= 0) {
 				// override continuous enter keydown
-				if (_editable && (_currentKeyDown != '\n' && _currentKeyDown != '\r')) {
+				if (_editable && (_currentKeyDown != Common::KEYCODE_RETURN && _currentKeyDown != Common::KEYCODE_KP_ENTER)) {
 					dirty = true;
 					startEditMode();
 				} else
 					sendCommand(kListItemActivatedCmd, _selectedItem);
 			}
 			break;
-		case 256+17:	// up arrow
+		case Common::KEYCODE_UP:
 			if (_selectedItem > 0)
 				_selectedItem--;
 			break;
-		case 256+18:	// down arrow
+		case Common::KEYCODE_DOWN:
 			if (_selectedItem < (int)_list.size() - 1)
 				_selectedItem++;
 			break;
-		case 256+24:	// pageup
+		case Common::KEYCODE_PAGEUP:
 			_selectedItem -= _entriesPerPage - 1;
 			if (_selectedItem < 0)
 				_selectedItem = 0;
 			break;
-		case 256+25:	// pagedown
+		case Common::KEYCODE_PAGEDOWN:
 			_selectedItem += _entriesPerPage - 1;
 			if (_selectedItem >= (int)_list.size() )
 				_selectedItem = _list.size() - 1;
 			break;
-		case 256+22:	// home
+		case Common::KEYCODE_HOME:
 			_selectedItem = 0;
 			break;
-		case 256+23:	// end
+		case Common::KEYCODE_END:
 			_selectedItem = _list.size() - 1;
 			break;
 		default:
@@ -281,14 +285,14 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 
 #if !defined(PALMOS_MODE)
 	// not done on PalmOS because keyboard is emulated and keyup is not generated
-	_currentKeyDown = keycode;
+	_currentKeyDown = state.keycode;
 #endif
 
 	return handled;
 }
 
-bool ListWidget::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
-	if (keycode == _currentKeyDown)
+bool ListWidget::handleKeyUp(Common::KeyState state) {
+	if (state.keycode == _currentKeyDown)
 		_currentKeyDown = 0;
 	return true;
 }

@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
  *
- * Copyright (C) 1999-2002 Sarien Team
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -87,7 +88,7 @@ void AgiEngine::unloadWords() {
  * Uses an algorithm hopefully like the one Sierra used. Returns the ID
  * of the word and the length in flen. Returns -1 if not found.
  *
- * Thomas Åkesson, November 2001
+ * Thomas Akesson, November 2001
  */
 int AgiEngine::findWord(char *word, int *flen) {
 	int mchr = 0;		/* matched chars */

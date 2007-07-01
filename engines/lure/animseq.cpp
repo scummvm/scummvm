@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2005-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,7 +42,7 @@ AnimAbortType AnimationSequence::delay(uint32 milliseconds) {
 	while (_system.getMillis() < delayCtr) {
 		while (events.pollEvent()) {
 			if (events.type() == Common::EVENT_KEYDOWN) {
-				if (events.event().kbd.keycode == 27) return ABORT_END_INTRO;
+				if (events.event().kbd.keycode == Common::KEYCODE_ESCAPE) return ABORT_END_INTRO;
 				else return ABORT_NEXT_SCENE;
 			} else if (events.type() == Common::EVENT_LBUTTONDOWN)
 				return ABORT_NEXT_SCENE;

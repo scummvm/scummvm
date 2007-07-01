@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -80,7 +82,7 @@ static bool launcherDialog(OSystem &system) {
 	return (dlg.runModal() != -1);
 }
 
-static const Plugin *detectMain() {
+static const Plugin *detectPlugin() {
 	const Plugin *plugin = 0;
 
 	// Make sure the gameid is set in the config manager, and that it is lowercase.
@@ -107,6 +109,7 @@ static const Plugin *detectMain() {
 	return plugin;
 }
 
+// TODO: specify the possible return values here
 static int runGame(const Plugin *plugin, OSystem &system, const Common::String &edebuglevels) {
 	Common::String gameDataPath(ConfMan.get("path"));
 	if (gameDataPath.empty()) {
@@ -119,8 +122,11 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 		ConfMan.set("path", gameDataPath, Common::ConfigManager::kTransientDomain);
 	}
 
-	// We add it here, so MD5-based detection will be able to
-	// read mixed case files
+	// We add the game "path" to the file search path via File::addDefaultDirectory(),
+	// so that MD5-based detection will be able to properly find files with mixed case 
+	// filenames.
+	// FIXME/TODO: Fingolfin still doesn't like this; if those MD5-based detectors used
+	// FSNodes instead of File::open, they wouldn't have to do this.
 	Common::String path;
 	if (ConfMan.hasKey("path")) {
 		path = ConfMan.get("path");
@@ -188,18 +194,26 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain))
 		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain));
 
+#ifdef DATA_PATH
+	// Add the global DATA_PATH to the directory search list
+	Common::File::addDefaultDirectoryRecursive(DATA_PATH);
+#endif
+
 	// On creation the engine should've set up all debug levels so we can use
 	// the command line arugments here
 	Common::enableSpecialDebugLevelList(edebuglevels);
 
 	int result;
 
-	// Init the engine (this might change the screen parameters
+	// Init the engine (this might change the screen parameters)
+	// TODO: We should specify what return values
 	result = engine->init();
 
 	// Run the game engine if the initialization was successful.
 	if (result == 0) {
 		result = engine->go();
+	} else {
+		// TODO: Set an error flag, notify user about the problem
 	}
 
 	// We clear all debug levels again even though the engine should do it
@@ -211,7 +225,7 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	// Reset the file/directory mappings
 	Common::File::resetDefaultDirectories();
 
-	return result;
+	return 0;
 }
 
 
@@ -287,14 +301,18 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// work as well as it should. In theory everything should be destroyed
 	// cleanly, so this is now enabled to encourage people to fix bits :)
 	while (0 != ConfMan.getActiveDomain()) {
-		// Verify the given game name is a valid supported game
-		const Plugin *plugin = detectMain();
+		// Try to find a plugin which feels responsible for the specified game.
+		const Plugin *plugin = detectPlugin();
 		if (plugin) {
 			// Unload all plugins not needed for this game,
 			// to save memory
 			PluginManager::instance().unloadPluginsExcept(plugin);
 
+			// Try to run the game
 			int result = runGame(plugin, system, specialDebug);
+			// TODO: We should keep running if starting the selected game failed
+			// (so instead of just quitting, show a nice error dialog to the
+			// user and let him pick another game).
 			if (result == 0)
 				break;
 
@@ -307,6 +325,9 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 			// PluginManager::instance().unloadPlugins();
 			PluginManager::instance().loadPlugins();
+		} else {
+			GUI::MessageDialog alert("Could not find any engine capable of running the selected game!");
+			alert.runModal();
 		}
 
 		launcherDialog(system);

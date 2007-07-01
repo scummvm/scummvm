@@ -1,6 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -321,8 +323,8 @@ void AGOSEngine_Simon2::os2_animate() {
 
 void AGOSEngine_Simon2::os2_stopAnimate() {
 	// 99: kill sprite
-	uint a = getVarOrWord();
-	uint b = getVarOrWord();
+	uint16 a = getVarOrWord();
+	uint16 b = getVarOrWord();
 	stopAnimateSimon2(a, b);
 }
 
@@ -353,7 +355,7 @@ void AGOSEngine_Simon2::os2_screenTextPObj() {
 	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
 
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	if (getFeatures() & GF_TALKIE) {
 		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
 			uint speechId = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFVoice)];
@@ -467,7 +469,7 @@ void AGOSEngine_Simon2::os2_waitMark() {
 		waitForMark(i);
 }
 
-void AGOSEngine::stopAnimateSimon2(uint a, uint b) {
+void AGOSEngine::stopAnimateSimon2(uint16 a, uint16 b) {
 	uint16 items[2];
 
 	items[0] = to16Wrapper(a);

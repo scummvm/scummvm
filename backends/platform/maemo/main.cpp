@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2006 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +33,7 @@
 
 #include "backends/platform/maemo/maemo-sdl.h"
 #include "base/main.h"
+#include "base/internal_version.h"
 #include <hildon-widgets/hildon-app.h>
 #include <gtk/gtk.h>
 #include <libosso.h>
@@ -38,7 +42,7 @@
 #include <sys/resource.h>
 
 #define OSSO_APP_NAME    "scummvm"
-#define OSSO_APP_VERSION "0.9.0CVS"
+#define OSSO_APP_VERSION SCUMMVM_VERSION
 
 void set_doubling(unsigned char enable) {
   return;

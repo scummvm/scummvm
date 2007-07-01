@@ -168,7 +168,7 @@ void Room::checkRoomHotspots() {
 			if (!skipFlag) {
 				skipFlag = (((entry->flags & HOTSPOTFLAG_FOUND) == 0) && 
 							((entry->flags & HOTSPOTFLAG_SKIP) != 0)) ||
-						    ((entry->flags & HOTSPOTFLAG_20) != 0);
+						    ((entry->flags & HOTSPOTFLAG_MENU_EXCLUSION) != 0);
 			}
 
 			if ((!skipFlag) && (entry->hotspotId < 0x409))
@@ -222,7 +222,7 @@ void Room::checkRoomHotspots() {
 	}
 }
 
-uint8 Room::checkRoomExits() {
+CursorType Room::checkRoomExits() {
 	Mouse &m = Mouse::getReference();
 	Resources &res = Resources::getReference();
 	_destRoomNumber = 0;
@@ -246,7 +246,7 @@ uint8 Room::checkRoomExits() {
 		if (!skipFlag && (m.x() >= rec->xs) && (m.x() <= rec->xe) &&
 			(m.y() >= rec->ys) && (m.y() <= rec->ye)) {
 			// Cursor is within exit area
-			uint8 cursorNum = rec->cursorNum;
+			CursorType cursorNum = (CursorType)rec->cursorNum;
 			_destRoomNumber = rec->destRoomNumber;
 
 			// If it's a hotspotted exit, change arrow to the + arrow
@@ -255,7 +255,7 @@ uint8 Room::checkRoomExits() {
 				_hotspot = res.getHotspot(_hotspotId);
 				_hotspotNameId = _hotspot->nameId;
 				_isExit = true;
-				cursorNum += 7;
+				cursorNum = (CursorType)((int)cursorNum + 7);
 			}
 
 			return cursorNum;
@@ -312,6 +312,9 @@ void Room::addLayers(Hotspot &h) {
 	int16 yEnd = (hsY + h.heightCopy() - 1) / RECT_SIZE;
 	int16 numY = yEnd - yStart + 1;
 	
+	if ((xStart < 0) || (yEnd < 0))
+		return;
+
 	for (int16 xCtr = 0; xCtr < numX; ++xCtr, ++xStart) {
 		int16 xs = xStart - 4;
 		if (xs < 0) continue;
@@ -454,6 +457,11 @@ void Room::update() {
 		Memory::dealloc(statusLineCopy);
 	}
 
+	// Debug - if the bottle object is on layer 0FEh, then display it's surface
+	Hotspot *displayHotspot = res.getActiveHotspot(BOTTLE_HOTSPOT_ID);
+	if ((displayHotspot != NULL) && (displayHotspot->layer() == 0xfe)) 
+		displayHotspot->frames().copyTo(&s);
+
 	// If show information is turned on, show extra debugging information
 	if (_showInfo) {
 		char buffer[64];
@@ -487,6 +495,7 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	_roomData = r.getRoom(newRoomNumber);
 	if (!_roomData)
 		error("Tried to change to non-existant room: %d", newRoomNumber);
+	bool leaveFlag = (_layers[0] && (newRoomNumber != _roomNumber));
 
 	_roomNumber = _roomData->roomNumber;
 	_descId = _roomData->descId;
@@ -494,7 +503,7 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	_screen.empty();
 	_screen.resetPalette();
 
-	if (_layers[0]) leaveRoom();
+	if (leaveFlag) leaveRoom();
 	_numLayers = _roomData->numLayers;
 	if (showOverlay) ++_numLayers;
 
@@ -529,15 +538,15 @@ void Room::checkCursor() {
 	Mouse &mouse = Mouse::getReference();
 	Resources &res = Resources::getReference();
 	uint16 oldHotspotId = _hotspotId;
-	uint16 currentCursor = mouse.getCursorNum();
-	uint16 newCursor = currentCursor;
+	CursorType currentCursor = mouse.getCursorNum();
+	CursorType newCursor = currentCursor;
 	CurrentAction playerAction = res.getActiveHotspot(PLAYER_ID)->currentActions().action();
 	uint16 oldRoomNumber = res.fieldList().getField(OLD_ROOM_NUMBER);
 
 	if ((currentCursor >= CURSOR_TIME_START) && (currentCursor <= CURSOR_TIME_END) &&
 		((playerAction == START_WALKING) || (playerAction == PROCESSING_PATH))) {
 		// Animate the clock when processing the player path
-		++newCursor;
+		newCursor = (CursorType)((int)newCursor + 1);
 		if (newCursor == CURSOR_CROSS) newCursor = CURSOR_TIME_START;
 	} else if (checkInTalkDialog() && (oldRoomNumber == 0)) {
 		newCursor = CURSOR_TALK;
@@ -625,8 +634,8 @@ void Room::saveToStream(Common::WriteStream *stream) {
 }
 
 void Room::loadFromStream(Common::ReadStream *stream) {
-	int roomNum = stream->readUint16LE();
-	setRoomNumber(roomNum, false);
+	_roomNumber = stream->readUint16LE();
+	setRoomNumber(_roomNumber, false);
 
 	_destRoomNumber = stream->readUint16LE();
 	_showInfo = stream->readByte() != 0;
