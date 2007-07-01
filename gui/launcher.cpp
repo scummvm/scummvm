@@ -581,6 +581,7 @@ void LauncherDialog::updateListing() {
 		String gameid(iter->_value.get("gameid"));
 		String description(iter->_value.get("description"));
 
+
 		if (gameid.empty())
 			gameid = iter->_key;
 		if (description.empty()) {
@@ -588,8 +589,18 @@ void LauncherDialog::updateListing() {
 			if (g.contains("description"))
 				description = g.description();
 		}
+
+#ifdef __DS__
+		// DS port uses an extra section called 'ds'.  This prevents the section from being
+		// detected as a game.
+		if (gameid == "ds") {
+			continue;
+		}
+#endif
+
 		if (description.empty())
 			description = "Unknown (target " + iter->_key + ", gameid " + gameid + ")";
+
 
 		if (!gameid.empty() && !description.empty()) {
 			// Insert the game into the launcher list
