@@ -62,7 +62,7 @@ enum {
 enum {
 	GF_DEMO = 1 << 0,
 	GF_LANG_EN = 1 << 1,
-	GF_LANG_FR = 1 << 2, 
+	GF_LANG_FR = 1 << 2,
 	GF_LANG_DE = 1 << 3,
 	GF_LANG_IT = 1 << 4,
 	GF_LANG_MULT = 1 << 5
@@ -398,7 +398,7 @@ protected:		// data
 	bool		_skipMenu;
 
 	bool 		_mouseHidden;
-	
+
 	// input-only
 	InputData	 _input;
 	bool		_actionAfterWalk;  // actived when the character needs to move before taking an action
@@ -460,15 +460,6 @@ protected:		// members
 	void		parseCommands(Script &script, CommandList&);
 
 	void 		freeCharacter();
-
-	uint16 		askDialoguePassword(Dialogue *q, StaticCnv *face);
-	bool 		displayAnswer(Dialogue *q, uint16 i);
-	bool 		displayAnswers(Dialogue *q);
-	void 		displayQuestion(Dialogue *q, Cnv *cnv);
-	uint16 		getDialogueAnswer(Dialogue *q, Cnv *cnv);
-	int16 		selectAnswer(Question *q, StaticCnv *cnv);
-	void 		enterDialogue();
-	void 		exitDialogue();
 
 	int 		addInventoryItem(uint16 item);
 	void 		dropItem(uint16 item);
