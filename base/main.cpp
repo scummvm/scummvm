@@ -203,6 +203,9 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	// the command line arugments here
 	Common::enableSpecialDebugLevelList(edebuglevels);
 
+	// Inform backend that the engine is about to be run
+	system.engineInit();
+
 	int result;
 
 	// Init the engine (this might change the screen parameters)
@@ -215,6 +218,9 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	} else {
 		// TODO: Set an error flag, notify user about the problem
 	}
+
+	// Inform backend that the engine finished
+	system.engineDone();
 
 	// We clear all debug levels again even though the engine should do it
 	Common::clearAllSpecialDebugLevels();
