@@ -88,7 +88,7 @@ void AgiEngine::unloadWords() {
  * Uses an algorithm hopefully like the one Sierra used. Returns the ID
  * of the word and the length in flen. Returns -1 if not found.
  *
- * Thomas Åkesson, November 2001
+ * Thomas Akesson, November 2001
  */
 int AgiEngine::findWord(char *word, int *flen) {
 	int mchr = 0;		/* matched chars */

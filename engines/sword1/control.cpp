@@ -650,14 +650,7 @@ bool Control::getConfirm(const uint8 *title) {
 }
 
 bool Control::keyAccepted(uint16 ascii) {
-	// this routine needs changes for Czech keys... No idea how to do that, though.
-	// FIXME: It is not a good idea to put non-ASCII chars into a C source file,
-	// since there is no way to specify which encoding you are using. 
-	// It is better to encode them as hex/octal. Although in this particular
-	// case, it seems questionable to do this at all, since we currently
-	// do not at all specify which encoding keyboard events use, so this
-	// check here is probably not portable anyway...
-	static const char allowedSpecials[] = "éèáàúùäöüÄÖÜß,.:-()?! \"\'";
+	static const char allowedSpecials[] = ",.:-()?! \"\'";
 	if (((ascii >= 'A') && (ascii <= 'Z')) ||
 		((ascii >= 'a') && (ascii <= 'z')) ||
 		((ascii >= '0') && (ascii <= '9')) ||
