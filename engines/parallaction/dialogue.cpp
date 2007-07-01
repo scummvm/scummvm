@@ -218,33 +218,38 @@ public:
 	void run();
 
 protected:
+	void clear() {
+		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	}
+
 	void displayQuestion();
 	bool displayAnswers();
 	bool displayAnswer(uint16 i);
 
 	uint16 getAnswer();
-	int16 selectAnswer(StaticCnv *cnv);
-	uint16 askPassword(StaticCnv *face);
+	int16 selectAnswer();
+	uint16 askPassword();
 	int16 getHoverAnswer(int16 x, int16 y);
 
 };
 
-uint16 DialogueManager::askPassword(StaticCnv *face) {
+uint16 DialogueManager::askPassword() {
 	debugC(1, kDebugDialogue, "checkDialoguePassword()");
 
 	char password[100];
 	uint16 passwordLen = 0;
 
 	while (true) {
+		clear();
+
 		strcpy(password, ".......");
-		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
 		Common::Rect r(_answerBalloonW[0], _answerBalloonH[0]);
 		r.moveTo(_answerBalloonX[0], _answerBalloonY[0]);
 
 		_vm->_gfx->drawBalloon(r, 1);
 		_vm->_gfx->displayWrappedString(_q->_answers[0]->_text, _answerBalloonX[0], _answerBalloonY[0], MAX_BALLOON_WIDTH, 3);
-		_vm->_gfx->flatBlitCnv(face, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y,	Gfx::kBitFront);
+		_vm->_gfx->flatBlitCnv(_answerer, 0, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y,	Gfx::kBitFront);
 		_vm->_gfx->displayBalloonString(_answerBalloonX[0] + 5,	_answerBalloonY[0] + _answerBalloonH[0] - 15, "> ", 0);
 
 		Common::Event e;
@@ -335,13 +340,7 @@ void DialogueManager::displayQuestion() {
 
 	if (!scumm_stricmp(_q->_text, "NULL")) return;
 
-	StaticCnv face;
-	face._width = _questioner->_width;
-	face._height = _questioner->_height;
-	face._data0 = _questioner->getFramePtr(_q->_mood & 0xF);
-	face._data1 = NULL; // _questioner->field_8[v60->_mood & 0xF];
-
-	_vm->_gfx->flatBlitCnv(&face, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y, Gfx::kBitFront);
+	_vm->_gfx->flatBlitCnv(_questioner, _q->_mood & 0xF, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y, Gfx::kBitFront);
 	_vm->_gfx->getStringExtent(_q->_text, MAX_BALLOON_WIDTH, &w, &h);
 
 	Common::Rect r(w, h);
@@ -353,7 +352,7 @@ void DialogueManager::displayQuestion() {
 
 	waitUntilLeftClick();
 
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	clear();
 
 	return;
 }
@@ -362,21 +361,13 @@ uint16 DialogueManager::getAnswer() {
 
 	uint16 answer = 0;
 
-	StaticCnv face;
-	face._width = _answerer->_width;
-	face._height = _answerer->_height;
-	face._data0 = _answerer->getFramePtr(0);
-	face._data1 = NULL; // cnv->field_8[0];
-
-	_vm->_gfx->flatBlitCnv(&face, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
-
 	if (_askPassword == false) {
-		answer = selectAnswer(&face);
+		answer = selectAnswer();
 	} else {
-		answer = askPassword(&face);
+		answer = askPassword();
 	}
 
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);	// erase answer screen
+	clear();
 
 	debugC(1, kDebugDialogue, "runDialogue: user selected answer #%i", answer);
 
@@ -409,14 +400,14 @@ void DialogueManager::run() {
 		_q = _q->_answers[answer]->_following._question;
 	}
 
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	clear();
 
 	if (cmdlist)
 		_vm->runCommands(*cmdlist);
 
 }
 
-int16 DialogueManager::selectAnswer(StaticCnv *cnv) {
+int16 DialogueManager::selectAnswer() {
 
 	int16 numAvailableAnswers = 0;
 	int16 _si = 0;
@@ -433,9 +424,7 @@ int16 DialogueManager::selectAnswer(StaticCnv *cnv) {
 
 	if (numAvailableAnswers == 1) {
 		_vm->_gfx->displayWrappedString(_q->_answers[_di]->_text, _answerBalloonX[_di], _answerBalloonY[_di], MAX_BALLOON_WIDTH, 0);
-		cnv->_data0 = _answerer->getFramePtr(_q->_answers[_di]->_mood & 0xF);
-//		cnv->_data1 = _answerer->field_8[q->_answers[_di]->_mood & 0xF];
-		_vm->_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X,	ANSWER_CHARACTER_Y, Gfx::kBitFront);
+		_vm->_gfx->flatBlitCnv(_answerer, 0, ANSWER_CHARACTER_X,	ANSWER_CHARACTER_Y, Gfx::kBitFront);
 		_vm->_gfx->updateScreen();
 		waitUntilLeftClick();
 		return _di;
@@ -454,9 +443,7 @@ int16 DialogueManager::selectAnswer(StaticCnv *cnv) {
 				_vm->_gfx->displayWrappedString(_q->_answers[v2]->_text, _answerBalloonX[v2], _answerBalloonY[v2], MAX_BALLOON_WIDTH, 3);
 
 			_vm->_gfx->displayWrappedString(_q->_answers[_si]->_text, _answerBalloonX[_si],	_answerBalloonY[_si], MAX_BALLOON_WIDTH, 0);
-			cnv->_data0 = _answerer->getFramePtr(_q->_answers[_si]->_mood & 0xF);
-//			cnv->_data1 = _answerer->field_8[q->_answers[_si]->_mood & 0xF];
-			_vm->_gfx->flatBlitCnv(cnv, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
+			_vm->_gfx->flatBlitCnv(_answerer, _q->_answers[_si]->_mood & 0xF, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
 		}
 
 		_vm->_gfx->updateScreen();
