@@ -33,9 +33,18 @@
 // Disk caching is disabled on GBA to conserve memory
 
 #define DISC_CACHE				// uncomment this line to enable disc caching
+#ifdef DS_BUILD_F
+#define DISC_CACHE_COUNT	128	// maximum number of sectors to cache (512 bytes per sector)
+#else
 #define DISC_CACHE_COUNT	32	// maximum number of sectors to cache (512 bytes per sector)
+#endif
 //#define DISK_CACHE_DMA		// use DMA for cache copies. If this is enabled, the data buffers must be word aligned
 
+
+// This allows the code to build on an earlier version of libnds, before the register was renamed
+#ifndef REG_EXMEMCNT
+#define REG_EXMEMCNT REG_EXEMEMCNT 
+#endif
 
 //----------------------------------------------------------------------
 

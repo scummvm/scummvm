@@ -4,18 +4,32 @@ libndsdir = /home/neil/devkitpro/libnds
 
 # Select the build you want by uncommenting one of the following lines:
 
-DS_BUILD_A = 1
+
+#DS_BUILD_A = 1
 #DS_BUILD_B = 1
 #DS_BUILD_C = 1
-#DS_BUILD_D = 1
+DS_BUILD_D = 1
+#DS_BUILD_E = 1
+#DS_BUILD_F = 1
 
 # Uncomment the following line to build in support for MP3 audio
 # using libmad:
-USE_MAD = 1
+
+ifdef DS_BUILD_F
+	# TODO: Fix this.  When libmad is compiled in, the Kyrandia resource loading
+	# searches through it's entire index to find an mp3 each time a voice sample is requested
+	# this causes a nasty pause.
+else
+	USE_MAD = 1
+endif
 
 # Uncomment the following line to enable support for the
 # ace DS Debugger (remembering to make the same change in the arm7 makefile):
 #USE_DEBUGGER = 1
+
+# Uncomment the following line to enable the profiler
+#USE_PROFILER = 1
+
 # NOTE: The header and libs for the debugger is assumed to be in the libnds
 # folder.
 
@@ -24,6 +38,7 @@ VPATH = $(srcdir)
 # Command to build libmad is:
 # ./configure --host=arm-elf --enable-speed --enable-sso -enable-fpm=arm CFLAGS='-specs=ds_arm9.specs -mthumb-interwork'
 
+ARM = 1
 
 ifdef DS_BUILD_A
 	DEFINES = -DDS_SCUMM_BUILD -DDS_BUILD_A
@@ -44,6 +59,7 @@ ifdef DS_BUILD_A
 	DISABLE_AGI = 1
 	DISABLE_TOUCHE = 1
 	DISABLE_PARALLACTION = 1
+	DISABLE_CRUISE = 1
 	BUILD=scummvm-A
 endif
 
@@ -66,6 +82,7 @@ ifdef DS_BUILD_B
 	DISABLE_AGI = 1
 	DISABLE_TOUCHE = 1
 	DISABLE_PARALLACTION = 1
+	DISABLE_CRUISE = 1
 	BUILD=scummvm-B
 endif
 
@@ -81,13 +98,14 @@ ifdef DS_BUILD_C
 	DISABLE_SWORD2 = 1
 	DISABLE_QUEEN = 1
 	DISABLE_SAGA = 1
-	#DISABLE_KYRA = 1
-	#DISABLE_GOB = 1
+	DISABLE_KYRA = 1
+	DISABLE_GOB = 1
 	DISABLE_LURE = 1
 	DISABLE_CINE = 1
 	DISABLE_AGI = 1
 	DISABLE_TOUCHE = 1
 	DISABLE_PARALLACTION = 1
+	DISABLE_CRUISE = 1
 	BUILD=scummvm-C
 endif
 
@@ -104,15 +122,62 @@ ifdef DS_BUILD_D
 	DISABLE_QUEEN = 1
 	DISABLE_SAGA = 1
 	DISABLE_KYRA = 1
-	DISABLE_GOB = 1
+	#DISABLE_GOB = 1
 	DISABLE_LURE = 1
 	#DISABLE_CINE = 1
 	#DISABLE_AGI = 1
 	DISABLE_TOUCHE = 1
 	DISABLE_PARALLACTION = 1
-	BUILD=scummvm-A
+	DISABLE_CRUISE = 1
+	BUILD=scummvm-D
 endif
 
+ifdef DS_BUILD_E
+	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_E
+	LOGO = logoc.bmp
+	DISABLE_HE = 1
+	DISABLE_SCUMM = 1
+	DISABLE_SCUMM_7_8 = 1
+	DISABLE_AGOS = 1
+	DISABLE_SKY = 1
+	DISABLE_SWORD1 = 1
+	DISABLE_SWORD2 = 1
+	DISABLE_QUEEN = 1
+	#DISABLE_SAGA = 1
+	DISABLE_KYRA = 1
+	DISABLE_GOB = 1
+	DISABLE_LURE = 1
+	DISABLE_CINE = 1
+	DISABLE_AGI = 1
+	DISABLE_TOUCHE = 1
+	DISABLE_PARALLACTION = 1
+	DISABLE_CRUISE = 1
+	BUILD=scummvm-E
+endif
+
+ifdef DS_BUILD_F
+	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_F
+	LOGO = logoc.bmp
+	DISABLE_HE = 1
+	DISABLE_SCUMM = 1
+	DISABLE_SCUMM_7_8 = 1
+	DISABLE_AGOS = 1
+	DISABLE_SKY = 1
+	DISABLE_SWORD1 = 1
+	DISABLE_SWORD2 = 1
+	DISABLE_QUEEN = 1
+	DISABLE_SAGA = 1
+	#DISABLE_KYRA = 1
+	DISABLE_GOB = 1
+	DISABLE_LURE = 1
+	DISABLE_CINE = 1
+	DISABLE_AGI = 1
+	DISABLE_TOUCHE = 1
+	DISABLE_PARALLACTION = 1
+	DISABLE_CRUISE = 1
+	BUILD=scummvm-F
+
+endif
 
 ARM7BIN	:= -7 $(CURDIR)/../../arm7/arm7.bin
 ICON 		:= -b ../../../logo.bmp "ScummVM;By Neil Millstone;"
@@ -120,7 +185,7 @@ ICON 		:= -b ../../../logo.bmp "ScummVM;By Neil Millstone;"
 CC      = arm-eabi-gcc
 CXX     = arm-eabi-g++
 
-CFLAGS	=	-Wno-multichar -Wall -Os\
+CFLAGS	=	-Wno-multichar -Wall\
 		-Wno-multichar -mcpu=arm9tdmi -mtune=arm9tdmi \
  		-mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer\
 		-ffast-math -mthumb-interwork
@@ -129,12 +194,17 @@ ifdef USE_DEBUGGER
 	DEFINES += -DUSE_DEBUGGER
 	CFLAGS += -g
 endif
+
+ifdef USE_PROFILER
+	CFLAGS += -mpoke-function-name -finstrument-functions -g
+	DEFINES += -DUSE_PROFILER
+endif
 		
 CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor	 -Wno-non-virtual-dtor \
 		-fno-exceptions -fno-rtti
 
 ASFLAGS = -mcpu=arm9tdmi -mthumb-interwork
-DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES -DDISABLE_DEFAULT_SAVEFILEMANAGER
+DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DARM
 ifdef USE_MAD
 	DEFINES += -DUSE_MAD
 endif
@@ -178,13 +248,18 @@ PRE_OBJS_FLAGS = -Wl,--whole-archive
 POST_OBJS_FLAGS = -Wl,--no-whole-archive
 endif
 
-PORT_OBJS :=	$(portdir)/source/blitters.o $(portdir)/source/cdaudio.o $(portdir)/source/dsmain.o \
+PORT_OBJS :=	$(portdir)/source/blitters_arm.o $(portdir)/source/cdaudio.o $(portdir)/source/dsmain.o \
 		$(portdir)/../../../fs/ds/ds-fs.o $(portdir)/source/gbampsave.o $(portdir)/source/scummhelp.o\
 		$(portdir)/source/osystem_ds.o $(portdir)/source/portdefs.o $(portdir)/source/ramsave.o\
 		$(portdir)/source/scummconsole.o $(portdir)/source/touchkeyboard.o $(portdir)/source/zipreader.o\
-		$(portdir)/source/dsoptions.o $(portdir)/source/keys.o
+		$(portdir)/source/dsoptions.o $(portdir)/source/keys.o $(portdir)/source/wordcompletion.o
 		
-DATA_OBJS := $(portdir)/data/icons.o $(portdir)/data/keyboard.o $(portdir)/data/keyboard_pal.o $(portdir)/data/default_font.o
+ifdef USE_PROFILER
+	PORT_OBJS += $(portdir)/source/profiler/cyg-profile.o
+endif
+
+
+DATA_OBJS := $(portdir)/data/icons.o $(portdir)/data/keyboard.o $(portdir)/data/keyboard_pal.o $(portdir)/data/default_font.o $(portdir)/data/8x8font_tga.o
 			
 		
 COMPRESSOR_OBJS := $(portdir)/source/compressor/lz.o
@@ -209,7 +284,9 @@ FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o
 
 LIBCARTRESET_OBJS := $(portdir)/source/libcartreset/cartreset.o
 			
-			
+# Files in this list will be compiled with -O2, otherwise they will be compiled with -Os
+OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp mixer.cpp
+#OPTLIST := 
 			
 OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS) 
 		
@@ -269,6 +346,7 @@ endef
 #	rm $(*).tmp
 #endef
 
+
 ##############
 # Replacement rule for the one in makefile.common
 ##############
@@ -276,6 +354,7 @@ ifndef HAVE_GCC3
 # If you use GCC, disable the above and enable this for intelligent
 # dependency tracking. 
 .cpp.o:
+
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 #	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
@@ -287,9 +366,19 @@ else
 # Also, with this GCC inserts additional dummy rules for the involved headers,
 # which ensures a smooth compilation even if said headers become obsolete.
 .cpp.o:
+#	echo !!!!!!!!!!!! $(notdir $<)
+#	ifeq ( $(notdir $<), $(findstring $(notdir $<), $(OPTLIST)) )
+#	 OPTFLAG=-O3
+#	else
+#	 OPTFLAG=-Os
+#	endif
+
+#	export OPTFLAG = ;
+#	echo !!!!!!!! $(OPTFLAG)
+
 	$(MKDIR) $(*D)/$(DEPDIR)
-#	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-	$(CXX) -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d"              $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	$(CXX) -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d"              $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o $(if $(findstring $(notdir $<), $(OPTLIST)), -O2, -Os)
 endif
 
 

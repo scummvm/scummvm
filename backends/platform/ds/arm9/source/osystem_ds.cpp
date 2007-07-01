@@ -37,6 +37,7 @@
 #include "common/str.h"
 #include "cdaudio.h"
 #include "graphics/surface.h"
+#include "touchkeyboard.h"
 
 OSystem_DS* OSystem_DS::_instance = NULL;
 
@@ -138,9 +139,12 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		green >>= 3;
 		blue >>= 3;
 		
-		BG_PALETTE[r] = red | (green << 5) | (blue << 10);
-		if (!DS::getKeyboardEnable()) {
-			BG_PALETTE_SUB[r] = red | (green << 5) | (blue << 10);
+//		if (r != 255)
+		{		
+			BG_PALETTE[r] = red | (green << 5) | (blue << 10);
+			if (!DS::getKeyboardEnable()) {
+				BG_PALETTE_SUB[r] = red | (green << 5) | (blue << 10);
+			}
 		}
 //		if (num == 16) consolePrintf("pal:%d r:%d g:%d b:%d\n", r, red, green, blue);
 		
@@ -293,6 +297,7 @@ int16 OSystem_DS::getOverlayWidth()
 	
 bool OSystem_DS::showMouse(bool visible)
 {
+	DS::setShowCursor(visible);
 	return true;
 }
 
@@ -301,7 +306,7 @@ void OSystem_DS::warpMouse(int x, int y)
 }
 
 void OSystem_DS::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetCursorScale) {
-	DS::setCursorIcon(buf, w, h, keycolor);
+	DS::setCursorIcon(buf, w, h, keycolor, hotspotX, hotspotY);
 }
 
 void OSystem_DS::addEvent(Common::Event& e) {
@@ -322,11 +327,11 @@ bool OSystem_DS::pollEvent(Common::Event &event)
 			event.kbd.ascii = 0;
 			event.kbd.keycode = 0;
 			event.kbd.flags = 0;
-			consolePrintf("type: %d\n", event.type);
+//			consolePrintf("type: %d\n", event.type);
 			return false;
 		} else {
 			event = eventQueue[eventNum++];
-			consolePrintf("type: %d\n", event.type);
+//			consolePrintf("type: %d\n", event.type);
 			return true;
 		}
 	}
@@ -478,7 +483,7 @@ bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
 	
-    size_t imageStrideInBytes = isCpuScalerEnabled() DS::getGameWidth() ? 512;
+    size_t imageStrideInBytes = DS::isCpuScalerEnabled()? DS::getGameWidth() : 512;
     size_t imageStrideInWords = imageStrideInBytes / 2;
 
 	u16* image = (u16 *) DS::get8BitBackBuffer();
@@ -502,6 +507,18 @@ void OSystem_DS::clearFocusRectangle() {
 
 }
 
+
+void OSystem_DS::addAutoComplete(const char *word) {
+	DS::addAutoComplete((char *) word);
+}
+
+void OSystem_DS::clearAutoComplete() {
+	DS::clearAutoComplete();
+}
+
+void OSystem_DS::setCharactersEntered(int count) {
+	DS::setCharactersEntered(count);
+}
 
 OSystem *OSystem_DS_create() {
 	return new OSystem_DS();

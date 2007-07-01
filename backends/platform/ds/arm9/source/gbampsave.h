@@ -37,7 +37,7 @@ class GBAMPSaveFile : public Common::InSaveFile, public Common::OutSaveFile {
 
 public:
 	GBAMPSaveFile(char* name, bool saveOrLoad);
-	~GBAMPSaveFile();
+	virtual ~GBAMPSaveFile();
 		
 	virtual uint32 read(void *buf, uint32 size);
 	virtual uint32 write(const void *buf, uint32 size);

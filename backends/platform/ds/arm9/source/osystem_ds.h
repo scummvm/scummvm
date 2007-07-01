@@ -41,11 +41,12 @@ class DSTimerManager : public DefaultTimerManager {
 
 class OSystem_DS : public OSystem {
 public:
+
 	static OSystem_DS *instance() { return _instance; }
 	int eventNum;
 	int lastPenFrame;
 	
-	Common::Event eventQueue[64];
+	Common::Event eventQueue[96];
 	int queuePos;
 	
 	DSSaveFileManager saveManager;
@@ -54,6 +55,7 @@ public:
 	DSTimerManager* _timer;
 
 	static OSystem_DS* _instance;
+
 	
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
 	typedef int  (*TimerProc)(int interval);
@@ -138,6 +140,14 @@ public:
 	virtual Audio::Mixer* getMixer() { return _mixer; }
 	virtual Common::TimerManager* getTimerManager() { return _timer; }
 	static int timerHandler(int t);
+
+
+	virtual void addAutoComplete(const char *word);
+	virtual void clearAutoComplete();
+	virtual void setCharactersEntered(int count);
+
+
+
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
