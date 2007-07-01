@@ -155,7 +155,7 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 
 				// Repeat as long as necessary.
 				while (neededSamples > 0) {
-					offset %= sLen;
+					offset = 0;
 
 					// Compute the number of samples to generate (see above) and mix 'em.
 					end = MIN(neededSamples, (int)((sLen - offset + rate - 1) / rate));
