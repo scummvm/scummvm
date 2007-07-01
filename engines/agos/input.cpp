@@ -567,12 +567,14 @@ bool AGOSEngine::processSpecialKeys() {
 				_speech ^= 1;
 		}
 	case Common::KEYCODE_PLUS:
+	case Common::KEYCODE_KP_PLUS:
 		if (_midiEnabled) {
 			_midi.setVolume(_midi.getVolume() + 16);
 		}
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 16);
 		break;
 	case Common::KEYCODE_MINUS:
+	case Common::KEYCODE_KP_MINUS:
 		if (_midiEnabled) {
 			_midi.setVolume(_midi.getVolume() - 16);
 		}
