@@ -5158,7 +5158,7 @@ const FxDef Sound::_fxList[312] = {
 		},
 	},
 	//------------------------
-	// 198 Ambient sound for Montfauçon Square
+	// 198 Ambient sound for Montfaucon Square
 	{
 		FX_MONTAMB,		// sampleId
 		FX_LOOP, 			// type

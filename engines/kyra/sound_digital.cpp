@@ -29,7 +29,7 @@
 
 namespace Kyra {
 
-// Thanks to Torbjörn Andersson (eriktorbjorn) for his aud player on which
+// Thanks to Torbjorn Andersson (eriktorbjorn) for his aud player on which
 // this code is based on
 
 // TODO: cleanup of whole AUDStream

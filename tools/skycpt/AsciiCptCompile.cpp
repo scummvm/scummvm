@@ -1,4 +1,4 @@
-// AsciiCptCompile.cpp : Definiert den Einstiegspunkt für die Konsolenanwendung.
+// AsciiCptCompile.cpp
 //
 
 #include "stdafx.h"
@@ -18,8 +18,7 @@ typedef signed long int32;
 
 void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *sve);
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
 	uint8 testBuf[4] = { 0x11, 0x22, 0x33, 0x44 };
 	if (*(uint32*)testBuf != 0x44332211) {
 		printf("Sorry, this program only works on little endian systems.\nGoodbye.\n");
@@ -39,7 +38,3 @@ int main(int argc, char* argv[])
 	printf("done\n");
 	return 0;
 }
-
-
-
-

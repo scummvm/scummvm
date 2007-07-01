@@ -585,7 +585,7 @@ void OSystem_Dreamcast::copyRectToOverlay(const int16 *buf, int pitch,
 
 
 static const OSystem::GraphicsMode gfxmodes[] = {
-  { "default", "640×480 16bpp", 0 },
+  { "default", "640x480 16bpp", 0 },
   { NULL, NULL, 0 }
 };
 

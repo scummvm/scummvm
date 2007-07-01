@@ -424,7 +424,7 @@ Boolean StartScummVM(Int16 engine) {
 	toLauncher= (gPrefs->exitLauncher);
 
 	// gVars values 
-	// (gVars->HRrefNum defined in checkHRmode on Clié)
+	// (gVars->HRrefNum defined in checkHRmode on Clie)
 #ifndef _DEBUG_ENGINE
 	gVars->VFS.volRefNum	= (gPrefs->card.autoDetect ? vfsInvalidVolRef : gPrefs->card.volRefNum);
 #else
