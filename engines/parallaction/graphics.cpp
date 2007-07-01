@@ -306,8 +306,6 @@ void Gfx::floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color) {
 		d += SCREEN_WIDTH;
 	}
 
-	if (buffer == kBitFront) updateScreen();
-
 	return;
 }
 
@@ -350,8 +348,6 @@ void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer) {
 		d += (SCREEN_WIDTH - q.width());
 	}
 
-	if (buffer == kBitFront) updateScreen();
-
 	return;
 
 }
@@ -388,8 +384,6 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 		s += (r.width() - q.right + q.left);
 		d += (SCREEN_WIDTH - q.right + q.left);
 	}
-
-	if (buffer == kBitFront) updateScreen();
 
 	return;
 
