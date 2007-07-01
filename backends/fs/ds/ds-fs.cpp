@@ -108,7 +108,7 @@ DSFileSystemNode::DSFileSystemNode(const String& path) {
 }
 
 DSFileSystemNode::DSFileSystemNode(const String& path, bool isDir) {
-//	consolePrintf("--%s ",path.c_str());
+//	consolePrintf("--%s \n",path.c_str());
 	
 	char disp[128];
 	char* pathStr = (char *) path.c_str();
@@ -238,6 +238,9 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path) {
 	
 	char disp[128];
 	char* pathStr = (char *) path.c_str();
+
+//	consolePrintf("PathStr: %s ", pathStr);
+
 	int lastSlash = 3;
 	for (int r = 0; r < (int) strlen(pathStr) - 1; r++) {
 		if ((path[r] == '\\') || (path[r] == '/')) {
@@ -256,9 +259,13 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path) {
 		if (check[strlen(check) - 1] == '/') {
 			check[strlen(check) - 1] = 0;
 		}
+		
 		success = FAT_FileExists(check);
+
+//		consolePrintf("Exists: %s %d ", pathStr, success);
 	} else {
 		success = FT_DIR;
+//		consolePrintf("Dir: %s ", pathStr);
 	}
 //	consolePrintf("Path: %s  (%d)\n", check, success);
 	
@@ -333,7 +340,7 @@ bool GBAMPFileSystemNode::listDir(AbstractFSList& dirList, ListMode mode) const 
 
 	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
 	
-	char temp[128], fname[128], *path, *pathTemp;
+	char temp[128], fname[256], *path, *pathTemp;
 	strcpy(temp, _path.c_str());
 	
 	path = temp + 3;
@@ -347,21 +354,28 @@ bool GBAMPFileSystemNode::listDir(AbstractFSList& dirList, ListMode mode) const 
 	}
 
 
-//	consolePrintf("This dir: %s\n", path);
 	FAT_chdir(path);
 	
-	int entryType = FAT_FindFirstFile(fname);
+	int entryType = FAT_FindFirstFileLFN(fname);
+
+	consolePrintf("First: %s\n", fname);
+	char pathTemp2[256];
 	
 	while (entryType != TYPE_NO_MORE) {
 	
 		if ( ((entryType == TYPE_DIR) && ((mode == FilesystemNode::kListDirectoriesOnly) || (mode == FilesystemNode::kListAll)))
 		||   ((entryType == TYPE_FILE) && ((mode == FilesystemNode::kListFilesOnly) || (mode == FilesystemNode::kListAll))) ) {
 			GBAMPFileSystemNode* dsfsn;
+
+			consolePrintf("file %s\n", fname);
 			
 			if (strcmp(fname, ".") && strcmp(fname, "..")) {
 				
 				if (!strcmp(path, "/")) {
+
+
 					dsfsn = new GBAMPFileSystemNode("mp:" + String(path) + String(fname), entryType == TYPE_DIR);
+
 				} else {
 					dsfsn = new GBAMPFileSystemNode("mp:" + String(path) + String("/") + String(fname), entryType == TYPE_DIR);
 				}
@@ -375,7 +389,7 @@ bool GBAMPFileSystemNode::listDir(AbstractFSList& dirList, ListMode mode) const 
 //			consolePrintf("Skipping %s\n", fname);
 		}
 		
-		entryType = FAT_FindNextFile(fname);
+		entryType = FAT_FindNextFileLFN(fname);
 	}
 	
 //	consolePrintf("No more");
