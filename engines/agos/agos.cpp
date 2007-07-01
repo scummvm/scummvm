@@ -920,7 +920,9 @@ void AGOSEngine::setupGame() {
 
 AGOSEngine::~AGOSEngine() {
 	// Sync with AGOSEngine::shutdown()
-	delete _gameFile;
+	// In Simon 2, this gets deleted along with _sound further down
+	if (getGameType() != GType_SIMON2)
+		delete _gameFile;
 
 	_midi.close();
 
@@ -950,7 +952,7 @@ AGOSEngine::~AGOSEngine() {
 	delete _dummyItem2;
 	delete _dummyItem3;
 
-	delete [] _dummyWindow;
+	delete _dummyWindow;
 	delete [] _windowList;
 
 	delete _debugger;
@@ -1053,7 +1055,9 @@ int AGOSEngine::go() {
 
 void AGOSEngine::shutdown() {
 	// Sync with AGOSEngine::~AGOSEngine()
-	delete _gameFile;
+	// In Simon 2, this gets deleted along with _sound further down
+	if (getGameType() != GType_SIMON2)
+		delete _gameFile;
 
 	_midi.close();
 
@@ -1083,7 +1087,7 @@ void AGOSEngine::shutdown() {
 	delete _dummyItem2;
 	delete _dummyItem3;
 
-	delete [] _dummyWindow;
+	delete _dummyWindow;
 	delete [] _windowList;
 
 	delete _debugger;

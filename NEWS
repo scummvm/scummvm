@@ -8,6 +8,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  
  AGOS:
    - Fixed crashes related to OmniTV playback in The Feeble Files.
+   - Fixed crash on exit in Simon the Sorcerer 2.
 
  BASS:
    - Better MT-32 compatibility
