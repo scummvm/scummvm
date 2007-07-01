@@ -172,6 +172,7 @@ Snd::Snd(GobEngine *vm) : _vm(vm) {
 	_repCount = 0;
 
 	_offset = 0;
+	_offsetFrac = 0;
 	_offsetInc = 0;
 
 	_cur = 0;
@@ -320,6 +321,7 @@ void Snd::setSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
 	_playingSound = 1;
 
 	_offset = 0;
+	_offsetFrac = 0;
 	_offsetInc = (_freq << FRAC_BITS) / _rate;
 
 	_last = _cur;
@@ -373,6 +375,7 @@ void Snd::checkEndSample() {
 		nextCompositionPos();
 	else if ((_repCount == -1) || (--_repCount > 0)) {
 		_offset = 0;
+		_offsetFrac = 0;
 		_end = false;
 		_playingSound = 1;
 	} else {
@@ -387,25 +390,25 @@ int Snd::readBuffer(int16 *buffer, const int numSamples) {
 	for (int i = 0; i < numSamples; i++) {
 		if (!_data)
 			return i;
-		if (_end || (fracToInt(_offset) >= (int)_length))
+		if (_end || (_offset >= _length))
 			checkEndSample();
 		if (_end)
 			return i;
 
 		// Linear interpolation. See sound/rate.cpp
 
-		int32 val = (_last + (((_cur - _last) * (_offset & FRAC_LO_MASK) +
+		int32 val = (_last + (((_cur - _last) * _offsetFrac +
 					FRAC_HALF) >> FRAC_BITS)) << 8;
 		*buffer++ = (val * _fadeVol) >> 16;
 		
-		int16 oldOffset = fracToInt(_offset);
-
-		_offset += _offsetInc;
+		_offsetFrac += _offsetInc;
 
 		// Was there an integral change?
-		if (oldOffset < fracToInt(_offset)) {
+		if (fracToInt(_offsetFrac) > 0) {
 			_last = _cur;
-			_cur = _data[oldOffset];
+			_cur = _data[_offset];
+			_offset += fracToInt(_offsetFrac);
+			_offsetFrac &= FRAC_LO_MASK;
 		}
 
 		if (_fade) {
