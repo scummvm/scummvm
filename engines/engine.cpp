@@ -54,7 +54,8 @@ Engine::Engine(OSystem *syst)
 		_eventMan(_system->getEventManager()),
 		_saveFileMan(_system->getSavefileManager()),
 		_targetName(ConfMan.getActiveDomainName()),
-		_gameDataPath(ConfMan.get("path")) {
+		_gameDataPath(ConfMan.get("path")),
+		_pauseLevel(0) {
 
 	g_engine = this;
 	_autosavePeriod = ConfMan.getInt("autosave_period");
