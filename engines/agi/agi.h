@@ -707,6 +707,9 @@ public:
 	int findWord(char *word, int *flen);
 	void dictionaryWords(char *);
 
+	static uint8* getWordsData();
+	static uint32 getWordsDataSize();
+
 	// Motion
 private:
 	int checkStep(int delta, int step);

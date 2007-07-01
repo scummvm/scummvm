@@ -45,6 +45,16 @@ static char *myStrndup(char *src, int n) {
 	return tmp;
 }
 
+uint8* AgiEngine::getWordsData() {
+	// Returns a pointer to Agi's words data
+	return words;
+}
+
+uint32 AgiEngine::getWordsDataSize() {
+	// Returns the length in bytes of Agi's words data
+	return wordsFlen;
+}
+
 int AgiEngine::loadWords(const char *fname) {
 	Common::File fp;
 	uint32 flen;
@@ -88,7 +98,7 @@ void AgiEngine::unloadWords() {
  * Uses an algorithm hopefully like the one Sierra used. Returns the ID
  * of the word and the length in flen. Returns -1 if not found.
  *
- * Thomas Åkesson, November 2001
+ * Thomas ï¿½kesson, November 2001
  */
 int AgiEngine::findWord(char *word, int *flen) {
 	int mchr = 0;		/* matched chars */
