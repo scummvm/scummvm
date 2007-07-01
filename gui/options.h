@@ -97,6 +97,8 @@ private:
 	bool _enableAudioSettings;
 	PopUpWidget *_midiPopUp;
 	PopUpWidget *_outputRatePopUp;
+	PopUpWidget *_rateConverterPopUp;
+	static const char *_rateConverterDesc[];
 
 	//
 	// MIDI controls

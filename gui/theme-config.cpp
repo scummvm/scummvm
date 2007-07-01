@@ -399,6 +399,8 @@ const char *Theme::_defaultConfigINI =
 "opYoffset=(opYoffset + buttonHeight + 4)\n"
 "auSampleRatePopup=(aux - 5) (opYoffset - 1) (auw + 5) (kLineHeight + 2)\n"
 "opYoffset=(opYoffset + buttonHeight + 4)\n"
+"auRateConverterPopup=(aux - 5) (opYoffset - 1) (auw + 5) (kLineHeight + 2)\n"
+"opYoffset=(opYoffset + buttonHeight + 4)\n"
 "\n"
 "[volumeControls]\n"
 "vctextw=(95 + vcAudioTabIndent)\n"

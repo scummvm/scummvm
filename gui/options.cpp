@@ -87,6 +87,12 @@ const char *OptionsDialog::_subModeDesc[] = {
 	"Subtitles Only"
 };
 
+const char *OptionsDialog::_rateConverterDesc[] = {
+	"Linear (low qual, faster)",
+	"Filtering (high qual, slower)",
+	0
+};
+
 void OptionsDialog::init() {
 	_enableGraphicSettings = false;
 	_gfxPopUp = 0;
@@ -96,6 +102,7 @@ void OptionsDialog::init() {
 	_enableAudioSettings = false;
 	_midiPopUp = 0;
 	_outputRatePopUp = 0;
+	_rateConverterPopUp = 0;
 	_enableMIDISettings = false;
 	_multiMidiCheckbox = 0;
 	_mt32Checkbox = 0;
@@ -186,6 +193,13 @@ void OptionsDialog::open() {
 			if (value == outputRateValues[i])
 				_outputRatePopUp->setSelected(i);
 		}
+	}
+	
+	if (_rateConverterPopUp) {
+		if (ConfMan.hasKey("rate_converter", _domain))
+			_rateConverterPopUp->setSelected(ConfMan.getInt("rate_converter", _domain));
+		else
+			_rateConverterPopUp->setSelected(0);
 	}
 
 	if (_multiMidiCheckbox) {
@@ -323,6 +337,14 @@ void OptionsDialog::close() {
 				ConfMan.removeKey("output_rate", _domain);
 			}
 		}
+		
+		if (_rateConverterPopUp) {
+			if (_enableAudioSettings) {
+				ConfMan.setInt("rate_converter", _rateConverterPopUp->getSelectedTag(), _domain);
+			} else {
+				ConfMan.removeKey("rate_converter", _domain);
+			}
+		}
 
 		// MIDI options
 		if (_multiMidiCheckbox) {
@@ -451,6 +473,7 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 
 	_midiPopUp->setEnabled(enabled);
 	_outputRatePopUp->setEnabled(enabled);
+	_rateConverterPopUp->setEnabled(enabled);
 }
 
 void OptionsDialog::setMIDISettingsState(bool enabled) {
@@ -553,6 +576,12 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 
 	for (int i = 0; outputRateLabels[i]; i++) {
 		_outputRatePopUp->appendEntry(outputRateLabels[i], outputRateValues[i]);
+	}
+
+	_rateConverterPopUp = new PopUpWidget(boss, prefix + "auRateConverterPopup", "Resampler:", labelWidth);
+	
+	for (int i = 0; _rateConverterDesc[i]; i++) {
+		_rateConverterPopUp->appendEntry(_rateConverterDesc[i], i);
 	}
 
 	_enableAudioSettings = true;
