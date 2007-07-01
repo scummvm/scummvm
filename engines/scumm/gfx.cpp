@@ -571,7 +571,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		const byte *text = (byte *)_textSurface.getBasePtr(x, y);
 	
 #ifdef __DS__
-		DS::asmDrawStripToScreen(height, width, text, src, dst, vs->pitch, _screenWidth, _textSurface.pitch);
+		asmDrawStripToScreen(height, width, text, src, dst, vs->pitch, _screenWidth, _textSurface.pitch);
 #else	
 		// Compose the text over the game graphics
 		for (int h = 0; h < height; ++h) {
@@ -1020,7 +1020,7 @@ static void copy8Col(byte *dst, int dstPitch, const byte *src, int height) {
 		src += dstPitch;
 	} while (--height);
 #else	
-	DS::asmCopy8Col(dst, dstPitch, src, height);
+	asmCopy8Col(dst, dstPitch, src, height);
 #endif
 	
 }
