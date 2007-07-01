@@ -32,10 +32,9 @@ enum ChildType {
 	kRoomType = 1,
 	kObjectType = 2,
 	kPlayerType = 3,
-	kSuperRoomType = 4,
+	kGenExitType = 4,   // Elira 1 specifc
+	kSuperRoomType = 4, // Elvira 2 specic
 
-	kGenExitType = 4,	// FIXME: Clash with kSuperRoomType ?!?
-	
 	kContainerType = 7,
 	kChainType = 8,
 	kUserFlagType = 9,
