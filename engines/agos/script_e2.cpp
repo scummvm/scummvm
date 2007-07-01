@@ -165,7 +165,7 @@ void AGOSEngine_Elvira2::setupOpcodes() {
 		OPCODE(o_cls),
 		/* 104 */
 		OPCODE(o_closeWindow),
-		OPCODE(o_invalid),
+		OPCODE(oe2_menu),
 		OPCODE(o_invalid),
 		OPCODE(o_addBox),
 		/* 108 */
@@ -331,6 +331,11 @@ void AGOSEngine_Elvira2::oe2_loadGame() {
 	} else {
 		loadGame((const char *)getStringPtrByID(stringId));
 	}
+}
+
+void AGOSEngine_Elvira2::oe2_menu() {
+	// 105: set agos menu
+	_agosMenu = getVarOrByte();
 }
 
 void AGOSEngine_Elvira2::oe2_drawItem() {

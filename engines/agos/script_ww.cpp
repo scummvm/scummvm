@@ -167,7 +167,7 @@ void AGOSEngine_Waxworks::setupOpcodes() {
 		OPCODE(o_cls),
 		/* 104 */
 		OPCODE(o_closeWindow),
-		OPCODE(oww_menu),
+		OPCODE(oe2_menu),
 		OPCODE(oww_textMenu),
 		OPCODE(o_addBox),
 		/* 108 */
@@ -353,11 +353,6 @@ void AGOSEngine_Waxworks::oww_whereTo() {
 		_subjectItem = derefItem(getExitOf(i, d));
 	else
 		_objectItem = derefItem(getExitOf(i, d));
-}
-
-void AGOSEngine_Waxworks::oww_menu() {
-	// 105: set agos menu
-	_agosMenu = getVarOrByte();
 }
 
 void AGOSEngine_Waxworks::oww_textMenu() {
