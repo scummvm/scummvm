@@ -60,7 +60,7 @@ struct MousePtr {
 	uint16 hotSpotX;
 	uint16 hotSpotY;
 	uint8  dummyData[0x30];
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

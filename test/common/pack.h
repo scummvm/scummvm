@@ -12,7 +12,7 @@ struct TestStruct {
 	uint16 z;
 	uint32 a;
 	byte b;
-};
+} PACKED_STRUCT;
 
 #include <common/pack-end.h>	// END STRUCT PACKING
 

@@ -44,7 +44,7 @@ struct BarData {
 	int16 dx;	// x2 - x1
 	int16 dy;	// y2 - y1
 	int32 co;	// co = (y1*dx) - (x1*dy) from an equation for a line y*dx = x*dy + co
-};
+} PACKED_STRUCT;
 
 struct NodeData {
 	int16 x;
@@ -52,7 +52,7 @@ struct NodeData {
 	int16 level;
 	int16 prev;
 	int16 dist;
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

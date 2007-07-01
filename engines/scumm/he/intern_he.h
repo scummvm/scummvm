@@ -250,7 +250,7 @@ protected:
 		int32 dim2start; //0C
 		int32 dim2end;   //10
 		byte data[1];    //14
-	};
+	} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

@@ -1257,10 +1257,11 @@ struct _lfl_index {
 	uint16	script_addr[200];
 	byte	sound_lfl[100];
 	uint16	sound_addr[100];
-} lfl_index;
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
+_lfl_index lfl_index;
 
 bool ScummNESFile::generateResource(int res) {
 	const LFL *lfl = &lfls[res - 1];

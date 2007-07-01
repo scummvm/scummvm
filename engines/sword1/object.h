@@ -40,7 +40,7 @@ namespace Sword1 {
 struct OEventSlot {			//receiving event list in the compact -
 	int32	o_event;		//array of these with O_TOTAL_EVENTS elements
 	int32	o_event_script;
-};	// size = 2*int32 = 8 bytes
+} PACKED_STRUCT;	// size = 2*int32 = 8 bytes
 
 #define	TOTAL_script_levels	5
 
@@ -48,12 +48,12 @@ struct ScriptTree {			//this is a logic tree, used by OBJECTs
 	int32	o_script_level;						//logic level
 	int32	o_script_id[TOTAL_script_levels];	//script id's (are unique to each level)
 	int32	o_script_pc[TOTAL_script_levels];	//pc of script for each (if script_manager)
-};	// size = 11*int32 = 44 bytes
+} PACKED_STRUCT;	// size = 11*int32 = 44 bytes
 
 struct TalkOffset {
 	int32	x;
 	int32	y;
-};	// size = 2*int32 = 8 bytes
+} PACKED_STRUCT;	// size = 2*int32 = 8 bytes
 
 struct WalkData {
 	int32	frame;
@@ -61,7 +61,7 @@ struct WalkData {
 	int32	y;
 	int32	step;
 	int32	dir;
-};	// size = 5*int32 = 20 bytes
+} PACKED_STRUCT;	// size = 5*int32 = 20 bytes
 
 struct Object {
 	int32	o_type;						// 0  broad description of type - object, floor, etc.
@@ -119,7 +119,7 @@ struct Object {
 
 	WalkData	o_route[O_WALKANIM_SIZE];	// 340	size = 600*20 bytes = 12000
 				// mega size = 12340 bytes (+ 8 byte offset table + 20 byte header = 12368)
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

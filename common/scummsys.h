@@ -313,8 +313,10 @@
 //
 #if defined(__GNUC__)
 	#define NORETURN __attribute__((__noreturn__)) 
+	#define PACKED_STRUCT __attribute__((packed)) 
 	#define GCC_PRINTF(x,y) __attribute__((format(printf, x, y)))
 #else
+	#define PACKED_STRUCT
 	#define GCC_PRINTF(x,y)
 #endif
 

@@ -80,7 +80,7 @@ struct Box {				/* Internal walkbox file format */
 			uint32 unk3;
 		} v8;
 	};
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

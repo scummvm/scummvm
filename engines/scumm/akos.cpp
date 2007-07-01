@@ -47,12 +47,12 @@ struct AkosHeader {
 	uint16 num_anims;
 	uint16 unk_3;
 	uint16 codec;
-};
+} PACKED_STRUCT;
 
 struct AkosOffset {
 	uint32 akcd;	// offset into the akcd data
 	uint16 akci;	// offset into the akci data
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

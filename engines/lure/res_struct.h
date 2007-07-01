@@ -47,7 +47,7 @@ struct VersionStructure {
 	uint16 id;
 	byte vMajor;
 	byte vMinor;
-};
+} PACKED_STRUCT;
 
 struct FileEntry {
 	uint16 id;
@@ -55,7 +55,7 @@ struct FileEntry {
 	byte sizeExtension;
 	uint16 size;
 	uint16 offset;
-};
+} PACKED_STRUCT;
 
 struct HotspotResource {
 	uint16 hotspotId;
@@ -91,7 +91,7 @@ struct HotspotResource {
 	uint16 delayCtr;
 	byte flags2;
 	byte hdrFlags;
-};
+} PACKED_STRUCT;
 
 struct HotspotAnimResource {
 	uint16 animRecordId;
@@ -105,18 +105,18 @@ struct HotspotAnimResource {
 	uint8 downFrame;
 	uint8 leftFrame;
 	uint8 rightFrame;
-};
+} PACKED_STRUCT;
 
 struct MovementResource {
 	uint16 frameNumber;
 	int16 xChange;
 	int16 yChange;
-};
+} PACKED_STRUCT;
 
 struct RoomRect {
 	int16 xs, xe;
 	int16 ys, ye;
-};
+} PACKED_STRUCT;
 
 struct RoomResource {
 	uint16 roomNumber;
@@ -133,7 +133,7 @@ struct RoomResource {
 	uint8 areaFlag;
 	RoomRect walkBounds;
 	uint16 numExits;
-};
+} PACKED_STRUCT;
 
 struct RoomExitResource {
 	int16 xs, xe, ys, ye;
@@ -141,12 +141,12 @@ struct RoomExitResource {
 	uint8 newRoom;
 	uint8 direction;
 	int16 newRoomX, newRoomY;
-};
+} PACKED_STRUCT;
 
 struct HotspotOverrideResource {
 	uint16 hotspotId;
 	int16 xs, xe, ys, ye;
-};
+} PACKED_STRUCT;
 
 struct RoomExitHotspotResource {
 	uint16 hotspotId;
@@ -154,7 +154,7 @@ struct RoomExitHotspotResource {
 	int16 ys, ye;
 	uint16 cursorNum;
 	uint16 destRoomNumber;
-};
+} PACKED_STRUCT;
 
 struct RoomExitJoinResource {
 	uint16 hotspot1Id;
@@ -168,41 +168,41 @@ struct RoomExitJoinResource {
 	uint8 h2OpenSound;
 	uint8 h2CloseSound;
 	byte blocked;
-};
+} PACKED_STRUCT;
 
 struct HotspotActionResource {
 	byte action;
 	uint16 sequenceOffset;
-};
+} PACKED_STRUCT;
 
 struct TalkHeaderResource {
 	uint16 hotspotId;
 	uint16 offset;
-};
+} PACKED_STRUCT;
 
 struct TalkDataHeaderResource {
 	uint16 recordId;
 	uint16 listOffset;
 	uint16 responsesOffset;
-};
+} PACKED_STRUCT;
 
 struct TalkDataResource {
 	uint16 preSequenceId;
 	uint16 descId;
 	uint16 postSequenceId;
-};
+} PACKED_STRUCT;
 
 struct TalkResponseResource {
 	uint16 sequenceId1;
 	uint16 sequenceId2;
 	uint16 sequenceId3;
-};
+} PACKED_STRUCT;
 
 struct RoomExitCoordinateResource {
 	int16 x;
 	int16 y;
 	uint16 roomNumber;
-};
+} PACKED_STRUCT;
 
 #define ROOM_EXIT_COORDINATES_NUM_ENTRIES 6
 #define ROOM_EXIT_COORDINATES_NUM_ROOMS 52
@@ -210,20 +210,20 @@ struct RoomExitCoordinateResource {
 struct RoomExitCoordinateEntryResource {
 	uint8 roomIndex[ROOM_EXIT_COORDINATES_NUM_ROOMS];
 	RoomExitCoordinateResource entries[ROOM_EXIT_COORDINATES_NUM_ENTRIES];
-};
+} PACKED_STRUCT;
 
 #define MAX_SCHEDULE_ENTRY_PARAMS 5
 
 struct CharacterScheduleResource {
 	uint16 action;
 	uint16 params[MAX_SCHEDULE_ENTRY_PARAMS];
-};
+} PACKED_STRUCT;
 
 struct RoomExitIndexedHotspotResource {
 	uint8 roomNumber;
 	uint8 hotspotIndex;
 	uint16 hotspotId;
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

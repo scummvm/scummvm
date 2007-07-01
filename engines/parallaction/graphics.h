@@ -67,7 +67,7 @@ struct PaletteFxRange {
 	byte	_first;
 	byte	_last;
 
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
