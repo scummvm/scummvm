@@ -1283,8 +1283,11 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	Common::OutSaveFile *f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
-	uint32 curTime = 0;
 	uint32 gsc = _gameStoppedClock;
+
+	uint32 curTime = 0;
+	if (getGameType() != GType_SIMON1 && getGameType() != GType_SIMON2)
+		curTime = time(NULL);
 
 	_lockWord |= 0x100;
 
@@ -1299,7 +1302,6 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 		// No caption
 	} else if (getGameType() == GType_FF) {
 		f->write(caption, 100);
-		curTime = time(NULL);
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		f->write(caption, 18);
 	} else {
@@ -1308,7 +1310,7 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 
 	f->writeUint32BE(_itemArrayInited - 1);
 	f->writeUint32BE(0xFFFFFFFF);
-	f->writeUint32BE(0);
+	f->writeUint32BE(curTime);
 	f->writeUint32BE(0);
 
 	i = 0;
