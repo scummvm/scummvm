@@ -2457,6 +2457,7 @@ void drawFailureMessage(byte cmd) {
 
 void drawOverlays(void) {
 	overlayHeadElement *currentOverlay;
+	overlayHeadElement *nextOverlay;
 
 	backupOverlayPage();
 
@@ -2467,6 +2468,8 @@ void drawOverlays(void) {
 	currentOverlay = currentOverlay->next;
 
 	while (currentOverlay) {
+		nextOverlay = currentOverlay->next;
+
 		switch (currentOverlay->type) {
 		case 0:	// sprite
 			{
@@ -2629,7 +2632,7 @@ void drawOverlays(void) {
 			}
 		}
 
-		currentOverlay = currentOverlay->next;
+		currentOverlay = nextOverlay;
 	}
 }
 
