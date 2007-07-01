@@ -259,7 +259,9 @@ bool SaveLoad_v3::loadScreenshot(int16 dataVar, int32 size, int32 offset) {
 
 		in->seek(1040 + varSize * 2);
 		return loadSprite(*in, size);
-
+		bool success = loadSprite(*in, size);
+		delete in;
+		return success;
 	} else
 		warning("Invalid attempt at loading a screenshot (%d, %d, %d, %d)",
 				offset, size, slot, slotR);
