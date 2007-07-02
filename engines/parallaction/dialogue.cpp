@@ -266,7 +266,7 @@ uint16 DialogueManager::askPassword() {
 			passwordLen++;
 			password[passwordLen] = '\0';
 
-			_vm->_gfx->displayBalloonString(_answerBalloonX[0] + 5, _answerBalloonY[0] + _answerBalloonH[0] - 15, password, 0);
+			_vm->_gfx->displayBalloonString(_answerBalloonX[0] + 10, _answerBalloonY[0] + _answerBalloonH[0] - 15, password, 0);
 			_vm->_gfx->updateScreen();
 
 			g_system->delayMillis(20);
