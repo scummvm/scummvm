@@ -32,8 +32,8 @@ enum ChildType {
 	kRoomType = 1,
 	kObjectType = 2,
 	kPlayerType = 3,
-	kGenExitType = 4,   // Elvira 1 specifc
-	kSuperRoomType = 4, // Elvira 2 specic
+	kGenExitType = 4,   // Elvira 1 specific
+	kSuperRoomType = 4, // Elvira 2 specific
 
 	kContainerType = 7,
 	kChainType = 8,
