@@ -88,8 +88,8 @@ const char *OptionsDialog::_subModeDesc[] = {
 };
 
 const char *OptionsDialog::_rateConverterDesc[] = {
-	"Linear (low qual, faster)",
-	"Filtering (high qual, slower)",
+	"Linear (fastest)",
+	"Filtering (best)",
 	0
 };
 
@@ -677,6 +677,8 @@ void OptionsDialog::reflowLayout() {
 		_midiPopUp->changeLabelWidth(labelWidth);
 	if (_outputRatePopUp)
 		_outputRatePopUp->changeLabelWidth(labelWidth);
+	if (_rateConverterPopUp)
+		_rateConverterPopUp->changeLabelWidth(labelWidth);
 	if (_gfxPopUp)
 		_gfxPopUp->changeLabelWidth(labelWidth);
 	if (_renderModePopUp)
