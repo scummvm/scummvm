@@ -652,6 +652,16 @@ void AGOSEngine_Elvira2::oe2_isAdjNoun() {
 	// 179: item unk1 unk2 is
 	Item *item = getNextItemPtr();
 	int16 a = getNextWord(), b = getNextWord();
+
+	if (getGameType() == GType_ELVIRA2) {
+		// WORKAROUND: A NULL item can occur when interacting with Wine Bottles
+		if (item == NULL) {
+			printf("Please report where exactly this occurs in Elvira 2.\n");
+			setScriptCondition(false);
+			return;
+		}
+	}
+
 	setScriptCondition(item->adjective == a && item->noun == b);
 }
 
