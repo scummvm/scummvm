@@ -656,7 +656,7 @@ void AGOSEngine_Elvira2::oe2_isAdjNoun() {
 	if (getGameType() == GType_ELVIRA2) {
 		// WORKAROUND: A NULL item can occur when interacting with Wine Bottles
 		if (item == NULL) {
-			printf("Please report where exactly this occurs in Elvira 2.\n");
+			warning("Please report where exactly this occurs in Elvira 2");
 			setScriptCondition(false);
 			return;
 		}
