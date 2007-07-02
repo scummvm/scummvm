@@ -77,7 +77,7 @@ void Render::drawScene() {
 
 	assert(_initialized);
 
-	_frameCount++;
+	_renderedFrameCount++;
 
 	backBufferSurface = _vm->_gfx->getBackBuffer();
 
@@ -183,8 +183,8 @@ void Render::fpsTimerCallback(void *refCon) {
 }
 
 void Render::fpsTimer(void) {
-	_fps = _frameCount;
-	_frameCount = 0;
+	_fps = _renderedFrameCount;
+	_renderedFrameCount = 0;
 }
 
 } // End of namespace Saga
