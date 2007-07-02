@@ -303,7 +303,7 @@ void Parallaction::displayCharacterComment(ExamineData *data) {
 	Common::Rect r(v28, v26);
 	r.moveTo(140, 10);
 	_gfx->drawBalloon(r, 0);
-	_gfx->displayWrappedString(data->_description, 140, 10, 130, 0);
+	_gfx->displayWrappedString(data->_description, 140, 10, 0, 130);
 
 	_gfx->updateScreen();
 
@@ -344,7 +344,7 @@ void Parallaction::displayItemComment(ExamineData *data) {
 	r.moveTo(0, 90);
 	_gfx->drawBalloon(r, 0);
 	_gfx->flatBlitCnv(_vm->_char._head, 100, 152, Gfx::kBitFront);
-	_gfx->displayWrappedString(data->_description, 0, 90, 130, 0);
+	_gfx->displayWrappedString(data->_description, 0, 90, 0, 130);
 
 	jobEraseAnimations((void*)1, NULL);
 	_gfx->updateScreen();

@@ -201,7 +201,7 @@ uint16 Menu::chooseLanguage() {
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
-	_vm->_gfx->displayString(60, 30, "SELECT LANGUAGE");
+	_vm->_gfx->displayString(60, 30, "SELECT LANGUAGE", 1);
 
 	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
@@ -287,10 +287,10 @@ uint16 Menu::selectGame() {
 
 		if (_si != 0) {
 			// load a game
-			_vm->_gfx->displayString(60, 30, loadGameMsg[_language]);
+			_vm->_gfx->displayString(60, 30, loadGameMsg[_language], 1);
 		} else {
 			// new game
-			_vm->_gfx->displayString(60, 30, newGameMsg[_language]);
+			_vm->_gfx->displayString(60, 30, newGameMsg[_language], 1);
 		}
 
 		_vm->_gfx->updateScreen();
@@ -353,7 +353,7 @@ void Menu::selectCharacter() {
 		askPassword = false;
 		_di = 0;
 
-		_vm->_gfx->displayString(60, 30, introMsg1[_language]);			// displays message
+		_vm->_gfx->displayString(60, 30, introMsg1[_language], 1);			// displays message
 		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
 		_donna_points = 0;
@@ -415,7 +415,7 @@ void Menu::selectCharacter() {
 		if (askPassword == false) break;
 
 		_vm->_gfx->copyScreen(Gfx::kBit2, Gfx::kBitFront);
-		_vm->_gfx->displayString(60, 30, introMsg2[_language]);
+		_vm->_gfx->displayString(60, 30, introMsg2[_language], 1);
 		_vm->_gfx->updateScreen();
 
 		g_system->delayMillis(2000);

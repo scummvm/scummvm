@@ -179,7 +179,7 @@ char *Parallaction::parseDialogueString(Script &script) {
 	} while (strlen(vD0) == 0);
 
 	vD0[strlen(vD0)-1] = '\0';	// deletes the trailing '0xA'
-								// this is critical for Gfx::displayBalloonString to work properly
+								// this is critical for Gfx::displayWrappedString to work properly
 
 	char *vCC = (char*)malloc(strlen(vD0)+1);
 	strcpy(vCC, vD0);
@@ -248,9 +248,10 @@ uint16 DialogueManager::askPassword() {
 		r.moveTo(_answerBalloonX[0], _answerBalloonY[0]);
 
 		_vm->_gfx->drawBalloon(r, 1);
-		_vm->_gfx->displayWrappedString(_q->_answers[0]->_text, _answerBalloonX[0], _answerBalloonY[0], MAX_BALLOON_WIDTH, 3);
+		_vm->_gfx->displayWrappedString(_q->_answers[0]->_text, _answerBalloonX[0], _answerBalloonY[0], 3, MAX_BALLOON_WIDTH);
 		_vm->_gfx->flatBlitCnv(_answerer, 0, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y,	Gfx::kBitFront);
-		_vm->_gfx->displayBalloonString(_answerBalloonX[0] + 5,	_answerBalloonY[0] + _answerBalloonH[0] - 15, "> ", 0);
+		_vm->_gfx->displayString(_answerBalloonX[0] + 5, _answerBalloonY[0] + _answerBalloonH[0] - 15, "> ", 0);
+		_vm->_gfx->updateScreen();
 
 		Common::Event e;
 		while (e.kbd.ascii != Common::KEYCODE_RETURN && passwordLen < MAX_PASSWORD_LENGTH) {
@@ -266,7 +267,7 @@ uint16 DialogueManager::askPassword() {
 			passwordLen++;
 			password[passwordLen] = '\0';
 
-			_vm->_gfx->displayBalloonString(_answerBalloonX[0] + 10, _answerBalloonY[0] + _answerBalloonH[0] - 15, password, 0);
+			_vm->_gfx->displayString(_answerBalloonX[0] + 10, _answerBalloonY[0] + _answerBalloonH[0] - 15, password, 0);
 			_vm->_gfx->updateScreen();
 
 			g_system->delayMillis(20);
@@ -305,7 +306,7 @@ bool DialogueManager::displayAnswer(uint16 i) {
 		_vm->_gfx->drawBalloon(r, 1);
 
 		_answerBalloonY[i+1] = 10 + _answerBalloonY[i] + _answerBalloonH[i];
-		_askPassword = _vm->_gfx->displayWrappedString(_q->_answers[i]->_text, _answerBalloonX[i], _answerBalloonY[i], MAX_BALLOON_WIDTH, 3);
+		_askPassword = _vm->_gfx->displayWrappedString(_q->_answers[i]->_text, _answerBalloonX[i], _answerBalloonY[i], 3, MAX_BALLOON_WIDTH);
 
 		return true;
 	}
@@ -347,7 +348,7 @@ void DialogueManager::displayQuestion() {
 	r.moveTo(QUESTION_BALLOON_X, QUESTION_BALLOON_Y);
 
 	_vm->_gfx->drawBalloon(r, _q->_mood & 0x10);
-	_vm->_gfx->displayWrappedString(_q->_text, QUESTION_BALLOON_X, QUESTION_BALLOON_Y, MAX_BALLOON_WIDTH, 0);
+	_vm->_gfx->displayWrappedString(_q->_text, QUESTION_BALLOON_X, QUESTION_BALLOON_Y, 0, MAX_BALLOON_WIDTH);
 	_vm->_gfx->updateScreen();
 
 	waitUntilLeftClick();
@@ -423,7 +424,7 @@ int16 DialogueManager::selectAnswer() {
 	_answerBalloonY[i] = 2000;
 
 	if (numAvailableAnswers == 1) {
-		_vm->_gfx->displayWrappedString(_q->_answers[_di]->_text, _answerBalloonX[_di], _answerBalloonY[_di], MAX_BALLOON_WIDTH, 0);
+		_vm->_gfx->displayWrappedString(_q->_answers[_di]->_text, _answerBalloonX[_di], _answerBalloonY[_di], 0, MAX_BALLOON_WIDTH);
 		_vm->_gfx->flatBlitCnv(_answerer, 0, ANSWER_CHARACTER_X,	ANSWER_CHARACTER_Y, Gfx::kBitFront);
 		_vm->_gfx->updateScreen();
 		waitUntilLeftClick();
@@ -440,9 +441,9 @@ int16 DialogueManager::selectAnswer() {
 
 		if (_si != v2) {
 			if (v2 != -1)
-				_vm->_gfx->displayWrappedString(_q->_answers[v2]->_text, _answerBalloonX[v2], _answerBalloonY[v2], MAX_BALLOON_WIDTH, 3);
+				_vm->_gfx->displayWrappedString(_q->_answers[v2]->_text, _answerBalloonX[v2], _answerBalloonY[v2], 3, MAX_BALLOON_WIDTH);
 
-			_vm->_gfx->displayWrappedString(_q->_answers[_si]->_text, _answerBalloonX[_si],	_answerBalloonY[_si], MAX_BALLOON_WIDTH, 0);
+			_vm->_gfx->displayWrappedString(_q->_answers[_si]->_text, _answerBalloonX[_si],	_answerBalloonY[_si], 0, MAX_BALLOON_WIDTH);
 			_vm->_gfx->flatBlitCnv(_answerer, _q->_answers[_si]->_mood & 0xF, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
 		}
 

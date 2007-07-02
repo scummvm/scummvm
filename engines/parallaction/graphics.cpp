@@ -583,30 +583,19 @@ void Gfx::makeCnvFromString(StaticCnv *cnv, char *text) {
 
 }
 
-void Gfx::displayString(uint16 x, uint16 y, const char *text) {
-	assert(_font == _fonts[kFontMenu]);
-
+void Gfx::displayString(uint16 x, uint16 y, const char *text, byte color) {
 	byte *dst = _buffers[kBitFront] + x + y*SCREEN_WIDTH;
-	_font->setColor(1);
+	_font->setColor(color);
 	_font->drawString(dst, SCREEN_WIDTH, text);
 }
 
 void Gfx::displayCenteredString(uint16 y, const char *text) {
 	uint16 x = (SCREEN_WIDTH - getStringWidth(text)) / 2;
-	displayString(x, y, text);
+	displayString(x, y, text, 1);
 }
 
-void Gfx::displayBalloonString(uint16 x, uint16 y, const char *text, byte color) {
-	assert(_font == _fonts[kFontDialogue]);
-
-	byte *dst = _buffers[kBitFront] + x + y*SCREEN_WIDTH;
-
-	_font->setColor(color);
-	_font->drawString(dst, SCREEN_WIDTH, text);
-}
-
-bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, byte color) {
-//	printf("Gfx::displayWrappedString(%s, %i, %i, %i, %i)...", text, x, y, maxwidth, color);
+bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, byte color, uint16 wrapwidth) {
+//	printf("Gfx::displayWrappedString(%s, %i, %i, %i, %i)...", text, x, y, color, wrapwidth);
 
 	uint16 lines = 0;
 	bool rv = false;
@@ -622,7 +611,7 @@ bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, 
 		text = parseNextToken(text, token, 40, "   ");
 		linewidth += getStringWidth(token);
 
-		if (linewidth > maxwidth) {
+		if (linewidth > wrapwidth) {
 			// wrap line
 			lines++;
 			rx = x + 10;			// x
@@ -636,7 +625,7 @@ bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, 
 		if (!scumm_stricmp(token, "%p")) {
 			rv = true;
 		} else
-			displayBalloonString(rx, ry, token, color);
+			displayString(rx, ry, token, color);
 
 		rx += getStringWidth(token) + getStringWidth(" ");
 		linewidth += getStringWidth(" ");

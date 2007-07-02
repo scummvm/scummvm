@@ -165,10 +165,9 @@ public:
 
 	// dialogue and text
 	void drawBalloon(const Common::Rect& r, uint16 arg_8);
-	void displayBalloonString(uint16 x, uint16 y, const char *text, byte color);
-	void displayString(uint16 x, uint16 y, const char *text);
+	void displayString(uint16 x, uint16 y, const char *text, byte color);
 	void displayCenteredString(uint16 y, const char *text);
-	bool displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, byte color);
+	bool displayWrappedString(char *text, uint16 x, uint16 y, byte color, uint16 wrapwidth = SCREEN_WIDTH);
 	uint16 getStringWidth(const char *text);
 	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
 

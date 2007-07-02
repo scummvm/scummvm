@@ -253,7 +253,7 @@ void _c_endComment(void *param) {
 	_vm->_gfx->floodFill(Gfx::kBitFront, r, 1);
 
 	_vm->_gfx->setFont(kFontDialogue);
-	_vm->_gfx->displayWrappedString(_vm->_location._endComment, 3, 5, 130, 0);
+	_vm->_gfx->displayWrappedString(_vm->_location._endComment, 3, 5, 0, 130);
 	_vm->_gfx->updateScreen();
 
 	uint32 di = 0;
