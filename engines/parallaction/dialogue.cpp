@@ -59,7 +59,8 @@ int16 _answerBalloonH[10] = { 0 };
 Dialogue *Parallaction::parseDialogue(Script &script) {
 //	printf("parseDialogue()\n");
 	uint16 numQuestions = 0;
-	Question *_questions[20];
+
+	Dialogue *dialogue = new Dialogue;
 
 	Table forwards(20);
 
@@ -68,23 +69,23 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 	while (scumm_stricmp(_tokens[0], "enddialogue")) {
 		if (scumm_stricmp(_tokens[0], "Question")) continue;
 
-		_questions[numQuestions] = new Dialogue;
-		Dialogue *dialogue = _questions[numQuestions];
+		Question *question = new Question;
+		dialogue->_questions[numQuestions] = question;
 
 		forwards.addData(_tokens[1]);
 
-		dialogue->_text = parseDialogueString(script);
+		question->_text = parseDialogueString(script);
 
 		fillBuffers(script, true);
-		dialogue->_mood = atoi(_tokens[0]);
+		question->_mood = atoi(_tokens[0]);
 
 		uint16 numAnswers = 0;
 
 		fillBuffers(script, true);
 		while (scumm_stricmp(_tokens[0], "endquestion")) {	// parse answers
 
-			dialogue->_answers[numAnswers] = new Answer;
-			Answer *answer = dialogue->_answers[numAnswers];
+			Answer *answer = new Answer;
+			question->_answers[numAnswers] = answer;
 
 			if (_tokens[1][0]) {
 
@@ -141,7 +142,7 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 	memset(v50, 0, 20);
 
 	for (uint16 i = 0; i < numQuestions; i++) {
-		Question *question = _questions[i];
+		Question *question = dialogue->_questions[i];
 
 		for (uint16 j = 0; j < NUM_ANSWERS; j++) {
 			Answer *answer = question->_answers[j];
@@ -150,21 +151,16 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 			int16 index = forwards.lookup(answer->_following._name);
 			free(answer->_following._name);
 
-			if (index == -1) {
+			if (index == -1)
 				answer->_following._question = 0;
-			} else {
-				answer->_following._question = _questions[index - 1];
-
-				if (v50[index])
-					answer->_mood |= 0x10;
+			else
+				answer->_following._question = dialogue->_questions[index - 1];
 
 
-				v50[index] = 1;
-			}
 		}
 	}
 
-	return _questions[0];
+	return dialogue;
 }
 
 
@@ -383,7 +379,7 @@ void DialogueManager::run() {
 	_askPassword = false;
 	CommandList *cmdlist = NULL;
 
-	_q = _dialogue;
+	_q = _dialogue->_questions[0];
 	int16 answer;
 
 	while (_q) {
@@ -514,12 +510,8 @@ Answer::Answer() {
 }
 
 Answer::~Answer() {
-	if (_mood & 0x10)
-		delete _following._question;
-
 	if (_text)
 		free(_text);
-
 }
 
 Question::Question() {
