@@ -153,6 +153,18 @@ cmd(toggle_v) {
 
 cmd(new_room) {
 	g_agi->newRoom(p0);
+
+	// WORKAROUND: Works around intro skipping bug (#1737343) in Gold Rush.
+	// Intro was skipped because the enter-keypress finalizing the entering
+	// of the copy protection string (Copy protection is in logic.128) was
+	// left over to the intro scene (Starts with room 73 i.e. logic.073).
+	// The intro scene checks for any keys pressed and if it finds any it
+	// jumps to the game's start (Room 1 i.e. logic.001). We clear the
+	// keyboard buffer when the intro sequence's first room (Room 73) is
+	// loaded so that no keys from the copy protection scene can be left
+	// over to cause the intro to skip to the game's start.
+	if (g_agi->getGameID() == GID_GOLDRUSH && p0 == 73)
+		game.keypress = 0;
 }
 
 cmd(new_room_f) {
