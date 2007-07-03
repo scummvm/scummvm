@@ -58,105 +58,108 @@ int16 _answerBalloonH[10] = { 0 };
 
 Dialogue *Parallaction::parseDialogue(Script &script) {
 //	printf("parseDialogue()\n");
-	uint16 num_questions = 0;
-	uint16 v50[20];
-	Table _questions_names(20);
+	uint16 numQuestions = 0;
 	Question *_questions[20];
 
-	for (uint16 _si = 0; _si < 20; _si++) {
-		v50[_si] = 0;
-	}
+	Table forwards(20);
 
 	fillBuffers(script, true);
 
 	while (scumm_stricmp(_tokens[0], "enddialogue")) {
 		if (scumm_stricmp(_tokens[0], "Question")) continue;
 
-		_questions[num_questions] = new Dialogue;
-		Dialogue *vB4 = _questions[num_questions];
+		_questions[numQuestions] = new Dialogue;
+		Dialogue *dialogue = _questions[numQuestions];
 
-		_questions_names.addData(_tokens[1]);
+		forwards.addData(_tokens[1]);
 
-		vB4->_text = parseDialogueString(script);
-//		printf("Question: '%s'\n", vB4->_text);
+		dialogue->_text = parseDialogueString(script);
 
 		fillBuffers(script, true);
-		vB4->_mood = atoi(_tokens[0]);
+		dialogue->_mood = atoi(_tokens[0]);
 
-		uint16 _di = 0;
+		uint16 numAnswers = 0;
 
 		fillBuffers(script, true);
 		while (scumm_stricmp(_tokens[0], "endquestion")) {	// parse answers
 
-			vB4->_answers[_di] = new Answer;
+			dialogue->_answers[numAnswers] = new Answer;
+			Answer *answer = dialogue->_answers[numAnswers];
 
 			if (_tokens[1][0]) {
 
-				Table* v60 = _localFlagNames;
-				uint16 v56 = 1;
+				Table* flagNames;
+				uint16 token;
 
 				if (!scumm_stricmp(_tokens[1], "global")) {
-					v56 = 2;
-					v60 = _globalTable;
-					vB4->_answers[_di]->_yesFlags |= kFlagsGlobal;
+					token = 2;
+					flagNames = _globalTable;
+					answer->_yesFlags |= kFlagsGlobal;
+				} else {
+					token = 1;
+					flagNames = _localFlagNames;
 				}
 
 				do {
 
-					if (!scumm_strnicmp(_tokens[v56], "no", 2)) {
-						byte _al = v60->lookup(_tokens[v56]+2);
-						vB4->_answers[_di]->_noFlags |= 1 << (_al - 1);
+					if (!scumm_strnicmp(_tokens[token], "no", 2)) {
+						byte _al = flagNames->lookup(_tokens[token]+2);
+						answer->_noFlags |= 1 << (_al - 1);
 					} else {
-						byte _al = v60->lookup(_tokens[v56]);
-						vB4->_answers[_di]->_yesFlags |= 1 << (_al - 1);
+						byte _al = flagNames->lookup(_tokens[token]);
+						answer->_yesFlags |= 1 << (_al - 1);
 					}
 
-					v56++;
+					token++;
 
-				} while (!scumm_stricmp(_tokens[v56++], "|"));
+				} while (!scumm_stricmp(_tokens[token++], "|"));
 
 			}
 
-			vB4->_answers[_di]->_text = parseDialogueString(script);
-
-//			printf("answer[%i]: '%s'\n", _di, vB4->_answers[_di]);
+			answer->_text = parseDialogueString(script);
 
 			fillBuffers(script, true);
-			vB4->_answers[_di]->_mood = atoi(_tokens[0]);
-			vB4->_answers[_di]->_following._name = parseDialogueString(script);
+			answer->_mood = atoi(_tokens[0]);
+			answer->_following._name = parseDialogueString(script);
 
 			fillBuffers(script, true);
 			if (!scumm_stricmp(_tokens[0], "commands")) {
-				parseCommands(script, vB4->_answers[_di]->_commands);
+				parseCommands(script, answer->_commands);
 				fillBuffers(script, true);
 			}
 
-			_di++;
+			numAnswers++;
 		}
 
 		fillBuffers(script, true);
-		num_questions++;
+		numQuestions++;
 
 	}
 
-	for (uint16 _si = 0; _si <num_questions; _si++) {
+	// link questions
+	byte v50[20];
+	memset(v50, 0, 20);
 
-		for (uint16 v5A = 0; v5A < 5; v5A++) {
-			if (_questions[_si]->_answers[v5A] == 0) continue;
+	for (uint16 i = 0; i < numQuestions; i++) {
+		Question *question = _questions[i];
 
-			int16 v58 = _questions_names.lookup(_questions[_si]->_answers[v5A]->_following._name);
-			free(_questions[_si]->_answers[v5A]->_following._name);
+		for (uint16 j = 0; j < NUM_ANSWERS; j++) {
+			Answer *answer = question->_answers[j];
+			if (answer == 0) continue;
 
-			if (v58 == -1) {
-				_questions[_si]->_answers[v5A]->_following._question = 0;
+			int16 index = forwards.lookup(answer->_following._name);
+			free(answer->_following._name);
+
+			if (index == -1) {
+				answer->_following._question = 0;
 			} else {
-				_questions[_si]->_answers[v5A]->_following._question = _questions[v58-1];
+				answer->_following._question = _questions[index - 1];
 
-				if (v50[v58]) {
-					_questions[_si]->_answers[v5A]->_mood |= 0x10;
-				}
+				if (v50[index])
+					answer->_mood |= 0x10;
 
-				v50[v58] = 1;
+
+				v50[index] = 1;
 			}
 		}
 	}
