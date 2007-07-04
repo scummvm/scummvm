@@ -370,10 +370,12 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 	if (y < 2)
 		y = 2;
 
-	if (getGameType() == GType_SIMON1)
-		animate(windowNum, 2, 199 + vgaSpriteId, x, y, 12);
-	else
+	if (getGameType() == GType_SIMON1) {
+		uint16 id = 199 + vgaSpriteId;
+		animate(windowNum, id / 100, id, x, y, 12);
+	} else {
 		animate(windowNum, 2, vgaSpriteId, x, y, 12);
+	}
 }
 
 // The Feeble Files specific
