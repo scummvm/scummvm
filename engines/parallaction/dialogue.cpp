@@ -424,7 +424,7 @@ int16 DialogueManager::selectAnswer() {
 
 	if (numAvailableAnswers == 1) {
 		_vm->_gfx->displayWrappedString(_q->_answers[_di]->_text, _answerBalloonX[_di], _answerBalloonY[_di], 0, MAX_BALLOON_WIDTH);
-		_vm->_gfx->flatBlitCnv(_answerer, 0, ANSWER_CHARACTER_X,	ANSWER_CHARACTER_Y, Gfx::kBitFront);
+		_vm->_gfx->flatBlitCnv(_answerer, _q->_answers[_di]->_mood & 0xF, ANSWER_CHARACTER_X,	ANSWER_CHARACTER_Y, Gfx::kBitFront);
 		_vm->_gfx->updateScreen();
 		waitUntilLeftClick();
 		return _di;
