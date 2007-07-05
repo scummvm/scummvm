@@ -699,26 +699,32 @@ void AmigaDisk::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 plan
 	byte s0, s1, s2, s3, s4, mask, t0, t1, t2, t3, t4;
 
 	for (uint32 i = 0; i < numFrames; i++) {
-		for (uint32 j = 0; j < planeSize; j++) {
-			s0 = src[j];
-			s1 = src[j+planeSize];
-			s2 = src[j+planeSize*2];
-			s3 = src[j+planeSize*3];
-			s4 = src[j+planeSize*4];
+		if (READ_BE_UINT32(src) == MKID_BE('DLTA')) {
+			// TODO: Add support for delta encoding
+			uint32 size = READ_BE_UINT32(src + 4);
 
-			for (uint32 k = 0; k < 8; k++) {
-				mask = 1 << (7 - k);
-				t0 = (s0 & mask ? 1 << 0 : 0);
-				t1 = (s1 & mask ? 1 << 1 : 0);
-				t2 = (s2 & mask ? 1 << 2 : 0);
-				t3 = (s3 & mask ? 1 << 3 : 0);
-				t4 = (s4 & mask ? 1 << 4 : 0);
-				*dst++ = t0 | t1 | t2 | t3 | t4;
+			src += size + 8;
+		} else {
+			for (uint32 j = 0; j < planeSize; j++) {
+				s0 = src[j];
+				s1 = src[j+planeSize];
+				s2 = src[j+planeSize*2];
+				s3 = src[j+planeSize*3];
+				s4 = src[j+planeSize*4];
+
+				for (uint32 k = 0; k < 8; k++) {
+					mask = 1 << (7 - k);
+					t0 = (s0 & mask ? 1 << 0 : 0);
+					t1 = (s1 & mask ? 1 << 1 : 0);
+					t2 = (s2 & mask ? 1 << 2 : 0);
+					t3 = (s3 & mask ? 1 << 3 : 0);
+					t4 = (s4 & mask ? 1 << 4 : 0);
+					*dst++ = t0 | t1 | t2 | t3 | t4;
+				}
+
 			}
-
+			src += planeSize * NUM_PLANES;
 		}
-
-		src += planeSize * NUM_PLANES;
 	}
 }
 
