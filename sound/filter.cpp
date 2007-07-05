@@ -42,6 +42,15 @@ static uint16 windowLength(
 			double samplingFreq);
 
 static void windowDesign(double *coeffs, uint16 length, double ripple);
+
+static double sinc(double arg);
+
+static void LPDesign(
+		double *coeffs,
+		uint16 length,
+		double passbandEdge,
+		double stopbandEdge,
+		double samplingFreq);
  
 /* 
  * Modified Bessel function of the first type and zeroth order.  This is
@@ -120,19 +129,56 @@ static void windowDesign(double *coeffs, uint16 length, double ripple) {
 	for (i = 0; i <= (length - 1) / 2; i++) {
 		int16 n = i - (length - 1) / 2;
 		
+		/*
+		 * Both this window and the later filter are even symmetric, so we
+		 * only need to calculate half of the window for now.
+		 */
 		coeffs[i] = 
 			bessel_i0(beta * sqrt(1 - pow((2.0 * n) / (length - 1), 2.0)))
 			/ bessel_i0(beta);
-		coeffs[length - i - 1] = coeffs[i];
+	}
+}
+
+static inline double sinc(double arg) {
+	if (arg == 0) {
+		/* continuous extension of sin(arg) / arg */
+		return 1;
+	} else {
+		return sin(arg) / arg;
 	}
 }
 
 /*
- * Generates a Kaiser window using the parameters expected to be available to
- * a rate converter.
+ * Generates the filter coefficients for a windowed lowpass filter by applying
+ * the provided window to the ideal lowpass (sinc) filter
  */
+static void LPDesign(
+		double *coeffs,
+		uint16 length,
+		double passbandEdge,
+		double stopbandEdge,
+		double samplingFreq) {
+	uint16 i;
+	
+	for (i = 0; i <= (length - 1) / 2; i++) {
+		int16 n = i - (length - 1) / 2;
+		
+		/*
+		 * Use an ideal transition halfway between the passband and stopband
+		 * edges
+		 */
+		double bandwidth = (passbandEdge + stopbandEdge) / samplingFreq;
+		// == 2 * ((passbandEdge + stopbandEdge) / 2) / samplingFreq
+		
+		coeffs[i] *= bandwidth *  sinc(M_PI * bandwidth * n);
+		/* Filter is even symmetric */
+		coeffs[length - i - 1] = coeffs[i];
+	}
+}
+
+/* Generates lowpass filter coefficients using the parameters provided */
 // TODO: Write a nice interface for this :)
-void kaiserWindow(
+void lowPassCoeffs(
 		double passbandEdge,
 		double stopbandEdge,
 		double dBPassbandRipple,
@@ -142,9 +188,13 @@ void kaiserWindow(
 	double ripple = equiripple(dBPassbandRipple, dBStopbandAtten);
 	
 	/* Find the number of coefficients in the window */
-	uint16 length = windowLength(ripple, stopbandEdge - passbandEdge, samplingFreq);
+	uint16 length = 
+		windowLength(ripple, stopbandEdge - passbandEdge, samplingFreq);
 	
 	/* Calculate the window coefficients */
 	double *coeffs = (double *)malloc(length * sizeof(double));
 	windowDesign(coeffs, length, ripple);
+	
+	/* Generate the coefficients of a low pass filter using this window */
+	LPDesign(coeffs, length, passbandEdge, stopbandEdge, samplingFreq);
 }

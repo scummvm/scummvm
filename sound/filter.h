@@ -28,11 +28,8 @@
 
 #include "common/scummsys.h"
 
-/*
- * Generates a Kaiser window using the parameters expected to be available to
- * a rate converter.
- */
-double *kaiserWindow(
+/* Generates lowpass filter coefficients using the parameters provided */
+void lowPassCoeffs(
 		double passbandEdge,
 		double stopbandEdge,
 		double dBPassbandRipple,
