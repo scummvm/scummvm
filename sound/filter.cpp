@@ -103,7 +103,6 @@ static inline uint16 windowLength(
  * Derives the coefficients for a Kaiser window of the given properties, using
  * standard Kaiser design formulae.
  */
-// TODO: check that the I_0 outputs haven't shot off to infinity
 static void windowDesign(double *coeffs, uint16 length, double ripple) {
 	uint16 i;
 	
