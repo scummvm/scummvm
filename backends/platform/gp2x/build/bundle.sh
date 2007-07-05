@@ -36,13 +36,14 @@ arm-open2x-linux-strip ./scummvm-gp2x-`date '+%Y-%m-%d'`/scummvm.gp2x
 echo Building ZIP bundle.
 if [ -f /usr/bin/zip ]
 	then
+		rm ./"gp2xkernel-open2x-`date '+%Y-%m-%d'`.zip"
 		cd "scummvm-gp2x-`date '+%Y-%m-%d'`"
-		zip "../scummvm-gp2x-`date '+%Y-%m-%d'`.zip" * -r -9
+		zip -r -9 "../scummvm-gp2x-`date '+%Y-%m-%d'`.zip" *
 		echo You should have a "scummvm-gp2x-`date '+%Y-%m-%d'`.zip" for the GP2X port ready to go.
-		echo All included files can also be found in ./"scummvm-gp2x-`date '+%Y-%m-%d'`"
+		cd ..
+		rm -R ./"scummvm-gp2x-`date '+%Y-%m-%d'`"
 	else  
 		echo - /usr/bin/zip not found, ZIP bundle not created.
 		echo All included files can also be found in ./"scummvm-gp2x-`date '+%Y-%m-%d'`"
 		echo - Please use you preferred archive tool to bundle these files.
 fi
-
