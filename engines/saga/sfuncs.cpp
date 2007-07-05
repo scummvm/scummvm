@@ -548,19 +548,20 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 
 	sceneNumber = thread->pop();
 	entrance = thread->pop();
-	if (_vm->getGameType() == GType_IHNM)
+	if (_vm->getGameType() == GType_IHNM) {
 		transition = thread->pop();
 
-	if (sceneNumber < 0) {
-		if (_vm->getGameType() == GType_ITE) {
-			_vm->shutDown();
-			return;
-		}
+		_vm->_gfx->setCursor(kCursorBusy);
+	}
+
+	if ((_vm->getGameType() == GType_ITE && sceneNumber < 0) ||
+		(_vm->getGameType() == GType_IHNM && sceneNumber == 0)) {
+		// TODO: set creditsFlag to true for IHNM
+		_vm->shutDown();
+		return;
 	}
 
 	if (_vm->getGameType() == GType_IHNM) {
-		warning("FIXME: implement sfScriptGotoScene differences for IHNM");
-
 		// Since it doesn't look like the IHNM scripts remove the
 		// cutaway after the intro, this is probably the best place to
 		// to it.
@@ -574,6 +575,7 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 		_vm->_interface->setMode(kPanelMain);
 	}
 
+	// changeScene calls loadScene which calls setVerb. setVerb resets all pending objects and object flags
 	if (sceneNumber == -1 && _vm->getGameType() == GType_IHNM) {
 		// TODO: This is used to return back to the character selection screen in IHNM.
 		// However, it seems more than this is needed, AM's speech is wrong and no actors
@@ -583,10 +585,19 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 		_vm->_scene->changeScene(sceneNumber, entrance, (sceneNumber == ITE_SCENE_ENDCREDIT1) ? kTransitionFade : kTransitionNoFade);
 	}
 
-	//TODO: placard stuff
+	if (_vm->_interface->getMode() == kPanelPlacard ||
+		_vm->_interface->getMode() == kPanelCutaway ||
+		_vm->_interface->getMode() == kPanelVideo) {
+		_vm->_gfx->showCursor(true);
+		_vm->_interface->setMode(kPanelMain);
+	}
+
 	_pendingVerb = _vm->_script->getVerbType(kVerbNone);
 	_currentObject[0] = _currentObject[1] = ID_NOTHING;
-	showVerb();
+	showVerb();	// calls setStatusText("")
+
+	if (_vm->getGameType() == GType_IHNM)
+		_vm->_gfx->setCursor(kCursorNormal);
 }
 
 // Script function #17 (0x11)
