@@ -768,12 +768,39 @@ static const byte amigaMouseCursor[] = {
 };
 
 /**
- * RGBA-palette for the Amiga-style arrow cursor.
+ * RGBA-palette for the Amiga-style arrow cursor
+ * and the Amiga-style busy cursor.
  */
 static const byte amigaMouseCursorPalette[] = {
 	0x00, 0x00, 0x00,	0x00, // Black
 	0xDE, 0x20, 0x21,	0x00, // Red
 	0xFF, 0xCF, 0xAD,	0x00  // Light red
+};
+
+/**
+ * An Amiga-style busy cursor showing an hourglass (13x16).
+ * 0 = Transparent.
+ * 1 = Black     (#000000 in 24-bit RGB).
+ * 2 = Red       (#DE2021 in 24-bit RGB).
+ * 3 = Light red (#FFCFAD in 24-bit RGB).
+ */
+static const byte busyAmigaMouseCursor[] = {
+	1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,2,2,2,2,2,2,2,2,2,2,2,1,
+	1,2,2,2,2,2,2,2,2,2,2,2,1,
+	0,1,3,3,3,3,3,3,3,3,3,1,0,
+	0,0,1,3,3,3,3,3,3,3,1,0,0,
+	0,0,0,1,3,3,3,3,3,1,0,0,0,
+	0,0,0,0,1,3,3,3,1,0,0,0,0,
+	0,0,0,0,0,1,3,1,0,0,0,0,0,
+	0,0,0,0,0,1,3,1,0,0,0,0,0,
+	0,0,0,0,1,2,3,2,1,0,0,0,0,
+	0,0,0,1,2,2,3,2,2,1,0,0,0,
+	0,0,1,2,2,2,3,2,2,2,1,0,0,
+	0,1,2,2,2,3,3,3,2,2,2,1,0,
+	1,3,3,3,3,3,3,3,3,3,3,3,1,
+	1,3,3,3,3,3,3,3,3,3,3,3,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1
 };
 
 void GfxMgr::setCursor(bool amigaStyleCursor) {
