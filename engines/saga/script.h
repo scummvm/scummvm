@@ -598,7 +598,7 @@ private:
 	void sfClearGlobalFlag(SCRIPTFUNC_PARAMS);
 	void sfTestGlobalFlag(SCRIPTFUNC_PARAMS);
 	void sfSetPoints(SCRIPTFUNC_PARAMS);
-	void sf103(SCRIPTFUNC_PARAMS);
+	void sfQueueMusic(SCRIPTFUNC_PARAMS);
 	void sfDisableAbortSpeeches(SCRIPTFUNC_PARAMS);
 
 	void SF_stub(const char *name, ScriptThread *thread, int nArgs);

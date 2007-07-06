@@ -240,7 +240,7 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfSetSpeechBox),
 		OPCODE(sfDebugShowData),
 		OPCODE(sfWaitFramesEsc),
-		OPCODE(sf103),
+		OPCODE(sfQueueMusic),
 		OPCODE(sfDisableAbortSpeeches)
 	};
 	if (_vm->getGameType() == GType_IHNM)
@@ -2119,8 +2119,38 @@ void Script::sfWaitFramesEsc(SCRIPTFUNC_PARAMS) {
 	thread->_returnValue = _vm->_framesEsc;
 }
 
-void Script::sf103(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf103", thread, nArgs);
+void Script::sfQueueMusic(SCRIPTFUNC_PARAMS) {
+	int16 param1 = thread->pop();
+	int16 param2 = thread->pop();
+	Event event;
+
+	if (param1 < 0) {
+		_vm->_music->stop();
+		return;
+	}
+
+	if (param1 >= _vm->_music->_songTableLen) {
+		warning("sfQueueMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTableLen - 1);
+	} else {
+		_vm->_music->setVolume(-1, 1);
+		event.type = kEvTOneshot;
+		event.code = kMusicEvent;
+		event.param = _vm->_music->_songTable[param1];
+		event.param2 = param2 ? MUSIC_LOOP : MUSIC_NORMAL;
+		event.op = kEventPlay;
+		event.time = 5 * 1000;	// we wait for 5x the duration here, to let the previous music track end
+								// TODO: original waits for 1000ms here, why is the 5x duration needed?
+
+		_vm->_events->queue(&event);
+
+		if (!_vm->_scene->haveChapterPointsChanged()) {
+			_vm->_scene->setCurrentMusicTrack(param1);
+			_vm->_scene->setCurrentMusicRepeat(param2);
+		} else {
+			// Don't save this music track when saving in IHNM
+			_vm->_scene->setChapterPointsChanged(false);
+		}
+	}
 }
 
 void Script::sfDisableAbortSpeeches(SCRIPTFUNC_PARAMS) {
