@@ -1130,7 +1130,7 @@ void Actor::handleSpeech(int msec) {
 		}
 
 		if (_activeSpeech.stringsCount == 0) {
-			_vm->_script->wakeUpThreadsDelayed(kWaitTypeSpeech, ticksToMSec(kScriptTimeTicksPerSecond / 3));
+			_vm->_script->wakeUpThreadsDelayed(kWaitTypeSpeech, _vm->ticksToMSec(kScriptTimeTicksPerSecond / 3));
 		}
 
 		return;

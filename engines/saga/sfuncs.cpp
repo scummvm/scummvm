@@ -266,7 +266,7 @@ void Script::sfWait(SCRIPTFUNC_PARAMS) {
 	time = thread->pop();
 
 	if (!_skipSpeeches) {
-		thread->waitDelay(ticksToMSec(time)); // put thread to sleep
+		thread->waitDelay(_vm->ticksToMSec(time)); // put thread to sleep
 	}
 }
 
@@ -437,7 +437,7 @@ void Script::sfStartBgdAnim(SCRIPTFUNC_PARAMS) {
 	int16 cycles = thread->pop();
 
 	_vm->_anim->setCycles(animId, cycles);
-	_vm->_anim->setFrameTime(animId, ticksToMSec(kRepeatSpeedTicks));
+	_vm->_anim->setFrameTime(animId, _vm->ticksToMSec(kRepeatSpeedTicks));
 	_vm->_anim->play(animId, 0);
 
 	debug(1, "sfStartBgdAnim(%d, %d)", animId, cycles);
@@ -695,7 +695,7 @@ void Script::sfSetBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
 	int16 animId = thread->pop();
 	int16 speed = thread->pop();
 
-	_vm->_anim->setFrameTime(animId, ticksToMSec(speed));
+	_vm->_anim->setFrameTime(animId, _vm->ticksToMSec(speed));
 	debug(1, "sfSetBgdAnimSpeed(%d, %d)", animId, speed);
 }
 
@@ -723,7 +723,7 @@ void Script::sfStartBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
 	int16 speed = thread->pop();
 
 	_vm->_anim->setCycles(animId, cycles);
-	_vm->_anim->setFrameTime(animId, ticksToMSec(speed));
+	_vm->_anim->setFrameTime(animId, _vm->ticksToMSec(speed));
 	_vm->_anim->play(animId, 0);
 
 	debug(1, "sfStartBgdAnimSpeed(%d, %d, %d)", animId, cycles, speed);
@@ -1086,7 +1086,7 @@ void Script::sfChainBgdAnim(SCRIPTFUNC_PARAMS) {
 	if (speed >= 0) {
 		_vm->_anim->setCycles(animId, cycles);
 		_vm->_anim->stop(animId);
-		_vm->_anim->setFrameTime(animId, ticksToMSec(speed));
+		_vm->_anim->setFrameTime(animId, _vm->ticksToMSec(speed));
 	}
 
 	_vm->_anim->link(animId1, animId);
@@ -2138,8 +2138,11 @@ void Script::sfQueueMusic(SCRIPTFUNC_PARAMS) {
 		event.param = _vm->_music->_songTable[param1];
 		event.param2 = param2 ? MUSIC_LOOP : MUSIC_NORMAL;
 		event.op = kEventPlay;
-		event.time = 5 * 1000;	// we wait for 5x the duration here, to let the previous music track end
-								// TODO: original waits for 1000ms here, why is the 5x duration needed?
+		event.time = _vm->ticksToMSec(500);		// I find the delay in the original to be too long, so I've set it to
+												// wait for half the time, which sounds better when chapter points
+												// change
+												// FIXME: If this is too short for other cases apart from chapter
+												// point change, set it back to 1000
 
 		_vm->_events->queue(&event);
 

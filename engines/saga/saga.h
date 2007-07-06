@@ -339,6 +339,7 @@ enum GameObjectTypes {
 
 enum ScriptTimings {
 	kScriptTimeTicksPerSecond = (728L/10L),
+	kScriptTimeTicksPerSecondIHNM = 72,
 	kRepeatSpeedTicks = (728L/10L)/3,
 	kNormalFadeDuration = 320, // 64 steps, 5 msec each
 	kQuickFadeDuration = 64,  // 64 steps, 1 msec each
@@ -458,10 +459,6 @@ struct SaveGameHeader {
 	uint32 version;
 	char name[SAVE_TITLE_SIZE];
 };
-
-inline int ticksToMSec(int tick) {
-	return tick * 1000 / kScriptTimeTicksPerSecond;
-}
 
 inline int clamp(int minValue, int value, int maxValue) {
 	if (value <= minValue) {
@@ -593,6 +590,13 @@ public:
 
 	const bool mouseButtonPressed() const {
 		return _leftMouseButtonPressed || _rightMouseButtonPressed;
+	}
+
+	inline int ticksToMSec(int tick) {
+		if (getGameType() == GType_ITE)
+			return tick * 1000 / kScriptTimeTicksPerSecond;
+		else
+			return tick * 1000 / kScriptTimeTicksPerSecondIHNM;
 	}
 
  private:
