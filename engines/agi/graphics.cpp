@@ -713,17 +713,43 @@ void GfxMgr::gfxPutBlock(int x1, int y1, int x2, int y2) {
 	g_system->copyRectToScreen(_screen + y1 * 320 + x1, 320, x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 }
 
-static const byte mouseCursorArrow[] = {
-	// This is the same arrow cursor that was later used in early SCI games
-	0x00, 0x00, 0x40, 0x00, 0x60, 0x00, 0x70, 0x00,
-	0x78, 0x00, 0x7C, 0x00, 0x7E, 0x00, 0x7F, 0x00,
-	0x7F, 0x80, 0x7F, 0xC0, 0x7C, 0x00, 0x46, 0x00,
-	0x06, 0x00, 0x03, 0x00, 0x03, 0x00, 0x01, 0x80,
-	0xC0, 0x00, 0xA0, 0x00, 0x90, 0x00, 0x88, 0x00,
-	0x84, 0x00, 0x82, 0x00, 0x81, 0x00, 0x80, 0x80,
-	0x80, 0x40, 0x80, 0x20, 0x82, 0x00, 0xA9, 0x00,
-	0xC9, 0x00, 0x04, 0x80, 0x04, 0x80, 0x02, 0x40
+/**
+ * A black and white SCI-style arrow cursor (11x16).
+ * 0 = Transparent.
+ * 1 = Black (#000000 in 24-bit RGB).
+ * 2 = White (#FFFFFF in 24-bit RGB).
+ */
+static const byte sciMouseCursor[] = {
+	1,1,0,0,0,0,0,0,0,0,0,
+	1,2,1,0,0,0,0,0,0,0,0,
+	1,2,2,1,0,0,0,0,0,0,0,
+	1,2,2,2,1,0,0,0,0,0,0,
+	1,2,2,2,2,1,0,0,0,0,0,
+	1,2,2,2,2,2,1,0,0,0,0,
+	1,2,2,2,2,2,2,1,0,0,0,
+	1,2,2,2,2,2,2,2,1,0,0,
+	1,2,2,2,2,2,2,2,2,1,0,
+	1,2,2,2,2,2,2,2,2,2,1,
+	1,2,2,2,2,2,1,0,0,0,0,
+	1,2,1,0,1,2,2,1,0,0,0,
+	1,1,0,0,1,2,2,1,0,0,0,
+	0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,0,1,2,2,1,0
 };
+
+/**
+ * RGBA-palette for the black and white SCI-style arrow cursor.
+ */
+static const byte sciMouseCursorPalette[] = {
+	0x00, 0x00, 0x00,	0x00, // Black
+	0xFF, 0xFF, 0xFF,	0x00  // White
+};
+
+void GfxMgr::setCursor() {
+	CursorMan.replaceCursorPalette(sciMouseCursorPalette, 1, ARRAYSIZE(sciMouseCursorPalette) / 4);
+	CursorMan.replaceCursor(sciMouseCursor, 11, 16, 1, 1, 0);
+}
 
 /**
  * Initialize graphics device.
@@ -741,31 +767,7 @@ int GfxMgr::initVideo() {
 
 	gfxSetPalette();
 
-	byte mouseCursor[16 * 16];
-	const byte *src = mouseCursorArrow;
-	for (int i = 0; i < 32; ++i) {
-		int offs = i * 8;
-		for (byte mask = 0x80; mask != 0; mask >>= 1) {
-			if (src[0] & mask) {
-				mouseCursor[offs] = 2;
-			} else if (src[32] & mask) {
-				mouseCursor[offs] = 0;
-			} else {
-				mouseCursor[offs] = 0xFF;
-			}
-			++offs;
-		}
-		++src;
-	}
-
-	const byte cursorPalette[] = {
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		255, 255, 255, 0
-	};
-
-	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
-	CursorMan.replaceCursor(mouseCursor, 16, 16, 1, 1);
+	setCursor();
 
 	return errOK;
 }
