@@ -87,7 +87,7 @@ public:
 	void putPixel(int, int, int);
 	void putBlock(int x1, int y1, int x2, int y2);
 	void gfxSetPalette();
-	void setCursor();
+	void setCursor(bool amigaStyleCursor = false);
 
 	int keypress();
 	int getKey();

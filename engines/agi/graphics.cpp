@@ -746,9 +746,44 @@ static const byte sciMouseCursorPalette[] = {
 	0xFF, 0xFF, 0xFF,	0x00  // White
 };
 
-void GfxMgr::setCursor() {
-	CursorMan.replaceCursorPalette(sciMouseCursorPalette, 1, ARRAYSIZE(sciMouseCursorPalette) / 4);
-	CursorMan.replaceCursor(sciMouseCursor, 11, 16, 1, 1, 0);
+/**
+ * An Amiga-style arrow cursor (8x11).
+ * 0 = Transparent.
+ * 1 = Black     (#000000 in 24-bit RGB).
+ * 2 = Red       (#DE2021 in 24-bit RGB).
+ * 3 = Light red (#FFCFAD in 24-bit RGB).
+ */
+static const byte amigaMouseCursor[] = {
+	2,3,1,0,0,0,0,0,
+	2,2,3,1,0,0,0,0,
+	2,2,2,3,1,0,0,0,
+	2,2,2,2,3,1,0,0,
+	2,2,2,2,2,3,1,0,
+	2,2,2,2,2,2,3,1,
+	2,0,2,2,3,1,0,0,
+	0,0,0,2,3,1,0,0,
+	0,0,0,2,2,3,1,0,
+	0,0,0,0,2,3,1,0,
+	0,0,0,0,2,2,3,1
+};
+
+/**
+ * RGBA-palette for the Amiga-style arrow cursor.
+ */
+static const byte amigaMouseCursorPalette[] = {
+	0x00, 0x00, 0x00,	0x00, // Black
+	0xDE, 0x20, 0x21,	0x00, // Red
+	0xFF, 0xCF, 0xAD,	0x00  // Light red
+};
+
+void GfxMgr::setCursor(bool amigaStyleCursor) {
+	if (!amigaStyleCursor) {
+		CursorMan.replaceCursorPalette(sciMouseCursorPalette, 1, ARRAYSIZE(sciMouseCursorPalette) / 4);
+		CursorMan.replaceCursor(sciMouseCursor, 11, 16, 1, 1, 0);
+	} else { // amigaStyleCursor
+		CursorMan.replaceCursorPalette(amigaMouseCursorPalette, 1, ARRAYSIZE(amigaMouseCursorPalette) / 4);
+		CursorMan.replaceCursor(amigaMouseCursor, 8, 11, 1, 1, 0);
+	}
 }
 
 /**
@@ -767,7 +802,7 @@ int GfxMgr::initVideo() {
 
 	gfxSetPalette();
 
-	setCursor();
+	setCursor(_vm->_renderMode == Common::kRenderAmiga);
 
 	return errOK;
 }
