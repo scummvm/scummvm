@@ -1178,11 +1178,6 @@ Cnv* AmigaDisk::loadTalk(const char *name) {
 	Cnv *cnv = makeCnv(*s);
 	delete s;
 
-	FILE *f = fopen(name, "wb");
-	fwrite(cnv->_data, cnv->_height*cnv->_width, cnv->_count, f);
-	fclose(f);
-
-
 	return cnv;
 }
 
