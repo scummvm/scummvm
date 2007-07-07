@@ -341,6 +341,7 @@ int Events::handleOneShot(Event *event) {
 					_vm->_gfx->setPalette(palPointer);
 				}
 			}
+			_vm->_actor->showActors(true);
 		}
 		break;
 	case kAnimEvent:

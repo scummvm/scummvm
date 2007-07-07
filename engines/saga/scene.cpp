@@ -570,6 +570,8 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	_chapterPointsChanged = false;
 
+	_vm->_actor->showActors(false);
+
 	if ((_vm->getGameType() == GType_IHNM) && (loadSceneParams->chapter != NO_CHAPTER_CHANGE)) {
 		if (loadSceneParams->loadFlag != kLoadBySceneNumber) {
 			error("loadScene wrong usage");
