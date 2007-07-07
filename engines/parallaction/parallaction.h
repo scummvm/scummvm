@@ -27,8 +27,7 @@
 #define PARALLACTION_H
 
 #include "common/str.h"
-#include "gui/dialog.h"
-#include "gui/widget.h"
+
 
 #include "engines/engine.h"
 
@@ -470,33 +469,6 @@ protected:		// members
 
 // FIXME: remove global
 extern Parallaction *_vm;
-
-class SaveLoadChooser : public GUI::Dialog {
-	typedef Common::String String;
-	typedef Common::StringList StringList;
-protected:
-	GUI::ListWidget		*_list;
-	GUI::ButtonWidget	*_chooseButton;
-	GUI::GraphicsWidget	*_gfxWidget;
-	GUI::StaticTextWidget	*_date;
-	GUI::StaticTextWidget	*_time;
-	GUI::StaticTextWidget	*_playtime;
-	GUI::ContainerWidget	*_container;
-	Parallaction			*_vm;
-
-	uint8 _fillR, _fillG, _fillB;
-
-public:
-	SaveLoadChooser(const String &title, const String &buttonLabel, Parallaction *engine);
-	~SaveLoadChooser();
-
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	const String &getResultString() const;
-	void setList(const StringList& list);
-	int runModal();
-
-	virtual void reflowLayout();
-};
 
 
 } // namespace Parallaction
