@@ -1019,7 +1019,13 @@ void Script::sfCycleFrames(SCRIPTFUNC_PARAMS) {
 		actor->_actorFlags |= kActorRandom;
 	}
 	if (flags & kCycleReverse) {
-		actor->_actorFlags |= kActorBackwards;
+		if (_vm->getGameType() == GType_IHNM && 
+			_vm->_scene->currentChapterNumber() == 2 && _vm->_scene->currentSceneNumber() == 41) {
+			// Prevent Benny from walking backwards after talking to the child via the monitor. This occurs in the
+			// original as well, and is fixed by not setting the kActorBackwards flag at this point
+		} else {
+			actor->_actorFlags |= kActorBackwards;
+		}
 	}
 
 	actor->_cycleFrameSequence = cycleFrameSequence;
