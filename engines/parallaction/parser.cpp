@@ -127,7 +127,7 @@ void clearTokens() {
 //
 //	The routine returns the unparsed portion of the input string 's'.
 //
-char *parseNextToken(char *s, char *tok, uint16 count, const char *brk) {
+char *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ignoreQuotes) {
 
 	enum STATES { NORMAL, QUOTED };
 
@@ -150,8 +150,13 @@ char *parseNextToken(char *s, char *tok, uint16 count, const char *brk) {
 			}
 
 			if (*s == '"') {
-				state = QUOTED;
-				s++;
+				if (ignoreQuotes) {
+					*tok++ = *s++;
+					count--;
+				} else {
+					state = QUOTED;
+					s++;
+				}
 			} else {
 				*tok++ = *s++;
 				count--;
