@@ -490,7 +490,9 @@ void Parallaction::runDialogue(SpeakData *data) {
 	debugC(1, kDebugDialogue, "runDialogue: starting dialogue '%s'", data->_name);
 
 	_gfx->setFont(kFontDialogue);
-	showCursor(false);
+
+	if (_vm->getPlatform() == Common::kPlatformPC)
+		showCursor(false);
 
 	DialogueManager man(this, data);
 	man.run();
