@@ -1379,8 +1379,8 @@ int KyraEngine_v1::o1_waitForConfirmationMouseClick(ScriptState *script) {
 	processButtonList(_buttonList);
 	_skipFlag = false;
 	Common::Point mouse = getMousePos();
-	script->variables[1] = mouse.x;
-	script->variables[2] = mouse.y;
+	script->regs[1] = mouse.x;
+	script->regs[2] = mouse.y;
 	return 0;
 }
 

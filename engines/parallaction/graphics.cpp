@@ -306,8 +306,6 @@ void Gfx::floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color) {
 		d += SCREEN_WIDTH;
 	}
 
-	if (buffer == kBitFront) updateScreen();
-
 	return;
 }
 
@@ -350,8 +348,6 @@ void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer) {
 		d += (SCREEN_WIDTH - q.width());
 	}
 
-	if (buffer == kBitFront) updateScreen();
-
 	return;
 
 }
@@ -388,8 +384,6 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 		s += (r.width() - q.right + q.left);
 		d += (SCREEN_WIDTH - q.right + q.left);
 	}
-
-	if (buffer == kBitFront) updateScreen();
 
 	return;
 
@@ -480,6 +474,18 @@ void Gfx::setMousePointer(int16 index) {
 //
 //	Cnv management
 //
+void Gfx::flatBlitCnv(Cnv *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer) {
+
+	StaticCnv scnv;
+
+	scnv._width = cnv->_width;
+	scnv._height = cnv->_height;
+	scnv._data0 = cnv->getFramePtr(frame);
+	scnv._data1 = NULL; // _questioner->field_8[v60->_mood & 0xF];
+
+	flatBlitCnv(&scnv, x, y, buffer);
+}
+
 void Gfx::flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer) {
 	Common::Rect r(cnv->_width, cnv->_height);
 	r.moveTo(x, y);
@@ -577,30 +583,19 @@ void Gfx::makeCnvFromString(StaticCnv *cnv, char *text) {
 
 }
 
-void Gfx::displayString(uint16 x, uint16 y, const char *text) {
-	assert(_font == _fonts[kFontMenu]);
-
+void Gfx::displayString(uint16 x, uint16 y, const char *text, byte color) {
 	byte *dst = _buffers[kBitFront] + x + y*SCREEN_WIDTH;
-	_font->setColor(1);
+	_font->setColor(color);
 	_font->drawString(dst, SCREEN_WIDTH, text);
 }
 
 void Gfx::displayCenteredString(uint16 y, const char *text) {
 	uint16 x = (SCREEN_WIDTH - getStringWidth(text)) / 2;
-	displayString(x, y, text);
+	displayString(x, y, text, 1);
 }
 
-void Gfx::displayBalloonString(uint16 x, uint16 y, const char *text, byte color) {
-	assert(_font == _fonts[kFontDialogue]);
-
-	byte *dst = _buffers[kBitFront] + x + y*SCREEN_WIDTH;
-
-	_font->setColor(color);
-	_font->drawString(dst, SCREEN_WIDTH, text);
-}
-
-bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, byte color) {
-//	printf("Gfx::displayWrappedString(%s, %i, %i, %i, %i)...", text, x, y, maxwidth, color);
+bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, byte color, uint16 wrapwidth) {
+//	printf("Gfx::displayWrappedString(%s, %i, %i, %i, %i)...", text, x, y, color, wrapwidth);
 
 	uint16 lines = 0;
 	bool rv = false;
@@ -613,10 +608,10 @@ bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, 
 
 	while (strlen(text) > 0) {
 
-		text = parseNextToken(text, token, 40, "   ");
+		text = parseNextToken(text, token, 40, "   ", true);
 		linewidth += getStringWidth(token);
 
-		if (linewidth > maxwidth) {
+		if (linewidth > wrapwidth) {
 			// wrap line
 			lines++;
 			rx = x + 10;			// x
@@ -630,7 +625,7 @@ bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, 
 		if (!scumm_stricmp(token, "%p")) {
 			rv = true;
 		} else
-			displayBalloonString(rx, ry, token, color);
+			displayString(rx, ry, token, color);
 
 		rx += getStringWidth(token) + getStringWidth(" ");
 		linewidth += getStringWidth(" ");
@@ -658,7 +653,7 @@ void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* heig
 
 	while (strlen(text) != 0) {
 
-		text = parseNextToken(text, token, 40, "   ");
+		text = parseNextToken(text, token, 40, "   ", true);
 		w += getStringWidth(token);
 
 		if (w > maxwidth) {

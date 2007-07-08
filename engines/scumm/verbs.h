@@ -30,6 +30,18 @@
 
 namespace Scumm {
 
+/**
+ * The area in which some click (or key press) occured and which is passed
+ * to the input script.
+ */
+enum ClickArea {
+	kVerbClickArea = 1,
+	kSceneClickArea = 2,
+	kInventoryClickArea = 3,
+	kKeyClickArea = 4,
+	kSentenceClickArea = 5
+};
+
 enum {
 	kTextVerbType = 0,
 	kImageVerbType = 1

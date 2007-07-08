@@ -302,13 +302,13 @@ void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	close();
 }
 
-void AboutDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (ascii)
+void AboutDialog::handleKeyDown(Common::KeyState state) {
+	if (state.ascii)
 		_willClose = true;
 }
 
-void AboutDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
-	if (ascii && _willClose)
+void AboutDialog::handleKeyUp(Common::KeyState state) {
+	if (state.ascii && _willClose)
 		close();
 }
 

@@ -652,7 +652,7 @@ int PictureMgr::decodePicture(int n, int clear, bool agi256) {
 
 	if (clear)
 		_vm->clearImageStack();
-	_vm->recordImageStackCall(ADD_PIC, n, clear, 0, 0, 0, 0, 0);
+	_vm->recordImageStackCall(ADD_PIC, n, clear, agi256, 0, 0, 0, 0);
 
 	return errOK;
 }
@@ -686,7 +686,7 @@ void PictureMgr::showPic() {
 	i = 0;
 	offset = _vm->_game.lineMinPrint * CHAR_LINES;
 	for (y = 0; y < _HEIGHT; y++) {
-		_gfx->putPixelsA(0, y + offset, _WIDTH, &_vm->_game.sbuf[i]);
+		_gfx->putPixelsA(0, y + offset, _WIDTH, &_vm->_game.sbuf16c[i]);
 		i += _WIDTH;
 	}
 

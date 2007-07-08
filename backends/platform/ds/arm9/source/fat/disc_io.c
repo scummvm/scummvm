@@ -358,7 +358,7 @@ void disc_getDldiId(char* id) {
 bool disc_setDsSlotInterface (void)
 {
 #ifdef ARM9
-	REG_EXMEMCNT &= ~(1<<11);
+	REG_EXEMEMCNT &= ~(1<<11);
 #endif
 #ifdef ARM7
 	REG_EXEMEMCNT |= (1<<11);

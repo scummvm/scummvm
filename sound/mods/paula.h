@@ -27,6 +27,7 @@
 #define SOUND_MODS_PAULA_H
 
 #include "sound/audiostream.h"
+#include "common/frac.h"
 #include "common/mutex.h"
 
 namespace Audio {
@@ -45,15 +46,11 @@ public:
 
 	bool playing() const { return _playing; }
 	void setInterruptFreq(int freq) { _curInt = _intFreq = freq; }
-	void setPanning(byte voice, byte panning) {
-		assert(voice < NUM_VOICES);
-		_voice[voice].panning = panning;
-	}
 	void clearVoice(byte voice);
 	void clearVoices() { for (int i = 0; i < NUM_VOICES; ++i) clearVoice(i); }
-	virtual void startPlay(void) {}
-	virtual void stopPlay(void) {}
-	virtual void pausePlay(bool pause) {}
+	void startPlay(void) { _playing = true; }
+	void stopPlay(void) { _playing = false; }
+	void pausePlay(bool pause) { _playing = !pause; }
 
 // AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -69,27 +66,79 @@ protected:
 		uint32 lengthRepeat;
 		int16 period;
 		byte volume;
-		double offset;
+		frac_t offset;
 		byte panning; // For stereo mixing: 0 = far left, 255 = far right
-	} _voice[NUM_VOICES];
+	};
 
-	int _rate;
-	int _intFreq;
-	int _curInt;
-	bool _stereo;
 	bool _end;
-	bool _playing;
 	Common::Mutex _mutex;
 
-	void mix(int16 *&buf, int8 data, int voice) {
-		const int32 tmp = ((int32) data) * _voice[voice].volume;
-		if (_stereo) {
-			*buf++ += (tmp * (255 - _voice[voice].panning)) >> 7;
-			*buf++ += (tmp * (_voice[voice].panning)) >> 7;
-		} else
-			*buf++ += tmp;
+	virtual void interrupt(void) = 0;
+
+	void startPaula() {
+		_playing = true;
+		_end = false;
 	}
-	virtual void interrupt(void) {}
+	
+	void stopPaula() {
+		_playing = false;
+		_end = true;
+	}
+	
+	void setChannelPanning(byte channel, byte panning) {
+		assert(channel < NUM_VOICES);
+		_voice[channel].panning = panning;
+	}
+
+	void setChannelPeriod(byte channel, int16 period) {
+		assert(channel < NUM_VOICES);
+		_voice[channel].period = period;
+	}
+
+	void setChannelVolume(byte channel, byte volume) {
+		assert(channel < NUM_VOICES);
+		_voice[channel].volume = volume;
+	}
+
+	void setChannelData(uint8 channel, const int8 *data, const int8 *dataRepeat, uint32 length, uint32 lengthRepeat, int32 offset = 0) {
+		assert(channel < NUM_VOICES);
+
+		// For now, we only support 32k samples, as we use 16bit fixed point arithmetics.
+		// If this ever turns out to be a problem, we can still enhance this code.
+		assert(0 <= offset && offset < 32768);
+		assert(length < 32768);
+		assert(lengthRepeat < 32768);
+
+		Channel &ch = _voice[channel];
+		ch.data = data;
+		ch.dataRepeat = dataRepeat;
+		ch.length = length;
+		ch.lengthRepeat = lengthRepeat;
+		ch.offset = intToFrac(offset);
+	}
+
+	void setChannelOffset(byte channel, frac_t offset) {
+		assert(channel < NUM_VOICES);
+		assert(0 <= offset);
+		_voice[channel].offset = offset;
+	}
+
+	frac_t getChannelOffset(byte channel) {
+		assert(channel < NUM_VOICES);
+		return _voice[channel].offset;
+	}
+
+private:
+	Channel _voice[NUM_VOICES];
+
+	const bool _stereo;
+	const int _rate;
+	int _intFreq;
+	int _curInt;
+	bool _playing;
+
+	template<bool stereo>
+	int readBufferIntern(int16 *buffer, const int numSamples);
 };
 
 } // End of namespace Audio

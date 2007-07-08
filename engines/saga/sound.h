@@ -28,7 +28,11 @@
 #ifndef SAGA_SOUND_H
 #define SAGA_SOUND_H
 
+#include "common/file.h"
 #include "sound/mixer.h"
+#include "sound/mp3.h"
+#include "sound/vorbis.h"
+#include "sound/flac.h"
 
 namespace Saga {
 
@@ -46,7 +50,11 @@ struct SoundBuffer {
 
 	byte *buffer;
 	size_t size;
+	size_t originalSize;
 	bool isBigEndian;
+	GameSoundTypes soundType;
+	Common::File *soundFile;
+	size_t fileOffset;
 };
 
 enum sndHandleType {

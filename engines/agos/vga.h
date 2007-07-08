@@ -40,20 +40,20 @@ struct VgaFileHeader2_Feeble {
 	uint16 x_4;
 	uint16 animationTable;
 	uint16 x_5;
-};
+} PACKED_STRUCT;
 
 struct ImageHeader_Feeble {
 	uint16 id;
 	uint16 x_1;
 	uint16 scriptOffs;
 	uint16 x_2;
-};
+} PACKED_STRUCT;
 
 struct AnimationHeader_Feeble {
 	uint16 scriptOffs;
 	uint16 x_2;
 	uint16 id;
-};
+} PACKED_STRUCT;
 
 // Simon 1/2
 struct ImageHeader_Simon {
@@ -61,13 +61,13 @@ struct ImageHeader_Simon {
 	uint16 color;
 	uint16 x_2;
 	uint16 scriptOffs;
-};
+} PACKED_STRUCT;
 
 struct AnimationHeader_Simon {
 	uint16 id;
 	uint16 x_2;
 	uint16 scriptOffs;
-};
+} PACKED_STRUCT;
 
 
 // Elvira 1/2 and Waxworks
@@ -76,14 +76,14 @@ struct ImageHeader_WW {
 	uint16 color;
 	uint16 x_2;
 	uint16 scriptOffs;
-};
+} PACKED_STRUCT;
 
 struct AnimationHeader_WW {
 	uint16 id;
 	uint16 x_1;
 	uint16 x_2;
 	uint16 scriptOffs;
-};
+} PACKED_STRUCT;
 
 // Common
 struct VgaFileHeader2_Common {
@@ -96,7 +96,7 @@ struct VgaFileHeader2_Common {
 	uint16 x_4;
 	uint16 animationTable;
 	uint16 x_5;
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

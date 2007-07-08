@@ -450,8 +450,8 @@ void KyraEngine::startSceneScript(int brandonAlive) {
 	_scriptInterpreter->unloadScript(_scriptClickData);
 	_scriptInterpreter->loadScript(fileNameBuffer, _scriptClickData, &_opcodes);
 	_scriptInterpreter->startScript(_scriptClick, 0);
-	_scriptClick->variables[0] = _currentCharacter->sceneId;
-	_scriptClick->variables[7] = brandonAlive;
+	_scriptClick->regs[0] = _currentCharacter->sceneId;
+	_scriptClick->regs[7] = brandonAlive;
 	
 	while (_scriptInterpreter->validScript(_scriptClick))
 		_scriptInterpreter->runScript(_scriptClick);
@@ -620,8 +620,8 @@ void KyraEngine::initSceneData(int facing, int unk1, int brandonAlive) {
 	if (unk1 && brandonAlive == 0)
 		moveCharacterToPos(0, facing, xpos2, ypos2);
 	
-	_scriptClick->variables[4] = _itemInHand;
-	_scriptClick->variables[7] = brandonAlive;
+	_scriptClick->regs[4] = _itemInHand;
+	_scriptClick->regs[7] = brandonAlive;
 	_scriptInterpreter->startScript(_scriptClick, 3);
 	while (_scriptInterpreter->validScript(_scriptClick))
 		_scriptInterpreter->runScript(_scriptClick);
@@ -852,7 +852,7 @@ void KyraEngine::initSceneScreen(int brandonAlive) {
 	if (!_scriptInterpreter->startScript(_scriptClick, 2))
 		error("Could not start script function 2 of scene script");
 
-	_scriptClick->variables[7] = brandonAlive;
+	_scriptClick->regs[7] = brandonAlive;
 
 	while (_scriptInterpreter->validScript(_scriptClick))
 		_scriptInterpreter->runScript(_scriptClick);

@@ -41,11 +41,12 @@ class DSTimerManager : public DefaultTimerManager {
 
 class OSystem_DS : public OSystem {
 public:
+
 	static OSystem_DS *instance() { return _instance; }
 	int eventNum;
 	int lastPenFrame;
 	
-	Common::Event eventQueue[64];
+	Common::Event eventQueue[96];
 	int queuePos;
 	
 	DSSaveFileManager saveManager;
@@ -53,9 +54,8 @@ public:
 	DSAudioMixer* _mixer;
 	DSTimerManager* _timer;
 
-	Graphics::Surface _framebuffer;
-
 	static OSystem_DS* _instance;
+
 	
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
 	typedef int  (*TimerProc)(int interval);
@@ -129,8 +129,7 @@ public:
 	void addEvent(Common::Event& e);
 	bool isEventQueueEmpty() { return queuePos == 0; }
 	
-	virtual Graphics::Surface *lockScreen();
-	virtual void unlockScreen();
+	virtual bool grabRawScreen(Graphics::Surface* surf);
 	
 	virtual void setFocusRectangle(const Common::Rect& rect);
 	
@@ -141,6 +140,14 @@ public:
 	virtual Audio::Mixer* getMixer() { return _mixer; }
 	virtual Common::TimerManager* getTimerManager() { return _timer; }
 	static int timerHandler(int t);
+
+
+	virtual void addAutoComplete(const char *word);
+	virtual void clearAutoComplete();
+	virtual void setCharactersEntered(int count);
+
+
+
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
@@ -160,11 +167,6 @@ void OSystem_DS::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b)
 	g = ((color & 0x03E0) >> 5) << 3;
 	b = ((color & 0x7C00) >> 10) << 3;
 	//consolePrintf("coltorgb\n");
-}
-
-namespace DS
-{
-bool isCpuScalerEnabled();
 }
 
 #endif

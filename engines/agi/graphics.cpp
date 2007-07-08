@@ -624,8 +624,7 @@ int GfxMgr::keypress() {
 /**
  * Initialize the color palette
  * This function initializes the color palette using the specified 16-color
- * RGB palette and creates 16 extra palette entries with translucent colors
- * for the interpreter console.
+ * RGB palette.
  * @param p  A pointer to the 16-color RGB palette.
  */
 void GfxMgr::initPalette(uint8 *p) {
@@ -633,7 +632,6 @@ void GfxMgr::initPalette(uint8 *p) {
 
 	for (i = 0; i < 48; i++) {
 		_palette[i] = p[i];
-		_palette[i + 48] = (p[i] + 0x30) >> 2;
 	}
 }
 
@@ -642,13 +640,13 @@ void GfxMgr::gfxSetPalette() {
 	byte pal[256 * 4];
 
 	if (!(_vm->getFeatures() & (GF_AGI256 | GF_AGI256_2))) {
-		for (i = 0; i < 32; i++) {
+		for (i = 0; i < 16; i++) {
 			pal[i * 4 + 0] = _palette[i * 3 + 0] << 2;
 			pal[i * 4 + 1] = _palette[i * 3 + 1] << 2;
 			pal[i * 4 + 2] = _palette[i * 3 + 2] << 2;
 			pal[i * 4 + 3] = 0;
 		}
-		g_system->setPalette(pal, 0, 32);
+		g_system->setPalette(pal, 0, 16);
 	} else {
 		for (i = 0; i < 256; i++) {
 			pal[i * 4 + 0] = vgaPalette[i * 3 + 0];
@@ -715,17 +713,105 @@ void GfxMgr::gfxPutBlock(int x1, int y1, int x2, int y2) {
 	g_system->copyRectToScreen(_screen + y1 * 320 + x1, 320, x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 }
 
-static const byte mouseCursorArrow[] = {
-	// This is the same arrow cursor that was later used in early SCI games
-	0x00, 0x00, 0x40, 0x00, 0x60, 0x00, 0x70, 0x00,
-	0x78, 0x00, 0x7C, 0x00, 0x7E, 0x00, 0x7F, 0x00,
-	0x7F, 0x80, 0x7F, 0xC0, 0x7C, 0x00, 0x46, 0x00,
-	0x06, 0x00, 0x03, 0x00, 0x03, 0x00, 0x01, 0x80,
-	0xC0, 0x00, 0xA0, 0x00, 0x90, 0x00, 0x88, 0x00,
-	0x84, 0x00, 0x82, 0x00, 0x81, 0x00, 0x80, 0x80,
-	0x80, 0x40, 0x80, 0x20, 0x82, 0x00, 0xA9, 0x00,
-	0xC9, 0x00, 0x04, 0x80, 0x04, 0x80, 0x02, 0x40
+/**
+ * A black and white SCI-style arrow cursor (11x16).
+ * 0 = Transparent.
+ * 1 = Black (#000000 in 24-bit RGB).
+ * 2 = White (#FFFFFF in 24-bit RGB).
+ */
+static const byte sciMouseCursor[] = {
+	1,1,0,0,0,0,0,0,0,0,0,
+	1,2,1,0,0,0,0,0,0,0,0,
+	1,2,2,1,0,0,0,0,0,0,0,
+	1,2,2,2,1,0,0,0,0,0,0,
+	1,2,2,2,2,1,0,0,0,0,0,
+	1,2,2,2,2,2,1,0,0,0,0,
+	1,2,2,2,2,2,2,1,0,0,0,
+	1,2,2,2,2,2,2,2,1,0,0,
+	1,2,2,2,2,2,2,2,2,1,0,
+	1,2,2,2,2,2,2,2,2,2,1,
+	1,2,2,2,2,2,1,0,0,0,0,
+	1,2,1,0,1,2,2,1,0,0,0,
+	1,1,0,0,1,2,2,1,0,0,0,
+	0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,0,1,2,2,1,0
 };
+
+/**
+ * RGBA-palette for the black and white SCI-style arrow cursor.
+ */
+static const byte sciMouseCursorPalette[] = {
+	0x00, 0x00, 0x00,	0x00, // Black
+	0xFF, 0xFF, 0xFF,	0x00  // White
+};
+
+/**
+ * An Amiga-style arrow cursor (8x11).
+ * 0 = Transparent.
+ * 1 = Black     (#000000 in 24-bit RGB).
+ * 2 = Red       (#DE2021 in 24-bit RGB).
+ * 3 = Light red (#FFCFAD in 24-bit RGB).
+ */
+static const byte amigaMouseCursor[] = {
+	2,3,1,0,0,0,0,0,
+	2,2,3,1,0,0,0,0,
+	2,2,2,3,1,0,0,0,
+	2,2,2,2,3,1,0,0,
+	2,2,2,2,2,3,1,0,
+	2,2,2,2,2,2,3,1,
+	2,0,2,2,3,1,0,0,
+	0,0,0,2,3,1,0,0,
+	0,0,0,2,2,3,1,0,
+	0,0,0,0,2,3,1,0,
+	0,0,0,0,2,2,3,1
+};
+
+/**
+ * RGBA-palette for the Amiga-style arrow cursor
+ * and the Amiga-style busy cursor.
+ */
+static const byte amigaMouseCursorPalette[] = {
+	0x00, 0x00, 0x00,	0x00, // Black
+	0xDE, 0x20, 0x21,	0x00, // Red
+	0xFF, 0xCF, 0xAD,	0x00  // Light red
+};
+
+/**
+ * An Amiga-style busy cursor showing an hourglass (13x16).
+ * 0 = Transparent.
+ * 1 = Black     (#000000 in 24-bit RGB).
+ * 2 = Red       (#DE2021 in 24-bit RGB).
+ * 3 = Light red (#FFCFAD in 24-bit RGB).
+ */
+static const byte busyAmigaMouseCursor[] = {
+	1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,2,2,2,2,2,2,2,2,2,2,2,1,
+	1,2,2,2,2,2,2,2,2,2,2,2,1,
+	0,1,3,3,3,3,3,3,3,3,3,1,0,
+	0,0,1,3,3,3,3,3,3,3,1,0,0,
+	0,0,0,1,3,3,3,3,3,1,0,0,0,
+	0,0,0,0,1,3,3,3,1,0,0,0,0,
+	0,0,0,0,0,1,3,1,0,0,0,0,0,
+	0,0,0,0,0,1,3,1,0,0,0,0,0,
+	0,0,0,0,1,2,3,2,1,0,0,0,0,
+	0,0,0,1,2,2,3,2,2,1,0,0,0,
+	0,0,1,2,2,2,3,2,2,2,1,0,0,
+	0,1,2,2,2,3,3,3,2,2,2,1,0,
+	1,3,3,3,3,3,3,3,3,3,3,3,1,
+	1,3,3,3,3,3,3,3,3,3,3,3,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1
+};
+
+void GfxMgr::setCursor(bool amigaStyleCursor) {
+	if (!amigaStyleCursor) {
+		CursorMan.replaceCursorPalette(sciMouseCursorPalette, 1, ARRAYSIZE(sciMouseCursorPalette) / 4);
+		CursorMan.replaceCursor(sciMouseCursor, 11, 16, 1, 1, 0);
+	} else { // amigaStyleCursor
+		CursorMan.replaceCursorPalette(amigaMouseCursorPalette, 1, ARRAYSIZE(amigaMouseCursorPalette) / 4);
+		CursorMan.replaceCursor(amigaMouseCursor, 8, 11, 1, 1, 0);
+	}
+}
 
 /**
  * Initialize graphics device.
@@ -743,31 +829,7 @@ int GfxMgr::initVideo() {
 
 	gfxSetPalette();
 
-	byte mouseCursor[16 * 16];
-	const byte *src = mouseCursorArrow;
-	for (int i = 0; i < 32; ++i) {
-		int offs = i * 8;
-		for (byte mask = 0x80; mask != 0; mask >>= 1) {
-			if (src[0] & mask) {
-				mouseCursor[offs] = 2;
-			} else if (src[32] & mask) {
-				mouseCursor[offs] = 0;
-			} else {
-				mouseCursor[offs] = 0xFF;
-			}
-			++offs;
-		}
-		++src;
-	}
-
-	const byte cursorPalette[] = {
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		255, 255, 255, 0
-	};
-
-	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
-	CursorMan.replaceCursor(mouseCursor, 16, 16, 1, 1);
+	setCursor(_vm->_renderMode == Common::kRenderAmiga);
 
 	return errOK;
 }
@@ -804,23 +866,26 @@ int GfxMgr::deinitMachine() {
  * @param x x coordinate of the row start (AGI coord.)
  * @param y y coordinate of the row start (AGI coord.)
  * @param n number of pixels in the row
- * @param p pointer to the row start in the AGI screen
+ * @param p pointer to the row start in the AGI screen (Always use sbuf16c as base, not sbuf256c)
+ * FIXME: CGA rendering doesn't work correctly with AGI256 or AGI256-2.
  */
 void GfxMgr::putPixelsA(int x, int y, int n, uint8 *p) {
+	const uint rShift = _vm->_debug.priority ? 4 : 0; // Priority information is in the top 4 bits of a byte taken from sbuf16c.
+
+	// Choose the correct screen to read from. If AGI256 or AGI256-2 is used and we're not trying to show the priority information,
+	// then choose the 256 color screen, otherwise choose the 16 color screen (Which also has the priority information).
+	p += _vm->getFeatures() & (GF_AGI256 | GF_AGI256_2) && !_vm->_debug.priority ? FROM_SBUF16_TO_SBUF256_OFFSET : 0;
+
 	if (_vm->_renderMode == Common::kRenderCGA) {
 		for (x *= 2; n--; p++, x += 2) {
 			register uint16 q = (cgaMap[(*p & 0xf0) >> 4] << 4) | cgaMap[*p & 0x0f];
-			if (_vm->_debug.priority)
-				q >>= 4;
-			*(uint16 *)&_agiScreen[x + y * GFX_WIDTH] = q & 0x0f0f;
+			*(uint16 *)&_agiScreen[x + y * GFX_WIDTH] = (q >> rShift) & 0x0f0f;
 		}
 	} else {
-		const uint16 mask = _vm->getFeatures() & (GF_AGI256 | GF_AGI256_2) ? 0xffff : 0x0f0f;
+		const uint16 mask = _vm->getFeatures() & (GF_AGI256 | GF_AGI256_2) && !_vm->_debug.priority ? 0xffff : 0x0f0f;
 		for (x *= 2; n--; p++, x += 2) {
 			register uint16 q = ((uint16) * p << 8) | *p;
-			if (_vm->_debug.priority)
-				q >>= 4;
-			*(uint16 *)&_agiScreen[x + y * GFX_WIDTH] = q & mask;
+			*(uint16 *)&_agiScreen[x + y * GFX_WIDTH] = (q >> rShift) & mask;
 		}
 	}
 }

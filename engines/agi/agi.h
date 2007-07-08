@@ -247,6 +247,18 @@ enum {
 };
 
 /**
+ * Different monitor types.
+ * Used with AGI variable 26 i.e. vMonitor.
+ */
+enum AgiMonitorType {
+	kAgiMonitorCga = 0,
+	// kAgiMonitorTandy = 1, // Not sure about this
+	kAgiMonitorHercules = 2,
+	kAgiMonitorEga = 3
+	// kAgiMonitorVga = 4 // Not sure about this
+};
+
+/**
  * AGI flags
  */
 enum {

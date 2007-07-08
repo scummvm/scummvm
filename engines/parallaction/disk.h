@@ -60,6 +60,7 @@ protected:
 	uint32			_fileCursor;
 	uint32			_fileEndOffset;
 
+	Common::String	_archiveName;
 	char 			_archiveDir[MAX_ARCHIVE_ENTRIES][32];
 	uint32			_archiveLenghts[MAX_ARCHIVE_ENTRIES];
 	uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
@@ -74,8 +75,10 @@ protected:
 public:
 	Archive();
 
-	void open(const char *file);
+	void open(const char* file);
 	void close();
+
+	Common::String name() const;
 
 	bool openArchivedFile(const char *name);
 	void closeArchivedFile();
@@ -103,7 +106,7 @@ public:
 	Disk(Parallaction *vm);
 	virtual ~Disk();
 
-	void selectArchive(const char *name);
+	Common::String selectArchive(const Common::String &name);
 	void setLanguage(uint16 language);
 
 	virtual Script* loadLocation(const char *name) = 0;
@@ -163,7 +166,9 @@ class AmigaDisk : public Disk {
 protected:
 	Cnv* makeCnv(Common::SeekableReadStream &stream);
 	StaticCnv* makeStaticCnv(Common::SeekableReadStream &stream);
-	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 planeSize);
+	void patchFrame(byte *dst, byte *dlta, uint16 bytesPerPlane, uint16 height);
+	void unpackFrame(byte *dst, byte *src, uint16 planeSize);
+	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height);
 	Common::SeekableReadStream *openArchivedFile(const char* name, bool errorOnFileNotFound = false);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
 	void loadMask(const char *name);

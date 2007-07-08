@@ -138,6 +138,8 @@ ScummVM Team
     Miscellaneous:
        Jerome Fisher         - MT-32 emulator
        Jochen Hoenicke       - Speaker & PCjr sound support, Adlib work
+       Robin Watts           - ARM assembly routines for nice speedups on
+                               several ports; improvements to the sound mixer
 
   Website (content)
   -----------------
@@ -246,7 +248,6 @@ Other contributions
      Daniel Schepler       - Final MI1 CD music support, initial Ogg Vorbis
                              support
      Andre Souza           - SDL-based OpenGL renderer
-     Robin Watts           - ARM assembly routines for the Windows CE port
 
    And to all the contributors, users, and beta testers we've missed. Thanks!
 

@@ -26,8 +26,12 @@
 #if !defined(DISABLE_DEFAULT_EVENTMANAGER)
 
 #include "common/stdafx.h"
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "backends/events/default/default-events.h"
+
+#include "engines/engine.h"
+#include "gui/message.h"
 
 DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	_boss(boss),
@@ -93,7 +97,15 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			break;
 
 		case Common::EVENT_QUIT:
-			_shouldQuit = true;
+			if (ConfMan.getBool("confirm_exit")) {
+				if (g_engine)
+					g_engine->pauseEngine(true);
+				GUI::MessageDialog alert("Do you really want to quit?", "Yes", "No");
+				result = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
+				if (g_engine)
+					g_engine->pauseEngine(false);
+			} else
+				_shouldQuit = true;
 			break;
 
 		default:

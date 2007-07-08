@@ -37,7 +37,7 @@ static const MidiDriverDescription s_musicDrivers[] = {
 
 	// The flags for the "auto" & "null" drivers indicate that they are anything
 	// you want it to be.
-	{"auto", "Default", MD_AUTO, MDT_MIDI | MDT_PCSPK | MDT_ADLIB | MDT_TOWNS},
+	{"auto", "<default>", MD_AUTO, MDT_MIDI | MDT_PCSPK | MDT_ADLIB | MDT_TOWNS},
 	{"null", "No music", MD_NULL, MDT_MIDI | MDT_PCSPK | MDT_ADLIB | MDT_TOWNS},
 
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)

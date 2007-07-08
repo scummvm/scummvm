@@ -31,7 +31,7 @@
 ZipFile::ZipFile() {
 	// Locate a zip file in cartridge memory space
 	
-	consolePrintf("ZIP file check...");
+//	consolePrintf("ZIP file check...");
 	
 	char* p = (char *) ZF_SEARCH_START;
 	bool found = false;
@@ -52,9 +52,9 @@ ZipFile::ZipFile() {
 	}
 
 	if (_zipFile) {
-		consolePrintf("Ok!\n");
+		consolePrintf("ZIP File found Ok!\n");
 	} else {
-		consolePrintf("Not in use!\n");
+//		consolePrintf("Not in use!\n");
 		return;
 	}
 	

@@ -37,7 +37,7 @@ namespace Parallaction {
 //  Amiga version of Nippon Safes, and one archive ('fr') in the Amiga Demo of
 //  Nippon Safes used different internal offsets than all the other archives.
 //
-//  When an archive is opened in the Amiga demo, its size is checked against 
+//  When an archive is opened in the Amiga demo, its size is checked against
 //  SIZEOF_SMALL_ARCHIVE to detect when the smaller archive is used.
 //
 //  When an archive is opened in Amiga multi-lingual version, the header is
@@ -72,6 +72,8 @@ void Archive::open(const char *file) {
 	if (!_archive.open(path))
 		error("archive '%s' not found", path);
 
+	_archiveName = file;
+
 	bool isSmallArchive = false;
 	if (_vm->getPlatform() == Common::kPlatformAmiga) {
 		if (_vm->getFeatures() & GF_DEMO) {
@@ -105,8 +107,12 @@ void Archive::close() {
 	resetArchivedFile();
 
 	_archive.close();
+	_archiveName.clear();
 }
 
+Common::String Archive::name() const {
+	return _archiveName;
+}
 
 bool Archive::openArchivedFile(const char *filename) {
 	debugC(3, kDebugDisk, "Archive::openArchivedFile(%s)", filename);

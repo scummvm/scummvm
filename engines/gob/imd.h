@@ -41,7 +41,7 @@ public:
 		int16 top;
 		int16 right;
 		int16 bottom;
-	};
+	} PACKED_STRUCT;
 
 	struct Imd {
 		int16 handle;
@@ -65,7 +65,7 @@ public:
 		int32 frameDataSize;
 		int32 vidBufferSize;
 		Video::Color *extraPalette;
-	};
+	} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

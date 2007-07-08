@@ -37,7 +37,7 @@ struct CostumeInfo {
 	uint16 width, height;
 	int16 rel_x, rel_y;
 	int16 move_x, move_y;
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

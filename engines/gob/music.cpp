@@ -268,20 +268,20 @@ void Adlib::setKey(byte voice, byte note, bool on, bool spec) {
 		// 0x3A donne 0x2AF;
 		//     3A
 		// <<   7 =  1D00
-		// + E000 =  FD00 négatif
+		// + E000 =  FD00 negatif
 		// *   19 = xB500
 		// / 2000 =    -2 => Ligne 17h, colonne -1
 
 		//     2E
 		// <<   7 =  1700
-		// + E000 =  F700 négatif
+		// + E000 =  F700 negatif
 		// *   19 = x1F00
 		// / 2000 =
 		short a;
 		short lin;
 		short col;
 
-		a = (note << 7) + 0xE000; // Volontairement tronqué
+		a = (note << 7) + 0xE000; // Volontairement tronque
 		a = (short)((long)a * 25 / 0x2000);
 		if (a < 0) {
 			col = - ((24 - a) / 25);

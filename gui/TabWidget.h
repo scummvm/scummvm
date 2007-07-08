@@ -87,7 +87,7 @@ public:
 	void setActiveTab(int tabID);
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
-	virtual bool handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	virtual bool handleKeyDown(Common::KeyState state);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	virtual void reflowLayout();

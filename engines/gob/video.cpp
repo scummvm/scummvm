@@ -235,7 +235,7 @@ void Video::drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1,
 
 /*
  * The original's version of the Bresenham Algorithm was a bit "unclean"
- * and produced strange edges at 45°, 135°, 225° and 315°, so using the
+ * and produced strange edges at 45, 135, 225 and 315 degrees, so using the
  * version found in the Wikipedia article about the
  * "Bresenham's line algorithm" instead
  */

@@ -37,8 +37,6 @@ class ProtrackerStream : public ::Audio::Paula {
 private:
 	Module _module;
 
-	int _rate;
-
 	int _tick;
 	int _row;
 	int _pos;
@@ -67,7 +65,7 @@ private:
 	struct {
 		byte sample;
 		uint16 period;
-		double offset;
+		frac_t offset;
 
 		byte vol;
 		byte finetune;
@@ -95,7 +93,6 @@ public:
 	ProtrackerStream(Common::ReadStream *stream, int rate, bool stereo);
 
 private:
-	void startPlay() { _playing = true; _end = false; }
 	void interrupt();
 
 	void doPorta(int track) {
@@ -153,7 +150,6 @@ ProtrackerStream::ProtrackerStream(Common::ReadStream *stream, int rate, bool st
 	bool result = _module.load(*stream);
 	assert(result);
 
-	_rate = rate;
 	_tick = _row = _pos = 0;
 
 	_speed = 6;
@@ -173,7 +169,7 @@ ProtrackerStream::ProtrackerStream(Common::ReadStream *stream, int rate, bool st
 
 	memset(_track, 0, sizeof(_track));
 
-	startPlay();
+	startPaula();
 }
 
 void ProtrackerStream::updateRow() {
@@ -181,10 +177,10 @@ void ProtrackerStream::updateRow() {
 		_track[track].arpeggio = false;
 		_track[track].vibrato = 0;
 		_track[track].delaySampleTick = 0;
-		note_t note =
+		const note_t note =
 		    _module.pattern[_module.songpos[_pos]][_row][track];
 
-		int effect = note.effect >> 8;
+		const int effect = note.effect >> 8;
 
 		if (note.sample) {
 			if (_track[track].sample != note.sample) {
@@ -201,19 +197,18 @@ void ProtrackerStream::updateRow() {
 					_track[track].period = _module.noteToPeriod(note.note, _track[track].finetune);
 				else
 					_track[track].period = note.period;
-				_track[track].offset = 0.0;
+				_track[track].offset = 0;
 			}
 		}
 
-		int exy = note.effect & 0xff;
-		if (exy);
-		int ex = (note.effect >> 4) & 0xf;
-		int ey = note.effect & 0xf;
+		const byte exy = note.effect & 0xff;
+		const byte ex = (note.effect >> 4) & 0xf;
+		const byte ey = note.effect & 0xf;
 
 		int vol;
 		switch (effect) {
 		case 0x0:
-			if (ex || ey) {
+			if (exy) {
 				_track[track].arpeggio = true;
 				if (note.period) {
 					_track[track].arpeggioNotes[0] = note.note;
@@ -233,7 +228,7 @@ void ProtrackerStream::updateRow() {
 				_track[track].portaToNoteSpeed = exy;
 			break;
 		case 0x4:
-			if (ex || ey) {
+			if (exy) {
 				_track[track].vibratoSpeed = ex;
 				_track[track].vibratoDepth = ey;
 			}
@@ -248,8 +243,8 @@ void ProtrackerStream::updateRow() {
 			break;
 		case 0x9: // Set sample offset
 			if (exy) {
-				_track[track].offset = exy * 256;
-				_voice[track].offset = _track[track].offset;
+				_track[track].offset = intToFrac(exy * 256);
+				setChannelOffset(track, _track[track].offset);
 			}
 			break;
 		case 0xA:
@@ -342,26 +337,22 @@ void ProtrackerStream::updateEffects() {
 	for (int track = 0; track < 4; track++) {
 		_track[track].vibrato = 0;
 
-		note_t note =
+		const note_t note =
 		    _module.pattern[_module.songpos[_pos]][_row][track];
 
-		int effect = note.effect >> 8;
+		const int effect = note.effect >> 8;
 
-		int exy = note.effect & 0xff;
-		int ex = (note.effect >> 4) & 0xf;
-		int ey = (note.effect) & 0xf;
+		const int exy = note.effect & 0xff;
+		const int ex = (note.effect >> 4) & 0xf;
+		const int ey = (note.effect) & 0xf;
 
 		switch (effect) {
 		case 0x0:
-			if (ex || ey) {
-				if (_tick == 1)
-					_track[track].period =
-						_module.noteToPeriod(_track[track].arpeggioNotes[0],
-								_track[track].finetune);
-				else
-					_track[track].period =
-						_module.noteToPeriod(_track[track].arpeggioNotes[_tick % 3],
-								_track[track].finetune);
+			if (exy) {
+				const int idx = (_tick == 1) ? 0 : (_tick % 3);
+				_track[track].period =
+					_module.noteToPeriod(_track[track].arpeggioNotes[idx],
+							_track[track].finetune);
 			}
 			break;
 		case 0x1:
@@ -392,13 +383,13 @@ void ProtrackerStream::updateEffects() {
 			case 0x6:
 				break;	// Pattern loop
 			case 0x9:	// Retrigger note
-				if (ey && _tick % ey == 0)
-					_track[track].offset = 0.0;
+				if (ey && (_tick % ey) == 0)
+					_track[track].offset = 0;
 				break;
 			case 0xD: // Delay sample
 				if (_tick == _track[track].delaySampleTick) {
 					_track[track].sample = _track[track].delaySample;
-					_track[track].offset = 0.0;
+					_track[track].offset = 0;
 					if (_track[track].sample)
 						_track[track].vol = _module.sample[_track[track].sample - 1].vol;
 				}
@@ -412,14 +403,15 @@ void ProtrackerStream::updateEffects() {
 void ProtrackerStream::interrupt(void) {
 	int track;
 
-	for (track = 0; track < 4; track++)
-		_track[track].offset = _voice[track].offset;
-
-	if (_tick == 0) {
-		if (_track[track].arpeggio) {
+	for (track = 0; track < 4; track++) {
+		_track[track].offset = getChannelOffset(track);
+		if (_tick == 0 && _track[track].arpeggio) {
 			_track[track].period = _module.noteToPeriod(_track[track].arpeggioNotes[0],
 					_track[track].finetune);
 		}
+	}
+
+	if (_tick == 0) {
 		if (_hasJumpToPattern) {
 			_hasJumpToPattern = false;
 			_pos = _jumpToPattern;
@@ -450,15 +442,16 @@ void ProtrackerStream::interrupt(void) {
 	}
 
 	for (track = 0; track < 4; track++) {
-		_voice[track].period = _track[track].period + _track[track].vibrato;
-		_voice[track].volume = _track[track].vol;
+		setChannelVolume(track, _track[track].vol);
+		setChannelPeriod(track, _track[track].period + _track[track].vibrato);
 		if (_track[track].sample) {
 			sample_t &sample = _module.sample[_track[track].sample - 1];
-			_voice[track].data = sample.data;
-			_voice[track].dataRepeat = sample.replen > 2 ? sample.data + sample.repeat : 0;
-			_voice[track].length = sample.len;
-			_voice[track].lengthRepeat = sample.replen;
-			_voice[track].offset = _track[track].offset;
+			setChannelData(track,
+			               sample.data,
+			               sample.replen > 2 ? sample.data + sample.repeat : 0,
+			               sample.len,
+			               sample.replen,
+			               _track[track].offset);
 			_track[track].sample = 0;
 		}
 	}

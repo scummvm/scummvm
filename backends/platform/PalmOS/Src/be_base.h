@@ -196,10 +196,6 @@ public:
 	
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
-	virtual int screenToOverlayX(int x);
-	virtual int screenToOverlayY(int y);
-	virtual int overlayToScreenX(int x);
-	virtual int overlayToScreenY(int y);
 	
 	virtual OverlayColor ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b);
 	virtual void colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b);

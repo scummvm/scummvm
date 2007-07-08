@@ -148,7 +148,7 @@ protected:
 EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	: OptionsDialog(domain, "gameoptions") {
 
-	int labelWidth = g_gui.evaluator()->getVar("gameOptionsLabelWidth");
+	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
 	String gamePath(ConfMan.get("path", _domain));
@@ -171,15 +171,15 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	tab->addTab("Game");
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, "gameoptions_id", "ID: ");
+	new StaticTextWidget(tab, "gameoptions_id", "ID:");
 	_domainWidget = new DomainEditTextWidget(tab, "gameoptions_domain", _domain);
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, "gameoptions_name", "Name: ");
+	new StaticTextWidget(tab, "gameoptions_name", "Name:");
 	_descriptionWidget = new EditTextWidget(tab, "gameoptions_desc", description);
 
 	// Language popup
-	_langPopUp = new PopUpWidget(tab, "gameoptions_lang", "Language: ", labelWidth);
+	_langPopUp = new PopUpWidget(tab, "gameoptions_lang", "Language:", labelWidth);
 	_langPopUp->appendEntry("<default>");
 	_langPopUp->appendEntry("");
 	const Common::LanguageDescription *l = Common::g_languages;
@@ -188,7 +188,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// Platform popup
-	_platformPopUp = new PopUpWidget(tab, "gameoptions_platform", "Platform: ", labelWidth);
+	_platformPopUp = new PopUpWidget(tab, "gameoptions_platform", "Platform:", labelWidth);
 	_platformPopUp->appendEntry("<default>");
 	_platformPopUp->appendEntry("");
 	const Common::PlatformDescription *p = Common::g_platforms;
@@ -242,7 +242,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// in the small version of the GUI.
 
 	// GUI:  Button + Label for the game path
-	new ButtonWidget(tab, "gameoptions_gamepath", "Game Path: ", kCmdGameBrowser, 0);
+	new ButtonWidget(tab, "gameoptions_gamepath", "Game Path:", kCmdGameBrowser, 0);
 	_gamePathWidget = new StaticTextWidget(tab, "gameoptions_gamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
@@ -253,7 +253,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// GUI:  Button + Label for the save path
-	new ButtonWidget(tab, "gameoptions_savepath", "Save Path: ", kCmdSaveBrowser, 0);
+	new ButtonWidget(tab, "gameoptions_savepath", "Save Path:", kCmdSaveBrowser, 0);
 	_savePathWidget = new StaticTextWidget(tab, "gameoptions_savepathText", savePath);
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel("Default");
@@ -270,7 +270,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 void EditGameDialog::reflowLayout() {
 	OptionsDialog::reflowLayout();
 
-	int labelWidth = g_gui.evaluator()->getVar("gameOptionsLabelWidth");
+	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
 
 	if (_langPopUp)
 		_langPopUp->changeLabelWidth(labelWidth);
@@ -588,6 +588,15 @@ void LauncherDialog::updateListing() {
 			if (g.contains("description"))
 				description = g.description();
 		}
+
+#ifdef __DS__
+		// DS port uses an extra section called 'ds'.  This prevents the section from being
+		// detected as a game.
+		if (gameid == "ds") {
+			continue;
+		}
+#endif
+
 		if (description.empty())
 			description = "Unknown (target " + iter->_key + ", gameid " + gameid + ")";
 
@@ -789,13 +798,13 @@ void LauncherDialog::editGame(int item) {
 	}
 }
 
-void LauncherDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	Dialog::handleKeyDown(ascii, keycode, modifiers);
+void LauncherDialog::handleKeyDown(Common::KeyState state) {
+	Dialog::handleKeyDown(state);
 	updateButtons();
 }
 
-void LauncherDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
-	Dialog::handleKeyUp(ascii, keycode, modifiers);
+void LauncherDialog::handleKeyUp(Common::KeyState state) {
+	Dialog::handleKeyUp(state);
 	updateButtons();
 }
 

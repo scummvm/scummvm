@@ -120,7 +120,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_gdi = new Gdi(this);
 	}
 	_res = new ResourceManager(this);
-
+	
 	// Convert MD5 checksum back into a digest
 	for (int i = 0; i < 16; ++i) {
 		char tmpStr[3] = "00";
@@ -2236,31 +2236,39 @@ void ScummEngine::startManiac() {
 #pragma mark --- GUI ---
 #pragma mark -
 
+void ScummEngine::pauseEngineIntern(bool pause) {
+	if (pause) {
+		// Record start of the pause, so that we can later
+		// adjust _engineStartTime accordingly.
+		_pauseStartTime = _system->getMillis();
+
+		// Pause sound & video
+		_oldSoundsPaused = _sound->_soundsPaused;
+		_sound->pauseSounds(true);
+	
+	} else {
+		// Update the screen to make it less likely that the player will see a
+		// brief cursor palette glitch when the GUI is disabled.
+		_system->updateScreen();
+
+		// Resume sound & video
+		_sound->pauseSounds(_oldSoundsPaused);
+
+		// Adjust engine start time
+		_engineStartTime += (_system->getMillis() - _pauseStartTime) / 1000;
+		_pauseStartTime = 0;
+	}
+}
+
 int ScummEngine::runDialog(Dialog &dialog) {
-	_dialogStartTime = _system->getMillis() / 1000;
-
-	// Pause sound & video
-	bool old_soundsPaused = _sound->_soundsPaused;
-	_sound->pauseSounds(true);
-
-	bool visible = CursorMan.isVisible();
+	// Pause engine
+	pauseEngine(true);
 
 	// Open & run the dialog
 	int result = dialog.runModal();
 
-	// Restore old cursor
-	updateCursor();
-	CursorMan.showMouse(visible);
-
-	// Update the screen to make it less likely that the player will see a
-	// brief cursor palette glitch when the GUI is disabled.
-	_system->updateScreen();
-
-	// Resume sound & video
-	_sound->pauseSounds(old_soundsPaused);
-
-	_engineStartTime += (_system->getMillis() / 1000) - _dialogStartTime;
-	_dialogStartTime = 0;
+	// Resume engine
+	pauseEngine(false);
 
 	// Return the result
 	return result;

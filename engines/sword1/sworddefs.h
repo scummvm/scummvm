@@ -100,7 +100,7 @@ struct Header {
 	uint32	comp_length;
 	char	compression[4];
 	uint32	decomp_length;
-};
+} PACKED_STRUCT;
 
 struct FrameHeader {
 	uint8 runTimeComp[4];
@@ -115,25 +115,25 @@ struct ParallaxHeader {
 	char type[16];
 	uint16 sizeX;
 	uint16 sizeY;
-};
+} PACKED_STRUCT;
 
 struct AnimUnit {
 	uint32 animX;
 	uint32 animY;
 	uint32 animFrame;
-};
+} PACKED_STRUCT;
 
 struct AnimSet {
 	uint32 cdt;
 	uint32 spr;
-};
+} PACKED_STRUCT;
 
 struct WalkGridHeader {
 	int32 scaleA;
 	int32 scaleB;
 	int32 numBars;
 	int32 numNodes;
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

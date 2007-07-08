@@ -33,7 +33,7 @@
 namespace Parallaction {
 
 uint16 fillBuffers(Common::SeekableReadStream &stream, bool errorOnEOF = false);
-char   *parseNextToken(char *s, char *tok, uint16 count, const char *brk);
+char   *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ignoreQuotes = false);
 
 extern char _tokens[][40];
 

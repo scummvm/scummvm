@@ -38,6 +38,7 @@ void Parallaction::parseLocation(const char *filename) {
 	_gfx->setFont(kFontLabel);
 
 	Script *_locationScript = _disk->loadLocation(filename);
+	_hasLocationSound = false;
 
 	fillBuffers(*_locationScript, true);
 	while (scumm_stricmp(_tokens[0], "ENDLOCATION")) {
@@ -140,15 +141,14 @@ void Parallaction::parseLocation(const char *filename) {
 			parseAnimation(*_locationScript, _animations, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "SOUND")) {
-			strcpy(_soundFile, _tokens[1]);
+			if (getPlatform() == Common::kPlatformAmiga) {
+				strcpy(_locationSound, _tokens[1]);
+				_hasLocationSound = true;
+			}
 		}
 		if (!scumm_stricmp(_tokens[0], "MUSIC")) {
 			if (getPlatform() == Common::kPlatformAmiga)
 				_soundMan->setMusicFile(_tokens[1]);
-		}
-		if (!scumm_stricmp(_tokens[0], "SOUND")) {
-//			if (getPlatform() == Common::kPlatformAmiga)
-//				_soundMan->loadSfx(_tokens[1], atoi(_tokens[2]));
 		}
 		fillBuffers(*_locationScript, true);
 	}
@@ -182,14 +182,14 @@ void Parallaction::freeLocation() {
 
 	if (_localFlagNames)
 		delete _localFlagNames;
-	
+
 	// HACK: prevents leakage. A routine like this
 	// should allocate memory at all, though.
 	if ((_engineFlags & kEngineQuit) == 0) {
 		_localFlagNames = new Table(120);
 		_localFlagNames->addData("visited");
 	}
-		
+
 	_location._walkNodes.clear();
 
 	// TODO (LIST): helperNode should be rendered useless by the use of a Common::List<>
@@ -379,11 +379,11 @@ void Parallaction::changeLocation(char *location) {
 		runJobs();
 		_gfx->swapBuffers();
 	}
-	
+
 	if (_location._comment) {
 		doLocationEnterTransition();
 	}
-	
+
 	runJobs();
 	_gfx->swapBuffers();
 
@@ -392,7 +392,8 @@ void Parallaction::changeLocation(char *location) {
 		runCommands(_location._aCommands);
 	}
 
-//	_soundMan->playSfx(0);
+	if (_hasLocationSound)
+		_soundMan->playSfx(_locationSound, 0, true);
 
 	debugC(1, kDebugLocation, "changeLocation() done");
 
@@ -416,7 +417,7 @@ void Parallaction::doLocationEnterTransition() {
         debugC(3, kDebugLocation, "skipping location transition");
         return; // visited
     }
- 
+
 	byte pal[PALETTE_SIZE];
 	_gfx->buildBWPalette(pal);
 	_gfx->setPalette(pal);
@@ -437,7 +438,7 @@ void Parallaction::doLocationEnterTransition() {
 	_gfx->floodFill(Gfx::kBitFront, r, 0);
 	r.grow(-1);
 	_gfx->floodFill(Gfx::kBitFront, r, 1);
-	_gfx->displayWrappedString(_location._comment, 3, 5, 130, 0);
+	_gfx->displayWrappedString(_location._comment, 3, 5, 0, 130);
 
 	_gfx->updateScreen();
 	waitUntilLeftClick();

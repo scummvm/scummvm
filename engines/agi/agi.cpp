@@ -334,7 +334,7 @@ void AgiEngine::replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 	case ADD_PIC:
 		debugC(8, kDebugLevelMain, "--- decoding picture %d ---", p1);
 		agiLoadResource(rPICTURE, p1);
-		_picture->decodePicture(p1, p2);
+		_picture->decodePicture(p1, p2, p3 != 0);
 		break;
 	case ADD_VIEW:
 		agiLoadResource(rVIEW, p1);

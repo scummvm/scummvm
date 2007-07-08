@@ -274,7 +274,7 @@ bool AGOSEngine::printNameOf(Item *item, uint x, uint y) {
 	if (item == 0 || item == _dummyItem2 || item == _dummyItem3)
 		return false;
 
-	subObject = (SubObject *)findChildOfType(item, 2);
+	subObject = (SubObject *)findChildOfType(item, kObjectType);
 	if (subObject == NULL)
 		return false;
 
@@ -370,10 +370,12 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 	if (y < 2)
 		y = 2;
 
-	if (getGameType() == GType_SIMON1)
-		animate(windowNum, 2, 199 + vgaSpriteId, x, y, 12);
-	else
+	if (getGameType() == GType_SIMON1) {
+		uint16 id = 199 + vgaSpriteId;
+		animate(windowNum, id / 100, id, x, y, 12);
+	} else {
 		animate(windowNum, 2, vgaSpriteId, x, y, 12);
+	}
 }
 
 // The Feeble Files specific

@@ -350,13 +350,13 @@ void AGOSEngine::readItemFromGamePc(Common::SeekableReadStream *in, Item *item) 
 }
 
 void AGOSEngine::readItemChildren(Common::SeekableReadStream *in, Item *item, uint type) {
-	if (type == 1) {
-		SubRoom *subRoom = (SubRoom *)allocateChildBlock(item, 1, sizeof(SubRoom));
+	if (type == kRoomType) {
+		SubRoom *subRoom = (SubRoom *)allocateChildBlock(item, kRoomType, sizeof(SubRoom));
 		subRoom->roomShort = in->readUint32BE();
 		subRoom->roomLong = in->readUint32BE();
 		subRoom->flags = in->readUint16BE();
-	} else if (type == 2) {
-		SubObject *subObject = (SubObject *)allocateChildBlock(item, 2, sizeof(SubObject));
+	} else if (type == kObjectType) {
+		SubObject *subObject = (SubObject *)allocateChildBlock(item, kObjectType, sizeof(SubObject));
 		in->readUint32BE();
 		in->readUint32BE();
 		in->readUint32BE();
@@ -364,8 +364,8 @@ void AGOSEngine::readItemChildren(Common::SeekableReadStream *in, Item *item, ui
 		subObject->objectSize = in->readUint16BE();
 		subObject->objectWeight = in->readUint16BE();
 		subObject->objectFlags = in->readUint16BE();
-	} else if (type == 4) {
-		SubGenExit *genExit = (SubGenExit *)allocateChildBlock(item, 4, sizeof(SubGenExit));
+	} else if (type == kGenExitType) {
+		SubGenExit *genExit = (SubGenExit *)allocateChildBlock(item, kGenExitType, sizeof(SubGenExit));
 		genExit->dest[0] = (uint16)fileReadItemID(in);
 		genExit->dest[1] = (uint16)fileReadItemID(in);
 		genExit->dest[2] = (uint16)fileReadItemID(in);
@@ -378,14 +378,14 @@ void AGOSEngine::readItemChildren(Common::SeekableReadStream *in, Item *item, ui
 		fileReadItemID(in);
 		fileReadItemID(in);
 		fileReadItemID(in);
-	} else if (type == 7) {
-		SubContainer *container = (SubContainer *)allocateChildBlock(item, 7, sizeof(SubContainer));
+	} else if (type == kContainerType) {
+		SubContainer *container = (SubContainer *)allocateChildBlock(item, kContainerType, sizeof(SubContainer));
 		container->volume = in->readUint16BE();
 		container->flags = in->readUint16BE();
-	} else if (type == 8) {
-		SubChain *chain = (SubChain *)allocateChildBlock(item, 8, sizeof(SubChain));
+	} else if (type == kChainType) {
+		SubChain *chain = (SubChain *)allocateChildBlock(item, kChainType, sizeof(SubChain));
 		chain->chChained = (uint16)fileReadItemID(in);
-	} else if (type == 9) {
+	} else if (type == kUserFlagType) {
 		setUserFlag(item, 0, in->readUint16BE());
 		setUserFlag(item, 1, in->readUint16BE());
 		setUserFlag(item, 2, in->readUint16BE());
@@ -394,13 +394,13 @@ void AGOSEngine::readItemChildren(Common::SeekableReadStream *in, Item *item, ui
 		setUserFlag(item, 5, in->readUint16BE());
 		setUserFlag(item, 6, in->readUint16BE());
 		setUserFlag(item, 7, in->readUint16BE());
-		SubUserFlag *subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
+		SubUserFlag *subUserFlag = (SubUserFlag *)findChildOfType(item, kUserFlagType);
 		subUserFlag->userItems[0] = (uint16)fileReadItemID(in); 
 		fileReadItemID(in);
 		fileReadItemID(in);
 		fileReadItemID(in);
-	} else if (type == 255) {
-		SubInherit *inherit = (SubInherit *)allocateChildBlock(item, 255, sizeof(SubInherit));
+	} else if (type == kInheritType) {
+		SubInherit *inherit = (SubInherit *)allocateChildBlock(item, kInheritType, sizeof(SubInherit));
 		inherit->inMaster = (uint16)fileReadItemID(in);
 	} else {
 		error("readItemChildren: invalid type %d", type);
@@ -408,7 +408,7 @@ void AGOSEngine::readItemChildren(Common::SeekableReadStream *in, Item *item, ui
 }
 
 void AGOSEngine_Elvira2::readItemChildren(Common::SeekableReadStream *in, Item *item, uint type) {
-	if (type == 1) {
+	if (type == kRoomType) {
 		uint fr1 = in->readUint16BE();
 		uint fr2 = in->readUint16BE();
 		uint i, size;
@@ -420,14 +420,14 @@ void AGOSEngine_Elvira2::readItemChildren(Common::SeekableReadStream *in, Item *
 			if (j & 3)
 				size += sizeof(subRoom->roomExit[0]);
 
-		subRoom = (SubRoom *)allocateChildBlock(item, 1, size);
+		subRoom = (SubRoom *)allocateChildBlock(item, kRoomType, size);
 		subRoom->subroutine_id = fr1;
 		subRoom->roomExitStates = fr2;
 
 		for (i = k = 0, j = fr2; i != 6; i++, j >>= 2)
 			if (j & 3)
 				subRoom->roomExit[k++] = (uint16)fileReadItemID(in);
-	} else if (type == 2) {
+	} else if (type == kObjectType) {
 		uint32 fr = in->readUint32BE();
 		uint i, k, size;
 		SubObject *subObject;
@@ -437,7 +437,7 @@ void AGOSEngine_Elvira2::readItemChildren(Common::SeekableReadStream *in, Item *
 			if (fr & (1 << i))
 				size += sizeof(subObject->objectFlagValue[0]);
 
-		subObject = (SubObject *)allocateChildBlock(item, 2, size);
+		subObject = (SubObject *)allocateChildBlock(item, kObjectType, size);
 		subObject->objectFlags = fr;
 
 		k = 0;
@@ -450,7 +450,7 @@ void AGOSEngine_Elvira2::readItemChildren(Common::SeekableReadStream *in, Item *
 
 		if (getGameType() != GType_ELVIRA2)
 			subObject->objectName = (uint16)in->readUint32BE();
-	} else if (type == 4) {
+	} else if (type == kSuperRoomType) {
 		assert(getGameType() == GType_ELVIRA2);
 
 		uint i, j, k, size;
@@ -467,7 +467,7 @@ void AGOSEngine_Elvira2::readItemChildren(Common::SeekableReadStream *in, Item *
 		for (i = 0; i != j; i++)
 			size += sizeof(subSuperRoom->roomExitStates[0]);
 
-		subSuperRoom = (SubSuperRoom *)allocateChildBlock(item, 4, size);
+		subSuperRoom = (SubSuperRoom *)allocateChildBlock(item, kSuperRoomType, size);
 		subSuperRoom->subroutine_id = id;
 		subSuperRoom->roomX = x;
 		subSuperRoom->roomY = y;
@@ -475,20 +475,20 @@ void AGOSEngine_Elvira2::readItemChildren(Common::SeekableReadStream *in, Item *
 
 		for (i = k = 0; i != j; i++)
 			subSuperRoom->roomExitStates[k++] = in->readUint16BE();
-	} else if (type == 7) {
-		SubContainer *container = (SubContainer *)allocateChildBlock(item, 7, sizeof(SubContainer));
+	} else if (type == kContainerType) {
+		SubContainer *container = (SubContainer *)allocateChildBlock(item, kContainerType, sizeof(SubContainer));
 		container->volume = in->readUint16BE();
 		container->flags = in->readUint16BE();
-	} else if (type == 8) {
-		SubChain *chain = (SubChain *)allocateChildBlock(item, 8, sizeof(SubChain));
+	} else if (type == kChainType) {
+		SubChain *chain = (SubChain *)allocateChildBlock(item, kChainType, sizeof(SubChain));
 		chain->chChained = (uint16)fileReadItemID(in);
-	} else if (type == 9) {
+	} else if (type == kUserFlagType) {
 		setUserFlag(item, 0, in->readUint16BE());
 		setUserFlag(item, 1, in->readUint16BE());
 		setUserFlag(item, 2, in->readUint16BE());
 		setUserFlag(item, 3, in->readUint16BE());
-	} else if (type == 255) {
-		SubInherit *inherit = (SubInherit *)allocateChildBlock(item, 255, sizeof(SubInherit));
+	} else if (type == kInheritType) {
+		SubInherit *inherit = (SubInherit *)allocateChildBlock(item, kInheritType, sizeof(SubInherit));
 		inherit->inMaster = (uint16)fileReadItemID(in);
 	} else {
 		error("readItemChildren: invalid type %d", type);

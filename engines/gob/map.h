@@ -51,7 +51,7 @@ public:
 		int16 x;
 		int16 y;
 		int16 notWalkable;
-	};
+	} PACKED_STRUCT;
 
 #define szMap_ItemPos 3
 
@@ -59,7 +59,7 @@ public:
 		int8 x;
 		int8 y;
 		int8 orient;
-	};
+	} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

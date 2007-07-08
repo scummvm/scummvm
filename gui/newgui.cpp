@@ -272,10 +272,10 @@ void NewGui::runLoop() {
 			
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				activeDialog->handleKeyDown(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
+				activeDialog->handleKeyDown(event.kbd);
 				break;
 			case Common::EVENT_KEYUP:
-				activeDialog->handleKeyUp(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
+				activeDialog->handleKeyUp(event.kbd);
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);

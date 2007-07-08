@@ -28,6 +28,7 @@
 
 #include "common/stdafx.h"
 #include "common/list.h"
+#include "common/rect.h"
 
 namespace Parallaction {
 

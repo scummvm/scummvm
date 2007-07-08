@@ -172,7 +172,7 @@ class Win32ResExtractor : public ResExtractor {
 		byte *memory;
 		byte *first_resource;
 		int total_size;
-	};
+	} PACKED_STRUCT;
 
 	struct WinResource {
 		char id[256];
@@ -183,7 +183,7 @@ class Win32ResExtractor : public ResExtractor {
 		bool is_directory;
 		
 		char *get_resource_id_quoted();
-	};
+	} PACKED_STRUCT;
 
 
 	struct Win32IconResDir {
@@ -191,12 +191,12 @@ class Win32ResExtractor : public ResExtractor {
 		byte height;
 		byte color_count;
 		byte reserved;
-	};
+	} PACKED_STRUCT;
 
 	struct Win32CursorDir {
 		uint16 width;
 		uint16 height;
-	};
+	} PACKED_STRUCT;
 
 	struct Win32CursorIconDirEntry {
 		union {
@@ -207,14 +207,14 @@ class Win32ResExtractor : public ResExtractor {
 		uint16 bit_count;
 		uint32 bytes_in_res;
 		uint16 res_id;
-	};
+	} PACKED_STRUCT;
 
 	struct Win32CursorIconDir {
 		uint16 reserved;
 		uint16 type;
 		uint16 count;
 		Win32CursorIconDirEntry entries[1];
-	};
+	} PACKED_STRUCT;
 
 	struct Win32CursorIconFileDirEntry {
 		byte width;
@@ -225,14 +225,14 @@ class Win32ResExtractor : public ResExtractor {
 		uint16 hotspot_y;
 		uint32 dib_size;
 		uint32 dib_offset;
-	};
+	} PACKED_STRUCT;
 
 	struct Win32CursorIconFileDir {
 		uint16 reserved;
 		uint16 type;
 		uint16 count;
 		Win32CursorIconFileDirEntry entries[1];
-	};
+	} PACKED_STRUCT;
 
 	struct Win32BitmapInfoHeader {
 		uint32 size;
@@ -246,25 +246,25 @@ class Win32ResExtractor : public ResExtractor {
 		int32 y_pels_per_meter;
 		uint32 clr_used;
 		uint32 clr_important;
-	};
+	} PACKED_STRUCT;
 
 	struct Win32RGBQuad {
 		byte blue;
 		byte green;
 		byte red;
 		byte reserved;
-	};
+	} PACKED_STRUCT;
 
 	struct Win32ImageResourceDirectoryEntry {
 		uint32 name;
 		uint32 offset_to_data;
-	};
+	} PACKED_STRUCT;
 
 	struct Win16NETypeInfo {
 		uint16 type_id;
 		uint16 count;
 		uint32 resloader;     // FARPROC16 - smaller? uint16?
-	};
+	} PACKED_STRUCT;
 
 	struct DOSImageHeader {
 		uint16 magic;
@@ -286,7 +286,7 @@ class Win32ResExtractor : public ResExtractor {
 		uint16 oeminfo;
 		uint16 res2[10];
 		uint32 lfanew;
-	};
+	} PACKED_STRUCT;
 
 	struct Win32ImageFileHeader {
 		uint16 machine;
@@ -296,12 +296,12 @@ class Win32ResExtractor : public ResExtractor {
 		uint32 number_of_symbols;
 		uint16 size_of_optional_header;
 		uint16 characteristics;
-	};
+	} PACKED_STRUCT;
 
 	struct Win32ImageDataDirectory {
 		uint32 virtual_address;
 		uint32 size;
-	};
+	} PACKED_STRUCT;
 
 	struct Win32ImageOptionalHeader {
 		uint16 magic;
@@ -335,13 +335,13 @@ class Win32ResExtractor : public ResExtractor {
 		uint32 loader_flags;
 		uint32 number_of_rva_and_sizes;
 		Win32ImageDataDirectory data_directory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
-	};
+	} PACKED_STRUCT;
 
 	struct Win32ImageNTHeaders {
 		uint32 signature;
 		Win32ImageFileHeader file_header;
 		Win32ImageOptionalHeader optional_header;
-	};
+	} PACKED_STRUCT;
 
 	struct Win32ImageSectionHeader {
 		byte name[IMAGE_SIZEOF_SHORT_NAME];
@@ -357,14 +357,14 @@ class Win32ResExtractor : public ResExtractor {
 		uint16 number_of_relocations;
 		uint16 number_of_linenumbers;
 		uint32 characteristics;
-	};
+	} PACKED_STRUCT;
 
 	struct Win32ImageResourceDataEntry {
 		uint32 offset_to_data;
 		uint32 size;
 		uint32 code_page;
 		uint32 resource_handle;
-	};
+	} PACKED_STRUCT;
 
 	struct Win32ImageResourceDirectory {
 		uint32 characteristics;
@@ -373,7 +373,7 @@ class Win32ResExtractor : public ResExtractor {
 		uint16 minor_version;
 		uint16 number_of_named_entries;
 		uint16 number_of_id_entries;
-	};
+	} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

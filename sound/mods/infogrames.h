@@ -80,14 +80,6 @@ public:
 	Instruments *getInstruments(void) const { return _instruments; }
 	bool getRepeating(void) const { return _repCount != 0; }
 	void setRepeating (int32 repCount) { _repCount = repCount; }
-	virtual void startPlay(void) { _playing = true;}
-	virtual void stopPlay(void)
-	{
-		_mutex.lock();
-		_playing = false;
-		_mutex.unlock();
-	}
-	virtual void pausePlay(bool pause) { _playing = !pause; }
 
 	bool load(Common::SeekableReadStream &dum);
 	bool load(const char *dum) {
@@ -98,7 +90,16 @@ public:
 		return false;
 	}
 	void unload(void);
-	void restart(void) { if (_data) { stopPlay(); init(); startPlay(); } }
+	void restart(void) {
+		if (_data) {
+			// Use the mutex here to ensure we do not call init()
+			// while data is being read by the mixer thread.
+			_mutex.lock();
+			init();
+			startPlay();
+			_mutex.unlock();
+		}
+	}
 
 protected:
 	Instruments *_instruments;

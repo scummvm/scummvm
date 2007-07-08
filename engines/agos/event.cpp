@@ -500,10 +500,7 @@ void AGOSEngine::delay(uint amount) {
 				}
 
 				// Make sure backspace works right (this fixes a small issue on OS X)
-				if (event.kbd.keycode == Common::KEYCODE_BACKSPACE)
-					_keyPressed = 8;
-				else
-					_keyPressed = (byte)event.kbd.ascii;
+				_keyPressed = event.kbd;
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				break;

@@ -47,8 +47,8 @@ public:
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
-	virtual void handleKeyUp(uint16 ascii, int keycode, int modifiers);
+	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyUp(Common::KeyState state);
 
 protected:
 	ListWidget		*_list;

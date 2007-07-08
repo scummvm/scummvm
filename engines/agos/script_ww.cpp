@@ -167,7 +167,7 @@ void AGOSEngine_Waxworks::setupOpcodes() {
 		OPCODE(o_cls),
 		/* 104 */
 		OPCODE(o_closeWindow),
-		OPCODE(oww_menu),
+		OPCODE(oe2_menu),
 		OPCODE(oww_textMenu),
 		OPCODE(o_addBox),
 		/* 108 */
@@ -355,11 +355,6 @@ void AGOSEngine_Waxworks::oww_whereTo() {
 		_objectItem = derefItem(getExitOf(i, d));
 }
 
-void AGOSEngine_Waxworks::oww_menu() {
-	// 105: set agos menu
-	_agosMenu = getVarOrByte();
-}
-
 void AGOSEngine_Waxworks::oww_textMenu() {
 	// 106: set text menu
 	byte slot = getVarOrByte();
@@ -419,7 +414,7 @@ void AGOSEngine_Waxworks::oww_printBox() {
 
 void AGOSEngine_Waxworks::oww_boxPObj() {
 	// 188: print object name to box
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 
 	if (subObject != NULL && subObject->objectFlags & kOFText)
 		boxTextMsg((const char *)getStringPtrByID(subObject->objectFlagValue[0]));

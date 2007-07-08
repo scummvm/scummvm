@@ -177,12 +177,12 @@ int loadSavegameData(int saveGameIdx) {
 	fileHandle = fopen(buffer, "rb");
 
 	if (!fileHandle) {
-		printInfoBlackBox("Sauvegarde non trouvée...");
+		printInfoBlackBox("Savegame not found...");
 		waitForPlayerInput();
 		return (-1);
 	}
 
-	printInfoBlackBox("Chargement en cours...");
+	printInfoBlackBox("Loading in progress...");
 
 	fread(saveIdentBuffer, 6, 1, fileHandle);
 

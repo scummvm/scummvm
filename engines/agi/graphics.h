@@ -41,7 +41,7 @@ class GfxMgr {
 private:
 	AgiEngine *_vm;
 
-	uint8 _palette[32 * 3];
+	uint8 _palette[16 * 3];
 	uint8 *_agiScreen;
 	unsigned char *_screen;
 
@@ -87,6 +87,7 @@ public:
 	void putPixel(int, int, int);
 	void putBlock(int x1, int y1, int x2, int y2);
 	void gfxSetPalette();
+	void setCursor(bool amigaStyleCursor = false);
 
 	int keypress();
 	int getKey();

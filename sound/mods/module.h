@@ -37,7 +37,7 @@ struct note_t {
 	byte note;
 	uint16 period;
 	uint16 effect;
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

@@ -63,10 +63,6 @@ protected:
 	void updateEffects(int ch);
 	void handleTick();
 
-	void startPaula();
-	void stopPaula();
-	void setPaulaChannelPeriod(uint8 channel, int16 period);
-	void setPaulaChannelVolume(uint8 channel, uint8 volume);
 	void enablePaulaChannel(uint8 channel);
 	void disablePaulaChannel(uint8 channel);
 	void setupPaulaChannel(uint8 channel, const int8 *data, uint16 len, uint16 repeatPos, uint16 repeatLen);
@@ -174,7 +170,7 @@ void SoundFx::play() {
 	_curOrder = 0;
 	_ticks = 0;
 	_eventsFreq = CIA_FREQ / _delay;
-	setInterruptFreq(_rate / _eventsFreq);
+	setInterruptFreq(getRate() / _eventsFreq);
 	startPaula();
 }
 
@@ -202,7 +198,7 @@ void SoundFx::handlePattern(int ch, uint32 pat) {
 				}
 				break;
 			}
-			setPaulaChannelVolume(ch, volume);
+			setChannelVolume(ch, volume);
 		}
 	}
 	_effects[ch] = note2;
@@ -211,7 +207,7 @@ void SoundFx::handlePattern(int ch, uint32 pat) {
 	} else if (note1 == 0xFFFE) { // STP
 		disablePaulaChannel(ch);
 	} else if (note1 != 0) {
-		setPaulaChannelPeriod(ch, note1);
+		setChannelPeriod(ch, note1);
 		enablePaulaChannel(ch);
 	}
 }
@@ -256,39 +252,17 @@ void SoundFx::handleTick() {
 	}
 }
 
-void SoundFx::startPaula() {
-	_playing = true;
-	_end = false;
-}
-
-void SoundFx::stopPaula() {
-	_playing = false;
-	_end = true;
-}
-
-void SoundFx::setPaulaChannelPeriod(uint8 channel, int16 period) {
-	_voice[channel].period = period;
-}
-
-void SoundFx::setPaulaChannelVolume(uint8 channel, uint8 volume) {
-	_voice[channel].volume = volume;
-}
-
 void SoundFx::enablePaulaChannel(uint8 channel) {
+	// FIXME: Is this empty on purpose?!?
 }
 
 void SoundFx::disablePaulaChannel(uint8 channel) {
-	_voice[channel].period = 0;
+	setChannelPeriod(channel, 0);
 }
 
 void SoundFx::setupPaulaChannel(uint8 channel, const int8 *data, uint16 len, uint16 repeatPos, uint16 repeatLen) {
 	if (data && len > 1) {
-		Channel *ch = &_voice[channel];
-		ch->data = data;
-		ch->dataRepeat = data + repeatPos * 2;
-		ch->length = len * 2;
-		ch->lengthRepeat = repeatLen * 2;
-		ch->offset = 0;
+		setChannelData(channel, data, data + repeatPos * 2, len * 2, repeatLen * 2);
 	}
 }
 

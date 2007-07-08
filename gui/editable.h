@@ -63,7 +63,7 @@ public:
 	virtual const String &getEditString() const		{ return _editString; }
 
 	virtual void handleTickle();
-	virtual bool handleKeyDown(uint16 ascii, int keycode, int modifiers);
+	virtual bool handleKeyDown(Common::KeyState state);
 
 	virtual void reflowLayout();
 

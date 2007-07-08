@@ -195,15 +195,22 @@ uint8 *Resource::fileData(const char *file, uint32 *size) const {
 			if (!(*cur)->isOpen())
 				continue;
 
-			uint32 fileSize = (*cur)->getFileSize(fileHash);
 
-			if (!fileSize)
-				continue;
+			uint8* result = (*cur)->getFile(fileHash);
 
-			if (size)
-				*size = fileSize;
+			if (result) {
+				uint32 fileSize = (*cur)->getFileSize(fileHash);
 
-			return (*cur)->getFile(fileHash);
+				if (!fileSize)
+					continue;
+
+				if (size)
+					*size = fileSize;
+
+				return result;
+			}
+
+
 		}
 	}
 
@@ -221,13 +228,15 @@ bool Resource::getFileHandle(const char *file, uint32 *size, Common::File &fileh
 		if (!(*start)->isOpen())
 			continue;
 
-		*size = (*start)->getFileSize(fileHash);
-		
-		if (!(*size))
-			continue;
+		if ((*start)->getFileHandle(fileHash, filehandle)) {
 
-		if ((*start)->getFileHandle(fileHash, filehandle))
+			*size = (*start)->getFileSize(fileHash);
+		
+			if (!(*size))
+				continue;
+
 			return true;
+		}
 	}
 	
 	return false;

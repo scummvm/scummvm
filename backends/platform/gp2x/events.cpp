@@ -72,7 +72,7 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode)
 		return key;
 	} else if (unicode) {
 		return unicode;
-	} else if (key >= 'a' && key <= 'z' && mod & KMOD_SHIFT) {
+	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
 		return key & ~0x20;
 	} else if (key >= SDLK_NUMLOCK && key <= SDLK_EURO) {
 		return 0;
@@ -168,17 +168,10 @@ void OSystem_GP2X::handleKbdMouse() {
 
 static byte SDLModToOSystemKeyFlags(SDLMod mod) {
 	byte b = 0;
-#ifdef LINUPY
-	// Yopy has no ALT key, steal the SHIFT key
-	// (which isn't used much anyway)
-	if (mod & KMOD_SHIFT)
-		b |= Common::KBD_ALT;
-#else
 	if (mod & KMOD_SHIFT)
 		b |= Common::KBD_SHIFT;
 	if (mod & KMOD_ALT)
 		b |= Common::KBD_ALT;
-#endif
 	if (mod & KMOD_CTRL)
 		b |= Common::KBD_CTRL;
 
@@ -246,7 +239,7 @@ void OSystem_GP2X::moveStick() {
 	//int GP2X_BUTTON_STATE_B               =	FALSE;
 	//int GP2X_BUTTON_STATE_Y               =	FALSE;
 	//int GP2X_BUTTON_STATE_X               =	FALSE;
-	int GP2X_BUTTON_STATE_L               =	FALSE;
+	int GP2X_BUTTON_STATE_L					=	FALSE;
 	//int GP2X_BUTTON_STATE_R               =	FALSE;
 	//int GP2X_BUTTON_STATE_START           =	FALSE;
 	//int GP2X_BUTTON_STATE_SELECT          =	FALSE;
@@ -306,6 +299,7 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 	GP2X_BUTTON_VOLUP &	GP2X_BUTTON_VOLDOWN		0 (For Monkey 2 CP)
 	GP2X_BUTTON_L &	GP2X_BUTTON_SELECT 			Common::EVENT_QUIT (Calls Sync() to make sure SD is flushed)
 	GP2X_BUTTON_L &	GP2X_BUTTON_Y				Toggles setZoomOnMouse() for larger then 320*240 games to scale to the point + raduis.
+	GP2X_BUTTON_L &	GP2X_BUTTON_A				Common::EVENT_PREDICTIVE_DIALOG for predictive text entry box (AGI games)
 	*/
 
 	while(SDL_PollEvent(&ev)) {
@@ -341,45 +335,13 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 				break;
 			}
 
-			// Ctrl-m toggles mouse capture
-			//if (b == Common::KBD_CTRL && ev.key.keysym.sym == 'm') {
-			//	toggleMouseGrab();
-			//	break;
-			//}
-
-//#ifdef MACOSX
-//			// On Macintosh', Cmd-Q quits
-//			if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym == 'q') {
-//				event.type = Common::EVENT_QUIT;
-//				return true;
-//			}
-//#elif defined(UNIX)
-//			// On other unices, Control-Q quits
-//			if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'q') {
-//				event.type = Common::EVENT_QUIT;
-//				return true;
-//			}
-//#else
-//			// Ctrl-z and Alt-X quit
-//			if ((b == Common::KBD_CTRL && ev.key.keysym.sym == 'z') || (b == Common::KBD_ALT && ev.key.keysym.sym == 'x')) {
-//				event.type = Common::EVENT_QUIT;
-//				return true;
-//			}
-//#endif
-//
-//			// Ctrl-Alt-<key> will change the GFX mode
-//			if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-//
-//				handleScalerHotkeys(ev.key);
-//				break;
-//			}
 			const bool event_complete = remapKey(ev,event);
 
 			if (event_complete)
 				return true;
 
 			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = ev.key.keysym.sym;
+			event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
 			return true;
@@ -392,7 +354,7 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 				return true;
 
 			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = ev.key.keysym.sym;
+			event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 
@@ -484,8 +446,15 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 						}
 						break;
 					case GP2X_BUTTON_A:
+						if (GP2X_BUTTON_STATE_L == TRUE) {
+							event.type = Common::EVENT_PREDICTIVE_DIALOG;
+						} else {
 						event.kbd.keycode = Common::KEYCODE_PERIOD;
 						event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+						}
+//						event.kbd.keycode = Common::KEYCODE_PERIOD;
+//						event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+
 						break;
 					case GP2X_BUTTON_Y:
 						if (GP2X_BUTTON_STATE_L == TRUE) {
@@ -606,10 +575,6 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 				axis = 0;
 
 			if ( ev.jaxis.axis == JOY_XAXIS) {
-#ifdef JOY_ANALOG
-				_km.x_vel = axis/2000;
-				_km.x_down_count = 0;
-#else
 				if (axis != 0) {
 					_km.x_vel = (axis > 0) ? 1:-1;
 					_km.x_down_count = 1;
@@ -617,7 +582,6 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 					_km.x_vel = 0;
 					_km.x_down_count = 0;
 				}
-#endif
 
 			} else if (ev.jaxis.axis == JOY_YAXIS) {
 #ifndef JOY_INVERT_Y

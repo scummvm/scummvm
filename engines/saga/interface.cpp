@@ -1478,6 +1478,7 @@ void Interface::setOption(PanelButton *panelButton) {
 	case kTextLoad:
 		if (_vm->getSaveFilesCount() > 0) {
 			if (_vm->isSaveListFull() || (_optionSaveFileTitleNumber > 0)) {
+				debug(1, "Loading save game %d", _vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
 				fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
 				setMode(kPanelMain);
 				_vm->load(fileName);

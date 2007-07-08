@@ -31,6 +31,22 @@
 
 namespace DS {
 
+
+enum controlType {
+	CONT_SCUMM_ORIGINAL,
+	CONT_SCUMM_SAMNMAX,
+	CONT_SKY,
+	CONT_SIMON,
+	CONT_FUTURE_WARS,
+	CONT_AGI,
+	CONT_GOBLINS
+};
+
+struct gameListType {
+	char 			gameId[16];
+	controlType 	control;
+};
+
 // Pen reading functions
 void 	penInit();
 void 	penUpdate();
@@ -83,7 +99,9 @@ void 	VBlankHandler();
 
 // Sam and Max Stuff
 void 	setGameID(int id);
-void 	setCursorIcon(const u8* icon, uint w, uint h, byte keycolor);
+void 	setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, int hotspotY);
+void	setShowCursor(bool enable);
+void	setMouseCursorVisible(bool visible);
 
 // Shake
 void 	setShakePos(int shakePos);
@@ -123,7 +141,12 @@ void	fastRamReset();
 void*	fastRamAlloc(int size);
 
 
+gameListType* getCurrentGame();
+
+
 }
 
+
+int cygprofile_getHBlanks();
 
 #endif

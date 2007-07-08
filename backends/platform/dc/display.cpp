@@ -585,7 +585,7 @@ void OSystem_Dreamcast::copyRectToOverlay(const int16 *buf, int pitch,
 
 
 static const OSystem::GraphicsMode gfxmodes[] = {
-  { "default", "640×480 16bpp", 0 },
+  { "default", "640x480 16bpp", 0 },
   { NULL, NULL, 0 }
 };
 
@@ -643,25 +643,5 @@ int16 OSystem_Dreamcast::getOverlayHeight()
 int16 OSystem_Dreamcast::getOverlayWidth()
 {
   return OVL_W;
-}
-
-int OSystem_Dreamcast::screenToOverlayX(int x)
-{
-  return x - _overlay_x;
-}
-
-int OSystem_Dreamcast::screenToOverlayY(int y)
-{
-  return y - _overlay_y;
-}
-
-int OSystem_Dreamcast::overlayToScreenX(int x)
-{
-  return x + _overlay_x;
-}
-
-int OSystem_Dreamcast::overlayToScreenY(int y)
-{
-  return y + _overlay_y;
 }
 

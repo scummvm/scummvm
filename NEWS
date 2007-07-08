@@ -2,8 +2,26 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
 0.11.0 (????-??-??)
+ General:
+   - Added ARM assembly routines for code in the sound mixer and SCUMM
+     video playback, resulting in some nice speedups on several ports.
+   - Improved the way keyboard input is handled internally, resolving
+     some odd quirks in some game / port combinations.
+   - Added optional 'confirm exit' dialog to the SDL backend.
+
+ AGOS:
+   - Fixed crashes related to OmniTV playback in The Feeble Files.
+
  Broken Sword 1:
    - Added support for FLAC encoded music.
+
+ SCUMM:
+   - Added subtitle skipping (via '.' key) in older games which didn't have
+     this feature so far (e.g. Zak, MM, Indy3, Loom).
+
+ SAGA:
+   - Added support for compressed sound effects, voices and music
+
 
 0.10.0 (2007-06-20)
  New Games:

@@ -149,7 +149,7 @@ private:
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 
-	struct {
+	struct AdlibInstrument {
 		byte flags_1;
 		byte oplvl_1;
 		byte atdec_1;
@@ -166,9 +166,11 @@ private:
 		byte flags_b;
 		struct { byte a,b,c,d,e,f,g,h; } extra_b;
 		byte duration;
-	} _instrument;
+	} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
+
+	AdlibInstrument _instrument;
 
 public:
 	Instrument_Adlib(const byte *data);
@@ -241,7 +243,7 @@ private:
 			byte tva_env_sustain_level;
 		} partial[4];
 		byte checksum;
-	};
+	} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

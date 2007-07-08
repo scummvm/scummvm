@@ -23,6 +23,7 @@
 #include "touchkeyboard.h"
 #include "keyboard_raw.h"
 #include "keyboard_pal_raw.h"
+#include "8x8font_tga_raw.h"
 #include "dsmain.h"
 #include "osystem_ds.h"
 
@@ -127,10 +128,21 @@ int keyboardY;
 int mapBase;
 int tileBase;
 
+u16* baseAddress;
+
 bool shiftState;
 bool capsLockState;
 
 bool closed;
+
+char autoCompleteWord[NUM_WORDS][32];
+int autoCompleteCount;
+
+char autoCompleteBuffer[128];
+
+int selectedCompletion = -1;
+int charactersEntered = 0;
+
 
 void restoreVRAM(int tileBase, int mapBase, u16* saveSpace) {
 /*	for (int r = 0; r < 32 * 32; r++) {
@@ -159,6 +171,26 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 		BG_PALETTE_SUB[r] = ((u16 *) (keyboard_pal_raw))[r];
 	}
 
+	// this is the font
+	for (int tile = 0; tile < 94; tile++) {
+		
+		u16* tileAddr = (u16 *) (CHAR_BASE_BLOCK_SUB(tileBase) + (8192 + (tile * 32)));
+		u8* src = ((u8 *) (_8x8font_tga_raw)) + 18 + tile * 8;
+
+		for (int y = 0 ; y < 8; y++) {
+			for (int x = 0; x < 2; x++) {
+				 *(tileAddr + (y * 2) + x) =(*(src + (y * 752) + (x * 4) + 0) & 0x0F)
+									 	 | ((*(src + (y * 752) + (x * 4) + 1) & 0x0F) << 4)
+										 | ((*(src + (y * 752) + (x * 4) + 2) & 0x0F) << 8)
+										 | ((*(src + (y * 752) + (x * 4) + 3) & 0x0F) << 12);
+					
+			}
+		}
+	}
+				
+
+
+
 	for (int r = 0; r < 16; r++) {
 		int col = ((u16 *) (keyboard_pal_raw))[r];
 		
@@ -167,17 +199,19 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 		int blue = (col & 0x7C00) >> 10;
 		
 		red = (red * 8) / 16;
-		green = (green * 8) / 16;
+		green = (green * 24) / 16;
 		blue = (blue * 8) / 16;
+
+		if (green > 31) green = 31;
 				
 		BG_PALETTE_SUB[16 + r] = red | (green << 5) | (blue << 10);
 	}
 	
 	keyboardX = -2;
-	keyboardY = 2;
+	keyboardY = 1;
 	
-	mapBase = mapBase;
-	tileBase = tileBase;
+	DS::mapBase = mapBase;
+	DS::tileBase = tileBase;
 	
 	shiftState = false;
 	capsLockState = false;
@@ -186,6 +220,7 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 	int y = keyboardY;
 	
 	u16* base = ((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase));
+	baseAddress = base;
 	
 	for (int r = 0; r < DS_NUM_KEYS; r++) {
 		base[(y + keys[r].y) * 32 + x + keys[r].x] = keys[r].keyNum * 2;
@@ -198,6 +233,36 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 	}
 	
 	closed = false;
+	clearAutoComplete();
+}
+
+void drawAutoComplete() {
+
+	for (int y = 12; y < 24; y++) {
+		for (int x = 0; x < 32; x++) {
+			baseAddress[y * 32 + x] = 127;
+		}
+	}
+			
+
+	for (int r = 0; r < autoCompleteCount; r++) {
+		int y = 12 + (r % 6) * 2;
+		int x = 0 + ((r / 6) * 16);
+
+		for (int p = 0; p < strlen(autoCompleteWord[r]); p++) {
+			char c = autoCompleteWord[r][p];
+			
+			int tile = c - 32 + 255;
+
+			if (selectedCompletion == r) {
+				tile |= 0x1000;
+			}
+
+			baseAddress[y * 32 + x + p] = tile;			
+			
+
+		}
+	}
 }
 
 bool getKeyboardClosed() {
@@ -220,13 +285,106 @@ void setKeyHighlight(int key, bool highlight) {
 	}
 }
 
+void addAutoComplete(char* word) {
+	if (autoCompleteCount == NUM_WORDS) return;
+	strcpy(&autoCompleteWord[autoCompleteCount++][0], word);
+	drawAutoComplete();
+}
+
+void setCharactersEntered(int count) {
+	charactersEntered = count;
+}
+
+void clearAutoComplete() {
+	autoCompleteCount = 0;
+	selectedCompletion = -1;
+	drawAutoComplete();
+}
+
+void typeCompletion(int current) {
+	Common::Event event;
+   	OSystem_DS* system = OSystem_DS::instance();
+
+	strcat(autoCompleteBuffer, &autoCompleteWord[current][charactersEntered]);
+	strcat(autoCompleteBuffer, " ");
+
+/*	consolePrintf("Typing word: %s\n", autoCompleteWord[current]);
+
+	for (int r = charactersEntered; r < strlen(autoCompleteWord[current]); r++) {
+		event.kbd.keycode = autoCompleteWord[current][r];
+		event.kbd.ascii = autoCompleteWord[current][r];
+		event.type = Common::EVENT_KEYDOWN;
+		event.kbd.flags = 0;
+		system->addEvent(event);
+	
+		event.type = Common::EVENT_KEYUP;
+		system->addEvent(event);
+	}
+
+	event.kbd.keycode = ' ';
+	event.kbd.ascii = ' ';
+
+	event.type = Common::EVENT_KEYDOWN;
+	system->addEvent(event);
+
+	event.type = Common::EVENT_KEYUP;
+	system->addEvent(event);*/
+}
+
+void updateTypeEvents()
+{
+	if (autoCompleteBuffer[0] != '\0')
+	{
+		Common::Event event;
+   		OSystem_DS* system = OSystem_DS::instance();
+	
+		event.kbd.keycode = autoCompleteBuffer[0];
+		event.kbd.ascii = autoCompleteBuffer[0];
+		event.type = Common::EVENT_KEYDOWN;
+		event.kbd.flags = 0;
+		system->addEvent(event);
+	
+		event.type = Common::EVENT_KEYUP;
+		system->addEvent(event);
+
+		for (int r = 0; r < strlen(autoCompleteBuffer); r++)
+		{
+			autoCompleteBuffer[r] = autoCompleteBuffer[r + 1];
+		}
+	}
+}
+
+
 void addKeyboardEvents() {
+	updateTypeEvents();
+
 	if (DS::getPenDown()) {
 		int x = IPC->touchXpx;
 		int y = IPC->touchYpx;
 		
-		int tx = (x >> 3) - keyboardX;
-		int ty = (y >> 3) - keyboardY;
+		int tx = (x >> 3);
+		int ty = (y >> 3);
+
+		if (ty >= 12) {
+			int current = -1;
+
+			if (tx < 12) {
+				current = (ty - 12) / 2;
+			} else {
+				current = 6 + (ty - 12) / 2;
+			}
+
+			if (selectedCompletion == current) {
+				typeCompletion(current);
+			} else {
+				selectedCompletion = current;
+			}
+
+			drawAutoComplete();
+		}
+
+		tx -= keyboardX;
+		ty -= keyboardY;
 		
 //		consolePrintf("x=%d y=%d\n", tx, ty);
 		
@@ -241,8 +399,14 @@ void addKeyboardEvents() {
 					// Close button
 					DS::closed = true;
 				} else	if ((keys[r].character >= '0') && (keys[r].character <= '9')) {
-					event.kbd.ascii = keys[r].character;
-					event.kbd.keycode = 0;
+
+					if (!DS::shiftState) {
+						event.kbd.ascii = keys[r].character;
+						event.kbd.keycode = 0;
+					} else {
+						event.kbd.keycode = SDLK_F1 - (keys[r].character - '1');
+						event.kbd.ascii = 0;
+					}					
 				
 				} else if ((keys[r].character >= 'A') && (keys[r].character <= 'Z')) {
 					

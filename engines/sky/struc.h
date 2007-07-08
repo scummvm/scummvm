@@ -55,7 +55,7 @@ struct dataFileHeader {
 	int16 s_offset_x;
 	int16 s_offset_y;
 	uint16 s_compressed_size;
-};
+} PACKED_STRUCT;
 
 struct TurnTable {
 	uint16 turnTableUp[5];
@@ -63,7 +63,7 @@ struct TurnTable {
 	uint16 turnTableLeft[5];
 	uint16 turnTableRight[5];
 	uint16 turnTableTalk[5];
-};
+} PACKED_STRUCT;
 
 struct MegaSet {
 	uint16 gridWidth;	 //  0
@@ -82,7 +82,7 @@ struct MegaSet {
 	uint16 standRightId; // 11
 	uint16 standTalkId;	 // 12
 	uint16 turnTableId;	 // 13
-};
+} PACKED_STRUCT;
 
 struct Compact {
 	uint16 logic;		 //  0: Entry in logic table to run (byte as <256entries in logic table
@@ -165,7 +165,7 @@ struct Compact {
 	MegaSet megaSet1;	 //
 	MegaSet megaSet2;	 //
 	MegaSet megaSet3;	 //
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

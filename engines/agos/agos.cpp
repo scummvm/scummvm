@@ -110,8 +110,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_debugger = 0;
 
-	_keyPressed = 0;
-
 	_gameFile = 0;
 	_opcode = 0;
 
@@ -746,10 +744,12 @@ void AGOSEngine_Simon2::setupGame() {
 	_tableIndexBase = 1580 / 4;
 	_textIndexBase = 1500 / 4;
 	_numVideoOpcodes = 75;
-#ifndef PALMOS_68K
-	_vgaMemSize = 2000000;
-#else
+#if defined(__DS__)
+	_vgaMemSize = 1300000;
+#elif defined(PALMOS_68K)
 	_vgaMemSize = gVars->memory[kMemSimon2Games];
+#else
+	_vgaMemSize = 2000000;
 #endif
 	_itemMemSize = 20000;
 	_tableMemSize = 100000;
@@ -958,8 +958,8 @@ GUI::Debugger *AGOSEngine::getDebugger() {
 }
 
 void AGOSEngine::pause() {
-	_keyPressed = 1;
-	_pause = 1;
+	_keyPressed.reset();
+	_pause = true;
 	bool ambient_status = _ambientPaused;
 	bool music_status = _musicPaused;
 
@@ -969,8 +969,8 @@ void AGOSEngine::pause() {
 
 	while (_pause) {
 		delay(1);
-		if (_keyPressed == 'p')
-			_pause = 0;
+		if (_keyPressed.keycode == Common::KEYCODE_p)
+			_pause = false;
 	}
 
 	_midi.pause(music_status);

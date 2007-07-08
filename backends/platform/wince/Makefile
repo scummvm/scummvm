@@ -51,7 +51,7 @@ USE_ZLIB          = 1
 
 #DISABLE_HQ_SCALERS = 1
 USE_ARM_SOUND_ASM = 1
-USE_ARM_SMUSH     = 1
+USE_ARM_SMUSH_ASM = 1
 
 
 ########################################################################

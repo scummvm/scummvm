@@ -99,7 +99,7 @@ public:
 	 * TODO: Or even replace it with a better API. For example, one that
 	 * returns a list of strings for all present file names. 
 	 */
-	virtual void listSavefiles(const char * /* prefix */, bool *marks, int num) = 0;
+	virtual void listSavefiles(const char *prefix , bool *marks, int num) = 0;
 
 	/**
 	 * Get the path to the save game directory.

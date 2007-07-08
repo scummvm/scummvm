@@ -257,12 +257,12 @@ restart:
 
 	for (;;) {
 		windowPutChar(window, 128);
-		_keyPressed = 0;
+		_keyPressed.reset();
 
 		for (;;) {
 			delay(10);
-			if (_keyPressed && _keyPressed < 128) {
-				i = _keyPressed;
+			if (_keyPressed.ascii && _keyPressed.ascii < 128) {
+				i = _keyPressed.ascii;
 				break;
 			}
 		}
@@ -490,16 +490,16 @@ int AGOSEngine_Elvira2::userGameGetKey(bool *b, char *buf, uint maxChar) {
 	HitArea *ha;
 	*b = true;
 
-	_keyPressed = 0;
+	_keyPressed.reset();
 
 	for (;;) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
 		do {
-			if (_saveLoadEdit && _keyPressed && _keyPressed < maxChar) {
+			if (_saveLoadEdit && _keyPressed.ascii && _keyPressed.ascii < maxChar) {
 				*b = false;
-				return _keyPressed;
+				return _keyPressed.ascii;
 			}
 			delay(10);
 		} while (_lastHitArea3 == 0);
@@ -759,16 +759,16 @@ int AGOSEngine_Simon1::userGameGetKey(bool *b, char *buf, uint maxChar) {
 		listSaveGames(buf);
 	}
 
-	_keyPressed = 0;
+	_keyPressed.reset();
 
 	for (;;) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
 		do {
-			if (_saveLoadEdit && _keyPressed && _keyPressed < maxChar) {
+			if (_saveLoadEdit && _keyPressed.ascii && _keyPressed.ascii < maxChar) {
 				*b = false;
-				return _keyPressed;
+				return _keyPressed.ascii;
 			}
 			delay(10);
 		} while (_lastHitArea3 == 0);
@@ -999,13 +999,13 @@ bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 		item->state = f->readUint16BE();
 		item->classFlags = f->readUint16BE();
 
-		SubObject *o = (SubObject *)findChildOfType(item, 2);
+		SubObject *o = (SubObject *)findChildOfType(item, kObjectType);
 		if (o) {
 			o->objectSize = f->readUint16BE();
 			o->objectWeight = f->readUint16BE();
 		}
 
-		SubPlayer *p = (SubPlayer *)findChildOfType(item, 3);
+		SubPlayer *p = (SubPlayer *)findChildOfType(item, kPlayerType);
 		if (p) {
 			p->score = f->readUint32BE();
 			p->level = f->readUint16BE();
@@ -1014,7 +1014,7 @@ bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 			p->strength = f->readUint16BE();
 		}
 
-		SubUserFlag *u = (SubUserFlag *) findChildOfType(item, 9);
+		SubUserFlag *u = (SubUserFlag *)findChildOfType(item, kUserFlagType);
 		if (u) {
 			for (i = 0; i != 8; i++) {
 				u->userFlags[i] = f->readUint16BE();
@@ -1083,13 +1083,13 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 		f->writeUint16BE(item->state);
 		f->writeUint16BE(item->classFlags);
 
-		SubObject *o = (SubObject *)findChildOfType(item, 2);
+		SubObject *o = (SubObject *)findChildOfType(item, kObjectType);
 		if (o) {
 			f->writeUint16BE(o->objectSize);
 			f->writeUint16BE(o->objectWeight);
 		}
 
-		SubPlayer *p = (SubPlayer *)findChildOfType(item, 3);
+		SubPlayer *p = (SubPlayer *)findChildOfType(item, kPlayerType);
 		if (p) {
 			f->writeUint32BE(p->score);
 			f->writeUint16BE(p->level);
@@ -1098,7 +1098,7 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 			f->writeUint16BE(p->strength);
 		}
 
-		SubUserFlag *u = (SubUserFlag *) findChildOfType(item, 9);
+		SubUserFlag *u = (SubUserFlag *)findChildOfType(item, kUserFlagType);
 		if (u) {
 			for (i = 0; i != 8; i++) {
 				f->writeUint16BE(u->userFlags[i]);
@@ -1204,19 +1204,19 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 		item->state = f->readUint16BE();
 		item->classFlags = f->readUint16BE();
 
-		SubRoom *r = (SubRoom *)findChildOfType(item, 1);
+		SubRoom *r = (SubRoom *)findChildOfType(item, kRoomType);
 		if (r) {
 			r->roomExitStates = f->readUint16BE();
 		}
 
-		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(item, 4);
+		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(item, kSuperRoomType);
 		if (sr) {
 			uint16 n = sr->roomX * sr->roomY * sr->roomZ;
  			for (i = j = 0; i != n; i++)
 				sr->roomExitStates[j++] = f->readUint16BE();
 		}
 
-		SubObject *o = (SubObject *)findChildOfType(item, 2);
+		SubObject *o = (SubObject *)findChildOfType(item, kObjectType);
 		if (o) {
 			o->objectFlags = f->readUint32BE();
 			i = o->objectFlags & 1;
@@ -1228,7 +1228,7 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 			}
 		}
 
-		SubUserFlag *u = (SubUserFlag *) findChildOfType(item, 9);
+		SubUserFlag *u = (SubUserFlag *)findChildOfType(item, kUserFlagType);
 		if (u) {
 			for (i = 0; i != 4; i++) {
 				u->userFlags[i] = f->readUint16BE();
@@ -1283,8 +1283,11 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	Common::OutSaveFile *f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
-	uint32 curTime = 0;
 	uint32 gsc = _gameStoppedClock;
+
+	uint32 curTime = 0;
+	if (getGameType() != GType_SIMON1 && getGameType() != GType_SIMON2)
+		curTime = time(NULL);
 
 	_lockWord |= 0x100;
 
@@ -1299,7 +1302,6 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 		// No caption
 	} else if (getGameType() == GType_FF) {
 		f->write(caption, 100);
-		curTime = time(NULL);
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		f->write(caption, 18);
 	} else {
@@ -1308,7 +1310,7 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 
 	f->writeUint32BE(_itemArrayInited - 1);
 	f->writeUint32BE(0xFFFFFFFF);
-	f->writeUint32BE(0);
+	f->writeUint32BE(curTime);
 	f->writeUint32BE(0);
 
 	i = 0;
@@ -1345,19 +1347,19 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 		f->writeUint16BE(item->state);
 		f->writeUint16BE(item->classFlags);
 
-		SubRoom *r = (SubRoom *)findChildOfType(item, 1);
+		SubRoom *r = (SubRoom *)findChildOfType(item, kRoomType);
 		if (r) {
 			f->writeUint16BE(r->roomExitStates);
 		}
 
-		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(item, 4);
+		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(item, kSuperRoomType);
 		if (sr) {
 			uint16 n = sr->roomX * sr->roomY * sr->roomZ;
  			for (i = j = 0; i != n; i++)
 				f->writeUint16BE(sr->roomExitStates[j++]);
 		}
 
-		SubObject *o = (SubObject *)findChildOfType(item, 2);
+		SubObject *o = (SubObject *)findChildOfType(item, kObjectType);
 		if (o) {
 			f->writeUint32BE(o->objectFlags);
 			i = o->objectFlags & 1;
@@ -1369,7 +1371,7 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 			}
 		}
 
-		SubUserFlag *u = (SubUserFlag *)findChildOfType(item, 9);
+		SubUserFlag *u = (SubUserFlag *)findChildOfType(item, kUserFlagType);
 		if (u) {
 			for (i = 0; i != 4; i++) {
 				f->writeUint16BE(u->userFlags[i]);

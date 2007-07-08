@@ -54,7 +54,8 @@ Engine::Engine(OSystem *syst)
 		_eventMan(_system->getEventManager()),
 		_saveFileMan(_system->getSavefileManager()),
 		_targetName(ConfMan.getActiveDomainName()),
-		_gameDataPath(ConfMan.get("path")) {
+		_gameDataPath(ConfMan.get("path")),
+		_pauseLevel(0) {
 
 	g_engine = this;
 	_autosavePeriod = ConfMan.getInt("autosave_period");
@@ -179,4 +180,24 @@ void Engine::GUIErrorMessage(const Common::String msg) {
 
 	GUI::MessageDialog dialog(msg);
 	dialog.runModal();
+}
+
+void Engine::pauseEngine(bool pause) {
+	assert((pause && _pauseLevel >= 0) || (!pause && _pauseLevel));
+
+	if (pause)
+		_pauseLevel++;
+	else
+		_pauseLevel--;
+
+	if (_pauseLevel == 1) {
+		pauseEngineIntern(true);
+	} else if (_pauseLevel == 0) {
+		pauseEngineIntern(false);
+	}
+}
+
+void Engine::pauseEngineIntern(bool pause) {
+	// By default, just (un)pause all digital sounds
+	_mixer->pauseAll(pause);
 }

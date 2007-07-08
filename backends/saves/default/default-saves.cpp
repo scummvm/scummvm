@@ -187,16 +187,21 @@ void DefaultSaveFileManager::listSavefiles(const char *prefix , bool *marks, int
 	search += '*';	//match all files that start with the given prefix
 	search.c_str(); //FIXME: subtle bug? removing this line will break things. Looks like the string isn't getting updated.
 	
+	assert(marks);
 	memset(marks, false, num * sizeof(bool));	//assume no savegames for this title
 	
 	if(savePath.lookupFile(savefiles, savePath, search, false, true)) {
 		char slot[2];
+		int slotNum;
 		for(FSList::const_iterator file = savefiles.begin(); file != savefiles.end(); file++) {
 			//TODO: check if this is the behavior for all engines
 			//Obtain the last 2 digits of the filename, since they correspond to the save slot
 			slot[0] = file->getName()[file->getName().size()-2];
 			slot[1] = file->getName()[file->getName().size()-1];
-			marks[atoi(slot)] = true;	//mark this slot as valid
+			
+			slotNum = atoi(slot);
+			if(slotNum >= 0 && slotNum < num)
+				marks[slotNum] = true;	//mark this slot as valid
 		}
 	}
 }

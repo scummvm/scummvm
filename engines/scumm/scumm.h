@@ -406,9 +406,6 @@ class ScummEngine : public Engine {
 	friend class CharsetRenderer;
 	friend class ResourceManager;
 
-	GUI::Debugger *getDebugger();
-	void errorString(const char *buf_input, char *buf_output);
-
 public:
 	/* Put often used variables at the top.
 	 * That results in a shorter form of the opcode
@@ -437,17 +434,20 @@ public:
 
 protected:
 	VirtualMachineState vm;
+	
+	bool _oldSoundsPaused;
 
 public:
 	// Constructor / Destructor
 	ScummEngine(OSystem *syst, const DetectorResult &dr);
 	virtual ~ScummEngine();
 
-	/** Startup function, main loop. */
-	int go();
-
-	// Init functions
-	int init();
+	// Engine APIs
+	virtual int init();
+	virtual int go();
+	virtual void errorString(const char *buf_input, char *buf_output);
+	virtual GUI::Debugger *getDebugger();
+	virtual void pauseEngineIntern(bool pause);
 
 protected:
 	virtual void setupScumm();
@@ -638,7 +638,7 @@ protected:
 	void saveInfos(Common::OutSaveFile* file);
 
 	int32 _engineStartTime;
-	int32 _dialogStartTime;
+	int32 _pauseStartTime;
 
 protected:
 	/* Script VM - should be in Script class */
@@ -863,7 +863,7 @@ protected:
 	void verbMouseOver(int verb);
 	int findVerbAtPos(int x, int y) const;
 	virtual void drawVerb(int verb, int mode);
-	virtual void runInputScript(int a, int cmd, int mode);
+	virtual void runInputScript(int clickArea, int val, int mode);
 	void restoreVerbBG(int verb);
 	void drawVerbBitmap(int verb, int x, int y);
 	int getVerbSlot(int id, int mode) const;

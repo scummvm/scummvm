@@ -419,7 +419,7 @@ void AGOSEngine_Elvira1::oe1_notPresent() {
 void AGOSEngine_Elvira1::oe1_worn() {
 	// 4: worn
 	Item *item = getNextItemPtr();
-	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
 
 	if (item->parent != getItem1ID() || subObject == NULL)
 		setScriptCondition(false);
@@ -430,7 +430,7 @@ void AGOSEngine_Elvira1::oe1_worn() {
 void AGOSEngine_Elvira1::oe1_notWorn() {
 	// 5: not worn
 	Item *item = getNextItemPtr();
-	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
 
 	if (item->parent != getItem1ID() || subObject == NULL)
 		setScriptCondition(false);
@@ -532,7 +532,7 @@ void AGOSEngine_Elvira1::oe1_moveDirn() {
 
 void AGOSEngine_Elvira1::oe1_score() {
 	// 90: score
-	SubPlayer *p = (SubPlayer *) findChildOfType(me(), 3);
+	SubPlayer *p = (SubPlayer *)findChildOfType(me(), kPlayerType);
 	showMessageFormat("Your score is %ld.\n", p->score);
 }
 
@@ -542,9 +542,9 @@ void AGOSEngine_Elvira1::oe1_look() {
 	if (i == NULL)
 		return;
 
-	SubRoom *r = (SubRoom *)findChildOfType(i, 1);
-	SubObject *o = (SubObject *)findChildOfType(i, 2);
-	SubPlayer *p = (SubPlayer *)findChildOfType(i, 3);
+	SubRoom *r = (SubRoom *)findChildOfType(i, kRoomType);
+	SubObject *o = (SubObject *)findChildOfType(i, kObjectType);
+	SubPlayer *p = (SubPlayer *)findChildOfType(i, kPlayerType);
 	if (p == NULL)
 		return;
 
@@ -594,7 +594,7 @@ void AGOSEngine_Elvira1::oe1_doClass() {
 
 void AGOSEngine_Elvira1::oe1_pObj() {
 	// 112: print object
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	getVarOrWord();
 
 	if (subObject != NULL)
@@ -624,7 +624,7 @@ void AGOSEngine_Elvira1::oe1_isCalled() {
 
 void AGOSEngine_Elvira1::oe1_cFlag() {
 	// 162: check container flag
-	SubContainer *c = (SubContainer *)findChildOfType(getNextItemPtr(), 7);
+	SubContainer *c = (SubContainer *)findChildOfType(getNextItemPtr(), kContainerType);
 	uint bit = getVarOrWord();
 
 	if (c == NULL)
@@ -678,7 +678,7 @@ void AGOSEngine_Elvira1::oe1_doorExit() {
 	int16 f = getVarOrWord();
 	int16 ct = 0;
 
-	c = (SubChain *)findChildOfType(d, 8);
+	c = (SubChain *)findChildOfType(d, kChainType);
 	if (c)
 		a = derefItem(c->chChained);
 	while (ct < 6) {
@@ -986,7 +986,7 @@ void AGOSEngine_Elvira1::oe1_printMonsterHit() {
 }
 
 int16 AGOSEngine::levelOf(Item *item) {
-	SubPlayer *p = (SubPlayer *) findChildOfType(item, 3);
+	SubPlayer *p = (SubPlayer *)findChildOfType(item, kPlayerType);
 	if (p == NULL)
 		return 0;
 
@@ -998,7 +998,7 @@ int16 AGOSEngine::moreText(Item *i) {
 	i = derefItem(i->next);
 
 	while (i) {
-		o = (SubObject *)findChildOfType(i, 2);
+		o = (SubObject *)findChildOfType(i, kObjectType);
 		if ((o) && (o->objectFlags & 1))
 			goto l1;
 		if (i != me())
@@ -1014,7 +1014,7 @@ void AGOSEngine::lobjFunc(Item *i, const char *f) {
 	SubObject *o;
 
 	while (i) {
-		o = (SubObject *)findChildOfType(i, 2);
+		o = (SubObject *)findChildOfType(i, kObjectType);
 		if ((o) && (o->objectFlags & 1))
 			goto l1;
 		if (i == me())

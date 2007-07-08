@@ -129,7 +129,7 @@ void Operator2612::frequency(int freq) {
 		value *= 127 - _specifiedTotalLevel;
 		value /= 127;
 	}
-	_attackTime = (int32) value; // 1 秒 == (1 << 12)
+	_attackTime = (int32) value; // 1 ?? == (1 << 12)
 	if (_attackTime > 0)
 		_attackTime = (1 << (12+10)) / (_owner->_rate * _attackTime);
 
@@ -295,7 +295,7 @@ Voice2612::~Voice2612() {
 void Voice2612::velocity(int velo) {
 	_velocity = velo;
 #if 0
-	int v = (velo * _control7) >> 7; // これだと精度良くないですね
+	int v = (velo * _control7) >> 7;
 #else
 	int v = velo + (_control7 - 127) * 4;
 #endif

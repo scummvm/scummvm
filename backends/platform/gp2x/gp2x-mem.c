@@ -39,20 +39,22 @@
 
 #include "gp2x-mem.h"
 
-void InitRam (void)
-{
-	if(!gp2x_dev)
-	{
-		gp2x_dev = open("/dev/mem", O_RDWR);
-		gp2x_ram = (unsigned short *)mmap(0, 0x10000, 3, 1, gp2x_dev, 0x03000000);
-		gp2x_memregs = (unsigned short *)mmap(0, 0x10000, 3, 1, gp2x_dev, 0xc0000000);
-	}
-}
+char uname[256];
 
-void CloseRam (void)
-{
-	if(gp2x_dev) close(gp2x_dev);
-}
+//void InitRam (void)
+//{
+//	if(!gp2x_dev)
+//	{
+//		gp2x_dev = open("/dev/mem", O_RDWR);
+//		gp2x_ram = (unsigned short *)mmap(0, 0x10000, 3, 1, gp2x_dev, 0x03000000);
+//		gp2x_memregs = (unsigned short *)mmap(0, 0x10000, 3, 1, gp2x_dev, 0xc0000000);
+//	}
+//}
+
+//void CloseRam (void)
+//{
+//	if(gp2x_dev) close(gp2x_dev);
+//}
 
 /*
 ****** [BEGIN] Squidge's MMU hack code ******
@@ -201,34 +203,30 @@ int hackpgtable (void)
     // do this in user mode, so we have to patch the kernel to get it to run it for us in supervisor mode. We dothis
     // at the moment by overwriting the sys_newuname function and then calling it.
 
-    lseek (gp2x_dev, 0x6ec00, SEEK_SET); // fixme: We should ask the kernel for this address rather than assuming it...
-    read (gp2x_dev, &oldc1, 4);
-    read (gp2x_dev, &oldc2, 4);
-    read (gp2x_dev, &oldc3, 4);
-    read (gp2x_dev, &oldc4, 4);
+    lseek (gp2x_dev[2], 0x6ec00, SEEK_SET); // fixme: We should ask the kernel for this address rather than assuming it...
+    read (gp2x_dev[2], &oldc1, 4);
+    read (gp2x_dev[2], &oldc2, 4);
+    read (gp2x_dev[2], &oldc3, 4);
+    read (gp2x_dev[2], &oldc4, 4);
 
-    printf ("0:%08X %08X - %08X %08X\n", oldc1, oldc2, newc1, newc2);
+    //printf ("0:%08X %08X - %08X %08X\n", oldc1, oldc2, newc1, newc2);
+    //printf ("point1 %d\n",a);
 
-
-
-    printf ("point1 %d\n",a);
     do {
-	    lseek (gp2x_dev, 0x6ec00, SEEK_SET);
-	    a+=write (gp2x_dev, &newc1, 4);
-	    a+=write (gp2x_dev, &newc2, 4);
+	    lseek (gp2x_dev[2], 0x6ec00, SEEK_SET);
+	    a+=write (gp2x_dev[2], &newc1, 4);
+	    a+=write (gp2x_dev[2], &newc2, 4);
 	    SDL_Delay(200);
 	    try++;
-	    ttb = myuname(name);
-	    printf ("2:%08X try %d\n", ttb,try);
+	    ttb = myuname(uname);
+	    //printf ("2:%08X try %d\n", ttb,try);
     } while (ttb==0 && try<4);
 
+    lseek (gp2x_dev[2], 0x6ec00, SEEK_SET);
+    a+=write (gp2x_dev[2], &oldc1, 4);
+    a+=write (gp2x_dev[2], &oldc2, 4);
 
-
-    lseek (gp2x_dev, 0x6ec00, SEEK_SET);
-    a+=write (gp2x_dev, &oldc1, 4);
-    a+=write (gp2x_dev, &oldc2, 4);
-
-    printf ("2:%08X %d\n", ttb,a);
+    //printf ("2:%08X %d\n", ttb,a);
     if (ttb!=0) {
 
 
@@ -243,28 +241,28 @@ int hackpgtable (void)
 	    unsigned int tlbc3 = 0xee080f17; // mcr    15, 0, r0, cr8, cr7, 0
 	    unsigned int tlbc4 = 0xe1a0f00e; // mov    pc, lr
 
-	    lseek (gp2x_dev, 0x6ec00, SEEK_SET);
-	    write (gp2x_dev, &tlbc1, 4);
-	    write (gp2x_dev, &tlbc2, 4);
-	    write (gp2x_dev, &tlbc3, 4);
-	    write (gp2x_dev, &tlbc4, 4);
+	    lseek (gp2x_dev[2], 0x6ec00, SEEK_SET);
+	    write (gp2x_dev[2], &tlbc1, 4);
+	    write (gp2x_dev[2], &tlbc2, 4);
+	    write (gp2x_dev[2], &tlbc3, 4);
+	    write (gp2x_dev[2], &tlbc4, 4);
 
 	    SDL_Delay(200);
 
-	    ttx = myuname(name);
+	    ttx = myuname(uname);
 
 	    printf ("Return from uname: %08X\n", ttx);
 
-	    lseek (gp2x_dev, 0x6ec00, SEEK_SET);
-	    write (gp2x_dev, &oldc1, 4);
-	    write (gp2x_dev, &oldc2, 4);
-	    write (gp2x_dev, &oldc3, 4);
-	    write (gp2x_dev, &oldc4, 4);
-	    lseek (gp2x_dev, 0x0, SEEK_SET);
+	    lseek (gp2x_dev[2], 0x6ec00, SEEK_SET);
+	    write (gp2x_dev[2], &oldc1, 4);
+	    write (gp2x_dev[2], &oldc2, 4);
+	    write (gp2x_dev[2], &oldc3, 4);
+	    write (gp2x_dev[2], &oldc4, 4);
+	    lseek (gp2x_dev[2], 0x0, SEEK_SET);
 	    return 0;
     }
 
-    lseek (gp2x_dev, 0x0, SEEK_SET);
+    lseek (gp2x_dev[2], 0x0, SEEK_SET);
     return 1;
     //printf ("Restored contents\n");
 
@@ -292,10 +290,34 @@ void SetClock (unsigned c)
     gp2x_memregs[0x910>>1] = v;
 }
 
-void MMUpatch (void)
+void patchMMU (void)
 {
-	volatile unsigned int *secbuf = (unsigned int *)malloc (204800);
+	//volatile unsigned int *secbuf = (unsigned int *)malloc (204800);
 
-	// Squidge's MMU hack
-	hackpgtable();
+	printf ("Reconfiguring cached memory regions...\n");
+
+	//hackpgtable();
+	//printf ("Sucess...\n");
+
+	system("/sbin/rmmod mmuhack");
+	system("/sbin/insmod -f mmuhack.o");
+
+	int mmufd = open("/dev/mmuhack", O_RDWR);
+
+	if(mmufd < 0)
+	{
+		printf ("Upper memory uncached (attempt failed, access to upper memory will be slower)...\n");
+	}
+	else
+	{
+		printf ("Upper memory cached...\n");
+		close(mmufd);
+	}
+}
+
+void unpatchMMU (void)
+{
+	printf ("Restoreing cached memory regions...\n");
+	system("/sbin/rmmod mmuhack");
+	return 1;
 }

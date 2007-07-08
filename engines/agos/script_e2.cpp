@@ -132,7 +132,7 @@ void AGOSEngine_Elvira2::setupOpcodes() {
 		OPCODE(o_when),
 		OPCODE(o_if1),
 		OPCODE(o_if2),
-		OPCODE(oe1_isCalled),
+		OPCODE(oe2_isCalled),
 		/* 80 */
 		OPCODE(o_is),
 		OPCODE(o_invalid),
@@ -165,7 +165,7 @@ void AGOSEngine_Elvira2::setupOpcodes() {
 		OPCODE(o_cls),
 		/* 104 */
 		OPCODE(o_closeWindow),
-		OPCODE(o_invalid),
+		OPCODE(oe2_menu),
 		OPCODE(o_invalid),
 		OPCODE(o_addBox),
 		/* 108 */
@@ -309,10 +309,17 @@ void AGOSEngine_Elvira2::oe2_doClass() {
 
 void AGOSEngine_Elvira2::oe2_pObj() {
 	// 73: print object
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 
 	if (subObject != NULL && subObject->objectFlags & kOFText)
 		showMessageFormat("%s\n", (const char *)getStringPtrByID(subObject->objectFlagValue[0])); // Difference
+}
+
+void AGOSEngine_Elvira2::oe2_isCalled() {
+	// 79: childstruct fr2 is
+	Item *i = getNextItemPtr();
+	uint stringId = getNextStringID();
+	setScriptCondition(i->itemName == stringId);
 }
 
 void AGOSEngine_Elvira2::oe2_loadGame() {
@@ -324,6 +331,11 @@ void AGOSEngine_Elvira2::oe2_loadGame() {
 	} else {
 		loadGame((const char *)getStringPtrByID(stringId));
 	}
+}
+
+void AGOSEngine_Elvira2::oe2_menu() {
+	// 105: set agos menu
+	_agosMenu = getVarOrByte();
 }
 
 void AGOSEngine_Elvira2::oe2_drawItem() {
@@ -341,7 +353,7 @@ void AGOSEngine_Elvira2::oe2_doTable() {
 	// 143: start item sub
 	Item *i = getNextItemPtr();
 
-	SubRoom *r = (SubRoom *)findChildOfType(i, 1);
+	SubRoom *r = (SubRoom *)findChildOfType(i, kRoomType);
 	if (r != NULL) {
 		Subroutine *sub = getSubroutineByID(r->subroutine_id);
 		if (sub) {
@@ -351,7 +363,7 @@ void AGOSEngine_Elvira2::oe2_doTable() {
 	}
 
 	if (getGameType() == GType_ELVIRA2) {
-		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, 4);
+		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(i, kSuperRoomType);
 		if (sr != NULL) {
 			Subroutine *sub = getSubroutineByID(sr->subroutine_id);
 			if (sub) {
@@ -478,7 +490,7 @@ void AGOSEngine_Elvira2::oe2_bNotZero() {
 void AGOSEngine_Elvira2::oe2_getOValue() {
 	// 157: get item int prop
 	Item *item = getNextItemPtr();
-	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
 	uint prop = getVarOrByte();
 
 	if (subObject != NULL && subObject->objectFlags & (1 << prop) && prop < 16) {
@@ -492,7 +504,7 @@ void AGOSEngine_Elvira2::oe2_getOValue() {
 void AGOSEngine_Elvira2::oe2_setOValue() {
 	// 158: set item prop
 	Item *item = getNextItemPtr();
-	SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
 	uint prop = getVarOrByte();
 	int value = getVarOrWord();
 
@@ -640,6 +652,16 @@ void AGOSEngine_Elvira2::oe2_isAdjNoun() {
 	// 179: item unk1 unk2 is
 	Item *item = getNextItemPtr();
 	int16 a = getNextWord(), b = getNextWord();
+
+	if (getGameType() == GType_ELVIRA2) {
+		// WORKAROUND: A NULL item can occur when interacting with Wine Bottles
+		if (item == NULL) {
+			warning("Please report where exactly this occurs in Elvira 2");
+			setScriptCondition(false);
+			return;
+		}
+	}
+
 	setScriptCondition(item->adjective == a && item->noun == b);
 }
 
@@ -707,7 +729,7 @@ void AGOSEngine_Elvira2::printStats() {
 	if (val > 9999)
 		val = 9999;	
 	writeChar(window, 30, y, 6, val / 100);
-	writeChar(window, 32, y, 2, val / 10);
+	writeChar(window, 32, y, 2, val % 100);
 
 	mouseOn();
 }

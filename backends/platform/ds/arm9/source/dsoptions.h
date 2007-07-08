@@ -43,7 +43,7 @@ public:
 	
 protected:
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-
+	void togglePause();
 
 	GUI::SliderWidget* _touchX;
 	GUI::SliderWidget* _touchY;
@@ -54,6 +54,7 @@ protected:
 	GUI::CheckboxWidget* _highQualityAudioCheckbox;
 	GUI::CheckboxWidget* _disablePowerOff;
 	GUI::CheckboxWidget* _cpuScaler;
+	GUI::CheckboxWidget* _showCursorCheckbox;
 	
 #ifdef DS_SCUMM_BUILD
 	Scumm::SaveLoadChooser* _delDialog;

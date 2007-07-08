@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 
+#include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/util.h"
 
@@ -216,7 +217,7 @@ protected:
 
 	const GameSpecificSettings *gss;
 
-	byte _keyPressed;
+	Common::KeyState _keyPressed;
 
 	Common::File *_gameFile;
 
@@ -875,8 +876,8 @@ public:
 	void vc36_setWindowImage();
 	void vc38_ifVarNotZero();
 	void vc39_setVar();
-	void vc40();
-	void vc41();
+	void vc40_scrollRight();
+	void vc41_scrollLeft();
 	void vc42_delayIfNotEQ();
 
 	// Video Script Opcodes, Elvira 1
@@ -1316,7 +1317,9 @@ public:
 	void oe2_moveDirn();
 	void oe2_doClass();
 	void oe2_pObj();
+	void oe2_isCalled();
 	void oe2_loadGame();
+	void oe2_menu();
 	void oe2_drawItem();
 	void oe2_doTable();
 	void oe2_pauseGame();
@@ -1410,7 +1413,6 @@ public:
 	void oww_setLongText();
 	void oww_printLongText();
 	void oww_whereTo();
-	void oww_menu();
 	void oww_textMenu();
 	void oww_pauseGame();
 	void oww_boxMessage();

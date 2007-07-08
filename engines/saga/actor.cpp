@@ -268,6 +268,8 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_pathRect.top = _vm->getDisplayInfo().pathStartY;
 	_pathRect.bottom = _vm->_scene->getHeight();
 
+	_showActors = true;
+
 	// Get actor resource file context
 	_actorContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (_actorContext == NULL) {
@@ -1130,7 +1132,7 @@ void Actor::handleSpeech(int msec) {
 		}
 
 		if (_activeSpeech.stringsCount == 0) {
-			_vm->_script->wakeUpThreadsDelayed(kWaitTypeSpeech, ticksToMSec(kScriptTimeTicksPerSecond / 3));
+			_vm->_script->wakeUpThreadsDelayed(kWaitTypeSpeech, _vm->ticksToMSec(kScriptTimeTicksPerSecond / 3));
 		}
 
 		return;
@@ -1808,6 +1810,10 @@ void Actor::drawActors() {
 		return;
 	}
 
+	if (!_showActors) {
+		return;
+	}
+
 	CommonObjectOrderList::iterator drawOrderIterator;
 	CommonObjectDataPointer drawObject;
 	int frameNumber;
@@ -2349,6 +2355,11 @@ void Actor::simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount,
 }
 
 void Actor::abortAllSpeeches() {
+	// WORKAROUND: Don't abort speeches in scene 31 (tree with beehive). This prevents the
+	// making fire animation from breaking
+	if (_vm->getGameType() == GType_ITE && _vm->_scene->currentSceneNumber() == 31)
+		return;
+
 	abortSpeech();
 
 	if (_vm->_script->_abortEnabled)

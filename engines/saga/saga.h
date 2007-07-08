@@ -152,7 +152,8 @@ enum GameFeatures {
 	GF_BIG_ENDIAN_DATA   = 1 << 0,
 	GF_WYRMKEEP          = 1 << 1,
 	GF_CD_FX             = 1 << 2,
-	GF_SCENE_SUBSTITUTES = 1 << 3
+	GF_SCENE_SUBSTITUTES = 1 << 3,
+	GF_COMPRESSED_SOUNDS = 1 << 4
 };
 
 enum VerbTypeIds {
@@ -224,7 +225,10 @@ enum GameSoundTypes {
 	kSoundVOX = 1,
 	kSoundVOC = 2,
 	kSoundWAV = 3,
-	kSoundMacPCM = 4
+	kSoundMacPCM = 4,
+	kSoundMP3 = 5,
+	kSoundOGG = 6,
+	kSoundFLAC = 7
 };
 
 enum TextStringIds {
@@ -335,6 +339,7 @@ enum GameObjectTypes {
 
 enum ScriptTimings {
 	kScriptTimeTicksPerSecond = (728L/10L),
+	kScriptTimeTicksPerSecondIHNM = 72,
 	kRepeatSpeedTicks = (728L/10L)/3,
 	kNormalFadeDuration = 320, // 64 steps, 5 msec each
 	kQuickFadeDuration = 64,  // 64 steps, 1 msec each
@@ -454,10 +459,6 @@ struct SaveGameHeader {
 	uint32 version;
 	char name[SAVE_TITLE_SIZE];
 };
-
-inline int ticksToMSec(int tick) {
-	return tick * 1000 / kScriptTimeTicksPerSecond;
-}
 
 inline int clamp(int minValue, int value, int maxValue) {
 	if (value <= minValue) {
@@ -589,6 +590,13 @@ public:
 
 	const bool mouseButtonPressed() const {
 		return _leftMouseButtonPressed || _rightMouseButtonPressed;
+	}
+
+	inline int ticksToMSec(int tick) {
+		if (getGameType() == GType_ITE)
+			return tick * 1000 / kScriptTimeTicksPerSecond;
+		else
+			return tick * 1000 / kScriptTimeTicksPerSecondIHNM;
 	}
 
  private:

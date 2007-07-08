@@ -26,6 +26,7 @@
 #include "common/stdafx.h"
 #include "common/savefile.h"
 
+#include "gui/dialog.h"
 #include "gui/widget.h"
 #include "gui/ListWidget.h"
 #include "gui/message.h"
@@ -47,6 +48,37 @@ namespace Parallaction {
 
 
 extern char _gameNames[][20];
+
+
+class SaveLoadChooser : public GUI::Dialog {
+	typedef Common::String String;
+	typedef Common::StringList StringList;
+protected:
+	GUI::ListWidget		*_list;
+	GUI::ButtonWidget	*_chooseButton;
+	GUI::GraphicsWidget	*_gfxWidget;
+	GUI::StaticTextWidget	*_date;
+	GUI::StaticTextWidget	*_time;
+	GUI::StaticTextWidget	*_playtime;
+	GUI::ContainerWidget	*_container;
+	Parallaction			*_vm;
+
+	uint8 _fillR, _fillG, _fillB;
+
+public:
+	SaveLoadChooser(const String &title, const String &buttonLabel, Parallaction *engine);
+	~SaveLoadChooser();
+
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	const String &getResultString() const;
+	void setList(const StringList& list);
+	int runModal();
+
+	virtual void reflowLayout();
+};
+
+
+
 
 void Parallaction::doLoadGame(uint16 slot) {
 

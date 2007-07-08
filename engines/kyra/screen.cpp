@@ -504,7 +504,12 @@ void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
 		dstPage += SCREEN_W;
 	}
 	addDirtyRect(0, y, SCREEN_W, h);
-	clearOverlayRect(0, 0, y, SCREEN_W, h);
+	// This would remove the text in the end sequence of 
+	// the FM-Towns version. 
+	// Since this method is just used for the Seqplayer
+	// this shouldn't be a problem anywhere else, so it's
+	// safe to disable the call here.
+	//clearOverlayRect(0, 0, y, SCREEN_W, h);
 }
 
 void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags) {

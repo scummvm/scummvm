@@ -1362,9 +1362,18 @@ DIR_ENT FAT_DirEntFromPath (const char* path)
 	DIR_ENT dirEntry;
 	u32 dirCluster;
 	bool flagLFN, dotSeen;
-	
 	// Start at beginning of path
 	pathPos = 0;
+
+#ifdef DS_BUILD_F
+	// Problems with Kyrandia doing a load of path lookups are reduced by this hack.
+	if (strstr(path, ".voc") || strstr(path, ".voc"))
+	{
+		dirEntry.name[0] = FILE_FREE;
+		dirEntry.attrib = 0x00;
+		return;
+	}
+#endif
 	
 	if (path[pathPos] == '/') 
 	{
@@ -2499,6 +2508,7 @@ int FAT_fseek(FAT_FILE* file, s32 offset, int origin)
 	u32 position;
 	u32 curPos;
 
+
 	if ((file == NULL) || (file->inUse == false))	// invalid file
 	{
 		return -1;
@@ -2613,6 +2623,7 @@ int FAT_fseek(FAT_FILE* file, s32 offset, int origin)
 	}
 
 	return 0;
+
 }
 
 /*-----------------------------------------------------------------

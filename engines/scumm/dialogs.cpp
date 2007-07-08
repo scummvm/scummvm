@@ -825,26 +825,26 @@ PauseDialog::PauseDialog(ScummEngine *scumm, int res)
 	: InfoDialog(scumm, res) {
 }
 
-void PauseDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (ascii == ' ')  // Close pause dialog if space key is pressed
+void PauseDialog::handleKeyDown(Common::KeyState state) {
+	if (state.ascii == ' ')  // Close pause dialog if space key is pressed
 		close();
 	else
-		ScummDialog::handleKeyDown(ascii, keycode, modifiers);
+		ScummDialog::handleKeyDown(state);
 }
 
 ConfirmDialog::ConfirmDialog(ScummEngine *scumm, int res)
 	: InfoDialog(scumm, res) {
 }
 
-void ConfirmDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (tolower(ascii) == 'n') {
+void ConfirmDialog::handleKeyDown(Common::KeyState state) {
+	if (state.keycode == Common::KEYCODE_n) {
 		setResult(0);
 		close();
-	} else if (tolower(ascii) == 'y') {
+	} else if (state.keycode == Common::KEYCODE_y) {
 		setResult(1);
 		close();
 	} else
-		ScummDialog::handleKeyDown(ascii, keycode, modifiers);
+		ScummDialog::handleKeyDown(state);
 }
 
 #pragma mark -
@@ -892,11 +892,11 @@ void ValueDisplayDialog::reflowLayout() {
 	_h = height;
 }
 
-void ValueDisplayDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (ascii == _incKey || ascii == _decKey) {
-		if (ascii == _incKey && _value < _max)
+void ValueDisplayDialog::handleKeyDown(Common::KeyState state) {
+	if (state.ascii == _incKey || state.ascii == _decKey) {
+		if (state.ascii == _incKey && _value < _max)
 			_value++;
-		else if (ascii == _decKey && _value > _min)
+		else if (state.ascii == _decKey && _value > _min)
 			_value--;
 
 		setResult(_value);
@@ -924,8 +924,8 @@ void SubtitleSettingsDialog::handleTickle() {
 		close();
 }
 
-void SubtitleSettingsDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (keycode == 't' && modifiers == Common::KBD_CTRL) {
+void SubtitleSettingsDialog::handleKeyDown(Common::KeyState state) {
+	if (state.keycode == 't' && state.flags == Common::KBD_CTRL) {
 		cycleValue();
 
 		reflowLayout();
@@ -959,11 +959,11 @@ Indy3IQPointsDialog::Indy3IQPointsDialog(ScummEngine *scumm, char* text)
 	: InfoDialog(scumm, text) {
 }
 
-void Indy3IQPointsDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (ascii == 'i') 
+void Indy3IQPointsDialog::handleKeyDown(Common::KeyState state) {
+	if (state.ascii == 'i') 
 		close();
 	else
-		ScummDialog::handleKeyDown(ascii, keycode, modifiers);
+		ScummDialog::handleKeyDown(state);
 }
 
 } // End of namespace Scumm

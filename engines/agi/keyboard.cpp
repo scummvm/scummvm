@@ -29,6 +29,9 @@
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
+#ifdef __DS__
+#include "wordcompletion.h"
+#endif
 
 namespace Agi {
 
@@ -308,6 +311,9 @@ void AgiEngine::handleKeys(int key) {
 		debugC(3, kDebugLevelInput, "clear lines");
 		clearLines(l, l + 1, bg);
 		flushLines(l, l + 1);
+#ifdef __DS__
+		DS::findWordCompletions((char *) _game.inputBuffer);
+#endif
 
 		break;
 	case KEY_ESCAPE:
@@ -324,6 +330,10 @@ void AgiEngine::handleKeys(int key) {
 		_game.inputBuffer[--_game.cursorPos] = 0;
 		/* Print cursor */
 		_gfx->printCharacter(_game.cursorPos + 1, l, _game.cursorChar, fg, bg);
+
+#ifdef __DS__
+		DS::findWordCompletions((char *) _game.inputBuffer);
+#endif
 		break;
 	default:
 		/* Ignore invalid keystrokes */
@@ -336,6 +346,10 @@ void AgiEngine::handleKeys(int key) {
 
 		_game.inputBuffer[_game.cursorPos++] = key;
 		_game.inputBuffer[_game.cursorPos] = 0;
+
+#ifdef __DS__
+		DS::findWordCompletions((char *) _game.inputBuffer);
+#endif
 
 		/* echo */
 		_gfx->printCharacter(_game.cursorPos, l, _game.inputBuffer[_game.cursorPos - 1], fg, bg);

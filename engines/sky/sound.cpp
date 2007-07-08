@@ -46,13 +46,13 @@ struct RoomList {
 	uint8 room;
 	uint8 adlibVolume;
 	uint8 rolandVolume;
-};
+} PACKED_STRUCT;
 
 struct Sfx {
 	uint8 soundNo;
 	uint8 flags;
 	RoomList roomList[10];
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

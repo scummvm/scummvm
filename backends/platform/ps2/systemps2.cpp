@@ -332,6 +332,16 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 OSystem_PS2::~OSystem_PS2(void) {
 }
 
+void OSystem_PS2::initBackend() {
+	// FIXME: Should probably move lots of stuff from the constructor to here
+	_mixer = new Audio::Mixer();
+	_timer = new DefaultTimerManager();
+	setSoundCallback(Audio::Mixer::mixCallback, _mixer);
+	setTimerCallback(&timer_handler, 10);
+
+	OSystem::initBackend();
+}
+
 void OSystem_PS2::initTimer(void) {
 	// first setup the two threads that get activated by the timer:
 	// the timerthread and the soundthread

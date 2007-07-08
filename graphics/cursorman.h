@@ -34,7 +34,10 @@ namespace Graphics {
 
 class CursorManager : public Common::Singleton<CursorManager> {
 public:
+	/** Query whether the mouse cursor is visible. */
 	bool isVisible();
+
+	/** Show or hide the mouse cursor. */
 	bool showMouse(bool visible);
 
 	/**

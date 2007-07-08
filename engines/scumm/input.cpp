@@ -75,83 +75,53 @@ void ScummEngine::parseEvents() {
 				sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
 				_saveLoadFlag = (event.kbd.flags == Common::KBD_ALT) ? 1 : 2;
 				_saveTemporaryState = false;
-			} else if (event.kbd.flags == Common::KBD_CTRL) {
-				if (event.kbd.keycode == 'f')
-					_fastMode ^= 1;
-				else if (event.kbd.keycode == 'g')
-					_fastMode ^= 2;
-				else if (event.kbd.keycode == 'd')
-					_debugger->attach();
-				else if (event.kbd.keycode == 's')
-					_res->resourceStats();
-				else
-					_keyPressed = event.kbd;	// Normal key press, pass on to the game.
-			} else if (event.kbd.flags & Common::KBD_ALT) {
-				// Handle KBD_ALT combos. We know that the result must be 273 for Alt-W
-				// because that's what MI2 looks for in its "instant win" cheat.
-
-				// FIXME: Handle this specific property of MI2 inside processKeyboard ?
-				_keyPressed = event.kbd;
-				_keyPressed.ascii = event.kbd.keycode + 154;
+			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'f') {
+				_fastMode ^= 1;
+			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'g') {
+				_fastMode ^= 2;
+			} else if ((event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'd') ||
+					event.kbd.ascii == '~' || event.kbd.ascii == '#') {
+				_debugger->attach();
+			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 's') {
+				_res->resourceStats();
 			} else {
 				// Normal key press, pass on to the game.
 				_keyPressed = event.kbd;
 			}
 
-			if (event.kbd.keycode >= Common::KEYCODE_UP && event.kbd.keycode <= Common::KEYCODE_LEFT) {
-				if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
-					_keyPressed = event.kbd;
-					_keyPressed.ascii = event.kbd.ascii - Common::KEYCODE_UP + 54;
-				} else if (_game.version < 7) {
-					// FIXME: Handle this specific property inside processKeyboard ?
-	
-					// Don't let game see arrow keys. This fixes bug with up arrow (273)
-					// corresponding to the "instant win" cheat in MI2 mentioned above.
-					//
-					// This is not applicable to V7+ games, which need to see the arrow keys,
-					// too, else certain things (derby scene, asterorid lander) won't work.
-					_keyPressed.reset();
-				}
-			}
-
 			if (_game.heversion >= 80) {
 				// Keyboard is controlled via variable
-				int _keyState = 0;
+				int keyState = 0;
 
 				if (event.kbd.keycode == Common::KEYCODE_LEFT) // Left
-					_keyState = 1;
+					keyState = 1;
 
 				if (event.kbd.keycode == Common::KEYCODE_RIGHT) // Right
-					_keyState |= 2;
+					keyState |= 2;
 
 				if (event.kbd.keycode == Common::KEYCODE_UP) // Up
-					_keyState |= 4;
+					keyState |= 4;
 
 				if (event.kbd.keycode == Common::KEYCODE_DOWN) // Down
-					_keyState |= 8;
+					keyState |= 8;
 
 				if (event.kbd.flags == Common::KBD_SHIFT)
-					_keyState |= 16;
+					keyState |= 16;
 
 				if (event.kbd.flags == Common::KBD_CTRL)
-					_keyState |= 32;
+					keyState |= 32;
 
-				VAR(VAR_KEY_STATE) = _keyState;
+				VAR(VAR_KEY_STATE) = keyState;
 			}
 
-			// FIXME: There is a discrepancy between EVENT_KEYDOWN and EVENT_KEYUP here:
-			// For EVENT_KEYDOWN, we use _keyPressed.keycode, which has potentially been
-			// modified, while for EVENT_KEYUP we use the unfiltered event.kbd.keycode.
-			// This could lead problems (like a key becoming 'stuck').
-			
-			// FIXME #2: We are mixing ascii and keycode values here. We probably should
-			// be using keycodes, but at least INSANE checks for "Shift-V" by looking for
-			// the 'V' key being pressed. It would be easy to solve that by also storing the
-			// the modifier flags. However, since getKeyState() is also called by scripts,
-			// we have to be very careful with semantic changes.
-			// Nevertheless, it's bad to rely on "ascii" holdoing keycode values for special
-			// keys (like the function keys), so this should be fixed.
-
+			// FIXME: We are using ASCII values to index the _keyDownMap here,
+			// yet later one code which checks _keyDownMap will use KEYCODEs
+			// to do so. That is, we are mixing ascii and keycode values here,
+			// which is bad. We probably should be only using keycodes, but at
+			// least INSANE checks for "Shift-V" by looking for the 'V' key
+			// being pressed. It would be easy to solve that by also storing
+			// the modifier flags. However, since getKeyState() is also called
+			// by scripts, we have to be careful with semantic changes.
 			if (_keyPressed.ascii >= 512)
 				debugC(DEBUG_GENERAL, "_keyPressed > 512 (%d)", _keyPressed.ascii);
 			else
@@ -159,11 +129,9 @@ void ScummEngine::parseEvents() {
 			break;
 
 		case Common::EVENT_KEYUP:
-			// FIXME: for some reason Common::KBD_ALT is set sometimes
-			// possible to a bug in sdl-common.cpp
-			if (event.kbd.ascii >= 512)
+			if (event.kbd.ascii >= 512) {
 				debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
-			else {
+			} else {
 				_keyDownMap[event.kbd.ascii] = false;
 
 				// Due to some weird bug with capslock key pressed
@@ -173,6 +141,8 @@ void ScummEngine::parseEvents() {
 				// both upper and lower letters are unpressed on keyup event
 				//
 				// Fixes bug #1709430: "FT: CAPSLOCK + V enables cheating for all fights"
+				//
+				// Fingolfin remarks: This wouldn't be a problem if we used keycodes.
 				_keyDownMap[toupper(event.kbd.ascii)] = false;
 			}
 			break;
@@ -204,24 +174,21 @@ void ScummEngine::parseEvents() {
 			_rightBtnPressed &= ~msDown;
 			break;
 
-		// The following two cases enable dialog choices to be
-		// scrolled through in the SegaCD version of MI
-		// as nothing else uses the wheel don't bother
-		// checking the gameid. Values are taken from script-14.
-
+		// The following two cases enable dialog choices to be scrolled
+		// through in the SegaCD version of MI. Values are taken from script-14.
+		// See bug report #1193185 for details.
 		case Common::EVENT_WHEELDOWN:
-			_keyPressed = Common::KeyState(Common::KEYCODE_7, 55);	// '7'
+			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
+				_keyPressed = Common::KeyState(Common::KEYCODE_7, 55);	// '7'
 			break;
 
 		case Common::EVENT_WHEELUP:
-			_keyPressed = Common::KeyState(Common::KEYCODE_6, 54);	// '6'
+			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
+				_keyPressed = Common::KeyState(Common::KEYCODE_6, 54);	// '6'
 			break;
 
 		case Common::EVENT_QUIT:
-			if (ConfMan.getBool("confirm_exit"))
-				confirmExitDialog();
-			else
-				_quit = true;
+			_quit = true;
 			break;
 
 		default:
@@ -446,11 +413,6 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 	// Fall back to default behavior
 	ScummEngine::processKeyboard(lastKeyHit);
 
-	// Store the input type. So far we can't distinguish
-	// between 1, 3 and 5.
-	// 1) Verb	2) Scene	3) Inv.		4) Key
-	// 5) Sentence Bar
-
 	if (VAR_KEYPRESS != 0xFF && _mouseAndKeyboardStat) {		// Key Input
 		if (315 <= _mouseAndKeyboardStat && _mouseAndKeyboardStat <= 323) {
 			// Convert F-Keys for V1/V2 games (they start at 1)
@@ -502,12 +464,6 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	// forcefully always enable it there), as that always disables it.
 	if (_game.id == GID_CMI)
 		mainmenuKeyEnabled = true;
-
-/*
-	FIXME: We also used to force-enable F5 in Sam&Max and HE >= 72 games -- why?
-	if ((_game.version <= 3) || (_game.id == GID_SAMNMAX) || (_game.id == GID_CMI) || (_game.heversion >= 72))
-		mainmenuKeyEnabled = true;
-*/
 
 	if (mainmenuKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == 0)) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
@@ -569,15 +525,35 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		if (VAR_CHARINC != 0xFF)
 			VAR(VAR_CHARINC) = _defaultTalkDelay;
 
-	} else if (lastKeyHit.ascii == '~' || lastKeyHit.ascii == '#') { // Debug console
-		_debugger->attach();
-
 	} else {
-		// FIXME: Possibly convert even more keycode/ascii pairs to their SCUMM counterparts?
-		if (lastKeyHit.keycode >= Common::KEYCODE_F1 && lastKeyHit.keycode <= Common::KEYCODE_F9)
+
+		if (lastKeyHit.keycode >= Common::KEYCODE_F1 &&
+		    lastKeyHit.keycode <= Common::KEYCODE_F9) {
 			_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_F1 + 315;
-		else
+
+		} else if (_game.id == GID_MONKEY2 && (lastKeyHit.flags & Common::KBD_ALT)) {
+			// Handle KBD_ALT combos in MI2. We know that the result must be 273 for Alt-W
+			// because that's what MI2 looks for in its "instant win" cheat.
+			_mouseAndKeyboardStat = lastKeyHit.keycode + 154;
+
+		} else if (lastKeyHit.keycode >= Common::KEYCODE_UP &&
+		          lastKeyHit.keycode <= Common::KEYCODE_LEFT) {
+			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
+				// Map arrow keys to number keys in the SEGA version of MI to support
+				// scrolling to conversation choices. See bug report #1193185 for details.
+				_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_UP + 54;
+			} else if (_game.version >= 7) {
+				// Don't let pre-V7 game see arrow keys. This fixes bug with up arrow (273)
+				// corresponding to the "instant win" cheat in MI2 mentioned above.
+				//
+				// This is not applicable to V7+ games, which need to see the arrow keys,
+				// too, else certain things (derby scene, asterorid lander) won't work.
+				_mouseAndKeyboardStat = lastKeyHit.ascii;
+			}
+
+		} else {
 			_mouseAndKeyboardStat = lastKeyHit.ascii;
+		}
 	}
 }
 

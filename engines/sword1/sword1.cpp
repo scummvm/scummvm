@@ -355,13 +355,17 @@ const CdFile SwordEngine::_pcCdFileList[] = {
 	{ "cows.mad", FLAG_DEMO },
 	{ "speech1.clu", FLAG_SPEECH1 },
 	 { "speech2.clu", FLAG_SPEECH2 }
-#ifdef USE_MAD
-	,{ "speech1.cl3", FLAG_SPEECH1 },
-	 { "speech2.cl3", FLAG_SPEECH2 }
+#ifdef USE_FLAC
+	,{ "speech1.clf", FLAG_SPEECH1 },
+	 { "speech2.clf", FLAG_SPEECH2 }
 #endif
 #ifdef USE_VORBIS
 	,{ "speech1.clv", FLAG_SPEECH1 },
 	 { "speech2.clv", FLAG_SPEECH2 }
+#endif
+#ifdef USE_MAD
+	,{ "speech1.cl3", FLAG_SPEECH1 },
+	 { "speech2.cl3", FLAG_SPEECH2 }
 #endif
 };
 
@@ -383,13 +387,17 @@ const CdFile SwordEngine::_macCdFileList[] = {
 	{ "text.clm", FLAG_CD1 | FLAG_DEMO },
 	{ "speech1.clu", FLAG_SPEECH1 },
 	 { "speech2.clu", FLAG_SPEECH2 }
-#ifdef USE_MAD
-	,{ "speech1.cl3", FLAG_SPEECH1 },
-	 { "speech2.cl3", FLAG_SPEECH2 }
+#ifdef USE_FLAC
+	,{ "speech1.clf", FLAG_SPEECH1 },
+	 { "speech2.clf", FLAG_SPEECH2 }
 #endif
 #ifdef USE_VORBIS
 	,{ "speech1.clv", FLAG_SPEECH1 },
 	 { "speech2.clv", FLAG_SPEECH2 }
+#endif
+#ifdef USE_MAD
+	,{ "speech1.cl3", FLAG_SPEECH1 },
+	 { "speech2.cl3", FLAG_SPEECH2 }
 #endif
 };
 

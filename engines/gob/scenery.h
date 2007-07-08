@@ -38,7 +38,7 @@ public:
 		int16 right;		//These are stored in Little Endian format
 		int16 top;		//And should be converted by client code when accessed
 		int16 bottom;		//i.e. use FROM_LE_16()
-	};
+	} PACKED_STRUCT;
 
 	struct StaticPlane {
 		int8 pictIndex;
@@ -47,13 +47,13 @@ public:
 		int16 destX;
 		int16 destY;
 		int8 transp;
-	};
+	} PACKED_STRUCT;
 
 	struct StaticLayer {
 		int16 backResId;
 		int16 planeCount;
 		StaticPlane *planes;
-	};
+	} PACKED_STRUCT;
 
 	// Animations
 
@@ -63,7 +63,7 @@ public:
 		int8 destX;
 		int8 destY;
 		int8 notFinal;
-	};
+	} PACKED_STRUCT;
 
 	struct AnimLayer {
 		int16 unknown0;
@@ -74,7 +74,7 @@ public:
 		int8 transp;
 		int16 framesCount;
 		AnimFramePiece *frames;
-	};
+	} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

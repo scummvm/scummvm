@@ -528,7 +528,7 @@ void AGOSEngine_Feeble::off_screenTextPObj() {
 	TextLocation *tl = NULL;
 	char buf[256];
 
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	if (subObject != NULL && subObject->objectFlags & kOFText) {
 		string_ptr = (const char *)getStringPtrByID(subObject->objectFlagValue[0]);
 		tl = getTextLocation(vgaSpriteId);

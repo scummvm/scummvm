@@ -130,8 +130,11 @@ void MoviePlayer::play() {
 		return;
 	}
 
-	if (!_fd) {
-		return;
+	if (_omniTVFile) {
+		// Clear any paused OmniTV video
+		_mixer->stopHandle(_omniTVSound);
+		delete _omniTVFile;
+		_omniTVFile = 0;
 	}
 
 	_leftButtonDown = false;

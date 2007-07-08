@@ -37,6 +37,7 @@
 #include "common/str.h"
 #include "cdaudio.h"
 #include "graphics/surface.h"
+#include "touchkeyboard.h"
 
 OSystem_DS* OSystem_DS::_instance = NULL;
 
@@ -138,9 +139,12 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		green >>= 3;
 		blue >>= 3;
 		
-		BG_PALETTE[r] = red | (green << 5) | (blue << 10);
-		if (!DS::getKeyboardEnable()) {
-			BG_PALETTE_SUB[r] = red | (green << 5) | (blue << 10);
+//		if (r != 255)
+		{		
+			BG_PALETTE[r] = red | (green << 5) | (blue << 10);
+			if (!DS::getKeyboardEnable()) {
+				BG_PALETTE_SUB[r] = red | (green << 5) | (blue << 10);
+			}
 		}
 //		if (num == 16) consolePrintf("pal:%d r:%d g:%d b:%d\n", r, red, green, blue);
 		
@@ -173,8 +177,8 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 	u16* src = (u16 *) buf;
 	
 	if (DS::getKeyboardEnable()) {
-		for (int dy = y; dy < y + h; dy++)
-        {
+	
+		for (int dy = y; dy < y + h; dy++) {
 			u16* dest = bg + (dy << 8) + (x >> 1);
 		
 			DC_FlushRange(src, w << 1);
@@ -185,8 +189,7 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 		}
 	
 	} else {
-		for (int dy = y; dy < y + h; dy++)
-        {
+		for (int dy = y; dy < y + h; dy++) {
 			u16* dest1 = bg + (dy << 8) + (x >> 1);
 			u16* dest2 = bgSub + (dy << 8) + (x >> 1);
 			
@@ -294,6 +297,7 @@ int16 OSystem_DS::getOverlayWidth()
 	
 bool OSystem_DS::showMouse(bool visible)
 {
+	DS::setShowCursor(visible);
 	return true;
 }
 
@@ -302,7 +306,7 @@ void OSystem_DS::warpMouse(int x, int y)
 }
 
 void OSystem_DS::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetCursorScale) {
-	DS::setCursorIcon(buf, w, h, keycolor);
+	DS::setCursorIcon(buf, w, h, keycolor, hotspotX, hotspotY);
 }
 
 void OSystem_DS::addEvent(Common::Event& e) {
@@ -323,11 +327,11 @@ bool OSystem_DS::pollEvent(Common::Event &event)
 			event.kbd.ascii = 0;
 			event.kbd.keycode = 0;
 			event.kbd.flags = 0;
-			consolePrintf("type: %d\n", event.type);
+//			consolePrintf("type: %d\n", event.type);
 			return false;
 		} else {
 			event = eventQueue[eventNum++];
-			consolePrintf("type: %d\n", event.type);
+//			consolePrintf("type: %d\n", event.type);
 			return true;
 		}
 	}
@@ -474,36 +478,25 @@ Common::SaveFileManager* OSystem_DS::getSavefileManager()
 	}
 }
 
-Graphics::Surface *OSystem_DS::lockScreen() {
-	// For now, we create a full temporary screen surface, to which we copy the
-	// the screen content. Later unlockScreen will copy everything back.
-	// Not very nice nor efficient, but at least works, and is not worse
-	// than in the bad old times where we used grabRawScreen + copyRectToScreen.
-	
-	_framebuffer.create(DS::getGameWidth(), DS::getGameHeight(), 1);
+bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
+	surf->create(DS::getGameWidth(), DS::getGameHeight(), 1);
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
 	
+    size_t imageStrideInBytes = DS::isCpuScalerEnabled()? DS::getGameWidth() : 512;
+    size_t imageStrideInWords = imageStrideInBytes / 2;
 
 	u16* image = (u16 *) DS::get8BitBackBuffer();
 	for (int y = 0; y <  DS::getGameHeight(); y++)
 	{
-		DC_FlushRange(image + (y << 8), DS::getGameWidth());
+		DC_FlushRange(image + (y * imageStrideInWords), DS::getGameWidth());
 		for (int x = 0; x < DS::getGameWidth() >> 1; x++)
 		{
-			*(((u16 *) (_framebuffer.pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y << 8 + x];
+			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y * imageStrideInWords + x];
 		}
 	}
 
-	return &_framebuffer;
-}
-
-void OSystem_DS::unlockScreen() {
-	// Copy temp framebuffer back to screen
-	copyRectToScreen((byte *)_framebuffer.pixels, _framebuffer.pitch, 0, 0, _framebuffer.w, _framebuffer.h);
-
-	// Free memory
-	_framebuffer.free(); 
+	return true;
 }
 
 void OSystem_DS::setFocusRectangle(const Common::Rect& rect) {
@@ -514,6 +507,18 @@ void OSystem_DS::clearFocusRectangle() {
 
 }
 
+
+void OSystem_DS::addAutoComplete(const char *word) {
+	DS::addAutoComplete((char *) word);
+}
+
+void OSystem_DS::clearAutoComplete() {
+	DS::clearAutoComplete();
+}
+
+void OSystem_DS::setCharactersEntered(int count) {
+	DS::setCharactersEntered(count);
+}
 
 OSystem *OSystem_DS_create() {
 	return new OSystem_DS();

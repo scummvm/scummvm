@@ -1,4 +1,4 @@
-// AsciiCptCompile.cpp : Definiert den Einstiegspunkt für die Konsolenanwendung.
+// AsciiCptCompile.cpp
 //
 
 #include "stdafx.h"

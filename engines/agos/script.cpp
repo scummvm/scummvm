@@ -206,7 +206,7 @@ void AGOSEngine::o_state() {
 
 void AGOSEngine::o_oflag() {
 	// 28: item has prop
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	uint num = getVarOrByte();
 	setScriptCondition(subObject != NULL && (subObject->objectFlags & (1 << num)) != 0);
 }
@@ -326,7 +326,7 @@ void AGOSEngine::o_goto() {
 
 void AGOSEngine::o_oset() {
 	// 56: set child2 fr bit
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	int value = getVarOrByte();
 	if (subObject != NULL && value >= 16)
 		subObject->objectFlags |= (1 << value);
@@ -334,7 +334,7 @@ void AGOSEngine::o_oset() {
 
 void AGOSEngine::o_oclear() {
 	// 57: clear child2 fr bit
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	int value = getVarOrByte();
 	if (subObject != NULL && value >= 16)
 		subObject->objectFlags &= ~(1 << value);
@@ -426,7 +426,7 @@ void AGOSEngine::o_if2() {
 
 void AGOSEngine::o_isCalled() {
 	// 79: childstruct fr2 is
-	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	uint stringId = getNextStringID();
 	setScriptCondition((subObject != NULL) && subObject->objectName == stringId);
 }
@@ -753,7 +753,7 @@ void AGOSEngine::o_setAdjNoun() {
 void AGOSEngine::o_saveUserGame() {
 	// 132: save user game
 	if (getGameId() == GID_SIMON1CD32) {
-		// The Amiga CD32 version of Simon the Sorcerer 1uses a single slot
+		// The Amiga CD32 version of Simon the Sorcerer 1 uses a single slot
 		if (!saveGame(0, "Default Saved Game")) {
 			vc33_setMouseOn();
 			fileError(_windowArray[5], true);
@@ -799,7 +799,7 @@ void AGOSEngine::o_freezeZones() {
 	freezeBottom();
 
 	if (!_copyProtection && !(getFeatures() & GF_TALKIE)) {
-		if ((getGameType() == GType_SIMON1 &&  _subroutine == 2924) ||
+		if ((getGameType() == GType_SIMON1 && _subroutine == 2924) ||
 			(getGameType() == GType_SIMON2 && _subroutine == 1322)) {
 			_variableArray[134] = 3;
 			_variableArray[135] = 3;
@@ -985,10 +985,10 @@ Child *nextSub(Child *sub, int16 key) {
 }
 
 void AGOSEngine::synchChain(Item *i) {
-	SubChain *c = (SubChain *)findChildOfType(i, 8);
+	SubChain *c = (SubChain *)findChildOfType(i, kChainType);
 	while (c) {
 		setItemState(derefItem(c->chChained), i->state);
-		c = (SubChain *)nextSub((Child *)c, 8);
+		c = (SubChain *)nextSub((Child *)c, kChainType);
 	}
 }
 
