@@ -774,7 +774,7 @@ void Parallaction::changeCharacter(const char *name) {
 			_vm->_char._talk = _disk->loadTalk(baseName);
 			_vm->_char._objs = _disk->loadObjects(baseName);
 			_objectsNames = _disk->loadTable(baseName);
-			refreshInventory(baseName);
+			refreshInventory();
 
 			_soundMan->playCharacterMusic(name);
 

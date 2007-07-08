@@ -238,7 +238,7 @@ void Parallaction::doSaveGame(uint16 slot, const char* name) {
 
 	delete f;
 
-	refreshInventory(_characterName);
+	refreshInventory();
 
 	return;
 

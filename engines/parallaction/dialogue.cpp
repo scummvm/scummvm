@@ -497,7 +497,7 @@ void Parallaction::runDialogue(SpeakData *data) {
 	DialogueManager man(this, data);
 	man.run();
 
-	refreshInventory(_characterName);
+	refreshInventory();
 	showCursor(true);
 
 	return;
