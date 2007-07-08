@@ -599,11 +599,6 @@ public:
 	 */
 	virtual int16 getOverlayWidth()   { return getWidth(); }
 
-	virtual int screenToOverlayX(int x) { return x; }
-	virtual int screenToOverlayY(int y) { return y; }
-	virtual int overlayToScreenX(int x) { return x; }
-	virtual int overlayToScreenY(int y) { return y; }
-
 	/**
 	* Convert the given RGB triplet into an OverlayColor. A OverlayColor can
 	 * be 8bit, 16bit or 32bit, depending on the target system. The default
