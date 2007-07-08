@@ -127,11 +127,7 @@ void clearTokens() {
 char *parseNextToken(char *s, char *tok, uint16 count, const char *brk) {
 
 	while (*s != '\0') {
-
-		if (brk[0] == *s) break;
-		if (brk[1] == *s) break;
-		if (brk[2] == *s) break;
-
+		if (strchr(brk, *s)) break;
 		*tok++ = *s++;
 	}
 
@@ -143,7 +139,7 @@ uint16 fillTokens(char* line) {
 
 	uint16 i = 0;
 	while (strlen(line) > 0 && i < 20) {
-		line = parseNextToken(line, _tokens[i], 40, " \t\n");
+		line = parseNextToken(line, _tokens[i], 40, " \t\n\a");
 		if (_tokens[i][0] == '"' && _tokens[i][strlen(_tokens[i]) - 1] != '"') {
 
 			line = parseNextToken(line, _tokens[i+1], 40, "\"");
