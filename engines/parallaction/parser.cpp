@@ -126,13 +126,52 @@ void clearTokens() {
 
 char *parseNextToken(char *s, char *tok, uint16 count, const char *brk) {
 
-	while (*s != '\0') {
-		if (strchr(brk, *s)) break;
-		*tok++ = *s++;
+	enum STATES { NORMAL, QUOTED };
+
+	STATES state = NORMAL;
+
+	while (count > 0) {
+
+		switch (state) {
+		case NORMAL:
+			if (*s == '\0') {
+				*tok = '\0';
+				return s;
+			}
+
+			if (strchr(brk, *s)) {
+				*tok = '\0';
+				return ++s;
+			}
+
+			if (*s == '"') {
+				state = QUOTED;
+				s++;
+			} else {
+				*tok++ = *s++;
+				count--;
+			}
+			break;
+
+		case QUOTED:
+			if (*s == '\0') {
+				*tok = '\0';
+				return s;
+			}
+			if (*s == '"' || strchr(brk, *s)) {
+				*tok = '\0';
+				return ++s;
+			}
+
+			*tok++ = *s++;
+			count--;
+			break;
+		}
+
 	}
 
-	*tok = '\0';
-	return s;
+	return 0;
+
 }
 
 uint16 fillTokens(char* line) {
@@ -140,15 +179,6 @@ uint16 fillTokens(char* line) {
 	uint16 i = 0;
 	while (strlen(line) > 0 && i < 20) {
 		line = parseNextToken(line, _tokens[i], 40, " \t\n\a");
-		if (_tokens[i][0] == '"' && _tokens[i][strlen(_tokens[i]) - 1] != '"') {
-
-			line = parseNextToken(line, _tokens[i+1], 40, "\"");
-			strcat(_tokens[i], _tokens[i+1]);
-			_tokens[i][0] = ' ';
-			line++;
-
-		}
-
 		line = Common::ltrim(line);
 		i++;
 	}
