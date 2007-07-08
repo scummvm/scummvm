@@ -28,6 +28,7 @@
 #include "common/stdafx.h"
 #include "common/savefile.h"
 #include "common/util.h"
+#include "common/fs.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/saves/compressed/compressed-saves.h"
 
@@ -179,11 +180,25 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename)
 	return wrapInSaveFile(sf);
 }
 
-void DefaultSaveFileManager::listSavefiles(const char * /* prefix */, bool *marks, int num) {
-	// TODO: Implement this properly, at least on systems that support
-	// opendir/readdir.
-	// Even better, replace this with a better design...
-	memset(marks, true, num * sizeof(bool));
+void DefaultSaveFileManager::listSavefiles(const char *prefix , bool *marks, int num) {
+	FilesystemNode savePath(getSavePath());
+	FSList savefiles;
+	Common::String search(prefix);
+	search += '*';	//match all files that start with the given prefix
+	search.c_str(); //FIXME: subtle bug? removing this line will break things. Looks like the string isn't getting updated.
+	
+	memset(marks, false, num * sizeof(bool));	//assume no savegames for this title
+	
+	if(savePath.lookupFile(savefiles, savePath, search, false, true)) {
+		char slot[2];
+		for(FSList::const_iterator file = savefiles.begin(); file != savefiles.end(); file++) {
+			//TODO: check if this is the behavior for all engines
+			//Obtain the last 2 digits of the filename, since they correspond to the save slot
+			slot[0] = file->getName()[file->getName().size()-2];
+			slot[1] = file->getName()[file->getName().size()-1];
+			marks[atoi(slot)] = true;	//mark this slot as valid
+		}
+	}
 }
 
 #endif // !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
