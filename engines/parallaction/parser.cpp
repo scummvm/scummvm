@@ -119,16 +119,21 @@ void clearTokens() {
 
 }
 
-//	looks for next token in a string
 //
-//	scans 's' until one of the stop-chars in 'brk' is found
-//	builds a token and return the part of the string which hasn't been parsed
-
+//	Scans 's' until one of the stop-chars in 'brk' is found, building a token.
+//	If the routine encounters quotes, it will extract the contained text and
+//  make a proper token. When scanning inside quotes, 'brk' is ignored and
+//  only newlines are considered stop-chars.
+//
+//	The routine returns the unparsed portion of the input string 's'.
+//
 char *parseNextToken(char *s, char *tok, uint16 count, const char *brk) {
 
 	enum STATES { NORMAL, QUOTED };
 
 	STATES state = NORMAL;
+
+	char *t = s;
 
 	while (count > 0) {
 
@@ -158,7 +163,7 @@ char *parseNextToken(char *s, char *tok, uint16 count, const char *brk) {
 				*tok = '\0';
 				return s;
 			}
-			if (*s == '"' || strchr(brk, *s)) {
+			if (*s == '"' || *s == '\n' || *s == '\t') {
 				*tok = '\0';
 				return ++s;
 			}
@@ -170,7 +175,10 @@ char *parseNextToken(char *s, char *tok, uint16 count, const char *brk) {
 
 	}
 
-	return 0;
+	*tok = '\0';
+	warning("token was truncated from line '%s'", t);
+
+	return tok;
 
 }
 
@@ -178,7 +186,7 @@ uint16 fillTokens(char* line) {
 
 	uint16 i = 0;
 	while (strlen(line) > 0 && i < 20) {
-		line = parseNextToken(line, _tokens[i], 40, " \t\n\a");
+		line = parseNextToken(line, _tokens[i], 40, " \t\n");
 		line = Common::ltrim(line);
 		i++;
 	}
