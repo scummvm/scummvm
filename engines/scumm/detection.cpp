@@ -765,19 +765,22 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 	// narrow down the list a bit more.
 	if (results.size() > 1 && ConfMan.hasKey("platform")) {
 		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
+		Common::List<DetectorResult> tmp;
+
+		// Copy only those candidates which match the platform setting
 		for (Common::List<DetectorResult>::iterator x = results.begin(); x != results.end(); ) {
-			if (x->game.platform != platform) {
-				x = results.erase(x); 
-			} else {
-				++x;
+			if (x->game.platform == platform) {
+				tmp.push_back(*x);
 			}
 		}
-	}
 
-	// If we narrowed it down too much, abort
-	if (results.empty()) {
-		warning("Engine_SCUMM_create: Game data inconsistent with platform override");
-		return kNoGameDataFoundError;
+		// If we narrowed it down too much, print a warning, else use the list
+		// we just computed as new candidates list.
+		if (tmp.empty()) {
+			warning("Engine_SCUMM_create: Game data inconsistent with platform override");
+		} else {
+			results = tmp;
+		}
 	}
 
 	// Still no unique match found -> print a warning
