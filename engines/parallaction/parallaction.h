@@ -176,7 +176,6 @@ extern uint32 		_localFlags[];
 extern Command 		*_forwardedCommands[];
 extern char 		_forwardedAnimationNames[][20];
 extern uint16 		_numForwards;
-extern char 		_soundFile[];
 extern char 		_slideText[][40];
 extern uint16 		_introSarcData3;		 // sarcophagus stuff to be saved
 extern uint16 		_introSarcData2;		 // sarcophagus stuff to be saved
@@ -415,6 +414,9 @@ protected:		// data
 	JobList		_jobs;
 
 	Common::String      _saveFileName;
+
+	bool		_hasLocationSound;
+	char		_locationSound[50];
 
 
 protected:		// members

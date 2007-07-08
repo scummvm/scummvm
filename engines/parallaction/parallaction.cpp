@@ -84,7 +84,6 @@ Command *	_forwardedCommands[20] = {
 
 char		_forwardedAnimationNames[20][20];
 uint16		_numForwards = 0;
-char		_soundFile[20];
 
 uint32		_commandFlags = 0;
 uint16		_introSarcData3 = 200;
@@ -157,6 +156,8 @@ int Parallaction::init() {
 	_globalTable = NULL;
 	_localFlagNames = NULL;
 	initResources();
+
+	_hasLocationSound = false;
 
 	_skipMenu = false;
 
@@ -368,6 +369,9 @@ void Parallaction::runGame() {
 
 	if (_location._comment)
 		doLocationEnterTransition();
+
+	if (_hasLocationSound)
+		_soundMan->playSfx(_locationSound, 0, true);
 
 	changeCursor(kCursorArrow);
 
