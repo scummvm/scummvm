@@ -565,13 +565,7 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 		// Since it doesn't look like the IHNM scripts remove the
 		// cutaway after the intro, this is probably the best place to
 		// to it.
-		Event event;
-		event.type = kEvTImmediate;
-		event.code = kCutawayEvent;
-		event.op = kEventClear;
-		event.time = 0;
-		event.duration = 0;
-		_vm->_events->queue(&event);
+		_vm->_anim->clearCutaway();
 	}
 
 	// It is possible to leave scene when converse panel is on,
