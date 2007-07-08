@@ -47,6 +47,7 @@ static void fill(byte *dst, int dstPitch, byte color, int w, int h);
 static void copy8Col(byte *dst, int dstPitch, const byte *src, int height);
 static void clear8Col(byte *dst, int dstPitch, int height);
 
+static void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height);
 
 struct StripTable {
 	int offsets[160];
@@ -535,21 +536,19 @@ void ScummEngine::updateDirtyScreen(VirtScreenNumber slot) {
  */
 void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int bottom) {
 
-	if (bottom <= top)
+	// Short-circuit if nothing has to be drawn
+	if (bottom <= top || top >= vs->h)
 		return;
 
-	if (top >= vs->h)
-		return;
-
-	assert(top >= 0 && bottom <= vs->h);	// Paranoia checks
+	// Some paranoia checks
+	assert(top >= 0 && bottom <= vs->h);
 	assert(x >= 0 && width <= vs->pitch);
 	assert(_textSurface.pixels);
 	assert(_compositeBuf);
 	
+	// Perform some clipping
 	if (width > vs->w - x)
 		width = vs->w - x;
-
-	// Clip to the visible part of the scene
 	if (top < _screenTop)
 		top = _screenTop;
 	if (bottom > _screenTop + _screenHeight)
@@ -559,7 +558,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	int y = vs->topline + top - _screenTop;
 	int height = bottom - top;
 	
-	if (height <= 0 || width <= 0)
+	if (width <= 0)
 		return;
 	
 	// Compute screen etc. buffer pointers
@@ -591,15 +590,15 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		blit(dst, _screenWidth, src, vs->pitch, width, height);
 	}
 
-	if (_renderMode == Common::kRenderCGA)
-		ditherCGA(_compositeBuf + x + y * _screenWidth, _screenWidth, x, y, width, height);
-
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		ditherHerc(_compositeBuf + x + y * _screenWidth, _herculesBuf, _screenWidth, &x, &y, &width, &height);
 		// center image on the screen
-		_system->copyRectToScreen(_herculesBuf + x + y * Common::kHercW, 
-			Common::kHercW, x + (Common::kHercW - _screenWidth * 2) / 2, y, width, height);
+		_system->copyRectToScreen(_herculesBuf + x + y * Common::kHercW, Common::kHercW, 
+			x + (Common::kHercW - _screenWidth * 2) / 2, y, width, height);
 	} else {
+		if (_renderMode == Common::kRenderCGA)
+			ditherCGA(_compositeBuf + x + y * _screenWidth, _screenWidth, x, y, width, height);
+	
 		// Finally blit the whole thing to the screen
 		int x1 = x;
 
@@ -644,10 +643,10 @@ void ScummEngine::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, in
 	for (int y1 = 0; y1 < height; y1++) {
 		ptr = dst + y1 * dstPitch;
 
-		idx1 = (y + y1) % 2;
-
 		if (_game.version == 2)
 			idx1 = 0;
+		else
+			idx1 = (y + y1) % 2;
 
 		for (int x1 = 0; x1 < width; x1++) {
 			idx2 = (x + x1) % 2;
@@ -666,40 +665,34 @@ void ScummEngine::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, in
 // dd      cccc0
 //         cccc1
 //         dddd0
-void ScummEngine::ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) const {
+void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) {
 	byte *srcptr, *dstptr;
-	int xo = *x, yo = *y, widtho = *width, heighto = *height;
-	int idx1, idx2, dsty = 0, y1;
+	const int xo = *x, yo = *y, widtho = *width, heighto = *height;
+	int dsty = yo*2 - yo/4;
 
-	// calculate dsty
-	for (y1 = 0; y1 < yo; y1++) {
-		dsty += 2;
-		if (y1 % 4 == 3)
-			dsty--;
-	}
-	*y = dsty;
-	*x *= 2;
-	*width *= 2;
-	*height = 0;
+	for (int y1 = 0; y1 < heighto;) {
+		assert(dsty < Common::kHercH);
 
-	for (y1 = 0; y1 < heighto;) {
 		srcptr = src + y1 * srcPitch;
 		dstptr = hercbuf + dsty * Common::kHercW + xo * 2;
 
-		assert(dstptr < hercbuf + Common::kHercW * Common::kHercH + widtho * 2);
-
-		idx1 = (dsty % 7) % 2;
+		const int idx1 = (dsty % 7) % 2;
 		for (int x1 = 0; x1 < widtho; x1++) {
-			idx2 = (xo + x1) % 2;
-			*dstptr++ = cgaDither[idx1][idx2][*srcptr & 0xF] >> 1;
-			*dstptr++ = cgaDither[idx1][idx2][*srcptr & 0xF] & 0x1;
+			const int idx2 = (xo + x1) % 2;
+			const byte tmp = cgaDither[idx1][idx2][*srcptr & 0xF];
+			*dstptr++ = tmp >> 1;
+			*dstptr++ = tmp & 0x1;
 			srcptr++;
 		}
 		if (idx1 || dsty % 7 == 6)
 			y1++;
 		dsty++;
-		(*height)++;
 	}
+
+	*x *= 2;
+	*y = yo*2 - yo/4;
+	*width *= 2;
+	*height = dsty - *y;
 }
 
 

@@ -1030,7 +1030,6 @@ protected:
 	void updateDirtyScreen(VirtScreenNumber slot);
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
 	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
-	void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) const;
 
 public:
 	VirtScreen *findVirtScreen(int y);
