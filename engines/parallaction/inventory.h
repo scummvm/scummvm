@@ -51,7 +51,6 @@ void cleanInventory();
 void addInventoryItem(uint16 item);
 
 void highlightInventoryItem(int16 pos, byte color);
-void refreshInventory();
 
 void extractInventoryGraphics(int16 pos, byte *dst);
 

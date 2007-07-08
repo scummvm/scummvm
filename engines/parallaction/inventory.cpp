@@ -117,17 +117,30 @@ int16 Parallaction::getHoverInventoryItem(int16 x, int16 y) {
 
 }
 
+void drawInventoryItem(uint16 pos, InventoryItem *item) {
 
-void refreshInventory() {
-	for (uint16 i = 0; i < INVENTORY_MAX_ITEMS; i++) {
-		drawInventoryItem(i, &_inventory[i]);
+	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
+	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
+
+	// FIXME: this will end up in a general blit function
+	byte* s = _vm->_char._objs->getFramePtr(item->_index);
+	byte* d = _buffer + col * INVENTORYITEM_WIDTH + line * _vm->_char._objs->_height * INVENTORY_WIDTH;
+	for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
+		memcpy(d, s, INVENTORYITEM_WIDTH);
+
+		d += INVENTORY_WIDTH;
+		s += INVENTORYITEM_PITCH;
 	}
+
 	return;
 }
 
 
-void refreshInventoryItem(uint16 index) {
-	drawInventoryItem(index, &_inventory[index]);
+
+void refreshInventory() {
+	for (uint16 i = 0; i < INVENTORY_MAX_ITEMS; i++)
+		drawInventoryItem(i, &_inventory[i]);
+
 	return;
 }
 
@@ -139,8 +152,6 @@ int Parallaction::addInventoryItem(uint16 item) {
 
 	_inventory[slot]._id = MAKE_INVENTORY_ID(item);
 	_inventory[slot]._index = item;
-
-	refreshInventoryItem(slot);
 
 	return 0;
 }
@@ -160,8 +171,6 @@ void Parallaction::dropItem(uint16 v) {
 		memcpy(&_inventory[slot], &_inventory[slot+1], sizeof(InventoryItem));
 	}
 
-	refreshInventory();
-
 	return;
 }
 
@@ -176,28 +185,6 @@ int16 Parallaction::isItemInInventory(int32 v) {
 	return 0;
 }
 
-
-
-
-
-
-void drawInventoryItem(uint16 pos, InventoryItem *item) {
-
-	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
-	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
-
-	// FIXME: this will end up in a general blit function
-	byte* s = _vm->_char._objs->getFramePtr(item->_index);
-	byte* d = _buffer + col * INVENTORYITEM_WIDTH + line * _vm->_char._objs->_height * INVENTORY_WIDTH;
-	for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
-		memcpy(d, s, INVENTORYITEM_WIDTH);
-
-		d += INVENTORY_WIDTH;
-		s += INVENTORYITEM_PITCH;
-	}
-
-	return;
-}
 
 void drawBorder(const Common::Rect& r, byte *buffer, byte color) {
 
@@ -241,6 +228,10 @@ void highlightInventoryItem(int16 pos, byte color) {
 
 void extractInventoryGraphics(int16 pos, byte *dst) {
 //	printf("extractInventoryGraphics(%i)\n", pos);
+
+	// NOTE: this refresh is needed because we are reading graphics data from the
+	// inventory buffer instead than from the inventory icons storage.
+	refreshInventory();
 
 	int16 line = pos / INVENTORY_ITEMS_PER_LINE;
 	int16 col = pos % INVENTORY_ITEMS_PER_LINE;
@@ -312,6 +303,8 @@ void openInventory() {
 
 	_invPosition.x = CLIP(_vm->_mousePos.x - (INVENTORY_WIDTH / 2), 0, SCREEN_WIDTH - INVENTORY_WIDTH);
 	_invPosition.y = CLIP(_vm->_mousePos.y - 2 - (lines * INVENTORYITEM_HEIGHT), 0, SCREEN_HEIGHT - lines * INVENTORYITEM_HEIGHT);
+
+	refreshInventory();
 
 	return;
 
