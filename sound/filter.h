@@ -28,12 +28,57 @@
 
 #include "common/scummsys.h"
 
+namespace Audio {
+
+class FIRFilter {
+
+private:
+	double _passbandEdge;
+	double _stopbandEdge;
+	double _dBPassbandRipple;
+	double _dBStopbandAtten;
+	uint16 _samplingFreq;
+	
+	double _ripple;
+	uint16 _length;
+	double *_coeffs;
+
+public:
 /* Generates lowpass filter coefficients using the parameters provided */
-void lowPassCoeffs(
-		double passbandEdge,
-		double stopbandEdge,
-		double dBPassbandRipple,
-		double dBStopbandAtten,
-		double samplingFreq);
+	FIRFilter(
+			double passbandEdge,
+			double stopbandEdge,
+			double dBPassbandRipple,
+			double dBStopbandAtten,
+			uint16 samplingFreq);
+	
+	uint16 getLength() { return _length; }
+	
+	double *getCoeffs() { return _coeffs; }
+
+private:
+	double equiripple(
+			double dBPassbandRipple,
+			double dBStopbandAtten);
+	
+	uint16 windowLength(
+			double ripple,
+			double transitionBW,
+			uint16 samplingFreq);
+	
+	void windowDesign(double *coeffs, uint16 length, double ripple);
+	
+	double sinc(double arg);
+	
+	void LPDesign(
+			double *coeffs,
+			uint16 length,
+			double passbandEdge,
+			double stopbandEdge,
+			uint16 samplingFreq);
+
+};
+
+} // End of namespace Audio
 
 #endif

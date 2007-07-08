@@ -24,34 +24,15 @@
  */
  
 /* Filter coefficient generation using Kaiser filter design */
-// TODO: Namespace, class, etc.
  
 #include "common/stdafx.h"
 
 #include "sound/filter.h"
 
+namespace Audio {
+
 static double bessel_i0(double x);
 
-static double equiripple(
-			double dBPassbandRipple,
-			double dBStopbandAtten);
-
-static uint16 windowLength(
-			double ripple,
-			double transitionBW,
-			double samplingFreq);
-
-static void windowDesign(double *coeffs, uint16 length, double ripple);
-
-static double sinc(double arg);
-
-static void LPDesign(
-		double *coeffs,
-		uint16 length,
-		double passbandEdge,
-		double stopbandEdge,
-		double samplingFreq);
- 
 /* 
  * Modified Bessel function of the first type and zeroth order.  This is
  * calculated using an iterative expansion of I_0(x) = sum from n=0:infinity
@@ -60,7 +41,7 @@ static void LPDesign(
  *                |---------previous term----------| |---new factor--|
  *                |------------------current term--------------------|
  */
-static double bessel_i0(double x) {
+static double bessel_i0(double x) { 
 	uint16 n;
 	
 	/* Base case for n == 0 */
@@ -89,7 +70,7 @@ static double bessel_i0(double x) {
 }
 
 /* Returns the tolerable ripple in an equiripple filter */
-static inline double equiripple(
+inline double FIRFilter::equiripple(
 			double dBPassbandRipple,
 			double dBStopbandAtten) {
 	return fmin(dBPassbandRipple, -dBStopbandAtten);
@@ -99,11 +80,13 @@ static inline double equiripple(
  * Estimated window length using the Kaiser design formula.
  * Assumption: window length <= 65535 taps.
  */
-static inline uint16 windowLength(
+inline uint16 FIRFilter::windowLength(
 					double ripple,
 					double transitionBW,
-					double samplingFreq) {
+					uint16 samplingFreq) {
 	double length = (samplingFreq * (-ripple - 7.95)) / (14.36 * transitionBW);
+	
+	assert(length > 0);
 	
 	return (uint16)(length + 1);
 }
@@ -112,7 +95,7 @@ static inline uint16 windowLength(
  * Derives the coefficients for a Kaiser window of the given properties, using
  * standard Kaiser design formulae.
  */
-static void windowDesign(double *coeffs, uint16 length, double ripple) {
+void FIRFilter::windowDesign(double *coeffs, uint16 length, double ripple) {
 	uint16 i;
 	
 	double alpha = -ripple;
@@ -139,7 +122,7 @@ static void windowDesign(double *coeffs, uint16 length, double ripple) {
 	}
 }
 
-static inline double sinc(double arg) {
+inline double FIRFilter::sinc(double arg) {
 	if (arg == 0) {
 		/* continuous extension of sin(arg) / arg */
 		return 1;
@@ -152,12 +135,12 @@ static inline double sinc(double arg) {
  * Generates the filter coefficients for a windowed lowpass filter by applying
  * the provided window to the ideal lowpass (sinc) filter
  */
-static void LPDesign(
+void FIRFilter::LPDesign(
 		double *coeffs,
 		uint16 length,
 		double passbandEdge,
 		double stopbandEdge,
-		double samplingFreq) {
+		uint16 samplingFreq) {
 	uint16 i;
 	
 	for (i = 0; i <= (length - 1) / 2; i++) {
@@ -177,24 +160,26 @@ static void LPDesign(
 }
 
 /* Generates lowpass filter coefficients using the parameters provided */
-// TODO: Write a nice interface for this :)
-void lowPassCoeffs(
-		double passbandEdge,
-		double stopbandEdge,
-		double dBPassbandRipple,
-		double dBStopbandAtten,
-		double samplingFreq) {
+FIRFilter::FIRFilter(double passbandEdge, double stopbandEdge,
+					double dBPassbandRipple, double dBStopbandAtten,
+					uint16 samplingFreq)
+		: _passbandEdge(passbandEdge), _stopbandEdge(stopbandEdge),
+		  _dBPassbandRipple(dBPassbandRipple),
+		  _dBStopbandAtten(dBStopbandAtten),
+		  _samplingFreq(samplingFreq), _ripple(0), _length(0), _coeffs(0) {
 	/* Find the amount of ripple that the filter will produce */
-	double ripple = equiripple(dBPassbandRipple, dBStopbandAtten);
+	_ripple = equiripple(_dBPassbandRipple, _dBStopbandAtten);
 	
 	/* Find the number of coefficients in the window */
-	uint16 length = 
-		windowLength(ripple, stopbandEdge - passbandEdge, samplingFreq);
+	_length = 
+		windowLength(_ripple, _stopbandEdge - _passbandEdge, _samplingFreq);
 	
 	/* Calculate the window coefficients */
-	double *coeffs = (double *)malloc(length * sizeof(double));
-	windowDesign(coeffs, length, ripple);
+	_coeffs = (double *)malloc(_length * sizeof(double));
+	windowDesign(_coeffs, _length, _ripple);
 	
 	/* Generate the coefficients of a low pass filter using this window */
-	LPDesign(coeffs, length, passbandEdge, stopbandEdge, samplingFreq);
+	LPDesign(_coeffs, _length, _passbandEdge, _stopbandEdge, _samplingFreq);
 }
+
+} // End of namespace Audio
