@@ -49,12 +49,12 @@ ScriptHelper::ScriptHelper(KyraEngine *vm) : _vm(vm) {
 		COMMAND(c1_push),
 		// 0x04
 		COMMAND(c1_push),
-		COMMAND(c1_pushVar),
+		COMMAND(c1_pushReg),
 		COMMAND(c1_pushBPNeg),
 		COMMAND(c1_pushBPAdd),
 		// 0x08
 		COMMAND(c1_popRetOrPos),
-		COMMAND(c1_popVar),
+		COMMAND(c1_popReg),
 		COMMAND(c1_popBPNeg),
 		COMMAND(c1_popBPAdd),
 		// 0x0C
@@ -324,8 +324,8 @@ void ScriptHelper::c1_push(ScriptState* script) {
 	script->stack[--script->sp] = _parameter;
 }
 
-void ScriptHelper::c1_pushVar(ScriptState* script) {
-	script->stack[--script->sp] = script->variables[_parameter];
+void ScriptHelper::c1_pushReg(ScriptState* script) {
+	script->stack[--script->sp] = script->regs[_parameter];
 }
 
 void ScriptHelper::c1_pushBPNeg(ScriptState* script) {
@@ -359,8 +359,8 @@ void ScriptHelper::c1_popRetOrPos(ScriptState* script) {
 	}
 }
 
-void ScriptHelper::c1_popVar(ScriptState* script) {
-	script->variables[_parameter] = script->stack[script->sp++];
+void ScriptHelper::c1_popReg(ScriptState* script) {
+	script->regs[_parameter] = script->stack[script->sp++];
 }
 
 void ScriptHelper::c1_popBPNeg(ScriptState* script) {

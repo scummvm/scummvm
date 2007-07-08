@@ -923,16 +923,16 @@ int KyraEngine::processInputHelper(int xpos, int ypos) {
 int KyraEngine::clickEventHandler(int xpos, int ypos) {
 	debugC(9, kDebugLevelMain, "KyraEngine::clickEventHandler(%d, %d)", xpos, ypos);
 	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
-	_scriptClick->variables[1] = xpos;
-	_scriptClick->variables[2] = ypos;
-	_scriptClick->variables[3] = 0;
-	_scriptClick->variables[4] = _itemInHand;
+	_scriptClick->regs[1] = xpos;
+	_scriptClick->regs[2] = ypos;
+	_scriptClick->regs[3] = 0;
+	_scriptClick->regs[4] = _itemInHand;
 	_scriptInterpreter->startScript(_scriptClick, 1);
 
 	while (_scriptInterpreter->validScript(_scriptClick))
 		_scriptInterpreter->runScript(_scriptClick);
 
-	return _scriptClick->variables[3];
+	return _scriptClick->regs[3];
 }
 
 void KyraEngine::updateMousePointer(bool forceUpdate) {
@@ -1068,10 +1068,10 @@ void KyraEngine::clickEventHandler2() {
 	Common::Point mouse = getMousePos();
 
 	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
-	_scriptClick->variables[0] = _currentCharacter->sceneId;
-	_scriptClick->variables[1] = mouse.x;
-	_scriptClick->variables[2] = mouse.y;
-	_scriptClick->variables[4] = _itemInHand;
+	_scriptClick->regs[0] = _currentCharacter->sceneId;
+	_scriptClick->regs[1] = mouse.x;
+	_scriptClick->regs[2] = mouse.y;
+	_scriptClick->regs[4] = _itemInHand;
 	_scriptInterpreter->startScript(_scriptClick, 6);
 	
 	while (_scriptInterpreter->validScript(_scriptClick))
@@ -1132,9 +1132,9 @@ void KyraEngine::runNpcScript(int func) {
 	debugC(9, kDebugLevelMain, "KyraEngine::runNpcScript(%d)", func);
 	_scriptInterpreter->initScript(_npcScript, _npcScriptData);
 	_scriptInterpreter->startScript(_npcScript, func);
-	_npcScript->variables[0] = _currentCharacter->sceneId;
-	_npcScript->variables[4] = _itemInHand;
-	_npcScript->variables[5] = func;
+	_npcScript->regs[0] = _currentCharacter->sceneId;
+	_npcScript->regs[4] = _itemInHand;
+	_npcScript->regs[5] = func;
 	
 	while (_scriptInterpreter->validScript(_npcScript))
 		_scriptInterpreter->runScript(_npcScript);

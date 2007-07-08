@@ -230,14 +230,14 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 	drawJewelsFadeOutEnd(jewel);
 	
 	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
-	_scriptClick->variables[3] = 0;
-	_scriptClick->variables[6] = jewel;
+	_scriptClick->regs[3] = 0;
+	_scriptClick->regs[6] = jewel;
 	_scriptInterpreter->startScript(_scriptClick, 4);
 	
 	while (_scriptInterpreter->validScript(_scriptClick))
 		_scriptInterpreter->runScript(_scriptClick);
 	
-	if (_scriptClick->variables[3])
+	if (_scriptClick->regs[3])
 		return 1;
 	
 	_unkAmuletVar = 1;
