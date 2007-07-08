@@ -654,7 +654,6 @@ void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* heig
 	while (strlen(text) != 0) {
 
 		text = parseNextToken(text, token, 40, "   ", true);
-		printf("%s\n", text);
 		w += getStringWidth(token);
 
 		if (w > maxwidth) {
