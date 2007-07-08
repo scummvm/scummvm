@@ -184,12 +184,11 @@ void DefaultSaveFileManager::listSavefiles(const char *prefix , bool *marks, int
 	FilesystemNode savePath(getSavePath());
 	FSList savefiles;
 	Common::String search(prefix);
-	search += '*';	//match all files that start with the given prefix
-	search.c_str(); //FIXME: subtle bug? removing this line will break things. Looks like the string isn't getting updated.
+	search = search + '*';	//match all files that start with the given prefix. += causes a strange bug.
 	
 	assert(marks);
 	memset(marks, false, num * sizeof(bool));	//assume no savegames for this title
-	
+
 	if(savePath.lookupFile(savefiles, savePath, search, false, true)) {
 		char slot[2];
 		int slotNum;
