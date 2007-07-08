@@ -480,7 +480,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_renderMode = Common::kRenderDefault;
 	}
 
-	// Do some render mode restirctions
+	// Check some render mode restrictions
 	if (_game.version <= 1)
 		_renderMode = Common::kRenderDefault;
 
