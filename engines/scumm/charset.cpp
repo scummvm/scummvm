@@ -1261,7 +1261,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		dst = vs->getPixels(_left, drawTop);
 		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight);
 	} else {
-		dst = (byte *)_vm->_textSurface.pixels + _top * _vm->_textSurface.pitch + _left;
+		dst = (byte *)_vm->_textSurface.getBasePtr(_left, _top);
 		drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight);
 	}
 
