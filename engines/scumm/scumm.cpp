@@ -521,7 +521,11 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_screenHeight = 200;
 	}
 
-	_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight);
+	// Allocate gfx compositing buffer (not needed for V7/V8 games).
+	if (_game.version < 7)
+		_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight);
+	else
+		_compositeBuf = 0;
 
 	_herculesBuf = 0;
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {

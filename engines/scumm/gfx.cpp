@@ -544,7 +544,6 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	assert(top >= 0 && bottom <= vs->h);
 	assert(x >= 0 && width <= vs->pitch);
 	assert(_textSurface.pixels);
-	assert(_compositeBuf);
 	
 	// Perform some clipping
 	if (width > vs->w - x)
@@ -561,17 +560,26 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	if (width <= 0)
 		return;
 	
-	// Compute screen etc. buffer pointers
 	const byte *src = vs->getPixels(x, top);
-	byte *dst = _compositeBuf + x + y * _screenWidth;
 
-	if (_game.version < 7) {
-		// Handle the text mask in older games; newer (V7/V8) games do not use it anymore.
+	if (_game.version >= 7) {
+		// For The Dig, FT and COMI, we just blit everything to the screen at once.
+		_system->copyRectToScreen(src, vs->pitch, x, y, width, height);
+
+	} else {
+		// For older games, things are more complicated. First off, we need to
+		// deal with the _textSurface, which needs to be composited over the
+		// screen contents. Secondly, a rendering mode might be active, which
+		// means a filter has to be applied.
+
+		// Compute pointers to the composite buffer and the text surface
+		assert(_compositeBuf);
+		byte *dst = _compositeBuf + x + y * _screenWidth;
 		const byte *text = (byte *)_textSurface.getBasePtr(x, y);
-	
+
 #ifdef __DS__
 		DS::asmDrawStripToScreen(height, width, text, src, dst, vs->pitch, _screenWidth, _textSurface.pitch);
-#else	
+#else
 		// Compose the text over the game graphics
 		for (int h = 0; h < height; ++h) {
 			for (int w = 0; w < width; ++w) {
@@ -585,36 +593,38 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 			text += _textSurface.pitch;
 		}
 #endif
-	} else {
-		// Just do a simple blit in V7/V8 games.
-		blit(dst, _screenWidth, src, vs->pitch, width, height);
-	}
 
-	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-		ditherHerc(_compositeBuf + x + y * _screenWidth, _herculesBuf, _screenWidth, &x, &y, &width, &height);
-		// center image on the screen
-		_system->copyRectToScreen(_herculesBuf + x + y * Common::kHercW, Common::kHercW, 
-			x + (Common::kHercW - _screenWidth * 2) / 2, y, width, height);
-	} else {
-		if (_renderMode == Common::kRenderCGA)
-			ditherCGA(_compositeBuf + x + y * _screenWidth, _screenWidth, x, y, width, height);
-	
-		// Finally blit the whole thing to the screen
-		int x1 = x;
+		src = dst = _compositeBuf + x + y * _screenWidth;
+		int pitch = _screenWidth;
 
-		// HACK: This is dirty hack which renders narrow NES rooms centered
-		// NES can address negative number strips and that poses problem for
-		// our code. So instead of adding zillions of fixes and potentially
-		// breaking other games, we shift it right at the rendering stage.
-		if ((_game.platform == Common::kPlatformNES) && (((_NESStartStrip > 0) && (vs->number == kMainVirtScreen)) || (vs->number == kTextVirtScreen))) {
-			x += 16;
-			while (x + width >= _screenWidth)
-				width -= 16;
-			if (width < 0)
-				return;
+		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
+			ditherHerc(dst, _herculesBuf, _screenWidth, &x, &y, &width, &height);
+
+			src = _herculesBuf + x + y * Common::kHercW;
+			pitch = Common::kHercW;
+
+			// center image on the screen
+			x += (Common::kHercW - _screenWidth * 2) / 2;	// (720 - 320*2)/2 = 40
+		} else {
+			if (_renderMode == Common::kRenderCGA)
+				ditherCGA(dst, _screenWidth, x, y, width, height);
+
+			// HACK: This is dirty hack which renders narrow NES rooms centered
+			// NES can address negative number strips and that poses problem for
+			// our code. So instead of adding zillions of fixes and potentially
+			// breaking other games, we shift it right at the rendering stage.
+			if ((_game.platform == Common::kPlatformNES) && (((_NESStartStrip > 0) && (vs->number == kMainVirtScreen)) || (vs->number == kTextVirtScreen))) {
+				x += 16;
+				while (x + width >= _screenWidth)
+					width -= 16;
+				if (width < 0)
+					return;
+			}
+
 		}
 
-		_system->copyRectToScreen(_compositeBuf + x1 + y * _screenWidth, _screenWidth, x, y, width, height);
+		// Finally blit the whole thing to the screen
+		_system->copyRectToScreen(src, pitch, x, y, width, height);
 	}
 }
 
