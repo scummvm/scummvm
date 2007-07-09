@@ -666,6 +666,9 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 	} else if (getGameType() == GType_SIMON1 && (getFeatures() & GF_DEMO)) {
 		// The DOS Floppy demo was based off Waxworks engine
 		if (_windowNum == 4 || (_windowNum >= 10 && _windowNum <= 27)) {
+			state->surf2_addr = getBackGround();
+			state->surf2_pitch = _screenWidth;
+
 			state->surf_addr = _window4BackScn;
 			state->surf_pitch = _videoWindows[18] * 16;
 
