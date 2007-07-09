@@ -572,33 +572,32 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		// screen contents. Secondly, a rendering mode might be active, which
 		// means a filter has to be applied.
 
-		// Compute pointers to the composite buffer and the text surface
+		// Compute pointer to the text surface
 		assert(_compositeBuf);
-		byte *dst = _compositeBuf + x + y * _screenWidth;
 		const byte *text = (byte *)_textSurface.getBasePtr(x, y);
 
 #ifdef __DS__
-		DS::asmDrawStripToScreen(height, width, text, src, dst, vs->pitch, _screenWidth, _textSurface.pitch);
+		DS::asmDrawStripToScreen(height, width, text, src, _compositeBuf, vs->pitch, width, _textSurface.pitch);
 #else
 		// Compose the text over the game graphics
+		byte *dst = _compositeBuf;
 		for (int h = 0; h < height; ++h) {
 			for (int w = 0; w < width; ++w) {
 				if (text[w] == CHARSET_MASK_TRANSPARENCY)
-					dst[w] = src[w];
+					*dst++ = src[w];
 				else
-					dst[w] = text[w];
+					*dst++ = text[w];
 			}
 			src += vs->pitch;
-			dst += _screenWidth;
 			text += _textSurface.pitch;
 		}
 #endif
 
-		src = dst = _compositeBuf + x + y * _screenWidth;
-		int pitch = _screenWidth;
+		src = _compositeBuf;
+		int pitch = width;
 
 		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-			ditherHerc(dst, _herculesBuf, _screenWidth, &x, &y, &width, &height);
+			ditherHerc(_compositeBuf, _herculesBuf, width, &x, &y, &width, &height);
 
 			src = _herculesBuf + x + y * Common::kHercW;
 			pitch = Common::kHercW;
@@ -607,7 +606,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 			x += (Common::kHercW - _screenWidth * 2) / 2;	// (720 - 320*2)/2 = 40
 		} else {
 			if (_renderMode == Common::kRenderCGA)
-				ditherCGA(dst, _screenWidth, x, y, width, height);
+				ditherCGA(_compositeBuf, width, x, y, width, height);
 
 			// HACK: This is dirty hack which renders narrow NES rooms centered
 			// NES can address negative number strips and that poses problem for
