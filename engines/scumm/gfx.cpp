@@ -561,12 +561,10 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		return;
 	
 	const byte *src = vs->getPixels(x, top);
+	int pitch = vs->pitch;
 
-	if (_game.version >= 7) {
+	if (_game.version < 7) {
 		// For The Dig, FT and COMI, we just blit everything to the screen at once.
-		_system->copyRectToScreen(src, vs->pitch, x, y, width, height);
-
-	} else {
 		// For older games, things are more complicated. First off, we need to
 		// deal with the _textSurface, which needs to be composited over the
 		// screen contents. Secondly, a rendering mode might be active, which
@@ -576,25 +574,44 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		assert(_compositeBuf);
 		const byte *text = (byte *)_textSurface.getBasePtr(x, y);
 
+		// The values x, width, etc. are all multiples of 8 at this point,
+		// so loop unrolloing might be a good idea...
+		assert(0 == ((int)text & 3));
+		assert(0 == (width & 3));
+
+		// Compose the text over the game graphics
+		
+		// TODO: Optimize this code. There are several things that come immediately to mind:
+		// (1) Loop unrolling: We could read 4 or even 8 pixels at once, since everything is
+		//     a multiple of 8 here.
+		// (2) More ASM versions (in particular, the ARM code for the NDS could be used on
+		//     all ARM systems, couldn't it?)
+		// (3) Better encoding of the text surface data. This is the one with the biggest
+		//     potential.
+		//     (a) Keep an "isEmpty" marker for each pixel row in the _textSurface. The idea
+		//         is that most rows won't contain any text data, so we can just use memcpy.
+		//     (b) RLE encode the _textSurface row-wise. This is an improved variant of (a),
+		//         but also more complicated to implement, and incurs a bigger overhead when
+		//         writing to the text surface.
 #ifdef __DS__
 		DS::asmDrawStripToScreen(height, width, text, src, _compositeBuf, vs->pitch, width, _textSurface.pitch);
 #else
-		// Compose the text over the game graphics
 		byte *dst = _compositeBuf;
 		for (int h = 0; h < height; ++h) {
 			for (int w = 0; w < width; ++w) {
-				if (text[w] == CHARSET_MASK_TRANSPARENCY)
-					*dst++ = src[w];
-				else
-					*dst++ = text[w];
+				byte tmp = *text++;
+				if (tmp == CHARSET_MASK_TRANSPARENCY)
+					tmp = *src;
+				*dst++ = tmp;
+				src++;
 			}
-			src += vs->pitch;
-			text += _textSurface.pitch;
+			src += vs->pitch - width;
+			text += _textSurface.pitch - width;
 		}
 #endif
 
 		src = _compositeBuf;
-		int pitch = width;
+		pitch = width;
 
 		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 			ditherHerc(_compositeBuf, _herculesBuf, width, &x, &y, &width, &height);
@@ -621,10 +638,10 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 			}
 
 		}
-
-		// Finally blit the whole thing to the screen
-		_system->copyRectToScreen(src, pitch, x, y, width, height);
 	}
+
+	// Finally blit the whole thing to the screen
+	_system->copyRectToScreen(src, pitch, x, y, width, height);
 }
 
 // CGA
