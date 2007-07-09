@@ -57,6 +57,12 @@ namespace Parallaction {
 #define BASE_PALETTE_SIZE		BASE_PALETTE_COLORS*3
 #define PALETTE_SIZE			PALETTE_COLORS*3
 
+#define MOUSEARROW_WIDTH		16
+#define MOUSEARROW_HEIGHT		16
+
+#define MOUSECOMBO_WIDTH		32	// sizes for cursor + selected inventory item
+#define MOUSECOMBO_HEIGHT		32
+
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 struct PaletteFxRange {

@@ -438,8 +438,8 @@ void Gfx::initMouse(uint16 arg_0) {
 
 	_mouseComposedArrow = _vm->_disk->loadPointer();
 
-	byte temp[16*16];
-	memcpy(temp, _mouseArrow, 16*16);
+	byte temp[MOUSEARROW_WIDTH*MOUSEARROW_HEIGHT];
+	memcpy(temp, _mouseArrow, MOUSEARROW_WIDTH*MOUSEARROW_HEIGHT);
 
 	uint16 k = 0;
 	for (uint16 i = 0; i < 4; i++) {
@@ -449,20 +449,40 @@ void Gfx::initMouse(uint16 arg_0) {
 	return;
 }
 
+//	NOTE: this routine will be moved into Gfx as soon as enough clarity
+//	is made regarding the field _id and _index of InventoryItem.
+//
+void extractInventoryGraphics(int16 pos, byte *dst) {
+//	printf("extractInventoryGraphics(%i)\n", pos);
+
+
+	return;
+}
+
+
 void Gfx::setMousePointer(int16 index) {
 
 	if (index == kCursorArrow) {		// standard mouse pointer
 
-		g_system->setMouseCursor(_mouseArrow, 16, 16, 0, 0, 0);
+		g_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
 		g_system->showMouse(true);
 
 	} else {
 		// inventory item pointer
 		byte *v8 = _mouseComposedArrow->_data0;
 
-		// FIXME: target offseting is not clear
-		extractInventoryGraphics(index, v8 + 7 + 32 * 7);
-		g_system->setMouseCursor(v8, 32, 32, 0, 0, 0);
+		// FIXME: destination offseting is not clear
+		byte* s = _vm->_char._objs->getFramePtr(getInventoryItemIndex(index));
+		byte* d = v8 + 7 + MOUSECOMBO_WIDTH * 7;
+
+		for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
+			memcpy(d, s, INVENTORYITEM_WIDTH);
+
+			s += INVENTORYITEM_PITCH;
+			d += MOUSECOMBO_WIDTH;
+		}
+
+		g_system->setMouseCursor(v8, MOUSECOMBO_WIDTH, MOUSECOMBO_HEIGHT, 0, 0, 0);
 	}
 
 	return;

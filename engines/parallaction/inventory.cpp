@@ -42,10 +42,6 @@ namespace Parallaction {
 #define INVENTORY_MAX_ITEMS 		30
 #define INVENTORY_FIRST_ITEM		4		// first four entries are used up by verbs
 
-#define INVENTORYITEM_PITCH 		32
-#define INVENTORYITEM_WIDTH 		24
-#define INVENTORYITEM_HEIGHT		24
-
 #define INVENTORY_ITEMS_PER_LINE	5
 #define INVENTORY_LINES 			6
 
@@ -89,7 +85,6 @@ InventoryItem _inventory[INVENTORY_MAX_ITEMS] = {
 	{ 0,	0 }
 };
 
-void drawInventoryItem(uint16 pos, InventoryItem *item);
 
 int16 getNumUsedSlots() {
 	int16 num = 0;
@@ -224,30 +219,14 @@ void highlightInventoryItem(int16 pos, byte color) {
 }
 
 
-
-
-void extractInventoryGraphics(int16 pos, byte *dst) {
-//	printf("extractInventoryGraphics(%i)\n", pos);
-
-	// NOTE: this refresh is needed because we are reading graphics data from the
-	// inventory buffer instead than from the inventory icons storage.
-	refreshInventory();
-
-	int16 line = pos / INVENTORY_ITEMS_PER_LINE;
-	int16 col = pos % INVENTORY_ITEMS_PER_LINE;
-
-	// FIXME: this will end up in a general blit function
-	byte* d = dst;
-	byte* s = _buffer + col * INVENTORYITEM_WIDTH + line * _vm->_char._objs->_height * INVENTORY_WIDTH;
-	for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
-		memcpy(d, s, INVENTORYITEM_WIDTH);
-
-		s += INVENTORY_WIDTH;
-		d += INVENTORYITEM_PITCH;
-	}
-
-	return;
+int16 getInventoryItemIndex(int16 pos) {
+	// TODO: should assert against the number of items actually contained,
+	// not the theoretical limit.
+	assert(pos >= 0 && pos < INVENTORY_MAX_ITEMS);
+	return _inventory[pos]._index;
 }
+
+
 
 void jobShowInventory(void *parm, Job *j) {
 //	printf("job_showInventory()...");
