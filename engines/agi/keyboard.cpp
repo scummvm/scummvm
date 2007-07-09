@@ -127,7 +127,7 @@ int AgiEngine::handleController(int key) {
 	}
 
 	if (key == BUTTON_LEFT) {
-		if (getflag(fMenusWork) && g_mouse.y <= CHAR_LINES) {
+		if ((getflag(fMenusWork) || (getFeatures() & GF_FORCEMENUS)) && g_mouse.y <= CHAR_LINES) {
 			newInputMode(INPUT_MENU);
 			return true;
 		}

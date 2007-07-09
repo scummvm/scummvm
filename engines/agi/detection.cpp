@@ -635,7 +635,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		},
 		GID_KQ3,
 		GType_V2,
-		0,
+		GF_FORCEMENUS,
 		0x2440,
 	},
 
