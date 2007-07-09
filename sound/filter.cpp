@@ -110,7 +110,7 @@ void FIRFilter::windowDesign(double *coeffs, uint16 length, double ripple) {
 	}
 	
 	for (i = 0; i <= (length - 1) / 2; i++) {
-		int16 n = i - (length - 1) / 2;
+		double n = i - (length - 1) / 2 - ((length % 2) ? 0 : 0.5);
 		
 		/*
 		 * Both this window and the later filter are even symmetric, so we
@@ -144,7 +144,7 @@ void FIRFilter::LPDesign(
 	uint16 i;
 	
 	for (i = 0; i <= (length - 1) / 2; i++) {
-		int16 n = i - (length - 1) / 2;
+		double n = i - (length - 1) / 2 - ((length % 2) ? 0 : 0.5);
 		
 		/*
 		 * Use an ideal transition halfway between the passband and stopband

@@ -52,6 +52,8 @@ public:
 			double dBStopbandAtten,
 			uint16 samplingFreq);
 	
+	~FIRFilter() { free(_coeffs); }
+	
 	uint16 getLength() { return _length; }
 	
 	double *getCoeffs() { return _coeffs; }
