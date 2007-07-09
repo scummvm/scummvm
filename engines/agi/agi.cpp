@@ -676,6 +676,13 @@ void AgiEngine::initialize() {
 }
 
 AgiEngine::~AgiEngine() {
+	// If the engine hasn't been initialized yet via AgiEngine::initialize(), don't attempt to free any resources,
+	// as they haven't been allocated. Fixes bug #1742432 - AGI: Engine crashes if no game is detected
+	if (_game.state == STATE_INIT) {
+		delete _rnd;	// delete _rnd, as it is allocated in the constructor, not in initialize()
+		return;
+	}
+
 	agiDeinit();
 	_sound->deinitSound();
 	delete _sound;
