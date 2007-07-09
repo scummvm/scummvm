@@ -35,8 +35,10 @@
 #include "sound/audiostream.h"
 #include "sound/rate.h"
 #include "sound/mixer.h"
+#include "sound/filter.h"
 #include "common/frac.h"
 #include "common/util.h"
+#include "common/config-manager.h"
 
 namespace Audio {
 
@@ -73,7 +75,7 @@ protected:
 public:
 	SimpleRateConverter(st_rate_t inrate, st_rate_t outrate);
 	int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r);
-	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
+	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
 		return ST_SUCCESS;
 	}
 };
@@ -179,7 +181,7 @@ protected:
 public:
 	LinearRateConverter(st_rate_t inrate, st_rate_t outrate);
 	int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r);
-	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
+	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
 		return ST_SUCCESS;
 	}
 };
@@ -269,6 +271,167 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 
 #pragma mark -
 
+/**
+ * Audio rate converter that uses filtering techniques.
+ *
+ * This currently allows us to upsample by an integer factor with very little
+ * spectral distortion.
+ *
+ * TODO: Make this a rational factor rather than an integer factor
+ *
+ * Limited to sampling frequency <= 65535 Hz.
+ */
+
+template<bool stereo, bool reverseStereo>
+class FilteringRateConverter : public RateConverter {
+protected:
+	FIRFilter *filt;
+	
+	/* Circular buffers for inputs which are currently in the filter */
+	st_sample_t *inBuf;
+	
+	/* Offset into the circular buffer of the most recent input sample */
+	uint32 inPos;
+	
+	/*
+     * Fraction of the input frequency which should be used as passband for
+	 * the filter design.
+	 */
+	double lowpassBW;
+	
+	/* Number of filter banks to use for the multirate filter */
+	uint16 numBanks;
+	
+	/* Subfilter length */
+	uint16 subLen;
+	
+	/* The current bank that we're up to (for output samples) */
+	uint16 currBank;
+	
+	/* The number of channels of audio */
+	uint8 numChan;
+
+public:
+	FilteringRateConverter(st_rate_t inrate, st_rate_t outrate);
+	~FilteringRateConverter() {
+		delete filt;
+		free(inBuf);
+	}
+	int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r);
+	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r);
+};
+
+/*
+ * Prepare processing.
+ */
+template<bool stereo, bool reverseStereo>
+FilteringRateConverter<stereo, reverseStereo>::FilteringRateConverter(st_rate_t inrate, st_rate_t outrate) {
+	if (inrate >= 65536 || outrate >= 65536) {
+		error("rate effect can only handle rates < 65536");
+	}
+	
+	currBank = 0;
+	
+	numBanks = outrate / inrate;
+	
+	// TODO: Make an editable way to set this value
+	/* This sets the point in the input signal where attenuation will begin */
+	lowpassBW = 0.925;
+	
+	// TODO: Make it so that this filter data can be reused by other
+	//       converters. 
+	/* Generate the filter coefficients */
+	filt = new FIRFilter(lowpassBW * inrate / 2.0, inrate / 2.0,
+						-40, 80, (uint16)outrate);
+	
+	uint16 len = filt->getLength();
+	
+	subLen = (len + (numBanks - 1)) / numBanks;
+	
+	/* TODO: Fix this. */
+	/* At this point I don't have any code appending 0s in this case */
+	assert((len % subLen) == 0); 
+	
+	numChan = (stereo ? 2 : 1);
+	
+	/* Two channel of audio */
+	inBuf = (st_sample_t *)calloc(numChan * subLen, sizeof(st_sample_t));
+	
+	inPos = 0;
+}
+
+template<bool stereo, bool reverseStereo>
+int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
+	st_sample_t *oend = obuf + osamp * 2;
+	
+	while (obuf < oend) {
+		if (currBank == 0) {
+			/*
+			 * We need to fetch a new input sample (two if this is a stereo
+			 * stream).  We'll want to replace the oldest sample(s) in the
+			 * circular buffer.  Since inPos points to the newest sample(s) in
+			 * the buffer, the oldest sample(s) can be found directly before
+			 * inPos.
+			 */
+			 
+			/* Circularly decrement inPos by numChan */
+			inPos = (inPos + (subLen - numChan)) % subLen;
+			
+			uint8 inLen;
+			
+			inLen = input.readBuffer(&inBuf[inPos], numChan);
+			if (inLen == 0) {
+				/* No more input samples */
+				return this->drain(obuf, (oend - obuf) / 2, vol_l, vol_r);
+			}
+			
+			assert(inLen == numChan);
+		}
+		
+		double accum0 = 0;
+		double accum1 = 0;
+		
+		uint16 i;
+		
+		/*
+		 * Convolve the input samples with the filter to get the next
+		 * outputs
+		 */
+		for (i = 0; i < subLen; i++) {
+			accum0 += (double)inBuf[(inPos + numChan * i) % subLen] /// ST_SAMPLE_MAX
+						* (filt->getCoeffs())[currBank + i*numBanks];
+			if (stereo) {
+				accum1 += (double)inBuf[(inPos + numChan * i + 1) % subLen] /// ST_SAMPLE_MAX
+						* (filt->getCoeffs())[currBank + i*numBanks];
+			}
+		}
+		
+		st_sample_t out0 = (st_sample_t)(accum0); //* ST_SAMPLE_MAX);
+		st_sample_t out1 = (st_sample_t)(stereo ? accum1 : accum0);//* ST_SAMPLE_MAX : accum0 * ST_SAMPLE_MAX);
+		
+		/* Output left channel */
+		clampedAdd(obuf[reverseStereo    ], (out0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
+
+		/* output right channel */
+		clampedAdd(obuf[reverseStereo ^ 1], (out1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
+		
+		obuf += 2;
+		
+		/* Circularly increment currBank */
+		currBank = (currBank + 1) % numBanks;
+	}
+	
+	return ST_SUCCESS;
+}
+
+template<bool stereo, bool reverseStereo>
+int FilteringRateConverter<stereo, reverseStereo>::drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
+	// TODO: implement this
+	return ST_SUCCESS;
+}
+
+
+#pragma mark -
 
 /**
  * Simple audio rate converter for the case that the inrate equals the outrate.
@@ -320,7 +483,7 @@ public:
 		return ST_SUCCESS;
 	}
 
-	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
+	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
 		return ST_SUCCESS;
 	}
 };
@@ -328,8 +491,17 @@ public:
 
 #pragma mark -
 
+// TODO: Add options checking for filtering rate converters.
 template<bool stereo, bool reverseStereo>
 RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate) {
+	if (ConfMan.hasKey("rate_converter")
+			&& (ConfMan.getInt("rate_converter") == kFilteringType)) {
+		/* Only handling integer upsampling rates at this point */
+		if (((outrate % inrate) == 0) && (outrate != inrate)) {
+			return new FilteringRateConverter<stereo, reverseStereo>(inrate, outrate);
+		}
+	}
+	
 	if (inrate != outrate) {
 		if ((inrate % outrate) == 0) {
 			return new SimpleRateConverter<stereo, reverseStereo>(inrate, outrate);

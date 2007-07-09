@@ -50,6 +50,13 @@ enum {
 	ST_SUCCESS = 0
 };
 
+/* This relates to the ConfMan rate_converter key. */
+enum RateConverterType {
+	kLinearType = 0,
+	kFilteringType = 1
+};
+	
+
 static inline void clampedAdd(int16& a, int b) {
 	register int val;
 #ifdef OUTPUT_UNSIGNED_AUDIO
@@ -75,7 +82,7 @@ public:
 	RateConverter() {}
 	virtual ~RateConverter() {}
 	virtual int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) = 0;
-	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) = 0;
+	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) = 0;
 };
 
 RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stereo, bool reverseStereo = false);
