@@ -133,9 +133,11 @@ AbstractFilesystemNode *DSFileSystemNode::getChild(const Common::String& n) cons
 	return NULL;
 }
 
-bool DSFileSystemNode::getChildren(AbstractFSList &dirList, ListMode mode) const {
+bool DSFileSystemNode::getChildren(AbstractFSList &dirList, ListMode mode, bool hidden) const {
 //	consolePrintf("Listdir\n");
 //	consolePrintf("Directory\n");
+
+	//TODO: honor the hidden flag
 
 	char temp[128];
 	strcpy(temp, _path.c_str());
@@ -283,8 +285,10 @@ AbstractFilesystemNode *GBAMPFileSystemNode::getChild(const Common::String& n) c
 	return NULL;
 }
 
-bool GBAMPFileSystemNode::getChildren(AbstractFSList& dirList, ListMode mode) const {
+bool GBAMPFileSystemNode::getChildren(AbstractFSList& dirList, ListMode mode, bool hidden) const {
 //	consolePrintf("Listdir\n");
+
+	//TODO: honor the hidden flag
 
 	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
 	

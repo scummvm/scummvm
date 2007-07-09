@@ -68,7 +68,7 @@ public:
 	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 };
 
@@ -128,8 +128,10 @@ AbstractFilesystemNode *PSPFilesystemNode::getChild(const String &n) const {
 	return new PSPFilesystemNode(newPath, true);
 }
 
-bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode) const {
+bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
+
+	//TODO: honor the hidden flag
 
 	int dfd  = sceIoDopen(_path.c_str());
 	if (dfd > 0) {

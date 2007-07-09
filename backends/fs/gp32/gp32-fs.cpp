@@ -53,6 +53,7 @@ public:
 	 */
 	GP32FilesystemNode(const String &path);
 
+	virtual bool exists() const { return true; }		//FIXME: this is just a stub
 	virtual String getDisplayName() const { return _displayName; }
 	virtual String getName() const { return _displayName; }
 	virtual String getPath() const { return _path; }
@@ -64,7 +65,7 @@ public:
 	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 };
 
@@ -193,8 +194,10 @@ AbstractFilesystemNode *GP32FilesystemNode::getChild(const String &n) const {
 	return new GP32FilesystemNode(newPath);
 }
 
-bool GP32FilesystemNode::getChildren(AbstractFSList &myList, ListMode mode) const {
+bool GP32FilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
+
+	//TODO: honor the hidden flag
 
 	GPDIRENTRY dirEntry;
 	GPFILEATTR attr;

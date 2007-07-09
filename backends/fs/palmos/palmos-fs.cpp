@@ -66,7 +66,7 @@ public:
 	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 
 private:
@@ -181,7 +181,9 @@ AbstractFilesystemNode *PalmOSFilesystemNode::getChild(const String &n) const {
 	return new PalmOSFilesystemNode(newPath);
 }
 
-bool PalmOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode) const {
+bool PalmOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
+	//TODO: honor the hidden flag
+	
 	Err error;
 	Char nameP[256];
 	FileInfoType desc;

@@ -86,7 +86,7 @@ public:
 	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 	
 	virtual AbstractFilesystemNode *getChild(const String &name) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 	
 	/**
@@ -250,8 +250,10 @@ AbstractFilesystemNode *ABoxFilesystemNode::getChild(const String &name) const {
 	return new ABoxFilesystemNode(newPath);
 }
 
-bool ABoxFilesystemNode::getChildren(AbstractFSList &list, ListMode mode) const
+bool ABoxFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hidden) const
 {
+	//TODO: honor the hidden flag
+	
 	if (!_isValid)
 	{
 		debug(6, "listDir() called on invalid node");

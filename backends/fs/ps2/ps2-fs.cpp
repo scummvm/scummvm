@@ -73,7 +73,7 @@ public:
 
 	virtual AbstractFilesystemNode *clone() const { return new Ps2FilesystemNode(this); }
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 };
 
@@ -150,7 +150,9 @@ AbstractFilesystemNode *Ps2FilesystemNode::getChild(const String &n) const {
 	return NULL;
 }
 
-bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode) const {
+bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hidden) const {
+	//TODO: honor the hidden flag
+	
 	if (!_isDirectory)
 		return false;
 

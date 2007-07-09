@@ -91,7 +91,7 @@ public:
 	 */
 	virtual AbstractFilesystemNode *clone() const { return new DSFileSystemNode(this); }
 	virtual AbstractFilesystemNode *getChild(const Common::String& name) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode = FilesystemNode::kListDirectoriesOnly) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode = FilesystemNode::kListDirectoriesOnly, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 	
 	/**
@@ -143,18 +143,21 @@ public:
 	 */
 	GBAMPFileSystemNode(const GBAMPFileSystemNode *node);
 
+	virtual bool exists() const { return true; }		//FIXME: this is just a stub
 	virtual String getDisplayName() const {  return _displayName; }
 	virtual String getName() const {  return _displayName; }
 	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
+	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
 	virtual bool isValid() const { return _isValid; }
+	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 	
 	/**
 	 * Returns a copy of this node.
 	 */
 	virtual AbstractFilesystemNode *clone() const { return new GBAMPFileSystemNode(this); }
 	virtual AbstractFilesystemNode *getChild(const Common::String& name) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode = FilesystemNode::kListDirectoriesOnly) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode = FilesystemNode::kListDirectoriesOnly, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 };
 

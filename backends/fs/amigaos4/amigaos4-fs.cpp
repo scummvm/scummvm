@@ -99,7 +99,7 @@ public:
 	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 	
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 	
 	/**
@@ -279,8 +279,10 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::getChild(const String &n) const {
 	return new AmigaOSFilesystemNode(newPath);
 }
 
-bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode) const {
+bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	ENTER();
+
+	//TODO: honor the hidden flag
 
 	if (!_bIsValid) {
 		debug(6, "Invalid node");
