@@ -8,7 +8,7 @@ AbstractFilesystemNode *WindowsFilesystemFactory::makeRootFileNode() const {
 }
 
 AbstractFilesystemNode *WindowsFilesystemFactory::makeCurrentDirectoryFileNode() const {
-	return new WindowsFilesystemNode(NULL, true);
+	return new WindowsFilesystemNode("", true);
 }
 
 AbstractFilesystemNode *WindowsFilesystemFactory::makeFileNodePath(const String &path) const {

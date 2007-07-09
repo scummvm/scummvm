@@ -82,7 +82,7 @@ public:
 	virtual bool isWritable() const { return _access(_path.c_str(), W_OK) == 0; }
 
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 
 private:
@@ -246,8 +246,10 @@ AbstractFilesystemNode *WindowsFilesystemNode::getChild(const String &n) const {
 	return new WindowsFilesystemNode(newPath, false);
 }
 
-bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode) const {
+bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
+
+	//TODO: honor the hidden flag
 
 	if (_isPseudoRoot) {
 #ifndef _WIN32_WCE
