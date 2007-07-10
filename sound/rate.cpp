@@ -398,16 +398,16 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 		 * outputs
 		 */
 		for (i = 0; i < subLen; i++) {
-			accum0 += (double)inBuf[(inPos + numChan * i) % subLen] /// ST_SAMPLE_MAX
+			accum0 += (double)inBuf[(inPos + numChan * i) % subLen]
 						* (filt->getCoeffs())[currBank + i*numBanks];
 			if (stereo) {
-				accum1 += (double)inBuf[(inPos + numChan * i + 1) % subLen] /// ST_SAMPLE_MAX
+				accum1 += (double)inBuf[(inPos + numChan * i + 1) % subLen]
 						* (filt->getCoeffs())[currBank + i*numBanks];
 			}
 		}
 		
-		st_sample_t out0 = (st_sample_t)(accum0); //* ST_SAMPLE_MAX);
-		st_sample_t out1 = (st_sample_t)(stereo ? accum1 : accum0);//* ST_SAMPLE_MAX : accum0 * ST_SAMPLE_MAX);
+		st_sample_t out0 = (st_sample_t)(accum0);
+		st_sample_t out1 = (st_sample_t)(stereo ? accum1 : accum0);
 		
 		/* Output left channel */
 		clampedAdd(obuf[reverseStereo    ], (out0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
