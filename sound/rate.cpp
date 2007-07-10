@@ -310,6 +310,15 @@ protected:
 	
 	/* The number of channels of audio */
 	uint8 numChan;
+	
+	/*
+	 * Used to adjust the DC filter gain, for the case of positive
+	 * reinforcement in the output when the filter coefficients are negative.
+	 */
+	double kFudgeFactor;
+	
+	/* The maximum DC gain across all subfilters */
+	double filtGain;
 
 public:
 	FilteringRateConverter(st_rate_t inrate, st_rate_t outrate);
@@ -350,11 +359,39 @@ FilteringRateConverter<stereo, reverseStereo>::FilteringRateConverter(st_rate_t 
 	
 	/* TODO: Fix this. */
 	/* At this point I don't have any code appending 0s in this case */
-	assert((len % subLen) == 0); 
+	assert((len % subLen) == 0);
+	
+	/* Find the DC gain of each subfilter */
+	double *gain = (double *)calloc(numBanks, sizeof(double));
+	
+	uint16 i;
+	for (i = 0; i < len; i++) {
+		/* 
+		 * Using the commented-out line and setting kFudgeFactor to 1 will
+		 * ensure that no clipping will occur, but this makes output volumes
+		 * softer than those of other resamplers using otherwise equal
+		 * options.
+		 */
+		//gain[i % numBanks] += fabs((filt->getCoeffs())[i]);
+		gain[i % numBanks] += (filt->getCoeffs())[i];
+	}
+	
+	/* Find the maximum of these subfilter gains */
+	filtGain = 0;
+	
+	for (i = 0; i < numBanks; i++) {
+		if (gain[i] > filtGain) {
+			filtGain = gain[i];
+		}
+	}
+	
+	free(gain);
+	
+	// TODO: Empirically determined -- is there some reasoned approximation?
+	kFudgeFactor = 0.75;
 	
 	numChan = (stereo ? 2 : 1);
 	
-	/* Two channel of audio */
 	inBuf = (st_sample_t *)calloc(numChan * subLen, sizeof(st_sample_t));
 	
 	inPos = 0;
@@ -406,14 +443,44 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 			}
 		}
 		
-		st_sample_t out0 = (st_sample_t)(accum0);
-		st_sample_t out1 = (st_sample_t)(stereo ? accum1 : accum0);
+		/* 
+		 * Cancel out the gain effects of the filter (approximated -- if we 
+		 * ensure that there can be no clipping at all, the volume is far
+		 * softer than the other resamplers produce)
+		 */
+		double out0 = kFudgeFactor * accum0 / filtGain;
+		double out1 = kFudgeFactor * (stereo ? accum1 : accum0) / filtGain;
+		
+		/* Check for clipping and clamp values in these cases */
+		if (fmax(out0, out1) > ST_SAMPLE_MAX) {
+			debug(1, "Clipping: sample value is %g (should be maximally %g)", fmax(out0, out1), (double)ST_SAMPLE_MAX);
+			
+			if (out0 > ST_SAMPLE_MAX) {
+				out0 = ST_SAMPLE_MAX;
+			}
+			if (out1 > ST_SAMPLE_MAX) {
+				out1 = ST_SAMPLE_MAX;
+			}
+		}
+		
+		if (fmin(out0, out1) < ST_SAMPLE_MIN) {
+			debug(1, "Clipping: sample value is %g (should be minimally %g)", fmin(out0, out1), (double)ST_SAMPLE_MIN);
+			if (out0 < ST_SAMPLE_MIN) {
+				out0 = ST_SAMPLE_MIN;
+			}
+			if (out1 < ST_SAMPLE_MIN) {
+				out1 = ST_SAMPLE_MIN;
+			}
+		}
+		
+		assert(fmax(out0, out1) <= ST_SAMPLE_MAX);
+		assert(fmin(out0, out1) >= ST_SAMPLE_MIN);
 		
 		/* Output left channel */
-		clampedAdd(obuf[reverseStereo    ], (out0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
+		clampedAdd(obuf[reverseStereo    ], ((st_sample_t)out0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
 
 		/* output right channel */
-		clampedAdd(obuf[reverseStereo ^ 1], (out1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
+		clampedAdd(obuf[reverseStereo ^ 1], ((st_sample_t)out1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
 		
 		obuf += 2;
 		
