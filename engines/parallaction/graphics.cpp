@@ -449,16 +449,6 @@ void Gfx::initMouse(uint16 arg_0) {
 	return;
 }
 
-//	NOTE: this routine will be moved into Gfx as soon as enough clarity
-//	is made regarding the field _id and _index of InventoryItem.
-//
-void extractInventoryGraphics(int16 pos, byte *dst) {
-//	printf("extractInventoryGraphics(%i)\n", pos);
-
-
-	return;
-}
-
 
 void Gfx::setMousePointer(int16 index) {
 
