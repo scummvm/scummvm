@@ -178,7 +178,7 @@ void AgiEngine::processEvents() {
 			case Common::KEYCODE_MINUS:
 				key = '-';
 				break;
-			case Common::KEYCODE_9:
+			case Common::KEYCODE_TAB:
 				key = 0x0009;
 				break;
 			case Common::KEYCODE_F1:
