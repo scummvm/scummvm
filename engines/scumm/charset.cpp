@@ -48,6 +48,8 @@ better separation of the various modules.
 void ScummEngine::loadCJKFont() {
 	Common::File fp;
 	_useCJKMode = false;
+	_textSurfaceMultiplier = 1;
+
 	if (_language == Common::JA_JPN && _game.version <= 5) { // FM-TOWNS v3 / v5 Kanji
 		int numChar = 256 * 32;
 		_2byteWidth = 16;
@@ -60,6 +62,7 @@ void ScummEngine::loadCJKFont() {
 			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
 			fp.close();
 		}
+		_textSurfaceMultiplier = 2;
 	} else if (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN) {
 		int numChar = 0;
 		const char *fontFile = NULL;
@@ -85,6 +88,7 @@ void ScummEngine::loadCJKFont() {
 		if (fontFile && fp.open(fontFile)) {
 			debug(2, "Loading CJK Font");
 			_useCJKMode = true;
+			_textSurfaceMultiplier = 1; // No multiplication here
 			fp.seek(2, SEEK_CUR);
 			_2byteWidth = fp.readByte();
 			_2byteHeight = fp.readByte();
@@ -276,7 +280,7 @@ int CharsetRendererCommon::getFontHeight() {
 // do spacing for variable width old-style font
 int CharsetRendererClassic::getCharWidth(byte chr) {
 	if (chr >= 0x80 && _vm->_useCJKMode)
-		return _vm->_2byteWidth / 2;
+		return _vm->_2byteWidth;
 	int spacing = 0;
 
 	int offs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
@@ -1160,7 +1164,7 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 
 int CharsetRendererV3::getCharWidth(byte chr) {
 	if (chr & 0x80 && _vm->_useCJKMode)
-		return _vm->_2byteWidth / 2;
+		return _vm->_2byteWidth;
 	int spacing = 0;
 
 	spacing = *(_widthTable + chr);
@@ -1257,18 +1261,18 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		_hasMask = true;
 		_textScreenID = vs->number;
 	}
-	if (ignoreCharsetMask || !vs->hasTwoBuffers) {
+	if ((ignoreCharsetMask || !vs->hasTwoBuffers) && !(_vm->_useCJKMode && _vm->_textSurfaceMultiplier == 2)) {
 		dst = vs->getPixels(_left, drawTop);
 		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight);
 	} else {
-		dst = (byte *)_vm->_textSurface.getBasePtr(_left, _top);
+		dst = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier);
 		drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight);
 	}
 
 	if (_str.left > _left)
 		_str.left = _left;
 
-	_left += origWidth;
+	_left += origWidth / _vm->_textSurfaceMultiplier;
 
 	if (_str.right < _left) {
 		_str.right = _left;
@@ -1276,8 +1280,8 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 			_str.right++;
 	}
 
-	if (_str.bottom < _top + height)
-		_str.bottom = _top + height;
+	if (_str.bottom < _top + height / _vm->_textSurfaceMultiplier)
+		_str.bottom = _top + height / _vm->_textSurfaceMultiplier;
 }
 
 void CharsetRendererV3::drawChar(int chr, const Graphics::Surface &s, int x, int y) {
@@ -1391,8 +1395,8 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	_top += offsY;
 	_left += offsX;
 
-	if (_left + origWidth > _right + 1 || _left < 0) {
-		_left += origWidth;
+	if (_left + origWidth / _vm->_textSurfaceMultiplier > _right + 1 || _left < 0) {
+		_left += origWidth / _vm->_textSurfaceMultiplier;
 		_top -= offsY;
 		return;
 	}
@@ -1424,7 +1428,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 	printCharIntern(is2byte, charPtr, origWidth, origHeight, width, height, vs, ignoreCharsetMask);
 
-	_left += origWidth;
+	_left += origWidth / _vm->_textSurfaceMultiplier;
 
 	if (_str.right < _left) {
 		_str.right = _left;
@@ -1432,8 +1436,8 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 			_str.right++;
 	}
 
-	if (_str.bottom < _top + height)
-		_str.bottom = _top + height;
+	if (_str.bottom < _top + height / _vm->_textSurfaceMultiplier)
+		_str.bottom = _top + height / _vm->_textSurfaceMultiplier;
 
 	_top -= offsY;
 }
@@ -1473,12 +1477,12 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 	} else {
 		Graphics::Surface dstSurface;
 		Graphics::Surface backSurface;
-		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
+		if ((ignoreCharsetMask || !vs->hasTwoBuffers) && !(_vm->_useCJKMode && _vm->_textSurfaceMultiplier == 2)) {
 			dstSurface = *vs;
 			dstPtr = vs->getPixels(_left, drawTop);
 		} else {
 			dstSurface = _vm->_textSurface;
-			dstPtr = (byte *)_vm->_textSurface.pixels + (_top - _vm->_screenTop) * _vm->_textSurface.pitch + _left;
+			dstPtr = (byte *)_vm->_textSurface.pixels + (_top - _vm->_screenTop) * _vm->_textSurface.pitch * _vm->_textSurfaceMultiplier + _left * _vm->_textSurfaceMultiplier;
 		}
 
 		if (_blitAlso && vs->hasTwoBuffers) {

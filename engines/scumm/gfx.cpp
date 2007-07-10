@@ -561,8 +561,25 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		return;
 	
 	const byte *src = vs->getPixels(x, top);
+	int m = _textSurfaceMultiplier;
+	byte *dst;
+	int vsPitch;
 	int pitch = vs->pitch;
 
+	if (_useCJKMode && _textSurfaceMultiplier == 2) {
+		dst = _fmtownsBuf;
+
+		scale2x(dst, _screenWidth * m, src, vs->pitch,  width, height);
+		src = dst;
+
+		vsPitch = _screenWidth * m - width * m;
+
+	} else {
+		vsPitch = vs->pitch - width;
+	}
+
+	dst = _compositeBuf;
+		
 	if (_game.version < 7) {
 		// For The Dig, FT and COMI, we just blit everything to the screen at once.
 		// For older games, things are more complicated. First off, we need to
@@ -572,7 +589,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 		// Compute pointer to the text surface
 		assert(_compositeBuf);
-		const byte *text = (byte *)_textSurface.getBasePtr(x, y);
+		const byte *text = (byte *)_textSurface.getBasePtr(x * m, y * m);
 
 		// The values x, width, etc. are all multiples of 8 at this point,
 		// so loop unrolloing might be a good idea...
@@ -594,19 +611,18 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		//         but also more complicated to implement, and incurs a bigger overhead when
 		//         writing to the text surface.
 #ifdef __DS__
-		DS::asmDrawStripToScreen(height, width, text, src, _compositeBuf, vs->pitch, width, _textSurface.pitch);
+		DS::asmDrawStripToScreen(height, width, text, src, dst, vs->pitch, width, _textSurface.pitch);
 #else
-		byte *dst = _compositeBuf;
-		for (int h = 0; h < height; ++h) {
-			for (int w = 0; w < width; ++w) {
+		for (int h = 0; h < height * m; ++h) {
+			for (int w = 0; w < width * m; ++w) {
 				byte tmp = *text++;
 				if (tmp == CHARSET_MASK_TRANSPARENCY)
 					tmp = *src;
 				*dst++ = tmp;
 				src++;
 			}
-			src += vs->pitch - width;
-			text += _textSurface.pitch - width;
+			src += vsPitch;
+			text += _textSurface.pitch - width * m;
 		}
 #endif
 
@@ -621,6 +637,12 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 			// center image on the screen
 			x += (Common::kHercW - _screenWidth * 2) / 2;	// (720 - 320*2)/2 = 40
+		} else if (_useCJKMode && m == 2) {
+			pitch *= m;
+			x *= m;
+			y *= m;
+			width *= m;
+			height *= m;
 		} else {
 			if (_renderMode == Common::kRenderCGA)
 				ditherCGA(_compositeBuf, width, x, y, width, height);
@@ -719,6 +741,25 @@ void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *wid
 	*y = yo*2 - yo/4;
 	*width *= 2;
 	*height = dsty - *y;
+}
+
+void ScummEngine::scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h) {
+	byte *dstL1 = dst;
+	byte *dstL2 = dst + dstPitch;
+
+	int dstAdd = dstPitch * 2 - w * 2;
+	int srcAdd = srcPitch - w;
+
+	while (h--) {
+		for (int x = 0; x < w; ++x, dstL1 += 2, dstL2 += 2) {
+			uint16 col = *src++;
+			col |= col << 8;
+			*(uint16*)(dstL1) = col;
+			*(uint16*)(dstL2) = col;
+		}
+		dstL1 += dstAdd; dstL2 += dstAdd;
+		src += srcAdd;
+	}
 }
 
 
@@ -1117,8 +1158,8 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 			error("can only copy bg to main window");
 		blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height);
 		if (_charset->_hasMask) {
-			byte *mask = (byte *)_textSurface.getBasePtr(x, y - _screenTop);
-			fill(mask, _textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
+			byte *mask = (byte *)_textSurface.getBasePtr(x * _textSurfaceMultiplier, (y - _screenTop) * _textSurfaceMultiplier);
+			fill(mask, _textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier);
 		}
 	} else if (_game.heversion >= 71) {
 		// Flags are used for different methods in HE games
@@ -3362,7 +3403,17 @@ void ScummEngine::dissolveEffect(int width, int height) {
 	for (i = 0; i < w * h; i++) {
 		x = offsets[i] % vs->pitch;
 		y = offsets[i] / vs->pitch;
-		_system->copyRectToScreen(vs->getPixels(x, y), vs->pitch, x, y + vs->topline, width, height);
+
+		if (_useCJKMode && _textSurfaceMultiplier == 2) {
+			int m = _textSurfaceMultiplier;
+			byte *dst = _fmtownsBuf + x * m + y * m * _screenWidth * m;
+			scale2x(dst, _screenWidth * m, vs->getPixels(x, y), vs->pitch,  width, height);
+
+			_system->copyRectToScreen(dst, _screenWidth * m, x * m, (y + vs->topline) * m, width * m, height * m);
+		} else {
+			_system->copyRectToScreen(vs->getPixels(x, y), vs->pitch, x, y + vs->topline, width, height);
+		}
+
 
 		if (++blits >= blits_before_refresh) {
 			blits = 0;
@@ -3391,16 +3442,30 @@ void ScummEngine::scrollEffect(int dir) {
 
 	step = (step * delay) / kScrolltime;
 
+	byte *src;
+	int m = _textSurfaceMultiplier;
+	int vsPitch = vs->pitch;
+
 	switch (dir) {
 	case 0:
 		//up
 		y = 1 + step;
 		while (y < vs->h) {
 			moveScreen(0, -step, vs->h);
-			_system->copyRectToScreen(vs->getPixels(0, y - step),
-				vs->pitch,
-				0, vs->h - step,
-				vs->w, step);
+
+			src = vs->getPixels(0, y - step);
+			if (_useCJKMode && m == 2) {
+				int x1 = 0, y1 = vs->h - step;
+				byte *dst = _fmtownsBuf + x1 * m + y1 * m * _screenWidth * m;
+				scale2x(dst, _screenWidth * m, src, vs->pitch, vs->w, step);
+				src = dst;
+				vsPitch = _screenWidth * 2;
+			}
+
+			_system->copyRectToScreen(src,
+				vsPitch,
+				0 * m, (vs->h - step) * m,
+				vs->w * m, step * m);
 			_system->updateScreen();
 			waitForTimer(delay);
 
@@ -3412,10 +3477,18 @@ void ScummEngine::scrollEffect(int dir) {
 		y = 1 + step;
 		while (y < vs->h) {
 			moveScreen(0, step, vs->h);
-			_system->copyRectToScreen(vs->getPixels(0, vs->h - y),
-				vs->pitch,
+			src = vs->getPixels(0, vs->h - y);
+			if (_useCJKMode && m == 2) {
+				int x1 = 0, y1 = 0;
+				byte *dst = _fmtownsBuf + x1 * m + y1 * m * _screenWidth * m;
+				scale2x(dst, _screenWidth * m, src, vs->pitch, vs->w, step);
+				src = dst;
+				vsPitch = _screenWidth * 2;
+			}
+			_system->copyRectToScreen(src,
+				vsPitch,
 				0, 0,
-				vs->w, step);
+				vs->w * m, step * m);
 			_system->updateScreen();
 			waitForTimer(delay);
 
@@ -3427,10 +3500,18 @@ void ScummEngine::scrollEffect(int dir) {
 		x = 1 + step;
 		while (x < vs->w) {
 			moveScreen(-step, 0, vs->h);
-			_system->copyRectToScreen(vs->getPixels(x - step, 0),
-				vs->pitch,
-				vs->w - step, 0,
-				step, vs->h);
+			src = vs->getPixels(x - step, 0);
+			if (_useCJKMode && m == 2) {
+				int x1 = vs->w - step, y1 = 0;
+				byte *dst = _fmtownsBuf + x1 * m + y1 * m * _screenWidth * m;
+				scale2x(dst, _screenWidth * m, src, vs->pitch, step, vs->h);
+				src = dst;
+				vsPitch = _screenWidth * 2;
+			}
+			_system->copyRectToScreen(src,
+				vsPitch,
+				(vs->w - step) * m, 0,
+				step * m, vs->h * m);
 			_system->updateScreen();
 			waitForTimer(delay);
 
@@ -3442,8 +3523,16 @@ void ScummEngine::scrollEffect(int dir) {
 		x = 1 + step;
 		while (x < vs->w) {
 			moveScreen(step, 0, vs->h);
-			_system->copyRectToScreen(vs->getPixels(vs->w - x, 0),
-				vs->pitch,
+			src = vs->getPixels(vs->w - x, 0);
+			if (_useCJKMode && m == 2) {
+				int x1 = 0, y1 = 0;
+				byte *dst = _fmtownsBuf + x1 * m + y1 * m * _screenWidth * m;
+				scale2x(dst, _screenWidth * m, src, vs->pitch, step, vs->h);
+				src = dst;
+				vsPitch = _screenWidth * 2;
+			}
+			_system->copyRectToScreen(src,
+				vsPitch,
 				0, 0,
 				step, vs->h);
 			_system->updateScreen();

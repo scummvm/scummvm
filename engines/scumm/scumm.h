@@ -1026,10 +1026,12 @@ protected:
 	// Screen rendering
 	byte *_compositeBuf;
 	byte *_herculesBuf;
+	byte *_fmtownsBuf;
 	virtual void drawDirtyScreenParts();
 	void updateDirtyScreen(VirtScreenNumber slot);
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
 	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
+	void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
 
 public:
 	VirtScreen *findVirtScreen(int y);
@@ -1151,6 +1153,7 @@ public:
 	 * drawStripToScreen() composits it over the game graphics.
 	 */
 	Graphics::Surface _textSurface;
+	int _textSurfaceMultiplier;
 
 protected:
 	byte _charsetColor;

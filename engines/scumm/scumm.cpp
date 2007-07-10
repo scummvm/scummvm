@@ -587,6 +587,7 @@ ScummEngine::~ScummEngine() {
 
 	free(_compositeBuf);
 	free(_herculesBuf);
+	free(_fmtownsBuf);
 
 	delete _debugger;
 	
@@ -1078,11 +1079,18 @@ int ScummEngine::init() {
 		_fileHandle = new ScummFile();
 	}
 	
+	// Load CJK font, if present
+	// Load it earlier so _useCJKMode variable could be set
+	loadCJKFont();
+
 	// Initialize backend
 	_system->beginGFXTransaction();
 		bool defaultTo1XScaler = false;
 		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 			_system->initSize(Common::kHercW, Common::kHercH);
+			defaultTo1XScaler = true;
+		} else if (_useCJKMode) {
+			_system->initSize(_screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier);
 			defaultTo1XScaler = true;
 		} else {
 			_system->initSize(_screenWidth, _screenHeight);
@@ -1135,14 +1143,11 @@ void ScummEngine::setupScumm() {
 	// Load localization data, if present
 	loadLanguageBundle();
 
-	// Load CJK font, if present
-	loadCJKFont();
-
 	// Create the charset renderer
 	setupCharsetRenderer();
 
 	// Create and clear the text surface
-	_textSurface.create(_screenWidth, _screenHeight, 1);
+	_textSurface.create(_screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, 1);
 	clearTextSurface();
 
 	// Create the costume renderer
@@ -1210,6 +1215,13 @@ void ScummEngine::setupScumm() {
 #if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 	Graphics::initfonts();
 #endif
+
+	_fmtownsBuf = 0;
+	if (_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) {
+		_fmtownsBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier);
+	}
+
+	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier);
 }
 
 #ifndef DISABLE_SCUMM_7_8
