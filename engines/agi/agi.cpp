@@ -554,7 +554,7 @@ AgiTextColor AgiButtonStyle::getColor(bool hasFocus, bool pressed, bool positive
 			return AgiTextColor(pcBlack, pcWhite);
 }
 
-AgiTextColor AgiButtonStyle::getColor(bool hasFocus, bool pressed, bool baseFgColor, bool baseBgColor) const {
+AgiTextColor AgiButtonStyle::getColor(bool hasFocus, bool pressed, int baseFgColor, int baseBgColor) const {
 	return getColor(hasFocus, pressed, AgiTextColor(baseFgColor, baseBgColor));
 }
 

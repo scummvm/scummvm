@@ -375,7 +375,7 @@ public:
 	 * @param baseFgColor Foreground color of the button when it has no focus and is not being pressed.
 	 * @param baseBgColor Background color of the button when it has no focus and is not being pressed.
 	 */
-	AgiTextColor getColor(bool hasFocus, bool pressed, bool baseFgColor, bool baseBgColor) const;
+	AgiTextColor getColor(bool hasFocus, bool pressed, int baseFgColor, int baseBgColor) const;
 
 	/**
 	 * Get the color of a button with the given base color and state ignoring current style.
