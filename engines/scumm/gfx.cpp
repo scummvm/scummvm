@@ -35,9 +35,12 @@
 #include "scumm/usage_bits.h"
 #include "scumm/he/wiz_he.h"
 #include "scumm/util.h"
-#ifdef __DS__
-#include "blitters.h"
-#endif
+
+#ifdef USE_ARM_GFX_ASM
+extern "C" void DrawStripToScreenARM(int height, int width, byte const* text, byte const* src, byte* dst, 
+	int vsPitch, int vmScreenWidth, int textSurfacePitch);
+extern "C" void Copy8ColARM(byte* dst, int dstPitch, const byte* src, int height);
+#endif /* USE_ARM_GFX_ASM */
 
 namespace Scumm {
 
@@ -610,8 +613,8 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		//     (b) RLE encode the _textSurface row-wise. This is an improved variant of (a),
 		//         but also more complicated to implement, and incurs a bigger overhead when
 		//         writing to the text surface.
-#ifdef __DS__
-		DS::asmDrawStripToScreen(height, width, text, src, dst, vs->pitch, width, _textSurface.pitch);
+#ifdef ARM_USE_GFX_ASM
+		DrawStripToScreenARM(height, width, text, src, dst, vs->pitch, width, _textSurface.pitch);
 #else
 		for (int h = 0; h < height * m; ++h) {
 			for (int w = 0; w < width * m; ++w) {
@@ -625,7 +628,6 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 			text += _textSurface.pitch - width * m;
 		}
 #endif
-
 		src = _compositeBuf;
 		pitch = width;
 
@@ -1064,11 +1066,14 @@ static void fill(byte *dst, int dstPitch, byte color, int w, int h) {
 	}
 }
 
+#ifdef ARM_USE_GFX_ASM
+
+#define copy8Col(A,B,C,D) copy8ColARM(A,B,C,D)
+
+#else
+
 static void copy8Col(byte *dst, int dstPitch, const byte *src, int height) {
 
-#ifndef __DS__
-	
-	
 	do {
 #if defined(SCUMM_NEED_ALIGNMENT)
 		memcpy(dst, src, 8);
@@ -1079,11 +1084,9 @@ static void copy8Col(byte *dst, int dstPitch, const byte *src, int height) {
 		dst += dstPitch;
 		src += dstPitch;
 	} while (--height);
-#else	
-	DS::asmCopy8Col(dst, dstPitch, src, height);
-#endif
-	
 }
+
+#endif /* ARM_USE_GFX_ASM */
 
 static void clear8Col(byte *dst, int dstPitch, int height) {
 	do {

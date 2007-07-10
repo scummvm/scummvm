@@ -52,6 +52,7 @@ USE_ZLIB          = 1
 #DISABLE_HQ_SCALERS = 1
 USE_ARM_SOUND_ASM = 1
 USE_ARM_SMUSH_ASM = 1
+USE_ARM_GFX_ASM   = 1
 
 
 ########################################################################
@@ -85,10 +86,6 @@ DEFINES += -DNONSTANDARD_PORT
 DEFINES += -DWIN32 
 DEFINES += -D__stdcall= -Dcdecl= -D__cdecl__= -D__cdecl= -Wno-multichar
 
-ifdef WINCE_DEBUG_BUILD
-DEFINES += -DDEBUG -DUSE_WINDBG -g
-endif
-
 INCLUDES := -I$(srcdir) -I. -I$(srcdir)/engines -Imissing/gcc -Ilibs/include -Ilibs/include/sdl -ICEgui -ICEkeys -I$(wince_gcc_root)/include
 
 CFLAGS := -O3 -march=armv4 -mtune=xscale
@@ -97,6 +94,11 @@ CXXFLAGS := $(CFLAGS)
 
 LDFLAGS := -Llibs/lib -L$(wince_gcc_root)/lib
 LIBS := -lSDL
+
+ifdef WINCE_DEBUG_BUILD
+DEFINES += -DDEBUG -DUSE_WINDBG -g
+LDFLAGS += -debug
+endif
 
 ifdef USE_ZLIB
 DEFINES += -DUSE_ZLIB
@@ -129,8 +131,12 @@ DEFINES += -DUSE_FLAC
 LIBS += -lFLAC
 endif
 
-ifdef USE_ARM_SMUSH
-DEFINES += -DUSE_ARM_SMUSH
+ifdef USE_ARM_SMUSH_ASM
+DEFINES += -DUSE_ARM_SMUSH_ASM
+endif
+
+ifdef USE_ARM_GFX_ASM
+DEFINES += -DUSE_ARM_GFX_ASM
 endif
 
 LIBS += --entry WinMainCRTStartup
