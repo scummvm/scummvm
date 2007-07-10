@@ -697,6 +697,7 @@ void AgiEngine::initialize() {
 	}
 
 	_buttonStyle = AgiButtonStyle(_renderMode);
+	_defaultButtonStyle = AgiButtonStyle();
 	_console = new Console(this);
 	_gfx = new GfxMgr(this);
 	_sound = new SoundMgr(this, _mixer);

@@ -516,7 +516,7 @@ int AgiEngine::selectSlot() {
 	buttonY = (vm + 17) * CHAR_LINES;
 	
 	for (i = 0; i < 2; i++)
-		_gfx->drawButton(buttonX[i], buttonY, buttonText[i], 0, 0, MSG_BOX_TEXT, MSG_BOX_COLOUR);
+		_gfx->drawDefaultStyleButton(buttonX[i], buttonY, buttonText[i], 0, 0, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 
 	AllowSyntheticEvents on(this);
 	int oldFirstSlot = _firstSlot + 1;

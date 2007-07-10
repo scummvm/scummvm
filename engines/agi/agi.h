@@ -81,6 +81,7 @@ typedef signed int Err;
 #define	MSG_BOX_COLOUR	0x0f	/* White */
 #define MSG_BOX_TEXT	0x00	/* Black */
 #define MSG_BOX_LINE	0x04	/* Red */
+#define BUTTON_BORDER	0x00	/* Black */
 #define STATUS_FG	0x00		/* Black */
 #define	STATUS_BG	0x0f		/* White */
 
@@ -708,6 +709,7 @@ public:
 
 	Menu* _menu;
 	AgiButtonStyle _buttonStyle;
+	AgiButtonStyle _defaultButtonStyle;
 
 	char _lastSentence[40];
 

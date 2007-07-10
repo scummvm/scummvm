@@ -554,13 +554,24 @@ void GfxMgr::printCharacter(int x, int y, char c, int fg, int bg) {
 }
 
 /**
- * Draw button
+ * Draw a default style button.
+ * Swaps background and foreground color if button is in focus or being pressed.
  * @param x  x coordinate of the button
  * @param y  y coordinate of the button
  * @param a  set if the button has focus
  * @param p  set if the button is pressed
+ * @param fgcolor foreground color of the button when it is neither in focus nor being pressed
+ * @param bgcolor background color of the button when it is neither in focus nor being pressed
  */
-void GfxMgr::drawButton(int x, int y, const char *s, int a, int p, int fgcolor, int bgcolor) {
+void GfxMgr::drawDefaultStyleButton(int x, int y, const char *s, int a, int p, int fgcolor, int bgcolor) {
+	int textOffset     = _vm->_defaultButtonStyle.getTextOffset(a > 0, p > 0);
+	AgiTextColor color = _vm->_defaultButtonStyle.getColor     (a > 0, p > 0, fgcolor, bgcolor);
+	bool border        = _vm->_defaultButtonStyle.getBorder    (a > 0, p > 0);
+
+	rawDrawButton(x, y, s, color.fg, color.bg, border, textOffset);
+}
+
+void GfxMgr::rawDrawButton(int x, int y, const char *s, int fgcolor, int bgcolor, bool border, int textOffset) {
 	int len = strlen(s);
 	int x1, y1, x2, y2;
 
@@ -569,8 +580,12 @@ void GfxMgr::drawButton(int x, int y, const char *s, int a, int p, int fgcolor, 
 	x2 = x + CHAR_COLS * len + 2;
 	y2 = y + CHAR_LINES + 2;
 
+	// Draw a filled rectangle that's larger than the button. Used for drawing
+	// a border around the button as the button itself is drawn after this.
+	drawRectangle(x1, y1, x2, y2, border ? BUTTON_BORDER : MSG_BOX_COLOUR);
+	
 	while (*s) {
-		putTextCharacter(0, x + (!!p), y + (!!p), *s++, a ? bgcolor : fgcolor, a ? fgcolor : bgcolor);
+		putTextCharacter(0, x + textOffset, y + textOffset, *s++, fgcolor, bgcolor);
 		x += CHAR_COLS;
 	}
 

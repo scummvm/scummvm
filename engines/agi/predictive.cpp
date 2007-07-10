@@ -200,9 +200,9 @@ bool AgiEngine::predictiveDialog(void) {
 					color2 = 7;
 				}
 				if (i == 14) {
-					_gfx->drawButton(bx[i], by[i], modes[mode], i == active, 0, color1, color2);
+					_gfx->drawDefaultStyleButton(bx[i], by[i], modes[mode], i == active, 0, color1, color2);
 				} else {
-					_gfx->drawButton(bx[i], by[i], buttons[i], i == active, 0, color1, color2);
+					_gfx->drawDefaultStyleButton(bx[i], by[i], buttons[i], i == active, 0, color1, color2);
 				}
 			}
 

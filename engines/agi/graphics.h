@@ -50,6 +50,9 @@ private:
 	uint8 _agipalPalette[16 * 3];
 	int _agipalFileNum;
 
+private:
+	void rawDrawButton(int x, int y, const char *s, int fgcolor, int bgcolor, bool border, int textOffset);
+
 public:
 	GfxMgr(AgiEngine *vm);
 
@@ -74,7 +77,7 @@ public:
 	void clearScreen(int);
 	void clearConsoleScreen(int);
 	void drawBox(int, int, int, int, int, int, int);
-	void drawButton(int, int, const char *, int, int, int fgcolor = 0, int bgcolor = 0);
+	void drawDefaultStyleButton(int, int, const char *, int, int, int fgcolor = 0, int bgcolor = 0);
 	int testButton(int, int, const char *);
 	void drawRectangle(int, int, int, int, int);
 	void saveBlock(int, int, int, int, uint8 *);
