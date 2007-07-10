@@ -280,7 +280,7 @@ int CharsetRendererCommon::getFontHeight() {
 // do spacing for variable width old-style font
 int CharsetRendererClassic::getCharWidth(byte chr) {
 	if (chr >= 0x80 && _vm->_useCJKMode)
-		return _vm->_2byteWidth;
+		return _vm->_2byteWidth / 2;
 	int spacing = 0;
 
 	int offs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
@@ -1164,7 +1164,7 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 
 int CharsetRendererV3::getCharWidth(byte chr) {
 	if (chr & 0x80 && _vm->_useCJKMode)
-		return _vm->_2byteWidth;
+		return _vm->_2byteWidth / 2;
 	int spacing = 0;
 
 	spacing = *(_widthTable + chr);
