@@ -593,7 +593,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 		// The values x, width, etc. are all multiples of 8 at this point,
 		// so loop unrolloing might be a good idea...
-		assert(0 == ((int)text & 3));
+		assert(0 == ((long)text & 3));
 		assert(0 == (width & 3));
 
 		// Compose the text over the game graphics
