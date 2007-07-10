@@ -571,6 +571,24 @@ void GfxMgr::drawDefaultStyleButton(int x, int y, const char *s, int a, int p, i
 	rawDrawButton(x, y, s, color.fg, color.bg, border, textOffset);
 }
 
+/**
+ * Draw a button using the currently chosen style.
+ * Amiga-style is used for the Amiga-rendering mode, PC-style is used otherwise.
+ * @param x  x coordinate of the button
+ * @param y  y coordinate of the button
+ * @param hasFocus  set if the button has focus
+ * @param pressed  set if the button is pressed
+ * @param positive  set if button is positive, otherwise button is negative (Only matters with Amiga-style buttons)
+ * TODO: Make Amiga-style buttons a bit wider as they were in Amiga AGI games.
+ */
+void GfxMgr::drawCurrentStyleButton(int x, int y, const char *label, bool hasFocus, bool pressed, bool positive) {
+	int textOffset     = _vm->_buttonStyle.getTextOffset(hasFocus, pressed);
+	AgiTextColor color = _vm->_buttonStyle.getColor(hasFocus, pressed, positive);
+	bool border        = _vm->_buttonStyle.getBorder(hasFocus, pressed);
+	
+	rawDrawButton(x, y, label, color.fg, color.bg, border, textOffset);
+}
+
 void GfxMgr::rawDrawButton(int x, int y, const char *s, int fgcolor, int bgcolor, bool border, int textOffset) {
 	int len = strlen(s);
 	int x1, y1, x2, y2;

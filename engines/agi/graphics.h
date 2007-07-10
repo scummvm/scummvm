@@ -78,6 +78,7 @@ public:
 	void clearConsoleScreen(int);
 	void drawBox(int, int, int, int, int, int, int);
 	void drawDefaultStyleButton(int, int, const char *, int, int, int fgcolor = 0, int bgcolor = 0);
+	void drawCurrentStyleButton(int x, int y, const char *label, bool hasFocus, bool pressed = false, bool positive = true);
 	int testButton(int, int, const char *);
 	void drawRectangle(int, int, int, int, int);
 	void saveBlock(int, int, int, int, uint8 *);
