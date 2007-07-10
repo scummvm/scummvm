@@ -39,6 +39,11 @@ enum {
 #include "towns.h"
 #include "amiga.h"
 
+const Game kyra1FanTranslations[] = {
+	{ kKyra1, IT_ITA, kTalkieVersion, "7a6887428c4847625db132a461cabbbf", kyra1FreCD },
+	GAME_DUMMY_ENTRY
+};
+
 bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
@@ -718,6 +723,7 @@ const Game *gameDescs[] = {
 	kyra1GerGames,
 	kyra1TownsGames,
 	kyra1AmigaGames,
+	kyra1FanTranslations,
 	0
 };
 
