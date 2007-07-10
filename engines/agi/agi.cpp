@@ -536,22 +536,31 @@ static const GameSettings agiSettings[] = {
 };
 
 AgiTextColor AgiButtonStyle::getColor(bool hasFocus, bool pressed, bool positive) const {
-	if (_amigaStyle)
-		if (positive)
-			if (pressed) // Positive pressed Amiga-style button
-				return AgiTextColor(amigaBlack, _olderAgi? amigaOrange : amigaPurple);
-			else // Positive unpressed Amiga-style button
+	if (_amigaStyle) {
+		if (positive) {
+			if (pressed) { // Positive pressed Amiga-style button
+				if (_olderAgi) {
+					return AgiTextColor(amigaBlack, amigaOrange);
+				} else {
+					return AgiTextColor(amigaBlack, amigaPurple);
+				}
+			} else { // Positive unpressed Amiga-style button
 				return AgiTextColor(amigaWhite, amigaGreen);
-		else // _amigaStyle && !positive
-			if (pressed) // Negative pressed Amiga-style button
+			}
+		} else { // _amigaStyle && !positive
+			if (pressed) { // Negative pressed Amiga-style button
 				return AgiTextColor(amigaBlack, amigaCyan);
-			else // Negative unpressed Amiga-style button
+			} else { // Negative unpressed Amiga-style button
 				return AgiTextColor(amigaWhite, amigaRed);
-	else // PC-style button
-		if (hasFocus || pressed) // A pressed or in focus PC-style button
+			}
+		}
+	} else { // PC-style button
+		if (hasFocus || pressed) { // A pressed or in focus PC-style button
 			return AgiTextColor(pcWhite, pcBlack);
-		else // An unpressed PC-style button without focus
+		} else { // An unpressed PC-style button without focus
 			return AgiTextColor(pcBlack, pcWhite);
+		}
+	}
 }
 
 AgiTextColor AgiButtonStyle::getColor(bool hasFocus, bool pressed, int baseFgColor, int baseBgColor) const {
