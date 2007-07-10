@@ -320,8 +320,8 @@ struct AgiBlock {
 
 /** AGI text color (Background and foreground color). */
 struct AgiTextColor {
-	/** Creates an AGI text color. Uses white text on black background by default. */
-	AgiTextColor(int fgColor = 0x0F, int bgColor = 0x00) : fg(fgColor), bg(bgColor) {}
+	/** Creates an AGI text color. Uses black text on white background by default. */
+	AgiTextColor(int fgColor = 0x00, int bgColor = 0x0F) : fg(fgColor), bg(bgColor) {}
 
 	/** Get an AGI text color with swapped foreground and background color. */
 	AgiTextColor swap() const { return AgiTextColor(bg, fg); }
