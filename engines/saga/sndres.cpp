@@ -169,7 +169,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	MemoryReadStream readS(soundResource, soundResourceLength);
 
 	resourceType = soundInfo->resourceType;
-	buffer.isBigEndian = soundInfo->isBigEndian;
 
 	if (soundResourceLength >= 8) {
 		if (!memcmp(soundResource, "Creative", 8)) {
@@ -178,7 +177,9 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			resourceType = kSoundWAV;
 		} 
 		
-		if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS) {
+		// If the game has patch files, then it includes a patch file for sound resource 4, used in the intro.
+		// Don't treat this patch file as compressed sound. This file is always included if patch files are present
+		if ((_vm->getFeatures() & GF_COMPRESSED_SOUNDS) && !(_vm->getPatchesCount() > 0 && resourceId == 4)) {
 			if (soundResource[0] == char(0)) {
 				resourceType = kSoundMP3;
 			} else if (soundResource[0] == char(1)) {
@@ -190,6 +191,9 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 	}
 
+	buffer.isBigEndian = soundInfo->isBigEndian;
+	buffer.soundType = resourceType;
+	buffer.originalSize = 0;
 
 	switch (resourceType) {
 	case kSoundPCM:
@@ -319,7 +323,7 @@ int SndRes::getVoiceLength(uint32 resourceId) {
 		return -1;
 	}
 
-	if (!(_vm->getFeatures() & GF_COMPRESSED_SOUNDS))
+	if (!(_vm->getFeatures() & GF_COMPRESSED_SOUNDS) || buffer.originalSize == 0)
 		msDouble = (double)buffer.size;
 	else
 		msDouble = (double)buffer.originalSize;
