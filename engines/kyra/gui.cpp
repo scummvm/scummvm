@@ -485,7 +485,7 @@ void KyraEngine::setGUILabels() {
 			offset = 52;
 		else if (_flags.lang == Common::DE_DEU)
 			offset = 30;
-		else if (_flags.lang == Common::FR_FRA)
+		else if (_flags.lang == Common::FR_FRA || _flags.lang == Common::IT_ITA)
 			offset = 6;
 		offsetOn = offsetMainMenu = offsetOptions = offset;
 		walkspeedGarbageOffset = 48;
