@@ -231,14 +231,21 @@ static Common::Language detectLanguage(const FSList &fslist, byte id) {
 			switch (size) {
 			case 439080:	// 2daf3db71d23d99d19fc9a544fcf6431
 				return Common::EN_ANY;
+			case 322602:	// caba99f4f5a0b69963e5a4d69e6f90af
+				return Common::ZH_TWN;
 			case 493252:	// 5d59594b24f3f1332e7d7e17455ed533
 				return Common::DE_DEU;
 			case 461746:	// 35bbe0e4d573b318b7b2092c331fd1fa
 				return Common::FR_FRA;
 			case 443439:	// 4689d013f67aabd7c35f4fd7c4b4ad69
 				return Common::IT_ITA;
+			case 398613:	// d1f5750d142d34c4c8f1f330a1278709
+				return Common::KO_KOR;
 			case 440586:	// 5a1d0f4fa00917bdbfe035a72a6bba9d
 				return Common::PT_BRA;
+			case 454457:	// 0e5f450ec474a30254c0e36291fb4ebd
+			case 394083:	// ad684ca14c2b4bf4c21a81c1dbed49bc
+				return Common::RU_RUS;
 			case 449787:	// 64f3fe479d45b52902cf88145c41d172
 				return Common::ES_ESP;
 			}
