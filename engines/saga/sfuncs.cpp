@@ -562,9 +562,17 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	}
 
 	if (_vm->getGameType() == GType_IHNM) {
+		// WORKAROUND for the briefly appearing actors at the beginning of each chapter
+		// This will stop the actors being drawn in those specific scenes until the scene background has been drawn
+		if ((_vm->_scene->currentChapterNumber() == 1 && _vm->_scene->currentSceneNumber() == 6) ||
+			(_vm->_scene->currentChapterNumber() == 2 && _vm->_scene->currentSceneNumber() == 31) ||
+			(_vm->_scene->currentChapterNumber() == 3 && _vm->_scene->currentSceneNumber() == 58) ||
+			(_vm->_scene->currentChapterNumber() == 4 && _vm->_scene->currentSceneNumber() == 68) ||
+			(_vm->_scene->currentChapterNumber() == 5 && _vm->_scene->currentSceneNumber() == 91))
+				_vm->_actor->showActors(false);		// Stop showing actors before the background is drawn
+
 		// Since it doesn't look like the IHNM scripts remove the
-		// cutaway after the intro, this is probably the best place to
-		// to it.
+		// cutaway after the intro, this is probably the best place to do it
 		_vm->_anim->clearCutaway();
 	}
 
