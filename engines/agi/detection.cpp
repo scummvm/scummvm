@@ -125,7 +125,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == AGI Demo 1 (PC) 05/87 [AGI 2.425]
+		// AGI Demo 1 (PC) 05/87 [AGI 2.425]
 		{
 			"agidemo",
 			"Demo 1 1987-05-20",
@@ -142,7 +142,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == AGI Demo 2 (IIgs) 1.0C (Censored)
+		// AGI Demo 2 (IIgs) 1.0C (Censored)
 		{
 			"agidemo",
 			"Demo 2 1987-11-24 1.0C",
@@ -159,7 +159,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == AGI Demo 2 (PC 3.5") 11/87 [AGI 2.915]
+		// AGI Demo 2 (PC 3.5") 11/87 [AGI 2.915]
 		{
 			"agidemo",
 			"Demo 2 1987-11-24 3.5\"",
@@ -176,7 +176,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == AGI Demo 2 (PC 5.25") 11/87 [v1] [AGI 2.915]
+		// AGI Demo 2 (PC 5.25") 11/87 [v1] [AGI 2.915]
 		{
 			"agidemo",
 			"Demo 2 1987-11-24 [version 1] 5.25\"",
@@ -193,7 +193,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == AGI Demo 2 (PC 5.25") 01/88 [v2] [AGI 2.917]
+		// AGI Demo 2 (PC 5.25") 01/88 [v2] [AGI 2.917]
 		{
 			"agidemo",
 			"Demo 2 1988-01-25 [version 2] 5.25\"",
@@ -210,7 +210,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == AGI Demo 3 (PC) 09/88 [AGI 3.002.102]
+		// AGI Demo 3 (PC) 09/88 [AGI 3.002.102]
 		{
 			"agidemo",
 			"Demo 3 1988-09-13",
@@ -227,7 +227,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Black Cauldron (Amiga) 2.00 6/14/87
+		// Black Cauldron (Amiga) 2.00 6/14/87
 		{
 			"bc",
 			"2.00 1987-06-14",
@@ -244,7 +244,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Black Cauldron (Apple IIgs) 1.0O 2/24/89 (CE)
+		// Black Cauldron (Apple IIgs) 1.0O 2/24/89 (CE)
 		{
 			"bc",
 			"1.0O 1989-02-24 (CE)",
@@ -261,7 +261,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Black Cauldron (PC) 2.00 6/14/87 [AGI 2.439]
+		// Black Cauldron (PC) 2.00 6/14/87 [AGI 2.439]
 		{
 			"bc",
 			"2.00 1987-06-14",
@@ -278,7 +278,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Black Cauldron (PC 5.25") 2.10 11/10/88 [AGI 3.002.098]
+		// Black Cauldron (PC 5.25") 2.10 11/10/88 [AGI 3.002.098]
 		{
 			"bc",
 			"2.10 1988-11-10 5.25\"",
@@ -297,7 +297,7 @@ static const AGIGameDescription gameDescriptions[] = {
 // These aren't supposed to work now as they require unsupported agi engine 2.01
 #if 0
 	{
-		// Sarien Name == Donald Duck's Playground (Amiga) 1.0C
+		// Donald Duck's Playground (Amiga) 1.0C
 		{
 			"ddp",
 			"1.0C 1987-04-27",
@@ -314,7 +314,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Donald Duck's Playground (ST) 1.0A 8/8/86
+		// Donald Duck's Playground (ST) 1.0A 8/8/86
 		{
 			"ddp",
 			"1.0A 1986-08-08",
@@ -348,7 +348,7 @@ static const AGIGameDescription gameDescriptions[] = {
 #endif
 
 	{
-		// Sarien Name == Gold Rush! (Amiga) 1.01 1/13/89 aka 2.05 3/9/89	# 2.316
+		// Gold Rush! (Amiga) 1.01 1/13/89 aka 2.05 3/9/89	# 2.316
 		{
 			"goldrush",
 			"1.01 1989-01-13 aka 2.05 1989-03-09",
@@ -365,7 +365,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Gold Rush! (Apple IIgs) 1.0M 2/28/89 (CE) aka 2.01 12/22/88
+		// Gold Rush! (Apple IIgs) 1.0M 2/28/89 (CE) aka 2.01 12/22/88
 		{
 			"goldrush",
 			"1.0M 1989-02-28 (CE) aka 2.01 1988-12-22",
@@ -382,7 +382,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Gold Rush! (ST) 1.01 1/13/89 aka 2.01 12/22/88
+		// Gold Rush! (ST) 1.01 1/13/89 aka 2.01 12/22/88
 		{
 			"goldrush",
 			"1.01 1989-01-13 aka 2.01 1988-12-22",
@@ -399,7 +399,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Gold Rush! (PC 5.25") 2.01 12/22/88 [AGI 3.002.149]
+		// Gold Rush! (PC 5.25") 2.01 12/22/88 [AGI 3.002.149]
 		{
 			"goldrush",
 			"2.01 1988-12-22 5.25\"",
@@ -416,7 +416,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Gold Rush! (PC 3.5") 2.01 12/22/88 [AGI 3.002.149]
+		// Gold Rush! (PC 3.5") 2.01 12/22/88 [AGI 3.002.149]
 		{
 			"goldrush",
 			"2.01 1988-12-22 3.5\"",
@@ -433,7 +433,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Gold Rush! (PC 5.25") 2.01 12/22/88 [AGI 3.002.149]
+		// Gold Rush! (PC 5.25") 2.01 12/22/88 [AGI 3.002.149]
 		{
 			"goldrush",
 			"2.01 1988-12-22",
@@ -454,7 +454,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 1 (Amiga) 1.0U		# 2.082
+		// King's Quest 1 (Amiga) 1.0U		# 2.082
 		{
 			"kq1",
 			"1.0U 1986",
@@ -471,7 +471,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 1 (ST) 1.0V
+		// King's Quest 1 (ST) 1.0V
 		{
 			"kq1",
 			"1.0V 1986",
@@ -488,7 +488,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 1 (IIgs) 1.0S-88223
+		// King's Quest 1 (IIgs) 1.0S-88223
 		{
 			"kq1",
 			"1.0S 1988-02-23",
@@ -505,7 +505,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 1 (Mac) 2.0C
+		// King's Quest 1 (Mac) 2.0C
 		{
 			"kq1",
 			"2.0C 1987-03-26",
@@ -522,7 +522,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 1 (PC 5.25"/3.5") 2.0F [AGI 2.917]
+		// King's Quest 1 (PC 5.25"/3.5") 2.0F [AGI 2.917]
 		{
 			"kq1",
 			"2.0F 1987-05-05 5.25\"/3.5\"",
@@ -539,7 +539,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 2 (IIgs) 2.0A 6/16/88 (CE)
+		// King's Quest 2 (IIgs) 2.0A 6/16/88 (CE)
 		{
 			"kq2",
 			"2.0A 1988-06-16 (CE)",
@@ -556,7 +556,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 2 (Amiga) 2.0J (Broken)
+		// King's Quest 2 (Amiga) 2.0J (Broken)
 		{
 			"kq2",
 			"2.0J 1987-01-29 [OBJECT decrypted]",
@@ -573,7 +573,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 2 (Mac) 2.0R
+		// King's Quest 2 (Mac) 2.0R
 		{
 			"kq2",
 			"2.0R 1988-03-23",
@@ -607,7 +607,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 2 (PC 5.25"/3.5") 2.2 [AGI 2.426]
+		// King's Quest 2 (PC 5.25"/3.5") 2.2 [AGI 2.426]
 		{
 			"kq2",
 			"2.2 1987-05-07 5.25\"/3.5\"",
@@ -624,7 +624,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 3 (Amiga) 1.01 11/8/86
+		// King's Quest 3 (Amiga) 1.01 11/8/86
 		{
 			"kq3",
 			"1.01 1986-11-08",
@@ -641,7 +641,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 3 (ST) 1.02 11/18/86
+		// King's Quest 3 (ST) 1.02 11/18/86
 		{
 			"kq3",
 			"1.02 1986-11-18",
@@ -658,7 +658,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 3 (Mac) 2.14 3/15/88
+		// King's Quest 3 (Mac) 2.14 3/15/88
 		{
 			"kq3",
 			"2.14 1988-03-15",
@@ -675,7 +675,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 3 (IIgs) 2.0A 8/28/88 (CE)
+		// King's Quest 3 (IIgs) 2.0A 8/28/88 (CE)
 		{
 			"kq3",
 			"2.0A 1988-08-28 (CE)",
@@ -692,7 +692,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 3 (Amiga) 2.15 11/15/89	# 2.333
+		// King's Quest 3 (Amiga) 2.15 11/15/89	# 2.333
 		{
 			"kq3",
 			"2.15 1989-11-15",
@@ -709,7 +709,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 3 (PC) 1.01 11/08/86 [AGI 2.272]
+		// King's Quest 3 (PC) 1.01 11/08/86 [AGI 2.272]
 		{
 			"kq3",
 			"1.01 1986-11-08",
@@ -726,7 +726,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 3 (PC 5.25") 2.00 5/25/87 [AGI 2.435]
+		// King's Quest 3 (PC 5.25") 2.00 5/25/87 [AGI 2.435]
 		{
 			"kq3",
 			"2.00 1987-05-25 5.25\"",
@@ -743,7 +743,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 3 (Mac) 2.14 3/15/88
+		// King's Quest 3 (Mac) 2.14 3/15/88
 		{
 			"kq3",
 			"2.14 1988-03-15 5.25\"",
@@ -760,7 +760,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 3 (PC 3.5") 2.14 3/15/88 [AGI 2.936]
+		// King's Quest 3 (PC 3.5") 2.14 3/15/88 [AGI 2.936]
 		{
 			"kq3",
 			"2.14 1988-03-15 3.5\"",
@@ -777,7 +777,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 4 (PC 5.25") 2.3 9/27/88 [AGI 3.002.086]
+		// King's Quest 4 (PC 5.25") 2.3 9/27/88 [AGI 3.002.086]
 		{
 			"kq4",
 			"2.3 1988-09-27",
@@ -794,7 +794,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 4 (IIgs) 1.0K 11/22/88 (CE)
+		// King's Quest 4 (IIgs) 1.0K 11/22/88 (CE)
 		{
 			"kq4",
 			"1.0K 1988-11-22",
@@ -811,7 +811,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 4 (PC 3.5") 2.0 7/27/88 [AGI 3.002.086]
+		// King's Quest 4 (PC 3.5") 2.0 7/27/88 [AGI 3.002.086]
 		{
 			"kq4",
 			"2.0 1988-07-27 3.5\"",
@@ -828,7 +828,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 4 (PC 3.5") 2.2 9/27/88 [AGI 3.002.086]
+		// King's Quest 4 (PC 3.5") 2.2 9/27/88 [AGI 3.002.086]
 		{
 			"kq4",
 			"2.2 1988-09-27 3.5\"",
@@ -845,7 +845,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == King's Quest 4 demo (PC) [AGI 3.002.102]
+		// King's Quest 4 demo (PC) [AGI 3.002.102]
 		{
 			"kq4",
 			"Demo 1988-12-20",
@@ -862,7 +862,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Leisure Suit Larry 1 (PC 5.25"/3.5") 1.00 6/1/87 [AGI 2.440]
+		// Leisure Suit Larry 1 (PC 5.25"/3.5") 1.00 6/1/87 [AGI 2.440]
 		{
 			"lsl1",
 			"1.00 1987-06-01 5.25\"/3.5\"",
@@ -879,7 +879,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Leisure Suit Larry 1 (ST) 1.04 6/18/87
+		// Leisure Suit Larry 1 (ST) 1.04 6/18/87
 		{
 			"lsl1",
 			"1.04 1987-06-18",
@@ -896,7 +896,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Leisure Suit Larry 1 (Amiga) 1.05 6/26/87	# x.yyy
+		// Leisure Suit Larry 1 (Amiga) 1.05 6/26/87	# x.yyy
 		{
 			"lsl1",
 			"1.05 1987-06-26",
@@ -913,7 +913,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Leisure Suit Larry 1 (IIgs) 1.0E
+		// Leisure Suit Larry 1 (IIgs) 1.0E
 		{
 			"lsl1",
 			"1.0E 1987",
@@ -930,7 +930,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Leisure Suit Larry 1 (Mac) 1.05 6/26/87
+		// Leisure Suit Larry 1 (Mac) 1.05 6/26/87
 		{
 			"lsl1",
 			"1.05 1987-06-26",
@@ -947,7 +947,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Manhunter NY (ST) 1.03 10/20/88
+		// Manhunter NY (ST) 1.03 10/20/88
 		{
 			"mh1",
 			"1.03 1988-10-20",
@@ -964,7 +964,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Manhunter NY (IIgs) 2.0E 10/05/88 (CE)
+		// Manhunter NY (IIgs) 2.0E 10/05/88 (CE)
 		{
 			"mh1",
 			"2.0E 1988-10-05 (CE)",
@@ -981,7 +981,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Manhunter NY (Amiga) 1.06 3/18/89
+		// Manhunter NY (Amiga) 1.06 3/18/89
 		{
 			"mh1",
 			"1.06 1989-03-18",
@@ -999,7 +999,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	{
 		// reported by Filippos (thebluegr) in bugreport #1654500
-		// Sarien Name == Manhunter NY (PC 5.25") 1.22 8/31/88 [AGI 3.002.107]
+		// Manhunter NY (PC 5.25") 1.22 8/31/88 [AGI 3.002.107]
 		{
 			"mh1",
 			"1.22 1988-08-31",
@@ -1016,7 +1016,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Manhunter NY (PC 3.5") 1.22 8/31/88 [AGI 3.002.102]
+		// Manhunter NY (PC 3.5") 1.22 8/31/88 [AGI 3.002.102]
 		{
 			"mh1",
 			"1.22 1988-08-31",
@@ -1033,7 +1033,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Manhunter SF (ST) 1.0 7/29/89
+		// Manhunter SF (ST) 1.0 7/29/89
 		{
 			"mh2",
 			"1.0 1989-07-29",
@@ -1050,7 +1050,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Manhunter SF (Amiga) 3.06 8/17/89		# 2.333
+		// Manhunter SF (Amiga) 3.06 8/17/89		# 2.333
 		{
 			"mh2",
 			"3.06 1989-08-17",
@@ -1067,7 +1067,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Manhunter SF (PC 5.25") 3.03 8/17/89 [AGI 3.002.149]
+		// Manhunter SF (PC 5.25") 3.03 8/17/89 [AGI 3.002.149]
 		{
 			"mh2",
 			"3.03 1989-08-17 5.25\"",
@@ -1084,7 +1084,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Manhunter SF (PC 3.5") 3.02 7/26/89 [AGI 3.002.149]
+		// Manhunter SF (PC 3.5") 3.02 7/26/89 [AGI 3.002.149]
 		{
 			"mh2",
 			"3.02 1989-07-26 3.5\"",
@@ -1101,7 +1101,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Mixed-Up Mother Goose (Amiga) 1.1
+		// Mixed-Up Mother Goose (Amiga) 1.1
 		{
 			"mixedup",
 			"1.1 1986-12-10",
@@ -1118,7 +1118,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Mixed Up Mother Goose (IIgs)
+		// Mixed Up Mother Goose (IIgs)
 		{
 			"mixedup",
 			"1987",
@@ -1135,7 +1135,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Mixed-Up Mother Goose (PC) [AGI 2.915]
+		// Mixed-Up Mother Goose (PC) [AGI 2.915]
 		{
 			"mixedup",
 			"1987-11-10",
@@ -1153,7 +1153,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 #if 0
 	{
-		// Sarien Name == Mixed Up Mother Goose (PC) [AGI 2.915] (Broken)
+		// Mixed Up Mother Goose (PC) [AGI 2.915] (Broken)
 		{
 			"mixedup",
 			"[corrupt/OBJECT from disk 1]",
@@ -1171,7 +1171,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Police Quest 1 (PC) 2.0E 11/17/87 [AGI 2.915]
+		// Police Quest 1 (PC) 2.0E 11/17/87 [AGI 2.915]
 		{
 			"pq1",
 			"2.0E 1987-11-17",
@@ -1188,7 +1188,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Police Quest 1 (Mac) 2.0G 12/3/87
+		// Police Quest 1 (Mac) 2.0G 12/3/87
 		{
 			"pq1",
 			"2.0G 1987-12-03",
@@ -1205,7 +1205,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Police Quest 1 (IIgs) 2.0B-88421
+		// Police Quest 1 (IIgs) 2.0B-88421
 		{
 			"pq1",
 			"2.0B 1988-04-21",
@@ -1222,7 +1222,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Police Quest 1 (Amiga) 2.0B 2/22/89	# 2.310
+		// Police Quest 1 (Amiga) 2.0B 2/22/89	# 2.310
 		{
 			"pq1",
 			"2.0B 1989-02-22",
@@ -1239,7 +1239,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Police Quest 1 (IIgs) 2.0A-88318
+		// Police Quest 1 (IIgs) 2.0A-88318
 		{
 			"pq1",
 			"2.0A 1988-03-18",
@@ -1256,7 +1256,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Police Quest 1 (PC) 2.0A 10/23/87 [AGI 2.903/2.911]
+		// Police Quest 1 (PC) 2.0A 10/23/87 [AGI 2.903/2.911]
 		{
 			"pq1",
 			"2.0A 1987-10-23",
@@ -1273,7 +1273,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Police Quest 1 (Mac) 2.0G 12/3/87
+		// Police Quest 1 (Mac) 2.0G 12/3/87
 		{
 			"pq1",
 			"2.0G 1987-12-03 5.25\"/ST",
@@ -1307,7 +1307,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Space Quest 1 (ST) 1.1A
+		// Space Quest 1 (ST) 1.1A
 		{
 			"sq1",
 			"1.1A 1986-02-06",
@@ -1324,7 +1324,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Space Quest 1 (PC) 1.1A [AGI 2.272]
+		// Space Quest 1 (PC) 1.1A [AGI 2.272]
 		{
 			"sq1",
 			"1.1A 1986-11-13",
@@ -1341,7 +1341,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Space Quest 1 (Amiga) 1.2			# 2.082
+		// Space Quest 1 (Amiga) 1.2			# 2.082
 		{
 			"sq1",
 			"1.2 1986",
@@ -1358,7 +1358,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Space Quest 1 (Mac) 1.5D
+		// Space Quest 1 (Mac) 1.5D
 		{
 			"sq1",
 			"1.5D 1987-04-02",
@@ -1375,7 +1375,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Space Quest 1 (IIgs) 2.2
+		// Space Quest 1 (IIgs) 2.2
 		{
 			"sq1",
 			"2.2 1987",
@@ -1392,7 +1392,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Space Quest 1 (PC) 1.0X [AGI 2.089]
+		// Space Quest 1 (PC) 1.0X [AGI 2.089]
 		{
 			"sq1",
 			"1.0X 1986-09-24",
@@ -1409,7 +1409,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Space Quest 1 (PC) 1.1A [AGI 2.272]
+		// Space Quest 1 (PC) 1.1A [AGI 2.272]
 		{
 			"sq1",
 			"1.1A 1986-11-13",
@@ -1426,7 +1426,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Space Quest 1 (PC 5.25"/3.5") 2.2 [AGI 2.426/2.917]
+		// Space Quest 1 (PC 5.25"/3.5") 2.2 [AGI 2.426/2.917]
 		{
 			"sq1",
 			"2.2 1987-05-07 5.25\"/3.5\"",
@@ -1444,7 +1444,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Space Quest 2 (PC 3.5") 2.0D [AGI 2.936]
+		// Space Quest 2 (PC 3.5") 2.0D [AGI 2.936]
 		{
 			"sq2",
 			"2.0D 1988-03-14 3.5\"",
@@ -1461,7 +1461,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Space Quest 2 (IIgs) 2.0A 7/25/88 (CE)
+		// Space Quest 2 (IIgs) 2.0A 7/25/88 (CE)
 		{
 			"sq2",
 			"2.0A 1988-07-25 (CE)",
@@ -1478,7 +1478,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Space Quest 2 (Amiga) 2.0F
+		// Space Quest 2 (Amiga) 2.0F
 		{
 			"sq2",
 			"2.0F 1986-12-09 [VOL.2->PICTURE.16 broken]",
@@ -1499,7 +1499,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Space Quest 2 (Mac) 2.0D
+		// Space Quest 2 (Mac) 2.0D
 		{
 			"sq2",
 			"2.0D 1988-04-04",
@@ -1517,7 +1517,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	{
 		// reported by Filippos (thebluegr) in bugreport #1654500
-		// Sarien Name == Space Quest 2 (PC 5.25") 2.0A [AGI 2.912]
+		// Space Quest 2 (PC 5.25") 2.0A [AGI 2.912]
 		{
 			"sq2",
 			"2.0A 1987-11-06 5.25\"",
@@ -1534,7 +1534,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Space Quest 2 (PC 3.5") 2.0A [AGI 2.912]
+		// Space Quest 2 (PC 3.5") 2.0A [AGI 2.912]
 		{
 			"sq2",
 			"2.0A 1987-11-06 3.5\"",
@@ -1551,7 +1551,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Space Quest 2 (PC 5.25"/ST) 2.0C/A [AGI 2.915]
+		// Space Quest 2 (PC 5.25"/ST) 2.0C/A [AGI 2.915]
 		{
 			"sq2",
 			"2.0C/A 5.25\"/ST",
@@ -1568,7 +1568,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Space Quest 2 (PC 3.5") 2.0F [AGI 2.936]
+		// Space Quest 2 (PC 3.5") 2.0F [AGI 2.936]
 		{
 			"sq2",
 			"2.0F 1989-01-05 3.5\"",
@@ -1585,7 +1585,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
-		// Sarien Name == Xmas Card 1986 (PC) [AGI 2.272]
+		// Xmas Card 1986 (PC) [AGI 2.272]
 		{
 			"xmascard",
 			"1986-11-13 [version 1]",
@@ -1675,7 +1675,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Good Man (demo v3.41)", "3facd8a8f856b7b6e0f6c3200274d88c"),
 
 	{
-		// Sarien Name == Groza
+		// Groza
 		{
 			"agi-fanmade",
 			"Groza (russian) [AGDS sample]",
