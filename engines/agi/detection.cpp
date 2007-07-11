@@ -1352,7 +1352,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		},
 		GID_SQ1,
 		GType_V2,
-		0,
+		GF_FORCEMENUS,
 		0x2440,
 	},
 
