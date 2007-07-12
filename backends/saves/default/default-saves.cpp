@@ -180,29 +180,19 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename)
 	return wrapInSaveFile(sf);
 }
 
-void DefaultSaveFileManager::listSavefiles(const char *prefix , bool *marks, int num) {
+Common::StringList DefaultSaveFileManager::listSavefiles(const char *regex) {
 	FilesystemNode savePath(getSavePath());
 	FSList savefiles;
-	Common::String search(prefix);
-	search = search + '*';	//match all files that start with the given prefix. += causes a strange bug.
+	Common::StringList results;
+	Common::String search(regex);
 	
-	assert(marks);
-	memset(marks, false, num * sizeof(bool));	//assume no savegames for this title
-
 	if(savePath.lookupFile(savefiles, savePath, search, false, true)) {
-		char slot[2];
-		int slotNum;
 		for(FSList::const_iterator file = savefiles.begin(); file != savefiles.end(); file++) {
-			//TODO: check if this is the behavior for all engines
-			//Obtain the last 2 digits of the filename, since they correspond to the save slot
-			slot[0] = file->getName()[file->getName().size()-2];
-			slot[1] = file->getName()[file->getName().size()-1];
-			
-			slotNum = atoi(slot);
-			if(slotNum >= 0 && slotNum < num)
-				marks[slotNum] = true;	//mark this slot as valid
+			results.push_back(file->getPath());
 		}
 	}
+				
+	return results;
 }
 
 #endif // !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)

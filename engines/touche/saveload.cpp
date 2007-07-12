@@ -398,7 +398,7 @@ void ToucheEngine::readGameStateDescription(int num, char *description, int len)
 
 void ToucheEngine::generateGameStateFileName(int num, char *dst, int len, bool prefixOnly) const {
 	if (prefixOnly) {
-		snprintf(dst, len, "%s.", _targetName.c_str());
+		snprintf(dst, len, "%s.*", _targetName.c_str());
 	} else {
 		snprintf(dst, len, "%s.%d", _targetName.c_str(), num);
 	}

@@ -30,6 +30,7 @@
 #include "common/noncopyable.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
+#include "common/str.h"
 
 namespace Common {
 
@@ -94,12 +95,11 @@ public:
 	virtual InSaveFile *openForLoading(const char *filename) = 0;
 
 	/**
-	 * Request a list of available savegames with a given prefix.
-	 * TODO: Document this better!
-	 * TODO: Or even replace it with a better API. For example, one that
-	 * returns a list of strings for all present file names. 
+	 * Request a list of available savegames with a given regex.
+	 * @param regex Regular expression to match. Wildcards like * or ? are available.
+	 * returns a list of strings for all present file names.
 	 */
-	virtual void listSavefiles(const char *prefix , bool *marks, int num) = 0;
+	virtual Common::StringList listSavefiles(const char *regex) = 0;
 
 	/**
 	 * Get the path to the save game directory.

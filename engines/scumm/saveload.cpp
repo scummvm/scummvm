@@ -384,10 +384,28 @@ void ScummEngine::makeSavegameName(char *out, int slot, bool temporary) {
 }
 
 void ScummEngine::listSavegames(bool *marks, int num) {
+	assert(marks);
+	
 	char prefix[256];
+	char slot[2];
+	int slotNum;
+	Common::StringList filenames;
+	
 	makeSavegameName(prefix, 99, false);
-	prefix[strlen(prefix)-2] = 0;
-	_saveFileMan->listSavefiles(prefix, marks, num);
+	prefix[strlen(prefix)-2] = '*';
+	prefix[strlen(prefix)-1] = 0;
+	memset(marks, false, num * sizeof(bool));	//assume no savegames for this title
+	filenames = _saveFileMan->listSavefiles(prefix);
+	
+	for(Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++){
+		//Obtain the last 2 digits of the filename, since they correspond to the save slot
+		slot[0] = file->c_str()[file->size()-2];
+		slot[1] = file->c_str()[file->size()-1];
+		
+		slotNum = atoi(slot);
+		if(slotNum >= 0 && slotNum < num)
+			marks[slotNum] = true;	//mark this slot as valid
+	}
 }
 
 bool ScummEngine::getSavegameName(int slot, char *desc) {
