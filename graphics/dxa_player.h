@@ -47,6 +47,10 @@ protected:
 	byte *_frameBuffer2;
 	byte *_scaledBuffer;
 	byte *_drawBuffer;
+	byte *_inBuffer;
+	uint32 _inBufferSize;
+	byte *_decompBuffer;
+	uint32 _decompBufferSize;
 	uint16 _width;
 	uint16 _height, _curHeight;
 	uint16 _framesCount;
@@ -121,10 +125,10 @@ protected:
 	void decodeNextFrame();
 
 	void decodeZlib(byte *data, int size, int totalSize);
-	void decode12(byte *data, int size, int totalSize);
-	void decode13(byte *data, int size, int totalSize);
+	void decode12(int size);
+	void decode13(int size);
 };
- 
+
 } // End of namespace Graphics
 
 #endif
