@@ -282,7 +282,7 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enable
 	xmidiParser = MidiParser::createParser_XMIDI();
 	smfParser = MidiParser::createParser_SMF();	
 
-	_musicContext = _vm->_resource->getContext(GAME_MUSICFILE);
+	_digitalMusicContext = _vm->_resource->getContext(GAME_MUSICFILE);
 
 	_songTableLen = 0;
 	_songTable = 0;
@@ -405,7 +405,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	if (_vm->getGameType() == GType_ITE) {
 		if (resourceId >= 9 && resourceId <= 34) {
-			if (_musicContext != NULL) {
+			if (_digitalMusicContext != NULL) {
 				//TODO: check resource size
 				loopStart = 0;
 				// fix ITE sunstatm score
@@ -415,7 +415,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 				if (!(_vm->getFeatures() & GF_COMPRESSED_SOUNDS)) {
 					// uncompressed digital music
-					audioStream = new RAWInputStream(_vm, _musicContext, resourceId - 9, flags == MUSIC_LOOP, loopStart);
+					audioStream = new RAWInputStream(_vm, _digitalMusicContext, resourceId - 9, flags == MUSIC_LOOP, loopStart);
 				} else {
 					// compressed digital music
 					ResourceData * musicResourceData;
@@ -423,8 +423,8 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 					byte compressedHeader[10];
 					GameSoundTypes soundType;
 
-					musicResourceData = _vm->_resource->getResourceData(_musicContext, resourceId - 9);
-					_file = _musicContext->getFile(musicResourceData);
+					musicResourceData = _vm->_resource->getResourceData(_digitalMusicContext, resourceId - 9);
+					_file = _digitalMusicContext->getFile(musicResourceData);
 
 					if (_vm->getMusicInfo() == NULL) {
 						error("RAWInputStream() wrong musicInfo");
