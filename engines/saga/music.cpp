@@ -42,6 +42,10 @@ namespace Saga {
 // stream class, or if I should use a "wrapper" class, like I did for Broken
 // Sword 2, to make it easier to add support for compressed music... but I'll
 // worry about that later.
+// Update by md5: Apparently, it wasn't a good idea. Compressed digital music
+// is handled outside of this class, so looping does not work for compressed
+// digital music yet
+// TODO/FIXME: Add looping support for compressed digital music
 
 class RAWInputStream : public Audio::AudioStream {
 private:
