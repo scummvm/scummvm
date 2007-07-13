@@ -41,7 +41,7 @@ namespace Saga {
 class HitZone;
 
 
-#define ACTOR_DEBUG 1 //only for actor pathfinding debug!
+//#define ACTOR_DEBUG 1 //only for actor pathfinding debug!
 
 #define ACTOR_BARRIERS_MAX 16
 
