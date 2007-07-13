@@ -527,6 +527,8 @@ public:
 	int _readingSpeed;
 
 	bool _copyProtection;
+	bool _gf_wyrmkeep;
+	bool _gf_compressed_sounds;
 
 	SndRes *_sndRes;
 	Sound *_sound;
