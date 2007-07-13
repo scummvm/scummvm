@@ -236,9 +236,14 @@ void KyraEngine::seq_introStory() {
 	_screen->clearPage(3);
 	_screen->clearPage(0);
 
-	if (_flags.isTalkie)
-		return;
-	else if (_flags.lang == Common::EN_ANY && (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformAmiga))
+	if (_flags.isTalkie) {
+		// HACK: The Italian fan translation uses an special text screen here
+		// so we show it even though it is a talkie version.
+		if (_flags.lang == Common::IT_ITA)
+			_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, 0);
+		else
+			return;
+	} else if (_flags.lang == Common::EN_ANY && (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformAmiga))
 		_screen->loadBitmap("TEXT.CPS", 3, 3, _screen->_currentPalette);
 	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN)
 		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, _screen->_currentPalette);
