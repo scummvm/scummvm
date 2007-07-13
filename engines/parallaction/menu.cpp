@@ -435,6 +435,7 @@ void Menu::selectCharacter() {
 	}
 
 	_vm->_gfx->setBlackPalette();
+	_vm->_gfx->updateScreen();
 
 	_engineFlags |= kEngineChangeLocation;
 

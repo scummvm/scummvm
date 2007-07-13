@@ -43,6 +43,7 @@ namespace GUI {
 	class CommandSender;
 }
 
+extern OSystem *g_system;
 
 namespace Parallaction {
 

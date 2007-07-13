@@ -30,9 +30,6 @@
 #include "parallaction/parallaction.h"
 
 
-
-extern OSystem *g_system;
-
 namespace Parallaction {
 
 byte *		Gfx::_buffers[];
@@ -142,7 +139,7 @@ void Gfx::setPalette(Palette pal, uint32 first, uint32 num) {
 	if (_vm->getPlatform() == Common::kPlatformAmiga)
 		g_system->setPalette(sysExtraPal, first+FIRST_EHB_COLOR, num);
 
-	g_system->updateScreen();
+//	g_system->updateScreen();
 
 	return;
 }
