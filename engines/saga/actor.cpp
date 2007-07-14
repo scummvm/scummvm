@@ -1605,7 +1605,9 @@ void Actor::handleActions(int msec, bool setup) {
 				if (actor->_lastZone)
 					stepZoneAction(actor, actor->_lastZone, true, false);
 				actor->_lastZone = hitZone;
-				if (hitZone)
+				// WORKAROUND for graphics glitch in the rat caves. Don't do this step zone action in the rat caves
+				// (room 51) to avoid the glitch
+				if (hitZone && !(_vm->getGameType() == GType_ITE && _vm->_scene->currentSceneNumber() == 51))
 					stepZoneAction(actor, hitZone, false, false);
 			}
 		}
