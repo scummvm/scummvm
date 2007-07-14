@@ -42,6 +42,8 @@ class DigitalMusicInputStream : public Audio::AudioStream {
 private:
 	Audio::AudioStream *_stream;
 	ResourceContext *_context;
+	ResourceData * resourceData;
+	GameSoundTypes soundType;
 	Common::File *_file;
 	uint32 _filePos;
 	uint32 _startPos;
@@ -62,6 +64,8 @@ public:
 	DigitalMusicInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping, uint32 loopStart);
 	~DigitalMusicInputStream();
 
+	void DigitalMusicInputStream::createCompressedStream();
+
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool endOfData() const	{ return eosIntern(); }
@@ -72,9 +76,7 @@ public:
 DigitalMusicInputStream::DigitalMusicInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping, uint32 loopStart)
 	: _context(context), _finished(false), _looping(looping), _bufferEnd(_buf + BUFFER_SIZE) {
 
-	ResourceData * resourceData;
 	byte compressedHeader[10];
-	GameSoundTypes soundType;
 
 	resourceData = vm->_resource->getResourceData(context, resourceId);
 	_file = context->getFile(resourceData);
@@ -99,31 +101,7 @@ DigitalMusicInputStream::DigitalMusicInputStream(SagaEngine *vm, ResourceContext
 			soundType = kSoundFLAC;
 		}
 
-		switch (soundType) {
-#ifdef USE_MAD
-			case kSoundMP3:
-				debug(1, "Playing MP3 compressed digital music");
-				_stream = Audio::makeMP3Stream(_file, resourceData->size);
-				break;
-#endif
-#ifdef USE_VORBIS
-			case kSoundOGG:
-				debug(1, "Playing OGG compressed digital music");
-				_stream = Audio::makeVorbisStream(_file, resourceData->size);
-				break;
-#endif
-#ifdef USE_FLAC
-			case kSoundFLAC:
-				debug(1, "Playing FLAC compressed digital music");
-				_stream = Audio::makeFlacStream(_file, resourceData->size);
-				break;
-#endif
-			default:
-				// Unknown compression
-				error("Trying to play a compressed digital music, but the compression is not known");
-				break;
-		}
-
+		createCompressedStream();
 		resourceData->offset += 9;	// Skip compressed header
 	}
 
@@ -142,26 +120,61 @@ DigitalMusicInputStream::~DigitalMusicInputStream() {
 	delete _stream;
 }
 
+void DigitalMusicInputStream::createCompressedStream() {
+	switch (soundType) {
+#ifdef USE_MAD
+		case kSoundMP3:
+			debug(1, "Playing MP3 compressed digital music");
+			_stream = Audio::makeMP3Stream(_file, resourceData->size);
+			break;
+#endif
+#ifdef USE_VORBIS
+		case kSoundOGG:
+			debug(1, "Playing OGG compressed digital music");
+			_stream = Audio::makeVorbisStream(_file, resourceData->size);
+			break;
+#endif
+#ifdef USE_FLAC
+		case kSoundFLAC:
+			debug(1, "Playing FLAC compressed digital music");
+			_stream = Audio::makeFlacStream(_file, resourceData->size);
+			break;
+#endif
+		default:
+			// Unknown compression
+			error("Trying to play a compressed digital music, but the compression is not known");
+			break;
+	}
+}
+
 int DigitalMusicInputStream::readBuffer(int16 *buffer, const int numSamples) {
-	// TODO/FIXME: Add looping support for compressed digital music
-	//if (!_looping && _stream != NULL)
-	if (_stream != NULL)
+	// TODO/FIXME: Add looping support for compressed digital music - remove this once it's done
+	// Currently, an illegal read is made, leading to a crash. Therefore, it's disabled for now
+	if (_stream != NULL) _looping = false;
+
+	if (!_looping && _stream != NULL)
 		return _stream->readBuffer(buffer, numSamples);
 
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
 		int len = 0;
-		if (_stream != NULL)
+		if (_stream != NULL) {
 			len = _stream->readBuffer(buffer, numSamples);
-		else
+			if (len < numSamples) {
+				delete _stream;
+				createCompressedStream();
+				//_file->seek(_startPos, SEEK_SET);
+				//_pos = 0;
+			}
+		} else {
 			len = MIN(numSamples - samples, (int) (_bufferEnd - _pos));
-		memcpy(buffer, _pos, len * 2);
+			memcpy(buffer, _pos, len * 2);
+		}
 		buffer += len;
 		_pos += len;
 		samples += len;
-		if (_pos >= _bufferEnd) {
+		if (_pos >= _bufferEnd)
 			refill();
-		}
 	}
 	return samples;
 }
