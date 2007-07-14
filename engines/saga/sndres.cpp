@@ -177,9 +177,13 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			resourceType = kSoundWAV;
 		} 
 		
-		// If the game has patch files, then it includes a patch file for sound resource 4, used in the intro.
-		// Don't treat this patch file as compressed sound. This file is always included if patch files are present
-		if ((_vm->getFeatures() & GF_COMPRESSED_SOUNDS) && !(_vm->getPatchesCount() > 0 && resourceId == 4)) {
+		bool patchedSound = false;
+		// If a patch file exists for sound resource 4 (used in ITE intro), don't treat this sound as compressed
+		if (_vm->getGameType() == GType_ITE && resourceId == 4 && 
+			(Common::File::exists("sound/p2_a.iaf") || Common::File::exists("sound/p2_a.voc")))
+			patchedSound = true;
+
+		if ((_vm->getFeatures() & GF_COMPRESSED_SOUNDS) && !patchedSound) {
 			if (soundResource[0] == char(0)) {
 				resourceType = kSoundMP3;
 			} else if (soundResource[0] == char(1)) {
