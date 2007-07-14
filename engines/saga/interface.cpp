@@ -2016,10 +2016,10 @@ void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bo
 	((byte *)ds->getBasePtr(x, ye))[0] = cornerColor;
 	((byte *)ds->getBasePtr(xe, y))[0] = cornerColor;
 	((byte *)ds->getBasePtr(xe, ye))[0] = cornerColor;
-	ds->hLine(x + 1, y, x + 1 + w - 2, frameColor);
-	ds->hLine(x + 1, ye, x + 1 + w - 2, frameColor);
-	ds->vLine(x, y + 1, y + 1 + h - 2, frameColor);
-	ds->vLine(xe, y + 1, y + 1 + h - 2, frameColor);
+	ds->hLine(x + 1, y, x + w - 2, frameColor);
+	ds->hLine(x + 1, ye, x + w - 2, frameColor);
+	ds->vLine(x, y + 1, y + h - 2, frameColor);
+	ds->vLine(xe, y + 1, y + h - 2, frameColor);
 
 	x++;
 	y++;
