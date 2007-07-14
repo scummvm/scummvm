@@ -40,7 +40,7 @@ namespace Saga {
 
 class DigitalMusicInputStream : public Audio::AudioStream {
 private:
-	Audio::AudioStream *_stream;
+	Audio::AudioStream *_compressedStream;
 	ResourceContext *_context;
 	ResourceData * resourceData;
 	GameSoundTypes soundType;
@@ -86,7 +86,7 @@ DigitalMusicInputStream::DigitalMusicInputStream(SagaEngine *vm, ResourceContext
 		error("DigitalMusicInputStream() wrong musicInfo");
 	}
 
-	_stream = NULL;
+	_compressedStream = NULL;
 
 	if (vm->getFeatures() & GF_COMPRESSED_SOUNDS) {
 		// Read compressed header to determine compression type
@@ -117,7 +117,7 @@ DigitalMusicInputStream::DigitalMusicInputStream(SagaEngine *vm, ResourceContext
 }
 
 DigitalMusicInputStream::~DigitalMusicInputStream() {
-	delete _stream;
+	delete _compressedStream;
 }
 
 void DigitalMusicInputStream::createCompressedStream() {
@@ -125,19 +125,19 @@ void DigitalMusicInputStream::createCompressedStream() {
 #ifdef USE_MAD
 		case kSoundMP3:
 			debug(1, "Playing MP3 compressed digital music");
-			_stream = Audio::makeMP3Stream(_file, resourceData->size);
+			_compressedStream = Audio::makeMP3Stream(_file, resourceData->size);
 			break;
 #endif
 #ifdef USE_VORBIS
 		case kSoundOGG:
 			debug(1, "Playing OGG compressed digital music");
-			_stream = Audio::makeVorbisStream(_file, resourceData->size);
+			_compressedStream = Audio::makeVorbisStream(_file, resourceData->size);
 			break;
 #endif
 #ifdef USE_FLAC
 		case kSoundFLAC:
 			debug(1, "Playing FLAC compressed digital music");
-			_stream = Audio::makeFlacStream(_file, resourceData->size);
+			_compressedStream = Audio::makeFlacStream(_file, resourceData->size);
 			break;
 #endif
 		default:
@@ -150,18 +150,18 @@ void DigitalMusicInputStream::createCompressedStream() {
 int DigitalMusicInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	// TODO/FIXME: Add looping support for compressed digital music - remove this once it's done
 	// Currently, an illegal read is made, leading to a crash. Therefore, it's disabled for now
-	if (_stream != NULL) _looping = false;
+	if (_compressedStream != NULL) _looping = false;
 
-	if (!_looping && _stream != NULL)
-		return _stream->readBuffer(buffer, numSamples);
+	if (!_looping && _compressedStream != NULL)
+		return _compressedStream->readBuffer(buffer, numSamples);
 
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
 		int len = 0;
-		if (_stream != NULL) {
-			len = _stream->readBuffer(buffer, numSamples);
+		if (_compressedStream != NULL) {
+			len = _compressedStream->readBuffer(buffer, numSamples);
 			if (len < numSamples) {
-				delete _stream;
+				delete _compressedStream;
 				createCompressedStream();
 				//_file->seek(_startPos, SEEK_SET);
 				//_pos = 0;
