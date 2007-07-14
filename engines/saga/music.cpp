@@ -64,7 +64,7 @@ public:
 	DigitalMusicInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping, uint32 loopStart);
 	~DigitalMusicInputStream();
 
-	void DigitalMusicInputStream::createCompressedStream();
+	void createCompressedStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
