@@ -204,6 +204,8 @@ monkey	The Secret of Monkey Island
 	66fd5ff9a810dfeb6d6bdada18221140	-1	it	DOS	VGA	VGA	4 disk	Andrea Petrucci
 	45152f7cf2ba8f43cf8a8ea2e740ae09	8357	es	DOS	VGA	VGA	4 disk	Fingolfin
 
+	8776caed014c321272af407c1502a2df	8955	en	Mac	CD	-	Mac v2.4	Petr Maruska (#1749232)
+
 	2d1e891fe52df707c30185e52c50cd92	8955	en	DOS	CD	CD	CD-ROM v2.3	Fingolfin
 	aa8a0cb65f3afbbe2c14c3f9f92775a3	8955	fr	DOS	CD	CD	CD-ROM v2.3	Fingolfin, Andrej Sinicyn, Andrea Petrucci
 	305d3dd57c96c65b017bc70c8c7cfb5e	8955	de	DOS	CD	CD	CD-ROM v2.3	Fingolfin
