@@ -50,12 +50,12 @@ def printColor(color, tabulate = True, printLastComma = True, newLine = True):
 	"""Prints color with optional start tabulation, comma in the end and a newline"""
 	result = ""
 	if tabulate:
-		result = result + "\t"
+		result += "\t"
 	for component in color[:-1]:
-		result = result + ((componentPrintFormat + ", ") % component)
-	result = result + (componentPrintFormat % color[-1])
+		result += ((componentPrintFormat + ", ") % component)
+	result += (componentPrintFormat % color[-1])
 	if printLastComma:
-		result = result + ","
+		result += ","
 	if newLine:
 		print result
 	else:
