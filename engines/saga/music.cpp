@@ -122,8 +122,7 @@ DigitalMusicInputStream::~DigitalMusicInputStream() {
 }
 
 void DigitalMusicInputStream::createCompressedStream() {
-	// we specify 32000 loops when looping is specified, which is quite close to looping forever
-	uint numLoops = _looping ? 32000 : 1;
+	uint numLoops = _looping ? 0 : 1;
 	_memoryStream = _file->readStream(resourceData->size);
 
 	switch (soundType) {
