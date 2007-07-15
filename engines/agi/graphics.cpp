@@ -68,6 +68,93 @@ uint8 egaPalette[16 * 3] = {
 };
 
 /**
+ * First generation Amiga AGI palette.
+ * A 16-color, 12-bit RGB palette.
+ *
+ * Used by at least the following Amiga AGI versions:
+ * 2.082 (King's Quest I   v1.0U 1986)
+ * 2.082 (Space Quest I    v1.2  1986)
+ * 2.090 (King's Quest III v1.01 1986-11-08)
+ * 2.107 (King's Quest II  v2.0J 1987-01-29)
+ * x.yyy (Black Cauldron   v2.00 1987-06-14)
+ * x.yyy (Larry I          v1.05 1987-06-26)
+ */
+uint8 amigaAgiPaletteV1[16 * 3] = {
+	0x0, 0x0, 0x0,
+	0x0, 0x0, 0xF,
+	0x0, 0x8, 0x0,
+	0x0, 0xD, 0xB,
+	0xC, 0x0, 0x0,
+	0xB, 0x7, 0xD,
+	0x8, 0x5, 0x0,
+	0xB, 0xB, 0xB,
+	0x7, 0x7, 0x7,
+	0x0, 0xB, 0xF,
+	0x0, 0xE, 0x0,
+	0x0, 0xF, 0xD,
+	0xF, 0x9, 0x8,
+	0xF, 0x7, 0x0,
+	0xE, 0xE, 0x0,
+	0xF, 0xF, 0xF
+};
+
+/**
+ * Second generation Amiga AGI palette.
+ * A 16-color, 12-bit RGB palette.
+ *
+ * Used by at least the following Amiga AGI versions:
+ * 2.202 (Space Quest II v2.0F. Intro says 1988. ScummVM 0.10.0 detects as 1986-12-09)
+ */
+uint8 amigaAgiPaletteV2[16 * 3] = {
+	0x0, 0x0, 0x0,
+	0x0, 0x0, 0xF,
+	0x0, 0x8, 0x0,
+	0x0, 0xD, 0xB,
+	0xC, 0x0, 0x0,
+	0xB, 0x7, 0xD,
+	0x8, 0x5, 0x0,
+	0xB, 0xB, 0xB,
+	0x7, 0x7, 0x7,
+	0x0, 0xB, 0xF,
+	0x0, 0xE, 0x0,
+	0x0, 0xF, 0xD,
+	0xF, 0x9, 0x8,
+	0xD, 0x0, 0xF,
+	0xE, 0xE, 0x0,
+	0xF, 0xF, 0xF
+};
+
+/**
+ * Third generation Amiga AGI palette.
+ * A 16-color, 12-bit RGB palette.
+ *
+ * Used by at least the following Amiga AGI versions:
+ * 2.310 (Police Quest I   v2.0B 1989-02-22)
+ * 2.316 (Gold Rush!       v2.05 1989-03-09)
+ * x.yyy (Manhunter I      v1.06 1989-03-18)
+ * 2.333 (Manhunter II     v3.06 1989-08-17)
+ * 2.333 (King's Quest III v2.15 1989-11-15)
+ */
+uint8 amigaAgiPaletteV3[16 * 3] = {
+	0x0, 0x0, 0x0,
+	0x0, 0x0, 0xB,
+	0x0, 0xB, 0x0,
+	0x0, 0xB, 0xB,
+	0xB, 0x0, 0x0,
+	0xB, 0x0, 0xB,
+	0xC, 0x7, 0x0,
+	0xB, 0xB, 0xB,
+	0x7, 0x7, 0x7,
+	0x0, 0x0, 0xF,
+	0x0, 0xF, 0x0,
+	0x0, 0xF, 0xF,
+	0xF, 0x0, 0x0,
+	0xF, 0x0, 0xF,
+	0xF, 0xF, 0x0,
+	0xF, 0xF, 0xF
+};
+
+/**
  * 16 color amiga-ish palette.
  */
 uint8 newPalette[16 * 3] = {
@@ -656,39 +743,26 @@ int GfxMgr::keypress() {
 
 /**
  * Initialize the color palette
- * This function initializes the color palette using the specified 16-color
+ * This function initializes the color palette using the specified
  * RGB palette.
- * @param p  A pointer to the 16-color RGB palette.
+ * @param p           A pointer to the source RGB palette.
+ * @param colorCount  Count of colors in the source palette.
+ * @param fromBits    Bits per source color component.
+ * @param toBits      Bits per destination color component.
  */
-void GfxMgr::initPalette(uint8 *p) {
-	int i;
-
-	for (i = 0; i < 48; i++) {
-		_palette[i] = p[i];
+void GfxMgr::initPalette(uint8 *p, uint colorCount, uint fromBits, uint toBits) {
+	const uint srcMax  = (1 << fromBits) - 1;
+	const uint destMax = (1 << toBits) - 1;
+	for (uint col = 0; col < colorCount; col++) {
+		for (uint comp = 0; comp < 3; comp++) { // Convert RGB components
+			_palette[col * 4 + comp] = (p[col * 3 + comp] * destMax) / srcMax;
+		}
+		_palette[col * 4 + 3] = 0; // Set alpha to zero
 	}
 }
 
 void GfxMgr::gfxSetPalette() {
-	int i;
-	byte pal[256 * 4];
-
-	if (!(_vm->getFeatures() & (GF_AGI256 | GF_AGI256_2))) {
-		for (i = 0; i < 16; i++) {
-			pal[i * 4 + 0] = _palette[i * 3 + 0] << 2;
-			pal[i * 4 + 1] = _palette[i * 3 + 1] << 2;
-			pal[i * 4 + 2] = _palette[i * 3 + 2] << 2;
-			pal[i * 4 + 3] = 0;
-		}
-		g_system->setPalette(pal, 0, 16);
-	} else {
-		for (i = 0; i < 256; i++) {
-			pal[i * 4 + 0] = vgaPalette[i * 3 + 0];
-			pal[i * 4 + 1] = vgaPalette[i * 3 + 1];
-			pal[i * 4 + 2] = vgaPalette[i * 3 + 2];
-			pal[i * 4 + 3] = 0;
-		}
-		g_system->setPalette(pal, 0, 256);
-	}
+	g_system->setPalette(_palette, 0, 256);
 }
 
 //Gets AGIPAL Data
@@ -852,7 +926,9 @@ void GfxMgr::setCursor(bool amigaStyleCursor) {
  * @see deinit_video()
  */
 int GfxMgr::initVideo() {
-	if (_vm->_renderMode == Common::kRenderEGA)
+	if (_vm->getFeatures() & (GF_AGI256 | GF_AGI256_2))
+		initPalette(vgaPalette, 256, 8);
+	else if (_vm->_renderMode == Common::kRenderEGA)
 		initPalette(egaPalette);
 	else
 		initPalette(newPalette);

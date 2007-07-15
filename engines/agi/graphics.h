@@ -41,7 +41,7 @@ class GfxMgr {
 private:
 	AgiEngine *_vm;
 
-	uint8 _palette[16 * 3];
+	uint8 _palette[256 * 4];
 	uint8 *_agiScreen;
 	unsigned char *_screen;
 
@@ -83,7 +83,7 @@ public:
 	void drawRectangle(int, int, int, int, int);
 	void saveBlock(int, int, int, int, uint8 *);
 	void restoreBlock(int, int, int, int, uint8 *);
-	void initPalette(uint8 *);
+	void initPalette(uint8 *p, uint colorCount = 16, uint fromBits = 6, uint toBits = 8);
 	void setAGIPal(int);
 	int getAGIPalFileNum();
 	void drawFrame(int x1, int y1, int x2, int y2, int c1, int c2);
