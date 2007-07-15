@@ -84,27 +84,34 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 		_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer, buffer.size, buffer.frequency, flags, -1, volume);
 	} else {
 		Audio::AudioStream *stream = NULL;
+		Common::MemoryReadStream *tmp = NULL;
 
 		switch (buffer.soundType) {
 #ifdef USE_MAD
 			case kSoundMP3:
 				debug(1, "Playing MP3 compressed sound");
 				buffer.soundFile->seek((long)buffer.fileOffset, SEEK_SET);
-				stream = Audio::makeMP3Stream(buffer.soundFile, buffer.size);
+				tmp = buffer.soundFile->readStream(buffer.size);
+				assert(tmp);
+				stream = Audio::makeMP3Stream(tmp, true);
 				break;
 #endif
 #ifdef USE_VORBIS
 			case kSoundOGG:
 				debug(1, "Playing OGG compressed sound");
 				buffer.soundFile->seek((long)buffer.fileOffset, SEEK_SET);
-				stream = Audio::makeVorbisStream(buffer.soundFile, buffer.size);
+				tmp = buffer.soundFile->readStream(buffer.size);
+				assert(tmp);
+				stream = Audio::makeVorbisStream(tmp, true);
 				break;
 #endif
 #ifdef USE_FLAC
 			case kSoundFLAC:
 				debug(1, "Playing FLAC compressed sound");
 				buffer.soundFile->seek((long)buffer.fileOffset, SEEK_SET);
-				stream = Audio::makeFlacStream(buffer.soundFile, buffer.size);
+				tmp = buffer.soundFile->readStream(buffer.size);
+				assert(tmp);
+				stream = Audio::makeFlacStream(tmp, true);
 				break;
 #endif
 			default:

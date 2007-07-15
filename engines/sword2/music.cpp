@@ -139,21 +139,29 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 	}
 
 	fh->file.seek(pos, SEEK_SET);
+	
+	Common::MemoryReadStream *tmp = 0;
 
 	switch (fh->fileType) {
 	case kCLUMode:
 		return makeCLUStream(&fh->file, enc_len);
 #ifdef USE_MAD
 	case kMP3Mode:
-		return Audio::makeMP3Stream(&fh->file, enc_len);
+		tmp = fh->file.readStream(enc_len);
+		assert(tmp);
+		return Audio::makeMP3Stream(tmp, true);
 #endif
 #ifdef USE_VORBIS
 	case kVorbisMode:
-		return Audio::makeVorbisStream(&fh->file, enc_len);
+		tmp = fh->file.readStream(enc_len);
+		assert(tmp);
+		return Audio::makeVorbisStream(tmp, true);
 #endif
 #ifdef USE_FLAC
 	case kFlacMode:
-		return Audio::makeFlacStream(&fh->file, enc_len);
+		tmp = fh->file.readStream(enc_len);
+		assert(tmp);
+		return Audio::makeFlacStream(tmp, true);
 #endif
 	default:
 		return NULL;

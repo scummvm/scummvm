@@ -615,13 +615,15 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 				oggMode = true;
 			}
 			if (!soundHandle->compressedStream) {
+				Common::MemoryReadStream *tmp = cmpFile->readStream(len);
+				assert(tmp);
 #ifdef USE_VORBIS
 				if (oggMode)
-					soundHandle->compressedStream = Audio::makeVorbisStream(cmpFile, len);
+					soundHandle->compressedStream = Audio::makeVorbisStream(tmp, true);
 #endif
 #ifdef USE_MAD
 				if (!oggMode)
-					soundHandle->compressedStream = Audio::makeMP3Stream(cmpFile, len);
+					soundHandle->compressedStream = Audio::makeMP3Stream(tmp, true);
 #endif
 				assert(soundHandle->compressedStream);
 			}
