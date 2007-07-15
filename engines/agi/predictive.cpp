@@ -30,6 +30,10 @@
 #include "common/func.h"
 #include "common/config-manager.h"
 
+#ifdef __DS__
+#include "wordcompletion.h"
+#endif
+
 namespace Agi {
 
 #define kModePre 0
@@ -517,6 +521,9 @@ void AgiEngine::loadDict(void) {
 	while ( (ptr = (char *) strchr(ptr, '\n')) != (char *) NULL ) {
 		*ptr = 0;
 		ptr++;
+#ifdef __DS__
+		DS::addAutoCompleteLine(_predictiveDictLine[i - 1]);
+#endif
 		_predictiveDictLine[i++] = ptr;
 	}
 	if (_predictiveDictLine[lines - 1][0] == 0)
@@ -524,6 +531,10 @@ void AgiEngine::loadDict(void) {
 
 	_predictiveDictLines = lines;
 	debug("Loaded %d lines", _predictiveDictLines);
+
+#ifdef __DS__
+	DS::sortAutoCompleteWordList();
+#endif
 
 	uint32 time3 = _system->getMillis();
 	printf("Time to parse pred.dic: %d, total: %d\n", time3-time2, time3-time1);
@@ -583,5 +594,5 @@ bool AgiEngine::matchWord(void) {
 		return false;
 	}
 }
-
+	
 } // End of namespace Agi
