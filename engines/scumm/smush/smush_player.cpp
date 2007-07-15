@@ -1178,6 +1178,9 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	char fname[260];
 #endif
 	Common::File *file = new Common::File();
+
+	// FIXME: How about using AudioStream::openStreamFile instead of the code below?
+
 #ifdef USE_VORBIS
 	memcpy(fname, filename, i - filename);
 	strcpy(fname + (i - filename), ".ogg");
