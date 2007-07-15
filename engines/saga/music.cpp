@@ -54,6 +54,7 @@ private:
 	const int16 *_bufferEnd;
 	const int16 *_pos;
 	const GameSoundInfo *_musicInfo;
+	Common::MemoryReadStream *_memoryStream;
 
 	void refill();
 	bool eosIntern() const {
@@ -121,23 +122,27 @@ DigitalMusicInputStream::~DigitalMusicInputStream() {
 }
 
 void DigitalMusicInputStream::createCompressedStream() {
+	// we specify 32000 loops when looping is specified, which is quite close to looping forever
+	uint numLoops = _looping ? 32000 : 1;
+	_memoryStream = _file->readStream(resourceData->size);
+
 	switch (soundType) {
 #ifdef USE_MAD
 		case kSoundMP3:
 			debug(1, "Playing MP3 compressed digital music");
-			_compressedStream = Audio::makeMP3Stream(_file, resourceData->size);
+			_compressedStream = Audio::makeMP3Stream(_memoryStream, true, 0, 0, numLoops);
 			break;
 #endif
 #ifdef USE_VORBIS
 		case kSoundOGG:
 			debug(1, "Playing OGG compressed digital music");
-			_compressedStream = Audio::makeVorbisStream(_file, resourceData->size);
+			_compressedStream = Audio::makeVorbisStream(_memoryStream, true, 0, 0, numLoops);
 			break;
 #endif
 #ifdef USE_FLAC
 		case kSoundFLAC:
 			debug(1, "Playing FLAC compressed digital music");
-			_compressedStream = Audio::makeFlacStream(_file, resourceData->size);
+			_compressedStream = Audio::makeFlacStream(_memoryStream, true, 0, 0, numLoops);
 			break;
 #endif
 		default:
@@ -148,36 +153,19 @@ void DigitalMusicInputStream::createCompressedStream() {
 }
 
 int DigitalMusicInputStream::readBuffer(int16 *buffer, const int numSamples) {
-	if (!_looping && _compressedStream != NULL)
+	if (_compressedStream != NULL)
 		return _compressedStream->readBuffer(buffer, numSamples);
 
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
 		int len = 0;
-		if (_compressedStream != NULL) {
-			len = _compressedStream->readBuffer(buffer, numSamples);
-			if (len < numSamples) {
-				// FIXME: When a looping compressed track finishes and before it restarts, there's a slight pause.
-				// This might be caused by the time it takes to reset the compressed stream
-
-				// Skip to the beginning of the track in the data file
-				_filePos = _startPos;
-				_file->seek(_filePos, SEEK_SET);
-				// Reset the compressed stream
-				delete _compressedStream;
-				createCompressedStream();
-				len = _compressedStream->readBuffer(buffer, numSamples);
-			}
-			samples += len;
-		} else {
-			len = MIN(numSamples - samples, (int) (_bufferEnd - _pos));
-			memcpy(buffer, _pos, len * 2);
-			buffer += len;
-			_pos += len;
-			samples += len;
-			if (_pos >= _bufferEnd)
-				refill();
-		}
+		len = MIN(numSamples - samples, (int) (_bufferEnd - _pos));
+		memcpy(buffer, _pos, len * 2);
+		buffer += len;
+		_pos += len;
+		samples += len;
+		if (_pos >= _bufferEnd)
+			refill();
 	}
 	return samples;
 }
