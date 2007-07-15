@@ -109,7 +109,12 @@ private:
 
 	struct SpeechCodecs {
 		const char *fileext;
-		Audio::AudioStream *(*streamFunc)(Common::File*, uint32);
+		Audio::AudioStream *(*streamFunc)(
+			Common::SeekableReadStream *stream,
+			bool disposeAfterUse,
+			uint32 startTime,
+			uint32 duration,
+			uint numLoops);
 	};
 
 	static const SpeechCodecs _supportedCodes[];
