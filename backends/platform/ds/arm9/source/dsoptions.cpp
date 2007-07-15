@@ -38,8 +38,8 @@ namespace Scumm {
 
 namespace DS {
 
-DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 200 - 20) {
-	addButton(this, 10, 160, "Close", GUI::kCloseCmd, 'C');
+DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 230 - 20) {
+	addButton(this, 10, 175, "Close", GUI::kCloseCmd, 'C');
 	
 #ifdef DS_SCUMM_BUILD
 	if (!DS::isGBAMPAvailable()) {
@@ -57,33 +57,44 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 200 - 20) {
 	_disablePowerOff = new GUI::CheckboxWidget(this, 20, 100, 250, 20, "Disable power off on quit", 0, 'T');
 //	_cpuScaler = new GUI::CheckboxWidget(this, 20, 115, 250, 20, "CPU scaler", 0, 'T');
 	_showCursorCheckbox = new GUI::CheckboxWidget(this, 20, 115, 250, 20, "Show mouse cursor", 0, 'T');
+	_snapToBorderCheckbox = new GUI::CheckboxWidget(this, 20, 130, 250, 20, "Snap to border", 0, 'T');
 
-	new GUI::StaticTextWidget(this, 20, 130, 110, 15, "Touch X Offset", GUI::kTextAlignLeft);
-	_touchX = new GUI::SliderWidget(this, 130, 130, 130, 12, 1);
+	new GUI::StaticTextWidget(this, 20, 145, 110, 15, "Touch X Offset", GUI::kTextAlignLeft);
+	_touchX = new GUI::SliderWidget(this, 130, 145, 130, 12, 1);
 	_touchX->setMinValue(-8);
 	_touchX->setMaxValue(+8);
 	_touchX->setValue(0);
 	_touchX->setFlags(GUI::WIDGET_CLEARBG);
 
-	new GUI::StaticTextWidget(this, 20, 145, 110, 15, "Touch Y Offset", GUI::kTextAlignLeft);
-	_touchY = new GUI::SliderWidget(this, 130, 145, 130, 12, 2);
+	new GUI::StaticTextWidget(this, 20, 160, 110, 15, "Touch Y Offset", GUI::kTextAlignLeft);
+	_touchY = new GUI::SliderWidget(this, 130, 160, 130, 12, 2);
 	_touchY->setMinValue(-8);
 	_touchY->setMaxValue(+8);
 	_touchY->setValue(0);
 	_touchY->setFlags(GUI::WIDGET_CLEARBG);
 
-	new GUI::StaticTextWidget(this, 130 + 65 - 10, 160, 20, 15, "0", GUI::kTextAlignCenter);
-	new GUI::StaticTextWidget(this, 130 + 130 - 10, 160, 20, 15, "8", GUI::kTextAlignCenter);
-	new GUI::StaticTextWidget(this, 130 - 10, 160, 20, 15, "-8", GUI::kTextAlignCenter);
+	new GUI::StaticTextWidget(this, 130 + 65 - 10, 175, 20, 15, "0", GUI::kTextAlignCenter);
+	new GUI::StaticTextWidget(this, 130 + 130 - 10, 175, 20, 15, "8", GUI::kTextAlignCenter);
+	new GUI::StaticTextWidget(this, 130 - 10, 175, 20, 15, "-8", GUI::kTextAlignCenter);
 
 #ifdef DS_SCUMM_BUILD
 	_delDialog = new Scumm::SaveLoadChooser("Delete game:", "Delete", false, Scumm::g_scumm);
 #endif
 
+	if (ConfMan.hasKey("snaptoborder", "ds")) {
+		_snapToBorderCheckbox->setState(ConfMan.getBool("snaptoborder", "ds"));
+	} else {
+#ifdef DS_BUILD_D
+		_snapToBorderCheckbox->setState(true);
+#else
+		_snapToBorderCheckbox->setState(false);
+#endif
+	}
+
 	if (ConfMan.hasKey("showcursor", "ds")) {
 		_showCursorCheckbox->setState(ConfMan.getBool("showcursor", "ds"));
 	} else {
-		_showCursorCheckbox->setState(false);
+		_showCursorCheckbox->setState(true);
 	}
 
 	if (ConfMan.hasKey("lefthanded", "ds")) {
@@ -148,6 +159,7 @@ DSOptionsDialog::~DSOptionsDialog() {
 	ConfMan.setInt("xoffset", _touchX->getValue(), "ds");
 	ConfMan.setInt("yoffset", _touchY->getValue(), "ds");
 	ConfMan.setBool("showcursor", _showCursorCheckbox->getState(), "ds");
+	ConfMan.setBool("snaptoborder", _snapToBorderCheckbox->getState(), "ds");
 	DS::setOptions();
 	DS::setIndyFightState(_indyFightCheckbox->getState());
 	ConfMan.flushToDisk();
@@ -237,6 +249,16 @@ void setOptions() {
 		DS::setMouseCursorVisible(ConfMan.getBool("showcursor", "ds"));
 	} else {
 		DS::setMouseCursorVisible(true);
+	}
+
+	if (ConfMan.hasKey("snaptoborder", "ds")) {
+		DS::setSnapToBorder(ConfMan.getBool("snaptoborder", "ds"));
+	} else {
+#ifdef DS_BUILD_D
+		DS::setSnapToBorder(true);
+#else
+		DS::setSnapToBorder(false);
+#endif
 	}
 
 	if (ConfMan.hasKey("unscaled", "ds")) {

@@ -5,10 +5,10 @@ libndsdir = /home/neil/devkitpro/libnds
 # Select the build you want by uncommenting one of the following lines:
 
 
-#DS_BUILD_A = 1
+DS_BUILD_A = 1
 #DS_BUILD_B = 1
 #DS_BUILD_C = 1
-DS_BUILD_D = 1
+#DS_BUILD_D = 1
 #DS_BUILD_E = 1
 #DS_BUILD_F = 1
 
@@ -111,7 +111,7 @@ endif
 
 ifdef DS_BUILD_D
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_D
-	LOGO = logoc.bmp
+	LOGO = logod.bmp
 	DISABLE_HE = 1
 	DISABLE_SCUMM = 1
 	DISABLE_SCUMM_7_8 = 1
@@ -134,7 +134,7 @@ endif
 
 ifdef DS_BUILD_E
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_E
-	LOGO = logoc.bmp
+	LOGO = logoe.bmp
 	DISABLE_HE = 1
 	DISABLE_SCUMM = 1
 	DISABLE_SCUMM_7_8 = 1
@@ -157,7 +157,7 @@ endif
 
 ifdef DS_BUILD_F
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_F
-	LOGO = logoc.bmp
+	LOGO = logof.bmp
 	DISABLE_HE = 1
 	DISABLE_SCUMM = 1
 	DISABLE_SCUMM_7_8 = 1

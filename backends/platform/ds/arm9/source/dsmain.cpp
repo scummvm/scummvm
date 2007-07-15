@@ -176,6 +176,7 @@ bool displayModeIs8Bit = false;
 // Game id
 u8 gameID;
 
+bool snapToBorder = false;
 bool consoleEnable = false;
 bool gameScreenSwap = false;
 bool isCpuScalerEnabled();
@@ -204,6 +205,7 @@ int touchScX, touchScY, touchX, touchY;
 int mouseHotspotX, mouseHotspotY;
 bool cursorEnable = false;
 bool mouseCursorVisible = true;
+bool rightButtonDown = false;
 
 // Dragging
 int dragStartX, dragStartY;
@@ -493,6 +495,10 @@ void initGame() {
 
 void setLeftHanded(bool enable) {
 	leftHandedMode = enable;
+}
+
+void setSnapToBorder(bool enable) {
+	snapToBorder = enable;
 }
 
 void setTouchXOffset(int x) {
@@ -1166,12 +1172,15 @@ void addEventsToQueue() {
 
 			if (!indyFightState) {
 
-				if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) && (getKeysChanged() & KEY_B)) {	
-					event.kbd.keycode = 27;		
-					event.kbd.ascii = 27;		
+				if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) && (getKeysDown() & KEY_B)) {	
+					event.kbd.keycode = 27;
+					event.kbd.ascii = 27;
 					event.kbd.flags = 0;
 
-					event.type = getKeyEvent(KEY_B);
+					event.type = Common::EVENT_KEYDOWN;
+					system->addEvent(event);
+
+					event.type = Common::EVENT_KEYUP;
 					system->addEvent(event);
 				}
 		
@@ -1188,34 +1197,45 @@ void addEventsToQueue() {
 				}
 			}
 	
-			if (!((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) && (getKeyboardEnable())) {
+			if ((getKeyboardEnable())) {
 				event.kbd.flags = 0;
 
-				if (getKeysChanged() & KEY_LEFT) {
-					event.kbd.keycode = SDLK_LEFT;
-					event.kbd.ascii = SDLK_LEFT;
-					event.type = getKeyEvent(KEY_LEFT);
-				}
+				bool down = getKeysDown() & (KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN);
+				bool release = getKeysReleased() & (KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN);
+				bool shoulders = getKeysHeld() & (KEY_L | KEY_R);
 
-				if (getKeysChanged() & KEY_RIGHT) {
-					event.kbd.keycode = SDLK_RIGHT;
-					event.kbd.ascii = SDLK_RIGHT;
-					event.type = getKeyEvent(KEY_RIGHT);
-				}
-
-				if (getKeysChanged() & KEY_UP) {
-					event.kbd.keycode = SDLK_UP;
-					event.kbd.ascii = SDLK_UP;
-					event.type = getKeyEvent(KEY_UP);
-				}
-
-				if (getKeysChanged() & KEY_DOWN) {
-					event.kbd.keycode = SDLK_DOWN;
-					event.kbd.ascii = SDLK_DOWN;
-					event.type = getKeyEvent(KEY_DOWN);
+				if ( (down && (!shoulders)) || release) 
+				{
+	
+					if (getKeysChanged() & KEY_LEFT) {
+						event.kbd.keycode = SDLK_LEFT;
+						event.kbd.ascii = SDLK_LEFT;
+						event.type = getKeyEvent(KEY_LEFT);
+						system->addEvent(event);
+					}
+	
+					if (getKeysChanged() & KEY_RIGHT) {
+						event.kbd.keycode = SDLK_RIGHT;
+						event.kbd.ascii = SDLK_RIGHT;
+						event.type = getKeyEvent(KEY_RIGHT);
+						system->addEvent(event);
+					}
+	
+					if (getKeysChanged() & KEY_UP) {
+						event.kbd.keycode = SDLK_UP;
+						event.kbd.ascii = SDLK_UP;
+						event.type = getKeyEvent(KEY_UP);
+						system->addEvent(event);
+					}
+	
+					if (getKeysChanged() & KEY_DOWN) {
+						event.kbd.keycode = SDLK_DOWN;
+						event.kbd.ascii = SDLK_DOWN;
+						event.type = getKeyEvent(KEY_DOWN);
+						system->addEvent(event);
+					}
 				}
 					
-				system->addEvent(event);
 			}
 	
 			if (!((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) && (!getIndyFightState()) && (!getKeyboardEnable())) {
@@ -1229,8 +1249,18 @@ void addEventsToQueue() {
 						mouseMode = MOUSE_LEFT;
 					}
 
+					if (rightButtonDown)
+					{
+						Common::Event event;
+						event.mouse = Common::Point(getPenX(), getPenY());
+						event.type = Common::EVENT_RBUTTONUP;
+						system->addEvent(event);
+						rightButtonDown = false;
+					}
+						
+
 					if (getKeysDown() & KEY_RIGHT) {
-						if ((currentGame->control != CONT_SCUMM_SAMNMAX) && (currentGame->control != CONT_FUTURE_WARS)) {
+						if ((currentGame->control != CONT_SCUMM_SAMNMAX) && (currentGame->control != CONT_FUTURE_WARS) && (currentGame->control != CONT_GOBLINS)) {
 							mouseMode = MOUSE_RIGHT;
 						} else {
 							// If we're playing sam and max, click and release the right mouse
@@ -1244,15 +1274,20 @@ void addEventsToQueue() {
 							} else {
 								event.mouse = Common::Point(getPenX(), getPenY());
 							}
+							
+							rightButtonDown = true;
 
 		
 							event.type = Common::EVENT_RBUTTONDOWN;
 							system->addEvent(event);
 		
-							event.type = Common::EVENT_RBUTTONUP;
-							system->addEvent(event);
+							//event.type = Common::EVENT_RBUTTONUP;
+							//system->addEvent(event);
 						}
 					}
+
+
+
 					if (getKeysDown() & KEY_UP) {
 						mouseMode = MOUSE_HOVER;
 					}
@@ -1343,27 +1378,33 @@ void addEventsToQueue() {
 
 				if (currentGame->control == CONT_SIMON) {
 					// Extra controls for Simon the Sorcerer
-					if ((getKeysChanged() & KEY_DOWN)) {
+					if ((getKeysDown() & KEY_DOWN)) {
 						Common::Event event;
 					
-						event.type = getKeyEvent(KEY_DOWN);
+						event.type = Common::EVENT_KEYDOWN;
 						event.kbd.keycode = '#';		// F10 or # - show hotspots
 						event.kbd.ascii = '#';
 						event.kbd.flags = 0;
 						system->addEvent(event);
 //						consolePrintf("F10\n");
+
+						event.type = Common::EVENT_KEYUP;
+						system->addEvent(event);
 					}
 				}
 	
 				if (currentGame->control == CONT_SCUMM_ORIGINAL) {
 					// Extra controls for Scumm v1-5 games
-					if ((getKeysChanged() & KEY_DOWN)) {
+					if ((getKeysDown() & KEY_DOWN)) {
 						Common::Event event;
 					
-						event.type = getKeyEvent(KEY_DOWN);
+						event.type = Common::EVENT_KEYDOWN;
 						event.kbd.keycode = '.';		// Full stop - skips current dialogue line
 						event.kbd.ascii = '.';
 						event.kbd.flags = 0;
+						system->addEvent(event);
+
+						event.type = Common::EVENT_KEYUP;
 						system->addEvent(event);
 					}
 					
@@ -1396,10 +1437,13 @@ void addEventsToQueue() {
 			}
 
 			if (leftHandedSwap(getKeysDown()) & KEY_A) {
-				event.type = getKeyEvent(leftHandedSwap(KEY_A));
+				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = SDLK_RETURN;
 				event.kbd.ascii = 0;
 				event.kbd.flags = 0;
+				system->addEvent(event);
+
+				event.type = Common::EVENT_KEYUP;
 				system->addEvent(event);
 			}
 		
@@ -1451,7 +1495,7 @@ void setIcon(int num, int x, int y, int imageNum, int flags, bool enable) {
 }
 
 void setIconMain(int num, int x, int y, int imageNum, int flags, bool enable) {
-	spritesMain[num].attribute[0] = ATTR0_BMP | (y & 0x1FF) | (!enable? ATTR0_DISABLED: 0); 
+	spritesMain[num].attribute[0] = ATTR0_BMP | (y & 0xFF) | (!enable? ATTR0_DISABLED: 0); 
 	spritesMain[num].attribute[1] = ATTR1_SIZE_32 | (x & 0x1FF) | flags;
 	spritesMain[num].attribute[2] = ATTR2_ALPHA(1)| (imageNum * 16);
 }
@@ -2228,12 +2272,26 @@ void consumePenEvents() {
 int getPenX() {
 	int x = ((penX * touchScX) >> 8) + touchX;
 	x = x < 0? 0: (x > gameWidth - 1? gameWidth - 1: x);
+
+	if (snapToBorder)
+	{
+		if (x < 8) x = 0;
+		if (x > gameWidth - 8) x = gameWidth - 1;
+	}
+
 	return x;
 }
 
 int getPenY() {
 	int y = ((penY * touchScY) >> 8) + touchY;
 	y = y < 0? 0: (y > gameHeight - 1? gameHeight - 1: y);
+
+	if (snapToBorder)
+	{
+		if (y < 8) y = 0;
+		if (y > gameHeight - 8) y = gameHeight - 1;
+	}
+
 	return y;
 }
 
@@ -2528,7 +2586,7 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.10.0 beta1 ");
+	consolePrintf("Version 0.10.0 beta2 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");

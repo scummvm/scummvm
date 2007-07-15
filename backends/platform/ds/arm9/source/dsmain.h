@@ -126,6 +126,7 @@ void 	setLeftHanded(bool enable);
 void 	setTouchXOffset(int x);
 void 	setTouchYOffset(int y);
 void 	setUnscaledMode(bool enable);
+void	setSnapToBorder(bool enable);
 void 	setIndyFightState(bool st);
 bool 	getIndyFightState();
 bool    isCpuScalerEnabled();
