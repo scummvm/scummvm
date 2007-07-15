@@ -267,7 +267,7 @@ bool Menu::keyhandler(int key) {
 	static int menuActive = false;
 	static int buttonUsed = 0;
 
-	if (!_vm->getflag(fMenusWork) && !(_vm->getFeatures() & GF_FORCEMENUS))
+	if (!_vm->getflag(fMenusWork) && !(_vm->getFeatures() & GF_MENUS))
 		return false;
 
 	if (!menuActive) {

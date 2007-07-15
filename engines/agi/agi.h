@@ -112,7 +112,7 @@ enum AgiGameFeatures {
 	GF_AGIPAL =      (1 << 4),
 	GF_MACGOLDRUSH = (1 << 5),
 	GF_FANMADE =     (1 << 6),
-	GF_FORCEMENUS =	 (1 << 7)
+	GF_MENUS =		 (1 << 7)
 };
 
 enum AgiGameID {

@@ -245,6 +245,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	{
 		// Black Cauldron (Apple IIgs) 1.0O 2/24/89 (CE)
+		// Menus not tested
 		{
 			"bc",
 			"1.0O 1989-02-24 (CE)",
@@ -298,6 +299,7 @@ static const AGIGameDescription gameDescriptions[] = {
 #if 0
 	{
 		// Donald Duck's Playground (Amiga) 1.0C
+		// Menus not tested
 		{
 			"ddp",
 			"1.0C 1987-04-27",
@@ -315,6 +317,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	{
 		// Donald Duck's Playground (ST) 1.0A 8/8/86
+		// Menus not tested
 		{
 			"ddp",
 			"1.0A 1986-08-08",
@@ -332,6 +335,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	{
 		// reported by Filippos (thebluegr) in bugreport #1654500
+		// Menus not tested
 		{
 			"ddp",
 			"1.0C 1986-06-09",   // verify date
@@ -366,6 +370,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	{
 		// Gold Rush! (Apple IIgs) 1.0M 2/28/89 (CE) aka 2.01 12/22/88
+		// Menus not tested
 		{
 			"goldrush",
 			"1.0M 1989-02-28 (CE) aka 2.01 1988-12-22",
@@ -455,6 +460,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	{
 		// King's Quest 1 (Amiga) 1.0U		# 2.082
+		// The original game did not have menus, they are enabled under ScummVM
 		{
 			"kq1",
 			"1.0U 1986",
@@ -465,13 +471,14 @@ static const AGIGameDescription gameDescriptions[] = {
 		},
 		GID_KQ1,
 		GType_V2,
-		0,
+		GF_MENUS,
 		0x2440,
 	},
 
 
 	{
 		// King's Quest 1 (ST) 1.0V
+		// The original game did not have menus, they are enabled under ScummVM
 		{
 			"kq1",
 			"1.0V 1986",
@@ -482,13 +489,14 @@ static const AGIGameDescription gameDescriptions[] = {
 		},
 		GID_KQ1,
 		GType_V2,
-		0,
+		GF_MENUS,
 		0x2272,
 	},
 
 
 	{
 		// King's Quest 1 (IIgs) 1.0S-88223
+		// Menus not tested
 		{
 			"kq1",
 			"1.0S 1988-02-23",
@@ -625,6 +633,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	{
 		// King's Quest 3 (Amiga) 1.01 11/8/86
+		// The original game did not have menus, they are enabled under ScummVM
 		{
 			"kq3",
 			"1.01 1986-11-08",
@@ -635,13 +644,14 @@ static const AGIGameDescription gameDescriptions[] = {
 		},
 		GID_KQ3,
 		GType_V2,
-		GF_FORCEMENUS,
+		GF_MENUS,
 		0x2440,
 	},
 
-
+#if 0
 	{
 		// King's Quest 3 (ST) 1.02 11/18/86
+		// Problematic: does not have menus, crashes if menus are enforced
 		{
 			"kq3",
 			"1.02 1986-11-18",
@@ -655,7 +665,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		0,
 		0x2272,
 	},
-
+#endif
 
 	{
 		// King's Quest 3 (Mac) 2.14 3/15/88
@@ -707,9 +717,10 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x3086,
 	},
 
-
+#if 0
 	{
 		// King's Quest 3 (PC) 1.01 11/08/86 [AGI 2.272]
+		// Problematic: does not have menus, crashes if menus are enforced
 		{
 			"kq3",
 			"1.01 1986-11-08",
@@ -723,7 +734,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		0,
 		0x2272,
 	},
-
+#endif
 
 	{
 		// King's Quest 3 (PC 5.25") 2.00 5/25/87 [AGI 2.435]
@@ -744,6 +755,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	{
 		// King's Quest 3 (Mac) 2.14 3/15/88
+		// Menus not tested
 		{
 			"kq3",
 			"2.14 1988-03-15 5.25\"",
@@ -795,6 +807,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	{
 		// King's Quest 4 (IIgs) 1.0K 11/22/88 (CE)
+		// Menus not tested
 		{
 			"kq4",
 			"1.0K 1988-11-22",
@@ -829,6 +842,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	{
 		// King's Quest 4 (PC 3.5") 2.2 9/27/88 [AGI 3.002.086]
+		// Menus not tested
 		{
 			"kq4",
 			"2.2 1988-09-27 3.5\"",
@@ -846,6 +860,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	{
 		// King's Quest 4 demo (PC) [AGI 3.002.102]
+		// Menus not tested
 		{
 			"kq4",
 			"Demo 1988-12-20",
@@ -1099,9 +1114,11 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x3149,
 	},
 
-
+#if 0
 	{
 		// Mixed-Up Mother Goose (Amiga) 1.1
+		// Problematic: crashes
+		// Menus not tested
 		{
 			"mixedup",
 			"1.1 1986-12-10",
@@ -1115,7 +1132,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		0,
 		0x3086,
 	},
-
+#endif
 
 	{
 		// Mixed Up Mother Goose (IIgs)
@@ -1154,6 +1171,7 @@ static const AGIGameDescription gameDescriptions[] = {
 #if 0
 	{
 		// Mixed Up Mother Goose (PC) [AGI 2.915] (Broken)
+		// Menus not tested
 		{
 			"mixedup",
 			"[corrupt/OBJECT from disk 1]",
@@ -1308,6 +1326,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	{
 		// Space Quest 1 (ST) 1.1A
+		// The original game did not have menus, they are enabled under ScummVM
 		{
 			"sq1",
 			"1.1A 1986-02-06",
@@ -1318,13 +1337,14 @@ static const AGIGameDescription gameDescriptions[] = {
 		},
 		GID_SQ1,
 		GType_V2,
-		0,
+		GF_MENUS,
 		0x2440,
 	},
 
 
 	{
 		// Space Quest 1 (PC) 1.1A [AGI 2.272]
+		// The original game did not have menus, they are enabled under ScummVM
 		{
 			"sq1",
 			"1.1A 1986-11-13",
@@ -1335,13 +1355,14 @@ static const AGIGameDescription gameDescriptions[] = {
 		},
 		GID_SQ1,
 		GType_V2,
-		GF_FORCEMENUS,
+		GF_MENUS,
 		0x2272,
 	},
 
 
 	{
 		// Space Quest 1 (Amiga) 1.2			# 2.082
+		// The original game did not have menus, they are enabled under ScummVM
 		{
 			"sq1",
 			"1.2 1986",
@@ -1352,7 +1373,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		},
 		GID_SQ1,
 		GType_V2,
-		GF_FORCEMENUS,
+		GF_MENUS,
 		0x2440,
 	},
 
@@ -1390,9 +1411,10 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x2917,
 	},
 
-
+#if 0
 	{
 		// Space Quest 1 (PC) 1.0X [AGI 2.089]
+		// Problematic: does not have menus, crashes if menus are enforced
 		{
 			"sq1",
 			"1.0X 1986-09-24",
@@ -1406,23 +1428,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		0,
 		0x2089,
 	},
-
-
-	{
-		// Space Quest 1 (PC) 1.1A [AGI 2.272]
-		{
-			"sq1",
-			"1.1A 1986-11-13",
-			AD_ENTRY1("logdir", "8d8c20ab9f4b6e4817698637174a1cb6"),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		GID_SQ1,
-		GType_V2,
-		0,
-		0x2272,
-	},
+#endif
 
 
 	{
@@ -1552,6 +1558,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	{
 		// Space Quest 2 (PC 5.25"/ST) 2.0C/A [AGI 2.915]
+		// Menus not tested
 		{
 			"sq2",
 			"2.0C/A 5.25\"/ST",
