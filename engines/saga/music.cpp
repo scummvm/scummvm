@@ -148,10 +148,6 @@ void DigitalMusicInputStream::createCompressedStream() {
 }
 
 int DigitalMusicInputStream::readBuffer(int16 *buffer, const int numSamples) {
-	// TODO/FIXME: Add looping support for compressed digital music - remove this once it's done
-	// Currently, an illegal read is made, leading to a crash. Therefore, it's disabled for now
-	if (_compressedStream != NULL) _looping = false;
-
 	if (!_looping && _compressedStream != NULL)
 		return _compressedStream->readBuffer(buffer, numSamples);
 
@@ -161,20 +157,27 @@ int DigitalMusicInputStream::readBuffer(int16 *buffer, const int numSamples) {
 		if (_compressedStream != NULL) {
 			len = _compressedStream->readBuffer(buffer, numSamples);
 			if (len < numSamples) {
+				// FIXME: When a looping compressed track finishes and before it restarts, there's a slight pause.
+				// This might be caused by the time it takes to reset the compressed stream
+
+				// Skip to the beginning of the track in the data file
+				_filePos = _startPos;
+				_file->seek(_filePos, SEEK_SET);
+				// Reset the compressed stream
 				delete _compressedStream;
 				createCompressedStream();
-				//_file->seek(_startPos, SEEK_SET);
-				//_pos = 0;
+				len = _compressedStream->readBuffer(buffer, numSamples);
 			}
+			samples += len;
 		} else {
 			len = MIN(numSamples - samples, (int) (_bufferEnd - _pos));
 			memcpy(buffer, _pos, len * 2);
+			buffer += len;
+			_pos += len;
+			samples += len;
+			if (_pos >= _bufferEnd)
+				refill();
 		}
-		buffer += len;
-		_pos += len;
-		samples += len;
-		if (_pos >= _bufferEnd)
-			refill();
 	}
 	return samples;
 }
