@@ -285,7 +285,7 @@ void Gfx::clearScreen(Gfx::Buffers buffer) {
 void Gfx::copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer) {
 	memcpy(_buffers[dstbuffer], _buffers[srcbuffer], SCREEN_WIDTH*SCREEN_HEIGHT);
 
-	if (dstbuffer == kBitFront) updateScreen();
+//	if (dstbuffer == kBitFront) updateScreen();
 
 	return;
 }

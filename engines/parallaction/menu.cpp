@@ -130,11 +130,13 @@ void Menu::splash() {
 	_vm->_disk->loadSlide("intro");
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	_vm->_gfx->updateScreen();
 	g_system->delayMillis(2000);
 
 	_vm->_disk->loadSlide("minintro");
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	_vm->_gfx->updateScreen();
 	g_system->delayMillis(2000);
 
 }
@@ -203,14 +205,10 @@ uint16 Menu::chooseLanguage() {
 
 	_vm->_gfx->displayString(60, 30, "SELECT LANGUAGE", 1);
 
-	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
-
 	_vm->changeCursor(kCursorArrow);
 
 	do {
 		_vm->updateInput();
-		_vm->_gfx->swapBuffers();
 
 		if (_mouseButtons == kMouseLeftUp) {
 			for (uint16 _si = 0; _si < 4; _si++) {
@@ -242,7 +240,8 @@ uint16 Menu::chooseLanguage() {
 			}
 		}
 
-		_vm->waitTime( 1 );
+		g_system->delayMillis(30);
+		_vm->_gfx->updateScreen();
 
 	} while (true);
 
@@ -261,41 +260,33 @@ uint16 Menu::selectGame() {
 
 	_vm->_disk->loadSlide("restore");
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
-
 
 	uint16 _si = 0;
 	uint16 _di = 3;
 
-	_vm->updateInput();
+	_mouseButtons = kMouseNone;
 	while (_mouseButtons != kMouseLeftUp) {
 
 		_vm->updateInput();
-		_vm->_gfx->swapBuffers();
-		_vm->waitTime( 1 );
 
-		_si = 0;
-		if (_vm->_mousePos.x > 160)
-			_si = 1;
+		_si = (_vm->_mousePos.x > 160) ? 1 : 0;
 
-		if (_si == _di) continue;
+		if (_si != _di) {
+			_di = _si;
 
-		_di = _si;
-		_vm->_gfx->copyScreen(Gfx::kBit2, Gfx::kBitFront);
+			_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+			if (_si != 0) {
+				// load a game
+				_vm->_gfx->displayString(60, 30, loadGameMsg[_language], 1);
+			} else {
+				// new game
+				_vm->_gfx->displayString(60, 30, newGameMsg[_language], 1);
+			}
 
-		if (_si != 0) {
-			// load a game
-			_vm->_gfx->displayString(60, 30, loadGameMsg[_language], 1);
-		} else {
-			// new game
-			_vm->_gfx->displayString(60, 30, newGameMsg[_language], 1);
 		}
 
+		g_system->delayMillis(30);
 		_vm->_gfx->updateScreen();
-		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
-
 	}
 
 	if (_si == 0) return 0; // new game
@@ -421,6 +412,7 @@ void Menu::selectCharacter() {
 		g_system->delayMillis(2000);
 
 		_vm->_gfx->copyScreen(Gfx::kBit2, Gfx::kBitFront);
+		_vm->_gfx->updateScreen();
 	}
 
 

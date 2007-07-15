@@ -310,6 +310,7 @@ void Parallaction::displayCharacterComment(ExamineData *data) {
 	waitUntilLeftClick();
 
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	_gfx->updateScreen();
 
 	return;
 }
@@ -353,6 +354,7 @@ void Parallaction::displayItemComment(ExamineData *data) {
 
 	_gfx->setHalfbriteMode(false);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	_gfx->updateScreen();
 
 	return;
 }
