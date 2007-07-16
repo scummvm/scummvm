@@ -448,6 +448,12 @@ int AgiEngine::agiInit() {
 		loadGame(saveNameBuffer, false); // Do not check game id
 	}
 
+#ifdef __DS__
+	// Normally, the engine loads the predictive text dictionary when the predictive dialog
+	// is shown.  On the DS version, the word completion feature needs the dictionary too.
+	loadDict();
+#endif
+
 	return ec;
 }
 
