@@ -79,6 +79,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "comi", "The Curse of Monkey Island" },
 #endif
 
+	{ "brstorm", "Bear Stormin'" },
 	{ "fbear", "Fatty Bear's Birthday Surprise" },
 	{ "fbpack", "Fatty Bear's Fun Pack" },
 	{ "funpack", "Putt-Putt's Fun Pack" },
@@ -248,6 +249,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"funpack",  0, 0, GID_FUNPACK, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 	{"fbpack",   0, 0, GID_HEGAME,  6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
+	{"brstorm", 0, 0, GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 	{"fbear", "HE 61", 0, GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 	{"fbear", "HE 70", 0, GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY, Common::kPlatformWindows},
 
@@ -460,6 +462,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "fbpack", "fbpack", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "funpack", "funpack", kGenHEPC, UNK_LANG, UNK, 0 },
+
+	{ "brstorm", "brstorm", kGenHEPC, UNK_LANG, UNK, 0 },
 
 	{ "fbear", "fbear", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "fbear", "fbdemo", kGenHEPC, UNK_LANG, UNK, 0 },
