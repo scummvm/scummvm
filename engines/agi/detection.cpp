@@ -648,10 +648,10 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x2440,
 	},
 
-#if 0
+
 	{
 		// King's Quest 3 (ST) 1.02 11/18/86
-		// Problematic: does not have menus, crashes if menus are enforced
+		// Does not have menus, crashes if menus are enforced. Therefore, ESC pauses the game
 		{
 			"kq3",
 			"1.02 1986-11-18",
@@ -662,10 +662,10 @@ static const AGIGameDescription gameDescriptions[] = {
 		},
 		GID_KQ3,
 		GType_V2,
-		0,
+		GF_ESCPAUSE,
 		0x2272,
 	},
-#endif
+
 
 	{
 		// King's Quest 3 (Mac) 2.14 3/15/88
@@ -717,10 +717,10 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x3086,
 	},
 
-#if 0
+
 	{
 		// King's Quest 3 (PC) 1.01 11/08/86 [AGI 2.272]
-		// Problematic: does not have menus, crashes if menus are enforced
+		// Does not have menus, crashes if menus are enforced. Therefore, ESC pauses the game
 		{
 			"kq3",
 			"1.01 1986-11-08",
@@ -731,10 +731,10 @@ static const AGIGameDescription gameDescriptions[] = {
 		},
 		GID_KQ3,
 		GType_V2,
-		0,
+		GF_ESCPAUSE,
 		0x2272,
 	},
-#endif
+
 
 	{
 		// King's Quest 3 (PC 5.25") 2.00 5/25/87 [AGI 2.435]
@@ -1411,10 +1411,10 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x2917,
 	},
 
-#if 0
+
 	{
 		// Space Quest 1 (PC) 1.0X [AGI 2.089]
-		// Problematic: does not have menus, crashes if menus are enforced
+		// Does not have menus, crashes if menus are enforced. Therefore, ESC pauses the game
 		{
 			"sq1",
 			"1.0X 1986-09-24",
@@ -1425,10 +1425,10 @@ static const AGIGameDescription gameDescriptions[] = {
 		},
 		GID_SQ1,
 		GType_V2,
-		0,
+		GF_ESCPAUSE,
 		0x2089,
 	},
-#endif
+
 
 
 	{

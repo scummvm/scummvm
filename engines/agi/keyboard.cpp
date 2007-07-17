@@ -107,8 +107,10 @@ int AgiEngine::handleController(int key) {
 	VtEntry *v = &_game.viewTable[0];
 	int i;
 
-	/* AGI 3.149 games and The Black Cauldron need KEY_ESCAPE to use menus */
-	if (key == 0 || (key == KEY_ESCAPE && agiGetRelease() != 0x3149 && getGameID() != GID_BC) )
+	// AGI 3.149 games and The Black Cauldron need KEY_ESCAPE to use menus
+	// Games with the GF_ESCPAUSE flag need KEY_ESCAPE to pause the game
+	if (key == 0 || 
+		(key == KEY_ESCAPE && agiGetRelease() != 0x3149 && getGameID() != GID_BC && !(getFeatures() & GF_ESCPAUSE)) )
 		return false;
 
 	if ((getGameID() == GID_MH1 || getGameID() == GID_MH2) && (key == KEY_ENTER) &&
