@@ -47,7 +47,7 @@ struct GameSettings {
 	const char *detectname;
 };
 
-static const GameSettings agiSettings[] = {
+static const GameSettings drasculaSettings[] = {
 	{"drascula", "Drascula game", 0, 0, 0},
 
 	{NULL, NULL, 0, 0, NULL}
@@ -66,7 +66,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst) : Engine(syst) {
 	const GameSettings *g;
 
 	const char *gameid = ConfMan.get("gameid").c_str();
-	for (g = agiSettings; g->gameid; ++g)
+	for (g = drasculaSettings; g->gameid; ++g)
 		if (!scumm_stricmp(g->gameid, gameid))
 			_gameId = g->id;
 
