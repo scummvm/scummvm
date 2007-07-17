@@ -839,6 +839,9 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		ConfMan.setActiveDomain(_domains[item]);
 		close();
 		break;
+	case kListItemRemovalRequestCmd:
+		removeGame(item);
+		break;
 	case kListSelectionChangedCmd:
 		updateButtons();
 		break;
