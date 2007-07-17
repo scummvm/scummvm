@@ -96,3 +96,9 @@ DEFINES += -DDISABLE_CRUISE
 else
 MODULES += engines/cruise
 endif
+
+ifdef DISABLE_DRASCULA
+DEFINES += -DDISABLE_DRASCULA
+else
+MODULES += engines/drascula
+endif

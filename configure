@@ -63,6 +63,7 @@ _build_agi=yes
 _build_touche=yes
 _build_parallaction=yes
 _build_cruise=no
+_build_drascula=no
 _build_hq_scalers=yes
 _build_scalers=yes
 
@@ -353,6 +354,7 @@ Optional Features:
   --disable-agos           don't build the AGOS engine
   --disable-cine           don't build the Cinematique engine evo 1
   --enable-cruise          build the Cruise for a Corpse engine
+  --enable-drascula        build the Drascula: The Vampire Strikes Back engine
   --disable-gob            don't build the Gobli*ns engine
   --disable-kyra           don't build the Legend of Kyrandia engine
   --enable-lure            build the Lure of the Temptress engine
@@ -438,6 +440,7 @@ for ac_option in $@; do
       --disable-touche)         _build_touche=no ;;
       --disable-parallaction)   _build_parallaction=no ;;
       --enable-cruise)          _build_cruise=yes ;;
+      --enable-drascula)        _build_drascula=yes ;;
       --disable-hq-scalers)     _build_hq_scalers=no ;;
       --disable-scalers)        _build_scalers=no ;;
       --enable-alsa)            _alsa=yes       ;;
@@ -730,6 +733,7 @@ add_to_config_mk_if_no $_build_agi          'DISABLE_AGI = 1'
 add_to_config_mk_if_no $_build_touche       'DISABLE_TOUCHE = 1'
 add_to_config_mk_if_no $_build_parallaction 'DISABLE_PARALLACTION = 1'
 add_to_config_mk_if_no $_build_cruise       'DISABLE_CRUISE = 1'
+add_to_config_mk_if_no $_build_drascula     'DISABLE_DRASCULA = 1'
 add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
 add_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS = 1'
 
@@ -1387,6 +1391,9 @@ if test "$_build_parallaction" = yes ; then
 fi
 if test "$_build_cruise" = yes ; then
 	echo "    Cinematique evo 2"
+fi
+if test "$_build_drascula" = yes ; then
+	echo "    Drascula"
 fi
 
 echo
