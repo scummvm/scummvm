@@ -427,14 +427,14 @@ bool Resource::createContexts() {
 		if (Common::File::exists("music.rsc") || Common::File::exists("music.cmp")) {
 			_contextsCount++;
 			digitalMusic = true;
-			if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+			if (Common::File::exists("music.cmp"))
 				sprintf(musicFileName, "music.cmp");
 			else
 				sprintf(musicFileName, "music.rsc");
 		} else if (Common::File::exists("musicd.rsc") || Common::File::exists("musicd.cmp")) {
 			_contextsCount++;
 			digitalMusic = true;
-			if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+			if (Common::File::exists("musicd.rsc"))
 				sprintf(musicFileName, "musicd.cmp");
 			else
 				sprintf(musicFileName, "musicd.rsc");
