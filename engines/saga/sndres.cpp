@@ -68,8 +68,13 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 		byte *resourcePointer;
 		size_t resourceLength;
 
-		_vm->_resource->loadResource(resourceContext, RID_IHNM_SFX_LUT,
-								 resourcePointer, resourceLength);
+		if (_vm->getGameId() == GID_IHNM_DEMO) {
+			_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_SFX_LUT,
+									 resourcePointer, resourceLength);
+		} else {
+			_vm->_resource->loadResource(resourceContext, RID_IHNM_SFX_LUT,
+									 resourcePointer, resourceLength);
+		}
 
 		if (resourceLength == 0) {
 			error("Sndres::SndRes can't read SfxIDs table");
