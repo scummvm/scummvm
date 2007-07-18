@@ -29,6 +29,7 @@
 #include "common/savefile.h"
 #include "common/util.h"
 #include "common/fs.h"
+#include "common/str.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/saves/compressed/compressed-saves.h"
 
@@ -120,36 +121,69 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 	// Ensure that the savepath exists and is writeable. If not, generate
 	// an appropriate error
 	const char *savePath = getSavePath();
+	
 #if defined(UNIX) || defined(__SYMBIAN32__)
 	struct stat sb;
+	clearError();
 	
 	// Check whether the dir exists
 	if (stat(savePath, &sb) == -1) {
 		// The dir does not exist, or stat failed for some other reason.
 		// If the problem was that the path pointed to nothing, try
-		// to create the dir.
-		if (errno == ENOENT) {
+		// to create the dir (ENOENT case).
+		switch (errno) {
+		case EACCES:
+			setError(SFM_DIR_ACCESS, Common::String("Search or write permission denied"));
+			break;
+		case ELOOP:
+			setError(SFM_DIR_LOOP, Common::String("Too many symbolic links encountered while traversing the path"));
+			break;
+		case ENAMETOOLONG:
+			setError(SFM_DIR_NAMETOOLONG, Common::String("The path name is too long"));
+			break;
+		case ENOENT:
 			if (mkdir(savePath, 0755) != 0) {
 				// mkdir could fail for various reasons: The parent dir doesn't exist,
 				// or is not writeable, the path could be completly bogus, etc.
 				warning("mkdir for '%s' failed!", savePath);
 				perror("mkdir");
-				// TODO: Specify an error code here so that callers can 
-				// determine what exactly went wrong.
+				
+				switch (errno) {
+				case EACCES:
+					setError(SFM_DIR_ACCESS, Common::String("Search or write permission denied"));
+					break;
+				case EMLINK:
+					setError(SFM_DIR_LINKMAX, Common::String("The link count of the parent directory would exceed {LINK_MAX}"));
+					break;
+				case ELOOP:
+					setError(SFM_DIR_LOOP, Common::String("Too many symbolic links encountered while traversing the path"));
+					break;
+				case ENAMETOOLONG:
+					setError(SFM_DIR_NAMETOOLONG, Common::String("The path name is too long"));
+					break;
+				case ENOENT:
+					setError(SFM_DIR_NOENT, Common::String("A component of the path path does not exist, or the path is an empty string"));
+					break;
+				case ENOTDIR:
+					setError(SFM_DIR_NOTDIR, Common::String("A component of the path prefix is not a directory"));
+					break;
+				case EROFS:
+					setError(SFM_DIR_ROFS, Common::String("The parent directory resides on a read-only file system"));
+					break;
+				}
+				
 				return 0;
 			}
-		} else {
-			// Unknown error, abort.
-			// TODO: Specify an error code here so that callers can 
-			// determine what exactly went wrong.
-			return 0;
-		}
+			break;
+		case ENOTDIR:
+			setError(SFM_DIR_NOTDIR, Common::String("A component of the path prefix is not a directory"));
+			break;
+		} 
 	} else {
 		// So stat() succeeded. But is the path actually pointing to a
 		// directory?
 		if (!S_ISDIR(sb.st_mode)) {
-			// TODO: Specify an error code here so that callers can 
-			// determine what exactly went wrong.
+			setError(SFM_DIR_NOTDIR, Common::String("The given savepath is not a directory"));
 			return 0;
 		}
 	}
@@ -164,6 +198,7 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 		delete sf;
 		sf = 0;
 	}
+	
 	return wrapOutSaveFile(sf);
 }
 

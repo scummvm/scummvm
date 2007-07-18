@@ -78,8 +78,50 @@ public:
 class SaveFileManager : NonCopyable {
 
 public:
+	enum SFMError {
+		SFM_NO_ERROR,			//Default state, indicates no error has been recorded
+		SFM_DIR_ACCESS,			//stat(), mkdir()::EACCES: Search or write permission denied
+		SFM_DIR_LINKMAX,		//mkdir()::EMLINK: The link count of the parent directory would exceed {LINK_MAX}
+		SFM_DIR_LOOP,			//stat(), mkdir()::ELOOP: Too many symbolic links encountered while traversing the path
+		SFM_DIR_NAMETOOLONG,	//stat(), mkdir()::ENAMETOOLONG: The path name is too long
+		SFM_DIR_NOENT,			//stat(), mkdir()::ENOENT: A component of the path path does not exist, or the path is an empty string
+		SFM_DIR_NOTDIR,			//stat(), mkdir()::ENOTDIR: A component of the path prefix is not a directory
+		SFM_DIR_ROFS			//mkdir()::EROFS: The parent directory resides on a read-only file system
+	};
+	
+protected:
+	SFMError _error;
+	String _errorDesc;
+	
+public:
 	virtual ~SaveFileManager() {}
-
+	
+	/**
+	 * Clears the last set error code and string.
+	 */
+	virtual void clearError() { _error = SFM_NO_ERROR; _errorDesc = ""; }
+	
+	/**
+	 * Returns the last ocurred error code. If none ocurred, returns SFM_NO_ERROR.
+	 * 
+	 * @return A SFMError indicating the type of the last error.
+	 */
+	virtual SFMError getError() { return _error; }
+	
+	/**
+	 * Returns the last ocurred error description. If none ocurred, returns 0.
+	 * 
+	 * @return A string describing the last error.
+	 */
+	virtual String getErrorDesc() { return _errorDesc; }
+	
+	/**
+	 * Sets the last ocurred error.
+	 * @param error Code identifying the last error.
+	 * @param errorDesc String describing the last error.
+	 */
+	virtual void setError(SFMError error, String errorDesc) { _error = error; _errorDesc = errorDesc; }
+	
 	/**
 	 * Open the file with name filename in the given directory for saving.
 	 * @param filename	the filename
