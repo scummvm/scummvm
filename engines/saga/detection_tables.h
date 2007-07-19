@@ -123,6 +123,8 @@ static const GameSoundInfo ITEMACDEMO_GameSound = {
 	true
 };
 
+/*
+// Not used
 static const GameSoundInfo ITEMACDEMO_GameMusic = {
 	kSoundPCM,
 	11025,
@@ -131,6 +133,7 @@ static const GameSoundInfo ITEMACDEMO_GameMusic = {
 	false,
 	true
 };
+*/
 
 // Inherit the Earth - Wyrmkeep Linux Demo version
 static const GameSoundInfo ITELINDEMO_GameMusic = {
@@ -326,7 +329,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEDEMO_GameFonts,
 		&ITEDEMO_GameSound,
 		&ITEDEMO_GameSound,
-		NULL,
+		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		0,
 		NULL,
 	},
@@ -424,7 +427,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&ITEWINDEMO1_GameSound,
 		&ITEWINDEMO1_GameSound,
-		NULL,
+		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
@@ -457,7 +460,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&ITEMACCD_G_GameSound,
 		&ITEMACCD_G_GameSound,
-		NULL,
+		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		0,
 		NULL,
 	},
@@ -587,7 +590,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITECD_GameFonts,
 		&ITECD_GameSound,
 		&ITECD_GameSound,
-		NULL,
+		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		0,
 		NULL,
 	},
@@ -618,7 +621,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITECD_GameFonts,
 		&ITECD_GameSound,
 		&ITECD_GameSound,
-		NULL,
+		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		0,
 		NULL,
 	},
@@ -649,7 +652,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEDISK_GameFonts,
 		&ITEDISK_GameSound,
 		&ITEDISK_GameSound,
-		NULL,
+		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		0,
 		NULL,
 	},
@@ -678,7 +681,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEDISK_GameFonts,
 		&ITEDISK_GameSound,
 		&ITEDISK_GameSound,
-		NULL,
+		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		0,
 		NULL,
 	},
