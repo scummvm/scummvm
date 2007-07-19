@@ -43,8 +43,8 @@ namespace Saga {
 #define RID_IHNM_SCRIPT_LUT 29
 #define RID_IHNM_SFX_LUT 265
 
-#define RID_IHNMDEMO_SCENE_LUT  286
-#define RID_IHNMDEMO_SCRIPT_LUT 18
+#define RID_IHNMDEMO_SCENE_LUT  286		// TODO: is this correct?
+#define RID_IHNMDEMO_SCRIPT_LUT 18		// TODO: is this correct?
 #define RID_IHNMDEMO_SFX_LUT 222
 
 //obj names
@@ -100,7 +100,7 @@ namespace Saga {
 #define RID_IHNM_MAIN_PANEL 9
 #define RID_IHNM_CONVERSE_PANEL 10
 #define RID_IHNM_HOURGLASS_CURSOR 11
-#define RID_IHNM_MAIN_SPRITES 12       // TODO: verify this
+#define RID_IHNM_MAIN_SPRITES 12
 #define RID_IHNM_MAIN_PANEL_SPRITES 12
 #define RID_IHNM_ARROW_SPRITES 13
 #define RID_IHNM_SAVEREMINDER_SPRITES 14
@@ -111,8 +111,19 @@ namespace Saga {
 #define RID_IHNM_PROFILE_BG 20
 #define RID_IHNM_MAIN_STRINGS 21
 
+#define RID_IHNMDEMO_MAIN_PANEL 4				// TODO: Verify this
+#define RID_IHNMDEMO_CONVERSE_PANEL 5			// TODO: Verify this
+#define RID_IHNMDEMO_HOURGLASS_CURSOR 6			// TODO: Verify this
+#define RID_IHNMDEMO_MAIN_SPRITES 7
+#define RID_IHNMDEMO_MAIN_PANEL_SPRITES 7
 #define RID_IHNMDEMO_ARROW_SPRITES 8
 #define RID_IHNMDEMO_SAVEREMINDER_SPRITES 9
+#define RID_IHNMDEMO_OPTION_PANEL 10			// TODO: Verify this
+#define RID_IHNMDEMO_OPTION_PANEL_SPRITES 11	// TODO: Verify this
+#define RID_IHNMDEMO_WARNING_PANEL 12			// TODO: Verify this
+#define RID_IHNMDEMO_BOSS_SCREEN 13				// TODO: Verify this
+#define RID_IHNMDEMO_PROFILE_BG 14				// TODO: Verify this
+#define RID_IHNMDEMO_MAIN_STRINGS 15			// TODO: Verify this
 
 // Puzzle portraits
 #define RID_ITE_SAKKA_APPRAISING	6

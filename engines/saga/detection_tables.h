@@ -274,6 +274,21 @@ static const GameResourceDescription IHNM_Resources = {
 	0					// Actors strings (ITE only)
 };
 
+static const GameResourceDescription IHNMDEMO_Resources = {
+	RID_IHNMDEMO_SCENE_LUT,  // Scene lookup table RN
+	RID_IHNMDEMO_SCRIPT_LUT, // Script lookup table RN
+	RID_IHNMDEMO_MAIN_PANEL,
+	RID_IHNMDEMO_CONVERSE_PANEL,
+	RID_IHNMDEMO_OPTION_PANEL,
+	RID_IHNMDEMO_WARNING_PANEL,
+	RID_IHNMDEMO_MAIN_SPRITES,
+	RID_IHNMDEMO_MAIN_PANEL_SPRITES,
+	RID_IHNMDEMO_OPTION_PANEL_SPRITES,
+	0,					// Default portraits (ITE only)
+	RID_IHNMDEMO_MAIN_STRINGS,
+	0					// Actors strings (ITE only)
+};
+
 static const GameFontDescription IHNMDEMO_GameFonts[] = {
 	{2},
 	{3},
@@ -708,7 +723,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GID_IHNM_DEMO,
 		0,
 		0,
-		&IHNM_Resources,
+		&IHNMDEMO_Resources,
 		ARRAYSIZE(IHNMDEMO_GameFonts),
 		IHNMDEMO_GameFonts,
 		&IHNM_GameSound,
