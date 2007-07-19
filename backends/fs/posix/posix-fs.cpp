@@ -243,7 +243,7 @@ AbstractFilesystemNode *POSIXFilesystemNode::getParent() const {
 	const char *start = _path.c_str();
 	const char *end = lastPathComponent(_path);
 
-	return new POSIXFilesystemNode(String(start, end - start), false);
+	return new POSIXFilesystemNode(String(start, end - start), true);
 }
 
 #endif //#if defined(UNIX)
