@@ -15,6 +15,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scummvm", "scummvm.vcproj",
 		{0068957B-E2E1-4988-8C87-D541D84DAF20} = {0068957B-E2E1-4988-8C87-D541D84DAF20}
 		{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC} = {9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}
 		{676DB4C5-9A3E-4EE1-8483-EBB79DC0700E} = {676DB4C5-9A3E-4EE1-8483-EBB79DC0700E}
+		{CF888EE2-239C-40D7-83F1-1CDD4F7D56E3} = {CF888EE2-239C-40D7-83F1-1CDD4F7D56E3}
 		{15DF71E6-ECA9-45ED-8049-1CD7C987CCFE} = {15DF71E6-ECA9-45ED-8049-1CD7C987CCFE}
 	EndProjectSection
 EndProject
@@ -75,6 +76,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "parallaction", "parallactio
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cruise", "cruise.vcproj", "{CD9AEE36-CEBD-40CE-A6B3-B71523AB8DEC}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "drascula", "drascula.vcproj", "{CF888EE2-239C-40D7-83F1-1CDD4F7D56E3}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -150,6 +155,10 @@ Global
 		{CD9AEE36-CEBD-40CE-A6B3-B71523AB8DEC}.Debug.Build.0 = Debug|Win32
 		{CD9AEE36-CEBD-40CE-A6B3-B71523AB8DEC}.Release.ActiveCfg = Release|Win32
 		{CD9AEE36-CEBD-40CE-A6B3-B71523AB8DEC}.Release.Build.0 = Release|Win32
+		{CF888EE2-239C-40D7-83F1-1CDD4F7D56E3}.Debug.ActiveCfg = Debug|Win32
+		{CF888EE2-239C-40D7-83F1-1CDD4F7D56E3}.Debug.Build.0 = Debug|Win32
+		{CF888EE2-239C-40D7-83F1-1CDD4F7D56E3}.Release.ActiveCfg = Release|Win32
+		{CF888EE2-239C-40D7-83F1-1CDD4F7D56E3}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
