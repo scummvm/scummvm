@@ -29,6 +29,10 @@
 #include "common/util.h"
 #include "common/hash-str.h"
 
+#if defined(UNIX) || defined(__SYMBIAN32__)
+#include <errno.h>
+#endif
+
 #ifdef MACOSX
 #include "CoreFoundation/CoreFoundation.h"
 #endif
@@ -408,16 +412,40 @@ bool File::open(const FilesystemNode &node, AccessMode mode) {
 	return true;
 }
 
+bool File::remove(const String &filename){
+	if (remove(filename.c_str()) != 0) {
+		if(errno == EACCES)
+			;//TODO: read-only file
+		if(errno == ENOENT)
+			;//TODO: non-existent file
+		
+		return false;
+	} else {
+		return true;
+	}
+}
+
+bool File::remove(const FilesystemNode &node){
+	if (remove(node.getPath()) != 0) {
+		if(errno == EACCES)
+			;//TODO: read-only file
+		if(errno == ENOENT)
+			;//TODO: non-existent file
+				
+		return false;
+	} else {
+		return true;
+	}
+}
+
 bool File::exists(const String &filename) {
 	// First try to find the file it via a FilesystemNode (in case an absolute
 	// path was passed). But we only use this to filter out directories.
 	FilesystemNode file(filename);
-	// FIXME: can't use isValid() here since at the time of writing
-	// FilesystemNode is to be unable to find for example files
-	// added in extrapath
-	if (file.isDirectory() || !file.exists())
-		return false;
-
+	
+	return (!file.isDirectory() && file.exists());
+	
+	//***DEPRECATED COMMENTS BELOW, LEFT FOR DISCUSSION***
 	// Next, try to locate the file by *opening* it in read mode. This has
 	// multiple effects:
 	// 1) It takes _filesMap and _defaultDirectories into consideration -> good
