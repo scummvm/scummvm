@@ -50,6 +50,9 @@ void ScummEngine::loadCJKFont() {
 	_useCJKMode = false;
 	_textSurfaceMultiplier = 1;
 
+	if (_game.platform == Common::kPlatformSegaCD)
+		return;
+
 	if (_language == Common::JA_JPN && _game.version <= 5) { // FM-TOWNS v3 / v5 Kanji
 		int numChar = 256 * 32;
 		_2byteWidth = 16;
