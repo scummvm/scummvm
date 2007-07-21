@@ -221,6 +221,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 				type = Audio::Mixer::kMusicSoundType;
 
 			_mixer->playInputStream(type, &track->mixChanHandle, track->stream, -1, vol, pan, false);
+			_mixer->pauseHandle(track->mixChanHandle, true);
 		}
 	}
 }
