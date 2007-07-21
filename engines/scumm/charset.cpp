@@ -82,7 +82,7 @@ void ScummEngine::loadCJKFont() {
 		case Common::ZH_TWN:
 			if (_game.id == GID_CMI) {
 				fontFile = "chinese.fnt";
-				numChar = 12779;
+				numChar = 13630;
 			}
 			break;
 		default:
@@ -105,7 +105,7 @@ void ScummEngine::loadCJKFont() {
 				break;
 			case Common::ZH_TWN:
 				_2byteWidth = 16;
-				_2byteHeight = 16;
+				_2byteHeight = 15;
 				// 0xFE -> 0x21. also compared with 0x0d. perhaps a newline
 				break;
 			default:
@@ -244,11 +244,11 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 						high -= 0x62;
 					}
 
-					base += (low * 157 + high) * 30;
+					base += (low * 0x9d + high) * 30;
 				}
 			}
 
-			return _2byteFontPtr + base - 2;
+			return _2byteFontPtr + base;
 			break;
 		}
 	default:
