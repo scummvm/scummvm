@@ -667,8 +667,10 @@ void Sound::muteSpeech(bool mute) {
  */
 
 void Sound::pauseSpeech() {
-	_speechPaused = true;
-	_vm->_mixer->pauseHandle(_soundHandleSpeech, true);
+	if (!_speechPaused) {
+		_speechPaused = true;
+		_vm->_mixer->pauseHandle(_soundHandleSpeech, true);
+	}
 }
 
 /**
@@ -676,8 +678,10 @@ void Sound::pauseSpeech() {
  */
 
 void Sound::unpauseSpeech() {
-	_speechPaused = false;
-	_vm->_mixer->pauseHandle(_soundHandleSpeech, false);
+	if (_speechPaused) {
+		_speechPaused = false;
+		_vm->_mixer->pauseHandle(_soundHandleSpeech, false);
+	}
 }
 
 /**
@@ -801,26 +805,22 @@ int32 Sound::setFxIdVolumePan(int32 id, int vol, int pan) {
 }
 
 void Sound::pauseFx() {
-	if (_fxPaused)
-		return;
-
-	for (int i = 0; i < FXQ_LENGTH; i++) {
-		if (_fxQueue[i].resource)
-			_vm->_mixer->pauseHandle(_fxQueue[i].handle, true);
+	if (!_fxPaused) {
+		for (int i = 0; i < FXQ_LENGTH; i++) {
+			if (_fxQueue[i].resource)
+				_vm->_mixer->pauseHandle(_fxQueue[i].handle, true);
+		}
+		_fxPaused = true;
 	}
-
-	_fxPaused = true;
 }
 
 void Sound::unpauseFx() {
-	if (!_fxPaused)
-		return;
-
-	for (int i = 0; i < FXQ_LENGTH; i++)
-		if (_fxQueue[i].resource)
-			_vm->_mixer->pauseHandle(_fxQueue[i].handle, false);
-
-	_fxPaused = false;
+	if (_fxPaused) {
+		for (int i = 0; i < FXQ_LENGTH; i++)
+			if (_fxQueue[i].resource)
+				_vm->_mixer->pauseHandle(_fxQueue[i].handle, false);
+		_fxPaused = false;
+	}
 }
 
 } // End of namespace Sword2
