@@ -82,7 +82,7 @@ void ScummEngine::loadCJKFont() {
 		case Common::ZH_TWN:
 			if (_game.id == GID_CMI) {
 				fontFile = "chinese.fnt";
-				numChar = 1; //FIXME
+				numChar = 12779;
 			}
 			break;
 		default:
@@ -92,9 +92,25 @@ void ScummEngine::loadCJKFont() {
 			debug(2, "Loading CJK Font");
 			_useCJKMode = true;
 			_textSurfaceMultiplier = 1; // No multiplication here
-			fp.seek(2, SEEK_CUR);
-			_2byteWidth = fp.readByte();
-			_2byteHeight = fp.readByte();
+			
+			switch (_language) {
+			case Common::KO_KOR:
+				fp.seek(2, SEEK_CUR);
+				_2byteWidth = fp.readByte();
+				_2byteHeight = fp.readByte();
+				break;
+			case Common::JA_JPN:
+				_2byteWidth = 16;
+				_2byteHeight = 16;
+				break;
+			case Common::ZH_TWN:
+				_2byteWidth = 16;
+				_2byteHeight = 16;
+				// 0xFE -> 0x21. also compared with 0x0d. perhaps a newline
+				break;
+			default:
+				break;
+			}
 
 			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
 			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
@@ -190,7 +206,7 @@ static int SJIStoFMTChunk(int f, int s) { //converts sjis code to fmt font offse
 }
 
 byte *ScummEngine::get2byteCharPtr(int idx) {
-	switch (_language) {
+	switch (_language) {	
 	case Common::KO_KOR:
 		idx = ((idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1;
 		break;
@@ -198,6 +214,43 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 		idx = SJIStoFMTChunk((idx % 256), (idx / 256));
 		break;
 	case Common::ZH_TWN:
+		{
+			int base = 0;
+			byte low = idx % 256;
+			int high = 0;
+
+			if (low >= 0x20 && low <= 0x7e) {
+				base = (low + low * 2 + 81012) * 5;
+			} else {
+				if (low >= 0xa1 && low <= 0xa3) {
+					base = 392820;
+					low += 0x5f;
+				} else if (low >= 0xa4 && low <= 0xc6) {
+					base = 0;
+					low += 0x5c;
+				} else if (low >= 0xc9 && low <= 0xf9) {
+					base = 162030;
+					low += 0x37;
+				} else {
+					base = 392820;
+					low = 0xff;
+				}
+
+				if (low != 0xff) {
+					high = idx / 256;
+					if (high >= 0x40 && high <= 0x7e) {
+						high -= 0x40;
+					} else {
+						high -= 0x62;
+					}
+
+					base += (low * 157 + high) * 30;
+				}
+			}
+
+			return _2byteFontPtr + base - 2;
+			break;
+		}
 	default:
 		idx = 0;
 	}
@@ -1723,6 +1776,10 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 
 	if (_str.left > _left)
 		_str.left = _left;
+
+	// Original keeps glyph width and character dimensions separately
+	if (_vm->_language == Common::ZH_TWN)
+		width = 17;
 
 	_left += width;
 
