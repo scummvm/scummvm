@@ -119,24 +119,72 @@ void clearTokens() {
 
 }
 
-//	looks for next token in a string
 //
-//	scans 's' until one of the stop-chars in 'brk' is found
-//	builds a token and return the part of the string which hasn't been parsed
+//	Scans 's' until one of the stop-chars in 'brk' is found, building a token.
+//	If the routine encounters quotes, it will extract the contained text and
+//  make a proper token. When scanning inside quotes, 'brk' is ignored and
+//  only newlines are considered stop-chars.
+//
+//	The routine returns the unparsed portion of the input string 's'.
+//
+char *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ignoreQuotes) {
 
-char *parseNextToken(char *s, char *tok, uint16 count, const char *brk) {
+	enum STATES { NORMAL, QUOTED };
 
-	while (*s != '\0') {
+	STATES state = NORMAL;
 
-		if (brk[0] == *s) break;
-		if (brk[1] == *s) break;
-		if (brk[2] == *s) break;
+	char *t = s;
 
-		*tok++ = *s++;
+	while (count > 0) {
+
+		switch (state) {
+		case NORMAL:
+			if (*s == '\0') {
+				*tok = '\0';
+				return s;
+			}
+
+			if (strchr(brk, *s)) {
+				*tok = '\0';
+				return ++s;
+			}
+
+			if (*s == '"') {
+				if (ignoreQuotes) {
+					*tok++ = *s++;
+					count--;
+				} else {
+					state = QUOTED;
+					s++;
+				}
+			} else {
+				*tok++ = *s++;
+				count--;
+			}
+			break;
+
+		case QUOTED:
+			if (*s == '\0') {
+				*tok = '\0';
+				return s;
+			}
+			if (*s == '"' || *s == '\n' || *s == '\t') {
+				*tok = '\0';
+				return ++s;
+			}
+
+			*tok++ = *s++;
+			count--;
+			break;
+		}
+
 	}
 
 	*tok = '\0';
-	return s;
+	warning("token was truncated from line '%s'", t);
+
+	return tok;
+
 }
 
 uint16 fillTokens(char* line) {
@@ -144,15 +192,6 @@ uint16 fillTokens(char* line) {
 	uint16 i = 0;
 	while (strlen(line) > 0 && i < 20) {
 		line = parseNextToken(line, _tokens[i], 40, " \t\n");
-		if (_tokens[i][0] == '"' && _tokens[i][strlen(_tokens[i]) - 1] != '"') {
-
-			line = parseNextToken(line, _tokens[i+1], 40, "\"");
-			strcat(_tokens[i], _tokens[i+1]);
-			_tokens[i][0] = ' ';
-			line++;
-
-		}
-
 		line = Common::ltrim(line);
 		i++;
 	}

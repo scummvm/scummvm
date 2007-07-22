@@ -445,6 +445,18 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 
 	if (anim->completed < anim->cycles) {
 		frame = anim->currentFrame;
+
+		// WORKAROUND for a buggy animation in IHNM. Animation 0 in scene 67 (the mob of angry prisoners) should
+		// start from frame 0, not frame 1. Frame 0 is the background of the animation (the mob of prisoners), whereas
+		// the rest of the frames are their animated arms. Therefore, in order for the prisoners to appear correctly,
+		// frame 0 should be displayed as the first frame, but anim->currentframe is set to 1, which means that the
+		// prisoners will never be shown. In the original, the prisoners (first frame in the animation) are shown a
+		// bit after the animation is started (which is wrong again, but not that apparent), whereas in ScummVM the
+		// first frame is never shown. Therefore, make sure that for this animation, frame 0 is shown first
+		if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 4 && 
+			_vm->_scene->currentSceneNumber() == 67 && animId == 0 && anim->completed == 1)
+			frame = 0;
+
 		// FIXME: if start > 0, then this works incorrectly
 		decodeFrame(anim, anim->frameOffsets[frame], displayBuffer, _vm->getDisplayWidth() * _vm->getDisplayHeight());
 		_vm->_frameCount++;	

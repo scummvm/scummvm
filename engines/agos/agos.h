@@ -1319,6 +1319,7 @@ public:
 	void oe2_pObj();
 	void oe2_isCalled();
 	void oe2_loadGame();
+	void oe2_menu();
 	void oe2_drawItem();
 	void oe2_doTable();
 	void oe2_pauseGame();
@@ -1412,7 +1413,6 @@ public:
 	void oww_setLongText();
 	void oww_printLongText();
 	void oww_whereTo();
-	void oww_menu();
 	void oww_textMenu();
 	void oww_pauseGame();
 	void oww_boxMessage();

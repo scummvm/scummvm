@@ -364,7 +364,7 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 	debugC(4, kDebugLevelText, "waiting...");
 	for (;;) {
 		for (i = 0; b[i]; i++)
-			_gfx->drawButton(bx[i], by[i], b[i], i == active, 0, MSG_BOX_TEXT, MSG_BOX_COLOUR);
+			_gfx->drawCurrentStyleButton(bx[i], by[i], b[i], i == active, false, i == 0);
 
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = doPollKeyboard();

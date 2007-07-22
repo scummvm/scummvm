@@ -48,6 +48,7 @@ protected:
 	void		newGame();
 	uint16		chooseLanguage();
 	uint16		selectGame();
+	int			getSelectedBlock(const Common::Point &p, Common::Rect& r);
 
 public:
 

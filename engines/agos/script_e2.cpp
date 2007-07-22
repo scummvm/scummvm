@@ -165,7 +165,7 @@ void AGOSEngine_Elvira2::setupOpcodes() {
 		OPCODE(o_cls),
 		/* 104 */
 		OPCODE(o_closeWindow),
-		OPCODE(o_invalid),
+		OPCODE(oe2_menu),
 		OPCODE(o_invalid),
 		OPCODE(o_addBox),
 		/* 108 */
@@ -331,6 +331,11 @@ void AGOSEngine_Elvira2::oe2_loadGame() {
 	} else {
 		loadGame((const char *)getStringPtrByID(stringId));
 	}
+}
+
+void AGOSEngine_Elvira2::oe2_menu() {
+	// 105: set agos menu
+	_agosMenu = getVarOrByte();
 }
 
 void AGOSEngine_Elvira2::oe2_drawItem() {
@@ -647,6 +652,16 @@ void AGOSEngine_Elvira2::oe2_isAdjNoun() {
 	// 179: item unk1 unk2 is
 	Item *item = getNextItemPtr();
 	int16 a = getNextWord(), b = getNextWord();
+
+	if (getGameType() == GType_ELVIRA2) {
+		// WORKAROUND: A NULL item can occur when interacting with Wine Bottles
+		if (item == NULL) {
+			warning("Please report where exactly this occurs in Elvira 2");
+			setScriptCondition(false);
+			return;
+		}
+	}
+
 	setScriptCondition(item->adjective == a && item->noun == b);
 }
 

@@ -48,6 +48,11 @@ better separation of the various modules.
 void ScummEngine::loadCJKFont() {
 	Common::File fp;
 	_useCJKMode = false;
+	_textSurfaceMultiplier = 1;
+
+	if (_game.platform == Common::kPlatformSegaCD)
+		return;
+
 	if (_language == Common::JA_JPN && _game.version <= 5) { // FM-TOWNS v3 / v5 Kanji
 		int numChar = 256 * 32;
 		_2byteWidth = 16;
@@ -60,6 +65,7 @@ void ScummEngine::loadCJKFont() {
 			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
 			fp.close();
 		}
+		_textSurfaceMultiplier = 2;
 	} else if (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN) {
 		int numChar = 0;
 		const char *fontFile = NULL;
@@ -76,7 +82,7 @@ void ScummEngine::loadCJKFont() {
 		case Common::ZH_TWN:
 			if (_game.id == GID_CMI) {
 				fontFile = "chinese.fnt";
-				numChar = 1; //FIXME
+				numChar = 13630;
 			}
 			break;
 		default:
@@ -85,9 +91,26 @@ void ScummEngine::loadCJKFont() {
 		if (fontFile && fp.open(fontFile)) {
 			debug(2, "Loading CJK Font");
 			_useCJKMode = true;
-			fp.seek(2, SEEK_CUR);
-			_2byteWidth = fp.readByte();
-			_2byteHeight = fp.readByte();
+			_textSurfaceMultiplier = 1; // No multiplication here
+			
+			switch (_language) {
+			case Common::KO_KOR:
+				fp.seek(2, SEEK_CUR);
+				_2byteWidth = fp.readByte();
+				_2byteHeight = fp.readByte();
+				break;
+			case Common::JA_JPN:
+				_2byteWidth = 16;
+				_2byteHeight = 16;
+				break;
+			case Common::ZH_TWN:
+				_2byteWidth = 16;
+				_2byteHeight = 15;
+				// 0xFE -> 0x21. also compared with 0x0d. perhaps a newline
+				break;
+			default:
+				break;
+			}
 
 			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
 			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
@@ -183,7 +206,7 @@ static int SJIStoFMTChunk(int f, int s) { //converts sjis code to fmt font offse
 }
 
 byte *ScummEngine::get2byteCharPtr(int idx) {
-	switch (_language) {
+	switch (_language) {	
 	case Common::KO_KOR:
 		idx = ((idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1;
 		break;
@@ -191,6 +214,43 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 		idx = SJIStoFMTChunk((idx % 256), (idx / 256));
 		break;
 	case Common::ZH_TWN:
+		{
+			int base = 0;
+			byte low = idx % 256;
+			int high = 0;
+
+			if (low >= 0x20 && low <= 0x7e) {
+				base = (low + low * 2 + 81012) * 5;
+			} else {
+				if (low >= 0xa1 && low <= 0xa3) {
+					base = 392820;
+					low += 0x5f;
+				} else if (low >= 0xa4 && low <= 0xc6) {
+					base = 0;
+					low += 0x5c;
+				} else if (low >= 0xc9 && low <= 0xf9) {
+					base = 162030;
+					low += 0x37;
+				} else {
+					base = 392820;
+					low = 0xff;
+				}
+
+				if (low != 0xff) {
+					high = idx / 256;
+					if (high >= 0x40 && high <= 0x7e) {
+						high -= 0x40;
+					} else {
+						high -= 0x62;
+					}
+
+					base += (low * 0x9d + high) * 30;
+				}
+			}
+
+			return _2byteFontPtr + base;
+			break;
+		}
 	default:
 		idx = 0;
 	}
@@ -1257,18 +1317,18 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		_hasMask = true;
 		_textScreenID = vs->number;
 	}
-	if (ignoreCharsetMask || !vs->hasTwoBuffers) {
+	if ((ignoreCharsetMask || !vs->hasTwoBuffers) && !(_vm->_useCJKMode && _vm->_textSurfaceMultiplier == 2)) {
 		dst = vs->getPixels(_left, drawTop);
 		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight);
 	} else {
-		dst = (byte *)_vm->_textSurface.pixels + _top * _vm->_textSurface.pitch + _left;
+		dst = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier);
 		drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight);
 	}
 
 	if (_str.left > _left)
 		_str.left = _left;
 
-	_left += origWidth;
+	_left += origWidth / _vm->_textSurfaceMultiplier;
 
 	if (_str.right < _left) {
 		_str.right = _left;
@@ -1276,8 +1336,8 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 			_str.right++;
 	}
 
-	if (_str.bottom < _top + height)
-		_str.bottom = _top + height;
+	if (_str.bottom < _top + height / _vm->_textSurfaceMultiplier)
+		_str.bottom = _top + height / _vm->_textSurfaceMultiplier;
 }
 
 void CharsetRendererV3::drawChar(int chr, const Graphics::Surface &s, int x, int y) {
@@ -1391,8 +1451,8 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	_top += offsY;
 	_left += offsX;
 
-	if (_left + origWidth > _right + 1 || _left < 0) {
-		_left += origWidth;
+	if (_left + origWidth / _vm->_textSurfaceMultiplier > _right + 1 || _left < 0) {
+		_left += origWidth / _vm->_textSurfaceMultiplier;
 		_top -= offsY;
 		return;
 	}
@@ -1424,7 +1484,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 	printCharIntern(is2byte, charPtr, origWidth, origHeight, width, height, vs, ignoreCharsetMask);
 
-	_left += origWidth;
+	_left += origWidth / _vm->_textSurfaceMultiplier;
 
 	if (_str.right < _left) {
 		_str.right = _left;
@@ -1432,8 +1492,8 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 			_str.right++;
 	}
 
-	if (_str.bottom < _top + height)
-		_str.bottom = _top + height;
+	if (_str.bottom < _top + height / _vm->_textSurfaceMultiplier)
+		_str.bottom = _top + height / _vm->_textSurfaceMultiplier;
 
 	_top -= offsY;
 }
@@ -1473,12 +1533,12 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 	} else {
 		Graphics::Surface dstSurface;
 		Graphics::Surface backSurface;
-		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
+		if ((ignoreCharsetMask || !vs->hasTwoBuffers) && !(_vm->_useCJKMode && _vm->_textSurfaceMultiplier == 2)) {
 			dstSurface = *vs;
 			dstPtr = vs->getPixels(_left, drawTop);
 		} else {
 			dstSurface = _vm->_textSurface;
-			dstPtr = (byte *)_vm->_textSurface.pixels + (_top - _vm->_screenTop) * _vm->_textSurface.pitch + _left;
+			dstPtr = (byte *)_vm->_textSurface.pixels + (_top - _vm->_screenTop) * _vm->_textSurface.pitch * _vm->_textSurfaceMultiplier + _left * _vm->_textSurfaceMultiplier;
 		}
 
 		if (_blitAlso && vs->hasTwoBuffers) {
@@ -1716,6 +1776,10 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 
 	if (_str.left > _left)
 		_str.left = _left;
+
+	// Original keeps glyph width and character dimensions separately
+	if (_vm->_language == Common::ZH_TWN)
+		width = 17;
 
 	_left += width;
 

@@ -70,8 +70,8 @@ struct ScriptState {
 	int16 retValue;
 	uint16 bp;
 	uint16 sp;
-	int16 variables[30];
-	int16 stack[61];
+	int16 regs[30];		// VM registers
+	int16 stack[61];	// VM stack
 };
 
 class ScriptHelper {
@@ -99,7 +99,7 @@ protected:
 	typedef void (ScriptHelper::*CommandProc)(ScriptState*);
 	struct CommandEntry {
 		CommandProc proc;
-		const char* desc;
+		const char *desc;
 	};
 	
 	const CommandEntry *_commands;
@@ -109,11 +109,11 @@ private:
 	void c1_pushRetOrPos(ScriptState*);
 	void c1_push(ScriptState*);
 	//void c1_push(); same as 03
-	void c1_pushVar(ScriptState*);
+	void c1_pushReg(ScriptState*);
 	void c1_pushBPNeg(ScriptState*);
 	void c1_pushBPAdd(ScriptState*);
 	void c1_popRetOrPos(ScriptState*);
-	void c1_popVar(ScriptState*);
+	void c1_popReg(ScriptState*);
 	void c1_popBPNeg(ScriptState*);
 	void c1_popBPAdd(ScriptState*);
 	void c1_addSP(ScriptState*);

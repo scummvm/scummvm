@@ -268,6 +268,8 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_pathRect.top = _vm->getDisplayInfo().pathStartY;
 	_pathRect.bottom = _vm->_scene->getHeight();
 
+	_showActors = true;
+
 	// Get actor resource file context
 	_actorContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (_actorContext == NULL) {
@@ -1130,7 +1132,7 @@ void Actor::handleSpeech(int msec) {
 		}
 
 		if (_activeSpeech.stringsCount == 0) {
-			_vm->_script->wakeUpThreadsDelayed(kWaitTypeSpeech, ticksToMSec(kScriptTimeTicksPerSecond / 3));
+			_vm->_script->wakeUpThreadsDelayed(kWaitTypeSpeech, _vm->ticksToMSec(kScriptTimeTicksPerSecond / 3));
 		}
 
 		return;
@@ -1603,7 +1605,9 @@ void Actor::handleActions(int msec, bool setup) {
 				if (actor->_lastZone)
 					stepZoneAction(actor, actor->_lastZone, true, false);
 				actor->_lastZone = hitZone;
-				if (hitZone)
+				// WORKAROUND for graphics glitch in the rat caves. Don't do this step zone action in the rat caves
+				// (room 51) to avoid the glitch
+				if (hitZone && !(_vm->getGameType() == GType_ITE && _vm->_scene->currentSceneNumber() == 51))
 					stepZoneAction(actor, hitZone, false, false);
 			}
 		}
@@ -1805,6 +1809,10 @@ void Actor::drawActors() {
 	}
 
 	if (_vm->_scene->_entryList.entryListCount == 0) {
+		return;
+	}
+
+	if (!_showActors) {
 		return;
 	}
 

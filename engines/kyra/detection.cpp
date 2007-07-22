@@ -73,6 +73,8 @@ const KYRAGameDescription adGameDescs[] = {
 	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "230f54e6afc007ab4117159181a1c722"), Common::DE_DEU, Common::kPlatformPC, Common::ADGF_NO_FLAGS }, KYRA1_CD_FLAGS },
 	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "b037c41768b652a040360ffa3556fd2a"), Common::FR_FRA, Common::kPlatformPC, Common::ADGF_NO_FLAGS }, KYRA1_CD_FLAGS },
 
+	{ { "kyra1", "CD", AD_ENTRY1("GEMCUT.PAK", "d8327fc4b7a72b23c900fa13aef4093a"), Common::IT_ITA, Common::kPlatformPC, Common::ADGF_NO_FLAGS }, KYRA1_CD_FLAGS }, // italian fan translation see fr#1727941 "KYRA: add Italian CD Version to kyra.dat"
+
 	{ { "kyra1", "Demo", AD_ENTRY1("DEMO1.WSA", "fb722947d94897512b13b50cc84fd648"), Common::EN_ANY, Common::kPlatformPC, Common::ADGF_DEMO }, KYRA1_DEMO_FLAGS },
 
 	{ { "kyra2", 0, AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"), Common::EN_ANY, Common::kPlatformPC, Common::ADGF_NO_FLAGS }, KYRA2_CD_FLAGS }, // CD version

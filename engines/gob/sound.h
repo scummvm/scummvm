@@ -175,7 +175,8 @@ protected:
 	int32 _freq;
 	int32 _repCount;
 
-	frac_t _offset;
+	uint32 _offset;
+	frac_t _offsetFrac;
 	frac_t _offsetInc;
 
 	int16 _cur;

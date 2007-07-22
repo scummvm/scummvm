@@ -61,7 +61,9 @@ void Sound::voicePlay(const char *file) {
 		if (!_compressHandle.isOpen())
 			continue;
 		
-		_currentVocFile = _supportedCodes[i].streamFunc(&_compressHandle, fileSize);
+		Common::MemoryReadStream *tmp = _compressHandle.readStream(fileSize);
+		assert(tmp);
+		_currentVocFile = _supportedCodes[i].streamFunc(tmp, true, 0, 0, 1);
 		found = true;
 		break;
 	}

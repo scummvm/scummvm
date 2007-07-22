@@ -42,10 +42,6 @@ namespace Parallaction {
 #define INVENTORY_MAX_ITEMS 		30
 #define INVENTORY_FIRST_ITEM		4		// first four entries are used up by verbs
 
-#define INVENTORYITEM_PITCH 		32
-#define INVENTORYITEM_WIDTH 		24
-#define INVENTORYITEM_HEIGHT		24
-
 #define INVENTORY_ITEMS_PER_LINE	5
 #define INVENTORY_LINES 			6
 
@@ -89,7 +85,13 @@ InventoryItem _inventory[INVENTORY_MAX_ITEMS] = {
 	{ 0,	0 }
 };
 
-void drawInventoryItem(uint16 pos, InventoryItem *item);
+
+int16 getNumUsedSlots() {
+	int16 num = 0;
+	while (num < INVENTORY_MAX_ITEMS && _inventory[num]._id != 0)
+		num++;
+	return num;
+}
 
 
 //	get inventory item index at position (x,y)
@@ -97,50 +99,54 @@ void drawInventoryItem(uint16 pos, InventoryItem *item);
 //
 int16 Parallaction::getHoverInventoryItem(int16 x, int16 y) {
 
-	int16 slot = -1;
-	do {
-		slot++;
-	} while (_inventory[slot]._id != 0);
-
+	int16 slot = getNumUsedSlots();
 	slot = (slot + 4) / INVENTORY_ITEMS_PER_LINE;
 
-	if (_invPosition.x >= x) return -1;
-	if ((_invPosition.x + INVENTORY_WIDTH) <= x) return -1;
+	Common::Rect r(INVENTORY_WIDTH, _numInvLines * INVENTORYITEM_HEIGHT);
+	r.moveTo(_invPosition);
 
-	if (_invPosition.y >= y) return -1;
-	if ((slot * INVENTORYITEM_HEIGHT + _invPosition.y) <= y) return -1;
+	if (!r.contains(Common::Point(x,y)))
+		return -1;
 
 	return ((x - _invPosition.x) / INVENTORYITEM_WIDTH) + (INVENTORY_ITEMS_PER_LINE * ((y - _invPosition.y) / INVENTORYITEM_HEIGHT));
 
 }
 
+void drawInventoryItem(uint16 pos, InventoryItem *item) {
 
-void refreshInventory(const char *character) {
-	for (uint16 i = 0; i < INVENTORY_MAX_ITEMS; i++) {
-		drawInventoryItem(i, &_inventory[i]);
+	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
+	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
+
+	// FIXME: this will end up in a general blit function
+	byte* s = _vm->_char._objs->getFramePtr(item->_index);
+	byte* d = _buffer + col * INVENTORYITEM_WIDTH + line * _vm->_char._objs->_height * INVENTORY_WIDTH;
+	for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
+		memcpy(d, s, INVENTORYITEM_WIDTH);
+
+		d += INVENTORY_WIDTH;
+		s += INVENTORYITEM_PITCH;
 	}
+
 	return;
 }
 
 
-void refreshInventoryItem(const char *character, uint16 index) {
-	drawInventoryItem(index, &_inventory[index]);
+
+void refreshInventory() {
+	for (uint16 i = 0; i < INVENTORY_MAX_ITEMS; i++)
+		drawInventoryItem(i, &_inventory[i]);
+
 	return;
 }
 
 int Parallaction::addInventoryItem(uint16 item) {
 
-	uint16 slot = 0;
-	while (_inventory[slot]._id != 0)
-		slot++;
-
+	int16 slot = getNumUsedSlots();
 	if (slot == INVENTORY_MAX_ITEMS)
 		return -1;
 
 	_inventory[slot]._id = MAKE_INVENTORY_ID(item);
 	_inventory[slot]._index = item;
-
-	refreshInventoryItem(_characterName, slot);
 
 	return 0;
 }
@@ -160,8 +166,6 @@ void Parallaction::dropItem(uint16 v) {
 		memcpy(&_inventory[slot], &_inventory[slot+1], sizeof(InventoryItem));
 	}
 
-	refreshInventory(_characterName);
-
 	return;
 }
 
@@ -176,28 +180,6 @@ int16 Parallaction::isItemInInventory(int32 v) {
 	return 0;
 }
 
-
-
-
-
-
-void drawInventoryItem(uint16 pos, InventoryItem *item) {
-
-	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
-	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
-
-	// FIXME: this will end up in a general blit function
-	byte* s = _vm->_char._objs->getFramePtr(item->_index);
-	byte* d = _buffer + col * INVENTORYITEM_WIDTH + line * _vm->_char._objs->_height * INVENTORY_WIDTH;
-	for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
-		memcpy(d, s, INVENTORYITEM_WIDTH);
-
-		d += INVENTORY_WIDTH;
-		s += INVENTORYITEM_PITCH;
-	}
-
-	return;
-}
 
 void drawBorder(const Common::Rect& r, byte *buffer, byte color) {
 
@@ -237,33 +219,20 @@ void highlightInventoryItem(int16 pos, byte color) {
 }
 
 
-
-
-void extractInventoryGraphics(int16 pos, byte *dst) {
-//	printf("extractInventoryGraphics(%i)\n", pos);
-
-	int16 line = pos / INVENTORY_ITEMS_PER_LINE;
-	int16 col = pos % INVENTORY_ITEMS_PER_LINE;
-
-	// FIXME: this will end up in a general blit function
-	byte* d = dst;
-	byte* s = _buffer + col * INVENTORYITEM_WIDTH + line * _vm->_char._objs->_height * INVENTORY_WIDTH;
-	for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
-		memcpy(d, s, INVENTORYITEM_WIDTH);
-
-		s += INVENTORY_WIDTH;
-		d += INVENTORYITEM_PITCH;
-	}
-
-	return;
+int16 getInventoryItemIndex(int16 pos) {
+	// TODO: should assert against the number of items actually contained,
+	// not the theoretical limit.
+	assert(pos >= 0 && pos < INVENTORY_MAX_ITEMS);
+	return _inventory[pos]._index;
 }
+
+
 
 void jobShowInventory(void *parm, Job *j) {
 //	printf("job_showInventory()...");
 
-	_numInvLines = 0;
-	while (_inventory[_numInvLines]._id != 0) _numInvLines++;
-	_numInvLines = (_numInvLines + 4) / INVENTORY_ITEMS_PER_LINE;
+	int16 slot = getNumUsedSlots();
+	_numInvLines = (slot + 4) / INVENTORY_ITEMS_PER_LINE;
 
 	Common::Rect r(INVENTORY_WIDTH, _numInvLines * INVENTORYITEM_HEIGHT);
 
@@ -308,25 +277,13 @@ void jobHideInventory(void *parm, Job *j) {
 void openInventory() {
 	_engineFlags |= kEngineInventory;
 
-	uint16 slot = 0;
-	while (_inventory[slot]._id != 0)
-		slot++;
-
+	int16 slot = getNumUsedSlots();
 	uint16 lines = (slot + 4) / INVENTORY_ITEMS_PER_LINE;
 
-	_invPosition.x = _vm->_mousePos.x - (INVENTORY_WIDTH / 2);
-	if (_invPosition.x < 0)
-		_invPosition.x = 0;
+	_invPosition.x = CLIP(_vm->_mousePos.x - (INVENTORY_WIDTH / 2), 0, SCREEN_WIDTH - INVENTORY_WIDTH);
+	_invPosition.y = CLIP(_vm->_mousePos.y - 2 - (lines * INVENTORYITEM_HEIGHT), 0, SCREEN_HEIGHT - lines * INVENTORYITEM_HEIGHT);
 
-	if ((_invPosition.x + INVENTORY_WIDTH) > SCREEN_WIDTH)
-		_invPosition.x = SCREEN_WIDTH - INVENTORY_WIDTH;
-
-	_invPosition.y = _vm->_mousePos.y - 2 - (lines * INVENTORYITEM_HEIGHT);
-	if (_invPosition.y < 0)
-		_invPosition.y = 0;
-
-	if (_invPosition.y > SCREEN_HEIGHT - lines * INVENTORYITEM_HEIGHT)
-		_invPosition.y = SCREEN_HEIGHT - lines * INVENTORYITEM_HEIGHT;
+	refreshInventory();
 
 	return;
 

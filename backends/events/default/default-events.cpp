@@ -98,10 +98,12 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 		case Common::EVENT_QUIT:
 			if (ConfMan.getBool("confirm_exit")) {
-				g_engine->pauseEngine(true);
+				if (g_engine)
+					g_engine->pauseEngine(true);
 				GUI::MessageDialog alert("Do you really want to quit?", "Yes", "No");
 				result = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
-				g_engine->pauseEngine(false);
+				if (g_engine)
+					g_engine->pauseEngine(false);
 			} else
 				_shouldQuit = true;
 			break;

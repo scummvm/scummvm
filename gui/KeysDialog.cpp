@@ -141,7 +141,7 @@ void KeysDialog::handleKeyUp(Common::KeyState state) {
 
 		Actions::Instance()->setMapping((ActionType)_actionSelected, state.ascii);
 
-		if (ascii != 0)
+		if (state.ascii != 0)
 			sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey) state.keycode));
 		else
 			sprintf(selection, "Associated key : none");

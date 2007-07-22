@@ -29,6 +29,9 @@
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
+#ifdef __DS__
+#include "wordcompletion.h"
+#endif
 
 namespace Agi {
 
@@ -104,8 +107,10 @@ int AgiEngine::handleController(int key) {
 	VtEntry *v = &_game.viewTable[0];
 	int i;
 
-	/* AGI 3.149 games and The Black Cauldron need KEY_ESCAPE to use menus */
-	if (key == 0 || (key == KEY_ESCAPE && agiGetRelease() != 0x3149 && getGameID() != GID_BC) )
+	// AGI 3.149 games and The Black Cauldron need KEY_ESCAPE to use menus
+	// Games with the GF_ESCPAUSE flag need KEY_ESCAPE to pause the game
+	if (key == 0 || 
+		(key == KEY_ESCAPE && agiGetRelease() != 0x3149 && getGameID() != GID_BC && !(getFeatures() & GF_ESCPAUSE)) )
 		return false;
 
 	if ((getGameID() == GID_MH1 || getGameID() == GID_MH2) && (key == KEY_ENTER) &&
@@ -124,7 +129,7 @@ int AgiEngine::handleController(int key) {
 	}
 
 	if (key == BUTTON_LEFT) {
-		if (getflag(fMenusWork) && g_mouse.y <= CHAR_LINES) {
+		if ((getflag(fMenusWork) || (getFeatures() & GF_MENUS)) && g_mouse.y <= CHAR_LINES) {
 			newInputMode(INPUT_MENU);
 			return true;
 		}
@@ -308,6 +313,9 @@ void AgiEngine::handleKeys(int key) {
 		debugC(3, kDebugLevelInput, "clear lines");
 		clearLines(l, l + 1, bg);
 		flushLines(l, l + 1);
+#ifdef __DS__
+		DS::findWordCompletions((char *) _game.inputBuffer);
+#endif
 
 		break;
 	case KEY_ESCAPE:
@@ -324,6 +332,10 @@ void AgiEngine::handleKeys(int key) {
 		_game.inputBuffer[--_game.cursorPos] = 0;
 		/* Print cursor */
 		_gfx->printCharacter(_game.cursorPos + 1, l, _game.cursorChar, fg, bg);
+
+#ifdef __DS__
+		DS::findWordCompletions((char *) _game.inputBuffer);
+#endif
 		break;
 	default:
 		/* Ignore invalid keystrokes */
@@ -336,6 +348,10 @@ void AgiEngine::handleKeys(int key) {
 
 		_game.inputBuffer[_game.cursorPos++] = key;
 		_game.inputBuffer[_game.cursorPos] = 0;
+
+#ifdef __DS__
+		DS::findWordCompletions((char *) _game.inputBuffer);
+#endif
 
 		/* echo */
 		_gfx->printCharacter(_game.cursorPos, l, _game.inputBuffer[_game.cursorPos - 1], fg, bg);

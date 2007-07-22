@@ -41,7 +41,7 @@ namespace Saga {
 class HitZone;
 
 
-// #define ACTOR_DEBUG 1 //only for actor pathfinding debug!
+//#define ACTOR_DEBUG 1 //only for actor pathfinding debug!
 
 #define ACTOR_BARRIERS_MAX 16
 
@@ -612,6 +612,8 @@ public:
 	void freeObjList();
 	void loadObjList(int objectCount, int objectsResourceID);
 
+	void showActors(bool flag) { _showActors = flag; }
+
 	/*
 	uint16 _currentFrameIndex;
 	void frameTest() {
@@ -712,6 +714,7 @@ private:
 	int _xCellCount;
 	int _yCellCount;
 	Rect _pathRect;
+	bool _showActors;
 
 	PathDirectionData *_pathDirectionList;
 	int _pathDirectionListCount;

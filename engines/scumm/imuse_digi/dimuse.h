@@ -98,7 +98,7 @@ private:
 		int32 dataMod12Bit;	// value used between all callback to align 12 bit source of data
 		int32 mixerFlags;	// flags for sound mixer's channel (kFlagStereo, kFlag16Bits, kFlagReverseStereo, kFlagUnsigned, kFlagLittleEndian)
 
-		ImuseDigiSndMgr::soundStruct *soundHandle;	// sound handle used by iMuse sound manager
+		ImuseDigiSndMgr::SoundDesc *soundDesc;	// sound handle used by iMuse sound manager
 		Audio::SoundHandle mixChanHandle;					// sound mixer's channel handle
 		Audio::AppendableAudioStream *stream;		// sound mixer's audio stream handle for *.la1 and *.bun
 		Audio::AudioStream *streamSou;				// sound mixer's audio stream handle for *.sou

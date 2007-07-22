@@ -73,6 +73,18 @@ public:
 	 */
 	virtual void initBackend() { }
 
+	/**
+	 * Allows the backend to perform engine specific init.
+	 * Called just before the engine is run.
+	 */
+	virtual void engineInit() { }
+
+	/**
+	 * Allows the backend to perform engine specific de-init.
+	 * Called after the engine finishes.
+	 */
+	virtual void engineDone() { }
+
 	/** @name Feature flags */
 	//@{
 
@@ -586,11 +598,6 @@ public:
 	 * @see getWidth
 	 */
 	virtual int16 getOverlayWidth()   { return getWidth(); }
-
-	virtual int screenToOverlayX(int x) { return x; }
-	virtual int screenToOverlayY(int y) { return y; }
-	virtual int overlayToScreenX(int x) { return x; }
-	virtual int overlayToScreenY(int y) { return y; }
 
 	/**
 	* Convert the given RGB triplet into an OverlayColor. A OverlayColor can

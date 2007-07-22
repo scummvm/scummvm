@@ -26,6 +26,8 @@
 #include "common/stdafx.h"
 
 #include "graphics/iff.h"
+#include "graphics/surface.h"
+
 #include "parallaction/parallaction.h"
 
 
@@ -693,33 +695,106 @@ AmigaDisk::~AmigaDisk() {
 
 #define NUM_PLANES		5
 
-// FIXME: no mask is loaded
-void AmigaDisk::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 planeSize) {
+/*
+	unpackFrame transforms images from 5-bitplanes format to
+	8-bit color-index mode
+*/
+void AmigaDisk::unpackFrame(byte *dst, byte *src, uint16 planeSize) {
 
 	byte s0, s1, s2, s3, s4, mask, t0, t1, t2, t3, t4;
 
-	for (uint32 i = 0; i < numFrames; i++) {
-		for (uint32 j = 0; j < planeSize; j++) {
-			s0 = src[j];
-			s1 = src[j+planeSize];
-			s2 = src[j+planeSize*2];
-			s3 = src[j+planeSize*3];
-			s4 = src[j+planeSize*4];
+	for (uint32 j = 0; j < planeSize; j++) {
+		s0 = src[j];
+		s1 = src[j+planeSize];
+		s2 = src[j+planeSize*2];
+		s3 = src[j+planeSize*3];
+		s4 = src[j+planeSize*4];
 
-			for (uint32 k = 0; k < 8; k++) {
-				mask = 1 << (7 - k);
-				t0 = (s0 & mask ? 1 << 0 : 0);
-				t1 = (s1 & mask ? 1 << 1 : 0);
-				t2 = (s2 & mask ? 1 << 2 : 0);
-				t3 = (s3 & mask ? 1 << 3 : 0);
-				t4 = (s4 & mask ? 1 << 4 : 0);
-				*dst++ = t0 | t1 | t2 | t3 | t4;
+		for (uint32 k = 0; k < 8; k++) {
+			mask = 1 << (7 - k);
+			t0 = (s0 & mask ? 1 << 0 : 0);
+			t1 = (s1 & mask ? 1 << 1 : 0);
+			t2 = (s2 & mask ? 1 << 2 : 0);
+			t3 = (s3 & mask ? 1 << 3 : 0);
+			t4 = (s4 & mask ? 1 << 4 : 0);
+			*dst++ = t0 | t1 | t2 | t3 | t4;
+		}
+
+	}
+
+}
+
+/*
+	patchFrame applies DLTA data (dlta) to specified buffer (dst)
+*/
+void AmigaDisk::patchFrame(byte *dst, byte *dlta, uint16 bytesPerPlane, uint16 height) {
+
+	uint32 *dataIndex = (uint32*)dlta;
+	uint32 *ofslenIndex = (uint32*)dlta + 8;
+
+	uint16 *base = (uint16*)dlta;
+	uint16 wordsPerLine = bytesPerPlane >> 1;
+
+	for (uint j = 0; j < NUM_PLANES; j++) {
+		uint16 *dst16 = (uint16*)(dst + j * bytesPerPlane * height);
+
+		uint16 *data = base + READ_BE_UINT32(dataIndex);
+		dataIndex++;
+		uint16 *ofslen = base + READ_BE_UINT32(ofslenIndex);
+		ofslenIndex++;
+
+		while (*ofslen != 0xFFFF) {
+
+			uint16 ofs = READ_BE_UINT16(ofslen);
+			ofslen++;
+			uint16 size = READ_BE_UINT16(ofslen);
+			ofslen++;
+
+			while (size > 0) {
+				dst16[ofs] ^= *data++;
+				ofs += wordsPerLine;
+				size--;
 			}
 
 		}
 
-		src += planeSize * NUM_PLANES;
 	}
+
+}
+
+// FIXME: no mask is loaded
+void AmigaDisk::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height) {
+
+	byte *baseFrame = src;
+	byte *tempBuffer = 0;
+
+	uint16 planeSize = bytesPerPlane * height;
+
+	for (uint32 i = 0; i < numFrames; i++) {
+		if (READ_BE_UINT32(src) == MKID_BE('DLTA')) {
+
+			uint size = READ_BE_UINT32(src + 4);
+
+			if (tempBuffer == 0)
+				tempBuffer = (byte*)malloc(planeSize * NUM_PLANES);
+
+			memcpy(tempBuffer, baseFrame, planeSize * NUM_PLANES);
+
+			patchFrame(tempBuffer, src + 8, bytesPerPlane, height);
+			unpackFrame(dst, tempBuffer, planeSize);
+
+			src += (size + 8);
+			dst += planeSize * 8;
+		} else {
+			unpackFrame(dst, src, planeSize);
+			src += planeSize * NUM_PLANES;
+			dst += planeSize * 8;
+		}
+	}
+
+	if (tempBuffer)
+		free(tempBuffer);
+
 }
 
 StaticCnv* AmigaDisk::makeStaticCnv(Common::SeekableReadStream &stream) {
@@ -739,7 +814,7 @@ StaticCnv* AmigaDisk::makeStaticCnv(Common::SeekableReadStream &stream) {
 	uint32 decsize = width * height;
 	byte *data = (byte*)calloc(decsize, 1);
 
-	unpackBitmap(data, buf, 1, height * bytesPerPlane);
+	unpackBitmap(data, buf, 1, bytesPerPlane, height);
 
 	free(buf);
 
@@ -769,7 +844,7 @@ Cnv* AmigaDisk::makeCnv(Common::SeekableReadStream &stream) {
 	uint32 decsize = numFrames * width * height;
 	byte *data = (byte*)calloc(decsize, 1);
 
-	unpackBitmap(data, buf, numFrames, height * bytesPerPlane);
+	unpackBitmap(data, buf, numFrames, bytesPerPlane, height);
 
 	free(buf);
 

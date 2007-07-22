@@ -44,7 +44,12 @@ enum {
 
 struct CompressedSpeechFile {
 	const char *filename;
-	Audio::AudioStream *(*makeStream)(Common::File *file, uint32 size);
+	Audio::AudioStream *(*makeStream)(
+			Common::SeekableReadStream *stream,
+			bool disposeAfterUse,
+			uint32 startTime,
+			uint32 duration,
+			uint numLoops);
 };
 
 static const CompressedSpeechFile compressedSpeechFilesTable[] = {
@@ -656,7 +661,9 @@ void ToucheEngine::res_loadSpeechSegment(int num) {
 				return;
 			}
 			_fSpeech[0].seek(offs);
-			stream = (compressedSpeechFilesTable[_compressedSpeechData].makeStream)(&_fSpeech[0], size);
+			Common::MemoryReadStream *tmp = _fSpeech[0].readStream(size);
+			assert(tmp);
+			stream = (compressedSpeechFilesTable[_compressedSpeechData].makeStream)(tmp, true, 0, 0, 1);
 		}
 		if (stream) {
 			_speechPlaying = true;

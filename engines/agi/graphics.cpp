@@ -68,6 +68,93 @@ uint8 egaPalette[16 * 3] = {
 };
 
 /**
+ * First generation Amiga AGI palette.
+ * A 16-color, 12-bit RGB palette.
+ *
+ * Used by at least the following Amiga AGI versions:
+ * 2.082 (King's Quest I   v1.0U 1986)
+ * 2.082 (Space Quest I    v1.2  1986)
+ * 2.090 (King's Quest III v1.01 1986-11-08)
+ * 2.107 (King's Quest II  v2.0J 1987-01-29)
+ * x.yyy (Black Cauldron   v2.00 1987-06-14)
+ * x.yyy (Larry I          v1.05 1987-06-26)
+ */
+uint8 amigaAgiPaletteV1[16 * 3] = {
+	0x0, 0x0, 0x0,
+	0x0, 0x0, 0xF,
+	0x0, 0x8, 0x0,
+	0x0, 0xD, 0xB,
+	0xC, 0x0, 0x0,
+	0xB, 0x7, 0xD,
+	0x8, 0x5, 0x0,
+	0xB, 0xB, 0xB,
+	0x7, 0x7, 0x7,
+	0x0, 0xB, 0xF,
+	0x0, 0xE, 0x0,
+	0x0, 0xF, 0xD,
+	0xF, 0x9, 0x8,
+	0xF, 0x7, 0x0,
+	0xE, 0xE, 0x0,
+	0xF, 0xF, 0xF
+};
+
+/**
+ * Second generation Amiga AGI palette.
+ * A 16-color, 12-bit RGB palette.
+ *
+ * Used by at least the following Amiga AGI versions:
+ * 2.202 (Space Quest II v2.0F. Intro says 1988. ScummVM 0.10.0 detects as 1986-12-09)
+ */
+uint8 amigaAgiPaletteV2[16 * 3] = {
+	0x0, 0x0, 0x0,
+	0x0, 0x0, 0xF,
+	0x0, 0x8, 0x0,
+	0x0, 0xD, 0xB,
+	0xC, 0x0, 0x0,
+	0xB, 0x7, 0xD,
+	0x8, 0x5, 0x0,
+	0xB, 0xB, 0xB,
+	0x7, 0x7, 0x7,
+	0x0, 0xB, 0xF,
+	0x0, 0xE, 0x0,
+	0x0, 0xF, 0xD,
+	0xF, 0x9, 0x8,
+	0xD, 0x0, 0xF,
+	0xE, 0xE, 0x0,
+	0xF, 0xF, 0xF
+};
+
+/**
+ * Third generation Amiga AGI palette.
+ * A 16-color, 12-bit RGB palette.
+ *
+ * Used by at least the following Amiga AGI versions:
+ * 2.310 (Police Quest I   v2.0B 1989-02-22)
+ * 2.316 (Gold Rush!       v2.05 1989-03-09)
+ * x.yyy (Manhunter I      v1.06 1989-03-18)
+ * 2.333 (Manhunter II     v3.06 1989-08-17)
+ * 2.333 (King's Quest III v2.15 1989-11-15)
+ */
+uint8 amigaAgiPaletteV3[16 * 3] = {
+	0x0, 0x0, 0x0,
+	0x0, 0x0, 0xB,
+	0x0, 0xB, 0x0,
+	0x0, 0xB, 0xB,
+	0xB, 0x0, 0x0,
+	0xB, 0x0, 0xB,
+	0xC, 0x7, 0x0,
+	0xB, 0xB, 0xB,
+	0x7, 0x7, 0x7,
+	0x0, 0x0, 0xF,
+	0x0, 0xF, 0x0,
+	0x0, 0xF, 0xF,
+	0xF, 0x0, 0x0,
+	0xF, 0x0, 0xF,
+	0xF, 0xF, 0x0,
+	0xF, 0xF, 0xF
+};
+
+/**
  * 16 color amiga-ish palette.
  */
 uint8 newPalette[16 * 3] = {
@@ -554,13 +641,42 @@ void GfxMgr::printCharacter(int x, int y, char c, int fg, int bg) {
 }
 
 /**
- * Draw button
+ * Draw a default style button.
+ * Swaps background and foreground color if button is in focus or being pressed.
  * @param x  x coordinate of the button
  * @param y  y coordinate of the button
  * @param a  set if the button has focus
  * @param p  set if the button is pressed
+ * @param fgcolor foreground color of the button when it is neither in focus nor being pressed
+ * @param bgcolor background color of the button when it is neither in focus nor being pressed
  */
-void GfxMgr::drawButton(int x, int y, const char *s, int a, int p, int fgcolor, int bgcolor) {
+void GfxMgr::drawDefaultStyleButton(int x, int y, const char *s, int a, int p, int fgcolor, int bgcolor) {
+	int textOffset     = _vm->_defaultButtonStyle.getTextOffset(a > 0, p > 0);
+	AgiTextColor color = _vm->_defaultButtonStyle.getColor     (a > 0, p > 0, fgcolor, bgcolor);
+	bool border        = _vm->_defaultButtonStyle.getBorder    (a > 0, p > 0);
+
+	rawDrawButton(x, y, s, color.fg, color.bg, border, textOffset);
+}
+
+/**
+ * Draw a button using the currently chosen style.
+ * Amiga-style is used for the Amiga-rendering mode, PC-style is used otherwise.
+ * @param x  x coordinate of the button
+ * @param y  y coordinate of the button
+ * @param hasFocus  set if the button has focus
+ * @param pressed  set if the button is pressed
+ * @param positive  set if button is positive, otherwise button is negative (Only matters with Amiga-style buttons)
+ * TODO: Make Amiga-style buttons a bit wider as they were in Amiga AGI games.
+ */
+void GfxMgr::drawCurrentStyleButton(int x, int y, const char *label, bool hasFocus, bool pressed, bool positive) {
+	int textOffset     = _vm->_buttonStyle.getTextOffset(hasFocus, pressed);
+	AgiTextColor color = _vm->_buttonStyle.getColor(hasFocus, pressed, positive);
+	bool border        = _vm->_buttonStyle.getBorder(hasFocus, pressed);
+	
+	rawDrawButton(x, y, label, color.fg, color.bg, border, textOffset);
+}
+
+void GfxMgr::rawDrawButton(int x, int y, const char *s, int fgcolor, int bgcolor, bool border, int textOffset) {
 	int len = strlen(s);
 	int x1, y1, x2, y2;
 
@@ -569,8 +685,12 @@ void GfxMgr::drawButton(int x, int y, const char *s, int a, int p, int fgcolor, 
 	x2 = x + CHAR_COLS * len + 2;
 	y2 = y + CHAR_LINES + 2;
 
+	// Draw a filled rectangle that's larger than the button. Used for drawing
+	// a border around the button as the button itself is drawn after this.
+	drawRectangle(x1, y1, x2, y2, border ? BUTTON_BORDER : MSG_BOX_COLOUR);
+	
 	while (*s) {
-		putTextCharacter(0, x + (!!p), y + (!!p), *s++, a ? bgcolor : fgcolor, a ? fgcolor : bgcolor);
+		putTextCharacter(0, x + textOffset, y + textOffset, *s++, fgcolor, bgcolor);
 		x += CHAR_COLS;
 	}
 
@@ -623,39 +743,26 @@ int GfxMgr::keypress() {
 
 /**
  * Initialize the color palette
- * This function initializes the color palette using the specified 16-color
+ * This function initializes the color palette using the specified
  * RGB palette.
- * @param p  A pointer to the 16-color RGB palette.
+ * @param p           A pointer to the source RGB palette.
+ * @param colorCount  Count of colors in the source palette.
+ * @param fromBits    Bits per source color component.
+ * @param toBits      Bits per destination color component.
  */
-void GfxMgr::initPalette(uint8 *p) {
-	int i;
-
-	for (i = 0; i < 48; i++) {
-		_palette[i] = p[i];
+void GfxMgr::initPalette(uint8 *p, uint colorCount, uint fromBits, uint toBits) {
+	const uint srcMax  = (1 << fromBits) - 1;
+	const uint destMax = (1 << toBits) - 1;
+	for (uint col = 0; col < colorCount; col++) {
+		for (uint comp = 0; comp < 3; comp++) { // Convert RGB components
+			_palette[col * 4 + comp] = (p[col * 3 + comp] * destMax) / srcMax;
+		}
+		_palette[col * 4 + 3] = 0; // Set alpha to zero
 	}
 }
 
 void GfxMgr::gfxSetPalette() {
-	int i;
-	byte pal[256 * 4];
-
-	if (!(_vm->getFeatures() & (GF_AGI256 | GF_AGI256_2))) {
-		for (i = 0; i < 16; i++) {
-			pal[i * 4 + 0] = _palette[i * 3 + 0] << 2;
-			pal[i * 4 + 1] = _palette[i * 3 + 1] << 2;
-			pal[i * 4 + 2] = _palette[i * 3 + 2] << 2;
-			pal[i * 4 + 3] = 0;
-		}
-		g_system->setPalette(pal, 0, 16);
-	} else {
-		for (i = 0; i < 256; i++) {
-			pal[i * 4 + 0] = vgaPalette[i * 3 + 0];
-			pal[i * 4 + 1] = vgaPalette[i * 3 + 1];
-			pal[i * 4 + 2] = vgaPalette[i * 3 + 2];
-			pal[i * 4 + 3] = 0;
-		}
-		g_system->setPalette(pal, 0, 256);
-	}
+	g_system->setPalette(_palette, 0, 256);
 }
 
 //Gets AGIPAL Data
@@ -713,17 +820,105 @@ void GfxMgr::gfxPutBlock(int x1, int y1, int x2, int y2) {
 	g_system->copyRectToScreen(_screen + y1 * 320 + x1, 320, x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 }
 
-static const byte mouseCursorArrow[] = {
-	// This is the same arrow cursor that was later used in early SCI games
-	0x00, 0x00, 0x40, 0x00, 0x60, 0x00, 0x70, 0x00,
-	0x78, 0x00, 0x7C, 0x00, 0x7E, 0x00, 0x7F, 0x00,
-	0x7F, 0x80, 0x7F, 0xC0, 0x7C, 0x00, 0x46, 0x00,
-	0x06, 0x00, 0x03, 0x00, 0x03, 0x00, 0x01, 0x80,
-	0xC0, 0x00, 0xA0, 0x00, 0x90, 0x00, 0x88, 0x00,
-	0x84, 0x00, 0x82, 0x00, 0x81, 0x00, 0x80, 0x80,
-	0x80, 0x40, 0x80, 0x20, 0x82, 0x00, 0xA9, 0x00,
-	0xC9, 0x00, 0x04, 0x80, 0x04, 0x80, 0x02, 0x40
+/**
+ * A black and white SCI-style arrow cursor (11x16).
+ * 0 = Transparent.
+ * 1 = Black (#000000 in 24-bit RGB).
+ * 2 = White (#FFFFFF in 24-bit RGB).
+ */
+static const byte sciMouseCursor[] = {
+	1,1,0,0,0,0,0,0,0,0,0,
+	1,2,1,0,0,0,0,0,0,0,0,
+	1,2,2,1,0,0,0,0,0,0,0,
+	1,2,2,2,1,0,0,0,0,0,0,
+	1,2,2,2,2,1,0,0,0,0,0,
+	1,2,2,2,2,2,1,0,0,0,0,
+	1,2,2,2,2,2,2,1,0,0,0,
+	1,2,2,2,2,2,2,2,1,0,0,
+	1,2,2,2,2,2,2,2,2,1,0,
+	1,2,2,2,2,2,2,2,2,2,1,
+	1,2,2,2,2,2,1,0,0,0,0,
+	1,2,1,0,1,2,2,1,0,0,0,
+	1,1,0,0,1,2,2,1,0,0,0,
+	0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,0,1,2,2,1,0
 };
+
+/**
+ * RGBA-palette for the black and white SCI-style arrow cursor.
+ */
+static const byte sciMouseCursorPalette[] = {
+	0x00, 0x00, 0x00,	0x00, // Black
+	0xFF, 0xFF, 0xFF,	0x00  // White
+};
+
+/**
+ * An Amiga-style arrow cursor (8x11).
+ * 0 = Transparent.
+ * 1 = Black     (#000000 in 24-bit RGB).
+ * 2 = Red       (#DE2021 in 24-bit RGB).
+ * 3 = Light red (#FFCFAD in 24-bit RGB).
+ */
+static const byte amigaMouseCursor[] = {
+	2,3,1,0,0,0,0,0,
+	2,2,3,1,0,0,0,0,
+	2,2,2,3,1,0,0,0,
+	2,2,2,2,3,1,0,0,
+	2,2,2,2,2,3,1,0,
+	2,2,2,2,2,2,3,1,
+	2,0,2,2,3,1,0,0,
+	0,0,0,2,3,1,0,0,
+	0,0,0,2,2,3,1,0,
+	0,0,0,0,2,3,1,0,
+	0,0,0,0,2,2,3,1
+};
+
+/**
+ * RGBA-palette for the Amiga-style arrow cursor
+ * and the Amiga-style busy cursor.
+ */
+static const byte amigaMouseCursorPalette[] = {
+	0x00, 0x00, 0x00,	0x00, // Black
+	0xDE, 0x20, 0x21,	0x00, // Red
+	0xFF, 0xCF, 0xAD,	0x00  // Light red
+};
+
+/**
+ * An Amiga-style busy cursor showing an hourglass (13x16).
+ * 0 = Transparent.
+ * 1 = Black     (#000000 in 24-bit RGB).
+ * 2 = Red       (#DE2021 in 24-bit RGB).
+ * 3 = Light red (#FFCFAD in 24-bit RGB).
+ */
+static const byte busyAmigaMouseCursor[] = {
+	1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,2,2,2,2,2,2,2,2,2,2,2,1,
+	1,2,2,2,2,2,2,2,2,2,2,2,1,
+	0,1,3,3,3,3,3,3,3,3,3,1,0,
+	0,0,1,3,3,3,3,3,3,3,1,0,0,
+	0,0,0,1,3,3,3,3,3,1,0,0,0,
+	0,0,0,0,1,3,3,3,1,0,0,0,0,
+	0,0,0,0,0,1,3,1,0,0,0,0,0,
+	0,0,0,0,0,1,3,1,0,0,0,0,0,
+	0,0,0,0,1,2,3,2,1,0,0,0,0,
+	0,0,0,1,2,2,3,2,2,1,0,0,0,
+	0,0,1,2,2,2,3,2,2,2,1,0,0,
+	0,1,2,2,2,3,3,3,2,2,2,1,0,
+	1,3,3,3,3,3,3,3,3,3,3,3,1,
+	1,3,3,3,3,3,3,3,3,3,3,3,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1
+};
+
+void GfxMgr::setCursor(bool amigaStyleCursor) {
+	if (!amigaStyleCursor) {
+		CursorMan.replaceCursorPalette(sciMouseCursorPalette, 1, ARRAYSIZE(sciMouseCursorPalette) / 4);
+		CursorMan.replaceCursor(sciMouseCursor, 11, 16, 1, 1, 0);
+	} else { // amigaStyleCursor
+		CursorMan.replaceCursorPalette(amigaMouseCursorPalette, 1, ARRAYSIZE(amigaMouseCursorPalette) / 4);
+		CursorMan.replaceCursor(amigaMouseCursor, 8, 11, 1, 1, 0);
+	}
+}
 
 /**
  * Initialize graphics device.
@@ -731,7 +926,9 @@ static const byte mouseCursorArrow[] = {
  * @see deinit_video()
  */
 int GfxMgr::initVideo() {
-	if (_vm->_renderMode == Common::kRenderEGA)
+	if (_vm->getFeatures() & (GF_AGI256 | GF_AGI256_2))
+		initPalette(vgaPalette, 256, 8);
+	else if (_vm->_renderMode == Common::kRenderEGA)
 		initPalette(egaPalette);
 	else
 		initPalette(newPalette);
@@ -741,31 +938,7 @@ int GfxMgr::initVideo() {
 
 	gfxSetPalette();
 
-	byte mouseCursor[16 * 16];
-	const byte *src = mouseCursorArrow;
-	for (int i = 0; i < 32; ++i) {
-		int offs = i * 8;
-		for (byte mask = 0x80; mask != 0; mask >>= 1) {
-			if (src[0] & mask) {
-				mouseCursor[offs] = 2;
-			} else if (src[32] & mask) {
-				mouseCursor[offs] = 0;
-			} else {
-				mouseCursor[offs] = 0xFF;
-			}
-			++offs;
-		}
-		++src;
-	}
-
-	const byte cursorPalette[] = {
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		255, 255, 255, 0
-	};
-
-	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
-	CursorMan.replaceCursor(mouseCursor, 16, 16, 1, 1);
+	setCursor(_vm->_renderMode == Common::kRenderAmiga);
 
 	return errOK;
 }

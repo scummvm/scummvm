@@ -51,7 +51,7 @@ public:
 		int16 freq;     // high/low byte * 100 - frequency
 		int16 repCount;	// high/low byte - repeat count
 		int16 sndFrame;
-	};
+	} PACKED_STRUCT;
 
 	typedef Gob_State *Gob_PState;
 
@@ -90,12 +90,12 @@ public:
 		char multObjIndex;
 		char unk14;
 		char visible;
-	};
+	} PACKED_STRUCT;
 
 	struct Gob_Pos {
 		char x;
 		char y;
-	};
+	} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

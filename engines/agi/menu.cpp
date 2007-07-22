@@ -267,7 +267,7 @@ bool Menu::keyhandler(int key) {
 	static int menuActive = false;
 	static int buttonUsed = 0;
 
-	if (!_vm->getflag(fMenusWork))
+	if (!_vm->getflag(fMenusWork) && !(_vm->getFeatures() & GF_MENUS))
 		return false;
 
 	if (!menuActive) {
@@ -351,6 +351,12 @@ bool Menu::keyhandler(int key) {
 						debugC(6, kDebugLevelMenu | kDebugLevelInput, "event %d registered", d->event);
 						_vm->_game.evKeyp[d->event].occured = true;
 						_vm->_game.evKeyp[d->event].data = d->event;
+						// In LSL1, event 0x20 is set when changing the game speed to normal via the menu
+						// Do not set the event data to 0x20, as this event is then incorrectly triggered
+						// when the spacebar is pressed, which has a keycode equal to 0x20 as well
+						// Fixes bug #1751390 - "LSL: after changing game speed, space key turn unfunctional"
+						if (d->event == 0x20)
+							_vm->_game.evKeyp[d->event].data = d->event + 1;
 						goto exit_menu;
 					}
 				}

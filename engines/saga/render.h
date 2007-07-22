@@ -85,7 +85,7 @@ private:
 	Surface _backGroundSurface;
 
 	unsigned int _fps;
-	unsigned int _frameCount;
+	unsigned int _renderedFrameCount;
 	uint32 _flags;
 };
 

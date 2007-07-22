@@ -78,7 +78,8 @@ void _c_fade(void *parm) {
 		_vm->_gfx->fadePalette(pal);
 		_vm->_gfx->setPalette(pal);
 
-		_vm->waitTime( 1 );
+		g_system->delayMillis(20);
+		_vm->_gfx->updateScreen();
 	}
 
 	return;
@@ -253,7 +254,7 @@ void _c_endComment(void *param) {
 	_vm->_gfx->floodFill(Gfx::kBitFront, r, 1);
 
 	_vm->_gfx->setFont(kFontDialogue);
-	_vm->_gfx->displayWrappedString(_vm->_location._endComment, 3, 5, 130, 0);
+	_vm->_gfx->displayWrappedString(_vm->_location._endComment, 3, 5, 0, 130);
 	_vm->_gfx->updateScreen();
 
 	uint32 di = 0;
@@ -292,6 +293,9 @@ void _c_endComment(void *param) {
 		}
 
 		_vm->_gfx->setPalette(_enginePal);
+		g_system->delayMillis(20);
+		_vm->_gfx->updateScreen();
+
 	}
 
 	waitUntilLeftClick();
@@ -316,11 +320,14 @@ void _c_frankenstein(void *parm) {
 	for (uint16 _di = 0; _di < 30; _di++) {
 		g_system->delayMillis(20);
 		_vm->_gfx->setPalette(pal0, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
+		_vm->_gfx->updateScreen();
 		g_system->delayMillis(20);
 		_vm->_gfx->setPalette(pal1, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
+		_vm->_gfx->updateScreen();
 	}
 
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
+	_vm->_gfx->updateScreen();
 
 	return;
 }

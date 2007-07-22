@@ -63,7 +63,7 @@ public:
 		int8 redrawAnimation;
 		int8 redrawLayer;
 		uint8 redrawFrame;
-	};
+	} PACKED_STRUCT;
 
 	struct Mult_GobState {
 		int16 animation; // .
@@ -74,7 +74,7 @@ public:
 		int16 freq;      // |- [1+]
 		int8 repCount;   // |
 		uint8 speaker;   // '
-	};
+	} PACKED_STRUCT;
 
 	struct Mult_Object {
 		int32 *pPosX;
@@ -104,12 +104,12 @@ public:
 		int16 newTop;
 		int16 newRight;
 		int16 newBottom;
-	};
+	} PACKED_STRUCT;
 
 	struct Mult_StaticKey {
 		int16 frame;
 		int16 layer;
-	};
+	} PACKED_STRUCT;
 
 	struct Mult_AnimKey {
 		int16 frame;
@@ -117,14 +117,14 @@ public:
 		int16 posX;
 		int16 posY;
 		int16 order;
-	};
+	} PACKED_STRUCT;
 
 	struct Mult_TextKey {
 		int16 frame;
 		int16 cmd;
 		char unknown[18];
 		byte script[6];
-	};
+	} PACKED_STRUCT;
 
 	struct Mult_PalKey {
 		int16 frame;
@@ -133,14 +133,14 @@ public:
 		int16 unknown0;
 		int16 unknown1;
 		int8 subst[16][4];
-	};
+	} PACKED_STRUCT;
 
 	struct Mult_PalFadeKey {
 		int16 frame;
 		int16 fade;
 		int16 palIndex;
 		int8 flag;
-	};
+	} PACKED_STRUCT;
 
 	struct Mult_SndKey {
 		int16 frame;
@@ -150,7 +150,7 @@ public:
 		int16 repCount;
 		int16 resId;
 		int16 soundIndex;
-	};
+	} PACKED_STRUCT;
 
 	struct Mult_ImdKey {
 		int16 frame;
@@ -162,7 +162,7 @@ public:
 		int16 lastFrame;
 		int8 palStart;
 		int8 palEnd;
-	};
+	} PACKED_STRUCT;
 
 	struct Mult_Data {
 		int16 palFadeKeysCount;
@@ -212,7 +212,7 @@ public:
 		char *imdFiles;
 		char *somepointer10; // ?
 		byte *execPtr;
-	};
+	} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

@@ -166,7 +166,9 @@ class AmigaDisk : public Disk {
 protected:
 	Cnv* makeCnv(Common::SeekableReadStream &stream);
 	StaticCnv* makeStaticCnv(Common::SeekableReadStream &stream);
-	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 planeSize);
+	void patchFrame(byte *dst, byte *dlta, uint16 bytesPerPlane, uint16 height);
+	void unpackFrame(byte *dst, byte *src, uint16 planeSize);
+	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height);
 	Common::SeekableReadStream *openArchivedFile(const char* name, bool errorOnFileNotFound = false);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
 	void loadMask(const char *name);

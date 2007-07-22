@@ -645,23 +645,3 @@ int16 OSystem_Dreamcast::getOverlayWidth()
   return OVL_W;
 }
 
-int OSystem_Dreamcast::screenToOverlayX(int x)
-{
-  return x - _overlay_x;
-}
-
-int OSystem_Dreamcast::screenToOverlayY(int y)
-{
-  return y - _overlay_y;
-}
-
-int OSystem_Dreamcast::overlayToScreenX(int x)
-{
-  return x + _overlay_x;
-}
-
-int OSystem_Dreamcast::overlayToScreenY(int y)
-{
-  return y + _overlay_y;
-}
-

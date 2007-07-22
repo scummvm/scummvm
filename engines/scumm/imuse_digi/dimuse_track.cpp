@@ -117,20 +117,20 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		track->feedSize = 0;
 		track->souStreamUsed = true;
 		track->soundName[0] = 0;
-		track->soundHandle = NULL;
+		track->soundDesc = NULL;
 	} else {
 		track->souStreamUsed = false;
 		strcpy(track->soundName, soundName);
-		track->soundHandle = _sound->openSound(soundId, soundName, soundType, volGroupId, -1);
+		track->soundDesc = _sound->openSound(soundId, soundName, soundType, volGroupId, -1);
 
-		if (track->soundHandle == NULL)
+		if (track->soundDesc == NULL)
 			return;
 
-		track->sndDataExtComp = _sound->isSndDataExtComp(track->soundHandle);
+		track->sndDataExtComp = _sound->isSndDataExtComp(track->soundDesc);
 
-		bits = _sound->getBits(track->soundHandle);
-		channels = _sound->getChannels(track->soundHandle);
-		freq = _sound->getFreq(track->soundHandle);
+		bits = _sound->getBits(track->soundDesc);
+		channels = _sound->getChannels(track->soundDesc);
+		freq = _sound->getFreq(track->soundDesc);
 
 		if ((soundId == kTalkSoundID) && (soundType == IMUSE_BUNDLE)) {
 			if (_vm->_actorToPrintStrFor != 0xFF && _vm->_actorToPrintStrFor != 0) {
@@ -325,15 +325,12 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(const Track *track, int f
 	// Clone the settings of the given track
 	memcpy(fadeTrack, track, sizeof(Track));
 
-	// Clone the soundhandle
-	// FIXME: Shouldn't we check here whether track->soundHandle is NULL, resp. whether stream2
-	// is being used (as in, we are using compressed data)...
-	//
-	// -- aquadran -- nope :) this is called only for bundle files and sound data in *.la1
-	// from switchToNextRegion and fadeOutMusic func.
-	// stream2 is used only for sou VOICE type sound data (FT) --
-	fadeTrack->soundHandle = _sound->cloneSound(track->soundHandle);
-	assert(fadeTrack->soundHandle);
+	// Clone the sound.
+	// According to aquadran, this is only called for bundle files and sound
+	// data in *.la1 from switchToNextRegion and fadeOutMusic func. Henc we
+	// know that track->soundDesc != NULL.
+	fadeTrack->soundDesc = _sound->cloneSound(track->soundDesc);
+	assert(fadeTrack->soundDesc);
 
 	// Set the volume fading parameters to indicate a fade out
 	fadeTrack->volFadeDelay = fadeDelay;
@@ -357,7 +354,7 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(const Track *track, int f
 		type = Audio::Mixer::kPlainSoundType;
 		break;
 	}
-	fadeTrack->stream = Audio::makeAppendableAudioStream(_sound->getFreq(fadeTrack->soundHandle), makeMixerFlags(fadeTrack->mixerFlags));
+	fadeTrack->stream = Audio::makeAppendableAudioStream(_sound->getFreq(fadeTrack->soundDesc), makeMixerFlags(fadeTrack->mixerFlags));
 	_mixer->playInputStream(type, &fadeTrack->mixChanHandle, fadeTrack->stream, -1, fadeTrack->vol / 1000, fadeTrack->pan, false);
 
 	fadeTrack->mixerStreamRunning = true;

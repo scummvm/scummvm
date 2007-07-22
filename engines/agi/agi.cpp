@@ -178,7 +178,7 @@ void AgiEngine::processEvents() {
 			case Common::KEYCODE_MINUS:
 				key = '-';
 				break;
-			case Common::KEYCODE_9:
+			case Common::KEYCODE_TAB:
 				key = 0x0009;
 				break;
 			case Common::KEYCODE_F1:
@@ -448,6 +448,12 @@ int AgiEngine::agiInit() {
 		loadGame(saveNameBuffer, false); // Do not check game id
 	}
 
+#ifdef __DS__
+	// Normally, the engine loads the predictive text dictionary when the predictive dialog
+	// is shown.  On the DS version, the word completion feature needs the dictionary too.
+	loadDict();
+#endif
+
 	return ec;
 }
 
@@ -534,6 +540,67 @@ static const GameSettings agiSettings[] = {
 	{"agi", "AGI game", GID_AGI, MDT_ADLIB, "OBJECT"},
 	{NULL, NULL, 0, 0, NULL}
 };
+
+AgiTextColor AgiButtonStyle::getColor(bool hasFocus, bool pressed, bool positive) const {
+	if (_amigaStyle) {
+		if (positive) {
+			if (pressed) { // Positive pressed Amiga-style button
+				if (_olderAgi) {
+					return AgiTextColor(amigaBlack, amigaOrange);
+				} else {
+					return AgiTextColor(amigaBlack, amigaPurple);
+				}
+			} else { // Positive unpressed Amiga-style button
+				return AgiTextColor(amigaWhite, amigaGreen);
+			}
+		} else { // _amigaStyle && !positive
+			if (pressed) { // Negative pressed Amiga-style button
+				return AgiTextColor(amigaBlack, amigaCyan);
+			} else { // Negative unpressed Amiga-style button
+				return AgiTextColor(amigaWhite, amigaRed);
+			}
+		}
+	} else { // PC-style button
+		if (hasFocus || pressed) { // A pressed or in focus PC-style button
+			return AgiTextColor(pcWhite, pcBlack);
+		} else { // An unpressed PC-style button without focus
+			return AgiTextColor(pcBlack, pcWhite);
+		}
+	}
+}
+
+AgiTextColor AgiButtonStyle::getColor(bool hasFocus, bool pressed, int baseFgColor, int baseBgColor) const {
+	return getColor(hasFocus, pressed, AgiTextColor(baseFgColor, baseBgColor));
+}
+
+AgiTextColor AgiButtonStyle::getColor(bool hasFocus, bool pressed, const AgiTextColor &baseColor) const {
+	if (hasFocus || pressed)
+		return baseColor.swap();
+	else
+		return baseColor;
+}
+
+int AgiButtonStyle::getTextOffset(bool hasFocus, bool pressed) const {
+	return (pressed && !_amigaStyle) ? 1 : 0;
+}
+
+bool AgiButtonStyle::getBorder(bool hasFocus, bool pressed) const {
+	return _amigaStyle && !_authenticAmiga && (hasFocus || pressed);
+}
+
+void AgiButtonStyle::setAmigaStyle(bool amigaStyle, bool olderAgi, bool authenticAmiga) {
+	_amigaStyle		= amigaStyle;
+	_olderAgi		= olderAgi;
+	_authenticAmiga	= authenticAmiga;
+}
+
+void AgiButtonStyle::setPcStyle(bool pcStyle) {
+	setAmigaStyle(!pcStyle);
+}
+
+AgiButtonStyle::AgiButtonStyle(Common::RenderMode renderMode) {
+	setAmigaStyle(renderMode == Common::kRenderAmiga);
+}
 
 AgiEngine::AgiEngine(OSystem *syst) : Engine(syst) {
 
@@ -635,6 +702,8 @@ void AgiEngine::initialize() {
 		}
 	}
 
+	_buttonStyle = AgiButtonStyle(_renderMode);
+	_defaultButtonStyle = AgiButtonStyle();
 	_console = new Console(this);
 	_gfx = new GfxMgr(this);
 	_sound = new SoundMgr(this, _mixer);
@@ -676,6 +745,13 @@ void AgiEngine::initialize() {
 }
 
 AgiEngine::~AgiEngine() {
+	// If the engine hasn't been initialized yet via AgiEngine::initialize(), don't attempt to free any resources,
+	// as they haven't been allocated. Fixes bug #1742432 - AGI: Engine crashes if no game is detected
+	if (_game.state == STATE_INIT) {
+		delete _rnd;	// delete _rnd, as it is allocated in the constructor, not in initialize()
+		return;
+	}
+
 	agiDeinit();
 	_sound->deinitSound();
 	delete _sound;

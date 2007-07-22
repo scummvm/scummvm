@@ -77,11 +77,11 @@ public:
 		return _input->endOfStream();
 	}
 	void pause(bool paused) {
-		assert((paused && _pauseLevel >= 0) || (!paused && _pauseLevel));
+		//assert((paused && _pauseLevel >= 0) || (!paused && _pauseLevel));
 	
 		if (paused)
 			_pauseLevel++;
-		else
+		else if (_pauseLevel > 0)
 			_pauseLevel--;
 	}
 	bool isPaused() {

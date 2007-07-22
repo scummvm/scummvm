@@ -144,10 +144,6 @@ class OSystem_Dreamcast : public OSystem {
   // Overlay
   int16 getOverlayHeight();
   int16 getOverlayWidth();
-  int screenToOverlayX(int x);
-  int screenToOverlayY(int y);
-  int overlayToScreenX(int x);
-  int overlayToScreenY(int y);
   void showOverlay();
   void hideOverlay();
   void clearOverlay();

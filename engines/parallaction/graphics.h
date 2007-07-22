@@ -57,6 +57,12 @@ namespace Parallaction {
 #define BASE_PALETTE_SIZE		BASE_PALETTE_COLORS*3
 #define PALETTE_SIZE			PALETTE_COLORS*3
 
+#define MOUSEARROW_WIDTH		16
+#define MOUSEARROW_HEIGHT		16
+
+#define MOUSECOMBO_WIDTH		32	// sizes for cursor + selected inventory item
+#define MOUSECOMBO_HEIGHT		32
+
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 struct PaletteFxRange {
@@ -67,7 +73,7 @@ struct PaletteFxRange {
 	byte	_first;
 	byte	_last;
 
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
@@ -165,10 +171,9 @@ public:
 
 	// dialogue and text
 	void drawBalloon(const Common::Rect& r, uint16 arg_8);
-	void displayBalloonString(uint16 x, uint16 y, const char *text, byte color);
-	void displayString(uint16 x, uint16 y, const char *text);
+	void displayString(uint16 x, uint16 y, const char *text, byte color);
 	void displayCenteredString(uint16 y, const char *text);
-	bool displayWrappedString(char *text, uint16 x, uint16 y, uint16 maxwidth, byte color);
+	bool displayWrappedString(char *text, uint16 x, uint16 y, byte color, uint16 wrapwidth = SCREEN_WIDTH);
 	uint16 getStringWidth(const char *text);
 	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
 
@@ -204,6 +209,8 @@ public:
 	// DOS version didn't make use of it, but it is probably needed for Amiga stuff.
 	void flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer);
 	void blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
+	void flatBlitCnv(Cnv *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer);
+
 
 	// palette
 	void setPalette(Palette palette, uint32 first = FIRST_BASE_COLOR, uint32 num = BASE_PALETTE_COLORS);

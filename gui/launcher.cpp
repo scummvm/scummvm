@@ -588,6 +588,15 @@ void LauncherDialog::updateListing() {
 			if (g.contains("description"))
 				description = g.description();
 		}
+
+#ifdef __DS__
+		// DS port uses an extra section called 'ds'.  This prevents the section from being
+		// detected as a game.
+		if (gameid == "ds") {
+			continue;
+		}
+#endif
+
 		if (description.empty())
 			description = "Unknown (target " + iter->_key + ", gameid " + gameid + ")";
 
@@ -829,6 +838,9 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		assert(item >= 0);
 		ConfMan.setActiveDomain(_domains[item]);
 		close();
+		break;
+	case kListItemRemovalRequestCmd:
+		removeGame(item);
 		break;
 	case kListSelectionChangedCmd:
 		updateButtons();

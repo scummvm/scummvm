@@ -516,44 +516,51 @@ int AgiEngine::selectSlot() {
 	buttonY = (vm + 17) * CHAR_LINES;
 	
 	for (i = 0; i < 2; i++)
-		_gfx->drawButton(buttonX[i], buttonY, buttonText[i], 0, 0, MSG_BOX_TEXT, MSG_BOX_COLOUR);
+		_gfx->drawCurrentStyleButton(buttonX[i], buttonY, buttonText[i], false, false, i == 0);
 
 	AllowSyntheticEvents on(this);
+	int oldFirstSlot = _firstSlot + 1;
+	int oldActive = active + 1;
 
 	for (;;) {
-		char dstr[64];
-		for (i = 0; i < NUM_VISIBLE_SLOTS; i++) {
-			sprintf(dstr, "[%2d. %-28.28s]", i + _firstSlot, desc[i]);
-			printText(dstr, 0, hm + 1, vm + 4 + i,
-					(40 - 2 * hm) - 1, i == active ? MSG_BOX_COLOUR : MSG_BOX_TEXT,
-					i == active ? MSG_BOX_TEXT : MSG_BOX_COLOUR);
-		}
-
-		char upArrow[] = "^";
-		char downArrow[] = "v";
-		char scrollBar[] = " ";
-
 		int sbPos;
 
-		// Use the extreme scrollbar positions only if the extreme
-		// slots are in sight.
+		if (oldFirstSlot != _firstSlot || oldActive != active) {
+			char dstr[64];
+			for (i = 0; i < NUM_VISIBLE_SLOTS; i++) {
+				sprintf(dstr, "[%2d. %-28.28s]", i + _firstSlot, desc[i]);
+				printText(dstr, 0, hm + 1, vm + 4 + i,
+						(40 - 2 * hm) - 1, i == active ? MSG_BOX_COLOUR : MSG_BOX_TEXT,
+						i == active ? MSG_BOX_TEXT : MSG_BOX_COLOUR);
+			}
 
-		if (_firstSlot == 0)
-			sbPos = 1;
-		else if (_firstSlot == NUM_SLOTS - NUM_VISIBLE_SLOTS)
-			sbPos = NUM_VISIBLE_SLOTS - 2;
-		else {
-			sbPos = 2 + (_firstSlot * (NUM_VISIBLE_SLOTS - 4)) / (NUM_SLOTS - NUM_VISIBLE_SLOTS - 1);
-			if (sbPos >= NUM_VISIBLE_SLOTS - 3)
-				sbPos = NUM_VISIBLE_SLOTS - 3;
+			char upArrow[] = "^";
+			char downArrow[] = "v";
+			char scrollBar[] = " ";
+
+			// Use the extreme scrollbar positions only if the
+			// extreme slots are in sight.
+
+			if (_firstSlot == 0)
+				sbPos = 1;
+			else if (_firstSlot == NUM_SLOTS - NUM_VISIBLE_SLOTS)
+				sbPos = NUM_VISIBLE_SLOTS - 2;
+			else {
+				sbPos = 2 + (_firstSlot * (NUM_VISIBLE_SLOTS - 4)) / (NUM_SLOTS - NUM_VISIBLE_SLOTS - 1);
+				if (sbPos >= NUM_VISIBLE_SLOTS - 3)
+					sbPos = NUM_VISIBLE_SLOTS - 3;
+			}
+
+			for (i = 1; i < NUM_VISIBLE_SLOTS - 1; i++)
+				printText(scrollBar, 35, hm + 1, vm + 4 + i, 1, MSG_BOX_COLOUR, 7, true);
+
+			printText(upArrow, 35, hm + 1, vm + 4, 1, 8, 7);
+			printText(downArrow, 35, hm + 1, vm + 4 + NUM_VISIBLE_SLOTS - 1, 1, 8, 7);
+			printText(scrollBar, 35, hm + 1, vm + 4 + sbPos, 1, MSG_BOX_COLOUR, MSG_BOX_TEXT);
+
+			oldActive = active;
+			oldFirstSlot = _firstSlot;
 		}
-
-		for (i = 1; i < NUM_VISIBLE_SLOTS - 1; i++)
-			printText(scrollBar, 35, hm + 1, vm + 4 + i, 1, MSG_BOX_COLOUR, 7, true);
-
-		printText(upArrow, 35, hm + 1, vm + 4, 1, 8, 7);
-		printText(downArrow, 35, hm + 1, vm + 4 + NUM_VISIBLE_SLOTS - 1, 1, 8, 7);
-		printText(scrollBar, 35, hm + 1, vm + 4 + sbPos, 1, MSG_BOX_COLOUR, MSG_BOX_TEXT);
 		
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = doPollKeyboard();

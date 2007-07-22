@@ -38,14 +38,12 @@ namespace Saga {
 
 #define BUFFER_SIZE 4096
 
-// I haven't decided yet if it's a good idea to make looping part of the audio
-// stream class, or if I should use a "wrapper" class, like I did for Broken
-// Sword 2, to make it easier to add support for compressed music... but I'll
-// worry about that later.
-
-class RAWInputStream : public Audio::AudioStream {
+class DigitalMusicInputStream : public Audio::AudioStream {
 private:
+	Audio::AudioStream *_compressedStream;
 	ResourceContext *_context;
+	ResourceData * resourceData;
+	GameSoundTypes soundType;
 	Common::File *_file;
 	uint32 _filePos;
 	uint32 _startPos;
@@ -56,6 +54,7 @@ private:
 	const int16 *_bufferEnd;
 	const int16 *_pos;
 	const GameSoundInfo *_musicInfo;
+	Common::MemoryReadStream *_memoryStream;
 
 	void refill();
 	bool eosIntern() const {
@@ -63,7 +62,10 @@ private:
 	}
 
 public:
-	RAWInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping, uint32 loopStart);
+	DigitalMusicInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping, uint32 loopStart);
+	~DigitalMusicInputStream();
+
+	void createCompressedStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
@@ -72,17 +74,36 @@ public:
 	int getRate() const	{ return _musicInfo->frequency; }
 };
 
-RAWInputStream::RAWInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping, uint32 loopStart)
+DigitalMusicInputStream::DigitalMusicInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping, uint32 loopStart)
 	: _context(context), _finished(false), _looping(looping), _bufferEnd(_buf + BUFFER_SIZE) {
 
-	ResourceData * resourceData;
+	byte compressedHeader[10];
 
 	resourceData = vm->_resource->getResourceData(context, resourceId);
 	_file = context->getFile(resourceData);
 	_musicInfo = vm->getMusicInfo();
 
 	if (_musicInfo == NULL) {
-		error("RAWInputStream() wrong musicInfo");
+		error("DigitalMusicInputStream() wrong musicInfo");
+	}
+
+	_compressedStream = NULL;
+
+	if (Common::File::exists("music.cmp")) {
+		// Read compressed header to determine compression type
+		_file->seek((long)resourceData->offset, SEEK_SET);
+		_file->read(compressedHeader, 9);
+
+		if (compressedHeader[0] == char(0)) {
+			soundType = kSoundMP3;
+		} else if (compressedHeader[0] == char(1)) {
+			soundType = kSoundOGG;
+		} else if (compressedHeader[0] == char(2)) {
+			soundType = kSoundFLAC;
+		}
+
+		createCompressedStream();
+		resourceData->offset += 9;	// Skip compressed header
 	}
 
 	// Determine the end position
@@ -96,22 +117,59 @@ RAWInputStream::RAWInputStream(SagaEngine *vm, ResourceContext *context, uint32 
 	refill();
 }
 
-int RAWInputStream::readBuffer(int16 *buffer, const int numSamples) {
+DigitalMusicInputStream::~DigitalMusicInputStream() {
+	delete _compressedStream;
+}
+
+void DigitalMusicInputStream::createCompressedStream() {
+	uint numLoops = _looping ? 0 : 1;
+	_memoryStream = _file->readStream(resourceData->size);
+
+	switch (soundType) {
+#ifdef USE_MAD
+		case kSoundMP3:
+			debug(1, "Playing MP3 compressed digital music");
+			_compressedStream = Audio::makeMP3Stream(_memoryStream, true, 0, 0, numLoops);
+			break;
+#endif
+#ifdef USE_VORBIS
+		case kSoundOGG:
+			debug(1, "Playing OGG compressed digital music");
+			_compressedStream = Audio::makeVorbisStream(_memoryStream, true, 0, 0, numLoops);
+			break;
+#endif
+#ifdef USE_FLAC
+		case kSoundFLAC:
+			debug(1, "Playing FLAC compressed digital music");
+			_compressedStream = Audio::makeFlacStream(_memoryStream, true, 0, 0, numLoops);
+			break;
+#endif
+		default:
+			// Unknown compression
+			error("Trying to play a compressed digital music, but the compression is not known");
+			break;
+	}
+}
+
+int DigitalMusicInputStream::readBuffer(int16 *buffer, const int numSamples) {
+	if (_compressedStream != NULL)
+		return _compressedStream->readBuffer(buffer, numSamples);
+
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
-		const int len = MIN(numSamples - samples, (int) (_bufferEnd - _pos));
+		int len = 0;
+		len = MIN(numSamples - samples, (int) (_bufferEnd - _pos));
 		memcpy(buffer, _pos, len * 2);
 		buffer += len;
 		_pos += len;
 		samples += len;
-		if (_pos >= _bufferEnd) {
+		if (_pos >= _bufferEnd)
 			refill();
-		}
 	}
 	return samples;
 }
 
-void RAWInputStream::refill() {
+void DigitalMusicInputStream::refill() {
 	if (_finished)
 		return;
 
@@ -282,7 +340,7 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enable
 	xmidiParser = MidiParser::createParser_XMIDI();
 	smfParser = MidiParser::createParser_SMF();	
 
-	_musicContext = _vm->_resource->getContext(GAME_MUSICFILE);
+	_digitalMusicContext = _vm->_resource->getContext(GAME_MUSICFILE);
 
 	_songTableLen = 0;
 	_songTable = 0;
@@ -405,7 +463,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	if (_vm->getGameType() == GType_ITE) {
 		if (resourceId >= 9 && resourceId <= 34) {
-			if (_musicContext != NULL) {
+			if (_digitalMusicContext != NULL) {
 				//TODO: check resource size
 				loopStart = 0;
 				// fix ITE sunstatm score
@@ -413,61 +471,8 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 					loopStart = 4 * 18727;
 				}
 
-				if (!(_vm->getFeatures() & GF_COMPRESSED_SOUNDS)) {
-					// uncompressed digital music
-					audioStream = new RAWInputStream(_vm, _musicContext, resourceId - 9, flags == MUSIC_LOOP, loopStart);
-				} else {
-					// compressed digital music
-					ResourceData * musicResourceData;
-					Common::File *_file;
-					byte compressedHeader[10];
-					GameSoundTypes soundType;
-
-					musicResourceData = _vm->_resource->getResourceData(_musicContext, resourceId - 9);
-					_file = _musicContext->getFile(musicResourceData);
-
-					if (_vm->getMusicInfo() == NULL) {
-						error("RAWInputStream() wrong musicInfo");
-					}
-
-					_file->seek((long)musicResourceData->offset, SEEK_SET);
-
-					_file->read(compressedHeader, 9);
-
-					if (compressedHeader[0] == char(0)) {
-						soundType = kSoundMP3;
-					} else if (compressedHeader[0] == char(1)) {
-						soundType = kSoundOGG;
-					} else if (compressedHeader[0] == char(2)) {
-						soundType = kSoundFLAC;
-					}
-
-					switch (soundType) {
-#ifdef USE_MAD
-						case kSoundMP3:
-							debug(1, "Playing MP3 compressed digital music");
-							audioStream = Audio::makeMP3Stream(_file, musicResourceData->size);
-							break;
-#endif
-#ifdef USE_VORBIS
-						case kSoundOGG:
-							debug(1, "Playing OGG compressed digital music");
-							audioStream = Audio::makeVorbisStream(_file, musicResourceData->size);
-							break;
-#endif
-#ifdef USE_FLAC
-						case kSoundFLAC:
-							debug(1, "Playing FLAC compressed digital music");
-							audioStream = Audio::makeFlacStream(_file, musicResourceData->size);
-							break;
-#endif
-						default:
-							// Unknown compression
-							error("Trying to play a compressed digital music, but the compression is not known");
-							break;
-					}
-
-				}
+				// digital music
+				audioStream = new DigitalMusicInputStream(_vm, _digitalMusicContext, resourceId - 9, flags == MUSIC_LOOP, loopStart);
 			}
 		}
 	}

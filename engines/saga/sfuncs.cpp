@@ -240,7 +240,7 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfSetSpeechBox),
 		OPCODE(sfDebugShowData),
 		OPCODE(sfWaitFramesEsc),
-		OPCODE(sf103),
+		OPCODE(sfQueueMusic),
 		OPCODE(sfDisableAbortSpeeches)
 	};
 	if (_vm->getGameType() == GType_IHNM)
@@ -266,7 +266,7 @@ void Script::sfWait(SCRIPTFUNC_PARAMS) {
 	time = thread->pop();
 
 	if (!_skipSpeeches) {
-		thread->waitDelay(ticksToMSec(time)); // put thread to sleep
+		thread->waitDelay(_vm->ticksToMSec(time)); // put thread to sleep
 	}
 }
 
@@ -437,7 +437,7 @@ void Script::sfStartBgdAnim(SCRIPTFUNC_PARAMS) {
 	int16 cycles = thread->pop();
 
 	_vm->_anim->setCycles(animId, cycles);
-	_vm->_anim->setFrameTime(animId, ticksToMSec(kRepeatSpeedTicks));
+	_vm->_anim->setFrameTime(animId, _vm->ticksToMSec(kRepeatSpeedTicks));
 	_vm->_anim->play(animId, 0);
 
 	debug(1, "sfStartBgdAnim(%d, %d)", animId, cycles);
@@ -548,22 +548,31 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 
 	sceneNumber = thread->pop();
 	entrance = thread->pop();
-	if (_vm->getGameType() == GType_IHNM)
+	if (_vm->getGameType() == GType_IHNM) {
 		transition = thread->pop();
 
-	if (sceneNumber < 0) {
-		if (_vm->getGameType() == GType_ITE) {
-			_vm->shutDown();
-			return;
-		}
+		_vm->_gfx->setCursor(kCursorBusy);
+	}
+
+	if ((_vm->getGameType() == GType_ITE && sceneNumber < 0) ||
+		(_vm->getGameType() == GType_IHNM && sceneNumber == 0)) {
+		// TODO: set creditsFlag to true for IHNM
+		_vm->shutDown();
+		return;
 	}
 
 	if (_vm->getGameType() == GType_IHNM) {
-		warning("FIXME: implement sfScriptGotoScene differences for IHNM");
+		// WORKAROUND for the briefly appearing actors at the beginning of each chapter
+		// This will stop the actors being drawn in those specific scenes until the scene background has been drawn
+		if ((_vm->_scene->currentChapterNumber() == 1 && _vm->_scene->currentSceneNumber() == 6) ||
+			(_vm->_scene->currentChapterNumber() == 2 && _vm->_scene->currentSceneNumber() == 31) ||
+			(_vm->_scene->currentChapterNumber() == 3 && _vm->_scene->currentSceneNumber() == 58) ||
+			(_vm->_scene->currentChapterNumber() == 4 && _vm->_scene->currentSceneNumber() == 68) ||
+			(_vm->_scene->currentChapterNumber() == 5 && _vm->_scene->currentSceneNumber() == 91))
+				_vm->_actor->showActors(false);		// Stop showing actors before the background is drawn
 
 		// Since it doesn't look like the IHNM scripts remove the
-		// cutaway after the intro, this is probably the best place to
-		// to it.
+		// cutaway after the intro, this is probably the best place to do it
 		_vm->_anim->clearCutaway();
 	}
 
@@ -574,6 +583,7 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 		_vm->_interface->setMode(kPanelMain);
 	}
 
+	// changeScene calls loadScene which calls setVerb. setVerb resets all pending objects and object flags
 	if (sceneNumber == -1 && _vm->getGameType() == GType_IHNM) {
 		// TODO: This is used to return back to the character selection screen in IHNM.
 		// However, it seems more than this is needed, AM's speech is wrong and no actors
@@ -583,10 +593,19 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 		_vm->_scene->changeScene(sceneNumber, entrance, (sceneNumber == ITE_SCENE_ENDCREDIT1) ? kTransitionFade : kTransitionNoFade);
 	}
 
-	//TODO: placard stuff
+	if (_vm->_interface->getMode() == kPanelPlacard ||
+		_vm->_interface->getMode() == kPanelCutaway ||
+		_vm->_interface->getMode() == kPanelVideo) {
+		_vm->_gfx->showCursor(true);
+		_vm->_interface->setMode(kPanelMain);
+	}
+
 	_pendingVerb = _vm->_script->getVerbType(kVerbNone);
 	_currentObject[0] = _currentObject[1] = ID_NOTHING;
-	showVerb();
+	showVerb();	// calls setStatusText("")
+
+	if (_vm->getGameType() == GType_IHNM)
+		_vm->_gfx->setCursor(kCursorNormal);
 }
 
 // Script function #17 (0x11)
@@ -684,7 +703,7 @@ void Script::sfSetBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
 	int16 animId = thread->pop();
 	int16 speed = thread->pop();
 
-	_vm->_anim->setFrameTime(animId, ticksToMSec(speed));
+	_vm->_anim->setFrameTime(animId, _vm->ticksToMSec(speed));
 	debug(1, "sfSetBgdAnimSpeed(%d, %d)", animId, speed);
 }
 
@@ -712,7 +731,7 @@ void Script::sfStartBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
 	int16 speed = thread->pop();
 
 	_vm->_anim->setCycles(animId, cycles);
-	_vm->_anim->setFrameTime(animId, ticksToMSec(speed));
+	_vm->_anim->setFrameTime(animId, _vm->ticksToMSec(speed));
 	_vm->_anim->play(animId, 0);
 
 	debug(1, "sfStartBgdAnimSpeed(%d, %d, %d)", animId, cycles, speed);
@@ -1008,7 +1027,13 @@ void Script::sfCycleFrames(SCRIPTFUNC_PARAMS) {
 		actor->_actorFlags |= kActorRandom;
 	}
 	if (flags & kCycleReverse) {
-		actor->_actorFlags |= kActorBackwards;
+		if (_vm->getGameType() == GType_IHNM && 
+			_vm->_scene->currentChapterNumber() == 2 && _vm->_scene->currentSceneNumber() == 41) {
+			// Prevent Benny from walking backwards after talking to the child via the monitor. This occurs in the
+			// original as well, and is fixed by not setting the kActorBackwards flag at this point
+		} else {
+			actor->_actorFlags |= kActorBackwards;
+		}
 	}
 
 	actor->_cycleFrameSequence = cycleFrameSequence;
@@ -1075,7 +1100,7 @@ void Script::sfChainBgdAnim(SCRIPTFUNC_PARAMS) {
 	if (speed >= 0) {
 		_vm->_anim->setCycles(animId, cycles);
 		_vm->_anim->stop(animId);
-		_vm->_anim->setFrameTime(animId, ticksToMSec(speed));
+		_vm->_anim->setFrameTime(animId, _vm->ticksToMSec(speed));
 	}
 
 	_vm->_anim->link(animId1, animId);
@@ -2108,8 +2133,41 @@ void Script::sfWaitFramesEsc(SCRIPTFUNC_PARAMS) {
 	thread->_returnValue = _vm->_framesEsc;
 }
 
-void Script::sf103(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf103", thread, nArgs);
+void Script::sfQueueMusic(SCRIPTFUNC_PARAMS) {
+	int16 param1 = thread->pop();
+	int16 param2 = thread->pop();
+	Event event;
+
+	if (param1 < 0) {
+		_vm->_music->stop();
+		return;
+	}
+
+	if (param1 >= _vm->_music->_songTableLen) {
+		warning("sfQueueMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTableLen - 1);
+	} else {
+		_vm->_music->setVolume(-1, 1);
+		event.type = kEvTOneshot;
+		event.code = kMusicEvent;
+		event.param = _vm->_music->_songTable[param1];
+		event.param2 = param2 ? MUSIC_LOOP : MUSIC_NORMAL;
+		event.op = kEventPlay;
+		event.time = _vm->ticksToMSec(500);		// I find the delay in the original to be too long, so I've set it to
+												// wait for half the time, which sounds better when chapter points
+												// change
+												// FIXME: If this is too short for other cases apart from chapter
+												// point change, set it back to 1000
+
+		_vm->_events->queue(&event);
+
+		if (!_vm->_scene->haveChapterPointsChanged()) {
+			_vm->_scene->setCurrentMusicTrack(param1);
+			_vm->_scene->setCurrentMusicRepeat(param2);
+		} else {
+			// Don't save this music track when saving in IHNM
+			_vm->_scene->setChapterPointsChanged(false);
+		}
+	}
 }
 
 void Script::sfDisableAbortSpeeches(SCRIPTFUNC_PARAMS) {

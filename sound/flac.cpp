@@ -734,28 +734,6 @@ void FlacInputStream::callWrapError(const ::FLAC__SeekableStreamDecoder *decoder
 #pragma mark -
 
 
-AudioStream *makeFlacStream(File *file, uint32 size) {
-	assert(file);
-
-	// FIXME: For now, just read the whole data into memory, and be done
-	// with it. Of course this is in general *not* a nice thing to do...
-
-	// If no size was specified, read the whole remainder of the file
-	if (!size)
-		size = file->size() - file->pos();
-
-	// Read 'size' bytes of data into a MemoryReadStream
-	Common::MemoryReadStream *stream = file->readStream(size);
-
-	// .. and create an MP3InputStream from all this
-	FlacInputStream *input = new FlacInputStream(stream, true);
-	if (!input->isStreamDecoderReady()) {
-		delete input;
-		return 0;
-	}
-	return input;
-}
-
 AudioStream *makeFlacStream(
 	Common::SeekableReadStream *stream,
 	bool disposeAfterUse,

@@ -1178,12 +1178,15 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	char fname[260];
 #endif
 	Common::File *file = new Common::File();
+
+	// FIXME: How about using AudioStream::openStreamFile instead of the code below?
+
 #ifdef USE_VORBIS
 	memcpy(fname, filename, i - filename);
 	strcpy(fname + (i - filename), ".ogg");
 	if (file->open(fname)) {
 		_compressedFileMode = true;
-		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeVorbisStream(file, true, 0, 0));
+		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeVorbisStream(file, true));
 		return;
 	}
 #endif
@@ -1192,7 +1195,7 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	strcpy(fname + (i - filename), ".mp3");
 	if (file->open(fname)) {
 		_compressedFileMode = true;
-		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeMP3Stream(file, true, 0, 0));
+		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeMP3Stream(file, true));
 		return;
 	}
 #endif

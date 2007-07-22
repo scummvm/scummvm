@@ -84,7 +84,6 @@ Command *	_forwardedCommands[20] = {
 
 char		_forwardedAnimationNames[20][20];
 uint16		_numForwards = 0;
-char		_soundFile[20];
 
 uint32		_commandFlags = 0;
 uint16		_introSarcData3 = 200;
@@ -157,6 +156,8 @@ int Parallaction::init() {
 	_globalTable = NULL;
 	_localFlagNames = NULL;
 	initResources();
+
+	_hasLocationSound = false;
 
 	_skipMenu = false;
 
@@ -368,6 +369,9 @@ void Parallaction::runGame() {
 
 	if (_location._comment)
 		doLocationEnterTransition();
+
+	if (_hasLocationSound)
+		_soundMan->playSfx(_locationSound, 0, true);
 
 	changeCursor(kCursorArrow);
 
@@ -759,15 +763,17 @@ void Parallaction::changeCharacter(const char *name) {
 		// character for sanity before memory is freed
 		freeCharacter();
 
-		Common::String oldArchive = _disk->selectArchive((_vm->getPlatform() == Common::kPlatformAmiga) ? "disk0" : "disk1");
+		Common::String oldArchive = _disk->selectArchive((_vm->getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
 		_vm->_char._ani._cnv = _disk->loadFrames(fullName);
 
 		if (!IS_DUMMY_CHARACTER(name)) {
+			if (_vm->getPlatform() == Common::kPlatformAmiga && (_vm->getFeatures() & GF_LANG_MULT))
+				_disk->selectArchive("disk0");
+
 			_vm->_char._head = _disk->loadHead(baseName);
 			_vm->_char._talk = _disk->loadTalk(baseName);
 			_vm->_char._objs = _disk->loadObjects(baseName);
 			_objectsNames = _disk->loadTable(baseName);
-			refreshInventory(baseName);
 
 			_soundMan->playCharacterMusic(name);
 

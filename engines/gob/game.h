@@ -48,7 +48,7 @@ public:
 		uint16 funcEnter;
 		uint16 funcLeave;
 		uint16 funcSub;
-	};
+	} PACKED_STRUCT;
 
 #define szGame_TotResItem (4 + 2 + 2 + 2)
 	struct TotResItem {
@@ -57,7 +57,7 @@ public:
 		int16 size;
 		int16 width;
 		int16 height;
-	};
+	} PACKED_STRUCT;
 
 #define szGame_TotResTable (2 + 1)
 	struct TotResTable {
@@ -65,7 +65,7 @@ public:
 		byte unknown;
 		TotResItem *items;
 		byte *dataPtr;
-	};
+	} PACKED_STRUCT;
 
 #define szGame_ExtItem (4 + 2 + 2 + 2)
 	struct ExtItem {
@@ -73,34 +73,34 @@ public:
 		uint16 size;
 		int16 width;		// width & 0x7FFF: width, width & 0x8000: pack flag
 		int16 height;		// not zero
-	};
+	} PACKED_STRUCT;
 
 #define szGame_ExtTable (2 + 1)
 	struct ExtTable {
 		int16 itemsCount;
 		byte unknown;
 		ExtItem* items;
-	};
+	} PACKED_STRUCT;
 
 #define szGame_TotTextItem (2 + 2)
 	struct TotTextItem {
 		int16 offset;
 		int16 size;
-	};
+	} PACKED_STRUCT;
 
 #define szGame_TotTextTable (2)
 	struct TotTextTable {
 		int16 itemsCount;
 		TotTextItem *items;
 		byte *dataPtr;
-	};
+	} PACKED_STRUCT;
 
 	struct InputDesc {
 		int16 fontIndex;
 		int16 backColor;
 		int16 frontColor;
 		byte *ptr;
-	};
+	} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

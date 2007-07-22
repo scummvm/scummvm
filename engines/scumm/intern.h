@@ -554,7 +554,7 @@ protected:
 		int16 type;
 		int16 dim2;
 		byte data[1];
-	};
+	} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

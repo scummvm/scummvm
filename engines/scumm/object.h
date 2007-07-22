@@ -91,7 +91,7 @@ struct RoomHeader {
 			uint32 transparency;
 		} v8;
 	};
-};
+} PACKED_STRUCT;
 
 struct CodeHeader {
 	union {
@@ -123,7 +123,7 @@ struct CodeHeader {
 		} v7;
 
 	};
-};
+} PACKED_STRUCT;
 
 struct ImageHeader { /* file format */
 	union {
@@ -172,7 +172,7 @@ struct ImageHeader { /* file format */
 			} hotspot[15];
 		} v8;
 	};
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 

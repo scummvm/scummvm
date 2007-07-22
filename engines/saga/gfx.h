@@ -85,7 +85,7 @@ struct PalEntry {
 	byte red;
 	byte green;
 	byte blue;
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
