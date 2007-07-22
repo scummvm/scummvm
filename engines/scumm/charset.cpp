@@ -1778,7 +1778,7 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 		_str.left = _left;
 
 	// Original keeps glyph width and character dimensions separately
-	if (_vm->_language == Common::ZH_TWN)
+	if (_vm->_language == Common::ZH_TWN && width == 16)
 		width = 17;
 
 	_left += width;
