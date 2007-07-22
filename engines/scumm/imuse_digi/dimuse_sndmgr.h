@@ -48,35 +48,39 @@ public:
 #define IMUSE_VOLGRP_MUSIC 3
 
 private:
-	struct _region {
+	struct Region {
 		int32 offset;		// offset of region
 		int32 length;		// lenght of region
 	};
 
-	struct _jump {
+	struct Jump {
 		int32 offset;		// jump offset position
 		int32 dest;			// jump to dest position
 		byte hookId;		// id of hook
 		int16 fadeDelay;	// fade delay in ms
 	};
 
-	struct _sync {
+	struct Sync {
 		int32 size;			// size of sync
 		byte *ptr;			// pointer to sync
 	};
 
 public:
 
-	struct soundStruct {
+	struct SoundDesc {
 		uint16 freq;		// frequency
 		byte channels;		// stereo or mono
 		byte bits;			// 8, 12, 16
+
 		int numJumps;		// number of Jumps
+		Region *region;
+
 		int numRegions;		// number of Regions
+		Jump *jump;
+
 		int numSyncs;		// number of Syncs
-		_region *region;
-		_jump *jump;
-		_sync *sync;
+		Sync *sync;
+
 		bool endFlag;
 		bool inUse;
 		byte *allData;
@@ -95,19 +99,19 @@ public:
 
 private:
 
-	soundStruct _sounds[MAX_IMUSE_SOUNDS];
+	SoundDesc _sounds[MAX_IMUSE_SOUNDS];
 
-	bool checkForProperHandle(soundStruct *soundHandle);
-	soundStruct *allocSlot();
-	void prepareSound(byte *ptr, soundStruct *sound);
-	void prepareSoundFromRMAP(Common::File *file, soundStruct *sound, int32 offset, int32 size);
+	bool checkForProperHandle(SoundDesc *soundDesc);
+	SoundDesc *allocSlot();
+	void prepareSound(byte *ptr, SoundDesc *sound);
+	void prepareSoundFromRMAP(Common::File *file, SoundDesc *sound, int32 offset, int32 size);
 
 	ScummEngine *_vm;
 	byte _disk;
 	BundleDirCache *_cacheBundleDir;
 
-	bool openMusicBundle(soundStruct *sound, int disk);
-	bool openVoiceBundle(soundStruct *sound, int disk);
+	bool openMusicBundle(SoundDesc *sound, int disk);
+	bool openVoiceBundle(SoundDesc *sound, int disk);
 
 	void countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs);
 
@@ -116,25 +120,25 @@ public:
 	ImuseDigiSndMgr(ScummEngine *scumm);
 	~ImuseDigiSndMgr();
 
-	soundStruct *openSound(int32 soundId, const char *soundName, int soundType, int volGroupId, int disk);
-	void closeSound(soundStruct *soundHandle);
-	soundStruct *cloneSound(soundStruct *soundHandle);
+	SoundDesc *openSound(int32 soundId, const char *soundName, int soundType, int volGroupId, int disk);
+	void closeSound(SoundDesc *soundDesc);
+	SoundDesc *cloneSound(SoundDesc *soundDesc);
 
-	bool isSndDataExtComp(soundStruct *soundHandle);
-	int getFreq(soundStruct *soundHandle);
-	int getBits(soundStruct *soundHandle);
-	int getChannels(soundStruct *soundHandle);
-	bool isEndOfRegion(soundStruct *soundHandle, int region);
-	int getNumRegions(soundStruct *soundHandle);
-	int getNumJumps(soundStruct *soundHandle);
-	int getRegionOffset(soundStruct *soundHandle, int region);
-	int getJumpIdByRegionAndHookId(soundStruct *soundHandle, int region, int hookId);
-	int getRegionIdByJumpId(soundStruct *soundHandle, int jumpId);
-	int getJumpHookId(soundStruct *soundHandle, int number);
-	int getJumpFade(soundStruct *soundHandle, int number);
-	void getSyncSizeAndPtrById(soundStruct *soundHandle, int number, int32 &sync_size, byte **sync_ptr);
+	bool isSndDataExtComp(SoundDesc *soundDesc);
+	int getFreq(SoundDesc *soundDesc);
+	int getBits(SoundDesc *soundDesc);
+	int getChannels(SoundDesc *soundDesc);
+	bool isEndOfRegion(SoundDesc *soundDesc, int region);
+	int getNumRegions(SoundDesc *soundDesc);
+	int getNumJumps(SoundDesc *soundDesc);
+	int getRegionOffset(SoundDesc *soundDesc, int region);
+	int getJumpIdByRegionAndHookId(SoundDesc *soundDesc, int region, int hookId);
+	int getRegionIdByJumpId(SoundDesc *soundDesc, int jumpId);
+	int getJumpHookId(SoundDesc *soundDesc, int number);
+	int getJumpFade(SoundDesc *soundDesc, int number);
+	void getSyncSizeAndPtrById(SoundDesc *soundDesc, int number, int32 &sync_size, byte **sync_ptr);
 
-	int32 getDataFromRegion(soundStruct *soundHandle, int region, byte **buf, int32 offset, int32 size);
+	int32 getDataFromRegion(SoundDesc *soundDesc, int region, byte **buf, int32 offset, int32 size);
 };
 
 } // End of namespace Scumm

@@ -166,10 +166,10 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 				continue;
 			}
 
-			track->soundHandle = _sound->openSound(track->soundId,
+			track->soundDesc = _sound->openSound(track->soundId,
 									track->soundName, track->soundType,
 									track->volGroupId, -1);
-			if (!track->soundHandle) {
+			if (!track->soundDesc) {
 				warning("IMuseDigital::saveOrLoad: Can't open sound so will not be resumed, propably on diffrent CD");
 				track->streamSou = NULL;
 				track->stream = NULL;
@@ -180,14 +180,14 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 			if (track->sndDataExtComp) {
 				track->regionOffset = 0;
 			}
-			track->sndDataExtComp = _sound->isSndDataExtComp(track->soundHandle);
+			track->sndDataExtComp = _sound->isSndDataExtComp(track->soundDesc);
 			if (track->sndDataExtComp) {
 				track->regionOffset = 0;
 			}
-			track->dataOffset = _sound->getRegionOffset(track->soundHandle, track->curRegion);
-			int bits = _sound->getBits(track->soundHandle);
-			int channels = _sound->getChannels(track->soundHandle);
-			int freq = _sound->getFreq(track->soundHandle);
+			track->dataOffset = _sound->getRegionOffset(track->soundDesc, track->curRegion);
+			int bits = _sound->getBits(track->soundDesc);
+			int channels = _sound->getChannels(track->soundDesc);
+			int freq = _sound->getFreq(track->soundDesc);
 			track->feedSize = freq * channels;
 			track->mixerFlags = 0;
 			if (channels == 2)
@@ -285,8 +285,8 @@ void IMuseDigital::callback() {
 						continue;
 				}
 
-				int bits = _sound->getBits(track->soundHandle);
-				int channels = _sound->getChannels(track->soundHandle);
+				int bits = _sound->getBits(track->soundDesc);
+				int channels = _sound->getChannels(track->soundDesc);
 
 				int32 feedSize = track->feedSize / _callbackFps;
 
@@ -317,12 +317,12 @@ void IMuseDigital::callback() {
 						track->dataMod12Bit = feedSize - tmpLength12Bits;
 
 						int32 tmpOffset = (track->regionOffset * 3) / 4;
-						int tmpFeedSize = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &tmpPtr, tmpOffset, tmpFeedSize12Bits);
+						int tmpFeedSize = _sound->getDataFromRegion(track->soundDesc, track->curRegion, &tmpPtr, tmpOffset, tmpFeedSize12Bits);
 						curFeedSize = BundleCodecs::decode12BitsSample(tmpPtr, &tmpSndBufferPtr, tmpFeedSize);
 
 						free(tmpPtr);
 					} else if (bits == 16) {
-						curFeedSize = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &tmpSndBufferPtr, track->regionOffset, feedSize);
+						curFeedSize = _sound->getDataFromRegion(track->soundDesc, track->curRegion, &tmpSndBufferPtr, track->regionOffset, feedSize);
 						if (channels == 1) {
 							curFeedSize &= ~1;
 						}
@@ -330,7 +330,7 @@ void IMuseDigital::callback() {
 							curFeedSize &= ~3;
 						}
 					} else if (bits == 8) {
-						curFeedSize = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &tmpSndBufferPtr, track->regionOffset, feedSize);
+						curFeedSize = _sound->getDataFromRegion(track->soundDesc, track->curRegion, &tmpSndBufferPtr, track->regionOffset, feedSize);
 						if (channels == 2) {
 							curFeedSize &= ~1;
 						}
@@ -347,7 +347,7 @@ void IMuseDigital::callback() {
 					} else
 						delete[] tmpSndBufferPtr;
 
-					if (_sound->isEndOfRegion(track->soundHandle, track->curRegion)) {
+					if (_sound->isEndOfRegion(track->soundDesc, track->curRegion)) {
 						switchToNextRegion(track);
 						if (track->toBeRemoved)
 							break;
@@ -380,7 +380,7 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 		return;
 	}
 
-	int num_regions = _sound->getNumRegions(track->soundHandle);
+	int num_regions = _sound->getNumRegions(track->soundDesc);
 
 	if (++track->curRegion == num_regions) {
 		track->toBeRemoved = true;
@@ -388,22 +388,22 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 		return;
 	}
 
-	ImuseDigiSndMgr::soundStruct *soundHandle = track->soundHandle;
-	int jumpId = _sound->getJumpIdByRegionAndHookId(soundHandle, track->curRegion, track->curHookId);
+	ImuseDigiSndMgr::SoundDesc *soundDesc = track->soundDesc;
+	int jumpId = _sound->getJumpIdByRegionAndHookId(soundDesc, track->curRegion, track->curHookId);
 	if (jumpId == -1)
-		jumpId = _sound->getJumpIdByRegionAndHookId(soundHandle, track->curRegion, 0);
+		jumpId = _sound->getJumpIdByRegionAndHookId(soundDesc, track->curRegion, 0);
 	if (jumpId != -1) {
-		int region = _sound->getRegionIdByJumpId(soundHandle, jumpId);
+		int region = _sound->getRegionIdByJumpId(soundDesc, jumpId);
 		assert(region != -1);
-		int sampleHookId = _sound->getJumpHookId(soundHandle, jumpId);
+		int sampleHookId = _sound->getJumpHookId(soundDesc, jumpId);
 		assert(sampleHookId != -1);
-		int fadeDelay = (60 * _sound->getJumpFade(soundHandle, jumpId)) / 1000;
+		int fadeDelay = (60 * _sound->getJumpFade(soundDesc, jumpId)) / 1000;
 		if (sampleHookId != 0) {
 			if (track->curHookId == sampleHookId) {
 				if (fadeDelay != 0) {
 					Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 					if (fadeTrack) {
-						fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundHandle, fadeTrack->curRegion);
+						fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
 						fadeTrack->regionOffset = 0;
 						debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
 						fadeTrack->curHookId = 0;
@@ -417,7 +417,7 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 			if (fadeDelay != 0) {
 				Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 				if (fadeTrack) {
-					fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundHandle, fadeTrack->curRegion);
+					fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
 					fadeTrack->regionOffset = 0;
 					debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
 				}
@@ -428,7 +428,7 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 	}
 
 	debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
-	track->dataOffset = _sound->getRegionOffset(soundHandle, track->curRegion);
+	track->dataOffset = _sound->getRegionOffset(soundDesc, track->curRegion);
 	track->regionOffset = 0;
 }
 
