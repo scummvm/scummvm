@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 
+#include "sound/flac.h"
 #include "sound/voc.h"
 #include "sound/vorbis.h"
 #include "sound/mp3.h"
@@ -601,13 +602,16 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 		if (scumm_stricmp(fileName, soundDesc->lastFileName) != 0) {
 			int32 offs = 0, len = 0;
 			Common::File *cmpFile;
-			bool oggMode = false;
-			sprintf(fileName, "%s_reg%03d.mp3", soundDesc->name, region);
+			uint8 soundMode = 0;
+
+			sprintf(fileName, "%s_reg%03d.fla", soundDesc->name, region);
 			cmpFile = soundDesc->bundle->getFile(fileName, offs, len);
-#ifndef USE_MAD
-			if (len)
-				error("Mad library compiled support needed!");
+			if (len) {
+#ifndef USE_FLAC
+				error("FLAC library compiled support needed!");
 #endif
+				soundMode = 3;
+			}
 			if (!len) {
 				sprintf(fileName, "%s_reg%03d.ogg", soundDesc->name, region);
 				cmpFile = soundDesc->bundle->getFile(fileName, offs, len);
@@ -616,17 +620,32 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 					error("Vorbis library compiled support needed!");
 #endif
 				assert(len);
-				oggMode = true;
+				soundMode = 2;
 			}
+			if (!len) {
+				sprintf(fileName, "%s_reg%03d.mp3", soundDesc->name, region);
+				cmpFile = soundDesc->bundle->getFile(fileName, offs, len);
+#ifndef USE_VORBIS
+				if (len)
+					error("Mad library compiled support needed!");
+#endif
+				assert(len);
+				soundMode = 1;
+			}
+
 			if (!soundDesc->compressedStream) {
 				Common::MemoryReadStream *tmp = cmpFile->readStream(len);
 				assert(tmp);
+#ifdef USE_FLAC
+				if (soundMode == 3)
+					soundDesc->compressedStream = Audio::makeFlacStream(tmp, true);
+#endif
 #ifdef USE_VORBIS
-				if (oggMode)
+				if (soundMode == 2)
 					soundDesc->compressedStream = Audio::makeVorbisStream(tmp, true);
 #endif
 #ifdef USE_MAD
-				if (!oggMode)
+				if (soundMode == 1)
 					soundDesc->compressedStream = Audio::makeMP3Stream(tmp, true);
 #endif
 				assert(soundDesc->compressedStream);
