@@ -1364,7 +1364,7 @@ than MP3, so have a good book handy.
 ------ ----------------------------------------
 As above, but ScummVM must be compiled with Flac support. Run:
 
-  compress_scumm_sou --flac --best -b 1152 monster.sou
+  compress_scumm_sou --flac monster.sou
 
 This should produce a smaller monster.sof file, which you should copy to your
 game directory. Remember that the quality is always the same, varying encoder
@@ -1403,7 +1403,7 @@ For Ogg Vorbis add --vorbis to the options, i.e.
 
 For Flac add --flac and optional parameters, i.e.
 
-  compress_agos --flac --best -b 1152
+  compress_agos --flac
 
 Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy this
 file to your game directory. You can safely remove the old file.
