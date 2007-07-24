@@ -112,7 +112,7 @@ public:
 	} PACKED_STRUCT;
 
 	struct Mult_AnimKey {
-		int16 frame;
+		uint16 frame;
 		int16 layer;
 		int16 posX;
 		int16 posY;
@@ -246,8 +246,10 @@ public:
 
 	virtual void loadMult(int16 resId) = 0;
 	virtual void freeMultKeys() = 0;
-	virtual void setMultData(uint16 multindex) = 0;
-	virtual void multSub(uint16 multindex) = 0;
+	virtual bool hasMultData(uint16 multIndex) = 0;
+	virtual void setMultData(uint16 multIndex) = 0;
+	virtual void zeroMultData(uint16 multIndex) = 0;
+	virtual void multSub(uint16 multIndex) = 0;
 	virtual void animate() = 0;
 
 	Mult(GobEngine *vm);
@@ -299,8 +301,10 @@ public:
 
 	virtual void loadMult(int16 resId);
 	virtual void freeMultKeys();
-	virtual void setMultData(uint16 multindex);
-	virtual void multSub(uint16 multindex);
+	virtual bool hasMultData(uint16 multIndex);
+	virtual void setMultData(uint16 multIndex);
+	virtual void zeroMultData(uint16 multIndex);
+	virtual void multSub(uint16 multIndex);
 	virtual void animate();
 
 protected:
@@ -317,8 +321,10 @@ public:
 
 	virtual void loadMult(int16 resId);
 	virtual void freeMultKeys();
-	virtual void setMultData(uint16 multindex);
-	virtual void multSub(uint16 multindex);
+	virtual bool hasMultData(uint16 multIndex);
+	virtual void setMultData(uint16 multIndex);
+	virtual void zeroMultData(uint16 multIndex);
+	virtual void multSub(uint16 multIndex);
 	virtual void animate();
 
 protected:
