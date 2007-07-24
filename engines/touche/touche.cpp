@@ -642,7 +642,7 @@ void ToucheEngine::initKeyChars(int keyChar) {
 		key->sequenceDataOffset = 0;
 		key->walkDataNum = 0;
 		key->walkPointsList[0] = -1;
-		key->walkPointsListCount = 0;
+		key->walkPointsListIndex = 0;
 		key->delay = 0;
 		key->waitingKeyChar = -1;
 		key->flags = 0;
@@ -2516,7 +2516,7 @@ void ToucheEngine::buildWalkPointsList(int keyChar) {
 	uint16 curPos, pos1, pos2;
 	if (key->pointsDataNum & 0x8000) {
 		const ProgramWalkData *pwd = &_programWalkTable[(key->pointsDataNum & 0x7FFF)];
-		if (_programPointsTable[pwd->point1].priority < _programPointsTable[pwd->point2].priority) {
+		if (_programPointsTable[pwd->point1].order < _programPointsTable[pwd->point2].order) {
 			curPos = pwd->point1;
 		} else {
 			curPos = pwd->point2;
@@ -2525,7 +2525,7 @@ void ToucheEngine::buildWalkPointsList(int keyChar) {
 		curPos = key->pointsDataNum;
 	}
 
-	int16 posNum = _programPointsTable[curPos].priority;
+	int16 posNum = _programPointsTable[curPos].order;
 	if (posNum == 32000) {
 		return;
 	}
@@ -2536,25 +2536,25 @@ void ToucheEngine::buildWalkPointsList(int keyChar) {
 			if ((_programWalkTable[i].point1 & 0x4000) == 0) {
 				pos1 = _programWalkTable[i].point1;
 				pos2 = _programWalkTable[i].point2;
-				if (pos1 == curPos && posNum > _programPointsTable[pos2].priority) {
+				if (pos1 == curPos && posNum > _programPointsTable[pos2].order) {
 					curPos = pos2;
 					assert(walkPointsCount < 40);
 					key->walkPointsList[walkPointsCount] = curPos;
 					++walkPointsCount;
-					posNum = _programPointsTable[pos2].priority;
+					posNum = _programPointsTable[pos2].order;
 					break;
 				}
-				if (pos2 == curPos && posNum > _programPointsTable[pos1].priority) {
+				if (pos2 == curPos && posNum > _programPointsTable[pos1].order) {
 					curPos = pos1;
 					assert(walkPointsCount < 40);
 					key->walkPointsList[walkPointsCount] = curPos;
 					++walkPointsCount;
-					posNum = _programPointsTable[pos1].priority;
+					posNum = _programPointsTable[pos1].order;
 					break;
 				}
 			}
 		}
-	} while (_programPointsTable[curPos].priority != 0);
+	} while (_programPointsTable[curPos].order != 0);
 	assert(walkPointsCount < 40);
 	key->walkPointsList[walkPointsCount] = -1;
 
@@ -2562,7 +2562,7 @@ void ToucheEngine::buildWalkPointsList(int keyChar) {
 	key->yPosPrev = _programPointsTable[curPos].y;
 	key->zPosPrev = _programPointsTable[curPos].z;
 	key->prevWalkDataNum = findWalkDataNum(curPos, -1);
-	key->walkPointsListCount = 0;
+	key->walkPointsListIndex = 0;
 	if (key->walkDataNum == -1) {
 		return;
 	}
@@ -2571,13 +2571,13 @@ void ToucheEngine::buildWalkPointsList(int keyChar) {
 	pos2 = _programWalkTable[key->walkDataNum].point2;
 	if (key->pointsDataNum == pos1) {
 		if (key->walkPointsList[1] == pos2) {
-			++key->walkPointsListCount;
+			++key->walkPointsListIndex;
 		}
 		return;
 	}
 	if (key->pointsDataNum == pos2) {
 		if (key->walkPointsList[1] == pos1) {
-			++key->walkPointsListCount;
+			++key->walkPointsListIndex;
 		}
 		return;
 	}
@@ -2678,7 +2678,7 @@ void ToucheEngine::unlockWalkPath(int num1, int num2) {
 void ToucheEngine::resetPointsData(int num) {
 	debugC(9, kDebugEngine, "ToucheEngine::resetPointsData(%d)", num);
 	for (uint i = 1; i < _programPointsTable.size(); ++i) {
-		_programPointsTable[i].priority = num;
+		_programPointsTable[i].order = num;
 	}
 }
 
@@ -2689,15 +2689,15 @@ bool ToucheEngine::sortPointsData(int num1, int num2) {
 		if (num2 == -1) {
 			return false;
 		}
-		_programPointsTable[num2].priority = 0;
+		_programPointsTable[num2].order = 0;
 	} else {
 		const int md1 = _programWalkTable[num1].point1;
-		_programPointsTable[md1].priority = 0;
+		_programPointsTable[md1].order = 0;
 		const int md2 = _programWalkTable[num1].point2;
-		_programPointsTable[md2].priority = 0;
+		_programPointsTable[md2].order = 0;
 	}
 	bool quit = false;
-	int priority = 1;
+	int order = 1;
 	while (!quit) {
 		quit = true;
 		for (uint i = 0; i < _programWalkTable.size(); ++i) {
@@ -2705,17 +2705,17 @@ bool ToucheEngine::sortPointsData(int num1, int num2) {
 			const int md2 = _programWalkTable[i].point2;
 			if ((md1 & 0x4000) == 0) {
 				assert((md2 & 0x4000) == 0);
-				if (_programPointsTable[md1].priority == priority - 1 && _programPointsTable[md2].priority > priority) {
-					_programPointsTable[md2].priority = priority;
+				if (_programPointsTable[md1].order == order - 1 && _programPointsTable[md2].order > order) {
+					_programPointsTable[md2].order = order;
 					quit = false;
 				}
-				if (_programPointsTable[md2].priority == priority - 1 && _programPointsTable[md1].priority > priority) {
-					_programPointsTable[md1].priority = priority;
+				if (_programPointsTable[md2].order == order - 1 && _programPointsTable[md1].order > order) {
+					_programPointsTable[md1].order = order;
 					quit = false;
 				}
 			}
 		}
-		++priority;
+		++order;
 	}
 	return true;
 }
@@ -2764,8 +2764,8 @@ void ToucheEngine::updateKeyCharWalkPath(KeyChar *key, int16 dx, int16 dy, int16
 
 	int16 xpos, ypos, zpos, walkPoint1, walkPoint2, newDirection, incDx, incDy, incDz;
 	while (1) {
-		walkPoint1 = key->walkPointsList[key->walkPointsListCount];
-		walkPoint2 = key->walkPointsList[key->walkPointsListCount + 1];
+		walkPoint1 = key->walkPointsList[key->walkPointsListIndex];
+		walkPoint2 = key->walkPointsList[key->walkPointsListIndex + 1];
 		key->currentWalkBox = walkPoint1;
 		if (walkPoint1 == -1) {
 			xpos = key->xPosPrev;
@@ -2805,9 +2805,9 @@ void ToucheEngine::updateKeyCharWalkPath(KeyChar *key, int16 dx, int16 dy, int16
 		key->pointsDataNum = walkPoint1;
 		if (walkPoint2 == -1) {
 			key->walkPointsList[0] = -1;
-			key->walkPointsListCount = 0;
+			key->walkPointsListIndex = 0;
 		} else {
-			++key->walkPointsListCount;
+			++key->walkPointsListIndex;
 			int16 walkDataNum = findWalkDataNum(walkPoint1, walkPoint2);
 			if (walkDataNum != -1) {
 				key->walkDataNum = walkDataNum;
@@ -2859,7 +2859,7 @@ void ToucheEngine::updateKeyCharWalkPath(KeyChar *key, int16 dx, int16 dy, int16
 				}
 				key->prevPointsDataNum = key->pointsDataNum;
 				key->pointsDataNum = walkPoint1;
-				++key->walkPointsListCount;
+				++key->walkPointsListIndex;
 				if (newDirection != curDirection) {
 					key->facingDirection = newDirection;
 					key->currentAnimCounter = 0;
@@ -2903,7 +2903,7 @@ void ToucheEngine::updateKeyCharWalkPath(KeyChar *key, int16 dx, int16 dy, int16
 				}
 				key->prevPointsDataNum = key->pointsDataNum;
 				key->pointsDataNum = walkPoint1;
-				++key->walkPointsListCount;
+				++key->walkPointsListIndex;
 				if (newDirection != curDirection) {
 					key->facingDirection = newDirection;
 					key->currentAnimCounter = 0;
@@ -2942,7 +2942,7 @@ void ToucheEngine::markWalkPoints(int keyChar) {
 	int16 pointsDataNum = key->pointsDataNum;
 	resetPointsData(0);
 	if (pointsDataNum != -1) {
-		_programPointsTable[pointsDataNum].priority = 1;
+		_programPointsTable[pointsDataNum].order = 1;
 		bool quit = false;
 		while (!quit) {
 			quit = true;
@@ -2951,12 +2951,12 @@ void ToucheEngine::markWalkPoints(int keyChar) {
 				int16 md2 = _programWalkTable[i].point2;
 				if ((md1 & 0x4000) == 0) {
 					assert((md2 & 0x4000) == 0);
-					if (_programPointsTable[md1].priority != 0 && _programPointsTable[md2].priority == 0) {
-						_programPointsTable[md2].priority = 1;
+					if (_programPointsTable[md1].order != 0 && _programPointsTable[md2].order == 0) {
+						_programPointsTable[md2].order = 1;
 						quit = false;
 					}
-					if (_programPointsTable[md2].priority != 0 && _programPointsTable[md1].priority == 0) {
-						_programPointsTable[md1].priority = 1;
+					if (_programPointsTable[md2].order != 0 && _programPointsTable[md1].order == 0) {
+						_programPointsTable[md1].order = 1;
 						quit = false;
 					}
 				}
@@ -2975,7 +2975,7 @@ void ToucheEngine::buildWalkPath(int dstPosX, int dstPosY, int keyChar) {
 	int minDistance = 0x7D000000;
 	int minPointsDataNum = -1;
 	for (uint i = 1; i < _programPointsTable.size(); ++i) {
-		if (_programPointsTable[i].priority != 0) {
+		if (_programPointsTable[i].order != 0) {
 			int dx = _programPointsTable[i].x - dstPosX;
 			int dy = _programPointsTable[i].y - dstPosY;
 			int distance = dx * dx + dy * dy;
@@ -2994,7 +2994,7 @@ void ToucheEngine::buildWalkPath(int dstPosX, int dstPosY, int keyChar) {
 			int distance = 32000;
 			ProgramPointData *pts1 = &_programPointsTable[pwd->point1];
 			ProgramPointData *pts2 = &_programPointsTable[pwd->point2];
-			if (pts1->priority != 0) {
+			if (pts1->order != 0) {
 				int dx = pts2->x - pts1->x;
 				int dy = pts2->y - pts1->y;
 				if (dx == 0) {
@@ -3053,7 +3053,7 @@ void ToucheEngine::buildWalkPath(int dstPosX, int dstPosY, int keyChar) {
 	key->prevWalkDataNum = minWalkDataNum;
 	if (key->walkDataNum == key->prevWalkDataNum && key->walkPointsList[1] == -1) {
 		if (key->walkPointsList[0] == _programWalkTable[minWalkDataNum].point1 || key->walkPointsList[0] == _programWalkTable[minWalkDataNum].point2) {
-			++key->walkPointsListCount;
+			++key->walkPointsListIndex;
 		}
 	}
 	key->xPosPrev = dstPosX;

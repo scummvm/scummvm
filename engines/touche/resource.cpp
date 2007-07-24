@@ -273,7 +273,7 @@ void ToucheEngine::res_decodeProgramData() {
 		ppd.x = READ_LE_UINT16(p); p += 2;
 		ppd.y = READ_LE_UINT16(p); p += 2;
 		ppd.z = READ_LE_UINT16(p); p += 2;
-		ppd.priority = READ_LE_UINT16(p); p += 2;
+		ppd.order = READ_LE_UINT16(p); p += 2;
 		_programPointsTable.push_back(ppd);
 		if (ppd.x == -1) {
 			break;

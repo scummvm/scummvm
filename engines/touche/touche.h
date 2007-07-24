@@ -114,7 +114,7 @@ struct KeyChar {
 	int16 followingKeyCharPos;
 	uint16 sequenceDataIndex;
 	uint16 sequenceDataOffset;
-	int16 walkPointsListCount;
+	int16 walkPointsListIndex;
 	int16 walkPointsList[40];
 	uint16 scriptDataStartOffset;
 	uint16 scriptDataOffset;
@@ -209,7 +209,7 @@ struct InventoryState {
 
 struct ProgramPointData {
 	int16 x, y, z;
-	int16 priority;
+	int16 order;
 };
 
 struct ProgramWalkData {

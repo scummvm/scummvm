@@ -131,7 +131,7 @@ static void saveOrLoad(S &s, KeyChar &key) {
 	saveOrLoad(s, key.followingKeyCharPos);
 	saveOrLoad(s, key.sequenceDataIndex);
 	saveOrLoad(s, key.sequenceDataOffset);
-	saveOrLoad(s, key.walkPointsListCount);
+	saveOrLoad(s, key.walkPointsListIndex);
 	for (uint i = 0; i < 40; ++i) {
 		saveOrLoad(s, key.walkPointsList[i]);
 	}
@@ -209,7 +209,7 @@ static void saveOrLoad(S &s, ProgramPointData &data) {
 	saveOrLoad(s, data.x);
 	saveOrLoad(s, data.y);
 	saveOrLoad(s, data.z);
-	saveOrLoad(s, data.priority);
+	saveOrLoad(s, data.order);
 }
 
 template <class S, class A>
