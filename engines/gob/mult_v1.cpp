@@ -237,11 +237,19 @@ void Mult_v1::freeMultKeys() {
 	_multData = 0;
 }
 
-void Mult_v1::setMultData(uint16 multindex) {
+bool Mult_v1::hasMultData(uint16 multIndex) {
 	error("Switching mults not supported for Gob1");
 }
 
-void Mult_v1::multSub(uint16 multindex) {
+void Mult_v1::setMultData(uint16 multIndex) {
+	error("Switching mults not supported for Gob1");
+}
+
+void Mult_v1::zeroMultData(uint16 multIndex) {
+	error("Switching mults not supported for Gob1");
+}
+
+void Mult_v1::multSub(uint16 multIndex) {
 	error("Switching mults not supported for Gob1");
 }
 

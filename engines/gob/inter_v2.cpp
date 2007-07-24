@@ -134,7 +134,7 @@ void Inter_v2::setupOpcodes() {
 		/* 00 */
 		OPCODE(o1_loadMult),
 		OPCODE(o2_playMult),
-		OPCODE(o1_freeMultKeys),
+		OPCODE(o2_freeMultKeys),
 		{NULL, ""},
 		/* 04 */
 		{NULL, ""},
@@ -824,6 +824,17 @@ void Inter_v2::o2_playMult() {
 
 	_vm->_mult->setMultData(checkEscape >> 1);
 	_vm->_mult->playMult(VAR(57), -1, checkEscape & 0x1, 0);
+}
+
+void Inter_v2::o2_freeMultKeys() {
+	uint16 index = load16();
+
+	if (!_vm->_mult->hasMultData(index))
+		return;
+
+	_vm->_mult->setMultData(index);
+	_vm->_mult->freeMultKeys();
+	_vm->_mult->zeroMultData(index);
 }
 
 void Inter_v2::o2_setRenderFlags() {

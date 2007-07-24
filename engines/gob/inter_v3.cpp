@@ -122,7 +122,7 @@ void Inter_v3::setupOpcodes() {
 		/* 00 */
 		OPCODE(o1_loadMult),
 		OPCODE(o2_playMult),
-		OPCODE(o1_freeMultKeys),
+		OPCODE(o2_freeMultKeys),
 		{NULL, ""},
 		/* 04 */
 		{NULL, ""},

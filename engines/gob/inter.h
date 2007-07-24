@@ -342,6 +342,7 @@ protected:
 	virtual void checkSwitchTable(byte **ppExec);
 
 	void o2_playMult();
+	void o2_freeMultKeys();
 	void o2_setRenderFlags();
 	void o2_multSub();
 	void o2_initMult();
