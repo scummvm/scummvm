@@ -1084,7 +1084,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeNone,
+		kGameTypeWoodruff,
 		kFeatures640 | kFeaturesAdlib,
 		"intro"
 	},
@@ -1097,7 +1097,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeNone,
+		kGameTypeWoodruff,
 		kFeatures640 | kFeaturesAdlib,
 		"intro"
 	},
@@ -1110,7 +1110,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeNone,
+		kGameTypeWoodruff,
 		kFeatures640 | kFeaturesAdlib,
 		"intro"
 	},
