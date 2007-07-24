@@ -315,11 +315,12 @@ void Game::evaluateScroll(int16 x, int16 y) {
 	}
 
 	int16 cursorRight = x + _vm->_draw->_cursorWidth;
-	int16 screenRight = _vm->_draw->_scrollOffsetX + 320;
+	int16 screenRight = _vm->_draw->_scrollOffsetX + _vm->_width;
 	int16 cursorBottom = y + _vm->_draw->_cursorHeight;
-	int16 screenBottom = _vm->_draw->_scrollOffsetY + 200;
+	int16 screenBottom = _vm->_draw->_scrollOffsetY + _vm->_height;
 
-	if ((cursorRight >= 320) && (screenRight < _vm->_video->_surfWidth)) {
+	if ((cursorRight >= _vm->_width) &&
+			(screenRight < _vm->_video->_surfWidth)) {
 		uint16 off;
 
 		off = MIN(_vm->_draw->_cursorWidth,
@@ -328,8 +329,8 @@ void Game::evaluateScroll(int16 x, int16 y) {
 
 		_vm->_draw->_scrollOffsetX += off;
 
-		_vm->_util->setMousePos(320 - _vm->_draw->_cursorWidth, y);
-	} else if ((cursorBottom >= (200 - _vm->_video->_splitHeight2)) &&
+		_vm->_util->setMousePos(_vm->_width - _vm->_draw->_cursorWidth, y);
+	} else if ((cursorBottom >= (_vm->_height - _vm->_video->_splitHeight2)) &&
 			(screenBottom < _vm->_video->_surfHeight)) {
 		uint16 off;
 
@@ -339,7 +340,7 @@ void Game::evaluateScroll(int16 x, int16 y) {
 
 		_vm->_draw->_scrollOffsetY += off;
 
-		_vm->_util->setMousePos(x, 200 - _vm->_video->_splitHeight2 -
+		_vm->_util->setMousePos(x, _vm->_height - _vm->_video->_splitHeight2 -
 				_vm->_draw->_cursorHeight);
 	}
 
@@ -544,7 +545,7 @@ void Game::switchTotSub(int16 index, int16 skipPlay) {
 	int16 newPos = _curBackupPos - index - ((index >= 0) ? 1 : 0);
 	// WORKAROUND: Some versions don't make the MOVEMENT menu item unselectable
 	// in the dreamland screen, resulting in a crash when it's clicked.
-	if ((_vm->_features & GF_GOB2) && (index == -1) && (skipPlay == 7) &&
+	if ((_vm->getGameType() == kGameTypeGob2) && (index == -1) && (skipPlay == 7) &&
 	    !scumm_stricmp(_curTotFileArray[newPos], "gob06.tot"))
 		return;
 

@@ -1379,7 +1379,7 @@ void Inter_v2::o2_initScreen() {
 
 	// Some versions require this
 	if (videoMode == 0xD)
-		videoMode = 0x14;
+		videoMode = _vm->_mode;
 
 	if ((videoMode == _vm->_global->_videoMode) && (width == -1))
 		return;
@@ -1389,7 +1389,8 @@ void Inter_v2::o2_initScreen() {
 	if (height > 0)
 		_vm->_video->_surfHeight = height;
 	
-	_vm->_video->_splitHeight1 = MIN(200, _vm->_video->_surfHeight - offY);
+	_vm->_video->_splitHeight1 =
+		MIN<int16>(_vm->_height, _vm->_video->_surfHeight - offY);
 	_vm->_video->_splitHeight2 = offY;
 	_vm->_video->_splitStart = _vm->_video->_surfHeight - offY;
 
@@ -1425,13 +1426,13 @@ void Inter_v2::o2_scroll() {
 	int16 curY;
 
 	startX = CLIP((int) _vm->_parse->parseValExpr(), 0,
-			_vm->_video->_surfWidth - 320);
+			_vm->_video->_surfWidth - _vm->_width);
 	startY = CLIP((int) _vm->_parse->parseValExpr(), 0,
-			_vm->_video->_surfHeight - 200);
+			_vm->_video->_surfHeight - _vm->_height);
 	endX = CLIP((int) _vm->_parse->parseValExpr(), 0,
-			_vm->_video->_surfWidth - 320);
+			_vm->_video->_surfWidth - _vm->_width);
 	endY = CLIP((int) _vm->_parse->parseValExpr(), 0,
-			_vm->_video->_surfHeight - 200);
+			_vm->_video->_surfHeight - _vm->_height);
 	stepX = _vm->_parse->parseValExpr();
 	stepY = _vm->_parse->parseValExpr();
 

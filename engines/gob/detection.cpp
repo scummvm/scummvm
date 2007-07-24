@@ -34,7 +34,8 @@ namespace Gob {
 struct GOBGameDescription {
 	Common::ADGameDescription desc;
 
-	uint32 features;
+	GameType gameType;
+	int32 features;
 	const char *startTotBase;
 };
 
@@ -74,7 +75,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1 | GF_EGA,
+		kGameTypeGob1,
+		kFeaturesEGA,
 		"intro"
 	},
 	{
@@ -86,7 +88,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1 | GF_EGA,
+		kGameTypeGob1,
+		kFeaturesEGA,
 		"intro"
 	},
 	{ // Supplied by Theruler76 in bug report #1201233
@@ -98,7 +101,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1,
+		kGameTypeGob1,
+		kFeaturesNone,
 		"intro"
 	},
 	{ // CD 1.000 version.
@@ -110,7 +114,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1 | GF_CD,
+		kGameTypeGob1,
+		kFeaturesCD,
 		"intro"
 	},
 	{ // CD 1.000 version.
@@ -122,7 +127,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1 | GF_CD,
+		kGameTypeGob1,
+		kFeaturesCD,
 		"intro"
 	},
 	{ // CD 1.000 version.
@@ -134,7 +140,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1 | GF_CD,
+		kGameTypeGob1,
+		kFeaturesCD,
 		"intro"
 	},
 	{ // CD 1.000 version.
@@ -146,7 +153,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1 | GF_CD,
+		kGameTypeGob1,
+		kFeaturesCD,
 		"intro"
 	},
 	{ // CD 1.000 version.
@@ -158,7 +166,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1 | GF_CD,
+		kGameTypeGob1,
+		kFeaturesCD,
 		"intro"
 	},
 	{ // CD 1.02 version. Multilingual
@@ -170,7 +179,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1 | GF_CD,
+		kGameTypeGob1,
+		kFeaturesCD,
 		"intro"
 	},
 	{ // CD 1.02 version. Multilingual
@@ -182,7 +192,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1 | GF_CD,
+		kGameTypeGob1,
+		kFeaturesCD,
 		"intro"
 	},
 	{ // CD 1.02 version. Multilingual
@@ -194,7 +205,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1 | GF_CD,
+		kGameTypeGob1,
+		kFeaturesCD,
 		"intro"
 	},
 	{ // CD 1.02 version. Multilingual
@@ -206,7 +218,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1 | GF_CD,
+		kGameTypeGob1,
+		kFeaturesCD,
 		"intro"
 	},
 	{ // CD 1.02 version. Multilingual
@@ -218,7 +231,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1 | GF_CD,
+		kGameTypeGob1,
+		kFeaturesCD,
 		"intro"
 	},
 	{
@@ -230,7 +244,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformAmiga,
 			Common::ADGF_DEMO
 		},
-		GF_GOB1,
+		kGameTypeGob1,
+		kFeaturesNone,
 		"intro"
 	},
 	{
@@ -242,7 +257,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_DEMO
 		},
-		GF_GOB1,
+		kGameTypeGob1,
+		kFeaturesNone,
 		"intro"
 	},
 	{ // Supplied by paul66 in bug report #1652352
@@ -254,7 +270,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1,
+		kGameTypeGob1,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{ // Supplied by paul66 in bug report #1652352
@@ -266,7 +283,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1,
+		kGameTypeGob1,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{ // Supplied by paul66 in bug report #1652352
@@ -278,7 +296,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1,
+		kGameTypeGob1,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{ // Supplied by paul66 in bug report #1652352
@@ -290,7 +309,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1,
+		kGameTypeGob1,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{ // Supplied by paul66 in bug report #1652352
@@ -302,7 +322,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1,
+		kGameTypeGob1,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -314,7 +335,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeGob2,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{ // Supplied by arcepi in bug report #1659884
@@ -326,7 +348,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeGob2,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -338,7 +361,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeGob2,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{ // Supplied by fac76 in bug report #1673397
@@ -354,7 +378,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeGob2,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -366,7 +391,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeGob2,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -378,7 +404,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeGob2,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -390,7 +417,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeGob2,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -402,7 +430,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeGob2,
+		kFeaturesNone,
 		"intro"
 	},
 	{ // Supplied by blackwhiteeagle in bug report #1605235
@@ -414,7 +443,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeGob2,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{ // Supplied by bgk in bug report #1706861
@@ -426,7 +456,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformAtariST,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeGob2,
+		kFeaturesNone,
 		"intro"
 	},
 	{
@@ -438,7 +469,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2 | GF_CD,
+		kGameTypeGob2,
+		kFeaturesCD,
 		"intro"
 	},
 	{
@@ -450,7 +482,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2 | GF_CD,
+		kGameTypeGob2,
+		kFeaturesCD,
 		"intro"
 	},
 	{
@@ -462,7 +495,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2 | GF_CD,
+		kGameTypeGob2,
+		kFeaturesCD,
 		"intro"
 	},
 	{
@@ -474,7 +508,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2 | GF_CD,
+		kGameTypeGob2,
+		kFeaturesCD,
 		"intro"
 	},
 	{
@@ -486,7 +521,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2 | GF_CD,
+		kGameTypeGob2,
+		kFeaturesCD,
 		"intro"
 	},
 	{
@@ -498,7 +534,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2 | GF_CD,
+		kGameTypeGob2,
+		kFeaturesCD,
 		"intro"
 	},
 	{
@@ -510,7 +547,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_DEMO
 		},
-		GF_GOB2,
+		kGameTypeGob2,
+		kFeaturesAdlib,
 		"usa"
 	},
 	{
@@ -522,7 +560,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_DEMO
 		},
-		GF_GOB2,
+		kGameTypeGob2,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -534,7 +573,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_DEMO
 		},
-		GF_GOB2,
+		kGameTypeGob2,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -546,7 +586,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeWeen,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -558,7 +599,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeWeen,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{ // Supplied by cybot_tmin in bug report #1667743
@@ -570,7 +612,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeWeen,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{ // Supplied by vampir_raziel in bug report #1658373
@@ -582,7 +625,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeWeen,
+		kFeaturesNone,
 		"intro"
 	},
 	{ // Supplied by vampir_raziel in bug report #1658373
@@ -594,7 +638,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeWeen,
+		kFeaturesNone,
 		"intro"
 	},
 	{ // Supplied by vampir_raziel in bug report #1658373
@@ -606,7 +651,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeWeen,
+		kFeaturesNone,
 		"intro"
 	},
 	{ // Supplied by vampir_raziel in bug report #1658373
@@ -618,7 +664,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeWeen,
+		kFeaturesNone,
 		"intro"
 	},
 	{
@@ -630,7 +677,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformAtariST,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeWeen,
+		kFeaturesNone,
 		"intro"
 	},
 	{
@@ -642,7 +690,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeWeen,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{ // Supplied by cartman_ on #scummvm
@@ -654,7 +703,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeWeen,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{ // Supplied by glorfindel in bugreport #1722142
@@ -666,7 +716,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeWeen,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -678,7 +729,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_DEMO
 		},
-		GF_GOB2,
+		kGameTypeWeen,
+		kFeaturesAdlib,
 		"show"
 	},
 	{
@@ -690,7 +742,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_DEMO
 		},
-		GF_GOB2,
+		kGameTypeWeen,
+		kFeaturesAdlib,
 		"show"
 	},
 	{
@@ -702,7 +755,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_BARGON,
+		kGameTypeBargon,
+		kFeaturesNone,
 		"intro"
 	},
 	{ // Supplied by Trekky in the forums
@@ -714,7 +768,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformAtariST,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_BARGON,
+		kGameTypeBargon,
+		kFeaturesNone,
 		"intro"
 	},
 	{ // Supplied by cesardark in bug #1681649
@@ -726,7 +781,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_BARGON,
+		kGameTypeBargon,
+		kFeaturesNone,
 		"intro"
 	},
 	{ // Supplied by paul66 in bug #1692667
@@ -738,7 +794,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_BARGON,
+		kGameTypeBargon,
+		kFeaturesNone,
 		"intro"
 	},
 	{ // Supplied by glorfindel in bugreport #1722142
@@ -750,7 +807,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_BARGON,
+		kGameTypeBargon,
+		kFeaturesNone,
 		"intro"
 	},
 	{
@@ -762,7 +820,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		kGameTypeGob3,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{ // Supplied by fac76 in bug report #1742716
@@ -778,7 +837,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		kGameTypeGob3,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -790,7 +850,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		kGameTypeGob3,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{ // Supplied by paul66 in bug report #1652352
@@ -802,7 +863,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		kGameTypeGob3,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -814,7 +876,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		kGameTypeGob3,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{ // Supplied by Paranoimia on #scummvm
@@ -826,7 +889,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		kGameTypeGob3,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -838,7 +902,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		kGameTypeGob3,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -850,7 +915,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		kGameTypeGob3,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -862,7 +928,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		kGameTypeGob3,
+		kFeaturesNone,
 		"menu"
 	},
 	{
@@ -874,7 +941,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformAmiga,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		kGameTypeGob3,
+		kFeaturesNone,
 		"menu"
 	},
 	{
@@ -886,7 +954,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3 | GF_CD,
+		kGameTypeGob3,
+		kFeaturesCD,
 		"intro"
 	},
 	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
@@ -898,7 +967,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3 | GF_CD,
+		kGameTypeGob3,
+		kFeaturesCD,
 		"intro"
 	},
 	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
@@ -910,7 +980,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3 | GF_CD,
+		kGameTypeGob3,
+		kFeaturesCD,
 		"intro"
 	},
 	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
@@ -922,7 +993,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3 | GF_CD,
+		kGameTypeGob3,
+		kFeaturesCD,
 		"intro"
 	},
 	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
@@ -934,7 +1006,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3 | GF_CD,
+		kGameTypeGob3,
+		kFeaturesCD,
 		"intro"
 	},
 	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
@@ -946,7 +1019,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3 | GF_CD,
+		kGameTypeGob3,
+		kFeaturesCD,
 		"intro"
 	},
 	{
@@ -958,7 +1032,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_DEMO
 		},
-		GF_GOB3,
+		kGameTypeGob3,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -970,7 +1045,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_DEMO
 		},
-		GF_GOB3,
+		kGameTypeGob3,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -982,7 +1058,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_DEMO
 		},
-		GF_GOB3,
+		kGameTypeGob3,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -994,7 +1071,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_DEMO
 		},
-		GF_GOB3,
+		kGameTypeGob3,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -1006,7 +1084,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_WOODRUFF,
+		kGameTypeNone,
+		kFeatures640 | kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -1018,7 +1097,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_WOODRUFF,
+		kGameTypeNone,
+		kFeatures640 | kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -1030,10 +1110,11 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_WOODRUFF,
+		kGameTypeNone,
+		kFeatures640 | kFeaturesAdlib,
 		"intro"
 	},
-	{ AD_TABLE_END_MARKER, 0, NULL }
+	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, NULL }
 };
 
 static const GOBGameDescription fallbackDescs[] = {
@@ -1046,7 +1127,8 @@ static const GOBGameDescription fallbackDescs[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1,
+		kGameTypeGob1,
+		kFeaturesNone,
 		"intro"
 	},
 	{
@@ -1058,7 +1140,8 @@ static const GOBGameDescription fallbackDescs[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB1 | GF_CD,
+		kGameTypeGob1,
+		kFeaturesCD,
 		"intro"
 	},
 	{
@@ -1070,7 +1153,8 @@ static const GOBGameDescription fallbackDescs[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2,
+		kGameTypeGob2,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -1082,7 +1166,8 @@ static const GOBGameDescription fallbackDescs[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB2 | GF_CD,
+		kGameTypeGob2,
+		kFeaturesCD,
 		"intro"
 	},
 	{
@@ -1094,7 +1179,8 @@ static const GOBGameDescription fallbackDescs[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_BARGON,
+		kGameTypeBargon,
+		kFeaturesNone,
 		"intro"
 	},
 	{
@@ -1106,7 +1192,8 @@ static const GOBGameDescription fallbackDescs[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3,
+		kGameTypeGob3,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
@@ -1118,7 +1205,8 @@ static const GOBGameDescription fallbackDescs[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GF_GOB3 | GF_CD,
+		kGameTypeGob3,
+		kFeaturesCD,
 		"intro"
 	},
 };
@@ -1186,6 +1274,7 @@ bool GobEngine::detectGame() {
 		strcat(_startTot0, "0.tot");
 	}
 
+	_gameType = gd->gameType;
 	_features = gd->features;
 	_language = gd->desc.language;
 	_platform = gd->desc.platform;

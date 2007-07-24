@@ -1136,13 +1136,13 @@ bool Inter_v1::o1_callSub(OpFuncParams &params) {
 	}
 
 	// Skipping the copy protection screen in Gobliiins
-	if (!_vm->_copyProtection && (_vm->_features & GF_GOB1) && (offset == 3905)
+	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob1) && (offset == 3905)
 			&& !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot)) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return false;
 	}
 	// Skipping the copy protection screen in Gobliins 2
-	if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 1746)
+	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob2) && (offset == 1746)
 			&& !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot0)) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return false;
@@ -1650,8 +1650,9 @@ bool Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	// WORKAROUND for bug #1726130: Ween busy-waits in the intro for a counter
 	// to become 5000. We deliberately slow down busy-waiting, so we shorten
 	// the counting, too.
-	if (((_vm->_global->_inter_execPtr - _vm->_game->_totFileData) == 729) &&
-	    (VAR(59) < 4000) && !scumm_stricmp(_vm->_game->_curTotFile, "intro5.tot"))
+	if ((_vm->getGameType() == kGameTypeWeen) && (VAR(59) < 4000) &&
+	    ((_vm->_global->_inter_execPtr - _vm->_game->_totFileData) == 729) &&
+	    !scumm_stricmp(_vm->_game->_curTotFile, "intro5.tot"))
 		WRITE_VAR(59, 4000);
 
 	switch (cmd) {
