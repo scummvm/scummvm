@@ -2704,6 +2704,7 @@ bool ToucheEngine::sortPointsData(int num1, int num2) {
 			const int md1 = _programWalkTable[i].point1;
 			const int md2 = _programWalkTable[i].point2;
 			if ((md1 & 0x4000) == 0) {
+				assert((md2 & 0x4000) == 0);
 				if (_programPointsTable[md1].priority == priority - 1 && _programPointsTable[md2].priority > priority) {
 					_programPointsTable[md2].priority = priority;
 					quit = false;
@@ -2949,6 +2950,7 @@ void ToucheEngine::markWalkPoints(int keyChar) {
 				int16 md1 = _programWalkTable[i].point1;
 				int16 md2 = _programWalkTable[i].point2;
 				if ((md1 & 0x4000) == 0) {
+					assert((md2 & 0x4000) == 0);
 					if (_programPointsTable[md1].priority != 0 && _programPointsTable[md2].priority == 0) {
 						_programPointsTable[md2].priority = 1;
 						quit = false;
@@ -2974,8 +2976,8 @@ void ToucheEngine::buildWalkPath(int dstPosX, int dstPosY, int keyChar) {
 	int minPointsDataNum = -1;
 	for (uint i = 1; i < _programPointsTable.size(); ++i) {
 		if (_programPointsTable[i].priority != 0) {
-			int dx = ABS<int>(_programPointsTable[i].x - dstPosX);
-			int dy = ABS<int>(_programPointsTable[i].y - dstPosY);
+			int dx = _programPointsTable[i].x - dstPosX;
+			int dy = _programPointsTable[i].y - dstPosY;
 			int distance = dx * dx + dy * dy;
 			if (distance < minDistance) {
 				minDistance = distance;
@@ -2997,23 +2999,23 @@ void ToucheEngine::buildWalkPath(int dstPosX, int dstPosY, int keyChar) {
 				int dy = pts2->y - pts1->y;
 				if (dx == 0) {
 					if (dstPosY > MIN(pts2->y, pts1->y) && dstPosY < MAX(pts2->y, pts1->y)) {
-						distance = ABS(dstPosX - pts1->x);
-						if (distance <= 100) {
-							distance *= distance;
+						int d = ABS(dstPosX - pts1->x);
+						if (d <= 100) {
+							distance = d * d;
 						}
 					}
 				} else if (dy == 0) {
 					if (dstPosX > MIN(pts2->x, pts1->x) && dstPosX < MAX(pts2->x, pts1->x)) {
-						distance = ABS(dstPosY - pts1->y);
-						if (distance <= 100) {
-							distance *= distance;
+						int d = ABS(dstPosY - pts1->y);
+						if (d <= 100) {
+							distance = d * d;
 						}
 					}
 				} else {
 					if (dstPosY > MIN(pts2->y, pts1->y) && dstPosY < MAX(pts2->y, pts1->y) &&
 						dstPosX > MIN(pts2->x, pts1->x) && dstPosX < MAX(pts2->x, pts1->x) ) {
-						distance = (dstPosY - pts1->y) * dx - (dstPosX - pts1->x) * dy;
-						distance = (dx * dx + dy * dy) / distance;
+						distance = (dstPosX - pts1->x) * dy - (dstPosY - pts1->y) * dx;
+						distance /= (dx * dx + dy * dy);
 					}
 				}
 				if (distance < minDistance) {
@@ -3047,13 +3049,13 @@ void ToucheEngine::buildWalkPath(int dstPosX, int dstPosY, int keyChar) {
 			dstPosZ = pts2->z - (pts2->x - dstPosX) * dz / dx;
 			dstPosY = pts2->y - (pts2->x - dstPosX) * dy / dx;
 		}
-		if (key->walkDataNum == key->prevWalkDataNum && key->walkPointsList[1] == -1) {
-			if (key->walkPointsList[0] == _programWalkTable[minWalkDataNum].point1 || key->walkPointsList[0] == _programWalkTable[minWalkDataNum].point2) {
-				++key->walkPointsListCount;
-			}
-		}
 	}
 	key->prevWalkDataNum = minWalkDataNum;
+	if (key->walkDataNum == key->prevWalkDataNum && key->walkPointsList[1] == -1) {
+		if (key->walkPointsList[0] == _programWalkTable[minWalkDataNum].point1 || key->walkPointsList[0] == _programWalkTable[minWalkDataNum].point2) {
+			++key->walkPointsListCount;
+		}
+	}
 	key->xPosPrev = dstPosX;
 	key->yPosPrev = dstPosY;
 	key->zPosPrev = dstPosZ;
