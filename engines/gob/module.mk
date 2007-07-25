@@ -26,9 +26,9 @@ MODULE_OBJS := \
 	inter.o \
 	inter_v1.o \
 	inter_v2.o \
-	inter_woodruff.o \
-	inter_v3.o \
 	inter_bargon.o \
+	inter_v3.o \
+	inter_v4.o \
 	map.o \
 	map_v1.o \
 	map_v2.o \

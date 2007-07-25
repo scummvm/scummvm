@@ -37,9 +37,9 @@
 
 namespace Gob {
 
-#define OPCODE(x) _OPCODE(Inter_Woodruff, x)
+#define OPCODE(x) _OPCODE(Inter_v4, x)
 
-const int Inter_Woodruff::_goblinFuncLookUp[][2] = {
+const int Inter_v4::_goblinFuncLookUp[][2] = {
 	{0, 0},
 	{1, 1},
 	{2, 2},
@@ -113,12 +113,12 @@ const int Inter_Woodruff::_goblinFuncLookUp[][2] = {
 	{2005, 70}
 };
 
-Inter_Woodruff::Inter_Woodruff(GobEngine *vm) : Inter_v3(vm) {
+Inter_v4::Inter_v4(GobEngine *vm) : Inter_v3(vm) {
 	setupOpcodes();
 }
 
-void Inter_Woodruff::setupOpcodes() {
-	static const OpcodeDrawEntryWoodruff opcodesDraw[256] = {
+void Inter_v4::setupOpcodes() {
+	static const OpcodeDrawEntryV4 opcodesDraw[256] = {
 		/* 00 */
 		OPCODE(o1_loadMult),
 		OPCODE(o2_playMult),
@@ -441,7 +441,7 @@ void Inter_Woodruff::setupOpcodes() {
 		{NULL, ""}
 	};
 
-	static const OpcodeFuncEntryWoodruff opcodesFunc[80] = {
+	static const OpcodeFuncEntryV4 opcodesFunc[80] = {
 		/* 00 */
 		OPCODE(o1_callSub),
 		OPCODE(o1_callSub),
@@ -473,7 +473,7 @@ void Inter_Woodruff::setupOpcodes() {
 		OPCODE(o1_capturePop),
 		OPCODE(o2_animPalInit),
 		/* 18 */
-		OPCODE(oWoodruff_stub0x18),
+		OPCODE(o4_stub0x18),
 		{NULL, ""},
 		OPCODE(o3_getTotTextItemPart),
 		{NULL, ""},
@@ -544,7 +544,7 @@ void Inter_Woodruff::setupOpcodes() {
 		OPCODE(o1_manageDataFile),
 	};
 
-	static const OpcodeGoblinEntryWoodruff opcodesGoblin[71] = {
+	static const OpcodeGoblinEntryV4 opcodesGoblin[71] = {
 		/* 00 */
 		OPCODE(o2_loadInfogramesIns),
 		OPCODE(o2_startInfogrames),
@@ -636,16 +636,16 @@ void Inter_Woodruff::setupOpcodes() {
 		{NULL, ""},
 	};
 
-	_opcodesDrawWoodruff = opcodesDraw;
-	_opcodesFuncWoodruff = opcodesFunc;
-	_opcodesGoblinWoodruff = opcodesGoblin;
+	_opcodesDrawV4 = opcodesDraw;
+	_opcodesFuncV4 = opcodesFunc;
+	_opcodesGoblinV4 = opcodesGoblin;
 }
 
-void Inter_Woodruff::executeDrawOpcode(byte i) {
+void Inter_v4::executeDrawOpcode(byte i) {
 	debugC(1, kDebugDrawOp, "opcodeDraw %d [0x%X] (%s)",
 		i, i, getOpcodeDrawDesc(i));
 
-	OpcodeDrawProcWoodruff op = _opcodesDrawWoodruff[i].proc;
+	OpcodeDrawProcV4 op = _opcodesDrawV4[i].proc;
 
 	if (op == NULL)
 		warning("unimplemented opcodeDraw: %d", i);
@@ -653,7 +653,7 @@ void Inter_Woodruff::executeDrawOpcode(byte i) {
 		(this->*op) ();
 }
 
-bool Inter_Woodruff::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {
+bool Inter_v4::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {
 	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%X.0x%X] (%s)",
 		i, j, i, j, getOpcodeFuncDesc(i, j));
 
@@ -662,7 +662,7 @@ bool Inter_Woodruff::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {
 		return false;
 	}
 
-	OpcodeFuncProcWoodruff op = _opcodesFuncWoodruff[i*16 + j].proc;
+	OpcodeFuncProcV4 op = _opcodesFuncV4[i*16 + j].proc;
 
 	if (op == NULL)
 		warning("unimplemented opcodeFunc: %d.%d", i, j);
@@ -672,15 +672,15 @@ bool Inter_Woodruff::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {
 	return false;
 }
 
-void Inter_Woodruff::executeGoblinOpcode(int i, OpGobParams &params) {
+void Inter_v4::executeGoblinOpcode(int i, OpGobParams &params) {
 	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%X] (%s)",
 		i, i, getOpcodeGoblinDesc(i));
 
-	OpcodeGoblinProcWoodruff op = NULL;
+	OpcodeGoblinProcV4 op = NULL;
 
 	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
 		if (_goblinFuncLookUp[j][0] == i) {
-			op = _opcodesGoblinWoodruff[_goblinFuncLookUp[j][1]].proc;
+			op = _opcodesGoblinV4[_goblinFuncLookUp[j][1]].proc;
 			break;
 		}
 
@@ -694,25 +694,25 @@ void Inter_Woodruff::executeGoblinOpcode(int i, OpGobParams &params) {
 		(this->*op) (params);
 }
 
-const char *Inter_Woodruff::getOpcodeDrawDesc(byte i) {
-	return _opcodesDrawWoodruff[i].desc;
+const char *Inter_v4::getOpcodeDrawDesc(byte i) {
+	return _opcodesDrawV4[i].desc;
 }
 
-const char *Inter_Woodruff::getOpcodeFuncDesc(byte i, byte j) {
+const char *Inter_v4::getOpcodeFuncDesc(byte i, byte j) {
 	if ((i > 4) || (j > 15))
 		return "";
 
-	return _opcodesFuncWoodruff[i*16 + j].desc;
+	return _opcodesFuncV4[i*16 + j].desc;
 }
 
-const char *Inter_Woodruff::getOpcodeGoblinDesc(int i) {
+const char *Inter_v4::getOpcodeGoblinDesc(int i) {
 	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
 		if (_goblinFuncLookUp[j][0] == i)
-			return _opcodesGoblinWoodruff[_goblinFuncLookUp[j][1]].desc;
+			return _opcodesGoblinV4[_goblinFuncLookUp[j][1]].desc;
 	return "";
 }
 
-bool Inter_Woodruff::oWoodruff_stub0x18(OpFuncParams &params) {
+bool Inter_v4::o4_stub0x18(OpFuncParams &params) {
 	int16 val1 = _vm->_parse->parseValExpr();
 	int16 val2 = _vm->_parse->parseValExpr();
 	int16 val3 = _vm->_parse->parseValExpr();

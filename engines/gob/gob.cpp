@@ -306,7 +306,7 @@ bool GobEngine::initGameParts() {
 		case kGameTypeWoodruff:
 			_init = new Init_v3(this);
 			_video = new Video_v2(this);
-			_inter = new Inter_Woodruff(this);
+			_inter = new Inter_v4(this);
 			_parse = new Parse_v2(this);
 			_mult = new Mult_v2(this);
 			_draw = new Draw_v2(this);
