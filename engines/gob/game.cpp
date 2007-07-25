@@ -663,7 +663,7 @@ int16 Game::openLocTextFile(char *locTextFile, int language) {
 	return _vm->_dataIO->openData(locTextFile);
 }
 
-byte *Game::loadLocTexts(void) {
+byte *Game::loadLocTexts(int32 *dataSize) {
 	char locTextFile[20];
 	int16 handle;
 	int i;
@@ -689,6 +689,10 @@ byte *Game::loadLocTexts(void) {
 
 	if (handle >= 0) {
 		_vm->_dataIO->closeData(handle);
+
+		if (dataSize)
+			*dataSize = _vm->_dataIO->getDataSize(locTextFile);
+
 		return _vm->_dataIO->getData(locTextFile);
 	}
 	return 0;

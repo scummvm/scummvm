@@ -1174,6 +1174,10 @@ bool Inter_v1::o1_loadCursor(OpFuncParams &params) {
 
 	id = load16();
 	index = (int8) *_vm->_global->_inter_execPtr++;
+
+	if ((index * _vm->_draw->_cursorWidth) >= _vm->_draw->_cursorSprites->getWidth())
+		return false;
+
 	itemPtr = &_vm->_game->_totResourceTable->items[id];
 	offset = itemPtr->offset;
 
@@ -1896,6 +1900,10 @@ bool Inter_v1::o1_fillRect(OpFuncParams &params) {
 	_vm->_draw->_spriteBottom = _vm->_parse->parseValExpr();
 
 	_vm->_draw->_backColor = _vm->_parse->parseValExpr();
+
+	if (!_vm->_draw->_spritesArray[_vm->_draw->_destSurface])
+		return false;
+
 	_vm->_draw->spriteOperation(DRAW_FILLRECT);
 	return false;
 }

@@ -134,12 +134,16 @@ void Game_v2::playTot(int16 skipPlay) {
 			totTextLoc = false;
 			if (READ_LE_UINT32(filePtr) != (uint32) -1) {
 				_totTextData = new TotTextTable;
+
+				int32 size;
+
 				if (READ_LE_UINT32(filePtr) == 0) {
-					_totTextData->dataPtr = loadLocTexts();
+					_totTextData->dataPtr = loadLocTexts(&size);
 					totTextLoc = true;
 				} else {
 					_totTextData->dataPtr =
 						(_totFileData + READ_LE_UINT32(_totFileData + 0x30));
+					size = totSize;
 					_vm->_global->_language = _vm->_global->_languageWanted;
 				}
 
@@ -147,7 +151,7 @@ void Game_v2::playTot(int16 skipPlay) {
 				if (_totTextData->dataPtr != 0) {
 					Common::MemoryReadStream totTextData(_totTextData->dataPtr,
 							4294967295U);
-					_totTextData->itemsCount = totTextData.readSint16LE();
+					_totTextData->itemsCount = MIN<int32>(totTextData.readSint16LE(), (size - 2) / 4);
 
 					_totTextData->items = new TotTextItem[_totTextData->itemsCount];
 					for (int i = 0; i < _totTextData->itemsCount; ++i) {

@@ -215,7 +215,7 @@ protected:
 		
 	int16 adjustKey(int16 key);
 
-	byte *loadLocTexts(void);
+	byte *loadLocTexts(int32 *dataSize = 0);
 	int32 loadTotFile(const char *path);
 	void loadExtTable(void);
 	void loadImFile(void);
