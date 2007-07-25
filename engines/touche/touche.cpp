@@ -869,11 +869,11 @@ void ToucheEngine::redrawRoom() {
 	}
 }
 
-void ToucheEngine::fadePalette(int firstColor, int lastColor, int scale, int scaleInc, int fadingStepsCount) {
+void ToucheEngine::fadePalette(int firstColor, int colorCount, int scale, int scaleInc, int fadingStepsCount) {
 	for (int i = 0; i < fadingStepsCount; ++i) {
 		scale += scaleInc;
 		scale = CLIP(scale, 0, 255);
-		setPalette(firstColor, lastColor, scale, scale, scale);
+		setPalette(firstColor, colorCount, scale, scale, scale);
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}

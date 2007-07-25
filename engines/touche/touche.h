@@ -390,7 +390,7 @@ protected:
 	void centerScreenToKeyChar(int keyChar);
 	void waitForKeyCharsSet();
 	void redrawRoom();
-	void fadePalette(int firstColor, int lastColor, int scale, int scaleInc, int fadingStepsCount);
+	void fadePalette(int firstColor, int colorCount, int scale, int scaleInc, int fadingStepsCount);
 	void fadePaletteFromFlags();
 	void moveKeyChar(uint8 *dst, int dstPitch, KeyChar *key);
 	void changeKeyCharFrame(KeyChar *key, int keyChar);
