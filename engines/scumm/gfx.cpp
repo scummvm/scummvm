@@ -560,7 +560,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	int y = vs->topline + top - _screenTop;
 	int height = bottom - top;
 	
-	if (width <= 0)
+	if (width <= 0 || height <= 0)
 		return;
 	
 	const byte *src = vs->getPixels(x, top);
