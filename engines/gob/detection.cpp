@@ -1085,7 +1085,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		kGameTypeWoodruff,
-		kFeatures640 | kFeaturesAdlib,
+		kFeatures640,
 		"intro"
 	},
 	{
@@ -1098,7 +1098,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		kGameTypeWoodruff,
-		kFeatures640 | kFeaturesAdlib,
+		kFeatures640,
 		"intro"
 	},
 	{
@@ -1111,7 +1111,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		kGameTypeWoodruff,
-		kFeatures640 | kFeaturesAdlib,
+		kFeatures640,
 		"intro"
 	},
 	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, NULL }
@@ -1209,6 +1209,19 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesCD,
 		"intro"
 	},
+	{
+		{
+			"woodruff",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
 };
 
 static const ADFileBasedFallback fileBased[] = {
@@ -1220,6 +1233,7 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[4], { "intro.stk", "scaa.imd", "scba.imd", "scbf.imd", 0 } },
 	{ &fallbackDescs[5], { "intro.stk", "imd.itk", 0 } },
 	{ &fallbackDescs[6], { "intro.stk", "mus_gob3.lic", 0 } },
+	{ &fallbackDescs[7], { "intro.stk", "woodruff.itk", 0 } },
 	{ 0, { 0 } }
 };
 
