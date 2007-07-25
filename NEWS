@@ -2,9 +2,6 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
 0.11.0 (????-??-??)
- New Games:
-   - Added support for A.J's World of Discovery.
-
  General:
    - Added ARM assembly routines for code in the sound mixer and SCUMM
      video playback, resulting in some nice speedups on several ports.
