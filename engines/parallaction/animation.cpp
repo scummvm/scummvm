@@ -166,15 +166,19 @@ void jobDisplayAnimations(void *parm, Job *j) {
 		if ((v18->_flags & kFlagsActive) && ((v18->_flags & kFlagsRemove) == 0))   {
 			v14._width = v18->width();
 			v14._height = v18->height();
-			v14._data0 = v18->getFrameData(v18->_frame);
-//			v14._data1 = v18->_cnv->field_8[v18->_frame];
+
+			int16 frame = CLIP((int)v18->_frame, 0, v18->getFrameNum()-1);
+
+			v14._data0 = v18->getFrameData(frame);
+//			v14._data1 = v18->_cnv->field_8[frame];
 
 			if (v18->_flags & kFlagsNoMasked)
 				_si = 3;
 			else
 				_si = _vm->_gfx->queryMask(v18->_top + v18->height());
 
-			debugC(9, kDebugLocation, "jobDisplayAnimations(%s, x:%i, y:%i, z:%i, w:%i, h:%i, %p)", v18->_label._text, v18->_left, v18->_top, _si, v14._width, v14._height, v14._data0);
+			debugC(9, kDebugLocation, "jobDisplayAnimations(%s, x:%i, y:%i, z:%i, w:%i, h:%i, f:%i/%i, %p)", v18->_label._text, v18->_left, v18->_top, _si, v14._width, v14._height,
+				frame, v18->getFrameNum(), v14._data0);
 			_vm->_gfx->blitCnv(&v14, v18->_left, v18->_top, _si, Gfx::kBitBack);
 
 		}

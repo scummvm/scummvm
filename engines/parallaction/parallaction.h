@@ -27,8 +27,7 @@
 #define PARALLACTION_H
 
 #include "common/str.h"
-#include "gui/dialog.h"
-#include "gui/widget.h"
+
 
 #include "engines/engine.h"
 
@@ -44,6 +43,7 @@ namespace GUI {
 	class CommandSender;
 }
 
+extern OSystem *g_system;
 
 namespace Parallaction {
 
@@ -60,7 +60,12 @@ enum {
 };
 
 enum {
-	GF_DEMO = 1 << 0
+	GF_DEMO = 1 << 0,
+	GF_LANG_EN = 1 << 1,
+	GF_LANG_FR = 1 << 2,
+	GF_LANG_DE = 1 << 3,
+	GF_LANG_IT = 1 << 4,
+	GF_LANG_MULT = 1 << 5
 };
 
 
@@ -105,7 +110,7 @@ enum EngineFlags {
 	kEngineInventory		= (1 << 2),
 	kEngineWalking			= (1 << 3),
 	kEngineChangeLocation	= (1 << 4),
-	kEngineMouse			= (1 << 5),
+	kEngineBlockInput		= (1 << 5),
 	kEngineDragging 		= (1 << 6),
 	kEngineTransformedDonna		= (1 << 7)
 };
@@ -172,12 +177,10 @@ extern uint32 		_localFlags[];
 extern Command 		*_forwardedCommands[];
 extern char 		_forwardedAnimationNames[][20];
 extern uint16 		_numForwards;
-extern char 		_soundFile[];
 extern char 		_slideText[][40];
 extern uint16 		_introSarcData3;		 // sarcophagus stuff to be saved
 extern uint16 		_introSarcData2;		 // sarcophagus stuff to be saved
 extern char 		_saveData1[];
-extern byte 		_mouseHidden;
 extern uint32 		_commandFlags;
 extern const char 	*_instructionNamesRes[];
 extern const char 	*_commandsNamesRes[];
@@ -306,6 +309,7 @@ public:
 
 	void 		parseLocation(const char *filename);
 	void 		changeCursor(int32 index);
+	void		showCursor(bool visible);
 	void 		changeCharacter(const char *name);
 
 	char   		*parseComment(Script &script);
@@ -392,6 +396,8 @@ protected:		// data
 
 	bool		_skipMenu;
 
+	bool 		_mouseHidden;
+
 	// input-only
 	InputData	 _input;
 	bool		_actionAfterWalk;  // actived when the character needs to move before taking an action
@@ -409,6 +415,9 @@ protected:		// data
 	JobList		_jobs;
 
 	Common::String      _saveFileName;
+
+	bool		_hasLocationSound;
+	char		_locationSound[50];
 
 
 protected:		// members
@@ -454,15 +463,6 @@ protected:		// members
 
 	void 		freeCharacter();
 
-	uint16 		askDialoguePassword(Dialogue *q, StaticCnv *face);
-	bool 		displayAnswer(Dialogue *q, uint16 i);
-	bool 		displayAnswers(Dialogue *q);
-	void 		displayQuestion(Dialogue *q, Cnv *cnv);
-	uint16 		getDialogueAnswer(Dialogue *q, Cnv *cnv);
-	int16 		selectAnswer(Question *q, StaticCnv *cnv);
-	void 		enterDialogue();
-	void 		exitDialogue();
-
 	int 		addInventoryItem(uint16 item);
 	void 		dropItem(uint16 item);
 	int16 		pickupItem(Zone *z);
@@ -472,33 +472,6 @@ protected:		// members
 
 // FIXME: remove global
 extern Parallaction *_vm;
-
-class SaveLoadChooser : public GUI::Dialog {
-	typedef Common::String String;
-	typedef Common::StringList StringList;
-protected:
-	GUI::ListWidget		*_list;
-	GUI::ButtonWidget	*_chooseButton;
-	GUI::GraphicsWidget	*_gfxWidget;
-	GUI::StaticTextWidget	*_date;
-	GUI::StaticTextWidget	*_time;
-	GUI::StaticTextWidget	*_playtime;
-	GUI::ContainerWidget	*_container;
-	Parallaction			*_vm;
-
-	uint8 _fillR, _fillG, _fillB;
-
-public:
-	SaveLoadChooser(const String &title, const String &buttonLabel, Parallaction *engine);
-	~SaveLoadChooser();
-
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	const String &getResultString() const;
-	void setList(const StringList& list);
-	int runModal();
-
-	virtual void reflowLayout();
-};
 
 
 } // namespace Parallaction

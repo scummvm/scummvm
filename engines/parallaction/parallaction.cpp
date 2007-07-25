@@ -84,9 +84,6 @@ Command *	_forwardedCommands[20] = {
 
 char		_forwardedAnimationNames[20][20];
 uint16		_numForwards = 0;
-char		_soundFile[20];
-
-byte		_mouseHidden = 0;
 
 uint32		_commandFlags = 0;
 uint16		_introSarcData3 = 200;
@@ -107,7 +104,7 @@ Parallaction::Parallaction(OSystem *syst) :
 	// FIXME
 	_vm = this;
 
-
+	_mouseHidden = false;
 
 	Common::File::addDefaultDirectory( _gameDataPath );
 
@@ -135,15 +132,15 @@ Parallaction::~Parallaction() {
 	delete _zoneFlagNames;
 
 	_animations.remove(&_char._ani);
-	
+
 	freeLocation();
-	
+
 	freeCharacter();
 	destroyInventory();
 
 	delete _gfx;
 	delete _soundMan;
-	delete _disk;	
+	delete _disk;
 }
 
 
@@ -160,6 +157,8 @@ int Parallaction::init() {
 	_localFlagNames = NULL;
 	initResources();
 
+	_hasLocationSound = false;
+
 	_skipMenu = false;
 
 	_transCurrentHoverItem = 0;
@@ -175,11 +174,14 @@ int Parallaction::init() {
 
 	_baseTime = 0;
 
-	if (getPlatform() == Common::kPlatformPC)
+	if (getPlatform() == Common::kPlatformPC) {
 		_disk = new DosDisk(this);
-	else {
+	} else {
+		if (getFeatures() & GF_DEMO) {
+			strcpy(_location._name, "fognedemo");
+		}
 		_disk = new AmigaDisk(this);
-		_disk->selectArchive("disk0");
+		_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 	}
 
 	_engineFlags = 0;
@@ -281,10 +283,11 @@ uint16 Parallaction::updateInput() {
 
 		switch (e.type) {
 		case Common::EVENT_KEYDOWN:
-			if (e.kbd.ascii == 'l') KeyDown = kEvLoadGame;
-			if (e.kbd.ascii == 's') KeyDown = kEvSaveGame;
 			if (e.kbd.flags == Common::KBD_CTRL && e.kbd.keycode == 'd')
 				_debugger->attach();
+			if (getFeatures() & GF_DEMO) break;
+			if (e.kbd.keycode == Common::KEYCODE_l) KeyDown = kEvLoadGame;
+			if (e.kbd.keycode == Common::KEYCODE_s) KeyDown = kEvSaveGame;
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
@@ -367,6 +370,9 @@ void Parallaction::runGame() {
 	if (_location._comment)
 		doLocationEnterTransition();
 
+	if (_hasLocationSound)
+		_soundMan->playSfx(_locationSound, 0, true);
+
 	changeCursor(kCursorArrow);
 
 	if (_location._aCommands.size() > 0)
@@ -376,8 +382,8 @@ void Parallaction::runGame() {
 		_keyDown = updateInput();
 
 		debugC(3, kDebugInput, "runGame: input flags (%i, %i, %i, %i)",
-			_mouseHidden == 0,
-			(_engineFlags & kEngineMouse) == 0,
+			!_mouseHidden,
+			(_engineFlags & kEngineBlockInput) == 0,
 			(_engineFlags & kEngineWalking) == 0,
 			(_engineFlags & kEngineChangeLocation) == 0
 		);
@@ -388,7 +394,7 @@ void Parallaction::runGame() {
 		// Skipping input processing when kEngineChangeLocation is set solves the issue. It's
 		// noteworthy that the programmers added this very check in Big Red Adventure's engine,
 		// so it should be ok here in Nippon Safes too.
-		if ((_mouseHidden == 0) && ((_engineFlags & kEngineMouse) == 0) && ((_engineFlags & kEngineWalking) == 0) && ((_engineFlags & kEngineChangeLocation) == 0)) {
+		if ((!_mouseHidden) && ((_engineFlags & kEngineBlockInput) == 0) && ((_engineFlags & kEngineWalking) == 0) && ((_engineFlags & kEngineChangeLocation) == 0)) {
 			InputData *v8 = translateInput();
 			if (v8) processInput(v8);
 		}
@@ -506,14 +512,14 @@ void Parallaction::processInput(InputData *data) {
 
 	case kEvSaveGame:
 		_hoverZone = NULL;
-		changeCursor(kCursorArrow);
 		saveGame();
+		changeCursor(kCursorArrow);
 		break;
 
 	case kEvLoadGame:
 		_hoverZone = NULL;
-		changeCursor(kCursorArrow);
 		loadGame();
+		changeCursor(kCursorArrow);
 		break;
 
 	}
@@ -673,7 +679,10 @@ void Parallaction::waitTime(uint32 t) {
 }
 
 
-
+void Parallaction::showCursor(bool visible) {
+	_mouseHidden = !visible;
+	g_system->showMouse(visible);
+}
 
 //	changes the mouse pointer
 //	index 0 means standard pointer (from pointer.cnv)
@@ -754,21 +763,26 @@ void Parallaction::changeCharacter(const char *name) {
 		// character for sanity before memory is freed
 		freeCharacter();
 
-		_disk->selectArchive((_vm->getPlatform() == Common::kPlatformPC) ? "disk1" : "disk0");
+		Common::String oldArchive = _disk->selectArchive((_vm->getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
 		_vm->_char._ani._cnv = _disk->loadFrames(fullName);
 
 		if (!IS_DUMMY_CHARACTER(name)) {
+			if (_vm->getPlatform() == Common::kPlatformAmiga && (_vm->getFeatures() & GF_LANG_MULT))
+				_disk->selectArchive("disk0");
+
 			_vm->_char._head = _disk->loadHead(baseName);
 			_vm->_char._talk = _disk->loadTalk(baseName);
 			_vm->_char._objs = _disk->loadObjects(baseName);
 			_objectsNames = _disk->loadTable(baseName);
-			refreshInventory(baseName);
 
 			_soundMan->playCharacterMusic(name);
 
-			if ((getFeatures() & GF_DEMO) == 0)
+			if (!(getFeatures() & GF_DEMO))
 				parseLocation("common");
 		}
+
+		if (!oldArchive.empty())
+			_disk->selectArchive(oldArchive);
 	}
 
 	strcpy(_characterName1, fullName);
@@ -856,13 +870,13 @@ void jobWaitRemoveJob(void *parm, Job *j) {
 
 	debugC(3, kDebugJobs, "jobWaitRemoveJob: count = %i", count);
 
-	_engineFlags |= kEngineMouse;
+	_engineFlags |= kEngineBlockInput;
 
 	count++;
 	if (count == 2) {
 		count = 0;
 		_vm->removeJob(arg);
-		_engineFlags &= ~kEngineMouse;
+		_engineFlags &= ~kEngineBlockInput;
 		j->_finished = 1;
 	}
 

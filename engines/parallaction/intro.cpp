@@ -134,7 +134,7 @@ void _c_startIntro(void *parm) {
 		_vm->_soundMan->playMusic();
 	}
 
-	_engineFlags |= kEngineMouse;
+	_engineFlags |= kEngineBlockInput;
 
 	return;
 }
@@ -170,7 +170,7 @@ void _c_endIntro(void *parm) {
 
 		waitUntilLeftClick();
 
-		_engineFlags &= ~kEngineMouse;
+		_engineFlags &= ~kEngineBlockInput;
 		_vm->_menu->selectCharacter();
 	} else {
 		waitUntilLeftClick();

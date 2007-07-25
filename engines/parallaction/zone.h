@@ -68,7 +68,8 @@ enum ZoneFlags {
 };
 
 
-#define NUM_ANSWERS		 5
+#define NUM_QUESTIONS		20
+#define NUM_ANSWERS		 	5
 
 struct Command;
 struct Question;
@@ -97,7 +98,9 @@ struct Question {
 	~Question();
 };
 
-typedef Question Dialogue;
+struct Dialogue {
+	Question	*_questions[NUM_QUESTIONS];
+};
 
 struct GetData {	// size = 24
 	uint32			_icon;

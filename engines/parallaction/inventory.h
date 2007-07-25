@@ -34,9 +34,13 @@ namespace Parallaction {
 struct Cnv;
 
 struct InventoryItem {
-	uint32		_id;            // lowest 16 bits are always zero
-	uint16		_index;
+	uint32		_id;            // object name (lowest 16 bits are always zero)
+	uint16		_index;			// index to frame in objs file
 };
+
+#define INVENTORYITEM_PITCH 		32
+#define INVENTORYITEM_WIDTH 		24
+#define INVENTORYITEM_HEIGHT		24
 
 #define MAKE_INVENTORY_ID(x) (((x) & 0xFFFF) << 16)
 
@@ -47,14 +51,11 @@ void initInventory();
 void destroyInventory();
 void openInventory();
 void closeInventory();
-int16 isItemInInventory(int32 v);
 void cleanInventory();
 void addInventoryItem(uint16 item);
 
+int16 getInventoryItemIndex(int16 pos);
 void highlightInventoryItem(int16 pos, byte color);
-void refreshInventory(const char *character);
-
-void extractInventoryGraphics(int16 pos, byte *dst);
 
 
 } // namespace Parallaction
