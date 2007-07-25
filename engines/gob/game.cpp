@@ -140,8 +140,18 @@ byte *Game::loadExtData(int16 itemId, int16 *pResWidth,
 	size = item->size;
 	isPacked = (item->width & 0x8000) != 0;
 
-	if (pResWidth != 0) {
+	if ((pResWidth != 0) && (pResHeight != 0)) {
 		*pResWidth = item->width & 0x7FFF;
+
+		if (*pResWidth & 0x4000)
+			size += 1 << 16;
+		if (*pResWidth & 0x2000)
+			size += 2 << 16;
+		if (*pResWidth & 0x1000)
+			size += 4 << 16;
+
+		*pResWidth &= 0xFFF;
+
 		*pResHeight = item->height;
 		debugC(7, kDebugFileIO, "loadExtData(%d, %d, %d)",
 				itemId, *pResWidth, *pResHeight);
