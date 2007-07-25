@@ -481,6 +481,43 @@ protected:
 	bool o3_writeData(OpFuncParams &params);
 };
 
+class Inter_Woodruff : public Inter_v3 {
+public:
+	Inter_Woodruff(GobEngine *vm);
+	virtual ~Inter_Woodruff() {}
+
+protected:
+	typedef void (Inter_Woodruff::*OpcodeDrawProcWoodruff)();
+	typedef bool (Inter_Woodruff::*OpcodeFuncProcWoodruff)(OpFuncParams &);
+	typedef void (Inter_Woodruff::*OpcodeGoblinProcWoodruff)(OpGobParams &);
+	struct OpcodeDrawEntryWoodruff {
+		OpcodeDrawProcWoodruff proc;
+		const char *desc;
+	};
+	struct OpcodeFuncEntryWoodruff {
+		OpcodeFuncProcWoodruff proc;
+		const char *desc;
+	};
+	struct OpcodeGoblinEntryWoodruff {
+		OpcodeGoblinProcWoodruff proc;
+		const char *desc;
+	};
+	const OpcodeDrawEntryWoodruff *_opcodesDrawWoodruff;
+	const OpcodeFuncEntryWoodruff *_opcodesFuncWoodruff;
+	const OpcodeGoblinEntryWoodruff *_opcodesGoblinWoodruff;
+	static const int _goblinFuncLookUp[][2];
+
+	virtual void setupOpcodes();
+	virtual void executeDrawOpcode(byte i);
+	virtual bool executeFuncOpcode(byte i, byte j, OpFuncParams &params);
+	virtual void executeGoblinOpcode(int i, OpGobParams &params);
+	virtual const char *getOpcodeDrawDesc(byte i);
+	virtual const char *getOpcodeFuncDesc(byte i, byte j);
+	virtual const char *getOpcodeGoblinDesc(int i);
+
+	bool oWoodruff_stub0x18(OpFuncParams &params);
+};
+
 } // End of namespace Gob
 
 #endif // GOB_INTER_H
