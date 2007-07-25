@@ -1705,6 +1705,10 @@ bool Inter_v1::o1_capturePush(OpFuncParams &params) {
 	top = _vm->_parse->parseValExpr();
 	width = _vm->_parse->parseValExpr();
 	height = _vm->_parse->parseValExpr();
+
+	if ((width < 0) || (height < 0))
+		return false;
+
 	_vm->_game->capturePush(left, top, width, height);
 	(*_vm->_scenery->_pCaptureCounter)++;
 	return false;
