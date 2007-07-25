@@ -54,6 +54,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"bargon", "Bargon Attack"},
 	{"ween", "Ween: The Prophecy"},
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
+//	{"dynasty", "The Last Dynasty"},
 	{0, 0}
 };
 
@@ -1114,6 +1115,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro"
 	},
+	/*{
+		{
+			"dynasty",
+			"",
+			AD_ENTRY1s("intro.stk", "6190e32404b672f4bbbc39cf76f41fda", 2511470),
+			EN_USA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},*/
 	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, NULL }
 };
 
