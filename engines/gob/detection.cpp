@@ -51,6 +51,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"gob2cd", "Gobliins 2 CD"},
 	{"gob3", "Goblins Quest 3"},
 	{"gob3cd", "Goblins Quest 3 CD"},
+	{"ajworld", "A.J's World of Discovery"},
 	{"bargon", "Bargon Attack"},
 	{"ween", "Ween: The Prophecy"},
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
@@ -809,6 +810,19 @@ static const GOBGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		kGameTypeBargon,
+		kFeaturesNone,
+		"intro"
+	},
+	{
+		{
+			"ajworld",
+			"",
+			AD_ENTRY1s("intro.stk", "e453bea7b28a67c930764d945f64d898", 3913628),
+			EN_ANY,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
 		kFeaturesNone,
 		"intro"
 	},
