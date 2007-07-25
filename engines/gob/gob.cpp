@@ -146,8 +146,8 @@ int GobEngine::init() {
 	}
 
 	_system->beginGFXTransaction();
-		initCommonGFX(false);
 		_system->initSize(_width, _height);
+		initCommonGFX(is640());
 	_system->endGFXTransaction();
 
 	// On some systems it's not safe to run CD audio games from the CD.
