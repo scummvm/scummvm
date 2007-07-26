@@ -150,8 +150,7 @@ bool SagaEngine::initGame() {
 	}
 
 	// If a compressed sound file is found in the game's directory, set the compressed flag to true
-	if (Common::File::exists("music.cmp")  || Common::File::exists("musicd.cmp")  ||
-		Common::File::exists("sounds.cmp") || Common::File::exists("soundsd.cmp") ||
+	if (Common::File::exists("sounds.cmp") || Common::File::exists("soundsd.cmp") ||
 		Common::File::exists("voices.cmp") || Common::File::exists("voicesd.cmp") ||
 		Common::File::exists("inherit the earth voices.cmp")) {
 		_gf_compressed_sounds = true;
