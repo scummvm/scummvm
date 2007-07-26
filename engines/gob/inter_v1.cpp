@@ -1908,6 +1908,15 @@ bool Inter_v1::o1_fillRect(OpFuncParams &params) {
 	if (!_vm->_draw->_spritesArray[_vm->_draw->_destSurface])
 		return false;
 
+	if (_vm->_draw->_spriteRight < 0) {
+		_vm->_draw->_destSpriteX += _vm->_draw->_spriteRight - 1;
+		_vm->_draw->_spriteRight = -_vm->_draw->_spriteRight + 2;
+	}
+	if (_vm->_draw->_spriteBottom < 0) {
+		_vm->_draw->_destSpriteY += _vm->_draw->_spriteBottom - 1;
+		_vm->_draw->_spriteBottom = -_vm->_draw->_spriteBottom + 2;
+	}
+
 	_vm->_draw->spriteOperation(DRAW_FILLRECT);
 	return false;
 }

@@ -151,7 +151,7 @@ void Game_v2::playTot(int16 skipPlay) {
 				if (_totTextData->dataPtr != 0) {
 					Common::MemoryReadStream totTextData(_totTextData->dataPtr,
 							4294967295U);
-					_totTextData->itemsCount = MIN<int32>(totTextData.readSint16LE(), (size - 2) / 4);
+					_totTextData->itemsCount = totTextData.readSint16LE() & 0x3FFF;
 
 					_totTextData->items = new TotTextItem[_totTextData->itemsCount];
 					for (int i = 0; i < _totTextData->itemsCount; ++i) {
