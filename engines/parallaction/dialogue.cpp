@@ -253,7 +253,7 @@ uint16 DialogueManager::askPassword() {
 		_vm->_gfx->updateScreen();
 
 		Common::Event e;
-		while (e.kbd.ascii != Common::KEYCODE_RETURN && passwordLen < MAX_PASSWORD_LENGTH) {
+		while (e.kbd.ascii != 0xD && passwordLen < MAX_PASSWORD_LENGTH) {
 
 			// FIXME: see comment for updateInput()
 			if (!g_system->getEventManager()->pollEvent(e)) continue;

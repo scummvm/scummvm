@@ -286,8 +286,8 @@ uint16 Parallaction::updateInput() {
 			if (e.kbd.flags == Common::KBD_CTRL && e.kbd.keycode == 'd')
 				_debugger->attach();
 			if (getFeatures() & GF_DEMO) break;
-			if (e.kbd.keycode == Common::KEYCODE_l) KeyDown = kEvLoadGame;
-			if (e.kbd.keycode == Common::KEYCODE_s) KeyDown = kEvSaveGame;
+			if (e.kbd.ascii == 'l') KeyDown = kEvLoadGame;
+			if (e.kbd.ascii == 's') KeyDown = kEvSaveGame;
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
