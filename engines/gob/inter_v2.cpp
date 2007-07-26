@@ -485,8 +485,8 @@ void Inter_v2::setupOpcodes() {
 		OPCODE(o1_capturePop),
 		OPCODE(o2_animPalInit),
 		/* 18 */
-		{NULL, ""},
-		{NULL, ""},
+		OPCODE(o2_addCollision),
+		OPCODE(o2_freeCollision),
 		{NULL, ""},
 		{NULL, ""},
 		/* 1C */
@@ -1730,6 +1730,71 @@ bool Inter_v2::o2_animPalInit(OpFuncParams &params) {
 		_animPalHighIndex[index] = _vm->_parse->parseValExpr();
 		_animPalDir[index] = -1;
 	}
+	return false;
+}
+
+bool Inter_v2::o2_addCollision(OpFuncParams &params) {
+	int16 id;
+	int16 left, top, width, height;
+	int16 flags;
+	int16 key;
+	int16 funcSub;
+
+	id = _vm->_parse->parseValExpr();
+	funcSub = _vm->_global->_inter_execPtr - _vm->_game->_totFileData;
+	left = _vm->_parse->parseValExpr();
+	top = _vm->_parse->parseValExpr();
+	width = _vm->_parse->parseValExpr();
+	height = _vm->_parse->parseValExpr();
+	flags = _vm->_parse->parseValExpr();
+	key = load16();
+
+	if (key == 0)
+		key = ABS(id) + 41960;
+
+	_vm->_draw->adjustCoords(0, &left, &top);
+	_vm->_draw->adjustCoords(2, &width, &height);
+
+	if (left < 0) {
+		width += left;
+		left = 0;
+	}
+
+	if (top < 0) {
+		height += top;
+		top = 0;
+	}
+
+	int16 index;
+	if (id < 0)
+		index = _vm->_game->addNewCollision(0xD000 - id, left & 0xFFFC, top & 0xFFFC,
+				left + width + 3, top + height + 3, flags, key, 0, 0);
+	else
+		index = _vm->_game->addNewCollision(0xE000 + id, left, top,
+				left + width - 1, top + height - 1, flags, key, 0, 0);
+
+	_vm->_game->_collisionAreas[index].funcSub = funcSub;
+
+	return false;
+}
+
+bool Inter_v2::o2_freeCollision(OpFuncParams &params) {
+	int16 id;
+
+	id = _vm->_parse->parseValExpr();
+	if (id == -2) {
+		for (int i = 0; i < 150; i++) {
+			if ((_vm->_game->_collisionAreas[i].id & 0xF000) == 0xD000)
+				_vm->_game->_collisionAreas[i].left = 0xFFFF;
+		}
+	} else if (id == -1) {
+		for (int i = 0; i < 150; i++) {
+			if ((_vm->_game->_collisionAreas[i].id & 0xF000) == 0xE000)
+				_vm->_game->_collisionAreas[i].left = 0xFFFF;
+		}
+	} else
+		_vm->_game->freeCollision(0xE000 + id);
+
 	return false;
 }
 

@@ -473,8 +473,8 @@ void Inter_v3::setupOpcodes() {
 		OPCODE(o1_capturePop),
 		OPCODE(o2_animPalInit),
 		/* 18 */
-		{NULL, ""},
-		{NULL, ""},
+		OPCODE(o2_addCollision),
+		OPCODE(o2_freeCollision),
 		OPCODE(o3_getTotTextItemPart),
 		{NULL, ""},
 		/* 1C */

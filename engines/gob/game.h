@@ -152,6 +152,8 @@ public:
 	void totSub(int8 flags, const char *newTotFile);
 	void switchTotSub(int16 index, int16 skipPlay);
 
+	void freeCollision(int16 id);
+
 	virtual void playTot(int16 skipPlay) = 0;
 
 	virtual void clearCollisions(void) = 0;
@@ -221,7 +223,6 @@ protected:
 	void loadImFile(void);
 
 	void setCollisions(void);
-	void freeCollision(int16 id);
 	void collSub(uint16 offset);
 	void collAreaSub(int16 index, int8 enter);
 	int16 openLocTextFile(char *locTextFile, int language);

@@ -379,6 +379,8 @@ protected:
 	bool o2_evaluateStore(OpFuncParams &params);
 	bool o2_printText(OpFuncParams &params);
 	bool o2_animPalInit(OpFuncParams &params);
+	bool o2_addCollision(OpFuncParams &params);
+	bool o2_freeCollision(OpFuncParams &params);
 	bool o2_goblinFunc(OpFuncParams &params);
 	bool o2_createSprite(OpFuncParams &params);
 	bool o2_stopSound(OpFuncParams &params);
@@ -514,8 +516,6 @@ protected:
 	virtual const char *getOpcodeDrawDesc(byte i);
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
 	virtual const char *getOpcodeGoblinDesc(int i);
-
-	bool o4_stub0x18(OpFuncParams &params);
 };
 
 } // End of namespace Gob

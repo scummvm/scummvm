@@ -473,8 +473,8 @@ void Inter_v4::setupOpcodes() {
 		OPCODE(o1_capturePop),
 		OPCODE(o2_animPalInit),
 		/* 18 */
-		OPCODE(o4_stub0x18),
-		{NULL, ""},
+		OPCODE(o2_addCollision),
+		OPCODE(o2_freeCollision),
 		OPCODE(o3_getTotTextItemPart),
 		{NULL, ""},
 		/* 1C */
@@ -710,21 +710,6 @@ const char *Inter_v4::getOpcodeGoblinDesc(int i) {
 		if (_goblinFuncLookUp[j][0] == i)
 			return _opcodesGoblinV4[_goblinFuncLookUp[j][1]].desc;
 	return "";
-}
-
-bool Inter_v4::o4_stub0x18(OpFuncParams &params) {
-	int16 val1 = _vm->_parse->parseValExpr();
-	int16 val2 = _vm->_parse->parseValExpr();
-	int16 val3 = _vm->_parse->parseValExpr();
-	int16 val4 = _vm->_parse->parseValExpr();
-	int16 val5 = _vm->_parse->parseValExpr();
-	int16 val6 = _vm->_parse->parseValExpr();
-	int16 val7 = load16();
-
-	warning("Stub! Woodruff Func 0x18: %d, %d, %d, %d, %d, %d, %d",
-			val1, val2, val3, val4, val5, val6, val7);
-
-	return false;
 }
 
 } // End of namespace Gob
