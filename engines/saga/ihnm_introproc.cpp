@@ -102,8 +102,11 @@ int Scene::IHNMStartProc() {
 
 	n_introscenes = ARRAYSIZE(IHNM_IntroList);
 
-	for (i = 0; i < n_introscenes; i++) {
-		_vm->_scene->queueScene(&IHNM_IntroList[i]);
+	// Queue the company and title videos for the full version of IHNM
+	if (_vm->getGameId() != GID_IHNM_DEMO) {
+		for (i = 0; i < n_introscenes; i++) {
+			_vm->_scene->queueScene(&IHNM_IntroList[i]);
+		}
 	}
 
 	firstScene.loadFlag = kLoadBySceneNumber;
