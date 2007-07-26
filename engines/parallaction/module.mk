@@ -2,7 +2,6 @@ MODULE := engines/parallaction
 
 MODULE_OBJS := \
 	animation.o \
-	archive.o \
 	callables.o \
 	commands.o \
 	debug.o \
