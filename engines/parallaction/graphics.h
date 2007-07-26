@@ -36,14 +36,6 @@
 namespace Parallaction {
 
 
-
-#define SCREEN_WIDTH		320
-#define SCREEN_HEIGHT		200
-#define SCREEN_SIZE 		SCREEN_WIDTH*SCREEN_HEIGHT
-
-#define SCREENMASK_WIDTH	SCREEN_WIDTH/4
-#define SCREENPATH_WIDTH	SCREEN_WIDTH/8
-
 #define BASE_PALETTE_COLORS		32
 #define FIRST_BASE_COLOR		0
 #define LAST_BASE_COLOR			(FIRST_BASE_COLOR+BASE_PALETTE_COLORS-1)
@@ -168,12 +160,13 @@ public:
 	};
 
 public:
+	void screenClip(Common::Rect& r, Common::Point& p);
 
 	// dialogue and text
 	void drawBalloon(const Common::Rect& r, uint16 arg_8);
 	void displayString(uint16 x, uint16 y, const char *text, byte color);
 	void displayCenteredString(uint16 y, const char *text);
-	bool displayWrappedString(char *text, uint16 x, uint16 y, byte color, uint16 wrapwidth = SCREEN_WIDTH);
+	bool displayWrappedString(char *text, uint16 x, uint16 y, byte color, int16 wrapwidth = -1);
 	uint16 getStringWidth(const char *text);
 	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
 

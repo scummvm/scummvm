@@ -59,11 +59,11 @@ void PathBuilder::correctPathPoint(Common::Point &to) {
 	int16 left = to.x;
 	do {
 		right++;
-	} while ((queryPath(right, to.y) == 0) && (right < SCREEN_WIDTH));
+	} while ((queryPath(right, to.y) == 0) && (right < _vm->_screenWidth));
 	do {
 		left--;
 	} while ((queryPath(left, to.y) == 0) && (left > 0));
-	right = (right == SCREEN_WIDTH) ? 1000 : right - to.x;
+	right = (right == _vm->_screenWidth) ? 1000 : right - to.x;
 	left = (left == 0) ? 1000 : to.x - left;
 
 
@@ -74,9 +74,9 @@ void PathBuilder::correctPathPoint(Common::Point &to) {
 	} while ((queryPath(to.x, top) == 0) && (top > 0));
 	do {
 		bottom++;
-	} while ((queryPath(to.x, bottom) == 0) && (bottom < SCREEN_HEIGHT));
+	} while ((queryPath(to.x, bottom) == 0) && (bottom < _vm->_screenHeight));
 	top = (top == 0) ? 1000 : to.y - top;
-	bottom = (bottom == SCREEN_HEIGHT) ? 1000 : bottom - to.y;
+	bottom = (bottom == _vm->_screenHeight) ? 1000 : bottom - to.y;
 
 
 	int16 closeX = (right >= left) ? left : right;
@@ -272,7 +272,7 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNode *Node) {
 
 void Parallaction::clipMove(Common::Point& pos, const WalkNode* from) {
 
-	if ((pos.x < from->_x) && (pos.x < SCREEN_WIDTH) && (queryPath(_vm->_char._ani.width()/2 + pos.x + 2, _vm->_char._ani.height() + pos.y) != 0)) {
+	if ((pos.x < from->_x) && (pos.x < _screenWidth) && (queryPath(_vm->_char._ani.width()/2 + pos.x + 2, _vm->_char._ani.height() + pos.y) != 0)) {
 		pos.x = (pos.x + 2 < from->_x) ? pos.x + 2 : from->_x;
 	}
 
@@ -280,7 +280,7 @@ void Parallaction::clipMove(Common::Point& pos, const WalkNode* from) {
 		pos.x = (pos.x - 2 > from->_x) ? pos.x - 2 : from->_x;
 	}
 
-	if ((pos.y < from->_y) && (pos.y < (SCREEN_HEIGHT - _vm->_char._ani.height())) && (queryPath(_vm->_char._ani.width()/2 + pos.x, _vm->_char._ani.height() + pos.y + 2) != 0)) {
+	if ((pos.y < from->_y) && (pos.y < (_screenHeight - _vm->_char._ani.height())) && (queryPath(_vm->_char._ani.width()/2 + pos.x, _vm->_char._ani.height() + pos.y + 2) != 0)) {
 		pos.y = (pos.y + 2 <= from->_y) ? pos.y + 2 : from->_y;
 	}
 
@@ -429,11 +429,11 @@ void jobWalk(void *parm, Job *j) {
 
 
 void Parallaction::setPath(byte *path) {
-	memcpy(_buffer, path, SCREENPATH_WIDTH*SCREEN_HEIGHT);
+	memcpy(_buffer, path, _screenPathSize);
 }
 
 void Parallaction::initWalk() {
-	_buffer = (byte*)malloc(SCREENPATH_WIDTH * SCREEN_HEIGHT);
+	_buffer = (byte*)malloc(_screenPathSize);
 }
 
 

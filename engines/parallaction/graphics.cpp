@@ -80,7 +80,7 @@ void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
 
 	winding = (winding == 0 ? 1 : 0);
 	byte *s = _resBalloon[winding];
-	byte *d = _buffers[kBitFront] + (r.left + (r.width()+5)/2 - 5) + (r.bottom - 1) * SCREEN_WIDTH;
+	byte *d = _buffers[kBitFront] + (r.left + (r.width()+5)/2 - 5) + (r.bottom - 1) * _vm->_screenWidth;
 
 	for (uint16 i = 0; i < BALLOON_HEIGHT; i++) {
 		for (uint16 j = 0; j < BALLOON_WIDTH; j++) {
@@ -89,7 +89,7 @@ void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
 			s++;
 		}
 
-		d += (SCREEN_WIDTH - BALLOON_WIDTH);
+		d += (_vm->_screenWidth - BALLOON_WIDTH);
 	}
 
 //	printf("done\n");
@@ -255,7 +255,7 @@ void Gfx::setHalfbriteMode(bool enable) {
 
 void Gfx::updateScreen() {
 //	  printf("Gfx::updateScreen()\n");
-	g_system->copyRectToScreen(_buffers[kBitFront], SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	g_system->copyRectToScreen(_buffers[kBitFront], _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
 	g_system->updateScreen();
 	return;
 }
@@ -274,7 +274,7 @@ void Gfx::swapBuffers() {
 //	graphic primitives
 //
 void Gfx::clearScreen(Gfx::Buffers buffer) {
-	memset(_buffers[buffer], 0, SCREEN_WIDTH*SCREEN_HEIGHT);
+	memset(_buffers[buffer], 0, _vm->_screenSize);
 
 	if (buffer == kBitFront) updateScreen();
 
@@ -283,7 +283,7 @@ void Gfx::clearScreen(Gfx::Buffers buffer) {
 
 
 void Gfx::copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer) {
-	memcpy(_buffers[dstbuffer], _buffers[srcbuffer], SCREEN_WIDTH*SCREEN_HEIGHT);
+	memcpy(_buffers[dstbuffer], _buffers[srcbuffer], _vm->_screenSize);
 
 //	if (dstbuffer == kBitFront) updateScreen();
 
@@ -293,25 +293,25 @@ void Gfx::copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer) {
 void Gfx::floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color) {
 //	printf("Gfx::floodFill(%i, %i, %i, %i, %i)\n", color, left, top, right, bottom);
 
-	byte *d = _buffers[buffer] + (r.left + r.top * SCREEN_WIDTH);
+	byte *d = _buffers[buffer] + (r.left + r.top * _vm->_screenWidth);
 	uint16 w = r.width() + 1;
 	uint16 h = r.height() + 1;
 
 	for (uint16 i = 0; i < h; i++) {
 		memset(d, color, w);
 
-		d += SCREEN_WIDTH;
+		d += _vm->_screenWidth;
 	}
 
 	return;
 }
 
-void screenClip(Common::Rect& r, Common::Point& p) {
+void Gfx::screenClip(Common::Rect& r, Common::Point& p) {
 
 	int32 x = r.left;
 	int32 y = r.top;
 
-	Common::Rect screen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	Common::Rect screen(0, 0, _vm->_screenWidth, _vm->_screenHeight);
 
 	r.clip(screen);
 
@@ -332,7 +332,7 @@ void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer) {
 	screenClip(q, dp);
 
 	byte *s = data + q.left + q.top * r.width();
-	byte *d = _buffers[buffer] + dp.x + dp.y * SCREEN_WIDTH;
+	byte *d = _buffers[buffer] + dp.x + dp.y * _vm->_screenWidth;
 
 	for (uint16 i = q.top; i < q.bottom; i++) {
 		for (uint16 j = q.left; j < q.right; j++) {
@@ -342,7 +342,7 @@ void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer) {
 		}
 
 		s += (r.width() - q.width());
-		d += (SCREEN_WIDTH - q.width());
+		d += (_vm->_screenWidth - q.width());
 	}
 
 	return;
@@ -357,12 +357,12 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 	screenClip(q, dp);
 
 	byte *s = data + q.left + q.top * r.width();
-	byte *d = _buffers[buffer] + dp.x + dp.y * SCREEN_WIDTH;
+	byte *d = _buffers[buffer] + dp.x + dp.y * _vm->_screenWidth;
 
 	for (uint16 i = q.top; i < q.bottom; i++) {
 
 		uint16 n = dp.x % 4;
-		byte *m = _buffers[kMask0] + dp.x/4 + (dp.y + i - q.top)*SCREENMASK_WIDTH;
+		byte *m = _buffers[kMask0] + dp.x/4 + (dp.y + i - q.top)*_vm->_screenMaskWidth;
 
 		for (uint16 j = q.left; j < q.right; j++) {
 			if (*s != 0) {
@@ -379,7 +379,7 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 		}
 
 		s += (r.width() - q.right + q.left);
-		d += (SCREEN_WIDTH - q.right + q.left);
+		d += (_vm->_screenWidth - q.right + q.left);
 	}
 
 	return;
@@ -417,8 +417,8 @@ void jobEraseLabel(void *parm, Job *j) {
 	if (_si < 0) _si = 0;
 	if (_di > 190) _di = 190;
 
-	if (label->_cnv._width + _si > SCREEN_WIDTH)
-		_si = SCREEN_WIDTH - label->_cnv._width;
+	if (label->_cnv._width + _si > _vm->_screenWidth)
+		_si = _vm->_screenWidth - label->_cnv._width;
 
 	Common::Rect r(label->_cnv._width, label->_cnv._height);
 	r.moveTo(_vm->_gfx->_labelPosition[1]);
@@ -512,13 +512,13 @@ void Gfx::blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffe
 
 void Gfx::backupDoorBackground(DoorData *data, int16 x, int16 y) {
 
-	byte *s = _buffers[kBit2] + x + y * SCREEN_WIDTH;
+	byte *s = _buffers[kBit2] + x + y * _vm->_screenWidth;
 	byte *d = data->_background;
 
 	for (uint16 i = 0; i < data->_cnv->_height ; i++) {
 		memcpy(d, s, data->_cnv->_width);
 
-		s += SCREEN_WIDTH;
+		s += _vm->_screenWidth;
 		d += data->_cnv->_width;
 	}
 
@@ -528,7 +528,7 @@ void Gfx::backupDoorBackground(DoorData *data, int16 x, int16 y) {
 void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 
 	byte *t = data->_cnv->_data0;
-	byte *s = _buffers[kBitBack] + x + y * SCREEN_WIDTH;
+	byte *s = _buffers[kBitBack] + x + y * _vm->_screenWidth;
 	byte *d = data->_backup;
 
 	for (uint16 i = 0; i < data->_cnv->_height ; i++) {
@@ -540,7 +540,7 @@ void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 			s++;
 		}
 
-		s += (SCREEN_WIDTH - data->_cnv->_width);
+		s += (_vm->_screenWidth - data->_cnv->_width);
 	}
 
 	return;
@@ -591,17 +591,17 @@ void Gfx::makeCnvFromString(StaticCnv *cnv, char *text) {
 }
 
 void Gfx::displayString(uint16 x, uint16 y, const char *text, byte color) {
-	byte *dst = _buffers[kBitFront] + x + y*SCREEN_WIDTH;
+	byte *dst = _buffers[kBitFront] + x + y*_vm->_screenWidth;
 	_font->setColor(color);
-	_font->drawString(dst, SCREEN_WIDTH, text);
+	_font->drawString(dst, _vm->_screenWidth, text);
 }
 
 void Gfx::displayCenteredString(uint16 y, const char *text) {
-	uint16 x = (SCREEN_WIDTH - getStringWidth(text)) / 2;
+	uint16 x = (_vm->_screenWidth - getStringWidth(text)) / 2;
 	displayString(x, y, text, 1);
 }
 
-bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, byte color, uint16 wrapwidth) {
+bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, byte color, int16 wrapwidth) {
 //	printf("Gfx::displayWrappedString(%s, %i, %i, %i, %i)...", text, x, y, color, wrapwidth);
 
 	uint16 lines = 0;
@@ -612,6 +612,9 @@ bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, byte color, uint1
 	uint16 ry = y + 4;
 
 	char token[40];
+
+	if (wrapwidth == -1)
+		wrapwidth = _vm->_screenWidth;
 
 	while (strlen(text) > 0) {
 
@@ -701,11 +704,11 @@ void Gfx::restoreBackground(const Common::Rect& r) {
 	if (left < 0) left = 0;
 	if (top < 0) top = 0;
 
-	if (left >= SCREEN_WIDTH) return;
-	if (top >= SCREEN_HEIGHT) return;
+	if (left >= _vm->_screenWidth) return;
+	if (top >= _vm->_screenHeight) return;
 
-	if (left+width >= SCREEN_WIDTH) width = SCREEN_WIDTH - left;
-	if (top+height >= SCREEN_HEIGHT) height = SCREEN_HEIGHT - top;
+	if (left+width >= _vm->_screenWidth) width = _vm->_screenWidth - left;
+	if (top+height >= _vm->_screenHeight) height = _vm->_screenHeight - top;
 
 	Common::Rect q(width, height);
 	q.moveTo(left, top);
@@ -713,8 +716,8 @@ void Gfx::restoreBackground(const Common::Rect& r) {
 	copyRect(
 		kBitBack,
 		q,
-		_buffers[kBit2] + q.left + q.top * SCREEN_WIDTH,
-		SCREEN_WIDTH
+		_buffers[kBit2] + q.left + q.top * _vm->_screenWidth,
+		_vm->_screenWidth
 	);
 
 	return;
@@ -735,26 +738,26 @@ void Gfx::freeStaticCnv(StaticCnv *cnv) {
 
 
 void Gfx::setBackground(byte *background) {
-	memcpy(_buffers[kBitBack], background, SCREEN_WIDTH*SCREEN_HEIGHT);
+	memcpy(_buffers[kBitBack], background, _vm->_screenSize);
 	copyScreen(kBitBack, kBit2);
 }
 
 void Gfx::setMask(byte *mask) {
-	memcpy(_buffers[kMask0], mask, SCREENMASK_WIDTH*SCREEN_HEIGHT);
+	memcpy(_buffers[kMask0], mask, _vm->_screenMaskSize);
 }
 
 
 
 void Gfx::copyRect(Gfx::Buffers dstbuffer, const Common::Rect& r, byte *src, uint16 pitch) {
 
-	byte *d = _buffers[dstbuffer] + r.left + SCREEN_WIDTH * r.top;
+	byte *d = _buffers[dstbuffer] + r.left + _vm->_screenWidth * r.top;
 	byte *s = src;
 
 	for (uint16 _si = 0; _si < r.height(); _si++) {
 		memcpy(d, s, r.width());
 
 		s += pitch;
-		d += SCREEN_WIDTH;
+		d += _vm->_screenWidth;
 	}
 
 
@@ -763,50 +766,48 @@ void Gfx::copyRect(Gfx::Buffers dstbuffer, const Common::Rect& r, byte *src, uin
 
 void Gfx::grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uint16 pitch) {
 
-	byte *s = _buffers[srcbuffer] + r.left + SCREEN_WIDTH * r.top;
+	byte *s = _buffers[srcbuffer] + r.left + _vm->_screenWidth * r.top;
 
 	for (uint16 i = 0; i < r.height(); i++) {
 		memcpy(dst, s, r.width());
 
-		s += SCREEN_WIDTH;
+		s += _vm->_screenWidth;
 		dst += pitch;
 	}
 
 	return;
 }
 
+/*
+	the following 3 routines are hacks for Nippon Safes coming from the original code,
+	so they shouldn't be modified when adding support for other games
+*/
 
 void Gfx::plotMaskPixel(uint16 x, uint16 y, byte color) {
 
-	uint16 _ax = x + y * SCREEN_WIDTH;
+	uint16 _ax = x + y * _vm->_screenWidth;
 	_buffers[kMask0][_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
 
 	return;
 }
-
-
-
 void Gfx::fillMaskRect(const Common::Rect& r, byte color) {
 
-	uint16 _di = r.left/4 + r.top*80;
+	uint16 _di = r.left/4 + r.top * _vm->_screenMaskWidth;
 
 	for (uint16 _si = r.top; _si < r.bottom; _si++) {
 		memset(&_buffers[kMask0][_di], color, r.width()/4+1);
-		_di += 80;
+		_di += _vm->_screenMaskWidth;
 	}
 
 	return;
 
 }
-
-//	HACK
-//	this routine is only invoked from the 'intgrotta scenario'
-//
 void Gfx::intGrottaHackMask() {
 	memset(_buffers[kMask0] + 3600, 0, 3600);
 	_bgLayers[1] = 500;
 	return;
 }
+
 
 int16 Gfx::queryMask(int16 v) {
 
@@ -821,13 +822,13 @@ Gfx::Gfx(Parallaction* vm) :
 	_vm(vm) {
 
 	g_system->beginGFXTransaction();
-	g_system->initSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	g_system->initSize(_vm->_screenWidth, _vm->_screenHeight);
 	g_system->endGFXTransaction();
 
-	_buffers[kBitFront] = (byte*)malloc(SCREEN_SIZE);
-	_buffers[kBitBack]	= (byte*)malloc(SCREEN_SIZE);
-	_buffers[kBit2]   = (byte*)malloc(SCREEN_SIZE);
-	_buffers[kMask0] = (byte*)malloc(SCREENMASK_WIDTH * SCREEN_HEIGHT);
+	_buffers[kBitFront] = (byte*)malloc(_vm->_screenSize);
+	_buffers[kBitBack]	= (byte*)malloc(_vm->_screenSize);
+	_buffers[kBit2]   = (byte*)malloc(_vm->_screenSize);
+	_buffers[kMask0] = (byte*)malloc(_vm->_screenMaskWidth * _vm->_screenHeight);
 
 	setBlackPalette();
 

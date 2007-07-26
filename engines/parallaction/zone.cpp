@@ -333,7 +333,7 @@ void Parallaction::displayItemComment(ExamineData *data) {
 	char v68[PATH_LEN];
 	strcpy(v68, data->_filename);
 	data->_cnv = _disk->loadStatic(v68);
-	_gfx->flatBlitCnv(data->_cnv, 140, (SCREEN_HEIGHT - data->_cnv->_height)/2, Gfx::kBitFront);
+	_gfx->flatBlitCnv(data->_cnv, 140, (_screenHeight - data->_cnv->_height)/2, Gfx::kBitFront);
 	_gfx->freeStaticCnv(data->_cnv);
 	delete data->_cnv;
 

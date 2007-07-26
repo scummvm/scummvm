@@ -412,9 +412,9 @@ void DosDisk::loadBackground(const char *filename) {
 
 	parseBackground(_resArchive);
 
-	byte *bg = (byte*)calloc(1, SCREEN_WIDTH*SCREEN_HEIGHT);
-	byte *mask = (byte*)calloc(1, SCREENMASK_WIDTH*SCREEN_HEIGHT);
-	byte *path = (byte*)calloc(1, SCREENPATH_WIDTH*SCREEN_HEIGHT);
+	byte *bg = (byte*)calloc(1, _vm->_screenSize);
+	byte *mask = (byte*)calloc(1, _vm->_screenMaskSize);
+	byte *path = (byte*)calloc(1, _vm->_screenPathSize);
 
 
 	Graphics::PackBitsReadStream stream(_resArchive);
@@ -444,13 +444,13 @@ void DosDisk::loadMaskAndPath(const char *name) {
 	if (!_resArchive.openArchivedFile(path))
 		errorFileNotFound(name);
 
-	byte *maskBuf = (byte*)calloc(1, SCREENMASK_WIDTH*SCREEN_HEIGHT);
-	byte *pathBuf = (byte*)calloc(1, SCREENPATH_WIDTH*SCREEN_HEIGHT);
+	byte *maskBuf = (byte*)calloc(1, _vm->_screenMaskSize);
+	byte *pathBuf = (byte*)calloc(1, _vm->_screenPathSize);
 
 	parseDepths(_resArchive);
 
-	_resArchive.read(pathBuf, SCREENPATH_WIDTH*SCREEN_HEIGHT);
-	_resArchive.read(maskBuf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
+	_resArchive.read(pathBuf, _vm->_screenPathSize);
+	_resArchive.read(maskBuf, _vm->_screenMaskSize);
 
 	_vm->_gfx->setMask(maskBuf);
 	_vm->setPath(pathBuf);
@@ -932,7 +932,12 @@ Common::SeekableReadStream *AmigaDisk::openArchivedFile(const char* name, bool e
 	return NULL;
 }
 
-// FIXME: mask values are not computed correctly for level 1 and 2
+/*
+	FIXME: mask values are not computed correctly for level 1 and 2
+
+	NOTE: this routine is only able to build masks for Nippon Safes, since mask widths are hardcoded
+	into the main loop.
+*/
 void buildMask(byte* buf) {
 
 	byte mask1[16] = { 0, 0x80, 0x20, 0xA0, 8, 0x88, 0x28, 0xA8, 2, 0x82, 0x22, 0xA2, 0xA, 0x8A, 0x2A, 0xAA };
@@ -941,7 +946,7 @@ void buildMask(byte* buf) {
 	byte plane0[40];
 	byte plane1[40];
 
-	for (uint32 i = 0; i < 200; i++) {
+	for (int32 i = 0; i < _vm->_screenHeight; i++) {
 
 		memcpy(plane0, buf, 40);
 		memcpy(plane1, buf+40, 40);
@@ -1051,8 +1056,8 @@ void AmigaDisk::loadMask(const char *name) {
 	s->seek(0x126, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
 	Graphics::PackBitsReadStream stream(*s);
 
-	byte *buf = (byte*)malloc(SCREENMASK_WIDTH*SCREEN_HEIGHT);
-	stream.read(buf, SCREENMASK_WIDTH*SCREEN_HEIGHT);
+	byte *buf = (byte*)malloc(_vm->_screenMaskSize);
+	stream.read(buf, _vm->_screenMaskSize);
 	buildMask(buf);
 	_vm->_gfx->setMask(buf);
 	free(buf);
@@ -1074,8 +1079,8 @@ void AmigaDisk::loadPath(const char *name) {
 	s->seek(0x120, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
 
 	Graphics::PackBitsReadStream stream(*s);
-	byte *buf = (byte*)malloc(SCREENPATH_WIDTH*SCREEN_HEIGHT);
-	stream.read(buf, SCREENPATH_WIDTH*SCREEN_HEIGHT);
+	byte *buf = (byte*)malloc(_vm->_screenPathSize);
+	stream.read(buf, _vm->_screenPathSize);
 	_vm->setPath(buf);
 	free(buf);
 	delete s;

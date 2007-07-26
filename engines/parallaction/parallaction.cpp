@@ -174,6 +174,25 @@ int Parallaction::init() {
 
 	_baseTime = 0;
 
+
+	if (_vm->getGameType() == GType_Nippon) {
+		_screenWidth = 320;
+		_screenHeight = 200;
+	} else
+	if (_vm->getGameType() == GType_BRA) {
+		_screenWidth = 640;
+		_screenHeight = 400;
+	}
+
+	_screenMaskWidth = _screenWidth / 4;
+	_screenPathWidth = _screenWidth / 8;
+
+	_screenSize = _screenWidth * _screenHeight;
+	_screenMaskSize = _screenMaskWidth * _screenHeight;
+	_screenPathSize = _screenPathWidth * _screenHeight;
+
+
+
 	if (getPlatform() == Common::kPlatformPC) {
 		_disk = new DosDisk(this);
 	} else {

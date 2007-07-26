@@ -361,6 +361,16 @@ private:
 	const PARALLACTIONGameDescription *_gameDescription;
 
 public:
+	// info
+	int32			_screenWidth;
+	int32 			_screenHeight;
+	int32 			_screenSize;
+
+	int32 			_screenMaskWidth;
+	int32 			_screenMaskSize;
+	int32 			_screenPathWidth;
+	int32 			_screenPathSize;
+
 	SoundMan		*_soundMan;
 
 	Gfx*			_gfx;

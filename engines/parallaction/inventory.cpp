@@ -280,8 +280,8 @@ void openInventory() {
 	int16 slot = getNumUsedSlots();
 	uint16 lines = (slot + 4) / INVENTORY_ITEMS_PER_LINE;
 
-	_invPosition.x = CLIP(_vm->_mousePos.x - (INVENTORY_WIDTH / 2), 0, SCREEN_WIDTH - INVENTORY_WIDTH);
-	_invPosition.y = CLIP(_vm->_mousePos.y - 2 - (lines * INVENTORYITEM_HEIGHT), 0, SCREEN_HEIGHT - lines * INVENTORYITEM_HEIGHT);
+	_invPosition.x = CLIP(_vm->_mousePos.x - (INVENTORY_WIDTH / 2), 0, (int)(_vm->_screenWidth - INVENTORY_WIDTH));
+	_invPosition.y = CLIP(_vm->_mousePos.y - 2 - (lines * INVENTORYITEM_HEIGHT), 0, (int)(_vm->_screenHeight - lines * INVENTORYITEM_HEIGHT));
 
 	refreshInventory();
 
