@@ -1896,7 +1896,9 @@ bool Inter_v1::o1_copySprite(OpFuncParams &params) {
 }
 
 bool Inter_v1::o1_fillRect(OpFuncParams &params) {
-	_vm->_draw->_destSurface = load16();
+	int16 destSurf;
+
+	_vm->_draw->_destSurface = destSurf = load16();
 
 	_vm->_draw->_destSpriteX = _vm->_parse->parseValExpr();
 	_vm->_draw->_destSpriteY = _vm->_parse->parseValExpr();
@@ -1905,7 +1907,7 @@ bool Inter_v1::o1_fillRect(OpFuncParams &params) {
 
 	_vm->_draw->_backColor = _vm->_parse->parseValExpr();
 
-	if (!_vm->_draw->_spritesArray[_vm->_draw->_destSurface])
+	if (!_vm->_draw->_spritesArray[(destSurf > 100) ? (destSurf - 80) : destSurf])
 		return false;
 
 	if (_vm->_draw->_spriteRight < 0) {
