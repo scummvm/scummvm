@@ -28,6 +28,7 @@
 #include "lure/memory.h"
 #include "lure/disk.h"
 #include "lure/decode.h"
+#include "lure/events.h"
 
 namespace Lure {
 
@@ -71,26 +72,40 @@ void Screen::setPalette(Palette *p) {
 	_system.updateScreen();
 }
 
+// setPalette
+// Variation that allows the specification of a subset of a palette passed in to be copied
+
+void Screen::setPalette(Palette *p, uint16 start, uint16 num) {
+	_palette->palette()->copyFrom(p->palette(), start * PALETTE_FADE_INC_SIZE,
+		start * PALETTE_FADE_INC_SIZE, num * PALETTE_FADE_INC_SIZE);
+	_system.setPalette(_palette->data(), 0, GAME_COLOURS);
+	_system.updateScreen();
+}
+
 // paletteFadeIn
 // Fades in the palette. For proper operation, the palette should have been
 // previously set to empty
 
 void Screen::paletteFadeIn(Palette *p) {
+	assert(p->numEntries() <= _palette->numEntries());
+	Events &events = Events::getReference();
 	bool changed;
-	byte *const pDest = p->data();
-	byte *const pTemp = _palette->data();
 
 	do {
 		changed = false;
+		byte *pFinal = p->data();
+		byte *pCurrent = _palette->data();
 
-		for (int palCtr = 0; palCtr < p->numEntries() * 4; ++palCtr)
+		for (int palCtr = 0; palCtr < p->numEntries() * PALETTE_FADE_INC_SIZE; ++palCtr, ++pCurrent, ++pFinal)
 		{
 			if (palCtr % PALETTE_FADE_INC_SIZE == (PALETTE_FADE_INC_SIZE - 1)) continue;
-			bool isDifferent = pTemp[palCtr] < pDest[palCtr];
+			bool isDifferent = *pCurrent < *pFinal;
+
 			if (isDifferent) {
-				if (pDest[palCtr] - pTemp[palCtr] < PALETTE_FADE_INC_SIZE) 
-					pTemp[palCtr] = pDest[palCtr];
-				else pTemp[palCtr] += PALETTE_FADE_INC_SIZE;
+				if ((*pFinal - *pCurrent) < PALETTE_FADE_INC_SIZE) 
+					*pCurrent = *pFinal;
+				else
+					*pCurrent += PALETTE_FADE_INC_SIZE;
 				changed = true;
 			}
 		}
@@ -99,6 +114,7 @@ void Screen::paletteFadeIn(Palette *p) {
 			_system.setPalette(_palette->data(), 0, GAME_COLOURS);
 			_system.updateScreen();
 			_system.delayMillis(20);
+			events.pollEvent();
 		}
 	} while (changed);
 }
@@ -106,14 +122,16 @@ void Screen::paletteFadeIn(Palette *p) {
 // paletteFadeOut
 // Fades the screen to black by gradually decreasing the palette colours
 
-void Screen::paletteFadeOut() {
+void Screen::paletteFadeOut(int numEntries) {
+	assert((uint32)numEntries <= _palette->palette()->size());
+	Events &events = Events::getReference();
 	bool changed;
 
 	do {
 		byte *pTemp = _palette->data();
 		changed = false;
 
-		for (uint32 palCtr = 0; palCtr < _palette->palette()->size(); ++palCtr, ++pTemp) {
+		for (uint32 palCtr = 0; palCtr < (uint32)(numEntries * PALETTE_FADE_INC_SIZE); ++palCtr, ++pTemp) {
 			if (palCtr % PALETTE_FADE_INC_SIZE == (PALETTE_FADE_INC_SIZE - 1)) 
 				continue;
 			bool isDifferent = *pTemp > 0;
@@ -128,6 +146,7 @@ void Screen::paletteFadeOut() {
 			_system.setPalette(_palette->data(), 0, GAME_COLOURS);
 			_system.updateScreen();
 			_system.delayMillis(20);
+			events.pollEvent();
 		}
 	} while (changed);
 }

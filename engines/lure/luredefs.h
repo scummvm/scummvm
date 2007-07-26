@@ -113,6 +113,8 @@ enum Action {
 #define SUB_PALETTE_SIZE 64
 // Palette resources have 220 palette entries
 #define RES_PALETTE_ENTRIES 220
+// Main working palette size
+#define MAIN_PALETTE_SIZE 228
 // Palette colour increment amouns for palette fade in/outs
 #define PALETTE_FADE_INC_SIZE 4
 

@@ -49,9 +49,10 @@ public:
 
 	void setPaletteEmpty();
 	void setPalette(Palette *p);
+	void setPalette(Palette *p, uint16 start, uint16 num);
 	Palette &getPalette() { return *_palette; }
 	void paletteFadeIn(Palette *p);
-	void paletteFadeOut();
+	void paletteFadeOut(int numEntries = MAIN_PALETTE_SIZE);
 	void resetPalette();
 	void empty();
 	void update();

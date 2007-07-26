@@ -66,7 +66,7 @@ public:
 
 	static Game &getReference();
 
-	void tick();
+	void tick(bool fastSpeed = false);
 	void nextFrame();
 	void execute();
 	void setState(uint8 flags) { _state = flags; }
