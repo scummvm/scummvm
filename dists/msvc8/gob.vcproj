@@ -313,6 +313,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\inter_v4.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\map.cpp"
 			>
 		</File>
