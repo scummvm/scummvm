@@ -629,7 +629,8 @@ void Font::textDrawRect(FontId fontId, Surface *ds, const char *text, const Comm
 Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 	FontId fontId = kSmallFont;
 
-	if (_vm->getGameType() == GType_ITE) {
+	// The demo version of IHNM has 3 font types (like ITE), not 6 (like the full version of IHNM)
+	if (_vm->getGameType() == GType_ITE || _vm->getGameId() == GID_IHNM_DEMO) {
 		switch (font)
 		{
 		case (kKnownFontSmall):
@@ -652,7 +653,7 @@ Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 			fontId = _vm->_font->valid(kBigFont) ? kBigFont : kMediumFont;
 			break;
 		}
-	} else if (_vm->getGameType() == GType_IHNM) {
+	} else if (_vm->getGameType() == GType_IHNM && _vm->getGameId() != GID_IHNM_DEMO) {
 		switch (font)
 		{
 		case (kKnownFontSmall):
