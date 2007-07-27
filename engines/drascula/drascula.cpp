@@ -2048,8 +2048,8 @@ void DrasculaEngine::color_abc(int cl) {
 		palJuego[254][3] = 0;
 	} else if (cl == 7) {
 		palJuego[254][0] = 0x38;
-        palJuego[254][1] = 0;
-        palJuego[254][2] = 0;
+		palJuego[254][1] = 0;
+		palJuego[254][2] = 0;
 		palJuego[254][3] = 0;
 	} else if (cl == 8) {
 		palJuego[254][0] = 0x3F;
@@ -2078,6 +2078,22 @@ void DrasculaEngine::color_abc(int cl) {
 
 char DrasculaEngine::LimitaVGA(char valor) {
 	return (valor & 0x3F) * (valor > 0);
+}
+
+// Public domain strrev() function by Bob Stout.
+// Should perhaps be moved to common/util.cpp or similar.
+
+static char *scumm_strrev(char *str) {
+	char *p1, *p2;
+
+	if (!str || !*str)
+		return str;
+	for (p1 = str, p2 = str + strlen(str) - 1; p2 > p1; ++p1, --p2) {
+		*p1 ^= *p2;
+		*p2 ^= *p1;
+		*p1 ^= *p2;
+	}
+	return str;
 }
 
 void DrasculaEngine::centra_texto(char mensaje[], int x_texto, int y_texto) {
@@ -2111,12 +2127,12 @@ void DrasculaEngine::centra_texto(char mensaje[], int x_texto, int y_texto) {
 
 tut:
 	strcpy(bb, m1);
-	strrev(bb);
+	scumm_strrev(bb);
 
 	if (x_texto1 < x_texto2) {
 		strcpy(m3, strrchr(m1, ' '));
 		strcpy(m1, strstr(bb, " "));
-		strrev(m1);
+		scumm_strrev(m1);
 		m1[strlen(m1) - 1] = '\0';
 		strcat(m3, m2);
 		strcpy(m2, m3);
@@ -2129,9 +2145,9 @@ tut:
 
 	if (!strcmp(m2, ""))
 		goto imprimir;
-	strrev(m2);
+	scumm_strrev(m2);
 	m2[strlen(m2) - 1] = '\0';
-	strrev(m2);
+	scumm_strrev(m2);
 	strcpy(m1, m2);
 	strcpy(m2, "");
 	conta_f++;
