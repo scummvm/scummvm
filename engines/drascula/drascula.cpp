@@ -4197,7 +4197,6 @@ void DrasculaEngine::pantalla_63(int fl) {
 }
 
 void DrasculaEngine::conversa(char nom_fich[]) {
-	int h;
 	int juego1 = 1, juego2 = 1, juego3 = 1, juego4 = 1;
 	char frase1[78];
 	char frase2[78];
