@@ -619,13 +619,12 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 				if (len)
 					error("Vorbis library compiled support needed!");
 #endif
-				assert(len);
 				soundMode = 2;
 			}
 			if (!len) {
 				sprintf(fileName, "%s_reg%03d.mp3", soundDesc->name, region);
 				cmpFile = soundDesc->bundle->getFile(fileName, offs, len);
-#ifndef USE_VORBIS
+#ifndef USE_MAD
 				if (len)
 					error("Mad library compiled support needed!");
 #endif
