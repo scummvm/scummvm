@@ -121,9 +121,16 @@ void GobEngine::shutdown() {
 
 void GobEngine::validateLanguage() {
 	if (_vm->_global->_languageWanted != _vm->_global->_language) {
-		warning("Your game version doesn't support the requested language");
-		warning("Using the first language available: %s",
-				getLangDesc(_vm->_global->_language));
+		warning("Your game version doesn't support the requested language %s",
+				getLangDesc(_vm->_global->_languageWanted));
+
+		if (((_vm->_global->_languageWanted == 2) && (_vm->_global->_language == 5)) ||
+		    ((_vm->_global->_languageWanted == 5) && (_vm->_global->_language == 2)))
+			warning("Using %s instead", getLangDesc(_vm->_global->_language));
+		else
+			warning("Using the first language available: %s",
+					getLangDesc(_vm->_global->_language));
+
 		_vm->_global->_languageWanted = _vm->_global->_language;
 	}
 }
