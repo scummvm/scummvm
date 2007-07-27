@@ -289,5 +289,6 @@ void CDECL debugC(int level, uint32 engine_level, const char *s, ...) GCC_PRINTF
 
 extern int gDebugLevel;
 
+char *scumm_strrev(char *str);
 
 #endif
