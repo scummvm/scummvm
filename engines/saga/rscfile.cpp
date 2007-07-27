@@ -683,22 +683,24 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	_vm->_anim->loadCutawayList(resourcePointer, resourceLength);
 
-	_vm->_resource->loadResource(resourceContext, _metaResource.songTableID, resourcePointer, resourceLength);
+	if (_metaResource.songTableID > 0) {
+		_vm->_resource->loadResource(resourceContext, _metaResource.songTableID, resourcePointer, resourceLength);
 
-	if (resourceLength == 0) {
-		error("Resource::loadGlobalResources Can't load songs list for current track");
+		if (resourceLength == 0) {
+			error("Resource::loadGlobalResources Can't load songs list for current track");
+		}
+
+		free(_vm->_music->_songTable);
+		
+		_vm->_music->_songTableLen = resourceLength / 4;
+		_vm->_music->_songTable = (int32 *)malloc(sizeof(int32) * _vm->_music->_songTableLen);
+
+		MemoryReadStream songS(resourcePointer, resourceLength);
+
+		for (i = 0; i < _vm->_music->_songTableLen; i++)
+			_vm->_music->_songTable[i] = songS.readSint32LE();
+		free(resourcePointer);
 	}
-
-	free(_vm->_music->_songTable);
-	
-	_vm->_music->_songTableLen = resourceLength / 4;
-	_vm->_music->_songTable = (int32 *)malloc(sizeof(int32) * _vm->_music->_songTableLen);
-
-	MemoryReadStream songS(resourcePointer, resourceLength);
-
-	for (i = 0; i < _vm->_music->_songTableLen; i++)
-		_vm->_music->_songTable[i] = songS.readSint32LE();
-	free(resourcePointer);
 
 	int voiceLUTResourceID = 0;
 
@@ -730,6 +732,9 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 		voiceLUTResourceID = 28;
 		break;
 	case 7:
+		// IHNM demo
+		_vm->_sndRes->setVoiceBank(0);
+		voiceLUTResourceID = 17;
 		break;
 	case 8:
 		_vm->_sndRes->setVoiceBank(0);
