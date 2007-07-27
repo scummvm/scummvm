@@ -1710,7 +1710,7 @@ void DrasculaEngine::print_abc(char dicho[], int x_pantalla, int y_pantalla) {
 
 	for (h = 0; h < longitud; h++) {
 		y_de_letra = Y_ABC;
-
+/*
 		if (dicho[h] == 'A')
 			x_de_letra = X_A;
 		else if (dicho[h] == 'B')
@@ -1901,7 +1901,7 @@ void DrasculaEngine::print_abc(char dicho[], int x_pantalla, int y_pantalla) {
 			else if (dicho[h] == 'ê')
 				x_de_letra = X_GN;
 		}                    
-
+*/
 		pos_texto[0] = x_de_letra;
 		pos_texto[1] = y_de_letra;
 		pos_texto[2] = x_pantalla;
@@ -3492,7 +3492,7 @@ void DrasculaEngine::introduce_nombre() {
 	    VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		key = getscan();
 		if (key != 0) {
-			if (key == 16)
+/*			if (key == 16)
 				select2[v] = 'q';
 			else if (key == 17)
 				select2[v] = 'w';
@@ -3578,7 +3578,7 @@ void DrasculaEngine::introduce_nombre() {
 				select2[v] = '\0'; 
 			else
 				v--;
-
+*/
 			if (key == 0x0E)
 				v--;
 			else
@@ -4240,7 +4240,7 @@ void DrasculaEngine::conversa(char nom_fich[]) {
 	canal_p(para_codificar); 
 
 	longitud = strlen(frase1);
-	for (h = 0; h < longitud; h++)
+/*	for (h = 0; h < longitud; h++)
 		if (frase1[h] == '§')
 			frase1[h] = ' ';
 
@@ -4258,7 +4258,7 @@ void DrasculaEngine::conversa(char nom_fich[]) {
 	for (h = 0; h < longitud; h++)
 		if (frase4[h] == '§')
 			frase4[h] = ' ';
-
+*/
 	lee_dibujos("car.alg");
 	descomprime_dibujo(dir_hare_fondo,1);
 /* TODO
@@ -4443,7 +4443,7 @@ void DrasculaEngine::print_abc_opc(char dicho[],int x_pantalla, int y_pantalla, 
 			y_de_letra = Y_ABC_OPC_2;
 			y_de_signos = Y_SIGNOS_OPC_2;
 		}
-
+/*
 		if (dicho[h] == 'A')
 			x_de_letra = X_A_OPC;
 		else if (dicho[h] == 'µ')
@@ -4597,7 +4597,7 @@ void DrasculaEngine::print_abc_opc(char dicho[],int x_pantalla, int y_pantalla, 
 			x_de_letra = X_N9_OPC;
 		else if (dicho[h] == '0')
 			x_de_letra = X_N0_OPC;
-
+*/
 		pos_texto[0] = x_de_letra;
 		pos_texto[1] = y_de_letra;
 		pos_texto[2] = x_pantalla;
