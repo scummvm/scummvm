@@ -555,10 +555,15 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&r
 }
 
 static int metaResourceTable[] = { 0, 326, 517, 677, 805, 968, 1165, 0, 1271 };
+static int metaResourceTableDemo[] = { 0, 0, 0, 0, 0, 0, 0, 285, 0 };
 
 void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
-	if (chapter < 0)
-		chapter = 8;
+	if (chapter < 0) {
+		if (_vm->getGameId() != GID_IHNM_DEMO)
+			chapter = 8;
+		else
+			chapter = 7;
+	}
 
 	// TODO
 	//if (module.voiceLUT)
@@ -583,8 +588,13 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	byte *resourcePointer;
 	size_t resourceLength;
 
-	_vm->_resource->loadResource(resourceContext, metaResourceTable[chapter],
-								 resourcePointer, resourceLength);
+	if (_vm->getGameId() != GID_IHNM_DEMO) {
+		_vm->_resource->loadResource(resourceContext, metaResourceTable[chapter],
+									 resourcePointer, resourceLength);
+	} else {
+		_vm->_resource->loadResource(resourceContext, metaResourceTableDemo[chapter],
+									 resourcePointer, resourceLength);
+	}
 
 	if (resourceLength == 0) {
 		error("Resource::loadGlobalResources wrong metaResource");
