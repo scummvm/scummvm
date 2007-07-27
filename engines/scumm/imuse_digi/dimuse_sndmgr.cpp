@@ -615,22 +615,24 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 			if (!len) {
 				sprintf(fileName, "%s_reg%03d.ogg", soundDesc->name, region);
 				cmpFile = soundDesc->bundle->getFile(fileName, offs, len);
+				if (len) {
 #ifndef USE_VORBIS
-				if (len)
 					error("Vorbis library compiled support needed!");
 #endif
-				soundMode = 2;
+					soundMode = 2;
+				}
 			}
 			if (!len) {
 				sprintf(fileName, "%s_reg%03d.mp3", soundDesc->name, region);
 				cmpFile = soundDesc->bundle->getFile(fileName, offs, len);
+				if (len) {
 #ifndef USE_MAD
-				if (len)
 					error("Mad library compiled support needed!");
 #endif
-				assert(len);
-				soundMode = 1;
+					soundMode = 1;
+				}
 			}
+			assert(len);
 
 			if (!soundDesc->compressedStream) {
 				Common::MemoryReadStream *tmp = cmpFile->readStream(len);
