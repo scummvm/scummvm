@@ -480,6 +480,22 @@ protected:		// members
 	int16		getHoverInventoryItem(int16 x, int16 y);
 };
 
+class Parallaction_ns : public Parallaction {
+
+public:
+	Parallaction_ns(OSystem* syst) : Parallaction(syst) { }
+	~Parallaction_ns() { }
+
+};
+
+class Parallaction_br : public Parallaction {
+
+public:
+	Parallaction_br(OSystem* syst) : Parallaction(syst) { }
+	~Parallaction_br() { }
+
+};
+
 // FIXME: remove global
 extern Parallaction *_vm;
 

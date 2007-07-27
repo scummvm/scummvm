@@ -27,6 +27,7 @@
 
 #include "base/plugins.h"
 
+#include "common/config-manager.h"
 #include "common/advancedDetector.h"
 
 #include "parallaction/parallaction.h"
@@ -47,7 +48,6 @@ Common::Platform Parallaction::getPlatform() const { return _gameDescription->de
 }
 
 static const PlainGameDescriptor parallactionGames[] = {
-	{"parallaction", "Parallaction engine game"},
 	{"nippon", "Nippon Safes Inc."},
 	{"bra", "The Big Red Adventure"},
 	{0, 0}
@@ -176,7 +176,7 @@ static const Common::ADParams detectionParams = {
 	// Structure for autoupgrading obsolete targets
 	0,
 	// Name of single gameid (optional)
-	"parallaction",
+	0,
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Fallback callback
@@ -185,7 +185,32 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(PARALLACTION, Parallaction::Parallaction, detectionParams);
+GameList Engine_PARALLACTION_gameIDList() {
+	return GameList(parallactionGames);
+}
+
+GameDescriptor Engine_PARALLACTION_findGameID(const char *gameid) {
+	return Common::AdvancedDetector::findGameID(gameid, parallactionGames);
+}
+
+GameList Engine_PARALLACTION_detectGames(const FSList &fslist) {
+	return Common::AdvancedDetector::detectAllGames(fslist, detectionParams);
+}
+
+PluginError Engine_PARALLACTION_create(OSystem *syst, Engine **engine) {
+	assert(engine);
+	const char *gameid = ConfMan.get("gameid").c_str();
+
+	if (!scumm_stricmp("nippon", gameid)) {
+		*engine = new Parallaction::Parallaction_ns(syst);
+	} else
+	if (!scumm_stricmp("bra", gameid)) {
+		*engine = new Parallaction::Parallaction_br(syst);
+	} else
+		error("Parallaction engine created with invalid gameid ('%s')", gameid);
+
+	return kNoError;
+}
 
 REGISTER_PLUGIN(PARALLACTION, "Parallaction engine", "Nippon Safes Inc. (C) Dynabyte");
 
