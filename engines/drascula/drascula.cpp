@@ -1702,7 +1702,7 @@ void DrasculaEngine::saves() {
 
 void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla) {
 	int pos_texto[8];
-	int i, y_de_letra = 0, x_de_letra = 0, h, longitud;
+	int i = 0, y_de_letra = 0, x_de_letra = 0, h, longitud;
 	longitud = strlen(dicho);
 
 	// FIXME: We can't do this on read-only strings!
@@ -4428,7 +4428,7 @@ void DrasculaEngine::animacion_4() {
 
 void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pantalla, int juego) {
 	int pos_texto[6];
-	int i, y_de_signos, y_de_letra, x_de_letra = 0, h, longitud;
+	int i = 0, y_de_signos, y_de_letra, x_de_letra = 0, h, longitud;
 	longitud = strlen(dicho);
 
 	// FIXME: We can't do this on read-only strings!
