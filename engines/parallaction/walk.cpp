@@ -41,7 +41,7 @@ static uint16	walkData2 = 0; 	// next walk frame
 uint16 queryPath(uint16 x, uint16 y) {
 
 	// NOTE: a better solution would have us mirror each byte in the mask in the loading routine
-	// AmigaDisk::loadPath() instead of doing it here.
+	// AmigaDisk_ns::loadPath() instead of doing it here.
 
 	byte _al = _buffer[y*40 + x/8];
 	byte _dl = (_vm->getPlatform() == Common::kPlatformPC) ? (x & 7) : (7 - (x & 7));

@@ -191,17 +191,24 @@ int Parallaction::init() {
 	_screenMaskSize = _screenMaskWidth * _screenHeight;
 	_screenPathSize = _screenPathWidth * _screenHeight;
 
-
-
-	if (getPlatform() == Common::kPlatformPC) {
-		_disk = new DosDisk(this);
-	} else {
-		if (getFeatures() & GF_DEMO) {
-			strcpy(_location._name, "fognedemo");
+	if (getGameType() == GType_Nippon) {
+		if (getPlatform() == Common::kPlatformPC) {
+			_disk = new DosDisk_ns(this);
+		} else {
+			if (getFeatures() & GF_DEMO) {
+				strcpy(_location._name, "fognedemo");
+			}
+			_disk = new AmigaDisk_ns(this);
+			_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 		}
-		_disk = new AmigaDisk(this);
-		_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
-	}
+	} else
+	if (getGameType() == GType_BRA) {
+		if (getPlatform() == Common::kPlatformPC) {
+			_disk = new DosDisk_br(this);
+		} else
+			error("unsupported platform for Big Red Adventure");
+	} else
+		error("unknown game type");
 
 	_engineFlags = 0;
 

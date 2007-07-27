@@ -408,7 +408,7 @@ void AmigaFont::drawString(byte *buffer, uint32 pitch, const char *s) {
 
 }
 
-Font *DosDisk::createFont(const char *name, Cnv* cnv) {
+Font *DosDisk_ns::createFont(const char *name, Cnv* cnv) {
 	Font *f = 0;
 
 	if (!scumm_stricmp(name, "comic"))
@@ -425,7 +425,7 @@ Font *DosDisk::createFont(const char *name, Cnv* cnv) {
 	return f;
 }
 
-Font *AmigaDisk::createFont(const char *name, Common::SeekableReadStream &stream) {
+Font *AmigaDisk_ns::createFont(const char *name, Common::SeekableReadStream &stream) {
 	// TODO: implement AmigaLabelFont for labels
 	return new AmigaFont(stream);
 }
