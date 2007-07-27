@@ -3767,7 +3767,8 @@ void DrasculaEngine::Des_OFF(char *BufferOFF, char *MiVideoOFF, int Lenght) {
 }
 
 void DrasculaEngine::Des_RLE(char *BufferRLE, char *MiVideoRLE) {
-	unsigned int con, X = 0;
+	signed int con = 0;
+	unsigned int X = 0;
 	unsigned int fExit = 0;
 	char ch, rep;
 	while (!fExit) {
@@ -3811,7 +3812,8 @@ int DrasculaEngine::chkkey() {
 }
 
 char *DrasculaEngine::carga_pcx(char *NamePcc) {
-	unsigned int con, X = 0;
+	signed int con = 0;
+	unsigned int X = 0;
 	unsigned int fExit = 0;
 	char ch, rep;
 	char *AuxPun;
