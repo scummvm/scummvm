@@ -672,18 +672,39 @@ byte *Game::loadLocTexts(int32 *dataSize) {
 
 	handle = openLocTextFile(locTextFile, _vm->_global->_languageWanted);
 	if (handle >= 0) {
+
 		_foundTotLoc = true;
 		_vm->_global->_language = _vm->_global->_languageWanted;
-	}
-	else if (!_foundTotLoc) {
-		for (i = 0; i < 10; i++) {
-			handle = openLocTextFile(locTextFile, i);
+
+	} else if (!_foundTotLoc) {
+		bool found = false;
+
+		if (_vm->_global->_languageWanted == 2) {
+			handle = openLocTextFile(locTextFile, 5);
 			if (handle >= 0) {
-				_vm->_global->_language = i;
-				break;
+				_vm->_global->_language = 5;
+				found = true;
+			}
+		} else if (_vm->_global->_languageWanted == 5) {
+			handle = openLocTextFile(locTextFile, 2);
+			if (handle >= 0) {
+				_vm->_global->_language = 2;
+				found = true;
 			}
 		}
+
+		if (!found) {
+			for (i = 0; i < 10; i++) {
+				handle = openLocTextFile(locTextFile, i);
+				if (handle >= 0) {
+					_vm->_global->_language = i;
+					break;
+				}
+			}
+		}
+
 	}
+
 	debugC(1, kDebugFileIO, "Using language %d for %s",
 			_vm->_global->_language, _curTotFile);
 
