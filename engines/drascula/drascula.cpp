@@ -239,7 +239,7 @@ void DrasculaEngine::carga_info() {
 	hay_que_load = 0;
 }
 
-void DrasculaEngine::lee_dibujos(char *NamePcc) {
+void DrasculaEngine::lee_dibujos(const char *NamePcc) {
 	unsigned int con, x = 0;
 	unsigned int fExit = 0;
 	unsigned char ch,rep;
@@ -2080,7 +2080,7 @@ char DrasculaEngine::LimitaVGA(char valor) {
 	return (valor & 0x3F) * (valor > 0);
 }
 
-void DrasculaEngine::centra_texto(char mensaje[], int x_texto, int y_texto) {
+void DrasculaEngine::centra_texto(const char *mensaje, int x_texto, int y_texto) {
 	char bb[190], m2[190], m1[190] ,mb[10][40];
 	char m3[190];
 	int h, fil, x_texto3, x_texto2, x_texto1, conta_f = 0, ya = 0;
@@ -2711,7 +2711,7 @@ bucless:
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_tabernero(char dicho[], char filename[]) {
+void DrasculaEngine::habla_tabernero(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -2887,7 +2887,7 @@ bucless:
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::hablar(char dicho[], char filename[]) {
+void DrasculaEngine::hablar(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -4196,7 +4196,7 @@ void DrasculaEngine::pantalla_63(int fl) {
 		hay_respuesta = 0;
 }
 
-void DrasculaEngine::conversa(char nom_fich[]) {
+void DrasculaEngine::conversa(const char *nom_fich) {
 	int juego1 = 1, juego2 = 1, juego3 = 1, juego4 = 1;
 	char frase1[78];
 	char frase2[78];
@@ -4619,7 +4619,7 @@ void DrasculaEngine::responde(int funcion) {
 		habla_borracho(TEXTB3, "B3.als");
 }
 
-void DrasculaEngine::habla_pianista(char dicho[], char filename[]) {
+void DrasculaEngine::habla_pianista(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 	int x_habla[4] = { 97, 145, 193, 241};
@@ -4684,7 +4684,7 @@ bucless:
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_borracho(char dicho[], char filename[]) {
+void DrasculaEngine::habla_borracho(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 

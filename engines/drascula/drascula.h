@@ -351,7 +351,7 @@ public:
 	void carga_info();
 	void salir_al_dos(int r);
 
-	void lee_dibujos(char *);
+	void lee_dibujos(const char *);
 	void descomprime_dibujo(char *dir_escritura, int plt);
 
 	typedef unsigned char DacPalette256[256][4];
@@ -498,7 +498,7 @@ public:
 	void FundeDelNegro(int VelocidadDeFundido);
 	char LimitaVGA(char valor);
 	void color_abc(int cl);
-	void centra_texto(char[],int,int);
+	void centra_texto(const char *,int,int);
 	void comienza_sound(char[]);
 	void anima(char animacion[], int FPS);
 	void fin_sound_corte();
@@ -513,11 +513,11 @@ public:
 	void habla_dr_izq(char dicho[], char filename[]);
 	void habla_solo(char[], char[]);
 	void habla_igor_frente(char[], char[]);
-	void habla_tabernero(char dicho[], char filename[]);
+	void habla_tabernero(const char *dicho, const char *filename);
 	void hipo(int);
 	void fin_sound();
 	void habla_bj(char[], char[]);
-	void hablar(char[], char[]);
+	void hablar(const char *, const char *);
 	void playmusic(int p);
 	void stopmusic();
 	int music_status();
@@ -598,13 +598,13 @@ public:
 	void pantalla_0();
 	void pantalla_62(int);
 	void pantalla_63(int);
-	void conversa(char []);
+	void conversa(const char *);
 	void animacion_3();
 	void animacion_4();
 	void print_abc_opc(char[], int, int, int);
 	void responde(int);
-	void habla_borracho(char dicho[], char filename[]);
-	void habla_pianista(char dicho[], char filename[]);
+	void habla_borracho(const char *dicho, const char *filename);
+	void habla_pianista(const char *dicho, const char *filename);
 
 	void MusicFadeout();
 	void ctvd_end();
