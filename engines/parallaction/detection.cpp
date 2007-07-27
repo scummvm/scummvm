@@ -155,7 +155,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GType_BRA,
-		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_MULT
+		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT
 	},
 
 
