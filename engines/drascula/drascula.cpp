@@ -1180,7 +1180,7 @@ void DrasculaEngine::para_cargar(char nom_game[]) {
 	sin_verbo();
 }
 
-void DrasculaEngine::carga_escoba(char nom_fich[13]) {
+void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	int l, obj_salir; 
 	float chiquez, pequegnez = 0;
 	char para_codificar[13];
@@ -1700,13 +1700,16 @@ void DrasculaEngine::saves() {
 	hay_seleccion = 0;
 }
 
-void DrasculaEngine::print_abc(char dicho[], int x_pantalla, int y_pantalla) {
+void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla) {
 	int pos_texto[8];
 	int i, y_de_letra = 0, x_de_letra = 0, h, longitud;
 	longitud = strlen(dicho);
 
+	// FIXME: We can't do this on read-only strings!
+#if 0
 	for (i = 0; dicho[i]; i++)
 		dicho[i] = toupper(dicho[i]);
+#endif
 
 	for (h = 0; h < longitud; h++) {
 		y_de_letra = Y_ABC;
@@ -1988,7 +1991,7 @@ void DrasculaEngine::salva_pantallas() {
 	descomprime_dibujo(dir_dibujo1, MEDIA);
 }
 
-void DrasculaEngine::fliplay(char filefli[], int vel) {
+void DrasculaEngine::fliplay(const char *filefli, int vel) {
 	return;
 	// TODO
 	OpenSSN(filefli, vel);
@@ -2149,7 +2152,7 @@ imprimir:
 	}
 }
 
-void DrasculaEngine::comienza_sound(char fichero[]) {
+void DrasculaEngine::comienza_sound(const char *fichero) {
 	if (hay_sb == 1) { 
 		if ((sku = fopen(fichero, "rb")) == NULL)  {
 			error("no puedo abrir archivo de voz");
@@ -2160,7 +2163,7 @@ void DrasculaEngine::comienza_sound(char fichero[]) {
 	ctvd_output(sku);
 }
 
-void DrasculaEngine::anima(char animacion[], int FPS) {
+void DrasculaEngine::anima(const char *animacion, int FPS) {
 	Common::File FileIn;
 	unsigned Org = 0, Des = 0, j, TotDes = 0;
 	int NFrames = 1, New = 1;
@@ -2251,7 +2254,7 @@ void DrasculaEngine::pausa(int cuanto) {
 	}
 }
 
-void DrasculaEngine::habla_dr_grande(char dicho[], char filename[]) {
+void DrasculaEngine::habla_dr_grande(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 	int x_habla[4] = {47, 93, 139, 185};
@@ -2364,7 +2367,7 @@ void DrasculaEngine::pon_bj() {
 	DIBUJA_BLOQUE_CUT(pos_bj, dir_dibujo3, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_igor_dch(char dicho[], char filename[]) {
+void DrasculaEngine::habla_igor_dch(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -2439,7 +2442,7 @@ bucless:
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_dr_izq(char dicho[], char filename[]) {
+void DrasculaEngine::habla_dr_izq(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -2514,7 +2517,7 @@ bucless:
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_dr_dch(char dicho[], char filename[]) {
+void DrasculaEngine::habla_dr_dch(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -2589,7 +2592,7 @@ bucless:
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_solo(char dicho[], char filename[]) {
+void DrasculaEngine::habla_solo(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -2636,7 +2639,7 @@ bucless:
 	}
 }
 
-void DrasculaEngine::habla_igor_frente(char dicho[], char filename[]) {
+void DrasculaEngine::habla_igor_frente(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -2815,7 +2818,7 @@ void DrasculaEngine::fin_sound() {
 	}
 }
 
-void DrasculaEngine::habla_bj(char dicho[], char filename[]) {
+void DrasculaEngine::habla_bj(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -3043,7 +3046,7 @@ void DrasculaEngine::refresca_pantalla() {
 	actualiza_refresco();
 }
 
-void DrasculaEngine::carga_partida(char nom_game[]) {
+void DrasculaEngine::carga_partida(const char *nom_game) {
 	int l, n_ejec2;
 
 	canal_p(nom_game);
@@ -3078,7 +3081,7 @@ void DrasculaEngine::carga_partida(char nom_game[]) {
 	canal_p(nom_game);
 }
 
-void DrasculaEngine::canal_p(char fich[13]){
+void DrasculaEngine::canal_p(const char *fich){
 	Common::File ald2, ald3;
 
 	char fich2[13];
@@ -3608,7 +3611,7 @@ int DrasculaEngine::LookForFree() {
 	return 1;
 }
 
-void DrasculaEngine::OpenSSN(char *Name, int Pause) {
+void DrasculaEngine::OpenSSN(const char *Name, int Pause) {
 	MiVideoSSN = (char *)malloc(64256);
 	GlobalSpeed = CLOCKS_PER_SEC / Pause;
 	FrameSSN = 0;
@@ -4423,13 +4426,16 @@ void DrasculaEngine::animacion_4() {
 	descomprime_dibujo(dir_hare_dch, 1);
 }
 
-void DrasculaEngine::print_abc_opc(char dicho[],int x_pantalla, int y_pantalla, int juego) {
+void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pantalla, int juego) {
 	int pos_texto[6];
 	int i, y_de_signos, y_de_letra, x_de_letra = 0, h, longitud;
 	longitud = strlen(dicho);
 
+	// FIXME: We can't do this on read-only strings!
+#if 0
 	for (i = 0; dicho[i]; i++)
 		dicho[i] = toupper(dicho[i]);
+#endif
 
 	for (h = 0; h < longitud; h++) {
 		if (juego == 1) {
