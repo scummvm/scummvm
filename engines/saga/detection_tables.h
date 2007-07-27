@@ -722,7 +722,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GType_IHNM,
 		GID_IHNM_DEMO,
 		0,
-		0,
+		IHNMDEMO_DEFAULT_SCENE,
 		&IHNMDEMO_Resources,
 		ARRAYSIZE(IHNMDEMO_GameFonts),
 		IHNMDEMO_GameFonts,

@@ -68,6 +68,7 @@ namespace Saga {
 #define IHNM_DEFAULT_SCENE 151
 
 #define ITEDEMO_DEFAULT_SCENE 68
+#define IHNMDEMO_DEFAULT_SCENE 144
 
 // FONTS
 #define RID_MEDIUM_FONT 0
