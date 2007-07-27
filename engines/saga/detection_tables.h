@@ -606,8 +606,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITECD_GameSound,
 		&ITECD_GameSound,
 		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
-		0,
-		NULL,
+		ARRAYSIZE(ITEPatch_Files),
+		ITEPatch_Files,
 	},
 
 	// Inherit the earth - DOS CD German version
@@ -697,8 +697,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITEDISK_GameSound,
 		&ITEDISK_GameSound,
 		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
-		0,
-		NULL,
+		ARRAYSIZE(ITEPatch_Files),
+		ITEPatch_Files,
 	},
 
 	// IHNM Section ///////////////////////////////////////////////////////////////////////////////////////////
