@@ -460,12 +460,13 @@ int Events::handleOneShot(Event *event) {
 			_vm->_gfx->showCursor(false);
 			break;
 		case kEventSetNormalCursor:
-			// in ITE there is just one cursor
-			if (_vm->getGameType() == GType_IHNM)
+			// in ITE and IHNM demo there is just one cursor
+			if (_vm->getGameType() == GType_IHNM && _vm->getGameId() != GID_IHNM_DEMO)
 				_vm->_gfx->setCursor(kCursorNormal);
 			break;
 		case kEventSetBusyCursor:
-			if (_vm->getGameType() == GType_IHNM)
+			// in ITE and IHNM demo there is just one cursor
+			if (_vm->getGameType() == GType_IHNM && _vm->getGameId() != GID_IHNM_DEMO)
 				_vm->_gfx->setCursor(kCursorBusy);
 			break;
 		default:
