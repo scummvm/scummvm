@@ -1208,13 +1208,16 @@ void AmigaDisk_ns::loadBackground(const char *name) {
 }
 
 void AmigaDisk_ns::loadMask(const char *name) {
+	debugC(5, kDebugDisk, "AmigaDisk_ns::loadMask(%s)", name);
 
 	char path[PATH_LEN];
 	sprintf(path, "%s.mask", name);
 
 	Common::SeekableReadStream *s = openArchivedFile(path, false);
-	if (s == NULL)
+	if (s == NULL) {
+		debugC(5, kDebugDisk, "Mask file not found");
 		return;	// no errors if missing mask files: not every location has one
+	}
 
 	s->seek(0x30, SEEK_SET);
 
@@ -1236,6 +1239,12 @@ void AmigaDisk_ns::loadMask(const char *name) {
 	byte *buf = (byte*)malloc(_vm->_screenMaskSize);
 	stream.read(buf, _vm->_screenMaskSize);
 	buildMask(buf);
+
+	FILE *f = fopen("mask.bin", "wb");
+	fwrite(buf, _vm->_screenMaskSize, 1, f);
+	fclose(f);
+	printf("written\n");
+
 	_vm->_gfx->setMask(buf);
 	free(buf);
 	delete s;
@@ -1272,8 +1281,14 @@ void AmigaDisk_ns::loadScenery(const char* background, const char* mask) {
 	sprintf(path, "%s.bkgnd", background);
 
 	loadBackground(path);
-	loadMask(background);
-	loadPath(background);
+
+	if (mask == NULL) {
+		loadMask(background);
+		loadPath(background);
+	} else {
+		loadMask(mask);
+		loadPath(mask);
+	}
 
 	return;
 }
