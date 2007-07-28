@@ -557,7 +557,8 @@ bucles:
 	} else if (cont_sv == 1500) {
 		salva_pantallas();
 		cont_sv = 0;
-	} else cont_sv++;
+	} else
+		cont_sv++;
 	goto bucles;
 }
 
@@ -1556,7 +1557,9 @@ void DrasculaEngine::update_events() {
 			boton_dch = 0;
 			break;
 		case Common::EVENT_QUIT:
-
+			// TODO
+			salir_al_dos(0);
+			exit(0);
 			break;
 		default:
 			break;
