@@ -1791,206 +1791,200 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 	int i = 0, y_de_letra = 0, x_de_letra = 0, h, longitud;
 	longitud = strlen(dicho);
 
-	// FIXME: We can't do this on read-only strings!
-#if 0
-	for (i = 0; dicho[i]; i++)
-		dicho[i] = toupper(dicho[i]);
-#endif
-
 	for (h = 0; h < longitud; h++) {
 		y_de_letra = Y_ABC;
-/*
-		if (dicho[h] == 'A')
+		char c = toupper(dicho[h]);
+		if (c == 'A')
 			x_de_letra = X_A;
-		else if (dicho[h] == 'B')
+		else if (c == 'B')
 			x_de_letra = X_B;
-		else if (dicho[h] == 'C')
+		else if (c == 'C')
 			x_de_letra = X_C;
-		else if (dicho[h] == 'D')
+		else if (c == 'D')
 			x_de_letra = X_D;
-		else if (dicho[h] == 'E')
+		else if (c == 'E')
 			x_de_letra = X_E;
-		else if (dicho[h] == 'F')
+		else if (c == 'F')
 			x_de_letra = X_F;
-		else if (dicho[h] == 'G')
+		else if (c == 'G')
 			x_de_letra = X_G;
-		else if (dicho[h] == 'H')
+		else if (c == 'H')
 			x_de_letra = X_H;
-		else if (dicho[h] == 'I')
+		else if (c == 'I')
 			x_de_letra = X_I;
-		else if (dicho[h] == 'J')
+		else if (c == 'J')
 			x_de_letra = X_J;
-		else if (dicho[h] == 'K')
+		else if (c == 'K')
 			x_de_letra = X_K;
-		else if (dicho[h] == 'L')
+		else if (c == 'L')
 			x_de_letra = X_L;
-		else if (dicho[h] == 'M')
+		else if (c == 'M')
 			x_de_letra = X_M;
-		else if (dicho[h] == 'N')
+		else if (c == 'N')
 			x_de_letra = X_N;
-		else if (dicho[h] == '¥')
-			x_de_letra = X_GN;
-		else if (dicho[h] == '¤')
-			x_de_letra = X_GN;
-		else if (dicho[h] == 'O')
+//TODO	else if (c == '¥')
+//			x_de_letra = X_GN;
+//		else if (c == '¤')
+//			x_de_letra = X_GN;
+		else if (c == 'O')
 			x_de_letra = X_O;
-		else if (dicho[h] == 'P')
+		else if (c == 'P')
 			x_de_letra = X_P;
-		else if (dicho[h] == 'Q')
+		else if (c == 'Q')
 			x_de_letra = X_Q;
-		else if (dicho[h] == 'R')
+		else if (c == 'R')
 			x_de_letra = X_R;
-		else if (dicho[h] == 'S')
+		else if (c == 'S')
 			x_de_letra = X_S;
-		else if (dicho[h] == 'T')
+		else if (c == 'T')
 			x_de_letra = X_T;
-		else if (dicho[h] == 'U')
+		else if (c == 'U')
 			x_de_letra = X_U;
-		else if (dicho[h] == 'V')
+		else if (c == 'V')
 			x_de_letra = X_V;
-		else if (dicho[h] == 'W')
+		else if (c == 'W')
 			x_de_letra = X_W;
-		else if (dicho[h] == 'X')
+		else if (c == 'X')
 			x_de_letra = X_X;
-		else if (dicho[h] == 'Y')
+		else if (c == 'Y')
 			x_de_letra = X_Y;
-		else if (dicho[h] == 'Z')
+		else if (c == 'Z')
 			x_de_letra = X_Z;
-		else if (dicho[h] == '§' || dicho[h] == ' ')
+		else if (/*c == 0xa7 ||*/ c == ' ')
 			x_de_letra = ESPACIO;
 		else {
 			y_de_letra = Y_SIGNOS;
-			if (dicho[h] == '.')
+			if (c == '.')
 				x_de_letra = X_PUNTO;
-			else if (dicho[h] == ',')
+			else if (c == ',')
 				x_de_letra = X_COMA;
-			else if (dicho[h] == '-')
+			else if (c == '-')
 				x_de_letra = X_GUION;
-			else if (dicho[h] == '?')
+			else if (c == '?')
 				x_de_letra = X_CIERRA_INTERROGACION;
-			else if (dicho[h] == '¨')
-				x_de_letra = X_ABRE_INTERROGACION;
-			else if (dicho[h] == '"')
+//TODO			else if (c == '¨')
+//				x_de_letra = X_ABRE_INTERROGACION;
+			else if (c == '"')
 				x_de_letra = X_COMILLAS;
-			else if (dicho[h] == '!')
+			else if (c == '!')
 				x_de_letra = X_CIERRA_EXCLAMACION;
-			else if (dicho[h] == '­')
-				x_de_letra = X_ABRE_EXCLAMACION;
-			else if (dicho[h] == ';')
+//TODO			else if (c == '­')
+//				x_de_letra = X_ABRE_EXCLAMACION;
+			else if (c == ';')
 				x_de_letra = X_PUNTO_Y_COMA;
-			else if (dicho[h] == '>')
+			else if (c == '>')
 				x_de_letra = X_MAYOR_QUE;
-			else if (dicho[h] == '<')
+			else if (c == '<')
 				x_de_letra = X_MENOR_QUE;
-			else if (dicho[h] == '$')
+			else if (c == '$')
 				x_de_letra = X_DOLAR;
-			else if (dicho[h] == '%')
+			else if (c == '%')
 				x_de_letra = X_POR_CIENTO;
-			else if (dicho[h] == ':')
+			else if (c == ':')
 				x_de_letra = X_DOS_PUNTOS;
-			else if (dicho[h] == '&')
+			else if (c == '&')
 				x_de_letra = X_AND;
-			else if (dicho[h] == '/')
+			else if (c == '/')
 				x_de_letra = X_BARRA;
-			else if (dicho[h] == '(')
+			else if (c == '(')
 				x_de_letra = X_ABRE_PARENTESIS;
-			else if (dicho[h] == ')')
+			else if (c == ')')
 				x_de_letra = X_CIERRA_PARENTESIS;
-			else if (dicho[h] == '*')
+			else if (c == '*')
 				x_de_letra = X_ASTERISCO;
-			else if (dicho[h] == '+')
+			else if (c == '+')
 				x_de_letra = X_MAS;
-			else if (dicho[h] == '1')
+			else if (c == '1')
 				x_de_letra = X_N1;
-			else if (dicho[h] == '2')
+			else if (c == '2')
 				x_de_letra = X_N2;
-			else if (dicho[h] == '3')
+			else if (c == '3')
 				x_de_letra = X_N3;
-			else if (dicho[h] == '4')
+			else if (c == '4')
 				x_de_letra = X_N4;
-			else if (dicho[h] == '5')
+			else if (c == '5')
 				x_de_letra = X_N5;
-			else if (dicho[h] == '6')
+			else if (c == '6')
 				x_de_letra = X_N6;
-			else if (dicho[h] == '7')
+			else if (c == '7')
 				x_de_letra = X_N7;
-			else if (dicho[h] == '8')
+			else if (c == '8')
 				x_de_letra = X_N8;
-			else if (dicho[h] == '9')
+			else if (c == '9')
 				x_de_letra = X_N9;
-			else if (dicho[h] == '0')
+			else if (c == '0')
 				x_de_letra = X_N0;
 			else
 				y_de_letra = Y_ACENTOS;
-
-			if (dicho[h] == ' ')
+/*
+			if (c == ' ')
 				x_de_letra = X_A;
-			else if (dicho[h] == '‚')
+			else if (c == '‚')
 				x_de_letra = X_B;
-			else if (dicho[h] == '¡')
+			else if (c == '¡')
 				x_de_letra = X_C;
-			else if (dicho[h] == '¢')
+			else if (c == '¢')
 				x_de_letra = X_D;
-			else if (dicho[h] == '£')
+			else if (c == '£')
 				x_de_letra = X_E;
-			else if (dicho[h] == '…')
+			else if (c == '…')
 				x_de_letra = X_F;
-			else if (dicho[h] == 'Š')
+			else if (c == 'Š')
 				x_de_letra = X_G;
-			else if (dicho[h] == '')
+			else if (c == '')
 				x_de_letra = X_H;
-			else if (dicho[h] == '•')
+			else if (c == '•')
 				x_de_letra = X_I;
-			else if (dicho[h] == '—')
+			else if (c == '—')
 				x_de_letra = X_J;
-			else if (dicho[h] == 'ƒ')
+			else if (c == 'ƒ')
 				x_de_letra = X_K;
-			else if (dicho[h] == 'ˆ')
+			else if (c == 'ˆ')
 				x_de_letra = X_L;
-			else if (dicho[h] == 'Œ')
+			else if (c == 'Œ')
 				x_de_letra = X_M;
-			else if (dicho[h] == '“')
+			else if (c == '“')
 				x_de_letra = X_N;
-			else if (dicho[h] == '–')
+			else if (c == '–')
 				x_de_letra = X_GN;
-			else if (dicho[h] == '\'')
+			else if (c == '\'')
 				x_de_letra = X_O;
-			else if (dicho[h] == '€')
+			else if (c == '€')
 				x_de_letra = X_P;
-			else if (dicho[h] == '‡')
+			else if (c == '‡')
 				x_de_letra = X_P;
-			else if (dicho[h] == 'µ')
+			else if (c == 'µ')
 				x_de_letra = X_A;
-			else if (dicho[h] == '')
+			else if (c == '')
 				x_de_letra = X_B;
-			else if (dicho[h] == 'Ö')
+			else if (c == 'Ö')
 				x_de_letra = X_C;
-			else if (dicho[h] == 'à')
+			else if (c == 'à')
 				x_de_letra = X_D;
-			else if (dicho[h] == 'é')
+			else if (c == 'é')
 				x_de_letra = X_E;
-			else if (dicho[h] == '·')
+			else if (c == '·')
 				x_de_letra = X_F;
-			else if (dicho[h] == 'Ô')
+			else if (c == 'Ô')
 				x_de_letra = X_G;
-			else if (dicho[h] == 'Þ')
+			else if (c == 'Þ')
 				x_de_letra = X_H;
-			else if (dicho[h] == 'ã')
+			else if (c == 'ã')
 				x_de_letra = X_I;
-			else if (dicho[h] == 'ë')
+			else if (c == 'ë')
 				x_de_letra = X_J;
-			else if (dicho[h] == '¶')
+			else if (c == '¶')
 				x_de_letra = X_K;
-			else if (dicho[h] == 'Ò')
+			else if (c == 'Ò')
 				x_de_letra = X_L;
-			else if (dicho[h] == '×')
+			else if (c == '×')
 				x_de_letra = X_M;
-			else if (dicho[h] == 'â')
+			else if (c == 'â')
 				x_de_letra = X_N;
-			else if (dicho[h] == 'ê')
+			else if (c == 'ê')
 				x_de_letra = X_GN;
-		}
-*/
+*/		}
+
 		pos_texto[0] = x_de_letra;
 		pos_texto[1] = y_de_letra;
 		pos_texto[2] = x_pantalla;
