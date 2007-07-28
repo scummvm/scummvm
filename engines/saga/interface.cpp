@@ -337,8 +337,9 @@ int Interface::activate() {
 		_vm->_script->_skipSpeeches = false;
 		_vm->_actor->_protagonist->_targetObject = ID_NOTHING;
 		unlockMode();
-		if (_panelMode == kPanelMain || _panelMode == kPanelChapterSelection){
-			_saveReminderState = 1;
+		if (_panelMode == kPanelMain || _panelMode == kPanelChapterSelection) {
+			if (_vm->getGameId() != GID_IHNM_DEMO)
+				_saveReminderState = 1;
 		}
 		draw();
 	}
@@ -383,9 +384,11 @@ void Interface::setMode(int mode) {
 
 	if (mode == kPanelMain) {
 		_inMainMode = true;
-		_saveReminderState = 1; //TODO: blinking timeout
+		if (_vm->getGameId() != GID_IHNM_DEMO)
+			_saveReminderState = 1; //TODO: blinking timeout
 	} else if (mode == kPanelChapterSelection) {
-		_saveReminderState = 1;
+		if (_vm->getGameId() != GID_IHNM_DEMO)
+			_saveReminderState = 1;
 	} else {
 		if (mode == kPanelConverse) {
 			_inMainMode = false;
