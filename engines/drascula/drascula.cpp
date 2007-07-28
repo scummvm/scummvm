@@ -942,7 +942,7 @@ void DrasculaEngine::animacion_1() {
 		playmusic(2);
 		pausa(5);
 		fliplay("intro.bin", 12);
-		term_int=1;
+		term_int = 1;
 	}
 	borra_pantalla();
 	lee_dibujos("96.alg");
@@ -1162,7 +1162,7 @@ void DrasculaEngine::sin_verbo() {
 	int c = 171;
 	if (menu_scr == 1)
 		c = 0;
-	if (lleva_objeto==1)
+	if (lleva_objeto == 1)
 		suma_objeto(objeto_que_lleva);
 		DIBUJA_FONDO(0, c, 0, 0, ANCHOBJ,ALTOBJ, dir_hare_fondo, dir_dibujo3);
 
@@ -1338,7 +1338,7 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		alto_hare = (ALTO_PERSONAJE * factor_red[hare_y]) / 100;
 		ancho_hare = (ANCHO_PERSONAJE * factor_red[hare_y]) / 100;
 	}
-	hare_se_mueve=0;
+	hare_se_mueve = 0;
 
 	actualiza_datos();
 
@@ -1356,8 +1356,8 @@ void DrasculaEngine::borra_pantalla() {
 }
 
 void DrasculaEngine::lleva_al_hare(int punto_x, int punto_y) {
-	sitio_x=punto_x;
-	sitio_y=punto_y;
+	sitio_x = punto_x;
+	sitio_y = punto_y;
 	empieza_andar();
 
 	for(;;) {
@@ -2174,9 +2174,9 @@ void DrasculaEngine::centra_texto(const char *mensaje, int x_texto, int y_texto)
 
 	strcpy(m1, mensaje);
 	if (x_texto < 60)
-		x_texto=60;
+		x_texto = 60;
 	if (x_texto > 255)
-		x_texto=255;
+		x_texto = 255;
 
 	x_texto1 = x_texto;
 
@@ -2284,7 +2284,7 @@ void DrasculaEngine::anima(const char *animacion, int FPS) {
 		key = getscan();
 		if (key == 0x01)
 			term_int = 1;
-		if (key !=0)
+		if (key != 0)
 			break;
 	}
 	free(AuxBuffLast);
@@ -2319,7 +2319,15 @@ void DrasculaEngine::FundeAlNegro(int VelocidadDeFundido) {
 }
 
 void DrasculaEngine::pausa(int cuanto) {
-	_system->delayMillis(cuanto);
+	int diferencia, conta_antes;
+
+	conta_antes = vez();
+
+	for (;;) {
+		diferencia = vez() - conta_antes;
+		if (diferencia >= 2 * cuanto)
+			break;
+	}
 }
 
 void DrasculaEngine::habla_dr_grande(const char *dicho, const char *filename) {
@@ -3913,7 +3921,7 @@ void DrasculaEngine::WaitForNext(long TimeMed) {
 }
 
 float DrasculaEngine::vez() {
-	return _system->getMillis() / 1000;
+	return _system->getMillis();
 }
 
 void DrasculaEngine::reduce_hare_chico(int x1,int y1, int x2,int y2, int ancho,int alto, int factor, byte *dir_inicio, byte *dir_fin) {
