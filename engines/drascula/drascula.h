@@ -323,6 +323,7 @@ struct DrasculaGameDescription;
 
 class DrasculaEngine : public ::Engine {
 	int _gameId;
+	Common::EventManager *_eventMan;
 
 protected:
 
@@ -345,6 +346,7 @@ public:
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
+	void update_events();
 
 	void asigna_memoria();
 	void libera_memoria();
@@ -354,13 +356,13 @@ public:
 	void lee_dibujos(const char *);
 	void descomprime_dibujo(char *dir_escritura, int plt);
 
-	typedef unsigned char DacPalette256[256][4];
+	typedef unsigned char DacPalette256[256][3];
 
 	void asigna_rgb(unsigned char *dir_lectura, int plt);
 	void funde_rgb(int plt);
 	void paleta_hare();
 	void ActualizaPaleta();
-	void setvgapalette256(DacPalette256 *PalBuf);
+	void setvgapalette256(byte *PalBuf);
 	void DIBUJA_FONDO(int xorg, int yorg, int xdes, int ydes, int Ancho,
 				int Alto, char *Origen, char *Destino);
 	void DIBUJA_BLOQUE(int xorg, int yorg, int xdes, int ydes, int Ancho,
@@ -373,7 +375,7 @@ public:
 	DacPalette256 palHareClaro;
 	DacPalette256 palHareOscuro;
 
-	char *VGA;
+	byte *VGA;
 
 	char *dir_dibujo1;
 	char *dir_hare_fondo;
@@ -386,12 +388,11 @@ public:
 	char *dir_texto;
 	char *dir_pendulo;
 
-	char cPal[768];
-	char *Buffer_pcx;
+	byte cPal[768];
+	byte *Buffer_pcx;
 	long LenFile;
-	FILE *handle_dibujos;
 
-	FILE *ald, *sku;
+	Common::File *ald, *sku;
 
 	int hay_sb;
 	int nivel_osc, musica_antes, musica_room;
@@ -548,11 +549,11 @@ public:
 	int LookForFree();
 	void OpenSSN(const char *Name,int Pause);
 	void WaitFrameSSN();
-	void MixVideo(char *OldScreen,char *NewScreen);
-	void Des_RLE(char *BufferRLE, char *MiVideoRLE);
-	void Des_OFF(char *BufferOFF, char *MiVideoOFF, int Lenght);
-	void set_dacSSN(char *dacSSN);
-	char *TryInMem(Common::File *Sesion);
+	void MixVideo(byte *OldScreen, byte *NewScreen);
+	void Des_RLE(byte *BufferRLE, byte *MiVideoRLE);
+	void Des_OFF(byte *BufferOFF, byte *MiVideoOFF, int Lenght);
+	void set_dacSSN(byte *dacSSN);
+	byte *TryInMem(Common::File *Sesion);
 	void EndSSN();
 	int PlayFrameSSN();
 	int chkkey();
@@ -563,13 +564,13 @@ public:
 	//TODO duplicate char cPal[768];
 	int Leng;
 
-	char *pointer;
+	byte *pointer;
 	int UsingMem;
 	Common::File *Sesion;
-	char CHUNK;
-	char CMP, dacSSN[768];
-	char *MiVideoSSN;
-	char *mSesion;
+	byte CHUNK;
+	byte CMP, dacSSN[768];
+	byte *MiVideoSSN;
+	byte *mSesion;
 	int FrameSSN;
 	int GlobalSpeed;
 	int LastFrame;
@@ -579,10 +580,10 @@ public:
 	long TimeMed;
 
 	char *carga_pcx(char *NamePcc);
-	void set_dac(char *dac);
+	void set_dac(byte *dac);
 	void WaitForNext(long TimeMed);
 	float vez();
-	void reduce_hare_chico(int,int, int,int, int,int, int, char *,char *);
+	void reduce_hare_chico(int, int, int, int, int, int, int, char *,char *);
 	char codifica(char);
 	void cuadrante_1();
 	void cuadrante_2();
@@ -611,7 +612,7 @@ public:
 	void ctvd_stop();
 	void ctvd_terminate();
 	void ctvd_speaker(int flag);
-	void ctvd_output(FILE *file_handle);
+	void ctvd_output(Common::File *file_handle);
 	void ctvd_init(int b);
 
 

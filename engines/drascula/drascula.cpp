@@ -72,6 +72,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst) : Engine(syst) {
 			_gameId = g->id;
 
 	_rnd = new Common::RandomSource();
+	Common::EventManager *_eventMan = _system->getEventManager();
 
 }
 
@@ -126,7 +127,7 @@ int DrasculaEngine::init() {
 	_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
-	VGA = (char *)malloc(320 * 200);
+	VGA = (byte *)malloc(320 * 200);
 	memset(VGA, 0, 64000);
 
 	lleva_objeto = 0;
@@ -242,15 +243,15 @@ void DrasculaEngine::carga_info() {
 void DrasculaEngine::lee_dibujos(const char *NamePcc) {
 	unsigned int con, x = 0;
 	unsigned int fExit = 0;
-	unsigned char ch,rep;
+	byte ch, rep;
 	Common::File file;
-	char *auxPun;
+	byte *auxPun;
 
 	file.open(NamePcc);
 	if (!file.isOpen())
 		error("missing game data %s %c", NamePcc, 7);
 
-	Buffer_pcx = (char *)malloc(65000);
+	Buffer_pcx = (byte *)malloc(65000);
 	auxPun = Buffer_pcx;
 	file.seek(128);
 	while (!fExit) {
@@ -275,7 +276,7 @@ void DrasculaEngine::lee_dibujos(const char *NamePcc) {
 void DrasculaEngine::descomprime_dibujo(char *dir_escritura, int plt) {
 	memcpy(dir_escritura, Buffer_pcx, 64000);
 	free(Buffer_pcx);
-	asigna_rgb((unsigned char *)cPal, plt); // TODO
+	asigna_rgb((unsigned char *)cPal, plt);
 	if (plt > 1)
 		funde_rgb(plt);
 }
@@ -284,7 +285,7 @@ void DrasculaEngine::paleta_hare() {
 	int color, componente;
 
 	for (color = 235; color < 253; color++)
-		for (componente = 0; componente < 4; componente++)
+		for (componente = 0; componente < 3; componente++)
 			palHare[color][componente] = palJuego[color][componente];
 
 }
@@ -293,10 +294,9 @@ void DrasculaEngine::asigna_rgb(unsigned char *dir_lectura, int plt) {
 	int x, cnt = 0;
 
 	for (x = 0; x < plt; x++) {
-		palJuego[x][0] = dir_lectura[cnt++] / 4;
-		palJuego[x][1] = dir_lectura[cnt++] / 4;
-		palJuego[x][2] = dir_lectura[cnt++] / 4;
-		palJuego[x][3] = 0;
+		palJuego[x][0] = dir_lectura[cnt++];
+		palJuego[x][1] = dir_lectura[cnt++];
+		palJuego[x][2] = dir_lectura[cnt++];
 	}
 	ActualizaPaleta();
 }
@@ -309,7 +309,6 @@ void DrasculaEngine::funde_rgb(int plt) {
 		palJuego[n][0] = inp(0x3c9);
 		palJuego[n][1] = inp(0x3c9);
 		palJuego[n][2] = inp(0x3c9);
-		palJuego[n][3] = 0;
 	}
 	ActualizaPaleta();
 */
@@ -320,23 +319,32 @@ void DrasculaEngine::Negro() {
 	DacPalette256 palNegra;
 
 	for (color = 0; color < 256; color++)
-		for (componente = 0; componente < 4; componente++)
+		for (componente = 0; componente < 3; componente++)
 			palNegra[color][componente] = 0;
 
-	palNegra[254][0] = 0x3F;
-	palNegra[254][1] = 0x3F;
-	palNegra[254][2] = 0x15;
-	palNegra[254][0] = 0;
+	palNegra[254][0] = 0xff;
+	palNegra[254][1] = 0xff;
+	palNegra[254][2] = 0x57;
 
-	setvgapalette256(&palNegra);
+	setvgapalette256((byte *)&palNegra);
 }
 
 void DrasculaEngine::ActualizaPaleta() {
-	setvgapalette256(&palJuego);
+	setvgapalette256((byte *)&palJuego);
 }
 
-void DrasculaEngine::setvgapalette256(DacPalette256 *PalBuf) {
-	g_system->setPalette((byte *)PalBuf, 0, 256);
+void DrasculaEngine::setvgapalette256(byte *PalBuf) {
+	byte pal[256 * 4];
+	int i;
+
+	for (i = 0; i < 256; i++) {
+		pal[i * 4 + 0] = PalBuf[i * 3 + 0] * 4;
+		pal[i * 4 + 1] = PalBuf[i * 3 + 1] * 4;
+		pal[i * 4 + 2] = PalBuf[i * 3 + 2] * 4;
+		pal[i * 4 + 3] = 0;
+	}
+	_system->setPalette(pal, 0, 256);
+	_system->updateScreen();
 }
 
 void DrasculaEngine::DIBUJA_FONDO(int xorg, int yorg, int xdes, int ydes, int Ancho,
@@ -408,7 +416,8 @@ void DrasculaEngine::VUELCA_PANTALLA(int xorg, int yorg, int xdes, int ydes, int
 		Buffer += 320;
 	}
 
-	g_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+	_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+	_system->updateScreen();
 }
 
 void DrasculaEngine::escoba() {
@@ -420,8 +429,8 @@ void DrasculaEngine::escoba() {
 
 	soc = 0;
 	for (l = 0; l < 6; l++) {
-		soc=soc+ANCHO_PERSONAJE;
-		frame_x[l]=soc;
+		soc = soc + ANCHO_PERSONAJE;
+		frame_x[l] = soc;
 	}
 
 	for (n = 1; n < 43; n++)
@@ -477,7 +486,7 @@ bucles:
 	if (boton_dch == 1 && menu_scr == 1) {
 		lee_dibujos("99.alg");
 		descomprime_dibujo(dir_hare_fondo, 1);
-		setvgapalette256(&palJuego);
+		setvgapalette256((byte *)&palJuego);
 		menu_scr = 0;
 		espera_soltar();
 		cont_sv = 0;
@@ -602,7 +611,7 @@ void DrasculaEngine::animacion_1() {
 
 	while (term_int == 0) {
 		playmusic(29);
-		fliplay("logoddm.bin",9);
+		fliplay("logoddm.bin", 9);
 		if ((term_int == 1) || (getscan() == ESC))
 			break;
 		delay(600);
@@ -1193,49 +1202,57 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 
 	buffer_teclado();
 
-	// TODO
-	if ((ald = fopen(nom_fich, "rb")) == NULL) {
+	ald = new Common::File;
+	ald->open(nom_fich);
+	if (!ald->isOpen()) {
 		error("missing data file");
 	}
-	fscanf(ald, "%s", num_room);
-	strcat(num_room,".alg");
-	fscanf(ald, "%d", &musica_room);
-	fscanf(ald, "%s", pantalla_disco);
-	fscanf(ald, "%d", &nivel_osc);
+	int size = ald->size();
+	char *buffer = new char[size];
+	ald->read(buffer, size);
+	delete ald;
+	for (l = 0; l < size; l++)
+		buffer[l] ^= 0xff;
 
-	fscanf(ald, "%d", &objs_room);
+	sscanf(buffer, "%s", num_room);
+	strcat(num_room,".alg");
+	sscanf(buffer, "%d", &musica_room);
+	sscanf(buffer, "%s", pantalla_disco);
+	sscanf(buffer, "%d", &nivel_osc);
+
+	sscanf(buffer, "%d", &objs_room);
 
 	for (l = 0; l < objs_room;l++) {
-		fscanf(ald, "%d", &num_obj[l]);
-		fscanf(ald, "%s", nombre_obj[l]);
-		fscanf(ald, "%d", &x1[l]);
-		fscanf(ald, "%d", &y1[l]);
-		fscanf(ald, "%d", &x2[l]);
-		fscanf(ald, "%d", &y2[l]);
-		fscanf(ald, "%d", &sitiobj_x[l]);
-		fscanf(ald, "%d", &sitiobj_y[l]);
-		fscanf(ald, "%d", &sentidobj[l]);
-		fscanf(ald, "%d", &visible[l]);
-		fscanf(ald, "%d", &espuerta[l]);
+		sscanf(buffer, "%d", &num_obj[l]);
+		sscanf(buffer, "%s", nombre_obj[l]);
+		sscanf(buffer, "%d", &x1[l]);
+		sscanf(buffer, "%d", &y1[l]);
+		sscanf(buffer, "%d", &x2[l]);
+		sscanf(buffer, "%d", &y2[l]);
+		sscanf(buffer, "%d", &sitiobj_x[l]);
+		sscanf(buffer, "%d", &sitiobj_y[l]);
+		sscanf(buffer, "%d", &sentidobj[l]);
+		sscanf(buffer, "%d", &visible[l]);
+		sscanf(buffer, "%d", &espuerta[l]);
 		if (espuerta[l] != 0) {
-			fscanf(ald, "%s", alapantallakeva[l]);
-			fscanf(ald, "%d", &x_alakeva[l]);
-			fscanf(ald, "%d", &y_alakeva[l]);
-			fscanf(ald, "%d", &sentido_alkeva[l]);
-			fscanf(ald, "%d", &alapuertakeva[l]);
+			sscanf(buffer, "%s", alapantallakeva[l]);
+			sscanf(buffer, "%d", &x_alakeva[l]);
+			sscanf(buffer, "%d", &y_alakeva[l]);
+			sscanf(buffer, "%d", &sentido_alkeva[l]);
+			sscanf(buffer, "%d", &alapuertakeva[l]);
 			puertas_cerradas(l);
 		}
 	}
 
-	fscanf(ald, "%d", &suelo_x1);
-	fscanf(ald, "%d", &suelo_y1);
-	fscanf(ald, "%d", &suelo_x2);
-	fscanf(ald, "%d", &suelo_y2);
+	sscanf(buffer, "%d", &suelo_x1);
+	sscanf(buffer, "%d", &suelo_y1);
+	sscanf(buffer, "%d", &suelo_x2);
+	sscanf(buffer, "%d", &suelo_y2);
 
-	fscanf(ald, "%d", &lejos);
-	fscanf(ald, "%d", &cerca);
+	sscanf(buffer, "%d", &lejos);
+	sscanf(buffer, "%d", &cerca);
+	delete buffer;
 
-	fclose(ald);
 	canal_p(para_codificar);
 
 	for (l = 0; l < objs_room; l++) {
@@ -1296,7 +1313,8 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 
 void DrasculaEngine::borra_pantalla() {
 	memset(VGA, 0, 64000);
-	g_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+	_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+	_system->updateScreen();
 }
 
 void DrasculaEngine::lleva_al_hare(int punto_x, int punto_y) {
@@ -1476,6 +1494,42 @@ void DrasculaEngine::comprueba2() {
 char DrasculaEngine::getscan() {
 	// TODO
 	return 0;
+}
+
+void DrasculaEngine::update_events() {
+	Common::Event event;
+
+	while (_eventMan->pollEvent(event)) {
+	switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+//			_keyPressed = event.kbd;
+			break;
+/*		case Common::EVENT_MOUSEMOVE:
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+			_mouseDown = true;
+			_mouseState |= BS1L_BUTTON_DOWN;
+			break;
+		case Common::EVENT_LBUTTONUP:
+			_mouseDown = false;
+			_mouseState |= BS1L_BUTTON_UP;
+			break;
+		case Common::EVENT_WHEELUP:
+			_mouseDown = false;
+			_mouseState |= BS1_WHEEL_UP;
+			break;
+		case Common::EVENT_WHEELDOWN:
+			_mouseDown = false;
+			_mouseState |= BS1_WHEEL_DOWN;
+			break;
+		case Common::EVENT_QUIT:
+			break;
+*/		default:
+			break;
+		}
+	}
 }
 
 void DrasculaEngine::elige_verbo(int verbo) {
@@ -1923,7 +1977,7 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 }
 
 void DrasculaEngine::delay(int ms) {
-	g_system->delayMillis(ms);
+	_system->delayMillis(ms);
 }
 
 void DrasculaEngine::confirma_go() {
@@ -1992,8 +2046,6 @@ void DrasculaEngine::salva_pantallas() {
 }
 
 void DrasculaEngine::fliplay(const char *filefli, int vel) {
-	return;
-	// TODO
 	OpenSSN(filefli, vel);
 	while (PlayFrameSSN() && (!term_int)) {
 		if (chkkey() == 27)
@@ -2012,12 +2064,11 @@ void DrasculaEngine::FundeDelNegro(int VelocidadDeFundido) {
 		for (color = 0; color < 256; color++) {
 			for (componente = 0; componente < 3; componente++) {
 				palFundido[color][componente] = LimitaVGA(palJuego[color][componente] - 63 + fundido);
-				palFundido[color][3] = 0;
 			}
 		}
 		pausa(VelocidadDeFundido);
 
-		setvgapalette256(&palFundido);
+		setvgapalette256((byte *)&palFundido);
 	}
 }
 
@@ -2028,55 +2079,45 @@ void DrasculaEngine::color_abc(int cl) {
 		palJuego[254][0] = 0;
 		palJuego[254][1] = 0;
 		palJuego[254][2] = 0;
-		palJuego[254][3] = 0;
 	} else if (cl == 1) {
 		palJuego[254][0] = 0x10;
 		palJuego[254][1] = 0x3E;
 		palJuego[254][2] = 0x28;
-		palJuego[254][3] = 0;
 	} else if (cl == 3) {
 		palJuego[254][0] = 0x16;
 		palJuego[254][1] = 0x3F;
 		palJuego[254][2] = 0x16;
-		palJuego[254][3] = 0;
 	} else if (cl == 4) {
 		palJuego[254][0] = 0x9;
 		palJuego[254][1] = 0x3F;
 		palJuego[254][2] = 0x12;
-		palJuego[254][3] = 0;
 	} else if (cl == 5) {
 		palJuego[254][0] = 0x3F;
 		palJuego[254][1] = 0x3F;
 		palJuego[254][2] = 0x15;
-		palJuego[254][3] = 0;
 	} else if (cl == 7) {
 		palJuego[254][0] = 0x38;
 		palJuego[254][1] = 0;
 		palJuego[254][2] = 0;
-		palJuego[254][3] = 0;
 	} else if (cl == 8) {
 		palJuego[254][0] = 0x3F;
 		palJuego[254][1] = 0x27;
 		palJuego[254][2] = 0x0B;
-		palJuego[254][3] = 0;
 	} else if (cl == 9) {
 		palJuego[254][0] = 0x2A;
 		palJuego[254][1] = 0;
 		palJuego[254][2] = 0x2A;
-		palJuego[254][3] = 0;
 	} else if (cl == 10) {
 		palJuego[254][0] = 0x30;
 		palJuego[254][1] = 0x30;
 		palJuego[254][2] = 0x30;
-		palJuego[254][3] = 0;
 	} else if (cl == 11) {
 		palJuego[254][0] = 98;
 		palJuego[254][1] = 91;
 		palJuego[254][2] = 100;
-		palJuego[254][3] = 0;
 	};
 
-	setvgapalette256(&palJuego);
+	setvgapalette256((byte *)&palJuego);
 }
 
 char DrasculaEngine::LimitaVGA(char valor) {
@@ -2084,7 +2125,7 @@ char DrasculaEngine::LimitaVGA(char valor) {
 }
 
 void DrasculaEngine::centra_texto(const char *mensaje, int x_texto, int y_texto) {
-	char bb[190], m2[190], m1[190] ,mb[10][40];
+	char bb[190], m2[190], m1[190], mb[10][40];
 	char m3[190];
 	int h, fil, x_texto3, x_texto2, x_texto1, conta_f = 0, ya = 0;
 
@@ -2154,7 +2195,9 @@ imprimir:
 
 void DrasculaEngine::comienza_sound(const char *fichero) {
 	if (hay_sb == 1) {
-		if ((sku = fopen(fichero, "rb")) == NULL) {
+		sku = new Common::File;
+		sku->open(fichero);
+		if (!sku->isOpen()) {
 			error("no puedo abrir archivo de voz");
 		}
 	}
@@ -2187,7 +2230,8 @@ void DrasculaEngine::anima(const char *animacion, int FPS) {
 	carga_pcx(AuxBuffOrg);
 	free(AuxBuffOrg);
 	memcpy(VGA, AuxBuffDes, 64000);
-	g_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+	_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+	_system->updateScreen();
 	set_dac(cPal);
 	memcpy(AuxBuffLast, AuxBuffDes, 64000);
 	WaitForNext(TimeMed);
@@ -2201,7 +2245,8 @@ void DrasculaEngine::anima(const char *animacion, int FPS) {
 		for (j = 0;j < 64000; j++) {
 			VGA[j] = AuxBuffLast[j] = AuxBuffDes[j] ^ AuxBuffLast[j];
 		}
-		g_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+		_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+		_system->updateScreen();
 		WaitForNext(TimeMed);
 		cnt++;
 		key = getscan();
@@ -2218,7 +2263,7 @@ void DrasculaEngine::anima(const char *animacion, int FPS) {
 void DrasculaEngine::animafin_sound_corte() {
 	if (hay_sb == 1) {
 		ctvd_stop();
-		fclose(sku);
+		delete sku;
 		ctvd_terminate();
 	}
 }
@@ -2238,20 +2283,12 @@ void DrasculaEngine::FundeAlNegro(int VelocidadDeFundido) {
 		}
 		pausa(VelocidadDeFundido);
 
-		setvgapalette256(&palFundido);
+		setvgapalette256((byte *)&palFundido);
 	}
 }
 
 void DrasculaEngine::pausa(int cuanto) {
-	int diferencia, conta_antes;
-
-	conta_antes = vez();
-
-	for (;;) {
-		diferencia = vez() - conta_antes;
-		if (diferencia >= 2 * cuanto)
-			break;
-	}
+	_system->delayMillis(cuanto);
 }
 
 void DrasculaEngine::habla_dr_grande(const char *dicho, const char *filename) {
@@ -2273,7 +2310,9 @@ void DrasculaEngine::habla_dr_grande(const char *dicho, const char *filename) {
 	color_abc(ROJO);
 
 	if (hay_sb == 1) {
-		if ((sku = fopen(filename, "rb")) == NULL) {
+		sku = new Common::File;
+		sku->open(filename);
+		if (!sku->isOpen()) {
 			error("no puedo abrir archivo de voz");
 		}
 		ctvd_init(2);
@@ -2308,7 +2347,7 @@ bucless:
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
-		fclose(sku);
+		delete sku;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -2386,8 +2425,9 @@ void DrasculaEngine::habla_igor_dch(const char *dicho, const char *filename) {
 	color_abc(BLANCO);
 
 	if (hay_sb == 1) {
-		// TODO
-		if ((sku = fopen(filename, "rb")) == NULL) {
+		sku = new Common::File;
+		sku->open(filename);
+		if (!sku->isOpen()) {
 			error("no puedo abrir archivo de voz");
 		}
 		ctvd_init(2);
@@ -2429,7 +2469,7 @@ bucless:
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
-		fclose(sku);
+		delete sku;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -2461,8 +2501,9 @@ void DrasculaEngine::habla_dr_izq(const char *dicho, const char *filename) {
 	color_abc(ROJO);
 
 	if (hay_sb == 1) {
-		// TODO
-		if ((sku = fopen(filename, "rb")) == NULL) {
+		sku = new Common::File;
+		sku->open(filename);
+		if (!sku->isOpen()) {
 			error("no puedo abrir archivo de voz");
 		}
 		ctvd_init(2);
@@ -2503,7 +2544,7 @@ bucless:
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
-		fclose(sku);
+		delete sku;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -2537,8 +2578,9 @@ void DrasculaEngine::habla_dr_dch(const char *dicho, const char *filename) {
 	color_abc(ROJO);
 
 	if (hay_sb == 1) {
-		// TODO
-		if ((sku = fopen(filename, "rb")) == NULL) {
+		sku = new Common::File;
+		sku->open(filename);
+		if (!sku->isOpen()) {
 			error("no puedo abrir archivo de voz");
 		}
 		ctvd_init(2);
@@ -2578,7 +2620,7 @@ bucless:
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
-		fclose(sku);
+		delete sku;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -2606,8 +2648,9 @@ void DrasculaEngine::habla_solo(const char *dicho, const char *filename) {
 	color_abc(color_solo);
 
 	if (hay_sb == 1) {
-		// TODO
-		if ((sku = fopen(filename, "rb")) == NULL) {
+		sku = new Common::File;
+		sku->open(filename);
+		if (!sku->isOpen()) {
 			error("no puedo abrir archivo de voz");
 		}
 		ctvd_init(2);
@@ -2630,7 +2673,7 @@ bucless:
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
-		fclose(sku);
+		delete sku;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -2659,7 +2702,9 @@ void DrasculaEngine::habla_igor_frente(const char *dicho, const char *filename) 
 	color_abc(BLANCO);
 
 	if (hay_sb == 1) {
-		if ((sku = fopen(filename, "rb")) == NULL) {
+		sku = new Common::File;
+		sku->open(filename);
+		if (!sku->isOpen()) {
 			error("no puedo abrir archivo de voz");
 		}
 		ctvd_init(2);
@@ -2700,7 +2745,7 @@ bucless:
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
-		fclose(sku);
+		delete sku;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -2733,8 +2778,9 @@ void DrasculaEngine::habla_tabernero(const char *dicho, const char *filename) {
 	color_abc(MARRON);
 
 	if (hay_sb == 1) {
-		// TODO
-		if ((sku = fopen(filename, "rb")) == NULL) {
+		sku = new Common::File;
+		sku->open(filename);
+		if (!sku->isOpen()) {
 			error("no puedo abrir archivo de voz");
 		}
 		ctvd_init(2);
@@ -2771,7 +2817,7 @@ bucless:
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
-		fclose(sku);
+		delete(sku);
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -2814,7 +2860,7 @@ void DrasculaEngine::fin_sound() {
 
 	if (hay_sb == 1) {
 		while (LookForFree() != 0);
-		fclose(sku);
+		delete sku;
 	}
 }
 
@@ -2837,8 +2883,9 @@ void DrasculaEngine::habla_bj(const char *dicho, const char *filename) {
 	color_abc(BLANCO);
 
 	if (hay_sb == 1) {
-		// TODO
-		if ((sku = fopen(filename, "rb")) == NULL) {
+		sku = new Common::File;
+		sku->open(filename);
+		if (!sku->isOpen()) {
 			error("no puedo abrir archivo de voz");
 		}
 		ctvd_init(2);
@@ -2878,7 +2925,7 @@ bucless:
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
-		fclose(sku);
+		delete sku;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -2914,7 +2961,9 @@ void DrasculaEngine::hablar(const char *dicho, const char *filename) {
 	color_abc(AMARILLO);
 
 	if (hay_sb == 1) {
-		if ((sku = fopen(filename, "rb")) == NULL) {
+		sku = new Common::File;
+		sku->open(filename);
+		if (!sku->isOpen()) {
 			error("no puedo abrir archivo de voz");
 		}
 		ctvd_init(2);
@@ -2983,7 +3032,7 @@ bucless:
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
-		fclose(sku);
+		delete sku;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -3050,34 +3099,40 @@ void DrasculaEngine::carga_partida(const char *nom_game) {
 	int l, n_ejec2;
 
 	canal_p(nom_game);
-	// TODO
-	if ((sku = fopen(nom_game, "rb")) == NULL) {
-		error("no puedo abrir el archivo");
+	sku = new Common::File;
+	sku->open(nom_game);
+	if (!ald->isOpen()) {
+		error("missing data file");
 	}
-	fscanf(sku, "%d", &n_ejec2);
+	int size = sku->size();
+	char *buffer = new char[size];
+	sku->read(buffer, size);
+	delete sku;
+	for (l = 0; l < size; l++)
+		buffer[l] ^= 0xff;
+
+	sscanf(buffer, "%d", &n_ejec2);
 	if (n_ejec2 != num_ejec) {
-		fclose(sku);
 		canal_p(nom_game);
 		strcpy(nom_partida, nom_game);
 		salir_al_dos(n_ejec2);
 	}
-	fscanf(sku, "%s", datos_actuales);
-	fscanf(sku, "%d", &hare_x);
-	fscanf(sku, "%d", &hare_y);
-	fscanf(sku, "%d", &sentido_hare);
+	sscanf(buffer, "%s", datos_actuales);
+	sscanf(buffer, "%d", &hare_x);
+	sscanf(buffer, "%d", &hare_y);
+	sscanf(buffer, "%d", &sentido_hare);
 
 	for (l = 1; l < 43; l++) {
-		fscanf(sku, "%d", &objetos_que_tengo[l]);
+		sscanf(buffer, "%d", &objetos_que_tengo[l]);
 	}
 
 	for (l = 0; l < NUM_BANDERAS; l++) {
-		fscanf(sku, "%d", &flags[l]);
+		sscanf(buffer, "%d", &flags[l]);
 	}
 
-	fscanf(sku, "%d", &lleva_objeto);
-	fscanf(sku, "%d", &objeto_que_lleva);
+	sscanf(buffer, "%d", &lleva_objeto);
+	sscanf(buffer, "%d", &objeto_que_lleva);
 
-	fclose(sku);
 	canal_p(nom_game);
 }
 
@@ -3122,7 +3177,6 @@ void DrasculaEngine::color_hare() {
 		for (componente = 0; componente < 3; componente++) {
 			palJuego[color][componente] = palHare[color][componente];
 		}
-		palJuego[color][3] = 0;
 	}
 	ActualizaPaleta();
 }
@@ -3135,7 +3189,6 @@ void DrasculaEngine::funde_hare(int oscuridad) {
 		for (color = 235; color < 253; color++) {
 			for (componente = 0; componente < 3; componente++)
 				palJuego[color][componente] = LimitaVGA( palJuego[color][componente] - 8 + fundido );
-			palJuego[color][3] = 0;
 		}
 	}
 
@@ -3148,7 +3201,6 @@ void DrasculaEngine::paleta_hare_claro() {
 	for (color = 235; color < 253; color++) {
 		for (componente = 0; componente < 3; componente++)
 			palHareClaro[color][componente] = palJuego[color][componente];
-		palHareClaro[color][3] = 0;
 	}
 }
 
@@ -3158,7 +3210,6 @@ void DrasculaEngine::paleta_hare_oscuro() {
 	for (color = 235; color < 253; color++) {
 		for (componente = 0; componente < 3; componente++)
 			palHareOscuro[color][componente] = palJuego[color][componente];
-		palHareOscuro[color][3] = 0;
 	}
 }
 
@@ -3168,7 +3219,6 @@ void DrasculaEngine::hare_claro() {
 	for (color = 235; color < 253; color++) {
 		for (componente = 0; componente < 3; componente++)
 			palJuego[color][componente] = palHareClaro[color][componente];
-		palJuego[color][3] = 0;
 	}
 
 	ActualizaPaleta();
@@ -3612,7 +3662,7 @@ int DrasculaEngine::LookForFree() {
 }
 
 void DrasculaEngine::OpenSSN(const char *Name, int Pause) {
-	MiVideoSSN = (char *)malloc(64256);
+	MiVideoSSN = (byte *)malloc(64256);
 	GlobalSpeed = CLOCKS_PER_SEC / Pause;
 	FrameSSN = 0;
 	UsingMem = 0;
@@ -3627,7 +3677,7 @@ void DrasculaEngine::OpenSSN(const char *Name, int Pause) {
 int DrasculaEngine::PlayFrameSSN() {
 	int Exit = 0;
 	int Lengt;
-	char *BufferSSN;
+	byte *BufferSSN;
 
 	if (!UsingMem)
 		Sesion->read(&CHUNK, 1);
@@ -3660,10 +3710,10 @@ int DrasculaEngine::PlayFrameSSN() {
 			}
 			if (CMP == CMP_RLE) {
 				if (!UsingMem) {
-					BufferSSN = (char *)malloc(Lengt);
+					BufferSSN = (byte *)malloc(Lengt);
 					Sesion->read(BufferSSN, Lengt);
 				} else {
-					BufferSSN = (char *)malloc(Lengt);
+					BufferSSN = (byte *)malloc(Lengt);
 					memcpy(BufferSSN, mSesion, Lengt);
 					mSesion += Lengt;
 				}
@@ -3672,20 +3722,21 @@ int DrasculaEngine::PlayFrameSSN() {
 				if (FrameSSN) {
 					WaitFrameSSN();
 					MixVideo(VGA, MiVideoSSN);
-					g_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+					_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 				} else {
 					WaitFrameSSN();
 					memcpy(VGA, MiVideoSSN, 64000);
-					g_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+					_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 				}
+				_system->updateScreen();
 				FrameSSN++;
 			} else {
 				if (CMP == CMP_OFF) {
 					if (!UsingMem) {
-						BufferSSN = (char *)malloc(Lengt);
+						BufferSSN = (byte *)malloc(Lengt);
 						Sesion->read(BufferSSN, Lengt);
 					} else {
-						BufferSSN = (char *)malloc(Lengt);
+						BufferSSN = (byte *)malloc(Lengt);
 						memcpy(BufferSSN, mSesion, Lengt);
 						mSesion += Lengt;
 					}
@@ -3694,12 +3745,13 @@ int DrasculaEngine::PlayFrameSSN() {
 					if (FrameSSN) {
 						WaitFrameSSN();
 						MixVideo(VGA, MiVideoSSN);
-						g_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+						_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 					} else {
 						WaitFrameSSN();
 						memcpy(VGA, MiVideoSSN, 64000);
-						g_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+						_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 					}
+					_system->updateScreen();
 					FrameSSN++;
 				}
 			}
@@ -3724,13 +3776,13 @@ void DrasculaEngine::EndSSN() {
 	}
 }
 
-char *DrasculaEngine::TryInMem(Common::File *Sesion) {
+byte *DrasculaEngine::TryInMem(Common::File *Sesion) {
 	int Lengt;
 
 	Sesion->seek(0, SEEK_END);
 	Lengt = Sesion->pos();
 	Sesion->seek(0, SEEK_SET);
-	pointer = (char *)malloc(Lengt);
+	pointer = (byte *)malloc(Lengt);
 	if (pointer == NULL)
 		return NULL;
 	Sesion->read(pointer, Lengt);
@@ -3740,24 +3792,13 @@ char *DrasculaEngine::TryInMem(Common::File *Sesion) {
 	return pointer;
 }
 
-void DrasculaEngine::set_dacSSN(char *dacSSN) {
-	int n = 0;
-// TODO
-/*
-	while (inp(0x3da)&8){};
-	while ((inp(0x3da)&8)==0){};
-
-	outp(0x3c8,0);
-	do {
-		outp(0x3c9,dacSSN[n++]);
-		outp(0x3c9,dacSSN[n++]);
-		outp(0x3c9,dacSSN[n++]);
-	} while (n<768);
-*/
+void DrasculaEngine::set_dacSSN(byte *dacSSN) {
+	setvgapalette256((byte *)dacSSN);
 }
 
-void DrasculaEngine::Des_OFF(char *BufferOFF, char *MiVideoOFF, int Lenght) {
-	int x = 0, Reps;
+void DrasculaEngine::Des_OFF(byte *BufferOFF, byte *MiVideoOFF, int Lenght) {
+	int x = 0;
+	unsigned char Reps;
 	int Offset;
 
 	memset(MiVideoSSN, 0, 64000);
@@ -3769,7 +3810,7 @@ void DrasculaEngine::Des_OFF(char *BufferOFF, char *MiVideoOFF, int Lenght) {
 	}
 }
 
-void DrasculaEngine::Des_RLE(char *BufferRLE, char *MiVideoRLE) {
+void DrasculaEngine::Des_RLE(byte *BufferRLE, byte *MiVideoRLE) {
 	signed int con = 0;
 	unsigned int X = 0;
 	unsigned int fExit = 0;
@@ -3790,7 +3831,7 @@ void DrasculaEngine::Des_RLE(char *BufferRLE, char *MiVideoRLE) {
 	}
 }
 
-void DrasculaEngine::MixVideo(char *OldScreen,char *NewScreen) {
+void DrasculaEngine::MixVideo(byte *OldScreen, byte *NewScreen) {
 	int x;
 	for (x = 0; x < 64000; x++)
 		OldScreen[x] ^= NewScreen[x];
@@ -3840,19 +3881,8 @@ char *DrasculaEngine::carga_pcx(char *NamePcc) {
 	return AuxBuffDes;
 }
 
-void DrasculaEngine::set_dac(char *dac) {
-	int n = 0;
-	/*retrazo();
-	// TODO
-	outp(0x3c8,0);
-	do {
-
-		outp(0x3c9,dac[n++]);
-		outp(0x3c9,dac[n++]);
-		outp(0x3c9,dac[n++]);
-
-	} while (n<768);
-	*/
+void DrasculaEngine::set_dac(byte *dac) {
+	setvgapalette256((byte *)dac);
 }
 
 void DrasculaEngine::WaitForNext(long TimeMed) {
@@ -3862,16 +3892,7 @@ void DrasculaEngine::WaitForNext(long TimeMed) {
 }
 
 float DrasculaEngine::vez() {
-/* TODO
-	float trasvase;
-	union REGS in, out;
-
-	in.h.ah=0;
-	int386(0x1A,&in,&out);
-	trasvase=((out.w.cx*65536)+out.w.dx)/0.182;
-	return(trasvase);
-*/
-	return 0;
+	return _system->getMillis() / 1000;
 }
 
 void DrasculaEngine::reduce_hare_chico(int x1,int y1, int x2,int y2, int ancho,int alto, int factor, char *dir_inicio, char *dir_fin) {
@@ -4076,7 +4097,7 @@ void DrasculaEngine::graba_partida(char nom_game[]) {
 }
 
 void DrasculaEngine::aumenta_num_frame() {
-	diff_vez=vez()-conta_vez;
+	diff_vez = vez() - conta_vez;
 
 	if (diff_vez >= 5.7) {
 		conta_vez = vez();
@@ -4200,6 +4221,7 @@ void DrasculaEngine::pantalla_63(int fl) {
 }
 
 void DrasculaEngine::conversa(const char *nom_fich) {
+	int h;
 	int juego1 = 1, juego2 = 1, juego3 = 1, juego4 = 1;
 	char frase1[78];
 	char frase2[78];
@@ -4223,44 +4245,52 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 	strcpy(para_codificar, nom_fich);
 	canal_p(para_codificar);
 
-	// TODO
-	if ((ald = fopen(nom_fich, "rb")) == NULL) {
-		error("no puedo abrir el archivo");
+	ald = new Common::File;
+	ald->open(nom_fich);
+	if (!ald->isOpen()) {
+		error("missing data file");
 	}
-	fscanf(ald, "%s", frase1);
-	fscanf(ald, "%s", frase2);
-	fscanf(ald, "%s", frase3);
-	fscanf(ald, "%s", frase4);
-	fscanf(ald, "%s", suena1);
-	fscanf(ald, "%s", suena2);
-	fscanf(ald, "%s", suena3);
-	fscanf(ald, "%s", suena4);
-	fscanf(ald, "%d", &respuesta1);
-	fscanf(ald, "%d", &respuesta2);
-	fscanf(ald, "%d", &respuesta3);
-	fclose(ald);
+	int size = ald->size();
+	char *buffer = new char[size];
+	ald->read(buffer, size);
+	delete ald;
+	for (h = 0; h < size; h++)
+		buffer[h] ^= 0xff;
+
+	sscanf(buffer, "%s", frase1);
+	sscanf(buffer, "%s", frase2);
+	sscanf(buffer, "%s", frase3);
+	sscanf(buffer, "%s", frase4);
+	sscanf(buffer, "%s", suena1);
+	sscanf(buffer, "%s", suena2);
+	sscanf(buffer, "%s", suena3);
+	sscanf(buffer, "%s", suena4);
+	sscanf(buffer, "%d", &respuesta1);
+	sscanf(buffer, "%d", &respuesta2);
+	sscanf(buffer, "%d", &respuesta3);
+	delete buffer;
 	canal_p(para_codificar);
 
 	longitud = strlen(frase1);
-/*	for (h = 0; h < longitud; h++)
-		if (frase1[h] == '§')
+	for (h = 0; h < longitud; h++)
+		if (frase1[h] == 0xa7)
 			frase1[h] = ' ';
 
 	longitud = strlen(frase2);
 	for (h = 0; h < longitud; h++)
-		if (frase2[h] == '§')
+		if (frase2[h] == 0xa7)
 			frase2[h] = ' ';
 
 	longitud = strlen(frase3);
 	for (h = 0; h < longitud; h++)
-		if (frase3[h] == '§')
+		if (frase3[h] == 0xa7)
 			frase3[h] = ' ';
 
 	longitud = strlen(frase4);
 	for (h = 0; h < longitud; h++)
-		if (frase4[h] == '§')
+		if (frase4[h] == 0xa7)
 			frase4[h] = ' ';
-*/
+
 	lee_dibujos("car.alg");
 	descomprime_dibujo(dir_hare_fondo,1);
 /* TODO
@@ -4642,8 +4672,9 @@ void DrasculaEngine::habla_pianista(const char *dicho, const char *filename) {
 	color_abc(BLANCO);
 
 	if (hay_sb == 1) {
-		// TODO
-		if ((sku = fopen(filename, "rb")) == NULL) {
+		sku = new Common::File;
+		sku->open(filename);
+		if (!sku->isOpen()) {
 			error("no puedo abrir archivo de voz");
 		}
 		ctvd_init(2);
@@ -4678,7 +4709,7 @@ bucless:
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
-		fclose(sku);
+		delete sku;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -4721,8 +4752,9 @@ bebiendo:
 	color_abc(VERDE_OSCURO);
 
 	if (hay_sb == 1) {
-		// TODO
-		if ((sku = fopen(filename, "rb")) == NULL) {
+		sku = new Common::File;
+		sku->open(filename);
+		if (!sku->isOpen()) {
 			error("no puedo abrir archivo de voz\n");
 		}
 		ctvd_init(2);
@@ -4756,7 +4788,7 @@ bucless:
 	if (hay_sb == 1) {
 		if (LookForFree() != 0)
 			goto bucless;
-		fclose(sku);
+		delete sku;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -4797,7 +4829,7 @@ void DrasculaEngine::suma_objeto(int osj) {
 void DrasculaEngine::fin_sound_corte() {
 	if (hay_sb == 1) {
 		ctvd_stop();
-		fclose(sku);
+		delete sku;
 		ctvd_terminate();
 	}
 }
@@ -4820,7 +4852,7 @@ void DrasculaEngine::ctvd_terminate() {
 
 void DrasculaEngine::ctvd_speaker(int flag) {}
 
-void DrasculaEngine::ctvd_output(FILE *file_handle) {}
+void DrasculaEngine::ctvd_output(Common::File *file_handle) {}
 
 void DrasculaEngine::ctvd_init(int b) {
 	//TODO
