@@ -589,10 +589,14 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		_vm->_interface->addToInventory(IHNM_OBJ_PROFILE);
 		_vm->_interface->activate();
 
-		if (loadSceneParams->chapter == 8 || loadSceneParams->chapter == -1)
-			_vm->_interface->setMode(kPanelChapterSelection);
-		else
+		if (loadSceneParams->chapter == 8 || loadSceneParams->chapter == -1) {
+			if (_vm->getGameId() != GID_IHNM_DEMO)
+				_vm->_interface->setMode(kPanelChapterSelection);
+			else
+				_vm->_interface->setMode(kPanelNull);
+		} else {
 			_vm->_interface->setMode(kPanelMain);
+		}
 
 		_inGame = true;
 
