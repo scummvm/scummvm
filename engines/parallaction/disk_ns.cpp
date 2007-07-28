@@ -1240,11 +1240,6 @@ void AmigaDisk_ns::loadMask(const char *name) {
 	stream.read(buf, _vm->_screenMaskSize);
 	buildMask(buf);
 
-	FILE *f = fopen("mask.bin", "wb");
-	fwrite(buf, _vm->_screenMaskSize, 1, f);
-	fclose(f);
-	printf("written\n");
-
 	_vm->_gfx->setMask(buf);
 	free(buf);
 	delete s;
