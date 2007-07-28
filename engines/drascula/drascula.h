@@ -34,6 +34,8 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/hash-str.h"
+#include "common/events.h"
+#include "common/keyboard.h"
 
 #include "engines/engine.h"
 
@@ -323,7 +325,7 @@ struct DrasculaGameDescription;
 
 class DrasculaEngine : public ::Engine {
 	int _gameId;
-	Common::EventManager *_eventMan;
+	Common::KeyState _keyPressed;
 
 protected:
 
@@ -454,16 +456,11 @@ public:
 	int corta_musica;
 	char select[23];
 	int hay_seleccion;
-
-
-	// TODO below
 	int x_raton;
 	int y_raton;
 	int y_raton_ant;
 	int boton_izq;
 	int boton_dch;
-
-
 
 	void escoba();
 	void Negro();
@@ -483,7 +480,7 @@ public:
 	void elige_en_barra();
 	void comprueba1();
 	void comprueba2();
-	char getscan();
+	byte getscan();
 	void elige_verbo(int);
 	void mesa();
 	void saves();
@@ -556,7 +553,6 @@ public:
 	byte *TryInMem(Common::File *Sesion);
 	void EndSSN();
 	int PlayFrameSSN();
-	int chkkey();
 
 	byte *AuxBuffOrg;
 	byte *AuxBuffLast;

@@ -26,6 +26,7 @@
 #include "common/stdafx.h"
 
 #include "common/events.h"
+#include "common/keyboard.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
@@ -72,8 +73,6 @@ DrasculaEngine::DrasculaEngine(OSystem *syst) : Engine(syst) {
 			_gameId = g->id;
 
 	_rnd = new Common::RandomSource();
-	Common::EventManager *_eventMan = _system->getEventManager();
-
 }
 
 DrasculaEngine::~DrasculaEngine() {
@@ -301,18 +300,7 @@ void DrasculaEngine::asigna_rgb(byte *dir_lectura, int plt) {
 	ActualizaPaleta();
 }
 
-void DrasculaEngine::funde_rgb(int plt) {
-/* TODO: ???
-	unsigned int n;
-
-	for (n = 0; n < plt; n++) {
-		palJuego[n][0] = inp(0x3c9);
-		palJuego[n][1] = inp(0x3c9);
-		palJuego[n][2] = inp(0x3c9);
-	}
-	ActualizaPaleta();
-*/
-}
+void DrasculaEngine::funde_rgb(int plt) {}
 
 void DrasculaEngine::Negro() {
 	int color, componente;
@@ -407,12 +395,13 @@ void DrasculaEngine::DIBUJA_BLOQUE_CUT(int *Array, byte *Origen, byte *Destino) 
 
 void DrasculaEngine::VUELCA_PANTALLA(int xorg, int yorg, int xdes, int ydes, int Ancho, int Alto, byte *Buffer) {
 	int x;
+	byte *ptr = VGA;
 
-	VGA += xdes + ydes * 320;
+	ptr += xdes + ydes * 320;
 	Buffer += xorg + yorg * 320;
 	for (x = 0; x < Alto; x++) {
-		memcpy(VGA, Buffer, Ancho);
-		VGA += 320;
+		memcpy(ptr, Buffer, Ancho);
+		ptr += 320;
 		Buffer += 320;
 	}
 
@@ -1189,10 +1178,36 @@ void DrasculaEngine::para_cargar(char nom_game[]) {
 	sin_verbo();
 }
 
+static char *getLine(Common::File *fp, char *buf, int len) {
+	int c;
+	char *b;
+
+	for (;;) {
+		b = buf;
+		while (!fp->eos()) {
+			c = fp->readByte() ^ 0xff;
+			if (c == '\r')
+				continue;
+			if (c == '\n')
+				break;
+			if (b - buf >= (len - 1))
+				break;
+			*b++ = c;
+		}
+		*b = '\0';
+		if (fp->eos() && b == buf)
+			return NULL;
+		if (b != buf)
+			break;
+	}
+	return buf;
+}
+
 void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	int l, obj_salir;
 	float chiquez, pequegnez = 0;
 	char para_codificar[13];
+	char buffer[256];
 
 	hay_nombre = 0;
 
@@ -1208,50 +1223,73 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		error("missing data file");
 	}
 	int size = ald->size();
-	char *buffer = new char[size];
-	ald->read(buffer, size);
-	delete ald;
-	for (l = 0; l < size; l++)
-		buffer[l] ^= 0xff;
 
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%s", num_room);
 	strcat(num_room,".alg");
+	
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &musica_room);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%s", pantalla_disco);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &nivel_osc);
 
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &objs_room);
 
 	for (l = 0; l < objs_room;l++) {
+		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &num_obj[l]);
+		getLine(ald, buffer, size);
 		sscanf(buffer, "%s", nombre_obj[l]);
+		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &x1[l]);
+		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &y1[l]);
+		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &x2[l]);
+		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &y2[l]);
+		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &sitiobj_x[l]);
+		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &sitiobj_y[l]);
+		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &sentidobj[l]);
+		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &visible[l]);
+		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &espuerta[l]);
 		if (espuerta[l] != 0) {
+			getLine(ald, buffer, size);
 			sscanf(buffer, "%s", alapantallakeva[l]);
+			getLine(ald, buffer, size);
 			sscanf(buffer, "%d", &x_alakeva[l]);
+			getLine(ald, buffer, size);
 			sscanf(buffer, "%d", &y_alakeva[l]);
+			getLine(ald, buffer, size);
 			sscanf(buffer, "%d", &sentido_alkeva[l]);
+			getLine(ald, buffer, size);
 			sscanf(buffer, "%d", &alapuertakeva[l]);
 			puertas_cerradas(l);
 		}
 	}
 
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &suelo_x1);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &suelo_y1);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &suelo_x2);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &suelo_y2);
 
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &lejos);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &cerca);
-	delete buffer;
+	delete ald;
 
 	canal_p(para_codificar);
 
@@ -1375,16 +1413,16 @@ void DrasculaEngine::comprueba_objetos() {
 				&& x_raton < x2[l] && y_raton < y2[l]
 				&& visible[l] == 1 && espuerta[l] == 0) {
 			strcpy(texto_nombre, nombre_obj[l]);
-			hay_nombre=1;
-			veo=1;
+			hay_nombre = 1;
+			veo = 1;
 		}
 	}
 
 	if (x_raton > hare_x + 2 && y_raton > hare_y + 2
 			&& x_raton < hare_x + ancho_hare - 2 && y_raton < hare_y + alto_hare - 2 && veo == 0) {
 		strcpy(texto_nombre, "hacker");
-		hay_nombre=1;
-		veo=1;
+		hay_nombre = 1;
+		veo = 1;
 	}
 
 	if (veo == 0)
@@ -1392,19 +1430,11 @@ void DrasculaEngine::comprueba_objetos() {
 }
 
 void DrasculaEngine::espera_soltar() {
-	// TODO
-	//boton_izq=sal.w.bx & 1;
-	//boton_dch=(sal.w.bx >> 1) & 1;
-	//x_raton=sal.w.cx >> 1;
-	//y_raton=sal.w.dx;
+	update_events();
 }
 
 void DrasculaEngine::MirarRaton() {
-	// TODO
-	//boton_izq=sal.w.bx & 1;
-	//boton_dch=(sal.w.bx >> 1) & 1;
-	//x_raton=sal.w.cx >> 1;
-	//y_raton=sal.w.dx;
+	update_events();
 }
 
 void DrasculaEngine::elige_en_barra() {
@@ -1491,39 +1521,41 @@ void DrasculaEngine::comprueba2() {
 	}
 }
 
-char DrasculaEngine::getscan() {
-	// TODO
-	return 0;
+byte DrasculaEngine::getscan() {
+	update_events();
+
+	return _keyPressed.ascii;
 }
 
 void DrasculaEngine::update_events() {
 	Common::Event event;
+	Common::EventManager *eventMan = _system->getEventManager();
 
-	while (_eventMan->pollEvent(event)) {
+	while (eventMan->pollEvent(event)) {
 	switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-//			_keyPressed = event.kbd;
+			_keyPressed = event.kbd;
 			break;
-/*		case Common::EVENT_MOUSEMOVE:
-			_mouseX = event.mouse.x;
-			_mouseY = event.mouse.y;
+		case Common::EVENT_KEYUP:
+			_keyPressed = event.kbd;
+			break;
+		case Common::EVENT_MOUSEMOVE:
+			x_raton = event.mouse.x;
+			y_raton = event.mouse.y;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			_mouseDown = true;
-			_mouseState |= BS1L_BUTTON_DOWN;
+			boton_izq = 1;
 			break;
 		case Common::EVENT_LBUTTONUP:
-			_mouseDown = false;
-			_mouseState |= BS1L_BUTTON_UP;
+			boton_izq = 0;
 			break;
-		case Common::EVENT_WHEELUP:
-			_mouseDown = false;
-			_mouseState |= BS1_WHEEL_UP;
+		case Common::EVENT_RBUTTONDOWN:
+			boton_dch = 1;
 			break;
-		case Common::EVENT_WHEELDOWN:
-			_mouseDown = false;
-			_mouseState |= BS1_WHEEL_DOWN;
+		case Common::EVENT_RBUTTONUP:
+			boton_dch = 0;
 			break;
+/*		// TODO
 		case Common::EVENT_QUIT:
 			break;
 */		default:
@@ -2048,7 +2080,7 @@ void DrasculaEngine::salva_pantallas() {
 void DrasculaEngine::fliplay(const char *filefli, int vel) {
 	OpenSSN(filefli, vel);
 	while (PlayFrameSSN() && (!term_int)) {
-		if (chkkey() == 27)
+		if (getscan() == 27)
 			term_int = 1;
 	}
 	EndSSN();
@@ -2300,9 +2332,9 @@ void DrasculaEngine::habla_dr_grande(const char *dicho, const char *filename) {
 	int longitud;
 	longitud = strlen(dicho);
 
-	tiempol = time(NULL);
+	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
-	srand(tiempou);
+	_rnd->setSeed(tiempou);
 
 	buffer_teclado();
 
@@ -2321,7 +2353,7 @@ void DrasculaEngine::habla_dr_grande(const char *dicho, const char *filename) {
 
 bucless:
 
-	cara = rand() % 4;
+	cara = _rnd->getRandomNumber(3);
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	DIBUJA_FONDO(interf_x[l] + 24, interf_y[l], 0, 45, 39, 31, dir_dibujo2, dir_zona_pantalla);
 	DIBUJA_FONDO(x_habla[cara], 1, 171, 68, 45, 48, dir_dibujo2, dir_zona_pantalla);
@@ -2417,7 +2449,7 @@ void DrasculaEngine::habla_igor_dch(const char *dicho, const char *filename) {
 
 	tiempol = time (NULL);
 	tiempou = (unsigned int)tiempol / 2;
-	srand(tiempou);
+	_rnd->setSeed(tiempou);
 
 	buffer_teclado();
 
@@ -2436,7 +2468,7 @@ void DrasculaEngine::habla_igor_dch(const char *dicho, const char *filename) {
 
 bucless:
 
-	cara = rand() % 8;
+	cara = _rnd->getRandomNumber(7);
 
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
@@ -2491,9 +2523,8 @@ void DrasculaEngine::habla_dr_izq(const char *dicho, const char *filename) {
 	int longitud;
 	longitud = strlen(dicho);
 
-	tiempol = time(NULL); // TODO
+	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
-	srand(tiempou);
 
 	buffer_teclado();
 
@@ -2512,7 +2543,7 @@ void DrasculaEngine::habla_dr_izq(const char *dicho, const char *filename) {
 
 bucless:
 
-	cara=rand() % 8;
+	cara = _rnd->getRandomNumber(7);
 
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
@@ -2567,10 +2598,9 @@ void DrasculaEngine::habla_dr_dch(const char *dicho, const char *filename) {
 	int longitud;
 	longitud = strlen(dicho);
 
-	// TODO
-	tiempol = time(NULL);
+	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
-	srand(tiempou);
+	_rnd->setSeed(tiempou);
 
 	buffer_teclado();
 
@@ -2589,7 +2619,7 @@ void DrasculaEngine::habla_dr_dch(const char *dicho, const char *filename) {
 
 bucless:
 
-	cara = rand() % 8;
+	cara = _rnd->getRandomNumber(7);
 
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	actualiza_refresco_antes();
@@ -2640,9 +2670,9 @@ void DrasculaEngine::habla_solo(const char *dicho, const char *filename) {
 	int longitud;
 	longitud = strlen(dicho);
 
-	tiempol = time(NULL);
+	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
-	srand(tiempou);
+	_rnd->setSeed(tiempou);
 
 	color_abc(color_solo);
 
@@ -2691,10 +2721,9 @@ void DrasculaEngine::habla_igor_frente(const char *dicho, const char *filename) 
 	int longitud;
 	longitud = strlen(dicho);
 
-	// TODO
-	tiempol = time(NULL);
+	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
-	srand(tiempou);
+	_rnd->setSeed(tiempou);
 
 	buffer_teclado();
 
@@ -2713,7 +2742,7 @@ void DrasculaEngine::habla_igor_frente(const char *dicho, const char *filename) 
 
 bucless:
 
-	cara = rand() % 8;
+	cara = _rnd->getRandomNumber(7);
 
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
@@ -2768,9 +2797,9 @@ void DrasculaEngine::habla_tabernero(const char *dicho, const char *filename) {
 	int longitud;
 	longitud = strlen(dicho);
 
-	tiempol = time(NULL);
+	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
-	srand(tiempou);
+	_rnd->setSeed(tiempou);
 
 	buffer_teclado();
 
@@ -2792,7 +2821,7 @@ bucless:
 	if (music_status() == 0)
 		playmusic(musica_room);
 
-	cara = rand() % 9;
+	cara = _rnd->getRandomNumber(8);
 
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
@@ -2873,9 +2902,9 @@ void DrasculaEngine::habla_bj(const char *dicho, const char *filename) {
 	int longitud;
 	longitud = strlen(dicho);
 
-	tiempol = time(NULL);
+	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
-	srand(tiempou);
+	_rnd->setSeed(tiempou);
 
 	buffer_teclado();
 
@@ -2894,7 +2923,7 @@ void DrasculaEngine::habla_bj(const char *dicho, const char *filename) {
 
 bucless:
 
-	cara = rand() % 5;
+	cara = _rnd->getRandomNumber(4);
 
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
@@ -2950,9 +2979,9 @@ void DrasculaEngine::hablar(const char *dicho, const char *filename) {
 	int longitud;
 	longitud = strlen(dicho);
 
-	tiempol = time(NULL);
+	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
-	srand(tiempou);
+	_rnd->setSeed(tiempou);
 
 	if (factor_red[hare_y + alto_hare] == 100)
 		suma_1_pixel = 0;
@@ -2972,7 +3001,7 @@ void DrasculaEngine::hablar(const char *dicho, const char *filename) {
 
 bucless:
 
-	cara = rand() % 6;
+	cara = _rnd->getRandomNumber(5);
 
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
@@ -3096,6 +3125,7 @@ void DrasculaEngine::refresca_pantalla() {
 
 void DrasculaEngine::carga_partida(const char *nom_game) {
 	int l, n_ejec2;
+	char buffer[256];
 
 	canal_p(nom_game);
 	sku = new Common::File;
@@ -3104,33 +3134,38 @@ void DrasculaEngine::carga_partida(const char *nom_game) {
 		error("missing data file");
 	}
 	int size = sku->size();
-	char *buffer = new char[size];
-	sku->read(buffer, size);
-	delete sku;
-	for (l = 0; l < size; l++)
-		buffer[l] ^= 0xff;
 
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &n_ejec2);
 	if (n_ejec2 != num_ejec) {
 		canal_p(nom_game);
 		strcpy(nom_partida, nom_game);
 		salir_al_dos(n_ejec2);
 	}
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%s", datos_actuales);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &hare_x);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &hare_y);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &sentido_hare);
 
 	for (l = 1; l < 43; l++) {
+		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &objetos_que_tengo[l]);
 	}
 
 	for (l = 0; l < NUM_BANDERAS; l++) {
+		getLine(ald, buffer, size);
 		sscanf(buffer, "%d", &flags[l]);
 	}
 
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &lleva_objeto);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &objeto_que_lleva);
+	delete ald;
 
 	canal_p(nom_game);
 }
@@ -3143,12 +3178,12 @@ void DrasculaEngine::canal_p(const char *fich){
 
 	strcpy(fich2, "top");
 
-	// TODO
 	ald3.open(fich);
 	if (!ald3.isOpen()) {
 		error("no puedo abrir el archivo codificado");
 	}
 
+	// TODO
 	ald2.open(fich2, Common::File::kFileWriteMode);
 	if (!ald2.isOpen()) {
 		error("no puedo abrir el archivo destino");
@@ -3532,7 +3567,7 @@ void DrasculaEngine::cursor_mesa() {
 }
 
 void DrasculaEngine::introduce_nombre() {
-	char key;
+	byte key;
 	int v = 0, h = 0;
 	char select2[23];
 	strcpy(select2, "                      ");
@@ -3841,19 +3876,6 @@ void DrasculaEngine::WaitFrameSSN() {
 	LastFrame = LastFrame + GlobalSpeed;
 }
 
-int DrasculaEngine::chkkey() {
-	//TODO
-/*
-	union REGS registros;
-
-	registros.h.ah=0x06;
-	registros.h.dl=0xff;
-	intdos(&registros,&registros);
-	return(registros.h.al);
-*/
-	return 0;
-}
-
 byte *DrasculaEngine::carga_pcx(byte *NamePcc) {
 	signed int con = 0;
 	unsigned int X = 0;
@@ -4021,10 +4043,8 @@ void DrasculaEngine::refresca_62_antes() {
 	int borracho_x[] = {1, 42, 83, 124, 165, 206, 247, 1 };
 	int diferencia;
 
-	DIBUJA_FONDO(123, velas_y[frame_velas], 142, 14, 39, 13,
-				dir_dibujo3, dir_zona_pantalla);
-	DIBUJA_FONDO(cirio_x[frame_velas], 146, 311, 80, 4, 8,
-				dir_dibujo3, dir_zona_pantalla);
+	DIBUJA_FONDO(123, velas_y[frame_velas], 142, 14, 39, 13, dir_dibujo3, dir_zona_pantalla);
+	DIBUJA_FONDO(cirio_x[frame_velas], 146, 311, 80, 4, 8, dir_dibujo3, dir_zona_pantalla);
 
 	if (parpadeo == 5)
 		DIBUJA_FONDO(1, 149, 127, 52, 9, 5, dir_dibujo3, dir_zona_pantalla);
@@ -4033,16 +4053,14 @@ void DrasculaEngine::refresca_62_antes() {
 		DIBUJA_FONDO(31, 138, 178, 51, 18, 16, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[11] == 0)
-		DIBUJA_FONDO(pianista_x[frame_piano], 157, 245, 130, 29, 42,
-					dir_dibujo3, dir_zona_pantalla);
+		DIBUJA_FONDO(pianista_x[frame_piano], 157, 245, 130, 29, 42, dir_dibujo3, dir_zona_pantalla);
 	else if (flags[5] == 0)
 		DIBUJA_FONDO(145, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
 	else
 		DIBUJA_FONDO(165, 140, 229, 117, 43, 59, dir_dibujo3, dir_zona_pantalla);
 
 	if (flags[12] == 1)
-		DIBUJA_FONDO(borracho_x[frame_borracho], 82, 170, 50, 40, 53,
-					dir_dibujo3, dir_zona_pantalla);
+		DIBUJA_FONDO(borracho_x[frame_borracho], 82, 170, 50, 40, 53, dir_dibujo3, dir_zona_pantalla);
 
 	diferencia = vez() - conta_ciego_vez;
 	if (diferencia > 6) {
@@ -4052,7 +4070,7 @@ void DrasculaEngine::refresca_62_antes() {
 				frame_borracho = 0;
 				flags[12] = 0;
 			}
-		} else if (((rand() % 95) == 15) && (flags[13] == 0))
+		} else if ((_rnd->getRandomNumber(94) == 15) && (flags[13] == 0))
 			flags[12] = 1;
 
 		frame_velas++;
@@ -4061,7 +4079,7 @@ void DrasculaEngine::refresca_62_antes() {
 		frame_piano++;
 		if (frame_piano == 9)
 			frame_piano = 0;
-		parpadeo = rand() % 11;
+		parpadeo = _rnd->getRandomNumber(10);
 		conta_ciego_vez = vez();
 	}
 }
@@ -4238,6 +4256,7 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 	int usado1 = 0;
 	int usado2 = 0;
 	int usado3 = 0;
+	char buffer[256];
 
 	rompo_y_salgo = 0;
 
@@ -4250,24 +4269,30 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 		error("missing data file");
 	}
 	int size = ald->size();
-	char *buffer = new char[size];
-	ald->read(buffer, size);
-	delete ald;
-	for (h = 0; h < size; h++)
-		buffer[h] ^= 0xff;
 
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%s", frase1);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%s", frase2);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%s", frase3);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%s", frase4);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%s", suena1);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%s", suena2);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%s", suena3);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%s", suena4);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &respuesta1);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &respuesta2);
+	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &respuesta3);
-	delete buffer;
+	delete ald;
 	canal_p(para_codificar);
 
 	longitud = strlen(frase1);
@@ -4357,7 +4382,7 @@ bucle_opc:
 		responde(respuesta3);
 	} else if ((boton_izq == 1) && (juego4 == 2)) {
 		hablar(frase4, suena4);
-		rompo_y_salgo=1;
+		rompo_y_salgo = 1;
 	}
 
 	if (boton_izq == 1)
@@ -4662,9 +4687,9 @@ void DrasculaEngine::habla_pianista(const char *dicho, const char *filename) {
 	int longitud;
 	longitud = strlen(dicho);
 
-	tiempol = time(NULL);
+	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
-	srand(tiempou);
+	_rnd->setSeed(tiempou);
 
 	buffer_teclado();
 
@@ -4683,7 +4708,7 @@ void DrasculaEngine::habla_pianista(const char *dicho, const char *filename) {
 
 bucless:
 
-	cara = rand() % 4;
+	cara = _rnd->getRandomNumber(3);
 
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
@@ -4729,9 +4754,9 @@ void DrasculaEngine::habla_borracho(const char *dicho, const char *filename) {
 	int longitud;
 	longitud = strlen(dicho);
 
-	tiempol = time(NULL);
+	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
-	srand(tiempou);
+	_rnd->setSeed(tiempou);
 
 	lee_dibujos("an11y13.alg");
 	descomprime_dibujo(dir_hare_frente, 1);
@@ -4763,7 +4788,7 @@ bebiendo:
 
 bucless:
 
-	cara = rand() % 8;
+	cara = _rnd->getRandomNumber(7);
 
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
