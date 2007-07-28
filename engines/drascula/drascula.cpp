@@ -293,9 +293,9 @@ void DrasculaEngine::asigna_rgb(byte *dir_lectura, int plt) {
 	int x, cnt = 0;
 
 	for (x = 0; x < plt; x++) {
-		palJuego[x][0] = dir_lectura[cnt++];
-		palJuego[x][1] = dir_lectura[cnt++];
-		palJuego[x][2] = dir_lectura[cnt++];
+		palJuego[x][0] = dir_lectura[cnt++] / 4;
+		palJuego[x][1] = dir_lectura[cnt++] / 4;
+		palJuego[x][2] = dir_lectura[cnt++] / 4;
 	}
 	ActualizaPaleta();
 }
@@ -2367,7 +2367,7 @@ bucless:
 	DIBUJA_FONDO(x_habla[cara], 1, 171, 68, 45, 48, dir_dibujo2, dir_zona_pantalla);
 	l++;
 	if (l == 7)
-		l=0;
+		l =0;
 
 	if (con_voces == 0)
 		centra_texto(dicho, 191, 69);
@@ -3230,7 +3230,7 @@ void DrasculaEngine::funde_hare(int oscuridad) {
 	for (fundido = oscuridad; fundido >= 0; fundido--) {
 		for (color = 235; color < 253; color++) {
 			for (componente = 0; componente < 3; componente++)
-				palJuego[color][componente] = LimitaVGA( palJuego[color][componente] - 8 + fundido );
+				palJuego[color][componente] = LimitaVGA(palJuego[color][componente] - 8 + fundido);
 		}
 	}
 
