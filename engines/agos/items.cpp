@@ -382,8 +382,13 @@ int AGOSEngine::wordMatch(Item *item, int16 a, int16 n) {
 }
 
 Item *AGOSEngine::derefItem(uint item) {
-	if (item >= _itemArraySize)
-		error("derefItem: invalid item %d", item);
+	// Occurs when loading item store from restart state in
+	// Elvira 2 (Amiga/AtariST) and Waxworks (Amiga).
+	if (item >= _itemArraySize) {
+		debug(0, "derefItem: invalid item %d", item);
+		return NULL;
+	}
+
 	return _itemArrayPtr[item];
 }
 
