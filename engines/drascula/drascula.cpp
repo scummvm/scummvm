@@ -322,9 +322,9 @@ void DrasculaEngine::Negro() {
 		for (componente = 0; componente < 3; componente++)
 			palNegra[color][componente] = 0;
 
-	palNegra[254][0] = 0xff;
-	palNegra[254][1] = 0xff;
-	palNegra[254][2] = 0x57;
+	palNegra[254][0] = 0x3F;
+	palNegra[254][1] = 0x3F;
+	palNegra[254][2] = 0x15;
 
 	setvgapalette256((byte *)&palNegra);
 }
