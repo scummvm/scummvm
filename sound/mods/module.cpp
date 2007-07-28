@@ -177,7 +177,7 @@ bool Module::load(Common::SeekableReadStream &st, int offs) {
 				// For modules that use common samples
 				for (int j = 0; j < NUM_SAMPLES; ++j) {
 					if (!scumm_stricmp((const char *)commonSamples[j].name, (const char *)sample[i].name)) {
-						sample[i].len = commonSamples[i].len;
+						sample[i].len = commonSamples[j].len;
 						st.seek(commonSamples[j].offs);
 						break;
 					}
