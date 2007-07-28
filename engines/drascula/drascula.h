@@ -354,21 +354,21 @@ public:
 	void salir_al_dos(int r);
 
 	void lee_dibujos(const char *);
-	void descomprime_dibujo(char *dir_escritura, int plt);
+	void descomprime_dibujo(byte *dir_escritura, int plt);
 
-	typedef unsigned char DacPalette256[256][3];
+	typedef byte DacPalette256[256][3];
 
-	void asigna_rgb(unsigned char *dir_lectura, int plt);
+	void asigna_rgb(byte *dir_lectura, int plt);
 	void funde_rgb(int plt);
 	void paleta_hare();
 	void ActualizaPaleta();
 	void setvgapalette256(byte *PalBuf);
 	void DIBUJA_FONDO(int xorg, int yorg, int xdes, int ydes, int Ancho,
-				int Alto, char *Origen, char *Destino);
+				int Alto, byte *Origen, byte *Destino);
 	void DIBUJA_BLOQUE(int xorg, int yorg, int xdes, int ydes, int Ancho,
-				int Alto, char *Origen, char *Destino);
-	void DIBUJA_BLOQUE_CUT(int *Array, char *Origen, char *Destino);
-	void VUELCA_PANTALLA(int xorg, int yorg, int xdes, int ydes, int Ancho, int Alto, char *Buffer);
+				int Alto, byte *Origen, byte *Destino);
+	void DIBUJA_BLOQUE_CUT(int *Array, byte *Origen, byte *Destino);
+	void VUELCA_PANTALLA(int xorg, int yorg, int xdes, int ydes, int Ancho, int Alto, byte *Buffer);
 
 	DacPalette256 palJuego;
 	DacPalette256 palHare;
@@ -377,16 +377,16 @@ public:
 
 	byte *VGA;
 
-	char *dir_dibujo1;
-	char *dir_hare_fondo;
-	char *dir_dibujo3;
-	char *dir_dibujo2;
-	char *dir_mesa;
-	char *dir_hare_dch;
-	char *dir_zona_pantalla;
-	char *dir_hare_frente;
-	char *dir_texto;
-	char *dir_pendulo;
+	byte *dir_dibujo1;
+	byte *dir_hare_fondo;
+	byte *dir_dibujo3;
+	byte *dir_dibujo2;
+	byte *dir_mesa;
+	byte *dir_hare_dch;
+	byte *dir_zona_pantalla;
+	byte *dir_hare_frente;
+	byte *dir_texto;
+	byte *dir_pendulo;
 
 	byte cPal[768];
 	byte *Buffer_pcx;
@@ -413,7 +413,7 @@ public:
 	int con_voces;
 	int menu_bar, menu_scr, hay_nombre;
 	char texto_nombre[13];
-	char key;
+	byte key;
 
 	int flags[NUM_BANDERAS];
 
@@ -497,7 +497,7 @@ public:
 	int resta_objeto(int osj);
 	void fliplay(const char *filefli, int vel);
 	void FundeDelNegro(int VelocidadDeFundido);
-	char LimitaVGA(char valor);
+	byte LimitaVGA(byte valor);
 	void color_abc(int cl);
 	void centra_texto(const char *,int,int);
 	void comienza_sound(const char *);
@@ -547,7 +547,7 @@ public:
 	void introduce_nombre();
 	void para_grabar(char[]);
 	int LookForFree();
-	void OpenSSN(const char *Name,int Pause);
+	void OpenSSN(const char *Name, int Pause);
 	void WaitFrameSSN();
 	void MixVideo(byte *OldScreen, byte *NewScreen);
 	void Des_RLE(byte *BufferRLE, byte *MiVideoRLE);
@@ -558,10 +558,9 @@ public:
 	int PlayFrameSSN();
 	int chkkey();
 
-	char *AuxBuffOrg;
-	char *AuxBuffLast;
-	char *AuxBuffDes;
-	//TODO duplicate char cPal[768];
+	byte *AuxBuffOrg;
+	byte *AuxBuffLast;
+	byte *AuxBuffDes;
 	int Leng;
 
 	byte *pointer;
@@ -579,11 +578,11 @@ public:
 	long TimeLast;
 	long TimeMed;
 
-	char *carga_pcx(char *NamePcc);
+	byte *carga_pcx(byte *NamePcc);
 	void set_dac(byte *dac);
 	void WaitForNext(long TimeMed);
 	float vez();
-	void reduce_hare_chico(int, int, int, int, int, int, int, char *,char *);
+	void reduce_hare_chico(int, int, int, int, int, int, int, byte *, byte *);
 	char codifica(char);
 	void cuadrante_1();
 	void cuadrante_2();

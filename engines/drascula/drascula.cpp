@@ -205,21 +205,21 @@ void DrasculaEngine::salir_al_dos(int r) {
 }
 
 void DrasculaEngine::asigna_memoria() {
-	dir_zona_pantalla = (char *)malloc(64000);
+	dir_zona_pantalla = (byte *)malloc(64000);
 	assert(dir_zona_pantalla);
-	dir_dibujo1 = (char *)malloc(64000);
+	dir_dibujo1 = (byte *)malloc(64000);
 	assert(dir_dibujo1);
-	dir_hare_fondo = (char *)malloc(64000);
+	dir_hare_fondo = (byte *)malloc(64000);
 	assert(dir_hare_fondo);
-	dir_dibujo3 = (char *)malloc(64000);
+	dir_dibujo3 = (byte *)malloc(64000);
 	assert(dir_dibujo3);
-	dir_dibujo2 = (char *)malloc(64000);
+	dir_dibujo2 = (byte *)malloc(64000);
 	assert(dir_dibujo2);
-	dir_mesa = (char *)malloc(64000);
+	dir_mesa = (byte *)malloc(64000);
 	assert(dir_mesa);
-	dir_hare_dch = (char *)malloc(64000);
+	dir_hare_dch = (byte *)malloc(64000);
 	assert(dir_hare_dch);
-	dir_hare_frente = (char *)malloc(64000);
+	dir_hare_frente = (byte *)malloc(64000);
 	assert(dir_hare_frente);
 }
 
@@ -273,10 +273,10 @@ void DrasculaEngine::lee_dibujos(const char *NamePcc) {
 	file.close();
 }
 
-void DrasculaEngine::descomprime_dibujo(char *dir_escritura, int plt) {
+void DrasculaEngine::descomprime_dibujo(byte *dir_escritura, int plt) {
 	memcpy(dir_escritura, Buffer_pcx, 64000);
 	free(Buffer_pcx);
-	asigna_rgb((unsigned char *)cPal, plt);
+	asigna_rgb((byte *)cPal, plt);
 	if (plt > 1)
 		funde_rgb(plt);
 }
@@ -290,7 +290,7 @@ void DrasculaEngine::paleta_hare() {
 
 }
 
-void DrasculaEngine::asigna_rgb(unsigned char *dir_lectura, int plt) {
+void DrasculaEngine::asigna_rgb(byte *dir_lectura, int plt) {
 	int x, cnt = 0;
 
 	for (x = 0; x < plt; x++) {
@@ -348,7 +348,7 @@ void DrasculaEngine::setvgapalette256(byte *PalBuf) {
 }
 
 void DrasculaEngine::DIBUJA_FONDO(int xorg, int yorg, int xdes, int ydes, int Ancho,
-				int Alto, char *Origen, char *Destino) {
+				int Alto, byte *Origen, byte *Destino) {
 	int x;
 	Destino += xdes + ydes * 320;
 	Origen += xorg + yorg * 320;
@@ -360,7 +360,7 @@ void DrasculaEngine::DIBUJA_FONDO(int xorg, int yorg, int xdes, int ydes, int An
 }
 
 void DrasculaEngine::DIBUJA_BLOQUE(int xorg, int yorg, int xdes, int ydes, int Ancho,
-				int Alto, char *Origen, char *Destino) {
+				int Alto, byte *Origen, byte *Destino) {
 	int y, x;
 
 	Destino += xdes + ydes * 320;
@@ -372,7 +372,7 @@ void DrasculaEngine::DIBUJA_BLOQUE(int xorg, int yorg, int xdes, int ydes, int A
 				Destino[x + y * 320] = Origen[x + y * 320];
 }
 
-void DrasculaEngine::DIBUJA_BLOQUE_CUT(int *Array, char *Origen, char *Destino) {
+void DrasculaEngine::DIBUJA_BLOQUE_CUT(int *Array, byte *Origen, byte *Destino) {
 	int y, x;
 	int xorg = Array[0];
 	int yorg = Array[1];
@@ -405,7 +405,7 @@ void DrasculaEngine::DIBUJA_BLOQUE_CUT(int *Array, char *Origen, char *Destino) 
 				Destino[x + y * 320] = Origen[x + y * 320];
 }
 
-void DrasculaEngine::VUELCA_PANTALLA(int xorg, int yorg, int xdes, int ydes, int Ancho, int Alto, char *Buffer) {
+void DrasculaEngine::VUELCA_PANTALLA(int xorg, int yorg, int xdes, int ydes, int Ancho, int Alto, byte *Buffer) {
 	int x;
 
 	VGA += xdes + ydes * 320;
@@ -465,8 +465,8 @@ void DrasculaEngine::escoba() {
 
 bucles:
 	if (hare_se_mueve == 0) {
-		paso_x=PASO_HARE_X;
-		paso_y=PASO_HARE_Y;
+		paso_x = PASO_HARE_X;
+		paso_y = PASO_HARE_Y;
 	}
 	if (hare_se_mueve == 0 && anda_a_objeto==1) {
 		sentido_hare = sentido_final;
@@ -2120,7 +2120,7 @@ void DrasculaEngine::color_abc(int cl) {
 	setvgapalette256((byte *)&palJuego);
 }
 
-char DrasculaEngine::LimitaVGA(char valor) {
+byte DrasculaEngine::LimitaVGA(byte valor) {
 	return (valor & 0x3F) * (valor > 0);
 }
 
@@ -2213,8 +2213,8 @@ void DrasculaEngine::anima(const char *animacion, int FPS) {
 	int cnt = 2;
 
 	TimeMed = CLOCKS_PER_SEC / FPS;
-	AuxBuffLast = (char *)malloc(65000);
-	AuxBuffDes = (char *)malloc(65000);
+	AuxBuffLast = (byte *)malloc(65000);
+	AuxBuffDes = (byte *)malloc(65000);
 
 	FileIn.open(animacion);
 
@@ -2224,7 +2224,7 @@ void DrasculaEngine::anima(const char *animacion, int FPS) {
 
 	FileIn.read(&NFrames, sizeof(NFrames));
 	FileIn.read(&Leng, sizeof(Leng));
-	AuxBuffOrg = (char *)malloc(Leng);
+	AuxBuffOrg = (byte *)malloc(Leng);
 	FileIn.read(AuxBuffOrg, Leng);
 	FileIn.read(cPal, 768);
 	carga_pcx(AuxBuffOrg);
@@ -2237,7 +2237,7 @@ void DrasculaEngine::anima(const char *animacion, int FPS) {
 	WaitForNext(TimeMed);
 	while (cnt < NFrames) {
 		FileIn.read(&Leng, sizeof(Leng));
-		AuxBuffOrg = (char *)malloc(Leng);
+		AuxBuffOrg = (byte *)malloc(Leng);
 		FileIn.read(AuxBuffOrg, Leng);
 		FileIn.read(cPal, 768);
 		carga_pcx(AuxBuffOrg);
@@ -2278,7 +2278,6 @@ void DrasculaEngine::FundeAlNegro(int VelocidadDeFundido) {
 		for (color = 0; color < 256; color++) {
 			for (componente = 0; componente < 3; componente++) {
 				palFundido[color][componente] = LimitaVGA(palJuego[color][componente] - 63 + fundido);
-				palFundido[color][3] = 0;
 			}
 		}
 		pausa(VelocidadDeFundido);
@@ -3855,12 +3854,12 @@ int DrasculaEngine::chkkey() {
 	return 0;
 }
 
-char *DrasculaEngine::carga_pcx(char *NamePcc) {
+byte *DrasculaEngine::carga_pcx(byte *NamePcc) {
 	signed int con = 0;
 	unsigned int X = 0;
 	unsigned int fExit = 0;
 	char ch, rep;
-	char *AuxPun;
+	byte *AuxPun;
 
 	AuxPun = AuxBuffDes;
 
@@ -3895,7 +3894,7 @@ float DrasculaEngine::vez() {
 	return _system->getMillis() / 1000;
 }
 
-void DrasculaEngine::reduce_hare_chico(int x1,int y1, int x2,int y2, int ancho,int alto, int factor, char *dir_inicio, char *dir_fin) {
+void DrasculaEngine::reduce_hare_chico(int x1,int y1, int x2,int y2, int ancho,int alto, int factor, byte *dir_inicio, byte *dir_fin) {
 	float suma_x, suma_y;
 	int n, m;
 	float pixel_x, pixel_y;
