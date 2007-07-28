@@ -656,6 +656,10 @@ void Interface::setStatusText(const char *text, int statusColor) {
 	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8)
 		return;
 
+	// Disable the status text in the IHNM demo
+	if (_vm->getGameId() == GID_IHNM_DEMO)
+		return;
+
 	assert(text != NULL);
 	assert(strlen(text) < STATUS_TEXT_LEN);
 
