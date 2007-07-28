@@ -792,7 +792,7 @@ void DrasculaEngine::animacion_1() {
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(20);
 		habla_solo(TEXTD6, "d6.als");
-		if ((term_int ==1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == ESC))
 			break;
 		anima("lib2.bin", 16);
 		if ((term_int == 1) || (getscan() == ESC))
@@ -1555,10 +1555,10 @@ void DrasculaEngine::update_events() {
 		case Common::EVENT_RBUTTONUP:
 			boton_dch = 0;
 			break;
-/*		// TODO
 		case Common::EVENT_QUIT:
+
 			break;
-*/		default:
+		default:
 			break;
 		}
 	}
@@ -4504,33 +4504,33 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 			y_de_letra = Y_ABC_OPC_2;
 			y_de_signos = Y_SIGNOS_OPC_2;
 		}
-/*
+
 		if (dicho[h] == 'A')
 			x_de_letra = X_A_OPC;
 		else if (dicho[h] == 'µ')
 			x_de_letra = X_A_OPC;
 		else if (dicho[h] == '∑')
 			x_de_letra = X_A_OPC;
-		else if (dicho[h] == '∂')
-			x_de_letra = X_A_OPC;
+//		else if (dicho[h] == '∂')
+//			x_de_letra = X_A_OPC;
 		else if (dicho[h] == 'B'
 			)x_de_letra = X_B_OPC;
 		else if (dicho[h] == 'C')
 			x_de_letra = X_C_OPC;
-		else if (dicho[h] == 'Ä')
-			x_de_letra = X_C_OPC;
-		else if (dicho[h] == 'á')
-			x_de_letra = X_C_OPC;
+//		else if (dicho[h] == 'Ä')
+//			x_de_letra = X_C_OPC;
+//		else if (dicho[h] == 'á')
+//			x_de_letra = X_C_OPC;
 		else if (dicho[h] == 'D')
 			x_de_letra = X_D_OPC;
 		else if (dicho[h] == 'E')
 			x_de_letra = X_E_OPC;
-		else if (dicho[h] == 'ê')
-			x_de_letra = X_E_OPC;
-		else if (dicho[h] == '‘')
-			x_de_letra = X_E_OPC;
-		else if (dicho[h] == '“')
-			x_de_letra = X_E_OPC;
+//		else if (dicho[h] == 'ê')
+//			x_de_letra = X_E_OPC;
+//		else if (dicho[h] == '‘')
+//			x_de_letra = X_E_OPC;
+//		else if (dicho[h] == '“')
+//			x_de_letra = X_E_OPC;
 		else if (dicho[h] == 'F')
 			x_de_letra = X_F_OPC;
 		else if (dicho[h] == 'G')
@@ -4539,12 +4539,12 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 			x_de_letra = X_H_OPC;
 		else if (dicho[h] == 'I')
 			x_de_letra = X_I_OPC;
-		else if (dicho[h] == '÷')
-			x_de_letra = X_I_OPC;
-		else if (dicho[h] == 'ﬁ')
-			x_de_letra = X_I_OPC;
-		else if (dicho[h] == '◊')
-			x_de_letra = X_I_OPC;
+//		else if (dicho[h] == '÷')
+//			x_de_letra = X_I_OPC;
+//		else if (dicho[h] == 'ﬁ')
+//			x_de_letra = X_I_OPC;
+//		else if (dicho[h] == '◊')
+//			x_de_letra = X_I_OPC;
 		else if (dicho[h] == 'J')
 			x_de_letra = X_J_OPC;
 		else if (dicho[h] == 'K')
@@ -4559,12 +4559,12 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 			x_de_letra = X_GN_OPC;
 		else if (dicho[h] == 'O')
 			x_de_letra = X_O_OPC;
-		else if (dicho[h] == '‡')
-			x_de_letra = X_O_OPC;
-		else if (dicho[h] == '‚')
-			x_de_letra = X_O_OPC;
-		else if (dicho[h] == '„')
-			x_de_letra = X_O_OPC;
+//		else if (dicho[h] == '‡')
+//			x_de_letra = X_O_OPC;
+//		else if (dicho[h] == '‚')
+//			x_de_letra = X_O_OPC;
+//		else if (dicho[h] == '„')
+//			x_de_letra = X_O_OPC;
 		else if (dicho[h] == 'P')
 			x_de_letra = X_P_OPC;
 		else if (dicho[h] == 'Q')
@@ -4577,12 +4577,12 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 			x_de_letra = X_T_OPC;
 		else if (dicho[h] == 'U')
 			x_de_letra = X_U_OPC;
-		else if (dicho[h] == 'Î')
-			x_de_letra = X_U_OPC;
-		else if (dicho[h] == 'Í')
-			x_de_letra = X_U_OPC;
-		else if (dicho[h] == 'È')
-			x_de_letra = X_U_OPC;
+//		else if (dicho[h] == 'Î')
+//			x_de_letra = X_U_OPC;
+//		else if (dicho[h] == 'Í')
+//			x_de_letra = X_U_OPC;
+//		else if (dicho[h] == 'È')
+//			x_de_letra = X_U_OPC;
 		else if (dicho[h] == 'V')
 			x_de_letra = X_V_OPC;
 		else if (dicho[h] == 'W')
@@ -4593,8 +4593,8 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 			x_de_letra = X_Y_OPC;
 		else if (dicho[h] == 'Z')
 			x_de_letra = X_Z_OPC;
-		else if (dicho[h] == ' ')
-			x_de_letra = ESPACIO_OPC;
+//		else if (dicho[h] == ' ')
+//			x_de_letra = ESPACIO_OPC;
 		else
 			y_de_letra = y_de_signos;
 
@@ -4606,12 +4606,12 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 			x_de_letra = X_GUION_OPC;
 		else if (dicho[h] == '?')
 			x_de_letra = X_CIERRA_INTERROGACION_OPC;
-		else if (dicho[h] == '®')
-			x_de_letra = X_ABRE_INTERROGACION_OPC;
+//		else if (dicho[h] == '®')
+//			x_de_letra = X_ABRE_INTERROGACION_OPC;
 		else if (dicho[h] == '"')
 			x_de_letra = X_COMILLAS_OPC;
-		else if (dicho[h] == '!')
-			x_de_letra = X_CIERRA_EXCLAMACION_OPC;
+//		else if (dicho[h] == '!')
+//			x_de_letra = X_CIERRA_EXCLAMACION_OPC;
 		else if (dicho[h] == '≠')
 			x_de_letra = X_ABRE_EXCLAMACION_OPC;
 		else if (dicho[h] == ';')
@@ -4658,7 +4658,7 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 			x_de_letra = X_N9_OPC;
 		else if (dicho[h] == '0')
 			x_de_letra = X_N0_OPC;
-*/
+
 		pos_texto[0] = x_de_letra;
 		pos_texto[1] = y_de_letra;
 		pos_texto[2] = x_pantalla;
