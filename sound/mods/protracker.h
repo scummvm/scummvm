@@ -44,7 +44,7 @@ class AudioStream;
  * @param stereo	TODO
  * @return	a new AudioStream, or NULL, if an error occured
  */
-AudioStream *makeProtrackerStream(Common::ReadStream *stream, int rate = 44100, bool stereo = true);
+AudioStream *makeProtrackerStream(Common::SeekableReadStream *stream, int offs = 0, int rate = 44100, bool stereo = true);
 
 } // End of namespace Audio
 

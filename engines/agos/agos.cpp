@@ -820,7 +820,7 @@ void AGOSEngine_Waxworks::setupGame() {
 	_numTextBoxes = 10;
 	_numVars = 255;
 
-	_numMusic = 9;
+	_numMusic = 26;
 
 	AGOSEngine::setupGame();
 }

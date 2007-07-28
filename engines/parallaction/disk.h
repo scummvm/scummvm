@@ -62,7 +62,7 @@ public:
 	virtual void loadSlide(const char *filename) = 0;
 	virtual void loadScenery(const char* background, const char* mask) = 0;
 	virtual Table* loadTable(const char* name) = 0;
-	virtual Common::ReadStream* loadMusic(const char* name) = 0;
+	virtual Common::SeekableReadStream* loadMusic(const char* name) = 0;
 	virtual Common::ReadStream* loadSound(const char* name) = 0;
 };
 
@@ -154,7 +154,7 @@ public:
 	void loadSlide(const char *filename);
 	void loadScenery(const char* background, const char* mask);
 	Table* loadTable(const char* name);
-	Common::ReadStream* loadMusic(const char* name);
+	Common::SeekableReadStream* loadMusic(const char* name);
 	Common::ReadStream* loadSound(const char* name);
 };
 
@@ -188,7 +188,7 @@ public:
 	void loadSlide(const char *filename);
 	void loadScenery(const char* background, const char* mask);
 	Table* loadTable(const char* name);
-	Common::ReadStream* loadMusic(const char* name);
+	Common::SeekableReadStream* loadMusic(const char* name);
 	Common::ReadStream* loadSound(const char* name);
 };
 
@@ -222,7 +222,7 @@ public:
 	void loadSlide(const char *filename);
 	void loadScenery(const char* background, const char* mask);
 	Table* loadTable(const char* name);
-	Common::ReadStream* loadMusic(const char* name);
+	Common::SeekableReadStream* loadMusic(const char* name);
 	Common::ReadStream* loadSound(const char* name);
 };
 

@@ -119,7 +119,7 @@ Table* DosDisk_br::loadTable(const char* name) {
 	return 0;
 }
 
-Common::ReadStream* DosDisk_br::loadMusic(const char* name) {
+Common::SeekableReadStream* DosDisk_br::loadMusic(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadMusic");
 	return 0;
 }

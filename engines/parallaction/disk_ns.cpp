@@ -674,7 +674,7 @@ Table* DosDisk_ns::loadTable(const char* name) {
 	return t;
 }
 
-Common::ReadStream* DosDisk_ns::loadMusic(const char* name) {
+Common::SeekableReadStream* DosDisk_ns::loadMusic(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.mid", name);
 
@@ -1427,7 +1427,7 @@ Font* AmigaDisk_ns::loadFont(const char* name) {
 }
 
 
-Common::ReadStream* AmigaDisk_ns::loadMusic(const char* name) {
+Common::SeekableReadStream* AmigaDisk_ns::loadMusic(const char* name) {
 	return openArchivedFile(name);
 }
 

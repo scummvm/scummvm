@@ -113,7 +113,9 @@ const int16 Module::periods[16][60] = {
 	 216 , 203 , 192 , 181 , 171 , 161 , 152 , 144 , 136 , 128 , 121 , 114,
 	 108 , 101 , 96  , 90  , 85  , 80  , 76  , 72  , 68  , 64  , 60  , 57 }};
 
-bool Module::load(Common::ReadStream &st) {
+bool Module::load(Common::SeekableReadStream &st, int offs) {
+	st.seek(offs);
+
 	st.read(songname, 20);
 	songname[20] = '\0';
 
@@ -160,16 +162,32 @@ bool Module::load(Common::ReadStream &st) {
 	}
 
 	for (int i = 0; i < NUM_SAMPLES; ++i) {
-		if (!sample[i].len)
+		if (offs == 0) {
+			// Store locations for modules that use common samples
+			memcpy(commonSamples[i].name, sample[i].name, 22);
+			commonSamples[i].len = sample[i].len;
+			commonSamples[i].offs = st.pos();
+
+		}
+
+		if (!sample[i].len) {
 			sample[i].data = 0;
-		else {
+		} else {
+			if (offs != 0) {		
+				// For modules that use common samples
+				for (int j = 0; j < NUM_SAMPLES; ++j) {
+					if (!scumm_stricmp((const char *)commonSamples[j].name, (const char *)sample[i].name)) {
+						sample[i].len = commonSamples[i].len;
+						st.seek(commonSamples[j].offs);
+						break;
+					}
+				}
+			}
+
 			sample[i].data = new int8[sample[i].len];
 			st.read((byte *)sample[i].data, sample[i].len);
 		}
 	}
-
-	if (!st.eos())
-		warning("Expected EOS on module stream");
 
 	return true;
 }
