@@ -1326,7 +1326,7 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 		f->writeUint16BE(te->subroutine_id);
 	}
 
-	if (getGameType() == GType_WW) {
+	if (getGameType() == GType_WW && getPlatform() == Common::kPlatformPC) {
 		// TODO Save room state data
 		for (uint s = 0; s <= _numRoomStates; s++) {
 			f->writeUint16BE(0);
