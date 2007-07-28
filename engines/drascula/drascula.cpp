@@ -99,7 +99,7 @@ static int x_pol[44] = {0, 1, 42, 83, 124, 165, 206, 247, 83, 1, 206,
 				83, 165, 1, 206, 42, 124, 83, 1, 247, 42,
 				1, 165, 206};
 static int y_pol[44] = {0, 1, 1, 1, 1, 1, 1, 1, 27, 27, 1,
-						27, 27, 27, 27, 27, 27, 27, 1, 1, 27, 
+						27, 27, 27, 27, 27, 27, 27, 1, 1, 27,
 						1, 1, 1, 1, 1, 27, 27, 27, 27, 27,
 						1, 1, 1, 1, 1, 27, 27, 27, 27, 27,
 						27, 1, 1};
@@ -169,10 +169,10 @@ int DrasculaEngine::init() {
 
 int DrasculaEngine::go() {
 	lee_dibujos("95.alg");
-	descomprime_dibujo(dir_mesa, 1);  
+	descomprime_dibujo(dir_mesa, 1);
 
 	lee_dibujos("96.alg");
-	descomprime_dibujo(dir_hare_frente, COMPLETA);  
+	descomprime_dibujo(dir_hare_frente, COMPLETA);
 	lee_dibujos("99.alg");
 	descomprime_dibujo(dir_hare_fondo, 1);
 	lee_dibujos("97.alg");
@@ -186,7 +186,7 @@ int DrasculaEngine::go() {
 	strcpy(nombre_icono[6], "push");
 
 	paleta_hare();
-	escoba();    
+	escoba();
 
 	return 0;
 }
@@ -376,7 +376,7 @@ void DrasculaEngine::DIBUJA_BLOQUE_CUT(int *Array, char *Origen, char *Destino) 
 	if (ydes < 0) {
 		yorg += -ydes;
 		Alto += ydes;
-		ydes = 0;                
+		ydes = 0;
 	}
 	if (xdes < 0) {
 		xorg += -xdes;
@@ -411,7 +411,7 @@ void DrasculaEngine::VUELCA_PANTALLA(int xorg, int yorg, int xdes, int ydes, int
 	g_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 }
 
-void DrasculaEngine::escoba() { 
+void DrasculaEngine::escoba() {
 	int soc, l, n;
 
 	dir_texto = dir_mesa;
@@ -421,7 +421,7 @@ void DrasculaEngine::escoba() {
 	soc = 0;
 	for (l = 0; l < 6; l++) {
 		soc=soc+ANCHO_PERSONAJE;
-		frame_x[l]=soc;        
+		frame_x[l]=soc;
 	}
 
 	for (n = 1; n < 43; n++)
@@ -429,7 +429,7 @@ void DrasculaEngine::escoba() {
 
 	for (n = 0; n < NUM_BANDERAS; n++)
 		flags[n] = 0;
-	
+
 	for (n = 1; n < 7; n++)
 		objetos_que_tengo[n] = n;
 
@@ -493,15 +493,15 @@ bucles:
 		sin_verbo();
 		cont_sv = 0;
 	}
-			
+
 	if (boton_izq == 1 && menu_bar == 1) {
 		elige_en_barra();
 		cont_sv = 0;
 	} else if (boton_izq == 1 && lleva_objeto == 0) {
-		comprueba1(); 
+		comprueba1();
 		cont_sv = 0;
 	} else if (boton_izq == 1 && lleva_objeto == 1) {
-		comprueba2(); 
+		comprueba2();
 		cont_sv = 0;
 	}
 
@@ -512,7 +512,7 @@ bucles:
 
 	key = getscan();
 	if (key == F1 && menu_scr == 0) {
-		elige_verbo(1); 
+		elige_verbo(1);
 		cont_sv = 0;
 	} else if (key == F2 && menu_scr == 0) {
 		elige_verbo(2);
@@ -573,31 +573,31 @@ void DrasculaEngine::agarra_objeto(int objeto) {
 
 void DrasculaEngine::elige_objeto(int objeto) {
 	if (lleva_objeto == 1 && menu_scr == 0)
-		suma_objeto(objeto_que_lleva); 
+		suma_objeto(objeto_que_lleva);
 	DIBUJA_FONDO(x1d_menu[objeto], y1d_menu[objeto], 0, 0, ANCHOBJ,ALTOBJ, dir_hare_fondo, dir_dibujo3);
 	lleva_objeto = 1;
 	objeto_que_lleva = objeto;
 }
 
 int DrasculaEngine::resta_objeto(int osj) {
-     int h, q = 0;
+	int h, q = 0;
 
-	 for (h = 1; h < 43; h++) {
+	for (h = 1; h < 43; h++) {
 		if (objetos_que_tengo[h] == osj) {
 			objetos_que_tengo[h] = 0;
 			q = 1;
 			break;
 		}
 	}
-     
-    if (q == 1)
+
+	if (q == 1)
 		return 0;
-    else 
+	else
 		return 1;
 }
 
 void DrasculaEngine::animacion_1() {
-	int l, l2, p;        
+	int l, l2, p;
 	int pos_pixel[6];
 
 	while (term_int == 0) {
@@ -668,7 +668,7 @@ void DrasculaEngine::animacion_1() {
 		borra_pantalla();
 
 		lee_dibujos("96.alg");
-		descomprime_dibujo(dir_hare_frente, COMPLETA);  
+		descomprime_dibujo(dir_hare_frente, COMPLETA);
 		lee_dibujos("103.alg");
 		descomprime_dibujo(dir_dibujo1, MEDIA);
 		lee_dibujos("104.alg");
@@ -679,7 +679,7 @@ void DrasculaEngine::animacion_1() {
 		playmusic(4);
 		if ((term_int == 1) || (getscan() == ESC))
 			break;
-		delay(400);        
+		delay(400);
 		if ((term_int == 1) || (getscan() == ESC))
 			break;
 
@@ -709,11 +709,11 @@ void DrasculaEngine::animacion_1() {
 			pos_pixel[0] = interf_x[l2];
 			pos_pixel[1] = interf_y[l2];
 			pos_pixel[2] = 156 - l;
-	  
+
 			DIBUJA_BLOQUE_CUT(pos_pixel, dir_dibujo2, dir_zona_pantalla);
 			VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			p++;
-			if (p == 6) { 
+			if (p == 6) {
 				p = 0;
 				l2++;
 			}
@@ -754,7 +754,7 @@ void DrasculaEngine::animacion_1() {
 		habla_igor_dch(TEXTI8, "I8.als");
 		if ((term_int == 1) || (getscan() == ESC))
 			break;
-	    DIBUJA_FONDO(0, 0, 0,0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		DIBUJA_FONDO(0, 0, 0,0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -886,7 +886,7 @@ void DrasculaEngine::animacion_1() {
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(1);
 		sentido_dr = 1;
-	    DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -898,7 +898,7 @@ void DrasculaEngine::animacion_1() {
 		if ((term_int == 1) || (getscan() == ESC))
 			break;
 		sentido_dr = 3;
-	    DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -948,7 +948,7 @@ void DrasculaEngine::animacion_1() {
 	}
 	borra_pantalla();
 	lee_dibujos("96.alg");
-	descomprime_dibujo(dir_hare_frente, COMPLETA);  
+	descomprime_dibujo(dir_hare_frente, COMPLETA);
 	lee_dibujos("99.alg");
 	descomprime_dibujo(dir_hare_fondo, 1);
 }
@@ -986,7 +986,7 @@ void DrasculaEngine::animacion_2() {
 		pausa(4);
 		comienza_sound("s1.als");
 		hipo(18);
-		fin_sound();  
+		fin_sound();
 		if ((term_int == 1) || (getscan() == ESC))
 			break;
 
@@ -1058,7 +1058,7 @@ void DrasculaEngine::animacion_2() {
 		sentido_hare = 1;
 		hare_x = 100;
 		hare_y = 95;
-	
+
 		habla_bj(TEXTBJ2, "BJ2.als");
 		hablar(TEXT215, "215.als");
 		habla_bj(TEXTBJ3, "BJ3.als");
@@ -1181,7 +1181,7 @@ void DrasculaEngine::para_cargar(char nom_game[]) {
 }
 
 void DrasculaEngine::carga_escoba(const char *nom_fich) {
-	int l, obj_salir; 
+	int l, obj_salir;
 	float chiquez, pequegnez = 0;
 	char para_codificar[13];
 
@@ -1194,8 +1194,8 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	buffer_teclado();
 
 	// TODO
-	if ((ald = fopen(nom_fich, "rb")) == NULL)  {
-  		error("missing data file");
+	if ((ald = fopen(nom_fich, "rb")) == NULL) {
+		error("missing data file");
 	}
 	fscanf(ald, "%s", num_room);
 	strcat(num_room,".alg");
@@ -1242,9 +1242,9 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		if (num_obj[l] == obj_saliendo)
 			obj_salir = l;
 	}
-	
+
 	lee_dibujos(pantalla_disco);
-	descomprime_dibujo(dir_dibujo3, 1);  
+	descomprime_dibujo(dir_dibujo3, 1);
 
 	lee_dibujos(num_room);
 	descomprime_dibujo(dir_dibujo1, MEDIA);
@@ -1268,7 +1268,7 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		factor_red[l] = cerca;
 
 	chiquez = (float)(cerca-lejos) / (float)(suelo_y2 - suelo_y1);
-	for (l = suelo_y1; l <= suelo_y2; l++){ 
+	for (l = suelo_y1; l <= suelo_y2; l++) {
 		factor_red[l] = lejos + pequegnez;
 		pequegnez = pequegnez + chiquez;
 	}
@@ -1279,18 +1279,18 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		alto_hare = (ALTO_PERSONAJE * factor_red[hare_y]) / 100;
 		ancho_hare = (ANCHO_PERSONAJE * factor_red[hare_y]) / 100;
 		hare_y = hare_y - alto_hare;
-	} else { 
+	} else {
 		alto_hare = (ALTO_PERSONAJE * factor_red[hare_y]) / 100;
 		ancho_hare = (ANCHO_PERSONAJE * factor_red[hare_y]) / 100;
 	}
 	hare_se_mueve=0;
-	
+
 	actualiza_datos();
 
 	espuerta[7] = 0;
 
 	if (musica_antes != musica_room)
-		playmusic(musica_room);  
+		playmusic(musica_room);
 	refresca_pantalla();
 }
 
@@ -1361,13 +1361,13 @@ void DrasculaEngine::comprueba_objetos() {
 			veo=1;
 		}
 	}
-	
+
 	if (x_raton > hare_x + 2 && y_raton > hare_y + 2
 			&& x_raton < hare_x + ancho_hare - 2 && y_raton < hare_y + alto_hare - 2 && veo == 0) {
 		strcpy(texto_nombre, "hacker");
 		hay_nombre=1;
 		veo=1;
-	}  
+	}
 
 	if (veo == 0)
 		hay_nombre = 0;
@@ -1406,7 +1406,7 @@ void DrasculaEngine::comprueba1() {
 	int l;
 
 	if (menu_scr == 1)
-		saca_objeto();    
+		saca_objeto();
 	else {
 		for (l = 0; l < objs_room; l++) {
 			if (x_raton >= x1[l] && y_raton >= y1[l]
@@ -1418,7 +1418,7 @@ void DrasculaEngine::comprueba1() {
 		}
 
 		if (x_raton > hare_x && y_raton > hare_y
-				&& x_raton < hare_x + ancho_hare && y_raton < hare_y + alto_hare) 
+				&& x_raton < hare_x + ancho_hare && y_raton < hare_y + alto_hare)
 			rompo = 1;
 
 		for (l = 0; l < objs_room; l++) {
@@ -1465,18 +1465,18 @@ void DrasculaEngine::comprueba2() {
 				if (x_raton > x1[l] && y_raton > y1[l]
 						&& x_raton < x2[l] && y_raton < y2[l] && visible[l] == 1) {
 					sentido_final = sentidobj[l];
-					anda_a_objeto = 1; 
+					anda_a_objeto = 1;
 					lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 					banderas(num_obj[l]);
-				 }
+				}
 			}
-	}  
+	}
 }
 
 char DrasculaEngine::getscan() {
 	// TODO
 	return 0;
-}    
+}
 
 void DrasculaEngine::elige_verbo(int verbo) {
 	int c = 171;
@@ -1506,7 +1506,7 @@ void DrasculaEngine::mesa() {
 		refresca_pantalla();
 
 		DIBUJA_BLOQUE(1, 56, 73, 63, 177, 97, dir_mesa, dir_zona_pantalla);
-	
+
 		DIBUJA_FONDO(183, 56, 82, nivel_master, 39, 2 + (12/*Master*/ * 4), dir_mesa, dir_zona_pantalla);
 		DIBUJA_FONDO(183, 56, 138, nivel_voc, 39, 2 + (12/*Voc*/ * 4), dir_mesa, dir_zona_pantalla);
 		DIBUJA_FONDO(183, 56, 194, nivel_cd, 39, 2 + (10/*CD*/ * 4), dir_mesa, dir_zona_pantalla);
@@ -1533,7 +1533,7 @@ void DrasculaEngine::mesa() {
 // TODO
 //				if (y_raton < nivel_voc && Voc < 15)
 //					Voc++;
-//				if (y_raton > nivel_voc && Voc > 0) 
+//				if (y_raton > nivel_voc && Voc > 0)
 //					Voc--;
 //				SetVocVolume(Voc);
 			}
@@ -1590,7 +1590,7 @@ void DrasculaEngine::saves() {
 		if (boton_izq == 1) {
 			for (n = 0; n < NUM_SAVES; n++) {
 				if (x_raton > 115 && y_raton > y + (9 * n) && x_raton < 115 + 175 && y_raton < y + 10 + (9 * n)) {
-					strcpy(select, nombres[n]); 
+					strcpy(select, nombres[n]);
 
 				if (strcmp(select, "*"))
 					hay_seleccion = 1;
@@ -1618,7 +1618,7 @@ void DrasculaEngine::saves() {
 							strcpy(fichero, "gsave09");
 						if (n == 9)
 							strcpy(fichero, "gsave10");
-						para_grabar(fichero); 
+						para_grabar(fichero);
 						// TODO
 						if ((sav = fopen("saves.epa", "w")) == NULL) {
 							error("no puedo abrir el archivo de partidas.");
@@ -1656,7 +1656,7 @@ void DrasculaEngine::saves() {
 						strcpy(fichero, "gsave09");
 					if (n == 9)
 						strcpy(fichero, "gsave10");}
-					num_sav = n;             
+					num_sav = n;
 				}
 			}
 
@@ -1674,8 +1674,8 @@ void DrasculaEngine::saves() {
 			if (x_raton > 125 && y_raton > 123 && x_raton < 199 && y_raton < 149 && hay_seleccion == 1) {
 				para_cargar(fichero);
 				break;
-			} else if (x_raton > 208 && y_raton > 123 && x_raton < 282 && y_raton < 149 && hay_seleccion == 1) { 
-				para_grabar(fichero); 
+			} else if (x_raton > 208 && y_raton > 123 && x_raton < 282 && y_raton < 149 && hay_seleccion == 1) {
+				para_grabar(fichero);
 				if ((sav = fopen("saves.epa", "w")) == NULL) {
 					error("no puedo abrir el archivo de partidas.");
 				}
@@ -1903,7 +1903,7 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 				x_de_letra = X_N;
 			else if (dicho[h] == 'ê')
 				x_de_letra = X_GN;
-		}                    
+		}
 */
 		pos_texto[0] = x_de_letra;
 		pos_texto[1] = y_de_letra;
@@ -1929,7 +1929,7 @@ void DrasculaEngine::delay(int ms) {
 void DrasculaEngine::confirma_go() {
 	color_abc(ROJO);
 	refresca_pantalla();
-	centra_texto(SYS0, 160, 87);        
+	centra_texto(SYS0, 160, 87);
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	for (;;) {
@@ -1947,12 +1947,12 @@ void DrasculaEngine::confirma_go() {
 void DrasculaEngine::confirma_salir() {
 	color_abc(ROJO);
 	refresca_pantalla();
-	centra_texto(SYS1, 160, 87);        
+	centra_texto(SYS1, 160, 87);
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	for (;;) {
 		key = getscan();
-		if (key != 0) 
+		if (key != 0)
 			break;
 	}
 
@@ -2153,8 +2153,8 @@ imprimir:
 }
 
 void DrasculaEngine::comienza_sound(const char *fichero) {
-	if (hay_sb == 1) { 
-		if ((sku = fopen(fichero, "rb")) == NULL)  {
+	if (hay_sb == 1) {
+		if ((sku = fopen(fichero, "rb")) == NULL) {
 			error("no puedo abrir archivo de voz");
 		}
 	}
@@ -2284,7 +2284,7 @@ void DrasculaEngine::habla_dr_grande(const char *dicho, const char *filename) {
 bucless:
 
 	cara = rand() % 4;
-    DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	DIBUJA_FONDO(interf_x[l] + 24, interf_y[l], 0, 45, 39, 31, dir_dibujo2, dir_zona_pantalla);
 	DIBUJA_FONDO(x_habla[cara], 1, 171, 68, 45, 48, dir_dibujo2, dir_zona_pantalla);
 	l++;
@@ -2314,7 +2314,7 @@ bucless:
 		longitud = longitud - 2;
 		if (longitud > 0)
 			goto bucless;
-	} 
+	}
 }
 
 void DrasculaEngine::pon_igor() {
@@ -2355,15 +2355,15 @@ void DrasculaEngine::pon_bj() {
 	int pos_bj[6];
 
 	if (sentido_bj == 3)
-		pos_bj[0] = 10;        
+		pos_bj[0] = 10;
 	else if (sentido_bj == 0)
-		pos_bj[0] = 37;        
+		pos_bj[0] = 37;
 	pos_bj[1] = 99;
-	pos_bj[2] = x_bj;        
-	pos_bj[3] = y_bj;        
-	pos_bj[4] = 26;        
-	pos_bj[5] = 76;        
-	     
+	pos_bj[2] = x_bj;
+	pos_bj[3] = y_bj;
+	pos_bj[4] = 26;
+	pos_bj[5] = 76;
+
 	DIBUJA_BLOQUE_CUT(pos_bj, dir_dibujo3, dir_zona_pantalla);
 }
 
@@ -2373,12 +2373,12 @@ void DrasculaEngine::habla_igor_dch(const char *dicho, const char *filename) {
 
 	int x_habla[8] = { 56, 82, 108, 134, 160, 186, 212, 238};
 	int cara;
-	
+
 	int longitud;
 	longitud = strlen(dicho);
 
 	tiempol = time (NULL);
-	tiempou = (unsigned int)tiempol / 2;    
+	tiempou = (unsigned int)tiempol / 2;
 	srand(tiempou);
 
 	buffer_teclado();
@@ -2419,7 +2419,7 @@ bucless:
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	pausa(3);
-	
+
 	key = getscan();
 	if (key == ESC)
 		term_int = 1;
@@ -2435,7 +2435,7 @@ bucless:
 		longitud = longitud - 2;
 		if (longitud > 0)
 			goto bucless;
-	} 
+	}
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	pon_igor();
 	pon_dr();
@@ -2448,7 +2448,7 @@ void DrasculaEngine::habla_dr_izq(const char *dicho, const char *filename) {
 
 	int x_habla[8] = { 1, 40, 79, 118, 157, 196, 235, 274 };
 	int cara;
-	
+
 	int longitud;
 	longitud = strlen(dicho);
 
@@ -2460,7 +2460,7 @@ void DrasculaEngine::habla_dr_izq(const char *dicho, const char *filename) {
 
 	color_abc(ROJO);
 
-	if (hay_sb == 1) { 
+	if (hay_sb == 1) {
 		// TODO
 		if ((sku = fopen(filename, "rb")) == NULL) {
 			error("no puedo abrir archivo de voz");
@@ -2483,7 +2483,7 @@ bucless:
 
 	DIBUJA_FONDO(x_dr, y_dr, x_dr, y_dr, 38, 31, dir_dibujo1, dir_zona_pantalla);
 	DIBUJA_BLOQUE(x_habla[cara], 90, x_dr, y_dr, 38, 31,
-				 dir_hare_fondo, dir_zona_pantalla);
+				dir_hare_fondo, dir_zona_pantalla);
 
 	actualiza_refresco();
 
@@ -2509,7 +2509,7 @@ bucless:
 		longitud = longitud - 2;
 		if (longitud > 0)
 			goto bucless;
-	} 
+	}
 
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	pon_igor();
@@ -2605,7 +2605,7 @@ void DrasculaEngine::habla_solo(const char *dicho, const char *filename) {
 
 	color_abc(color_solo);
 
-	if (hay_sb == 1) { 
+	if (hay_sb == 1) {
 		// TODO
 		if ((sku = fopen(filename, "rb")) == NULL) {
 			error("no puedo abrir archivo de voz");
@@ -2672,7 +2672,7 @@ bucless:
 	cara = rand() % 8;
 
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
-		
+
 	actualiza_refresco_antes();
 
 	pon_igor();
@@ -2777,7 +2777,7 @@ bucless:
 		longitud = longitud - 2;
 		if (longitud > 0)
 			goto bucless;
-	} 
+	}
 
 	refresca_pantalla();
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -2791,7 +2791,7 @@ void DrasculaEngine::hipo(int contador) {
 comienza:
 	contador--;
 
-	refresca_pantalla();        
+	refresca_pantalla();
 	VUELCA_PANTALLA(0, 1, 0, y, 320, 198, dir_zona_pantalla);
 
 	if (sentido == 0)
@@ -2810,7 +2810,7 @@ comienza:
 }
 
 void DrasculaEngine::fin_sound() {
-   delay(1);
+	delay(1);
 
 	if (hay_sb == 1) {
 		while (LookForFree() != 0);
@@ -2884,7 +2884,7 @@ bucless:
 		longitud = longitud - 2;
 		if (longitud > 0)
 			goto bucless;
-	} 
+	}
 
 	refresca_pantalla();
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -2930,12 +2930,12 @@ bucless:
 
 	actualiza_refresco_antes();
 	DIBUJA_FONDO(hare_x, hare_y, ANCHOBJ+1, 0,
-				 ((float)ancho_hare / 100) * factor_red[hare_y + alto_hare],
-				 ((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare],
-				 dir_zona_pantalla, dir_dibujo3);
+				((float)ancho_hare / 100) * factor_red[hare_y + alto_hare],
+				((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare],
+				dir_zona_pantalla, dir_dibujo3);
 	pon_hare();
-	
-	DIBUJA_FONDO(ANCHOBJ + 1, 0, hare_x, hare_y, 
+
+	DIBUJA_FONDO(ANCHOBJ + 1, 0, hare_x, hare_y,
 				((float)ancho_hare / 100) * factor_red[hare_y + alto_hare],
 				((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare],
 				dir_dibujo3, dir_zona_pantalla);
@@ -2989,7 +2989,7 @@ bucless:
 		longitud = longitud - 2;
 		if (longitud > 0)
 			goto bucless;
-	} 
+	}
 
 	refresca_pantalla();
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -3016,19 +3016,19 @@ void DrasculaEngine::playmusic(int p) {
 */
 }
 
-void DrasculaEngine::stopmusic() {            
+void DrasculaEngine::stopmusic() {
 //TODO
 /*	unsigned short v;
 
 	cd_stop_audio ();
 	/v=GetCDVolume();
 	if (reducido)
-      {
-        SetCDVolume(v+2);
-        reducido=0;
-      }
-      cd_done_play ();
-      Playing=0;
+	{
+		SetCDVolume(v+2);
+		reducido=0;
+	}
+	cd_done_play ();
+	Playing=0;
 */
 }
 
@@ -3181,20 +3181,20 @@ void DrasculaEngine::empieza_andar() {
 	paso_y = PASO_HARE_Y;
 
 	if ((sitio_x < hare_x + ancho_hare / 2 ) && (sitio_y <= (hare_y + alto_hare)))
-		cuadrante_1();                        
+		cuadrante_1();
 	else if ((sitio_x < hare_x + ancho_hare / 2) && (sitio_y > (hare_y + alto_hare)))
-		cuadrante_3();                        
+		cuadrante_3();
 	else if ((sitio_x > hare_x + ancho_hare / 2) && (sitio_y <= (hare_y + alto_hare)))
-		cuadrante_2();                        
+		cuadrante_2();
 	else if ((sitio_x > hare_x + ancho_hare / 2) && (sitio_y > (hare_y + alto_hare)))
-		cuadrante_4();                        
+		cuadrante_4();
 	else
 		hare_se_mueve=0;
 
 	conta_vez = vez();
 }
 
-void DrasculaEngine::actualiza_refresco() {	
+void DrasculaEngine::actualiza_refresco() {
 	if (!strcmp(num_room, "63.alg"))
 		refresca_63();
 	else if (!strcmp(num_room, "62.alg"))
@@ -3229,7 +3229,7 @@ void DrasculaEngine::pon_hare() {
 		}
 	}
 	if (hare_se_mueve == 1 && paso_y == PASO_HARE_Y) {
-	   for (r = 0; r < paso_y; r++) {
+		for (r = 0; r < paso_y; r++) {
 			if (sentido_hare == 2 && sitio_y - r == hare_y + alto_hare) {
 				hare_se_mueve = 0;
 				paso_x = PASO_HARE_X;
@@ -3244,7 +3244,7 @@ void DrasculaEngine::pon_hare() {
 	}
 
 	if (hare_se_ve == 0)
-		goto no_vuelco; 
+		goto no_vuelco;
 
 	if (hare_se_mueve == 0) {
 		pos_hare[0] = 0;
@@ -3273,7 +3273,7 @@ void DrasculaEngine::pon_hare() {
 						pos_hare[4], pos_hare[5],
 						factor_red[hare_y + alto_hare],
 						dir_hare_fondo, dir_zona_pantalla);
-		else 
+		else
 			reduce_hare_chico( pos_hare[0], pos_hare[1],
 						pos_hare[2], pos_hare[3],
 						pos_hare[4], pos_hare[5],
@@ -3305,7 +3305,7 @@ void DrasculaEngine::pon_hare() {
 						pos_hare[4], pos_hare[5],
 						factor_red[hare_y + alto_hare],
 						dir_hare_fondo, dir_zona_pantalla);
-		else 
+		else
 			reduce_hare_chico(pos_hare[0], pos_hare[1],
 						pos_hare[2], pos_hare[3],
 						pos_hare[4], pos_hare[5],
@@ -3316,20 +3316,20 @@ no_vuelco:
 		aumenta_num_frame();
 	}
 }
-	  
+
 void DrasculaEngine::menu_sin_volcar() {
 	int h, n, x;
 	char texto_icono[13];
-  
+
 	x = sobre_que_objeto();
 	strcpy(texto_icono, nombre_icono[x]);
-  
+
 	for (n = 1; n < 43; n++) {
 		h = objetos_que_tengo[n];
 
 		if (h != 0)
 			DIBUJA_FONDO(x_pol[n], y_pol[n], x_obj[n], y_obj[n],
-					ANCHOBJ, ALTOBJ, dir_hare_frente,  dir_zona_pantalla);
+					ANCHOBJ, ALTOBJ, dir_hare_frente, dir_zona_pantalla);
 
 		DIBUJA_BLOQUE(x1d_menu[h], y1d_menu[h], x_obj[n], y_obj[n],
 				ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_zona_pantalla);
@@ -3346,8 +3346,8 @@ void DrasculaEngine::barra_menu() {
 		if (x_raton > x_barra[n] && x_raton < x_barra[n + 1])
 			sobre_verbo = 0;
 		DIBUJA_BLOQUE(ANCHOBJ * n, ALTOBJ * sobre_verbo,
-				 x_barra[n], 2, ANCHOBJ, ALTOBJ,
-				 dir_hare_fondo,  dir_zona_pantalla);
+				x_barra[n], 2, ANCHOBJ, ALTOBJ,
+				dir_hare_fondo, dir_zona_pantalla);
 		sobre_verbo = 1;
 	}
 }
@@ -3374,17 +3374,17 @@ void DrasculaEngine::saca_objeto() {
 
 void DrasculaEngine::sal_de_la_habitacion(int l) {
 	char salgo[13];
-	
+
 	if (num_obj[l] == 105 && flags[0] == 0)
 		hablar(TEXT442, "442.als");
 	else {
 		puertas_cerradas(l);
 
 		if (espuerta[l] != 0) {
-			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]); 
+			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			sentido_hare = sentidobj[l];
 			refresca_pantalla();
-			VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla); 
+			VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 			hare_se_mueve = 0;
 			sentido_hare = sentido_alkeva[l];
 			obj_saliendo = alapuertakeva[l];
@@ -3427,7 +3427,7 @@ usando_verbos:
 	if (comprueba_flags == 1) {
 		comprueba_banderas_menu();
 	}
-	espera_soltar(); 
+	espera_soltar();
 	if (lleva_objeto == 0)
 		sin_verbo();
 }
@@ -3443,7 +3443,7 @@ void DrasculaEngine::banderas(int fl) {
 
 	if (objeto_que_lleva == MIRAR && fl == 28)
 		hablar(TEXT328, "328.als");
-	} else {     
+	} else {
 		if (objeto_que_lleva == MIRAR && fl == 50)
 			hablar(TEXT308, "308.als");
 		else if (objeto_que_lleva == ABRIR && fl == 50)
@@ -3453,20 +3453,20 @@ void DrasculaEngine::banderas(int fl) {
 		else if (objeto_que_lleva == MOVER && fl == 50)
 			hablar(TEXT312, "312.als" );
 		else if (objeto_que_lleva == COGER && fl == 50)
-			hablar(TEXT313, "313.als" ); 
+			hablar(TEXT313, "313.als" );
 		else if (objeto_que_lleva == HABLAR && fl == 50)
 			hablar(TEXT314,"314.als" );
 		else if (!strcmp(num_room, "62.alg"))
-			pantalla_62(fl);  
+			pantalla_62(fl);
 		else if (!strcmp(num_room, "63.alg"))
-			pantalla_63(fl);  
+			pantalla_63(fl);
 		else
 			hay_respuesta = 0;
 	}
 	if (hay_respuesta == 0 && hay_nombre == 1)
 		pantalla_0();
 	else if (hay_respuesta == 0 && menu_scr == 1)
-		pantalla_0(); 
+		pantalla_0();
 }
 
 void DrasculaEngine::cursor_mesa() {
@@ -3492,7 +3492,7 @@ void DrasculaEngine::introduce_nombre() {
 		select2[v] = '-';
 		DIBUJA_FONDO(115, 14, 115, 14, 176, 9, dir_dibujo1, dir_zona_pantalla);
 		print_abc(select2, 117, 15);
-	    VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		key = getscan();
 		if (key != 0) {
 /*			if (key == 16)
@@ -3578,7 +3578,7 @@ void DrasculaEngine::introduce_nombre() {
 					h = 1;
 					break;
 			} else if (key == 0x0E)
-				select2[v] = '\0'; 
+				select2[v] = '\0';
 			else
 				v--;
 */
@@ -3636,7 +3636,7 @@ int DrasculaEngine::PlayFrameSSN() {
 		mSesion += 1;
 	}
 	switch (CHUNK) {
-		case SET_PALET:                                
+		case SET_PALET:
 			if (!UsingMem)
 				Sesion->read(dacSSN, 768);
 			else {
@@ -3645,19 +3645,19 @@ int DrasculaEngine::PlayFrameSSN() {
 			}
 			set_dacSSN(dacSSN);
 			break;
-		case EMPTY_FRAME:                                
+		case EMPTY_FRAME:
 			WaitFrameSSN();
 			break;
-		case INIT_FRAME:                                
+		case INIT_FRAME:
 			if (!UsingMem) {
 				Sesion->read(&CMP, 1);
-				Sesion->read(&Lengt, 4);                                        
+				Sesion->read(&Lengt, 4);
 			} else {
 				memcpy(&CMP, mSesion, 1);
 				mSesion += 1;
 				memcpy(&Lengt, mSesion, 4);
 				mSesion += 4;
-			}                                
+			}
 			if (CMP == CMP_RLE) {
 				if (!UsingMem) {
 					BufferSSN = (char *)malloc(Lengt);
@@ -3666,7 +3666,7 @@ int DrasculaEngine::PlayFrameSSN() {
 					BufferSSN = (char *)malloc(Lengt);
 					memcpy(BufferSSN, mSesion, Lengt);
 					mSesion += Lengt;
-				}                                         
+				}
 				Des_RLE(BufferSSN, MiVideoSSN);
 				free(BufferSSN);
 				if (FrameSSN) {
@@ -3680,7 +3680,7 @@ int DrasculaEngine::PlayFrameSSN() {
 				}
 				FrameSSN++;
 			} else {
-				if (CMP == CMP_OFF) {                                        
+				if (CMP == CMP_OFF) {
 					if (!UsingMem) {
 						BufferSSN = (char *)malloc(Lengt);
 						Sesion->read(BufferSSN, Lengt);
@@ -3689,7 +3689,7 @@ int DrasculaEngine::PlayFrameSSN() {
 						memcpy(BufferSSN, mSesion, Lengt);
 						mSesion += Lengt;
 					}
-					Des_OFF(BufferSSN, MiVideoSSN, Lengt);                                        
+					Des_OFF(BufferSSN, MiVideoSSN, Lengt);
 					free(BufferSSN);
 					if (FrameSSN) {
 						WaitFrameSSN();
@@ -3728,9 +3728,9 @@ char *DrasculaEngine::TryInMem(Common::File *Sesion) {
 	int Lengt;
 
 	Sesion->seek(0, SEEK_END);
-	Lengt = Sesion->pos();        
+	Lengt = Sesion->pos();
 	Sesion->seek(0, SEEK_SET);
-	pointer = (char *)malloc(Lengt);        
+	pointer = (char *)malloc(Lengt);
 	if (pointer == NULL)
 		return NULL;
 	Sesion->read(pointer, Lengt);
@@ -3747,12 +3747,12 @@ void DrasculaEngine::set_dacSSN(char *dacSSN) {
 	while (inp(0x3da)&8){};
 	while ((inp(0x3da)&8)==0){};
 
-  outp(0x3c8,0);
-  do {
-        outp(0x3c9,dacSSN[n++]);
-        outp(0x3c9,dacSSN[n++]);
-        outp(0x3c9,dacSSN[n++]);
-        } while (n<768);
+	outp(0x3c8,0);
+	do {
+		outp(0x3c9,dacSSN[n++]);
+		outp(0x3c9,dacSSN[n++]);
+		outp(0x3c9,dacSSN[n++]);
+	} while (n<768);
 */
 }
 
@@ -3792,7 +3792,7 @@ void DrasculaEngine::Des_RLE(char *BufferRLE, char *MiVideoRLE) {
 
 void DrasculaEngine::MixVideo(char *OldScreen,char *NewScreen) {
 	int x;
-    for (x = 0; x < 64000; x++)
+	for (x = 0; x < 64000; x++)
 		OldScreen[x] ^= NewScreen[x];
 }
 
@@ -3806,10 +3806,10 @@ int DrasculaEngine::chkkey() {
 /*
 	union REGS registros;
 
-    registros.h.ah=0x06;
-    registros.h.dl=0xff;
-    intdos(&registros,&registros);
-    return(registros.h.al);
+	registros.h.ah=0x06;
+	registros.h.dl=0xff;
+	intdos(&registros,&registros);
+	return(registros.h.al);
 */
 	return 0;
 }
@@ -3835,7 +3835,7 @@ char *DrasculaEngine::carga_pcx(char *NamePcc) {
 			X++;
 			if (X > 64000)
 				fExit = 1;
-		}               
+		}
 	}
 	return AuxBuffDes;
 }
@@ -3866,9 +3866,9 @@ float DrasculaEngine::vez() {
 	float trasvase;
 	union REGS in, out;
 
-    in.h.ah=0;
-        int386(0x1A,&in,&out);
-        trasvase=((out.w.cx*65536)+out.w.dx)/0.182;
+	in.h.ah=0;
+	int386(0x1A,&in,&out);
+	trasvase=((out.w.cx*65536)+out.w.dx)/0.182;
 	return(trasvase);
 */
 	return 0;
@@ -3878,7 +3878,7 @@ void DrasculaEngine::reduce_hare_chico(int x1,int y1, int x2,int y2, int ancho,i
 	float suma_x, suma_y;
 	int n, m;
 	float pixel_x, pixel_y;
-	int pos_pixel[6];        
+	int pos_pixel[6];
 
 	nuevo_ancho = (ancho * factor) / 100;
 	nuevo_alto = (alto * factor) / 100;
@@ -3891,16 +3891,16 @@ void DrasculaEngine::reduce_hare_chico(int x1,int y1, int x2,int y2, int ancho,i
 
 	for (n = 0;n < nuevo_alto; n++){
 		for (m = 0; m < nuevo_ancho; m++){
-		      pos_pixel[0] = pixel_x;
-		      pos_pixel[1] = pixel_y;
-		      pos_pixel[2] = x2 + m;
-		      pos_pixel[3] = y2 + n;
-		      pos_pixel[4] = 1;
-		      pos_pixel[5] = 1;
+			pos_pixel[0] = pixel_x;
+			pos_pixel[1] = pixel_y;
+			pos_pixel[2] = x2 + m;
+			pos_pixel[3] = y2 + n;
+			pos_pixel[4] = 1;
+			pos_pixel[5] = 1;
 
-			  DIBUJA_BLOQUE_CUT(pos_pixel, dir_inicio, dir_fin);
+			DIBUJA_BLOQUE_CUT(pos_pixel, dir_inicio, dir_fin);
 
-			  pixel_x = pixel_x + suma_x;
+			pixel_x = pixel_x + suma_x;
 		}
 		pixel_x = x1;
 		pixel_y = pixel_y + suma_y;
@@ -3947,7 +3947,7 @@ void DrasculaEngine::cuadrante_2() {
 
 void DrasculaEngine::cuadrante_3() {
 	float distancia_x, distancia_y;
-      
+
 	distancia_x = hare_x + ancho_hare / 2 - sitio_x;
 	distancia_y = sitio_y - (hare_y + alto_hare);
 
@@ -3999,7 +3999,7 @@ void DrasculaEngine::refresca_62_antes() {
 	int cirio_x[] = { 14, 19, 24 };
 	int pianista_x[] = {1, 91, 61, 31, 91, 31, 1, 61, 31 };
 	int borracho_x[] = {1, 42, 83, 124, 165, 206, 247, 1 };
-	int diferencia;          
+	int diferencia;
 
 	DIBUJA_FONDO(123, velas_y[frame_velas], 142, 14, 39, 13,
 				dir_dibujo3, dir_zona_pantalla);
@@ -4034,14 +4034,14 @@ void DrasculaEngine::refresca_62_antes() {
 			}
 		} else if (((rand() % 95) == 15) && (flags[13] == 0))
 			flags[12] = 1;
-		 
+
 		frame_velas++;
 		if (frame_velas == 3)
 			frame_velas = 0;
 		frame_piano++;
 		if (frame_piano == 9)
 			frame_piano = 0;
-		parpadeo = rand() % 11;          
+		parpadeo = rand() % 11;
 		conta_ciego_vez = vez();
 	}
 }
@@ -4051,7 +4051,7 @@ void DrasculaEngine::graba_partida(char nom_game[]) {
 	int l;
 
 	// TODO
-	if ((scu = fopen(nom_game, "w")) == NULL)  {
+	if ((scu = fopen(nom_game, "w")) == NULL) {
 		error("no puedo abrir el archivo");
 	}
 	fprintf(scu, "%d\n", num_ejec);
@@ -4084,7 +4084,7 @@ void DrasculaEngine::aumenta_num_frame() {
 		if (num_frame == 6)
 			num_frame = 0;
 
-		if (direccion_hare == 0){ 
+		if (direccion_hare == 0) {
 			hare_x = hare_x - paso_x;
 			hare_y = hare_y - paso_y;
 		} else if (direccion_hare == 7) {
@@ -4117,7 +4117,7 @@ void DrasculaEngine::aumenta_num_frame() {
 	hare_x = hare_x + diferencia_x;
 	alto_hare = nuevo_alto;
 	ancho_hare = nuevo_ancho;
-}  
+}
 
 int DrasculaEngine::sobre_que_objeto() {
 	int n;
@@ -4149,9 +4149,9 @@ void DrasculaEngine::pantalla_0() {
 	else if (objeto_que_lleva == MOVER)
 		hablar(TEXT19, "19.als" );
 	else if (objeto_que_lleva == COGER)
-		hablar(TEXT11, "11.als" ); 
+		hablar(TEXT11, "11.als" );
 	else if (objeto_que_lleva == ABRIR)
-		hablar(TEXT9, "9.als" ); 
+		hablar(TEXT9, "9.als" );
 	else if (objeto_que_lleva == CERRAR)
 		hablar(TEXT9, "9.als" );
 	else if (objeto_que_lleva == HABLAR)
@@ -4211,17 +4211,17 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 	char suena3[13];
 	char suena4[13];
 	int longitud;
-	int respuesta1;        
-	int respuesta2;        
-	int respuesta3;        
+	int respuesta1;
+	int respuesta2;
+	int respuesta3;
 	int usado1 = 0;
 	int usado2 = 0;
 	int usado3 = 0;
 
 	rompo_y_salgo = 0;
-	
+
 	strcpy(para_codificar, nom_fich);
-	canal_p(para_codificar); 
+	canal_p(para_codificar);
 
 	// TODO
 	if ((ald = fopen(nom_fich, "rb")) == NULL) {
@@ -4239,7 +4239,7 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 	fscanf(ald, "%d", &respuesta2);
 	fscanf(ald, "%d", &respuesta3);
 	fclose(ald);
-	canal_p(para_codificar); 
+	canal_p(para_codificar);
 
 	longitud = strlen(frase1);
 /*	for (h = 0; h < longitud; h++)
@@ -4247,7 +4247,7 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 			frase1[h] = ' ';
 
 	longitud = strlen(frase2);
-	for (h=  0; h < longitud; h++)
+	for (h = 0; h < longitud; h++)
 		if (frase2[h] == '§')
 			frase2[h] = ' ';
 
@@ -4264,19 +4264,19 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 	lee_dibujos("car.alg");
 	descomprime_dibujo(dir_hare_fondo,1);
 /* TODO
-	ent.w.ax =   8;
-	ent.w.cx =   1;
-	ent.w.dx =  31;
+	ent.w.ax =  8;
+	ent.w.cx =  1;
+	ent.w.dx = 31;
 	int386(0x33, &ent, &sal);
-*/	
+*/
 	color_abc(VERDE_CLARO);
 
 bucle_opc:
 
 	refresca_pantalla();
-  
+
 	if (music_status() == 0 && flags[11] == 0)
-		playmusic(musica_room);  
+		playmusic(musica_room);
 
 	MirarRaton();
 
@@ -4285,7 +4285,7 @@ bucle_opc:
 			color_abc(BLANCO);
 		else if (usado1 == 0 && color != VERDE_CLARO)
 			color_abc(VERDE_CLARO);
-	} else if (y_raton > 8 && y_raton < 17){ 
+	} else if (y_raton > 8 && y_raton < 17) {
 		if (usado2==1 && color!=BLANCO)
 			color_abc(BLANCO);
 		else if (usado2 == 0 && color != VERDE_CLARO)
@@ -4311,18 +4311,18 @@ bucle_opc:
 	print_abc_opc(frase2, 1, 10, juego2);
 	print_abc_opc(frase3, 1, 18, juego3);
 	print_abc_opc(frase4, 1, 26, juego4);
-	
+
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	if ((boton_izq == 1) && (juego1 == 2)) { 
+	if ((boton_izq == 1) && (juego1 == 2)) {
 		usado1 = 1;
 		hablar(frase1, suena1);
 		responde(respuesta1);
-	} else if ((boton_izq == 1) && (juego2 == 2)) { 
+	} else if ((boton_izq == 1) && (juego2 == 2)) {
 		usado2 = 1;
 		hablar(frase2, suena2);
 		responde(respuesta2);
-	} else if ((boton_izq == 1) && (juego3 == 2)) { 
+	} else if ((boton_izq == 1) && (juego3 == 2)) {
 		usado3 = 1;
 		hablar(frase3, suena3);
 		responde(respuesta3);
@@ -4336,17 +4336,17 @@ bucle_opc:
 
 	if (usado1 == 0)
 		juego1 = 1;
-	else 
+	else
 		juego1 = 3;
 	if (usado2 == 0)
 		juego2 = 1;
-	else 
+	else
 		juego2 = 3;
 	if (usado3 == 0)
-		juego3 = 1; 
+		juego3 = 1;
 	else
 		juego3 = 3;
-       
+
 	juego4 = 1;
 
 	if (rompo_y_salgo == 0)
@@ -4383,7 +4383,7 @@ void DrasculaEngine::animacion_3() {
 	hablar(TEXT202, "202.als");
 
 	flags[0] = 1;
-	
+
 	lee_dibujos("97.alg");
 	descomprime_dibujo(dir_hare_dch, 1);
 }
@@ -4393,7 +4393,7 @@ void DrasculaEngine::animacion_4() {
 	descomprime_dibujo(dir_hare_dch, 1);
 
 	hablar(TEXT205,"205.als");
-  
+
 	actualiza_refresco_antes();
 
 	DIBUJA_FONDO(1, 139, 228, 112, 47, 60, dir_hare_dch, dir_zona_pantalla);
@@ -4618,7 +4618,7 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 
 void DrasculaEngine::responde(int funcion) {
 	if (funcion == 10)
-		habla_borracho(TEXTB1, "B1.als"); 
+		habla_borracho(TEXTB1, "B1.als");
 	else if (funcion == 11)
 		habla_borracho(TEXTB2, "B2.als");
 	else if (funcion == 12)
@@ -4660,7 +4660,7 @@ bucless:
 	actualiza_refresco_antes();
 
 	DIBUJA_FONDO(x_habla[cara], 139, 228, 112, 47, 60,
-				 dir_hare_dch, dir_zona_pantalla);
+				dir_hare_dch, dir_zona_pantalla);
 	pon_hare();
 	actualiza_refresco();
 
@@ -4684,7 +4684,7 @@ bucless:
 		longitud = longitud - 2;
 		if (longitud > 0)
 			goto bucless;
-	} 
+	}
 
 	refresca_pantalla();
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -4708,7 +4708,7 @@ void DrasculaEngine::habla_borracho(const char *dicho, const char *filename) {
 
 	flags[13] = 1;
 
-bebiendo:        
+bebiendo:
 
 	if (flags[12] == 1) {
 		refresca_pantalla();
@@ -4762,7 +4762,7 @@ bucless:
 		longitud = longitud - 2;
 		if (longitud > 0)
 			goto bucless;
-	} 
+	}
 
 	refresca_pantalla();
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
@@ -4772,7 +4772,7 @@ bucless:
 	descomprime_dibujo(dir_hare_frente, 1);
 
 	if (music_status() == 0 && flags[11] == 0)
-		playmusic(musica_room);  
+		playmusic(musica_room);
 }
 
 void DrasculaEngine::suma_objeto(int osj) {
@@ -4782,7 +4782,7 @@ void DrasculaEngine::suma_objeto(int osj) {
 		if (objetos_que_tengo[h] == osj)
 			puesto = 1;
 	}
- 
+
 	if (puesto == 0) {
 		for (h = 1; h < 43; h++) {
 			if (objetos_que_tengo[h] == 0) {
@@ -4795,7 +4795,7 @@ void DrasculaEngine::suma_objeto(int osj) {
 }
 
 void DrasculaEngine::fin_sound_corte() {
-	if (hay_sb == 1) { 
+	if (hay_sb == 1) {
 		ctvd_stop();
 		fclose(sku);
 		ctvd_terminate();

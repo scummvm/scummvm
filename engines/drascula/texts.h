@@ -742,12 +742,12 @@
 #define SYS1  "press ESC again to exit"
 #define SYS2  "VOiCES only"
 #define SYS3  "VOices and TEXT"
-        
+
 #define HIS1  "A long time ago, it seems that Drascula killed Von Braun's wife, and then, as he intended to face the count, Von Braun started to investigate all he found vampires."
-#define HIS2  "When he thought he was ready, he came up to the castle and had a very violent encounter with Drascula." 
+#define HIS2  "When he thought he was ready, he came up to the castle and had a very violent encounter with Drascula."
 #define HIS3  "Nobody knows exactly what happened there. Although Von Braun lost, Drascula could not kill him."
 #define HIS4  "Von Braun felt humiliated by his defect, run away from the castle and has never dared to face Drascula ever again."
 
-        
+
 
 
