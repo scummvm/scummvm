@@ -155,6 +155,12 @@ void Anim::playCutaway(int cut, bool fade) {
 
 	_vm->_gfx->setPalette(palette);
 
+	// WORKAROUND for a bug found in the original IHNM demo. The palette of cutaway 12 is incorrect (the incorrect
+	// palette can be seen in the original demo too, for a split second). Therefore, use the saved palette for this
+	// cutaway
+	if (_vm->getGameId() == GID_IHNM_DEMO && cut == 12)
+		_vm->_gfx->restorePalette();
+
 	free(buf);
 	free(resourceData);
 
