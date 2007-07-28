@@ -372,7 +372,8 @@ void waitUntilLeftClick() {
 			break;
 		}
 
-		g_system->delayMillis(10);
+		g_system->delayMillis(30);
+		_vm->_gfx->updateScreen();
 	}
 
 
