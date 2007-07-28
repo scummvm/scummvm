@@ -295,6 +295,13 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 void Parallaction::displayCharacterComment(ExamineData *data) {
 	if (data->_description == NULL) return;
 
+	// NOTE: saving visible screen before displaying comment allows
+	// to restore the exact situation after the comment is deleted.
+	// This means animations are restored in the exact position as
+	// they were, thus avoiding clipping effect as signalled in
+	// BUG item #1762614.
+	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
+
 	_gfx->setFont(kFontDialogue);
 	_gfx->flatBlitCnv(_char._talk, 0, 190, 80, Gfx::kBitFront);
 
@@ -304,8 +311,6 @@ void Parallaction::displayCharacterComment(ExamineData *data) {
 	r.moveTo(140, 10);
 	_gfx->drawBalloon(r, 0);
 	_gfx->displayWrappedString(data->_description, 140, 10, 0, 130);
-
-	_gfx->updateScreen();
 
 	waitUntilLeftClick();
 
