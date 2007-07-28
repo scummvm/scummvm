@@ -197,11 +197,15 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\disk.cpp"
+			RelativePath="..\..\engines\parallaction\disk.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\disk.h"
+			RelativePath="..\..\engines\parallaction\disk_br.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\disk_ns.cpp"
 			>
 		</File>
 		<File
