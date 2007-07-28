@@ -1173,9 +1173,15 @@ void addEventsToQueue() {
 			if (!indyFightState) {
 
 				if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) && (getKeysDown() & KEY_B)) {	
-					event.kbd.keycode = 27;
-					event.kbd.ascii = 27;
-					event.kbd.flags = 0;
+					if (currentGame->control == CONT_AGI) {
+						event.kbd.keycode = 13;
+						event.kbd.ascii = 13;
+						event.kbd.flags = 0;
+					} else {
+						event.kbd.keycode = 27;
+						event.kbd.ascii = 27;
+						event.kbd.flags = 0;
+					}
 
 					event.type = Common::EVENT_KEYDOWN;
 					system->addEvent(event);
@@ -1392,6 +1398,8 @@ void addEventsToQueue() {
 						system->addEvent(event);
 					}
 				}
+
+	
 	
 				if (currentGame->control == CONT_SCUMM_ORIGINAL) {
 					// Extra controls for Scumm v1-5 games
@@ -1459,6 +1467,9 @@ void addEventsToQueue() {
 				event.kbd.keycode = 282;
 				event.kbd.ascii = 315;
 //				consolePrintf("!!!!!F1!!!!!");
+			} else if (currentGame->control == CONT_AGI) {
+				event.kbd.keycode = 27;
+				event.kbd.ascii = 27;
 			} else {
 				event.kbd.keycode = 319;		// F5
 				event.kbd.ascii = 319;
@@ -2586,7 +2597,7 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.10.0 beta2 ");
+	consolePrintf("Version 0.10.0a ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");
@@ -2709,7 +2720,7 @@ int main(void)
 
 		if (!initGBAMP(mode)) {
 			consolePrintf("\nNo file system was found.\n");
-			consolePrintf("View the README_DLDI.TXT file\n");
+			consolePrintf("View the readme file\n");
 			consolePrintf("for more information.\n");
 
 			while (1);

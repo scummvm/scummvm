@@ -19,8 +19,15 @@ ifdef DS_BUILD_F
 	# TODO: Fix this.  When libmad is compiled in, the Kyrandia resource loading
 	# searches through it's entire index to find an mp3 each time a voice sample is requested
 	# this causes a nasty pause.
-else
-	USE_MAD = 1
+else 
+	ifdef DS_BUILD_E
+	# TODO: Inherit the earth uses so much RAM that I have removed libmad in order to
+	# claw some back.	
+
+
+	else
+		USE_MAD = 1
+	endif
 endif
 
 # Uncomment the following line to enable support for the
@@ -204,7 +211,7 @@ CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor	 -Wno-non-virtual-dtor \
 		-fno-exceptions -fno-rtti
 
 ASFLAGS = -mcpu=arm9tdmi -mthumb-interwork
-DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DARM
+DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DARM -DDISABLE_IHNM
 ifdef USE_MAD
 	DEFINES += -DUSE_MAD
 endif
@@ -422,8 +429,8 @@ endif
 
 #---------------------------------------------------------------------------------
 %.nds: %.bin
-	@echo ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM 0.10.0;DS Port"
-	ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM 0.10.0;DS Port"
+	@echo ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "ScummVM DS;Version 0.10.0a;http://www.scummvm.org"
+	ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "ScummVM DS;Version 0.10.0a;http://www.scummvm.org"
 	dsbuild $@ -l ../ndsloader.bin
 
 	padbin 16 $(basename $@).ds.gba

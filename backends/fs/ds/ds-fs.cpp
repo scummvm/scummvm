@@ -358,7 +358,7 @@ bool GBAMPFileSystemNode::listDir(AbstractFSList& dirList, ListMode mode) const 
 	
 	int entryType = FAT_FindFirstFileLFN(fname);
 
-	consolePrintf("First: %s\n", fname);
+//	consolePrintf("First: %s\n", fname);
 	char pathTemp2[256];
 	
 	while (entryType != TYPE_NO_MORE) {
@@ -367,7 +367,6 @@ bool GBAMPFileSystemNode::listDir(AbstractFSList& dirList, ListMode mode) const 
 		||   ((entryType == TYPE_FILE) && ((mode == FilesystemNode::kListFilesOnly) || (mode == FilesystemNode::kListAll))) ) {
 			GBAMPFileSystemNode* dsfsn;
 
-			consolePrintf("file %s\n", fname);
 			
 			if (strcmp(fname, ".") && strcmp(fname, "..")) {
 				
@@ -857,7 +856,7 @@ void std_cwd(char* dir) {
 		if (*(currentDir + strlen(currentDir) - 1) == '/') {
 			*(currentDir + strlen(currentDir) - 1) = '\0';
 		}
-		consolePrintf("CWD: %s\n", currentDir);
+//		consolePrintf("CWD: %s\n", currentDir);
 	}	
 }
 

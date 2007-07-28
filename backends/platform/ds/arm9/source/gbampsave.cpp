@@ -29,7 +29,7 @@
 
 GBAMPSaveFile::GBAMPSaveFile(char* name, bool saveOrLoad) {
 	handle = DS::std_fopen(name, saveOrLoad? "w": "r");
-	consolePrintf("%s handle is %d\n", name, handle);
+//	consolePrintf("%s handle is %d\n", name, handle);
 //	consolePrintf("Created %s\n", name);
 	bufferPos = 0;
 	saveSize = 0;
@@ -39,7 +39,7 @@ GBAMPSaveFile::GBAMPSaveFile(char* name, bool saveOrLoad) {
 GBAMPSaveFile::~GBAMPSaveFile() {
 	flushSaveBuffer();
 	if (handle) DS::std_fclose(handle);
-	consolePrintf("Closed file\n");
+//	consolePrintf("Closed file\n");
 }
 
 uint32 GBAMPSaveFile::read(void *buf, uint32 size) {
@@ -176,7 +176,7 @@ void GBAMPSaveFileManager::listSavefiles(char const* prefix, bool* marks, int nu
 	
 	DS::std_cwd((char *) getSavePath());
 
-	consolePrintf("Save path: %s\n", getSavePath());
+//	consolePrintf("Save path: %s\n", getSavePath());
 	
 	int fileType = FAT_FindFirstFileLFN(name);
 	
@@ -195,10 +195,10 @@ void GBAMPSaveFileManager::listSavefiles(char const* prefix, bool* marks, int nu
 				
 				
 				sprintf(str, "%s%02d", prefix, r);
-				consolePrintf("%s != %s", str, name);
+//				consolePrintf("%s != %s", str, name);
 				if (!stricmp(str, name)) {
 					marks[r] = true;
-					consolePrintf("Matched %d", r);
+//					consolePrintf("Matched %d", r);
 				}
 				
 			}

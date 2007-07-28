@@ -37,7 +37,7 @@ struct key_data {
 };
 
 #define DS_NUM_KEYS 60
-#define DS_SHIFT 0
+#define DS_SHIFT 2
 #define DS_BACKSPACE 8
 #define DS_RETURN 13
 #define DS_CAPSLOCK 1
