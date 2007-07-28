@@ -94,7 +94,10 @@ void Anim::playCutaway(int cut, bool fade) {
 		startImmediately = true;
 	}
 
-	_vm->_gfx->savePalette();
+	// WORKAROUND: The IHNM demo deals with chained cutaways in a different manner. Don't save
+	// the palette of cutaway 11 (the woman looking at the marble)
+	if (!(_vm->getGameId() == GID_IHNM_DEMO && cut == 11))
+		_vm->_gfx->savePalette();
 
 	if (fade) {
 		_vm->_gfx->getCurrentPal(saved_pal);
