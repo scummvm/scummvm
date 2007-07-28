@@ -1338,7 +1338,8 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	for (num_item = _itemArrayInited - 1; num_item; num_item--) {
 		Item *item = _itemArrayPtr[item_index++];
 
-		if (getGameType() == GType_ELVIRA2) {
+		if ((getGameType() == GType_WW && getPlatform() == Common::kPlatformAmiga) ||
+			getGameType() == GType_ELVIRA2) {
 			writeItemID(f, item->parent);
 		} else {
 			f->writeUint16BE(item->parent);
