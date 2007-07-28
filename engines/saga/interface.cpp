@@ -389,6 +389,9 @@ void Interface::setMode(int mode) {
 	} else if (mode == kPanelChapterSelection) {
 		if (_vm->getGameId() != GID_IHNM_DEMO)
 			_saveReminderState = 1;
+	} else if (mode == kPanelNull) {
+		if (_vm->getGameId() == GID_IHNM_DEMO)
+			_inMainMode = true;
 	} else {
 		if (mode == kPanelConverse) {
 			_inMainMode = false;
@@ -726,7 +729,8 @@ void Interface::draw() {
 
 	drawStatusBar();
 
-	if (_panelMode == kPanelMain || _panelMode == kPanelMap) {
+	if (_panelMode == kPanelMain || _panelMode == kPanelMap || 
+		(_panelMode == kPanelNull && _vm->getGameId() == GID_IHNM_DEMO)) {
 		_mainPanel.getRect(rect);
 		backBuffer->blit(rect, _mainPanel.image);
 
@@ -752,7 +756,8 @@ void Interface::draw() {
 	}
 
 	if (_panelMode == kPanelMain || _panelMode == kPanelConverse ||
-		_lockedMode == kPanelMain || _lockedMode == kPanelConverse) {
+		_lockedMode == kPanelMain || _lockedMode == kPanelConverse ||
+		(_panelMode == kPanelNull && _vm->getGameId() == GID_IHNM_DEMO)) {
 		leftPortraitPoint.x = _mainPanel.x + _vm->getDisplayInfo().leftPortraitXOffset;
 		leftPortraitPoint.y = _mainPanel.y + _vm->getDisplayInfo().leftPortraitYOffset;
 		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _defPortraits, _leftPortrait, leftPortraitPoint, 256);
