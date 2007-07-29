@@ -1227,7 +1227,7 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 
 	getLine(ald, buffer, size);
 	sscanf(buffer, "%s", num_room);
-	strcat(num_room,".alg");
+	strcat(num_room, ".alg");
 	
 	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &musica_room);
@@ -3685,14 +3685,6 @@ void DrasculaEngine::para_grabar(char nom_game[]) {
 	fin_sound();
 }
 
-int DrasculaEngine::LookForFree() {
-	delay(10);
-	// TODO GAME_Poll(gamev, 10);
-	//return(!SDEV_ChannelFree(gamev->EffectDev, 0));
-	delay(1000); // workround too much fast played sound
-	return 0;
-}
-
 void DrasculaEngine::OpenSSN(const char *Name, int Pause) {
 	MiVideoSSN = (byte *)malloc(64256);
 	GlobalSpeed = CLOCKS_PER_SEC / Pause;
@@ -4856,15 +4848,15 @@ void DrasculaEngine::MusicFadeout() {
 }
 
 void DrasculaEngine::ctvd_end() {
-	//TODO
+	_mixer->stopHandle(_soundHandle);
 }
 
 void DrasculaEngine::ctvd_stop() {
-	//TODO
+	_mixer->stopHandle(_soundHandle);
 }
 
 void DrasculaEngine::ctvd_terminate() {
-	//TODO
+//	_mixer->stopHandle(_soundHandle);
 }
 
 void DrasculaEngine::ctvd_speaker(int flag) {}
@@ -4872,7 +4864,16 @@ void DrasculaEngine::ctvd_speaker(int flag) {}
 void DrasculaEngine::ctvd_output(Common::File *file_handle) {}
 
 void DrasculaEngine::ctvd_init(int b) {
-	//TODO
+	int soundSize = sku->size();
+	byte *soundData = (byte *)malloc(soundSize);
+	sku->seek(32);
+	sku->read(soundData, soundSize);
+	_mixer->playRaw(Audio::Mixer::kPlainSoundType, &_soundHandle, soundData, soundSize - 64,
+					11025, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
+}
+
+int DrasculaEngine::LookForFree() {
+	return _mixer->isSoundHandleActive(_soundHandle);
 }
 
 

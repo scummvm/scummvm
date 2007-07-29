@@ -37,6 +37,10 @@
 #include "common/events.h"
 #include "common/keyboard.h"
 
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
+#include "sound/voc.h"
+
 #include "engines/engine.h"
 
 namespace Drascula {
@@ -350,6 +354,8 @@ public:
 	Common::Platform getPlatform() const;
 	void update_events();
 
+	Audio::SoundHandle _soundHandle;
+
 	void asigna_memoria();
 	void libera_memoria();
 	void carga_info();
@@ -438,7 +444,7 @@ public:
 	int vb_x, sentido_vb, vb_se_mueve, frame_vb;
 	float nuevo_alto, nuevo_ancho;
 	int diferencia_x, diferencia_y;
-	int factor_red[201];
+	int factor_red[202];
 	int frame_piano;
 	int frame_borracho;
 	int frame_velas;
