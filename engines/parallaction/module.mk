@@ -17,6 +17,8 @@ MODULE_OBJS := \
 	menu.o \
 	parser.o \
 	parallaction.o \
+	parallaction_br.o \
+	parallaction_ns.o \
 	saveload.o \
 	sound.o \
 	staticres.o \
