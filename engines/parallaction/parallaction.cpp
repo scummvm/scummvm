@@ -146,50 +146,39 @@ Parallaction::~Parallaction() {
 
 int Parallaction::init() {
 
+	initResources();	// needs to be pushed into subclass
+
+	_engineFlags = 0;
 	_objectsNames = NULL;
 	_globalTable = NULL;
-	_localFlagNames = NULL;
-	initResources();
-
 	_hasLocationSound = false;
-
 	_skipMenu = false;
-
 	_transCurrentHoverItem = 0;
 	_actionAfterWalk = false;  // actived when the character needs to move before taking an action
 	_activeItem._index = 0;
 	_activeItem._id = 0;
 	_procCurrentHoverItem = -1;
-
-//	_musicData1 = 0;
-	strcpy(_characterName1, "null");
-
 	_baseTime = 0;
+	_numLocations = 0;
+	_location._startPosition.x = -1000;
+	_location._startPosition.y = -1000;
+	_location._startFrame = 0;
+	_location._comment = NULL;
+	_location._endComment = NULL;
 
 	_screenMaskWidth = _screenWidth / 4;
 	_screenPathWidth = _screenWidth / 8;
-
 	_screenSize = _screenWidth * _screenHeight;
 	_screenMaskSize = _screenMaskWidth * _screenHeight;
 	_screenPathSize = _screenPathWidth * _screenHeight;
 
-	_engineFlags = 0;
-
+	strcpy(_characterName1, "null");
 	strcpy(_characterName, "dough");
 
 	memset(_locationNames, 0, 120*32);
-	_numLocations = 0;
 
-	_location._startPosition.x = -1000;
-	_location._startPosition.y = -1000;
-	_location._startFrame = 0;
-
-	_location._comment = NULL;
-	_location._endComment = NULL;
-
-	initWalk();
-
-	initInventory();
+	initWalk();			// needs to be pushed into subclass
+	initInventory();	// needs to be pushed into subclass
 
 	_animations.push_front(&_vm->_char._ani);
 	_gfx = new Gfx(this);
