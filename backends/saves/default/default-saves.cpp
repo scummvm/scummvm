@@ -29,7 +29,7 @@
 #include "common/savefile.h"
 #include "common/util.h"
 #include "common/fs.h"
-#include "common/str.h"
+#include "common/file.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/saves/compressed/compressed-saves.h"
 
@@ -180,10 +180,10 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 			break;
 		} 
 	} else {
-		// So stat() succeeded. But is the path actually pointing to a
-		// directory?
+		// So stat() succeeded. But is the path actually pointing to a directory?
 		if (!S_ISDIR(sb.st_mode)) {
 			setError(SFM_DIR_NOTDIR, Common::String("The given savepath is not a directory"));
+			
 			return 0;
 		}
 	}
@@ -213,6 +213,12 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename)
 		sf = 0;
 	}
 	return wrapInSaveFile(sf);
+}
+
+bool DefaultSaveFileManager::removeSavefile(const char *filename) {
+	Common::File file;
+	FilesystemNode savePath(filename);
+	return file.remove(savePath);
 }
 
 Common::StringList DefaultSaveFileManager::listSavefiles(const char *regex) {

@@ -137,6 +137,13 @@ public:
 	virtual InSaveFile *openForLoading(const char *filename) = 0;
 
 	/**
+	 * Removes the given savefile from the filesystem.
+	 * @param filename Filename path pointing to the savefile.
+	 * @return true if no error ocurred. false otherwise.
+	 */
+	virtual bool removeSavefile(const char *filename) = 0;
+	
+	/**
 	 * Request a list of available savegames with a given regex.
 	 * @param regex Regular expression to match. Wildcards like * or ? are available.
 	 * returns a list of strings for all present file names.
