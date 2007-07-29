@@ -358,7 +358,7 @@ public:
 	void lee_dibujos(const char *);
 	void descomprime_dibujo(byte *dir_escritura, int plt);
 
-	typedef byte DacPalette256[256][3];
+	typedef char DacPalette256[256][3];
 
 	void asigna_rgb(byte *dir_lectura, int plt);
 	void funde_rgb(int plt);
@@ -494,7 +494,7 @@ public:
 	int resta_objeto(int osj);
 	void fliplay(const char *filefli, int vel);
 	void FundeDelNegro(int VelocidadDeFundido);
-	byte LimitaVGA(byte valor);
+	char LimitaVGA(char valor);
 	void color_abc(int cl);
 	void centra_texto(const char *,int,int);
 	void comienza_sound(const char *);

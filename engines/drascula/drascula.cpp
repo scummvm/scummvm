@@ -2149,7 +2149,7 @@ void DrasculaEngine::color_abc(int cl) {
 	setvgapalette256((byte *)&palJuego);
 }
 
-byte DrasculaEngine::LimitaVGA(byte valor) {
+char DrasculaEngine::LimitaVGA(char valor) {
 	return (valor & 0x3F) * (valor > 0);
 }
 
