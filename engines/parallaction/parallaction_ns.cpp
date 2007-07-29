@@ -70,7 +70,7 @@ int Parallaction_ns::init() {
 
 void Parallaction_ns::callFunction(uint index, void* parm) {
 	printf("index = %i\n", index);
-	assert(index >= 0 && index < 25);	// magic value 25 is maximum # of callables for Nippon Safes
+	assert(index < 25);	// magic value 25 is maximum # of callables for Nippon Safes
 
 	(this->*_callables[index])(parm);
 }

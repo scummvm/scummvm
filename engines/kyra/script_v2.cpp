@@ -281,7 +281,7 @@ int KyraEngine_v2::o2_drawSceneShapeOnPage(ScriptState *script) {
 }
 
 int KyraEngine_v2::o2_restoreBackBuffer(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "o2_restoreBackBuffer(%p) (%d, %d)", (const void *)script, stackPos(0));
+	debugC(3, kDebugLevelScriptFuncs, "o2_restoreBackBuffer(%p) (%d)", (const void *)script, stackPos(0));
 	int disable = stackPos(0);
 	int oldState = 0;
 	if (disable) {
