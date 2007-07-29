@@ -30,7 +30,7 @@
 #include "kyra/screen.h"
 #include "kyra/sprites.h"
 #include "kyra/wsamovie.h"
-#include "kyra/animator.h"
+#include "kyra/animator_v1.h"
 #include "kyra/text.h"
 #include "common/system.h"
 

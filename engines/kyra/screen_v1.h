@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -22,45 +22,27 @@
  * $Id$
  *
  */
-
-#ifndef KYRA_DEBUGGER_H
-#define KYRA_DEBUGGER_H
-
-#include "gui/debugger.h"
+ 
+#ifndef KYRA_SCREEN_V1_H
+#define KYRA_SCREEN_V1_H
+ 
+#include "kyra/screen.h"
 
 namespace Kyra {
 
-class KyraEngine;
 class KyraEngine_v1;
 
-class Debugger : public GUI::Debugger {
+class Screen_v1 : public Screen {
 public:
-	Debugger(KyraEngine *vm) {}
-	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
-};
-
-class Debugger_v1 : public Debugger {
-public:
-	Debugger_v1(KyraEngine_v1 *vm);
-	virtual ~Debugger_v1() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
-
+	Screen_v1(KyraEngine_v1 *vm, OSystem *system);
+	virtual ~Screen_v1();
+	
+	void fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime);
+	
 protected:
 	KyraEngine_v1 *_vm;
-
-	virtual void preEnter();
-	virtual void postEnter();
-
-	bool cmd_enterRoom(int argc, const char **argv);
-	bool cmd_listRooms(int argc, const char **argv);
-	bool cmd_listFlags(int argc, const char **argv);
-	bool cmd_toggleFlag(int argc, const char **argv);
-	bool cmd_queryFlag(int argc, const char **argv);
-	bool cmd_listTimers(int argc, const char **argv);
-	bool cmd_setTimerCountdown(int argc, const char **argv);
-	bool cmd_giveItem(int argc, const char **argv);
 };
 
-} // End of namespace Kyra
+} // end of namespace Kyra
 
 #endif
-

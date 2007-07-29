@@ -23,14 +23,14 @@
  *
  */
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/seqplayer.h"
 #include "kyra/screen.h"
 #include "kyra/resource.h"
 #include "kyra/sound.h"
 #include "kyra/sprites.h"
 #include "kyra/wsamovie.h"
-#include "kyra/animator.h"
+#include "kyra/animator_v1.h"
 #include "kyra/text.h"
 #include "kyra/script.h"
 
@@ -39,8 +39,8 @@
 
 namespace Kyra {
 
-void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int brandonAlive) {
-	debugC(9, kDebugLevelMain, "KyraEngine::enterNewScene(%d, %d, %d, %d, %d)", sceneId, facing, unk1, unk2, brandonAlive);
+void KyraEngine_v1::enterNewScene(int sceneId, int facing, int unk1, int unk2, int brandonAlive) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::enterNewScene(%d, %d, %d, %d, %d)", sceneId, facing, unk1, unk2, brandonAlive);
 	int unkVar1 = 1;
 	_screen->hideMouse();
 	_handleInput = false;
@@ -191,8 +191,8 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	_changedScene = true;
 }
 
-void KyraEngine::transcendScenes(int roomIndex, int roomName) {
-	debugC(9, kDebugLevelMain, "KyraEngine::transcendScenes(%d, %d)", roomIndex, roomName);
+void KyraEngine_v1::transcendScenes(int roomIndex, int roomName) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::transcendScenes(%d, %d)", roomIndex, roomName);
 	assert(roomIndex < _roomTableSize);
 
 	if (_flags.isTalkie) {
@@ -217,14 +217,14 @@ void KyraEngine::transcendScenes(int roomIndex, int roomName) {
 	_unkScreenVar3 = 0;
 }
 
-void KyraEngine::setSceneFile(int roomIndex, int roomName) {
-	debugC(9, kDebugLevelMain, "KyraEngine::setSceneFile(%d, %d)", roomIndex, roomName);
+void KyraEngine_v1::setSceneFile(int roomIndex, int roomName) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::setSceneFile(%d, %d)", roomIndex, roomName);
 	assert(roomIndex < _roomTableSize);
 	_roomTable[roomIndex].nameIndex = roomName;
 }
 
-void KyraEngine::moveCharacterToPos(int character, int facing, int xpos, int ypos) {
-	debugC(9, kDebugLevelMain, "KyraEngine::moveCharacterToPos(%d, %d, %d, %d)", character, facing, xpos, ypos);
+void KyraEngine_v1::moveCharacterToPos(int character, int facing, int xpos, int ypos) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::moveCharacterToPos(%d, %d, %d, %d)", character, facing, xpos, ypos);
 	Character *ch = &_characterList[character];
 	ch->facing = facing;
 	_screen->hideMouse();
@@ -278,8 +278,8 @@ void KyraEngine::moveCharacterToPos(int character, int facing, int xpos, int ypo
 	_screen->showMouse();
 }
 
-void KyraEngine::setCharacterPositionWithUpdate(int character) {
-	debugC(9, kDebugLevelMain, "KyraEngine::setCharacterPositionWithUpdate(%d)", character);
+void KyraEngine_v1::setCharacterPositionWithUpdate(int character) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::setCharacterPositionWithUpdate(%d)", character);
 	setCharacterPosition(character, 0);
 	_sprites->updateSceneAnims();
 	updateGameTimers();
@@ -290,8 +290,8 @@ void KyraEngine::setCharacterPositionWithUpdate(int character) {
 		updateKyragemFading();
 }
 
-int KyraEngine::setCharacterPosition(int character, int *facingTable) {
-	debugC(9, kDebugLevelMain, "KyraEngine::setCharacterPosition(%d, %p)", character, (const void *)facingTable);
+int KyraEngine_v1::setCharacterPosition(int character, int *facingTable) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::setCharacterPosition(%d, %p)", character, (const void *)facingTable);
 
 	if (character == 0) {
 		_currentCharacter->x1 += _charXPosTable[_currentCharacter->facing];
@@ -307,8 +307,8 @@ int KyraEngine::setCharacterPosition(int character, int *facingTable) {
 	return 0;
 }
 
-void KyraEngine::setCharacterPositionHelper(int character, int *facingTable) {
-	debugC(9, kDebugLevelMain, "KyraEngine::setCharacterPositionHelper(%d, %p)", character, (const void *)facingTable);
+void KyraEngine_v1::setCharacterPositionHelper(int character, int *facingTable) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::setCharacterPositionHelper(%d, %p)", character, (const void *)facingTable);
 	Character *ch = &_characterList[character];
 	++ch->currentAnimFrame;
 	int facing = ch->facing;
@@ -391,8 +391,8 @@ void KyraEngine::setCharacterPositionHelper(int character, int *facingTable) {
 	_animator->animRefreshNPC(character);
 }
 
-int KyraEngine::getOppositeFacingDirection(int dir) {
-	debugC(9, kDebugLevelMain, "KyraEngine::getOppositeFacingDirection(%d)", dir);
+int KyraEngine_v1::getOppositeFacingDirection(int dir) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::getOppositeFacingDirection(%d)", dir);
 	switch (dir) {
 	case 0:
 		return 2;
@@ -414,7 +414,7 @@ int KyraEngine::getOppositeFacingDirection(int dir) {
 	return 0;
 }
 
-void KyraEngine::loadSceneMsc() {
+void KyraEngine_v1::loadSceneMsc() {
 	assert(_currentCharacter->sceneId < _roomTableSize);
 	int tableId = _roomTable[_currentCharacter->sceneId].nameIndex;
 	assert(tableId < _roomFilenameTableSize);
@@ -425,8 +425,8 @@ void KyraEngine::loadSceneMsc() {
 	_screen->loadBitmap(fileNameBuffer, 3, 5, 0);
 }
 
-void KyraEngine::startSceneScript(int brandonAlive) {
-	debugC(9, kDebugLevelMain, "KyraEngine::startSceneScript(%d)", brandonAlive);
+void KyraEngine_v1::startSceneScript(int brandonAlive) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::startSceneScript(%d)", brandonAlive);
 	assert(_currentCharacter->sceneId < _roomTableSize);
 	int tableId = _roomTable[_currentCharacter->sceneId].nameIndex;
 	assert(tableId < _roomFilenameTableSize);
@@ -457,8 +457,8 @@ void KyraEngine::startSceneScript(int brandonAlive) {
 		_scriptInterpreter->runScript(_scriptClick);
 }
 
-void KyraEngine::initSceneData(int facing, int unk1, int brandonAlive) {
-	debugC(9, kDebugLevelMain, "KyraEngine::initSceneData(%d, %d, %d)", facing, unk1, brandonAlive);
+void KyraEngine_v1::initSceneData(int facing, int unk1, int brandonAlive) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::initSceneData(%d, %d, %d)", facing, unk1, brandonAlive);
 	
 	int16 xpos2 = 0;
 	int setFacing = 1;
@@ -627,8 +627,8 @@ void KyraEngine::initSceneData(int facing, int unk1, int brandonAlive) {
 		_scriptInterpreter->runScript(_scriptClick);
 }
 
-void KyraEngine::initSceneObjectList(int brandonAlive) {
-	debugC(9, kDebugLevelMain, "KyraEngine::initSceneObjectList(%d)", brandonAlive);
+void KyraEngine_v1::initSceneObjectList(int brandonAlive) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::initSceneObjectList(%d)", brandonAlive);
 	for (int i = 0; i < 28; ++i)
 		_animator->actors()[i].active = 0;
 	
@@ -798,7 +798,7 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 	_animator->copyChangedObjectsForward(0);
 }
 
-void KyraEngine::initSceneScreen(int brandonAlive) {
+void KyraEngine_v1::initSceneScreen(int brandonAlive) {
 	if (_flags.platform == Common::kPlatformAmiga) {
 		if (_unkScreenVar1 && !queryGameFlag(0xF0)) {
 			memset(_screen->getPalette(2), 0, 32*3);
@@ -871,8 +871,8 @@ void KyraEngine::initSceneScreen(int brandonAlive) {
 	}
 }
 
-int KyraEngine::handleSceneChange(int xpos, int ypos, int unk1, int frameReset) {
-	debugC(9, kDebugLevelMain, "KyraEngine::handleSceneChange(%d, %d, %d, %d)", xpos, ypos, unk1, frameReset);
+int KyraEngine_v1::handleSceneChange(int xpos, int ypos, int unk1, int frameReset) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::handleSceneChange(%d, %d, %d, %d)", xpos, ypos, unk1, frameReset);
 	if (queryGameFlag(0xEF))
 		unk1 = 0;
 
@@ -931,8 +931,8 @@ int KyraEngine::handleSceneChange(int xpos, int ypos, int unk1, int frameReset) 
 	return processSceneChange(_movFacingTable, unk1, frameReset);
 }
 
-int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
-	debugC(9, kDebugLevelMain, "KyraEngine::processSceneChange(%p, %d, %d)", (const void *)table, unk1, frameReset);
+int KyraEngine_v1::processSceneChange(int *table, int unk1, int frameReset) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::processSceneChange(%p, %d, %d)", (const void *)table, unk1, frameReset);
 	if (queryGameFlag(0xEF))
 		unk1 = 0;
 
@@ -1024,8 +1024,8 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 	return returnValue;
 }
 
-int KyraEngine::changeScene(int facing) {
-	debugC(9, kDebugLevelMain, "KyraEngine::changeScene(%d)", facing);
+int KyraEngine_v1::changeScene(int facing) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::changeScene(%d)", facing);
 	if (queryGameFlag(0xEF)) {
 		if (_currentCharacter->sceneId == 5)
 			return 0;
@@ -1142,7 +1142,7 @@ int KyraEngine::changeScene(int facing) {
 	return returnValue;
 }
 
-void KyraEngine::setCharactersInDefaultScene() {
+void KyraEngine_v1::setCharactersInDefaultScene() {
 	static const uint32 defaultSceneTable[][4] = {
 		{ 0xFFFF, 0x0004, 0x0003, 0xFFFF },
 		{ 0xFFFF, 0x0022, 0xFFFF, 0x0000 },
@@ -1165,7 +1165,7 @@ void KyraEngine::setCharactersInDefaultScene() {
 	}
 }
 
-void KyraEngine::setCharactersPositions(int character) {
+void KyraEngine_v1::setCharactersPositions(int character) {
 	static uint16 initXPosTable[] = {
 		0x3200, 0x0024, 0x2230, 0x2F00, 0x0020, 0x002B,
 		0x00CA, 0x00F0, 0x0082, 0x00A2, 0x0042
@@ -1186,8 +1186,8 @@ void KyraEngine::setCharactersPositions(int character) {
 #pragma mark - Pathfinder
 #pragma mark -
 
-int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize) {
-	debugC(9, kDebugLevelMain, "KyraEngine::findWay(%d, %d, %d, %d, %p, %d)", x, y, toX, toY, (const void *)moveTable, moveTableSize);
+int KyraEngine_v1::findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::findWay(%d, %d, %d, %d, %p, %d)", x, y, toX, toY, (const void *)moveTable, moveTableSize);
 	x &= 0xFFFC; toX &= 0xFFFC;
 	y &= 0xFFFE; toY &= 0xFFFE;
 	x = (int16)x; y = (int16)y; toX = (int16)toX; toY = (int16)toY;
@@ -1301,8 +1301,8 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 	return getMoveTableSize(moveTable);
 }
 
-int KyraEngine::findSubPath(int x, int y, int toX, int toY, int *moveTable, int start, int end) {
-	debugC(9, kDebugLevelMain, "KyraEngine::findSubPath(%d, %d, %d, %d, %p, %d, %d)", x, y, toX, toY, (const void *)moveTable, start, end);
+int KyraEngine_v1::findSubPath(int x, int y, int toX, int toY, int *moveTable, int start, int end) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::findSubPath(%d, %d, %d, %d, %p, %d, %d)", x, y, toX, toY, (const void *)moveTable, start, end);
 	// only used for debug specific code
 	//static uint16 unkTable[] = { 8, 5 };
 	static const int8 facingTable1[] = {  7,  0,  1,  2,  3,  4,  5,  6,  1,  2,  3,  4,  5,  6,  7,  0 };
@@ -1370,8 +1370,8 @@ int KyraEngine::findSubPath(int x, int y, int toX, int toY, int *moveTable, int 
 	return 0x7D00;
 }
 
-int KyraEngine::getFacingFromPointToPoint(int x, int y, int toX, int toY) {
-	debugC(9, kDebugLevelMain, "KyraEngine::getFacingFromPointToPoint(%d, %d, %d, %d)", x, y, toX, toY);
+int KyraEngine_v1::getFacingFromPointToPoint(int x, int y, int toX, int toY) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::getFacingFromPointToPoint(%d, %d, %d, %d)", x, y, toX, toY);
 	static const int facingTable[] = {
 		1, 0, 1, 2, 3, 4, 3, 2, 7, 0, 7, 6, 5, 4, 5, 6
 	};
@@ -1413,14 +1413,14 @@ int KyraEngine::getFacingFromPointToPoint(int x, int y, int toX, int toY) {
 	return facingTable[facingEntry];
 }
 
-void KyraEngine::changePosTowardsFacing(int &x, int &y, int facing) {
-	debugC(9, kDebugLevelMain, "KyraEngine::changePosTowardsFacing(%d, %d, %d)", x, y, facing);
+void KyraEngine_v1::changePosTowardsFacing(int &x, int &y, int facing) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::changePosTowardsFacing(%d, %d, %d)", x, y, facing);
 	x += _addXPosTable[facing];
 	y += _addYPosTable[facing];
 }
 
-bool KyraEngine::lineIsPassable(int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine::lineIsPassable(%d, %d)", x, y);
+bool KyraEngine_v1::lineIsPassable(int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::lineIsPassable(%d, %d)", x, y);
 	if (queryGameFlag(0xEF)) {
 		if (_currentCharacter->sceneId == 5)
 			return true;
@@ -1478,8 +1478,8 @@ bool KyraEngine::lineIsPassable(int x, int y) {
 	return true;
 }
 
-int KyraEngine::getMoveTableSize(int *moveTable) {
-	debugC(9, kDebugLevelMain, "KyraEngine::getMoveTableSize(%p)", (const void *)moveTable);
+int KyraEngine_v1::getMoveTableSize(int *moveTable) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::getMoveTableSize(%p)", (const void *)moveTable);
 	int retValue = 0;
 	if (moveTable[0] == 8)
 		return 0;
@@ -1573,8 +1573,8 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 	return retValue;
 }
 
-void KyraEngine::setupSceneResource(int sceneId) {
-	debugC(9, kDebugLevelMain, "KyraEngine::setupSceneResource(%d)", sceneId);
+void KyraEngine_v1::setupSceneResource(int sceneId) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::setupSceneResource(%d)", sceneId);
 	if (!_flags.isTalkie)
 		return;
 

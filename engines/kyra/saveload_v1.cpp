@@ -28,8 +28,8 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
-#include "kyra/kyra.h"
-#include "kyra/animator.h"
+#include "kyra/kyra_v1.h"
+#include "kyra/animator_v1.h"
 #include "kyra/screen.h"
 #include "kyra/resource.h"
 #include "kyra/sound.h"
@@ -44,7 +44,7 @@
 #define GF_FMTOWNS (1 <<  2)
 
 namespace Kyra {
-void KyraEngine::loadGame(const char *fileName) {
+void KyraEngine_v1::loadGame(const char *fileName) {
 	debugC(9, kDebugLevelMain, "loadGame('%s')", fileName);
 	Common::InSaveFile *in;
 
@@ -266,7 +266,7 @@ void KyraEngine::loadGame(const char *fileName) {
 	delete in;
 }
 
-void KyraEngine::saveGame(const char *fileName, const char *saveName) {
+void KyraEngine_v1::saveGame(const char *fileName, const char *saveName) {
 	debugC(9, kDebugLevelMain, "saveGame('%s', '%s')", fileName, saveName);
 	Common::OutSaveFile *out;
 	if (_quitFlag) return;

@@ -23,15 +23,15 @@
  *
  */
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/screen.h"
-#include "kyra/animator.h"
+#include "kyra/animator_v1.h"
 
 #include "common/system.h"
 
 namespace Kyra {
-void KyraEngine::setupTimers() {
-	debugC(9, kDebugLevelMain, "KyraEngine::setupTimers()");
+void KyraEngine_v1::setupTimers() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::setupTimers()");
 	memset(_timers, 0, sizeof(_timers));
 
 	for (int i = 0; i < 34; i++)
@@ -40,12 +40,12 @@ void KyraEngine::setupTimers() {
 	_timers[0].func = _timers[1].func = _timers[2].func = _timers[3].func = _timers[4].func = 0; //Unused.
 	_timers[5].func = _timers[6].func = _timers[7].func = _timers[8].func = _timers[9].func = 0; //_nullsub51;
 	_timers[10].func = _timers[11].func = _timers[12].func = _timers[13].func = 0; //_nullsub50;
-	_timers[14].func = &KyraEngine::timerCheckAnimFlag2; //_nullsub52;
-	_timers[15].func = &KyraEngine::timerUpdateHeadAnims; //_nullsub48;
-	_timers[16].func = &KyraEngine::timerSetFlags1; //_nullsub47;
+	_timers[14].func = &KyraEngine_v1::timerCheckAnimFlag2; //_nullsub52;
+	_timers[15].func = &KyraEngine_v1::timerUpdateHeadAnims; //_nullsub48;
+	_timers[16].func = &KyraEngine_v1::timerSetFlags1; //_nullsub47;
 	_timers[17].func = 0; //sub_15120;
-	_timers[18].func = &KyraEngine::timerCheckAnimFlag1; //_nullsub53;
-	_timers[19].func = &KyraEngine::timerRedrawAmulet; //_nullsub54;
+	_timers[18].func = &KyraEngine_v1::timerCheckAnimFlag1; //_nullsub53;
+	_timers[19].func = &KyraEngine_v1::timerRedrawAmulet; //_nullsub54;
 	_timers[20].func = 0; //offset _timerDummy1
 	_timers[21].func = 0; //sub_1517C; 
 	_timers[22].func = 0; //offset _timerDummy2
@@ -57,9 +57,9 @@ void KyraEngine::setupTimers() {
 	_timers[28].func = 0; //offset _timerDummy6
 	_timers[29].func = 0; //offset _timerDummy7, 
 	_timers[30].func = 0; //offset _timerDummy8, 
-	_timers[31].func = &KyraEngine::timerFadeText; //sub_151F8;
-	_timers[32].func = &KyraEngine::updateAnimFlag1; //_nullsub61;
-	_timers[33].func = &KyraEngine::updateAnimFlag2; //_nullsub62;
+	_timers[31].func = &KyraEngine_v1::timerFadeText; //sub_151F8;
+	_timers[32].func = &KyraEngine_v1::updateAnimFlag1; //_nullsub61;
+	_timers[33].func = &KyraEngine_v1::updateAnimFlag2; //_nullsub62;
 
 	_timers[0].countdown = _timers[1].countdown = _timers[2].countdown = _timers[3].countdown = _timers[4].countdown = -1;
 	_timers[5].countdown = 5;
@@ -84,8 +84,8 @@ void KyraEngine::setupTimers() {
 	_timers[33].countdown = 3;
 }
 
-void KyraEngine::updateGameTimers() {
-	debugC(9, kDebugLevelMain, "KyraEngine::updateGameTimers()");
+void KyraEngine_v1::updateGameTimers() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::updateGameTimers()");
 	
 	if (_system->getMillis() < _timerNextRun)
 		return;
@@ -106,23 +106,23 @@ void KyraEngine::updateGameTimers() {
 	}
 }
 
-void KyraEngine::clearNextEventTickCount() {
-	debugC(9, kDebugLevelMain, "KyraEngine::clearNextEventTickCount()");
+void KyraEngine_v1::clearNextEventTickCount() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::clearNextEventTickCount()");
 	_timerNextRun = 0;
 }
 
-void KyraEngine::setTimerDelay(uint8 timer, int32 countdown) {
-	debugC(9, kDebugLevelMain, "KyraEngine::setTimerDelay(%i, %d)", timer, countdown);
+void KyraEngine_v1::setTimerDelay(uint8 timer, int32 countdown) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::setTimerDelay(%i, %d)", timer, countdown);
 	_timers[timer].countdown = countdown;
 }
 
-int16 KyraEngine::getTimerDelay(uint8 timer) {
-	debugC(9, kDebugLevelMain, "KyraEngine::getTimerDelay(%i)", timer);
+int16 KyraEngine_v1::getTimerDelay(uint8 timer) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::getTimerDelay(%i)", timer);
 	return _timers[timer].countdown;
 }
 
-void KyraEngine::setTimerCountdown(uint8 timer, int32 countdown) {
-	debugC(9, kDebugLevelMain, "KyraEngine::setTimerCountdown(%i, %i)", timer, countdown);
+void KyraEngine_v1::setTimerCountdown(uint8 timer, int32 countdown) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::setTimerCountdown(%i, %i)", timer, countdown);
 	_timers[timer].countdown = countdown;
 	_timers[timer].nextRun = _system->getMillis() + countdown * _tickLength;
 
@@ -131,18 +131,18 @@ void KyraEngine::setTimerCountdown(uint8 timer, int32 countdown) {
 		_timerNextRun = nextRun;
 }
 
-void KyraEngine::enableTimer(uint8 timer) {
-	debugC(9, kDebugLevelMain, "KyraEngine::enableTimer(%i)", timer);
+void KyraEngine_v1::enableTimer(uint8 timer) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::enableTimer(%i)", timer);
 	_timers[timer].active = 1;
 }
 
-void KyraEngine::disableTimer(uint8 timer) {
-	debugC(9, kDebugLevelMain, "KyraEngine::disableTimer(%i)", timer);
+void KyraEngine_v1::disableTimer(uint8 timer) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::disableTimer(%i)", timer);
 	_timers[timer].active = 0;
 }
 
-void KyraEngine::timerUpdateHeadAnims(int timerNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine::timerUpdateHeadAnims(%i)", timerNum);
+void KyraEngine_v1::timerUpdateHeadAnims(int timerNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::timerUpdateHeadAnims(%i)", timerNum);
 	static int8 currentFrame = 0;
 	static const int8 frameTable[] = {4, 5, 4, 5, 4, 5, 0, 1, 4, 5,
 								4, 4, 6, 4, 8, 1, 9, 4, -1};
@@ -160,8 +160,8 @@ void KyraEngine::timerUpdateHeadAnims(int timerNum) {
 	_animator->animRefreshNPC(_talkingCharNum);
 }
 
-void KyraEngine::timerSetFlags1(int timerNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine::timerSetFlags(%i)", timerNum);
+void KyraEngine_v1::timerSetFlags1(int timerNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::timerSetFlags(%i)", timerNum);
 	if (_currentCharacter->sceneId == 0x1C)
 		return;
 
@@ -179,57 +179,57 @@ void KyraEngine::timerSetFlags1(int timerNum) {
 	}
 }
 
-void KyraEngine::timerFadeText(int timerNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine::timerFadeText(%i)", timerNum);
+void KyraEngine_v1::timerFadeText(int timerNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::timerFadeText(%i)", timerNum);
 	_fadeText = true;
 }
 
-void KyraEngine::updateAnimFlag1(int timerNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine::updateAnimFlag1(%d)", timerNum);
+void KyraEngine_v1::updateAnimFlag1(int timerNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::updateAnimFlag1(%d)", timerNum);
 	if (_brandonStatusBit & 2) {
 		_brandonStatusBit0x02Flag = 1;
 	}
 }
 
-void KyraEngine::updateAnimFlag2(int timerNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine::updateAnimFlag2(%d)", timerNum);
+void KyraEngine_v1::updateAnimFlag2(int timerNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::updateAnimFlag2(%d)", timerNum);
 	if (_brandonStatusBit & 0x20) {
 		_brandonStatusBit0x20Flag = 1;
 	}
 }
 
-void KyraEngine::setTextFadeTimerCountdown(int16 countdown) {
-	debugC(9, kDebugLevelMain, "KyraEngine::setTextFadeTimerCountdown(%i)", countdown);
+void KyraEngine_v1::setTextFadeTimerCountdown(int16 countdown) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::setTextFadeTimerCountdown(%i)", countdown);
 	//if (countdown == -1)
 		//countdown = 32000;
 
 	setTimerCountdown(31, countdown*60);
 }
 
-void KyraEngine::timerSetFlags2(int timerNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine::timerSetFlags2(%i)", timerNum);
+void KyraEngine_v1::timerSetFlags2(int timerNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::timerSetFlags2(%i)", timerNum);
 	if (!((uint32*)(_flagsTable+0x2D))[timerNum])
 		((uint32*)(_flagsTable+0x2D))[timerNum] = 1;	
 }
 
-void KyraEngine::timerCheckAnimFlag1(int timerNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine::timerCheckAnimFlag1(%i)", timerNum);
+void KyraEngine_v1::timerCheckAnimFlag1(int timerNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::timerCheckAnimFlag1(%i)", timerNum);
 	if (_brandonStatusBit & 0x20) {
 		checkAmuletAnimFlags();
 		setTimerCountdown(18, -1);
 	}
 }
 
-void KyraEngine::timerCheckAnimFlag2(int timerNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine::timerCheckAnimFlag1(%i)", timerNum);
+void KyraEngine_v1::timerCheckAnimFlag2(int timerNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::timerCheckAnimFlag1(%i)", timerNum);
 	if (_brandonStatusBit & 0x2) {
 		checkAmuletAnimFlags();
 		setTimerCountdown(14, -1);
 	}
 }
 
-void KyraEngine::checkAmuletAnimFlags() {
-	debugC(9, kDebugLevelMain, "KyraEngine::checkSpecialAnimFlags()");
+void KyraEngine_v1::checkAmuletAnimFlags() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::checkSpecialAnimFlags()");
 	if (_brandonStatusBit & 2) {
 		seq_makeBrandonNormal2();
 		setTimerCountdown(19, 300);
@@ -241,16 +241,16 @@ void KyraEngine::checkAmuletAnimFlags() {
 	}
 }
 
-void KyraEngine::timerRedrawAmulet(int timerNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine::timerRedrawAmulet(%i)", timerNum);
+void KyraEngine_v1::timerRedrawAmulet(int timerNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::timerRedrawAmulet(%i)", timerNum);
 	if (queryGameFlag(0xF1)) {
 		drawAmulet();
 		setTimerCountdown(19, -1);
 	}
 }
 
-void KyraEngine::drawAmulet() {
-	debugC(9, kDebugLevelMain, "KyraEngine::drawAmulet()");
+void KyraEngine_v1::drawAmulet() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::drawAmulet()");
 	static const int16 amuletTable1[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x150, 0x155, 0x15A, 0x15F, 0x164, 0x145, -1};
 	static const int16 amuletTable3[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x14F, 0x154, 0x159, 0x15E, 0x163, 0x144, -1};
 	static const int16 amuletTable2[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x152, 0x157, 0x15C, 0x161, 0x166, 0x147, -1};
@@ -280,8 +280,8 @@ void KyraEngine::drawAmulet() {
 	_screen->showMouse();
 }
 
-void KyraEngine::setWalkspeed(uint8 newSpeed) {
-	debugC(9, kDebugLevelMain, "KyraEngine::setWalkspeed(%i)", newSpeed);
+void KyraEngine_v1::setWalkspeed(uint8 newSpeed) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::setWalkspeed(%i)", newSpeed);
 	static const uint8 speeds[] = {11, 9, 6, 5, 3};
 
 	assert(newSpeed < ARRAYSIZE(speeds));

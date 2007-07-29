@@ -27,35 +27,35 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "kyra/debugger.h"
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/screen.h"
 
 namespace Kyra {
 
-Debugger::Debugger(KyraEngine *vm)
-	: GUI::Debugger() {
+Debugger_v1::Debugger_v1(KyraEngine_v1 *vm)
+	: Debugger(vm) {
 	_vm = vm;
 
-	DCmd_Register("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("enter",				WRAP_METHOD(Debugger, cmd_enterRoom));
-	DCmd_Register("rooms",				WRAP_METHOD(Debugger, cmd_listRooms));
-	DCmd_Register("flags",				WRAP_METHOD(Debugger, cmd_listFlags));
-	DCmd_Register("toggleflag",			WRAP_METHOD(Debugger, cmd_toggleFlag));
-	DCmd_Register("queryflag",			WRAP_METHOD(Debugger, cmd_queryFlag));
-	DCmd_Register("timers",				WRAP_METHOD(Debugger, cmd_listTimers));
-	DCmd_Register("settimercountdown",	WRAP_METHOD(Debugger, cmd_setTimerCountdown));
-	DCmd_Register("give",				WRAP_METHOD(Debugger, cmd_giveItem));
+	DCmd_Register("continue",			WRAP_METHOD(Debugger_v1, Cmd_Exit));
+	DCmd_Register("enter",				WRAP_METHOD(Debugger_v1, cmd_enterRoom));
+	DCmd_Register("rooms",				WRAP_METHOD(Debugger_v1, cmd_listRooms));
+	DCmd_Register("flags",				WRAP_METHOD(Debugger_v1, cmd_listFlags));
+	DCmd_Register("toggleflag",			WRAP_METHOD(Debugger_v1, cmd_toggleFlag));
+	DCmd_Register("queryflag",			WRAP_METHOD(Debugger_v1, cmd_queryFlag));
+	DCmd_Register("timers",				WRAP_METHOD(Debugger_v1, cmd_listTimers));
+	DCmd_Register("settimercountdown",	WRAP_METHOD(Debugger_v1, cmd_setTimerCountdown));
+	DCmd_Register("give",				WRAP_METHOD(Debugger_v1, cmd_giveItem));
 }
 
-void Debugger::preEnter() {
+void Debugger_v1::preEnter() {
 	//_vm->midi.pause(1);
 }
 
-void Debugger::postEnter() {
+void Debugger_v1::postEnter() {
 	//_vm->midi.pause(0);
 }
 
-bool Debugger::cmd_enterRoom(int argc, const char **argv) {
+bool Debugger_v1::cmd_enterRoom(int argc, const char **argv) {
 	uint direction = 0;
 	if (argc > 1) {
 		int room = atoi(argv[1]);
@@ -93,7 +93,7 @@ bool Debugger::cmd_enterRoom(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_listRooms(int argc, const char **argv) {
+bool Debugger_v1::cmd_listRooms(int argc, const char **argv) {
 	for (int i = 0; i < _vm->_roomTableSize; i++) {
 		DebugPrintf("%-3i: %-10s", i, _vm->_roomFilenameTable[_vm->_roomTable[i].nameIndex]);
 		if (!(i % 8)) 
@@ -104,7 +104,7 @@ bool Debugger::cmd_listRooms(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_listFlags(int argc, const char **argv) {
+bool Debugger_v1::cmd_listFlags(int argc, const char **argv) {
 	for (int i = 0; i < (int)sizeof(_vm->_flagsTable)*8; i++) {
 		DebugPrintf("(%-3i): %-5i", i, _vm->queryGameFlag(i));
 		if (!(i % 10)) 
@@ -114,7 +114,7 @@ bool Debugger::cmd_listFlags(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_toggleFlag(int argc, const char **argv) {
+bool Debugger_v1::cmd_toggleFlag(int argc, const char **argv) {
 	if (argc > 1) {
 		uint flag = atoi(argv[1]);
 		if (_vm->queryGameFlag(flag))
@@ -129,7 +129,7 @@ bool Debugger::cmd_toggleFlag(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_queryFlag(int argc, const char **argv) {
+bool Debugger_v1::cmd_queryFlag(int argc, const char **argv) {
 	if (argc > 1) {
 		uint flag = atoi(argv[1]);
 		DebugPrintf("Flag %i is %i\n", flag, _vm->queryGameFlag(flag)); 
@@ -140,14 +140,14 @@ bool Debugger::cmd_queryFlag(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_listTimers(int argc, const char **argv) {
+bool Debugger_v1::cmd_listTimers(int argc, const char **argv) {
 	for (int i = 0; i < ARRAYSIZE(_vm->_timers); i++)
 		DebugPrintf("Timer %-2i: Active: %-3s Countdown: %-6i\n", i, _vm->_timers[i].active ? "Yes" : "No", _vm->_timers[i].countdown);
 
 	return true;
 }
 
-bool Debugger::cmd_setTimerCountdown(int argc, const char **argv) {
+bool Debugger_v1::cmd_setTimerCountdown(int argc, const char **argv) {
 	if (argc > 2) {
 		uint timer = atoi(argv[1]);
 		uint countdown = atoi(argv[2]);
@@ -160,7 +160,7 @@ bool Debugger::cmd_setTimerCountdown(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_giveItem(int argc, const char **argv) {
+bool Debugger_v1::cmd_giveItem(int argc, const char **argv) {
 	if (argc == 2) {
 		int item = atoi(argv[1]);
 

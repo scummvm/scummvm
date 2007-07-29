@@ -41,9 +41,19 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 
 KyraEngine_v2::~KyraEngine_v2() {
 	delete [] _mouseSHPBuf;
+	delete _screen;
+}
+
+Movie *KyraEngine_v2::createWSAMovie() {
+	return new WSAMovieV2(this);
 }
 
 int KyraEngine_v2::init() {
+	_screen = new Screen_v2(this, _system);
+	assert(_screen);
+	if (!_screen->init())
+		error("_screen->init() failed");
+
 	KyraEngine::init();
 
 	if (_res->getFileSize("6.FNT"))

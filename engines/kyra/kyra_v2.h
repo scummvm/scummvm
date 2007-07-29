@@ -26,6 +26,9 @@
 #ifndef KYRA_KYRA_V2_H
 #define KYRA_KYRA_V2_H
 
+#include "kyra/kyra.h"
+#include "kyra/screen_v2.h"
+
 namespace Kyra {
 
 enum kSequences {
@@ -82,10 +85,24 @@ class KyraEngine_v2 : public KyraEngine {
 public:
 	KyraEngine_v2(OSystem *system, const GameFlags &flags);
 	~KyraEngine_v2();
+	
+	virtual Screen *screen() { return _screen; }
+	Screen *screen_v2() { return _screen; }
+	
+	Movie *createWSAMovie();
+protected:
+	// Main menu code, also used for Kyra 3
+	static const char *_mainMenuStrings[];
 
-	int go();
+	virtual void gui_initMainMenu() {}
+	int gui_handleMainMenu();
+	virtual void gui_updateMainMenuAnimation();
+	void gui_drawMainMenu(const char * const *strings, int select);
+	void gui_drawMainBox(int x, int y, int w, int h, int fill);
+	bool gui_mainMenuGetInput();
+	
+	void gui_printString(const char *string, int x, int y, int col1, int col2, int flags, ...);
 
-private:
 	void setupOpcodeTable() {}
 
 	void seq_playSequences(int startSeq, int endSeq = -1);
@@ -111,7 +128,11 @@ private:
 	void seq_setChatEntry(uint16 strIndex, uint16 posX, uint16 posY, int duration, uint16 unk1);
 
 	void mainMenu();
+
 	int init();
+	int go();
+	
+	Screen_v2 *_screen;
 	
 	ActiveWSA *_activeWSA;
 	ActiveChat *_activeChat;

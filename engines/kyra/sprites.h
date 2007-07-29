@@ -26,6 +26,8 @@
 #ifndef KYRA_SPRITES_H
 #define KYRA_SPRITES_H
 
+#include "kyra/kyra_v1.h"
+
 namespace Kyra {
 
 #define MAX_NUM_ANIMS 11
@@ -61,10 +63,11 @@ struct Anim {
 	bool disable;
 };
 
+class KyraEngine_v1;
+
 class Sprites {
 public:
-
-	Sprites(KyraEngine *vm, OSystem *system);
+	Sprites(KyraEngine_v1 *vm, OSystem *system);
 	~Sprites();
 
 	void updateSceneAnims();
@@ -83,7 +86,7 @@ public:
 protected:
 	void freeSceneShapes();
 
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 	Resource *_res;
 	OSystem *_system;
 	Screen *_screen;

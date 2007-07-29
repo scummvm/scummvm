@@ -33,7 +33,6 @@ class OSystem;
 namespace Kyra {
 
 class KyraEngine;
-class Debugger;
 struct Rect;
 
 struct ScreenDim {
@@ -57,7 +56,7 @@ struct Font {
 };
 
 class Screen {
-	friend class Debugger;
+	friend class Debugger_v1;
 public:
 
 	enum {
@@ -94,7 +93,7 @@ public:
 	};
 	
 	Screen(KyraEngine *vm, OSystem *system);
-	~Screen();
+	virtual ~Screen();
 
 	bool init();
 
@@ -136,7 +135,6 @@ public:
 
 	void k2IntroFadeToGrey(int delay=0x54);
 
-	void fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime);
 	void fadePalette(const uint8 *palData, int delay);
 
 	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
@@ -243,7 +241,7 @@ public:
 
 	uint16 getShapeSize(const uint8 *shp);
 
-private:
+protected:
 	uint8 *getPagePtr(int pageNum);
 	void updateDirtyRects();
 	void updateDirtyRectsOvl();

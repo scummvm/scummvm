@@ -27,7 +27,7 @@
 #define KYRA_ANIMATOR_H
 
 namespace Kyra {
-class KyraEngine;
+class KyraEngine_v1;
 class Screen;
 
 struct AnimObject {
@@ -53,7 +53,7 @@ struct AnimObject {
 
 class ScreenAnimator {
 public:
-	ScreenAnimator(KyraEngine *vm, OSystem *system);
+	ScreenAnimator(KyraEngine_v1 *vm, OSystem *system);
 	virtual ~ScreenAnimator();
 
 	operator bool() const { return _initOk; }
@@ -101,7 +101,7 @@ public:
 	int _brandonScaleY;
 
 protected:
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 	Screen *_screen;
 	OSystem *_system;
 	bool _initOk;

@@ -1,19 +1,22 @@
 MODULE := engines/kyra
 
 MODULE_OBJS := \
-	animator.o \
+	animator_v1.o \
 	debugger.o \
 	detection.o \
-	gui.o \
-	items.o \
+	gui_v1.o \
+	gui_v2.o \
+	items_v1.o \
 	kyra.o \
 	kyra_v1.o \
 	kyra_v2.o \
 	kyra_v3.o \
 	resource.o \
-	saveload.o \
-	scene.o \
+	saveload_v1.o \
+	scene_v1.o \
 	screen.o \
+	screen_v1.o \
+	screen_v2.o \
 	script_v1.o \
 	script.o \
 	seqplayer.o \
@@ -23,10 +26,12 @@ MODULE_OBJS := \
 	sound_digital.o \
 	sound_towns.o \
 	sound.o \
+	sound_v1.o \
 	sprites.o \
 	staticres.o \
 	text.o \
-	timer.o \
+	text_v1.o \
+	timer_v1.o \
 	vqa.o \
 	wsamovie.o
 
