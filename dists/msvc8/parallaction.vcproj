@@ -221,10 +221,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\intro.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\parallaction\inventory.cpp"
 			>
 		</File>
