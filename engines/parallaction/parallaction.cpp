@@ -102,7 +102,7 @@ Parallaction::Parallaction(OSystem *syst) :
 	Engine(syst) {
 
 	// FIXME
-//	_vm = this;
+	_vm = this;
 
 	_mouseHidden = false;
 
