@@ -42,10 +42,9 @@ namespace Parallaction {
 	game callables data members
 */
 
-// there three guys are extern'd somewhere
-Zone *_moveSarcZone0 = NULL;
-int16 _introSarcData1 = 0;
-Zone *_moveSarcZone1 = NULL;
+static Zone *_moveSarcZone0 = NULL;
+static int16 _introSarcData1 = 0;
+static Zone *_moveSarcZone1 = NULL;
 
 // part completion messages
 static const char *endMsg0[] = {"COMPLIMENTI!", "BRAVO!", "CONGRATULATIONS!", "PRIMA!"};
@@ -186,8 +185,8 @@ void Parallaction_ns::_c_play_boogie(void *parm) {
 		return;
 	flag = 0;
 
-	_vm->_soundMan->setMusicFile("boogie2");
-	_vm->_soundMan->playMusic();
+	_soundMan->setMusicFile("boogie2");
+	_soundMan->playMusic();
 
 	return;
 }
@@ -200,17 +199,17 @@ void Parallaction_ns::_c_score(void *parm) {
 
 void Parallaction_ns::_c_fade(void *parm) {
 
-	_vm->_gfx->setBlackPalette();
+	_gfx->setBlackPalette();
 
 	Gfx::Palette pal;
 	memset(pal, 0, sizeof(Gfx::Palette));
 
 	for (uint16 _di = 0; _di < 64; _di++) {
-		_vm->_gfx->fadePalette(pal);
-		_vm->_gfx->setPalette(pal);
+		_gfx->fadePalette(pal);
+		_gfx->setPalette(pal);
 
 		g_system->delayMillis(20);
-		_vm->_gfx->updateScreen();
+		_gfx->updateScreen();
 	}
 
 	return;
@@ -227,21 +226,21 @@ void Parallaction_ns::_c_moveSarc(void *parm) {
 		_introSarcData2 = 0;
 		if (_moveSarcZones[0] == NULL) {
 
-			_moveSarcZones[0] = _vm->findZone("sarc1");
-			_moveSarcZones[1] = _vm->findZone("sarc2");
-			_moveSarcZones[2] = _vm->findZone("sarc3");
-			_moveSarcZones[3] = _vm->findZone("sarc4");
-			_moveSarcZones[4] = _vm->findZone("sarc5");
+			_moveSarcZones[0] = findZone("sarc1");
+			_moveSarcZones[1] = findZone("sarc2");
+			_moveSarcZones[2] = findZone("sarc3");
+			_moveSarcZones[3] = findZone("sarc4");
+			_moveSarcZones[4] = findZone("sarc5");
 
-			_moveSarcExaZones[0] = _vm->findZone("sarc1exa");
-			_moveSarcExaZones[1] = _vm->findZone("sarc2exa");
-			_moveSarcExaZones[2] = _vm->findZone("sarc3exa");
-			_moveSarcExaZones[3] = _vm->findZone("sarc4exa");
-			_moveSarcExaZones[4] = _vm->findZone("sarc5exa");
+			_moveSarcExaZones[0] = findZone("sarc1exa");
+			_moveSarcExaZones[1] = findZone("sarc2exa");
+			_moveSarcExaZones[2] = findZone("sarc3exa");
+			_moveSarcExaZones[3] = findZone("sarc4exa");
+			_moveSarcExaZones[4] = findZone("sarc5exa");
 
 		}
 
-		a = _vm->findAnimation("sposta");
+		a = findAnimation("sposta");
 
 		_moveSarcZone1 = (Zone*)parm;
 
@@ -282,10 +281,10 @@ void Parallaction_ns::_c_moveSarc(void *parm) {
 		_moveSarcZones[3]->_left == 134 &&
 		_moveSarcZones[4]->_left == 167) {
 
-		a = _vm->findAnimation("finito");
+		a = findAnimation("finito");
 
 		a->_flags |= (kFlagsActive | kFlagsActing);
-		_localFlags[_vm->_currentLocationIndex] |= 0x20;		// GROSS HACK: activates 'finito' flag in dinoit_museo.loc
+		_localFlags[_currentLocationIndex] |= 0x20;		// GROSS HACK: activates 'finito' flag in dinoit_museo.loc
 	}
 
 	return;
@@ -317,14 +316,14 @@ void Parallaction_ns::_c_trasformata(void *parm) {
 }
 
 void Parallaction_ns::_c_offMouse(void *parm) {
-	_vm->showCursor(false);
+	showCursor(false);
 	_engineFlags |= kEngineBlockInput;
 	return;
 }
 
 void Parallaction_ns::_c_onMouse(void *parm) {
 	_engineFlags &= ~kEngineBlockInput;
-	_vm->showCursor(true);
+	showCursor(true);
 	return;
 }
 
@@ -332,14 +331,14 @@ void Parallaction_ns::_c_onMouse(void *parm) {
 
 void Parallaction_ns::_c_setMask(void *parm) {
 
-	_vm->_gfx->intGrottaHackMask();
+	_gfx->intGrottaHackMask();
 
 	return;
 }
 
 void Parallaction_ns::_c_endComment(void *param) {
 
-	byte* _enginePal = _vm->_gfx->_palette;
+	byte* _enginePal = _gfx->_palette;
 	Gfx::Palette pal;
 
 	uint32 si;
@@ -371,20 +370,20 @@ void Parallaction_ns::_c_endComment(void *param) {
 	}
 
 	int16 w = 0, h = 0;
-	_vm->_gfx->getStringExtent(_vm->_location._endComment, 130, &w, &h);
+	_gfx->getStringExtent(_location._endComment, 130, &w, &h);
 
 	Common::Rect r(w+5, h+5);
 	r.moveTo(5, 5);
-	_vm->_gfx->floodFill(Gfx::kBitFront, r, 0);
+	_gfx->floodFill(Gfx::kBitFront, r, 0);
 
 	r.setWidth(w+3);
 	r.setHeight(h+3);
 	r.moveTo(7, 7);
-	_vm->_gfx->floodFill(Gfx::kBitFront, r, 1);
+	_gfx->floodFill(Gfx::kBitFront, r, 1);
 
-	_vm->_gfx->setFont(kFontDialogue);
-	_vm->_gfx->displayWrappedString(_vm->_location._endComment, 3, 5, 0, 130);
-	_vm->_gfx->updateScreen();
+	_gfx->setFont(kFontDialogue);
+	_gfx->displayWrappedString(_location._endComment, 3, 5, 0, 130);
+	_gfx->updateScreen();
 
 	uint32 di = 0;
 	for (di = 0; di < PALETTE_COLORS; di++) {
@@ -421,9 +420,9 @@ void Parallaction_ns::_c_endComment(void *param) {
 
 		}
 
-		_vm->_gfx->setPalette(_enginePal);
+		_gfx->setPalette(_enginePal);
 		g_system->delayMillis(20);
-		_vm->_gfx->updateScreen();
+		_gfx->updateScreen();
 
 	}
 
@@ -438,7 +437,7 @@ void Parallaction_ns::_c_frankenstein(void *parm) {
 	Gfx::Palette pal1;
 
 	for (uint16 i = 0; i <= BASE_PALETTE_COLORS; i++) {
-		pal0[(i+FIRST_BASE_COLOR)] = _vm->_gfx->_palette[i];
+		pal0[(i+FIRST_BASE_COLOR)] = _gfx->_palette[i];
 		pal0[(i+FIRST_BASE_COLOR)*3+1] = 0;
 		pal0[(i+FIRST_BASE_COLOR)*3+2] = 0;
 
@@ -448,15 +447,15 @@ void Parallaction_ns::_c_frankenstein(void *parm) {
 
 	for (uint16 _di = 0; _di < 30; _di++) {
 		g_system->delayMillis(20);
-		_vm->_gfx->setPalette(pal0, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
-		_vm->_gfx->updateScreen();
+		_gfx->setPalette(pal0, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
+		_gfx->updateScreen();
 		g_system->delayMillis(20);
-		_vm->_gfx->setPalette(pal1, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
-		_vm->_gfx->updateScreen();
+		_gfx->setPalette(pal1, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
+		_gfx->updateScreen();
 	}
 
-	_vm->_gfx->setPalette(_vm->_gfx->_palette);
-	_vm->_gfx->updateScreen();
+	_gfx->setPalette(_gfx->_palette);
+	_gfx->updateScreen();
 
 	return;
 }
@@ -475,7 +474,7 @@ void Parallaction_ns::_c_finito(void *parm) {
 
 	Common::File stream;
 
-	stream.open(_vm->_characterName, Common::File::kFileWriteMode);
+	stream.open(_characterName, Common::File::kFileWriteMode);
 	if (stream.isOpen())
 		stream.close();
 
@@ -493,94 +492,91 @@ void Parallaction_ns::_c_finito(void *parm) {
 
 	cleanInventory();
 
-	_vm->_gfx->setPalette(_vm->_gfx->_palette);
+	_gfx->setPalette(_gfx->_palette);
 
 	if (gameCompleted) {
-		_vm->_gfx->setFont(kFontMenu);
-		_vm->_gfx->displayCenteredString(70, v4C[_language]);
-		_vm->_gfx->displayCenteredString(100, v3C[_language]);
-		_vm->_gfx->displayCenteredString(130, v2C[_language]);
-		_vm->_gfx->displayCenteredString(160, v1C[_language]);
+		_gfx->setFont(kFontMenu);
+		_gfx->displayCenteredString(70, v4C[_language]);
+		_gfx->displayCenteredString(100, v3C[_language]);
+		_gfx->displayCenteredString(130, v2C[_language]);
+		_gfx->displayCenteredString(160, v1C[_language]);
 
-		_vm->_gfx->updateScreen();
+		_gfx->updateScreen();
 		waitUntilLeftClick();
 
-		strcpy(_vm->_location._name, "estgrotta.drki");
+		strcpy(_location._name, "estgrotta.drki");
 
 		_engineFlags |= kEngineChangeLocation;
 	} else {
-		_vm->_gfx->setFont(kFontMenu);
-		_vm->_gfx->displayCenteredString(70, v8C[_language]);
-		_vm->_gfx->displayCenteredString(100, v7C[_language]);
-		_vm->_gfx->displayCenteredString(130, v6C[_language]);
-		_vm->_gfx->displayCenteredString(160, v5C[_language]);
+		_gfx->setFont(kFontMenu);
+		_gfx->displayCenteredString(70, v8C[_language]);
+		_gfx->displayCenteredString(100, v7C[_language]);
+		_gfx->displayCenteredString(130, v6C[_language]);
+		_gfx->displayCenteredString(160, v5C[_language]);
 
-		_vm->_gfx->updateScreen();
+		_gfx->updateScreen();
 		waitUntilLeftClick();
 
-		_vm->_menu->selectCharacter();
+		_menu->selectCharacter();
 	}
 
 	// this code saves main character animation from being removed from the following code
-	_vm->_animations.remove(&_vm->_char._ani);
-	_vm->_locationNames[0][0] = '\0';
-	_vm->_numLocations = 0;
+	_animations.remove(&_char._ani);
+	_locationNames[0][0] = '\0';
+	_numLocations = 0;
 	_commandFlags = 0;
 
 	// this flag tells freeZones to unconditionally remove *all* Zones
 	_engineFlags |= kEngineQuit;
 
-	// TODO (LIST): this sequence should be just _zones.clear()
-	_vm->freeZones();
-
-	// TODO (LIST): this sequence should be just _animations.clear()
-	_vm->freeAnimations();
+	freeZones();
+	freeAnimations();
 
 	// this dangerous flag can now be cleared
 	_engineFlags &= ~kEngineQuit;
 
 	// main character animation is restored
-	_vm->_animations.push_front(&_vm->_char._ani);
+	_animations.push_front(&_char._ani);
 	_score = 0;
 
 	return;
 }
 
 void Parallaction_ns::_c_ridux(void *parm) {
-	_vm->changeCharacter(_minidinoName);
+	changeCharacter(_minidinoName);
 	return;
 }
 
 void Parallaction_ns::_c_testResult(void *parm) {
-	_vm->_gfx->swapBuffers();
+	_gfx->swapBuffers();
 
-	_vm->_disk->selectArchive("disk1");
-	_vm->parseLocation("common");
+	_disk->selectArchive("disk1");
+	parseLocation("common");
 
-	_vm->_gfx->setFont(kFontMenu);
+	_gfx->setFont(kFontMenu);
 
-	_vm->_gfx->displayCenteredString(38, _slideText[0]);
-	_vm->_gfx->displayCenteredString(58, _slideText[1]);
+	_gfx->displayCenteredString(38, _slideText[0]);
+	_gfx->displayCenteredString(58, _slideText[1]);
 
-	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
-	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBit2);
+	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
+	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBit2);
 
 	return;
 }
 
 void Parallaction_ns::_c_offSound(void*) {
-	_vm->_soundMan->stopSfx(0);
-	_vm->_soundMan->stopSfx(1);
-	_vm->_soundMan->stopSfx(2);
-	_vm->_soundMan->stopSfx(3);
+	_soundMan->stopSfx(0);
+	_soundMan->stopSfx(1);
+	_soundMan->stopSfx(2);
+	_soundMan->stopSfx(3);
 }
 
 void Parallaction_ns::_c_startMusic(void*) {
-	_vm->_soundMan->playMusic();
+	_soundMan->playMusic();
 }
 
 void Parallaction_ns::_c_closeMusic(void*) {
-	_vm->_soundMan->stopMusic();
+	_soundMan->stopMusic();
 }
 
 /*
@@ -588,11 +584,11 @@ void Parallaction_ns::_c_closeMusic(void*) {
 */
 
 void Parallaction_ns::_c_startIntro(void *parm) {
-	_rightHandAnim = _vm->findAnimation("righthand");
+	_rightHandAnim = findAnimation("righthand");
 
-	if (_vm->getPlatform() == Common::kPlatformPC) {
-		_vm->_soundMan->setMusicFile("intro");
-		_vm->_soundMan->playMusic();
+	if (getPlatform() == Common::kPlatformPC) {
+		_soundMan->setMusicFile("intro");
+		_soundMan->playMusic();
 	}
 
 	_engineFlags |= kEngineBlockInput;
@@ -602,37 +598,37 @@ void Parallaction_ns::_c_startIntro(void *parm) {
 
 void Parallaction_ns::_c_endIntro(void *parm) {
 
-	_vm->_gfx->setFont(kFontMenu);
+	_gfx->setFont(kFontMenu);
 
 	debugC(1, kDebugLocation, "endIntro()");
 
 	for (uint16 _si = 0; _si < 6; _si++) {
-		_vm->_gfx->displayCenteredString(80, _credits[_si]._role);
-		_vm->_gfx->displayCenteredString(100, _credits[_si]._name);
+		_gfx->displayCenteredString(80, _credits[_si]._role);
+		_gfx->displayCenteredString(100, _credits[_si]._name);
 
-		_vm->_gfx->updateScreen();
+		_gfx->updateScreen();
 
 		for (uint16 v2 = 0; v2 < 100; v2++) {
 			_mouseButtons = kMouseNone;
-			_vm->updateInput();
+			updateInput();
 			if (_mouseButtons == kMouseLeftUp)
 				break;
 
-			_vm->waitTime( 1 );
+			waitTime( 1 );
 		}
 
-		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+		_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	}
 	debugC(1, kDebugLocation, "endIntro(): done showing credits");
 
-	if ((_vm->getFeatures() & GF_DEMO) == 0) {
-		_vm->_gfx->displayCenteredString(80, "CLICK MOUSE BUTTON TO START");
-		_vm->_gfx->updateScreen();
+	if ((getFeatures() & GF_DEMO) == 0) {
+		_gfx->displayCenteredString(80, "CLICK MOUSE BUTTON TO START");
+		_gfx->updateScreen();
 
 		waitUntilLeftClick();
 
 		_engineFlags &= ~kEngineBlockInput;
-		_vm->_menu->selectCharacter();
+		_menu->selectCharacter();
 	} else {
 		waitUntilLeftClick();
 	}
@@ -653,8 +649,8 @@ void Parallaction_ns::_c_moveSheet(void *parm) {
 	r.top = 47;
 	r.right = (x + 32 > 319) ? 319 : (x + 32);
 	r.bottom = 199;
-	_vm->_gfx->floodFill(Gfx::kBitBack, r, 1);
-	_vm->_gfx->floodFill(Gfx::kBit2, r, 1);
+	_gfx->floodFill(Gfx::kBitBack, r, 1);
+	_gfx->floodFill(Gfx::kBit2, r, 1);
 
 	if (x >= 104) return;
 
@@ -662,8 +658,8 @@ void Parallaction_ns::_c_moveSheet(void *parm) {
 	r.top = 47;
 	r.right = (x + 247 > 319) ? 319 : (x + 247);
 	r.bottom = 199;
-	_vm->_gfx->floodFill(Gfx::kBitBack, r, 12);
-	_vm->_gfx->floodFill(Gfx::kBit2, r, 12);
+	_gfx->floodFill(Gfx::kBitBack, r, 12);
+	_gfx->floodFill(Gfx::kBit2, r, 12);
 
 	return;
 }
@@ -704,7 +700,7 @@ void Parallaction_ns::_c_shade(void *parm) {
 		_rightHandAnim->_top
 	);
 
-	_vm->_gfx->fillMaskRect(r, 0);
+	_gfx->fillMaskRect(r, 0);
 
 	return;
 
@@ -719,12 +715,12 @@ void Parallaction_ns::_c_projector(void*) {
 
 	if (dword_16032 != 0) {
 /*		// keep drawing spotlight in its final place
-		_vm->_gfx->flatBlitCnv(&scnv, 110, 25, Gfx::kBitFront);
+		_gfx->flatBlitCnv(&scnv, 110, 25, Gfx::kBitFront);
 		BltBitMap(&bm, 0, 0, &_screen._bitMap, 110, 25, a3->??, a3->??, 0x20, 0x20);
 */		return;
 	}
 
-	_vm->_gfx->setHalfbriteMode(true);
+	_gfx->setHalfbriteMode(true);
 /*
 	// move spot light around the stage
 	int d7, d6;
@@ -758,7 +754,7 @@ void Parallaction_ns::_c_projector(void*) {
 	}
 
 	BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+120, d6, a3->??, a3->??, 0x20, 0x20);
-	_vm->_gfx->flatBlitCnv(&scnv, d7+120, d6, Gfx::kBitFront);
+	_gfx->flatBlitCnv(&scnv, d7+120, d6, Gfx::kBitFront);
 */
 
 	dword_16032 = 1;
@@ -768,13 +764,13 @@ void Parallaction_ns::_c_projector(void*) {
 
 void Parallaction_ns::_c_HBOff(void*) {
 #ifdef HALFBRITE
-	_vm->_gfx->setHalfbriteMode(false);
+	_gfx->setHalfbriteMode(false);
 #endif
 }
 
 void Parallaction_ns::_c_HBOn(void*) {
 #ifdef HALFBRITE
-	_vm->_gfx->setHalfbriteMode(true);
+	_gfx->setHalfbriteMode(true);
 #endif
 }
 
