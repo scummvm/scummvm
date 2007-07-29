@@ -146,12 +146,6 @@ Parallaction::~Parallaction() {
 
 int Parallaction::init() {
 
-	// Detect game
-	if (!detectGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
 	_objectsNames = NULL;
 	_globalTable = NULL;
 	_localFlagNames = NULL;
@@ -170,19 +164,7 @@ int Parallaction::init() {
 //	_musicData1 = 0;
 	strcpy(_characterName1, "null");
 
-	_soundMan = 0;
-
 	_baseTime = 0;
-
-
-	if (_vm->getGameType() == GType_Nippon) {
-		_screenWidth = 320;
-		_screenHeight = 200;
-	} else
-	if (_vm->getGameType() == GType_BRA) {
-		_screenWidth = 640;
-		_screenHeight = 400;
-	}
 
 	_screenMaskWidth = _screenWidth / 4;
 	_screenPathWidth = _screenWidth / 8;
@@ -190,25 +172,6 @@ int Parallaction::init() {
 	_screenSize = _screenWidth * _screenHeight;
 	_screenMaskSize = _screenMaskWidth * _screenHeight;
 	_screenPathSize = _screenPathWidth * _screenHeight;
-
-	if (getGameType() == GType_Nippon) {
-		if (getPlatform() == Common::kPlatformPC) {
-			_disk = new DosDisk_ns(this);
-		} else {
-			if (getFeatures() & GF_DEMO) {
-				strcpy(_location._name, "fognedemo");
-			}
-			_disk = new AmigaDisk_ns(this);
-			_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
-		}
-	} else
-	if (getGameType() == GType_BRA) {
-		if (getPlatform() == Common::kPlatformPC) {
-			_disk = new DosDisk_br(this);
-		} else
-			error("unsupported platform for Big Red Adventure");
-	} else
-		error("unknown game type");
 
 	_engineFlags = 0;
 
@@ -230,15 +193,6 @@ int Parallaction::init() {
 
 	_animations.push_front(&_vm->_char._ani);
 	_gfx = new Gfx(this);
-
-	if (getPlatform() == Common::kPlatformPC) {
-		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
-		_soundMan = new DosSoundMan(this, driver);
-		_soundMan->setMusicVolume(ConfMan.getInt("music_volume"));
-	} else {
-		_soundMan = new AmigaSoundMan(this);
-	}
 
 	_debugger = new Debugger(this);
 

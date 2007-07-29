@@ -486,6 +486,7 @@ public:
 	Parallaction_ns(OSystem* syst) : Parallaction(syst) { }
 	~Parallaction_ns() { }
 
+	int init();
 };
 
 class Parallaction_br : public Parallaction {
@@ -493,6 +494,8 @@ class Parallaction_br : public Parallaction {
 public:
 	Parallaction_br(OSystem* syst) : Parallaction(syst) { }
 	~Parallaction_br() { }
+
+	int init();
 
 };
 
