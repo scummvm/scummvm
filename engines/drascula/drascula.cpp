@@ -4715,7 +4715,7 @@ bucless:
 
 	pausa(3);
 
-	key = getscan();
+	byte key = getscan();
 	if (key != 0)
 		ctvd_stop();
 	buffer_teclado();
