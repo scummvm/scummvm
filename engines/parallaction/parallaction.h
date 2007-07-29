@@ -497,6 +497,42 @@ public:
 private:
 	void 		initResources();
 
+	typedef void (Parallaction_ns::*Callable)(void*);
+
+	// common callables
+	void _c_play_boogie(void*);
+	void _c_startIntro(void*);
+	void _c_endIntro(void*);
+	void _c_moveSheet(void*);
+	void _c_sketch(void*);
+	void _c_shade(void*);
+	void _c_score(void*);
+	void _c_fade(void*);
+	void _c_moveSarc(void*);
+	void _c_contaFoglie(void*);
+	void _c_zeroFoglie(void*);
+	void _c_trasformata(void*);
+	void _c_offMouse(void*);
+	void _c_onMouse(void*);
+	void _c_setMask(void*);
+	void _c_endComment(void*);
+	void _c_frankenstein(void*);
+	void _c_finito(void*);
+	void _c_ridux(void*);
+	void _c_testResult(void*);
+
+	// dos specific callables
+	void _c_null(void*);
+
+	// amiga specific callables
+	void _c_projector(void*);
+	void _c_HBOff(void*);
+	void _c_offSound(void*);
+	void _c_startMusic(void*);
+	void _c_closeMusic(void*);
+	void _c_HBOn(void*);
+
+	Callable _callables[25];
 };
 
 class Parallaction_br : public Parallaction {

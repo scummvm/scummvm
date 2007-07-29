@@ -472,40 +472,6 @@ const char *_audioCommandsNamesRes_br[] = {
 	"loop"
 };
 
-typedef void (*callable)(void*);
-
-
-void _c_play_boogie(void*);
-void _c_startIntro(void*);
-void _c_endIntro(void*);
-void _c_moveSheet(void*);
-void _c_sketch(void*);
-void _c_shade(void*);
-void _c_score(void*);
-void _c_fade(void*);
-void _c_moveSarc(void*);
-void _c_contaFoglie(void*);
-void _c_zeroFoglie(void*);
-void _c_trasformata(void*);
-void _c_offMouse(void*);
-void _c_onMouse(void*);
-void _c_setMask(void*);
-void _c_endComment(void*);
-void _c_frankenstein(void*);
-void _c_finito(void*);
-void _c_ridux(void*);
-void _c_testResult(void*);
-void _c_null(void*);
-
-void _c_projector(void*);
-void _c_HBOff(void*);
-void _c_offSound(void*);
-void _c_startMusic(void*);
-void _c_closeMusic(void*);
-void _c_HBOn(void*);
-
-callable _callables[25];
-
 const char *_dinoName = "dino";
 const char *_donnaName = "donna";
 const char *_doughName = "dough";
@@ -516,6 +482,7 @@ const char *_minidonnaName = "minidonna";
 const char *_minidoughName = "minidough";
 const char *_minidrkiName = "minidrki";
 
+#define CALLABLE_NS(x) &Parallaction_ns::x
 
 void Parallaction_ns::initResources() {
 
@@ -535,57 +502,57 @@ void Parallaction_ns::initResources() {
 	_localFlagNames->addData("visited");
 
 	if (getPlatform() == Common::kPlatformPC) {
-		_callables[0] = 	_c_play_boogie;
-		_callables[1] = 	_c_play_boogie;
-		_callables[2] = 	_c_startIntro;
-		_callables[3] = 	_c_endIntro;
-		_callables[4] = 	_c_moveSheet;
-		_callables[5] = 	_c_sketch;
-		_callables[6] = 	_c_shade;
-		_callables[7] = 	_c_score;
-		_callables[8] = 	_c_null;
-		_callables[9] = 	_c_null;
-		_callables[10] = 	_c_null;
-		_callables[11] = 	_c_fade;
-		_callables[12] = 	_c_play_boogie;
-		_callables[13] = 	_c_moveSarc;
-		_callables[14] = 	_c_contaFoglie;
-		_callables[15] = 	_c_zeroFoglie;
-		_callables[16] = 	_c_trasformata;
-		_callables[17] = 	_c_offMouse;
-		_callables[18] = 	_c_onMouse;
-		_callables[19] = 	_c_setMask;
-		_callables[20] = 	_c_endComment;
-		_callables[21] = 	_c_frankenstein;
-		_callables[22] = 	_c_finito;
-		_callables[23] = 	_c_ridux;
-		_callables[24] = 	_c_testResult;
+		_callables[0] = 	CALLABLE_NS(_c_play_boogie);
+		_callables[1] = 	CALLABLE_NS(_c_play_boogie);
+		_callables[2] = 	CALLABLE_NS(_c_startIntro);
+		_callables[3] = 	CALLABLE_NS(_c_endIntro);
+		_callables[4] = 	CALLABLE_NS(_c_moveSheet);
+		_callables[5] = 	CALLABLE_NS(_c_sketch);
+		_callables[6] = 	CALLABLE_NS(_c_shade);
+		_callables[7] = 	CALLABLE_NS(_c_score);
+		_callables[8] = 	CALLABLE_NS(_c_null);
+		_callables[9] = 	CALLABLE_NS(_c_null);
+		_callables[10] = 	CALLABLE_NS(_c_null);
+		_callables[11] = 	CALLABLE_NS(_c_fade);
+		_callables[12] = 	CALLABLE_NS(_c_play_boogie);
+		_callables[13] = 	CALLABLE_NS(_c_moveSarc);
+		_callables[14] = 	CALLABLE_NS(_c_contaFoglie);
+		_callables[15] = 	CALLABLE_NS(_c_zeroFoglie);
+		_callables[16] = 	CALLABLE_NS(_c_trasformata);
+		_callables[17] = 	CALLABLE_NS(_c_offMouse);
+		_callables[18] = 	CALLABLE_NS(_c_onMouse);
+		_callables[19] = 	CALLABLE_NS(_c_setMask);
+		_callables[20] = 	CALLABLE_NS(_c_endComment);
+		_callables[21] = 	CALLABLE_NS(_c_frankenstein);
+		_callables[22] = 	CALLABLE_NS(_c_finito);
+		_callables[23] = 	CALLABLE_NS(_c_ridux);
+		_callables[24] = 	CALLABLE_NS(_c_testResult);
 	} else {
-		_callables[0] = 	_c_projector;
-		_callables[1] = 	_c_HBOff;
-		_callables[2] = 	_c_startIntro;
-		_callables[3] = 	_c_endIntro;
-		_callables[4] = 	_c_moveSheet;
-		_callables[5] = 	_c_sketch;
-		_callables[6] = 	_c_shade;
-		_callables[7] = 	_c_score;
-		_callables[8] = 	_c_offSound;
-		_callables[9] = 	_c_startMusic;
-		_callables[10] = 	_c_closeMusic;
-		_callables[11] = 	_c_fade;
-		_callables[12] = 	_c_HBOn;
-		_callables[13] = 	_c_moveSarc;
-		_callables[14] = 	_c_contaFoglie;
-		_callables[15] = 	_c_zeroFoglie;
-		_callables[16] = 	_c_trasformata;
-		_callables[17] = 	_c_offMouse;
-		_callables[18] = 	_c_onMouse;
-		_callables[19] = 	_c_setMask;
-		_callables[20] = 	_c_endComment;
-		_callables[21] = 	_c_frankenstein;
-		_callables[22] = 	_c_finito;
-		_callables[23] = 	_c_ridux;
-		_callables[24] = 	_c_testResult;
+		_callables[0] = 	CALLABLE_NS(_c_projector);
+		_callables[1] = 	CALLABLE_NS(_c_HBOff);
+		_callables[2] = 	CALLABLE_NS(_c_startIntro);
+		_callables[3] = 	CALLABLE_NS(_c_endIntro);
+		_callables[4] = 	CALLABLE_NS(_c_moveSheet);
+		_callables[5] = 	CALLABLE_NS(_c_sketch);
+		_callables[6] = 	CALLABLE_NS(_c_shade);
+		_callables[7] = 	CALLABLE_NS(_c_score);
+		_callables[8] = 	CALLABLE_NS(_c_offSound);
+		_callables[9] = 	CALLABLE_NS(_c_startMusic);
+		_callables[10] = 	CALLABLE_NS(_c_closeMusic);
+		_callables[11] = 	CALLABLE_NS(_c_fade);
+		_callables[12] = 	CALLABLE_NS(_c_HBOn);
+		_callables[13] = 	CALLABLE_NS(_c_moveSarc);
+		_callables[14] = 	CALLABLE_NS(_c_contaFoglie);
+		_callables[15] = 	CALLABLE_NS(_c_zeroFoglie);
+		_callables[16] = 	CALLABLE_NS(_c_trasformata);
+		_callables[17] = 	CALLABLE_NS(_c_offMouse);
+		_callables[18] = 	CALLABLE_NS(_c_onMouse);
+		_callables[19] = 	CALLABLE_NS(_c_setMask);
+		_callables[20] = 	CALLABLE_NS(_c_endComment);
+		_callables[21] = 	CALLABLE_NS(_c_frankenstein);
+		_callables[22] = 	CALLABLE_NS(_c_finito);
+		_callables[23] = 	CALLABLE_NS(_c_ridux);
+		_callables[24] = 	CALLABLE_NS(_c_testResult);
 	}
 
 }

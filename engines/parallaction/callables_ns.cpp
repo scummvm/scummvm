@@ -173,12 +173,12 @@ struct Credit {
 	game callables
 */
 
-void _c_null(void *parm) {
+void Parallaction_ns::_c_null(void *parm) {
 
 	return;
 }
 
-void _c_play_boogie(void *parm) {
+void Parallaction_ns::_c_play_boogie(void *parm) {
 
 	static uint16 flag = 1;
 
@@ -193,12 +193,12 @@ void _c_play_boogie(void *parm) {
 }
 
 
-void _c_score(void *parm) {
+void Parallaction_ns::_c_score(void *parm) {
 	_score += 5;
 	return;
 }
 
-void _c_fade(void *parm) {
+void Parallaction_ns::_c_fade(void *parm) {
 
 	_vm->_gfx->setBlackPalette();
 
@@ -218,7 +218,7 @@ void _c_fade(void *parm) {
 
 
 
-void _c_moveSarc(void *parm) {
+void Parallaction_ns::_c_moveSarc(void *parm) {
 
 	Animation *a;
 
@@ -295,7 +295,7 @@ void _c_moveSarc(void *parm) {
 
 
 
-void _c_contaFoglie(void *parm) {
+void Parallaction_ns::_c_contaFoglie(void *parm) {
 
 	num_foglie++;
 	if (num_foglie != 6)
@@ -306,23 +306,23 @@ void _c_contaFoglie(void *parm) {
 	return;
 }
 
-void _c_zeroFoglie(void *parm) {
+void Parallaction_ns::_c_zeroFoglie(void *parm) {
 	num_foglie = 0;
 	return;
 }
 
-void _c_trasformata(void *parm) {
+void Parallaction_ns::_c_trasformata(void *parm) {
 	_engineFlags ^= kEngineTransformedDonna;
 	return;
 }
 
-void _c_offMouse(void *parm) {
+void Parallaction_ns::_c_offMouse(void *parm) {
 	_vm->showCursor(false);
 	_engineFlags |= kEngineBlockInput;
 	return;
 }
 
-void _c_onMouse(void *parm) {
+void Parallaction_ns::_c_onMouse(void *parm) {
 	_engineFlags &= ~kEngineBlockInput;
 	_vm->showCursor(true);
 	return;
@@ -330,14 +330,14 @@ void _c_onMouse(void *parm) {
 
 
 
-void _c_setMask(void *parm) {
+void Parallaction_ns::_c_setMask(void *parm) {
 
 	_vm->_gfx->intGrottaHackMask();
 
 	return;
 }
 
-void _c_endComment(void *param) {
+void Parallaction_ns::_c_endComment(void *param) {
 
 	byte* _enginePal = _vm->_gfx->_palette;
 	Gfx::Palette pal;
@@ -432,7 +432,7 @@ void _c_endComment(void *param) {
 	return;
 }
 
-void _c_frankenstein(void *parm) {
+void Parallaction_ns::_c_frankenstein(void *parm) {
 
 	Gfx::Palette pal0;
 	Gfx::Palette pal1;
@@ -462,7 +462,7 @@ void _c_frankenstein(void *parm) {
 }
 
 
-void _c_finito(void *parm) {
+void Parallaction_ns::_c_finito(void *parm) {
 
 	const char **v8C = endMsg0;
 	const char **v7C = endMsg1;
@@ -546,12 +546,12 @@ void _c_finito(void *parm) {
 	return;
 }
 
-void _c_ridux(void *parm) {
+void Parallaction_ns::_c_ridux(void *parm) {
 	_vm->changeCharacter(_minidinoName);
 	return;
 }
 
-void _c_testResult(void *parm) {
+void Parallaction_ns::_c_testResult(void *parm) {
 	_vm->_gfx->swapBuffers();
 
 	_vm->_disk->selectArchive("disk1");
@@ -568,18 +568,18 @@ void _c_testResult(void *parm) {
 	return;
 }
 
-void _c_offSound(void*) {
+void Parallaction_ns::_c_offSound(void*) {
 	_vm->_soundMan->stopSfx(0);
 	_vm->_soundMan->stopSfx(1);
 	_vm->_soundMan->stopSfx(2);
 	_vm->_soundMan->stopSfx(3);
 }
 
-void _c_startMusic(void*) {
+void Parallaction_ns::_c_startMusic(void*) {
 	_vm->_soundMan->playMusic();
 }
 
-void _c_closeMusic(void*) {
+void Parallaction_ns::_c_closeMusic(void*) {
 	_vm->_soundMan->stopMusic();
 }
 
@@ -587,7 +587,7 @@ void _c_closeMusic(void*) {
 	intro callables
 */
 
-void _c_startIntro(void *parm) {
+void Parallaction_ns::_c_startIntro(void *parm) {
 	_rightHandAnim = _vm->findAnimation("righthand");
 
 	if (_vm->getPlatform() == Common::kPlatformPC) {
@@ -600,7 +600,7 @@ void _c_startIntro(void *parm) {
 	return;
 }
 
-void _c_endIntro(void *parm) {
+void Parallaction_ns::_c_endIntro(void *parm) {
 
 	_vm->_gfx->setFont(kFontMenu);
 
@@ -640,7 +640,7 @@ void _c_endIntro(void *parm) {
 	return;
 }
 
-void _c_moveSheet(void *parm) {
+void Parallaction_ns::_c_moveSheet(void *parm) {
 
 	static uint16 x = 319;
 
@@ -672,7 +672,7 @@ void plotPixel(int x, int y, int color, void *data) {
 	_vm->_gfx->plotMaskPixel(x, y, color);
 }
 
-void _c_sketch(void *parm) {
+void Parallaction_ns::_c_sketch(void *parm) {
 
 	static uint16 index = 1;
 
@@ -695,7 +695,7 @@ void _c_sketch(void *parm) {
 
 
 
-void _c_shade(void *parm) {
+void Parallaction_ns::_c_shade(void *parm) {
 
 	Common::Rect r(
 		_rightHandAnim->_left - 36,
@@ -710,7 +710,7 @@ void _c_shade(void *parm) {
 
 }
 
-void _c_projector(void*) {
+void Parallaction_ns::_c_projector(void*) {
 #ifdef HALFBRITE
 	static int dword_16032 = 0;
 
@@ -766,13 +766,13 @@ void _c_projector(void*) {
 #endif
 }
 
-void _c_HBOff(void*) {
+void Parallaction_ns::_c_HBOff(void*) {
 #ifdef HALFBRITE
 	_vm->_gfx->setHalfbriteMode(false);
 #endif
 }
 
-void _c_HBOn(void*) {
+void Parallaction_ns::_c_HBOn(void*) {
 #ifdef HALFBRITE
 	_vm->_gfx->setHalfbriteMode(true);
 #endif
