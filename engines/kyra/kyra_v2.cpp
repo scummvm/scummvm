@@ -137,7 +137,7 @@ int KyraEngine_v2::go() {
 }
 
 void KyraEngine_v2::mainMenu() {
-	/*bool running = true;
+	bool running = true;
 
 	while (running && !_quitFlag) {
 		seq_playSequences(kSequenceTitle);
@@ -145,11 +145,11 @@ void KyraEngine_v2::mainMenu() {
 		
 		switch (gui_handleMainMenu()) {
 			case 0:
-				_screen->showMouse();*/
+				_screen->showMouse();
 				startup();
 				runLoop();
 				cleanup();
-				/*running = false;
+				running = false;
 				break;
 			case 1:
 				seq_playSequences(kSequenceOverview, kSequenceZanFaun); 
@@ -163,7 +163,7 @@ void KyraEngine_v2::mainMenu() {
 				break;
 		}
 		_screen->hideMouse();
-	}*/
+	}
 }
 
 void KyraEngine_v2::startup() {

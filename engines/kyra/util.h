@@ -32,6 +32,8 @@ namespace Kyra {
 
 template<class Arg, class Res>
 struct Functor1 : public Common::UnaryFunction<Arg, Res> {
+	virtual ~Functor1() {}
+
 	virtual operator bool() const = 0;
 	virtual Res operator()(Arg) const = 0;
 };
