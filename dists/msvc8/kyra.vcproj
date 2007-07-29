@@ -161,11 +161,15 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\engines\kyra\animator.cpp"
+			RelativePath="..\..\engines\kyra\animator_v1.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\animator.h"
+			RelativePath="..\..\engines\kyra\animator_v1.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\animator_v2.cpp"
 			>
 		</File>
 		<File
@@ -181,11 +185,19 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\gui.cpp"
+			RelativePath="..\..\engines\kyra\gui_v1.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\items.cpp"
+			RelativePath="..\..\engines\kyra\gui_v2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\items_v1.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\items_v2.cpp"
 			>
 		</File>
 		<File
@@ -229,11 +241,19 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\saveload.cpp"
+			RelativePath="..\..\engines\kyra\saveload_v1.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\scene.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\scene_v1.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\scene_v2.cpp"
 			>
 		</File>
 		<File
@@ -242,6 +262,22 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\screen.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\screen_v1.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\screen_v1.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\screen_v2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\screen_v2.h"
 			>
 		</File>
 		<File
@@ -254,6 +290,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\script_v1.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\script_v2.cpp"
 			>
 		</File>
 		<File
@@ -293,6 +333,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\sound_v1.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\sprites.cpp"
 			>
 		</File>
@@ -313,7 +357,27 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\text_v1.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\timer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\timer.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\timer_v1.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\timer_v2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\util.h"
 			>
 		</File>
 		<File
