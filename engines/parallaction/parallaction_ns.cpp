@@ -49,7 +49,7 @@ int Parallaction_ns::init() {
 			strcpy(_location._name, "fognedemo");
 		}
 		_disk = new AmigaDisk_ns(this);
-		_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
+		_disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 	}
 
 	if (getPlatform() == Common::kPlatformPC) {

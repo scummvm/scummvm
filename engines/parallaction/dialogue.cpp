@@ -491,7 +491,7 @@ void Parallaction::runDialogue(SpeakData *data) {
 
 	_gfx->setFont(kFontDialogue);
 
-	if (_vm->getPlatform() == Common::kPlatformPC)
+	if (getPlatform() == Common::kPlatformPC)
 		showCursor(false);
 
 	DialogueManager man(this, data);

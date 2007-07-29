@@ -314,7 +314,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 				continue;
 			}
 
-			WalkNodeList *vC = _vm->_char._builder.buildPath(u->_move._x, u->_move._y);
+			WalkNodeList *vC = _char._builder.buildPath(u->_move._x, u->_move._y);
 
 			addJob(&jobWalk, vC, kPriority19 );
 			_engineFlags |= kEngineWalking;
