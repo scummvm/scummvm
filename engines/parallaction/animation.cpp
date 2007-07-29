@@ -566,7 +566,7 @@ void jobRunScripts(void *parm, Job *j) {
 
 
 			case INST_CALL: // call
-				_callables[(*inst)->_opBase._index](0);
+				_vm->callFunction((*inst)->_opBase._index, 0);
 				break;
 
 			case INST_WAIT: // wait

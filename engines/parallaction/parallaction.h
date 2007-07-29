@@ -478,6 +478,10 @@ protected:		// members
 	int16 		pickupItem(Zone *z);
 	int16 		isItemInInventory(int32 v);
 	int16		getHoverInventoryItem(int16 x, int16 y);
+
+public:
+	virtual	void callFunction(uint index, void* parm) { }
+
 };
 
 class Parallaction_ns : public Parallaction {
@@ -487,6 +491,9 @@ public:
 	~Parallaction_ns() { }
 
 	int init();
+
+public:
+	virtual	void callFunction(uint index, void* parm);
 };
 
 class Parallaction_br : public Parallaction {

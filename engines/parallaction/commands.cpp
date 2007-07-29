@@ -302,7 +302,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 			break;
 
 		case CMD_CALL:	// call
-			_callables[u->_callable](z);
+			callFunction(u->_callable, z);
 			break;
 
 		case CMD_QUIT:	// quit
