@@ -2006,7 +2006,7 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 }
 
 void DrasculaEngine::delay(int ms) {
-	_system->delayMillis(ms);
+	_system->delayMillis(ms * 2); // originaly was 1
 }
 
 void DrasculaEngine::confirma_go() {
@@ -2316,15 +2316,7 @@ void DrasculaEngine::FundeAlNegro(int VelocidadDeFundido) {
 }
 
 void DrasculaEngine::pausa(int cuanto) {
-	int diferencia, conta_antes;
-
-	conta_antes = vez();
-
-	for (;;) {
-		diferencia = vez() - conta_antes;
-		if (diferencia >= 2 * cuanto)
-			break;
-	}
+	_system->delayMillis(cuanto * 25); // was originaly 2
 }
 
 void DrasculaEngine::habla_dr_grande(const char *dicho, const char *filename) {
@@ -2364,7 +2356,7 @@ bucless:
 	DIBUJA_FONDO(x_habla[cara], 1, 171, 68, 45, 48, dir_dibujo2, dir_zona_pantalla);
 	l++;
 	if (l == 7)
-		l =0;
+		l = 0;
 
 	if (con_voces == 0)
 		centra_texto(dicho, 191, 69);
@@ -3697,7 +3689,8 @@ int DrasculaEngine::LookForFree() {
 	delay(10);
 	// TODO GAME_Poll(gamev, 10);
 	//return(!SDEV_ChannelFree(gamev->EffectDev, 0));
-	return 1;
+	delay(1000); // workround too much fast played sound
+	return 0;
 }
 
 void DrasculaEngine::OpenSSN(const char *Name, int Pause) {
