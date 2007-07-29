@@ -160,11 +160,6 @@ public:
 typedef Job* JobPointer;
 typedef ManagedList<JobPointer> JobList;
 
-struct Credit {
-	const char *_role;
-	const char *_name;
-};
-
 typedef void (*callable)(void*);
 
 extern uint16 		_mouseButtons;

@@ -506,16 +506,6 @@ void _c_HBOn(void*);
 
 callable _callables[25];
 
-
-Credit _credits[] = {
-	{"Music and Sound Effects", "MARCO CAPRELLI"},
-	{"PC Version", "RICCARDO BALLARINO"},
-	{"Project Manager", "LOVRANO CANEPA"},
-	{"Production", "BRUNO BOZ"},
-	{"Special Thanks to", "LUIGI BENEDICENTI - GILDA and DANILO"},
-	{"Copyright 1992 Euclidea s.r.l ITALY", "All rights reserved"}
-};
-
 const char *_dinoName = "dino";
 const char *_donnaName = "donna";
 const char *_doughName = "dough";

@@ -11,7 +11,6 @@ MODULE_OBJS := \
 	disk_ns.o \
 	font.o \
 	graphics.o \
-	intro.o \
 	inventory.o \
 	location.o \
 	menu.o \
