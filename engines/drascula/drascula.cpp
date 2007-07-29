@@ -508,7 +508,7 @@ bucles:
 	else
 		menu_bar = 0;
 
-	key = getscan();
+	byte key = getscan();
 	if (key == F1 && menu_scr == 0) {
 		elige_verbo(1);
 		cont_sv = 0;
@@ -1325,7 +1325,7 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 
 	chiquez = (float)(cerca-lejos) / (float)(suelo_y2 - suelo_y1);
 	for (l = suelo_y1; l <= suelo_y2; l++) {
-		factor_red[l] = lejos + pequegnez;
+		factor_red[l] = (int)(lejos + pequegnez);
 		pequegnez = pequegnez + chiquez;
 	}
 
@@ -1386,9 +1386,9 @@ void DrasculaEngine::mueve_cursor() {
 	actualiza_refresco();
 
 	if (!strcmp(texto_nombre, "hacker") && hay_nombre == 1) {
-		if (color != ROJO && menu_scr == 0)
+		if (_color != ROJO && menu_scr == 0)
 			color_abc(ROJO);
-	} else if (menu_scr == 0 && color != VERDE_CLARO)
+	} else if (menu_scr == 0 && _color != VERDE_CLARO)
 		color_abc(VERDE_CLARO);
 	if (hay_nombre == 1 && menu_scr == 0)
 		centra_texto(texto_nombre, x_raton, y_raton);
@@ -1791,7 +1791,7 @@ void DrasculaEngine::saves() {
 
 void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla) {
 	int pos_texto[8];
-	int i = 0, y_de_letra = 0, x_de_letra = 0, h, longitud;
+	int y_de_letra = 0, x_de_letra = 0, h, longitud;
 	longitud = strlen(dicho);
 
 	for (h = 0; h < longitud; h++) {
@@ -2010,6 +2010,8 @@ void DrasculaEngine::delay(int ms) {
 }
 
 void DrasculaEngine::confirma_go() {
+	byte key;
+
 	color_abc(ROJO);
 	refresca_pantalla();
 	centra_texto(SYS0, 160, 87);
@@ -2028,6 +2030,8 @@ void DrasculaEngine::confirma_go() {
 }
 
 void DrasculaEngine::confirma_salir() {
+	byte key;
+
 	color_abc(ROJO);
 	refresca_pantalla();
 	centra_texto(SYS1, 160, 87);
@@ -2102,7 +2106,7 @@ void DrasculaEngine::FundeDelNegro(int VelocidadDeFundido) {
 }
 
 void DrasculaEngine::color_abc(int cl) {
-	color = cl;
+	_color = cl;
 
 	if (cl == 0) {
 		palJuego[254][0] = 0;
@@ -2237,8 +2241,8 @@ void DrasculaEngine::comienza_sound(const char *fichero) {
 
 void DrasculaEngine::anima(const char *animacion, int FPS) {
 	Common::File FileIn;
-	unsigned Org = 0, Des = 0, j, TotDes = 0;
-	int NFrames = 1, New = 1;
+	unsigned j;
+	int NFrames = 1;
 	int cnt = 2;
 
 	TimeMed = CLOCKS_PER_SEC / FPS;
@@ -2278,7 +2282,7 @@ void DrasculaEngine::anima(const char *animacion, int FPS) {
 		_system->updateScreen();
 		WaitForNext(TimeMed);
 		cnt++;
-		key = getscan();
+		byte key = getscan();
 		if (key == 0x01)
 			term_int = 1;
 		if (key != 0)
@@ -2365,7 +2369,7 @@ bucless:
 
 	pausa(3);
 
-	key = getscan();
+	byte key = getscan();
 	if (key == ESC)
 		term_int = 1;
 
@@ -2488,7 +2492,7 @@ bucless:
 
 	pausa(3);
 
-	key = getscan();
+	byte key = getscan();
 	if (key == ESC)
 		term_int = 1;
 	if (key != 0)
@@ -2562,7 +2566,7 @@ bucless:
 
 	pausa(3);
 
-	key = getscan();
+	byte key = getscan();
 	if (key == ESC)
 		term_int = 1;
 	if (key != 0)
@@ -2637,7 +2641,7 @@ bucless:
 
 	pausa(3);
 
-	key = getscan();
+	byte key = getscan();
 	if (key == ESC)
 		term_int = 1;
 	if (key != 0)
@@ -2690,7 +2694,7 @@ bucless:
 		centra_texto(dicho, 156, 90);
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	key = getscan();
+	byte key = getscan();
 	if (key == ESC)
 		term_int = 1;
 	if (key != 0)
@@ -2761,7 +2765,7 @@ bucless:
 
 	pausa(3);
 
-	key = getscan();
+	byte key = getscan();
 	if (key == ESC)
 		term_int = 1;
 	if (key != 0)
@@ -2835,7 +2839,7 @@ bucless:
 
 	pausa(3);
 
-	key = getscan();
+	byte key = getscan();
 	if (key != 0)
 		ctvd_stop();
 	buffer_teclado();
@@ -2941,7 +2945,7 @@ bucless:
 
 	pausa(3);
 
-	key = getscan();
+	byte key = getscan();
 	if (key == ESC)
 		term_int = 1;
 	if (key != 0)
@@ -3004,38 +3008,38 @@ bucless:
 
 	actualiza_refresco_antes();
 	DIBUJA_FONDO(hare_x, hare_y, ANCHOBJ+1, 0,
-				((float)ancho_hare / 100) * factor_red[hare_y + alto_hare],
-				((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare],
+				ancho_hare * factor_red[hare_y + alto_hare] / 100,
+				(alto_habla - 1) * factor_red[hare_y + alto_hare] / 100,
 				dir_zona_pantalla, dir_dibujo3);
 	pon_hare();
 
 	DIBUJA_FONDO(ANCHOBJ + 1, 0, hare_x, hare_y,
-				((float)ancho_hare / 100) * factor_red[hare_y + alto_hare],
-				((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare],
+				ancho_hare * factor_red[hare_y + alto_hare] / 100,
+				(alto_habla - 1) * factor_red[hare_y + alto_hare] / 100,
 				dir_dibujo3, dir_zona_pantalla);
 
 	if (sentido_hare == 0) {
 		reduce_hare_chico(x_habla_izq[cara], y_mask_habla,
-						hare_x + ((float)8 / 100) * factor_red[hare_y + alto_hare],
+						hare_x + 8 * factor_red[hare_y + alto_hare] / 100,
 						hare_y, ancho_habla, alto_habla, factor_red[hare_y + alto_hare],
 						dir_hare_dch, dir_zona_pantalla);
 
 		actualiza_refresco();
 	} else if (sentido_hare == 1) {
 		reduce_hare_chico(x_habla_dch[cara], y_mask_habla,
-						hare_x + ((float)12 / 100) * factor_red[hare_y + alto_hare],
+						hare_x + 12 * factor_red[hare_y + alto_hare] / 100,
 						hare_y, ancho_habla,alto_habla, factor_red[hare_y + alto_hare],
 						dir_hare_dch, dir_zona_pantalla);
 		actualiza_refresco();
 	} else if (sentido_hare == 2) {
 		reduce_hare_chico(x_habla_izq[cara], y_mask_habla,
-						suma_1_pixel + hare_x + ((float)12 / 100) * factor_red[hare_y + alto_hare],
+						suma_1_pixel + hare_x + 12 * factor_red[hare_y + alto_hare] / 100,
 						hare_y, ancho_habla, alto_habla, factor_red[hare_y + alto_hare],
 						dir_hare_frente, dir_zona_pantalla);
 		actualiza_refresco();
 	} else if (sentido_hare == 3) {
 		reduce_hare_chico(x_habla_dch[cara], y_mask_habla,
-						suma_1_pixel + hare_x + ((float)8 / 100) * factor_red[hare_y + alto_hare],
+						suma_1_pixel + hare_x + 8 * factor_red[hare_y + alto_hare] / 100,
 						hare_y, ancho_habla,alto_habla, factor_red[hare_y + alto_hare],
 						dir_hare_frente, dir_zona_pantalla);
 		actualiza_refresco();
@@ -3048,7 +3052,7 @@ bucless:
 
 	pausa(3);
 
-	key = getscan();
+	byte key = getscan();
 	if (key == ESC)
 		term_int = 1;
 	if (key != 0)
@@ -3692,9 +3696,9 @@ void DrasculaEngine::OpenSSN(const char *Name, int Pause) {
 	UsingMem = 0;
 	if (MiVideoSSN == NULL)
 		return;
-	Sesion = new Common::File;
-	Sesion->open(Name);
-	mSesion = TryInMem(Sesion);
+	_Sesion = new Common::File;
+	_Sesion->open(Name);
+	mSesion = TryInMem(_Sesion);
 	LastFrame = clock();
 }
 
@@ -3704,7 +3708,7 @@ int DrasculaEngine::PlayFrameSSN() {
 	byte *BufferSSN;
 
 	if (!UsingMem)
-		Sesion->read(&CHUNK, 1);
+		_Sesion->read(&CHUNK, 1);
 	else {
 		memcpy(&CHUNK, mSesion, 1);
 		mSesion += 1;
@@ -3712,7 +3716,7 @@ int DrasculaEngine::PlayFrameSSN() {
 	switch (CHUNK) {
 		case SET_PALET:
 			if (!UsingMem)
-				Sesion->read(dacSSN, 768);
+				_Sesion->read(dacSSN, 768);
 			else {
 				memcpy(dacSSN, mSesion, 768);
 				mSesion += 768;
@@ -3724,8 +3728,8 @@ int DrasculaEngine::PlayFrameSSN() {
 			break;
 		case INIT_FRAME:
 			if (!UsingMem) {
-				Sesion->read(&CMP, 1);
-				Sesion->read(&Lengt, 4);
+				_Sesion->read(&CMP, 1);
+				_Sesion->read(&Lengt, 4);
 			} else {
 				memcpy(&CMP, mSesion, 1);
 				mSesion += 1;
@@ -3735,7 +3739,7 @@ int DrasculaEngine::PlayFrameSSN() {
 			if (CMP == CMP_RLE) {
 				if (!UsingMem) {
 					BufferSSN = (byte *)malloc(Lengt);
-					Sesion->read(BufferSSN, Lengt);
+					_Sesion->read(BufferSSN, Lengt);
 				} else {
 					BufferSSN = (byte *)malloc(Lengt);
 					memcpy(BufferSSN, mSesion, Lengt);
@@ -3758,7 +3762,7 @@ int DrasculaEngine::PlayFrameSSN() {
 				if (CMP == CMP_OFF) {
 					if (!UsingMem) {
 						BufferSSN = (byte *)malloc(Lengt);
-						Sesion->read(BufferSSN, Lengt);
+						_Sesion->read(BufferSSN, Lengt);
 					} else {
 						BufferSSN = (byte *)malloc(Lengt);
 						memcpy(BufferSSN, mSesion, Lengt);
@@ -3795,8 +3799,8 @@ void DrasculaEngine::EndSSN() {
 	if (UsingMem)
 		free(pointer);
 	else {
-		Sesion->close();
-		delete Sesion;
+		_Sesion->close();
+		delete _Sesion;
 	}
 }
 
@@ -4287,22 +4291,22 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 
 	longitud = strlen(frase1);
 	for (h = 0; h < longitud; h++)
-		if (frase1[h] == 0xa7)
+		if (frase1[h] == (char)0xa7)
 			frase1[h] = ' ';
 
 	longitud = strlen(frase2);
 	for (h = 0; h < longitud; h++)
-		if (frase2[h] == 0xa7)
+		if (frase2[h] == (char)0xa7)
 			frase2[h] = ' ';
 
 	longitud = strlen(frase3);
 	for (h = 0; h < longitud; h++)
-		if (frase3[h] == 0xa7)
+		if (frase3[h] == (char)0xa7)
 			frase3[h] = ' ';
 
 	longitud = strlen(frase4);
 	for (h = 0; h < longitud; h++)
-		if (frase4[h] == 0xa7)
+		if (frase4[h] == (char)0xa7)
 			frase4[h] = ' ';
 
 	lee_dibujos("car.alg");
@@ -4325,21 +4329,21 @@ bucle_opc:
 	MirarRaton();
 
 	if ( y_raton > 0 && y_raton < 9) {
-		if (usado1 == 1 && color != BLANCO)
+		if (usado1 == 1 && _color != BLANCO)
 			color_abc(BLANCO);
-		else if (usado1 == 0 && color != VERDE_CLARO)
+		else if (usado1 == 0 && _color != VERDE_CLARO)
 			color_abc(VERDE_CLARO);
 	} else if (y_raton > 8 && y_raton < 17) {
-		if (usado2 == 1 && color != BLANCO)
+		if (usado2 == 1 && _color != BLANCO)
 			color_abc(BLANCO);
-		else if (usado2 == 0 && color != VERDE_CLARO)
+		else if (usado2 == 0 && _color != VERDE_CLARO)
 			color_abc(VERDE_CLARO);
 	} else if (y_raton > 16 && y_raton < 25) {
-		if (usado3 == 1 && color != BLANCO)
+		if (usado3 == 1 && _color != BLANCO)
 			color_abc(BLANCO);
-		else if (usado3 == 0 && color != VERDE_CLARO)
+		else if (usado3 == 0 && _color != VERDE_CLARO)
 			color_abc(VERDE_CLARO);
-	} else if (color != VERDE_CLARO)
+	} else if (_color != VERDE_CLARO)
 		color_abc(VERDE_CLARO);
 
 	if (y_raton > 0 && y_raton < 9)
@@ -4472,7 +4476,7 @@ void DrasculaEngine::animacion_4() {
 
 void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pantalla, int juego) {
 	int pos_texto[6];
-	int i = 0, y_de_signos, y_de_letra, x_de_letra = 0, h, longitud;
+	int y_de_signos, y_de_letra, x_de_letra = 0, h, longitud;
 	longitud = strlen(dicho);
 
 	for (h = 0; h < longitud; h++) {
@@ -4790,7 +4794,7 @@ bucless:
 
 	pausa(3);
 
-	key = getscan();
+	byte key = getscan();
 	if (key != 0)
 		ctvd_stop();
 	buffer_teclado();

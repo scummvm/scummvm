@@ -421,7 +421,6 @@ public:
 	int con_voces;
 	int menu_bar, menu_scr, hay_nombre;
 	char texto_nombre[13];
-	byte key;
 
 	int flags[NUM_BANDERAS];
 
@@ -458,7 +457,7 @@ public:
 	int num_ejec;
 	int cual_ejec, hay_que_load;
 	char nom_partida[13];
-	int color;
+	int _color;
 	int corta_musica;
 	char select[23];
 	int hay_seleccion;
@@ -567,7 +566,7 @@ public:
 
 	byte *pointer;
 	int UsingMem;
-	Common::File *Sesion;
+	Common::File *_Sesion;
 	byte CHUNK;
 	byte CMP, dacSSN[768];
 	byte *MiVideoSSN;
