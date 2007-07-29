@@ -483,6 +483,8 @@ const char *_minidoughName = "minidough";
 const char *_minidrkiName = "minidrki";
 
 #define CALLABLE_NS(x) &Parallaction_ns::x
+#define CALLABLE_BR(x) &Parallaction_br::x
+
 
 void Parallaction_ns::initResources() {
 
@@ -577,7 +579,14 @@ void Parallaction_br::initResources() {
 	_localFlagNames = new Table(120);
 	_localFlagNames->addData("visited");
 
-	// TODO: init callables for Big Red Adventure
+	if (getPlatform() == Common::kPlatformPC) {
+		_callables[0] = 	CALLABLE_BR(_c_blufade);
+		_callables[1] = 	CALLABLE_BR(_c_resetpalette);
+		_callables[2] = 	CALLABLE_BR(_c_ferrcycle);
+		_callables[3] = 	CALLABLE_BR(_c_lipsinc);
+		_callables[4] = 	CALLABLE_BR(_c_albcycle);
+		_callables[5] = 	CALLABLE_BR(_c_password);
+	}
 
 }
 
