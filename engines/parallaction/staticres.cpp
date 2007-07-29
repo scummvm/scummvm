@@ -483,8 +483,73 @@ const char *_minidoughName = "minidough";
 const char *_minidrkiName = "minidrki";
 
 #define CALLABLE_NS(x) &Parallaction_ns::x
+
+const Parallaction_ns::Callable Parallaction_ns::_dosCallables[] = {
+	CALLABLE_NS(_c_play_boogie),
+	CALLABLE_NS(_c_play_boogie),
+	CALLABLE_NS(_c_startIntro),
+	CALLABLE_NS(_c_endIntro),
+	CALLABLE_NS(_c_moveSheet),
+	CALLABLE_NS(_c_sketch),
+	CALLABLE_NS(_c_shade),
+	CALLABLE_NS(_c_score),
+	CALLABLE_NS(_c_null),
+	CALLABLE_NS(_c_null),
+	CALLABLE_NS(_c_null),
+	CALLABLE_NS(_c_fade),
+	CALLABLE_NS(_c_play_boogie),
+	CALLABLE_NS(_c_moveSarc),
+	CALLABLE_NS(_c_contaFoglie),
+	CALLABLE_NS(_c_zeroFoglie),
+	CALLABLE_NS(_c_trasformata),
+	CALLABLE_NS(_c_offMouse),
+	CALLABLE_NS(_c_onMouse),
+	CALLABLE_NS(_c_setMask),
+	CALLABLE_NS(_c_endComment),
+	CALLABLE_NS(_c_frankenstein),
+	CALLABLE_NS(_c_finito),
+	CALLABLE_NS(_c_ridux),
+	CALLABLE_NS(_c_testResult)
+};
+
+const Parallaction_ns::Callable Parallaction_ns::_amigaCallables[] = {
+	CALLABLE_NS(_c_projector),
+	CALLABLE_NS(_c_HBOff),
+	CALLABLE_NS(_c_startIntro),
+	CALLABLE_NS(_c_endIntro),
+	CALLABLE_NS(_c_moveSheet),
+	CALLABLE_NS(_c_sketch),
+	CALLABLE_NS(_c_shade),
+	CALLABLE_NS(_c_score),
+	CALLABLE_NS(_c_offSound),
+	CALLABLE_NS(_c_startMusic),
+	CALLABLE_NS(_c_closeMusic),
+	CALLABLE_NS(_c_fade),
+	CALLABLE_NS(_c_play_boogie),
+	CALLABLE_NS(_c_moveSarc),
+	CALLABLE_NS(_c_contaFoglie),
+	CALLABLE_NS(_c_zeroFoglie),
+	CALLABLE_NS(_c_trasformata),
+	CALLABLE_NS(_c_offMouse),
+	CALLABLE_NS(_c_onMouse),
+	CALLABLE_NS(_c_setMask),
+	CALLABLE_NS(_c_endComment),
+	CALLABLE_NS(_c_frankenstein),
+	CALLABLE_NS(_c_finito),
+	CALLABLE_NS(_c_ridux),
+	CALLABLE_NS(_c_testResult)
+};
+
 #define CALLABLE_BR(x) &Parallaction_br::x
 
+const Parallaction_br::Callable Parallaction_br::_dosCallables[] = {
+	CALLABLE_BR(_c_blufade),
+	CALLABLE_BR(_c_resetpalette),
+	CALLABLE_BR(_c_ferrcycle),
+	CALLABLE_BR(_c_lipsinc),
+	CALLABLE_BR(_c_albcycle),
+	CALLABLE_BR(_c_password)
+};
 
 void Parallaction_ns::initResources() {
 
@@ -504,57 +569,9 @@ void Parallaction_ns::initResources() {
 	_localFlagNames->addData("visited");
 
 	if (getPlatform() == Common::kPlatformPC) {
-		_callables[0] = 	CALLABLE_NS(_c_play_boogie);
-		_callables[1] = 	CALLABLE_NS(_c_play_boogie);
-		_callables[2] = 	CALLABLE_NS(_c_startIntro);
-		_callables[3] = 	CALLABLE_NS(_c_endIntro);
-		_callables[4] = 	CALLABLE_NS(_c_moveSheet);
-		_callables[5] = 	CALLABLE_NS(_c_sketch);
-		_callables[6] = 	CALLABLE_NS(_c_shade);
-		_callables[7] = 	CALLABLE_NS(_c_score);
-		_callables[8] = 	CALLABLE_NS(_c_null);
-		_callables[9] = 	CALLABLE_NS(_c_null);
-		_callables[10] = 	CALLABLE_NS(_c_null);
-		_callables[11] = 	CALLABLE_NS(_c_fade);
-		_callables[12] = 	CALLABLE_NS(_c_play_boogie);
-		_callables[13] = 	CALLABLE_NS(_c_moveSarc);
-		_callables[14] = 	CALLABLE_NS(_c_contaFoglie);
-		_callables[15] = 	CALLABLE_NS(_c_zeroFoglie);
-		_callables[16] = 	CALLABLE_NS(_c_trasformata);
-		_callables[17] = 	CALLABLE_NS(_c_offMouse);
-		_callables[18] = 	CALLABLE_NS(_c_onMouse);
-		_callables[19] = 	CALLABLE_NS(_c_setMask);
-		_callables[20] = 	CALLABLE_NS(_c_endComment);
-		_callables[21] = 	CALLABLE_NS(_c_frankenstein);
-		_callables[22] = 	CALLABLE_NS(_c_finito);
-		_callables[23] = 	CALLABLE_NS(_c_ridux);
-		_callables[24] = 	CALLABLE_NS(_c_testResult);
+		_callables = _dosCallables;
 	} else {
-		_callables[0] = 	CALLABLE_NS(_c_projector);
-		_callables[1] = 	CALLABLE_NS(_c_HBOff);
-		_callables[2] = 	CALLABLE_NS(_c_startIntro);
-		_callables[3] = 	CALLABLE_NS(_c_endIntro);
-		_callables[4] = 	CALLABLE_NS(_c_moveSheet);
-		_callables[5] = 	CALLABLE_NS(_c_sketch);
-		_callables[6] = 	CALLABLE_NS(_c_shade);
-		_callables[7] = 	CALLABLE_NS(_c_score);
-		_callables[8] = 	CALLABLE_NS(_c_offSound);
-		_callables[9] = 	CALLABLE_NS(_c_startMusic);
-		_callables[10] = 	CALLABLE_NS(_c_closeMusic);
-		_callables[11] = 	CALLABLE_NS(_c_fade);
-		_callables[12] = 	CALLABLE_NS(_c_HBOn);
-		_callables[13] = 	CALLABLE_NS(_c_moveSarc);
-		_callables[14] = 	CALLABLE_NS(_c_contaFoglie);
-		_callables[15] = 	CALLABLE_NS(_c_zeroFoglie);
-		_callables[16] = 	CALLABLE_NS(_c_trasformata);
-		_callables[17] = 	CALLABLE_NS(_c_offMouse);
-		_callables[18] = 	CALLABLE_NS(_c_onMouse);
-		_callables[19] = 	CALLABLE_NS(_c_setMask);
-		_callables[20] = 	CALLABLE_NS(_c_endComment);
-		_callables[21] = 	CALLABLE_NS(_c_frankenstein);
-		_callables[22] = 	CALLABLE_NS(_c_finito);
-		_callables[23] = 	CALLABLE_NS(_c_ridux);
-		_callables[24] = 	CALLABLE_NS(_c_testResult);
+		_callables = _amigaCallables;
 	}
 
 }
@@ -580,12 +597,7 @@ void Parallaction_br::initResources() {
 	_localFlagNames->addData("visited");
 
 	if (getPlatform() == Common::kPlatformPC) {
-		_callables[0] = 	CALLABLE_BR(_c_blufade);
-		_callables[1] = 	CALLABLE_BR(_c_resetpalette);
-		_callables[2] = 	CALLABLE_BR(_c_ferrcycle);
-		_callables[3] = 	CALLABLE_BR(_c_lipsinc);
-		_callables[4] = 	CALLABLE_BR(_c_albcycle);
-		_callables[5] = 	CALLABLE_BR(_c_password);
+		_callables = _dosCallables;
 	}
 
 }

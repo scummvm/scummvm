@@ -492,12 +492,15 @@ public:
 	int init();
 
 public:
+	typedef void (Parallaction_ns::*Callable)(void*);
+
 	virtual	void callFunction(uint index, void* parm);
 
 private:
 	void 		initResources();
 
-	typedef void (Parallaction_ns::*Callable)(void*);
+	static const Callable _dosCallables[25];
+	static const Callable _amigaCallables[25];
 
 	// common callables
 	void _c_play_boogie(void*);
@@ -532,7 +535,7 @@ private:
 	void _c_closeMusic(void*);
 	void _c_HBOn(void*);
 
-	Callable _callables[25];
+	const Callable *_callables;
 };
 
 class Parallaction_br : public Parallaction {
@@ -544,6 +547,7 @@ public:
 	int init();
 
 public:
+	typedef void (Parallaction_br::*Callable)(void*);
 	virtual	void callFunction(uint index, void* parm);
 
 public:
@@ -553,7 +557,7 @@ public:
 private:
 	void 		initResources();
 
-	typedef void (Parallaction_br::*Callable)(void*);
+	static const Callable _dosCallables[6];
 
 	void _c_blufade(void*);
 	void _c_resetpalette(void*);
@@ -562,7 +566,7 @@ private:
 	void _c_albcycle(void*);
 	void _c_password(void*);
 
-	Callable _callables[6];
+	const Callable *_callables;
 };
 
 // FIXME: remove global
