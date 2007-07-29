@@ -277,7 +277,16 @@ void Script::sfTakeObject(SCRIPTFUNC_PARAMS) {
 	obj = _vm->_actor->getObj(objectId);
 	if (obj->_sceneNumber != ITE_SCENE_INV) {
 		obj->_sceneNumber = ITE_SCENE_INV;
-		//4debug for (int j=0;j<17;j++)
+
+		// WORKAROUND for two incorrect object sprites in the IHNM demo
+		// (the mirror and the icon in Ted's part). Set them correctly here
+		if (_vm->getGameId() == GID_IHNM_DEMO) {
+			if (obj->_spriteListResourceId == 4)
+				obj->_spriteListResourceId = 24;
+			if (obj->_spriteListResourceId == 3)
+				obj->_spriteListResourceId = 25;
+		}
+
 		_vm->_interface->addToInventory(objectId);
 	}
 }
@@ -870,10 +879,16 @@ void Script::sfDropObject(SCRIPTFUNC_PARAMS) {
 		_vm->_scene->currentSceneNumber() == 59 && obj->_id == 16385)
 			obj->_sceneNumber = -1;
 
-	if (_vm->getGameType() == GType_IHNM)
-		obj->_spriteListResourceId = spriteId;
-	else
+	if (_vm->getGameType() == GType_IHNM) {
+		if (_vm->getGameId() != GID_IHNM_DEMO) {
+			obj->_spriteListResourceId = spriteId;
+		} else {
+			// Don't update the object's _spriteListResourceId in the IHNM demo, as this function is
+			// called incorrectly there (with spriteId == 0, which resets the object sprites)
+		}
+	} else {
 		obj->_spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
+	}
 
 	obj->_location.x = x;
 	obj->_location.y = y;
