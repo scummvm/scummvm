@@ -165,6 +165,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\callables_br.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\callables_ns.cpp"
 			>
 		</File>
