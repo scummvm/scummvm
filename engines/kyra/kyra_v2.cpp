@@ -901,7 +901,7 @@ int KyraEngine_v2::inputSceneChange(int x, int y, int unk1, int unk2) {
 	_timer->disable(5);
 	
 	if (wayLength != 0 && wayLength != 0x7D00)
-		refreshNPC = trySceneChange(_movFacingTable, unk1, unk2);
+		refreshNPC = (trySceneChange(_movFacingTable, unk1, unk2) != 0);
 
 	//XXX
 	

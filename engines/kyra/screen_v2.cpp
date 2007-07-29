@@ -417,7 +417,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 	
 	uint16 sx1 = getScreenDim(sd)->sx << 3;
 	uint16 sy1 = getScreenDim(sd)->sy;
-	uint16 sx2 = sx1 + getScreenDim(sd)->w << 3;
+	uint16 sx2 = sx1 + (getScreenDim(sd)->w << 3);
 	uint16 sy2 = sy1 + getScreenDim(sd)->h;
 	if (flags & 0x10) {
 		x += sx1;
