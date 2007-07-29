@@ -146,8 +146,6 @@ Parallaction::~Parallaction() {
 
 int Parallaction::init() {
 
-	initResources();	// needs to be pushed into subclass
-
 	_engineFlags = 0;
 	_objectsNames = NULL;
 	_globalTable = NULL;

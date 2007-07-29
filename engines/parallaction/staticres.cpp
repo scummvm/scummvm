@@ -219,7 +219,7 @@ byte _amigaTopazFont[2600] =
 
 
 
-const char *_zoneFlagNamesRes[] = {
+const char *_zoneFlagNamesRes_ns[] = {
 	"closed",
 	"active",
 	"remove",
@@ -234,7 +234,7 @@ const char *_zoneFlagNamesRes[] = {
 	"nowalk"
 };
 
-const char *_zoneTypeNamesRes[] = {
+const char *_zoneTypeNamesRes_ns[] = {
 	"examine",
 	"door",
 	"get",
@@ -262,7 +262,7 @@ const char _gameNames[10][20] = {
 	"GAME10"
 };
 
-const char *_commandsNamesRes[] = {
+const char *_commandsNamesRes_ns[] = {
 	"set",
 	"clear",
 	"start",
@@ -281,7 +281,7 @@ const char *_commandsNamesRes[] = {
 	"stop"
 };
 
-const char *_instructionNamesRes[] = {
+const char *_instructionNamesRes_ns[] = {
 	"on",
 	"off",
 	"x",
@@ -302,7 +302,7 @@ const char *_instructionNamesRes[] = {
 	"move"
 };
 
-const char *_callableNamesRes[] = {
+const char *_callableNamesRes_ns[] = {
 	"Projector",
 	"HBOff",
 	"StartIntro",
@@ -328,6 +328,148 @@ const char *_callableNamesRes[] = {
 	"Finito",
 	"Ridux",
 	"TestResult"
+};
+
+const char *_zoneTypeNamesRes_br[] = {
+	"examine",
+	"door",
+	"get",
+	"merge",
+	"taste",
+	"hear",
+	"feel",
+	"speak",
+	"none",
+	"trap",
+	"you",
+	"command",
+	"path",
+	"box"
+};
+
+const char *_zoneFlagNamesRes_br[] = {
+	"closed",
+	"active",
+	"remove",
+	"acting",
+	"locked",
+	"fixed",
+	"noname",
+	"nomasked",
+	"looping",
+	"added",
+	"character",
+	"nowalk",
+	"yourself",
+	"scaled",
+	"selfuse"
+};
+
+const char *_instructionNamesRes_br[] = {
+	"on",
+	"off",
+	"x",
+	"y",
+	"z",
+	"f",
+	"loop",
+	"endloop",
+	"show",
+	"inc",
+	"dec",
+	"set",
+	"put",
+	"call",
+	"wait",
+	"start",
+	"process",
+	"move",
+	"color",
+	"sound",
+	"mask",
+	"print",
+	"text",
+	"mul",
+	"div",
+	"if",
+	"ifeq",
+	"iflt",
+	"ifgt",
+	"endif",
+	"stop"
+};
+
+const char *_commandsNamesRes_br[] = {
+	"set",
+	"clear",
+	"start",
+	"speak",
+	"get"
+	"location",
+	"open",
+	"close",
+	"on",
+	"off",
+	"call",
+	"toggle",
+	"drop",
+	"quit",
+	"move",
+	"stop",
+	"character",
+	"followme",
+	"onmouse",
+	"offmouse",
+	"add",
+	"leave",
+	"inc",
+	"dec",
+	"text",
+	"dummy",
+	"dummy",
+	"let",
+	"music",
+	"fix",
+	"unfix",
+	"zeta",
+	"scroll",
+	"swap",
+	"give",
+	"text",
+	"part",
+	"dummy",
+	"return",
+	"onsave",
+	"offsave"
+};
+
+const char *_callableNamesRes_br[] = {
+	"blufade",
+	"resetpalette",
+	"ferrcycle",
+	"lipsinc",
+	"albycle",
+	"password"
+};
+
+const char *_audioCommandsNamesRes_br[] = {
+	"play",
+	"stop",
+	"pause",
+	"channel_level",
+	"fadein",
+	"fadeout",
+	"volume",
+	" ",
+	"faderate",
+	" ",
+	" ",
+	" ",
+	" ",
+	" ",
+	" ",
+	" ",
+	"loop"
 };
 
 typedef void (*callable)(void*);
@@ -385,13 +527,19 @@ const char *_minidoughName = "minidough";
 const char *_minidrkiName = "minidrki";
 
 
-void Parallaction::initResources() {
+void Parallaction_ns::initResources() {
 
-	_callableNames = new Table(ARRAYSIZE(_callableNamesRes), _callableNamesRes);
-	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes), _instructionNamesRes);
-	_zoneFlagNames = new Table(ARRAYSIZE(_zoneFlagNamesRes), _zoneFlagNamesRes);
-	_zoneTypeNames = new Table(ARRAYSIZE(_zoneTypeNamesRes), _zoneTypeNamesRes);
-	_commandsNames = new Table(ARRAYSIZE(_commandsNamesRes), _commandsNamesRes);
+	_zoneFlagNamesRes = _zoneFlagNamesRes_ns;
+	_zoneTypeNamesRes = _zoneTypeNamesRes_ns;
+	_commandsNamesRes = _commandsNamesRes_ns;
+	_callableNamesRes = _callableNamesRes_ns;
+	_instructionNamesRes = _instructionNamesRes_ns;
+
+	_callableNames = new Table(ARRAYSIZE(_zoneFlagNamesRes_ns), _zoneFlagNamesRes_ns);
+	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes_ns), _instructionNamesRes_ns);
+	_zoneFlagNames = new Table(ARRAYSIZE(_zoneFlagNamesRes_ns), _zoneFlagNamesRes_ns);
+	_zoneTypeNames = new Table(ARRAYSIZE(_zoneTypeNamesRes_ns), _zoneTypeNamesRes_ns);
+	_commandsNames = new Table(ARRAYSIZE(_commandsNamesRes_ns), _commandsNamesRes_ns);
 
 	_localFlagNames = new Table(120);
 	_localFlagNames->addData("visited");
@@ -452,5 +600,28 @@ void Parallaction::initResources() {
 
 }
 
+void Parallaction_br::initResources() {
+
+	_zoneFlagNamesRes = _zoneFlagNamesRes_br;
+	_zoneTypeNamesRes = _zoneTypeNamesRes_br;
+	_commandsNamesRes = _commandsNamesRes_br;
+	_callableNamesRes = _callableNamesRes_br;
+	_instructionNamesRes = _instructionNamesRes_br;
+	_audioCommandsNamesRes = _audioCommandsNamesRes_br;
+
+	_callableNames = new Table(ARRAYSIZE(_callableNamesRes_br), _callableNamesRes_br);
+	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes_br), _instructionNamesRes_br);
+	_zoneFlagNames = new Table(ARRAYSIZE(_zoneFlagNamesRes_br), _zoneFlagNamesRes_br);
+	_zoneTypeNames = new Table(ARRAYSIZE(_zoneTypeNamesRes_br), _zoneTypeNamesRes_br);
+	_commandsNames = new Table(ARRAYSIZE(_commandsNamesRes_br), _commandsNamesRes_br);
+	_audioCommandsNames = new Table(ARRAYSIZE(_audioCommandsNamesRes_br), _audioCommandsNamesRes_br);
+
+	// TODO: make sure there are 120 max locations in Big Red Adventure
+	_localFlagNames = new Table(120);
+	_localFlagNames->addData("visited");
+
+	// TODO: init callables for Big Red Adventure
+
+}
 
 } // namespace Parallaction

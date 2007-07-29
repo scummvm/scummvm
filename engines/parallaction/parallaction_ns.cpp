@@ -61,6 +61,8 @@ int Parallaction_ns::init() {
 		_soundMan = new AmigaSoundMan(this);
 	}
 
+	initResources();
+
 	Parallaction::init();
 
 	return 0;

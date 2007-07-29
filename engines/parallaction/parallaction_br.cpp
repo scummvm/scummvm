@@ -50,6 +50,8 @@ int Parallaction_br::init() {
 
 	_soundMan = new DummySoundMan(this);
 
+	initResources();
+
 	Parallaction::init();
 
 	return 0;

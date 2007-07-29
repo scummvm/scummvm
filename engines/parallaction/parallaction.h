@@ -182,8 +182,6 @@ extern uint16 		_introSarcData3;		 // sarcophagus stuff to be saved
 extern uint16 		_introSarcData2;		 // sarcophagus stuff to be saved
 extern char 		_saveData1[];
 extern uint32 		_commandFlags;
-extern const char 	*_instructionNamesRes[];
-extern const char 	*_commandsNamesRes[];
 extern const char 	*_dinoName;
 extern const char 	*_donnaName;
 extern const char 	*_doughName;
@@ -435,7 +433,6 @@ protected:		// members
 
 	void		initGame();
 	void		initGlobals();
-	void 		initResources();
 	void		runGame();
 	uint32		getElapsedTime();
 	void		resetTimer();
@@ -482,6 +479,13 @@ protected:		// members
 public:
 	virtual	void callFunction(uint index, void* parm) { }
 
+public:
+	const char **_zoneFlagNamesRes;
+	const char **_zoneTypeNamesRes;
+	const char **_commandsNamesRes;
+	const char **_callableNamesRes;
+	const char **_instructionNamesRes;
+
 };
 
 class Parallaction_ns : public Parallaction {
@@ -494,6 +498,10 @@ public:
 
 public:
 	virtual	void callFunction(uint index, void* parm);
+
+private:
+	void 		initResources();
+
 };
 
 class Parallaction_br : public Parallaction {
@@ -503,6 +511,14 @@ public:
 	~Parallaction_br() { }
 
 	int init();
+
+public:
+	Table		*_audioCommandsNames;
+	const char **_audioCommandsNamesRes;
+
+private:
+	void 		initResources();
+
 
 };
 
