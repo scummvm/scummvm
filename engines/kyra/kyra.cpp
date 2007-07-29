@@ -35,16 +35,23 @@
 #include "kyra/resource.h"
 #include "kyra/screen.h"
 #include "kyra/text.h"
+#include "kyra/timer.h"
+#include "kyra/script.h"
 
 namespace Kyra {
 
 KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	: Engine(system) {
-	_screen = 0;
 	_res = 0;
 	_sound = 0;
 	_text = 0;
 	_staticres = 0;
+	_timer = 0;
+	_scriptInterpreter = 0;
+	
+	_flags = flags;
+	_gameSpeed = 60;
+	_tickLength = (uint8)(1000.0 / _gameSpeed);
 	
 	_quitFlag = false;
 	
@@ -63,6 +70,7 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	Common::addSpecialDebugLevel(kDebugLevelGUI, "GUI", "GUI debug level");
 	Common::addSpecialDebugLevel(kDebugLevelSequence, "Sequence", "Sequence debug level");
 	Common::addSpecialDebugLevel(kDebugLevelMovie, "Movie", "Movie debug level");
+	Common::addSpecialDebugLevel(kDebugLevelTimer, "Timer", "Timer debug level");
 }
 
 int KyraEngine::init() {
@@ -115,12 +123,18 @@ int KyraEngine::init() {
 
 	_res = new Resource(this);
 	assert(_res);
-	_text = new TextDisplayer(this, _screen);
+	_text = new TextDisplayer(this, this->screen());
 	assert(_text);
 	_staticres = new StaticResource(this);
 	assert(_staticres);
 	if (!_staticres->init())
 		error("_staticres->init() failed");
+	_timer = new TimerManager(this, _system);
+	assert(_timer);
+	_scriptInterpreter = new ScriptHelper(this);
+	assert(_scriptInterpreter);
+	
+	setupOpcodeTable();
 
 	_lang = 0;
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
@@ -155,6 +169,8 @@ KyraEngine::~KyraEngine() {
 	delete _res;
 	delete _sound;
 	delete _text;
+	delete _timer;
+	delete _scriptInterpreter;
 }
 
 void KyraEngine::quitGame() {

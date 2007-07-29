@@ -42,6 +42,7 @@
 #include "kyra/animator_v1.h"
 #include "kyra/text.h"
 #include "kyra/debugger.h"
+#include "kyra/timer.h"
 
 namespace Kyra {
 
@@ -80,7 +81,6 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_sprites = 0;
 	_animator = 0;
 	_seq = 0;
-	_scriptInterpreter = 0;
 	_npcScriptData = 0;
 	_scriptMain = 0;
 	_scriptClickData = 0;
@@ -124,8 +124,7 @@ KyraEngine_v1::~KyraEngine_v1() {
 	delete _sprites;
 	delete _animator;
 	delete _seq;
-	delete _scriptInterpreter;
-	
+		
 	delete _npcScriptData;
 	delete _scriptMain;
 	
@@ -181,18 +180,18 @@ int KyraEngine_v1::init() {
 
 	initStaticResource();
 	
-	if (!_sound->init())
-		error("Couldn't init sound");
-
 	if (_flags.platform == Common::kPlatformFMTowns)
 		_sound->setSoundFileList(_soundFilesTowns, _soundFilesTownsCount);
 	else
 		_sound->setSoundFileList(_soundFiles, _soundFilesCount);
+	
+	if (!_sound->init())
+		error("Couldn't init sound");
 
 	_sound->setVolume(255);
 	_sound->loadSoundFile(0);
 
-	setupOpcodeTable();
+	setupTimers();
 	setupButtonData();
 	setupMenu();
 
@@ -209,9 +208,6 @@ int KyraEngine_v1::init() {
 	_characterList[0].height = 48;
 	_characterList[0].facing = 3;
 	_characterList[0].currentAnimFrame = 7;
-	
-	_scriptInterpreter = new ScriptHelper(this);
-	assert(_scriptInterpreter);
 	
 	_npcScriptData = new ScriptData;
 	memset(_npcScriptData, 0, sizeof(ScriptData));
@@ -263,7 +259,6 @@ int KyraEngine_v1::init() {
 	_pathfinderFlag = _pathfinderFlag2 = 0;
 	_lastFindWayRet = 0;
 	_sceneChangeState = _loopFlag2 = 0;
-	_timerNextRun = 0;
 
 	_movFacingTable = new int[150];
 	assert(_movFacingTable);
@@ -309,9 +304,6 @@ int KyraEngine_v1::init() {
 	_menuDirectlyToLoad = false;
 
 	_lastMusicCommand = 0;
-
-	_gameSpeed = 60;
-	_tickLength = (uint8)(1000.0 / _gameSpeed);
 	
 	return 0;
 }
@@ -456,7 +448,7 @@ void KyraEngine_v1::mainLoop() {
 
 		processButtonList(_buttonList);
 		updateMousePointer();
-		updateGameTimers();
+		_timer->update();
 		updateTextFade();
 
 		_handleInput = true;
@@ -470,7 +462,7 @@ void KyraEngine_v1::mainLoop() {
 void KyraEngine_v1::delayUntil(uint32 timestamp, bool updateTimers, bool update, bool isMainLoop) {
 	while (_system->getMillis() < timestamp && !_quitFlag) {
 		if (updateTimers)
-			updateGameTimers();
+			_timer->update();
 
 		if (timestamp - _system->getMillis() >= 10)
 			delay(10, update, isMainLoop);
@@ -1003,6 +995,21 @@ void KyraEngine_v1::runNpcScript(int func) {
 		_scriptInterpreter->runScript(_npcScript);
 }
 
+void KyraEngine_v1::checkAmuletAnimFlags() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::checkSpecialAnimFlags()");
+
+	if (_brandonStatusBit & 2) {
+		seq_makeBrandonNormal2();
+		_timer->setCountdown(19, 300);
+	}
+
+	if (_brandonStatusBit & 0x20) {
+		seq_makeBrandonNormal();
+		_timer->setCountdown(19, 300);
+	}
+}
+
+typedef Functor1Mem<ScriptState*, int, KyraEngine_v1> OpcodeV1;
 #define Opcode(x) OpcodeV1(this, &KyraEngine_v1::x)
 void KyraEngine_v1::setupOpcodeTable() {
 	static const OpcodeV1 opcodeTable[] = {
@@ -1201,6 +1208,7 @@ void KyraEngine_v1::setupOpcodeTable() {
 		Opcode(o1_fillRect),
 		Opcode(o1_vocUnload),
 		Opcode(o1_vocLoad),
+		// 0x9c
 		Opcode(o1_dummy)
 	};
 	

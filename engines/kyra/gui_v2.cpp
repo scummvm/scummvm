@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -63,7 +63,10 @@ int KyraEngine_v2::gui_handleMainMenu() {
 	int charWidthBackUp = _screen->_charWidth;
 	
 	_screen->_charWidth = -2;
-	_screen->setScreenDim(3);
+	if (_flags.gameID == GI_KYRA2)
+		_screen->setScreenDim(11);
+	else
+		_screen->setScreenDim(3);
 	int backUpX = _screen->_curDim->sx;
 	int backUpY = _screen->_curDim->sy;
 	int backUpWidth = _screen->_curDim->w;

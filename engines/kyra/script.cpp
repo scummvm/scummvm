@@ -40,64 +40,62 @@
 namespace Kyra {
 ScriptHelper::ScriptHelper(KyraEngine *vm) : _vm(vm) {
 #define COMMAND(x) { &ScriptHelper::x, #x }
-	// now we create a list of all Command/Opcode procs and so
 	static CommandEntry commandProcs[] = {
 		// 0x00
-		COMMAND(c1_jmpTo),
-		COMMAND(c1_setRetValue),
-		COMMAND(c1_pushRetOrPos),
-		COMMAND(c1_push),
+		COMMAND(cmd_jmpTo),
+		COMMAND(cmd_setRetValue),
+		COMMAND(cmd_pushRetOrPos),
+		COMMAND(cmd_push),
 		// 0x04
-		COMMAND(c1_push),
-		COMMAND(c1_pushReg),
-		COMMAND(c1_pushBPNeg),
-		COMMAND(c1_pushBPAdd),
+		COMMAND(cmd_push),
+		COMMAND(cmd_pushReg),
+		COMMAND(cmd_pushBPNeg),
+		COMMAND(cmd_pushBPAdd),
 		// 0x08
-		COMMAND(c1_popRetOrPos),
-		COMMAND(c1_popReg),
-		COMMAND(c1_popBPNeg),
-		COMMAND(c1_popBPAdd),
+		COMMAND(cmd_popRetOrPos),
+		COMMAND(cmd_popReg),
+		COMMAND(cmd_popBPNeg),
+		COMMAND(cmd_popBPAdd),
 		// 0x0C
-		COMMAND(c1_addSP),
-		COMMAND(c1_subSP),
-		COMMAND(c1_execOpcode),
-		COMMAND(c1_ifNotJmp),
+		COMMAND(cmd_addSP),
+		COMMAND(cmd_subSP),
+		COMMAND(cmd_execOpcode),
+		COMMAND(cmd_ifNotJmp),
 		// 0x10
-		COMMAND(c1_negate),
-		COMMAND(c1_eval),
-		COMMAND(c1_setRetAndJmp)
+		COMMAND(cmd_negate),
+		COMMAND(cmd_eval),
+		COMMAND(cmd_setRetAndJmp)
 	};
 	_commands = commandProcs;
 #undef COMMAND
 }
 
 bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, const Common::Array<const Opcode*> *opcodes) {
-	uint32 size = 0;
-	uint8 *data = _vm->resource()->fileData(filename, &size);	
-	const byte *curData = data;
+	ScriptFileParser file(filename, _vm->resource());
+	if (!file) {
+		error("Couldn't open script file '%s'", filename);
+		return false;
+	}
 	
-	uint32 formBlockSize = getFORMBlockSize(curData);
+	uint32 formBlockSize = file.getFORMBlockSize();
 	if (formBlockSize == (uint32)-1) {
-		delete [] data;
 		error("No FORM chunk found in file: '%s'", filename);
 		return false;
 	}
 	
-	uint32 chunkSize = getIFFBlockSize(data, curData, size, TEXT_CHUNK);
+	uint32 chunkSize = file.getIFFBlockSize(TEXT_CHUNK);
 	if (chunkSize != (uint32)-1) {
 		scriptData->text = new byte[chunkSize];
 
-		if (!loadIFFBlock(data, curData, size, TEXT_CHUNK, scriptData->text, chunkSize)) {
-			delete [] data;
+		if (!file.loadIFFBlock(TEXT_CHUNK, scriptData->text, chunkSize)) {
 			unloadScript(scriptData);
 			error("Couldn't load TEXT chunk from file: '%s'", filename);
 			return false;
 		}
 	}
 	
-	chunkSize = getIFFBlockSize(data, curData, size, ORDR_CHUNK);
+	chunkSize = file.getIFFBlockSize(ORDR_CHUNK);
 	if (chunkSize == (uint32)-1) {
-		delete [] data;
 		unloadScript(scriptData);
 		error("No ORDR chunk found in file: '%s'", filename);
 		return false;
@@ -106,8 +104,7 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, cons
 
 	scriptData->ordr = new uint16[chunkSize];
 
-	if (!loadIFFBlock(data, curData, size, ORDR_CHUNK, scriptData->ordr, chunkSize << 1)) {
-		delete [] data;
+	if (!file.loadIFFBlock(ORDR_CHUNK, scriptData->ordr, chunkSize << 1)) {
 		unloadScript(scriptData);
 		error("Couldn't load ORDR chunk from file: '%s'", filename);
 		return false;
@@ -116,9 +113,8 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, cons
 	while (chunkSize--)
 		scriptData->ordr[chunkSize] = READ_BE_UINT16(&scriptData->ordr[chunkSize]);
 	
-	chunkSize = getIFFBlockSize(data, curData, size, DATA_CHUNK);
+	chunkSize = file.getIFFBlockSize(DATA_CHUNK);
 	if (chunkSize == (uint32)-1) {
-		delete [] data;
 		unloadScript(scriptData);
 		error("No DATA chunk found in file: '%s'", filename);
 		return false;
@@ -127,8 +123,7 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, cons
 
 	scriptData->data = new uint16[chunkSize];
 
-	if (!loadIFFBlock(data, curData, size, DATA_CHUNK, scriptData->data, chunkSize << 1)) {
-		delete [] data;
+	if (!file.loadIFFBlock(DATA_CHUNK, scriptData->data, chunkSize << 1)) {
 		unloadScript(scriptData);
 		error("Couldn't load DATA chunk from file: '%s'", filename);
 		return false;
@@ -139,8 +134,7 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, cons
 		scriptData->data[chunkSize] = READ_BE_UINT16(&scriptData->data[chunkSize]);
 
 	scriptData->opcodes = opcodes;
-	
-	delete [] data;
+
 	return true;
 }
 
@@ -172,10 +166,14 @@ bool ScriptHelper::startScript(ScriptState *script, int function) {
 	if (functionOffset == 0xFFFF)
 		return false;
 
-	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+	if (_vm->game() == GI_KYRA1) {
+		if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+			script->ip = &script->dataPtr->data[functionOffset+1];
+		else
+			script->ip = &script->dataPtr->data[functionOffset];
+	} else {
 		script->ip = &script->dataPtr->data[functionOffset+1];
-	else
-		script->ip = &script->dataPtr->data[functionOffset];
+	}
 
 	return true;
 }
@@ -217,37 +215,51 @@ bool ScriptHelper::runScript(ScriptState *script) {
 	return _continue;
 }
 
-uint32 ScriptHelper::getFORMBlockSize(const byte *&data) const {
-	static const uint32 chunkName = FORM_CHUNK;
+#pragma mark -
+#pragma mark - ScriptFileParser implementation
+#pragma mark -
 
-	if (READ_LE_UINT32(data) != chunkName)
-		return (uint32)-1;
-
-	data += 4;
-	uint32 retValue = READ_BE_UINT32(data); data += 4;
-	return retValue;
+void ScriptFileParser::setFile(const char *filename, Resource *res) {
+	destroy();
+	
+	if (!res->getFileHandle(filename, &_endOffset, _scriptFile))
+		return;
+	_startOffset = _scriptFile.pos();
+	_endOffset += _startOffset;
 }
 
-uint32 ScriptHelper::getIFFBlockSize(const byte *start, const byte *&data, uint32 maxSize, const uint32 chunkName) const {
-	uint32 size = (uint32)-1;
-	bool special = false;
-	
-	if (data == (start + maxSize))
-		data = start + 0x0C;
+void ScriptFileParser::destroy() {
+	_scriptFile.close();
+	_startOffset = _endOffset = 0;
+}
 
-	while (data < (start + maxSize)) {
-		uint32 chunk = READ_LE_UINT32(data); data += 4;
-		uint32 size_temp = READ_BE_UINT32(data); data += 4;
+uint32 ScriptFileParser::getFORMBlockSize() {
+	uint32 oldOffset = _scriptFile.pos();
+	
+	uint32 data = _scriptFile.readUint32LE();
+
+	if (data != FORM_CHUNK) {
+		_scriptFile.seek(oldOffset);
+		return (uint32)-1;
+	}
+
+	data = _scriptFile.readUint32BE();
+	return data;
+}
+
+uint32 ScriptFileParser::getIFFBlockSize(const uint32 chunkName) {
+	uint32 size = (uint32)-1;
+	
+	_scriptFile.seek(_startOffset + 0x0C);
+
+	while (_scriptFile.pos() < _endOffset) {
+		uint32 chunk = _scriptFile.readUint32LE();
+		uint32 size_temp = _scriptFile.readUint32BE();
+	
 		if (chunk != chunkName) {
-			if (special) {
-				data += (size_temp + 1) & 0xFFFFFFFE;
-			} else {
-				data = start + 0x0C;
-				special = true;
-			}
+			_scriptFile.seek((size_temp + 1) & (~1), SEEK_CUR);
+			assert(_scriptFile.pos() <= _endOffset);
 		} else {
-			// kill our data
-			data = start;
 			size = size_temp;
 			break;
 		}
@@ -256,32 +268,21 @@ uint32 ScriptHelper::getIFFBlockSize(const byte *start, const byte *&data, uint3
 	return size;
 }
 
-bool ScriptHelper::loadIFFBlock(const byte *start, const byte *&data, uint32 maxSize, const uint32 chunkName, void *loadTo, uint32 ptrSize) const {
-	bool special = false;
-	
-	if (data == (start + maxSize))
-		data = start + 0x0C;
+bool ScriptFileParser::loadIFFBlock(const uint32 chunkName, void *loadTo, uint32 ptrSize) {
+	_scriptFile.seek(_startOffset + 0x0C);
 
-	while (data < (start + maxSize)) {
-		uint32 chunk = READ_LE_UINT32(data); data += 4;
-		uint32 chunkSize = READ_BE_UINT32(data); data += 4;
+	while (_scriptFile.pos() < _endOffset) {
+		uint32 chunk = _scriptFile.readUint32LE();
+		uint32 chunkSize = _scriptFile.readUint32BE();
+
 		if (chunk != chunkName) {
-			if (special) {
-				data += (chunkSize + 1) & 0xFFFFFFFE;
-			} else {
-				data = start + 0x0C;
-				special = true;
-			}
+			_scriptFile.seek((chunkSize + 1) & (~1), SEEK_CUR);
+			assert(_scriptFile.pos() <= _endOffset);
 		} else {
 			uint32 loadSize = 0;
-			if (chunkSize < ptrSize)
-				loadSize = chunkSize;
-			else
-				loadSize = ptrSize;
-			memcpy(loadTo, data, loadSize);
-			chunkSize = (chunkSize + 1) & 0xFFFFFFFE;
-			if (chunkSize > loadSize)
-				data += (chunkSize - loadSize);
+
+			loadSize = MIN(ptrSize, chunkSize);
+			_scriptFile.read(loadTo, loadSize);
 			return true;
 		}
 	}
@@ -293,15 +294,15 @@ bool ScriptHelper::loadIFFBlock(const byte *start, const byte *&data, uint32 max
 #pragma mark - Command implementations
 #pragma mark -
 
-void ScriptHelper::c1_jmpTo(ScriptState* script) {
+void ScriptHelper::cmd_jmpTo(ScriptState* script) {
 	script->ip = script->dataPtr->data + _parameter;
 }
 
-void ScriptHelper::c1_setRetValue(ScriptState* script) {
+void ScriptHelper::cmd_setRetValue(ScriptState* script) {
 	script->retValue = _parameter;
 }
 
-void ScriptHelper::c1_pushRetOrPos(ScriptState* script) {
+void ScriptHelper::cmd_pushRetOrPos(ScriptState* script) {
 	switch (_parameter) {
 	case 0:
 		script->stack[--script->sp] = script->retValue;
@@ -320,23 +321,23 @@ void ScriptHelper::c1_pushRetOrPos(ScriptState* script) {
 	}
 }
 
-void ScriptHelper::c1_push(ScriptState* script) {
+void ScriptHelper::cmd_push(ScriptState* script) {
 	script->stack[--script->sp] = _parameter;
 }
 
-void ScriptHelper::c1_pushReg(ScriptState* script) {
+void ScriptHelper::cmd_pushReg(ScriptState* script) {
 	script->stack[--script->sp] = script->regs[_parameter];
 }
 
-void ScriptHelper::c1_pushBPNeg(ScriptState* script) {
+void ScriptHelper::cmd_pushBPNeg(ScriptState* script) {
 	script->stack[--script->sp] = script->stack[(-(int32)(_parameter + 2)) + script->bp];
 }
 
-void ScriptHelper::c1_pushBPAdd(ScriptState* script) {
+void ScriptHelper::cmd_pushBPAdd(ScriptState* script) {
 	script->stack[--script->sp] = script->stack[(_parameter - 1) + script->bp];
 }
 
-void ScriptHelper::c1_popRetOrPos(ScriptState* script) {
+void ScriptHelper::cmd_popRetOrPos(ScriptState* script) {
 	switch (_parameter) {
 	case 0:
 		script->retValue = script->stack[script->sp++];
@@ -359,48 +360,48 @@ void ScriptHelper::c1_popRetOrPos(ScriptState* script) {
 	}
 }
 
-void ScriptHelper::c1_popReg(ScriptState* script) {
+void ScriptHelper::cmd_popReg(ScriptState* script) {
 	script->regs[_parameter] = script->stack[script->sp++];
 }
 
-void ScriptHelper::c1_popBPNeg(ScriptState* script) {
+void ScriptHelper::cmd_popBPNeg(ScriptState* script) {
 	script->stack[(-(int32)(_parameter + 2)) + script->bp] = script->stack[script->sp++];
 }
 
-void ScriptHelper::c1_popBPAdd(ScriptState* script) {
+void ScriptHelper::cmd_popBPAdd(ScriptState* script) {
 	script->stack[(_parameter - 1) + script->bp] = script->stack[script->sp++];
 }
 
-void ScriptHelper::c1_addSP(ScriptState* script) {
+void ScriptHelper::cmd_addSP(ScriptState* script) {
 	script->sp += _parameter;
 }
 
-void ScriptHelper::c1_subSP(ScriptState* script) {
+void ScriptHelper::cmd_subSP(ScriptState* script) {
 	script->sp -= _parameter;
 }
 
-void ScriptHelper::c1_execOpcode(ScriptState* script) {
+void ScriptHelper::cmd_execOpcode(ScriptState* script) {
 	uint8 opcode = _parameter;
 
 	assert(script->dataPtr->opcodes);
 	assert(opcode < script->dataPtr->opcodes->size());
 
-	if ((*script->dataPtr->opcodes)[opcode]) {
+	if ((*script->dataPtr->opcodes)[opcode] && *(*script->dataPtr->opcodes)[opcode]) {
 		script->retValue = (*(*script->dataPtr->opcodes)[opcode])(script);
 	} else {
 		script->retValue = 0;
-		warning("calling unimplemented opcode(0x%.02X)", opcode);
+		warning("calling unimplemented opcode(0x%.02X/%d)", opcode, opcode);
 	}
 }
 
-void ScriptHelper::c1_ifNotJmp(ScriptState* script) {
+void ScriptHelper::cmd_ifNotJmp(ScriptState* script) {
 	if (!script->stack[script->sp++]) {
 		_parameter &= 0x7FFF;
 		script->ip = script->dataPtr->data + _parameter;
 	}
 }
 
-void ScriptHelper::c1_negate(ScriptState* script) {
+void ScriptHelper::cmd_negate(ScriptState* script) {
 	int16 value = script->stack[script->sp];
 	switch (_parameter) {
 	case 0:
@@ -424,7 +425,7 @@ void ScriptHelper::c1_negate(ScriptState* script) {
 	}
 }
 
-void ScriptHelper::c1_eval(ScriptState* script) {
+void ScriptHelper::cmd_eval(ScriptState* script) {
 	int16 ret = 0;
 	bool error = false;
 	
@@ -542,7 +543,7 @@ void ScriptHelper::c1_eval(ScriptState* script) {
 	}
 }
 
-void ScriptHelper::c1_setRetAndJmp(ScriptState* script) {
+void ScriptHelper::cmd_setRetAndJmp(ScriptState* script) {
 	if (script->sp >= 60) {
 		_continue = false;
 		script->ip = 0;

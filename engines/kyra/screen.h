@@ -133,8 +133,6 @@ public:
 	void fadeFromBlack(int delay=0x54);
 	void fadeToBlack(int delay=0x54);
 
-	void k2IntroFadeToGrey(int delay=0x54);
-
 	void fadePalette(const uint8 *palData, int delay);
 
 	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
@@ -162,7 +160,7 @@ public:
 	void setTextColorMap(const uint8 *cmap);
 	void setTextColor(const uint8 *cmap, int a, int b);
 
-	void setScreenDim(int dim);
+	virtual void setScreenDim(int dim);
 
 	// shape handling
 	uint8 *encodeShape(int x, int y, int w, int h, int flags);
@@ -170,7 +168,7 @@ public:
 	int setNewShapeHeight(uint8 *shape, int height);
 	int resetShapeHeight(uint8 *shape);
 
-	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
+	virtual void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
 
 	// mouse handling
 	void hideMouse();
@@ -178,7 +176,7 @@ public:
 	void setMouseCursor(int x, int y, byte *shape);	
 
 	// rect handling
-	int getRectSize(int w, int h);
+	virtual int getRectSize(int w, int h);
 
 	void rectClip(int &x, int &y, int w, int h);
 
@@ -208,6 +206,7 @@ public:
 	void copyBackgroundBlock(int x, int page, int flag);
 	void copyBackgroundBlock2(int x);
 
+	// kyra1 specific?
 	int getDrawLayer(int x, int y);
 	int getDrawLayer2(int x, int y, int height);
 
@@ -231,15 +230,6 @@ public:
 	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch, bool noXor);
 	static void convertAmigaGfx(uint8 *data, int w, int h, bool offscreen = true);
 	static void convertAmigaMsc(uint8 *data);
-
-	// maybe subclass screen for kyra3
-	static const ScreenDim _screenDimTableK3[];
-	static const int _screenDimTableCountK3;
-
-	uint8 *getPtrToShape(uint8 *shpFile, int shape);
-	const uint8 *getPtrToShape(const uint8 *shpFile, int shape);
-
-	uint16 getShapeSize(const uint8 *shp);
 
 protected:
 	uint8 *getPagePtr(int pageNum);

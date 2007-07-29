@@ -32,6 +32,7 @@
 #include "kyra/wsamovie.h"
 #include "kyra/animator_v1.h"
 #include "kyra/text.h"
+#include "kyra/timer.h"
 
 #include "common/events.h"
 #include "common/system.h"
@@ -654,7 +655,7 @@ void KyraEngine_v1::seq_makeBrandonInv() {
 	_screen->hideMouse();
 	checkAmuletAnimFlags();
 	_brandonStatusBit |= 0x20;
-	setTimerCountdown(18, 2700);
+	_timer->setCountdown(18, 2700);
 	_brandonStatusBit |= 0x40;
 	snd_playSoundEffect(0x77);
 	_brandonInvFlag = 0;
@@ -732,9 +733,9 @@ void KyraEngine_v1::seq_makeBrandonWisp() {
 	_brandonStatusBit |= 2;
 
 	if (_currentCharacter->sceneId >= 109 && _currentCharacter->sceneId <= 198)
-		setTimerCountdown(14, 18000);
+		_timer->setCountdown(14, 18000);
 	else
-		setTimerCountdown(14, 7200);
+		_timer->setCountdown(14, 7200);
 
 	_animator->_brandonDrawFrame = 113;
 	_brandonStatusBit0x02Flag = 1;
@@ -1858,7 +1859,7 @@ void KyraEngine_v1::drawJewelsFadeOutEnd(int jewel) {
 	}
 
 	setGameFlag(0xF1);
-	setTimerCountdown(19, newDelay);
+	_timer->setCountdown(19, newDelay);
 	_screen->hideMouse();
 	for (int i = 0; jewelTable[i] != 0xFFFF; ++i) {
 		uint16 shape = jewelTable[i];

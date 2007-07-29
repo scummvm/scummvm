@@ -35,6 +35,7 @@ class SoundHandle;
 
 namespace Kyra {
 class KyraEngine;
+class KyraEngine_v2;
 
 class Movie {
 public:
@@ -48,7 +49,7 @@ public:
 
 	virtual int frames() = 0;
 
-	virtual void displayFrame(int frameNum) = 0;
+	virtual void displayFrame(int frameNum, ...) = 0;
 
 	virtual void setX(int x) { _x = x; }
 	virtual void setY(int y) { _y = y; }
@@ -71,7 +72,7 @@ public:
 
 	virtual int frames() { return _opened ? _numFrames : -1; }
 
-	virtual void displayFrame(int frameNum);
+	virtual void displayFrame(int frameNum, ...);
 
 	enum WSAFlags {
 		WF_OFFSCREEN_DECODE = 0x10,
@@ -101,7 +102,7 @@ public:
 	int open(const char *filename, int offscreen, uint8 *palette);
 	void close();
 
-	void displayFrame(int frameNum);
+	void displayFrame(int frameNum, ...);
 private:	
 	void processFrame(int frameNum, uint8 *dst);
 
@@ -110,9 +111,11 @@ private:
 
 class WSAMovieV2 : public WSAMovieV1 {
 public:
-	WSAMovieV2(KyraEngine *vm);
+	WSAMovieV2(KyraEngine_v2 *vm);
 	
 	int open(const char *filename, int unk1, uint8 *palette);
+	
+	virtual void displayFrame(int frameNum, ...);
 
 	void setX(int x) { _x = x + _xAdd; }
 	void setY(int y) { _y = y + _yAdd; }
@@ -122,10 +125,15 @@ public:
 	
 	int width() const { return _width; }
 	int height() const { return _height; }
-protected:
 	
+	// HACK for our intro code
+	void flagOldOff(bool enabled) { _oldOff = enabled; }
+protected:
+	KyraEngine_v2 *_vm;
+
 	int16 _xAdd;
 	int16 _yAdd;
+	bool _oldOff; // old offscreen copy, HACK for our intro code
 };
 
 } // end of namespace Kyra

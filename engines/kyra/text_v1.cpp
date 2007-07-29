@@ -28,6 +28,7 @@
 #include "kyra/text.h"
 #include "kyra/animator_v1.h"
 #include "kyra/sprites.h"
+#include "kyra/timer.h"
 
 namespace Kyra {
 
@@ -66,9 +67,9 @@ void KyraEngine_v1::waitForChatToFinish(int vocFile, int16 chatDuration, const c
 		snd_playVoiceFile(vocFile);
 	}
 
-	disableTimer(14);
-	disableTimer(18);
-	disableTimer(19);
+	_timer->disable(14);
+	_timer->disable(18);
+	_timer->disable(19);
 
 	uint32 timeAtStart = _system->getMillis();
 	uint32 loopStart;
@@ -80,7 +81,7 @@ void KyraEngine_v1::waitForChatToFinish(int vocFile, int16 chatDuration, const c
 
 		if (_system->getMillis() > timeToEnd && !hasUpdatedNPCs) {
 			hasUpdatedNPCs = true;
-			disableTimer(15);
+			_timer->disable(15);
 			_currHeadShape = 4;
 			_animator->animRefreshNPC(0);
 			_animator->animRefreshNPC(_talkingCharNum);
@@ -92,7 +93,7 @@ void KyraEngine_v1::waitForChatToFinish(int vocFile, int16 chatDuration, const c
 			}
 		}
 
-		updateGameTimers();
+		_timer->update();
 		_sprites->updateSceneAnims();
 		_animator->restoreAllObjectBackgrounds();
 		_animator->preserveAnyChangedBackgrounds();
@@ -146,10 +147,10 @@ void KyraEngine_v1::waitForChatToFinish(int vocFile, int16 chatDuration, const c
 	snd_voiceWaitForFinish();
 	snd_stopVoice();
 
-	enableTimer(14);
-	enableTimer(15);
-	enableTimer(18);
-	enableTimer(19);
+	_timer->enable(14);
+	_timer->enable(15);
+	_timer->enable(18);
+	_timer->enable(19);
 	//clearKyrandiaButtonIO();
 }
 
@@ -374,7 +375,7 @@ void KyraEngine_v1::updateTextFade() {
 		return;
 	
 	bool finished = false;
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++) {
 		if (_currSentenceColor[i] > 4)
 			_currSentenceColor[i] -= 4;
 		else
@@ -382,7 +383,8 @@ void KyraEngine_v1::updateTextFade() {
 				_currSentenceColor[i] = 0;
 				finished = true;
 			}
-		
+	}
+	
 	_screen->_currentPalette[765] = _currSentenceColor[0];
 	_screen->_currentPalette[766] = _currSentenceColor[1];
 	_screen->_currentPalette[767] = _currSentenceColor[2];

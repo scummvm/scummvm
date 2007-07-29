@@ -29,6 +29,7 @@
 #include "kyra/debugger.h"
 #include "kyra/kyra_v1.h"
 #include "kyra/screen.h"
+#include "kyra/timer.h"
 
 namespace Kyra {
 
@@ -141,8 +142,8 @@ bool Debugger_v1::cmd_queryFlag(int argc, const char **argv) {
 }
 
 bool Debugger_v1::cmd_listTimers(int argc, const char **argv) {
-	for (int i = 0; i < ARRAYSIZE(_vm->_timers); i++)
-		DebugPrintf("Timer %-2i: Active: %-3s Countdown: %-6i\n", i, _vm->_timers[i].active ? "Yes" : "No", _vm->_timers[i].countdown);
+	for (int i = 0; i < _vm->timer()->count(); i++)
+		DebugPrintf("Timer %-2i: Active: %-3s Countdown: %-6i\n", i, _vm->timer()->isEnabled(i) ? "Yes" : "No", _vm->timer()->getDelay(i));
 
 	return true;
 }
@@ -151,8 +152,8 @@ bool Debugger_v1::cmd_setTimerCountdown(int argc, const char **argv) {
 	if (argc > 2) {
 		uint timer = atoi(argv[1]);
 		uint countdown = atoi(argv[2]);
-		_vm->setTimerCountdown(timer, countdown);	
-		DebugPrintf("Timer %i now has countdown %i\n", timer, _vm->_timers[timer].countdown); 
+		_vm->timer()->setCountdown(timer, countdown);	
+		DebugPrintf("Timer %i now has countdown %i\n", timer, _vm->timer()->getDelay(timer)); 
 	} else {
 		DebugPrintf("Syntax: settimercountdown <timer> <countdown>\n");
 	}

@@ -355,33 +355,6 @@ void Screen::fadeToBlack(int delay) {
 	fadePalette(blackPal, delay);
 }
 
-void Screen::k2IntroFadeToGrey(int delay) {
-	debugC(9, kDebugLevelScreen, "Screen::k2IntroFadeToGrey()");
-
-	for (int i = 0; i <= 50; ++i) {
-		if (i <= 8 || i >= 30) {
-			_currentPalette[3 * i + 0] = (_currentPalette[3 * i + 0] + 
-						      _currentPalette[3 * i + 1] + 
-						      _currentPalette[3 * i + 2]) / 3;
-			_currentPalette[3 * i + 1] =  _currentPalette[3 * i + 0];
-			_currentPalette[3 * i + 2] =  _currentPalette[3 * i + 0];
-		}
-	}
-
-	// color 71 is the same in both the overview and closeup scenes
-	// Converting it to greyscale makes the trees in the closeup look dull
-	for (int i = 71; i < 200; ++i) {
-		_currentPalette[3 * i + 0] = (_currentPalette[3 * i + 0] + 
-					      _currentPalette[3 * i + 1] + 
-					      _currentPalette[3 * i + 2]) / 3;
-		_currentPalette[3 * i + 1] =  _currentPalette[3 * i + 0];
-		_currentPalette[3 * i + 2] =  _currentPalette[3 * i + 0];
-	}
-	fadePalette(_currentPalette, delay);
-	// Make the font color white again
-	setPaletteIndex(254, 254, 254, 254);
-}
-
 void Screen::fadePalette(const uint8 *palData, int delay) {
 	debugC(9, kDebugLevelScreen, "Screen::fadePalette(%p, %d)", (const void *)palData, delay);
 	updateScreen();
@@ -1057,13 +1030,8 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 
 void Screen::setScreenDim(int dim) {
 	debugC(9, kDebugLevelScreen, "Screen::setScreenDim(%d)", dim);
-	if (_vm->game() == GI_KYRA1) {
-		assert(dim < _screenDimTableCount);
-		_curDim = &_screenDimTable[dim];
-	} else {
-		assert(dim < _screenDimTableCountK3);
-		_curDim = &_screenDimTableK3[dim];
-	}
+	assert(dim < _screenDimTableCount);
+	_curDim = &_screenDimTable[dim];
 	// XXX
 }
 
@@ -2678,38 +2646,6 @@ void Screen::loadPalette(const byte *data, uint8 *palData, int bytes) {
 	} else {
 		memcpy(palData, data, bytes);
 	}
-}
-
-// kyra3 specific
-
-const uint8 *Screen::getPtrToShape(const uint8 *shpFile, int shape) {
-	debugC(9, kDebugLevelScreen, "KyraEngine::getPtrToShape(%p, %d)", (const void *)shpFile, shape);
-	uint16 shapes = READ_LE_UINT16(shpFile);
-
-	if (shapes <= shape)
-		return 0;
-
-	uint32 offset = READ_LE_UINT32(shpFile + (shape << 2) + 2);
-
-	return shpFile + offset + 2;
-}
-
-uint8 *Screen::getPtrToShape(uint8 *shpFile, int shape) {
-	debugC(9, kDebugLevelScreen, "KyraEngine::getPtrToShape(%p, %d)", (void *)shpFile, shape);
-	uint16 shapes = READ_LE_UINT16(shpFile);
-
-	if (shapes <= shape)
-		return 0;
-
-	uint32 offset = READ_LE_UINT32(shpFile + (shape << 2) + 2);
-
-	return shpFile + offset + 2;
-}
-
-uint16 Screen::getShapeSize(const uint8 *shp) {
-	debugC(9, kDebugLevelScreen, "KyraEngine::getShapeSize(%p)", (const void *)shp);
-
-	return READ_LE_UINT16(shp+6);
 }
 
 // dirty rect handling

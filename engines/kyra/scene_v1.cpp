@@ -33,6 +33,7 @@
 #include "kyra/animator_v1.h"
 #include "kyra/text.h"
 #include "kyra/script.h"
+#include "kyra/timer.h"
 
 #include "common/system.h"
 #include "common/savefile.h"
@@ -230,15 +231,15 @@ void KyraEngine_v1::moveCharacterToPos(int character, int facing, int xpos, int 
 	_screen->hideMouse();
 	xpos = (int16)(xpos & 0xFFFC);
 	ypos = (int16)(ypos & 0xFFFE);
-	disableTimer(19);
-	disableTimer(14);
-	disableTimer(18);
+	_timer->disable(19);
+	_timer->disable(14);
+	_timer->disable(18);
 	uint32 nextFrame = 0;
 
 	switch (facing) {
 	case 0:
 		while (ypos < ch->y1) {
-			nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
+			nextFrame = _timer->getDelay(5 + character) * _tickLength + _system->getMillis();
 			setCharacterPositionWithUpdate(character);
 			delayUntil(nextFrame, true);
 		}
@@ -246,7 +247,7 @@ void KyraEngine_v1::moveCharacterToPos(int character, int facing, int xpos, int 
 		
 	case 2:	
 		while (ch->x1 < xpos) {
-			nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
+			nextFrame = _timer->getDelay(5 + character) * _tickLength + _system->getMillis();
 			setCharacterPositionWithUpdate(character);
 			delayUntil(nextFrame, true);
 		}
@@ -254,7 +255,7 @@ void KyraEngine_v1::moveCharacterToPos(int character, int facing, int xpos, int 
 		
 	case 4:
 		while (ypos > ch->y1) {
-			nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
+			nextFrame = _timer->getDelay(5 + character) * _tickLength + _system->getMillis();
 			setCharacterPositionWithUpdate(character);
 			delayUntil(nextFrame, true);
 		}
@@ -262,7 +263,7 @@ void KyraEngine_v1::moveCharacterToPos(int character, int facing, int xpos, int 
 		
 	case 6:
 		while (ch->x1 > xpos) {
-			nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
+			nextFrame = _timer->getDelay(5 + character) * _tickLength + _system->getMillis();
 			setCharacterPositionWithUpdate(character);
 			delayUntil(nextFrame, true);
 		}
@@ -272,9 +273,9 @@ void KyraEngine_v1::moveCharacterToPos(int character, int facing, int xpos, int 
 		break;
 	}
 
-	enableTimer(19);
-	enableTimer(14);
-	enableTimer(18);
+	_timer->enable(19);
+	_timer->enable(14);
+	_timer->enable(18);
 	_screen->showMouse();
 }
 
@@ -282,7 +283,7 @@ void KyraEngine_v1::setCharacterPositionWithUpdate(int character) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::setCharacterPositionWithUpdate(%d)", character);
 	setCharacterPosition(character, 0);
 	_sprites->updateSceneAnims();
-	updateGameTimers();
+	_timer->update();
 	_animator->updateAllObjectShapes();
 	updateTextFade();
 
@@ -389,29 +390,6 @@ void KyraEngine_v1::setCharacterPositionHelper(int character, int *facingTable) 
 		ch->currentAnimFrame = 88;
 	
 	_animator->animRefreshNPC(character);
-}
-
-int KyraEngine_v1::getOppositeFacingDirection(int dir) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::getOppositeFacingDirection(%d)", dir);
-	switch (dir) {
-	case 0:
-		return 2;
-	case 1:
-		return 1;
-	case 3:
-		return 7;
-	case 4:
-		return 6;
-	case 5:
-		return 5;
-	case 6:
-		return 4;
-	case 7:
-		return 3;
-	default:
-		break;
-	}
-	return 0;
 }
 
 void KyraEngine_v1::loadSceneMsc() {
@@ -998,9 +976,9 @@ int KyraEngine_v1::processSceneChange(int *table, int unk1, int frameReset) {
 		if (temp)
 			++table;
 		
-		nextFrame = getTimerDelay(5) * _tickLength + _system->getMillis();
+		nextFrame = _timer->getDelay(5) * _tickLength + _system->getMillis();
 		while (_system->getMillis() < nextFrame) {
-			updateGameTimers();
+			_timer->update();
 
 			if (_currentCharacter->sceneId == 210) {
 				updateKyragemFading();
@@ -1188,235 +1166,8 @@ void KyraEngine_v1::setCharactersPositions(int character) {
 
 int KyraEngine_v1::findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::findWay(%d, %d, %d, %d, %p, %d)", x, y, toX, toY, (const void *)moveTable, moveTableSize);
-	x &= 0xFFFC; toX &= 0xFFFC;
-	y &= 0xFFFE; toY &= 0xFFFE;
-	x = (int16)x; y = (int16)y; toX = (int16)toX; toY = (int16)toY;
-	
-	if (x == toY && y == toY) {
-		moveTable[0] = 8;
-		return 0;
-	}
-	
-	int curX = x;
-	int curY = y;
-	int lastUsedEntry = 0;
-	int tempValue = 0;
-	int *pathTable1 = new int[0x7D0];
-	int *pathTable2 = new int[0x7D0];
-	assert(pathTable1 && pathTable2);
-	
-	while (true) {
-		int newFacing = getFacingFromPointToPoint(x, y, toX, toY);
-		changePosTowardsFacing(curX, curY, newFacing);
-		
-		if (curX == toX && curY == toY) {
-			if (!lineIsPassable(curX, curY))
-				break;
-			moveTable[lastUsedEntry++] = newFacing;
-			break;
-		}
-		
-		if (lineIsPassable(curX, curY)) {
-			if (lastUsedEntry == moveTableSize) {
-				delete [] pathTable1;
-				delete [] pathTable2;
-				return 0x7D00;
-			}
-			// debug drawing
-			//if (curX >= 0 && curY >= 0 && curX < 320 && curY < 200) {
-			//	_screen->setPagePixel(0, curX, curY, 11);
-			//	_screen->updateScreen();
-			//	waitTicks(5);
-			//}
-			moveTable[lastUsedEntry++] = newFacing;
-			x = curX;
-			y = curY;
-			continue;
-		}
-		
-		int temp = 0;
-		while (true) {
-			newFacing = getFacingFromPointToPoint(curX, curY, toX, toY);
-			changePosTowardsFacing(curX, curY, newFacing);
-			// debug drawing
-			//if (curX >= 0 && curY >= 0 && curX < 320 && curY < 200) {
-			//	_screen->setPagePixel(0, curX, curY, 8);
-			//	_screen->updateScreen();
-			//	waitTicks(5);
-			//}
-			
-			if (!lineIsPassable(curX, curY)) {
-				if (curX != toX || curY != toY)
-					continue;
-			}
-			
-			if (curX == toX && curY == toY) {
-				if (!lineIsPassable(curX, curY)) {
-					tempValue = 0;
-					temp = 0;
-					break;
-				}
-			}
-			
-			temp = findSubPath(x, y, curX, curY, pathTable1, 1, 0x7D0);
-			tempValue = findSubPath(x, y, curX, curY, pathTable2, 0, 0x7D0);
-			if (curX == toX && curY == toY) {
-				if (temp == 0x7D00 && tempValue == 0x7D00) {
-					delete [] pathTable1;
-					delete [] pathTable2;
-					return 0x7D00;
-				}
-			}
-			
-			if (temp != 0x7D00 || tempValue != 0x7D00)
-				break;
-		}
-		
-		if (temp < tempValue) {
-			if (lastUsedEntry + temp > moveTableSize) {
-				delete [] pathTable1;
-				delete [] pathTable2;
-				return 0x7D00;
-			}
-			memcpy(&moveTable[lastUsedEntry], pathTable1, temp*sizeof(int));
-			lastUsedEntry += temp;
-		} else {
-			if (lastUsedEntry + tempValue > moveTableSize) {
-				delete [] pathTable1;
-				delete [] pathTable2;
-				return 0x7D00;
-			}
-			memcpy(&moveTable[lastUsedEntry], pathTable2, tempValue*sizeof(int));
-			lastUsedEntry += tempValue;
-		}
-		x = curX;
-		y = curY;
-		if (curX == toX && curY == toY)
-			break;
-	}
-
-	delete [] pathTable1;
-	delete [] pathTable2;
-	moveTable[lastUsedEntry] = 8;
+	KyraEngine::findWay(x, y, toX, toY, moveTable, moveTableSize);
 	return getMoveTableSize(moveTable);
-}
-
-int KyraEngine_v1::findSubPath(int x, int y, int toX, int toY, int *moveTable, int start, int end) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::findSubPath(%d, %d, %d, %d, %p, %d, %d)", x, y, toX, toY, (const void *)moveTable, start, end);
-	// only used for debug specific code
-	//static uint16 unkTable[] = { 8, 5 };
-	static const int8 facingTable1[] = {  7,  0,  1,  2,  3,  4,  5,  6,  1,  2,  3,  4,  5,  6,  7,  0 };
-	static const int8 facingTable2[] = { -1,  0, -1,  2, -1,  4, -1,  6, -1,  2, -1,  4, -1,  6, -1,  0 };
-	static const int8 facingTable3[] = {  2,  4,  4,  6,  6,  0,  0,  2,  6,  6,  0,  0,  2,  2,  4,  4 };
-	static const int8 addPosTableX[] = { -1,  0, -1,  4, -1,  0, -1, -4, -1, -4, -1,  0, -1,  4, -1,  0 };
-	static const int8 addPosTableY[] = { -1,  2, -1,  0, -1, -2, -1,  0, -1,  0, -1,  2, -1,  0, -1, -2 };
-	
-	// debug specific
-	//++unkTable[start];
-	//while (_screen->getPalette(0)[unkTable[start]] != 0x0F) {
-	//	++unkTable[start];
-	//}
-	
-	int xpos1 = x, xpos2 = x;
-	int ypos1 = y, ypos2 = y;
-	int newFacing = getFacingFromPointToPoint(x, y, toX, toY);
-	int position = 0;
-	
-	while (position != end) {
-		int newFacing2 = newFacing;
-		while (true) {
-			changePosTowardsFacing(xpos1, ypos1, facingTable1[start*8 + newFacing2]);
-			if (!lineIsPassable(xpos1, ypos1)) {
-				if (facingTable1[start*8 + newFacing2] == newFacing)
-					return 0x7D00;
-				newFacing2 = facingTable1[start*8 + newFacing2];
-				xpos1 = x;
-				ypos1 = y;
-				continue;
-			}
-			newFacing = facingTable1[start*8 + newFacing2];
-			break;
-		}
-		// debug drawing
-		//if (xpos1 >= 0 && ypos1 >= 0 && xpos1 < 320 && ypos1 < 200) {
-		//	_screen->setPagePixel(0, xpos1, ypos1, unkTable[start]);
-		//	_screen->updateScreen();
-		//	waitTicks(5);
-		//}
-		if (newFacing & 1) {
-			int temp = xpos1 + addPosTableX[newFacing + start * 8];
-			if (toX == temp) {
-				temp = ypos1 + addPosTableY[newFacing + start * 8];
-				if (toY == temp) {
-					moveTable[position++] = facingTable2[newFacing + start * 8];
-					return position;
-				}
-			}
-		}
-
-		moveTable[position++] = newFacing;
-		x = xpos1;
-		y = ypos1;
-
-		if (x == toX && y == toY)
-			return position;
-		
-		if (xpos1 == xpos2 && ypos1 == ypos2)
-			break;
-		
-		newFacing = facingTable3[start*8 + newFacing];
-	}
-
-	return 0x7D00;
-}
-
-int KyraEngine_v1::getFacingFromPointToPoint(int x, int y, int toX, int toY) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::getFacingFromPointToPoint(%d, %d, %d, %d)", x, y, toX, toY);
-	static const int facingTable[] = {
-		1, 0, 1, 2, 3, 4, 3, 2, 7, 0, 7, 6, 5, 4, 5, 6
-	};
-	
-	int facingEntry = 0;
-	int ydiff = y - toY;
-	if (ydiff < 0) {
-		++facingEntry;
-		ydiff = -ydiff;
-	}	
-	facingEntry <<= 1;
-	
-	int xdiff = toX - x;
-	if (xdiff < 0) {
-		++facingEntry;
-		xdiff = -xdiff;
-	}
-	
-	if (xdiff >= ydiff) {
-		int temp = ydiff;
-		ydiff = xdiff;
-		xdiff = temp;
-		
-		facingEntry <<= 1;
-	} else {
-		facingEntry <<= 1;
-		facingEntry += 1;
-	}
-	int temp = (ydiff + 1) >> 1;
-	
-	if (xdiff < temp) {
-		facingEntry <<= 1;
-		facingEntry += 1;
-	} else {
-		facingEntry <<= 1;
-	}
-
-	assert(facingEntry < ARRAYSIZE(facingTable));
-	return facingTable[facingEntry];
-}
-
-void KyraEngine_v1::changePosTowardsFacing(int &x, int &y, int facing) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::changePosTowardsFacing(%d, %d, %d)", x, y, facing);
-	x += _addXPosTable[facing];
-	y += _addYPosTable[facing];
 }
 
 bool KyraEngine_v1::lineIsPassable(int x, int y) {
@@ -1478,100 +1229,7 @@ bool KyraEngine_v1::lineIsPassable(int x, int y) {
 	return true;
 }
 
-int KyraEngine_v1::getMoveTableSize(int *moveTable) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::getMoveTableSize(%p)", (const void *)moveTable);
-	int retValue = 0;
-	if (moveTable[0] == 8)
-		return 0;
-	
-	static const int facingTable[] = {
-		4, 5, 6, 7, 0, 1, 2, 3
-	};
-	static const int unkTable[] = {
-		-1, -1,  1,  2, -1,  6,  7, -1,
-		-1, -1, -1, -1,  2, -1,  0, -1,
-		 1, -1, -1, -1,  3,  4, -1,  0,
-		 2, -1, -1, -1, -1, -1,  4, -1,
-		-1,  2,  3, -1, -1, -1,  5,  6,
-		 6, -1,  4, -1, -1, -1, -1, -1,
-		 7,  0, -1,  4,  5, -1, -1, -1,
-		-1, -1,  0, -1,  6, -1, -1, -1
-	};
-	
-	int *oldPosition = moveTable;
-	int *tempPosition = moveTable;
-	int *curPosition = moveTable + 1;
-	retValue = 1;
-
-	while (*curPosition != 8) {
-		if (*oldPosition == facingTable[*curPosition]) {
-			retValue -= 2;
-			*oldPosition = 9;
-			*curPosition = 9;
-			
-			while (tempPosition != moveTable) {
-				--tempPosition;
-				if (*tempPosition != 9)
-					break;
-			}
-			
-			if (tempPosition == moveTable && *tempPosition == 9) {
-				while (*tempPosition != 8 && *tempPosition == 9)
-					++tempPosition;
-
-				if (*tempPosition == 8)
-					return 0;
-			}
-			
-			oldPosition = tempPosition;
-			curPosition = oldPosition+1;
-
-			while (*curPosition != 8 && *curPosition == 9)
-				++curPosition;
-
-			continue;
-		}
-		
-		if (unkTable[*curPosition+((*oldPosition)*8)] != -1) {
-			--retValue;
-			*oldPosition = unkTable[*curPosition+((*oldPosition)*8)];
-			*curPosition = 9;
-			
-			if (tempPosition != oldPosition) {
-				curPosition = oldPosition;
-				oldPosition = tempPosition;
-				while (true) {
-					if (tempPosition == moveTable)
-						break;
-
-					--tempPosition;
-					if (*tempPosition != 9)
-						break;
-
-				}
-			} else {
-				while (true) {
-					++curPosition;
-					if (*curPosition != 9)
-						break;
-				}
-			}
-			continue;
-		}
-		
-		tempPosition = oldPosition;
-		oldPosition = curPosition;
-		++retValue;
-
-		while (true) {
-			++curPosition;
-			if (*curPosition != 9)
-				break;
-		}
-	}
-
-	return retValue;
-}
+#pragma mark -
 
 void KyraEngine_v1::setupSceneResource(int sceneId) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::setupSceneResource(%d)", sceneId);

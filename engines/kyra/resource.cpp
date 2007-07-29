@@ -42,11 +42,11 @@
 namespace Kyra {
 
 namespace {
-struct ResFilenameEqual : public Common::BinaryFunction<ResourceFile*, uint, bool> {
+struct ResFilenameEqual : public Common::UnaryFunction<ResourceFile*, bool> {
 	uint _filename;
 	ResFilenameEqual(uint file) : _filename(file) {}
 
-	bool operator()(ResourceFile *f) {
+	bool operator()(const ResourceFile *f) {
 		return f->filename() == _filename;
 	}
 };

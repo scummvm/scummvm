@@ -290,14 +290,14 @@ void KyraEngine_v3::stopMusicTrack() {
 int KyraEngine_v3::musicUpdate(int forceRestart) {
 	debugC(9, kDebugLevelMain, "KyraEngine::unkUpdate(%d)", forceRestart);
 	
-	static uint32 timer = 0;
+	static uint32 mTimer = 0;
 	static uint16 lock = 0;
 
-	if (ABS<int>(_system->getMillis() - timer) > (int)(0x0F * _tickLength)) {
-		timer = _system->getMillis();
+	if (ABS<int>(_system->getMillis() - mTimer) > (int)(0x0F * _tickLength)) {
+		mTimer = _system->getMillis();
 	}
 	
-	if (_system->getMillis() < timer && !forceRestart) {
+	if (_system->getMillis() < mTimer && !forceRestart) {
 		return 1;
 	}
 
@@ -311,7 +311,7 @@ int KyraEngine_v3::musicUpdate(int forceRestart) {
 			}
 		}
 		lock = 0;
-		timer = _system->getMillis() + 0x0F * _tickLength;
+		mTimer = _system->getMillis() + 0x0F * _tickLength;
 	}
 	
 	return 1;

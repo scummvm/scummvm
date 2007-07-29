@@ -31,9 +31,9 @@
 #include "common/array.h"
 #include "common/events.h"
 
-namespace Kyra {
+#include "kyra/util.h"
 
-struct Opcode;
+namespace Kyra {
 
 struct GameFlags {
 	Common::Language lang;
@@ -59,16 +59,17 @@ enum {
 // TODO: this is just the start of makeing the debug output of the kyra engine a bit more useable
 // in the future we maybe merge some flags  and/or create new ones
 enum kDebugLevels {
-	kDebugLevelScriptFuncs = 1 << 0,		// prints debug output of o1_* functions
+	kDebugLevelScriptFuncs = 1 << 0,		// prints debug output of o#_* functions
 	kDebugLevelScript = 1 << 1,				// prints debug output of "ScriptHelper" functions
 	kDebugLevelSprites = 1 << 2,			// prints debug output of "Sprites" functions
 	kDebugLevelScreen = 1 << 3,				// prints debug output of "Screen" functions
 	kDebugLevelSound = 1 << 4,				// prints debug output of "Sound" functions
 	kDebugLevelAnimator = 1 << 5,			// prints debug output of "ScreenAnimator" functions
-	kDebugLevelMain = 1 << 6,				// prints debug output of common "KyraEngine*" functions && "TextDisplayer" functions
+	kDebugLevelMain = 1 << 6,				// prints debug output of common "KyraEngine(_v#)" functions && "TextDisplayer" functions
 	kDebugLevelGUI = 1 << 7,				// prints debug output of "KyraEngine*" gui functions
 	kDebugLevelSequence = 1 << 8,			// prints debug output of "SeqPlayer" functions
-	kDebugLevelMovie = 1 << 9				// prints debug output of movie specific funtions
+	kDebugLevelMovie = 1 << 9,				// prints debug output of movie specific funtions
+	kDebugLevelTimer = 1 << 10				// prints debug output of "TimerManager" functions
 };
 
 class Screen;
@@ -77,6 +78,8 @@ class Sound;
 class Movie;
 class TextDisplayer;
 class StaticResource;
+class TimerManager;
+class ScriptHelper;
 
 class KyraEngine : public Engine {
 public:
@@ -94,6 +97,7 @@ public:
 	TextDisplayer *text() { return _text; }
 	Sound *sound() { return _sound; }
 	StaticResource *staticres() { return _staticres; }
+	TimerManager *timer() { return _timer; }
 	
 	uint32 tickLength() const { return _tickLength; }
 	
@@ -123,14 +127,16 @@ protected:
 	
 	// intern
 	Resource *_res;
-	Screen *_screen;
 	Sound *_sound;
 	TextDisplayer *_text;
 	StaticResource *_staticres;
+	TimerManager *_timer;
+	ScriptHelper *_scriptInterpreter;
 	
 	// game speed
 	bool _skipFlag;
 	uint16 _tickLength;
+	uint16 _gameSpeed;
 	
 	// detection
 	GameFlags _flags;
@@ -145,6 +151,18 @@ protected:
 	
 	// input	
 	Common::Point getMousePos() const;
+	
+	// pathfinder
+	virtual int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize);
+	int findSubPath(int x, int y, int toX, int toY, int *moveTable, int start, int end);
+	int getFacingFromPointToPoint(int x, int y, int toX, int toY);
+	int getOppositeFacingDirection(int dir);
+	void changePosTowardsFacing(int &x, int &y, int facing);
+	int getMoveTableSize(int *moveTable);
+	virtual bool lineIsPassable(int x, int y) = 0;
+	
+	static const int8 _addXPosTable[];
+	static const int8 _addYPosTable[];
 };
 
 } // End of namespace Kyra

@@ -36,7 +36,6 @@ class Movie;
 class SoundDigital;
 class SeqPlayer;
 class Sprites;
-class ScriptHelper;
 class Debugger;
 class ScreenAnimator;
 class TextDisplayer;
@@ -103,13 +102,6 @@ struct BeadState {
 	int16 unk8;
 	int16 unk9;
 	int16 tableIndex;
-};
-
-struct Timer {
-	uint8 active;
-	int32 countdown;
-	uint32 nextRun;
-	void (KyraEngine_v1::*func)(int timerNum);
 };
 
 struct Button {
@@ -294,14 +286,6 @@ public:
 	bool speechEnabled();
 	bool textEnabled();
 	
-	void updateGameTimers();
-	void clearNextEventTickCount();
-	void setTimerCountdown(uint8 timer, int32 countdown);
-	void setTimerDelay(uint8 timer, int32 countdown);
-	int16 getTimerDelay(uint8 timer);
-	void enableTimer(uint8 timer);
-	void disableTimer(uint8 timer);
-
 	void saveGame(const char *fileName, const char *saveName);
 	void loadGame(const char *fileName);
 
@@ -336,11 +320,7 @@ protected:
 
 	// -> pathfinder
 	int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize);
-	int findSubPath(int x, int y, int toX, int toY, int *moveTable, int start, int end);
-	int getFacingFromPointToPoint(int x, int y, int toX, int toY);
-	void changePosTowardsFacing(int &x, int &y, int facing);
 	bool lineIsPassable(int x, int y);
-	int getMoveTableSize(int *moveTable);
 
 	// -> item handling 
 	// --> misc
@@ -397,7 +377,6 @@ protected:
 	void setCharacterPositionWithUpdate(int character);
 	int setCharacterPosition(int character, int *facingTable);
 	void setCharacterPositionHelper(int character, int *facingTable);
-	int getOppositeFacingDirection(int dir);
 	void setCharactersPositions(int character);
 
 	// -> brandon
@@ -459,7 +438,7 @@ protected:
 	void freePanPages();
 	void closeFinalWsa();
 	
-	void setTimer19();
+	//void setTimer19();
 	void setupTimers();
 	void timerUpdateHeadAnims(int timerNum);
 	void timerSetFlags1(int timerNum);
@@ -535,7 +514,6 @@ protected:
 	int8 _mouseWheel;
 	uint8 *_itemBkgBackUp[2];
 	uint8 *_shapes[373];
-	uint16 _gameSpeed;
 	int8 _itemInHand;
 	int _mouseState;
 	bool _handleInput;
@@ -632,7 +610,6 @@ protected:
 	SeqPlayer *_seq;
 	Sprites *_sprites;
 	Screen_v1 *_screen;
-	ScriptHelper *_scriptInterpreter;
 	Debugger *_debugger;
 
 	ScriptState *_scriptMain;
@@ -790,18 +767,13 @@ protected:
 	
 	const uint8 * const*_specialPalettes;
 
-	Timer _timers[34];
-	uint32 _timerNextRun;
-
 	static const char *_soundFiles[];
 	static const int _soundFilesCount;
 	static const char *_soundFilesTowns[];
 	static const int _soundFilesTownsCount;
 	
 	static const int8 _charXPosTable[];
-	static const int8 _addXPosTable[];
 	static const int8 _charYPosTable[];
-	static const int8 _addYPosTable[];
 
 	// positions of the inventory
 	static const uint16 _itemPosX[];
@@ -829,7 +801,6 @@ protected:
 	static const uint16 _amuletX2[];
 	static const uint16 _amuletY2[];
 protected:
-	typedef OpcodeImpl<KyraEngine_v1> OpcodeV1;
 	void setupOpcodeTable();
 
 	// Opcodes

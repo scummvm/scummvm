@@ -1469,5 +1469,38 @@ void KyraEngine_v1::gui_restorePalette() {
 	_screen->fadePalette(_screen->_currentPalette, 2);
 }
 
+#pragma mark -
+
+void KyraEngine_v1::drawAmulet() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::drawAmulet()");
+	static const int16 amuletTable1[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x150, 0x155, 0x15A, 0x15F, 0x164, 0x145, -1};
+	static const int16 amuletTable3[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x14F, 0x154, 0x159, 0x15E, 0x163, 0x144, -1};
+	static const int16 amuletTable2[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x152, 0x157, 0x15C, 0x161, 0x166, 0x147, -1};
+	static const int16 amuletTable4[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x151, 0x156, 0x15B, 0x160, 0x165, 0x146, -1};
+
+	resetGameFlag(0xF1);
+	_screen->hideMouse();
+
+	int i = 0;
+	while (amuletTable1[i] != -1) {
+		if (queryGameFlag(87))
+			_screen->drawShape(0, _shapes[amuletTable1[i]], _amuletX[0], _amuletY[0], 0, 0);
+
+		if (queryGameFlag(89))
+			_screen->drawShape(0, _shapes[amuletTable2[i]], _amuletX[1], _amuletY[1], 0, 0);
+
+		if (queryGameFlag(86))
+			_screen->drawShape(0, _shapes[amuletTable3[i]], _amuletX[2], _amuletY[2], 0, 0);
+
+		if (queryGameFlag(88))
+			_screen->drawShape(0, _shapes[amuletTable4[i]], _amuletX[3], _amuletY[3], 0, 0);
+
+		_screen->updateScreen();
+		delayWithTicks(3);
+		i++;
+	}
+	_screen->showMouse();
+}
+
 } // end of namespace Kyra
  
