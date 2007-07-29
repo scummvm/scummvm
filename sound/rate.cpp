@@ -319,12 +319,16 @@ protected:
 	
 	/* The maximum DC gain across all subfilters */
 	double filtGain;
+	
+	/* Random number source for getting dither values */
+	Common::RandomSource *rand;
 
 public:
 	FilteringRateConverter(st_rate_t inrate, st_rate_t outrate);
 	~FilteringRateConverter() {
 		delete filt;
 		free(inBuf);
+		delete rand;
 	}
 	int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r);
 	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r);
@@ -395,6 +399,8 @@ FilteringRateConverter<stereo, reverseStereo>::FilteringRateConverter(st_rate_t 
 	inBuf = (st_sample_t *)calloc(numChan * subLen, sizeof(st_sample_t));
 	
 	inPos = 0;
+	
+	rand = new Common::RandomSource();
 }
 
 template<bool stereo, bool reverseStereo>
@@ -448,39 +454,71 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 		 * ensure that there can be no clipping at all, the volume is far
 		 * softer than the other resamplers produce)
 		 */
-		double out0 = kFudgeFactor * accum0 / filtGain;
-		double out1 = kFudgeFactor * (stereo ? accum1 : accum0) / filtGain;
+		accum0 *= kFudgeFactor / filtGain;
 		
-		/* Check for clipping and clamp values in these cases */
-		if (fmax(out0, out1) > ST_SAMPLE_MAX) {
-			debug(1, "Clipping: sample value is %g (should be maximally %g)", fmax(out0, out1), (double)ST_SAMPLE_MAX);
+		/* Scale down according to the volume settings. */
+		accum0 *= vol_l / Audio::Mixer::kMaxMixerVolume;
+		
+		/*
+		 * The overall effect of the following code is to add dithering of up
+		 * to +/- 0.5, using a triangular distribution centred at 0 (central
+		 * limit theorem), then rounding to the nearest integer; however, due
+		 * to the fact that the floating point -> integer cast will round
+		 * towards 0, the implementation uses a triangular distribution
+		 * centred at 0.5 (spreading out to 0 and 1) and then checks the sign
+		 * of the sample to determine if the dither value should be added or
+		 * subtracted (to give the desired overall effect of rounding to the
+		 * nearest integer).
+		 */
+		
+		/* RandomSource hiccups if you use -1U here, since it adds 1 to this */
+		static const uint kRandMax = -2U; 
+		
+		double dither0 = ((accum0 >= 0) ? 1 : -1) * 
+				( (double)(rand->getRandomNumber(kRandMax)) + 
+				  (double)(rand->getRandomNumber(kRandMax)) )
+				/ (2.0 * kRandMax);
+		
+		accum0 += dither0;
+		
+		/* Check for clipping and clamp values if necessary */
+		if (accum0 > ST_SAMPLE_MAX) {
+			debug(1, "Clipping: sample value is %g (should be maximally %g)", accum0, (double)ST_SAMPLE_MAX);
+			accum0 = ST_SAMPLE_MAX;
+		} else	if (accum0 < ST_SAMPLE_MIN) {
+			debug(1, "Clipping: sample value is %g (should be minimally %g)", accum0, (double)ST_SAMPLE_MIN);
+			accum0 = ST_SAMPLE_MIN;
+		}
+		
+		/* Perform the same steps for the second channel if neccesary */
+		if (stereo || vol_l != vol_r) {
+			accum1 *= kFudgeFactor / filtGain;
 			
-			if (out0 > ST_SAMPLE_MAX) {
-				out0 = ST_SAMPLE_MAX;
+			accum1 *= vol_r / Audio::Mixer::kMaxMixerVolume;
+			
+			double dither1 = ((accum1 >= 0) ? 1 : -1) * 
+					( (double)(rand->getRandomNumber(kRandMax)) + 
+					(double)(rand->getRandomNumber(kRandMax)) )
+					/ (2.0 * kRandMax);
+			
+			accum1 += dither1;
+			
+			if (accum1 > ST_SAMPLE_MAX) {
+				debug(1, "Clipping: sample value is %g (should be maximally %g)", accum1, (double)ST_SAMPLE_MAX);
+				accum1 = ST_SAMPLE_MAX;
+			} else	if (accum1 < ST_SAMPLE_MIN) {
+				debug(1, "Clipping: sample value is %g (should be minimally %g)", accum1, (double)ST_SAMPLE_MIN);
+				accum1 = ST_SAMPLE_MIN;
 			}
-			if (out1 > ST_SAMPLE_MAX) {
-				out1 = ST_SAMPLE_MAX;
-			}
+		} else {
+			accum1 = accum0;
 		}
-		
-		if (fmin(out0, out1) < ST_SAMPLE_MIN) {
-			debug(1, "Clipping: sample value is %g (should be minimally %g)", fmin(out0, out1), (double)ST_SAMPLE_MIN);
-			if (out0 < ST_SAMPLE_MIN) {
-				out0 = ST_SAMPLE_MIN;
-			}
-			if (out1 < ST_SAMPLE_MIN) {
-				out1 = ST_SAMPLE_MIN;
-			}
-		}
-		
-		assert(fmax(out0, out1) <= ST_SAMPLE_MAX);
-		assert(fmin(out0, out1) >= ST_SAMPLE_MIN);
 		
 		/* Output left channel */
-		clampedAdd(obuf[reverseStereo    ], ((st_sample_t)out0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
-
+		clampedAdd(obuf[reverseStereo    ], (int)accum0);
+		
 		/* output right channel */
-		clampedAdd(obuf[reverseStereo ^ 1], ((st_sample_t)out1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
+		clampedAdd(obuf[reverseStereo ^ 1], (int)accum1);
 		
 		obuf += 2;
 		
@@ -494,7 +532,8 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 template<bool stereo, bool reverseStereo>
 int FilteringRateConverter<stereo, reverseStereo>::drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
 	// TODO: implement this
-	return ST_SUCCESS;
+	
+	return ST_EOF;
 }
 
 
