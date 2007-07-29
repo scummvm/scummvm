@@ -24,43 +24,37 @@
  */
 
 #include "common/stdafx.h"
+
 #include "parallaction/parallaction.h"
-#include "parallaction/sound.h"
 
 namespace Parallaction {
 
-int Parallaction_br::init() {
 
-	// Detect game
-	if (!detectGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
-	_screenWidth = 640;
-	_screenHeight = 400;
-
-	if (getGameType() == GType_BRA) {
-		if (getPlatform() == Common::kPlatformPC) {
-			_disk = new DosDisk_br(this);
-		} else
-			error("unsupported platform for Big Red Adventure");
-	} else
-		error("unknown game type");
-
-	_soundMan = new DummySoundMan(this);
-
-	initResources();
-
-	Parallaction::init();
-
-	return 0;
+void Parallaction_br::_c_blufade(void*) {
+	warning("Parallaction_br::_c_blufade() not yet implemented");
 }
 
-void Parallaction_br::callFunction(uint index, void* parm) {
-	assert(index < 6);	// magic value 6 is maximum # of callables for Big Red Adventure
-
-	(this->*_callables[index])(parm);
+void Parallaction_br::_c_resetpalette(void*) {
+	warning("Parallaction_br::_c_resetpalette() not yet implemented");
 }
+
+void Parallaction_br::_c_ferrcycle(void*) {
+	warning("Parallaction_br::_c_ferrcycle() not yet implemented");
+}
+
+void Parallaction_br::_c_lipsinc(void*) {
+	warning("Parallaction_br::_c_lipsinc() not yet implemented");
+}
+
+void Parallaction_br::_c_albcycle(void*) {
+	warning("Parallaction_br::_c_albcycle() not yet implemented");
+}
+
+void Parallaction_br::_c_password(void*) {
+	warning("Parallaction_br::_c_password() not yet implemented");
+}
+
+
+
 
 } // namespace Parallaction

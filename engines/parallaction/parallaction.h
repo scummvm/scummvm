@@ -544,13 +544,25 @@ public:
 	int init();
 
 public:
+	virtual	void callFunction(uint index, void* parm);
+
+public:
 	Table		*_audioCommandsNames;
 	const char **_audioCommandsNamesRes;
 
 private:
 	void 		initResources();
 
+	typedef void (Parallaction_br::*Callable)(void*);
 
+	void _c_blufade(void*);
+	void _c_resetpalette(void*);
+	void _c_ferrcycle(void*);
+	void _c_lipsinc(void*);
+	void _c_albcycle(void*);
+	void _c_password(void*);
+
+	Callable _callables[6];
 };
 
 // FIXME: remove global
