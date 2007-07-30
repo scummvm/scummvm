@@ -113,7 +113,7 @@ namespace Saga {
 #define RID_IHNM_MAIN_STRINGS 21
 
 #define RID_IHNMDEMO_MAIN_PANEL 5
-#define RID_IHNMDEMO_CONVERSE_PANEL 5			// TODO: Verify this
+#define RID_IHNMDEMO_CONVERSE_PANEL 6
 #define RID_IHNMDEMO_HOURGLASS_CURSOR 6			// Does not exist in the demo
 #define RID_IHNMDEMO_MAIN_SPRITES 7
 #define RID_IHNMDEMO_MAIN_PANEL_SPRITES 7
@@ -123,7 +123,7 @@ namespace Saga {
 #define RID_IHNMDEMO_OPTION_PANEL_SPRITES 11
 #define RID_IHNMDEMO_WARNING_PANEL 12
 #define RID_IHNMDEMO_BOSS_SCREEN 13				// Does not exist in the demo
-#define RID_IHNMDEMO_PROFILE_BG 14
+#define RID_IHNMDEMO_PROFILE_BG 15
 #define RID_IHNMDEMO_MAIN_STRINGS 16
 
 // Puzzle portraits
