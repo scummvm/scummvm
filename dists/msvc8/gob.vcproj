@@ -169,6 +169,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\coktelvideo.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\coktelvideo.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\dataio.cpp"
 			>
 		</File>
@@ -258,14 +266,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\goblin_v3.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\imd.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\imd.h"
 			>
 		</File>
 		<File
@@ -442,6 +442,14 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\video_v2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\videoplayer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\videoplayer.h"
 			>
 		</File>
 	</Files>
