@@ -36,6 +36,7 @@ static const GameResourceDescription ITE_Resources = {
 	RID_ITE_MAIN_PANEL_SPRITES,
 	0,					// Option panel sprites (IHNM only)
 	RID_ITE_DEFAULT_PORTRAITS,
+	0,					// Psychic profile background (IHNM only)
 	RID_ITE_MAIN_STRINGS,
 	RID_ITE_ACTOR_NAMES
 };
@@ -51,6 +52,7 @@ static const GameResourceDescription ITEDemo_Resources = {
 	RID_ITEDEMO_MAIN_PANEL_SPRITES,
 	0,						// Option panel sprites (IHNM only)
 	RID_ITEDEMO_DEFAULT_PORTRAITS,
+	0,						// Psychic profile background (IHNM only)
 	RID_ITEDEMO_MAIN_STRINGS,
 	RID_ITEDEMO_ACTOR_NAMES
 };
@@ -270,6 +272,7 @@ static const GameResourceDescription IHNM_Resources = {
 	RID_IHNM_MAIN_PANEL_SPRITES,
 	RID_IHNM_OPTION_PANEL_SPRITES,
 	0,					// Default portraits (ITE only)
+	RID_IHNM_PROFILE_BG,
 	RID_IHNM_MAIN_STRINGS,
 	0					// Actors strings (ITE only)
 };
@@ -285,6 +288,7 @@ static const GameResourceDescription IHNMDEMO_Resources = {
 	RID_IHNMDEMO_MAIN_PANEL_SPRITES,
 	RID_IHNMDEMO_OPTION_PANEL_SPRITES,
 	0,					// Default portraits (ITE only)
+	RID_IHNMDEMO_PROFILE_BG,
 	RID_IHNMDEMO_MAIN_STRINGS,
 	0					// Actors strings (ITE only)
 };

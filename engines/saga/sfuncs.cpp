@@ -40,6 +40,7 @@
 #include "saga/render.h"
 #include "saga/sound.h"
 #include "saga/sndres.h"
+#include "saga/rscfile.h"
 
 #include "saga/script.h"
 #include "saga/objectmap.h"
@@ -1476,7 +1477,123 @@ void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfPsychicProfile", thread, nArgs);
+	int stringId;
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
+	static PalEntry cur_pal[PAL_ENTRIES];
+	PalEntry *pal;
+	Event event;
+	Event *q_event;
+
+	// FIXME: This still needs work: the actors are shown while the psychic
+	// profile is shown and the text placement and color are incorrect
+
+	thread->wait(kWaitTypePlacard);
+
+	_vm->_interface->rememberMode();
+	_vm->_interface->setMode(kPanelPlacard);
+
+	stringId = thread->pop();
+
+	event.type = kEvTOneshot;
+	event.code = kCursorEvent;
+	event.op = kEventHide;
+
+	q_event = _vm->_events->queue(&event);
+
+	_vm->_gfx->getCurrentPal(cur_pal);
+
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventPalToBlack;
+	event.time = 0;
+	event.duration = kNormalFadeDuration;
+	event.data = cur_pal;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTOneshot;
+	event.code = kInterfaceEvent;
+	event.op = kEventClearStatus;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTOneshot;
+	event.code = kGraphicsEvent;
+	event.op = kEventSetFlag;
+	event.param = RF_PLACARD;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	// Set the background and palette for the psychic profile
+	ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
+
+	byte *resourceData;
+	size_t resourceDataLength;
+
+	_vm->_resource->loadResource(context, _vm->getResourceDescription()->psychicProfileResourceId, resourceData, resourceDataLength);
+
+	byte *buf;
+	size_t buflen;
+	int width;
+	int height;
+
+	_vm->decodeBGImage(resourceData, resourceDataLength, &buf, &buflen, &width, &height);
+
+	const PalEntry *palette = (const PalEntry *)_vm->getImagePal(resourceData, resourceDataLength);
+
+	Surface *bgSurface = _vm->_render->getBackGroundSurface();
+	const Rect rect(width, height);
+
+	bgSurface->blit(rect, buf);
+	_vm->_frameCount++;
+
+	_vm->_gfx->setPalette(palette);
+
+	free(buf);
+	free(resourceData);
+
+	// Put the text in the center of the viewport, assuming it will fit on
+	// one line. If we cannot make that assumption we'll need to extend
+	// the text drawing function so that it can center text around a point.
+	// It doesn't end up in exactly the same spot as the original did it,
+	// but it's close enough for now at least.
+
+	TextListEntry textEntry;
+
+	textEntry.knownColor = kKnownColorTransparent;
+	textEntry.effectKnownColor = kKnownColorBrightWhite;
+	textEntry.point.x = _vm->getDisplayWidth() / 2;
+	textEntry.point.y = (_vm->_scene->getHeight() - _vm->_font->getHeight(kKnownFontMedium)) / 2;
+	textEntry.font = kKnownFontVerb;
+	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);
+	textEntry.text = thread->_strings->getString(stringId);
+
+	_placardTextEntry = _vm->_scene->_textList.addEntry(textEntry);
+
+	event.type = kEvTOneshot;
+	event.code = kTextEvent;
+	event.op = kEventDisplay;
+	event.data = _placardTextEntry;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	_vm->_scene->getBGPal(pal);
+
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventBlackToPal;
+	event.time = 0;
+	event.duration = kNormalFadeDuration;
+	event.data = pal;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTOneshot;
+	event.code = kScriptEvent;
+	event.op = kEventThreadWake;
+	event.param = kWaitTypePlacard;
+
+	q_event = _vm->_events->chain(q_event, &event);
 }
 
 void Script::sfPsychicProfileOff(SCRIPTFUNC_PARAMS) {

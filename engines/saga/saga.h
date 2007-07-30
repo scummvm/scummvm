@@ -301,6 +301,7 @@ struct GameResourceDescription {
 	uint32 mainPanelSpritesResourceId;
 	uint32 optionPanelSpritesResourceId;
 	uint32 defaultPortraitsResourceId;
+	uint32 psychicProfileResourceId;
 	uint32 mainStringsResourceId;
 	uint32 actorsStringsResourceId;
 };
