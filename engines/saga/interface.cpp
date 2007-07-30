@@ -338,8 +338,7 @@ int Interface::activate() {
 		_vm->_actor->_protagonist->_targetObject = ID_NOTHING;
 		unlockMode();
 		if (_panelMode == kPanelMain || _panelMode == kPanelChapterSelection) {
-			if (_vm->getGameId() != GID_IHNM_DEMO)
-				_saveReminderState = 1;
+			_saveReminderState = 1;
 		}
 		draw();
 	}
@@ -382,21 +381,33 @@ void Interface::restoreMode(bool draw_) {
 void Interface::setMode(int mode) {
 	debug(1, "Interface::setMode %i", mode);
 
+	// The non-interactive part of the IHNM demo does not have an options
+	// screen - the psychic profile screen is displayed instead, with some
+	// dialog options (help, play non-interactive demo, play interactive demo, quit)
+	// TODO: Show the psychic profile screen in the non-interactive demo and show
+	// the normal options screen in the interactive demo
+	if (_vm->getGameId() == GID_IHNM_DEMO && mode == kPanelOption)
+		mode = kPanelNull;
+
 	if (mode == kPanelMain) {
 		_inMainMode = true;
-		if (_vm->getGameId() != GID_IHNM_DEMO)
-			_saveReminderState = 1; //TODO: blinking timeout
+		_saveReminderState = 1; //TODO: blinking timeout
 	} else if (mode == kPanelChapterSelection) {
-		if (_vm->getGameId() != GID_IHNM_DEMO)
-			_saveReminderState = 1;
+		_saveReminderState = 1;
 	} else if (mode == kPanelNull) {
-		if (_vm->getGameId() == GID_IHNM_DEMO)
+		if (_vm->getGameId() == GID_IHNM_DEMO) {
 			_inMainMode = true;
+			_saveReminderState = 1;
+		}
 	} else {
 		if (mode == kPanelConverse) {
 			_inMainMode = false;
 		}
-		_saveReminderState = 0;
+
+		if (_vm->getGameId() != GID_IHNM_DEMO)
+			_saveReminderState = 0;
+		else
+			_saveReminderState = 1;
 	}
 
 	_panelMode = mode;
