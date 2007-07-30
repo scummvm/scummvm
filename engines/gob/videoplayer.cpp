@@ -119,7 +119,7 @@ bool VideoPlayer::openVideo(const char *video, int16 x, int16 y, int16 flags, Ty
 		if (which == kVideoTypeIMD) {
 			_video = new Imd();
 		} else if (which == kVideoTypeVMD) {
-			warning("STUB: VMD");
+			warning("STUB: %s", fileName);
 			closeVideo();
 			return false;
 		} else {

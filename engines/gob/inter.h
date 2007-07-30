@@ -516,6 +516,8 @@ protected:
 	virtual const char *getOpcodeDrawDesc(byte i);
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
 	virtual const char *getOpcodeGoblinDesc(int i);
+
+	void o4_playVmdOrMusic();
 };
 
 } // End of namespace Gob

@@ -30,10 +30,9 @@
 #include "gob/gob.h"
 #include "gob/inter.h"
 #include "gob/global.h"
-#include "gob/dataio.h"
-#include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/parse.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
@@ -283,7 +282,7 @@ void Inter_v4::setupOpcodes() {
 		OPCODE(o2_initScreen),
 		OPCODE(o2_scroll),
 		OPCODE(o2_setScrollOffset),
-		OPCODE(o2_playImd),
+		OPCODE(o4_playVmdOrMusic),
 		/* 84 */
 		OPCODE(o2_getImdInfo),
 		OPCODE(o2_openItk),
@@ -710,6 +709,78 @@ const char *Inter_v4::getOpcodeGoblinDesc(int i) {
 		if (_goblinFuncLookUp[j][0] == i)
 			return _opcodesGoblinV4[_goblinFuncLookUp[j][1]].desc;
 	return "";
+}
+
+void Inter_v4::o4_playVmdOrMusic() {
+	char fileName[128];
+	int16 x, y;
+	int16 startFrame;
+	int16 lastFrame;
+	int16 breakKey;
+	int16 flags;
+	int16 palStart;
+	int16 palEnd;
+	uint16 palCmd;
+	bool close;
+
+	evalExpr(0);
+	_vm->_global->_inter_resStr[8] = 0;
+	strncpy0(fileName, _vm->_global->_inter_resStr, 127);
+
+	x = _vm->_parse->parseValExpr();
+	y = _vm->_parse->parseValExpr();
+	startFrame = _vm->_parse->parseValExpr();
+	lastFrame = _vm->_parse->parseValExpr();
+	breakKey = _vm->_parse->parseValExpr();
+	flags = _vm->_parse->parseValExpr();
+	palStart = _vm->_parse->parseValExpr();
+	palEnd = _vm->_parse->parseValExpr();
+	palCmd = 1 << (flags & 0x3F);
+	
+	close = false;
+	if (lastFrame == -1) {
+		close = true;
+	} else if (lastFrame == -3) {
+		warning("Woodruff Stub: Video/Music command -3: Play background video %s", fileName);
+		return;
+	} else if (lastFrame == -4) {
+		warning("Woodruff Stub: Video/Music command -4: Play background video %s", fileName);
+		return;
+	} else if (lastFrame == -5) {
+		warning("Woodruff Stub: Video/Music command -5");
+		return;
+	} else if (lastFrame == -6) {
+		warning("Woodruff Stub: Video/Music command -6: Load background video %s", fileName);
+		return;
+	} else if (lastFrame == -8) {
+		warning("Woodruff Stub: Video/Music command -8: Play background video %s", fileName);
+		return;
+	} else if (lastFrame == -9) {
+		warning("Woodruff Stub: Video/Music command -9: Play background music %s (%d-%d)", fileName, palEnd, palStart);
+		return;
+	} else if (lastFrame < 0) {
+		warning("Unknown Video/Music command: %d, %s", lastFrame, fileName);
+		return;
+	}
+
+	if (startFrame == -2) {
+		startFrame = lastFrame = 0;
+		close = false;
+	}
+
+	if ((fileName[0] != 0) && !_vm->_vidPlayer->openVideo(fileName, x, y, flags)) {
+		WRITE_VAR(11, -1);
+		return;
+	}
+
+	if (startFrame >= 0) {
+		_vm->_game->_preventScroll = true;
+		_vm->_vidPlayer->play(startFrame, lastFrame, breakKey, palCmd, palStart, palEnd, 0);
+		_vm->_game->_preventScroll = false;
+	}
+
+	if (close)
+		_vm->_vidPlayer->closeVideo();
 }
 
 } // End of namespace Gob
