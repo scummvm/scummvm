@@ -450,9 +450,6 @@ CoktelVideo::State Imd::processFrame(int16 frame) {
 	state.right += state.left - 1;
 	state.bottom += state.top - 1;
 
-/*	if ((frame == 0) && (_features & 0x8))
-		_vm->_video->setPalette(_palette);*/
-
 	do {
 		if (frame != 0) {
 			if (_stdX != -1) {
@@ -504,9 +501,6 @@ CoktelVideo::State Imd::processFrame(int16 frame) {
 
 		if (_soundStage != 0) {
 			byte *soundBuf;
-
-/*			if (!hasNextCmd)
-				waitEndSoundSlice();*/
 
 			// Next sound slice data
 			if (cmd == 0xFF00) {
@@ -606,8 +600,7 @@ CoktelVideo::State Imd::processFrame(int16 frame) {
 			_height = bottom - top;
 			_width = right - left;
 
-			renderFrame();
-
+			state.flags |= renderFrame();
 			state.flags |= _frameData[0];
 
 		// Frame video data
@@ -615,8 +608,7 @@ CoktelVideo::State Imd::processFrame(int16 frame) {
 
 			_stream->read(_frameData, cmd + 2);
 
-			renderFrame();
-
+			state.flags |= renderFrame();
 			state.flags |= _frameData[0];
 
 		} else
@@ -737,9 +729,9 @@ CoktelVideo::State Imd::peekFrame(int16 frame) {
 	return state;
 }
 
-void Imd::renderFrame() {
+uint32 Imd::renderFrame() {
 	if (!_frameData || (_width <= 0) || (_height <= 0))
-		return;
+		return 0;
 
 	if (!_vidMem)
 		setVideoMemory();
@@ -753,11 +745,17 @@ void Imd::renderFrame() {
 	byte *imdVidMem = _vidMem + sW * imdY + imdX;
 	uint8 type = *dataPtr++;
 	byte *srcPtr = dataPtr;
-
+	uint32 retVal = 0;
 
 	if (type & 0x10) { // Palette data
+		// One byte index
+		int index = *dataPtr++;
+		// 16 entries with each 3 bytes (RGB)
+		memcpy(_palette + index * 3, dataPtr, MIN((255 - index) * 3, 48));
+
+		retVal = kStatePalette;
+		dataPtr += 48;
 		type ^= 0x10;
-		dataPtr += 49;
 	}
 
 	srcPtr = dataPtr;
@@ -766,7 +764,7 @@ void Imd::renderFrame() {
 		type &= 0x7F;
 		if ((type == 2) && (imdW == sW)) {
 			frameUncompressor(imdVidMem, dataPtr);
-			return;
+			return retVal;
 		} else
 			frameUncompressor(srcPtr, dataPtr);
 	}
@@ -843,6 +841,8 @@ void Imd::renderFrame() {
 			imdVidMem = imdVidMemBak;
 		}
 	}
+
+	return retVal;
 }
 
 void Imd::frameUncompressor(byte *dest, byte *src) {

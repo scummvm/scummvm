@@ -239,7 +239,7 @@ protected:
 	void clear(bool del = true);
 
 	State processFrame(int16 frame);
-	void renderFrame();
+	uint32 renderFrame();
 	void frameUncompressor(byte *dest, byte *src);
 };
 
