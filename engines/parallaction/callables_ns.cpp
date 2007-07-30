@@ -341,33 +341,7 @@ void Parallaction_ns::_c_endComment(void *param) {
 	byte* _enginePal = _gfx->_palette;
 	Gfx::Palette pal;
 
-	uint32 si;
-	for (si = 0; si < 32; si++) {
-
-		byte al = _enginePal[si*3+1];
-		if (al > _enginePal[si*3+2]) {
-			al = _enginePal[si*3+1];
-		} else {
-			al = _enginePal[si*3+2];
-		}
-
-		if (al < _enginePal[si*3]) {
-			al = _enginePal[si*3];
-		} else {
-			al = _enginePal[si*3+1];
-		}
-
-		if (al > _enginePal[si*3+2]) {
-			al = _enginePal[si*3+1];
-		} else {
-			al = _enginePal[si*3+2];
-		}
-
-		pal[si*3] = al;
-		pal[si*3+2] = al;
-		pal[si*3+1] = al;
-
-	}
+	_gfx->buildBWPalette(pal);
 
 	int16 w = 0, h = 0;
 	_gfx->getStringExtent(_location._endComment, 130, &w, &h);
@@ -385,7 +359,7 @@ void Parallaction_ns::_c_endComment(void *param) {
 	_gfx->displayWrappedString(_location._endComment, 3, 5, 0, 130);
 	_gfx->updateScreen();
 
-	uint32 di = 0;
+	uint32 si, di;
 	for (di = 0; di < PALETTE_COLORS; di++) {
 		for (si = 0; si <= 93; si +=3) {
 
