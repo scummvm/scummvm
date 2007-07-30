@@ -596,6 +596,7 @@ private:
 	void sf89(SCRIPTFUNC_PARAMS);
 	void sfGetPoints(SCRIPTFUNC_PARAMS);
 	void sfSetGlobalFlag(SCRIPTFUNC_PARAMS);
+	void sf92(SCRIPTFUNC_PARAMS);
 	void sfClearGlobalFlag(SCRIPTFUNC_PARAMS);
 	void sfTestGlobalFlag(SCRIPTFUNC_PARAMS);
 	void sfSetPoints(SCRIPTFUNC_PARAMS);

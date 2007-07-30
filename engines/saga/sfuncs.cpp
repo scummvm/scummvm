@@ -230,7 +230,7 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sf89),
 		OPCODE(sfVstopFX),
 		OPCODE(sfVstopLoopedFX),
-		OPCODE(sfNull),
+		OPCODE(sf92),	// only used in the demo version of IHNM
 		OPCODE(sfDemoIsInteractive),
 		OPCODE(sfVsetTrack),
 		OPCODE(sfGetPoints),
@@ -2107,6 +2107,11 @@ void Script::sfVstopFX(SCRIPTFUNC_PARAMS) {
 
 void Script::sfVstopLoopedFX(SCRIPTFUNC_PARAMS) {
 	_vm->_sound->stopSound();
+}
+
+void Script::sf92(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf92", thread, nArgs);
+	// This opcode is empty in the full version of IHNM, but it's not empty in the demo
 }
 
 void Script::sfDemoIsInteractive(SCRIPTFUNC_PARAMS) {
