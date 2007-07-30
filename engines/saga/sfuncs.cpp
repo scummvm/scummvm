@@ -577,7 +577,8 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 			(_vm->_scene->currentChapterNumber() == 2 && _vm->_scene->currentSceneNumber() == 31) ||
 			(_vm->_scene->currentChapterNumber() == 3 && _vm->_scene->currentSceneNumber() == 58) ||
 			(_vm->_scene->currentChapterNumber() == 4 && _vm->_scene->currentSceneNumber() == 68) ||
-			(_vm->_scene->currentChapterNumber() == 5 && _vm->_scene->currentSceneNumber() == 91))
+			(_vm->_scene->currentChapterNumber() == 5 && _vm->_scene->currentSceneNumber() == 91) ||
+			(_vm->_scene->currentChapterNumber() == 7 && _vm->_scene->currentSceneNumber() == 145))
 				_vm->_actor->showActors(false);		// Stop showing actors before the background is drawn
 
 		// Since it doesn't look like the IHNM scripts remove the
