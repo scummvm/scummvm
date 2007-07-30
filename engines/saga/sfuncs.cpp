@@ -1484,8 +1484,7 @@ void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
 	Event event;
 	Event *q_event;
 
-	// FIXME: This still needs work: the actors are shown while the psychic
-	// profile is shown and the text placement and color are incorrect
+	// FIXME: This still needs work: the text placement is incorrect
 
 	thread->wait(kWaitTypePlacard);
 
@@ -1525,32 +1524,10 @@ void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
 	q_event = _vm->_events->chain(q_event, &event);
 
 	// Set the background and palette for the psychic profile
-	ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
+	event.type = kEvTOneshot;
+	event.code = kPsychicProfileBgEvent;
 
-	byte *resourceData;
-	size_t resourceDataLength;
-
-	_vm->_resource->loadResource(context, _vm->getResourceDescription()->psychicProfileResourceId, resourceData, resourceDataLength);
-
-	byte *buf;
-	size_t buflen;
-	int width;
-	int height;
-
-	_vm->decodeBGImage(resourceData, resourceDataLength, &buf, &buflen, &width, &height);
-
-	const PalEntry *palette = (const PalEntry *)_vm->getImagePal(resourceData, resourceDataLength);
-
-	Surface *bgSurface = _vm->_render->getBackGroundSurface();
-	const Rect rect(width, height);
-
-	bgSurface->blit(rect, buf);
-	_vm->_frameCount++;
-
-	_vm->_gfx->setPalette(palette);
-
-	free(buf);
-	free(resourceData);
+	q_event = _vm->_events->chain(q_event, &event);
 
 	// Put the text in the center of the viewport, assuming it will fit on
 	// one line. If we cannot make that assumption we'll need to extend
@@ -1558,14 +1535,16 @@ void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
 	// It doesn't end up in exactly the same spot as the original did it,
 	// but it's close enough for now at least.
 
+	// FIXME: This assumption is wrong for the psychic profile, the text
+	// placement is incorrect
+
 	TextListEntry textEntry;
 
-	textEntry.knownColor = kKnownColorTransparent;
-	textEntry.effectKnownColor = kKnownColorBrightWhite;
+	textEntry.knownColor = kKnownColorBlack;
 	textEntry.point.x = _vm->getDisplayWidth() / 2;
 	textEntry.point.y = (_vm->_scene->getHeight() - _vm->_font->getHeight(kKnownFontMedium)) / 2;
 	textEntry.font = kKnownFontVerb;
-	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);
+	textEntry.flags = (FontEffectFlags)(kFontCentered);
 	textEntry.text = thread->_strings->getString(stringId);
 
 	_placardTextEntry = _vm->_scene->_textList.addEntry(textEntry);

@@ -35,6 +35,7 @@
 #include "saga/palanim.h"
 #include "saga/render.h"
 #include "saga/sndres.h"
+#include "saga/rscfile.h"
 #include "saga/music.h"
 #include "saga/actor.h"
 
@@ -342,6 +343,39 @@ int Events::handleOneShot(Event *event) {
 				}
 			}
 			_vm->_actor->showActors(true);
+		}
+		break;
+	case kPsychicProfileBgEvent:
+		{
+		ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
+
+		byte *resourceData;
+		size_t resourceDataLength;
+
+		_vm->_resource->loadResource(context, _vm->getResourceDescription()->psychicProfileResourceId, resourceData, resourceDataLength);
+
+		byte *buf;
+		size_t buflen;
+		int width;
+		int height;
+
+		_vm->decodeBGImage(resourceData, resourceDataLength, &buf, &buflen, &width, &height);
+
+		const PalEntry *palette = (const PalEntry *)_vm->getImagePal(resourceData, resourceDataLength);
+
+		Surface *bgSurface = _vm->_render->getBackGroundSurface();
+		const Rect rect(width, height);
+
+		bgSurface->blit(rect, buf);
+		_vm->_frameCount++;
+
+		_vm->_gfx->setPalette(palette);
+
+		free(buf);
+		free(resourceData);
+
+		// Draw the scene. It won't be drawn by Render::drawScene(), as the RF_PLACARD is set
+		_vm->_scene->draw();
 		}
 		break;
 	case kAnimEvent:
