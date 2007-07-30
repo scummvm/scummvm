@@ -136,11 +136,11 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 		int32 offset = READ_LE_UINT16(ptr + 20);
 		int16 code = READ_LE_UINT16(ptr + 24);
 
-		sound->numRegions = 70;
+		sound->numRegions = 0;
 		sound->region = new Region[70];
 		assert(sound->region);
 
-		sound->numJumps = 1;
+		sound->numJumps = 0;
 		sound->jump = new Jump[1];
 		assert(sound->jump);
 
