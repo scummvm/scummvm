@@ -367,7 +367,7 @@ void Parallaction_ns::_c_endComment(void *param) {
 
 			if (_enginePal[si] != pal[si]) {
 				al = _enginePal[si];
-				if (al > pal[si])
+				if (al < pal[si])
 					al = 1;
 				else
 					al = -1;
@@ -376,7 +376,7 @@ void Parallaction_ns::_c_endComment(void *param) {
 
 			if (_enginePal[si+1] != pal[si+1]) {
 				al = _enginePal[si+1];
-				if (al > pal[si+1])
+				if (al < pal[si+1])
 					al = 1;
 				else
 					al = -1;
@@ -385,7 +385,7 @@ void Parallaction_ns::_c_endComment(void *param) {
 
 			if (_enginePal[si+2] != pal[si+2]) {
 				al = _enginePal[si+2];
-				if (al > pal[si+2])
+				if (al < pal[si+2])
 					al = 1;
 				else
 					al = -1;
