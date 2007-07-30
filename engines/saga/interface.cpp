@@ -1556,7 +1556,7 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 	if (_vm->_scene->isInIntro() || _fadeMode == kFadeOut || !_active) {
 		// When opening the psychic profile, the interface is locked (_active is false)
 		// Don't return if the psychic profile is up, so that mouse clicks can be processed
-		if (!(_vm->getGameType() == GType_IHNM && _panelMode == kPanelPlacard))
+		if (!(_vm->getGameType() == GType_IHNM && _panelMode == kPanelPlacard && (updateFlag & UPDATE_MOUSECLICK)))
 			return;
 	}
 
