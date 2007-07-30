@@ -282,9 +282,9 @@ void Script::sfTakeObject(SCRIPTFUNC_PARAMS) {
 		// WORKAROUND for two incorrect object sprites in the IHNM demo
 		// (the mirror and the icon in Ted's part). Set them correctly here
 		if (_vm->getGameId() == GID_IHNM_DEMO) {
-			if (obj->_spriteListResourceId == 4)
+			if (obj->_spriteListResourceId == 4 && objectId == 16408)
 				obj->_spriteListResourceId = 24;
-			if (obj->_spriteListResourceId == 3)
+			if (obj->_spriteListResourceId == 3 && objectId == 16409)
 				obj->_spriteListResourceId = 25;
 		}
 
