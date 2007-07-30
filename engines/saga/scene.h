@@ -392,13 +392,11 @@ class Scene {
 	static int SC_IHNMIntroMovieProc1(int param, void *refCon);
 	static int SC_IHNMIntroMovieProc2(int param, void *refCon);
 	static int SC_IHNMIntroMovieProc3(int param, void *refCon);
-	static int SC_IHNMHateProc(int param, void *refCon);
 
  private:
 	int IHNMIntroMovieProc1(int param);
 	int IHNMIntroMovieProc2(int param);
 	int IHNMIntroMovieProc3(int param);
-	int IHNMHateProc(int param);
 
  public:
 	static int SC_ITEIntroAnimProc(int param, void *refCon);

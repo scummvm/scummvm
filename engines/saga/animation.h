@@ -154,6 +154,7 @@ public:
 		}
 		return (_animations[animId] != NULL);
 	}
+	int cutawayResourceID(int cutaway) { return _cutawayList[cutaway].animResourceId; }
 private:
 	void decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_t bufLength);
 	void fillFrameOffsets(AnimationData *anim);

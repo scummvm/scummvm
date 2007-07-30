@@ -31,6 +31,7 @@
 #include "saga/animation.h"
 #include "saga/events.h"
 #include "saga/interface.h"
+#include "saga/rscfile.h"
 #include "saga/sndres.h"
 #include "saga/music.h"
 
@@ -39,7 +40,7 @@
 namespace Saga {
 
 SceneResourceData IHNM_IntroMovie1RL[] = {
-	{30, 2, 0, 0, false} ,
+	{30, 2, 0, 0, false},
 	{31, 14, 0, 0, false}
 };
 
@@ -50,7 +51,7 @@ SceneDescription IHNM_IntroMovie1Desc = {
 };
 
 SceneResourceData IHNM_IntroMovie2RL[] = {
-	{32, 2, 0, 0, false} ,
+	{32, 2, 0, 0, false},
 	{33, 14, 0, 0, false}
 };
 
@@ -82,11 +83,42 @@ SceneDescription IHNM_IntroMovie4Desc = {
 	ARRAYSIZE(IHNM_IntroMovie4RL)
 };
 
+// Demo
+SceneResourceData IHNMDEMO_IntroMovie1RL[] = {
+	{19, 2, 0, 0, false}	// this scene doesn't have an animation
+};
+
+SceneDescription IHNMDEMO_IntroMovie1Desc = {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	IHNMDEMO_IntroMovie1RL,
+	ARRAYSIZE(IHNMDEMO_IntroMovie1RL)
+};
+
+SceneResourceData IHNMDEMO_IntroMovie2RL[] = {
+	{22, 2, 0, 0, false},
+	{23, 14, 0, 0, false}
+};
+
+SceneDescription IHNMDEMO_IntroMovie2Desc = {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	IHNMDEMO_IntroMovie2RL,
+	ARRAYSIZE(IHNMDEMO_IntroMovie2RL)
+};
+
 LoadSceneParams IHNM_IntroList[] = {
 	{0, kLoadByDescription, &IHNM_IntroMovie1Desc, Scene::SC_IHNMIntroMovieProc1, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 	{0, kLoadByDescription, &IHNM_IntroMovie2Desc, Scene::SC_IHNMIntroMovieProc2, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 	{0, kLoadByDescription, &IHNM_IntroMovie3Desc, Scene::SC_IHNMIntroMovieProc3, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 };
+
+LoadSceneParams IHNMDEMO_IntroList[] = {
+	{0, kLoadByDescription, &IHNMDEMO_IntroMovie1Desc, Scene::SC_IHNMIntroMovieProc1, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByDescription, &IHNMDEMO_IntroMovie2Desc, Scene::SC_IHNMIntroMovieProc3, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+};
+
+// IHNM cutaway intro resource IDs
+#define RID_IHNM_INTRO_CUTAWAYS 39
+#define RID_IHNMDEMO_INTRO_CUTAWAYS 25
 
 int Scene::IHNMStartProc() {
 	size_t n_introscenes;
@@ -94,18 +126,56 @@ int Scene::IHNMStartProc() {
 
 	LoadSceneParams firstScene;
 
+	/*
+	// Test code - uses loadCutawayList to load the intro cutaways, like the original
+
+	ResourceContext *resourceContext;
+	//ResourceContext *soundContext;
+	byte *resourcePointer;
+	size_t resourceLength;
+
+	resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
+	if (resourceContext == NULL) {
+		error("Scene::IHNMStartProc() resource context not found");
+	}
+
+	if (_vm->getGameId() != GID_IHNM_DEMO)
+		_vm->_resource->loadResource(resourceContext, RID_IHNM_INTRO_CUTAWAYS, resourcePointer, resourceLength);
+	else
+		_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_INTRO_CUTAWAYS, resourcePointer, resourceLength);
+
+	if (resourceLength == 0) {
+		error("Scene::IHNMStartProc() Can't load cutaway list");
+	}
+
+	// Load the cutaways for the title screens
+	_vm->_anim->loadCutawayList(resourcePointer, resourceLength);
+	
+	// Note that the resource ID needed is the returned ID minus one
+	printf("%i\n", _vm->_anim->cutawayResourceID(0));
+	printf("%i\n", _vm->_anim->cutawayResourceID(1));
+	printf("%i\n", _vm->_anim->cutawayResourceID(2));
+	*/
+
 	// The original used the "play video" mechanism for the first part of
 	// the intro. We just use that panel mode.
 
 	_vm->_anim->setCutAwayMode(kPanelVideo);
 	_vm->_interface->setMode(kPanelVideo);
 
-	n_introscenes = ARRAYSIZE(IHNM_IntroList);
+	if (_vm->getGameId() != GID_IHNM_DEMO)
+		n_introscenes = ARRAYSIZE(IHNM_IntroList);
+	else
+		n_introscenes = ARRAYSIZE(IHNMDEMO_IntroList);
 
-	// Queue the company and title videos for the full version of IHNM
+	// Queue the company and title videos
 	if (_vm->getGameId() != GID_IHNM_DEMO) {
 		for (i = 0; i < n_introscenes; i++) {
 			_vm->_scene->queueScene(&IHNM_IntroList[i]);
+		}
+	} else {
+		for (i = 0; i < n_introscenes; i++) {
+			_vm->_scene->queueScene(&IHNMDEMO_IntroList[i]);
 		}
 	}
 
@@ -143,16 +213,30 @@ int Scene::IHNMIntroMovieProc1(int param) {
 
 		q_event = _vm->_events->queue(&event);
 
-		_vm->_anim->setFrameTime(0, IHNM_INTRO_FRAMETIME);
-		_vm->_anim->setFlag(0, ANIM_FLAG_ENDSCENE);
+		if (_vm->getGameId() != GID_IHNM_DEMO) {
+			_vm->_anim->setFrameTime(0, IHNM_INTRO_FRAMETIME);
+			_vm->_anim->setFlag(0, ANIM_FLAG_ENDSCENE);
 
-		event.type = kEvTOneshot;
-		event.code = kAnimEvent;
-		event.op = kEventPlay;
-		event.param = 0;
-		event.time = 0;
+			event.type = kEvTOneshot;
+			event.code = kAnimEvent;
+			event.op = kEventPlay;
+			event.param = 0;
+			event.time = 0;
 
-		q_event = _vm->_events->chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
+		} else {
+			// The IHNM demo doesn't have an animation at the
+			// Cyberdreans logo screen
+
+			// Queue end of scene after a while
+			event.type = kEvTOneshot;
+			event.code = kSceneEvent;
+			event.op = kEventEnd;
+			event.time = 4000;
+
+			q_event = _vm->_events->chain(q_event, &event);
+		}
+
 		break;
 	default:
 		break;
@@ -276,14 +360,18 @@ int Scene::IHNMIntroMovieProc3(int param) {
 		// In the GM file, this music also appears as tracks 7, 13, 19,
 		// 25 and 31, but only track 1 sounds right with the FM music.
 
-		event.type = kEvTOneshot;
-		event.code = kMusicEvent;
-		event.param = 1;
-		event.param2 = MUSIC_NORMAL;
-		event.op = kEventPlay;
-		event.time = 0;
+		// FIXME: MIDI music in the demo is problematic right now, so music is
+		// disabled in this part
+		if (_vm->getGameId() != GID_IHNM_DEMO) {
+			event.type = kEvTOneshot;
+			event.code = kMusicEvent;
+			event.param = 1;
+			event.param2 = MUSIC_NORMAL;
+			event.op = kEventPlay;
+			event.time = 0;
 
-		q_event = _vm->_events->chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
+		}
 
 		// Background for intro scene is the first frame of the intro
 		// animation; display it but don't set palette
@@ -320,7 +408,10 @@ int Scene::IHNMIntroMovieProc3(int param) {
 		event.type = kEvTOneshot;
 		event.code = kSceneEvent;
 		event.op = kEventEnd;
-		event.time = _vm->_music->hasAdlib() ? IHNM_TITLE_TIME_FM : IHNM_TITLE_TIME_GM;
+		if (_vm->getGameId() != GID_IHNM_DEMO)
+			event.time = _vm->_music->hasAdlib() ? IHNM_TITLE_TIME_FM : IHNM_TITLE_TIME_GM;
+		else
+			event.time = 10000;
 
 		q_event = _vm->_events->chain(q_event, &event);
 		break;
