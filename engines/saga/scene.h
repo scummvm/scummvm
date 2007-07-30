@@ -340,6 +340,9 @@ class Scene {
 			return _vm->getDisplayInfo().sceneHeight;
 	}
 
+	void clearPlacard();
+	void clearPsychicProfile();
+
  private:
 	void loadScene(LoadSceneParams *loadSceneParams);
 	void loadSceneDescriptor(uint32 resourceId);

@@ -1284,4 +1284,71 @@ void Scene::loadSceneEntryList(const byte* resourcePointer, size_t resourceLengt
 	}
 }
 
+void Scene::clearPlacard() {
+	static PalEntry cur_pal[PAL_ENTRIES];
+	PalEntry *pal;
+	Event event;
+	Event *q_event;
+
+	_vm->_interface->restoreMode();
+
+	_vm->_gfx->getCurrentPal(cur_pal);
+
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventPalToBlack;
+	event.time = 0;
+	event.duration = kNormalFadeDuration;
+	event.data = cur_pal;
+
+	q_event = _vm->_events->queue(&event);
+
+	event.type = kEvTOneshot;
+	event.code = kGraphicsEvent;
+	event.op = kEventClearFlag;
+	event.param = RF_PLACARD;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTOneshot;
+	event.code = kTextEvent;
+	event.op = kEventRemove;
+	event.data = _vm->_script->getPlacardTextEntry();
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	_vm->_scene->getBGPal(pal);
+
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventBlackToPal;
+	event.time = 0;
+	event.duration = kNormalFadeDuration;
+	event.data = pal;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTOneshot;
+	event.code = kCursorEvent;
+	event.op = kEventShow;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTOneshot;
+	event.code = kScriptEvent;
+	event.op = kEventThreadWake;
+	event.param = kWaitTypePlacard;
+
+	q_event = _vm->_events->chain(q_event, &event);
+}
+
+void Scene::clearPsychicProfile() {
+	_vm->_scene->clearPlacard();
+	_vm->_actor->showActors(false);
+	_vm->_gfx->restorePalette();
+	_vm->_scene->restoreScene();
+	_vm->_interface->setMode(kPanelMain);
+	_vm->_interface->activate();
+}
+
 } // End of namespace Saga

@@ -652,6 +652,12 @@ bool Interface::processAscii(uint16 ascii) {
 				_protectHash = (_protectHash << 1) + toupper(*p);
 		}
 		break;
+	case kPanelPlacard:
+		if (_vm->getGameType() == GType_IHNM) {
+			// Any keypress here returns the user back to the game
+			_vm->_scene->clearPsychicProfile();
+		}
+		break;
 	}
 	return false;
 }
@@ -1548,7 +1554,10 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		_vm->_actor->abortSpeech();
 
 	if (_vm->_scene->isInIntro() || _fadeMode == kFadeOut || !_active) {
-		return;
+		// When opening the psychic profile, the interface is locked (_active is false)
+		// Don't return if the psychic profile is up, so that mouse clicks can be processed
+		if (!(_vm->getGameType() == GType_IHNM && _panelMode == kPanelPlacard))
+			return;
 	}
 
 	if (_statusTextInput) {
@@ -1694,6 +1703,13 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		// No mouse interaction
 		break;
 
+	case kPanelPlacard:
+		if (_vm->getGameType() == GType_IHNM) {
+			// Any mouse click here returns the user back to the game
+			if (updateFlag & UPDATE_MOUSECLICK)
+				_vm->_scene->clearPsychicProfile();
+		}
+		break;
 	}
 
 	_lastMousePoint = mousePoint;

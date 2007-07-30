@@ -1315,11 +1315,6 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	Event event;
 	Event *q_event;
 
-	if (_vm->getGameType() == GType_IHNM) {
-		warning("Psychic profile is not implemented");
-		return;
-	}
-
 	thread->wait(kWaitTypePlacard);
 
 	_vm->_interface->rememberMode();
@@ -1416,64 +1411,9 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 
 // Script function #49 (0x31)
 void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
-	static PalEntry cur_pal[PAL_ENTRIES];
-	PalEntry *pal;
-	Event event;
-	Event *q_event;
-
 	thread->wait(kWaitTypePlacard);
 
-	_vm->_interface->restoreMode();
-
-	_vm->_gfx->getCurrentPal(cur_pal);
-
-	event.type = kEvTImmediate;
-	event.code = kPalEvent;
-	event.op = kEventPalToBlack;
-	event.time = 0;
-	event.duration = kNormalFadeDuration;
-	event.data = cur_pal;
-
-	q_event = _vm->_events->queue(&event);
-
-	event.type = kEvTOneshot;
-	event.code = kGraphicsEvent;
-	event.op = kEventClearFlag;
-	event.param = RF_PLACARD;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	event.type = kEvTOneshot;
-	event.code = kTextEvent;
-	event.op = kEventRemove;
-	event.data = _placardTextEntry;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	_vm->_scene->getBGPal(pal);
-
-	event.type = kEvTImmediate;
-	event.code = kPalEvent;
-	event.op = kEventBlackToPal;
-	event.time = 0;
-	event.duration = kNormalFadeDuration;
-	event.data = pal;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	event.type = kEvTOneshot;
-	event.code = kCursorEvent;
-	event.op = kEventShow;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	event.type = kEvTOneshot;
-	event.code = kScriptEvent;
-	event.op = kEventThreadWake;
-	event.param = kWaitTypePlacard;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
+	_vm->_scene->clearPlacard();
 }
 
 void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
@@ -1490,6 +1430,7 @@ void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
 
 	_vm->_interface->rememberMode();
 	_vm->_interface->setMode(kPanelPlacard);
+	_vm->_gfx->savePalette();
 
 	stringId = thread->pop();
 
@@ -1576,7 +1517,9 @@ void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfPsychicProfileOff(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfPsychicProfileOff", thread, nArgs);
+	thread->wait(kWaitTypePlacard);
+
+	_vm->_scene->clearPsychicProfile();
 }
 
 // Script function #50 (0x32)

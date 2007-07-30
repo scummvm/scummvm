@@ -380,6 +380,7 @@ public:
 		setPointerVerb();
 	}
 	int getVerbType(VerbTypes verbType);
+	TextListEntry *getPlacardTextEntry() { return _placardTextEntry; }
 
 private:
 	// When reading or writing data to the common buffer, we have to use a
