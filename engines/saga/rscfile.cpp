@@ -683,7 +683,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	_vm->_anim->loadCutawayList(resourcePointer, resourceLength);
 
-	if (_vm->getGameId() != GID_IHNM_DEMO) {
+	if (_metaResource.songTableID > 0) {
 		_vm->_resource->loadResource(resourceContext, _metaResource.songTableID, resourcePointer, resourceLength);
 
 		if (resourceLength == 0) {
