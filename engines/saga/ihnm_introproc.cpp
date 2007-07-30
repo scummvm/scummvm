@@ -225,6 +225,16 @@ int Scene::IHNMIntroMovieProc1(int param) {
 
 			q_event = _vm->_events->chain(q_event, &event);
 		} else {
+			// Start playing the intro music for the demo version
+			event.type = kEvTOneshot;
+			event.code = kMusicEvent;
+			event.param = 1;
+			event.param2 = MUSIC_NORMAL;
+			event.op = kEventPlay;
+			event.time = 0;
+
+			q_event = _vm->_events->chain(q_event, &event);
+
 			// The IHNM demo doesn't have an animation at the
 			// Cyberdreans logo screen
 
@@ -232,7 +242,7 @@ int Scene::IHNMIntroMovieProc1(int param) {
 			event.type = kEvTOneshot;
 			event.code = kSceneEvent;
 			event.op = kEventEnd;
-			event.time = 4000;
+			event.time = 8000;
 
 			q_event = _vm->_events->chain(q_event, &event);
 		}
@@ -360,8 +370,6 @@ int Scene::IHNMIntroMovieProc3(int param) {
 		// In the GM file, this music also appears as tracks 7, 13, 19,
 		// 25 and 31, but only track 1 sounds right with the FM music.
 
-		// FIXME: MIDI music in the demo is problematic right now, so music is
-		// disabled in this part
 		if (_vm->getGameId() != GID_IHNM_DEMO) {
 			event.type = kEvTOneshot;
 			event.code = kMusicEvent;
@@ -411,7 +419,7 @@ int Scene::IHNMIntroMovieProc3(int param) {
 		if (_vm->getGameId() != GID_IHNM_DEMO)
 			event.time = _vm->_music->hasAdlib() ? IHNM_TITLE_TIME_FM : IHNM_TITLE_TIME_GM;
 		else
-			event.time = 10000;
+			event.time = 12000;
 
 		q_event = _vm->_events->chain(q_event, &event);
 		break;

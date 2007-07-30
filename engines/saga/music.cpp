@@ -517,8 +517,10 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 		// Oddly enough, the intro music (song 1) is very
 		// different in the two files. I have no idea why.
+		// Note that the IHNM demo has only got one music file
+		// (music.rsc). It is assumed that it contains FM music
 
-		if (hasAdlib()) {
+		if (hasAdlib() || _vm->getGameId() == GID_IHNM_DEMO) {
 			context = _vm->_resource->getContext(GAME_MUSICFILE_FM);
 		} else {
 			context = _vm->_resource->getContext(GAME_MUSICFILE_GM);

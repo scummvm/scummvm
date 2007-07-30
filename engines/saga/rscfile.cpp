@@ -683,7 +683,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	_vm->_anim->loadCutawayList(resourcePointer, resourceLength);
 
-	if (_metaResource.songTableID > 0) {
+	if (_vm->getGameId() != GID_IHNM_DEMO) {
 		_vm->_resource->loadResource(resourceContext, _metaResource.songTableID, resourcePointer, resourceLength);
 
 		if (resourceLength == 0) {
@@ -700,6 +700,9 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 		for (i = 0; i < _vm->_music->_songTableLen; i++)
 			_vm->_music->_songTable[i] = songS.readSint32LE();
 		free(resourcePointer);
+	} else {
+		// The IHNM demo has a fixed music track and doesn't load a song table
+		_vm->_music->play(3, MUSIC_NORMAL);
 	}
 
 	int voiceLUTResourceID = 0;
