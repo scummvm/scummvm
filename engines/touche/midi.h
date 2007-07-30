@@ -46,7 +46,7 @@ public:
 		NUM_CHANNELS = 16
 	};
 
-	MidiPlayer(MidiDriver *driver);
+	MidiPlayer(MidiDriver *driver, bool nativeMT32);
 	~MidiPlayer();
 
 	void play(Common::ReadStream &stream, int size, bool loop = false);
@@ -77,9 +77,12 @@ private:
 	bool _isLooping;
 	bool _isPlaying;
 	int _masterVolume;
+	bool _nativeMT32;
 	MidiChannel *_channelsTable[NUM_CHANNELS];
 	uint8 _channelsVolume[NUM_CHANNELS];
 	Common::Mutex _mutex;
+
+	static const uint8 _gmToRol[];
 };
 
 } // namespace Touche
