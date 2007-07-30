@@ -316,7 +316,17 @@ void Anim::clearCutaway(void) {
 		}
 
 		_vm->_interface->restoreMode();
-		_vm->_gfx->showCursor(true);
+		
+		if (_vm->getGameId() != GID_IHNM_DEMO) {
+			if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149) {
+				// Don't show the mouse cursor in the non-interactive part of the IHNM demo
+			} else {
+				_vm->_gfx->showCursor(true);
+			}
+		} else {
+			// Enable the save reminder state after each cutaway for the IHNM demo
+			_vm->_interface->setSaveReminderState(true);
+		}
 	}
 }
 

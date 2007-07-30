@@ -339,11 +339,21 @@ int Interface::activate() {
 		unlockMode();
 		if (_panelMode == kPanelMain || _panelMode == kPanelChapterSelection) {
 			_saveReminderState = 1;
+		} else if (_panelMode == kPanelNull && _vm->getGameId() == GID_IHNM_DEMO) {
+			_saveReminderState = 1;
 		}
 		draw();
 	}
-	_vm->_gfx->showCursor(true);
 
+	if (_vm->getGameId() != GID_IHNM_DEMO) {
+		_vm->_gfx->showCursor(true);
+	} else {		
+		if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149) {
+			// Don't show the mouse cursor in the non-interactive part of the IHNM demo
+		} else {
+			_vm->_gfx->showCursor(true);
+		}
+	}
 	return SUCCESS;
 }
 
@@ -381,14 +391,6 @@ void Interface::restoreMode(bool draw_) {
 void Interface::setMode(int mode) {
 	debug(1, "Interface::setMode %i", mode);
 
-	// The non-interactive part of the IHNM demo does not have an options
-	// screen - the psychic profile screen is displayed instead, with some
-	// dialog options (help, play non-interactive demo, play interactive demo, quit)
-	// TODO: Show the psychic profile screen in the non-interactive demo and show
-	// the normal options screen in the interactive demo
-	if (_vm->getGameId() == GID_IHNM_DEMO && mode == kPanelOption)
-		mode = kPanelNull;
-
 	if (mode == kPanelMain) {
 		_inMainMode = true;
 		_saveReminderState = 1; //TODO: blinking timeout
@@ -398,16 +400,20 @@ void Interface::setMode(int mode) {
 		if (_vm->getGameId() == GID_IHNM_DEMO) {
 			_inMainMode = true;
 			_saveReminderState = 1;
+			if ((_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149) ||
+				_vm->_scene->currentSceneNumber() == 0 || _vm->_scene->currentSceneNumber() == -1)
+				_vm->_gfx->showCursor(false);
 		}
+	} else if (mode == kPanelOption) {
+		// Show the cursor in the IHNM demo
+		if (_vm->getGameId() == GID_IHNM_DEMO)
+			_vm->_gfx->showCursor(true);
 	} else {
 		if (mode == kPanelConverse) {
 			_inMainMode = false;
 		}
 
-		if (_vm->getGameId() != GID_IHNM_DEMO)
-			_saveReminderState = 0;
-		else
-			_saveReminderState = 1;
+		_saveReminderState = 0;
 	}
 
 	_panelMode = mode;
@@ -493,6 +499,11 @@ bool Interface::processAscii(uint16 ascii) {
 			}
 			return true;
 		}
+
+		if (_vm->getGameId() == GID_IHNM_DEMO) {
+			if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149)
+				_vm->_scene->showIHNMDemoSpecialScreen();
+		}
 		break;
 	case kPanelCutaway:
 		if (ascii == 27) { // Esc
@@ -500,6 +511,11 @@ bool Interface::processAscii(uint16 ascii) {
 				_vm->_actor->abortAllSpeeches();
 			_vm->_scene->cutawaySkip();
 			return true;
+		}
+
+		if (_vm->getGameId() == GID_IHNM_DEMO) {
+			if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149)
+				_vm->_scene->showIHNMDemoSpecialScreen();
 		}
 		break;
 	case kPanelVideo:
@@ -511,6 +527,12 @@ bool Interface::processAscii(uint16 ascii) {
 					_vm->_actor->abortAllSpeeches();
 			}
 			_vm->_scene->cutawaySkip();
+			return true;
+		}
+
+		if (_vm->getGameId() == GID_IHNM_DEMO) {
+			if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149)
+				_vm->_scene->showIHNMDemoSpecialScreen();
 		}
 		break;
 	case kPanelOption:
@@ -679,8 +701,8 @@ void Interface::setStatusText(const char *text, int statusColor) {
 	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8)
 		return;
 
-	// Disable the status text in the IHNM demo
-	if (_vm->getGameId() == GID_IHNM_DEMO)
+	// Disable the status text in the introduction of the IHNM demo
+	if (_vm->getGameId() == GID_IHNM_DEMO && _vm->_scene->currentSceneNumber() == 0)
 		return;
 
 	assert(text != NULL);
@@ -1496,10 +1518,20 @@ void Interface::setOption(PanelButton *panelButton) {
 	switch (panelButton->id) {
 	case kTextContinuePlaying:
 		ConfMan.flushToDisk();
-		if (!(_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8))
+		if (_vm->getGameType() == GType_ITE) {
 			setMode(kPanelMain);
-		else
-			setMode(kPanelChapterSelection);
+		} else {
+			if (_vm->_scene->currentChapterNumber() == 8) {
+				setMode(kPanelChapterSelection);
+			} else if (_vm->getGameId() == GID_IHNM_DEMO) {
+				if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149)
+					setMode(kPanelNull);
+				else
+					setMode(kPanelMain);
+			} else {
+				setMode(kPanelMain);
+			}
+		}
 		break;
 	case kTextQuitGame:
 		setMode(kPanelQuit);
@@ -1515,6 +1547,12 @@ void Interface::setOption(PanelButton *panelButton) {
 		}
 		break;
 	case kTextSave:
+		// Disallow saving in the non-interactive part of the IHNM demo
+		if (_vm->getGameId() == GID_IHNM_DEMO) {
+			if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149)
+				return;
+		}
+
 		if (!_vm->isSaveListFull() && (_optionSaveFileTitleNumber == 0)) {
 			_textInputString[0] = 0;
 		} else {
@@ -1719,6 +1757,13 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 			// Any mouse click here returns the user back to the game
 			if (updateFlag & UPDATE_MOUSECLICK)
 				_vm->_scene->clearPsychicProfile();
+		}
+		break;
+
+	case kPanelNull:
+		if (_vm->getGameId() == GID_IHNM_DEMO && (updateFlag & UPDATE_MOUSECLICK)) {
+			if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149)
+				_vm->_scene->showIHNMDemoSpecialScreen();
 		}
 		break;
 	}

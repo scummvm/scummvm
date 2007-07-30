@@ -642,6 +642,15 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	debug(3, "Loading scene number %d:", _sceneNumber);
 
+	if (_vm->getGameId() == GID_IHNM_DEMO && _sceneNumber == 144) {
+		// WORKAROUND for the non-interactive part of the IHNM demo: When restarting the 
+		// non-interactive demo, opcode sfMainMode is incorrectly called. Therefore, if the
+		// starting scene of the non-interactive demo is loaded (scene 144), set panel to null
+		// and lock the user interface
+		_vm->_interface->deactivate();
+		_vm->_interface->setMode(kPanelNull);
+	}
+
 	// Load scene descriptor and resource list resources
 	if (_loadDescription) {
 		debug(3, "Loading scene resource %i", _sceneResourceId);
@@ -1349,6 +1358,12 @@ void Scene::clearPsychicProfile() {
 	_vm->_scene->restoreScene();
 	_vm->_interface->setMode(kPanelMain);
 	_vm->_interface->activate();
+}
+
+void Scene::showIHNMDemoSpecialScreen() {
+	_vm->_gfx->showCursor(true);
+	_vm->_interface->clearInventory();
+	_vm->_scene->changeScene(150, 0, kTransitionFade);
 }
 
 } // End of namespace Saga

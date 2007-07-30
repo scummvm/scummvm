@@ -406,8 +406,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 }
 
 void Gfx::showCursor(bool state) {
-	if (_vm->getGameId() != GID_IHNM_DEMO)	// Don't show the mouse cursor in the IHNM demo
-		CursorMan.showMouse(state);
+	CursorMan.showMouse(state);
 }
 
 void Gfx::setCursor(CursorType cursorType) {

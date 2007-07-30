@@ -342,6 +342,7 @@ class Scene {
 
 	void clearPlacard();
 	void clearPsychicProfile();
+	void showIHNMDemoSpecialScreen();
 
  private:
 	void loadScene(LoadSceneParams *loadSceneParams);
