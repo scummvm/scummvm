@@ -18,7 +18,8 @@ MODULE_OBJS := \
 	goblin_v1.o \
 	goblin_v2.o \
 	goblin_v3.o \
-	imd.o \
+	coktelvideo.o \
+	videoplayer.o \
 	init.o \
 	init_v1.o \
 	init_v2.o \

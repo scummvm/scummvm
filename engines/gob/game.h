@@ -147,7 +147,8 @@ public:
 
 	void evaluateScroll(int16 x, int16 y);
 
-	int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons, char handleMouse);
+	int16 checkKeys(int16 *pMousex = 0, int16 *pMouseY = 0,
+			int16 *pButtons = 0, char handleMouse = 0);
 	void start(void);
 	void totSub(int8 flags, const char *newTotFile);
 	void switchTotSub(int16 index, int16 skipPlay);

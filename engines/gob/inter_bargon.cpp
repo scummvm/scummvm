@@ -33,10 +33,10 @@
 #include "gob/dataio.h"
 #include "gob/draw.h"
 #include "gob/game.h"
-#include "gob/imd.h"
 #include "gob/palanim.h"
 #include "gob/sound.h"
 #include "gob/video.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
@@ -717,11 +717,17 @@ const char *Inter_Bargon::getOpcodeGoblinDesc(int i) {
 }
 
 void Inter_Bargon::oBargon_intro0(OpGobParams &params) {
-	_vm->_imdPlayer->play("scaa", 0, 160, 0, 92, 0, 1);
+	if (_vm->_vidPlayer->openVideo("scaa", 0, 160)) {
+		_vm->_vidPlayer->play(0, 92, 27, 0, 0, 0);
+		_vm->_vidPlayer->closeVideo();
+	}
 }
 
 void Inter_Bargon::oBargon_intro1(OpGobParams &params) {
-	_vm->_imdPlayer->play("scaa", 0, 160, 0, -23, 1, 1);
+	if (_vm->_vidPlayer->openVideo("scaa", 0, 160)) {
+		_vm->_vidPlayer->play(0, -1, 27, 0, 0, 0, 0, 0, true, 23);
+		_vm->_vidPlayer->closeVideo();
+	}
 }
 
 void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
@@ -813,27 +819,45 @@ void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 }
 
 void Inter_Bargon::oBargon_intro4(OpGobParams &params) {
-	_vm->_imdPlayer->play("scba", 191, 54, 0, 0, 1, 1);
+	if (_vm->_vidPlayer->openVideo("scba", 191, 54)) {
+		_vm->_vidPlayer->play(0, -1, 27, 0, 0, 0, 0, 0, true);
+		_vm->_vidPlayer->closeVideo();
+	}
 }
 
 void Inter_Bargon::oBargon_intro5(OpGobParams &params) {
-	_vm->_imdPlayer->play("scbb", 191, 54, 0, 0, 0, 1);
+	if (_vm->_vidPlayer->openVideo("scbb", 191, 54)) {
+		_vm->_vidPlayer->play(0, -1, 27, 0, 0, 0);
+		_vm->_vidPlayer->closeVideo();
+	}
 }
 
 void Inter_Bargon::oBargon_intro6(OpGobParams &params) {
-	_vm->_imdPlayer->play("scbc", 191, 54, 0, 0, 0, 1);
+	if (_vm->_vidPlayer->openVideo("scbc", 191, 54)) {
+		_vm->_vidPlayer->play(0, -1, 27, 0, 0, 0);
+		_vm->_vidPlayer->closeVideo();
+	}
 }
 
 void Inter_Bargon::oBargon_intro7(OpGobParams &params) {
-	_vm->_imdPlayer->play("scbf", 191, 54, 0, 0, 0, 1);
+	if (_vm->_vidPlayer->openVideo("scbf", 191, 54)) {
+		_vm->_vidPlayer->play(0, -1, 27, 0, 0, 0);
+		_vm->_vidPlayer->closeVideo();
+	}
 }
 
 void Inter_Bargon::oBargon_intro8(OpGobParams &params) {
-	_vm->_imdPlayer->play("scbc", 191, 54, 0, 0, 0, 1);
+	if (_vm->_vidPlayer->openVideo("scbc", 191, 54)) {
+		_vm->_vidPlayer->play(0, -1, 27, 0, 0, 0);
+		_vm->_vidPlayer->closeVideo();
+	}
 }
 
 void Inter_Bargon::oBargon_intro9(OpGobParams &params) {
-	_vm->_imdPlayer->play("scbd", 191, 54, 0, 0, 0, 1);
+	if (_vm->_vidPlayer->openVideo("scbd", 191, 54)) {
+		_vm->_vidPlayer->play(0, -1, 27, 0, 0, 0);
+		_vm->_vidPlayer->closeVideo();
+	}
 }
 
 } // End of namespace Gob

@@ -34,11 +34,11 @@
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/goblin.h"
-#include "gob/imd.h"
 #include "gob/inter.h"
 #include "gob/parse.h"
 #include "gob/scenery.h"
 #include "gob/video.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
@@ -1041,7 +1041,7 @@ void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 		x = y = -1;
 
 	if (key.imdFile == -1) {
-		_vm->_imdPlayer->closeImd();
+		_vm->_vidPlayer->closeVideo();
 		_vm->_game->_preventScroll = false;
 		return;
 	}
@@ -1059,23 +1059,24 @@ void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 		if ((lastFrame - palFrame) < startFrame)
 			if (!(key.flags & 0x4000)) {
 				_vm->_game->_preventScroll = false;
-				_vm->_imdPlayer->closeImd();
+				_vm->_vidPlayer->closeVideo();
 				return;
 			}
 
-	if (!_vm->_imdPlayer->openImd(imdFile, x, y, 0, flags)) {
+	if (!_vm->_vidPlayer->openVideo(imdFile, x, y, flags)) {
 		_vm->_game->_preventScroll = false;
 		return;
 	}
 
 	if (palFrame == -1)
 		palFrame = 0;
+
 	if (lastFrame == -1)
-		lastFrame = _vm->_imdPlayer->_curImd->framesCount - 1;
+		lastFrame = _vm->_vidPlayer->getFramesCount() - 1;
 
 	baseFrame = startFrame % (lastFrame - palFrame + 1);
-	_vm->_imdPlayer->play(baseFrame + palFrame, flags & 0x7F,
-			palStart, palEnd, palFrame, lastFrame);
+	_vm->_vidPlayer->play(baseFrame + palFrame, baseFrame + palFrame, 0,
+			flags & 0x7F, palStart, palEnd, palFrame, lastFrame);
 }
 
 void Mult_v2::advanceObjects(int16 index) {

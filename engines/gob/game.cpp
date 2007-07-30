@@ -379,10 +379,12 @@ int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
 		_vm->_inter->_soundEndTimeKey = 0;
 	}
 
-	_vm->_util->getMouseState(pMouseX, pMouseY, pButtons);
+	if (pMouseX && pMouseY && pButtons) {
+		_vm->_util->getMouseState(pMouseX, pMouseY, pButtons);
 
-	if (*pButtons == 3)
-		*pButtons = 0;
+		if (*pButtons == 3)
+			*pButtons = 0;
+	}
 
 	return _vm->_util->checkKey();
 }

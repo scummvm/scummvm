@@ -37,7 +37,7 @@
 #include "gob/palanim.h"
 #include "gob/sound.h"
 #include "gob/video.h"
-#include "gob/imd.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
@@ -167,8 +167,14 @@ void Init::initGame(const char *totName) {
 			_vm->_dataIO->closeData(imdHandle);
 			_vm->_draw->initScreen();
 			_vm->_draw->_cursorIndex = -1;
+
 			_vm->_util->longDelay(200); // Letting everything settle
-			_vm->_imdPlayer->play("coktel", -1, -1, true);
+
+			if (_vm->_vidPlayer->openVideo("coktel.imd")) {
+				_vm->_vidPlayer->play();
+				_vm->_vidPlayer->closeVideo();
+			}
+
 			_vm->_draw->closeScreen();
 		} else if ((imdHandle = _vm->_dataIO->openData("coktel.clt")) >= 0) {
 			_vm->_draw->initScreen();

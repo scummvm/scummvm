@@ -42,7 +42,7 @@ class Draw;
 class CDROM;
 class DataIO;
 class Goblin;
-class ImdPlayer;
+class VideoPlayer;
 class Init;
 class Inter;
 class Map;
@@ -216,7 +216,7 @@ public:
 	Inter *_inter;
 	SaveLoad *_saveLoad;
 	Adlib *_adlib;
-	ImdPlayer *_imdPlayer;
+	VideoPlayer *_vidPlayer;
 
 	void shutdown();
 

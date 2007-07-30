@@ -33,6 +33,83 @@
 
 namespace Gob {
 
+DataStream::DataStream(DataIO &io, int16 handle, uint32 dSize, bool dispose) {
+	_io = &io;
+	_handle = handle;
+	_size = dSize;
+	_dispose = dispose;
+
+	_data = 0;
+	_stream = 0;
+}
+
+DataStream::DataStream(byte *buf, uint32 dSize, bool dispose) {
+	_data = buf;
+	_size = dSize;
+	_stream = new Common::MemoryReadStream(_data, _size);
+	_dispose = dispose;
+
+	_io = 0;
+	_handle = -1;
+}
+
+DataStream::~DataStream() {
+	delete _stream;
+
+	if (_dispose) {
+		delete[] _data;
+		if ((_handle >= 0) && _io)
+			_io->closeData(_handle);
+	}
+}
+
+uint32 DataStream::pos() const {
+	if (_stream)
+		return _stream->pos();
+
+	uint32 resPos = _io->getChunkPos(_handle);
+	if (resPos != 0xFFFFFFFF)
+		return resPos;
+
+	return _io->file_getHandle(_handle)->pos();
+}
+
+uint32 DataStream::size() const {
+	if (_stream)
+		return _stream->size();
+
+	return _size;
+}
+
+void DataStream::seek(int32 offset, int whence) {
+	if (_stream)
+		_stream->seek(offset, whence);
+
+	int32 resPos = _io->seekChunk(_handle, offset, whence);
+	if (resPos != -1)
+		return;
+
+	_io->file_getHandle(_handle)->seek(offset, whence);
+}
+
+bool DataStream::eos() const {
+	if (_stream)
+		return _stream->eos();
+
+	return pos() >= size();
+}
+
+uint32 DataStream::read(void *dataPtr, uint32 dataSize) {
+	if (_stream)
+		return _stream->read(dataPtr, dataSize);
+
+	int32 res = _io->readChunk(_handle, (byte *) dataPtr, dataSize);
+	if (res >= 0)
+		return res;
+
+	return _io->file_getHandle(_handle)->read((byte *) dataPtr, dataSize);
+}
+
 DataIO::DataIO(GobEngine *vm) : _vm(vm) {
 	for (int i = 0; i < MAX_DATA_FILES; i++) {
 		_dataFiles[i] = 0;
@@ -112,6 +189,10 @@ int32 DataIO::unpackData(byte *src, byte *dest) {
 }
 
 Common::File *DataIO::file_getHandle(int16 handle) {
+	return &_filesHandles[handle];
+}
+
+const Common::File *DataIO::file_getHandle(int16 handle) const {
 	return &_filesHandles[handle];
 }
 
@@ -226,7 +307,7 @@ int16 DataIO::seekChunk(int16 handle, int32 pos, int16 from) {
 	return _chunkPos[file * MAX_SLOT_COUNT + slot];
 }
 
-uint32 DataIO::getChunkPos(int16 handle) {
+uint32 DataIO::getChunkPos(int16 handle) const {
 	int16 file;
 	int16 slot;
 
@@ -390,6 +471,15 @@ int16 DataIO::openData(const char *path, Common::File::AccessMode mode) {
 	return file_open(path, mode);
 }
 
+DataStream *DataIO::openAsStream(int16 handle, bool dispose) {
+	uint32 curPos = getPos(handle);
+	seekData(handle, 0, SEEK_END);
+	uint32 size = getPos(handle);
+	seekData(handle, curPos, SEEK_SET);
+
+	return new DataStream(*this, handle, size, dispose);
+}
+
 int32 DataIO::readData(int16 handle, byte *buf, uint16 size) {
 	int32 res;
 
@@ -490,6 +580,13 @@ byte *DataIO::getData(const char *path) {
 	readData(handle, ptr, size);
 	closeData(handle);
 	return data;
+}
+
+DataStream *DataIO::getDataStream(const char *path) {
+	uint32 size = getDataSize(path);
+	byte *data = getData(path);
+
+	return new DataStream(data, size);
 }
 
 } // End of namespace Gob

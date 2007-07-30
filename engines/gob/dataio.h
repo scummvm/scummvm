@@ -37,6 +37,32 @@ namespace Gob {
 #define MAX_DATA_FILES	8
 #define MAX_SLOT_COUNT	8
 
+class DataIO;
+
+class DataStream : public Common::SeekableReadStream {
+public:
+	DataStream(DataIO &io, int16 handle, uint32 dSize, bool dispose = false);
+	DataStream(byte *buf, uint32 dSize, bool dispose = true);
+	virtual ~DataStream();
+
+	virtual uint32 pos() const;
+	virtual uint32 size() const;
+
+	virtual void seek(int32 offset, int whence = SEEK_SET);
+
+	virtual bool eos() const;
+
+	virtual uint32 read(void *dataPtr, uint32 dataSize);
+
+private:
+	DataIO *_io;
+	int16 _handle;
+	uint32 _size;
+	byte *_data;
+	Common::MemoryReadStream *_stream;
+	bool _dispose;
+};
+
 class DataIO {
 public:
 	struct ChunkDesc {
@@ -55,6 +81,8 @@ public:
 	void closeData(int16 handle);
 	int16 openData(const char *path,
 			Common::File::AccessMode mode = Common::File::kFileReadMode);
+	DataStream *openAsStream(int16 handle, bool dispose = false);
+
 	int32 readData(int16 handle, byte *buf, uint16 size);
 	byte readByte(int16 handle);
 	uint16 readUint16(int16 handle);
@@ -64,6 +92,7 @@ public:
 	uint32 getPos(int16 handle);
 	int32 getDataSize(const char *name);
 	byte *getData(const char *path);
+	DataStream *getDataStream(const char *path);
 
 	DataIO(class GobEngine *vm);
 	~DataIO();
@@ -85,13 +114,16 @@ protected:
 	int16 file_open(const char *path,
 			Common::File::AccessMode mode = Common::File::kFileReadMode);
 	Common::File *file_getHandle(int16 handle);
+	const Common::File *file_getHandle(int16 handle) const;
 
 	int16 getChunk(const char *chunkName);
 	char freeChunk(int16 handle);
 	int32 readChunk(int16 handle, byte *buf, uint16 size);
 	int16 seekChunk(int16 handle, int32 pos, int16 from);
-	uint32 getChunkPos(int16 handle);
+	uint32 getChunkPos(int16 handle) const;
 	int32 getChunkSize(const char *chunkName);
+
+friend class DataStream;
 };
 
 } // End of namespace Gob

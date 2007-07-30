@@ -48,7 +48,7 @@
 #include "gob/parse.h"
 #include "gob/scenery.h"
 #include "gob/music.h"
-#include "gob/imd.h"
+#include "gob/videoplayer.h"
 #include "gob/saveload.h"
 
 namespace Gob {
@@ -72,7 +72,7 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 
 	_snd      = 0; _adlib  = 0; _mult      = 0;
 	_game     = 0; _global = 0; _cdrom     = 0;
-	_dataIO   = 0; _goblin = 0; _imdPlayer = 0;
+	_dataIO   = 0; _goblin = 0; _vidPlayer = 0;
 	_init     = 0; _inter  = 0; _map       = 0;
 	_palAnim  = 0; _parse  = 0; _scenery   = 0;
 	_draw     = 0; _util   = 0; _video     = 0;
@@ -236,7 +236,7 @@ bool GobEngine::initGameParts() {
 	_util = new Util(this);
 	_dataIO = new DataIO(this);
 	_palAnim = new PalAnim(this);
-	_imdPlayer = new ImdPlayer(this);
+	_vidPlayer = new VideoPlayer(this);
 	_cdrom = new CDROM(this);
 	_snd = new Snd(this);
 
@@ -364,7 +364,7 @@ void GobEngine::deinitGameParts() {
 	delete _cdrom;     _cdrom = 0;
 	delete _dataIO;    _dataIO = 0;
 	delete _goblin;    _goblin = 0;
-	delete _imdPlayer; _imdPlayer = 0;
+	delete _vidPlayer; _vidPlayer = 0;
 	delete _init;      _init = 0;
 	delete _inter;     _inter = 0;
 	delete _map;       _map = 0;

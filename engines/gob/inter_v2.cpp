@@ -38,7 +38,6 @@
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/goblin.h"
-#include "gob/imd.h"
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/parse.h"
@@ -46,6 +45,7 @@
 #include "gob/sound.h"
 #include "gob/video.h"
 #include "gob/saveload.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
@@ -1493,48 +1493,28 @@ void Inter_v2::o2_playImd() {
 	palEnd = _vm->_parse->parseValExpr();
 	palCmd = 1 << (flags & 0x3F);
 	
-	if (!_vm->_imdPlayer->openImd(imd, x, y, startFrame, flags)) {
+	if ((imd[0] != 0) && !_vm->_vidPlayer->openVideo(imd, x, y, flags)) {
 		WRITE_VAR(11, -1);
 		return;
 	}
 
 	close = (lastFrame == -1);
-	if (lastFrame < 0)
-		lastFrame = _vm->_imdPlayer->_curImd->framesCount - 1;
 	if (startFrame == -2) {
 		startFrame = lastFrame = 0;
 		close = false;
 	}
 
-	_vm->_game->_preventScroll = true;
-	for (int i = startFrame; i <= lastFrame; i++) {
-		_vm->_imdPlayer->play(i, palCmd, palStart, palEnd, 0, lastFrame);
-		WRITE_VAR(11, i);
-
-		if (_vm->_quitRequested)
-			break;
-
-		if (breakKey != 0) {
-			_vm->_util->getMouseState(&_vm->_global->_inter_mouseX,
-					&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons);
-
-			storeKey(_vm->_util->checkKey());
-			if (VAR(0) == (unsigned) breakKey) {
-				if (_vm->_imdPlayer->_soundStage == 2)
-					_vm->_snd->stopSound(0);
-				_vm->_game->_preventScroll = false;
-				return;
-			}
-		}
+	if (startFrame >= 0) {
+		_vm->_game->_preventScroll = true;
+		_vm->_vidPlayer->play(startFrame, lastFrame, breakKey, palCmd, palStart, palEnd, 0);
+		_vm->_game->_preventScroll = false;
 	}
-	_vm->_game->_preventScroll = false;
 
 	if (close)
-		_vm->_imdPlayer->closeImd();
+		_vm->_vidPlayer->closeVideo();
 }
 
 void Inter_v2::o2_getImdInfo() {
-	ImdPlayer::Imd *imd;
 	int16 varX, varY;
 	int16 varFrames;
 	int16 varWidth, varHeight;
@@ -1545,21 +1525,9 @@ void Inter_v2::o2_getImdInfo() {
 	varFrames = _vm->_parse->parseVarIndex();
 	varWidth = _vm->_parse->parseVarIndex();
 	varHeight = _vm->_parse->parseVarIndex();
-	imd = _vm->_imdPlayer->loadImdFile(_vm->_global->_inter_resStr, 0, 2);
-	if (!imd) {
-		WRITE_VAR_OFFSET(varX, -1);
-		WRITE_VAR_OFFSET(varY, -1);
-		WRITE_VAR_OFFSET(varFrames, -1);
-		WRITE_VAR_OFFSET(varWidth, -1);
-		WRITE_VAR_OFFSET(varHeight, -1);
-	} else {
-		WRITE_VAR_OFFSET(varX, imd->x);
-		WRITE_VAR_OFFSET(varY, imd->y);
-		WRITE_VAR_OFFSET(varFrames, imd->framesCount);
-		WRITE_VAR_OFFSET(varWidth, imd->width);
-		WRITE_VAR_OFFSET(varHeight, imd->height);
-	}
-	_vm->_imdPlayer->finishImd(imd);
+
+	_vm->_vidPlayer->writeVideoInfo(_vm->_global->_inter_resStr, varX, varY,
+			varFrames, varWidth, varHeight);
 }
 
 void Inter_v2::o2_openItk() {
@@ -1577,21 +1545,9 @@ void Inter_v2::o2_closeItk() {
 }
 
 void Inter_v2::o2_setImdFrontSurf() {
-	_vm->_imdPlayer->_frontSurf = 21;
-	if (_vm->_global->_videoMode == 0x14) {
-		_vm->_imdPlayer->_frontMem = _vm->_draw->_frontSurface->getVidMem();
-		_vm->_draw->blitInvalidated();
-		_vm->_imdPlayer->_frontSurf = 20;
-	}
 }
 
 void Inter_v2::o2_resetImdFrontSurf() {
-	_vm->_imdPlayer->_frontSurf = 21;
-	if (_vm->_imdPlayer->_frontMem) {
-		_vm->_imdPlayer->_frontMem = _vm->_draw->_frontSurface->getVidMem();
-		_vm->_draw->forceBlit();
-	} else
-		_vm->_draw->forceBlit(true);
 }
 
 bool Inter_v2::o2_evaluateStore(OpFuncParams &params) {
