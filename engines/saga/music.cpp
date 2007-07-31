@@ -431,6 +431,10 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	_player->stopMusic();
 	_mixer->stopHandle(_musicHandle);
 
+	if (!_vm->_musicVolume) {
+		return;
+	}
+
 	int realTrackNumber;
 
 	if (_vm->getGameType() == GType_ITE) {
