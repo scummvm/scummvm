@@ -209,9 +209,9 @@ public:
 	void setPalette(Palette palette, uint32 first = FIRST_BASE_COLOR, uint32 num = BASE_PALETTE_COLORS);
 	void setBlackPalette();
 	void animatePalette();
-	void fadePalette(Palette palette);
-	void buildBWPalette(Palette palette);
-	void quickFadePalette(Palette palette);
+	void fadeInPalette(Palette palette);		// fades palette (from black) to system palette
+	void fadePalette(Palette palette);			// fades palette to system palette
+	void makeGrayscalePalette(Palette palette);		// transform palette into black and white
 
 	// amiga specific
 	void setHalfbriteMode(bool enable);

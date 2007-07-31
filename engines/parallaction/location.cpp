@@ -424,7 +424,7 @@ void Parallaction::doLocationEnterTransition() {
     }
 
 	byte pal[PALETTE_SIZE];
-	_gfx->buildBWPalette(pal);
+	_gfx->makeGrayscalePalette(pal);
 	_gfx->setPalette(pal);
 
 	jobRunScripts(NULL, NULL);
@@ -452,7 +452,7 @@ void Parallaction::doLocationEnterTransition() {
 
 	// fades maximum intensity palette towards approximation of main palette
 	for (uint16 _si = 0; _si<6; _si++) {
-		_gfx->quickFadePalette(pal);
+		_gfx->fadePalette(pal);
 		_gfx->setPalette(pal);
 		waitTime( 1 );
 		_gfx->updateScreen();

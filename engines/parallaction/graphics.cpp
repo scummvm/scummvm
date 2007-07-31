@@ -203,14 +203,14 @@ void Gfx::animatePalette() {
 	return;
 }
 
-void Gfx::fadePalette(Palette pal) {
+void Gfx::fadeInPalette(Palette pal) {
 	for (uint16 i = 0; i < BASE_PALETTE_COLORS * 3; i++)
 		if (pal[i] < _palette[i]) pal[i]++;
 
 	return;
 }
 
-void Gfx::buildBWPalette(Palette pal) {
+void Gfx::makeGrayscalePalette(Palette pal) {
 
 	for (uint16 i = 0; i < BASE_PALETTE_COLORS; i++) {
 		byte max;
@@ -226,7 +226,7 @@ void Gfx::buildBWPalette(Palette pal) {
 	return;
 }
 
-void Gfx::quickFadePalette(Palette pal) {
+void Gfx::fadePalette(Palette pal) {
 
 	for (uint16 i = 0; i < BASE_PALETTE_COLORS * 3; i++) {
 		if (pal[i] == _palette[i]) continue;

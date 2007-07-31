@@ -205,7 +205,7 @@ void Parallaction_ns::_c_fade(void *parm) {
 	memset(pal, 0, sizeof(Gfx::Palette));
 
 	for (uint16 _di = 0; _di < 64; _di++) {
-		_gfx->fadePalette(pal);
+		_gfx->fadeInPalette(pal);
 		_gfx->setPalette(pal);
 
 		g_system->delayMillis(20);
@@ -341,7 +341,7 @@ void Parallaction_ns::_c_endComment(void *param) {
 	byte* _enginePal = _gfx->_palette;
 	Gfx::Palette pal;
 
-	_gfx->buildBWPalette(pal);
+	_gfx->makeGrayscalePalette(pal);
 
 	int16 w = 0, h = 0;
 	_gfx->getStringExtent(_location._endComment, 130, &w, &h);
