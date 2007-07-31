@@ -48,7 +48,9 @@ public:
 		/** Has general standard coordinates. */
 		kFeaturesStdCoords = 0x100,
 		/** Has a frame positions table. */
-		kFeaturesFramesPos = 0x200
+		kFeaturesFramesPos = 0x200,
+		/** Has video. */
+		kFeaturesVideo = 0x400
 	};
 
 	enum StateFlags {
@@ -60,7 +62,7 @@ public:
 		/** Updated according to the specific frame coordinates. */
 		kStateFrameCoords = 0x400,
 		/** Got no frame data. */
-		kStateNoData = 0x800,
+		kStateNoVideoData = 0x800,
 		/** Updated according to the general standard coordinates. */
 		kStateStdCoords = 0x1000,
 		/** Had to explicitely seek to the frame. */
@@ -80,6 +82,8 @@ public:
 		int16 bottom;
 		/** Set accordingly to what was done. */
 		uint32 flags;
+
+		State() : left(0), top(0), right(0), bottom(0), flags(0) { }
 	};
 
 	virtual ~CoktelVideo() { }
@@ -95,9 +99,13 @@ public:
 	/** Returns the height of the video. */
 	virtual int16 getHeight() const = 0;
 	/** Returns the number of frames the loaded video has. */
-	virtual int16 getFramesCount() const = 0;
-	/** Returns the current frame number. */
-	virtual int16 getCurrentFrame() const = 0;
+	virtual uint16 getFramesCount() const = 0;
+	/** Returns the current frame number.
+	 *
+	 *  This is the current frame after the last nextFrame()-call,
+	 *  i.e. it's 0 after loading, 1 after the first nextFrame()-call, etc..
+	 */
+	virtual uint16 getCurrentFrame() const = 0;
 	/** Returns the frame rate. */
 	virtual int16 getFrameRate() const = 0;
 	/** Returns the number of frames the video lags behind the audio. */
@@ -128,12 +136,10 @@ public:
 	 *  @param whence The offset from whence the frame is given.
 	 *  @param restart Restart the video to reach an otherwise inaccessible frame?
 	 */
-	virtual void seekFrame(int16 frame, int16 whence = SEEK_SET, bool restart = false) = 0;
+	virtual void seekFrame(int32 frame, int16 whence = SEEK_SET, bool restart = false) = 0;
 
 	/** Render the next frame. */
 	virtual State nextFrame() = 0;
-	/** Look at what a frame would do/have, without actually rendering the frame. */
-	virtual State peekFrame(int16 frame) = 0;
 	/** Wait for the frame to end. */
 	virtual void waitEndFrame() = 0;
 
@@ -160,8 +166,8 @@ public:
 	int16 getY() const { return _y; }
 	int16 getWidth() const { return _width; }
 	int16 getHeight() const { return _height; }
-	int16 getFramesCount() const { return _framesCount; }
-	int16 getCurrentFrame() const { return _curFrame; }
+	uint16 getFramesCount() const { return _framesCount; }
+	uint16 getCurrentFrame() const { return _curFrame; }
 	int16 getFrameRate() const { if (_hasSound) return 1000 / _soundSliceLength; return 12; }
 	uint32 getSyncLag() const { return _skipFrames; }
 	const byte *getPalette() const { return _palette; }
@@ -176,10 +182,9 @@ public:
 	void enableSound(Audio::Mixer &mixer);
 	void disableSound();
 
-	void seekFrame(int16 frame, int16 whence = SEEK_SET, bool restart = false);
+	void seekFrame(int32 frame, int16 whence = SEEK_SET, bool restart = false);
 
 	State nextFrame();
-	State peekFrame(int16 frame);
 	void waitEndFrame();
 
 	void copyCurrentFrame(byte *dest, uint16 x, uint16 y, uint16 width, int16 transp = -1);
@@ -193,17 +198,17 @@ protected:
 	} PACKED_STRUCT;
 
 	Common::SeekableReadStream *_stream;
-	uint8 _version;
+	uint16 _version;
 	uint16 _features;
-	int16 _flags;
+	uint16 _flags;
 	int16 _x, _y, _width, _height;
 	int16 _stdX, _stdY, _stdWidth, _stdHeight;
-	int16 _framesCount, _curFrame;
-	int32 *_framesPos;
-	int32 _firstFramePos;
+	uint16 _framesCount, _curFrame;
+	uint32 *_framesPos;
+	uint32 _firstFramePos;
 	Coord *_frameCoords;
 
-	int32 _frameDataSize, _vidBufferSize;
+	uint32 _frameDataSize, _vidBufferSize;
 	byte *_frameData, *_vidBuffer;
 
 	byte _palette[768];
@@ -238,9 +243,54 @@ protected:
 	void deleteVidMem(bool del = true);
 	void clear(bool del = true);
 
-	State processFrame(int16 frame);
+	State processFrame(uint16 frame);
 	uint32 renderFrame();
-	void frameUncompressor(byte *dest, byte *src);
+	void deLZ77(byte *dest, byte *src);
+};
+
+class Vmd : public Imd {
+public:
+	Vmd();
+	~Vmd();
+
+	bool load(Common::SeekableReadStream &stream);
+	void unload();
+
+	void setXY(int16 x, int16 y);
+
+	void seekFrame(int32 frame, int16 whence = SEEK_SET, bool restart = false);
+
+	State nextFrame();
+
+protected:
+	enum PartType {
+		kPartTypeAudio = 1,
+		kPartTypeVideo = 2
+	};
+	struct Part {
+		PartType type;
+		uint32 size;
+		int16 left;
+		int16 top;
+		int16 right;
+		int16 bottom;
+		byte flags;
+	} PACKED_STRUCT;
+	struct Frame {
+		uint32 offset;
+		Part *parts;
+
+		Frame() : parts(0) { }
+		~Frame() { delete[] parts; }
+	} PACKED_STRUCT;
+
+	bool _hasVideo;
+	uint16 _partsPerFrame;
+	Frame *_frames;
+
+	void clear(bool del = true);
+
+	State processFrame(uint16 frame);
 };
 
 } // End of namespace Gob

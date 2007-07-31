@@ -742,12 +742,12 @@ void Inter_v4::o4_playVmdOrMusic() {
 		close = true;
 	} else if (lastFrame == -3) {
 		warning("Woodruff Stub: Video/Music command -3: Play background video %s", fileName);
-		return;
+//		return;
 	} else if (lastFrame == -4) {
 		warning("Woodruff Stub: Video/Music command -4: Play background video %s", fileName);
 		return;
 	} else if (lastFrame == -5) {
-		warning("Woodruff Stub: Video/Music command -5");
+		warning("Woodruff Stub: Video/Music command -5: Stop background music");
 		return;
 	} else if (lastFrame == -6) {
 		warning("Woodruff Stub: Video/Music command -6: Load background video %s", fileName);

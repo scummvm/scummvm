@@ -103,11 +103,20 @@ uint32 DataStream::read(void *dataPtr, uint32 dataSize) {
 	if (_stream)
 		return _stream->read(dataPtr, dataSize);
 
-	int32 res = _io->readChunk(_handle, (byte *) dataPtr, dataSize);
-	if (res >= 0)
-		return res;
+	if ((_handle < 50) || (_handle >= 128))
+		return _io->file_getHandle(_handle)->read((byte *) dataPtr, dataSize);
 
-	return _io->file_getHandle(_handle)->read((byte *) dataPtr, dataSize);
+	byte *data = (byte *) dataPtr;
+	uint32 haveRead = 0;
+	while (dataSize > 0x3FFF) {
+		_io->readChunk(_handle, (byte *) data, 0x3FFF);
+		dataSize -= 0x3FFF;
+		data += 0x3FFF;
+		haveRead += 0x3FFF;
+	}
+	_io->readChunk(_handle, (byte *) data, dataSize);
+
+	return haveRead + dataSize;
 }
 
 DataIO::DataIO(GobEngine *vm) : _vm(vm) {

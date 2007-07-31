@@ -119,9 +119,7 @@ bool VideoPlayer::openVideo(const char *video, int16 x, int16 y, int16 flags, Ty
 		if (which == kVideoTypeIMD) {
 			_video = new Imd();
 		} else if (which == kVideoTypeVMD) {
-			warning("STUB: %s", fileName);
-			closeVideo();
-			return false;
+			_video = new Vmd();
 		} else {
 			warning("Couldn't open video \"%s\": Invalid video Type", fileName);
 			closeVideo();
@@ -161,6 +159,7 @@ void VideoPlayer::play(int16 startFrame, int16 lastFrame, int16 breakKey,
 	if (!_video)
 		return;
 
+	breakKey = 27;
 	if (startFrame < 0)
 		startFrame = _video->getCurrentFrame();
 	if (lastFrame < 0)
