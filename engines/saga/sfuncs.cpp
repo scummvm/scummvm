@@ -1752,7 +1752,7 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 		int16 param = thread->pop() + 9;
 
 		if (param >= 9 && param <= 34) {
-			_vm->_music->setVolume(-1, 1);
+			_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
 			_vm->_music->play(param);
 		} else {
 			_vm->_music->stop();
@@ -1769,7 +1769,7 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 		if (param1 >= _vm->_music->_songTableLen) {
 			warning("sfPlayMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTableLen - 1);
 		} else {
-			_vm->_music->setVolume(-1, 1);
+			_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
 			_vm->_music->play(_vm->_music->_songTable[param1], param2 ? MUSIC_LOOP : MUSIC_NORMAL);
 			if (!_vm->_scene->haveChapterPointsChanged()) {
 				_vm->_scene->setCurrentMusicTrack(param1);
@@ -2206,7 +2206,7 @@ void Script::sfQueueMusic(SCRIPTFUNC_PARAMS) {
 	if (param1 >= _vm->_music->_songTableLen) {
 		warning("sfQueueMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTableLen - 1);
 	} else {
-		_vm->_music->setVolume(-1, 1);
+		_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
 		event.type = kEvTOneshot;
 		event.code = kMusicEvent;
 		event.param = _vm->_music->_songTable[param1];
