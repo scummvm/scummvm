@@ -800,6 +800,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		"intro"
 	},
+	{ // Supplied by pwigren in bugreport #1764174
+		{
+			"bargon",
+			"",
+			AD_ENTRY1s("intro.stk", "569d679fe41d49972d34c9fce5930dda", 269825),
+			EN_ANY,
+			kPlatformAmiga,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeBargon,
+		kFeaturesNone,
+		"intro"
+	},
 	{ // Supplied by glorfindel in bugreport #1722142
 		{
 			"bargon",
