@@ -226,11 +226,19 @@ void Gfx::makeGrayscalePalette(Palette pal) {
 	return;
 }
 
-void Gfx::fadePalette(Palette pal) {
+void Gfx::fadePalette(Palette pal, Palette target, uint step) {
+
+	if (step == 0)
+		return;
 
 	for (uint16 i = 0; i < BASE_PALETTE_COLORS * 3; i++) {
-		if (pal[i] == _palette[i]) continue;
-		pal[i] += (pal[i] < _palette[i] ? 4 : -4);
+		if (pal[i] == target[i]) continue;
+
+		if (pal[i] < target[i])
+			pal[i] = CLIP(pal[i] + step, (uint)0, (uint)target[i]);
+		else
+			pal[i] = CLIP(pal[i] - step, (uint)target[i], (uint)255);
+
 	}
 
 	return;

@@ -452,7 +452,7 @@ void Parallaction::doLocationEnterTransition() {
 
 	// fades maximum intensity palette towards approximation of main palette
 	for (uint16 _si = 0; _si<6; _si++) {
-		_gfx->fadePalette(pal);
+		_gfx->fadePalette(pal, _gfx->_palette, 4);
 		_gfx->setPalette(pal);
 		waitTime( 1 );
 		_gfx->updateScreen();

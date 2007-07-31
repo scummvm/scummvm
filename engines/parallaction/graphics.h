@@ -210,7 +210,7 @@ public:
 	void setBlackPalette();
 	void animatePalette();
 	void fadeInPalette(Palette palette);		// fades palette (from black) to system palette
-	void fadePalette(Palette palette);			// fades palette to system palette
+	void fadePalette(Palette palette, Palette target, uint step);			// fades palette to target palette, with specified step
 	void makeGrayscalePalette(Palette palette);		// transform palette into black and white
 
 	// amiga specific
