@@ -223,6 +223,7 @@ protected:
 	uint32 _soundStartTime;
 	uint32 _skipFrames;
 
+	uint16 _soundFlags;
 	int16 _soundFreq;
 	uint16 _soundSliceSize;
 	int16 _soundSlicesCount;
@@ -244,7 +245,7 @@ protected:
 	void clear(bool del = true);
 
 	State processFrame(uint16 frame);
-	uint32 renderFrame();
+	uint32 renderFrame(int16 left, int16 top, int16 right, int16 bottom);
 	void deLZ77(byte *dest, byte *src);
 };
 
@@ -291,6 +292,7 @@ protected:
 	void clear(bool del = true);
 
 	State processFrame(uint16 frame);
+	uint32 renderFrame(int16 left, int16 top, int16 right, int16 bottom);
 };
 
 } // End of namespace Gob

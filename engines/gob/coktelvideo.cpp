@@ -315,7 +315,7 @@ void Imd::waitEndFrame() {
 
 			if (waitTime < 0) {
 				_skipFrames = -waitTime / _soundSliceLength;
-				warning("IMD A/V sync broken, skipping %d frame(s)", _skipFrames + 1);
+				warning("Video A/V sync broken, skipping %d frame(s)", _skipFrames + 1);
 			} else if (waitTime > 0)
 				g_system->delayMillis(waitTime);
 
@@ -418,6 +418,7 @@ void Imd::clear(bool del) {
 	_soundStartTime = 0;
 	_skipFrames = 0;
 
+	_soundFlags = 0;
 	_soundFreq = 0;
 	_soundSliceSize = 0;
 	_soundSlicesCount = 0;
@@ -432,7 +433,6 @@ void Imd::clear(bool del) {
 CoktelVideo::State Imd::processFrame(uint16 frame) {
 	State state;
 	uint32 cmd = 0;
-	int16 xBak, yBak, heightBak, widthBak;
 	bool hasNextCmd = false;
 	bool startSound = false;
 
@@ -446,34 +446,29 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 		seekFrame(frame);
 	}
 
-	state.left = xBak = _x;
-	state.top = yBak = _y;
-	state.bottom = heightBak = _height;
-	state.right = widthBak = _width;
-	state.right += state.left - 1;
-	state.bottom += state.top - 1;
+	if (!_vidMem)
+		setVideoMemory();
+
+	state.left = _x;
+	state.top = _y;
+	state.right = _width + state.left - 1;
+	state.bottom = _height + state.top - 1;
 
 	do {
 		if (frame != 0) {
 			if (_stdX != -1) {
-				state.left = _x = _stdX;
-				state.top = _y = _stdY;
-				state.right = _width = _stdWidth;
-				state.bottom = _height = _stdHeight;
-				state.right += state.left - 1;
-				state.bottom += state.top - 1;
+				state.left = _stdX;
+				state.top = _stdY;
+				state.right = _stdWidth + state.left - 1;
+				state.bottom = _stdHeight + state.top - 1;
 				state.flags |= kStateStdCoords;
 			}
 			if (_frameCoords &&
 					(_frameCoords[frame].left != -1)) {
-				state.left = _x = _frameCoords[frame].left;
-				state.top = _y = _frameCoords[frame].top;
-				state.right = _width =
-					_frameCoords[frame].right - _x + 1;
-				state.bottom = _height =
-					_frameCoords[frame].bottom - _y + 1;
-				state.right += state.left - 1;
-				state.bottom += state.top - 1;
+				state.left = _frameCoords[frame].left;
+				state.top = _frameCoords[frame].top;
+				state.right = _frameCoords[frame].right;
+				state.bottom = _frameCoords[frame].bottom;
 				state.flags |= kStateFrameCoords;
 			}
 		}
@@ -577,33 +572,20 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 			cmd = _stream->readUint32LE();
 			_stream->read(_frameData, cmd + 2);
 
-			int16 left = _x;
-			int16 top = _y;
-			int16 right = _width + left;
-			int16 bottom = _height + top;
-
-			if (!_vidMem)
-				setVideoMemory();
-
-			if (_vidMemWidth < right) {
-				left = 0;
-				right = _width;
+			if (_vidMemWidth <= state.right) {
+				state.left = 0;
+				state.right -= state.left;
 			}
-			if (_vidMemWidth < right)
-				right = _vidMemWidth;
-			if (_vidMemHeight < bottom) {
-				top = 0;
-				bottom = _height;
+			if (_vidMemWidth <= state.right)
+				state.right = _vidMemWidth - 1;
+			if (_vidMemHeight <= state.bottom) {
+				state.top = 0;
+				state.bottom -= state.top;
 			}
-			if (_vidMemHeight < bottom)
-				bottom = _vidMemHeight;
+			if (_vidMemHeight <= state.bottom)
+				state.bottom = _vidMemHeight -1;
 
-			_x = left;
-			_y = top;
-			_height = bottom - top;
-			_width = right - left;
-
-			state.flags |= renderFrame();
+			state.flags |= renderFrame(state.left, state.top, state.right, state.bottom);
 			state.flags |= _frameData[0];
 
 		// Frame video data
@@ -611,7 +593,7 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 
 			_stream->read(_frameData, cmd + 2);
 
-			state.flags |= renderFrame();
+			state.flags |= renderFrame(state.left, state.top, state.right, state.bottom);
 			state.flags |= _frameData[0];
 
 		} else
@@ -626,11 +608,6 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 		_soundStage = 2;
 	}
 
-	_x = xBak;
-	_y = yBak;
-	_width = widthBak;
-	_height = heightBak;
-
 	_curFrame++;
 	if ((_curFrame == _framesCount) && (_soundStage == 2)) {
 		_audioStream->finish();
@@ -643,23 +620,18 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 	return state;
 }
 
-uint32 Imd::renderFrame() {
-	if (!_frameData || (_width <= 0) || (_height <= 0))
+uint32 Imd::renderFrame(int16 left, int16 top, int16 right, int16 bottom) {
+	if (!_frameData || !_vidMem || (_width <= 0) || (_height <= 0))
 		return 0;
 
-	if (!_vidMem)
-		setVideoMemory();
-
-	byte *dataPtr = _frameData;
-	int16 imdX = _x;
-	int16 imdY = _y;
-	int16 imdW = _width;
-	int16 imdH = _height;
-	int16 sW = _vidMemWidth;
-	byte *imdVidMem = _vidMem + sW * imdY + imdX;
-	uint8 type = *dataPtr++;
-	byte *srcPtr = dataPtr;
 	uint32 retVal = 0;
+	int16 width = right - left + 1;
+	int16 height = bottom - top + 1;
+	int16 sW = _vidMemWidth;
+	byte *dataPtr = _frameData;
+	byte *imdVidMem = _vidMem + sW * top + left;
+	byte *srcPtr;
+	uint8 type = *dataPtr++;
 
 	if (type & 0x10) { // Palette data
 		// One byte index
@@ -673,10 +645,11 @@ uint32 Imd::renderFrame() {
 	}
 
 	srcPtr = dataPtr;
+
 	if (type & 0x80) { // Frame data is compressed
 		srcPtr = _vidBuffer;
 		type &= 0x7F;
-		if ((type == 2) && (imdW == sW)) {
+		if ((type == 2) && (width == sW)) {
 			deLZ77(imdVidMem, dataPtr);
 			return retVal;
 		} else
@@ -687,19 +660,19 @@ uint32 Imd::renderFrame() {
 	byte *imdVidMemBak;
 
 	if (type == 2) { // Whole block
-		for (int i = 0; i < imdH; i++) {
-			memcpy(imdVidMem, srcPtr, imdW);
-			srcPtr += imdW;
+		for (int i = 0; i < height; i++) {
+			memcpy(imdVidMem, srcPtr, width);
+			srcPtr += width;
 			imdVidMem += sW;
 		}
 	} else if (type == 1) { // Sparse block
 		imdVidMemBak = imdVidMem;
-		for (int i = 0; i < imdH; i++) {
+		for (int i = 0; i < height; i++) {
 			pixWritten = 0;
-			while (pixWritten < imdW) {
+			while (pixWritten < width) {
 				pixCount = *srcPtr++;
 				if (pixCount & 0x80) { // data
-					pixCount = MIN((pixCount & 0x7F) + 1, imdW - pixWritten);
+					pixCount = MIN((pixCount & 0x7F) + 1, width - pixWritten);
 					memcpy(imdVidMem, srcPtr, pixCount);
 
 					pixWritten += pixCount;
@@ -715,30 +688,30 @@ uint32 Imd::renderFrame() {
 			imdVidMem = imdVidMemBak;
 		}
 	} else if (type == 0x42) { // Whole quarter-wide block
-		for (int i = 0; i < imdH; i++) {
+		for (int i = 0; i < height; i++) {
 			imdVidMemBak = imdVidMem;
 
-			for (int j = 0; j < imdW; j += 4, imdVidMem += 4, srcPtr++)
+			for (int j = 0; j < width; j += 4, imdVidMem += 4, srcPtr++)
 				memset(imdVidMem, *srcPtr, 4);
 
 			imdVidMemBak += sW;
 			imdVidMem = imdVidMemBak;
 		}
 	} else if ((type & 0xF) == 2) { // Whole half-high block
-		for (; imdH > 1; imdH -= 2, imdVidMem += sW + sW, srcPtr += imdW) {
-			memcpy(imdVidMem, srcPtr, imdW);
-			memcpy(imdVidMem + sW, srcPtr, imdW);
+		for (; height > 1; height -= 2, imdVidMem += sW + sW, srcPtr += width) {
+			memcpy(imdVidMem, srcPtr, width);
+			memcpy(imdVidMem + sW, srcPtr, width);
 		}
-		if (imdH == -1)
-			memcpy(imdVidMem, srcPtr, imdW);
+		if (height == -1)
+			memcpy(imdVidMem, srcPtr, width);
 	} else { // Sparse half-high block
 		imdVidMemBak = imdVidMem;
-		for (int i = 0; i < imdH; i += 2) {
+		for (int i = 0; i < height; i += 2) {
 			pixWritten = 0;
-			while (pixWritten < imdW) {
+			while (pixWritten < width) {
 				pixCount = *srcPtr++;
 				if (pixCount & 0x80) { // data
-					pixCount = MIN((pixCount & 0x7F) + 1, imdW - pixWritten);
+					pixCount = MIN((pixCount & 0x7F) + 1, width - pixWritten);
 					memcpy(imdVidMem, srcPtr, pixCount);
 					memcpy(imdVidMem + sW, srcPtr, pixCount);
 
@@ -865,14 +838,12 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 
 	// Version checking
 	if ((headerLength != 814) || (handle != 0) || (_version != 1)) {
-		warning("IMD Version incorrect (%d, %d, %d)", headerLength, handle, _version);
+		warning("VMD Version incorrect (%d, %d, %d)", headerLength, handle, _version);
 		unload();
 		return false;
 	}
 
 	_framesCount = _stream->readUint16LE();
-
-	warning("# of frames: %d", _framesCount);
 
 	_x = _stream->readSint16LE();
 	_y = _stream->readSint16LE();
@@ -881,19 +852,13 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	if ((_width != 0) && (_height != 0)) {
 		_hasVideo = true;
 		_features |= kFeaturesVideo;
-
-		warning("%dx%d+%d+%d", _width, _height, _x, _y);
-
 	} else
 		_hasVideo = false;
 
 	_flags = _stream->readUint16LE();
 	_partsPerFrame = _stream->readUint16LE();
 	_firstFramePos = _stream->readUint32LE();
-	uint32 unknown1 = _stream->readUint32LE();
-
-	warning("flags: %d (0x%X), #parts: %d, firstFramePos: %d, U1: %d (0x%X)",
-			_flags, _flags, _partsPerFrame, _firstFramePos, unknown1, unknown1);
+	_stream->skip(4); // Unknown
 
 	_stream->read((byte *) _palette, 768);
 
@@ -912,13 +877,12 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 		_vidBuffer = new byte[_vidBufferSize];
 		assert(_vidBuffer);
 		memset(_vidBuffer, 0, _vidBufferSize);
-		warning("Sizes: frameData: %d, vidBuffer: %d", _frameDataSize, _vidBufferSize);
 	}
 
 	_soundFreq = _stream->readSint16LE();
 	_soundSliceSize = _stream->readUint16LE();
 	_soundSlicesCount = _stream->readSint16LE();
-	uint16 soundFlags = _stream->readUint16LE();
+	_soundFlags = _stream->readUint16LE();
 	_hasSound = (_soundFreq != 0);
 
 	if (_hasSound) {
@@ -928,59 +892,45 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 		_frameLength = _soundSliceLength;
 
 		_soundStage = 1;
-
 		_audioStream = Audio::makeAppendableAudioStream(_soundFreq, 0);
-
-		warning("Sound: Freq: %d, # slices %d, slideSize: %d, flags: %d (0x%X), sliceLen = %d",
-				_soundFreq, _soundSlicesCount, _soundSliceSize, soundFlags, soundFlags, _soundSliceLength);
-
 	} else
 		_frameLength = 1000 / 12; // 12 FPS for a video without sound
 
 	uint32 frameInfoOffset = _stream->readUint32LE();
 
-	warning("frameInfoOffset: %d", frameInfoOffset);
-
 	_stream->seek(frameInfoOffset);
 	_frames = new Frame[_framesCount];
 	for (uint16 i = 0; i < _framesCount; i++) {
 		_frames[i].parts = new Part[_partsPerFrame];
-		_stream->skip(2);
+		_stream->skip(2); // Unknown
 		_frames[i].offset = _stream->readUint32LE();
 	}
 	for (uint16 i = 0; i < _framesCount; i++) {
 		for (uint16 j = 0; j < _partsPerFrame; j++) {
+
 			_frames[i].parts[j].type = (PartType) _stream->readByte();
-			uint16 Unknown3 = _stream->readByte();
+			_stream->skip(1); // Unknown
 			_frames[i].parts[j].size = _stream->readUint32LE();
+
 			if (_frames[i].parts[j].type == kPartTypeAudio) {
+
 				_frames[i].parts[j].flags = _stream->readByte();
-				_stream->skip(9);
-				warning("%d.%d (%d): Audio: %d (0x%X), %d (0x%X)",
-						i, j, _frames[i].parts[j].size,
-						Unknown3, Unknown3, _frames[i].parts[j].flags, _frames[i].parts[j].flags);
+				_stream->skip(9); // Unknow
 
 			} else if (_frames[i].parts[j].type == kPartTypeVideo) {
+
 				_frames[i].parts[j].left = _stream->readUint16LE();
 				_frames[i].parts[j].top = _stream->readUint16LE();
 				_frames[i].parts[j].right = _stream->readUint16LE();
 				_frames[i].parts[j].bottom = _stream->readUint16LE();
-				uint16 Unknown4 = _stream->readByte();
+				_stream->skip(1); // Unknown
 				_frames[i].parts[j].flags = _stream->readByte();
-				warning("%d.%d (%d): Video: %d (0x%X), %d+%d+%d+%d, %d (0x%X), %d (0x%X)",
-						i, j, _frames[i].parts[j].size,
-						Unknown3, Unknown3, _frames[i].parts[j].left,
-						_frames[i].parts[j].top, _frames[i].parts[j].right,
-						_frames[i].parts[j].bottom, Unknown4, Unknown4,
-						_frames[i].parts[j].flags, _frames[i].parts[j].flags);
 
 			} else {
-				warning("VMD: Unknown frame part type found (%d.%d: %d, %d)",
-						i, j, _frames[i].parts[j].type, _frames[i].parts[j].size);
+				// Unknow type
 				_stream->skip(10);
-//				unload();
-//				return false;
 			}
+
 		}
 	}
 
@@ -1060,13 +1010,18 @@ void Vmd::clear(bool del) {
 
 CoktelVideo::State Vmd::processFrame(uint16 frame) {
 	State state;
-	int16 xBak = 0, yBak = 0, heightBak = 0, widthBak = 0;
 	bool startSound = false;
 
 	seekFrame(frame);
 
 	state.flags |= kStateNoVideoData;
-	state.left = -1;
+	state.left = 0x7FFF;
+	state.right = 0x7FFF;
+	state.top = 0;
+	state.bottom = 0;
+
+	if (!_vidMem)
+		setVideoMemory();
 
 	for (uint16 i = 0; i < _partsPerFrame; i++) {
 		Part &part = _frames[frame].parts[i];
@@ -1092,9 +1047,7 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 			} else if (part.flags == 2) {
 
 				if (_soundEnabled) {
-					uint32 U = _stream->readUint32LE();
-
-					warning("Mask? %d (0x%X)", U, U);
+					_stream->skip(4); // Unknown
 
 					soundBuf = new byte[part.size - 4];
 					assert(soundBuf);
@@ -1128,24 +1081,7 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 		} else if (part.type == kPartTypeVideo) {
 			state.flags &= ~kStateNoVideoData;
 
-			if (state.left == -1) {
-				state.left = _x = part.left;
-				state.top = _y = part.top;
-				state.right = _width = part.right;
-				state.bottom = _height = part.bottom;
-				_width -= _x - 1;
-				_height -= _y - 1;
-			} else {
-				_x = part.left;
-				_y = part.top;
-				_width = part.right - (_x - 1);
-				_height = part.bottom - (_y - 1);
-				state.left = MIN(state.left, part.left);
-				state.top = MIN(state.top, part.top);
-				state.right = MAX(state.right, part.right);
-				state.bottom = MAX(state.bottom, part.bottom);
-			}
-
+			// New palette
 			if (part.flags & 2) {
 				uint8 index = _stream->readByte();
 				uint8 count = _stream->readByte();
@@ -1157,10 +1093,20 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 			}
 
 			_stream->read(_frameData, part.size);
-			state.flags |= renderFrame();
-		} else {
-			warning("Unknown frame part type %d, size %d (%d of %d)", part.type, part.size, i + 1, _partsPerFrame);
+			if (renderFrame(part.left, part.top, part.right, part.bottom)) {
+				// Rendering succeeded, merging areas
+				state.left = MIN(state.left, part.left);
+				state.top = MIN(state.top, part.top);
+				state.right = MAX(state.right, part.right);
+				state.bottom = MAX(state.bottom, part.bottom);
+			}
+
+		} else if (part.type == 4) {
+			// Unknown
 			_stream->skip(part.size);
+		} else {
+			// Unknow type
+//			warning("Unknown frame part type %d, size %d (%d of %d)", part.type, part.size, i + 1, _partsPerFrame);
 		}
 	}
 
@@ -1171,11 +1117,6 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 		_soundStage = 2;
 	}
 
-	_x = xBak;
-	_y = yBak;
-	_width = widthBak;
-	_height = heightBak;
-
 	if ((_curFrame == (_framesCount - 1)) && (_soundStage == 2)) {
 		_audioStream->finish();
 		_mixer->stopHandle(_audioHandle);
@@ -1185,6 +1126,72 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 
 	_lastFrameTime = g_system->getMillis();
 	return state;
+}
+
+uint32 Vmd::renderFrame(int16 left, int16 top, int16 right, int16 bottom) {
+	if (!_frameData || !_vidMem || (_width <= 0) || (_height <= 0))
+		return 0;
+
+	int16 width = right - left + 1;
+	int16 height = bottom - top + 1;
+	int16 sW = _vidMemWidth;
+	byte *dataPtr = _frameData;
+	byte *imdVidMem = _vidMem + sW * top + left;
+	byte *srcPtr;
+	uint8 type = *dataPtr++;
+
+	srcPtr = dataPtr;
+
+	if (type & 0x80) { // Frame data is compressed
+		srcPtr = _vidBuffer;
+		type &= 0x7F;
+		if ((type == 2) && (width == sW)) {
+			deLZ77(imdVidMem, dataPtr);
+			return 1;
+		} else
+			deLZ77(srcPtr, dataPtr);
+	}
+
+	uint16 pixCount, pixWritten;
+	byte *imdVidMemBak;
+
+	if (type == 1) { // Sparse block
+		imdVidMemBak = imdVidMem;
+		for (int i = 0; i < height; i++) {
+			pixWritten = 0;
+			while (pixWritten < width) {
+				pixCount = *srcPtr++;
+				if (pixCount & 0x80) { // data
+					pixCount = MIN((pixCount & 0x7F) + 1, width - pixWritten);
+					memcpy(imdVidMem, srcPtr, pixCount);
+
+					pixWritten += pixCount;
+					imdVidMem += pixCount;
+					srcPtr += pixCount;
+				} else { // "hole"
+					pixCount = (pixCount + 1) % 256;
+					pixWritten += pixCount;
+					imdVidMem += pixCount;
+				}
+			}
+			imdVidMemBak += sW;
+			imdVidMem = imdVidMemBak;
+		}
+	} else if (type == 2) { // Whole block
+		for (int i = 0; i < height; i++) {
+			memcpy(imdVidMem, srcPtr, width);
+			srcPtr += width;
+			imdVidMem += sW;
+		}
+	} else if (type == 3) { // RLE block
+		warning("Frame render method 3: RLE block");
+		return 0;
+	} else {
+		warning("Unkown frame rendering method %d (0x%X)", type, type);
+		return 0;
+	}
+
+	return 1;
 }
 
 } // End of namespace Gob
