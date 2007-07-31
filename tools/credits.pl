@@ -718,10 +718,6 @@ begin_credits("Credits");
 	  end_section();
 	end_section();
 
-	begin_section("ScummVM Music Enhancement project");
-	      	add_person("James Woodcock", "James|GlideManiac", "");
-	end_section();
-
 	begin_section("Websites (design)");
 	  begin_persons();
 		  add_person("Dob&oacute; Bal&aacute;zs", "draven", "Website design");
