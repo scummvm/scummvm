@@ -1233,6 +1233,71 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro"
 	},
+	{ // Supplied by jvprat on #scummvm
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "270529d9b8cce770b1575908a3800b52", 20296452),
+			ES_ESP,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
+	{ // Supplied by jvprat on #scummvm
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "270529d9b8cce770b1575908a3800b52", 20296452),
+			EN_GRB,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
+	{ // Supplied by jvprat on #scummvm
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "270529d9b8cce770b1575908a3800b52", 20296452),
+			DE_DEU,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
+	{ // Supplied by jvprat on #scummvm
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "270529d9b8cce770b1575908a3800b52", 20296452),
+			FR_FRA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
+	{ // Supplied by jvprat on #scummvm
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "270529d9b8cce770b1575908a3800b52", 20296452),
+			IT_ITA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
 	/*{
 		{
 			"dynasty",
