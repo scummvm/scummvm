@@ -276,7 +276,10 @@ void SagaEngine::load(const char *fileName) {
 		_scene->setCurrentMusicTrack(in->readSint32LE());
 		_scene->setCurrentMusicRepeat(in->readSint32LE());
 		_music->stop();
-		_music->play(_music->_songTable[_scene->getCurrentMusicTrack()], _scene->getCurrentMusicRepeat() ? MUSIC_LOOP : MUSIC_NORMAL);			
+		if (getGameId() != GID_IHNM_DEMO)
+			_music->play(_music->_songTable[_scene->getCurrentMusicTrack()], _scene->getCurrentMusicRepeat() ? MUSIC_LOOP : MUSIC_NORMAL);			
+		else
+			_music->play(3, MUSIC_LOOP);
 	}
 
 	// Inset scene
