@@ -205,11 +205,11 @@ void Parallaction_ns::_c_fade(void *parm) {
 	memset(pal, 0, sizeof(Gfx::Palette));
 
 	for (uint16 _di = 0; _di < 64; _di++) {
-		_gfx->fadeInPalette(pal);
+		_gfx->fadePalette(pal, _gfx->_palette, 1);
 		_gfx->setPalette(pal);
 
-		g_system->delayMillis(20);
 		_gfx->updateScreen();
+		g_system->delayMillis(20);
 	}
 
 	return;
@@ -338,11 +338,6 @@ void Parallaction_ns::_c_setMask(void *parm) {
 
 void Parallaction_ns::_c_endComment(void *param) {
 
-	byte* _enginePal = _gfx->_palette;
-	Gfx::Palette pal;
-
-	_gfx->makeGrayscalePalette(pal);
-
 	int16 w = 0, h = 0;
 	_gfx->getStringExtent(_location._endComment, 130, &w, &h);
 
@@ -359,45 +354,16 @@ void Parallaction_ns::_c_endComment(void *param) {
 	_gfx->displayWrappedString(_location._endComment, 3, 5, 0, 130);
 	_gfx->updateScreen();
 
-	uint32 si, di;
-	for (di = 0; di < PALETTE_COLORS; di++) {
-		for (si = 0; si <= 93; si +=3) {
 
-			int8 al;
+	Gfx::Palette pal;
+	_gfx->makeGrayscalePalette(pal);
 
-			if (_enginePal[si] != pal[si]) {
-				al = _enginePal[si];
-				if (al < pal[si])
-					al = 1;
-				else
-					al = -1;
-				_enginePal[si] += al;
-			}
+	for (uint di = 0; di < 64; di++) {
+		_gfx->fadePalette(_gfx->_palette, pal, 1);
+		_gfx->setPalette(_gfx->_palette);
 
-			if (_enginePal[si+1] != pal[si+1]) {
-				al = _enginePal[si+1];
-				if (al < pal[si+1])
-					al = 1;
-				else
-					al = -1;
-				_enginePal[si+1] += al;
-			}
-
-			if (_enginePal[si+2] != pal[si+2]) {
-				al = _enginePal[si+2];
-				if (al < pal[si+2])
-					al = 1;
-				else
-					al = -1;
-				_enginePal[si+2] += al;
-			}
-
-		}
-
-		_gfx->setPalette(_enginePal);
-		g_system->delayMillis(20);
 		_gfx->updateScreen();
-
+		g_system->delayMillis(20);
 	}
 
 	waitUntilLeftClick();

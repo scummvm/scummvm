@@ -209,7 +209,6 @@ public:
 	void setPalette(Palette palette, uint32 first = FIRST_BASE_COLOR, uint32 num = BASE_PALETTE_COLORS);
 	void setBlackPalette();
 	void animatePalette();
-	void fadeInPalette(Palette palette);		// fades palette (from black) to system palette
 	void fadePalette(Palette palette, Palette target, uint step);			// fades palette to target palette, with specified step
 	void makeGrayscalePalette(Palette palette);		// transform palette into black and white
 
