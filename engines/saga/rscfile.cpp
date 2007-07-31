@@ -435,7 +435,7 @@ bool Resource::createContexts() {
 		} else if (Common::File::exists("musicd.rsc") || Common::File::exists("musicd.cmp")) {
 			_contextsCount++;
 			digitalMusic = true;
-			if (Common::File::exists("musicd.rsc"))
+			if (Common::File::exists("musicd.cmp"))
 				sprintf(musicFileName, "musicd.cmp");
 			else
 				sprintf(musicFileName, "musicd.rsc");
@@ -452,22 +452,13 @@ bool Resource::createContexts() {
 
 		// For ITE, add the digital music file and sfx file information here
 		if (_vm->getGameType() == GType_ITE && digitalMusic && i == _contextsCount - 1) {
-			if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
-				context->fileName = musicFileName;
-			else
-				context->fileName = musicFileName;
+			context->fileName = musicFileName;
 			context->fileType = GAME_MUSICFILE;
 		} else if (_vm->getGameType() == GType_ITE && !soundFileInArray && i == soundFileIndex) {
-			if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
-				context->fileName = soundFileName;
-			else
-				context->fileName = soundFileName;
+			context->fileName = soundFileName;
 			context->fileType = GAME_SOUNDFILE;	
 		} else if (_vm->getGameType() == GType_ITE && !voicesFileInArray && i == voicesFileIndex) {
-			if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
-				context->fileName = voicesFileName;
-			else
-				context->fileName = voicesFileName;
+			context->fileName = voicesFileName;
 			// can be GAME_VOICEFILE or GAME_SOUNDFILE | GAME_VOICEFILE or GAME_VOICEFILE | GAME_SWAPENDIAN
 			context->fileType = voiceFileType;
 		} else {
