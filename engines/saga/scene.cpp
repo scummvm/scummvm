@@ -1361,12 +1361,13 @@ void Scene::clearPlacard() {
 }
 
 void Scene::clearPsychicProfile() {
-	_vm->_scene->clearPlacard();
-	_vm->_actor->showActors(false);
-	_vm->_gfx->restorePalette();
-	_vm->_scene->restoreScene();
-	_vm->_interface->setMode(kPanelMain);
-	_vm->_interface->activate();
+	if (_vm->_interface->getMode() == kPanelPlacard) {
+		_vm->_scene->clearPlacard();
+		_vm->_actor->showActors(false);
+		_vm->_gfx->restorePalette();
+		_vm->_scene->restoreScene();
+		_vm->_interface->activate();
+	}
 }
 
 void Scene::showIHNMDemoSpecialScreen() {

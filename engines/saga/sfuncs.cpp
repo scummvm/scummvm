@@ -1519,8 +1519,9 @@ void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
 void Script::sfPsychicProfileOff(SCRIPTFUNC_PARAMS) {
 	thread->wait(kWaitTypePlacard);
 
-	// This is not used
-	//_vm->_scene->clearPsychicProfile();
+	// This is called a while after the psychic profile is
+	// opened, to close it automatically
+	_vm->_scene->clearPsychicProfile();
 }
 
 // Script function #50 (0x32)

@@ -369,17 +369,17 @@ int Interface::deactivate() {
 }
 
 void Interface::rememberMode() {
-	assert (_savedMode == -1);
+	debug(1, "rememberMode(%d)", _savedMode);
 
 	_savedMode = _panelMode;
-
-	debug(1, "rememberMode(%d)", _savedMode);
 }
 
 void Interface::restoreMode(bool draw_) {
-	assert (_savedMode != -1);
-
 	debug(1, "restoreMode(%d)", _savedMode);
+
+	// If _savedMode is -1 by a race condition, set it to kPanelMain
+	if (_savedMode == -1)
+		_savedMode = kPanelMain;
 
 	_panelMode = _savedMode;
 	_savedMode = -1;
