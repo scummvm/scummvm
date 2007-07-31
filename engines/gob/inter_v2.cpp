@@ -1903,25 +1903,27 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	if (handle < 0)
 		return false;
 
+	DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
+
 	_vm->_draw->animateCursor(4);
 	if (offset < 0)
-		_vm->_dataIO->seekData(handle, -offset - 1, SEEK_END);
+		stream->seek(-offset - 1, SEEK_END);
 	else
-		_vm->_dataIO->seekData(handle, offset, SEEK_SET);
+		stream->seek(offset);
 
 	if (((dataVar >> 2) == 59) && (size == 4)) {
-		WRITE_VAR(59, _vm->_dataIO->readUint32(handle));
+		WRITE_VAR(59, stream->readUint32LE());
 		// The scripts in some versions divide through 256^3 then,
 		// effectively doing a LE->BE conversion
 		if ((_vm->_platform != Common::kPlatformPC) && (VAR(59) < 256))
 			WRITE_VAR(59, SWAP_BYTES_32(VAR(59)));
 	} else
-		retSize = _vm->_dataIO->readData(handle, buf, size);
+		retSize = stream->read(buf, size);
 
 	if (retSize == size)
 		WRITE_VAR(1, 0);
 
-	_vm->_dataIO->closeData(handle);
+	delete stream;
 	return false;
 }
 

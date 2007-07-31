@@ -174,8 +174,10 @@ byte *Game::loadExtData(int16 itemId, int16 *pResWidth,
 	} else
 		handle = _extHandle;
 
+	DataStream *stream = _vm->_dataIO->openAsStream(handle);
+
 	debugC(7, kDebugFileIO, "off: %d size: %d", offset, tableSize);
-	_vm->_dataIO->seekData(handle, offset + tableSize, SEEK_SET);
+	stream->seek(offset + tableSize);
 	realSize = size;
 	if (isPacked)
 		dataBuf = new byte[size + 2];
@@ -185,11 +187,13 @@ byte *Game::loadExtData(int16 itemId, int16 *pResWidth,
 	dataPtr = dataBuf;
 	while (size > 32000) {
 		// BUG: huge->far conversion. Need normalization?
-		_vm->_dataIO->readData(handle, dataPtr, 32000);
+		stream->read(dataPtr, 32000);
 		size -= 32000;
 		dataPtr += 32000;
 	}
-	_vm->_dataIO->readData(handle, dataPtr, size);
+	stream->read(dataPtr, size);
+
+	delete stream;
 	if (commonHandle != -1) {
 		_vm->_dataIO->closeData(commonHandle);
 		_extHandle = _vm->_dataIO->openData(_curExtFile);
@@ -421,23 +425,26 @@ void Game::loadExtTable(void) {
 	if (_extHandle < 0)
 		return;
 
-	count = _vm->_dataIO->readUint16(_extHandle);
+	DataStream *stream = _vm->_dataIO->openAsStream(_extHandle);
+	count = stream->readUint16LE();
 
-	_vm->_dataIO->seekData(_extHandle, 0, SEEK_SET);
+	stream->seek(0);
 	_extTable = new ExtTable;
 	_extTable->items = 0;
 	if (count)
 		_extTable->items = new ExtItem[count];
 
-	_extTable->itemsCount = _vm->_dataIO->readUint16(_extHandle);
-	_extTable->unknown = _vm->_dataIO->readByte(_extHandle);
+	_extTable->itemsCount = stream->readUint16LE();
+	_extTable->unknown = stream->readByte();
 
 	for (int i = 0; i < count; i++) {
-		_extTable->items[i].offset = _vm->_dataIO->readUint32(_extHandle);
-		_extTable->items[i].size = _vm->_dataIO->readUint16(_extHandle);
-		_extTable->items[i].width = _vm->_dataIO->readUint16(_extHandle);
-		_extTable->items[i].height = _vm->_dataIO->readUint16(_extHandle);
+		_extTable->items[i].offset = stream->readUint32LE();
+		_extTable->items[i].size = stream->readUint16LE();
+		_extTable->items[i].width = stream->readUint16LE();
+		_extTable->items[i].height = stream->readUint16LE();
 	}
+
+	delete stream;
 }
 
 void Game::loadImFile(void) {

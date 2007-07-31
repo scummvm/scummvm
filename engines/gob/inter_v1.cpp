@@ -2225,22 +2225,23 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 	WRITE_VAR(1, 1);
 	handle = _vm->_dataIO->openData(_vm->_global->_inter_resStr);
 	if (handle >= 0) {
+		DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
+
 		_vm->_draw->animateCursor(4);
 		if (offset < 0)
-			_vm->_dataIO->seekData(handle, -offset - 1, SEEK_END);
+			stream->seek(-offset - 1, SEEK_END);
 		else
-			_vm->_dataIO->seekData(handle, offset, SEEK_SET);
+			stream->seek(offset);
 
 		if (((dataVar >> 2) == 59) && (size == 4))
-			WRITE_VAR(59, _vm->_dataIO->readUint32(handle));
+			WRITE_VAR(59, stream->readUint32LE());
 		else
-			retSize = _vm->_dataIO->readData(handle,
-					_vm->_global->_inter_variables + dataVar, size);
-
-		_vm->_dataIO->closeData(handle);
+			retSize = stream->read(_vm->_global->_inter_variables + dataVar, size);
 
 		if (retSize == size)
 			WRITE_VAR(1, 0);
+
+		delete stream;
 	}
 
 	if (_vm->_game->_extHandle >= 0)

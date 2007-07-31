@@ -147,10 +147,12 @@ void Init::initGame(const char *totName) {
 	handle = _vm->_dataIO->openData(buffer);
 
 	if (handle >= 0) {
-		// Get variables count
-		_vm->_dataIO->seekData(handle, 0x2C, SEEK_SET);
-		varsCount = _vm->_dataIO->readUint16(handle);
-		_vm->_dataIO->closeData(handle);
+		DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
+
+		stream->seek(0x2C);
+		varsCount = stream->readUint16LE();
+
+		delete stream;
 
 		_vm->_global->_inter_variables = new byte[varsCount * 4];
 		_vm->_global->_inter_variablesSizes = new byte[varsCount * 4];
@@ -178,9 +180,12 @@ void Init::initGame(const char *totName) {
 			_vm->_draw->closeScreen();
 		} else if ((imdHandle = _vm->_dataIO->openData("coktel.clt")) >= 0) {
 			_vm->_draw->initScreen();
+
+			stream = _vm->_dataIO->openAsStream(imdHandle, true);
 			_vm->_util->clearPalette();
-			_vm->_dataIO->readData(imdHandle, (byte *) _vm->_draw->_vgaPalette, 768);
-			_vm->_dataIO->closeData(imdHandle);
+			stream->read((byte *) _vm->_draw->_vgaPalette, 768);
+			delete stream;
+
 			imdHandle = _vm->_dataIO->openData("coktel.ims");
 			if (imdHandle >= 0) {
 				byte *sprBuf;

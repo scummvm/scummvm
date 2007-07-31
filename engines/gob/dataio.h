@@ -83,13 +83,6 @@ public:
 			Common::File::AccessMode mode = Common::File::kFileReadMode);
 	DataStream *openAsStream(int16 handle, bool dispose = false);
 
-	int32 readData(int16 handle, byte *buf, uint16 size);
-	byte readByte(int16 handle);
-	uint16 readUint16(int16 handle);
-	uint32 readUint32(int16 handle);
-	int32 writeData(int16 handle, byte *buf, uint16 size);
-	void seekData(int16 handle, int32 pos, int16 from);
-	uint32 getPos(int16 handle);
 	int32 getDataSize(const char *name);
 	byte *getData(const char *path);
 	DataStream *getDataStream(const char *path);
@@ -122,6 +115,10 @@ protected:
 	int16 seekChunk(int16 handle, int32 pos, int16 from);
 	uint32 getChunkPos(int16 handle) const;
 	int32 getChunkSize(const char *chunkName);
+
+	uint32 getPos(int16 handle);
+	void seekData(int16 handle, int32 pos, int16 from);
+	int32 readData(int16 handle, byte *buf, uint16 size);
 
 friend class DataStream;
 };

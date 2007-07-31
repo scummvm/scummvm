@@ -480,39 +480,14 @@ DataStream *DataIO::openAsStream(int16 handle, bool dispose) {
 	return new DataStream(*this, handle, size, dispose);
 }
 
-int32 DataIO::readData(int16 handle, byte *buf, uint16 size) {
-	int32 res;
+uint32 DataIO::getPos(int16 handle) {
+	uint32 resPos;
 
-	res = readChunk(handle, buf, size);
-	if (res >= 0)
-		return res;
+	resPos = getChunkPos(handle);
+	if (resPos != 0xFFFFFFFF)
+		return resPos;
 
-	return file_getHandle(handle)->read(buf, size);
-}
-
-byte DataIO::readByte(int16 handle) {
-	byte buf;
-
-	readData(handle, &buf, 1);
-	return ((byte) buf);
-}
-
-uint16 DataIO::readUint16(int16 handle) {
-	byte buf[2];
-
-	readData(handle, buf, 2);
-	return READ_LE_UINT16(buf);
-}
-
-uint32 DataIO::readUint32(int16 handle) {
-	byte buf[4];
-
-	readData(handle, buf, 4);
-	return READ_LE_UINT32(buf);
-}
-
-int32 DataIO::writeData(int16 handle, byte *buf, uint16 size) {
-	return file_getHandle(handle)->write(buf, size);
+	return file_getHandle(handle)->pos();
 }
 
 void DataIO::seekData(int16 handle, int32 pos, int16 from) {
@@ -525,14 +500,14 @@ void DataIO::seekData(int16 handle, int32 pos, int16 from) {
 	file_getHandle(handle)->seek(pos, from);
 }
 
-uint32 DataIO::getPos(int16 handle) {
-	uint32 resPos;
+int32 DataIO::readData(int16 handle, byte *buf, uint16 size) {
+	int32 res;
 
-	resPos = getChunkPos(handle);
-	if (resPos != 0xFFFFFFFF)
-		return resPos;
+	res = readChunk(handle, buf, size);
+	if (res >= 0)
+		return res;
 
-	return file_getHandle(handle)->pos();
+	return file_getHandle(handle)->read(buf, size);
 }
 
 int32 DataIO::getDataSize(const char *name) {
