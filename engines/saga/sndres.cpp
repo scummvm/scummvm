@@ -44,7 +44,7 @@
 namespace Saga {
 
 SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
-	/* Load sound module resource file contexts */
+	// Load sound module resource file contexts
 	_sfxContext = _vm->_resource->getContext(GAME_SOUNDFILE);
 	if (_sfxContext == NULL) {
 		error("SndRes::SndRes resource context not found");

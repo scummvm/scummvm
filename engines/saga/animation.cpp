@@ -24,6 +24,7 @@
  */
 
 // Background animation management module
+
 #include "saga/saga.h"
 #include "saga/gfx.h"
 
@@ -386,16 +387,6 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 
 	fillFrameOffsets(anim);
 
-	/*	char s[200];
-		sprintf(s, "d:\\anim%i",animId);
-		long flen=anim->resourceLength;
-		char *buf=(char*)anim->resourceData;
-		FILE*f;
-		f=fopen(s,"wb");
-		for (long i = 0; i < flen; i++)
-			fputc(buf[i],f);
-		fclose(f);*/
-
 	// Set animation data
 	anim->currentFrame = 0;
 	anim->completed = 0;
@@ -661,7 +652,7 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 				yStart = readS.readUint16BE();
 			else
 				yStart = readS.readByte();
-			readS.readByte();		/* Skip pad byte */
+			readS.readByte();		// Skip pad byte
 			/*xPos = */readS.readUint16BE();
 			/*yPos = */readS.readUint16BE();
 			/*width = */readS.readUint16BE();

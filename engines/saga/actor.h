@@ -614,11 +614,6 @@ public:
 
 	void showActors(bool flag) { _showActors = flag; }
 
-	/*
-	uint16 _currentFrameIndex;
-	void frameTest() {
-		_currentFrameIndex++; 
-	}*/
 protected:
 	friend class Script;
 	bool loadActorResources(ActorData *actor);

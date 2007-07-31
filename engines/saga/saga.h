@@ -551,7 +551,7 @@ public:
 	Resource *_resource;
 
 
-	/** Random number generator */
+	// Random number generator
 	Common::RandomSource _rnd;
 
 private:

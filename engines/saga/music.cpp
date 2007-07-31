@@ -22,6 +22,9 @@
  * $Id$
  *
  */
+
+// MIDI and digital music class
+
 #include "saga/saga.h"
 
 #include "saga/rscfile.h"

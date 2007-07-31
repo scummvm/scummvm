@@ -24,6 +24,7 @@
  */
 
 // RSC Resource file management module
+
 #include "saga/saga.h"
 
 #include "saga/actor.h"

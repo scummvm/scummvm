@@ -209,4 +209,4 @@ private:
 
 } // End of namespace Saga
 
-#endif				/* ANIMATION_H_ */
+#endif				// ANIMATION_H_

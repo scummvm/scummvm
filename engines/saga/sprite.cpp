@@ -24,6 +24,7 @@
  */
 
 // Sprite management module
+
 #include "saga/saga.h"
 
 #include "saga/gfx.h"

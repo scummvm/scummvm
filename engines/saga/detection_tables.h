@@ -23,6 +23,8 @@
  *
  */
 
+// Game detection information and MD5s
+
 namespace Saga {
 
 static const GameResourceDescription ITE_Resources = {

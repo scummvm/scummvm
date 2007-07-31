@@ -154,14 +154,6 @@ void SagaEngine::fillSaveList() {
 		}
 		i++;
 	}
-/* 4debug
-	for (i = 0; i < 14; i++) {
-		sprintf(_saveFiles[i].name,"test%i", i);
-		_saveFiles[i].slotNumber = i;
-	}
-	_saveFilesCount = 14;
-	_saveFilesMaxCount = 14;
-	*/
 }
 
 

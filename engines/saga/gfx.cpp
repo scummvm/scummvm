@@ -130,10 +130,7 @@ void Surface::drawPolyLine(const Point *points, int count, int color) {
 	}
 }
 
-/**
-* Dissolve one image with another.
-* If flags if set to 1, do zero masking.
-*/
+// Dissolve one image with another. If flags is set to 1, do zero masking.
 void Surface::transitionDissolve(const byte *sourceBuffer, const Common::Rect &sourceRect, int flags, double percent) {
 #define XOR_MASK 0xB400;
 	int pixelcount = w * h;
