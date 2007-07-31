@@ -280,8 +280,8 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	_newMusicNum = stream->readUint16LE();
 	_currentRoomNum = stream->readUint16LE();
 	res_loadRoom(_currentRoomNum);
-	int16 roomOffsX = stream->readUint16LE();
-	int16 roomOffsY = stream->readUint16LE();
+	int16 roomOffsX = _flagsTable[614] = stream->readUint16LE();
+	int16 roomOffsY = _flagsTable[615] = stream->readUint16LE();
 	_disabledInputCounter = stream->readUint16LE();
 	res_loadProgram(_currentEpisodeNum);
 	setupEpisode(-1);
@@ -291,7 +291,7 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	saveOrLoadCommonArray(*stream, _programWalkTable);
 	saveOrLoadCommonArray(*stream, _programPointsTable);
 	stream->read(_updatedRoomAreasTable, 200);
-	for (uint i = 1; i <= _updatedRoomAreasTable[0]; ++i) {
+	for (uint i = 1; i < _updatedRoomAreasTable[0]; ++i) {
 		updateRoomAreas(_updatedRoomAreasTable[i], -1);
 	}
 	saveOrLoadStaticArray(*stream, _sequenceEntryTable, NUM_SEQUENCES);
@@ -327,7 +327,9 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	Graphics::copyRect(_offscreenBuffer, kScreenWidth, 0, 0,
 	  _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615],
 	  kScreenWidth, kRoomHeight);
+	updateRoomRegions();
 	updateEntireScreen();
+	_roomNeedRedraw = false;
 	if (_flagsTable[617] != 0) {
 		res_loadSpeech(_flagsTable[617]);
 	}
