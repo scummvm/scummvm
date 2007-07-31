@@ -1086,7 +1086,7 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 				uint8 index = _stream->readByte();
 				uint8 count = _stream->readByte();
 
-				_stream->read(_palette + index * 3, count + 1);
+				_stream->read(_palette + index * 3, (count + 1) * 3);
 				_stream->skip((255 - count) * 3);
 				
 				state.flags |= kStatePalette;
