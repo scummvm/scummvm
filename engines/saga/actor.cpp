@@ -2129,7 +2129,10 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 			if ((((actor->_currentAction >= kActionWalkToPoint) &&
 				(actor->_currentAction <= kActionWalkDir)) || (actor == _protagonist)) &&
 				!_vm->_scene->canWalk(pointFrom)) {
-				for (i = 1; i < 8; i++) {
+				
+				int max = _vm->getGameType() == GType_ITE ? 8 : 4;
+
+				for (i = 1; i < max; i++) {
 					pointAdd = pointFrom;
 					pointAdd.y += i;
 					if (_vm->_scene->canWalk(pointAdd)) {
@@ -2142,17 +2145,19 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 						pointFrom = pointAdd;
 						break;
 					}
-					pointAdd = pointFrom;
-					pointAdd.x += i;
-					if (_vm->_scene->canWalk(pointAdd)) {
-						pointFrom = pointAdd;
-						break;
-					}
-					pointAdd = pointFrom;
-					pointAdd.x -= i;
-					if (_vm->_scene->canWalk(pointAdd)) {
-						pointFrom = pointAdd;
-						break;
+					if (_vm->getGameType() == GType_ITE) {
+						pointAdd = pointFrom;
+						pointAdd.x += i;
+						if (_vm->_scene->canWalk(pointAdd)) {
+							pointFrom = pointAdd;
+							break;
+						}
+						pointAdd = pointFrom;
+						pointAdd.x -= i;
+						if (_vm->_scene->canWalk(pointAdd)) {
+							pointFrom = pointAdd;
+							break;
+						}
 					}
 				}
 			}
