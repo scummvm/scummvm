@@ -622,9 +622,30 @@ static const GOBGameDescription gameDescriptions[] = {
 		{
 			"ween",
 			"",
-			AD_ENTRY1s("intro.stk", "bfd9d02faf3d8d60a2cf744f95eb48dd", 456570),
+			{
+				{"intro.stk", 0, "bfd9d02faf3d8d60a2cf744f95eb48dd", 456570},
+				{"ween.ins", 0, "d2cb24292c9ddafcad07e23382027218", 87800},
+				{NULL, 0, NULL, 0}
+			},
 			EN_GRB,
 			kPlatformAmiga,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWeen,
+		kFeaturesNone,
+		"intro"
+	},
+	{ // Supplied by pwigren in bug report #1764174
+		{
+			"ween",
+			"",
+			{
+				{"intro.stk", 0, "bfd9d02faf3d8d60a2cf744f95eb48dd", 456570},
+				{"music__5.snd", 0, "7d1819b9981ecddd53d3aacbc75f1cc8", 13446},
+				{NULL, 0, NULL, 0}
+			},
+			EN_GRB,
+			kPlatformAtariST,
 			Common::ADGF_NO_FLAGS
 		},
 		kGameTypeWeen,
