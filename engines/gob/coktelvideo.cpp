@@ -1060,7 +1060,7 @@ void Vmd::clear(bool del) {
 
 CoktelVideo::State Vmd::processFrame(uint16 frame) {
 	State state;
-	int16 xBak, yBak, heightBak, widthBak;
+	int16 xBak = 0, yBak = 0, heightBak = 0, widthBak = 0;
 	bool startSound = false;
 
 	seekFrame(frame);
