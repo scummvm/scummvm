@@ -233,6 +233,30 @@ int SagaEngine::init() {
 		_voicesEnabled = true;
 	}
 
+	// WORKAROUND for a weird bug that I haven't been able to understand.
+	// In some ITE demos, scenes are substituted with pictures, which are
+	// loaded instead of the actual scene in Scene::changeScene(). The
+	// weird phenomenon is that NO files can be opened or found in that
+	// function. However, file existence works in other parts of the engine.
+	// The strange thing is that if we add a dummy file existence check here
+	// (or in any part of init() or go()) for a file that exists (it doesn't
+	// work if the file doesn't exist), files are opened correctly in the
+	// function. I don't know if this is a bug of the Common::File class or 
+	// of the SAGA engine itself (or perhaps of a clashing definition?), but
+	// still, it's very strange that a file existence check fixes things. In
+	// both cases (with and without this dummy check here), the Common::File
+	// open function called from Scene::changeScene() finds the file through
+	// the _filesMap, but without this dummy check here, the handle returned
+	// is 0
+	// To reproduce: run any of the ITE demos that has scene substitutes like,
+	// for example, the ITE demo from Wyrmkeep's site. Enter the game, and
+	// exit the faire (to speed things up, open the debug console and type
+	// "scene_change 1", close the console and visit any place other than
+	// the faire)
+	// Since the files we need are BBM files, just check for the existence
+	// of one file of them here
+	if (Common::File::exists("tycho.bbm")) {}
+
 	// FIXME: This is the ugly way of reducing redraw overhead. It works
 	//        well for 320x200 but it's unclear how well it will work for
 	//        640x480.
