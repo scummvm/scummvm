@@ -4831,7 +4831,22 @@ void DrasculaEngine::fin_sound_corte() {
 }
 
 void DrasculaEngine::MusicFadeout() {
-	//TODO
+	int org_vol = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+	for (;;) {
+		int vol = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+		vol -= 10;
+			if (vol < 0)
+				vol = 0;
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
+		if (vol == 0)
+			break;
+		update_events();
+		_system->updateScreen();
+		_system->delayMillis(50);
+	}
+	AudioCD.stop();
+	_system->delayMillis(100);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, org_vol);
 }
 
 void DrasculaEngine::ctvd_end() {
