@@ -461,7 +461,7 @@ bucles:
 		paso_x = PASO_HARE_X;
 		paso_y = PASO_HARE_Y;
 	}
-	if (hare_se_mueve == 0 && anda_a_objeto==1) {
+	if (hare_se_mueve == 0 && anda_a_objeto == 1) {
 		sentido_hare = sentido_final;
 		anda_a_objeto = 0;
 	}
