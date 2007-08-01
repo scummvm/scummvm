@@ -3095,7 +3095,7 @@ void DrasculaEngine::stopmusic() {
 }
 
 int DrasculaEngine::music_status() {
-	return AudioCD.isPlaying() != 0;
+	return AudioCD.isPlaying();
 }
 
 void DrasculaEngine::refresca_pantalla() {
