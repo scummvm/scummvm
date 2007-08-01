@@ -330,6 +330,7 @@ bool Resource::loadContext(ResourceContext *context) {
 				if (resourceData->patchData->_patchFile->open(patchDescription->fileName)) {
 					resourceData->offset = 0;
 					resourceData->size = resourceData->patchData->_patchFile->size();
+					resourceData->patchData->_patchFile->close();
 				} else {
 					delete resourceData->patchData;
 					resourceData->patchData = NULL;
@@ -544,6 +545,8 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&r
 	if (file->read(resourceBuffer, resourceSize) != resourceSize) {
 		error("Resource::loadResource() failed to read");
 	}
+	if (resourceData->patchData != NULL)
+		file->close();
 }
 
 static int metaResourceTable[] = { 0, 326, 517, 677, 805, 968, 1165, 0, 1271 };
