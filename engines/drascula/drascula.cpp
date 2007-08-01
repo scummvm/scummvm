@@ -1588,17 +1588,17 @@ void DrasculaEngine::mesa() {
 	VUELCA_PANTALLA(73, 63, 73, 63, 177, 97, dir_zona_pantalla);
 
 	for (;;) {
-		nivel_master = 72 + 61 - (12/*Master*/ * 4);
-		nivel_voc = 72 + 61 - (12/*Voc*/ * 4);
-		nivel_cd = 72 + 61 - (10/*CD*/ * 4);
+		nivel_master = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16) * 4);
+		nivel_voc = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16) * 4);
+		nivel_cd = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16) * 4);
 
 		refresca_pantalla();
 
 		DIBUJA_BLOQUE(1, 56, 73, 63, 177, 97, dir_mesa, dir_zona_pantalla);
 
-		DIBUJA_FONDO(183, 56, 82, nivel_master, 39, 2 + (12/*Master*/ * 4), dir_mesa, dir_zona_pantalla);
-		DIBUJA_FONDO(183, 56, 138, nivel_voc, 39, 2 + (12/*Voc*/ * 4), dir_mesa, dir_zona_pantalla);
-		DIBUJA_FONDO(183, 56, 194, nivel_cd, 39, 2 + (10/*CD*/ * 4), dir_mesa, dir_zona_pantalla);
+		DIBUJA_FONDO(183, 56, 82, nivel_master, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16) * 4), dir_mesa, dir_zona_pantalla);
+		DIBUJA_FONDO(183, 56, 138, nivel_voc, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16) * 4), dir_mesa, dir_zona_pantalla);
+		DIBUJA_FONDO(183, 56, 194, nivel_cd, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16) * 4), dir_mesa, dir_zona_pantalla);
 
 		cursor_mesa();
 
@@ -1610,30 +1610,30 @@ void DrasculaEngine::mesa() {
 			break;
 		if (boton_izq == 1) {
 			if (x_raton > 80 && x_raton < 121) {
-// TODO
-//				if (y_raton < nivel_master && Master < 15)
-//					Master++;
-//				if (y_raton > nivel_master && Master > 0)
-//					Master--;
-//				SetMasterVolume(Master);
+				int vol = _mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16;
+				if (y_raton < nivel_master && vol < 15)
+					vol++;
+				if (y_raton > nivel_master && vol > 0)
+					vol--;
+				_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol * 16);
 			}
 
 			if (x_raton > 136 && x_raton < 178) {
-// TODO
-//				if (y_raton < nivel_voc && Voc < 15)
-//					Voc++;
-//				if (y_raton > nivel_voc && Voc > 0)
-//					Voc--;
-//				SetVocVolume(Voc);
+				int vol = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16;
+				if (y_raton < nivel_voc && vol < 15)
+					vol++;
+				if (y_raton > nivel_voc && vol > 0)
+					vol--;
+				_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol * 16);
 			}
 
 			if (x_raton > 192 && x_raton < 233) {
-// TODO
-//				if (y_raton < nivel_cd && CD < 15)
-//					CD++;
-//				if (y_raton > nivel_cd && CD > 0)
-//					CD--;
-//				SetCDVolume(CD);
+				int vol = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16;
+				if (y_raton < nivel_cd && vol < 15)
+					vol++;
+				if (y_raton > nivel_cd && vol > 0)
+					vol--;
+				_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol * 16);
 			}
 		}
 
@@ -1646,16 +1646,16 @@ void DrasculaEngine::saves() {
 	char nombres[10][23];
 	char fichero[13];
 	int n, n2, num_sav, y = 27;
-	FILE *sav;
+	Common::InSaveFile *sav;
 
 	borra_pantalla();
 
-	if ((sav = fopen("saves.epa", "r")) == NULL) {
+	if (!(sav = _saveFileMan->openForLoading("saves.epa"))) {
 		error("Can't open saves.epa file.");
 	}
 	for (n = 0; n < NUM_SAVES; n++)
-		fscanf(sav, "%s", nombres[n]);
-	fclose(sav);
+		sav->read(nombres[n], 23);
+	delete sav;
 
 	lee_dibujos("savescr.alg");
 	descomprime_dibujo(dir_dibujo1, MEDIA);
@@ -1708,13 +1708,14 @@ void DrasculaEngine::saves() {
 						if (n == 9)
 							strcpy(fichero, "gsave10");
 						para_grabar(fichero);
-						// TODO
-						if ((sav = fopen("saves.epa", "w")) == NULL) {
-							error("no puedo abrir el archivo de partidas.");
+						Common::OutSaveFile *tsav;
+						if (!(tsav = _saveFileMan->openForSaving("saves.epa"))) {
+							error("Can't open saves.epa file.");
 						}
 						for (n = 0; n < NUM_SAVES; n++)
-							fprintf(sav, "%s\n", nombres[n]);
-						fclose(sav);
+							tsav->write(nombres[n], 23);
+						tsav->finalize();
+						delete tsav;
 					}
 				}
 
@@ -1765,12 +1766,14 @@ void DrasculaEngine::saves() {
 				break;
 			} else if (x_raton > 208 && y_raton > 123 && x_raton < 282 && y_raton < 149 && hay_seleccion == 1) {
 				para_grabar(fichero);
-				if ((sav = fopen("saves.epa", "w")) == NULL) {
-					error("no puedo abrir el archivo de partidas.");
+				Common::OutSaveFile *tsav;
+				if (!(tsav = _saveFileMan->openForSaving("saves.epa"))) {
+					error("Can't open saves.epa file.");
 				}
 				for (n = 0; n < NUM_SAVES; n++)
-					fprintf(sav, "%s\n", nombres[n]);
-				fclose(sav);
+					tsav->write(nombres[n], 23);
+				tsav->finalize();
+				delete tsav;
 			} else if (x_raton > 168 && y_raton > 154 && x_raton < 242 && y_raton < 180)
 				break;
 			else if (hay_seleccion == 0) {
@@ -2245,7 +2248,6 @@ void DrasculaEngine::anima(const char *animacion, int FPS) {
 	int NFrames = 1;
 	int cnt = 2;
 
-	TimeMed = CLOCKS_PER_SEC / FPS;
 	AuxBuffLast = (byte *)malloc(65000);
 	AuxBuffDes = (byte *)malloc(65000);
 
@@ -2267,7 +2269,7 @@ void DrasculaEngine::anima(const char *animacion, int FPS) {
 	_system->updateScreen();
 	set_dac(cPal);
 	memcpy(AuxBuffLast, AuxBuffDes, 64000);
-	WaitForNext(TimeMed);
+	WaitForNext(FPS);
 	while (cnt < NFrames) {
 		FileIn.read(&Leng, sizeof(Leng));
 		AuxBuffOrg = (byte *)malloc(Leng);
@@ -2280,7 +2282,7 @@ void DrasculaEngine::anima(const char *animacion, int FPS) {
 		}
 		_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 		_system->updateScreen();
-		WaitForNext(TimeMed);
+		WaitForNext(FPS);
 		cnt++;
 		byte key = getscan();
 		if (key == 0x01)
@@ -2320,7 +2322,7 @@ void DrasculaEngine::FundeAlNegro(int VelocidadDeFundido) {
 }
 
 void DrasculaEngine::pausa(int cuanto) {
-	_system->delayMillis(cuanto * 25); // was originaly 2
+	_system->delayMillis(cuanto * 30); // was originaly 2
 }
 
 void DrasculaEngine::habla_dr_grande(const char *dicho, const char *filename) {
@@ -2526,6 +2528,7 @@ void DrasculaEngine::habla_dr_izq(const char *dicho, const char *filename) {
 
 	tiempol = _system->getMillis();
 	tiempou = (unsigned int)tiempol / 2;
+	_rnd->setSeed(tiempou);
 
 	buffer_teclado();
 
@@ -3172,6 +3175,9 @@ void DrasculaEngine::carga_partida(const char *nom_game) {
 }
 
 void DrasculaEngine::canal_p(const char *fich){
+	return;
+	// TODO
+
 	Common::File ald2, ald3;
 
 	char fich2[13];
@@ -3184,7 +3190,6 @@ void DrasculaEngine::canal_p(const char *fich){
 		error("no puedo abrir el archivo codificado");
 	}
 
-	// TODO
 	ald2.open(fich2, Common::File::kFileWriteMode);
 	if (!ald2.isOpen()) {
 		error("no puedo abrir el archivo destino");
@@ -3198,7 +3203,6 @@ void DrasculaEngine::canal_p(const char *fich){
 
 	ald2.close();
 	ald3.close();
-	// TODO
 	remove(fich);
 	rename(fich2, fich);
 }
@@ -3421,7 +3425,7 @@ void DrasculaEngine::menu_sin_volcar() {
 	}
 
 	if (x < 7)
-		print_abc(texto_icono,x_obj[x] - 2, y_obj[x] - 7);
+		print_abc(texto_icono, x_obj[x] - 2, y_obj[x] - 7);
 }
 
 void DrasculaEngine::barra_menu() {
@@ -3900,17 +3904,15 @@ void DrasculaEngine::set_dac(byte *dac) {
 	setvgapalette256((byte *)dac);
 }
 
-void DrasculaEngine::WaitForNext(long TimeLen) {
-	TimeLast = clock();
-	while (clock() < (TimeLast + TimeLen)) {}
-	TimeLast = clock();
+void DrasculaEngine::WaitForNext(int FPS) {
+	_system->delayMillis(1000 / FPS);
 }
 
 float DrasculaEngine::vez() {
-	return _system->getMillis();
+	return _system->getMillis() / 20; // originaly was 1
 }
 
-void DrasculaEngine::reduce_hare_chico(int xx1,int yy1, int xx2,int yy2, int ancho,int alto, int factor, byte *dir_inicio, byte *dir_fin) {
+void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int ancho, int alto, int factor, byte *dir_inicio, byte *dir_fin) {
 	float suma_x, suma_y;
 	int n, m;
 	float pixel_x, pixel_y;
@@ -4079,31 +4081,34 @@ void DrasculaEngine::refresca_62_antes() {
 }
 
 void DrasculaEngine::graba_partida(char nom_game[]) {
-	FILE *scu;
+	Common::OutSaveFile *out;
 	int l;
 
-	// TODO
-	if ((scu = fopen(nom_game, "w")) == NULL) {
+	if (!(out = _saveFileMan->openForSaving(nom_game))) {
 		error("no puedo abrir el archivo");
 	}
-	fprintf(scu, "%d\n", num_ejec);
-	fprintf(scu, "%s\n", datos_actuales);
-	fprintf(scu, "%d\n", hare_x);
-	fprintf(scu, "%d\n", hare_y);
-	fprintf(scu, "%d\n", sentido_hare);
+	out->writeSint32LE(num_ejec);
+	out->write(datos_actuales, 13);
+	out->writeSint32LE(hare_x);
+	out->writeSint32LE(hare_y);
+	out->writeSint32LE(sentido_hare);
 
 	for (l = 1; l < 43; l++) {
-		fprintf(scu,"%d\n", objetos_que_tengo[l]);
+		out->writeSint32LE(objetos_que_tengo[l]);
 	}
 
 	for (l = 0; l < NUM_BANDERAS; l++) {
-		fprintf(scu, "%d\n", flags[l]);
+		out->writeSint32LE(flags[l]);
 	}
 
-	fprintf(scu, "%d\n", lleva_objeto);
-	fprintf(scu, "%d\n", objeto_que_lleva);
+	out->writeSint32LE(lleva_objeto);
+	out->writeSint32LE(objeto_que_lleva);
 
-	fclose(scu);
+	out->finalize();
+	if (out->ioFailed())
+		warning("Can't write file '%s'. (Disk full?)", nom_game);
+
+	delete out;
 	canal_p(nom_game);
 }
 
@@ -4872,7 +4877,7 @@ void DrasculaEngine::ctvd_init(int b) {
 	byte *soundData = (byte *)malloc(soundSize);
 	sku->seek(32);
 	sku->read(soundData, soundSize);
-	_mixer->playRaw(Audio::Mixer::kPlainSoundType, &_soundHandle, soundData, soundSize - 64,
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_soundHandle, soundData, soundSize - 64,
 					11025, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
 }
 

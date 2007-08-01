@@ -575,13 +575,9 @@ public:
 	int GlobalSpeed;
 	int LastFrame;
 
-
-	long TimeLast;
-	long TimeMed;
-
 	byte *carga_pcx(byte *NamePcc);
 	void set_dac(byte *dac);
-	void WaitForNext(long TimeMed);
+	void WaitForNext(int FPS);
 	float vez();
 	void reduce_hare_chico(int, int, int, int, int, int, int, byte *, byte *);
 	char codifica(char);
