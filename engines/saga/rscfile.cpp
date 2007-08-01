@@ -353,6 +353,8 @@ bool Resource::createContexts() {
 	bool digitalMusic = false;
 	bool soundFileInArray = false;
 	bool voicesFileInArray = false;
+	bool multipleVoices = false;
+	bool censoredVersion = false;
 	uint16 voiceFileType = GAME_VOICEFILE;
 
 	_contextsCount = 0;
@@ -364,8 +366,8 @@ bool Resource::createContexts() {
 			voicesFileInArray = true;
 	}
 
-	if (_vm->getGameType() == GType_ITE) {
-		if (!soundFileInArray) {
+	if (!soundFileInArray) {
+		if (_vm->getGameType() == GType_ITE) {
 			// If the sound file is not specified in the detector table, add it here
 			if (Common::File::exists("sounds.rsc") || Common::File::exists("sounds.cmp")) {
 				_contextsCount++;
@@ -387,9 +389,24 @@ bool Resource::createContexts() {
 				// ITE floppy versions have both voices and sounds in voices.rsc
 				voiceFileType = GAME_SOUNDFILE | GAME_VOICEFILE;
 			}
+		} else {
+			// If the sound file is not specified in the detector table, add it here
+			if (Common::File::exists("sfx.res") || Common::File::exists("sfx.cmp")) {
+				_contextsCount++;
+				soundFileIndex = _contextsCount - 1;
+				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+					sprintf(soundFileName, "sfx.cmp");
+				else
+					sprintf(soundFileName, "sfx.res");
+			} else {
+				// No sound file found, don't add any file to the array
+				soundFileInArray = true;
+			}
 		}
+	}
 
-		if (!voicesFileInArray) {
+	if (!voicesFileInArray) {
+		if (_vm->getGameType() == GType_ITE) {
 			// If the voices file is not specified in the detector table, add it here
 			if (Common::File::exists("voices.rsc") || Common::File::exists("voices.cmp")) {
 				_contextsCount++;
@@ -413,18 +430,50 @@ bool Resource::createContexts() {
 					sprintf(voicesFileName, "inherit the earth voices.cmp");
 				else
 					sprintf(voicesFileName, "inherit the earth voices");
-
-				// The resources in the Wyrmkeep combined Windows/Mac/Linux CD version are little endian, but
-				// the voice file is big endian. If we got such a version with mixed files, mark this voice file
-				// as big endian
-				if (!_vm->isBigEndian())
-					voiceFileType = GAME_VOICEFILE | GAME_SWAPENDIAN;	// This file is big endian
+					// The resources in the Wyrmkeep combined Windows/Mac/Linux CD version are little endian, but
+					// the voice file is big endian. If we got such a version with mixed files, mark this voice file
+					// as big endian
+					if (!_vm->isBigEndian())
+						voiceFileType = GAME_VOICEFILE | GAME_SWAPENDIAN;	// This file is big endian
+			} else {
+				// No voice file found, don't add any file to the array
+				voicesFileInArray = true;
+			}
+		} else {
+			// If the voices file is not specified in the detector table, add it here
+			if (Common::File::exists("voicess.res") || Common::File::exists("voicess.cmp")) {
+				_contextsCount++;
+				voicesFileIndex = _contextsCount - 1;
+				// IHNM has multiple voice files
+				multipleVoices = true;
+				// Note: it is assumed that the voices are always last in the list
+				if (Common::File::exists("voices4.res") || Common::File::exists("voices4.cmp")) {
+					_contextsCount += 6;	// voices1-voices6
+				} else {
+					// The German and French versions of IHNM don't have Nimdok's chapter, therefore the voices file
+					// for that chapter is missing
+					_contextsCount += 5;	// voices1-voices3, voices4-voices5
+					censoredVersion = true;
+				}
+				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+					sprintf(voicesFileName, "voicess.cmp");
+				else
+					sprintf(voicesFileName, "voicess.res");
+			} else if (Common::File::exists("voicesd.res") || Common::File::exists("voicesd.cmp")) {
+				_contextsCount++;
+				voicesFileIndex = _contextsCount - 1;
+				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+					sprintf(voicesFileName, "voicesd.cmp");
+				else
+					sprintf(voicesFileName, "voicesd.res");
 			} else {
 				// No voice file found, don't add any file to the array
 				voicesFileInArray = true;
 			}
 		}
+	}
 
+	if (_vm->getGameType() == GType_ITE) {
 		// Check for digital music in ITE
 		if (Common::File::exists("music.rsc") || Common::File::exists("music.cmp")) {
 			_contextsCount++;
@@ -455,16 +504,28 @@ bool Resource::createContexts() {
 		if (_vm->getGameType() == GType_ITE && digitalMusic && i == _contextsCount - 1) {
 			context->fileName = musicFileName;
 			context->fileType = GAME_MUSICFILE;
-		} else if (_vm->getGameType() == GType_ITE && !soundFileInArray && i == soundFileIndex) {
+		} else if (!soundFileInArray && i == soundFileIndex) {
 			context->fileName = soundFileName;
 			context->fileType = GAME_SOUNDFILE;	
-		} else if (_vm->getGameType() == GType_ITE && !voicesFileInArray && i == voicesFileIndex) {
+		} else if (!voicesFileInArray && i == voicesFileIndex) {
 			context->fileName = voicesFileName;
 			// can be GAME_VOICEFILE or GAME_SOUNDFILE | GAME_VOICEFILE or GAME_VOICEFILE | GAME_SWAPENDIAN
 			context->fileType = voiceFileType;
 		} else {
-			context->fileName = _vm->getFilesDescriptions()[i].fileName;
-			context->fileType = _vm->getFilesDescriptions()[i].fileType;
+			if (!(!voicesFileInArray && multipleVoices && (i > voicesFileIndex))) {
+				context->fileName = _vm->getFilesDescriptions()[i].fileName;
+				context->fileType = _vm->getFilesDescriptions()[i].fileType;
+			} else {
+				int token = (censoredVersion && (i - voicesFileIndex >= 4)) ? 1 : 0;	// censored versions don't have voice4
+
+				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+					sprintf(voicesFileName, "voices%i.cmp", i - voicesFileIndex + token);
+				else
+					sprintf(voicesFileName, "voices%i.res", i - voicesFileIndex + token);
+
+				context->fileName = voicesFileName;
+				context->fileType = GAME_VOICEFILE;
+			}
 		}
 		context->serial = 0;
 
