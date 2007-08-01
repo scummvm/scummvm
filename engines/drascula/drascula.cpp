@@ -3820,8 +3820,8 @@ byte *DrasculaEngine::TryInMem(Common::File *Sesion) {
 	return pointer;
 }
 
-void DrasculaEngine::set_dacSSN(byte *dacSSN) {
-	setvgapalette256((byte *)dacSSN);
+void DrasculaEngine::set_dacSSN(byte *PalBuf) {
+	setvgapalette256((byte *)PalBuf);
 }
 
 void DrasculaEngine::Des_OFF(byte *BufferOFF, byte *MiVideoOFF, int Lenght) {
@@ -3900,9 +3900,9 @@ void DrasculaEngine::set_dac(byte *dac) {
 	setvgapalette256((byte *)dac);
 }
 
-void DrasculaEngine::WaitForNext(long TimeMed) {
+void DrasculaEngine::WaitForNext(long TimeLen) {
 	TimeLast = clock();
-	while (clock() < (TimeLast + TimeMed)) {}
+	while (clock() < (TimeLast + TimeLen)) {}
 	TimeLast = clock();
 }
 
@@ -3910,7 +3910,7 @@ float DrasculaEngine::vez() {
 	return _system->getMillis();
 }
 
-void DrasculaEngine::reduce_hare_chico(int x1,int y1, int x2,int y2, int ancho,int alto, int factor, byte *dir_inicio, byte *dir_fin) {
+void DrasculaEngine::reduce_hare_chico(int xx1,int yy1, int xx2,int yy2, int ancho,int alto, int factor, byte *dir_inicio, byte *dir_fin) {
 	float suma_x, suma_y;
 	int n, m;
 	float pixel_x, pixel_y;
@@ -3922,15 +3922,15 @@ void DrasculaEngine::reduce_hare_chico(int x1,int y1, int x2,int y2, int ancho,i
 	suma_x = ancho / nuevo_ancho;
 	suma_y = alto / nuevo_alto;
 
-	pixel_x = x1;
-	pixel_y = y1;
+	pixel_x = xx1;
+	pixel_y = yy1;
 
 	for (n = 0;n < nuevo_alto; n++){
 		for (m = 0; m < nuevo_ancho; m++){
-			pos_pixel[0] = pixel_x;
-			pos_pixel[1] = pixel_y;
-			pos_pixel[2] = x2 + m;
-			pos_pixel[3] = y2 + n;
+			pos_pixel[0] = (int)pixel_x;
+			pos_pixel[1] = (int)pixel_y;
+			pos_pixel[2] = xx2 + m;
+			pos_pixel[3] = yy2 + n;
 			pos_pixel[4] = 1;
 			pos_pixel[5] = 1;
 
@@ -3938,7 +3938,7 @@ void DrasculaEngine::reduce_hare_chico(int x1,int y1, int x2,int y2, int ancho,i
 
 			pixel_x = pixel_x + suma_x;
 		}
-		pixel_x = x1;
+		pixel_x = xx1;
 		pixel_y = pixel_y + suma_y;
 	}
 }
@@ -3956,11 +3956,11 @@ void DrasculaEngine::cuadrante_1() {
 	if (distancia_x < distancia_y) {
 		direccion_hare = 0;
 		sentido_hare = 2;
-		paso_x = distancia_x / (distancia_y / PASO_HARE_Y);
+		paso_x = (int)distancia_x / ((int)distancia_y / PASO_HARE_Y);
 	} else {
 		direccion_hare = 7;
 		sentido_hare = 0;
-		paso_y = distancia_y / (distancia_x / PASO_HARE_X);
+		paso_y = (int)distancia_y / ((int)distancia_x / PASO_HARE_X);
 	}
 }
 
@@ -3973,11 +3973,11 @@ void DrasculaEngine::cuadrante_2() {
 	if (distancia_x < distancia_y) {
 		direccion_hare = 1;
 		sentido_hare = 2;
-		paso_x = distancia_x / (distancia_y / PASO_HARE_Y);
+		paso_x = (int)distancia_x / ((int)distancia_y / PASO_HARE_Y);
 	} else {
 		direccion_hare = 2;
 		sentido_hare = 1;
-		paso_y = distancia_y / (distancia_x / PASO_HARE_X);
+		paso_y = (int)distancia_y / ((int)distancia_x / PASO_HARE_X);
 	}
 }
 
@@ -3990,11 +3990,11 @@ void DrasculaEngine::cuadrante_3() {
 	if (distancia_x < distancia_y) {
 		direccion_hare = 5;
 		sentido_hare = 3;
-		paso_x = distancia_x / (distancia_y / PASO_HARE_Y);
+		paso_x = (int)distancia_x / ((int)distancia_y / PASO_HARE_Y);
 	} else {
 		direccion_hare = 6;
 		sentido_hare = 0;
-		paso_y = distancia_y / (distancia_x / PASO_HARE_X);
+		paso_y = (int)distancia_y / ((int)distancia_x / PASO_HARE_X);
 	}
 }
 
@@ -4007,11 +4007,11 @@ void DrasculaEngine::cuadrante_4() {
 	if (distancia_x <distancia_y) {
 		direccion_hare = 4;
 		sentido_hare = 3;
-		paso_x = distancia_x / (distancia_y / PASO_HARE_Y);
+		paso_x = (int)distancia_x / ((int)distancia_y / PASO_HARE_Y);
 	} else {
 		direccion_hare = 3;
 		sentido_hare = 1;
-		paso_y = distancia_y / (distancia_x / PASO_HARE_X);
+		paso_y = (int)distancia_y / ((int)distancia_x / PASO_HARE_X);
 	}
 }
 
@@ -4056,7 +4056,7 @@ void DrasculaEngine::refresca_62_antes() {
 	if (flags[12] == 1)
 		DIBUJA_FONDO(borracho_x[frame_borracho], 82, 170, 50, 40, 53, dir_dibujo3, dir_zona_pantalla);
 
-	diferencia = vez() - conta_ciego_vez;
+	diferencia = (int)vez() - conta_ciego_vez;
 	if (diferencia > 6) {
 		if (flags[12] == 1) {
 			frame_borracho++;
@@ -4074,7 +4074,7 @@ void DrasculaEngine::refresca_62_antes() {
 		if (frame_piano == 9)
 			frame_piano = 0;
 		parpadeo = _rnd->getRandomNumber(10);
-		conta_ciego_vez = vez();
+		conta_ciego_vez = (int)vez();
 	}
 }
 
@@ -4143,12 +4143,12 @@ void DrasculaEngine::aumenta_num_frame() {
 		}
 	}
 
-	diferencia_y = alto_hare - nuevo_alto;
-	diferencia_x = ancho_hare - nuevo_ancho;
+	diferencia_y = alto_hare - (int)nuevo_alto;
+	diferencia_x = ancho_hare - (int)nuevo_ancho;
 	hare_y = hare_y + diferencia_y;
 	hare_x = hare_x + diferencia_x;
-	alto_hare = nuevo_alto;
-	ancho_hare = nuevo_ancho;
+	alto_hare = (int)nuevo_alto;
+	ancho_hare = (int)nuevo_ancho;
 }
 
 int DrasculaEngine::sobre_que_objeto() {
