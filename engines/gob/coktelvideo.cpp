@@ -868,7 +868,7 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	if (_hasVideo) {
 		if (_frameDataSize == 0)
 			_frameDataSize = _width * _height + 500;
-		if (_vidBufferSize)
+		if (_vidBufferSize == 0)
 			_vidBufferSize = _frameDataSize;
 
 		_frameData = new byte[_frameDataSize];
@@ -888,7 +888,7 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	if (_hasSound) {
 		_features |= kFeaturesSound;
 
-		_soundSliceLength = 1000 / (_soundFreq / _soundSliceSize);
+		_soundSliceLength = (uint16) (1000.0 / ((double) _soundFreq / (double) _soundSliceSize));
 		_frameLength = _soundSliceLength;
 
 		_soundStage = 1;
