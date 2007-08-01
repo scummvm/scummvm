@@ -73,6 +73,10 @@ DrasculaEngine::DrasculaEngine(OSystem *syst) : Engine(syst) {
 			_gameId = g->id;
 
 	_rnd = new Common::RandomSource();
+
+	int cd_num = ConfMan.getInt("cdrom");
+	if (cd_num >= 0)
+		_system->openCD(cd_num);
 }
 
 DrasculaEngine::~DrasculaEngine() {
@@ -1531,6 +1535,8 @@ byte DrasculaEngine::getscan() {
 void DrasculaEngine::update_events() {
 	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
+
+	AudioCD.updateCD();
 
 	while (eventMan->pollEvent(event)) {
 	switch (event.type) {
@@ -3080,44 +3086,16 @@ bucless:
 }
 
 void DrasculaEngine::playmusic(int p) {
-// TODO
-/*	unsigned short v;
-	stopmusic();
-
-	v=GetCDVolume();
-	if ((p==12 || p==21) && !reducido) {
-		SetCDVolume(v-2);
-		reducido = 1;
-	}
-	cd_track_length(p, &min, &sec, &frame);
-	cd_set_track (p);
-	get_musicpos();
-	cd_play_audio(startpos, endpos);
-	Playing=1;
-*/
+	AudioCD.stop();
+	AudioCD.play(p - 1, 1, 0, 0);
 }
 
 void DrasculaEngine::stopmusic() {
-//TODO
-/*	unsigned short v;
-
-	cd_stop_audio ();
-	/v=GetCDVolume();
-	if (reducido)
-	{
-		SetCDVolume(v+2);
-		reducido=0;
-	}
-	cd_done_play ();
-	Playing=0;
-*/
+	AudioCD.stop();
 }
 
 int DrasculaEngine::music_status() {
-	// TODO
-	//cd_status();
-	//return ((cdrom_data.error & BUSY) != 0);
-	return 0;
+	return AudioCD.isPlaying() != 0;
 }
 
 void DrasculaEngine::refresca_pantalla() {
