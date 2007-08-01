@@ -513,49 +513,49 @@ bucles:
 		menu_bar = 0;
 
 	byte key = getscan();
-	if (key == F1 && menu_scr == 0) {
+	if (key == Common::KEYCODE_F1 && menu_scr == 0) {
 		elige_verbo(1);
 		cont_sv = 0;
-	} else if (key == F2 && menu_scr == 0) {
+	} else if (key == Common::KEYCODE_F2 && menu_scr == 0) {
 		elige_verbo(2);
 		cont_sv = 0;
-	} else if (key == F3 && menu_scr == 0) {
+	} else if (key == Common::KEYCODE_F3 && menu_scr == 0) {
 		elige_verbo(3);
 		cont_sv = 0;
-	} else if (key == F4 && menu_scr == 0) {
+	} else if (key == Common::KEYCODE_F4 && menu_scr == 0) {
 		elige_verbo(4);
 		cont_sv = 0;
-	} else if (key == F5 && menu_scr == 0) {
+	} else if (key == Common::KEYCODE_F5 && menu_scr == 0) {
 		elige_verbo(5);
 		cont_sv = 0;
-	} else if (key == F6 && menu_scr == 0) {
+	} else if (key == Common::KEYCODE_F6 && menu_scr == 0) {
 		elige_verbo(6);
 		cont_sv = 0;
-	} else if (key == F9) {
+	} else if (key == Common::KEYCODE_F9) {
 		mesa();
 		cont_sv = 0;
-	} else if (key == F10) {
+	} else if (key == Common::KEYCODE_F10) {
 		saves();
 		cont_sv = 0;
-	} else if (key == F8) {
+	} else if (key == Common::KEYCODE_F8) {
 		sin_verbo();
 		cont_sv = 0;
-	} else if (key == 47) {
+	} else if (key == Common::KEYCODE_v) {
 		con_voces = 1;
 		print_abc(SYS2, 96, 86);
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		delay(1410);
 		cont_sv = 0;
-	} else if (key == 20) {
+	} else if (key == Common::KEYCODE_t) {
 		con_voces = 0;
 		print_abc(SYS3, 94, 86);
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		delay(1460);
 		cont_sv = 0;
-	} else if (key == 83) {
+	} else if (key == Common::KEYCODE_DELETE) {
 		confirma_go();
 		cont_sv = 0;
-	} else if (key == ESC) {
+	} else if (key == Common::KEYCODE_ESCAPE) {
 		confirma_salir();
 		cont_sv = 0;
 	} else if (cont_sv == 1500) {
@@ -606,21 +606,21 @@ void DrasculaEngine::animacion_1() {
 	while (term_int == 0) {
 		playmusic(29);
 		fliplay("logoddm.bin", 9);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		delay(600);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		borra_pantalla();
 		delay(340);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		playmusic(26);
 		delay(500);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		fliplay("logoalc.bin", 8);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		borra_pantalla();
 		lee_dibujos("cielo.alg");
@@ -628,45 +628,45 @@ void DrasculaEngine::animacion_1() {
 		Negro();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		FundeDelNegro(2);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		delay(900);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		color_abc(ROJO);
 		centra_texto("Transilvanya, 1993 d.c.", 160, 100);
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		delay(1000);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		delay(1200);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
 		fliplay("scrollb.bin", 9);
 
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		borra_pantalla();
 		comienza_sound("s5.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("scr2.bin", 17);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		fin_sound_corte();
 		anima("scr3.bin", 17);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		lee_dibujos("cielo2.alg");
 		descomprime_dibujo(dir_zona_pantalla, 256);
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		FundeAlNegro(1);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		borra_pantalla();
 
@@ -680,10 +680,10 @@ void DrasculaEngine::animacion_1() {
 		descomprime_dibujo(dir_dibujo2, 1);
 
 		playmusic(4);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		delay(400);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
 		for (l2 = 0; l2 < 3; l2++)
@@ -691,13 +691,13 @@ void DrasculaEngine::animacion_1() {
 				DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 				DIBUJA_FONDO(interf_x[l], interf_y[l], 156, 45, 63, 31, dir_dibujo2, dir_zona_pantalla);
 				VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-				if (getscan() == ESC) {
+				if (getscan() == Common::KEYCODE_ESCAPE) {
 					term_int = 1;
 					break;
 				}
 				pausa(3);
 			}
-			if ((term_int == 1) || (getscan() == ESC))
+			if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 				break;
 
 		l2 = 0; p = 0;
@@ -722,17 +722,17 @@ void DrasculaEngine::animacion_1() {
 			}
 			if (l2 == 7)
 				l2 = 0;
-			if (getscan() == ESC) {
+			if (getscan() == Common::KEYCODE_ESCAPE) {
 				term_int = 1;
 				break;
 			}
 		}
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_zona_pantalla, dir_dibujo1);
 
 		habla_dr_grande(TEXTD1, "D1.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
 		borra_pantalla();
@@ -755,23 +755,23 @@ void DrasculaEngine::animacion_1() {
 		pon_dr();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		habla_igor_dch(TEXTI8, "I8.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		DIBUJA_FONDO(0, 0, 0,0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		habla_dr_izq(TEXTD2, "d2.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		habla_dr_izq(TEXTD3, "d3.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("lib.bin", 16);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("lib2.bin", 16);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		borra_pantalla();
 		color_solo = ROJO;
@@ -780,16 +780,16 @@ void DrasculaEngine::animacion_1() {
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(10);
 		habla_solo(TEXTD4,"d4.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		lee_dibujos("plan1.alg");
 		descomprime_dibujo(dir_zona_pantalla, MEDIA);
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		habla_solo(TEXTD5, "d5.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("lib2.bin", 16);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		borra_pantalla();
 		lee_dibujos("plan2.alg");
@@ -797,76 +797,76 @@ void DrasculaEngine::animacion_1() {
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(20);
 		habla_solo(TEXTD6, "d6.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("lib2.bin", 16);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		borra_pantalla();
 		lee_dibujos("plan3.alg");
 		descomprime_dibujo(dir_zona_pantalla, MEDIA);
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(20);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		habla_solo(TEXTD7, "d7.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		lee_dibujos("plan3.alg");
 		descomprime_dibujo(dir_zona_pantalla, MEDIA);
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		habla_solo(TEXTD8, "d8.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		borra_pantalla();
 		lee_dibujos("100.alg");
 		descomprime_dibujo(dir_dibujo1, MEDIA);
 		MusicFadeout();
 		stopmusic();
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		habla_igor_dch(TEXTI9, "I9.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		habla_dr_izq(TEXTD9, "d9.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		habla_igor_dch(TEXTI10, "I10.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		playmusic(11);
 		habla_dr_izq(TEXTD10, "d10.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("rayo1.bin", 16);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		comienza_sound("s5.als");
 		anima("rayo2.bin", 15);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("frel2.bin", 16);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("frel.bin", 16);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("frel.bin", 16);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		fin_sound_corte();
 		borra_pantalla();
 		Negro();
 		playmusic(23);
 		FundeDelNegro(0);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 1;
 		habla_igor_dch(TEXTI1, "I1.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		habla_dr_dch(TEXTD11, "d11.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
 		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
@@ -880,7 +880,7 @@ void DrasculaEngine::animacion_1() {
 		pon_dr();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		habla_dr_izq(TEXTD12, "d12.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
 		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
@@ -894,11 +894,11 @@ void DrasculaEngine::animacion_1() {
 		pon_dr();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		habla_igor_dch(TEXTI2, "I2.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		pausa(13);
 		habla_dr_dch(TEXTD13,"d13.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_dr = 3;
 		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
@@ -912,35 +912,35 @@ void DrasculaEngine::animacion_1() {
 		pon_dr();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		habla_dr_izq(TEXTD14, "d14.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		habla_igor_dch(TEXTI3, "I3.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		habla_dr_izq(TEXTD15, "d15.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		habla_igor_dch(TEXTI4, "I4.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		habla_dr_izq(TEXTD16, "d16.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		habla_igor_dch(TEXTI5, "I5.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_igor = 3;
 		habla_dr_izq(TEXTD17, "d17.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		pausa(18);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		habla_igor_frente(TEXTI6, "I6.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		FundeAlNegro(0);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		borra_pantalla();
 
@@ -965,32 +965,32 @@ void DrasculaEngine::animacion_2() {
 	term_int = 0;
 
 	for (;;) {
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
 		anima("ag.bin", 14);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
 		lee_dibujos("an11y13.alg");
 		descomprime_dibujo(dir_hare_dch, 1);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
 		habla_tabernero(TEXTT22, "T22.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
 		lee_dibujos("97.alg");
 		descomprime_dibujo(dir_hare_dch, 1);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
 		pausa(4);
 		comienza_sound("s1.als");
 		hipo(18);
 		fin_sound();
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
 		borra_pantalla();
@@ -1000,39 +1000,39 @@ void DrasculaEngine::animacion_2() {
 		color_solo = BLANCO;
 		pausa(80);
 
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		habla_solo(TEXTBJ1, "BJ1.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		borra_pantalla();
 		lee_dibujos("bj.alg");
 		descomprime_dibujo(dir_zona_pantalla, MEDIA);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		Negro();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		FundeDelNegro(1);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		color_solo = AMARILLO;
 		habla_solo(TEXT214, "214.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		borra_pantalla();
 
 		lee_dibujos("16.alg");
 		descomprime_dibujo(dir_dibujo1, MEDIA);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		lee_dibujos("auxbj.alg");
 		descomprime_dibujo(dir_dibujo3, 1);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
 		strcpy(num_room,"16.alg");
 
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		for (l = 0; l < 200; l++)
 			factor_red[l] = 99;
@@ -1043,20 +1043,20 @@ void DrasculaEngine::animacion_2() {
 		hare_y = 95;
 		sentido_hare = 1;
 		hare_se_ve = 1;
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
 		lee_dibujos("97g.alg");
 		descomprime_dibujo(dir_hare_dch, 1);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
 		anima("lev.bin", 15);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 
 		lleva_al_hare(100 + ancho_hare / 2, 99 + alto_hare);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_hare = 1;
 		hare_x = 100;
@@ -1082,79 +1082,79 @@ void DrasculaEngine::animacion_2() {
 		anima("gaf.bin", 15);
 		anima("bjb.bin", 14);
 		playmusic(9);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		lee_dibujos("97.alg");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		descomprime_dibujo(dir_hare_dch, 1);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		refresca_pantalla();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		pausa(120);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		habla_solo(TEXT223, "223.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		color_solo = BLANCO;
 		refresca_pantalla();
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(110);
 		habla_solo(TEXTBJ11, "BJ11.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		refresca_pantalla();
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		pausa(118);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		lleva_al_hare(132, 97 + alto_hare);
 		pausa(60);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		hablar(TEXT224, "224.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		habla_bj(TEXTBJ12, "BJ12.als");
 		lleva_al_hare(157, 98 + alto_hare);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		anima("bes.bin", 16);
 		playmusic(11);
 		anima("rap.bin", 16);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_hare = 3;
 		strcpy(num_room, "no_bj.alg");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		pausa(8);
 		refresca_pantalla();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		hablar(TEXT225, "225.als");
 		pausa(76);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		sentido_hare = 1;
 		refresca_pantalla();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		hablar(TEXT226, "226.als");
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		refresca_pantalla();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		pausa(30);
-		if ((term_int == 1) || (getscan() == ESC))
+		if ((term_int == 1) || (getscan() == Common::KEYCODE_ESCAPE))
 			break;
 		hablar(TEXT227,"227.als");
 		FundeAlNegro(0);
@@ -1529,7 +1529,7 @@ void DrasculaEngine::comprueba2() {
 byte DrasculaEngine::getscan() {
 	update_events();
 
-	return _keyPressed.ascii;
+	return _keyPressed.keycode;
 }
 
 void DrasculaEngine::update_events() {
@@ -1544,7 +1544,7 @@ void DrasculaEngine::update_events() {
 			_keyPressed = event.kbd;
 			break;
 		case Common::EVENT_KEYUP:
-			_keyPressed = event.kbd;
+			_keyPressed.keycode = Common::KEYCODE_INVALID;
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			x_raton = event.mouse.x;
@@ -1836,8 +1836,8 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 			x_de_letra = X_N;
 //TODO	else if (c == '¥')
 //			x_de_letra = X_GN;
-//		else if (c == '¤')
-//			x_de_letra = X_GN;
+		else if (c == '¤')
+			x_de_letra = X_GN;
 		else if (c == 'O')
 			x_de_letra = X_O;
 		else if (c == 'P')
@@ -2032,7 +2032,7 @@ void DrasculaEngine::confirma_go() {
 			break;
 	}
 
-	if (key == 83) {
+	if (key == Common::KEYCODE_DELETE) {
 		stopmusic();
 		carga_partida("gsave00");
 	}
@@ -2052,7 +2052,7 @@ void DrasculaEngine::confirma_salir() {
 			break;
 	}
 
-	if (key == ESC) {
+	if (key == Common::KEYCODE_ESCAPE) {
 		stopmusic();
 		salir_al_dos(0);
 	}
@@ -2090,7 +2090,7 @@ void DrasculaEngine::salva_pantallas() {
 void DrasculaEngine::fliplay(const char *filefli, int vel) {
 	OpenSSN(filefli, vel);
 	while (PlayFrameSSN() && (!term_int)) {
-		if (getscan() == 27)
+		if (getscan() == Common::KEYCODE_ESCAPE)
 			term_int = 1;
 	}
 	EndSSN();
@@ -2291,7 +2291,7 @@ void DrasculaEngine::anima(const char *animacion, int FPS) {
 		WaitForNext(FPS);
 		cnt++;
 		byte key = getscan();
-		if (key == 0x01)
+		if (key == Common::KEYCODE_ESCAPE)
 			term_int = 1;
 		if (key != 0)
 			break;
@@ -2378,7 +2378,7 @@ bucless:
 	pausa(3);
 
 	byte key = getscan();
-	if (key == ESC)
+	if (key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 
 	if (key != 0)
@@ -2501,7 +2501,7 @@ bucless:
 	pausa(3);
 
 	byte key = getscan();
-	if (key == ESC)
+	if (key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
@@ -2576,7 +2576,7 @@ bucless:
 	pausa(3);
 
 	byte key = getscan();
-	if (key == ESC)
+	if (key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
@@ -2651,7 +2651,7 @@ bucless:
 	pausa(3);
 
 	byte key = getscan();
-	if (key == ESC)
+	if (key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
@@ -2704,7 +2704,7 @@ bucless:
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	byte key = getscan();
-	if (key == ESC)
+	if (key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
@@ -2775,7 +2775,7 @@ bucless:
 	pausa(3);
 
 	byte key = getscan();
-	if (key == ESC)
+	if (key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
@@ -2955,7 +2955,7 @@ bucless:
 	pausa(3);
 
 	byte key = getscan();
-	if (key == ESC)
+	if (key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
@@ -3062,7 +3062,7 @@ bucless:
 	pausa(3);
 
 	byte key = getscan();
-	if (key == ESC)
+	if (key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
@@ -3562,94 +3562,94 @@ void DrasculaEngine::introduce_nombre() {
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		key = getscan();
 		if (key != 0) {
-/*			if (key == 16)
+			if (key == Common::KEYCODE_q)
 				select2[v] = 'q';
-			else if (key == 17)
+			else if (key == Common::KEYCODE_w)
 				select2[v] = 'w';
-			else if (key == 18)
+			else if (key == Common::KEYCODE_e)
 				select2[v] = 'e';
-			else if (key == 19)
+			else if (key == Common::KEYCODE_r)
 				select2[v] = 'r';
-			else if (key == 20)
+			else if (key == Common::KEYCODE_t)
 				select2[v] = 't';
-			else if (key == 21)
+			else if (key == Common::KEYCODE_y)
 				select2[v] = 'y';
-			else if (key == 22)
+			else if (key == Common::KEYCODE_u)
 				select2[v] = 'u';
-			else if (key == 23)
+			else if (key == Common::KEYCODE_i)
 				select2[v] = 'i';
-			else if (key == 24)
+			else if (key == Common::KEYCODE_o)
 				select2[v] = 'o';
-			else if (key == 25)
+			else if (key == Common::KEYCODE_p)
 				select2[v] = 'p';
-			else if (key == 30)
+			else if (key == Common::KEYCODE_a)
 				select2[v] = 'a';
-			else if (key == 31)
+			else if (key == Common::KEYCODE_s)
 				select2[v] = 's';
-			else if (key == 32)
+			else if (key == Common::KEYCODE_d)
 				select2[v] = 'd';
-			else if (key == 33)
+			else if (key == Common::KEYCODE_f)
 				select2[v] = 'f';
-			else if (key == 34)
+			else if (key == Common::KEYCODE_g)
 				select2[v] = 'g';
-			else if (key == 35)
+			else if (key == Common::KEYCODE_h)
 				select2[v] = 'h';
-			else if (key == 36)
+			else if (key == Common::KEYCODE_j)
 				select2[v] = 'j';
-			else if (key == 37)
+			else if (key == Common::KEYCODE_k)
 				select2[v] = 'k';
-			else if (key == 38)
+			else if (key == Common::KEYCODE_l)
 				select2[v] = 'l';
-			else if (key == 39)
+			else if ((key == Common::KEYCODE_LCTRL) || (key == Common::KEYCODE_RCTRL))
 				select2[v] = '¤';
-			else if (key == 44)
+			else if (key == Common::KEYCODE_z)
 				select2[v] = 'z';
-			else if (key == 45)
+			else if (key == Common::KEYCODE_x)
 				select2[v] = 'x';
-			else if (key == 46)
+			else if (key == Common::KEYCODE_c)
 				select2[v] = 'c';
-			else if (key == 47)
+			else if (key == Common::KEYCODE_v)
 				select2[v] = 'v';
-			else if (key == 48)
+			else if (key == Common::KEYCODE_b)
 				select2[v] = 'b';
-			else if (key == 49)
+			else if (key == Common::KEYCODE_n)
 				select2[v] = 'n';
-			else if (key == 50)
+			else if (key == Common::KEYCODE_m)
 				select2[v] = 'm';
-			else if (key == 2)
+			else if (key == Common::KEYCODE_1)
 				select2[v] = '1';
-			else if (key == 3)
+			else if (key == Common::KEYCODE_2)
 				select2[v] = '2';
-			else if (key == 4)
+			else if (key == Common::KEYCODE_3)
 				select2[v] = '3';
-			else if (key == 5)
+			else if (key == Common::KEYCODE_4)
 				select2[v] = '4';
-			else if (key == 6)
+			else if (key == Common::KEYCODE_5)
 				select2[v] = '5';
-			else if (key == 7)
+			else if (key == Common::KEYCODE_6)
 				select2[v] = '6';
-			else if (key == 8)
+			else if (key == Common::KEYCODE_7)
 				select2[v] = '7';
-			else if (key == 9)
+			else if (key == Common::KEYCODE_8)
 				select2[v] = '8';
-			else if (key == 10)
+			else if (key == Common::KEYCODE_9)
 				select2[v] = '9';
-			else if (key == 11)
+			else if (key == Common::KEYCODE_0)
 				select2[v] = '0';
-			else if (key == 57)
+			else if (key == Common::KEYCODE_SPACE)
 				select2[v] = '§';
 			else if (key == ESC)
 				break;
-			else if (key == 0x1C) {
+			else if (key == Common::KEYCODE_RETURN) {
 					select2[v] = '\0';
 					h = 1;
 					break;
-			} else if (key == 0x0E)
+			} else if (key == Common::KEYCODE_BACKSPACE)
 				select2[v] = '\0';
 			else
 				v--;
-*/
-			if (key == 0x0E)
+
+			if (key == Common::KEYCODE_BACKSPACE)
 				v--;
 			else
 				v++;
